@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>NutriPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --teal:#0F766E;--teal-l:#14B8A6;--teal-d:#0C5F58;
+  --sage:#F0FDF4;--cream:#FAFDF7;
+  --slate:#1E293B;--slate-m:#334155;--slate-l:#64748B;
+  --amber:#D97706;--amber-l:#FEF3C7;
+  --red:#DC2626;--red-l:#FEE2E2;
+  --bg:#F1F5F9;--card:#ffffff;
+  --border:#E2E8F0;--border-d:#CBD5E1;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.14);
+  --r:12px;--r-sm:8px;
+  font-size:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--slate);min-height:100vh;overflow-x:hidden}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{
+  display:none;position:fixed;inset:0;
+  background:linear-gradient(135deg,#0F766E 0%,#1E293B 60%,#0C5F58 100%);
+  z-index:9999;align-items:center;justify-content:center;
+}
+#login-screen.active{display:flex;}
+.login-box{
+  background:white;border-radius:20px;padding:40px 36px;
+  max-width:420px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,.35);
+  animation:loginIn .4s cubic-bezier(.4,0,.2,1);
+}
+@keyframes loginIn{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo h1{font-family:'DM Serif Display',serif;font-size:32px;color:var(--teal);line-height:1.1}
+.login-logo span{font-size:11px;color:var(--slate-l);letter-spacing:1.5px;text-transform:uppercase}
+.login-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:24px}
+.login-tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--slate-l);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.login-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.login-panel{display:none}.login-panel.active{display:block}
+.login-fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.login-fg label{font-size:12px;font-weight:600;color:var(--slate-m)}
+.login-fg input{padding:10px 13px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
+.login-fg input:focus{border-color:var(--teal-l)}
+.login-btn{width:100%;padding:12px;background:var(--teal);color:white;border:none;border-radius:var(--r-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:6px}
+.login-btn:hover{background:var(--teal-d)}
+.login-btn:disabled{background:var(--slate-l);cursor:not-allowed}
+.login-err{background:var(--red-l);color:var(--red);padding:9px 13px;border-radius:var(--r-sm);font-size:12.5px;font-weight:600;margin-bottom:12px;display:none}
+.login-err.show{display:block}
+.login-ok{background:#D1FAE5;color:#065F46;padding:9px 13px;border-radius:var(--r-sm);font-size:12.5px;font-weight:600;margin-bottom:12px;display:none}
+.login-ok.show{display:block}
+.login-note{font-size:11.5px;color:var(--slate-l);text-align:center;margin-top:14px}
+
+/* ── APP (hidden when not logged in) ── */
+#app{display:none}
+#app.active{display:block}
+
+/* ── SIDEBAR ── */
+#sidebar{position:fixed;top:0;left:0;bottom:0;width:244px;background:var(--slate);color:#CBD5E1;display:flex;flex-direction:column;z-index:200;transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.logo{padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo h1{font-family:'DM Serif Display',serif;font-size:22px;color:white;line-height:1.1}
+.logo span{font-size:10px;color:#94A3B8;letter-spacing:1.2px;text-transform:uppercase}
+.nav-sec{padding:12px 0 3px 20px;font-size:10px;letter-spacing:1.5px;color:#475569;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;font-size:13px;font-weight:500;color:#94A3B8;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{color:#E2E8F0;background:rgba(255,255,255,.04)}
+.nav-item.active{color:white;background:rgba(20,184,166,.12);border-left-color:var(--teal-l)}
+.nav-item .ni{font-size:16px;width:20px;text-align:center}
+.sb-bottom{margin-top:auto;padding:14px 20px;border-top:1px solid rgba(255,255,255,.07);font-size:11px;color:#475569}
+.sb-user{font-size:12px;color:#94A3B8;margin-bottom:6px;word-break:break-all}
+.sb-logout{background:rgba(220,38,38,.15);color:#FCA5A5;border:none;padding:6px 12px;border-radius:6px;font-size:11.5px;cursor:pointer;font-family:inherit;font-weight:600;width:100%;transition:background .15s}
+.sb-logout:hover{background:rgba(220,38,38,.3)}
+#sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+
+/* ── TOPBAR ── */
+#topbar{position:fixed;top:0;left:244px;right:0;height:54px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;z-index:150;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+#menu-toggle{display:none;background:none;border:none;font-size:22px;cursor:pointer;padding:4px;color:var(--slate)}
+#topbar h2{font-size:15px;font-weight:600;color:var(--slate);flex:1}
+.tbar-actions{display:flex;gap:6px;align-items:center;flex-wrap:nowrap}
+
+/* ── MAIN ── */
+#main{margin-left:244px;padding-top:54px;min-height:100vh}
+.page{display:none;padding:18px}
+.page.active{display:block}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r-sm);border:none;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;letter-spacing:.2px}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--teal);color:white}.btn-primary:hover{background:var(--teal-d)}
+.btn-danger{background:var(--red);color:white}.btn-danger:hover{background:#B91C1C}
+.btn-amber{background:var(--amber);color:white}.btn-amber:hover{background:#B45309}
+.btn-ghost{background:transparent;color:var(--slate-m);border:1.5px solid var(--border-d)}.btn-ghost:hover{background:var(--bg)}
+.btn-sm{padding:5px 9px;font-size:11.5px}
+.btn-xs{padding:3px 7px;font-size:11px}
+.btn-teal-light{background:#E0F2F1;color:var(--teal-d);border:none}.btn-teal-light:hover{background:#B2DFDB}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--border)}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.card-hdr h3{font-size:13.5px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:7px}
+
+/* ── MACRO BAR ── */
+.macro-bar{display:flex;gap:8px;flex-wrap:wrap;background:var(--card);border-radius:var(--r);padding:12px 16px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:14px;align-items:center}
+.mpill{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12.5px;font-weight:600}
+.mpill .v{font-size:15px;font-weight:700}
+.mpill .u{font-size:10.5px;font-weight:400;opacity:.7}
+.m-kcal{background:#FFF7ED;color:#C2410C}.m-prot{background:#F0FDF4;color:#15803D}
+.m-cho{background:#EFF6FF;color:#1D4ED8}.m-fat{background:#FFFBEB;color:#B45309}
+.m-fibra{background:#FAF5FF;color:#7E22CE}
+
+/* ── PASTO CARD ── */
+.pasto-card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
+.pasto-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none;background:linear-gradient(90deg,var(--slate),var(--slate-m));color:white;transition:background .15s}
+.pasto-hdr:hover{background:linear-gradient(90deg,var(--teal-d),var(--slate-m))}
+.ph-drag{cursor:grab;opacity:.35;font-size:15px}.ph-drag:hover{opacity:.8}
+.ph-emoji{font-size:17px}.ph-nome{font-size:13.5px;font-weight:700;flex:1}
+.ph-macro{font-size:10.5px;color:#94A3B8;margin-right:6px}
+.ph-tog{font-size:11px;opacity:.6;transition:transform .2s}
+.pasto-body{}
+.pasto-body.collapsed{display:none}
+
+/* ── MICRO BAR ── */
+.micro-bar{display:flex;gap:5px;flex-wrap:wrap;padding:7px 12px;background:#F8FAFC;border-bottom:1px solid var(--border);align-items:center}
+.micro-bar label{font-size:11px;color:var(--slate-l);margin-right:3px;font-weight:600}
+.mtog{padding:3px 8px;border-radius:11px;font-size:11px;font-weight:600;border:1.5px solid var(--border-d);background:white;cursor:pointer;color:var(--slate-l);transition:all .15s;font-family:inherit}
+.mtog.on{background:var(--teal);color:white;border-color:var(--teal)}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--slate);color:#CBD5E1;padding:6px 7px;text-align:center;font-size:10.5px;font-weight:600;white-space:nowrap;position:sticky;top:0;z-index:10}
+thead th:first-child{text-align:left;padding-left:10px}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:hover{background:#F8FBFF}
+tbody td{padding:4px 5px;vertical-align:middle}
+tbody td:first-child{padding-left:8px}
+
+/* ── INPUTS ── */
+.ac-wrap{position:relative}
+.inp-food{width:100%;border:none;outline:none;background:#FFFBEB;padding:5px 7px;font-size:12.5px;border-radius:5px;font-family:inherit;min-width:160px;transition:box-shadow .15s}
+.inp-food:focus{box-shadow:0 0 0 2px var(--teal-l);background:white}
+.inp-qt{width:66px;border:none;outline:none;background:#FFFBEB;padding:5px 6px;font-size:12.5px;border-radius:5px;text-align:right;font-family:inherit;transition:box-shadow .15s}
+.inp-qt:focus{box-shadow:0 0 0 2px var(--teal-l);background:white}
+
+/* ── AUTOCOMPLETE ── */
+.ac-list{position:absolute;top:calc(100% + 2px);left:0;background:white;border:2px solid var(--teal-l);border-radius:var(--r-sm);max-height:210px;overflow-y:auto;z-index:600;box-shadow:var(--shadow-lg);min-width:290px;display:none}
+.ac-item{padding:7px 11px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.ac-item:hover,.ac-item.sel{background:#F0FDF4}
+.ac-item:last-child{border-bottom:none}
+.ac-name{font-weight:500}
+.ac-right{display:flex;gap:5px;align-items:center}
+.ac-cat{font-size:10px;color:var(--slate-l);background:var(--bg);padding:2px 5px;border-radius:8px}
+.ac-src{font-size:9.5px;padding:1px 5px;border-radius:6px;font-weight:700}
+.src-crea{background:#DBEAFE;color:#1D4ED8}
+.src-bda{background:#D1FAE5;color:#065F46}
+.src-custom{background:#FEF3C7;color:#B45309}
+
+/* ── VALORI CALC ── */
+.vc{text-align:center;font-size:11.5px;color:var(--slate-m)}
+.vnd{color:#CBD5E1;font-style:italic;font-size:10.5px}
+
+/* ── TOTALE ROW ── */
+.tr-tot td{background:linear-gradient(90deg,#0F766E,#14B8A6);color:white;font-weight:700;padding:6px 7px;font-size:11.5px}
+.tr-tot td:first-child{padding-left:8px}
+
+/* ── FOOTER PASTO ── */
+.pasto-footer{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:#F8FAFC;border-top:1px solid var(--border);flex-wrap:wrap;gap:5px}
+.pf-info{font-size:11px;color:var(--slate-l)}
+
+/* ── DEL BTN ── */
+.del-row{background:none;border:none;color:#CBD5E1;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:3px;line-height:1}
+.del-row:hover{background:var(--red-l);color:var(--red)}
+.alt-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 4px;border-radius:3px;color:#94A3B8;line-height:1;transition:all .15s}
+.alt-btn:hover{background:#E0F2F1;color:var(--teal)}
+.alt-print-row td{background:#F0FDF4;font-size:11px;color:#065F46;padding:3px 7px;border-bottom:1px dashed var(--border);font-style:italic;text-align:center}.alt-print-row td:first-child{text-align:left;padding-left:22px}
+.no-print-col{/* visible on screen */}
+@media print{
+  .no-print,.no-print-col{display:none!important}
+  .alt-print-row{display:table-row!important}
+  .alt-print-row td{background:#D1FAE5!important;color:#065F46!important;-webkit-print-color-adjust:exact}
+}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:800;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px)}
+.modal-bg.open{display:flex}
+.modal{background:white;border-radius:14px;padding:0;max-width:540px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.22);animation:mIn .2s ease}
+@keyframes mIn{from{transform:translateY(-14px)scale(.97);opacity:0}to{transform:none;opacity:1}}
+.mhdr{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mhdr h2{font-size:16px;font-weight:700;color:var(--slate)}
+.mclose{background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate-l);padding:2px 5px;border-radius:5px}
+.mclose:hover{background:var(--bg)}
+.mbody{padding:18px 22px}
+.mfoot{padding:12px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:7px}
+
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11.5px;font-weight:600;color:var(--slate-m)}
+.fg input,.fg select,.fg textarea{padding:7px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;color:var(--slate);outline:none;transition:border-color .15s;background:white}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--teal-l)}
+.fg textarea{resize:vertical;min-height:55px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fgrid.c3{grid-template-columns:1fr 1fr 1fr}
+.full{grid-column:1/-1}
+.fsep{grid-column:1/-1;border:none;border-top:1px solid var(--border);margin:2px 0}
+
+/* ── PAZ CARDS ── */
+.paz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:14px}
+.paz-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:14px;cursor:pointer;transition:all .15s;position:relative}
+.paz-card:hover{border-color:var(--teal-l);box-shadow:0 4px 16px rgba(15,118,110,.12)}
+.paz-card h4{font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:3px}
+.paz-meta{font-size:11.5px;color:var(--slate-l)}
+.paz-actions{position:absolute;top:8px;right:8px;display:flex;gap:3px;opacity:0;transition:opacity .15s}
+.paz-card:hover .paz-actions{opacity:1}
+.paz-tag{display:inline-block;padding:2px 7px;border-radius:9px;font-size:10.5px;font-weight:600;background:var(--sage);color:var(--teal-d);margin-top:5px}
+
+/* ── DB TABLE ── */
+.db-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.db-search{flex:1;min-width:160px;padding:7px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none}
+.db-search:focus{border-color:var(--teal-l)}
+.db-cat{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;background:white;color:var(--slate)}
+.db-cat:focus{border-color:var(--teal-l)}
+.dbt{width:100%;border-collapse:collapse;font-size:11.5px}
+.dbt thead th{background:var(--slate);color:#CBD5E1;padding:7px 8px;text-align:left;font-size:10.5px;font-weight:600;white-space:nowrap;position:sticky;top:0}
+.dbt tbody tr{border-bottom:1px solid var(--border)}
+.dbt tbody tr:hover{background:#F0FDF4}
+.dbt tbody td{padding:5px 8px}
+.dbt tbody td:first-child{font-weight:600}
+.db-src-badge{font-size:9px;padding:1px 5px;border-radius:5px;font-weight:700;margin-left:4px}
+
+/* ── ALTERNATIVE PANEL ── */
+.alt-panel{background:#F0FDF4;border:1.5px solid var(--teal-l);border-radius:var(--r-sm);padding:12px 14px;margin:6px 0}
+.alt-panel h4{font-size:12.5px;font-weight:700;color:var(--teal-d);margin-bottom:8px}
+.alt-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:white;border-radius:6px;margin-bottom:5px;border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.alt-item:hover{border-color:var(--teal-l);background:var(--sage)}
+.alt-item .ai-nome{font-weight:600;font-size:12.5px;flex:1}
+.alt-item .ai-qt{font-size:12px;color:var(--teal-d);font-weight:700;background:#D1FAE5;padding:2px 7px;border-radius:6px}
+.alt-item .ai-diff{font-size:10.5px;color:var(--slate-l)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--slate);color:white;padding:10px 20px;border-radius:28px;font-weight:600;font-size:13px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+#toast.ok{background:var(--teal)}
+#toast.err{background:var(--red)}
+#toast.info{background:var(--amber)}
+
+/* ── PAZ HEADER ── */
+.paz-hdr{display:grid;grid-template-columns:1fr 1fr auto;gap:9px;align-items:end;background:white;border-radius:var(--r);border:1px solid var(--border);padding:12px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.paz-hdr input{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none}
+.paz-hdr input:focus{border-color:var(--teal-l)}
+.paz-hdr label{font-size:11px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:2px}
+.action-bar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;background:white;border-radius:var(--r);border:1px solid var(--border);padding:9px 12px;margin-bottom:12px;box-shadow:var(--shadow)}
+.add-pasto-area{border:2px dashed var(--border-d);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .15s;color:var(--slate-l);margin-top:3px;font-size:13px}
+.add-pasto-area:hover{border-color:var(--teal-l);color:var(--teal);background:var(--sage)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:36px 20px;color:var(--slate-l)}
+.empty-state .ei{font-size:36px;margin-bottom:10px}
+.empty-state h3{font-size:15px;font-weight:700;color:var(--slate-m);margin-bottom:5px}
+
+/* ── PRINT ── */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  #sidebar,#topbar,.action-bar,.pasto-footer,.btn,.del-row,.alt-btn,.micro-bar,#toast,.add-pasto-area,#login-screen,#waiting-screen,#loading-overlay,.no-print,.no-print-col{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page.active{padding:10px!important}
+  #sb-overlay{display:none!important}
+  .pasto-body.collapsed{display:block!important}
+  .inp-food,.inp-qt{background:transparent!important;border-bottom:1px solid #ccc!important}
+  .paz-hdr,.macro-bar{page-break-inside:avoid}
+  .pasto-card{page-break-inside:avoid;margin-bottom:8px!important}
+  table{font-size:10px!important}
+  thead th{background:#1E293B!important;color:#CBD5E1!important;-webkit-print-color-adjust:exact}
+  .tr-tot td{background:#0F766E!important;color:white!important;-webkit-print-color-adjust:exact}
+  .pasto-hdr{background:#1E293B!important;-webkit-print-color-adjust:exact}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #sb-overlay{display:block}
+  #main{margin-left:0}
+  #topbar{left:0}
+  #menu-toggle{display:block}
+  .fgrid{grid-template-columns:1fr}
+  .fgrid.c3{grid-template-columns:1fr 1fr}
+  .tbar-actions .btn span{display:none}
+}
+@media(max-width:480px){
+  .page{padding:10px}
+  .fgrid.c3{grid-template-columns:1fr}
+}
+@media(max-width:900px){#val-grid{grid-template-columns:1fr!important}}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px}
+.tab{padding:9px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--slate-l);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab:hover{color:var(--slate)}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+.emoji-opt{font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px;transition:background .12s}
+.emoji-opt:hover,.emoji-opt.sel{background:var(--sage)}
+.pasto-opt{display:flex;align-items:center;gap:9px;padding:10px 13px;cursor:pointer;border-radius:var(--r-sm);border:1.5px solid var(--border);margin-bottom:5px;transition:all .12s}
+.pasto-opt:hover{border-color:var(--teal-l);background:var(--sage)}
+
+/* Loading overlay */
+#loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.85);z-index:5000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#loading-overlay.active{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="active">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>NutriPlan Pro</h1>
+      <span>CREA 2019 + BDA · Accesso Sicuro</span>
+    </div>
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('login')">Accedi</div>
+      <div class="login-tab" onclick="switchLoginTab('register')">Registrati</div>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="login-panel active" id="lp-login">
+      <div class="login-err" id="login-err"></div>
+      <div class="login-fg"><label>Email o Username</label><input type="text" id="login-email" placeholder="email@esempio.com o username" autocomplete="username"></div>
+      <div class="login-fg"><label>Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Accedi</button>
+      <p class="login-note">I tuoi piani sono salvati in modo sicuro e accessibili solo da te.</p>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div class="login-panel" id="lp-register">
+      <div class="login-err" id="reg-err"></div>
+      <div class="login-ok" id="reg-ok"></div>
+      <div class="login-fg"><label>Username (opzionale)</label><input type="text" id="reg-username" placeholder="il-tuo-username" autocomplete="username"></div>
+      <div class="login-fg"><label>Email</label><input type="email" id="reg-email" placeholder="la-tua@email.com" autocomplete="email"></div>
+      <div class="login-fg"><label>Password</label><input type="password" id="reg-pw" placeholder="Minimo 6 caratteri" autocomplete="new-password"></div>
+      <div class="login-fg"><label>Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <button class="login-btn" id="reg-btn" onclick="doRegister()">Crea Account</button>
+      <p class="login-note">Dopo la registrazione potrai accedere subito all'app.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<!-- WAITING APPROVAL -->
+<div id="waiting-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0F766E,#1E293B);z-index:9998;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:20px;padding:40px 36px;max-width:420px;width:90%;text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">⏳</div>
+    <h2 style="font-size:18px;font-weight:700;color:#D97706;margin-bottom:8px">Account in attesa di approvazione</h2>
+    <p style="font-size:13px;color:#334155;margin-bottom:16px">Il tuo account è stato registrato. Un amministratore lo attiverà a breve dopo la verifica del pagamento.</p>
+    <p style="font-size:12px;color:#64748B;margin-bottom:16px" id="waiting-email"></p>
+    <button onclick="doLogout()" style="width:100%;padding:12px;background:#1E293B;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Esci</button>
+  </div>
+</div>
+
+<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="logo"><h1>NutriPlan<br>Pro</h1><span>CREA 2019 + BDA</span></div>
+  <div class="nav-sec">Piano</div>
+  <div class="nav-item active" onclick="goPage('piano')" id="nav-piano"><span class="ni">📋</span>Piano Alimentare</div>
+  <div class="nav-item" onclick="goPage('pazienti')" id="nav-pazienti"><span class="ni">👥</span>Pazienti</div>
+  <div class="nav-sec">Strumenti</div>
+  <div class="nav-item" onclick="goPage('patologie')" id="nav-patologie"><span class="ni">🏥</span>Diete per Patologia</div>
+  <div class="nav-item" onclick="goPage('cartelle')" id="nav-cartelle"><span class="ni">📁</span>Cartelle Pazienti</div>
+  <div class="nav-item" onclick="goPage('valutazione')" id="nav-valutazione"><span class="ni">📊</span>Valutazione Paziente</div>
+  <div class="nav-sec">Database</div>
+  <div class="nav-item" onclick="goPage('database')" id="nav-database"><span class="ni">🔬</span>Alimenti CREA+BDA</div>
+  <div class="nav-item" onclick="goPage('aggiungi')" id="nav-aggiungi"><span class="ni">➕</span>Aggiungi Alimento</div>
+  <div class="nav-item" id="nav-admin" style="display:none" onclick="goPage('admin')"><span class="ni">⚙️</span>Admin Utenti</div>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px">NutriPlan Pro v5.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">📋 Piano Alimentare</h2>
+  <div class="tbar-actions" id="tbar-actions">
+    <button class="btn btn-danger btn-sm" onclick="eliminaVuote()">🗑️<span>Elimina Vuote</span></button>
+    <button class="btn btn-primary btn-sm" onclick="openAddRow()">➕<span>Aggiungi Riga</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openNewPasto()">🍽️<span>Pasto</span></button>
+    <button class="btn btn-amber btn-sm" onclick="esportaExcel()">📥<span>Excel</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="salvaPaziente()">💾<span>Salva</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaPDF()">🖨️</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- PIANO -->
+<div class="page active" id="page-piano">
+  <div class="paz-hdr">
+    <div><label>👤 Paziente</label><input type="text" id="inp-nome" placeholder="Cognome Nome" oninput="markDirty()"></div>
+    <div><label>📅 Data</label><input type="date" id="inp-data" oninput="markDirty()"></div>
+    <button class="btn btn-ghost btn-sm" onclick="nuovoPiano()">🔄 Nuovo</button>
+  </div>
+  <div class="macro-bar">
+    <span style="font-size:11.5px;color:var(--slate-l);font-weight:600">TOTALE GIORNATA</span>
+    <div class="mpill m-kcal">🔥<span class="v" id="tot-kcal">0</span><span class="u">kcal</span></div>
+    <div class="mpill m-prot">💪<span class="v" id="tot-prot">0</span><span class="u">g prot</span></div>
+    <div class="mpill m-cho">🍞<span class="v" id="tot-cho">0</span><span class="u">g CHO</span></div>
+    <div class="mpill m-fat">🧈<span class="v" id="tot-fat">0</span><span class="u">g grassi</span></div>
+    <div class="mpill m-fibra">🌿<span class="v" id="tot-fibra">0</span><span class="u">g fibra</span></div>
+  </div>
+  <div id="pasti-container"></div>
+  <div class="add-pasto-area" onclick="openNewPasto()">＋ Aggiungi un nuovo pasto</div>
+</div>
+
+<!-- PAZIENTI -->
+<div class="page" id="page-pazienti">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:9px">
+    <h2 style="font-size:17px;font-weight:700">👥 Pazienti Salvati</h2>
+    <button class="btn btn-primary btn-sm" onclick="goPage('piano');nuovoPiano()">➕ Nuovo Piano</button>
+  </div>
+  <div id="paz-grid-wrap"></div>
+</div>
+
+<!-- PATOLOGIE -->
+<div class="page" id="page-patologie">
+  <div style="margin-bottom:14px">
+    <h2 style="font-size:17px;font-weight:700;margin-bottom:4px">🏥 Diete per Patologia</h2>
+    <p style="font-size:12.5px;color:var(--slate-l)">Giornate tipo basate su dieta mediterranea e linee guida ESPEN. Clicca per vedere e caricare il piano nell'editor.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px" id="pat-grid"></div>
+  <div class="card" id="pat-detail" style="display:none;margin-top:14px">
+    <div class="card-hdr">
+      <h3 id="pat-detail-title"></h3>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-primary btn-sm" onclick="caricaPatologia()">📋 Carica nel Piano</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('pat-detail').style.display='none'">✕ Chiudi</button>
+      </div>
+    </div>
+    <div class="mbody" id="pat-detail-body"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:9px">
+    <h2 style="font-size:17px;font-weight:700">⚙️ Gestione Utenti</h2>
+    <button class="btn btn-primary btn-sm" onclick="loadAdmin()">🔄 Aggiorna</button>
+  </div>
+  <div class="card" style="overflow:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:var(--slate);color:#CBD5E1">
+        <th style="padding:8px 12px;text-align:left;font-size:11px">Email</th>
+        <th style="padding:8px 12px;text-align:left;font-size:11px">Username</th>
+        <th style="padding:8px 12px;text-align:left;font-size:11px">Stato</th>
+        <th style="padding:8px 12px;text-align:left;font-size:11px">Registrato il</th>
+        <th style="padding:8px 12px;text-align:left;font-size:11px">Azioni</th>
+      </tr></thead>
+      <tbody id="admin-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DATABASE -->
+<div class="page" id="page-database">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:9px">
+    <h2 style="font-size:17px;font-weight:700">🔬 Database Alimenti</h2>
+    <button class="btn btn-primary btn-sm" onclick="goPage('aggiungi')">➕ Aggiungi</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchDbTab('crea')">🔵 CREA 2019</div>
+    <div class="tab" onclick="switchDbTab('bda')">🟢 BDA INRAN</div>
+    <div class="tab" onclick="switchDbTab('custom')">🟡 Personalizzati</div>
+  </div>
+  <div class="db-filters">
+    <input class="db-search" id="db-search" type="text" placeholder="🔍 Cerca alimento..." oninput="renderDB()">
+    <select class="db-cat" id="db-cat" onchange="renderDB()"><option value="">Tutte le categorie</option></select>
+    <span style="font-size:12px;color:var(--slate-l)" id="db-count"></span>
+  </div>
+  <div class="card" style="overflow:auto;max-height:calc(100vh - 260px)">
+    <table class="dbt"><thead><tr id="db-thead-row"></tr></thead><tbody id="db-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- AGGIUNGI -->
+<div class="page" id="page-aggiungi">
+  <div style="margin-bottom:14px">
+    <h2 style="font-size:17px;font-weight:700;margin-bottom:3px">➕ Aggiungi Alimento Personalizzato</h2>
+    <p style="font-size:12.5px;color:var(--slate-l)">Valori per 100g. Scegli a quale database aggiungere l'alimento.</p>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><h3>📝 Dati Alimento</h3></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="fg full"><label>Nome Alimento *</label><input type="text" id="add-nome" placeholder="es. Tempeh, Edamame..."></div>
+        <div class="fg"><label>Categoria</label>
+          <select id="add-cat">
+            <option value="Personalizzato">Personalizzato</option>
+            <option>Bevande</option><option>Cereali e derivati</option><option>Carni e derivati</option>
+            <option>Pesce e prodotti della pesca</option><option>Latte e derivati</option>
+            <option>Uova</option><option>Legumi</option><option>Ortaggi e legumi freschi</option>
+            <option>Frutta</option><option>Frutta secca e semi</option><option>Grassi e oli</option>
+            <option>Dolci e prodotti da forno</option><option>Altro</option>
+          </select>
+        </div>
+        <div class="fg"><label>Database</label>
+          <select id="add-db"><option value="custom">Personalizzato</option><option value="crea">CREA</option><option value="bda">BDA</option></select>
+        </div>
+        <hr class="fsep">
+        <div class="fg"><label>Calorie (kcal)</label><input type="number" id="add-k" min="0" step="0.1" placeholder="0"></div>
+        <div class="fg"><label>Proteine (g)</label><input type="number" id="add-p" min="0" step="0.1" placeholder="0"></div>
+        <div class="fg"><label>Grassi Saturi (g)</label><input type="number" id="add-gs" min="0" step="0.1" placeholder="0"></div>
+        <div class="fg"><label>Grassi Totali (g)</label><input type="number" id="add-g" min="0" step="0.1" placeholder="0"></div>
+        <div class="fg"><label>Zuccheri (g)</label><input type="number" id="add-z" min="0" step="0.1" placeholder="0"></div>
+        <div class="fg"><label>CHO (g)</label><input type="number" id="add-ch" min="0" step="0.1" placeholder="0"></div>
+        <div class="fg"><label>Fibra (g)</label><input type="number" id="add-fi" min="0" step="0.1" placeholder="0"></div>
+        <hr class="fsep">
+        <div class="fg"><label>Calcio (mg)</label><input type="number" id="add-ca" min="0" step="0.01" placeholder="0"></div>
+        <div class="fg"><label>Ferro (mg)</label><input type="number" id="add-fe" min="0" step="0.01" placeholder="0"></div>
+        <div class="fg"><label>Magnesio (mg)</label><input type="number" id="add-mg2" min="0" step="0.01" placeholder="0"></div>
+        <div class="fg"><label>Potassio (mg)</label><input type="number" id="add-k2" min="0" step="0.01" placeholder="0"></div>
+        <div class="fg"><label>Sodio (mg)</label><input type="number" id="add-na" min="0" step="0.01" placeholder="0"></div>
+        <div class="fg"><label>Zinco (mg)</label><input type="number" id="add-zn" min="0" step="0.001" placeholder="0"></div>
+        <div class="fg"><label>Fosforo (mg)</label><input type="number" id="add-fo" min="0" step="0.01" placeholder="0"></div>
+        <div class="fg"><label>Selenio (µg)</label><input type="number" id="add-se" min="0" step="0.01" placeholder="0"></div>
+        <div class="fg"><label>Colesterolo (mg)</label><input type="number" id="add-col" min="0" step="0.1" placeholder="0"></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="salvaCustom()">💾 Aggiungi al Database</button>
+        <button class="btn btn-ghost" onclick="resetAddForm()">🔄 Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- CARTELLE PAZIENTI -->
+<div class="page" id="page-cartelle">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:9px">
+    <h2 style="font-size:17px;font-weight:700">📁 Cartelle Pazienti</h2>
+    <button class="btn btn-primary btn-sm" onclick="openNewCartella()">📁 Nuova Cartella</button>
+  </div>
+  <div id="cartelle-wrap"></div>
+</div>
+
+<!-- VALUTAZIONE PAZIENTE -->
+<div class="page" id="page-valutazione">
+  <div style="margin-bottom:14px">
+    <h2 style="font-size:17px;font-weight:700;margin-bottom:4px">📊 Valutazione Paziente & Fabbisogno</h2>
+    <p style="font-size:12.5px;color:var(--slate-l)">Calcolo del metabolismo basale con le principali formule validate. Seleziona un paziente o inserisci i dati manualmente.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;--val-cols:1fr 1fr" id="val-grid">
+    <!-- DATI PAZIENTE -->
+    <div class="card">
+      <div class="card-hdr"><h3>👤 Dati Antropometrici</h3>
+        <button class="btn btn-ghost btn-xs" onclick="resetVal()">🔄 Reset</button>
+      </div>
+      <div class="mbody">
+        <div class="fgrid">
+          <div class="fg"><label>Sesso</label>
+            <select id="val-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select>
+          </div>
+          <div class="fg"><label>Età (anni)</label><input type="number" id="val-eta" min="1" max="120" placeholder="es. 45"></div>
+          <div class="fg"><label>Peso attuale (kg)</label><input type="number" id="val-peso" min="1" step="0.1" placeholder="es. 75"></div>
+          <div class="fg"><label>Altezza (cm)</label><input type="number" id="val-altezza" min="50" max="250" placeholder="es. 170"></div>
+          <div class="fg"><label>Peso ideale (kg)</label><input type="number" id="val-pi" min="1" step="0.1" placeholder="opzionale"></div>
+          <div class="fg"><label>Peso aggiustato (kg)</label><input type="number" id="val-pa" min="1" step="0.1" placeholder="auto-calcolato"></div>
+          <div class="fg"><label>Circonf. vita (cm)</label><input type="number" id="val-vita" min="1" step="0.1" placeholder="es. 90"></div>
+          <div class="fg"><label>Circonf. fianchi (cm)</label><input type="number" id="val-fianchi" min="1" step="0.1" placeholder="es. 100"></div>
+          <div class="fg"><label>Circonf. braccio (cm)</label><input type="number" id="val-braccio" min="1" step="0.1" placeholder="es. 30"></div>
+          <div class="fg"><label>Plica tricipitale (mm)</label><input type="number" id="val-plica" min="0" step="0.1" placeholder="es. 15"></div>
+          <div class="fg"><label>Massa grassa (%)</label><input type="number" id="val-mg" min="0" max="70" step="0.1" placeholder="es. 25"></div>
+          <div class="fg"><label>Massa magra (kg)</label><input type="number" id="val-mm" min="0" step="0.1" placeholder="auto-calcolato"></div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="fg" style="margin-bottom:8px"><label>Patologia (per fabbisogni specifici)</label>
+            <select id="val-patologia" onchange="updateFabbisognoPatologia()">
+              <option value="">-- Nessuna patologia selezionata --</option>
+              <option value="diabete">Diabete Mellito Tipo 2</option>
+              <option value="irc">Insufficienza Renale Cronica</option>
+              <option value="dialisi">Dialisi (emodialisi/peritoneale)</option>
+              <option value="obesita">Obesità / Sovrappeso</option>
+              <option value="dislipidemia">Dislipidemia</option>
+              <option value="ipertensione">Ipertensione Arteriosa</option>
+              <option value="celiachia">Celiachia</option>
+              <option value="ibd">IBD (Crohn/RCU)</option>
+              <option value="sarcopenia">Sarcopenia / Anziano fragile</option>
+              <option value="steatosi">Steatosi Epatica (NAFLD/MASLD)</option>
+              <option value="cirrosi">Cirrosi Epatica</option>
+              <option value="bpco">BPCO</option>
+              <option value="calcolosi">Calcolosi Renale</option>
+              <option value="gotta">Iperuricemia / Gotta</option>
+              <option value="anemia">Anemia Sideropenica</option>
+              <option value="oncologia">Oncologia / Cachessia</option>
+              <option value="osteoporosi">Osteoporosi</option>
+              <option value="fenilchetonuria">Fenilchetonuria (PKU)</option>
+              <option value="hiv">HIV/AIDS</option>
+              <option value="scompenso">Scompenso Cardiaco</option>
+              <option value="pancreatite">Pancreatite Cronica</option>
+              <option value="gravidanza">Gravidanza</option>
+              <option value="allattamento">Allattamento</option>
+            </select>
+          </div>
+          <div id="val-patologia-box" style="display:none;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:12px;font-size:11.5px;color:#1E3A5F;line-height:1.7"></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="calcolaFabbisogno()">📊 Calcola Fabbisogno</button>
+      </div>
+    </div>
+    <!-- RISULTATI -->
+    <div id="val-risultati" style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="border-left:4px solid var(--teal)">
+        <div class="card-hdr"><h3>📐 Indici Antropometrici</h3></div>
+        <div class="mbody" id="val-indici"><p style="color:var(--slate-l);font-size:13px">Inserisci i dati e clicca Calcola.</p></div>
+      </div>
+      <div class="card" style="border-left:4px solid #3B82F6">
+        <div class="card-hdr"><h3>🔥 Metabolismo Basale (MB)</h3></div>
+        <div class="mbody" id="val-mb"><p style="color:var(--slate-l);font-size:13px">—</p></div>
+      </div>
+      <div class="card" style="border-left:4px solid #F59E0B">
+        <div class="card-hdr"><h3>⚡ Fabbisogno Energetico Totale</h3></div>
+        <div class="mbody" id="val-fet"><p style="color:var(--slate-l);font-size:13px">—</p></div>
+      </div>
+      <div class="card" style="border-left:4px solid #8B5CF6">
+        <div class="card-hdr"><h3>🥩 Fabbisogno Proteico</h3></div>
+        <div class="mbody" id="val-prot"><p style="color:var(--slate-l);font-size:13px">—</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- MODAL: NUOVA CARTELLA -->
+<div class="modal-bg" id="modal-newcartella">
+  <div class="modal" style="max-width:380px">
+    <div class="mhdr"><h2>📁 Nuova Cartella Paziente</h2><button class="mclose" onclick="closeM('modal-newcartella')">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:10px"><label>Nome Paziente *</label><input type="text" id="nc-nome" placeholder="Cognome Nome"></div>
+      <div class="fg" style="margin-bottom:10px"><label>Data di nascita</label><input type="date" id="nc-ddn"></div>
+      <div class="fg"><label>Note</label><textarea id="nc-note" placeholder="Diagnosi, allergie, note cliniche..."></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-newcartella')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="creaCartella()">📁 Crea Cartella</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AGGIUNGI RIGA -->
+<div class="modal-bg" id="modal-addrow">
+  <div class="modal" style="max-width:360px">
+    <div class="mhdr"><h2>➕ Aggiungi riga a...</h2><button class="mclose" onclick="closeM('modal-addrow')">✕</button></div>
+    <div class="mbody" style="padding-top:10px"><div id="modal-addrow-list"></div></div>
+  </div>
+</div>
+
+<!-- MODAL: NUOVO PASTO -->
+<div class="modal-bg" id="modal-newpasto">
+  <div class="modal" style="max-width:360px">
+    <div class="mhdr"><h2>🍽️ Nuovo Pasto</h2><button class="mclose" onclick="closeM('modal-newpasto')">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:10px"><label>Nome pasto</label><input type="text" id="np-nome" placeholder="es. Pre-allenamento..." maxlength="40"></div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Emoji</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+          <span class="emoji-opt" onclick="selEmoji(this,'🌅')">🌅</span><span class="emoji-opt" onclick="selEmoji(this,'🍎')">🍎</span>
+          <span class="emoji-opt" onclick="selEmoji(this,'🍽️')">🍽️</span><span class="emoji-opt" onclick="selEmoji(this,'🍊')">🍊</span>
+          <span class="emoji-opt" onclick="selEmoji(this,'🌙')">🌙</span><span class="emoji-opt" onclick="selEmoji(this,'🌛')">🌛</span>
+          <span class="emoji-opt" onclick="selEmoji(this,'🥗')">🥗</span><span class="emoji-opt" onclick="selEmoji(this,'🏋️')">🏋️</span>
+          <span class="emoji-opt" onclick="selEmoji(this,'☕')">☕</span><span class="emoji-opt" onclick="selEmoji(this,'🥤')">🥤</span>
+        </div>
+        <input type="text" id="np-emoji" placeholder="🍽️" maxlength="5" style="width:70px">
+      </div>
+      <div class="fg"><label>Inserisci dopo</label><select id="np-pos"><option value="-1">— All'inizio —</option></select></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-newpasto')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="creaPasto()">Crea Pasto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RINOMINA -->
+<div class="modal-bg" id="modal-rename">
+  <div class="modal" style="max-width:320px">
+    <div class="mhdr"><h2>✏️ Rinomina Pasto</h2><button class="mclose" onclick="closeM('modal-rename')">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:10px"><label>Nome</label><input type="text" id="rn-nome" maxlength="40"></div>
+      <div class="fg"><label>Emoji</label><input type="text" id="rn-emoji" maxlength="5" style="width:70px"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-rename')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="doRename()">Rinomina</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ALTERNATIVE -->
+<div class="modal-bg" id="modal-alt">
+  <div class="modal" style="max-width:500px">
+    <div class="mhdr"><h2 id="alt-title">🔄 Alternative Equivalenti</h2><button class="mclose" onclick="closeM('modal-alt')">✕</button></div>
+    <div class="mbody">
+      <div id="alt-filter-area" style="margin-bottom:12px">
+        <label style="font-size:12px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:6px">Trova equivalente per:</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="alt-nutrient-btns"></div>
+      </div>
+      <div id="alt-results"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #app -->
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// SUPABASE INIT
+// ════════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null, isAdmin = false;
+
+// ════════════════════════════════════════════════════════════
+// AUTH FUNCTIONS
+// ════════════════════════════════════════════════════════════
+function switchLoginTab(tab) {
+  document.querySelectorAll('.login-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.querySelectorAll('.login-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('lp-'+tab).classList.add('active');
+}
+
+async function doLogin() {
+  const id = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-pw').value;
+  const errEl = document.getElementById('login-err');
+  errEl.classList.remove('show');
+  if(!id||!pw){errEl.textContent='Inserisci credenziali.';errEl.classList.add('show');return;}
+  const btn = document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='Accesso...';
+  
+  let email = id;
+  if(!id.includes('@')) {
+    const {data:pr} = await sb.from('profiles').select('email').eq('username',id).single();
+    if(!pr){btn.disabled=false;btn.textContent='Accedi';errEl.textContent='Username non trovato.';errEl.classList.add('show');return;}
+    email = pr.email;
+  }
+  
+  const {data,error} = await sb.auth.signInWithPassword({email,password:pw});
+  btn.disabled=false;btn.textContent='Accedi';
+  if(error){errEl.textContent='Credenziali errate.';errEl.classList.add('show');return;}
+  await checkApprovalAndLoad(data.user);
+}
+
+async function doRegister() {
+  const username = (document.getElementById('reg-username')||{value:''}).value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw = document.getElementById('reg-pw').value;
+  const pw2 = document.getElementById('reg-pw2').value;
+  const errEl = document.getElementById('reg-err');
+  const okEl = document.getElementById('reg-ok');
+  errEl.classList.remove('show');okEl.classList.remove('show');
+  if(!email||!pw){errEl.textContent='Compila tutti i campi.';errEl.classList.add('show');return;}
+  if(pw!==pw2){errEl.textContent='Le password non coincidono.';errEl.classList.add('show');return;}
+  if(pw.length<6){errEl.textContent='Password minimo 6 caratteri.';errEl.classList.add('show');return;}
+  const btn = document.getElementById('reg-btn');
+  btn.disabled=true;btn.textContent='Registrazione...';
+  const {data,error} = await sb.auth.signUp({email,password:pw});
+  btn.disabled=false;btn.textContent='Crea Account';
+  if(error){errEl.textContent=error.message;errEl.classList.add('show');return;}
+  if(data.user) {
+    await sb.from('profiles').upsert({id:data.user.id,email,username:username||null,approved:false});
+  }
+  if(data.user && data.session){
+    await checkApprovalAndLoad(data.user);
+  } else {
+    okEl.textContent="✅ Registrato! Attendi l'approvazione dell'amministratore per accedere.";
+    okEl.classList.add('show');
+  }
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  currentUser = null; isAdmin = false;
+  document.getElementById('app').classList.remove('active');
+  const ws = document.getElementById('waiting-screen');
+  if(ws) ws.style.display='none';
+  document.getElementById('login-screen').classList.add('active');
+  toast('👋 Uscito','info');
+}
+
+async function checkApprovalAndLoad(user) {
+  showLoading(true);
+  const {data:profile, error} = await sb.from('profiles').select('*').eq('id',user.id).single();
+  showLoading(false);
+  console.log('Profile:', profile, 'Error:', error);
+  if(error || !profile) {
+    onLogin(user, {approved:true, is_admin:false});
+    return;
+  }
+  if(profile.approved || profile.is_admin){ onLogin(user, profile); }
+  else { showWaiting(user); }
+}
+
+function showWaiting(user) {
+  document.getElementById('login-screen').classList.remove('active');
+  const ws = document.getElementById('waiting-screen');
+  ws.style.display='flex';
+  const we = document.getElementById('waiting-email');
+  if(we) we.textContent = 'Account: '+user.email;
+  currentUser = user;
+}
+
+function onLogin(user, profile) {
+  currentUser = user;
+  isAdmin = profile?.is_admin || false;
+  document.getElementById('login-screen').classList.remove('active');
+  const ws = document.getElementById('waiting-screen');
+  if(ws) ws.style.display='none';
+  document.getElementById('app').classList.add('active');
+  const dispName = profile?.username || user.email;
+  document.getElementById('sb-user-email').textContent = dispName;
+  const adminNav = document.getElementById('nav-admin');
+  if(adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
+  init();
+}
+
+// Check existing session on page load
+async function checkSession() {
+  showLoading(true);
+  const {data:{session}} = await sb.auth.getSession();
+  showLoading(false);
+  if(session?.user){ await checkApprovalAndLoad(session.user); }
+  else { document.getElementById('login-screen').classList.add('active'); }
+}
+
+function showLoading(v){
+  document.getElementById('loading-overlay').classList.toggle('active',v);
+}
+
+// ════════════════════════════════════════════════════════════
+// CREA DATABASE
+// ════════════════════════════════════════════════════════════
+const DB_CREA=[
+{n:"Acqua minerale naturale",c:"Bevande",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0,mg:2,k2:1,na:10,zn:0,fo:0,se:1,col:0,src:"CREA"},
+{n:"Birra analcolica",c:"Bevande",k:18,p:0.5,gs:0,g:0,z:0,ch:3.5,fi:0,ca:5,fe:0,mg:5,k2:22,na:4,zn:0.01,fo:28,se:1,col:0,src:"CREA"},
+{n:"Birra normale (4-5%)",c:"Bevande",k:43,p:0.3,gs:0,g:0,z:0,ch:3.5,fi:0,ca:6,fe:0,mg:6,k2:35,na:4,zn:0.01,fo:28,se:1,col:0,src:"CREA"},
+{n:"Caffè espresso",c:"Bevande",k:2,p:0.1,gs:0,g:0,z:0,ch:0.3,fi:0,ca:4,fe:0,mg:8,k2:36,na:4,zn:0.05,fo:4,se:0,col:0,src:"CREA"},
+{n:"Latte parz. scremato UHT",c:"Bevande",k:47,p:3.5,gs:0.8,g:1.5,z:4.8,ch:5,fi:0,ca:123,fe:0.1,mg:11,k2:160,na:51,zn:0.4,fo:90,se:2,col:5,src:"CREA"},
+{n:"Latte intero fresco",c:"Bevande",k:64,p:3.3,gs:2.4,g:3.7,z:4.7,ch:4.8,fi:0,ca:120,fe:0.1,mg:11,k2:150,na:51,zn:0.4,fo:93,se:2,col:13,src:"CREA"},
+{n:"Latte scremato",c:"Bevande",k:36,p:3.6,gs:0.1,g:0.2,z:5,ch:5.1,fi:0,ca:125,fe:0.1,mg:11,k2:166,na:52,zn:0.4,fo:90,se:2,col:2,src:"CREA"},
+{n:"Succo di arancia",c:"Bevande",k:38,p:0.7,gs:0,g:0.1,z:8.6,ch:8.8,fi:0.3,ca:11,fe:0.2,mg:11,k2:190,na:1,zn:0.05,fo:17,se:0,col:0,src:"CREA"},
+{n:"Crackers salati",c:"Biscotti e crackers",k:432,p:9.2,gs:3.1,g:11.5,z:1.5,ch:69,fi:2.5,ca:30,fe:1.5,mg:18,k2:100,na:700,zn:0.5,fo:80,se:3,col:0,src:"CREA"},
+{n:"Fette biscottate",c:"Biscotti e crackers",k:410,p:10,gs:0.9,g:4.5,z:8.5,ch:75,fi:2.7,ca:55,fe:2.5,mg:20,k2:150,na:500,zn:0.5,fo:100,se:2,col:0,src:"CREA"},
+{n:"Gallette di riso",c:"Biscotti e crackers",k:382,p:7,gs:0.3,g:1.5,z:1.5,ch:83,fi:2.5,ca:12,fe:0.8,mg:40,k2:100,na:20,zn:0.5,fo:90,se:4,col:0,src:"CREA"},
+{n:"Pollo petto (senza pelle)",c:"Carni bianche",k:110,p:23.3,gs:0.5,g:1.2,z:0,ch:0,fi:0,ca:11,fe:0.7,mg:27,k2:370,na:62,zn:0.7,fo:220,se:27,col:58,src:"CREA"},
+{n:"Tacchino petto",c:"Carni bianche",k:107,p:24.1,gs:0.4,g:1,z:0,ch:0,fi:0,ca:11,fe:0.8,mg:28,k2:340,na:55,zn:1.5,fo:215,se:26,col:57,src:"CREA"},
+{n:"Coniglio",c:"Carni bianche",k:136,p:21.9,gs:1.5,g:5,z:0,ch:0,fi:0,ca:20,fe:1.2,mg:22,k2:330,na:50,zn:1.3,fo:180,se:10,col:65,src:"CREA"},
+{n:"Manzo magro",c:"Carni rosse",k:175,p:20.7,gs:3.5,g:9.4,z:0,ch:0,fi:0,ca:6,fe:2,mg:21,k2:350,na:63,zn:4.8,fo:170,se:13,col:70,src:"CREA"},
+{n:"Vitello fettina",c:"Carni rosse",k:131,p:21,gs:1.7,g:5,z:0,ch:0,fi:0,ca:10,fe:1.2,mg:22,k2:310,na:70,zn:3,fo:190,se:8,col:88,src:"CREA"},
+{n:"Maiale lonza",c:"Carni rosse",k:157,p:19.7,gs:2.5,g:8.8,z:0,ch:0,fi:0,ca:7,fe:0.9,mg:24,k2:340,na:60,zn:2,fo:220,se:38,col:67,src:"CREA"},
+{n:"Fiocchi d'avena",c:"Cereali da colazione",k:369,p:12.5,gs:1.2,g:6.5,z:1,ch:62,fi:9,ca:56,fe:4.5,mg:140,k2:360,na:5,zn:3.4,fo:390,se:9,col:0,src:"CREA"},
+{n:"Corn flakes",c:"Cereali da colazione",k:370,p:7,gs:0.2,g:0.9,z:7.5,ch:82,fi:3,ca:5,fe:3,mg:15,k2:100,na:620,zn:0.3,fo:60,se:3,col:0,src:"CREA"},
+{n:"Pasta di semola cruda",c:"Cereali e pasta",k:353,p:11,gs:0.2,g:1.5,z:3,ch:70.6,fi:2.6,ca:23,fe:1.7,mg:56,k2:190,na:6,zn:1.2,fo:170,se:26,col:0,src:"CREA"},
+{n:"Pasta integrale cruda",c:"Cereali e pasta",k:335,p:13,gs:0.3,g:2.5,z:2.5,ch:63,fi:8,ca:30,fe:3,mg:100,k2:270,na:5,zn:2.3,fo:270,se:39,col:0,src:"CREA"},
+{n:"Riso bianco crudo",c:"Cereali e pasta",k:339,p:6.7,gs:0.2,g:0.4,z:0,ch:79,fi:1,ca:6,fe:0.8,mg:25,k2:100,na:2,zn:1.2,fo:100,se:7,col:0,src:"CREA"},
+{n:"Riso integrale crudo",c:"Cereali e pasta",k:332,p:7.5,gs:0.3,g:2.2,z:0.5,ch:71,fi:3.5,ca:20,fe:1.2,mg:90,k2:260,na:5,zn:2,fo:250,se:14,col:0,src:"CREA"},
+{n:"Farro perlato crudo",c:"Cereali e pasta",k:340,p:14,gs:0.2,g:2.4,z:0,ch:65,fi:8.5,ca:43,fe:3,mg:90,k2:380,na:4,zn:2.7,fo:350,se:7,col:0,src:"CREA"},
+{n:"Quinoa cruda",c:"Cereali e pasta",k:368,p:14.1,gs:0.7,g:6.1,z:0,ch:64,fi:7,ca:47,fe:4.9,mg:197,k2:563,na:5,zn:3.1,fo:457,se:8,col:0,src:"CREA"},
+{n:"Orzo perlato crudo",c:"Cereali e pasta",k:352,p:9.9,gs:0.2,g:1.8,z:0.5,ch:71,fi:9,ca:33,fe:2.5,mg:70,k2:270,na:5,zn:2,fo:240,se:37,col:0,src:"CREA"},
+{n:"Gamberi",c:"Crostacei",k:71,p:14.7,gs:0.2,g:1,z:0,ch:0.6,fi:0,ca:90,fe:1.4,mg:30,k2:180,na:220,zn:1.4,fo:170,se:38,col:160,src:"CREA"},
+{n:"Cioccolato fondente (>70%)",c:"Dolci",k:549,p:6,gs:18,g:35,z:36,ch:50,fi:10,ca:72,fe:6,mg:270,k2:560,na:20,zn:3.3,fo:310,se:4,col:0,src:"CREA"},
+{n:"Marmellata / confettura",c:"Dolci",k:240,p:0.5,gs:0,g:0.1,z:50,ch:55,fi:1.5,ca:15,fe:0.4,mg:6,k2:100,na:10,zn:0.05,fo:10,se:1,col:0,src:"CREA"},
+{n:"Miele millefiori",c:"Dolci",k:304,p:0.3,gs:0,g:0,z:78,ch:80,fi:0,ca:5,fe:0.4,mg:2,k2:52,na:6,zn:0.1,fo:4,se:1,col:0,src:"CREA"},
+{n:"Mozzarella vaccina",c:"Formaggi",k:241,p:18.7,gs:10,g:17,z:0.7,ch:0.7,fi:0,ca:400,fe:0.3,mg:20,k2:115,na:600,zn:2.5,fo:280,se:5,col:54,src:"CREA"},
+{n:"Ricotta vaccina",c:"Formaggi",k:146,p:8.8,gs:5,g:10.9,z:3.5,ch:3.5,fi:0,ca:295,fe:0.3,mg:13,k2:100,na:99,zn:1,fo:180,se:10,col:51,src:"CREA"},
+{n:"Parmigiano Reggiano",c:"Formaggi",k:392,p:33,gs:12,g:28.4,z:0,ch:0,fi:0,ca:1160,fe:0.3,mg:43,k2:100,na:600,zn:4.2,fo:750,se:13,col:84,src:"CREA"},
+{n:"Grana Padano",c:"Formaggi",k:384,p:33,gs:11.5,g:28,z:0,ch:0,fi:0,ca:1165,fe:0.3,mg:41,k2:95,na:600,zn:4,fo:680,se:12,col:89,src:"CREA"},
+{n:"Mela",c:"Frutta fresca",k:52,p:0.3,gs:0,g:0.2,z:11.4,ch:13.8,fi:2.4,ca:7,fe:0.1,mg:5,k2:107,na:1,zn:0.04,fo:11,se:0,col:0,src:"CREA"},
+{n:"Banana",c:"Frutta fresca",k:89,p:1.1,gs:0.1,g:0.3,z:12.2,ch:23,fi:2.6,ca:5,fe:0.3,mg:27,k2:358,na:1,zn:0.15,fo:22,se:1,col:0,src:"CREA"},
+{n:"Arancia",c:"Frutta fresca",k:34,p:0.9,gs:0,g:0.2,z:7.4,ch:8.3,fi:2.3,ca:49,fe:0.2,mg:10,k2:166,na:2,zn:0.07,fo:23,se:0.4,col:0,src:"CREA"},
+{n:"Pera",c:"Frutta fresca",k:41,p:0.4,gs:0,g:0.1,z:9,ch:10.8,fi:3.1,ca:9,fe:0.2,mg:7,k2:116,na:1,zn:0.1,fo:12,se:0.1,col:0,src:"CREA"},
+{n:"Fragola",c:"Frutta fresca",k:27,p:0.9,gs:0,g:0.4,z:6,ch:5.3,fi:1.6,ca:16,fe:0.4,mg:13,k2:153,na:1,zn:0.14,fo:26,se:0.4,col:0,src:"CREA"},
+{n:"Kiwi",c:"Frutta fresca",k:44,p:0.8,gs:0,g:0.6,z:8,ch:10.6,fi:2.1,ca:26,fe:0.3,mg:17,k2:290,na:3,zn:0.1,fo:34,se:0.2,col:0,src:"CREA"},
+{n:"Avocado",c:"Frutta lipidica",k:160,p:2,gs:3,g:15,z:0.7,ch:8.5,fi:6.7,ca:12,fe:0.6,mg:29,k2:485,na:7,zn:0.64,fo:52,se:0.4,col:0,src:"CREA"},
+{n:"Mandorle dolci secche",c:"Frutta secca",k:602,p:22.1,gs:4,g:55.3,z:5,ch:19.7,fi:12.5,ca:240,fe:3,mg:270,k2:780,na:6,zn:3,fo:480,se:4,col:0,src:"CREA"},
+{n:"Noci",c:"Frutta secca",k:689,p:14.3,gs:6.1,g:68,z:2.6,ch:14.3,fi:6.7,ca:83,fe:2.6,mg:158,k2:441,na:2,zn:2.7,fo:370,se:4,col:0,src:"CREA"},
+{n:"Semi di chia",c:"Frutta secca",k:486,p:17,gs:3.3,g:31,z:0,ch:42,fi:34.4,ca:631,fe:7.4,mg:335,k2:407,na:16,zn:4.6,fo:860,se:55,col:0,src:"CREA"},
+{n:"Burro",c:"Grassi",k:758,p:0.8,gs:52,g:83,z:0.6,ch:0.6,fi:0,ca:20,fe:0.2,mg:2,k2:15,na:650,zn:0.09,fo:23,se:1,col:250,src:"CREA"},
+{n:"Burro di arachidi",c:"Grassi",k:598,p:24.1,gs:9.7,g:51.4,z:6.2,ch:16.1,fi:5,ca:43,fe:1.5,mg:154,k2:649,na:385,zn:2.5,fo:363,se:4,col:0,src:"CREA"},
+{n:"Olio extra vergine di oliva",c:"Grassi",k:899,p:0,gs:14.5,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:0,k2:2,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Yogurt greco 0% grassi",c:"Latte e derivati",k:57,p:10.3,gs:0,g:0.4,z:3.9,ch:3.9,fi:0,ca:110,fe:0.1,mg:11,k2:141,na:47,zn:0.5,fo:107,se:3,col:5,src:"CREA"},
+{n:"Yogurt intero bianco",c:"Latte e derivati",k:66,p:3.9,gs:2.5,g:3.5,z:5.5,ch:4.9,fi:0,ca:124,fe:0.1,mg:12,k2:170,na:52,zn:0.5,fo:90,se:2,col:13,src:"CREA"},
+{n:"Ceci secchi",c:"Legumi",k:316,p:20.9,gs:0.5,g:5.4,z:2.6,ch:46.9,fi:14.3,ca:124,fe:6,mg:115,k2:875,na:24,zn:3.4,fo:366,se:7,col:0,src:"CREA"},
+{n:"Lenticchie secche",c:"Legumi",k:291,p:22.7,gs:0.3,g:1.3,z:2,ch:50.5,fi:11.5,ca:56,fe:8,mg:107,k2:904,na:6,zn:3.6,fo:400,se:8,col:0,src:"CREA"},
+{n:"Fagioli borlotti secchi",c:"Legumi",k:291,p:20.2,gs:0.2,g:1.5,z:1,ch:48,fi:15.5,ca:102,fe:7,mg:150,k2:1100,na:5,zn:3.8,fo:380,se:6,col:0,src:"CREA"},
+{n:"Tofu naturale",c:"Legumi",k:70,p:8,gs:0.8,g:4.3,z:0.4,ch:1.9,fi:0.3,ca:350,fe:5.4,mg:30,k2:150,na:7,zn:0.8,fo:97,se:8,col:0,src:"CREA"},
+{n:"Soia secca",c:"Legumi",k:422,p:36.5,gs:2,g:20.9,z:9,ch:30.2,fi:15.7,ca:257,fe:9,mg:280,k2:1740,na:2,zn:4.9,fo:700,se:17,col:0,src:"CREA"},
+{n:"Pane bianco",c:"Pane",k:275,p:8.1,gs:0.3,g:1.4,z:3.5,ch:56,fi:3.5,ca:100,fe:1.5,mg:28,k2:120,na:530,zn:0.7,fo:100,se:20,col:0,src:"CREA"},
+{n:"Pane integrale",c:"Pane",k:243,p:8.5,gs:0.4,g:2.7,z:2.5,ch:44.5,fi:6.5,ca:73,fe:2.5,mg:57,k2:210,na:480,zn:1.5,fo:160,se:25,col:0,src:"CREA"},
+{n:"Pane di segale",c:"Pane",k:259,p:8.5,gs:0.3,g:2,z:1.5,ch:50,fi:7.5,ca:60,fe:2.5,mg:60,k2:230,na:450,zn:1.5,fo:200,se:18,col:0,src:"CREA"},
+{n:"Salmone atlantico",c:"Pesce",k:208,p:20,gs:2.8,g:13,z:0,ch:0,fi:0,ca:12,fe:0.4,mg:27,k2:420,na:50,zn:0.4,fo:250,se:36,col:63,src:"CREA"},
+{n:"Tonno in scatola al naturale",c:"Pesce",k:103,p:22,gs:0.3,g:1,z:0,ch:0,fi:0,ca:14,fe:1.2,mg:32,k2:300,na:400,zn:0.6,fo:230,se:90,col:50,src:"CREA"},
+{n:"Merluzzo",c:"Pesce",k:71,p:16.5,gs:0.1,g:0.3,z:0,ch:0,fi:0,ca:16,fe:0.5,mg:25,k2:350,na:80,zn:0.4,fo:170,se:30,col:43,src:"CREA"},
+{n:"Branzino (spigola)",c:"Pesce",k:82,p:16.5,gs:0.5,g:1.5,z:0,ch:0,fi:0,ca:15,fe:0.6,mg:25,k2:280,na:75,zn:0.4,fo:168,se:12,col:50,src:"CREA"},
+{n:"Sgombro",c:"Pesce",k:191,p:19,gs:3,g:12.5,z:0,ch:0,fi:0,ca:12,fe:1,mg:30,k2:350,na:90,zn:0.6,fo:217,se:51,col:70,src:"CREA"},
+{n:"Prosciutto crudo",c:"Salumi",k:258,p:27.1,gs:5.4,g:16.7,z:1,ch:1,fi:0,ca:14,fe:1.5,mg:26,k2:420,na:2560,zn:2.5,fo:215,se:20,col:70,src:"CREA"},
+{n:"Prosciutto cotto",c:"Salumi",k:215,p:19,gs:5,g:14,z:1.5,ch:1.5,fi:0,ca:10,fe:1,mg:18,k2:320,na:1250,zn:1.4,fo:165,se:15,col:68,src:"CREA"},
+{n:"Bresaola",c:"Salumi",k:151,p:32,gs:0.4,g:2,z:0,ch:0,fi:0,ca:14,fe:2,mg:25,k2:460,na:2190,zn:3.5,fo:220,se:10,col:62,src:"CREA"},
+{n:"Uovo di gallina intero crudo",c:"Uova",k:128,p:12.4,gs:3.3,g:8.7,z:0.5,ch:0.5,fi:0,ca:56,fe:1.9,mg:12,k2:147,na:140,zn:1.2,fo:198,se:30,col:370,src:"CREA"},
+{n:"Albume d'uovo",c:"Uova",k:43,p:10.9,gs:0,g:0,z:0.7,ch:0.7,fi:0,ca:7,fe:0.1,mg:12,k2:163,na:170,zn:0.02,fo:15,se:6,col:0,src:"CREA"},
+{n:"Carota",c:"Verdure",k:35,p:1.1,gs:0,g:0.2,z:6.7,ch:7.9,fi:3.1,ca:44,fe:0.5,mg:14,k2:323,na:70,zn:0.3,fo:35,se:0.1,col:0,src:"CREA"},
+{n:"Pomodoro rosso",c:"Verdure",k:19,p:1,gs:0,g:0.2,z:3,ch:3.9,fi:1.2,ca:13,fe:0.3,mg:11,k2:237,na:3,zn:0.15,fo:26,se:0.4,col:0,src:"CREA"},
+{n:"Spinaci crudi",c:"Verdure",k:20,p:2.9,gs:0,g:0.4,z:0.4,ch:2.9,fi:1.9,ca:78,fe:2.6,mg:58,k2:466,na:90,zn:0.53,fo:49,se:1,col:0,src:"CREA"},
+{n:"Broccoli",c:"Verdure",k:34,p:2.8,gs:0,g:0.4,z:1.7,ch:6.6,fi:2.6,ca:47,fe:0.7,mg:21,k2:316,na:27,zn:0.4,fo:67,se:2.5,col:0,src:"CREA"},
+{n:"Zucchina",c:"Verdure",k:15,p:1.3,gs:0,g:0.2,z:2.5,ch:2.6,fi:1,ca:18,fe:0.4,mg:18,k2:262,na:2,zn:0.32,fo:38,se:0.2,col:0,src:"CREA"},
+{n:"Patata",c:"Verdure",k:79,p:2.1,gs:0,g:0.1,z:0.3,ch:17,fi:2,ca:11,fe:0.5,mg:23,k2:418,na:6,zn:0.3,fo:44,se:1,col:0,src:"CREA"},
+{n:"Melanzana",c:"Verdure",k:18,p:1,gs:0,g:0.2,z:2.6,ch:3.6,fi:2.5,ca:12,fe:0.3,mg:11,k2:219,na:2,zn:0.2,fo:25,se:0.3,col:0,src:"CREA"},
+{n:"Peperone rosso",c:"Verdure",k:28,p:0.9,gs:0,g:0.3,z:4.9,ch:6.7,fi:2.1,ca:11,fe:0.5,mg:11,k2:211,na:2,zn:0.25,fo:26,se:0.6,col:0,src:"CREA"},
+{n:"Funghi champignon",c:"Verdure",k:20,p:1.8,gs:0,g:0.3,z:0.5,ch:3.3,fi:1.3,ca:6,fe:0.6,mg:9,k2:318,na:5,zn:0.5,fo:86,se:26,col:0,src:"CREA"},
+{n:"Cipolla",c:"Verdure",k:26,p:1,gs:0,g:0.2,z:4.7,ch:5.7,fi:1.8,ca:20,fe:0.3,mg:9,k2:146,na:3,zn:0.2,fo:33,se:0.5,col:0,src:"CREA"},
+{n:"Aglio",c:"Verdure",k:41,p:2,gs:0.1,g:0.6,z:1,ch:8.4,fi:1.7,ca:17,fe:1.4,mg:21,k2:401,na:14,zn:1.16,fo:153,se:14,col:0,src:"CREA"},
+{n:"Lattuga",c:"Verdure",k:13,p:1.3,gs:0,g:0.2,z:1.5,ch:1.7,fi:1.5,ca:36,fe:0.7,mg:14,k2:220,na:9,zn:0.2,fo:29,se:0.6,col:0,src:"CREA"},
+{n:"Asparagi",c:"Verdure",k:20,p:2.2,gs:0,g:0.2,z:1,ch:3.9,fi:2,ca:24,fe:0.8,mg:14,k2:202,na:2,zn:0.5,fo:52,se:2,col:0,src:"CREA"},
+{n:"Finocchio",c:"Verdure",k:9,p:0.9,gs:0,g:0.2,z:1.3,ch:1.8,fi:1.6,ca:35,fe:0.5,mg:13,k2:414,na:52,zn:0.2,fo:47,se:0.7,col:0,src:"CREA"},
+{n:"Cetriolo",c:"Verdure",k:12,p:0.7,gs:0,g:0.1,z:1.7,ch:2.2,fi:0.7,ca:16,fe:0.2,mg:13,k2:147,na:2,zn:0.2,fo:24,se:0.4,col:0,src:"CREA"},
+{n:"Cozze",c:"Molluschi",k:84,p:11.7,gs:0.8,g:2.7,z:0,ch:3.4,fi:0,ca:88,fe:3.2,mg:37,k2:320,na:290,zn:2.1,fo:236,se:89,col:50,src:"CREA"},
+{n:"Vongole",c:"Molluschi",k:74,p:10.2,gs:0.4,g:1.7,z:0,ch:3.6,fi:0,ca:92,fe:2.8,mg:38,k2:260,na:200,zn:1.5,fo:181,se:24,col:34,src:"CREA"}
+];
+
+const DB_BDA=[
+{n:"Pane tipo 0",c:"Cereali e derivati",k:279,p:8.9,gs:0.3,g:1.0,z:3.5,ch:56.8,fi:2.2,ca:24,fe:1.3,mg:25,k2:112,na:530,zn:0.6,fo:85,se:15,col:0,src:"BDA"},
+{n:"Pane tipo 00",c:"Cereali e derivati",k:270,p:8.4,gs:0.3,g:0.9,z:3.2,ch:54.9,fi:1.9,ca:20,fe:1.1,mg:22,k2:105,na:510,zn:0.5,fo:80,se:14,col:0,src:"BDA"},
+{n:"Pasta all'uovo cruda",c:"Cereali e derivati",k:368,p:12.8,gs:1.4,g:4.2,z:2,ch:66.5,fi:2.2,ca:30,fe:2.1,mg:40,k2:160,na:20,zn:1.1,fo:160,se:28,col:65,src:"BDA"},
+{n:"Gnocchi di patate",c:"Cereali e derivati",k:131,p:3.1,gs:0.2,g:0.8,z:1,ch:26.8,fi:1.5,ca:12,fe:0.6,mg:12,k2:120,na:250,zn:0.3,fo:45,se:3,col:0,src:"BDA"},
+{n:"Farina di frumento tipo 00",c:"Cereali e derivati",k:363,p:11.5,gs:0.2,g:1.4,z:1.5,ch:75.3,fi:2.2,ca:17,fe:1.2,mg:22,k2:126,na:2,zn:0.7,fo:108,se:10,col:0,src:"BDA"},
+{n:"Farina integrale di frumento",c:"Cereali e derivati",k:339,p:13.4,gs:0.3,g:2.5,z:2,ch:68.0,fi:8.4,ca:34,fe:3.2,mg:112,k2:320,na:5,zn:2.6,fo:346,se:35,col:0,src:"BDA"},
+{n:"Polenta cotta",c:"Cereali e derivati",k:80,p:1.8,gs:0.1,g:0.4,z:0.5,ch:16.8,fi:0.8,ca:1,fe:0.4,mg:22,k2:65,na:1,zn:0.2,fo:38,se:2,col:0,src:"BDA"},
+{n:"Vitello (coscia)",c:"Carni e derivati",k:107,p:21.2,gs:0.9,g:2.3,z:0,ch:0,fi:0,ca:12,fe:1.3,mg:24,k2:335,na:65,zn:3.2,fo:198,se:9,col:85,src:"BDA"},
+{n:"Manzo (coscia)",c:"Carni e derivati",k:133,p:21.5,gs:1.7,g:5.0,z:0,ch:0,fi:0,ca:7,fe:2.2,mg:22,k2:325,na:58,zn:4.6,fo:175,se:12,col:72,src:"BDA"},
+{n:"Fegato di manzo",c:"Carni e derivati",k:139,p:21.1,gs:1.4,g:5.3,z:0,ch:5.2,fi:0,ca:7,fe:6.5,mg:20,k2:320,na:76,zn:4.2,fo:374,se:18,col:276,src:"BDA"},
+{n:"Speck",c:"Carni e derivati",k:293,p:26.4,gs:7.2,g:20.2,z:0,ch:0,fi:0,ca:10,fe:2.0,mg:22,k2:380,na:2250,zn:2.8,fo:200,se:22,col:68,src:"BDA"},
+{n:"Merluzzo surgelato",c:"Pesce",k:69,p:15.8,gs:0.1,g:0.4,z:0,ch:0,fi:0,ca:18,fe:0.4,mg:26,k2:320,na:85,zn:0.35,fo:175,se:32,col:41,src:"BDA"},
+{n:"Salmone affumicato",c:"Pesce",k:175,p:22.5,gs:2.2,g:9.0,z:0,ch:0,fi:0,ca:15,fe:0.7,mg:20,k2:320,na:1800,zn:0.5,fo:220,se:38,col:55,src:"BDA"},
+{n:"Trota",c:"Pesce",k:86,p:18.0,gs:0.6,g:2.7,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:24,k2:380,na:52,zn:0.4,fo:210,se:14,col:55,src:"BDA"},
+{n:"Latte di mucca intero",c:"Latte e derivati",k:61,p:3.3,gs:2.2,g:3.5,z:4.8,ch:4.9,fi:0,ca:119,fe:0.1,mg:11,k2:152,na:50,zn:0.38,fo:90,se:2,col:14,src:"BDA"},
+{n:"Formaggio emmenthal",c:"Latte e derivati",k:382,p:28.8,gs:18.0,g:30.0,z:0.5,ch:0.5,fi:0,ca:1020,fe:0.3,mg:44,k2:100,na:450,zn:3.8,fo:620,se:14,col:97,src:"BDA"},
+{n:"Stracchino",c:"Latte e derivati",k:252,p:16.5,gs:13.0,g:20.5,z:0,ch:0,fi:0,ca:496,fe:0.3,mg:16,k2:97,na:688,zn:1.8,fo:310,se:4,col:61,src:"BDA"},
+{n:"Mascarpone",c:"Latte e derivati",k:430,p:6.0,gs:26.0,g:44.0,z:4.5,ch:4.5,fi:0,ca:105,fe:0.1,mg:8,k2:80,na:95,zn:0.5,fo:80,se:2,col:120,src:"BDA"},
+{n:"Yogurt alla frutta",c:"Latte e derivati",k:91,p:3.5,gs:0.8,g:1.4,z:15.5,ch:16.0,fi:0.3,ca:115,fe:0.1,mg:11,k2:160,na:50,zn:0.4,fo:88,se:2,col:5,src:"BDA"},
+{n:"Mele golden",c:"Frutta",k:49,p:0.2,gs:0,g:0.1,z:11.7,ch:12.3,fi:1.8,ca:8,fe:0.2,mg:5,k2:105,na:1,zn:0.04,fo:10,se:0,col:0,src:"BDA"},
+{n:"Uva bianca",c:"Frutta",k:65,p:0.5,gs:0,g:0.1,z:16,ch:16.2,fi:1.5,ca:12,fe:0.4,mg:7,k2:185,na:2,zn:0.07,fo:18,se:0.2,col:0,src:"BDA"},
+{n:"Albicocche",c:"Frutta",k:28,p:0.9,gs:0,g:0.1,z:5.5,ch:6.8,fi:1.5,ca:17,fe:0.4,mg:8,k2:296,na:1,zn:0.2,fo:22,se:0,col:0,src:"BDA"},
+{n:"Ciliegie",c:"Frutta",k:50,p:0.8,gs:0,g:0.1,z:11.3,ch:11.3,fi:1.6,ca:13,fe:0.3,mg:9,k2:173,na:3,zn:0.1,fo:16,se:0,col:0,src:"BDA"},
+{n:"Spinaci cotti",c:"Ortaggi",k:28,p:3.0,gs:0,g:0.7,z:0,ch:3.7,fi:2.0,ca:90,fe:3.4,mg:57,k2:529,na:125,zn:0.76,fo:55,se:1.5,col:0,src:"BDA"},
+{n:"Fagioli borlotti cotti",c:"Ortaggi",k:93,p:6.2,gs:0.1,g:0.4,z:0.5,ch:16.5,fi:5.5,ca:32,fe:2.3,mg:45,k2:380,na:5,zn:1.1,fo:110,se:2,col:0,src:"BDA"},
+{n:"Ceci cotti",c:"Ortaggi",k:116,p:8.4,gs:0.2,g:2.4,z:0.8,ch:18.5,fi:5.8,ca:48,fe:2.5,mg:45,k2:360,na:18,zn:1.3,fo:150,se:3,col:0,src:"BDA"},
+{n:"Lenticchie cotte",c:"Ortaggi",k:95,p:8.0,gs:0.1,g:0.4,z:0.8,ch:15.6,fi:4.2,ca:20,fe:2.8,mg:36,k2:310,na:3,zn:1.2,fo:140,se:3,col:0,src:"BDA"},
+{n:"Piselli freschi",c:"Ortaggi",k:80,p:6.7,gs:0.1,g:0.4,z:5.0,ch:14.5,fi:5.2,ca:26,fe:1.9,mg:34,k2:216,na:4,zn:1.3,fo:116,se:2,col:0,src:"BDA"},
+{n:"Olio di mais",c:"Grassi e oli",k:900,p:0,gs:12.7,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
+{n:"Zucchero semolato",c:"Dolci",k:392,p:0,gs:0,g:0,z:100,ch:104,fi:0,ca:0,fe:0.1,mg:0,k2:2,na:1,zn:0,fo:0,se:0,col:0,src:"BDA"},
+{n:"Cioccolato al latte",c:"Dolci",k:545,p:7.5,gs:19.5,g:31.5,z:56.0,ch:58.5,fi:1.5,ca:220,fe:1.5,mg:50,k2:372,na:90,zn:1.1,fo:205,se:4,col:20,src:"BDA"},
+{n:"Croissant (cornetto)",c:"Dolci",k:420,p:7.5,gs:8.5,g:21.5,z:26.5,ch:51.0,fi:1.5,ca:55,fe:1.5,mg:15,k2:135,na:380,zn:0.5,fo:90,se:5,col:85,src:"BDA"},
+{n:"Nocciole tostate",c:"Frutta secca e semi",k:654,p:14.1,gs:4.5,g:61.5,z:4.3,ch:17.0,fi:10.5,ca:150,fe:3.4,mg:163,k2:680,na:4,zn:2.4,fo:290,se:3,col:0,src:"BDA"},
+{n:"Arachidi tostate salate",c:"Frutta secca e semi",k:599,p:28.3,gs:7.6,g:49.4,z:4.2,ch:16.7,fi:8.4,ca:60,fe:2.3,mg:168,k2:745,na:550,zn:3.3,fo:360,se:7,col:0,src:"BDA"},
+{n:"Semi di girasole",c:"Frutta secca e semi",k:584,p:20.8,gs:4.5,g:51.5,z:3.4,ch:18.6,fi:8.6,ca:78,fe:5.3,mg:325,k2:689,na:3,zn:5.3,fo:660,se:53,col:0,src:"BDA"},
+{n:"Tonno all'olio d'oliva (sgocciolato)",c:"Pesce",k:225,p:24.0,gs:3.5,g:14.5,z:0,ch:0,fi:0,ca:12,fe:1.5,mg:28,k2:290,na:380,zn:0.7,fo:210,se:80,col:55,src:"BDA"},
+{n:"Pesto genovese",c:"Condimenti",k:460,p:7.5,gs:8.0,g:46.5,z:1.0,ch:4.0,fi:1.8,ca:185,fe:2.5,mg:65,k2:330,na:600,zn:0.9,fo:120,se:2,col:12,src:"BDA"},
+{n:"Maionese",c:"Condimenti",k:721,p:1.5,gs:8.2,g:79.4,z:2.0,ch:2.2,fi:0,ca:20,fe:0.5,mg:5,k2:38,na:480,zn:0.3,fo:58,se:5,col:260,src:"BDA"},
+{n:"Salsa di soia",c:"Condimenti",k:53,p:8.1,gs:0,g:0.1,z:4.8,ch:4.9,fi:0.8,ca:17,fe:2.4,mg:40,k2:212,na:5720,zn:0.4,fo:130,se:0.6,col:0,src:"BDA"}
+];
+
+// ════════════════════════════════════════════════════════════
+// APP STATE
+// ════════════════════════════════════════════════════════════
+let CUSTOM_DB=[];
+let ALL_DB=[];
+let FOOD_MAP={};
+
+function rebuildDB(){
+  ALL_DB=[...DB_CREA,...DB_BDA,...CUSTOM_DB];
+  FOOD_MAP={};
+  ALL_DB.forEach(f=>{FOOD_MAP[f.n.toLowerCase()]=f;});
+}
+
+const DEFAULT_MEALS=[
+  {id:'colazione',nome:'Colazione',emoji:'🌅'},
+  {id:'spuntino1',nome:'Spuntino Mattina',emoji:'🍎'},
+  {id:'pranzo',nome:'Pranzo',emoji:'🍽️'},
+  {id:'spuntino2',nome:'Spuntino Pomeriggio',emoji:'🍊'},
+  {id:'cena',nome:'Cena',emoji:'🌙'},
+  {id:'spuntino3',nome:'Spuntino Sera',emoji:'🌛'},
+  {id:'extra',nome:'Pasti Extra',emoji:'🥗'},
+];
+let meals=[];
+let dirty=false,currentPaz=null,renamingIdx=null;
+let dbTab='crea';
+let altMi=-1,altIi=-1;
+
+const MICROS=[
+  {k:'ca',l:'Calcio (mg)'},{k:'fe',l:'Ferro (mg)'},{k:'mg',l:'Magnesio (mg)'},
+  {k:'k2',l:'Potassio (mg)'},{k:'na',l:'Sodio (mg)'},{k:'zn',l:'Zinco (mg)'},
+  {k:'fo',l:'Fosforo (mg)'},{k:'se',l:'Selenio (µg)'},{k:'col',l:'Col. (mg)'}
+];
+const NUTRIENT_LABELS={k:'Kcal',p:'Proteine',g:'Grassi',ch:'CHO',fi:'Fibra',ca:'Calcio',fe:'Ferro',mg:'Magnesio',k2:'Potassio',na:'Sodio'};
+const ALL_NUTRIENTS=[
+  {k:'k',l:'Calorie'},  {k:'p',l:'Proteine'},  {k:'g',l:'Grassi Tot.'},
+  {k:'gs',l:'Grassi Sat.'},{k:'ch',l:'CHO'},   {k:'fi',l:'Fibra'},
+  {k:'ca',l:'Calcio'},  {k:'fe',l:'Ferro'},    {k:'mg',l:'Magnesio'},
+  {k:'k2',l:'Potassio'},{k:'na',l:'Sodio'},    {k:'zn',l:'Zinco'},
+  {k:'fo',l:'Fosforo'}, {k:'se',l:'Selenio'},  {k:'col',l:'Colesterolo'}
+];
+let visM=new Set();
+
+function lookup(n){if(!n)return null;return FOOD_MAP[n.toLowerCase()]||null;}
+function cv(f,key,qt){if(!f||f[key]==null)return null;return(f[key]/100)*(parseFloat(qt)||0);}
+function r1(v){return Math.round(v*10)/10;}
+function fmtV(v,dec=1){
+  if(v===null||v===undefined)return '<span class="vnd">n.d.</span>';
+  const n=Math.round(v*Math.pow(10,dec))/Math.pow(10,dec);
+  return n===0?'<span style="color:#CBD5E1">—</span>':(n%1===0?n.toFixed(0):n.toFixed(dec));
+}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function todayISO(){return new Date().toISOString().split('T')[0];}
+
+// ════════════════════════════════════════════════════════════
+// NAV
+// ════════════════════════════════════════════════════════════
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  const titles={piano:'📋 Piano Alimentare',pazienti:'👥 Pazienti',patologie:'🏥 Diete per Patologia',cartelle:'📁 Cartelle Pazienti',valutazione:'📊 Valutazione Paziente',database:'🔬 Database CREA+BDA',aggiungi:'➕ Aggiungi Alimento',admin:'⚙️ Gestione Utenti'};
+  document.getElementById('page-title').textContent=titles[id]||id;
+  document.getElementById('tbar-actions').style.display=id==='piano'?'':'none';
+  closeSB();
+  if(id==='pazienti')renderPazienti();
+  if(id==='database')initDB();
+  if(id==='patologie'){renderPatologie();}
+  if(id==='cartelle')loadCartelle();
+  if(id==='admin')loadAdmin();
+}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');}
+
+// ════════════════════════════════════════════════════════════
+// RENDER PIANO
+// ════════════════════════════════════════════════════════════
+function renderPiano(){
+  const c=document.getElementById('pasti-container');
+  c.innerHTML='';
+  meals.forEach((_,mi)=>c.appendChild(buildCard(mi)));
+  updateRiep();
+}
+
+function buildCard(mi){
+  const meal=meals[mi];
+  const div=document.createElement('div');
+  div.className='pasto-card';div.id='pc-'+mi;
+  div.setAttribute('draggable','true');
+  div.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',mi);div.classList.add('dragging');});
+  div.addEventListener('dragend',()=>div.classList.remove('dragging'));
+  div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('drag-over');});
+  div.addEventListener('dragleave',()=>div.classList.remove('drag-over'));
+  div.addEventListener('drop',e=>{e.preventDefault();div.classList.remove('drag-over');const f=parseInt(e.dataTransfer.getData('text/plain'));swapM(f,mi);});
+  const t=sumMeal(mi);
+  div.innerHTML=`
+  <div class="pasto-hdr" onclick="toggleM(${mi})">
+    <span class="ph-drag" onclick="event.stopPropagation()" title="Trascina">⠿</span>
+    <span class="ph-emoji">${meal.emoji}</span>
+    <span class="ph-nome">${meal.nome}</span>
+    <span class="ph-macro">${t.kcal} kcal · P:${t.prot}g · C:${t.cho}g · G:${t.fat}g</span>
+    <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openRename(${mi})" style="color:white;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06);margin-right:4px">✏️</button>
+    <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();delMeal(${mi})" style="margin-right:4px">✕</button>
+    <span class="ph-tog">${meal.collapsed?'▼':'▲'}</span>
+  </div>
+  <div class="pasto-body${meal.collapsed?' collapsed':''}" id="pb-${mi}">
+    <div class="micro-bar">
+      <label>Micronutrienti:</label>
+      ${MICROS.map(m=>`<button class="mtog${visM.has(m.k)?' on':''}" onclick="toggleMicro('${m.k}')">${m.l}</button>`).join('')}
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th style="text-align:left;min-width:165px">Alimento</th>
+          <th style="min-width:62px">Qt (g)</th>
+          <th>Kcal</th><th>Prot</th><th>Gr.Sat</th><th>Gr.Tot</th><th>Zucc</th><th>CHO</th><th>Fibra</th>
+          ${MICROS.map(m=>`<th style="display:${visM.has(m.k)?'':'none'}">${m.l}</th>`).join('')}
+          <th style="min-width:70px">Fonte</th><th></th><th style="width:22px"></th>
+        </tr></thead>
+        <tbody id="tb-${mi}">
+          ${meal.items.map((_,ii)=>buildRow(mi,ii)).join('')}
+          ${buildTot(mi)}
+        </tbody>
+      </table>
+    </div>
+    <div class="pasto-footer">
+      <span class="pf-info" id="pf-${mi}">${t.kcal} kcal · P:${t.prot}g · C:${t.cho}g · G:${t.fat}g</span>
+      <button class="btn btn-primary btn-sm" onclick="addRow(${mi})">➕ Riga</button>
+    </div>
+  </div>`;
+  return div;
+}
+
+function buildRow(mi,ii){
+  const item=meals[mi].items[ii];
+  const f=lookup(item.nome);
+  const qt=item.qt;
+  const srcBadge=f?`<span class="ac-src ${f.src==='CREA'?'src-crea':f.src==='BDA'?'src-bda':'src-custom'}">${f.src}</span>`:'';
+  const microTds=MICROS.map(m=>`<td class="vc" style="display:${visM.has(m.k)?'':'none'}">${fmtV(cv(f,m.k,qt),2)}</td>`).join('');
+  const altRows=(item.altPrint||[]).map((a,ai)=>{
+    const fa=lookup(a.nome);
+    return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${ai}">
+      <td style="padding-left:22px">↳ ALT: <b>${esc(a.nome)}</b></td>
+      <td style="text-align:right">${a.qt}g</td>
+      <td>${fmtV(cv(fa,'k',a.qt))}</td><td>${fmtV(cv(fa,'p',a.qt))}</td>
+      <td></td><td></td><td></td><td>${fmtV(cv(fa,'ch',a.qt))}</td><td>${fmtV(cv(fa,'fi',a.qt))}</td>
+      ${MICROS.map(m=>`<td style="display:${visM.has(m.k)?'':'none'}"></td>`).join('')}
+      <td></td>
+      <td class="no-print"><button class="del-row" onclick="removeAltPrint(${mi},${ii},${ai})" title="Rimuovi da stampa">✕</button></td>
+      <td></td>
+    </tr>`;
+  }).join('');
+  return `<tr id="r-${mi}-${ii}">
+    <td><div class="ac-wrap">
+      <input class="inp-food" type="text" value="${esc(item.nome)}" placeholder="Cerca alimento..." autocomplete="off"
+        oninput="onFI(${mi},${ii},this)" onkeydown="onFK(event,${mi},${ii})"
+        onfocus="onFF(${mi},${ii},this)" onblur="onFB(${mi},${ii})">
+      <div class="ac-list" id="ac-${mi}-${ii}"></div>
+    </div></td>
+    <td><input class="inp-qt" type="number" min="0" step="any" value="${qt||''}" placeholder="g" oninput="onQI(${mi},${ii},this)"></td>
+    <td class="vc" data-k="k">${fmtV(cv(f,'k',qt))}</td>
+    <td class="vc" data-k="p">${fmtV(cv(f,'p',qt))}</td>
+    <td class="vc" data-k="gs">${fmtV(cv(f,'gs',qt))}</td>
+    <td class="vc" data-k="g">${fmtV(cv(f,'g',qt))}</td>
+    <td class="vc" data-k="z">${fmtV(cv(f,'z',qt))}</td>
+    <td class="vc" data-k="ch">${fmtV(cv(f,'ch',qt))}</td>
+    <td class="vc" data-k="fi">${fmtV(cv(f,'fi',qt))}</td>
+    ${microTds}
+    <td style="font-size:10px;white-space:nowrap">${f?esc(f.c):''} ${srcBadge}</td>
+    <td class="no-print"><button class="alt-btn" onclick="openAlt(${mi},${ii})" title="Alternative equivalenti">⇄</button></td>
+    <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})">✕</button></td>
+  </tr>${altRows}`;
+}
+
+function buildTot(mi){
+  const t=sumMeal(mi);
+  const microTds=MICROS.map(m=>{
+    let tot=0;meals[mi].items.forEach(item=>{const f=lookup(item.nome);const v=cv(f,m.k,item.qt);if(v!==null)tot+=v;});
+    return `<td style="text-align:center;display:${visM.has(m.k)?'':'none'}">${tot>0?r1(tot):'—'}</td>`;
+  }).join('');
+  return `<tr class="tr-tot" id="tr-tot-${mi}">
+    <td>∑ ${meals[mi].nome.toUpperCase()}</td><td>—</td>
+    <td>${t.kcal}</td><td>${t.prot}</td><td>${t.fatSat}</td><td>${t.fat}</td><td>${t.z}</td><td>${t.cho}</td><td>${t.fibra}</td>
+    ${microTds}<td></td><td></td><td></td>
+  </tr>`;
+}
+
+function sumMeal(mi){
+  let k=0,p=0,gs=0,g=0,z=0,ch=0,fi=0;
+  meals[mi].items.forEach(item=>{
+    const f=lookup(item.nome);const qt=parseFloat(item.qt)||0;
+    if(f){k+=(f.k||0)/100*qt;p+=(f.p||0)/100*qt;gs+=(f.gs||0)/100*qt;g+=(f.g||0)/100*qt;z+=(f.z||0)/100*qt;ch+=(f.ch||0)/100*qt;fi+=(f.fi||0)/100*qt;}
+  });
+  return{kcal:Math.round(k),prot:r1(p),fatSat:r1(gs),fat:r1(g),z:r1(z),cho:r1(ch),fibra:r1(fi)};
+}
+
+function updateRiep(){
+  let k=0,p=0,g=0,ch=0,fi=0;
+  meals.forEach((_,mi)=>{const t=sumMeal(mi);k+=t.kcal;p+=t.prot;g+=t.fat;ch+=t.cho;fi+=t.fibra;});
+  document.getElementById('tot-kcal').textContent=Math.round(k);
+  document.getElementById('tot-prot').textContent=r1(p);
+  document.getElementById('tot-cho').textContent=r1(ch);
+  document.getElementById('tot-fat').textContent=r1(g);
+  document.getElementById('tot-fibra').textContent=r1(fi);
+}
+
+// ════════════════════════════════════════════════════════════
+// AUTOCOMPLETE
+// ════════════════════════════════════════════════════════════
+let acIdx={},acRes={},acT=null;
+
+function onFI(mi,ii,inp){
+  meals[mi].items[ii].nome=inp.value;markDirty();
+  clearTimeout(acT);acT=setTimeout(()=>showAC(mi,ii,inp.value),100);
+}
+function showAC(mi,ii,val){
+  const el=document.getElementById(`ac-${mi}-${ii}`);
+  if(!el)return;acIdx[`${mi}-${ii}`]=-1;
+  if(!val||val.length<1){el.style.display='none';return;}
+  const q=val.toLowerCase();
+  const res=ALL_DB.filter(f=>f.n.toLowerCase().includes(q)).slice(0,16);
+  acRes[`${mi}-${ii}`]=res;
+  if(!res.length){el.style.display='none';return;}
+  el.innerHTML=res.map((f,i)=>`<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(f.n)}</span><span class="ac-right"><span class="ac-cat">${esc(f.c)}</span><span class="ac-src ${f.src==='CREA'?'src-crea':f.src==='BDA'?'src-bda':'src-custom'}">${f.src}</span></span></div>`).join('');
+  el.style.display='block';
+}
+function pickAC(mi,ii,ri){
+  const res=acRes[`${mi}-${ii}`];if(!res||!res[ri])return;
+  meals[mi].items[ii].nome=res[ri].n;
+  const el=document.getElementById(`ac-${mi}-${ii}`);if(el)el.style.display='none';
+  const inp=document.querySelector(`#r-${mi}-${ii} .inp-food`);if(inp)inp.value=res[ri].n;
+  refreshRow(mi,ii);refreshTot(mi);updateRiep();
+  const qt=document.querySelector(`#r-${mi}-${ii} .inp-qt`);if(qt){qt.focus();qt.select();}
+}
+function onFF(mi,ii,inp){if(inp.value.length>=1)showAC(mi,ii,inp.value);}
+function onFB(mi,ii){setTimeout(()=>{const el=document.getElementById(`ac-${mi}-${ii}`);if(el)el.style.display='none';refreshRow(mi,ii);refreshTot(mi);updateRiep();},200);}
+function onFK(e,mi,ii){
+  const el=document.getElementById(`ac-${mi}-${ii}`);if(!el||el.style.display==='none')return;
+  const items=el.querySelectorAll('.ac-item');const k=`${mi}-${ii}`;
+  if(e.key==='ArrowDown'){acIdx[k]=Math.min((acIdx[k]||0)+1,items.length-1);e.preventDefault();}
+  else if(e.key==='ArrowUp'){acIdx[k]=Math.max((acIdx[k]||-1)-1,0);e.preventDefault();}
+  else if(e.key==='Enter'||e.key==='Tab'){const idx=acIdx[k]>=0?acIdx[k]:0;if(items[idx]){items[idx].dispatchEvent(new MouseEvent('mousedown'));e.preventDefault();}return;}
+  else if(e.key==='Escape'){el.style.display='none';return;}
+  items.forEach((el2,i)=>el2.classList.toggle('sel',i===acIdx[k]));
+  if(items[acIdx[k]])items[acIdx[k]].scrollIntoView({block:'nearest'});
+}
+function onQI(mi,ii,inp){meals[mi].items[ii].qt=inp.value;markDirty();refreshRow(mi,ii);refreshTot(mi);updateRiep();}
+
+function refreshRow(mi,ii){
+  const row=document.getElementById(`r-${mi}-${ii}`);if(!row)return;
+  const item=meals[mi].items[ii];const f=lookup(item.nome);const qt=item.qt;
+  row.querySelectorAll('td.vc[data-k]').forEach(td=>{
+    const k=td.getAttribute('data-k');td.innerHTML=fmtV(cv(f,k,qt));
+  });
+  const microTds=row.querySelectorAll('td.vc:not([data-k])');
+  MICROS.forEach((m,i)=>{if(microTds[i]){microTds[i].innerHTML=fmtV(cv(f,m.k,qt),2);microTds[i].style.display=visM.has(m.k)?'':'none';}});
+  const srcTd=row.querySelector('td:nth-last-child(3)');
+  if(srcTd&&f)srcTd.innerHTML=`${esc(f.c)} <span class="ac-src ${f.src==='CREA'?'src-crea':f.src==='BDA'?'src-bda':'src-custom'}">${f.src}</span>`;
+}
+function refreshTot(mi){
+  const el=document.getElementById(`tr-tot-${mi}`);
+  if(el){const tmp=document.createElement('tbody');tmp.innerHTML=buildTot(mi);el.replaceWith(tmp.firstChild);}
+  const pf=document.getElementById(`pf-${mi}`);
+  if(pf){const t=sumMeal(mi);pf.innerHTML=`${t.kcal} kcal · P:${t.prot}g · C:${t.cho}g · G:${t.fat}g`;}
+}
+
+// ════════════════════════════════════════════════════════════
+// MICRO TOGGLE
+// ════════════════════════════════════════════════════════════
+function toggleMicro(k){
+  if(visM.has(k))visM.delete(k);else visM.add(k);
+  renderPiano();
+}
+
+// ════════════════════════════════════════════════════════════
+// AZIONI
+// ════════════════════════════════════════════════════════════
+function toggleM(mi){meals[mi].collapsed=!meals[mi].collapsed;renderPiano();}
+function addRow(mi){meals[mi].items.push({nome:'',qt:'',altPrint:[]});meals[mi].collapsed=false;markDirty();renderPiano();setTimeout(()=>{const ii=meals[mi].items.length-1;const inp=document.querySelector(`#r-${mi}-${ii} .inp-food`);if(inp)inp.focus();},80);}
+function delRow(mi,ii){if(meals[mi].items.length<=1)meals[mi].items[0]={nome:'',qt:''};else meals[mi].items.splice(ii,1);markDirty();renderPiano();}
+function swapM(a,b){if(a===b)return;[meals[a],meals[b]]=[meals[b],meals[a]];markDirty();renderPiano();}
+function delMeal(mi){if(meals.length<=1){toast('Almeno un pasto richiesto!','err');return;}if(!confirm(`Eliminare "${meals[mi].nome}"?`))return;meals.splice(mi,1);markDirty();renderPiano();}
+function eliminaVuote(){let tot=0;meals.forEach((m,mi)=>{const b=m.items.length;m.items=m.items.filter(i=>i.nome&&i.nome.trim()!=='');if(!m.items.length)m.items=[{nome:'',qt:''}];tot+=b-m.items.length;});renderPiano();toast(tot>0?`✅ ${tot} righe vuote eliminate!`:'Nessuna riga vuota.','ok');}
+function openAddRow(){const l=document.getElementById('modal-addrow-list');l.innerHTML=meals.map((m,i)=>`<div class="pasto-opt" onclick="addRow(${i});closeM('modal-addrow')"><span style="font-size:20px">${m.emoji}</span><span style="font-weight:600">${m.nome}</span></div>`).join('');openM('modal-addrow');}
+function markDirty(){dirty=true;}
+
+// ════════════════════════════════════════════════════════════
+// NUOVO PASTO
+// ════════════════════════════════════════════════════════════
+function openNewPasto(){
+  document.getElementById('np-nome').value='';document.getElementById('np-emoji').value='🍽️';
+  const sel=document.getElementById('np-pos');sel.innerHTML='<option value="-1">— All\'inizio —</option>'+meals.map((m,i)=>`<option value="${i}">${m.emoji} ${m.nome}</option>`).join('');
+  sel.value=String(meals.length-1);openM('modal-newpasto');setTimeout(()=>document.getElementById('np-nome').focus(),200);
+}
+function selEmoji(el,e){document.getElementById('np-emoji').value=e;document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');}
+function creaPasto(){
+  const nome=document.getElementById('np-nome').value.trim();if(!nome){toast('Inserisci nome','err');return;}
+  const emoji=document.getElementById('np-emoji').value||'🍽️';
+  const pos=parseInt(document.getElementById('np-pos').value);
+  const m={id:'c'+Date.now(),nome,emoji,items:[{nome:'',qt:''}],collapsed:false};
+  if(pos===-1)meals.unshift(m);else meals.splice(pos+1,0,m);
+  closeM('modal-newpasto');markDirty();renderPiano();toast(`✅ "${nome}" aggiunto!`,'ok');
+}
+
+// ════════════════════════════════════════════════════════════
+// RINOMINA
+// ════════════════════════════════════════════════════════════
+function openRename(mi){renamingIdx=mi;document.getElementById('rn-nome').value=meals[mi].nome;document.getElementById('rn-emoji').value=meals[mi].emoji;openM('modal-rename');setTimeout(()=>document.getElementById('rn-nome').focus(),200);}
+function doRename(){const n=document.getElementById('rn-nome').value.trim();const e=document.getElementById('rn-emoji').value||meals[renamingIdx].emoji;if(!n)return;meals[renamingIdx].nome=n;meals[renamingIdx].emoji=e;closeM('modal-rename');markDirty();renderPiano();}
+
+// ════════════════════════════════════════════════════════════
+// NUOVO PIANO
+// ════════════════════════════════════════════════════════════
+function nuovoPiano(){if(dirty&&!confirm('Modifiche non salvate. Continuare?'))return;meals=DEFAULT_MEALS.map(m=>({...m,items:[{nome:'',qt:'',altPrint:[]}],collapsed:false}));document.getElementById('inp-nome').value='';document.getElementById('inp-data').value=todayISO();dirty=false;currentPaz=null;renderPiano();toast('🔄 Nuovo piano!','info');}
+
+// ════════════════════════════════════════════════════════════
+// PAZIENTI — salvati su Supabase
+// ════════════════════════════════════════════════════════════
+async function salvaPaziente(){
+  const nome=document.getElementById('inp-nome').value.trim();
+  if(!nome){toast('Inserisci nome paziente','err');return;}
+  const data=document.getElementById('inp-data').value||todayISO();
+  const payload={
+    user_id: currentUser.id,
+    nome,
+    data_piano: data,
+    meals: JSON.stringify(meals),
+    saved_at: new Date().toISOString()
+  };
+  showLoading(true);
+  let result;
+  if(currentPaz){
+    result = await sb.from('piani').update(payload).eq('id',currentPaz);
+  } else {
+    result = await sb.from('piani').insert(payload).select().single();
+    if(result.data) currentPaz = result.data.id;
+  }
+  showLoading(false);
+  if(result.error){toast('❌ Errore salvataggio: '+result.error.message,'err');return;}
+  dirty=false;
+  toast(`💾 "${nome}" salvato!`,'ok');
+}
+
+async function renderPazienti(){
+  const g=document.getElementById('paz-grid-wrap');
+  g.innerHTML='<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
+  const {data,error}=await sb.from('piani').select('*').eq('user_id',currentUser.id).order('saved_at',{ascending:false});
+  if(error||!data){g.innerHTML='<div class="empty-state"><div class="ei">❌</div><h3>Errore caricamento</h3></div>';return;}
+  if(!data.length){g.innerHTML='<div class="empty-state"><div class="ei">📂</div><h3>Nessun paziente</h3><p>Crea un piano e clicca "Salva".</p></div>';return;}
+  g.innerHTML='<div class="paz-grid">'+data.map(p=>{
+    let mealsParsed=[];try{mealsParsed=JSON.parse(p.meals||'[]');}catch{}
+    const count=mealsParsed.reduce((s,m)=>s+(m.items||[]).filter(i=>i.nome).length,0);
+    return `<div class="paz-card" onclick="caricaPaz('${p.id}')">
+      <h4>${esc(p.nome)}</h4>
+      <div class="paz-meta">📅 ${p.data_piano||'–'} · ${new Date(p.saved_at).toLocaleDateString('it')}</div>
+      <div class="paz-tag">${count} alimenti</div>
+      <div class="paz-actions"><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPaz('${p.id}')">🗑️</button></div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+async function caricaPaz(id){
+  if(dirty&&!confirm('Modifiche non salvate. Caricare?'))return;
+  showLoading(true);
+  const {data,error}=await sb.from('piani').select('*').eq('id',id).single();
+  showLoading(false);
+  if(error||!data){toast('❌ Errore caricamento','err');return;}
+  document.getElementById('inp-nome').value=data.nome;
+  document.getElementById('inp-data').value=data.data_piano||'';
+  try{meals=JSON.parse(data.meals||'[]').map(m=>({...m,collapsed:false,items:(m.items||[{nome:'',qt:'',altPrint:[]}]).map(i=>({...i,altPrint:i.altPrint||[]}))}));}catch{meals=[];}
+  currentPaz=id;dirty=false;
+  goPage('piano');renderPiano();
+  toast(`📂 "${data.nome}" caricato!`,'ok');
+}
+
+async function delPaz(id){
+  if(!confirm('Eliminare questo piano?'))return;
+  showLoading(true);
+  await sb.from('piani').delete().eq('id',id);
+  showLoading(false);
+  renderPazienti();toast('🗑️ Eliminato','info');
+}
+
+// ════════════════════════════════════════════════════════════
+// ALTERNATIVE EQUIVALENTI
+// ════════════════════════════════════════════════════════════
+let altNutrient='ch';
+
+function openAlt(mi,ii){
+  altMi=mi;altIi=ii;
+  const item=meals[mi].items[ii];
+  const f=lookup(item.nome);
+  if(!item.nome||!f){toast('Seleziona prima un alimento valido','err');return;}
+  document.getElementById('alt-title').textContent=`⇄ Alternative a: ${item.nome} (${item.qt||0}g)`;
+  document.getElementById('alt-nutrient-btns').innerHTML=ALL_NUTRIENTS.map(b=>
+    `<button class="mtog${altNutrient===b.k?' on':''}" onclick="setAltNutrient('${b.k}')">${b.l}</button>`
+  ).join('');
+  showAlternatives();
+  openM('modal-alt');
+}
+
+function setAltNutrient(k){
+  altNutrient=k;
+  document.querySelectorAll('#alt-nutrient-btns .mtog').forEach((b,i)=>{
+    b.classList.toggle('on', ALL_NUTRIENTS[i] && ALL_NUTRIENTS[i].k===k);
+  });
+  showAlternatives();
+}
+
+function showAlternatives(){
+  const item=meals[altMi].items[altIi];
+  const f=lookup(item.nome);if(!f)return;
+  const qt=parseFloat(item.qt)||100;
+  const targetVal=(f[altNutrient]||0)/100*qt;
+  const nutriLabel=(ALL_NUTRIENTS.find(n=>n.k===altNutrient)||{l:altNutrient}).l;
+  if(targetVal<=0){
+    document.getElementById('alt-results').innerHTML=`<p style="color:var(--slate-l);font-size:13px">Nessun valore per <b>${nutriLabel}</b> in questo alimento.</p>`;
+    return;
+  }
+  const alts=ALL_DB.filter(alt=>alt.n!==f.n&&alt[altNutrient]&&alt[altNutrient]>0)
+    .map(alt=>{const newQt=Math.round((targetVal/(alt[altNutrient]/100))*10)/10;
+      return{food:alt,newQt,kcal:Math.round((alt.k||0)/100*newQt),prot:r1((alt.p||0)/100*newQt),diff:Math.abs(newQt-qt)};})
+    .filter(a=>a.newQt>0&&a.newQt<2000).sort((a,b)=>a.diff-b.diff).slice(0,15);
+  if(!alts.length){document.getElementById('alt-results').innerHTML='<p style="color:var(--slate-l)">Nessuna alternativa trovata.</p>';return;}
+  const currentPrint=(item.altPrint||[]).map(a=>a.nome);
+  const rows=alts.map(a=>{
+    const inPrint=currentPrint.includes(a.food.n);
+    return `<div class="alt-item" style="flex-wrap:wrap">
+      <div class="ai-nome" style="flex:1;min-width:160px">${esc(a.food.n)}
+        <span class="ac-src ${a.food.src==='CREA'?'src-crea':a.food.src==='BDA'?'src-bda':'src-custom'}">${a.food.src}</span>
+      </div>
+      <span class="ai-qt">${a.newQt}g</span>
+      <span class="ai-diff">${a.kcal}kcal · P${a.prot}g</span>
+      <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">Sostituisci</button>
+      <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}"
+        onclick="addAltToPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">
+        ${inPrint?'✅ In stampa':'📄 +Stampa'}
+      </button>
+    </div>`;
+  }).join('');
+  document.getElementById('alt-results').innerHTML=`
+    <p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">
+      <b>${qt}g di ${f.n}</b> apportano <b>${r1(targetVal)} ${nutriLabel}</b>. Le alternative sotto forniscono la stessa quantità:
+    </p>${rows}
+    <p style="font-size:11px;color:var(--slate-l);margin-top:8px">📄 "+Stampa" aggiunge l'alternativa sotto l'alimento nel piano stampato.</p>`;
+}
+
+function removeAltPrint(mi,ii,ai){
+  if(!meals[mi].items[ii].altPrint)return;
+  meals[mi].items[ii].altPrint.splice(ai,1);
+  markDirty();renderPiano();
+  toast('🗑️ Alternativa rimossa dalla stampa','info');
+}
+
+function addAltToPrint(mi,ii,nome,qt){
+  if(!meals[mi].items[ii].altPrint) meals[mi].items[ii].altPrint=[];
+  const idx=meals[mi].items[ii].altPrint.findIndex(a=>a.nome===nome);
+  if(idx>=0){
+    meals[mi].items[ii].altPrint.splice(idx,1);
+    toast(`🗑️ "${nome}" rimosso dalla stampa`,'info');
+  } else {
+    meals[mi].items[ii].altPrint.push({nome,qt});
+    toast(`📄 "${nome}" aggiunto alla stampa!`,'ok');
+  }
+  markDirty();
+  showAlternatives(); // refresh modal buttons
+  renderPiano();      // refresh rows
+}
+
+function applyAlt(mi,ii,nome,qt){
+  meals[mi].items[ii].nome=nome;meals[mi].items[ii].qt=qt;
+  if(!meals[mi].items[ii].altPrint) meals[mi].items[ii].altPrint=[];
+  markDirty();closeM('modal-alt');renderPiano();
+  toast(`✅ Sostituito con ${nome} (${qt}g)!`,'ok');
+}
+function escJS(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+
+// ════════════════════════════════════════════════════════════
+// DATABASE VIEW
+// ════════════════════════════════════════════════════════════
+let dbInited=false;
+function initDB(){
+  if(!dbInited){
+    const cats=[...new Set(ALL_DB.map(f=>f.c))].sort();
+    const sel=document.getElementById('db-cat');
+    cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+    const hdrCols=['Alimento','Categoria','Kcal','Prot','Gr.Sat','Gr.Tot','Zucc','CHO','Fibra','Calcio','Ferro','Mg','K','Na','Zn','Fo','Se','Col'];
+    document.getElementById('db-thead-row').innerHTML=hdrCols.map(c=>`<th>${c}</th>`).join('');
+    dbInited=true;
+  }
+  renderDB();
+}
+
+function switchDbTab(tab){
+  dbTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const idx={crea:0,bda:1,custom:2}[tab]||0;
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.getElementById('db-search').value='';
+  document.getElementById('db-cat').value='';
+  renderDB();
+}
+
+function renderDB(){
+  const q=(document.getElementById('db-search')||{value:''}).value.toLowerCase();
+  const cat=(document.getElementById('db-cat')||{value:''}).value;
+  let pool=dbTab==='crea'?DB_CREA:dbTab==='bda'?DB_BDA:CUSTOM_DB;
+  const filtered=pool.filter(f=>{
+    if(q&&!f.n.toLowerCase().includes(q))return false;
+    if(cat&&f.c!==cat)return false;
+    return true;
+  });
+  document.getElementById('db-count').textContent=`${filtered.length} alimenti`;
+  const tbody=document.getElementById('db-tbody');if(!tbody)return;
+  function nf(v){return(v===null||v===undefined)?'<span style="color:#CBD5E1">—</span>':v===0?'0':v;}
+  tbody.innerHTML=filtered.slice(0,300).map(f=>`<tr><td>${esc(f.n)}</td><td><span class="ac-cat">${esc(f.c)}</span></td><td>${nf(f.k)}</td><td>${nf(f.p)}</td><td>${nf(f.gs)}</td><td>${nf(f.g)}</td><td>${nf(f.z)}</td><td>${nf(f.ch)}</td><td>${nf(f.fi)}</td><td>${nf(f.ca)}</td><td>${nf(f.fe)}</td><td>${nf(f.mg)}</td><td>${nf(f.k2)}</td><td>${nf(f.na)}</td><td>${nf(f.zn)}</td><td>${nf(f.fo)}</td><td>${nf(f.se)}</td><td>${nf(f.col)}</td></tr>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// AGGIUNGI CUSTOM
+// ════════════════════════════════════════════════════════════
+function salvaCustom(){
+  const nome=document.getElementById('add-nome').value.trim();
+  if(!nome){toast('Nome obbligatorio','err');return;}
+  if(ALL_DB.find(f=>f.n.toLowerCase()===nome.toLowerCase())){toast('Alimento già presente','err');return;}
+  const gv=id=>{const v=parseFloat(document.getElementById(id).value);return isNaN(v)?null:v;};
+  const dbTarget=document.getElementById('add-db').value||'custom';
+  const item={n:nome,c:document.getElementById('add-cat').value||'Personalizzato',src:dbTarget==='crea'?'CREA':dbTarget==='bda'?'BDA':'Custom',
+    k:gv('add-k'),p:gv('add-p'),gs:gv('add-gs'),g:gv('add-g'),z:gv('add-z'),ch:gv('add-ch'),fi:gv('add-fi'),
+    ca:gv('add-ca'),fe:gv('add-fe'),mg:gv('add-mg2'),k2:gv('add-k2'),na:gv('add-na'),zn:gv('add-zn'),fo:gv('add-fo'),se:gv('add-se'),col:gv('add-col')};
+  CUSTOM_DB.push(item);rebuildDB();
+  resetAddForm();dbInited=false;
+  toast(`✅ "${nome}" aggiunto!`,'ok');
+}
+function resetAddForm(){['add-nome','add-k','add-p','add-gs','add-g','add-z','add-ch','add-fi','add-ca','add-fe','add-mg2','add-k2','add-na','add-zn','add-fo','add-se','add-col'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
+
+// ════════════════════════════════════════════════════════════
+// ESPORTA EXCEL
+// ════════════════════════════════════════════════════════════
+function esportaExcel(){
+  const nome=document.getElementById('inp-nome').value||'Paziente';
+  const data=document.getElementById('inp-data').value||todayISO();
+  const COL_HDR=['Alimento','Qt (g)','Kcal','Proteine (g)','Grassi Sat. (g)','Grassi Tot. (g)','Zuccheri (g)','CHO (g)','Fibra (g)','Calcio (mg)','Ferro (mg)','Magnesio (mg)','Potassio (mg)','Sodio (mg)','Zinco (mg)','Fosforo (mg)','Selenio (µg)','Colesterolo (mg)','Categoria','Fonte'];
+  const KEYS=['k','p','gs','g','z','ch','fi','ca','fe','mg','k2','na','zn','fo','se','col'];
+  const style=`<style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt}.section-title{background:#1E293B;color:white;font-size:12pt;font-weight:bold;padding:6px 10px;margin-top:18px}.col-hdr{background:#0F766E;color:white;font-size:9.5pt;font-weight:bold;padding:4px 7px;text-align:center;border:1px solid #0C5F58}.data-row td{padding:3px 7px;border:1px solid #E2E8F0;font-size:10pt}.data-row:nth-child(even) td{background:#F8FAFC}.num-cell{text-align:right}.nd-cell{color:#CBD5E1;text-align:center;font-style:italic}.total-row td{background:#0F766E;color:white;font-weight:bold;padding:5px 7px;border:1px solid #0C5F58;text-align:center}.grand-total td{background:#D97706;color:white;font-weight:bold;padding:5px 8px;border:1px solid #B45309}</style>`;
+  function nv(f,k,qt){if(!f||f[k]==null)return null;return Math.round((f[k]/100*(parseFloat(qt)||0))*100)/100;}
+  function td(v){if(v===null||v===undefined)return`<td class="nd-cell">—</td>`;return`<td class="num-cell">${v===0?'0':v}</td>`;}
+  let body=`<h1 style="color:#0F766E;font-family:Calibri">🥗 Piano Alimentare — ${esc(nome)} — ${data}</h1><br>`;
+  meals.forEach((meal,mi)=>{
+    const filled=meal.items.filter(i=>i.nome&&i.nome.trim());
+    body+=`<div class="section-title">${meal.emoji} ${meal.nome.toUpperCase()}</div><table width="100%"><tr>${COL_HDR.map(h=>`<th class="col-hdr">${h}</th>`).join('')}</tr>`;
+    if(!filled.length){body+=`<tr class="data-row"><td colspan="${COL_HDR.length}" style="text-align:center;font-style:italic;color:#94A3B8">(vuoto)</td></tr>`;}
+    else{filled.forEach(item=>{const f=lookup(item.nome);const qt=parseFloat(item.qt)||0;body+=`<tr class="data-row"><td>${esc(item.nome)}</td><td class="num-cell">${qt}</td>${KEYS.map(k=>td(nv(f,k,qt))).join('')}<td>${f?esc(f.c):''}</td><td>${f?f.src:''}</td></tr>`;});}
+    const t=sumMeal(mi);
+    body+=`<tr class="total-row"><td>∑ TOTALE ${meal.nome.toUpperCase()}</td><td>—</td><td>${t.kcal}</td><td>${t.prot}</td><td>${t.fatSat}</td><td>${t.fat}</td><td>${t.z}</td><td>${t.cho}</td><td>${t.fibra}</td><td colspan="${KEYS.length-7+2}"></td></tr></table><br>`;
+  });
+  let totK=0,totP=0,totCh=0,totG=0,totFi=0;
+  body+=`<br><div class="section-title">📊 RIEPILOGO GIORNATA</div><table width="60%"><tr style="background:#334155;color:white"><td>Pasto</td><td>Kcal</td><td>Proteine</td><td>CHO</td><td>Grassi</td><td>Fibra</td></tr>`;
+  meals.forEach((meal,mi)=>{const t=sumMeal(mi);totK+=t.kcal;totP+=t.prot;totCh+=t.cho;totG+=t.fat;totFi+=t.fibra;body+=`<tr><td>${meal.emoji} ${esc(meal.nome)}</td><td>${t.kcal}</td><td>${t.prot}</td><td>${t.cho}</td><td>${t.fat}</td><td>${t.fibra}</td></tr>`;});
+  body+=`<tr class="grand-total"><td>TOTALE</td><td>${Math.round(totK)}</td><td>${r1(totP)}</td><td>${r1(totCh)}</td><td>${r1(totG)}</td><td>${r1(totFi)}</td></tr></table>`;
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8">${style}</head><body>${body}</body></html>`;
+  const blob=new Blob(['\uFEFF'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`PianoAlimentare_${nome.replace(/\s+/g,'_')}_${data}.xls`;a.click();URL.revokeObjectURL(url);
+  toast('📥 File Excel scaricato!','ok');
+}
+
+// ════════════════════════════════════════════════════════════
+// STAMPA PDF
+// ════════════════════════════════════════════════════════════
+function stampaPDF(){
+  meals.forEach(m=>m.collapsed=false);renderPiano();
+  setTimeout(()=>window.print(),400);
+}
+
+// ════════════════════════════════════════════════════════════
+// MODAL
+// ════════════════════════════════════════════════════════════
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-bg').forEach(mb=>mb.addEventListener('click',e=>{if(e.target===mb)mb.classList.remove('open');}));
+
+// ════════════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════════════
+let tT=null;
+function toast(msg,type='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+type+' show';clearTimeout(tT);tT=setTimeout(()=>el.className='toast',3000);}
+
+// ════════════════════════════════════════════════════════════
+// PATOLOGIE
+// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+// PATOLOGIE — DATI COMPLETI (25 patologie)
+// ════════════════════════════════════════════════════════════
+const PATOLOGIE_BASE=[
+  {id:'diabete',emoji:'🩸',nome:'Diabete Mellito Tipo 2',badge:'ESPEN 2023',colore:'#3B82F6',
+   desc:'Basso IG, ricca di fibre, grassi insaturi. Controllo glicemico e peso corporeo.',
+   note:'ESPEN 2023 · CHO 45-60% (basso IG), fibra ≥25g/die, proteine 1.0-1.2g/kg/die, grassi saturi <10% energia totale. Monitorare HbA1c.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte scremato',qt:'200'},{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Lenticchie secche',qt:'40'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Broccoli',qt:'150'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'irc',emoji:'🫘',nome:'Insufficienza Renale Cronica',badge:'ESPEN 2021',colore:'#F97316',
+   desc:'Ridotto apporto di potassio, fosforo, sodio e proteine. Stadio 3-4 senza dialisi.',
+   note:'ESPEN 2021 · Proteine 0.6-0.8g/kg/die (stadio 3-4) · Fosforo <800mg/die · Potassio <2000mg/die · Sodio <2g/die · Evitare eccesso di liquidi.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Fette biscottate',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Caffè espresso',qt:'60'},{nome:'Latte parz. scremato UHT',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pollo petto (senza pelle)',qt:'80'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pane bianco',qt:'50'},{nome:'Merluzzo',qt:'120'},{nome:'Carota',qt:'100'},{nome:'Cetriolo',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
+   ]},
+  {id:'dialisi',emoji:'💧',nome:'Dialisi (Emodialisi / Peritoneale)',badge:'ESPEN 2021',colore:'#06B6D4',
+   desc:'Apporto proteico aumentato per compensare le perdite dialitiche. Controllo K, P, Na, liquidi.',
+   note:'ESPEN 2021 · Proteine 1.2-1.4g/kg/die (emodialisi) · Energia 30-35 kcal/kg/die · K <2000mg/die · P <800mg/die · Liquidi <1000-1500ml/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Fette biscottate',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Uovo di gallina intero crudo',qt:'60'},{nome:'Caffè espresso',qt:'60'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Gallette di riso',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane bianco',qt:'40'},{nome:'Ricotta vaccina',qt:'60'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Cetriolo',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'obesita',emoji:'⚖️',nome:'Obesità / Sovrappeso',badge:'ESPEN 2022',colore:'#22C55E',
+   desc:'Deficit calorico moderato (-500/750 kcal), alta densità nutrizionale, proteine aumentate.',
+   note:'ESPEN 2022 · Deficit 500-750 kcal/die · Proteine 1.2-1.5g/kg peso ideale/die · Fibre ≥30g/die · Limitare zuccheri semplici e grassi saturi.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'30'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Tonno in scatola al naturale',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'8'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'250'},{nome:'Patata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+   ]},
+  {id:'dislipidemia',emoji:'🫀',nome:'Dislipidemia',badge:'ESC/EAS 2019',colore:'#EF4444',
+   desc:'Riduzione grassi saturi e colesterolo. Omega-3, fibre solubili, fitosteroli.',
+   note:'ESC/EAS 2019 · Grassi saturi <7% energia · Colesterolo alimentare <200mg/die · Omega-3 ≥2g/die · Fibre solubili ≥10g/die · Fitosteroli 2g/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'60'},{nome:'Latte scremato',qt:'200'},{nome:'Noci',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Salmone atlantico',qt:'120'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Spinaci crudi',qt:'150'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Orzo perlato crudo',qt:'70'},{nome:'Ceci secchi',qt:'50'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'ipertensione',emoji:'💊',nome:'Ipertensione Arteriosa',badge:'DASH/ESH 2023',colore:'#6366F1',
+   desc:'Dieta DASH-mediterranea. Sodio ridotto, ricca di potassio, calcio, magnesio.',
+   note:'ESH 2023 + DASH · Sodio <2g/die (ideale <1.5g) · Potassio ≥3.5g/die · Calcio ≥1000mg/die · Magnesio ≥300mg/die · Alcol limitato.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Banana',qt:'100'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Kiwi',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'80'},{nome:'Spinaci crudi',qt:'200'},{nome:'Fagioli borlotti secchi',qt:'50'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'200'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Branzino (spigola)',qt:'180'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'celiachia',emoji:'🌾',nome:'Celiachia / Gluten-Free',badge:'AIC/ESPEN',colore:'#EAB308',
+   desc:'Completamente priva di glutine. Attenzione a cross-contaminazione. Reintegro Fe, Ca, folati.',
+   note:'AIC/ESPEN · Dieta rigorosamente GF a vita · Monitorare Fe, Ca, folati, B12, vitamina D · Evitare cross-contaminazione · Preferire cereali naturalmente GF.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Gallette di riso',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pera',qt:'150'}]}
+   ]},
+  {id:'ibd',emoji:'🦠',nome:'IBD - Crohn / RCU (remissione)',badge:'ECCO/ESPEN 2023',colore:'#14B8A6',
+   desc:'Anti-infiammatoria, facilmente digeribile. Adattata alla fase di remissione.',
+   note:'ECCO-ESPEN 2023 · In remissione: dieta mediterranea a basso residuo · Omega-3 benefici · Evitare cibi pro-infiammatori · In riacutizzazione: nutrizione enterale esclusiva.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Fette biscottate',qt:'40'},{nome:'Marmellata / confettura',qt:'20'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Banana',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Ricotta vaccina',qt:'60'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tacchino petto',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'sarcopenia',emoji:'💪',nome:'Sarcopenia / Anziano Fragile',badge:'ESPEN 2018',colore:'#A855F7',
+   desc:'Alto apporto proteico per prevenire la sarcopenia. Leucina, vitamina D, omega-3.',
+   note:'ESPEN 2018 · Proteine ≥1.2-1.5g/kg/die · Leucina ≥3g/pasto · Vitamina D 800-1000 UI/die · Omega-3 · Attività fisica di resistenza raccomandata.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Uovo di gallina intero crudo',qt:'120'},{nome:'Latte intero fresco',qt:'200'},{nome:'Pane integrale',qt:'50'},{nome:'Marmellata / confettura',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mandorle dolci secche',qt:'25'},{nome:'Banana',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Manzo magro',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Parmigiano Reggiano',qt:'20'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Ricotta vaccina',qt:'150'},{nome:'Noci',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'180'},{nome:'Quinoa cruda',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'steatosi',emoji:'🫁',nome:'Steatosi Epatica (NAFLD/MASLD)',badge:'EASL/ESPEN 2024',colore:'#F59E0B',
+   desc:'Restrizione calorica moderata, eliminazione fruttosio e alcol, dieta mediterranea.',
+   note:'EASL 2024 · Riduzione peso 7-10% se sovrappeso · Eliminare alcol e fruttosio aggiunto · Dieta mediterranea · Omega-3 EPA/DHA 2-4g/die · Vitamina E 800 UI/die (selezionati) · Caffeina permessa.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Caffè espresso',qt:'60'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Noci',qt:'25'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Sgombro',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Spinaci crudi',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Arancia',qt:'150'}]}
+   ]},
+  {id:'cirrosi',emoji:'🏥',nome:'Cirrosi Epatica',badge:'EASL/ESPEN 2019',colore:'#DC2626',
+   desc:'Apporto energetico aumentato, proteine non ridotte. Piccoli pasti frequenti. Snack serale.',
+   note:'EASL/ESPEN 2019 · Energia 35-40 kcal/kg/die · Proteine 1.2-1.5g/kg/die (non limitare) · 4-6 pasti/die · Snack a base di CHO la sera (50g CHO) · Na <2g/die se ascite · BCAA se encefalopatia.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Fette biscottate',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Uovo di gallina intero crudo',qt:'60'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Banana',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'40'},{nome:'Ricotta vaccina',qt:'80'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino serale (CHO)',emoji:'🌛',items:[{nome:'Pane bianco',qt:'50'},{nome:'Miele millefiori',qt:'15'}]}
+   ]},
+  {id:'bpco',emoji:'🫁',nome:'BPCO (Broncopneumopatia Cronica)',badge:'ESPEN 2021',colore:'#0EA5E9',
+   desc:'Alto apporto calorico, limitare eccesso di CHO (aumenta CO2). Grassi come fonte energetica.',
+   note:'ESPEN 2021 · Energia 30-40 kcal/kg/die · Proteine 1.2-1.5g/kg/die · CHO non >50% per limitare produzione di CO2 · Grassi 35-45% · Pasti piccoli e frequenti · Vitamina D, calcio.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Uovo di gallina intero crudo',qt:'120'},{nome:'Pane integrale',qt:'50'},{nome:'Avocado',qt:'60'},{nome:'Latte intero fresco',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Noci',qt:'25'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'30'},{nome:'Pera',qt:'130'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Manzo magro',qt:'150'},{nome:'Patata',qt:'120'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
+   ]},
+  {id:'calcolosi',emoji:'💎',nome:'Calcolosi Renale (ossalato Ca)',badge:'EAU 2022',colore:'#64748B',
+   desc:'Idratazione abbondante, calcio adeguato, ridurre ossalati, sale e proteine animali.',
+   note:'EAU 2022 · Liquidi ≥2.5L/die (diuresi >2L) · Calcio 1000-1200mg/die (non ridurre) · Sodio <5g NaCl/die · Ossalati limitati · Proteine animali <0.8g/kg/die · Vitamina C <1000mg/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'250'},{nome:'Fette biscottate',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Ricotta vaccina',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'120'},{nome:'Patata',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pane integrale',qt:'40'}]}
+   ]},
+  {id:'gotta',emoji:'🦶',nome:'Iperuricemia / Gotta',badge:'ACR/EULAR 2020',colore:'#EC4899',
+   desc:'Riduzione purine, alcol zero, abbondante idratazione, controllo fruttosio.',
+   note:'ACR/EULAR 2020 · Evitare carni rosse, frattaglie, pesce grasso, alcol (soprattutto birra) · Fruttosio limitato · Latticini scremati protettivi · Idratazione ≥2L/die · Vitamina C utile.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte scremato',qt:'250'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Fragola',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Lattuga',qt:'100'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'anemia',emoji:'🩸',nome:'Anemia Sideropenica',badge:'WHO/LARN 2022',colore:'#B91C1C',
+   desc:'Ferro eme e non-eme, vitamina C per assorbimento, evitare inibitori del ferro ai pasti.',
+   note:'WHO/LARN 2022 · Ferro eme (carni) + non-eme (legumi, verdure) · Vitamina C ai pasti aumenta assorbimento · Evitare tè/caffè/calcio ai pasti principali · Folati e B12 adeguati.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Succo di arancia',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte scremato',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Kiwi',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Lenticchie secche',qt:'80'},{nome:'Spinaci crudi',qt:'150'},{nome:'Manzo magro',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Succo di arancia',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Fragola',qt:'200'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Fagioli borlotti secchi',qt:'60'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'oncologia',emoji:'🎗️',nome:'Oncologia / Cachessia Neoplastica',badge:'ESPEN 2021',colore:'#7C3AED',
+   desc:'Prevenire la cachessia: alto apporto proteico e calorico, omega-3, nutrizione adattata.',
+   note:'ESPEN 2021 · Energia 25-30 kcal/kg/die (cachessia: 30-35) · Proteine 1.2-2.0g/kg/die · Omega-3 EPA 2g/die · Supporto nutrizionale precoce · ONS se intake <60% per >1 settimana.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'250'},{nome:'Pane integrale',qt:'60'},{nome:'Burro di arachidi',qt:'20'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'150'},{nome:'Noci',qt:'30'},{nome:'Miele millefiori',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'90'},{nome:'Manzo magro',qt:'150'},{nome:'Parmigiano Reggiano',qt:'20'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pomodoro rosso',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Ricotta vaccina',qt:'150'},{nome:'Miele millefiori',qt:'20'},{nome:'Banana',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'180'},{nome:'Riso bianco crudo',qt:'90'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
+   ]},
+  {id:'osteoporosi',emoji:'🦴',nome:'Osteoporosi',badge:'IOF/ESPEN 2021',colore:'#9CA3AF',
+   desc:'Calcio, vitamina D, proteine adeguate. Limitare alcol, sale, caffeina eccessiva.',
+   note:'IOF 2021 · Calcio 1000-1200mg/die · Vitamina D 800-2000 UI/die · Proteine 1.0-1.2g/kg/die · Limitare alcol e sodio · Vitamina K2 90-120µg/die · Attività fisica con carico.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'250'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mandorle dolci secche',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Kiwi',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Parmigiano Reggiano',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Tofu naturale',qt:'150'},{nome:'Riso integrale crudo',qt:'80'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'scompenso',emoji:'❤️',nome:'Scompenso Cardiaco',badge:'ESC/ESPEN 2021',colore:'#E11D48',
+   desc:'Restrizione sodio e liquidi, densità nutrizionale elevata, monitoraggio peso quotidiano.',
+   note:'ESC 2021 · Sodio <2g/die · Liquidi 1.5-2L/die se riacutizzazione · Energia 25-30 kcal/kg/die · Proteine 1.0-1.2g/kg/die · Potassio adeguato (diuretici) · Pesi quotidiani.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte scremato',qt:'200'},{nome:'Fette biscottate',qt:'30'},{nome:'Marmellata / confettura',qt:'15'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Banana',qt:'100'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'130'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'pancreatite',emoji:'🔴',nome:'Pancreatite Cronica',badge:'AGA/ESPEN 2020',colore:'#F97316',
+   desc:'Grassi limitati, pasti piccoli e frequenti, no alcol, enzimi pancreatici se insufficienza.',
+   note:'AGA/ESPEN 2020 · Grassi <40g/die in fase acuta (poi liberalizzare) · Alcol zero · Pasti 5-6/die piccoli · Se steatorrea: enzimi pancreatici · Vitamina D, B12, zinco da monitorare.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte scremato',qt:'200'},{nome:'Fette biscottate',qt:'40'},{nome:'Marmellata / confettura',qt:'15'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mela',qt:'130'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Ricotta vaccina',qt:'60'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+   ]},
+  {id:'gravidanza',emoji:'🤰',nome:'Gravidanza (II-III trimestre)',badge:'LARN 2023/ACOG',colore:'#EC4899',
+   desc:'Aumento fabbisogno energetico, folati, ferro, calcio, iodio, DHA.',
+   note:'LARN 2023 · +350 kcal/die (II trim) / +460 kcal/die (III trim) · Folati 600µg/die · Ferro 27mg/die · Calcio 1000mg/die · DHA 200mg/die extra · Iodio 220µg/die · Evitare alimenti a rischio.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'250'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Fragola',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Kiwi',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'90'},{nome:'Lenticchie secche',qt:'60'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Parmigiano Reggiano',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'40'},{nome:'Ricotta vaccina',qt:'80'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'allattamento',emoji:'🍼',nome:'Allattamento',badge:'LARN 2023',colore:'#F472B6',
+   desc:'Fabbisogno calorico aumentato, DHA, calcio, vitamina D, idratazione abbondante.',
+   note:'LARN 2023 · +500 kcal/die · DHA 200mg/die extra · Calcio 1000mg/die · Vitamina D 1500 UI/die · Iodio 290µg/die · Liquidi ≥2L/die · Limitare caffeina <200mg/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'300'},{nome:"Fiocchi d'avena",qt:'60'},{nome:'Banana',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'150'},{nome:'Fragola',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'90'},{nome:'Salmone atlantico',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Parmigiano Reggiano',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'50'},{nome:'Ricotta vaccina',qt:'100'},{nome:'Miele millefiori',qt:'10'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Manzo magro',qt:'150'},{nome:'Spinaci crudi',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]}
+];
+
+// Merge base + custom user patologie
+let PATOLOGIE_CUSTOM=[];
+function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}
+
+const PATOLOGIE=[
+  {id:'diabete',emoji:'🩸',nome:'Diabete Mellito Tipo 2',badge:'ESPEN 2023',
+   colore:'#3B82F6',desc:'Basso IG, ricca di fibre, grassi insaturi. Controllo glicemico e peso.',
+   note:'ESPEN 2023 · CHO 45-60%, fibra ≥25g/die, proteine 1-1.2g/kg/die, grassi <35% tot (saturi <10%).',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte scremato',qt:'200'},{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Lenticchie secche',qt:'40'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Broccoli',qt:'150'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+  ]},
+  {id:'irc',emoji:'🫘',nome:'Insufficienza Renale Cronica',badge:'ESPEN 2021',
+   colore:'#F97316',desc:'Ridotto apporto di potassio, fosforo, sodio e proteine. Previene iperkaliemia/iperfosfatemia.',
+   note:'ESPEN 2021 · Proteine 0.6-0.8g/kg/die (stadio 3-4 senza dialisi) · Fosforo <800mg/die · Potassio <2000mg/die · Sodio <2g/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Fette biscottate',qt:'40'},{nome:"Marmellata / confettura",qt:'20'},{nome:'Caffè espresso',qt:'60'},{nome:'Latte parz. scremato UHT',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pollo petto (senza pelle)',qt:'80'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pane bianco',qt:'50'},{nome:'Merluzzo',qt:'120'},{nome:'Carota',qt:'100'},{nome:'Cetriolo',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
+  ]},
+  {id:'obesita',emoji:'⚖️',nome:'Obesità / Sovrappeso',badge:'ESPEN 2022',
+   colore:'#22C55E',desc:'Deficit calorico moderato, alta densità nutrizionale. Proteine aumentate per preservare la massa magra.',
+   note:'ESPEN 2022 · Deficit 500-750 kcal/die · Proteine 1.2-1.5g/kg peso ideale/die · Fibre ≥30g/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'30'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Tonno in scatola al naturale',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'8'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'250'},{nome:'Patata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+  ]},
+  {id:'dislipidemia',emoji:'🫀',nome:'Dislipidemia',badge:'ESC/EAS 2019',
+   colore:'#EF4444',desc:'Riduzione grassi saturi e colesterolo. Omega-3, fibre solubili, fitosteroli.',
+   note:'ESC/EAS 2019 · Grassi saturi <7% tot · Colesterolo <200mg/die · Omega-3 ≥2g/die · Fibre solubili ≥10g/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'60'},{nome:'Latte scremato',qt:'200'},{nome:'Noci',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Salmone atlantico',qt:'120'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Spinaci crudi',qt:'150'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Orzo perlato crudo',qt:'70'},{nome:'Ceci secchi',qt:'50'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+  ]},
+  {id:'ipertensione',emoji:'💊',nome:'Ipertensione Arteriosa',badge:'DASH/ESH 2023',
+   colore:'#6366F1',desc:'Dieta DASH-mediterranea. Ridotto sodio, ricca di potassio, calcio, magnesio.',
+   note:'ESH 2023 + DASH · Sodio <2g/die · Potassio ≥3.5g/die · Calcio ≥1000mg/die · Magnesio ≥300mg/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Banana',qt:'100'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Kiwi',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'80'},{nome:'Spinaci crudi',qt:'200'},{nome:'Fagioli borlotti secchi',qt:'50'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'200'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Branzino (spigola)',qt:'180'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+  ]},
+  {id:'celiachia',emoji:'🌾',nome:'Celiachia / Gluten-Free',badge:'AIC/ESPEN',
+   colore:'#EAB308',desc:'Completamente priva di glutine. Attenzione a cross-contaminazione. Reintegro ferro, calcio, folati.',
+   note:'AIC/ESPEN · Tutti gli alimenti devono essere naturalmente GF o certificati. Monitorare Fe, Ca, folati, B12, vitamina D.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Gallette di riso',qt:'40'},{nome:"Marmellata / confettura",qt:'20'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pera',qt:'150'}]}
+  ]},
+  {id:'ibd',emoji:'🦠',nome:'IBD - Malattia Infiammatoria Intestinale',badge:'ECCO/ESPEN 2023',
+   colore:'#14B8A6',desc:'Anti-infiammatoria, facilmente digeribile. Adattata alla fase: remissione o riacutizzazione.',
+   note:'ECCO-ESPEN 2023 · In remissione: dieta mediterranea a basso residuo. In riacutizzazione: nutrizione enterale esclusiva. Omega-3 benefici.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Fette biscottate',qt:'40'},{nome:"Marmellata / confettura",qt:'20'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Banana',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Ricotta vaccina',qt:'60'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tacchino petto',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+  ]},
+  {id:'sarcopenia',emoji:'💪',nome:'Sarcopenia / Anziano',badge:'ESPEN 2018',
+   colore:'#A855F7',desc:'Alto apporto proteico per prevenire e trattare la sarcopenia. Leucina, vitamina D, omega-3.',
+   note:'ESPEN 2018 · Proteine ≥1.2-1.5g/kg/die · Leucina ≥3g/pasto · Vitamina D 800-1000 UI/die · Omega-3.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Uovo di gallina intero crudo',qt:'120'},{nome:'Latte intero fresco',qt:'200'},{nome:'Pane integrale',qt:'50'},{nome:"Marmellata / confettura",qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mandorle dolci secche',qt:'25'},{nome:'Banana',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Manzo magro',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Parmigiano Reggiano',qt:'20'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Ricotta vaccina',qt:'150'},{nome:'Noci',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'180'},{nome:'Quinoa cruda',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+  ]}
+];
+
+let patologiaSelezionata=null;
+
+function renderPatologie(){
+  const g=document.getElementById('pat-grid');
+  if(!g)return;
+  g.innerHTML=PATOLOGIE.map(p=>`
+    <div onclick="showPatologia('${p.id}')" style="background:white;border-radius:12px;border:1.5px solid var(--border);padding:16px;cursor:pointer;transition:all .15s;border-top:3px solid ${p.colore}"
+      onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)';this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.boxShadow='';this.style.transform=''">
+      <div style="font-size:24px;margin-bottom:6px">${p.emoji}</div>
+      <div style="font-weight:700;font-size:13.5px;color:var(--slate);margin-bottom:3px">${p.nome}</div>
+      <span style="font-size:9.5px;padding:2px 7px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8">${p.badge}</span>
+      <p style="font-size:11.5px;color:var(--slate-l);margin-top:8px;line-height:1.5">${p.desc}</p>
+    </div>`).join('');
+}
+
+function showPatologia(id){
+  patologiaSelezionata=PATOLOGIE.find(p=>p.id===id);
+  if(!patologiaSelezionata)return;
+  const p=patologiaSelezionata;
+  document.getElementById('pat-detail-title').innerHTML=`${p.emoji} ${p.nome}`;
+  let html=`<div style="background:#F8FAFC;border-radius:8px;padding:12px 16px;margin-bottom:16px;border-left:3px solid ${p.colore}">
+    <div style="font-size:11.5px;color:var(--slate-m);line-height:1.6;font-weight:500">📚 ${p.note}</div></div>`;
+  p.pasti.forEach(pasto=>{
+    html+=`<div style="margin-bottom:14px"><div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:6px">${pasto.emoji} ${pasto.nome}</div>
+      <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+        <thead><tr style="background:var(--slate);color:#CBD5E1">
+          <th style="padding:5px 8px;text-align:left">Alimento</th>
+          <th style="padding:5px 8px;text-align:center">Qt(g)</th>
+          <th style="padding:5px 8px;text-align:center">Kcal</th>
+          <th style="padding:5px 8px;text-align:center">Prot(g)</th>
+          <th style="padding:5px 8px;text-align:center">CHO(g)</th>
+          <th style="padding:5px 8px;text-align:center">Grassi(g)</th>
+        </tr></thead><tbody>`;
+    let tk=0,tp=0,tch=0,tg=0;
+    pasto.items.forEach(item=>{
+      const f=lookup(item.nome);const qt=parseFloat(item.qt)||0;
+      if(f){tk+=(f.k||0)/100*qt;tp+=(f.p||0)/100*qt;tch+=(f.ch||0)/100*qt;tg+=(f.g||0)/100*qt;}
+      html+=`<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:4px 8px;font-weight:500">${esc(item.nome)}</td>
+        <td style="padding:4px 8px;text-align:center">${item.qt}</td>
+        <td style="padding:4px 8px;text-align:center">${f?Math.round((f.k||0)/100*qt):'—'}</td>
+        <td style="padding:4px 8px;text-align:center">${f?Math.round((f.p||0)/100*qt*10)/10:'—'}</td>
+        <td style="padding:4px 8px;text-align:center">${f?Math.round((f.ch||0)/100*qt*10)/10:'—'}</td>
+        <td style="padding:4px 8px;text-align:center">${f?Math.round((f.g||0)/100*qt*10)/10:'—'}</td>
+      </tr>`;
+    });
+    html+=`<tr style="background:var(--teal);color:white;font-weight:700">
+      <td style="padding:5px 8px">Totale</td><td style="text-align:center">—</td>
+      <td style="text-align:center">${Math.round(tk)}</td><td style="text-align:center">${Math.round(tp*10)/10}</td>
+      <td style="text-align:center">${Math.round(tch*10)/10}</td><td style="text-align:center">${Math.round(tg*10)/10}</td>
+    </tr></tbody></table></div>`;
+  });
+  const det=document.getElementById('pat-detail');
+  document.getElementById('pat-detail-body').innerHTML=html;
+  det.style.display='block';
+  setTimeout(()=>det.scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+
+function caricaPatologia(){
+  if(!patologiaSelezionata){toast('Seleziona prima una patologia','err');return;}
+  if(dirty&&!confirm('Modifiche non salvate. Continuare?'))return;
+  meals=patologiaSelezionata.pasti.map(pasto=>({
+    id:'pat'+Date.now()+Math.random(),
+    nome:pasto.nome,emoji:pasto.emoji,
+    items:pasto.items.map(i=>({nome:i.nome,qt:i.qt,altPrint:[]})),
+    collapsed:false
+  }));
+  document.getElementById('inp-nome').value='';
+  document.getElementById('inp-data').value=todayISO();
+  dirty=true;currentPaz=null;
+  goPage('piano');renderPiano();
+  toast(`✅ Piano "${patologiaSelezionata.nome}" caricato!`,'ok');
+}
+
+// ════════════════════════════════════════════════════════════
+// ADMIN PANEL
+// ════════════════════════════════════════════════════════════
+async function loadAdmin(){
+  if(!isAdmin){toast('Accesso negato','err');return;}
+  const tbody=document.getElementById('admin-tbody');
+  if(!tbody)return;
+  tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--slate-l)">⏳ Caricamento...</td></tr>';
+  const {data,error}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
+  if(error||!data){tbody.innerHTML='<tr><td colspan="5">Errore caricamento</td></tr>';return;}
+  if(!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--slate-l)">Nessun utente registrato.</td></tr>';return;}
+  tbody.innerHTML=data.map(p=>{
+    const stato=p.is_admin
+      ?'<span style="background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">👑 Admin</span>'
+      :p.approved
+        ?'<span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">✅ Approvato</span>'
+        :'<span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">⏳ In attesa</span>';
+    const azioni=[];
+    if(!p.approved&&!p.is_admin) azioni.push(`<button class="btn btn-primary btn-xs" onclick="approveUser('${p.id}',true)">✅ Approva</button>`);
+    if(p.approved&&!p.is_admin) azioni.push(`<button class="btn btn-danger btn-xs" onclick="approveUser('${p.id}',false)">🚫 Revoca</button>`);
+    if(!p.is_admin&&p.id!==currentUser?.id) azioni.push(`<button class="btn btn-xs" style="background:#EDE9FE;color:#5B21B6;border:none" onclick="toggleAdmin('${p.id}',true)">👑 Promuovi Admin</button>`);
+    return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 12px">${esc(p.email||'')}</td>
+      <td style="padding:8px 12px">${esc(p.username||'—')}</td>
+      <td style="padding:8px 12px">${stato}</td>
+      <td style="padding:8px 12px;font-size:11px;color:var(--slate-l)">${p.created_at?new Date(p.created_at).toLocaleDateString('it'):''}</td>
+      <td style="padding:8px 12px;display:flex;gap:5px;flex-wrap:wrap">${azioni.join('')}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function approveUser(id,approved){
+  await sb.from('profiles').update({approved}).eq('id',id);
+  toast(approved?'✅ Utente approvato! Ora può accedere.':'🚫 Accesso revocato.','ok');
+  loadAdmin();
+}
+
+async function toggleAdmin(id,val){
+  await sb.from('profiles').update({is_admin:val,approved:true}).eq('id',id);
+  toast('👑 Ruolo admin aggiornato','ok');
+  loadAdmin();
+}
+
+// ════════════════════════════════════════════════════════════
+// NUOVA PATOLOGIA PERSONALIZZATA
+// ════════════════════════════════════════════════════════════
+function openNuovaPatologia(){
+  // Carica la patologia corrente nel piano e permette di salvarla come personalizzata
+  const modal=`<div class="modal-bg open" id="modal-nuovapat" onclick="if(event.target===this)closeM('modal-nuovapat')">
+    <div class="modal" style="max-width:420px">
+      <div class="mhdr"><h2>➕ Nuova Patologia Personalizzata</h2><button class="mclose" onclick="closeM('modal-nuovapat')">✕</button></div>
+      <div class="mbody">
+        <div class="fg" style="margin-bottom:10px"><label>Nome Patologia *</label><input type="text" id="np-pnom" placeholder="es. Sindrome Metabolica..."></div>
+        <div class="fg" style="margin-bottom:10px"><label>Emoji</label><input type="text" id="np-pemo" value="🏥" maxlength="5" style="width:70px"></div>
+        <div class="fg" style="margin-bottom:10px"><label>Badge (es. ESPEN 2024)</label><input type="text" id="np-pbadge" placeholder="ESPEN 2024"></div>
+        <div class="fg" style="margin-bottom:10px"><label>Colore card</label><input type="color" id="np-pcolor" value="#0F766E"></div>
+        <div class="fg" style="margin-bottom:10px"><label>Descrizione breve</label><input type="text" id="np-pdesc" placeholder="Breve descrizione..."></div>
+        <div class="fg"><label>Note linee guida</label><textarea id="np-pnote" placeholder="Raccomandazioni nutrizionali..."></textarea></div>
+        <p style="font-size:11.5px;color:var(--slate-l);margin-top:10px">💡 Il piano alimentare della nuova patologia verrà popolato dai pasti attualmente nell'editor. Crea prima un piano tipo, poi salva qui.</p>
+      </div>
+      <div class="mfoot">
+        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-nuovapat')">Annulla</button>
+        <button class="btn btn-primary btn-sm" onclick="salvaPatologiaCustom()">💾 Salva Patologia</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend',modal);
+}
+
+async function salvaPatologiaCustom(){
+  const nome=document.getElementById('np-pnom').value.trim();
+  if(!nome){toast('Inserisci nome patologia','err');return;}
+  const pat={
+    id:'custom_'+Date.now(),
+    emoji:document.getElementById('np-pemo').value||'🏥',
+    nome,
+    badge:document.getElementById('np-pbadge').value||'Personalizzato',
+    colore:document.getElementById('np-pcolor').value||'#0F766E',
+    desc:document.getElementById('np-pdesc').value||'',
+    note:document.getElementById('np-pnote').value||'',
+    pasti:meals.filter(m=>m.items.some(i=>i.nome)).map(m=>({
+      nome:m.nome,emoji:m.emoji,
+      items:m.items.filter(i=>i.nome).map(i=>({nome:i.nome,qt:String(i.qt)}))
+    })),
+    isCustom:true
+  };
+  // Save to Supabase
+  showLoading(true);
+  const {error}=await sb.from('patologie_custom').upsert({
+    user_id:currentUser.id,
+    pat_id:pat.id,
+    data:JSON.stringify(pat)
+  });
+  showLoading(false);
+  if(error){
+    // Fallback: save locally
+    PATOLOGIE_CUSTOM.push(pat);
+  } else {
+    PATOLOGIE_CUSTOM.push(pat);
+  }
+  closeM('modal-nuovapat');
+  renderPatologie();
+  toast('✅ Patologia "'+nome+'" salvata!','ok');
+}
+
+async function loadPatologieCustom(){
+  if(!currentUser)return;
+  try{
+    const {data}=await sb.from('patologie_custom').select('*').eq('user_id',currentUser.id);
+    if(data&&data.length){
+      PATOLOGIE_CUSTOM=data.map(r=>{try{return JSON.parse(r.data);}catch{return null;}}).filter(Boolean);
+    }
+  }catch(e){console.log('patologie_custom table not found, skip');}
+}
+
+// ════════════════════════════════════════════════════════════
+// CARTELLE PAZIENTI
+// ════════════════════════════════════════════════════════════
+function openNewCartella(){
+  document.getElementById('nc-nome').value='';
+  document.getElementById('nc-ddn').value='';
+  document.getElementById('nc-note').value='';
+  openM('modal-newcartella');
+  setTimeout(()=>document.getElementById('nc-nome').focus(),200);
+}
+
+async function creaCartella(){
+  const nome=document.getElementById('nc-nome').value.trim();
+  if(!nome){toast('Inserisci nome paziente','err');return;}
+  const ddn=document.getElementById('nc-ddn').value;
+  const note=document.getElementById('nc-note').value.trim();
+  showLoading(true);
+  const {data,error}=await sb.from('cartelle').insert({
+    user_id:currentUser.id,nome,ddn:ddn||null,note:note||null,created_at:new Date().toISOString()
+  }).select().single();
+  showLoading(false);
+  if(error){toast('❌ Errore: '+error.message,'err');return;}
+  closeM('modal-newcartella');
+  toast('📁 Cartella "'+nome+'" creata!','ok');
+  loadCartelle();
+}
+
+let cartellaAperta=null;
+
+async function loadCartelle(){
+  const wrap=document.getElementById('cartelle-wrap');
+  if(!wrap)return;
+  if(cartellaAperta){await renderCartellaDetail(cartellaAperta);return;}
+  wrap.innerHTML='<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
+  const {data,error}=await sb.from('cartelle').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  if(error||!data){wrap.innerHTML='<div class="empty-state"><div class="ei">❌</div><h3>Errore</h3></div>';return;}
+  if(!data.length){wrap.innerHTML='<div class="empty-state"><div class="ei">📁</div><h3>Nessuna cartella</h3><p>Crea la prima cartella con il pulsante in alto.</p></div>';return;}
+  wrap.innerHTML='<div class="paz-grid">'+data.map(c=>{
+    const eta=c.ddn?calcolaEta(c.ddn):'';
+    return `<div class="paz-card" onclick="apriCartella('${c.id}')">
+      <h4>📁 ${esc(c.nome)}</h4>
+      <div class="paz-meta">${eta?'Età: '+eta+' anni · ':''}${new Date(c.created_at).toLocaleDateString('it')}</div>
+      ${c.note?'<div style="font-size:11px;color:var(--slate-l);margin-top:4px;font-style:italic">'+esc(c.note.substring(0,60))+'...</div>':''}
+      <div class="paz-actions">
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delCartella('${c.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function calcolaEta(ddn){
+  if(!ddn)return '';
+  const oggi=new Date();const nato=new Date(ddn);
+  let eta=oggi.getFullYear()-nato.getFullYear();
+  if(oggi<new Date(oggi.getFullYear(),nato.getMonth(),nato.getDate()))eta--;
+  return eta;
+}
+
+async function apriCartella(id){
+  cartellaAperta=id;
+  await renderCartellaDetail(id);
+}
+
+async function renderCartellaDetail(id){
+  const wrap=document.getElementById('cartelle-wrap');
+  wrap.innerHTML='<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
+  const [{data:cart},{data:piani}]=await Promise.all([
+    sb.from('cartelle').select('*').eq('id',id).single(),
+    sb.from('piani').select('*').eq('cartella_id',id).order('saved_at',{ascending:false})
+  ]);
+  if(!cart){wrap.innerHTML='<p>Errore</p>';return;}
+  const eta=cart.ddn?calcolaEta(cart.ddn):'—';
+  wrap.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="cartellaAperta=null;loadCartelle()">← Tutte le cartelle</button>
+      <h3 style="font-size:16px;font-weight:700">📁 ${esc(cart.nome)}</h3>
+      ${cart.ddn?'<span style="font-size:12px;color:var(--slate-l)">Età: '+eta+' anni</span>':''}
+    </div>
+    ${cart.note?'<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)">'+esc(cart.note)+'</div>':''}
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm" onclick="nuovoPianoInCartella('${id}')">📋 Nuovo Piano in questa Cartella</button>
+    </div>
+    <h4 style="font-size:13px;font-weight:700;color:var(--slate-m);margin-bottom:8px">📋 Piani salvati (${(piani||[]).length})</h4>
+    ${!(piani&&piani.length)?'<div class="empty-state"><div class="ei">📄</div><h3>Nessun piano ancora</h3><p>Crea un piano e salvalo in questa cartella.</p></div>':
+    '<div class="paz-grid">'+piani.map(p=>{
+      let mealsParsed=[];try{mealsParsed=JSON.parse(p.meals||'[]');}catch{}
+      const count=mealsParsed.reduce((s,m)=>s+(m.items||[]).filter(i=>i.nome).length,0);
+      return `<div class="paz-card" onclick="caricaPaz('${p.id}')">
+        <h4>${esc(p.nome)}</h4>
+        <div class="paz-meta">📅 ${p.data_piano||'–'} · ${new Date(p.saved_at).toLocaleDateString('it')}</div>
+        <div class="paz-tag">${count} alimenti</div>
+        <div class="paz-actions"><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPaz('${p.id}')">🗑️</button></div>
+      </div>`;
+    }).join('')+'</div>'}`;
+}
+
+function nuovoPianoInCartella(cartellaId){
+  if(dirty&&!confirm('Modifiche non salvate. Continuare?'))return;
+  meals=DEFAULT_MEALS.map(m=>({...m,items:[{nome:'',qt:'',altPrint:[]}],collapsed:false}));
+  document.getElementById('inp-nome').value='';
+  document.getElementById('inp-data').value=todayISO();
+  dirty=false;currentPaz=null;
+  // Store cartella to save into
+  window._pendingCartellaId=cartellaId;
+  goPage('piano');renderPiano();
+  toast('📋 Nuovo piano. Clicca 💾 Salva per salvarlo nella cartella.','info');
+}
+
+async function delCartella(id){
+  if(!confirm('Eliminare questa cartella e tutti i piani al suo interno?'))return;
+  showLoading(true);
+  await sb.from('piani').delete().eq('cartella_id',id);
+  await sb.from('cartelle').delete().eq('id',id);
+  showLoading(false);
+  cartellaAperta=null;
+  loadCartelle();
+  toast('🗑️ Cartella eliminata','info');
+}
+
+// Override salvaPaziente to support cartelle
+const _origSalvaPaziente = salvaPaziente;
+salvaPaziente = async function(){
+  const nome=document.getElementById('inp-nome').value.trim();
+  if(!nome){toast('Inserisci nome paziente','err');return;}
+  const data=document.getElementById('inp-data').value||todayISO();
+  const payload={
+    user_id:currentUser.id,nome,data_piano:data,
+    meals:JSON.stringify(meals),saved_at:new Date().toISOString(),
+    cartella_id:window._pendingCartellaId||null
+  };
+  showLoading(true);
+  let result;
+  if(currentPaz){result=await sb.from('piani').update(payload).eq('id',currentPaz);}
+  else{result=await sb.from('piani').insert(payload).select().single();if(result.data)currentPaz=result.data.id;}
+  showLoading(false);
+  if(result.error){toast('❌ '+result.error.message,'err');return;}
+  window._pendingCartellaId=null;
+  dirty=false;
+  toast('💾 "'+nome+'" salvato!','ok');
+};
+
+// ════════════════════════════════════════════════════════════
+// VALUTAZIONE PAZIENTE & FABBISOGNO
+// ════════════════════════════════════════════════════════════
+const FABBISOGNO_PATOLOGIE={
+  diabete:{kcal:'25-35 kcal/kg/die (peso ideale)',prot:'1.0-1.2 g/kg/die',note:'ESPEN 2023. Preferire peso ideale o aggiustato se sovrappeso. CHO 45-60% (basso IG). Fibre ≥25g/die. Grassi saturi <10%.'},
+  irc:{kcal:'30-35 kcal/kg/die',prot:'0.6-0.8 g/kg/die (pre-dialisi stadio 3-4)',note:'ESPEN 2021. Fosforo <800mg/die. Potassio <2000mg/die. Sodio <2g/die. Se GFR<25: supplementazione di keto-analoghi.'},
+  dialisi:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.4 g/kg/die (emodialisi), 1.2-1.5 (peritoneale)',note:'ESPEN 2021. Le perdite proteiche dialitiche richiedono apporto aumentato. Fosforo <800mg, K <2g, Na <2g/die. Liquidi 500ml + diuresi residua.'},
+  obesita:{kcal:'Deficit 500-750 kcal/die sul TDEE (min 1200F/1500M)',prot:'1.2-1.5 g/kg peso ideale/die',note:'ESPEN 2022. Usare peso ideale per calcolo proteico. Fibre ≥30g/die. Limitare zuccheri semplici. Obiettivo -0.5/1kg/settimana.'},
+  dislipidemia:{kcal:'Normocalorica o ipocalorica se sovrappeso',prot:'1.0-1.2 g/kg/die',note:'ESC/EAS 2019. Grassi saturi <7% tot. Colesterolo <200mg/die. Omega-3 ≥2g/die. Fibre solubili ≥10g. Fitosteroli 2g/die.'},
+  ipertensione:{kcal:'Normocalorica o deficit se sovrappeso',prot:'1.0-1.2 g/kg/die',note:'ESH 2023. Sodio <2g/die (ideale <1.5g). Potassio ≥3.5g/die. DASH diet. Alcol <14 unità/settimana uomini, <7 donne.'},
+  celiachia:{kcal:'Normocalorica (adattata al peso)',prot:'1.0-1.2 g/kg/die',note:'AIC/ESPEN. Dieta rigorosamente gluten-free. Monitorare Fe, Ca, folati, B12, vitamina D, zinco. Evitare cross-contaminazione.'},
+  ibd:{kcal:'25-30 kcal/kg/die (remissione), 30-35 (riacutizzazione)',prot:'1.2-1.5 g/kg/die',note:'ECCO-ESPEN 2023. In riacutizzazione grave: nutrizione enterale esclusiva. Omega-3 anti-infiammatori. Monitorare Fe, B12, vitamina D, zinco.'},
+  sarcopenia:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die (fino a 2.0 se molto sedentario/malnutrito)',note:'ESPEN 2018. Leucina ≥3g/pasto (stimola sintesi proteica). Vitamina D 800-1000 UI/die. Omega-3. Attività fisica di resistenza fondamentale.'},
+  steatosi:{kcal:'Deficit 500-750 kcal se BMI>25 (obiettivo -7-10% peso)',prot:'1.2-1.5 g/kg/die',note:'EASL 2024. Eliminare alcol e fruttosio aggiunto. Dieta mediterranea. Omega-3 EPA/DHA 2-4g/die. Vitamina E 800 UI/die (NASH selezionata). Caffeina permessa.'},
+  cirrosi:{kcal:'35-40 kcal/kg/die (peso secco)',prot:'1.2-1.5 g/kg/die (non ridurre!)',note:'EASL/ESPEN 2019. Non limitare proteine (aumenta mortalità). 4-6 pasti/die. Snack serale CHO (50g). Sodio <2g se ascite. BCAA se encefalopatia.'},
+  bpco:{kcal:'30-40 kcal/kg/die (aumentato per lavoro respiratorio)',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. CHO non >50% (aumenta produzione CO2). Grassi 35-45% energia. Pasti piccoli e frequenti. Vitamina D, calcio. Evitare sovrappeso.'},
+  calcolosi:{kcal:'Normocalorica',prot:'0.8-1.0 g/kg/die (limitare animali)',note:'EAU 2022. Liquidi ≥2.5L/die. Calcio 1000-1200mg/die (NON ridurre). Sodio <5g NaCl. Ossalati limitati. Vitamina C <1000mg. Purine ridotte.'},
+  gotta:{kcal:'Ipocalorica se sovrappeso',prot:'1.0 g/kg/die (limitare animali)',note:'ACR/EULAR 2020. Alcol zero (soprattutto birra). Evitare frattaglie, carni rosse, pesce grasso. Fruttosio limitato. Latticini scremati protettivi. Idratazione ≥2L/die.'},
+  anemia:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'WHO/LARN 2022. Ferro eme (carne) + non-eme (legumi, verdure a foglia). Vitamina C ai pasti principali. Evitare tè, caffè, calcio ai pasti (inibiscono assorbimento Fe). Folati e B12 adeguati.'},
+  oncologia:{kcal:'25-30 kcal/kg/die (cachessia: 30-35)',prot:'1.2-2.0 g/kg/die',note:'ESPEN 2021. Supporto nutrizionale precoce. Omega-3 EPA 2g/die (anti-cachessia). ONS se intake <60% per >7 giorni. Nutrizione enterale se tratto GI funzionante.'},
+  osteoporosi:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'IOF 2021. Calcio 1000-1200mg/die. Vitamina D 800-2000 UI/die. Vitamina K2 90-120µg/die. Limitare alcol e sodio. Attività fisica con carico. Evitare diete molto ipocaloriche.'},
+  scompenso:{kcal:'25-30 kcal/kg/die',prot:'1.0-1.2 g/kg/die',note:'ESC 2021. Sodio <2g/die. Liquidi 1.5-2L/die se edemi. Monitorare potassio (diuretici). Peso quotidiano. Alcol limitato o assente. Piccoli pasti frequenti.'},
+  pancreatite:{kcal:'25-35 kcal/kg/die',prot:'1.0-1.5 g/kg/die',note:'AGA/ESPEN 2020. Alcol zero. Grassi <40g/die se steatorrea (poi liberalizzare). 5-6 pasti piccoli. Enzimi pancreatici se insufficienza esocrina. Vitamina D, B12, zinco.'},
+  gravidanza:{kcal:'+350 kcal/die (II trim), +460 kcal/die (III trim)',prot:'+25g/die rispetto al fabbisogno base',note:'LARN 2023. Folati 600µg/die. Ferro 27mg/die. Calcio 1000mg/die. DHA 200mg/die extra. Iodio 220µg/die. Evitare: alcol, crudi animali, pesce ad alto Hg, fegato eccessivo.'},
+  allattamento:{kcal:'+500 kcal/die',prot:'+28g/die rispetto al fabbisogno base',note:'LARN 2023. DHA 200mg/die extra. Calcio 1000mg/die. Vitamina D 1500 UI/die. Iodio 290µg/die. Liquidi ≥2L/die. Caffeina <200mg/die.'},
+  fenilchetonuria:{kcal:'Normocalorica',prot:'Fenilalanina <300mg/die (da alimenti naturali)',note:'ACMG 2014. Fenilalanina monitorata e limitata. Integratori di aminoacidi senza Phe obbligatori. Tirosina supplementata. Vitamina B12, D, selenio, zinco.'},
+  hiv:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'WHO/ESPEN. Prevenire la malnutrizione. Micronutrienti: zinco, selenio, vitamina D, B12. Attenzione a interazioni farmaci-nutrienti (antiretrovirali). Lipodistrofia: limitare grassi saturi.'}
+};
+
+const LAF_OPTIONS=[
+  {label:'Sedentario (allettato/minima attività)',val:1.2},
+  {label:'Leggermente attivo (1-3 gg/sett)',val:1.375},
+  {label:'Moderatamente attivo (3-5 gg/sett)',val:1.55},
+  {label:'Molto attivo (6-7 gg/sett)',val:1.725},
+  {label:'Estremamente attivo (atleta/lavoro fisico)',val:1.9}
+];
+
+const FC_OPTIONS=[
+  {label:'Nessun fattore correttivo',val:1.0},
+  {label:'Stress lieve (chirurgia minore, infezione lieve)',val:1.1},
+  {label:'Stress moderato (chirurgia maggiore, sepsi)',val:1.2},
+  {label:'Stress severo (politrauma, ustioni gravi)',val:1.4},
+  {label:'Febbre (+13% per ogni °C >37)',val:1.13},
+  {label:'Crescita/gravidanza',val:1.15},
+  {label:'Obesità (usare peso aggiustato)',val:1.0}
+];
+
+function updateFabbisognoPatologia(){
+  const val=document.getElementById('val-patologia').value;
+  const box=document.getElementById('val-patologia-box');
+  if(!val||!FABBISOGNO_PATOLOGIE[val]){box.style.display='none';return;}
+  const fp=FABBISOGNO_PATOLOGIE[val];
+  box.style.display='block';
+  box.innerHTML=`<b style="font-size:12px;color:var(--teal-d)">📋 Raccomandazioni ESPEN/LG per ${document.getElementById('val-patologia').options[document.getElementById('val-patologia').selectedIndex].text}</b><br>
+    <span style="color:#1e40af">🔥 Energia:</span> <b>${fp.kcal}</b><br>
+    <span style="color:#15803d">💪 Proteine:</span> <b>${fp.prot}</b><br>
+    <span style="color:var(--slate-m);font-size:11px;margin-top:4px;display:block">📚 ${fp.note}</span>`;
+}
+
+function resetVal(){
+  ['val-eta','val-peso','val-altezza','val-pi','val-pa','val-vita','val-fianchi','val-braccio','val-plica','val-mg','val-mm'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('val-sesso').value='M';
+  document.getElementById('val-patologia').value='';
+  document.getElementById('val-patologia-box').style.display='none';
+  document.getElementById('val-indici').innerHTML='<p style="color:var(--slate-l);font-size:13px">Inserisci i dati e clicca Calcola.</p>';
+  document.getElementById('val-mb').innerHTML='<p style="color:var(--slate-l);font-size:13px">—</p>';
+  document.getElementById('val-fet').innerHTML='<p style="color:var(--slate-l);font-size:13px">—</p>';
+  document.getElementById('val-prot').innerHTML='<p style="color:var(--slate-l);font-size:13px">—</p>';
+}
+
+function calcolaFabbisogno(){
+  const sesso=document.getElementById('val-sesso').value;
+  const eta=parseFloat(document.getElementById('val-eta').value);
+  const peso=parseFloat(document.getElementById('val-peso').value);
+  const altezza=parseFloat(document.getElementById('val-altezza').value);
+  const vita=parseFloat(document.getElementById('val-vita').value)||null;
+  const fianchi=parseFloat(document.getElementById('val-fianchi').value)||null;
+  const mgPct=parseFloat(document.getElementById('val-mg').value)||null;
+
+  if(!eta||!peso||!altezza){toast('Inserisci età, peso e altezza','err');return;}
+
+  const altM=altezza/100;
+  const bmi=peso/(altM*altM);
+
+  // Peso ideale (Lorenz)
+  const pi=sesso==='M'?(altezza-100)-((altezza-150)/4):(altezza-100)-((altezza-150)/2.5);
+  const piEl=document.getElementById('val-pi');
+  if(piEl&&!piEl.value)piEl.value=Math.round(pi*10)/10;
+
+  // Peso aggiustato
+  const pa=pi+0.25*(peso-pi);
+  const paEl=document.getElementById('val-pa');
+  if(paEl&&!paEl.value)paEl.value=Math.round(pa*10)/10;
+
+  // Massa magra
+  let mm=null;
+  if(mgPct!==null){mm=peso*(1-mgPct/100);const mmEl=document.getElementById('val-mm');if(mmEl)mmEl.value=Math.round(mm*10)/10;}
+
+  // BMI categoria
+  let bmiCat='';
+  if(bmi<18.5)bmiCat='⚠️ Sottopeso';
+  else if(bmi<25)bmiCat='✅ Normopeso';
+  else if(bmi<30)bmiCat='⚠️ Sovrappeso';
+  else if(bmi<35)bmiCat='🔴 Obesità I';
+  else if(bmi<40)bmiCat='🔴 Obesità II';
+  else bmiCat='🔴 Obesità III (grave)';
+
+  // WHR / WHtR
+  const whr=vita&&fianchi?vita/fianchi:null;
+  const whtr=vita?vita/altezza:null;
+  const whrRisk=whr?(sesso==='M'?whr>0.9:whr>0.85)?'🔴 Rischio elevato':'✅ OK':null;
+
+  // INDICI
+  let indiciHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px">';
+  indiciHTML+='<div style="background:#F0FDF4;border-radius:8px;padding:10px"><b>BMI</b><br><span style="font-size:18px;font-weight:700;color:var(--teal)">'+Math.round(bmi*10)/10+'</span><br><span style="font-size:11px">'+bmiCat+'</span></div>';
+  indiciHTML+='<div style="background:#EFF6FF;border-radius:8px;padding:10px"><b>Peso Ideale (Lorenz)</b><br><span style="font-size:18px;font-weight:700;color:#1D4ED8">'+Math.round(pi*10)/10+' kg</span></div>';
+  indiciHTML+='<div style="background:#FFF7ED;border-radius:8px;padding:10px"><b>Peso Aggiustato</b><br><span style="font-size:18px;font-weight:700;color:#C2410C">'+Math.round(pa*10)/10+' kg</span><br><span style="font-size:10px">(se obeso)</span></div>';
+  if(mm!==null)indiciHTML+='<div style="background:#FAF5FF;border-radius:8px;padding:10px"><b>Massa Magra</b><br><span style="font-size:18px;font-weight:700;color:#7E22CE">'+Math.round(mm*10)/10+' kg</span></div>';
+  if(whr!==null)indiciHTML+='<div style="background:#F0FDF4;border-radius:8px;padding:10px"><b>WHR (Vita/Fianchi)</b><br><span style="font-size:16px;font-weight:700">'+Math.round(whr*100)/100+'</span><br><span style="font-size:11px">'+whrRisk+'</span></div>';
+  if(whtr!==null)indiciHTML+='<div style="background:#FFFBEB;border-radius:8px;padding:10px"><b>WHtR (Vita/Altezza)</b><br><span style="font-size:16px;font-weight:700">'+Math.round(whtr*100)/100+'</span><br><span style="font-size:11px">'+(whtr>0.5?'⚠️ Rischio metabolico':'✅ OK')+'</span></div>';
+  indiciHTML+='</div>';
+  document.getElementById('val-indici').innerHTML=indiciHTML;
+
+  // MB con 5 formule
+  const pesoCalcolo=bmi>=30?pa:peso;
+  const hbM=66.47+(13.75*pesoCalcolo)+(5.003*altezza)-(6.755*eta);
+  const hbF=655.1+(9.563*pesoCalcolo)+(1.85*altezza)-(4.676*eta);
+  const hb=sesso==='M'?hbM:hbF;
+
+  // Mifflin-St Jeor
+  const miffM=(10*pesoCalcolo)+(6.25*altezza)-(5*eta)+5;
+  const miffF=(10*pesoCalcolo)+(6.25*altezza)-(5*eta)-161;
+  const miff=sesso==='M'?miffM:miffF;
+
+  // Schofield (peso)
+  let schof=0;
+  if(sesso==='M'){
+    if(eta<3)schof=0.249*pesoCalcolo-0.127;
+    else if(eta<10)schof=0.095*pesoCalcolo+2.110;
+    else if(eta<18)schof=0.074*pesoCalcolo+2.754;
+    else if(eta<30)schof=0.063*pesoCalcolo+2.896;
+    else if(eta<60)schof=0.048*pesoCalcolo+3.653;
+    else schof=0.049*pesoCalcolo+2.459;
+    schof*=1000;
+  }else{
+    if(eta<3)schof=0.244*pesoCalcolo-0.130;
+    else if(eta<10)schof=0.085*pesoCalcolo+2.033;
+    else if(eta<18)schof=0.056*pesoCalcolo+2.898;
+    else if(eta<30)schof=0.062*pesoCalcolo+2.036;
+    else if(eta<60)schof=0.034*pesoCalcolo+3.538;
+    else schof=0.038*pesoCalcolo+2.755;
+    schof*=1000;
+  }
+
+  // FAO/WHO 1985
+  let faoWho=0;
+  if(sesso==='M'){
+    if(eta<3)faoWho=60.9*pesoCalcolo-54;
+    else if(eta<10)faoWho=22.7*pesoCalcolo+495;
+    else if(eta<18)faoWho=17.5*pesoCalcolo+651;
+    else if(eta<30)faoWho=15.3*pesoCalcolo+679;
+    else if(eta<60)faoWho=11.6*pesoCalcolo+879;
+    else faoWho=13.5*pesoCalcolo+487;
+  }else{
+    if(eta<3)faoWho=61.0*pesoCalcolo-51;
+    else if(eta<10)faoWho=22.5*pesoCalcolo+499;
+    else if(eta<18)faoWho=12.2*pesoCalcolo+746;
+    else if(eta<30)faoWho=14.7*pesoCalcolo+496;
+    else if(eta<60)faoWho=8.7*pesoCalcolo+829;
+    else faoWho=10.5*pesoCalcolo+596;
+  }
+
+  // Katch-McArdle (se massa magra disponibile)
+  const kma=mm!==null?370+(21.6*mm):null;
+
+  const formule=[
+    {nome:'Harris-Benedict (1919)',val:Math.round(hb),badge:'Più usata clinicamente'},
+    {nome:'Mifflin-St Jeor (1990)',val:Math.round(miff),badge:'Più accurata generale'},
+    {nome:'Schofield (1985)',val:Math.round(schof),badge:'LARN / OMS'},
+    {nome:'FAO/WHO (1985)',val:Math.round(faoWho),badge:'Standard internazionale'},
+  ];
+  if(kma!==null)formule.push({nome:'Katch-McArdle (con MM)',val:Math.round(kma),badge:'Accurata se massa magra nota'});
+
+  const mbMedio=Math.round(formule.reduce((s,f)=>s+f.val,0)/formule.length);
+
+  document.getElementById('val-mb').innerHTML=`
+    <div style="display:grid;gap:8px">
+      ${formule.map(f=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#F8FAFC;border-radius:8px;border:1px solid var(--border)">
+        <div><div style="font-weight:600;font-size:12.5px">${f.nome}</div><div style="font-size:10.5px;color:var(--slate-l)">${f.badge}</div></div>
+        <div style="font-size:18px;font-weight:700;color:var(--teal)">${f.val} <span style="font-size:11px;color:var(--slate-l)">kcal</span></div>
+      </div>`).join('')}
+      <div style="background:var(--teal);color:white;padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+        <b>Media delle formule</b><span style="font-size:20px;font-weight:700">${mbMedio} kcal</span>
+      </div>
+    </div>`;
+
+  // FET con LAF e FC
+  const lafSel=`<select id="val-laf" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;margin-bottom:8px" onchange="calcolaFET(${mbMedio})">
+    ${LAF_OPTIONS.map((l,i)=>`<option value="${l.val}" ${i===1?'selected':''}>${l.label} (×${l.val})</option>`).join('')}
+  </select>`;
+  const fcSel=`<select id="val-fc" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;margin-bottom:12px" onchange="calcolaFET(${mbMedio})">
+    ${FC_OPTIONS.map((f,i)=>`<option value="${f.val}" ${i===0?'selected':''}>${f.label}</option>`).join('')}
+  </select>`;
+
+  document.getElementById('val-fet').innerHTML=`
+    <div style="font-size:12px;font-weight:600;color:var(--slate-m);margin-bottom:4px">Livello Attività Fisica (LAF):</div>
+    ${lafSel}
+    <div style="font-size:12px;font-weight:600;color:var(--slate-m);margin-bottom:4px">Fattore di Correzione (FC):</div>
+    ${fcSel}
+    <div id="val-fet-result"></div>`;
+
+  calcolaFET(mbMedio);
+
+  // Fabbisogno proteico
+  const patVal=document.getElementById('val-patologia').value;
+  const fp=patVal&&FABBISOGNO_PATOLOGIE[patVal]?FABBISOGNO_PATOLOGIE[patVal]:null;
+  const pesoRef=bmi>=30?pa:peso;
+  const protMin=Math.round(pesoRef*1.0*10)/10;
+  const protMax=Math.round(pesoRef*1.2*10)/10;
+
+  document.getElementById('val-prot').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px;margin-bottom:10px">
+      <div style="background:#F0FDF4;border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">1.0 g/kg/die</div><div style="font-size:20px;font-weight:700;color:#15803D">${protMin}g</div></div>
+      <div style="background:#F0FDF4;border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">1.2 g/kg/die</div><div style="font-size:20px;font-weight:700;color:#15803D">${protMax}g</div></div>
+      <div style="background:#EFF6FF;border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">1.5 g/kg/die</div><div style="font-size:20px;font-weight:700;color:#1D4ED8">${Math.round(pesoRef*1.5*10)/10}g</div></div>
+      <div style="background:#EFF6FF;border-radius:8px;padding:10px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">2.0 g/kg/die</div><div style="font-size:20px;font-weight:700;color:#1D4ED8">${Math.round(pesoRef*2.0*10)/10}g</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--slate-l);margin-bottom:8px">Peso di riferimento usato: <b>${pesoRef}kg</b> ${bmi>=30?'(aggiustato, BMI≥30)':'(attuale)'}</div>
+    ${fp?'<div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:10px;font-size:12px;color:#1E3A5F"><b>📋 Raccomandazione specifica:</b> '+fp.prot+'<br><span style="font-size:11px">'+fp.note+'</span></div>':''}`;
+}
+
+function calcolaFET(mb){
+  const lafEl=document.getElementById('val-laf');
+  const fcEl=document.getElementById('val-fc');
+  const resEl=document.getElementById('val-fet-result');
+  if(!lafEl||!fcEl||!resEl)return;
+  const laf=parseFloat(lafEl.value)||1.375;
+  const fc=parseFloat(fcEl.value)||1.0;
+  const tdee=Math.round(mb*laf);
+  const tdeeFc=Math.round(tdee*fc);
+  const patVal=document.getElementById('val-patologia').value;
+  const fp=patVal&&FABBISOGNO_PATOLOGIE[patVal]?FABBISOGNO_PATOLOGIE[patVal]:null;
+  resEl.innerHTML=`
+    <div style="display:grid;gap:8px">
+      <div style="background:#FFF7ED;border-radius:8px;padding:10px;display:flex;justify-content:space-between;align-items:center">
+        <div><b>TDEE (MB × LAF)</b><div style="font-size:11px;color:var(--slate-l)">Fabbisogno energetico totale</div></div>
+        <span style="font-size:20px;font-weight:700;color:#C2410C">${tdee} kcal</span>
+      </div>
+      ${fc!==1?'<div style="background:#FFFBEB;border-radius:8px;padding:10px;display:flex;justify-content:space-between;align-items:center"><div><b>TDEE × FC (fattore correttivo)</b><div style="font-size:11px;color:var(--slate-l)">Con stress metabolico</div></div><span style="font-size:20px;font-weight:700;color:#B45309">'+tdeeFc+' kcal</span></div>':''}
+      ${fp?'<div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:10px;font-size:12px;color:#1E3A5F"><b>📋 Raccomandazione LG per la patologia:</b> '+fp.kcal+'</div>':''}
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+function init(){
+  rebuildDB();
+  meals=DEFAULT_MEALS.map(m=>({...m,items:[{nome:'',qt:'',altPrint:[]}],collapsed:false}));
+  document.getElementById('inp-data').value=todayISO();
+  dirty=false;currentPaz=null;
+  renderPiano();
+  loadPatologieCustom();
+}
+
+// Start
+checkSession();
+</script>
+</body>
+</html>

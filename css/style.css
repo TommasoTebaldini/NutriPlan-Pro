@@ -226,6 +226,100 @@ tbody td:first-child{padding-left:8px;text-align:left}
 .vnd{color:#CBD5E1;font-style:italic;font-size:10.5px}
 
 /* ── PRINT ── */
+
+/* ── MICRO BAR RESPONSIVE ── */
+.micro-bar{flex-wrap:wrap}
+.mtog{margin-bottom:3px}
+
+/* ── TABLE RESPONSIVE FOR PRINT ── */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,.undo-bar,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:6px!important}
+  .pasto-body.collapsed{display:block!important}
+  .pasto-card{page-break-inside:avoid;margin-bottom:4px!important;overflow:visible!important}
+  .table-wrap{overflow:visible!important;max-height:none!important;-webkit-overflow-scrolling:auto!important}
+  table{font-size:8px!important;table-layout:auto!important}
+  thead th{background:#1E293B!important;color:#CBD5E1!important;font-size:7.5px!important;padding:3px 4px!important}
+  tbody td{padding:2px 4px!important;font-size:8px!important}
+  .tr-tot td{background:#0F766E!important;color:white!important}
+  .pasto-hdr{background:#1E293B!important;-webkit-print-color-adjust:exact;padding:6px 10px!important}
+  .alt-print-row td{background:#D1FAE5!important;color:#065F46!important}
+  .macro-bar{page-break-inside:avoid;margin-bottom:4px!important}
+  .giorno-tabs,.micro-bar,.add-pasto-area,.pasto-footer,.ph-drag,.ph-tog,.btn{display:none!important}
+  .paz-hdr{page-break-inside:avoid;margin-bottom:6px!important}
+  .paz-hdr-field input,.paz-hdr-field select{border:none!important;padding:2px!important;font-size:11px!important}
+  h2#page-title{display:block!important;font-size:14px!important;font-weight:700!important;margin-bottom:8px!important;color:#0F766E!important}
+}
+
+/* ── FULL RESPONSIVE MOBILE ── */
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%);width:260px}
+  #sidebar.open{transform:translateX(0)}
+  #sb-overlay.open{display:block}
+  #main{margin-left:0}
+  #topbar{left:0}
+  #menu-toggle{display:flex!important}
+  .fgrid{grid-template-columns:1fr}
+  .fgrid.c3{grid-template-columns:1fr 1fr}
+  .tbar-actions .btn span{display:none}
+  .tbar-actions .btn{padding:6px 8px}
+  .paz-hdr{flex-direction:column;gap:8px}
+  .paz-hdr-field{width:100%;min-width:unset}
+  #val-grid{grid-template-columns:1fr!important}
+  .val-section{padding:12px}
+  .macro-bar{gap:5px;padding:8px 10px}
+  .mpill{padding:4px 8px;font-size:11.5px}
+  .mpill .v{font-size:13px}
+  .giorno-tabs{gap:4px}
+  .giorno-tab{padding:6px 10px;font-size:12px}
+  .pat-grid{grid-template-columns:1fr!important}
+  .paz-grid{grid-template-columns:1fr!important}
+  .modal{max-width:calc(100vw - 20px)!important;margin:10px}
+  .mbody{padding:12px 14px}
+  .mhdr{padding:12px 14px}
+}
+@media(max-width:480px){
+  .page-content{padding:8px}
+  .fgrid.c3{grid-template-columns:1fr}
+  .macro-bar{flex-direction:column;align-items:flex-start}
+  .tbar-actions{gap:4px}
+  table{font-size:11px}
+  thead th{font-size:10px;padding:5px 4px}
+  .inp-food{min-width:120px}
+  h2{font-size:14px}
+}
+@media(max-width:360px){
+  .logo h1{font-size:18px}
+  .btn{font-size:11px;padding:5px 7px}
+}
+
+/* ── TABLET ── */
+@media(min-width:769px) and (max-width:1024px){
+  #sidebar{width:220px}
+  #main{margin-left:220px}
+  #topbar{left:220px}
+  .pat-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+}
+
+/* ── TOUCH IMPROVEMENTS ── */
+@media(hover:none){
+  .btn:active{transform:scale(.94);opacity:.85}
+  .nav-item:active{background:rgba(255,255,255,.08)}
+  .pat-card:active{transform:scale(.98)}
+  input,select,textarea{font-size:16px!important} /* prevent zoom on iOS */
+}
+
+/* ── MICRO OVERFLOW FIX ── */
+.micro-bar{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:thin}
+.micro-bar::-webkit-scrollbar{height:3px}
+.micro-bar::-webkit-scrollbar-thumb{background:var(--border-d);border-radius:3px}
+
+/* ── UNDO BAR MOBILE ── */
+@media(max-width:480px){
+  .undo-bar{bottom:10px;left:10px;right:10px;transform:none;justify-content:space-between}
+}
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   #sidebar,#topbar,.no-print,#toast,.undo-bar,#loading-overlay{display:none!important}
@@ -281,4 +375,3 @@ tbody td:first-child{padding-left:8px;text-align:left}
 .food-pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10.5px;margin:1px;font-weight:500}
 .food-ok{background:#D1FAE5;color:#065F46}
 .food-no{background:#FEE2E2;color:#991B1B}
-

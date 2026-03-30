@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>NCPt — NutriPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.ncpt-tabs{display:flex;border-bottom:3px solid var(--border);margin-bottom:18px;flex-wrap:wrap;gap:0}
+.ncpt-tab{padding:11px 20px;cursor:pointer;font-size:13px;font-weight:700;color:var(--slate-l);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.ncpt-tab:hover{color:var(--slate)}
+.ncpt-tab.active{color:var(--teal);border-bottom-color:var(--teal);background:var(--sage)}
+.ncpt-step{display:none}.ncpt-step.active{display:block}
+.ncpt-section{background:white;border-radius:var(--r);border:1px solid var(--border);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.ncpt-section h3{font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.ncpt-section h4{font-size:12.5px;font-weight:700;color:var(--slate-m);margin-bottom:8px;margin-top:14px}
+.diag-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#F0FDF4;color:var(--teal-d);border:1.5px solid var(--teal-l);margin:3px;cursor:pointer;transition:all .12s}
+.diag-chip:hover{background:var(--teal-l);color:white}
+.diag-chip.selected{background:var(--teal);color:white;border-color:var(--teal-d)}
+.obiettivo-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#F8FAFC;border-radius:8px;border:1px solid var(--border);margin-bottom:6px}
+.obiettivo-row input[type=text]{flex:1;border:none;outline:none;background:transparent;font-size:13px;font-family:inherit;color:var(--slate)}
+.obiettivo-row input[type=date]{border:1px solid var(--border-d);border-radius:6px;padding:4px 8px;font-size:12px;font-family:inherit;outline:none}
+.monit-row{display:grid;grid-template-columns:1fr 120px 120px auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.monit-row:last-child{border-bottom:none}
+.paziente-sel{background:white;border-radius:var(--r);border:1px solid var(--border);padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow)}
+.paziente-sel label{font-size:12px;font-weight:700;color:var(--slate-m)}
+.paziente-sel select{flex:1;min-width:200px;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none}
+.paziente-sel select:focus{border-color:var(--teal-l)}
+.ncpt-badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;margin-left:8px}
+.b-val{background:#EFF6FF;color:#1D4ED8}
+.b-diag{background:#FEF3C7;color:#B45309}
+.b-int{background:#F0FDF4;color:#15803D}
+.b-mon{background:#FAF5FF;color:#7E22CE}
+.progress-bar{display:flex;gap:0;margin-bottom:20px;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.pb-step{flex:1;padding:10px 14px;text-align:center;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;border-right:1px solid rgba(255,255,255,.1)}
+.pb-step:last-child{border-right:none}
+.pb-step.active{color:white;font-size:13px}
+.pb-step.done{color:rgba(255,255,255,.9)}
+.stamp-ncpt{background:#F8FAFC;border-radius:var(--r);padding:16px;border:1px solid var(--border);margin-top:8px;font-size:12.5px;line-height:1.8}
+.stamp-ncpt h4{color:var(--teal-d);font-size:13px;font-weight:700;margin-bottom:4px}
+.stamp-ncpt p{color:var(--slate-m);margin-bottom:8px}
+@media(max-width:768px){
+  .ncpt-tab{padding:8px 12px;font-size:12px}
+  .monit-row{grid-template-columns:1fr 1fr auto;flex-wrap:wrap}
+  .progress-bar{flex-direction:column;border-radius:var(--r-sm)}
+  .pb-step{border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>NutriPlan<br>Pro</h1><span>CREA 2019 + BDA</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html" id="nav-piano"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html" id="nav-pazienti"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="ricette.html" id="nav-ricette"><span class="ni">👨‍🍳</span>Ricette</a>
+  <a class="nav-item active" href="ncpt.html" id="nav-ncpt"><span class="ni">📋</span>NCPt</a>
+  <a class="nav-item" href="patologie.html" id="nav-patologie"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item" href="valutazione.html" id="nav-valutazione"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="linee-guida.html" id="nav-lg"><span class="ni">📚</span>Linee Guida</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html" id="nav-database"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">NutriPlan Pro v5.1</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📋 Processo di Cura Nutrizionale (NCPt)</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary btn-sm" onclick="salvaNCPt()">💾 Salva</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaNcpt()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm" onclick="nuovoNCPt()">🔄 Nuovo</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+  <!-- SELEZIONE PAZIENTE -->
+  <div class="paziente-sel">
+    <label>👤 Paziente:</label>
+    <select id="ncpt-cartella" onchange="onCartellaChange()">
+      <option value="">-- Seleziona paziente --</option>
+    </select>
+    <input type="date" id="ncpt-data" title="Data NCPt" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;outline:none;font-size:13px">
+    <span id="ncpt-status" style="font-size:12px;color:var(--slate-l)"></span>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar" id="ncpt-progress">
+    <div class="pb-step active" style="background:#3B82F6" onclick="switchStep(0)">1. Valutazione</div>
+    <div class="pb-step" style="background:#F59E0B" onclick="switchStep(1)">2. Diagnosi</div>
+    <div class="pb-step" style="background:#10B981" onclick="switchStep(2)">3. Intervento</div>
+    <div class="pb-step" style="background:#8B5CF6" onclick="switchStep(3)">4. Monitoraggio</div>
+  </div>
+
+  <!-- STEP TABS -->
+  <div class="ncpt-tabs">
+    <div class="ncpt-tab active" onclick="switchStep(0)">🔍<span>Valutazione Nutrizionale</span><span class="ncpt-badge b-val">Step 1</span></div>
+    <div class="ncpt-tab" onclick="switchStep(1)">🩺<span>Diagnosi Nutrizionale</span><span class="ncpt-badge b-diag">Step 2</span></div>
+    <div class="ncpt-tab" onclick="switchStep(2)">🥗<span>Intervento Nutrizionale</span><span class="ncpt-badge b-int">Step 3</span></div>
+    <div class="ncpt-tab" onclick="switchStep(3)">📊<span>Monitoraggio</span><span class="ncpt-badge b-mon">Step 4</span></div>
+  </div>
+
+  <!-- STEP 1: VALUTAZIONE -->
+  <div class="ncpt-step active" id="step-0">
+
+    <div class="ncpt-section">
+      <h3>👤 Dati Anagrafici e Clinici</h3>
+      <div class="fgrid">
+        <div class="fg"><label>Nome e Cognome</label><input type="text" id="v-paziente-nome" placeholder="Nome Cognome"></div>
+        <div class="fg"><label>Data di nascita</label><input type="date" id="v-ddn"></div>
+        <div class="fg"><label>Sesso</label><select id="v-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+        <div class="fg"><label>Diagnosi medica principale</label><input type="text" id="v-diagnosi-med" placeholder="es. Diabete T2, IRC stadio 3..."></div>
+        <div class="fg"><label>Farmaci rilevanti</label><input type="text" id="v-farmaci" placeholder="es. Metformina, diuretici..."></div>
+        <div class="fg"><label>Allergie / Intolleranze</label><input type="text" id="v-allergie" placeholder="es. Lattosio, glutine..."></div>
+      </div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>📏 Valutazione Antropometrica</h3>
+      <div class="fgrid">
+        <div class="fg"><label>Peso attuale (kg)</label><input type="number" id="v-peso" step="0.1" oninput="calcV()"></div>
+        <div class="fg"><label>Altezza (cm)</label><input type="number" id="v-altezza" oninput="calcV()"></div>
+        <div class="fg"><label>BMI</label><input type="text" id="v-bmi" readonly style="background:#F8FAFC;font-weight:700;color:var(--teal)"></div>
+        <div class="fg"><label>Peso ideale (kg)</label><input type="number" id="v-pi" step="0.1"></div>
+        <div class="fg"><label>Peso aggiustato (kg)</label><input type="number" id="v-pa" step="0.1"></div>
+        <div class="fg"><label>Circonf. vita (cm)</label><input type="number" id="v-vita" step="0.1"></div>
+        <div class="fg"><label>Circonf. fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1"></div>
+        <div class="fg"><label>Massa grassa (%)</label><input type="number" id="v-mg" step="0.1" oninput="calcV()"></div>
+        <div class="fg"><label>Massa magra (kg)</label><input type="text" id="v-mm" readonly style="background:#F8FAFC;font-weight:700;color:var(--teal)"></div>
+      </div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>🔬 Parametri Biochimici</h3>
+      <div class="fgrid c3">
+        <div class="fg"><label>Albumina (g/dL)</label><input type="number" id="b-albumina" step="0.1" placeholder="3.5-5.0"></div>
+        <div class="fg"><label>Glicemia a digiuno (mg/dL)</label><input type="number" id="b-glicemia" placeholder="70-100"></div>
+        <div class="fg"><label>HbA1c (%)</label><input type="number" id="b-hba1c" step="0.1" placeholder="<5.7"></div>
+        <div class="fg"><label>Colesterolo TOT (mg/dL)</label><input type="number" id="b-col-tot" placeholder="<200"></div>
+        <div class="fg"><label>LDL (mg/dL)</label><input type="number" id="b-ldl" placeholder="<100"></div>
+        <div class="fg"><label>HDL (mg/dL)</label><input type="number" id="b-hdl" placeholder=">40M >50F"></div>
+        <div class="fg"><label>Trigliceridi (mg/dL)</label><input type="number" id="b-tg" placeholder="<150"></div>
+        <div class="fg"><label>Creatinina (mg/dL)</label><input type="number" id="b-creat" step="0.01" placeholder="0.7-1.2"></div>
+        <div class="fg"><label>eGFR (mL/min/1.73m²)</label><input type="number" id="b-egfr" placeholder=">60"></div>
+        <div class="fg"><label>Emoglobina (g/dL)</label><input type="number" id="b-hb" step="0.1" placeholder="12-17"></div>
+        <div class="fg"><label>Ferritina (ng/mL)</label><input type="number" id="b-ferrit" placeholder="12-300"></div>
+        <div class="fg"><label>Vitamina D (ng/mL)</label><input type="number" id="b-vitd" placeholder=">30"></div>
+      </div>
+      <div class="fg" style="margin-top:8px"><label>Altri esami rilevanti</label><textarea id="b-altri" rows="2" placeholder="TSH, PCR, elettroliti, altro..."></textarea></div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>🍽️ Valutazione Dietetica</h3>
+      <div class="fgrid">
+        <div class="fg"><label>Metodo di raccolta dati</label>
+          <select id="d-metodo">
+            <option>Recall 24h</option>
+            <option>Diario alimentare 3gg</option>
+            <option>Frequenza alimentare (FFQ)</option>
+            <option>Anamnesi alimentare</option>
+          </select>
+        </div>
+        <div class="fg"><label>Apporto calorico stimato (kcal/die)</label><input type="number" id="d-kcal-stim" placeholder="es. 1800"></div>
+        <div class="fg"><label>Proteine stimate (g/die)</label><input type="number" id="d-prot-stim" placeholder="es. 70"></div>
+        <div class="fg"><label>Pasti al giorno</label><input type="number" id="d-pasti" min="1" max="8" value="3"></div>
+      </div>
+      <div class="fg" style="margin-top:6px"><label>Note sull'alimentazione (preferenze, avversioni, abitudini)</label>
+        <textarea id="d-note-alim" rows="3" placeholder="Vegetariano, non gradisce pesce, mangia fuori 3 volte/settimana..."></textarea>
+      </div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>⚡ Fabbisogno Energetico</h3>
+      <div class="fgrid">
+        <div class="fg"><label>MB calcolato (kcal/die)</label><input type="number" id="f-mb" placeholder="auto da valutazione"></div>
+        <div class="fg"><label>TDEE (kcal/die)</label><input type="number" id="f-tdee" placeholder="MB × LAF"></div>
+        <div class="fg"><label>Fabbisogno target (kcal/die)</label><input type="number" id="f-target" placeholder="prescritto"></div>
+        <div class="fg"><label>Proteine target (g/die)</label><input type="number" id="f-prot" placeholder="es. 80"></div>
+        <div class="fg"><label>CHO target (g/die)</label><input type="number" id="f-cho" placeholder="es. 250"></div>
+        <div class="fg"><label>Grassi target (g/die)</label><input type="number" id="f-grassi" placeholder="es. 60"></div>
+        <div class="fg"><label>Fibra target (g/die)</label><input type="number" id="f-fibra" placeholder="≥25"></div>
+      </div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>📝 Note Generali Valutazione</h3>
+      <div class="fg"><textarea id="v-note-gen" rows="4" placeholder="Sintesi della valutazione nutrizionale, fattori di rischio, condizioni che influenzano lo stato nutrizionale..."></textarea></div>
+    </div>
+    <button class="btn btn-primary" onclick="switchStep(1)" style="width:100%;padding:12px">Avanti → Diagnosi Nutrizionale</button>
+  </div>
+
+  <!-- STEP 2: DIAGNOSI -->
+  <div class="ncpt-step" id="step-1">
+    <div class="ncpt-section">
+      <h3>🩺 Diagnosi Nutrizionale (formato PES)</h3>
+      <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px;line-height:1.7">La diagnosi nutrizionale segue il formato <b>PES</b>: <b>P</b>roblema — <b>E</b>ziologia — <b>S</b>egni/Sintomi. Seleziona il problema principale e compila i campi.</p>
+
+      <h4>Problema nutrizionale principale</h4>
+      <div id="problema-chips" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px"></div>
+
+      <div class="fgrid">
+        <div class="fg full"><label>P — Problema (descrizione)</label>
+          <input type="text" id="pes-p" placeholder="es. Apporto energetico insufficiente, Malnutrizione proteico-energetica...">
+        </div>
+        <div class="fg full"><label>E — Eziologia (causa/fattori correlati)</label>
+          <input type="text" id="pes-e" placeholder="es. correlato a ridotta assunzione di alimenti per nausea indotta da chemioterapia...">
+        </div>
+        <div class="fg full"><label>S — Segni e Sintomi (evidenze)</label>
+          <input type="text" id="pes-s" placeholder="es. come evidenziato da perdita di peso del 8% in 3 mesi e albumina 2.8 g/dL...">
+        </div>
+      </div>
+
+      <div id="pes-preview" style="background:#EFF6FF;border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;display:none;border-left:4px solid #3B82F6;line-height:1.8">
+        <b style="color:#1D4ED8">Diagnosi PES:</b><br>
+        <span id="pes-testo"></span>
+      </div>
+
+      <h4 style="margin-top:16px">Diagnosi secondarie (se presenti)</h4>
+      <div id="diagnosi-secondarie">
+        <div style="display:flex;gap:8px;margin-bottom:6px">
+          <input type="text" id="diag-sec-1" class="db-search" placeholder="Seconda diagnosi nutrizionale PES..." style="flex:1">
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:6px">
+          <input type="text" id="diag-sec-2" class="db-search" placeholder="Terza diagnosi nutrizionale PES..." style="flex:1">
+        </div>
+      </div>
+
+      <h4 style="margin-top:16px">Priorità di intervento</h4>
+      <div class="fg"><select id="priorita">
+        <option value="alta">🔴 Alta — Intervento immediato necessario</option>
+        <option value="media" selected>🟡 Media — Intervento programmato</option>
+        <option value="bassa">🟢 Bassa — Monitoraggio e educazione</option>
+      </select></div>
+
+      <div class="fg" style="margin-top:10px"><label>Note diagnosi</label>
+        <textarea id="diag-note" rows="3" placeholder="Considerazioni cliniche aggiuntive, diagnosi differenziali..."></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="switchStep(0)" style="flex:1;padding:12px">← Valutazione</button>
+      <button class="btn btn-primary" onclick="switchStep(2)" style="flex:2;padding:12px">Avanti → Intervento</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: INTERVENTO -->
+  <div class="ncpt-step" id="step-2">
+    <div class="ncpt-section">
+      <h3>🎯 Obiettivi Nutrizionali</h3>
+      <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px">Definisci obiettivi SMART (Specifici, Misurabili, Achievable, Realistici, Temporali).</p>
+      <div id="obiettivi-list"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addObiettivo()">➕ Aggiungi Obiettivo</button>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>🥗 Prescrizione Dietetica</h3>
+      <div class="fgrid">
+        <div class="fg"><label>Tipo di dieta</label>
+          <select id="int-tipo-dieta">
+            <option>Dieta normocalorica bilanciata</option>
+            <option>Dieta ipocalorica</option>
+            <option>Dieta ipercalorica</option>
+            <option>Dieta iperproteica</option>
+            <option>Dieta ipoproteica</option>
+            <option>Dieta a basso indice glicemico</option>
+            <option>Dieta iposodica</option>
+            <option>Dieta per insufficienza renale</option>
+            <option>Dieta gluten-free</option>
+            <option>Dieta per dislipidemia</option>
+            <option>Dieta per dialisi</option>
+            <option>Dieta mediterranea</option>
+            <option>Dieta DASH</option>
+            <option>Altra (specificare nelle note)</option>
+          </select>
+        </div>
+        <div class="fg"><label>Kcal/die prescritte</label><input type="number" id="int-kcal"></div>
+        <div class="fg"><label>Proteine (g/die)</label><input type="number" id="int-prot"></div>
+        <div class="fg"><label>CHO (g/die o %)</label><input type="text" id="int-cho" placeholder="es. 250g o 50%"></div>
+        <div class="fg"><label>Grassi (g/die o %)</label><input type="text" id="int-grassi" placeholder="es. 70g o 30%"></div>
+        <div class="fg"><label>Fibra (g/die)</label><input type="number" id="int-fibra" placeholder="≥25"></div>
+        <div class="fg"><label>Liquidi (mL/die)</label><input type="number" id="int-liquidi" placeholder="1500-2000"></div>
+        <div class="fg"><label>Pasti/die</label><input type="number" id="int-pasti" min="1" max="8" value="5"></div>
+      </div>
+      <div class="fg full" style="margin-top:8px"><label>Restrizioni specifiche</label>
+        <input type="text" id="int-restrizioni" placeholder="es. Sodio <2g, Potassio <2000mg, Fosforo <800mg...">
+      </div>
+      <div class="fg" style="margin-top:8px"><label>Supplementazione nutrizionale</label>
+        <input type="text" id="int-suppl" placeholder="es. Vitamina D 1000 UI, Omega-3 2g, ONS Ensure Plus...">
+      </div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>📚 Educazione Nutrizionale</h3>
+      <div class="fgrid">
+        <div class="fg"><label>Argomenti trattati</label>
+          <textarea id="edu-argomenti" rows="3" placeholder="es. Lettura etichette, porzioni, metodi di cottura, sostituzione alimenti..."></textarea>
+        </div>
+        <div class="fg"><label>Materiale consegnato</label>
+          <textarea id="edu-materiale" rows="3" placeholder="es. Piano alimentare settimanale, schema degli equivalenti, lista della spesa..."></textarea>
+        </div>
+      </div>
+      <div class="fg"><label>Livello di comprensione del paziente</label>
+        <select id="edu-comprensione">
+          <option value="ottimo">✅ Ottimo — Ha compreso e si dimostra motivato</option>
+          <option value="buono" selected>👍 Buono — Ha compreso con qualche dubbio</option>
+          <option value="parziale">⚠️ Parziale — Necessita di rinforzo</option>
+          <option value="scarso">❌ Scarso — Richiede sessione aggiuntiva</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>🤝 Coordinamento con il Team</h3>
+      <div class="fg"><textarea id="int-team" rows="3" placeholder="es. Comunicato al medico curante, coordinamento con infermiere per monitoraggio glicemia, referral a psicologo per disturbo alimentare..."></textarea></div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>📅 Prossimo Appuntamento</h3>
+      <div class="fgrid">
+        <div class="fg"><label>Data follow-up</label><input type="date" id="int-followup"></div>
+        <div class="fg"><label>Tipo di visita</label>
+          <select id="int-tipo-visita">
+            <option>Visita di controllo</option>
+            <option>Visita di follow-up</option>
+            <option>Consulenza telefonica</option>
+            <option>Visita domiciliare</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:6px"><label>Note intervento</label>
+        <textarea id="int-note" rows="3" placeholder="Considerazioni generali sull'intervento..."></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="switchStep(1)" style="flex:1;padding:12px">← Diagnosi</button>
+      <button class="btn btn-primary" onclick="switchStep(3)" style="flex:2;padding:12px">Avanti → Monitoraggio</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: MONITORAGGIO -->
+  <div class="ncpt-step" id="step-3">
+    <div class="ncpt-section">
+      <h3>📊 Parametri da Monitorare</h3>
+      <div id="monit-params">
+        <div class="fgrid" style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--slate-l)">PARAMETRO</div>
+          <div style="font-size:11px;font-weight:700;color:var(--slate-l)">VALORE TARGET</div>
+          <div style="font-size:11px;font-weight:700;color:var(--slate-l)">FREQUENZA</div>
+          <div></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="addMonitParam()">➕ Aggiungi Parametro</button>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>📈 Storico Misurazioni</h3>
+      <div id="storico-list" style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:500px">
+          <thead><tr style="background:var(--slate);color:#CBD5E1">
+            <th style="padding:7px 10px;text-align:left">Data</th>
+            <th style="padding:7px 10px">Peso (kg)</th>
+            <th style="padding:7px 10px">BMI</th>
+            <th style="padding:7px 10px">Kcal/die stimate</th>
+            <th style="padding:7px 10px">Note</th>
+            <th style="padding:7px 10px;width:40px"></th>
+          </tr></thead>
+          <tbody id="storico-tbody"></tbody>
+        </table>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addMisurazione()">➕ Nuova Misurazione</button>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>✅ Valutazione Raggiungimento Obiettivi</h3>
+      <div id="obiettivi-eval" style="font-size:12.5px;color:var(--slate-l)">Salva prima gli obiettivi nella sezione Intervento per visualizzarli qui.</div>
+    </div>
+
+    <div class="ncpt-section">
+      <h3>🔄 Revisione del Piano</h3>
+      <div class="fg"><label>Esito del monitoraggio</label>
+        <select id="mon-esito">
+          <option value="raggiunto">✅ Obiettivi raggiunti — Mantenimento</option>
+          <option value="parziale">⚠️ Obiettivi parzialmente raggiunti — Revisione parziale</option>
+          <option value="nonraggiunto">❌ Obiettivi non raggiunti — Revisione completa del piano</option>
+          <option value="continuare" selected>▶️ In corso — Continuare il piano attuale</option>
+        </select>
+      </div>
+      <div class="fg" style="margin-top:8px"><label>Note di monitoraggio e revisione</label>
+        <textarea id="mon-note" rows="4" placeholder="Aderenza alla dieta, barriere riscontrate, modifiche al piano, risposta clinica..."></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="switchStep(2)" style="flex:1;padding:12px">← Intervento</button>
+      <button class="btn btn-primary" onclick="salvaNCPt()" style="flex:2;padding:12px">💾 Salva NCPt Completo</button>
+    </div>
+  </div>
+
+</div></main>
+
+<!-- MODAL STAMPA -->
+<div class="modal-bg" id="modal-stampa">
+  <div class="modal" style="max-width:700px">
+    <div class="mhdr"><h2>🖨️ Anteprima Stampa NCPt</h2><button class="mclose" onclick="closeM('modal-stampa')">✕</button></div>
+    <div class="mbody" id="stampa-content"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-stampa')">Chiudi</button>
+      <button class="btn btn-primary btn-sm" onclick="window.print()">🖨️ Stampa</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+let ncptId = null;
+let obiettivi = [];
+let monitParams = [];
+let storico = [];
+let misurazioni = [];
+
+const PROBLEMI_PES = [
+  'Apporto energetico insufficiente','Apporto energetico eccessivo',
+  'Apporto proteico insufficiente','Malnutrizione proteico-energetica',
+  'Apporto di grassi eccessivo','Apporto di carboidrati eccessivo',
+  'Apporto di fibra insufficiente','Apporto di sodio eccessivo',
+  'Apporto di micronutrienti insufficiente','Disidratazione',
+  'Sovrappeso/Obesità','Sottopeso/Cachessia','Disfagia',
+  'Interazione farmaco-nutriente','Scarsa aderenza dietetica',
+  'Conoscenze nutrizionali inadeguate'
+];
+
+// ── STEP NAVIGATION ──
+function switchStep(n) {
+  document.querySelectorAll('.ncpt-step').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.ncpt-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('.pb-step').forEach((p,i) => {
+    p.classList.toggle('active', i===n);
+    p.classList.toggle('done', i<n);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── CALC ANTHROPOMETRICS ──
+function calcV() {
+  const peso = parseFloat(document.getElementById('v-peso').value);
+  const alt = parseFloat(document.getElementById('v-altezza').value);
+  const mg = parseFloat(document.getElementById('v-mg').value);
+  if (peso && alt) {
+    const bmi = peso / ((alt/100)**2);
+    document.getElementById('v-bmi').value = Math.round(bmi*10)/10;
+    const sesso = document.getElementById('v-sesso').value;
+    const pi = sesso==='M' ? (alt-100)-((alt-150)/4) : (alt-100)-((alt-150)/2.5);
+    document.getElementById('v-pi').value = Math.round(pi*10)/10;
+    document.getElementById('v-pa').value = Math.round((pi+0.25*(peso-pi))*10)/10;
+  }
+  if (peso && mg) {
+    document.getElementById('v-mm').value = Math.round(peso*(1-mg/100)*10)/10;
+  }
+}
+
+// ── PROBLEMI CHIPS ──
+function renderProblemiChips() {
+  const container = document.getElementById('problema-chips');
+  container.innerHTML = PROBLEMI_PES.map(p =>
+    `<div class="diag-chip" onclick="selProblema(this,'${p.replace(/'/g,"\\'")}')">📌 ${p}</div>`
+  ).join('');
+}
+
+function selProblema(el, testo) {
+  document.querySelectorAll('.diag-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('pes-p').value = testo;
+  aggiornaPES();
+}
+
+function aggiornaPES() {
+  const p = document.getElementById('pes-p').value.trim();
+  const e = document.getElementById('pes-e').value.trim();
+  const s = document.getElementById('pes-s').value.trim();
+  const prev = document.getElementById('pes-preview');
+  if (p) {
+    prev.style.display = 'block';
+    document.getElementById('pes-testo').innerHTML =
+      `<b>${p}</b>${e?' correlato a <i>'+e+'</i>':''}${s?' come evidenziato da <i>'+s+'</i>':''}.`;
+  } else {
+    prev.style.display = 'none';
+  }
+}
+
+['pes-p','pes-e','pes-s'].forEach(id => {
+  document.getElementById(id).addEventListener('input', aggiornaPES);
+});
+
+// ── OBIETTIVI ──
+function addObiettivo(testo='', scadenza='', raggiunto=false) {
+  const id = Date.now();
+  obiettivi.push({id, testo, scadenza, raggiunto});
+  renderObiettivi();
+}
+
+function renderObiettivi() {
+  const container = document.getElementById('obiettivi-list');
+  if (!obiettivi.length) {
+    container.innerHTML = '<p style="color:var(--slate-l);font-size:12.5px;margin-bottom:8px">Nessun obiettivo aggiunto.</p>';
+    return;
+  }
+  container.innerHTML = obiettivi.map((ob,i) => `
+    <div class="obiettivo-row">
+      <span style="font-size:11px;font-weight:700;color:var(--slate-l);min-width:24px">${i+1}.</span>
+      <input type="text" value="${ob.testo}" placeholder="es. Ridurre il peso di 5kg in 3 mesi..."
+        oninput="obiettivi[${i}].testo=this.value" style="flex:1;border:none;outline:none;background:transparent;font-size:13px;font-family:inherit">
+      <input type="date" value="${ob.scadenza}" onchange="obiettivi[${i}].scadenza=this.value"
+        style="border:1px solid var(--border-d);border-radius:6px;padding:4px 8px;font-size:12px;font-family:inherit;outline:none">
+      <button class="del-row" onclick="obiettivi.splice(${i},1);renderObiettivi()">✕</button>
+    </div>`).join('');
+  renderObiettiviEval();
+}
+
+function renderObiettiviEval() {
+  const el = document.getElementById('obiettivi-eval');
+  if (!obiettivi.length) { el.innerHTML = '<p style="color:var(--slate-l);font-size:12.5px">Nessun obiettivo definito.</p>'; return; }
+  el.innerHTML = obiettivi.map((ob,i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#F8FAFC;border-radius:8px;border:1px solid var(--border);margin-bottom:6px">
+      <span style="font-size:16px;cursor:pointer" onclick="toggleObiettivo(${i})">${ob.raggiunto?'✅':'⬜'}</span>
+      <span style="font-size:13px;flex:1;${ob.raggiunto?'text-decoration:line-through;color:var(--slate-l)':''}">${ob.testo||'Obiettivo '+( i+1)}</span>
+      ${ob.scadenza?`<span style="font-size:11px;color:var(--slate-l)">${ob.scadenza}</span>`:''}
+    </div>`).join('');
+}
+
+function toggleObiettivo(i) { obiettivi[i].raggiunto = !obiettivi[i].raggiunto; renderObiettivi(); }
+
+// ── MONITORAGGIO PARAMS ──
+function addMonitParam(param='', target='', freq='') {
+  const id = Date.now();
+  monitParams.push({id, param, target, freq});
+  renderMonitParams();
+}
+
+function renderMonitParams() {
+  const container = document.getElementById('monit-params');
+  const header = container.querySelector('.fgrid');
+  const items = monitParams.map((mp,i) => `
+    <div class="monit-row">
+      <input type="text" value="${mp.param}" placeholder="es. Peso corporeo, HbA1c, pressione..."
+        oninput="monitParams[${i}].param=this.value"
+        style="border:1px solid var(--border-d);border-radius:6px;padding:6px 8px;font-size:12.5px;font-family:inherit;outline:none">
+      <input type="text" value="${mp.target}" placeholder="es. <100 mg/dL"
+        oninput="monitParams[${i}].target=this.value"
+        style="border:1px solid var(--border-d);border-radius:6px;padding:6px 8px;font-size:12.5px;font-family:inherit;outline:none">
+      <select oninput="monitParams[${i}].freq=this.value"
+        style="border:1px solid var(--border-d);border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit;outline:none">
+        ${['Ogni visita','Settimanale','Mensile','Ogni 3 mesi','Ogni 6 mesi','Annuale'].map(f=>`<option ${mp.freq===f?'selected':''}>${f}</option>`).join('')}
+      </select>
+      <button class="del-row" onclick="monitParams.splice(${i},1);renderMonitParams()">✕</button>
+    </div>`).join('');
+  container.innerHTML = '';
+  if (header) container.appendChild(header);
+  container.insertAdjacentHTML('beforeend', items);
+}
+
+// ── STORICO MISURAZIONI ──
+function addMisurazione() {
+  const data = prompt('Data misurazione (YYYY-MM-DD):') || new Date().toISOString().split('T')[0];
+  const peso = prompt('Peso (kg):') || '';
+  const kcal = prompt('Kcal/die stimate:') || '';
+  const note = prompt('Note:') || '';
+  const bmi = peso && document.getElementById('v-altezza').value
+    ? Math.round(parseFloat(peso)/((parseFloat(document.getElementById('v-altezza').value)/100)**2)*10)/10 : '';
+  misurazioni.push({data, peso, bmi, kcal, note});
+  renderStorico();
+}
+
+function renderStorico() {
+  const tbody = document.getElementById('storico-tbody');
+  if (!misurazioni.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Nessuna misurazione ancora.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = misurazioni.map((m,i) => `<tr style="border-bottom:1px solid var(--border)">
+    <td style="padding:6px 10px">${m.data}</td>
+    <td style="padding:6px 10px;text-align:center">${m.peso||'—'}</td>
+    <td style="padding:6px 10px;text-align:center">${m.bmi||'—'}</td>
+    <td style="padding:6px 10px;text-align:center">${m.kcal||'—'}</td>
+    <td style="padding:6px 10px;font-size:12px;color:var(--slate-l)">${m.note||''}</td>
+    <td style="padding:6px 10px;text-align:center"><button class="del-row" onclick="misurazioni.splice(${i},1);renderStorico()">✕</button></td>
+  </tr>`).join('');
+}
+
+// ── PAZIENTE ──
+async function loadCartellePaziente() {
+  const sel = document.getElementById('ncpt-cartella');
+  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  if (data) data.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = '📁 ' + c.nome;
+    sel.appendChild(o);
+  });
+}
+
+async function onCartellaChange() {
+  const id = document.getElementById('ncpt-cartella').value;
+  if (!id) return;
+  // Try to load existing NCPt for this patient
+  const { data } = await sb.from('ncpt').select('*').eq('cartella_id', id).order('created_at', {ascending:false}).limit(1);
+  if (data && data.length) {
+    if (confirm(`Trovato NCPt salvato del ${new Date(data[0].created_at).toLocaleDateString('it')}. Caricarlo?`)) {
+      loadFromData(data[0]);
+    }
+  }
+}
+
+// ── SAVE/LOAD ──
+function raccogliDati() {
+  const g = id => document.getElementById(id)?.value || '';
+  return {
+    cartella_id: g('ncpt-cartella'),
+    data_ncpt: g('ncpt-data') || new Date().toISOString().split('T')[0],
+    valutazione: {
+      paziente_nome: g('v-paziente-nome'), ddn: g('v-ddn'), sesso: g('v-sesso'),
+      diagnosi_med: g('v-diagnosi-med'), farmaci: g('v-farmaci'), allergie: g('v-allergie'),
+      peso: g('v-peso'), altezza: g('v-altezza'), bmi: g('v-bmi'),
+      pi: g('v-pi'), pa: g('v-pa'), vita: g('v-vita'), fianchi: g('v-fianchi'),
+      mg: g('v-mg'), mm: g('v-mm'),
+      b_albumina: g('b-albumina'), b_glicemia: g('b-glicemia'), b_hba1c: g('b-hba1c'),
+      b_col_tot: g('b-col-tot'), b_ldl: g('b-ldl'), b_hdl: g('b-hdl'),
+      b_tg: g('b-tg'), b_creat: g('b-creat'), b_egfr: g('b-egfr'),
+      b_hb: g('b-hb'), b_ferrit: g('b-ferrit'), b_vitd: g('b-vitd'), b_altri: g('b-altri'),
+      d_metodo: g('d-metodo'), d_kcal_stim: g('d-kcal-stim'), d_prot_stim: g('d-prot-stim'),
+      d_pasti: g('d-pasti'), d_note_alim: g('d-note-alim'),
+      f_mb: g('f-mb'), f_tdee: g('f-tdee'), f_target: g('f-target'),
+      f_prot: g('f-prot'), f_cho: g('f-cho'), f_grassi: g('f-grassi'), f_fibra: g('f-fibra'),
+      note_gen: g('v-note-gen')
+    },
+    diagnosi: {
+      pes_p: g('pes-p'), pes_e: g('pes-e'), pes_s: g('pes-s'),
+      diag_sec_1: g('diag-sec-1'), diag_sec_2: g('diag-sec-2'),
+      priorita: g('priorita'), note: g('diag-note')
+    },
+    intervento: {
+      tipo_dieta: g('int-tipo-dieta'), kcal: g('int-kcal'), prot: g('int-prot'),
+      cho: g('int-cho'), grassi: g('int-grassi'), fibra: g('int-fibra'),
+      liquidi: g('int-liquidi'), pasti: g('int-pasti'),
+      restrizioni: g('int-restrizioni'), suppl: g('int-suppl'),
+      edu_argomenti: g('edu-argomenti'), edu_materiale: g('edu-materiale'),
+      edu_comprensione: g('edu-comprensione'),
+      team: g('int-team'), followup: g('int-followup'),
+      tipo_visita: g('int-tipo-visita'), note: g('int-note'),
+      obiettivi
+    },
+    monitoraggio: {
+      params: monitParams, storico: misurazioni,
+      esito: g('mon-esito'), note: g('mon-note')
+    }
+  };
+}
+
+async function salvaNCPt() {
+  const cartella = document.getElementById('ncpt-cartella').value;
+  if (!cartella) { toast('Seleziona prima un paziente', 'err'); return; }
+  const dati = raccogliDati();
+  const payload = {
+    user_id: currentUser.id,
+    cartella_id: cartella,
+    data_ncpt: dati.data_ncpt,
+    dati: JSON.stringify(dati),
+    updated_at: new Date().toISOString()
+  };
+  showLoading(true);
+  let result;
+  if (ncptId) {
+    result = await sb.from('ncpt').update(payload).eq('id', ncptId);
+  } else {
+    payload.created_at = new Date().toISOString();
+    result = await sb.from('ncpt').insert(payload).select().single();
+    if (result.data) ncptId = result.data.id;
+  }
+  showLoading(false);
+  if (result.error) {
+    if (result.error.code === '42P01') {
+      toast('Tabella "ncpt" mancante. Esegui SQL in console.', 'err');
+      console.error('Esegui:\ncreate table ncpt(id uuid default gen_random_uuid() primary key, user_id uuid references auth.users not null, cartella_id uuid references cartelle(id) on delete cascade, data_ncpt date, dati text, created_at timestamptz default now(), updated_at timestamptz default now());\nalter table ncpt enable row level security;\ncreate policy "Proprio ncpt" on ncpt for all using(auth.uid()=user_id);');
+    } else { toast('❌ ' + result.error.message, 'err'); }
+    return;
+  }
+  document.getElementById('ncpt-status').textContent = '✅ Salvato ' + new Date().toLocaleTimeString('it');
+  toast('💾 NCPt salvato!', 'ok');
+}
+
+function loadFromData(row) {
+  ncptId = row.id;
+  const d = JSON.parse(row.dati || '{}');
+  document.getElementById('ncpt-data').value = d.data_ncpt || '';
+  const s = id => { const el = document.getElementById(id); if(el&&d.valutazione) el.value = d.valutazione[id.replace('v-','').replace('b-','').replace('d-','').replace('f-','')] || ''; };
+  // Restore all fields
+  const v = d.valutazione || {};
+  const setV = (id, val) => { const el = document.getElementById(id); if(el) el.value = val||''; };
+  setV('v-paziente-nome', v.paziente_nome); setV('v-ddn', v.ddn); setV('v-sesso', v.sesso);
+  setV('v-diagnosi-med', v.diagnosi_med); setV('v-farmaci', v.farmaci); setV('v-allergie', v.allergie);
+  setV('v-peso', v.peso); setV('v-altezza', v.altezza); setV('v-vita', v.vita); setV('v-fianchi', v.fianchi);
+  setV('v-mg', v.mg); setV('v-pi', v.pi); setV('v-pa', v.pa); setV('v-bmi', v.bmi); setV('v-mm', v.mm);
+  setV('b-albumina', v.b_albumina); setV('b-glicemia', v.b_glicemia); setV('b-hba1c', v.b_hba1c);
+  setV('b-col-tot', v.b_col_tot); setV('b-ldl', v.b_ldl); setV('b-hdl', v.b_hdl);
+  setV('b-tg', v.b_tg); setV('b-creat', v.b_creat); setV('b-egfr', v.b_egfr);
+  setV('b-hb', v.b_hb); setV('b-ferrit', v.b_ferrit); setV('b-vitd', v.b_vitd); setV('b-altri', v.b_altri);
+  setV('d-metodo', v.d_metodo); setV('d-kcal-stim', v.d_kcal_stim); setV('d-prot-stim', v.d_prot_stim);
+  setV('d-pasti', v.d_pasti); setV('d-note-alim', v.d_note_alim);
+  setV('f-mb', v.f_mb); setV('f-tdee', v.f_tdee); setV('f-target', v.f_target);
+  setV('f-prot', v.f_prot); setV('f-cho', v.f_cho); setV('f-grassi', v.f_grassi); setV('f-fibra', v.f_fibra);
+  setV('v-note-gen', v.note_gen);
+  const diag = d.diagnosi || {};
+  setV('pes-p', diag.pes_p); setV('pes-e', diag.pes_e); setV('pes-s', diag.pes_s);
+  setV('diag-sec-1', diag.diag_sec_1); setV('diag-sec-2', diag.diag_sec_2);
+  setV('priorita', diag.priorita); setV('diag-note', diag.note);
+  aggiornaPES();
+  const int = d.intervento || {};
+  setV('int-tipo-dieta', int.tipo_dieta); setV('int-kcal', int.kcal); setV('int-prot', int.prot);
+  setV('int-cho', int.cho); setV('int-grassi', int.grassi); setV('int-fibra', int.fibra);
+  setV('int-liquidi', int.liquidi); setV('int-pasti', int.pasti);
+  setV('int-restrizioni', int.restrizioni); setV('int-suppl', int.suppl);
+  setV('edu-argomenti', int.edu_argomenti); setV('edu-materiale', int.edu_materiale);
+  setV('edu-comprensione', int.edu_comprensione);
+  setV('int-team', int.team); setV('int-followup', int.followup);
+  setV('int-tipo-visita', int.tipo_visita); setV('int-note', int.note);
+  obiettivi = int.obiettivi || [];
+  renderObiettivi();
+  const mon = d.monitoraggio || {};
+  monitParams = mon.params || [];
+  misurazioni = mon.storico || [];
+  setV('mon-esito', mon.esito); setV('mon-note', mon.note);
+  renderMonitParams();
+  renderStorico();
+  toast('📂 NCPt caricato!', 'ok');
+}
+
+function nuovoNCPt() {
+  if (!confirm('Creare un nuovo NCPt? I dati non salvati saranno persi.')) return;
+  ncptId = null;
+  obiettivi = []; monitParams = []; misurazioni = [];
+  document.querySelectorAll('input:not([readonly]),textarea,select').forEach(el => {
+    if (el.type === 'date') el.value = '';
+    else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+  document.getElementById('ncpt-cartella').value = '';
+  document.getElementById('ncpt-status').textContent = '';
+  renderObiettivi(); renderMonitParams(); renderStorico();
+  switchStep(0);
+  toast('🔄 Nuovo NCPt', 'info');
+}
+
+function stampaNcpt() {
+  const d = raccogliDati();
+  const v = d.valutazione; const diag = d.diagnosi; const int = d.intervento; const mon = d.monitoraggio;
+  const nome = document.getElementById('ncpt-cartella').options[document.getElementById('ncpt-cartella').selectedIndex]?.text || '';
+  const html = `<div style="font-family:Calibri,Arial;font-size:11pt;color:#1E293B">
+    <h2 style="color:#0F766E;border-bottom:2px solid #0F766E;padding-bottom:5px">📋 NCPt — Processo di Cura Nutrizionale</h2>
+    <p style="color:#64748B;font-size:9pt">Paziente: <b>${v.paziente_nome||nome}</b> &nbsp;|&nbsp; Data: <b>${d.data_ncpt}</b></p>
+    <h3 style="color:#3B82F6;margin-top:14px">1. VALUTAZIONE NUTRIZIONALE</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:10px">
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600;width:35%">Peso / Altezza / BMI</td><td style="padding:3px 8px;border:1px solid #E2E8F0">${v.peso||'—'} kg / ${v.altezza||'—'} cm / BMI ${v.bmi||'—'}</td></tr>
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600;background:#F8FAFC">Diagnosi medica</td><td style="padding:3px 8px;border:1px solid #E2E8F0;background:#F8FAFC">${v.diagnosi_med||'—'}</td></tr>
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600">Kcal stimate / target</td><td style="padding:3px 8px;border:1px solid #E2E8F0">${v.d_kcal_stim||'—'} kcal/die stimate → target ${v.f_target||'—'} kcal/die</td></tr>
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600;background:#F8FAFC">Note valutazione</td><td style="padding:3px 8px;border:1px solid #E2E8F0;background:#F8FAFC">${v.note_gen||'—'}</td></tr>
+    </table>
+    <h3 style="color:#F59E0B;margin-top:14px">2. DIAGNOSI NUTRIZIONALE (PES)</h3>
+    <div style="background:#FEF3C7;border-left:4px solid #F59E0B;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:10px;font-size:11pt">
+      <b>${diag.pes_p||'—'}</b>${diag.pes_e?' correlato a '+diag.pes_e:''}${diag.pes_s?' come evidenziato da '+diag.pes_s:''}.
+    </div>
+    <p style="font-size:10pt"><b>Priorità:</b> ${diag.priorita||'media'}</p>
+    <h3 style="color:#10B981;margin-top:14px">3. INTERVENTO NUTRIZIONALE</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:8px">
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600;width:35%">Tipo di dieta</td><td style="padding:3px 8px;border:1px solid #E2E8F0">${int.tipo_dieta||'—'}</td></tr>
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600;background:#F8FAFC">Prescrizione</td><td style="padding:3px 8px;border:1px solid #E2E8F0;background:#F8FAFC">${int.kcal||'—'} kcal | P:${int.prot||'—'}g | CHO:${int.cho||'—'} | G:${int.grassi||'—'} | F:${int.fibra||'—'}g</td></tr>
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600">Restrizioni</td><td style="padding:3px 8px;border:1px solid #E2E8F0">${int.restrizioni||'—'}</td></tr>
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600;background:#F8FAFC">Supplementazione</td><td style="padding:3px 8px;border:1px solid #E2E8F0;background:#F8FAFC">${int.suppl||'—'}</td></tr>
+      <tr><td style="padding:3px 8px;border:1px solid #E2E8F0;font-weight:600">Follow-up</td><td style="padding:3px 8px;border:1px solid #E2E8F0">${int.followup||'—'} — ${int.tipo_visita||'—'}</td></tr>
+    </table>
+    ${obiettivi.length?`<p style="font-size:10pt"><b>Obiettivi:</b> ${obiettivi.map(o=>o.testo).join('; ')}</p>`:''}
+    <h3 style="color:#8B5CF6;margin-top:14px">4. MONITORAGGIO</h3>
+    <p style="font-size:10pt"><b>Esito:</b> ${mon.esito||'—'}</p>
+    ${mon.note?`<p style="font-size:10pt"><b>Note:</b> ${mon.note}</p>`:''}
+    ${misurazioni.length?`<p style="font-size:10pt"><b>Misurazioni:</b> ${misurazioni.map(m=>`${m.data}: ${m.peso}kg`).join(', ')}</p>`:''}
+    <p style="font-size:8pt;color:#94A3B8;border-top:1px solid #E2E8F0;padding-top:8px;margin-top:16px">NutriPlan Pro v5.1 · Generato il ${new Date().toLocaleDateString('it')}</p>
+  </div>`;
+  document.getElementById('stampa-content').innerHTML = html;
+  openM('modal-stampa');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
+  loadCartellePaziente();
+  renderProblemiChips();
+  document.getElementById('ncpt-data').value = new Date().toISOString().split('T')[0];
+  // Add default monitoring params
+  addMonitParam('Peso corporeo', 'obiettivo peso', 'Ogni visita');
+  addMonitParam('Aderenza dietetica', 'buona', 'Ogni visita');
+  renderStorico();
+});
+</script>
+</body>
+</html>

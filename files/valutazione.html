@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Valutazione Paziente — NutriPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.val-section{background:white;border-radius:var(--r);border:1px solid var(--border);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.val-section h3{font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:7px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.result-pill{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;background:#F8FAFC;border-radius:8px;border:1px solid var(--border);margin-bottom:7px}
+.rp-label{font-size:12px;color:var(--slate-m);font-weight:600}
+.rp-val{font-size:17px;font-weight:700;color:var(--teal)}
+.rp-badge{font-size:10px;color:var(--slate-l);background:var(--bg);padding:2px 7px;border-radius:8px;margin-top:2px}
+.formula-row{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;background:#F8FAFC;border-radius:8px;margin-bottom:5px;border:1px solid var(--border)}
+.formula-row.best{background:#F0FDF4;border-color:var(--teal-l)}
+.fn{font-size:12px;font-weight:600;color:var(--slate-m)}
+.fb{font-size:10px;color:var(--slate-l)}
+.fv{font-size:16px;font-weight:700;color:var(--teal)}
+.pat-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;background:white;color:var(--slate-m);border:1.5px solid var(--border-d);margin:2px;cursor:pointer;transition:all .12s;white-space:nowrap}
+.pat-chip:hover{border-color:var(--teal-l);color:var(--teal)}
+.pat-chip.selected{background:var(--teal);color:white;border-color:var(--teal-d)}
+.lg-note-box{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:12px;font-size:12px;color:#1E3A5F;line-height:1.7;margin-bottom:8px}
+@media(max-width:900px){#val-grid{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>NutriPlan<br>Pro</h1><span>v5.1</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item active" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">👨‍🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📊 Valutazione Paziente</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary btn-sm" onclick="salvaScheda()">💾 Salva Scheda</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetVal()">🔄 Reset</button>
+  </div>
+</div>
+<main id="main"><div class="page-content">
+<div style="display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start" id="val-grid">
+
+<!-- SINISTRA INPUT -->
+<div>
+<div class="val-section">
+  <h3>👤 Dati Anagrafici</h3>
+  <div class="fgrid">
+    <div class="fg"><label>Nome *</label><input type="text" id="v-nome" placeholder="Nome"></div>
+    <div class="fg"><label>Cognome</label><input type="text" id="v-cognome" placeholder="Cognome"></div>
+    <div class="fg"><label>Data di nascita</label><input type="date" id="v-ddn" oninput="aggiornaEta()"></div>
+    <div class="fg"><label>Eta (anni)</label><input type="number" id="v-eta" min="1" max="120" placeholder="45"></div>
+    <div class="fg"><label>Sesso</label><select id="v-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+    <div class="fg"><label>Cartella paziente</label><select id="v-cartella"><option value="">-- Crea nuova --</option></select></div>
+  </div>
+</div>
+
+<div class="val-section">
+  <h3>📏 Dati Antropometrici</h3>
+  <div class="fgrid">
+    <div class="fg"><label>Peso attuale (kg)</label><input type="number" id="v-peso" step="0.1" placeholder="75" oninput="aggiornaCalcoli()"></div>
+    <div class="fg"><label>Altezza (cm)</label><input type="number" id="v-altezza" placeholder="170" oninput="aggiornaCalcoli()"></div>
+    <div class="fg"><label>Peso ideale (kg)</label><input type="number" id="v-pi" step="0.1" placeholder="auto"></div>
+    <div class="fg"><label>Peso aggiustato (kg)</label><input type="number" id="v-pa" step="0.1" placeholder="auto"></div>
+    <div class="fg"><label>Circ. vita (cm)</label><input type="number" id="v-vita" step="0.1" oninput="aggiornaCalcoli()"></div>
+    <div class="fg"><label>Circ. fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1" oninput="aggiornaCalcoli()"></div>
+    <div class="fg"><label>Circ. braccio (cm)</label><input type="number" id="v-braccio" step="0.1"></div>
+    <div class="fg"><label>Plica tricipitale (mm)</label><input type="number" id="v-plica" step="0.1"></div>
+    <div class="fg"><label>Massa grassa (%)</label><input type="number" id="v-mg" step="0.1" oninput="aggiornaCalcoli()"></div>
+    <div class="fg"><label>Massa magra (kg)</label><input type="number" id="v-mm" step="0.1"></div>
+  </div>
+</div>
+
+<div class="val-section">
+  <h3>🏥 Patologie (multi-selezione)</h3>
+  <input type="text" id="pat-search" class="db-search" placeholder="Filtra patologie..." oninput="filterPat()" style="width:100%;margin-bottom:8px">
+  <div id="pat-chips" style="max-height:260px;overflow-y:auto;display:flex;flex-wrap:wrap"></div>
+  <div id="pat-selezionate" style="margin-top:8px;font-size:11.5px;color:var(--teal-d);font-weight:600;display:none"></div>
+</div>
+
+<div class="val-section">
+  <h3>📝 Note Cliniche</h3>
+  <div class="fg"><label>Diagnosi, farmaci, allergie, note</label>
+    <textarea id="v-note" rows="3" placeholder="Es. Diabete T2, metformina, allergia nichel..."></textarea>
+  </div>
+</div>
+
+<button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px" onclick="calcolaFabbisogno()">📊 Calcola Fabbisogno</button>
+</div>
+
+<!-- DESTRA RISULTATI -->
+<div id="risultati-col">
+  <div style="text-align:center;padding:48px 20px;color:var(--slate-l)">
+    <div style="font-size:44px;margin-bottom:14px">📊</div>
+    <p>Inserisci i dati e clicca <b>Calcola Fabbisogno</b></p>
+  </div>
+</div>
+</div>
+</div></main>
+
+<!-- MODAL nuova cartella -->
+<div class="modal-bg" id="modal-newcart">
+  <div class="modal" style="max-width:360px">
+    <div class="mhdr"><h2>📁 Crea Cartella Paziente</h2><button class="mclose" onclick="closeM('modal-newcart')">✕</button></div>
+    <div class="mbody">
+      <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:10px">Verrà creata automaticamente una nuova cartella paziente.</p>
+      <div class="fg"><label>Nome cartella</label><input type="text" id="new-cart-nome" placeholder="Cognome Nome"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-newcart')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="confermaSalva()">📁 Crea e Salva</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+const TUTTE_PATOLOGIE=[
+  {id:'diabete',label:'Diabete Mellito Tipo 2',cat:'Metabolica',emoji:'🩸'},
+  {id:'obesita',label:'Obesita / Sovrappeso',cat:'Metabolica',emoji:'⚖️'},
+  {id:'dislipidemia',label:'Dislipidemia',cat:'Cardiovascolare',emoji:'🫀'},
+  {id:'ipertensione',label:'Ipertensione Arteriosa',cat:'Cardiovascolare',emoji:'💊'},
+  {id:'scompenso',label:'Scompenso Cardiaco',cat:'Cardiovascolare',emoji:'❤️'},
+  {id:'steatosi',label:'Steatosi Epatica (NAFLD/MASLD)',cat:'Epatica',emoji:'🫁'},
+  {id:'cirrosi',label:'Cirrosi Epatica',cat:'Epatica',emoji:'🏥'},
+  {id:'pancreatite',label:'Pancreatite Cronica',cat:'Gastroenterologica',emoji:'🔴'},
+  {id:'irc',label:'Insufficienza Renale Cronica (stadio 3-4)',cat:'Renale',emoji:'🫘'},
+  {id:'dialisi',label:'Dialisi (Emodialisi/Peritoneale)',cat:'Renale',emoji:'💧'},
+  {id:'calcolosi',label:'Calcolosi Renale',cat:'Renale',emoji:'💎'},
+  {id:'celiachia',label:'Celiachia / Gluten-Free',cat:'Gastroenterologica',emoji:'🌾'},
+  {id:'ibd',label:'IBD - Crohn / Rettocolite Ulcerosa',cat:'Gastroenterologica',emoji:'🦠'},
+  {id:'diverticolite',label:'Diverticolite acuta',cat:'Gastroenterologica',emoji:'🔴'},
+  {id:'diverticolosi',label:'Diverticolosi (prevenzione)',cat:'Gastroenterologica',emoji:'🟡'},
+  {id:'gastrectomia',label:'Post-Gastrectomia',cat:'Chirurgica',emoji:'🔧'},
+  {id:'stomia',label:'Stomia (ileo/colostomia)',cat:'Chirurgica',emoji:'🔧'},
+  {id:'oncologia',label:'Oncologia / Cachessia Neoplastica',cat:'Oncologica',emoji:'🎗️'},
+  {id:'tumore_seno',label:'Tumore al Seno',cat:'Oncologica',emoji:'🎗️'},
+  {id:'tumore_pancreas',label:'Tumore del Pancreas',cat:'Oncologica',emoji:'🎗️'},
+  {id:'tumore_colon',label:'Tumore del Colon-Retto',cat:'Oncologica',emoji:'🎗️'},
+  {id:'sarcopenia',label:'Sarcopenia / Anziano Fragile',cat:'Geriatrica',emoji:'💪'},
+  {id:'osteoporosi',label:'Osteoporosi',cat:'Geriatrica',emoji:'🦴'},
+  {id:'anemia',label:'Anemia Sideropenica',cat:'Ematologica',emoji:'🩸'},
+  {id:'gotta',label:'Iperuricemia / Gotta',cat:'Reumatologica',emoji:'🦶'},
+  {id:'bpco',label:'BPCO',cat:'Respiratoria',emoji:'🫁'},
+  {id:'hiv',label:'HIV/AIDS',cat:'Infettiva',emoji:'🎗️'},
+  {id:'gravidanza',label:'Gravidanza',cat:'Fisiologica',emoji:'🤰'},
+  {id:'allattamento',label:'Allattamento',cat:'Fisiologica',emoji:'🍼'},
+  {id:'fenilchetonuria',label:'Fenilchetonuria (PKU)',cat:'Genetica',emoji:'🧬'},
+  {id:'allergia_latte',label:'Allergia Proteine Latte Vaccino',cat:'Allergia',emoji:'🥛'},
+  {id:'allergia_pesce',label:'Allergia al Pesce',cat:'Allergia',emoji:'🐟'},
+  {id:'allergia_molluschi',label:'Allergia Molluschi/Crostacei',cat:'Allergia',emoji:'🦐'},
+  {id:'allergia_frutta_secca',label:'Allergia Frutta Secca',cat:'Allergia',emoji:'🥜'},
+  {id:'intolleranza_lattosio',label:'Intolleranza al Lattosio',cat:'Intolleranza',emoji:'🥛'},
+];
+
+const FC_OPTIONS=[
+  {label:'Nessun fattore correttivo',val:1.0},
+  {label:'Stress lieve (chirurgia minore)',val:1.1},
+  {label:'Stress moderato (chirurgia maggiore, sepsi)',val:1.2},
+  {label:'Stress severo (politrauma, ustioni)',val:1.4},
+  {label:'Febbre (+13% per gradi C > 37)',val:1.13},
+  {label:'Gravidanza / crescita',val:1.15},
+];
+
+let selectedPat=new Set();
+let tdee=0,mbGlobale=0;
+let schedaId=null;
+const macroDist={prot:20,cho:50,fat:30,fibra:25};
+
+function renderPatChips(filter=''){
+  const container=document.getElementById('pat-chips');
+  const cats={};
+  TUTTE_PATOLOGIE.forEach(p=>{
+    if(filter&&!p.label.toLowerCase().includes(filter.toLowerCase())&&!p.cat.toLowerCase().includes(filter.toLowerCase()))return;
+    if(!cats[p.cat])cats[p.cat]=[];
+    cats[p.cat].push(p);
+  });
+  let html='';
+  Object.entries(cats).forEach(([cat,pats])=>{
+    html+=`<div style="width:100%;font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:1px;margin:6px 0 3px;padding:0 2px">${cat}</div>`;
+    pats.forEach(p=>{
+      html+=`<div class="pat-chip${selectedPat.has(p.id)?' selected':''}" onclick="togglePat('${p.id}')" id="chip-${p.id}">${p.emoji} ${p.label}</div>`;
+    });
+  });
+  container.innerHTML=html||'<p style="color:var(--slate-l);font-size:12px;padding:8px">Nessuna patologia trovata.</p>';
+  updatePatSel();
+}
+function togglePat(id){
+  if(selectedPat.has(id))selectedPat.delete(id);else selectedPat.add(id);
+  const chip=document.getElementById('chip-'+id);
+  if(chip)chip.classList.toggle('selected',selectedPat.has(id));
+  updatePatSel();
+  if(document.getElementById('pat-lg-notes'))renderLGNotes(document.getElementById('pat-lg-notes'));
+}
+function filterPat(){renderPatChips(document.getElementById('pat-search').value);}
+function updatePatSel(){
+  const el=document.getElementById('pat-selezionate');
+  const arr=[...selectedPat];
+  if(!arr.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML='Selezionate: '+arr.map(id=>TUTTE_PATOLOGIE.find(p=>p.id===id)?.label||id).join(' · ');
+}
+function renderLGNotes(container){
+  const arr=[...selectedPat];
+  if(!arr.length){container.innerHTML='<p style="color:var(--slate-l);font-size:12.5px">Nessuna patologia selezionata.</p>';return;}
+  container.innerHTML=arr.map(id=>{
+    const fp=FABBISOGNO_PATOLOGIE[id];
+    const pat=TUTTE_PATOLOGIE.find(p=>p.id===id);
+    if(!fp||!pat)return '';
+    return `<div class="lg-note-box"><div style="font-weight:700;color:var(--teal-d);margin-bottom:4px">${pat.emoji} ${pat.label}</div><div>Energia: <b>${fp.kcal}</b></div><div>Proteine: <b>${fp.prot}</b></div><div style="font-size:11px;color:#334155;margin-top:4px">${fp.note}</div></div>`;
+  }).join('');
+}
+
+function aggiornaEta(){
+  const ddn=document.getElementById('v-ddn').value;
+  if(!ddn)return;
+  document.getElementById('v-eta').value=calcolaEta(ddn);
+}
+function aggiornaCalcoli(){
+  const peso=parseFloat(document.getElementById('v-peso').value);
+  const alt=parseFloat(document.getElementById('v-altezza').value);
+  const sesso=document.getElementById('v-sesso').value;
+  const mg=parseFloat(document.getElementById('v-mg').value);
+  if(!peso||!alt)return;
+  const pi=sesso==='M'?(alt-100)-((alt-150)/4):(alt-100)-((alt-150)/2.5);
+  const pa=pi+0.25*(peso-pi);
+  if(!document.getElementById('v-pi')._userEdited)document.getElementById('v-pi').value=Math.round(pi*10)/10;
+  if(!document.getElementById('v-pa')._userEdited)document.getElementById('v-pa').value=Math.round(pa*10)/10;
+  if(!isNaN(mg)&&mg>0&&!document.getElementById('v-mm')._userEdited)document.getElementById('v-mm').value=Math.round(peso*(1-mg/100)*10)/10;
+}
+
+function schofieldFn(sesso,eta,peso){
+  let MJ;
+  if(sesso==='M'){if(eta<3)MJ=0.249*peso-0.127;else if(eta<10)MJ=0.095*peso+2.110;else if(eta<18)MJ=0.074*peso+2.754;else if(eta<30)MJ=0.063*peso+2.896;else if(eta<60)MJ=0.048*peso+3.653;else MJ=0.049*peso+2.459;}
+  else{if(eta<3)MJ=0.244*peso-0.130;else if(eta<10)MJ=0.085*peso+2.033;else if(eta<18)MJ=0.056*peso+2.898;else if(eta<30)MJ=0.062*peso+2.036;else if(eta<60)MJ=0.034*peso+3.538;else MJ=0.038*peso+2.755;}
+  return Math.round(MJ*1000/4.184);
+}
+function faoWhoFn(sesso,eta,peso){
+  let k;
+  if(sesso==='M'){if(eta<3)k=60.9*peso-54;else if(eta<10)k=22.7*peso+495;else if(eta<18)k=17.5*peso+651;else if(eta<30)k=15.3*peso+679;else if(eta<60)k=11.6*peso+879;else k=13.5*peso+487;}
+  else{if(eta<3)k=61.0*peso-51;else if(eta<10)k=22.5*peso+499;else if(eta<18)k=12.2*peso+746;else if(eta<30)k=14.7*peso+496;else if(eta<60)k=8.7*peso+829;else k=10.5*peso+596;}
+  return Math.round(k);
+}
+
+function renderMacroDist(){
+  const el=document.getElementById('macro-dist-body');
+  if(!el||!tdee)return;
+  const items=[{key:'prot',label:'Proteine',col:'#15803D',kcalpg:4},{key:'cho',label:'CHO',col:'#1D4ED8',kcalpg:4},{key:'fat',label:'Grassi',col:'#B45309',kcalpg:9}];
+  el.innerHTML=items.map(it=>{
+    const g=Math.round(tdee*macroDist[it.key]/100/it.kcalpg);
+    return `<div style="display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+      <label style="font-size:12.5px;font-weight:600;color:${it.col}">${it.label}</label>
+      <input type="range" min="5" max="70" value="${macroDist[it.key]}" oninput="macroDist['${it.key}']=parseInt(this.value);renderMacroDist()" style="accent-color:${it.col}">
+      <span style="font-size:13px;font-weight:700;color:${it.col};min-width:36px;text-align:right">${macroDist[it.key]}%</span>
+      <span style="font-size:12px;color:var(--slate-l);min-width:60px;text-align:right">${g} g</span>
+    </div>`;
+  }).join('')+`<div style="padding:7px 0;font-size:11px;color:var(--slate-l)">Totale: ${macroDist.prot+macroDist.cho+macroDist.fat}%${macroDist.prot+macroDist.cho+macroDist.fat!==100?' <span style="color:var(--red);font-weight:700">⚠️ Deve essere 100%</span>':'<span style="color:var(--teal)"> ✅</span>'}</div>
+  <div style="background:#FAF5FF;border-radius:8px;padding:10px;margin-top:8px">
+    <div style="font-size:12px;font-weight:700;color:#7E22CE;margin-bottom:6px">🌿 Fibra (separata)</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <input type="range" min="15" max="45" value="${macroDist.fibra||25}" oninput="macroDist.fibra=parseInt(this.value);this.nextElementSibling.textContent=this.value+'g/die'" style="flex:1;accent-color:#7E22CE">
+      <span style="font-size:13px;font-weight:700;color:#7E22CE;min-width:65px">${macroDist.fibra||25}g/die</span>
+    </div>
+    <div style="font-size:11px;color:var(--slate-l);margin-top:4px">Target LG: ≥25g/die (≥30g se obesita)</div>
+  </div>`;
+}
+
+function aggiornaTDEE(mb){
+  const laf=parseFloat(document.getElementById('val-laf')?.value)||1.375;
+  const fc=parseFloat(document.getElementById('val-fc')?.value)||1.0;
+  const t=Math.round(mb*laf);
+  const tfc=Math.round(t*fc);
+  tdee=tfc>0?tfc:t;
+  const el=document.getElementById('tdee-result');
+  if(!el)return;
+  el.innerHTML=`<div class="result-pill" style="background:#FFF7ED"><div><div class="rp-label">TDEE (MB x LAF)</div></div><div class="rp-val" style="color:#C2410C">${t} kcal</div></div>${fc!==1?`<div class="result-pill" style="background:#FFFBEB"><div><div class="rp-label">TDEE x FC (stress)</div></div><div class="rp-val" style="color:#B45309">${tfc} kcal</div></div>`:''}`;
+  renderMacroDist();
+}
+
+function calcolaFabbisogno(){
+  const sesso=document.getElementById('v-sesso').value;
+  const eta=parseFloat(document.getElementById('v-eta').value);
+  const peso=parseFloat(document.getElementById('v-peso').value);
+  const alt=parseFloat(document.getElementById('v-altezza').value);
+  const vita=parseFloat(document.getElementById('v-vita').value)||null;
+  const fianchi=parseFloat(document.getElementById('v-fianchi').value)||null;
+  const mg=parseFloat(document.getElementById('v-mg').value)||null;
+  const mm=parseFloat(document.getElementById('v-mm').value)||null;
+  if(!eta||!peso||!alt){toast('Inserisci eta, peso e altezza','err');return;}
+  const altM=alt/100;const bmi=peso/(altM*altM);
+  const pi=parseFloat(document.getElementById('v-pi').value)||( sesso==='M'?(alt-100)-((alt-150)/4):(alt-100)-((alt-150)/2.5));
+  const pa=pi+0.25*(peso-pi);
+  if(!document.getElementById('v-pi').value)document.getElementById('v-pi').value=Math.round(pi*10)/10;
+  if(!document.getElementById('v-pa').value)document.getElementById('v-pa').value=Math.round(pa*10)/10;
+  const pesoF=bmi>=30?pa:peso;
+  const hb=Math.round(sesso==='M'?66.47+13.75*pesoF+5.003*alt-6.755*eta:655.1+9.563*pesoF+1.85*alt-4.676*eta);
+  const miff=Math.round(sesso==='M'?10*pesoF+6.25*alt-5*eta+5:10*pesoF+6.25*alt-5*eta-161);
+  const schof=schofieldFn(sesso,eta,pesoF);
+  const fao=faoWhoFn(sesso,eta,pesoF);
+  const kma=mm?Math.round(370+21.6*mm):null;
+  const formule=[{nome:'Harris-Benedict (1919)',val:hb,note:'Piu usata clinicamente'},{nome:'Mifflin-St Jeor (1990)',val:miff,note:'Piu accurata in generale'},{nome:'Schofield (1985) LARN',val:schof,note:'Standard OMS/LARN - corretta'},{nome:'FAO/WHO (1985)',val:fao,note:'Standard internazionale'},...(kma?[{nome:'Katch-McArdle (MM)',val:kma,note:'Se massa magra nota'}]:[])];
+  const mbM=Math.round(formule.reduce((s,f)=>s+f.val,0)/formule.length);
+  mbGlobale=mbM;tdee=Math.round(mbM*1.375);
+  let bmiCat='',bmiCol='var(--teal)';
+  if(bmi<18.5){bmiCat='Sottopeso';bmiCol='#0EA5E9';}else if(bmi<25){bmiCat='Normopeso';bmiCol='#15803D';}else if(bmi<30){bmiCat='Sovrappeso';bmiCol='#D97706';}else if(bmi<35){bmiCat='Obesita I';bmiCol='#DC2626';}else if(bmi<40){bmiCat='Obesita II';bmiCol='#DC2626';}else{bmiCat='Obesita III';bmiCol='#991B1B';}
+  const whr=vita&&fianchi?vita/fianchi:null;
+  const whtr=vita?vita/alt:null;
+  const col=document.getElementById('risultati-col');
+  col.innerHTML=`
+  <div class="val-section"><h3>📐 Indici Antropometrici</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div class="result-pill"><div><div class="rp-label">BMI</div><div class="rp-badge" style="color:${bmiCol}">${bmiCat}</div></div><div class="rp-val" style="color:${bmiCol}">${Math.round(bmi*10)/10}</div></div>
+    <div class="result-pill"><div><div class="rp-label">Peso Ideale (Lorenz)</div></div><div class="rp-val">${Math.round(pi*10)/10} kg</div></div>
+    <div class="result-pill"><div><div class="rp-label">Peso Aggiustato</div><div class="rp-badge">se BMI>=30</div></div><div class="rp-val" style="color:#C2410C">${Math.round(pa*10)/10} kg</div></div>
+    ${mm?`<div class="result-pill"><div><div class="rp-label">Massa Magra</div></div><div class="rp-val" style="color:#7E22CE">${Math.round(mm*10)/10} kg</div></div>`:''}
+    ${whr?`<div class="result-pill"><div><div class="rp-label">WHR</div><div class="rp-badge">${(sesso==='M'?whr>0.90:whr>0.85)?'Rischio':'OK'}</div></div><div class="rp-val">${Math.round(whr*100)/100}</div></div>`:''}
+    ${whtr?`<div class="result-pill"><div><div class="rp-label">WHtR</div><div class="rp-badge">${whtr>0.5?'Rischio metabolico':'OK'}</div></div><div class="rp-val">${Math.round(whtr*100)/100}</div></div>`:''}
+  </div></div>
+
+  <div class="val-section"><h3>🔥 Metabolismo Basale</h3>
+  <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:10px">Peso usato: <b>${Math.round(pesoF*10)/10} kg</b>${bmi>=30?' (aggiustato)':''}</div>
+  ${formule.map((f,i)=>`<div class="formula-row${i===1?' best':''}"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div class="fv">${f.val} kcal</div></div>`).join('')}
+  <div style="background:var(--teal);color:white;padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:8px"><b>Media formule</b><span style="font-size:22px;font-weight:700">${mbM} kcal</span></div>
+  </div>
+
+  <div class="val-section"><h3>⚡ Fabbisogno Totale (TDEE)</h3>
+  <div class="fg" style="margin-bottom:10px"><label>Livello Attivita Fisica (LAF)</label>
+  <select id="val-laf" onchange="aggiornaTDEE(${mbM})" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
+    ${LAF_OPTIONS.map((l,i)=>`<option value="${l.val}" ${i===1?'selected':''}>${l.label} (x${l.val})</option>`).join('')}
+  </select></div>
+  <div class="fg" style="margin-bottom:12px"><label>Fattore di Correzione (FC)</label>
+  <select id="val-fc" onchange="aggiornaTDEE(${mbM})" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
+    ${FC_OPTIONS.map((f,i)=>`<option value="${f.val}" ${i===0?'selected':''}>${f.label}</option>`).join('')}
+  </select></div>
+  <div id="tdee-result"></div></div>
+
+  <div class="val-section"><h3>🍽️ Ripartizione Macronutrienti</h3>
+  <p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">Trascina i cursori per impostare le percentuali. I grammi si aggiornano sul TDEE calcolato.</p>
+  <div id="macro-dist-body"></div></div>
+
+  <div class="val-section"><h3>🥩 Fabbisogno Proteico</h3>
+  ${[1.0,1.2,1.5,2.0].map(v=>`<div class="result-pill"><div><div class="rp-label">${v} g/kg/die</div></div><div class="rp-val">${Math.round(pesoF*v*10)/10} g</div></div>`).join('')}
+  <div style="font-size:11px;color:var(--slate-l);margin-top:6px">Peso: ${Math.round(pesoF*10)/10} kg${bmi>=30?' (aggiustato)':''}</div>
+  </div>
+
+  <div class="val-section"><h3>🏥 Raccomandazioni per le Patologie</h3><div id="pat-lg-notes"></div></div>`;
+
+  aggiornaTDEE(mbM);renderMacroDist();renderLGNotes(document.getElementById('pat-lg-notes'));
+}
+
+async function salvaScheda(){
+  const nome=document.getElementById('v-nome').value.trim();
+  if(!nome){toast('Inserisci il nome del paziente','err');return;}
+  const cartellaId=document.getElementById('v-cartella').value;
+  if(!cartellaId){
+    const cog=document.getElementById('v-cognome').value.trim();
+    document.getElementById('new-cart-nome').value=(cog?cog+' ':'')+nome;
+    openM('modal-newcart');return;
+  }
+  await doSalva(cartellaId);
+}
+
+async function confermaSalva(){
+  const nomeCart=document.getElementById('new-cart-nome').value.trim();
+  if(!nomeCart){toast('Inserisci nome cartella','err');return;}
+  showLoading(true);
+  const{data,error}=await sb.from('cartelle').insert({
+    user_id:currentUser.id,nome:nomeCart,
+    ddn:document.getElementById('v-ddn').value||null,
+    sesso:document.getElementById('v-sesso').value||null,
+    note:document.getElementById('v-note').value.trim()||null,
+    created_at:new Date().toISOString()
+  }).select().single();
+  showLoading(false);
+  if(error||!data){toast('Errore: '+(error?.message||''),'err');return;}
+  closeM('modal-newcart');
+  await loadCartelleDropdown2();
+  document.getElementById('v-cartella').value=data.id;
+  await doSalva(data.id);
+  toast('Cartella creata e scheda salvata!','ok');
+}
+
+async function doSalva(cartellaId){
+  const payload={
+    cartella_id:cartellaId,user_id:currentUser.id,
+    nome:document.getElementById('v-nome').value.trim(),
+    cognome:document.getElementById('v-cognome').value.trim()||null,
+    ddn:document.getElementById('v-ddn').value||null,
+    eta:parseInt(document.getElementById('v-eta').value)||null,
+    sesso:document.getElementById('v-sesso').value,
+    peso:parseFloat(document.getElementById('v-peso').value)||null,
+    altezza:parseFloat(document.getElementById('v-altezza').value)||null,
+    peso_ideale:parseFloat(document.getElementById('v-pi').value)||null,
+    peso_aggiustato:parseFloat(document.getElementById('v-pa').value)||null,
+    massa_grassa_pct:parseFloat(document.getElementById('v-mg').value)||null,
+    massa_magra:parseFloat(document.getElementById('v-mm').value)||null,
+    vita:parseFloat(document.getElementById('v-vita').value)||null,
+    fianchi:parseFloat(document.getElementById('v-fianchi').value)||null,
+    braccio:parseFloat(document.getElementById('v-braccio').value)||null,
+    plica:parseFloat(document.getElementById('v-plica').value)||null,
+    patologie:JSON.stringify([...selectedPat]),
+    note:document.getElementById('v-note').value.trim()||null,
+    macro_dist:JSON.stringify(macroDist),
+    tdee_calcolato:tdee||null,
+    saved_at:new Date().toISOString()
+  };
+  showLoading(true);
+  let result;
+  if(schedaId){result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId);}
+  else{result=await sb.from('schede_valutazione').insert(payload).select().single();if(result.data)schedaId=result.data.id;}
+  showLoading(false);
+  if(result.error){
+    if(result.error.code==='42P01'){
+      toast('Tabella schede_valutazione mancante - esegui SQL in console','err');
+      console.error('Esegui su Supabase:\ncreate table schede_valutazione(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,nome text,cognome text,ddn date,eta int,sesso text,peso numeric,altezza numeric,peso_ideale numeric,peso_aggiustato numeric,massa_grassa_pct numeric,massa_magra numeric,vita numeric,fianchi numeric,braccio numeric,plica numeric,patologie text,note text,macro_dist text,tdee_calcolato numeric,saved_at timestamptz default now());\nalter table schede_valutazione enable row level security;\ncreate policy "Proprie schede" on schede_valutazione for all using (auth.uid()=user_id);');
+    }else{toast('Errore: '+result.error.message,'err');}
+    return;
+  }
+  toast('Scheda salvata nella cartella!','ok');
+}
+
+async function loadCartelleDropdown2(){
+  const sel=document.getElementById('v-cartella');
+  if(!sel||!currentUser)return;
+  const{data}=await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">-- Crea nuova cartella --</option>';
+  if(data)data.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent='📁 '+c.nome;sel.appendChild(o);});
+  if(cur)sel.value=cur;
+}
+
+function resetVal(){
+  ['v-nome','v-cognome','v-eta','v-peso','v-altezza','v-pi','v-pa','v-vita','v-fianchi','v-braccio','v-plica','v-mg','v-mm','v-note'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el._userEdited=false;}});
+  document.getElementById('v-ddn').value='';
+  document.getElementById('v-sesso').value='M';
+  selectedPat.clear();renderPatChips();
+  document.getElementById('risultati-col').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--slate-l)"><div style="font-size:44px;margin-bottom:14px">📊</div><p>Inserisci i dati e clicca Calcola Fabbisogno</p></div>';
+  tdee=0;schedaId=null;
+}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+  await checkAuth();
+  renderPatChips();
+  loadCartelleDropdown2();
+  // Mark user-edited
+  ['v-pi','v-pa','v-mm'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el._userEdited=true);});
+});
+</script>
+</body>
+</html>

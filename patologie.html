@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Diete per Patologia — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.pat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.pat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:all .15s;cursor:pointer}
+.pat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.pat-card-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;color:white}
+.pat-card-hdr h3{font-size:13.5px;font-weight:700;flex:1}
+.pat-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;background:rgba(255,255,255,.2);white-space:nowrap}
+.pat-card-body{padding:12px 16px}
+.pat-desc{font-size:12px;color:var(--slate-m);margin-bottom:10px;line-height:1.6}
+.pat-note{font-size:11px;color:var(--slate-l);background:#F8FAFC;border-radius:6px;padding:8px 10px;margin-bottom:10px;line-height:1.6;border-left:3px solid var(--teal-l)}
+.macro-summary{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ms-pill{padding:3px 9px;border-radius:10px;font-size:11px;font-weight:600}
+.pasto-preview{margin-bottom:6px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.pp-hdr{background:var(--slate);color:white;padding:6px 10px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.pp-items{padding:6px 10px}
+.pp-item{display:flex;justify-content:space-between;padding:3px 0;font-size:11.5px;border-bottom:1px solid var(--border)}
+.pp-item:last-child{border-bottom:none}
+.pp-nome{color:var(--slate-m);font-weight:500}
+.pp-qt{color:var(--teal-d);font-weight:700}
+.totali-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:#F0FDF4;border-radius:8px;padding:8px 10px;margin-top:8px}
+.tot-cell{text-align:center}
+.tot-cell .tv{font-size:14px;font-weight:700;color:var(--teal-d)}
+.tot-cell .tl{font-size:9.5px;color:var(--slate-l)}
+.micro-totali{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.micro-pill-tot{padding:3px 8px;border-radius:10px;font-size:10.5px;font-weight:600;background:#EFF6FF;color:#1D4ED8}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item active" href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🏥 Diete per Patologia</h2>
+</div>
+<main id="main"><div class="page-content">
+  <div class="db-filters" style="margin-bottom:14px">
+    <input type="text" id="pat-search" class="db-search" placeholder="🔍 Cerca patologia..." oninput="filterPat()" style="max-width:400px">
+    <span id="pat-count" style="font-size:12px;color:var(--slate-l)"></span>
+  </div>
+  <div id="pat-grid" class="pat-grid"></div>
+</div></main>
+
+<!-- MODAL DETTAGLIO -->
+<div class="modal-bg" id="modal-pat">
+  <div class="modal" style="max-width:680px">
+    <div class="mhdr" id="modal-pat-hdr"><h2 id="modal-pat-title"></h2><button class="mclose" onclick="closeM('modal-pat')">✕</button></div>
+    <div class="mbody" id="modal-pat-body"></div>
+    <div class="mfoot" style="flex-wrap:wrap;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-pat')">Chiudi</button>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+        <label style="font-size:12.5px;font-weight:600;color:var(--slate-m)">🔥 Kcal target:</label>
+        <select id="kcal-target-sel" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none" onchange="aggiornaSchemaCal()">
+          <option value="1200">1200 kcal</option>
+          <option value="1400">1400 kcal</option>
+          <option value="1600" selected>1600 kcal</option>
+          <option value="1800">1800 kcal</option>
+          <option value="2000">2000 kcal</option>
+          <option value="2200">2200 kcal</option>
+          <option value="2400">2400 kcal</option>
+          <option value="2600">2600 kcal</option>
+          <option value="2800">2800 kcal</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-sm" id="btn-usa-schema" onclick="usaSchema()">📋 Usa questo schema nel Piano</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+let patCorrente = null;
+
+function calcTotali(pasti) {
+  let k=0,p=0,ch=0,g=0,fi=0,gs=0,z=0;
+  let ca=0,fe=0,na=0,fo=0,k2=0,mg=0,zn=0,se=0,col=0;
+  pasti.forEach(pasto => {
+    pasto.items.forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt)||0;
+      if(f){
+        k+=(f.k||0)/100*qt; p+=(f.p||0)/100*qt; ch+=(f.ch||0)/100*qt;
+        g+=(f.g||0)/100*qt; fi+=(f.fi||0)/100*qt;
+        gs+=(f.gs||0)/100*qt; z+=(f.z||0)/100*qt;
+        ca+=(f.ca||0)/100*qt; fe+=(f.fe||0)/100*qt;
+        na+=(f.na||0)/100*qt; fo+=(f.fo||0)/100*qt; k2+=(f.k2||0)/100*qt;
+        mg+=(f.mg||0)/100*qt; zn+=(f.zn||0)/100*qt;
+        se+=(f.se||0)/100*qt; col+=(f.col||0)/100*qt;
+      }
+    });
+  });
+  return {
+    k:Math.round(k),p:r1(p),ch:r1(ch),g:r1(g),fi:r1(fi),gs:r1(gs),z:r1(z),
+    ca:Math.round(ca),fe:r1(fe),na:Math.round(na),fo:Math.round(fo),
+    k2:Math.round(k2),mg:Math.round(mg),zn:r1(zn),se:Math.round(se),col:Math.round(col)
+  };
+}
+
+function buildPatCard(pat) {
+  const tot = calcTotali(pat.pasti);
+  const card = document.createElement('div');
+  card.className = 'pat-card';
+  card.dataset.search = pat.nome.toLowerCase() + ' ' + (pat.badge||'').toLowerCase();
+  card.innerHTML = `
+    <div class="pat-card-hdr" style="background:${pat.colore||'#334155'}">
+      <span style="font-size:22px">${pat.emoji}</span>
+      <h3>${pat.nome}</h3>
+      <span class="pat-badge">${pat.badge||''}</span>
+    </div>
+    <div class="pat-card-body">
+      <p class="pat-desc">${pat.desc||''}</p>
+      <div class="totali-row">
+        <div class="tot-cell"><div class="tv">${tot.k}</div><div class="tl">kcal</div></div>
+        <div class="tot-cell"><div class="tv">${tot.p}g</div><div class="tl">prot</div></div>
+        <div class="tot-cell"><div class="tv">${tot.ch}g</div><div class="tl">CHO</div></div>
+        <div class="tot-cell"><div class="tv">${tot.g}g</div><div class="tl">grassi</div></div>
+        <div class="tot-cell"><div class="tv">${tot.fi}g</div><div class="tl">fibra</div></div>
+      </div>
+      <div class="micro-totali" style="overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;scrollbar-width:thin">
+        <span class="micro-pill-tot" style="white-space:nowrap">Ca: ${tot.ca}mg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">Fe: ${tot.fe}mg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">Na: ${tot.na}mg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">Fo: ${tot.fo}mg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">K: ${tot.k2}mg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">Mg: ${tot.mg}mg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">Zn: ${tot.zn}mg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">Se: ${tot.se}µg</span>
+        <span class="micro-pill-tot" style="white-space:nowrap">Col: ${tot.col}mg</span>
+      </div>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="event.stopPropagation();apriDettaglio('${pat.id}')">👁️ Vedi schema completo</button>
+    </div>`;
+  return card;
+}
+
+function renderPat(filter='') {
+  const grid = document.getElementById('pat-grid');
+  const pats = getAllPatologie();
+  const q = filter.toLowerCase();
+  const filtered = pats.filter(p => !q || p.nome.toLowerCase().includes(q) || (p.badge||'').toLowerCase().includes(q));
+  document.getElementById('pat-count').textContent = filtered.length + ' schemi';
+  grid.innerHTML = '';
+  if(!filtered.length){
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="ei">🔍</div><h3>Nessuna patologia trovata</h3></div>';
+    return;
+  }
+  filtered.forEach(p => grid.appendChild(buildPatCard(p)));
+}
+
+function filterPat() { renderPat(document.getElementById('pat-search').value); }
+
+function apriDettaglio(id) {
+  const allPats = getAllPatologie();
+  const pat = allPats.find(p => p.id === id);
+  if(!pat) {
+    // DB might not be ready, rebuild and retry
+    rebuildDB();
+    const pat2 = getAllPatologie().find(p => p.id === id);
+    if(!pat2) { toast('Patologia non trovata. Ricarica la pagina.','err'); return; }
+    return apriDettaglio(id);
+  }
+  patCorrente = pat;
+  patCorrenteScaled = pat;
+
+  document.getElementById('modal-pat-title').textContent = pat.emoji + ' ' + pat.nome;
+  const hdr = document.getElementById('modal-pat-hdr');
+  hdr.style.background = pat.colore || '#334155';
+  hdr.style.color = 'white';
+  hdr.querySelector('h2').style.color = 'white';
+  hdr.querySelector('.mclose').style.color = 'white';
+
+  // Set kcal selector to base value
+  const baseTot = calcTotali(pat.pasti);
+  const baseKcal = baseTot.k;
+  const sel = document.getElementById('kcal-target-sel');
+  if(sel) {
+    // Find closest kcal option
+    const opts = [1200,1400,1600,1800,2000,2200,2400,2600,2800];
+    const closest = opts.reduce((a,b) => Math.abs(b-baseKcal)<Math.abs(a-baseKcal)?b:a);
+    sel.value = String(closest);
+  }
+
+  document.getElementById('modal-pat-body').innerHTML = buildModalBody(pat);
+  openM('modal-pat');
+}
+
+
+function aggiornaSchemaCal() {
+  if (!patCorrente) return;
+  const targetKcal = parseInt(document.getElementById('kcal-target-sel').value);
+  const baseKcal = calcTotali(patCorrente.pasti).k;
+  if (!baseKcal || baseKcal === 0) return;
+  const ratio = targetKcal / baseKcal;
+  // Scale all portions
+  patCorrenteScaled = {
+    ...patCorrente,
+    pasti: patCorrente.pasti.map(pasto => ({
+      ...pasto,
+      items: pasto.items.map(item => ({
+        ...item,
+        qt: String(Math.round(parseFloat(item.qt) * ratio))
+      }))
+    }))
+  };
+  // Re-render modal body with scaled values
+  document.getElementById('modal-pat-body').innerHTML = buildModalBody(patCorrenteScaled);
+  // Update totals display
+  const tot = calcTotali(patCorrenteScaled.pasti);
+  toast(`✅ Schema adattato a ${targetKcal} kcal (base: ${baseKcal} kcal)`, 'ok');
+}
+
+let patCorrenteScaled = null;
+
+function getMicroRelevanti(id) {
+  const map = {
+    irc:[{k:'fo',label:'Fosforo',bg:'#FEF3C7',col:'#B45309',target:'<800mg',u:'mg'},{k:'k2',label:'Potassio',bg:'#FCE7F3',col:'#9D174D',target:'<2000mg',u:'mg'},{k:'na',label:'Sodio',bg:'#FEE2E2',col:'#991B1B',target:'<2000mg',u:'mg'}],
+    dialisi:[{k:'fo',label:'Fosforo',bg:'#FEF3C7',col:'#B45309',target:'<800mg',u:'mg'},{k:'k2',label:'Potassio',bg:'#FCE7F3',col:'#9D174D',target:'<2000mg',u:'mg'},{k:'na',label:'Sodio',bg:'#FEE2E2',col:'#991B1B',target:'<2000mg',u:'mg'}],
+    ipertensione:[{k:'na',label:'Sodio',bg:'#FEE2E2',col:'#991B1B',target:'<2000mg',u:'mg'},{k:'k2',label:'Potassio',bg:'#F0FDF4',col:'#15803D',target:'>3500mg',u:'mg'},{k:'ca',label:'Calcio',bg:'#EFF6FF',col:'#1D4ED8',target:'>1000mg',u:'mg'}],
+    scompenso:[{k:'na',label:'Sodio',bg:'#FEE2E2',col:'#991B1B',target:'<2000mg',u:'mg'},{k:'k2',label:'Potassio',bg:'#F0FDF4',col:'#15803D',target:'monit.',u:'mg'}],
+    calcolosi:[{k:'ca',label:'Calcio',bg:'#EFF6FF',col:'#1D4ED8',target:'1000-1200mg',u:'mg'},{k:'na',label:'Sodio',bg:'#FEE2E2',col:'#991B1B',target:'<2300mg',u:'mg'}],
+    osteoporosi:[{k:'ca',label:'Calcio',bg:'#EFF6FF',col:'#1D4ED8',target:'1000-1200mg',u:'mg'},{k:'fo',label:'Fosforo',bg:'#FEF3C7',col:'#B45309',target:'',u:'mg'}],
+    anemia:[{k:'fe',label:'Ferro',bg:'#FEE2E2',col:'#991B1B',target:'18-27mg',u:'mg'}],
+    gravidanza:[{k:'ca',label:'Calcio',bg:'#EFF6FF',col:'#1D4ED8',target:'1000mg',u:'mg'},{k:'fe',label:'Ferro',bg:'#FEE2E2',col:'#991B1B',target:'27mg',u:'mg'}],
+    allattamento:[{k:'ca',label:'Calcio',bg:'#EFF6FF',col:'#1D4ED8',target:'1000mg',u:'mg'}],
+  };
+  return map[id] || [{k:'na',label:'Sodio',bg:'#FEE2E2',col:'#991B1B',target:'',u:'mg'},{k:'ca',label:'Calcio',bg:'#EFF6FF',col:'#1D4ED8',target:'',u:'mg'},{k:'fe',label:'Ferro',bg:'#FEF3C7',col:'#B45309',target:'',u:'mg'}];
+}
+
+function buildModalBody(pat) {
+  const tot = calcTotali(pat.pasti);
+  const microRelevanti = getMicroRelevanti(pat.id);
+
+  let html = `
+    <div style="background:#EFF6FF;border-radius:8px;padding:10px 14px;margin-bottom:14px;border-left:3px solid ${pat.colore}">
+      <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">${pat.note||''}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px">
+      <div style="text-align:center;background:#FFF7ED;border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:#C2410C">${tot.k}</div><div style="font-size:10px;color:var(--slate-l)">kcal</div></div>
+      <div style="text-align:center;background:#F0FDF4;border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:#15803D">${tot.p}g</div><div style="font-size:10px;color:var(--slate-l)">proteine</div></div>
+      <div style="text-align:center;background:#EFF6FF;border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:#1D4ED8">${tot.ch}g</div><div style="font-size:10px;color:var(--slate-l)">CHO</div></div>
+      <div style="text-align:center;background:#FFFBEB;border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:#B45309">${tot.g}g</div><div style="font-size:10px;color:var(--slate-l)">grassi</div></div>
+      <div style="text-align:center;background:#FAF5FF;border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:#7E22CE">${tot.fi}g</div><div style="font-size:10px;color:var(--slate-l)">fibra</div></div>
+    </div>`;
+
+  if(microRelevanti.length) {
+    html += `<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px">⚗️ Micronutrienti rilevanti:</div><div style="display:flex;flex-wrap:wrap;gap:5px">`;
+    microRelevanti.forEach(m => {
+      const val = tot[m.k] !== undefined ? tot[m.k] + (m.u||'mg') : 'n.d.';
+      html += `<div style="background:${m.bg||'#EFF6FF'};color:${m.col||'#1D4ED8'};padding:5px 10px;border-radius:8px;font-size:11.5px;font-weight:600">${m.label}: <b>${val}</b> <span style="font-size:10px;opacity:.7">${m.target||''}</span></div>`;
+    });
+    html += '</div></div>';
+  }
+
+  html += `<div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">🍽️ Schema giornaliero tipo:</div>`;
+  pat.pasti.forEach(pasto => {
+    let pastoK=0,pastoP=0,pastoCh=0,pastoG=0;
+    pasto.items.forEach(item => {
+      const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
+      if(f){pastoK+=(f.k||0)/100*qt;pastoP+=(f.p||0)/100*qt;pastoCh+=(f.ch||0)/100*qt;pastoG+=(f.g||0)/100*qt;}
+    });
+    html += `<div class="pasto-preview" style="margin-bottom:8px">
+      <div class="pp-hdr">${pasto.emoji} ${pasto.nome}<span style="margin-left:auto;font-size:10.5px;opacity:.7">${Math.round(pastoK)}kcal · P:${r1(pastoP)}g · C:${r1(pastoCh)}g · G:${r1(pastoG)}g</span></div>
+      <div class="pp-items">${pasto.items.map(item => {
+        const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
+        const k=f?Math.round((f.k||0)/100*qt):0;
+        return `<div class="pp-item"><span class="pp-nome">${esc(item.nome)}</span><span style="display:flex;gap:10px;align-items:center"><span class="pp-qt">${item.qt}g</span><span style="font-size:10.5px;color:var(--slate-l);min-width:55px;text-align:right">${k} kcal</span></span></div>`;
+      }).join('')}</div>
+    </div>`;
+  });
+  return html;
+}
+
+function usaSchema() {
+  const schema = patCorrenteScaled || patCorrente;
+  if(!schema) return;
+  sessionStorage.setItem('loadPatologia', JSON.stringify({
+    pasti: schema.pasti,
+    nome: schema.nome
+  }));
+  window.location.href = 'app.html';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  rebuildDB();
+  renderPat();
+  // Auth in background
+  try { await checkAuth(); } catch(e) {}
+});
+</script>
+</body>
+</html>

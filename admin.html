@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Admin Utenti — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" class="nav-item active"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>⚙️ Gestione Utenti</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary btn-sm" onclick="loadUtenti()">🔄 Aggiorna</button>
+  </div>
+</div>
+<main id="main"><div class="page-content">
+  <div id="admin-check" class="empty-state">
+    <div class="ei">🔒</div><h3>Verifica accesso...</h3>
+  </div>
+  <div id="admin-content" style="display:none">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr"><h3>👥 Utenti Registrati</h3></div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:var(--slate);color:#CBD5E1">
+              <th style="padding:8px 12px;text-align:left">Email</th>
+              <th style="padding:8px 12px;text-align:center">Approvato</th>
+              <th style="padding:8px 12px;text-align:center">Admin</th>
+              <th style="padding:8px 12px;text-align:center">Registrato</th>
+              <th style="padding:8px 12px;text-align:center">Azioni</th>
+            </tr>
+          </thead>
+          <tbody id="utenti-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+async function loadUtenti() {
+  showLoading(true);
+  const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+  showLoading(false);
+  if(error){ toast('Errore: ' + error.message, 'err'); return; }
+  const tbody = document.getElementById('utenti-tbody');
+  if(!data || !data.length){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--slate-l)">Nessun utente trovato</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(u => `<tr style="border-bottom:1px solid var(--border)">
+    <td style="padding:8px 12px;font-weight:500">${esc(u.email||u.username||u.id)}</td>
+    <td style="padding:8px 12px;text-align:center">
+      ${u.approved
+        ? '<span style="color:#15803D;font-weight:700">✅ Sì</span>'
+        : '<span style="color:#DC2626;font-weight:700">❌ No</span>'}
+    </td>
+    <td style="padding:8px 12px;text-align:center">
+      ${u.is_admin ? '<span style="color:#7C3AED;font-weight:700">👑 Admin</span>' : '—'}
+    </td>
+    <td style="padding:8px 12px;text-align:center;font-size:12px;color:var(--slate-l)">
+      ${u.created_at ? new Date(u.created_at).toLocaleDateString('it') : '—'}
+    </td>
+    <td style="padding:8px 12px;text-align:center">
+      <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+        ${!u.approved
+          ? `<button class="btn btn-primary btn-xs" onclick="approvaUtente('${u.id}')">✅ Approva</button>`
+          : `<button class="btn btn-ghost btn-xs" onclick="revokaUtente('${u.id}')">❌ Revoca</button>`}
+        ${!u.is_admin
+          ? `<button class="btn btn-ghost btn-xs" style="color:#7C3AED;border-color:#DDD6FE" onclick="makeAdmin('${u.id}')">👑 Admin</button>`
+          : `<button class="btn btn-ghost btn-xs" onclick="removeAdmin('${u.id}')">Remove Admin</button>`}
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+async function approvaUtente(id) {
+  showLoading(true);
+  await sb.from('profiles').update({ approved: true }).eq('id', id);
+  showLoading(false);
+  toast('✅ Utente approvato!', 'ok');
+  loadUtenti();
+}
+async function revokaUtente(id) {
+  if(!confirm('Revocare accesso a questo utente?')) return;
+  showLoading(true);
+  await sb.from('profiles').update({ approved: false }).eq('id', id);
+  showLoading(false);
+  toast('❌ Accesso revocato', 'info');
+  loadUtenti();
+}
+async function makeAdmin(id) {
+  if(!confirm('Rendere admin questo utente?')) return;
+  showLoading(true);
+  await sb.from('profiles').update({ is_admin: true }).eq('id', id);
+  showLoading(false);
+  toast('👑 Admin impostato!', 'ok');
+  loadUtenti();
+}
+async function removeAdmin(id) {
+  if(!confirm('Rimuovere privilegi admin?')) return;
+  showLoading(true);
+  await sb.from('profiles').update({ is_admin: false }).eq('id', id);
+  showLoading(false);
+  toast('Admin rimosso', 'info');
+  loadUtenti();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await checkAuth();
+  if(!ok) return;
+  if(!isAdmin) {
+    document.getElementById('admin-check').innerHTML = '<div class="ei">🔒</div><h3>Accesso negato</h3><p>Solo gli amministratori possono accedere a questa sezione.</p><br><a href="app.html" class="btn btn-primary" style="width:auto;padding:8px 20px">← Torna al Piano</a>';
+    return;
+  }
+  document.getElementById('admin-check').style.display = 'none';
+  document.getElementById('admin-content').style.display = 'block';
+  loadUtenti();
+});
+</script>
+</body>
+</html>

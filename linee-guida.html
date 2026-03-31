@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Linee Guida Nutrizionali — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.lg-version-toggle{display:flex;gap:6px;margin-bottom:12px}
+.lg-ver-btn{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);transition:all .15s}
+.lg-ver-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+.lg-link-box{background:#EFF6FF;border-radius:8px;padding:10px 14px;margin-top:12px;border-left:3px solid #3B82F6;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.lg-link-btn{padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.lg-link-btn:hover{background:#1D4ED8}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item active" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📚 Linee Guida Nutrizionali</h2>
+</div>
+<main id="main">
+<div class="page-content">
+  <div style="margin-bottom:16px">
+    <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:10px">Sintesi delle più recenti linee guida internazionali (ESPEN, ESC, EASL, WHO) per la gestione nutrizionale delle principali patologie.</p>
+    <div style="position:relative">
+      <input type="text" id="lg-search" class="db-search" style="width:100%;padding:10px 14px;font-size:14px" placeholder="🔍 Cerca patologia (es. diabete, cirrosi, osteoporosi...)..." oninput="filterLG()">
+    </div>
+    <div id="lg-count" style="font-size:12px;color:var(--slate-l);margin-top:6px">21 patologie</div>
+  </div>
+  <div id="lg-grid" style="display:flex;flex-direction:column;gap:8px">
+    
+  <div class="lg-card" id="lg-diabete" data-search="diabete mellito tipo 2 espen 2023">
+    <div class="lg-card-hdr" onclick="toggleLG('diabete')">
+      <span style="font-size:24px">🩸</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Diabete Mellito Tipo 2</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Approccio nutrizionale basato su basso indice glicemico, alto contenuto di fibre, grassi insaturi, proteine moderate. Obiettivo: controllo glicemico e peso corporeo.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESPEN 2023</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-diabete">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-diabete">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('diabete','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('diabete','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #3B82F6">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 25-35 kcal/kg/die (peso ideale) · Proteine: 1.0-1.2 g/kg/die · CHO: 45-60% (basso IG) · Grassi saturi: <10% · Fibra: ≥25 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2023 raccomanda una dieta a basso indice glicemico con preferenza per carboidrati complessi. L'HbA1c è il marker primario da monitorare. La distribuzione dei macronutrienti deve essere individualizzata. Limitare zuccheri semplici e bevande zuccherate. Alcol con moderazione. Pasti regolari e suddivisione dei carboidrati durante la giornata.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2023 — Diabetes</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_diabetes.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #3B82F6">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 25-35 kcal/kg/die (peso ideale) · Proteine: 1.0-1.2 g/kg/die · CHO: 45-60% (basso IG) · Grassi saturi: <10% · Fibra: ≥25 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2023 raccomanda una dieta a basso indice glicemico con preferenza per carboidrati complessi. L'HbA1c è il marker primario da monitorare. La distribuzione dei macronutrienti deve essere individualizzata. Limitare zuccheri semplici e bevande zuccherate. Alcol con moderazione. Pasti regolari e suddivisione dei carboidrati durante la giornata.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Pasta integrale, riso integrale, orzo</span><span class="food-pill food-ok">✅ Legumi (lenticchie, ceci, fagioli)</span><span class="food-pill food-ok">✅ Verdure non amidacee</span><span class="food-pill food-ok">✅ Frutta a basso IG (mele, pere, agrumi)</span><span class="food-pill food-ok">✅ Olio EVO, noci, mandorle</span><span class="food-pill food-ok">✅ Pesce, pollo, tacchino</span><span class="food-pill food-ok">✅ Yogurt greco, latticini magri</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Zucchero, dolci, caramelle</span><span class="food-pill food-no">❌ Bevande zuccherate, succhi di frutta</span><span class="food-pill food-no">❌ Pane bianco, riso bianco in eccesso</span><span class="food-pill food-no">❌ Patate fritte, snack</span><span class="food-pill food-no">❌ Carni grasse e processate</span><span class="food-pill food-no">❌ Alcol in eccesso</span><span class="food-pill food-no">❌ Cereali raffinati</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2023 — Diabetes</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_diabetes.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-irc" data-search="insufficienza renale cronica (stadio 3-4) espen 2021">
+    <div class="lg-card-hdr" onclick="toggleLG('irc')">
+      <span style="font-size:24px">🫘</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Insufficienza Renale Cronica (stadio 3-4)</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Restrizione proteica moderata, controllo di potassio, fosforo e sodio. Apporto calorico adeguato per evitare catabolismo.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESPEN 2021</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-irc">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-irc">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('irc','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('irc','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F97316">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 30-35 kcal/kg/die · Proteine: 0.6-0.8 g/kg/die (senza dialisi) · Fosforo: <800 mg/die · Potassio: <2000 mg/die · Sodio: <2 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2021 indica che la restrizione proteica rallenta la progressione dell'IRC. La qualità proteica è importante: preferire proteine ad alto valore biologico. Il fosforo additivo nei cibi processati è particolarmente assorbibile e va evitato. Il potassio va limitato lessando i vegetali in abbondante acqua (lisciviazione). Monitorare calcio, vitamina D e bicarbonato.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2021 — CKD</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_chronic_kidney_disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F97316">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 30-35 kcal/kg/die · Proteine: 0.6-0.8 g/kg/die (senza dialisi) · Fosforo: <800 mg/die · Potassio: <2000 mg/die · Sodio: <2 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2021 indica che la restrizione proteica rallenta la progressione dell'IRC. La qualità proteica è importante: preferire proteine ad alto valore biologico. Il fosforo additivo nei cibi processati è particolarmente assorbibile e va evitato. Il potassio va limitato lessando i vegetali in abbondante acqua (lisciviazione). Monitorare calcio, vitamina D e bicarbonato.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Riso bianco, pasta bianca (no integrale)</span><span class="food-pill food-ok">✅ Pane bianco non salato</span><span class="food-pill food-ok">✅ Carote, zucchine lessate</span><span class="food-pill food-ok">✅ Cetriolo, lattuga</span><span class="food-pill food-ok">✅ Mele, pere (sciroppate per ridurre K)</span><span class="food-pill food-ok">✅ Olio EVO</span><span class="food-pill food-ok">✅ Carne bianca in porzioni moderate</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Potassio alto: banane, kiwi, legumi, patate, pomodori</span><span class="food-pill food-no">❌ Fosforo alto: latticini, noci, cioccolato, cola</span><span class="food-pill food-no">❌ Sale da cucina in eccesso</span><span class="food-pill food-no">❌ Cibi processati con additivi fosfatici (E338-E341)</span><span class="food-pill food-no">❌ Integratori di K e P non prescritti</span><span class="food-pill food-no">❌ Proteine in eccesso</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2021 — CKD</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_chronic_kidney_disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-dialisi" data-search="dialisi (emodialisi/peritoneale) espen 2021">
+    <div class="lg-card-hdr" onclick="toggleLG('dialisi')">
+      <span style="font-size:24px">💧</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Dialisi (Emodialisi/Peritoneale)</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Apporto proteico aumentato per compensare le perdite dialitiche. Controllo rigoroso di K, P, Na e liquidi.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESPEN 2021</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-dialisi">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-dialisi">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('dialisi','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('dialisi','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #06B6D4">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 30-35 kcal/kg/die · Proteine: 1.2-1.4 g/kg/die (HD), 1.2-1.5 (PD) · K: <2000 mg/die · P: <800 mg/die · Liquidi: 500 ml + diuresi residua</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">La dialisi rimuove proteine e aminoacidi, aumentando il fabbisogno proteico rispetto all'IRC non dialitica. L'apporto calorico deve essere adeguato per evitare catabolismo. Nella dialisi peritoneale, considerare le calorie assorbite dal dializzato glucosato (~200-400 kcal/die). Chelanti del fosforo con i pasti se prescritti. Monitorare albumina (target >3.5 g/dl).</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2021 — CKD/Dialysis</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_chronic_kidney_disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #06B6D4">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 30-35 kcal/kg/die · Proteine: 1.2-1.4 g/kg/die (HD), 1.2-1.5 (PD) · K: <2000 mg/die · P: <800 mg/die · Liquidi: 500 ml + diuresi residua</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">La dialisi rimuove proteine e aminoacidi, aumentando il fabbisogno proteico rispetto all'IRC non dialitica. L'apporto calorico deve essere adeguato per evitare catabolismo. Nella dialisi peritoneale, considerare le calorie assorbite dal dializzato glucosato (~200-400 kcal/die). Chelanti del fosforo con i pasti se prescritti. Monitorare albumina (target >3.5 g/dl).</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Proteine ad alto valore biologico: uova, carne bianca, pesce</span><span class="food-pill food-ok">✅ Riso, pasta bianca</span><span class="food-pill food-ok">✅ Pane bianco non salato</span><span class="food-pill food-ok">✅ Verdure a basso K (lessate)</span><span class="food-pill food-ok">✅ Frutta in piccole quantità</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Liquidi in eccesso</span><span class="food-pill food-no">❌ Sale aggiunto</span><span class="food-pill food-no">❌ Banane, pomodori, patate, legumi (alto K)</span><span class="food-pill food-no">❌ Latticini in eccesso (alto P)</span><span class="food-pill food-no">❌ Cola, cioccolato, noci</span><span class="food-pill food-no">❌ Frutta secca</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2021 — CKD/Dialysis</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_chronic_kidney_disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-obesita" data-search="obesità e sovrappeso espen 2022">
+    <div class="lg-card-hdr" onclick="toggleLG('obesita')">
+      <span style="font-size:24px">⚖️</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Obesità e Sovrappeso</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Deficit calorico moderato mantenendo densità nutrizionale alta. Proteine aumentate per preservare la massa magra.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESPEN 2022</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-obesita">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-obesita">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('obesita','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('obesita','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #22C55E">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: deficit 500-750 kcal/die sul TDEE (min 1200 kcal donne, 1500 kcal uomini) · Proteine: 1.2-1.5 g/kg peso ideale/die · Fibre: ≥30 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2022 raccomanda un approccio multidisciplinare. La perdita di peso ottimale è 0.5-1 kg/settimana. Preferire diete che garantiscano aderenza a lungo termine. La dieta mediterranea è raccomandata. Limitare alimenti ad alta densità energetica e bassa densità nutrizionale. L'attività fisica è componente essenziale.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2022 — Obesità</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_practical_guideline_Clinical_nutrition_in_overweight_and_obesity.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #22C55E">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: deficit 500-750 kcal/die sul TDEE (min 1200 kcal donne, 1500 kcal uomini) · Proteine: 1.2-1.5 g/kg peso ideale/die · Fibre: ≥30 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2022 raccomanda un approccio multidisciplinare. La perdita di peso ottimale è 0.5-1 kg/settimana. Preferire diete che garantiscano aderenza a lungo termine. La dieta mediterranea è raccomandata. Limitare alimenti ad alta densità energetica e bassa densità nutrizionale. L'attività fisica è componente essenziale.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Verdure non amidacee (abbondanti)</span><span class="food-pill food-ok">✅ Proteine magre: pollo, tacchino, pesce, legumi</span><span class="food-pill food-ok">✅ Cereali integrali in porzioni controllate</span><span class="food-pill food-ok">✅ Frutta fresca (2 porzioni/die)</span><span class="food-pill food-ok">✅ Olio EVO (2-3 cucchiai/die)</span><span class="food-pill food-ok">✅ Yogurt greco, latticini magri</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Cibi ultra-processati</span><span class="food-pill food-no">❌ Bevande zuccherate e alcoliche</span><span class="food-pill food-no">❌ Dolci, snack, merendine</span><span class="food-pill food-no">❌ Fritture e fast food</span><span class="food-pill food-no">❌ Porzioni eccessive di cereali e grassi</span><span class="food-pill food-no">❌ Sauces e condimenti ipercalorici</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2022 — Obesità</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_practical_guideline_Clinical_nutrition_in_overweight_and_obesity.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-dislipidemia" data-search="dislipidemia esc/eas 2019">
+    <div class="lg-card-hdr" onclick="toggleLG('dislipidemia')">
+      <span style="font-size:24px">🫀</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Dislipidemia</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Riduzione grassi saturi e colesterolo, aumento omega-3 e fibre solubili. Fitosteroli come integrazione.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESC/EAS 2019</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-dislipidemia">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-dislipidemia">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('dislipidemia','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('dislipidemia','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EF4444">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Grassi saturi: <7% energia totale · Colesterolo: <200 mg/die · Omega-3: ≥2 g/die · Fibre solubili: ≥10 g/die · Fitosteroli: 2 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESC/EAS 2019 indica obiettivi LDL individuali secondo il rischio cardiovascolare. La dieta può ridurre LDL del 10-20%. Gli acidi grassi trans (presenti in cibi industriali) sono particolarmente dannosi. Gli omega-3 EPA/DHA riducono i trigliceridi. Alcol: <14 unità/settimana uomini, <7 donne.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESC/EAS 2019 — Dislipidemia</div>
+        </div>
+        <a href="https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Dyslipidaemias-Management-of" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EF4444">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Grassi saturi: <7% energia totale · Colesterolo: <200 mg/die · Omega-3: ≥2 g/die · Fibre solubili: ≥10 g/die · Fitosteroli: 2 g/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESC/EAS 2019 indica obiettivi LDL individuali secondo il rischio cardiovascolare. La dieta può ridurre LDL del 10-20%. Gli acidi grassi trans (presenti in cibi industriali) sono particolarmente dannosi. Gli omega-3 EPA/DHA riducono i trigliceridi. Alcol: <14 unità/settimana uomini, <7 donne.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Olio EVO, avocado (grassi insaturi)</span><span class="food-pill food-ok">✅ Pesce azzurro, salmone (omega-3)</span><span class="food-pill food-ok">✅ Fibre solubili: avena, legumi, mele</span><span class="food-pill food-ok">✅ Noci (con moderazione)</span><span class="food-pill food-ok">✅ Steroli/stanoli vegetali (yogurt arricchiti)</span><span class="food-pill food-ok">✅ Soia e derivati</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Burro, strutto, lardo</span><span class="food-pill food-no">❌ Carni grasse, salumi, insaccati</span><span class="food-pill food-no">❌ Formaggi stagionati in eccesso</span><span class="food-pill food-no">❌ Margarine con grassi trans</span><span class="food-pill food-no">❌ Dolci con oli tropicali (palma, cocco)</span><span class="food-pill food-no">❌ Fritto in eccesso</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESC/EAS 2019 — Dislipidemia</div>
+        </div>
+        <a href="https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Dyslipidaemias-Management-of" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-ipertensione" data-search="ipertensione arteriosa esh 2023 + dash">
+    <div class="lg-card-hdr" onclick="toggleLG('ipertensione')">
+      <span style="font-size:24px">💊</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Ipertensione Arteriosa</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Dieta DASH-Mediterranea. Riduzione sodio, aumento potassio, calcio e magnesio. Limitare alcol.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESH 2023 + DASH</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-ipertensione">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-ipertensione">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('ipertensione','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('ipertensione','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #6366F1">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Sodio: <2 g/die (ideale <1.5 g) · Potassio: ≥3.5 g/die · Calcio: ≥1000 mg/die · Magnesio: ≥300 mg/die · Alcol: <14 unità/settimana</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESH 2023 indica che la riduzione di sodio di 1 g/die riduce la PA sistolica di ~3 mmHg. La dieta DASH associata alla dieta mediterranea ottiene risultati migliori. Il 70-75% del sodio alimentare proviene da cibi processati. La perdita di peso (se sovrappeso) è intervento prioritario.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESH 2023 — Ipertensione</div>
+        </div>
+        <a href="https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Hypertension" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #6366F1">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Sodio: <2 g/die (ideale <1.5 g) · Potassio: ≥3.5 g/die · Calcio: ≥1000 mg/die · Magnesio: ≥300 mg/die · Alcol: <14 unità/settimana</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESH 2023 indica che la riduzione di sodio di 1 g/die riduce la PA sistolica di ~3 mmHg. La dieta DASH associata alla dieta mediterranea ottiene risultati migliori. Il 70-75% del sodio alimentare proviene da cibi processati. La perdita di peso (se sovrappeso) è intervento prioritario.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Frutta fresca (alta in potassio)</span><span class="food-pill food-ok">✅ Verdure a foglia verde</span><span class="food-pill food-ok">✅ Legumi</span><span class="food-pill food-ok">✅ Latticini magri (calcio)</span><span class="food-pill food-ok">✅ Cereali integrali</span><span class="food-pill food-ok">✅ Pesce, pollo</span><span class="food-pill food-ok">✅ Olio EVO</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Sale aggiunto (massimo 5 g NaCl/die totale)</span><span class="food-pill food-no">❌ Cibi in scatola e inscatolati</span><span class="food-pill food-no">❌ Salumi, formaggi stagionati</span><span class="food-pill food-no">❌ Patatine, snack salati</span><span class="food-pill food-no">❌ Alcol in eccesso</span><span class="food-pill food-no">❌ Liquirizia (aumenta PA)</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESH 2023 — Ipertensione</div>
+        </div>
+        <a href="https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Hypertension" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-celiachia" data-search="celiachia / dieta gluten-free aic/espen">
+    <div class="lg-card-hdr" onclick="toggleLG('celiachia')">
+      <span style="font-size:24px">🌾</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Celiachia / Dieta Gluten-Free</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Dieta rigorosamente priva di glutine per tutta la vita. Attenzione a cross-contaminazione. Supplementazione di micronutrienti carenti.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">AIC/ESPEN</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-celiachia">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-celiachia">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('celiachia','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('celiachia','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EAB308">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Glutine: 0 mg/die · Ferro, Calcio, Folati, B12, Vitamina D: monitorare · Fibre adeguate nonostante esclusione cereali</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">Il glutine è contenuto in frumento, orzo, segale e farro. La soglia di sicurezza è <20 ppm. I prodotti certificati AIC garantiscono la sicurezza. La cross-contaminazione avviene tramite utensili, superfici e oli di cottura condivisi. La mucosa intestinale si recupera in 1-2 anni con dieta rigorosa. Monitorare periodicamente densità ossea (rischio osteoporosi).</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPGHAN/AIC — Celiachia</div>
+        </div>
+        <a href="https://www.espghan.org/guidelines/guidelines-list" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EAB308">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Glutine: 0 mg/die · Ferro, Calcio, Folati, B12, Vitamina D: monitorare · Fibre adeguate nonostante esclusione cereali</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">Il glutine è contenuto in frumento, orzo, segale e farro. La soglia di sicurezza è <20 ppm. I prodotti certificati AIC garantiscono la sicurezza. La cross-contaminazione avviene tramite utensili, superfici e oli di cottura condivisi. La mucosa intestinale si recupera in 1-2 anni con dieta rigorosa. Monitorare periodicamente densità ossea (rischio osteoporosi).</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Riso, mais, quinoa, grano saraceno, miglio</span><span class="food-pill food-ok">✅ Patate, castagne</span><span class="food-pill food-ok">✅ Carni, pesce, uova (non impanati)</span><span class="food-pill food-ok">✅ Legumi naturali</span><span class="food-pill food-ok">✅ Frutta e verdura fresca</span><span class="food-pill food-ok">✅ Latte e derivati naturali</span><span class="food-pill food-ok">✅ Prodotti certificati gluten-free</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Frumento (pane, pasta, pizza, biscotti normali)</span><span class="food-pill food-no">❌ Orzo (birra, orzo solubile)</span><span class="food-pill food-no">❌ Segale</span><span class="food-pill food-no">❌ Farro, kamut</span><span class="food-pill food-no">❌ Seitan</span><span class="food-pill food-no">❌ Prodotti con glutine nascosto (salse, dado, surimi)</span><span class="food-pill food-no">❌ Cross-contaminazione</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPGHAN/AIC — Celiachia</div>
+        </div>
+        <a href="https://www.espghan.org/guidelines/guidelines-list" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-ibd" data-search="ibd - crohn e rettocolite ulcerosa ecco/espen 2023">
+    <div class="lg-card-hdr" onclick="toggleLG('ibd')">
+      <span style="font-size:24px">🦠</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">IBD - Crohn e Rettocolite Ulcerosa</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Adattamento alle fasi della malattia. In remissione: dieta mediterranea a basso residuo. In riacutizzazione: nutrizione enterale esclusiva.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ECCO/ESPEN 2023</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-ibd">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-ibd">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('ibd','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('ibd','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #14B8A6">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 25-30 (remissione), 30-35 (riacutizzazione) · Proteine: 1.2-1.5 g/kg/die · Omega-3 EPA/DHA: benefici · Monitorare: Fe, B12, D, Zn</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ECCO-ESPEN 2023: in fase di riacutizzazione severa, la nutrizione enterale esclusiva è terapeutica (specialmente nel Crohn pediatrico). Non esiste una dieta specifica di remissione, ma la dieta mediterranea è raccomandata. Gli omega-3 hanno effetti anti-infiammatori. Evitare alimenti che scatenano i sintomi (molto individuale). Probiotici: evidenza limitata.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ECCO-ESPEN 2023 — IBD</div>
+        </div>
+        <a href="https://www.ecco-ibd.eu/publications/ecco-guidelines-ecco-consensus.html" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #14B8A6">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 25-30 (remissione), 30-35 (riacutizzazione) · Proteine: 1.2-1.5 g/kg/die · Omega-3 EPA/DHA: benefici · Monitorare: Fe, B12, D, Zn</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ECCO-ESPEN 2023: in fase di riacutizzazione severa, la nutrizione enterale esclusiva è terapeutica (specialmente nel Crohn pediatrico). Non esiste una dieta specifica di remissione, ma la dieta mediterranea è raccomandata. Gli omega-3 hanno effetti anti-infiammatori. Evitare alimenti che scatenano i sintomi (molto individuale). Probiotici: evidenza limitata.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Cereali raffinati in riacutizzazione</span><span class="food-pill food-ok">✅ Carni magre cotte</span><span class="food-pill food-ok">✅ Pesce (omega-3 benefici)</span><span class="food-pill food-ok">✅ Verdure cotte e pelate</span><span class="food-pill food-ok">✅ Yogurt, latticini fermentati</span><span class="food-pill food-ok">✅ Olio EVO</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Fibre grossolane in riacutizzazione</span><span class="food-pill food-no">❌ Fritti e grassi in eccesso</span><span class="food-pill food-no">❌ Alcol</span><span class="food-pill food-no">❌ Caffè in eccesso</span><span class="food-pill food-no">❌ Cibi piccanti</span><span class="food-pill food-no">❌ Latte (se intolleranza lattosio secondaria)</span><span class="food-pill food-no">❌ Sorbitolo e fruttosio in eccesso</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ECCO-ESPEN 2023 — IBD</div>
+        </div>
+        <a href="https://www.ecco-ibd.eu/publications/ecco-guidelines-ecco-consensus.html" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-sarcopenia" data-search="sarcopenia e anziano fragile espen 2018">
+    <div class="lg-card-hdr" onclick="toggleLG('sarcopenia')">
+      <span style="font-size:24px">💪</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Sarcopenia e Anziano Fragile</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Alto apporto proteico per prevenire e trattare la perdita di massa muscolare. Leucina, vitamina D, omega-3 e attività fisica.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESPEN 2018</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-sarcopenia">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-sarcopenia">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('sarcopenia','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('sarcopenia','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #A855F7">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Proteine: ≥1.2-1.5 g/kg/die (fino a 2.0 se allettato) · Leucina: ≥3 g/pasto · Vitamina D: 800-1000 UI/die · Kcal: 30-35 kcal/kg/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2018 indica che la sarcopenia interessa il 10-15% degli over 65 e oltre il 50% degli over 80. La sintesi proteica muscolare richiede ≥3g di leucina per pasto (contenuta in latticini, carni, uova). La vitamina D è essenziale per la funzione muscolare. L'esercizio di resistenza è insostituibile. Evitare malnutrizione: comune negli anziani ospedalizzati.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2022 — Anziano/Sarcopenia</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_practical_guideline_Nutrition_and_physical_activity_in_the_elderly.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #A855F7">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Proteine: ≥1.2-1.5 g/kg/die (fino a 2.0 se allettato) · Leucina: ≥3 g/pasto · Vitamina D: 800-1000 UI/die · Kcal: 30-35 kcal/kg/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2018 indica che la sarcopenia interessa il 10-15% degli over 65 e oltre il 50% degli over 80. La sintesi proteica muscolare richiede ≥3g di leucina per pasto (contenuta in latticini, carni, uova). La vitamina D è essenziale per la funzione muscolare. L'esercizio di resistenza è insostituibile. Evitare malnutrizione: comune negli anziani ospedalizzati.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Uova (leucina)</span><span class="food-pill food-ok">✅ Latticini: yogurt, ricotta, latte</span><span class="food-pill food-ok">✅ Carni bianche e rosse magre</span><span class="food-pill food-ok">✅ Pesce (omega-3 + proteine)</span><span class="food-pill food-ok">✅ Legumi (proteine vegetali)</span><span class="food-pill food-ok">✅ Frutta secca (energia densa)</span><span class="food-pill food-ok">✅ Latte arricchito in vitamina D</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Diete ipocaloriche non necessarie</span><span class="food-pill food-no">❌ Malnutrizione per inappetenza (trattare causa)</span><span class="food-pill food-no">❌ Alcol in eccesso</span><span class="food-pill food-no">❌ Carenza di vitamina D (supplementare se necessario)</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2022 — Anziano/Sarcopenia</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_practical_guideline_Nutrition_and_physical_activity_in_the_elderly.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-steatosi" data-search="steatosi epatica (nafld/masld) easl 2024">
+    <div class="lg-card-hdr" onclick="toggleLG('steatosi')">
+      <span style="font-size:24px">🫁</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Steatosi Epatica (NAFLD/MASLD)</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Perdita di peso 7-10% se sovrappeso. Eliminare alcol e fruttosio aggiunto. Dieta mediterranea, omega-3.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">EASL 2024</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-steatosi">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-steatosi">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('steatosi','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('steatosi','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F59E0B">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: deficit 500-750 se sovrappeso · Fruttosio aggiunto: 0 · Omega-3 EPA/DHA: 2-4 g/die · Vitamina E: 800 UI/die (NASH selezionata) · Alcol: 0</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">EASL 2024 aggiorna la nomenclatura in MASLD (Metabolic Associated Steatotic Liver Disease). La perdita di peso del 7-10% migliora la steatosi. Il fruttosio aggiunto (bevande, dolci) è il principale fattore dietetico. La caffeina ha effetti epatoprotettivi. Gli omega-3 riducono i trigliceridi epatici. La dieta mediterranea è raccomandata come approccio principale.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">EASL 2024 — MASLD/NAFLD</div>
+        </div>
+        <a href="https://easl.eu/publication/easl-clinical-practice-guidelines-on-metabolic-dysfunction-associated-steatotic-liver-disease/" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F59E0B">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: deficit 500-750 se sovrappeso · Fruttosio aggiunto: 0 · Omega-3 EPA/DHA: 2-4 g/die · Vitamina E: 800 UI/die (NASH selezionata) · Alcol: 0</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">EASL 2024 aggiorna la nomenclatura in MASLD (Metabolic Associated Steatotic Liver Disease). La perdita di peso del 7-10% migliora la steatosi. Il fruttosio aggiunto (bevande, dolci) è il principale fattore dietetico. La caffeina ha effetti epatoprotettivi. Gli omega-3 riducono i trigliceridi epatici. La dieta mediterranea è raccomandata come approccio principale.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Caffè (epatoprotettivo)</span><span class="food-pill food-ok">✅ Olio EVO (polifenoli)</span><span class="food-pill food-ok">✅ Pesce azzurro (omega-3)</span><span class="food-pill food-ok">✅ Verdure crucifere</span><span class="food-pill food-ok">✅ Legumi</span><span class="food-pill food-ok">✅ Cereali integrali</span><span class="food-pill food-ok">✅ Noci (omega-3 vegetali)</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Alcol (anche piccole quantità)</span><span class="food-pill food-no">❌ Bevande con fruttosio aggiunto (succhi, cola)</span><span class="food-pill food-no">❌ Cibi ultra-processati</span><span class="food-pill food-no">❌ Dolci industriali</span><span class="food-pill food-no">❌ Fruttosio in eccesso (sciroppo di glucosio-fruttosio)</span><span class="food-pill food-no">❌ Carni rosse in eccesso</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">EASL 2024 — MASLD/NAFLD</div>
+        </div>
+        <a href="https://easl.eu/publication/easl-clinical-practice-guidelines-on-metabolic-dysfunction-associated-steatotic-liver-disease/" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-cirrosi" data-search="cirrosi epatica easl/espen 2019">
+    <div class="lg-card-hdr" onclick="toggleLG('cirrosi')">
+      <span style="font-size:24px">🏥</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Cirrosi Epatica</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">NON ridurre le proteine! Pasti frequenti, snack serale a base di CHO. Sodio limitato se ascite.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">EASL/ESPEN 2019</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-cirrosi">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-cirrosi">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('cirrosi','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('cirrosi','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #DC2626">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 35-40 kcal/kg peso secco/die · Proteine: 1.2-1.5 g/kg/die (NON ridurre!) · Pasti: 4-6/die · Snack serale: 50g CHO · Na: <2 g/die se ascite</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">EASL/ESPEN 2019 ha sfatato il mito della restrizione proteica nella cirrosi (aumenta mortalità!). Lo snack serale con carboidrati è raccomandato per ridurre il digiuno notturno e migliorare il metabolismo proteico. I BCAA (aminoacidi ramificati) sono utili se encefalopatia. Monitorare zinco, vitamina D, tiamina. In caso di varici: non modificare consistenza degli alimenti.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">EASL 2019 — Cirrosi</div>
+        </div>
+        <a href="https://www.easl.eu/medias/uploads/easl-guidelines/clinical-practice-guidelines-on-nutrition-in-chronic-liver-disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #DC2626">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 35-40 kcal/kg peso secco/die · Proteine: 1.2-1.5 g/kg/die (NON ridurre!) · Pasti: 4-6/die · Snack serale: 50g CHO · Na: <2 g/die se ascite</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">EASL/ESPEN 2019 ha sfatato il mito della restrizione proteica nella cirrosi (aumenta mortalità!). Lo snack serale con carboidrati è raccomandato per ridurre il digiuno notturno e migliorare il metabolismo proteico. I BCAA (aminoacidi ramificati) sono utili se encefalopatia. Monitorare zinco, vitamina D, tiamina. In caso di varici: non modificare consistenza degli alimenti.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Proteine: uova, carne bianca, pesce, latticini</span><span class="food-pill food-ok">✅ Pasti piccoli e frequenti (6/die)</span><span class="food-pill food-ok">✅ Snack serale con carboidrati (pane, riso, banana)</span><span class="food-pill food-ok">✅ Aminoacidi ramificati (BCAA) se prescritti</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Alcol (assoluta astensione)</span><span class="food-pill food-no">❌ Sale in eccesso se ascite</span><span class="food-pill food-no">❌ Restrizione proteica (CONTROINDICATO)</span><span class="food-pill food-no">❌ Digiuno prolungato (>6 ore)</span><span class="food-pill food-no">❌ Pasti abbondanti e infrequenti</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">EASL 2019 — Cirrosi</div>
+        </div>
+        <a href="https://www.easl.eu/medias/uploads/easl-guidelines/clinical-practice-guidelines-on-nutrition-in-chronic-liver-disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-bpco" data-search="bpco (broncopneumopatia cronica ostruttiva) espen 2021">
+    <div class="lg-card-hdr" onclick="toggleLG('bpco')">
+      <span style="font-size:24px">🫁</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">BPCO (Broncopneumopatia Cronica Ostruttiva)</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Bilancio energetico positivo per prevenire la malnutrizione. Limitare CHO in eccesso (aumenta produzione CO2). Pasti piccoli e frequenti.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESPEN 2021</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-bpco">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-bpco">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('bpco','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('bpco','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #0EA5E9">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 30-40 kcal/kg/die · Proteine: 1.2-1.5 g/kg/die · CHO: 40-50% (non >50%) · Grassi: 35-45% · Pasti: 5-6 piccoli/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2021: la malnutrizione è presente nel 20-40% dei pazienti BPCO e peggiora la prognosi. L'eccesso di carboidrati aumenta il quoziente respiratorio (QR) e la produzione di CO2, aggravando la dispnea. I grassi hanno QR più basso. Pasti piccoli riducono la distensione addominale che limita l'escursione diaframmatica. Vitamina D e calcio sono spesso carenti.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2019 — BPCO</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_pulmonary_disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #0EA5E9">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 30-40 kcal/kg/die · Proteine: 1.2-1.5 g/kg/die · CHO: 40-50% (non >50%) · Grassi: 35-45% · Pasti: 5-6 piccoli/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2021: la malnutrizione è presente nel 20-40% dei pazienti BPCO e peggiora la prognosi. L'eccesso di carboidrati aumenta il quoziente respiratorio (QR) e la produzione di CO2, aggravando la dispnea. I grassi hanno QR più basso. Pasti piccoli riducono la distensione addominale che limita l'escursione diaframmatica. Vitamina D e calcio sono spesso carenti.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Grassi insaturi (olio EVO, avocado, pesce)</span><span class="food-pill food-ok">✅ Proteine ad alto valore biologico</span><span class="food-pill food-ok">✅ Cereali in porzioni moderate</span><span class="food-pill food-ok">✅ Verdure (piccole porzioni per non distendere l'addome)</span><span class="food-pill food-ok">✅ Latte (calcio e vitamina D)</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Pasti abbondanti (favorisce dispnea)</span><span class="food-pill food-no">❌ Eccesso di carboidrati semplici</span><span class="food-pill food-no">❌ Bevande gasate (gonfiore)</span><span class="food-pill food-no">❌ Cibi che causano gonfiore (legumi in eccesso, cavoli)</span><span class="food-pill food-no">❌ Disidratazione (mucosità dense)</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2019 — BPCO</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_pulmonary_disease.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-calcolosi" data-search="calcolosi renale (ossalato di calcio) eau 2022">
+    <div class="lg-card-hdr" onclick="toggleLG('calcolosi')">
+      <span style="font-size:24px">💎</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Calcolosi Renale (Ossalato di Calcio)</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Idratazione abbondante (≥2.5L/die). Calcio ADEGUATO (non ridurre!). Limitare ossalati, sale e proteine animali.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">EAU 2022</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-calcolosi">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-calcolosi">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('calcolosi','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('calcolosi','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #64748B">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Liquidi: ≥2.5 L/die (diuresi >2L) · Calcio: 1000-1200 mg/die (NON ridurre!) · Sodio: <5 g NaCl/die · Vitamina C: <1000 mg/die · Purine: moderate</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">EAU 2022: il calcio alimentare lega l'ossalato intestinale impedendone l'assorbimento - ridurre il calcio aumenta la calcolosi! L'ipercalciuria è favorita dall'eccesso di sale e proteine animali. L'ossalato è alto in spinaci, cioccolato, tè nero, barbabietole. La vitamina C ad alte dosi si converte in ossalato. La dieta varia secondo il tipo di calcolo (ossalato Ca, urato, fosfato Ca).</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">EAU 2023 — Calcolosi</div>
+        </div>
+        <a href="https://uroweb.org/guidelines/urolithiasis" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #64748B">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Liquidi: ≥2.5 L/die (diuresi >2L) · Calcio: 1000-1200 mg/die (NON ridurre!) · Sodio: <5 g NaCl/die · Vitamina C: <1000 mg/die · Purine: moderate</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">EAU 2022: il calcio alimentare lega l'ossalato intestinale impedendone l'assorbimento - ridurre il calcio aumenta la calcolosi! L'ipercalciuria è favorita dall'eccesso di sale e proteine animali. L'ossalato è alto in spinaci, cioccolato, tè nero, barbabietole. La vitamina C ad alte dosi si converte in ossalato. La dieta varia secondo il tipo di calcolo (ossalato Ca, urato, fosfato Ca).</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Acqua in abbondanza (6-8 bicchieri/die)</span><span class="food-pill food-ok">✅ Latte e yogurt (calcio ai pasti per legare ossalato)</span><span class="food-pill food-ok">✅ Frutta fresca (limone: citrato)</span><span class="food-pill food-ok">✅ Cereali</span><span class="food-pill food-ok">✅ Verdure a basso ossalato (zucchine, carote, lattuga)</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Sale in eccesso</span><span class="food-pill food-no">❌ Proteine animali in eccesso</span><span class="food-pill food-no">❌ Spinaci, barbabietole (alto ossalato)</span><span class="food-pill food-no">❌ Tè nero, cioccolato (ossalato)</span><span class="food-pill food-no">❌ Vitamina C in megadosi (>1000 mg/die)</span><span class="food-pill food-no">❌ Disidratazione</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">EAU 2023 — Calcolosi</div>
+        </div>
+        <a href="https://uroweb.org/guidelines/urolithiasis" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-gotta" data-search="iperuricemia e gotta acr/eular 2020">
+    <div class="lg-card-hdr" onclick="toggleLG('gotta')">
+      <span style="font-size:24px">🦶</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Iperuricemia e Gotta</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Riduzione alimenti ricchi di purine, eliminazione alcol (soprattutto birra). Idratazione abbondante. I latticini scremati sono protettivi.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ACR/EULAR 2020</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-gotta">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-gotta">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('gotta','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('gotta','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EC4899">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Acido urico: <6 mg/dl (con tofus: <5) · Alcol: 0 · Liquidi: ≥2 L/die · Fruttosio aggiunto: 0</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ACR/EULAR 2020: la dieta riduce l'uricemia del 10-15%. La farmacoterapia (allopurinolo) è necessaria per target severi. La birra è particolarmente dannosa (guanina e alcol). La frutta contiene fruttosio naturale (moderata), ma le bevande con fruttosio aggiunto sono pericolose come l'alcol. I latticini scremati riducono l'uricemia. La vitamina C (500 mg/die) è lievemente uricosurica.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ACR 2020 — Gotta</div>
+        </div>
+        <a href="https://www.rheumatology.org/Portals/0/Files/Gout-Guideline-2020.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EC4899">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Acido urico: <6 mg/dl (con tofus: <5) · Alcol: 0 · Liquidi: ≥2 L/die · Fruttosio aggiunto: 0</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ACR/EULAR 2020: la dieta riduce l'uricemia del 10-15%. La farmacoterapia (allopurinolo) è necessaria per target severi. La birra è particolarmente dannosa (guanina e alcol). La frutta contiene fruttosio naturale (moderata), ma le bevande con fruttosio aggiunto sono pericolose come l'alcol. I latticini scremati riducono l'uricemia. La vitamina C (500 mg/die) è lievemente uricosurica.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Latticini scremati (yogurt, latte, ricotta)</span><span class="food-pill food-ok">✅ Uova</span><span class="food-pill food-ok">✅ Verdure (inclusi asparagi, spinaci - contengono purine ma non aumentano l'uricemia)</span><span class="food-pill food-ok">✅ Cereali</span><span class="food-pill food-ok">✅ Caffè (riduce uricemia)</span><span class="food-pill food-ok">✅ Vitamina C</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Birra e alcolici</span><span class="food-pill food-no">❌ Frattaglie (fegato, reni, cervello)</span><span class="food-pill food-no">❌ Carni rosse in eccesso</span><span class="food-pill food-no">❌ Pesce grasso: sardine, acciughe, sgombro (alto in purine)</span><span class="food-pill food-no">❌ Fruttosio aggiunto (succhi, cola, dolci)</span><span class="food-pill food-no">❌ Digiuno prolungato</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ACR 2020 — Gotta</div>
+        </div>
+        <a href="https://www.rheumatology.org/Portals/0/Files/Gout-Guideline-2020.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-anemia" data-search="anemia sideropenica who/larn 2022">
+    <div class="lg-card-hdr" onclick="toggleLG('anemia')">
+      <span style="font-size:24px">🩸</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Anemia Sideropenica</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Aumentare ferro eme e non-eme. Vitamina C ai pasti principali per migliorare l'assorbimento. Evitare inibitori al momento del pasto.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">WHO/LARN 2022</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-anemia">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-anemia">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('anemia','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('anemia','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #B91C1C">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Ferro: 14-18 mg/die (uomini/donne post-menopausa), 18-27 mg/die (donne fertili/gravidanza) · Vitamina C: ≥80 mg ai pasti</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">WHO/LARN 2022: il ferro eme (carni) ha assorbimento del 15-35%, il non-eme (vegetali) solo 2-10%. La vitamina C aumenta l'assorbimento del ferro non-eme di 2-4 volte. Fitati (cereali integrali), tannini (tè, caffè), calcio e polifenoli inibiscono l'assorbimento. Mangiare latticini lontano dai pasti principali ricchi di ferro. La cottura migliora la biodisponibilità del ferro vegetale.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">WHO — Anemia</div>
+        </div>
+        <a href="https://www.who.int/publications/i/item/9789240000124" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #B91C1C">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Ferro: 14-18 mg/die (uomini/donne post-menopausa), 18-27 mg/die (donne fertili/gravidanza) · Vitamina C: ≥80 mg ai pasti</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">WHO/LARN 2022: il ferro eme (carni) ha assorbimento del 15-35%, il non-eme (vegetali) solo 2-10%. La vitamina C aumenta l'assorbimento del ferro non-eme di 2-4 volte. Fitati (cereali integrali), tannini (tè, caffè), calcio e polifenoli inibiscono l'assorbimento. Mangiare latticini lontano dai pasti principali ricchi di ferro. La cottura migliora la biodisponibilità del ferro vegetale.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Carne rossa (ferro eme)</span><span class="food-pill food-ok">✅ Fegato (attenzione in gravidanza)</span><span class="food-pill food-ok">✅ Pesce, molluschi (cozze)</span><span class="food-pill food-ok">✅ Legumi con vitamina C (succo limone)</span><span class="food-pill food-ok">✅ Verdure a foglia verde</span><span class="food-pill food-ok">✅ Cereali arricchiti in ferro</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Tè e caffè AI pasti (tannini inibiscono)</span><span class="food-pill food-no">❌ Latte e latticini AI pasti principali</span><span class="food-pill food-no">❌ Calcio supplementare AI pasti (inibitore)</span><span class="food-pill food-no">❌ Eccesso di crusca/fitati AI pasti</span><span class="food-pill food-no">❌ Antiacidi (riducono assorbimento Fe)</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">WHO — Anemia</div>
+        </div>
+        <a href="https://www.who.int/publications/i/item/9789240000124" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-oncologia" data-search="oncologia e cachessia neoplastica espen 2021">
+    <div class="lg-card-hdr" onclick="toggleLG('oncologia')">
+      <span style="font-size:24px">🎗️</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Oncologia e Cachessia Neoplastica</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Prevenire e trattare la cachessia con alto apporto calorico e proteico. Omega-3 EPA anti-catabolo. Supporto nutrizionale precoce.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESPEN 2021</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-oncologia">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-oncologia">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('oncologia','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('oncologia','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #7C3AED">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 25-30 (normostato), 30-35 (cachessia) · Proteine: 1.2-2.0 g/kg/die · Omega-3 EPA: ≥2 g/die · ONS se intake <60% per >7 giorni</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2021: la cachessia interessa il 50-80% dei pazienti oncologici e causa il 20% dei decessi. Il supporto nutrizionale precoce migliora la risposta al trattamento e la qualità di vita. Omega-3 EPA 2g/die riduce la cachessia. La nutrizione enterale è preferita a quella parenterale se il tratto GI funziona. Gli integratori orali (ONS) sono raccomandati se l'intake è insufficiente.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2021 — Oncologia</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_cancer.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #7C3AED">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Kcal: 25-30 (normostato), 30-35 (cachessia) · Proteine: 1.2-2.0 g/kg/die · Omega-3 EPA: ≥2 g/die · ONS se intake <60% per >7 giorni</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESPEN 2021: la cachessia interessa il 50-80% dei pazienti oncologici e causa il 20% dei decessi. Il supporto nutrizionale precoce migliora la risposta al trattamento e la qualità di vita. Omega-3 EPA 2g/die riduce la cachessia. La nutrizione enterale è preferita a quella parenterale se il tratto GI funziona. Gli integratori orali (ONS) sono raccomandati se l'intake è insufficiente.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Alimenti ad alta densità energetica e proteica</span><span class="food-pill food-ok">✅ Frullati arricchiti (latte, uova, ricotta)</span><span class="food-pill food-ok">✅ Supplementi nutrizionali orali (ONS)</span><span class="food-pill food-ok">✅ Pesce grasso (EPA)</span><span class="food-pill food-ok">✅ Oli vegetali</span><span class="food-pill food-ok">✅ Piccoli pasti frequenti e appetibili</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Restrizioni dietetiche non necessarie</span><span class="food-pill food-no">❌ Cibi mal tollerati per effetti della chemioterapia</span><span class="food-pill food-no">❌ Digiuno prolungato</span><span class="food-pill food-no">❌ Disidratazione</span><span class="food-pill food-no">❌ Cibi pro-infiammatori in eccesso</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2021 — Oncologia</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_cancer.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-osteoporosi" data-search="osteoporosi iof 2021">
+    <div class="lg-card-hdr" onclick="toggleLG('osteoporosi')">
+      <span style="font-size:24px">🦴</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Osteoporosi</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Calcio e Vitamina D adeguati. Proteine non eccessivamente ridotte. Limitare alcol, sodio e caffeina eccessiva.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">IOF 2021</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-osteoporosi">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-osteoporosi">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('osteoporosi','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('osteoporosi','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #9CA3AF">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Calcio: 1000-1200 mg/die · Vitamina D: 800-2000 UI/die · Proteine: 1.0-1.2 g/kg/die · Vitamina K2: 90-120 µg/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">IOF 2021: il calcio alimentare è preferibile agli integratori per la salute cardiovascolare. La vitamina D migliora l'assorbimento del calcio e la funzione muscolare (riduce le cadute). La vitamina K2 (MK-7) dirige il calcio verso le ossa. Le proteine sono necessarie per la matrice ossea. L'attività fisica con carico è insostituibile. Il fumo riduce la densità ossea.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">IOF 2021 — Osteoporosi</div>
+        </div>
+        <a href="https://www.iofbonehealth.org/osteoporosis" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #9CA3AF">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Calcio: 1000-1200 mg/die · Vitamina D: 800-2000 UI/die · Proteine: 1.0-1.2 g/kg/die · Vitamina K2: 90-120 µg/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">IOF 2021: il calcio alimentare è preferibile agli integratori per la salute cardiovascolare. La vitamina D migliora l'assorbimento del calcio e la funzione muscolare (riduce le cadute). La vitamina K2 (MK-7) dirige il calcio verso le ossa. Le proteine sono necessarie per la matrice ossea. L'attività fisica con carico è insostituibile. Il fumo riduce la densità ossea.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Latte e derivati (calcio bio-disponibile)</span><span class="food-pill food-ok">✅ Pesce con lische (sardine, salmone)</span><span class="food-pill food-ok">✅ Tofu con solfato di calcio</span><span class="food-pill food-ok">✅ Verdure verde scuro (broccoli, cavolo)</span><span class="food-pill food-ok">✅ Semi di sesamo (calcio)</span><span class="food-pill food-ok">✅ Vitamina D: sole e pesci grassi</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Alcol in eccesso (inibisce osteoblasti)</span><span class="food-pill food-no">❌ Fumo</span><span class="food-pill food-no">❌ Sale in eccesso (calciuria)</span><span class="food-pill food-no">❌ Caffeina in eccesso (>4 caffè/die)</span><span class="food-pill food-no">❌ Diete molto ipocaloriche</span><span class="food-pill food-no">❌ Vitamina A in megadosi (antagonista vitamina D)</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">IOF 2021 — Osteoporosi</div>
+        </div>
+        <a href="https://www.iofbonehealth.org/osteoporosis" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-scompenso" data-search="scompenso cardiaco esc 2021">
+    <div class="lg-card-hdr" onclick="toggleLG('scompenso')">
+      <span style="font-size:24px">❤️</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Scompenso Cardiaco</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Restrizione sodio e liquidi. Monitoraggio peso quotidiano. Densità nutrizionale elevata in piccole porzioni.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">ESC 2021</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-scompenso">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-scompenso">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('scompenso','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('scompenso','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #E11D48">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Sodio: <2 g/die · Liquidi: 1.5-2 L/die (se edemi/riacutizzazione) · Kcal: 25-30 kcal/kg/die · Potassio: monitorare (diuretici)</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESC 2021: il peso quotidiano è fondamentale (aumento >2 kg in 3 giorni → contattare medico). La restrizione sodica è raccomandazione di classe I. L'alcol ha effetto cardiotossico diretto. I diuretici possono causare deplezione di potassio e magnesio - monitorare elettroliti. In cachessia cardiaca: target proteico aumentato a 1.5 g/kg.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESC 2021 — Heart Failure</div>
+        </div>
+        <a href="https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Acute-and-Chronic-Heart-Failure" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #E11D48">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Sodio: <2 g/die · Liquidi: 1.5-2 L/die (se edemi/riacutizzazione) · Kcal: 25-30 kcal/kg/die · Potassio: monitorare (diuretici)</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">ESC 2021: il peso quotidiano è fondamentale (aumento >2 kg in 3 giorni → contattare medico). La restrizione sodica è raccomandazione di classe I. L'alcol ha effetto cardiotossico diretto. I diuretici possono causare deplezione di potassio e magnesio - monitorare elettroliti. In cachessia cardiaca: target proteico aumentato a 1.5 g/kg.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Frutta fresca (potassio se in diuretici)</span><span class="food-pill food-ok">✅ Verdure (potassio, magnesio)</span><span class="food-pill food-ok">✅ Cereali integrali</span><span class="food-pill food-ok">✅ Pesce (omega-3)</span><span class="food-pill food-ok">✅ Legumi</span><span class="food-pill food-ok">✅ Latte e yogurt scremati</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Sale aggiunto (condimenti, conserve)</span><span class="food-pill food-no">❌ Liquidi in eccesso</span><span class="food-pill food-no">❌ Alcol</span><span class="food-pill food-no">❌ Cibi conservati ad alto contenuto di sodio</span><span class="food-pill food-no">❌ Cibi in scatola</span><span class="food-pill food-no">❌ Formaggi stagionati (sodio)</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESC 2021 — Heart Failure</div>
+        </div>
+        <a href="https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Acute-and-Chronic-Heart-Failure" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-pancreatite" data-search="pancreatite cronica aga/espen 2020">
+    <div class="lg-card-hdr" onclick="toggleLG('pancreatite')">
+      <span style="font-size:24px">🔴</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Pancreatite Cronica</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Alcol assoluto zero. Grassi limitati se steatorrea. Pasti piccoli e frequenti. Enzimi pancreatici se insufficienza esocrina.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">AGA/ESPEN 2020</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-pancreatite">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-pancreatite">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('pancreatite','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('pancreatite','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F97316">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Alcol: 0 · Grassi: <40 g/die (se steatorrea grave), liberalizzare progressivamente · Pasti: 5-6/die · Enzimi pancreatici se lipasi fecale ridotta</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">AGA/ESPEN 2020: l'astensione dall'alcol è il principale fattore modificabile per rallentare la progressione. L'insufficienza esocrina causa malassorbimento di grassi e vitamine liposolubili (A, D, E, K). Gli enzimi pancreatici vanno assunti durante il pasto. Il dolore post-prandiale è il principale ostacolo alla nutrizione adeguata. Monitorare glicemia (insufficienza endocrina frequente).</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2020 — Pancreatite</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_acute_and_chronic_pancreatitis.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F97316">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">Alcol: 0 · Grassi: <40 g/die (se steatorrea grave), liberalizzare progressivamente · Pasti: 5-6/die · Enzimi pancreatici se lipasi fecale ridotta</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">AGA/ESPEN 2020: l'astensione dall'alcol è il principale fattore modificabile per rallentare la progressione. L'insufficienza esocrina causa malassorbimento di grassi e vitamine liposolubili (A, D, E, K). Gli enzimi pancreatici vanno assunti durante il pasto. Il dolore post-prandiale è il principale ostacolo alla nutrizione adeguata. Monitorare glicemia (insufficienza endocrina frequente).</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Carboidrati semplici in fase acuta</span><span class="food-pill food-ok">✅ Carni bianche magre</span><span class="food-pill food-ok">✅ Pesce magro</span><span class="food-pill food-ok">✅ Verdure cotte</span><span class="food-pill food-ok">✅ Yogurt, latticini magri</span><span class="food-pill food-ok">✅ Pasti piccoli e frequenti</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Alcol (assoluta astensione)</span><span class="food-pill food-no">❌ Grassi in eccesso (fattore scatenante)</span><span class="food-pill food-no">❌ Pasti abbondanti</span><span class="food-pill food-no">❌ Cibi fritti</span><span class="food-pill food-no">❌ Spezie piccanti</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">ESPEN 2020 — Pancreatite</div>
+        </div>
+        <a href="https://www.espen.org/files/ESPEN-guidelines/ESPEN_guideline_on_clinical_nutrition_in_acute_and_chronic_pancreatitis.pdf" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-gravidanza" data-search="gravidanza larn 2023 / acog">
+    <div class="lg-card-hdr" onclick="toggleLG('gravidanza')">
+      <span style="font-size:24px">🤰</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Gravidanza</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Aumento fabbisogno calorico dal II trimestre. Folati, ferro, calcio, DHA e iodio. Alimenti a rischio microbiologico da evitare.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">LARN 2023 / ACOG</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-gravidanza">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-gravidanza">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('gravidanza','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('gravidanza','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EC4899">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">+350 kcal/die (II trim) / +460 kcal (III trim) · Folati: 600 µg/die · Ferro: 27 mg/die · Calcio: 1000 mg/die · DHA: 200 mg/die extra · Iodio: 220 µg/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">LARN 2023: l'integrazione con acido folico (400-600 µg/die) è raccomandata dalla pre-gravidanza per prevenire i difetti del tubo neurale. Il DHA è fondamentale per lo sviluppo cerebrale fetale. La nausea del I trimestre può richiedere adattamenti alimentari. Evitare pesce ad alto contenuto di mercurio. Il fabbisogno proteico aumenta di +25 g/die al III trimestre.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">LARN 2023 — Gravidanza</div>
+        </div>
+        <a href="https://www.sigo.it/linee-guida/" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #EC4899">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">+350 kcal/die (II trim) / +460 kcal (III trim) · Folati: 600 µg/die · Ferro: 27 mg/die · Calcio: 1000 mg/die · DHA: 200 mg/die extra · Iodio: 220 µg/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">LARN 2023: l'integrazione con acido folico (400-600 µg/die) è raccomandata dalla pre-gravidanza per prevenire i difetti del tubo neurale. Il DHA è fondamentale per lo sviluppo cerebrale fetale. La nausea del I trimestre può richiedere adattamenti alimentari. Evitare pesce ad alto contenuto di mercurio. Il fabbisogno proteico aumenta di +25 g/die al III trimestre.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Folati: verdure a foglia verde, legumi</span><span class="food-pill food-ok">✅ Ferro: carne, legumi con vitamina C</span><span class="food-pill food-ok">✅ Calcio: latte, yogurt, formaggi pastorizzati</span><span class="food-pill food-ok">✅ DHA: salmone, sardine (non affumicati)</span><span class="food-pill food-ok">✅ Iodio: pesce, latte, sale iodato</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Alcol (nessuna quantità è sicura)</span><span class="food-pill food-no">❌ Affettati crudi, sushi, carpacci</span><span class="food-pill food-no">❌ Latte non pastorizzato</span><span class="food-pill food-no">❌ Formaggi erborinati e a crosta fiorita</span><span class="food-pill food-no">❌ Pesce ad alto mercurio (pesce spada, tonno in eccesso)</span><span class="food-pill food-no">❌ Fegato in eccesso (vitamina A teratogena)</span><span class="food-pill food-no">❌ Vegetali non lavati</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">LARN 2023 — Gravidanza</div>
+        </div>
+        <a href="https://www.sigo.it/linee-guida/" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-card" id="lg-allattamento" data-search="allattamento larn 2023">
+    <div class="lg-card-hdr" onclick="toggleLG('allattamento')">
+      <span style="font-size:24px">🍼</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--slate)">Allattamento</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:2px">Fabbisogno calorico e proteico aumentati. DHA, calcio, vitamina D, iodio essenziali. Idratazione abbondante.</div>
+      </div>
+      <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">LARN 2023</span>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px" id="tog-allattamento">▼</span>
+    </div>
+    <div class="lg-card-body" id="body-allattamento">
+      <div class="lg-version-toggle">
+        <button class="lg-ver-btn active" onclick="toggleLGVersion('allattamento','short')">📋 Versione breve</button>
+        <button class="lg-ver-btn" onclick="toggleLGVersion('allattamento','extended')">📖 Versione estesa</button>
+      </div>
+      <div class="lg-short">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F472B6">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">+500 kcal/die · Proteine: +28 g/die · DHA: 200 mg/die extra · Calcio: 1000 mg/die · Vitamina D: 1500 UI/die · Iodio: 290 µg/die · Liquidi: ≥2 L/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">LARN 2023: la composizione del latte materno dipende dall'alimentazione materna, specialmente per vitamina D, B12, iodio, DHA. La caffeina passa nel latte (<200 mg/die è sicuro). L'alcol è sconsigliato. I cibi piccanti e i legumi in eccesso possono causare coliche nel neonato. La produzione di latte richiede un adeguato apporto calorico - le diete drastiche sono sconsigliate.</div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">LARN 2023 — Allattamento</div>
+        </div>
+        <a href="https://www.sigo.it/linee-guida/" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+      <div class="lg-extended" style="display:none">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #F472B6">
+        <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+        <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">+500 kcal/die · Proteine: +28 g/die · DHA: 200 mg/die extra · Calcio: 1000 mg/die · Vitamina D: 1500 UI/die · Iodio: 290 µg/die · Liquidi: ≥2 L/die</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.7;margin-bottom:14px">LARN 2023: la composizione del latte materno dipende dall'alimentazione materna, specialmente per vitamina D, B12, iodio, DHA. La caffeina passa nel latte (<200 mg/die è sicuro). L'alcol è sconsigliato. I cibi piccanti e i legumi in eccesso possono causare coliche nel neonato. La produzione di latte richiede un adeguato apporto calorico - le diete drastiche sono sconsigliate.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F0FDF4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+          <div><span class="food-pill food-ok">✅ Alimenti ricchi di DHA (pesce grasso)</span><span class="food-pill food-ok">✅ Latte e latticini (calcio)</span><span class="food-pill food-ok">✅ Verdure a foglia verde (calcio, folati)</span><span class="food-pill food-ok">✅ Frutta fresca</span><span class="food-pill food-ok">✅ Cereali integrali</span><span class="food-pill food-ok">✅ Legumi (proteine)</span></div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ALIMENTI SCONSIGLIATI / DA LIMITARE</div>
+          <div><span class="food-pill food-no">❌ Alcol</span><span class="food-pill food-no">❌ Caffeina in eccesso (>200 mg/die)</span><span class="food-pill food-no">❌ Pesce ad alto mercurio</span><span class="food-pill food-no">❌ Diete molto restrittive</span><span class="food-pill food-no">❌ Alcune erbe e integratori senza consulto medico</span></div>
+        </div>
+      </div>
+        <div class="lg-link-box">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:3px">📄 Fonte ufficiale</div>
+          <div style="font-size:12px;color:#334155">LARN 2023 — Allattamento</div>
+        </div>
+        <a href="https://www.sigo.it/linee-guida/" target="_blank" rel="noopener" class="lg-link-btn">🔗 Apri linea guida completa</a>
+      </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div id="lg-empty" style="display:none" class="empty-state">
+    <div class="ei">🔍</div><h3>Nessuna patologia trovata</h3>
+    <p>Prova con un termine diverso.</p>
+  </div>
+</div>
+</main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+function toggleLG(id) {
+  const body = document.getElementById('body-'+id);
+  const tog = document.getElementById('tog-'+id);
+  const isOpen = body.classList.toggle('open');
+  tog.textContent = isOpen ? '▲' : '▼';
+}
+
+// Extended content for each pathology
+const LG_EXTENDED = {
+  diabete: `<div style="background:#FEF3C7;border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid #F59E0B">
+    <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:6px">📖 Razionale scientifico — ESPEN 2023</div>
+    <div style="font-size:12px;color:#334155;line-height:1.8">
+    <b>Perché ridurre i CHO e l'IG?</b> Il diabete T2 è caratterizzato da resistenza insulinica: l'insulina non riesce a far entrare il glucosio nelle cellule in modo efficiente. Ridurre il carico glicemico dei pasti abbassa il picco glicemico post-prandiale, riducendo lo stress sul pancreas e migliorando l'HbA1c del 0.5-1.0%.<br><br>
+    <b>Perché le fibre?</b> Le fibre solubili (avena, legumi, frutta) rallentano l'assorbimento del glucosio formando un gel nel tratto GI, riducendo il picco glicemico post-prandiale del 20-30%. Fibre insolubili migliorano la sensibilità insulinica.<br><br>
+    <b>Perché limitare i grassi saturi?</b> I grassi saturi aumentano la resistenza insulinica a livello cellulare (interferiscono con i recettori GLUT4) e favoriscono l'accumulo di grasso epatico (steatosi epatica, frequente nel T2DM).<br><br>
+    <b>Timing dei pasti:</b> Distribuire i carboidrati uniformemente (non pasti abbondanti in CHO) riduce le fluttuazioni glicemiche. La colazione non va saltata (aumenta la resistenza insulinica del giorno).<br><br>
+    <b>Monitoraggio:</b> HbA1c ogni 3 mesi (obiettivo individuale: <7% nella maggior parte, <8% negli anziani). Glicemia a digiuno 80-130 mg/dL, post-prandiale <180 mg/dL.
+    </div></div>`,
+  irc: `<div style="background:#FEF3C7;border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid #F59E0B">
+    <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:6px">📖 Razionale scientifico — ESPEN 2021</div>
+    <div style="font-size:12px;color:#334155;line-height:1.8">
+    <b>Perché ridurre le proteine?</b> Il metabolismo delle proteine produce urea e altri prodotti azotati che i reni malati non riescono a eliminare efficacemente, causando uremia. La restrizione proteica a 0.6-0.8 g/kg/die riduce la produzione di scorie azotate e rallenta la progressione della malattia renale (evidenza Grado A ESPEN).<br><br>
+    <b>Perché limitare il fosforo (<800 mg/die)?</b> I reni malati non riescono a eliminare il fosforo. L'iperfosfatemia causa iperparatiroidismo secondario, calcificazioni vascolari, malattia ossea renale (osteodistrofia). Il fosforo degli additivi alimentari (E338-E341) è quasi completamente assorbito vs il 40-60% del fosforo organico: evitare assolutamente cibi processati.<br><br>
+    <b>Perché limitare il potassio (<2000 mg/die)?</b> L'iperpotassiemia (K>5.5 mEq/L) causa aritmie cardiache potenzialmente fatali. La lisciviazione (sbucciare, tagliare, lessare in acqua abbondante, scolare) riduce il K delle verdure del 30-50%.<br><br>
+    <b>Cheto-analoghi degli AA:</b> In diete molto ipoproteiche (0.3-0.4 g/kg/die), i cheto-analoghi (es. Ketostéril) forniscono lo scheletro carbonioso degli AA essenziali senza azoto, preservando la massa muscolare.
+    </div></div>`,
+  ipertensione: `<div style="background:#FEF3C7;border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid #F59E0B">
+    <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:6px">📖 Razionale scientifico — ESH 2023 + DASH</div>
+    <div style="font-size:12px;color:#334155;line-height:1.8">
+    <b>Perché ridurre il sodio?</b> Il sodio trattiene acqua nei vasi, aumentando il volume ematico e quindi la pressione. Ridurre di 1g NaCl/die abbassa la PAS di ~3 mmHg (ipertesi) e ~1 mmHg (normotesi). Il 70-75% del sodio alimentare proviene da cibi processati, non dal sale aggiunto.<br><br>
+    <b>Perché aumentare il potassio?</b> Il potassio antagonizza l'effetto ipertensivo del sodio: favorisce la natriuresi (eliminazione renale del Na), rilassa le pareti vascolari. Ogni aumento di 1000 mg K/die abbassa la PAS di ~1.5 mmHg.<br><br>
+    <b>Perché la dieta DASH?</b> Dietary Approaches to Stop Hypertension: riduce la PAS di 8-14 mmHg in ipertesi, paragonabile a un farmaco antipertensivo in monoterapia. Meccanismo: alta K+Ca+Mg, basso Na, abbondante fibra, grassi insaturi.<br><br>
+    <b>Alcol:</b> Ogni unità alcolica/die aumenta la PAS di ~1 mmHg e aumenta il rischio di ictus. Max 1 bicchiere di vino/die per le donne, 2 per gli uomini.
+    </div></div>`,
+};
+
+function toggleLGVersion(id, ver) {
+  const card = document.getElementById('lg-'+id);
+  if(!card) return;
+  const s = card.querySelector('.lg-short');
+  const e = card.querySelector('.lg-extended');
+  const btns = card.querySelectorAll('.lg-ver-btn');
+  if(ver==='short'){
+    if(s) s.style.display='block'; if(e) e.style.display='none';
+    btns[0]?.classList.add('active'); btns[1]?.classList.remove('active');
+  } else {
+    // Inject extended content if available
+    if(e && LG_EXTENDED[id]) {
+      const existing = e.querySelector('.lg-extended-content');
+      if(!existing) {
+        const div = document.createElement('div');
+        div.className = 'lg-extended-content';
+        div.innerHTML = LG_EXTENDED[id];
+        e.insertBefore(div, e.firstChild);
+      }
+    }
+    if(s) s.style.display='none'; if(e) e.style.display='block';
+    btns[0]?.classList.remove('active'); btns[1]?.classList.add('active');
+  }
+}
+
+function filterLG() {
+  const q = document.getElementById('lg-search').value.toLowerCase().trim();
+  const cards = document.querySelectorAll('.lg-card');
+  let visible = 0;
+  cards.forEach(c => {
+    const match = !q || c.dataset.search.includes(q) || c.textContent.toLowerCase().includes(q);
+    c.style.display = match ? '' : 'none';
+    if (match) visible++;
+    // Auto-open if searching
+    if (q && match) {
+      const id = c.id.replace('lg-', '');
+      document.getElementById('body-'+id)?.classList.add('open');
+      const tog = document.getElementById('tog-'+id);
+      if (tog) tog.textContent = '▲';
+    }
+  });
+  document.getElementById('lg-count').textContent = visible + ' patologie';
+  document.getElementById('lg-empty').style.display = visible === 0 ? 'block' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(false); } catch(e) {}
+});
+</script>
+</body>
+</html
+.lg-version-toggle{display:flex;gap:6px;margin-bottom:12px}
+.lg-ver-btn{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);transition:all .15s}
+.lg-ver-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+.lg-short{display:block}.lg-extended{display:none}
+.lg-link-box{background:#EFF6FF;border-radius:8px;padding:10px 14px;margin-top:12px;border-left:3px solid #3B82F6;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.lg-link-btn{padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.lg-link-btn:hover{background:#1D4ED8}
+
+.lg-version-toggle{display:flex;gap:6px;margin-bottom:12px}
+.lg-ver-btn{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);transition:all .15s}
+.lg-ver-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+.lg-link-box{background:#EFF6FF;border-radius:8px;padding:10px 14px;margin-top:12px;border-left:3px solid #3B82F6;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.lg-link-btn{padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.lg-link-btn:hover{background:#1D4ED8}
+>

@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Piano Alimentare — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+@media print{
+  @page{margin:1cm 1.2cm;size:A4 landscape}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,.undo-bar,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:6px!important}
+  .pasto-body.collapsed{display:block!important}
+  .pasto-card{page-break-inside:avoid;margin-bottom:5px!important;overflow:visible!important}
+  .table-wrap{overflow:visible!important;max-height:none!important;width:100%!important}
+  table{font-size:7.5px!important;width:100%!important;table-layout:auto!important}
+  thead th{background:#1E293B!important;color:#CBD5E1!important;padding:3px 4px!important;font-size:7px!important;white-space:nowrap}
+  tbody td{padding:2px 3px!important;font-size:7.5px!important}
+  .tr-tot td{background:#0F766E!important;color:white!important;padding:3px 4px!important}
+  .pasto-hdr{background:#1E293B!important;padding:5px 8px!important}
+  .pasto-hdr .ph-macro{display:none!important}
+  .alt-print-row td{background:#D1FAE5!important;color:#065F46!important}
+  .macro-bar{page-break-inside:avoid;margin-bottom:5px!important;padding:6px 10px!important;flex-wrap:wrap!important}
+  .mpill{padding:3px 7px!important;font-size:10px!important}
+  .giorno-tabs,.micro-bar,.add-pasto-area,.pasto-footer,.ph-drag,.ph-tog{display:none!important}
+  .paz-hdr{page-break-inside:avoid;display:none!important}
+  .vnd{color:#999!important}
+  .ac-src{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item active" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <button id="menu-toggle" class="no-print" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">📋 Piano Alimentare</h2>
+  <div class="tbar-actions no-print">
+    <button class="btn btn-ghost btn-sm" id="btn-undo" onclick="doUndo()" title="Annulla ultima azione" disabled style="opacity:.5">↩<span>Annulla</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openNewPasto()">🍽️<span>Pasto</span></button>
+    <button class="btn btn-amber btn-sm" onclick="esportaExcel()">📥<span>Excel</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="salvaPiano()">💾<span>Salva</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF">🖨️</button>
+  </div>
+</div>
+
+<!-- UNDO BAR -->
+<div class="undo-bar" id="undo-bar">
+  <span>Azione registrata</span>
+  <button class="undo-btn" onclick="doUndo()">↩ Annulla</button>
+</div>
+
+<!-- MAIN -->
+<main id="main">
+<div class="page-content">
+
+  <!-- PAZIENTE HDR -->
+  <div class="paz-hdr no-print">
+    <div class="paz-hdr-field" style="flex:2;min-width:200px">
+      <label>📁 Cartella Paziente</label>
+      <div style="position:relative">
+        <input type="text" id="cartella-search" placeholder="🔍 Cerca paziente..." autocomplete="off"
+          oninput="filterCartelleDropdown()" onfocus="showCartelleList()" onblur="setTimeout(hideCartelleList,200)"
+          style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none">
+        <div id="cartelle-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid var(--teal-l);border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:var(--shadow-lg)"></div>
+        <input type="hidden" id="inp-cartella" value="">
+        <span id="cartella-selected" style="font-size:11px;color:var(--teal-d);font-weight:600;margin-top:3px;display:block"></span>
+      </div>
+    </div>
+    <div class="paz-hdr-field" style="max-width:160px"><label>📅 Data piano</label><input type="date" id="inp-data" oninput="markDirty()"></div>
+    <div class="paz-hdr-field" style="max-width:180px"><label>📋 Nome piano</label><input type="text" id="inp-nome" placeholder="es. Piano gennaio..." oninput="markDirty()"></div>
+    <button class="btn btn-ghost btn-sm" onclick="nuovoPiano()" title="Nuovo piano vuoto">🔄 Nuovo</button>
+  </div>
+
+  <!-- MACRO BAR TOTALE -->
+  <div class="macro-bar" id="macro-bar-totale">
+    <span style="font-size:11px;color:var(--slate-l);font-weight:700;white-space:nowrap">📅 GIORNO</span>
+    <div class="mpill m-kcal">🔥<span class="v" id="tot-kcal">0</span><span class="u">kcal</span></div>
+    <div class="mpill m-prot">💪<span class="v" id="tot-prot">0</span><span class="u">g prot</span></div>
+    <div class="mpill m-cho">🍞<span class="v" id="tot-cho">0</span><span class="u">g CHO</span></div>
+    <div class="mpill m-fat">🧈<span class="v" id="tot-fat">0</span><span class="u">g grassi</span></div>
+    <div class="mpill m-fibra">🌿<span class="v" id="tot-fibra">0</span><span class="u">g fibra</span></div>
+    <div id="macro-micro-extra" style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:5px;-webkit-overflow-scrolling:touch;max-width:100%;scrollbar-width:thin"></div>
+  </div>
+
+  <!-- GIORNI TABS -->
+  <div class="giorno-tabs no-print" id="giorno-tabs"></div>
+
+  <!-- PRINT GIORNO HEADER -->
+  <div id="print-giorno-hdr" style="display:none;margin-bottom:10px;font-size:14px;font-weight:700;color:var(--slate)"></div>
+
+  <!-- PASTI CONTAINER -->
+  <div id="pasti-container"></div>
+  <div class="add-pasto-area no-print" onclick="openNewPasto()">＋ Aggiungi un nuovo pasto</div>
+
+</div>
+</main>
+
+<!-- MODAL: AGGIUNGI RIGA -->
+<div class="modal-bg" id="modal-addrow">
+  <div class="modal" style="max-width:360px">
+    <div class="mhdr"><h2>➕ Aggiungi riga a...</h2><button class="mclose" onclick="closeM('modal-addrow')">✕</button></div>
+    <div class="mbody" style="padding-top:10px"><div id="modal-addrow-list"></div></div>
+  </div>
+</div>
+
+<!-- MODAL: NUOVO PASTO -->
+<div class="modal-bg" id="modal-newpasto">
+  <div class="modal" style="max-width:360px">
+    <div class="mhdr"><h2>🍽️ Nuovo Pasto</h2><button class="mclose" onclick="closeM('modal-newpasto')">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:10px"><label>Nome pasto</label><input type="text" id="np-nome" placeholder="es. Pre-allenamento..." maxlength="40"></div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Emoji</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">🌅</span>
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">🍎</span>
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">🍽️</span>
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">🍊</span>
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">🌙</span>
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">🌛</span>
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">🥗</span>
+          <span style="font-size:20px;cursor:pointer;padding:4px 6px;border-radius:5px" onclick="document.getElementById('np-emoji').value=this.textContent">☕</span>
+        </div>
+        <input type="text" id="np-emoji" placeholder="🍽️" maxlength="5" style="width:70px">
+      </div>
+      <div class="fg"><label>Inserisci dopo</label><select id="np-pos"><option value="-1">— All'inizio —</option></select></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-newpasto')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="creaPasto()">Crea Pasto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RINOMINA PASTO -->
+<div class="modal-bg" id="modal-rename">
+  <div class="modal" style="max-width:320px">
+    <div class="mhdr"><h2>✏️ Rinomina Pasto</h2><button class="mclose" onclick="closeM('modal-rename')">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:10px"><label>Nome</label><input type="text" id="rn-nome" maxlength="40"></div>
+      <div class="fg"><label>Emoji</label><input type="text" id="rn-emoji" maxlength="5" style="width:70px"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-rename')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="doRename()">Rinomina</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUOVO GIORNO -->
+<div class="modal-bg" id="modal-newgiorno">
+  <div class="modal" style="max-width:380px">
+    <div class="mhdr"><h2>📅 Nuovo Giorno</h2><button class="mclose" onclick="closeM('modal-newgiorno')">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:12px"><label>Nome del giorno *</label><input type="text" id="ng-nome" placeholder="es. Lunedì, Giorno 1, Settimana A..."></div>
+      <div class="fg" style="margin-bottom:12px">
+        <label>Copia da</label>
+        <select id="ng-copia">
+          <option value="">— Inizia vuoto —</option>
+          <option value="_default">📋 Schema vuoto standard</option>
+        </select>
+      </div>
+      <div style="font-size:12px;color:var(--slate-l)">💡 Puoi anche caricare uno schema da "Diete per Patologia" dopo aver creato il giorno.</div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-newgiorno')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="creaGiorno()">Crea Giorno</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RINOMINA GIORNO -->
+<div class="modal-bg" id="modal-rename-giorno">
+  <div class="modal" style="max-width:320px">
+    <div class="mhdr"><h2>✏️ Rinomina Giorno</h2><button class="mclose" onclick="closeM('modal-rename-giorno')">✕</button></div>
+    <div class="mbody">
+      <div class="fg"><label>Nome</label><input type="text" id="rg-nome" maxlength="40"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-rename-giorno')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="doRenameGiorno()">Rinomina</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ALTERNATIVE -->
+<div class="modal-bg" id="modal-alt">
+  <div class="modal" style="max-width:520px">
+    <div class="mhdr"><h2 id="alt-title">🔄 Alternative Equivalenti</h2><button class="mclose" onclick="closeM('modal-alt')">✕</button></div>
+    <div class="mbody">
+      <div style="margin-bottom:10px">
+        <label style="font-size:12px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:6px">Trova equivalente per:</label>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="alt-nutrient-btns"></div>
+      </div>
+      <div style="margin-bottom:10px">
+        <input type="text" id="alt-search" class="db-search" placeholder="🔍 Cerca alimento alternativo..." oninput="showAlternatives()" style="width:100%">
+      </div>
+      <div id="alt-results"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
+
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+// giorni = [{id, nome, meals:[{id,nome,emoji,items:[],collapsed}]}]
+let giorni = [];
+let giornoCorrente = 0;
+let dirty = false;
+let currentPianoId = null;
+let renamingPastoIdx = null;
+let renamingGiornoIdx = null;
+let altMi = -1, altIi = -1, altNutrient = 'ch';
+
+const DEFAULT_MEALS = [
+  { id: 'colazione', nome: 'Colazione', emoji: '🌅' },
+  { id: 'spuntino1', nome: 'Spuntino Mattina', emoji: '🍎' },
+  { id: 'pranzo', nome: 'Pranzo', emoji: '🍽️' },
+  { id: 'spuntino2', nome: 'Spuntino Pomeriggio', emoji: '🍊' },
+  { id: 'cena', nome: 'Cena', emoji: '🌙' },
+];
+
+function getMeals() { return giorni[giornoCorrente]?.meals || []; }
+
+// ═══════════════════════════════════════════════════
+// GIORNO MANAGEMENT
+// ═══════════════════════════════════════════════════
+function renderGiornoTabs() {
+  const container = document.getElementById('giorno-tabs');
+  if (!container) return;
+  let html = '';
+  giorni.forEach((g, i) => {
+    html += `<div class="giorno-tab${i === giornoCorrente ? ' active' : ''}" ondblclick="openRenameGiorno(${i})">
+      <span onclick="switchGiorno(${i})">${g.nome}</span>
+      ${giorni.length > 1 ? `<span class="gt-del no-print" onclick="delGiorno(${i})" title="Elimina giorno">✕</span>` : ''}
+    </div>`;
+  });
+  html += `<div class="giorno-add-btn no-print" onclick="openNewGiorno()">＋ Giorno</div>`;
+  container.innerHTML = html;
+
+  // Update print header
+  const phdr = document.getElementById('print-giorno-hdr');
+  if (phdr && giorni.length > 1) {
+    phdr.style.display = 'block';
+    phdr.textContent = '📅 ' + (giorni[giornoCorrente]?.nome || '');
+  } else if (phdr) {
+    phdr.style.display = 'none';
+  }
+
+  // Populate ng-copia with existing giorni
+  const sel = document.getElementById('ng-copia');
+  if (sel) {
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Inizia vuoto —</option><option value="_default">📋 Schema vuoto standard</option>';
+    giorni.forEach((g, i) => {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = `📅 Copia da: ${g.nome}`;
+      sel.appendChild(o);
+    });
+    sel.value = cur;
+  }
+}
+
+function switchGiorno(idx) {
+  giornoCorrente = idx;
+  renderGiornoTabs();
+  renderPiano();
+}
+
+function openNewGiorno() {
+  document.getElementById('ng-nome').value = 'Giorno ' + (giorni.length + 1);
+  openM('modal-newgiorno');
+  setTimeout(() => { const el = document.getElementById('ng-nome'); if (el) { el.focus(); el.select(); } }, 200);
+}
+
+function creaGiorno() {
+  const nome = document.getElementById('ng-nome').value.trim();
+  if (!nome) { toast('Inserisci nome del giorno', 'err'); return; }
+  const copiaFrom = document.getElementById('ng-copia').value;
+  let meals;
+  if (copiaFrom === '' || copiaFrom === undefined) {
+    meals = [];
+  } else if (copiaFrom === '_default') {
+    meals = DEFAULT_MEALS.map(m => ({ ...m, id: m.id + '_' + Date.now(), items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false }));
+  } else {
+    const srcIdx = parseInt(copiaFrom);
+    meals = JSON.parse(JSON.stringify(giorni[srcIdx].meals)).map(m => ({
+      ...m, id: m.id + '_' + Date.now(),
+      items: m.items.map(it => ({ ...it, altPrint: it.altPrint || [] })),
+      collapsed: false
+    }));
+  }
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  giorni.push({ id: 'g_' + Date.now(), nome, meals });
+  giornoCorrente = giorni.length - 1;
+  closeM('modal-newgiorno');
+  markDirty();
+  renderGiornoTabs();
+  renderPiano();
+  toast('📅 "' + nome + '" aggiunto!', 'ok');
+}
+
+function delGiorno(idx) {
+  if (giorni.length <= 1) { toast('Almeno un giorno richiesto', 'err'); return; }
+  if (!confirm('Eliminare il giorno "' + giorni[idx].nome + '" e tutti i suoi pasti?')) return;
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  giorni.splice(idx, 1);
+  if (giornoCorrente >= giorni.length) giornoCorrente = giorni.length - 1;
+  markDirty();
+  renderGiornoTabs();
+  renderPiano();
+  toast('🗑️ Giorno eliminato', 'info');
+}
+
+function openRenameGiorno(idx) {
+  renamingGiornoIdx = idx;
+  document.getElementById('rg-nome').value = giorni[idx].nome;
+  openM('modal-rename-giorno');
+  setTimeout(() => { const el = document.getElementById('rg-nome'); if (el) { el.focus(); el.select(); } }, 150);
+}
+
+function doRenameGiorno() {
+  const nome = document.getElementById('rg-nome').value.trim();
+  if (!nome || renamingGiornoIdx === null) return;
+  giorni[renamingGiornoIdx].nome = nome;
+  closeM('modal-rename-giorno');
+  markDirty();
+  renderGiornoTabs();
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER PIANO
+// ═══════════════════════════════════════════════════
+function renderPiano() {
+  const c = document.getElementById('pasti-container');
+  if (!c) return;
+  c.innerHTML = '';
+  const meals = getMeals();
+  meals.forEach((_, mi) => c.appendChild(buildCard(mi)));
+  updateRiep();
+}
+
+function buildCard(mi) {
+  const meals = getMeals();
+  const meal = meals[mi];
+  const div = document.createElement('div');
+  div.className = 'pasto-card'; div.id = 'pc-' + mi;
+  div.setAttribute('draggable', 'true');
+  div.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', mi); div.classList.add('dragging'); });
+  div.addEventListener('dragend', () => div.classList.remove('dragging'));
+  div.addEventListener('dragover', e => { e.preventDefault(); div.classList.add('drag-over'); });
+  div.addEventListener('dragleave', () => div.classList.remove('drag-over'));
+  div.addEventListener('drop', e => { e.preventDefault(); div.classList.remove('drag-over'); swapM(parseInt(e.dataTransfer.getData('text/plain')), mi); });
+  const t = sumMeal(mi);
+  const microExtra = [...visM].map(k => {
+    const lbl = MICROS.find(m => m.k === k)?.l || k;
+    let tot = 0;
+    meal.items.forEach(item => { const f = lookup(item.nome); const v = cv(f, k, item.qt); if (v !== null) tot += v; });
+    return tot > 0 ? `<span style="font-size:10px;color:#94A3B8;margin-left:4px">${lbl.split(' ')[0]}:${r1(tot)}</span>` : '';
+  }).join('');
+
+  div.innerHTML = `
+  <div class="pasto-hdr" onclick="toggleM(${mi})">
+    <span class="ph-drag no-print" onclick="event.stopPropagation()" title="Trascina">⠿</span>
+    <span class="ph-emoji">${meal.emoji}</span>
+    <span class="ph-nome">${meal.nome}</span>
+    <span class="ph-macro">${t.kcal}kcal · P:${t.prot}g · C:${t.cho}g · G:${t.fat}g</span>
+    <button class="btn btn-ghost btn-xs no-print" onclick="event.stopPropagation();openRename(${mi})" style="color:white;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06);margin-right:3px">✏️</button>
+    <button class="btn btn-danger btn-xs no-print" onclick="event.stopPropagation();delMeal(${mi})" style="margin-right:4px">✕</button>
+    <span class="ph-tog">${meal.collapsed ? '▼' : '▲'}</span>
+  </div>
+  <div class="pasto-body${meal.collapsed ? ' collapsed' : ''}" id="pb-${mi}">
+    <div class="micro-bar no-print" style="flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:4px">
+      <label>Micronutrienti:</label>
+      ${MICROS.map(m => `<button class="mtog${visM.has(m.k) ? ' on' : ''}" onclick="toggleMicro('${m.k}')">${m.l}</button>`).join('')}
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th style="text-align:left;min-width:160px">Alimento</th>
+          <th style="min-width:62px">Qt (g)</th>
+          <th>Kcal</th><th>Prot</th><th>Gr.Sat</th><th>Gr.Tot</th><th>Zucc</th><th>CHO</th><th>Fibra</th>
+          ${MICROS.map(m => `<th style="display:${visM.has(m.k) ? '' : 'none'}">${m.l}</th>`).join('')}
+          <th>Fonte</th><th class="no-print"></th><th class="no-print" style="width:22px"></th>
+        </tr></thead>
+        <tbody id="tb-${mi}">
+          ${meal.items.map((_, ii) => buildRow(mi, ii)).join('')}
+          ${buildTot(mi)}
+        </tbody>
+      </table>
+    </div>
+    <div class="pasto-footer no-print">
+      <span class="pf-info" id="pf-${mi}">${t.kcal} kcal · P:${t.prot}g · C:${t.cho}g · G:${t.fat}g</span>
+      <button class="btn btn-primary btn-sm" onclick="addRow(${mi})">➕ Riga</button>
+    </div>
+  </div>`;
+  return div;
+}
+
+function buildRow(mi, ii) {
+  const meals = getMeals();
+  const item = meals[mi].items[ii];
+  const f = lookup(item.nome);
+  const qt = item.qt;
+  const srcBadge = f ? `<span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span>` : '';
+  const microTds = MICROS.map(m => `<td class="vc" style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(f, m.k, qt), 2)}</td>`).join('');
+  const altRows = (item.altPrint || []).map((a, ai) => {
+    const fa = lookup(a.nome);
+    return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${ai}">
+      <td style="padding-left:22px;text-align:left">↳ ALT: <b>${esc(a.nome)}</b></td>
+      <td>${a.qt}g</td>
+      <td>${fmtV(cv(fa, 'k', a.qt))}</td><td>${fmtV(cv(fa, 'p', a.qt))}</td>
+      <td></td><td></td><td></td><td>${fmtV(cv(fa, 'ch', a.qt))}</td><td>${fmtV(cv(fa, 'fi', a.qt))}</td>
+      ${MICROS.map(m => `<td style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(fa, m.k, a.qt), 2)}</td>`).join('')}
+      <td></td>
+      <td class="no-print"><button class="del-row" onclick="removeAltPrint(${mi},${ii},${ai})">✕</button></td>
+      <td></td>
+    </tr>`;
+  }).join('');
+  return `<tr id="r-${mi}-${ii}">
+    <td><div class="ac-wrap">
+      <input class="inp-food" type="text" value="${esc(item.nome)}" placeholder="Cerca alimento..." autocomplete="off"
+        oninput="onFI(${mi},${ii},this)" onkeydown="onFK(event,${mi},${ii})"
+        onfocus="onFF(${mi},${ii},this)" onblur="onFB(${mi},${ii})">
+      <div class="ac-list" id="ac-${mi}-${ii}"></div>
+    </div></td>
+    <td><input class="inp-qt" type="number" min="0" step="any" value="${qt || ''}" placeholder="g" oninput="onQI(${mi},${ii},this)"></td>
+    <td class="vc" data-k="k">${fmtV(cv(f, 'k', qt))}</td>
+    <td class="vc" data-k="p">${fmtV(cv(f, 'p', qt))}</td>
+    <td class="vc" data-k="gs">${fmtV(cv(f, 'gs', qt))}</td>
+    <td class="vc" data-k="g">${fmtV(cv(f, 'g', qt))}</td>
+    <td class="vc" data-k="z">${fmtV(cv(f, 'z', qt))}</td>
+    <td class="vc" data-k="ch">${fmtV(cv(f, 'ch', qt))}</td>
+    <td class="vc" data-k="fi">${fmtV(cv(f, 'fi', qt))}</td>
+    ${microTds}
+    <td style="font-size:10px;white-space:nowrap;text-align:left">${f ? esc(f.c || '') + ' ' : ''}${srcBadge}</td>
+    <td class="no-print"><button class="alt-btn" onclick="openAlt(${mi},${ii})" title="Alternative equivalenti">⇄</button></td>
+    <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})">✕</button></td>
+  </tr>${altRows}`;
+}
+
+function buildTot(mi) {
+  const t = sumMeal(mi);
+  const microTds = MICROS.map(mk => {
+    let tot = 0;
+    getMeals()[mi].items.forEach(item => { const f = lookup(item.nome); const v = cv(f, mk.k, item.qt); if (v !== null) tot += v; });
+    return `<td style="display:${visM.has(mk.k) ? '' : 'none'}">${tot > 0 ? r1(tot) : '—'}</td>`;
+  }).join('');
+  return `<tr class="tr-tot" id="tr-tot-${mi}">
+    <td style="text-align:left">∑ ${getMeals()[mi].nome.toUpperCase()}</td><td style="text-align:center">—</td>
+    <td style="text-align:center">${t.kcal}</td><td style="text-align:center">${t.prot}</td><td style="text-align:center">${t.fatSat}</td><td style="text-align:center">${t.fat}</td><td style="text-align:center">${t.z}</td><td style="text-align:center">${t.cho}</td><td style="text-align:center">${t.fibra}</td>
+    ${microTds}<td></td><td class="no-print"></td><td class="no-print"></td>
+  </tr>`;
+}
+
+function sumMeal(mi) {
+  let k = 0, p = 0, gs = 0, g = 0, z = 0, ch = 0, fi = 0;
+  getMeals()[mi].items.forEach(item => {
+    const f = lookup(item.nome); const qt = parseFloat(item.qt) || 0;
+    if (f) { k += (f.k || 0) / 100 * qt; p += (f.p || 0) / 100 * qt; gs += (f.gs || 0) / 100 * qt; g += (f.g || 0) / 100 * qt; z += (f.z || 0) / 100 * qt; ch += (f.ch || 0) / 100 * qt; fi += (f.fi || 0) / 100 * qt; }
+  });
+  return { kcal: Math.round(k), prot: r1(p), fatSat: r1(gs), fat: r1(g), z: r1(z), cho: r1(ch), fibra: r1(fi) };
+}
+
+function updateRiep() {
+  let k = 0, p = 0, g = 0, ch = 0, fi = 0;
+  getMeals().forEach((_, mi) => { const t = sumMeal(mi); k += t.kcal; p += parseFloat(t.prot); g += parseFloat(t.fat); ch += parseFloat(t.cho); fi += parseFloat(t.fibra); });
+  document.getElementById('tot-kcal').textContent = Math.round(k);
+  document.getElementById('tot-prot').textContent = r1(p);
+  document.getElementById('tot-cho').textContent = r1(ch);
+  document.getElementById('tot-fat').textContent = r1(g);
+  document.getElementById('tot-fibra').textContent = r1(fi);
+  // Micro extra totals
+  const extra = document.getElementById('macro-micro-extra');
+  if (extra) {
+    const microColors = { ca: '#0369A1', fe: '#B91C1C', mg: '#065F46', k2: '#7E22CE', na: '#B45309', fo: '#DC2626', se: '#0F766E', col: '#6B21A8', gs: '#92400E', z: '#1D4ED8' };
+    extra.innerHTML = [...visM].map(mk => {
+      let tot = 0;
+      getMeals().forEach((_, mi) => { getMeals()[mi].items.forEach(item => { const f = lookup(item.nome); const v = cv(f, mk, item.qt); if (v !== null) tot += v; }); });
+      const lbl = MICROS.find(m => m.k === mk)?.l || mk;
+      const col = microColors[mk] || '#334155';
+      return `<div class="mpill m-micro" style="background:${col}18;color:${col}"><span class="v">${r1(tot)}</span><span class="u">${lbl}</span></div>`;
+    }).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// AUTOCOMPLETE
+// ═══════════════════════════════════════════════════
+let acIdx = {}, acRes = {}, acT = null;
+
+function onFI(mi, ii, inp) {
+  getMeals()[mi].items[ii].nome = inp.value; markDirty();
+  clearTimeout(acT); acT = setTimeout(() => showAC(mi, ii, inp.value), 80);
+}
+function showAC(mi, ii, val) {
+  const el = document.getElementById(`ac-${mi}-${ii}`);
+  if (!el) return; acIdx[`${mi}-${ii}`] = -1;
+  if (!val || val.length < 1) { el.style.display = 'none'; return; }
+  const q = val.toLowerCase();
+  const res = ALL_DB.filter(f => f.n.toLowerCase().includes(q)).slice(0, 16);
+  acRes[`${mi}-${ii}`] = res;
+  if (!res.length) { el.style.display = 'none'; return; }
+  el.innerHTML = res.map((f, i) => `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(f.n)}</span><span class="ac-right"><span class="ac-cat">${esc(f.c || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
+  el.style.display = 'block';
+  // Smart position: show above if too close to bottom
+  const rect = el.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - rect.top;
+  const spaceAbove = rect.top;
+  const ddH = Math.min(res.length * 36, 210);
+  if (spaceBelow < ddH + 20 && spaceAbove > ddH) {
+    el.style.top = 'auto';
+    el.style.bottom = 'calc(100% + 2px)';
+  } else {
+    el.style.top = 'calc(100% + 2px)';
+    el.style.bottom = 'auto';
+  }
+}
+function pickAC(mi, ii, ri) {
+  const res = acRes[`${mi}-${ii}`]; if (!res || !res[ri]) return;
+  getMeals()[mi].items[ii].nome = res[ri].n;
+  const el = document.getElementById(`ac-${mi}-${ii}`); if (el) el.style.display = 'none';
+  const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.value = res[ri].n;
+  refreshRow(mi, ii); refreshTot(mi); updateRiep();
+  const qt = document.querySelector(`#r-${mi}-${ii} .inp-qt`); if (qt) { qt.focus(); qt.select(); }
+}
+function onFF(mi, ii, inp) { if (inp.value.length >= 1) showAC(mi, ii, inp.value); }
+function onFB(mi, ii) { setTimeout(() => { const el = document.getElementById(`ac-${mi}-${ii}`); if (el) el.style.display = 'none'; refreshRow(mi, ii); refreshTot(mi); updateRiep(); }, 200); }
+function onFK(e, mi, ii) {
+  const el = document.getElementById(`ac-${mi}-${ii}`); if (!el || el.style.display === 'none') return;
+  const items = el.querySelectorAll('.ac-item'); const k = `${mi}-${ii}`;
+  if (e.key === 'ArrowDown') { acIdx[k] = Math.min((acIdx[k] || 0) + 1, items.length - 1); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { acIdx[k] = Math.max((acIdx[k] || -1) - 1, 0); e.preventDefault(); }
+  else if (e.key === 'Enter' || e.key === 'Tab') { const idx = acIdx[k] >= 0 ? acIdx[k] : 0; if (items[idx]) { items[idx].dispatchEvent(new MouseEvent('mousedown')); e.preventDefault(); } return; }
+  else if (e.key === 'Escape') { el.style.display = 'none'; return; }
+  items.forEach((el2, i) => el2.classList.toggle('sel', i === acIdx[k]));
+  if (items[acIdx[k]]) items[acIdx[k]].scrollIntoView({ block: 'nearest' });
+}
+function onQI(mi, ii, inp) { getMeals()[mi].items[ii].qt = inp.value; markDirty(); refreshRow(mi, ii); refreshTot(mi); updateRiep(); }
+
+function refreshRow(mi, ii) {
+  const row = document.getElementById(`r-${mi}-${ii}`); if (!row) return;
+  const item = getMeals()[mi].items[ii]; const f = lookup(item.nome); const qt = item.qt;
+  row.querySelectorAll('td.vc[data-k]').forEach(td => { td.innerHTML = fmtV(cv(f, td.getAttribute('data-k'), qt)); });
+  const microTds = row.querySelectorAll('td.vc:not([data-k])');
+  MICROS.forEach((m, i) => { if (microTds[i]) { microTds[i].innerHTML = fmtV(cv(f, m.k, qt), 2); microTds[i].style.display = visM.has(m.k) ? '' : 'none'; } });
+  const srcTd = row.querySelector('td:nth-last-child(3)');
+  if (srcTd && f) srcTd.innerHTML = `${esc(f.c || '')} <span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : 'custom'}">${f.src}</span>`;
+}
+function refreshTot(mi) {
+  const el = document.getElementById(`tr-tot-${mi}`);
+  if (el) { const tmp = document.createElement('tbody'); tmp.innerHTML = buildTot(mi); el.replaceWith(tmp.firstChild); }
+  const pf = document.getElementById(`pf-${mi}`);
+  if (pf) { const t = sumMeal(mi); pf.innerHTML = `${t.kcal} kcal · P:${t.prot}g · C:${t.cho}g · G:${t.fat}g`; }
+}
+
+// ═══════════════════════════════════════════════════
+// MICRO TOGGLE
+// ═══════════════════════════════════════════════════
+function toggleMicro(k) {
+  if (visM.has(k)) visM.delete(k); else visM.add(k);
+  renderPiano();
+}
+
+// ═══════════════════════════════════════════════════
+// AZIONI PASTO/RIGA
+// ═══════════════════════════════════════════════════
+function toggleM(mi) {
+  const meals = getMeals(); meals[mi].collapsed = !meals[mi].collapsed; renderPiano();
+}
+function addRow(mi) {
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  getMeals()[mi].items.push({ nome: '', qt: '', altPrint: [] });
+  getMeals()[mi].collapsed = false; markDirty(); renderPiano();
+  setTimeout(() => { const ii = getMeals()[mi].items.length - 1; const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.focus(); }, 80);
+}
+function delRow(mi, ii) {
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  const meals = getMeals();
+  if (meals[mi].items.length <= 1) meals[mi].items[0] = { nome: '', qt: '', altPrint: [] };
+  else meals[mi].items.splice(ii, 1);
+  markDirty(); renderPiano();
+}
+function swapM(a, b) {
+  if (a === b) return;
+  const meals = getMeals();
+  [meals[a], meals[b]] = [meals[b], meals[a]]; markDirty(); renderPiano();
+}
+function delMeal(mi) {
+  if (getMeals().length <= 1) { toast('Almeno un pasto richiesto!', 'err'); return; }
+  if (!confirm(`Eliminare "${getMeals()[mi].nome}"?`)) return;
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  giorni[giornoCorrente].meals.splice(mi, 1); markDirty(); renderPiano();
+}
+function eliminaVuote() {
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  let tot = 0;
+  getMeals().forEach((m, mi) => {
+    const b = m.items.length;
+    m.items = m.items.filter(i => i.nome && i.nome.trim() !== '');
+    if (!m.items.length) m.items = [{ nome: '', qt: '', altPrint: [] }];
+    tot += b - m.items.length;
+  });
+  renderPiano(); toast(tot > 0 ? `✅ ${tot} righe vuote eliminate!` : 'Nessuna riga vuota.', 'ok');
+}
+function openAddRow() {
+  const l = document.getElementById('modal-addrow-list');
+  l.innerHTML = getMeals().map((m, i) => `<div style="display:flex;align-items:center;gap:9px;padding:10px 13px;cursor:pointer;border-radius:var(--r-sm);border:1.5px solid var(--border);margin-bottom:5px;transition:all .12s" onmouseover="this.style.borderColor='var(--teal-l)'" onmouseout="this.style.borderColor='var(--border)'" onclick="addRow(${i});closeM('modal-addrow')"><span style="font-size:20px">${m.emoji}</span><span style="font-weight:600">${m.nome}</span></div>`).join('');
+  openM('modal-addrow');
+}
+function markDirty() { dirty = true; }
+
+// ═══════════════════════════════════════════════════
+// NUOVO PASTO
+// ═══════════════════════════════════════════════════
+function openNewPasto() {
+  document.getElementById('np-nome').value = '';
+  document.getElementById('np-emoji').value = '🍽️';
+  const sel = document.getElementById('np-pos');
+  sel.innerHTML = "<option value='-1'>— All'inizio —</option>" + getMeals().map((m, i) => `<option value="${i}">${m.emoji} ${m.nome}</option>`).join('');
+  sel.value = String(getMeals().length - 1);
+  openM('modal-newpasto');
+  setTimeout(() => document.getElementById('np-nome').focus(), 200);
+}
+function creaPasto() {
+  const nome = document.getElementById('np-nome').value.trim();
+  if (!nome) { toast('Inserisci nome', 'err'); return; }
+  const emoji = document.getElementById('np-emoji').value || '🍽️';
+  const pos = parseInt(document.getElementById('np-pos').value);
+  const m = { id: 'c' + Date.now(), nome, emoji, items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false };
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  if (pos === -1) giorni[giornoCorrente].meals.unshift(m);
+  else giorni[giornoCorrente].meals.splice(pos + 1, 0, m);
+  closeM('modal-newpasto'); markDirty(); renderPiano();
+  toast(`✅ "${nome}" aggiunto!`, 'ok');
+}
+
+// ═══════════════════════════════════════════════════
+// RINOMINA PASTO
+// ═══════════════════════════════════════════════════
+function openRename(mi) {
+  renamingPastoIdx = mi;
+  document.getElementById('rn-nome').value = getMeals()[mi].nome;
+  document.getElementById('rn-emoji').value = getMeals()[mi].emoji;
+  openM('modal-rename');
+  setTimeout(() => document.getElementById('rn-nome').focus(), 200);
+}
+function doRename() {
+  const n = document.getElementById('rn-nome').value.trim();
+  const e = document.getElementById('rn-emoji').value || getMeals()[renamingPastoIdx].emoji;
+  if (!n) return;
+  getMeals()[renamingPastoIdx].nome = n;
+  getMeals()[renamingPastoIdx].emoji = e;
+  closeM('modal-rename'); markDirty(); renderPiano();
+}
+
+// ═══════════════════════════════════════════════════
+// UNDO
+// ═══════════════════════════════════════════════════
+function doUndo() {
+  const state = popUndo(); if (!state) return;
+  giorni = state.giorni;
+  giornoCorrente = state.giornoCorrente;
+  markDirty();
+  renderGiornoTabs();
+  renderPiano();
+  toast('↩ Azione annullata', 'info');
+}
+
+// ═══════════════════════════════════════════════════
+// ALTERNATIVE
+// ═══════════════════════════════════════════════════
+function openAlt(mi, ii) {
+  altMi = mi; altIi = ii;
+  const item = getMeals()[mi].items[ii];
+  const f = lookup(item.nome);
+  if (!item.nome || !f) { toast('Seleziona prima un alimento valido', 'err'); return; }
+  document.getElementById('alt-title').textContent = `⇄ Alternative a: ${item.nome} (${item.qt || 0}g)`;
+  document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
+    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${b.l}</button>`
+  ).join('');
+  document.getElementById('alt-search').value = '';
+  showAlternatives();
+  openM('modal-alt');
+}
+
+function showAlternatives() {
+  const item = getMeals()[altMi]?.items[altIi];
+  if (!item) return;
+  const f = lookup(item.nome); if (!f) return;
+  const qt = parseFloat(item.qt) || 100;
+  const targetVal = (f[altNutrient] || 0) / 100 * qt;
+  const nutriLabel = (ALL_NUTRIENTS.find(n => n.k === altNutrient) || { l: altNutrient }).l;
+  const searchQ = (document.getElementById('alt-search')?.value || '').toLowerCase().trim();
+
+  // If searching by name: show all matching foods regardless of targetVal
+  // If not searching: show equivalents by nutrient
+  let pool = ALL_DB.filter(alt => alt.n !== f.n);
+  if (searchQ) pool = pool.filter(alt => alt.n.toLowerCase().includes(searchQ));
+
+  let alts, introText;
+  if (targetVal > 0) {
+    const withNutrient = pool.filter(alt => alt[altNutrient] && alt[altNutrient] > 0);
+    const mapped = withNutrient.map(alt => {
+      const newQt = Math.round((targetVal / (alt[altNutrient] / 100)) * 10) / 10;
+      return { food: alt, newQt, kcal: Math.round((alt.k || 0) / 100 * newQt), prot: r1((alt.p || 0) / 100 * newQt), diff: Math.abs(newQt - qt) };
+    }).filter(a => a.newQt > 0 && a.newQt < 2000);
+    // Sort by similarity if no search, else keep search order
+    alts = searchQ ? mapped : mapped.sort((a, b) => a.diff - b.diff);
+    alts = alts.slice(0, 40);
+    introText = `<b>${qt}g di ${f.n}</b> apportano <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalenti (stessa quantità di ${nutriLabel}):`;
+  } else {
+    // No nutrient value: just show matching foods
+    alts = pool.slice(0, 40).map(alt => ({
+      food: alt, newQt: qt,
+      kcal: Math.round((alt.k || 0) / 100 * qt),
+      prot: r1((alt.p || 0) / 100 * qt)
+    }));
+    introText = `Alimenti trovati (stessa quantità: ${qt}g):`;
+  }
+
+  if (!alts.length) {
+    document.getElementById('alt-results').innerHTML = '<p style="color:var(--slate-l)">Nessuna alternativa trovata. Prova a cercare per nome.</p>';
+    return;
+  }
+  const currentPrint = (getMeals()[altMi].items[altIi].altPrint || []).map(a => a.nome);
+  const rows = alts.map(a => {
+    const inPrint = currentPrint.includes(a.food.n);
+    const srcCls = a.food.src === 'CREA' ? 'src-crea' : a.food.src === 'BDA' ? 'src-bda' : 'src-custom';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:white;border-radius:6px;margin-bottom:5px;border:1px solid var(--border);flex-wrap:wrap">
+      <div style="font-weight:600;font-size:12.5px;flex:1;min-width:140px">${esc(a.food.n)} <span class="ac-src ${srcCls}">${a.food.src}</span></div>
+      <span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700">${a.newQt}g</span>
+      <span style="font-size:10.5px;color:var(--slate-l)">${a.kcal}kcal · P${a.prot}g</span>
+      <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">Sostituisci</button>
+      <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?'✅ In stampa':'📄 +Stampa'}</button>
+    </div>`;
+  }).join('');
+  document.getElementById('alt-results').innerHTML = `<p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">${introText}</p>${rows}<p style="font-size:11px;color:var(--slate-l);margin-top:6px">Mostrando ${alts.length} risultati. Usa la ricerca per filtrare.</p>`;
+}
+
+function toggleAltPrint(mi, ii, nome, qt) {
+  if (!getMeals()[mi].items[ii].altPrint) getMeals()[mi].items[ii].altPrint = [];
+  const idx = getMeals()[mi].items[ii].altPrint.findIndex(a => a.nome === nome);
+  if (idx >= 0) { getMeals()[mi].items[ii].altPrint.splice(idx, 1); toast('🗑️ Rimosso dalla stampa', 'info'); }
+  else { getMeals()[mi].items[ii].altPrint.push({ nome, qt }); toast('📄 Aggiunto alla stampa!', 'ok'); }
+  markDirty(); showAlternatives(); renderPiano();
+}
+function removeAltPrint(mi, ii, ai) {
+  getMeals()[mi].items[ii].altPrint.splice(ai, 1); markDirty(); renderPiano();
+}
+function applyAlt(mi, ii, nome, qt) {
+  getMeals()[mi].items[ii].nome = nome; getMeals()[mi].items[ii].qt = qt;
+  markDirty(); closeM('modal-alt'); renderPiano();
+  toast(`✅ Sostituito con ${nome} (${qt}g)!`, 'ok');
+}
+
+// ═══════════════════════════════════════════════════
+// PIANO OPERATIONS (new/save/load)
+// ═══════════════════════════════════════════════════
+function nuovoPiano() {
+  if (dirty && !confirm('Modifiche non salvate. Continuare?')) return;
+  giorni = [{ id: 'g_' + Date.now(), nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false })) }];
+  giornoCorrente = 0;
+  document.getElementById('inp-nome').value = '';
+  document.getElementById('inp-data').value = todayISO();
+  const sel = document.getElementById('inp-cartella'); if (sel) sel.value = '';
+  dirty = false; currentPianoId = null; undoStack = []; hideUndoBar();
+  renderGiornoTabs(); renderPiano();
+  toast('🔄 Nuovo piano', 'info');
+}
+
+async function salvaPiano() {
+  const nome = document.getElementById('inp-nome').value.trim();
+  if (!nome) { toast('Inserisci nome paziente', 'err'); return; }
+  const data = document.getElementById('inp-data').value || todayISO();
+  const cartellaEl = document.getElementById('inp-cartella');
+  const cartella_id = cartellaEl && cartellaEl.value ? cartellaEl.value : null;
+  const payload = {
+    user_id: currentUser.id, nome, data_piano: data,
+    meals: JSON.stringify(giorni), // save full giorni array
+    saved_at: new Date().toISOString(), cartella_id
+  };
+  showLoading(true);
+  let result;
+  if (currentPianoId) { result = await sb.from('piani').update(payload).eq('id', currentPianoId); }
+  else { result = await sb.from('piani').insert(payload).select().single(); if (result.data) currentPianoId = result.data.id; }
+  showLoading(false);
+  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  dirty = false;
+  toast(`💾 "${nome}" salvato!`, 'ok');
+}
+
+// ═══════════════════════════════════════════════════
+// ESPORTA EXCEL
+// ═══════════════════════════════════════════════════
+function getSelectedMicros() {
+  return [...visM];
+}
+
+function esportaExcel() {
+  const nomePaz = document.getElementById('inp-nome')?.value || 'Piano Alimentare';
+  const dataStr = document.getElementById('inp-data')?.value || todayISO();
+  const selMicros = getSelectedMicros();
+  const MICRO_LABELS = {ca:'Ca(mg)',fe:'Fe(mg)',mg:'Mg(mg)',k2:'K(mg)',na:'Na(mg)',zn:'Zn(mg)',fo:'Fo(mg)',se:'Se(µg)',col:'Col(mg)'};
+
+  function xs(v) {
+    if(v===undefined||v===null||v===0||v==='') return '';
+    return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function xn(v) { const n=parseFloat(v); return isNaN(n)?0:Math.round(n*10)/10; }
+
+  // Stili CSS inline per Excel HTML
+  const css = `
+    body{font-family:Calibri,Arial,sans-serif;font-size:10pt}
+    .t-title{background:#0F2027;color:#FFFFFF;font-size:14pt;font-weight:bold;padding:8px 12px}
+    .t-sub{background:#0F2027;color:#94A3B8;font-size:9pt;padding:4px 12px}
+    .t-day{background:#0F766E;color:#FFFFFF;font-size:12pt;font-weight:bold;padding:6px 10px}
+    .t-meal{background:#DCFCE7;color:#14532D;font-size:11pt;font-weight:bold;padding:5px 10px}
+    .t-hdr{background:#1E293B;color:#FFFFFF;font-size:9pt;font-weight:bold;text-align:center;padding:4px 6px;border:1px solid #0F766E}
+    .t-hdr-l{background:#1E293B;color:#FFFFFF;font-size:9pt;font-weight:bold;text-align:left;padding:4px 6px;border:1px solid #0F766E}
+    .t-food{font-size:10pt;color:#1E293B;padding:3px 6px;border-bottom:1px solid #E2E8F0}
+    .t-num{font-size:10pt;color:#1E293B;text-align:right;padding:3px 6px;border-bottom:1px solid #E2E8F0}
+    .t-kcal{font-size:10pt;color:#0F766E;font-weight:bold;text-align:right;padding:3px 6px;border-bottom:1px solid #E2E8F0}
+    .t-sub-lbl{background:#1E293B;color:#CCFBF1;font-weight:bold;font-size:10pt;padding:4px 6px}
+    .t-sub-num{background:#1E293B;color:#CCFBF1;font-weight:bold;font-size:10pt;text-align:right;padding:4px 6px}
+    .t-day-tot{background:#CCFBF1;color:#0F766E;font-weight:bold;font-size:11pt;padding:6px 10px}
+    .t-empty{background:#F8FAFC;height:8px}
+    td,th{white-space:nowrap}
+  `;
+
+  let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+<x:Name>Piano Alimentare</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+<style>${css}</style></head><body><table border="0" cellspacing="0" cellpadding="0" width="100%">`;
+
+  const totalCols = 7 + selMicros.length;
+
+  // Titolo
+  html += `<tr><td class="t-title" colspan="${totalCols}">${xs(nomePaz)} — Piano Alimentare</td></tr>`;
+  html += `<tr><td class="t-sub" colspan="${totalCols}">Data: ${xs(dataStr)} &nbsp;·&nbsp; Generato con DietPlan Pro</td></tr>`;
+  html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
+
+  giorni.forEach((giorno, gi) => {
+    const gNome = giorno.nome || ('Giorno ' + (gi+1));
+
+    let dK=0,dP=0,dCH=0,dG=0,dFi=0;
+    const dM = selMicros.map(()=>0);
+    let hasFood = false;
+
+    giorno.meals.forEach(pasto => {
+      const items = (pasto.items||[]).filter(it=>it.nome&&it.nome.trim());
+      if(!items.length) return;
+      hasFood = true;
+
+      let pK=0,pP=0,pCH=0,pG=0,pFi=0;
+      const pM = selMicros.map(()=>0);
+
+      // Intestazione pasto
+      html += `<tr><td class="t-meal" colspan="${totalCols}">${xs(pasto.emoji+' '+pasto.nome)} &nbsp;—&nbsp; ${xs(gNome)}</td></tr>`;
+
+      // Intestazione colonne
+      html += `<tr><th class="t-hdr-l">Alimento</th><th class="t-hdr">Qt (g)</th><th class="t-hdr">Kcal</th><th class="t-hdr">Prot (g)</th><th class="t-hdr">CHO (g)</th><th class="t-hdr">Gr (g)</th><th class="t-hdr">Fibra (g)</th>${selMicros.map(k=>`<th class="t-hdr">${xs(MICRO_LABELS[k]||k)}</th>`).join('')}</tr>`;
+
+      // Alimenti
+      items.forEach(item => {
+        const f = lookup(item.nome);
+        const qt = parseFloat(item.qt)||0;
+        const k=f?xn((f.k||0)/100*qt):0;
+        const p=f?xn((f.p||0)/100*qt):0;
+        const ch=f?xn((f.ch||0)/100*qt):0;
+        const g=f?xn((f.g||0)/100*qt):0;
+        const fi=f?xn((f.fi||0)/100*qt):0;
+        pK+=k;pP+=p;pCH+=ch;pG+=g;pFi+=fi;
+        const mVals = selMicros.map((mk,mi)=>{ const v=f?xn((f[mk]||0)/100*qt):0; pM[mi]+=v; return v; });
+        const alt = item.altPrint&&item.altPrint.length&&item.altPrint[0]?.nome ? ` <span style="color:#64748B;font-size:9pt">(Alt: ${xs(item.altPrint[0].nome)} ${item.altPrint[0].qt}g)</span>` : '';
+        html += `<tr><td class="t-food">${xs(item.nome)}${alt}</td><td class="t-num">${qt||''}</td><td class="t-kcal">${k||''}</td><td class="t-num">${p||''}</td><td class="t-num">${ch||''}</td><td class="t-num">${g||''}</td><td class="t-num">${fi||''}</td>${mVals.map(v=>`<td class="t-num">${v||''}</td>`).join('')}</tr>`;
+      });
+
+      // Subtotale pasto
+      dK+=pK;dP+=pP;dCH+=pCH;dG+=pG;dFi+=pFi;
+      pM.forEach((v,i)=>dM[i]+=v);
+      html += `<tr><td class="t-sub-lbl">SUBTOTALE ${xs(pasto.nome)}</td><td class="t-sub-num"></td><td class="t-sub-num">${Math.round(pK)}</td><td class="t-sub-num">${r1(pP)}</td><td class="t-sub-num">${r1(pCH)}</td><td class="t-sub-num">${r1(pG)}</td><td class="t-sub-num">${r1(pFi)}</td>${pM.map(v=>`<td class="t-sub-num">${r1(v)||''}</td>`).join('')}</tr>`;
+      html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
+    });
+
+    if(hasFood) {
+      html += `<tr><td class="t-day-tot" colspan="${totalCols}">TOTALE ${xs(gNome.toUpperCase())}: &nbsp;<strong>${Math.round(dK)} kcal</strong> &nbsp;·&nbsp; Proteine ${r1(dP)}g &nbsp;·&nbsp; CHO ${r1(dCH)}g &nbsp;·&nbsp; Grassi ${r1(dG)}g &nbsp;·&nbsp; Fibra ${r1(dFi)}g${selMicros.map((mk,i)=>` &nbsp;·&nbsp; ${MICRO_LABELS[mk]||mk} ${r1(dM[i])}`).join('')}</td></tr>`;
+      html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
+      html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
+    }
+  });
+
+  html += `</table></body></html>`;
+
+  const blob = new Blob([html], {type:'application/vnd.ms-excel;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${nomePaz.replace(/[^a-zA-Z0-9_\- ]/g,'_').trim()}_${dataStr}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  toast('📥 Excel esportato!', 'ok');
+}
+
+
+function stampaPDF() {
+  // Expand all meals for print
+  giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
+  renderPiano();
+  setTimeout(() => window.print(), 400);
+}
+
+// ═══════════════════════════════════════════════════
+// CARTELLE SEARCH DROPDOWN
+// ═══════════════════════════════════════════════════
+let allCartelle = [];
+
+async function loadCartelleAll() {
+  if (!currentUser) return;
+  const { data } = await sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id', currentUser.id).order('nome');
+  allCartelle = data || [];
+  // Also populate standard select for compatibility
+  const sel = document.getElementById('inp-cartella');
+  if (sel && sel.tagName === 'SELECT') {
+    sel.innerHTML = '<option value="">-- Nessuna --</option>';
+    allCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent=c.nome; sel.appendChild(o); });
+  }
+}
+
+function filterCartelleDropdown() {
+  const q = document.getElementById('cartella-search')?.value.toLowerCase() || '';
+  showCartelleList(q);
+}
+
+function showCartelleList(q = '') {
+  const dd = document.getElementById('cartelle-dropdown');
+  if (!dd) return;
+  const filtered = q ? allCartelle.filter(c => c.nome.toLowerCase().includes(q)) : allCartelle;
+  dd._filteredCartelle = filtered;
+  if (!filtered.length) {
+    dd.innerHTML = '<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella trovata</div>';
+  } else {
+    dd.innerHTML = '<div style="padding:5px 10px;font-size:10.5px;color:var(--slate-l);border-bottom:1px solid var(--border)">Seleziona cartella</div>' +
+      filtered.map((c, i) => `<div data-app-cart-idx="${i}" 
+        style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)"
+        onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background=''">📁 ${esc(c.nome)}</div>`).join('');
+  }
+  dd.style.display = 'block';
+}
+
+function hideCartelleList() {
+  const dd = document.getElementById('cartelle-dropdown');
+  if (dd) dd.style.display = 'none';
+}
+
+function selectCartella(id, nome) {
+  document.getElementById('inp-cartella').value = id;
+  const s = document.getElementById('cartella-search');
+  if (s) s.value = nome;
+  const sel = document.getElementById('cartella-selected');
+  if (sel) sel.textContent = '✅ ' + nome;
+  hideCartelleList();
+  markDirty();
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+// Event delegation for cartella dropdown in app
+document.addEventListener('mousedown', function(e) {
+  const cartItem = e.target.closest('[data-app-cart-idx]');
+  if (cartItem) {
+    e.preventDefault();
+    const dd = document.getElementById('cartelle-dropdown');
+    if (dd && dd._filteredCartelle) {
+      const idx2 = parseInt(cartItem.dataset.appCartIdx);
+      const cart = dd._filteredCartelle[idx2];
+      if (cart) selectCartella(cart.id, cart.nome);
+    }
+  }
+});
+
+async function init() {
+  const ok = await checkAuth();
+  if (!ok) return;
+  rebuildDB();
+  await loadCartelleAll();
+
+  const pianoToLoad = sessionStorage.getItem('loadPianoId');
+  const newCartellaId = sessionStorage.getItem('newPianoCartella');
+  const insertRicetta = sessionStorage.getItem('insertRicetta');
+  const loadPatologia = sessionStorage.getItem('loadPatologia');
+
+  if (pianoToLoad) {
+    sessionStorage.removeItem('loadPianoId');
+    sessionStorage.removeItem('newPianoCartella');
+    await caricaPianoById(pianoToLoad);
+  } else {
+    nuovoPiano();
+    if (newCartellaId) {
+      sessionStorage.removeItem('newPianoCartella');
+      selectCartella(newCartellaId, allCartelle.find(c=>c.id===newCartellaId)?.nome || '');
+    }
+  }
+
+  if (loadPatologia) {
+    sessionStorage.removeItem('loadPatologia');
+    try {
+      const d = JSON.parse(loadPatologia);
+      giorni[giornoCorrente].meals = d.pasti.map(m => ({
+        ...m, id: 'p_'+Date.now()+Math.random(),
+        items: m.items.map(i => ({...i, altPrint:[]})),
+        collapsed: false
+      }));
+      markDirty(); renderGiornoTabs(); renderPiano();
+      toast('✅ Schema "'+d.nome+'" caricato!','ok');
+    } catch(e) { console.error(e); }
+  }
+
+  if (insertRicetta) {
+    sessionStorage.removeItem('insertRicetta');
+    try {
+      const r = JSON.parse(insertRicetta);
+      const mealNames = getMeals().map((m,i) => i+': '+m.emoji+' '+m.nome).join('\n');
+      const choice = prompt('Inserisci "'+r.nome+'" in quale pasto?\n\n'+mealNames+'\n\nInserisci il numero:');
+      const mi = parseInt(choice);
+      if (!isNaN(mi) && mi >= 0 && mi < getMeals().length) {
+        r.ingredienti.forEach(ing => {
+          getMeals()[mi].items.push({nome:ing.nome, qt:ing.qt, altPrint:[]});
+        });
+        const items = getMeals()[mi].items;
+        if (items.length > 1 && !items[0].nome) items.shift();
+        markDirty(); renderPiano();
+        toast('✅ Ricetta inserita in '+getMeals()[mi].nome+'!','ok');
+      }
+    } catch(e) { console.error(e); }
+  }
+}
+
+
+async function caricaPianoById(id) {
+  showLoading(true);
+  const { data, error } = await sb.from('piani').select('*').eq('id', id).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Errore caricamento', 'err'); nuovoPiano(); return; }
+  document.getElementById('inp-nome').value = data.nome;
+  document.getElementById('inp-data').value = data.data_piano || '';
+  // Support both old format (meals=[]) and new format (giorni=[{nome,meals}])
+  try {
+    const parsed = JSON.parse(data.meals || '[]');
+    if (parsed.length > 0 && parsed[0].meals !== undefined) {
+      // New format: array of giorni
+      giorni = parsed.map(g => ({ ...g, meals: (g.meals || []).map(m => ({ ...m, collapsed: false, items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [] })) })) }));
+    } else {
+      // Old format: flat array of meals
+      giorni = [{ id: 'g_legacy', nome: 'Giorno 1', meals: parsed.map(m => ({ ...m, collapsed: false, items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [] })) })) }];
+    }
+  } catch { giorni = [{ id: 'g_new', nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false })) }]; }
+  giornoCorrente = 0;
+  currentPianoId = id;
+  dirty = false;
+  if (data.cartella_id) { const sel = document.getElementById('inp-cartella'); if (sel) { await loadCartelleDropdown(); sel.value = data.cartella_id; } }
+  renderGiornoTabs();
+  renderPiano();
+  toast(`📂 "${data.nome}" caricato!`, 'ok');
+}
+
+// Expose for patologie page to load a plan
+window.loadPianoFromPatologia = function(giorni_data, nomePat) {
+  if (dirty && !confirm('Modifiche non salvate nel giorno corrente. Sovrascrivere?')) return;
+  const idx = giornoCorrente;
+  giorni[idx].meals = giorni_data.map(m => ({ ...m, id: m.id || ('m_' + Date.now() + Math.random()), items: m.items.map(i => ({ ...i, altPrint: [] })), collapsed: false }));
+  markDirty();
+  renderGiornoTabs();
+  renderPiano();
+  toast(`✅ Schema "${nomePat}" caricato nel giorno corrente!`, 'ok');
+};
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

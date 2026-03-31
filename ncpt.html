@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>NCPt — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ── TABS ── */
+.ncpt-tabs{display:flex;border-bottom:none;margin-bottom:18px;overflow-x:auto;gap:6px;padding-bottom:2px}
+.ncpt-tab{padding:10px 18px;cursor:pointer;font-size:13px;font-weight:600;color:var(--slate-l);border-radius:10px 10px 0 0;border:1.5px solid var(--border);border-bottom:none;transition:all .15s;white-space:nowrap;flex-shrink:0;background:var(--bg)}
+.ncpt-tab:hover{color:var(--slate);background:white}
+.ncpt-tab.active{color:var(--teal);background:white;border-color:var(--teal-l);border-bottom-color:white;position:relative;z-index:2}
+.ncpt-panel{display:none;padding-top:4px}
+.ncpt-panel.active{display:block}
+
+/* ── SECTIONS ── */
+.ns{background:white;border-radius:var(--r);border:1px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.ns h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.nf{margin-bottom:12px}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.nf input,.nf select,.nf textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;color:var(--slate);outline:none;transition:border-color .15s;background:white}
+.nf input:focus,.nf select:focus,.nf textarea:focus{border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
+.nf textarea{resize:vertical;min-height:70px;line-height:1.6}
+
+/* ── PES CARDS ── */
+.pes-card{background:white;border-radius:12px;padding:18px;margin-bottom:12px;border:1.5px solid #BFDBFE;box-shadow:0 2px 8px rgba(59,130,246,.08);position:relative}
+.pes-card-hdr{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #DBEAFE}
+.pes-num{font-size:11px;background:linear-gradient(135deg,#3B82F6,#6366F1);color:white;padding:3px 10px;border-radius:10px;font-weight:700}
+.pes-del{margin-left:auto}
+.pes-field{margin-bottom:12px}
+.pes-label-p{font-size:11px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.pes-label-e{font-size:11px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.pes-label-s{font-size:11px;font-weight:700;color:#15803D;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.pes-inp{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none;transition:all .15s;background:white;line-height:1.5}
+.pes-inp.p-inp{border-color:#FCA5A5;background:#FFF5F5}
+.pes-inp.p-inp:focus{border-color:#EF4444;box-shadow:0 0 0 3px rgba(239,68,68,.1);background:white}
+.pes-inp.e-inp{border-color:#FDE68A;background:#FFFDF0}
+.pes-inp.e-inp:focus{border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.1);background:white}
+.pes-inp.s-inp{border-color:#86EFAC;background:#F0FDF4}
+.pes-inp.s-inp:focus{border-color:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.1);background:white}
+.pes-preview{background:linear-gradient(135deg,#EFF6FF,#F0F9FF);border-radius:8px;padding:10px 13px;font-size:12.5px;border-left:4px solid #3B82F6;line-height:1.8;color:#1E3A5F;margin-top:8px;display:none}
+
+/* ── CHIPS ── */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;margin:3px;cursor:pointer;transition:all .15s}
+.chip:hover{background:#1D4ED8;color:white;transform:translateY(-1px);box-shadow:0 3px 10px rgba(29,78,216,.2)}
+
+/* ── STORICO ── */
+.stor-card{background:white;border-radius:10px;border:1.5px solid var(--border);padding:12px 15px;margin-bottom:8px;transition:box-shadow .15s}
+.stor-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.08)}
+.stor-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.stor-pill{padding:3px 10px;border-radius:9px;font-size:11.5px;font-weight:600}
+
+/* ── OBIETTIVI ── */
+.ob-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.ob-row:last-child{border-bottom:none}
+
+/* ── MONITORAGGIO ── */
+.monit-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.monit-grid:last-child{border-bottom:none}
+.mi{padding:6px 9px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none;width:100%;transition:border-color .15s}
+.mi:focus{border-color:var(--teal-l)}
+
+/* ── EZIOLOGIE DROPDOWN ── */
+.ez-dd{display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid var(--teal-l);border-radius:9px;max-height:200px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.15);margin-top:2px}
+.ez-item{padding:8px 12px;cursor:pointer;font-size:12.5px;border-bottom:1px solid var(--border);transition:background .1s}
+.ez-item:hover{background:#F0FDF4;color:var(--teal-d)}
+.ez-item:last-child{border-bottom:none}
+
+/* ── PAZ BAR ── */
+#paz-bar{background:linear-gradient(135deg,var(--sage),white);border-radius:var(--r);border:1.5px solid var(--teal-l);padding:12px 18px;margin-bottom:14px;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:var(--shadow)}
+#paz-bar.visible{display:flex}
+
+/* ── PRINT ── */
+@media print{
+  @page{margin:1.5cm 2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:10px!important}
+  /* Show ALL tabs when printing */
+  .ncpt-progress{display:none!important}
+  .ncpt-tab{display:none!important}
+  .ncpt-panel{display:block!important;border-top:none!important;padding-top:0!important}
+  /* Section headers for print */
+  .ncpt-panel::before{display:block;font-size:14pt;font-weight:700;color:#0F766E;padding:8px 0;margin-bottom:8px;border-bottom:2px solid #0F766E}
+  #tab-0::before{content:"1. VALUTAZIONE NUTRIZIONALE"}
+  #tab-1::before{content:"2. DIAGNOSI NUTRIZIONALE (PES)"}
+  #tab-2::before{content:"3. INTERVENTO NUTRIZIONALE"}
+  #tab-3::before{content:"4. MONITORAGGIO"}
+  /* Page breaks between sections */
+  #tab-1, #tab-2, #tab-3{page-break-before:always}
+  .ns{box-shadow:none!important;border:1px solid #CBD5E1!important;page-break-inside:avoid;margin-bottom:10px!important}
+  .pes-card{border:1px solid #BFDBFE!important;box-shadow:none!important;page-break-inside:avoid}
+  .pes-label-p,.pes-label-e,.pes-label-s{-webkit-print-color-adjust:exact}
+  .recall-box{border:1px solid #E2E8F0!important}
+  .recall-hdr{-webkit-print-color-adjust:exact}
+  /* Hide interactive elements */
+  .del-row, button:not(.print-btn){display:none!important}
+  .pes-inp,.mi,.nf input,.nf select,.nf textarea{border:none!important;background:transparent!important;padding:2px 0!important}
+  .ez-dd{display:none!important}
+  /* Pat bar */
+  #paz-bar{display:flex!important;margin-bottom:12px}
+}
+
+/* ── PROGRESS STEPS ── */
+.ncpt-progress{display:flex;align-items:center;margin-bottom:20px;padding:16px 20px;background:white;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow)}
+.ncpt-step-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;flex-shrink:0}
+.ncpt-step-circle{width:36px;height:36px;border-radius:50%;border:2.5px solid var(--border-d);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--slate-l);background:white;transition:all .25s}
+.ncpt-step-label{font-size:11px;font-weight:600;color:var(--slate-l);margin-top:5px;text-align:center;white-space:nowrap;transition:color .25s}
+.ncpt-step-item.active .ncpt-step-circle{background:var(--teal);border-color:var(--teal);color:white;box-shadow:0 0 0 4px rgba(15,118,110,.15)}
+.ncpt-step-item.active .ncpt-step-label{color:var(--teal);font-weight:700}
+.ncpt-step-item.done .ncpt-step-circle{background:#D1FAE5;border-color:#10B981;color:#065F46}
+.ncpt-step-item.done .ncpt-step-label{color:#065F46}
+.ncpt-step-item:hover .ncpt-step-circle{border-color:var(--teal-l);color:var(--teal)}
+.ncpt-step-line{flex:1;height:3px;background:var(--border-d);border-radius:2px;margin:0 8px;margin-bottom:16px;transition:background .25s}
+.ncpt-step-line.done{background:var(--teal)}
+
+/* ── NAV BUTTONS ── */
+.ncpt-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding:0;background:transparent;border:none;gap:8px}
+.ncpt-nav-btn-prev{flex:1;padding:12px 20px;background:white;color:var(--slate-m);border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s}
+.ncpt-nav-btn-prev:hover{background:#F8FAFC;border-color:var(--slate-l)}
+.ncpt-nav-btn-next{flex:1;padding:12px 20px;background:var(--teal);color:white;border:none;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:flex-end;gap:8px;transition:all .15s}
+.ncpt-nav-btn-next:hover{background:var(--teal-d);transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,118,110,.3)}
+
+/* ── RECALL 24H ── */
+.recall-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.recall-box{background:white;border-radius:9px;overflow:hidden}
+.recall-hdr{padding:8px 12px;font-size:11px;font-weight:700;border-bottom-width:1px;border-bottom-style:solid}
+.recall-ta{width:100%;padding:8px 11px;border:none;font-family:inherit;font-size:12.5px;outline:none;resize:vertical;background:white;min-height:80px;line-height:1.6}
+
+@media(max-width:768px){
+  .ncpt-progress{padding:12px;overflow-x:auto}
+  .ncpt-step-label{font-size:10px}
+  .recall-grid{grid-template-columns:1fr}
+  .monit-grid{grid-template-columns:1fr;gap:4px}
+  .fgrid.c3{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item active" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📝 NCPt — Nutrition Care Process</h2>
+  <div class="tbar-actions">
+    <div style="position:relative">
+      <input type="text" id="cart-search" placeholder="🔍 Cerca paziente..." autocomplete="off"
+        oninput="filterCart()" onfocus="showCartDD()" onblur="setTimeout(hideCartDD,200)"
+        style="padding:6px 11px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none;width:200px">
+      <div id="cart-dd" style="display:none;position:absolute;top:110%;right:0;left:0;background:white;border:2px solid var(--teal-l);border-radius:8px;max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:220px"></div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="salvaNCPt()">💾 Salva</button>
+    <button class="btn btn-ghost btn-sm" onclick="nuovoNCPt()">🔄 Nuovo</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="printAllNCPt()" title="Stampa tutto">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- PAZIENTE BAR -->
+<div id="paz-bar" style="display:none;background:white;border-radius:var(--r);border:1.5px solid var(--teal-l);padding:10px 16px;margin-bottom:12px;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow)">
+  <span style="font-size:15px;font-weight:700;color:var(--teal-d)" id="pb-nome">—</span>
+  <span style="font-size:12px;color:var(--slate-l)" id="pb-meta"></span>
+  <span style="font-size:11px;background:var(--teal);color:white;padding:2px 9px;border-radius:10px;font-weight:600" id="pb-data"></span>
+</div>
+
+<!-- STEP PROGRESS BAR -->
+<div class="ncpt-progress no-print">
+  <div class="ncpt-step-item" id="sp-0" onclick="goTab(0)">
+    <div class="ncpt-step-circle">1</div>
+    <div class="ncpt-step-label">Valutazione</div>
+  </div>
+  <div class="ncpt-step-line" id="sl-0"></div>
+  <div class="ncpt-step-item" id="sp-1" onclick="goTab(1)">
+    <div class="ncpt-step-circle">2</div>
+    <div class="ncpt-step-label">Diagnosi PES</div>
+  </div>
+  <div class="ncpt-step-line" id="sl-1"></div>
+  <div class="ncpt-step-item" id="sp-2" onclick="goTab(2)">
+    <div class="ncpt-step-circle">3</div>
+    <div class="ncpt-step-label">Intervento</div>
+  </div>
+  <div class="ncpt-step-line" id="sl-2"></div>
+  <div class="ncpt-step-item" id="sp-3" onclick="goTab(3)">
+    <div class="ncpt-step-circle">4</div>
+    <div class="ncpt-step-label">Monitoraggio</div>
+  </div>
+</div>
+
+
+
+<!-- ══════════════════════ TAB 1: VALUTAZIONE ══════════════════════ -->
+<div class="ncpt-panel active" id="tab-0">
+
+<div class="ns">
+  <h3>👤 Dati Anagrafici e Clinici</h3>
+  <div class="fgrid">
+    <div class="nf"><label>Nome e Cognome</label><input type="text" id="v-nome" placeholder="Cognome Nome"></div>
+    <div class="nf"><label>Data di nascita</label><input type="date" id="v-ddn"></div>
+    <div class="nf"><label>Sesso</label><select id="v-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+    <div class="nf"><label>Data valutazione</label><input type="date" id="v-data"></div>
+    <div class="nf full"><label>Diagnosi medica / Motivo della consulenza</label>
+      <textarea id="v-diag" placeholder="Es. Diabete mellito tipo 2, ipertensione, calo ponderale..."></textarea></div>
+    <div class="nf full"><label>Anamnesi patologica remota e prossima</label>
+      <textarea id="v-anamnesi" placeholder="Patologie pregresse, interventi, allergie, intolleranze..."></textarea></div>
+  </div>
+</div>
+
+<div class="ns">
+  <h3>📏 Valutazione Antropometrica</h3>
+  <div class="fgrid c3">
+    <div class="nf"><label>Peso attuale (kg)</label><input type="number" id="v-peso" step="0.1" placeholder="es. 78.5" oninput="calcAntropo()"></div>
+    <div class="nf"><label>Altezza (cm)</label><input type="number" id="v-altezza" placeholder="es. 170" oninput="calcAntropo()"></div>
+    <div class="nf"><label>BMI (auto)</label><input type="text" id="v-bmi" readonly style="background:#F8FAFC"></div>
+    <div class="nf"><label>Peso Ideale — Lorenz (kg)</label><input type="text" id="v-pi" readonly style="background:#F8FAFC"></div>
+    <div class="nf"><label>Peso Aggiustato (kg)</label><input type="text" id="v-pa" readonly style="background:#F8FAFC"></div>
+    <div class="nf"><label>Variazione peso recente</label><input type="text" id="v-dpeso" placeholder="es. -3 kg in 2 mesi"></div>
+    <div class="nf"><label>Circ. vita (cm)</label><input type="number" id="v-vita" step="0.1" oninput="calcAntropo()"></div>
+    <div class="nf"><label>Circ. fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1" oninput="calcAntropo()"></div>
+    <div class="nf"><label>WHR (auto)</label><input type="text" id="v-whr" readonly style="background:#F8FAFC"></div>
+    <div class="nf"><label>Massa grassa (%)</label><input type="number" id="v-mg" step="0.1"></div>
+    <div class="nf"><label>Massa magra (kg)</label><input type="number" id="v-mm" step="0.1"></div>
+    <div class="nf"><label>Circ. braccio (cm)</label><input type="number" id="v-braccio" step="0.1"></div>
+  </div>
+  <div id="antr-result" style="margin-top:8px;font-size:12.5px;color:var(--slate-m);background:#F8FAFC;border-radius:7px;padding:8px 12px;display:none"></div>
+</div>
+
+<div class="ns">
+  <h3>🔬 Esami Biochimici</h3>
+  <div class="fgrid c3">
+    <div class="nf"><label>Glicemia (mg/dL)</label><input type="text" id="b-glic"></div>
+    <div class="nf"><label>HbA1c (%)</label><input type="text" id="b-hba1c"></div>
+    <div class="nf"><label>Colesterolo tot. (mg/dL)</label><input type="text" id="b-col"></div>
+    <div class="nf"><label>LDL (mg/dL)</label><input type="text" id="b-ldl"></div>
+    <div class="nf"><label>HDL (mg/dL)</label><input type="text" id="b-hdl"></div>
+    <div class="nf"><label>Trigliceridi (mg/dL)</label><input type="text" id="b-tg"></div>
+    <div class="nf"><label>Creatinina (mg/dL)</label><input type="text" id="b-creat"></div>
+    <div class="nf"><label>eGFR (mL/min)</label><input type="text" id="b-egfr"></div>
+    <div class="nf"><label>Albumina (g/dL)</label><input type="text" id="b-alb"></div>
+    <div class="nf"><label>Emoglobina (g/dL)</label><input type="text" id="b-hb"></div>
+    <div class="nf"><label>Ferritina (ng/mL)</label><input type="text" id="b-ferr"></div>
+    <div class="nf"><label>Vitamina D (ng/mL)</label><input type="text" id="b-vitd"></div>
+    <div class="nf full"><label>Altri esami rilevanti</label>
+      <textarea id="b-altri" rows="2" placeholder="TSH, PCR, azotemia, elettroliti, B12..."></textarea></div>
+  </div>
+</div>
+
+<div class="ns">
+  <h3>🍽️ Anamnesi Alimentare</h3>
+  <div class="fgrid">
+    <div class="nf full"><label>📋 Recall 24h — Abitudini Alimentari</label>
+      <div class="recall-grid">
+        <div class="recall-box" style="border:1.5px solid #FDE68A">
+          <div class="recall-hdr" style="background:#FEF3C7;color:#B45309;border-bottom-color:#FDE68A">☀️ COLAZIONE</div>
+          <textarea id="v-colazione" class="recall-ta" placeholder="Es. Latte, biscotti, caffè..."></textarea>
+        </div>
+        <div class="recall-box" style="border:1.5px solid #D1FAE5">
+          <div class="recall-hdr" style="background:#ECFDF5;color:#065F46;border-bottom-color:#D1FAE5">🍎 SPUNTINO MATTINA</div>
+          <textarea id="v-spunt1" class="recall-ta" placeholder="Es. Frutta, yogurt..."></textarea>
+        </div>
+        <div class="recall-box" style="border:1.5px solid #BFDBFE">
+          <div class="recall-hdr" style="background:#EFF6FF;color:#1D4ED8;border-bottom-color:#BFDBFE">🍽️ PRANZO</div>
+          <textarea id="v-pranzo" class="recall-ta" placeholder="Es. Pasta, secondo, contorno, pane..."></textarea>
+        </div>
+        <div class="recall-box" style="border:1.5px solid #FED7AA">
+          <div class="recall-hdr" style="background:#FFF7ED;color:#C2410C;border-bottom-color:#FED7AA">🍊 SPUNTINO POMERIGGIO</div>
+          <textarea id="v-spunt2" class="recall-ta" placeholder="Es. Merenda, frutta, snack..."></textarea>
+        </div>
+        <div class="recall-box" style="border:1.5px solid #DDD6FE">
+          <div class="recall-hdr" style="background:#EDE9FE;color:#5B21B6;border-bottom-color:#DDD6FE">🌙 CENA</div>
+          <textarea id="v-cena" class="recall-ta" placeholder="Es. Minestra, secondo, contorno, pane..."></textarea>
+        </div>
+        <div class="recall-box" style="border:1.5px solid #CBD5E1">
+          <div class="recall-hdr" style="background:#F8FAFC;color:#475569;border-bottom-color:#CBD5E1">🧃 FUORI PASTO / ALTRO</div>
+          <textarea id="v-fuori" class="recall-ta" placeholder="Es. Bevande, alcol, snack, integratori..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="nf"><label>Apporti stimati (kcal/die)</label><input type="text" id="v-kcal-att"></div>
+    <div class="nf"><label>Appetito</label>
+      <select id="v-appetito"><option>Normale</option><option>Ridotto</option><option>Aumentato</option><option>Molto ridotto / anoressia</option></select></div>
+    <div class="nf full"><label>Intolleranze, allergie, preferenze etiche/religiose</label>
+      <textarea id="v-intoll" rows="2" placeholder="Celiachia, intolleranza lattosio, vegano, halal..."></textarea></div>
+    <div class="nf full"><label>Attività fisica</label>
+      <textarea id="v-attiv" rows="2" placeholder="Tipo, frequenza, durata..."></textarea></div>
+    <div class="nf full"><label>Terapia farmacologica e supplementi</label>
+      <textarea id="v-farmaci" rows="2" placeholder="Farmaci, dosaggi, interazioni farmaco-nutrienti..."></textarea></div>
+  </div>
+</div>
+
+<div class="ns">
+  <h3>⚡ Fabbisogno Energetico Stimato</h3>
+  <div class="fgrid c3">
+    <div class="nf"><label>Formula MB usata</label>
+      <select id="v-formula"><option>Harris-Benedict</option><option>Mifflin-St Jeor</option><option>Schofield (LARN)</option><option>FAO/WHO 1985</option><option>Katch-McArdle</option></select></div>
+    <div class="nf"><label>MB calcolato (kcal)</label><input type="text" id="v-mb" placeholder="es. 1650"></div>
+    <div class="nf"><label>LAF</label>
+      <select id="v-laf"><option value="1.2">1.2 — Sedentario</option><option value="1.375" selected>1.375 — Leggermente attivo</option><option value="1.55">1.55 — Moderatamente attivo</option><option value="1.725">1.725 — Molto attivo</option><option value="1.9">1.9 — Atleta</option></select></div>
+    <div class="nf"><label>TDEE stimato (kcal)</label><input type="text" id="v-tdee" placeholder="es. 2100"></div>
+    <div class="nf"><label>Fabbisogno proteico (g/die)</label><input type="text" id="v-prot" placeholder="es. 75-90 g"></div>
+    <div class="nf"><label>Kcal target prescritte</label><input type="text" id="v-kcal-tgt" placeholder="es. 1600"></div>
+    <div class="nf full"><label>Note fabbisogno</label>
+      <textarea id="v-note-fabb" rows="2" placeholder="Motivazione scelta calorica, peso di riferimento..."></textarea></div>
+  </div>
+</div>
+
+
+<div class="ncpt-nav no-print"><div class="ncpt-nav-btn-prev" style="visibility:hidden">←</div><button class="ncpt-nav-btn-next" onclick="goTab(1)">Avanti → Diagnosi PES</button></div>
+</div><!-- end tab 0 -->
+
+<!-- ══════════════════════ TAB 2: DIAGNOSI PES ══════════════════════ -->
+<div class="ncpt-panel" id="tab-1">
+
+<div class="ns">
+  <h3>🏷️ Diagnosi Nutrizionale — Formato PES</h3>
+  <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px;line-height:1.7">
+    Ogni diagnosi descrive: <b style="color:#DC2626">P</b>roblema nutrizionale — <b style="color:#D97706">E</b>ziologia (correlato a) — <b style="color:#15803D">S</b>egni/Sintomi (evidenziato da).<br>
+    Puoi aggiungere più diagnosi PES per lo stesso paziente.
+  </p>
+
+  <div style="margin-bottom:12px">
+    <div style="font-size:11.5px;font-weight:700;color:var(--slate-m);margin-bottom:7px">Seleziona problema per aggiungere PES:</div>
+    <div id="problemi-chips"></div>
+  </div>
+
+  <div id="pes-container"></div>
+
+  <button class="btn btn-primary btn-sm" onclick="addPES()" style="margin-top:8px">➕ Aggiungi PES vuoto</button>
+</div>
+
+<div class="ns">
+  <h3>📋 Codici NCP di riferimento</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11.5px">
+    <div style="background:#FEF3C7;border-radius:8px;padding:10px">
+      <div style="font-weight:700;color:#B45309;margin-bottom:5px">NI — Introito</div>
+      <div style="color:#334155;line-height:1.8">NI-1: Metabolismo<br>NI-2: Introito orale<br>NI-3: Fluidi<br>NI-4: Bioattivi<br>NI-5: Macro/micronutrienti</div>
+    </div>
+    <div style="background:#FEE2E2;border-radius:8px;padding:10px">
+      <div style="font-weight:700;color:#991B1B;margin-bottom:5px">NC — Clinico</div>
+      <div style="color:#334155;line-height:1.8">NC-1: Funzionale<br>NC-2: Biochimico<br>NC-3: Peso<br>NC-4: Malnutrizione/Sarcopenia</div>
+    </div>
+    <div style="background:#EDE9FE;border-radius:8px;padding:10px">
+      <div style="font-weight:700;color:#5B21B6;margin-bottom:5px">NB — Comportamentale</div>
+      <div style="color:#334155;line-height:1.8">NB-1: Conoscenze<br>NB-2: Attività fisica<br>NB-3: Sicurezza alimentare</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="ncpt-nav no-print"><button class="ncpt-nav-btn-prev" onclick="goTab(0)">← Valutazione</button><button class="ncpt-nav-btn-next" onclick="goTab(2)">Avanti → Intervento</button></div>
+</div><!-- end tab 1 -->
+
+<!-- ══════════════════════ TAB 3: INTERVENTO ══════════════════════ -->
+<div class="ncpt-panel" id="tab-2">
+
+<div class="ns">
+  <h3>🎯 Obiettivi Nutrizionali (SMART)</h3>
+  <p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">Specifici, Misurabili, Raggiungibili, Rilevanti, Temporizzati.</p>
+  <div id="ob-container"></div>
+  <button class="btn btn-primary btn-sm" onclick="addObiettivo()" style="margin-top:8px">➕ Aggiungi Obiettivo</button>
+</div>
+
+<div class="ns">
+  <h3>🥗 Piano Dietetico Prescritto</h3>
+  <div class="fgrid c3">
+    <div class="nf"><label>Kcal/die</label><input type="text" id="i-kcal"></div>
+    <div class="nf"><label>Proteine (g o %)</label><input type="text" id="i-prot"></div>
+    <div class="nf"><label>CHO (g o %)</label><input type="text" id="i-cho"></div>
+    <div class="nf"><label>Grassi (g o %)</label><input type="text" id="i-grassi"></div>
+    <div class="nf"><label>Fibra (g/die)</label><input type="text" id="i-fibra"></div>
+    <div class="nf"><label>Liquidi (mL/die)</label><input type="text" id="i-liquidi" placeholder="es. 2000"></div>
+  </div>
+  <div class="nf"><label>Distribuzione pasti</label>
+    <textarea id="i-distrib" rows="2" placeholder="es. 5 pasti: colazione 20%, spuntino 5%, pranzo 35%, spuntino 5%, cena 35%"></textarea></div>
+  <div class="nf"><label>Restrizioni e indicazioni specifiche</label>
+    <textarea id="i-restr" rows="3" placeholder="Alimenti da limitare/evitare, modalità di cottura, indicazioni per la spesa..."></textarea></div>
+</div>
+
+<div class="ns">
+  <h3>📚 Educazione Alimentare e Counseling</h3>
+  <div class="nf"><label>Argomenti trattati nella seduta</label>
+    <textarea id="i-edu" rows="3" placeholder="Lettura etichette, gestione fame emotiva, pianificazione pasti, educazione IG..."></textarea></div>
+  <div class="nf"><label>Materiale consegnato al paziente</label>
+    <textarea id="i-mat" rows="2" placeholder="Schema dietetico, opuscoli, link..."></textarea></div>
+  <div class="nf"><label>Strategie motivazionali</label>
+    <textarea id="i-motiv" rows="2" placeholder="Tecniche colloquio motivazionale, obiettivi a breve termine..."></textarea></div>
+</div>
+
+<div class="ns">
+  <h3>💊 Supplementazione e Coordinamento</h3>
+  <div class="nf"><label>Supplementi prescritti</label>
+    <textarea id="i-suppl" rows="2" placeholder="Vitamina D 1000 UI/die, Omega-3 2g/die, Ferro 30mg..."></textarea></div>
+  <div class="nf"><label>Coordinamento multidisciplinare</label>
+    <textarea id="i-coord" rows="2" placeholder="Comunicazione con medico, fisioterapista, psicologo..."></textarea></div>
+</div>
+
+
+<div class="ncpt-nav no-print"><button class="ncpt-nav-btn-prev" onclick="goTab(1)">← Diagnosi</button><button class="ncpt-nav-btn-next" onclick="goTab(3)">Avanti → Monitoraggio</button></div>
+</div><!-- end tab 2 -->
+
+<!-- ══════════════════════ TAB 4: MONITORAGGIO ══════════════════════ -->
+<div class="ncpt-panel" id="tab-3">
+
+<div class="ns">
+  <h3>📅 Pianificazione Follow-up</h3>
+  <div class="fgrid c3">
+    <div class="nf"><label>Data prossima visita</label><input type="date" id="m-next"></div>
+    <div class="nf"><label>Frequenza</label>
+      <select id="m-freq"><option>Settimanale</option><option>Quindicinale</option><option selected>Mensile</option><option>Ogni 2 mesi</option><option>Ogni 3 mesi</option><option>A necessità</option></select></div>
+    <div class="nf"><label>Modalità</label>
+      <select id="m-mod"><option>In presenza</option><option>Videoconsulto</option><option>Telefonico</option><option>Misto</option></select></div>
+  </div>
+</div>
+
+<div class="ns">
+  <h3>📊 Parametri da Monitorare</h3>
+  <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;padding:6px 0;border-bottom:2px solid var(--border);font-size:11px;font-weight:700;color:var(--slate-l)">
+    <span>Parametro</span><span style="text-align:center">Baseline</span><span style="text-align:center">Obiettivo</span><span style="text-align:center">Attuale</span><span></span>
+  </div>
+  <div id="monit-params">
+    <div class="monit-grid"><span class="monit-label" style="font-weight:600;font-size:12.5px">Peso (kg)</span><input class="mi" id="mp-peso-b" placeholder="—"><input class="mi" id="mp-peso-t" placeholder="—"><input class="mi" id="mp-peso-a" placeholder="—"><span></span></div>
+    <div class="monit-grid"><span class="monit-label" style="font-weight:600;font-size:12.5px">BMI</span><input class="mi" id="mp-bmi-b" placeholder="—"><input class="mi" id="mp-bmi-t" placeholder="—"><input class="mi" id="mp-bmi-a" placeholder="—"><span></span></div>
+    <div class="monit-grid"><span class="monit-label" style="font-weight:600;font-size:12.5px">Circ. vita (cm)</span><input class="mi" id="mp-vita-b" placeholder="—"><input class="mi" id="mp-vita-t" placeholder="—"><input class="mi" id="mp-vita-a" placeholder="—"><span></span></div>
+    <div class="monit-grid"><span class="monit-label" style="font-weight:600;font-size:12.5px">HbA1c (%)</span><input class="mi" id="mp-hba1c-b" placeholder="—"><input class="mi" id="mp-hba1c-t" placeholder="—"><input class="mi" id="mp-hba1c-a" placeholder="—"><span></span></div>
+    <div class="monit-grid"><span class="monit-label" style="font-weight:600;font-size:12.5px">Colesterolo tot.</span><input class="mi" id="mp-col-b" placeholder="—"><input class="mi" id="mp-col-t" placeholder="—"><input class="mi" id="mp-col-a" placeholder="—"><span></span></div>
+  </div>
+  <div id="monit-extra"></div>
+  <button class="btn btn-ghost btn-sm" onclick="addMonitParam()" style="margin-top:10px">➕ Parametro personalizzato</button>
+</div>
+
+<div class="ns">
+  <h3>📅 Storico Misurazioni</h3>
+  <button class="btn btn-primary btn-sm" onclick="toggleStorForm()" style="margin-bottom:10px">➕ Aggiungi Misurazione</button>
+  <button class="btn btn-ghost btn-sm" onclick="storView=!storView;renderStor()" style="margin-bottom:10px">🔀 Vista</button>
+  <div id="stor-form" style="display:none;background:#F0FDF4;border-radius:10px;padding:14px;margin-bottom:12px;border:1.5px solid var(--teal-l)">
+    <div style="font-size:12px;font-weight:700;color:var(--teal-d);margin-bottom:10px">📅 Nuova Misurazione</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:10px">
+      <div class="nf"><label>Data</label><input type="date" id="sf-data" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+      <div class="nf"><label>Peso (kg)</label><input type="number" id="sf-peso" step="0.1" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+      <div class="nf"><label>BMI</label><input type="number" id="sf-bmi" step="0.1" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+      <div class="nf"><label>Vita (cm)</label><input type="number" id="sf-vita" step="0.1" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+      <div class="nf"><label>MG (%)</label><input type="number" id="sf-mg" step="0.1" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+      <div class="nf"><label>Kcal/die</label><input type="number" id="sf-kcal" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+      <div class="nf"><label>HbA1c (%)</label><input type="number" id="sf-hba1c" step="0.1" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+      <div class="nf"><label>Pressione</label><input type="text" id="sf-pa" placeholder="es. 130/80" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none"></div>
+    </div>
+    <div class="nf" style="margin-bottom:10px"><label>Note</label>
+      <textarea id="sf-note" rows="2" placeholder="Aderenza alla dieta, eventi rilevanti..." style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none;resize:vertical"></textarea></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-primary btn-sm" onclick="salvaStorEntry()">💾 Salva</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('stor-form').style.display='none'">Annulla</button>
+    </div>
+  </div>
+  <div id="stor-list"></div>
+</div>
+
+<div class="ns">
+  <h3>✅ Verifica Obiettivi e Esito</h3>
+  <div id="ob-verifica" style="margin-bottom:12px"></div>
+  <div class="nf"><label>Aggiornamento piano / Riesame diagnosi</label>
+    <textarea id="m-riesame" rows="3" placeholder="Modifiche al piano, riesame diagnosi, nuovi obiettivi..."></textarea></div>
+  <div class="nf"><label>Esito complessivo</label>
+    <select id="m-esito">
+      <option>In corso — obiettivi non ancora raggiunti</option>
+      <option>Miglioramento parziale</option>
+      <option>Obiettivi raggiunti — mantenimento</option>
+      <option>Peggioramento — revisione piano</option>
+      <option>Dimissione nutrizionale</option>
+    </select></div>
+</div>
+
+
+<div class="ncpt-nav no-print"><button class="ncpt-nav-btn-prev" onclick="goTab(2)">← Intervento</button><button class="ncpt-nav-btn-next" onclick="salvaNCPt()">💾 Salva NCPt</button></div>
+</div><!-- end tab 3 -->
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<script src="js/utils.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════
+const PROBLEMI_PES = [
+  'Apporto energetico insufficiente','Apporto energetico eccessivo',
+  'Apporto proteico insufficiente','Malnutrizione proteico-energetica',
+  'Apporto di grassi eccessivo','Apporto di carboidrati eccessivo',
+  'Apporto di fibre insufficiente','Introito di micronutrienti insufficiente',
+  'Introito di fluidi insufficiente','Introito di fluidi eccessivo',
+  'Alterazione laboratoristica correlata alla nutrizione',
+  'Interazione farmaco-nutriente','Sottopeso','Sovrappeso/Obesità',
+  'Perdita di peso involontaria','Aumento di peso involontario',
+  'Malnutrizione in corso di malattia cronica','Sarcopenia','Cachessia',
+  'Conoscenze nutrizionali insufficienti','Non aderenza al piano nutrizionale',
+  'Comportamento alimentare non salutare','Attività fisica insufficiente',
+];
+
+const EZIOLOGIE = [
+  'ridotta assunzione alimentare per inappetenza',
+  'nausea e vomito da farmaci o patologia',
+  'difficoltà di deglutizione (disfagia)',
+  'malassorbimento intestinale',
+  'aumentato fabbisogno energetico per patologia',
+  'aumentate perdite nutrizionali (dialisi, stomia)',
+  'conoscenze nutrizionali insufficienti',
+  'scarsa aderenza al piano alimentare',
+  'limitato accesso al cibo (fattori socioeconomici)',
+  'alterazioni metaboliche da patologia',
+  'effetti collaterali della terapia farmacologica',
+  'dipendenza da alcol o sostanze',
+  'disturbo del comportamento alimentare',
+  'ridotta mobilità e attività fisica',
+  'stress psicologico, ansia o depressione',
+  'isolamento sociale e solitudine',
+  'patologia gastrointestinale (gastroparesi, IBD)',
+  'insufficienza d\'organo (renale, epatica, cardiaca)',
+];
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let pesList = [];
+let obiettiviList = [];
+let storici = [];
+let monitExtra = [];
+let currentCartellaId = null;
+let currentNcptId = null;
+let allCartelle = [];
+let storView = true; // true=card, false=table
+
+// ═══════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════
+let currentTab = 0;
+function goTab(n) {
+  currentTab = n;
+  document.querySelectorAll('.ncpt-panel').forEach((p,i) => p.classList.toggle('active', i===n));
+  // Update progress bar
+  for(let i=0;i<4;i++){
+    const sp = document.getElementById('sp-'+i);
+    const sl = document.getElementById('sl-'+i);
+    if(sp){
+      sp.classList.toggle('active', i===n);
+      sp.classList.toggle('done', i<n);
+    }
+    if(sl) sl.classList.toggle('done', i<n);
+  }
+  if(n===3) renderObVerifica();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════
+// CARTELLE SEARCH
+// ═══════════════════════════════════════════════════
+function filterCart() {
+  const q = document.getElementById('cart-search').value.toLowerCase();
+  showCartDD(q);
+}
+function showCartDD(q='') {
+  const dd = document.getElementById('cart-dd');
+  if (!dd) return;
+  const filtered = q ? allCartelle.filter(c => c.nome.toLowerCase().includes(q)) : allCartelle;
+  if (!filtered.length) {
+    dd.innerHTML='<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella</div>';
+    dd.style.display='block';
+    return;
+  }
+  // Store filtered on element to avoid escaping issues
+  dd._filteredCartelle = filtered;
+  dd.innerHTML = filtered.map((c, idx) =>
+    `<div class="ez-item" data-cart-idx="${idx}"
+      style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #E2E8F0">
+      📁 ${esc(c.nome)}
+    </div>`
+  ).join('');
+  dd.style.display = 'block';
+}
+function hideCartDD() { const dd=document.getElementById('cart-dd'); if(dd) dd.style.display='none'; }
+async function selCartella(id, nome) {
+  currentCartellaId = id;
+  document.getElementById('cart-search').value = nome;
+  hideCartDD();
+  // Load NCPt for this cartella
+  showLoading(true);
+  const {data} = await sb.from('ncpt').select('*').eq('cartella_id',id).eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(1);
+  showLoading(false);
+  if (data && data.length) { caricaDati(data[0]); toast('📂 NCPt caricato!','ok'); }
+  else { nuovoNCPt(false); toast('📋 Nuovo NCPt per questo paziente','info'); }
+  // Show paz bar
+  const cart = allCartelle.find(c=>c.id===id);
+  if (cart) {
+    document.getElementById('paz-bar').classList.add('visible'); document.getElementById('paz-bar').style.display='flex';
+    document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
+    document.getElementById('pb-meta').textContent = cart.ddn ? calcolaEta(cart.ddn)+' anni' : '';
+    document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
+    // Pre-fill nome in valutazione
+    if (!document.getElementById('v-nome').value) document.getElementById('v-nome').value = cart.nome;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ANTROPOMETRIA
+// ═══════════════════════════════════════════════════
+function calcAntropo() {
+  const peso=parseFloat(document.getElementById('v-peso').value);
+  const alt=parseFloat(document.getElementById('v-altezza').value);
+  const sesso=document.getElementById('v-sesso').value;
+  const vita=parseFloat(document.getElementById('v-vita').value);
+  const fianchi=parseFloat(document.getElementById('v-fianchi').value);
+  if(!peso||!alt) return;
+  const bmi=peso/(alt/100)**2;
+  const pi=sesso==='M'?(alt-100)-((alt-150)/4):(alt-100)-((alt-150)/2.5);
+  const pa=pi+0.25*(peso-pi);
+  document.getElementById('v-bmi').value=Math.round(bmi*10)/10;
+  document.getElementById('v-pi').value=Math.round(pi*10)/10;
+  document.getElementById('v-pa').value=Math.round(pa*10)/10;
+  if(vita&&fianchi) document.getElementById('v-whr').value=Math.round(vita/fianchi*100)/100;
+  let cat='',col='var(--teal)';
+  if(bmi<18.5){cat='⚠️ Sottopeso';col='#0EA5E9';}
+  else if(bmi<25){cat='✅ Normopeso';col='#15803D';}
+  else if(bmi<30){cat='⚠️ Sovrappeso';col='#D97706';}
+  else if(bmi<35){cat='🔴 Obesità I';col='#DC2626';}
+  else if(bmi<40){cat='🔴 Obesità II';col='#DC2626';}
+  else{cat='🔴 Obesità III';col='#991B1B';}
+  const res=document.getElementById('antr-result');
+  res.style.display='block';
+  res.innerHTML=`<span style="font-weight:700;color:${col}">${cat}</span> · BMI: <b>${Math.round(bmi*10)/10}</b> · Peso ideale: <b>${Math.round(pi*10)/10}kg</b> · Peso aggiustato: <b>${Math.round(pa*10)/10}kg</b>`;
+}
+
+// ═══════════════════════════════════════════════════
+// PES — MULTI
+// ═══════════════════════════════════════════════════
+function renderProblemiChips() {
+  const c = document.getElementById('problemi-chips');
+  if (!c) return;
+  c.innerHTML = PROBLEMI_PES.map((p,i) =>
+    `<span class="chip" onclick="addPESwith(PROBLEMI_PES[${i}])">➕ ${p}</span>`
+  ).join('');
+}
+
+function addPESwith(problema) {
+  pesList.push({p:problema, e:'', s:''});
+  renderPES();
+  toast('PES aggiunto!','ok');
+}
+
+function addPES() {
+  pesList.push({p:'', e:'', s:''});
+  renderPES();
+}
+
+function removePES(i) { pesList.splice(i,1); renderPES(); }
+
+function renderPES() {
+  const c = document.getElementById('pes-container');
+  if (!c) return;
+  if (!pesList.length) {
+    c.innerHTML='<p style="color:var(--slate-l);font-size:12.5px;padding:8px 0">Nessuna diagnosi PES. Clicca su un problema o usa "Aggiungi PES vuoto".</p>';
+    return;
+  }
+  c.innerHTML = pesList.map((pes,i) => `
+    <div class="pes-card">
+      <div class="pes-card-hdr">
+        <span class="pes-num">🩺 Diagnosi PES ${i+1}</span>
+        <button class="del-row pes-del" onclick="removePES(${i})" title="Rimuovi">✕</button>
+      </div>
+      <div class="pes-field">
+        <label class="pes-label-p">🔴 P — Problema nutrizionale</label>
+        <input class="pes-inp p-inp" type="text" value="${esc(pes.p||'')}"
+          oninput="pesList[${i}].p=this.value;updPrev(${i})"
+          placeholder="es. Apporto energetico insufficiente, Malnutrizione proteico-energetica...">
+      </div>
+      <div class="pes-field">
+        <label class="pes-label-e">🟡 E — Eziologia (correlato a...)</label>
+        <div style="position:relative">
+          <input class="pes-inp e-inp" type="text" value="${esc(pes.e||'')}"
+            oninput="pesList[${i}].e=this.value;updPrev(${i});filtEz(${i},this.value)"
+            onfocus="filtEz(${i},this.value||'')" onblur="setTimeout(()=>hideEz(${i}),200)"
+            placeholder="Inizia a scrivere o scegli dall'elenco...">
+          <div class="ez-dd" id="ez-${i}"></div>
+        </div>
+      </div>
+      <div class="pes-field">
+        <label class="pes-label-s">🟢 S — Segni e Sintomi (evidenziato da...)</label>
+        <textarea class="pes-inp s-inp" rows="2" oninput="pesList[${i}].s=this.value;updPrev(${i})"
+          placeholder="es. come evidenziato da: perdita peso 8% in 3 mesi, albumina 2.8 g/dL, apporto stimato <60% del fabbisogno...">${esc(pes.s||'')}</textarea>
+      </div>
+      <div class="pes-preview" id="prev-${i}"></div>
+    </div>`).join('');
+  pesList.forEach((_,i) => updPrev(i));
+}
+
+function updPrev(i) {
+  const pes=pesList[i];
+  const el=document.getElementById(`prev-${i}`);
+  if(!el||!pes) return;
+  if(pes.p||pes.e||pes.s){
+    const parts=[];
+    if(pes.p) parts.push(`<b>${esc(pes.p)}</b>`);
+    if(pes.e) parts.push(`correlato a <i>${esc(pes.e)}</i>`);
+    if(pes.s) parts.push(`come evidenziato da <i>${esc(pes.s)}</i>`);
+    el.innerHTML=`<b style="color:#1D4ED8">Diagnosi PES ${i+1}:</b> `+parts.join(' ');
+    el.style.display='block';
+  } else { el.style.display='none'; }
+}
+
+function filtEz(i, q) {
+  const dd = document.getElementById('ez-' + i);
+  if (!dd) return;
+  const filtered = q ? EZIOLOGIE.filter(e => e.toLowerCase().includes(q.toLowerCase())) : EZIOLOGIE;
+  if (!filtered.length) {
+    dd.innerHTML = '<div style="padding:8px 12px;font-size:12.5px;color:#94A3B8">Nessuna eziologia trovata</div>';
+    dd.style.display = 'block';
+    return;
+  }
+  // Use data attributes and event delegation - NO inline onclick, NO JSON.stringify
+  dd.innerHTML = filtered.map((e, fi) => 
+    `<div class="ez-item" data-ez-idx="${fi}" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-bottom:1px solid #E2E8F0">${e}</div>`
+  ).join('');
+  // Store filtered list on the dropdown element itself
+  dd._filtered = filtered;
+  dd._pesIdx = i;
+  dd.style.display = 'block';
+}
+
+function hideEz(i) {
+  const dd = document.getElementById('ez-' + i);
+  if (dd) dd.style.display = 'none';
+}
+
+function hideEz(i){const dd=document.getElementById(`ez-${i}`);if(dd)dd.style.display='none';}
+
+// ═══════════════════════════════════════════════════
+// OBIETTIVI
+// ═══════════════════════════════════════════════════
+function addObiettivo(testo='') {
+  obiettiviList.push({testo, stato:'attivo'});
+  renderObiettivi();
+}
+function removeOb(i){obiettiviList.splice(i,1);renderObiettivi();}
+function renderObiettivi() {
+  const c=document.getElementById('ob-container');
+  if(!c) return;
+  if(!obiettiviList.length){c.innerHTML='<p style="color:var(--slate-l);font-size:12.5px">Nessun obiettivo.</p>';return;}
+  c.innerHTML=obiettiviList.map((ob,i)=>`
+    <div class="ob-row">
+      <input type="text" value="${esc(ob.testo)}" oninput="obiettiviList[${i}].testo=this.value"
+        placeholder="Obiettivo SMART (es. Ridurre peso di 5kg in 3 mesi...)"
+        style="flex:1;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:13px;outline:none">
+      <select onchange="obiettiviList[${i}].stato=this.value"
+        style="padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12px;outline:none">
+        <option value="attivo" ${ob.stato==='attivo'?'selected':''}>🔄 In corso</option>
+        <option value="raggiunto" ${ob.stato==='raggiunto'?'selected':''}>✅ Raggiunto</option>
+        <option value="parziale" ${ob.stato==='parziale'?'selected':''}>⚠️ Parziale</option>
+        <option value="non_raggiunto" ${ob.stato==='non_raggiunto'?'selected':''}>❌ Non raggiunto</option>
+      </select>
+      <button class="del-row" onclick="removeOb(${i})">✕</button>
+    </div>`).join('');
+}
+function renderObVerifica() {
+  const c=document.getElementById('ob-verifica');
+  if(!c) return;
+  if(!obiettiviList.length){c.innerHTML='<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessun obiettivo impostato nella sezione Intervento.</p>';return;}
+  c.innerHTML=obiettiviList.map((ob,i)=>`
+    <div class="ob-row">
+      <span style="flex:1;font-size:12.5px">${esc(ob.testo)||'(obiettivo non definito)'}</span>
+      <select onchange="obiettiviList[${i}].stato=this.value"
+        style="padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-family:inherit;font-size:12px;outline:none">
+        <option value="attivo" ${ob.stato==='attivo'?'selected':''}>🔄 In corso</option>
+        <option value="raggiunto" ${ob.stato==='raggiunto'?'selected':''}>✅ Raggiunto</option>
+        <option value="parziale" ${ob.stato==='parziale'?'selected':''}>⚠️ Parziale</option>
+        <option value="non_raggiunto" ${ob.stato==='non_raggiunto'?'selected':''}>❌ Non raggiunto</option>
+      </select>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// MONITORAGGIO EXTRA PARAMS
+// ═══════════════════════════════════════════════════
+function addMonitParam() {
+  const nome=prompt('Nome del parametro da monitorare:');
+  if(!nome) return;
+  const id='me_'+Date.now();
+  monitExtra.push({id,nome});
+  const c=document.getElementById('monit-extra');
+  const div=document.createElement('div');
+  div.className='monit-grid';
+  div.id='div-'+id;
+  div.innerHTML=`<span style="font-weight:600;font-size:12.5px">${esc(nome)}</span>
+    <input class="mi" id="${id}-b" placeholder="—">
+    <input class="mi" id="${id}-t" placeholder="—">
+    <input class="mi" id="${id}-a" placeholder="—">
+    <button class="del-row" onclick="document.getElementById('div-${id}').remove();monitExtra=monitExtra.filter(x=>x.id!=='${id}')">✕</button>`;
+  c.appendChild(div);
+}
+
+// ═══════════════════════════════════════════════════
+// STORICO MISURAZIONI
+// ═══════════════════════════════════════════════════
+function toggleStorForm() {
+  const f=document.getElementById('stor-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+  if(f.style.display==='block'){
+    document.getElementById('sf-data').value=new Date().toISOString().split('T')[0];
+  }
+}
+
+function salvaStorEntry() {
+  const g=id=>document.getElementById(id)?.value||'';
+  const entry={
+    id:Date.now(),
+    data:g('sf-data')||new Date().toLocaleDateString('it'),
+    peso:g('sf-peso'),bmi:g('sf-bmi'),vita:g('sf-vita'),
+    mg:g('sf-mg'),kcal:g('sf-kcal'),hba1c:g('sf-hba1c'),
+    pa:g('sf-pa'),note:g('sf-note')
+  };
+  if(!entry.peso&&!entry.bmi&&!entry.kcal){toast('Inserisci almeno un valore','err');return;}
+  storici.unshift(entry);
+  renderStor();
+  document.getElementById('stor-form').style.display='none';
+  ['sf-peso','sf-bmi','sf-vita','sf-mg','sf-kcal','sf-hba1c','sf-pa','sf-note'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  toast('📊 Misurazione salvata!','ok');
+}
+
+function renderStor() {
+  const c=document.getElementById('stor-list');
+  if(!c) return;
+  if(!storici.length){c.innerHTML='<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessuna misurazione registrata.</p>';return;}
+  if(storView){
+    c.innerHTML=storici.map((m,i)=>`
+      <div class="stor-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-weight:700;color:var(--teal-d);font-size:13px">📅 ${esc(m.data)}</span>
+          <button class="del-row" onclick="storici.splice(${i},1);renderStor()">✕</button>
+        </div>
+        <div class="stor-pills">
+          ${m.peso?`<span class="stor-pill" style="background:#F0FDF4;color:#15803D">⚖️ ${m.peso}kg</span>`:''}
+          ${m.bmi?`<span class="stor-pill" style="background:#EFF6FF;color:#1D4ED8">BMI ${m.bmi}</span>`:''}
+          ${m.vita?`<span class="stor-pill" style="background:#FEF3C7;color:#B45309">Vita ${m.vita}cm</span>`:''}
+          ${m.mg?`<span class="stor-pill" style="background:#FAF5FF;color:#7E22CE">MG ${m.mg}%</span>`:''}
+          ${m.kcal?`<span class="stor-pill" style="background:#FFF7ED;color:#C2410C">🔥${m.kcal}kcal</span>`:''}
+          ${m.hba1c?`<span class="stor-pill" style="background:#FEE2E2;color:#991B1B">HbA1c ${m.hba1c}%</span>`:''}
+          ${m.pa?`<span class="stor-pill" style="background:#EDE9FE;color:#5B21B6">PA ${m.pa}</span>`:''}
+        </div>
+        ${m.note?`<div style="margin-top:6px;font-size:12px;color:var(--slate-l);font-style:italic">📝 ${esc(m.note)}</div>`:''}
+      </div>`).join('');
+  } else {
+    c.innerHTML=`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="background:var(--slate);color:#CBD5E1">
+        <th style="padding:6px 10px;text-align:left">Data</th>
+        <th style="padding:6px 8px;text-align:center">Peso</th><th style="padding:6px 8px;text-align:center">BMI</th>
+        <th style="padding:6px 8px;text-align:center">Vita</th><th style="padding:6px 8px;text-align:center">Kcal</th>
+        <th style="padding:6px 8px;text-align:center">HbA1c</th><th style="padding:6px 8px;text-align:center">PA</th>
+        <th style="padding:6px 8px;text-align:left">Note</th><th></th>
+      </tr></thead>
+      <tbody>${storici.map((m,i)=>`
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:5px 10px;font-weight:600">${esc(m.data)}</td>
+          <td style="text-align:center;padding:5px 7px">${m.peso||'—'}</td>
+          <td style="text-align:center;padding:5px 7px">${m.bmi||'—'}</td>
+          <td style="text-align:center;padding:5px 7px">${m.vita||'—'}</td>
+          <td style="text-align:center;padding:5px 7px">${m.kcal||'—'}</td>
+          <td style="text-align:center;padding:5px 7px">${m.hba1c||'—'}</td>
+          <td style="text-align:center;padding:5px 7px">${m.pa||'—'}</td>
+          <td style="padding:5px 7px;font-size:11px;color:var(--slate-l)">${esc(m.note||'')}</td>
+          <td><button class="del-row" onclick="storici.splice(${i},1);renderStor()">✕</button></td>
+        </tr>`).join('')}
+      </tbody></table></div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SALVA / CARICA
+// ═══════════════════════════════════════════════════
+function raccogliDati() {
+  const g=id=>document.getElementById(id)?.value||'';
+  return {
+    cartella_id: currentCartellaId,
+    user_id: currentUser?.id,
+    valutazione: JSON.stringify({
+      nome:g('v-nome'),ddn:g('v-ddn'),sesso:g('v-sesso'),data:g('v-data'),
+      diag:g('v-diag'),anamnesi:g('v-anamnesi'),
+      peso:g('v-peso'),altezza:g('v-altezza'),bmi:g('v-bmi'),pi:g('v-pi'),pa:g('v-pa'),
+      dpeso:g('v-dpeso'),vita:g('v-vita'),fianchi:g('v-fianchi'),whr:g('v-whr'),
+      mg:g('v-mg'),mm:g('v-mm'),braccio:g('v-braccio'),
+      glic:g('b-glic'),hba1c:g('b-hba1c'),col:g('b-col'),ldl:g('b-ldl'),hdl:g('b-hdl'),
+      tg:g('b-tg'),creat:g('b-creat'),egfr:g('b-egfr'),alb:g('b-alb'),
+      hb:g('b-hb'),ferr:g('b-ferr'),vitd:g('b-vitd'),altri:g('b-altri'),
+      colazione:g('v-colazione'),spunt1:g('v-spunt1'),pranzo:g('v-pranzo'),
+      spunt2:g('v-spunt2'),cena:g('v-cena'),fuori:g('v-fuori'),
+      kcal_att:g('v-kcal-att'),appetito:g('v-appetito'),
+      intoll:g('v-intoll'),attiv:g('v-attiv'),farmaci:g('v-farmaci'),
+      formula:g('v-formula'),mb:g('v-mb'),laf:g('v-laf'),tdee:g('v-tdee'),
+      prot:g('v-prot'),kcal_tgt:g('v-kcal-tgt'),note_fabb:g('v-note-fabb')
+    }),
+    diagnosi: JSON.stringify({pes: pesList}),
+    intervento: JSON.stringify({
+      kcal:g('i-kcal'),prot:g('i-prot'),cho:g('i-cho'),grassi:g('i-grassi'),
+      fibra:g('i-fibra'),liquidi:g('i-liquidi'),distrib:g('i-distrib'),restr:g('i-restr'),
+      edu:g('i-edu'),mat:g('i-mat'),motiv:g('i-motiv'),suppl:g('i-suppl'),coord:g('i-coord'),
+      obiettivi: obiettiviList
+    }),
+    monitoraggio: JSON.stringify({
+      next:g('m-next'),freq:g('m-freq'),mod:g('m-mod'),
+      peso_b:g('mp-peso-b'),peso_t:g('mp-peso-t'),peso_a:g('mp-peso-a'),
+      bmi_b:g('mp-bmi-b'),bmi_t:g('mp-bmi-t'),bmi_a:g('mp-bmi-a'),
+      vita_b:g('mp-vita-b'),vita_t:g('mp-vita-t'),vita_a:g('mp-vita-a'),
+      hba1c_b:g('mp-hba1c-b'),hba1c_t:g('mp-hba1c-t'),hba1c_a:g('mp-hba1c-a'),
+      col_b:g('mp-col-b'),col_t:g('mp-col-t'),col_a:g('mp-col-a'),
+      storici, monitExtra, riesame:g('m-riesame'), esito:g('m-esito')
+    }),
+    updated_at: new Date().toISOString()
+  };
+}
+
+async function salvaNCPt() {
+  if(!currentUser){ toast('Effettua il login per salvare','err'); return; }
+  // If no cartella selected but only one result in search, auto-select it
+  if(!currentCartellaId){
+    const q = document.getElementById('cart-search').value.trim().toLowerCase();
+    if(q) {
+      const match = allCartelle.filter(c => c.nome.toLowerCase().includes(q));
+      if(match.length === 1) {
+        currentCartellaId = match[0].id;
+        toast('📁 Cartella selezionata: ' + match[0].nome, 'info');
+      }
+    }
+    if(!currentCartellaId){
+      toast('⚠️ Seleziona una cartella paziente dalla lista','err');
+      // Show dropdown
+      showCartDD(document.getElementById('cart-search').value.toLowerCase());
+      return;
+    }
+  }
+  const payload = raccogliDati();
+  showLoading(true);
+  let result;
+  if(currentNcptId){
+    result = await sb.from('ncpt').update(payload).eq('id',currentNcptId);
+  } else {
+    payload.created_at = new Date().toISOString();
+    result = await sb.from('ncpt').insert(payload).select().single();
+    if(result.data) currentNcptId = result.data.id;
+  }
+  showLoading(false);
+  if(result.error){
+    if(result.error.code==='42P01'){
+      toast('Tabella "ncpt" mancante — esegui SQL','err');
+      console.error('SQL:\ncreate table ncpt(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,valutazione text,diagnosi text,intervento text,monitoraggio text,created_at timestamptz default now(),updated_at timestamptz default now());\nalter table ncpt enable row level security;\ncreate policy "Proprio ncpt" on ncpt for all using(auth.uid()=user_id);');
+    } else { toast('❌ '+result.error.message,'err'); }
+    return;
+  }
+  toast('💾 NCPt salvato nella cartella!','ok');
+}
+
+function caricaDati(data) {
+  currentNcptId = data.id;
+  const s=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined)el.value=val;};
+  try {
+    const v=JSON.parse(data.valutazione||'{}');
+    const fieldMap = {
+      colazione:'v-colazione',spunt1:'v-spunt1',pranzo:'v-pranzo',
+      spunt2:'v-spunt2',cena:'v-cena',fuori:'v-fuori',
+      kcal_att:'v-kcal-att'
+    };
+    Object.entries(v).forEach(([k,val])=>{
+      if(!val) return;
+      const id = fieldMap[k] || 'v-'+k.replace(/_/g,'-');
+      const el = document.getElementById(id) || document.getElementById('b-'+k);
+      if(el) el.value=val;
+    });
+    // Fix specific IDs
+    if(v.ddn) s('v-ddn',v.ddn);
+    if(v.sesso) s('v-sesso',v.sesso);
+    if(v.appetito) s('v-appetito',v.appetito);
+    if(v.formula) s('v-formula',v.formula);
+    if(v.laf) s('v-laf',v.laf);
+    const d=JSON.parse(data.diagnosi||'{}');
+    pesList = d.pes||[];
+    renderPES();
+    const i=JSON.parse(data.intervento||'{}');
+    ['kcal','prot','cho','grassi','fibra','liquidi','distrib','restr','edu','mat','motiv','suppl','coord'].forEach(k=>{s('i-'+k,i[k]);});
+    obiettiviList=i.obiettivi||[];
+    renderObiettivi();
+    const m=JSON.parse(data.monitoraggio||'{}');
+    ['next','freq','mod','riesame','esito'].forEach(k=>s('m-'+k,m[k]));
+    ['peso','bmi','vita','hba1c','col'].forEach(p=>{
+      ['b','t','a'].forEach(s2=>s(`mp-${p}-${s2}`,m[`${p}_${s2}`]));
+    });
+    storici=m.storici||[];
+    renderStor();
+  } catch(e){ console.error(e); }
+}
+
+function nuovoNCPt(clearCart=true) {
+  currentNcptId=null;
+  pesList=[]; obiettiviList=[]; storici=[]; monitExtra=[];
+  document.querySelectorAll('.ncpt-panel input, .ncpt-panel textarea, .recall-ta').forEach(el=>{
+    if(el.type!=='date') el.value='';
+  });
+  document.getElementById('v-data').value=new Date().toISOString().split('T')[0];
+  if(clearCart){currentCartellaId=null;document.getElementById('cart-search').value='';document.getElementById('paz-bar').style.display='none';}
+  renderPES(); renderObiettivi(); renderStor();
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+function printAllNCPt() {
+  // Show all panels before printing
+  document.querySelectorAll('.ncpt-panel').forEach(p => p.classList.add('active'));
+  window.print();
+  // Restore after print
+  setTimeout(() => {
+    document.querySelectorAll('.ncpt-panel').forEach((p, i) => {
+      p.classList.toggle('active', i === currentTab);
+    });
+  }, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Global event delegation for ALL dropdowns (eziologia + cartelle)
+  document.addEventListener('mousedown', function(e) {
+    // Eziologia dropdown items
+    const ezItem = e.target.closest('.ez-item[data-ez-idx]');
+    if (ezItem) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dd = ezItem.closest('.ez-dd');
+      if (dd && dd._filtered) {
+        const idx2 = parseInt(ezItem.dataset.ezIdx);
+        if (pesList[dd._pesIdx] !== undefined && dd._filtered[idx2] !== undefined) {
+          pesList[dd._pesIdx].e = dd._filtered[idx2];
+          renderPES();
+        }
+      }
+      return;
+    }
+    // Cartella dropdown items
+    const cartItem = e.target.closest('[data-cart-idx]');
+    if (cartItem) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dd = document.getElementById('cart-dd');
+      if (dd && dd._filteredCartelle) {
+        const idx2 = parseInt(cartItem.dataset.cartIdx);
+        const cart = dd._filteredCartelle[idx2];
+        if (cart) selCartella(cart.id, cart.nome);
+      }
+      return;
+    }
+    // Hover effect
+    if (e.target.classList && e.target.classList.contains('ez-item')) {
+      e.target.style.background = '#F0FDF4';
+      setTimeout(() => { if(e.target) e.target.style.background = ''; }, 200);
+    }
+  });
+
+  // Render immediately
+  renderProblemiChips();
+  renderPES();
+  renderObiettivi();
+  renderStor();
+  document.getElementById('v-data').value = new Date().toISOString().split('T')[0];
+  // Auth in background
+  try {
+    await checkAuth();
+    const {data} = await sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',currentUser.id).order('nome');
+    allCartelle = data || [];
+
+    // Check if we should open a specific NCPt or cartella
+    const loadNcptId = sessionStorage.getItem('loadNcptId');
+    const newNcptCartella = sessionStorage.getItem('newNcptCartella');
+
+    if(loadNcptId) {
+      sessionStorage.removeItem('loadNcptId');
+      showLoading(true);
+      const {data: ncptData} = await sb.from('ncpt').select('*').eq('id', loadNcptId).single();
+      showLoading(false);
+      if(ncptData) {
+        currentCartellaId = ncptData.cartella_id;
+        const cart = allCartelle.find(c => c.id === currentCartellaId);
+        if(cart) {
+          document.getElementById('cart-search').value = cart.nome;
+          document.getElementById('paz-bar').style.display='flex';
+          document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
+          document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
+        }
+        caricaDati(ncptData);
+        toast('📂 NCPt caricato!','ok');
+      }
+    } else if(newNcptCartella) {
+      sessionStorage.removeItem('newNcptCartella');
+      currentCartellaId = newNcptCartella;
+      const cart = allCartelle.find(c => c.id === newNcptCartella);
+      if(cart) {
+        document.getElementById('cart-search').value = cart.nome;
+        document.getElementById('paz-bar').style.display='flex';
+        document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
+        document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
+        document.getElementById('v-nome').value = cart.nome;
+        toast('📋 Nuovo NCPt per: '+cart.nome,'info');
+      }
+    }
+  } catch(e) { console.log('Auth not available'); }
+});
+</script>
+</body>
+</html>

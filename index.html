@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>DietPlan Pro — Accedi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradient(135deg,#0F766E 0%,#1E293B 60%,#0C5F58 100%);display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:white;border-radius:20px;padding:40px 36px;max-width:420px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.35);animation:fadeIn .4s cubic-bezier(.4,0,.2,1)}
+@keyframes fadeIn{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.logo{text-align:center;margin-bottom:28px}
+.logo h1{font-family:'DM Serif Display',serif;font-size:32px;color:#0F766E;line-height:1.1}
+.logo p{font-size:11px;color:#64748B;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+.tabs{display:flex;border-bottom:2px solid #E2E8F0;margin-bottom:24px}
+.tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-weight:600;font-size:13.5px;color:#64748B;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab.active{color:#0F766E;border-bottom-color:#0F766E}
+.panel{display:none}.panel.active{display:block}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg label{font-size:12px;font-weight:600;color:#334155}
+.fg input{padding:10px 13px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
+.fg input:focus{border-color:#14B8A6}
+.btn{width:100%;padding:12px;background:#0F766E;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:6px}
+.btn:hover{background:#0C5F58}
+.btn:disabled{background:#94A3B8;cursor:not-allowed}
+.err{background:#FEE2E2;color:#DC2626;padding:9px 13px;border-radius:8px;font-size:12.5px;font-weight:600;margin-bottom:12px;display:none}
+.err.show{display:block}
+.ok{background:#D1FAE5;color:#065F46;padding:9px 13px;border-radius:8px;font-size:12.5px;font-weight:600;margin-bottom:12px;display:none}
+.ok.show{display:block}
+.note{font-size:11.5px;color:#64748B;text-align:center;margin-top:14px}
+.waiting{text-align:center;padding:16px;display:none}
+.waiting.show{display:block}
+#loading{position:fixed;inset:0;background:rgba(255,255,255,.85);display:none;align-items:center;justify-content:center;font-size:14px;color:#64748B;gap:12px}
+#loading.show{display:flex}
+.spinner{width:28px;height:28px;border:3px solid #E2E8F0;border-top-color:#0F766E;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">
+    <h1>DietPlan Pro</h1>
+    <p>CREA 2019 + BDA INRAN · v1.0</p>
+  </div>
+
+  <!-- WAITING -->
+  <div class="waiting" id="waiting-box">
+    <div style="font-size:40px;margin-bottom:12px">⏳</div>
+    <h3 style="font-size:16px;font-weight:700;color:#D97706;margin-bottom:8px">Account in attesa di approvazione</h3>
+    <p style="font-size:13px;color:#334155;margin-bottom:12px">Il tuo account è registrato. Un amministratore lo attiverà a breve.</p>
+    <p style="font-size:12px;color:#64748B" id="waiting-email"></p>
+    <button onclick="doLogout()" style="width:100%;padding:10px;background:#1E293B;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px">Esci</button>
+  </div>
+
+  <!-- LOGIN/REGISTER -->
+  <div id="auth-box">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Accedi</div>
+      <div class="tab" onclick="switchTab('register')">Registrati</div>
+    </div>
+
+    <div class="panel active" id="p-login">
+      <div class="err" id="login-err"></div>
+      <div class="fg"><label>Email</label><input type="email" id="login-email" placeholder="la-tua@email.com" autocomplete="email"></div>
+      <div class="fg"><label>Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn" id="login-btn" onclick="doLogin()">Accedi</button>
+      <p class="note">I tuoi dati sono salvati in modo sicuro.</p>
+    </div>
+
+    <div class="panel" id="p-register">
+      <div class="err" id="reg-err"></div>
+      <div class="ok" id="reg-ok"></div>
+      <div class="fg"><label>Email</label><input type="email" id="reg-email" placeholder="la-tua@email.com" autocomplete="email"></div>
+      <div class="fg"><label>Password</label><input type="password" id="reg-pw" placeholder="Minimo 6 caratteri" autocomplete="new-password"></div>
+      <div class="fg"><label>Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <button class="btn" id="reg-btn" onclick="doRegister()">Crea Account</button>
+      <p class="note">Dopo la registrazione attendi l'approvazione dell'amministratore.</p>
+    </div>
+  </div>
+</div>
+
+<div id="loading"><div class="spinner"></div>Caricamento...</div>
+
+<script>
+const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-'+t).classList.add('active');
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-pw').value;
+  const err = document.getElementById('login-err');
+  err.classList.remove('show');
+  if (!email||!pw){err.textContent='Inserisci email e password.';err.classList.add('show');return;}
+  const btn = document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='Accesso...';
+  const {data,error} = await sb.auth.signInWithPassword({email,password:pw});
+  btn.disabled=false;btn.textContent='Accedi';
+  if (error){err.textContent=error.message==='Invalid login credentials'?'Email o password errata.':error.message;err.classList.add('show');return;}
+  await checkAndRedirect(data.user);
+}
+
+async function doRegister() {
+  const email = document.getElementById('reg-email').value.trim();
+  const pw = document.getElementById('reg-pw').value;
+  const pw2 = document.getElementById('reg-pw2').value;
+  const err = document.getElementById('reg-err');
+  const ok = document.getElementById('reg-ok');
+  err.classList.remove('show');ok.classList.remove('show');
+  if (!email||!pw){err.textContent='Compila tutti i campi.';err.classList.add('show');return;}
+  if (pw!==pw2){err.textContent='Le password non coincidono.';err.classList.add('show');return;}
+  if (pw.length<6){err.textContent='Password minimo 6 caratteri.';err.classList.add('show');return;}
+  const btn = document.getElementById('reg-btn');
+  btn.disabled=true;btn.textContent='Registrazione...';
+  const {data,error} = await sb.auth.signUp({email,password:pw});
+  btn.disabled=false;btn.textContent='Crea Account';
+  if (error){err.textContent=error.message;err.classList.add('show');return;}
+  if (data.user) await sb.from('profiles').upsert({id:data.user.id,email,approved:false,is_admin:false});
+  if (data.session) {
+    await checkAndRedirect(data.user);
+  } else {
+    ok.textContent="✅ Registrato! Attendi l'approvazione dell'amministratore.";
+    ok.classList.add('show');
+  }
+}
+
+async function checkAndRedirect(user) {
+  document.getElementById('loading').classList.add('show');
+  const {data:profile,error} = await sb.from('profiles').select('*').eq('id',user.id).single();
+  document.getElementById('loading').classList.remove('show');
+  if (error||!profile) { window.location.href='app.html'; return; }
+  if (profile.approved||profile.is_admin) { window.location.href='app.html'; }
+  else {
+    document.getElementById('auth-box').style.display='none';
+    document.getElementById('waiting-box').classList.add('show');
+    document.getElementById('waiting-email').textContent='Account: '+user.email;
+  }
+}
+
+async function doLogout() { await sb.auth.signOut(); location.reload(); }
+
+async function init() {
+  document.getElementById('loading').classList.add('show');
+  const {data:{session}} = await sb.auth.getSession();
+  document.getElementById('loading').classList.remove('show');
+  if (session?.user) await checkAndRedirect(session.user);
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Integratori e AFMS — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.int-cat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:box-shadow .15s}
+.int-cat-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.int-cat-hdr{padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;color:white}
+.int-cat-hdr h3{font-size:13.5px;font-weight:700;flex:1}
+.int-cat-body{padding:0;display:none}
+.int-cat-body.open{display:block}
+.int-item{padding:11px 16px;border-bottom:1px solid var(--border);transition:background .1s}
+.int-item:last-child{border-bottom:none}
+.int-item:hover{background:#F8FAFC}
+.int-item-name{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:3px;display:flex;align-items:center;gap:7px}
+.int-item-type{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700}
+.int-item-desc{font-size:12px;color:var(--slate-m);line-height:1.6;margin-bottom:4px}
+.int-item-use{font-size:11.5px;color:var(--teal-d);font-weight:500}
+.int-item-dose{font-size:11px;color:var(--slate-l);margin-top:2px}
+.int-search{max-width:400px}
+.int-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item active" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>💊 Integratori e Alimenti a Fini Medici Speciali</h2>
+  <div class="tbar-actions no-print">
+    <button class="btn btn-ghost btn-sm" onclick="toggleAll(true)">▼ Espandi tutti</button>
+    <button class="btn btn-ghost btn-sm" onclick="toggleAll(false)">▲ Chiudi tutti</button>
+  </div>
+</div>
+<main id="main"><div class="page-content">
+  <div style="background:linear-gradient(135deg,#0F766E,#0EA5E9);border-radius:var(--r);padding:16px 20px;margin-bottom:16px;color:white">
+    <div style="font-size:14px;font-weight:700;margin-bottom:6px">📋 Guida agli Integratori e AFMS</div>
+    <div style="font-size:12.5px;opacity:.9;line-height:1.7">Gli <b>Alimenti a Fini Medici Speciali (AFMS)</b> sono prodotti destinati a pazienti con specifiche esigenze mediche, da usare sotto supervisione medica/dietistica. Gli <b>integratori alimentari</b> sono supplementi di nutrienti indicati in caso di carenze documentate o aumentato fabbisogno. <b>Non sostituiscono una dieta equilibrata.</b></div>
+  </div>
+  <div class="db-filters" style="margin-bottom:14px">
+    <input type="text" id="int-search" class="db-search int-search" placeholder="🔍 Cerca integratore o AFMS..." oninput="filterInt()">
+    <span id="int-count" style="font-size:12px;color:var(--slate-l)"></span>
+  </div>
+  <div id="int-grid" class="int-grid"></div>
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+const INT_DATA = [
+  {
+    id:'ons', nome:'ONS — Oral Nutritional Supplements', emoji:'🥤', colore:'#0F766E',
+    desc:'Integratori orali completi o modulari per supporto nutrizionale in pazienti con intake insufficiente.',
+    items:[
+      {nome:'Ensure Plus / Fortimel Extra', tipo:'AFMS', badge:'Completo', desc:'Bevande ipercaloriche e iperproteiche complete (1.5-2.4 kcal/mL). Contengono macro e micronutrienti in formula bilanciata.', uso:'Malnutrizione, cachessia, post-chirurgia, anziani con anoressia', dose:'200-400 mL/die (2-3 flaconi). Come supplemento o sostituto pasto.'},
+      {nome:'Ensure / Fresubin Original', tipo:'AFMS', badge:'Completo', desc:'Formula normocalorica completa (1.0-1.5 kcal/mL) per supporto nutrizionale base.', uso:'Supporto nutrizionale generale, convalescenza, anziani', dose:'200-400 mL/die in aggiunta ai pasti.'},
+      {nome:'Fortimel Compact Protein', tipo:'AFMS', badge:'Iperproteico', desc:'Formula ipercalorica ad alto contenuto proteico (18g prot/125 mL). Piccolo volume per pazienti con ridotta capacità gastrica.', uso:'Sarcopenia, post-chirurgia bariatrica, gastrectomia, malnutrizione proteica', dose:'125 mL, 2-3 volte/die.'},
+      {nome:'Resource 2.0 / Fresubin 2 kcal', tipo:'AFMS', badge:'Ipercalorico', desc:'Formula molto ipercalorica (2.0 kcal/mL) per pazienti con restrizione idrica o elevato fabbisogno.', uso:'Scompenso cardiaco, BPCO grave, dialisi, restrizione liquidi', dose:'200 mL = 400 kcal. 1-2/die.'},
+      {nome:'Modulen IBD / Alicalm', tipo:'AFMS', badge:'IBD', desc:'Formula polimerica arricchita in TGF-β2 per controllo infiammazione intestinale.', uso:'Malattia di Crohn in riacutizzazione, nutrizione enterale esclusiva pediatrica', dose:'Sotto supervisione medica. Spesso nutrizione enterale esclusiva x 6-8 settimane.'},
+    ]
+  },
+  {
+    id:'proteine', nome:'Integratori Proteici', emoji:'💪', colore:'#7C3AED',
+    desc:'Supplementi di proteine e aminoacidi per aumentare l\'apporto proteico in condizioni di aumentato fabbisogno.',
+    items:[
+      {nome:'Proteine del Siero (Whey Protein)', tipo:'Integratore', badge:'Whey', desc:'Proteine ad alto valore biologico con elevato contenuto di leucina (trigger sintesi proteica muscolare). Rapida digestione e assorbimento.', uso:'Sarcopenia, anziani, post-chirurgia, allenamento resistenza, malnutrizione', dose:'20-40g/dose, 1-2 volte/die. Idealmente dopo esercizio e al mattino.'},
+      {nome:'Caseine / Proteine Micelari', tipo:'Integratore', badge:'Caseina', desc:'Proteine a lento rilascio (6-8h). Mantengono bilancio azotato positivo per tempi prolungati.', uso:'Catabolismo notturno, sarcopenia, supporto notturno', dose:'20-40g prima di dormire.'},
+      {nome:'Aminoacidi Essenziali (EAA)', tipo:'Integratore', badge:'AA', desc:'Miscela dei 9 aminoacidi essenziali inclusa leucina, isoleucina, valina (BCAA). Stimolano sintesi proteica senza carico renale delle proteine intere.', uso:'IRC, dialisi, malnutrizione, sarcopenia, post-trapianto', dose:'6-10g/die, spesso 2 somministrazioni. Validati in IRC dove le proteine intere sono limitate.'},
+      {nome:'BCAA (Aminoacidi Ramificati)', tipo:'Integratore', badge:'BCAA', desc:'Leucina, isoleucina, valina. Metabolizzati prevalentemente nel muscolo. Effetto anti-catabolico.', uso:'Cirrosi epatica (prevenire encefalopatia), sarcopenia, malnutrizione in sport', dose:'3-6g/dose. In cirrosi: rapporto Fischer (BCAA/AAA) importante.'},
+      {nome:'Glutammina', tipo:'Integratore', badge:'Aa non essenziale', desc:'Aminoacido condizionatamente essenziale in situazioni di stress. Nutre enterociti, supporta immunità.', uso:'Post-chirurgia maggiore, grandi ustioni, chemioterapia, nutrizione parenterale', dose:'0.2-0.4 g/kg/die. Di solito in ambiente ospedaliero.'},
+    ]
+  },
+  {
+    id:'vitamine', nome:'Vitamine', emoji:'🌟', colore:'#F59E0B',
+    desc:'Supplementi vitaminici indicati in caso di carenze documentate o aumentato fabbisogno specifico.',
+    items:[
+      {nome:'Vitamina D3 (Colecalciferolo)', tipo:'Integratore', badge:'Vit D', desc:'La forma attiva è il calcitriolo (1,25-OH D3). Essenziale per metabolismo del calcio, sistema immunitario, funzione muscolare. Carenza molto comune (>50% popolazione italiana).', uso:'Osteoporosi, IRC, sarcopenia, anziani, malassorbimento, scarsa esposizione solare, celiachia', dose:'800-2000 UI/die mantenimento. Deficit severo: 50.000 UI/settimana x 8-12 settimane (medico). Target: 25-OH-D >30 ng/mL.'},
+      {nome:'Vitamina B12 (Cianocobalamina/Metilcobalamina)', tipo:'Integratore', badge:'Vit B12', desc:'Essenziale per sintesi DNA, funzione neurologica, formazione globuli rossi. Non contenuta in alimenti vegetali.', uso:'Vegani/vegetariani, anziani (ridotto fattore intrinseco), gastrectomia, metformina (riduce assorbimento), celiachia', dose:'500-1000 µg/die orale. Deficit severo: iniezioni IM 1000 µg/mese. Monitorare ogni 6-12 mesi.'},
+      {nome:'Acido Folico (Vitamina B9)', tipo:'Integratore', badge:'Folato', desc:'Essenziale per sintesi DNA, divisione cellulare, prevenzione difetti del tubo neurale. Metilfolato è la forma attiva.', uso:'Gravidanza (obbligatorio), anemia megaloblastica, celiachia, alcolismo, metotressato', dose:'400-600 µg/die in gravidanza (iniziare 1 mese prima). 5 mg/die in terapia con metotressato.'},
+      {nome:'Vitamina C (Acido Ascorbico)', tipo:'Integratore', badge:'Vit C', desc:'Antiossidante, essenziale per sintesi collagene, potenzia assorbimento ferro non-eme, funzione immunitaria.', uso:'Anemia sideropenica (aumenta assorbimento Fe), convalescenza, fumatori, scorbuto', dose:'200-500 mg/die. Con integratori di ferro: assumere contemporaneamente.'},
+      {nome:'Vitamina A (Retinolo / Beta-carotene)', tipo:'Integratore', badge:'Vit A', desc:'Essenziale per visione, immunità, differenziazione cellulare. ATTENZIONE: teratogena a dosi elevate.', uso:'Malassorbimento gravi, celiachia non trattata, chirurgia bariatrica', dose:'Max 3000 µg RAE/die. Non superare mai. Gravidanza: evitare retinolo (preferire beta-carotene).'},
+      {nome:'Vitamina K2 (Menachinone MK-7)', tipo:'Integratore', badge:'Vit K2', desc:'Attiva osteocalcina e MGP (proteina carboxilata che previene calcificazioni vascolari). Sinergia con vitamina D.', uso:'Osteoporosi, prevenzione calcificazioni in IRC/dialisi, supplementazione vitamina D3', dose:'90-200 µg/die MK-7. Attenzione: interagisce con anticoagulanti (warfarin).'},
+    ]
+  },
+  {
+    id:'minerali', nome:'Minerali e Oligoelementi', emoji:'⚗️', colore:'#059669',
+    desc:'Supplementi di minerali per correggere carenze documentate o aumentato fabbisogno.',
+    items:[
+      {nome:'Calcio (Citrato / Carbonato)', tipo:'Integratore', badge:'Ca', desc:'Citrato: assorbito meglio a stomaco vuoto e in anziani con ipocloridria, meno calcoli renali. Carbonato: più economico, richiede acido gastrico.', uso:'Osteoporosi, IRC, celiachia, intolleranza lattosio, chirurgia bariatrica, post-menopausa', dose:'500-1200 mg/die (non più di 500 mg per dose). Suddividere in 2-3 dosi. Preferire citrato post-bariatrica.'},
+      {nome:'Ferro (Solfato / Gluconato / Bisglicinato)', tipo:'Integratore', badge:'Fe', desc:'Solfato ferroso: efficace ma effetti GI. Bisglicinato (forma chelata): meglio tollerata, assorbimento simile. Gluconato: intermedio.', uso:'Anemia sideropenica, celiachia, IBD, chirurgia bariatrica, gravidanza, mestruazioni abbondanti', dose:'100-200 mg/die ferro elementare. Solfato ferroso 325 mg = ~65 mg ferro elementare. Assumere a stomaco vuoto con vitamina C. Monitorare ferritina.'},
+      {nome:'Magnesio (Citrato / Glicinato / Ossido)', tipo:'Integratore', badge:'Mg', desc:'Citrato/glicinato: miglior biodisponibilità, meno effetti lassativi. Ossido: economico ma poco assorbito. Necessario per 300+ enzimi.', uso:'Crampi muscolari, ipertensione, diabete T2, emicrania, ansia, BPCO, alcolismo', dose:'200-400 mg/die. Suddividere. Dosi eccessive: diarrea osmolalità. IRC: cautela (riduzione escrezione).'},
+      {nome:'Zinco (Gluconato / Picolinato)', tipo:'Integratore', badge:'Zn', desc:'Essenziale per immunità, cicatrizzazione, funzione enzimatica, metabolismo proteico e glucidico.', uso:'Cirosi, HIV/AIDS, malnutrizione, IBD, celiachia, diarrea cronica, anziani', dose:'8-25 mg/die zinco elementare. Non superare 40 mg/die (tossicità). Assunzione lontana da ferro e calcio.'},
+      {nome:'Selenio (Selenometionina)', tipo:'Integratore', badge:'Se', desc:'Antiossidante (glutatione perossidasi), metabolismo tiroideo, immunità. Finestra terapeutica stretta.', uso:'Malnutrizione, HIV, oncologia, chirurgia bariatrica, carenze geografiche', dose:'55-200 µg/die. Non superare 400 µg/die (selenosi). Selenometionina meglio assorbita.'},
+      {nome:'Iodio (Ioduro di Potassio)', tipo:'Integratore', badge:'I', desc:'Essenziale per sintesi ormoni tiroidei. Carenza causa gozzo e ipotiroidismo.', uso:'Gravidanza, allattamento, aree iodo-carenti, diete vegane', dose:'150-250 µg/die. Gravidanza/allattamento: 220-290 µg/die. Sale iodato copre in gran parte il fabbisogno.'},
+    ]
+  },
+  {
+    id:'probiotici', nome:'Probiotici e Prebiotici', emoji:'🦠', colore:'#0EA5E9',
+    desc:'Microrganismi vivi benefici e sostanze che ne favoriscono la crescita nel microbiota intestinale.',
+    items:[
+      {nome:'Lactobacillus rhamnosus GG (LGG)', tipo:'Probiotico', badge:'Lactobacillus', desc:'Probiotico tra i più studiati. Colonizzazione intestinale documentata. Riduce durata diarrea, previene AAD (diarrea da antibiotici).', uso:'Diarrea acuta da rotavirus, prevenzione diarrea da antibiotici, sindrome dell\'intestino irritabile (IBS)', dose:'10^9-10^10 CFU/die. Iniziare con antibiotico e continuare 2 settimane dopo.'},
+      {nome:'Saccharomyces boulardii', tipo:'Probiotico', badge:'Lievito', desc:'Lievito probiotico resistente agli antibiotici (non è un batterio). Efficace contro C. difficile e diarrea del viaggiatore.', uso:'Diarrea da Clostridioides difficile, diarrea del viaggiatore, IBS, colite post-antibiotica', dose:'250-500 mg (5-10 miliardi CFU) 2 volte/die. Non usare in immunodepressi gravi.'},
+      {nome:'VSL#3 / Vivomixx', tipo:'Probiotico', badge:'Multispecie', desc:'Miscela ad alta potenza di 8 ceppi (Lactobacillus, Bifidobacterium, Streptococcus). La più studiata in IBD.', uso:'Pouchite, colite ulcerosa (remissione), IBS severo', dose:'450 miliardi-900 miliardi CFU/die. Mantenere in frigorifero. Sotto supervisione medica in IBD.'},
+      {nome:'Probiotici per IBD (ES: Mutaflor)', tipo:'Probiotico', badge:'E. coli Nissle', desc:'E. coli Nissle 1917: unico probiotico con efficacia simile alla mesalazina nella RCU in remissione.', uso:'Mantenimento remissione rettocolite ulcerosa', dose:'200 mg/die (1 capsula). Solo su indicazione gastroenterologica.'},
+      {nome:'Inulina / FOS / GOS', tipo:'Prebiotico', badge:'Fibra', desc:'Fibre fermentabili che nutrono selettivamente Bifidobacterium e Lactobacillus. Effetto bifidogenico documentato.', uso:'Supporto microbiota, stipsi, IBS, prevenzione, anziani', dose:'3-10 g/die. Aumentare gradualmente per evitare gonfiore. Fonti: cicoria, aglio, cipolla, topinambur.'},
+    ]
+  },
+  {
+    id:'omega3', nome:'Acidi Grassi Omega-3 e Lipidi', emoji:'🐟', colore:'#3B82F6',
+    desc:'Acidi grassi polinsaturi essenziali con effetti antinfiammatori e cardioprotettivi documentati.',
+    items:[
+      {nome:'EPA + DHA (Olio di Pesce)', tipo:'Integratore', badge:'Omega-3', desc:'EPA (eicosapentaenoico): antinfiammatorio, trigliceridemia. DHA (docosaesaenoico): funzione cerebrale, visione. Rapporto EPA:DHA varia per indicazione.', uso:'Ipertrigliceridemia, malattia cardiovascolare, cachessia oncologica (EPA>2g), IBD, depressione', dose:'2-4 g/die EPA+DHA per trigliceridi. 2g EPA/die in oncologia. Farmaci: Omacor 4 g/die (Rx). Attenzione con anticoagulanti.'},
+      {nome:'Omega-3 da Alghe (Vegan DHA)', tipo:'Integratore', badge:'Algae DHA', desc:'DHA da microalghe marine: fonte vegan certificata. Stessa biodisponibilità dell\'olio di pesce.', uso:'Vegani, vegetariani, gravidanza vegana, bambini vegani', dose:'200-500 mg DHA/die. Gravidanza: 200 mg DHA/die aggiuntivi.'},
+      {nome:'MCT (Trigliceridi a Catena Media)', tipo:'AFMS', badge:'MCT', desc:'Acidi grassi C8-C10: assorbiti direttamente nel fegato senza bile/linfatici. Non richiedono carnitina per entrare nei mitocondri.', uso:'Malassorbimento gravi (celiachia refrattaria, linfangectasia), insufficienza pancreatica, disfagia (in formule)', dose:'15-45 mL/die olio MCT. Iniziare con 5 mL e aumentare gradualmente (nausea iniziale). Usare in cucina senza friggere.'},
+    ]
+  },
+  {
+    id:'fibra', nome:'Fibre e Regolatori Intestinali', emoji:'🌾', colore:'#84CC16',
+    desc:'Supplementi di fibra per regolarizzare la funzione intestinale e supportare il microbiota.',
+    items:[
+      {nome:'Psyllium (Psillio / Ispaghula)', tipo:'Integratore', badge:'Fibra solubile', desc:'Fibra solubile viscosa. Aumenta volume fecale, riduce LDL del 5-10% (gel che sequestra acidi biliari), riduce picco glicemico post-prandiale.', uso:'Stipsi, ipercolesterolemia, diabete T2, IBS-C, diverticolosi in remissione', dose:'5-15 g/die. Assumere con abbondante acqua (250 mL per dose). Aumentare gradualmente.'},
+      {nome:'Metilcellulosa / Policarbofil', tipo:'Integratore', badge:'Fibra insolubile', desc:'Fibra di sintesi non fermentata. Forma gel in acqua, ammorbidisce le feci senza gas intestinali.', uso:'Stipsi cronica, IBS, diverticolosi, colon irritabile', dose:'2-4 g/die con acqua abbondante.'},
+      {nome:'Lattulosio', tipo:'Lassativo osmotico', badge:'Disaccaride', desc:'Disaccaride non assorbito che richiama acqua nel colon. A basse dosi ha effetto prebiotico (acidifica colon, inibisce produzione NH3).', uso:'Stipsi cronica, encefalopatia epatica (riduce ammonio intestinale)', dose:'Stipsi: 10-30 mL/die (15g). Encefalopatia: 30-60 mL 3-4 volte/die (fino a 2-3 scariche/die morbide).'},
+      {nome:'Addensanti (Resource ThickenUp, Nutilis)', tipo:'AFMS', badge:'Addensante', desc:'Amidi modificati o gomme xantano che aumentano viscosità di liquidi e alimenti. Indispensabili in disfagia.', uso:'Disfagia (livelli IDDSI), anziani, pazienti neurologici, post-stroke', dose:'1-4 misurini per 200 mL secondo il livello IDDSI desiderato (Nectare, Miele, Budino).'},
+    ]
+  },
+  {
+    id:'afms_speciali', nome:'AFMS per Condizioni Specifiche', emoji:'🏥', colore:'#DC2626',
+    desc:'Alimenti a Fini Medici Speciali formulati per patologie specifiche.',
+    items:[
+      {nome:'Ketocal / KetoCal 4:1', tipo:'AFMS', badge:'Chetogenico', desc:'Formula per dieta chetogenica in rapporto 4:1 o 3:1 (grassi:proteine+CHO). Usata in epilessia farmacoresistente.', uso:'Epilessia refrattaria pediatrica e adulti, sindrome di Angelman, deficit GLUT-1', dose:'Sotto stretta supervisione neurologica/dietistica. Formula in polvere o liquida completa.'},
+      {nome:'Loprofin / PKU Gel (basso contenuto Phe)', tipo:'AFMS', badge:'PKU', desc:'Alimenti con bassissimo contenuto di fenilalanina per pazienti con fenilchetonuria. Include pasta, pane, biscotti.', uso:'Fenilchetonuria (PKU), iperfenilalaninemia', dose:'Sostituiscono i corrispondenti alimenti normali. Quantità basate sul calcolo giornaliero della Phe tollerata.'},
+      {nome:'Glucerna / Diben', tipo:'AFMS', badge:'Diabete', desc:'Formula ipocalorica a basso indice glicemico, arricchita in fibre solubili (MUFA, FOS). Riduce picco glicemico del 30-40% vs formule standard.', uso:'Diabete mellito, iperglicemia in area critica, nutrizione enterale nel diabetico', dose:'200-400 mL/die come supplemento. In NE: usare come unica formula se glicemia non controllata.'},
+      {nome:'Nepro / Renilon / Suplena', tipo:'AFMS', badge:'Renale', desc:'Formula ipercalorica a ridotto contenuto di proteine, potassio, fosforo, sodio. Per pazienti renali che necessitano supplemento calorico.', uso:'IRC stadio 3-5 non in dialisi, riduzione apporto proteico', dose:'200 mL/die come supplemento. Alto contenuto calorico (2 kcal/mL) con basso volume.'},
+      {nome:'Pulmocare / Fresubin Intensive', tipo:'AFMS', badge:'BPCO/Polmonare', desc:'Formula ipercalorica ad alto contenuto lipidico (55% calorie da grassi). I lipidi hanno quoziente respiratorio più basso dei CHO (0.7 vs 1.0): meno CO2 prodotta.', uso:'BPCO, insufficienza respiratoria, pazienti in ventilazione meccanica', dose:'200-400 mL/die. Riduce carico di CO2 in pazienti con ipercapnia.'},
+      {nome:'Peptamen / Nutrison Peptisorb', tipo:'AFMS', badge:'Peptidico', desc:'Formula a base di peptidi pre-digeriti (idrolizzato proteico). Assorbita anche in presenza di grave malassorbimento.', uso:'Sindrome dell\'intestino corto, malassorbimento grave, pancreatite, mucositi severa, allergia proteine latte', dose:'Uguale a formule polimeriche ma con migliore tolleranza GI in malassorbimento.'},
+      {nome:'Forticare / Pro-Sure (EPA arricchito)', tipo:'AFMS', badge:'Oncologico', desc:'Formula ipercalorica arricchita in EPA (2-2.4g/flacone), proteina e HMB (beta-idrossi-beta-metilbutirrato). Contrasta catabolismo muscolare.', uso:'Cachessia neoplastica, perdita di peso in chemioterapia, sarcopenia oncologica', dose:'2 flaconi/die (400 mL totali) = 4g EPA. Continuare almeno 8 settimane.'},
+      {nome:'Neocate / Nutrilon Pepti / Alfamino', tipo:'AFMS', badge:'Aminoacidico', desc:'Formula a base di aminoacidi liberi: nessuna proteina intera o peptide. Per allergie severe con fallimento formula idrolisata.', uso:'APLV severa (allergia proteine latte vaccino), eosinofilia esofagea, allergie multiple, sindrome di Heiner', dose:'Come sostituto del latte in lattanti. In adulti: sotto supervisione allergologica.'},
+    ]
+  },
+  {
+    id:'vit_minerali_combo', nome:'Vitamine e Multivitaminici Specifici', emoji:'💎', colore:'#8B5CF6',
+    desc:'Complessi vitaminico-minerali formulati per specifiche condizioni cliniche.',
+    items:[
+      {nome:'Acido Folico + B12 + B6 (Omocisteinemia)', tipo:'Integratore', badge:'Cardio', desc:'Combinazione che abbassa omocisteina plasmatica. Folato/B12 per metilazione, B6 per transulfurazione. Ogni carenza può aumentare omocisteina.', uso:'Iperomocisteinemia, rischio cardiovascolare elevato, malattie renali croniche', dose:'Acido folico 400-5000 µg + B12 500-1000 µg + B6 1.7-25 mg/die.'},
+      {nome:'Multivitaminici Post-bariatrici (Bariatric Advantage)', tipo:'Integratore', badge:'Post-bariatrico', desc:'Formulati specificamente per pazienti dopo bypass gastrico o sleeve gastrectomy. Contengono Fe, Ca citrato, vit D3, B12 sublinguale, zinco in dosi aumentate.', uso:'Chirurgia bariatrica (bypass gastrico, sleeve, BPD-DS): supplementazione a vita', dose:'2-4 compresse/die secondo tipo intervento. Non masticabili post-bypass (malassorbimento).'},
+      {nome:'Integratori per IRC (Nephrovit / Ketostéril)', tipo:'AFMS', badge:'Renale', desc:'Cheto-analoghi degli aminoacidi essenziali: forniscono lo scheletro carbonioso senza azoto, l\'organismo li converte in AA usando N di scarto. Riduce produzione urea.', uso:'IRC stadio 3-5 con dieta ipoproteica (0.3-0.6 g/kg/die)', dose:'1 compressa per 5 kg peso corporeo, con i pasti. Es. 70 kg → 14 compresse/die.'},
+      {nome:'Thiamina (Vitamina B1)', tipo:'Integratore', badge:'Vit B1', desc:'Carenza causa sindrome di Wernicke (encefalopatia) e beri-beri. Rischio alto in alcolisti, post-bariatrica, vomito prolungato, refeeding syndrome.', uso:'Alcolismo, sindrome di Wernicke (emergenza), post-chirurgia bariatrica, iperemesi gravidica, refeeding', dose:'Profilassi: 100-300 mg/die orale. Wernicke (emergenza): 200-500 mg EV x 3/die x 2-3 giorni poi IM/orale.'},
+      {nome:'Vitamina D3 + K2 + Magnesio', tipo:'Integratore', badge:'Ossa', desc:'Sinergia documentata: D3 aumenta assorbimento Ca, K2 dirige Ca nelle ossa (non arterie), Mg necessario per attivazione D3 (renal 1-α-hydroxylase).', uso:'Osteoporosi, sarcopenia, prevenzione cadute anziani, supplementazione D3 ad alte dosi', dose:'D3 1000-4000 UI + K2 (MK-7) 90-200 µg + Mg 200-400 mg/die.'},
+    ]
+  }
+];
+
+let allItems = [];
+
+function buildIntGrid(filter='') {
+  const grid = document.getElementById('int-grid');
+  const q = filter.toLowerCase();
+  let totalVisible = 0;
+  
+  grid.innerHTML = INT_DATA.map(cat => {
+    const filteredItems = q 
+      ? cat.items.filter(it => it.nome.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q) || it.uso.toLowerCase().includes(q) || it.tipo.toLowerCase().includes(q))
+      : cat.items;
+    
+    if(q && !filteredItems.length) return '';
+    totalVisible += filteredItems.length;
+    
+    const itemsHtml = filteredItems.map(it => `
+      <div class="int-item">
+        <div class="int-item-name">
+          ${esc(it.nome)}
+          <span class="int-item-type" style="background:${typeColor(it.tipo)};color:white">${esc(it.tipo)}</span>
+          <span class="int-badge" style="background:#EFF6FF;color:#1D4ED8">${esc(it.badge)}</span>
+        </div>
+        <div class="int-item-desc">${esc(it.desc)}</div>
+        <div class="int-item-use">🎯 Indicazioni: ${esc(it.uso)}</div>
+        <div class="int-item-dose">💊 Dosaggio: ${esc(it.dose)}</div>
+      </div>`).join('');
+    
+    return `<div class="int-cat-card" id="cat-${cat.id}">
+      <div class="int-cat-hdr" style="background:${cat.colore}" onclick="toggleCat('${cat.id}')">
+        <span style="font-size:22px">${cat.emoji}</span>
+        <h3>${esc(cat.nome)}</h3>
+        <span style="font-size:11px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:8px;font-weight:700">${filteredItems.length} prodotti</span>
+        <span id="tog-${cat.id}" style="font-size:15px;margin-left:6px">▼</span>
+      </div>
+      <div style="padding:8px 16px;font-size:12px;color:var(--slate-l);border-bottom:1px solid var(--border)">${esc(cat.desc)}</div>
+      <div class="int-cat-body${q?' open':''}" id="body-${cat.id}">
+        ${itemsHtml}
+      </div>
+    </div>`;
+  }).join('');
+  
+  document.getElementById('int-count').textContent = filter ? `${totalVisible} risultati` : `${INT_DATA.reduce((a,c)=>a+c.items.length,0)} prodotti in ${INT_DATA.length} categorie`;
+  
+  if(filter) {
+    document.querySelectorAll('.int-cat-body').forEach(b => b.classList.add('open'));
+  }
+}
+
+function typeColor(tipo) {
+  const map = {'AFMS':'#DC2626','Integratore':'#0F766E','Probiotico':'#0EA5E9','Prebiotico':'#84CC16','Lassativo osmotico':'#8B5CF6','Addensante':'#F59E0B'};
+  return map[tipo] || '#64748B';
+}
+
+function toggleCat(id) {
+  const body = document.getElementById('body-'+id);
+  const tog = document.getElementById('tog-'+id);
+  const open = body.classList.toggle('open');
+  tog.textContent = open ? '▲' : '▼';
+}
+
+function toggleAll(open) {
+  document.querySelectorAll('.int-cat-body').forEach(b => b.classList.toggle('open', open));
+  document.querySelectorAll('[id^="tog-"]').forEach(t => t.textContent = open ? '▲' : '▼');
+}
+
+function filterInt() {
+  buildIntGrid(document.getElementById('int-search').value);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildIntGrid();
+  try { checkAuth(); } catch(e) {}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Consigli Nutrizionali — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.consiglio-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;margin-bottom:10px;transition:box-shadow .15s}
+.consiglio-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.cc-hdr{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;color:white}
+.cc-hdr h3{font-size:14px;font-weight:700;flex:1;color:white}
+.cc-badge{font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.2);font-weight:700;white-space:nowrap}
+.cc-body{padding:16px;display:none}
+.cc-body.open{display:block}
+.cc-section{margin-bottom:14px}
+.cc-section h4{font-size:12px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.food-grid{display:flex;flex-wrap:wrap;gap:5px}
+.food-ok{background:#D1FAE5;color:#065F46;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:500}
+.food-no{background:#FEE2E2;color:#991B1B;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:500}
+.food-mod{background:#FEF3C7;color:#B45309;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:500}
+.consiglio-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px}
+.ci-box{background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid var(--teal)}
+.ci-label{font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:3px}
+.ci-val{font-size:13px;font-weight:700;color:var(--slate)}
+.note-clinica{background:#EFF6FF;border-radius:8px;padding:10px 13px;font-size:12px;color:#1E3A5F;line-height:1.7;margin-bottom:12px;border-left:3px solid #3B82F6}
+
+@media print{
+  @page{margin:1.5cm 2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:10px!important}
+  .consiglio-card{page-break-inside:avoid;border:1.5px solid #CBD5E1!important;margin-bottom:12px!important}
+  .cc-body{display:block!important}
+  .cc-hdr{-webkit-print-color-adjust:exact}
+  .cc-toggle-btn{display:none!important}
+  .food-ok,.food-no,.food-mod{-webkit-print-color-adjust:exact}
+  .print-header{display:block!important}
+  h1.print-title{font-family:'DM Serif Display',serif;font-size:22pt;color:#0F766E;margin-bottom:4px}
+  .print-subtitle{font-size:10pt;color:#64748B;margin-bottom:20px}
+}
+.print-header{display:none}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item active" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>💡 Consigli Nutrizionali per Patologia</h2>
+  <div class="tbar-actions no-print">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-primary btn-sm" onclick="openNuovoConsiglio()">➕ Consiglio Personalizzato</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<div class="print-header">
+  <h1 class="print-title">💡 Consigli Nutrizionali</h1>
+  <div class="print-subtitle">DietPlan Pro · Generato il <span id="print-date"></span></div>
+</div>
+
+<div class="db-filters no-print" style="margin-bottom:14px">
+  <input type="text" id="cs-search" class="db-search" placeholder="🔍 Cerca patologia..." oninput="filterConsigli()" style="max-width:350px">
+  <button class="btn btn-ghost btn-sm" onclick="toggleAll(true)">▼ Espandi tutti</button>
+  <button class="btn btn-ghost btn-sm" onclick="toggleAll(false)">▲ Chiudi tutti</button>
+  <span id="cs-count" style="font-size:12px;color:var(--slate-l)"></span>
+</div>
+
+<div id="consigli-list"></div>
+
+</div></main>
+
+<!-- MODAL: NUOVO CONSIGLIO PERSONALIZZATO -->
+<div class="modal-bg" id="modal-nc">
+  <div class="modal" style="max-width:680px">
+    <div class="mhdr"><h2 id="nc-title">➕ Nuovo Consiglio Personalizzato</h2><button class="mclose" onclick="closeM('modal-nc')">✕</button></div>
+    <div class="mbody" style="max-height:70vh;overflow-y:auto">
+      <div class="fgrid" style="margin-bottom:12px">
+        <div class="fg"><label>Nome patologia *</label><input type="text" id="nc-nome" placeholder="es. Sindrome metabolica"></div>
+        <div class="fg"><label>Emoji</label><input type="text" id="nc-emoji" placeholder="🏥" style="width:70px"></div>
+        <div class="fg"><label>Colore header</label><input type="color" id="nc-colore" value="#0F766E"></div>
+        <div class="fg"><label>Pasti consigliati/die</label><input type="text" id="nc-pasti" placeholder="es. 5 pasti (3+2 spuntini)"></div>
+        <div class="fg"><label>Porzioni consigliate</label><input type="text" id="nc-porzioni" placeholder="es. Ridurre i volumi del 20%"></div>
+        <div class="fg"><label>Idratazione</label><input type="text" id="nc-idratazione" placeholder="es. ≥2 L/die"></div>
+        <div class="fg full"><label>Nota clinica (fonte linee guida)</label><textarea id="nc-nota" rows="2" placeholder="es. ESPEN 2023 raccomanda..."></textarea></div>
+        <div class="fg full"><label>✅ Alimenti consigliati (uno per riga)</label><textarea id="nc-ok" rows="4" placeholder="Pasta integrale&#10;Legumi&#10;Verdure non amidacee&#10;Olio EVO"></textarea></div>
+        <div class="fg full"><label>❌ Alimenti da limitare/evitare (uno per riga)</label><textarea id="nc-no" rows="4" placeholder="Zuccheri semplici&#10;Bevande zuccherate&#10;Cibi ultra-processati"></textarea></div>
+        <div class="fg full"><label>⚠️ Alimenti da moderare (uno per riga)</label><textarea id="nc-mod" rows="2" placeholder="Frutta ad alto IG&#10;Alcol"></textarea></div>
+        <div class="fg full"><label>📋 Consigli pratici</label><textarea id="nc-pratici" rows="3" placeholder="Masticare lentamente&#10;Non saltare i pasti&#10;Cucinare con metodi leggeri (vapore, griglia)"></textarea></div>
+        <div class="fg full"><label>⚠️ Avvertenze / Quando contattare il medico</label><textarea id="nc-avvisi" rows="2" placeholder="Contattare il medico se..."></textarea></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-nc')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaConsiglio()">💾 Salva Consiglio</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+// ═══════════════════════════════
+// CONSIGLI STANDARD
+// ═══════════════════════════════
+const CONSIGLI_BASE = [
+  {
+    id:'diabete', emoji:'🩸', nome:'Diabete Mellito Tipo 2', colore:'#3B82F6',
+    pasti:'5 pasti (3 principali + 2 spuntini)', porzioni:'Porzioni moderate, costanti nei CHO',
+    idratazione:'≥1.5-2 L/die, preferire acqua', nota:'ESPEN 2023 · Distribuire i carboidrati uniformemente durante la giornata. Evitare pasti abbondanti. Monitorare la glicemia post-prandiale.',
+    ok:['Pasta/riso integrali','Legumi (lenticchie, ceci, fagioli)','Verdure non amidacee (abbondanti)','Frutta fresca (porzioni moderate)','Olio EVO','Pesce, pollo, tacchino','Yogurt greco 0%','Avena, orzo','Noci e mandorle (piccole porzioni)'],
+    no:['Zucchero, miele, sciroppi','Bevande zuccherate e succhi di frutta','Dolci, caramelle, dessert','Pane bianco e riso bianco in eccesso','Patate fritte, snack','Alcol a stomaco vuoto'],
+    mod:['Frutta ad alto indice glicemico (banane, uva)','Pane bianco (preferire integrale)','Patate lesse','Alcol (solo ai pasti)'],
+    pratici:['Controllare sempre le etichette nutrizionali dei prodotti','Consumare sempre le verdure prima dei carboidrati','Non saltare mai i pasti','Attività fisica regolare: almeno 150 min/settimana','Cucinare preferibilmente al vapore, griglia, forno'],
+    avvisi:['Ipoglicemia: tremori, sudorazione, confusione → assumere 15g di zucchero','Glicemia persistentemente >250 mg/dL → contattare il medico']
+  },
+  {
+    id:'irc', emoji:'🫘', nome:'Insufficienza Renale Cronica', colore:'#F97316',
+    pasti:'3 pasti principali + 1-2 spuntini leggeri', porzioni:'Porzioni di proteine ridotte e controllate',
+    idratazione:'Secondo indicazione medica (spesso limitata)', nota:'ESPEN 2021 · Lisciviare le verdure: sbucciare, tagliare a pezzi, lessare in abbondante acqua fredda cambiandola 2-3 volte. Questo riduce il potassio del 30-50%.',
+    ok:['Riso bianco, pasta bianca','Pane bianco non salato','Albume d\'uovo (basso fosforo)','Mela, pera (basso potassio)','Verdure lessate (lisciviazione)','Cetriolo, lattuga, zucchine','Olio EVO','Miele, marmellata (senza K aggiunto)'],
+    no:['Banane, kiwi, albicocche, agrumi (alto K)','Patate, pomodori, legumi (alto K)','Latticini in eccesso (alto P)','Cioccolato, noci, semi (alto P)','Cola (alta in fosforo)','Sale aggiunto','Cibi in scatola (alto Na e P)','Integratori di K e P non prescritti'],
+    mod:['Carne e pesce (proteine: quantità controllate)','Pane integrale (più P)','Frutta cotta (riduce K)'],
+    pratici:['Lessare SEMPRE le verdure in abbondante acqua e buttare l\'acqua di cottura','Evitare sale: usare erbe aromatiche e spezie','Leggere le etichette: evitare additivi E338-E341 (fosfati)','Pesare gli alimenti per controllare le porzioni proteiche','Non usare sostituti del sale (contengono potassio)'],
+    avvisi:['Gonfiore alle gambe improvviso → contattare medico','Urine molto scure o molto chiare → segnalare al medico','Non assumere FANS (ibuprofene, aspirina) senza indicazione medica']
+  },
+  {
+    id:'ipertensione', emoji:'💊', nome:'Ipertensione Arteriosa', colore:'#6366F1',
+    pasti:'3 pasti regolari + 1-2 spuntini', porzioni:'Porzioni normali, evitare abbuffate',
+    idratazione:'≥2 L/die, evitare alcolici e bevande energetiche', nota:'ESH 2023 · La riduzione di 1g di sodio/die abbassa la pressione di ~3 mmHg. Oltre il 70% del sodio alimentare proviene da cibi industriali, non dal sale aggiunto.',
+    ok:['Verdure a foglia verde (spinaci, rucola, bietole)','Frutta fresca (banane, kiwi, agrumi — ricchi di K)','Cereali integrali','Legumi','Pesce azzurro (omega-3)','Latticini magri (yogurt, latte scremato)','Noci (moderate)','Olio EVO','Aglio, erbe aromatiche (sostituiscono il sale)'],
+    no:['Sale aggiunto (max 5g NaCl al giorno totale)','Salumi, affettati, insaccati','Formaggi stagionati','Cibi in scatola e conserve','Patatine, snack salati','Dadi da brodo, salse pronte','Alcol (soprattutto in eccesso)','Liquirizia (aumenta la pressione)'],
+    mod:['Caffè (max 2-3/die)','Formaggi freschi (mozzarella, ricotta)','Carne rossa (1-2 volte/settimana)'],
+    pratici:['Non aggiungere sale durante la cottura né a tavola','Usare erbe aromatiche: basilico, origano, prezzemolo, aglio','Leggere le etichette: cercare mg di Na (obiettivo <2000mg/die)','Perdita di peso anche minima (5%) riduce la pressione','Attività fisica aerobica 30 min/die almeno 5 volte a settimana'],
+    avvisi:['Pressione >180/120 mmHg → pronto soccorso','Mal di testa improvviso e forte, visione offuscata → emergenza','Non interrompere mai i farmaci senza indicazione medica']
+  },
+  {
+    id:'celiachia', emoji:'🌾', nome:'Celiachia / Dieta Gluten-Free', colore:'#EAB308',
+    pasti:'3 pasti + 2 spuntini (come normale)', porzioni:'Nessuna restrizione sulle porzioni',
+    idratazione:'≥2 L/die', nota:'AIC · La dieta gluten-free è l\'unico trattamento per la celiachia. Anche piccole contaminazioni (>20 ppm) possono danneggiare l\'intestino anche senza sintomi evidenti.',
+    ok:['Riso, mais, quinoa, grano saraceno, miglio, teff','Patate, castagne','Legumi naturali (non in scatola con additivi)','Carni, pesce, uova fresche','Frutta e verdura fresca','Latte e derivati naturali','Prodotti certificati con spiga barrata AIC'],
+    no:['Frumento (pane, pasta, pizza, biscotti normali)','Orzo (incluso caffè d\'orzo, birra)','Segale','Farro, kamut, bulgur, couscous','Seitan','Salse, sughi, dadi con glutine nascosto','Prodotti fritti in olio condiviso'],
+    mod:['Avena (solo se certificata gluten-free)','Alimenti trasformati (leggere sempre le etichette)'],
+    pratici:['Usare sempre utensili, taglieri e padelle separate','Non cuocere alimenti GF in acqua usata per pasta normale','Conservare i prodotti GF separati dagli altri','Attenzione ai cosmetici (rossetti, dentifrici) con glutine','Comunicare sempre la celiachia al ristorante','Scegliere sempre prodotti con spiga barrata AIC'],
+    avvisi:['Sintomi persistenti nonostante dieta GF → verificare contaminazioni','Controllo gastroenterologico annuale con sierologia','Densitometria ossea ogni 2-3 anni (rischio osteoporosi)']
+  },
+  {
+    id:'obesita', emoji:'⚖️', nome:'Obesità e Sovrappeso', colore:'#22C55E',
+    pasti:'5 pasti (evitare di saltare i pasti)', porzioni:'Ridurre le porzioni del 20-30%',
+    idratazione:'≥2 L/die (bere prima dei pasti aiuta)', nota:'ESPEN 2022 · Obiettivo: -0.5/1 kg a settimana. Diete troppo restrittive portano a recupero del peso. La perdita graduale preserva la massa muscolare.',
+    ok:['Verdure non amidacee (abbondanti, riempiono)', 'Proteine magre: pollo, tacchino, pesce, legumi','Cereali integrali (saziano di più)','Frutta fresca (2 porzioni/die)','Yogurt greco 0%','Acqua e tisane senza zucchero','Olio EVO (2-3 cucchiai/die)'],
+    no:['Cibi ultra-processati (merendine, snack)','Bevande zuccherate e alcoliche','Dolci, gelati, dessert','Fritture e fast food','Pane bianco in eccesso','Formaggi grassi in eccesso','Salse e condimenti ipercalorici'],
+    mod:['Frutta secca (alta densità calorica: max 30g/die)','Pane (preferire integrale, max 2 fette/die)','Pasta/riso (porzioni ridotte: 70-80g)','Formaggio (1-2 volte/settimana)'],
+    pratici:['Usare piatti più piccoli (riduce la porzione automaticamente)','Mangiare lentamente: ci vogliono 20 min per sentirsi sazi','Non fare la spesa a stomaco vuoto','Cucinare a casa: controllo sugli ingredienti','Non eliminare nessun alimento: tutto in quantità','Fare attività fisica: almeno 150 min/settimana di moderata intensità'],
+    avvisi:['Non seguire diete "miracolose" o molto restrittive senza supervisione','BMI >40 → valutazione chirurgia bariatrica con specialista']
+  },
+  {
+    id:'dislipidemia', emoji:'🫀', nome:'Dislipidemia', colore:'#EF4444',
+    pasti:'3 pasti + 1-2 spuntini', porzioni:'Porzioni moderate, limitare grassi animali',
+    idratazione:'≥2 L/die', nota:'ESC/EAS 2019 · La dieta può ridurre LDL del 10-20%. I grassi trans (presenti in molti cibi industriali) sono particolarmente dannosi e aumentano LDL riducendo HDL.',
+    ok:['Olio EVO (fonte di grassi monoinsaturi)','Pesce azzurro 2-3 volte/settimana (omega-3)','Avena e orzo (fibre solubili riducono colesterolo)','Legumi (fibre solubili)','Frutta secca: noci, mandorle (omega-3, fibre)','Yogurt con fitosteroli','Soia e derivati','Verdure e frutta abbondanti','Aglio (effetto ipocolesterolemizzante)'],
+    no:['Burro, strutto, lardo','Carni grasse, salumi, insaccati','Formaggi stagionati in eccesso','Margarine con grassi trans','Dolci con olio di palma/cocco','Fritti','Frattaglie (fegato, reni)'],
+    mod:['Uova (max 3-4/settimana)','Carne rossa (max 1-2 volte/settimana)','Formaggi freschi (mozzarella, ricotta)','Alcol (max 1 bicchiere di vino/die)'],
+    pratici:['Sostituire il burro con olio EVO in tutte le ricette','Iniziare ogni pasto con verdure crude o insalata','Mangiare pesce almeno 2 volte a settimana','Usare yogurt al posto della panna','Consumare una porzione di noci al giorno (30g)','Praticare attività fisica: aumenta HDL ("colesterolo buono")'],
+    avvisi:['LDL >190 mg/dL o LDL >70 con rischio CV alto → terapia farmacologica necessaria','Dolori muscolari con statine → contattare medico']
+  },
+  {
+    id:'anemia', emoji:'🩸', nome:'Anemia Sideropenica', colore:'#B91C1C',
+    pasti:'3 pasti + 2 spuntini', porzioni:'Normali', idratazione:'≥2 L/die',
+    nota:'WHO · Il ferro eme (carni) si assorbe al 15-35%, il ferro non-eme (vegetali) solo al 2-10%. La vitamina C aumenta l\'assorbimento del ferro vegetale di 2-4 volte.',
+    ok:['Carni rosse magre (ferro eme)','Cozze e vongole (ferro altissimo)','Lenticchie, fagioli, ceci con limone','Spinaci e verdure a foglia scura','Tofu','Cereali arricchiti','Frutta ricca di vitamina C: kiwi, agrumi, fragole','Frutta secca: albicocche secche, uva sultanina'],
+    no:['Tè e caffè durante i pasti (tannini bloccano assorbimento ferro)','Latte e latticini durante i pasti principali (calcio inibisce Fe)','Crusca in eccesso ai pasti principali','Antiacidi (riducono assorbimento ferro)'],
+    mod:['Vino rosso (tannini: berlo lontano dai pasti ricchi di Fe)','Cereali integrali (fitati inibiscono Fe: abbinarli a vitamina C)'],
+    pratici:['Assumere sempre vitamina C ai pasti principali (succo di limone sul piatto)','Bere tè e caffè almeno 1 ora lontano dai pasti principali','Non prendere integratori di calcio durante i pasti','Cuocere le verdure a foglia (aumenta biodisponibilità ferro)','Abbinare legumi con vitamina C (succo di limone)'],
+    avvisi:['Emoglobina <7 g/dL → consultare il medico urgentemente','Stanchezza estrema, palpitazioni, dispnea → pronto soccorso','Supplementazione di ferro: assumere a stomaco vuoto con vitamina C']
+  },
+  {
+    id:'osteoporosi', emoji:'🦴', nome:'Osteoporosi', colore:'#9CA3AF',
+    pasti:'3 pasti + 1-2 spuntini', porzioni:'Normali', idratazione:'≥2 L/die',
+    nota:'IOF 2021 · Il calcio alimentare è preferibile agli integratori. La vitamina D è essenziale per l\'assorbimento del calcio (esposizione solare + alimentazione).',
+    ok:['Latte e yogurt (calcio bio-disponibile)','Formaggi (in moderazione)','Sardine e salmone con lische','Tofu con solfato di calcio','Broccoli, cavolo, rucola','Semi di sesamo','Mandorle','Legumi','Pesce (vitamina D)'],
+    no:['Alcol in eccesso (inibisce la formazione ossea)','Sale in eccesso (favorisce perdita urinaria di calcio)','Caffè in eccesso (>4/die)','Fumo (riduce densità ossea del 10-15%)','Vitamina A in megadosi (supplementi, non alimenti)'],
+    mod:['Carne rossa (acidifica il sangue, favorisce perdita Ca)','Caffè (max 2-3/die)','Bibite con fosforo (cola)'],
+    pratici:['Distribuire il calcio tra i pasti (max 500mg per pasto viene assorbito)','Esposizione solare: 15-20 min/die su viso e braccia','Attività fisica con carico: camminata, scale, pesi (stimola formazione ossea)','Non fumare','Controllare assunzione di vitamina D: spesso necessario integrare'],
+    avvisi:['Frattura per trauma minimo → densitometria ossea urgente','Dolore dorsale improvviso → escludere frattura vertebrale']
+  },
+  {
+    id:'gotta', emoji:'🦶', nome:'Iperuricemia e Gotta', colore:'#EC4899',
+    pasti:'3 pasti regolari (non saltare)', porzioni:'Normali, limitare proteine animali',
+    idratazione:'≥2-3 L/die (fondamentale per eliminare urato)', nota:'ACR/EULAR 2020 · La dieta da sola riduce l\'uricemia del 10-15%. Per valori molto elevati è necessaria la terapia farmacologica (allopurinolo).',
+    ok:['Latticini scremati (yogurt, latte, ricotta) — riducono uricemia','Uova','Cereali, riso, pasta','Verdure (anche asparagi e spinaci — non aumentano uricemia)','Caffè (riduce uricemia)','Vitamina C (500mg/die — lievemente uricosurica)','Frutta fresca (con moderazione)','Olio EVO'],
+    no:['Birra e alcolici (soprattutto birra: guanina + alcol)','Frattaglie: fegato, reni, cervello, cuore','Selvaggina','Sardine, acciughe, sgombro (alto in purine)','Bevande con fruttosio aggiunto (cola, succhi)','Dolci industriali con sciroppo di fruttosio'],
+    mod:['Carne rossa (max 2 volte/settimana)','Pesce (max 3 volte/settimana, evitare quelli grassi)','Fruttosio naturale della frutta (max 2 porzioni/die)'],
+    pratici:['Bere almeno 2-3 litri di acqua al giorno (diluisce l\'acido urico)','Evitare assolutamente l\'alcol, soprattutto la birra','Non digiunare: il digiuno aumenta l\'acido urico','Perdere peso gradualmente se in sovrappeso','In caso di crisi acuta: riposo, ghiaccio, idratazione abbondante'],
+    avvisi:['Crisi di gotta acuta → antinfiammatori su indicazione medica','Tofi articolari → specialista reumatologo','Uricemia persistentemente >8 mg/dL → terapia farmacologica']
+  },
+  {
+    id:'cirrosi', emoji:'🏥', nome:'Cirrosi Epatica', colore:'#DC2626',
+    pasti:'4-6 pasti piccoli + SNACK SERALE obbligatorio', porzioni:'Piccole e frequenti, mai saltare',
+    idratazione:'Secondo indicazione medica', nota:'EASL/ESPEN 2019 · NON ridurre le proteine (aumenta la mortalità!). Lo snack serale a base di carboidrati è raccomandazione di Grado A: riduce il digiuno notturno e preserva la massa muscolare.',
+    ok:['Proteine: uova, carne bianca, pesce, latticini','Carboidrati: pasta, riso, pane (snack serale)','Verdure cotte (evitare crude se coagulopatia)','Yogurt e latticini (proteine + calcio)','Legumi (proteine vegetali)'],
+    no:['Alcol: ZERO assoluto, anche piccole quantità','Sale aggiunto se ascite','Cibi crude se immunodepresso','Alimenti che causano encefalopatia (non le proteine: mitoː)'],
+    mod:['Sale: se ascite, limitare a <2g NaCl/die','Liquidi: secondo indicazione (se ascite)'],
+    pratici:['SNACK SERALE OBBLIGATORIO: 50g di carboidrati prima di dormire (es. pane + marmellata, riso in bianco, yogurt con crackers)','Non stare mai senza mangiare per più di 6 ore','Pesarsi ogni mattina: aumento >2kg in 3 giorni → segnalare al medico','Assumere tutti i farmaci prescritti (lattulosio, diuretici)','Evitare FANS e aspirina: sono tossici per il fegato'],
+    avvisi:['Vomito di sangue o feci nere → pronto soccorso urgente','Confusione, sonnolenza, disorientamento → emergenza medica','Aumento rapido della circonferenza addominale → medico']
+  },
+  {
+    id:'scompenso', emoji:'❤️', nome:'Scompenso Cardiaco', colore:'#E11D48',
+    pasti:'5-6 pasti piccoli (evitare pasti abbondanti)', porzioni:'Piccole: pasti abbondanti affaticano il cuore',
+    idratazione:'1.5-2 L/die (non superare senza indicazione medica)', nota:'ESC 2021 · Pesarsi ogni mattina nelle stesse condizioni. Aumento >2 kg in 3 giorni indica ritenzione idrica → contattare il medico.',
+    ok:['Frutta e verdura fresca (potassio: importante con diuretici)','Cereali integrali','Pesce (omega-3)','Legumi','Yogurt e latticini scremati','Olio EVO','Alimenti naturali non processati'],
+    no:['Sale aggiunto (peggior nemico: max 2g NaCl/die)','Cibi in scatola, conserve, sottaceti','Salumi, formaggi stagionati','Alcol','Bevande energetiche e caffè in eccesso','Liquirizia'],
+    mod:['Acqua e liquidi (non superare la quota indicata)','Caffè (max 1-2/die)','Carni rosse (max 1 volta/settimana)'],
+    pratici:['PESARSI OGNI MATTINA a digiuno: registrare il peso','Sostituire il sale con: limone, erbe aromatiche, spezie, aglio','Leggere le etichette: cercare mg di sodio (obiettivo <800mg per pasto)','Cuocere senza sale: insaporire con erbe aromatiche','Pasti piccoli e frequenti: evitare di riempire lo stomaco'],
+    avvisi:['Peso >2 kg in 3 giorni → contattare medico (ritenzione idrica)','Difficoltà respiratoria improvvisa o peggiorata → pronto soccorso','Gonfiore alle caviglie che peggiora → medico']
+  }
+,
+  {
+    id:'celiachia', emoji:'🌾', nome:'Celiachia / Dieta Gluten-Free', colore:'#EAB308',
+    pasti:'3 pasti + 2 spuntini (normale)', porzioni:'Nessuna restrizione sulle porzioni',
+    idratazione:'≥2 L/die',
+    nota:'AIC · La soglia di sicurezza è <20 ppm di glutine. Anche piccole contaminazioni danneggiano l\'intestino anche senza sintomi evidenti. Dieta a vita senza eccezioni.',
+    ok:['Riso, mais, quinoa, grano saraceno, miglio','Patate, castagne, tapioca','Legumi naturali (non in scatola)','Carni e pesce freschi (non impanati)','Frutta e verdura fresca','Latte e derivati naturali','Prodotti con spiga barrata AIC'],
+    no:['Frumento (pane, pasta, pizza, biscotti normali)','Orzo (birra, caffè d\'orzo, orzo solubile)','Segale, farro, kamut, bulgur','Seitan','Dadi da brodo e salse (spesso contengono glutine)','Prodotti fritti in olio condiviso con impanati'],
+    mod:['Avena (solo se certificata gluten-free)','Prodotti trasformati (leggere sempre le etichette)'],
+    pratici:['Usare sempre utensili e padelle separate per i cibi GF','Non cuocere alimenti GF in acqua usata per pasta normale','Comunicare sempre la celiachia al ristorante prima di ordinare','Cercare sempre il simbolo della spiga barrata AIC sui prodotti','Conservare prodotti GF in ripiani separati in cucina','Controllare anche dentifrici, cosmetici e farmaci'],
+    avvisi:['Sintomi persistenti nonostante dieta GF → verificare contaminazioni nascoste','Controllo gastroenterologico annuale con sierologia','Densitometria ossea ogni 2-3 anni (rischio osteoporosi)']
+  },
+  {
+    id:'ibd', emoji:'🦠', nome:'IBD — Crohn e Rettocolite Ulcerosa', colore:'#14B8A6',
+    pasti:'4-6 pasti piccoli in remissione, più frequenti in riacutizzazione', porzioni:'Piccole e frequenti',
+    idratazione:'≥2 L/die (aumentare in caso di diarrea)',
+    nota:'ECCO-ESPEN 2023 · In riacutizzazione severa: nutrizione enterale esclusiva. In remissione: dieta mediterranea. Gli alimenti scatenanti sono molto individuali.',
+    ok:['Cereali raffinati in fase acuta (riso, pasta bianca)','Carni magre cotte (pollo, tacchino, coniglio)','Pesce magro (merluzzo, branzino)','Verdure cotte e pelate in remissione','Yogurt e latticini fermentati (se tollerati)','Olio EVO (anti-infiammatorio)','Banana matura (tollerata)'],
+    no:['Fibre grossolane in riacutizzazione (crusca, semi, bucce)','Fritti e grassi in eccesso','Alcol','Caffè in eccesso','Cibi piccanti','Sorbitolo e fruttosio (in caramelle senza zucchero, sciroppi)'],
+    mod:['Latticini (ridurre se intolleranza lattosio secondaria)','Legumi (ben cotti, in remissione)','Verdure crude (solo in remissione)','Caffè (max 1-2/die in remissione)'],
+    pratici:['Tenere un diario alimentare per identificare i cibi scatenanti personali','In riacutizzazione: passare a dieta leggera e facilmente digeribile','Masticare molto bene i cibi','Non saltare i pasti','Assumere regolarmente la terapia prescritta','Bere frequentemente piccole quantità di liquidi (non grandi quantità in una volta)'],
+    avvisi:['Sangue nelle feci abbondante → pronto soccorso urgente','Febbre >38.5°C con dolore addominale → medico urgente','Dimagrimento rapido involontario → valutare supporto nutrizionale']
+  },
+  {
+    id:'pancreatite', emoji:'🔴', nome:'Pancreatite Cronica', colore:'#F97316',
+    pasti:'5-6 pasti piccoli e frequenti', porzioni:'Piccole (ridurre i volumi del 30-40%)',
+    idratazione:'≥2 L/die (evitare alcol assolutamente)',
+    nota:'AGA/ESPEN 2020 · L\'alcol è il principale fattore modificabile: ZERO assoluto. L\'eccesso di grassi scatena le crisi. Gli enzimi pancreatici vanno assunti durante ogni pasto.',
+    ok:['Cereali raffinati (riso, pasta bianca, pane bianco)','Carni bianche magre bollite o al vapore','Pesce magro (merluzzo, sogliola, orata)','Verdure cotte (carote, zucchine, patate)','Yogurt magro e latticini scremati','Frutta cotta o matura morbida','Olio EVO (in quantità ridotta)'],
+    no:['Alcol: ZERO assoluto (anche piccole quantità)','Grassi in eccesso (burro, fritti, carni grasse)','Pasti abbondanti','Spezie piccanti','Dolci ricchi di grassi','Cibi in scatola e processati'],
+    mod:['Grassi: massimo 40g/die se steatorrea','Fibra (ridurre in fase acuta)','Caffè (max 1/die in remissione)'],
+    pratici:['Assumere gli enzimi pancreatici DURANTE ogni pasto (non prima né dopo)','Mangiare lentamente masticando molto bene','Evitare di mangiare troppo in una sola volta','Cuocere sempre con metodi leggeri: vapore, bollitura, forno senza grassi','Tenere un diario per identificare i cibi che causano dolore','Non mangiare mai a stomaco vuoto da troppo tempo'],
+    avvisi:['Dolore addominale severo irradiato alla schiena → pronto soccorso','Steatorrea persistente (feci untuose) → aggiustare la dose degli enzimi','Diabete secondario → monitorare la glicemia']
+  },
+  {
+    id:'steatosi', emoji:'🫁', nome:'Steatosi Epatica (NAFLD/MASLD)', colore:'#F59E0B',
+    pasti:'3 pasti principali + 1-2 spuntini', porzioni:'Ridurre le porzioni del 20% se sovrappeso',
+    idratazione:'≥2 L/die (caffè permesso e benefico)',
+    nota:'EASL 2024 · La perdita di peso del 7-10% migliora o normalizza la steatosi. Il fruttosio aggiunto (bevande, dolci) è il principale fattore dietetico. Il caffè ha effetti epatoprotettivi.',
+    ok:['Caffè (2-3/die: epatoprotettivo)', 'Olio EVO (polifenoli anti-infiammatori)','Pesce azzurro (omega-3 riducono trigliceridi epatici)','Verdure crucifere (broccoli, cavolfiore)','Legumi (fibra, proteine)','Cereali integrali','Noci (omega-3)','Frutta fresca (moderata)'],
+    no:['Alcol (anche piccole quantità)','Bevande con fruttosio aggiunto (cola, succhi industriali)','Dolci industriali','Cibi ultra-processati','Fritti e grassi in eccesso','Sciroppo di glucosio-fruttosio (nelle etichette)'],
+    mod:['Frutta (contiene fruttosio naturale: max 2 porzioni/die)','Carni rosse (max 1-2 volte/settimana)','Formaggi grassi'],
+    pratici:['Leggere le etichette: evitare "sciroppo di fruttosio" e "sciroppo di glucosio-fruttosio"','Sostituire le bibite con acqua o caffè','Perdere peso gradualmente (0.5-1 kg/settimana)','Attività fisica regolare: 150 min/settimana di moderata intensità','Cucinare a casa per controllare gli ingredienti'],
+    avvisi:['Aumento delle transaminasi → controllo epatico urgente','Ittero (colorazione gialla della pelle) → pronto soccorso','Gonfiore addominale → ecografia epatica']
+  },
+  {
+    id:'gravidanza', emoji:'🤰', nome:'Gravidanza', colore:'#EC4899',
+    pasti:'5 pasti (3 principali + 2 spuntini) — non mangiare per due!', porzioni:'Aumentare moderatamente le porzioni dal II trimestre',
+    idratazione:'≥2 L/die (acqua naturale preferibilmente)',
+    nota:'LARN 2023 · Il fabbisogno aumenta di +350 kcal/die nel II trimestre e +460 nel III. La qualità è più importante della quantità. Folati e ferro sono i micronutrienti più critici.',
+    ok:['Verdure a foglia verde (folati)','Legumi (ferro + folati + proteine)','Pesce grasso magro: salmone, trota (DHA, omega-3)','Latticini pastorizzati (calcio)','Carne magra ben cotta (ferro eme)','Cereali integrali','Frutta fresca (vitamina C aiuta assorbimento ferro)','Uova ben cotte'],
+    no:['Alcol: NESSUNA quantità è sicura in gravidanza','Affettati crudi: prosciutto crudo, bresaola, salame (rischio listeria)','Sushi e pesce crudo','Latte non pastorizzato','Formaggi a crosta fiorita (brie, camembert) e erborinati','Pesce ad alto mercurio: pesce spada, tonno in grandi quantità','Fegato in eccesso (vitamina A teratogena)','Verdure non lavate accuratamente (toxoplasma)'],
+    mod:['Caffè: max 200mg/die (1-2 caffè)','Tè: max 2 tazze/die','Tonno in scatola (max 2 volte/settimana per il mercurio)'],
+    pratici:['Assumere acido folico 400-600 µg/die (iniziare prima del concepimento)','Lavare accuratamente frutta e verdura','Non mangiare carni crude o poco cotte','Cuocere bene le uova','Integrare vitamina D se carente (test del sangue)','Dividere il cibo in piccoli pasti frequenti per ridurre nausea'],
+    avvisi:['Nausea grave (iperemesi gravidica) con perdita di peso → medico','Gonfiore improvviso alle mani e al viso → pronto soccorso (pre-eclampsia)','Sanguinamento → pronto soccorso immediatamente']
+  },
+  {
+    id:'sarcopenia', emoji:'💪', nome:'Sarcopenia e Anziano Fragile', colore:'#A855F7',
+    pasti:'4-5 pasti con proteine ad ogni pasto', porzioni:'Porzioni proteiche adeguate (non ridurre!)',
+    idratazione:'≥1.5 L/die (gli anziani sentono meno la sete)',
+    nota:'ESPEN 2018 · La sintesi proteica muscolare richiede ≥3g di leucina per pasto. Con l\'età aumenta la resistenza anabolica: servono più proteine per stimolare lo stesso effetto.',
+    ok:['Uova (leucina alta: 1g per uovo)','Latticini: yogurt, ricotta, latte (leucina + calcio)','Carni bianche e rosse magre','Pesce (proteine + omega-3 anti-infiammatori)','Legumi (proteine vegetali)','Frutta secca (energia densa)','Latte arricchito in vitamina D','Cereali arricchiti in proteine'],
+    no:['Diete ipocaloriche non necessarie (accelerano la perdita muscolare)','Alcol in eccesso (tossico per il muscolo)','Carenza di vitamina D (integrare se necessario)'],
+    mod:['Fibra (non eccessiva: può ridurre assorbimento proteine)'],
+    pratici:['Distribuire le proteine uniformemente in 4-5 pasti (non concentrarle in un solo pasto)','Consumare una fonte proteica ad ogni pasto, anche a colazione (uova, yogurt)','Attività fisica di resistenza (pesi, elastici): insostituibile per il muscolo','Bere regolarmente anche senza sete','Integrare vitamina D se il medico lo prescrive','Se l\'appetito è ridotto: cibi ad alta densità nutrizionale e calorica'],
+    avvisi:['Calo ponderale involontario >5% in 3 mesi → valutazione medica urgente','Cadute ripetute → valutazione fisiatrica e nutrizionale','Difficoltà a deglutire (disfagia) → logopedista + dietista specializzato']
+  },
+  {
+    id:'dialisi', emoji:'💧', nome:'Dialisi (Emodialisi / Peritoneale)', colore:'#06B6D4',
+    pasti:'3 pasti + 1-2 spuntini', porzioni:'Proteine aumentate, volume liquidi controllato',
+    idratazione:'500 mL + diuresi residua (misurare ogni giorno)',
+    nota:'ESPEN 2021 · La dialisi rimuove proteine → aumentare l\'apporto. Fosforo e potassio: limitare. Liquidi: controllare rigorosamente (pesarsi ogni giorno). Albumina target >3.5 g/dL.',
+    ok:['Albume d\'uovo (alto valore biologico, basso fosforo)','Pollo e tacchino (proteine + basso fosforo vs latticini)','Pesce magro (merluzzo, branzino)','Riso bianco e pasta bianca (basso K e P)','Verdure lessate in abbondante acqua (riduce K del 50%)','Mele, pere (basso potassio)','Olio EVO'],
+    no:['Banane, kiwi, agrumi, pomodori (alto potassio)','Latticini in eccesso (alto fosforo)','Cola e bevande con fosforo (E338-E341)','Legumi (alto K e P)','Cioccolato, noci, semi (alto P)','Sale aggiunto','Liquidi in eccesso (rispettare quota prescritta)'],
+    mod:['Carne: quantità controllate (proteine necessarie ma non eccessive)','Pane (preferire senza sale)'],
+    pratici:['Lessare SEMPRE le verdure in abbondante acqua fredda, cambiandola 2-3 volte','Pesarsi ogni mattina: segnalare aumento >1 kg al centro dialisi','Evitare additivi fosfatici: E338, E339, E340, E341 sulle etichette','Bere a piccoli sorsi durante la giornata (non tutto in una volta)','Portare sempre il libretto dei valori ai controlli'],
+    avvisi:['Aumento peso rapido tra le sedute → segnalare al centro dialisi','Difficoltà respiratoria → pronto soccorso (ritenzione liquidi)','Crampi muscolari frequenti → controllare K e Mg con il medico']
+  },
+  {
+    id:'bpco', emoji:'🌬️', nome:'BPCO (Broncopneumopatia Cronica Ostruttiva)', colore:'#0EA5E9',
+    pasti:'5-6 pasti piccoli (i pasti abbondanti aumentano la dispnea)', porzioni:'Ridurre i volumi del 30%: stomaco pieno comprime il diaframma',
+    idratazione:'≥1.5 L/die (fluidifica le secrezioni)',
+    nota:'ESPEN 2021 · La malnutrizione peggiora la prognosi. I carboidrati in eccesso aumentano la produzione di CO2 aggravando la dispnea. I grassi hanno il quoziente respiratorio più basso.',
+    ok:['Grassi insaturi: olio EVO, avocado, pesce grasso','Proteine ad alto valore biologico (uova, carne, pesce)','Cereali in porzioni moderate','Latticini (calcio + vitamina D per i muscoli)','Verdure cotte (non gonfianti, porzioni piccole)'],
+    no:['Pasti abbondanti (aumentano la dispnea)','Eccesso di carboidrati semplici (aumentano CO2)','Bevande gassate (gonfiano l\'addome)','Cibi che causano gonfiore: legumi in eccesso, cavoli, broccoli crudi','Alcol (deprime la respirazione)'],
+    mod:['Legumi (ben cotti e in piccole quantità)','Caffè (max 1-2/die, può aiutare la broncodilatazione)','Latte (tollerato da molti, alcuni lo trovano mucogenico)'],
+    pratici:['Mangiare in posizione seduta eretta (mai sdraiati)','Riposarsi prima dei pasti se dispnoici','Usare posate leggere e piatti antiscivolo se la respirazione è faticosa','Preparare pasti in anticipo nei momenti di maggior energia','Cuocere in anticipo e congelare porzioni singole','Non cucinare durante le crisi di dispnea'],
+    avvisi:['Dispnea improvvisa e severa → pronto soccorso','Colorazione blu delle labbra → emergenza','Perdita di peso involontaria → valutare supporto nutrizionale']
+  },
+  {
+    id:'allergia_latte', emoji:'🥛', nome:'Allergia alle Proteine del Latte Vaccino', colore:'#64748B',
+    pasti:'Regolari (3+2)', porzioni:'Normali',
+    idratazione:'≥2 L/die',
+    nota:'EAACI 2019 · Eliminazione totale e permanente di latte e derivati. Attenzione alle etichette: caseina, siero di latte, lattosio, burro, panna, formaggio sono tutti vietati.',
+    ok:['Latte vegetale arricchito in calcio (soia, avena, riso, mandorla)','Yogurt di soia o cocco (verificare etichetta)','Formaggio di soia (tofu)','Verdure ricche di calcio: broccoli, cavolo, rucola','Sardine con lische (calcio)','Legumi','Frutta secca (mandorle, sesamo)'],
+    no:['Latte vaccino (intero, parzialmente scremato, scremato)','Burro, panna, strutto','Formaggi di qualsiasi tipo (mozzarella, ricotta, grana, ecc.)','Yogurt di latte vaccino','Gelato al latte','Cioccolato al latte','Prodotti da forno con latte (leggere le etichette)'],
+    mod:['Prodotti "senza lattosio" (contengono ancora le proteine del latte = VIETATI)'],
+    pratici:['Leggere SEMPRE le etichette: cercare caseina, siero di latte, proteine del latte','Attenzione ai "può contenere tracce di latte" in caso di allergia severa','Supplementare calcio e vitamina D (carenza frequente)','Informare sempre il ristorante prima di ordinare','Portare sempre l\'adrenalina auto-iniettabile se l\'allergia è severa (anafilassi)'],
+    avvisi:['Gonfiore alle labbra, orticaria, difficoltà respiratoria → adrenalina + pronto soccorso','Reazione anafilattica → emergenza: chiamare il 118']
+  }
+];
+
+let consigliPersonalizzati = [];
+let editingId = null;
+
+// ═══════════════════════════════
+// RENDER
+// ═══════════════════════════════
+function buildConsiglio(c, isCustom = false) {
+  const div = document.createElement('div');
+  div.className = 'consiglio-card';
+  div.dataset.search = (c.nome + ' ' + (c.id||'')).toLowerCase();
+  div.innerHTML = `
+    <div class="cc-hdr" style="background:${c.colore}" onclick="toggleCC(this)">
+      <span style="font-size:22px">${c.emoji}</span>
+      <h3>${esc(c.nome)}</h3>
+      ${isCustom ? '<span class="cc-badge">✏️ Personalizzato</span>' : ''}
+      <span class="cc-badge">${c.pasti}</span>
+      <span class="cc-toggle-btn" style="margin-left:8px;font-size:16px">▼</span>
+    </div>
+    <div class="cc-body">
+      <div class="consiglio-info">
+        <div class="ci-box"><div class="ci-label">🍽️ Pasti/die</div><div class="ci-val">${esc(c.pasti)}</div></div>
+        <div class="ci-box"><div class="ci-label">🥣 Porzioni</div><div class="ci-val">${esc(c.porzioni)}</div></div>
+        <div class="ci-box"><div class="ci-label">💧 Idratazione</div><div class="ci-val">${esc(c.idratazione)}</div></div>
+      </div>
+      ${c.nota ? `<div class="note-clinica">📚 ${esc(c.nota)}</div>` : ''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="cc-section">
+          <h4>✅ Alimenti Consigliati</h4>
+          <div class="food-grid">${(c.ok||[]).map(f=>`<span class="food-ok">${esc(f)}</span>`).join('')}</div>
+        </div>
+        <div class="cc-section">
+          <h4>❌ Da Evitare / Limitare</h4>
+          <div class="food-grid">${(c.no||[]).map(f=>`<span class="food-no">${esc(f)}</span>`).join('')}</div>
+        </div>
+      </div>
+      ${c.mod && c.mod.length ? `<div class="cc-section"><h4>⚠️ Consumare con Moderazione</h4><div class="food-grid">${c.mod.map(f=>`<span class="food-mod">${esc(f)}</span>`).join('')}</div></div>` : ''}
+      ${c.pratici && c.pratici.length ? `<div class="cc-section"><h4>💡 Consigli Pratici</h4><ul style="list-style:none;padding:0">${c.pratici.map(p=>`<li style="padding:4px 0;border-bottom:1px solid var(--border);font-size:12.5px">→ ${esc(p)}</li>`).join('')}</ul></div>` : ''}
+      ${c.avvisi && c.avvisi.length ? `<div class="cc-section"><h4>🚨 Avvertenze</h4><div style="background:#FEF2F2;border-radius:8px;padding:10px 13px">${c.avvisi.map(a=>`<div style="font-size:12px;color:#991B1B;padding:3px 0;border-bottom:1px solid #FEE2E2">⚠️ ${esc(a)}</div>`).join('')}</div></div>` : ''}
+      <div class="no-print" style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:10px">
+        <button class="btn btn-ghost btn-sm" onclick="stampaConsiglio('${c.id}')">🖨️ Stampa</button>
+        <button class="btn btn-amber btn-sm" onclick="stampaPdfConsiglio('${c.id}')">📄 PDF</button>
+        ${isCustom ? `<button class="btn btn-ghost btn-sm" onclick="editConsiglio('${c.id}')">✏️ Modifica</button><button class="btn btn-danger btn-sm" onclick="delConsiglio('${c.id}')">🗑️ Elimina</button>` : ''}
+      </div>
+    </div>`;
+  return div;
+}
+
+function toggleCC(hdr) {
+  const body = hdr.nextElementSibling;
+  const tog = hdr.querySelector('.cc-toggle-btn');
+  const isOpen = body.classList.toggle('open');
+  if (tog) tog.textContent = isOpen ? '▲' : '▼';
+}
+
+// ═══════════════════════════════
+// STAMPA SINGOLA
+// ═══════════════════════════════
+function getAllConsigli() {
+  return [...CONSIGLI_BASE, ...consigliPersonalizzati];
+}
+
+function stampaConsiglio(id) {
+  const c = getAllConsigli().find(x => x.id === id);
+  if (!c) return;
+  const win = window.open('', '_blank', 'width=800,height=900');
+  win.document.write(buildStampaHTML(c));
+  win.document.close();
+  win.onload = () => { win.focus(); win.print(); };
+}
+
+function stampaPdfConsiglio(id) {
+  const c = getAllConsigli().find(x => x.id === id);
+  if (!c) return;
+  const win = window.open('', '_blank', 'width=800,height=900');
+  win.document.write(buildStampaHTML(c));
+  win.document.close();
+  win.onload = () => { win.focus(); win.print(); win.close(); };
+}
+
+function buildStampaHTML(c) {
+  const foodPill = (f, cls, col, bg) => 
+    `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:500;margin:3px;background:${bg};color:${col}">${f}</span>`;
+  
+  const okPills = (c.ok||[]).map(f => foodPill(f,'ok','#065F46','#D1FAE5')).join('');
+  const noPills = (c.no||[]).map(f => foodPill(f,'no','#991B1B','#FEE2E2')).join('');
+  const modPills = (c.mod||[]).map(f => foodPill(f,'mod','#92400E','#FEF3C7')).join('');
+  const praticiHtml = (c.pratici||[]).map(p => 
+    `<li style="padding:5px 0;border-bottom:1px solid #E2E8F0;font-size:12pt;color:#334155">→ ${p}</li>`).join('');
+  const avvisiHtml = (c.avvisi||[]).map(a => 
+    `<div style="padding:5px 8px;border-bottom:1px solid #FEE2E2;font-size:11pt;color:#991B1B">⚠️ ${a}</div>`).join('');
+
+  return `<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Consigli Nutrizionali — ${c.nome}</title>
+<style>
+  @page { margin: 1.5cm 2cm; size: A4; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1E293B; font-size: 11pt; line-height: 1.5; }
+  .header { background: ${c.colore}; color: white; padding: 16px 20px; border-radius: 10px; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; }
+  .header h1 { font-size: 20pt; font-weight: 700; }
+  .header .emoji { font-size: 32pt; }
+  .header .subtitle { font-size: 10pt; opacity: .8; margin-top: 4px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .info-box { background: #F8FAFC; border-radius: 8px; padding: 10px 12px; border-left: 3px solid ${c.colore}; }
+  .info-label { font-size: 9pt; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+  .info-val { font-size: 11pt; font-weight: 700; color: #1E293B; }
+  .nota { background: #EFF6FF; border-left: 4px solid #3B82F6; border-radius: 6px; padding: 10px 14px; font-size: 10pt; color: #1E3A5F; margin-bottom: 14px; line-height: 1.6; }
+  .section-title { font-size: 11pt; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid #E2E8F0; }
+  .food-grid { margin-bottom: 14px; }
+  .alimenti-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .avvisi-box { background: #FEF2F2; border-radius: 8px; padding: 12px; margin-top: 10px; border: 1.5px solid #FEE2E2; }
+  .footer { margin-top: 20px; padding-top: 10px; border-top: 1px solid #E2E8F0; font-size: 9pt; color: #94A3B8; display: flex; justify-content: space-between; }
+  ul { list-style: none; padding: 0; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <span class="emoji">${c.emoji}</span>
+    <div>
+      <h1>${c.nome}</h1>
+      <div class="subtitle">Consigli Nutrizionali · DietPlan Pro</div>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-box"><div class="info-label">🍽️ Pasti/die</div><div class="info-val">${c.pasti||'—'}</div></div>
+    <div class="info-box"><div class="info-label">🥣 Porzioni</div><div class="info-val">${c.porzioni||'—'}</div></div>
+    <div class="info-box"><div class="info-label">💧 Idratazione</div><div class="info-val">${c.idratazione||'—'}</div></div>
+  </div>
+
+  ${c.nota ? `<div class="nota">📚 ${c.nota}</div>` : ''}
+
+  <div class="alimenti-grid">
+    <div>
+      <div class="section-title">✅ Alimenti Consigliati</div>
+      <div class="food-grid">${okPills}</div>
+    </div>
+    <div>
+      <div class="section-title">❌ Da Evitare / Limitare</div>
+      <div class="food-grid">${noPills}</div>
+    </div>
+  </div>
+
+  ${modPills ? `<div style="margin-bottom:14px"><div class="section-title">⚠️ Consumare con Moderazione</div><div class="food-grid">${modPills}</div></div>` : ''}
+
+  ${praticiHtml ? `<div style="margin-bottom:14px"><div class="section-title">💡 Consigli Pratici</div><ul>${praticiHtml}</ul></div>` : ''}
+
+  ${avvisiHtml ? `<div class="avvisi-box"><div class="section-title" style="color:#991B1B;border-color:#FEE2E2">🚨 Avvertenze</div>${avvisiHtml}</div>` : ''}
+
+  <div class="footer">
+    <span>DietPlan Pro · Consigli Nutrizionali</span>
+    <span>Generato il ${new Date().toLocaleDateString('it')}</span>
+  </div>
+</body>
+</html>`;
+}
+
+function renderConsigli(filter = '') {
+  const list = document.getElementById('consigli-list');
+  list.innerHTML = '';
+  const q = filter.toLowerCase();
+  const all = [...CONSIGLI_BASE, ...consigliPersonalizzati];
+  const filtered = q ? all.filter(c => c.nome.toLowerCase().includes(q) || (c.id||'').includes(q)) : all;
+  document.getElementById('cs-count').textContent = filtered.length + ' patologie';
+  filtered.forEach(c => {
+    const isCustom = consigliPersonalizzati.some(p => p.id === c.id);
+    list.appendChild(buildConsiglio(c, isCustom));
+  });
+}
+
+function filterConsigli() { renderConsigli(document.getElementById('cs-search').value); }
+function toggleAll(open) {
+  document.querySelectorAll('.cc-body').forEach(b => b.classList.toggle('open', open));
+  document.querySelectorAll('.cc-toggle-btn').forEach(t => t.textContent = open ? '▲' : '▼');
+}
+
+// ═══════════════════════════════
+// NUOVO CONSIGLIO
+// ═══════════════════════════════
+function openNuovoConsiglio(prefill = null) {
+  editingId = prefill?.id || null;
+  document.getElementById('nc-title').textContent = editingId ? '✏️ Modifica Consiglio' : '➕ Nuovo Consiglio Personalizzato';
+  const f = id => document.getElementById(id);
+  if (prefill) {
+    f('nc-nome').value = prefill.nome || '';
+    f('nc-emoji').value = prefill.emoji || '🏥';
+    f('nc-colore').value = prefill.colore || '#0F766E';
+    f('nc-pasti').value = prefill.pasti || '';
+    f('nc-porzioni').value = prefill.porzioni || '';
+    f('nc-idratazione').value = prefill.idratazione || '';
+    f('nc-nota').value = prefill.nota || '';
+    f('nc-ok').value = (prefill.ok||[]).join('\n');
+    f('nc-no').value = (prefill.no||[]).join('\n');
+    f('nc-mod').value = (prefill.mod||[]).join('\n');
+    f('nc-pratici').value = (prefill.pratici||[]).join('\n');
+    f('nc-avvisi').value = (prefill.avvisi||[]).join('\n');
+  } else {
+    ['nc-nome','nc-pasti','nc-porzioni','nc-idratazione','nc-nota','nc-ok','nc-no','nc-mod','nc-pratici','nc-avvisi'].forEach(id => f(id).value = '');
+    f('nc-emoji').value = '🏥';
+    f('nc-colore').value = '#0F766E';
+  }
+  openM('modal-nc');
+}
+
+async function salvaConsiglio() {
+  const nome = document.getElementById('nc-nome').value.trim();
+  if (!nome) { toast('Inserisci nome patologia', 'err'); return; }
+  const g = id => document.getElementById(id).value;
+  const splitLines = v => v.split('\n').map(s=>s.trim()).filter(Boolean);
+  const data = {
+    id: editingId || ('custom_' + Date.now()),
+    nome, emoji: g('nc-emoji') || '🏥', colore: g('nc-colore') || '#0F766E',
+    pasti: g('nc-pasti'), porzioni: g('nc-porzioni'), idratazione: g('nc-idratazione'),
+    nota: g('nc-nota'), ok: splitLines(g('nc-ok')), no: splitLines(g('nc-no')),
+    mod: splitLines(g('nc-mod')), pratici: splitLines(g('nc-pratici')), avvisi: splitLines(g('nc-avvisi'))
+  };
+  showLoading(true);
+  const payload = { user_id: currentUser.id, data_id: data.id, contenuto: JSON.stringify(data), updated_at: new Date().toISOString() };
+  let result;
+  if (editingId) {
+    result = await sb.from('consigli_custom').update(payload).eq('data_id', editingId).eq('user_id', currentUser.id);
+    if (!result.error) {
+      const idx = consigliPersonalizzati.findIndex(c => c.id === editingId);
+      if (idx >= 0) consigliPersonalizzati[idx] = data;
+    }
+  } else {
+    payload.created_at = new Date().toISOString();
+    result = await sb.from('consigli_custom').insert(payload);
+    if (!result.error) consigliPersonalizzati.push(data);
+  }
+  showLoading(false);
+  if (result.error) {
+    if (result.error.code === '42P01') {
+      toast('Tabella "consigli_custom" mancante — esegui SQL', 'err');
+      console.error('create table consigli_custom(id uuid default gen_random_uuid() primary key,user_id uuid references auth.users not null,data_id text,contenuto text,created_at timestamptz default now(),updated_at timestamptz default now());\nalter table consigli_custom enable row level security;\ncreate policy "Propri consigli" on consigli_custom for all using(auth.uid()=user_id);');
+    } else { toast('❌ ' + result.error.message, 'err'); }
+    return;
+  }
+  closeM('modal-nc');
+  toast('✅ Consiglio salvato!', 'ok');
+  renderConsigli();
+}
+
+function editConsiglio(id) {
+  const c = consigliPersonalizzati.find(x => x.id === id);
+  if (c) openNuovoConsiglio(c);
+}
+
+async function delConsiglio(id) {
+  if (!confirm('Eliminare questo consiglio personalizzato?')) return;
+  showLoading(true);
+  await sb.from('consigli_custom').delete().eq('data_id', id).eq('user_id', currentUser.id);
+  showLoading(false);
+  consigliPersonalizzati = consigliPersonalizzati.filter(c => c.id !== id);
+  toast('🗑️ Eliminato', 'info');
+  renderConsigli();
+}
+
+async function loadConsigliCustom() {
+  const { data } = await sb.from('consigli_custom').select('*').eq('user_id', currentUser.id);
+  consigliPersonalizzati = (data || []).map(r => { try { return JSON.parse(r.contenuto); } catch { return null; } }).filter(Boolean);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Render base consigli immediately — no auth needed
+  document.getElementById('print-date').textContent = new Date().toLocaleDateString('it');
+  renderConsigli();
+  // Then try auth for custom consigli (async, non-blocking)
+  (async () => {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.user) {
+        currentUser = session.user;
+        await loadProfile().catch(()=>{});
+        await loadConsigliCustom();
+        if (consigliPersonalizzati.length) renderConsigli();
+      }
+    } catch(e) {}
+  })();
+});
+</script>
+</body>
+</html>

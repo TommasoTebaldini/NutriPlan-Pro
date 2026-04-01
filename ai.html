@@ -202,7 +202,6 @@ async function sendMessage(text) {
   input.value = '';
   autoResize(input);
   document.getElementById('ai-chips').style.display = 'none';
-
   addMessage('user', msg);
   messages.push({role:'user', content: msg});
 
@@ -211,51 +210,52 @@ async function sendMessage(text) {
   document.getElementById('ai-send-btn').disabled = true;
 
   const ctx = document.getElementById('ai-context').value;
-  const ctxNote = ctx ? '[Paziente con ' + ctx + '] ' : '';
 
-  // Short system context + last 2 exchanges for continuity
-  const lastPairs = messages.slice(-5, -1).map(m =>
-    (m.role === 'user' ? 'U:' : 'A:') + m.content.substring(0, 200)
-  ).join(' | ');
-
-  const fullPrompt = 'Sei un dietista clinico esperto. Rispondi in italiano con dati clinici precisi. ' +
-    ctxNote +
-    (lastPairs ? 'Contesto: ' + lastPairs + ' | ' : '') +
-    'Domanda: ' + msg;
+  // Build a compact prompt (max 800 chars to avoid 404)
+  const sysShort = 'Sei un dietista clinico. Rispondi in italiano, conciso e preciso. ';
+  const ctxNote = ctx ? '[Patologia: ' + ctx + '] ' : '';
+  // Only include last user message for context
+  const prevMsg = messages.length > 2 ? 'Precedente: ' + messages[messages.length-3].content.substring(0,100) + ' | ' : '';
+  const prompt = sysShort + ctxNote + prevMsg + msg;
+  const encoded = encodeURIComponent(prompt.substring(0, 900));
 
   let replyText = '';
+  const MODELS = ['openai-fast', 'mistral', 'openai'];
 
-  // Try Pollinations models in order (GET endpoint, no API key, CORS-free)
-  const models = ['mistral', 'llama'];
-  for (const model of models) {
+  for (let i = 0; i < MODELS.length; i++) {
     try {
-      const encoded = encodeURIComponent(fullPrompt.substring(0, 1500));
-      const url = 'https://text.pollinations.ai/' + encoded +
-        '?model=' + model +
-        '&seed=' + (Date.now() % 9999);
-      const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
+      const url = 'https://text.pollinations.ai/' + encoded + '?model=' + MODELS[i] + '&seed=' + (Date.now() % 9999);
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 15000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
       if (res.ok) {
         const txt = await res.text();
-        if (txt && txt.length > 15 && !txt.startsWith('{"error"')) {
-          replyText = txt;
+        if (txt && txt.length > 20 && !txt.includes('"error"') && !txt.startsWith('<!')) {
+          replyText = txt.trim();
           break;
         }
       }
     } catch(e) {
-      console.warn('Model', model, 'failed:', e.message);
+      console.warn('Model ' + MODELS[i] + ' failed:', e.message);
+      if (i < MODELS.length - 1) await new Promise(r => setTimeout(r, 800));
     }
-    // Small delay between retries
-    await new Promise(r => setTimeout(r, 500));
   }
 
   const bubble = loadingDiv.querySelector('.ai-bubble');
   bubble.className = 'ai-bubble bot';
-  if (replyText && replyText.length > 15) {
+  if (replyText && replyText.length > 20) {
     bubble.innerHTML = formatMessage(replyText);
     messages.push({role:'bot', content: replyText});
     if (messages.length > 20) messages = messages.slice(-20);
   } else {
-    bubble.innerHTML = '<span style="color:#D97706">⏳ Il servizio AI è temporaneamente occupato. Riprova tra qualche secondo o riformula la domanda in modo più breve.</span>';
+    bubble.innerHTML = `<div style="background:#FEF3C7;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#92400E">
+      ⚠️ <b>Servizio AI non raggiungibile.</b><br>
+      Possibili cause:<br>
+      • Il programma è aperto da file:// locale (alcuni browser bloccano le richieste esterne)<br>
+      • Rate limit temporaneo del servizio<br>
+      <b>Soluzione:</b> Carica il programma su Vercel/GitHub Pages oppure riprova tra 10 secondi.
+    </div>`;
   }
 
   isLoading = false;

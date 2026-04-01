@@ -120,36 +120,54 @@ async function doRegister() {
   if (pw.length<6){err.textContent='Password minimo 6 caratteri.';err.classList.add('show');return;}
   const btn = document.getElementById('reg-btn');
   btn.disabled=true;btn.textContent='Registrazione...';
-  const {data,error} = await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:window.location.origin+'/app.html'}});
-  btn.disabled=false;btn.textContent='Crea Account';
-  if (error){
-    // Common error translations
-    const errMap = {
+  // Attempt registration
+  const {data, error} = await sb.auth.signUp({
+    email,
+    password: pw,
+    options: { data: { approved: false } }
+  });
+  btn.disabled=false; btn.textContent='Crea Account';
+
+  if (error) {
+    const msgs = {
       'User already registered': 'Email già registrata. Prova ad accedere.',
-      'Password should be at least 6 characters': 'Password troppo corta (minimo 6 caratteri).',
+      'Password should be at least 6 characters': 'Password troppo corta (min. 6 caratteri).',
       'Unable to validate email address: invalid format': 'Formato email non valido.',
-      'Email rate limit exceeded': 'Troppe registrazioni. Riprova tra qualche minuto.',
+      'Email rate limit exceeded': 'Troppe richieste. Riprova tra un minuto.',
+      'Database error saving new user': 'Errore Supabase — vedi istruzioni SQL qui sotto',
     };
-    err.textContent = errMap[error.message] || error.message;
+    err.textContent = msgs[error.message] || ('Errore: ' + error.message);
+    err.classList.add('show');
+    if (error.message.includes('Database error')) document.getElementById('sql-info').style.display='block';
+    console.error('SignUp error:', error);
+    return;
+  }
+
+  if (!data.user) {
+    err.textContent = 'Registrazione non riuscita. Riprova.';
     err.classList.add('show');
     return;
   }
-  // Try to create profile (may fail if table doesn't exist or RLS blocks)
-  if (data.user) {
-    const {error: profErr} = await sb.from('profiles').upsert({
-      id:data.user.id, email, approved:false, is_admin:false
-    }).select();
-    if (profErr) {
-      console.warn('Profile creation error (non-critical):', profErr.message);
-    }
+
+  // Try to insert profile - use insert instead of upsert, ignore errors
+  try {
+    await sb.from('profiles').insert({
+      id: data.user.id,
+      email: email,
+      approved: false,
+      is_admin: false
+    });
+  } catch(e) {
+    console.warn('Profile insert skipped (trigger may handle it):', e.message);
   }
-  // Supabase can send confirmation email or auto-confirm depending on settings
-  ok.textContent = data.session 
-    ? "✅ Registrato! Reindirizzamento..."
-    : "✅ Registrato! Controlla la tua email per confermare l'account, poi attendi l'approvazione dell'amministratore.";
-  ok.classList.add('show');
+
   if (data.session) {
-    setTimeout(() => checkAndRedirect(data.user), 1000);
+    ok.textContent = '✅ Account creato! Reindirizzamento...';
+    ok.classList.add('show');
+    setTimeout(() => checkAndRedirect(data.user), 1200);
+  } else {
+    ok.textContent = '✅ Registrato! Controlla la tua email per confermare il tuo account.';
+    ok.classList.add('show');
   }
 }
 

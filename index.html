@@ -120,15 +120,36 @@ async function doRegister() {
   if (pw.length<6){err.textContent='Password minimo 6 caratteri.';err.classList.add('show');return;}
   const btn = document.getElementById('reg-btn');
   btn.disabled=true;btn.textContent='Registrazione...';
-  const {data,error} = await sb.auth.signUp({email,password:pw});
+  const {data,error} = await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:window.location.origin+'/app.html'}});
   btn.disabled=false;btn.textContent='Crea Account';
-  if (error){err.textContent=error.message;err.classList.add('show');return;}
-  if (data.user) await sb.from('profiles').upsert({id:data.user.id,email,approved:false,is_admin:false});
+  if (error){
+    // Common error translations
+    const errMap = {
+      'User already registered': 'Email già registrata. Prova ad accedere.',
+      'Password should be at least 6 characters': 'Password troppo corta (minimo 6 caratteri).',
+      'Unable to validate email address: invalid format': 'Formato email non valido.',
+      'Email rate limit exceeded': 'Troppe registrazioni. Riprova tra qualche minuto.',
+    };
+    err.textContent = errMap[error.message] || error.message;
+    err.classList.add('show');
+    return;
+  }
+  // Try to create profile (may fail if table doesn't exist or RLS blocks)
+  if (data.user) {
+    const {error: profErr} = await sb.from('profiles').upsert({
+      id:data.user.id, email, approved:false, is_admin:false
+    }).select();
+    if (profErr) {
+      console.warn('Profile creation error (non-critical):', profErr.message);
+    }
+  }
+  // Supabase can send confirmation email or auto-confirm depending on settings
+  ok.textContent = data.session 
+    ? "✅ Registrato! Reindirizzamento..."
+    : "✅ Registrato! Controlla la tua email per confermare l'account, poi attendi l'approvazione dell'amministratore.";
+  ok.classList.add('show');
   if (data.session) {
-    await checkAndRedirect(data.user);
-  } else {
-    ok.textContent="✅ Registrato! Attendi l'approvazione dell'amministratore.";
-    ok.classList.add('show');
+    setTimeout(() => checkAndRedirect(data.user), 1000);
   }
 }
 

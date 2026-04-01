@@ -808,15 +808,25 @@ function nuovoPiano() {
 }
 
 async function salvaPiano() {
-  const nome = document.getElementById('inp-nome').value.trim();
-  if (!nome) { toast('Inserisci nome paziente', 'err'); return; }
+  const nomeEl = document.getElementById('inp-nome');
+  const nome = (nomeEl ? nomeEl.value.trim() : '') || 'Piano ' + new Date().toLocaleDateString('it');
   const data = document.getElementById('inp-data').value || todayISO();
+  // Get cartella_id from hidden input (set by selectCartella dropdown)
   const cartellaEl = document.getElementById('inp-cartella');
-  const cartella_id = cartellaEl && cartellaEl.value ? cartellaEl.value : null;
+  const cartella_id = (cartellaEl && cartellaEl.value) ? cartellaEl.value : null;
+  if (!cartella_id) {
+    // Try to get from global allCartelle if search has a match
+    const searchVal = document.getElementById('cartella-search')?.value?.toLowerCase();
+    if (searchVal) {
+      const match = allCartelle.filter(c => c.nome.toLowerCase().includes(searchVal));
+      if (match.length === 1 && cartellaEl) { cartellaEl.value = match[0].id; }
+    }
+  }
+  const finalCartellaId = (cartellaEl && cartellaEl.value) ? cartellaEl.value : null;
   const payload = {
     user_id: currentUser.id, nome, data_piano: data,
-    meals: JSON.stringify(giorni), // save full giorni array
-    saved_at: new Date().toISOString(), cartella_id
+    nome_piano: nome, meals: JSON.stringify(giorni),
+    saved_at: new Date().toISOString(), cartella_id: finalCartellaId
   };
   showLoading(true);
   let result;

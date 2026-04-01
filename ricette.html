@@ -419,10 +419,9 @@ async function importaRicetta() {
   let extractedText = '';
 
   try {
-    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 12000);
-    const pageRes = await fetch(proxyUrl, { signal: controller.signal });
+    const timer = setTimeout(() => controller.abort(), 15000);
+    const pageRes = await fetch('/api/fetch-page?url=' + encodeURIComponent(url), { signal: controller.signal });
     clearTimeout(timer);
     if (pageRes.ok) {
       const pageData = await pageRes.json();
@@ -450,16 +449,20 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
 {"nome":"nome ricetta","porzioni":4,"categoria":"Primo piatto","ingredienti":[{"nome":"pasta","qt":"80"}],"note":"breve nota"}`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 1000,
         messages: [{ role: 'user', content: userPrompt }]
       })
     });
 
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || 'HTTP ' + response.status);
+    }
     const data = await response.json();
     const aiText = data.content?.map(b => b.type === 'text' ? b.text : '').join('') || '';
 

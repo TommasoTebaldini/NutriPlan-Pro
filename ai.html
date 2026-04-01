@@ -211,54 +211,51 @@ async function sendMessage(text) {
   document.getElementById('ai-send-btn').disabled = true;
 
   const ctx = document.getElementById('ai-context').value;
-  const ctxNote = ctx ? ' [Contesto paziente: ' + ctx + ']' : '';
+  const ctxNote = ctx ? '[Paziente con ' + ctx + '] ' : '';
 
-  // Build conversation context (last 6 messages)
-  const recent = messages.slice(-7, -1);
-    let contextStr = '';
-  recent.forEach(m => {
-    const role = m.role === 'user' ? 'Utente' : 'Assistente';
-    contextStr += role + ': ' + m.content.substring(0, 300) + ' | ';
-  });
+  // Short system context + last 2 exchanges for continuity
+  const lastPairs = messages.slice(-5, -1).map(m =>
+    (m.role === 'user' ? 'U:' : 'A:') + m.content.substring(0, 200)
+  ).join(' | ');
 
-  const fullPrompt = SYSTEM_PROMPT_SHORT + ctxNote + ' ' +
-    (contextStr ? 'Contesto: ' + contextStr : '') +
-    ' Domanda attuale: ' + msg;
+  const fullPrompt = 'Sei un dietista clinico esperto. Rispondi in italiano con dati clinici precisi. ' +
+    ctxNote +
+    (lastPairs ? 'Contesto: ' + lastPairs + ' | ' : '') +
+    'Domanda: ' + msg;
 
   let replyText = '';
 
-  try {
-    // Use Pollinations.ai GET endpoint - works from any origin including file://
-    const encoded = encodeURIComponent(fullPrompt);
-    // Try multiple models
-    const models = ['mistral', 'llama', 'openai'];
-    let lastErr = null;
-    for (const model of models) {
-      try {
-        const url = 'https://text.pollinations.ai/' + encoded + '?model=' + model + '&seed=' + Math.floor(Math.random()*1000);
-        const res = await fetch(url, { signal: AbortSignal.timeout(25000) });
-        if (res.ok) {
-          replyText = await res.text();
-          if (replyText && replyText.length > 10 && !replyText.includes('"error"')) {
-            break;
-          }
+  // Try Pollinations models in order (GET endpoint, no API key, CORS-free)
+  const models = ['mistral', 'llama'];
+  for (const model of models) {
+    try {
+      const encoded = encodeURIComponent(fullPrompt.substring(0, 1500));
+      const url = 'https://text.pollinations.ai/' + encoded +
+        '?model=' + model +
+        '&seed=' + (Date.now() % 9999);
+      const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
+      if (res.ok) {
+        const txt = await res.text();
+        if (txt && txt.length > 15 && !txt.startsWith('{"error"')) {
+          replyText = txt;
+          break;
         }
-      } catch(e) { lastErr = e; }
+      }
+    } catch(e) {
+      console.warn('Model', model, 'failed:', e.message);
     }
-    if (!replyText || replyText.length < 10) throw new Error(lastErr?.message || 'Nessuna risposta');
-  } catch(err) {
-    replyText = '';
-    console.error('AI error:', err);
+    // Small delay between retries
+    await new Promise(r => setTimeout(r, 500));
   }
 
   const bubble = loadingDiv.querySelector('.ai-bubble');
   bubble.className = 'ai-bubble bot';
-  if (replyText && replyText.length > 5) {
+  if (replyText && replyText.length > 15) {
     bubble.innerHTML = formatMessage(replyText);
     messages.push({role:'bot', content: replyText});
     if (messages.length > 20) messages = messages.slice(-20);
   } else {
-    bubble.innerHTML = '<span style="color:#DC2626">⚠️ Servizio AI temporaneamente non disponibile. Riprova tra qualche secondo, oppure riformula la domanda.</span>';
+    bubble.innerHTML = '<span style="color:#D97706">⏳ Il servizio AI è temporaneamente occupato. Riprova tra qualche secondo o riformula la domanda in modo più breve.</span>';
   }
 
   isLoading = false;

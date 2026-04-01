@@ -409,54 +409,69 @@ function openImportaUrl() {
 async function importaRicetta() {
   const url = document.getElementById('import-url').value.trim();
   if (!url) { toast('Inserisci un URL', 'err'); return; }
+
   const status = document.getElementById('import-status');
   const btn = document.getElementById('import-btn');
   status.style.display = 'block';
-  status.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--slate-m)"><div class="spinner" style="width:18px;height:18px;border-width:2px"></div>Analisi ricetta in corso...</div>';
+  status.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--slate-m)"><div class="spinner" style="width:18px;height:18px;border-width:2px"></div>Analisi ricetta in corso (10-20 sec)...</div>';
   btn.disabled = true;
 
-  try {
-    const prompt = `Analizza questa URL di ricetta: ${url}
-Rispondi SOLO con un oggetto JSON valido (nessun testo prima o dopo), con questa struttura esatta:
-{"nome":"nome ricetta","porzioni":4,"categoria":"Primo piatto","ingredienti":[{"nome":"pasta","qt":"80"},{"nome":"pomodoro","qt":"150"}],"note":"brevi note di preparazione"}
-Categorie valide: Primo piatto, Secondo piatto, Contorno, Antipasto, Dessert, Colazione, Spuntino, Zuppa/Minestra, Insalata, Bevanda.
-Per gli ingredienti usa nomi italiani semplici (come "pasta di semola cruda", "pollo petto", "olio extra vergine di oliva").
-Se non riesci ad accedere all'URL, crea una ricetta tipica italiana per il piatto indicato nell'URL.`;
+  let extractedText = '';
 
-    const encodedPrompt = encodeURIComponent(prompt);
-    const res = await fetch(`https://text.pollinations.ai/${encodedPrompt}?model=openai-large&seed=42&json=true`, {
-      signal: AbortSignal.timeout(20000)
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    let text = await res.text();
-    
+  try {
+    // Use allorigins.win to bypass CORS and fetch the page
+    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+    const pageRes = await fetch(proxyUrl, { signal: AbortSignal.timeout(12000) });
+    if (pageRes.ok) {
+      const pageData = await pageRes.json();
+      const html = pageData.contents || '';
+      // Strip HTML tags and get text content
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      // Remove scripts and styles
+      tmp.querySelectorAll('script,style,nav,header,footer,aside').forEach(el => el.remove());
+      extractedText = tmp.textContent.replace(/\s+/g, ' ').trim().substring(0, 3000);
+    }
+  } catch(e) {
+    console.warn('Page fetch failed:', e.message);
+  }
+
+  // Now use Pollinations AI to extract structured recipe data
+  const promptText = extractedText
+    ? 'Dal seguente testo di una pagina web, estrai la ricetta e rispondi SOLO con JSON valido: {"nome":"nome","porzioni":4,"categoria":"Primo piatto","ingredienti":[{"nome":"pasta","qt":"80"},{"nome":"pomodoro","qt":"150"}],"note":"breve nota"}. Testo: ' + extractedText.substring(0, 2000)
+    : 'Crea una ricetta italiana tipica dal nome che si trova nell URL: ' + url + '. Rispondi SOLO con JSON valido: {"nome":"nome","porzioni":4,"categoria":"Primo piatto","ingredienti":[{"nome":"pasta","qt":"80"}],"note":"nota"}';
+
+  try {
+    const encoded = encodeURIComponent(promptText.substring(0, 1800));
+    const aiUrl = 'https://text.pollinations.ai/' + encoded + '?model=mistral&seed=42&json=true';
+    const aiRes = await fetch(aiUrl, { signal: AbortSignal.timeout(20000) });
+    if (!aiRes.ok) throw new Error('AI HTTP ' + aiRes.status);
+    const aiText = await aiRes.text();
+
     // Extract JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('Nessun JSON nella risposta');
+    const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Nessun JSON trovato nella risposta');
     const ricetta = JSON.parse(jsonMatch[0]);
-    
-    if (!ricetta.nome || !ricetta.ingredienti?.length) throw new Error('Struttura JSON non valida');
-    
-    // Populate form
-    document.getElementById('r-nome').value = ricetta.nome || '';
-    document.getElementById('r-porzioni').value = ricetta.porzioni || 4;
-    document.getElementById('r-cat').value = ricetta.categoria || 'Primo piatto';
-    document.getElementById('r-note').value = ricetta.note || '';
-    
-    // Clear and populate ingredients
+    if (!ricetta.nome || !Array.isArray(ricetta.ingredienti)) throw new Error('JSON non valido');
+
+    // Populate form fields
+    const setVal = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
+    setVal('r-nome', ricetta.nome);
+    setVal('r-porzioni', ricetta.porzioni || 4);
+    setVal('r-cat', ricetta.categoria || 'Primo piatto');
+    setVal('r-note', ricetta.note || '');
+
     document.getElementById('ingredienti-list').innerHTML = '';
     ingredientiCount = 0;
-    (ricetta.ingredienti || []).forEach(ing => aggiungiIngrediente(ing.nome, ing.qt));
-    
-    status.innerHTML = `<div style="background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#15803D">✅ Ricetta importata: <b>${esc(ricetta.nome)}</b> (${(ricetta.ingredienti||[]).length} ingredienti). Controlla e salva!</div>`;
+    (ricetta.ingredienti || []).forEach(ing => aggiungiIngrediente(ing.nome, String(ing.qt)));
+
+    status.innerHTML = '<div style="background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#15803D">✅ Ricetta importata: <b>' + esc(ricetta.nome) + '</b> (' + (ricetta.ingredienti||[]).length + ' ingredienti). Verifica e salva!</div>';
     toast('✅ Ricetta importata!', 'ok');
-    
+
   } catch(e) {
-    status.innerHTML = `<div style="background:#FEF2F2;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#DC2626">⚠️ Errore importazione: ${e.message}. Prova a inserire la ricetta manualmente.</div>`;
-    console.error('Import error:', e);
+    status.innerHTML = '<div style="background:#FEF2F2;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#DC2626">⚠️ ' + esc(e.message) + '. Inserisci la ricetta manualmente o riprova con un URL diverso.</div>';
   }
   btn.disabled = false;
 }
-</script>
-</body>
-</html>
+
+

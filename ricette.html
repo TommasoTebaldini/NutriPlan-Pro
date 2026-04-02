@@ -29,16 +29,18 @@
   <div class="nav-sec">Piano</div>
   <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
   <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
-  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
-  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
   <div class="nav-sec">Database</div>
@@ -54,6 +56,7 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>👨‍🍳 Ricette</h2>
   <div class="tbar-actions">
@@ -470,10 +473,26 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
     const data = await response.json();
     const aiText = data.content?.map(b => b.type === 'text' ? b.text : '').join('') || '';
 
-    const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('Nessun JSON trovato nella risposta AI');
-    const ricetta = JSON.parse(jsonMatch[0]);
-    if (!ricetta.nome || !Array.isArray(ricetta.ingredienti)) throw new Error('Struttura JSON non valida');
+    // Extract first valid JSON object from response (handles text before/after JSON)
+    let ricetta = null;
+    const jsonMatches = aiText.match(/\{[\s\S]*?\}/g) || [];
+    // Try from longest to shortest to get the full object
+    const allMatches = [];
+    let depth = 0, start = -1;
+    for (let i = 0; i < aiText.length; i++) {
+      if (aiText[i] === '{') { if (depth === 0) start = i; depth++; }
+      else if (aiText[i] === '}') { depth--; if (depth === 0 && start >= 0) { allMatches.push(aiText.slice(start, i+1)); start = -1; } }
+    }
+    for (const m of allMatches.sort((a,b) => b.length - a.length)) {
+      try { const p = JSON.parse(m); if (p.nome && Array.isArray(p.ingredienti)) { ricetta = p; break; } } catch(e) {}
+    }
+    if (!ricetta) {
+      // Last resort: try to clean and parse
+      const cleaned = aiText.replace(/```json|```/g,'').replace(/[ -]/g,' ').trim();
+      const m2 = cleaned.match(/\{[\s\S]*\}/);
+      if (m2) try { ricetta = JSON.parse(m2[0]); } catch(e) {}
+    }
+    if (!ricetta || !ricetta.nome || !Array.isArray(ricetta.ingredienti)) throw new Error('Struttura JSON non valida — riprova o inserisci manualmente');
 
     // Populate form
     const setVal = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.value = val; };

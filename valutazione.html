@@ -32,6 +32,12 @@
   <div class="nav-sec">Piano</div>
   <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
   <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item active" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
@@ -53,6 +59,7 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>📊 Valutazione Paziente</h2>
   <div class="tbar-actions">
@@ -285,24 +292,49 @@ function faoWhoFn(sesso,eta,peso){
 function renderMacroDist(){
   const el=document.getElementById('macro-dist-body');
   if(!el||!tdee)return;
-  const items=[{key:'prot',label:'Proteine',col:'#15803D',kcalpg:4},{key:'cho',label:'CHO',col:'#1D4ED8',kcalpg:4},{key:'fat',label:'Grassi',col:'#B45309',kcalpg:9}];
-  el.innerHTML=items.map(it=>{
+  const items=[{key:'prot',label:'Proteine',icon:'🥩',col:'#15803D',bg:'#F0FDF4',kcalpg:4},{key:'cho',label:'CHO',icon:'🌾',col:'#1D4ED8',bg:'#EFF6FF',kcalpg:4},{key:'fat',label:'Grassi',icon:'🫒',col:'#B45309',bg:'#FEF3C7',kcalpg:9}];
+  const tot=macroDist.prot+macroDist.cho+macroDist.fat;
+  const totOk=tot===100;
+  el.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+  ${items.map(it=>{
     const g=Math.round(tdee*macroDist[it.key]/100/it.kcalpg);
-    return `<div style="display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-      <label style="font-size:12.5px;font-weight:600;color:${it.col}">${it.label}</label>
-      <input type="range" min="5" max="70" value="${macroDist[it.key]}" oninput="macroDist['${it.key}']=parseInt(this.value);renderMacroDist()" style="accent-color:${it.col}">
-      <span style="font-size:13px;font-weight:700;color:${it.col};min-width:36px;text-align:right">${macroDist[it.key]}%</span>
-      <span style="font-size:12px;color:var(--slate-l);min-width:60px;text-align:right">${g} g</span>
+    const kcal=Math.round(tdee*macroDist[it.key]/100);
+    return `<div style="background:${it.bg};border-radius:10px;padding:12px;border:2px solid ${totOk?it.col+'33':'#FCA5A5'}">
+      <div style="font-size:12px;font-weight:700;color:${it.col};margin-bottom:8px">${it.icon} ${it.label}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <input type="number" id="inp-${it.key}" min="5" max="80" value="${macroDist[it.key]}"
+          oninput="macroDist['${it.key}']=Math.min(80,Math.max(5,parseInt(this.value)||0));renderMacroDist()"
+          style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
+        <span style="font-size:18px;font-weight:700;color:${it.col}">%</span>
+      </div>
+      <div style="font-size:11.5px;color:${it.col};font-weight:600">${g}g &nbsp;|&nbsp; ${kcal} kcal</div>
     </div>`;
-  }).join('')+`<div style="padding:7px 0;font-size:11px;color:var(--slate-l)">Totale: ${macroDist.prot+macroDist.cho+macroDist.fat}%${macroDist.prot+macroDist.cho+macroDist.fat!==100?' <span style="color:var(--red);font-weight:700">⚠️ Deve essere 100%</span>':'<span style="color:var(--teal)"> ✅</span>'}</div>
-  <div style="background:#FAF5FF;border-radius:8px;padding:10px;margin-top:8px">
-    <div style="font-size:12px;font-weight:700;color:#7E22CE;margin-bottom:6px">🌿 Fibra (separata)</div>
+  }).join('')}
+  </div>
+  <div style="padding:10px 14px;border-radius:8px;background:${totOk?'#F0FDF4':'#FEF2F2'};border:2px solid ${totOk?'#10B981':'#EF4444'};display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <span style="font-size:13px;font-weight:700;color:${totOk?'#065F46':'#991B1B'}">
+      ${totOk?'✅ Totale: 100%':'⚠️ Totale: '+tot+'% — deve essere esattamente 100%'}
+    </span>
+    ${!totOk?`<button onclick="autoBalance()" style="padding:5px 12px;background:#EF4444;color:white;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">Auto-bilancia</button>`:''}
+  </div>
+  <div style="background:#FAF5FF;border-radius:8px;padding:10px;margin-top:4px">
+    <div style="font-size:12px;font-weight:700;color:#7E22CE;margin-bottom:8px">🌿 Fibra (separata dai CHO)</div>
     <div style="display:flex;align-items:center;gap:10px">
-      <input type="range" min="15" max="45" value="${macroDist.fibra||25}" oninput="macroDist.fibra=parseInt(this.value);this.nextElementSibling.textContent=this.value+'g/die'" style="flex:1;accent-color:#7E22CE">
-      <span style="font-size:13px;font-weight:700;color:#7E22CE;min-width:65px">${macroDist.fibra||25}g/die</span>
+      <input type="number" min="15" max="50" value="${macroDist.fibra||25}"
+        oninput="macroDist.fibra=parseInt(this.value)||25;document.getElementById('fibra-display').textContent=this.value+'g/die'"
+        style="width:70px;padding:6px 8px;border:2px solid #7E22CE;border-radius:8px;font-size:16px;font-weight:700;color:#7E22CE;text-align:center;outline:none">
+      <span id="fibra-display" style="font-size:13px;font-weight:700;color:#7E22CE">${macroDist.fibra||25}g/die</span>
+      <span style="font-size:11px;color:var(--slate-l)">Target: ≥25g/die</span>
     </div>
-    <div style="font-size:11px;color:var(--slate-l);margin-top:4px">Target LG: ≥25g/die (≥30g se obesita)</div>
   </div>`;
+}
+
+function autoBalance(){
+  // Distribute remaining to CHO
+  const diff=100-(macroDist.prot+macroDist.cho+macroDist.fat);
+  macroDist.cho=Math.max(5,macroDist.cho+diff);
+  renderMacroDist();
 }
 
 function aggiornaTDEE(mb){

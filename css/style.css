@@ -375,3 +375,21 @@ tbody td:first-child{padding-left:8px;text-align:left}
 .food-pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10.5px;margin:1px;font-weight:500}
 .food-ok{background:#D1FAE5;color:#065F46}
 .food-no{background:#FEE2E2;color:#991B1B}
+
+/* ── Sidebar collapse ── */
+#sidebar { transition: width .25s cubic-bezier(.4,0,.2,1), transform .28s cubic-bezier(.4,0,.2,1); }
+#sidebar.collapsed { width: 0 !important; overflow: hidden; }
+body.sidebar-collapsed #main { margin-left: 0 !important; transition: margin .25s cubic-bezier(.4,0,.2,1); }
+body.sidebar-collapsed #topbar { left: 0 !important; transition: left .25s cubic-bezier(.4,0,.2,1); }
+#main, #topbar { transition: margin .25s cubic-bezier(.4,0,.2,1), left .25s cubic-bezier(.4,0,.2,1); }
+
+/* Toggle button — lives inside topbar */
+#sb-toggle-btn {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: #F1F5F9; color: var(--slate); border: 1.5px solid var(--border-d);
+  font-size: 15px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s; font-family: inherit;
+}
+#sb-toggle-btn:hover { background: var(--teal); color: white; border-color: var(--teal); }
+@media (max-width: 768px) { #sb-toggle-btn { display: none; } }

@@ -193,3 +193,27 @@ function hideUndoBar() {
   const bar = document.getElementById('undo-bar');
   if (bar) bar.classList.remove('show');
 }
+
+// ── Sidebar toggle ──
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const overlay = document.getElementById('sb-overlay');
+  const btn = document.getElementById('sb-toggle-btn');
+  if (!sb) return;
+  const isCollapsed = sb.classList.contains('collapsed');
+  sb.classList.toggle('collapsed', !isCollapsed);
+  document.body.classList.toggle('sidebar-collapsed', !isCollapsed);
+  if (btn) btn.innerHTML = isCollapsed ? '☰' : '✕';
+  localStorage.setItem('sidebarCollapsed', !isCollapsed ? '1' : '0');
+}
+
+// Restore sidebar state on load
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('sidebarCollapsed') === '1') {
+    const sb = document.getElementById('sidebar');
+    const btn = document.getElementById('sb-toggle-btn');
+    if (sb) sb.classList.add('collapsed');
+    document.body.classList.add('sidebar-collapsed');
+    if (btn) btn.innerHTML = '✕';
+  }
+});

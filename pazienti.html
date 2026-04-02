@@ -14,16 +14,18 @@
   <div class="nav-sec">Piano</div>
   <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
   <a class="nav-item active" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
-  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
-  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
   <div class="nav-sec">Database</div>
@@ -39,6 +41,7 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2 id="page-title">📁 Cartelle Pazienti</h2>
   <div class="tbar-actions">
@@ -90,7 +93,29 @@ async function loadCartelle() {
   const { data, error } = await sb.from('cartelle').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   if (error || !data) { wrap.innerHTML = '<div class="empty-state"><div class="ei">❌</div><h3>Errore</h3></div>'; return; }
   if (!data.length) {
-    wrap.innerHTML = `<div class="empty-state"><div class="ei">📁</div><h3>Nessuna cartella</h3><p>Crea la prima cartella paziente con il pulsante in alto a destra.</p></div>`;
+    // BIA HTML
+  const biaHtml = (biaList && biaList.length) ? `
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      <thead><tr style="background:#1E3A5F;color:#E2E8F0">
+        <th style="padding:7px 12px;text-align:left">Data</th>
+        <th style="padding:7px 12px;text-align:center">Peso</th>
+        <th style="padding:7px 12px;text-align:center">BF%</th>
+        <th style="padding:7px 12px;text-align:center">FFM</th>
+        <th style="padding:7px 12px;text-align:center">Angolo°</th>
+        <th style="padding:7px 12px;text-align:left">Note</th>
+      </tr></thead>
+      <tbody>${biaList.map(b => `<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="window.location.href='bia.html?cartella=${id}'">
+        <td style="padding:7px 12px">${b.data_misura ? new Date(b.data_misura).toLocaleDateString('it') : '—'}</td>
+        <td style="padding:7px 12px;text-align:center">${b.peso ? b.peso+'kg' : '—'}</td>
+        <td style="padding:7px 12px;text-align:center;font-weight:700;color:${(b.bf_pct||0)>30?'#DC2626':'#10B981'}">${b.bf_pct ? Math.round(b.bf_pct*10)/10+'%' : '—'}</td>
+        <td style="padding:7px 12px;text-align:center">${b.ffm_kg ? Math.round(b.ffm_kg*10)/10+'kg' : '—'}</td>
+        <td style="padding:7px 12px;text-align:center;font-weight:700">${b.angolo_fase ? Math.round(b.angolo_fase*10)/10+'°' : '—'}</td>
+        <td style="padding:7px 12px;font-size:11.5px;color:var(--slate-l)">${b.note || '—'}</td>
+      </tr>`).join('')}</tbody>
+    </table>` 
+    : '<div style="padding:14px;color:var(--slate-l);font-size:13px;text-align:center">Nessuna misurazione BIA — <a href="bia.html" style="color:#3B82F6">Aggiungi la prima BIA</a></div>';
+
+  wrap.innerHTML = `<div class="empty-state"><div class="ei">📁</div><h3>Nessuna cartella</h3><p>Crea la prima cartella paziente con il pulsante in alto a destra.</p></div>`;
     return;
   }
   wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">` +
@@ -119,20 +144,30 @@ async function apriCartella(id) {
 async function renderCartellaDetail(id) {
   const wrap = document.getElementById('main-content');
   wrap.innerHTML = '<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
+  
+  // Guard: ensure auth is ready
+  if (!currentUser) {
+    try { await checkAuth(); } catch(e) {}
+    if (!currentUser) { wrap.innerHTML = '<div class="empty-state"><div class="ei">🔒</div><h3>Sessione scaduta — effettua nuovamente il login</h3></div>'; return; }
+  }
 
-  // Load cartella + all file types in parallel
-  // Load all data with individual error handling
-  const cartResult = await sb.from('cartelle').select('*').eq('id', id).single().catch(()=>({data:null}));
-  const pianiResult = await sb.from('piani').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', { ascending: false }).catch(()=>({data:[]}));
-  const ncptsResult = await sb.from('ncpt').select('id,created_at,updated_at,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', { ascending: false }).catch(()=>({data:[]}));
-  const schedeResult = await sb.from('schede_valutazione').select('id,created_at,nome,cognome').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', { ascending: false }).catch(()=>({data:[]}));
+  const cartResult = await sb.from('cartelle').select('*').eq('id', id).eq('user_id', currentUser.id).maybeSingle().catch(e=>({data:null,error:e}));
+  // Load related data with individual error handling (tables may not exist yet)
+  const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
+  const [piani, ncpts, schede, biaList] = await Promise.all([
+    safeQuery(sb.from('piani').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('ncpt').select('id,created_at,updated_at,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('schede_valutazione').select('id,created_at,nome,cognome,patologie').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,note').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
+  ]);
   
   const cart = cartResult.data;
-  const piani = pianiResult.data || [];
-  const ncpts = ncptsResult.data || [];
-  const schede = schedeResult.data || [];
 
-  if (!cart) { wrap.innerHTML = '<p>Errore caricamento cartella</p>'; return; }
+  if (!cart) { 
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>Cartella non trovata</h3><p style="color:var(--slate-l);font-size:13px">Cartella non accessibile o inesistente.</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">← Torna all'elenco</button></div>`;
+    cartellaAperta = null;
+    return; 
+  }
   document.getElementById('page-title').textContent = '📁 ' + cart.nome;
   const eta = cart.ddn ? calcolaEta(cart.ddn) : null;
 
@@ -217,6 +252,18 @@ async function renderCartellaDetail(id) {
         📊 Schede Valutazione <span style="background:#F0FDF4;color:#15803D;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;margin-left:6px">${(schede||[]).length}</span>
       </h4>
       ${schedeHtml}
+    </div>
+
+    <!-- BIA Records -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0">
+          ⚡ BIA — Bioimpedenziometria
+          <span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(biaList||[]).length}</span>
+        </h4>
+        <button class="btn btn-primary btn-sm" onclick="window.location.href='bia.html?cartella=${id}'">+ Nuova BIA</button>
+      </div>
+      ${biaHtml}
     </div>
   `;
 }

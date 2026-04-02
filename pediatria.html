@@ -8,9 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.ped-tab{padding:9px 16px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ped-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
 .ped-tab:hover{background:rgba(139,92,246,.12);color:#8B5CF6}
-.ped-tab.active{background:white;color:#5B21B6;box-shadow:0 2px 8px rgba(0,0,0,.12);font-weight:700}
+.ped-tab.active{background:white;color:#5B21B6;box-shadow:0 3px 10px rgba(139,92,246,.2);font-weight:700;letter-spacing:.2px}
 .ped-panel{display:none}.ped-panel.active{display:block}
 .calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
@@ -45,16 +45,18 @@
   <div class="nav-sec">Piano</div>
   <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
   <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item active" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
-  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
-  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item active" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
   <div class="nav-sec">Database</div>
@@ -70,6 +72,7 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>👶 Nutrizione Pediatrica — Crescita & Fabbisogni</h2>
   <div class="tbar-actions">
@@ -78,6 +81,52 @@
 </div>
 
 <main id="main"><div class="page-content">
+
+<!-- SCHEDA PAZIENTE CONDIVISA -->
+<div id="ped-paziente-box" style="background:white;border-radius:14px;border:2px solid #C4B5FD;padding:18px;margin-bottom:18px;box-shadow:0 2px 12px rgba(139,92,246,.1)">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <span style="font-size:22px">👶</span>
+    <div>
+      <h3 style="font-size:14px;font-weight:700;color:#5B21B6;margin:0">Dati Paziente Pediatrico</h3>
+      <p style="font-size:11.5px;color:var(--slate-l);margin:0">Inserisci i dati una volta sola — vengono usati in tutte le sezioni</p>
+    </div>
+    <button onclick="togglePazBox()" id="paz-toggle-btn" style="margin-left:auto;padding:5px 12px;background:#EDE9FE;color:#5B21B6;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">▲ Comprimi</button>
+  </div>
+  <div id="paz-box-content">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Anni</label>
+        <input type="number" id="g-anni" placeholder="0" min="0" max="19" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Mesi</label>
+        <input type="number" id="g-mesi" placeholder="0" min="0" max="11" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Sesso</label>
+        <select id="g-sesso" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:13.5px;font-weight:600;color:#5B21B6;outline:none;font-family:inherit;background:white" onchange="syncSharedData()">
+          <option value="M">Maschio ♂</option>
+          <option value="F">Femmina ♀</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Peso (kg)</label>
+        <input type="number" id="g-peso" placeholder="es. 18.5" step="0.1" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Altezza (cm)</label>
+        <input type="number" id="g-altezza" placeholder="es. 110" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Circ. cranica (cm)</label>
+        <input type="number" id="g-cc" placeholder="es. 50" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+      </div>
+    </div>
+    <div id="ped-quick-result" style="margin-top:12px;display:none">
+      <div style="display:flex;gap:10px;flex-wrap:wrap" id="ped-quick-cards"></div>
+    </div>
+  </div>
+</div>
 
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FAF5FF;border-radius:14px">
   <button class="ped-tab active" onclick="showPed('curve')">📈 Curve di Crescita</button>
@@ -91,35 +140,41 @@
 <!-- CURVE DI CRESCITA -->
 <div class="ped-panel active" id="tab-curve">
   <div class="alert-info alert-box">
-    Percentili calcolati su <b>dati OMS (WHO Child Growth Standards 2006)</b> per 0-5 anni e <b>WHO Reference 2007</b> per 5-19 anni. Ogni bambino segue la propria curva: un singolo punto è meno informativo della tendenza nel tempo.
+    Percentili calcolati su dati <b>OMS (WHO Child Growth Standards 2006)</b> per 0-5 anni e <b>WHO Reference 2007</b> per 5-19 anni. I dati sono presi dalla scheda paziente in alto — aggiornali per ricalcolare.
   </div>
 
-  <div class="calc-box">
-    <h3>📏 Calcola Percentile di Crescita (OMS)</h3>
-    <div class="grid-3" style="margin-bottom:14px">
-      <div class="nf"><label>Età</label>
-        <div style="display:flex;gap:6px">
-          <input type="number" id="p-anni" placeholder="anni" min="0" max="19" style="flex:1" oninput="calcPercentile()">
-          <input type="number" id="p-mesi" placeholder="mesi" min="0" max="11" style="flex:1" oninput="calcPercentile()">
-        </div>
-      </div>
-      <div class="nf"><label>Sesso</label>
-        <select id="p-sesso" onchange="calcPercentile()">
-          <option value="M">Maschio</option>
-          <option value="F">Femmina</option>
-        </select>
-      </div>
-      <div class="nf"><label>Peso (kg)</label><input type="number" id="p-peso" placeholder="es. 18.5" step="0.1" oninput="calcPercentile()"></div>
-      <div class="nf"><label>Altezza (cm)</label><input type="number" id="p-altezza" placeholder="es. 110" step="0.5" oninput="calcPercentile()"></div>
-      <div class="nf"><label>Circonferenza cranica (cm)</label><input type="number" id="p-cc" placeholder="es. 50" step="0.5" oninput="calcPercentile()"></div>
-    </div>
+  <div id="perc-result" style="display:none;margin-bottom:16px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:16px" id="perc-cards"></div>
+    <div id="perc-interpretation" class="alert-box"></div>
+    <div id="perc-flags"></div>
+  </div>
 
-    <div id="perc-result" style="display:none">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:16px" id="perc-cards"></div>
-      <div id="perc-interpretation" class="alert-box"></div>
-      <div id="perc-flags"></div>
+  <!-- GROWTH CHARTS -->
+  <div id="growth-chart-box" style="display:none">
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="gc-btn active" onclick="switchGrowthChart('weight',this)">⚖️ Peso/Età</button>
+      <button class="gc-btn" onclick="switchGrowthChart('height',this)">📏 Altezza/Età</button>
+      <button class="gc-btn" onclick="switchGrowthChart('bmi',this)">📊 BMI/Età</button>
+      <button class="gc-btn" onclick="switchGrowthChart('wh',this)">⚖️/📏 Peso/Altezza</button>
+    </div>
+    <div class="calc-box">
+      <h3 id="growth-chart-title">📈 Peso per Età (OMS)</h3>
+      <div style="overflow-x:auto">
+        <canvas id="growth-canvas" width="700" height="360" style="max-width:100%;border-radius:8px;border:1px solid var(--border)"></canvas>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;font-size:12px">
+        <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:20px;height:3px;background:#DC2626;display:inline-block;border-radius:2px"></span>3° e 97°</span>
+        <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:20px;height:3px;background:#F59E0B;display:inline-block;border-radius:2px"></span>15° e 85°</span>
+        <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:20px;height:3px;background:#10B981;display:inline-block;border-radius:2px"></span>50° percentile</span>
+        <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:14px;height:14px;background:#5B21B6;border-radius:50%;display:inline-block"></span>Paziente</span>
+      </div>
     </div>
   </div>
+  <style>
+  .gc-btn{padding:7px 16px;border-radius:9px;border:none;background:#F3F0FF;color:#5B21B6;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+  .gc-btn:hover{background:#DDD6FE}
+  .gc-btn.active{background:#7C3AED;color:white;box-shadow:0 2px 8px rgba(124,58,237,.3)}
+  </style>
 
   <div class="calc-box">
     <h3>📊 Tabella Valori Medi di Riferimento (OMS)</h3>
@@ -428,286 +483,462 @@ function showPed(id) {
   document.querySelectorAll('.ped-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   event.target.classList.add('active');
+  if (id === 'curve') { syncSharedData(); calcPercentile(); }
+  if (id === 'fabbisogni') { syncSharedData(); calcFabb(); }
 }
 
-// ── WHO Growth Standards — z-score approximation tables ──
-// Based on WHO LMS parameters (simplified for key ages)
-// Returns approximate percentile given z-score
-function zToPercentile(z) {
-  if (z <= -3.0) return 0.1;
-  if (z <= -2.5) return 0.6;
-  if (z <= -2.0) return 2.3;
-  if (z <= -1.5) return 6.7;
-  if (z <= -1.0) return 15.9;
-  if (z <= -0.5) return 30.9;
-  if (z <= 0.0)  return 50.0;
-  if (z <= 0.5)  return 69.1;
-  if (z <= 1.0)  return 84.1;
-  if (z <= 1.5)  return 93.3;
-  if (z <= 2.0)  return 97.7;
-  if (z <= 2.5)  return 99.4;
-  return 99.9;
+function togglePazBox() {
+  const box = document.getElementById('paz-box-content');
+  const btn = document.getElementById('paz-toggle-btn');
+  if (box.style.display === 'none') {
+    box.style.display = 'block';
+    btn.textContent = '▲ Comprimi';
+  } else {
+    box.style.display = 'none';
+    btn.textContent = '▼ Espandi';
+  }
 }
 
-// WHO weight-for-age medians and SDs (simplified, key ages in months)
+// ── WHO Growth Reference Tables (LMS simplified: median + SD per age in months) ──
 const WHO_WEIGHT = {
   M: {
-    0:{med:3.35,sd:0.43}, 3:{med:6.0,sd:0.67}, 6:{med:7.9,sd:0.78},
-    12:{med:9.6,sd:0.88}, 18:{med:10.9,sd:0.96}, 24:{med:12.2,sd:1.02},
-    36:{med:14.3,sd:1.19}, 48:{med:16.3,sd:1.34}, 60:{med:18.3,sd:1.53},
-    72:{med:20.5,sd:1.75}, 84:{med:22.9,sd:2.1}, 96:{med:25.3,sd:2.5},
-    108:{med:28.1,sd:3.1}, 120:{med:31.9,sd:4.0}, 132:{med:36.3,sd:5.1},
-    144:{med:41.2,sd:6.5}, 156:{med:46.8,sd:8.0}, 168:{med:53.3,sd:9.5},
-    180:{med:58.7,sd:10.5}, 192:{med:63.0,sd:11.0}, 204:{med:65.0,sd:11.5},
-    216:{med:66.0,sd:11.8}
+    0:{med:3.35,sd:0.43},3:{med:6.0,sd:0.67},6:{med:7.9,sd:0.78},
+    9:{med:9.2,sd:0.88},12:{med:9.6,sd:0.92},18:{med:10.9,sd:1.00},
+    24:{med:12.2,sd:1.10},30:{med:13.3,sd:1.18},36:{med:14.3,sd:1.25},
+    42:{med:15.3,sd:1.33},48:{med:16.3,sd:1.42},54:{med:17.3,sd:1.52},
+    60:{med:18.3,sd:1.63},72:{med:20.5,sd:1.93},84:{med:22.9,sd:2.30},
+    96:{med:25.3,sd:2.73},108:{med:28.1,sd:3.25},120:{med:31.9,sd:4.00},
+    132:{med:36.3,sd:5.00},144:{med:41.2,sd:6.30},156:{med:46.8,sd:7.70},
+    168:{med:53.3,sd:9.20},180:{med:58.7,sd:10.30},192:{med:63.0,sd:10.90},
+    204:{med:65.0,sd:11.30},216:{med:66.0,sd:11.70}
   },
   F: {
-    0:{med:3.23,sd:0.40}, 3:{med:5.4,sd:0.58}, 6:{med:7.3,sd:0.68},
-    12:{med:9.0,sd:0.79}, 18:{med:10.2,sd:0.87}, 24:{med:11.5,sd:0.95},
-    36:{med:13.9,sd:1.18}, 48:{med:15.9,sd:1.37}, 60:{med:17.9,sd:1.60},
-    72:{med:20.2,sd:1.90}, 84:{med:22.6,sd:2.30}, 96:{med:25.2,sd:2.90},
-    108:{med:28.5,sd:3.7}, 120:{med:32.5,sd:4.8}, 132:{med:37.0,sd:6.2},
-    144:{med:41.5,sd:7.5}, 156:{med:46.0,sd:8.9}, 168:{med:49.4,sd:9.5},
-    180:{med:52.0,sd:9.8}, 192:{med:54.0,sd:10.0}, 204:{med:55.0,sd:10.0},
-    216:{med:56.0,sd:10.0}
+    0:{med:3.23,sd:0.40},3:{med:5.4,sd:0.58},6:{med:7.3,sd:0.68},
+    9:{med:8.5,sd:0.78},12:{med:9.0,sd:0.83},18:{med:10.2,sd:0.93},
+    24:{med:11.5,sd:1.05},30:{med:12.6,sd:1.15},36:{med:13.9,sd:1.28},
+    42:{med:15.0,sd:1.40},48:{med:15.9,sd:1.52},54:{med:16.9,sd:1.65},
+    60:{med:17.9,sd:1.78},72:{med:20.2,sd:2.20},84:{med:22.6,sd:2.72},
+    96:{med:25.2,sd:3.32},108:{med:28.5,sd:4.05},120:{med:32.5,sd:4.98},
+    132:{med:37.0,sd:6.10},144:{med:41.5,sd:7.40},156:{med:46.0,sd:8.65},
+    168:{med:49.4,sd:9.40},180:{med:52.0,sd:9.75},192:{med:54.0,sd:10.00},
+    204:{med:55.0,sd:10.10},216:{med:56.0,sd:10.20}
   }
 };
 
 const WHO_HEIGHT = {
   M: {
-    0:{med:49.9,sd:1.89}, 3:{med:61.4,sd:1.98}, 6:{med:67.6,sd:2.01},
-    12:{med:75.7,sd:2.21}, 18:{med:82.3,sd:2.30}, 24:{med:87.8,sd:2.49},
-    36:{med:96.1,sd:2.74}, 48:{med:103.3,sd:2.97}, 60:{med:110.0,sd:3.17},
-    72:{med:116.0,sd:3.40}, 84:{med:121.7,sd:3.6}, 96:{med:127.3,sd:3.8},
-    108:{med:132.6,sd:4.1}, 120:{med:137.8,sd:4.4}, 132:{med:143.5,sd:5.0},
-    144:{med:149.1,sd:5.6}, 156:{med:155.5,sd:6.0}, 168:{med:162.4,sd:5.9},
-    180:{med:167.5,sd:5.5}, 192:{med:170.8,sd:5.2}, 204:{med:172.9,sd:5.0},
-    216:{med:174.0,sd:5.0}
+    0:{med:49.9,sd:1.89},3:{med:61.4,sd:1.98},6:{med:67.6,sd:2.01},
+    9:{med:72.0,sd:2.15},12:{med:75.7,sd:2.21},18:{med:82.3,sd:2.36},
+    24:{med:87.8,sd:2.55},30:{med:92.6,sd:2.67},36:{med:96.1,sd:2.80},
+    42:{med:99.8,sd:2.94},48:{med:103.3,sd:3.07},54:{med:106.7,sd:3.20},
+    60:{med:110.0,sd:3.35},72:{med:116.0,sd:3.61},84:{med:121.7,sd:3.87},
+    96:{med:127.3,sd:4.12},108:{med:132.6,sd:4.38},120:{med:137.8,sd:4.65},
+    132:{med:143.5,sd:5.10},144:{med:149.1,sd:5.70},156:{med:155.5,sd:6.20},
+    168:{med:162.4,sd:6.05},180:{med:167.5,sd:5.80},192:{med:170.8,sd:5.50},
+    204:{med:172.9,sd:5.20},216:{med:174.0,sd:5.05}
   },
   F: {
-    0:{med:49.1,sd:1.86}, 3:{med:59.8,sd:1.90}, 6:{med:65.7,sd:1.92},
-    12:{med:74.0,sd:2.10}, 18:{med:80.7,sd:2.21}, 24:{med:86.4,sd:2.38},
-    36:{med:95.1,sd:2.70}, 48:{med:102.7,sd:2.89}, 60:{med:109.4,sd:3.10},
-    72:{med:115.0,sd:3.30}, 84:{med:121.0,sd:3.5}, 96:{med:126.6,sd:3.7},
-    108:{med:132.0,sd:4.1}, 120:{med:138.6,sd:4.6}, 132:{med:144.5,sd:5.1},
-    144:{med:151.5,sd:5.7}, 156:{med:156.0,sd:5.9}, 168:{med:158.7,sd:5.6},
-    180:{med:160.5,sd:5.4}, 192:{med:161.5,sd:5.3}, 204:{med:162.5,sd:5.2},
-    216:{med:163.0,sd:5.2}
+    0:{med:49.1,sd:1.86},3:{med:59.8,sd:1.90},6:{med:65.7,sd:1.95},
+    9:{med:70.1,sd:2.07},12:{med:74.0,sd:2.16},18:{med:80.7,sd:2.28},
+    24:{med:86.4,sd:2.46},30:{med:91.2,sd:2.60},36:{med:95.1,sd:2.76},
+    42:{med:98.8,sd:2.91},48:{med:102.7,sd:3.05},54:{med:106.4,sd:3.19},
+    60:{med:109.4,sd:3.33},72:{med:115.0,sd:3.60},84:{med:121.0,sd:3.88},
+    96:{med:126.6,sd:4.14},108:{med:132.0,sd:4.43},120:{med:138.6,sd:4.74},
+    132:{med:144.5,sd:5.28},144:{med:151.5,sd:5.85},156:{med:156.0,sd:6.02},
+    168:{med:158.7,sd:5.80},180:{med:160.5,sd:5.55},192:{med:161.5,sd:5.40},
+    204:{med:162.5,sd:5.30},216:{med:163.0,sd:5.25}
   }
 };
 
+
+// ── WHO z-score tables ──
+function zToPercentile(z) {
+  const table = [[-3.0,0.1],[-2.5,0.6],[-2.0,2.3],[-1.5,6.7],[-1.0,15.9],[-0.5,30.9],
+    [0.0,50.0],[0.5,69.1],[1.0,84.1],[1.5,93.3],[2.0,97.7],[2.5,99.4],[3.0,99.9]];
+  if (z <= -3.0) return 0.1;
+  if (z >= 3.0) return 99.9;
+  for (let i = 1; i < table.length; i++) {
+    if (z <= table[i][0]) {
+      const t = (z - table[i-1][0]) / (table[i][0] - table[i-1][0]);
+      return table[i-1][1] + t * (table[i][1] - table[i-1][1]);
+    }
+  }
+  return 50;
+}
+
 function getClosestAge(table, ageMonths) {
   const ages = Object.keys(table).map(Number);
-  return ages.reduce((a, b) => Math.abs(b - ageMonths) < Math.abs(a - ageMonths) ? b : a);
+  return ages.reduce((a,b) => Math.abs(b-ageMonths) < Math.abs(a-ageMonths) ? b : a);
 }
 
 function calcPercentile() {
-  const anni = parseFloat(document.getElementById('p-anni').value) || 0;
-  const mesi_extra = parseFloat(document.getElementById('p-mesi').value) || 0;
-  const sesso = document.getElementById('p-sesso').value;
-  const peso = parseFloat(document.getElementById('p-peso').value);
-  const altezza = parseFloat(document.getElementById('p-altezza').value);
-  if ((!peso && !altezza) || (anni === 0 && mesi_extra === 0)) return;
+  const anni  = parseFloat(document.getElementById('g-anni').value)  || 0;
+  const mesi  = parseFloat(document.getElementById('g-mesi').value)  || 0;
+  const sesso = document.getElementById('g-sesso').value || 'M';
+  const peso  = parseFloat(document.getElementById('g-peso').value)  || 0;
+  const altezza = parseFloat(document.getElementById('g-altezza').value) || 0;
 
-  const ageMonths = Math.round(anni * 12 + mesi_extra);
+  if ((!peso && !altezza) || (anni === 0 && mesi === 0)) {
+    document.getElementById('perc-result').style.display = 'none';
+    document.getElementById('growth-chart-box').style.display = 'none';
+    return;
+  }
+  const ageMonths = Math.round(anni * 12 + mesi);
   const cards = document.getElementById('perc-cards');
   const interp = document.getElementById('perc-interpretation');
   const flags = document.getElementById('perc-flags');
-  let cardsHTML = '';
-  let issues = [];
+  let cardsHTML = '', issues = [];
 
   function getPerc(table, value) {
     const closest = getClosestAge(table[sesso], ageMonths);
     const {med, sd} = table[sesso][closest];
-    const z = (value - med) / sd;
-    return {z: Math.round(z * 10) / 10, perc: zToPercentile(z)};
+    const z = Math.round((value - med) / sd * 10) / 10;
+    return {z, perc: Math.round(zToPercentile(z) * 10) / 10};
   }
 
   if (peso) {
     const {z, perc} = getPerc(WHO_WEIGHT, peso);
     const color = perc < 3 ? '#DC2626' : perc > 97 ? '#F97316' : perc < 15 ? '#F59E0B' : '#10B981';
-    cardsHTML += `<div style="background:white;border-radius:10px;border:2px solid ${color};padding:14px;text-align:center">
-      <div style="font-size:11.5px;color:var(--slate-l)">Peso/Età</div>
-      <div style="font-size:28px;font-weight:700;color:${color}">${r1(perc)}°</div>
-      <div style="font-size:11px;color:var(--slate-l)">percentile (z=${z})</div>
+    cardsHTML += `<div style="background:white;border-radius:10px;border:2.5px solid ${color};padding:14px;text-align:center;min-width:140px">
+      <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:4px">Peso / Età</div>
+      <div style="font-size:30px;font-weight:700;color:${color};line-height:1">${perc}°</div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:4px">z = ${z}</div>
     </div>`;
-    if (perc < 3) issues.push('Peso molto basso (&lt;3° perc) — valutare malnutrizione');
-    if (perc > 97) issues.push('Peso molto elevato (&gt;97° perc) — valutare eccesso ponderale');
+    if (perc < 3) issues.push('Peso molto basso (&lt;3° percentile) — valutare malnutrizione');
+    if (perc > 97) issues.push('Peso molto elevato (&gt;97° percentile) — valutare eccesso ponderale');
   }
-
   if (altezza) {
     const {z, perc} = getPerc(WHO_HEIGHT, altezza);
     const color = perc < 3 ? '#DC2626' : perc > 97 ? '#F97316' : perc < 15 ? '#F59E0B' : '#10B981';
-    cardsHTML += `<div style="background:white;border-radius:10px;border:2px solid ${color};padding:14px;text-align:center">
-      <div style="font-size:11.5px;color:var(--slate-l)">Altezza/Età</div>
-      <div style="font-size:28px;font-weight:700;color:${color}">${r1(perc)}°</div>
-      <div style="font-size:11px;color:var(--slate-l)">percentile (z=${z})</div>
+    cardsHTML += `<div style="background:white;border-radius:10px;border:2.5px solid ${color};padding:14px;text-align:center;min-width:140px">
+      <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:4px">Altezza / Età</div>
+      <div style="font-size:30px;font-weight:700;color:${color};line-height:1">${perc}°</div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:4px">z = ${z}</div>
     </div>`;
-    if (perc < 3) issues.push('Statura molto bassa — possibile stunting, valutare causa');
+    if (perc < 3) issues.push('Statura molto bassa — possibile stunting');
   }
-
   if (peso && altezza) {
-    const bmi = peso / (altezza / 100) ** 2;
-    // BMI percentile approximation using z-score with age-specific reference
-    const ageYears = ageMonths / 12;
-    let bmiMed, bmiSd;
-    if (sesso === 'M') {
-      bmiMed = 13.4 + ageYears * 0.35;
-      bmiSd = 1.5 + ageYears * 0.08;
-    } else {
-      bmiMed = 13.3 + ageYears * 0.38;
-      bmiSd = 1.4 + ageYears * 0.09;
-    }
-    const zBMI = (bmi - bmiMed) / bmiSd;
-    const percBMI = zToPercentile(zBMI);
-    const color = percBMI < 3 ? '#DC2626' : percBMI > 95 ? '#F97316' : percBMI > 85 ? '#F59E0B' : '#10B981';
-    cardsHTML += `<div style="background:white;border-radius:10px;border:2px solid ${color};padding:14px;text-align:center">
-      <div style="font-size:11.5px;color:var(--slate-l)">BMI/Età</div>
-      <div style="font-size:28px;font-weight:700;color:${color}">${r1(percBMI)}°</div>
-      <div style="font-size:11px;color:var(--slate-l)">BMI = ${r1(bmi)}</div>
+    const bmi = peso / (altezza/100)**2;
+    const ageYears = ageMonths/12;
+    const bmiMed = (sesso==='M' ? 13.4 : 13.3) + ageYears * 0.37;
+    const bmiSd  = (sesso==='M' ? 1.50 : 1.40) + ageYears * 0.08;
+    const zBmi   = (bmi - bmiMed) / bmiSd;
+    const percBmi = Math.round(zToPercentile(zBmi) * 10) / 10;
+    const color   = percBmi > 97 ? '#DC2626' : percBmi > 85 ? '#F59E0B' : percBmi < 3 ? '#DC2626' : '#10B981';
+    cardsHTML += `<div style="background:white;border-radius:10px;border:2.5px solid ${color};padding:14px;text-align:center;min-width:140px">
+      <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:4px">BMI / Età</div>
+      <div style="font-size:30px;font-weight:700;color:${color};line-height:1">${percBmi}°</div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:4px">BMI = ${Math.round(bmi*10)/10}</div>
     </div>`;
-    if (percBMI > 95) issues.push('BMI/età &gt;95° percentile — Obesità secondo IOTF/OMS');
-    else if (percBMI > 85) issues.push('BMI/età &gt;85° percentile — Sovrappeso');
-    else if (percBMI < 3) issues.push('BMI/età &lt;3° percentile — Sottopeso, valutare stato nutrizionale');
+    if (percBmi > 97) issues.push('BMI/età &gt;97° percentile — Obesità');
+    else if (percBmi > 85) issues.push('BMI/età &gt;85° percentile — Sovrappeso');
+    else if (percBmi < 3) issues.push('BMI/età &lt;3° percentile — Sottopeso');
   }
 
   cards.innerHTML = cardsHTML;
   document.getElementById('perc-result').style.display = 'block';
 
   if (issues.length) {
-    flags.innerHTML = issues.map(i => `<div class="alert-warn alert-box">⚠️ ${i}</div>`).join('');
+    flags.innerHTML = issues.map(i => `<div style="background:#FEF3C7;border-left:3px solid #F59E0B;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:12.5px;color:#78350F">⚠️ ${i}</div>`).join('');
     interp.className = 'alert-box alert-warn';
-    interp.innerHTML = '<b>Attenzione clinica richiesta:</b> vedere segnalazioni sotto.';
+    interp.innerHTML = '<b>Attenzione clinica:</b> vedere segnalazioni.';
   } else {
     flags.innerHTML = '';
-    interp.className = 'alert-box';
-    interp.style.cssText = 'background:#ECFDF5;border-left:3px solid #10B981;color:#064E3B';
+    interp.style.cssText = 'background:#ECFDF5;border-left:3px solid #10B981;color:#064E3B;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:12.5px';
     interp.innerHTML = '✅ <b>Crescita nella norma.</b> Continuare il monitoraggio periodico.';
   }
+
+  // Show growth charts
+  if (peso || altezza) {
+    document.getElementById('growth-chart-box').style.display = 'block';
+    lastGrowthData = {sesso, ageMonths, peso, altezza};
+    setTimeout(() => drawGrowthChart(sesso, ageMonths, peso, altezza), 60);
+  }
 }
 
-function calcFabb() {
-  const anni = parseFloat(document.getElementById('f-anni').value) || 0;
-  const mesiExtra = parseFloat(document.getElementById('f-mesi').value) || 0;
-  const peso = parseFloat(document.getElementById('f-peso').value);
-  const alt = parseFloat(document.getElementById('f-altezza').value);
-  const sesso = document.getElementById('f-sesso').value;
-  const laf = parseFloat(document.getElementById('f-laf').value);
-  const stress = parseFloat(document.getElementById('f-cond').value);
-  if (!peso || anni === 0) return;
-  const eta = anni + mesiExtra / 12;
 
-  // Schofield formula per MB
-  let mb;
-  if (sesso === 'M') {
-    if (eta < 3) mb = 0.167 * peso + 15.174 * (alt/100 || 1.0) - 617.6;
-    else if (eta < 10) mb = 19.59 * peso + 1.303 * (alt || 110) - 414.9;
-    else if (eta < 18) mb = 16.25 * peso + 1.372 * (alt || 160) - 515.5;
-    else mb = 15.4 * peso - 27 * (alt/100 || 1.7) + 717;
-    if (mb < 0) mb = 60 * peso; // fallback
-  } else {
-    if (eta < 3) mb = 16.252 * peso + 10.232 * (alt/100 || 0.9) - 413.5;
-    else if (eta < 10) mb = 16.969 * peso + 1.618 * (alt || 105) - 371.2;
-    else if (eta < 18) mb = 8.365 * peso + 4.65 * (alt/100 || 1.5) * 100 - 200; // approx
-    else mb = 13.3 * peso + 334 * (alt/100 || 1.6) + 35;
-    if (mb < 0) mb = 55 * peso;
+function syncSharedData() {
+  // Sync shared fields to tab-specific fields
+  const map = {
+    'g-anni':    ['p-anni','f-anni','fm-eta'],
+    'g-mesi':    ['p-mesi','f-mesi'],
+    'g-sesso':   ['p-sesso','f-sesso','fm-sesso'],
+    'g-peso':    ['p-peso','f-peso','fm-peso','idro-peso'],
+    'g-altezza': ['p-altezza','f-altezza','fm-alt'],
+    'g-cc':      ['p-cc'],
+  };
+  Object.entries(map).forEach(([src, targets]) => {
+    const srcEl = document.getElementById(src);
+    if (!srcEl) return;
+    targets.forEach(t => {
+      const el = document.getElementById(t);
+      if (el && srcEl.value) el.value = srcEl.value;
+    });
+  });
+  // Auto-calculate if we have enough data
+  const anni = parseFloat(document.getElementById('g-anni').value)||0;
+  const peso = parseFloat(document.getElementById('g-peso').value)||0;
+  const alt  = parseFloat(document.getElementById('g-altezza').value)||0;
+  const sesso = document.getElementById('g-sesso').value;
+  if ((anni > 0 || peso > 0) && (peso > 0 || alt > 0)) {
+    calcPercentile();
+    // Quick result cards
+    const cards = document.getElementById('ped-quick-cards');
+    const qr = document.getElementById('ped-quick-result');
+    if (cards && peso && alt) {
+      const bmi = peso / (alt/100)**2;
+      const ageM = anni*12 + (parseFloat(document.getElementById('g-mesi').value)||0);
+      const wRes = getPercResult('weight', sesso, ageM, peso);
+      const hRes = getPercResult('height', sesso, ageM, alt);
+      const bmiMed = 13.4 + (ageM/12)*0.35, bmiSd = 1.5 + (ageM/12)*0.08;
+      const bmiZ = (bmi - bmiMed)/bmiSd;
+      const bmiPerc = zToPercentile(bmiZ);
+      cards.innerHTML = [
+        {l:'Peso/Età', p:wRes?.perc, z:wRes?.z},
+        {l:'Altezza/Età', p:hRes?.perc, z:hRes?.z},
+        {l:'BMI/Età', p:bmiPerc, z:Math.round(bmiZ*10)/10},
+      ].map(({l,p,z}) => {
+        if (!p) return '';
+        const col = p<3?'#DC2626':p>97?'#F97316':p<15||p>85?'#F59E0B':'#10B981';
+        return `<div style="background:white;border:2px solid ${col};border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+          <div>
+            <div style="font-size:11px;color:var(--slate-l)">${l}</div>
+            <div style="font-size:22px;font-weight:700;color:${col}">${Math.round(p*10)/10}°</div>
+            <div style="font-size:10.5px;color:var(--slate-l)">z=${z}</div>
+          </div>
+        </div>`;
+      }).join('');
+      qr.style.display = 'flex';
+    }
+  }
+}
+
+function getPercResult(type, sesso, ageMonths, value) {
+  const table = type === 'weight' ? WHO_WEIGHT : WHO_HEIGHT;
+  if (!table[sesso]) return null;
+  const closest = getClosestAge(table[sesso], ageMonths);
+  const {med, sd} = table[sesso][closest];
+  const z = Math.round((value - med) / sd * 10) / 10;
+  return {z, perc: zToPercentile(z)};
+}
+
+
+// ── WHO HEIGHT DATA ──
+const WHO_HEIGHT_CHART = {
+  M: [
+    [0, 46.1,47.9,49.9,51.8,53.7],[3, 57.6,59.4,61.4,63.5,65.5],[6, 63.6,65.7,67.6,69.8,72.0],
+    [9, 68.0,70.1,72.3,74.5,76.9],[12,71.7,73.9,75.7,78.0,80.5],[18,76.9,79.1,82.3,85.1,87.8],
+    [24,82.3,84.6,87.8,90.9,94.0],[36,88.7,91.5,96.1,99.8,103.3],[48,95.8,98.9,103.3,107.4,111.7],
+    [60,102.0,105.3,110.0,114.2,118.7],[72,107.4,110.9,116.0,120.6,125.5],
+    [84,112.7,116.4,121.7,126.6,131.7],[96,117.7,121.7,127.3,132.3,137.7],
+    [108,122.6,126.8,132.6,137.9,143.6],[120,127.3,131.8,137.8,143.3,149.3],
+    [132,132.4,137.0,143.5,149.3,155.5],[144,137.4,142.3,149.1,155.4,162.1],
+    [156,142.8,148.0,155.5,162.5,169.8],[168,149.1,154.6,162.4,170.0,177.6],
+    [180,154.3,160.1,167.5,174.7,182.1],[192,157.6,163.4,170.8,177.9,185.2],
+    [216,159.3,165.2,174.0,180.7,187.9],
+  ],
+  F: [
+    [0, 45.6,47.3,49.1,51.0,52.9],[3, 56.2,57.8,59.8,61.9,63.9],[6, 61.5,63.5,65.7,67.8,70.0],
+    [9, 65.6,67.7,70.1,72.4,74.8],[12,69.2,71.3,74.0,76.7,79.4],[18,74.5,76.7,80.7,84.2,87.7],
+    [24,80.0,82.4,86.4,90.0,93.6],[36,87.4,90.0,95.1,99.6,104.1],[48,94.1,97.0,102.7,107.6,112.5],
+    [60,100.2,103.3,109.4,115.0,120.6],[72,105.6,109.0,115.0,121.0,127.0],
+    [84,110.8,114.4,121.0,127.4,133.9],[96,115.7,119.6,126.6,133.4,140.1],
+    [108,120.5,124.6,132.0,139.3,146.7],[120,124.8,129.3,138.6,146.4,154.1],
+    [132,129.7,134.6,144.5,152.9,161.2],[144,134.3,139.6,151.5,160.6,169.6],
+    [156,138.2,144.0,156.0,166.0,175.7],[168,140.5,146.8,158.7,169.3,179.6],
+    [180,141.4,148.0,160.5,171.3,181.8],[192,142.0,148.8,161.5,172.5,183.2],
+    [216,142.4,149.4,163.0,174.2,185.2],
+  ]
+};
+
+// BMI for age (p3, p15, p50, p85, p97) - WHO 2006/2007
+const WHO_BMI_CHART = {
+  M: [
+    [0,10.2,11.1,13.4,15.7,16.9],[6,12.5,13.5,16.0,18.0,19.4],[12,12.0,13.0,16.0,18.3,19.9],
+    [24,13.0,13.8,15.7,17.4,19.0],[36,12.9,13.7,15.5,17.2,18.7],[48,12.7,13.5,15.3,16.9,18.5],
+    [60,12.5,13.3,15.1,16.8,18.4],[72,12.5,13.3,15.2,17.0,18.7],[84,12.5,13.4,15.3,17.1,19.1],
+    [96,12.5,13.4,15.4,17.5,19.6],[108,12.7,13.6,15.6,17.8,20.0],[120,12.9,13.9,16.0,18.3,20.6],
+    [132,13.2,14.3,16.5,18.9,21.4],[144,13.5,14.7,17.1,19.6,22.2],[156,14.0,15.3,17.8,20.5,23.2],
+    [168,14.5,16.0,18.6,21.4,24.3],[180,15.1,16.7,19.4,22.3,25.4],[192,15.7,17.5,20.2,23.3,26.6],
+    [216,16.7,18.5,21.3,24.7,28.3],
+  ],
+  F: [
+    [0,10.1,10.9,13.3,15.5,16.8],[6,12.0,13.0,15.5,17.7,19.2],[12,11.7,12.7,15.5,17.9,19.6],
+    [24,12.7,13.5,15.4,17.1,18.6],[36,12.6,13.4,15.4,17.1,18.5],[48,12.4,13.2,15.2,17.0,18.5],
+    [60,12.2,13.1,15.1,17.0,18.6],[72,12.2,13.1,15.2,17.1,18.8],[84,12.2,13.2,15.4,17.4,19.2],
+    [96,12.3,13.3,15.6,17.7,19.7],[108,12.5,13.6,15.9,18.2,20.3],[120,12.8,13.9,16.4,18.8,21.0],
+    [132,13.2,14.4,17.0,19.5,21.9],[144,13.7,15.1,17.8,20.4,23.0],[156,14.4,15.9,18.7,21.5,24.3],
+    [168,15.1,16.7,19.5,22.5,25.5],[180,15.7,17.5,20.2,23.4,26.5],[192,16.2,18.1,20.9,24.3,27.5],
+    [216,17.0,19.1,22.0,25.6,29.0],
+  ]
+};
+
+let currentGrowthChart = 'weight';
+let lastGrowthData = {};
+
+function switchGrowthChart(type, btn) {
+  document.querySelectorAll('.gc-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  currentGrowthChart = type;
+  const titles = {
+    weight: '📈 Peso per Età (OMS)',
+    height: '📏 Altezza per Età (OMS)',
+    bmi:    '📊 BMI per Età (OMS)',
+    wh:     '⚖️ Peso per Altezza (OMS)',
+  };
+  const titleEl = document.getElementById('growth-chart-title');
+  if (titleEl) titleEl.textContent = titles[type];
+  const {sesso, ageMonths, peso, altezza} = lastGrowthData;
+  if (sesso !== undefined) {
+    drawGrowthChartType(type, sesso, ageMonths, peso, altezza);
+  }
+}
+
+function drawGrowthChart(sesso, ageMonthsPatient, weightPatient, heightPatient) {
+  lastGrowthData = {sesso, ageMonths: ageMonthsPatient, peso: weightPatient, altezza: heightPatient};
+  drawGrowthChartType(currentGrowthChart, sesso, ageMonthsPatient, weightPatient, heightPatient);
+}
+
+function drawGrowthChartType(type, sesso, ageMonthsPatient, weightPatient, heightPatient) {
+  const canvas = document.getElementById('growth-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const PAD = {l:54, r:24, t:20, b:44};
+  const chartW = W - PAD.l - PAD.r;
+  const chartH = H - PAD.t - PAD.b;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#FAFAFA';
+  ctx.fillRect(0, 0, W, H);
+
+  let chartData, patientX, patientY, yLabel, xLabel;
+
+  if (type === 'weight') {
+    chartData = WHO_WEIGHT_CHART[sesso];
+    patientX = ageMonthsPatient;
+    patientY = weightPatient;
+    yLabel = 'Peso (kg)';
+    xLabel = 'Età';
+  } else if (type === 'height') {
+    chartData = WHO_HEIGHT_CHART[sesso];
+    patientX = ageMonthsPatient;
+    patientY = heightPatient;
+    yLabel = 'Altezza (cm)';
+    xLabel = 'Età';
+  } else if (type === 'bmi') {
+    chartData = WHO_BMI_CHART[sesso];
+    patientX = ageMonthsPatient;
+    const bmi = weightPatient && heightPatient ? weightPatient/(heightPatient/100)**2 : null;
+    patientY = bmi;
+    yLabel = 'BMI (kg/m²)';
+    xLabel = 'Età';
+  } else { // weight-for-height
+    // Convert: x = height, y = weight
+    // Use approximate: weight vs height using WHO median
+    chartData = null;
+    yLabel = 'Peso (kg)';
+    xLabel = 'Altezza (cm)';
   }
 
-  const kcal = Math.round(mb * laf * stress);
-  const protG = Math.round(peso * (eta < 1 ? 2.0 : eta < 4 ? 1.1 : eta < 10 ? 0.95 : 1.0));
-  const choG = Math.round(kcal * 0.50 / 4);
-  const grassiG = Math.round(kcal * 0.35 / 9);
-  // Holiday-Segar water
-  let water;
-  if (peso <= 10) water = peso * 100;
-  else if (peso <= 20) water = 1000 + (peso - 10) * 50;
-  else water = 1500 + (peso - 20) * 20;
-
-  document.getElementById('fr-mb').textContent = Math.round(mb) + ' kcal';
-  document.getElementById('fr-kcal').textContent = kcal.toLocaleString();
-  document.getElementById('fr-prot').textContent = protG + 'g';
-  document.getElementById('fr-cho').textContent = choG + 'g';
-  document.getElementById('fr-grassi').textContent = grassiG + 'g';
-  document.getElementById('fr-acqua').textContent = Math.round(water / 100) * 100 + ' mL';
-  document.getElementById('fabb-larn').innerHTML = `
-    <b>Riferimento LARN 2014:</b> Età ${anni} anni → 
-    Kcal/kg: ~${eta < 1 ? 105 : eta < 4 ? 83 : eta < 7 ? 77 : 67} | 
-    Proteine: ~${eta < 1 ? 1.1 : 0.9}g/kg/die | 
-    Calcio: ${eta < 1 ? 260 : eta < 4 ? 700 : eta < 7 ? 900 : 1100}mg | 
-    Ferro: ${sesso === 'F' && eta >= 11 ? 18 : eta < 1 ? 11 : 8}mg/die
-  `;
-  document.getElementById('fabb-result').style.display = 'block';
-}
-
-function calcFormule() {
-  const peso = parseFloat(document.getElementById('fm-peso').value);
-  const alt = parseFloat(document.getElementById('fm-alt').value);
-  const eta = parseFloat(document.getElementById('fm-eta').value);
-  const sesso = document.getElementById('fm-sesso').value;
-  if (!peso || !eta) return;
-
-  const calcoli = [];
-
-  // Schofield
-  let sch;
-  if (sesso === 'M') {
-    if (eta < 3) sch = 0.167 * peso + 15.174 * ((alt||90)/100) - 617.6;
-    else if (eta < 10) sch = 19.59 * peso + 1.303 * (alt||110) - 414.9;
-    else if (eta < 18) sch = 16.25 * peso + 1.372 * (alt||160) - 515.5;
-    else sch = 15.4 * peso - 27 * ((alt||170)/100) + 717;
-  } else {
-    if (eta < 3) sch = 16.252 * peso + 10.232 * ((alt||85)/100) - 413.5;
-    else if (eta < 10) sch = 16.969 * peso + 1.618 * (alt||105) - 371.2;
-    else if (eta < 18) sch = 8.365 * peso + 4.65 * ((alt||155)/100)*100 - 200;
-    else sch = 13.3 * peso + 334 * ((alt||160)/100) + 35;
+  if (!chartData) {
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '14px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Grafico Peso/Altezza non disponibile in questa versione', W/2, H/2);
+    return;
   }
-  if (sch > 0) calcoli.push({nome:'Schofield (WHO)', eta:'Tutte le età pediatriche', mb: Math.round(sch)});
 
-  // Harris-Benedict
-  let hb;
-  if (sesso === 'M') hb = 66.47 + 13.75 * peso + 5.0 * (alt||110) - 6.76 * eta;
-  else hb = 655.1 + 9.56 * peso + 1.85 * (alt||110) - 4.68 * eta;
-  calcoli.push({nome:'Harris-Benedict', eta:'Adolescenti/adulti', mb: Math.round(hb)});
+  const ages = chartData.map(d => d[0]);
+  const minAge = Math.min(...ages), maxAge = Math.max(...ages);
+  const allVals = chartData.flatMap(d => d.slice(1));
+  const minY = Math.floor(Math.min(...allVals) / 5) * 5;
+  const maxY = Math.ceil(Math.max(...allVals) / 5) * 5;
 
-  // Mifflin-St Jeor
-  let msj;
-  if (sesso === 'M') msj = 10 * peso + 6.25 * (alt||110) - 5 * eta + 5;
-  else msj = 10 * peso + 6.25 * (alt||110) - 5 * eta - 161;
-  calcoli.push({nome:'Mifflin-St Jeor', eta:'≥16 anni', mb: Math.round(msj)});
+  const toX = a => PAD.l + (a - minAge) / (maxAge - minAge) * chartW;
+  const toY = v => PAD.t + chartH - (v - minY) / (maxY - minY) * chartH;
 
-  // Rule of thumb
-  const rt = Math.round(peso * (eta < 2 ? 60 : eta < 6 ? 55 : eta < 10 ? 50 : 40));
-  calcoli.push({nome:'Regola pratica (kcal/kg)', eta:'Tutte', mb: rt});
-
-  const tbody = document.getElementById('formule-tbody');
-  tbody.innerHTML = calcoli.map(c => `<tr><td><b>${c.nome}</b></td><td>${c.eta}</td><td style="font-weight:700;color:#8B5CF6">${c.mb}</td></tr>`).join('');
-  document.getElementById('formule-result').style.display = 'block';
-}
-
-function calcIdro() {
-  const peso = parseFloat(document.getElementById('idro-peso').value);
-  if (!peso) return;
-  let ml, formula;
-  if (peso <= 10) {
-    ml = peso * 100;
-    formula = `${peso} kg × 100 = ${ml} mL`;
-  } else if (peso <= 20) {
-    ml = 1000 + (peso - 10) * 50;
-    formula = `1000 + (${peso}-10) × 50 = ${ml} mL`;
-  } else {
-    ml = 1500 + (peso - 20) * 20;
-    formula = `1500 + (${peso}-20) × 20 = ${ml} mL`;
+  // Y gridlines
+  const yStep = (maxY - minY) <= 30 ? 2 : (maxY-minY) <= 80 ? 5 : (maxY-minY) <= 200 ? 10 : 20;
+  for (let v = minY; v <= maxY; v += yStep) {
+    ctx.strokeStyle = '#E2E8F0'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(PAD.l, toY(v)); ctx.lineTo(PAD.l+chartW, toY(v)); ctx.stroke();
+    ctx.fillStyle = '#94A3B8'; ctx.font = '10px DM Sans,sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(v, PAD.l-4, toY(v)+3);
   }
-  document.getElementById('idro-ml').textContent = ml.toLocaleString() + ' mL/die';
-  document.getElementById('idro-formula').textContent = formula;
-  const tbody = document.getElementById('idro-tbody');
-  tbody.innerHTML = `
-    <tr><td>Acqua libera</td><td><b>${Math.round(ml * 0.6)} mL</b></td></tr>
-    <tr><td>Dalla dieta (alimenti)</td><td>~${Math.round(ml * 0.3)} mL</td></tr>
-    <tr><td>Metabolica</td><td>~${Math.round(ml * 0.1)} mL</td></tr>
-  `;
-  document.getElementById('idro-result').style.display = 'block';
+  // X gridlines/labels
+  const ageSteps = maxAge <= 60 ? [0,6,12,18,24,36,48,60] : [0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,216];
+  ageSteps.forEach(am => {
+    if (am > maxAge+6) return;
+    const x = toX(am);
+    ctx.strokeStyle='#E2E8F0'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(x,PAD.t); ctx.lineTo(x,PAD.t+chartH); ctx.stroke();
+    ctx.fillStyle='#94A3B8'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='center';
+    ctx.fillText(am<24?am+'m':Math.round(am/12)+'a', x, H-PAD.b+14);
+  });
+
+  // Percentile curves: indices 1=p3, 2=p15, 3=p50, 4=p85, 5=p97
+  const curves = [
+    {idx:1, col:'#DC2626', lw:1.5, dash:[]},
+    {idx:2, col:'#F59E0B', lw:1.2, dash:[4,3]},
+    {idx:3, col:'#10B981', lw:2.5, dash:[]},
+    {idx:4, col:'#F59E0B', lw:1.2, dash:[4,3]},
+    {idx:5, col:'#DC2626', lw:1.5, dash:[]},
+  ];
+  
+  // Shade between p3 and p97
+  ctx.beginPath();
+  chartData.forEach((d,i) => { const x=toX(d[0]), y=toY(d[1]); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  [...chartData].reverse().forEach(d => { ctx.lineTo(toX(d[0]), toY(d[5])); });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(16,185,129,0.06)'; ctx.fill();
+
+  curves.forEach(({idx,col,lw,dash}) => {
+    ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.setLineDash(dash);
+    chartData.forEach((d,i) => { const x=toX(d[0]), y=toY(d[idx]); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke(); ctx.setLineDash([]);
+    // Label at end of curve
+    const last = chartData[chartData.length-1];
+    const labels = {1:'3°',2:'15°',3:'50°',4:'85°',5:'97°'};
+    ctx.fillStyle=col; ctx.font=`bold 10px DM Sans,sans-serif`; ctx.textAlign='left';
+    ctx.fillText(labels[idx], toX(last[0])+4, toY(last[idx])+3);
+  });
+
+  // Axes
+  ctx.strokeStyle='#1E293B'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,PAD.t+chartH); ctx.lineTo(PAD.l+chartW,PAD.t+chartH); ctx.stroke();
+
+  // Y axis label
+  ctx.save(); ctx.translate(12, PAD.t+chartH/2); ctx.rotate(-Math.PI/2);
+  ctx.fillStyle='#334155'; ctx.font='bold 11px DM Sans,sans-serif'; ctx.textAlign='center';
+  ctx.fillText(yLabel, 0, 0); ctx.restore();
+  // X axis label
+  ctx.fillStyle='#334155'; ctx.font='bold 11px DM Sans,sans-serif'; ctx.textAlign='center';
+  ctx.fillText(xLabel, PAD.l+chartW/2, H-2);
+
+  // Patient dot
+  if (patientY && patientX >= 0 && patientX <= maxAge+6) {
+    const px = toX(Math.min(patientX, maxAge));
+    const py = toY(Math.min(Math.max(patientY, minY), maxY));
+    // Shadow glow
+    ctx.shadowColor = '#5B21B6'; ctx.shadowBlur = 10;
+    ctx.beginPath(); ctx.arc(px, py, 7, 0, 2*Math.PI);
+    ctx.fillStyle='#7C3AED'; ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.strokeStyle='white'; ctx.lineWidth=2;
+    ctx.stroke();
+    // Label
+    ctx.fillStyle='#5B21B6'; ctx.font='bold 11px DM Sans,sans-serif'; ctx.textAlign='center';
+    const label = type==='bmi' ? r1(patientY)+' kg/m²' : type==='height' ? patientY+'cm' : patientY+'kg';
+    ctx.fillText(label, px, py-14);
+    ctx.fillText(patientX<24?patientX+'m':Math.round(patientX/12)+'a', px, py+20);
+  }
+
+  // Title / sex label
+  ctx.fillStyle='#1E293B'; ctx.font='bold 12px DM Sans,sans-serif'; ctx.textAlign='right';
+  ctx.fillText(sesso==='M'?'♂ Maschi':'♀ Femmine', PAD.l+chartW-5, PAD.t+14);
 }
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   try { await checkAuth(false); } catch(e) {}

@@ -8,9 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.p-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.p-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
 .p-tab:hover{background:rgba(249,115,22,.12);color:#F97316}
-.p-tab.active{background:white;color:#C2410C;box-shadow:0 2px 8px rgba(0,0,0,.12);font-weight:700}
+.p-tab.active{background:white;color:#C2410C;box-shadow:0 3px 10px rgba(249,115,22,.2);font-weight:700;letter-spacing:.2px}
 .p-panel{display:none}.p-panel.active{display:block}
 .calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
@@ -43,16 +43,18 @@
   <div class="nav-sec">Piano</div>
   <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
   <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item active" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
-  <a class="nav-item active" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
-  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
   <div class="nav-sec">Database</div>
@@ -68,6 +70,7 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>🫁 Insufficienza Pancreatica Esocrina (IPE)</h2>
   <div class="tbar-actions">
@@ -98,11 +101,35 @@
       <div class="nf" style="margin-bottom:10px"><label>Grassi nel pasto (g)</label><input type="number" id="pert-grassi" placeholder="es. 20" oninput="calcPERT()"></div>
       <div class="nf" style="margin-bottom:10px"><label>Patologia</label>
         <select id="pert-pat" onchange="calcPERT()">
-          <option value="fc_adulto">Fibrosi Cistica (adulto)</option>
-          <option value="fc_bambino">Fibrosi Cistica (bambino &lt;4 anni)</option>
-          <option value="pancreatite">Pancreatite Cronica</option>
-          <option value="gastrectomia">Gastrectomia totale/parziale</option>
-          <option value="whipple">Duodenocefalopancreasectomia (Whipple)</option>
+          <optgroup label="Fibrosi Cistica">
+            <option value="fc_adulto">Fibrosi Cistica — Adulto</option>
+            <option value="fc_bambino">Fibrosi Cistica — Bambino &lt;4 anni</option>
+            <option value="fc_adolescente">Fibrosi Cistica — Adolescente</option>
+          </optgroup>
+          <optgroup label="Patologie Pancreatiche">
+            <option value="pancreatite">Pancreatite Cronica</option>
+            <option value="pancreatite_acuta">Pancreatite Acuta Necrotizzante (post-acuta)</option>
+            <option value="cancro_pancreas">Cancro del Pancreas</option>
+            <option value="t3c">Diabete Tipo 3c (pancreatogenico)</option>
+            <option value="pancreas_divisum">Pancreas Divisum con IPE</option>
+          </optgroup>
+          <optgroup label="Chirurgia Pancreatica / GI">
+            <option value="pancreasectomia_totale">Pancreasectomia Totale</option>
+            <option value="whipple">Duodenocefalopancreasectomia (Whipple)</option>
+            <option value="distale">Pancreasectomia Distale</option>
+            <option value="gastrectomia">Gastrectomia Totale</option>
+            <option value="gastrectomia_parz">Gastrectomia Parziale (Billroth II)</option>
+            <option value="bypass_gastrico">Bypass Gastrico (Roux-en-Y)</option>
+            <option value="sleeve">Sleeve Gastrectomy con IPE</option>
+          </optgroup>
+          <optgroup label="Malattie Infiammatorie / Altre">
+            <option value="crohn_duod">Morbo di Crohn (localizzazione duodenale)</option>
+            <option value="celiachia_ipe">Celiachia con IPE (non responsiva)</option>
+            <option value="sibo">SIBO con IPE funzionale</option>
+            <option value="zollinger">Sindrome di Zollinger-Ellison</option>
+            <option value="hiv_ipe">HIV/AIDS con IPE</option>
+            <option value="sclerodermia">Sclerodermia con IPE</option>
+          </optgroup>
           <option value="altro">Altra causa IPE</option>
         </select>
       </div>
@@ -127,8 +154,13 @@
       <div class="nf" style="margin-bottom:10px"><label>Peso corporeo (kg)</label><input type="number" id="max-peso" placeholder="es. 70" oninput="calcMax()"></div>
       <div class="nf" style="margin-bottom:10px"><label>Patologia</label>
         <select id="max-pat" onchange="calcMax()">
-          <option value="fc">Fibrosi Cistica (linee guida ECFS 2017)</option>
-          <option value="altro">Pancreatite cronica / altre cause</option>
+          <option value="fc">Fibrosi Cistica (ECFS 2017 — max 10.000 UL/kg/die)</option>
+          <option value="fc_bambino">Fibrosi Cistica bambino &lt;4 anni (max 10.000 UL/kg/die)</option>
+          <option value="pancreasectomia">Pancreasectomia Totale / Whipple</option>
+          <option value="pancreatite">Pancreatite Cronica</option>
+          <option value="cancro">Cancro del Pancreas</option>
+          <option value="chirurgia_gi">Chirurgia GI (gastrectomia, bypass, sleeve)</option>
+          <option value="altro">Altra causa IPE</option>
         </select>
       </div>
       <div id="max-result" style="background:#F0FDF4;border-radius:10px;padding:16px;margin-top:10px;display:none">
@@ -343,14 +375,26 @@ function calcPERT() {
   if (!grassi) return;
 
   let ul, note;
+  const FC_PATS = ['fc_adulto','fc_bambino','fc_adolescente'];
+  const isFC = FC_PATS.includes(pat);
+  
   if (metodo === 'grassi') {
-    // FC: 500-1000 UL/g; pancreatite: 1000 UL/g come stima media
-    const ulPerG = pat.startsWith('fc') ? 500 : 1000;
+    // FC: 500-1000 UL/g; chirurgia pesante/cancro: 750-1000; altro: 500-750
+    let ulPerG;
+    if (pat === 'fc_bambino') ulPerG = 450;
+    else if (isFC || pat === 'pancreasectomia_totale' || pat === 'whipple') ulPerG = 750;
+    else if (pat === 'cancro_pancreas' || pat === 'distale') ulPerG = 1000;
+    else ulPerG = 750; // standard per la maggior parte
     ul = grassi * ulPerG;
     note = `${ulPerG} UL/g × ${grassi}g grassi`;
   } else {
     if (!peso) return;
-    const ulPerKg = pat.startsWith('fc_bambino') ? 1000 : 750;
+    let ulPerKg;
+    if (pat === 'fc_bambino') ulPerKg = 1000;
+    else if (pat === 'fc_adolescente') ulPerKg = 800;
+    else if (isFC) ulPerKg = 750;
+    else if (pat === 'pancreasectomia_totale' || pat === 'whipple') ulPerKg = 1000;
+    else ulPerKg = 750;
     ul = ulPerKg * peso;
     note = `${ulPerKg} UL/kg × ${peso}kg`;
   }
@@ -386,16 +430,31 @@ function calcMax() {
   if (!peso) return;
   const res = document.getElementById('max-result');
   let maxUL, note, details;
-  if (pat === 'fc') {
-    maxUL = 10000 * peso;
-    note = `10.000 UL/kg/die × ${peso} kg — ECFS 2017`;
+  const MAX_INFO = {
+    'fc':            {max:10000, src:'ECFS 2017', warn:'⚠️ Rischio colopathy fibrosante oltre 10.000 UL/kg/die'},
+    'fc_bambino':    {max:10000, src:'ECFS 2017 — bambini', warn:'⚠️ Massima attenzione: rischio colopathy fibrosante'},
+    'pancreasectomia':{max:null, src:'ESPEN 2020', warn:'Non esiste un limite assoluto: titolare fino a 80.000 UL/pasto'},
+    'pancreatite':   {max:null, src:'UEG/EPC 2017', warn:'Titolare: iniziare con 25.000-40.000 UL/pasto principale'},
+    'cancro':        {max:null, src:'ESPEN 2021', warn:'PERT migliora qualità vita e risposta chemioterapia'},
+    'chirurgia_gi':  {max:null, src:'ESPEN 2020', warn:'Timing critico: assumere all\'inizio pasto'},
+    'altro':         {max:null, src:'Linee guida generali', warn:'Titolare sulla risposta: steatosi, peso, albumina'},
+  };
+  const info = MAX_INFO[pat] || MAX_INFO['altro'];
+  if (info.max) {
+    maxUL = info.max * peso;
+    note = `${info.max.toLocaleString()} UL/kg/die × ${peso} kg — ${info.src}`;
     details = `<b>Distribuzione suggerita (3 pasti + 2 snack):</b><br>
-      Pasto principale: max ${Math.round(maxUL * 0.28).toLocaleString()} UL (= ${Math.ceil(maxUL * 0.28 / 25000)} Creon 25.000)<br>
-      Spuntino: max ${Math.round(maxUL * 0.08).toLocaleString()} UL`;
+      Colazione: ${Math.round(maxUL*0.18).toLocaleString()} UL = ${Math.ceil(maxUL*0.18/25000)} Creon 25.000<br>
+      Pranzo: ${Math.round(maxUL*0.30).toLocaleString()} UL = ${Math.ceil(maxUL*0.30/25000)} Creon 25.000<br>
+      Cena: ${Math.round(maxUL*0.30).toLocaleString()} UL = ${Math.ceil(maxUL*0.30/25000)} Creon 25.000<br>
+      Spuntini (×2): ${Math.round(maxUL*0.11).toLocaleString()} UL cadauno<br><br>
+      <span style="color:#DC2626;font-weight:700">${info.warn}</span>`;
   } else {
-    maxUL = 15000 * peso;
-    note = `~15.000 UL/kg/die (non esiste un limite assoluto in letteratura per non-FC)`;
-    details = `La dose giornaliera totale va titolata sulla risposta clinica. Non esiste un limite assoluto dimostrato per pancreatite cronica, ma si raccomanda di non superare 75.000-80.000 UL per pasto.`;
+    maxUL = 80000; // per pasto, non per kg
+    note = `Limite pratico: ~75.000-80.000 UL per pasto — ${info.src}`;
+    details = `${info.warn}<br><br>
+      <b>Schema indicativo:</b> Pasto principale 40.000-80.000 UL · Spuntino 10.000-25.000 UL<br>
+      Monitorare: peso, steatosi, elastasi fecale, albumina ogni 3-6 mesi.`;
   }
   document.getElementById('max-ul').textContent = maxUL.toLocaleString('it') + ' UL/die';
   document.getElementById('max-note').textContent = note;

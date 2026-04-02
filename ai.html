@@ -122,7 +122,7 @@
       <button class="ai-send" id="ai-send-btn" onclick="sendMessage()" title="Invia">➤</button>
     </div>
     <div style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center">
-      Powered by Google Gemini AI · Le risposte sono a scopo professionale e non sostituiscono la consulenza medica
+      Powered by OpenRouter AI (Llama · Gemma · Mistral) · Le risposte sono a scopo professionale e non sostituiscono la consulenza medica
     </div>
   </div>
 
@@ -273,9 +273,9 @@ async function sendMessage(text) {
     bubble.innerHTML = `<div style="background:#FEE2E2;border-radius:8px;padding:12px 16px;font-size:12.5px;color:#991B1B;border-left:3px solid #DC2626">
       ⚠️ <b>Errore AI:</b> ${
         isKeyMissing
-          ? 'Chiave API non configurata. In Vercel → Settings → Environment Variables aggiungi <code>GEMINI_API_KEY</code>. Chiave gratuita su <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#1D4ED8">aistudio.google.com</a>.'
+          ? 'Chiave API non configurata. Registrati gratis su <a href="https://openrouter.ai/keys" target="_blank" style="color:#1D4ED8">openrouter.ai/keys</a>, crea una chiave e aggiungila in Vercel → Settings → Environment Variables come <code>GEMINI_API_KEY</code>.'
           : isQuota
-          ? '⏱️ Limite richieste superato. <b>Soluzione:</b> Vai su <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#1D4ED8">aistudio.google.com</a>, crea una <b>nuova chiave API con un nuovo progetto Google Cloud</b>, e aggiornala in Vercel → Environment Variables → GEMINI_API_KEY.'
+          ? '⏱️ Limite richieste superato. <b>Soluzione:</b> Riprova tra qualche secondo. Se l\'errore persiste, aggiorna la chiave in Vercel → Environment Variables → GEMINI_API_KEY con una nuova chiave da <a href="https://openrouter.ai/keys" target="_blank" style="color:#1D4ED8">openrouter.ai/keys</a>.'
           : esc(errorMsg)
       }
     </div>`

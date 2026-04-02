@@ -1,7 +1,7 @@
 // api/gemini.js — Vercel Serverless Function
-// Proxy per Google Gemini API
-// Chiave GRATIS su: https://aistudio.google.com/app/apikey (usa progetto NUOVO)
-// Vercel: Settings → Environment Variables → GEMINI_API_KEY
+// Usa OpenRouter: modelli AI gratuiti, nessun limite quota per il progetto
+// Chiave gratuita su: https://openrouter.ai/keys
+// Vercel: Settings → Environment Variables → GEMINI_API_KEY (stessa variabile)
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,79 +13,86 @@ export default async function handler(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(500).json({
-      error: 'GEMINI_API_KEY non configurata. Aggiungila in Vercel → Settings → Environment Variables. Chiave gratuita su https://aistudio.google.com/app/apikey'
+      error: 'API Key non configurata. Vai su https://openrouter.ai/keys, crea una chiave gratuita e aggiungila in Vercel → Settings → Environment Variables come GEMINI_API_KEY'
     });
   }
 
   try {
     const { system, messages, max_tokens } = req.body;
 
-    const contents = (messages || []).map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }]
-    }));
+    // Build messages array with system prompt
+    const allMessages = [
+      { role: 'system', content: system || 'Sei un assistente nutrizionale clinico per dietisti italiani.' },
+      ...(messages || []).map(m => ({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: m.content
+      }))
+    ];
 
-    const body = {
-      system_instruction: {
-        parts: [{ text: system || 'Sei un assistente nutrizionale clinico per dietisti italiani.' }]
-      },
-      contents,
-      generationConfig: {
-        maxOutputTokens: max_tokens || 1024,
-        temperature: 0.7
-      }
-    };
-
-    // Try models in order: 1.5-flash (free tier), then 1.0-pro as fallback
-    const MODELS = [
-      'gemini-1.5-flash',
-      'gemini-1.5-flash-8b',
-      'gemini-1.0-pro'
+    // Free models on OpenRouter (no credits needed)
+    // Try in order: best quality first
+    const FREE_MODELS = [
+      'google/gemma-3-9b-it:free',
+      'meta-llama/llama-3.1-8b-instruct:free',
+      'microsoft/phi-3-mini-128k-instruct:free',
+      'mistralai/mistral-7b-instruct:free',
     ];
 
     let lastError = null;
-    for (const model of MODELS) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+    for (const model of FREE_MODELS) {
       try {
-        const response = await fetch(url, {
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'HTTP-Referer': 'https://dietplanpro.vercel.app',
+            'X-Title': 'DietPlan Pro'
+          },
+          body: JSON.stringify({
+            model,
+            messages: allMessages,
+            max_tokens: max_tokens || 1024,
+            temperature: 0.7
+          })
         });
+
         const data = await response.json();
 
-        if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
-          const text = data.candidates[0].content.parts[0].text;
+        if (response.ok && data.choices?.[0]?.message?.content) {
+          const text = data.choices[0].message.content;
           return res.status(200).json({
             content: [{ type: 'text', text }],
             model,
-            usage: {
-              input_tokens: data.usageMetadata?.promptTokenCount || 0,
-              output_tokens: data.usageMetadata?.candidatesTokenCount || 0
-            }
+            usage: data.usage || {}
           });
         }
 
-        // If quota exceeded, try next model
-        const errMsg = data.error?.message || '';
-        lastError = errMsg;
-        if (!errMsg.includes('quota') && !errMsg.includes('RESOURCE_EXHAUSTED') && !errMsg.includes('not found')) {
-          // Non-quota error (e.g. bad key) — no point retrying
-          return res.status(400).json({ error: errMsg });
+        lastError = data.error?.message || `HTTP ${response.status}`;
+        console.warn(`Model ${model} failed: ${lastError}`);
+
+        // If rate limited, try next model
+        if (response.status === 429 || response.status === 503) continue;
+        // If auth error, no point retrying
+        if (response.status === 401) {
+          return res.status(401).json({
+            error: 'Chiave API OpenRouter non valida. Verificala su https://openrouter.ai/keys'
+          });
         }
-        console.warn(`Model ${model} failed (quota/not found): ${errMsg}`);
+
       } catch(e) {
         lastError = e.message;
+        console.warn(`Model ${model} exception: ${e.message}`);
       }
     }
 
-    // All models failed
-    return res.status(429).json({
-      error: `Quota Gemini esaurita su tutti i modelli disponibili. Verifica il tuo piano su https://ai.dev/rate-limit oppure crea una nuova chiave API su https://aistudio.google.com/app/apikey con un progetto Google Cloud diverso. Dettaglio: ${lastError}`
+    return res.status(503).json({
+      error: `Tutti i modelli gratuiti non disponibili al momento. Riprova tra qualche minuto. (${lastError})`
     });
 
   } catch (err) {
-    console.error('Gemini proxy error:', err);
+    console.error('AI proxy error:', err);
     return res.status(500).json({ error: 'Errore server: ' + err.message });
   }
 }

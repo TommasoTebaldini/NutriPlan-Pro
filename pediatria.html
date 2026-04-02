@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Nutrizione Pediatrica — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.ped-tab{padding:9px 16px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ped-tab:hover{background:rgba(139,92,246,.12);color:#8B5CF6}
+.ped-tab.active{background:white;color:#5B21B6;box-shadow:0 2px 8px rgba(0,0,0,.12);font-weight:700}
+.ped-panel{display:none}.ped-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:26px;font-weight:700;color:#8B5CF6}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus{border-color:#8B5CF6}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#EDE9FE;border-left:3px solid #8B5CF6;color:#3B0764}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.food-table th{background:#3B0764;color:#DDD6FE;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.food-table th:first-child{text-align:left}
+.food-table td{padding:7px 12px;border-bottom:1px solid #EDE9FE;text-align:center;vertical-align:middle}
+.food-table td:first-child{text-align:left;font-weight:600}
+.food-table tbody tr:nth-child(even){background:#FAF5FF}
+.food-table tr:hover td{background:#DDD6FE}
+.percentile-bar{height:24px;border-radius:4px;background:#E2E8F0;position:relative;margin:8px 0;overflow:hidden}
+.percentile-fill{height:100%;border-radius:4px;transition:width .4s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;font-weight:700;color:white}
+.pzone-green{background:linear-gradient(90deg,#10B981,#059669)}
+.pzone-yellow{background:linear-gradient(90deg,#F59E0B,#D97706)}
+.pzone-red{background:linear-gradient(90deg,#EF4444,#DC2626)}
+.growth-chart{background:white;border-radius:8px;border:1px solid var(--border);padding:14px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item active" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>👶 Nutrizione Pediatrica — Crescita & Fabbisogni</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FAF5FF;border-radius:14px">
+  <button class="ped-tab active" onclick="showPed('curve')">📈 Curve di Crescita</button>
+  <button class="ped-tab" onclick="showPed('fabbisogni')">⚡ Fabbisogni</button>
+  <button class="ped-tab" onclick="showPed('allattamento')">🤱 Allattamento & Svezzamento</button>
+  <button class="ped-tab" onclick="showPed('formule')">🧮 Formule Cliniche</button>
+  <button class="ped-tab" onclick="showPed('patologie')">🏥 Patologie Pediatriche</button>
+  <button class="ped-tab" onclick="showPed('lg')">📚 Linee Guida</button>
+</div>
+
+<!-- CURVE DI CRESCITA -->
+<div class="ped-panel active" id="tab-curve">
+  <div class="alert-info alert-box">
+    Percentili calcolati su <b>dati OMS (WHO Child Growth Standards 2006)</b> per 0-5 anni e <b>WHO Reference 2007</b> per 5-19 anni. Ogni bambino segue la propria curva: un singolo punto è meno informativo della tendenza nel tempo.
+  </div>
+
+  <div class="calc-box">
+    <h3>📏 Calcola Percentile di Crescita (OMS)</h3>
+    <div class="grid-3" style="margin-bottom:14px">
+      <div class="nf"><label>Età</label>
+        <div style="display:flex;gap:6px">
+          <input type="number" id="p-anni" placeholder="anni" min="0" max="19" style="flex:1" oninput="calcPercentile()">
+          <input type="number" id="p-mesi" placeholder="mesi" min="0" max="11" style="flex:1" oninput="calcPercentile()">
+        </div>
+      </div>
+      <div class="nf"><label>Sesso</label>
+        <select id="p-sesso" onchange="calcPercentile()">
+          <option value="M">Maschio</option>
+          <option value="F">Femmina</option>
+        </select>
+      </div>
+      <div class="nf"><label>Peso (kg)</label><input type="number" id="p-peso" placeholder="es. 18.5" step="0.1" oninput="calcPercentile()"></div>
+      <div class="nf"><label>Altezza (cm)</label><input type="number" id="p-altezza" placeholder="es. 110" step="0.5" oninput="calcPercentile()"></div>
+      <div class="nf"><label>Circonferenza cranica (cm)</label><input type="number" id="p-cc" placeholder="es. 50" step="0.5" oninput="calcPercentile()"></div>
+    </div>
+
+    <div id="perc-result" style="display:none">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:16px" id="perc-cards"></div>
+      <div id="perc-interpretation" class="alert-box"></div>
+      <div id="perc-flags"></div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📊 Tabella Valori Medi di Riferimento (OMS)</h3>
+    <table class="food-table">
+      <thead><tr><th>Età</th><th>Peso M (kg)</th><th>Peso F (kg)</th><th>Altezza M (cm)</th><th>Altezza F (cm)</th><th>BMI M</th><th>BMI F</th></tr></thead>
+      <tbody>
+        <tr><td>Nascita</td><td>3.3</td><td>3.2</td><td>49.9</td><td>49.1</td><td>13.4</td><td>13.3</td></tr>
+        <tr><td>3 mesi</td><td>6.0</td><td>5.4</td><td>61.4</td><td>59.8</td><td>15.9</td><td>15.2</td></tr>
+        <tr><td>6 mesi</td><td>7.9</td><td>7.3</td><td>67.6</td><td>65.7</td><td>17.3</td><td>16.9</td></tr>
+        <tr><td>12 mesi</td><td>9.6</td><td>9.0</td><td>75.7</td><td>74.0</td><td>16.7</td><td>16.4</td></tr>
+        <tr><td>2 anni</td><td>12.2</td><td>11.5</td><td>87.8</td><td>86.4</td><td>15.7</td><td>15.4</td></tr>
+        <tr><td>3 anni</td><td>14.3</td><td>13.9</td><td>96.1</td><td>95.1</td><td>15.5</td><td>15.4</td></tr>
+        <tr><td>4 anni</td><td>16.3</td><td>15.9</td><td>103.3</td><td>102.7</td><td>15.3</td><td>15.1</td></tr>
+        <tr><td>5 anni</td><td>18.3</td><td>17.9</td><td>110.0</td><td>109.4</td><td>15.1</td><td>15.0</td></tr>
+        <tr><td>6 anni</td><td>20.7</td><td>20.2</td><td>116.0</td><td>115.0</td><td>15.3</td><td>15.3</td></tr>
+        <tr><td>8 anni</td><td>25.6</td><td>25.2</td><td>127.3</td><td>126.6</td><td>15.8</td><td>15.7</td></tr>
+        <tr><td>10 anni</td><td>31.9</td><td>32.5</td><td>137.8</td><td>138.6</td><td>16.6</td><td>16.9</td></tr>
+        <tr><td>12 anni</td><td>39.9</td><td>41.5</td><td>149.1</td><td>151.5</td><td>17.8</td><td>18.0</td></tr>
+        <tr><td>14 anni</td><td>50.8</td><td>49.4</td><td>162.4</td><td>158.7</td><td>19.2</td><td>19.6</td></tr>
+        <tr><td>16 anni</td><td>60.2</td><td>53.4</td><td>171.3</td><td>162.1</td><td>20.5</td><td>20.4</td></tr>
+        <tr><td>18 anni</td><td>66.0</td><td>56.0</td><td>174.0</td><td>163.0</td><td>21.8</td><td>21.1</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FABBISOGNI -->
+<div class="ped-panel" id="tab-fabbisogni">
+  <div class="calc-box">
+    <h3>⚡ Calcolatore Fabbisogno Energetico Pediatrico</h3>
+    <div class="grid-3">
+      <div class="nf"><label>Età (anni e mesi)</label>
+        <div style="display:flex;gap:6px">
+          <input type="number" id="f-anni" placeholder="anni" min="0" max="18" style="flex:1" oninput="calcFabb()">
+          <input type="number" id="f-mesi" placeholder="mesi" min="0" max="11" style="flex:1" oninput="calcFabb()">
+        </div>
+      </div>
+      <div class="nf"><label>Peso (kg)</label><input type="number" id="f-peso" placeholder="es. 20" step="0.5" oninput="calcFabb()"></div>
+      <div class="nf"><label>Altezza (cm)</label><input type="number" id="f-altezza" placeholder="es. 115" oninput="calcFabb()"></div>
+      <div class="nf"><label>Sesso</label><select id="f-sesso" onchange="calcFabb()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+      <div class="nf"><label>Livello attività</label>
+        <select id="f-laf" onchange="calcFabb()">
+          <option value="1.2">Sedentario (malato/ospedalizzato)</option>
+          <option value="1.4" selected>Bassa attività</option>
+          <option value="1.6">Moderata attività</option>
+          <option value="1.8">Alta attività (sport)</option>
+          <option value="2.0">Molto attivo (atleta)</option>
+        </select>
+      </div>
+      <div class="nf"><label>Condizione clinica</label>
+        <select id="f-cond" onchange="calcFabb()">
+          <option value="1.0">Sano</option>
+          <option value="1.1">Leggero stress (infezione minore)</option>
+          <option value="1.2">Stress moderato (chirurgia elettiva)</option>
+          <option value="1.3">Stress severo (sepsi, trauma)</option>
+          <option value="1.5">Grandi ustioni, cachessia</option>
+        </select>
+      </div>
+    </div>
+    <div id="fabb-result" style="display:none;margin-top:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
+        <div style="background:#EDE9FE;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">MB (Schofield)</div><div class="result-big" id="fr-mb" style="font-size:20px">—</div></div>
+        <div style="background:#EDE9FE;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Kcal/die</div><div class="result-big" id="fr-kcal">—</div></div>
+        <div style="background:#EFF6FF;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Proteine</div><div class="result-big" id="fr-prot" style="color:#3B82F6;font-size:18px">—</div></div>
+        <div style="background:#FEF3C7;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">CHO</div><div class="result-big" id="fr-cho" style="color:#D97706;font-size:18px">—</div></div>
+        <div style="background:#FFF7ED;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Grassi</div><div class="result-big" id="fr-grassi" style="color:#F97316;font-size:18px">—</div></div>
+        <div style="background:#F0FDF4;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Acqua min.</div><div class="result-big" id="fr-acqua" style="color:#15803D;font-size:18px">—</div></div>
+      </div>
+      <div id="fabb-larn" style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:12.5px;line-height:1.8"></div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📊 Fabbisogni LARN 2014 per Età</h3>
+    <table class="food-table">
+      <thead><tr><th>Età</th><th>Kcal/kg</th><th>Proteine (g/kg)</th><th>Calcio (mg)</th><th>Ferro (mg)</th><th>Vit D (µg)</th><th>Acqua (mL/kg)</th></tr></thead>
+      <tbody>
+        <tr><td>0-6 mesi</td><td>108-105</td><td>1.52 (latte)</td><td>200</td><td>0.3</td><td>10</td><td>150</td></tr>
+        <tr><td>6-12 mesi</td><td>98-95</td><td>1.1-1.3</td><td>260</td><td>11</td><td>10</td><td>130</td></tr>
+        <tr><td>1-3 anni</td><td>83</td><td>1.1</td><td>700</td><td>8</td><td>15</td><td>115</td></tr>
+        <tr><td>4-6 anni</td><td>77</td><td>0.9</td><td>900</td><td>11</td><td>15</td><td>100</td></tr>
+        <tr><td>7-10 anni</td><td>67</td><td>0.9</td><td>1100</td><td>11</td><td>15</td><td>85</td></tr>
+        <tr><td>11-14 M</td><td>56</td><td>1.0</td><td>1300</td><td>13</td><td>15</td><td>70</td></tr>
+        <tr><td>11-14 F</td><td>49</td><td>1.0</td><td>1300</td><td>18</td><td>15</td><td>70</td></tr>
+        <tr><td>15-17 M</td><td>50</td><td>0.9</td><td>1300</td><td>13</td><td>15</td><td>65</td></tr>
+        <tr><td>15-17 F</td><td>41</td><td>0.9</td><td>1300</td><td>18</td><td>15</td><td>55</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ALLATTAMENTO & SVEZZAMENTO -->
+<div class="ped-panel" id="tab-allattamento">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🤱 Allattamento al Seno</h3>
+      <div class="alert-info alert-box">Esclusivo fino a 6 mesi. Continuare fino a 24 mesi+ se possibile (OMS). Il latte materno fornisce tutti i nutrienti necessari tranne la vitamina D.</div>
+      <table class="food-table">
+        <thead><tr><th>Aspetto</th><th>Indicazione</th></tr></thead>
+        <tbody>
+          <tr><td><b>Frequenza poppate</b></td><td>8-12 volte/24h (neonato). Poi su richiesta.</td></tr>
+          <tr><td><b>Vit D supplemento</b></td><td><b>400 UI/die</b> dal 1° giorno di vita (tutti i neonati allattati)</td></tr>
+          <tr><td><b>Vit K neonato</b></td><td>1 mg im alla nascita (prevenzione emorragia)</td></tr>
+          <tr><td><b>Ferro</b></td><td>Pretermine e neonati a rischio: 2 mg/kg/die dal 1° mese</td></tr>
+          <tr><td><b>Fabbisogno latte</b></td><td>150-200 mL/kg/die (0-3 mesi), poi 120-150 mL/kg</td></tr>
+          <tr><td><b>Dieta madre</b></td><td>+500 kcal/die, +25g proteine, DHA 200mg/die, iodio 200µg/die</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>🍼 Formula Lattea</h3>
+      <table class="food-table">
+        <thead><tr><th>Tipo</th><th>Indicazione</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td><b>Formula 1 (inizio)</b></td><td>0-6 mesi</td><td>Base siero + caseina</td></tr>
+          <tr><td><b>Formula 2 (proseguimento)</b></td><td>6-12 mesi</td><td>Con svezzamento</td></tr>
+          <tr><td><b>Formula 3 (crescita)</b></td><td>1-3 anni</td><td>Opzionale</td></tr>
+          <tr><td><b>Formula idrolisata</b></td><td>APLV rischio</td><td>pHF o eHF</td></tr>
+          <tr><td><b>Formula aminoacidica</b></td><td>APLV grave</td><td>Neocate, Alfamino</td></tr>
+          <tr><td><b>Formula soia</b></td><td>Galattosemia</td><td>Non in &lt;6 mesi</td></tr>
+          <tr><td><b>Formula AR</b></td><td>Rigurgito</td><td>Amido di riso/carruba</td></tr>
+          <tr><td><b>Formula prematura</b></td><td>PN &lt;1500g</td><td>Arricchita calorie</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🥣 Svezzamento — Schema Progressivo (ESPGHAN 2017 + SIP 2022)</h3>
+    <table class="food-table">
+      <thead><tr><th>Età</th><th>Alimenti introdotti</th><th>Consistenza</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><b>0-6 mesi</b></td><td>Solo latte materno o formula</td><td>Liquido</td><td>Nessun altro alimento</td></tr>
+        <tr><td><b>4-6 mesi</b> (se necessario)</td><td>Cereali senza glutine, verdure, frutta</td><td>Purea liscia</td><td>Non prima di 4 mesi compiuti. OMS: aspettare 6 mesi</td></tr>
+        <tr><td><b>6 mesi</b></td><td>Verdure, frutta, cereali, carne, pesce, legumi, uovo, glutine</td><td>Purea/passato</td><td>Glutine: introdurre a 6 mesi (reduce T1D e celiachia)</td></tr>
+        <tr><td><b>7-8 mesi</b></td><td>Tutti i gruppi alimentari. Formaggio fresco.</td><td>Purea grumosa</td><td>Pesci allergizzanti: introdurre normalmente</td></tr>
+        <tr><td><b>9-11 mesi</b></td><td>Tutto. Introdurre finger food.</td><td>Morbido a pezzetti</td><td>Arachidi: introdurre presto (previene allergia, LEAP study)</td></tr>
+        <tr><td><b>12+ mesi</b></td><td>Dieta familiare. Latte vaccino intero.</td><td>Come adulto</td><td>Evitare: miele (&lt;12m), sale aggiunto, zucchero, miele</td></tr>
+      </tbody>
+    </table>
+    <div class="alert-warn alert-box" style="margin-top:10px">
+      <b>⚠️ Non dare mai prima di 12 mesi:</b> Miele (botulismo), latte vaccino come bevanda principale, frutta secca intera (soffocamento), cibi duri, pesce spada/tonno (mercurio).
+    </div>
+  </div>
+</div>
+
+<!-- FORMULE CLINICHE -->
+<div class="ped-panel" id="tab-formule">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🧮 Formule per il Metabolismo Basale (MB)</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="fm-peso" placeholder="es. 20" step="0.5" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="fm-alt" placeholder="es. 115" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="fm-eta" placeholder="es. 6" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Sesso</label><select id="fm-sesso" onchange="calcFormule()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+      <div id="formule-result" style="display:none">
+        <table class="food-table" style="margin-top:10px">
+          <thead><tr><th>Formula</th><th>Età applicabile</th><th>MB (kcal/die)</th></tr></thead>
+          <tbody id="formule-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>💧 Fabbisogno Idrico Pediatrico</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="idro-peso" placeholder="es. 25" step="0.5" oninput="calcIdro()"></div>
+      <div id="idro-result" style="display:none;margin-top:10px">
+        <div style="background:#EDE9FE;border-radius:8px;padding:14px;margin-bottom:10px">
+          <div style="font-size:12px;color:var(--slate-l)">Fabbisogno idrico (Holiday-Segar)</div>
+          <div class="result-big" id="idro-ml">— mL/die</div>
+          <div id="idro-formula" style="font-size:12px;color:var(--slate-l);margin-top:4px"></div>
+        </div>
+        <table class="food-table">
+          <thead><tr><th>Via</th><th>Volume</th></tr></thead>
+          <tbody id="idro-tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;font-size:12.5px;color:var(--slate-m)">
+        <b>Formula di Holiday-Segar:</b><br>
+        • Per i primi 10 kg: 100 mL/kg<br>
+        • Per kg 11-20: + 50 mL/kg<br>
+        • Per ogni kg oltre 20: + 20 mL/kg
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>📊 Fattori di Stress (Pediatrico)</h3>
+    <table class="food-table">
+      <thead><tr><th>Condizione clinica</th><th>Fattore stress</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Normale crescita/manutenzione</td><td>1.0</td><td>Base</td></tr>
+        <tr><td>Malnutrizione in recupero</td><td>1.2-1.5</td><td>Refeeding graduale!</td></tr>
+        <tr><td>Infezione minore, febbre</td><td>+13% per ogni °C sopra 37°C</td><td>Es: 38°C = ×1.13</td></tr>
+        <tr><td>Chirurgia elettiva</td><td>1.1-1.2</td><td>Dipende dall'entità</td></tr>
+        <tr><td>Trauma cranico</td><td>1.3-1.4</td><td>Prima settimana</td></tr>
+        <tr><td>Sepsi grave</td><td>1.3-1.5</td><td>PICU</td></tr>
+        <tr><td>Ustioni (&lt;30% BSA)</td><td>1.5-1.7</td><td>Proteine 2.5-3g/kg</td></tr>
+        <tr><td>Ustioni (&gt;30% BSA)</td><td>1.7-2.0</td><td>Nutrizione enterale continua</td></tr>
+        <tr><td>Fibrosi Cistica</td><td>1.2-1.5 (adulti 1.5-2.0)</td><td>Obiettivo BMI ≥22 F, ≥23 M</td></tr>
+        <tr><td>Cardiopatia congenita</td><td>1.3-1.5</td><td>Aumentare densità calorica</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PATOLOGIE PEDIATRICHE -->
+<div class="ped-panel" id="tab-patologie">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🏥 Malnutrizione Pediatrica (ESPGHAN/ASPEN)</h3>
+      <div class="alert-info alert-box">Classificazione OMS basata su z-score (deviazioni standard dalla mediana).</div>
+      <table class="food-table">
+        <thead><tr><th>Indicatore</th><th>Lieve</th><th>Moderata</th><th>Grave</th></tr></thead>
+        <tbody>
+          <tr><td>Peso/Età (z-score)</td><td>-1 a -2</td><td>-2 a -3</td><td>&lt; -3</td></tr>
+          <tr><td>Altezza/Età (z-score) — stunting</td><td>-1 a -2</td><td>-2 a -3</td><td>&lt; -3</td></tr>
+          <tr><td>Peso/Altezza — wasting</td><td>-1 a -2</td><td>-2 a -3</td><td>&lt; -3 (marasma)</td></tr>
+          <tr><td>BMI/Età (z-score)</td><td>-1 a -2</td><td>-2 a -3</td><td>&lt; -3</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-warn alert-box" style="margin-top:10px">
+        <b>Refeeding syndrome:</b> In malnutrizione severa (BMI/età &lt; -3 SD), aumentare le calorie lentamente (max 20% ogni 2 giorni). Monitorare: fosforo, potassio, magnesio.
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>⚖️ Sovrappeso e Obesità Pediatrica</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px"><b>IOTF/OMS:</b> BMI ≥ 85° percentile = sovrappeso. BMI ≥ 95° percentile = obesità.</div>
+        <div style="padding:8px;background:#EDE9FE;border-radius:8px;margin-bottom:8px"><b>Obiettivo terapeutico:</b> Non perdita di peso in età prescolare (tranne casi gravi), ma rallentamento crescita del peso mentre l'altezza aumenta. In adolescenti: calo ponderale graduale max 0.5 kg/settimana.</div>
+        <div style="padding:8px;background:#ECFDF5;border-radius:8px"><b>Approccio:</b> Riduzione zuccheri semplici e bibite, aumento verdure e frutta, regolarità dei pasti, colazione obbligatoria, riduzione sedentarietà a max 2h/die schermo.</div>
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🧬 Patologie con Necessità Dietetiche Specifiche</h3>
+    <table class="food-table">
+      <thead><tr><th>Patologia</th><th>Intervento nutrizionale</th><th>Monitoraggio</th></tr></thead>
+      <tbody>
+        <tr><td><b>Celiachia pediatrica</b></td><td>Dieta senza glutine assoluta. Integrare Ca, Vit D, Fe, folati.</td><td>Anti-tTG ogni 6 mesi → poi annuale. Curva crescita.</td></tr>
+        <tr><td><b>Fenilchetonuria (PKU)</b></td><td>Fenilalanina &lt;200-400 µmol/L. Formula aminoacidica senza Phe.</td><td>Phe ematica 2 volte/settimana (neonato), settimanale (poi).</td></tr>
+        <tr><td><b>Galattosemia classica</b></td><td>Formula soia o idrolisata. Nessun latte, latticini o prodotti con galattosio.</td><td>Galattosio ematico. Monitorare sviluppo neurologico.</td></tr>
+        <tr><td><b>APLV (Allergia PLV)</b></td><td>Eliminazione totale PLV. Formula idrolisata o aminoacidica. Ca supplemento.</td><td>Reintroduzione a 12-18 mesi (oral tolerance test).</td></tr>
+        <tr><td><b>Diabete T1 pediatrico</b></td><td>CHO counting + PERT insulinica. Target HbA1c &lt;7% (ISPAD 2022).</td><td>HbA1c ogni 3 mesi. Crescita e curva ponderale.</td></tr>
+        <tr><td><b>Fibrosi Cistica</b></td><td>Ipercalorica (120-150% RDA). PERT. Vitamine ADEK. Sale in estate.</td><td>Peso, altezza mensile. Vitamina D, OGTT.</td></tr>
+        <tr><td><b>Malattia di Crohn pediatrica</b></td><td>NE esclusiva (Modulen) per 6-8 settimane per indurre remissione.</td><td>PCR, albumina, curva crescita, densità ossea.</td></tr>
+        <tr><td><b>Epilessia farmacoresistente</b></td><td>Dieta chetogenica (4:1 o 3:1 grassi:CHO+prot). KetoCal.</td><td>Chetoni urine, glicemia, EEG ogni 3 mesi.</td></tr>
+        <tr><td><b>Cardiopatia congenita</b></td><td>Aumentare densità calorica (formule arricchite). Limitare volumi se scompenso.</td><td>Peso, edemi, bilancio idrico.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- LINEE GUIDA -->
+<div class="ped-panel" id="tab-lg">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📚 Linee Guida Pediatriche</h3>
+      <div style="font-size:13px;line-height:2">
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #8B5CF6;margin-bottom:10px">
+          <div style="font-weight:700;color:#3B0764;margin-bottom:4px">ESPGHAN 2017 — Nutrizione Complementare</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Linee guida europee sull'introduzione degli alimenti complementari nel lattante.</div>
+          <a href="https://www.espghan.org/knowledge-center/publications/infant-nutrition" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#8B5CF6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida ESPGHAN →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #7C3AED;margin-bottom:10px">
+          <div style="font-weight:700;color:#3B0764;margin-bottom:4px">OMS — Child Growth Standards</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Curve di crescita WHO di riferimento internazionale 0-19 anni.</div>
+          <a href="https://www.who.int/tools/child-growth-standards" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#7C3AED;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 WHO Growth Standards →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #6D28D9;margin-bottom:10px">
+          <div style="font-weight:700;color:#3B0764;margin-bottom:4px">ISPAD 2022 — Diabete Pediatrico</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Linee guida globali per la gestione del diabete in bambini e adolescenti.</div>
+          <a href="https://www.ispad.org/page/ISPADGuidelines2022" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#6D28D9;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida ISPAD →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #5B21B6;margin-bottom:10px">
+          <div style="font-weight:700;color:#3B0764;margin-bottom:4px">LARN 2014 — Livelli di Assunzione (Italia)</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Riferimento italiano per i fabbisogni nutrizionali in tutte le fasce d'età.</div>
+          <a href="https://sinu.it/larn/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#5B21B6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 LARN SINU 2014 →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #4C1D95">
+          <div style="font-weight:700;color:#3B0764;margin-bottom:4px">SIP/SIPPS 2022 — Divezzamento</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Raccomandazioni italiane sull'alimentazione complementare e lo svezzamento.</div>
+          <a href="https://www.sipps.it" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#4C1D95;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida SIP/SIPPS →</a>
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🎯 Red Flags — Quando Riferire</h3>
+      <div style="font-size:13px;line-height:2">
+        <div style="padding:8px;background:#FEF2F2;border-radius:8px;margin-bottom:6px">🔴 Peso/altezza &lt; 3° percentile o calo ≥ 2 percentili in 3-6 mesi</div>
+        <div style="padding:8px;background:#FEF2F2;border-radius:8px;margin-bottom:6px">🔴 Mancata crescita staturale per 6+ mesi</div>
+        <div style="padding:8px;background:#FEF2F2;border-radius:8px;margin-bottom:6px">🔴 Albumina &lt;3.5 g/dL o perdita proteica</div>
+        <div style="padding:8px;background:#FEF2F2;border-radius:8px;margin-bottom:6px">🔴 Vomito persistente o diarrea &gt;4 settimane</div>
+        <div style="padding:8px;background:#FEF2F2;border-radius:8px;margin-bottom:6px">🔴 Rifiuto alimentare severo con perdita di peso</div>
+        <div style="padding:8px;background:#FEF2F2;border-radius:8px">🔴 BMI/età &gt;99° percentile con comorbilità</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+function showPed(id) {
+  document.querySelectorAll('.ped-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ped-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── WHO Growth Standards — z-score approximation tables ──
+// Based on WHO LMS parameters (simplified for key ages)
+// Returns approximate percentile given z-score
+function zToPercentile(z) {
+  if (z <= -3.0) return 0.1;
+  if (z <= -2.5) return 0.6;
+  if (z <= -2.0) return 2.3;
+  if (z <= -1.5) return 6.7;
+  if (z <= -1.0) return 15.9;
+  if (z <= -0.5) return 30.9;
+  if (z <= 0.0)  return 50.0;
+  if (z <= 0.5)  return 69.1;
+  if (z <= 1.0)  return 84.1;
+  if (z <= 1.5)  return 93.3;
+  if (z <= 2.0)  return 97.7;
+  if (z <= 2.5)  return 99.4;
+  return 99.9;
+}
+
+// WHO weight-for-age medians and SDs (simplified, key ages in months)
+const WHO_WEIGHT = {
+  M: {
+    0:{med:3.35,sd:0.43}, 3:{med:6.0,sd:0.67}, 6:{med:7.9,sd:0.78},
+    12:{med:9.6,sd:0.88}, 18:{med:10.9,sd:0.96}, 24:{med:12.2,sd:1.02},
+    36:{med:14.3,sd:1.19}, 48:{med:16.3,sd:1.34}, 60:{med:18.3,sd:1.53},
+    72:{med:20.5,sd:1.75}, 84:{med:22.9,sd:2.1}, 96:{med:25.3,sd:2.5},
+    108:{med:28.1,sd:3.1}, 120:{med:31.9,sd:4.0}, 132:{med:36.3,sd:5.1},
+    144:{med:41.2,sd:6.5}, 156:{med:46.8,sd:8.0}, 168:{med:53.3,sd:9.5},
+    180:{med:58.7,sd:10.5}, 192:{med:63.0,sd:11.0}, 204:{med:65.0,sd:11.5},
+    216:{med:66.0,sd:11.8}
+  },
+  F: {
+    0:{med:3.23,sd:0.40}, 3:{med:5.4,sd:0.58}, 6:{med:7.3,sd:0.68},
+    12:{med:9.0,sd:0.79}, 18:{med:10.2,sd:0.87}, 24:{med:11.5,sd:0.95},
+    36:{med:13.9,sd:1.18}, 48:{med:15.9,sd:1.37}, 60:{med:17.9,sd:1.60},
+    72:{med:20.2,sd:1.90}, 84:{med:22.6,sd:2.30}, 96:{med:25.2,sd:2.90},
+    108:{med:28.5,sd:3.7}, 120:{med:32.5,sd:4.8}, 132:{med:37.0,sd:6.2},
+    144:{med:41.5,sd:7.5}, 156:{med:46.0,sd:8.9}, 168:{med:49.4,sd:9.5},
+    180:{med:52.0,sd:9.8}, 192:{med:54.0,sd:10.0}, 204:{med:55.0,sd:10.0},
+    216:{med:56.0,sd:10.0}
+  }
+};
+
+const WHO_HEIGHT = {
+  M: {
+    0:{med:49.9,sd:1.89}, 3:{med:61.4,sd:1.98}, 6:{med:67.6,sd:2.01},
+    12:{med:75.7,sd:2.21}, 18:{med:82.3,sd:2.30}, 24:{med:87.8,sd:2.49},
+    36:{med:96.1,sd:2.74}, 48:{med:103.3,sd:2.97}, 60:{med:110.0,sd:3.17},
+    72:{med:116.0,sd:3.40}, 84:{med:121.7,sd:3.6}, 96:{med:127.3,sd:3.8},
+    108:{med:132.6,sd:4.1}, 120:{med:137.8,sd:4.4}, 132:{med:143.5,sd:5.0},
+    144:{med:149.1,sd:5.6}, 156:{med:155.5,sd:6.0}, 168:{med:162.4,sd:5.9},
+    180:{med:167.5,sd:5.5}, 192:{med:170.8,sd:5.2}, 204:{med:172.9,sd:5.0},
+    216:{med:174.0,sd:5.0}
+  },
+  F: {
+    0:{med:49.1,sd:1.86}, 3:{med:59.8,sd:1.90}, 6:{med:65.7,sd:1.92},
+    12:{med:74.0,sd:2.10}, 18:{med:80.7,sd:2.21}, 24:{med:86.4,sd:2.38},
+    36:{med:95.1,sd:2.70}, 48:{med:102.7,sd:2.89}, 60:{med:109.4,sd:3.10},
+    72:{med:115.0,sd:3.30}, 84:{med:121.0,sd:3.5}, 96:{med:126.6,sd:3.7},
+    108:{med:132.0,sd:4.1}, 120:{med:138.6,sd:4.6}, 132:{med:144.5,sd:5.1},
+    144:{med:151.5,sd:5.7}, 156:{med:156.0,sd:5.9}, 168:{med:158.7,sd:5.6},
+    180:{med:160.5,sd:5.4}, 192:{med:161.5,sd:5.3}, 204:{med:162.5,sd:5.2},
+    216:{med:163.0,sd:5.2}
+  }
+};
+
+function getClosestAge(table, ageMonths) {
+  const ages = Object.keys(table).map(Number);
+  return ages.reduce((a, b) => Math.abs(b - ageMonths) < Math.abs(a - ageMonths) ? b : a);
+}
+
+function calcPercentile() {
+  const anni = parseFloat(document.getElementById('p-anni').value) || 0;
+  const mesi_extra = parseFloat(document.getElementById('p-mesi').value) || 0;
+  const sesso = document.getElementById('p-sesso').value;
+  const peso = parseFloat(document.getElementById('p-peso').value);
+  const altezza = parseFloat(document.getElementById('p-altezza').value);
+  if ((!peso && !altezza) || (anni === 0 && mesi_extra === 0)) return;
+
+  const ageMonths = Math.round(anni * 12 + mesi_extra);
+  const cards = document.getElementById('perc-cards');
+  const interp = document.getElementById('perc-interpretation');
+  const flags = document.getElementById('perc-flags');
+  let cardsHTML = '';
+  let issues = [];
+
+  function getPerc(table, value) {
+    const closest = getClosestAge(table[sesso], ageMonths);
+    const {med, sd} = table[sesso][closest];
+    const z = (value - med) / sd;
+    return {z: Math.round(z * 10) / 10, perc: zToPercentile(z)};
+  }
+
+  if (peso) {
+    const {z, perc} = getPerc(WHO_WEIGHT, peso);
+    const color = perc < 3 ? '#DC2626' : perc > 97 ? '#F97316' : perc < 15 ? '#F59E0B' : '#10B981';
+    cardsHTML += `<div style="background:white;border-radius:10px;border:2px solid ${color};padding:14px;text-align:center">
+      <div style="font-size:11.5px;color:var(--slate-l)">Peso/Età</div>
+      <div style="font-size:28px;font-weight:700;color:${color}">${r1(perc)}°</div>
+      <div style="font-size:11px;color:var(--slate-l)">percentile (z=${z})</div>
+    </div>`;
+    if (perc < 3) issues.push('Peso molto basso (&lt;3° perc) — valutare malnutrizione');
+    if (perc > 97) issues.push('Peso molto elevato (&gt;97° perc) — valutare eccesso ponderale');
+  }
+
+  if (altezza) {
+    const {z, perc} = getPerc(WHO_HEIGHT, altezza);
+    const color = perc < 3 ? '#DC2626' : perc > 97 ? '#F97316' : perc < 15 ? '#F59E0B' : '#10B981';
+    cardsHTML += `<div style="background:white;border-radius:10px;border:2px solid ${color};padding:14px;text-align:center">
+      <div style="font-size:11.5px;color:var(--slate-l)">Altezza/Età</div>
+      <div style="font-size:28px;font-weight:700;color:${color}">${r1(perc)}°</div>
+      <div style="font-size:11px;color:var(--slate-l)">percentile (z=${z})</div>
+    </div>`;
+    if (perc < 3) issues.push('Statura molto bassa — possibile stunting, valutare causa');
+  }
+
+  if (peso && altezza) {
+    const bmi = peso / (altezza / 100) ** 2;
+    // BMI percentile approximation using z-score with age-specific reference
+    const ageYears = ageMonths / 12;
+    let bmiMed, bmiSd;
+    if (sesso === 'M') {
+      bmiMed = 13.4 + ageYears * 0.35;
+      bmiSd = 1.5 + ageYears * 0.08;
+    } else {
+      bmiMed = 13.3 + ageYears * 0.38;
+      bmiSd = 1.4 + ageYears * 0.09;
+    }
+    const zBMI = (bmi - bmiMed) / bmiSd;
+    const percBMI = zToPercentile(zBMI);
+    const color = percBMI < 3 ? '#DC2626' : percBMI > 95 ? '#F97316' : percBMI > 85 ? '#F59E0B' : '#10B981';
+    cardsHTML += `<div style="background:white;border-radius:10px;border:2px solid ${color};padding:14px;text-align:center">
+      <div style="font-size:11.5px;color:var(--slate-l)">BMI/Età</div>
+      <div style="font-size:28px;font-weight:700;color:${color}">${r1(percBMI)}°</div>
+      <div style="font-size:11px;color:var(--slate-l)">BMI = ${r1(bmi)}</div>
+    </div>`;
+    if (percBMI > 95) issues.push('BMI/età &gt;95° percentile — Obesità secondo IOTF/OMS');
+    else if (percBMI > 85) issues.push('BMI/età &gt;85° percentile — Sovrappeso');
+    else if (percBMI < 3) issues.push('BMI/età &lt;3° percentile — Sottopeso, valutare stato nutrizionale');
+  }
+
+  cards.innerHTML = cardsHTML;
+  document.getElementById('perc-result').style.display = 'block';
+
+  if (issues.length) {
+    flags.innerHTML = issues.map(i => `<div class="alert-warn alert-box">⚠️ ${i}</div>`).join('');
+    interp.className = 'alert-box alert-warn';
+    interp.innerHTML = '<b>Attenzione clinica richiesta:</b> vedere segnalazioni sotto.';
+  } else {
+    flags.innerHTML = '';
+    interp.className = 'alert-box';
+    interp.style.cssText = 'background:#ECFDF5;border-left:3px solid #10B981;color:#064E3B';
+    interp.innerHTML = '✅ <b>Crescita nella norma.</b> Continuare il monitoraggio periodico.';
+  }
+}
+
+function calcFabb() {
+  const anni = parseFloat(document.getElementById('f-anni').value) || 0;
+  const mesiExtra = parseFloat(document.getElementById('f-mesi').value) || 0;
+  const peso = parseFloat(document.getElementById('f-peso').value);
+  const alt = parseFloat(document.getElementById('f-altezza').value);
+  const sesso = document.getElementById('f-sesso').value;
+  const laf = parseFloat(document.getElementById('f-laf').value);
+  const stress = parseFloat(document.getElementById('f-cond').value);
+  if (!peso || anni === 0) return;
+  const eta = anni + mesiExtra / 12;
+
+  // Schofield formula per MB
+  let mb;
+  if (sesso === 'M') {
+    if (eta < 3) mb = 0.167 * peso + 15.174 * (alt/100 || 1.0) - 617.6;
+    else if (eta < 10) mb = 19.59 * peso + 1.303 * (alt || 110) - 414.9;
+    else if (eta < 18) mb = 16.25 * peso + 1.372 * (alt || 160) - 515.5;
+    else mb = 15.4 * peso - 27 * (alt/100 || 1.7) + 717;
+    if (mb < 0) mb = 60 * peso; // fallback
+  } else {
+    if (eta < 3) mb = 16.252 * peso + 10.232 * (alt/100 || 0.9) - 413.5;
+    else if (eta < 10) mb = 16.969 * peso + 1.618 * (alt || 105) - 371.2;
+    else if (eta < 18) mb = 8.365 * peso + 4.65 * (alt/100 || 1.5) * 100 - 200; // approx
+    else mb = 13.3 * peso + 334 * (alt/100 || 1.6) + 35;
+    if (mb < 0) mb = 55 * peso;
+  }
+
+  const kcal = Math.round(mb * laf * stress);
+  const protG = Math.round(peso * (eta < 1 ? 2.0 : eta < 4 ? 1.1 : eta < 10 ? 0.95 : 1.0));
+  const choG = Math.round(kcal * 0.50 / 4);
+  const grassiG = Math.round(kcal * 0.35 / 9);
+  // Holiday-Segar water
+  let water;
+  if (peso <= 10) water = peso * 100;
+  else if (peso <= 20) water = 1000 + (peso - 10) * 50;
+  else water = 1500 + (peso - 20) * 20;
+
+  document.getElementById('fr-mb').textContent = Math.round(mb) + ' kcal';
+  document.getElementById('fr-kcal').textContent = kcal.toLocaleString();
+  document.getElementById('fr-prot').textContent = protG + 'g';
+  document.getElementById('fr-cho').textContent = choG + 'g';
+  document.getElementById('fr-grassi').textContent = grassiG + 'g';
+  document.getElementById('fr-acqua').textContent = Math.round(water / 100) * 100 + ' mL';
+  document.getElementById('fabb-larn').innerHTML = `
+    <b>Riferimento LARN 2014:</b> Età ${anni} anni → 
+    Kcal/kg: ~${eta < 1 ? 105 : eta < 4 ? 83 : eta < 7 ? 77 : 67} | 
+    Proteine: ~${eta < 1 ? 1.1 : 0.9}g/kg/die | 
+    Calcio: ${eta < 1 ? 260 : eta < 4 ? 700 : eta < 7 ? 900 : 1100}mg | 
+    Ferro: ${sesso === 'F' && eta >= 11 ? 18 : eta < 1 ? 11 : 8}mg/die
+  `;
+  document.getElementById('fabb-result').style.display = 'block';
+}
+
+function calcFormule() {
+  const peso = parseFloat(document.getElementById('fm-peso').value);
+  const alt = parseFloat(document.getElementById('fm-alt').value);
+  const eta = parseFloat(document.getElementById('fm-eta').value);
+  const sesso = document.getElementById('fm-sesso').value;
+  if (!peso || !eta) return;
+
+  const calcoli = [];
+
+  // Schofield
+  let sch;
+  if (sesso === 'M') {
+    if (eta < 3) sch = 0.167 * peso + 15.174 * ((alt||90)/100) - 617.6;
+    else if (eta < 10) sch = 19.59 * peso + 1.303 * (alt||110) - 414.9;
+    else if (eta < 18) sch = 16.25 * peso + 1.372 * (alt||160) - 515.5;
+    else sch = 15.4 * peso - 27 * ((alt||170)/100) + 717;
+  } else {
+    if (eta < 3) sch = 16.252 * peso + 10.232 * ((alt||85)/100) - 413.5;
+    else if (eta < 10) sch = 16.969 * peso + 1.618 * (alt||105) - 371.2;
+    else if (eta < 18) sch = 8.365 * peso + 4.65 * ((alt||155)/100)*100 - 200;
+    else sch = 13.3 * peso + 334 * ((alt||160)/100) + 35;
+  }
+  if (sch > 0) calcoli.push({nome:'Schofield (WHO)', eta:'Tutte le età pediatriche', mb: Math.round(sch)});
+
+  // Harris-Benedict
+  let hb;
+  if (sesso === 'M') hb = 66.47 + 13.75 * peso + 5.0 * (alt||110) - 6.76 * eta;
+  else hb = 655.1 + 9.56 * peso + 1.85 * (alt||110) - 4.68 * eta;
+  calcoli.push({nome:'Harris-Benedict', eta:'Adolescenti/adulti', mb: Math.round(hb)});
+
+  // Mifflin-St Jeor
+  let msj;
+  if (sesso === 'M') msj = 10 * peso + 6.25 * (alt||110) - 5 * eta + 5;
+  else msj = 10 * peso + 6.25 * (alt||110) - 5 * eta - 161;
+  calcoli.push({nome:'Mifflin-St Jeor', eta:'≥16 anni', mb: Math.round(msj)});
+
+  // Rule of thumb
+  const rt = Math.round(peso * (eta < 2 ? 60 : eta < 6 ? 55 : eta < 10 ? 50 : 40));
+  calcoli.push({nome:'Regola pratica (kcal/kg)', eta:'Tutte', mb: rt});
+
+  const tbody = document.getElementById('formule-tbody');
+  tbody.innerHTML = calcoli.map(c => `<tr><td><b>${c.nome}</b></td><td>${c.eta}</td><td style="font-weight:700;color:#8B5CF6">${c.mb}</td></tr>`).join('');
+  document.getElementById('formule-result').style.display = 'block';
+}
+
+function calcIdro() {
+  const peso = parseFloat(document.getElementById('idro-peso').value);
+  if (!peso) return;
+  let ml, formula;
+  if (peso <= 10) {
+    ml = peso * 100;
+    formula = `${peso} kg × 100 = ${ml} mL`;
+  } else if (peso <= 20) {
+    ml = 1000 + (peso - 10) * 50;
+    formula = `1000 + (${peso}-10) × 50 = ${ml} mL`;
+  } else {
+    ml = 1500 + (peso - 20) * 20;
+    formula = `1500 + (${peso}-20) × 20 = ${ml} mL`;
+  }
+  document.getElementById('idro-ml').textContent = ml.toLocaleString() + ' mL/die';
+  document.getElementById('idro-formula').textContent = formula;
+  const tbody = document.getElementById('idro-tbody');
+  tbody.innerHTML = `
+    <tr><td>Acqua libera</td><td><b>${Math.round(ml * 0.6)} mL</b></td></tr>
+    <tr><td>Dalla dieta (alimenti)</td><td>~${Math.round(ml * 0.3)} mL</td></tr>
+    <tr><td>Metabolica</td><td>~${Math.round(ml * 0.1)} mL</td></tr>
+  `;
+  document.getElementById('idro-result').style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(false); } catch(e) {}
+});
+</script>
+</body>
+</html>

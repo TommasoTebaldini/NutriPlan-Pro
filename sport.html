@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Nutrizione Sportiva — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.sport-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#F0FDF4;border-radius:14px}
+.sport-tab{padding:9px 16px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.sport-tab:hover{background:rgba(16,185,129,.12);color:#10B981}
+.sport-tab.active{background:white;color:#065F46;box-shadow:0 2px 8px rgba(0,0,0,.12);font-weight:700}
+.sport-panel{display:none}.sport-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:26px;font-weight:700;color:#10B981}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus{border-color:#10B981}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#ECFDF5;border-left:3px solid #10B981;color:#064E3B}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.food-table th{background:#064E3B;color:#A7F3D0;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.food-table th:first-child{text-align:left}
+.food-table td{padding:7px 12px;border-bottom:1px solid #ECFDF5;text-align:center;vertical-align:middle}
+.food-table td:first-child{text-align:left;font-weight:600}
+.food-table tbody tr:nth-child(even){background:#F0FDF4}
+.food-table tr:hover td{background:#A7F3D0}
+.timing-box{border-radius:8px;padding:12px;margin-bottom:8px;font-size:13px;border-left:4px solid}
+.pre{border-color:#F59E0B;background:#FEF3C7}
+.during{border-color:#3B82F6;background:#EFF6FF}
+.post{border-color:#10B981;background:#ECFDF5}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item active" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🏃 Nutrizione Sportiva</h2>
+</div>
+
+<main id="main"><div class="page-content">
+
+<div class="sport-tabs">
+  <button class="sport-tab active" onclick="showSport('calc')">⚡ Calcolatore</button>
+  <button class="sport-tab" onclick="showSport('corsa')">🏃 Corsa</button>
+  <button class="sport-tab" onclick="showSport('nuoto')">🏊 Nuoto</button>
+  <button class="sport-tab" onclick="showSport('pesi')">🏋️ Palestra/Pesi</button>
+  <button class="sport-tab" onclick="showSport('ciclismo')">🚴 Ciclismo</button>
+  <button class="sport-tab" onclick="showSport('sport_team')">⚽ Sport di Squadra</button>
+  <button class="sport-tab" onclick="showSport('integr')">💊 Integratori</button>
+  <button class="sport-tab" onclick="showSport('lg')">📚 Linee Guida</button>
+</div>
+
+<!-- CALCOLATORE GENERALE -->
+<div class="sport-panel active" id="tab-calc">
+  <div class="calc-box">
+    <h3>⚡ Fabbisogno Energetico e Macronutrienti Sportivo</h3>
+    <div class="grid-3">
+      <div class="nf"><label>Peso (kg)</label><input type="number" id="s-peso" placeholder="es. 75" oninput="calcSport()"></div>
+      <div class="nf"><label>Altezza (cm)</label><input type="number" id="s-alt" placeholder="es. 178" oninput="calcSport()"></div>
+      <div class="nf"><label>Età (anni)</label><input type="number" id="s-eta" placeholder="es. 28" oninput="calcSport()"></div>
+      <div class="nf"><label>Sesso</label>
+        <select id="s-sesso" onchange="calcSport()">
+          <option value="M">Maschio</option><option value="F">Femmina</option>
+        </select>
+      </div>
+      <div class="nf"><label>Sport praticato</label>
+        <select id="s-sport" onchange="calcSport()">
+          <option value="corsa_rec">Corsa (ricreativa, &lt;40 km/sett)</option>
+          <option value="corsa_comp">Corsa (competitiva, &gt;60 km/sett)</option>
+          <option value="nuoto_rec">Nuoto (ricreativo, 2-3 h/sett)</option>
+          <option value="nuoto_comp">Nuoto (competitivo, &gt;5 h/sett)</option>
+          <option value="pesi_ipert">Palestra — Ipertrofia muscolare</option>
+          <option value="pesi_forza">Palestra — Forza massima</option>
+          <option value="pesi_def">Palestra — Definizione</option>
+          <option value="ciclismo_rec">Ciclismo (ricreativo)</option>
+          <option value="ciclismo_comp">Ciclismo (competitivo/granfondo)</option>
+          <option value="calcio">Calcio / Sport di squadra</option>
+          <option value="basket">Basket / Pallavolo</option>
+          <option value="tennis">Tennis / Padel</option>
+          <option value="crossfit">CrossFit / HIIT</option>
+          <option value="triathlon">Triathlon</option>
+          <option value="martial">Arti marziali / MMA</option>
+        </select>
+      </div>
+      <div class="nf"><label>Sessioni/settimana</label>
+        <select id="s-sess" onchange="calcSport()">
+          <option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5" selected>5</option>
+          <option value="6">6</option><option value="7">7</option>
+        </select>
+      </div>
+    </div>
+    <div id="sport-result" style="display:none;margin-top:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px">
+        <div style="background:#ECFDF5;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Kcal/die</div><div class="result-big" id="sr-kcal">—</div></div>
+        <div style="background:#EFF6FF;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Proteine</div><div class="result-big" id="sr-prot" style="color:#3B82F6">—</div><div style="font-size:10px;color:var(--slate-l)" id="sr-prot-g">—</div></div>
+        <div style="background:#FEF3C7;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">CHO</div><div class="result-big" id="sr-cho" style="color:#D97706">—</div><div style="font-size:10px;color:var(--slate-l)" id="sr-cho-g">—</div></div>
+        <div style="background:#FFF7ED;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Grassi</div><div class="result-big" id="sr-grassi" style="color:#F97316">—</div><div style="font-size:10px;color:var(--slate-l)" id="sr-grassi-g">—</div></div>
+        <div style="background:#FAF5FF;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Acqua min.</div><div class="result-big" id="sr-acqua" style="color:#7C3AED">—</div></div>
+      </div>
+      <div id="sr-timing" style="font-size:13px;line-height:1.8;background:#F8FAFC;border-radius:8px;padding:14px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CORSA -->
+<div class="sport-panel" id="tab-corsa">
+  <div class="alert-info alert-box"><b>🏃 Nutrizione per la Corsa</b> — Linee guida basate su IAAF 2019, ACSM 2016, IOC Consensus 2018</div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Fabbisogni per la Corsa</h3>
+      <table class="food-table">
+        <thead><tr><th>Parametro</th><th>Ricreativo (&lt;40 km/sett)</th><th>Competitivo (&gt;60 km/sett)</th></tr></thead>
+        <tbody>
+          <tr><td><b>Calorie</b></td><td>35-40 kcal/kg</td><td>45-60 kcal/kg</td></tr>
+          <tr><td><b>CHO</b></td><td>5-7 g/kg/die</td><td>7-10 g/kg/die</td></tr>
+          <tr><td><b>Proteine</b></td><td>1.4-1.6 g/kg/die</td><td>1.6-1.8 g/kg/die</td></tr>
+          <tr><td><b>Grassi</b></td><td>1.0-1.5 g/kg/die</td><td>1.0-1.5 g/kg/die</td></tr>
+          <tr><td><b>Ferro (F)</b></td><td>18 mg/die</td><td>22-25 mg/die (foot strike)</td></tr>
+          <tr><td><b>Calcio</b></td><td>1000-1200 mg/die</td><td>1200-1500 mg/die</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>⏱️ Timing Nutrizionale — Corsa</h3>
+      <div class="timing-box pre"><b>🟡 PRE-allenamento (2-4h prima):</b><br>Pasto ricco di CHO, basso contenuto di grassi e fibre. Es: pasta/riso + fonte proteica magra. 1-4 g/kg CHO.</div>
+      <div class="timing-box pre"><b>🟡 PRE-allenamento (30-60 min prima):</b><br>Snack leggero se necessario: banana, barretta ai cereali, gel. Max 0.5-1 g/kg CHO.</div>
+      <div class="timing-box during"><b>🔵 DURANTE (&gt;60 min):</b><br>30-60 g CHO/h (gel, gomme da masticare sportive, datteri, banana). Acqua: 400-800 mL/h. Sodio: 300-600 mg/h (gare &gt;1h).</div>
+      <div class="timing-box post"><b>🟢 POST-allenamento (entro 30 min):</b><br>20-30g proteine + 1-1.2 g/kg CHO. Es: Recovery shake, latte + banana, yogurt greco + riso.</div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🍽️ Schema Alimentare Tipo (Corsa, 65kg, 50 km/sett)</h3>
+    <table class="food-table">
+      <thead><tr><th>Pasto</th><th>Alimenti</th><th>CHO (g)</th><th>Prot (g)</th><th>Kcal</th></tr></thead>
+      <tbody>
+        <tr><td><b>Colazione (ore 7)</b></td><td>Fiocchi d'avena 80g + latte 200mL + miele 10g + banana</td><td>90</td><td>15</td><td>480</td></tr>
+        <tr><td><b>Pre-allenamento (ore 9.30)</b></td><td>Gallette di riso 3 pz + marmellata</td><td>30</td><td>2</td><td>140</td></tr>
+        <tr><td><b>Post-allenamento (ore 11)</b></td><td>Yogurt greco 200g + frutta + miele</td><td>25</td><td>22</td><td>230</td></tr>
+        <tr><td><b>Pranzo (ore 13)</b></td><td>Pasta 100g + tonno 80g + olio EVO 15g + insalata</td><td>80</td><td>30</td><td>520</td></tr>
+        <tr><td><b>Spuntino (ore 16)</b></td><td>Frutta fresca 200g + mandorle 20g</td><td>30</td><td>5</td><td>200</td></tr>
+        <tr><td><b>Cena (ore 20)</b></td><td>Pollo 150g + riso 80g + verdure + olio</td><td>70</td><td>35</td><td>520</td></tr>
+        <tr style="background:#ECFDF5;font-weight:700"><td>TOTALE</td><td></td><td>325g (5g/kg)</td><td>109g (1.7g/kg)</td><td>~2090 kcal</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- NUOTO -->
+<div class="sport-panel" id="tab-nuoto">
+  <div class="alert-info alert-box"><b>🏊 Nutrizione per il Nuoto</b> — Il nuoto è un esercizio ad alta intensità con ampia variabilità. L'acqua fredda aumenta il dispendio energetico e sopprime l'appetito.</div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Fabbisogni per il Nuoto</h3>
+      <table class="food-table">
+        <thead><tr><th>Parametro</th><th>Ricreativo</th><th>Agonistico</th></tr></thead>
+        <tbody>
+          <tr><td><b>Calorie</b></td><td>35-45 kcal/kg</td><td>50-70 kcal/kg</td></tr>
+          <tr><td><b>CHO</b></td><td>5-7 g/kg/die</td><td>8-12 g/kg/die (doppia seduta)</td></tr>
+          <tr><td><b>Proteine</b></td><td>1.4-1.7 g/kg/die</td><td>1.7-2.0 g/kg/die</td></tr>
+          <tr><td><b>Grassi</b></td><td>1.0-1.5 g/kg/die</td><td>1.2-1.5 g/kg/die</td></tr>
+          <tr><td><b>Idratazione</b></td><td>In acqua si suda! Non si percepisce la sete</td><td>Monitorare peso pre/post</td></tr>
+          <tr><td><b>Ferro (F)</b></td><td>18 mg/die</td><td>20 mg/die</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>⏱️ Timing Nutrizionale — Nuoto</h3>
+      <div class="timing-box pre"><b>🟡 PRE-allenamento mattutino (6-7h):</b><br>Se allenamento &lt;90 min: colazione leggera o digiuno tollerato. Se &gt;90 min: 1-2g/kg CHO.<br>Es: banana + crackers, porridge leggero</div>
+      <div class="timing-box during"><b>🔵 DURANTE (&gt;90 min):</b><br>Gel/drink sportivo bordo vasca: 30-60g CHO/h. Attenzione: nausea è frequente in acqua.</div>
+      <div class="timing-box post"><b>🟢 POST-allenamento:</b><br>Recupero con proteine (20-25g) + CHO (1g/kg) entro 30-60 min. L'appetito soppresso dall'acqua fredda → mangiare attivamente anche senza fame.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PESI/PALESTRA -->
+<div class="sport-panel" id="tab-pesi">
+  <div class="alert-info alert-box"><b>🏋️ Nutrizione per Palestra e Sala Pesi</b> — Linee guida ISSN 2017, ACSM/AND/DC 2016</div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Fabbisogni per Obiettivo</h3>
+      <table class="food-table">
+        <thead><tr><th>Obiettivo</th><th>Kcal</th><th>Proteine</th><th>CHO</th><th>Grassi</th></tr></thead>
+        <tbody>
+          <tr><td><b>🔴 Ipertrofia</b></td><td>+300-500 kcal TDEE</td><td>1.6-2.2 g/kg</td><td>5-7 g/kg</td><td>1.0-1.5 g/kg</td></tr>
+          <tr><td><b>⚫ Forza massima</b></td><td>+200-400 kcal TDEE</td><td>1.4-2.0 g/kg</td><td>4-7 g/kg</td><td>1.0-2.0 g/kg</td></tr>
+          <tr><td><b>🟢 Definizione</b></td><td>-300-500 kcal TDEE</td><td>2.0-3.1 g/kg</td><td>3-5 g/kg</td><td>0.8-1.2 g/kg</td></tr>
+          <tr><td><b>🔵 Recomp.</b></td><td>Mantenimento ±0</td><td>1.8-2.5 g/kg</td><td>4-6 g/kg</td><td>0.8-1.5 g/kg</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-warn alert-box" style="margin-top:10px">
+        <b>Distribuzione proteica:</b> 4-5 pasti da 20-40g proteine ciascuno (ogni 3-4h) massimizza la sintesi proteica muscolare (MPS) rispetto a pochi pasti abbondanti.
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>⏱️ Timing — Palestra</h3>
+      <div class="timing-box pre"><b>🟡 PRE-workout (1-2h prima):</b><br>Pasto misto CHO + proteine. Es: riso 80g + pollo 120g + olio. NON allenamento a digiuno per ipertrofia.</div>
+      <div class="timing-box during"><b>🔵 DURANTE (se &gt;75 min intenso):</b><br>10-20g EAA o BCAA in soluzione. CHO solo per sessioni &gt;90 min ad alta intensità.</div>
+      <div class="timing-box post"><b>🟢 POST-workout (entro 30-60 min):</b><br>20-40g proteine (whey ideale: rapido assorbimento) + 0.5-1g/kg CHO. La "finestra anabolica" è reale ma non critica se la dieta totale è adeguata.</div>
+      <div style="margin-top:10px;padding:10px;background:#EDE9FE;border-radius:8px;font-size:12.5px">
+        <b>🌙 Spuntino serale pre-nanna:</b> 30-40g caseine o yogurt greco (digestione lenta, mantiene la MPS notturna per 7-8h).
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🔬 Evidenze sulle Proteine — Dose Ottimale per Pasto</h3>
+    <div style="font-size:13px;line-height:1.8">
+      Meta-analisi Morton et al. 2018 (BJSM): <b>1.62 g/kg/die di proteine</b> come dose ottimale per la sintesi muscolare in soggetti che si allenano. Dosi superiori non aggiungono beneficio salvo in fasi di deficit calorico.<br>
+      Schoenfeld & Krieger 2018: la distribuzione del <b>proteico in 4-5 pasti da 0.4 g/kg</b> ciascuno massimizza la MPS giornaliera.<br>
+      Loenneke et al. 2016: La proteina serale da <b>caseine (30-40g)</b> prima del sonno aumenta la MPS notturna del 22%.
+    </div>
+  </div>
+</div>
+
+<!-- CICLISMO -->
+<div class="sport-panel" id="tab-ciclismo">
+  <div class="alert-info alert-box"><b>🚴 Nutrizione per il Ciclismo</b> — Linee guida UCI, Jeukendrup 2017, Burke et al. 2019</div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Fabbisogni per il Ciclismo</h3>
+      <table class="food-table">
+        <thead><tr><th>Parametro</th><th>Amatoriale</th><th>Granfondo</th><th>Professionista</th></tr></thead>
+        <tbody>
+          <tr><td><b>Kcal/h gara</b></td><td>400-600</td><td>600-800</td><td>800-1200</td></tr>
+          <tr><td><b>CHO/die</b></td><td>5-7 g/kg</td><td>7-10 g/kg</td><td>10-12 g/kg</td></tr>
+          <tr><td><b>Proteine</b></td><td>1.4-1.7 g/kg</td><td>1.6-1.8 g/kg</td><td>1.8-2.0 g/kg</td></tr>
+          <tr><td><b>CHO durante gara</b></td><td>30-60 g/h</td><td>60-90 g/h</td><td>90-120 g/h (glucosio+fruttosio)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>⏱️ Timing Nutrizionale — Ciclismo</h3>
+      <div class="timing-box pre"><b>🟡 Carico di CHO pre-gara (48-72h prima per granfondo):</b><br>8-12 g/kg/die di CHO. Ridurre le fibre nelle ultime 24h per ridurre il peso intestinale.</div>
+      <div class="timing-box during"><b>🔵 DURANTE (&gt;2h):</b><br>Multiple transportable CHO: glucosio + fruttosio (2:1). Max ossidazione 90-120 g/h. Gel + banana + barrette. Idratazione: 500-1000 mL/h con sodio 500-1000 mg/h.</div>
+      <div class="timing-box post"><b>🟢 POST-allenamento:</b><br>1.2 g/kg/h CHO per 4-6h dopo gare lunghe + 20-30g proteine. Recupero glicogeno completo richiede 24-48h.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SPORT DI SQUADRA -->
+<div class="sport-panel" id="tab-sport_team">
+  <div class="alert-info alert-box"><b>⚽ Nutrizione per Sport di Squadra</b> — Calcio, Basket, Rugby, Pallavolo, Hockey. Linee guida FIFA 2010, ACSM 2016</div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Fabbisogni — Sport di Squadra</h3>
+      <table class="food-table">
+        <thead><tr><th>Parametro</th><th>Valore</th></tr></thead>
+        <tbody>
+          <tr><td><b>Kcal/die (allenamento)</b></td><td>40-55 kcal/kg</td></tr>
+          <tr><td><b>Kcal/die (gara)</b></td><td>55-70 kcal/kg</td></tr>
+          <tr><td><b>CHO</b></td><td>5-8 g/kg/die (aumentare pre-gara)</td></tr>
+          <tr><td><b>Proteine</b></td><td>1.4-1.7 g/kg/die</td></tr>
+          <tr><td><b>CHO durante gara (90 min)</b></td><td>30-60 g/h</td></tr>
+          <tr><td><b>Idratazione</b></td><td>Monitorare colore urine (obiettivo giallo paglierino)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>📅 Pre-gara — Protocollo Nutrizionale</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px"><b>Sera prima:</b> Pasto ricco di CHO, basso in grassi e fibre. Pasta, riso, patate + proteina magra. Evitare alimenti nuovi o non testati.</div>
+        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px"><b>Mattina gara (3-4h prima):</b> 2-3 g/kg CHO. Pane bianco, pasta, riso, yogurt, frutta fresca. Evitare latte intero e fibre.</div>
+        <div style="padding:8px;background:#EFF6FF;border-radius:8px;margin-bottom:8px"><b>Pre-riscaldamento (1h prima):</b> 0.5 g/kg CHO se necessario. Gel, banana, sports drink.</div>
+        <div style="padding:8px;background:#ECFDF5;border-radius:8px"><b>Post-gara:</b> 1-1.2 g/kg CHO + 20-25g proteine entro 30 min. Poi pasto completo entro 2h.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INTEGRATORI -->
+<div class="sport-panel" id="tab-integr">
+  <div class="calc-box">
+    <h3>💊 Integratori con Evidenza Scientifica — Sport</h3>
+    <div class="alert-warn alert-box">Solo gli integratori con evidenza di Grado A (multipli RCT) sono elencati come efficaci. Evitare integratori non testati o non approvati nel proprio sport.</div>
+    <table class="food-table">
+      <thead><tr><th>Integratore</th><th>Evidenza</th><th>Dose efficace</th><th>Sport indicato</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><b>Creatina monoidrato</b></td><td style="color:#15803D">⭐⭐⭐ Grado A</td><td>3-5 g/die (mantenimento)</td><td>Pesi, sprint, potenza</td><td>Carico: 20g/die × 5gg. Bere abbondante acqua.</td></tr>
+        <tr><td><b>Caffeina</b></td><td style="color:#15803D">⭐⭐⭐ Grado A</td><td>3-6 mg/kg (60 min prima)</td><td>Tutti gli sport</td><td>Max beneficio: 200-400mg. Tolleranza individuale.</td></tr>
+        <tr><td><b>Beta-Alanina</b></td><td style="color:#D97706">⭐⭐ Grado B</td><td>3.2-6.4 g/die (divisa)</td><td>Sport 1-10 min alta intensità</td><td>Prurito (parestesia) normale. Effetto in 4-6 settimane.</td></tr>
+        <tr><td><b>Proteine Whey</b></td><td style="color:#15803D">⭐⭐⭐ Grado A</td><td>20-40g post-workout</td><td>Pesi, sport forza</td><td>Utile se introito proteico totale inadeguato con la dieta.</td></tr>
+        <tr><td><b>Bicarbonato di sodio</b></td><td style="color:#D97706">⭐⭐ Grado B</td><td>0.3 g/kg (60-90 min prima)</td><td>Sport anaerobici 1-7 min</td><td>Rischio GI. Testare in allenamento prima.</td></tr>
+        <tr><td><b>Nitrati (succo barbabietola)</b></td><td style="color:#D97706">⭐⭐ Grado B</td><td>400-600 mg NO3⁻ (2-3h prima)</td><td>Endurance</td><td>500 mL succo barbabietola = ~400mg nitrati</td></tr>
+        <tr><td><b>Vitamina D</b></td><td style="color:#15803D">⭐⭐⭐ Grado A</td><td>1000-2000 UI/die</td><td>Tutti gli sport</td><td>Monitorare 25-OH-D. Target &gt;40 ng/mL in atleti.</td></tr>
+        <tr><td><b>Omega-3 EPA+DHA</b></td><td style="color:#D97706">⭐⭐ Grado B</td><td>2-4 g/die EPA+DHA</td><td>Tutti gli sport</td><td>Anti-infiammatorio, recupero, MPS. Assumere con i pasti.</td></tr>
+        <tr><td><b>Magnesio</b></td><td style="color:#D97706">⭐⭐ Grado B</td><td>300-400 mg/die</td><td>Endurance</td><td>Carenza frequente in atleti. Integrare se sudorazione intensa.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- LINEE GUIDA -->
+<div class="sport-panel" id="tab-lg">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📚 Documenti di Riferimento</h3>
+      <div style="font-size:13px;line-height:2">
+        <div style="padding:12px 14px;background:#ECFDF5;border-radius:10px;border-left:4px solid #10B981;margin-bottom:10px">
+          <div style="font-weight:700;color:#064E3B;margin-bottom:4px">IOC Consensus Statement on Sports Nutrition 2018</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Il documento di riferimento internazionale per la nutrizione sportiva, aggiornato 2018.</div>
+          <a href="https://bjsm.bmj.com/content/52/7/439" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#10B981;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida IOC →</a>
+        </div>
+        <div style="padding:12px 14px;background:#ECFDF5;border-radius:10px;border-left:4px solid #059669;margin-bottom:10px">
+          <div style="font-weight:700;color:#064E3B;margin-bottom:4px">ACSM/AND/DC Joint Position Statement 2016</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Nutrizione e performance atletica — documento congiunto delle principali società scientifiche USA.</div>
+          <a href="https://journals.lww.com/acsm-msse/fulltext/2016/03000/nutrition_and_athletic_performance.25.aspx" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#059669;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida ACSM →</a>
+        </div>
+        <div style="padding:12px 14px;background:#ECFDF5;border-radius:10px;border-left:4px solid #047857;margin-bottom:10px">
+          <div style="font-weight:700;color:#064E3B;margin-bottom:4px">ISSN Position Stand: Protein and Exercise 2017</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Evidenze su proteine e performance — riferimento per le raccomandazioni proteiche negli atleti.</div>
+          <a href="https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0177-8" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#047857;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida ISSN →</a>
+        </div>
+        <div style="padding:12px 14px;background:#ECFDF5;border-radius:10px;border-left:4px solid #065F46">
+          <div style="font-weight:700;color:#064E3B;margin-bottom:4px">Burke et al. 2019 — CHO for Training and Racing</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Raccomandazioni aggiornate sui carboidrati per l'allenamento e la gara nell'endurance.</div>
+          <a href="https://link.springer.com/article/10.1007/s40279-019-01164-x" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#065F46;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Articolo Burke 2019 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>⚠️ RED-S — Relative Energy Deficiency in Sport</h3>
+      <div class="alert-warn alert-box">
+        <b>RED-S (ex Female Athlete Triad):</b> Deficit energetico relativo che causa disfunzione ormonale, riduzione densità ossea e performance.<br><br>
+        <b>Disponibilità energetica (EA) target:</b> &gt;45 kcal/kg FFM/die<br>
+        <b>EA critica:</b> &lt;30 kcal/kg FFM/die<br><br>
+        <b>Formula EA:</b> (Kcal assunte − Kcal consumate nell'esercizio) ÷ kg massa magra
+      </div>
+      <div class="nf" style="margin-bottom:8px"><label>Kcal assunte/die</label><input type="number" id="ea-kcal" placeholder="es. 2200" oninput="calcEA()"></div>
+      <div class="nf" style="margin-bottom:8px"><label>Kcal consumate nell'esercizio/die</label><input type="number" id="ea-ex" placeholder="es. 600" oninput="calcEA()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Massa magra FFM (kg)</label><input type="number" id="ea-ffm" placeholder="es. 55" oninput="calcEA()"></div>
+      <div id="ea-result" style="display:none;padding:12px;border-radius:8px;font-size:13px"></div>
+    </div>
+  </div>
+</div>
+
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+const SPORT_PARAMS = {
+  corsa_rec:    {laf:1.6, cho_g:6, prot_g:1.5, grassi_g:1.2, acqua_L:2.5},
+  corsa_comp:   {laf:1.9, cho_g:9, prot_g:1.7, grassi_g:1.3, acqua_L:3.5},
+  nuoto_rec:    {laf:1.6, cho_g:6, prot_g:1.5, grassi_g:1.2, acqua_L:2.5},
+  nuoto_comp:   {laf:1.9, cho_g:10, prot_g:1.9, grassi_g:1.3, acqua_L:3.5},
+  pesi_ipert:   {laf:1.65, cho_g:5, prot_g:1.9, grassi_g:1.2, acqua_L:3.0},
+  pesi_forza:   {laf:1.6, cho_g:5, prot_g:1.7, grassi_g:1.4, acqua_L:3.0},
+  pesi_def:     {laf:1.6, cho_g:3, prot_g:2.4, grassi_g:0.9, acqua_L:2.5},
+  ciclismo_rec: {laf:1.65, cho_g:6, prot_g:1.5, grassi_g:1.2, acqua_L:3.0},
+  ciclismo_comp:{laf:2.0, cho_g:10, prot_g:1.8, grassi_g:1.3, acqua_L:4.0},
+  calcio:       {laf:1.75, cho_g:6, prot_g:1.6, grassi_g:1.2, acqua_L:3.0},
+  basket:       {laf:1.75, cho_g:6, prot_g:1.6, grassi_g:1.2, acqua_L:3.0},
+  tennis:       {laf:1.6, cho_g:5, prot_g:1.5, grassi_g:1.2, acqua_L:2.5},
+  crossfit:     {laf:1.75, cho_g:5, prot_g:2.0, grassi_g:1.0, acqua_L:3.0},
+  triathlon:    {laf:2.0, cho_g:10, prot_g:1.8, grassi_g:1.3, acqua_L:4.0},
+  martial:      {laf:1.7, cho_g:5, prot_g:1.8, grassi_g:1.2, acqua_L:3.0},
+};
+
+function showSport(id) {
+  document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sport-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function calcSport() {
+  const peso = parseFloat(document.getElementById('s-peso').value);
+  const alt = parseFloat(document.getElementById('s-alt').value);
+  const eta = parseFloat(document.getElementById('s-eta').value);
+  const sesso = document.getElementById('s-sesso').value;
+  const sport = document.getElementById('s-sport').value;
+  if (!peso || !alt || !eta) return;
+  
+  const p = SPORT_PARAMS[sport] || SPORT_PARAMS.corsa_rec;
+  
+  // MB con Mifflin-St Jeor
+  const mb = sesso === 'M'
+    ? 10 * peso + 6.25 * alt - 5 * eta + 5
+    : 10 * peso + 6.25 * alt - 5 * eta - 161;
+  const tdee = Math.round(mb * p.laf);
+  
+  const cho_g = Math.round(p.cho_g * peso);
+  const prot_g = Math.round(p.prot_g * peso);
+  const grassi_g = Math.round(p.grassi_g * peso);
+  const cho_kcal = Math.round(cho_g * 4);
+  const prot_kcal = Math.round(prot_g * 4);
+  const grassi_kcal = Math.round(grassi_g * 9);
+  
+  document.getElementById('sr-kcal').textContent = tdee.toLocaleString();
+  document.getElementById('sr-prot').textContent = r1(p.prot_g) + 'g/kg';
+  document.getElementById('sr-prot-g').textContent = prot_g + 'g/die';
+  document.getElementById('sr-cho').textContent = r1(p.cho_g) + 'g/kg';
+  document.getElementById('sr-cho-g').textContent = cho_g + 'g/die';
+  document.getElementById('sr-grassi').textContent = r1(p.grassi_g) + 'g/kg';
+  document.getElementById('sr-grassi-g').textContent = grassi_g + 'g/die';
+  document.getElementById('sr-acqua').textContent = p.acqua_L + ' L';
+  
+  document.getElementById('sr-timing').innerHTML = `
+    <b>⏱️ Distribuzione consigliata (${tdee} kcal/die):</b><br>
+    🌅 Colazione: ${Math.round(tdee*0.25)} kcal | 🍎 Spuntino: ${Math.round(tdee*0.10)} kcal | 🍽️ Pranzo: ${Math.round(tdee*0.30)} kcal | 🍊 Merenda: ${Math.round(tdee*0.10)} kcal | 🌙 Cena: ${Math.round(tdee*0.25)} kcal
+  `;
+  document.getElementById('sport-result').style.display = 'block';
+}
+
+function calcEA() {
+  const kcal = parseFloat(document.getElementById('ea-kcal').value);
+  const ex = parseFloat(document.getElementById('ea-ex').value);
+  const ffm = parseFloat(document.getElementById('ea-ffm').value);
+  if (!kcal || !ffm) return;
+  const ea = (kcal - (ex || 0)) / ffm;
+  const el = document.getElementById('ea-result');
+  let bg, color, msg;
+  if (ea < 30) { bg='#FEE2E2'; color='#991B1B'; msg='🔴 DEFICIT ENERGETICO CRITICO — RED-S probabile. Aumentare l\'introito calorico urgentemente.'; }
+  else if (ea < 45) { bg='#FEF3C7'; color='#92400E'; msg='🟡 ZONA A RISCHIO — RED-S possibile. Monitorare ciclo mestruale, densità ossea e umore.'; }
+  else { bg='#DCFCE7'; color='#14532D'; msg='🟢 DISPONIBILITÀ ENERGETICA ADEGUATA — Continuare il monitoraggio periodico.'; }
+  el.style.cssText = `display:block;background:${bg};color:${color};border-radius:8px;padding:12px;font-size:13px`;
+  el.innerHTML = `<b>EA = ${r1(ea)} kcal/kg FFM/die</b><br>${msg}`;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(false); } catch(e) {}
+});
+</script>
+</body>
+</html>

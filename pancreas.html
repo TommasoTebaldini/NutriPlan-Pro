@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Insufficienza Pancreatica Esocrina — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.p-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.p-tab:hover{background:rgba(249,115,22,.12);color:#F97316}
+.p-tab.active{background:white;color:#C2410C;box-shadow:0 2px 8px rgba(0,0,0,.12);font-weight:700}
+.p-panel{display:none}.p-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:28px;font-weight:700;color:#F97316}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus{border-color:#F97316}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#FFF7ED;border-left:3px solid #F97316;color:#7C2D12}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.alert-ok{background:#F0FDF4;border-left:3px solid #10B981;color:#14532D}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.grid-2{grid-template-columns:1fr}}
+.food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.food-table th{background:#7C2D12;color:#FED7AA;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.food-table th:first-child{text-align:left}
+.food-table td{padding:7px 12px;border-bottom:1px solid #FFF7ED;text-align:center;vertical-align:middle}
+.food-table td:first-child{text-align:left;font-weight:600}
+.food-table tbody tr:nth-child(even){background:#FFFBF5}
+.food-table tr:hover td{background:#FED7AA}
+.creon-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin:2px}
+.creon-10{background:#DBEAFE;color:#1D4ED8}
+.creon-25{background:#EDE9FE;color:#5B21B6}
+.creon-40{background:#FCE7F3;color:#9D174D}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item active" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🫁 Insufficienza Pancreatica Esocrina (IPE)</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FFF7ED;border-radius:14px">
+  <button class="p-tab active" onclick="showPTab('calc')">💊 Calcolo PERT</button>
+  <button class="p-tab" onclick="showPTab('grassi')">🧈 Grassi & Lipasi</button>
+  <button class="p-tab" onclick="showPTab('dieta')">🥗 Schema Dietetico</button>
+  <button class="p-tab" onclick="showPTab('cause')">📋 Cause & Patologie</button>
+  <button class="p-tab" onclick="showPTab('lg')">📚 Linee Guida</button>
+</div>
+
+<!-- TAB 1: CALCOLO PERT -->
+<div class="p-panel active" id="tab-calc">
+  <div class="alert-info alert-box">
+    <b>🎯 PERT (Pancreatic Enzyme Replacement Therapy)</b> — La terapia enzimatica sostitutiva con lipasi pancreatica (Creon®, Panzytrat®, ecc.) è il cardine del trattamento dell'IPE. Il dosaggio si calcola in Unità Lipasi (UL) per grammo di grasso assunto o per kg di peso corporeo.
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>💊 Calcolo Dosi PERT per Pasto</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso corporeo (kg)</label><input type="number" id="pert-peso" placeholder="es. 70" oninput="calcPERT()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Grassi nel pasto (g)</label><input type="number" id="pert-grassi" placeholder="es. 20" oninput="calcPERT()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Patologia</label>
+        <select id="pert-pat" onchange="calcPERT()">
+          <option value="fc_adulto">Fibrosi Cistica (adulto)</option>
+          <option value="fc_bambino">Fibrosi Cistica (bambino &lt;4 anni)</option>
+          <option value="pancreatite">Pancreatite Cronica</option>
+          <option value="gastrectomia">Gastrectomia totale/parziale</option>
+          <option value="whipple">Duodenocefalopancreasectomia (Whipple)</option>
+          <option value="altro">Altra causa IPE</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Metodo calcolo preferito</label>
+        <select id="pert-metodo" onchange="calcPERT()">
+          <option value="grassi">Per grammo di grasso (500-1000 UL/g)</option>
+          <option value="peso">Per kg di peso corporeo (500-1500 UL/kg/pasto)</option>
+        </select>
+      </div>
+      <div id="pert-result" style="background:#FFF7ED;border-radius:10px;padding:16px;margin-top:10px;display:none">
+        <div style="font-size:12px;color:var(--slate-l);margin-bottom:6px">Dose PERT stimata per questo pasto</div>
+        <div class="result-big" id="pert-ul">—</div>
+        <div style="font-size:12px;color:var(--slate-l);margin-bottom:12px">Unità Lipasi</div>
+        <div id="pert-creon" style="margin-bottom:10px"></div>
+        <div id="pert-max-warn" style="display:none" class="alert-warn alert-box" style="margin-top:8px"></div>
+        <div style="font-size:11px;color:var(--slate-l)">⚠️ Dose iniziale — titolare sulla risposta clinica con il team medico</div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>📊 Dose Massima Giornaliera (Linee Guida)</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso corporeo (kg)</label><input type="number" id="max-peso" placeholder="es. 70" oninput="calcMax()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Patologia</label>
+        <select id="max-pat" onchange="calcMax()">
+          <option value="fc">Fibrosi Cistica (linee guida ECFS 2017)</option>
+          <option value="altro">Pancreatite cronica / altre cause</option>
+        </select>
+      </div>
+      <div id="max-result" style="background:#F0FDF4;border-radius:10px;padding:16px;margin-top:10px;display:none">
+        <div style="font-size:12px;color:var(--slate-l);margin-bottom:4px">Limite massimo giornaliero</div>
+        <div class="result-big" id="max-ul" style="color:#15803D">—</div>
+        <div style="font-size:12px;color:var(--slate-l)" id="max-note"></div>
+        <div style="margin-top:10px;font-size:12px;line-height:1.7;color:#334155" id="max-details"></div>
+      </div>
+      <div style="margin-top:14px;background:#FEF2F2;border-radius:8px;padding:12px;font-size:12px;color:#991B1B;border-left:3px solid #DC2626">
+        <b>⚠️ Colopathy fibrosante:</b> Dosi &gt;10.000 UL/kg/die sono associate a colopathy fibrosante nei pazienti con FC. Non superare MAI questo limite.
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📅 Piano PERT Giornaliero Completo</h3>
+    <div class="nf" style="margin-bottom:10px;max-width:200px"><label>Peso (kg)</label><input type="number" id="plan-peso" placeholder="es. 65" oninput="calcPlan()"></div>
+    <div id="plan-result" style="display:none">
+      <table class="food-table">
+        <thead><tr><th>Pasto</th><th>Grassi medi (g)</th><th>UL stimate</th><th>Creon 25.000</th><th>Creon 10.000</th></tr></thead>
+        <tbody id="plan-tbody"></tbody>
+        <tfoot id="plan-tfoot"></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: GRASSI & LIPASI -->
+<div class="p-panel" id="tab-grassi">
+  <div class="alert-info alert-box">
+    Il contenuto di grassi nel pasto determina la dose di enzimi. Maggiori sono i grassi, maggiore è la dose di PERT necessaria. La PERT va assunta <b>all'inizio del pasto</b> e, per pasti lunghi (&gt;20 min), può essere suddivisa (metà inizio, metà a metà pasto).
+  </div>
+
+  <div class="calc-box">
+    <h3>🧈 Stima Grassi nel Pasto</h3>
+    <div id="grassi-items"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addGrassiItem()" style="margin-bottom:12px">➕ Aggiungi alimento</button>
+    <div style="background:#FFF7ED;border-radius:8px;padding:14px;display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+      <div><div style="font-size:12px;color:var(--slate-l)">Totale Grassi</div><div class="result-big" id="grassi-tot">0 g</div></div>
+      <div><div style="font-size:12px;color:var(--slate-l)">UL stimate (750 UL/g)</div><div class="result-big" id="grassi-ul" style="font-size:22px">— UL</div></div>
+      <div><div style="font-size:12px;color:var(--slate-l)">Creon 25.000</div><div class="result-big" id="grassi-creon" style="font-size:22px;color:#5B21B6">—</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Contenuto di Grassi — Alimenti Comuni</h3>
+      <table class="food-table">
+        <thead><tr><th>Alimento</th><th>Porzione</th><th>Grassi (g)</th><th>UL approx.</th></tr></thead>
+        <tbody>
+          <tr><td>Olio EVO</td><td>10 mL (1 cucchiaio)</td><td><b>9</b></td><td>6.750</td></tr>
+          <tr><td>Burro</td><td>10g</td><td><b>8</b></td><td>6.000</td></tr>
+          <tr><td>Mozzarella</td><td>125g</td><td><b>16</b></td><td>12.000</td></tr>
+          <tr><td>Parmigiano</td><td>30g (grattugiato)</td><td><b>10</b></td><td>7.500</td></tr>
+          <tr><td>Salmone</td><td>150g</td><td><b>20</b></td><td>15.000</td></tr>
+          <tr><td>Pollo petto</td><td>150g</td><td><b>3</b></td><td>2.250</td></tr>
+          <tr><td>Uovo intero</td><td>60g</td><td><b>6</b></td><td>4.500</td></tr>
+          <tr><td>Prosciutto crudo</td><td>50g</td><td><b>5</b></td><td>3.750</td></tr>
+          <tr><td>Noci</td><td>30g</td><td><b>19</b></td><td>14.250</td></tr>
+          <tr><td>Latte intero</td><td>200 mL</td><td><b>7</b></td><td>5.250</td></tr>
+          <tr><td>Yogurt greco intero</td><td>150g</td><td><b>8</b></td><td>6.000</td></tr>
+          <tr><td>Tonno al naturale</td><td>80g</td><td><b>1</b></td><td>750</td></tr>
+          <tr><td>Pasta semplice (solo olio)</td><td>80g pasta + 10g olio</td><td><b>9</b></td><td>6.750</td></tr>
+          <tr><td>Pizza margherita</td><td>1 porzione 250g</td><td><b>12</b></td><td>9.000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>💊 Preparazioni Enzimatiche Disponibili</h3>
+      <table class="food-table">
+        <thead><tr><th>Farmaco</th><th>Dosaggio</th><th>UL Lipasi</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td><b>Creon®</b></td><td>10.000</td><td>10.000</td><td>Fibrosi cistica bambini</td></tr>
+          <tr><td><b>Creon®</b></td><td>25.000</td><td>25.000</td><td>Il più usato negli adulti</td></tr>
+          <tr><td><b>Creon®</b></td><td>40.000</td><td>40.000</td><td>Malassorbimento grave</td></tr>
+          <tr><td><b>Panzytrat®</b></td><td>25.000</td><td>25.000</td><td>Alternativa al Creon</td></tr>
+          <tr><td><b>Kreon®</b> (pediatrico)</td><td>5.000</td><td>5.000</td><td>Neonati FC</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-warn alert-box" style="margin-top:12px">
+        <b>Come assumere:</b><br>
+        • Sempre <b>all'inizio del pasto</b> (non prima, non dopo)<br>
+        • Per pasti prolungati: metà all'inizio, metà a metà pasto<br>
+        • <b>Non schiacciare o masticare</b> le capsule (distrugge il rivestimento enterico)<br>
+        • Se difficoltà a deglutire: aprire la capsula e mescolare le micropallet a cibo acido (mela, yogurt) — NON in alimenti caldi
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: SCHEMA DIETETICO -->
+<div class="p-panel" id="tab-dieta">
+  <div class="alert-info alert-box">
+    Con una PERT adeguata, <b>non è necessario ridurre i grassi</b>. La dieta deve essere normocalorica e normolipidica. La restrizione di grassi è controproducente: riduce l'apporto calorico già compromesso.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>✅ Principi Dietetici IPE</h3>
+      <div style="font-size:13px;line-height:2">
+        <div style="padding:8px;background:#F0FDF4;border-radius:8px;margin-bottom:8px">✅ <b>Calorie:</b> 30-40 kcal/kg/die (aumentate del 20-50% in FC)</div>
+        <div style="padding:8px;background:#F0FDF4;border-radius:8px;margin-bottom:8px">✅ <b>Proteine:</b> 1.5-2.0 g/kg/die</div>
+        <div style="padding:8px;background:#F0FDF4;border-radius:8px;margin-bottom:8px">✅ <b>Grassi:</b> Normali (35-40% calorie) con PERT adeguata</div>
+        <div style="padding:8px;background:#F0FDF4;border-radius:8px;margin-bottom:8px">✅ <b>Pasti:</b> 5-6 pasti piccoli/die (riduce il carico enzimatico per pasto)</div>
+        <div style="padding:8px;background:#FFF7ED;border-radius:8px;margin-bottom:8px">⚠️ <b>MCT:</b> Considerare se malassorbimento persistente (assorbiti senza lipasi)</div>
+        <div style="padding:8px;background:#FEF3C7;border-radius:8px">⚠️ <b>Alcol:</b> Assolutamente controindicato in pancreatite cronica</div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>💊 Supplementi Obbligatori</h3>
+      <table class="food-table">
+        <thead><tr><th>Supplemento</th><th>Dose</th><th>Motivazione</th></tr></thead>
+        <tbody>
+          <tr><td><b>Vitamina D</b></td><td>800-2000 UI/die</td><td>Malassorbimento grassi → vitamina liposolubile</td></tr>
+          <tr><td><b>Vitamina E</b></td><td>200-400 mg/die</td><td>Antiossidante, ridotta in IPE</td></tr>
+          <tr><td><b>Vitamina A</b></td><td>10.000 UI/die</td><td>Malassorbimento (max 25.000 UI)</td></tr>
+          <tr><td><b>Vitamina K</b></td><td>Monitorare PT</td><td>Rischio sanguinamento se carente</td></tr>
+          <tr><td><b>Zinco</b></td><td>15-30 mg/die</td><td>Perdite aumentate in IPE</td></tr>
+          <tr><td><b>Magnesio</b></td><td>300-400 mg/die</td><td>Carenza frequente</td></tr>
+          <tr><td><b>B12</b></td><td>500-1000 µg/die</td><td>Deficit in gastrectomia + FC</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: CAUSE -->
+<div class="p-panel" id="tab-cause">
+  <div class="calc-box">
+    <h3>📋 Cause di Insufficienza Pancreatica Esocrina</h3>
+    <table class="food-table">
+      <thead><tr><th>Causa</th><th>Meccanismo</th><th>Note cliniche</th></tr></thead>
+      <tbody>
+        <tr><td><b>Fibrosi Cistica (FC)</b></td><td>Mutazione CFTR → ostruzione dotti pancreatici</td><td>85-90% dei pazienti FC. PERT obbligatoria dalla diagnosi</td></tr>
+        <tr><td><b>Pancreatite Cronica</b></td><td>Fibrosi progressiva del parenchima</td><td>Causa più frequente nell'adulto. IPE dopo anni di malattia</td></tr>
+        <tr><td><b>Pancreasectomia totale</b></td><td>Asportazione del pancreas</td><td>PERT + insulinoterapia obbligatorie</td></tr>
+        <tr><td><b>Duodenocefalopancreasectomia (Whipple)</b></td><td>Parziale resezione + bypass duodenale</td><td>IPE frequente, grado variabile</td></tr>
+        <tr><td><b>Cancro del pancreas</b></td><td>Ostruzione dotto di Wirsung</td><td>PERT migliora qualità vita e risposta alla chemioterapia</td></tr>
+        <tr><td><b>Diabete mellito tipo 3c</b></td><td>Insufficienza combinata eso/endocrina</td><td>Spesso sottovalutato, frequente in pancreatite cronica</td></tr>
+        <tr><td><b>Malattia di Crohn</b></td><td>Infiammazione duodenale, riduzione stimolo CCK</td><td>IPE funzionale, risponde alla PERT</td></tr>
+        <tr><td><b>Celiachia non trattata</b></td><td>Atrofia villi → riduzione CCK</td><td>Regredisce con dieta senza glutine</td></tr>
+        <tr><td><b>Gastrectomia</b></td><td>Mismatch enzimatico/chimo</td><td>Timing PERT critico</td></tr>
+        <tr><td><b>Sindrome di Zollinger-Ellison</b></td><td>Acidità pH → inattivazione enzimi</td><td>Aggiungere IPP + PERT</td></tr>
+      </tbody>
+    </table>
+    <div class="alert-ok alert-box" style="margin-top:14px">
+      <b>📊 Come diagnosticare l'IPE:</b> Elastasi fecale-1 (EF-1) &lt;200 µg/g = IPE moderata-severa. EF-1 &lt;100 = IPE severa. Test del grasso fecale (72h) gold standard. Prova terapeutica con PERT: miglioramento steatosi in 4-6 settimane.
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: LG -->
+<div class="p-panel" id="tab-lg">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📚 Linee Guida PERT</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:12px 14px;background:#FFF7ED;border-radius:10px;border-left:4px solid #F97316;margin-bottom:10px">
+          <div style="font-weight:700;color:#7C2D12;margin-bottom:4px">ECFS 2017 — Fibrosi Cistica</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">500-1000 UL lipasi/g grasso per pasto · Max <b>10.000 UL/kg/die</b> · Snack: 500 UL/kg</div>
+          <a href="https://www.ecfs.eu/publications/ecfs-best-practice-guidelines" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#F97316;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida ECFS →</a>
+        </div>
+        <div style="padding:12px 14px;background:#FFF7ED;border-radius:10px;border-left:4px solid #EA580C;margin-bottom:10px">
+          <div style="font-weight:700;color:#7C2D12;margin-bottom:4px">UEG/EPC 2017 — Pancreatite Cronica</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Iniziare con 25.000-40.000 UL/pasto · 10.000-25.000 UL/spuntino · Titolare sulla risposta clinica</div>
+          <a href="https://journals.sagepub.com/doi/10.1177/2050640617698625" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#EA580C;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida UEG/EPC →</a>
+        </div>
+        <div style="padding:12px 14px;background:#FFF7ED;border-radius:10px;border-left:4px solid #C2410C">
+          <div style="font-weight:700;color:#7C2D12;margin-bottom:4px">ESPEN 2020 — Chirurgia Pancreatica</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">PERT obbligatoria dopo pancreasectomia · Monitorare: elastasi fecale, steatosi, peso, vitamine liposolubili</div>
+          <a href="https://www.espen.org/guidelines-home/espen-guidelines?search=pancreatitis" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#C2410C;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida ESPEN →</a>
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🎯 Indicatori di Risposta Adeguata alla PERT</h3>
+      <table class="food-table">
+        <thead><tr><th>Parametro</th><th>Obiettivo</th></tr></thead>
+        <tbody>
+          <tr><td>Steatosi (feci untuose)</td><td>Assente o marcatamente ridotta</td></tr>
+          <tr><td>Numero evacuazioni/die</td><td>≤3</td></tr>
+          <tr><td>Consistenza feci</td><td>Formate, non pallide</td></tr>
+          <tr><td>Peso corporeo</td><td>Stabile o in aumento</td></tr>
+          <tr><td>Albumina</td><td>&gt;3.5 g/dL</td></tr>
+          <tr><td>Vitamina D (25-OH)</td><td>&gt;30 ng/mL</td></tr>
+          <tr><td>Vitamina E</td><td>Nella norma</td></tr>
+          <tr><td>Coefficiente assorbimento grasso</td><td>&gt;93%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+function showPTab(id) {
+  document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.p-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function calcPERT() {
+  const peso = parseFloat(document.getElementById('pert-peso').value);
+  const grassi = parseFloat(document.getElementById('pert-grassi').value);
+  const metodo = document.getElementById('pert-metodo').value;
+  const pat = document.getElementById('pert-pat').value;
+  const res = document.getElementById('pert-result');
+  if (!grassi) return;
+
+  let ul, note;
+  if (metodo === 'grassi') {
+    // FC: 500-1000 UL/g; pancreatite: 1000 UL/g come stima media
+    const ulPerG = pat.startsWith('fc') ? 500 : 1000;
+    ul = grassi * ulPerG;
+    note = `${ulPerG} UL/g × ${grassi}g grassi`;
+  } else {
+    if (!peso) return;
+    const ulPerKg = pat.startsWith('fc_bambino') ? 1000 : 750;
+    ul = ulPerKg * peso;
+    note = `${ulPerKg} UL/kg × ${peso}kg`;
+  }
+
+  document.getElementById('pert-ul').textContent = ul.toLocaleString('it') + ' UL';
+
+  // Suggest Creon formulations
+  const creon40 = Math.ceil(ul / 40000);
+  const creon25 = Math.ceil(ul / 25000);
+  const creon10 = Math.ceil(ul / 10000);
+  let creonHTML = '<div style="font-size:12px;color:var(--slate-m);margin-bottom:6px">Capsule suggerite:</div>';
+  creonHTML += `<span class="creon-badge creon-40">Creon 40.000: ${creon40} cps</span>`;
+  creonHTML += `<span class="creon-badge creon-25">Creon 25.000: ${creon25} cps</span>`;
+  creonHTML += `<span class="creon-badge creon-10">Creon 10.000: ${creon10} cps</span>`;
+  document.getElementById('pert-creon').innerHTML = creonHTML;
+
+  // Check max dose
+  if (peso) {
+    const ulKg = ul / peso;
+    const warn = document.getElementById('pert-max-warn');
+    if (ulKg > 10000) {
+      warn.style.display = 'block';
+      warn.innerHTML = `⚠️ <b>ATTENZIONE:</b> ${Math.round(ulKg).toLocaleString()} UL/kg supera il limite di sicurezza di 10.000 UL/kg/pasto. Ridurre la dose o suddividere il pasto.`;
+    } else warn.style.display = 'none';
+  }
+
+  res.style.display = 'block';
+}
+
+function calcMax() {
+  const peso = parseFloat(document.getElementById('max-peso').value);
+  const pat = document.getElementById('max-pat').value;
+  if (!peso) return;
+  const res = document.getElementById('max-result');
+  let maxUL, note, details;
+  if (pat === 'fc') {
+    maxUL = 10000 * peso;
+    note = `10.000 UL/kg/die × ${peso} kg — ECFS 2017`;
+    details = `<b>Distribuzione suggerita (3 pasti + 2 snack):</b><br>
+      Pasto principale: max ${Math.round(maxUL * 0.28).toLocaleString()} UL (= ${Math.ceil(maxUL * 0.28 / 25000)} Creon 25.000)<br>
+      Spuntino: max ${Math.round(maxUL * 0.08).toLocaleString()} UL`;
+  } else {
+    maxUL = 15000 * peso;
+    note = `~15.000 UL/kg/die (non esiste un limite assoluto in letteratura per non-FC)`;
+    details = `La dose giornaliera totale va titolata sulla risposta clinica. Non esiste un limite assoluto dimostrato per pancreatite cronica, ma si raccomanda di non superare 75.000-80.000 UL per pasto.`;
+  }
+  document.getElementById('max-ul').textContent = maxUL.toLocaleString('it') + ' UL/die';
+  document.getElementById('max-note').textContent = note;
+  document.getElementById('max-details').innerHTML = details;
+  res.style.display = 'block';
+}
+
+function calcPlan() {
+  const peso = parseFloat(document.getElementById('plan-peso').value);
+  if (!peso) return;
+  const MEALS = [
+    {nome:'Colazione', g_grassi: 8},
+    {nome:'Spuntino mattina', g_grassi: 3},
+    {nome:'Pranzo', g_grassi: 20},
+    {nome:'Spuntino pomeriggio', g_grassi: 5},
+    {nome:'Cena', g_grassi: 18},
+  ];
+  const tbody = document.getElementById('plan-tbody');
+  const tfoot = document.getElementById('plan-tfoot');
+  let totalUL = 0;
+  tbody.innerHTML = MEALS.map(m => {
+    const ul = m.g_grassi * 750;
+    totalUL += ul;
+    return `<tr>
+      <td><b>${m.nome}</b></td>
+      <td style="text-align:center">${m.g_grassi}g</td>
+      <td style="text-align:center">${ul.toLocaleString()}</td>
+      <td style="text-align:center">${Math.ceil(ul/25000)} cps</td>
+      <td style="text-align:center">${Math.ceil(ul/10000)} cps</td>
+    </tr>`;
+  }).join('');
+  const maxUL = 10000 * peso;
+  const overMax = totalUL > maxUL;
+  tfoot.innerHTML = `<tr style="background:${overMax?'#FEF2F2':'#F0FDF4'}">
+    <td><b>TOTALE</b></td><td></td>
+    <td style="text-align:center;font-weight:700;color:${overMax?'#DC2626':'#15803D'}">${totalUL.toLocaleString()}</td>
+    <td style="text-align:center;font-weight:700">${Math.ceil(totalUL/25000)} cps</td>
+    <td style="text-align:center;font-weight:700">${Math.ceil(totalUL/10000)} cps</td>
+  </tr>
+  <tr><td colspan="5" style="font-size:11.5px;color:${overMax?'#DC2626':'#64748B'};padding:6px 10px">
+    ${overMax ? '⚠️ Supera il limite FC ('+maxUL.toLocaleString()+' UL/die). Ridurre i grassi o suddividere i pasti.' : '✅ Entro i limiti di sicurezza (max FC: '+maxUL.toLocaleString()+' UL/die)'}
+  </td></tr>`;
+  document.getElementById('plan-result').style.display = 'block';
+}
+
+let grassiItems = [];
+function addGrassiItem() {
+  grassiItems.push({nome:'', grassi:0});
+  renderGrassiItems();
+}
+function renderGrassiItems() {
+  const c = document.getElementById('grassi-items');
+  c.innerHTML = grassiItems.map((it, i) => `
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+      <input type="text" value="${esc(it.nome)}" placeholder="Alimento"
+        oninput="grassiItems[${i}].nome=this.value"
+        style="flex:2;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <input type="number" value="${it.grassi||''}" placeholder="g grassi"
+        oninput="grassiItems[${i}].grassi=parseFloat(this.value)||0;calcGrassiTot()"
+        style="flex:1;max-width:100px;padding:7px 8px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <button onclick="grassiItems.splice(${i},1);renderGrassiItems();calcGrassiTot()"
+        style="background:none;border:none;color:#DC2626;font-size:16px;cursor:pointer;padding:0 4px">✕</button>
+    </div>`).join('');
+}
+function calcGrassiTot() {
+  const tot = grassiItems.reduce((s,it) => s + (it.grassi||0), 0);
+  document.getElementById('grassi-tot').textContent = r1(tot) + ' g';
+  document.getElementById('grassi-ul').textContent = Math.round(tot * 750).toLocaleString() + ' UL';
+  document.getElementById('grassi-creon').textContent = Math.ceil(tot * 750 / 25000) + ' cps';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(false); } catch(e) {}
+});
+</script>
+</body>
+</html>

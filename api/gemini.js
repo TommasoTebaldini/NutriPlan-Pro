@@ -1,7 +1,7 @@
-// api/gemini.js — Vercel Serverless Function
-// Usa OpenRouter: modelli AI gratuiti, nessun limite quota per il progetto
-// Chiave gratuita su: https://openrouter.ai/keys
-// Vercel: Settings → Environment Variables → GEMINI_API_KEY (stessa variabile)
+// api/ai.js — Vercel Serverless Function
+// Usa Groq API: GRATIS, velocissima, nessun limite pratico
+// Chiave gratuita su: https://console.groq.com/keys (registrazione con Google/GitHub)
+// Vercel: Settings → Environment Variables → GEMINI_API_KEY (stessa variabile, non cambiare nome)
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,82 +13,78 @@ export default async function handler(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(500).json({
-      error: 'API Key non configurata. Vai su https://openrouter.ai/keys, crea una chiave gratuita e aggiungila in Vercel → Settings → Environment Variables come GEMINI_API_KEY'
+      error: 'API Key non configurata. Registrati GRATIS su https://console.groq.com/keys e aggiungi la chiave in Vercel → Settings → Environment Variables → GEMINI_API_KEY'
     });
   }
 
   try {
     const { system, messages, max_tokens } = req.body;
 
-    // Build messages array with system prompt
     const allMessages = [
-      { role: 'system', content: system || 'Sei un assistente nutrizionale clinico per dietisti italiani.' },
+      { role: 'system', content: system || 'Sei un assistente nutrizionale clinico per dietisti italiani. Rispondi in italiano in modo preciso e professionale.' },
       ...(messages || []).map(m => ({
         role: m.role === 'assistant' ? 'assistant' : 'user',
         content: m.content
       }))
     ];
 
-    // Free models on OpenRouter (no credits needed)
-    // Try in order: best quality first
-    const FREE_MODELS = [
-      'google/gemma-3-9b-it:free',
-      'meta-llama/llama-3.1-8b-instruct:free',
-      'microsoft/phi-3-mini-128k-instruct:free',
-      'mistralai/mistral-7b-instruct:free',
+    // Groq free models — llama3 è eccellente per domande cliniche
+    const MODELS = [
+      'llama-3.1-8b-instant',    // Più veloce
+      'llama3-8b-8192',          // Alternativa
+      'gemma2-9b-it',            // Gemma 2 Google via Groq
+      'mixtral-8x7b-32768',      // Mixtral
     ];
 
     let lastError = null;
 
-    for (const model of FREE_MODELS) {
+    for (const model of MODELS) {
       try {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'HTTP-Referer': 'https://dietplanpro.vercel.app',
-            'X-Title': 'DietPlan Pro'
+            'Authorization': `Bearer ${apiKey}`
           },
           body: JSON.stringify({
             model,
             messages: allMessages,
             max_tokens: max_tokens || 1024,
-            temperature: 0.7
+            temperature: 0.7,
+            stream: false
           })
         });
 
         const data = await response.json();
 
         if (response.ok && data.choices?.[0]?.message?.content) {
-          const text = data.choices[0].message.content;
           return res.status(200).json({
-            content: [{ type: 'text', text }],
+            content: [{ type: 'text', text: data.choices[0].message.content }],
             model,
             usage: data.usage || {}
           });
         }
 
         lastError = data.error?.message || `HTTP ${response.status}`;
-        console.warn(`Model ${model} failed: ${lastError}`);
+        console.warn(`Groq model ${model} failed: ${lastError}`);
 
-        // If rate limited, try next model
-        if (response.status === 429 || response.status === 503) continue;
-        // If auth error, no point retrying
+        // Auth error — no point retrying other models
         if (response.status === 401) {
           return res.status(401).json({
-            error: 'Chiave API OpenRouter non valida. Verificala su https://openrouter.ai/keys'
+            error: 'Chiave API Groq non valida. Verifica su https://console.groq.com/keys che la chiave sia corretta e aggiorna GEMINI_API_KEY in Vercel.'
           });
         }
 
+        // Rate limit — try next model
+        if (response.status === 429) continue;
+
       } catch(e) {
         lastError = e.message;
-        console.warn(`Model ${model} exception: ${e.message}`);
       }
     }
 
     return res.status(503).json({
-      error: `Tutti i modelli gratuiti non disponibili al momento. Riprova tra qualche minuto. (${lastError})`
+      error: `Servizio AI temporaneamente non disponibile. Riprova tra qualche secondo. (${lastError})`
     });
 
   } catch (err) {

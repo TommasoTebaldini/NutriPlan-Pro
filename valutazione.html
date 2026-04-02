@@ -38,10 +38,6 @@
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
-  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
-  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
   <div class="nav-sec">Database</div>
@@ -146,56 +142,40 @@
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
 <script>
-const TUTTE_PATOLOGIE=[
-  {id:'diabete',label:'Diabete Mellito Tipo 2',cat:'Metabolica',emoji:'🩸'},
-  {id:'obesita',label:'Obesita / Sovrappeso',cat:'Metabolica',emoji:'⚖️'},
-  {id:'dislipidemia',label:'Dislipidemia',cat:'Cardiovascolare',emoji:'🫀'},
-  {id:'ipertensione',label:'Ipertensione Arteriosa',cat:'Cardiovascolare',emoji:'💊'},
-  {id:'scompenso',label:'Scompenso Cardiaco',cat:'Cardiovascolare',emoji:'❤️'},
-  {id:'steatosi',label:'Steatosi Epatica (NAFLD/MASLD)',cat:'Epatica',emoji:'🫁'},
-  {id:'cirrosi',label:'Cirrosi Epatica',cat:'Epatica',emoji:'🏥'},
-  {id:'pancreatite',label:'Pancreatite Cronica',cat:'Gastroenterologica',emoji:'🔴'},
-  {id:'irc',label:'Insufficienza Renale Cronica (stadio 3-4)',cat:'Renale',emoji:'🫘'},
-  {id:'dialisi',label:'Dialisi (Emodialisi/Peritoneale)',cat:'Renale',emoji:'💧'},
-  {id:'calcolosi',label:'Calcolosi Renale',cat:'Renale',emoji:'💎'},
-  {id:'celiachia',label:'Celiachia / Gluten-Free',cat:'Gastroenterologica',emoji:'🌾'},
-  {id:'ibd',label:'IBD - Crohn / Rettocolite Ulcerosa',cat:'Gastroenterologica',emoji:'🦠'},
-  {id:'diverticolite',label:'Diverticolite acuta',cat:'Gastroenterologica',emoji:'🔴'},
-  {id:'diverticolosi',label:'Diverticolosi (prevenzione)',cat:'Gastroenterologica',emoji:'🟡'},
-  {id:'gastrectomia',label:'Post-Gastrectomia',cat:'Chirurgica',emoji:'🔧'},
-  {id:'stomia',label:'Stomia (ileo/colostomia)',cat:'Chirurgica',emoji:'🔧'},
-  {id:'oncologia',label:'Oncologia / Cachessia Neoplastica',cat:'Oncologica',emoji:'🎗️'},
-  {id:'tumore_seno',label:'Tumore al Seno',cat:'Oncologica',emoji:'🎗️'},
-  {id:'tumore_pancreas',label:'Tumore del Pancreas',cat:'Oncologica',emoji:'🎗️'},
-  {id:'tumore_colon',label:'Tumore del Colon-Retto',cat:'Oncologica',emoji:'🎗️'},
-  {id:'sarcopenia',label:'Sarcopenia / Anziano Fragile',cat:'Geriatrica',emoji:'💪'},
-  {id:'osteoporosi',label:'Osteoporosi',cat:'Geriatrica',emoji:'🦴'},
-  {id:'anemia',label:'Anemia Sideropenica',cat:'Ematologica',emoji:'🩸'},
-  {id:'gotta',label:'Iperuricemia / Gotta',cat:'Reumatologica',emoji:'🦶'},
-  {id:'bpco',label:'BPCO',cat:'Respiratoria',emoji:'🫁'},
-  {id:'hiv',label:'HIV/AIDS',cat:'Infettiva',emoji:'🎗️'},
-  {id:'gravidanza',label:'Gravidanza',cat:'Fisiologica',emoji:'🤰'},
-  {id:'allattamento',label:'Allattamento',cat:'Fisiologica',emoji:'🍼'},
-  {id:'fenilchetonuria',label:'Fenilchetonuria (PKU)',cat:'Genetica',emoji:'🧬'},
-  {id:'allergia_latte',label:'Allergia Proteine Latte Vaccino',cat:'Allergia',emoji:'🥛'},
-  {id:'allergia_pesce',label:'Allergia al Pesce',cat:'Allergia',emoji:'🐟'},
-  {id:'allergia_molluschi',label:'Allergia Molluschi/Crostacei',cat:'Allergia',emoji:'🦐'},
-  {id:'allergia_frutta_secca',label:'Allergia Frutta Secca',cat:'Allergia',emoji:'🥜'},
-  {id:'intolleranza_lattosio',label:'Intolleranza al Lattosio',cat:'Intolleranza',emoji:'🥛'},
-];
+// FC_OPTIONS, LAF_OPTIONS, FABBISOGNO_PATOLOGIE already defined in db.js — do NOT redeclare
 
-const FC_OPTIONS=[
-  {label:'Nessun fattore correttivo',val:1.0},
-  {label:'Stress lieve (chirurgia minore)',val:1.1},
-  {label:'Stress moderato (chirurgia maggiore, sepsi)',val:1.2},
-  {label:'Stress severo (politrauma, ustioni)',val:1.4},
-  {label:'Febbre (+13% per gradi C > 37)',val:1.13},
-  {label:'Gravidanza / crescita',val:1.15},
-];
+// Build TUTTE_PATOLOGIE from PATOLOGIE_BASE (db.js) with category mapping
+function getTuttePatologie() {
+  const catMap = {
+    diabete:'Metabolica', obesita:'Metabolica', dislipidemia:'Cardiovascolare',
+    ipertensione:'Cardiovascolare', scompenso:'Cardiovascolare',
+    steatosi:'Epatica', cirrosi:'Epatica', pancreatite:'Gastroenterologica',
+    irc:'Renale', dialisi:'Renale', calcolosi:'Renale',
+    celiachia:'Gastroenterologica', ibd:'Gastroenterologica',
+    diverticolite:'Gastroenterologica', diverticolosi:'Gastroenterologica',
+    gastrectomia:'Chirurgica', stomia:'Chirurgica', chirurgia_bariatrica:'Chirurgica',
+    oncologia:'Oncologica', tumore_seno:'Oncologica', tumore_pancreas:'Oncologica',
+    tumore_colon:'Oncologica', neoplasia:'Oncologica',
+    sarcopenia:'Geriatrica', osteoporosi:'Geriatrica', malnutrizione:'Geriatrica',
+    anemia:'Ematologica', gotta:'Reumatologica',
+    bpco:'Respiratoria', disfagia:'Respiratoria',
+    hiv:'Infettiva', gravidanza:'Fisiologica', allattamento:'Fisiologica',
+    fenilchetonuria:'Genetica',
+    allergia_latte:'Allergia', allergia_pesce:'Allergia',
+    allergia_molluschi:'Allergia', allergia_frutta_secca:'Allergia',
+    intolleranza_lattosio:'Intolleranza',
+  };
+  const src = (typeof getAllPatologie === 'function') ? getAllPatologie()
+              : (typeof PATOLOGIE_BASE !== 'undefined' ? PATOLOGIE_BASE : []);
+  return src.map(p => ({
+    id: p.id,
+    label: p.nome || p.label || p.id,
+    cat: catMap[p.id] || 'Altre',
+    emoji: p.emoji || '🏥'
+  }));
+}
 
 let selectedPat=new Set();
-let schedaId_global=null;
-let cartellaId_global=null;
 let tdee=0,mbGlobale=0;
 let schedaId=null;
 const macroDist={prot:20,cho:50,fat:30,fibra:25};
@@ -206,7 +186,7 @@ function renderPatChips(filter=''){
   container.innerHTML = '';
   const q = filter.toLowerCase();
   const cats = {};
-  TUTTE_PATOLOGIE.forEach(p => {
+  getTuttePatologie().forEach(p => {
     if(q && !p.label.toLowerCase().includes(q) && !p.cat.toLowerCase().includes(q)) return;
     if(!cats[p.cat]) cats[p.cat] = [];
     cats[p.cat].push(p);
@@ -243,7 +223,12 @@ function renderPatChips(filter=''){
 function togglePat(id){
   if(selectedPat.has(id))selectedPat.delete(id);else selectedPat.add(id);
   const chip=document.getElementById('chip-'+id);
-  if(chip)chip.classList.toggle('selected',selectedPat.has(id));
+  if(chip){
+    const sel=selectedPat.has(id);
+    chip.style.background=sel?'#0F766E':'white';
+    chip.style.color=sel?'white':'#475569';
+    chip.style.borderColor=sel?'#0F766E':'#CBD5E1';
+  }
   updatePatSel();
   if(document.getElementById('pat-lg-notes'))renderLGNotes(document.getElementById('pat-lg-notes'));
 }
@@ -253,14 +238,14 @@ function updatePatSel(){
   const arr=[...selectedPat];
   if(!arr.length){el.style.display='none';return;}
   el.style.display='block';
-  el.innerHTML='Selezionate: '+arr.map(id=>TUTTE_PATOLOGIE.find(p=>p.id===id)?.label||id).join(' · ');
+  el.innerHTML='Selezionate: '+arr.map(id=>getTuttePatologie().find(p=>p.id===id)?.label||id).join(' · ');
 }
 function renderLGNotes(container){
   const arr=[...selectedPat];
   if(!arr.length){container.innerHTML='<p style="color:var(--slate-l);font-size:12.5px">Nessuna patologia selezionata.</p>';return;}
   container.innerHTML=arr.map(id=>{
     const fp=FABBISOGNO_PATOLOGIE[id];
-    const pat=TUTTE_PATOLOGIE.find(p=>p.id===id);
+    const pat=getTuttePatologie().find(p=>p.id===id);
     if(!fp||!pat)return '';
     return `<div class="lg-note-box"><div style="font-weight:700;color:var(--teal-d);margin-bottom:4px">${pat.emoji} ${pat.label}</div><div>Energia: <b>${fp.kcal}</b></div><div>Proteine: <b>${fp.prot}</b></div><div style="font-size:11px;color:#334155;margin-top:4px">${fp.note}</div></div>`;
   }).join('');
@@ -406,10 +391,11 @@ function calcolaFabbisogno(){
 async function salvaScheda(){
   const nome=document.getElementById('v-nome').value.trim();
   if(!nome){toast('Inserisci il nome del paziente','err');return;}
+  if(!currentUser){toast('Sessione scaduta, ricarica la pagina','err');return;}
   const cartellaId=document.getElementById('v-cartella').value;
   if(!cartellaId){
     const cog=document.getElementById('v-cognome').value.trim();
-    document.getElementById('new-cart-nome').value=(cog?cog+' ':'')+nome;
+    document.getElementById('new-cart-nome').value=(cog&&nome?(cog+' '+nome):(cog||nome));
     openM('modal-newcart');return;
   }
   await doSalva(cartellaId);
@@ -418,31 +404,75 @@ async function salvaScheda(){
 async function confermaSalva(){
   const nomeCart=document.getElementById('new-cart-nome').value.trim();
   if(!nomeCart){toast('Inserisci nome cartella','err');return;}
+  if(!currentUser){toast('Sessione scaduta, ricarica la pagina','err');return;}
   showLoading(true);
   const{data,error}=await sb.from('cartelle').insert({
-    user_id:currentUser.id,nome:nomeCart,
+    user_id:currentUser.id,
+    nome:nomeCart,
     ddn:document.getElementById('v-ddn').value||null,
     sesso:document.getElementById('v-sesso').value||null,
     note:document.getElementById('v-note').value.trim()||null,
     created_at:new Date().toISOString()
   }).select().single();
   showLoading(false);
-  if(error||!data){toast('Errore: '+(error?.message||''),'err');return;}
+  if(error||!data){
+    toast('Errore creazione cartella: '+(error?.message||'risposta vuota'),'err');
+    console.error('Errore cartella:', error);
+    return;
+  }
   closeM('modal-newcart');
   await loadCartelleDropdown2();
   document.getElementById('v-cartella').value=data.id;
   await doSalva(data.id);
-  toast('Cartella creata e scheda salvata!','ok');
+}
+
+const SQL_SCHEDE = `-- Esegui questo SQL nel tuo progetto Supabase (SQL Editor):
+create table if not exists schede_valutazione (
+  id uuid default gen_random_uuid() primary key,
+  cartella_id uuid references cartelle(id) on delete cascade,
+  user_id uuid references auth.users not null,
+  nome text, cognome text, ddn date, eta int, sesso text,
+  peso numeric, altezza numeric, peso_ideale numeric, peso_aggiustato numeric,
+  massa_grassa_pct numeric, massa_magra numeric,
+  vita numeric, fianchi numeric, braccio numeric, plica numeric,
+  patologie text, note text, macro_dist text, tdee_calcolato numeric,
+  saved_at timestamptz default now()
+);
+alter table schede_valutazione enable row level security;
+create policy "Proprie schede" on schede_valutazione
+  for all using (auth.uid() = user_id);`;
+
+function mostraModalSQL(){
+  const existing=document.getElementById('modal-sql');
+  if(existing){existing.classList.add('open');return;}
+  const div=document.createElement('div');
+  div.id='modal-sql';
+  div.className='modal-bg open';
+  div.innerHTML=`<div class="modal" style="max-width:560px">
+    <div class="mhdr"><h2>🗄️ Tabella mancante su Supabase</h2><button class="mclose" onclick="this.closest('.modal-bg').classList.remove('open')">✕</button></div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:10px">La tabella <b>schede_valutazione</b> non esiste ancora nel tuo database Supabase. Copialo ed eseguilo nell'<b>SQL Editor</b> del tuo progetto:</p>
+      <textarea readonly style="width:100%;height:220px;font-family:monospace;font-size:11px;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;background:#F8FAFC;resize:none">${SQL_SCHEDE}</textarea>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="this.closest('.modal-bg').classList.remove('open')">Chiudi</button>
+      <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.querySelector('#modal-sql textarea').value);toast('SQL copiato!','ok')">📋 Copia SQL</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
 }
 
 async function doSalva(cartellaId){
+  if(!currentUser){toast('Sessione scaduta, ricarica la pagina','err');return;}
+  if(!cartellaId){toast('Seleziona o crea una cartella paziente','err');return;}
   const payload={
-    cartella_id:cartellaId,user_id:currentUser.id,
-    nome:document.getElementById('v-nome').value.trim(),
+    cartella_id:cartellaId,
+    user_id:currentUser.id,
+    nome:document.getElementById('v-nome').value.trim()||null,
     cognome:document.getElementById('v-cognome').value.trim()||null,
     ddn:document.getElementById('v-ddn').value||null,
     eta:parseInt(document.getElementById('v-eta').value)||null,
-    sesso:document.getElementById('v-sesso').value,
+    sesso:document.getElementById('v-sesso').value||null,
     peso:parseFloat(document.getElementById('v-peso').value)||null,
     altezza:parseFloat(document.getElementById('v-altezza').value)||null,
     peso_ideale:parseFloat(document.getElementById('v-pi').value)||null,
@@ -461,27 +491,52 @@ async function doSalva(cartellaId){
   };
   showLoading(true);
   let result;
-  if(schedaId){result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId);}
-  else{result=await sb.from('schede_valutazione').insert(payload).select().single();if(result.data)schedaId=result.data.id;}
-  showLoading(false);
-  if(result.error){
-    if(result.error.code==='42P01'){
-      toast('Tabella schede_valutazione mancante - esegui SQL in console','err');
-      console.error('Esegui su Supabase:\ncreate table schede_valutazione(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,nome text,cognome text,ddn date,eta int,sesso text,peso numeric,altezza numeric,peso_ideale numeric,peso_aggiustato numeric,massa_grassa_pct numeric,massa_magra numeric,vita numeric,fianchi numeric,braccio numeric,plica numeric,patologie text,note text,macro_dist text,tdee_calcolato numeric,saved_at timestamptz default now());\nalter table schede_valutazione enable row level security;\ncreate policy "Proprie schede" on schede_valutazione for all using (auth.uid()=user_id);');
-    }else{toast('Errore: '+result.error.message,'err');}
+  try {
+    if(schedaId){
+      result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId);
+    } else {
+      result=await sb.from('schede_valutazione').insert(payload).select().single();
+      if(result.data)schedaId=result.data.id;
+    }
+  } catch(e) {
+    showLoading(false);
+    toast('Errore di rete: '+e.message,'err');
     return;
   }
-  toast('Scheda salvata nella cartella!','ok');
+  showLoading(false);
+  if(result.error){
+    const err = result.error;
+    console.error('❌ Errore salvataggio scheda:', JSON.stringify(err));
+    if(err.code==='42P01'){
+      mostraBannerSQL();
+      toast('❌ Tabella mancante — segui le istruzioni in pagina','err');
+    } else if(err.code==='23503'){
+      toast('❌ Cartella non trovata (FK error). Ricarica la pagina.','err');
+    } else if(err.message&&err.message.includes('row-level security')){
+      toast('❌ Errore permessi RLS: '+err.message,'err');
+    } else if(err.code==='PGRST301'||err.message&&err.message.includes('JWT')){
+      toast('❌ Sessione scaduta. Rieffettua il login.','err');
+    } else {
+      toast('❌ Errore: ['+err.code+'] '+err.message,'err');
+    }
+    return;
+  }
+  // Success
+  const nomePaz = document.getElementById('v-nome').value.trim();
+  toast('✅ Scheda di '+nomePaz+' salvata nella cartella!','ok');
 }
 
 async function loadCartelleDropdown2(){
   const sel=document.getElementById('v-cartella');
   if(!sel||!currentUser)return;
-  const{data}=await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
-  const cur=sel.value;
-  sel.innerHTML='<option value="">-- Crea nuova cartella --</option>';
-  if(data)data.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent='📁 '+c.nome;sel.appendChild(o);});
-  if(cur)sel.value=cur;
+  try{
+    const{data,error}=await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+    if(error){console.warn('Errore caricamento cartelle:',error.message);return;}
+    const cur=sel.value;
+    sel.innerHTML='<option value="">-- Crea nuova cartella --</option>';
+    if(data)data.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent='📁 '+c.nome;sel.appendChild(o);});
+    if(cur)sel.value=cur;
+  }catch(e){console.warn('loadCartelleDropdown2 error:',e.message);}
 }
 
 function resetVal(){
@@ -496,44 +551,53 @@ function resetVal(){
 document.addEventListener('DOMContentLoaded',async()=>{
   renderPatChips();
   ['v-pi','v-pa','v-mm'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el._userEdited=true);});
+  const preCartella = sessionStorage.getItem('valCartella');
   try {
-    await checkAuth();
-    loadCartelleDropdown2();
-    // Load scheda if coming from pazienti.html
-    const schedaId = sessionStorage.getItem('loadSchedaId');
-    const valCartella = sessionStorage.getItem('valCartella');
-    if(schedaId) {
-      sessionStorage.removeItem('loadSchedaId');
-      showLoading(true);
-      const {data} = await sb.from('schede_valutazione').select('*').eq('id',schedaId).single();
-      showLoading(false);
-      if(data) {
-        schedaId_global = schedaId;
-        cartellaId_global = data.cartella_id;
-        // Populate fields from saved JSON
-        try {
-          const fields = JSON.parse(data.campi||'{}');
-          Object.entries(fields).forEach(([k,v])=>{const el=document.getElementById(k);if(el&&v)el.value=v;});
-          if(data.patologie) {
-            JSON.parse(data.patologie||'[]').forEach(pid=>selectedPat.add(pid));
-            renderPatChips();
-          }
-        } catch(e2){console.error(e2);}
-        toast('📂 Scheda caricata!','ok');
+    const ok = await checkAuth();
+    if(ok) {
+      await loadCartelleDropdown2();
+      if(preCartella){
+        const sel=document.getElementById('v-cartella');
+        if(sel) sel.value=preCartella;
+        sessionStorage.removeItem('valCartella');
       }
-    } else if(valCartella) {
-      sessionStorage.removeItem('valCartella');
-      cartellaId_global = valCartella;
-      const {data:cartData} = await sb.from('cartelle').select('*').eq('id',valCartella).single().catch(()=>({data:null}));
-      if(cartData) {
-        if(document.getElementById('v-nome')) document.getElementById('v-nome').value = cartData.nome||'';
-        if(document.getElementById('v-cognome')) document.getElementById('v-cognome').value = cartData.cognome||'';
-        if(document.getElementById('v-ddn')&&cartData.ddn) { document.getElementById('v-ddn').value=cartData.ddn; aggiornaEta(); }
-        if(document.getElementById('v-sesso')&&cartData.sesso) document.getElementById('v-sesso').value=cartData.sesso;
-      }
+      // Proactive check: does schede_valutazione table exist?
+      verificaTabella();
     }
-  } catch(e) { console.log('Auth not available'); }
+  } catch(e) { console.log('Auth not available:', e.message); }
 });
+
+async function verificaTabella(){
+  try {
+    const {error} = await sb.from('schede_valutazione').select('id').limit(1);
+    if(error && error.code==='42P01'){
+      // Table missing — show persistent banner
+      mostraBannerSQL();
+    }
+  } catch(e){}
+}
+
+function mostraBannerSQL(){
+  if(document.getElementById('banner-sql')) return;
+  const banner = document.createElement('div');
+  banner.id = 'banner-sql';
+  banner.style.cssText = 'background:#FEF3C7;border:2px solid #F59E0B;border-radius:10px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;';
+  banner.innerHTML = `
+    <div style="font-size:24px;flex-shrink:0">⚠️</div>
+    <div style="flex:1">
+      <div style="font-weight:700;color:#92400E;margin-bottom:4px">Tabella mancante su Supabase</div>
+      <div style="font-size:12.5px;color:#78350F;margin-bottom:10px">La tabella <b>schede_valutazione</b> non è ancora stata creata nel tuo progetto Supabase. Il salvataggio non funzionerà finché non esegui questo SQL:</div>
+      <textarea readonly id="sql-banner-text" style="width:100%;height:130px;font-family:monospace;font-size:10.5px;padding:8px;border:1px solid #F59E0B;border-radius:6px;background:#FFFBEB;resize:none;display:block">${SQL_SCHEDE}</textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-banner-text').value).then(()=>toast('✅ SQL copiato! Incollalo nell\'SQL Editor di Supabase','ok'))">📋 Copia SQL</button>
+        <a href="https://supabase.com/dashboard" target="_blank" class="btn btn-ghost btn-sm">🔗 Apri Supabase Dashboard</a>
+        <button class="btn btn-ghost btn-sm" onclick="verificaTabella().then(()=>{const b=document.getElementById('banner-sql');if(b)b.remove();toast('✅ Tabella trovata!','ok')})">🔄 Ho eseguito l'SQL</button>
+      </div>
+    </div>`;
+  // Insert at top of page-content
+  const pageContent = document.querySelector('.page-content');
+  if(pageContent) pageContent.insertBefore(banner, pageContent.firstChild);
+}
 </script>
 </body>
 </html>

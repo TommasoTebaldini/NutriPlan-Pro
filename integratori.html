@@ -8,21 +8,21 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-.int-cat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:box-shadow .15s}
-.int-cat-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1)}
-.int-cat-hdr{padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;color:white}
-.int-cat-hdr h3{font-size:13.5px;font-weight:700;flex:1}
+.int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+.int-cat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:box-shadow .15s,transform .15s}
+.int-cat-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.1);transform:translateY(-1px)}
+.int-cat-hdr{padding:14px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;color:white}
+.int-cat-hdr h3{font-size:13.5px;font-weight:700;flex:1;letter-spacing:.1px}
 .int-cat-body{padding:0;display:none}
 .int-cat-body.open{display:block}
-.int-item{padding:11px 16px;border-bottom:1px solid var(--border);transition:background .1s}
+.int-item{padding:13px 16px;border-bottom:1px solid var(--border);transition:background .1s}
 .int-item:last-child{border-bottom:none}
 .int-item:hover{background:#F8FAFC}
-.int-item-name{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:3px;display:flex;align-items:center;gap:7px}
-.int-item-type{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700}
-.int-item-desc{font-size:12px;color:var(--slate-m);line-height:1.6;margin-bottom:4px}
-.int-item-use{font-size:11.5px;color:var(--teal-d);font-weight:500}
-.int-item-dose{font-size:11px;color:var(--slate-l);margin-top:2px}
+.int-item-name{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.int-item-type{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap}
+.int-item-desc{font-size:12px;color:var(--slate-m);line-height:1.65;margin-bottom:6px}
+.int-item-use{font-size:11.5px;color:#0F766E;font-weight:600;background:#F0FDF4;padding:5px 8px;border-radius:7px;margin-bottom:4px;border-left:3px solid #10B981}
+.int-item-dose{font-size:11px;color:#1E3A5F;margin-top:4px;background:#EFF6FF;padding:5px 8px;border-radius:7px;border-left:3px solid #3B82F6}
 .int-search{max-width:400px}
 .int-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap}
 </style>
@@ -176,6 +176,9 @@ const INT_DATA = [
       {nome:'Peptamen / Nutrison Peptisorb', tipo:'AFMS', badge:'Peptidico', desc:'Formula a base di peptidi pre-digeriti (idrolizzato proteico). Assorbita anche in presenza di grave malassorbimento.', uso:'Sindrome dell\'intestino corto, malassorbimento grave, pancreatite, mucositi severa, allergia proteine latte', dose:'Uguale a formule polimeriche ma con migliore tolleranza GI in malassorbimento.'},
       {nome:'Forticare / Pro-Sure (EPA arricchito)', tipo:'AFMS', badge:'Oncologico', desc:'Formula ipercalorica arricchita in EPA (2-2.4g/flacone), proteina e HMB (beta-idrossi-beta-metilbutirrato). Contrasta catabolismo muscolare.', uso:'Cachessia neoplastica, perdita di peso in chemioterapia, sarcopenia oncologica', dose:'2 flaconi/die (400 mL totali) = 4g EPA. Continuare almeno 8 settimane.'},
       {nome:'Neocate / Nutrilon Pepti / Alfamino', tipo:'AFMS', badge:'Aminoacidico', desc:'Formula a base di aminoacidi liberi: nessuna proteina intera o peptide. Per allergie severe con fallimento formula idrolisata.', uso:'APLV severa (allergia proteine latte vaccino), eosinofilia esofagea, allergie multiple, sindrome di Heiner', dose:'Come sostituto del latte in lattanti. In adulti: sotto supervisione allergologica.'},
+      {nome:'Fresubin Renal / Novasource Renal', tipo:'AFMS', badge:'Dialisi', desc:'Formula ipercalorica arricchita in proteine per pazienti dializzati (fabbisogno proteico aumentato 1.2-1.4 g/kg). Ridotto contenuto di potassio, fosforo, sodio.', uso:'Emodialisi, dialisi peritoneale con aumentato catabolismo proteico e malnutrizione', dose:'200-400 mL/die in aggiunta ai pasti. Alto apporto proteico (15-20g/200 mL).'},
+      {nome:'Infatrini / SMA High Energy', tipo:'AFMS', badge:'Neonatale', desc:'Formula ipercalorica per lattanti (1.0 kcal/mL) per ottimizzare la crescita con volumi ridotti. Arricchita in proteine, Ca, P, vitamine.', uso:'Neonati prematuri, RCIU, scarso accrescimento, displasia broncopolmonare, cardiopatie', dose:'Come sostituto del latte materno o integrazione. Sotto supervisione neonatologica/pediatrica.'},
+      {nome:'Vital 1.5 / Nutrison Energy Multi Fibre', tipo:'AFMS', badge:'Nutrizione Enterale', desc:'Formula polimerica standard arricchita in fibre miste (solubili e insolubili). Per nutrizione enterale completa via sonda.', uso:'Nutrizione enterale tramite SNG/PEG/PEJ in pazienti che non possono alimentarsi per os', dose:'Velocità iniziale 20-30 mL/h, incrementare di 20 mL ogni 8-12h fino al target. 1.5 kcal/mL.'},
     ]
   },
   {
@@ -187,6 +190,24 @@ const INT_DATA = [
       {nome:'Integratori per IRC (Nephrovit / Ketostéril)', tipo:'AFMS', badge:'Renale', desc:'Cheto-analoghi degli aminoacidi essenziali: forniscono lo scheletro carbonioso senza azoto, l\'organismo li converte in AA usando N di scarto. Riduce produzione urea.', uso:'IRC stadio 3-5 con dieta ipoproteica (0.3-0.6 g/kg/die)', dose:'1 compressa per 5 kg peso corporeo, con i pasti. Es. 70 kg → 14 compresse/die.'},
       {nome:'Thiamina (Vitamina B1)', tipo:'Integratore', badge:'Vit B1', desc:'Carenza causa sindrome di Wernicke (encefalopatia) e beri-beri. Rischio alto in alcolisti, post-bariatrica, vomito prolungato, refeeding syndrome.', uso:'Alcolismo, sindrome di Wernicke (emergenza), post-chirurgia bariatrica, iperemesi gravidica, refeeding', dose:'Profilassi: 100-300 mg/die orale. Wernicke (emergenza): 200-500 mg EV x 3/die x 2-3 giorni poi IM/orale.'},
       {nome:'Vitamina D3 + K2 + Magnesio', tipo:'Integratore', badge:'Ossa', desc:'Sinergia documentata: D3 aumenta assorbimento Ca, K2 dirige Ca nelle ossa (non arterie), Mg necessario per attivazione D3 (renal 1-α-hydroxylase).', uso:'Osteoporosi, sarcopenia, prevenzione cadute anziani, supplementazione D3 ad alte dosi', dose:'D3 1000-4000 UI + K2 (MK-7) 90-200 µg + Mg 200-400 mg/die.'},
+      {nome:'Vitamina B6 (Piridossina)', tipo:'Integratore', badge:'Vit B6', desc:'Coenzima per oltre 100 reazioni enzimatiche: metabolismo aminoacidi, sintesi neurotrasmettitori (serotonina, dopamina). Carenza causa neuropatia periferica.', uso:'Iperemesi gravidica (con B12), neuropatia, iperomocisteinemia, dermatiti, anemia sidero-blastica', dose:'10-50 mg/die. Non superare 200 mg/die (neuropatia sensoriale reversibile a dosi elevate).'},
+      {nome:'Vitamina E (Tocoferolo)', tipo:'Integratore', badge:'Vit E', desc:'Antiossidante liposolubile. Protegge membrane cellulari da ossidazione. Spesso carente in malassorbimento lipidico e prematurità.', uso:'Fibrosi cistica, IPE, malassorbimento lipidico, neonati prematuri, atassia da carenza di E', dose:'15-400 mg/die (forma alfa-tocoferolo). 100-400 mg nei malassorbimenti. Con PERT in IPE.'},
+      {nome:'Coenzima Q10 (Ubiquinolo)', tipo:'Integratore', badge:'CoQ10', desc:'Antiossidante e cofattore nella catena respiratoria mitocondriale. Sintesi ridotta da statine. Ubiquinolo è la forma ridotta (meglio assorbita).', uso:'Miopatia da statine, scompenso cardiaco (add-on), malattie mitocondriali, infertilità maschile', dose:'100-400 mg/die ubiquinolo (meglio assorbito dei tocoferoli). Con il pasto contenente grassi.'},
+      {nome:'Vitamina B2 (Riboflavina)', tipo:'Integratore', badge:'Vit B2', desc:'Coenzima FAD/FMN per metabolismo energetico, attivazione B6, folato, B12. Fotosensibile. Carenza causa cheilosi, glossite, dermatite.', uso:'Emicrania (evidenza di grado B: 400 mg/die), malnutrizione, malassorbimento, alcolismo', dose:'1.6-2 mg/die normale; 400 mg/die per profilassi emicrania (sotto supervisione).'},
+      {nome:'Niacina (Vitamina B3 / Acido Nicotinico)', tipo:'Integratore', badge:'Vit B3', desc:'Precursore di NAD/NADP. A dosi farmacologiche (1-3g): aumenta HDL del 20-30%, riduce trigliceridi e LDL. Effetto flush dose-dipendente.', uso:'Dislipidemia (trigliceridi elevati, HDL basso), pellagra (carenza severa)', dose:'Dose nutrizionale: 14-18 mg/die. Dose farmacologica (dislipidemia): 1-3 g/die a rilascio prolungato (solo Rx, sotto supervisione cardiologo).'},
+    ]
+  },
+  {
+    id:'sport_performance', nome:'Integratori per la Performance Sportiva', emoji:'🏃', colore:'#0EA5E9',
+    desc:'Integratori con evidenza scientifica per atleti e sportivi (classificazione WADA-safe).',
+    items:[
+      {nome:'Creatina Monoidrato', tipo:'Integratore', badge:'Grado A', desc:'L\'integratore sportivo più studiato. Aumenta riserve di PCr nel muscolo, migliora performance in esercizi ad alta intensità breve (<30s), facilita recupero, può aumentare massa magra (+1-2 kg in 4 settimane).', uso:'Forza, potenza, sprint, ipertrofia muscolare, recupero da infortuni, sarcopenia, anziani', dose:'3-5 g/die mantenimento (no fase carica necessaria). Con carboidrati dopo allenamento. Sicura a lungo termine.'},
+      {nome:'Caffeina', tipo:'Integratore', badge:'Grado A', desc:'Antagonista dell\'adenosina: riduce percezione dello sforzo, migliora resistenza aerobica del 3-5%, aumenta potenza anaerobica. Effetti variano per genetica CYP1A2.', uso:'Endurance, sport di squadra, sport di forza, gara — da assumere 30-60 min prima', dose:'3-6 mg/kg peso (175-420 mg per 70 kg). Gum caffeina: efficacia simile a capsule. Tolleranza con uso quotidiano.'},
+      {nome:'Beta-Alanina', tipo:'Integratore', badge:'Grado A', desc:'Precursore della carnosina muscolare (buffer dell\'acidosi lattica). Migliora performance in attività 60-240s (gare mezzofondo, HIIT, boxe).', uso:'Mezzofondo, nuoto 200-800m, sport ad alta intensità 1-4 min, HIIT', dose:'3.2-6.4 g/die in 2-4 dosi per ridurre il parestesie. Carica 4-6 settimane per effetto massimo.'},
+      {nome:'Bicarbonato di Sodio', tipo:'Integratore', badge:'Grado A', desc:'Buffer extracellulare. Aumenta capacità tampone del sangue riducendo acidosi metabolica. Migliora performance del 2-3% in attività di 1-7 minuti.', uso:'Mezzofondo, nuoto 200-800m, sport di squadra (sprint brevi ripetuti)', dose:'0.2-0.3 g/kg peso 60-90 min prima della gara. Effetto GI possibile — testare in allenamento.'},
+      {nome:'Nitrati (Succo di Barbabietola)', tipo:'Integratore', badge:'Grado A', desc:'Convertiti in NO (ossido nitrico) → vasodilatazione, riduzione costo dell\'O2 dell\'esercizio. Migliora performance endurance del 1-3%. Efficace nei non-élite.', uso:'Endurance (corsa, ciclismo), sport misti ad intermittenza', dose:'5-8 mmol nitrati 2-3h prima (circa 500mL succo barbabietola concentrato). Evitare antibiotici (distruggono batteri orali che convertono nitrati in nitriti).'},
+      {nome:'HMB (Beta-idrossi-beta-metilbutirrato)', tipo:'Integratore', badge:'Grado B', desc:'Metabolita della leucina. Riduce degradazione proteica muscolare (segnalazione ubiquitina-proteasoma). Utile in anziani, malattia, post-chirurgia; effetti limitati negli atleti avanzati.', uso:'Sarcopenia, anziani inattivi, pazienti oncologici, post-chirurgia (es. ONS Forticare con HMB)', dose:'3 g/die in 3 dosi. Efficacia maggiore in non-allenati e pazienti malnutriti.'},
+      {nome:'Vitamina D per Atleti', tipo:'Integratore', badge:'Raccomandato', desc:'Gli atleti hanno rischio di carenza simile alla popolazione generale. La carenza riduce forza muscolare, immunità, recupero. Target atleti: 50-80 ng/mL (più alto del normale).', uso:'Prevenzione infortuni, ottimizzazione forza muscolare, immunità, stress fractures', dose:'2000-5000 UI/die in base al livello basale. Monitorare 25-OH-D ogni 6 mesi. Con pasto grasso.'},
     ]
   }
 ];
@@ -214,18 +235,20 @@ function buildIntGrid(filter='') {
           <span class="int-badge" style="background:#EFF6FF;color:#1D4ED8">${esc(it.badge)}</span>
         </div>
         <div class="int-item-desc">${esc(it.desc)}</div>
-        <div class="int-item-use">🎯 Indicazioni: ${esc(it.uso)}</div>
-        <div class="int-item-dose">💊 Dosaggio: ${esc(it.dose)}</div>
+        <div class="int-item-use">🎯 <b>Indicazioni:</b> ${esc(it.uso)}</div>
+        <div class="int-item-dose">💊 <b>Dosaggio:</b> ${esc(it.dose)}</div>
       </div>`).join('');
     
     return `<div class="int-cat-card" id="cat-${cat.id}">
-      <div class="int-cat-hdr" style="background:${cat.colore}" onclick="toggleCat('${cat.id}')">
-        <span style="font-size:22px">${cat.emoji}</span>
-        <h3>${esc(cat.nome)}</h3>
-        <span style="font-size:11px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:8px;font-weight:700">${filteredItems.length} prodotti</span>
+      <div class="int-cat-hdr" style="background:linear-gradient(135deg,${cat.colore},${cat.colore}cc)" onclick="toggleCat('${cat.id}')">
+        <span style="font-size:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.25))">${cat.emoji}</span>
+        <div style="flex:1">
+          <h3>${esc(cat.nome)}</h3>
+          <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:1px">${esc(cat.desc)}</div>
+        </div>
+        <span style="font-size:11px;background:rgba(255,255,255,.25);padding:3px 9px;border-radius:10px;font-weight:700;flex-shrink:0">${filteredItems.length} prodotti</span>
         <span id="tog-${cat.id}" style="font-size:15px;margin-left:6px">▼</span>
       </div>
-      <div style="padding:8px 16px;font-size:12px;color:var(--slate-l);border-bottom:1px solid var(--border)">${esc(cat.desc)}</div>
       <div class="int-cat-body${q?' open':''}" id="body-${cat.id}">
         ${itemsHtml}
       </div>
@@ -240,7 +263,7 @@ function buildIntGrid(filter='') {
 }
 
 function typeColor(tipo) {
-  const map = {'AFMS':'#DC2626','Integratore':'#0F766E','Probiotico':'#0EA5E9','Prebiotico':'#84CC16','Lassativo osmotico':'#8B5CF6','Addensante':'#F59E0B'};
+  const map = {'AFMS':'#DC2626','Integratore':'#0F766E','Probiotico':'#0EA5E9','Prebiotico':'#84CC16','Lassativo osmotico':'#8B5CF6','Addensante':'#F59E0B','Probiotico/Simbiotico':'#0EA5E9'};
   return map[tipo] || '#64748B';
 }
 

@@ -248,6 +248,8 @@ function renderRicette(filter = '') {
     const porzioni = r.porzioni || 1;
     const totKcal = ing.reduce((s, i) => { const f = lookup(i.nome); return s + (f ? (f.k||0)/100*(parseFloat(i.qt)||0) : 0); }, 0);
     const kcalPorz = Math.round(totKcal / porzioni);
+    const ingPreview = ing.slice(0, 5).map(i => `<span style="display:inline-flex;align-items:center;gap:3px;font-size:11px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:5px;padding:2px 6px;color:#15803D"><b>${esc(i.nome)}</b>${i.qt && i.qt !== '0' ? `<span style="color:#64748B;font-weight:400">${i.qt}g</span>` : ''}</span>`).join('');
+    const ingMore = ing.length > 5 ? `<span style="font-size:11px;color:var(--slate-l)">+${ing.length - 5} altri</span>` : '';
     return `<div class="ricetta-card" onclick="apriDettaglio('${r.id}')">
       <h4>🍽️ ${esc(r.nome)}</h4>
       <div class="rc-meta">
@@ -256,8 +258,8 @@ function renderRicette(filter = '') {
         <span>🔥 ~${kcalPorz} kcal/porz</span>
       </div>
       ${r.note ? `<div style="font-size:11px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(r.note.substring(0,60))}${r.note.length>60?'...':''}</div>` : ''}
-      <div style="margin-top:8px;display:flex;gap:5px">
-        <span class="rc-tag">${ing.length} ingredienti</span>
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
+        ${ingPreview}${ingMore}
       </div>
       <div class="paz-actions">
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editRicetta('${r.id}')">✏️</button>
@@ -474,7 +476,8 @@ function aggiornaDettaglio() {
   const porzioniSel = parseFloat(document.getElementById('det-porzioni').value) || 1;
   const porzioniTot = detRicetta.porzioni || 1;
   const ratio = porzioniSel / porzioniTot;
-  const ing = detRicetta.ingredienti ? JSON.parse(detRicetta.ingredienti) : [];
+  const raw = detRicetta.ingredienti;
+  const ing = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
   let totK = 0, totP = 0, totCh = 0, totG = 0, totFi = 0;
   let html = `<div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">Ingredienti per ${porzioniSel} porzione${porzioniSel!==1?'i':''}:</div>`;
   html += '<div>';
@@ -501,7 +504,8 @@ function inserisciNelPiano() {
   const porzioniSel = parseFloat(document.getElementById('det-porzioni').value) || 1;
   const porzioniTot = detRicetta.porzioni || 1;
   const ratio = porzioniSel / porzioniTot;
-  const ing = detRicetta.ingredienti ? JSON.parse(detRicetta.ingredienti) : [];
+  const rawIns = detRicetta.ingredienti;
+  const ing = rawIns ? (typeof rawIns === 'string' ? JSON.parse(rawIns) : rawIns) : [];
   // Store in sessionStorage for app.html to pick up
   const data = {
     nome: detRicetta.nome + (porzioniSel !== 1 ? ` (${porzioniSel} porz.)` : ''),

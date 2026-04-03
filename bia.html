@@ -104,7 +104,7 @@
     <div class="grid-2">
       <div class="nf">
         <label>Paziente (cartella)</label>
-        <select id="bia-cartella" onchange="onCartellaChange()">
+        <select id="bia-cartella" onchange="onCartellaChange()" onfocus="loadCartellePaz()">
           <option value="">-- Nessuna cartella selezionata --</option>
         </select>
       </div>
@@ -991,6 +991,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth(false);
     await loadCartellePaz();
+    // Pre-select cartella from URL parameter
+    const params = new URLSearchParams(window.location.search);
+    const cartellaParam = params.get('cartella');
+    if (cartellaParam) {
+      const sel = document.getElementById('bia-cartella');
+      if (sel) { sel.value = cartellaParam; onCartellaChange(); }
+    }
   } catch(e) {}
 });
 </script>

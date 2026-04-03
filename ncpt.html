@@ -597,6 +597,13 @@ function filterCart() {
 function showCartDD(q='') {
   const dd = document.getElementById('cart-dd');
   if (!dd) return;
+  if (!allCartelle.length && currentUser) {
+    sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',currentUser.id).order('nome').then(({data}) => {
+      allCartelle = data || [];
+      showCartDD(q);
+    });
+    return;
+  }
   const filtered = q ? allCartelle.filter(c => c.nome.toLowerCase().includes(q)) : allCartelle;
   if (!filtered.length) {
     dd.innerHTML='<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella</div>';

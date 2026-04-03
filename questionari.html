@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Questionari Nutrizionali — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.q-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#F0F9FF;border-radius:14px}
+.q-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.q-tab:hover{background:rgba(14,165,233,.12);color:#0369A1}
+.q-tab.active{background:white;color:#0369A1;box-shadow:0 3px 10px rgba(14,165,233,.2);font-weight:700}
+.q-panel{display:none}.q-panel.active{display:block}
+.q-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow)}
+.q-card-hdr{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;user-select:none}
+.q-card-hdr h3{font-size:14px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:8px;margin:0}
+.q-card-hdr .q-badge{font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:12px}
+.q-card-body{padding:18px;border-top:1.5px solid var(--border);display:none}
+.q-card-body.open{display:block}
+.q-item{background:#F8FAFC;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:10px}
+.q-item label{font-size:13px;font-weight:600;color:var(--slate);display:block;margin-bottom:8px;line-height:1.5}
+.q-item .q-sub{font-size:11.5px;color:var(--slate-l);margin-bottom:8px;font-weight:400}
+.q-options{display:flex;flex-direction:column;gap:6px}
+.q-opt{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;transition:background .15s}
+.q-opt:hover{background:#EFF6FF}
+.q-opt input[type=radio]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.q-opt input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.q-opt label{font-size:12.5px;color:var(--slate-m);cursor:pointer}
+.q-scale{display:flex;gap:4px;flex-wrap:wrap}
+.q-scale-btn{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;color:var(--slate-m);transition:all .15s;min-width:36px;text-align:center}
+.q-scale-btn.sel{background:var(--teal);color:white;border-color:var(--teal)}
+.q-scale-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--slate-l);margin-top:3px}
+.q-result-box{border-radius:var(--r);padding:16px 20px;margin-top:16px;display:none}
+.q-result-box.show{display:block}
+.q-result-score{font-size:32px;font-weight:800;font-family:'DM Serif Display',serif}
+.q-result-label{font-size:14px;font-weight:700;margin-bottom:6px}
+.q-result-desc{font-size:12.5px;line-height:1.7}
+.q-bar{height:12px;border-radius:8px;background:#E2E8F0;overflow:hidden;margin:6px 0}
+.q-bar-fill{height:100%;border-radius:8px;transition:width .6s ease}
+.info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.7;border-left:4px solid}
+.ib-blue{background:#EFF6FF;border-color:#3B82F6;color:#1E3A5F}
+.ib-green{background:#ECFDF5;border-color:#10B981;color:#064E3B}
+.ib-amber{background:#FEF3C7;border-color:#F59E0B;color:#78350F}
+.ib-red{background:#FEE2E2;border-color:#EF4444;color:#7F1D1D}
+.ib-teal{background:#F0FDFA;border-color:#14B8A6;color:#134E4A}
+.q-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--slate-l);margin:20px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--border)}
+.q-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.q-grid-2{grid-template-columns:1fr}}
+.q-num-input{width:80px;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:14px;font-weight:700;text-align:center;font-family:inherit;outline:none}
+.q-num-input:focus{border-color:var(--teal)}
+.q-subscale{background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #3B82F6}
+.q-subscale-title{font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.q-subscale-score{font-size:18px;font-weight:800;color:#1D4ED8}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item active" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📋 Questionari Nutrizionali</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<div class="info-box ib-blue">
+  <b>📋 Questionari Nutrizionali</b> — Strumenti validati a livello internazionale per la valutazione dello stato nutrizionale e dei comportamenti alimentari. Divisi in <b>Test di Screening</b> (identificazione rapida del rischio) e <b>Test di Assessment</b> (valutazione approfondita). Ogni questionario restituisce un punteggio con interpretazione clinica e raccomandazioni operative.
+</div>
+
+<div class="q-tabs">
+  <button class="q-tab active" onclick="showQTab('screening')">🔍 Test di Screening</button>
+  <button class="q-tab" onclick="showQTab('assessment')">📊 Test di Assessment</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: TEST DI SCREENING
+     ══════════════════════════════════════════════ -->
+<div class="q-panel active" id="qtab-screening">
+
+  <div class="q-section-title">🔍 Screening dello Stato Nutrizionale</div>
+
+  <!-- MUST -->
+  <div class="q-card" id="qcard-must">
+    <div class="q-card-hdr" onclick="toggleQCard('must')">
+      <h3>⚖️ MUST — Malnutrition Universal Screening Tool</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#ECFDF5;color:#065F46">Adulti ospedalizzati e territorio</span>
+        <span id="must-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body open" id="qbody-must">
+      <div class="info-box ib-teal" style="font-size:12px">MUST è sviluppato dalla BAPEN (British Association for Parenteral and Enteral Nutrition). Valuta il rischio di malnutrizione in adulti. Si calcola sommando i punteggi di 3 componenti.</div>
+      <div class="q-item">
+        <label>1. BMI attuale del paziente</label>
+        <div class="q-options" id="must-q1">
+          <label class="q-opt"><input type="radio" name="must1" value="0" onchange="calcMUST()"><label>BMI &gt; 20 kg/m² → <b>0 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="must1" value="1" onchange="calcMUST()"><label>BMI 18.5–20 kg/m² → <b>1 punto</b></label></label>
+          <label class="q-opt"><input type="radio" name="must1" value="2" onchange="calcMUST()"><label>BMI &lt; 18.5 kg/m² → <b>2 punti</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>2. Perdita di peso non intenzionale negli ultimi 3–6 mesi</label>
+        <div class="q-options" id="must-q2">
+          <label class="q-opt"><input type="radio" name="must2" value="0" onchange="calcMUST()"><label>Nessuna perdita o &lt; 5% → <b>0 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="must2" value="1" onchange="calcMUST()"><label>5–10% del peso corporeo → <b>1 punto</b></label></label>
+          <label class="q-opt"><input type="radio" name="must2" value="2" onchange="calcMUST()"><label>&gt; 10% del peso corporeo → <b>2 punti</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>3. Effetto di una malattia acuta (es. il paziente non si nutre o è probabile che non lo faccia per &gt; 5 giorni)</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="must3" value="0" onchange="calcMUST()"><label>No → <b>0 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="must3" value="2" onchange="calcMUST()"><label>Sì → <b>2 punti</b></label></label>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="calcMUST(true)">📊 Calcola MUST</button>
+      <div class="q-result-box" id="must-result"></div>
+    </div>
+  </div>
+
+  <!-- MNA-SF -->
+  <div class="q-card" id="qcard-mna">
+    <div class="q-card-hdr" onclick="toggleQCard('mna')">
+      <h3>👴 MNA-SF — Mini Nutritional Assessment (Short Form)</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95">Anziani ≥65 anni</span>
+        <span id="mna-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-mna">
+      <div class="info-box ib-teal" style="font-size:12px">MNA-SF è lo strumento di riferimento per la valutazione del rischio nutrizionale negli anziani (≥65 anni), validato in setting geriatrico, ospedaliero e di comunità.</div>
+      <div class="q-item">
+        <label>A. Riduzione dell'apporto alimentare negli ultimi 3 mesi per perdita di appetito, problemi digestivi, difficoltà di masticazione o deglutizione</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mna_a" value="0" onchange="calcMNA()"><label>Riduzione grave dell'apporto → <b>0</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_a" value="1" onchange="calcMNA()"><label>Riduzione moderata dell'apporto → <b>1</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_a" value="2" onchange="calcMNA()"><label>Nessuna riduzione dell'apporto → <b>2</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>B. Perdita di peso negli ultimi 3 mesi</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mna_b" value="0" onchange="calcMNA()"><label>Perdita di peso &gt; 3 kg → <b>0</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_b" value="1" onchange="calcMNA()"><label>Non sa → <b>1</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_b" value="2" onchange="calcMNA()"><label>Perdita di peso 1–3 kg → <b>2</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_b" value="3" onchange="calcMNA()"><label>Nessuna perdita di peso → <b>3</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>C. Mobilità</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mna_c" value="0" onchange="calcMNA()"><label>Allettato o in sedia a rotelle → <b>0</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_c" value="1" onchange="calcMNA()"><label>Alzato ma non esce di casa → <b>1</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_c" value="2" onchange="calcMNA()"><label>Esce di casa → <b>2</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>D. Presenza di stress psicologico o malattia acuta negli ultimi 3 mesi</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mna_d" value="0" onchange="calcMNA()"><label>Sì → <b>0</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_d" value="2" onchange="calcMNA()"><label>No → <b>2</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>E. Problemi neuropsicologici</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mna_e" value="0" onchange="calcMNA()"><label>Demenza grave o depressione → <b>0</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_e" value="1" onchange="calcMNA()"><label>Demenza lieve → <b>1</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_e" value="2" onchange="calcMNA()"><label>Nessun problema → <b>2</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>F. Indice di massa corporea (BMI) — Se non disponibile, usare circonferenza del polpaccio (F2)</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mna_f" value="0" onchange="calcMNA()"><label>BMI &lt; 19 → <b>0</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_f" value="1" onchange="calcMNA()"><label>BMI 19–21 → <b>1</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_f" value="2" onchange="calcMNA()"><label>BMI 21–23 → <b>2</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_f" value="3" onchange="calcMNA()"><label>BMI ≥ 23 → <b>3</b></label></label>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="calcMNA(true)">📊 Calcola MNA-SF</button>
+      <div class="q-result-box" id="mna-result"></div>
+    </div>
+  </div>
+
+  <!-- NRS-2002 -->
+  <div class="q-card" id="qcard-nrs">
+    <div class="q-card-hdr" onclick="toggleQCard('nrs')">
+      <h3>🏥 NRS-2002 — Nutritional Risk Screening 2002</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#FEF3C7;color:#92400E">Setting ospedaliero</span>
+        <span id="nrs-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-nrs">
+      <div class="info-box ib-teal" style="font-size:12px">NRS-2002 (Kondrup et al., 2003) è lo strumento raccomandato da ESPEN per lo screening nutrizionale in ospedale. Valuta sia lo stato nutrizionale attuale sia la gravità della malattia.</div>
+      <div class="q-section-title" style="margin-top:0">FASE 1 — Pre-screening iniziale</div>
+      <div class="q-item">
+        <label>Rispondere SÌ o NO alle seguenti domande. Se almeno una risposta è SÌ, procedere alla Fase 2.</label>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;font-size:12.5px;margin-top:8px">
+          <span>BMI &lt; 20.5?</span><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre1" value="1" onchange="calcNRS()"> Sì</label><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre1" value="0" onchange="calcNRS()"> No</label>
+          <span>Ha perso peso negli ultimi 3 mesi?</span><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre2" value="1" onchange="calcNRS()"> Sì</label><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre2" value="0" onchange="calcNRS()"> No</label>
+          <span>Ha ridotto l'apporto alimentare nell'ultima settimana?</span><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre3" value="1" onchange="calcNRS()"> Sì</label><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre3" value="0" onchange="calcNRS()"> No</label>
+          <span>È affetto da malattia grave?</span><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre4" value="1" onchange="calcNRS()"> Sì</label><label class="q-opt" style="padding:4px 8px"><input type="radio" name="nrs_pre4" value="0" onchange="calcNRS()"> No</label>
+        </div>
+      </div>
+      <div class="q-section-title">FASE 2 — Valutazione principale</div>
+      <div class="q-item">
+        <label>Stato nutrizionale (scegliere il grado peggiore)</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="nrs_n" value="0" onchange="calcNRS()"><label>Normale — <b>0 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_n" value="1" onchange="calcNRS()"><label>Lieve: perdita peso &gt;5% in 3 mesi o apporto 50-75% fabbisogno — <b>1 punto</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_n" value="2" onchange="calcNRS()"><label>Moderato: perdita peso &gt;5% in 2 mesi o BMI 18.5-20.5 o apporto 25-60% fabbisogno — <b>2 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_n" value="3" onchange="calcNRS()"><label>Grave: perdita peso &gt;5% in 1 mese (&gt;15% in 3 mesi) o BMI &lt;18.5 o apporto 0-25% fabbisogno — <b>3 punti</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>Gravità della malattia (aumentato fabbisogno)</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="nrs_m" value="0" onchange="calcNRS()"><label>Nessuna — <b>0 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_m" value="1" onchange="calcNRS()"><label>Lieve: frattura dell'anca, BPCO, emodialisi, diabete, oncologici non in chemioterapia — <b>1 punto</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_m" value="2" onchange="calcNRS()"><label>Moderata: chirurgia addominale maggiore, ictus, polmonite grave, tumori ematologici — <b>2 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_m" value="3" onchange="calcNRS()"><label>Grave: trauma cranico, trapianto di midollo, terapia intensiva (APACHE &gt;10) — <b>3 punti</b></label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>Età &gt; 70 anni?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="nrs_eta" value="0" onchange="calcNRS()"><label>No → <b>0 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_eta" value="1" onchange="calcNRS()"><label>Sì → <b>+1 punto</b></label></label>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="calcNRS(true)">📊 Calcola NRS-2002</button>
+      <div class="q-result-box" id="nrs-result"></div>
+    </div>
+  </div>
+
+  <!-- SCOFF -->
+  <div class="q-card" id="qcard-scoff">
+    <div class="q-card-hdr" onclick="toggleQCard('scoff')">
+      <h3>🔎 SCOFF — Screening DCA</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#FEE2E2;color:#991B1B">Disturbi comportamento alimentare</span>
+        <span id="scoff-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-scoff">
+      <div class="info-box ib-teal" style="font-size:12px">SCOFF (Morgan et al., 1999) è un questionario a 5 item per lo screening dei disturbi del comportamento alimentare (DCA). Ogni risposta "Sì" vale 1 punto. Punteggio ≥2 = screening positivo per DCA.</div>
+      <div class="q-item">
+        <label>S — Ti <b>S</b>ei mai provocato il vomito perché ti sentivi troppo pieno/a?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="scoff1" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
+          <label class="q-opt"><input type="radio" name="scoff1" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>C — Ti preoccupi di aver perso il <b>C</b>ontrollo su quanto mangi?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="scoff2" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
+          <label class="q-opt"><input type="radio" name="scoff2" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>O — Hai perso recentemente più di 6 kg in un periodo di 3 mesi (<b>O</b>ver 6kg)?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="scoff3" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
+          <label class="q-opt"><input type="radio" name="scoff3" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>F — Ti consideri <b>F</b>ormoso/a pur essendo magro/a secondo gli altri?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="scoff4" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
+          <label class="q-opt"><input type="radio" name="scoff4" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>F — Diresti che il <b>F</b>ood (cibo) domina la tua vita?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="scoff5" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
+          <label class="q-opt"><input type="radio" name="scoff5" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="calcSCOFF(true)">📊 Calcola SCOFF</button>
+      <div class="q-result-box" id="scoff-result"></div>
+    </div>
+  </div>
+
+  <!-- PHQ-2 -->
+  <div class="q-card" id="qcard-phq2">
+    <div class="q-card-hdr" onclick="toggleQCard('phq2')">
+      <h3>🧠 PHQ-2 — Patient Health Questionnaire (Screening Depressione)</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95">Screening depressione</span>
+        <span id="phq2-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-phq2">
+      <div class="info-box ib-teal" style="font-size:12px">Il PHQ-2 è il primo step dello screening della depressione. Nelle ultime 2 settimane, con quale frequenza hai avuto questi problemi? (0=Mai · 1=Alcuni giorni · 2=Più della metà dei giorni · 3=Quasi ogni giorno). Punteggio ≥3 = procedere a PHQ-9.</div>
+      <div class="q-item">
+        <label>1. Poco interesse o piacere nel fare le cose</label>
+        <div class="q-scale">
+          <button class="q-scale-btn" data-q="phq2_1" data-v="0" onclick="selScale(this,0,'phq2_1',calcPHQ2)">0<br><span style="font-size:9px">Mai</span></button>
+          <button class="q-scale-btn" data-q="phq2_1" data-v="1" onclick="selScale(this,1,'phq2_1',calcPHQ2)">1<br><span style="font-size:9px">Alcuni gg</span></button>
+          <button class="q-scale-btn" data-q="phq2_1" data-v="2" onclick="selScale(this,2,'phq2_1',calcPHQ2)">2<br><span style="font-size:9px">&gt;Metà</span></button>
+          <button class="q-scale-btn" data-q="phq2_1" data-v="3" onclick="selScale(this,3,'phq2_1',calcPHQ2)">3<br><span style="font-size:9px">Ogni gg</span></button>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>2. Senso di tristezza, depressione o mancanza di speranza</label>
+        <div class="q-scale">
+          <button class="q-scale-btn" data-q="phq2_2" data-v="0" onclick="selScale(this,0,'phq2_2',calcPHQ2)">0<br><span style="font-size:9px">Mai</span></button>
+          <button class="q-scale-btn" data-q="phq2_2" data-v="1" onclick="selScale(this,1,'phq2_2',calcPHQ2)">1<br><span style="font-size:9px">Alcuni gg</span></button>
+          <button class="q-scale-btn" data-q="phq2_2" data-v="2" onclick="selScale(this,2,'phq2_2',calcPHQ2)">2<br><span style="font-size:9px">&gt;Metà</span></button>
+          <button class="q-scale-btn" data-q="phq2_2" data-v="3" onclick="selScale(this,3,'phq2_2',calcPHQ2)">3<br><span style="font-size:9px">Ogni gg</span></button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="calcPHQ2(true)">📊 Calcola PHQ-2</button>
+      <div class="q-result-box" id="phq2-result"></div>
+    </div>
+  </div>
+
+</div><!-- end qtab-screening -->
+
+<!-- ══════════════════════════════════════════════
+     TAB: TEST DI ASSESSMENT
+     ══════════════════════════════════════════════ -->
+<div class="q-panel" id="qtab-assessment">
+
+  <div class="q-section-title">📊 Assessment Approfondito del Comportamento Alimentare</div>
+
+  <!-- EDE-Q -->
+  <div class="q-card" id="qcard-edeq">
+    <div class="q-card-hdr" onclick="toggleQCard('edeq')">
+      <h3>📋 EDE-Q — Eating Disorder Examination Questionnaire</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#FEE2E2;color:#991B1B">Gold standard DCA — 28 item</span>
+        <span id="edeq-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-edeq">
+      <div class="info-box ib-teal" style="font-size:12px">EDE-Q (Fairburn & Beglin, 1994) è la versione self-report dell'EDE, gold standard diagnostico per i DCA. Valuta le ultime <b>4 settimane</b> su scala <b>0–6</b> (0=Mai/Per niente · 6=Ogni giorno/Estremamente). Punteggio globale &gt;2.3 = probabile DCA clinicamente significativo.</div>
+
+      <div class="q-section-title" style="margin-top:8px">Sottoscala 1: Restrizione (item R)</div>
+      <div id="edeq-restr"></div>
+
+      <div class="q-section-title">Sottoscala 2: Preoccupazione per il cibo (item EC)</div>
+      <div id="edeq-eatc"></div>
+
+      <div class="q-section-title">Sottoscala 3: Preoccupazione per la forma corporea (item SC)</div>
+      <div id="edeq-shapec"></div>
+
+      <div class="q-section-title">Sottoscala 4: Preoccupazione per il peso (item WC)</div>
+      <div id="edeq-weightc"></div>
+
+      <button class="btn btn-primary btn-sm" onclick="calcEDEQ(true)">📊 Calcola EDE-Q</button>
+      <div class="q-result-box" id="edeq-result"></div>
+    </div>
+  </div>
+
+  <!-- BES -->
+  <div class="q-card" id="qcard-bes">
+    <div class="q-card-hdr" onclick="toggleQCard('bes')">
+      <h3>🍽️ BES — Binge Eating Scale</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95">Binge Eating Disorder — 16 item</span>
+        <span id="bes-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-bes">
+      <div class="info-box ib-teal" style="font-size:12px">La BES (Gormally et al., 1982) valuta la presenza e la gravità del Binge Eating Disorder (BED). Ogni item ha 3–4 opzioni con peso differente. Totale: 0–46 punti. Cut-off: &lt;17 = nessuna/lieve · 17-26 = moderata · ≥27 = grave.</div>
+      <div id="bes-items"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcBES(true)">📊 Calcola BES</button>
+      <div class="q-result-box" id="bes-result"></div>
+    </div>
+  </div>
+
+  <!-- PHQ-9 -->
+  <div class="q-card" id="qcard-phq9">
+    <div class="q-card-hdr" onclick="toggleQCard('phq9')">
+      <h3>🧠 PHQ-9 — Patient Health Questionnaire (Assessment Depressione)</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95">Assessment depressione — 9 item</span>
+        <span id="phq9-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-phq9">
+      <div class="info-box ib-teal" style="font-size:12px">PHQ-9 (Kroenke et al., 2001). Nelle ultime 2 settimane, con quale frequenza hai avuto questi problemi? (0=Mai · 1=Alcuni giorni · 2=Più di metà dei giorni · 3=Quasi ogni giorno). Cut-off: 0-4=Minima · 5-9=Lieve · 10-14=Moderata · 15-19=Moderata-Grave · 20-27=Grave.</div>
+      <div id="phq9-items"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcPHQ9(true)">📊 Calcola PHQ-9</button>
+      <div class="q-result-box" id="phq9-result"></div>
+    </div>
+  </div>
+
+  <!-- ORTO-15 -->
+  <div class="q-card" id="qcard-orto">
+    <div class="q-card-hdr" onclick="toggleQCard('orto')">
+      <h3>🥦 ORTO-15 — Screening Ortoressia</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#ECFDF5;color:#065F46">Ortoressia nervosa — 15 item</span>
+        <span id="orto-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-orto">
+      <div class="info-box ib-teal" style="font-size:12px">ORTO-15 (Donini et al., 2004) valuta le ossessioni relative al cibo "sano" tipiche dell'ortoressia nervosa. Scala: 1=Sempre · 2=Spesso · 3=A volte · 4=Mai. Punteggio &lt;40 = possibile ortoressia (cut-off controverso in letteratura).</div>
+      <div id="orto-items"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcORTO(true)">📊 Calcola ORTO-15</button>
+      <div class="q-result-box" id="orto-result"></div>
+    </div>
+  </div>
+
+  <!-- IES-2 -->
+  <div class="q-card" id="qcard-ies">
+    <div class="q-card-hdr" onclick="toggleQCard('ies')">
+      <h3>💚 IES-2 — Intuitive Eating Scale</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#ECFDF5;color:#065F46">Alimentazione intuitiva — 23 item</span>
+        <span id="ies-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-ies">
+      <div class="info-box ib-teal" style="font-size:12px">IES-2 (Tylka & Kroon Van Diest, 2013) misura il grado di alimentazione intuitiva (ascolto dei segnali di fame/sazietà, assenza di regole rigide). Scala da 1 (Fortemente in disaccordo) a 5 (Fortemente d'accordo). Punteggio più alto = alimentazione più intuitiva.</div>
+      <div id="ies-items"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcIES(true)">📊 Calcola IES-2</button>
+      <div class="q-result-box" id="ies-result"></div>
+    </div>
+  </div>
+
+</div><!-- end qtab-assessment -->
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+// ── SCORES STATE ──
+const scaleState = {};
+
+function showQTab(id) {
+  document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.q-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('qtab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleQCard(id) {
+  const body = document.getElementById('qbody-' + id);
+  const tog = document.getElementById(id + '-tog');
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  if (tog) tog.textContent = isOpen ? '▲' : '▼';
+}
+
+function selScale(btn, val, key, calcFn) {
+  document.querySelectorAll(`.q-scale-btn[data-q="${key}"]`).forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  scaleState[key] = val;
+  if (calcFn) calcFn();
+}
+
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? parseFloat(el.value) : null;
+}
+
+function showResult(id, html, color) {
+  const box = document.getElementById(id);
+  if (!box) return;
+  box.innerHTML = html;
+  box.style.background = color || '#F0FDF4';
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ─────────────────────────────────
+// MUST
+// ─────────────────────────────────
+function calcMUST(show) {
+  const v1 = getRadio('must1'), v2 = getRadio('must2'), v3 = getRadio('must3');
+  if (show && (v1 === null || v2 === null || v3 === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = (v1||0) + (v2||0) + (v3||0);
+  let label, color, desc, rec;
+  if (score === 0) {
+    label = '🟢 Rischio Basso'; color = '#ECFDF5';
+    desc = 'Lo stato nutrizionale del paziente è adeguato.';
+    rec = 'Nessun intervento nutrizionale immediato. Ripetere la valutazione settimanalmente (ospedale) o mensilmente (comunità).';
+  } else if (score === 1) {
+    label = '🟡 Rischio Medio'; color = '#FEF3C7';
+    desc = 'Il paziente presenta un rischio nutrizionale moderato.';
+    rec = 'Monitorare l\'apporto alimentare per 3 giorni. Se appropriato, rivalutare successivamente. Consulenza dietetica raccomandata.';
+  } else {
+    label = '🔴 Rischio Alto'; color = '#FEE2E2';
+    desc = 'Il paziente è a rischio elevato di malnutrizione.';
+    rec = 'Avviare intervento nutrizionale immediato. Fissare obiettivi calorici/proteici. Valutare supporto nutrizionale (ONS, NE, NP). Coinvolgere il team multidisciplinare.';
+  }
+  showResult('must-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">Punteggio MUST</div><div class="q-result-score">${score}</div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/6*100)}%;background:${score===0?'#10B981':score===1?'#F59E0B':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione BAPEN:</b> ${rec}</div>
+  `, color);
+}
+
+// ─────────────────────────────────
+// MNA-SF
+// ─────────────────────────────────
+function calcMNA(show) {
+  const keys = ['mna_a','mna_b','mna_c','mna_d','mna_e','mna_f'];
+  const vals = keys.map(k => getRadio(k));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s + (v||0), 0);
+  let label, color, desc, rec;
+  if (score >= 12) {
+    label = '🟢 Stato Nutrizionale Normale'; color = '#ECFDF5';
+    desc = 'Nessun rischio nutrizionale rilevato.';
+    rec = 'Ripetere la valutazione ogni 3 mesi. Mantenere un\'adeguata assunzione proteica (1.0-1.2g/kg/die per anziani).';
+  } else if (score >= 8) {
+    label = '🟡 A Rischio di Malnutrizione'; color = '#FEF3C7';
+    desc = 'Il paziente presenta un rischio nutrizionale significativo.';
+    rec = 'Completare la valutazione con MNA completo (full form). Intervenire sulla causa della riduzione dell\'apporto. Considerare ONS (Oral Nutritional Supplements).';
+  } else {
+    label = '🔴 Malnutrizione'; color = '#FEE2E2';
+    desc = 'Il paziente è malnutrito secondo i criteri MNA.';
+    rec = 'Intervento nutrizionale urgente. Piano nutrizionale personalizzato. Supplementazione orale o enterale. Monitoraggio settimanale peso e apporto alimentare. Valutare cause mediche sottostanti.';
+  }
+  showResult('mna-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">Punteggio MNA-SF</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/14</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/14*100)}%;background:${score>=12?'#10B981':score>=8?'#F59E0B':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione ESPEN:</b> ${rec}</div>
+  `, color);
+}
+
+// ─────────────────────────────────
+// NRS-2002
+// ─────────────────────────────────
+function calcNRS(show) {
+  const n = getRadio('nrs_n'), m = getRadio('nrs_m'), eta = getRadio('nrs_eta');
+  if (show && (n === null || m === null || eta === null)) { toast('Compila tutte le domande della Fase 2', 'err'); return; }
+  if (!show) return;
+  const score = (n||0) + (m||0) + (eta||0);
+  let label, color, desc, rec;
+  if (score < 3) {
+    label = '🟢 Paziente non a rischio'; color = '#ECFDF5';
+    desc = 'Il paziente non è attualmente a rischio nutrizionale.';
+    rec = 'Ripetere lo screening settimanalmente durante il ricovero ospedaliero.';
+  } else {
+    label = '🔴 Paziente a rischio — Avviare piano nutrizionale'; color = '#FEE2E2';
+    desc = 'Il paziente è a rischio nutrizionale. È necessario un piano nutrizionale.';
+    rec = 'Coinvolgere il team nutrizionale. Impostare obiettivi energetici (25-35 kcal/kg/die) e proteici (1.2-2.0g/kg/die). Valutare via di somministrazione (orale > enterale > parenterale). Monitorare glicemia, elettroliti, tolleranza nutrizionale.';
+  }
+  showResult('nrs-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">Punteggio NRS-2002</div><div class="q-result-score">${score}</div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(Math.min(score,7)/7*100)}%;background:${score<3?'#10B981':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione ESPEN (2021):</b> ${rec}</div>
+  `, color);
+}
+
+// ─────────────────────────────────
+// SCOFF
+// ─────────────────────────────────
+function calcSCOFF(show) {
+  const vals = [1,2,3,4,5].map(i => getRadio('scoff'+i));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s + (v||0), 0);
+  const pos = score >= 2;
+  showResult('scoff-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">Punteggio SCOFF</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/5</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${score/5*100}%;background:${pos?'#EF4444':'#10B981'}"></div></div>
+      <div class="q-result-label">${pos ? '🔴 Screening POSITIVO per DCA' : '🟢 Screening Negativo'}</div>
+    </div>
+    <div class="q-result-desc">
+      <b>Interpretazione:</b> ${pos ? 'Punteggio ≥2 indica un probabile disturbo del comportamento alimentare. Il SCOFF non ha valore diagnostico, ma orienta verso una valutazione più approfondita.' : 'Nessun indicatore di DCA rilevato con questo screening.'}<br><br>
+      <b>Raccomandazione:</b> ${pos ? 'Approfondire con EDE-Q (valutazione approfondita) o colloquio clinico strutturato. Riferire a psicologo/psichiatra specializzato in DCA. Non lasciare il paziente senza follow-up.' : 'Ripetere la valutazione se emergono nuovi segnali clinici (perdita di peso rapida, preoccupazione corporea, restrizione alimentare).'}
+    </div>
+  `, pos ? '#FEE2E2' : '#ECFDF5');
+}
+
+// ─────────────────────────────────
+// PHQ-2
+// ─────────────────────────────────
+function calcPHQ2(show) {
+  const v1 = scaleState['phq2_1'] ?? null, v2 = scaleState['phq2_2'] ?? null;
+  if (show && (v1 === null || v2 === null)) { toast('Seleziona un punteggio per ogni domanda', 'err'); return; }
+  if (!show) return;
+  const score = (v1||0) + (v2||0);
+  const pos = score >= 3;
+  showResult('phq2-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">Punteggio PHQ-2</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/6</span></div></div>
+      <div class="q-result-label">${pos ? '🟡 Screening positivo — Procedere con PHQ-9' : '🟢 Screening negativo'}</div>
+    </div>
+    <div class="q-result-desc">
+      <b>Interpretazione:</b> ${pos ? 'Punteggio ≥3 indica possibile depressione. È necessario un assessment più approfondito con PHQ-9.' : 'Nessun indicatore significativo di depressione. Ripetere la valutazione se la situazione clinica cambia.'}<br><br>
+      <b>Relevanza nutrizionale:</b> La depressione è frequentemente associata a modifiche del comportamento alimentare (riduzione appetito, abbuffate emotive, disfagia funzionale). ${pos ? 'Valutare l\'impatto sull\'apporto alimentare e procedere con PHQ-9 (tab Assessment).' : 'Monitorare le abitudini alimentari nelle visite successive.'}
+    </div>
+  `, pos ? '#FEF3C7' : '#ECFDF5');
+}
+
+// ─────────────────────────────────
+// EDE-Q ITEMS INIT
+// ─────────────────────────────────
+const EDEQ_ITEMS = {
+  restr: [
+    'Hai cercato di limitare la quantità di cibo che mangi per influenzare la tua forma o il tuo peso corporeo?',
+    'Hai digiunato (non mangiato nulla per almeno 8 ore consecutive) per influenzare la tua forma o il tuo peso corporeo?',
+    'Hai cercato di escludere dalla tua dieta cibi che ami per influenzare la tua forma o il tuo peso corporeo?',
+    'Hai cercato di seguire regole precise riguardo a cosa mangiare per influenzare la tua forma o il tuo peso corporeo?',
+    'Hai volontariamente vomitato per influenzare la tua forma o il tuo peso corporeo?'
+  ],
+  eatc: [
+    'Hai avuto pensieri intrusivi riguardo al cibo?',
+    'Hai avuto paura di perdere il controllo su quello che mangi?',
+    'Hai mangiato di nascosto (escluse le abbuffate)?',
+    'La presenza di cibo o l\'idea di mangiare ti ha distratto?'
+  ],
+  shapec: [
+    'Il peso è stato importante nel determinarti giudizi su te stesso/a come persona?',
+    'La forma del corpo è stata importante nel determinarti giudizi su te stesso/a come persona?',
+    'Ti sei sentito/a insoddisfatto/a del tuo peso corporeo?',
+    'Ti sei sentito/a insoddisfatto/a della tua forma corporea?',
+    'Ti sei sentito/a a disagio nel vedere il tuo corpo (per esempio in uno specchio, nel riflesso di una vetrina, spogliandoti)?',
+    'Ti sei sentito/a a disagio quando gli altri vedono il tuo corpo (per esempio in piscina, in spiaggia)?',
+    'Ti sei sentito/a grasso/a?',
+    'Hai avuto il forte desiderio di perdere peso?'
+  ],
+  weightc: [
+    'Hai avuto paura di aumentare di peso?',
+    'La tua restrizione alimentare ti ha causato difficoltà di concentrazione su attività che ti interessano?',
+    'Ti sei pesato/a frequentemente?'
+  ]
+};
+
+function renderEDEQItems() {
+  const scale6 = (id) => {
+    const btns = [0,1,2,3,4,5,6].map(v =>
+      `<button class="q-scale-btn" data-q="${id}" data-v="${v}" onclick="selScale(this,${v},'${id}',calcEDEQ)">${v}</button>`
+    ).join('');
+    return `<div class="q-scale">${btns}</div><div class="q-scale-labels"><span>Mai/Per niente</span><span>Ogni giorno/Estremamente</span></div>`;
+  };
+  const sections = [
+    {key:'restr', el:'edeq-restr', prefix:'R'},
+    {key:'eatc', el:'edeq-eatc', prefix:'EC'},
+    {key:'shapec', el:'edeq-shapec', prefix:'SC'},
+    {key:'weightc', el:'edeq-weightc', prefix:'WC'}
+  ];
+  sections.forEach(sec => {
+    const el = document.getElementById(sec.el);
+    if (!el) return;
+    el.innerHTML = EDEQ_ITEMS[sec.key].map((q,i) => {
+      const id = `edeq_${sec.key}_${i}`;
+      return `<div class="q-item"><label>${sec.prefix}${i+1}. ${q}</label>${scale6(id)}</div>`;
+    }).join('');
+  });
+}
+
+function calcEDEQ(show) {
+  const sections = ['restr','eatc','shapec','weightc'];
+  const labels = ['Restrizione','Preoccupazione per il cibo','Preoccupazione per la forma','Preoccupazione per il peso'];
+  const cutoffs = [2.77, 1.39, 2.79, 1.24];
+  let allFilled = true;
+  const subScores = sections.map((sec, si) => {
+    const n = EDEQ_ITEMS[sec].length;
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+      const v = scaleState[`edeq_${sec}_${i}`];
+      if (v === undefined || v === null) { allFilled = false; }
+      sum += v || 0;
+    }
+    return sum / n;
+  });
+
+  if (show && !allFilled) { toast('Compila tutti gli item per ottenere il risultato', 'err'); return; }
+  if (!show) return;
+
+  const global = subScores.reduce((s,v) => s+v, 0) / 4;
+  const isPositive = global > 2.3;
+
+  const subsHtml = subScores.map((sc, i) => `
+    <div class="q-subscale">
+      <div class="q-subscale-title">${labels[i]} (cut-off ≥${cutoffs[i]})</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="q-subscale-score">${sc.toFixed(2)}<span style="font-size:12px;font-weight:400">/6</span></div>
+        <div class="q-bar" style="flex:1"><div class="q-bar-fill" style="width:${sc/6*100}%;background:${sc>=cutoffs[i]?'#EF4444':'#10B981'}"></div></div>
+        <span style="font-size:11px;font-weight:700;color:${sc>=cutoffs[i]?'#DC2626':'#15803D'}">${sc>=cutoffs[i]?'▲ Sopra cut-off':'▼ Sotto cut-off'}</span>
+      </div>
+    </div>`).join('');
+
+  showResult('edeq-result', `
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;color:var(--slate-l)">Punteggio Globale EDE-Q</div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="q-result-score">${global.toFixed(2)}<span style="font-size:14px;font-weight:400">/6</span></div>
+        <div class="q-result-label">${isPositive ? '🔴 DCA clinicamente significativo probabile' : '🟢 Sotto soglia clinica'}</div>
+      </div>
+      <div class="q-bar"><div class="q-bar-fill" style="width:${global/6*100}%;background:${isPositive?'#EF4444':'#10B981'}"></div></div>
+    </div>
+    ${subsHtml}
+    <div class="q-result-desc" style="margin-top:10px">
+      <b>Interpretazione:</b> ${isPositive ? 'Punteggio globale >2.3: probabile DCA clinicamente significativo. L\'EDE-Q non è diagnostico ma orienta verso valutazione clinica approfondita.' : 'Punteggio globale ≤2.3: nella norma. Monitorare se emergono nuovi segnali.'}<br><br>
+      <b>Raccomandazioni:</b> ${isPositive ? '① Riferire a specialista DCA (psicologo/psichiatra). ② Completare la valutazione con colloquio clinico strutturato. ③ Impostare follow-up nutrizionale mensile. ④ Valutare comorbidità (ansia, depressione, disturbi del sonno).' : 'Continuare il monitoraggio nelle visite periodiche. Ripetere EDE-Q se cambiano le abitudini alimentari.'}
+    </div>
+  `, isPositive ? '#FEE2E2' : '#ECFDF5');
+}
+
+// ─────────────────────────────────
+// BES ITEMS
+// ─────────────────────────────────
+const BES_ITEMS = [
+  {q:'Quando mangio non mi fermo finché non mi sento spiacevolmente pieno/a.', opts:['Non mi sento eccessivamente pieno/a dopo mangiare (0)','A volte mi sento eccessivamente pieno/a dopo mangiare (1)','Spesso mi sento eccessivamente pieno/a dopo mangiare (2)','Mi sento sempre eccessivamente pieno/a dopo mangiare (3)'], vals:[0,1,2,3]},
+  {q:'Nella mia vita ho cercato di fare diete per perdere peso.', opts:['Non ho mai fatto diete per dimagrire (0)','Ho fatto 1-2 diete per dimagrire (1)','Ho fatto 3-4 diete per dimagrire (2)','Ho fatto moltissime diete per dimagrire (3)'], vals:[0,1,2,3]},
+  {q:'A volte mangio velocemente senza accorgermene.', opts:['Mangio sempre lentamente e mi rendo conto di quello che mangio (0)','A volte mangio velocemente senza rendermi conto (1)','Spesso mangio velocemente senza rendermi conto (2)','Mangio sempre velocemente senza rendermi conto (3)'], vals:[0,1,2,3]},
+  {q:'Mi sento in colpa quando esagero con il cibo.', opts:['Non mi sento quasi mai in colpa dopo aver mangiato (0)','A volte mi sento in colpa dopo aver mangiato molto (1)','Spesso mi sento in colpa dopo aver mangiato molto (2)','Mi sento quasi sempre in colpa dopo aver mangiato (3)'], vals:[0,1,2,3]},
+  {q:'Mangio di più quando sono stressato/a o ho problemi emotivi.', opts:['Non mangio mai di più per stress o problemi emotivi (0)','A volte mangio di più quando sono stressato/a (1)','Spesso mangio di più quando sono stressato/a (2)','Mangio sempre di più quando sono stressato/a (3)'], vals:[0,1,2,3]},
+  {q:'La mia vita sarebbe molto più soddisfacente se fossi più magro/a.', opts:['Sono soddisfatto/a del mio peso e non penso di dover dimagrire (0)','A volte vorrei pesare meno ma non è un\'ossessione (1)','Penso spesso che potrei vivere meglio se fossi più magro/a (2)','Penso sempre che potrei vivere meglio se fossi più magro/a (3)'], vals:[0,1,2,3]},
+  {q:'Quando mi sento ansioso/a mangio senza controllare.', opts:['Non mangio mai per gestire l\'ansia (0)','A volte mangio per gestire l\'ansia (1)','Spesso mangio per gestire l\'ansia (2)','Mangio sempre per gestire l\'ansia (3)'], vals:[0,1,2,3]},
+  {q:'Non sono bravo/a a smettere di mangiare quando non ho più fame.', opts:['Mi fermo di solito quando non ho più fame (0)','A volte ho difficoltà a smettere quando non ho più fame (1)','Spesso ho difficoltà a smettere quando non ho più fame (2)','Non riesco quasi mai a smettere di mangiare quando non ho fame (3)'], vals:[0,1,2,3]}
+];
+
+function renderBESItems() {
+  const el = document.getElementById('bes-items');
+  if (!el) return;
+  el.innerHTML = BES_ITEMS.map((item, i) => `
+    <div class="q-item">
+      <label>${i+1}. ${item.q}</label>
+      <div class="q-options">
+        ${item.opts.map((opt, j) => `<label class="q-opt"><input type="radio" name="bes_${i}" value="${item.vals[j]}" onchange="calcBES()"><label>${opt}</label></label>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function calcBES(show) {
+  const vals = BES_ITEMS.map((_,i) => getRadio('bes_'+i));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  let label, color, desc, rec;
+  if (score < 17) {
+    label = '🟢 Nessuna/Lieve problematica binge'; color = '#ECFDF5';
+    desc = 'Nessuna evidenza significativa di Binge Eating Disorder.';
+    rec = 'Monitorare i comportamenti alimentari nel tempo. Educazione nutrizionale centrata sul riconoscimento dei segnali di fame/sazietà.';
+  } else if (score <= 26) {
+    label = '🟡 Binge Eating Moderato'; color = '#FEF3C7';
+    desc = 'Presenza di comportamenti binge di intensità moderata.';
+    rec = 'Valutare i trigger emotivi delle abbuffate. Iniziare un lavoro cognitivo-comportamentale (CBT-E). Collaborazione con psicologo. Piano alimentare strutturato senza restrizioni rigide.';
+  } else {
+    label = '🔴 Binge Eating Grave'; color = '#FEE2E2';
+    desc = 'Comportamenti binge frequenti e significativi. Probabile BED clinico.';
+    rec = 'Riferimento urgente a specialista DCA. Valutare comorbidità metaboliche (obesità, diabete T2, sindrome metabolica). Evitare diete ipocaloriche restrittive. Trattamento combinato: psicologico + nutrizionale + eventuale farmacologico.';
+  }
+  showResult('bes-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Punteggio BES</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/46</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/46*100)}%;background:${score<17?'#10B981':score<=26?'#F59E0B':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione clinica:</b> ${rec}</div>
+  `, color);
+}
+
+// ─────────────────────────────────
+// PHQ-9 ITEMS
+// ─────────────────────────────────
+const PHQ9_DOMANDE = [
+  'Poco interesse o piacere nel fare le cose',
+  'Senso di tristezza, depressione o mancanza di speranza',
+  'Difficoltà ad addormentarsi o a dormire, oppure dormire troppo',
+  'Stanchezza o mancanza di energia',
+  'Poco appetito o mangiare troppo',
+  'Senso di scarsa autostima — o sensazione di essere un fallito/a o di aver deluso se stesso/a o la propria famiglia',
+  'Difficoltà a concentrarsi sulle cose, come leggere un giornale o guardare la televisione',
+  'Muoversi o parlare così lentamente che gli altri lo notavano? Oppure al contrario — essere così agitato/a da muoversi molto più del solito',
+  'Pensieri ricorrenti di morte o di farsi del male in qualsiasi modo'
+];
+
+function renderPHQ9Items() {
+  const el = document.getElementById('phq9-items');
+  if (!el) return;
+  el.innerHTML = PHQ9_DOMANDE.map((q,i) => {
+    const id = `phq9_${i}`;
+    return `<div class="q-item"><label>${i+1}. ${q}</label>
+      <div class="q-scale">
+        ${[0,1,2,3].map(v => `<button class="q-scale-btn" data-q="${id}" data-v="${v}" onclick="selScale(this,${v},'${id}',calcPHQ9)">${v}<br><span style="font-size:9px">${['Mai','Alcuni gg','&gt;Metà','Ogni gg'][v]}</span></button>`).join('')}
+      </div></div>`;
+  }).join('');
+}
+
+function calcPHQ9(show) {
+  const vals = PHQ9_DOMANDE.map((_,i) => scaleState[`phq9_${i}`] ?? null);
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  const levels = [[0,4,'🟢 Minima','#ECFDF5','Nessuna depressione significativa. Monitorare.','Supporto psicosociale di base. Educazione nutrizionale.'],
+    [5,9,'🟡 Lieve','#FEF3C7','Sintomi depressivi lievi presenti.','Watchful waiting. Rivalutare in 4-6 settimane. Attività fisica, intervento nutrizionale.'],
+    [10,14,'🟠 Moderata','#FEF3C7','Depressione moderata.','Psicoterapia (CBT). Valutazione psichiatrica. Impatto sull\'apporto alimentare: valutare attentamente.'],
+    [15,19,'🔴 Moderata-Grave','#FEE2E2','Depressione moderata-grave.','Farmacoterapia + psicoterapia raccomandate. Monitoraggio apporto calorico e peso.'],
+    [20,27,'🔴 Grave','#FEE2E2','Depressione grave.','Intervento psichiatrico urgente. Rischio suicidale: valutare. Apporto nutrizionale spesso gravemente compromesso.']];
+  const [,, label, color, desc, rec] = levels.find(([lo,hi]) => score >= lo && score <= hi) || levels[4];
+  showResult('phq9-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Punteggio PHQ-9</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/27</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/27*100)}%;background:${score<5?'#10B981':score<10?'#F59E0B':score<15?'#F97316':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione:</b> ${rec}</div>
+  `, color);
+}
+
+// ─────────────────────────────────
+// ORTO-15 ITEMS
+// ─────────────────────────────────
+const ORTO_DOMANDE = [
+  'Quando mangi, presti attenzione alle calorie degli alimenti?',
+  'Sei disorientato/a al supermercato per la scelta degli alimenti "sani"?',
+  'Il pensiero di mangiare alimenti poco salutari ti turba?',
+  'Il mangiare sano è un tuo stile di vita oppure è una preoccupazione?',
+  'Il concetto di "alimento naturale" è, per te, una qualità essenziale nel cibo che scegli?',
+  'Sei disposto/a a spendere di più per comprare alimenti più sani?',
+  'Il pensiero di nutrirti in modo sano ti occupa per più di 3 ore al giorno?',
+  'Ti permetti qualche eccezione alla tua dieta?',
+  'Pensi che il tuo umore sia influenzato dal consumo di cibo sano?',
+  'Ritieni che la certezza di mangiare in modo sano aumenti la tua autostima?',
+  'Ti capita di sentirti in colpa quando ti allontani dalla tua alimentazione sana?',
+  'Pensi che un\'alimentazione sana includa anche la dimensione psicologica e non solo fisica?',
+  'Bevi solo acqua o bevande naturali?',
+  'Mangi spesso prodotti di erboristeria, prodotti biologici o "naturali"?',
+  'Pensi che la tua salute dipenda fortemente dall\'alimentazione?'
+];
+
+function renderORTOItems() {
+  const el = document.getElementById('orto-items');
+  if (!el) return;
+  // Items 8, 12 are reverse-scored (never=1, always=4 → inverted in scoring)
+  const reverseIdx = [7, 11]; // 0-based
+  el.innerHTML = ORTO_DOMANDE.map((q,i) => `
+    <div class="q-item">
+      <label>${i+1}. ${q}</label>
+      <div class="q-options">
+        ${['Sempre','Spesso','A volte','Mai'].map((opt,j) => {
+          const val = reverseIdx.includes(i) ? [4,3,2,1][j] : [1,2,3,4][j];
+          return `<label class="q-opt"><input type="radio" name="orto_${i}" value="${val}" onchange="calcORTO()"><label>${opt}</label></label>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function calcORTO(show) {
+  const vals = ORTO_DOMANDE.map((_,i) => getRadio('orto_'+i));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  const pos = score < 40;
+  showResult('orto-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Punteggio ORTO-15</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/60</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/60*100)}%;background:${pos?'#EF4444':'#10B981'}"></div></div>
+      <div class="q-result-label">${pos ? '⚠️ Possibile Ortoressia (score < 40)' : '🟢 Nessun indicatore di Ortoressia'}</div>
+    </div>
+    <div class="q-result-desc">
+      <b>Interpretazione:</b> ${pos ? 'Score < 40 suggerisce possibili tratti ortoressici. Nota: il cut-off è controverso in letteratura.' : 'Score ≥ 40: nessun indicatore significativo di comportamento ortoressico.'}<br><br>
+      <b>Nota metodologica:</b> L\'ORTO-15 ha una specificità limitata. Non diagnostica l\'ortoressia nervosa (non inclusa nel DSM-5) ma può orientare verso un approccio clinico più attento.<br><br>
+      <b>Raccomandazioni:</b> ${pos ? 'Esplorare con colloquio clinico il livello di flessibilità alimentare, l\'impatto sulla vita sociale, il disagio causato dall\'impossibilità di seguire le regole. Valutare se l\'attenzione al cibo sano causa compromissione funzionale.' : 'Monitorare. Educare a un approccio flessibile all\'alimentazione sana senza rigidità.'}
+    </div>
+  `, pos ? '#FEF3C7' : '#ECFDF5');
+}
+
+// ─────────────────────────────────
+// IES-2 ITEMS
+// ─────────────────────────────────
+const IES2_DOMANDE = [
+  'Se voglio mangiare un certo cibo, me lo concedo.',
+  'Mi piace mangiare diversi tipi di cibo.',
+  'Non mi sento in colpa quando mangio un certo cibo.',
+  'Riesco a far fronte alle mie emozioni negative senza usare il cibo come consolazione.',
+  'Riesco a far fronte alle mie emozioni positive senza festeggiare con il cibo.',
+  'Mi fido delle mie sensazioni corporee per sapere quando smettere di mangiare.',
+  'Mi fido delle mie sensazioni corporee per sapere quando mangiare.',
+  'Mi fido delle mie sensazioni corporee per sapere di cosa ho bisogno.',
+  'Riesco ad interpretare le mie sensazioni corporee per capire se ho mangiato abbastanza.',
+  'Non seguo regole dietetiche rigide sul mangiare.',
+  'Non penso molto al cibo.',
+  'Non ho un alimento "proibito".',
+  'Mangio quando ho fame fisica, non per ragioni emotive.',
+  'Smetto di mangiare quando sono sazio/a anche se mi piace quello che sto mangiando.',
+  'Il mio umore non influenza la quantità di cibo che mangio.',
+  'Quando sono annoiato/a non mangio solo per farlo.',
+  'Quando mi sento stressato/a non uso il cibo per sentirmi meglio.',
+  'Non mangio quando sono triste.',
+  'Non mangio quando sono solo/a o non ho compagnia.',
+  'Non mangio per lenire sentimenti negativi.',
+  'Mi prendo cura di me stesso/a attraverso attività diverse dal mangiare quando ho bisogno di conforto.',
+  'Non mangio di più quando mi sento ansioso/a.',
+  'Scelgo i cibi senza senso di colpa.'
+];
+
+function renderIESItems() {
+  const el = document.getElementById('ies-items');
+  if (!el) return;
+  el.innerHTML = IES2_DOMANDE.map((q,i) => {
+    const id = `ies_${i}`;
+    return `<div class="q-item"><label>${i+1}. ${q}</label>
+      <div class="q-scale">
+        ${[1,2,3,4,5].map(v => `<button class="q-scale-btn" data-q="${id}" data-v="${v}" onclick="selScale(this,${v},'${id}',calcIES)">${v}<br><span style="font-size:9px">${v===1?'Disaccordo':v===5?'Accordo':''}</span></button>`).join('')}
+      </div></div>`;
+  }).join('');
+}
+
+function calcIES(show) {
+  const vals = IES2_DOMANDE.map((_,i) => scaleState[`ies_${i}`] ?? null);
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = (vals.reduce((s,v) => s+(v||0), 0) / IES2_DOMANDE.length).toFixed(2);
+  const n = parseFloat(score);
+  let label, color, desc, rec;
+  if (n >= 3.5) {
+    label = '🟢 Buona alimentazione intuitiva'; color = '#ECFDF5';
+    desc = 'Il paziente presenta un buon livello di alimentazione intuitiva, con ascolto dei segnali corporei e assenza di rigidità alimentare.';
+    rec = 'Mantenere e rafforzare il rapporto positivo con il cibo. L\'alimentazione intuitiva è associata a migliori outcome nutrizionali e minore rischio di DCA.';
+  } else if (n >= 2.5) {
+    label = '🟡 Alimentazione intuitiva parziale'; color = '#FEF3C7';
+    desc = 'Presenza di alcune barriere nell\'ascolto dei segnali corporei o nella gestione emozionale del cibo.';
+    rec = 'Lavorare sulla consapevolezza alimentare (mindful eating). Ridurre le regole alimentari rigide. Esplorare il rapporto emotivo con il cibo.';
+  } else {
+    label = '🔴 Alimentazione intuitiva ridotta'; color = '#FEE2E2';
+    desc = 'Il paziente presenta difficoltà significative nell\'ascolto dei segnali di fame/sazietà e una relazione problematica con il cibo.';
+    rec = 'Approccio integrato: dietista + psicologo. Percorso di mindful eating strutturato. Esplorare restrizione cognitiva, eating emotivo e influenze culturali. Evitare piani alimentari troppo rigidi.';
+  }
+  showResult('ies-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Score medio IES-2</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/5</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${n/5*100}%;background:${n>=3.5?'#10B981':n>=2.5?'#F59E0B':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione clinica:</b> ${rec}</div>
+  `, color);
+}
+
+// ─────────────────────────────────
+// INIT
+// ─────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(false); } catch(e) {}
+  renderEDEQItems();
+  renderBESItems();
+  renderPHQ9Items();
+  renderORTOItems();
+  renderIESItems();
+});
+</script>
+</body>
+</html>

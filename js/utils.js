@@ -89,8 +89,16 @@ async function loadCartelleDropdown() {
 // ═══════════════════════════════════════════════════
 // SIDEBAR & NAV
 // ═══════════════════════════════════════════════════
-function toggleSB() { document.getElementById('sidebar').classList.toggle('open'); }
-function closeSB() { document.getElementById('sidebar').classList.remove('open'); }
+function toggleSB() {
+  const open = document.getElementById('sidebar').classList.toggle('open');
+  const ov = document.getElementById('sb-overlay');
+  if (ov) ov.classList.toggle('open', open);
+}
+function closeSB() {
+  document.getElementById('sidebar').classList.remove('open');
+  const ov = document.getElementById('sb-overlay');
+  if (ov) ov.classList.remove('open');
+}
 
 function setActiveNav(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));

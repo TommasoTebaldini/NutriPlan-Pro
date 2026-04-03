@@ -27,7 +27,7 @@
 .q-opt:hover{background:#EFF6FF}
 .q-opt input[type=radio]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
 .q-opt input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
-.q-opt label{font-size:12.5px;color:var(--slate-m);cursor:pointer}
+.q-opt label,.q-opt span{font-size:12.5px;color:var(--slate-m);cursor:pointer}
 .q-scale{display:flex;gap:4px;flex-wrap:wrap}
 .q-scale-btn{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;color:var(--slate-m);transition:all .15s;min-width:36px;text-align:center}
 .q-scale-btn.sel{background:var(--teal);color:white;border-color:var(--teal)}
@@ -107,8 +107,10 @@
 </div>
 
 <div class="q-tabs">
-  <button class="q-tab active" onclick="showQTab('screening')">🔍 Test di Screening</button>
-  <button class="q-tab" onclick="showQTab('assessment')">📊 Test di Assessment</button>
+  <button class="q-tab active" onclick="showQTab('screening')">🔍 Screening</button>
+  <button class="q-tab" onclick="showQTab('assessment')">📊 Assessment DCA</button>
+  <button class="q-tab" onclick="showQTab('nutrizione')">🍀 Nutrizione &amp; Stile di Vita</button>
+  <button class="q-tab" onclick="showQTab('psicologici')">🧠 Psicologici &amp; Benessere</button>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -132,24 +134,24 @@
       <div class="q-item">
         <label>1. BMI attuale del paziente</label>
         <div class="q-options" id="must-q1">
-          <label class="q-opt"><input type="radio" name="must1" value="0" onchange="calcMUST()"><label>BMI &gt; 20 kg/m² → <b>0 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="must1" value="1" onchange="calcMUST()"><label>BMI 18.5–20 kg/m² → <b>1 punto</b></label></label>
-          <label class="q-opt"><input type="radio" name="must1" value="2" onchange="calcMUST()"><label>BMI &lt; 18.5 kg/m² → <b>2 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="must1" value="0" onchange="calcMUST()"><span>BMI &gt; 20 kg/m² → <b>0 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="must1" value="1" onchange="calcMUST()"><span>BMI 18.5–20 kg/m² → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="must1" value="2" onchange="calcMUST()"><span>BMI &lt; 18.5 kg/m² → <b>2 punti</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>2. Perdita di peso non intenzionale negli ultimi 3–6 mesi</label>
         <div class="q-options" id="must-q2">
-          <label class="q-opt"><input type="radio" name="must2" value="0" onchange="calcMUST()"><label>Nessuna perdita o &lt; 5% → <b>0 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="must2" value="1" onchange="calcMUST()"><label>5–10% del peso corporeo → <b>1 punto</b></label></label>
-          <label class="q-opt"><input type="radio" name="must2" value="2" onchange="calcMUST()"><label>&gt; 10% del peso corporeo → <b>2 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="must2" value="0" onchange="calcMUST()"><span>Nessuna perdita o &lt; 5% → <b>0 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="must2" value="1" onchange="calcMUST()"><span>5–10% del peso corporeo → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="must2" value="2" onchange="calcMUST()"><span>&gt; 10% del peso corporeo → <b>2 punti</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>3. Effetto di una malattia acuta (es. il paziente non si nutre o è probabile che non lo faccia per &gt; 5 giorni)</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="must3" value="0" onchange="calcMUST()"><label>No → <b>0 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="must3" value="2" onchange="calcMUST()"><label>Sì → <b>2 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="must3" value="0" onchange="calcMUST()"><span>No → <b>0 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="must3" value="2" onchange="calcMUST()"><span>Sì → <b>2 punti</b></span></label>
         </div>
       </div>
       <div class="q-result-box" id="must-result"></div>
@@ -171,50 +173,50 @@
       <div class="q-item">
         <label>A. Riduzione dell'apporto alimentare negli ultimi 3 mesi per perdita di appetito, problemi digestivi, difficoltà di masticazione o deglutizione</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="mna_a" value="0" onchange="calcMNA()"><label>Riduzione grave dell'apporto → <b>0</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_a" value="1" onchange="calcMNA()"><label>Riduzione moderata dell'apporto → <b>1</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_a" value="2" onchange="calcMNA()"><label>Nessuna riduzione dell'apporto → <b>2</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_a" value="0" onchange="calcMNA()"><span>Riduzione grave dell'apporto → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_a" value="1" onchange="calcMNA()"><span>Riduzione moderata dell'apporto → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_a" value="2" onchange="calcMNA()"><span>Nessuna riduzione dell'apporto → <b>2</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>B. Perdita di peso negli ultimi 3 mesi</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="mna_b" value="0" onchange="calcMNA()"><label>Perdita di peso &gt; 3 kg → <b>0</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_b" value="1" onchange="calcMNA()"><label>Non sa → <b>1</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_b" value="2" onchange="calcMNA()"><label>Perdita di peso 1–3 kg → <b>2</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_b" value="3" onchange="calcMNA()"><label>Nessuna perdita di peso → <b>3</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_b" value="0" onchange="calcMNA()"><span>Perdita di peso &gt; 3 kg → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_b" value="1" onchange="calcMNA()"><span>Non sa → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_b" value="2" onchange="calcMNA()"><span>Perdita di peso 1–3 kg → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_b" value="3" onchange="calcMNA()"><span>Nessuna perdita di peso → <b>3</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>C. Mobilità</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="mna_c" value="0" onchange="calcMNA()"><label>Allettato o in sedia a rotelle → <b>0</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_c" value="1" onchange="calcMNA()"><label>Alzato ma non esce di casa → <b>1</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_c" value="2" onchange="calcMNA()"><label>Esce di casa → <b>2</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_c" value="0" onchange="calcMNA()"><span>Allettato o in sedia a rotelle → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_c" value="1" onchange="calcMNA()"><span>Alzato ma non esce di casa → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_c" value="2" onchange="calcMNA()"><span>Esce di casa → <b>2</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>D. Presenza di stress psicologico o malattia acuta negli ultimi 3 mesi</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="mna_d" value="0" onchange="calcMNA()"><label>Sì → <b>0</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_d" value="2" onchange="calcMNA()"><label>No → <b>2</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_d" value="0" onchange="calcMNA()"><span>Sì → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_d" value="2" onchange="calcMNA()"><span>No → <b>2</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>E. Problemi neuropsicologici</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="mna_e" value="0" onchange="calcMNA()"><label>Demenza grave o depressione → <b>0</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_e" value="1" onchange="calcMNA()"><label>Demenza lieve → <b>1</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_e" value="2" onchange="calcMNA()"><label>Nessun problema → <b>2</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_e" value="0" onchange="calcMNA()"><span>Demenza grave o depressione → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_e" value="1" onchange="calcMNA()"><span>Demenza lieve → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_e" value="2" onchange="calcMNA()"><span>Nessun problema → <b>2</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>F. Indice di massa corporea (BMI) — Se non disponibile, usare circonferenza del polpaccio (F2)</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="mna_f" value="0" onchange="calcMNA()"><label>BMI &lt; 19 → <b>0</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_f" value="1" onchange="calcMNA()"><label>BMI 19–21 → <b>1</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_f" value="2" onchange="calcMNA()"><label>BMI 21–23 → <b>2</b></label></label>
-          <label class="q-opt"><input type="radio" name="mna_f" value="3" onchange="calcMNA()"><label>BMI ≥ 23 → <b>3</b></label></label>
+          <label class="q-opt"><input type="radio" name="mna_f" value="0" onchange="calcMNA()"><span>BMI &lt; 19 → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_f" value="1" onchange="calcMNA()"><span>BMI 19–21 → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_f" value="2" onchange="calcMNA()"><span>BMI 21–23 → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="mna_f" value="3" onchange="calcMNA()"><span>BMI ≥ 23 → <b>3</b></span></label>
         </div>
       </div>
       <div class="q-result-box" id="mna-result"></div>
@@ -247,26 +249,26 @@
       <div class="q-item">
         <label>Stato nutrizionale (scegliere il grado peggiore)</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="nrs_n" value="0" onchange="calcNRS()"><label>Normale — <b>0 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="nrs_n" value="1" onchange="calcNRS()"><label>Lieve: perdita peso &gt;5% in 3 mesi o apporto 50-75% fabbisogno — <b>1 punto</b></label></label>
-          <label class="q-opt"><input type="radio" name="nrs_n" value="2" onchange="calcNRS()"><label>Moderato: perdita peso &gt;5% in 2 mesi o BMI 18.5-20.5 o apporto 25-60% fabbisogno — <b>2 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="nrs_n" value="3" onchange="calcNRS()"><label>Grave: perdita peso &gt;5% in 1 mese (&gt;15% in 3 mesi) o BMI &lt;18.5 o apporto 0-25% fabbisogno — <b>3 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_n" value="0" onchange="calcNRS()"><span>Normale — <b>0 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="nrs_n" value="1" onchange="calcNRS()"><span>Lieve: perdita peso &gt;5% in 3 mesi o apporto 50-75% fabbisogno — <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="nrs_n" value="2" onchange="calcNRS()"><span>Moderato: perdita peso &gt;5% in 2 mesi o BMI 18.5-20.5 o apporto 25-60% fabbisogno — <b>2 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="nrs_n" value="3" onchange="calcNRS()"><span>Grave: perdita peso &gt;5% in 1 mese (&gt;15% in 3 mesi) o BMI &lt;18.5 o apporto 0-25% fabbisogno — <b>3 punti</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>Gravità della malattia (aumentato fabbisogno)</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="nrs_m" value="0" onchange="calcNRS()"><label>Nessuna — <b>0 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="nrs_m" value="1" onchange="calcNRS()"><label>Lieve: frattura dell'anca, BPCO, emodialisi, diabete, oncologici non in chemioterapia — <b>1 punto</b></label></label>
-          <label class="q-opt"><input type="radio" name="nrs_m" value="2" onchange="calcNRS()"><label>Moderata: chirurgia addominale maggiore, ictus, polmonite grave, tumori ematologici — <b>2 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="nrs_m" value="3" onchange="calcNRS()"><label>Grave: trauma cranico, trapianto di midollo, terapia intensiva (APACHE &gt;10) — <b>3 punti</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_m" value="0" onchange="calcNRS()"><span>Nessuna — <b>0 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="nrs_m" value="1" onchange="calcNRS()"><span>Lieve: frattura dell'anca, BPCO, emodialisi, diabete, oncologici non in chemioterapia — <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="nrs_m" value="2" onchange="calcNRS()"><span>Moderata: chirurgia addominale maggiore, ictus, polmonite grave, tumori ematologici — <b>2 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="nrs_m" value="3" onchange="calcNRS()"><span>Grave: trauma cranico, trapianto di midollo, terapia intensiva (APACHE &gt;10) — <b>3 punti</b></span></label>
         </div>
       </div>
       <div class="q-item">
         <label>Età &gt; 70 anni?</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="nrs_eta" value="0" onchange="calcNRS()"><label>No → <b>0 punti</b></label></label>
-          <label class="q-opt"><input type="radio" name="nrs_eta" value="1" onchange="calcNRS()"><label>Sì → <b>+1 punto</b></label></label>
+          <label class="q-opt"><input type="radio" name="nrs_eta" value="0" onchange="calcNRS()"><span>No → <b>0 punti</b></span></label>
+          <label class="q-opt"><input type="radio" name="nrs_eta" value="1" onchange="calcNRS()"><span>Sì → <b>+1 punto</b></span></label>
         </div>
       </div>
       <div class="q-result-box" id="nrs-result"></div>
@@ -288,36 +290,36 @@
       <div class="q-item">
         <label>S — Ti <b>S</b>ei mai provocato il vomito perché ti sentivi troppo pieno/a?</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="scoff1" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
-          <label class="q-opt"><input type="radio" name="scoff1" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+          <label class="q-opt"><input type="radio" name="scoff1" value="0" onchange="calcSCOFF()"><span>No → 0</span></label>
+          <label class="q-opt"><input type="radio" name="scoff1" value="1" onchange="calcSCOFF()"><span>Sì → 1</span></label>
         </div>
       </div>
       <div class="q-item">
         <label>C — Ti preoccupi di aver perso il <b>C</b>ontrollo su quanto mangi?</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="scoff2" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
-          <label class="q-opt"><input type="radio" name="scoff2" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+          <label class="q-opt"><input type="radio" name="scoff2" value="0" onchange="calcSCOFF()"><span>No → 0</span></label>
+          <label class="q-opt"><input type="radio" name="scoff2" value="1" onchange="calcSCOFF()"><span>Sì → 1</span></label>
         </div>
       </div>
       <div class="q-item">
         <label>O — Hai perso recentemente più di 6 kg in un periodo di 3 mesi (<b>O</b>ver 6kg)?</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="scoff3" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
-          <label class="q-opt"><input type="radio" name="scoff3" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+          <label class="q-opt"><input type="radio" name="scoff3" value="0" onchange="calcSCOFF()"><span>No → 0</span></label>
+          <label class="q-opt"><input type="radio" name="scoff3" value="1" onchange="calcSCOFF()"><span>Sì → 1</span></label>
         </div>
       </div>
       <div class="q-item">
         <label>F — Ti consideri <b>F</b>ormoso/a pur essendo magro/a secondo gli altri?</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="scoff4" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
-          <label class="q-opt"><input type="radio" name="scoff4" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+          <label class="q-opt"><input type="radio" name="scoff4" value="0" onchange="calcSCOFF()"><span>No → 0</span></label>
+          <label class="q-opt"><input type="radio" name="scoff4" value="1" onchange="calcSCOFF()"><span>Sì → 1</span></label>
         </div>
       </div>
       <div class="q-item">
         <label>F — Diresti che il <b>F</b>ood (cibo) domina la tua vita?</label>
         <div class="q-options">
-          <label class="q-opt"><input type="radio" name="scoff5" value="0" onchange="calcSCOFF()"><label>No → 0</label></label>
-          <label class="q-opt"><input type="radio" name="scoff5" value="1" onchange="calcSCOFF()"><label>Sì → 1</label></label>
+          <label class="q-opt"><input type="radio" name="scoff5" value="0" onchange="calcSCOFF()"><span>No → 0</span></label>
+          <label class="q-opt"><input type="radio" name="scoff5" value="1" onchange="calcSCOFF()"><span>Sì → 1</span></label>
         </div>
       </div>
       <div class="q-result-box" id="scoff-result"></div>
@@ -356,6 +358,88 @@
       </div>
       <div class="q-result-box" id="phq2-result"></div>
       <button class="btn btn-primary btn-sm" onclick="calcPHQ2(true)">📊 Calcola PHQ-2</button>
+    </div>
+  </div>
+
+
+  <!-- GAD-7 -->
+  <div class="q-card" id="qcard-gad7">
+    <div class="q-card-hdr" onclick="toggleQCard('gad7')">
+      <h3>😟 GAD-7 — Generalized Anxiety Disorder 7</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95">Ansia generalizzata — 7 item</span>
+        <span id="gad7-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-gad7">
+      <div class="info-box ib-teal" style="font-size:12px">GAD-7 (Spitzer et al., 2006). Nelle ultime 2 settimane, con quale frequenza ha avuto questi problemi? (0=Mai · 1=Alcuni giorni · 2=Più della metà dei giorni · 3=Quasi ogni giorno). Cut-off: 0-4=Minima · 5-9=Lieve · 10-14=Moderata · ≥15=Grave.</div>
+      <div id="gad7-items"></div>
+      <div class="q-result-box" id="gad7-result"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcGAD7(true)">📊 Calcola GAD-7</button>
+    </div>
+  </div>
+
+  <!-- SGA -->
+  <div class="q-card" id="qcard-sga">
+    <div class="q-card-hdr" onclick="toggleQCard('sga')">
+      <h3>📋 SGA — Subjective Global Assessment</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#FEF3C7;color:#92400E">Valutazione nutrizionale globale</span>
+        <span id="sga-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-sga">
+      <div class="info-box ib-teal" style="font-size:12px">SGA (Detsky et al., 1987) è uno strumento di valutazione nutrizionale clinica basato su anamnesi ed esame fisico. Fornisce una classificazione in 3 categorie: A (Ben nutrito), B (Moderatamente malnutrito), C (Gravemente malnutrito).</div>
+      <div class="q-item">
+        <label>1. Perdita di peso negli ultimi 6 mesi</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="sga1" value="A" onchange="calcSGA()"><span>Nessuna o &lt;5% → <b>A</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga1" value="B" onchange="calcSGA()"><span>Lieve: 5–10% → <b>B</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga1" value="C" onchange="calcSGA()"><span>Significativa: &gt;10% → <b>C</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>2. Cambiamento del peso nell'ultima settimana</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="sga2" value="A" onchange="calcSGA()"><span>Aumento → <b>A</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga2" value="B" onchange="calcSGA()"><span>Nessun cambiamento → <b>B</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga2" value="C" onchange="calcSGA()"><span>Riduzione → <b>C</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>3. Riduzione dell'apporto alimentare</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="sga3" value="A" onchange="calcSGA()"><span>Nessuna riduzione → <b>A</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga3" value="B" onchange="calcSGA()"><span>Riduzione lieve → <b>B</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga3" value="C" onchange="calcSGA()"><span>Riduzione significativa → <b>C</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>4. Sintomi gastrointestinali persistenti (&gt;2 settimane)</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="sga4" value="A" onchange="calcSGA()"><span>Nessuno → <b>A</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga4" value="B" onchange="calcSGA()"><span>Uno (nausea/vomito/diarrea) → <b>B</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga4" value="C" onchange="calcSGA()"><span>Multipli → <b>C</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>5. Capacità funzionale</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="sga5" value="A" onchange="calcSGA()"><span>Normale → <b>A</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga5" value="B" onchange="calcSGA()"><span>Ridotta (lavora ma non a piena capacità) → <b>B</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga5" value="C" onchange="calcSGA()"><span>Allettato → <b>C</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>6. Esame fisico: perdita di grasso/muscolo</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="sga6" value="A" onchange="calcSGA()"><span>Normale → <b>A</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga6" value="B" onchange="calcSGA()"><span>Lieve riduzione → <b>B</b></span></label>
+          <label class="q-opt"><input type="radio" name="sga6" value="C" onchange="calcSGA()"><span>Riduzione marcata → <b>C</b></span></label>
+        </div>
+      </div>
+      <div class="q-result-box" id="sga-result"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcSGA(true)">📊 Calcola SGA</button>
     </div>
   </div>
 
@@ -465,7 +549,312 @@
     </div>
   </div>
 
+  <!-- EAT-26 -->
+  <div class="q-card" id="qcard-eat26">
+    <div class="q-card-hdr" onclick="toggleQCard('eat26')">
+      <h3>🍽️ EAT-26 — Eating Attitudes Test</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#FEE2E2;color:#991B1B">Attitudini alimentari — 26 item</span>
+        <span id="eat26-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-eat26">
+      <div class="info-box ib-teal" style="font-size:12px">EAT-26 (Garner et al., 1982). Indica la frequenza dei seguenti comportamenti. Scala: Sempre=3 · Solitamente=2 · Quasi sempre=1 · Spesso=0 · A volte=0 · Mai=0 (item 23 e 26 con punteggio invertito). Cut-off: ≥20 = possibile disturbo del comportamento alimentare.</div>
+      <div id="eat26-items"></div>
+      <div class="q-result-box" id="eat26-result"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcEAT26(true)">📊 Calcola EAT-26</button>
+    </div>
+  </div>
+
 </div><!-- end qtab-assessment -->
+
+<!-- ══════════════════════════════════════════════
+     TAB: NUTRIZIONE & STILE DI VITA
+     ══════════════════════════════════════════════ -->
+<div class="q-panel" id="qtab-nutrizione">
+
+  <div class="q-section-title">🍀 Qualità della Dieta e Stili di Vita</div>
+
+  <!-- PREDIMED -->
+  <div class="q-card" id="qcard-predimed">
+    <div class="q-card-hdr" onclick="toggleQCard('predimed')">
+      <h3>🫒 PREDIMED — Aderenza alla Dieta Mediterranea</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#ECFDF5;color:#065F46">Dieta mediterranea — 14 item</span>
+        <span id="predimed-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-predimed">
+      <div class="info-box ib-teal" style="font-size:12px">PREDIMED (Martínez-González et al., 2004). Score di aderenza alla dieta mediterranea. Ogni risposta favorevole vale 1 punto. Score ≥10 = alta aderenza · 6–9 = media aderenza · &lt;6 = bassa aderenza.</div>
+      <div class="q-item">
+        <label>1. Usa olio d'oliva come grasso principale per cucinare (≥4 cucchiai/die)?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred1" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred1" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>2. Consuma ≥2 porzioni di verdura/die (almeno una cruda o in insalata)?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred2" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred2" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>3. Consuma ≥2 porzioni di frutta/die?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred3" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred3" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>4. Consuma &lt;1 porzione di carne rossa o lavorata/die?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred4" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred4" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>5. Consuma &lt;1 porzione di burro, margarina o crema/die?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred5" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred5" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>6. Beve &lt;1 bicchiere di bevande zuccherate/die?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred6" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred6" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>7. Consuma ≥7 bicchieri di vino/settimana (se beve alcolici)?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred7" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred7" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>8. Consuma ≥3 porzioni di legumi/settimana?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred8" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred8" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>9. Consuma ≥3 porzioni di pesce (inclusi molluschi e crostacei)/settimana?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred9" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred9" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>10. Consuma &lt;2 porzioni di dolci o pasticcini/settimana?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred10" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred10" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>11. Consuma ≥3 porzioni di frutta secca/settimana?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred11" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred11" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>12. Preferisce pollo, tacchino o coniglio rispetto a manzo, maiale o hamburger?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred12" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred12" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>13. Consuma ≥2 volte/settimana salsa di pomodoro, aglio, cipolla o porro preparata con olio d'oliva?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred13" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred13" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>14. Ha mantenuto o aumentato il consumo di olio d'oliva negli ultimi anni?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="pred14" value="1" onchange="calcPREDIMED()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="pred14" value="0" onchange="calcPREDIMED()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-result-box" id="predimed-result"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcPREDIMED(true)">📊 Calcola PREDIMED</button>
+    </div>
+  </div>
+
+  <!-- AUDIT -->
+  <div class="q-card" id="qcard-audit">
+    <div class="q-card-hdr" onclick="toggleQCard('audit')">
+      <h3>🍷 AUDIT — Alcohol Use Disorders Identification Test</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#FEE2E2;color:#991B1B">Consumo alcolici — 10 item</span>
+        <span id="audit-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-audit">
+      <div class="info-box ib-teal" style="font-size:12px">AUDIT (Babor et al., OMS 1989). Identifica il consumo rischioso e dannoso di alcol. Cut-off: 0–7=Basso rischio · 8–15=Consumo rischioso · 16–19=Consumo pericoloso · ≥20=Possibile dipendenza.</div>
+      <div class="q-item">
+        <label>1. Con quale frequenza consuma bevande alcoliche?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit1" value="0" onchange="calcAUDIT()"><span>Mai → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit1" value="1" onchange="calcAUDIT()"><span>Una volta al mese o meno → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit1" value="2" onchange="calcAUDIT()"><span>2–4 volte al mese → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit1" value="3" onchange="calcAUDIT()"><span>2–3 volte a settimana → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit1" value="4" onchange="calcAUDIT()"><span>4 o più volte a settimana → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>2. Quante unità alcoliche beve in una giornata tipica in cui consuma alcol?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit2" value="0" onchange="calcAUDIT()"><span>1–2 → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit2" value="1" onchange="calcAUDIT()"><span>3–4 → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit2" value="2" onchange="calcAUDIT()"><span>5–6 → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit2" value="3" onchange="calcAUDIT()"><span>7–9 → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit2" value="4" onchange="calcAUDIT()"><span>10 o più → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>3. Con quale frequenza beve 6 o più unità alcoliche in una sola occasione?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit3" value="0" onchange="calcAUDIT()"><span>Mai → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit3" value="1" onchange="calcAUDIT()"><span>Meno di una volta al mese → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit3" value="2" onchange="calcAUDIT()"><span>Una volta al mese → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit3" value="3" onchange="calcAUDIT()"><span>Una volta a settimana → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit3" value="4" onchange="calcAUDIT()"><span>Quotidianamente o quasi → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>4. Con quale frequenza nell'ultimo anno ha trovato di non riuscire a smettere di bere una volta iniziato?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit4" value="0" onchange="calcAUDIT()"><span>Mai → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit4" value="1" onchange="calcAUDIT()"><span>Meno di una volta al mese → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit4" value="2" onchange="calcAUDIT()"><span>Una volta al mese → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit4" value="3" onchange="calcAUDIT()"><span>Una volta a settimana → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit4" value="4" onchange="calcAUDIT()"><span>Quasi ogni giorno → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>5. Con quale frequenza nell'ultimo anno non è riuscito a fare quello che ci si aspettava da lei a causa dell'alcol?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit5" value="0" onchange="calcAUDIT()"><span>Mai → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit5" value="1" onchange="calcAUDIT()"><span>Meno di una volta al mese → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit5" value="2" onchange="calcAUDIT()"><span>Una volta al mese → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit5" value="3" onchange="calcAUDIT()"><span>Una volta a settimana → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit5" value="4" onchange="calcAUDIT()"><span>Quasi ogni giorno → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>6. Con quale frequenza nell'ultimo anno ha avuto bisogno di bere al mattino per rimettersi in sesto dopo una serata di forte consumo?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit6" value="0" onchange="calcAUDIT()"><span>Mai → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit6" value="1" onchange="calcAUDIT()"><span>Meno di una volta al mese → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit6" value="2" onchange="calcAUDIT()"><span>Una volta al mese → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit6" value="3" onchange="calcAUDIT()"><span>Una volta a settimana → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit6" value="4" onchange="calcAUDIT()"><span>Quasi ogni giorno → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>7. Con quale frequenza nell'ultimo anno ha avuto un senso di colpa o rimorso dopo aver bevuto?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit7" value="0" onchange="calcAUDIT()"><span>Mai → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit7" value="1" onchange="calcAUDIT()"><span>Meno di una volta al mese → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit7" value="2" onchange="calcAUDIT()"><span>Una volta al mese → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit7" value="3" onchange="calcAUDIT()"><span>Una volta a settimana → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit7" value="4" onchange="calcAUDIT()"><span>Quasi ogni giorno → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>8. Con quale frequenza nell'ultimo anno non è riuscito a ricordare cosa successe la sera prima perché stava bevendo?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit8" value="0" onchange="calcAUDIT()"><span>Mai → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit8" value="1" onchange="calcAUDIT()"><span>Meno di una volta al mese → <b>1</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit8" value="2" onchange="calcAUDIT()"><span>Una volta al mese → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit8" value="3" onchange="calcAUDIT()"><span>Una volta a settimana → <b>3</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit8" value="4" onchange="calcAUDIT()"><span>Quasi ogni giorno → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>9. Ha mai subito una lesione o qualcuno si è fatto del male a causa del suo consumo di alcol?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit9" value="0" onchange="calcAUDIT()"><span>No → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit9" value="2" onchange="calcAUDIT()"><span>Sì, ma non nell'ultimo anno → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit9" value="4" onchange="calcAUDIT()"><span>Sì, nell'ultimo anno → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>10. Un familiare, un amico, un medico o un operatore sanitario si è preoccupato per il suo consumo di alcol o le ha suggerito di ridurlo?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="audit10" value="0" onchange="calcAUDIT()"><span>No → <b>0</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit10" value="2" onchange="calcAUDIT()"><span>Sì, ma non nell'ultimo anno → <b>2</b></span></label>
+          <label class="q-opt"><input type="radio" name="audit10" value="4" onchange="calcAUDIT()"><span>Sì, nell'ultimo anno → <b>4</b></span></label>
+        </div>
+      </div>
+      <div class="q-result-box" id="audit-result"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcAUDIT(true)">📊 Calcola AUDIT</button>
+    </div>
+  </div>
+
+</div><!-- end qtab-nutrizione -->
+
+<!-- ══════════════════════════════════════════════
+     TAB: PSICOLOGICI & BENESSERE
+     ══════════════════════════════════════════════ -->
+<div class="q-panel" id="qtab-psicologici">
+
+  <div class="q-section-title">🧠 Valutazione Psicologica e Aderenza Terapeutica</div>
+
+  <!-- MMAS-4 -->
+  <div class="q-card" id="qcard-mmas4">
+    <div class="q-card-hdr" onclick="toggleQCard('mmas4')">
+      <h3>💊 MMAS-4 — Morisky Medication Adherence Scale</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95">Aderenza terapeutica — 4 item</span>
+        <span id="mmas4-tog">▼</span>
+      </div>
+    </div>
+    <div class="q-card-body" id="qbody-mmas4">
+      <div class="info-box ib-teal" style="font-size:12px">MMAS-4 (Morisky et al., 1986). Versione semplificata a 4 item per la valutazione dell'aderenza alla terapia farmacologica. Score: 0=Alta aderenza · 1–2=Media aderenza · 3–4=Bassa aderenza.</div>
+      <div class="q-item">
+        <label>1. Si dimentica mai di prendere i farmaci?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mmas1" value="1" onchange="calcMMAS4()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="mmas1" value="0" onchange="calcMMAS4()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>2. È trascurato/a nell'assunzione dei farmaci?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mmas2" value="1" onchange="calcMMAS4()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="mmas2" value="0" onchange="calcMMAS4()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>3. Smette di prendere i farmaci quando si sente meglio?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mmas3" value="1" onchange="calcMMAS4()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="mmas3" value="0" onchange="calcMMAS4()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-item">
+        <label>4. Smette di prendere i farmaci quando si sente peggio?</label>
+        <div class="q-options">
+          <label class="q-opt"><input type="radio" name="mmas4q" value="1" onchange="calcMMAS4()"><span>Sì → <b>1 punto</b></span></label>
+          <label class="q-opt"><input type="radio" name="mmas4q" value="0" onchange="calcMMAS4()"><span>No → <b>0 punti</b></span></label>
+        </div>
+      </div>
+      <div class="q-result-box" id="mmas4-result"></div>
+      <button class="btn btn-primary btn-sm" onclick="calcMMAS4(true)">📊 Calcola MMAS-4</button>
+    </div>
+  </div>
+
+</div><!-- end qtab-psicologici -->
 
 </div></main>
 
@@ -805,7 +1194,7 @@ function renderBESItems() {
     <div class="q-item">
       <label>${i+1}. ${item.q}</label>
       <div class="q-options">
-        ${item.opts.map((opt, j) => `<label class="q-opt"><input type="radio" name="bes_${i}" value="${item.vals[j]}" onchange="calcBES()"><label>${opt}</label></label>`).join('')}
+        ${item.opts.map((opt, j) => `<label class="q-opt"><input type="radio" name="bes_${i}" value="${item.vals[j]}" onchange="calcBES()"><span>${opt}</span></label>`).join('')}
       </div>
     </div>`).join('');
 }
@@ -919,7 +1308,7 @@ function renderORTOItems() {
       <div class="q-options">
         ${['Sempre','Spesso','A volte','Mai'].map((opt,j) => {
           const val = reverseIdx.includes(i) ? [4,3,2,1][j] : [1,2,3,4][j];
-          return `<label class="q-opt"><input type="radio" name="orto_${i}" value="${val}" onchange="calcORTO()"><label>${opt}</label></label>`;
+          return `<label class="q-opt"><input type="radio" name="orto_${i}" value="${val}" onchange="calcORTO()"><span>${opt}</span></label>`;
         }).join('')}
       </div>
     </div>`).join('');
@@ -1016,6 +1405,270 @@ function calcIES(show) {
   `, color, 'IES-2', { score, label, desc, rec });
 }
 
+
+// ─────────────────────────────────
+// GAD-7
+// ─────────────────────────────────
+const GAD7_DOMANDE = [
+  'Senso di nervosismo, ansia o irrequietezza',
+  'Incapacità di smettere di preoccuparsi o di controllare le preoccupazioni',
+  'Preoccupazione eccessiva per cose diverse',
+  'Difficoltà a rilassarsi',
+  'Stato di agitazione tale da rendere difficile stare fermi',
+  'Tendenza a irritarsi o a essere facilmente infastiditi',
+  'Sensazione di aver paura come se stesse per succedere qualcosa di terribile'
+];
+
+function renderGAD7Items() {
+  const el = document.getElementById('gad7-items');
+  if (!el) return;
+  el.innerHTML = GAD7_DOMANDE.map((q,i) => {
+    const id = `gad7_${i}`;
+    return `<div class="q-item"><label>${i+1}. ${q}</label>
+      <div class="q-scale">
+        ${[0,1,2,3].map(v => `<button class="q-scale-btn" data-q="${id}" data-v="${v}" onclick="selScale(this,${v},'${id}',calcGAD7)">${v}<br><span style="font-size:9px">${['Mai','Alcuni gg','&gt;Metà','Ogni gg'][v]}</span></button>`).join('')}
+      </div></div>`;
+  }).join('');
+}
+
+function calcGAD7(show) {
+  const vals = GAD7_DOMANDE.map((_,i) => scaleState[`gad7_${i}`] ?? null);
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  const levels = [
+    [0,4,'🟢 Ansia Minima','#ECFDF5','Nessun disturbo d'ansia significativo.','Monitorare. Eventuale intervento su gestione dello stress e abitudini alimentari.'],
+    [5,9,'🟡 Ansia Lieve','#FEF3C7','Sintomi ansiosi lievi presenti.','Considerare tecniche di rilassamento e psicoeducazione. L'ansia lieve può influenzare le scelte alimentari (comfort eating).'],
+    [10,14,'🟠 Ansia Moderata','#FEF3C7','Ansia moderata con possibile impatto funzionale.','Valutazione psicologica raccomandata. Esplorare la relazione tra ansia e comportamento alimentare.'],
+    [15,21,'🔴 Ansia Grave','#FEE2E2','Sintomi ansiosi gravi. Significativo impatto sulla qualità di vita.','Riferimento urgente a specialista. L'ansia grave è frequentemente associata a restrizione alimentare o abbuffate emotive.']
+  ];
+  const [,, label, color, desc, rec] = levels.find(([lo,hi]) => score >= lo && score <= hi) || levels[3];
+  showResult('gad7-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Punteggio GAD-7</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/21</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/21*100)}%;background:${score<5?'#10B981':score<10?'#F59E0B':score<15?'#F97316':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione clinica:</b> ${rec}</div>
+  `, color, 'GAD-7', { score, label, desc, rec });
+}
+
+// ─────────────────────────────────
+// SGA
+// ─────────────────────────────────
+function calcSGA(show) {
+  const vals = [1,2,3,4,5,6].map(i => {
+    const el = document.querySelector(`input[name="sga${i}"]:checked`);
+    return el ? el.value : null;
+  });
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le voci', 'err'); return; }
+  if (!show) return;
+  const countA = vals.filter(v => v === 'A').length;
+  const countB = vals.filter(v => v === 'B').length;
+  const countC = vals.filter(v => v === 'C').length;
+  let cat, label, color, desc, rec;
+  if (countC >= 3) {
+    cat = 'C'; label = '🔴 SGA-C — Gravemente Malnutrito'; color = '#FEE2E2';
+    desc = 'Evidenza di grave malnutrizione: perdita di peso significativa, riduzione importante dell'apporto, segni fisici di deplezione.';
+    rec = 'Intervento nutrizionale urgente. Piano nutrizionale individualizzato con obiettivi energetici e proteici elevati. Considerare supporto nutrizionale artificiale (NE/NP). Monitoraggio settimanale.';
+  } else if (countC >= 1 || countB >= 3) {
+    cat = 'B'; label = '🟡 SGA-B — Moderatamente Malnutrito'; color = '#FEF3C7';
+    desc = 'Segni moderati di malnutrizione o rischio nutrizionale significativo.';
+    rec = 'Intervento nutrizionale attivo. Supplementazione orale (ONS). Piano alimentare personalizzato con monitoraggio bisettimanale. Rivalutare SGA in 2 settimane.';
+  } else {
+    cat = 'A'; label = '🟢 SGA-A — Ben Nutrito'; color = '#ECFDF5';
+    desc = 'Stato nutrizionale adeguato. Nessun segno significativo di malnutrizione.';
+    rec = 'Mantenere l'apporto nutrizionale attuale. Rivalutare SGA a ogni visita o al cambio di condizione clinica.';
+  }
+  showResult('sga-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Categoria SGA</div><div class="q-result-score" style="font-size:42px">${cat}</div></div>
+      <div style="flex:1">
+        <div class="q-result-label">${label}</div>
+        <div style="font-size:11px;color:var(--slate-l);margin-top:4px">A: ${countA} · B: ${countB} · C: ${countC}</div>
+      </div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione ESPEN:</b> ${rec}</div>
+  `, color, 'SGA', { categoria: cat, label, countA, countB, countC });
+}
+
+// ─────────────────────────────────
+// EAT-26
+// ─────────────────────────────────
+const EAT26_ITEMS = [
+  'Ho paura di pesare troppo',
+  'Evito di mangiare quando ho fame',
+  'Sono preoccupato/a per il cibo',
+  'Ho episodi di abbuffate in cui sento di non riuscire a smettere di mangiare',
+  'Taglio il cibo in pezzi piccoli',
+  'So quante calorie ci sono nel cibo che mangio',
+  'Evito specialmente i cibi ricchi di zucchero',
+  'Mangio alimenti dietetici',
+  'Sento che il cibo controlla la mia vita',
+  'Mi sento incapace di controllare il cibo',
+  'Mi preoccupo di avere grassi in eccesso nel mio corpo',
+  'Sento che gli altri preferirebbero che mangiassi di più',
+  'Vomito dopo i pasti',
+  'Dopo i pasti mi sento molto in colpa',
+  'Sono ossessionato/a dal desiderio di essere più magro/a',
+  'Faccio attività sportiva bruciando calorie',
+  'Peso me stesso/a più volte alla settimana',
+  'Mi piace che i vestiti mi stiano stretti',
+  'Mi piace mangiare carne',
+  'Mi alzo presto la mattina per fare esercizio',
+  'Mangio la stessa cosa ogni giorno',
+  'Penso a bruciare calorie quando faccio esercizio',
+  'Sono soddisfatto/a delle mie abitudini alimentari',
+  'Penso che le altre persone vogliano che io mangi',
+  'Mi ci vuole più tempo per mangiare rispetto agli altri',
+  'Godo di stare a tavola nei ristoranti'
+];
+// Items at 0-based index 22 (item 23) and 25 (item 26) are reverse scored
+const EAT26_REVERSE = [22, 25];
+
+function renderEAT26Items() {
+  const el = document.getElementById('eat26-items');
+  if (!el) return;
+  const opts = ['Sempre','Solitamente','Quasi sempre','Spesso','A volte','Mai'];
+  el.innerHTML = EAT26_ITEMS.map((q,i) => {
+    const reversed = EAT26_REVERSE.includes(i);
+    const vals = reversed ? [0,0,0,1,2,3] : [3,2,1,0,0,0];
+    return `<div class="q-item">
+      <label>${i+1}. ${q}${reversed ? ' <span style="font-size:10px;color:var(--slate-l)">(inverso)</span>' : ''}</label>
+      <div class="q-options">
+        ${opts.map((opt,j) => `<label class="q-opt"><input type="radio" name="eat26_${i}" value="${vals[j]}" onchange="calcEAT26()"><span>${opt} → <b>${vals[j]}</b></span></label>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function calcEAT26(show) {
+  const vals = EAT26_ITEMS.map((_,i) => getRadio('eat26_'+i));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  const pos = score >= 20;
+  let label, color, desc, rec;
+  if (!pos) {
+    label = '🟢 Sotto soglia clinica'; color = '#ECFDF5';
+    desc = 'Punteggio EAT-26 nella norma. Nessun indicatore di disturbo alimentare significativo.';
+    rec = 'Monitorare nel tempo. Ripetere la valutazione se emergono preoccupazioni alimentari o cambiamenti di peso.';
+  } else {
+    label = '🔴 Screening positivo — Possibile disturbo alimentare'; color = '#FEE2E2';
+    desc = 'Punteggio ≥20 indica possibili attitudini e comportamenti problematici verso il cibo e il peso.';
+    rec = 'L'EAT-26 non è diagnostico ma orienta verso valutazione specialistica. Completare con EDE-Q o colloquio clinico strutturato. Riferire a psicologo/psichiatra specializzato in DCA.';
+  }
+  showResult('eat26-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Punteggio EAT-26</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/78</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/78*100)}%;background:${pos?'#EF4444':'#10B981'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione clinica:</b> ${rec}</div>
+  `, color, 'EAT-26', { score, label, desc, rec });
+}
+
+// ─────────────────────────────────
+// PREDIMED
+// ─────────────────────────────────
+function calcPREDIMED(show) {
+  const vals = Array.from({length:14}, (_,i) => getRadio('pred'+(i+1)));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  let label, color, desc, rec;
+  if (score >= 10) {
+    label = '🟢 Alta aderenza alla Dieta Mediterranea'; color = '#ECFDF5';
+    desc = 'Eccellente aderenza al pattern della dieta mediterranea.';
+    rec = 'Mantenere le abitudini alimentari attuali. Enfatizzare i benefici cardiovascolari, metabolici e oncologici documentati nello studio PREDIMED.';
+  } else if (score >= 6) {
+    label = '🟡 Media aderenza alla Dieta Mediterranea'; color = '#FEF3C7';
+    desc = 'Discreta aderenza con margini di miglioramento.';
+    rec = 'Aumentare il consumo di verdura, legumi, frutta secca e pesce. Ridurre carne rossa e bevande zuccherate. Prediligere olio d'oliva extravergine come grasso principale.';
+  } else {
+    label = '🔴 Bassa aderenza alla Dieta Mediterranea'; color = '#FEE2E2';
+    desc = 'Scarsa aderenza al pattern mediterraneo. Elevato rischio cardiovascolare e metabolico.';
+    rec = 'Intervento nutrizionale educazionale mirato. Impostare obiettivi graduali di transizione verso la dieta mediterranea. Fornire materiali educativi pratici (ricette, liste della spesa).';
+  }
+  showResult('predimed-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Score PREDIMED</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/14</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/14*100)}%;background:${score>=10?'#10B981':score>=6?'#F59E0B':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione:</b> ${rec}</div>
+  `, color, 'PREDIMED', { score, label, desc, rec });
+}
+
+// ─────────────────────────────────
+// AUDIT
+// ─────────────────────────────────
+function calcAUDIT(show) {
+  const vals = Array.from({length:10}, (_,i) => getRadio('audit'+(i+1)));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  let label, color, desc, rec;
+  if (score <= 7) {
+    label = '🟢 Basso rischio'; color = '#ECFDF5';
+    desc = 'Consumo di alcol a basso rischio o assenza di consumo.';
+    rec = 'Educazione sui rischi dell'alcol. Monitorare nelle visite successive. Considerare l'impatto calorico dell'alcol nelle valutazioni nutrizionali.';
+  } else if (score <= 15) {
+    label = '🟡 Consumo rischioso'; color = '#FEF3C7';
+    desc = 'Consumo di alcol a livello rischioso. Possibile impatto sulla salute.';
+    rec = 'Counseling motivazionale breve (brief intervention). Informare sui limiti raccomandati. Monitorare l'impatto sullo stato nutrizionale e sul peso. Rivalutare AUDIT in 3 mesi.';
+  } else if (score <= 19) {
+    label = '🔴 Consumo pericoloso'; color = '#FEE2E2';
+    desc = 'Consumo di alcol pericoloso con significativo impatto sulla salute.';
+    rec = 'Intervento specialistico. Valutazione epatica (transaminasi, GGT). Considerare la carenza di vitamine del gruppo B (tiamina). Supporto multidisciplinare: dietista + medico + psicologo.';
+  } else {
+    label = '🔴 Possibile dipendenza da alcol'; color = '#FEE2E2';
+    desc = 'Score elevato compatibile con possibile dipendenza alcolica.';
+    rec = 'Riferimento urgente a centro per le dipendenze. Valutare malnutrizione proteico-energetica. Integrare tiamina e folati. Non prescrivere diete ipocaloriche senza supervisione medica.';
+  }
+  showResult('audit-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Punteggio AUDIT</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/40</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/40*100)}%;background:${score<=7?'#10B981':score<=15?'#F59E0B':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione OMS:</b> ${rec}</div>
+  `, color, 'AUDIT', { score, label, desc, rec });
+}
+
+// ─────────────────────────────────
+// MMAS-4
+// ─────────────────────────────────
+function calcMMAS4(show) {
+  const vals = [1,2,3].map(i => getRadio('mmas'+i));
+  vals.push(getRadio('mmas4q'));
+  if (show && vals.some(v => v === null)) { toast('Compila tutte le domande', 'err'); return; }
+  if (!show) return;
+  const score = vals.reduce((s,v) => s+(v||0), 0);
+  let label, color, desc, rec;
+  if (score === 0) {
+    label = '🟢 Alta aderenza terapeutica'; color = '#ECFDF5';
+    desc = 'Il paziente aderisce correttamente alla terapia farmacologica.';
+    rec = 'Rinforzare positivamente l'aderenza. Continuare il monitoraggio periodico. Valutare l'aderenza anche al piano nutrizionale.';
+  } else if (score <= 2) {
+    label = '🟡 Media aderenza terapeutica'; color = '#FEF3C7';
+    desc = 'Presenza di dimenticanze o comportamenti che riducono l'aderenza.';
+    rec = 'Counseling motivazionale. Identificare le barriere all'aderenza (effetti collaterali, costo, dimenticanze). Strumenti pratici: promemoria, dosette, app. Valutare eventuali aggiustamenti posologici.';
+  } else {
+    label = '�� Bassa aderenza terapeutica'; color = '#FEE2E2';
+    desc = 'Bassa aderenza alla terapia. Rischio di outcome clinici negativi.';
+    rec = 'Intervento strutturato sull'aderenza. Coinvolgere il team curante. Semplificare lo schema posologico. Esplorare le cause (costi, effetti avversi, credenze, dimenticanze). Colloquio motivazionale approfondito.';
+  }
+  showResult('mmas4-result', `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:var(--slate-l)">Score MMAS-4</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/4</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/4*100)}%;background:${score===0?'#10B981':score<=2?'#F59E0B':'#EF4444'}"></div></div>
+      <div class="q-result-label">${label}</div>
+    </div>
+    <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione clinica:</b> ${rec}</div>
+  `, color, 'MMAS-4', { score, label, desc, rec });
+}
+
 // ─────────────────────────────────
 // SALVA IN CARTELLA PAZIENTE
 // ─────────────────────────────────
@@ -1082,6 +1735,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderPHQ9Items();
   renderORTOItems();
   renderIESItems();
+  renderGAD7Items();
+  renderEAT26Items();
   loadCartellePazienti();
 });
 </script>

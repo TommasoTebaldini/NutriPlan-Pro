@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
 /* ── Tab buttons: pill style ── */
-.dg-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#F1F5F9;border-radius:14px}
+.dg-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .dg-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
 .dg-tab:hover{background:rgba(59,130,246,.1);color:#3B82F6}
 .dg-tab.active{background:white;color:#1D4ED8;box-shadow:0 3px 10px rgba(59,130,246,.2);font-weight:700;letter-spacing:.2px}
@@ -110,7 +110,7 @@
   <button class="dg-tab" onclick="showTab('porzioni')">🍽️ Porzioni Isoglucidiche</button>
   <button class="dg-tab" onclick="showTab('depliant')">📄 Depliant Paziente</button>
   <button class="dg-tab" onclick="showTab('lg')">📚 Linee Guida</button>
-  <button class="dg-tab" onclick="showTab('piano_diabete')" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E3A5F;border:1.5px solid #93C5FD">🍽️ Piano Alimentare</button>
+  <button class="dg-tab" onclick="showTab('piano_diabete')">🍽️ Piano Alimentare</button>
 </div>
 
 <!-- TAB 1: RAPPORTO I:C -->
@@ -195,7 +195,7 @@
     <h3>📱 Calcolatore CHO del Pasto</h3>
     <div id="cho-items"></div>
     <button class="btn btn-ghost btn-sm" onclick="addCHOItem()" style="margin-bottom:12px">➕ Aggiungi alimento</button>
-    <div style="background:#EFF6FF;border-radius:8px;padding:14px;display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+    <div style="background:#EFF6FF;border-radius:8px;padding:14px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
       <div><div style="font-size:12px;color:var(--slate-l)">Totale CHO pasto</div><div class="result-big" id="cho-tot">0 g</div></div>
       <div><div style="font-size:12px;color:var(--slate-l)">Con I:C</div>
         <input type="number" id="cho-ic-val" placeholder="I:C es. 10" style="width:80px;padding:5px 8px;border:1.5px solid #BFDBFE;border-radius:6px;font-family:inherit;font-size:13px" oninput="calcCHODose()">
@@ -464,13 +464,15 @@
     if (!c) return;
     c.innerHTML = DG_MEALS.map(function(m) {
       return '<div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:10px">'
-        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">'
-        + '<span style="font-size:20px">' + m.icon + '</span>'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">'
+        + '<span style="font-size:20px;flex-shrink:0">' + m.icon + '</span>'
         + '<input type="text" id="dg-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">'
-        + '<input type="text" id="dg-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Ora" style="width:65px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
+        + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+        + '<input type="text" id="dg-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Ora" style="width:60px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
         + '<span style="font-size:11px;font-weight:700;color:#1D4ED8">CHO:</span>'
-        + '<input type="number" id="dg-m' + m.id + '-cho" value="' + m.cho + '" placeholder="g" style="width:65px;padding:5px 8px;border:1.5px solid #93C5FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none;color:#1D4ED8">'
-        + '<span style="font-size:11px;color:var(--slate-l)">g CHO</span>'
+        + '<input type="number" id="dg-m' + m.id + '-cho" value="' + m.cho + '" placeholder="g" style="width:60px;padding:5px 8px;border:1.5px solid #93C5FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none;color:#1D4ED8">'
+        + '<span style="font-size:11px;color:var(--slate-l)">g</span>'
+        + '</div>'
         + '</div>'
         + '<textarea id="dg-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti (es. Pane integrale 80g=40gCHO, Latte 250mL=12gCHO, Frutta 150g=18gCHO)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
         + '<input type="text" id="dg-m' + m.id + '-note" placeholder="Note: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'

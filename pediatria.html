@@ -1235,8 +1235,32 @@ async function salvaPediatria() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
   }
   showLoading(false);
-  if (result.error) { toast('❌ '+result.error.message,'err'); return; }
+  if (result.error) {
+    if (result.error.code === '42P01') { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
+    return;
+  }
   toast(editingPedNoteId ? '✅ Scheda Pediatrica aggiornata!' : '✅ Scheda Pediatrica salvata nella cartella!','ok');
+}
+
+function mostraSetupSQL() {
+  const sql = `-- Esegui questo SQL nel pannello Supabase (SQL Editor → New Query):
+CREATE TABLE IF NOT EXISTS note_specialistiche (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users NOT NULL,
+  tipo text NOT NULL,
+  nota text,
+  dati jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Own note" ON note_specialistiche;
+CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
+  console.error('SQL da eseguire:\n' + sql);
+  const modal = document.getElementById('modal-sql-setup');
+  if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
+  else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
 }
 
 async function caricaPedDaNote(noteId) {

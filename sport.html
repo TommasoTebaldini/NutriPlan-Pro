@@ -853,7 +853,7 @@ async function salvaSport() {
 }
 
 function mostraSetupSQL() {
-  const sql = `-- Esegui questo SQL nel pannello Supabase (SQL Editor → New Query):\nCREATE TABLE IF NOT EXISTS note_specialistiche (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,\n  user_id uuid REFERENCES auth.users NOT NULL,\n  tipo text NOT NULL,\n  nota text,\n  dati jsonb,\n  created_at timestamptz DEFAULT now(),\n  updated_at timestamptz DEFAULT now()\n);\nALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
+  const sql = `-- Esegui questo SQL nel pannello Supabase (SQL Editor → New Query):\nCREATE TABLE IF NOT EXISTS note_specialistiche (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,\n  user_id uuid REFERENCES auth.users NOT NULL,\n  tipo text NOT NULL,\n  nota text,\n  dati jsonb,\n  created_at timestamptz DEFAULT now(),\n  updated_at timestamptz DEFAULT now()\n);\nALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;\nDROP POLICY IF EXISTS "Own note" ON note_specialistiche;\nCREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
   console.error(sql);
   const modal = document.getElementById('modal-sql-setup');
   if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }

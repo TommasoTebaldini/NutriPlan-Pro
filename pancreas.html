@@ -776,13 +776,31 @@ async function salvaPancreas() {
   }
   showLoading(false);
   if (result.error) {
-    if (result.error.code === '42P01') {
-      toast('⚠️ Tabella mancante — esegui SQL di setup (vedi console)','err');
-      console.error('SQL da eseguire:\ncreate table note_specialistiche(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,tipo text not null,nota text,dati jsonb,created_at timestamptz default now(),updated_at timestamptz default now());\nalter table note_specialistiche enable row level security;\ncreate policy "Own note" on note_specialistiche for all using(auth.uid()=user_id);');
-    } else { toast('❌ '+result.error.message,'err'); }
+    if (result.error.code === '42P01') { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
   toast(editingPanNoteId ? '✅ Scheda IPE aggiornata!' : '✅ Dati IPE salvati nella cartella!','ok');
+}
+
+function mostraSetupSQL() {
+  const sql = `-- Esegui questo SQL nel pannello Supabase (SQL Editor → New Query):
+CREATE TABLE IF NOT EXISTS note_specialistiche (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users NOT NULL,
+  tipo text NOT NULL,
+  nota text,
+  dati jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Own note" ON note_specialistiche;
+CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
+  console.error('SQL da eseguire:\n' + sql);
+  const modal = document.getElementById('modal-sql-setup');
+  if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
+  else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
 }
 
 async function caricaPanDaNote(noteId) {

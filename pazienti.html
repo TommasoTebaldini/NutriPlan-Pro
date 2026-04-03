@@ -130,7 +130,13 @@ async function renderCartellaDetail(id) {
     if (!currentUser) { wrap.innerHTML = '<div class="empty-state"><div class="ei">🔒</div><h3>Sessione scaduta — effettua nuovamente il login</h3></div>'; return; }
   }
 
-  const cartResult = await sb.from('cartelle').select('*').eq('id', id).eq('user_id', currentUser.id).maybeSingle().catch(e=>({data:null,error:e}));
+  const cartResult = await sb.from('cartelle').select('*').eq('id', id).eq('user_id', currentUser.id).maybeSingle();
+  if (cartResult?.error) {
+    console.error('Errore caricamento cartella:', cartResult.error);
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>Errore caricamento cartella</h3><p style="color:var(--slate-l);font-size:13px">${esc(cartResult.error.message)}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">← Torna all'elenco</button></div>`;
+    cartellaAperta = null;
+    return;
+  }
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
   const [piani, ncpts, schede, biaList] = await Promise.all([
@@ -180,6 +186,16 @@ async function renderCartellaDetail(id) {
       <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:3px 9px;border-radius:8px;font-weight:600">NCPt</span>
     </div>`;
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun NCPt salvato.</div>';
+
+  // Build BIA records list
+  const biaHtml = (biaList && biaList.length) ? biaList.map(b => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px">
+      <span style="font-size:22px">⚡</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13px;color:var(--slate)">${fmtDate(b.data_misura)}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${b.peso ? 'Peso: ' + b.peso + ' kg' : ''}${b.bf_pct ? ' · BF: ' + b.bf_pct + '%' : ''}${b.ffm_kg ? ' · FFM: ' + b.ffm_kg + ' kg' : ''}${b.angolo_fase ? ' · φ: ' + b.angolo_fase + '°' : ''}</div>
+      </div>
+    </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna misurazione BIA salvata.</div>';
 
   // Build schede valutazione list
   const schedeHtml = (schede && schede.length) ? schede.map(s => `

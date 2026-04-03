@@ -8,24 +8,74 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.consiglio-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;margin-bottom:10px;transition:box-shadow .15s}
-.consiglio-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
-.cc-hdr{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;color:white}
-.cc-hdr h3{font-size:14px;font-weight:700;flex:1;color:white}
-.cc-badge{font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.2);font-weight:700;white-space:nowrap}
-.cc-body{padding:16px;display:none}
+/* ── TABS ── */
+.cs-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:6px;background:#F0FDF4;border-radius:14px;margin-bottom:18px}
+.cs-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.cs-tab:hover{background:rgba(15,118,110,.12);color:var(--teal)}
+.cs-tab.active{background:white;color:var(--teal-d);box-shadow:0 3px 10px rgba(15,118,110,.2);font-weight:700}
+.cs-panel{display:none}.cs-panel.active{display:block}
+
+/* ── CONSIGLIO CARDS (improved) ── */
+.consiglio-card{background:white;border-radius:14px;border:none;overflow:hidden;margin-bottom:12px;transition:box-shadow .2s,transform .15s;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.consiglio-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.13);transform:translateY(-1px)}
+.cc-hdr{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;overflow:hidden}
+.cc-hdr::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.04);opacity:0;transition:opacity .15s}
+.cc-hdr:hover::after{opacity:1}
+.cc-hdr h3{font-size:15px;font-weight:700;flex:1;color:white;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+.cc-emoji{font-size:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))}
+.cc-badge{font-size:9px;padding:3px 9px;border-radius:10px;background:rgba(255,255,255,.22);font-weight:700;white-space:nowrap;backdrop-filter:blur(4px)}
+.cc-body{padding:18px;display:none;background:white}
 .cc-body.open{display:block}
-.cc-section{margin-bottom:14px}
-.cc-section h4{font-size:12px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.cc-section{margin-bottom:16px}
+.cc-section h4{font-size:11px;font-weight:800;color:var(--slate-l);text-transform:uppercase;letter-spacing:1px;margin-bottom:9px;padding-bottom:5px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:5px}
 .food-grid{display:flex;flex-wrap:wrap;gap:5px}
-.food-ok{background:#D1FAE5;color:#065F46;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:500}
-.food-no{background:#FEE2E2;color:#991B1B;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:500}
-.food-mod{background:#FEF3C7;color:#B45309;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:500}
-.consiglio-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px}
-.ci-box{background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid var(--teal)}
-.ci-label{font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:3px}
-.ci-val{font-size:13px;font-weight:700;color:var(--slate)}
-.note-clinica{background:#EFF6FF;border-radius:8px;padding:10px 13px;font-size:12px;color:#1E3A5F;line-height:1.7;margin-bottom:12px;border-left:3px solid #3B82F6}
+.food-ok{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);color:#065F46;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #6EE7B7}
+.food-no{background:linear-gradient(135deg,#FEE2E2,#FECACA);color:#991B1B;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #FCA5A5}
+.food-mod{background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#92400E;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #FCD34D}
+.consiglio-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.ci-box{background:linear-gradient(135deg,#F8FAFC,#F1F5F9);border-radius:10px;padding:11px 14px;border-left:4px solid var(--teal)}
+.ci-label{font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.ci-val{font-size:13.5px;font-weight:700;color:var(--slate)}
+.note-clinica{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#1E3A5F;line-height:1.75;margin-bottom:14px;border-left:4px solid #3B82F6;position:relative}
+.cc-actions{margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px}
+
+/* ── SEARCH BAR ── */
+.cs-search-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.cs-search-input{flex:1;min-width:200px;padding:10px 16px;border:2px solid var(--border-d);border-radius:50px;font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s;background:white}
+.cs-search-input:focus{border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
+
+/* ── ECM CARDS ── */
+.ecm-card{background:white;border-radius:14px;padding:18px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:12px;display:flex;gap:16px;align-items:flex-start;transition:box-shadow .15s}
+.ecm-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.ecm-badge{padding:4px 12px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.ecm-credits{font-size:24px;font-weight:800;color:var(--teal);line-height:1}
+.ecm-provider{font-size:11px;color:var(--slate-l);margin-top:2px}
+.ecm-left{text-align:center;min-width:70px}
+
+/* ── FOOD ATLAS ── */
+.atlas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:12px}
+.atlas-item{background:white;border-radius:12px;padding:14px 10px;text-align:center;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.atlas-item:hover{border-color:var(--teal-l);box-shadow:0 4px 12px rgba(15,118,110,.15);transform:translateY(-2px)}
+.atlas-item .ai-emoji{font-size:36px;margin-bottom:6px}
+.atlas-item .ai-name{font-size:11.5px;font-weight:700;color:var(--slate);margin-bottom:2px}
+.atlas-item .ai-portion{font-size:10.5px;color:var(--slate-l)}
+.atlas-cat-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.atlas-cat-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+.atlas-detail{background:white;border-radius:14px;padding:20px;border:2px solid var(--teal-l);margin-top:14px;display:none;box-shadow:0 4px 16px rgba(15,118,110,.12)}
+
+/* ── PIRAMIDE ALIMENTARE ── */
+.pyramid-level{border-radius:10px;padding:12px 18px;margin-bottom:6px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.pyramid-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0}
+.pyramid-foods{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.pyramid-food-tag{padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600;background:rgba(255,255,255,.6)}
+.freq-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.freq-table th{background:var(--teal);color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.freq-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.freq-table tbody tr:nth-child(even){background:#F8FAFC}
+.freq-table tbody tr:hover td{background:#E0F2F1}
+.freq-ok{color:#065F46;background:#D1FAE5;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700}
+.freq-warn{color:#92400E;background:#FEF3C7;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700}
+.freq-no{color:#991B1B;background:#FEE2E2;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700}
 
 @media print{
   @page{margin:1.5cm 2cm;size:A4}
@@ -36,13 +86,35 @@
   .consiglio-card{page-break-inside:avoid;border:1.5px solid #CBD5E1!important;margin-bottom:12px!important}
   .cc-body{display:block!important}
   .cc-hdr{-webkit-print-color-adjust:exact}
-  .cc-toggle-btn{display:none!important}
   .food-ok,.food-no,.food-mod{-webkit-print-color-adjust:exact}
   .print-header{display:block!important}
   h1.print-title{font-family:'DM Serif Display',serif;font-size:22pt;color:#0F766E;margin-bottom:4px}
   .print-subtitle{font-size:10pt;color:#64748B;margin-bottom:20px}
+  /* Atlas print: show grid, hide detail panel, show visual reference in each card */
+  .cs-tabs{display:none!important}
+  .cs-panel{display:block!important}
+  #tab-patologie{display:none!important}
+  #tab-educazione{display:none!important}
+  .atlas-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:8px!important}
+  .atlas-item{page-break-inside:avoid;cursor:default!important;border:1px solid #CBD5E1!important}
+  .atlas-item:hover{transform:none!important;box-shadow:none!important}
+  .atlas-detail{display:none!important}
+  .atlas-cat-btn{display:none!important}
+  /* Show the visual reference below each card when printing */
+  .atlas-item::after{
+    content:attr(data-obj);
+    display:block;
+    font-size:9px;
+    color:#64748B;
+    margin-top:4px;
+    font-style:italic;
+    border-top:1px solid #E2E8F0;
+    padding-top:3px;
+  }
+  .atlas-print-ref{display:block!important;font-size:9px;color:#64748B;font-style:italic;border-top:1px solid #E2E8F0;padding-top:3px;margin-top:4px}
+  /* Atlas print title */
+  #tab-atlante::before{content:"🍽️ Atlante Porzioni Alimentari — DietPlan Pro";display:block;font-size:16pt;font-weight:700;color:#0F766E;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #0F766E}
 }
-.print-header{display:none}
 </style>
 </head>
 <body>
@@ -56,15 +128,16 @@
   <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
   <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
   <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
-  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
   <a class="nav-item active" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
   <div class="nav-sec">Database</div>
   <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
   <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
@@ -94,14 +167,330 @@
   <div class="print-subtitle">DietPlan Pro · Generato il <span id="print-date"></span></div>
 </div>
 
-<div class="db-filters no-print" style="margin-bottom:14px">
-  <input type="text" id="cs-search" class="db-search" placeholder="🔍 Cerca patologia..." oninput="filterConsigli()" style="max-width:350px">
-  <button class="btn btn-ghost btn-sm" onclick="toggleAll(true)">▼ Espandi tutti</button>
-  <button class="btn btn-ghost btn-sm" onclick="toggleAll(false)">▲ Chiudi tutti</button>
-  <span id="cs-count" style="font-size:12px;color:var(--slate-l)"></span>
+<!-- TABS -->
+<div class="cs-tabs no-print">
+  <button class="cs-tab active" onclick="showTab('patologie',this)">🏥 Consigli per Patologia</button>
+  <button class="cs-tab" onclick="showTab('educazione',this)">🥗 Educazione Alimentare</button>
+  <button class="cs-tab" onclick="showTab('atlante',this)">🍽️ Atlante Porzioni</button>
 </div>
 
-<div id="consigli-list"></div>
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 1: CONSIGLI PER PATOLOGIA -->
+<!-- ══════════════════════════════════════════ -->
+<div class="cs-panel active" id="tab-patologie">
+  <!-- hero gradient banner -->
+  <div style="background:linear-gradient(135deg,#0F766E 0%,#0EA5E9 100%);border-radius:16px;padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 4px 20px rgba(15,118,110,.25)">
+    <div style="font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">💡</div>
+    <div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px">Consigli Nutrizionali per Patologia</div>
+      <div style="font-size:12.5px;opacity:.88">Linee guida basate su evidenze ESPEN · ESC · WHO · LARN · AIC per le principali patologie cliniche. <b>Strumento professionale — non sostituisce la prescrizione dietetica personalizzata.</b></div>
+    </div>
+  </div>
+
+  <div class="cs-search-bar no-print">
+    <input type="text" id="cs-search" class="cs-search-input" placeholder="🔍 Cerca patologia (es. diabete, IRC, celiachia...)..." oninput="filterConsigli()">
+    <button class="btn btn-ghost btn-sm" onclick="toggleAll(true)">▼ Espandi tutti</button>
+    <button class="btn btn-ghost btn-sm" onclick="toggleAll(false)">▲ Comprimi tutti</button>
+    <span id="cs-count" style="font-size:12px;color:var(--slate-l);white-space:nowrap"></span>
+  </div>
+
+  <div id="consigli-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 2: EDUCAZIONE ALIMENTARE SANI -->
+<!-- ══════════════════════════════════════════ -->
+<div class="cs-panel" id="tab-educazione">
+
+  <!-- Banner -->
+  <div style="background:linear-gradient(135deg,#059669 0%,#10B981 50%,#34D399 100%);border-radius:16px;padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 4px 20px rgba(5,150,105,.25)">
+    <div style="font-size:42px">🥗</div>
+    <div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px">Educazione Alimentare per Soggetti Sani</div>
+      <div style="font-size:12.5px;opacity:.9">Basata sulle <b>Linee Guida per una Sana Alimentazione 2018 (CREA)</b> · Piramide Alimentare Mediterranea Aggiornata · LARN 2023</div>
+    </div>
+    <button class="btn btn-sm no-print" onclick="window.print()" style="margin-left:auto;background:rgba(255,255,255,.2);color:white;border:none">🖨️ Stampa</button>
+  </div>
+
+  <!-- PIRAMIDE ALIMENTARE -->
+  <div style="background:white;border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)">
+    <h3 style="font-size:16px;font-weight:700;color:var(--slate);margin-bottom:6px;display:flex;align-items:center;gap:8px">🔺 Piramide Alimentare Mediterranea Aggiornata</h3>
+    <p style="font-size:12px;color:var(--slate-l);margin-bottom:16px">Fonte: CIISCAM 2009 aggiornata · ogni livello indica la frequenza raccomandata (dalla base = quotidiano, all'apice = raro)</p>
+
+    <!-- Pyramid levels bottom→top -->
+    <div style="max-width:680px;margin:0 auto">
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#D1FAE5,#A7F3D0);border-left:5px solid #059669">
+        <div class="pyramid-num" style="background:#059669">1</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#065F46">💧 Acqua e Attività Fisica — OGNI GIORNO</div>
+          <div style="font-size:11.5px;color:#065F46;margin:4px 0">6–8 bicchieri d'acqua al giorno · 30 min di movimento fisico quotidiano</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#065F46">Acqua naturale</span>
+            <span class="pyramid-food-tag" style="color:#065F46">Camminata 30 min/die</span>
+            <span class="pyramid-food-tag" style="color:#065F46">Tisane non zuccherate</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#D1FAE5,#BBF7D0);border-left:5px solid #16A34A">
+        <div class="pyramid-num" style="background:#16A34A">2</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#14532D">🥦🍅 Verdure e Frutta — 5 PORZIONI AL GIORNO</div>
+          <div style="font-size:11.5px;color:#166534;margin:4px 0">≥3 porzioni verdure (200-300g ciascuna) + ≥2 porzioni frutta (150-200g) · variare i colori!</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#166534">Verdure crude e cotte</span>
+            <span class="pyramid-food-tag" style="color:#166534">Frutta fresca di stagione</span>
+            <span class="pyramid-food-tag" style="color:#166534">Erbe aromatiche fresche</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#FEF9C3,#FEF08A);border-left:5px solid #CA8A04">
+        <div class="pyramid-num" style="background:#CA8A04">3</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#78350F">🌾🍞 Cereali Integrali e Tuberi — AD OGNI PASTO</div>
+          <div style="font-size:11.5px;color:#92400E;margin:4px 0">Pasta/riso 70-90g · Pane integrale 50g · Patate 1-2 volte/settimana · preferire sempre integrali</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#78350F">Pasta integrale</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Riso integrale</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Avena</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Orzo</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Farro</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Pane integrale</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE);border-left:5px solid #7C3AED">
+        <div class="pyramid-num" style="background:#7C3AED">4</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#3B0764">🫒🥛 Olio EVO e Latticini — OGNI GIORNO</div>
+          <div style="font-size:11.5px;color:#4C1D95;margin:4px 0">Olio EVO 3-4 cucchiai/die come condimento principale · Yogurt/latte 2 porzioni al giorno</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#3B0764">Olio EVO (3-4 cucchiai)</span>
+            <span class="pyramid-food-tag" style="color:#3B0764">Yogurt naturale</span>
+            <span class="pyramid-food-tag" style="color:#3B0764">Latte (parz.scremato)</span>
+            <span class="pyramid-food-tag" style="color:#3B0764">Kefir</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);border-left:5px solid #1D4ED8">
+        <div class="pyramid-num" style="background:#1D4ED8">5</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#1E3A8A">🐟🫘 Pesce e Legumi — 2-3 VOLTE/SETTIMANA</div>
+          <div style="font-size:11.5px;color:#1E40AF;margin:4px 0">Pesce (preferire quello azzurro) 2-3x/sett · Legumi (porzione secca 50g o 150g cotti) 3-4x/sett come fonte proteica</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#1E3A8A">Sardine, sgombro, salmone</span>
+            <span class="pyramid-food-tag" style="color:#1E3A8A">Lenticchie, ceci, fagioli</span>
+            <span class="pyramid-food-tag" style="color:#1E3A8A">Tonno al naturale</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-left:5px solid #D97706">
+        <div class="pyramid-num" style="background:#D97706">6</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#78350F">🥚🐔 Uova e Carni Bianche — 2-3 VOLTE/SETTIMANA</div>
+          <div style="font-size:11.5px;color:#92400E;margin:4px 0">Uova 3-4/settimana · Pollo, tacchino, coniglio: 2-3 porzioni da 100-130g/settimana</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#78350F">Uova (3-4/sett)</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Pollo senza pelle</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Tacchino</span>
+            <span class="pyramid-food-tag" style="color:#78350F">Coniglio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#FEE2E2,#FECACA);border-left:5px solid #DC2626">
+        <div class="pyramid-num" style="background:#DC2626">7</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#7F1D1D">🥩🧀 Carne Rossa e Formaggi — 1-2 VOLTE/SETTIMANA</div>
+          <div style="font-size:11.5px;color:#991B1B;margin:4px 0">Carne rossa (100-130g): max 1-2 volte/sett · Formaggi (stagionati 50g, freschi 100g): 2-3 volte/sett</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#7F1D1D">Manzo, maiale magro</span>
+            <span class="pyramid-food-tag" style="color:#7F1D1D">Parmigiano (piccole quantità)</span>
+            <span class="pyramid-food-tag" style="color:#7F1D1D">Mozzarella</span>
+            <span class="pyramid-food-tag" style="color:#7F1D1D">Ricotta</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pyramid-level" style="background:linear-gradient(135deg,#F3F4F6,#E5E7EB);border-left:5px solid #6B7280">
+        <div class="pyramid-num" style="background:#6B7280">8</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#111827">🍷🍰 Dolci e Alcol — RARAMENTE / CON MODERAZIONE</div>
+          <div style="font-size:11.5px;color:#374151;margin:4px 0">Vino rosso (se si consuma): max 1 bicchiere/die per donne, 2 per uomini · Dolci e dessert: max 1-2 volte/settimana · Preferire prodotti da forno artigianali</div>
+          <div class="pyramid-foods">
+            <span class="pyramid-food-tag" style="color:#374151">Vino (max 1-2 bic/die)</span>
+            <span class="pyramid-food-tag" style="color:#374151">Dolci (max 2x/sett)</span>
+            <span class="pyramid-food-tag" style="color:#374151">Mai a stomaco vuoto</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELLA FREQUENZE COMPLETE -->
+  <div style="background:white;border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)">
+    <h3 style="font-size:16px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px">📊 Frequenze di Consumo Raccomandate — Linee Guida CREA 2018</h3>
+    <div style="overflow-x:auto">
+    <table class="freq-table">
+      <thead><tr><th>Gruppo Alimentare</th><th>Frequenza</th><th>Porzione</th><th>Note Pratiche</th></tr></thead>
+      <tbody>
+        <tr><td><b>🌾 Cereali e derivati (preferire integrali)</b></td><td><span class="freq-ok">Ad ogni pasto</span></td><td>Pasta/riso 70-90g · Pane 50g</td><td>Sempre integrali (fibra, sazietà, glicemia)</td></tr>
+        <tr><td><b>🥦 Verdure e ortaggi</b></td><td><span class="freq-ok">≥3 porzioni/die</span></td><td>200-300g per porzione</td><td>Variare i colori: almeno 3 colori diversi al giorno</td></tr>
+        <tr><td><b>🍎 Frutta fresca</b></td><td><span class="freq-ok">≥2 porzioni/die</span></td><td>150-200g (1 frutto medio)</td><td>Mangiare intera, non centrifugata. Preferire di stagione</td></tr>
+        <tr><td><b>🐟 Pesce (fresco o surgelato)</b></td><td><span class="freq-ok">2-3 volte/settimana</span></td><td>150g</td><td>Preferire pesce azzurro (sardine, sgombro, alici) — ricco di omega-3</td></tr>
+        <tr><td><b>🫘 Legumi (secchi o in scatola)</b></td><td><span class="freq-ok">3-4 volte/settimana</span></td><td>50g secchi / 150g cotti</td><td>Proteine + fibra + ferro. Abbinare a cereali per proteine complete</td></tr>
+        <tr><td><b>🥚 Uova</b></td><td><span class="freq-ok">3-4 uova/settimana</span></td><td>1-2 uova</td><td>Non limitare arbitrariamente: non aumentano il rischio CV in individui sani</td></tr>
+        <tr><td><b>🐔 Carni bianche (pollo, tacchino, coniglio)</b></td><td><span class="freq-ok">2-3 volte/settimana</span></td><td>100-130g</td><td>Senza pelle, cotto al forno/vapore/griglia</td></tr>
+        <tr><td><b>🥩 Carne rossa (manzo, maiale, agnello)</b></td><td><span class="freq-warn">Max 1-2 volte/settimana</span></td><td>100-130g</td><td>Preferire tagli magri. Ridurre carni processate (salumi, würstel)</td></tr>
+        <tr><td><b>🧀 Formaggi stagionati (parmigiano, pecorino)</b></td><td><span class="freq-warn">Max 2 volte/settimana</span></td><td>50g</td><td>Alta densità calorica e di calcio. Ottimo in piccole quantità</td></tr>
+        <tr><td><b>🧀 Formaggi freschi (mozzarella, ricotta, stracchino)</b></td><td><span class="freq-ok">2-3 volte/settimana</span></td><td>100g</td><td>Fonte di calcio e proteine. Preferire in sostituzione alla carne</td></tr>
+        <tr><td><b>🥛 Latte e yogurt</b></td><td><span class="freq-ok">2 porzioni/die</span></td><td>125ml latte / 125g yogurt</td><td>Fonte primaria di calcio. Parzialmente scremato per adulti</td></tr>
+        <tr><td><b>🫒 Olio extra vergine di oliva</b></td><td><span class="freq-ok">Ad ogni pasto (3-4 cucchiai)</span></td><td>10ml (1 cucchiaio)</td><td>L'unico grasso da condimento raccomandato. Crudo è meglio</td></tr>
+        <tr><td><b>🥜 Frutta secca oleosa (noci, mandorle, pistacchi)</b></td><td><span class="freq-ok">Ogni giorno (piccola quantità)</span></td><td>30g (una manciata)</td><td>Omega-3, vitamina E, sazietà. Non sostituire con quelli salati</td></tr>
+        <tr><td><b>🍷 Vino (se si consuma)</b></td><td><span class="freq-warn">Max 1 bic/die F · 2 bic/die M</span></td><td>125ml (1 bicchiere)</td><td>Mai a stomaco vuoto. Nessuna quantità è sicura in gravidanza</td></tr>
+        <tr><td><b>🍺 Birra e superalcolici</b></td><td><span class="freq-warn">Occasionalmente (preferire non bere)</span></td><td>—</td><td>Nessuna quantità è completamente sicura. Zero in gravidanza e allattamento</td></tr>
+        <tr><td><b>💧 Acqua</b></td><td><span class="freq-ok">6-8 bicchieri/die (≥1,5-2 L)</span></td><td>200ml (1 bicchiere)</td><td>Prima, durante e dopo l'attività fisica. Preferire acqua del rubinetto</td></tr>
+        <tr><td><b>☕ Caffè</b></td><td><span class="freq-ok">Max 3-4/die</span></td><td>1 caffè espresso</td><td>Non aggiungere zucchero. Evitare in gravidanza (max 200mg caffeina)</td></tr>
+        <tr><td><b>🍰 Dolci e dessert</b></td><td><span class="freq-no">Max 1-2 volte/settimana</span></td><td>50-70g</td><td>Evitare dolci industriali con grassi trans. Occasionalmente e con piacere</td></tr>
+        <tr><td><b>🧂 Sale</b></td><td><span class="freq-warn">Max 5g NaCl al giorno (totale)</span></td><td>—</td><td>Usare sale iodato. Non aggiungere sale in cottura. Usare erbe aromatiche</td></tr>
+        <tr><td><b>🍫 Cioccolato fondente (>70%)</b></td><td><span class="freq-ok">Qualche volta/settimana (piccole quantità)</span></td><td>20-30g</td><td>Flavonoidi antiossidanti. Solo fondente >70% cacao</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- I 10 PRINCIPI -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div style="background:white;border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)">
+      <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:12px">✅ I 10 Principi della Sana Alimentazione (CREA 2018)</h3>
+      <ol style="padding-left:18px;display:flex;flex-direction:column;gap:7px">
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Controlla il peso</b> e mantieniti sempre attivo</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Più cereali, legumi, frutta e verdura</b> — la base della dieta</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Grassi: scegli la qualità</b> — olio EVO sì, grassi saturi no</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Zuccheri, dolci e bevande zuccherate</b> — limitali</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Bevi acqua</b> in abbondanza — ogni giorno</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Sale poco</b> — preferisci quello iodato</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Bevande alcoliche</b>: se le consumi, fallo con moderazione</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Varia</b> spesso le tue scelte a tavola — la biodiversità alimentare</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Sicurezza degli alimenti</b>: leggi le etichette, conserva correttamente</li>
+        <li style="font-size:12.5px;color:var(--slate-m)"><b>Gusto e piacere</b>: la sana alimentazione è anche convivialità</li>
+      </ol>
+    </div>
+    <div style="background:white;border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)">
+      <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:12px">⚡ Fabbisogno Energetico Stimato (adulto sano)</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--teal);color:white"><th style="padding:7px 10px;text-align:left">Profilo</th><th style="padding:7px;text-align:center">Donna</th><th style="padding:7px;text-align:center">Uomo</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 10px"><b>Sedentario</b></td><td style="text-align:center;padding:7px">~1800 kcal</td><td style="text-align:center;padding:7px">~2100 kcal</td></tr>
+          <tr style="border-bottom:1px solid var(--border);background:#F8FAFC"><td style="padding:7px 10px"><b>Leggermente attivo</b></td><td style="text-align:center;padding:7px">~2000 kcal</td><td style="text-align:center;padding:7px">~2400 kcal</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 10px"><b>Moderatamente attivo</b></td><td style="text-align:center;padding:7px">~2200 kcal</td><td style="text-align:center;padding:7px">~2700 kcal</td></tr>
+          <tr style="border-bottom:1px solid var(--border);background:#F8FAFC"><td style="padding:7px 10px"><b>Molto attivo</b></td><td style="text-align:center;padding:7px">~2400 kcal</td><td style="text-align:center;padding:7px">~3000 kcal</td></tr>
+          <tr><td style="padding:7px 10px"><b>Atleta</b></td><td style="text-align:center;padding:7px">2500+ kcal</td><td style="text-align:center;padding:7px">3500+ kcal</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;background:#F0FDF4;border-radius:8px;padding:10px 13px;font-size:12px;color:#065F46">
+        <b>Distribuzione macronutrienti raccomandata (LARN 2023):</b><br>
+        🍞 CHO: 45-60% (prevalenza integrali) · 🥩 Proteine: 15-20% (0.9-1.1 g/kg) · 🫒 Grassi: 25-35% (preferire insaturi)
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSIGLI PRATICI -->
+  <div style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-radius:14px;padding:20px;border:1px solid #6EE7B7;margin-bottom:16px">
+    <h3 style="font-size:14px;font-weight:700;color:#065F46;margin-bottom:12px">💡 Consigli Pratici per la Spesa e la Cucina</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#065F46;margin-bottom:6px">🛒 A TAVOLA</div>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:5px">
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Inizia sempre il pasto con la verdura</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Mangia lentamente (20 min per sentirsi sazi)</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Non saltare la colazione — è il pasto più importante</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Usa piatti da 20-22 cm invece di 28 cm</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Non mangiare davanti allo schermo o in piedi</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ 5 pasti al giorno: 3 principali + 2 spuntini</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#065F46;margin-bottom:6px">🍳 IN CUCINA</div>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:5px">
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Preferisci: vapore, bollitura, forno, griglia, cartoccio</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Evita fritture: usa padella antiaderente con poco olio</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Usa erbe aromatiche al posto del sale</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Leggi sempre le etichette: ingredienti e valore nutrizionale</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Pianifica i pasti della settimana (meal prep)</li>
+          <li style="font-size:12.5px;color:var(--slate-m)">→ Preferisci prodotti di stagione e locali</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 3: ATLANTE PORZIONI VISIVE -->
+<!-- ══════════════════════════════════════════ -->
+<div class="cs-panel" id="tab-atlante">
+
+  <div style="background:linear-gradient(135deg,#7C3AED 0%,#6366F1 100%);border-radius:16px;padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 4px 20px rgba(124,58,237,.25)">
+    <div style="font-size:42px">🍽️</div>
+    <div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px">Atlante Visivo delle Porzioni Alimentari</div>
+      <div style="font-size:12.5px;opacity:.9">Riferimento visivo per la stima delle porzioni · Standard LARN 2023 · Clicca su un alimento per i dettagli</div>
+    </div>
+  </div>
+
+  <!-- Filtri categoria -->
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+    <button class="atlas-cat-btn active" onclick="filterAtlas('tutti',this)">🔍 Tutti</button>
+    <button class="atlas-cat-btn" onclick="filterAtlas('cereali',this)">🌾 Cereali</button>
+    <button class="atlas-cat-btn" onclick="filterAtlas('proteine',this)">🥩 Proteine</button>
+    <button class="atlas-cat-btn" onclick="filterAtlas('verdure',this)">🥦 Verdure</button>
+    <button class="atlas-cat-btn" onclick="filterAtlas('frutta',this)">🍎 Frutta</button>
+    <button class="atlas-cat-btn" onclick="filterAtlas('latticini',this)">🥛 Latticini</button>
+    <button class="atlas-cat-btn" onclick="filterAtlas('grassi',this)">🫒 Grassi</button>
+    <button class="atlas-cat-btn" onclick="filterAtlas('dolci',this)">🍰 Dolci & Extra</button>
+  </div>
+
+  <div class="atlas-grid" id="atlas-grid"></div>
+
+  <!-- Detail panel -->
+  <div class="atlas-detail" id="atlas-detail"></div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 4: CORSI ECM -->
+<!-- ══════════════════════════════════════════ -->
+<div class="cs-panel" id="tab-ecm">
+
+  <div style="background:linear-gradient(135deg,#1D4ED8 0%,#4F46E5 100%);border-radius:16px;padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 4px 20px rgba(29,78,216,.25)">
+    <div style="font-size:42px">🎓</div>
+    <div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px">Corsi ECM per Dietisti e Nutrizionisti</div>
+      <div style="font-size:12.5px;opacity:.9">Educazione Continua in Medicina · Corsi accreditati per dietisti, nutrizionisti, medici e professionisti della salute</div>
+    </div>
+  </div>
+
+  <!-- Alert info -->
+  <div style="background:#EFF6FF;border-left:4px solid #3B82F6;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12.5px;color:#1E3A5F;line-height:1.7">
+    ℹ️ <b>Obbligo ECM 2024-2026:</b> I dietisti devono acquisire <b>150 crediti ECM ogni 3 anni</b>. I corsi mostrati sono a titolo illustrativo — verifica sempre l'accreditamento attuale su <b>ECM.salute.gov.it</b> prima di iscriverti.
+  </div>
+
+  <!-- Filtri -->
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+    <button class="atlas-cat-btn active" onclick="filterECM('tutti',this)">📋 Tutti</button>
+    <button class="atlas-cat-btn" onclick="filterECM('nutrizione',this)">🥗 Nutrizione Clinica</button>
+    <button class="atlas-cat-btn" onclick="filterECM('patologie',this)">🏥 Patologie</button>
+    <button class="atlas-cat-btn" onclick="filterECM('pediatria',this)">👶 Pediatria</button>
+    <button class="atlas-cat-btn" onclick="filterECM('online',this)">💻 Online / FAD</button>
+    <button class="atlas-cat-btn" onclick="filterECM('residenziale',this)">🏛️ Residenziale</button>
+  </div>
+
+  <div id="ecm-list"></div>
+</div>
 
 </div></main>
 
@@ -358,26 +747,178 @@ let editingId = null;
 // ═══════════════════════════════
 // RENDER
 // ═══════════════════════════════
+
+// ═══════════════════════════════
+// ATLANTE PORZIONI
+// ═══════════════════════════════
+const ATLAS_DATA = [
+  {cat:'cereali',emoji:'🍝',nome:'Pasta',porzione:'80g (secca)',kcal:284,note:'Un piatto fondo medio. Equivale a circa 3-4 cucchiai colmi prima della cottura. Dopo la cottura pesa ~240g.',obj:'Una manciata e mezza con due mani'},
+  {cat:'cereali',emoji:'🍚',nome:'Riso',porzione:'80g (secco)',kcal:284,note:'Circa 5 cucchiai colmi di riso crudo. Cotto pesa circa 240g (piatto piano colmo).',obj:'Due pugni chiusi'},
+  {cat:'cereali',emoji:'🍞',nome:'Pane comune',porzione:'50g',kcal:133,note:'Una fetta e mezza di pane a cassetta o mezzo panino piccolo da 50g.',obj:'Un palmo di mano'},
+  {cat:'cereali',emoji:'🌾',nome:'Pane integrale',porzione:'50g',kcal:116,note:'Due fette di pane integrale in cassetta. Più fibra e minore IG rispetto al bianco.',obj:'Un palmo di mano'},
+  {cat:'cereali',emoji:'🥣',nome:'Avena (fiocchi)',porzione:'40g',kcal:152,note:'Quattro cucchiai colmi di fiocchi d\'avena. Ottima fonte di beta-glucani.',obj:'Una manciata abbondante'},
+  {cat:'cereali',emoji:'🫓',nome:'Crackers integrali',porzione:'30g',kcal:125,note:'Circa 4-5 crackers integrali standard. Preferire senza olio di palma.',obj:'4-5 pezzi'},
+  {cat:'cereali',emoji:'🥞',nome:'Fette biscottate',porzione:'30g',kcal:124,note:'Circa 4-5 fette biscottate. Preferire integrali per maggiore fibra.',obj:'4-5 fette'},
+  {cat:'proteine',emoji:'🐟',nome:'Pesce (filetto)',porzione:'150g',kcal:135,note:'Un filetto medio di pesce (merluzzo, branzino, orata). Cotto al forno o vapore.',obj:'Il palmo della mano (senza dita)'},
+  {cat:'proteine',emoji:'🐔',nome:'Petto di pollo',porzione:'130g',kcal:143,note:'Un petto medio di pollo senza pelle. Cotto al forno/griglia.',obj:'Il palmo della mano'},
+  {cat:'proteine',emoji:'🥩',nome:'Carne rossa magra',porzione:'130g',kcal:182,note:'Una fettina di manzo o lonza di maiale. Max 1-2 volte a settimana.',obj:'Il palmo della mano'},
+  {cat:'proteine',emoji:'🥚',nome:'Uova',porzione:'2 uova (110g)',kcal:154,note:'Due uova medie = una porzione standard. Proteine di alta qualità biologica.',obj:'2 uova medie'},
+  {cat:'proteine',emoji:'🫘',nome:'Legumi (cotti)',porzione:'150g',kcal:120,note:'Ceci, lenticchie, fagioli cotti. Pari a circa 50g secchi.',obj:'Un pugno chiuso e mezzo'},
+  {cat:'proteine',emoji:'🐟',nome:'Tonno al naturale',porzione:'80g sgocciolato',kcal:86,note:'Circa mezza lattina standard di tonno. Sgocciolare bene.',obj:'Mezza lattina'},
+  {cat:'proteine',emoji:'🍤',nome:'Gamberi (crudi)',porzione:'150g',kcal:90,note:'Circa 10-12 gamberi medi. Bassissimo contenuto di grassi.',obj:'Una manciata abbondante'},
+  {cat:'verdure',emoji:'🥦',nome:'Verdure cotte',porzione:'200g',kcal:50,note:'Un piatto abbondante di verdure cotte (broccoli, zucchine, spinaci). Nessuna restrizione!',obj:'Due pugni chiusi'},
+  {cat:'verdure',emoji:'🥗',nome:'Insalata mista',porzione:'80g',kcal:16,note:'Una ciotola grande di insalata mista. Pochissime calorie, molta fibra.',obj:'Due mani aperte'},
+  {cat:'verdure',emoji:'🍅',nome:'Pomodori',porzione:'200g',kcal:34,note:'2 pomodori medi o una tazza di pomodorini. Fonte di licopene e vitamina C.',obj:'Due pugni chiusi'},
+  {cat:'verdure',emoji:'🥕',nome:'Carote',porzione:'200g',kcal:66,note:'Due carote medie. Ricche di beta-carotene. Ottimo spuntino crudo.',obj:'Due carote medie'},
+  {cat:'verdure',emoji:'🫑',nome:'Peperoni',porzione:'200g',kcal:40,note:'Un peperone grande. Altissimo contenuto di vitamina C.',obj:'Un peperone grande'},
+  {cat:'frutta',emoji:'🍎',nome:'Mela / Pera',porzione:'150g (1 frutto)',kcal:72,note:'Una mela o pera media. Mangiare sempre con la buccia per la fibra.',obj:'Un pugno chiuso'},
+  {cat:'frutta',emoji:'🍊',nome:'Arancia',porzione:'150g (1 frutto)',kcal:54,note:'Una grossa arancia. Ricca di vitamina C e flavonoidi.',obj:'Un pugno chiuso'},
+  {cat:'frutta',emoji:'🍌',nome:'Banana',porzione:'100g (mezza)',kcal:89,note:'Una banana piccola. Alto contenuto di potassio e carboidrati.',obj:'Mezza banana grande'},
+  {cat:'frutta',emoji:'🍇',nome:'Uva',porzione:'100g',kcal:67,note:'Un piccolo grappolo. Alto indice glicemico: moderare.',obj:'Un piccolo grappolo'},
+  {cat:'frutta',emoji:'🍓',nome:'Frutti di bosco',porzione:'150g',kcal:45,note:'Una tazza colma di fragole o mirtilli. Bassissime calorie, alte in antiossidanti.',obj:'Una tazza'},
+  {cat:'frutta',emoji:'🥝',nome:'Kiwi',porzione:'150g (2 kiwi)',kcal:87,note:'Due kiwi medi. Una delle fonti più ricche di vitamina C.',obj:'Due kiwi medi'},
+  {cat:'latticini',emoji:'🥛',nome:'Latte parz.scremato',porzione:'125ml',kcal:56,note:'Un bicchiere di latte. Due bicchieri/die coprono ~40% del fabbisogno di calcio.',obj:'Un bicchiere piccolo'},
+  {cat:'latticini',emoji:'🍦',nome:'Yogurt naturale',porzione:'125g (1 vasetto)',kcal:72,note:'Un vasetto standard. Preferire greco per più proteine, senza zuccheri aggiunti.',obj:'Un vasetto standard'},
+  {cat:'latticini',emoji:'🧀',nome:'Mozzarella',porzione:'100g',kcal:253,note:'Una mozzarella piccola. Ottima fonte di calcio e proteine.',obj:'Una pallina da tennis'},
+  {cat:'latticini',emoji:'🧀',nome:'Parmigiano Reggiano',porzione:'30g',kcal:120,note:'Tre cucchiai grattugiati. Altissimo contenuto di calcio: 330mg/30g.',obj:'Un quadratino 3x3 cm'},
+  {cat:'latticini',emoji:'🍮',nome:'Ricotta vaccina',porzione:'100g',kcal:140,note:'Due cucchiai abbondanti. Più leggera di molti formaggi.',obj:'Due cucchiai grandi'},
+  {cat:'grassi',emoji:'🫒',nome:'Olio EVO',porzione:'10ml (1 cucchiaio)',kcal:88,note:'Un cucchiaio da cucina colmo. Massimo 3-4 cucchiai/die. Crudo è meglio!',obj:'Un cucchiaio da cucina'},
+  {cat:'grassi',emoji:'🥑',nome:'Avocado',porzione:'80g (metà)',kcal:128,note:'Metà avocado medio. Ricco di grassi monoinsaturi e vitamina E.',obj:'Metà avocado'},
+  {cat:'grassi',emoji:'🥜',nome:'Noci / Mandorle',porzione:'30g',kcal:185,note:'Una piccola manciata: ~7 noci o 20 mandorle. Omega-3 e vitamina E.',obj:'Una manciata chiusa'},
+  {cat:'dolci',emoji:'🍫',nome:'Cioccolato fondente >70%',porzione:'20-30g',kcal:160,note:'2-3 quadratini di cioccolato fondente. Flavonoidi antiossidanti.',obj:'2-3 quadratini'},
+  {cat:'dolci',emoji:'🍰',nome:'Torta (fetta)',porzione:'80-100g',kcal:300,note:'Una fetta sottile di torta casalinga. Qualche volta a settimana.',obj:'Una fetta sottile'},
+  {cat:'dolci',emoji:'🍷',nome:'Vino rosso',porzione:'125ml',kcal:80,note:'Un bicchiere da vino. Max 1/die (F) o 2/die (M).',obj:'Un bicchiere da vino'},
+];
+
+let atlasFilter = 'tutti';
+function filterAtlas(cat, btn) {
+  atlasFilter = cat;
+  document.querySelectorAll('#tab-atlante .atlas-cat-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderAtlas();
+}
+function renderAtlas() {
+  const grid = document.getElementById('atlas-grid');
+  if (!grid) return;
+  const items = atlasFilter === 'tutti' ? ATLAS_DATA : ATLAS_DATA.filter(a => a.cat === atlasFilter);
+  grid.innerHTML = items.map((a) => {
+    const idx = ATLAS_DATA.indexOf(a);
+    return `<div class="atlas-item" data-obj="${a.obj}" onclick="showAtlasDetail(${idx})">
+      <div class="ai-emoji">${a.emoji}</div>
+      <div class="ai-name">${a.nome}</div>
+      <div class="ai-portion">${a.porzione}</div>
+      <div style="font-size:10px;color:var(--teal-d);font-weight:700;margin-top:3px">${a.kcal} kcal</div>
+      <div class="atlas-print-ref" style="display:none">${a.obj}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('atlas-detail').style.display = 'none';
+}
+function showAtlasDetail(idx) {
+  const a = ATLAS_DATA[idx];
+  const detail = document.getElementById('atlas-detail');
+  detail.style.display = 'block';
+  detail.innerHTML = `<div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+    <div style="text-align:center;min-width:100px">
+      <div style="font-size:64px;margin-bottom:8px">${a.emoji}</div>
+      <div style="font-size:26px;font-weight:800;color:var(--teal)">${a.kcal}</div>
+      <div style="font-size:11px;color:var(--slate-l)">kcal/porzione</div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:18px;font-weight:700;color:var(--slate);margin-bottom:6px">${a.nome}</div>
+      <div style="background:var(--teal);color:white;display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:12px">${a.porzione}</div>
+      <div style="font-size:13px;color:var(--slate-m);line-height:1.7;margin-bottom:12px">${a.note}</div>
+      <div style="background:#F0FDF4;border-radius:10px;padding:10px 14px;border-left:4px solid var(--teal)">
+        <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">👁️ RIFERIMENTO VISIVO</div>
+        <div style="font-size:15px;font-weight:700;color:var(--teal-d)">${a.obj}</div>
+      </div>
+    </div>
+  </div>`;
+  detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ═══════════════════════════════
+// ECM CORSI
+// ═══════════════════════════════
+const ECM_DATA = [
+  {cat:'nutrizione',tipo:'online',provider:'SINU — Società Italiana di Nutrizione Umana',titolo:'Nutrizione Clinica Avanzata: dalla Valutazione al Piano Terapeutico',crediti:12,durata:'8 ore FAD',costo:'Gratuito per soci',target:'Dietisti, medici, biologi nutrizionisti',descrizione:'Corso FAD accreditato ECM su valutazione dello stato nutrizionale, malnutrizione, NCP, NRS-2002 e MNA.',link:'https://www.sinu.it/formazione',scadenza:'Verificare date su sito ufficiale'},
+  {cat:'nutrizione',tipo:'residenziale',provider:'ANDID — Associazione Nazionale Dietisti',titolo:'Congresso Nazionale ANDID — Nutrizione e Innovazione Clinica',crediti:16,durata:'2 giorni',costo:'€ 250-400 (soci/non soci)',target:'Dietisti',descrizione:'Il più importante evento nazionale per i dietisti italiani. Aggiornamento su tutte le aree della nutrizione clinica.',link:'https://www.andid.it/congresso',scadenza:'Verificare date su sito ufficiale'},
+  {cat:'patologie',tipo:'online',provider:'ESPEN — European Society for Clinical Nutrition',titolo:'ESPEN eLearning: Nutrition in Diabetes and Metabolic Diseases',crediti:8,durata:'6 ore FAD (inglese)',costo:'Gratuito per soci ESPEN',target:'Dietisti, medici, nutrizionisti',descrizione:'Moduli online ESPEN su nutrizione e diabete, insulino-resistenza, microbioma e malattie metaboliche.',link:'https://www.espen.org/elearning',scadenza:'Accesso permanente con registrazione'},
+  {cat:'patologie',tipo:'residenziale',provider:'Federazione COMLAS',titolo:'Nutrizione nell\'Insufficienza Renale Cronica: dalla teoria alla pratica',crediti:10,durata:'1 giorno',costo:'€ 100-180',target:'Dietisti, medici nefrologi, infermieri',descrizione:'Corso pratico: restrizione proteica, potassio, fosforo, gestione del paziente dialitico.',link:'https://www.ecm.salute.gov.it',scadenza:'Verificare calendario ECM'},
+  {cat:'pediatria',tipo:'online',provider:'SIP — Società Italiana di Pediatria',titolo:'Nutrizione Pediatrica: svezzamento, obesità e patologie specifiche',crediti:10,durata:'8 ore FAD',costo:'€ 50-80',target:'Dietisti, pediatri, MMG',descrizione:'Corso FAD su allattamento, diversificazione alimentare, obesità pediatrica, APLV, celiachia e diete speciali in età evolutiva.',link:'https://www.sip.it/formazione',scadenza:'Verificare disponibilità'},
+  {cat:'pediatria',tipo:'residenziale',provider:'SIPPS — Società Italiana Prevenzione e Igiene',titolo:'Svezzamento Guidato dal Bambino (BLW) e nutrizione 0-3 anni',crediti:8,durata:'1 giorno',costo:'€ 90-150',target:'Pediatri, dietisti, ostetriche',descrizione:'Workshop pratico su BLW, prevenzione allergie, educazione alimentare precoce e linee guida WHO.',link:'https://www.sipps.it',scadenza:'Verificare calendario'},
+  {cat:'nutrizione',tipo:'online',provider:'ISS — Istituto Superiore di Sanità',titolo:'Sorveglianza nutrizionale e indicatori di salute nella popolazione italiana',crediti:6,durata:'4 ore FAD',costo:'Gratuito',target:'Professionisti sanitari',descrizione:'Corso gratuito ISS su dati epidemiologici italiani, OKkio alla SALUTE, PASSI e sorveglianza nutrizionale.',link:'https://www.iss.it/formazione',scadenza:'Accesso libero'},
+  {cat:'patologie',tipo:'online',provider:'ADI — Associazione Italiana di Dietetica',titolo:'Nutrizione Enterale e Parenterale: gestione pratica',crediti:14,durata:'10 ore FAD + 2 ore residenziali',costo:'€ 120-200 (soci/non soci)',target:'Dietisti, infermieri, medici',descrizione:'Percorso completo sulla nutrizione artificiale: indicazioni, accessi, miscele, monitoraggio, NED e complicanze.',link:'https://www.adiitalia.net/formazione',scadenza:'Verificare su sito ADI'},
+  {cat:'nutrizione',tipo:'residenziale',provider:'SINUPE — Società Italiana Nutrizione Pediatrica',titolo:'Obesità infantile: dalla prevenzione al trattamento multidisciplinare',crediti:12,durata:'1,5 giorni',costo:'€ 180-280',target:'Pediatri, dietisti, psicologi',descrizione:'Approccio integrato all\'obesità infantile: diagnosi precoce, intervento nutrizionale, aspetti psicologici.',link:'https://www.sinupe.it',scadenza:'Verificare calendario'},
+  {cat:'online',tipo:'online',provider:'Ministero della Salute / Agenas',titolo:'Portale ECM.salute.gov.it — Ricerca corsi accreditati',crediti:'Variabile',durata:'Variabile',costo:'Variabile',target:'Tutti i professionisti sanitari',descrizione:'Il portale ufficiale del Ministero della Salute per la ricerca di tutti i corsi ECM accreditati in Italia.',link:'https://www.ecm.salute.gov.it',scadenza:'Aggiornato continuamente'},
+];
+
+let ecmFilter = 'tutti';
+function filterECM(cat, btn) {
+  ecmFilter = cat;
+  document.querySelectorAll('#tab-ecm .atlas-cat-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderECM();
+}
+function renderECM() {
+  const container = document.getElementById('ecm-list');
+  if (!container) return;
+  const list = ecmFilter === 'tutti' ? ECM_DATA : ECM_DATA.filter(e => e.cat === ecmFilter || e.tipo === ecmFilter);
+  container.innerHTML = list.map(e => `<div class="ecm-card">
+    <div class="ecm-left">
+      <div class="ecm-credits">${e.crediti}</div>
+      <div class="ecm-provider" style="font-size:9px">crediti ECM</div>
+      <div style="margin-top:8px"><span class="ecm-badge" style="background:${e.tipo==='online'?'#DBEAFE':'#D1FAE5'};color:${e.tipo==='online'?'#1D4ED8':'#065F46'}">${e.tipo==='online'?'💻 FAD':'🏛️ Res.'}</span></div>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:3px">${esc(e.titolo)}</div>
+      <div style="font-size:11.5px;color:var(--teal-d);font-weight:600;margin-bottom:6px">📍 ${esc(e.provider)}</div>
+      <div style="font-size:12.5px;color:var(--slate-m);line-height:1.6;margin-bottom:8px">${esc(e.descrizione)}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--slate-l);margin-bottom:10px">
+        <span>⏱️ ${esc(e.durata)}</span>
+        <span>💰 ${esc(e.costo)}</span>
+        <span>👥 ${esc(e.target)}</span>
+        <span>📅 ${esc(e.scadenza)}</span>
+      </div>
+      <a href="${e.link}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">🔗 Vai al sito ufficiale</a>
+    </div>
+  </div>`).join('');
+}
+
+
+function showTab(id, btn) {
+  document.querySelectorAll('.cs-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cs-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else document.querySelector(`.cs-tab[onclick*="${id}"]`)?.classList.add('active');
+}
+
+// ═══════════════════════════════
+// RENDER CARDS (improved)
+// ═══════════════════════════════
 function buildConsiglio(c, isCustom = false) {
   const div = document.createElement('div');
   div.className = 'consiglio-card';
   div.dataset.search = (c.nome + ' ' + (c.id||'')).toLowerCase();
+
+  // Compute a lighter version of the color for gradient
+  const hex = c.colore || '#0F766E';
   div.innerHTML = `
-    <div class="cc-hdr" style="background:${c.colore}" onclick="toggleCC(this)">
-      <span style="font-size:22px">${c.emoji}</span>
+    <div class="cc-hdr" style="background:linear-gradient(135deg,${hex},${hex}CC)" onclick="toggleCC(this)">
+      <span class="cc-emoji">${c.emoji}</span>
       <h3>${esc(c.nome)}</h3>
       ${isCustom ? '<span class="cc-badge">✏️ Personalizzato</span>' : ''}
-      <span class="cc-badge">${c.pasti}</span>
-      <span class="cc-toggle-btn" style="margin-left:8px;font-size:16px">▼</span>
+      <span class="cc-badge">🍽️ ${c.pasti}</span>
+      <span style="margin-left:6px;font-size:18px;color:rgba(255,255,255,.8);transition:transform .2s" class="cc-toggle-btn">▼</span>
     </div>
     <div class="cc-body">
       <div class="consiglio-info">
-        <div class="ci-box"><div class="ci-label">🍽️ Pasti/die</div><div class="ci-val">${esc(c.pasti)}</div></div>
-        <div class="ci-box"><div class="ci-label">🥣 Porzioni</div><div class="ci-val">${esc(c.porzioni)}</div></div>
-        <div class="ci-box"><div class="ci-label">💧 Idratazione</div><div class="ci-val">${esc(c.idratazione)}</div></div>
+        <div class="ci-box" style="border-left-color:${hex}"><div class="ci-label">🍽️ Pasti/die</div><div class="ci-val">${esc(c.pasti)}</div></div>
+        <div class="ci-box" style="border-left-color:${hex}"><div class="ci-label">🥣 Porzioni</div><div class="ci-val">${esc(c.porzioni)}</div></div>
+        <div class="ci-box" style="border-left-color:${hex}"><div class="ci-label">💧 Idratazione</div><div class="ci-val">${esc(c.idratazione)}</div></div>
       </div>
-      ${c.nota ? `<div class="note-clinica">📚 ${esc(c.nota)}</div>` : ''}
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      ${c.nota ? `<div class="note-clinica">📚 <b>Nota clinica:</b> ${esc(c.nota)}</div>` : ''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
         <div class="cc-section">
           <h4>✅ Alimenti Consigliati</h4>
           <div class="food-grid">${(c.ok||[]).map(f=>`<span class="food-ok">${esc(f)}</span>`).join('')}</div>
@@ -387,10 +928,10 @@ function buildConsiglio(c, isCustom = false) {
           <div class="food-grid">${(c.no||[]).map(f=>`<span class="food-no">${esc(f)}</span>`).join('')}</div>
         </div>
       </div>
-      ${c.mod && c.mod.length ? `<div class="cc-section"><h4>⚠️ Consumare con Moderazione</h4><div class="food-grid">${c.mod.map(f=>`<span class="food-mod">${esc(f)}</span>`).join('')}</div></div>` : ''}
-      ${c.pratici && c.pratici.length ? `<div class="cc-section"><h4>💡 Consigli Pratici</h4><ul style="list-style:none;padding:0">${c.pratici.map(p=>`<li style="padding:4px 0;border-bottom:1px solid var(--border);font-size:12.5px">→ ${esc(p)}</li>`).join('')}</ul></div>` : ''}
-      ${c.avvisi && c.avvisi.length ? `<div class="cc-section"><h4>🚨 Avvertenze</h4><div style="background:#FEF2F2;border-radius:8px;padding:10px 13px">${c.avvisi.map(a=>`<div style="font-size:12px;color:#991B1B;padding:3px 0;border-bottom:1px solid #FEE2E2">⚠️ ${esc(a)}</div>`).join('')}</div></div>` : ''}
-      <div class="no-print" style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:10px">
+      ${c.mod && c.mod.length ? `<div class="cc-section"><h4>⚠️ Con Moderazione</h4><div class="food-grid">${c.mod.map(f=>`<span class="food-mod">${esc(f)}</span>`).join('')}</div></div>` : ''}
+      ${c.pratici && c.pratici.length ? `<div class="cc-section"><h4>💡 Consigli Pratici</h4><ul style="list-style:none;padding:0">${c.pratici.map(p=>`<li style="padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--slate-m)"><span style="color:${hex};font-weight:700">→</span> ${esc(p)}</li>`).join('')}</ul></div>` : ''}
+      ${c.avvisi && c.avvisi.length ? `<div class="cc-section"><h4>🚨 Avvertenze</h4><div style="background:#FEF2F2;border-radius:10px;padding:12px 14px;border:1px solid #FECACA">${c.avvisi.map(a=>`<div style="font-size:12.5px;color:#991B1B;padding:4px 0;border-bottom:1px solid #FEE2E2;display:flex;align-items:flex-start;gap:6px">⚠️ ${esc(a)}</div>`).join('')}</div></div>` : ''}
+      <div class="cc-actions no-print">
         <button class="btn btn-ghost btn-sm" onclick="stampaConsiglio('${c.id}')">🖨️ Stampa</button>
         <button class="btn btn-amber btn-sm" onclick="stampaPdfConsiglio('${c.id}')">📄 PDF</button>
         ${isCustom ? `<button class="btn btn-ghost btn-sm" onclick="editConsiglio('${c.id}')">✏️ Modifica</button><button class="btn btn-danger btn-sm" onclick="delConsiglio('${c.id}')">🗑️ Elimina</button>` : ''}
@@ -403,7 +944,10 @@ function toggleCC(hdr) {
   const body = hdr.nextElementSibling;
   const tog = hdr.querySelector('.cc-toggle-btn');
   const isOpen = body.classList.toggle('open');
-  if (tog) tog.textContent = isOpen ? '▲' : '▼';
+  if (tog) {
+    tog.textContent = isOpen ? '▲' : '▼';
+    tog.style.transform = isOpen ? 'rotate(0deg)' : '';
+  }
 }
 
 // ═══════════════════════════════
@@ -618,9 +1162,10 @@ async function loadConsigliCustom() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Render base consigli immediately — no auth needed
   document.getElementById('print-date').textContent = new Date().toLocaleDateString('it');
   renderConsigli();
+  renderAtlas();
+  renderECM();
   // Then try auth for custom consigli (async, non-blocking)
   (async () => {
     try {

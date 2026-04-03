@@ -19,15 +19,16 @@
   <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
   <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
   <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
-  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
   <div class="nav-sec">Database</div>
   <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
   <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
@@ -93,29 +94,7 @@ async function loadCartelle() {
   const { data, error } = await sb.from('cartelle').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   if (error || !data) { wrap.innerHTML = '<div class="empty-state"><div class="ei">❌</div><h3>Errore</h3></div>'; return; }
   if (!data.length) {
-    // BIA HTML
-  const biaHtml = (biaList && biaList.length) ? `
-    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
-      <thead><tr style="background:#1E3A5F;color:#E2E8F0">
-        <th style="padding:7px 12px;text-align:left">Data</th>
-        <th style="padding:7px 12px;text-align:center">Peso</th>
-        <th style="padding:7px 12px;text-align:center">BF%</th>
-        <th style="padding:7px 12px;text-align:center">FFM</th>
-        <th style="padding:7px 12px;text-align:center">Angolo°</th>
-        <th style="padding:7px 12px;text-align:left">Note</th>
-      </tr></thead>
-      <tbody>${biaList.map(b => `<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="window.location.href='bia.html?cartella=${id}'">
-        <td style="padding:7px 12px">${b.data_misura ? new Date(b.data_misura).toLocaleDateString('it') : '—'}</td>
-        <td style="padding:7px 12px;text-align:center">${b.peso ? b.peso+'kg' : '—'}</td>
-        <td style="padding:7px 12px;text-align:center;font-weight:700;color:${(b.bf_pct||0)>30?'#DC2626':'#10B981'}">${b.bf_pct ? Math.round(b.bf_pct*10)/10+'%' : '—'}</td>
-        <td style="padding:7px 12px;text-align:center">${b.ffm_kg ? Math.round(b.ffm_kg*10)/10+'kg' : '—'}</td>
-        <td style="padding:7px 12px;text-align:center;font-weight:700">${b.angolo_fase ? Math.round(b.angolo_fase*10)/10+'°' : '—'}</td>
-        <td style="padding:7px 12px;font-size:11.5px;color:var(--slate-l)">${b.note || '—'}</td>
-      </tr>`).join('')}</tbody>
-    </table>` 
-    : '<div style="padding:14px;color:var(--slate-l);font-size:13px;text-align:center">Nessuna misurazione BIA — <a href="bia.html" style="color:#3B82F6">Aggiungi la prima BIA</a></div>';
-
-  wrap.innerHTML = `<div class="empty-state"><div class="ei">📁</div><h3>Nessuna cartella</h3><p>Crea la prima cartella paziente con il pulsante in alto a destra.</p></div>`;
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">📁</div><h3>Nessuna cartella</h3><p>Crea la prima cartella paziente con il pulsante in alto a destra.</p></div>`;
     return;
   }
   wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">` +

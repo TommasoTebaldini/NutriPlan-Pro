@@ -289,8 +289,49 @@ const DB_ONS = [
    k:295,p:2.1,ch:79,g:0.7,fi:71,gs:0,z:1.3,ca:58,fe:2.5,mg:88,k2:274,na:45,zn:0.9,fo:120,se:2,col:0,porzione:5},
 ];
 
-function rebuildDB(){
-  ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
+// ═══════════════════════════════════════════════════
+// DATABASE ALIMENTI APROTEICI (valori per 100g)
+// Prodotti a basso/bassissimo contenuto proteico
+// per patologie renali, fenilchetonuria, IRC
+// Fonti: Loprofin (Nutricia), Aproten (DrSchär),
+//        Aglutén, PKU/IRC product lines
+// ═══════════════════════════════════════════════════
+const DB_APROTEICI = [
+  // PASTA APROTEICA
+  {n:"Pasta aproteica (Loprofin)",c:"Aproteici - Pasta",src:"APROT",k:362,p:0.4,gs:0.3,g:1.0,z:1.5,ch:86,fi:1.2,ca:10,fe:0.5,mg:8,k2:35,na:5,zn:0.1,fo:20,se:1,col:0},
+  {n:"Pasta aproteica rigatoni (Aproten)",c:"Aproteici - Pasta",src:"APROT",k:358,p:0.5,gs:0.2,g:0.9,z:2.0,ch:85,fi:0.8,ca:8,fe:0.4,mg:6,k2:30,na:4,zn:0.1,fo:15,se:1,col:0},
+  {n:"Pasta aproteica spaghetti (DrSchär)",c:"Aproteici - Pasta",src:"APROT",k:360,p:0.5,gs:0.2,g:1.1,z:1.8,ch:85,fi:1.0,ca:9,fe:0.5,mg:7,k2:32,na:6,zn:0.1,fo:18,se:1,col:0},
+  {n:"Pasta aproteica penne (Nutricia)",c:"Aproteici - Pasta",src:"APROT",k:355,p:0.4,gs:0.3,g:1.2,z:1.6,ch:84,fi:1.1,ca:9,fe:0.4,mg:7,k2:30,na:5,zn:0.1,fo:16,se:1,col:0},
+  {n:"Gnocchi aproteici (Loprofin)",c:"Aproteici - Pasta",src:"APROT",k:220,p:0.3,gs:0.2,g:0.5,z:1.0,ch:53,fi:0.5,ca:6,fe:0.3,mg:4,k2:20,na:380,zn:0.1,fo:10,se:0,col:0},
+  {n:"Pasta all'uovo aproteica",c:"Aproteici - Pasta",src:"APROT",k:350,p:0.4,gs:0.2,g:1.0,z:1.5,ch:84,fi:0.9,ca:8,fe:0.4,mg:6,k2:28,na:5,zn:0.1,fo:15,se:1,col:0},
+  // PANE E FETTE BISCOTTATE APROTEICI
+  {n:"Fette biscottate aproteiche (Loprofin)",c:"Aproteici - Pane",src:"APROT",k:395,p:0.4,gs:0.3,g:5.5,z:6.0,ch:82,fi:1.5,ca:20,fe:0.8,mg:8,k2:80,na:420,zn:0.1,fo:25,se:1,col:0},
+  {n:"Fette biscottate aproteiche (Aproten)",c:"Aproteici - Pane",src:"APROT",k:390,p:0.5,gs:0.3,g:5.0,z:5.5,ch:82,fi:1.0,ca:18,fe:0.7,mg:7,k2:75,na:380,zn:0.1,fo:22,se:1,col:0},
+  {n:"Pane aproteico (Loprofin)",c:"Aproteici - Pane",src:"APROT",k:255,p:0.4,gs:0.4,g:4.5,z:2.0,ch:52,fi:2.5,ca:25,fe:0.5,mg:8,k2:60,na:480,zn:0.1,fo:20,se:1,col:0},
+  {n:"Pane aproteico in cassetta",c:"Aproteici - Pane",src:"APROT",k:258,p:0.3,gs:0.3,g:4.0,z:3.0,ch:53,fi:2.0,ca:22,fe:0.5,mg:7,k2:55,na:450,zn:0.1,fo:18,se:1,col:0},
+  {n:"Cracker aproteici (Loprofin)",c:"Aproteici - Pane",src:"APROT",k:440,p:0.4,gs:0.5,g:14,z:2.5,ch:76,fi:1.5,ca:15,fe:0.6,mg:6,k2:60,na:530,zn:0.1,fo:18,se:1,col:0},
+  {n:"Grissini aproteici",c:"Aproteici - Pane",src:"APROT",k:425,p:0.4,gs:0.4,g:10,z:3.0,ch:80,fi:1.2,ca:12,fe:0.5,mg:5,k2:50,na:490,zn:0.1,fo:15,se:1,col:0},
+  // BISCOTTI APROTEICI
+  {n:"Biscotti aproteici al cioccolato (Loprofin)",c:"Aproteici - Biscotti",src:"APROT",k:480,p:0.5,gs:5.5,g:18,z:32,ch:70,fi:1.5,ca:20,fe:1.0,mg:10,k2:90,na:180,zn:0.2,fo:30,se:1,col:0},
+  {n:"Biscotti aproteici secchi (Nutricia)",c:"Aproteici - Biscotti",src:"APROT",k:455,p:0.4,gs:3.0,g:14,z:22,ch:73,fi:1.8,ca:25,fe:0.9,mg:9,k2:85,na:220,zn:0.1,fo:28,se:1,col:0},
+  {n:"Biscotti aproteici frollini (Aproten)",c:"Aproteici - Biscotti",src:"APROT",k:465,p:0.4,gs:3.5,g:15,z:28,ch:71,fi:1.2,ca:18,fe:0.8,mg:8,k2:80,na:200,zn:0.1,fo:25,se:1,col:0},
+  {n:"Biscotti aproteici vaniglia (PKU Foods)",c:"Aproteici - Biscotti",src:"APROT",k:470,p:0.5,gs:3.0,g:16,z:30,ch:72,fi:1.0,ca:15,fe:0.7,mg:7,k2:75,na:190,zn:0.1,fo:22,se:1,col:0},
+  {n:"Wafer aproteici (Loprofin)",c:"Aproteici - Biscotti",src:"APROT",k:495,p:0.5,gs:7.0,g:22,z:35,ch:68,fi:0.8,ca:12,fe:0.8,mg:8,k2:70,na:150,zn:0.1,fo:20,se:1,col:0},
+  // RISO E CEREALI APROTEICI
+  {n:"Riso aproteico (Loprofin)",c:"Aproteici - Cereali",src:"APROT",k:360,p:0.2,gs:0.1,g:0.5,z:0.5,ch:88,fi:0.5,ca:5,fe:0.2,mg:5,k2:25,na:2,zn:0.05,fo:8,se:0,col:0},
+  {n:"Mix di farine aproteiche (Loprofin)",c:"Aproteici - Cereali",src:"APROT",k:370,p:0.4,gs:0.2,g:1.5,z:2.0,ch:88,fi:1.0,ca:12,fe:0.5,mg:8,k2:40,na:10,zn:0.1,fo:15,se:1,col:0},
+  // DOLCI E DESSERT APROTEICI
+  {n:"Gelato aproteico alla vaniglia (Loprofin)",c:"Aproteici - Dessert",src:"APROT",k:155,p:0.2,gs:5.0,g:7.5,z:19,ch:22,fi:0.2,ca:35,fe:0.1,mg:5,k2:50,na:60,zn:0.1,fo:12,se:0,col:15},
+  {n:"Torta/plumcake aproteico (Loprofin)",c:"Aproteici - Dessert",src:"APROT",k:378,p:0.5,gs:5.0,g:16,z:28,ch:54,fi:1.5,ca:20,fe:0.8,mg:7,k2:70,na:350,zn:0.1,fo:20,se:1,col:0},
+  {n:"Budino aproteico (Loprofin)",c:"Aproteici - Dessert",src:"APROT",k:85,p:0.2,gs:0.5,g:2.0,z:13,ch:16,fi:0.2,ca:60,fe:0.1,mg:5,k2:60,na:55,zn:0.05,fo:45,se:0,col:0},
+  // CONDIMENTI E SALSE APROTEICI
+  {n:"Maionese aproteica (senza uova)",c:"Aproteici - Condimenti",src:"APROT",k:355,p:0.2,gs:4.0,g:37,z:2.0,ch:8,fi:0.1,ca:5,fe:0.2,mg:3,k2:10,na:620,zn:0.05,fo:8,se:0,col:0},
+  // FORMULA APROTEICA
+  {n:"Loprofin Energy (liquido, per 100ml)",c:"Aproteici - Formula",src:"APROT",k:150,p:0.1,gs:2.2,g:5.6,z:20,ch:22,fi:0,ca:40,fe:0.5,mg:12,k2:70,na:35,zn:0.5,fo:40,se:3,col:0},
+];
+
+
+  ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...DB_APROTEICI,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
   FOOD_MAP={};
   ALL_DB.forEach(f=>{FOOD_MAP[f.n.toLowerCase()]=f;});
 }

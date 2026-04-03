@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Corsi ECM — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.ecm-hero{background:linear-gradient(135deg,#1D4ED8 0%,#4F46E5 100%);border-radius:16px;padding:22px 28px;margin-bottom:20px;display:flex;align-items:center;gap:20px;color:white;box-shadow:0 4px 24px rgba(29,78,216,.3)}
+.ecm-hero-icon{font-size:52px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25))}
+.ecm-hero h2{font-size:20px;font-weight:700;margin-bottom:6px}
+.ecm-hero p{font-size:13px;opacity:.9;line-height:1.6}
+
+.ecm-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.ecm-filter-btn{padding:8px 18px;border-radius:20px;border:2px solid var(--border-d);background:white;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.ecm-filter-btn:hover{border-color:#4F46E5;color:#4F46E5;background:#EEF2FF}
+.ecm-filter-btn.active{background:#4F46E5;color:white;border-color:#4F46E5;box-shadow:0 2px 8px rgba(79,70,229,.3)}
+
+.ecm-card{background:white;border-radius:14px;padding:0;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px;overflow:hidden;transition:box-shadow .2s,transform .15s}
+.ecm-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.12);transform:translateY(-2px)}
+.ecm-card-inner{display:flex;gap:0;align-items:stretch}
+.ecm-card-left{min-width:90px;max-width:90px;background:linear-gradient(135deg,#1D4ED8,#4F46E5);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;gap:4px;flex-shrink:0}
+.ecm-credits-num{font-size:30px;font-weight:800;color:white;line-height:1}
+.ecm-credits-lbl{font-size:9px;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.ecm-tipo-badge{margin-top:10px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+.ecm-tipo-fad{background:#BFDBFE;color:#1E40AF}
+.ecm-tipo-res{background:#BBF7D0;color:#14532D}
+.ecm-tipo-blended{background:#DDD6FE;color:#4C1D95}
+
+.ecm-card-body{padding:16px 20px;flex:1;min-width:0}
+.ecm-card-title{font-size:14.5px;font-weight:700;color:var(--slate);margin-bottom:4px;line-height:1.4}
+.ecm-card-provider{font-size:12px;color:#4F46E5;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.ecm-card-desc{font-size:12.5px;color:var(--slate-m);line-height:1.65;margin-bottom:10px}
+.ecm-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--slate-l);margin-bottom:12px}
+.ecm-meta span{display:flex;align-items:center;gap:4px}
+.ecm-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.ecm-tag{padding:2px 9px;border-radius:10px;font-size:10.5px;font-weight:600;background:#F1F5F9;color:var(--slate-m)}
+.ecm-card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.ecm-alert{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1px solid #93C5FD;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:#1E3A5F;line-height:1.7}
+.ecm-alert b{color:#1D4ED8}
+
+.ecm-section-title{font-size:13px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+
+.ecm-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.ecm-info-box{background:white;border-radius:12px;padding:16px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05);text-align:center}
+.ecm-info-val{font-size:28px;font-weight:800;color:#4F46E5;line-height:1;margin-bottom:4px}
+.ecm-info-lbl{font-size:12px;color:var(--slate-l);font-weight:500}
+
+.ecm-empty{text-align:center;padding:40px;color:var(--slate-l);font-size:14px}
+.ecm-count{font-size:12px;color:var(--slate-l);margin-left:auto;padding:0 4px}
+
+@media(max-width:640px){
+  .ecm-card-inner{flex-direction:column}
+  .ecm-card-left{min-width:unset;max-width:unset;flex-direction:row;padding:12px 16px;justify-content:flex-start;gap:12px}
+  .ecm-hero{flex-direction:column;text-align:center;padding:18px}
+}
+@media print{
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .ecm-card{page-break-inside:avoid;box-shadow:none!important;border:1px solid #CBD5E1!important}
+  .ecm-card:hover{transform:none!important}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item active" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🎓 Corsi ECM</h2>
+  <div class="tbar-actions no-print">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+  <!-- HERO -->
+  <div class="ecm-hero">
+    <div class="ecm-hero-icon">🎓</div>
+    <div>
+      <h2>Educazione Continua in Medicina — Corsi per Dietisti</h2>
+      <p>Corsi accreditati ECM per dietisti, nutrizionisti e professionisti della salute. Obbligo triennale: <b>150 crediti ogni 3 anni</b>. Verifica sempre l'accreditamento attivo su <b>ECM.salute.gov.it</b> prima di iscriverti.</p>
+    </div>
+  </div>
+
+  <!-- INFO BOXES -->
+  <div class="ecm-info-grid no-print">
+    <div class="ecm-info-box">
+      <div class="ecm-info-val">150</div>
+      <div class="ecm-info-lbl">Crediti ECM obbligatori ogni 3 anni</div>
+    </div>
+    <div class="ecm-info-box">
+      <div class="ecm-info-val">50</div>
+      <div class="ecm-info-lbl">Crediti minimi annuali consigliati</div>
+    </div>
+    <div class="ecm-info-box">
+      <div class="ecm-info-val">50%</div>
+      <div class="ecm-info-lbl">Max crediti da FAD (formazione online)</div>
+    </div>
+    <div class="ecm-info-box">
+      <div class="ecm-info-val" style="font-size:20px">2026</div>
+      <div class="ecm-info-lbl">Fine triennio ECM corrente 2024–2026</div>
+    </div>
+  </div>
+
+  <!-- ALERT -->
+  <div class="ecm-alert">
+    ℹ️ <b>Importante:</b> I corsi mostrati sono a titolo informativo e orientativo. Date, costi e accreditamenti cambiano frequentemente. Verifica sempre la disponibilità e l'accreditamento attuale prima di iscriverti. Il portale ufficiale è <a href="https://www.ecm.salute.gov.it" target="_blank" style="color:#1D4ED8;font-weight:600">ecm.salute.gov.it</a>. Per i soci ANDID è disponibile un'area riservata su <a href="https://www.andid.it" target="_blank" style="color:#1D4ED8;font-weight:600">andid.it</a>.
+  </div>
+
+  <!-- FILTRI -->
+  <div class="ecm-filters no-print">
+    <button class="ecm-filter-btn active" onclick="filterECM('tutti',this)">📋 Tutti (<span id="count-tutti">0</span>)</button>
+    <button class="ecm-filter-btn" onclick="filterECM('fad',this)">💻 FAD / Online</button>
+    <button class="ecm-filter-btn" onclick="filterECM('residenziale',this)">🏛️ Residenziale</button>
+    <button class="ecm-filter-btn" onclick="filterECM('nutrizione',this)">🥗 Nutrizione Clinica</button>
+    <button class="ecm-filter-btn" onclick="filterECM('patologie',this)">🏥 Patologie</button>
+    <button class="ecm-filter-btn" onclick="filterECM('pediatria',this)">👶 Pediatria</button>
+    <button class="ecm-filter-btn" onclick="filterECM('gratuito',this)">🎁 Gratuiti</button>
+    <span class="ecm-count" id="ecm-count-label"></span>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="no-print" style="margin-bottom:16px">
+    <input type="text" id="ecm-search" placeholder="🔍 Cerca per titolo, provider o argomento..." oninput="renderECM()"
+      style="width:100%;padding:10px 16px;border:2px solid var(--border-d);border-radius:50px;font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s"
+      onfocus="this.style.borderColor='#4F46E5'" onblur="this.style.borderColor='var(--border-d)'">
+  </div>
+
+  <!-- LISTA CORSI -->
+  <div id="ecm-list"></div>
+
+  <!-- SEZIONE RISORSE UTILI -->
+  <div style="background:white;border-radius:14px;padding:22px;margin-top:24px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06)">
+    <div class="ecm-section-title">🔗 Risorse e Link Utili</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">
+      <a href="https://www.ecm.salute.gov.it" target="_blank" rel="noopener" style="text-decoration:none">
+        <div style="border:1.5px solid #BFDBFE;border-radius:12px;padding:14px 16px;transition:all .15s;background:#EFF6FF" onmouseover="this.style.borderColor='#3B82F6'" onmouseout="this.style.borderColor='#BFDBFE'">
+          <div style="font-size:18px;margin-bottom:6px">🏛️</div>
+          <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:3px">ECM.salute.gov.it</div>
+          <div style="font-size:11.5px;color:#64748B">Portale ufficiale Ministero della Salute — ricerca tutti i corsi accreditati</div>
+        </div>
+      </a>
+      <a href="https://www.andid.it" target="_blank" rel="noopener" style="text-decoration:none">
+        <div style="border:1.5px solid #A7F3D0;border-radius:12px;padding:14px 16px;transition:all .15s;background:#F0FDF4" onmouseover="this.style.borderColor='#10B981'" onmouseout="this.style.borderColor='#A7F3D0'">
+          <div style="font-size:18px;margin-bottom:6px">👩‍⚕️</div>
+          <div style="font-size:13px;font-weight:700;color:#065F46;margin-bottom:3px">ANDID.it</div>
+          <div style="font-size:11.5px;color:#64748B">Associazione Nazionale Dietisti — corsi, congresso nazionale, area soci</div>
+        </div>
+      </a>
+      <a href="https://www.sinu.it" target="_blank" rel="noopener" style="text-decoration:none">
+        <div style="border:1.5px solid #DDD6FE;border-radius:12px;padding:14px 16px;transition:all .15s;background:#FAF5FF" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="this.style.borderColor='#DDD6FE'">
+          <div style="font-size:18px;margin-bottom:6px">🔬</div>
+          <div style="font-size:13px;font-weight:700;color:#4C1D95;margin-bottom:3px">SINU.it</div>
+          <div style="font-size:11.5px;color:#64748B">Società Italiana di Nutrizione Umana — formazione scientifica avanzata</div>
+        </div>
+      </a>
+      <a href="https://www.espen.org/elearning" target="_blank" rel="noopener" style="text-decoration:none">
+        <div style="border:1.5px solid #FDE68A;border-radius:12px;padding:14px 16px;transition:all .15s;background:#FFFBEB" onmouseover="this.style.borderColor='#F59E0B'" onmouseout="this.style.borderColor='#FDE68A'">
+          <div style="font-size:18px;margin-bottom:6px">🌍</div>
+          <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:3px">ESPEN eLearning</div>
+          <div style="font-size:11.5px;color:#64748B">European Society for Clinical Nutrition — moduli FAD in inglese, gratuiti per soci</div>
+        </div>
+      </a>
+      <a href="https://www.adiitalia.net" target="_blank" rel="noopener" style="text-decoration:none">
+        <div style="border:1.5px solid #FCA5A5;border-radius:12px;padding:14px 16px;transition:all .15s;background:#FEF2F2" onmouseover="this.style.borderColor='#EF4444'" onmouseout="this.style.borderColor='#FCA5A5'">
+          <div style="font-size:18px;margin-bottom:6px">📖</div>
+          <div style="font-size:13px;font-weight:700;color:#991B1B;margin-bottom:3px">ADI Italia</div>
+          <div style="font-size:11.5px;color:#64748B">Associazione Italiana di Dietetica e Nutrizione Clinica</div>
+        </div>
+      </a>
+      <a href="https://www.sipps.it" target="_blank" rel="noopener" style="text-decoration:none">
+        <div style="border:1.5px solid #99F6E4;border-radius:12px;padding:14px 16px;transition:all .15s;background:#F0FDFA" onmouseover="this.style.borderColor='#0D9488'" onmouseout="this.style.borderColor='#99F6E4'">
+          <div style="font-size:18px;margin-bottom:6px">👶</div>
+          <div style="font-size:13px;font-weight:700;color:#134E4A;margin-bottom:3px">SIPPS / SIP</div>
+          <div style="font-size:11.5px;color:#64748B">Società di Pediatria — corsi su svezzamento, obesità pediatrica, allergie</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+const ECM_DATA = [
+  {
+    id:1, cat:['nutrizione','fad'], tipo:'fad', gratuito:false,
+    provider:'ANDID — Associazione Nazionale Dietisti',
+    titolo:'Congresso Nazionale ANDID — Nutrizione e Innovazione Clinica',
+    crediti:16, durata:'2 giorni', costo:'€ 180–350 (soci/non soci)',
+    target:['Dietisti'],
+    descrizione:'Il principale evento formativo nazionale per i dietisti italiani. Aggiornamento su tutte le aree della nutrizione clinica con relatori italiani e internazionali. Include sessioni pratiche, workshop e networking professionale.',
+    argomenti:['Nutrizione clinica','NCP','Malnutrizione','Evidenze scientifiche'],
+    link:'https://www.andid.it/congresso',
+    scadenza:'Annuale — verificare date sul sito ANDID',
+    tipo_label:'🏛️ Residenziale'
+  },
+  {
+    id:2, cat:['nutrizione','fad'], tipo:'fad', gratuito:false,
+    provider:'SINU — Società Italiana di Nutrizione Umana',
+    titolo:'Nutrizione Clinica Avanzata: dalla Valutazione al Piano Terapeutico',
+    crediti:12, durata:'8 ore FAD',costo:'Gratuito per soci SINU / € 60 non soci',
+    target:['Dietisti','Medici','Biologi nutrizionisti'],
+    descrizione:'Corso FAD accreditato ECM su valutazione dello stato nutrizionale con strumenti validati (NRS-2002, MNA, MUST), diagnosi di malnutrizione secondo criteri GLIM, NCP (Nutrition Care Process) e formulazione di piani nutrizionali personalizzati.',
+    argomenti:['NRS-2002','MNA','GLIM','NCP','Malnutrizione'],
+    link:'https://www.sinu.it/formazione',
+    scadenza:'Accesso continuativo — verificare su sito SINU',
+    tipo_label:'💻 FAD'
+  },
+  {
+    id:3, cat:['patologie','fad'], tipo:'fad', gratuito:false,
+    provider:'ESPEN — European Society for Clinical Nutrition',
+    titolo:'ESPEN eLearning: Nutrition in Chronic Diseases',
+    crediti:8, durata:'6 ore FAD (in inglese)', costo:'Gratuito per soci ESPEN',
+    target:['Dietisti','Medici','Nutrizionisti'],
+    descrizione:'Moduli eLearning della European Society for Clinical Nutrition su nutrizione nelle malattie croniche: diabete, IRC, epatopatia, BPCO, oncologia e malattie cardiovascolari. Basati sulle linee guida ESPEN aggiornate.',
+    argomenti:['Diabete','IRC','Oncologia','BPCO','Epatopatie','Linee guida ESPEN'],
+    link:'https://www.espen.org/elearning',
+    scadenza:'Accesso permanente con registrazione ESPEN',
+    tipo_label:'💻 FAD'
+  },
+  {
+    id:4, cat:['patologie','residenziale'], tipo:'residenziale', gratuito:false,
+    provider:'Federazione COMLAS / ADI Italia',
+    titolo:'Nutrizione nell\'Insufficienza Renale Cronica: dalla teoria alla pratica',
+    crediti:10, durata:'1 giorno', costo:'€ 100–180',
+    target:['Dietisti','Medici nefrologi','Infermieri'],
+    descrizione:'Corso pratico sulla gestione nutrizionale del paziente con IRC: restrizione proteica (0.6–0.8 g/kg), gestione di potassio e fosforo, lisciviazione delle verdure, paziente dialitico (emodialitico e peritoneale), calcolo del fabbisogno e monitoraggio.',
+    argomenti:['IRC','Dialisi','Potassio','Fosforo','Proteine','Lisciviazione'],
+    link:'https://www.ecm.salute.gov.it',
+    scadenza:'Verificare calendario ECM regionale',
+    tipo_label:'🏛️ Residenziale'
+  },
+  {
+    id:5, cat:['pediatria','fad'], tipo:'fad', gratuito:false,
+    provider:'SIP — Società Italiana di Pediatria',
+    titolo:'Nutrizione Pediatrica: svezzamento, obesità e patologie specifiche',
+    crediti:10, durata:'8 ore FAD', costo:'€ 50–80',
+    target:['Dietisti','Pediatri','MMG','Infermieri pediatrici'],
+    descrizione:'Corso FAD su allattamento al seno (OMS/UNICEF), diversificazione alimentare (BLW e metodo tradizionale), APLV e gestione delle allergie alimentari in età pediatrica, obesità infantile, celiachia e diete speciali in età evolutiva.',
+    argomenti:['Allattamento','BLW','Svezzamento','APLV','Obesità infantile','Celiachia'],
+    link:'https://www.sip.it/formazione',
+    scadenza:'Verificare disponibilità sul sito SIP',
+    tipo_label:'💻 FAD'
+  },
+  {
+    id:6, cat:['pediatria','residenziale'], tipo:'residenziale', gratuito:false,
+    provider:'SIPPS — Società Italiana di Prevenzione e Igiene Pediatrica',
+    titolo:'Svezzamento Guidato dal Bambino (BLW) e Nutrizione 0–3 Anni',
+    crediti:8, durata:'1 giorno', costo:'€ 90–150',
+    target:['Pediatri','Dietisti','Ostetriche','MMG'],
+    descrizione:'Workshop pratico sul Baby-Led Weaning: basi teoriche e pratiche, sicurezza alimentare, prevenzione delle allergie con introduzione precoce, educazione alimentare precoce e linee guida WHO/ESPGHAN per l\'allattamento e lo svezzamento.',
+    argomenti:['BLW','Prevenzione allergie','ESPGHAN','WHO','Alimentazione complementare'],
+    link:'https://www.sipps.it',
+    scadenza:'Verificare calendario annuale SIPPS',
+    tipo_label:'🏛️ Residenziale'
+  },
+  {
+    id:7, cat:['nutrizione','fad'], tipo:'fad', gratuito:true,
+    provider:'ISS — Istituto Superiore di Sanità',
+    titolo:'Sorveglianza Nutrizionale e Indicatori di Salute nella Popolazione Italiana',
+    crediti:6, durata:'4 ore FAD', costo:'GRATUITO',
+    target:['Tutti i professionisti sanitari'],
+    descrizione:'Corso gratuito ISS su dati epidemiologici della nutrizione italiana, indagini OKkio alla SALUTE (obesità infantile), sistema di sorveglianza PASSI, PASSI d\'Argento e i principali indicatori di salute nutrizionale a livello nazionale e regionale.',
+    argomenti:['Epidemiologia','OKkio alla SALUTE','PASSI','Sorveglianza','Salute pubblica'],
+    link:'https://www.iss.it/formazione',
+    scadenza:'Accesso libero e continuativo',
+    tipo_label:'💻 FAD'
+  },
+  {
+    id:8, cat:['patologie','fad'], tipo:'fad', gratuito:false,
+    provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+    titolo:'Nutrizione Enterale e Parenterale: Gestione Pratica in Ospedale e a Domicilio',
+    crediti:14, durata:'10 ore FAD + 2 ore residenziale', costo:'€ 120–200 (soci/non soci)',
+    target:['Dietisti','Infermieri','Medici'],
+    descrizione:'Percorso formativo completo sulla nutrizione artificiale clinica: indicazioni e controindicazioni, accessi enterali (SNG, PEG, digiunostomia), miscele standard e modulari, nutrizione parenterale totale (NPT) e periferica, monitoraggio, NED domiciliare e gestione delle complicanze metaboliche.',
+    argomenti:['Nutrizione enterale','Nutrizione parenterale','PEG','NPT','NED','Complicanze'],
+    link:'https://www.adiitalia.net/formazione',
+    scadenza:'Verificare disponibilità su sito ADI Italia',
+    tipo_label:'🔀 Blended'
+  },
+  {
+    id:9, cat:['nutrizione','residenziale'], tipo:'residenziale', gratuito:false,
+    provider:'SINUPE — Società Italiana di Nutrizione Pediatrica',
+    titolo:'Obesità Infantile: dalla Prevenzione al Trattamento Multidisciplinare',
+    crediti:12, durata:'1,5 giorni', costo:'€ 180–280',
+    target:['Pediatri','Dietisti','Psicologi','MMG','Endocrinologi'],
+    descrizione:'Approccio integrato e multidisciplinare all\'obesità infantile: strumenti di diagnosi precoce (BMI/età, circonferenza addominale), intervento nutrizionale per età, attività fisica, aspetti psicologici e familiari, comorbilità metaboliche (insulino-resistenza, NAFLD, ipertensione) e indicazioni al trattamento farmacologico.',
+    argomenti:['Obesità pediatrica','BMI','Insulino-resistenza','NAFLD','Approccio multidisciplinare'],
+    link:'https://www.sinupe.it',
+    scadenza:'Verificare calendario annuale SINUPE',
+    tipo_label:'🏛️ Residenziale'
+  },
+  {
+    id:10, cat:['patologie','fad'], tipo:'fad', gratuito:false,
+    provider:'SID — Società Italiana di Diabetologia',
+    titolo:'Terapia Medica Nutrizionale nel Diabete Mellito Tipo 1 e Tipo 2',
+    crediti:10, durata:'8 ore FAD', costo:'€ 40–80',
+    target:['Dietisti','Medici diabetologi','MMG','Infermieri'],
+    descrizione:'Linee guida ADA/SID 2024 sulla terapia nutrizionale nel diabete: conteggio dei carboidrati, indice e carico glicemico, dieta mediterranea vs low-carb, gestione della terapia insulinica in relazione all\'alimentazione, time-restricted eating e gestione del paziente con complicanze.',
+    argomenti:['Diabete T1','Diabete T2','Conteggio CHO','Indice glicemico','Insulina','ADA 2024'],
+    link:'https://www.siditalia.it/formazione',
+    scadenza:'Verificare su sito SID',
+    tipo_label:'💻 FAD'
+  },
+  {
+    id:11, cat:['nutrizione','fad'], tipo:'fad', gratuito:true,
+    provider:'Humanitas Research Hospital / Fondazione Umberto Veronesi',
+    titolo:'Alimentazione e Prevenzione dei Tumori: evidenze e raccomandazioni',
+    crediti:8, durata:'6 ore FAD', costo:'GRATUITO',
+    target:['Tutti i professionisti sanitari'],
+    descrizione:'Corso gratuito sulle evidenze scientifiche sul legame tra alimentazione e rischio oncologico, raccomandazioni WCRF/AIRC aggiornate, nutrizione durante la chemioterapia e radioterapia, cachessia neoplastica, integrazione di omega-3 e arginina nella nutrizione oncologica.',
+    argomenti:['Oncologia','Prevenzione tumori','WCRF','Cachessia','Omega-3','Immunonutrizione'],
+    link:'https://www.fondazioneveronesi.it/formazione',
+    scadenza:'Accesso libero — verificare su sito',
+    tipo_label:'💻 FAD'
+  },
+  {
+    id:12, cat:['nutrizione','residenziale'], tipo:'residenziale', gratuito:false,
+    provider:'ANDID — Associazione Nazionale Dietisti',
+    titolo:'La Comunicazione Efficace con il Paziente: Counseling Motivazionale in Dietetica',
+    crediti:8, durata:'1 giorno', costo:'€ 100–180 (soci/non soci)',
+    target:['Dietisti','Nutrizionisti'],
+    descrizione:'Workshop pratico sul counseling motivazionale (Motivational Interviewing) applicato alla dietetica: tecniche di comunicazione empatica, gestione della resistenza al cambiamento, tecniche SMART per la definizione degli obiettivi, gestione del paziente obeso e aderenza alla terapia dietetica.',
+    argomenti:['Counseling','Motivational Interviewing','Comunicazione','Aderenza terapeutica','Psicologia dell\'alimentazione'],
+    link:'https://www.andid.it/formazione',
+    scadenza:'Verificare calendario ANDID regionale',
+    tipo_label:'🏛️ Residenziale'
+  },
+];
+
+let ecmFilter = 'tutti';
+
+function filterECM(cat, btn) {
+  ecmFilter = cat;
+  document.querySelectorAll('.ecm-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderECM();
+}
+
+function renderECM() {
+  const container = document.getElementById('ecm-list');
+  const searchQ = (document.getElementById('ecm-search')?.value || '').toLowerCase().trim();
+  
+  let list = ECM_DATA;
+  
+  // Filter by category
+  if (ecmFilter !== 'tutti') {
+    if (ecmFilter === 'fad') list = list.filter(e => e.tipo === 'fad');
+    else if (ecmFilter === 'residenziale') list = list.filter(e => e.tipo === 'residenziale');
+    else if (ecmFilter === 'gratuito') list = list.filter(e => e.gratuito);
+    else list = list.filter(e => e.cat.includes(ecmFilter));
+  }
+  
+  // Filter by search
+  if (searchQ) {
+    list = list.filter(e =>
+      e.titolo.toLowerCase().includes(searchQ) ||
+      e.provider.toLowerCase().includes(searchQ) ||
+      e.descrizione.toLowerCase().includes(searchQ) ||
+      e.argomenti.some(a => a.toLowerCase().includes(searchQ))
+    );
+  }
+  
+  // Update count
+  document.getElementById('count-tutti').textContent = ECM_DATA.length;
+  const lbl = document.getElementById('ecm-count-label');
+  if (lbl) lbl.textContent = `${list.length} corso${list.length !== 1 ? 'i' : ''} trovato${list.length !== 1 ? 'i' : ''}`;
+  
+  if (!list.length) {
+    container.innerHTML = `<div class="ecm-empty">
+      <div style="font-size:40px;margin-bottom:12px">🔍</div>
+      <div>Nessun corso trovato per questa ricerca.</div>
+    </div>`;
+    return;
+  }
+  
+  container.innerHTML = list.map(e => {
+    const tipoClass = e.tipo === 'fad' ? 'ecm-tipo-fad' : e.tipo === 'residenziale' ? 'ecm-tipo-res' : 'ecm-tipo-blended';
+    const tipoIcon = e.tipo === 'fad' ? '💻' : e.tipo === 'residenziale' ? '🏛️' : '🔀';
+    
+    return `<div class="ecm-card">
+      <div class="ecm-card-inner">
+        <div class="ecm-card-left">
+          <div class="ecm-credits-num">${e.crediti}</div>
+          <div class="ecm-credits-lbl">crediti ECM</div>
+          <span class="ecm-tipo-badge ${tipoClass}" style="margin-top:10px">${tipoIcon} ${e.tipo === 'fad' ? 'FAD' : e.tipo === 'residenziale' ? 'Res.' : 'Blended'}</span>
+          ${e.gratuito ? '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:10px;font-size:9.5px;font-weight:800;margin-top:6px;white-space:nowrap">🎁 GRATIS</span>' : ''}
+        </div>
+        <div class="ecm-card-body">
+          <div class="ecm-card-title">${esc(e.titolo)}</div>
+          <div class="ecm-card-provider">📍 ${esc(e.provider)}</div>
+          <div class="ecm-card-desc">${esc(e.descrizione)}</div>
+          <div class="ecm-meta">
+            <span>⏱️ ${esc(e.durata)}</span>
+            <span>💰 ${esc(e.costo)}</span>
+            <span>👥 ${e.target.join(', ')}</span>
+            <span>📅 ${esc(e.scadenza)}</span>
+          </div>
+          <div class="ecm-tags">
+            ${e.argomenti.map(a => `<span class="ecm-tag">${esc(a)}</span>`).join('')}
+          </div>
+          <div class="ecm-card-actions">
+            <a href="${e.link}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">
+              🔗 Vai al sito ufficiale
+            </a>
+            <span style="font-size:11.5px;color:var(--slate-l);font-style:italic">⚠️ Verifica l'accreditamento attuale prima di iscriverti</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  renderECM();
+  try { await checkAuth(false); } catch(e) {}
+});
+</script>
+</body>
+</html>

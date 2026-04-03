@@ -210,14 +210,44 @@
 <!-- DIETE SPECIALI -->
 <div class="rist-panel" id="tab-diete">
   <div class="info-box ib-purple">
-    <b>⚕️ Gestione Diete Speciali</b> — Le diete speciali in ristorazione collettiva richiedono un protocollo scritto, la collaborazione con il medico (per diete mediche), e un sistema di identificazione del vassoio/piatto sicuro per il commensale.
+    <b>⚕️ Gestione Diete Speciali</b> — Le diete speciali richiedono un protocollo scritto, la collaborazione con il medico (per diete mediche) e un sistema di identificazione del vassoio. Seleziona le diete attive, indica il numero di utenti e genera il protocollo operativo.
   </div>
 
+  <!-- RIEPILOGO DIETE ATTIVE -->
+  <div class="calc-box" id="ds-riepilogo-box">
+    <h3>📊 Registro Diete Speciali Attive</h3>
+    <div id="ds-summary" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"></div>
+    <div style="overflow-x:auto">
+    <table class="menu-table" id="ds-table" style="min-width:600px">
+      <thead><tr><th style="width:36px">Attiva</th><th>Tipo di Dieta</th><th style="width:90px">N° Utenti</th><th>Categoria</th><th>Colore vassoio</th><th style="width:80px">Priorità</th></tr></thead>
+      <tbody id="ds-tbody"></tbody>
+    </table>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm" onclick="generaProto()">📋 Genera Protocollo</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa Registro</button>
+    </div>
+  </div>
+
+  <!-- ALLERGENI GESTITI -->
+  <div class="calc-box">
+    <h3>⚠️ Allergeni Gestiti — Reg. UE 1169/2011</h3>
+    <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px">Seleziona gli allergeni presenti nel menu della struttura. Per ognuno sarà generato il protocollo operativo specifico.</p>
+    <div id="ds-allergeni-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px"></div>
+  </div>
+
+  <!-- PROTOCOLLO GENERATO -->
+  <div class="calc-box" id="ds-proto-box" style="display:none">
+    <h3>📄 Protocollo Operativo Generato</h3>
+    <div id="ds-proto-content"></div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="window.print()">🖨️ Stampa Protocollo</button>
+  </div>
+
+  <!-- SCHEDE DIETE + PROTOCOLLO OPERATIVO -->
   <div class="grid-2">
     <div>
-      <!-- DIETE MEDICHE -->
       <div class="dieta-card">
-        <h3>🏥 Diete Mediche</h3>
+        <h3>🏥 Diete Mediche — Dettaglio Clinico</h3>
         <div class="dieta-badge" style="background:#FEE2E2;color:#991B1B">Prescrizione medica obbligatoria</div>
         <div style="font-size:13px;line-height:1.8">
           <b>Diabete mellito tipo 2:</b><br>
@@ -226,92 +256,51 @@
           — Porzioni di pasta/riso ridotte al 90%<br><br>
           <b>Insufficienza renale (CKD):</b><br>
           — Proteine ridotte: 0.6-0.8g/kg/die (pre-dialisi)<br>
-          — Fosforo &lt;800mg/die, potassio &lt;2000mg/die<br>
-          — Evitare: legumi, frutta secca, latticini eccessivi<br><br>
-          <b>Celiachia (certificata):</b><br>
-          — Eliminazione TOTALE glutine (frumento, segale, orzo)<br>
-          — Linea di preparazione separata, utensili dedicati<br>
-          — Pasta/pane gluten-free da fornitore certificato AIC<br><br>
+          — Fosforo &lt;800mg/die, potassio &lt;2000mg/die<br><br>
+          <b>Celiachia (certificata AIC):</b><br>
+          — Eliminazione TOTALE glutine. Linea separata.<br>
+          — Pasta/pane da fornitore certificato AIC<br><br>
           <b>Ipertensione/scompenso cardiaco:</b><br>
-          — Sodio &lt;2g/die (no sale aggiunto, limitare affettati)<br>
-          — Alimenti in bianco o a vapore<br>
-          — Bannare alimenti ad alto contenuto di sodio nascosto
+          — Sodio &lt;2g/die, no sale aggiunto
         </div>
       </div>
       <div class="dieta-card">
-        <h3>🧩 Diete per Allergie e Intolleranze</h3>
-        <div class="dieta-badge" style="background:#FEF3C7;color:#B45309">Protocollo HACCP obbligatorio</div>
+        <h3>🧩 Allergie e Intolleranze</h3>
+        <div class="dieta-badge" style="background:#FEF3C7;color:#B45309">Protocollo HACCP + separazione fisica</div>
         <div style="font-size:13px;line-height:1.8">
-          <b>Allergia al latte vaccino (APLV):</b><br>
-          — Eliminazione di tutti i derivati del latte<br>
-          — Alternativa: prodotti a base di soia/riso certificati<br>
-          — Attenzione a etichette, tracce, contaminazione crociata<br><br>
-          <b>Allergia alle uova:</b><br>
-          — Eliminazione di uova e derivati (maionese, pasta all'uovo)<br>
-          — Verificare ingredienti compositi (prodotti da forno, sughi)<br><br>
-          <b>Allergia ai crostacei/molluschi:</b><br>
-          — Eliminazione totale, attenzione a brodi e sughi di pesce<br><br>
+          <b>APLV (Allergia Latte Vaccino):</b><br>
+          — Eliminazione tutti i derivati latte. Alternative: soia/riso certificati<br><br>
+          <b>Allergia uova:</b><br>
+          — Eliminare maionese, pasta all'uovo, prodotti da forno<br><br>
           <b>Intolleranza al lattosio:</b><br>
-          — Latte e formaggi freschi da sostituire o eliminare<br>
-          — Formaggi stagionati (parmigiano, pecorino) generalmente tollerati<br><br>
-          <b>Allergia alla frutta secca:</b><br>
-          — Eliminazione e verifica tracce in prodotti da forno, pesto<br>
-          — Segnalare sempre presenza di frutta secca nei menu esposti
+          — Formaggi stagionati generalmente tollerati<br><br>
+          <b>Allergia frutta secca:</b><br>
+          — Verifica tracce in pesto, dolci, muesli
         </div>
       </div>
     </div>
     <div>
-      <!-- DIETE ETICO-RELIGIOSE -->
       <div class="dieta-card">
         <h3>🕌 Diete Etico-Religiose e Culturali</h3>
         <div class="dieta-badge" style="background:#EDE9FE;color:#5B21B6">Rispetto dell'identità culturale</div>
         <div style="font-size:13px;line-height:1.8">
-          <b>Dieta vegetariana (latto-ovo):</b><br>
-          — Seconde portate: uova, formaggi, legumi, tofu<br>
-          — Garantire apporto di Fe, Zn, B12 (monitorare)<br>
-          — Primo: pasta, riso, cereali (sempre presenti)<br><br>
-          <b>Dieta vegana:</b><br>
-          — No qualsiasi prodotto di origine animale<br>
-          — Secondi: legumi, tofu, tempeh, seitan<br>
-          — Attenzione: B12 (supplementazione), Fe, Ca, omega-3<br>
-          — Fornitore dedicato, preparazione separata<br><br>
-          <b>Dieta Halal (Islam):</b><br>
-          — Carne halal certificata (macellazione rituale)<br>
-          — No maiale e derivati (lardo, prosciutto, gelatina suina)<br>
-          — No alcol (anche in preparazioni culinarie)<br>
-          — Separazione utensili carne halal/non-halal<br><br>
-          <b>Dieta Kosher (Ebraismo):</b><br>
-          — No maiale, frutti di mare, molluschi<br>
-          — Separazione tra carne e latte (pasti separati)<br>
-          — Carne da macellazione rituale certificata<br>
-          — Certificazione rabbinica spesso necessaria<br><br>
-          <b>Dieta indù (vegetariana):</b><br>
-          — No carne bovina, spesso vegetariana completa<br>
-          — Attenzione a brodi e sughi di carne<br><br>
-          <b>Digiuno Ramadan:</b><br>
-          — Pasto anticipato (Suhur) e posticipato (Iftar)<br>
-          — Adattare orari di distribuzione
+          <b>Vegetariana (latto-ovo):</b> Uova, formaggi, legumi, tofu come secondi.<br><br>
+          <b>Vegana:</b> No prodotti animali. Attenzione B12, Fe, Ca, omega-3.<br><br>
+          <b>Halal:</b> Carne certificata, no maiale/alcol, utensili separati.<br><br>
+          <b>Kosher:</b> No maiale/frutti di mare. Separazione carne/latte.<br><br>
+          <b>Indù:</b> No carne bovina, spesso vegetariana.<br><br>
+          <b>Ramadan:</b> Adattare orari distribuzione (Suhur/Iftar).
         </div>
       </div>
       <div class="dieta-card">
-        <h3>👶 Diete per Fasce d'Età Specifiche</h3>
-        <div class="dieta-badge" style="background:#ECFDF5;color:#065F46">LARN 2023 età-specifici</div>
+        <h3>👶 Fasce d'Età e Texture</h3>
+        <div class="dieta-badge" style="background:#ECFDF5;color:#065F46">LARN 2023 / IDDSI per disfagia</div>
         <div style="font-size:13px;line-height:1.8">
-          <b>Bambini 1-3 anni (asilo nido):</b><br>
-          — Porzioni ridotte, consistenze morbide<br>
-          — No sale aggiunto, zuccheri limitati<br>
-          — Allergie frequenti: monitorare attentamente<br><br>
-          <b>Bambini 3-10 anni (scuola primaria):</b><br>
-          — Pranzo = 35% del fabbisogno giornaliero<br>
-          — Energia 500-700 kcal, no fritti &gt;1×/sett<br><br>
-          <b>Adolescenti 11-18 anni:</b><br>
-          — Fabbisogni aumentati (Fe, Ca, vitamina D)<br>
-          — Attenzione a diete restrittive spontanee<br><br>
-          <b>Anziani ≥65 anni (RSA):</b><br>
-          — Proteine aumentate: 1.0-1.2g/kg/die<br>
-          — Texture modificata se disfagia (IDDSI)<br>
-          — Idratazione monitorata (senso della sete ridotto)<br>
-          — Vitamina D, Ca, B12 spesso carenti
+          <b>Nido (1-3 anni):</b> Porzioni ridotte, consistenze morbide, no sale aggiunto.<br><br>
+          <b>Scuola primaria (3-10 anni):</b> 500-700 kcal, no fritti &gt;1×/sett.<br><br>
+          <b>Adolescenti (11-18 anni):</b> Fabbisogni Fe/Ca/D aumentati.<br><br>
+          <b>Anziani ≥65 (RSA):</b> Proteine 1.0-1.2g/kg/die, texture IDDSI se disfagia.<br><br>
+          <b>Disfagia (IDDSI):</b> Livelli 0-7. Addensanti certificati, pasti a cucchiaio o frullati.
         </div>
       </div>
     </div>
@@ -325,9 +314,9 @@
         <tr><td><b>1. Richiesta</b></td><td>Utente/famiglia presenta richiesta scritta + certificazione medica (se necessaria)</td><td>Coordinatore struttura</td><td>Modulo richiesta dieta speciale</td></tr>
         <tr><td><b>2. Valutazione</b></td><td>Dietista valuta la richiesta, verifica documentazione, definisce protocollo</td><td>Dietista responsabile</td><td>Scheda dieta personalizzata</td></tr>
         <tr><td><b>3. Preparazione</b></td><td>Cucina riceve scheda, prepara pasto separato con utensili dedicati</td><td>Capo cuoco</td><td>Registro preparazioni speciali</td></tr>
-        <tr><td><b>4. Identificazione</b></td><td>Vassoio/piatto con etichetta identificativa (nome, tipo dieta)</td><td>Addetto distribuzione</td><td>Etichetta vassoio</td></tr>
-        <tr><td><b>5. Distribuzione</b></td><td>Consegna diretta all'utente, verifica identità</td><td>Addetto distribuzione</td><td>Registro consegne</td></tr>
-        <tr><td><b>6. Monitoraggio</b></td><td>Controllo periodico dell'adeguatezza nutrizionale e della soddisfazione</td><td>Dietista</td><td>Report mensile qualità</td></tr>
+        <tr><td><b>4. Identificazione</b></td><td>Vassoio/piatto con etichetta identificativa colorata (nome, tipo dieta)</td><td>Addetto distribuzione</td><td>Etichetta vassoio</td></tr>
+        <tr><td><b>5. Distribuzione</b></td><td>Consegna diretta all'utente, verifica identità visiva</td><td>Addetto distribuzione</td><td>Registro consegne</td></tr>
+        <tr><td><b>6. Monitoraggio</b></td><td>Controllo periodico adeguatezza nutrizionale e soddisfazione</td><td>Dietista</td><td>Report mensile qualità</td></tr>
       </tbody>
     </table>
   </div>
@@ -616,6 +605,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) {}
   calcFabbisogno();
+  initDieteSpeciali();
 });
 
 // ── SAVE / LOAD RISTORAZIONE ──
@@ -708,6 +698,149 @@ async function caricaRistDaNote(noteId) {
   const notaEl = document.getElementById('rist-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiRist(JSON.parse(data.dati || '{}')); } catch(e) {}
   toast('✅ Piano Ristorazione caricato','ok');
+}
+
+// ── DIETE SPECIALI INTERATTIVE ──
+const DS_DIETE = [
+  {id:'celiachia', nome:'Celiachia / Dieta senza glutine', cat:'Medica', color:'#7C3AED', vassoio:'🟣 Viola', proto:'Linea preparazione separata, utensili AIC certificati, pasta/pane gluten-free. Comunicare al cuoco per iscritto.'},
+  {id:'diabete', nome:'Diabete mellito tipo 2', cat:'Medica', color:'#DC2626', vassoio:'🔴 Rosso', proto:'CHO 45-60% (basso IG), fibre ≥25g/die, no zuccheri semplici. Ridurre porzioni pasta/riso del 10%.'},
+  {id:'ckd', nome:'Insufficienza renale (CKD)', cat:'Medica', color:'#D97706', vassoio:'🟠 Arancione', proto:'Proteine ridotte 0.6-0.8g/kg/die. Fosforo <800mg/die, potassio <2000mg/die. Evitare legumi, frutta secca.'},
+  {id:'ipertensione', nome:'Ipertensione / Dieta iposodica', cat:'Medica', color:'#0891B2', vassoio:'🔵 Azzurro', proto:'Sodio <2g/die. No sale aggiunto. Limitare affettati, formaggi stagionati, prodotti in scatola.'},
+  {id:'aplv', nome:'Allergia al latte vaccino (APLV)', cat:'Allergie', color:'#B45309', vassoio:'🟡 Giallo', proto:'Eliminare tutti i derivati del latte. Alternative certificate a base di soia/riso. Verificare tracce.'},
+  {id:'uova', nome:'Allergia alle uova', cat:'Allergie', color:'#B45309', vassoio:'🟡 Giallo striato', proto:'Eliminare uova e derivati: maionese, pasta all\'uovo, prodotti da forno. Verificare ingredienti compositi.'},
+  {id:'lattosio', nome:'Intolleranza al lattosio', cat:'Intolleranze', color:'#059669', vassoio:'🟢 Verde chiaro', proto:'Sostituire latte e formaggi freschi. Formaggi stagionati (parmigiano >36 mesi) generalmente tollerati.'},
+  {id:'frutta-secca', nome:'Allergia frutta a guscio', cat:'Allergie', color:'#9333EA', vassoio:'🟤 Marrone', proto:'Eliminare e verificare tracce in pesto, dolci, muesli, cioccolato. Segnalare sempre nel menu esposto.'},
+  {id:'arachidi', nome:'Allergia arachidi', cat:'Allergie', color:'#9333EA', vassoio:'🟤 Marrone pois', proto:'Verificare oli, burro di arachidi, prodotti etnici. Rischio anafilassi: adrenalina auto-iniettabile disponibile.'},
+  {id:'vegetariana', nome:'Dieta vegetariana (latto-ovo)', cat:'Etico-Religiosa', color:'#16A34A', vassoio:'🟢 Verde', proto:'Secondi: uova, formaggi, legumi, tofu. Monitorare Fe, Zn, B12 nel lungo periodo.'},
+  {id:'vegana', nome:'Dieta vegana', cat:'Etico-Religiosa', color:'#15803D', vassoio:'🌿 Verde scuro', proto:'No prodotti animali. Secondi: legumi, tofu, tempeh, seitan. Supplementare B12. Fornitore separato.'},
+  {id:'halal', nome:'Dieta Halal (Islam)', cat:'Etico-Religiosa', color:'#1D4ED8', vassoio:'🔵 Blu', proto:'Carne halal certificata. No maiale/derivati/alcol anche in preparazioni. Utensili separati.'},
+  {id:'kosher', nome:'Dieta Kosher (Ebraismo)', cat:'Etico-Religiosa', color:'#1D4ED8', vassoio:'🔷 Blu diamante', proto:'No maiale, frutti di mare, molluschi. Separazione carne/latte. Certificazione rabbinica consigliata.'},
+  {id:'disfagia', nome:'Disfagia / Texture modificata (IDDSI)', cat:'Età / Clinica', color:'#0F766E', vassoio:'⬜ Bianco bordo verde', proto:'Livelli IDDSI 3-7. Addensanti certificati. Pasti frullati o a cucchiaio secondo prescrizione logopedica.'},
+  {id:'pediatrica', nome:'Dieta pediatrica (nido/infanzia)', cat:'Età / Clinica', color:'#EC4899', vassoio:'🩷 Rosa', proto:'Porzioni ridotte, consistenze morbide, no sale aggiunto, zuccheri limitati. Energia 35% fabbisogno.'},
+  {id:'fenilchetonuria', nome:'Fenilchetonuria (PKU)', cat:'Medica', color:'#7C3AED', vassoio:'🟣 Viola bordo', proto:'Restrizione fenilalanina. Alimenti speciali PKU prescritti. Collaborazione con centro metabolico.'},
+  {id:'gotta', nome:'Dieta per iperuricemia/gotta', cat:'Medica', color:'#78350F', vassoio:'🟫 Marrone chiaro', proto:'Limitare carne rossa, frattaglie, frutti di mare, alcol. Aumentare idratazione.'},
+];
+
+const DS_ALLERGENI = [
+  {id:'glutine', nome:'🌾 Cereali con glutine', proto:'Linea separata, utensili dedicati. Pasta/pane AIC. Preparare pasti allergici per primi.'},
+  {id:'crostacei', nome:'🦐 Crostacei', proto:'Eliminare da brodi, salse. Evitare contaminazione con piatti di mare.'},
+  {id:'uova-all', nome:'🥚 Uova', proto:'Verificare maionese, pasta all\'uovo, prodotti da forno, impanature.'},
+  {id:'pesce', nome:'🐟 Pesce', proto:'Worcester sauce, pasta d\'acciughe, salse di pesce. Friggitrice separata.'},
+  {id:'arachidi-all', nome:'🥜 Arachidi', proto:'Oli, burro di arachidi, prodotti etnici. Adrenalina auto-iniettabile disponibile.'},
+  {id:'latte-all', nome:'🥛 Latte e derivati', proto:'Burro, formaggio, panna, besciamella, cioccolato al latte. Alternative vegetali.'},
+  {id:'fruttasecca-all', nome:'🌰 Frutta a guscio', proto:'Pesto, dolci, muesli, cioccolato. Segnalare nel menu esposto.'},
+  {id:'sedano', nome:'🫘 Sedano', proto:'Brodi, insalate, curry, spezie miste. Verificare ingredienti compositi.'},
+  {id:'senape', nome:'🌼 Senape', proto:'Salse, dressing, marinate, curry. Attenzione a hamburger e preparazioni etniche.'},
+  {id:'sesamo', nome:'🫘 Semi di sesamo', proto:'Pane, cracker, hummus, cucina orientale. Tahini.'},
+  {id:'solfiti', nome:'🍷 Anidride solforosa/solfiti', proto:'Vino, birra, frutta secca, conserve, prodotti marinati. Conc. >10mg/kg dichiarare.'},
+  {id:'molluschi', nome:'🐚 Molluschi', proto:'Sughi di pesce, risotti di mare. Cozze, vongole, seppie, polpo.'},
+  {id:'lupino', nome:'🌿 Lupino', proto:'Prodotti da forno, pasta alternativa, burger vegetali.'},
+  {id:'soia', nome:'🫘 Soia', proto:'Tofu, salsa di soia, prodotti vegani, lecitina di soia. Verificare etichette.'},
+];
+
+function initDieteSpeciali() {
+  // Populate table
+  const tbody = document.getElementById('ds-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = DS_DIETE.map((d,i) => `
+    <tr id="ds-row-${d.id}">
+      <td style="text-align:center"><input type="checkbox" id="ds-chk-${d.id}" onchange="aggiornaSummaryDS()" style="width:16px;height:16px;accent-color:var(--teal);cursor:pointer"></td>
+      <td style="font-weight:600;font-size:12.5px">${d.nome}</td>
+      <td><input type="number" id="ds-n-${d.id}" min="0" max="999" placeholder="0" style="width:70px;padding:4px 6px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none" oninput="aggiornaSummaryDS()"></td>
+      <td><span class="dieta-badge" style="background:${d.cat==='Medica'?'#FEE2E2;color:#991B1B':d.cat==='Allergie'?'#FEF3C7;color:#B45309':d.cat==='Intolleranze'?'#ECFDF5;color:#065F46':d.cat==='Etico-Religiosa'?'#EDE9FE;color:#5B21B6':'#E0F2F1;color:#134E4A'}">${d.cat}</span></td>
+      <td style="font-size:12px;color:var(--slate-m)">${d.vassoio}</td>
+      <td style="text-align:center"><select id="ds-p-${d.id}" style="padding:3px 6px;border:1.5px solid var(--border-d);border-radius:6px;font-size:11.5px;font-family:inherit;outline:none">
+        <option value="alta">🔴 Alta</option><option value="media" selected>🟡 Media</option><option value="bassa">🟢 Bassa</option>
+      </select></td>
+    </tr>`).join('');
+
+  // Populate allergeni
+  const ag = document.getElementById('ds-allergeni-grid');
+  if (ag) ag.innerHTML = DS_ALLERGENI.map(a => `
+    <div style="background:white;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px">
+      <input type="checkbox" id="ds-all-${a.id}" style="margin-top:2px;width:15px;height:15px;accent-color:#D97706;cursor:pointer;flex-shrink:0" onchange="aggiornaSummaryDS()">
+      <label for="ds-all-${a.id}" style="font-size:12.5px;font-weight:600;cursor:pointer;line-height:1.4">${a.nome}</label>
+    </div>`).join('');
+
+  aggiornaSummaryDS();
+}
+
+function aggiornaSummaryDS() {
+  const summary = document.getElementById('ds-summary');
+  if (!summary) return;
+  const attive = DS_DIETE.filter(d => document.getElementById('ds-chk-'+d.id)?.checked);
+  const totUtenti = attive.reduce((s,d) => s + (parseInt(document.getElementById('ds-n-'+d.id)?.value)||0), 0);
+  if (!attive.length) {
+    summary.innerHTML = '<span style="font-size:12.5px;color:var(--slate-l)">Nessuna dieta speciale attiva. Seleziona le diete dalla tabella.</span>';
+    return;
+  }
+  summary.innerHTML = `<div style="background:#F0FDF4;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;color:#15803D;display:flex;align-items:center;gap:8px">
+    ✅ ${attive.length} diet${attive.length===1?'a':'e'} special${attive.length===1?'e':'i'} attiv${attive.length===1?'a':'e'} · ${totUtenti} utenti totali
+  </div>` + attive.map(d => {
+    const n = parseInt(document.getElementById('ds-n-'+d.id)?.value)||0;
+    const p = document.getElementById('ds-p-'+d.id)?.value||'media';
+    const pColor = p==='alta'?'#FEE2E2;color:#991B1B':p==='media'?'#FEF3C7;color:#B45309':'#ECFDF5;color:#15803D';
+    return `<div style="background:white;border:1.5px solid var(--border);border-left:3px solid ${d.color};border-radius:8px;padding:7px 12px;font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-weight:700;color:${d.color}">${d.nome}</span>
+      <span style="background:#F1F5F9;border-radius:10px;padding:2px 8px;font-size:11px">👥 ${n>0?n:'n.d.'} utent${n===1?'e':'i'}</span>
+      <span style="background:${pColor};border-radius:10px;padding:2px 8px;font-size:11px">Priorità ${p}</span>
+      <span style="font-size:11px;color:var(--slate-l)">${d.vassoio}</span>
+    </div>`;
+  }).join('');
+}
+
+function generaProto() {
+  const attive = DS_DIETE.filter(d => document.getElementById('ds-chk-'+d.id)?.checked);
+  const allergs = DS_ALLERGENI.filter(a => document.getElementById('ds-all-'+a.id)?.checked);
+  if (!attive.length && !allergs.length) {
+    toast('Seleziona almeno una dieta o allergene', 'err'); return;
+  }
+  const today = new Date().toLocaleDateString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric'});
+  let html = `<div style="font-size:12px;color:var(--slate-l);margin-bottom:12px">Generato il ${today} · ${attive.length} diete speciali · ${allergs.length} allergeni gestiti</div>`;
+
+  if (attive.length) {
+    html += `<h4 style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--slate)">🍽️ Diete Speciali Attive</h4>`;
+    html += attive.map(d => {
+      const n = parseInt(document.getElementById('ds-n-'+d.id)?.value)||0;
+      const p = document.getElementById('ds-p-'+d.id)?.value||'media';
+      return `<div style="background:white;border:1.5px solid var(--border);border-left:4px solid ${d.color};border-radius:8px;padding:12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+          <span style="font-weight:700;font-size:13px;color:${d.color}">${d.nome}</span>
+          <span style="font-size:11px;background:#F1F5F9;border-radius:10px;padding:2px 8px">👥 ${n>0?n:'n.d.'} utenti</span>
+          <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;border-radius:10px;padding:2px 8px">${d.cat}</span>
+          <span style="font-size:11px;color:var(--slate-m)">${d.vassoio}</span>
+        </div>
+        <div style="font-size:12px;color:var(--slate-m);line-height:1.6">📌 ${d.proto}</div>
+        <div style="margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:11px">☐ Scheda dieta consegnata alla cucina</span>
+          <span style="font-size:11px">☐ Etichetta vassoio preparata</span>
+          <span style="font-size:11px">☐ Utensili dedicati disponibili</span>
+          <span style="font-size:11px">☐ Personale informato</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (allergs.length) {
+    html += `<h4 style="font-size:13px;font-weight:700;margin:14px 0 10px;color:var(--slate)">⚠️ Allergeni Gestiti</h4>`;
+    html += allergs.map(a => `<div style="background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:8px;padding:10px 12px;margin-bottom:8px">
+      <div style="font-weight:700;font-size:12.5px;margin-bottom:4px">${a.nome}</div>
+      <div style="font-size:12px;color:#78350F">📌 ${a.proto}</div>
+      <div style="margin-top:6px;font-size:11px">☐ Scheda allergeni piatto aggiornata &nbsp;☐ Informazione al personale di servizio</div>
+    </div>`).join('');
+  }
+
+  html += `<div style="margin-top:14px;padding:10px 14px;background:#ECFDF5;border-radius:8px;font-size:12px;color:#065F46">
+    <b>✅ Checklist Finale Giornaliera</b><br>
+    ☐ Tutti i vassoi speciali preparati e identificati · ☐ Cucina ha ricevuto elenco diete del giorno · 
+    ☐ Temperatura pasti verificata · ☐ Nessuna contaminazione crociata · ☐ Registro consegne aggiornato
+  </div>`;
+
+  const box = document.getElementById('ds-proto-box');
+  document.getElementById('ds-proto-content').innerHTML = html;
+  box.style.display = 'block';
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+  toast('✅ Protocollo generato!', 'ok');
 }
 </script>
 </body>

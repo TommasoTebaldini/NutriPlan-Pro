@@ -283,6 +283,7 @@
 <script>
 let biaData = {};
 let cartelleList = [];
+let currentBiaId = null;
 
 function showBIA(id) {
   document.querySelectorAll('.bia-tab').forEach(t => t.classList.remove('active'));
@@ -830,7 +831,15 @@ async function salvaBIA() {
   };
 
   showLoading(true);
-  const { error } = await sb.from('bia_records').insert(record);
+  let error;
+  const isUpdate = !!currentBiaId;
+  if (currentBiaId) {
+    ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId));
+  } else {
+    const result = await sb.from('bia_records').insert(record).select().single();
+    error = result.error;
+    if (result.data) currentBiaId = result.data.id;
+  }
   showLoading(false);
 
   if (error) {
@@ -840,7 +849,7 @@ async function salvaBIA() {
       toast('Errore salvataggio: ' + error.message, 'err');
     }
   } else {
-    toast('✅ BIA salvata nella cartella paziente!', 'ok');
+    toast(isUpdate ? '✅ BIA aggiornata!' : '✅ BIA salvata nella cartella paziente!', 'ok');
     loadStorico();
   }
 }
@@ -961,6 +970,9 @@ function resetBIA() {
   document.getElementById('bia-paste').value = '';
   document.getElementById('bia-results-wrap').innerHTML = '<div class="alert-info">Inserisci i dati per vedere l\'analisi.</div>';
   biaData = {};
+  currentBiaId = null;
+  const btnSalva = document.getElementById('btn-salva-bia');
+  if (btnSalva) btnSalva.textContent = '💾 Salva in Cartella Paziente';
 }
 
 function onCartellaChange() {
@@ -994,9 +1006,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Pre-select cartella from URL parameter
     const params = new URLSearchParams(window.location.search);
     const cartellaParam = params.get('cartella');
+    const biaIdParam = params.get('biaId');
     if (cartellaParam) {
       const sel = document.getElementById('bia-cartella');
       if (sel) { sel.value = cartellaParam; onCartellaChange(); }
+    }
+    if (biaIdParam) {
+      showLoading(true);
+      const { data } = await sb.from('bia_records').select('*').eq('id', biaIdParam).single();
+      showLoading(false);
+      if (data) {
+        currentBiaId = data.id;
+        // Populate cartella
+        const sel = document.getElementById('bia-cartella');
+        if (sel && data.cartella_id) { sel.value = data.cartella_id; onCartellaChange(); }
+        // Populate date and note
+        if (data.data_misura) document.getElementById('bia-data').value = data.data_misura;
+        if (data.note) document.getElementById('bia-note').value = data.note;
+        // Populate manual fields from raw_data if available
+        let raw = {};
+        try { if (data.raw_data) raw = JSON.parse(data.raw_data); } catch(e) { console.warn('BIA raw_data parse error:', e); }
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+        setVal('bia-peso', raw.peso ?? data.peso);
+        setVal('bia-alt', raw.alt ?? data.altezza);
+        setVal('bia-eta', raw.eta ?? data.eta);
+        if (data.sesso) document.getElementById('bia-sesso').value = data.sesso;
+        setVal('bia-R', raw.R ?? data.resistenza);
+        setVal('bia-Xc', raw.Xc ?? data.reattanza);
+        setVal('bia-af', raw.af ?? data.angolo_fase);
+        setVal('bia-bf', data.bf_pct);
+        setVal('bia-ffm', data.ffm_kg);
+        setVal('bia-tbw', data.tbw);
+        setVal('bia-bcm', data.bcm);
+        setVal('bia-bone', data.bone);
+        setVal('bia-muscle', data.muscle);
+        setVal('bia-icw', data.icw);
+        setVal('bia-ecw', data.ecw);
+        calcBIA();
+        toast('📂 BIA caricata per modifica!', 'ok');
+        document.getElementById('btn-salva-bia').textContent = '💾 Aggiorna BIA';
+      }
     }
   } catch(e) {}
 });

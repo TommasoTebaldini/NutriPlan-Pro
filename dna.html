@@ -3,43 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Nutrizione e DNA — DietPlan Pro</title>
+<title>DCA — DietPlan Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.dna-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FAF5FF;border-radius:14px}
+.dna-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#F0F9FF;border-radius:14px}
 .dna-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
-.dna-tab:hover{background:rgba(124,58,237,.12);color:#7C3AED}
-.dna-tab.active{background:white;color:#5B21B6;box-shadow:0 3px 10px rgba(124,58,237,.2);font-weight:700}
+.dna-tab:hover{background:rgba(14,165,233,.12);color:#0369A1}
+.dna-tab.active{background:white;color:#0369A1;box-shadow:0 3px 10px rgba(14,165,233,.2);font-weight:700}
 .dna-panel{display:none}.dna-panel.active{display:block}
 .info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.7;border-left:4px solid}
-.ib-purple{background:#EDE9FE;border-color:#7C3AED;color:#4C1D95}
+.ib-blue{background:#EFF6FF;border-color:#3B82F6;color:#1E3A5F}
 .ib-green{background:#ECFDF5;border-color:#10B981;color:#064E3B}
 .ib-amber{background:#FEF3C7;border-color:#F59E0B;color:#78350F}
-.ib-blue{background:#EFF6FF;border-color:#3B82F6;color:#1E3A5F}
 .ib-red{background:#FEE2E2;border-color:#EF4444;color:#7F1D1D}
-.snp-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.snp-card h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.snp-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:10px}
+.ib-purple{background:#EDE9FE;border-color:#7C3AED;color:#4C1D95}
+.ib-teal{background:#F0FDFA;border-color:#14B8A6;color:#134E4A}
 .calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.gene-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden;margin-bottom:14px}
-.gene-table th{background:#5B21B6;color:white;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
-.gene-table th:first-child{text-align:left}
-.gene-table td{padding:7px 12px;border-bottom:1px solid #EDE9FE;text-align:center;vertical-align:middle}
-.gene-table td:first-child{text-align:left;font-weight:600}
-.gene-table tbody tr:nth-child(even){background:#FAF5FF}
-.gene-table tr:hover td{background:#DDD6FE}
+.dca-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.dca-table th{background:#0F766E;color:white;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.dca-table th:first-child{text-align:left}
+.dca-table td{padding:7px 12px;border-bottom:1px solid #E0F2F1;text-align:center;vertical-align:middle}
+.dca-table td:first-child{text-align:left;font-weight:600}
+.dca-table tbody tr:nth-child(even){background:#F0FDFA}
+.dca-table tr:hover td{background:#CCFBF1}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 @media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
-.rs-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;font-family:monospace;background:#EDE9FE;color:#5B21B6}
-.allele-risk{color:#DC2626;font-weight:700}
-.allele-prot{color:#15803D;font-weight:700}
-.evidence-A{color:#15803D}
-.evidence-B{color:#D97706}
-.evidence-C{color:#DC2626}
+.dca-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin:0 4px 4px 0}
+.badge-an{background:#FEE2E2;color:#991B1B}
+.badge-bn{background:#FEF3C7;color:#92400E}
+.badge-bed{background:#EDE9FE;color:#4C1D95}
+.badge-arfid{background:#DBEAFE;color:#1E40AF}
+.badge-purg{background:#FCE7F3;color:#831843}
+.badge-nes{background:#E0F2F1;color:#134E4A}
+.score-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.score-row:last-child{border-bottom:none}
+.score-val{font-size:18px;font-weight:800;color:var(--teal)}
+.risk-high{color:#DC2626;font-weight:700}
+.risk-med{color:#D97706;font-weight:700}
+.risk-low{color:#15803D;font-weight:700}
+.scoff-q{background:white;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:8px}
+.scoff-q label{font-size:13px;font-weight:500;color:var(--slate);display:flex;align-items:center;gap:10px;cursor:pointer}
+.scoff-q input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal);cursor:pointer}
 </style>
 </head>
 <body>
@@ -54,7 +62,7 @@
   <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
   <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
-  <a class="nav-item active" href="dna.html"><span class="ni">🧬</span>Nutrizione e DNA</a>
+  <a class="nav-item active" href="dna.html"><span class="ni">🫀</span>DCA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
@@ -80,497 +88,527 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>🧬 Nutrizione e DNA</h2>
+  <h2>🫀 DCA — Disturbi del Comportamento Alimentare</h2>
 </div>
 
 <main id="main"><div class="page-content">
 
 <div class="dna-tabs">
-  <button class="dna-tab active" onclick="showDna('overview')">🧬 Introduzione</button>
-  <button class="dna-tab" onclick="showDna('snp')">🔬 Varianti Principali</button>
-  <button class="dna-tab" onclick="showDna('macro')">🍽️ Macronutrienti &amp; Geni</button>
-  <button class="dna-tab" onclick="showDna('micronutrienti')">🔬 Micronutrienti &amp; Geni</button>
-  <button class="dna-tab" onclick="showDna('sport_gen')">🏃 Sport &amp; Genetica</button>
-  <button class="dna-tab" onclick="showDna('clinica')">⚕️ Applicazione Clinica</button>
-  <button class="dna-tab" onclick="showDna('linee_guida')">📚 Linee Guida &amp; Etica</button>
+  <button class="dna-tab active" onclick="showDna('overview')">📋 Panoramica</button>
+  <button class="dna-tab" onclick="showDna('screening')">🔍 Screening</button>
+  <button class="dna-tab" onclick="showDna('anoressia')">⚠️ Anoressia Nervosa</button>
+  <button class="dna-tab" onclick="showDna('bulimia')">🔄 Bulimia &amp; BED</button>
+  <button class="dna-tab" onclick="showDna('complicanze')">🏥 Complicanze Mediche</button>
+  <button class="dna-tab" onclick="showDna('trattamento')">🤝 Approccio Terapeutico</button>
+  <button class="dna-tab" onclick="showDna('linee_guida')">📚 Linee Guida</button>
 </div>
 
-<!-- INTRODUZIONE -->
+<!-- PANORAMICA -->
 <div class="dna-panel active" id="tab-overview">
-  <div class="info-box ib-purple">
-    <b>🧬 Nutrigenomica e Nutrigenetica</b> — La nutrigenomica studia come i nutrienti influenzano l'espressione genica. La nutrigenetica studia come le variazioni genetiche (polimorfismi, SNP) influenzano la risposta individuale agli alimenti. L'obiettivo è una nutrizione personalizzata basata sul profilo genetico del paziente.
-  </div>
-  <div class="grid-2">
-    <div class="calc-box">
-      <h3>📖 Concetti Fondamentali</h3>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="padding:8px 12px;background:#EDE9FE;border-radius:8px;margin-bottom:8px;border-left:3px solid #7C3AED">
-          <b>SNP (Single Nucleotide Polymorphism)</b><br>
-          Variazione di un singolo nucleotide nel DNA. Frequenza &gt;1% nella popolazione. Rappresenta la base della variabilità genetica interindividuale. Es: <span class="rs-badge">rs9939609</span> nel gene FTO associato all'obesità.
-        </div>
-        <div style="padding:8px 12px;background:#DBEAFE;border-radius:8px;margin-bottom:8px;border-left:3px solid #3B82F6">
-          <b>Epigenetica Nutrizionale</b><br>
-          I nutrienti modificano l'espressione genica attraverso meccanismi epigenetici (metilazione DNA, acetilazione istoni) senza alterare la sequenza del DNA. Dieta materna e nei primi 1000 giorni di vita ha effetti epigenetici duraturi.
-        </div>
-        <div style="padding:8px 12px;background:#ECFDF5;border-radius:8px;margin-bottom:8px;border-left:3px solid #10B981">
-          <b>Interazione Gene-Nutriente</b><br>
-          Un gene può modificare il metabolismo di un nutriente, e un nutriente può modificare l'espressione di un gene. Esempio: la vitamina D regola l'espressione di &gt;200 geni attraverso il recettore VDR.
-        </div>
-        <div style="padding:8px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #F59E0B">
-          <b>Penetranza e Modificabilità</b><br>
-          La maggior parte dei polimorfismi nutrizionali ha penetranza parziale. L'intervento dietetico può spesso modificare l'espressione del rischio genetico (gene-diet interaction).
-        </div>
-      </div>
-    </div>
-    <div class="calc-box">
-      <h3>🔬 Aree di Applicazione Clinica</h3>
-      <table class="gene-table">
-        <thead><tr><th>Area</th><th>Esempi clinici</th><th>Livello evidenza</th></tr></thead>
-        <tbody>
-          <tr><td><b>Metabolismo CHO</b></td><td>Diabete T2, insulino-resistenza, adiposità</td><td><span class="evidence-A">Grado A</span></td></tr>
-          <tr><td><b>Metabolismo lipidico</b></td><td>Ipercolesterolemia, risposta ai grassi saturi/insaturi</td><td><span class="evidence-A">Grado A</span></td></tr>
-          <tr><td><b>Metabolismo folati</b></td><td>Iperomocisteinemia, difetti del tubo neurale, CVD</td><td><span class="evidence-A">Grado A</span></td></tr>
-          <tr><td><b>Metabolismo vitamina D</b></td><td>Deficit vitamina D, patologie ossee, immunità</td><td><span class="evidence-A">Grado A</span></td></tr>
-          <tr><td><b>Intolleranza al lattosio</b></td><td>Persistenza lattasi (LCT gene)</td><td><span class="evidence-A">Grado A</span></td></tr>
-          <tr><td><b>Sensibilità al caffè</b></td><td>CYP1A2 — metabolismo della caffeina</td><td><span class="evidence-A">Grado A</span></td></tr>
-          <tr><td><b>Controllo del peso</b></td><td>FTO, MC4R — predisposizione all'obesità</td><td><span class="evidence-B">Grado B</span></td></tr>
-          <tr><td><b>Predisposizione al sodio</b></td><td>AGT, ACE — ipertensione sale-sensibile</td><td><span class="evidence-B">Grado B</span></td></tr>
-          <tr><td><b>Nutrizione sportiva</b></td><td>ACTN3 (potenza), ACE (endurance)</td><td><span class="evidence-B">Grado B</span></td></tr>
-          <tr><td><b>Ferro e anemia</b></td><td>HFE (emocromatosi), TMPRSS6</td><td><span class="evidence-A">Grado A</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- SNP PRINCIPALI -->
-<div class="dna-panel" id="tab-snp">
-  <div class="info-box ib-purple">
-    <b>🔬 Polimorfismi a Singolo Nucleotide (SNP) Nutrizionalmente Rilevanti</b> — I seguenti SNP hanno sufficiente evidenza scientifica per essere considerati nelle valutazioni di nutrigenomica clinica. Tutti richiedono interpretazione contestualizzata da parte di un professionista qualificato.
-  </div>
-
-  <div class="snp-card">
-    <h3>🧈 Metabolismo dei Lipidi</h3>
-    <div class="snp-badge" style="background:#EDE9FE;color:#5B21B6">Evidenza clinica robusta</div>
-    <table class="gene-table">
-      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><b>APOE</b><br><span class="rs-badge">ε2/ε3/ε4</span></td>
-          <td>Trasporto e metabolismo colesterolo</td>
-          <td><span class="allele-risk">ε4 (APOE4)</span></td>
-          <td>Aumento LDL con grassi saturi. Ridurre SFA &lt;7%, aumentare MUFA/omega-3. Rischio Alzheimer aumentato → dieta neuroprotettiva (MIND/Mediterranea)</td>
-          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
-        </tr>
-        <tr>
-          <td><b>APOA1</b><br><span class="rs-badge">rs670</span></td>
-          <td>Componente principale HDL</td>
-          <td><span class="allele-risk">Allele A (−75G&gt;A)</span></td>
-          <td>Risposta HDL agli acidi grassi insaturi aumentata nell'allele A. Omega-3 particolarmente benefici.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-        <tr>
-          <td><b>APOC3</b><br><span class="rs-badge">rs5128</span></td>
-          <td>Metabolismo trigliceridi</td>
-          <td><span class="allele-risk">Allele G (SstI)</span></td>
-          <td>Ipertrigliceridemia da CHO semplici. Ridurre zuccheri &lt;5% energia, aumentare omega-3 (2-4g EPA+DHA/die).</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-        <tr>
-          <td><b>CETP</b><br><span class="rs-badge">rs708272</span></td>
-          <td>Trasferimento esteri colesterolo tra lipoproteine</td>
-          <td><span class="allele-risk">Allele B1 (TaqIB)</span></td>
-          <td>Riduzione HDL. L'alcol aumenta paradossalmente l'HDL nei portatori B1B1, ma i rischi superano i benefici.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="snp-card">
-    <h3>🍬 Metabolismo dei Carboidrati e Peso Corporeo</h3>
-    <div class="snp-badge" style="background:#FEF3C7;color:#B45309">Impatto su BMI e composizione corporea</div>
-    <table class="gene-table">
-      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><b>FTO</b><br><span class="rs-badge">rs9939609</span></td>
-          <td>Regolazione appetito/sazietà. Gene "fat mass and obesity associated"</td>
-          <td><span class="allele-risk">Allele A</span> (↑BMI ~0.4kg/m²)</td>
-          <td>Aumentata preferenza per alimenti ipercalorici. Beneficio maggiore da dieta ipocalorica + attività fisica vs solo dieta. Colazione abbondante protettiva.</td>
-          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
-        </tr>
-        <tr>
-          <td><b>MC4R</b><br><span class="rs-badge">rs17782313</span></td>
-          <td>Recettore melanocortina-4 — regolazione appetito ipotalamica</td>
-          <td><span class="allele-risk">Allele C</span></td>
-          <td>Ridotta sazietà. Pasti frequenti (5-6/die) e ricchi di proteine (aumentano sazietà). Limitare densità energetica.</td>
-          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
-        </tr>
-        <tr>
-          <td><b>TCF7L2</b><br><span class="rs-badge">rs7903146</span></td>
-          <td>Fattore di trascrizione — secrezione insulinica e glucagone</td>
-          <td><span class="allele-risk">Allele T</span> (↑rischio T2D ~40%)</td>
-          <td>Risposta glicemica elevata ai CHO raffinati. Privilegiare CHO a basso IG, fibre ≥30g/die, dieta mediterranea.</td>
-          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
-        </tr>
-        <tr>
-          <td><b>PPARG</b><br><span class="rs-badge">rs1801282 (Pro12Ala)</span></td>
-          <td>Recettore nucleare — differenziazione adipociti, sensibilità insulinica</td>
-          <td><span class="allele-risk">Allele Pro12 (comune)</span></td>
-          <td>Allele Ala12 (raro) → maggiore sensibilità insulinica. Omega-3 attivano PPARG: beneficio maggiore nei portatori Pro12.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-        <tr>
-          <td><b>AMY1</b><br>Numero copie</td>
-          <td>Amilasi salivare — digestione amidi</td>
-          <td>Basso numero di copie (&lt;4)</td>
-          <td>Ridotta digestione amidi. Risposta glicemica aumentata a riso e pane bianco. Preferire cereali integrali e legumi.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="snp-card">
-    <h3>🧪 Metabolismo di Folati e Vitamina B12</h3>
-    <div class="snp-badge" style="background:#ECFDF5;color:#065F46">Alta rilevanza clinica</div>
-    <table class="gene-table">
-      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><b>MTHFR</b><br><span class="rs-badge">rs1801133 (C677T)</span></td>
-          <td>Metilenetetraidrofolato reduttasi — ciclo dei folati e metilazione</td>
-          <td><span class="allele-risk">TT omozigote</span> (~10% popolazione italiana)</td>
-          <td>Attività enzimatica ridotta 70%. Iperomocisteinemia. Aumentare folati a 600-800µg/die (verdure a foglia, legumi). Forma metilata (5-MTHF) preferibile. B12 adeguata (≥2.4µg/die). Riboflavina B2 cofattore essenziale.</td>
-          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
-        </tr>
-        <tr>
-          <td><b>MTHFR</b><br><span class="rs-badge">rs1801131 (A1298C)</span></td>
-          <td>Secondo polimorfismo MTHFR — riduce ulteriormente attività</td>
-          <td><span class="allele-risk">CC omozigote (raro)</span></td>
-          <td>Doppio eterozigote (C677T+A1298C) ha effetto simile a TT. Integrazione B12+folati metilati raccomandata.</td>
-          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
-        </tr>
-        <tr>
-          <td><b>MTR</b><br><span class="rs-badge">rs1805087 (A2756G)</span></td>
-          <td>Metionina sintasi — rimineralizzazione omocisteina</td>
-          <td><span class="allele-risk">Allele G</span></td>
-          <td>Aumentato fabbisogno di B12. Dieta ricca di alimenti animali o supplementazione B12 metilcobalamina.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-        <tr>
-          <td><b>TCN2</b><br><span class="rs-badge">rs1801198 (C776G)</span></td>
-          <td>Transcobalamina II — trasporto B12</td>
-          <td><span class="allele-risk">Allele G (776GG)</span></td>
-          <td>Ridotto trasporto cellulare B12. Fabbisogno aumentato. Monitorare olotranscobalamina (B12 attiva) oltre a B12 sierica totale.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="snp-card">
-    <h3>☀️ Vitamina D e Calcio</h3>
-    <div class="snp-badge" style="background:#DBEAFE;color:#1D4ED8">Comune — alta prevalenza carenza</div>
-    <table class="gene-table">
-      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><b>VDR</b><br><span class="rs-badge">rs2228570 (FokI)</span></td>
-          <td>Recettore vitamina D — regola 200+ geni</td>
-          <td><span class="allele-risk">Allele f (ff omozigote)</span></td>
-          <td>Ridotta risposta alla vitamina D. Target 25-OH-D &gt;50ng/mL. Supplementazione spesso necessaria: 2000-4000 UI/die. Esposizione solare regolare.</td>
-          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
-        </tr>
-        <tr>
-          <td><b>GC (VDBP)</b><br><span class="rs-badge">rs4588 / rs7041</span></td>
-          <td>Vitamina D binding protein — trasporto vitamina D</td>
-          <td><span class="allele-risk">Aplotipo 1c</span></td>
-          <td>Ridotta capacità di trasporto. Deficit di vitamina D più frequente. Supplementazione preventiva raccomandata in aree a bassa insolazione.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-        <tr>
-          <td><b>CYP27B1</b><br><span class="rs-badge">rs10877012</span></td>
-          <td>1α-idrossilasi renale — attivazione vitamina D</td>
-          <td><span class="allele-risk">Allele T</span></td>
-          <td>Ridotta conversione 25-OH-D → 1,25(OH)2D (forma attiva). Calcio alimentare ottimale: 1000-1200mg/die. Monitorare PTH.</td>
-          <td><span class="evidence-B">⭐⭐ B</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- MACRONUTRIENTI E GENI -->
-<div class="dna-panel" id="tab-macro">
   <div class="info-box ib-blue">
-    <b>🍽️ Interazione Macronutrienti — Genoma</b> — La risposta individuale ai macronutrienti varia significativamente in base al profilo genetico. Questo ha implicazioni pratiche per la personalizzazione del piano nutrizionale.
+    <b>🫀 Disturbi del Comportamento Alimentare (DCA)</b> — I DCA sono condizioni psichiatriche gravi caratterizzate da alterazioni persistenti del comportamento alimentare, dell'immagine corporea e della relazione con il cibo. Richiedono un approccio multidisciplinare che include dietista, psicologo/psichiatra e medico.
   </div>
   <div class="grid-2">
     <div class="calc-box">
-      <h3>🧈 Grassi Alimentari e Geni</h3>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="padding:10px;background:#FAF5FF;border-radius:8px;margin-bottom:10px">
-          <b>Grassi Saturi (SFA) — Risposta LDL:</b><br>
-          I portatori di <b>APOE ε4</b> mostrano un aumento di LDL-C significativamente maggiore con SFA rispetto agli altri genotipi. Per APOE ε4: SFA &lt;7% energia (anziché &lt;10% delle linee guida standard).<br><br>
-          Il polimorfismo <b>APOA5 rs662799</b> amplifica la risposta ipertrigliceridemica ai grassi saturi → in questi individui, grassi monoinsaturi (olio EVO) sono preferibili.
+      <h3>📊 Classificazione DSM-5 / ICD-11</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div style="padding:10px 12px;background:#FEE2E2;border-radius:8px;margin-bottom:8px;border-left:3px solid #DC2626">
+          <span class="dca-badge badge-an">AN</span> <b>Anoressia Nervosa</b><br>
+          <span style="font-size:12px;color:#7F1D1D">Restrizione severa dell'apporto energetico, paura intensa di ingrassare, alterazione dell'immagine corporea. Tipo restrittivo o con abbuffate/condotte di eliminazione.</span>
         </div>
-        <div style="padding:10px;background:#EDE9FE;border-radius:8px;margin-bottom:10px">
-          <b>Omega-3 (EPA/DHA) — Risposta Individuale:</b><br>
-          Il gene <b>FADS1/FADS2</b> (desaturasi) regola la conversione ALA→EPA→DHA. I portatori di varianti a bassa attività (aplotipo T) dell'rs174546 convertono male ALA: necessitano di omega-3 a catena lunga preformati (pesce, alghe), non basta ALA da semi di lino/chia.
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;margin-bottom:8px;border-left:3px solid #F59E0B">
+          <span class="dca-badge badge-bn">BN</span> <b>Bulimia Nervosa</b><br>
+          <span style="font-size:12px;color:#78350F">Episodi ricorrenti di abbuffate seguiti da condotte compensatorie (vomito, lassativi, digiuno, iperattività fisica). Almeno 1×/settimana per 3 mesi.</span>
         </div>
-        <div style="padding:10px;background:#ECFDF5;border-radius:8px">
-          <b>Vitamina E e Metabolismo Lipidico:</b><br>
-          Gli APOE ε4 hanno maggiore stress ossidativo lipidico → vitamina E &gt;15mg/die dall'alimentazione (olio EVO, frutta secca, germe di grano) ha effetto protettivo specifico in questo genotipo.
+        <div style="padding:10px 12px;background:#EDE9FE;border-radius:8px;margin-bottom:8px;border-left:3px solid #7C3AED">
+          <span class="dca-badge badge-bed">BED</span> <b>Binge Eating Disorder</b><br>
+          <span style="font-size:12px;color:#4C1D95">Abbuffate ricorrenti senza condotte compensatorie. Marcato disagio, sensazione di perdita di controllo. Spesso associato a obesità.</span>
+        </div>
+        <div style="padding:10px 12px;background:#DBEAFE;border-radius:8px;margin-bottom:8px;border-left:3px solid #3B82F6">
+          <span class="dca-badge badge-arfid">ARFID</span> <b>ARFID</b><br>
+          <span style="font-size:12px;color:#1E40AF">Avoidant/Restrictive Food Intake Disorder: evitamento/restrizione alimentare non basato su immagine corporea. Frequente in età evolutiva.</span>
+        </div>
+        <div style="padding:10px 12px;background:#FCE7F3;border-radius:8px;margin-bottom:8px;border-left:3px solid #EC4899">
+          <span class="dca-badge badge-purg">PD</span> <b>Disturbo da Alimentazione Incontrollata / Purging Disorder</b><br>
+          <span style="font-size:12px;color:#831843">Condotte di eliminazione ricorrenti senza abbuffate oggettive. Classificato tra i DCA non altrimenti specificati (OSFED).</span>
+        </div>
+        <div style="padding:10px 12px;background:#E0F2F1;border-radius:8px;border-left:3px solid #14B8A6">
+          <span class="dca-badge badge-nes">NES</span> <b>Night Eating Syndrome</b><br>
+          <span style="font-size:12px;color:#134E4A">Consumo eccessivo di cibo notturno (≥25% dell'apporto calorico giornaliero dopo cena). Spesso associato a insonnia e umore depresso.</span>
         </div>
       </div>
     </div>
-    <div class="calc-box">
-      <h3>🍞 Carboidrati e Sensibilità Glicemica Genotipo-Specifica</h3>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="padding:10px;background:#FEF3C7;border-radius:8px;margin-bottom:10px">
-          <b>TCF7L2 rs7903146 — Il "gene del diabete":</b><br>
-          I portatori dell'allele T hanno ridotta secrezione insulinica post-prandiale. In questi pazienti: privilegiare CHO a basso IG (&lt;55), fibre solubili ≥15g/die, evitare picchi glicemici. La dieta mediterranea riduce del 50% il rischio di T2D rispetto alle diete standard nei portatori TT.
-        </div>
-        <div style="padding:10px;background:#EFF6FF;border-radius:8px;margin-bottom:10px">
-          <b>AMY1 — Amilasi salivare:</b><br>
-          Individui con basso numero di copie del gene AMY1 (CNV) hanno meno amilasi salivare e rispondono peggio agli amidi. Consigliare cottura al dente, raffreddamento del riso/pasta (aumenta amido resistente) e abbinamento con verdure/aceto per ridurre IG.
-        </div>
-        <div style="padding:10px;background:#ECFDF5;border-radius:8px">
-          <b>GLUT2 (SLC2A2) rs5400:</b><br>
-          Variante associata ad aumentato consumo spontaneo di zucchero. I portatori riportano maggiore preferenza per alimenti dolci e difficoltà nel ridurre i carboidrati raffinati → approccio comportamentale specifico necessario.
+    <div>
+      <div class="calc-box">
+        <h3>📈 Epidemiologia</h3>
+        <table class="dca-table">
+          <thead><tr><th>Disturbo</th><th>Prevalenza</th><th>F:M</th><th>Età esordio</th></tr></thead>
+          <tbody>
+            <tr><td>Anoressia Nervosa</td><td>0.3–1%</td><td>10:1</td><td>14–18 anni</td></tr>
+            <tr><td>Bulimia Nervosa</td><td>1–3%</td><td>5:1</td><td>16–22 anni</td></tr>
+            <tr><td>BED</td><td>2–3.5%</td><td>3:2</td><td>20–30 anni</td></tr>
+            <tr><td>ARFID</td><td>3–5% (età evol.)</td><td>≈1:1</td><td>Infanzia</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="calc-box">
+        <h3>⚠️ Fattori di Rischio</h3>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="margin-bottom:8px"><b style="color:#DC2626">Individuali:</b> bassa autostima, perfezionismo, storia di traumi/abusi, pubertà precoce, diete restrittive pregresse, comorbidità psichiatriche (ansia, depressione, TOC).</div>
+          <div style="margin-bottom:8px"><b style="color:#D97706">Familiari:</b> storia familiare di DCA o obesità, relazioni familiari disfunzionali, commenti negativi su corpo/peso, conflitti genitoriali.</div>
+          <div><b style="color:#7C3AED">Socioculturali:</b> pressione mediatica per la magrezza, sport estetici o a categorie di peso (danza, ginnastica, lotta), stigma del peso, idealizzazione della magrezza.</div>
         </div>
       </div>
     </div>
   </div>
   <div class="calc-box">
-    <h3>💪 Proteine e Metabolismo Muscolare</h3>
-    <div class="grid-2">
-      <div style="font-size:13px;line-height:1.9">
-        <b>VDR e sintesi muscolare:</b><br>
-        Il recettore VDR è espresso nel muscolo scheletrico. I portatori di varianti VDR a bassa funzionalità hanno minore sintesi proteica muscolare in risposta all'allenamento → vitamina D ottimale (&gt;40ng/mL) e proteine &gt;1.6g/kg/die.<br><br>
-        <b>ACTN3 R577X:</b><br>
-        Le persone omozigoti XX (deficit alfa-actinina 3) hanno fibre muscolari con caratteristiche di endurance ma ridotta potenza esplosiva. Il fabbisogno proteico per la sintesi muscolare è leggermente ridotto rispetto agli omozigoti RR.
+    <h3>🔴 Segnali d'Allarme per il Dietista</h3>
+    <div class="grid-3">
+      <div style="padding:10px;background:#FEE2E2;border-radius:8px;font-size:12.5px">
+        <b>Fisici:</b><br>Calo ponderale rapido (&gt;1 kg/settimana), BMI &lt;17.5, bradicardia, ipotensione, amenorrea, lanugo, edemi, erosione dello smalto, ghiandole parotidi ingrossate.
       </div>
-      <div style="font-size:13px;line-height:1.9">
-        <b>IGF-1 e risposta proteica:</b><br>
-        Varianti del gene IGF-1 influenzano la risposta anabolica alle proteine. I soggetti con varianti a bassa funzionalità possono richiedere proteine &gt;2.0g/kg/die per massimizzare la sintesi muscolare.<br><br>
-        <b>Metabolismo della leucina:</b><br>
-        Il gene BCAT2 (transaminasi amminoacidi ramificati) regola il metabolismo della leucina. I portatori di varianti a bassa attività rispondono meno alle proteine whey e BCAA → preferire proteine complete con aminoacidi ramificati naturali (carne, uova, latticini).
+      <div style="padding:10px;background:#FEF3C7;border-radius:8px;font-size:12.5px">
+        <b>Comportamentali:</b><br>Evitamento di pasti condivisi, rituali alimentari rigidi, conteggio ossessivo delle calorie, uso di lassativi/diuretici, iperattività fisica compensatoria, abbuffate notturne.
+      </div>
+      <div style="padding:10px;background:#EDE9FE;border-radius:8px;font-size:12.5px">
+        <b>Psicologici:</b><br>Distorsione dell'immagine corporea, negazione del problema, paura irrazionale di ingrassare, pensiero dicotomico sul cibo ("cibo buono/cattivo"), umore instabile correlato al peso.
       </div>
     </div>
   </div>
 </div>
 
-<!-- MICRONUTRIENTI E GENI -->
-<div class="dna-panel" id="tab-micronutrienti">
-  <div class="info-box ib-green">
-    <b>🔬 Micronutrienti e Variazioni Genetiche</b> — Molti micronutrienti essenziali hanno metabolismo influenzato da varianti genetiche comuni. La conoscenza del genotipo permette di ottimizzare l'apporto e prevenire carenze subcliniche.
+<!-- SCREENING -->
+<div class="dna-panel" id="tab-screening">
+  <div class="info-box ib-teal">
+    <b>🔍 Strumenti di Screening</b> — Il dietista non effettua diagnosi (spetta allo psichiatra/psicologo), ma può utilizzare questi strumenti per rilevare il rischio e indirizzare il paziente al team multidisciplinare.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📋 SCOFF Questionnaire</h3>
+      <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px">Strumento di screening validato. ≥2 risposte "Sì" = sospetto DCA (sensibilità 85%, specificità 89%).</p>
+      <div id="scoff-questions">
+        <div class="scoff-q"><label><input type="checkbox" id="s1"> Ti fai <b>S</b>entire <b>m</b>ale perché ti sembra di aver mangiato troppo?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s2"> Sei preoccupato/a di aver perso il <b>C</b>ontrollo su quanto mangi?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s3"> Hai perso recentemente più di <b>O</b>ne stone (≈6 kg) in un periodo di 3 mesi?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s4"> Credi di essere <b>F</b>at (grasso/a) anche quando gli altri dicono che sei troppo magro/a?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s5"> Diresti che il <b>F</b>ood (cibo) domina la tua vita?</label></div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="calcolaScoff()">📊 Calcola Punteggio</button>
+      <div id="scoff-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
+    </div>
+    <div class="calc-box">
+      <h3>�� EDE-Q — Eating Disorder Examination</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div class="info-box ib-blue" style="margin-bottom:12px">EDE-Q è l'autocompilazione dell'EDE (gold standard diagnostico). Valuta le ultime 4 settimane su scala 0–6.</div>
+        <b>4 Sottoscale principali:</b>
+        <table class="dca-table" style="margin-top:8px">
+          <thead><tr><th>Sottoscala</th><th>Cosa misura</th><th>Cut-off clinico</th></tr></thead>
+          <tbody>
+            <tr><td>Restrizione</td><td>Limitazione intenzionale dell'apporto alimentare</td><td>≥2.77</td></tr>
+            <tr><td>Preoccupazione per il cibo</td><td>Pensieri intrusivi sul cibo e mangiare</td><td>≥1.39</td></tr>
+            <tr><td>Preoccupazione per la forma</td><td>Valutazione negativa della forma del corpo</td><td>≥2.79</td></tr>
+            <tr><td>Preoccupazione per il peso</td><td>Importanza del peso nell'autovalutazione</td><td>≥1.24</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;padding:10px;background:#EFF6FF;border-radius:8px;font-size:12px">
+          <b>Punteggio globale (Global Score) &gt;2.3</b> = probabile DCA clinicamente significativo. Riferire a psicologo/psichiatra.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 BITE — Bulimic Investigatory Test Edinburgh</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <p style="margin-bottom:10px">Specifico per bulimia. 33 item su due subscale:</p>
+        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px">
+          <b>Scala dei Sintomi (0–30):</b><br>
+          <span style="font-size:12px">&lt;10: nessun problema · 10–19: alcune caratteristiche bulimiche · ≥20: disturbo bulimico probabile</span>
+        </div>
+        <div style="padding:8px;background:#DBEAFE;border-radius:8px">
+          <b>Scala della Gravità (0–39):</b><br>
+          <span style="font-size:12px">Frequenza delle abbuffate e dei comportamenti compensatori. Punteggio ≥5 = clinicamente significativo.</span>
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🧒 ChEAT-26 / KEDS (età evolutiva)</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div style="padding:10px;background:#ECFDF5;border-radius:8px;margin-bottom:10px">
+          <b>ChEAT-26</b> (Children Eating Attitudes Test): adatto a bambini 8–13 anni. Cut-off ≥20 = screening positivo.
+        </div>
+        <div style="padding:10px;background:#F0F9FF;border-radius:8px;margin-bottom:10px">
+          <b>KEDS</b> (Kids Eating Disorder Survey): 14 item per preadolescenti. Valuta preoccupazioni per il peso e abbuffate.
+        </div>
+        <div class="info-box ib-amber" style="margin-bottom:0">
+          ⚠️ In età evolutiva, coinvolgere sempre i genitori/caregivers e collaborare strettamente con il pediatra.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANORESSIA NERVOSA -->
+<div class="dna-panel" id="tab-anoressia">
+  <div class="info-box ib-red">
+    <b>⚠️ Anoressia Nervosa — Condizione a Elevata Mortalità</b> — L'AN ha il più alto tasso di mortalità tra tutti i disturbi psichiatrici (5–10%). Il trattamento nutrizionale richiede estrema cautela per il rischio di <b>Refeeding Syndrome</b>. Il dietista deve sempre operare all'interno di un team multidisciplinare.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📋 Criteri Diagnostici DSM-5</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div style="padding:8px;background:#FEE2E2;border-radius:8px;margin-bottom:8px;border-left:3px solid #DC2626">
+          <b>A.</b> Restrizione dell'apporto energetico relativo al fabbisogno, con significativo basso peso corporeo (BMI &lt;17.5 negli adulti; in età evolutiva riferirsi alle curve di crescita).
+        </div>
+        <div style="padding:8px;background:#FEE2E2;border-radius:8px;margin-bottom:8px;border-left:3px solid #DC2626">
+          <b>B.</b> Intensa paura di ingrassare o di acquistare peso, anche quando si è sottopeso. Comportamenti che interferiscono con l'aumento di peso.
+        </div>
+        <div style="padding:8px;background:#FEE2E2;border-radius:8px;border-left:3px solid #DC2626">
+          <b>C.</b> Alterazione della percezione del proprio corpo (peso, dimensioni o forma). Influenza sul senso di autostima. Mancanza di riconoscimento della gravità del basso peso.
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:#F8FAFC;border-radius:8px;font-size:12.5px">
+        <b>Specifica il tipo:</b><br>
+        <span class="dca-badge badge-an">AN-R</span> Tipo Restrittivo — solo limitazione calorica/attività fisica<br>
+        <span class="dca-badge badge-bn">AN-BP</span> Tipo Abbuffate/Eliminazione — abbuffate e/o vomito, lassativi
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>📊 Valutazione della Gravità (BMI)</h3>
+      <table class="dca-table">
+        <thead><tr><th>Livello</th><th>BMI adulto</th><th>Caratteristiche</th></tr></thead>
+        <tbody>
+          <tr><td><span class="risk-low">Lieve</span></td><td>≥17</td><td>Limitazione funzionale minima</td></tr>
+          <tr><td><span class="risk-med">Moderata</span></td><td>16–16.99</td><td>Limitazione funzionale media</td></tr>
+          <tr><td><span class="risk-high">Grave</span></td><td>15–15.99</td><td>Limitazione funzionale significativa</td></tr>
+          <tr><td><span class="risk-high">Estrema</span></td><td>&lt;15</td><td>Grave limitazione funzionale, alto rischio vitale</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box ib-amber" style="margin-top:4px">
+        ⚠️ In età evolutiva utilizzare le curve di BMI percentile per età/sesso (IOTF/WHO). Un calo del &gt;20° percentile è già clinicamente significativo.
+      </div>
+    </div>
   </div>
   <div class="calc-box">
-    <h3>🔬 Principali Interazioni Gene-Micronutriente</h3>
-    <table class="gene-table">
-      <thead><tr><th>Micronutriente</th><th>Gene chiave</th><th>SNP</th><th>Effetto</th><th>Indicazione pratica</th></tr></thead>
+    <h3>🍽️ Approccio Nutrizionale nell'AN</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--teal-d);margin-bottom:8px">🔄 Fasi del recupero ponderale</div>
+        <div style="padding:8px;background:#F0FDFA;border-radius:8px;margin-bottom:8px;border-left:3px solid var(--teal);font-size:13px">
+          <b>Fase 1 — Stabilizzazione (settimane 1–2):</b><br>Inizio con apporto calorico moderato. Ambulatoriale: 1200–1500 kcal/die. Ospedaliero: 1000–1200 kcal/die. Monitoraggio elettroliti ogni 48–72h. Obiettivo: non perdere peso ulteriormente.
+        </div>
+        <div style="padding:8px;background:#F0FDFA;border-radius:8px;margin-bottom:8px;border-left:3px solid var(--teal);font-size:13px">
+          <b>Fase 2 — Rialimentazione graduale (settimane 3–8):</b><br>Incremento di 100–200 kcal ogni 3–5 giorni. Obiettivo: aumento di 0.5–1 kg/settimana (ambulatorio) o 1–1.5 kg/settimana (degenza). Monitoraggio quotidiano di P, K, Mg in ospedale.
+        </div>
+        <div style="padding:8px;background:#F0FDFA;border-radius:8px;border-left:3px solid var(--teal);font-size:13px">
+          <b>Fase 3 — Mantenimento e normalizzazione (mesi):</b><br>Target BMI: ≥18.5. Introduzione progressiva di cibi "fobici". Educazione alimentare. Supporto psicologico continuo.
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:#DC2626;margin-bottom:8px">🚨 Refeeding Syndrome — Prevenzione</div>
+        <div class="info-box ib-red" style="font-size:12.5px;margin-bottom:10px">
+          Rischio elevato in: BMI &lt;14, digiuno &gt;5 giorni, storia di abuso di alcol o diuretici. Monitorare ogni 24–48h: <b>Fosforo, Potassio, Magnesio, Tiamina (B1)</b>.
+        </div>
+        <table class="dca-table">
+          <thead><tr><th>Elettrolita</th><th>Valore critico</th><th>Azione</th></tr></thead>
+          <tbody>
+            <tr><td>Fosforo</td><td>&lt;0.5 mmol/L</td><td>Stop rialimentazione + integrazione EV</td></tr>
+            <tr><td>Potassio</td><td>&lt;3.0 mEq/L</td><td>Integrazione orale/EV + ECG</td></tr>
+            <tr><td>Magnesio</td><td>&lt;0.5 mmol/L</td><td>Integrazione orale/EV</td></tr>
+            <tr><td>Tiamina (B1)</td><td>Profilattica</td><td>100 mg/die prima della rialimentazione</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;padding:10px;background:#EFF6FF;border-radius:8px;font-size:12.5px">
+          <b>Integrazioni raccomandate:</b> Multivitaminico completo · Tiamina B1 · Calcio + Vit D (osteoporosi) · Zinco (guarigione mucose) · Omega-3 (funzione cardiaca)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BULIMIA E BED -->
+<div class="dna-panel" id="tab-bulimia">
+  <div class="grid-2">
+    <div>
+      <div class="calc-box">
+        <h3>🔄 Bulimia Nervosa (BN)</h3>
+        <div class="info-box ib-amber">
+          <b>Criteri DSM-5:</b> (A) Abbuffate ricorrenti; (B) Comportamenti compensatori ricorrenti (vomito, lassativi, diuretici, digiuno, iperattività); (C) Frequenza ≥1×/sett. per 3 mesi; (D) Autovalutazione influenzata da forma e peso; (E) Non durante episodio di AN.
+        </div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--slate-m);margin:10px 0 8px">🍽️ Approccio nutrizionale</div>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="padding:8px;background:#FEF9EE;border-radius:8px;margin-bottom:8px">
+            <b>1. Struttura dei pasti:</b> 3 pasti principali + 2–3 spuntini. Orari regolari per ridurre la restrizione cognitiva che innesca le abbuffate.
+          </div>
+          <div style="padding:8px;background:#FEF9EE;border-radius:8px;margin-bottom:8px">
+            <b>2. Eliminare i "cibi proibiti":</b> La restrizione cognitiva aumenta il desiderio e le abbuffate. Reintroduzione graduale di tutti gli alimenti.
+          </div>
+          <div style="padding:8px;background:#FEF9EE;border-radius:8px;margin-bottom:8px">
+            <b>3. Apporto energetico adeguato:</b> Almeno 1600–1800 kcal/die per ridurre la fame biologica. Non prescrivere diete ipocaloriche.
+          </div>
+          <div style="padding:8px;background:#FEF9EE;border-radius:8px">
+            <b>4. Proteine a ogni pasto:</b> Aumentano la sazietà e stabilizzano la glicemia. Obiettivo: ≥0.8 g/kg/die.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="calc-box">
+        <h3>🍩 Binge Eating Disorder (BED)</h3>
+        <div class="info-box ib-purple">
+          <b>Criteri DSM-5:</b> (A) Abbuffate ricorrenti con ≥3 tra: mangiare rapidamente, mangiare fino a sentirsi sgradevolmente pieni, mangiare senza fame, mangiare da soli per vergogna, disgusto/senso di colpa; (B) Marcato disagio; (C) ≥1×/sett. per 3 mesi; (D) Nessuna condotta compensatoria.
+        </div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--slate-m);margin:10px 0 8px">🍽️ Approccio nutrizionale</div>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="padding:8px;background:#FAF5FF;border-radius:8px;margin-bottom:8px">
+            <b>1. Non prescrivere diete restrittive:</b> Le diete ipocaloriche peggiorano il ciclo abbuffata–restrizione nel BED.
+          </div>
+          <div style="padding:8px;background:#FAF5FF;border-radius:8px;margin-bottom:8px">
+            <b>2. Mindful eating:</b> Rallentare i pasti, ridurre le distrazioni (TV, smartphone), riconoscere fame/sazietà fisica vs. emotiva.
+          </div>
+          <div style="padding:8px;background:#FAF5FF;border-radius:8px;margin-bottom:8px">
+            <b>3. Monitoraggio del diario alimentare</b> con registrazione delle emozioni correlate agli episodi di abbuffata.
+          </div>
+          <div style="padding:8px;background:#FAF5FF;border-radius:8px">
+            <b>4. Evitare il "mangiare emotivo":</b> Identificare i trigger e sviluppare strategie alternative al cibo.
+          </div>
+        </div>
+      </div>
+      <div class="calc-box">
+        <h3>⚖️ BED e Gestione del Peso</h3>
+        <div class="info-box ib-teal" style="font-size:12.5px">
+          Nel BED, il trattamento del disturbo alimentare ha sempre la <b>priorità</b> sulla gestione del peso. Solo dopo la stabilizzazione del comportamento alimentare si può affrontare la perdita di peso, se indicata.
+        </div>
+        <div style="font-size:13px;padding:8px;background:#F0FDFA;border-radius:8px">
+          Approccio raccomandato: <b>CBT-E</b> (Terapia Cognitivo-Comportamentale per i disturbi alimentari) + supporto dietistico + eventuale farmacoterapia (lisdexamfetamina — approvata per BED in alcuni paesi).
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>⚡ Confronto Rapido BN vs BED</h3>
+    <table class="dca-table">
+      <thead><tr><th>Caratteristica</th><th>Bulimia Nervosa</th><th>BED</th></tr></thead>
       <tbody>
-        <tr>
-          <td><b>Folati / B9</b></td>
-          <td>MTHFR</td>
-          <td><span class="rs-badge">rs1801133</span></td>
-          <td>TT: attività MTHFR ridotta 70%. Omocisteina elevata.</td>
-          <td>Folati 600-800µg/die. Preferire 5-MTHF (forma metilata). Verdure a foglia scura, legumi.</td>
-        </tr>
-        <tr>
-          <td><b>Vitamina B12</b></td>
-          <td>TCN2, FUT2</td>
-          <td><span class="rs-badge">rs1801198</span></td>
-          <td>Ridotto assorbimento/trasporto B12.</td>
-          <td>Metilcobalamina 500-1000µg/die se portatori a rischio. Monitorare olotranscobalamina.</td>
-        </tr>
-        <tr>
-          <td><b>Ferro</b></td>
-          <td>HFE, TMPRSS6</td>
-          <td><span class="rs-badge">rs1800562 (C282Y)</span></td>
-          <td>HFE C282Y/H63D: emocromatosi ereditaria (accumulo Fe). TMPRSS6: anemia ferropriva resistente.</td>
-          <td>HFE C282Y omozigote: evitare supplementazione Fe, limitare carne rossa, no vitamina C ai pasti. Monitorare ferritina.</td>
-        </tr>
-        <tr>
-          <td><b>Vitamina C</b></td>
-          <td>SLC23A1/A2</td>
-          <td><span class="rs-badge">rs33972313</span></td>
-          <td>Ridotto assorbimento intestinale vitamina C.</td>
-          <td>Aumentare frutta e verdura fresca. Supplementazione 250-500mg/die se necessario.</td>
-        </tr>
-        <tr>
-          <td><b>Zinco</b></td>
-          <td>SLC30A8, ZIP4</td>
-          <td>Varie</td>
-          <td>Ridotto assorbimento/utilizzo zinco. Frequente in varianti del diabete T2.</td>
-          <td>Ottimizzare fonti alimentari: carne, ostriche, legumi. Fitati (cereali integrali) riducono assorbimento.</td>
-        </tr>
-        <tr>
-          <td><b>Vitamina A</b></td>
-          <td>BCMO1</td>
-          <td><span class="rs-badge">rs7501331</span></td>
-          <td>Ridotta conversione betacarotene → vitamina A retinolo (fino a -60%).</td>
-          <td>Portatori: privilegiare vitamina A preformata (fegato, uova, latticini). Non fare affidamento solo su betacarotene vegetale.</td>
-        </tr>
-        <tr>
-          <td><b>Caffè / caffeina</b></td>
-          <td>CYP1A2</td>
-          <td><span class="rs-badge">rs762551</span></td>
-          <td>Metabolizzatori lenti (CC): caffeina si accumula → ↑rischio CVD con &gt;1 tazza/die.</td>
-          <td>CC: max 1 caffè/die. Rischio infarto aumentato con &gt;4 tazze. AA (metabolizzatori veloci): fino a 4 tazze/die sicure.</td>
-        </tr>
-        <tr>
-          <td><b>Lattosio</b></td>
-          <td>LCT</td>
-          <td><span class="rs-badge">rs4988235</span></td>
-          <td>TT: non-persistenza lattasi. Intolleranza al lattosio geneticamente determinata.</td>
-          <td>TT: limitare latte fresco, privilegiare yogurt/formaggi stagionati. Integrare calcio da fonti alternative.</td>
-        </tr>
-        <tr>
-          <td><b>Vitamina E</b></td>
-          <td>SEC14L2, TTPA</td>
-          <td>Varie</td>
-          <td>Varianti associate a deficit vitamina E nonostante apporto adeguato.</td>
-          <td>Aumentare olio EVO, frutta secca, germe di grano. Monitorare alfa-tocoferolo plasmatico.</td>
-        </tr>
+        <tr><td>Abbuffate</td><td>✅ Sì (oggettive)</td><td>✅ Sì (oggettive)</td></tr>
+        <tr><td>Condotte compensatorie</td><td>✅ Sì (vomito, lassativi...)</td><td>❌ No</td></tr>
+        <tr><td>Peso corporeo</td><td>Solitamente normale/lieve sovrappeso</td><td>Spesso sovrappeso/obeso</td></tr>
+        <tr><td>Autostima influenzata da peso/forma</td><td>✅ Sì (criterio centrale)</td><td>Variabile</td></tr>
+        <tr><td>Frequenza diagnosi</td><td>≥1×/sett. per 3 mesi</td><td>≥1×/sett. per 3 mesi</td></tr>
+        <tr><td>Trattamento nutrizionale</td><td>Struttura pasti, eliminare cibi proibiti</td><td>Mindful eating, no dieta ipocalorica</td></tr>
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- SPORT E GENETICA -->
-<div class="dna-panel" id="tab-sport_gen">
-  <div class="info-box ib-amber">
-    <b>🏃 Genetica della Performance e Nutrizione Sportiva</b> — La genetica sportiva integra la nutrizione sportiva offrendo indicazioni personalizzate su recupero, adattamento, rischio infortuni e risposta ai nutrienti ergogenici.
-  </div>
-  <div class="grid-2">
-    <div class="calc-box">
-      <h3>🏃 Geni della Performance</h3>
-      <table class="gene-table">
-        <thead><tr><th>Gene</th><th>Funzione</th><th>Allele/Genotipo</th><th>Sport consigliato</th></tr></thead>
-        <tbody>
-          <tr><td><b>ACTN3</b></td><td>Alfa-actinina 3 — fibra muscolare veloce</td><td><b style="color:#15803D">RR</b>: potenza | <b style="color:#1D4ED8">XX</b>: endurance</td><td>RR: sprint/pesi | XX: maratona/triathlon</td></tr>
-          <tr><td><b>ACE</b></td><td>Enzima di conversione angiotensina — adattamento cardiovascolare</td><td><b style="color:#1D4ED8">II</b>: endurance | <b style="color:#15803D">DD</b>: potenza</td><td>II: ciclismo/nuoto | DD: sport forza</td></tr>
-          <tr><td><b>PPARGC1A</b></td><td>Coattivatore PGC-1α — biogenesi mitocondriale</td><td><b style="color:#1D4ED8">Gly482</b>: migliore adattamento aerobico</td><td>Gly482: beneficio da allenamento aerobico intenso</td></tr>
-          <tr><td><b>COL5A1</b></td><td>Collagene tipo V — struttura tendini e legamenti</td><td><b style="color:#DC2626">TT (rs12722)</b>: ↑rischio lesioni</td><td>TT: maggiore cautela, fisioterapia preventiva</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="calc-box">
-      <h3>🥗 Nutrizione Sportiva Genotipo-Specifica</h3>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="padding:10px;background:#FAF5FF;border-radius:8px;margin-bottom:10px">
-          <b>ACTN3 XX (endurance):</b><br>
-          — Fabbisogno CHO leggermente ridotto rispetto a RR<br>
-          — Risposta migliore a dieta con CHO moderati (5-7g/kg)<br>
-          — Recupero: minore richiesta proteica post-esercizio<br>
-          — Ferro: monitorare (endurance ↑foot-strike hemolysis)
-        </div>
-        <div style="padding:10px;background:#EDE9FE;border-radius:8px;margin-bottom:10px">
-          <b>ACTN3 RR (potenza):</b><br>
-          — Fabbisogno proteico maggiore: 1.8-2.2g/kg/die<br>
-          — CHO pre-workout critici per performance<br>
-          — Creatina monoidrato: risposta potenziata<br>
-          — Beta-alanina: risposta migliore per sport ad alta intensità
-        </div>
-        <div style="padding:10px;background:#FEF3C7;border-radius:8px">
-          <b>COL5A1 TT (rischio lesioni):</b><br>
-          — Vitamina C ≥200mg/die (sintesi collagene)<br>
-          — Gelatina/collagene idrolizzato 10g prima dell'esercizio<br>
-          — Curcumina anti-infiammatoria: 500mg/die<br>
-          — Omega-3 per ridurre infiammazione tendinea
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- APPLICAZIONE CLINICA -->
-<div class="dna-panel" id="tab-clinica">
-  <div class="info-box ib-purple">
-    <b>⚕️ Applicazione Clinica della Nutrigenomica</b> — Il profilo genetico nutrizionale si inserisce come strumento complementare — non sostitutivo — della valutazione nutrizionale standard. Deve essere interpretato in contesto clinico, ambientale e comportamentale.
-  </div>
-  <div class="grid-2">
-    <div class="calc-box">
-      <h3>📋 Percorso di Valutazione Nutrigenetica</h3>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 1 — Raccolta anamnestica completa</b><br>Storia clinica, familiare, alimentare, stile di vita. Dati antropometrici e composizione corporea. Esami di laboratorio di base.</div>
-        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 2 — Test genetico</b><br>Consenso informato scritto. Test su saliva (swab buccale). Laboratorio accreditato. Pannello SNP clinicamente validati (non test DTC non certificati).</div>
-        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 3 — Interpretazione integrata</b><br>Il dietista interpreta il referto genetico in chiave clinica, considerando penetranza, fenotipo osservato, abitudini attuali e obiettivi del paziente.</div>
-        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 4 — Piano nutrizionale personalizzato</b><br>Modifiche mirate al piano, non rivoluzione completa. Spiegare al paziente le basi del suo profilo genetico (empowerment).</div>
-        <div style="padding:8px;background:#F0F9FF;border-radius:8px;border-left:3px solid #0369A1"><b>Step 5 — Follow-up</b><br>Monitoraggio biomarker (omocisteina, 25-OH-D, ferritina, HbA1c ecc.). La genetica non cambia, ma l'alimentazione è modulabile. Rivalutare ogni 6-12 mesi.</div>
-      </div>
-    </div>
-    <div class="calc-box">
-      <h3>📊 Biomarker da Monitorare per Genotipo</h3>
-      <table class="gene-table">
-        <thead><tr><th>Genotipo a rischio</th><th>Biomarker prioritari</th><th>Target clinico</th></tr></thead>
-        <tbody>
-          <tr><td><b>MTHFR TT</b></td><td>Omocisteina plasmatica, folati eritrocitari, B12</td><td>Omocisteina &lt;10µmol/L</td></tr>
-          <tr><td><b>APOE ε4</b></td><td>LDL-C, ApoB, Lp(a), hs-CRP</td><td>LDL &lt;100mg/dL, hs-CRP &lt;2mg/L</td></tr>
-          <tr><td><b>VDR ff/FF</b></td><td>25-OH-D, PTH, calcio urinario</td><td>25-OH-D 40-60ng/mL</td></tr>
-          <tr><td><b>HFE C282Y</b></td><td>Ferritina, sideremia, transferrina</td><td>Ferritina 20-100ng/mL (M)</td></tr>
-          <tr><td><b>TCF7L2 TT</b></td><td>Glicemia a digiuno, HbA1c, insulina, HOMA-IR</td><td>HbA1c &lt;5.7%, HOMA-IR &lt;2.5</td></tr>
-          <tr><td><b>FTO AA</b></td><td>BMI, circonferenza vita, composizione corporea</td><td>BMI 18.5-24.9, vita &lt;94cm M</td></tr>
-          <tr><td><b>FADS1/2 TT</b></td><td>EPA+DHA eritrocitari (omega-3 index)</td><td>Omega-3 index &gt;8%</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- LINEE GUIDA ED ETICA -->
-<div class="dna-panel" id="tab-linee_guida">
+<!-- COMPLICANZE -->
+<div class="dna-panel" id="tab-complicanze">
   <div class="info-box ib-red">
-    <b>⚠️ Considerazioni Etiche e Limitazioni</b> — L'applicazione della nutrigenomica deve rispettare principi etici fondamentali: il genotipo non è destino, la privacy genetica è protetta dalla legge, e i test DTC (direct-to-consumer) non certificati possono essere fuorvianti.
+    <b>🏥 Complicanze Mediche nei DCA</b> — Le complicanze mediche possono essere gravi e potenzialmente letali. Il dietista deve riconoscerle e indirizzare tempestivamente il paziente al medico. Non trattare le complicanze in autonomia senza supervisione medica.
   </div>
   <div class="grid-2">
     <div class="calc-box">
-      <h3>⚖️ Principi Etici</h3>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="padding:8px;background:#FEE2E2;border-radius:8px;margin-bottom:8px">
-          <b>🔒 Privacy e consenso</b><br>
-          Il dato genetico è considerato dato sensibile (GDPR, D.Lgs. 196/2003). Consenso informato scritto obbligatorio. Il paziente ha diritto a conoscere o non conoscere i propri risultati. Il dato genetico non può essere condiviso senza autorizzazione.
+      <h3>❤️ Complicanze Cardiovascolari</h3>
+      <table class="dca-table">
+        <thead><tr><th>Complicanza</th><th>Meccanismo</th><th>Segni clinici</th></tr></thead>
+        <tbody>
+          <tr><td>Bradicardia</td><td>Adattamento metabolico al digiuno</td><td>FC &lt;50 bpm → emergenza</td></tr>
+          <tr><td>Ipotensione ortostatica</td><td>Deplezione di volume, ipokaliemia</td><td>Vertigini, sincope</td></tr>
+          <tr><td>Prolungamento QTc</td><td>Ipokaliemia, ipomagnesiemia</td><td>Rischio aritmie fatali</td></tr>
+          <tr><td>Insufficienza cardiaca</td><td>Atrofia miocardica</td><td>Edemi, dispnea — AN grave</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>🦴 Complicanze Ossee</h3>
+      <table class="dca-table">
+        <thead><tr><th>Complicanza</th><th>DCA</th><th>Approccio nutrizionale</th></tr></thead>
+        <tbody>
+          <tr><td>Osteopenia/Osteoporosi</td><td>AN (prevalenza ~90%)</td><td>Ca 1000–1500 mg/die + Vit D 1500–2000 UI/die</td></tr>
+          <tr><td>Fratture da stress</td><td>AN, BN (atleti)</td><td>Recupero ponderale + Ca + riduzione sport</td></tr>
+          <tr><td>Ritardo accrescimento</td><td>AN in adolescenza</td><td>Recupero peso + Ca + Vit D + Zinco</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box ib-amber" style="margin-top:8px;font-size:12px">
+        La perdita ossea nell'AN è in parte irreversibile. La prevenzione richiede recupero ponderale precoce + adeguato apporto di Ca e Vit D. La pillola anticoncezionale non protegge l'osso nell'AN.
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🫀 Complicanze Metaboliche ed Endocrine</h3>
+      <table class="dca-table">
+        <thead><tr><th>Complicanza</th><th>DCA</th><th>Note cliniche</th></tr></thead>
+        <tbody>
+          <tr><td>Amenorrea/oligomenorrea</td><td>AN, BN intensa</td><td>Indicatore di malnutrizione severa. Recupero con peso.</td></tr>
+          <tr><td>Ipoglicemia</td><td>AN, digiuno prolungato</td><td>Monitoraggio glicemico, pasti frequenti.</td></tr>
+          <tr><td>Ipotiroidismo funzionale (sick euthyroid)</td><td>AN</td><td>T3 basso ma TSH normale. Non trattare — si normalizza con peso.</td></tr>
+          <tr><td>Ipokaliemia</td><td>BN (vomito), lassativi</td><td>&lt;3.5 mEq/L: rischio aritmie. Integrazione orale/EV.</td></tr>
+          <tr><td>Iperamilasemia</td><td>BN (vomito)</td><td>Ghiandole parotidi ingrossate, erosione smalto.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>🧬 Complicanze Gastrointestinali</h3>
+      <table class="dca-table">
+        <thead><tr><th>Complicanza</th><th>DCA</th><th>Intervento</th></tr></thead>
+        <tbody>
+          <tr><td>Gastroparesi</td><td>AN (da malnutrizione)</td><td>Pasti piccoli e frequenti, cibi a basso contenuto di fibre e grassi nella fase acuta</td></tr>
+          <tr><td>Reflusso gastroesofageo</td><td>BN (vomito autoindotto)</td><td>Non mangiare in posizione supina, evitare cibi trigger</td></tr>
+          <tr><td>Stipsi cronica</td><td>AN, abuso lassativi</td><td>Aumento graduale di fibre + idratazione. Evitare lassativi.</td></tr>
+          <tr><td>Sindrome del colon irritabile</td><td>BED, BN</td><td>Dieta FODMAP se indicato, gestione stress</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>⚕️ Criteri di Ospedalizzazione Urgente</h3>
+    <div class="grid-3">
+      <div style="padding:10px;background:#FEE2E2;border-radius:8px;font-size:12.5px">
+        <b>🚨 Parametri vitali:</b><br>FC &lt;40 bpm · PAS &lt;80 mmHg · SpO₂ &lt;90% · Temperatura &lt;35°C · Sincope
+      </div>
+      <div style="padding:10px;background:#FEE2E2;border-radius:8px;font-size:12.5px">
+        <b>🧪 Laboratorio:</b><br>K &lt;2.5 mEq/L · Na &lt;125 mEq/L · Fosforo &lt;0.5 mmol/L · Glicemia &lt;50 mg/dL · QTc &gt;500 ms
+      </div>
+      <div style="padding:10px;background:#FEE2E2;border-radius:8px;font-size:12.5px">
+        <b>⚠️ Clinici:</b><br>BMI &lt;13 adulto · Calo &gt;1 kg/sett. · Rifiuto cure in ambulatorio · Ideazione suicidaria
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRATTAMENTO -->
+<div class="dna-panel" id="tab-trattamento">
+  <div class="info-box ib-teal">
+    <b>🤝 Approccio Multidisciplinare</b> — Il trattamento dei DCA richiede un team integrato. Il dietista è una figura chiave ma non può operare in isolamento. La collaborazione con psicologo/psichiatra e medico è essenziale per la sicurezza del paziente.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>👥 Il Team Multidisciplinare</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div style="padding:10px 12px;background:#F0FDFA;border-radius:8px;margin-bottom:8px;border-left:3px solid var(--teal)">
+          <b>🩺 Medico/Psichiatra</b><br>
+          Diagnosi, valutazione medica, prescrizione farmacologica (SSRI in BN/BED), gestione complicanze, eventuale ricovero.
         </div>
-        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px">
-          <b>⚠️ Non determinismo genetico</b><br>
-          "Il genotipo non è il fenotipo." L'epigenetica e l'ambiente (dieta, esercizio, stress) modificano l'espressione genica. Un singolo SNP spiega &lt;1% della varianza fenotipica nella maggior parte dei casi. Non creare determinismo o fatalismo nel paziente.
+        <div style="padding:10px 12px;background:#EFF6FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #3B82F6">
+          <b>🧠 Psicologo/Psicoterapeuta</b><br>
+          CBT-E, terapia familiare (FBT in adolescenti), DBT, terapia interpersonale. Lavoro su immagine corporea e autostima.
         </div>
-        <div style="padding:8px;background:#ECFDF5;border-radius:8px;margin-bottom:8px">
-          <b>✅ Comunicazione al paziente</b><br>
-          Spiegare in termini comprensibili: "Ha una variante che rende il suo corpo meno efficiente nell'elaborare i folati → mangiamo più verdure a foglia verde e valutiamo un integratore." Non: "Ha un gene 'cattivo'."
+        <div style="padding:10px 12px;background:#ECFDF5;border-radius:8px;margin-bottom:8px;border-left:3px solid #10B981">
+          <b>🥗 Dietista</b><br>
+          Valutazione nutrizionale, piano alimentare personalizzato, educazione alimentare, supporto nel cambiamento comportamentale, monitoraggio ponderale.
         </div>
-        <div style="padding:8px;background:#EDE9FE;border-radius:8px">
-          <b>🔬 Qualità dei test</b><br>
-          Utilizzare solo laboratori accreditati con pannelli validati scientificamente. Evitare test DTC non certificati che analizzano centinaia di SNP non validati clinicamente. La norma ISO 15189 è il riferimento per i laboratori di genetica clinica.
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #F59E0B">
+          <b>👨‍👩‍👧 Famiglia/Supporto sociale</b><br>
+          Fondamentale nell'adolescenza (FBT). Psicoeducazione familiare. Gruppi di supporto tra pari.
         </div>
       </div>
     </div>
     <div class="calc-box">
-      <h3>📚 Documenti e Linee Guida di Riferimento</h3>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #7C3AED;margin-bottom:10px">
-          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">ISNN Position Stand — Nutrigenomics 2021</div>
-          <div style="font-size:12px;color:#334155;margin-bottom:8px">International Society of Sports Nutrition — posizione ufficiale sulla nutrigenomica applicata alla performance sportiva.</div>
-          <a href="https://jissn.biomedcentral.com/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#7C3AED;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 JISSN →</a>
+      <h3>🎯 Livelli di Cura</h3>
+      <table class="dca-table">
+        <thead><tr><th>Livello</th><th>Setting</th><th>Indicazioni</th></tr></thead>
+        <tbody>
+          <tr><td><b>1</b></td><td>Ambulatoriale base</td><td>BMI &gt;17.5, motivazione presente, assenza di complicanze mediche acute</td></tr>
+          <tr><td><b>2</b></td><td>Ambulatoriale intensivo</td><td>BMI 15–17.5, lieve calo ponderale, compliance moderata</td></tr>
+          <tr><td><b>3</b></td><td>Day Hospital</td><td>BMI 14–15, necessità di supervisione pasti, fallimento ambulatoriale</td></tr>
+          <tr><td><b>4</b></td><td>Residenziale</td><td>BMI &lt;14, necessità di struttura 24h, comorbidità psichiatrica grave</td></tr>
+          <tr><td><b>5</b></td><td>Ospedaliero</td><td>Emergenze mediche, rifiuto cure, rischio vitale</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🗓️ Piano del Trattamento Dietistico</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--teal-d);margin-bottom:8px">📝 Prima valutazione</div>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="padding:7px 10px;background:#F0FDFA;border-radius:7px;margin-bottom:7px"><b>Anamnesi alimentare completa:</b> storia del peso, diete pregresse, cibi fobici, rituali, abbuffate/compensazioni, comportamento alimentare in famiglia.</div>
+          <div style="padding:7px 10px;background:#F0FDFA;border-radius:7px;margin-bottom:7px"><b>Valutazione nutrizionale:</b> peso, altezza, BMI, composizione corporea (se tollerato), parametri biochimici (emocromo, elettroliti, ferritina, vit D, zinco).</div>
+          <div style="padding:7px 10px;background:#F0FDFA;border-radius:7px"><b>Valutazione della motivazione</b> (stadio del cambiamento di Prochaska): non imporre cambiamenti se il paziente è in fase pre-contemplativa.</div>
         </div>
-        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #6D28D9;margin-bottom:10px">
-          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">Nutrigenomics International Consortium (NUGO)</div>
-          <div style="font-size:12px;color:#334155;margin-bottom:8px">Consorzio europeo per la ricerca in nutrigenomica e nutrigenetica clinica.</div>
-          <a href="https://www.nugo.org" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#6D28D9;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 NUGO →</a>
+      </div>
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--teal-d);margin-bottom:8px">📊 Monitoraggio follow-up</div>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="padding:7px 10px;background:#F0FDFA;border-radius:7px;margin-bottom:7px"><b>Frequenza:</b> settimanale nella fase acuta, quindicinale in fase di mantenimento, mensile nella fase di consolidamento.</div>
+          <div style="padding:7px 10px;background:#F0FDFA;border-radius:7px;margin-bottom:7px"><b>Parametri da monitorare:</b> peso (stesso orario, stessi indumenti), composizione corporea (se appropriato), aderenza al piano, frequenza abbuffate/compensazioni, qualità della vita.</div>
+          <div style="padding:7px 10px;background:#F0FDFA;border-radius:7px"><b>Comunicazione col team:</b> aggiornamento regolare su andamento nutrizionale. Segnalare tempestivamente peggioramenti o complicanze.</div>
         </div>
-        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #5B21B6;margin-bottom:10px">
-          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">EFSA — Panel on Dietetic Products (NDA)</div>
-          <div style="font-size:12px;color:#334155;margin-bottom:8px">Opinioni scientifiche dell'Autorità Europea per la Sicurezza Alimentare su nutrigenomica e nutrizione personalizzata.</div>
-          <a href="https://www.efsa.europa.eu/en/topics/topic/nutrition" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#5B21B6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 EFSA NDA →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LINEE GUIDA -->
+<div class="dna-panel" id="tab-linee_guida">
+  <div class="info-box ib-blue">
+    <b>📚 Linee Guida Internazionali e Nazionali</b> — I DCA devono essere trattati secondo le evidenze scientifiche più aggiornate. Le principali linee guida internazionali convergono sull'importanza del trattamento multidisciplinare e della CBT-E come gold standard psicoterapeutico.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📋 Linee Guida Principali</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div style="padding:12px 14px;background:#EFF6FF;border-radius:10px;border-left:4px solid #3B82F6;margin-bottom:10px">
+          <div style="font-weight:700;color:#1E3A5F;margin-bottom:4px">NICE Guidelines — Eating Disorders (NG69, 2017)</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Linee guida britanniche di riferimento: raccomandano CBT-E come trattamento di prima scelta per AN, BN e BED negli adulti; FBT per adolescenti con AN.</div>
+          <a href="https://www.nice.org.uk/guidance/ng69" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 NICE NG69 →</a>
         </div>
-        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #4C1D95">
-          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">SNUGG — Società Italiana Nutrigenetica</div>
-          <div style="font-size:12px;color:#334155;margin-bottom:8px">Linee guida italiane per la nutrigenetica clinica e formazione professionale dei dietisti.</div>
-          <a href="https://pubmed.ncbi.nlm.nih.gov/?term=nutrigenetics+Italy" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#4C1D95;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 PubMed → nutrigenetica</a>
+        <div style="padding:12px 14px;background:#EFF6FF;border-radius:10px;border-left:4px solid #1D4ED8;margin-bottom:10px">
+          <div style="font-weight:700;color:#1E3A5F;margin-bottom:4px">APA Practice Guideline for Eating Disorders (2023)</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Aggiornamento delle linee guida dell'American Psychiatric Association con raccomandazioni basate su evidenze per AN, BN, BED e altri DCA.</div>
+          <a href="https://www.psychiatry.org/psychiatrists/practice/clinical-practice-guidelines" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#1D4ED8;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 APA Guidelines →</a>
+        </div>
+        <div style="padding:12px 14px;background:#ECFDF5;border-radius:10px;border-left:4px solid #10B981;margin-bottom:10px">
+          <div style="font-weight:700;color:#064E3B;margin-bottom:4px">ISS — Rapporto Disturbi Alimentari (2022)</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Istituto Superiore di Sanità — linee di indirizzo nazionali per la riabilitazione nutrizionale nei DCA. Documento di riferimento per i professionisti italiani.</div>
+          <a href="https://www.iss.it/disturbi-del-comportamento-alimentare" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#10B981;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 ISS →</a>
+        </div>
+        <div style="padding:12px 14px;background:#ECFDF5;border-radius:10px;border-left:4px solid #059669">
+          <div style="font-weight:700;color:#064E3B;margin-bottom:4px">SISDCA — Linee di indirizzo per la riabilitazione nutrizionale (2022)</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Società Italiana per lo Studio dei Disturbi del Comportamento Alimentare — documento specifico per il dietista nei DCA.</div>
+          <a href="https://www.sisdca.it" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#059669;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 SISDCA →</a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="calc-box">
+        <h3>⚖️ Principi Etici per il Dietista nei DCA</h3>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px">
+            <b>⚠️ Non danneggiare:</b><br>Non prescrivere mai diete ipocaloriche nell'AN. Non pesare ossessivamente il paziente. Non commentare negativamente il corpo o il peso.
+          </div>
+          <div style="padding:8px;background:#ECFDF5;border-radius:8px;margin-bottom:8px">
+            <b>✅ Approccio weight-neutral:</b><br>Nella fase iniziale del trattamento, l'obiettivo è il miglioramento del comportamento alimentare, non la normalizzazione del peso. "Health at every size" come principio guida nel BED.
+          </div>
+          <div style="padding:8px;background:#EFF6FF;border-radius:8px;margin-bottom:8px">
+            <b>🤝 Alleanza terapeutica:</b><br>Il paziente con DCA è spesso ambivalente. Non imporre, ma motivare. L'alleanza terapeutica è fondamentale per l'aderenza al trattamento.
+          </div>
+          <div style="padding:8px;background:#EDE9FE;border-radius:8px">
+            <b>🔒 Confidenzialità e segnalazione:</b><br>Rispettare la privacy del paziente, ma segnalare al medico in caso di rischio vitale imminente. Il segreto professionale non protegge in caso di pericolo di vita.
+          </div>
+        </div>
+      </div>
+      <div class="calc-box">
+        <h3>📖 Risorse Formative</h3>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="padding:8px 12px;background:#F8FAFC;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+            <span><b>Journal of Eating Disorders</b> — Rivista open access dedicata ai DCA</span>
+            <a href="https://jeatdisord.biomedcentral.com" target="_blank" class="btn btn-ghost btn-xs">🔗</a>
+          </div>
+          <div style="padding:8px 12px;background:#F8FAFC;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+            <span><b>International Journal of Eating Disorders</b></span>
+            <a href="https://onlinelibrary.wiley.com/journal/10970703" target="_blank" class="btn btn-ghost btn-xs">🔗</a>
+          </div>
+          <div style="padding:8px 12px;background:#F8FAFC;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+            <span><b>Eating Disorder Hope</b> — Risorse per professionisti</span>
+            <a href="https://www.eatingdisorderhope.com" target="_blank" class="btn btn-ghost btn-xs">🔗</a>
+          </div>
+          <div style="padding:8px 12px;background:#F8FAFC;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+            <span><b>ABA — Associazione Bulimia Anoressia</b></span>
+            <a href="https://www.aba-onlus.com" target="_blank" class="btn btn-ghost btn-xs">🔗</a>
+          </div>
         </div>
       </div>
     </div>
@@ -588,6 +626,19 @@ function showDna(id) {
   document.querySelectorAll('.dna-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   event.target.classList.add('active');
+}
+
+function calcolaScoff() {
+  const tot = ['s1','s2','s3','s4','s5'].filter(id => document.getElementById(id).checked).length;
+  const res = document.getElementById('scoff-result');
+  res.style.display = 'block';
+  if (tot >= 2) {
+    res.style.background = '#FEE2E2';
+    res.innerHTML = `<b>🔴 Punteggio SCOFF: ${tot}/5 — Screening POSITIVO</b><br>Punteggio ≥2 indica un possibile disturbo del comportamento alimentare. Si raccomanda un approfondimento clinico con psicologo/psichiatra specializzato in DCA.`;
+  } else {
+    res.style.background = '#ECFDF5';
+    res.innerHTML = `<b>🟢 Punteggio SCOFF: ${tot}/5 — Screening negativo</b><br>Punteggio &lt;2. Non emergono segnali di rischio da questo screening. Tuttavia, se clinicamente indicato, considerare una valutazione più approfondita.`;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

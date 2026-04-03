@@ -38,6 +38,15 @@
 .ci-val{font-size:13px;font-weight:700;color:var(--slate)}
 .note-clinica{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:12px;padding:13px 17px;font-size:12.5px;color:#1E3A5F;line-height:1.75;margin-bottom:14px;border-left:4px solid #3B82F6;position:relative}
 .cc-actions{margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;border-top:2px solid var(--border);padding-top:12px}
+.cc-note-paz-box{margin-top:12px;background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border-radius:12px;padding:13px 17px;border-left:4px solid #F59E0B;display:none}
+.cc-note-paz-box.visible{display:block}
+.cc-note-paz-box textarea{width:100%;padding:8px 10px;border:1.5px solid #FCD34D;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;box-sizing:border-box;margin-top:6px;transition:border-color .15s}
+.cc-note-paz-box textarea:focus{border-color:#F59E0B}
+.cc-note-paz-label{font-size:11px;font-weight:800;color:#92400E;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:5px}
+.cs-paz-bar{background:white;border:1.5px solid var(--border-d);border-radius:14px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.cs-paz-bar label{font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.cs-paz-bar select{flex:1;min-width:200px;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none}
+.cs-paz-bar select:focus{border-color:var(--teal-l)}
 
 /* ── SEARCH BAR ── */
 .cs-search-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;background:white;border:1.5px solid var(--border-d);border-radius:14px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
@@ -90,17 +99,22 @@
   .print-header{display:block!important}
   h1.print-title{font-family:'DM Serif Display',serif;font-size:22pt;color:#0F766E;margin-bottom:4px}
   .print-subtitle{font-size:10pt;color:#64748B;margin-bottom:20px}
-  /* Atlas print: show grid, hide detail panel, show visual reference in each card */
+  /* Hide all tabs bar */
   .cs-tabs{display:none!important}
-  .cs-panel{display:block!important}
-  #tab-patologie{display:none!important}
-  #tab-educazione{display:none!important}
+  /* By default hide all panels */
+  .cs-panel{display:none!important}
+  /* Show only the active print tab — controlled by body[data-print-tab] */
+  body[data-print-tab="patologie"] #tab-patologie{display:block!important}
+  body[data-print-tab="educazione"] #tab-educazione{display:block!important}
+  body[data-print-tab="atlante"] #tab-atlante{display:block!important}
+  /* Fallback: if no attribute set, show the panel that has .active */
+  body:not([data-print-tab]) .cs-panel.active{display:block!important}
+  /* Atlas-specific print styles */
   .atlas-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:8px!important}
   .atlas-item{page-break-inside:avoid;cursor:default!important;border:1px solid #CBD5E1!important}
   .atlas-item:hover{transform:none!important;box-shadow:none!important}
   .atlas-detail{display:none!important}
   .atlas-cat-btn{display:none!important}
-  /* Show the visual reference below each card when printing */
   .atlas-item::after{
     content:attr(data-obj);
     display:block;
@@ -112,8 +126,9 @@
     padding-top:3px;
   }
   .atlas-print-ref{display:block!important;font-size:9px;color:#64748B;font-style:italic;border-top:1px solid #E2E8F0;padding-top:3px;margin-top:4px}
-  /* Atlas print title */
   #tab-atlante::before{content:"🍽️ Atlante Porzioni Alimentari — DietPlan Pro";display:block;font-size:16pt;font-weight:700;color:#0F766E;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #0F766E}
+  /* Patologie: show note paziente in print */
+  .cc-note-paz-box{display:block!important}
 }
 </style>
 </head>
@@ -158,7 +173,7 @@
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>💡 Consigli Nutrizionali per Patologia</h2>
   <div class="tbar-actions no-print">
-    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaPaginaAttiva()">🖨️ Stampa</button>
     <button class="btn btn-primary btn-sm" onclick="openNuovoConsiglio()">➕ Consiglio Personalizzato</button>
   </div>
 </div>
@@ -205,6 +220,16 @@
     <span id="cs-count" style="font-size:12px;color:var(--slate-l);white-space:nowrap;background:#F1F5F9;padding:4px 10px;border-radius:8px;font-weight:600"></span>
   </div>
 
+  <!-- Selezione cartella paziente per note -->
+  <div class="cs-paz-bar no-print" id="cs-paz-bar">
+    <span style="font-size:18px">📁</span>
+    <label>Cartella Paziente per Note:</label>
+    <select id="cs-cartella" onchange="onCartellaChange()" onfocus="loadCSCartelle()">
+      <option value="">-- Nessuna cartella selezionata --</option>
+    </select>
+    <span style="font-size:12px;color:var(--slate-l);flex-shrink:0">Seleziona una cartella per aggiungere note personalizzate ai consigli</span>
+  </div>
+
   <div id="consigli-list"></div>
 </div>
 
@@ -220,7 +245,7 @@
       <div style="font-size:17px;font-weight:700;margin-bottom:4px">Educazione Alimentare per Soggetti Sani</div>
       <div style="font-size:12.5px;opacity:.9">Basata sulle <b>Linee Guida per una Sana Alimentazione 2018 (CREA)</b> · Piramide Alimentare Mediterranea Aggiornata · LARN 2023</div>
     </div>
-    <button class="btn btn-sm no-print" onclick="window.print()" style="margin-left:auto;background:rgba(255,255,255,.2);color:white;border:none">🖨️ Stampa</button>
+    <button class="btn btn-sm no-print" onclick="stampaPaginaAttiva()" style="margin-left:auto;background:rgba(255,255,255,.2);color:white;border:none">🖨️ Stampa</button>
   </div>
 
   <!-- PIRAMIDE ALIMENTARE -->
@@ -534,6 +559,22 @@
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
+
+<!-- Modale Setup SQL -->
+<div class="modal" id="modal-sql-setup">
+  <div class="modal-box" style="max-width:600px">
+    <div class="modal-hdr"><span>⚙️ Setup Database — Tabella Mancante</span><button onclick="closeM('modal-sql-setup')">✕</button></div>
+    <div style="padding:18px">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova.</p>
+      <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
+        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="js/utils.js"></script>
 <script>
 // ═══════════════════════════════
@@ -902,7 +943,19 @@ function showTab(id, btn) {
   document.getElementById('tab-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
   else document.querySelector(`.cs-tab[onclick*="${id}"]`)?.classList.add('active');
+  document.body.dataset.printTab = id;
 }
+
+function stampaPaginaAttiva() {
+  const active = document.querySelector('.cs-panel.active');
+  const id = active ? active.id.replace('tab-', '') : 'patologie';
+  document.body.dataset.printTab = id;
+  window.print();
+}
+
+window.addEventListener('afterprint', () => {
+  delete document.body.dataset.printTab;
+});
 
 // ═══════════════════════════════
 // RENDER CARDS (improved)
@@ -942,9 +995,20 @@ function buildConsiglio(c, isCustom = false) {
       ${c.mod && c.mod.length ? `<div class="cc-section"><h4>⚠️ Con Moderazione</h4><div class="food-grid">${c.mod.map(f=>`<span class="food-mod">${esc(f)}</span>`).join('')}</div></div>` : ''}
       ${c.pratici && c.pratici.length ? `<div class="cc-section"><h4>💡 Consigli Pratici</h4><ul style="list-style:none;padding:0">${c.pratici.map(p=>`<li style="padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--slate-m)"><span style="color:${hex};font-weight:700">→</span> ${esc(p)}</li>`).join('')}</ul></div>` : ''}
       ${c.avvisi && c.avvisi.length ? `<div class="cc-section"><h4>🚨 Avvertenze</h4><div style="background:#FEF2F2;border-radius:10px;padding:12px 14px;border:1px solid #FECACA">${c.avvisi.map(a=>`<div style="font-size:12.5px;color:#991B1B;padding:4px 0;border-bottom:1px solid #FEE2E2;display:flex;align-items:flex-start;gap:6px">⚠️ ${esc(a)}</div>`).join('')}</div></div>` : ''}
+      <!-- NOTE PAZIENTE -->
+      <div class="cc-note-paz-box" id="note-box-${c.id}">
+        <div class="cc-note-paz-label">✏️ Note specifiche per il paziente</div>
+        <textarea id="note-text-${c.id}" rows="3" placeholder="Aggiungi note personalizzate per questo paziente..."></textarea>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+          <button class="btn btn-amber btn-sm" onclick="salvaNotePaziente('${c.id}')">💾 Salva note</button>
+          <button class="btn btn-ghost btn-sm" onclick="stampaConsiglioConNote('${c.id}')">🖨️ Stampa con note</button>
+        </div>
+        <div id="note-stato-${c.id}" style="font-size:11px;color:var(--slate-l);margin-top:4px"></div>
+      </div>
       <div class="cc-actions no-print">
         <button class="btn btn-ghost btn-sm" onclick="stampaConsiglio('${c.id}')">🖨️ Stampa</button>
         <button class="btn btn-amber btn-sm" onclick="stampaPdfConsiglio('${c.id}')">📄 PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleNotePaziente('${c.id}')" id="note-btn-${c.id}">✏️ Note paziente</button>
         ${isCustom ? `<button class="btn btn-ghost btn-sm" onclick="editConsiglio('${c.id}')">✏️ Modifica</button><button class="btn btn-danger btn-sm" onclick="delConsiglio('${c.id}')">🗑️ Elimina</button>` : ''}
       </div>
     </div>`;
@@ -971,8 +1035,9 @@ function getAllConsigli() {
 function stampaConsiglio(id) {
   const c = getAllConsigli().find(x => x.id === id);
   if (!c) return;
+  const note = document.getElementById('note-text-' + id)?.value || '';
   const win = window.open('', '_blank', 'width=800,height=900');
-  win.document.write(buildStampaHTML(c));
+  win.document.write(buildStampaHTML(c, note));
   win.document.close();
   win.onload = () => { win.focus(); win.print(); };
 }
@@ -980,13 +1045,18 @@ function stampaConsiglio(id) {
 function stampaPdfConsiglio(id) {
   const c = getAllConsigli().find(x => x.id === id);
   if (!c) return;
+  const note = document.getElementById('note-text-' + id)?.value || '';
   const win = window.open('', '_blank', 'width=800,height=900');
-  win.document.write(buildStampaHTML(c));
+  win.document.write(buildStampaHTML(c, note));
   win.document.close();
   win.onload = () => { win.focus(); win.print(); win.close(); };
 }
 
-function buildStampaHTML(c) {
+function stampaConsiglioConNote(id) {
+  stampaConsiglio(id);
+}
+
+function buildStampaHTML(c, notePaziente = '') {
   const foodPill = (f, cls, col, bg) => 
     `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:500;margin:3px;background:${bg};color:${col}">${f}</span>`;
   
@@ -997,6 +1067,7 @@ function buildStampaHTML(c) {
     `<li style="padding:5px 0;border-bottom:1px solid #E2E8F0;font-size:12pt;color:#334155">→ ${p}</li>`).join('');
   const avvisiHtml = (c.avvisi||[]).map(a => 
     `<div style="padding:5px 8px;border-bottom:1px solid #FEE2E2;font-size:11pt;color:#991B1B">⚠️ ${a}</div>`).join('');
+  const noteHtml = notePaziente ? `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;font-size:10pt;color:#78350F;margin-bottom:14px;line-height:1.6;white-space:pre-wrap"><b>✏️ Note specifiche per il paziente:</b><br>${notePaziente}</div>` : '';
 
   return `<!DOCTYPE html>
 <html lang="it">
@@ -1040,7 +1111,7 @@ function buildStampaHTML(c) {
   </div>
 
   ${c.nota ? `<div class="nota">📚 ${c.nota}</div>` : ''}
-
+  ${noteHtml}
   <div class="alimenti-grid">
     <div>
       <div class="section-title">✅ Alimenti Consigliati</div>
@@ -1172,8 +1243,121 @@ async function loadConsigliCustom() {
   consigliPersonalizzati = (data || []).map(r => { try { return JSON.parse(r.contenuto); } catch { return null; } }).filter(Boolean);
 }
 
+// ═══════════════════════════════
+// NOTE PAZIENTE PER CONSIGLIO
+// ═══════════════════════════════
+let noteConsigli = {}; // { consiglio_id: { id (supabase row id), testo } }
+
+function toggleNotePaziente(id) {
+  const box = document.getElementById('note-box-' + id);
+  if (!box) return;
+  const visible = box.classList.toggle('visible');
+  const btn = document.getElementById('note-btn-' + id);
+  if (btn) btn.textContent = visible ? '✖ Chiudi note' : '✏️ Note paziente';
+}
+
+async function loadCSCartelle() {
+  if (!currentUser) return;
+  const sel = document.getElementById('cs-cartella');
+  if (!sel || sel.dataset.loaded) return;
+  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  if (!data) return;
+  sel.innerHTML = '<option value="">-- Nessuna cartella selezionata --</option>';
+  data.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = '📁 ' + c.nome;
+    sel.appendChild(o);
+  });
+  sel.dataset.loaded = '1';
+}
+
+async function onCartellaChange() {
+  const cartella_id = document.getElementById('cs-cartella')?.value;
+  if (!cartella_id || !currentUser) { noteConsigli = {}; return; }
+  await caricaNoteConsigli(cartella_id);
+}
+
+async function caricaNoteConsigli(cartella_id) {
+  const { data } = await sb.from('note_specialistiche').select('*').eq('cartella_id', cartella_id).eq('user_id', currentUser.id).eq('tipo', 'consiglio');
+  noteConsigli = {};
+  (data || []).forEach(row => {
+    try {
+      const d = JSON.parse(row.dati || '{}');
+      if (d.consiglio_id) noteConsigli[d.consiglio_id] = { id: row.id, testo: d.note_paziente || '' };
+    } catch(e) {}
+  });
+  // Populate textareas
+  Object.entries(noteConsigli).forEach(([cid, n]) => {
+    const ta = document.getElementById('note-text-' + cid);
+    if (ta) ta.value = n.testo;
+    const box = document.getElementById('note-box-' + cid);
+    if (box && n.testo) box.classList.add('visible');
+    const btn = document.getElementById('note-btn-' + cid);
+    if (btn && n.testo) btn.textContent = '✖ Chiudi note';
+    const stato = document.getElementById('note-stato-' + cid);
+    if (stato && n.testo) stato.textContent = '✅ Nota salvata in cartella';
+  });
+}
+
+async function salvaNotePaziente(consiglioId) {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartella_id = document.getElementById('cs-cartella')?.value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente nella barra in alto', 'err'); return; }
+  const testo = document.getElementById('note-text-' + consiglioId)?.value || '';
+  const c = getAllConsigli().find(x => x.id === consiglioId);
+  const dati = { consiglio_id: consiglioId, consiglio_nome: c?.nome || consiglioId, note_paziente: testo };
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  const existing = noteConsigli[consiglioId];
+  if (existing?.id) {
+    result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', existing.id);
+  } else {
+    result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString() });
+  }
+  showLoading(false);
+  if (result.error) {
+    if (result.error.code === '42P01') {
+      mostraModalSetupSQL();
+    } else {
+      toast('❌ ' + result.error.message, 'err');
+    }
+    return;
+  }
+  // Reload notes to get the new ID
+  await caricaNoteConsigli(cartella_id);
+  const stato = document.getElementById('note-stato-' + consiglioId);
+  if (stato) stato.textContent = '✅ Nota salvata in cartella';
+  toast('✅ Nota salvata!', 'ok');
+}
+
+function mostraModalSetupSQL() {
+  const sql = `-- Esegui questo SQL nel tuo pannello Supabase (SQL Editor):
+CREATE TABLE IF NOT EXISTS note_specialistiche (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users NOT NULL,
+  tipo text NOT NULL,
+  nota text,
+  dati jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
+  console.error(sql);
+  const modal = document.getElementById('modal-sql-setup');
+  if (modal) {
+    document.getElementById('sql-setup-text').value = sql;
+    openM('modal-sql-setup');
+  } else {
+    toast('⚠️ Tabella DB mancante — SQL copiato in console (F12)', 'err');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('print-date').textContent = new Date().toLocaleDateString('it');
+  document.body.dataset.printTab = 'patologie';
   renderConsigli();
   renderAtlas();
   renderECM();

@@ -406,8 +406,50 @@ const DB_APROTEICI = [
 ];
 
 
+// ═══════════════════════════════════════════════════════
+// DB_FLAVIS — Prodotti aproteici Flavis (Dr. Schär Group)
+// Fonte: Flavis (www.flavis.net) — linea aproteica per
+//        IRC, PKU e altre patologie con restrizione proteica.
+// Valori su 100g di prodotto (salvo indicazione contraria)
+// ═══════════════════════════════════════════════════════
+const DB_FLAVIS = [
+  // PASTA FLAVIS
+  {n:"Flavis Pasta Penne Rigate aproteiche",c:"Flavis - Pasta",src:"FLAVIS",k:367,p:0.4,gs:0.3,g:1.5,z:1.8,ch:86,fi:1.0,ca:8,fe:0.5,mg:7,k2:28,na:6,zn:0.1,fo:16,se:1,col:0},
+  {n:"Flavis Pasta Fusilli aproteici",c:"Flavis - Pasta",src:"FLAVIS",k:366,p:0.4,gs:0.3,g:1.4,z:1.7,ch:86,fi:1.0,ca:8,fe:0.5,mg:7,k2:28,na:6,zn:0.1,fo:16,se:1,col:0},
+  {n:"Flavis Pasta Spaghetti aproteici",c:"Flavis - Pasta",src:"FLAVIS",k:365,p:0.4,gs:0.2,g:1.2,z:1.5,ch:86,fi:0.9,ca:7,fe:0.4,mg:6,k2:25,na:5,zn:0.1,fo:15,se:1,col:0},
+  {n:"Flavis Pasta Farfalle aproteiche",c:"Flavis - Pasta",src:"FLAVIS",k:366,p:0.4,gs:0.3,g:1.4,z:1.7,ch:86,fi:1.0,ca:8,fe:0.5,mg:7,k2:27,na:6,zn:0.1,fo:16,se:1,col:0},
+  {n:"Flavis Pasta Tagliatelle aproteiche",c:"Flavis - Pasta",src:"FLAVIS",k:364,p:0.4,gs:0.2,g:1.3,z:1.6,ch:86,fi:0.9,ca:7,fe:0.4,mg:6,k2:26,na:5,zn:0.1,fo:15,se:1,col:0},
+  {n:"Flavis Lasagne aproteiche",c:"Flavis - Pasta",src:"FLAVIS",k:362,p:0.4,gs:0.2,g:1.2,z:1.5,ch:85,fi:0.9,ca:7,fe:0.4,mg:6,k2:25,na:5,zn:0.1,fo:15,se:1,col:0},
+  {n:"Flavis Pasta Ditalini aproteici",c:"Flavis - Pasta",src:"FLAVIS",k:366,p:0.4,gs:0.3,g:1.4,z:1.7,ch:86,fi:1.0,ca:8,fe:0.5,mg:7,k2:27,na:6,zn:0.1,fo:16,se:1,col:0},
+  {n:"Flavis Gnocchi di patate aproteici",c:"Flavis - Pasta",src:"FLAVIS",k:215,p:0.3,gs:0.2,g:0.4,z:0.8,ch:52,fi:0.5,ca:5,fe:0.2,mg:4,k2:18,na:390,zn:0.05,fo:9,se:0,col:0},
+  // PANE E PRODOTTI DA FORNO FLAVIS
+  {n:"Flavis Fette biscottate aproteiche",c:"Flavis - Pane",src:"FLAVIS",k:388,p:0.5,gs:0.4,g:6.0,z:5.0,ch:80,fi:1.8,ca:22,fe:0.9,mg:9,k2:82,na:430,zn:0.1,fo:26,se:1,col:0},
+  {n:"Flavis Pane bianco aproteico a fette",c:"Flavis - Pane",src:"FLAVIS",k:248,p:0.4,gs:0.4,g:4.2,z:2.2,ch:51,fi:2.8,ca:28,fe:0.6,mg:9,k2:62,na:495,zn:0.1,fo:22,se:1,col:0},
+  {n:"Flavis Crackers aproteici",c:"Flavis - Pane",src:"FLAVIS",k:438,p:0.5,gs:0.6,g:13,z:2.0,ch:76,fi:1.8,ca:18,fe:0.7,mg:7,k2:62,na:545,zn:0.1,fo:20,se:1,col:0},
+  {n:"Flavis Grissini aproteici",c:"Flavis - Pane",src:"FLAVIS",k:428,p:0.4,gs:0.5,g:11,z:2.5,ch:80,fi:1.4,ca:14,fe:0.6,mg:6,k2:52,na:500,zn:0.1,fo:17,se:1,col:0},
+  {n:"Flavis Mix per pane aproteico",c:"Flavis - Pane",src:"FLAVIS",k:372,p:0.4,gs:0.2,g:1.8,z:2.0,ch:88,fi:1.2,ca:14,fe:0.6,mg:9,k2:42,na:12,zn:0.1,fo:17,se:1,col:0},
+  {n:"Flavis Panini aproteici (cotti)",c:"Flavis - Pane",src:"FLAVIS",k:242,p:0.4,gs:0.4,g:3.8,z:2.0,ch:50,fi:2.5,ca:25,fe:0.5,mg:8,k2:58,na:480,zn:0.1,fo:20,se:1,col:0},
+  // BISCOTTI E DOLCI FLAVIS
+  {n:"Flavis Biscotti aproteici secchi",c:"Flavis - Biscotti",src:"FLAVIS",k:458,p:0.4,gs:3.2,g:14,z:24,ch:73,fi:1.6,ca:26,fe:1.0,mg:10,k2:88,na:225,zn:0.1,fo:30,se:1,col:0},
+  {n:"Flavis Biscotti aproteici al cioccolato",c:"Flavis - Biscotti",src:"FLAVIS",k:478,p:0.5,gs:6.0,g:19,z:33,ch:69,fi:1.8,ca:22,fe:1.2,mg:12,k2:92,na:185,zn:0.2,fo:32,se:1,col:0},
+  {n:"Flavis Frollini aproteici",c:"Flavis - Biscotti",src:"FLAVIS",k:468,p:0.4,gs:3.8,g:16,z:29,ch:71,fi:1.2,ca:19,fe:0.9,mg:9,k2:82,na:205,zn:0.1,fo:27,se:1,col:0},
+  {n:"Flavis Wafer aproteici alle nocciole",c:"Flavis - Biscotti",src:"FLAVIS",k:492,p:0.5,gs:7.5,g:23,z:36,ch:67,fi:0.9,ca:14,fe:0.9,mg:9,k2:72,na:155,zn:0.1,fo:22,se:1,col:0},
+  // CEREALI E FARINE FLAVIS
+  {n:"Flavis Riso aproteico",c:"Flavis - Cereali",src:"FLAVIS",k:362,p:0.2,gs:0.1,g:0.4,z:0.4,ch:89,fi:0.4,ca:4,fe:0.2,mg:4,k2:22,na:2,zn:0.04,fo:7,se:0,col:0},
+  {n:"Flavis Farina aproteica di mais",c:"Flavis - Cereali",src:"FLAVIS",k:368,p:0.3,gs:0.1,g:0.8,z:1.0,ch:90,fi:0.6,ca:5,fe:0.3,mg:6,k2:30,na:3,zn:0.08,fo:10,se:0,col:0},
+  {n:"Flavis Mix per dolci aproteico",c:"Flavis - Cereali",src:"FLAVIS",k:374,p:0.4,gs:0.2,g:2.0,z:4.0,ch:88,fi:1.0,ca:16,fe:0.7,mg:10,k2:45,na:15,zn:0.1,fo:18,se:1,col:0},
+  {n:"Flavis Semolino aproteico",c:"Flavis - Cereali",src:"FLAVIS",k:358,p:0.3,gs:0.1,g:0.6,z:0.5,ch:87,fi:0.5,ca:6,fe:0.3,mg:5,k2:24,na:2,zn:0.06,fo:9,se:0,col:0},
+  // DESSERT E PREPARATI FLAVIS
+  {n:"Flavis Budino aproteico al cioccolato",c:"Flavis - Dessert",src:"FLAVIS",k:88,p:0.2,gs:0.6,g:2.2,z:14,ch:16,fi:0.2,ca:65,fe:0.2,mg:6,k2:62,na:58,zn:0.06,fo:48,se:0,col:0},
+  {n:"Flavis Crema dessert aproteica alla vaniglia",c:"Flavis - Dessert",src:"FLAVIS",k:82,p:0.2,gs:0.4,g:1.8,z:12,ch:15,fi:0.1,ca:60,fe:0.1,mg:5,k2:55,na:52,zn:0.05,fo:44,se:0,col:0},
+  {n:"Flavis Gelato aproteico fior di latte",c:"Flavis - Dessert",src:"FLAVIS",k:148,p:0.2,gs:4.8,g:7.0,z:18,ch:21,fi:0.2,ca:38,fe:0.1,mg:5,k2:48,na:62,zn:0.1,fo:14,se:0,col:14},
+  {n:"Flavis Torta/plumcake aproteico",c:"Flavis - Dessert",src:"FLAVIS",k:372,p:0.5,gs:4.8,g:15,z:27,ch:55,fi:1.4,ca:22,fe:0.9,mg:8,k2:72,na:360,zn:0.1,fo:22,se:1,col:0},
+  // CONDIMENTI FLAVIS
+  {n:"Flavis Besciamella aproteica",c:"Flavis - Condimenti",src:"FLAVIS",k:92,p:0.2,gs:1.8,g:5.0,z:3.5,ch:11,fi:0.1,ca:42,fe:0.1,mg:4,k2:48,na:420,zn:0.05,fo:35,se:0,col:8},
+];
+
 function rebuildDB() {
-  ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...DB_APROTEICI,...DB_UPF,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
+  ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...DB_APROTEICI,...DB_FLAVIS,...DB_UPF,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
   FOOD_MAP={};
   ALL_DB.forEach(f=>{FOOD_MAP[f.n.toLowerCase()]=f;});
 }

@@ -23,11 +23,11 @@
 .q-item label{font-size:13px;font-weight:600;color:var(--slate);display:block;margin-bottom:8px;line-height:1.5}
 .q-item .q-sub{font-size:11.5px;color:var(--slate-l);margin-bottom:8px;font-weight:400}
 .q-options{display:flex;flex-direction:column;gap:6px}
-.q-opt{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;transition:background .15s}
+.q-options .q-opt{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;transition:background .15s;margin-bottom:0}
 .q-opt:hover{background:#EFF6FF}
 .q-opt input[type=radio]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
 .q-opt input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
-.q-opt label,.q-opt span{font-size:12.5px;color:var(--slate-m);cursor:pointer}
+.q-opt label,.q-opt span{font-size:12.5px;color:var(--slate-m);cursor:pointer;display:inline;font-weight:normal;margin-bottom:0}
 .q-scale{display:flex;gap:4px;flex-wrap:wrap}
 .q-scale-btn{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;color:var(--slate-m);transition:all .15s;min-width:36px;text-align:center}
 .q-scale-btn.sel{background:var(--teal);color:white;border-color:var(--teal)}
@@ -1437,10 +1437,10 @@ function calcGAD7(show) {
   if (!show) return;
   const score = vals.reduce((s,v) => s+(v||0), 0);
   const levels = [
-    [0,4,'🟢 Ansia Minima','#ECFDF5','Nessun disturbo d'ansia significativo.','Monitorare. Eventuale intervento su gestione dello stress e abitudini alimentari.'],
-    [5,9,'🟡 Ansia Lieve','#FEF3C7','Sintomi ansiosi lievi presenti.','Considerare tecniche di rilassamento e psicoeducazione. L'ansia lieve può influenzare le scelte alimentari (comfort eating).'],
-    [10,14,'🟠 Ansia Moderata','#FEF3C7','Ansia moderata con possibile impatto funzionale.','Valutazione psicologica raccomandata. Esplorare la relazione tra ansia e comportamento alimentare.'],
-    [15,21,'🔴 Ansia Grave','#FEE2E2','Sintomi ansiosi gravi. Significativo impatto sulla qualità di vita.','Riferimento urgente a specialista. L'ansia grave è frequentemente associata a restrizione alimentare o abbuffate emotive.']
+    [0,4,'\uD83D\uDFE2 Ansia Minima','#ECFDF5','Nessun disturbo d\u2019ansia significativo.','Monitorare. Eventuale intervento su gestione dello stress e abitudini alimentari.'],
+    [5,9,'\uD83D\uDFE1 Ansia Lieve','#FEF3C7','Sintomi ansiosi lievi presenti.','Considerare tecniche di rilassamento e psicoeducazione. L\u2019ansia lieve pu\xF2 influenzare le scelte alimentari (comfort eating).'],
+    [10,14,'\uD83D\uDFE0 Ansia Moderata','#FEF3C7','Ansia moderata con possibile impatto funzionale.','Valutazione psicologica raccomandata. Esplorare la relazione tra ansia e comportamento alimentare.'],
+    [15,21,'\uD83D\uDD34 Ansia Grave','#FEE2E2','Sintomi ansiosi gravi. Significativo impatto sulla qualit\xE0 di vita.','Riferimento urgente a specialista. L\u2019ansia grave \xE8 frequentemente associata a restrizione alimentare o abbuffate emotive.']
   ];
   const [,, label, color, desc, rec] = levels.find(([lo,hi]) => score >= lo && score <= hi) || levels[3];
   showResult('gad7-result', `
@@ -1469,7 +1469,7 @@ function calcSGA(show) {
   let cat, label, color, desc, rec;
   if (countC >= 3) {
     cat = 'C'; label = '🔴 SGA-C — Gravemente Malnutrito'; color = '#FEE2E2';
-    desc = 'Evidenza di grave malnutrizione: perdita di peso significativa, riduzione importante dell'apporto, segni fisici di deplezione.';
+    desc = 'Evidenza di grave malnutrizione: perdita di peso significativa, riduzione importante dell\u2019apporto, segni fisici di deplezione.';
     rec = 'Intervento nutrizionale urgente. Piano nutrizionale individualizzato con obiettivi energetici e proteici elevati. Considerare supporto nutrizionale artificiale (NE/NP). Monitoraggio settimanale.';
   } else if (countC >= 1 || countB >= 3) {
     cat = 'B'; label = '🟡 SGA-B — Moderatamente Malnutrito'; color = '#FEF3C7';
@@ -1478,7 +1478,7 @@ function calcSGA(show) {
   } else {
     cat = 'A'; label = '🟢 SGA-A — Ben Nutrito'; color = '#ECFDF5';
     desc = 'Stato nutrizionale adeguato. Nessun segno significativo di malnutrizione.';
-    rec = 'Mantenere l'apporto nutrizionale attuale. Rivalutare SGA a ogni visita o al cambio di condizione clinica.';
+    rec = 'Mantenere l\u2019apporto nutrizionale attuale. Rivalutare SGA a ogni visita o al cambio di condizione clinica.';
   }
   showResult('sga-result', `
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
@@ -1556,7 +1556,7 @@ function calcEAT26(show) {
   } else {
     label = '🔴 Screening positivo — Possibile disturbo alimentare'; color = '#FEE2E2';
     desc = 'Punteggio ≥20 indica possibili attitudini e comportamenti problematici verso il cibo e il peso.';
-    rec = 'L'EAT-26 non è diagnostico ma orienta verso valutazione specialistica. Completare con EDE-Q o colloquio clinico strutturato. Riferire a psicologo/psichiatra specializzato in DCA.';
+    rec = 'L\u2019EAT-26 non \xE8 diagnostico ma orienta verso valutazione specialistica. Completare con EDE-Q o colloquio clinico strutturato. Riferire a psicologo/psichiatra specializzato in DCA.';
   }
   showResult('eat26-result', `
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
@@ -1584,7 +1584,7 @@ function calcPREDIMED(show) {
   } else if (score >= 6) {
     label = '🟡 Media aderenza alla Dieta Mediterranea'; color = '#FEF3C7';
     desc = 'Discreta aderenza con margini di miglioramento.';
-    rec = 'Aumentare il consumo di verdura, legumi, frutta secca e pesce. Ridurre carne rossa e bevande zuccherate. Prediligere olio d'oliva extravergine come grasso principale.';
+    rec = 'Aumentare il consumo di verdura, legumi, frutta secca e pesce. Ridurre carne rossa e bevande zuccherate. Prediligere olio d\u2019oliva extravergine come grasso principale.';
   } else {
     label = '🔴 Bassa aderenza alla Dieta Mediterranea'; color = '#FEE2E2';
     desc = 'Scarsa aderenza al pattern mediterraneo. Elevato rischio cardiovascolare e metabolico.';
@@ -1612,11 +1612,11 @@ function calcAUDIT(show) {
   if (score <= 7) {
     label = '🟢 Basso rischio'; color = '#ECFDF5';
     desc = 'Consumo di alcol a basso rischio o assenza di consumo.';
-    rec = 'Educazione sui rischi dell'alcol. Monitorare nelle visite successive. Considerare l'impatto calorico dell'alcol nelle valutazioni nutrizionali.';
+    rec = 'Educazione sui rischi dell\u2019alcol. Monitorare nelle visite successive. Considerare l\u2019impatto calorico dell\u2019alcol nelle valutazioni nutrizionali.';
   } else if (score <= 15) {
     label = '🟡 Consumo rischioso'; color = '#FEF3C7';
     desc = 'Consumo di alcol a livello rischioso. Possibile impatto sulla salute.';
-    rec = 'Counseling motivazionale breve (brief intervention). Informare sui limiti raccomandati. Monitorare l'impatto sullo stato nutrizionale e sul peso. Rivalutare AUDIT in 3 mesi.';
+    rec = 'Counseling motivazionale breve (brief intervention). Informare sui limiti raccomandati. Monitorare l\u2019impatto sullo stato nutrizionale e sul peso. Rivalutare AUDIT in 3 mesi.';
   } else if (score <= 19) {
     label = '🔴 Consumo pericoloso'; color = '#FEE2E2';
     desc = 'Consumo di alcol pericoloso con significativo impatto sulla salute.';
@@ -1649,15 +1649,15 @@ function calcMMAS4(show) {
   if (score === 0) {
     label = '🟢 Alta aderenza terapeutica'; color = '#ECFDF5';
     desc = 'Il paziente aderisce correttamente alla terapia farmacologica.';
-    rec = 'Rinforzare positivamente l'aderenza. Continuare il monitoraggio periodico. Valutare l'aderenza anche al piano nutrizionale.';
+    rec = 'Rinforzare positivamente l\u2019aderenza. Continuare il monitoraggio periodico. Valutare l\u2019aderenza anche al piano nutrizionale.';
   } else if (score <= 2) {
     label = '🟡 Media aderenza terapeutica'; color = '#FEF3C7';
-    desc = 'Presenza di dimenticanze o comportamenti che riducono l'aderenza.';
-    rec = 'Counseling motivazionale. Identificare le barriere all'aderenza (effetti collaterali, costo, dimenticanze). Strumenti pratici: promemoria, dosette, app. Valutare eventuali aggiustamenti posologici.';
+    desc = 'Presenza di dimenticanze o comportamenti che riducono l\u2019aderenza.';
+    rec = 'Counseling motivazionale. Identificare le barriere all\u2019aderenza (effetti collaterali, costo, dimenticanze). Strumenti pratici: promemoria, dosette, app. Valutare eventuali aggiustamenti posologici.';
   } else {
-    label = '�� Bassa aderenza terapeutica'; color = '#FEE2E2';
+    label = '🔴 Bassa aderenza terapeutica'; color = '#FEE2E2';
     desc = 'Bassa aderenza alla terapia. Rischio di outcome clinici negativi.';
-    rec = 'Intervento strutturato sull'aderenza. Coinvolgere il team curante. Semplificare lo schema posologico. Esplorare le cause (costi, effetti avversi, credenze, dimenticanze). Colloquio motivazionale approfondito.';
+    rec = 'Intervento strutturato sull\u2019aderenza. Coinvolgere il team curante. Semplificare lo schema posologico. Esplorare le cause (costi, effetti avversi, credenze, dimenticanze). Colloquio motivazionale approfondito.';
   }
   showResult('mmas4-result', `
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">

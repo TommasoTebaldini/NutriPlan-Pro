@@ -86,6 +86,21 @@
 
 <main id="main"><div class="page-content">
 
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="dg-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <select id="dg-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadDgCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="dg-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaDiabete()" style="margin-top:18px">💾 Salva in Cartella</button>
+</div>
+
 <div class="dg-tabs">
   <button class="dg-tab active" onclick="showTab('rapporto')">⚖️ Rapporto I:C</button>
   <button class="dg-tab" onclick="showTab('counting')">🔢 Counting CHO</button>
@@ -635,8 +650,45 @@ function renderDepliant() {
 }
 
 // ── Init ──
+let dgCartelle = [];
+async function loadDgCartelle() {
+  if (!currentUser) return;
+  if (dgCartelle.length) return; // already loaded
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  dgCartelle = data || [];
+  const sel = document.getElementById('dg-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  dgCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+async function salvaDiabete() {
+  if (!currentUser) { toast('Effettua il login per salvare','err'); return; }
+  const cartella_id = document.getElementById('dg-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
+  const nota = document.getElementById('dg-nota').value.trim() || 'Sessione diabete ' + new Date().toLocaleDateString('it');
+  // Collect current values
+  const dati = {
+    rapporto_ic: { peso: document.getElementById('ic-peso')?.value, tipo: document.getElementById('ic-tipo')?.value, tdd: document.getElementById('ic-tdd')?.value, metodo: document.getElementById('ic-metodo')?.value, risultato: document.getElementById('ic-val')?.textContent },
+    dose_pasto: { cho: document.getElementById('pasto-cho')?.value, ic: document.getElementById('pasto-ic')?.value, glicemia: document.getElementById('pasto-glic')?.value, target: document.getElementById('pasto-target')?.value, fsi: document.getElementById('pasto-fsi')?.value },
+    fsi: { tdd: document.getElementById('fsi-tdd')?.value, metodo: document.getElementById('fsi-metodo')?.value, risultato: document.getElementById('fsi-val')?.textContent }
+  };
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati), created_at: new Date().toISOString() };
+  const {error} = await sb.from('note_specialistiche').insert(payload);
+  if (error) {
+    if (error.code === '42P01') {
+      toast('⚠️ Tabella mancante — esegui SQL di setup (vedi console)','err');
+      console.error('SQL da eseguire:\ncreate table note_specialistiche(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,tipo text not null,nota text,dati jsonb,created_at timestamptz default now());\nalter table note_specialistiche enable row level security;\ncreate policy "Own note" on note_specialistiche for all using(auth.uid()=user_id);');
+    } else { toast('❌ '+error.message,'err'); }
+    return;
+  }
+  toast('✅ Dati diabete salvati nella cartella!','ok');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
+  try { await checkAuth(false); if(currentUser) loadDgCartelle(); } catch(e) {}
 });
 </script>
 </body>

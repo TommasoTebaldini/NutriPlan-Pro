@@ -810,6 +810,8 @@ function nuovoPiano() {
   document.getElementById('inp-nome').value = '';
   document.getElementById('inp-data').value = todayISO();
   const sel = document.getElementById('inp-cartella'); if (sel) sel.value = '';
+  const cs = document.getElementById('cartella-search'); if (cs) cs.value = '';
+  const csel = document.getElementById('cartella-selected'); if (csel) csel.textContent = '';
   dirty = false; currentPianoId = null; undoStack = []; hideUndoBar();
   renderGiornoTabs(); renderPiano();
   toast('🔄 Nuovo piano', 'info');
@@ -993,6 +995,10 @@ function filterCartelleDropdown() {
 function showCartelleList(q = '') {
   const dd = document.getElementById('cartelle-dropdown');
   if (!dd) return;
+  if (!allCartelle.length && currentUser) {
+    loadCartelleAll().then(() => showCartelleList(q));
+    return;
+  }
   const filtered = q ? allCartelle.filter(c => c.nome.toLowerCase().includes(q)) : allCartelle;
   dd._filteredCartelle = filtered;
   if (!filtered.length) {
@@ -1117,7 +1123,18 @@ async function caricaPianoById(id) {
   giornoCorrente = 0;
   currentPianoId = id;
   dirty = false;
-  if (data.cartella_id) { const sel = document.getElementById('inp-cartella'); if (sel) { await loadCartelleDropdown(); sel.value = data.cartella_id; } }
+  if (data.cartella_id) {
+    const sel = document.getElementById('inp-cartella');
+    if (sel) {
+      if (!allCartelle.length) await loadCartelleAll();
+      sel.value = data.cartella_id;
+      const cart = allCartelle.find(c => c.id === data.cartella_id);
+      if (cart) {
+        const cs = document.getElementById('cartella-search'); if (cs) cs.value = cart.nome;
+        const csel = document.getElementById('cartella-selected'); if (csel) csel.textContent = '✅ ' + cart.nome;
+      }
+    }
+  }
   renderGiornoTabs();
   renderPiano();
   toast(`📂 "${data.nome}" caricato!`, 'ok');

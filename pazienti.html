@@ -139,11 +139,12 @@ async function renderCartellaDetail(id) {
   }
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
-  const [piani, ncpts, schede, biaList] = await Promise.all([
+  const [piani, ncpts, schede, biaList, noteSpec] = await Promise.all([
     safeQuery(sb.from('piani').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('ncpt').select('id,created_at,updated_at,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('schede_valutazione').select('id,created_at,nome,cognome,patologie').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,note').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
+    safeQuery(sb.from('note_specialistiche').select('id,created_at,tipo,nota').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
   ]);
   
   const cart = cartResult.data;
@@ -218,35 +219,40 @@ async function renderCartellaDetail(id) {
     </div>
     ${cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
 
-    <!-- AZIONI RAPIDE -->
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <button class="btn btn-primary btn-sm" onclick="nuovoPianoInCartella('${cart.id}')">📋 Nuovo Piano</button>
-      <button class="btn btn-ghost btn-sm" onclick="apriNuovoNCPt('${cart.id}')">📝 Nuovo NCPt</button>
-      <button class="btn btn-ghost btn-sm" onclick="apriValutazione('${cart.id}')">📊 Nuova Valutazione</button>
-    </div>
-
     <!-- SEZIONE PIANI -->
-    <div style="background:white;border-radius:var(--r);border:1px solid var(--border);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)">
-      <h4 style="font-size:13px;font-weight:700;color:var(--slate-m);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">
-        📋 Piani Alimentari <span style="background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;margin-left:6px">${(piani||[]).length}</span>
-      </h4>
-      ${pianiHtml}
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0">
+          📋 Piani Alimentari
+          <span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(piani||[]).length}</span>
+        </h4>
+        <button class="btn btn-primary btn-sm" onclick="nuovoPianoInCartella('${cart.id}')">+ Nuovo Piano</button>
+      </div>
+      <div style="padding:10px 14px">${pianiHtml}</div>
     </div>
 
     <!-- SEZIONE NCPt -->
-    <div style="background:white;border-radius:var(--r);border:1px solid var(--border);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)">
-      <h4 style="font-size:13px;font-weight:700;color:var(--slate-m);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">
-        📝 Schede NCPt <span style="background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;margin-left:6px">${(ncpts||[]).length}</span>
-      </h4>
-      ${ncptsHtml}
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0">
+          📝 Schede NCPt
+          <span style="background:#EDE9FE;color:#5B21B6;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(ncpts||[]).length}</span>
+        </h4>
+        <button class="btn btn-primary btn-sm" onclick="apriNuovoNCPt('${cart.id}')">+ Nuovo NCPt</button>
+      </div>
+      <div style="padding:10px 14px">${ncptsHtml}</div>
     </div>
 
     <!-- SEZIONE VALUTAZIONI -->
-    <div style="background:white;border-radius:var(--r);border:1px solid var(--border);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)">
-      <h4 style="font-size:13px;font-weight:700;color:var(--slate-m);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">
-        📊 Schede Valutazione <span style="background:#F0FDF4;color:#15803D;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;margin-left:6px">${(schede||[]).length}</span>
-      </h4>
-      ${schedeHtml}
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0">
+          📊 Schede Valutazione
+          <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(schede||[]).length}</span>
+        </h4>
+        <button class="btn btn-primary btn-sm" onclick="apriValutazione('${cart.id}')">+ Nuova Valutazione</button>
+      </div>
+      <div style="padding:10px 14px">${schedeHtml}</div>
     </div>
 
     <!-- BIA Records -->
@@ -258,8 +264,27 @@ async function renderCartellaDetail(id) {
         </h4>
         <button class="btn btn-primary btn-sm" onclick="window.location.href='bia.html?cartella=${id}'">+ Nuova BIA</button>
       </div>
-      ${biaHtml}
+      <div style="padding:10px 14px">${biaHtml}</div>
     </div>
+
+    <!-- Note Specialistiche (Diabete, Pancreas, ecc.) -->
+    ${(noteSpec && noteSpec.length) ? `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr">
+        <h4 style="font-size:14px;margin:0">📌 Note Specialistiche <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${noteSpec.length}</span></h4>
+      </div>
+      <div style="padding:10px 14px">${noteSpec.map(n => {
+        const tipoLabel = n.tipo === 'diabete' ? '🩸 Diabete' : n.tipo === 'pancreas' ? '🫁 Pancreas IPE' : '📌 ' + n.tipo;
+        const tipoIcon = n.tipo === 'diabete' ? '🩸' : n.tipo === 'pancreas' ? '🫁' : '📌';
+        return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px">
+          <span style="font-size:22px">${tipoIcon}</span>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(n.nota||tipoLabel)}</div>
+            <div style="font-size:11.5px;color:var(--slate-l)">${tipoLabel} · ${fmtDate(n.created_at)}</div>
+          </div>
+        </div>`;
+      }).join('')}</div>
+    </div>` : ''}
   `;
 }
 

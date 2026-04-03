@@ -81,6 +81,21 @@
 
 <main id="main"><div class="page-content">
 
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <select id="pan-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadPanCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="pan-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaPancreas()" style="margin-top:18px">💾 Salva in Cartella</button>
+</div>
+
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FFF7ED;border-radius:14px">
   <button class="p-tab active" onclick="showPTab('calc')">💊 Calcolo PERT</button>
   <button class="p-tab" onclick="showPTab('grassi')">🧈 Grassi & Lipasi</button>
@@ -527,8 +542,43 @@ function calcGrassiTot() {
   document.getElementById('grassi-creon').textContent = Math.ceil(tot * 750 / 25000) + ' cps';
 }
 
+let panCartelle = [];
+async function loadPanCartelle() {
+  if (!currentUser) return;
+  if (panCartelle.length) return;
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  panCartelle = data || [];
+  const sel = document.getElementById('pan-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  panCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+async function salvaPancreas() {
+  if (!currentUser) { toast('Effettua il login per salvare','err'); return; }
+  const cartella_id = document.getElementById('pan-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
+  const nota = document.getElementById('pan-nota').value.trim() || 'Sessione pancreas ' + new Date().toLocaleDateString('it');
+  const dati = {
+    pert: { peso: document.getElementById('pert-peso')?.value, grassi: document.getElementById('pert-grassi')?.value, patologia: document.getElementById('pert-pat')?.value, metodo: document.getElementById('pert-metodo')?.value, risultato_ul: document.getElementById('pert-ul')?.textContent },
+    grassi: { totale: document.getElementById('grassi-tot')?.textContent, ul: document.getElementById('grassi-ul')?.textContent, creon: document.getElementById('grassi-creon')?.textContent }
+  };
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'pancreas', nota, dati: JSON.stringify(dati), created_at: new Date().toISOString() };
+  const {error} = await sb.from('note_specialistiche').insert(payload);
+  if (error) {
+    if (error.code === '42P01') {
+      toast('⚠️ Tabella mancante — esegui SQL di setup (vedi console)','err');
+      console.error('SQL da eseguire:\ncreate table note_specialistiche(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,tipo text not null,nota text,dati jsonb,created_at timestamptz default now());\nalter table note_specialistiche enable row level security;\ncreate policy "Own note" on note_specialistiche for all using(auth.uid()=user_id);');
+    } else { toast('❌ '+error.message,'err'); }
+    return;
+  }
+  toast('✅ Dati IPE salvati nella cartella!','ok');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
+  try { await checkAuth(false); if(currentUser) loadPanCartelle(); } catch(e) {}
 });
 </script>
 </body>

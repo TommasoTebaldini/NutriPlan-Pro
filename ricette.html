@@ -531,8 +531,10 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
 
 document.addEventListener('DOMContentLoaded', async () => {
   rebuildDB();
-  try { await checkAuth(); } catch(e) { console.warn(e); }
-  loadRicette();
+  try {
+    const ok = await checkAuth();
+    if (ok) loadRicette();
+  } catch(e) { console.warn(e); }
 });
 </script>
 </body>

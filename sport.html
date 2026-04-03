@@ -503,22 +503,30 @@ function generaSchema() {
   const kcalSp2 = Math.round(tdee * 0.10);
   const kcalCen = Math.round(tdee * 0.25);
 
+  // Nutritional reference values (per 100g) for portion calculations
+  const CHO_AVENA_PER100 = 62;    // CHO in fiocchi d'avena
+  const PROT_YOGURT_PER100 = 10.3; // proteine yogurt greco 0%
+  const CHO_PASTA_PER100 = 71;    // CHO pasta/riso crudo
+  const PROT_POLLO_PER100 = 23.3;  // proteine petto di pollo
+  const CHO_RISO_PER100 = 79;     // CHO riso/patate (media)
+  const PROT_SALMONE_PER100 = 20.0; // proteine salmone/carne
+
   // Proportional macros per meal (rough distribution)
   const schema = [
     { nome:'🌅 Colazione', kcal: kcalCol,
-      alimenti: `Fiocchi d'avena ${Math.round(cho_g*0.25*100/62)}g + Latte p.s. 200mL + Frutta fresca 150g + Noci 15g`,
+      alimenti: `Fiocchi d'avena ${Math.round(cho_g * 0.25 * 100 / CHO_AVENA_PER100)}g + Latte p.s. 200mL + Frutta fresca 150g + Noci 15g`,
       note:'CHO complessi + proteine + grassi buoni. Evitare zuccheri semplici.' },
     { nome:'🍎 Spuntino mattina', kcal: kcalSp1,
-      alimenti: `Yogurt greco 0% ${Math.round(prot_g*0.10/0.103)}g + Banana 1 (≈120g)`,
+      alimenti: `Yogurt greco 0% ${Math.round(prot_g * 0.10 / (PROT_YOGURT_PER100 / 100))}g + Banana 1 (≈120g)`,
       note:'Pre o post allenamento mattutino. Proteine rapide + CHO.' },
     { nome:'🍽️ Pranzo', kcal: kcalPra,
-      alimenti: `Pasta/riso ${Math.round(cho_g*0.30*100/71)}g crudo + Pollo/pesce ${Math.round(prot_g*0.30/0.233)}g + Verdure 200g + Olio EVO ${Math.round(grassi_g*0.30/0.999*10)}mL`,
+      alimenti: `Pasta/riso ${Math.round(cho_g * 0.30 * 100 / CHO_PASTA_PER100)}g crudo + Pollo/pesce ${Math.round(prot_g * 0.30 / (PROT_POLLO_PER100 / 100))}g + Verdure 200g + Olio EVO ${Math.round(grassi_g * 0.30 * 10)}mL`,
       note:'Pasto principale. Ricco di CHO complessi. Secondo magro.' },
     { nome:'🍊 Merenda', kcal: kcalSp2,
       alimenti: `Frutta fresca 200g + Mandorle 20g`,
       note:'Spuntino pomeridiano. Se allenamento serale: aggiungere 30g CHO (gallette, pane integrale).' },
     { nome:'🌙 Cena', kcal: kcalCen,
-      alimenti: `Riso/patate ${Math.round(cho_g*0.20*100/79)}g + Salmone/carne ${Math.round(prot_g*0.30/0.200)}g + Verdure 250g + Olio EVO ${Math.round(grassi_g*0.30/0.999*10)}mL`,
+      alimenti: `Riso/patate ${Math.round(cho_g * 0.20 * 100 / CHO_RISO_PER100)}g + Salmone/carne ${Math.round(prot_g * 0.30 / (PROT_SALMONE_PER100 / 100))}g + Verdure 250g + Olio EVO ${Math.round(grassi_g * 0.30 * 10)}mL`,
       note:'Sera: privilegiare proteine e verdure. CHO moderati (non eliminare).' }
   ];
 

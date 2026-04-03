@@ -1024,8 +1024,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (data.data_misura) document.getElementById('bia-data').value = data.data_misura;
         if (data.note) document.getElementById('bia-note').value = data.note;
         // Populate manual fields from raw_data if available
-        const raw = data.raw_data ? JSON.parse(data.raw_data) : {};
-        const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null && !isNaN(val)) el.value = val; };
+        let raw = {};
+        try { if (data.raw_data) raw = JSON.parse(data.raw_data); } catch(e) { console.warn('BIA raw_data parse error:', e); }
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
         setVal('bia-peso', raw.peso ?? data.peso);
         setVal('bia-alt', raw.alt ?? data.altezza);
         setVal('bia-eta', raw.eta ?? data.eta);

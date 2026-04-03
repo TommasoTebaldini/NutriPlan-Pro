@@ -131,6 +131,21 @@
   </div>
 </div>
 
+<!-- BARRA PAZIENTE PEDIATRIA -->
+<div class="paz-hdr no-print" id="ped-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <select id="ped-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadPedCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Titolo sessione</label>
+    <input type="text" id="ped-nota" placeholder="es. Visita pediatrica..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaPediatria()" style="margin-top:18px;background:#7C3AED">💾 Salva in Cartella</button>
+</div>
+
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FAF5FF;border-radius:14px">
   <button class="ped-tab active" onclick="showPed('curve')">📈 Curve di Crescita</button>
   <button class="ped-tab" onclick="showPed('fabbisogni')">⚡ Fabbisogni</button>
@@ -138,6 +153,7 @@
   <button class="ped-tab" onclick="showPed('formule')">🧮 Formule Cliniche</button>
   <button class="ped-tab" onclick="showPed('patologie')">🏥 Patologie Pediatriche</button>
   <button class="ped-tab" onclick="showPed('lg')">📚 Linee Guida</button>
+  <button class="ped-tab" onclick="showPed('piano_ped')" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE);color:#5B21B6;border:1.5px solid #C4B5FD">🍽️ Piano Alimentare</button>
 </div>
 
 <!-- CURVE DI CRESCITA -->
@@ -474,8 +490,80 @@
     </div>
   </div>
 </div>
+<!-- PIANO ALIMENTARE PEDIATRICO -->
+<div class="ped-panel" id="tab-piano_ped">
+  <div class="alert-info alert-box" style="background:#FAF5FF;border-color:#8B5CF6;color:#3B0764">
+    <b>🍽️ Piano Alimentare Pediatrico</b> — Il piano alimentare pediatrico deve garantire adeguati apporti di energia e nutrienti per supportare la crescita e lo sviluppo. I fabbisogni variano significativamente per età, e devono essere individualizzati tenendo conto delle preferenze alimentari, della cultura familiare e di eventuali patologie.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚙️ Dati Clinici e Obiettivi</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Fascia d'età</label>
+        <select id="ped-piano-eta"><option value="0-6m">0–6 mesi (lattante)</option><option value="6-12m">6–12 mesi (diversificazione)</option><option value="1-3a">1–3 anni (prima infanzia)</option><option value="4-6a">4–6 anni (età prescolare)</option><option value="7-10a">7–10 anni (età scolare)</option><option value="11-14a">11–14 anni (pre-adolescenza)</option><option value="15-18a">15–18 anni (adolescenza)</option></select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Motivo della consulenza</label>
+        <select id="ped-piano-motivo"><option value="crescita">Crescita (ritardo o promozione)</option><option value="sovrappeso">Sovrappeso / Obesità pediatrica</option><option value="sottopeso">Sottopeso / Scarso accrescimento</option><option value="allergie">Allergie / Intolleranze alimentari</option><option value="neofobia">Neofobia alimentare / ARFID</option><option value="patologia">Patologia cronica (IBD, celiachia, FC...)</option><option value="prevenzione">Prevenzione e promozione della salute</option></select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="ped-piano-kcal" placeholder="es. 1600" oninput="calcolaPedPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="ped-piano-peso" placeholder="es. 35" oninput="calcolaPedPiano()"></div>
+      <div class="nf"><label>Note cliniche sul paziente</label><textarea id="ped-piano-note-cliniche" rows="3" placeholder="Diagnosi, allergie/intolleranze, farmaci, abitudini alimentari, preferenze/avversioni..."></textarea></div>
+    </div>
+    <div class="calc-box">
+      <h3>📊 Target Nutrizionali Pediatrici</h3>
+      <div id="ped-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#FAF5FF;border-radius:8px;font-size:13px"><i>Inserisci le kcal e il peso per calcolare i target.</i></div>
+      <div class="alert-info alert-box" style="font-size:12px;background:#FAF5FF;border-color:#8B5CF6;color:#3B0764">
+        <b>💡 Linee guida pediatriche:</b><br>
+        Proteine: 1.2–2.0g/kg (più alto nella prima infanzia e adolescenza).<br>
+        Calcio: 500–1300mg/die per fascia d'età.<br>
+        Vitamina D: 400–600 UI/die (spesso indicata integrazione).<br>
+        Ferro: 7–15mg/die (critico in svezzamento e adolescenza femminile).
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🗓️ Schema Pasti Pediatrico</h3>
+    <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Strutturare il piano in 5 pasti regolari. Indicare alimenti in forma adeguata all'età del bambino (tritato, in pezzi, intero). Per bambini piccoli specificare consistenza e modalità di preparazione.</p>
+    <div id="ped-pasti-container">
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>📝 Note Supplementazione e Follow-up</h3>
+    <div class="grid-2">
+      <div class="nf"><label>Supplementazione prescritta</label><textarea id="ped-piano-suppl" rows="3" placeholder="Vitamina D, Ferro, Omega-3, Calcio, Zinco — dosaggi e modalità..."></textarea></div>
+      <div class="nf"><label>Educazione alimentare / famiglia</label><textarea id="ped-piano-edu" rows="3" placeholder="Indicazioni per i genitori, strategie per neofobia, modelling alimentare, no premi con cibo..."></textarea></div>
+    </div>
+    <div class="nf" style="margin-top:10px"><label>Note generali e follow-up</label><textarea id="ped-piano-note-generali" rows="2" placeholder="Rivalutazione tra: ... Parametri di crescita da monitorare: ..."></textarea></div>
+  </div>
+</div>
 
 </div></main>
+<script>
+(function() {
+  var PED_MEALS = [
+    {id:1,icon:'☀️',nome:'Colazione',ora:'07:30',note:'Latte/yogurt + cereali/pane + frutta'},
+    {id:2,icon:'🍎',nome:'Spuntino mattina',ora:'10:30',note:'Frutta fresca o yogurt (porzione piccola)'},
+    {id:3,icon:'🍽️',nome:'Pranzo',ora:'12:30',note:'Primo + secondo + verdura + frutta'},
+    {id:4,icon:'🥛',nome:'Merenda',ora:'16:30',note:'Latte/yogurt + pane/cereali — no snack industriali'},
+    {id:5,icon:'🌙',nome:'Cena',ora:'19:30',note:'Secondo + verdura + pane + frutta'}
+  ];
+  document.addEventListener('DOMContentLoaded', function() {
+    var c = document.getElementById('ped-pasti-container');
+    if (!c) return;
+    c.innerHTML = PED_MEALS.map(function(m) {
+      return '<div style="background:#FAF5FF;border-radius:10px;border:1.5px solid #C4B5FD;padding:12px;margin-bottom:10px">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">'
+        + '<span style="font-size:20px">' + m.icon + '</span>'
+        + '<input type="text" id="ped-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">'
+        + '<input type="text" id="ped-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Ora" style="width:65px;padding:5px 8px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
+        + '<input type="number" id="ped-m' + m.id + '-kcal" placeholder="kcal" style="width:80px;padding:5px 8px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">'
+        + '</div>'
+        + '<textarea id="ped-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti e grammi (es. Latte 200mL, Cereali 30g, Frutta 100g)..." style="width:100%;padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<input type="text" id="ped-m' + m.id + '-note" placeholder="Note: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
+        + '</div>';
+    }).join('');
+  });
+})();
+</script>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>
@@ -484,7 +572,8 @@
 function showPed(id) {
   document.querySelectorAll('.ped-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.ped-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
   event.target.classList.add('active');
   if (id === 'curve') { syncSharedData(); calcPercentile(); }
   if (id === 'fabbisogni') { syncSharedData(); calcFabb(); }
@@ -988,8 +1077,108 @@ function drawGrowthChartType(type, sesso, ageMonthsPatient, weightPatient, heigh
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
+  try {
+    await checkAuth(false);
+    if (currentUser) {
+      loadPedCartelle();
+      const noteId = new URLSearchParams(window.location.search).get('noteId');
+      if (noteId) await caricaPedDaNote(noteId);
+    }
+  } catch(e) {}
 });
+
+// ── SAVE / LOAD PEDIATRIA ──
+let pedCartelle = [];
+let editingPedNoteId = null;
+
+async function loadPedCartelle() {
+  if (!currentUser) return;
+  if (pedCartelle.length) return;
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  pedCartelle = data || [];
+  const sel = document.getElementById('ped-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  pedCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+function calcolaPedPiano() {
+  const kcal = parseFloat(document.getElementById('ped-piano-kcal')?.value);
+  const peso = parseFloat(document.getElementById('ped-piano-peso')?.value);
+  const el = document.getElementById('ped-piano-macro-result');
+  if (!el) return;
+  if (!kcal) { el.innerHTML = '<i>Inserisci le kcal per calcolare i target.</i>'; return; }
+  const prot = Math.round(kcal * 0.15 / 4);
+  const cho = Math.round(kcal * 0.55 / 4);
+  const fat = Math.round(kcal * 0.30 / 9);
+  const protKg = peso ? r1(prot / peso) : '—';
+  const calcio = peso && peso < 20 ? 700 : peso && peso < 40 ? 1000 : 1300;
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+    <div style="background:#EDE9FE;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#5B21B6">Proteine</div><div style="font-size:18px;font-weight:700;color:#5B21B6">${prot}g</div><div style="font-size:10px">${protKg}g/kg</div></div>
+    <div style="background:#FEF3C7;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#78350F">CHO</div><div style="font-size:18px;font-weight:700;color:#D97706">${cho}g</div><div style="font-size:10px">${(cho*4/kcal*100).toFixed(0)}%</div></div>
+    <div style="background:#FAF5FF;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#5B21B6">Grassi</div><div style="font-size:18px;font-weight:700;color:#7C3AED">${fat}g</div><div style="font-size:10px">${(fat*9/kcal*100).toFixed(0)}%</div></div>
+    <div style="background:#F0FDF4;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#15803D">Calcio est.</div><div style="font-size:18px;font-weight:700;color:#16A34A">${calcio}mg</div><div style="font-size:10px">target/die</div></div>
+  </div>`;
+}
+
+function raccogliDatiPed() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    paziente: { anni: gv('g-anni'), mesi: gv('g-mesi'), sesso: gv('g-sesso'), peso: gv('g-peso'), altezza: gv('g-altezza') },
+    piano: {
+      eta: gv('ped-piano-eta'), motivo: gv('ped-piano-motivo'), kcal: gv('ped-piano-kcal'), peso: gv('ped-piano-peso'),
+      note_cliniche: gv('ped-piano-note-cliniche'), suppl: gv('ped-piano-suppl'), edu: gv('ped-piano-edu'), note_generali: gv('ped-piano-note-generali'),
+      pasti: [1,2,3,4,5].map(i => ({ nome: gv('ped-m'+i+'-nome'), ora: gv('ped-m'+i+'-ora'), kcal: gv('ped-m'+i+'-kcal'), alimenti: gv('ped-m'+i+'-alimenti'), note: gv('ped-m'+i+'-note') }))
+    }
+  };
+}
+
+function ripristinaDatiPed(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.paziente) { sv('g-anni',dati.paziente.anni); sv('g-mesi',dati.paziente.mesi); sv('g-sesso',dati.paziente.sesso); sv('g-peso',dati.paziente.peso); sv('g-altezza',dati.paziente.altezza); }
+  if (dati.piano) {
+    const p = dati.piano;
+    sv('ped-piano-eta',p.eta); sv('ped-piano-motivo',p.motivo); sv('ped-piano-kcal',p.kcal); sv('ped-piano-peso',p.peso);
+    sv('ped-piano-note-cliniche',p.note_cliniche); sv('ped-piano-suppl',p.suppl); sv('ped-piano-edu',p.edu); sv('ped-piano-note-generali',p.note_generali);
+    if (Array.isArray(p.pasti)) p.pasti.forEach((m, i) => { const n=i+1; sv('ped-m'+n+'-nome',m.nome); sv('ped-m'+n+'-ora',m.ora); sv('ped-m'+n+'-kcal',m.kcal); sv('ped-m'+n+'-alimenti',m.alimenti); sv('ped-m'+n+'-note',m.note); });
+    calcolaPedPiano();
+  }
+}
+
+async function salvaPediatria() {
+  if (!currentUser) { toast('Effettua il login per salvare','err'); return; }
+  const cartella_id = document.getElementById('ped-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
+  const nota = document.getElementById('ped-nota').value.trim() || 'Sessione pediatria ' + new Date().toLocaleDateString('it');
+  const dati = raccogliDatiPed();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'pediatria', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingPedNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPedNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ '+result.error.message,'err'); return; }
+  toast(editingPedNoteId ? '✅ Scheda Pediatrica aggiornata!' : '✅ Scheda Pediatrica salvata nella cartella!','ok');
+}
+
+async function caricaPedDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
+  editingPedNoteId = noteId;
+  await loadPedCartelle();
+  const sel = document.getElementById('ped-cartella'); if (sel) sel.value = data.cartella_id || '';
+  const notaEl = document.getElementById('ped-nota'); if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiPed(JSON.parse(data.dati || '{}')); } catch(e) {}
+  syncSharedData();
+  toast('✅ Scheda Pediatrica caricata','ok');
+}
 </script>
 </body>
 </html>

@@ -69,10 +69,20 @@
 </div>
 <main id="main">
 <div class="page-content">
-  <div style="margin-bottom:16px">
-    <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:10px">Sintesi delle più recenti linee guida internazionali (ESPEN, ESC, EASL, WHO) per la gestione nutrizionale delle principali patologie.</p>
-    <input type="text" id="lg-search" class="db-search" style="width:100%;padding:10px 14px;font-size:14px" placeholder="🔍 Cerca patologia (es. diabete, cirrosi, osteoporosi...)..." oninput="filterLG()">
-    <div id="lg-count" style="font-size:12px;color:var(--slate-l);margin-top:6px"></div>
+  <div style="background:linear-gradient(135deg,#0F766E,#0C5F58);border-radius:14px;padding:20px 24px;margin-bottom:18px;color:white;display:flex;align-items:center;gap:16px;box-shadow:0 4px 18px rgba(15,118,110,.25)">
+    <div style="font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">📚</div>
+    <div style="flex:1">
+      <div style="font-size:18px;font-weight:700;letter-spacing:.2px;margin-bottom:4px">Linee Guida Nutrizionali</div>
+      <div style="font-size:12.5px;opacity:.85;line-height:1.55">Sintesi delle più recenti linee guida internazionali <b>ESPEN · ESC · EASL · WHO</b> per la gestione nutrizionale delle principali patologie.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;flex-shrink:0">
+      <div id="lg-stat-n" style="font-size:24px;font-weight:700">—</div>
+      <div style="font-size:10.5px;opacity:.8;text-align:center">linee guida</div>
+    </div>
+  </div>
+  <div style="background:white;border-radius:12px;border:1.5px solid var(--border);padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+    <input type="text" id="lg-search" class="db-search" style="width:100%;padding:10px 14px;font-size:14px;border-radius:8px" placeholder="🔍 Cerca patologia (es. diabete, cirrosi, osteoporosi...)..." oninput="filterLG()">
+    <div id="lg-count" style="font-size:12px;color:var(--slate-l);margin-top:8px"></div>
   </div>
   <div id="lg-grid"></div>
   <div id="lg-empty" style="display:none" class="empty-state">
@@ -381,6 +391,8 @@ function filterLG() { renderAll(document.getElementById('lg-search').value); }
 
 document.addEventListener('DOMContentLoaded', async () => {
   renderAll();
+  const s = document.getElementById('lg-stat-n');
+  if(s) s.textContent = LG_DATA.length;
   try { await checkAuth(false); } catch(e) {}
 });
 </script>

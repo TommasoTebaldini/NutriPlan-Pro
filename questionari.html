@@ -884,6 +884,22 @@
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
+<!-- Modale Setup SQL -->
+<div class="modal-bg" id="modal-sql-setup">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-hdr"><span>⚙️ Setup Database — Tabella Mancante</span><button onclick="closeM('modal-sql-setup')">✕</button></div>
+    <div style="padding:18px">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
+      <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
+        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: SALVA QUESTIONARIO IN CARTELLA PAZIENTE -->
 <div class="modal-bg" id="modal-salva-q">
   <div class="modal" style="max-width:420px">
@@ -1738,7 +1754,7 @@ async function salvaQuestionarioInCartella() {
   showLoading(false);
   if (error) {
     if (error.code === '42P01') {
-      toast('⚠️ Tabella note_specialistiche non trovata nel DB. Esegui lo SQL da pazienti.html.', 'err');
+      mostraSetupSQL();
     } else {
       toast('❌ ' + error.message, 'err');
     }
@@ -1751,6 +1767,27 @@ async function salvaQuestionarioInCartella() {
 // ─────────────────────────────────
 // INIT
 // ─────────────────────────────────
+function mostraSetupSQL() {
+  const sql = `-- Esegui questo SQL nel pannello Supabase (SQL Editor → New Query):
+CREATE TABLE IF NOT EXISTS note_specialistiche (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users NOT NULL,
+  tipo text NOT NULL,
+  nota text,
+  dati jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Own note" ON note_specialistiche;
+CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
+  console.error('SQL da eseguire:\n' + sql);
+  const modal = document.getElementById('modal-sql-setup');
+  if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
+  else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   try { await checkAuth(false); } catch(e) {}
   renderEDEQItems();

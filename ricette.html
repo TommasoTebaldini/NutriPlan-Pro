@@ -9,10 +9,12 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
 .ricetta-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:16px;cursor:pointer;transition:all .15s;position:relative}
-.ricetta-card:hover{border-color:var(--teal-l);box-shadow:0 4px 16px rgba(15,118,110,.1);transform:translateY(-1px)}
+.ricetta-card:hover{border-color:var(--teal-l);box-shadow:0 6px 20px rgba(15,118,110,.12);transform:translateY(-2px)}
 .ricetta-card h4{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:4px}
 .rc-meta{font-size:11.5px;color:var(--slate-l);display:flex;gap:10px;flex-wrap:wrap}
 .rc-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:var(--sage);color:var(--teal-d)}
+.rc-macro-bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.rc-macro{font-size:10.5px;padding:2px 8px;border-radius:8px;font-weight:600}
 .ingrediente-row{display:grid;grid-template-columns:1fr 80px 80px auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
 .ingrediente-row:last-child{border-bottom:none}
 .ing-nome{font-size:13px;font-weight:500}
@@ -69,6 +71,25 @@
   </div>
 </div>
 <main id="main"><div class="page-content">
+  <!-- HERO BANNER -->
+  <div style="background:linear-gradient(135deg,#065F46 0%,#059669 60%,#34D399 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(6,95,70,.28);position:relative;overflow:hidden">
+    <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+    <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+    <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🍳</div>
+    <div style="flex:1;position:relative">
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Archivio Ricette</div>
+      <div style="font-size:12px;opacity:.88;line-height:1.6">Crea e gestisci le tue ricette personalizzate con calcolo automatico dei valori nutrizionali per porzione. Importa ricette dal web o aggiungi le tue.</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥕 Calcolo Nutrizionale</div>
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🌐 Importa da URL</div>
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📋 Gestisci Porzioni</div>
+      </div>
+    </div>
+    <div class="no-print" style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+      <button class="btn btn-sm" onclick="openNuovaRicetta()" style="background:rgba(255,255,255,.2);color:white;border:none;font-weight:700">➕ Nuova Ricetta</button>
+      <button class="btn btn-sm" onclick="openImportaUrl()" style="background:rgba(255,255,255,.14);color:white;border:none">🌐 Importa</button>
+    </div>
+  </div>
   <div class="db-filters">
     <input type="text" id="r-search" class="db-search" placeholder="🔍 Cerca ricetta..." oninput="filterRicette()">
     <span id="r-count" style="font-size:12px;color:var(--slate-l)"></span>
@@ -251,11 +272,14 @@ function renderRicette(filter = '') {
     const ingPreview = ing.slice(0, 5).map(i => `<span style="display:inline-flex;align-items:center;gap:3px;font-size:11px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:5px;padding:2px 6px;color:#15803D"><b>${esc(i.nome)}</b>${i.qt && i.qt !== '0' ? `<span style="color:#64748B;font-weight:400">${i.qt}g</span>` : ''}</span>`).join('');
     const ingMore = ing.length > 5 ? `<span style="font-size:11px;color:var(--slate-l)">+${ing.length - 5} altri</span>` : '';
     return `<div class="ricetta-card" onclick="apriDettaglio('${r.id}')">
-      <h4>🍽️ ${esc(r.nome)}</h4>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <h4 style="margin:0">🍽️ ${esc(r.nome)}</h4>
+        <span class="rc-tag" style="flex-shrink:0;${catStyle(r.categoria)}">${esc(r.categoria||'Ricetta')}</span>
+      </div>
       <div class="rc-meta">
-        <span>${r.categoria || 'Ricetta'}</span>
         <span>👥 ${porzioni} porzioni</span>
         <span>🔥 ~${kcalPorz} kcal/porz</span>
+        <span>🥕 ${ing.length} ingredienti</span>
       </div>
       ${r.note ? `<div style="font-size:11px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(r.note.substring(0,60))}${r.note.length>60?'...':''}</div>` : ''}
       <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
@@ -270,6 +294,11 @@ function renderRicette(filter = '') {
 }
 
 function filterRicette() { renderRicette(document.getElementById('r-search').value); }
+
+function catStyle(cat) {
+  const m = {'Primo piatto':'background:#EDE9FE;color:#5B21B6','Secondo piatto':'background:#DBEAFE;color:#1E40AF','Contorno':'background:#D1FAE5;color:#065F46','Colazione':'background:#FEF3C7;color:#92400E','Spuntino':'background:#FCE7F3;color:#9D174D','Dessert':'background:#FEE2E2;color:#991B1B'};
+  return m[cat] || 'background:#F1F5F9;color:#475569';
+}
 
 // ── NUOVA RICETTA ──
 function openNuovaRicetta() {

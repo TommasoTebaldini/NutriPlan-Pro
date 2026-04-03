@@ -40,6 +40,16 @@
 .nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
 .nf input:focus,.nf select:focus{border-color:#3B82F6}
 .badge-blu{background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast,#dg-paz-hdr{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .dg-tabs{display:none!important}
+  .dg-panel{display:none!important}
+  .dg-panel.active{display:block!important}
+}
 </style>
 </head>
 <body>
@@ -89,6 +99,22 @@
 
 <main id="main"><div class="page-content">
 
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 60%,#3B82F6 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(30,58,95,.3);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🩸</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Gestione Diabete — Counting CHO &amp; Insulina</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Strumenti per il calcolo del rapporto I:C, counting dei carboidrati, porzioni isoglucidiche e depliant paziente. Basato su <b>ADA 2024 · EASD · AMD-SID 2023</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">⚖️ Rapporto I:C</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🔢 Counting CHO</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📄 Depliant Paziente</div>
+    </div>
+  </div>
+</div>
+
 <!-- PAZIENTE BAR -->
 <div class="paz-hdr no-print" id="dg-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
@@ -110,7 +136,7 @@
   <button class="dg-tab" onclick="showTab('porzioni')">🍽️ Porzioni Isoglucidiche</button>
   <button class="dg-tab" onclick="showTab('depliant')">📄 Depliant Paziente</button>
   <button class="dg-tab" onclick="showTab('lg')">📚 Linee Guida</button>
-  <button class="dg-tab" onclick="showTab('piano_diabete')" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6);color:#9F1239;border:1.5px solid #FDA4AF">🍽️ Piano Alimentare</button>
+  <button class="dg-tab" onclick="showTab('piano_diabete')" style="background:white">🍽️ Piano Alimentare</button>
 </div>
 
 <!-- TAB 1: RAPPORTO I:C -->

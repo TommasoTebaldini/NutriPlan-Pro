@@ -48,6 +48,16 @@
 .scoff-q{background:white;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:8px}
 .scoff-q label{font-size:13px;font-weight:500;color:var(--slate);display:flex;align-items:center;gap:10px;cursor:pointer}
 .scoff-q input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal);cursor:pointer}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast,#dca-paz-hdr{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .dna-tabs{display:none!important}
+  .dna-panel{display:none!important}
+  .dna-panel.active{display:block!important}
+}
 </style>
 </head>
 <body>
@@ -90,9 +100,28 @@
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>🫀 DCA — Disturbi del Comportamento Alimentare</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
 </div>
 
 <main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#134E4A 0%,#0F766E 60%,#14B8A6 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(19,78,74,.3);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🫀</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">DCA — Disturbi del Comportamento Alimentare</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Screening, classificazione DSM-5/ICD-11, approccio terapeutico multidisciplinare e piano alimentare personalizzato. Basato su <b>NICE 2017 · MARSIPAN · SISDCA</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🔍 Screening SCOFF</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">⚠️ AN / BN / BED</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🤝 Approccio Terapeutico</div>
+    </div>
+  </div>
+</div>
 
 <!-- BARRA PAZIENTE DCA -->
 <div class="paz-hdr no-print" id="dca-paz-hdr" style="margin-bottom:16px">
@@ -117,7 +146,7 @@
   <button class="dna-tab" onclick="showDna('complicanze')">🏥 Complicanze Mediche</button>
   <button class="dna-tab" onclick="showDna('trattamento')">🤝 Approccio Terapeutico</button>
   <button class="dna-tab" onclick="showDna('linee_guida')">📚 Linee Guida</button>
-  <button class="dna-tab" onclick="showDna('piano_dca')" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);color:#6D28D9;border:1.5px solid #C4B5FD">🍽️ Piano Alimentare DCA</button>
+  <button class="dna-tab" onclick="showDna('piano_dca')" style="background:white">🍽️ Piano Alimentare DCA</button>
 </div>
 
 <!-- PANORAMICA -->

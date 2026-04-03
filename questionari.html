@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.q-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#F0F9FF;border-radius:14px}
+.q-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#F0F9FF;border-radius:14px;border:1.5px solid #BAE6FD;box-shadow:0 2px 8px rgba(14,165,233,.08)}
 .q-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
 .q-tab:hover{background:rgba(14,165,233,.12);color:#0369A1}
 .q-tab.active{background:white;color:#0369A1;box-shadow:0 3px 10px rgba(14,165,233,.2);font-weight:700}
@@ -53,6 +53,17 @@
 .q-subscale{background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #3B82F6}
 .q-subscale-title{font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
 .q-subscale-score{font-size:18px;font-weight:800;color:#1D4ED8}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .q-tabs{display:none!important}
+  .q-panel{display:none!important}
+  .q-panel.active{display:block!important}
+  .q-card-body{display:block!important}
+}
 </style>
 </head>
 <body>
@@ -102,8 +113,20 @@
 
 <main id="main"><div class="page-content">
 
-<div class="info-box ib-blue">
-  <b>📋 Questionari Nutrizionali</b> — Strumenti validati a livello internazionale per la valutazione dello stato nutrizionale e dei comportamenti alimentari. Divisi in <b>Test di Screening</b> (identificazione rapida del rischio) e <b>Test di Assessment</b> (valutazione approfondita). Ogni questionario restituisce un punteggio con interpretazione clinica e raccomandazioni operative.
+<!-- HERO BANNER -->
+<div style="background:linear-gradient(135deg,#0369A1 0%,#0EA5E9 60%,#38BDF8 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(3,105,161,.28);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">📋</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Questionari Nutrizionali Validati</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Strumenti di screening e assessment internazionali per la valutazione dello stato nutrizionale e dei comportamenti alimentari. Calcolo automatico con interpretazione clinica.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🔍 MUST · MNA · NRS-2002</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📊 EDE-Q · SCOFF · BES</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧠 PHQ-9 · GAD-7</div>
+    </div>
+  </div>
 </div>
 
 <div class="q-tabs">

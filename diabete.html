@@ -368,13 +368,13 @@
           </div>
           <div>
             <label style="font-size:11px;font-weight:700;color:#78350F;display:block;margin-bottom:4px">Target glicemia</label>
-            <input type="text" placeholder="es. 100 mg/dL" style="width:100%;border:none;border-bottom:2px solid #F59E0B;outline:none;background:transparent;font-size:13px;padding:2px 0">
+            <input type="text" id="dep-target" placeholder="es. 100 mg/dL" style="width:100%;border:none;border-bottom:2px solid #F59E0B;outline:none;background:transparent;font-size:13px;padding:2px 0">
           </div>
           <div>
             <label style="font-size:11px;font-weight:700;color:#78350F;display:block;margin-bottom:4px">FSI</label>
             <div style="display:flex;align-items:center;gap:4px">
               1 U → −
-              <input type="text" placeholder="__" style="width:35px;border:none;border-bottom:2px solid #F59E0B;outline:none;text-align:center;font-weight:700;background:transparent;font-size:14px">
+              <input type="text" id="dep-fsi" placeholder="__" style="width:35px;border:none;border-bottom:2px solid #F59E0B;outline:none;text-align:center;font-weight:700;background:transparent;font-size:14px">
               mg/dL
             </div>
           </div>
@@ -539,6 +539,22 @@
 </script>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
+
+<!-- Modale Setup SQL -->
+<div class="modal" id="modal-sql-setup">
+  <div class="modal-box" style="max-width:600px">
+    <div class="modal-hdr"><span>⚙️ Setup Database — Tabella Mancante</span><button onclick="closeM('modal-sql-setup')">✕</button></div>
+    <div style="padding:18px">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
+      <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
+        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
 <script>
@@ -815,6 +831,7 @@ function raccogliDatiDg() {
     rapporto_ic: { peso: document.getElementById('ic-peso')?.value, tipo: document.getElementById('ic-tipo')?.value, tdd: document.getElementById('ic-tdd')?.value, metodo: document.getElementById('ic-metodo')?.value, risultato: document.getElementById('ic-val')?.textContent },
     dose_pasto: { cho: document.getElementById('pasto-cho')?.value, ic: document.getElementById('pasto-ic')?.value, glicemia: document.getElementById('pasto-glic')?.value, target: document.getElementById('pasto-target')?.value, fsi: document.getElementById('pasto-fsi')?.value },
     fsi: { tdd: document.getElementById('fsi-tdd')?.value, metodo: document.getElementById('fsi-metodo')?.value, risultato: document.getElementById('fsi-val')?.textContent },
+    depliant: { ic: gv('dep-ic'), target: gv('dep-target'), fsi: gv('dep-fsi') },
     piano: {
       tipo: gv('dg-piano-tipo'), insulina: gv('dg-piano-insulina'), kcal: gv('dg-piano-kcal'), cho_tot: gv('dg-piano-cho-tot'),
       note_cliniche: gv('dg-piano-note-cliniche'), limita: gv('dg-piano-limita'), sport: gv('dg-piano-sport'), note_generali: gv('dg-piano-note-generali'),
@@ -828,6 +845,7 @@ function ripristinaDatiDg(dati) {
   if (dati.rapporto_ic) { sv('ic-peso',dati.rapporto_ic.peso); sv('ic-tipo',dati.rapporto_ic.tipo); sv('ic-tdd',dati.rapporto_ic.tdd); sv('ic-metodo',dati.rapporto_ic.metodo); }
   if (dati.dose_pasto) { sv('pasto-cho',dati.dose_pasto.cho); sv('pasto-ic',dati.dose_pasto.ic); sv('pasto-glic',dati.dose_pasto.glicemia); sv('pasto-target',dati.dose_pasto.target); sv('pasto-fsi',dati.dose_pasto.fsi); }
   if (dati.fsi) { sv('fsi-tdd',dati.fsi.tdd); sv('fsi-metodo',dati.fsi.metodo); }
+  if (dati.depliant) { sv('dep-ic',dati.depliant.ic); sv('dep-target',dati.depliant.target); sv('dep-fsi',dati.depliant.fsi); }
   if (dati.piano) {
     const p = dati.piano;
     sv('dg-piano-tipo',p.tipo); sv('dg-piano-insulina',p.insulina); sv('dg-piano-kcal',p.kcal); sv('dg-piano-cho-tot',p.cho_tot);
@@ -854,12 +872,36 @@ async function salvaDiabete() {
   showLoading(false);
   if (result.error) {
     if (result.error.code === '42P01') {
-      toast('⚠️ Tabella mancante — esegui SQL di setup (vedi console)','err');
-      console.error('SQL da eseguire:\ncreate table note_specialistiche(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,tipo text not null,nota text,dati jsonb,created_at timestamptz default now(),updated_at timestamptz default now());\nalter table note_specialistiche enable row level security;\ncreate policy "Own note" on note_specialistiche for all using(auth.uid()=user_id);');
+      mostraSetupSQL();
     } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
   toast(editingDgNoteId ? '✅ Scheda Diabete aggiornata!' : '✅ Dati diabete salvati nella cartella!','ok');
+  if (!editingDgNoteId && result.data?.[0]?.id) editingDgNoteId = result.data[0].id;
+}
+
+function mostraSetupSQL() {
+  const sql = `-- Esegui questo SQL nel pannello Supabase (SQL Editor → New Query):
+CREATE TABLE IF NOT EXISTS note_specialistiche (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users NOT NULL,
+  tipo text NOT NULL,
+  nota text,
+  dati jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
+  console.error('SQL da eseguire:\n' + sql);
+  const modal = document.getElementById('modal-sql-setup');
+  if (modal) {
+    document.getElementById('sql-setup-text').value = sql;
+    openM('modal-sql-setup');
+  } else {
+    toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err');
+  }
 }
 
 async function caricaDgDaNote(noteId) {

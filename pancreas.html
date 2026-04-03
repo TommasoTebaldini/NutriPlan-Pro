@@ -515,6 +515,22 @@
 </script>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
+
+<!-- Modale Setup SQL -->
+<div class="modal" id="modal-sql-setup">
+  <div class="modal-box" style="max-width:600px">
+    <div class="modal-hdr"><span>⚙️ Setup Database — Tabella Mancante</span><button onclick="closeM('modal-sql-setup')">✕</button></div>
+    <div style="padding:18px">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
+      <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
+        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
 <script>

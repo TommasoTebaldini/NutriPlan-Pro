@@ -82,6 +82,21 @@
 
 <main id="main"><div class="page-content">
 
+<!-- BARRA PAZIENTE RISTORAZIONE -->
+<div class="paz-hdr no-print" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Progetto / Struttura</label>
+    <select id="rist-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadRistCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Titolo menu / progetto</label>
+    <input type="text" id="rist-nota" placeholder="es. Menu mensa scolastica..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaRistorazione()" style="margin-top:18px;background:#1D4ED8">💾 Salva in Cartella</button>
+</div>
+
 <div class="rist-tabs">
   <button class="rist-tab active" onclick="showRist('overview')">📋 Panoramica</button>
   <button class="rist-tab" onclick="showRist('menu')">🗓️ Menu Settimanale</button>
@@ -89,6 +104,7 @@
   <button class="rist-tab" onclick="showRist('allergeni')">⚠️ Allergeni</button>
   <button class="rist-tab" onclick="showRist('haccp')">🔒 HACCP &amp; Normativa</button>
   <button class="rist-tab" onclick="showRist('fabbisogni')">📊 Fabbisogni per Utenza</button>
+  <button class="rist-tab" onclick="showRist('piano_rist')" style="background:linear-gradient(135deg,#EFF6FF,#BFDBFE);color:#1E3A5F;border:1.5px solid #93C5FD">🍽️ Piano Pasti</button>
 </div>
 
 <!-- PANORAMICA -->
@@ -482,6 +498,64 @@
     <div id="fb-result" style="background:#F0F9FF;border-radius:10px;padding:14px;font-size:13px;line-height:1.9"></div>
   </div>
 </div>
+<!-- PIANO PASTI COLLETTIVI -->
+<div class="rist-panel" id="tab-piano_rist">
+  <div class="info-box ib-blue">
+    <b>🍽️ Piano Pasti Collettivi</b> — Struttura il piano pasti per la struttura di ristorazione. Include la composizione nutrizionale del pasto, le diete speciali previste e le indicazioni per la rotazione ciclica del menu.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚙️ Configurazione Struttura</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Tipologia struttura</label>
+        <select id="rist-piano-tipo"><option value="scolastica">Mensa Scolastica</option><option value="ospedaliera">Mensa Ospedaliera</option><option value="aziendale">Mensa Aziendale</option><option value="rsa">RSA / Casa di Riposo</option><option value="sportiva">Centro Sportivo</option><option value="universitaria">Mensa Universitaria</option><option value="comunitaria">Comunità / Centro Sociale</option></select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Numero coperti medi/giorno</label><input type="number" id="rist-piano-coperti" placeholder="es. 250" oninput="calcolaRistPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal obiettivo per pasto (pranzo)</label><input type="number" id="rist-piano-kcal" placeholder="es. 770" oninput="calcolaRistPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Utenza principale</label><input type="text" id="rist-piano-utenza" placeholder="es. Bambini 6-10 anni, Adulti 25-55 anni..."></div>
+      <div class="nf"><label>Note specifiche struttura</label><textarea id="rist-piano-note-struttura" rows="3" placeholder="Contratto di fornitura, vincoli di budget, attrezzature disponibili, HACCP specifiche..."></textarea></div>
+    </div>
+    <div class="calc-box">
+      <h3>📊 Standard Nutrizionali Pasto</h3>
+      <div id="rist-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#EFF6FF;border-radius:8px;font-size:13px"><i>Inserisci le kcal per calcolare i macronutrienti del pasto.</i></div>
+      <div class="alert-info alert-box" style="font-size:12px;background:#EFF6FF;border-color:#3B82F6;color:#1E3A5F">
+        <b>💡 Standard nutrizionali per il pranzo:</b><br>
+        Il pranzo deve coprire il 35–40% del fabbisogno giornaliero.<br>
+        Proteine: 15–18% delle kcal totali del pasto.<br>
+        CHO: 50–55%, grassi: 28–33%, fibra ≥5g per pasto.<br>
+        Rispettare i LARN 2023 per la specifica fascia d'età dell'utenza.
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🗓️ Struttura del Pasto — Menu Tipo</h3>
+    <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Compilare un menu tipo rappresentativo. Per la rotazione ciclica, indicare le varianti settimanali nelle note di ogni portata.</p>
+    <div id="rist-pasti-container">
+      ${[
+        {id:'1',icon:'🍝',nome:'Primo Piatto',porz:'Adulti: pasta/riso 80g crudo',note:'Ruotare: pasta, riso, legumi, zuppa — max 2×/sett legumi come unico secondo'},
+        {id:'2',icon:'🥩',nome:'Secondo Piatto',porz:'Carne 130g / Pesce 150g / Uova 2 / Legumi 50g secchi',note:'Carne 2-3×/sett, pesce 2-3×/sett, legumi 1-2×/sett come secondo'},
+        {id:'3',icon:'🥦',nome:'Contorno',porz:'Verdura 200g cotta / 150g cruda',note:'Almeno 5 verdure diverse a settimana, alternare crude e cotte'},
+        {id:'4',icon:'🍞',nome:'Pane e Cereali',porz:'Pane 50g',note:'Preferire pane integrale o ai cereali'},
+        {id:'5',icon:'🍎',nome:'Frutta / Dessert',porz:'Frutta 150g fresca',note:'Frutta fresca come dessert 4/5 giorni. Dolce max 1-2×/sett'},
+      ].map(m => `<div style="background:#F0F9FF;border-radius:10px;border:1.5px solid #BAE6FD;padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+          <span style="font-size:20px">${m.icon}</span>
+          <input type="text" id="rist-m${m.id}-nome" value="${m.nome}" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">
+          <input type="text" id="rist-m${m.id}-porzione" value="${m.porz}" placeholder="Porzione tipo" style="flex:2;min-width:150px;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:#1E3A5F">
+        </div>
+        <textarea id="rist-m${m.id}-menu" rows="2" placeholder="Menu specifico: es. Pasta al pomodoro fresco, Risotto alle verdure, Pasta e fagioli..." style="width:100%;padding:8px 10px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>
+        <input type="text" id="rist-m${m.id}-note" placeholder="Note rotazione/varianti: ${m.note}" style="width:100%;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>⚕️ Diete Speciali Previste e Protocollo Allergeni</h3>
+    <div class="grid-2">
+      <div class="nf"><label>Diete speciali attive</label><textarea id="rist-piano-diete" rows="4" placeholder="• Dieta senza glutine (n. X utenti)&#10;• Dieta vegetariana (n. X)&#10;• Dieta per diabete (n. X)&#10;• Dieta senza lattosio (n. X)&#10;• Dieta iposodica (n. X)..."></textarea></div>
+      <div class="nf"><label>Allergeni principali da gestire</label><textarea id="rist-piano-allergeni" rows="4" placeholder="Glutine: alimenti sostitutivi disponibili...&#10;Lattosio: alternative disponibili...&#10;Uova: protocollo sostituzione...&#10;Frutta a guscio: procedura contaminazione crociata..."></textarea></div>
+    </div>
+    <div class="nf" style="margin-top:10px"><label>Note HACCP e follow-up</label><textarea id="rist-piano-note-generali" rows="2" placeholder="Verifiche periodiche, audit, tavolo di lavoro multidisciplinare..."></textarea></div>
+  </div>
+</div>
 
 </div></main>
 <div id="toast"></div>
@@ -521,9 +595,108 @@ function calcFabbisogno() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
+  try {
+    await checkAuth(false);
+    if (currentUser) {
+      loadRistCartelle();
+      const noteId = new URLSearchParams(window.location.search).get('noteId');
+      if (noteId) await caricaRistDaNote(noteId);
+    }
+  } catch(e) {}
   calcFabbisogno();
 });
+
+// ── SAVE / LOAD RISTORAZIONE ──
+let ristCartelle = [];
+let editingRistNoteId = null;
+
+async function loadRistCartelle() {
+  if (!currentUser) return;
+  if (ristCartelle.length) return;
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  ristCartelle = data || [];
+  const sel = document.getElementById('rist-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  ristCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+function calcolaRistPiano() {
+  const kcal = parseFloat(document.getElementById('rist-piano-kcal')?.value);
+  const coperti = parseInt(document.getElementById('rist-piano-coperti')?.value) || 100;
+  const el = document.getElementById('rist-piano-macro-result');
+  if (!el) return;
+  if (!kcal) { el.innerHTML = '<i>Inserisci le kcal per calcolare i macronutrienti del pasto.</i>'; return; }
+  const prot = Math.round(kcal * 0.17 / 4);
+  const cho = Math.round(kcal * 0.53 / 4);
+  const fat = Math.round(kcal * 0.30 / 9);
+  const fibra = Math.round(7);
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px">
+    <div style="background:#DBEAFE;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#1E3A5F">Proteine</div><div style="font-size:18px;font-weight:700;color:#1D4ED8">${prot}g</div></div>
+    <div style="background:#FEF3C7;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#78350F">CHO</div><div style="font-size:18px;font-weight:700;color:#D97706">${cho}g</div></div>
+    <div style="background:#FFF7ED;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#7C2D12">Grassi</div><div style="font-size:18px;font-weight:700;color:#F97316">${fat}g</div></div>
+    <div style="background:#F0FDF4;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#15803D">Fibra</div><div style="font-size:18px;font-weight:700;color:#16A34A">≥${fibra}g</div></div>
+  </div>
+  <div style="font-size:12px;color:#1E3A5F">Per ${coperti} coperti: Proteine ${Math.round(prot*coperti/1000)}kg · CHO ${Math.round(cho*coperti/1000)}kg · Grassi ${Math.round(fat*coperti/1000)}kg</div>`;
+}
+
+function raccogliDatiRist() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    piano: {
+      tipo: gv('rist-piano-tipo'), coperti: gv('rist-piano-coperti'), kcal: gv('rist-piano-kcal'),
+      utenza: gv('rist-piano-utenza'), note_struttura: gv('rist-piano-note-struttura'),
+      diete: gv('rist-piano-diete'), allergeni: gv('rist-piano-allergeni'), note_generali: gv('rist-piano-note-generali'),
+      portate: [1,2,3,4,5].map(i => ({ nome: gv('rist-m'+i+'-nome'), porzione: gv('rist-m'+i+'-porzione'), menu: gv('rist-m'+i+'-menu'), note: gv('rist-m'+i+'-note') }))
+    }
+  };
+}
+
+function ripristinaDatiRist(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.piano) {
+    const p = dati.piano;
+    sv('rist-piano-tipo',p.tipo); sv('rist-piano-coperti',p.coperti); sv('rist-piano-kcal',p.kcal);
+    sv('rist-piano-utenza',p.utenza); sv('rist-piano-note-struttura',p.note_struttura);
+    sv('rist-piano-diete',p.diete); sv('rist-piano-allergeni',p.allergeni); sv('rist-piano-note-generali',p.note_generali);
+    if (Array.isArray(p.portate)) p.portate.forEach((m, i) => { const n=i+1; sv('rist-m'+n+'-nome',m.nome); sv('rist-m'+n+'-porzione',m.porzione); sv('rist-m'+n+'-menu',m.menu); sv('rist-m'+n+'-note',m.note); });
+    calcolaRistPiano();
+  }
+}
+
+async function salvaRistorazione() {
+  if (!currentUser) { toast('Effettua il login per salvare','err'); return; }
+  const cartella_id = document.getElementById('rist-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella / progetto','err'); return; }
+  const nota = document.getElementById('rist-nota').value.trim() || 'Menu ristorazione ' + new Date().toLocaleDateString('it');
+  const dati = raccogliDatiRist();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'ristorazione', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingRistNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRistNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ '+result.error.message,'err'); return; }
+  toast(editingRistNoteId ? '✅ Piano Ristorazione aggiornato!' : '✅ Piano Ristorazione salvato!','ok');
+}
+
+async function caricaRistDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare il piano','err'); return; }
+  editingRistNoteId = noteId;
+  await loadRistCartelle();
+  const sel = document.getElementById('rist-cartella'); if (sel) sel.value = data.cartella_id || '';
+  const notaEl = document.getElementById('rist-nota'); if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiRist(JSON.parse(data.dati || '{}')); } catch(e) {}
+  toast('✅ Piano Ristorazione caricato','ok');
+}
 </script>
 </body>
 </html>

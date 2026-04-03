@@ -151,16 +151,20 @@ let ricette = [];
 let editingRicettaId = null;
 let detRicetta = null;
 let ingredientiCount = 0;
+let ricetteTableMissing = false;
 
 // ── LOAD RICETTE ──
 async function loadRicette() {
   showLoading(true);
+  ricetteTableMissing = false;
   try {
     const { data, error } = await sb.from('ricette').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     showLoading(false);
     if (error) {
       if (error.code === '42P01') {
+        ricetteTableMissing = true;
         showSetupBanner();
+        return; // Don't call renderRicette — banner already shows in grid
       } else {
         toast('❌ Errore caricamento ricette: ' + error.message, 'err');
       }
@@ -354,8 +358,10 @@ async function salvaRicetta() {
   showLoading(false);
   if (result.error) {
     if (result.error.code === '42P01') {
-      toast('Tabella "ricette" mancante. Esegui SQL in console.', 'err');
-      console.error('Esegui su Supabase:\ncreate table ricette(id uuid default gen_random_uuid() primary key,user_id uuid references auth.users not null,nome text not null,categoria text,porzioni int default 4,ingredienti text,note text,created_at timestamptz default now(),updated_at timestamptz default now());\nalter table ricette enable row level security;\ncreate policy "Proprie ricette" on ricette for all using(auth.uid()=user_id);');
+      closeM('modal-ricetta');
+      ricetteTableMissing = true;
+      showSetupBanner();
+      toast('⚠️ Tabella "ricette" mancante — vedi istruzioni nella pagina', 'err');
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }

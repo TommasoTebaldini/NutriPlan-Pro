@@ -230,7 +230,7 @@ async function renderCartellaDetail(id) {
           📋 Piani Alimentari
           <span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(piani||[]).length}</span>
         </h4>
-        <button class="btn btn-primary btn-sm" onclick="nuovoPianoInCartella('${cart.id}')">+ Nuovo Piano</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;box-shadow:0 2px 8px rgba(15,118,110,.3);transition:all .15s;font-family:inherit" onmouseover="this.style.boxShadow='0 4px 14px rgba(15,118,110,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(15,118,110,.3)';this.style.transform=''" onclick="nuovoPianoInCartella('${cart.id}')">📋 Nuovo Piano</button>
       </div>
       <div style="padding:10px 14px">${pianiHtml}</div>
     </div>
@@ -242,7 +242,7 @@ async function renderCartellaDetail(id) {
           📝 Schede NCPt
           <span style="background:#EDE9FE;color:#5B21B6;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(ncpts||[]).length}</span>
         </h4>
-        <button class="btn btn-primary btn-sm" onclick="apriNuovoNCPt('${cart.id}')">+ Nuovo NCPt</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;box-shadow:0 2px 8px rgba(124,58,237,.3);transition:all .15s;font-family:inherit" onmouseover="this.style.boxShadow='0 4px 14px rgba(124,58,237,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(124,58,237,.3)';this.style.transform=''" onclick="apriNuovoNCPt('${cart.id}')">📝 Nuovo NCPt</button>
       </div>
       <div style="padding:10px 14px">${ncptsHtml}</div>
     </div>
@@ -254,7 +254,7 @@ async function renderCartellaDetail(id) {
           📊 Schede Valutazione
           <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(schede||[]).length}</span>
         </h4>
-        <button class="btn btn-primary btn-sm" onclick="apriValutazione('${cart.id}')">+ Nuova Valutazione</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#16A34A,#4ADE80);color:white;box-shadow:0 2px 8px rgba(22,163,74,.3);transition:all .15s;font-family:inherit" onmouseover="this.style.boxShadow='0 4px 14px rgba(22,163,74,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,74,.3)';this.style.transform=''" onclick="apriValutazione('${cart.id}')">📊 Nuova Valutazione</button>
       </div>
       <div style="padding:10px 14px">${schedeHtml}</div>
     </div>
@@ -266,7 +266,7 @@ async function renderCartellaDetail(id) {
           ⚡ BIA — Bioimpedenziometria
           <span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(biaList||[]).length}</span>
         </h4>
-        <button class="btn btn-primary btn-sm" onclick="window.location.href='bia.html?cartella=${id}'">+ Nuova BIA</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;box-shadow:0 2px 8px rgba(29,78,216,.3);transition:all .15s;font-family:inherit" onmouseover="this.style.boxShadow='0 4px 14px rgba(29,78,216,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(29,78,216,.3)';this.style.transform=''" onclick="window.location.href='bia.html?cartella=${id}'">⚡ Nuova BIA</button>
       </div>
       <div style="padding:10px 14px">${biaHtml}</div>
     </div>
@@ -274,22 +274,43 @@ async function renderCartellaDetail(id) {
     <!-- Note Specialistiche (Diabete, Pancreas, ecc.) -->
     ${(noteSpec && noteSpec.length) ? `
     <div class="card" style="margin-bottom:16px">
-      <div class="card-hdr">
-        <h4 style="font-size:14px;margin:0">📌 Note Specialistiche <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${noteSpec.length}</span></h4>
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h4 style="font-size:14px;margin:0">📌 Schede Specialistiche <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${noteSpec.length}</span></h4>
       </div>
       <div style="padding:10px 14px">${noteSpec.map(n => {
-        const tipoLabel = n.tipo === 'diabete' ? '🩸 Diabete' : n.tipo === 'pancreas' ? '🫁 Pancreas IPE' : '📌 ' + n.tipo;
-        const tipoIcon = n.tipo === 'diabete' ? '🩸' : n.tipo === 'pancreas' ? '🫁' : '📌';
-        return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px">
-          <span style="font-size:22px">${tipoIcon}</span>
-          <div style="flex:1">
-            <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(n.nota||tipoLabel)}</div>
-            <div style="font-size:11.5px;color:var(--slate-l)">${tipoLabel} · ${fmtDate(n.created_at)}</div>
+        const specMap = {
+          'diabete':     {icon:'🩸', label:'Diabete',            page:'diabete.html',     bg:'#DBEAFE', col:'#1D4ED8'},
+          'pancreas':    {icon:'🫁', label:'IPE — Pancreas',     page:'pancreas.html',    bg:'#FFF7ED', col:'#C2410C'},
+          'sport':       {icon:'🏃', label:'Nutrizione Sportiva',page:'sport.html',       bg:'#ECFDF5', col:'#065F46'},
+          'pediatria':   {icon:'👶', label:'Pediatria',          page:'pediatria.html',   bg:'#EDE9FE', col:'#5B21B6'},
+          'ristorazione':{icon:'🍽️',label:'Ristorazione',       page:'ristorazione.html',bg:'#F0F9FF', col:'#0369A1'},
+          'dca':         {icon:'🫀', label:'DCA',                page:'dna.html',         bg:'#FEE2E2', col:'#991B1B'},
+        };
+        const s = specMap[n.tipo] || {icon:'📌', label:n.tipo, page:null, bg:'#F8FAFC', col:'#475569'};
+        const openBtn = s.page ? `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','${n.tipo}')">✏️ Apri</button>` : '';
+        return `<div onclick="apriNoteSpec('${n.id}','${n.tipo}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:${s.page?'pointer':'default'};transition:all .15s" onmouseover="if('${s.page}')this.style.borderColor='${s.col}'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="font-size:22px;background:${s.bg};padding:6px;border-radius:8px">${s.icon}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(n.nota||s.label)}</div>
+            <div style="font-size:11.5px;color:var(--slate-l)">${s.label} · ${fmtDate(n.created_at)}</div>
           </div>
+          <span style="font-size:11px;background:${s.bg};color:${s.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${s.label}</span>
+          ${openBtn}
         </div>`;
       }).join('')}</div>
     </div>` : ''}
   `;
+}
+
+function apriNoteSpec(noteId, tipo) {
+  const pageMap = {
+    'diabete': 'diabete.html', 'pancreas': 'pancreas.html',
+    'sport': 'sport.html', 'pediatria': 'pediatria.html',
+    'ristorazione': 'ristorazione.html', 'dca': 'dna.html'
+  };
+  const page = pageMap[tipo];
+  if (!page) return;
+  window.location.href = page + '?noteId=' + encodeURIComponent(noteId);
 }
 
 function apriScheda(schedaId) {

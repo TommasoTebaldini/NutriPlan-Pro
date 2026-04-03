@@ -93,6 +93,21 @@
 
 <main id="main"><div class="page-content">
 
+<!-- BARRA PAZIENTE DCA -->
+<div class="paz-hdr no-print" id="dca-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <select id="dca-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadDcaCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Titolo sessione</label>
+    <input type="text" id="dca-nota" placeholder="es. Prima visita DCA..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaDca()" style="margin-top:18px">💾 Salva in Cartella</button>
+</div>
+
 <div class="dna-tabs">
   <button class="dna-tab active" onclick="showDna('overview')">📋 Panoramica</button>
   <button class="dna-tab" onclick="showDna('screening')">🔍 Screening</button>
@@ -101,6 +116,7 @@
   <button class="dna-tab" onclick="showDna('complicanze')">🏥 Complicanze Mediche</button>
   <button class="dna-tab" onclick="showDna('trattamento')">🤝 Approccio Terapeutico</button>
   <button class="dna-tab" onclick="showDna('linee_guida')">📚 Linee Guida</button>
+  <button class="dna-tab" onclick="showDna('piano_dca')" style="background:linear-gradient(135deg,#FEE2E2,#FCE7F3);color:#991B1B;border:1.5px solid #FECACA">🍽️ Piano Alimentare DCA</button>
 </div>
 
 <!-- PANORAMICA -->
@@ -187,11 +203,11 @@
       <h3>📋 SCOFF Questionnaire</h3>
       <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px">Strumento di screening validato. ≥2 risposte "Sì" = sospetto DCA (sensibilità 85%, specificità 89%).</p>
       <div id="scoff-questions">
-        <div class="scoff-q"><label><input type="checkbox" id="s1"> Ti fai <b>S</b>entire <b>m</b>ale perché ti sembra di aver mangiato troppo?</label></div>
-        <div class="scoff-q"><label><input type="checkbox" id="s2"> Sei preoccupato/a di aver perso il <b>C</b>ontrollo su quanto mangi?</label></div>
-        <div class="scoff-q"><label><input type="checkbox" id="s3"> Hai perso recentemente più di <b>O</b>ne stone (≈6 kg) in un periodo di 3 mesi?</label></div>
-        <div class="scoff-q"><label><input type="checkbox" id="s4"> Credi di essere <b>F</b>at (grasso/a) anche quando gli altri dicono che sei troppo magro/a?</label></div>
-        <div class="scoff-q"><label><input type="checkbox" id="s5"> Diresti che il <b>F</b>ood (cibo) domina la tua vita?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s1"> Ti fai vomitare perché ti senti eccessivamente piena/o?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s2"> Sei preoccupato/a di aver perso il controllo su quanto mangi?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s3"> Hai perso recentemente più di 6 kg in un periodo di 3 mesi?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s4"> Credi di essere grasso/a anche quando gli altri dicono che sei troppo magro/a?</label></div>
+        <div class="scoff-q"><label><input type="checkbox" id="s5"> Diresti che il cibo domina la tua vita?</label></div>
       </div>
       <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="calcolaScoff()">📊 Calcola Punteggio</button>
       <div id="scoff-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
@@ -616,6 +632,116 @@
 </div>
 
 </div></main>
+
+<!-- PIANO ALIMENTARE DCA TAB (fuori dalla struttura dei tab per semplicità) -->
+<script>document.addEventListener('DOMContentLoaded',()=>{
+  const pianoPanel = document.createElement('div');
+  pianoPanel.className = 'dna-panel';
+  pianoPanel.id = 'tab-piano_dca';
+  pianoPanel.innerHTML = `
+  <div class="info-box ib-red" style="background:#FEF2F2;border-color:#EF4444">
+    <b>🍽️ Piano Alimentare DCA</b> — Il piano alimentare nel trattamento dei DCA deve essere costruito in accordo con il team multidisciplinare. L'obiettivo primario non è la gestione del peso ma la normalizzazione del comportamento alimentare e del rapporto con il cibo.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚙️ Configurazione Piano</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Tipo DCA</label>
+        <select id="dca-piano-tipo">
+          <option value="AN">Anoressia Nervosa (AN)</option>
+          <option value="BN">Bulimia Nervosa (BN)</option>
+          <option value="BED">Binge Eating Disorder (BED)</option>
+          <option value="ARFID">ARFID</option>
+          <option value="altro">Altro / NAS</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Fase trattamento</label>
+        <select id="dca-piano-fase">
+          <option value="acuta">Acuta / Refeeding</option>
+          <option value="stabilizzazione">Stabilizzazione</option>
+          <option value="mantenimento">Mantenimento</option>
+          <option value="prevenzione_ricadute">Prevenzione ricadute</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label>
+        <input type="number" id="dca-piano-kcal" placeholder="es. 1800" oninput="calcolaDcaMacro()">
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Approccio alimentare</label>
+        <select id="dca-piano-approccio">
+          <option value="meccanico">Pasto meccanico (orari fissi, grammi stabiliti)</option>
+          <option value="strutturato">Strutturato con flessibilità guidata</option>
+          <option value="mindful">Mindful eating (fase avanzata)</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Note cliniche sul paziente</label>
+        <textarea id="dca-piano-note-cliniche" rows="3" placeholder="Diagnosi specifica, comorbilità, farmaci, storia DCA, obiettivi concordati col team..."></textarea>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>📊 Obiettivi Nutrizionali</h3>
+      <div id="dca-macro-result" style="margin-bottom:12px;padding:12px;background:#FEF9F9;border-radius:8px;font-size:13px;line-height:1.9">
+        <i>Inserisci le kcal target per calcolare la distribuzione dei macronutrienti.</i>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>% Proteine</label>
+        <input type="number" id="dca-prot-perc" value="20" min="15" max="30" oninput="calcolaDcaMacro()">
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>% Carboidrati</label>
+        <input type="number" id="dca-cho-perc" value="55" min="45" max="65" oninput="calcolaDcaMacro()">
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>% Grassi</label>
+        <input type="number" id="dca-fat-perc" value="25" min="20" max="35" oninput="calcolaDcaMacro()">
+      </div>
+      <div class="info-box ib-amber" style="margin-top:10px;font-size:12px">
+        <b>⚠️ Linee guida DCA:</b> Nell'AN refeeding: partire da 30–40 kcal/kg/die, aumentare di 200–300 kcal ogni 3–5 giorni. Nella BN: garantire adeguatezza calorica per ridurre la restrizione-abbuffata. Nel BED: approccio non restrittivo, struttura regolare dei pasti.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEMA PASTI -->
+  <div class="calc-box">
+    <h3>🗓️ Schema Pasti DCA</h3>
+    <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Compilare ogni pasto con gli alimenti e le grammature. Nel pasto meccanico indicare le quantità precise; in fase avanzata si può usare il sistema degli equivalenti.</p>
+    <div id="dca-pasti-container">
+      ${[
+        {id:'1',icon:'☀️',nome:'Colazione',ora:'07:30',note_default:'Mangiare seduto, tempo minimo 20 min'},
+        {id:'2',icon:'🍎',nome:'Spuntino mattina',ora:'10:30',note_default:'Spuntino strutturato, evitare di saltarlo'},
+        {id:'3',icon:'🍽️',nome:'Pranzo',ora:'12:30',note_default:'Pasto completo: primo + secondo + contorno'},
+        {id:'4',icon:'🥜',nome:'Spuntino pomeriggio',ora:'16:00',note_default:'Importante per la BN per evitare abbuffate serali'},
+        {id:'5',icon:'🌙',nome:'Cena',ora:'19:30',note_default:'Pasto completo: secondo + contorno + pane/cereali'},
+        {id:'6',icon:'🥛',nome:'Spuntino serale',ora:'21:30',note_default:'Indicato nell\'AN per incremento calorico graduale'}
+      ].map(m => `
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span style="font-size:20px">${m.icon}</span>
+          <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" id="dca-m${m.id}-nome" value="${m.nome}" style="flex:1;min-width:120px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">
+            <input type="text" id="dca-m${m.id}-ora" value="${m.ora}" placeholder="Orario" style="width:70px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">
+            <input type="number" id="dca-m${m.id}-kcal" placeholder="kcal pasto" style="width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">
+          </div>
+        </div>
+        <textarea id="dca-m${m.id}-alimenti" rows="2" placeholder="Alimenti e grammature (es. Latte parz. scremato 200mL, Pane integrale 60g, Marmellata 20g, Frutta 150g)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>
+        <input type="text" id="dca-m${m.id}-note" placeholder="Note specifiche pasto: ${m.note_default}" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- NOTE STRATEGICHE -->
+  <div class="calc-box">
+    <h3>📝 Strategie e Note Cliniche per il Piano</h3>
+    <div class="grid-2" style="margin-bottom:12px">
+      <div class="nf"><label>Alimenti da introdurre gradualmente</label>
+        <textarea id="dca-piano-intro-foods" rows="3" placeholder="Alimenti evitati o temuti da reintrodurre progressivamente nel piano..."></textarea>
+      </div>
+      <div class="nf"><label>Indicazioni comportamentali</label>
+        <textarea id="dca-piano-comportamento" rows="3" placeholder="Mangiare in compagnia, orari fissi, evitare distrazione con schermi, nessuna pesatura degli alimenti dopo il pasto..."></textarea>
+      </div>
+    </div>
+    <div class="nf"><label>Note generali e piano di rivalutazione</label>
+      <textarea id="dca-piano-note-generali" rows="3" placeholder="Prossima rivalutazione tra: ... Indicatori di progresso: ..."></textarea>
+    </div>
+  </div>`;
+  // Append before </div></main>
+  document.querySelector('.page-content').appendChild(pianoPanel);
+});</script>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>
@@ -624,7 +750,8 @@
 function showDna(id) {
   document.querySelectorAll('.dna-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.dna-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
   event.target.classList.add('active');
 }
 
@@ -641,8 +768,110 @@ function calcolaScoff() {
   }
 }
 
+function calcolaDcaMacro() {
+  const kcal = parseFloat(document.getElementById('dca-piano-kcal')?.value);
+  const pP = parseFloat(document.getElementById('dca-prot-perc')?.value) || 20;
+  const pC = parseFloat(document.getElementById('dca-cho-perc')?.value) || 55;
+  const pF = parseFloat(document.getElementById('dca-fat-perc')?.value) || 25;
+  const el = document.getElementById('dca-macro-result');
+  if (!el) return;
+  if (!kcal) { el.innerHTML = '<i>Inserisci le kcal target per calcolare la distribuzione.</i>'; return; }
+  const prot = Math.round(kcal * pP / 100 / 4);
+  const cho = Math.round(kcal * pC / 100 / 4);
+  const fat = Math.round(kcal * pF / 100 / 9);
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <div style="background:#DBEAFE;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#1E3A5F">Proteine</div><div style="font-size:22px;font-weight:700;color:#1D4ED8">${prot}g</div><div style="font-size:10px;color:#1E3A5F">${pP}% — ${Math.round(kcal*pP/100)} kcal</div></div>
+    <div style="background:#FEF3C7;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#78350F">CHO</div><div style="font-size:22px;font-weight:700;color:#D97706">${cho}g</div><div style="font-size:10px;color:#78350F">${pC}% — ${Math.round(kcal*pC/100)} kcal</div></div>
+    <div style="background:#FFF7ED;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#7C2D12">Grassi</div><div style="font-size:22px;font-weight:700;color:#F97316">${fat}g</div><div style="font-size:10px;color:#7C2D12">${pF}% — ${Math.round(kcal*pF/100)} kcal</div></div>
+  </div>`;
+}
+
+// ── SAVE / LOAD DCA ──
+let dcaCartelle = [];
+let editingDcaNoteId = null;
+
+async function loadDcaCartelle() {
+  if (!currentUser) return;
+  if (dcaCartelle.length) return;
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  dcaCartelle = data || [];
+  const sel = document.getElementById('dca-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  dcaCartelle.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = '📁 ' + c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+function raccogliDatiDca() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    scoff: { s1: document.getElementById('s1')?.checked, s2: document.getElementById('s2')?.checked, s3: document.getElementById('s3')?.checked, s4: document.getElementById('s4')?.checked, s5: document.getElementById('s5')?.checked },
+    piano: {
+      tipo: gv('dca-piano-tipo'), fase: gv('dca-piano-fase'), kcal: gv('dca-piano-kcal'), approccio: gv('dca-piano-approccio'),
+      note_cliniche: gv('dca-piano-note-cliniche'), prot_perc: gv('dca-prot-perc'), cho_perc: gv('dca-cho-perc'), fat_perc: gv('dca-fat-perc'),
+      intro_foods: gv('dca-piano-intro-foods'), comportamento: gv('dca-piano-comportamento'), note_generali: gv('dca-piano-note-generali'),
+      pasti: [1,2,3,4,5,6].map(i => ({ nome: gv('dca-m'+i+'-nome'), ora: gv('dca-m'+i+'-ora'), kcal: gv('dca-m'+i+'-kcal'), alimenti: gv('dca-m'+i+'-alimenti'), note: gv('dca-m'+i+'-note') }))
+    }
+  };
+}
+
+function ripristinaDatiDca(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  const sc = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+  if (dati.scoff) { sc('s1',dati.scoff.s1); sc('s2',dati.scoff.s2); sc('s3',dati.scoff.s3); sc('s4',dati.scoff.s4); sc('s5',dati.scoff.s5); }
+  if (dati.piano) {
+    const p = dati.piano;
+    sv('dca-piano-tipo', p.tipo); sv('dca-piano-fase', p.fase); sv('dca-piano-kcal', p.kcal);
+    sv('dca-piano-approccio', p.approccio); sv('dca-piano-note-cliniche', p.note_cliniche);
+    sv('dca-prot-perc', p.prot_perc); sv('dca-cho-perc', p.cho_perc); sv('dca-fat-perc', p.fat_perc);
+    sv('dca-piano-intro-foods', p.intro_foods); sv('dca-piano-comportamento', p.comportamento); sv('dca-piano-note-generali', p.note_generali);
+    if (Array.isArray(p.pasti)) p.pasti.forEach((m, i) => { const n = i+1; sv('dca-m'+n+'-nome',m.nome); sv('dca-m'+n+'-ora',m.ora); sv('dca-m'+n+'-kcal',m.kcal); sv('dca-m'+n+'-alimenti',m.alimenti); sv('dca-m'+n+'-note',m.note); });
+    calcolaDcaMacro();
+  }
+}
+
+async function salvaDca() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartella_id = document.getElementById('dca-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
+  const nota = document.getElementById('dca-nota').value.trim() || 'Sessione DCA ' + new Date().toLocaleDateString('it');
+  const dati = raccogliDatiDca();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'dca', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingDcaNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDcaNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  toast(editingDcaNoteId ? '✅ Scheda DCA aggiornata!' : '✅ Scheda DCA salvata nella cartella!', 'ok');
+}
+
+async function caricaDcaDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
+  editingDcaNoteId = noteId;
+  // Set cartella
+  await loadDcaCartelle();
+  const sel = document.getElementById('dca-cartella');
+  if (sel) sel.value = data.cartella_id || '';
+  const notaEl = document.getElementById('dca-nota');
+  if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiDca(JSON.parse(data.dati || '{}')); } catch(e) {}
+  toast('✅ Scheda DCA caricata', 'ok');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
+  try { await checkAuth(false); if (currentUser) { loadDcaCartelle(); } } catch(e) {}
+  // Check URL for noteId to load
+  const noteId = new URLSearchParams(window.location.search).get('noteId');
+  if (noteId && currentUser) await caricaDcaDaNote(noteId);
+  else if (noteId) { await checkAuth(false); if (currentUser) await caricaDcaDaNote(noteId); }
 });
 </script>
 </body>

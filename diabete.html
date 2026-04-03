@@ -109,6 +109,7 @@
   <button class="dg-tab" onclick="showTab('porzioni')">🍽️ Porzioni Isoglucidiche</button>
   <button class="dg-tab" onclick="showTab('depliant')">📄 Depliant Paziente</button>
   <button class="dg-tab" onclick="showTab('lg')">📚 Linee Guida</button>
+  <button class="dg-tab" onclick="showTab('piano_diabete')" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E3A5F;border:1.5px solid #93C5FD">🍽️ Piano Alimentare</button>
 </div>
 
 <!-- TAB 1: RAPPORTO I:C -->
@@ -404,6 +405,66 @@
     </div>
   </div>
 </div>
+<!-- PIANO ALIMENTARE DIABETE -->
+<div class="dg-panel" id="tab-piano_diabete">
+  <div class="alert-info alert-box">
+    <b>🍽️ Piano Alimentare per Diabete</b> — Struttura il piano alimentare integrando il counting dei carboidrati, la distribuzione glicemica ottimale e il timing con la terapia insulinica.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚙️ Configurazione Piano</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Tipo Diabete</label>
+        <select id="dg-piano-tipo"><option value="T1">Tipo 1</option><option value="T2">Tipo 2</option><option value="LADA">LADA</option><option value="GDM">Gestazionale</option><option value="altro">Altro</option></select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Terapia insulinica</label>
+        <select id="dg-piano-insulina"><option value="basal_bolus">Basal-Bolus (MDI)</option><option value="csii">Pompa (CSII)</option><option value="basale">Solo basale</option><option value="nessuna">Non insulino-dipendente</option></select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="dg-piano-kcal" placeholder="es. 1800" oninput="calcolaDgPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>CHO target totale (g/die)</label><input type="number" id="dg-piano-cho-tot" placeholder="es. 220" oninput="calcolaDgPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Note cliniche sul paziente</label><textarea id="dg-piano-note-cliniche" rows="3" placeholder="HbA1c, TIR attuale, complicanze, altri farmaci..."></textarea></div>
+    </div>
+    <div class="calc-box">
+      <h3>📊 Distribuzione CHO per Pasto</h3>
+      <div id="dg-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#F0F9FF;border-radius:8px;font-size:13px"><i>Inserisci CHO totale per calcolare la distribuzione.</i></div>
+      <div class="alert-info alert-box" style="font-size:12px">
+        <b>💡 Distribuzione CHO raccomandata nel diabete:</b><br>
+        Colazione 15–20% · Spuntino 5–10% · Pranzo 30–35% · Spuntino 5–10% · Cena 25–30%<br>
+        Evitare pasti con >60g CHO in una singola seduta. Privilegiare alimenti a basso IG.
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🗓️ Schema Pasti con Counting CHO</h3>
+    <div id="dg-pasti-container">
+      ${[
+        {id:'1',icon:'☀️',nome:'Colazione',ora:'07:30',cho_default:'40',note:'IG basso, associare proteina per ridurre picco'},
+        {id:'2',icon:'🍎',nome:'Spuntino mattina',ora:'10:30',cho_default:'20',note:'Opzionale in base alla glicemia'},
+        {id:'3',icon:'🍽️',nome:'Pranzo',ora:'12:30',cho_default:'70',note:'Pasto principale — contare CHO per bolus'},
+        {id:'4',icon:'🥜',nome:'Spuntino pomeriggio',ora:'16:00',cho_default:'20',note:'Prima dell\'attività fisica se prevista'},
+        {id:'5',icon:'🌙',nome:'Cena',ora:'19:30',cho_default:'60',note:'CHO moderato — evitare ipoglicemia notturna'},
+      ].map(m => `<div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+          <span style="font-size:20px">${m.icon}</span>
+          <input type="text" id="dg-m${m.id}-nome" value="${m.nome}" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">
+          <input type="text" id="dg-m${m.id}-ora" value="${m.ora}" placeholder="Ora" style="width:65px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">
+          <span style="font-size:11px;font-weight:700;color:#1D4ED8">CHO:</span>
+          <input type="number" id="dg-m${m.id}-cho" value="${m.cho_default}" placeholder="g" style="width:65px;padding:5px 8px;border:1.5px solid #93C5FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none;color:#1D4ED8">
+          <span style="font-size:11px;color:var(--slate-l)">g CHO</span>
+        </div>
+        <textarea id="dg-m${m.id}-alimenti" rows="2" placeholder="Alimenti (es. Pane integrale 80g=40gCHO, Latte 250mL=12gCHO, Frutta 150g=18gCHO)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>
+        <input type="text" id="dg-m${m.id}-note" placeholder="Note: ${m.note}" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>📝 Note Generali e Raccomandazioni</h3>
+    <div class="grid-2">
+      <div class="nf"><label>Alimenti da limitare / monitorare</label><textarea id="dg-piano-limita" rows="3" placeholder="Alimenti ad alto IG da limitare, porzioni critiche..."></textarea></div>
+      <div class="nf"><label>Attività fisica — indicazioni nutrizionali</label><textarea id="dg-piano-sport" rows="3" placeholder="Timing del pasto pre-attività, gestione ipoglicemia da sforzo..."></textarea></div>
+    </div>
+    <div class="nf" style="margin-top:10px"><label>Note generali e piano di follow-up</label><textarea id="dg-piano-note-generali" rows="2" placeholder="Prossima rivalutazione, obiettivi TIR, HbA1c target..."></textarea></div>
+  </div>
+</div>
 
 </div></main>
 <div id="toast"></div>
@@ -653,6 +714,8 @@ function renderDepliant() {
 
 // ── Init ──
 let dgCartelle = [];
+let editingDgNoteId = null;
+
 async function loadDgCartelle() {
   if (!currentUser) return;
   if (dgCartelle.length) return; // already loaded
@@ -666,31 +729,92 @@ async function loadDgCartelle() {
   if (cur) sel.value = cur;
 }
 
+function calcolaDgPiano() {
+  const cho = parseFloat(document.getElementById('dg-piano-cho-tot')?.value);
+  const el = document.getElementById('dg-piano-macro-result');
+  if (!el) return;
+  if (!cho) { el.innerHTML = '<i>Inserisci CHO totale per calcolare la distribuzione.</i>'; return; }
+  const dist = [{n:'Colazione',p:0.18},{n:'Spuntino M',p:0.08},{n:'Pranzo',p:0.32},{n:'Spuntino P',p:0.08},{n:'Cena',p:0.29},{n:'Serale',p:0.05}];
+  el.innerHTML = dist.map(d => `<span style="display:inline-block;margin:3px;padding:4px 8px;background:#DBEAFE;color:#1D4ED8;border-radius:8px;font-size:12px;font-weight:700">${d.n}: ${Math.round(cho*d.p)}g CHO</span>`).join('');
+}
+
+function raccogliDatiDg() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    rapporto_ic: { peso: document.getElementById('ic-peso')?.value, tipo: document.getElementById('ic-tipo')?.value, tdd: document.getElementById('ic-tdd')?.value, metodo: document.getElementById('ic-metodo')?.value, risultato: document.getElementById('ic-val')?.textContent },
+    dose_pasto: { cho: document.getElementById('pasto-cho')?.value, ic: document.getElementById('pasto-ic')?.value, glicemia: document.getElementById('pasto-glic')?.value, target: document.getElementById('pasto-target')?.value, fsi: document.getElementById('pasto-fsi')?.value },
+    fsi: { tdd: document.getElementById('fsi-tdd')?.value, metodo: document.getElementById('fsi-metodo')?.value, risultato: document.getElementById('fsi-val')?.textContent },
+    piano: {
+      tipo: gv('dg-piano-tipo'), insulina: gv('dg-piano-insulina'), kcal: gv('dg-piano-kcal'), cho_tot: gv('dg-piano-cho-tot'),
+      note_cliniche: gv('dg-piano-note-cliniche'), limita: gv('dg-piano-limita'), sport: gv('dg-piano-sport'), note_generali: gv('dg-piano-note-generali'),
+      pasti: [1,2,3,4,5].map(i => ({ nome: gv('dg-m'+i+'-nome'), ora: gv('dg-m'+i+'-ora'), cho: gv('dg-m'+i+'-cho'), alimenti: gv('dg-m'+i+'-alimenti'), note: gv('dg-m'+i+'-note') }))
+    }
+  };
+}
+
+function ripristinaDatiDg(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.rapporto_ic) { sv('ic-peso',dati.rapporto_ic.peso); sv('ic-tipo',dati.rapporto_ic.tipo); sv('ic-tdd',dati.rapporto_ic.tdd); sv('ic-metodo',dati.rapporto_ic.metodo); }
+  if (dati.dose_pasto) { sv('pasto-cho',dati.dose_pasto.cho); sv('pasto-ic',dati.dose_pasto.ic); sv('pasto-glic',dati.dose_pasto.glicemia); sv('pasto-target',dati.dose_pasto.target); sv('pasto-fsi',dati.dose_pasto.fsi); }
+  if (dati.fsi) { sv('fsi-tdd',dati.fsi.tdd); sv('fsi-metodo',dati.fsi.metodo); }
+  if (dati.piano) {
+    const p = dati.piano;
+    sv('dg-piano-tipo',p.tipo); sv('dg-piano-insulina',p.insulina); sv('dg-piano-kcal',p.kcal); sv('dg-piano-cho-tot',p.cho_tot);
+    sv('dg-piano-note-cliniche',p.note_cliniche); sv('dg-piano-limita',p.limita); sv('dg-piano-sport',p.sport); sv('dg-piano-note-generali',p.note_generali);
+    if (Array.isArray(p.pasti)) p.pasti.forEach((m, i) => { const n=i+1; sv('dg-m'+n+'-nome',m.nome); sv('dg-m'+n+'-ora',m.ora); sv('dg-m'+n+'-cho',m.cho); sv('dg-m'+n+'-alimenti',m.alimenti); sv('dg-m'+n+'-note',m.note); });
+    calcolaDgPiano();
+  }
+}
+
 async function salvaDiabete() {
   if (!currentUser) { toast('Effettua il login per salvare','err'); return; }
   const cartella_id = document.getElementById('dg-cartella').value;
   if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
   const nota = document.getElementById('dg-nota').value.trim() || 'Sessione diabete ' + new Date().toLocaleDateString('it');
-  // Collect current values
-  const dati = {
-    rapporto_ic: { peso: document.getElementById('ic-peso')?.value, tipo: document.getElementById('ic-tipo')?.value, tdd: document.getElementById('ic-tdd')?.value, metodo: document.getElementById('ic-metodo')?.value, risultato: document.getElementById('ic-val')?.textContent },
-    dose_pasto: { cho: document.getElementById('pasto-cho')?.value, ic: document.getElementById('pasto-ic')?.value, glicemia: document.getElementById('pasto-glic')?.value, target: document.getElementById('pasto-target')?.value, fsi: document.getElementById('pasto-fsi')?.value },
-    fsi: { tdd: document.getElementById('fsi-tdd')?.value, metodo: document.getElementById('fsi-metodo')?.value, risultato: document.getElementById('fsi-val')?.textContent }
-  };
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati), created_at: new Date().toISOString() };
-  const {error} = await sb.from('note_specialistiche').insert(payload);
-  if (error) {
-    if (error.code === '42P01') {
+  const dati = raccogliDatiDg();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingDgNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDgNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+  }
+  showLoading(false);
+  if (result.error) {
+    if (result.error.code === '42P01') {
       toast('⚠️ Tabella mancante — esegui SQL di setup (vedi console)','err');
-      console.error('SQL da eseguire:\ncreate table note_specialistiche(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,tipo text not null,nota text,dati jsonb,created_at timestamptz default now());\nalter table note_specialistiche enable row level security;\ncreate policy "Own note" on note_specialistiche for all using(auth.uid()=user_id);');
-    } else { toast('❌ '+error.message,'err'); }
+      console.error('SQL da eseguire:\ncreate table note_specialistiche(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,tipo text not null,nota text,dati jsonb,created_at timestamptz default now(),updated_at timestamptz default now());\nalter table note_specialistiche enable row level security;\ncreate policy "Own note" on note_specialistiche for all using(auth.uid()=user_id);');
+    } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast('✅ Dati diabete salvati nella cartella!','ok');
+  toast(editingDgNoteId ? '✅ Scheda Diabete aggiornata!' : '✅ Dati diabete salvati nella cartella!','ok');
+}
+
+async function caricaDgDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
+  editingDgNoteId = noteId;
+  await loadDgCartelle();
+  const sel = document.getElementById('dg-cartella');
+  if (sel) sel.value = data.cartella_id || '';
+  const notaEl = document.getElementById('dg-nota');
+  if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiDg(JSON.parse(data.dati || '{}')); } catch(e) {}
+  toast('✅ Scheda Diabete caricata','ok');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); if(currentUser) loadDgCartelle(); } catch(e) {}
+  try {
+    await checkAuth(false);
+    if (currentUser) {
+      loadDgCartelle();
+      const noteId = new URLSearchParams(window.location.search).get('noteId');
+      if (noteId) await caricaDgDaNote(noteId);
+    }
+  } catch(e) {}
 });
 </script>
 </body>

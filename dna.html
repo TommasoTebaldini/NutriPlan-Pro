@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Nutrizione e DNA — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.dna-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FAF5FF;border-radius:14px}
+.dna-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.dna-tab:hover{background:rgba(124,58,237,.12);color:#7C3AED}
+.dna-tab.active{background:white;color:#5B21B6;box-shadow:0 3px 10px rgba(124,58,237,.2);font-weight:700}
+.dna-panel{display:none}.dna-panel.active{display:block}
+.info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.7;border-left:4px solid}
+.ib-purple{background:#EDE9FE;border-color:#7C3AED;color:#4C1D95}
+.ib-green{background:#ECFDF5;border-color:#10B981;color:#064E3B}
+.ib-amber{background:#FEF3C7;border-color:#F59E0B;color:#78350F}
+.ib-blue{background:#EFF6FF;border-color:#3B82F6;color:#1E3A5F}
+.ib-red{background:#FEE2E2;border-color:#EF4444;color:#7F1D1D}
+.snp-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.snp-card h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.snp-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:10px}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.gene-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.gene-table th{background:#5B21B6;color:white;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.gene-table th:first-child{text-align:left}
+.gene-table td{padding:7px 12px;border-bottom:1px solid #EDE9FE;text-align:center;vertical-align:middle}
+.gene-table td:first-child{text-align:left;font-weight:600}
+.gene-table tbody tr:nth-child(even){background:#FAF5FF}
+.gene-table tr:hover td{background:#DDD6FE}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.rs-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;font-family:monospace;background:#EDE9FE;color:#5B21B6}
+.allele-risk{color:#DC2626;font-weight:700}
+.allele-prot{color:#15803D;font-weight:700}
+.evidence-A{color:#15803D}
+.evidence-B{color:#D97706}
+.evidence-C{color:#DC2626}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item active" href="dna.html"><span class="ni">🧬</span>Nutrizione e DNA</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🧬 Nutrizione e DNA</h2>
+</div>
+
+<main id="main"><div class="page-content">
+
+<div class="dna-tabs">
+  <button class="dna-tab active" onclick="showDna('overview')">🧬 Introduzione</button>
+  <button class="dna-tab" onclick="showDna('snp')">🔬 Varianti Principali</button>
+  <button class="dna-tab" onclick="showDna('macro')">🍽️ Macronutrienti &amp; Geni</button>
+  <button class="dna-tab" onclick="showDna('micronutrienti')">🔬 Micronutrienti &amp; Geni</button>
+  <button class="dna-tab" onclick="showDna('sport_gen')">🏃 Sport &amp; Genetica</button>
+  <button class="dna-tab" onclick="showDna('clinica')">⚕️ Applicazione Clinica</button>
+  <button class="dna-tab" onclick="showDna('linee_guida')">📚 Linee Guida &amp; Etica</button>
+</div>
+
+<!-- INTRODUZIONE -->
+<div class="dna-panel active" id="tab-overview">
+  <div class="info-box ib-purple">
+    <b>🧬 Nutrigenomica e Nutrigenetica</b> — La nutrigenomica studia come i nutrienti influenzano l'espressione genica. La nutrigenetica studia come le variazioni genetiche (polimorfismi, SNP) influenzano la risposta individuale agli alimenti. L'obiettivo è una nutrizione personalizzata basata sul profilo genetico del paziente.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📖 Concetti Fondamentali</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:8px 12px;background:#EDE9FE;border-radius:8px;margin-bottom:8px;border-left:3px solid #7C3AED">
+          <b>SNP (Single Nucleotide Polymorphism)</b><br>
+          Variazione di un singolo nucleotide nel DNA. Frequenza &gt;1% nella popolazione. Rappresenta la base della variabilità genetica interindividuale. Es: <span class="rs-badge">rs9939609</span> nel gene FTO associato all'obesità.
+        </div>
+        <div style="padding:8px 12px;background:#DBEAFE;border-radius:8px;margin-bottom:8px;border-left:3px solid #3B82F6">
+          <b>Epigenetica Nutrizionale</b><br>
+          I nutrienti modificano l'espressione genica attraverso meccanismi epigenetici (metilazione DNA, acetilazione istoni) senza alterare la sequenza del DNA. Dieta materna e nei primi 1000 giorni di vita ha effetti epigenetici duraturi.
+        </div>
+        <div style="padding:8px 12px;background:#ECFDF5;border-radius:8px;margin-bottom:8px;border-left:3px solid #10B981">
+          <b>Interazione Gene-Nutriente</b><br>
+          Un gene può modificare il metabolismo di un nutriente, e un nutriente può modificare l'espressione di un gene. Esempio: la vitamina D regola l'espressione di &gt;200 geni attraverso il recettore VDR.
+        </div>
+        <div style="padding:8px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #F59E0B">
+          <b>Penetranza e Modificabilità</b><br>
+          La maggior parte dei polimorfismi nutrizionali ha penetranza parziale. L'intervento dietetico può spesso modificare l'espressione del rischio genetico (gene-diet interaction).
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🔬 Aree di Applicazione Clinica</h3>
+      <table class="gene-table">
+        <thead><tr><th>Area</th><th>Esempi clinici</th><th>Livello evidenza</th></tr></thead>
+        <tbody>
+          <tr><td><b>Metabolismo CHO</b></td><td>Diabete T2, insulino-resistenza, adiposità</td><td><span class="evidence-A">Grado A</span></td></tr>
+          <tr><td><b>Metabolismo lipidico</b></td><td>Ipercolesterolemia, risposta ai grassi saturi/insaturi</td><td><span class="evidence-A">Grado A</span></td></tr>
+          <tr><td><b>Metabolismo folati</b></td><td>Iperomocisteinemia, difetti del tubo neurale, CVD</td><td><span class="evidence-A">Grado A</span></td></tr>
+          <tr><td><b>Metabolismo vitamina D</b></td><td>Deficit vitamina D, patologie ossee, immunità</td><td><span class="evidence-A">Grado A</span></td></tr>
+          <tr><td><b>Intolleranza al lattosio</b></td><td>Persistenza lattasi (LCT gene)</td><td><span class="evidence-A">Grado A</span></td></tr>
+          <tr><td><b>Sensibilità al caffè</b></td><td>CYP1A2 — metabolismo della caffeina</td><td><span class="evidence-A">Grado A</span></td></tr>
+          <tr><td><b>Controllo del peso</b></td><td>FTO, MC4R — predisposizione all'obesità</td><td><span class="evidence-B">Grado B</span></td></tr>
+          <tr><td><b>Predisposizione al sodio</b></td><td>AGT, ACE — ipertensione sale-sensibile</td><td><span class="evidence-B">Grado B</span></td></tr>
+          <tr><td><b>Nutrizione sportiva</b></td><td>ACTN3 (potenza), ACE (endurance)</td><td><span class="evidence-B">Grado B</span></td></tr>
+          <tr><td><b>Ferro e anemia</b></td><td>HFE (emocromatosi), TMPRSS6</td><td><span class="evidence-A">Grado A</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SNP PRINCIPALI -->
+<div class="dna-panel" id="tab-snp">
+  <div class="info-box ib-purple">
+    <b>🔬 Polimorfismi a Singolo Nucleotide (SNP) Nutrizionalmente Rilevanti</b> — I seguenti SNP hanno sufficiente evidenza scientifica per essere considerati nelle valutazioni di nutrigenomica clinica. Tutti richiedono interpretazione contestualizzata da parte di un professionista qualificato.
+  </div>
+
+  <div class="snp-card">
+    <h3>🧈 Metabolismo dei Lipidi</h3>
+    <div class="snp-badge" style="background:#EDE9FE;color:#5B21B6">Evidenza clinica robusta</div>
+    <table class="gene-table">
+      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>APOE</b><br><span class="rs-badge">ε2/ε3/ε4</span></td>
+          <td>Trasporto e metabolismo colesterolo</td>
+          <td><span class="allele-risk">ε4 (APOE4)</span></td>
+          <td>Aumento LDL con grassi saturi. Ridurre SFA &lt;7%, aumentare MUFA/omega-3. Rischio Alzheimer aumentato → dieta neuroprotettiva (MIND/Mediterranea)</td>
+          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
+        </tr>
+        <tr>
+          <td><b>APOA1</b><br><span class="rs-badge">rs670</span></td>
+          <td>Componente principale HDL</td>
+          <td><span class="allele-risk">Allele A (−75G&gt;A)</span></td>
+          <td>Risposta HDL agli acidi grassi insaturi aumentata nell'allele A. Omega-3 particolarmente benefici.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+        <tr>
+          <td><b>APOC3</b><br><span class="rs-badge">rs5128</span></td>
+          <td>Metabolismo trigliceridi</td>
+          <td><span class="allele-risk">Allele G (SstI)</span></td>
+          <td>Ipertrigliceridemia da CHO semplici. Ridurre zuccheri &lt;5% energia, aumentare omega-3 (2-4g EPA+DHA/die).</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+        <tr>
+          <td><b>CETP</b><br><span class="rs-badge">rs708272</span></td>
+          <td>Trasferimento esteri colesterolo tra lipoproteine</td>
+          <td><span class="allele-risk">Allele B1 (TaqIB)</span></td>
+          <td>Riduzione HDL. L'alcol aumenta paradossalmente l'HDL nei portatori B1B1, ma i rischi superano i benefici.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="snp-card">
+    <h3>🍬 Metabolismo dei Carboidrati e Peso Corporeo</h3>
+    <div class="snp-badge" style="background:#FEF3C7;color:#B45309">Impatto su BMI e composizione corporea</div>
+    <table class="gene-table">
+      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>FTO</b><br><span class="rs-badge">rs9939609</span></td>
+          <td>Regolazione appetito/sazietà. Gene "fat mass and obesity associated"</td>
+          <td><span class="allele-risk">Allele A</span> (↑BMI ~0.4kg/m²)</td>
+          <td>Aumentata preferenza per alimenti ipercalorici. Beneficio maggiore da dieta ipocalorica + attività fisica vs solo dieta. Colazione abbondante protettiva.</td>
+          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
+        </tr>
+        <tr>
+          <td><b>MC4R</b><br><span class="rs-badge">rs17782313</span></td>
+          <td>Recettore melanocortina-4 — regolazione appetito ipotalamica</td>
+          <td><span class="allele-risk">Allele C</span></td>
+          <td>Ridotta sazietà. Pasti frequenti (5-6/die) e ricchi di proteine (aumentano sazietà). Limitare densità energetica.</td>
+          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
+        </tr>
+        <tr>
+          <td><b>TCF7L2</b><br><span class="rs-badge">rs7903146</span></td>
+          <td>Fattore di trascrizione — secrezione insulinica e glucagone</td>
+          <td><span class="allele-risk">Allele T</span> (↑rischio T2D ~40%)</td>
+          <td>Risposta glicemica elevata ai CHO raffinati. Privilegiare CHO a basso IG, fibre ≥30g/die, dieta mediterranea.</td>
+          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
+        </tr>
+        <tr>
+          <td><b>PPARG</b><br><span class="rs-badge">rs1801282 (Pro12Ala)</span></td>
+          <td>Recettore nucleare — differenziazione adipociti, sensibilità insulinica</td>
+          <td><span class="allele-risk">Allele Pro12 (comune)</span></td>
+          <td>Allele Ala12 (raro) → maggiore sensibilità insulinica. Omega-3 attivano PPARG: beneficio maggiore nei portatori Pro12.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+        <tr>
+          <td><b>AMY1</b><br>Numero copie</td>
+          <td>Amilasi salivare — digestione amidi</td>
+          <td>Basso numero di copie (&lt;4)</td>
+          <td>Ridotta digestione amidi. Risposta glicemica aumentata a riso e pane bianco. Preferire cereali integrali e legumi.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="snp-card">
+    <h3>🧪 Metabolismo di Folati e Vitamina B12</h3>
+    <div class="snp-badge" style="background:#ECFDF5;color:#065F46">Alta rilevanza clinica</div>
+    <table class="gene-table">
+      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>MTHFR</b><br><span class="rs-badge">rs1801133 (C677T)</span></td>
+          <td>Metilenetetraidrofolato reduttasi — ciclo dei folati e metilazione</td>
+          <td><span class="allele-risk">TT omozigote</span> (~10% popolazione italiana)</td>
+          <td>Attività enzimatica ridotta 70%. Iperomocisteinemia. Aumentare folati a 600-800µg/die (verdure a foglia, legumi). Forma metilata (5-MTHF) preferibile. B12 adeguata (≥2.4µg/die). Riboflavina B2 cofattore essenziale.</td>
+          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
+        </tr>
+        <tr>
+          <td><b>MTHFR</b><br><span class="rs-badge">rs1801131 (A1298C)</span></td>
+          <td>Secondo polimorfismo MTHFR — riduce ulteriormente attività</td>
+          <td><span class="allele-risk">CC omozigote (raro)</span></td>
+          <td>Doppio eterozigote (C677T+A1298C) ha effetto simile a TT. Integrazione B12+folati metilati raccomandata.</td>
+          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
+        </tr>
+        <tr>
+          <td><b>MTR</b><br><span class="rs-badge">rs1805087 (A2756G)</span></td>
+          <td>Metionina sintasi — rimineralizzazione omocisteina</td>
+          <td><span class="allele-risk">Allele G</span></td>
+          <td>Aumentato fabbisogno di B12. Dieta ricca di alimenti animali o supplementazione B12 metilcobalamina.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+        <tr>
+          <td><b>TCN2</b><br><span class="rs-badge">rs1801198 (C776G)</span></td>
+          <td>Transcobalamina II — trasporto B12</td>
+          <td><span class="allele-risk">Allele G (776GG)</span></td>
+          <td>Ridotto trasporto cellulare B12. Fabbisogno aumentato. Monitorare olotranscobalamina (B12 attiva) oltre a B12 sierica totale.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="snp-card">
+    <h3>☀️ Vitamina D e Calcio</h3>
+    <div class="snp-badge" style="background:#DBEAFE;color:#1D4ED8">Comune — alta prevalenza carenza</div>
+    <table class="gene-table">
+      <thead><tr><th>Gene / SNP</th><th>Funzione</th><th>Allele rischio</th><th>Implicazione dietetica</th><th>Evidenza</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>VDR</b><br><span class="rs-badge">rs2228570 (FokI)</span></td>
+          <td>Recettore vitamina D — regola 200+ geni</td>
+          <td><span class="allele-risk">Allele f (ff omozigote)</span></td>
+          <td>Ridotta risposta alla vitamina D. Target 25-OH-D &gt;50ng/mL. Supplementazione spesso necessaria: 2000-4000 UI/die. Esposizione solare regolare.</td>
+          <td><span class="evidence-A">⭐⭐⭐ A</span></td>
+        </tr>
+        <tr>
+          <td><b>GC (VDBP)</b><br><span class="rs-badge">rs4588 / rs7041</span></td>
+          <td>Vitamina D binding protein — trasporto vitamina D</td>
+          <td><span class="allele-risk">Aplotipo 1c</span></td>
+          <td>Ridotta capacità di trasporto. Deficit di vitamina D più frequente. Supplementazione preventiva raccomandata in aree a bassa insolazione.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+        <tr>
+          <td><b>CYP27B1</b><br><span class="rs-badge">rs10877012</span></td>
+          <td>1α-idrossilasi renale — attivazione vitamina D</td>
+          <td><span class="allele-risk">Allele T</span></td>
+          <td>Ridotta conversione 25-OH-D → 1,25(OH)2D (forma attiva). Calcio alimentare ottimale: 1000-1200mg/die. Monitorare PTH.</td>
+          <td><span class="evidence-B">⭐⭐ B</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MACRONUTRIENTI E GENI -->
+<div class="dna-panel" id="tab-macro">
+  <div class="info-box ib-blue">
+    <b>🍽️ Interazione Macronutrienti — Genoma</b> — La risposta individuale ai macronutrienti varia significativamente in base al profilo genetico. Questo ha implicazioni pratiche per la personalizzazione del piano nutrizionale.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🧈 Grassi Alimentari e Geni</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:10px;background:#FAF5FF;border-radius:8px;margin-bottom:10px">
+          <b>Grassi Saturi (SFA) — Risposta LDL:</b><br>
+          I portatori di <b>APOE ε4</b> mostrano un aumento di LDL-C significativamente maggiore con SFA rispetto agli altri genotipi. Per APOE ε4: SFA &lt;7% energia (anziché &lt;10% delle linee guida standard).<br><br>
+          Il polimorfismo <b>APOA5 rs662799</b> amplifica la risposta ipertrigliceridemica ai grassi saturi → in questi individui, grassi monoinsaturi (olio EVO) sono preferibili.
+        </div>
+        <div style="padding:10px;background:#EDE9FE;border-radius:8px;margin-bottom:10px">
+          <b>Omega-3 (EPA/DHA) — Risposta Individuale:</b><br>
+          Il gene <b>FADS1/FADS2</b> (desaturasi) regola la conversione ALA→EPA→DHA. I portatori di varianti a bassa attività (aplotipo T) dell'rs174546 convertono male ALA: necessitano di omega-3 a catena lunga preformati (pesce, alghe), non basta ALA da semi di lino/chia.
+        </div>
+        <div style="padding:10px;background:#ECFDF5;border-radius:8px">
+          <b>Vitamina E e Metabolismo Lipidico:</b><br>
+          Gli APOE ε4 hanno maggiore stress ossidativo lipidico → vitamina E &gt;15mg/die dall'alimentazione (olio EVO, frutta secca, germe di grano) ha effetto protettivo specifico in questo genotipo.
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🍞 Carboidrati e Sensibilità Glicemica Genotipo-Specifica</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:10px;background:#FEF3C7;border-radius:8px;margin-bottom:10px">
+          <b>TCF7L2 rs7903146 — Il "gene del diabete":</b><br>
+          I portatori dell'allele T hanno ridotta secrezione insulinica post-prandiale. In questi pazienti: privilegiare CHO a basso IG (&lt;55), fibre solubili ≥15g/die, evitare picchi glicemici. La dieta mediterranea riduce del 50% il rischio di T2D rispetto alle diete standard nei portatori TT.
+        </div>
+        <div style="padding:10px;background:#EFF6FF;border-radius:8px;margin-bottom:10px">
+          <b>AMY1 — Amilasi salivare:</b><br>
+          Individui con basso numero di copie del gene AMY1 (CNV) hanno meno amilasi salivare e rispondono peggio agli amidi. Consigliare cottura al dente, raffreddamento del riso/pasta (aumenta amido resistente) e abbinamento con verdure/aceto per ridurre IG.
+        </div>
+        <div style="padding:10px;background:#ECFDF5;border-radius:8px">
+          <b>GLUT2 (SLC2A2) rs5400:</b><br>
+          Variante associata ad aumentato consumo spontaneo di zucchero. I portatori riportano maggiore preferenza per alimenti dolci e difficoltà nel ridurre i carboidrati raffinati → approccio comportamentale specifico necessario.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>💪 Proteine e Metabolismo Muscolare</h3>
+    <div class="grid-2">
+      <div style="font-size:13px;line-height:1.9">
+        <b>VDR e sintesi muscolare:</b><br>
+        Il recettore VDR è espresso nel muscolo scheletrico. I portatori di varianti VDR a bassa funzionalità hanno minore sintesi proteica muscolare in risposta all'allenamento → vitamina D ottimale (&gt;40ng/mL) e proteine &gt;1.6g/kg/die.<br><br>
+        <b>ACTN3 R577X:</b><br>
+        Le persone omozigoti XX (deficit alfa-actinina 3) hanno fibre muscolari con caratteristiche di endurance ma ridotta potenza esplosiva. Il fabbisogno proteico per la sintesi muscolare è leggermente ridotto rispetto agli omozigoti RR.
+      </div>
+      <div style="font-size:13px;line-height:1.9">
+        <b>IGF-1 e risposta proteica:</b><br>
+        Varianti del gene IGF-1 influenzano la risposta anabolica alle proteine. I soggetti con varianti a bassa funzionalità possono richiedere proteine &gt;2.0g/kg/die per massimizzare la sintesi muscolare.<br><br>
+        <b>Metabolismo della leucina:</b><br>
+        Il gene BCAT2 (transaminasi amminoacidi ramificati) regola il metabolismo della leucina. I portatori di varianti a bassa attività rispondono meno alle proteine whey e BCAA → preferire proteine complete con aminoacidi ramificati naturali (carne, uova, latticini).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MICRONUTRIENTI E GENI -->
+<div class="dna-panel" id="tab-micronutrienti">
+  <div class="info-box ib-green">
+    <b>🔬 Micronutrienti e Variazioni Genetiche</b> — Molti micronutrienti essenziali hanno metabolismo influenzato da varianti genetiche comuni. La conoscenza del genotipo permette di ottimizzare l'apporto e prevenire carenze subcliniche.
+  </div>
+  <div class="calc-box">
+    <h3>🔬 Principali Interazioni Gene-Micronutriente</h3>
+    <table class="gene-table">
+      <thead><tr><th>Micronutriente</th><th>Gene chiave</th><th>SNP</th><th>Effetto</th><th>Indicazione pratica</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Folati / B9</b></td>
+          <td>MTHFR</td>
+          <td><span class="rs-badge">rs1801133</span></td>
+          <td>TT: attività MTHFR ridotta 70%. Omocisteina elevata.</td>
+          <td>Folati 600-800µg/die. Preferire 5-MTHF (forma metilata). Verdure a foglia scura, legumi.</td>
+        </tr>
+        <tr>
+          <td><b>Vitamina B12</b></td>
+          <td>TCN2, FUT2</td>
+          <td><span class="rs-badge">rs1801198</span></td>
+          <td>Ridotto assorbimento/trasporto B12.</td>
+          <td>Metilcobalamina 500-1000µg/die se portatori a rischio. Monitorare olotranscobalamina.</td>
+        </tr>
+        <tr>
+          <td><b>Ferro</b></td>
+          <td>HFE, TMPRSS6</td>
+          <td><span class="rs-badge">rs1800562 (C282Y)</span></td>
+          <td>HFE C282Y/H63D: emocromatosi ereditaria (accumulo Fe). TMPRSS6: anemia ferropriva resistente.</td>
+          <td>HFE C282Y omozigote: evitare supplementazione Fe, limitare carne rossa, no vitamina C ai pasti. Monitorare ferritina.</td>
+        </tr>
+        <tr>
+          <td><b>Vitamina C</b></td>
+          <td>SLC23A1/A2</td>
+          <td><span class="rs-badge">rs33972313</span></td>
+          <td>Ridotto assorbimento intestinale vitamina C.</td>
+          <td>Aumentare frutta e verdura fresca. Supplementazione 250-500mg/die se necessario.</td>
+        </tr>
+        <tr>
+          <td><b>Zinco</b></td>
+          <td>SLC30A8, ZIP4</td>
+          <td>Varie</td>
+          <td>Ridotto assorbimento/utilizzo zinco. Frequente in varianti del diabete T2.</td>
+          <td>Ottimizzare fonti alimentari: carne, ostriche, legumi. Fitati (cereali integrali) riducono assorbimento.</td>
+        </tr>
+        <tr>
+          <td><b>Vitamina A</b></td>
+          <td>BCMO1</td>
+          <td><span class="rs-badge">rs7501331</span></td>
+          <td>Ridotta conversione betacarotene → vitamina A retinolo (fino a -60%).</td>
+          <td>Portatori: privilegiare vitamina A preformata (fegato, uova, latticini). Non fare affidamento solo su betacarotene vegetale.</td>
+        </tr>
+        <tr>
+          <td><b>Caffè / caffeina</b></td>
+          <td>CYP1A2</td>
+          <td><span class="rs-badge">rs762551</span></td>
+          <td>Metabolizzatori lenti (CC): caffeina si accumula → ↑rischio CVD con &gt;1 tazza/die.</td>
+          <td>CC: max 1 caffè/die. Rischio infarto aumentato con &gt;4 tazze. AA (metabolizzatori veloci): fino a 4 tazze/die sicure.</td>
+        </tr>
+        <tr>
+          <td><b>Lattosio</b></td>
+          <td>LCT</td>
+          <td><span class="rs-badge">rs4988235</span></td>
+          <td>TT: non-persistenza lattasi. Intolleranza al lattosio geneticamente determinata.</td>
+          <td>TT: limitare latte fresco, privilegiare yogurt/formaggi stagionati. Integrare calcio da fonti alternative.</td>
+        </tr>
+        <tr>
+          <td><b>Vitamina E</b></td>
+          <td>SEC14L2, TTPA</td>
+          <td>Varie</td>
+          <td>Varianti associate a deficit vitamina E nonostante apporto adeguato.</td>
+          <td>Aumentare olio EVO, frutta secca, germe di grano. Monitorare alfa-tocoferolo plasmatico.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SPORT E GENETICA -->
+<div class="dna-panel" id="tab-sport_gen">
+  <div class="info-box ib-amber">
+    <b>🏃 Genetica della Performance e Nutrizione Sportiva</b> — La genetica sportiva integra la nutrizione sportiva offrendo indicazioni personalizzate su recupero, adattamento, rischio infortuni e risposta ai nutrienti ergogenici.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🏃 Geni della Performance</h3>
+      <table class="gene-table">
+        <thead><tr><th>Gene</th><th>Funzione</th><th>Allele/Genotipo</th><th>Sport consigliato</th></tr></thead>
+        <tbody>
+          <tr><td><b>ACTN3</b></td><td>Alfa-actinina 3 — fibra muscolare veloce</td><td><b style="color:#15803D">RR</b>: potenza | <b style="color:#1D4ED8">XX</b>: endurance</td><td>RR: sprint/pesi | XX: maratona/triathlon</td></tr>
+          <tr><td><b>ACE</b></td><td>Enzima di conversione angiotensina — adattamento cardiovascolare</td><td><b style="color:#1D4ED8">II</b>: endurance | <b style="color:#15803D">DD</b>: potenza</td><td>II: ciclismo/nuoto | DD: sport forza</td></tr>
+          <tr><td><b>PPARGC1A</b></td><td>Coattivatore PGC-1α — biogenesi mitocondriale</td><td><b style="color:#1D4ED8">Gly482</b>: migliore adattamento aerobico</td><td>Gly482: beneficio da allenamento aerobico intenso</td></tr>
+          <tr><td><b>COL5A1</b></td><td>Collagene tipo V — struttura tendini e legamenti</td><td><b style="color:#DC2626">TT (rs12722)</b>: ↑rischio lesioni</td><td>TT: maggiore cautela, fisioterapia preventiva</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>🥗 Nutrizione Sportiva Genotipo-Specifica</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:10px;background:#FAF5FF;border-radius:8px;margin-bottom:10px">
+          <b>ACTN3 XX (endurance):</b><br>
+          — Fabbisogno CHO leggermente ridotto rispetto a RR<br>
+          — Risposta migliore a dieta con CHO moderati (5-7g/kg)<br>
+          — Recupero: minore richiesta proteica post-esercizio<br>
+          — Ferro: monitorare (endurance ↑foot-strike hemolysis)
+        </div>
+        <div style="padding:10px;background:#EDE9FE;border-radius:8px;margin-bottom:10px">
+          <b>ACTN3 RR (potenza):</b><br>
+          — Fabbisogno proteico maggiore: 1.8-2.2g/kg/die<br>
+          — CHO pre-workout critici per performance<br>
+          — Creatina monoidrato: risposta potenziata<br>
+          — Beta-alanina: risposta migliore per sport ad alta intensità
+        </div>
+        <div style="padding:10px;background:#FEF3C7;border-radius:8px">
+          <b>COL5A1 TT (rischio lesioni):</b><br>
+          — Vitamina C ≥200mg/die (sintesi collagene)<br>
+          — Gelatina/collagene idrolizzato 10g prima dell'esercizio<br>
+          — Curcumina anti-infiammatoria: 500mg/die<br>
+          — Omega-3 per ridurre infiammazione tendinea
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APPLICAZIONE CLINICA -->
+<div class="dna-panel" id="tab-clinica">
+  <div class="info-box ib-purple">
+    <b>⚕️ Applicazione Clinica della Nutrigenomica</b> — Il profilo genetico nutrizionale si inserisce come strumento complementare — non sostitutivo — della valutazione nutrizionale standard. Deve essere interpretato in contesto clinico, ambientale e comportamentale.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📋 Percorso di Valutazione Nutrigenetica</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 1 — Raccolta anamnestica completa</b><br>Storia clinica, familiare, alimentare, stile di vita. Dati antropometrici e composizione corporea. Esami di laboratorio di base.</div>
+        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 2 — Test genetico</b><br>Consenso informato scritto. Test su saliva (swab buccale). Laboratorio accreditato. Pannello SNP clinicamente validati (non test DTC non certificati).</div>
+        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 3 — Interpretazione integrata</b><br>Il dietista interpreta il referto genetico in chiave clinica, considerando penetranza, fenotipo osservato, abitudini attuali e obiettivi del paziente.</div>
+        <div style="padding:8px;background:#F0F9FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #0369A1"><b>Step 4 — Piano nutrizionale personalizzato</b><br>Modifiche mirate al piano, non rivoluzione completa. Spiegare al paziente le basi del suo profilo genetico (empowerment).</div>
+        <div style="padding:8px;background:#F0F9FF;border-radius:8px;border-left:3px solid #0369A1"><b>Step 5 — Follow-up</b><br>Monitoraggio biomarker (omocisteina, 25-OH-D, ferritina, HbA1c ecc.). La genetica non cambia, ma l'alimentazione è modulabile. Rivalutare ogni 6-12 mesi.</div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>📊 Biomarker da Monitorare per Genotipo</h3>
+      <table class="gene-table">
+        <thead><tr><th>Genotipo a rischio</th><th>Biomarker prioritari</th><th>Target clinico</th></tr></thead>
+        <tbody>
+          <tr><td><b>MTHFR TT</b></td><td>Omocisteina plasmatica, folati eritrocitari, B12</td><td>Omocisteina &lt;10µmol/L</td></tr>
+          <tr><td><b>APOE ε4</b></td><td>LDL-C, ApoB, Lp(a), hs-CRP</td><td>LDL &lt;100mg/dL, hs-CRP &lt;2mg/L</td></tr>
+          <tr><td><b>VDR ff/FF</b></td><td>25-OH-D, PTH, calcio urinario</td><td>25-OH-D 40-60ng/mL</td></tr>
+          <tr><td><b>HFE C282Y</b></td><td>Ferritina, sideremia, transferrina</td><td>Ferritina 20-100ng/mL (M)</td></tr>
+          <tr><td><b>TCF7L2 TT</b></td><td>Glicemia a digiuno, HbA1c, insulina, HOMA-IR</td><td>HbA1c &lt;5.7%, HOMA-IR &lt;2.5</td></tr>
+          <tr><td><b>FTO AA</b></td><td>BMI, circonferenza vita, composizione corporea</td><td>BMI 18.5-24.9, vita &lt;94cm M</td></tr>
+          <tr><td><b>FADS1/2 TT</b></td><td>EPA+DHA eritrocitari (omega-3 index)</td><td>Omega-3 index &gt;8%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- LINEE GUIDA ED ETICA -->
+<div class="dna-panel" id="tab-linee_guida">
+  <div class="info-box ib-red">
+    <b>⚠️ Considerazioni Etiche e Limitazioni</b> — L'applicazione della nutrigenomica deve rispettare principi etici fondamentali: il genotipo non è destino, la privacy genetica è protetta dalla legge, e i test DTC (direct-to-consumer) non certificati possono essere fuorvianti.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚖️ Principi Etici</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:8px;background:#FEE2E2;border-radius:8px;margin-bottom:8px">
+          <b>🔒 Privacy e consenso</b><br>
+          Il dato genetico è considerato dato sensibile (GDPR, D.Lgs. 196/2003). Consenso informato scritto obbligatorio. Il paziente ha diritto a conoscere o non conoscere i propri risultati. Il dato genetico non può essere condiviso senza autorizzazione.
+        </div>
+        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px">
+          <b>⚠️ Non determinismo genetico</b><br>
+          "Il genotipo non è il fenotipo." L'epigenetica e l'ambiente (dieta, esercizio, stress) modificano l'espressione genica. Un singolo SNP spiega &lt;1% della varianza fenotipica nella maggior parte dei casi. Non creare determinismo o fatalismo nel paziente.
+        </div>
+        <div style="padding:8px;background:#ECFDF5;border-radius:8px;margin-bottom:8px">
+          <b>✅ Comunicazione al paziente</b><br>
+          Spiegare in termini comprensibili: "Ha una variante che rende il suo corpo meno efficiente nell'elaborare i folati → mangiamo più verdure a foglia verde e valutiamo un integratore." Non: "Ha un gene 'cattivo'."
+        </div>
+        <div style="padding:8px;background:#EDE9FE;border-radius:8px">
+          <b>🔬 Qualità dei test</b><br>
+          Utilizzare solo laboratori accreditati con pannelli validati scientificamente. Evitare test DTC non certificati che analizzano centinaia di SNP non validati clinicamente. La norma ISO 15189 è il riferimento per i laboratori di genetica clinica.
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>📚 Documenti e Linee Guida di Riferimento</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #7C3AED;margin-bottom:10px">
+          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">ISNN Position Stand — Nutrigenomics 2021</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">International Society of Sports Nutrition — posizione ufficiale sulla nutrigenomica applicata alla performance sportiva.</div>
+          <a href="https://jissn.biomedcentral.com/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#7C3AED;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 JISSN →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #6D28D9;margin-bottom:10px">
+          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">Nutrigenomics International Consortium (NUGO)</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Consorzio europeo per la ricerca in nutrigenomica e nutrigenetica clinica.</div>
+          <a href="https://www.nugo.org" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#6D28D9;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 NUGO →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #5B21B6;margin-bottom:10px">
+          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">EFSA — Panel on Dietetic Products (NDA)</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Opinioni scientifiche dell'Autorità Europea per la Sicurezza Alimentare su nutrigenomica e nutrizione personalizzata.</div>
+          <a href="https://www.efsa.europa.eu/en/topics/topic/nutrition" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#5B21B6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 EFSA NDA →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #4C1D95">
+          <div style="font-weight:700;color:#4C1D95;margin-bottom:4px">SNUGG — Società Italiana Nutrigenetica</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Linee guida italiane per la nutrigenetica clinica e formazione professionale dei dietisti.</div>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/?term=nutrigenetics+Italy" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#4C1D95;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 PubMed → nutrigenetica</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+function showDna(id) {
+  document.querySelectorAll('.dna-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dna-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(false); } catch(e) {}
+});
+</script>
+</body>
+</html>

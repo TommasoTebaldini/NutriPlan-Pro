@@ -49,6 +49,8 @@
   <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
   <a class="nav-item active" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
   <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🧬</span>Nutrizione e DNA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
@@ -81,11 +83,8 @@
 
 <div class="sport-tabs">
   <button class="sport-tab active" onclick="showSport('calc')">⚡ Calcolatore</button>
-  <button class="sport-tab" onclick="showSport('corsa')">🏃 Corsa</button>
-  <button class="sport-tab" onclick="showSport('nuoto')">🏊 Nuoto</button>
-  <button class="sport-tab" onclick="showSport('pesi')">🏋️ Palestra/Pesi</button>
-  <button class="sport-tab" onclick="showSport('ciclismo')">🚴 Ciclismo</button>
-  <button class="sport-tab" onclick="showSport('sport_team')">⚽ Sport di Squadra</button>
+  <button class="sport-tab" onclick="showSport('schema')">📋 Schema Base</button>
+  <button class="sport-tab" onclick="showSport('guide')">📖 Guide per Sport</button>
   <button class="sport-tab" onclick="showSport('integr')">💊 Integratori</button>
   <button class="sport-tab" onclick="showSport('lg')">📚 Linee Guida</button>
 </div>
@@ -139,12 +138,34 @@
         <div style="background:#FAF5FF;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)">Acqua min.</div><div class="result-big" id="sr-acqua" style="color:#7C3AED">—</div></div>
       </div>
       <div id="sr-timing" style="font-size:13px;line-height:1.8;background:#F8FAFC;border-radius:8px;padding:14px"></div>
+      <div style="margin-top:12px;text-align:center">
+        <button class="btn btn-primary" onclick="generaSchema()" id="btn-genera-schema">📋 Genera Schema Alimentare Base</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- CORSA -->
-<div class="sport-panel" id="tab-corsa">
+<!-- SCHEMA BASE GENERATO -->
+<div class="sport-panel" id="tab-schema">
+  <div class="alert-info alert-box"><b>📋 Schema Alimentare Base Sportivo</b> — Lo schema viene generato automaticamente dai valori calcolati nel Calcolatore. Torna alla scheda ⚡ Calcolatore, inserisci i dati e clicca "Genera Schema".</div>
+  <div id="schema-content">
+    <div class="empty-state"><div class="ei">📋</div><h3>Nessuno schema generato</h3><p>Vai al <b>Calcolatore</b>, inserisci i tuoi dati e clicca "Genera Schema Alimentare Base".</p></div>
+  </div>
+</div>
+<div class="sport-panel" id="tab-guide">
+  <div class="alert-info alert-box"><b>📖 Guide per Sport</b> — Fabbisogni, timing nutrizionale e schemi alimentari per ogni disciplina sportiva. Tutte le linee guida sono basate su evidenze scientifiche internazionali (IOC 2018, ACSM 2016, IAAF 2019).</div>
+
+  <!-- Navigazione interna guide sport -->
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" onclick="scrollToSport('guide-corsa')">🏃 Corsa</button>
+    <button class="btn btn-ghost btn-sm" onclick="scrollToSport('guide-nuoto')">🏊 Nuoto</button>
+    <button class="btn btn-ghost btn-sm" onclick="scrollToSport('guide-pesi')">🏋️ Palestra</button>
+    <button class="btn btn-ghost btn-sm" onclick="scrollToSport('guide-ciclismo')">🚴 Ciclismo</button>
+    <button class="btn btn-ghost btn-sm" onclick="scrollToSport('guide-team')">⚽ Sport di Squadra</button>
+  </div>
+
+<div id="guide-corsa">
+<div class="sport-panel" id="tab-corsa" style="display:block">
   <div class="alert-info alert-box"><b>🏃 Nutrizione per la Corsa</b> — Linee guida basate su IAAF 2019, ACSM 2016, IOC Consensus 2018</div>
   <div class="grid-2">
     <div class="calc-box">
@@ -185,9 +206,11 @@
     </table>
   </div>
 </div>
+</div><!-- end guide-corsa -->
 
+<div id="guide-nuoto">
 <!-- NUOTO -->
-<div class="sport-panel" id="tab-nuoto">
+<div class="sport-panel" id="tab-nuoto" style="display:block">
   <div class="alert-info alert-box"><b>🏊 Nutrizione per il Nuoto</b> — Il nuoto è un esercizio ad alta intensità con ampia variabilità. L'acqua fredda aumenta il dispendio energetico e sopprime l'appetito.</div>
   <div class="grid-2">
     <div class="calc-box">
@@ -212,9 +235,11 @@
     </div>
   </div>
 </div>
+</div><!-- end guide-nuoto -->
 
+<div id="guide-pesi">
 <!-- PESI/PALESTRA -->
-<div class="sport-panel" id="tab-pesi">
+<div class="sport-panel" id="tab-pesi" style="display:block">
   <div class="alert-info alert-box"><b>🏋️ Nutrizione per Palestra e Sala Pesi</b> — Linee guida ISSN 2017, ACSM/AND/DC 2016</div>
   <div class="grid-2">
     <div class="calc-box">
@@ -251,9 +276,11 @@
     </div>
   </div>
 </div>
+</div><!-- end guide-pesi -->
 
+<div id="guide-ciclismo">
 <!-- CICLISMO -->
-<div class="sport-panel" id="tab-ciclismo">
+<div class="sport-panel" id="tab-ciclismo" style="display:block">
   <div class="alert-info alert-box"><b>🚴 Nutrizione per il Ciclismo</b> — Linee guida UCI, Jeukendrup 2017, Burke et al. 2019</div>
   <div class="grid-2">
     <div class="calc-box">
@@ -276,9 +303,11 @@
     </div>
   </div>
 </div>
+</div><!-- end guide-ciclismo -->
 
+<div id="guide-team">
 <!-- SPORT DI SQUADRA -->
-<div class="sport-panel" id="tab-sport_team">
+<div class="sport-panel" id="tab-sport_team" style="display:block">
   <div class="alert-info alert-box"><b>⚽ Nutrizione per Sport di Squadra</b> — Calcio, Basket, Rugby, Pallavolo, Hockey. Linee guida FIFA 2010, ACSM 2016</div>
   <div class="grid-2">
     <div class="calc-box">
@@ -306,8 +335,9 @@
     </div>
   </div>
 </div>
+</div><!-- end guide-team -->
 
-<!-- INTEGRATORI -->
+</div><!-- end tab-guide -->
 <div class="sport-panel" id="tab-integr">
   <div class="calc-box">
     <h3>💊 Integratori con Evidenza Scientifica — Sport</h3>
@@ -399,10 +429,20 @@ const SPORT_PARAMS = {
 
 function showSport(id) {
   document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.sport-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
+  // Only hide top-level sport-panels (not the nested ones inside guide)
+  document.querySelectorAll('#main > div > .sport-panel, #main .page-content > .sport-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
   event.target.classList.add('active');
 }
+
+function scrollToSport(anchorId) {
+  const el = document.getElementById(anchorId);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Store last calculated values for schema generation
+let _lastCalc = null;
 
 function calcSport() {
   const peso = parseFloat(document.getElementById('s-peso').value);
@@ -423,9 +463,8 @@ function calcSport() {
   const cho_g = Math.round(p.cho_g * peso);
   const prot_g = Math.round(p.prot_g * peso);
   const grassi_g = Math.round(p.grassi_g * peso);
-  const cho_kcal = Math.round(cho_g * 4);
-  const prot_kcal = Math.round(prot_g * 4);
-  const grassi_kcal = Math.round(grassi_g * 9);
+  
+  _lastCalc = { peso, alt, eta, sesso, sport, p, tdee, cho_g, prot_g, grassi_g };
   
   document.getElementById('sr-kcal').textContent = tdee.toLocaleString();
   document.getElementById('sr-prot').textContent = r1(p.prot_g) + 'g/kg';
@@ -441,6 +480,86 @@ function calcSport() {
     🌅 Colazione: ${Math.round(tdee*0.25)} kcal | 🍎 Spuntino: ${Math.round(tdee*0.10)} kcal | 🍽️ Pranzo: ${Math.round(tdee*0.30)} kcal | 🍊 Merenda: ${Math.round(tdee*0.10)} kcal | 🌙 Cena: ${Math.round(tdee*0.25)} kcal
   `;
   document.getElementById('sport-result').style.display = 'block';
+}
+
+function generaSchema() {
+  if (!_lastCalc) { toast('Inserisci prima i dati nel calcolatore', 'err'); return; }
+  const { peso, sport, tdee, cho_g, prot_g, grassi_g, p } = _lastCalc;
+
+  // Sport label mapping
+  const sportLabels = {
+    corsa_rec:'Corsa ricreativa', corsa_comp:'Corsa competitiva', nuoto_rec:'Nuoto ricreativo',
+    nuoto_comp:'Nuoto competitivo', pesi_ipert:'Palestra — Ipertrofia', pesi_forza:'Palestra — Forza',
+    pesi_def:'Palestra — Definizione', ciclismo_rec:'Ciclismo ricreativo', ciclismo_comp:'Ciclismo competitivo',
+    calcio:'Calcio / Sport di squadra', basket:'Basket / Pallavolo', tennis:'Tennis / Padel',
+    crossfit:'CrossFit / HIIT', triathlon:'Triathlon', martial:'Arti marziali / MMA'
+  };
+  const sportLabel = sportLabels[sport] || sport;
+
+  // Generate a 5-meal plan distributed according to energy
+  const kcalCol = Math.round(tdee * 0.25);
+  const kcalSp1 = Math.round(tdee * 0.10);
+  const kcalPra = Math.round(tdee * 0.30);
+  const kcalSp2 = Math.round(tdee * 0.10);
+  const kcalCen = Math.round(tdee * 0.25);
+
+  // Proportional macros per meal (rough distribution)
+  const schema = [
+    { nome:'🌅 Colazione', kcal: kcalCol,
+      alimenti: `Fiocchi d'avena ${Math.round(cho_g*0.25*100/62)}g + Latte p.s. 200mL + Frutta fresca 150g + Noci 15g`,
+      note:'CHO complessi + proteine + grassi buoni. Evitare zuccheri semplici.' },
+    { nome:'🍎 Spuntino mattina', kcal: kcalSp1,
+      alimenti: `Yogurt greco 0% ${Math.round(prot_g*0.10/0.103)}g + Banana 1 (≈120g)`,
+      note:'Pre o post allenamento mattutino. Proteine rapide + CHO.' },
+    { nome:'🍽️ Pranzo', kcal: kcalPra,
+      alimenti: `Pasta/riso ${Math.round(cho_g*0.30*100/71)}g crudo + Pollo/pesce ${Math.round(prot_g*0.30/0.233)}g + Verdure 200g + Olio EVO ${Math.round(grassi_g*0.30/0.999*10)}mL`,
+      note:'Pasto principale. Ricco di CHO complessi. Secondo magro.' },
+    { nome:'🍊 Merenda', kcal: kcalSp2,
+      alimenti: `Frutta fresca 200g + Mandorle 20g`,
+      note:'Spuntino pomeridiano. Se allenamento serale: aggiungere 30g CHO (gallette, pane integrale).' },
+    { nome:'🌙 Cena', kcal: kcalCen,
+      alimenti: `Riso/patate ${Math.round(cho_g*0.20*100/79)}g + Salmone/carne ${Math.round(prot_g*0.30/0.200)}g + Verdure 250g + Olio EVO ${Math.round(grassi_g*0.30/0.999*10)}mL`,
+      note:'Sera: privilegiare proteine e verdure. CHO moderati (non eliminare).' }
+  ];
+
+  let html = `
+    <div style="background:#ECFDF5;border-radius:10px;padding:14px 18px;margin-bottom:16px">
+      <h3 style="font-size:15px;font-weight:700;color:#065F46;margin-bottom:6px">📋 Schema Alimentare Base — ${esc(sportLabel)}</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:#064E3B">
+        <span>⚖️ Peso: <b>${_lastCalc.peso}kg</b></span>
+        <span>🔥 Energia totale: <b>${tdee} kcal/die</b></span>
+        <span>💪 Proteine: <b>${prot_g}g/die</b> (${r1(p.prot_g)}g/kg)</span>
+        <span>🍞 CHO: <b>${cho_g}g/die</b> (${r1(p.cho_g)}g/kg)</span>
+        <span>🧈 Grassi: <b>${grassi_g}g/die</b> (${r1(p.grassi_g)}g/kg)</span>
+        <span>💧 Acqua: <b>≥${p.acqua_L}L/die</b></span>
+      </div>
+    </div>
+    <div style="display:grid;gap:10px">`;
+
+  schema.forEach(m => {
+    html += `
+      <div style="background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:14px;box-shadow:var(--shadow)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <span style="font-size:14px;font-weight:700;color:var(--slate)">${esc(m.nome)}</span>
+          <span style="background:#ECFDF5;color:#065F46;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700">~${m.kcal} kcal</span>
+        </div>
+        <div style="font-size:13px;color:var(--slate-m);margin-bottom:6px"><b>Alimenti:</b> ${esc(m.alimenti)}</div>
+        <div style="font-size:11.5px;color:var(--slate-l);font-style:italic">${esc(m.note)}</div>
+      </div>`;
+  });
+
+  html += `</div>
+    <div style="margin-top:14px;background:#FEF3C7;border-radius:10px;padding:12px 16px;font-size:12.5px;color:#78350F">
+      <b>⚠️ Note importanti:</b> Questo schema è indicativo. Le quantità vanno adattate al peso corporeo reale, alla tolleranza digestiva individuale e al periodo di allenamento (pre-gara, recupero, off-season). Per uno schema personalizzato, consultare il piano paziente.
+    </div>`;
+
+  document.getElementById('schema-content').innerHTML = html;
+  // Switch to schema tab
+  document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#main .page-content > .sport-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-schema').classList.add('active');
+  document.querySelector('.sport-tab[onclick="showSport(\'schema\')"]')?.classList.add('active');
+  document.getElementById('tab-schema').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function calcEA() {

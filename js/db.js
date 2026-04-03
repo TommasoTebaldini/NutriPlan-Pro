@@ -194,9 +194,84 @@ const DB_BDA=[
 let CUSTOM_DB=[];
 let RICETTE_DB=[];
 
-
 // ═══════════════════════════════════════════════════
-// DB ONS e INTEGRATORI CLINICI (valori per 100g)
+// DB ALIMENTI ULTRA-PROCESSATI (UPF)
+// Nova Group 4 — non contenuti in CREA/BDA
+// Valori nutrizionali per 100g di prodotto
+// ═══════════════════════════════════════════════════
+const DB_UPF = [
+  // ── SNACK SALATI ──
+  {n:"Patatine fritte in busta (chips classiche)",c:"Snack salati",src:"UPF",k:536,p:7,gs:3.1,g:34,z:0.5,ch:53,fi:2.5,ca:20,fe:1.5,mg:40,k2:1100,na:560,zn:0.8,fo:150,se:3,col:0},
+  {n:"Patatine al formaggio (Fonzies/simili)",c:"Snack salati",src:"UPF",k:510,p:5,gs:2.5,g:29,z:2,ch:58,fi:1.5,ca:25,fe:0.8,mg:15,k2:200,na:700,zn:0.5,fo:80,se:2,col:5},
+  {n:"Crackers snack con sesamo (tipo MixBowl)",c:"Snack salati",src:"UPF",k:465,p:9,gs:3.5,g:18,z:2,ch:65,fi:3,ca:60,fe:2,mg:40,k2:150,na:750,zn:1,fo:130,se:5,col:0},
+  {n:"Pop corn da microonde al burro",c:"Snack salati",src:"UPF",k:424,p:9,gs:4,g:22,z:0,ch:52,fi:8,ca:2,fe:1.5,mg:90,k2:250,na:480,zn:1.5,fo:280,se:5,col:10},
+  {n:"Pretzels/grissini salati industriali",c:"Snack salati",src:"UPF",k:383,p:9.5,gs:0.5,g:3,z:2,ch:78,fi:2.5,ca:25,fe:2,mg:25,k2:150,na:1400,zn:0.8,fo:90,se:8,col:0},
+  {n:"Nachos/tortilla chips al formaggio",c:"Snack salati",src:"UPF",k:495,p:7,gs:3.5,g:26,z:1.5,ch:61,fi:3.5,ca:110,fe:1.5,mg:55,k2:190,na:600,zn:1,fo:160,se:4,col:5},
+  {n:"Crackers Ritz (classici)",c:"Snack salati",src:"UPF",k:484,p:7,gs:4,g:21,z:5,ch:66,fi:1.5,ca:30,fe:2.5,mg:15,k2:100,na:740,zn:0.4,fo:55,se:5,col:0},
+
+  // ── MERENDINE E DOLCI CONFEZIONATI ──
+  {n:"Merendina tipo Crostatina/Merenda (Mulino B.)",c:"Dolci confezionati",src:"UPF",k:405,p:4.5,gs:5.5,g:14,z:27,ch:65,fi:1,ca:70,fe:1.5,mg:10,k2:100,na:320,zn:0.3,fo:60,se:3,col:15},
+  {n:"Pan di stelle / biscotti al cioccolato",c:"Dolci confezionati",src:"UPF",k:472,p:6,gs:7,g:19,z:33,ch:67,fi:2,ca:55,fe:2.5,mg:30,k2:200,na:230,zn:0.8,fo:110,se:4,col:5},
+  {n:"Kinder Bueno (per 100g)",c:"Dolci confezionati",src:"UPF",k:566,p:8,gs:18,g:35,z:47,ch:53,fi:1,ca:115,fe:1.5,mg:30,k2:240,na:160,zn:0.9,fo:140,se:3,col:20},
+  {n:"Nutella (crema alla nocciola)",c:"Creme e spalmate",src:"UPF",k:539,p:6,gs:10.6,g:30.9,z:57,ch:57.5,fi:3,ca:80,fe:2.9,mg:51,k2:350,na:41,zn:1,fo:165,se:2,col:0},
+  {n:"Panna cotta industriale confezionata",c:"Dolci confezionati",src:"UPF",k:178,p:3,gs:6.5,g:10,z:18,ch:22,fi:0,ca:100,fe:0.1,mg:8,k2:120,na:75,zn:0.3,fo:80,se:2,col:38},
+  {n:"Tiramisù industriale (porzione 100g)",c:"Dolci confezionati",src:"UPF",k:316,p:4.5,gs:10,g:18,z:30,ch:36,fi:0.3,ca:60,fe:0.8,mg:10,k2:110,na:100,zn:0.4,fo:75,se:4,col:85},
+  {n:"Torta confezionata al cioccolato (tipo Sacher)",c:"Dolci confezionati",src:"UPF",k:380,p:5,gs:8,g:16,z:48,ch:55,fi:2,ca:30,fe:1.5,mg:25,k2:150,na:180,zn:0.5,fo:80,se:3,col:30},
+  {n:"Brioche industriale (brioches confezionate)",c:"Dolci confezionati",src:"UPF",k:388,p:7.5,gs:7,g:16,z:20,ch:54,fi:1.5,ca:50,fe:1.5,mg:15,k2:100,na:380,zn:0.5,fo:70,se:6,col:85},
+  {n:"Croissant/cornetto industriale",c:"Dolci confezionati",src:"UPF",k:397,p:7,gs:9,g:22,z:15,ch:47,fi:1.5,ca:25,fe:1.5,mg:12,k2:110,na:450,zn:0.5,fo:65,se:5,col:60},
+  {n:"Wafer al cioccolato (KitKat/simili)",c:"Dolci confezionati",src:"UPF",k:519,p:6.8,gs:15,g:27,z:55,ch:63,fi:1.5,ca:110,fe:1.8,mg:45,k2:215,na:95,zn:0.9,fo:145,se:3,col:5},
+  {n:"Biscotti digestive industriali",c:"Dolci confezionati",src:"UPF",k:464,p:6.5,gs:5,g:20,z:22,ch:63,fi:3,ca:50,fe:2,mg:30,k2:150,na:450,zn:0.5,fo:100,se:8,col:0},
+  {n:"Torta di riso industriale",c:"Dolci confezionati",src:"UPF",k:260,p:5,gs:4,g:10,z:28,ch:40,fi:0.5,ca:100,fe:0.5,mg:15,k2:120,na:120,zn:0.3,fo:90,se:2,col:85},
+
+  // ── GELATI E GHIACCIOLI ──
+  {n:"Gelato al cioccolato industriale",c:"Gelati",src:"UPF",k:216,p:3.5,gs:7,g:12,z:23,ch:26,fi:0.5,ca:105,fe:0.8,mg:18,k2:195,na:65,zn:0.5,fo:110,se:2,col:35},
+  {n:"Ghiacciolo alla fragola (tipo Polaretti)",c:"Gelati",src:"UPF",k:68,p:0,gs:0,g:0,z:17,ch:17,fi:0,ca:3,fe:0,mg:1,k2:5,na:10,zn:0,fo:2,se:0,col:0},
+  {n:"Gelato Magnum (cioccolato, stima per 100g)",c:"Gelati",src:"UPF",k:288,p:3.5,gs:13,g:20,z:25,ch:27,fi:0.8,ca:85,fe:0.6,mg:15,k2:150,na:60,zn:0.4,fo:90,se:2,col:30},
+  {n:"Gelato alla crema industriale",c:"Gelati",src:"UPF",k:185,p:3.5,gs:6,g:9,z:20,ch:24,fi:0,ca:110,fe:0.2,mg:10,k2:165,na:70,zn:0.4,fo:95,se:2,col:45},
+
+  // ── BEVANDE ALCOLICHE ──
+  {n:"Vino rosso (12% vol.)",c:"Alcolici",src:"UPF",k:85,p:0.2,gs:0,g:0,z:0.3,ch:2.6,fi:0,ca:8,fe:0.5,mg:11,k2:127,na:5,zn:0.1,fo:23,se:1,col:0},
+  {n:"Vino bianco secco (12% vol.)",c:"Alcolici",src:"UPF",k:82,p:0.1,gs:0,g:0,z:0.6,ch:2.0,fi:0,ca:9,fe:0.3,mg:10,k2:71,na:10,zn:0.1,fo:18,se:1,col:0},
+  {n:"Birra chiara (5% vol.)",c:"Alcolici",src:"UPF",k:43,p:0.5,gs:0,g:0,z:0,ch:3.5,fi:0,ca:6,fe:0.02,mg:6,k2:35,na:4,zn:0.01,fo:28,se:1,col:0},
+  {n:"Birra scura/doppio malto (7% vol.)",c:"Alcolici",src:"UPF",k:62,p:0.7,gs:0,g:0,z:2.5,ch:5,fi:0,ca:10,fe:0.1,mg:9,k2:60,na:6,zn:0.02,fo:40,se:1,col:0},
+  {n:"Prosecco / spumante (11% vol.)",c:"Alcolici",src:"UPF",k:77,p:0.1,gs:0,g:0,z:1.2,ch:3,fi:0,ca:10,fe:0.2,mg:8,k2:59,na:10,zn:0.1,fo:14,se:1,col:0},
+  {n:"Vodka (40% vol.)",c:"Alcolici",src:"UPF",k:231,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:2,na:1,zn:0,fo:0,se:0,col:0},
+  {n:"Whisky/Rum (40% vol.)",c:"Alcolici",src:"UPF",k:231,p:0,gs:0,g:0,z:0,ch:0.1,fi:0,ca:0,fe:0,mg:0,k2:1,na:1,zn:0,fo:0,se:0,col:0},
+  {n:"Aperol Spritz (porzione 200mL)",c:"Alcolici",src:"UPF",k:76,p:0,gs:0,g:0,z:8,ch:8,fi:0,ca:5,fe:0,mg:2,k2:10,na:10,zn:0,fo:2,se:0,col:0},
+  {n:"Cocktail Mojito (porzione 200mL)",c:"Alcolici",src:"UPF",k:105,p:0,gs:0,g:0,z:15,ch:15,fi:0,ca:5,fe:0.1,mg:3,k2:15,na:5,zn:0,fo:3,se:0,col:0},
+
+  // ── BEVANDE ZUCCHERATE ──
+  {n:"Coca-Cola / cola classica",c:"Bibite zuccherate",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:2,fe:0.1,mg:2,k2:3,na:10,zn:0,fo:10,se:0,col:0},
+  {n:"Fanta / aranciata zuccherata",c:"Bibite zuccherate",src:"UPF",k:44,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:8,fe:0.1,mg:2,k2:4,na:12,zn:0,fo:3,se:0,col:0},
+  {n:"Succo di frutta industriale (brick)",c:"Bibite zuccherate",src:"UPF",k:46,p:0.3,gs:0,g:0.1,z:11,ch:11.5,fi:0.2,ca:10,fe:0.2,mg:8,k2:100,na:5,zn:0.05,fo:10,se:0,col:0},
+  {n:"Energy drink (Monster/Red Bull tipo)",c:"Bibite zuccherate",src:"UPF",k:45,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:5,fe:0,mg:5,k2:40,na:100,zn:0,fo:0,se:0,col:0},
+  {n:"Tè freddo industriale zuccherato",c:"Bibite zuccherate",src:"UPF",k:38,p:0.1,gs:0,g:0,z:9,ch:9.2,fi:0,ca:2,fe:0.1,mg:2,k2:15,na:5,zn:0,fo:3,se:0,col:0},
+  {n:"Smoothie industriale (bottiglia)",c:"Bibite zuccherate",src:"UPF",k:55,p:0.5,gs:0,g:0.2,z:12,ch:13,fi:0.5,ca:15,fe:0.3,mg:10,k2:120,na:5,zn:0.1,fo:15,se:0.5,col:0},
+
+  // ── FAST FOOD E PIATTI PRONTI ──
+  {n:"Hamburger industriale (burger surgelato)",c:"Fast food",src:"UPF",k:285,p:15,gs:6,g:17,z:3,ch:21,fi:1.5,ca:50,fe:2.5,mg:20,k2:250,na:600,zn:2.5,fo:130,se:10,col:50},
+  {n:"Pizza margherita surgelata",c:"Fast food",src:"UPF",k:225,p:9,gs:4,g:8,z:3,ch:30,fi:2,ca:180,fe:1.5,mg:20,k2:200,na:550,zn:1,fo:120,se:8,col:15},
+  {n:"Lasagne industriali surgelate",c:"Fast food",src:"UPF",k:150,p:8,gs:3.5,g:7,z:2,ch:15,fi:1,ca:80,fe:1,mg:15,k2:200,na:500,zn:0.8,fo:90,se:5,col:25},
+  {n:"Nuggets di pollo surgelati",c:"Fast food",src:"UPF",k:250,p:15,gs:2.5,g:14,z:0.5,ch:17,fi:0.5,ca:20,fe:0.8,mg:18,k2:180,na:550,zn:0.8,fo:140,se:12,col:40},
+  {n:"Hotdog/würstel industriale",c:"Salumi processati",src:"UPF",k:280,p:11,gs:10,g:25,z:1.5,ch:3,fi:0,ca:10,fe:1.2,mg:12,k2:170,na:1100,zn:1.5,fo:80,se:8,col:60},
+  {n:"Wurstel di pollo industriale",c:"Salumi processati",src:"UPF",k:215,p:13,gs:5.5,g:17,z:1,ch:2,fi:0,ca:15,fe:1,mg:15,k2:200,na:950,zn:1,fo:100,se:9,col:55},
+  {n:"Salame Milano industriale",c:"Salumi processati",src:"UPF",k:406,p:22,gs:14,g:35,z:0.3,ch:0.3,fi:0,ca:10,fe:1.8,mg:20,k2:340,na:1800,zn:2.2,fo:175,se:18,col:80},
+  {n:"Mortadella industriale",c:"Salumi processati",src:"UPF",k:311,p:14.7,gs:11,g:26.5,z:0.5,ch:1.5,fi:0,ca:8,fe:1.3,mg:15,k2:230,na:1100,zn:1.5,fo:140,se:12,col:70},
+
+  // ── CREME E SALSE INDUSTRIALI ──
+  {n:"Maionese industriale",c:"Condimenti",src:"UPF",k:680,p:1.5,gs:8,g:75,z:1.5,ch:2,fi:0,ca:15,fe:0.5,mg:5,k2:20,na:750,zn:0.2,fo:30,se:2,col:55},
+  {n:"Ketchup industriale",c:"Condimenti",src:"UPF",k:101,p:1.3,gs:0.1,g:0.1,z:22,ch:25,fi:1.5,ca:20,fe:0.8,mg:12,k2:310,na:1100,zn:0.2,fo:25,se:1,col:0},
+  {n:"Salsa barbecue industriale",c:"Condimenti",src:"UPF",k:172,p:1.5,gs:0.1,g:0.3,z:37,ch:40,fi:1,ca:25,fe:0.5,mg:10,k2:240,na:950,zn:0.2,fo:20,se:1,col:0},
+  {n:"Crema di nocciole bianca (tipo Bianca)",c:"Creme e spalmate",src:"UPF",k:535,p:5,gs:14,g:27,z:65,ch:65,fi:1,ca:100,fe:1,mg:20,k2:200,na:70,zn:0.5,fo:100,se:1,col:5},
+  {n:"Crema al pistacchio industriale",c:"Creme e spalmate",src:"UPF",k:520,p:7,gs:12,g:28,z:57,ch:61,fi:2,ca:70,fe:1.5,mg:50,k2:250,na:80,zn:1,fo:130,se:2,col:5},
+
+  // ── CEREALI DA COLAZIONE ULTRA-PROCESSATI ──
+  {n:"Cereali al cioccolato tipo Coco Pops",c:"Cereali da colazione",src:"UPF",k:381,p:5,gs:0.7,g:3.5,z:37,ch:83,fi:2,ca:25,fe:8,mg:30,k2:130,na:480,zn:1.5,fo:90,se:4,col:0},
+  {n:"Muesli industriale con frutta e zucchero",c:"Cereali da colazione",src:"UPF",k:368,p:9,gs:2,g:8,z:28,ch:63,fi:6,ca:40,fe:3.5,mg:85,k2:350,na:100,zn:2,fo:220,se:7,col:0},
+  {n:"Cereali Frosties (glassati allo zucchero)",c:"Cereali da colazione",src:"UPF",k:378,p:6.2,gs:0.2,g:0.9,z:37,ch:87,fi:2,ca:3,fe:8,mg:15,k2:75,na:640,zn:0.3,fo:55,se:3,col:0},
+];
+
+
 // Porzione standard indicata nel nome
 // ═══════════════════════════════════════════════════
 const DB_ONS = [
@@ -332,7 +407,7 @@ const DB_APROTEICI = [
 
 
 function rebuildDB() {
-  ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...DB_APROTEICI,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
+  ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...DB_APROTEICI,...DB_UPF,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
   FOOD_MAP={};
   ALL_DB.forEach(f=>{FOOD_MAP[f.n.toLowerCase()]=f;});
 }

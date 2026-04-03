@@ -585,11 +585,41 @@ document.addEventListener('DOMContentLoaded',async()=>{
   renderPatChips();
   ['v-pi','v-pa','v-mm'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el._userEdited=true);});
   const preCartella = sessionStorage.getItem('valCartella');
+  const loadSchedaId = sessionStorage.getItem('loadSchedaId');
   try {
     const ok = await checkAuth();
     if(ok) {
       await loadCartelleDropdown2();
-      if(preCartella){
+      if(loadSchedaId){
+        sessionStorage.removeItem('loadSchedaId');
+        showLoading(true);
+        const {data} = await sb.from('schede_valutazione').select('*').eq('id', loadSchedaId).single();
+        showLoading(false);
+        if(data){
+          schedaId = data.id;
+          const sel=document.getElementById('v-cartella');
+          if(sel && data.cartella_id) sel.value=data.cartella_id;
+          const setVal=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};
+          setVal('v-nome',data.nome);
+          setVal('v-cognome',data.cognome);
+          setVal('v-ddn',data.ddn);
+          setVal('v-eta',data.eta);
+          if(data.sesso)document.getElementById('v-sesso').value=data.sesso;
+          setVal('v-peso',data.peso);
+          setVal('v-altezza',data.altezza);
+          setVal('v-pi',data.peso_ideale);
+          setVal('v-pa',data.peso_aggiustato);
+          setVal('v-mg',data.massa_grassa_pct);
+          setVal('v-mm',data.massa_magra);
+          setVal('v-vita',data.vita);
+          setVal('v-fianchi',data.fianchi);
+          setVal('v-braccio',data.braccio);
+          setVal('v-plica',data.plica);
+          setVal('v-note',data.note);
+          try{const pat=JSON.parse(data.patologie||'[]');selectedPat=new Set(pat);renderPatChips();}catch(e){}
+          toast('📂 Scheda caricata per modifica!','ok');
+        }
+      } else if(preCartella){
         const sel=document.getElementById('v-cartella');
         if(sel) sel.value=preCartella;
         sessionStorage.removeItem('valCartella');

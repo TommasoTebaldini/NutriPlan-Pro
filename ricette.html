@@ -515,6 +515,11 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
     status.innerHTML = `<div style="background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#15803D">✅ Ricetta importata: <b>${esc(ricetta.nome)}</b> (${(ricetta.ingredienti||[]).length} ingredienti). Verifica e salva!</div>`;
     toast('✅ Ricetta importata!', 'ok');
     setTimeout(aggTotali, 200);
+    editingRicettaId = null;
+    document.getElementById('modal-r-title').textContent = '✏️ Nuova Ricetta (da URL)';
+    document.getElementById('r-totali').style.display = 'none';
+    closeM('modal-url');
+    openM('modal-ricetta');
 
   } catch(e) {
     status.innerHTML = `<div style="background:#FEF2F2;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#DC2626">⚠️ Errore: ${esc(e.message)}. Prova con un URL diverso o inserisci la ricetta manualmente.</div>`;

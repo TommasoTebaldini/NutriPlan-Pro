@@ -54,6 +54,11 @@
   .agenda-layout{grid-template-columns:1fr}
   .sidebar-agenda{display:none}
 }
+.agenda-stat-bar{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.agenda-stat{background:white;border-radius:12px;padding:12px 18px;border:1.5px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;flex:1;min-width:150px}
+.agenda-stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.agenda-stat-val{font-size:22px;font-weight:800;color:var(--slate);line-height:1}
+.agenda-stat-lbl{font-size:11px;color:var(--slate-l);font-weight:600;margin-top:2px}
 </style>
 </head>
 <body>
@@ -103,6 +108,38 @@
 </div>
 
 <main id="main"><div class="page-content" style="padding-bottom:0">
+
+<!-- STATS BAR -->
+<div class="agenda-stat-bar">
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#DBEAFE">📅</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-oggi">0</div>
+      <div class="agenda-stat-lbl">Appuntamenti Oggi</div>
+    </div>
+  </div>
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#D1FAE5">🗓️</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-settimana">0</div>
+      <div class="agenda-stat-lbl">Questa Settimana</div>
+    </div>
+  </div>
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#FEE2E2">🚨</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-urgenti">0</div>
+      <div class="agenda-stat-lbl">Urgenti</div>
+    </div>
+  </div>
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#EDE9FE">📋</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-totale">0</div>
+      <div class="agenda-stat-lbl">Totale Appuntamenti</div>
+    </div>
+  </div>
+</div>
 
 <div class="agenda-layout">
   <!-- CALENDAR -->
@@ -426,10 +463,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   const d = new Date().toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('selected-date-label').textContent = d;
   renderCalendar();
+  updateStats();
   setInterval(checkNotifications, 60000);
   if(Notification.permission === 'default') Notification.requestPermission();
   try { await checkAuth(); } catch(e) {}
 });
+
+function updateStats() {
+  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const in7 = new Date(now.getTime() + 7*24*60*60*1000).toISOString().split('T')[0];
+  const todayCount = events.filter(e => e.data === today).length;
+  const weekCount = events.filter(e => e.data >= today && e.data <= in7).length;
+  const urgCount = events.filter(e => e.tipo === 'urgente' && e.data >= today).length;
+  document.getElementById('stat-oggi').textContent = todayCount;
+  document.getElementById('stat-settimana').textContent = weekCount;
+  document.getElementById('stat-urgenti').textContent = urgCount;
+  document.getElementById('stat-totale').textContent = events.length;
+}
 </script>
 </body>
 </html>

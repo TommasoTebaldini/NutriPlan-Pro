@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.rist-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#EFF6FF;border-radius:14px}
+.rist-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#EFF6FF;border-radius:14px;border:1px solid #BFDBFE;box-shadow:0 1px 4px rgba(59,130,246,.1)}
 .rist-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
 .rist-tab:hover{background:rgba(59,130,246,.12);color:#3B82F6}
 .rist-tab.active{background:white;color:#1D4ED8;box-shadow:0 3px 10px rgba(59,130,246,.2);font-weight:700}
@@ -37,6 +37,16 @@
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 @media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast,.paz-hdr{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .rist-tabs{display:none!important}
+  .rist-panel{display:none!important}
+  .rist-panel.active{display:block!important}
+}
 </style>
 </head>
 <body>
@@ -83,6 +93,22 @@
 
 <main id="main"><div class="page-content">
 
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#1D4ED8 0%,#3B82F6 60%,#60A5FA 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(29,78,216,.3);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🍽️</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Ristorazione Collettiva</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Progettazione menu, gestione diete speciali, allergeni, normativa HACCP e fabbisogni nutrizionali per mense scolastiche, aziendali e sanitarie.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🗓️ Menu Settimanale</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">⚕️ Diete Speciali</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🔒 HACCP &amp; Normativa</div>
+    </div>
+  </div>
+</div>
+
 <!-- BARRA PAZIENTE RISTORAZIONE -->
 <div class="paz-hdr no-print" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
@@ -105,7 +131,7 @@
   <button class="rist-tab" onclick="showRist('allergeni')">⚠️ Allergeni</button>
   <button class="rist-tab" onclick="showRist('haccp')">🔒 HACCP &amp; Normativa</button>
   <button class="rist-tab" onclick="showRist('fabbisogni')">📊 Fabbisogni per Utenza</button>
-  <button class="rist-tab" onclick="showRist('piano_rist')" style="background:linear-gradient(135deg,#EFF6FF,#BFDBFE);color:#1E3A5F;border:1.5px solid #93C5FD">🍽️ Piano Pasti</button>
+  <button class="rist-tab" onclick="showRist('piano_rist')">🍽️ Piano Pasti</button>
 </div>
 
 <!-- PANORAMICA -->

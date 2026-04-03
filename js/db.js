@@ -331,6 +331,7 @@ const DB_APROTEICI = [
 ];
 
 
+function rebuildDB() {
   ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...DB_APROTEICI,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
   FOOD_MAP={};
   ALL_DB.forEach(f=>{FOOD_MAP[f.n.toLowerCase()]=f;});

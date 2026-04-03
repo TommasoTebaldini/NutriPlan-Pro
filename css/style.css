@@ -383,6 +383,10 @@ body.sidebar-collapsed #main { margin-left: 0 !important; transition: margin .25
 body.sidebar-collapsed #topbar { left: 0 !important; transition: left .25s cubic-bezier(.4,0,.2,1); }
 #main, #topbar { transition: margin .25s cubic-bezier(.4,0,.2,1), left .25s cubic-bezier(.4,0,.2,1); }
 
+/* Sidebar collapsed visual indicator */
+#sidebar.collapsed + #sb-overlay { pointer-events: none; }
+body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; border-color: var(--teal); }
+
 /* Toggle button — lives inside topbar */
 #sb-toggle-btn {
   width: 34px; height: 34px; border-radius: 9px;
@@ -392,4 +396,36 @@ body.sidebar-collapsed #topbar { left: 0 !important; transition: left .25s cubic
   flex-shrink: 0; transition: all .15s; font-family: inherit;
 }
 #sb-toggle-btn:hover { background: var(--teal); color: white; border-color: var(--teal); }
-@media (max-width: 768px) { #sb-toggle-btn { display: none; } }
+@media (max-width: 768px) { #sb-toggle-btn { display: none; } /* on mobile, menu-toggle replaces this */ }
+
+/* ── Standardize action buttons ── */
+.tbar-actions .btn,
+.card-hdr .btn,
+.paz-footer .btn,
+.mfoot .btn {
+  min-height: 32px;
+}
+/* All primary create/action buttons: same look */
+.btn-primary { background: var(--teal); color: white; }
+.btn-primary:hover { background: var(--teal-d); }
+
+/* Grid layouts responsive for specialty pages */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media(max-width:900px) { .grid-2 { grid-template-columns: 1fr; } }
+@media(max-width:640px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+@media(max-width:420px) { .grid-3 { grid-template-columns: 1fr; } }
+
+/* Specialty page calc-box */
+.calc-box { background: white; border-radius: var(--r); border: 1.5px solid var(--border); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.calc-box h3 { font-size: 14px; font-weight: 700; color: var(--slate); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.nf { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.nf label { font-size: 11px; font-weight: 700; color: var(--slate-m); text-transform: uppercase; letter-spacing: .4px; }
+.nf input, .nf select { padding: 8px 11px; border: 1.5px solid var(--border-d); border-radius: var(--r-sm); font-size: 13.5px; font-family: inherit; outline: none; transition: border-color .15s; width: 100%; }
+.nf input:focus, .nf select:focus { border-color: var(--teal-l); }
+.result-big { font-size: 24px; font-weight: 800; color: var(--teal); font-family: 'DM Serif Display', serif; }
+.alert-box { border-radius: var(--r-sm); padding: 12px 16px; font-size: 12.5px; line-height: 1.7; margin-bottom: 14px; }
+.alert-info { background: #EFF6FF; border-left: 4px solid #3B82F6; color: #1E40AF; }
+.alert-warn { background: #FEF3C7; border-left: 4px solid #F59E0B; color: #92400E; }
+.alert-success { background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; }
+

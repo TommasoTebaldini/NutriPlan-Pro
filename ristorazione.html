@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Ristorazione Collettiva — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.rist-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#EFF6FF;border-radius:14px}
+.rist-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.rist-tab:hover{background:rgba(59,130,246,.12);color:#3B82F6}
+.rist-tab.active{background:white;color:#1D4ED8;box-shadow:0 3px 10px rgba(59,130,246,.2);font-weight:700}
+.rist-panel{display:none}.rist-panel.active{display:block}
+.info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.7;border-left:4px solid}
+.ib-blue{background:#EFF6FF;border-color:#3B82F6;color:#1E3A5F}
+.ib-green{background:#ECFDF5;border-color:#10B981;color:#064E3B}
+.ib-amber{background:#FEF3C7;border-color:#F59E0B;color:#78350F}
+.ib-red{background:#FEE2E2;border-color:#EF4444;color:#7F1D1D}
+.ib-purple{background:#EDE9FE;border-color:#7C3AED;color:#4C1D95}
+.menu-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.menu-table th{background:#1D4ED8;color:white;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.menu-table th:first-child{text-align:left}
+.menu-table td{padding:7px 12px;border-bottom:1px solid #EFF6FF;text-align:center;vertical-align:middle}
+.menu-table td:first-child{text-align:left;font-weight:600}
+.menu-table tbody tr:nth-child(even){background:#F8FBFF}
+.menu-table tr:hover td{background:#DBEAFE}
+.dieta-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.dieta-card h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.dieta-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:10px}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus{border-color:#3B82F6}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item active" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🧬</span>Nutrizione e DNA</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🍽️ Ristorazione Collettiva</h2>
+</div>
+
+<main id="main"><div class="page-content">
+
+<div class="rist-tabs">
+  <button class="rist-tab active" onclick="showRist('overview')">📋 Panoramica</button>
+  <button class="rist-tab" onclick="showRist('menu')">🗓️ Menu Settimanale</button>
+  <button class="rist-tab" onclick="showRist('diete')">⚕️ Diete Speciali</button>
+  <button class="rist-tab" onclick="showRist('allergeni')">⚠️ Allergeni</button>
+  <button class="rist-tab" onclick="showRist('haccp')">🔒 HACCP &amp; Normativa</button>
+  <button class="rist-tab" onclick="showRist('fabbisogni')">📊 Fabbisogni per Utenza</button>
+</div>
+
+<!-- PANORAMICA -->
+<div class="rist-panel active" id="tab-overview">
+  <div class="info-box ib-blue">
+    <b>🍽️ Ristorazione Collettiva</b> — La ristorazione collettiva comprende mense scolastiche, aziendali, ospedaliere, assistenziali e comunitarie. Il dietista è responsabile della progettazione dei menu, della gestione delle diete speciali e del rispetto delle normative igienico-sanitarie.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📌 Principi Fondamentali</h3>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="padding:8px 12px;background:#EFF6FF;border-radius:8px;margin-bottom:8px;border-left:3px solid #3B82F6"><b>Adeguatezza nutrizionale</b><br>Menu calibrati sui LARN 2023 per la specifica utenza. Energia, macronutrienti e micronutrienti nei range raccomandati.</div>
+        <div style="padding:8px 12px;background:#ECFDF5;border-radius:8px;margin-bottom:8px;border-left:3px solid #10B981"><b>Varietà alimentare</b><br>Rotazione ciclica dei menu (4-6 settimane). Rispetto della stagionalità. Almeno 30 alimenti diversi/settimana.</div>
+        <div style="padding:8px 12px;background:#FEF3C7;border-radius:8px;margin-bottom:8px;border-left:3px solid #F59E0B"><b>Sicurezza alimentare</b><br>Rispetto HACCP, temperatura di cottura/conservazione. Tracciabilità alimenti. Gestione allergeni (Reg. 1169/2011).</div>
+        <div style="padding:8px 12px;background:#EDE9FE;border-radius:8px;border-left:3px solid #7C3AED"><b>Inclusività</b><br>Gestione sistematica di diete speciali: mediche, etico-religiose, culturali. Protocollo scritto per ogni tipologia.</div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🏛️ Contesti di Applicazione</h3>
+      <table class="menu-table">
+        <thead><tr><th>Contesto</th><th>Utenza principale</th><th>Criticità</th></tr></thead>
+        <tbody>
+          <tr><td><b>🏫 Mensa scolastica</b></td><td>Bambini 3-18 anni</td><td>Allergie, neofobia, LARN età pediatrica</td></tr>
+          <tr><td><b>🏥 Mensa ospedaliera</b></td><td>Degenti</td><td>Diete terapeutiche, consistenza, allergie</td></tr>
+          <tr><td><b>🏠 RSA / Casa di riposo</b></td><td>Anziani ≥65 anni</td><td>Masticazione, deglutizione, sarcopenia</td></tr>
+          <tr><td><b>🏢 Mensa aziendale</b></td><td>Adulti 20-65 anni</td><td>Varietà, equilibrio, velocità servizio</td></tr>
+          <tr><td><b>⚽ Centri sportivi</b></td><td>Atleti</td><td>Fabbisogni aumentati, timing nutrizionale</td></tr>
+          <tr><td><b>⛪ Comunità / centri sociali</b></td><td>Varia</td><td>Culture diverse, diete religiose</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>📐 Struttura del Pasto in Ristorazione Collettiva</h3>
+    <table class="menu-table">
+      <thead><tr><th>Componente</th><th>Frequenza/settimana</th><th>Porzione tipo (adulto)</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><b>Primo piatto</b></td><td>5/5 giorni</td><td>Pasta/riso 80g crudo</td><td>Alternare pasta, riso, legumi, zuppe</td></tr>
+        <tr><td><b>Secondo piatto</b></td><td>5/5 giorni</td><td>Carne 130g, pesce 150g, uova 2</td><td>Carne 2-3×/sett, pesce 2-3×/sett</td></tr>
+        <tr><td><b>Contorno</b></td><td>5/5 giorni</td><td>Verdura 200g</td><td>Preferire fresco e di stagione</td></tr>
+        <tr><td><b>Frutta</b></td><td>5/5 giorni</td><td>150-200g</td><td>Varietà stagionale</td></tr>
+        <tr><td><b>Pane</b></td><td>5/5 giorni</td><td>50-80g</td><td>Preferire integrale almeno 2×/sett</td></tr>
+        <tr><td><b>Condimento</b></td><td>Ad ogni pasto</td><td>Olio EVO 10-15mL</td><td>A crudo. Limitare burro e margarina</td></tr>
+        <tr><td><b>Legumi come secondo</b></td><td>1-2×/sett</td><td>150g cotti</td><td>Ottima alternativa proteica</td></tr>
+        <tr><td><b>Pesce</b></td><td>2-3×/sett</td><td>150g</td><td>Variare le specie, preferire MSC</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MENU SETTIMANALE -->
+<div class="rist-panel" id="tab-menu">
+  <div class="info-box ib-green">
+    <b>🗓️ Menu Ciclico</b> — Il menu ciclico (4-6 settimane di rotazione) garantisce varietà nutrizionale e organizzativa. Deve essere revisionato stagionalmente e sottoposto ad analisi nutrizionale da parte del dietista responsabile.
+  </div>
+  <div class="calc-box">
+    <h3>🗓️ Esempio Menu Settimanale — Mensa Aziendale (Adulti)</h3>
+    <div style="overflow-x:auto">
+    <table class="menu-table" style="min-width:700px">
+      <thead><tr><th>Giorno</th><th>Primo</th><th>Secondo</th><th>Contorno</th><th>Frutta</th></tr></thead>
+      <tbody>
+        <tr><td><b>Lunedì</b></td><td>Pasta al pomodoro</td><td>Petto di pollo alla piastra</td><td>Insalata mista</td><td>Mela</td></tr>
+        <tr><td><b>Martedì</b></td><td>Risotto alle verdure</td><td>Merluzzo al vapore</td><td>Broccoli al vapore</td><td>Arancia</td></tr>
+        <tr><td><b>Mercoledì</b></td><td>Pasta e fagioli</td><td>Frittata 2 uova</td><td>Spinaci saltati</td><td>Banana</td></tr>
+        <tr><td><b>Giovedì</b></td><td>Riso in brodo</td><td>Salmone al forno</td><td>Zucchine trifolate</td><td>Pera</td></tr>
+        <tr><td><b>Venerdì</b></td><td>Pasta al pesto</td><td>Tonno in scatola al naturale</td><td>Insalata di pomodori</td><td>Kiwi</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Apporto Nutrizionale Stimato (Pranzo Tipo)</h3>
+      <table class="menu-table">
+        <thead><tr><th>Nutriente</th><th>Valore medio</th><th>% LARN adulto</th></tr></thead>
+        <tbody>
+          <tr><td><b>Energia</b></td><td>650-750 kcal</td><td>~35% fabbisogno giornaliero</td></tr>
+          <tr><td><b>Proteine</b></td><td>30-35g</td><td>~40% fabbisogno giornaliero</td></tr>
+          <tr><td><b>CHO</b></td><td>80-90g</td><td>~30% CHO giornalieri</td></tr>
+          <tr><td><b>Grassi</b></td><td>20-25g</td><td>~30% grassi giornalieri</td></tr>
+          <tr><td><b>Fibra</b></td><td>8-12g</td><td>~35-50% fabbisogno</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>✅ Criteri di Qualità del Menu</h3>
+      <div style="font-size:13px;line-height:2">
+        ✅ Carne rossa max 1×/sett (prevenzione NCDs)<br>
+        ✅ Pesce almeno 2-3×/sett (omega-3)<br>
+        ✅ Legumi almeno 1-2×/sett (proteine vegetali)<br>
+        ✅ Verdura cotta E cruda ogni giorno<br>
+        ✅ Sale iodato, olio EVO come condimento<br>
+        ✅ Pane integrale almeno 2-3 volte a settimana<br>
+        ✅ Frutta fresca di stagione ogni giorno<br>
+        ✅ Dolci/dessert max 1×/settimana<br>
+        ✅ Fritture max 1×/settimana<br>
+        ⚠️ NO bevande zuccherate / succhi industriali
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DIETE SPECIALI -->
+<div class="rist-panel" id="tab-diete">
+  <div class="info-box ib-purple">
+    <b>⚕️ Gestione Diete Speciali</b> — Le diete speciali in ristorazione collettiva richiedono un protocollo scritto, la collaborazione con il medico (per diete mediche), e un sistema di identificazione del vassoio/piatto sicuro per il commensale.
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <!-- DIETE MEDICHE -->
+      <div class="dieta-card">
+        <h3>🏥 Diete Mediche</h3>
+        <div class="dieta-badge" style="background:#FEE2E2;color:#991B1B">Prescrizione medica obbligatoria</div>
+        <div style="font-size:13px;line-height:1.8">
+          <b>Diabete mellito tipo 2:</b><br>
+          — CHO 45-60% (basso IG), fibre ≥25g/die<br>
+          — No zuccheri semplici aggiunti, no fritti<br>
+          — Porzioni di pasta/riso ridotte al 90%<br><br>
+          <b>Insufficienza renale (CKD):</b><br>
+          — Proteine ridotte: 0.6-0.8g/kg/die (pre-dialisi)<br>
+          — Fosforo &lt;800mg/die, potassio &lt;2000mg/die<br>
+          — Evitare: legumi, frutta secca, latticini eccessivi<br><br>
+          <b>Celiachia (certificata):</b><br>
+          — Eliminazione TOTALE glutine (frumento, segale, orzo)<br>
+          — Linea di preparazione separata, utensili dedicati<br>
+          — Pasta/pane gluten-free da fornitore certificato AIC<br><br>
+          <b>Ipertensione/scompenso cardiaco:</b><br>
+          — Sodio &lt;2g/die (no sale aggiunto, limitare affettati)<br>
+          — Alimenti in bianco o a vapore<br>
+          — Bannare alimenti ad alto contenuto di sodio nascosto
+        </div>
+      </div>
+      <div class="dieta-card">
+        <h3>🧩 Diete per Allergie e Intolleranze</h3>
+        <div class="dieta-badge" style="background:#FEF3C7;color:#B45309">Protocollo HACCP obbligatorio</div>
+        <div style="font-size:13px;line-height:1.8">
+          <b>Allergia al latte vaccino (APLV):</b><br>
+          — Eliminazione di tutti i derivati del latte<br>
+          — Alternativa: prodotti a base di soia/riso certificati<br>
+          — Attenzione a etichette, tracce, contaminazione crociata<br><br>
+          <b>Allergia alle uova:</b><br>
+          — Eliminazione di uova e derivati (maionese, pasta all'uovo)<br>
+          — Verificare ingredienti compositi (prodotti da forno, sughi)<br><br>
+          <b>Allergia ai crostacei/molluschi:</b><br>
+          — Eliminazione totale, attenzione a brodi e sughi di pesce<br><br>
+          <b>Intolleranza al lattosio:</b><br>
+          — Latte e formaggi freschi da sostituire o eliminare<br>
+          — Formaggi stagionati (parmigiano, pecorino) generalmente tollerati<br><br>
+          <b>Allergia alla frutta secca:</b><br>
+          — Eliminazione e verifica tracce in prodotti da forno, pesto<br>
+          — Segnalare sempre presenza di frutta secca nei menu esposti
+        </div>
+      </div>
+    </div>
+    <div>
+      <!-- DIETE ETICO-RELIGIOSE -->
+      <div class="dieta-card">
+        <h3>🕌 Diete Etico-Religiose e Culturali</h3>
+        <div class="dieta-badge" style="background:#EDE9FE;color:#5B21B6">Rispetto dell'identità culturale</div>
+        <div style="font-size:13px;line-height:1.8">
+          <b>Dieta vegetariana (latto-ovo):</b><br>
+          — Seconde portate: uova, formaggi, legumi, tofu<br>
+          — Garantire apporto di Fe, Zn, B12 (monitorare)<br>
+          — Primo: pasta, riso, cereali (sempre presenti)<br><br>
+          <b>Dieta vegana:</b><br>
+          — No qualsiasi prodotto di origine animale<br>
+          — Secondi: legumi, tofu, tempeh, seitan<br>
+          — Attenzione: B12 (supplementazione), Fe, Ca, omega-3<br>
+          — Fornitore dedicato, preparazione separata<br><br>
+          <b>Dieta Halal (Islam):</b><br>
+          — Carne halal certificata (macellazione rituale)<br>
+          — No maiale e derivati (lardo, prosciutto, gelatina suina)<br>
+          — No alcol (anche in preparazioni culinarie)<br>
+          — Separazione utensili carne halal/non-halal<br><br>
+          <b>Dieta Kosher (Ebraismo):</b><br>
+          — No maiale, frutti di mare, molluschi<br>
+          — Separazione tra carne e latte (pasti separati)<br>
+          — Carne da macellazione rituale certificata<br>
+          — Certificazione rabbinica spesso necessaria<br><br>
+          <b>Dieta indù (vegetariana):</b><br>
+          — No carne bovina, spesso vegetariana completa<br>
+          — Attenzione a brodi e sughi di carne<br><br>
+          <b>Digiuno Ramadan:</b><br>
+          — Pasto anticipato (Suhur) e posticipato (Iftar)<br>
+          — Adattare orari di distribuzione
+        </div>
+      </div>
+      <div class="dieta-card">
+        <h3>👶 Diete per Fasce d'Età Specifiche</h3>
+        <div class="dieta-badge" style="background:#ECFDF5;color:#065F46">LARN 2023 età-specifici</div>
+        <div style="font-size:13px;line-height:1.8">
+          <b>Bambini 1-3 anni (asilo nido):</b><br>
+          — Porzioni ridotte, consistenze morbide<br>
+          — No sale aggiunto, zuccheri limitati<br>
+          — Allergie frequenti: monitorare attentamente<br><br>
+          <b>Bambini 3-10 anni (scuola primaria):</b><br>
+          — Pranzo = 35% del fabbisogno giornaliero<br>
+          — Energia 500-700 kcal, no fritti &gt;1×/sett<br><br>
+          <b>Adolescenti 11-18 anni:</b><br>
+          — Fabbisogni aumentati (Fe, Ca, vitamina D)<br>
+          — Attenzione a diete restrittive spontanee<br><br>
+          <b>Anziani ≥65 anni (RSA):</b><br>
+          — Proteine aumentate: 1.0-1.2g/kg/die<br>
+          — Texture modificata se disfagia (IDDSI)<br>
+          — Idratazione monitorata (senso della sete ridotto)<br>
+          — Vitamina D, Ca, B12 spesso carenti
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📋 Protocollo Operativo per Diete Speciali</h3>
+    <table class="menu-table">
+      <thead><tr><th>Fase</th><th>Azione</th><th>Responsabile</th><th>Documentazione</th></tr></thead>
+      <tbody>
+        <tr><td><b>1. Richiesta</b></td><td>Utente/famiglia presenta richiesta scritta + certificazione medica (se necessaria)</td><td>Coordinatore struttura</td><td>Modulo richiesta dieta speciale</td></tr>
+        <tr><td><b>2. Valutazione</b></td><td>Dietista valuta la richiesta, verifica documentazione, definisce protocollo</td><td>Dietista responsabile</td><td>Scheda dieta personalizzata</td></tr>
+        <tr><td><b>3. Preparazione</b></td><td>Cucina riceve scheda, prepara pasto separato con utensili dedicati</td><td>Capo cuoco</td><td>Registro preparazioni speciali</td></tr>
+        <tr><td><b>4. Identificazione</b></td><td>Vassoio/piatto con etichetta identificativa (nome, tipo dieta)</td><td>Addetto distribuzione</td><td>Etichetta vassoio</td></tr>
+        <tr><td><b>5. Distribuzione</b></td><td>Consegna diretta all'utente, verifica identità</td><td>Addetto distribuzione</td><td>Registro consegne</td></tr>
+        <tr><td><b>6. Monitoraggio</b></td><td>Controllo periodico dell'adeguatezza nutrizionale e della soddisfazione</td><td>Dietista</td><td>Report mensile qualità</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ALLERGENI -->
+<div class="rist-panel" id="tab-allergeni">
+  <div class="info-box ib-amber">
+    <b>⚠️ Regolamento (UE) 1169/2011 — Obbligo di Dichiarazione Allergeni</b> — Per la ristorazione collettiva è obbligatorio fornire informazioni sugli allergeni presenti nei piatti, in forma scritta o orale (con registrazione scritta disponibile su richiesta). Dal 2021 anche la ristorazione collettiva deve esporre informazioni sugli allergeni.
+  </div>
+  <div class="calc-box">
+    <h3>⚠️ I 14 Allergeni Principali — Reg. UE 1169/2011</h3>
+    <table class="menu-table">
+      <thead><tr><th>#</th><th>Allergene</th><th>Fonti principali</th><th>Attenzione in ristorazione</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><b>🌾 Cereali con glutine</b></td><td>Frumento, segale, orzo, avena, farro, kamut</td><td>Pasta, pane, panature, salse addensate, birra</td></tr>
+        <tr><td>2</td><td><b>🦐 Crostacei</b></td><td>Gamberetti, granchio, aragosta, scampi</td><td>Brodi, salse di pesce, piatti misti di mare</td></tr>
+        <tr><td>3</td><td><b>🥚 Uova</b></td><td>Uova di tutti i volatili</td><td>Maionese, pasta all'uovo, prodotti da forno, impanature</td></tr>
+        <tr><td>4</td><td><b>🐟 Pesce</b></td><td>Tutti i pesci</td><td>Worcester sauce, pasta d'acciughe, piatti di mare</td></tr>
+        <tr><td>5</td><td><b>🥜 Arachidi</b></td><td>Arachidi e prodotti derivati</td><td>Oli, burro di arachidi, prodotti da forno etnici</td></tr>
+        <tr><td>6</td><td><b>🥛 Latte</b></td><td>Latte e derivati (incluso lattosio)</td><td>Burro, formaggio, panna, besciamella, cioccolato al latte</td></tr>
+        <tr><td>7</td><td><b>🌰 Frutta a guscio</b></td><td>Mandorle, nocciole, noci, anacardi, pistacchi, pinoli</td><td>Pesto, dolci, muesli, cioccolato, salse orientali</td></tr>
+        <tr><td>8</td><td><b>🫘 Sedano</b></td><td>Sedano (gambo, foglie, semi)</td><td>Brodi, insalate, sughi, curry, spezie miste</td></tr>
+        <tr><td>9</td><td><b>🌼 Senape</b></td><td>Semi, foglie, fiori, olio</td><td>Salse, dressing, marinate, curry, hamburger</td></tr>
+        <tr><td>10</td><td><b>🫘 Semi di sesamo</b></td><td>Semi, olio, tahini</td><td>Pane, cracker, hamburger, cucina orientale, hummus</td></tr>
+        <tr><td>11</td><td><b>🍷 Anidride solforosa/solfiti</b></td><td>Concentrazioni &gt;10 mg/kg o 10 mg/L</td><td>Vino, birra, frutta secca, conserve, prodotti marinati</td></tr>
+        <tr><td>12</td><td><b>🐚 Molluschi</b></td><td>Cozze, vongole, seppie, polpo, calamari, lumache</td><td>Sughi di pesce, risotti di mare</td></tr>
+        <tr><td>13</td><td><b>🌿 Lupino</b></td><td>Farina e prodotti derivati</td><td>Prodotti da forno, pasta alternativa, burger vegetali</td></tr>
+        <tr><td>14</td><td><b>🫘 Soia</b></td><td>Fagioli di soia e derivati</td><td>Tofu, salsa di soia, prodotti vegani, lecitina di soia</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📋 Scheda Allergeni per Piatto</h3>
+      <div style="font-size:13px;line-height:1.8">
+        Ogni piatto servito deve avere una <b>scheda allergeni</b> aggiornata che riporti:<br><br>
+        ✅ Nome del piatto<br>
+        ✅ Lista degli allergeni presenti (simbolo grafico + testo)<br>
+        ✅ Presenza eventuale di tracce (contaminazione crociata)<br>
+        ✅ Data di aggiornamento<br>
+        ✅ Nome del responsabile<br><br>
+        Le schede devono essere:<br>
+        — Esposte in modo visibile (bacheca, cartellini)<br>
+        — Disponibili in formato digitale<br>
+        — Aggiornate ad ogni variazione di ricetta/fornitore
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🔄 Gestione Contaminazione Crociata</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div style="padding:8px;background:#FEE2E2;border-radius:8px;margin-bottom:8px">⚠️ <b>PERICOLO MASSIMO</b><br>Allergici a frutta secca, arachidi, crostacei, celiachia. Contaminazione crociata può causare anafilassi.</div>
+        <b>Procedure obbligatorie:</b><br>
+        — Superfici e utensili dedicati e lavati separatamente<br>
+        — Preparazione degli allergici PRIMA degli altri piatti<br>
+        — Friggitrice separata o pulita accuratamente<br>
+        — Fornitore che garantisce assenza di tracce<br>
+        — Formazione del personale (almeno 1× anno)<br>
+        — Piano di emergenza per reazioni allergiche gravi<br>
+        — Adrenalina auto-iniettabile disponibile in struttura
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HACCP -->
+<div class="rist-panel" id="tab-haccp">
+  <div class="info-box ib-red">
+    <b>🔒 HACCP e Normativa Igienico-Sanitaria</b> — Il sistema HACCP (Hazard Analysis and Critical Control Points) è obbligatorio per tutti gli operatori del settore alimentare (Reg. CE 852/2004). La ristorazione collettiva deve attuare procedure documentate per prevenire rischi biologici, chimici e fisici.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🌡️ Temperature di Sicurezza Alimentare</h3>
+      <table class="menu-table">
+        <thead><tr><th>Fase</th><th>Temperatura</th><th>Regola</th></tr></thead>
+        <tbody>
+          <tr><td><b>Cottura</b></td><td>&gt;75°C al cuore</td><td>Minimo 2 min a 75°C</td></tr>
+          <tr><td><b>Mantenimento caldo</b></td><td>&gt;65°C</td><td>Max 2 ore dalla cottura</td></tr>
+          <tr><td><b>Raffreddamento rapido</b></td><td>65°C→10°C in &lt;2h</td><td>Abbattitore obbligatorio</td></tr>
+          <tr><td><b>Conservazione freddo</b></td><td>0-4°C</td><td>Frigo dedicate per categorie</td></tr>
+          <tr><td><b>Surgelazione</b></td><td>-18°C o inferiore</td><td>Core product -18°C o meno</td></tr>
+          <tr><td><b>Scongelamento</b></td><td>4°C (frigo), mai a T ambiente</td><td>Programmare 24h prima</td></tr>
+          <tr><td><b>Distribuzione fredda</b></td><td>&lt;10°C</td><td>Banco refrigerato</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>📋 Punti Critici di Controllo (CCP)</h3>
+      <div style="font-size:13px;line-height:1.8">
+        <div style="padding:8px;background:#FEE2E2;border-radius:8px;margin-bottom:8px"><b>CCP1 — Ricevimento merci</b><br>Controllo temperatura, integrità imballaggi, date scadenza, documentazione fornitore (DDT)</div>
+        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px"><b>CCP2 — Conservazione</b><br>Monitoraggio continuo temperature frigo/freezer. Separazione categorie (carne cruda sempre in basso)</div>
+        <div style="padding:8px;background:#EFF6FF;border-radius:8px;margin-bottom:8px"><b>CCP3 — Preparazione</b><br>Igiene personale, separazione crudo/cotto, sanificazione superfici, lavaggio mani frequente</div>
+        <div style="padding:8px;background:#ECFDF5;border-radius:8px;margin-bottom:8px"><b>CCP4 — Cottura</b><br>Misurazione temperatura al cuore. Registrazione. Rigenerazione corretta dei pasti</div>
+        <div style="padding:8px;background:#EDE9FE;border-radius:8px"><b>CCP5 — Distribuzione</b><br>Mantenimento temperature, contenitori idonei, igiene del personale di servizio</div>
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>📜 Normativa di Riferimento</h3>
+    <table class="menu-table">
+      <thead><tr><th>Normativa</th><th>Contenuto</th><th>Applicazione</th></tr></thead>
+      <tbody>
+        <tr><td><b>Reg. CE 852/2004</b></td><td>Igiene dei prodotti alimentari — HACCP obbligatorio</td><td>Tutti gli operatori del settore</td></tr>
+        <tr><td><b>Reg. CE 853/2004</b></td><td>Igiene per alimenti di origine animale</td><td>Carne, pesce, latte, uova</td></tr>
+        <tr><td><b>Reg. UE 1169/2011</b></td><td>Informazioni sugli alimenti ai consumatori — allergeni</td><td>Ristorazione collettiva e commerciale</td></tr>
+        <tr><td><b>D.Lgs. 193/2007</b></td><td>Attuazione direttiva 2004/41/CE — revoca direttive igiene</td><td>Italia</td></tr>
+        <tr><td><b>Circolare MIUR 2017</b></td><td>Linee guida per le mense scolastiche</td><td>Mense scolastiche</td></tr>
+        <tr><td><b>D.Lgs. 231/2017</b></td><td>Disciplina degli illeciti penali e amministrativi sicurezza alimentare</td><td>Tutti i settori food</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FABBISOGNI PER UTENZA -->
+<div class="rist-panel" id="tab-fabbisogni">
+  <div class="info-box ib-blue">
+    <b>📊 Fabbisogni Nutrizionali per Utenza</b> — I fabbisogni sono calcolati in base ai LARN 2023 (Livelli di Assunzione di Riferimento di Nutrienti). In ristorazione collettiva, il pasto principale (pranzo) dovrebbe coprire il 35-40% del fabbisogno giornaliero.
+  </div>
+  <div class="calc-box">
+    <h3>📊 Fabbisogni per Fascia di Età — LARN 2023</h3>
+    <div style="overflow-x:auto">
+    <table class="menu-table" style="min-width:700px">
+      <thead><tr><th>Fascia età</th><th>Energia (kcal/die)</th><th>Proteine (g/die)</th><th>Calcio (mg/die)</th><th>Ferro (mg/die)</th><th>Vitamina D (µg)</th></tr></thead>
+      <tbody>
+        <tr><td><b>1-3 anni</b></td><td>1100-1300</td><td>14-19g</td><td>700 mg</td><td>7 mg</td><td>15 µg</td></tr>
+        <tr><td><b>4-6 anni</b></td><td>1400-1600</td><td>19-24g</td><td>900 mg</td><td>9 mg</td><td>15 µg</td></tr>
+        <tr><td><b>7-10 anni</b></td><td>1700-2000</td><td>27-34g</td><td>1000 mg</td><td>9-13 mg</td><td>15 µg</td></tr>
+        <tr><td><b>11-14 anni</b></td><td>2000-2500</td><td>42-55g</td><td>1200 mg</td><td>13-18 mg (F)</td><td>15 µg</td></tr>
+        <tr><td><b>15-17 anni</b></td><td>2200-2700</td><td>52-63g</td><td>1200 mg</td><td>13-18 mg (F)</td><td>15 µg</td></tr>
+        <tr><td><b>Adulti 18-59 M</b></td><td>2100-2500</td><td>0.9g/kg (min 54g)</td><td>1000 mg</td><td>10 mg</td><td>15 µg</td></tr>
+        <tr><td><b>Adulti 18-59 F</b></td><td>1700-2000</td><td>0.9g/kg (min 46g)</td><td>1000 mg</td><td>18 mg</td><td>15 µg</td></tr>
+        <tr><td><b>Adulti 60-74 anni</b></td><td>1800-2200</td><td>1.0-1.1g/kg</td><td>1200 mg</td><td>10 mg</td><td>20 µg</td></tr>
+        <tr><td><b>Anziani ≥75 anni</b></td><td>1600-2000</td><td>1.1-1.2g/kg</td><td>1200 mg</td><td>10 mg</td><td>20 µg</td></tr>
+        <tr><td><b>Gravidanza (III trim)</b></td><td>+460 kcal/die</td><td>+25g/die</td><td>1200 mg</td><td>27 mg</td><td>15 µg + integr.</td></tr>
+        <tr><td><b>Allattamento</b></td><td>+500 kcal/die</td><td>+28g/die</td><td>1200 mg</td><td>10 mg</td><td>15 µg + integr.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🔢 Calcolatore Fabbisogno Pasto (35% del Giornaliero)</h3>
+    <div class="grid-3" style="margin-bottom:14px">
+      <div class="nf"><label>Fascia d'utenza</label>
+        <select id="fb-utenza" onchange="calcFabbisogno()">
+          <option value="1300">Bambini 1-3 anni (1200 kcal/die)</option>
+          <option value="1500">Bambini 4-6 anni (1500 kcal/die)</option>
+          <option value="1850">Bambini 7-10 anni (1850 kcal/die)</option>
+          <option value="2250">Adolescenti 11-14 (2250 kcal/die)</option>
+          <option value="2450">Adolescenti 15-17 (2450 kcal/die)</option>
+          <option value="2200" selected>Adulti M (2200 kcal/die)</option>
+          <option value="1850">Adulti F (1850 kcal/die)</option>
+          <option value="2000">Anziani 60-74 (2000 kcal/die)</option>
+          <option value="1800">Anziani ≥75 (1800 kcal/die)</option>
+        </select>
+      </div>
+      <div class="nf"><label>% fabbisogno coperta dal pasto</label>
+        <select id="fb-perc" onchange="calcFabbisogno()">
+          <option value="0.35" selected>35% (pranzo standard)</option>
+          <option value="0.40">40% (pranzo principale)</option>
+          <option value="0.30">30% (pasto ridotto)</option>
+          <option value="0.20">20% (spuntino principale)</option>
+        </select>
+      </div>
+      <div class="nf"><label>N° coperti (per costi)</label>
+        <input type="number" id="fb-coperti" value="100" oninput="calcFabbisogno()">
+      </div>
+    </div>
+    <div id="fb-result" style="background:#F0F9FF;border-radius:10px;padding:14px;font-size:13px;line-height:1.9"></div>
+  </div>
+</div>
+
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+function showRist(id) {
+  document.querySelectorAll('.rist-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.rist-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function calcFabbisogno() {
+  const totalKcal = parseFloat(document.getElementById('fb-utenza').value) || 2200;
+  const perc = parseFloat(document.getElementById('fb-perc').value) || 0.35;
+  const coperti = parseInt(document.getElementById('fb-coperti').value) || 100;
+
+  const pKcal = Math.round(totalKcal * perc);
+  const pProt = Math.round(pKcal * 0.18 / 4);
+  const pCHO = Math.round(pKcal * 0.52 / 4);
+  const pGrassi = Math.round(pKcal * 0.30 / 9);
+  const pFibra = Math.round(25 * perc);
+
+  const el = document.getElementById('fb-result');
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
+      <div style="background:#EFF6FF;border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--slate-l)">Energia</div><div style="font-size:22px;font-weight:700;color:#1D4ED8">${pKcal}</div><div style="font-size:10px;color:var(--slate-l)">kcal</div></div>
+      <div style="background:#ECFDF5;border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--slate-l)">Proteine</div><div style="font-size:22px;font-weight:700;color:#10B981">${pProt}g</div><div style="font-size:10px;color:var(--slate-l)">${Math.round(pKcal*0.18)}kcal</div></div>
+      <div style="background:#FEF3C7;border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--slate-l)">CHO</div><div style="font-size:22px;font-weight:700;color:#D97706">${pCHO}g</div><div style="font-size:10px;color:var(--slate-l)">${Math.round(pKcal*0.52)}kcal</div></div>
+      <div style="background:#FFF7ED;border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--slate-l)">Grassi</div><div style="font-size:22px;font-weight:700;color:#F97316">${pGrassi}g</div><div style="font-size:10px;color:var(--slate-l)">${Math.round(pKcal*0.30)}kcal</div></div>
+      <div style="background:#FAF5FF;border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--slate-l)">Fibra</div><div style="font-size:22px;font-weight:700;color:#7C3AED">≥${pFibra}g</div><div style="font-size:10px;color:var(--slate-l)">obiettivo</div></div>
+    </div>
+    <b>Per ${coperti} coperti:</b> Tot. ${Math.round(pKcal * coperti / 1000)} Mcal · Proteine ${Math.round(pProt * coperti / 1000)}kg · CHO ${Math.round(pCHO * coperti / 1000)}kg · Grassi ${Math.round(pGrassi * coperti / 1000)}kg
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(false); } catch(e) {}
+  calcFabbisogno();
+});
+</script>
+</body>
+</html>

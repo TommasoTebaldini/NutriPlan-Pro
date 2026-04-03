@@ -23,6 +23,7 @@
 .src-bda{background:#D1FAE5;color:#065F46}
 .src-aprot{background:#EDE9FE;color:#5B21B6}
 .src-int{background:#FEF3C7;color:#B45309}
+.src-upf{background:#FEE2E2;color:#991B1B}
 .nd{color:#CBD5E1;font-style:italic;font-size:10px}
 </style>
 </head>
@@ -37,6 +38,8 @@
   <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
   <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
   <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🧬</span>Nutrizione e DNA</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
@@ -74,6 +77,7 @@
       <option value="BDA">BDA INRAN</option>
       <option value="APROT">🟣 Aproteici</option>
       <option value="INT">🟡 Integratori/ONS</option>
+      <option value="UPF">🔴 Ultra-processati (UPF)</option>
     </select>
     <span id="db-count" style="font-size:12px;color:var(--slate-l)"></span>
   </div>
@@ -114,7 +118,7 @@ function renderDB(list) {
   tbody.innerHTML = list.map(f => `<tr>
     <td>${esc(f.n)}</td>
     <td>${esc(f.c||'')}</td>
-    <td><span class="src-badge src-${f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':'int'}">${f.src}</span></td>
+    <td><span class="src-badge src-${f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':'int'}">${f.src}</span></td>
     <td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td>
     <td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td>
     <td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td>

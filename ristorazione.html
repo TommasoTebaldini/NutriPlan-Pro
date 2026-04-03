@@ -530,21 +530,6 @@
     <h3>🗓️ Struttura del Pasto — Menu Tipo</h3>
     <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Compilare un menu tipo rappresentativo. Per la rotazione ciclica, indicare le varianti settimanali nelle note di ogni portata.</p>
     <div id="rist-pasti-container">
-      ${[
-        {id:'1',icon:'🍝',nome:'Primo Piatto',porz:'Adulti: pasta/riso 80g crudo',note:'Ruotare: pasta, riso, legumi, zuppa — max 2×/sett legumi come unico secondo'},
-        {id:'2',icon:'🥩',nome:'Secondo Piatto',porz:'Carne 130g / Pesce 150g / Uova 2 / Legumi 50g secchi',note:'Carne 2-3×/sett, pesce 2-3×/sett, legumi 1-2×/sett come secondo'},
-        {id:'3',icon:'🥦',nome:'Contorno',porz:'Verdura 200g cotta / 150g cruda',note:'Almeno 5 verdure diverse a settimana, alternare crude e cotte'},
-        {id:'4',icon:'🍞',nome:'Pane e Cereali',porz:'Pane 50g',note:'Preferire pane integrale o ai cereali'},
-        {id:'5',icon:'🍎',nome:'Frutta / Dessert',porz:'Frutta 150g fresca',note:'Frutta fresca come dessert 4/5 giorni. Dolce max 1-2×/sett'},
-      ].map(m => `<div style="background:#F0F9FF;border-radius:10px;border:1.5px solid #BAE6FD;padding:12px;margin-bottom:10px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size:20px">${m.icon}</span>
-          <input type="text" id="rist-m${m.id}-nome" value="${m.nome}" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">
-          <input type="text" id="rist-m${m.id}-porzione" value="${m.porz}" placeholder="Porzione tipo" style="flex:2;min-width:150px;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:#1E3A5F">
-        </div>
-        <textarea id="rist-m${m.id}-menu" rows="2" placeholder="Menu specifico: es. Pasta al pomodoro fresco, Risotto alle verdure, Pasta e fagioli..." style="width:100%;padding:8px 10px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>
-        <input type="text" id="rist-m${m.id}-note" placeholder="Note rotazione/varianti: ${m.note}" style="width:100%;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">
-      </div>`).join('')}
     </div>
   </div>
   <div class="calc-box">
@@ -558,6 +543,32 @@
 </div>
 
 </div></main>
+<script>
+(function() {
+  var RIST_PORTATE = [
+    {id:1,icon:'🍝',nome:'Primo Piatto',porz:'Adulti: pasta/riso 80g crudo',note:'Ruotare: pasta, riso, legumi, zuppa — max 2/sett legumi come unico secondo'},
+    {id:2,icon:'🥩',nome:'Secondo Piatto',porz:'Carne 130g / Pesce 150g / Uova 2 / Legumi 50g secchi',note:'Carne 2-3/sett, pesce 2-3/sett, legumi 1-2/sett come secondo'},
+    {id:3,icon:'🥦',nome:'Contorno',porz:'Verdura 200g cotta / 150g cruda',note:'Almeno 5 verdure diverse a settimana, alternare crude e cotte'},
+    {id:4,icon:'🍞',nome:'Pane e Cereali',porz:'Pane 50g',note:'Preferire pane integrale o ai cereali'},
+    {id:5,icon:'🍎',nome:'Frutta / Dessert',porz:'Frutta 150g fresca',note:'Frutta fresca come dessert 4/5 giorni. Dolce max 1-2/sett'}
+  ];
+  document.addEventListener('DOMContentLoaded', function() {
+    var c = document.getElementById('rist-pasti-container');
+    if (!c) return;
+    c.innerHTML = RIST_PORTATE.map(function(m) {
+      return '<div style="background:#F0F9FF;border-radius:10px;border:1.5px solid #BAE6FD;padding:12px;margin-bottom:10px">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">'
+        + '<span style="font-size:20px">' + m.icon + '</span>'
+        + '<input type="text" id="rist-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">'
+        + '<input type="text" id="rist-m' + m.id + '-porzione" value="' + m.porz + '" placeholder="Porzione tipo" style="flex:2;min-width:150px;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:#1E3A5F">'
+        + '</div>'
+        + '<textarea id="rist-m' + m.id + '-menu" rows="2" placeholder="Menu specifico: es. Pasta al pomodoro fresco, Risotto alle verdure, Pasta e fagioli..." style="width:100%;padding:8px 10px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<input type="text" id="rist-m' + m.id + '-note" placeholder="Note rotazione/varianti: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
+        + '</div>';
+    }).join('');
+  });
+})();
+</script>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>
@@ -566,7 +577,8 @@
 function showRist(id) {
   document.querySelectorAll('.rist-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.rist-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
   event.target.classList.add('active');
 }
 

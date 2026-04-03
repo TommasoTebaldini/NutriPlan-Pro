@@ -633,115 +633,68 @@
 
 </div></main>
 
-<!-- PIANO ALIMENTARE DCA TAB (fuori dalla struttura dei tab per semplicità) -->
-<script>document.addEventListener('DOMContentLoaded',()=>{
-  const pianoPanel = document.createElement('div');
-  pianoPanel.className = 'dna-panel';
-  pianoPanel.id = 'tab-piano_dca';
-  pianoPanel.innerHTML = `
-  <div class="info-box ib-red" style="background:#FEF2F2;border-color:#EF4444">
-    <b>🍽️ Piano Alimentare DCA</b> — Il piano alimentare nel trattamento dei DCA deve essere costruito in accordo con il team multidisciplinare. L'obiettivo primario non è la gestione del peso ma la normalizzazione del comportamento alimentare e del rapporto con il cibo.
-  </div>
-  <div class="grid-2">
-    <div class="calc-box">
-      <h3>⚙️ Configurazione Piano</h3>
-      <div class="nf" style="margin-bottom:10px"><label>Tipo DCA</label>
-        <select id="dca-piano-tipo">
-          <option value="AN">Anoressia Nervosa (AN)</option>
-          <option value="BN">Bulimia Nervosa (BN)</option>
-          <option value="BED">Binge Eating Disorder (BED)</option>
-          <option value="ARFID">ARFID</option>
-          <option value="altro">Altro / NAS</option>
-        </select>
-      </div>
-      <div class="nf" style="margin-bottom:10px"><label>Fase trattamento</label>
-        <select id="dca-piano-fase">
-          <option value="acuta">Acuta / Refeeding</option>
-          <option value="stabilizzazione">Stabilizzazione</option>
-          <option value="mantenimento">Mantenimento</option>
-          <option value="prevenzione_ricadute">Prevenzione ricadute</option>
-        </select>
-      </div>
-      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label>
-        <input type="number" id="dca-piano-kcal" placeholder="es. 1800" oninput="calcolaDcaMacro()">
-      </div>
-      <div class="nf" style="margin-bottom:10px"><label>Approccio alimentare</label>
-        <select id="dca-piano-approccio">
-          <option value="meccanico">Pasto meccanico (orari fissi, grammi stabiliti)</option>
-          <option value="strutturato">Strutturato con flessibilità guidata</option>
-          <option value="mindful">Mindful eating (fase avanzata)</option>
-        </select>
-      </div>
-      <div class="nf" style="margin-bottom:10px"><label>Note cliniche sul paziente</label>
-        <textarea id="dca-piano-note-cliniche" rows="3" placeholder="Diagnosi specifica, comorbilità, farmaci, storia DCA, obiettivi concordati col team..."></textarea>
-      </div>
-    </div>
-    <div class="calc-box">
-      <h3>📊 Obiettivi Nutrizionali</h3>
-      <div id="dca-macro-result" style="margin-bottom:12px;padding:12px;background:#FEF9F9;border-radius:8px;font-size:13px;line-height:1.9">
-        <i>Inserisci le kcal target per calcolare la distribuzione dei macronutrienti.</i>
-      </div>
-      <div class="nf" style="margin-bottom:10px"><label>% Proteine</label>
-        <input type="number" id="dca-prot-perc" value="20" min="15" max="30" oninput="calcolaDcaMacro()">
-      </div>
-      <div class="nf" style="margin-bottom:10px"><label>% Carboidrati</label>
-        <input type="number" id="dca-cho-perc" value="55" min="45" max="65" oninput="calcolaDcaMacro()">
-      </div>
-      <div class="nf" style="margin-bottom:10px"><label>% Grassi</label>
-        <input type="number" id="dca-fat-perc" value="25" min="20" max="35" oninput="calcolaDcaMacro()">
-      </div>
-      <div class="info-box ib-amber" style="margin-top:10px;font-size:12px">
-        <b>⚠️ Linee guida DCA:</b> Nell'AN refeeding: partire da 30–40 kcal/kg/die, aumentare di 200–300 kcal ogni 3–5 giorni. Nella BN: garantire adeguatezza calorica per ridurre la restrizione-abbuffata. Nel BED: approccio non restrittivo, struttura regolare dei pasti.
-      </div>
-    </div>
-  </div>
-
-  <!-- SCHEMA PASTI -->
-  <div class="calc-box">
-    <h3>🗓️ Schema Pasti DCA</h3>
-    <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Compilare ogni pasto con gli alimenti e le grammature. Nel pasto meccanico indicare le quantità precise; in fase avanzata si può usare il sistema degli equivalenti.</p>
-    <div id="dca-pasti-container">
-      ${[
-        {id:'1',icon:'☀️',nome:'Colazione',ora:'07:30',note_default:'Mangiare seduto, tempo minimo 20 min'},
-        {id:'2',icon:'🍎',nome:'Spuntino mattina',ora:'10:30',note_default:'Spuntino strutturato, evitare di saltarlo'},
-        {id:'3',icon:'🍽️',nome:'Pranzo',ora:'12:30',note_default:'Pasto completo: primo + secondo + contorno'},
-        {id:'4',icon:'🥜',nome:'Spuntino pomeriggio',ora:'16:00',note_default:'Importante per la BN per evitare abbuffate serali'},
-        {id:'5',icon:'🌙',nome:'Cena',ora:'19:30',note_default:'Pasto completo: secondo + contorno + pane/cereali'},
-        {id:'6',icon:'🥛',nome:'Spuntino serale',ora:'21:30',note_default:'Indicato nell\'AN per incremento calorico graduale'}
-      ].map(m => `
-      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:10px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-          <span style="font-size:20px">${m.icon}</span>
-          <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap">
-            <input type="text" id="dca-m${m.id}-nome" value="${m.nome}" style="flex:1;min-width:120px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">
-            <input type="text" id="dca-m${m.id}-ora" value="${m.ora}" placeholder="Orario" style="width:70px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">
-            <input type="number" id="dca-m${m.id}-kcal" placeholder="kcal pasto" style="width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">
-          </div>
-        </div>
-        <textarea id="dca-m${m.id}-alimenti" rows="2" placeholder="Alimenti e grammature (es. Latte parz. scremato 200mL, Pane integrale 60g, Marmellata 20g, Frutta 150g)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>
-        <input type="text" id="dca-m${m.id}-note" placeholder="Note specifiche pasto: ${m.note_default}" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">
-      </div>`).join('')}
-    </div>
-  </div>
-
-  <!-- NOTE STRATEGICHE -->
-  <div class="calc-box">
-    <h3>📝 Strategie e Note Cliniche per il Piano</h3>
-    <div class="grid-2" style="margin-bottom:12px">
-      <div class="nf"><label>Alimenti da introdurre gradualmente</label>
-        <textarea id="dca-piano-intro-foods" rows="3" placeholder="Alimenti evitati o temuti da reintrodurre progressivamente nel piano..."></textarea>
-      </div>
-      <div class="nf"><label>Indicazioni comportamentali</label>
-        <textarea id="dca-piano-comportamento" rows="3" placeholder="Mangiare in compagnia, orari fissi, evitare distrazione con schermi, nessuna pesatura degli alimenti dopo il pasto..."></textarea>
-      </div>
-    </div>
-    <div class="nf"><label>Note generali e piano di rivalutazione</label>
-      <textarea id="dca-piano-note-generali" rows="3" placeholder="Prossima rivalutazione tra: ... Indicatori di progresso: ..."></textarea>
-    </div>
-  </div>`;
-  // Append before </div></main>
-  document.querySelector('.page-content').appendChild(pianoPanel);
-});</script>
+<!-- PIANO ALIMENTARE DCA TAB -->
+<script>
+// Inject DCA piano panel into .page-content at load time
+(function() {
+  function buildDcaPianoPanel() {
+    const d = document.createElement('div');
+    d.className = 'dna-panel';
+    d.id = 'tab-piano_dca';
+    const meals = [
+      {id:'1',icon:'☀️',nome:'Colazione',ora:'07:30',noteP:'Mangiare seduto, tempo minimo 20 min'},
+      {id:'2',icon:'🍎',nome:'Spuntino mattina',ora:'10:30',noteP:'Spuntino strutturato, evitare di saltarlo'},
+      {id:'3',icon:'🍽️',nome:'Pranzo',ora:'12:30',noteP:'Pasto completo: primo + secondo + contorno'},
+      {id:'4',icon:'🥜',nome:'Spuntino pomeriggio',ora:'16:00',noteP:'Importante per la BN per evitare abbuffate serali'},
+      {id:'5',icon:'🌙',nome:'Cena',ora:'19:30',noteP:'Pasto completo: secondo + contorno + pane/cereali'},
+      {id:'6',icon:'🥛',nome:'Spuntino serale',ora:'21:30',noteP:'Indicato nell\'AN per incremento calorico graduale'}
+    ];
+    const pastiHtml = meals.map(function(m) {
+      return '<div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:10px">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">'
+        + '<span style="font-size:20px">' + m.icon + '</span>'
+        + '<div style="flex:1;display:flex;gap:8px;flex-wrap:wrap">'
+        + '<input type="text" id="dca-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:120px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">'
+        + '<input type="text" id="dca-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Orario" style="width:70px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
+        + '<input type="number" id="dca-m' + m.id + '-kcal" placeholder="kcal pasto" style="width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">'
+        + '</div></div>'
+        + '<textarea id="dca-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti e grammature (es. Latte parz. scremato 200mL, Pane integrale 60g, Marmellata 20g, Frutta 150g)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<input type="text" id="dca-m' + m.id + '-note" placeholder="Note specifiche pasto: ' + m.noteP + '" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
+        + '</div>';
+    }).join('');
+    d.innerHTML = '<div class="info-box ib-red" style="background:#FEF2F2;border-color:#EF4444"><b>🍽️ Piano Alimentare DCA</b> — Il piano alimentare nel trattamento dei DCA deve essere costruito in accordo con il team multidisciplinare. L\'obiettivo primario non è la gestione del peso ma la normalizzazione del comportamento alimentare e del rapporto con il cibo.</div>'
+      + '<div class="grid-2">'
+      + '<div class="calc-box"><h3>⚙️ Configurazione Piano</h3>'
+      + '<div class="nf" style="margin-bottom:10px"><label>Tipo DCA</label><select id="dca-piano-tipo"><option value="AN">Anoressia Nervosa (AN)</option><option value="BN">Bulimia Nervosa (BN)</option><option value="BED">Binge Eating Disorder (BED)</option><option value="ARFID">ARFID</option><option value="altro">Altro / NAS</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>Fase trattamento</label><select id="dca-piano-fase"><option value="acuta">Acuta / Refeeding</option><option value="stabilizzazione">Stabilizzazione</option><option value="mantenimento">Mantenimento</option><option value="prevenzione_ricadute">Prevenzione ricadute</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="dca-piano-kcal" placeholder="es. 1800" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>Approccio alimentare</label><select id="dca-piano-approccio"><option value="meccanico">Pasto meccanico (orari fissi, grammi stabiliti)</option><option value="strutturato">Strutturato con flessibilità guidata</option><option value="mindful">Mindful eating (fase avanzata)</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>Note cliniche sul paziente</label><textarea id="dca-piano-note-cliniche" rows="3" placeholder="Diagnosi specifica, comorbilità, farmaci, storia DCA, obiettivi concordati col team..."></textarea></div>'
+      + '</div>'
+      + '<div class="calc-box"><h3>📊 Obiettivi Nutrizionali</h3>'
+      + '<div id="dca-macro-result" style="margin-bottom:12px;padding:12px;background:#FEF9F9;border-radius:8px;font-size:13px;line-height:1.9"><i>Inserisci le kcal target per calcolare la distribuzione dei macronutrienti.</i></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>% Proteine</label><input type="number" id="dca-prot-perc" value="20" min="15" max="30" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>% Carboidrati</label><input type="number" id="dca-cho-perc" value="55" min="45" max="65" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>% Grassi</label><input type="number" id="dca-fat-perc" value="25" min="20" max="35" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="info-box ib-amber" style="margin-top:10px;font-size:12px"><b>⚠️ Linee guida DCA:</b> Nell\'AN refeeding: partire da 30–40 kcal/kg/die, aumentare di 200–300 kcal ogni 3–5 giorni. Nella BN: garantire adeguatezza calorica per ridurre la restrizione-abbuffata. Nel BED: approccio non restrittivo, struttura regolare dei pasti.</div>'
+      + '</div>'
+      + '</div>'
+      + '<div class="calc-box"><h3>🗓️ Schema Pasti DCA</h3><p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Compilare ogni pasto con gli alimenti e le grammature. Nel pasto meccanico indicare le quantità precise; in fase avanzata si può usare il sistema degli equivalenti.</p><div id="dca-pasti-container">' + pastiHtml + '</div></div>'
+      + '<div class="calc-box"><h3>📝 Strategie e Note Cliniche per il Piano</h3>'
+      + '<div class="grid-2" style="margin-bottom:12px">'
+      + '<div class="nf"><label>Alimenti da introdurre gradualmente</label><textarea id="dca-piano-intro-foods" rows="3" placeholder="Alimenti evitati o temuti da reintrodurre progressivamente nel piano..."></textarea></div>'
+      + '<div class="nf"><label>Indicazioni comportamentali</label><textarea id="dca-piano-comportamento" rows="3" placeholder="Mangiare in compagnia, orari fissi, evitare distrazione con schermi, nessuna pesatura degli alimenti dopo il pasto..."></textarea></div>'
+      + '</div>'
+      + '<div class="nf"><label>Note generali e piano di rivalutazione</label><textarea id="dca-piano-note-generali" rows="3" placeholder="Prossima rivalutazione tra: ... Indicatori di progresso: ..."></textarea></div>'
+      + '</div>';
+    return d;
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var pc = document.querySelector('.page-content');
+    if (pc) pc.appendChild(buildDcaPianoPanel());
+  });
+})();
+</script>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>
@@ -867,11 +820,14 @@ async function caricaDcaDaNote(noteId) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); if (currentUser) { loadDcaCartelle(); } } catch(e) {}
-  // Check URL for noteId to load
-  const noteId = new URLSearchParams(window.location.search).get('noteId');
-  if (noteId && currentUser) await caricaDcaDaNote(noteId);
-  else if (noteId) { await checkAuth(false); if (currentUser) await caricaDcaDaNote(noteId); }
+  try {
+    await checkAuth(false);
+    if (currentUser) {
+      loadDcaCartelle();
+      const noteId = new URLSearchParams(window.location.search).get('noteId');
+      if (noteId) await caricaDcaDaNote(noteId);
+    }
+  } catch(e) {}
 });
 </script>
 </body>

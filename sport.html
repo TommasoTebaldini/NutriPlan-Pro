@@ -453,24 +453,6 @@
   <div class="calc-box">
     <h3>🗓️ Schema Pasti Training Day</h3>
     <div id="sp-pasti-container">
-      ${[
-        {id:'1',icon:'☀️',nome:'Colazione',ora:'07:00',cho_perc:'20',note:'CHO + proteine, 2-3h prima dell\'allenamento mattutino'},
-        {id:'2',icon:'⚡',nome:'Pre-Allenamento',ora:'07:30',cho_perc:'10',note:'Snack leggero solo se allenamento entro 1-2h'},
-        {id:'3',icon:'🏃',nome:'Intra-Allenamento',ora:'Durata',cho_perc:'',note:'Gel / banana / mela (solo se >60min)'},
-        {id:'4',icon:'💪',nome:'Post-Allenamento',ora:'10:30',cho_perc:'15',note:'Finestra anabolica: proteine + CHO veloci entro 30min'},
-        {id:'5',icon:'🍽️',nome:'Pranzo',ora:'13:00',cho_perc:'25',note:'Pasto principale — riso/pasta + proteina + verdura'},
-        {id:'6',icon:'🥜',nome:'Spuntino',ora:'16:30',cho_perc:'10',note:'Spuntino pre-serale'},
-        {id:'7',icon:'🌙',nome:'Cena',ora:'20:00',cho_perc:'20',note:'Proteina + verdura, CHO in base al ciclo di allenamento'},
-      ].map(m => `<div style="background:#F0FDF4;border-radius:10px;border:1.5px solid #A7F3D0;padding:12px;margin-bottom:10px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size:20px">${m.icon}</span>
-          <input type="text" id="sp-m${m.id}-nome" value="${m.nome}" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">
-          <input type="text" id="sp-m${m.id}-ora" value="${m.ora}" placeholder="Ora" style="width:80px;padding:5px 8px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:13px;font-family:inherit;outline:none">
-          <input type="number" id="sp-m${m.id}-kcal" placeholder="kcal" style="width:80px;padding:5px 8px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">
-        </div>
-        <textarea id="sp-m${m.id}-alimenti" rows="2" placeholder="Alimenti e dosi..." style="width:100%;padding:8px 10px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>
-        <input type="text" id="sp-m${m.id}-note" placeholder="Note: ${m.note}" style="width:100%;padding:5px 8px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">
-      </div>`).join('')}
     </div>
   </div>
   <div class="calc-box">
@@ -484,6 +466,37 @@
 </div>
 
 </div></main>
+<script>
+(function() {
+  var SP_MEALS = [
+    {id:1,icon:'☀️',nome:'Colazione',ora:'07:00',note:'CHO + proteine, 2-3h prima dell\'allenamento mattutino'},
+    {id:2,icon:'⚡',nome:'Pre-Allenamento',ora:'07:30',note:'Snack leggero solo se allenamento entro 1-2h'},
+    {id:3,icon:'🏃',nome:'Intra-Allenamento',ora:'Durata',note:'Gel / banana / mela (solo se >60min)'},
+    {id:4,icon:'💪',nome:'Post-Allenamento',ora:'10:30',note:'Finestra anabolica: proteine + CHO veloci entro 30min'},
+    {id:5,icon:'🍽️',nome:'Pranzo',ora:'13:00',note:'Pasto principale — riso/pasta + proteina + verdura'},
+    {id:6,icon:'🥜',nome:'Spuntino',ora:'16:30',note:'Spuntino pre-serale'},
+    {id:7,icon:'🌙',nome:'Cena',ora:'20:00',note:'Proteina + verdura, CHO in base al ciclo di allenamento'}
+  ];
+  var stl = 'background:#F0FDF4;border-radius:10px;border:1.5px solid #A7F3D0;padding:12px;margin-bottom:10px';
+  var inp = 'padding:5px 8px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:13px;font-family:inherit;outline:none';
+  document.addEventListener('DOMContentLoaded', function() {
+    var c = document.getElementById('sp-pasti-container');
+    if (!c) return;
+    c.innerHTML = SP_MEALS.map(function(m) {
+      return '<div style="' + stl + '">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">'
+        + '<span style="font-size:20px">' + m.icon + '</span>'
+        + '<input type="text" id="sp-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:100px;' + inp + ';font-weight:700">'
+        + '<input type="text" id="sp-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Ora" style="width:80px;' + inp + '">'
+        + '<input type="number" id="sp-m' + m.id + '-kcal" placeholder="kcal" style="width:80px;' + inp + ';text-align:right">'
+        + '</div>'
+        + '<textarea id="sp-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti e dosi..." style="width:100%;padding:8px 10px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<input type="text" id="sp-m' + m.id + '-note" placeholder="Note: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid #A7F3D0;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
+        + '</div>';
+    }).join('');
+  });
+})();
+</script>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>

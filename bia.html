@@ -118,9 +118,7 @@
     <div class="grid-2">
       <div class="nf">
         <label>Paziente (cartella)</label>
-        <select id="bia-cartella" onchange="onCartellaChange()" onfocus="loadCartellePaz()">
-          <option value="">-- Nessuna cartella selezionata --</option>
-        </select>
+        <div id="bia-cartella-cw"></div>
       </div>
       <div class="nf">
         <label>Data misurazione</label>
@@ -219,9 +217,7 @@
     <h3>📈 Storico Misurazioni BIA</h3>
     <div class="nf" style="max-width:300px;margin-bottom:14px">
       <label>Filtra per paziente</label>
-      <select id="storico-cartella" onchange="loadStorico()">
-        <option value="">Tutti i pazienti</option>
-      </select>
+      <div id="storico-cartella-cw"></div>
     </div>
     <div id="storico-table-wrap">
       <div class="alert-info">Seleziona un paziente per vedere lo storico.</div>
@@ -991,7 +987,11 @@ function resetBIA() {
 
 function onCartellaChange() {
   const id = document.getElementById('bia-cartella').value;
-  document.getElementById('storico-cartella').value = id;
+  if (!id) { _cwClear('storico-cartella-cw'); return; }
+  _cwLoadCache().then(function(cartelle) {
+    const cart = cartelle.find(function(c){ return c.id === id; });
+    if (cart) _cwSelect('storico-cartella-cw', cart.id, cart.nome);
+  });
 }
 
 async function loadCartellePaz() {
@@ -1016,14 +1016,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('bia-data').value = new Date().toISOString().split('T')[0];
   try {
     await checkAuth(false);
-    await loadCartellePaz();
+    initCartellaWidget('bia-cartella-cw', { hiddenInputId:'bia-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF', onSelect:(id,nome)=>{ _cwSelect('storico-cartella-cw',id,nome); loadStorico(); } });
+    initCartellaWidget('storico-cartella-cw', { hiddenInputId:'storico-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF', onSelect:()=>loadStorico() });
     // Pre-select cartella from URL parameter
     const params = new URLSearchParams(window.location.search);
     const cartellaParam = params.get('cartella');
     const biaIdParam = params.get('biaId');
     if (cartellaParam) {
-      const sel = document.getElementById('bia-cartella');
-      if (sel) { sel.value = cartellaParam; onCartellaChange(); }
+      await _cwSetById('bia-cartella-cw', cartellaParam);
+      onCartellaChange();
     }
     if (biaIdParam) {
       showLoading(true);
@@ -1032,8 +1033,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (data) {
         currentBiaId = data.id;
         // Populate cartella
-        const sel = document.getElementById('bia-cartella');
-        if (sel && data.cartella_id) { sel.value = data.cartella_id; onCartellaChange(); }
+        if (data.cartella_id) { await _cwSetById('bia-cartella-cw', data.cartella_id); onCartellaChange(); }
         // Populate date and note
         if (data.data_misura) document.getElementById('bia-data').value = data.data_misura;
         if (data.note) document.getElementById('bia-note').value = data.note;

@@ -225,3 +225,203 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.innerHTML = '✕';
   }
 });
+
+// ═══════════════════════════════════════════════════
+// CARTELLA SEARCH WIDGET (shared across all pages)
+// ═══════════════════════════════════════════════════
+// Usage:
+//   HTML: <div id="mypref-cartella-cw"></div>
+//   JS:   initCartellaWidget('mypref-cartella-cw', { hiddenInputId:'mypref-cartella', accentColor:'#14B8A6', labelColor:'#0F766E' });
+//   Read: document.getElementById('mypref-cartella').value  (same as before)
+//   Set:  _cwSetById('mypref-cartella-cw', cartella_id)
+
+window._cartelleCache = null;
+
+async function _cwLoadCache() {
+  if (window._cartelleCache) return window._cartelleCache;
+  if (!currentUser) return [];
+  try {
+    const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+    window._cartelleCache = data || [];
+  } catch(e) { window._cartelleCache = []; }
+  return window._cartelleCache;
+}
+
+function initCartellaWidget(cid, opts) {
+  const container = document.getElementById(cid);
+  if (!container) return;
+  opts = opts || {};
+  container._cwOpts = opts;
+  const border = opts.accentColor || '#6EE7B7';
+  const labelColor = opts.labelColor || '#0F766E';
+  const hiddenId = opts.hiddenInputId || (cid + '-val');
+  const placeholder = opts.placeholder || '🔍 Cerca paziente...';
+  container.style.position = 'relative';
+  container.innerHTML =
+    '<input type="text" id="' + cid + '-srch" placeholder="' + placeholder + '" autocomplete="off"' +
+    ' style="width:100%;padding:6px 10px;border:1.5px solid ' + border + ';border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none;background:white;box-sizing:border-box"' +
+    ' oninput="_cwFilter(\'' + cid + '\')"' +
+    ' onfocus="_cwShow(\'' + cid + '\')"' +
+    ' onblur="setTimeout(()=>_cwHide(\'' + cid + '\'),200)">' +
+    '<div id="' + cid + '-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15)"></div>' +
+    '<input type="hidden" id="' + hiddenId + '" value="">' +
+    '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:block;min-height:15px"></span>';
+}
+
+function _cwFilter(cid) {
+  const q = (document.getElementById(cid + '-srch') || {}).value || '';
+  _cwShow(cid, q.toLowerCase());
+}
+
+async function _cwShow(cid, q) {
+  if (q === undefined) q = ((document.getElementById(cid + '-srch') || {}).value || '').toLowerCase();
+  const dd = document.getElementById(cid + '-dd');
+  if (!dd) return;
+  const container = document.getElementById(cid);
+  const opts = (container || {})._cwOpts || {};
+  const border = opts.accentColor || '#6EE7B7';
+  const hoverBg = opts.hoverBg || '#F0FDF4';
+  const nuovaBg = opts.nuovaBg || '#F0FDF4';
+  const cartelle = await _cwLoadCache();
+  const filtered = q ? cartelle.filter(function(c){ return c.nome.toLowerCase().indexOf(q) !== -1; }) : cartelle;
+  var html = '<div style="padding:5px 10px;font-size:10.5px;color:var(--slate-l);border-bottom:1px solid var(--border)">Seleziona cartella</div>';
+  if (!filtered.length) {
+    html += '<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella trovata</div>';
+  } else {
+    html += filtered.map(function(c){
+      return '<div onclick="_cwSelect(\'' + cid + '\',\'' + escJS(c.id) + '\',\'' + escJS(c.nome) + '\')"' +
+        ' style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)"' +
+        ' onmouseover="this.style.background=\'' + hoverBg + '\'" onmouseout="this.style.background=\'\'">📁 ' + esc(c.nome) + '</div>';
+    }).join('');
+  }
+  html += '<div onclick="_cwNuovaCartella(\'' + cid + '\')"' +
+    ' style="padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:' + border + ';background:' + nuovaBg + ';border-top:2px solid var(--border)"' +
+    ' onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">➕ Crea nuova cartella</div>';
+  dd.innerHTML = html;
+  dd.style.display = 'block';
+}
+
+function _cwHide(cid) {
+  const dd = document.getElementById(cid + '-dd');
+  if (dd) dd.style.display = 'none';
+}
+
+function _cwUpdateDisplay(cid, id, nome) {
+  const container = document.getElementById(cid);
+  const opts = (container || {})._cwOpts || {};
+  const hiddenId = opts.hiddenInputId || (cid + '-val');
+  const hidden = document.getElementById(hiddenId);
+  if (hidden) hidden.value = id;
+  const srch = document.getElementById(cid + '-srch');
+  if (srch) srch.value = nome;
+  const lbl = document.getElementById(cid + '-lbl');
+  if (lbl) lbl.textContent = nome ? '✅ ' + nome : '';
+  _cwHide(cid);
+}
+
+function _cwSelect(cid, id, nome) {
+  _cwUpdateDisplay(cid, id, nome);
+  const container = document.getElementById(cid);
+  const opts = (container || {})._cwOpts || {};
+  if (opts.onSelect) opts.onSelect(id, nome);
+}
+
+async function _cwSetById(cid, cartellaId) {
+  if (!cartellaId) return;
+  const cartelle = await _cwLoadCache();
+  const cart = cartelle.find(function(c){ return c.id === cartellaId; });
+  if (cart) {
+    _cwUpdateDisplay(cid, cart.id, cart.nome);
+  } else {
+    // Fallback: just set hidden value
+    const container = document.getElementById(cid);
+    const opts = (container || {})._cwOpts || {};
+    const hiddenId = opts.hiddenInputId || (cid + '-val');
+    const hidden = document.getElementById(hiddenId);
+    if (hidden) hidden.value = cartellaId;
+  }
+}
+
+function _cwClear(cid) {
+  const container = document.getElementById(cid);
+  const opts = (container || {})._cwOpts || {};
+  const hiddenId = opts.hiddenInputId || (cid + '-val');
+  const hidden = document.getElementById(hiddenId);
+  if (hidden) hidden.value = '';
+  const srch = document.getElementById(cid + '-srch');
+  if (srch) srch.value = '';
+  const lbl = document.getElementById(cid + '-lbl');
+  if (lbl) lbl.textContent = '';
+}
+
+function _cwNuovaCartella(cid) {
+  _cwHide(cid);
+  openNuovaCartellaModal(async function(id, nome) {
+    window._cartelleCache = null;
+    if (typeof allCartelle !== 'undefined') allCartelle = await _cwLoadCache();
+    _cwSelect(cid, id, nome);
+  });
+}
+
+// ── Global "Nuova Cartella" modal (injected once on demand) ──
+var _gncCallback = null;
+
+function openNuovaCartellaModal(callback) {
+  _injectNuovaCartellaModal();
+  _gncCallback = callback;
+  var inp = document.getElementById('gnc-nome');
+  if (inp) inp.value = '';
+  openM('modal-nuova-cart-global');
+  setTimeout(function(){ var i = document.getElementById('gnc-nome'); if(i) i.focus(); }, 100);
+}
+
+function _injectNuovaCartellaModal() {
+  if (document.getElementById('modal-nuova-cart-global')) return;
+  var el = document.createElement('div');
+  el.id = 'modal-nuova-cart-global';
+  el.className = 'modal-bg';
+  el.innerHTML =
+    '<div class="modal" style="max-width:380px">' +
+      '<div class="mhdr"><h2>📁 Nuova Cartella Paziente</h2><button class="mclose" onclick="closeM(\'modal-nuova-cart-global\')">✕</button></div>' +
+      '<div class="mbody">' +
+        '<p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px">Inserisci il nome per la nuova cartella paziente.</p>' +
+        '<div class="fg">' +
+          '<label>Nome cartella *</label>' +
+          '<input type="text" id="gnc-nome" placeholder="es. Rossi Mario"' +
+          ' style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px"' +
+          ' onkeydown="if(event.key===\'Enter\')_gncCrea()">' +
+        '</div>' +
+      '</div>' +
+      '<div class="mfoot">' +
+        '<button class="btn btn-ghost btn-sm" onclick="closeM(\'modal-nuova-cart-global\')">Annulla</button>' +
+        '<button class="btn btn-primary btn-sm" onclick="_gncCrea()">📁 Crea Cartella</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(el);
+  el.addEventListener('click', function(e){ if (e.target === el) closeM('modal-nuova-cart-global'); });
+}
+
+async function _gncCrea() {
+  var nome = (document.getElementById('gnc-nome') || {}).value || '';
+  nome = nome.trim();
+  if (!nome) { toast('Inserisci il nome della cartella', 'err'); return; }
+  if (!currentUser) { toast('Sessione scaduta, ricarica la pagina', 'err'); return; }
+  showLoading(true);
+  var result = await sb.from('cartelle').insert({
+    user_id: currentUser.id,
+    nome: nome,
+    created_at: new Date().toISOString()
+  }).select().single();
+  showLoading(false);
+  var data = result.data, error = result.error;
+  if (error || !data) {
+    toast('Errore creazione cartella: ' + ((error && error.message) || 'risposta vuota'), 'err');
+    return;
+  }
+  closeM('modal-nuova-cart-global');
+  toast('📁 Cartella "' + nome + '" creata!', 'ok');
+  if (_gncCallback) {
+    await _gncCallback(data.id, data.nome);
+    _gncCallback = null;
+  }
+}

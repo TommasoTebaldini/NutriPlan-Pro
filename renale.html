@@ -130,9 +130,7 @@
 <div class="paz-hdr no-print" id="ren-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
-    <select id="ren-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadRenCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="ren-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
@@ -1066,9 +1064,7 @@ async function caricaRenDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
   editingRenNoteId = noteId;
-  await loadRenCartelle();
-  const sel = document.getElementById('ren-cartella');
-  if (sel) sel.value = data.cartella_id || '';
+  await _cwSetById('ren-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('ren-nota');
   if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiRen(JSON.parse(data.dati || '{}')); } catch(e) {}
@@ -1079,8 +1075,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof checkAuth === 'function') {
     try {
       await checkAuth(false);
+      initCartellaWidget('ren-cartella-cw', { hiddenInputId:'ren-cartella', accentColor:'#14B8A6', labelColor:'#0F766E', hoverBg:'#F0FDF4', nuovaBg:'#F0FDF4' });
       if (currentUser) {
-        loadRenCartelle();
         const noteId = new URLSearchParams(window.location.search).get('noteId');
         if (noteId) await caricaRenDaNote(noteId);
       }

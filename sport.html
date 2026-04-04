@@ -118,9 +118,7 @@
 <div class="paz-hdr no-print" id="sport-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
-    <select id="sport-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadSportCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="sport-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Titolo sessione</label>
@@ -760,8 +758,8 @@ function calcEA() {
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth(false);
+    initCartellaWidget('sport-cartella-cw', { hiddenInputId:'sport-cartella', accentColor:'#10B981', labelColor:'#059669', hoverBg:'#F0FDF4', nuovaBg:'#F0FDF4' });
     if (currentUser) {
-      loadSportCartelle();
       const noteId = new URLSearchParams(window.location.search).get('noteId');
       if (noteId) await caricaSportDaNote(noteId);
     }
@@ -869,8 +867,7 @@ async function caricaSportDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
   editingSportNoteId = noteId;
-  await loadSportCartelle();
-  const sel = document.getElementById('sport-cartella'); if (sel) sel.value = data.cartella_id || '';
+  await _cwSetById('sport-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('sport-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiSport(JSON.parse(data.dati || '{}')); } catch(e) {}
   toast('✅ Scheda Sportiva caricata','ok');

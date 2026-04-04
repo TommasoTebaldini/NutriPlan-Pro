@@ -227,9 +227,7 @@
   <div class="cs-paz-bar no-print" id="cs-paz-bar">
     <span style="font-size:18px">📁</span>
     <label>Cartella Paziente per Note:</label>
-    <select id="cs-cartella" onchange="onCartellaChange()" onfocus="loadCSCartelle()">
-      <option value="">-- Nessuna cartella selezionata --</option>
-    </select>
+    <div id="cs-cartella-cw" style="flex:1;min-width:200px"></div>
     <span style="font-size:12px;color:var(--slate-l);flex-shrink:0">Seleziona una cartella per aggiungere note personalizzate ai consigli</span>
   </div>
 
@@ -1538,6 +1536,7 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('print-date').textContent = new Date().toLocaleDateString('it');
   document.body.dataset.printTab = 'patologie';
+  initCartellaWidget('cs-cartella-cw', { hiddenInputId:'cs-cartella', accentColor:'#16A34A', labelColor:'#15803D', hoverBg:'#F0FDF4', nuovaBg:'#F0FDF4', onSelect:()=>onCartellaChange() });
   renderConsigli();
   renderAtlas();
   renderECM();

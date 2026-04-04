@@ -119,9 +119,7 @@
 <div class="paz-hdr no-print" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Progetto / Struttura</label>
-    <select id="rist-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadRistCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="rist-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Titolo menu / progetto</label>
@@ -703,8 +701,8 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth(false);
+    initCartellaWidget('rist-cartella-cw', { hiddenInputId:'rist-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF' });
     if (currentUser) {
-      loadRistCartelle();
       const noteId = new URLSearchParams(window.location.search).get('noteId');
       if (noteId) await caricaRistDaNote(noteId);
     }
@@ -801,8 +799,7 @@ async function caricaRistDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast('❌ Impossibile caricare il piano','err'); return; }
   editingRistNoteId = noteId;
-  await loadRistCartelle();
-  const sel = document.getElementById('rist-cartella'); if (sel) sel.value = data.cartella_id || '';
+  await _cwSetById('rist-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('rist-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiRist(JSON.parse(data.dati || '{}')); } catch(e) {}
   toast('✅ Piano Ristorazione caricato','ok');

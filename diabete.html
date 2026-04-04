@@ -122,9 +122,7 @@
 <div class="paz-hdr no-print" id="dg-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
-    <select id="dg-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadDgCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="dg-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
@@ -914,9 +912,7 @@ async function caricaDgDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
   editingDgNoteId = noteId;
-  await loadDgCartelle();
-  const sel = document.getElementById('dg-cartella');
-  if (sel) sel.value = data.cartella_id || '';
+  await _cwSetById('dg-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('dg-nota');
   if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiDg(JSON.parse(data.dati || '{}')); } catch(e) {}
@@ -926,8 +922,8 @@ async function caricaDgDaNote(noteId) {
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth(false);
+    initCartellaWidget('dg-cartella-cw', { hiddenInputId:'dg-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF' });
     if (currentUser) {
-      loadDgCartelle();
       const noteId = new URLSearchParams(window.location.search).get('noteId');
       if (noteId) await caricaDgDaNote(noteId);
     }

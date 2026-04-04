@@ -117,9 +117,7 @@
 <div class="paz-hdr no-print" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
-    <select id="pan-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadPanCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="pan-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
@@ -812,8 +810,7 @@ async function caricaPanDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
   editingPanNoteId = noteId;
-  await loadPanCartelle();
-  const sel = document.getElementById('pan-cartella'); if (sel) sel.value = data.cartella_id || '';
+  await _cwSetById('pan-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('pan-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiPan(JSON.parse(data.dati || '{}')); } catch(e) {}
   toast('✅ Scheda IPE caricata','ok');
@@ -822,8 +819,8 @@ async function caricaPanDaNote(noteId) {
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth(false);
+    initCartellaWidget('pan-cartella-cw', { hiddenInputId:'pan-cartella', accentColor:'#F97316', labelColor:'#C2410C', hoverBg:'#FFF7ED', nuovaBg:'#FFF7ED' });
     if (currentUser) {
-      loadPanCartelle();
       const noteId = new URLSearchParams(window.location.search).get('noteId');
       if (noteId) await caricaPanDaNote(noteId);
     }

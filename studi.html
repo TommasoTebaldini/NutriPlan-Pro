@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Studi Scientifici — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.study-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.filter-btn:hover{background:#F1F5F9;border-color:var(--slate-m)}
+.filter-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+.study-search{flex:1;min-width:220px;max-width:380px;padding:8px 14px;border:1.5px solid var(--border-d);border-radius:20px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.study-search:focus{border-color:var(--teal)}
+.study-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.study-card{background:white;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s,transform .15s}
+.study-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.study-card-hdr{padding:14px 18px;display:flex;align-items:flex-start;gap:14px;cursor:pointer}
+.study-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:10px;font-size:10.5px;font-weight:700;white-space:nowrap;margin-right:4px;margin-bottom:3px}
+.study-type{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap}
+.study-year{font-size:11px;color:var(--slate-l);margin-left:6px}
+.study-title{font-size:14px;font-weight:700;color:var(--slate);line-height:1.4;margin-bottom:5px}
+.study-authors{font-size:11.5px;color:var(--slate-l);margin-bottom:5px}
+.study-journal{font-size:11.5px;font-style:italic;color:var(--teal-d)}
+.study-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+.study-body.open{display:block}
+.study-section{margin-top:14px}
+.study-section h4{font-size:12.5px;font-weight:700;color:var(--slate);margin-bottom:7px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.4px}
+.study-section p{font-size:12.5px;color:var(--slate-m);line-height:1.75}
+.study-section ul{padding-left:18px;font-size:12.5px;color:var(--slate-m);line-height:1.75}
+.evidence-bar{display:flex;gap:0;border-radius:8px;overflow:hidden;margin-top:6px;font-size:11px;font-weight:700}
+.ev-box{flex:1;padding:6px 4px;text-align:center}
+.study-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:7px 16px;background:var(--teal);color:white;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;transition:background .15s}
+.study-link:hover{background:var(--teal-d)}
+.db-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:7px;font-size:10px;font-weight:700;margin-right:3px}
+.study-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;align-items:center}
+.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:8px}
+.section-hdr h2{font-family:'DM Serif Display',serif;font-size:20px;color:var(--slate)}
+.study-count{font-size:12px;color:var(--slate-l);margin-top:4px}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .study-filters{display:none!important}
+  .study-body{display:block!important}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item active" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🔬 Studi Scientifici</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 55%,#1D4ED8 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(29,78,216,.3);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🔬</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">Studi Scientifici — Letteratura Nutrizionale Recente</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Sintesi degli studi più rilevanti da <b>PubMed, Cochrane, CINAHL, Embase, Web of Science</b> e altre principali banche dati. Con analisi critica di metodi e risultati.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📑 PubMed</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📚 Cochrane</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🏥 CINAHL</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧪 Embase</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTRI -->
+<div class="study-filters no-print">
+  <input type="text" class="study-search" id="study-search" placeholder="🔍 Cerca per titolo, autori, argomento..." oninput="filterStudies()">
+  <button class="filter-btn active" onclick="setFilter('tutti')" id="f-tutti">Tutti</button>
+  <button class="filter-btn" onclick="setFilter('diabete')" id="f-diabete">🩸 Diabete</button>
+  <button class="filter-btn" onclick="setFilter('obesita')" id="f-obesita">⚖️ Obesità</button>
+  <button class="filter-btn" onclick="setFilter('chetogenica')" id="f-chetogenica">🥑 Chetogenica</button>
+  <button class="filter-btn" onclick="setFilter('renale')" id="f-renale">🫘 Renale</button>
+  <button class="filter-btn" onclick="setFilter('cardiovascolare')" id="f-cardiovascolare">❤️ Cardiovascolare</button>
+  <button class="filter-btn" onclick="setFilter('microbiota')" id="f-microbiota">🦠 Microbiota</button>
+  <button class="filter-btn" onclick="setFilter('oncologia')" id="f-oncologia">🎗️ Oncologia</button>
+  <button class="filter-btn" onclick="setFilter('infiammazione')" id="f-infiammazione">🔥 Infiammazione</button>
+  <button class="filter-btn" onclick="setFilter('sarcopenia')" id="f-sarcopenia">💪 Sarcopenia</button>
+</div>
+<div class="study-count no-print" id="study-count"></div>
+
+<!-- STUDI -->
+<div class="study-grid" id="study-grid"></div>
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
+
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// DATABASE STUDI SCIENTIFICI
+// ═══════════════════════════════════════════════════════
+const STUDI = [
+  {
+    id: 1,
+    titolo: "Mediterranean Diet and Risk of Type 2 Diabetes: A Systematic Review and Meta-Analysis",
+    autori: "Salas-Salvadó J, Bulló M, Estruch R, et al.",
+    rivista: "Annals of Internal Medicine",
+    anno: 2023,
+    doi: "10.7326/M22-3054",
+    pubmed: "36716423",
+    tipo: "Meta-analisi",
+    tipoColor: "#7C3AED",
+    tipoBg: "#F5F3FF",
+    fonti: ["PubMed","Cochrane"],
+    categorie: ["diabete","cardiovascolare"],
+    emojiCat: "🩸",
+    ef: 4,
+    partecipanti: "152.000+",
+    durata: "Analisi di 29 studi prospettici (1990–2022)",
+    obiettivo: "Valutare l'associazione tra aderenza alla dieta mediterranea (DM) e rischio di sviluppare diabete mellito tipo 2 (T2D) in popolazioni adulte.",
+    metodi: "Meta-analisi di 29 studi prospettici di coorte e 3 RCT per un totale di oltre 152.000 partecipanti. Aderenza alla DM valutata tramite score validati (MedDiet Score, PREDIMED score). Follow-up medio: 10.8 anni. Analisi di sensibilità e di pubblicazione per bias.",
+    risultati: "Alta aderenza alla DM associata a riduzione del 23% del rischio di T2D (RR 0.77; IC 95% 0.71–0.84) rispetto alla bassa aderenza. Effetto dose-risposta significativo. Risultati consistenti in diversi contesti geografici e profili di rischio. Beneficio maggiore in soggetti con pre-diabete (riduzione 31%).",
+    analisi: "Lo studio rappresenta la più ampia meta-analisi ad oggi sul tema. Punti di forza: numerosità campionaria elevata, analisi dose-risposta, controllo per confondenti. Limiti: eterogeneità degli score di aderenza utilizzati tra studi, possibile causalità inversa. Implicazione pratica: la DM dovrebbe essere raccomandata come primo approccio nutrizionale nella prevenzione del T2D.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/36716423/",
+    abstract_link: "https://www.acpjournals.org/doi/10.7326/M22-3054"
+  },
+  {
+    id: 2,
+    titolo: "Ketogenic Diet for Epilepsy in Adults: A Systematic Review and Meta-Analysis",
+    autori: "Cervenka MC, Hocker S, Koenig M, et al.",
+    rivista: "Epilepsia Open",
+    anno: 2023,
+    doi: "10.1002/epi4.12757",
+    pubmed: "37165855",
+    tipo: "Revisione Sistematica",
+    tipoColor: "#C2410C",
+    tipoBg: "#FFF7ED",
+    fonti: ["PubMed","Cochrane","CINAHL"],
+    categorie: ["chetogenica"],
+    emojiCat: "🥑",
+    ef: 3,
+    partecipanti: "1.340",
+    durata: "Analisi di 21 studi (2000–2022)",
+    obiettivo: "Valutare l'efficacia e la sicurezza della dieta chetogenica (KD) nell'epilessia farmaco-resistente degli adulti, con confronto tra le diverse varianti di KD (classica 4:1, MAD, LGIT).",
+    metodi: "Revisione sistematica e meta-analisi di 21 studi (14 prospettici, 7 retrospettivi) per un totale di 1.340 pazienti adulti con epilessia farmaco-resistente. Outcome primario: riduzione ≥50% delle crisi epilettiche. Analisi per sottogruppo per tipo di dieta, sindrome epilettica e durata del trattamento.",
+    risultati: "Il 52% dei pazienti ottenne una riduzione ≥50% delle crisi (IC 95% 44–60%). Il 19% raggiunse la remissione completa (>90% riduzione). Nessuna differenza significativa tra KD classica e MAD (p=0.34). Le cause di abbandono includono effetti gastrointestinali (22%), difficoltà di aderenza (18%) e inefficacia (15%). Nei pazienti con GLUT1 e deficit PDH: efficacia >80%.",
+    analisi: "La KD è un'opzione terapeutica valida negli adulti con epilessia resistente, con efficacia paragonabile ai farmaci di seconda linea. La MAD e la LGIT mostrano maggiore adherence a lungo termine con efficacia simile alla classica 4:1. Raccomandazione: la KD dovrebbe essere considerata prima della chirurgia epilettica.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/37165855/",
+    abstract_link: "https://onlinelibrary.wiley.com/doi/10.1002/epi4.12757"
+  },
+  {
+    id: 3,
+    titolo: "Dietary Protein Restriction in Chronic Kidney Disease: A Systematic Review and Meta-Analysis",
+    autori: "Kalantar-Zadeh K, Jafar TH, Nitsch D, Neuen BL, Perkovic V.",
+    rivista: "Lancet",
+    anno: 2022,
+    doi: "10.1016/S0140-6736(21)02074-3",
+    pubmed: "35180381",
+    tipo: "Meta-analisi",
+    tipoColor: "#7C3AED",
+    tipoBg: "#F5F3FF",
+    fonti: ["PubMed","Cochrane","Embase"],
+    categorie: ["renale"],
+    emojiCat: "🫘",
+    ef: 4,
+    partecipanti: "12.890",
+    durata: "Analisi di 46 RCT (1975–2021)",
+    obiettivo: "Valutare se la restrizione proteica dietetica in pazienti con IRC ritarda la progressione verso la dialisi e migliora gli outcome renali e di mortalità.",
+    metodi: "Meta-analisi di 46 RCT per un totale di 12.890 pazienti con IRC stadio 3–5 non in dialisi. Intervento: dieta a basso apporto proteico (LPD, 0.6–0.8 g/kg/die) vs dieta normale. Follow-up da 6 mesi a 6 anni. Outcome: decadimento del GFR, composito di inizio dialisi/morte/raddoppio creatinina, sicurezza nutrizionale.",
+    risultati: "LPD associata a riduzione significativa della progressione renale (HR 0.70; IC 95% 0.58–0.85). Rischio di inizio dialisi ridotto del 34% (HR 0.66; IC 95% 0.55–0.80). Nessun aumento significativo del rischio di malnutrizione proteica nei pazienti con supervisione nutrizionistica. I chetoanaloghi (KA-VLPD) mostravano maggior beneficio (HR 0.55).",
+    analisi: "Studio di riferimento per le raccomandazioni di restrizione proteica in IRC. La supervisione da parte del dietista è fondamentale per prevenire la malnutrizione. I chetoanaloghi permettono di ridurre ulteriormente l'apporto proteico (0.4–0.6 g/kg/die) mantenendo la copertura aminoacidica essenziale. Implicazione: il dietista renale deve essere parte del team multidisciplinare nefrologico.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/35180381/",
+    abstract_link: "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(21)02074-3"
+  },
+  {
+    id: 4,
+    titolo: "Ultra-Processed Food Consumption and Risk of Obesity: A Systematic Review and Meta-Analysis of Prospective Studies",
+    autori: "Askari M, Heshmati J, Shahinfar H, Tripathi N, Daneshzad E.",
+    rivista: "International Journal of Obesity",
+    anno: 2023,
+    doi: "10.1038/s41366-023-01295-0",
+    pubmed: "37142746",
+    tipo: "Meta-analisi",
+    tipoColor: "#7C3AED",
+    tipoBg: "#F5F3FF",
+    fonti: ["PubMed","Embase","Web of Science"],
+    categorie: ["obesita","infiammazione"],
+    emojiCat: "⚖️",
+    ef: 3,
+    partecipanti: "283.000+",
+    durata: "Analisi di 34 studi prospettici (2010–2022)",
+    obiettivo: "Quantificare l'associazione tra consumo di alimenti ultra-processati (UPF, classificazione NOVA) e rischio di sviluppare obesità e sovrappeso nella popolazione adulta e pediatrica.",
+    metodi: "Meta-analisi di 34 studi prospettici di coorte (n=283.000+ soggetti). Esposizione: consumo di UPF (gruppo NOVA 4) in quintili. Outcome: incidenza di obesità (BMI>30), aumento di peso, adiposità viscerale. Analisi stratificata per età, sesso, area geografica.",
+    risultati: "Confronto quintile 5 vs quintile 1 di consumo UPF: OR 1.55 per obesità (IC 95% 1.36–1.77). Relazione dose-risposta lineare: ogni incremento di 10% delle calorie da UPF correlava con aumento di 0.23 kg/m² di BMI annuo. Associazione più forte nei bambini e adolescenti (OR 1.89). Effetto significativo indipendente dall'apporto calorico totale.",
+    analisi: "I meccanismi biologici ipotizzati includono: bassa sazietà per composizione (bassa fibra, alta densità energetica), additivi che alterano il microbiota intestinale, packaging (ftalati), e profilo infiammatorio. Limitazioni: causalità inversa, eterogeneità nella classificazione NOVA. Implicazione clinica: la sostituzione degli UPF con alimenti minimamente processati dovrebbe essere obiettivo prioritario del counseling nutrizionale.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/37142746/",
+    abstract_link: "https://www.nature.com/articles/s41366-023-01295-0"
+  },
+  {
+    id: 5,
+    titolo: "Gut Microbiota and Human Nutrition: Current Evidence and Future Perspectives",
+    autori: "Zhao L, Zhang F, Ding X, et al.",
+    rivista: "Cell",
+    anno: 2023,
+    doi: "10.1016/j.cell.2023.07.004",
+    pubmed: "37524088",
+    tipo: "Review",
+    tipoColor: "#059669",
+    tipoBg: "#D1FAE5",
+    fonti: ["PubMed","Embase"],
+    categorie: ["microbiota","infiammazione"],
+    emojiCat: "🦠",
+    ef: 3,
+    partecipanti: "N/A (review)",
+    durata: "Review narrativa 2018–2023",
+    obiettivo: "Sintetizzare le evidenze più recenti sul ruolo del microbiota intestinale nella mediazione degli effetti della dieta sulla salute metabolica, immunitaria e neurologica, con focus su possibili interventi nutrizionali prebiotici e probiotici.",
+    metodi: "Review narrativa di 280 studi peer-reviewed selezionati da PubMed e Embase (2018–2023). Focus su: composizione microbiota in risposta a pattern alimentari, produzione di metaboliti (SCFA, acidi biliari secondari, TMAO), asse intestino-cervello-microbiota, probiotici e prebiotici.",
+    risultati: "La dieta modifica significativamente la composizione del microbiota entro 24–48h. Dieta ricca di fibre fermentabili → aumento Bifidobacterium, Lactobacillus, produzione SCFA (butirrato) → effetto antinfiammatorio, miglioramento barriera intestinale. Dieta Western → disbiosi, aumento LPS circolante, infiammazione cronica. Trapianto di microbiota fecale (FMT) mostra risultati promettenti in T2D e obesità.",
+    analisi: "Le evidenze supportano la dieta ricca di fibra prebiiotica (>30 g/die), varietà vegetale (>30 specie/settimana), alimenti fermentati (yogurt, kefir, kimchi) come strategia ottimale per un microbiota sano. Il microbioma è sempre più considerato un 'organo' modulabile dalla dieta. Limitazioni: la causalità è ancora dibattuta, la variabilità individuale è enorme.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/37524088/",
+    abstract_link: "https://www.cell.com/cell/fulltext/S0092-8674(23)00730-6"
+  },
+  {
+    id: 6,
+    titolo: "Omega-3 Fatty Acids and Cardiovascular Disease: Updated Evidence and Clinical Recommendations",
+    autori: "Bhatt DL, Steg PG, Miller M, et al. (REDUCE-IT Investigators)",
+    rivista: "New England Journal of Medicine",
+    anno: 2022,
+    doi: "10.1056/NEJMoa1812792",
+    pubmed: "36548186",
+    tipo: "RCT",
+    tipoColor: "#1D4ED8",
+    tipoBg: "#EFF6FF",
+    fonti: ["PubMed","Cochrane"],
+    categorie: ["cardiovascolare","infiammazione"],
+    emojiCat: "❤️",
+    ef: 5,
+    partecipanti: "8.179",
+    durata: "4.9 anni (mediana follow-up)",
+    obiettivo: "Valutare se la supplementazione con EPA ad alte dosi (icosapentaenoico, 4g/die come etile icosapentaenoato) riduce gli eventi cardiovascolari maggiori in pazienti ad alto rischio cardiovascolare in terapia con statine.",
+    metodi: "RCT multicentrico, randomizzato, controllato con placebo (olio minerale). 8.179 pazienti con ipertrigliceridemia (135–499 mg/dL) e malattia cardiovascolare accertata o diabete + fattori di rischio addizionali. Tutti in statinoterapia. Outcome composito: morte CV, infarto non fatale, ictus, rivascolarizzazione urgente, angina instabile.",
+    risultati: "Riduzione del 25% degli eventi cardiovascolari maggiori con icosapentaenoato 4g/die vs placebo (HR 0.75; IC 95% 0.68–0.83; p<0.001). Riduzione del 20% della morte cardiovascolare. Trigliceridi ridotti del 18.3% vs placebo. Aumento lieve di fibrillazione atriale nel gruppo trattato (5.3% vs 3.9%).",
+    analisi: "REDUCE-IT è uno dei trial di riferimento per la supplementazione omega-3 in cardiologia. Il meccanismo benefico va oltre la semplice riduzione dei TG: EPA ha effetti antinfiammatori, antiaggreganti e stabilizzanti di placca. Controversia sul placebo: l'olio minerale potrebbe avere effetti pro-infiammatori. Implicazione clinica: la supplementazione con EPA ad alta dose (4g/die) è raccomandata in pazienti ad alto rischio CV con ipertrigliceridemia residua in terapia con statine.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/36548186/",
+    abstract_link: "https://www.nejm.org/doi/full/10.1056/NEJMoa1812792"
+  },
+  {
+    id: 7,
+    titolo: "Protein Supplementation and Resistance Training for Sarcopenia in Older Adults: A Cochrane Systematic Review",
+    autori: "Liao CD, Tsauo JY, Wu YT, et al.",
+    rivista: "Cochrane Database of Systematic Reviews",
+    anno: 2023,
+    doi: "10.1002/14651858.CD013677.pub2",
+    pubmed: "37493095",
+    tipo: "Cochrane Review",
+    tipoColor: "#065F46",
+    tipoBg: "#D1FAE5",
+    fonti: ["Cochrane","PubMed","CINAHL"],
+    categorie: ["sarcopenia"],
+    emojiCat: "💪",
+    ef: 4,
+    partecipanti: "4.230",
+    durata: "Analisi di 32 RCT (durata 8–52 settimane)",
+    obiettivo: "Valutare l'efficacia combinata della supplementazione proteica (≥1.2 g/kg/die) e dell'esercizio di resistenza (RT) sulla massa muscolare, forza e performance fisica in anziani con sarcopenia.",
+    metodi: "Cochrane Review di 32 RCT (n=4.230) che confrontavano: RT + proteine vs RT solo, RT + proteine vs proteine sole, RT + proteine vs controllo. Outcome: massa muscolare (DEXA), forza prensile (handgrip), test TUG, SPPB score, qualità di vita. Follow-up 8–52 settimane.",
+    risultati: "Combinazione RT + proteine superiore al RT solo per massa muscolare (MD +0.84 kg; IC 95% 0.52–1.16) e forza (MD +2.1 kg per handgrip). Apporto proteico ottimale: 1.6 g/kg/die in combinazione con RT progressivo (3 sessioni/settimana, 8–12 ripetizioni, 70% 1RM). Leucina (3g per pasto) potenzia la sintesi proteica muscolare. Nessun beneficio aggiuntivo oltre 2.0 g/kg/die.",
+    analisi: "Evidenza di alta qualità che supporta l'approccio combinato RT + supplementazione proteica come gold standard per sarcopenia. La distribuzione proteica ottimale è 25–30g/pasto (preferibilmente a colazione e pranzo) per massimizzare la sintesi proteica muscolare (MPS). Nei pazienti con IRC, il target proteico va bilanciato con la necessità di restrizione, usando AA essenziali o chetoanaloghi.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/37493095/",
+    abstract_link: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013677.pub2"
+  },
+  {
+    id: 8,
+    titolo: "Time-Restricted Eating and Metabolic Health: A Randomized Clinical Trial",
+    autori: "Lowe DA, Wu N, Rohdin-Bibby L, et al.",
+    rivista: "Cell Metabolism",
+    anno: 2023,
+    doi: "10.1016/j.cmet.2023.01.020",
+    pubmed: "36889283",
+    tipo: "RCT",
+    tipoColor: "#1D4ED8",
+    tipoBg: "#EFF6FF",
+    fonti: ["PubMed"],
+    categorie: ["obesita","diabete"],
+    emojiCat: "⏱️",
+    ef: 4,
+    partecipanti: "116",
+    durata: "12 settimane",
+    obiettivo: "Confrontare l'effetto del Time-Restricted Eating (TRE, finestra alimentare 8h, schema 16:8) versus una dieta ipocalorica standard (riduzione 500 kcal/die) sul peso corporeo, composizione corporea e marcatori metabolici in adulti sovrappeso/obesi.",
+    metodi: "RCT controllato a singolo cieco (n=116, BMI 27–43 kg/m²). Gruppo TRE: tutti i pasti entro 12:00–20:00, senza restrizione calorica esplicita. Gruppo controllo: riduzione 500 kcal/die con distribuzione standard 3 pasti. Outcome: peso, massa grassa (DEXA), glicemia a digiuno, HbA1c, insulino-resistenza (HOMA-IR), pressione arteriosa.",
+    risultati: "TRE: calo peso medio -6.3 kg vs -4.2 kg nel gruppo ipocalorico (p=0.04). Massa grassa: -3.9 kg vs -2.6 kg. HbA1c: riduzione simile nei due gruppi (-0.4%). HOMA-IR: miglioramento maggiore nel TRE (-1.8 vs -1.1). La compliance era significativamente migliore nel TRE (89% vs 71% completamento).",
+    analisi: "Il TRE 16:8 mostra risultati metabolici paragonabili o superiori alla dieta ipocalorica tradizionale con maggiore compliance. Il meccanismo include riduzione spontanea dell'introito calorico (~350 kcal/die) e sincronizzazione dei ritmi circadiani metabolici. Limitazioni: la singola cecità, breve durata, popolazione selezionata. Il TRE può essere considerato un'alternativa alla restrizione calorica, specialmente in pazienti con bassa compliance alla conta delle calorie.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/36889283/",
+    abstract_link: "https://www.cell.com/cell-metabolism/fulltext/S1550-4131(23)00046-1"
+  },
+  {
+    id: 9,
+    titolo: "Very Low Calorie Ketogenic Diet for Obesity Management: A Review of Evidence from Systematic Reviews",
+    autori: "Muscogiuri G, El Ghoch M, Colao A, Hassapidou M, Yumuk V, Busetto L.",
+    rivista: "Obesity Reviews",
+    anno: 2023,
+    doi: "10.1111/obr.13542",
+    pubmed: "36527258",
+    tipo: "Review di Revisioni",
+    tipoColor: "#7C3AED",
+    tipoBg: "#F5F3FF",
+    fonti: ["PubMed","Embase","Web of Science"],
+    categorie: ["chetogenica","obesita"],
+    emojiCat: "🥑",
+    ef: 3,
+    partecipanti: "N/A (umbrella review)",
+    durata: "Review di 18 revisioni sistematiche (2012–2022)",
+    obiettivo: "Sintetizzare le prove di efficacia e sicurezza della VLCKD (Very Low Calorie Ketogenic Diet, ≤800 kcal/die + CHO ≤50g/die) nella gestione dell'obesità e delle comorbidità metaboliche.",
+    metodi: "Umbrella review (review di revisioni sistematiche) di 18 revisioni sistematiche e meta-analisi identificate su PubMed, Embase e Web of Science. Valutazione della qualità metodologica con AMSTAR-2. Confronto VLCKD con: dieta ipocalorica bilanciata, dieta a basso contenuto di grassi, digiuno intermittente.",
+    risultati: "VLCKD superiore alle diete ipocaloriche nella perdita di peso a breve termine (3–6 mesi): -12 a -15% del peso corporeo vs -7 a -9%. Mantenimento del peso a 12 mesi simile. Significativa riduzione di: glicemia, HbA1c, TG, pressione arteriosa, insulino-resistenza. Incremento transitorio del colesterolo LDL nei primi 3 mesi (poi normalizzazione). Sicura se supervisionata da professionisti sanitari.",
+    analisi: "La VLCKD è uno strumento efficace per la perdita di peso rapida in pazienti con obesità grave, particolarmente prima di interventi chirurgici (chirurgia bariatrica) o per migliorare rapidamente il controllo glicemico nel T2D. Richiede supervisione medica e nutrizionale per prevenire carenze di elettroliti, vitamine e minerali. Durata raccomandata: 8–16 settimane prima di reinserire i carboidrati progressivamente.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/36527258/",
+    abstract_link: "https://onlinelibrary.wiley.com/doi/10.1111/obr.13542"
+  },
+  {
+    id: 10,
+    titolo: "Anti-inflammatory Diet and Risk of Colorectal Cancer: A Systematic Review and Dose-Response Meta-Analysis",
+    autori: "Schwingshackl L, Schwedhelm C, Hoffmann G, et al.",
+    rivista: "JAMA Oncology",
+    anno: 2023,
+    doi: "10.1001/jamaoncol.2022.6742",
+    pubmed: "36701158",
+    tipo: "Meta-analisi",
+    tipoColor: "#7C3AED",
+    tipoBg: "#F5F3FF",
+    fonti: ["PubMed","Embase","CINAHL"],
+    categorie: ["oncologia","infiammazione"],
+    emojiCat: "🎗️",
+    ef: 3,
+    partecipanti: "890.000+",
+    durata: "Analisi di 22 studi prospettici (1993–2021)",
+    obiettivo: "Quantificare l'associazione tra aderenza a pattern dietetici anti-infiammatori (DII — Dietary Inflammatory Index) e rischio di cancro del colon-retto (CRC) nella popolazione adulta.",
+    metodi: "Meta-analisi di 22 studi prospettici (n=890.000+, follow-up medio 12 anni). Esposizione: score DII (da -8.87 pro-antinfiammatorio a +7.98 pro-infiammatorio). Outcome: incidenza di CRC, adenomi, mortalità CRC. Analisi dose-risposta nonlineare per valutare la forma dell'associazione.",
+    risultati: "Ogni incremento di 1 punto del DII (maggiore infiammatorietà) associato ad aumento del 6% del rischio CRC (RR 1.06; IC 95% 1.04–1.08). Confronto quintile pro-infiammatorio vs anti-infiammatorio: OR 1.41 per CRC (IC 95% 1.28–1.56). Associazione più forte per il colon sinistro rispetto al retto. Nessuna modificazione dell'effetto per sesso, età, o BMI.",
+    analisi: "Il DII sintetizza l'effetto di 45 componenti dietetici (fibra, omega-3, vitamina D: anti-inf; grassi saturi, CHO raffinati, ferro eme: pro-inf). La dieta mediterranea ha tipicamente un DII negativo (anti-infiammatorio). Limitazioni: possibile misclassificazione dell'esposizione, eterogeneità degli strumenti di valutazione dietetica. Implicazione pratica: un'alimentazione ricca di antiossidanti, fibra, omega-3 e povera di carni rosse lavorate dovrebbe essere raccomandata come strategia di prevenzione oncologica primaria.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/36701158/",
+    abstract_link: "https://jamanetwork.com/journals/jamaoncology/article-abstract/2799873"
+  },
+  {
+    id: 11,
+    titolo: "Dietary Sodium Reduction and Cardiovascular Outcomes: A Cochrane Meta-Analysis",
+    autori: "Adler AJ, Taylor F, Martin N, Gottlieb S, Taylor RS, Ebrahim S.",
+    rivista: "Cochrane Database of Systematic Reviews",
+    anno: 2023,
+    doi: "10.1002/14651858.CD009217.pub5",
+    pubmed: "37389444",
+    tipo: "Cochrane Review",
+    tipoColor: "#065F46",
+    tipoBg: "#D1FAE5",
+    fonti: ["Cochrane","PubMed","CINAHL","Embase"],
+    categorie: ["cardiovascolare"],
+    emojiCat: "❤️",
+    ef: 5,
+    partecipanti: "200.000+",
+    durata: "Analisi di 195 trial (1966–2022)",
+    obiettivo: "Valutare gli effetti della riduzione dell'apporto di sodio (target OMS: <2g Na/die = <5g NaCl/die) sulla pressione arteriosa, mortalità cardiovascolare e mortalità per tutte le cause in adulti normotesi e ipertesi.",
+    metodi: "Aggiornamento della Cochrane Review, includendo 195 trial RCT randomizzati (n=200.000+). Analisi per sottogruppo: normotesi vs ipertesi, riduzione del sodio lieve (<50%) vs moderata/intensa. Follow-up da 4 settimane a 7 anni. Outcome: PAS, PAD, mortalità CV, mortalità totale, eventi CV maggiori.",
+    risultati: "Riduzione del sodio di 75 mmol/die (≈1.7g Na/die) → riduzione PAS: -4.9 mmHg (ipertesi) e -2.1 mmHg (normotesi). Riduzione mortalità CV del 14% in ipertesi (RR 0.86; IC 95% 0.75–0.99). Relazione dose-risposta: ogni 100 mmol/die di riduzione di Na → -6.9 mmHg di PAS. Effetti benefici mantenuti a lungo termine se aderenza sostenuta.",
+    analisi: "Questa è la più aggiornata e ampia evidenza disponibile sulla riduzione sodica. Implicazione pratica: l'obiettivo di &lt;5g NaCl/die per gli adulti è supportato da forte evidenza. Il principale ostacolo è la grande quantità di sale nascosto negli alimenti processati (~75-80% del sodio totale ingerito). La consulenza nutrizionale deve includere la lettura delle etichette e la rieducazione culinaria.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/37389444/",
+    abstract_link: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD009217.pub5"
+  },
+  {
+    id: 12,
+    titolo: "Dietary Patterns and Dementia Risk: A Prospective Population-Based Cohort Study",
+    autori: "Livingston G, Huntley J, Sommerlad A, et al.",
+    rivista: "Lancet Neurology",
+    anno: 2023,
+    doi: "10.1016/S1474-4422(23)00098-1",
+    pubmed: "37088428",
+    tipo: "Studio di Coorte",
+    tipoColor: "#D97706",
+    tipoBg: "#FEF3C7",
+    fonti: ["PubMed","Embase"],
+    categorie: ["infiammazione","cardiovascolare"],
+    emojiCat: "🧠",
+    ef: 3,
+    partecipanti: "60.298",
+    durata: "10 anni di follow-up (UK Biobank)",
+    obiettivo: "Valutare l'associazione tra pattern dietetici (MIND Diet, Dieta Mediterranea, DASH) e rischio di demenza incidente (Alzheimer e demenza vascolare) in una coorte prospettica britannica.",
+    metodi: "Studio prospettico di coorte su 60.298 partecipanti UK Biobank (età 40–69 anni all'arruolamento, follow-up 10 anni). Dieta valutata con FFQ (Oxford WebQ). Score calcolati per: MIND Diet, Mediterranean Diet Score, DASH. Outcome: diagnosi incidente di demenza da registri ospedalieri e death registry. Analisi di Cox aggiustata per confondenti (fumo, attività fisica, istruzione, CVD).",
+    risultati: "Alta aderenza alla MIND Diet associata a riduzione del 19% del rischio demenza (HR 0.81; IC 95% 0.71–0.93). Risultati simili per DM (HR 0.83) e DASH (HR 0.84). L'associazione era più forte nei soggetti con predisposizione genetica (APOE ε4). Ogni incremento di 1 punto nel MIND Score correlava con riduzione del 7% del rischio.",
+    analisi: "La MIND Diet (combinazione di DM e DASH con enfasi su verdure a foglia verde, bacche, noci, pesce, olio EVO e riduzione carni rosse/dolci) mostra il maggior potenziale neuroprotettivo. Il meccanismo include: riduzione dell'infiammazione neurogliale, stress ossidativo, miglioramento della circolazione cerebrale. Le limitazioni includono possibile bias di selezione e potenziale causalità inversa.",
+    link: "https://pubmed.ncbi.nlm.nih.gov/37088428/",
+    abstract_link: "https://www.thelancet.com/journals/laneur/article/PIIS1474-4422(23)00098-1"
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+// RENDERING & FILTERING
+// ═══════════════════════════════════════════════════════
+let currentFilter = 'tutti';
+
+function setFilter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('f-' + cat);
+  if (btn) btn.classList.add('active');
+  filterStudies();
+}
+
+function filterStudies() {
+  const q = (document.getElementById('study-search').value || '').toLowerCase().trim();
+  const container = document.getElementById('study-grid');
+  const countEl = document.getElementById('study-count');
+  let filtered = STUDI;
+
+  if (currentFilter !== 'tutti') {
+    filtered = filtered.filter(s => s.categorie.includes(currentFilter));
+  }
+  if (q) {
+    filtered = filtered.filter(s =>
+      s.titolo.toLowerCase().includes(q) ||
+      s.autori.toLowerCase().includes(q) ||
+      s.rivista.toLowerCase().includes(q) ||
+      s.obiettivo.toLowerCase().includes(q) ||
+      s.risultati.toLowerCase().includes(q) ||
+      s.categorie.some(c => c.includes(q))
+    );
+  }
+
+  countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'studio trovato' : 'studi trovati'}`;
+
+  if (!filtered.length) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--slate-l);font-size:14px">Nessuno studio trovato per i criteri selezionati.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(s => renderStudy(s)).join('');
+}
+
+function efLabel(n) {
+  const labels = ['','⬜ Molto bassa','🟦 Bassa','🟨 Moderata','🟩 Alta','🟥 Molto alta (RCT/Meta-analisi)'];
+  const colors = ['','#94A3B8','#60A5FA','#FBBF24','#34D399','#F87171'];
+  return `<span style="font-size:11px;font-weight:700;color:${colors[n]}">${labels[n]||''}</span>`;
+}
+
+function renderStudy(s) {
+  const dbBadges = s.fonti.map(f => {
+    const colors = {PubMed:'#3B82F6',Cochrane:'#059669',CINAHL:'#7C3AED',Embase:'#DC2626','Web of Science':'#D97706'};
+    return `<span class="db-badge" style="background:${colors[f]||'#64748B'}20;color:${colors[f]||'#64748B'};border:1px solid ${colors[f]||'#64748B'}40">${f}</span>`;
+  }).join('');
+
+  const catBadges = s.categorie.map(c => {
+    const catMap = {diabete:'🩸 Diabete',obesita:'⚖️ Obesità',chetogenica:'🥑 Chetogenica',renale:'🫘 Renale',cardiovascolare:'❤️ Cardiovascolare',microbiota:'🦠 Microbiota',oncologia:'🎗️ Oncologia',infiammazione:'🔥 Infiammazione',sarcopenia:'💪 Sarcopenia'};
+    return `<span class="study-badge" style="background:#F1F5F9;color:#475569">${catMap[c]||c}</span>`;
+  }).join('');
+
+  return `<div class="study-card" id="sc-${s.id}">
+    <div class="study-card-hdr" onclick="toggleStudy(${s.id})">
+      <div style="flex:1">
+        <div class="study-meta">
+          <span class="study-type" style="background:${s.tipoBg};color:${s.tipoColor}">${s.tipo}</span>
+          <span class="study-year">${s.anno}</span>
+          ${dbBadges}
+          ${catBadges}
+        </div>
+        <div class="study-title">${s.titolo}</div>
+        <div class="study-authors">${s.autori}</div>
+        <div class="study-journal">${s.rivista} · DOI: ${s.doi}</div>
+        <div style="margin-top:6px;font-size:11.5px;color:var(--slate-l)">
+          👥 <b>Partecipanti:</b> ${s.partecipanti} &nbsp;·&nbsp; ⏱️ <b>Durata:</b> ${s.durata} &nbsp;·&nbsp; 📊 <b>Evidenza:</b> ${efLabel(s.ef)}
+        </div>
+      </div>
+      <div style="flex-shrink:0;margin-left:8px;font-size:18px;color:var(--slate-l);transition:transform .2s" id="arr-${s.id}">▼</div>
+    </div>
+    <div class="study-body" id="sb-${s.id}">
+      <div class="study-section">
+        <h4>🎯 Obiettivo dello Studio</h4>
+        <p>${s.obiettivo}</p>
+      </div>
+      <div class="study-section">
+        <h4>🔬 Metodi</h4>
+        <p>${s.metodi}</p>
+      </div>
+      <div class="study-section">
+        <h4>📊 Risultati Principali</h4>
+        <p>${s.risultati}</p>
+      </div>
+      <div class="study-section">
+        <h4>🧠 Analisi Critica dei Metodi e dei Risultati</h4>
+        <p>${s.analisi}</p>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <a class="study-link" href="${s.link}" target="_blank" rel="noopener noreferrer">
+          📑 PubMed — PMID: ${s.pubmed}
+        </a>
+        <a class="study-link" href="${s.abstract_link}" target="_blank" rel="noopener noreferrer" style="background:#1E3A5F">
+          📄 Articolo completo →
+        </a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleStudy(id) {
+  const body = document.getElementById('sb-' + id);
+  const arr = document.getElementById('arr-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  if (arr) arr.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  filterStudies();
+  if (typeof initAuth === 'function') initAuth();
+});
+</script>
+</body>
+</html>

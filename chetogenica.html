@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Dieta Chetogenica — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.keto-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.keto-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
+.keto-tab:hover{background:rgba(124,58,237,.1);color:#7C3AED}
+.keto-tab.active{background:linear-gradient(135deg,#7C3AED,#6D28D9);color:white;box-shadow:0 3px 10px rgba(124,58,237,.3);font-weight:700}
+.keto-panel{display:none}.keto-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:28px;font-weight:700;color:#7C3AED;margin:8px 0}
+.result-note{font-size:12px;color:var(--slate-l)}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#F5F3FF;border-left:3px solid #7C3AED;color:#3B0764}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.alert-danger{background:#FEE2E2;border-left:3px solid #DC2626;color:#7F1D1D}
+.alert-ok{background:#D1FAE5;border-left:3px solid #059669;color:#064E3B}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus{border-color:#7C3AED}
+.food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.food-table th{background:#3B0764;color:#E9D5FF;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.food-table th:first-child{text-align:left}
+.food-table td{padding:7px 12px;border-bottom:1px solid #F5F3FF;text-align:center;vertical-align:middle}
+.food-table td:first-child{text-align:left;font-weight:600;color:var(--slate)}
+.food-table tbody tr:nth-child(even){background:#FAF5FF}
+.food-table tr:hover td{background:#EDE9FE}
+.keto-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:20px;font-size:11.5px;font-weight:700;margin:3px}
+.badge-ok{background:#D1FAE5;color:#065F46}
+.badge-mod{background:#FEF3C7;color:#92400E}
+.badge-no{background:#FEE2E2;color:#7F1D1D}
+.badge-keto{background:#EDE9FE;color:#5B21B6}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:10px}
+.food-item{background:white;border-radius:8px;padding:10px 12px;border:1px solid var(--border);font-size:12.5px;display:flex;align-items:center;gap:8px}
+.food-item-ok{border-left:3px solid #059669}
+.food-item-mod{border-left:3px solid #D97706}
+.food-item-no{border-left:3px solid #DC2626}
+.menu-card{background:white;border-radius:12px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px}
+.menu-card-hdr{padding:12px 16px;font-size:13px;font-weight:700;color:white;display:flex;align-items:center;gap:8px}
+.menu-card-body{padding:14px 16px}
+.menu-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;gap:10px}
+.menu-row:last-child{border-bottom:none}
+.menu-row-food{flex:1;font-weight:600;color:var(--slate)}
+.menu-row-macros{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.mpill-sm{padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:700}
+.ratio-table{width:100%;border-collapse:collapse;font-size:13px;border-radius:10px;overflow:hidden}
+.ratio-table th{background:linear-gradient(90deg,#3B0764,#7C3AED);color:white;padding:10px 14px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.ratio-table th:first-child{text-align:left}
+.ratio-table td{padding:10px 14px;border-bottom:1px solid #EDE9FE;text-align:center;vertical-align:middle}
+.ratio-table td:first-child{text-align:left;font-weight:600;color:var(--slate)}
+.ratio-table tbody tr:nth-child(even){background:#FAF5FF}
+.ratio-table tr:hover td{background:#EDE9FE}
+.monitor-row{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px}
+.monitor-row:last-child{border-bottom:none}
+.monitor-icon{font-size:22px;flex-shrink:0;width:32px;text-align:center}
+.monitor-label{font-weight:700;color:var(--slate);margin-bottom:2px}
+.monitor-val{color:var(--slate-l);font-size:12px}
+.ketone-scale{display:flex;gap:0;border-radius:10px;overflow:hidden;margin-top:8px;border:1px solid var(--border)}
+.ketone-box{flex:1;padding:10px 6px;text-align:center;font-size:11px;font-weight:700}
+.gki-result{background:linear-gradient(135deg,#7C3AED,#5B21B6);border-radius:12px;padding:16px;color:white;text-align:center;margin-top:12px}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .keto-tabs{display:none!important}
+  .keto-panel{display:none!important}
+  .keto-panel.active{display:block!important}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item active" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🥑 Dieta Chetogenica</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#3B0764 0%,#7C3AED 60%,#A78BFA 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(124,58,237,.35);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🥑</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Dieta Chetogenica — Strumenti Clinici</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Calcolo macronutrienti, tipi di KD, alimenti consentiti, menu esempio, monitoraggio e sicurezza. Basato su <b>ILAE 2018 · AAN 2016 · ESPEN 2021</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧮 Calcolo Macro</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥩 Alimenti</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📋 Menu Esempio</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🩺 Monitoraggio</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="keto-tabs no-print">
+  <button class="keto-tab active" onclick="showKetoTab('principi')">📖 Principi & Indicazioni</button>
+  <button class="keto-tab" onclick="showKetoTab('calcolo')">🧮 Calcolo Macronutrienti</button>
+  <button class="keto-tab" onclick="showKetoTab('alimenti')">🥩 Alimenti Consentiti</button>
+  <button class="keto-tab" onclick="showKetoTab('menu')">🍽️ Menu Esempio</button>
+  <button class="keto-tab" onclick="showKetoTab('monitoraggio')">🩺 Monitoraggio & Sicurezza</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 1: PRINCIPI & INDICAZIONI                     -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="keto-panel active" id="tab-principi">
+
+  <div class="alert-info alert-box">
+    <b>🔬 Cos'è la Dieta Chetogenica?</b> La dieta chetogenica (KD) è un regime alimentare a bassissimo contenuto di carboidrati, elevato contenuto di grassi e adeguato apporto proteico. La drastica riduzione dei CHO (&lt;20–50 g/die) porta il fegato a produrre <b>corpi chetonici</b> (β-idrossibutirrato, acetoacetato, acetone) dal metabolismo lipidico, sostituendo il glucosio come substrato energetico principale — uno stato chiamato <b>chetosi nutrizionale</b>.
+  </div>
+
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="calc-box">
+      <h3>✅ Indicazioni Cliniche Principali</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">🧠 Epilessia Farmaco-Resistente</div>
+          <div style="font-size:12px;color:var(--slate-l)">Indicazione primaria. ≥50% riduzione crisi nel 50% dei pazienti. Specialmente: Sindrome di Dravet, GLUT1, Deficit di Piruvato Deidrogenasi.</div>
+        </div>
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">⚖️ Obesità & Sindrome Metabolica</div>
+          <div style="font-size:12px;color:var(--slate-l)">Efficace a breve-medio termine per perdita di peso, riduzione glicemia, miglioramento profilo lipidico (↑HDL, ↓TG).</div>
+        </div>
+        <div style="padding:10px 12px;background:#FFF7ED;border-radius:8px;border-left:3px solid #D97706">
+          <div style="font-weight:700;font-size:13px;color:#78350F;margin-bottom:3px">🩸 Diabete Tipo 2</div>
+          <div style="font-size:12px;color:var(--slate-l)">Riduzione HbA1c, peso corporeo, fabbisogno di farmaci ipoglicemizzanti. Monitoraggio glicemico intensivo necessario.</div>
+        </div>
+        <div style="padding:10px 12px;background:#FFF1F2;border-radius:8px;border-left:3px solid #E11D48">
+          <div style="font-weight:700;font-size:13px;color:#881337;margin-bottom:3px">🎗️ Oncologia (Uso Adiuvante)</div>
+          <div style="font-size:12px;color:var(--slate-l)">Glioblastoma e altri tumori cerebrali: ipotesi metabolica (Warburg). Uso sperimentale, sempre in affiancamento alle cure standard.</div>
+        </div>
+        <div style="padding:10px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+          <div style="font-weight:700;font-size:13px;color:#1E3A8A;margin-bottom:3px">🧬 Altre Indicazioni</div>
+          <div style="font-size:12px;color:var(--slate-l)">PCOS, emicrania cronica, malattia di Alzheimer (Tipo 3 Diabete), SLA (sperimentale), Parkinson (neuroprotettivo).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>🚫 Controindicazioni Assolute & Relative</h3>
+      <div style="margin-bottom:10px">
+        <div style="font-weight:700;font-size:12px;color:#7F1D1D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">⛔ Controindicazioni Assolute</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="padding:6px 10px;background:#FEE2E2;border-radius:6px;font-size:12px;color:#7F1D1D">Deficit di piruvato carbossilasi</div>
+          <div style="padding:6px 10px;background:#FEE2E2;border-radius:6px;font-size:12px;color:#7F1D1D">Porfiria acuta intermittente</div>
+          <div style="padding:6px 10px;background:#FEE2E2;border-radius:6px;font-size:12px;color:#7F1D1D">Disturbi dell'ossidazione degli acidi grassi (LCHAD, MCAD, VLCAD)</div>
+          <div style="padding:6px 10px;background:#FEE2E2;border-radius:6px;font-size:12px;color:#7F1D1D">Deficit di carnitina primario / secondario</div>
+          <div style="padding:6px 10px;background:#FEE2E2;border-radius:6px;font-size:12px;color:#7F1D1D">Deficit di carnitina palmitoiltransferasi (CPT I/II)</div>
+          <div style="padding:6px 10px;background:#FEE2E2;border-radius:6px;font-size:12px;color:#7F1D1D">Disturbi della beta-ossidazione mitocondriale</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:12px;color:#78350F;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">⚠️ Controindicazioni Relative</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="padding:6px 10px;background:#FEF3C7;border-radius:6px;font-size:12px;color:#78350F">Malattia epatica severa (cirrosi)</div>
+          <div style="padding:6px 10px;background:#FEF3C7;border-radius:6px;font-size:12px;color:#78350F">Pancreatite cronica</div>
+          <div style="padding:6px 10px;background:#FEF3C7;border-radius:6px;font-size:12px;color:#78350F">Dislipidemia severa (LDL molto elevato)</div>
+          <div style="padding:6px 10px;background:#FEF3C7;border-radius:6px;font-size:12px;color:#78350F">Gravidanza e allattamento</div>
+          <div style="padding:6px 10px;background:#FEF3C7;border-radius:6px;font-size:12px;color:#78350F">Malnutrizione o scarso accrescimento pediatrico</div>
+          <div style="padding:6px 10px;background:#FEF3C7;border-radius:6px;font-size:12px;color:#78350F">Disturbi del comportamento alimentare</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPI DI KD -->
+  <div class="calc-box">
+    <h3>📊 Tipi di Dieta Chetogenica — Confronto</h3>
+    <div style="overflow-x:auto">
+      <table class="ratio-table">
+        <thead>
+          <tr>
+            <th>Tipo di KD</th>
+            <th>Rapporto (G:P+C)</th>
+            <th>CHO (g/die)</th>
+            <th>Grassi (% kcal)</th>
+            <th>Proteine (% kcal)</th>
+            <th>Indicazione Principale</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>🏆 Classica 4:1</b></td>
+            <td><span class="badge-keto keto-badge">4:1</span></td>
+            <td>5–10 g</td>
+            <td>90%</td>
+            <td>6–8%</td>
+            <td>Epilessia pediatrica, GLUT1</td>
+            <td>Standard gold per epilessia. Monitoraggio intensivo necessario.</td>
+          </tr>
+          <tr>
+            <td><b>Classica 3:1</b></td>
+            <td><span class="badge-keto keto-badge">3:1</span></td>
+            <td>10–15 g</td>
+            <td>85%</td>
+            <td>8–10%</td>
+            <td>Epilessia, maggiore tollerabilità</td>
+            <td>Più flessibile. Minor rischio ipoglicemia neonatale.</td>
+          </tr>
+          <tr>
+            <td><b>MCT (Medium Chain Triglycerides)</b></td>
+            <td>Variabile</td>
+            <td>15–20 g</td>
+            <td>60–70%</td>
+            <td>10–15%</td>
+            <td>Epilessia con miglior tolleranza GI</td>
+            <td>30–60% delle calorie da MCT. Più CHO consentiti. GI più frequenti.</td>
+          </tr>
+          <tr>
+            <td><b>Atkins Modificata (MAD)</b></td>
+            <td>~1:1</td>
+            <td>15–20 g</td>
+            <td>65%</td>
+            <td>25–30%</td>
+            <td>Adulti, adolescenti, obesità, T2D</td>
+            <td>No restrizione calorica. Più aderente. Efficacia epilessia ~simile a classica.</td>
+          </tr>
+          <tr>
+            <td><b>LGIT (Low Glycemic Index)</b></td>
+            <td>~1:1</td>
+            <td>40–60 g (IG &lt;50)</td>
+            <td>55–65%</td>
+            <td>20–30%</td>
+            <td>Epilessia lieve, bambini in crescita</td>
+            <td>Più varietà alimentare. Migliore compliance a lungo termine.</td>
+          </tr>
+          <tr>
+            <td><b>Very Low CHO (VLCKD)</b></td>
+            <td>~2:1</td>
+            <td>&lt;20–30 g</td>
+            <td>70–75%</td>
+            <td>15–20%</td>
+            <td>Obesità, T2D, sindrome metabolica</td>
+            <td>Forma più diffusa per dimagrimento. LARN Italia, SIGOT.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- fine tab-principi -->
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 2: CALCOLO MACRONUTRIENTI                      -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="keto-panel" id="tab-calcolo">
+
+  <div class="alert-info alert-box">
+    <b>🧮 Calcolo Macronutrienti Chetogenici</b> — Inserire i dati del paziente per calcolare la distribuzione ottimale dei macronutrienti in base al tipo di dieta chetogenica scelto.
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>👤 Dati Paziente</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="k-peso" placeholder="es. 75" step="0.5" oninput="calcKeto()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="k-altezza" placeholder="es. 170" oninput="calcKeto()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="k-eta" placeholder="es. 35" oninput="calcKeto()"></div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Sesso</label>
+        <select id="k-sesso" onchange="calcKeto()">
+          <option value="m">Maschio</option>
+          <option value="f">Femmina</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Livello attività fisica</label>
+        <select id="k-attivita" onchange="calcKeto()">
+          <option value="1.2">Sedentario (poco o nessun esercizio)</option>
+          <option value="1.375">Leggermente attivo (1–3 gg/settimana)</option>
+          <option value="1.55" selected>Moderatamente attivo (3–5 gg/settimana)</option>
+          <option value="1.725">Molto attivo (6–7 gg/settimana)</option>
+          <option value="1.9">Estremamente attivo (atleti)</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Tipo di Dieta Chetogenica</label>
+        <select id="k-tipo" onchange="calcKeto()">
+          <option value="4_1">Classica 4:1</option>
+          <option value="3_1">Classica 3:1</option>
+          <option value="mad" selected>Atkins Modificata (MAD)</option>
+          <option value="vlckd">VLCKD (Obesità/T2D)</option>
+          <option value="lgit">LGIT</option>
+          <option value="mct">MCT</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Obiettivo</label>
+        <select id="k-obiettivo" onchange="calcKeto()">
+          <option value="man">Mantenimento</option>
+          <option value="dima">Dimagrimento (-500 kcal/die)</option>
+          <option value="epilessia">Epilessia (fabbisogno pediatrico RDA)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>📊 Risultati Calcolo</h3>
+      <div id="keto-results" style="text-align:center;color:var(--slate-l);padding:30px 0;font-size:13px">
+        Inserire i dati del paziente per calcolare i macronutrienti.
+      </div>
+    </div>
+  </div>
+
+  <!-- GKI CALCULATOR -->
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🩸 Indice Glucosio-Chetoni (GKI)</h3>
+      <div class="alert-info alert-box" style="margin-bottom:12px">
+        Il <b>GKI (Glucose Ketone Index)</b> = Glicemia (mmol/L) ÷ β-idrossibutirrato (mmol/L). Indicatore dello stato chetotico terapeutico. Più basso = più profonda la chetosi.
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Glicemia capillare (mg/dL)</label><input type="number" id="gki-glic" placeholder="es. 90" oninput="calcGKI()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>β-idrossibutirrato ematico (mmol/L)</label><input type="number" id="gki-keton" placeholder="es. 1.5" step="0.1" oninput="calcGKI()"></div>
+      <div id="gki-result" style="display:none" class="gki-result">
+        <div style="font-size:12px;opacity:.8;margin-bottom:4px">GKI calcolato</div>
+        <div style="font-size:36px;font-weight:700" id="gki-val">—</div>
+        <div style="font-size:12px;opacity:.9;margin-top:6px" id="gki-note">—</div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>🔵 Scala Chetoni Urinari (Stix)</h3>
+      <div style="margin-bottom:10px;font-size:12.5px;color:var(--slate-l)">Riferimento per il monitoraggio con stix urinari. I chetoni ematici sono più precisi degli urinari.</div>
+      <div class="ketone-scale">
+        <div class="ketone-box" style="background:#F1F5F9;color:#64748B">
+          <div style="font-size:16px">⚪</div>
+          <div>Negativo</div>
+          <div style="font-size:10px">&lt; 0.5 mmol/L</div>
+          <div style="font-size:10px">No chetosi</div>
+        </div>
+        <div class="ketone-box" style="background:#FEF3C7;color:#92400E">
+          <div style="font-size:16px">🟡</div>
+          <div>Tracce</div>
+          <div style="font-size:10px">0.5–1.5</div>
+          <div style="font-size:10px">Lieve</div>
+        </div>
+        <div class="ketone-box" style="background:#FDE68A;color:#78350F">
+          <div style="font-size:16px">🟠</div>
+          <div>Piccole</div>
+          <div style="font-size:10px">1.5–3.0</div>
+          <div style="font-size:10px">Moderata</div>
+        </div>
+        <div class="ketone-box" style="background:#EDE9FE;color:#5B21B6">
+          <div style="font-size:16px">🟣</div>
+          <div>Moderate</div>
+          <div style="font-size:10px">3.0–8.0</div>
+          <div style="font-size:10px">Terapeutica</div>
+        </div>
+        <div class="ketone-box" style="background:#DDD6FE;color:#3B0764">
+          <div style="font-size:16px">🔵</div>
+          <div>Grandi</div>
+          <div style="font-size:10px">&gt; 8.0</div>
+          <div style="font-size:10px">Profonda</div>
+        </div>
+      </div>
+      <div class="alert-warn alert-box" style="margin-top:10px">
+        <b>⚠️ Attenzione:</b> Chetoni ematici &gt;10 mmol/L con glicemia elevata → rischio <b>chetoacidosi diabetica</b>. Contattare il medico immediatamente.
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-calcolo -->
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 3: ALIMENTI CONSENTITI                         -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="keto-panel" id="tab-alimenti">
+
+  <div class="alert-info alert-box">
+    <b>🥩 Guida agli Alimenti Chetogenici</b> — Gli alimenti ✅ permessi sono a bassissimo contenuto di carboidrati. ⚠️ moderati vanno consumati con attenzione alle quantità. ❌ vietati compromettono la chetosi.
+  </div>
+
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="calc-box">
+      <h3>✅ Alimenti Permessi (CHO &lt;5g/100g)</h3>
+      <div style="margin-bottom:12px">
+        <div style="font-weight:700;font-size:11.5px;color:#065F46;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🥩 Proteine & Grassi</div>
+        <div class="food-grid">
+          <div class="food-item food-item-ok"><span>🥩</span>Manzo, agnello, maiale</div>
+          <div class="food-item food-item-ok"><span>🐔</span>Pollo, tacchino, anatra</div>
+          <div class="food-item food-item-ok"><span>🐟</span>Salmone, tonno, sgombro</div>
+          <div class="food-item food-item-ok"><span>🦐</span>Gamberi, cozze, seppie</div>
+          <div class="food-item food-item-ok"><span>🥚</span>Uova (tuorlo + albume)</div>
+          <div class="food-item food-item-ok"><span>🧀</span>Formaggi stagionati</div>
+          <div class="food-item food-item-ok"><span>🧈</span>Burro, panna, lardo</div>
+          <div class="food-item food-item-ok"><span>🫒</span>Olio d'oliva EVO</div>
+          <div class="food-item food-item-ok"><span>🥥</span>Olio di cocco, MCT</div>
+          <div class="food-item food-item-ok"><span>🥑</span>Avocado (0.9g CHO)</div>
+          <div class="food-item food-item-ok"><span>🥓</span>Pancetta, prosciutto crudo</div>
+          <div class="food-item food-item-ok"><span>🫙</span>Maionese (senza zucchero)</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:11.5px;color:#065F46;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🥦 Verdure a Basso IG</div>
+        <div class="food-grid">
+          <div class="food-item food-item-ok"><span>🥦</span>Broccoli (4g CHO)</div>
+          <div class="food-item food-item-ok"><span>🥬</span>Spinaci (1.4g CHO)</div>
+          <div class="food-item food-item-ok"><span>🥒</span>Zucchine (2.1g CHO)</div>
+          <div class="food-item food-item-ok"><span>🥗</span>Insalata, lattuga</div>
+          <div class="food-item food-item-ok"><span>🌿</span>Cavolo, cavolfiore</div>
+          <div class="food-item food-item-ok"><span>🫑</span>Peperoni (verdi)</div>
+          <div class="food-item food-item-ok"><span>🍄</span>Funghi (2.3g CHO)</div>
+          <div class="food-item food-item-ok"><span>🌱</span>Asparagi, sedano</div>
+          <div class="food-item food-item-ok"><span>🫛</span>Fagiolini (4.5g CHO)</div>
+          <div class="food-item food-item-ok"><span>🫚</span>Olive (1.0g CHO)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>⚠️ Moderati &amp; ❌ Vietati</h3>
+      <div style="margin-bottom:14px">
+        <div style="font-weight:700;font-size:11.5px;color:#92400E;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">⚠️ Consuma con Moderazione</div>
+        <div class="food-grid">
+          <div class="food-item food-item-mod"><span>🫐</span>Mirtilli (9g/100g)</div>
+          <div class="food-item food-item-mod"><span>🍓</span>Fragole (5.5g/100g)</div>
+          <div class="food-item food-item-mod"><span>🫐</span>Lamponi (5g/100g)</div>
+          <div class="food-item food-item-mod"><span>🥜</span>Mandorle (6g/100g)</div>
+          <div class="food-item food-item-mod"><span>🥜</span>Noci, nocciole</div>
+          <div class="food-item food-item-mod"><span>🥛</span>Panna acida</div>
+          <div class="food-item food-item-mod"><span>🧀</span>Ricotta (3g/100g)</div>
+          <div class="food-item food-item-mod"><span>🍫</span>Cioccolato &gt;90%</div>
+          <div class="food-item food-item-mod"><span>🥩</span>Salumi lavorati</div>
+          <div class="food-item food-item-mod"><span>🌶️</span>Pomodori (&lt;50g)</div>
+          <div class="food-item food-item-mod"><span>🧅</span>Cipolla (&lt;30g)</div>
+          <div class="food-item food-item-mod"><span>🥕</span>Carota cruda (&lt;50g)</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:11.5px;color:#7F1D1D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">❌ Assolutamente Vietati</div>
+        <div class="food-grid">
+          <div class="food-item food-item-no"><span>🍞</span>Pane, pasta, riso</div>
+          <div class="food-item food-item-no"><span>🍰</span>Dolci, biscotti</div>
+          <div class="food-item food-item-no"><span>🥔</span>Patate, patate dolci</div>
+          <div class="food-item food-item-no"><span>🍫</span>Cioccolato &lt;85%</div>
+          <div class="food-item food-item-no"><span>🍎</span>Tutta la frutta (eccetto bacche)</div>
+          <div class="food-item food-item-no"><span>🫘</span>Legumi (fagioli, lenticchie)</div>
+          <div class="food-item food-item-no"><span>🥤</span>Succhi di frutta, bibite</div>
+          <div class="food-item food-item-no"><span>🍺</span>Birra, alcolici dolci</div>
+          <div class="food-item food-item-no"><span>🥛</span>Latte, yogurt normale</div>
+          <div class="food-item food-item-no"><span>🌽</span>Mais, cereali</div>
+          <div class="food-item food-item-no"><span>🍯</span>Miele, sciroppi</div>
+          <div class="food-item food-item-no"><span>🍕</span>Cibi processati</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELLA NUTRIZIONALE DI RIFERIMENTO -->
+  <div class="calc-box">
+    <h3>📊 Valori Nutrizionali Alimenti Chetogenici Chiave (per 100g)</h3>
+    <div style="overflow-x:auto">
+      <table class="food-table">
+        <thead>
+          <tr>
+            <th>Alimento</th>
+            <th>Kcal</th>
+            <th>Grassi (g)</th>
+            <th>Proteine (g)</th>
+            <th>CHO (g)</th>
+            <th>Fibra (g)</th>
+            <th>CHO Netti</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>🥑 Avocado</td><td>160</td><td>14.7</td><td>2.0</td><td>8.5</td><td>6.7</td><td><span class="badge-ok keto-badge">1.8g</span></td><td>Eccellente fonte grassi MUFA</td></tr>
+          <tr><td>🧈 Burro</td><td>717</td><td>81.1</td><td>0.9</td><td>0.1</td><td>0</td><td><span class="badge-ok keto-badge">0.1g</span></td><td>Base culinaria KD</td></tr>
+          <tr><td>🥚 Uovo intero</td><td>143</td><td>9.9</td><td>12.6</td><td>0.7</td><td>0</td><td><span class="badge-ok keto-badge">0.7g</span></td><td>Proteine complete, coline</td></tr>
+          <tr><td>🐟 Salmone</td><td>208</td><td>13.4</td><td>20.4</td><td>0</td><td>0</td><td><span class="badge-ok keto-badge">0g</span></td><td>Omega-3 EPA/DHA</td></tr>
+          <tr><td>🧀 Parmigiano</td><td>392</td><td>25.8</td><td>33.0</td><td>3.2</td><td>0</td><td><span class="badge-ok keto-badge">3.2g</span></td><td>Alto Ca, controllare Na</td></tr>
+          <tr><td>🥦 Broccoli</td><td>34</td><td>0.4</td><td>2.8</td><td>4.0</td><td>2.6</td><td><span class="badge-ok keto-badge">1.4g</span></td><td>Glucosinolati, vitamina C</td></tr>
+          <tr><td>🥬 Spinaci</td><td>23</td><td>0.4</td><td>2.9</td><td>1.4</td><td>2.2</td><td><span class="badge-ok keto-badge">0g</span></td><td>Fe, Mg, vitamina K</td></tr>
+          <tr><td>🥜 Mandorle</td><td>579</td><td>49.9</td><td>21.2</td><td>21.6</td><td>12.5</td><td><span class="badge-mod keto-badge">9.1g</span></td><td>Controllare la quantità</td></tr>
+          <tr><td>🥥 Olio MCT</td><td>862</td><td>100</td><td>0</td><td>0</td><td>0</td><td><span class="badge-ok keto-badge">0g</span></td><td>Chetogenesi rapida, max 15ml/dose</td></tr>
+          <tr><td>🫒 Olio EVO</td><td>884</td><td>100</td><td>0</td><td>0</td><td>0</td><td><span class="badge-ok keto-badge">0g</span></td><td>MUFA, polifenoli</td></tr>
+          <tr><td>🍓 Fragole</td><td>32</td><td>0.3</td><td>0.7</td><td>7.7</td><td>2.0</td><td><span class="badge-mod keto-badge">5.7g</span></td><td>Porzioni piccole (50g)</td></tr>
+          <tr><td>🐔 Petto pollo</td><td>165</td><td>3.6</td><td>31.0</td><td>0</td><td>0</td><td><span class="badge-ok keto-badge">0g</span></td><td>Proteine magre, no CHO</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- fine tab-alimenti -->
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 4: MENU ESEMPIO                                -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="keto-panel" id="tab-menu">
+
+  <div class="alert-info alert-box">
+    <b>🍽️ Menu Esempio Chetogenici</b> — Esempi di piani alimentari giornalieri per i diversi tipi di KD. Le quantità sono indicative per un adulto di 70 kg con apporto di ~1800 kcal/die.
+  </div>
+
+  <!-- MENU 1: MAD -->
+  <div class="menu-card">
+    <div class="menu-card-hdr" style="background:linear-gradient(135deg,#3B0764,#7C3AED)">
+      <span style="font-size:20px">🥑</span>
+      <div>
+        <div>Atkins Modificata (MAD) — 1800 kcal</div>
+        <div style="font-size:11px;opacity:.85;font-weight:400">CHO ~20g · Grassi ~145g · Proteine ~90g · Rapporto ~2:1</div>
+      </div>
+    </div>
+    <div class="menu-card-body">
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🌅 Colazione</div>
+        <div class="menu-row-food">
+          3 uova strapazzate in burro + 2 fette pancetta + ½ avocado + caffè con panna
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">480 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">26g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">3g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">41g G</span>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🍽️ Pranzo</div>
+        <div class="menu-row-food">
+          Salmone al forno 150g + zucchine trifolate in olio EVO 150g + insalata mista + olio EVO 20ml
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">550 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">35g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">5g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">44g G</span>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🍎 Spuntino</div>
+        <div class="menu-row-food">
+          30g noci + 30g parmigiano + 5 olive
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">280 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">11g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">4g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">24g G</span>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🌙 Cena</div>
+        <div class="menu-row-food">
+          Petto di pollo 200g con crosta di erbe aromatiche + broccoli al vapore 200g con burro + 15ml olio EVO
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">490 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">62g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">8g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">36g G</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU 2: VLCKD -->
+  <div class="menu-card">
+    <div class="menu-card-hdr" style="background:linear-gradient(135deg,#064E3B,#059669)">
+      <span style="font-size:20px">⚖️</span>
+      <div>
+        <div>VLCKD per Dimagrimento — 1400 kcal</div>
+        <div style="font-size:11px;opacity:.85;font-weight:400">CHO &lt;30g · Grassi ~100g · Proteine ~80g · Deficit calorico 400 kcal</div>
+      </div>
+    </div>
+    <div class="menu-card-body">
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🌅 Colazione</div>
+        <div class="menu-row-food">
+          2 uova sode + 100g ricotta intera + cannella + caffè amaro
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">310 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">24g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">4g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">22g G</span>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🍽️ Pranzo</div>
+        <div class="menu-row-food">
+          Tonno al naturale 150g + insalata mista + pomodori ciliegini (&lt;50g) + olio EVO 15ml + limone
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">340 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">34g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">6g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">22g G</span>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🍎 Spuntino</div>
+        <div class="menu-row-food">
+          20g mandorle + 100g fragole
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">150 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">5g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">9g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">10g G</span>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🌙 Cena</div>
+        <div class="menu-row-food">
+          Filetto di branzino 180g al vapore + spinaci saltati in olio EVO 200g + 10ml olio EVO
+        </div>
+        <div class="menu-row-macros">
+          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">380 kcal</span>
+          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">40g P</span>
+          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">3g CHO</span>
+          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">24g G</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSIGLI PRATICI -->
+  <div class="calc-box">
+    <h3>💡 Consigli Pratici per la Cucina Chetogenica</h3>
+    <div class="grid-2">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
+          <b>🧮 Conta i CHO netti:</b> Sottrai la fibra dai carboidrati totali. Es.: broccoli 4g CHO - 2.6g fibra = 1.4g CHO netti.
+        </div>
+        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
+          <b>🫙 Elettroliti:</b> Aggiungere brodo di ossa, sale rosa, acqua di mare diluita. La KD causa natriuresi e perdita di elettroliti.
+        </div>
+        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
+          <b>🥥 MCT Oil:</b> Iniziare con 5ml/die e aumentare gradualmente a 15–20ml per evitare disturbi gastrointestinali.
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
+          <b>📅 Adattamento (settimane 1–4):</b> La "keto-flu" (affaticamento, mal di testa, crampi) è normale e transitoria. Idratazione abbondante.
+        </div>
+        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
+          <b>🍽️ Etichette:</b> Leggere sempre le etichette nutrizionali. Molti alimenti "senza zucchero" contengono maltodestrine o sciroppi ad alto IG.
+        </div>
+        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
+          <b>💊 Farmaci:</b> La KD può modificare l'assorbimento di farmaci antiepilettici e ipoglicemizzanti. Sempre supervisione medica.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-menu -->
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 5: MONITORAGGIO & SICUREZZA                    -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="keto-panel" id="tab-monitoraggio">
+
+  <div class="alert-warn alert-box">
+    <b>⚠️ La dieta chetogenica richiede supervisione medica e nutrizionistica.</b> Non avviare mai una KD senza valutazione clinica preliminare e monitoraggio periodico degli esami ematochimici.
+  </div>
+
+  <!-- SCHEDULE MONITORAGGIO -->
+  <div class="calc-box" style="margin-bottom:14px">
+    <h3>📅 Schema di Monitoraggio Laboratoristico</h3>
+    <div style="overflow-x:auto">
+      <table class="ratio-table">
+        <thead>
+          <tr>
+            <th>Esame</th>
+            <th>Basale</th>
+            <th>1 Mese</th>
+            <th>3 Mesi</th>
+            <th>6 Mesi</th>
+            <th>Annuale</th>
+            <th>Valori Target KD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><b>🩸 Glicemia a digiuno</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>70–100 mg/dL</td></tr>
+          <tr><td><b>β-OHButirrato ematico</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>0.5–3.0 mmol/L (nutriz.)</td></tr>
+          <tr><td><b>HbA1c</b></td><td>✅</td><td>—</td><td>✅</td><td>✅</td><td>✅</td><td>&lt;5.7% (non diabetici)</td></tr>
+          <tr><td><b>Colesterolo totale, LDL, HDL</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>LDL &lt;100 mg/dL, HDL ↑</td></tr>
+          <tr><td><b>Trigliceridi</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>&lt;150 mg/dL (spesso ↓↓)</td></tr>
+          <tr><td><b>Transaminasi (GOT/GPT)</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>Normali (esclud. steatosi)</td></tr>
+          <tr><td><b>Funzionalità renale (Cr, GFR, urea)</b></td><td>✅</td><td>—</td><td>✅</td><td>✅</td><td>✅</td><td>Normali</td></tr>
+          <tr><td><b>Elettroliti (Na, K, Mg, P, Ca)</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>Normali (spesso depleti)</td></tr>
+          <tr><td><b>Acido urico</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>&lt;6.0 mg/dL (F), &lt;7.0 (M)</td></tr>
+          <tr><td><b>Vitamina D, B12, folati</b></td><td>✅</td><td>—</td><td>—</td><td>✅</td><td>✅</td><td>Vit D &gt;30 ng/mL</td></tr>
+          <tr><td><b>Emocromo completo</b></td><td>✅</td><td>—</td><td>✅</td><td>✅</td><td>✅</td><td>Normale</td></tr>
+          <tr><td><b>Selenio, Zinco</b></td><td>✅</td><td>—</td><td>—</td><td>✅</td><td>✅</td><td>Normali (rischio deplezione)</td></tr>
+          <tr><td><b>Ecografia renale</b></td><td>✅</td><td>—</td><td>—</td><td>—</td><td>✅</td><td>No nefrolitiasi</td></tr>
+          <tr><td><b>ECG basale</b></td><td>✅</td><td>—</td><td>—</td><td>—</td><td>✅</td><td>Normale (ipokaliemia rischio)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EFFETTI COLLATERALI -->
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚠️ Effetti Collaterali e Gestione</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="monitor-row" style="background:#FFF7ED;border-radius:8px;border:none">
+          <div class="monitor-icon">🤕</div>
+          <div>
+            <div class="monitor-label">Keto-Flu (settimane 1–2)</div>
+            <div class="monitor-val">Mal di testa, affaticamento, nausea, irritabilità. <b>Gestione:</b> Idratazione abbondante, supplementazione elettroliti (Na 2–4g, K 3g, Mg 300mg/die).</div>
+          </div>
+        </div>
+        <div class="monitor-row" style="background:#F5F3FF;border-radius:8px;border:none">
+          <div class="monitor-icon">🚽</div>
+          <div>
+            <div class="monitor-label">Stipsi</div>
+            <div class="monitor-val">Comune per riduzione fibra. <b>Gestione:</b> Aumentare verdure a basso CHO, semi di chia (max 15g/die), semi di lino macinati, psyllium husk, idratazione &gt;2L/die.</div>
+          </div>
+        </div>
+        <div class="monitor-row" style="background:#FEF3C7;border-radius:8px;border:none">
+          <div class="monitor-icon">💎</div>
+          <div>
+            <div class="monitor-label">Nefrolitiasi (Calcoli Renali)</div>
+            <div class="monitor-val">Rischio aumentato (ossalati, urati). <b>Gestione:</b> Idratazione &gt;2.5L/die, citrato di potassio (se pH urinario &lt;5.5), limitare ossalati, ecografia annuale.</div>
+          </div>
+        </div>
+        <div class="monitor-row" style="background:#F0FDF4;border-radius:8px;border:none">
+          <div class="monitor-icon">📈</div>
+          <div>
+            <div class="monitor-label">Iperlipidemia (LDL paradosso)</div>
+            <div class="monitor-val">Alcuni pazienti mostrano aumento LDL. <b>Gestione:</b> Ridurre grassi saturi, preferire MUFA (olio EVO, avocado), omega-3. Valutare particella LDL (size).</div>
+          </div>
+        </div>
+        <div class="monitor-row" style="background:#FEE2E2;border-radius:8px;border:none">
+          <div class="monitor-icon">🦴</div>
+          <div>
+            <div class="monitor-label">Riduzione Densità Ossea (lungo termine)</div>
+            <div class="monitor-val">Acidosi metabolica cronica può aumentare riassorbimento osseo. <b>Gestione:</b> Calcio 1000–1500mg/die, vitamina D3 2000 UI/die, citrato di potassio.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>💊 Supplementazione Raccomandata in KD</h3>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="padding:9px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:12.5px;color:#3B0764">Multivitaminico + Minerali</div>
+          <div style="font-size:12px;color:var(--slate-l)">1 compressa/die con cibo. Coprire deficit di B-vitamine, vitamina C, E, A.</div>
+        </div>
+        <div style="padding:9px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:12.5px;color:#3B0764">Calcio Citrato</div>
+          <div style="font-size:12px;color:var(--slate-l)">500–1500 mg/die in 2–3 dosi. Il citrato riduce anche il rischio di calcoli.</div>
+        </div>
+        <div style="padding:9px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:12.5px;color:#3B0764">Vitamina D3</div>
+          <div style="font-size:12px;color:var(--slate-l)">1000–4000 UI/die in base ai livelli ematici. Con K2 (100mcg MK-7).</div>
+        </div>
+        <div style="padding:9px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:12.5px;color:#3B0764">Magnesio Glicinato/Malato</div>
+          <div style="font-size:12px;color:var(--slate-l)">300–400 mg/die sera. Riduce crampi muscolari, migliora sonno.</div>
+        </div>
+        <div style="padding:9px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:12.5px;color:#3B0764">Selenio + Zinco</div>
+          <div style="font-size:12px;color:var(--slate-l)">Se &gt;1 anno KD: Se 55–200 mcg/die, Zn 10–25 mg/die. Monitorare ematicamente.</div>
+        </div>
+        <div style="padding:9px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:12.5px;color:#3B0764">Omega-3 (EPA+DHA)</div>
+          <div style="font-size:12px;color:var(--slate-l)">1–3 g/die se apporto di pesce grasso &lt;2 volte/settimana. Antinfiammatorio.</div>
+        </div>
+        <div style="padding:9px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:12.5px;color:#3B0764">Carnitina (L-Carnitina)</div>
+          <div style="font-size:12px;color:var(--slate-l)">2–3 g/die se supplementazione MCT Oil. Supporta beta-ossidazione.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIFERIMENTI -->
+  <div class="calc-box">
+    <h3>📚 Riferimenti Bibliografici e Linee Guida</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px">
+      <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px">
+        <b>ILAE 2018</b> — International League Against Epilepsy: "Dietary therapies for epilepsy: International consensus statement". <i>Epilepsia Open</i> 2018;3(2):175–92.
+      </div>
+      <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px">
+        <b>AAN 2016</b> — American Academy of Neurology: "Practice guideline summary: Dietary therapies for epilepsy". <i>Neurology</i> 2017;88(3):321–8.
+      </div>
+      <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px">
+        <b>ESPEN 2021</b> — "Clinical nutrition in neurology". Raccomandazioni per KD in epilessia farmaco-resistente e malattie neurodegenerative.
+      </div>
+      <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px">
+        <b>SIGOT/SICOB 2022</b> — Linee guida italiane per la VLCKD nel trattamento dell'obesità. Protocollo di 12–16 settimane.
+      </div>
+      <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px">
+        <b>ADA 2024</b> — American Diabetes Association Standards of Care: Low-carbohydrate eating patterns per il diabete tipo 2.
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-monitoraggio -->
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
+
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+function showKetoTab(id) {
+  document.querySelectorAll('.keto-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.keto-tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
+  const tabs = document.querySelectorAll('.keto-tab');
+  const map = {principi:0, calcolo:1, alimenti:2, menu:3, monitoraggio:4};
+  if (tabs[map[id]]) tabs[map[id]].classList.add('active');
+}
+
+function calcKeto() {
+  const peso = parseFloat(document.getElementById('k-peso').value) || 0;
+  const altezza = parseFloat(document.getElementById('k-altezza').value) || 0;
+  const eta = parseFloat(document.getElementById('k-eta').value) || 0;
+  const sesso = document.getElementById('k-sesso').value;
+  const attivita = parseFloat(document.getElementById('k-attivita').value) || 1.55;
+  const tipo = document.getElementById('k-tipo').value;
+  const obiettivo = document.getElementById('k-obiettivo').value;
+  const res = document.getElementById('keto-results');
+  if (!peso || !altezza || !eta) { res.innerHTML = '<div style="text-align:center;color:var(--slate-l);padding:20px;font-size:13px">Inserire peso, altezza ed età per calcolare.</div>'; return; }
+
+  // BMR Harris-Benedict
+  let bmr = sesso === 'm'
+    ? (10 * peso) + (6.25 * altezza) - (5 * eta) + 5
+    : (10 * peso) + (6.25 * altezza) - (5 * eta) - 161;
+  let tdee = Math.round(bmr * attivita);
+  let kcal = tdee;
+  if (obiettivo === 'dima') kcal = Math.max(1200, tdee - 500);
+  if (obiettivo === 'epilessia') kcal = Math.round(peso * 70); // ~70 kcal/kg per pediatria
+
+  // Macros per tipo
+  let fatPct, protPct, choPct;
+  switch(tipo) {
+    case '4_1': fatPct=0.90; protPct=0.07; choPct=0.03; break;
+    case '3_1': fatPct=0.85; protPct=0.10; choPct=0.05; break;
+    case 'mad': fatPct=0.65; protPct=0.28; choPct=0.07; break;
+    case 'vlckd': fatPct=0.70; protPct=0.25; choPct=0.05; break;
+    case 'lgit': fatPct=0.55; protPct=0.25; choPct=0.20; break;
+    case 'mct': fatPct=0.60; protPct=0.15; choPct=0.25; break;
+    default: fatPct=0.65; protPct=0.28; choPct=0.07;
+  }
+
+  const fatG = Math.round((kcal * fatPct) / 9);
+  const protG = Math.round((kcal * protPct) / 4);
+  const choG = Math.round((kcal * choPct) / 4);
+  const ratio = Math.round((fatG / (protG + choG)) * 10) / 10;
+  const bmi = Math.round((peso / ((altezza/100) ** 2)) * 10) / 10;
+
+  res.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:#F5F3FF;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--slate-l);margin-bottom:2px">Energia Target</div>
+        <div style="font-size:26px;font-weight:700;color:#7C3AED">${kcal}</div>
+        <div style="font-size:11px;color:var(--slate-l)">kcal/die</div>
+      </div>
+      <div style="background:#FFF7ED;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--slate-l);margin-bottom:2px">BMI</div>
+        <div style="font-size:26px;font-weight:700;color:#D97706">${bmi}</div>
+        <div style="font-size:11px;color:var(--slate-l)">kg/m²</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div style="background:#FFFBEB;border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">🧈 GRASSI</div>
+        <div style="font-size:22px;font-weight:700;color:#B45309">${fatG}</div>
+        <div style="font-size:10px;color:var(--slate-l)">g/die (${Math.round(fatPct*100)}%)</div>
+      </div>
+      <div style="background:#F0FDF4;border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">💪 PROTEINE</div>
+        <div style="font-size:22px;font-weight:700;color:#15803D">${protG}</div>
+        <div style="font-size:10px;color:var(--slate-l)">g/die (${Math.round(protPct*100)}%)</div>
+      </div>
+      <div style="background:#EFF6FF;border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--slate-l);margin-bottom:2px">🍞 CHO</div>
+        <div style="font-size:22px;font-weight:700;color:#1D4ED8">${choG}</div>
+        <div style="font-size:10px;color:var(--slate-l)">g/die (${Math.round(choPct*100)}%)</div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,#3B0764,#7C3AED);border-radius:10px;padding:12px;color:white;text-align:center">
+      <div style="font-size:11px;opacity:.8;margin-bottom:3px">Rapporto Chetogenico (G:P+CHO)</div>
+      <div style="font-size:28px;font-weight:700">${ratio}:1</div>
+      <div style="font-size:11px;opacity:.8;margin-top:3px">${ratio>=3?'🟣 Fortemente chetogenico':ratio>=2?'🔵 Chetogenico':ratio>=1?'🟡 Moderatamente chetogenico':'⚪ Non chetogenico'}</div>
+    </div>
+    <div style="margin-top:10px;font-size:11.5px;color:var(--slate-l);background:#F8FAFC;border-radius:8px;padding:8px 12px">
+      💡 <b>BMR:</b> ${Math.round(bmr)} kcal · <b>TDEE:</b> ${tdee} kcal · <b>Prot/kg:</b> ${(protG/peso).toFixed(1)} g/kg
+    </div>`;
+}
+
+function calcGKI() {
+  const glic = parseFloat(document.getElementById('gki-glic').value) || 0;
+  const keton = parseFloat(document.getElementById('gki-keton').value) || 0;
+  const resEl = document.getElementById('gki-result');
+  if (!glic || !keton) { resEl.style.display='none'; return; }
+  const glucMmol = glic / 18.0182;
+  const gki = Math.round((glucMmol / keton) * 100) / 100;
+  let note = '';
+  if (gki <= 1) note = '🟣 Chetosi terapeutica massima (oncologia, epilessia refrattaria)';
+  else if (gki <= 3) note = '🔵 Chetosi terapeutica (epilessia, malattie neurodeg.)';
+  else if (gki <= 6) note = '🟡 Chetosi moderata (perdit peso, T2D)';
+  else if (gki <= 9) note = '🟢 Chetosi lieve / adattamento';
+  else note = '⚪ Non in chetosi nutrizionale';
+  document.getElementById('gki-val').textContent = gki;
+  document.getElementById('gki-note').textContent = note;
+  resEl.style.display = 'block';
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof initAuth === 'function') initAuth();
+});
+</script>
+</body>
+</html>

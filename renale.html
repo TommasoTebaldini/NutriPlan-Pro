@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Nefropatia / IRC — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.ren-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ren-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.ren-tab:hover{background:rgba(249,115,22,.1);color:#EA580C}
+.ren-tab.active{background:linear-gradient(135deg,#C2410C,#F97316);color:white;box-shadow:0 3px 10px rgba(249,115,22,.3);font-weight:700}
+.ren-panel{display:none}.ren-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#FFF7ED;border-left:3px solid #F97316;color:#7C2D12}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.alert-danger{background:#FEE2E2;border-left:3px solid #DC2626;color:#7F1D1D}
+.alert-ok{background:#D1FAE5;border-left:3px solid #059669;color:#064E3B}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus{border-color:#F97316}
+.ren-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.ren-table th{background:linear-gradient(90deg,#7C2D12,#C2410C);color:#FED7AA;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.ren-table th:first-child{text-align:left}
+.ren-table td{padding:8px 12px;border-bottom:1px solid #FFF7ED;text-align:center;vertical-align:middle}
+.ren-table td:first-child{text-align:left;font-weight:600;color:var(--slate)}
+.ren-table tbody tr:nth-child(even){background:#FFF7ED}
+.ren-table tr:hover td{background:#FFEDD5}
+.stage-card{border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow)}
+.stage-hdr{padding:12px 16px;color:white;font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:10px}
+.stage-body{padding:14px 16px;background:white;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px;margin-top:8px}
+.food-item{background:white;border-radius:8px;padding:9px 11px;border:1px solid var(--border);font-size:12px;display:flex;align-items:center;gap:7px}
+.food-item-ok{border-left:3px solid #059669}
+.food-item-mod{border-left:3px solid #D97706}
+.food-item-no{border-left:3px solid #DC2626}
+.macro-target{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:12.5px}
+.badge-pill{display:inline-flex;align-items:center;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.result-big{font-size:26px;font-weight:700;color:#EA580C;margin:6px 0}
+.dialisi-card{background:white;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:14px}
+.dialisi-hdr{padding:14px 18px;color:white;font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px}
+.dialisi-body{padding:16px 18px}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .ren-tabs{display:none!important}
+  .ren-panel{display:none!important}
+  .ren-panel.active{display:block!important}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item active" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🫘 Nefropatia Cronica / IRC</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#7C2D12 0%,#C2410C 55%,#F97316 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(194,65,12,.35);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🫘</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">Insufficienza Renale Cronica — Gestione Nutrizionale</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Piani dietetici personalizzati per IRC Stadio 1–5, Emodialisi e Dialisi Peritoneale. Basato su <b>ESPEN 2021 · KDOQI 2020 · KDIGO 2024</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📊 IRC 1–5</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">💉 Emodialisi</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🔄 Dialisi Peritoneale</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧮 Calcolatore</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="ren-tabs no-print">
+  <button class="ren-tab active" onclick="showRenTab('stadiazione')">📊 Stadiazione & Obiettivi</button>
+  <button class="ren-tab" onclick="showRenTab('calcolo')">🧮 Calcolo Fabbisogni</button>
+  <button class="ren-tab" onclick="showRenTab('irc15')">🟡 IRC Stadi 1–5</button>
+  <button class="ren-tab" onclick="showRenTab('emodialisi')">💉 Emodialisi (HD)</button>
+  <button class="ren-tab" onclick="showRenTab('peritoneale')">🔄 Dialisi Peritoneale (DP)</button>
+  <button class="ren-tab" onclick="showRenTab('alimenti')">🥦 Alimenti & Lisciviazione</button>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 1: STADIAZIONE                 -->
+<!-- ══════════════════════════════════ -->
+<div class="ren-panel active" id="tab-stadiazione">
+
+  <div class="alert-info alert-box">
+    <b>🫘 Insufficienza Renale Cronica (IRC)</b> — Definita come anomalie della struttura o della funzione renale presenti per &gt;3 mesi. La stadiazione KDIGO si basa sul <b>GFR stimato (eGFR)</b> e sull'<b>albuminuria</b> per valutare rischio cardiovascolare e progressione.
+  </div>
+
+  <div class="calc-box">
+    <h3>📊 Classificazione KDIGO 2024 per eGFR</h3>
+    <div style="overflow-x:auto">
+      <table class="ren-table">
+        <thead>
+          <tr>
+            <th>Stadio G</th>
+            <th>eGFR (mL/min/1.73m²)</th>
+            <th>Descrizione</th>
+            <th>Proteine (g/kg/die)</th>
+            <th>Potassio</th>
+            <th>Fosforo</th>
+            <th>Sodio (NaCl)</th>
+            <th>Liquidi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:10px;font-weight:700">G1</span></td>
+            <td>≥ 90</td>
+            <td>Danno renale con GFR normale</td>
+            <td>0.8 g/kg</td>
+            <td>Libero</td>
+            <td>Libero</td>
+            <td>&lt; 5 g NaCl</td>
+            <td>Libera</td>
+          </tr>
+          <tr>
+            <td><span style="background:#FEF3C7;color:#92400E;padding:3px 10px;border-radius:10px;font-weight:700">G2</span></td>
+            <td>60–89</td>
+            <td>Lieve riduzione GFR</td>
+            <td>0.8 g/kg</td>
+            <td>Monitorare</td>
+            <td>Monitorare</td>
+            <td>&lt; 5 g NaCl</td>
+            <td>Libera</td>
+          </tr>
+          <tr>
+            <td><span style="background:#FED7AA;color:#9A3412;padding:3px 10px;border-radius:10px;font-weight:700">G3a</span></td>
+            <td>45–59</td>
+            <td>Lieve-moderata riduzione</td>
+            <td>0.6–0.8 g/kg</td>
+            <td>&lt; 2500 mg/die</td>
+            <td>&lt; 800 mg/die</td>
+            <td>&lt; 5 g NaCl</td>
+            <td>Libera</td>
+          </tr>
+          <tr>
+            <td><span style="background:#FDBA74;color:#7C2D12;padding:3px 10px;border-radius:10px;font-weight:700">G3b</span></td>
+            <td>30–44</td>
+            <td>Moderata-severa riduzione</td>
+            <td>0.6–0.8 g/kg</td>
+            <td>&lt; 2000 mg/die</td>
+            <td>&lt; 700 mg/die</td>
+            <td>&lt; 5 g NaCl</td>
+            <td>Secondo bilancio</td>
+          </tr>
+          <tr>
+            <td><span style="background:#FCA5A5;color:#7F1D1D;padding:3px 10px;border-radius:10px;font-weight:700">G4</span></td>
+            <td>15–29</td>
+            <td>Severa riduzione</td>
+            <td>0.6–0.8 g/kg (AA essenziali)</td>
+            <td>&lt; 1500 mg/die</td>
+            <td>&lt; 600 mg/die</td>
+            <td>&lt; 3 g NaCl</td>
+            <td>Restrizione se edemi</td>
+          </tr>
+          <tr>
+            <td><span style="background:#EF4444;color:white;padding:3px 10px;border-radius:10px;font-weight:700">G5</span></td>
+            <td>&lt; 15</td>
+            <td>Insufficienza renale (pre-dialisi)</td>
+            <td>0.6 g/kg (max 50% HBV)</td>
+            <td>&lt; 1000 mg/die</td>
+            <td>&lt; 500 mg/die</td>
+            <td>&lt; 2 g NaCl</td>
+            <td>Restrizione severa</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;font-size:11.5px;color:var(--slate-l);background:#FFF7ED;border-radius:8px;padding:8px 12px">
+      💡 <b>HBV = Alto Valore Biologico:</b> uova, carne bianca, pesce. <b>AA essenziali</b> o chetoanaloghi (Ketosteril®) possono essere impiegati nei stadi avanzati per ridurre l'accumulo di urea mantenendo l'apporto proteico minimo.
+    </div>
+  </div>
+
+  <!-- ALBUMINURIA -->
+  <div class="calc-box">
+    <h3>🔴 Classificazione Albuminuria (KDIGO)</h3>
+    <div style="overflow-x:auto">
+      <table class="ren-table">
+        <thead>
+          <tr>
+            <th>Categoria A</th>
+            <th>ACR (mg/g o mg/mmol)</th>
+            <th>Descrizione</th>
+            <th>Implicazione Nutrizionale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="background:#D1FAE5;color:#065F46;padding:2px 9px;border-radius:8px;font-weight:700">A1</span></td>
+            <td>&lt; 30 mg/g</td>
+            <td>Normale o lievemente aumentata</td>
+            <td>Dieta standard, monitoraggio proteico</td>
+          </tr>
+          <tr>
+            <td><span style="background:#FEF3C7;color:#92400E;padding:2px 9px;border-radius:8px;font-weight:700">A2</span></td>
+            <td>30–300 mg/g</td>
+            <td>Moderatamente aumentata (microalbuminuria)</td>
+            <td>Ridurre proteine a 0.8 g/kg, controllo Na e P</td>
+          </tr>
+          <tr>
+            <td><span style="background:#FEE2E2;color:#7F1D1D;padding:2px 9px;border-radius:8px;font-weight:700">A3</span></td>
+            <td>&gt; 300 mg/g</td>
+            <td>Molto aumentata (macroalbuminuria/proteinuria)</td>
+            <td>Proteine 0.6–0.8 g/kg, albumina serica monitorata, supplemento EAA</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- OBIETTIVI NUTRIZIONALI -->
+  <div class="calc-box">
+    <h3>🎯 Obiettivi Nutrizionali Trasversali IRC</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-weight:700;font-size:12px;color:#7C2D12;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">✅ Priorità Cliniche</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px;border-left:3px solid #F97316">
+            <b>Rallentare progressione IRC:</b> Restrizione proteica (&lt;0.8 g/kg/die) riduce iperfiltrazione glomerulare e stress ossidativo.
+          </div>
+          <div style="padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px;border-left:3px solid #F97316">
+            <b>Prevenire l'iperkaliemia:</b> K+ &gt; 5.5 mEq/L → aritmie fatali. Lisciviazione degli alimenti fondamentale.
+          </div>
+          <div style="padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px;border-left:3px solid #F97316">
+            <b>Controllare iperfosfatemia:</b> P &gt; 5.5 mg/dL → iperPTH secondario, calcificazioni vascolari. Evitare additivi fosfato (E338–E341).
+          </div>
+          <div style="padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px;border-left:3px solid #F97316">
+            <b>Mantenere stato nutrizionale:</b> Prevenire la malnutrizione proteico-energetica (PEW — Protein Energy Wasting), frequente in IRC avanzata.
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:12px;color:#7C2D12;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">⚠️ Segnali di Allarme</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="padding:8px 12px;background:#FEE2E2;border-radius:8px;font-size:12.5px;border-left:3px solid #DC2626">
+            <b>Iperkaliemia acuta:</b> K+ &gt; 6.5 mEq/L → emergenza cardiologica. Monitorare ogni 1–3 mesi.
+          </div>
+          <div style="padding:8px 12px;background:#FEE2E2;border-radius:8px;font-size:12.5px;border-left:3px solid #DC2626">
+            <b>Edemi improvvisi:</b> Ritenzione sodio-idrica → segnalare immediatamente al nefrologo.
+          </div>
+          <div style="padding:8px 12px;background:#FEE2E2;border-radius:8px;font-size:12.5px;border-left:3px solid #DC2626">
+            <b>Calo ponderale involontario:</b> &gt;5% in 3 mesi → sospettare PEW. Aumentare densità energetica.
+          </div>
+          <div style="padding:8px 12px;background:#FEE2E2;border-radius:8px;font-size:12.5px;border-left:3px solid #DC2626">
+            <b>Urine schiumose/ematuria:</b> Aumento proteinuria → rivalutare piano proteico.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-stadiazione -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 2: CALCOLO FABBISOGNI          -->
+<!-- ══════════════════════════════════ -->
+<div class="ren-panel" id="tab-calcolo">
+
+  <div class="alert-info alert-box">
+    <b>🧮 Calcolo Fabbisogni Nutrizionali IRC</b> — Inserire i dati del paziente per ottenere le raccomandazioni personalizzate secondo ESPEN 2021 e KDOQI 2020.
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>👤 Dati Paziente</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="r-peso" placeholder="es. 70" step="0.5" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso ideale (kg) — se obeso/edematoso</label><input type="number" id="r-peso-ideale" placeholder="es. 65 (opzionale)" step="0.5" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="r-altezza" placeholder="es. 170" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="r-eta" placeholder="es. 60" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Sesso</label>
+        <select id="r-sesso" onchange="calcIRC()">
+          <option value="m">Maschio</option>
+          <option value="f">Femmina</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Stadio / Tipo di trattamento</label>
+        <select id="r-stadio" onchange="calcIRC()">
+          <option value="g1g2">IRC Stadio G1–G2 (eGFR ≥ 60)</option>
+          <option value="g3a">IRC Stadio G3a (eGFR 45–59)</option>
+          <option value="g3b">IRC Stadio G3b (eGFR 30–44)</option>
+          <option value="g4">IRC Stadio G4 (eGFR 15–29)</option>
+          <option value="g5">IRC Stadio G5 pre-dialisi (eGFR &lt;15)</option>
+          <option value="hd">Emodialisi (HD)</option>
+          <option value="pd">Dialisi Peritoneale (DP)</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Livello attività fisica</label>
+        <select id="r-attivita" onchange="calcIRC()">
+          <option value="1.2">Sedentario / allettato</option>
+          <option value="1.375" selected>Lievemente attivo</option>
+          <option value="1.55">Moderatamente attivo</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Diabete mellito concomitante?</label>
+        <select id="r-diabete" onchange="calcIRC()">
+          <option value="no">No</option>
+          <option value="si">Sì</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>📊 Raccomandazioni Nutrizionali</h3>
+      <div id="irc-results" style="text-align:center;color:var(--slate-l);padding:30px 0;font-size:13px">
+        Inserire i dati del paziente per visualizzare le raccomandazioni.
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-calcolo -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 3: IRC 1–5                     -->
+<!-- ══════════════════════════════════ -->
+<div class="ren-panel" id="tab-irc15">
+
+  <div class="alert-info alert-box">
+    <b>📋 Piani Dietetici per Stadio IRC</b> — Linee guida nutrizionali specifiche per ogni stadio della malattia renale cronica, secondo ESPEN 2021 e KDOQI 2020.
+  </div>
+
+  <!-- STADIO G1-G2 -->
+  <div class="stage-card">
+    <div class="stage-hdr" style="background:linear-gradient(90deg,#065F46,#059669)">
+      <span style="font-size:24px">🟢</span>
+      <div>
+        <div>IRC Stadio G1–G2 — eGFR ≥ 60 mL/min/1.73m²</div>
+        <div style="font-size:11.5px;font-weight:400;opacity:.9">Danno renale con funzione conservata o lievemente ridotta</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="grid-2">
+        <div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+            <div class="macro-target" style="background:#D1FAE5">
+              <span>💪 Proteine</span><span style="font-weight:700;color:#065F46">0.8 g/kg/die (normale)</span>
+            </div>
+            <div class="macro-target" style="background:#EFF6FF">
+              <span>🔥 Energia</span><span style="font-weight:700;color:#1D4ED8">30–35 kcal/kg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FFF7ED">
+              <span>🧂 Sodio</span><span style="font-weight:700;color:#C2410C">&lt; 5 g NaCl/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEF3C7">
+              <span>⚡ Potassio</span><span style="font-weight:700;color:#92400E">Libero (monitorare)</span>
+            </div>
+            <div class="macro-target" style="background:#F5F3FF">
+              <span>🔵 Fosforo</span><span style="font-weight:700;color:#5B21B6">Libero (monitorare)</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;color:var(--slate-l);line-height:1.7">
+            <b>Priorità:</b> Controllo pressione arteriosa (&lt;130/80 mmHg), dieta DASH o mediterranea, riduzione rischio cardiovascolare.<br><br>
+            <b>Se diabete:</b> Controllo glicemico intensivo, riduzione carboidrati raffinati.<br><br>
+            <b>Idratazione:</b> 1.5–2 L/die (salvo controindicazioni cardiache).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STADIO G3 -->
+  <div class="stage-card">
+    <div class="stage-hdr" style="background:linear-gradient(90deg,#78350F,#D97706)">
+      <span style="font-size:24px">🟡</span>
+      <div>
+        <div>IRC Stadio G3a–G3b — eGFR 30–59 mL/min/1.73m²</div>
+        <div style="font-size:11.5px;font-weight:400;opacity:.9">Moderata riduzione della funzione renale — iniziare restrizioni</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="grid-2">
+        <div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+            <div class="macro-target" style="background:#FEF3C7">
+              <span>💪 Proteine</span><span style="font-weight:700;color:#92400E">0.6–0.8 g/kg/die</span>
+            </div>
+            <div class="macro-target" style="background:#EFF6FF">
+              <span>🔥 Energia</span><span style="font-weight:700;color:#1D4ED8">30–35 kcal/kg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FFF7ED">
+              <span>🧂 Sodio</span><span style="font-weight:700;color:#C2410C">&lt; 5 g NaCl/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>⚡ Potassio (G3a)</span><span style="font-weight:700;color:#7F1D1D">&lt; 2500 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>⚡ Potassio (G3b)</span><span style="font-weight:700;color:#7F1D1D">&lt; 2000 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🔵 Fosforo</span><span style="font-weight:700;color:#7F1D1D">&lt; 800 mg/die</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;color:var(--slate-l);line-height:1.7">
+            <b>Lisciviazione verdure:</b> Necessaria per tutte le verdure ricche di K (patate, pomodori). Tecnica: pelare, tagliare piccolo, bollire in acqua abbondante, cambiare l'acqua 2–3 volte.<br><br>
+            <b>Fosforo:</b> Leggere etichette per additivi fosfato (E338–E341). Il fosforo degli additivi è assorbito quasi al 100% vs 40–60% del fosforo organico.<br><br>
+            <b>Attenzione:</b> No sostituti del sale (contengono KCl). No integratori di potassio senza prescrizione medica.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STADIO G4 -->
+  <div class="stage-card">
+    <div class="stage-hdr" style="background:linear-gradient(90deg,#9A3412,#EA580C)">
+      <span style="font-size:24px">🟠</span>
+      <div>
+        <div>IRC Stadio G4 — eGFR 15–29 mL/min/1.73m²</div>
+        <div style="font-size:11.5px;font-weight:400;opacity:.9">Severa riduzione — preparazione alla terapia sostitutiva renale</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="grid-2">
+        <div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+            <div class="macro-target" style="background:#FFEDD5">
+              <span>💪 Proteine</span><span style="font-weight:700;color:#9A3412">0.6–0.8 g/kg (≥50% HBV)</span>
+            </div>
+            <div class="macro-target" style="background:#EFF6FF">
+              <span>🔥 Energia</span><span style="font-weight:700;color:#1D4ED8">30–35 kcal/kg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FFF7ED">
+              <span>🧂 Sodio</span><span style="font-weight:700;color:#C2410C">&lt; 3 g NaCl/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>⚡ Potassio</span><span style="font-weight:700;color:#7F1D1D">&lt; 1500 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🔵 Fosforo</span><span style="font-weight:700;color:#7F1D1D">&lt; 600 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEF3C7">
+              <span>💧 Liquidi</span><span style="font-weight:700;color:#92400E">Secondo bilancio idrico</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;color:var(--slate-l);line-height:1.7">
+            <b>Chetoanaloghi (Ketosteril®):</b> Se apporto proteico &lt;0.6 g/kg tollerato: supplementazione con chetoanaloghi degli AA essenziali, riduce produzione di urea preservando la massa magra.<br><br>
+            <b>Vitamina D attiva:</b> Calcitrolo/alfacalcidolo per prevenire iperPTH secondario.<br><br>
+            <b>Chelanti del fosforo:</b> Calcio carbonato/acetato, sevelamer (non Ca) con i pasti.<br><br>
+            <b>Anemia:</b> EPO + ferro ev se Hb &lt;10 g/dL. Ferro per os ha scarsa efficacia.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STADIO G5 -->
+  <div class="stage-card">
+    <div class="stage-hdr" style="background:linear-gradient(90deg,#450A0A,#DC2626)">
+      <span style="font-size:24px">🔴</span>
+      <div>
+        <div>IRC Stadio G5 Pre-dialisi — eGFR &lt; 15 mL/min/1.73m²</div>
+        <div style="font-size:11.5px;font-weight:400;opacity:.9">Insufficienza renale terminale — gestione strettamente medica e nutrizionale</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="grid-2">
+        <div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>💪 Proteine</span><span style="font-weight:700;color:#7F1D1D">0.6 g/kg (max 50% HBV) + chetoanaloghi</span>
+            </div>
+            <div class="macro-target" style="background:#EFF6FF">
+              <span>🔥 Energia</span><span style="font-weight:700;color:#1D4ED8">30–35 kcal/kg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🧂 Sodio</span><span style="font-weight:700;color:#7F1D1D">&lt; 2 g NaCl/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>⚡ Potassio</span><span style="font-weight:700;color:#7F1D1D">&lt; 1000 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🔵 Fosforo</span><span style="font-weight:700;color:#7F1D1D">&lt; 500 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>💧 Liquidi</span><span style="font-weight:700;color:#7F1D1D">Diuresi residua + 500 mL/die</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;color:var(--slate-l);line-height:1.7">
+            <b>Gestione integrata:</b> Cardine del trattamento è la stretta collaborazione tra nefrologo, dietista e medico di base.<br><br>
+            <b>Monitoraggio mensile:</b> urea, creatinina, K, Na, P, Ca, PTH, albumina, bicarbonato, emocromo.<br><br>
+            <b>Integrazione nutrizionale:</b> Se albumina &lt;3.5 g/dL → considerare integratori orali ipercalorici specifici per IRC (Nepro®, Renilon®) a basso K e P.<br><br>
+            <b>Preparazione alla dialisi:</b> Educazione nutrizionale per transizione HD o DP.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-irc15 -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 4: EMODIALISI                  -->
+<!-- ══════════════════════════════════ -->
+<div class="ren-panel" id="tab-emodialisi">
+
+  <div class="dialisi-card">
+    <div class="dialisi-hdr" style="background:linear-gradient(135deg,#1E3A5F,#2563EB)">
+      <span style="font-size:28px">💉</span>
+      <div>
+        <div style="font-size:15px">Emodialisi (HD) — Gestione Nutrizionale</div>
+        <div style="font-size:12px;opacity:.85;font-weight:400">Sessioni tipiche: 3 volte/settimana, 3.5–4.5 ore/sessione. Dializzato elimina K, P, urea, creatinina e alcune vitamine idrosolubili.</div>
+      </div>
+    </div>
+    <div class="dialisi-body">
+      <div class="alert-info alert-box" style="margin-bottom:14px">
+        <b>⚠️ Paradosso nutrizionale in HD:</b> La dialisi migliora la tolleranza proteica ma aumenta le perdite di aminoacidi (~10–12 g/sessione) e vitamine idrosolubili. L'apporto proteico DEVE essere aumentato rispetto alla pre-dialisi.
+      </div>
+
+      <div class="grid-2" style="margin-bottom:14px">
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1E3A5F;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📊 Raccomandazioni Nutrizionali HD</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div class="macro-target" style="background:#DBEAFE">
+              <span>💪 Proteine</span><span style="font-weight:700;color:#1D4ED8">1.1–1.2 g/kg/die (≥50% HBV)</span>
+            </div>
+            <div class="macro-target" style="background:#EFF6FF">
+              <span>🔥 Energia</span><span style="font-weight:700;color:#1D4ED8">30–35 kcal/kg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🧂 Sodio</span><span style="font-weight:700;color:#7F1D1D">&lt; 2 g NaCl/die (≤85 mEq/die)</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>⚡ Potassio</span><span style="font-weight:700;color:#7F1D1D">2000–2500 mg/die (51–64 mEq)</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🔵 Fosforo</span><span style="font-weight:700;color:#7F1D1D">800–1000 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🔴 Calcio</span><span style="font-weight:700;color:#7F1D1D">1000–1500 mg/die (con chelanti)</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>💧 Liquidi</span><span style="font-weight:700;color:#7F1D1D">Diuresi residua + 500–750 mL</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1E3A5F;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">💊 Supplementazione Raccomandata HD</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px">
+            <div style="padding:8px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+              <b>Vitamina B6, B12, Acido Folico:</b> Perse durante la dialisi. Supplementare giornalmente. Folato 1 mg/die, B12 1000 mcg/mese (im o sublinguale).
+            </div>
+            <div style="padding:8px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+              <b>Vitamina C:</b> Max 60–100 mg/die (no megadosi → oxalosi). Integrazione orale post-dialisi.
+            </div>
+            <div style="padding:8px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+              <b>Vitamina D attiva:</b> Calcitrolo 0.25–0.5 mcg/die o paracalcitolo per iperPTH secondario.
+            </div>
+            <div style="padding:8px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+              <b>Ferro ev:</b> Saccarosio di ferro o carboximaltosio ferrico nelle prime sedute dialitiche (se ferritina &lt;500 ng/mL).
+            </div>
+            <div style="padding:8px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+              <b>L-Carnitina:</b> 1 g ev post-dialisi se sintomi (crampi, stanchezza cronica, aritmie).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-box" style="border:1.5px solid #DBEAFE">
+        <h3>🍽️ Piano Alimentare Tipo HD — Giornata Senza Dialisi</h3>
+        <div style="overflow-x:auto">
+          <table class="ren-table">
+            <thead>
+              <tr><th>Pasto</th><th>Alimenti</th><th>Kcal</th><th>Prot (g)</th><th>K (mg)</th><th>P (mg)</th><th>Na (mg)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🌅 Colazione</td><td>Riso soffiato 40g + latte parzialmente scremato 150ml + marmellata 20g + caffè</td><td>310</td><td>8</td><td>220</td><td>180</td><td>90</td></tr>
+              <tr><td>🍎 Spuntino</td><td>Mela golden 150g (sbucciata)</td><td>78</td><td>0.4</td><td>107</td><td>10</td><td>2</td></tr>
+              <tr><td>🍽️ Pranzo</td><td>Riso bianco 80g + petto pollo 100g + zucchine lisciviate 150g + olio EVO 10ml + pane senza sale 50g</td><td>520</td><td>32</td><td>390</td><td>240</td><td>120</td></tr>
+              <tr><td>🍊 Spuntino</td><td>Pere 150g + 3 crackers senza sale</td><td>130</td><td>1.5</td><td>150</td><td>40</td><td>10</td></tr>
+              <tr><td>🌙 Cena</td><td>Pasta 80g + olio EVO + filetto merluzzo 100g + insalata verde 100g + olio 10ml + pane senza sale 30g</td><td>490</td><td>28</td><td>320</td><td>220</td><td>110</td></tr>
+              <tr style="background:#DBEAFE;font-weight:700"><td>📊 TOTALE</td><td></td><td>1528</td><td>70</td><td>1187</td><td>690</td><td>332</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:8px;font-size:11.5px;color:var(--slate-l)">
+          ⚠️ Questo schema è per un paziente di ~65 kg. Adattare sempre le quantità al peso del paziente. Esempio: paziente 70 kg → prot target ~77 g/die.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-emodialisi -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 5: DIALISI PERITONEALE         -->
+<!-- ══════════════════════════════════ -->
+<div class="ren-panel" id="tab-peritoneale">
+
+  <div class="dialisi-card">
+    <div class="dialisi-hdr" style="background:linear-gradient(135deg,#1B4332,#059669)">
+      <span style="font-size:28px">🔄</span>
+      <div>
+        <div style="font-size:15px">Dialisi Peritoneale (DP) — Gestione Nutrizionale</div>
+        <div style="font-size:12px;opacity:.85;font-weight:400">CAPD (continua ambulatoriale) o APD (automatizzata notturna). Il dializzato peritoneale è a base di glucosio — contribuisce all'apporto calorico.</div>
+      </div>
+    </div>
+    <div class="dialisi-body">
+
+      <div class="alert-info alert-box" style="margin-bottom:14px">
+        <b>🔬 Caratteristiche uniche della DP:</b> A differenza dell'HD, la DP è continua 24h/7gg. Le perdite proteiche peritoneali sono maggiori (~8–10 g/die vs 10–12 g/sessione HD ma solo 3 volte/settimana). Il glucosio del dializzato fornisce 300–800 kcal/die aggiuntive, riducendo l'appetito e favorendo obesità viscerale e dislipidemia.
+      </div>
+
+      <div class="grid-2" style="margin-bottom:14px">
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1B4332;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📊 Raccomandazioni Nutrizionali DP</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div class="macro-target" style="background:#D1FAE5">
+              <span>💪 Proteine</span><span style="font-weight:700;color:#065F46">1.2–1.3 g/kg/die (≥50% HBV)</span>
+            </div>
+            <div class="macro-target" style="background:#D1FAE5">
+              <span>🔥 Energia totale</span><span style="font-weight:700;color:#065F46">30–35 kcal/kg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEF3C7">
+              <span>🍬 Glucosio dializzato</span><span style="font-weight:700;color:#92400E">300–800 kcal/die (da sottrarre)</span>
+            </div>
+            <div class="macro-target" style="background:#D1FAE5">
+              <span>🥗 Kcal da cibo</span><span style="font-weight:700;color:#065F46">30–35 kcal/kg - kcal dializzato</span>
+            </div>
+            <div class="macro-target" style="background:#FEF3C7">
+              <span>⚡ Potassio</span><span style="font-weight:700;color:#92400E">2500–3500 mg/die (meno restrittivo!)</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🔵 Fosforo</span><span style="font-weight:700;color:#7F1D1D">800–1000 mg/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>🧂 Sodio</span><span style="font-weight:700;color:#7F1D1D">&lt; 2 g NaCl/die</span>
+            </div>
+            <div class="macro-target" style="background:#FEE2E2">
+              <span>💧 Liquidi</span><span style="font-weight:700;color:#7F1D1D">Diuresi residua + 500–750 mL</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1B4332;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">⚡ Differenze Chiave DP vs HD</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px">
+            <div style="padding:10px 12px;background:#D1FAE5;border-radius:8px;border-left:3px solid #059669">
+              <b>✅ Potassio meno restrittivo in DP:</b> La dialisi continua rimuove K+ più efficacemente. Molti pazienti in DP non necessitano di restrizione severa del potassio.
+            </div>
+            <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #D97706">
+              <b>⚠️ Glucosio dializzato: calorie nascoste</b><br>
+              Sacca 1.36% → ~80 kcal/sacca<br>
+              Sacca 2.27% → ~140 kcal/sacca<br>
+              Sacca 3.86% → ~240 kcal/sacca<br>
+              CAPD standard (4 sacche/die): 300–600 kcal/die medie.
+            </div>
+            <div style="padding:10px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+              <b>🔵 Perdite proteiche peritoneali:</b> 8–10 g/die in condizioni normali; fino a 20–30 g/die in peritonite. Aumentare proteine durante peritoniti.
+            </div>
+            <div style="padding:10px 12px;background:#FEE2E2;border-radius:8px;border-left:3px solid #DC2626">
+              <b>❌ Rischio obesità e dislipidemia:</b> Il glucosio del dializzato stimola lipogenesi → aumento TG, LDL, peso corporeo. Preferire sacche con aminoacidi o icodextrina quando disponibili.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-box" style="border:1.5px solid #D1FAE5">
+        <h3>🍽️ Piano Alimentare Tipo DP — CAPD 4 sacche 1.36%</h3>
+        <div style="margin-bottom:10px;font-size:12.5px;color:var(--slate-l)">
+          Paziente 70 kg · Kcal dializzato stimato: ~320 kcal/die · Kcal da cibo target: ~2100 - 320 = ~1780 kcal/die
+        </div>
+        <div style="overflow-x:auto">
+          <table class="ren-table">
+            <thead>
+              <tr><th>Pasto</th><th>Alimenti</th><th>Kcal</th><th>Prot (g)</th><th>K (mg)</th><th>P (mg)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🌅 Colazione</td><td>Pane integrale 60g + affettato tacchino 40g + ricotta 50g + caffè con latte parz. scr. 100ml</td><td>350</td><td>20</td><td>280</td><td>230</td></tr>
+              <tr><td>🍎 Spuntino</td><td>Yogurt greco magro 125g + fragole 100g</td><td>160</td><td>12</td><td>350</td><td>150</td></tr>
+              <tr><td>🍽️ Pranzo</td><td>Pasta 90g + sugo pomodoro (50g tom. + olio EVO) + petto tacchino 120g + insalata + spinaci lisciviati 100g + pane 40g</td><td>580</td><td>42</td><td>450</td><td>300</td></tr>
+              <tr><td>🍊 Spuntino</td><td>Mela 150g + 5 mandorle</td><td>120</td><td>2</td><td>160</td><td>45</td></tr>
+              <tr><td>🌙 Cena</td><td>Riso bianco 80g + filetto orata 150g al vapore + broccoli lisciviati 150g + olio EVO 15ml + pane senza sale 30g</td><td>570</td><td>36</td><td>380</td><td>280</td></tr>
+              <tr style="background:#D1FAE5;font-weight:700"><td>📊 Da cibo</td><td></td><td>1780</td><td>112</td><td>1620</td><td>1005</td></tr>
+              <tr style="background:#FEF3C7"><td>➕ Dializzato</td><td>4 sacche 1.36% glucosio</td><td>320</td><td>0</td><td>0</td><td>0</td></tr>
+              <tr style="background:#FFEDD5;font-weight:700"><td>📊 TOTALE</td><td></td><td>2100</td><td>112</td><td>1620</td><td>1005</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- fine tab-peritoneale -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 6: ALIMENTI & LISCIVIAZIONE    -->
+<!-- ══════════════════════════════════ -->
+<div class="ren-panel" id="tab-alimenti">
+
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="calc-box">
+      <h3>✅ Alimenti Consigliati in IRC</h3>
+      <div style="margin-bottom:10px">
+        <div style="font-weight:700;font-size:11.5px;color:#065F46;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🌾 Cereali e Farinacei (basso P, basso K)</div>
+        <div class="food-grid">
+          <div class="food-item food-item-ok"><span>🍚</span>Riso bianco</div>
+          <div class="food-item food-item-ok"><span>🍝</span>Pasta bianca</div>
+          <div class="food-item food-item-ok"><span>🍞</span>Pane senza sale</div>
+          <div class="food-item food-item-ok"><span>🥣</span>Riso soffiato</div>
+          <div class="food-item food-item-ok"><span>🥖</span>Grissini senza sale</div>
+          <div class="food-item food-item-ok"><span>🫓</span>Crackers no sale</div>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-weight:700;font-size:11.5px;color:#065F46;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🥩 Proteine Alta Qualità (HBV)</div>
+        <div class="food-grid">
+          <div class="food-item food-item-ok"><span>🥚</span>Albume d'uovo</div>
+          <div class="food-item food-item-ok"><span>🐔</span>Petto pollo/tacchino</div>
+          <div class="food-item food-item-ok"><span>🐟</span>Merluzzo, sogliola</div>
+          <div class="food-item food-item-ok"><span>🐡</span>Orata, branzino</div>
+          <div class="food-item food-item-ok"><span>🥩</span>Vitello magro</div>
+          <div class="food-item food-item-ok"><span>🐇</span>Coniglio</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:11.5px;color:#065F46;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🍎 Frutta a basso K (per 100g)</div>
+        <div class="food-grid">
+          <div class="food-item food-item-ok"><span>🍎</span>Mela (107 mg K)</div>
+          <div class="food-item food-item-ok"><span>🍐</span>Pera (116 mg K)</div>
+          <div class="food-item food-item-ok"><span>🍓</span>Fragole (153 mg K)</div>
+          <div class="food-item food-item-ok"><span>🍇</span>Uva (191 mg K)</div>
+          <div class="food-item food-item-ok"><span>🍑</span>Pesca sciroppata</div>
+          <div class="food-item food-item-ok"><span>🫐</span>Mirtilli (77 mg K)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>❌ Alimenti da Evitare / Limitare in IRC</h3>
+      <div style="margin-bottom:10px">
+        <div style="font-weight:700;font-size:11.5px;color:#7F1D1D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">⚡ Alto Potassio</div>
+        <div class="food-grid">
+          <div class="food-item food-item-no"><span>🍌</span>Banana (358 mg K)</div>
+          <div class="food-item food-item-no"><span>🥝</span>Kiwi (312 mg K)</div>
+          <div class="food-item food-item-no"><span>🍊</span>Arance (181 mg K)</div>
+          <div class="food-item food-item-no"><span>🥔</span>Patata (328 mg K)</div>
+          <div class="food-item food-item-no"><span>🍅</span>Pomodoro (237 mg K)</div>
+          <div class="food-item food-item-no"><span>🥬</span>Spinaci crudi (558 mg K)</div>
+          <div class="food-item food-item-no"><span>🫘</span>Legumi (tutti)</div>
+          <div class="food-item food-item-no"><span>🍫</span>Cioccolato fondente</div>
+          <div class="food-item food-item-no"><span>🥜</span>Frutta secca (alta K)</div>
+          <div class="food-item food-item-no"><span>🧃</span>Succhi di frutta</div>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-weight:700;font-size:11.5px;color:#7F1D1D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🔵 Alto Fosforo</div>
+        <div class="food-grid">
+          <div class="food-item food-item-no"><span>🥛</span>Latte intero (eccesso)</div>
+          <div class="food-item food-item-no"><span>🧀</span>Formaggi stagionati</div>
+          <div class="food-item food-item-no"><span>🍺</span>Birra (alto P)</div>
+          <div class="food-item food-item-no"><span>🥤</span>Cola (acido fosforico)</div>
+          <div class="food-item food-item-no"><span>🐟</span>Sardine, acciughe</div>
+          <div class="food-item food-item-no"><span>🫘</span>Legumi (alto P)</div>
+          <div class="food-item food-item-no"><span>🌰</span>Frutta secca (alta P)</div>
+          <div class="food-item food-item-no"><span>🥚</span>Tuorlo d'uovo (eccesso)</div>
+        </div>
+      </div>
+      <div class="alert-warn alert-box">
+        <b>⚠️ Additivi fosfato (E338–E341, E450, E452):</b> Presenti in salumi lavorati, formaggi fusi, pane industriale, snack, bevande. Il fosforo inorganico è assorbito quasi al 100% vs 40–60% del fosforo organico. Leggere SEMPRE le etichette.
+      </div>
+    </div>
+  </div>
+
+  <!-- TECNICA LISCIVIAZIONE -->
+  <div class="calc-box">
+    <h3>💧 Tecnica di Lisciviazione delle Verdure</h3>
+    <div class="alert-ok alert-box" style="margin-bottom:14px">
+      <b>✅ La lisciviazione (doppia bollitura) riduce il contenuto di potassio delle verdure del 30–50%.</b> È obbligatoria per tutti i pazienti IRC Stadio G3b e superiori con iperkaliemia.
+    </div>
+    <div class="grid-2">
+      <div>
+        <div style="font-weight:700;font-size:12px;color:var(--slate);margin-bottom:10px">📋 Procedura Standard</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px">
+            <div style="background:#F97316;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</div>
+            <div><b>Pelare</b> la verdura (la buccia è la parte più ricca di K)</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px">
+            <div style="background:#F97316;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</div>
+            <div><b>Tagliare a pezzi piccoli</b> (1–2 cm): maggiore superficie = maggiore perdita di K</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px">
+            <div style="background:#F97316;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</div>
+            <div><b>Ammollo in acqua fredda</b> per almeno 2 ore (cambiare acqua 1–2 volte)</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px">
+            <div style="background:#F97316;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">4</div>
+            <div><b>Prima bollitura</b> in abbondante acqua (rapporto 10:1). Buttare l'acqua.</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:#FFF7ED;border-radius:8px;font-size:12.5px">
+            <div style="background:#F97316;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">5</div>
+            <div><b>Seconda bollitura</b> in acqua pulita. Cuocere fino a cottura desiderata. Buttare l'acqua.</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:#D1FAE5;border-radius:8px;font-size:12.5px">
+            <div style="background:#059669;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">✓</div>
+            <div><b>Condire</b> con olio EVO, erbe aromatiche, limone. MAI aggiungere sale da cucina o sostituti del sale (contengono KCl!).</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:12px;color:var(--slate);margin-bottom:10px">📊 Riduzione K% con Lisciviazione</div>
+        <div style="overflow-x:auto">
+          <table class="ren-table">
+            <thead><tr><th>Alimento</th><th>K crudo (mg/100g)</th><th>K dopo lisciviazione</th><th>Riduzione %</th></tr></thead>
+            <tbody>
+              <tr><td>Patata</td><td>328</td><td>~130–160 mg</td><td>~50%</td></tr>
+              <tr><td>Spinaci</td><td>558</td><td>~200–280 mg</td><td>~50%</td></tr>
+              <tr><td>Pomodoro</td><td>237</td><td>~120–150 mg</td><td>~40%</td></tr>
+              <tr><td>Carote</td><td>320</td><td>~160–180 mg</td><td>~45%</td></tr>
+              <tr><td>Zucchine</td><td>264</td><td>~150–180 mg</td><td>~35%</td></tr>
+              <tr><td>Cavolfiore</td><td>303</td><td>~150–180 mg</td><td>~45%</td></tr>
+              <tr><td>Fagiolini</td><td>209</td><td>~120–140 mg</td><td>~40%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert-warn alert-box" style="margin-top:10px">
+          <b>⚠️ NO a:</b> Cottura al vapore (conserva il K), frutta e verdura crude, brodo di verdure (ricco di K estratto), centrifughe e succhi. ❌ No sostituti del sale (cloruro di potassio KCl → rischio iperkaliemia acuta!).
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fine tab-alimenti -->
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
+
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+function showRenTab(id) {
+  document.querySelectorAll('.ren-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ren-tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
+  const map = {stadiazione:0, calcolo:1, irc15:2, emodialisi:3, peritoneale:4, alimenti:5};
+  const tabs = document.querySelectorAll('.ren-tab');
+  if (tabs[map[id]] !== undefined) tabs[map[id]].classList.add('active');
+}
+
+function calcIRC() {
+  const peso = parseFloat(document.getElementById('r-peso').value) || 0;
+  const pesoI = parseFloat(document.getElementById('r-peso-ideale').value) || 0;
+  const altezza = parseFloat(document.getElementById('r-altezza').value) || 0;
+  const eta = parseFloat(document.getElementById('r-eta').value) || 0;
+  const sesso = document.getElementById('r-sesso').value;
+  const stadio = document.getElementById('r-stadio').value;
+  const attivita = parseFloat(document.getElementById('r-attivita').value) || 1.375;
+  const diabete = document.getElementById('r-diabete').value;
+  const resEl = document.getElementById('irc-results');
+
+  if (!peso || !altezza || !eta) {
+    resEl.innerHTML = '<div style="text-align:center;color:var(--slate-l);padding:20px;font-size:13px">Inserire peso, altezza ed età per visualizzare le raccomandazioni.</div>';
+    return;
+  }
+
+  const pesoCalc = pesoI > 0 ? pesoI : peso;
+  const bmi = Math.round((peso / Math.pow(altezza/100, 2)) * 10) / 10;
+
+  // BMR e TDEE
+  let bmr = sesso === 'm'
+    ? (10 * peso) + (6.25 * altezza) - (5 * eta) + 5
+    : (10 * peso) + (6.25 * altezza) - (5 * eta) - 161;
+  let tdee = Math.round(bmr * attivita);
+
+  // Target kcal e protein per stadio
+  const configs = {
+    g1g2: {kcalMin:30,kcalMax:35,protMin:0.8,protMax:0.8,kMax:null,pMax:null,naMax:5,liq:'Libera',label:'G1–G2',color:'#059669'},
+    g3a:  {kcalMin:30,kcalMax:35,protMin:0.6,protMax:0.8,kMax:2500,pMax:800,naMax:5,liq:'Libera',label:'G3a',color:'#D97706'},
+    g3b:  {kcalMin:30,kcalMax:35,protMin:0.6,protMax:0.8,kMax:2000,pMax:700,naMax:5,liq:'Secondo bilancio',label:'G3b',color:'#EA580C'},
+    g4:   {kcalMin:30,kcalMax:35,protMin:0.6,protMax:0.8,kMax:1500,pMax:600,naMax:3,liq:'Restrizione se edemi',label:'G4',color:'#DC2626'},
+    g5:   {kcalMin:30,kcalMax:35,protMin:0.6,protMax:0.6,kMax:1000,pMax:500,naMax:2,liq:'Diuresi+500mL',label:'G5',color:'#991B1B'},
+    hd:   {kcalMin:30,kcalMax:35,protMin:1.1,protMax:1.2,kMax:2500,pMax:1000,naMax:2,liq:'Diuresi+500-750mL',label:'Emodialisi',color:'#1D4ED8'},
+    pd:   {kcalMin:30,kcalMax:35,protMin:1.2,protMax:1.3,kMax:3500,pMax:1000,naMax:2,liq:'Diuresi+500-750mL',label:'Dialisi Peritoneale',color:'#059669'},
+  };
+  const cfg = configs[stadio];
+
+  const kcalTarget = Math.round(pesoCalc * ((cfg.kcalMin + cfg.kcalMax) / 2));
+  const protMin = Math.round(pesoCalc * cfg.protMin * 10) / 10;
+  const protMax = Math.round(pesoCalc * cfg.protMax * 10) / 10;
+
+  let html = `
+    <div style="margin-bottom:10px;padding:8px 12px;background:#FFF7ED;border-radius:8px;text-align:center">
+      <span style="font-weight:700;color:${cfg.color};font-size:14px">Stadio: ${cfg.label}</span>
+      <span style="margin-left:12px;font-size:12px;color:var(--slate-l)">BMI: ${bmi} kg/m²</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:#FFF7ED;border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--slate-l)">Energia Target</div>
+        <div style="font-size:22px;font-weight:700;color:#EA580C">${kcalTarget}</div>
+        <div style="font-size:10px;color:var(--slate-l)">kcal/die</div>
+      </div>
+      <div style="background:#EFF6FF;border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--slate-l)">Proteine</div>
+        <div style="font-size:22px;font-weight:700;color:#1D4ED8">${protMin}${protMin!==protMax?'–'+protMax:''}</div>
+        <div style="font-size:10px;color:var(--slate-l)">g/die</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px">`;
+
+  if (cfg.kMax) html += `<div style="display:flex;justify-content:space-between;padding:6px 10px;background:#FEE2E2;border-radius:6px"><span>⚡ Potassio max</span><b style="color:#7F1D1D">&lt;${cfg.kMax} mg/die</b></div>`;
+  if (cfg.pMax) html += `<div style="display:flex;justify-content:space-between;padding:6px 10px;background:#FEE2E2;border-radius:6px"><span>🔵 Fosforo max</span><b style="color:#7F1D1D">&lt;${cfg.pMax} mg/die</b></div>`;
+  html += `<div style="display:flex;justify-content:space-between;padding:6px 10px;background:#FEE2E2;border-radius:6px"><span>🧂 Sodio max</span><b style="color:#7F1D1D">&lt;${cfg.naMax} g NaCl/die</b></div>`;
+  html += `<div style="display:flex;justify-content:space-between;padding:6px 10px;background:#EFF6FF;border-radius:6px"><span>💧 Liquidi</span><b style="color:#1D4ED8">${cfg.liq}</b></div>`;
+
+  if (stadio === 'pd') {
+    html += `<div style="padding:8px 10px;background:#D1FAE5;border-radius:6px;margin-top:4px"><b>🔬 DP:</b> Sottrarre kcal dializzato (~300–600 kcal/die) dall'apporto calorico alimentare totale.</div>`;
+  }
+  if (diabete === 'si') {
+    html += `<div style="padding:8px 10px;background:#FEF3C7;border-radius:6px;margin-top:4px"><b>🩸 Diabete:</b> Target HbA1c &lt;7.5–8%. Attenzione a ipoglicemia in dialisi. Evitare CHO semplici.</div>`;
+  }
+
+  html += `</div>
+    <div style="margin-top:10px;font-size:11px;color:var(--slate-l);background:#F8FAFC;border-radius:8px;padding:8px">
+      💡 Peso usato per calcolo: ${pesoCalc} kg · BMR: ${Math.round(bmr)} kcal · TDEE: ${tdee} kcal
+    </div>`;
+
+  resEl.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof initAuth === 'function') initAuth();
+});
+</script>
+</body>
+</html>

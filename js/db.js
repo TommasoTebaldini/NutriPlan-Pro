@@ -743,7 +743,7 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Banana',qt:'100'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
-   ]}
+   ]},
   {id:'allergia_latte',emoji:'🥛',nome:"Allergia Proteine Latte Vaccino (APLV)",badge:'EAACI 2019',colore:'#64748B',
    desc:"Eliminazione totale di latte e derivati. Sostituire calcio con alternative vegetali arricchite.",
    note:"EAACI 2019 · Eliminare caseina, sieroproteine, lattoalbumina, lattoglobulina · Calcio target 1000-1200mg/die da fonti alternative · Vitamina D 800-2000 UI/die · Senza lattosio non significa senza APLV.",

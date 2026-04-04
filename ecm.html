@@ -575,7 +575,7 @@ let ecmFromDB = false;
 function isExpired(e) {
   if (!e.data_fine) return false;
   const today = new Date(); today.setHours(0,0,0,0);
-  return new Date(e.data_fine) < today;
+  return new Date(e.data_fine) <= today;
 }
 
 function daysUntil(dateStr) {
@@ -691,6 +691,7 @@ function renderECM() {
 
     const argomenti = Array.isArray(e.argomenti) ? e.argomenti : [];
     const target = Array.isArray(e.target) ? e.target : [];
+    const safeLink = /^https?:\/\//i.test(e.link) ? e.link : '#';
 
     return `<div class="ecm-card">
       <div class="ecm-card-inner">
@@ -717,7 +718,7 @@ function renderECM() {
             ${argomenti.map(a => `<span class="ecm-tag">${esc(a)}</span>`).join('')}
           </div>
           <div class="ecm-card-actions">
-            <a href="${esc(e.link)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">
+            <a href="${safeLink}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">
               🔗 Vai al sito ufficiale
             </a>
             <span style="font-size:11.5px;color:var(--slate-l);font-style:italic">⚠️ Verifica l'accreditamento attuale prima di iscriverti</span>

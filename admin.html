@@ -280,7 +280,7 @@ async function loadECMCorsi() {
   }
   const today = new Date(); today.setHours(0,0,0,0);
   tbody.innerHTML = data.map(c => {
-    const expired = c.data_fine && new Date(c.data_fine) < today;
+    const expired = c.data_fine && new Date(c.data_fine) <= today;
     const tipoIcon = c.tipo === 'fad' ? '💻' : c.tipo === 'residenziale' ? '🏛️' : '🔀';
     const statoHtml = !c.attivo
       ? '<span style="color:#64748B;font-weight:600">⏸ Inattivo</span>'
@@ -328,7 +328,7 @@ async function salvaCorsoECM() {
   if (!titolo || !provider || !link || !descrizione || crediti < 1) {
     toast('Compila i campi obbligatori (titolo, provider, link, descrizione, crediti)', 'err'); return;
   }
-  const splitList = v => v.split(',').map(s => s.trim()).filter(Boolean);
+  const splitList = inputValue => inputValue.split(',').map(s => s.trim()).filter(Boolean);
   const payload = {
     titolo, provider, link, descrizione, crediti,
     tipo: document.getElementById('ef-tipo').value,

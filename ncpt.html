@@ -687,6 +687,7 @@ async function selCartella(id, nome) {
   const mainInput = document.getElementById('cart-search-main');
   if (mainInput) mainInput.value = nome;
   hideCartDD();
+  hideCartDDMain();
   // Load NCPt for this cartella
   showLoading(true);
   const {data} = await sb.from('ncpt').select('*').eq('cartella_id',id).eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(1);
@@ -1169,8 +1170,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cart = dd._filteredCartelleMain[idx2];
         if (cart) {
           selCartella(cart.id, cart.nome);
-          document.getElementById('cart-search-main').value = cart.nome;
-          hideCartDDMain();
         }
       }
       return;

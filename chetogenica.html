@@ -95,8 +95,8 @@
   <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
   <a class="nav-item active" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
   <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
-  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
   <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
@@ -146,6 +146,21 @@
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🩺 Monitoraggio</div>
     </div>
   </div>
+</div>
+
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="keto-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <select id="keto-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadKetoCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="keto-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaKeto()" style="margin-top:18px;background:linear-gradient(135deg,#7C3AED,#6D28D9)">💾 Salva in Cartella</button>
 </div>
 
 <!-- TABS -->
@@ -963,9 +978,90 @@ function calcGKI() {
   resEl.style.display = 'block';
 }
 
+// ── SAVE / LOAD IN CARTELLA ──
+let ketoCartelle = [];
+let editingKetoNoteId = null;
+
+async function loadKetoCartelle() {
+  if (!currentUser) return;
+  if (ketoCartelle.length) return;
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  ketoCartelle = data || [];
+  const sel = document.getElementById('keto-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  ketoCartelle.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = '📁 ' + c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+function raccogliDatiKeto() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    calcolo: { peso: gv('k-peso'), altezza: gv('k-altezza'), eta: gv('k-eta'), sesso: gv('k-sesso'), attivita: gv('k-attivita'), tipo: gv('k-tipo'), obiettivo: gv('k-obiettivo') },
+    gki: { glicemia: gv('gki-glic'), chetoni: gv('gki-keton') }
+  };
+}
+
+function ripristinaDatiKeto(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.calcolo) {
+    const c = dati.calcolo;
+    sv('k-peso', c.peso); sv('k-altezza', c.altezza); sv('k-eta', c.eta);
+    sv('k-sesso', c.sesso); sv('k-attivita', c.attivita); sv('k-tipo', c.tipo); sv('k-obiettivo', c.obiettivo);
+    if (c.peso && c.altezza) calcKeto();
+  }
+  if (dati.gki) { sv('gki-glic', dati.gki.glicemia); sv('gki-keton', dati.gki.chetoni); if (dati.gki.glicemia && dati.gki.chetoni) calcGKI(); }
+}
+
+async function salvaKeto() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartella_id = document.getElementById('keto-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
+  const nota = document.getElementById('keto-nota').value.trim() || 'Sessione Chetogenica ' + new Date().toLocaleDateString('it');
+  const dati = raccogliDatiKeto();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  const wasNew = !editingKetoNoteId;
+  if (editingKetoNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingKetoNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  if (!editingKetoNoteId && result.data?.[0]?.id) editingKetoNoteId = result.data[0].id;
+  toast(!wasNew ? '✅ Scheda Chetogenica aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
+}
+
+async function caricaKetoDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
+  editingKetoNoteId = noteId;
+  await loadKetoCartelle();
+  const sel = document.getElementById('keto-cartella');
+  if (sel) sel.value = data.cartella_id || '';
+  const notaEl = document.getElementById('keto-nota');
+  if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiKeto(JSON.parse(data.dati || '{}')); } catch(e) {}
+  toast('✅ Scheda Chetogenica caricata', 'ok');
+}
+
 // Init
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof initAuth === 'function') initAuth();
+document.addEventListener('DOMContentLoaded', async () => {
+  if (typeof checkAuth === 'function') {
+    try {
+      await checkAuth(false);
+      if (currentUser) {
+        loadKetoCartelle();
+        const noteId = new URLSearchParams(window.location.search).get('noteId');
+        if (noteId) await caricaKetoDaNote(noteId);
+      }
+    } catch(e) { console.error('Errore init chetogenica:', e); }
+  } else if (typeof initAuth === 'function') initAuth();
 });
 </script>
 </body>

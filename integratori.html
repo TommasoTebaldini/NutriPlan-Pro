@@ -224,6 +224,7 @@ const INT_DATA = [
 let allItems = [];
 
 function hexToRgba(hex, a) {
+  if (!hex || !/^#[0-9A-Fa-f]{6}$/.test(hex)) return `rgba(100,116,139,${a})`;
   const r = parseInt(hex.slice(1,3), 16);
   const g = parseInt(hex.slice(3,5), 16);
   const b = parseInt(hex.slice(5,7), 16);
@@ -243,16 +244,16 @@ function buildIntGrid(filter='') {
     if(q && !filteredItems.length) return '';
     totalVisible += filteredItems.length;
     
-    const catBg  = hexToRgba(cat.colore, 0.06);
-    const catMid = hexToRgba(cat.colore, 0.14);
-    const catText = cat.colore;
+    const catBg      = hexToRgba(cat.colore, 0.06);
+    const catBadgeBg = hexToRgba(cat.colore, 0.14);
+    const catText    = cat.colore;
 
     const itemsHtml = filteredItems.map(it => `
-      <div class="int-item" style="--cat-color:${cat.colore};--cat-bg:${catBg};--cat-mid:${catMid};--cat-text:${catText}">
+      <div class="int-item" style="--cat-color:${cat.colore};--cat-bg:${catBg};--cat-mid:${catBadgeBg};--cat-text:${catText}">
         <div class="int-item-name">
           ${esc(it.nome)}
           <span class="int-item-type" style="background:${typeColor(it.tipo)};color:white">${esc(it.tipo)}</span>
-          <span class="int-badge" style="background:${catMid};color:${cat.colore}">${esc(it.badge)}</span>
+          <span class="int-badge" style="background:${catBadgeBg};color:${cat.colore}">${esc(it.badge)}</span>
         </div>
         <div class="int-item-desc">${esc(it.desc)}</div>
         <div class="int-item-use">🎯 <b>Indicazioni:</b>&nbsp;${esc(it.uso)}</div>

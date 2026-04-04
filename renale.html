@@ -126,6 +126,21 @@
   </div>
 </div>
 
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="ren-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <select id="ren-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadRenCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="ren-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaRenale()" style="margin-top:18px;background:linear-gradient(135deg,#0F766E,#14B8A6)">💾 Salva in Cartella</button>
+</div>
+
 <!-- TABS -->
 <div class="ren-tabs no-print">
   <button class="ren-tab active" onclick="showRenTab('stadiazione')">📊 Stadiazione & Obiettivi</button>
@@ -990,8 +1005,86 @@ function calcIRC() {
   resEl.innerHTML = html;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof initAuth === 'function') initAuth();
+// ── SAVE / LOAD IN CARTELLA ──
+let renCartelle = [];
+let editingRenNoteId = null;
+
+async function loadRenCartelle() {
+  if (!currentUser) return;
+  if (renCartelle.length) return;
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  renCartelle = data || [];
+  const sel = document.getElementById('ren-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  renCartelle.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = '📁 ' + c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+function raccogliDatiRen() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    calcolo: { peso: gv('r-peso'), peso_ideale: gv('r-peso-ideale'), altezza: gv('r-altezza'), eta: gv('r-eta'), sesso: gv('r-sesso'), stadio: gv('r-stadio'), attivita: gv('r-attivita'), diabete: gv('r-diabete') }
+  };
+}
+
+function ripristinaDatiRen(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.calcolo) {
+    const c = dati.calcolo;
+    sv('r-peso', c.peso); sv('r-peso-ideale', c.peso_ideale); sv('r-altezza', c.altezza); sv('r-eta', c.eta);
+    sv('r-sesso', c.sesso); sv('r-stadio', c.stadio); sv('r-attivita', c.attivita); sv('r-diabete', c.diabete);
+    if (c.peso && c.altezza) calcIRC();
+  }
+}
+
+async function salvaRenale() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartella_id = document.getElementById('ren-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
+  const nota = document.getElementById('ren-nota').value.trim() || 'Sessione Nefropatia ' + new Date().toLocaleDateString('it');
+  const dati = raccogliDatiRen();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'renale', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingRenNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRenNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  if (!editingRenNoteId && result.data?.[0]?.id) editingRenNoteId = result.data[0].id;
+  toast(editingRenNoteId ? '✅ Scheda IRC aggiornata!' : '✅ Dati IRC salvati nella cartella!', 'ok');
+}
+
+async function caricaRenDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
+  editingRenNoteId = noteId;
+  await loadRenCartelle();
+  const sel = document.getElementById('ren-cartella');
+  if (sel) sel.value = data.cartella_id || '';
+  const notaEl = document.getElementById('ren-nota');
+  if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiRen(JSON.parse(data.dati || '{}')); } catch(e) {}
+  toast('✅ Scheda IRC caricata', 'ok');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (typeof checkAuth === 'function') {
+    try {
+      await checkAuth(false);
+      if (currentUser) {
+        loadRenCartelle();
+        const noteId = new URLSearchParams(window.location.search).get('noteId');
+        if (noteId) await caricaRenDaNote(noteId);
+      }
+    } catch(e) {}
+  } else if (typeof initAuth === 'function') initAuth();
 });
 </script>
 </body>

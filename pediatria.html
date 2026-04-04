@@ -165,9 +165,7 @@
 <div class="paz-hdr no-print" id="ped-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
-    <select id="ped-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadPedCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="ped-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Titolo sessione</label>
@@ -1155,8 +1153,8 @@ function drawGrowthChartType(type, sesso, ageMonthsPatient, weightPatient, heigh
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth(false);
+    initCartellaWidget('ped-cartella-cw', { hiddenInputId:'ped-cartella', accentColor:'#8B5CF6', labelColor:'#7C3AED', hoverBg:'#F5F3FF', nuovaBg:'#F5F3FF' });
     if (currentUser) {
-      loadPedCartelle();
       const noteId = new URLSearchParams(window.location.search).get('noteId');
       if (noteId) await caricaPedDaNote(noteId);
     }
@@ -1272,8 +1270,7 @@ async function caricaPedDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
   editingPedNoteId = noteId;
-  await loadPedCartelle();
-  const sel = document.getElementById('ped-cartella'); if (sel) sel.value = data.cartella_id || '';
+  await _cwSetById('ped-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('ped-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiPed(JSON.parse(data.dati || '{}')); } catch(e) {}
   syncSharedData();

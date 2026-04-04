@@ -914,9 +914,7 @@
       </div>
       <div class="fg" style="margin-bottom:12px">
         <label>Cartella Paziente</label>
-        <select id="sq-cartella" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit">
-          <option value="">-- Seleziona paziente --</option>
-        </select>
+        <div id="sq-cartella-cw"></div>
       </div>
       <div class="fg" style="margin-bottom:12px">
         <label>Data somministrazione <span style="font-weight:400;color:var(--slate-l)">(opzionale)</span></label>
@@ -1733,7 +1731,7 @@ function apriSalvaQuestionario() {
   if (!_qSaveNome) return;
   document.getElementById('sq-nome').value = _qSaveNome;
   document.getElementById('sq-data').value = new Date().toISOString().slice(0, 10);
-  loadCartellePazienti();
+  _cwClear('sq-cartella-cw');
   openM('modal-salva-q');
 }
 
@@ -1793,6 +1791,7 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
 
 document.addEventListener('DOMContentLoaded', async () => {
   try { await checkAuth(false); } catch(e) {}
+  initCartellaWidget('sq-cartella-cw', { hiddenInputId:'sq-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
   renderEDEQItems();
   renderBESItems();
   renderPHQ9Items();
@@ -1800,7 +1799,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderIESItems();
   renderGAD7Items();
   renderEAT26Items();
-  loadCartellePazienti();
 });
 </script>
 </body>

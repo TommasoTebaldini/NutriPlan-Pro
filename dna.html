@@ -130,9 +130,7 @@
 <div class="paz-hdr no-print" id="dca-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
-    <select id="dca-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadDcaCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="dca-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Titolo sessione</label>
@@ -898,9 +896,7 @@ async function caricaDcaDaNote(noteId) {
   if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
   editingDcaNoteId = noteId;
   // Set cartella
-  await loadDcaCartelle();
-  const sel = document.getElementById('dca-cartella');
-  if (sel) sel.value = data.cartella_id || '';
+  await _cwSetById('dca-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('dca-nota');
   if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiDca(JSON.parse(data.dati || '{}')); } catch(e) {}
@@ -1134,8 +1130,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initEDEQ_dca(); initBITE(); initChEAT(); initKEDS();
   try {
     await checkAuth(false);
+    initCartellaWidget('dca-cartella-cw', { hiddenInputId:'dca-cartella', accentColor:'#14B8A6', labelColor:'#0F766E', hoverBg:'#F0FDF4', nuovaBg:'#F0FDF4' });
     if (currentUser) {
-      loadDcaCartelle();
       const noteId = new URLSearchParams(window.location.search).get('noteId');
       if (noteId) await caricaDcaDaNote(noteId);
     }

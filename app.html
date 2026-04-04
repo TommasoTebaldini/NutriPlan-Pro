@@ -126,10 +126,10 @@
           <input type="text" id="cartella-search" placeholder="🔍 Cerca paziente..." autocomplete="off"
             oninput="filterCartelleDropdown()" onfocus="showCartelleList()" onblur="setTimeout(hideCartelleList,200)"
             style="width:100%;padding:6px 10px;border:1.5px solid rgba(255,255,255,.35);border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none;background:rgba(255,255,255,.12);color:white;transition:border-color .15s;box-sizing:border-box">
-          <div id="cartelle-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #2DD4BF;border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:var(--shadow-lg)"></div>
+          <div id="cartelle-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #2DD4BF;border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:var(--shadow-lg);color:#1E293B"></div>
           <input type="hidden" id="inp-cartella" value="">
-          <span id="cartella-selected" style="font-size:11px;color:rgba(255,255,255,.75);font-weight:600;margin-top:3px;display:block"></span>
         </div>
+        <span id="cartella-selected" style="font-size:11px;color:rgba(255,255,255,.75);font-weight:600;margin-top:3px;display:block"></span>
       </div>
       <!-- Data piano -->
       <div style="max-width:160px;display:flex;flex-direction:column;gap:3px">
@@ -1070,7 +1070,7 @@ function showCartelleList(q = '') {
     html += '<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella trovata</div>';
   } else {
     html += filtered.map((c, i) => `<div data-app-cart-idx="${i}" 
-        style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)"
+        style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border);color:#1E293B"
         onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background=''">📁 ${esc(c.nome)}</div>`).join('');
   }
   html += '<div onclick="appNuovaCartella()" style="padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:#6EE7B7;background:#F0FDF4;border-top:2px solid var(--border)" onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">➕ Crea nuova cartella</div>';

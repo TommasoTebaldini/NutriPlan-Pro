@@ -244,51 +244,83 @@
     </div>
     <div class="calc-box">
       <h3>📋 EDE-Q — Eating Disorder Examination</h3>
-      <div style="font-size:13px;line-height:1.8">
-        <div class="info-box ib-blue" style="margin-bottom:12px">EDE-Q è l'autocompilazione dell'EDE (gold standard diagnostico). Valuta le ultime 4 settimane su scala 0–6.</div>
-        <b>4 Sottoscale principali:</b>
-        <table class="dca-table" style="margin-top:8px">
-          <thead><tr><th>Sottoscala</th><th>Cosa misura</th><th>Cut-off clinico</th></tr></thead>
-          <tbody>
-            <tr><td>Restrizione</td><td>Limitazione intenzionale dell'apporto alimentare</td><td>≥2.77</td></tr>
-            <tr><td>Preoccupazione per il cibo</td><td>Pensieri intrusivi sul cibo e mangiare</td><td>≥1.39</td></tr>
-            <tr><td>Preoccupazione per la forma</td><td>Valutazione negativa della forma del corpo</td><td>≥2.79</td></tr>
-            <tr><td>Preoccupazione per il peso</td><td>Importanza del peso nell'autovalutazione</td><td>≥1.24</td></tr>
-          </tbody>
-        </table>
-        <div style="margin-top:10px;padding:10px;background:#EFF6FF;border-radius:8px;font-size:12px">
-          <b>Punteggio globale (Global Score) &gt;2.3</b> = probabile DCA clinicamente significativo. Riferire a psicologo/psichiatra.
-        </div>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">Ultime 4 settimane. 0=Mai · 3=Metà dei giorni · 6=Ogni giorno</p>
+      <div style="font-size:11px;font-weight:700;color:#6D28D9;text-transform:uppercase;letter-spacing:.5px;margin:6px 0 4px">Restrizione</div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">Hai deliberatamente cercato di limitare la quantità di cibo che mangi per influenzare il tuo peso o la forma?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_r1_wrap"></div>
       </div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">Hai seguito regole rigide riguardo al mangiare (es. limite di calorie) che tenti di rispettare?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_r2_wrap"></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#B45309;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 4px">Preoccupazione per il cibo</div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">Hai avuto paura di perdere il controllo sul mangiare?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_ec1_wrap"></div>
+      </div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">Il pensiero al cibo, al mangiare o alle calorie ha reso difficile concentrarti su attività di interesse?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_ec2_wrap"></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 4px">Preoccupazione per la forma</div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">Sei stato/a insoddisfatto/a della tua forma corporea?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_sc1_wrap"></div>
+      </div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">La tua forma corporea ha influenzato il modo in cui ti valuti come persona?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_sc2_wrap"></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 4px">Preoccupazione per il peso</div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">Il tuo peso ha influenzato il modo in cui ti valuti come persona?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_wc1_wrap"></div>
+      </div>
+      <div class="scoff-q">
+        <label style="font-size:12px;display:block;margin-bottom:4px">Quanta importanza ha avuto il tuo peso nell'influenzare la tua autostima?</label>
+        <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_wc2_wrap"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="calcEDEQ_dca()">📊 Calcola EDE-Q (Screening)</button>
+      <div id="edeq-dca-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
     </div>
   </div>
   <div class="grid-2">
     <div class="calc-box">
       <h3>📊 BITE — Bulimic Investigatory Test Edinburgh</h3>
-      <div style="font-size:13px;line-height:1.8">
-        <p style="margin-bottom:10px">Specifico per bulimia. 33 item su due subscale:</p>
-        <div style="padding:8px;background:#FEF3C7;border-radius:8px;margin-bottom:8px">
-          <b>Scala dei Sintomi (0–30):</b><br>
-          <span style="font-size:12px">&lt;10: nessun problema · 10–19: alcune caratteristiche bulimiche · ≥20: disturbo bulimico probabile</span>
-        </div>
-        <div style="padding:8px;background:#DBEAFE;border-radius:8px">
-          <b>Scala della Gravità (0–39):</b><br>
-          <span style="font-size:12px">Frequenza delle abbuffate e dei comportamenti compensatori. Punteggio ≥5 = clinicamente significativo.</span>
-        </div>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Henderson &amp; Freeman (1987). Rispondere Sì/No a ogni domanda.</p>
+      <div id="bite-items-container"></div>
+      <div style="margin-top:10px">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">⚡ Gravità — Con quale frequenza si verificano le abbuffate?</label>
+        <select id="bite-freq" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:12.5px;outline:none">
+          <option value="0">Mai (o meno di 1 volta al mese)</option>
+          <option value="5">1–2 volte al mese</option>
+          <option value="10">1 volta a settimana</option>
+          <option value="20">2–3 volte a settimana</option>
+          <option value="30">Ogni giorno o quasi</option>
+        </select>
       </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="calcBITE()">📊 Calcola BITE</button>
+      <div id="bite-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
     </div>
     <div class="calc-box">
       <h3>🧒 ChEAT-26 / KEDS (età evolutiva)</h3>
-      <div style="font-size:13px;line-height:1.8">
-        <div style="padding:10px;background:#ECFDF5;border-radius:8px;margin-bottom:10px">
-          <b>ChEAT-26</b> (Children Eating Attitudes Test): adatto a bambini 8–13 anni. Cut-off ≥20 = screening positivo.
-        </div>
-        <div style="padding:10px;background:#F0F9FF;border-radius:8px;margin-bottom:10px">
-          <b>KEDS</b> (Kids Eating Disorder Survey): 14 item per preadolescenti. Valuta preoccupazioni per il peso e abbuffate.
-        </div>
-        <div class="info-box ib-amber" style="margin-bottom:0">
-          ⚠️ In età evolutiva, coinvolgere sempre i genitori/caregivers e collaborare strettamente con il pediatra.
-        </div>
+      <div class="info-box ib-amber" style="margin-bottom:10px;font-size:12px">⚠️ Coinvolgere sempre i genitori/caregivers. Età: ChEAT-26 = 8–13 anni, KEDS = 8–14 anni.</div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button class="btn btn-sm" id="btn-cheat" onclick="showChildTab('cheat')" style="background:var(--teal);color:white">ChEAT-26</button>
+        <button class="btn btn-ghost btn-sm" id="btn-keds" onclick="showChildTab('keds')">KEDS</button>
+      </div>
+      <div id="panel-cheat">
+        <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Scala: 3=Sempre · 2=Molto spesso · 1=Spesso · 0=Qualche volta/Raramente/Mai</p>
+        <div id="cheat-items-container"></div>
+        <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="calcChEAT()">📊 Calcola ChEAT-26</button>
+        <div id="cheat-result" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
+      </div>
+      <div id="panel-keds" style="display:none">
+        <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">14 item. Rispondere Sì/No. Cut-off ≥4 = possibile DCA.</p>
+        <div id="keds-items-container"></div>
+        <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="calcKEDS()">📊 Calcola KEDS</button>
+        <div id="keds-result" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
       </div>
     </div>
   </div>
@@ -893,7 +925,210 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
   else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
 }
 
+// ── EDE-Q (DCA Screening) ──
+const EDEQ_IDS = ['edeq_r1','edeq_r2','edeq_ec1','edeq_ec2','edeq_sc1','edeq_sc2','edeq_wc1','edeq_wc2'];
+function initEDEQ_dca() {
+  EDEQ_IDS.forEach(id => {
+    const wrap = document.getElementById(id + '_wrap');
+    if (!wrap) return;
+    for (let v = 0; v <= 6; v++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = v;
+      btn.dataset.id = id;
+      btn.dataset.val = v;
+      btn.style.cssText = 'width:28px;height:28px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;cursor:pointer;background:white;font-family:inherit;transition:all .12s';
+      btn.onclick = function() {
+        wrap.querySelectorAll('button').forEach(b => { b.style.background='white'; b.style.color='var(--slate)'; b.style.borderColor='var(--border-d)'; });
+        btn.style.background = '#6D28D9'; btn.style.color = 'white'; btn.style.borderColor = '#6D28D9';
+        wrap.dataset.val = v;
+      };
+      wrap.appendChild(btn);
+    }
+    wrap.dataset.val = '';
+  });
+}
+function calcEDEQ_dca() {
+  const vals = EDEQ_IDS.map(id => {
+    const w = document.getElementById(id + '_wrap');
+    return (w && w.dataset.val !== '') ? parseFloat(w.dataset.val) : null;
+  });
+  if (vals.some(v => v === null)) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  const r  = (vals[0] + vals[1]) / 2;
+  const ec = (vals[2] + vals[3]) / 2;
+  const sc = (vals[4] + vals[5]) / 2;
+  const wc = (vals[6] + vals[7]) / 2;
+  const global = (r + ec + sc + wc) / 4;
+  const res = document.getElementById('edeq-dca-result');
+  res.style.display = 'block';
+  const pos = global > 2.3;
+  res.style.background = pos ? '#FEE2E2' : '#ECFDF5';
+  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} EDE-Q Global Score: ${global.toFixed(2)} — ${pos ? 'Screening POSITIVO' : 'Screening negativo'}</b><br>
+    <div style="margin-top:6px;font-size:12px;display:grid;grid-template-columns:1fr 1fr;gap:4px">
+      <span>Restrizione: <b>${r.toFixed(2)}</b> ${r>=2.77?'⚠️':''}</span>
+      <span>Preoc. cibo: <b>${ec.toFixed(2)}</b> ${ec>=1.39?'⚠️':''}</span>
+      <span>Preoc. forma: <b>${sc.toFixed(2)}</b> ${sc>=2.79?'⚠️':''}</span>
+      <span>Preoc. peso: <b>${wc.toFixed(2)}</b> ${wc>=1.24?'⚠️':''}</span>
+    </div>
+    <div style="margin-top:6px;font-size:12px">${pos ? 'Global Score >2.3: probabile DCA clinicamente significativo. Riferire a psicologo/psichiatra.' : 'Global Score ≤2.3: nessun segnale di rischio clinicamente significativo con questo screening.'}</div>`;
+}
+
+// ── BITE ──
+const BITE_ITEMS = [
+  'Segui una dieta rigida?',
+  'Mangi senza smettere fino a sentirti male?',
+  'Hai il pensiero fisso sul cibo?',
+  'Hai avuto periodi in cui non riuscivi a smettere di mangiare?',
+  'Dividi i cibi in quelli "permessi" e quelli "proibiti"?',
+  'Mangi in segreto?',
+  'Sei schiava/o delle tue abitudini alimentari?',
+  'Senti spesso il bisogno di vomitare dopo i pasti?',
+  'Ti senti colpevole dopo aver mangiato?',
+  'Mangi a volte fino a stare molto male fisicamente?',
+  'Ti fanno schifo le tue abitudini alimentari?',
+  'Usi lassativi o diuretici per controllare il peso?',
+  'Il tuo peso cambia di più di 2,5 kg a settimana?',
+  'Hai pensieri o comportamenti riguardo al cibo che interferiscono con la tua vita?',
+  'Hai mai digiunato per un giorno intero per controllare il peso?'
+];
+function initBITE() {
+  const c = document.getElementById('bite-items-container');
+  if (!c) return;
+  c.innerHTML = BITE_ITEMS.map((q, i) =>
+    `<div class="scoff-q" style="margin-bottom:6px">
+      <div style="font-size:12px;margin-bottom:3px">${i+1}. ${q}</div>
+      <div style="display:flex;gap:8px">
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="bite${i}" value="1"> Sì</label>
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="bite${i}" value="0"> No</label>
+      </div>
+    </div>`
+  ).join('');
+}
+function calcBITE() {
+  let sym = 0, missing = false;
+  BITE_ITEMS.forEach((_, i) => {
+    const sel = document.querySelector(`input[name="bite${i}"]:checked`);
+    if (!sel) { missing = true; return; }
+    sym += parseInt(sel.value);
+  });
+  if (missing) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  const sev = parseInt(document.getElementById('bite-freq').value);
+  const res = document.getElementById('bite-result');
+  res.style.display = 'block';
+  const symLabel = sym < 10 ? '🟢 Nessun problema significativo' : sym < 20 ? '🟡 Alcune caratteristiche bulimiche' : '🔴 Disturbo bulimico probabile';
+  const sevLabel = sev === 0 ? 'Non clinicamente significativa' : sev < 10 ? '🟡 Lieve' : sev < 20 ? '🟠 Moderata' : '🔴 Grave';
+  const pos = sym >= 20 || sev >= 5;
+  res.style.background = pos ? '#FEE2E2' : (sym >= 10 ? '#FEF3C7' : '#ECFDF5');
+  res.innerHTML = `<b>📊 BITE — Risultati</b><br>
+    <div style="margin-top:6px;font-size:12px">
+      <div>Scala Sintomi: <b>${sym}/30</b> — ${symLabel}</div>
+      <div style="margin-top:4px">Scala Gravità: <b>${sev}/39</b> — ${sevLabel}</div>
+      <div style="margin-top:6px">${pos ? 'Punteggio clinicamente significativo. Approfondimento psicologico/psichiatrico consigliato.' : 'Non emergono segnali di disturbo bulimico clinicamente significativo con questo screening.'}</div>
+    </div>`;
+}
+
+// ── ChEAT-26 / KEDS ──
+function showChildTab(tab) {
+  document.getElementById('panel-cheat').style.display = tab === 'cheat' ? 'block' : 'none';
+  document.getElementById('panel-keds').style.display  = tab === 'keds'  ? 'block' : 'none';
+  const bc = document.getElementById('btn-cheat'), bk = document.getElementById('btn-keds');
+  if (tab === 'cheat') {
+    bc.className='btn btn-sm'; bc.style.cssText='background:var(--teal);color:white';
+    bk.className='btn btn-ghost btn-sm'; bk.style.cssText='';
+  } else {
+    bk.className='btn btn-sm'; bk.style.cssText='background:var(--teal);color:white';
+    bc.className='btn btn-ghost btn-sm'; bc.style.cssText='';
+  }
+}
+const CHEAT_ITEMS = [
+  'Ho paura di essere sovrappeso/a',
+  'Evito di mangiare quando ho fame',
+  'Mi preoccupo per il cibo',
+  'A volte mi abbuffo e sento di non poter smettere',
+  'Taglio il cibo in pezzetti piccoli',
+  'Sono consapevole del contenuto calorico del cibo',
+  'Evito in particolare i cibi ad alto contenuto di carboidrati',
+  'Sento che gli altri vorrebbero che mangiassi di più',
+  'Vomito dopo aver mangiato',
+  'Mi sento molto colpevole dopo aver mangiato',
+  'Mi preoccupo del desiderio di essere più magra/o',
+  'Quando mi alleno penso alle calorie che brucio'
+];
+const CHEAT_OPTS = [{label:'Sempre',val:3},{label:'Molto spesso',val:2},{label:'Spesso',val:1},{label:'Qualche volta/Raramente/Mai',val:0}];
+function initChEAT() {
+  const c = document.getElementById('cheat-items-container');
+  if (!c) return;
+  c.innerHTML = CHEAT_ITEMS.map((q, i) =>
+    `<div class="scoff-q" style="margin-bottom:6px">
+      <div style="font-size:12px;margin-bottom:3px">${i+1}. ${q}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${CHEAT_OPTS.map(o => `<label style="font-size:11.5px;cursor:pointer"><input type="radio" name="cheat${i}" value="${o.val}"> ${o.label}</label>`).join('')}
+      </div>
+    </div>`
+  ).join('');
+}
+function calcChEAT() {
+  let tot = 0, missing = false;
+  CHEAT_ITEMS.forEach((_, i) => {
+    const sel = document.querySelector(`input[name="cheat${i}"]:checked`);
+    if (!sel) { missing = true; return; }
+    tot += parseInt(sel.value);
+  });
+  if (missing) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  const res = document.getElementById('cheat-result');
+  res.style.display = 'block';
+  const pos = tot >= 20;
+  res.style.background = pos ? '#FEE2E2' : '#ECFDF5';
+  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} ChEAT-26: ${tot}/36 — ${pos ? 'Screening POSITIVO (≥20)' : 'Screening negativo (<20)'}</b><br>
+    <div style="margin-top:4px;font-size:12px">${pos ? 'Punteggio ≥20: possibile disturbo alimentare. Coinvolgere i genitori e richiedere valutazione specialistica pediatrica/psicologica.' : 'Punteggio <20: non emergono segnali di rischio significativo.'}</div>`;
+}
+const KEDS_ITEMS = [
+  'Hai mai cercato di perdere peso mangiando di meno?',
+  'Hai mai saltato i pasti per perdere peso?',
+  'Hai mai usato lassativi o pillole dimagranti?',
+  'Hai mai fatto molto esercizio solo per bruciare calorie?',
+  'Hai mai vomitato apposta dopo aver mangiato?',
+  'Ti preoccupi spesso del tuo peso?',
+  'Ti preoccupi di essere troppo grassa/o?',
+  'Senti che il cibo controlla la tua vita?',
+  'Hai mai mangiato moltissimo in poco tempo senza riuscire a fermarti?',
+  'Senti di dover nascondere quanto mangi?',
+  'Ti senti a disagio quando mangi con altre persone?',
+  'Pensi spesso alle calorie?',
+  'Salti i pasti abitualmente?',
+  'Ti pesa guardare il tuo corpo allo specchio?'
+];
+function initKEDS() {
+  const c = document.getElementById('keds-items-container');
+  if (!c) return;
+  c.innerHTML = KEDS_ITEMS.map((q, i) =>
+    `<div class="scoff-q" style="margin-bottom:6px">
+      <div style="font-size:12px;margin-bottom:3px">${i+1}. ${q}</div>
+      <div style="display:flex;gap:8px">
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="keds${i}" value="1"> Sì</label>
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="keds${i}" value="0"> No</label>
+      </div>
+    </div>`
+  ).join('');
+}
+function calcKEDS() {
+  let tot = 0, missing = false;
+  KEDS_ITEMS.forEach((_, i) => {
+    const sel = document.querySelector(`input[name="keds${i}"]:checked`);
+    if (!sel) { missing = true; return; }
+    tot += parseInt(sel.value);
+  });
+  if (missing) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  const res = document.getElementById('keds-result');
+  res.style.display = 'block';
+  const pos = tot >= 4;
+  res.style.background = pos ? '#FEE2E2' : '#ECFDF5';
+  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} KEDS: ${tot}/14 — ${pos ? 'Screening POSITIVO (≥4)' : 'Screening negativo (<4)'}</b><br>
+    <div style="margin-top:4px;font-size:12px">${pos ? 'Punteggio ≥4: possibile disturbo del comportamento alimentare in età evolutiva. Si consiglia valutazione multidisciplinare.' : 'Punteggio <4: non emergono segnali di rischio significativo.'}</div>`;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  initEDEQ_dca(); initBITE(); initChEAT(); initKEDS();
   try {
     await checkAuth(false);
     if (currentUser) {

@@ -237,8 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window._cartelleCache = null;
 
-async function _cwLoadCache(force) {
-  if (!force && window._cartelleCache) return window._cartelleCache;
+async function _cwLoadCache() {
+  if (window._cartelleCache) return window._cartelleCache;
   if (!currentUser) return [];
   try {
     const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
@@ -306,7 +306,7 @@ function _cwHide(cid) {
   if (dd) dd.style.display = 'none';
 }
 
-function _cwSelect(cid, id, nome) {
+function _cwUpdateDisplay(cid, id, nome) {
   const container = document.getElementById(cid);
   const opts = (container || {})._cwOpts || {};
   const hiddenId = opts.hiddenInputId || (cid + '-val');
@@ -315,8 +315,14 @@ function _cwSelect(cid, id, nome) {
   const srch = document.getElementById(cid + '-srch');
   if (srch) srch.value = nome;
   const lbl = document.getElementById(cid + '-lbl');
-  if (lbl) lbl.textContent = '✅ ' + nome;
+  if (lbl) lbl.textContent = nome ? '✅ ' + nome : '';
   _cwHide(cid);
+}
+
+function _cwSelect(cid, id, nome) {
+  _cwUpdateDisplay(cid, id, nome);
+  const container = document.getElementById(cid);
+  const opts = (container || {})._cwOpts || {};
   if (opts.onSelect) opts.onSelect(id, nome);
 }
 
@@ -325,7 +331,7 @@ async function _cwSetById(cid, cartellaId) {
   const cartelle = await _cwLoadCache();
   const cart = cartelle.find(function(c){ return c.id === cartellaId; });
   if (cart) {
-    _cwSelect(cid, cart.id, cart.nome);
+    _cwUpdateDisplay(cid, cart.id, cart.nome);
   } else {
     // Fallback: just set hidden value
     const container = document.getElementById(cid);

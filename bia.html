@@ -987,9 +987,11 @@ function resetBIA() {
 
 function onCartellaChange() {
   const id = document.getElementById('bia-cartella').value;
-  const srch = document.getElementById('bia-cartella-cw-srch');
-  const nome = srch ? srch.value : '';
-  if (id) _cwSelect('storico-cartella-cw', id, nome);
+  if (!id) { _cwClear('storico-cartella-cw'); return; }
+  _cwLoadCache().then(function(cartelle) {
+    const cart = cartelle.find(function(c){ return c.id === id; });
+    if (cart) _cwSelect('storico-cartella-cw', cart.id, cart.nome);
+  });
 }
 
 async function loadCartellePaz() {

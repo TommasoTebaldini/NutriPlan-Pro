@@ -701,11 +701,8 @@ async function onCartSelectMain() {
 async function selCartella(id, nome) {
   currentCartellaId = id;
   document.getElementById('cart-search').value = nome;
-  // Update main card widget display
-  const srch = document.getElementById('ncpt-cartella-cw-srch');
-  if (srch) srch.value = nome;
-  const lbl = document.getElementById('ncpt-cartella-cw-lbl');
-  if (lbl) lbl.textContent = nome ? '✅ ' + nome : '';
+  // Update main card widget display without triggering onSelect (avoid recursion)
+  _cwUpdateDisplay('ncpt-cartella-cw', id, nome);
   hideCartDD();
   // Load NCPt for this cartella
   showLoading(true);
@@ -1227,8 +1224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cart = allCartelle.find(c => c.id === currentCartellaId);
         if(cart) {
           document.getElementById('cart-search').value = cart.nome;
-          const srch=document.getElementById('ncpt-cartella-cw-srch'); if(srch) srch.value=cart.nome;
-          const lbl=document.getElementById('ncpt-cartella-cw-lbl'); if(lbl) lbl.textContent='✅ '+cart.nome;
+          _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
           document.getElementById('paz-bar').style.display='flex';
           document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
           document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
@@ -1242,8 +1238,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const cart = allCartelle.find(c => c.id === newNcptCartella);
       if(cart) {
         document.getElementById('cart-search').value = cart.nome;
-        const srch=document.getElementById('ncpt-cartella-cw-srch'); if(srch) srch.value=cart.nome;
-        const lbl=document.getElementById('ncpt-cartella-cw-lbl'); if(lbl) lbl.textContent='✅ '+cart.nome;
+        _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
         document.getElementById('paz-bar').style.display='flex';
         document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
         document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');

@@ -473,9 +473,8 @@ async function salvaScheda(){
   const cartellaId=document.getElementById('v-cartella').value;
   if(!cartellaId){
     const cog=document.getElementById('v-cognome').value.trim();
-    openNuovaCartellaModal(async (id)=>{
-      window._cartelleCache=null;
-      document.getElementById('v-cartella').value=id;
+    openNuovaCartellaModal(async (id, nomeCart)=>{
+      _cwSelect('v-cartella-cw', id, nomeCart);
       await doSalva(id);
     });
     const inp=document.getElementById('gnc-nome');

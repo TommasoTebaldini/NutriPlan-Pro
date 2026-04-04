@@ -1048,6 +1048,7 @@ async function salvaRenale() {
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'renale', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
+  const wasNew = !editingRenNoteId;
   if (editingRenNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRenNoteId);
   } else {
@@ -1056,7 +1057,7 @@ async function salvaRenale() {
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   if (!editingRenNoteId && result.data?.[0]?.id) editingRenNoteId = result.data[0].id;
-  toast(editingRenNoteId ? '✅ Scheda IRC aggiornata!' : '✅ Dati IRC salvati nella cartella!', 'ok');
+  toast(!wasNew ? '✅ Scheda IRC aggiornata!' : '✅ Dati IRC salvati nella cartella!', 'ok');
 }
 
 async function caricaRenDaNote(noteId) {

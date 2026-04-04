@@ -1023,6 +1023,7 @@ async function salvaKeto() {
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
+  const wasNew = !editingKetoNoteId;
   if (editingKetoNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingKetoNoteId);
   } else {
@@ -1031,7 +1032,7 @@ async function salvaKeto() {
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   if (!editingKetoNoteId && result.data?.[0]?.id) editingKetoNoteId = result.data[0].id;
-  toast(editingKetoNoteId ? '✅ Scheda Chetogenica aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
+  toast(!wasNew ? '✅ Scheda Chetogenica aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
 }
 
 async function caricaKetoDaNote(noteId) {

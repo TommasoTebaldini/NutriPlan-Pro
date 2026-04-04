@@ -166,10 +166,10 @@
 
 <!-- TABS -->
 <div class="dis-tabs no-print">
-  <button class="dis-tab active" onclick="showDisTab('iddsi')">📋 Scala IDDSI</button>
-  <button class="dis-tab" onclick="showDisTab('piano')">🍽️ Piano Dietetico</button>
-  <button class="dis-tab" onclick="showDisTab('alimenti')">🥦 Alimenti per Livello</button>
-  <button class="dis-tab" onclick="showDisTab('clinica')">⚠️ Avvertenze Cliniche</button>
+  <button class="dis-tab active" onclick="showDisTab('iddsi',event)">📋 Scala IDDSI</button>
+  <button class="dis-tab" onclick="showDisTab('piano',event)">🍽️ Piano Dietetico</button>
+  <button class="dis-tab" onclick="showDisTab('alimenti',event)">🥦 Alimenti per Livello</button>
+  <button class="dis-tab" onclick="showDisTab('clinica',event)">⚠️ Avvertenze Cliniche</button>
 </div>
 
 <!-- ══════════════════════════════════════════════ -->
@@ -744,11 +744,11 @@ const KCAL_TARGETS = [1200, 1400, 1600, 1800, 2000, 2200, 2400];
 /* ═══════════════════════════════════════════════
    TAB SWITCHING
 ═══════════════════════════════════════════════ */
-function showDisTab(id) {
+function showDisTab(id, ev) {
   document.querySelectorAll('.dis-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.dis-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  event.target.classList.add('active');
+  if (ev && ev.target) ev.target.classList.add('active');
 }
 
 /* ═══════════════════════════════════════════════

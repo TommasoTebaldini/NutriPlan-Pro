@@ -744,6 +744,76 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Banana',qt:'100'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
    ]}
+  {id:'allergia_latte',emoji:'🥛',nome:"Allergia Proteine Latte Vaccino (APLV)",badge:'EAACI 2019',colore:'#64748B',
+   desc:"Eliminazione totale di latte e derivati. Sostituire calcio con alternative vegetali arricchite.",
+   note:"EAACI 2019 · Eliminare caseina, sieroproteine, lattoalbumina, lattoglobulina · Calcio target 1000-1200mg/die da fonti alternative · Vitamina D 800-2000 UI/die · Senza lattosio non significa senza APLV.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Banana',qt:'100'},{nome:'Mandorle dolci secche',qt:'20'},{nome:'Miele millefiori',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Riso bianco crudo',qt:'70'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'ibs',emoji:'🔄',nome:"Sindrome dell'Intestino Irritabile (IBS)",badge:'ACG 2021',colore:'#D97706',
+   desc:"Dieta Low-FODMAP nelle fasi sintomatiche. Reintroduzione graduale. Fibra solubile raccomandata.",
+   note:"ACG 2021 · Dieta Low-FODMAP riduce sintomi nel 70% dei pazienti · Fase eliminazione 4-6 settimane · Reintroduzione graduale per identificare trigger · Psyllium utile per IBS-C.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Uovo di gallina intero crudo',qt:'120'},{nome:'Fragola',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Kiwi',qt:'100'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carota',qt:'100'},{nome:'Zucchina',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'120'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'sindrome_metabolica',emoji:'⚡',nome:'Sindrome Metabolica',badge:'IDF/AHA 2009',colore:'#7C3AED',
+   desc:"Dieta mediterranea + deficit calorico. Riduzione peso del 5-10%. Esercizio fisico fondamentale.",
+   note:"IDF/AHA 2009 · Criteri: obesità addominale + 2 tra: glicemia ≥100, TG ≥150, HDL basso, PA ≥130/85 · Obiettivo: -500 kcal/die, attività fisica 150 min/settimana · Pattern mediterraneo (PREDIMED).",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'40'},{nome:'Fragola',qt:'100'},{nome:'Mandorle dolci secche',qt:'10'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Lenticchie secche',qt:'40'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'}]},
+    {nome:'Cena',emoji:'��',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'pcos',emoji:'🌸',nome:"Sindrome dell'Ovaio Policistico (PCOS)",badge:'ESHRE 2023',colore:'#EC4899',
+   desc:"Dieta a basso IG, riduzione insulino-resistenza. Perdita del 5-10% del peso migliora i sintomi ormonali.",
+   note:"ESHRE 2023 · Insulino-resistenza presente nel 70-80% · Dieta basso IG + antiinfiammatoria · Omega-3 utili · Mio-inositolo 2g + D-chiro-inositolo 200mg · Attività fisica 150-300 min/settimana.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'40'},{nome:'Arancia',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'10'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Orzo perlato crudo',qt:'70'},{nome:'Ceci secchi',qt:'50'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pomodoro rosso',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'hashimoto',emoji:'🦋',nome:"Tiroidite di Hashimoto / Ipotiroidismo",badge:'ETA 2022',colore:'#0891B2',
+   desc:"Dieta antiinfiammatoria. Selenio e vitamina D importanti. Screening celiachia associata.",
+   note:"ETA 2022 · Associazione con celiachia (screening obbligatorio) · Selenio 55-200 µg/die · Vitamina D target >40 ng/mL · Levotiroxina a stomaco vuoto 30-60 min prima della colazione · Soia e calcio distanziati di 4h dal farmaco.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'150'},{nome:'Kiwi',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Arancia',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'ipe',emoji:'🫁',nome:"Insufficienza Pancreatica Esocrina (IPE)",badge:'UEG 2022',colore:'#B45309',
+   desc:"Pasti frequenti e piccoli, grassi ridotti. PERT obbligatoria ad ogni pasto. No alcol assoluto.",
+   note:"UEG 2022 · PERT (Creon): 40.000-80.000 UI lipasi per pasto principale, 20.000-40.000 per spuntino · Grassi <40g/die se PERT non adeguata · Supplementare vitamine liposolubili A,D,E,K · No alcol assoluto.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco',qt:'60'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Miele millefiori',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Gallette di riso',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+   ]},
+  {id:'ictus',emoji:'🧠',nome:"Post-Ictus / Riabilitazione Neurologica",badge:'ESPEN 2021',colore:'#1D4ED8',
+   desc:"Prevenire disfagia e malnutrizione post-ictus. Pattern mediterraneo per prevenzione recidive.",
+   note:"ESPEN 2021 · Valutare sempre la deglutizione · Texture adattata IDDSI se disfagia · Energia 25-30 kcal/kg/die · Proteine 1.2-1.5 g/kg/die · Omega-3 (EPA+DHA) 1-2g/die · DASH/Mediterranea per prevenzione recidive.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Banana',qt:'120'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Pera',qt:'120'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]}
 ];
 let PATOLOGIE_CUSTOM=[];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}

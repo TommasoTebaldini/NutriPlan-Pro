@@ -303,11 +303,13 @@ function buildIntGrid(filter='') {
 
   const totalProducts = INT_DATA.reduce((a,c) => a + c.items.length, 0);
   
-  grid.innerHTML = cards || `<div class="int-empty">
-    <div class="int-empty-icon">🔍</div>
-    <h4>Nessun risultato</h4>
-    <p>Nessun integratore o AFMS trovato per "<b>${esc(filter)}</b>".<br>Prova con un termine diverso.</p>
-  </div>`;
+  grid.innerHTML = (q && totalVisible === 0)
+    ? `<div class="int-empty">
+        <div class="int-empty-icon">🔍</div>
+        <h4>Nessun risultato</h4>
+        <p>Nessun integratore o AFMS trovato per "<b>${esc(filter)}</b>".<br>Prova con un termine diverso.</p>
+      </div>`
+    : cards;
   
   document.getElementById('int-count').textContent = filter
     ? `${totalVisible} risultat${totalVisible === 1 ? 'o' : 'i'} su ${totalProducts}`

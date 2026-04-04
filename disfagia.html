@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Disfagia — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.dis-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.dis-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.dis-tab:hover{background:rgba(14,165,233,.1);color:#0369A1}
+.dis-tab.active{background:linear-gradient(135deg,#0369A1,#0EA5E9);color:white;box-shadow:0 3px 10px rgba(14,165,233,.3);font-weight:700}
+.dis-panel{display:none}.dis-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#E0F2FE;border-left:3px solid #0EA5E9;color:#0369A1}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.alert-danger{background:#FEE2E2;border-left:3px solid #DC2626;color:#7F1D1D}
+.alert-ok{background:#D1FAE5;border-left:3px solid #059669;color:#064E3B}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus{border-color:#0EA5E9}
+.dis-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.dis-table th{background:linear-gradient(90deg,#0369A1,#0EA5E9);color:#E0F2FE;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.dis-table th:first-child{text-align:left}
+.dis-table td{padding:8px 12px;border-bottom:1px solid #E0F2FE;text-align:center;vertical-align:middle}
+.dis-table td:first-child{text-align:left;font-weight:600;color:var(--slate)}
+.dis-table tbody tr:nth-child(even){background:#F0F9FF}
+.dis-table tr:hover td{background:#E0F2FE}
+.iddsi-badge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-weight:900;font-size:13px;flex-shrink:0}
+.iddsi-card{border-radius:12px;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow)}
+.iddsi-hdr{padding:12px 16px;color:white;font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:10px}
+.iddsi-body{padding:14px 16px;background:white;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px;margin-top:8px}
+.food-item{background:white;border-radius:8px;padding:9px 11px;border:1px solid var(--border);font-size:12px;display:flex;align-items:center;gap:7px}
+.food-item-ok{border-left:3px solid #059669}
+.food-item-mod{border-left:3px solid #D97706}
+.food-item-no{border-left:3px solid #DC2626}
+.piano-selector{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:18px;box-shadow:var(--shadow)}
+.piano-selector h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px}
+.kcal-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.kcal-btn{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.kcal-btn:hover{border-color:#0EA5E9;color:#0369A1}
+.kcal-btn.active{background:linear-gradient(135deg,#0369A1,#0EA5E9);color:white;border-color:#0EA5E9;box-shadow:0 2px 8px rgba(14,165,233,.25)}
+.iddsi-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.iddsi-btn{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.iddsi-btn:hover{opacity:.85}
+.iddsi-btn.active{color:white;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.pasto-card{background:white;border-radius:12px;border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
+.pasto-hdr{padding:12px 16px;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#0369A1,#0EA5E9);color:white}
+.pasto-hdr .pasto-nome{font-weight:700;font-size:14px;flex:1}
+.pasto-hdr .pasto-kcal{font-size:12px;opacity:.88;font-weight:600}
+.pasto-items{padding:0}
+.pasto-item{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);font-size:13px}
+.pasto-item:last-child{border-bottom:none}
+.pasto-item-nome{color:var(--slate);flex:1}
+.pasto-item-qt{font-weight:700;color:#0369A1;font-size:12.5px;white-space:nowrap;margin-left:12px}
+.pasto-item-kcal{font-size:11px;color:var(--slate-l);background:#F0F9FF;border-radius:6px;padding:2px 7px;margin-left:8px;white-space:nowrap}
+.macro-totale{display:flex;flex-wrap:wrap;gap:12px;background:#F0F9FF;border-radius:10px;padding:14px 16px;margin-top:4px;border:1px solid #BAE6FD}
+.macro-pill{display:flex;flex-direction:column;align-items:center;min-width:80px}
+.macro-pill .mp-val{font-size:20px;font-weight:700;color:#0369A1}
+.macro-pill .mp-lbl{font-size:10px;color:var(--slate-m);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.nota-box{background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:10px 14px;font-size:12px;color:#7C2D12;margin-top:10px;line-height:1.7}
+.alim-level-card{background:white;border-radius:12px;border:1.5px solid var(--border);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.alim-level-hdr{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+@media print{
+  @page{margin:1cm 1.2cm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:8px!important}
+  .dis-tabs{display:none!important}
+  .dis-panel{display:none!important}
+  .dis-panel.active{display:block!important}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item active" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🗣️ Disfagia — Dieta IDDSI</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#0369A1 0%,#0EA5E9 55%,#38BDF8 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(3,105,161,.35);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🗣️</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">Disfagia — Gestione Dietetica con Scala IDDSI</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Piani alimentari personalizzati per i 7 livelli IDDSI di consistenza (1–7) con target calorici da 1200 a 2400 kcal. Basato su <b>IDDSI 2019 · ESPEN 2021 · DYSPHAGIA DIET</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥤 IDDSI 1-3 (Liquidi)</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥣 IDDSI 4 (Frullato)</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🍽️ IDDSI 5-7 (Solidi)</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧮 1200–2400 kcal</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="dis-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <select id="dis-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadDisCartelle()">
+      <option value="">-- Nessuna cartella --</option>
+    </select>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="dis-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="salvaDisfagia()" style="margin-top:18px;background:linear-gradient(135deg,#0369A1,#0EA5E9)">💾 Salva in Cartella</button>
+</div>
+
+<!-- TABS -->
+<div class="dis-tabs no-print">
+  <button class="dis-tab active" onclick="showDisTab('iddsi',event)">📋 Scala IDDSI</button>
+  <button class="dis-tab" onclick="showDisTab('piano',event)">🍽️ Piano Dietetico</button>
+  <button class="dis-tab" onclick="showDisTab('alimenti',event)">🥦 Alimenti per Livello</button>
+  <button class="dis-tab" onclick="showDisTab('clinica',event)">⚠️ Avvertenze Cliniche</button>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- TAB 1: SCALA IDDSI                            -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="dis-panel active" id="tab-iddsi">
+
+  <div class="alert-info alert-box">
+    <b>🗣️ IDDSI — International Dysphagia Diet Standardisation Initiative (2019)</b> — La classificazione IDDSI definisce 8 livelli (0–7) di consistenza per alimenti e liquidi. I <b>Livelli 0–4</b> descrivono bevande/liquidi, i <b>Livelli 3–7</b> descrivono alimenti. Il livello 0 (Thin) è la consistenza normale dei liquidi non modificati.
+  </div>
+
+  <div class="calc-box">
+    <h3>📊 Classificazione IDDSI 2019 — Livelli 0–7</h3>
+    <div style="overflow-x:auto">
+      <table class="dis-table">
+        <thead>
+          <tr>
+            <th>Livello</th>
+            <th>Nome IT</th>
+            <th>Nome EN</th>
+            <th>Consistenza</th>
+            <th>Test Verifica</th>
+            <th>Uso clinico</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#374151;color:white">0</span></td>
+            <td>Liquido Sottile</td>
+            <td>Thin</td>
+            <td>Acqua, brodo chiaro, succhi</td>
+            <td>Flow Test: scorre liberamente</td>
+            <td>Deglutizione normale o solo alimenti solidi adattati</td>
+          </tr>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#9CA3AF;color:white">1</span></td>
+            <td>Leggermente Addensato</td>
+            <td>Slightly Thick</td>
+            <td>Più denso dell'acqua, ma scorre con filo continuo</td>
+            <td>Flow Test: filo continuo dal cucchiaio</td>
+            <td>Disfagia lieve ai liquidi sottili</td>
+          </tr>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#EC4899;color:white">2</span></td>
+            <td>Moderatamente Addensato</td>
+            <td>Mildly Thick</td>
+            <td>Scorre lentamente dal cucchiaio, lascia traccia</td>
+            <td>Flow Test: scorre lento, ≥8mL in 10s</td>
+            <td>Disfagia ai liquidi, controllo ridotto in bocca</td>
+          </tr>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#F59E0B;color:white">3</span></td>
+            <td>Liquidizzato</td>
+            <td>Liquidised / Moderately Thick</td>
+            <td>Si può bere da un bicchiere, non trattiene la forma</td>
+            <td>Fork Drip Test: gocce dal cucchiaio</td>
+            <td>Difficoltà deglutizione, mancato controllo orale</td>
+          </tr>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#10B981;color:white">4</span></td>
+            <td>Frullato / Passato</td>
+            <td>Pureed / Extremely Thick</td>
+            <td>Non scorre, mantiene forma sul piatto, senza grumi</td>
+            <td>Fork Pressure Test: schiaccia facilmente</td>
+            <td>Disfagia moderata-grave, masticazione assente/ridotta</td>
+          </tr>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#EF4444;color:white">5</span></td>
+            <td>Tritato Umido</td>
+            <td>Minced &amp; Moist</td>
+            <td>Pezzi ≤4mm × 15mm, morbidi, umidi, facilmente schiacciabili</td>
+            <td>Fork Pressure Test: cede facilmente al cucchiaio</td>
+            <td>Masticazione compromessa, movimenti lingua limitati</td>
+          </tr>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#3B82F6;color:white">6</span></td>
+            <td>Morbido a Pezzi</td>
+            <td>Soft &amp; Bite-Size</td>
+            <td>Pezzi ≤15mm × 15mm, teneri, non necessitano di coltello</td>
+            <td>Fork Pressure Test: cedimento con lieve pressione del dito</td>
+            <td>Difficoltà masticazione, dentatura compromessa</td>
+          </tr>
+          <tr>
+            <td><span class="iddsi-badge" style="background:#F97316;color:white">7</span></td>
+            <td>Facile da Masticare</td>
+            <td>Easy to Chew / Regular</td>
+            <td>Alimenti normali morbidi, evitare duri/croccanti/appiccicosi</td>
+            <td>Test masticazione: masticato in ≤3 movimenti</td>
+            <td>Disfagia lieve, stanchezza masticatoria, dentatura ridotta</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚠️ Rischi principali</h3>
+      <div class="alert-danger alert-box"><b>Aspirazione / ab ingestis:</b> Ingresso di cibo/liquidi nelle vie aeree. Causa principale di polmonite da aspirazione.</div>
+      <div class="alert-warn alert-box"><b>Disidratazione:</b> I liquidi addensati riducono l'apporto idrico. Monitorare bilancio idrico e segni di disidratazione.</div>
+      <div class="alert-warn alert-box"><b>Malnutrizione:</b> La texture modificata riduce la densità energetica. Usare ONS e integratori per raggiungere i fabbisogni calorici.</div>
+      <div class="alert-info alert-box"><b>Collaborazione multidisciplinare:</b> Logopedista, dietista, medico, infermiere e caregiver devono agire coordinati.</div>
+    </div>
+    <div class="calc-box">
+      <h3>🧮 Fabbisogno energetico in disfagia</h3>
+      <div style="font-size:12.5px;line-height:1.8;color:var(--slate)">
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:8px">
+          <b>Energia:</b> 25–30 kcal/kg/die (30–35 se malnutrizione o stress metabolico)<br>
+          <b>Proteine:</b> 1.0–1.5 g/kg/die (aumentare fino a 2.0 g/kg se lesioni da pressione)<br>
+          <b>Liquidi:</b> 30 mL/kg/die (monitorare disidratazione in L1-L3)<br>
+          <b>Fibre:</b> Ridurre in L1-L4; riprendere gradualmente da L5
+        </div>
+        <div style="background:#FFF7ED;border-radius:8px;padding:10px 14px;">
+          <b>🔑 Ottimizzazione calorica per L1–L3:</b><br>
+          • Aggiungere olio EVO / MCT alle preparazioni<br>
+          • Usare ONS (Ensure, Fortisip, Resource) addensati<br>
+          • Maltodestrine in polvere come integratore energetico<br>
+          • Frazionare in 5–6 piccoli pasti
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🎨 Mappa visiva dei livelli IDDSI</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px">
+      <div id="map-cards"></div>
+    </div>
+  </div>
+
+</div><!-- /tab-iddsi -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- TAB 2: PIANO DIETETICO                        -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="dis-panel" id="tab-piano">
+
+  <div class="piano-selector no-print">
+    <h3>⚙️ Seleziona Livello IDDSI e Target Calorico</h3>
+    <div class="grid-2" style="gap:16px">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Livello di Consistenza IDDSI</div>
+        <div class="iddsi-btns" id="iddsi-btn-group"></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Target Calorico</div>
+        <div class="kcal-btns" id="kcal-btn-group"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="piano-output"></div>
+
+</div><!-- /tab-piano -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- TAB 3: ALIMENTI PER LIVELLO                   -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="dis-panel" id="tab-alimenti">
+
+  <div class="alert-info alert-box">
+    <b>�� Guida agli alimenti per livello IDDSI</b> — I cibi elencati sono indicativi. La preparazione corretta (cottura, consistenza, umidità) è fondamentale. Consultare sempre il logopedista per la valutazione individuale.
+  </div>
+
+  <div id="alimenti-output"></div>
+
+</div><!-- /tab-alimenti -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- TAB 4: AVVERTENZE CLINICHE                    -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="dis-panel" id="tab-clinica">
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🏥 Indicazioni cliniche per livello IDDSI</h3>
+      <div style="font-size:12.5px;line-height:1.9;color:var(--slate)">
+        <div style="margin-bottom:10px"><span style="background:#9CA3AF;color:white;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">L1-L2</span> Disfagia lieve ai liquidi. Disfagia neurogenica iniziale. Post-stroke senza disfagia grave. Xerostomia.</div>
+        <div style="margin-bottom:10px"><span style="background:#F59E0B;color:white;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">L3</span> Disfagia orofaringea moderata. Ridotto controllo del bolo. Morbo di Parkinson, SLA iniziale.</div>
+        <div style="margin-bottom:10px"><span style="background:#10B981;color:white;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">L4</span> Disfagia grave. Masticazione assente. Post-chirurgia orofaringea. SLA avanzata. Demenza grave.</div>
+        <div style="margin-bottom:10px"><span style="background:#EF4444;color:white;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">L5</span> Masticazione compromessa. Protesi mal adattate. Debolezza muscolare facciale. Anziani fragili.</div>
+        <div style="margin-bottom:10px"><span style="background:#3B82F6;color:white;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">L6</span> Difficoltà masticatoria moderata. Dentatura compromessa. Stomatite/mucositi post-radio/chemio.</div>
+        <div><span style="background:#F97316;color:white;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11px">L7</span> Disfagia lieve. Stanchezza masticatoria. Anziani con riduzione forza masticatoria.</div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>🩺 Valutazione della deglutizione</h3>
+      <div style="font-size:12.5px;line-height:1.8;color:var(--slate)">
+        <div style="background:#FEF2F2;border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #EF4444">
+          <b>⚠️ Segnali di allarme (dysphagia red flags):</b><br>
+          • Tosse durante/dopo il pasto<br>
+          • Voce gorgogliante dopo la deglutizione<br>
+          • Residui di cibo in bocca<br>
+          • Deglutizioni multiple per un singolo boccone<br>
+          • Perdita di peso non spiegata<br>
+          • Polmoniti ricorrenti
+        </div>
+        <div style="background:#F0F9FF;border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #0EA5E9">
+          <b>🔬 Strumenti di valutazione:</b><br>
+          • VFSS (Videofluoroscopia della deglutizione)<br>
+          • FEES (Fibroendoscopia della deglutizione)<br>
+          • EAT-10 (Eating Assessment Tool)<br>
+          • GUSS (Gugging Swallowing Screen)
+        </div>
+        <div style="background:#D1FAE5;border-radius:8px;padding:10px 14px;border-left:3px solid #059669">
+          <b>✅ Team multidisciplinare:</b><br>
+          Logopedista · Dietista clinico · Medico specialista · Infermiere dedicato · Caregiver formato
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>💊 Integratori e supporti nutrizionali consigliati</h3>
+    <div style="overflow-x:auto">
+      <table class="dis-table">
+        <thead>
+          <tr>
+            <th>Prodotto</th>
+            <th>Categoria</th>
+            <th>Uso principale</th>
+            <th>Livelli IDDSI</th>
+            <th>Dosaggio indicativo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Addensanti (Resource ThickenUp, Nutilis)</td>
+            <td>AFMS</td>
+            <td>Addensare liquidi e alimenti</td>
+            <td>L1–L4</td>
+            <td>1–4 misurini/200 mL secondo livello IDDSI</td>
+          </tr>
+          <tr>
+            <td>ONS liquidi addensabili (Ensure Plus, Fortisip)</td>
+            <td>ONS</td>
+            <td>Supporto energetico-proteico</td>
+            <td>L1–L7</td>
+            <td>1–2 bottiglie (200 mL) al giorno</td>
+          </tr>
+          <tr>
+            <td>Maltodestrine in polvere</td>
+            <td>Modulare</td>
+            <td>Incremento calorico senza modificare consistenza</td>
+            <td>L1–L4</td>
+            <td>20–50 g/die suddivisi nei pasti</td>
+          </tr>
+          <tr>
+            <td>Proteine modulari (Protifar, Resource Protein)</td>
+            <td>Modulare</td>
+            <td>Incremento proteico</td>
+            <td>L1–L7</td>
+            <td>1–3 misurini/die secondo fabbisogno</td>
+          </tr>
+          <tr>
+            <td>Olio MCT (Trigliceridi a catena media)</td>
+            <td>Lipidico</td>
+            <td>Incremento calorico denso</td>
+            <td>L1–L4</td>
+            <td>15–30 mL/die da aggiungere alle preparazioni</td>
+          </tr>
+          <tr>
+            <td>Acqua gelificata</td>
+            <td>Idratazione</td>
+            <td>Idratazione sicura in disfagia grave</td>
+            <td>L3–L4</td>
+            <td>200–500 mL/die o secondo necessità</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📚 Riferimenti scientifici</h3>
+    <div style="font-size:12.5px;line-height:1.8;color:var(--slate)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border:1px solid var(--border)">
+          <b>IDDSI Framework 2019</b><br>
+          Cichero JA et al. New framework for diet standardisation and safety. J Texture Stud. 2017.
+        </div>
+        <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border:1px solid var(--border)">
+          <b>ESPEN 2021 — Clinical Nutrition in Dysphagia</b><br>
+          Volkert D et al. ESPEN practical guideline: Clinical nutrition and hydration in geriatrics. Clin Nutr. 2022.
+        </div>
+        <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border:1px solid var(--border)">
+          <b>SINPE / SIN — Linee Guida Nazionali</b><br>
+          Gestione nutrizionale della disfagia nell'adulto. Società Italiana di Nutrizione Parenterale ed Enterale.
+        </div>
+        <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border:1px solid var(--border)">
+          <b>SIGN 119 — Management of patients with stroke</b><br>
+          Section on nutritional assessment and support including dysphagia management.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-clinica -->
+
+</div></main>
+
+<script src="js/utils.js"></script>
+<script>
+/* ═══════════════════════════════════════════════
+   DATI IDDSI
+═══════════════════════════════════════════════ */
+const IDDSI_META = {
+  1: {nome:'Leggermente Addensato', en:'Slightly Thick', bg:'#9CA3AF', text:'#fff', sfondo:'#F3F4F6', border:'#D1D5DB'},
+  2: {nome:'Moderatamente Addensato', en:'Mildly Thick', bg:'#EC4899', text:'#fff', sfondo:'#FDF2F8', border:'#FBCFE8'},
+  3: {nome:'Liquidizzato', en:'Liquidised', bg:'#F59E0B', text:'#fff', sfondo:'#FFFBEB', border:'#FDE68A'},
+  4: {nome:'Frullato / Passato', en:'Pureed', bg:'#10B981', text:'#fff', sfondo:'#ECFDF5', border:'#6EE7B7'},
+  5: {nome:'Tritato Umido', en:'Minced & Moist', bg:'#EF4444', text:'#fff', sfondo:'#FEF2F2', border:'#FCA5A5'},
+  6: {nome:'Morbido a Pezzi', en:'Soft & Bite-Size', bg:'#3B82F6', text:'#fff', sfondo:'#EFF6FF', border:'#93C5FD'},
+  7: {nome:'Facile da Masticare', en:'Easy to Chew', bg:'#F97316', text:'#fff', sfondo:'#FFF7ED', border:'#FED7AA'}
+};
+
+const IDDSI_DIETE = {
+  1: {
+    kcal_base: 1785,
+    nota: '⚠️ Tutti i liquidi devono essere addensati con addensante certificato (gomma xantano / amido modificato). Verificare la consistenza prima della somministrazione. ONS (integratori nutrizionali orali) spesso necessari per raggiungere target calorici elevati.',
+    pasti: [
+      {nome:'Colazione', emoji:'🌅', items:[
+        {nome:'Latte intero + addensante', qt:300, unit:'mL', kcal:195},
+        {nome:'Succo di arancia setacciato + addensante', qt:150, unit:'mL', kcal:60},
+        {nome:'Maltodestrine in polvere', qt:40, unit:'g', kcal:155}
+      ]},
+      {nome:'Spuntino Mattino', emoji:'🍊', items:[
+        {nome:'ONS liquido addensato (es. Ensure Plus)', qt:200, unit:'mL', kcal:300}
+      ]},
+      {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:'Vellutata di verdure passata al setaccio fine', qt:350, unit:'mL', kcal:170},
+        {nome:'Frullato di pollo passato al setaccio', qt:80, unit:'g', kcal:100},
+        {nome:'Olio extra vergine di oliva (aggiunto)', qt:15, unit:'g', kcal:135},
+        {nome:'Succo di pesca + addensante', qt:100, unit:'mL', kcal:40}
+      ]},
+      {nome:'Spuntino Pomeriggio', emoji:'☕', items:[
+        {nome:'Yogurt bianco intero setacciato', qt:125, unit:'g', kcal:100}
+      ]},
+      {nome:'Cena', emoji:'🌙', items:[
+        {nome:'Crema di patate + brodo addensato', qt:350, unit:'mL', kcal:200},
+        {nome:'Frullato di merluzzo passato al setaccio', qt:80, unit:'g', kcal:80},
+        {nome:'Olio extra vergine di oliva (aggiunto)', qt:15, unit:'g', kcal:135},
+        {nome:'Budino / crema fluida dolce', qt:100, unit:'g', kcal:115}
+      ]}
+    ]
+  },
+  2: {
+    kcal_base: 1807,
+    nota: '⚠️ Consistenza "Nectare" — i liquidi devono scorrere lentamente dal cucchiaio. Addensare tutte le bevande. Usare ONS densi per aumentare l\'apporto calorico. Monitorare idratazione.',
+    pasti: [
+      {nome:'Colazione', emoji:'🌅', items:[
+        {nome:'Latte intero + addensante', qt:300, unit:'mL', kcal:195},
+        {nome:'Semolino cotto fluido addensato', qt:80, unit:'g', kcal:197},
+        {nome:'Miele', qt:10, unit:'g', kcal:30}
+      ]},
+      {nome:'Spuntino Mattino', emoji:'🍊', items:[
+        {nome:'ONS denso addensato (es. Fortisip Compact)', qt:200, unit:'mL', kcal:300}
+      ]},
+      {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:'Vellutata di zucca passata finissima', qt:350, unit:'mL', kcal:175},
+        {nome:'Carne (tacchino) frullata passata al setaccio', qt:80, unit:'g', kcal:100},
+        {nome:'Olio extra vergine di oliva', qt:15, unit:'g', kcal:135},
+        {nome:'Composta di frutta passata finissima', qt:100, unit:'g', kcal:50}
+      ]},
+      {nome:'Spuntino Pomeriggio', emoji:'☕', items:[
+        {nome:'Yogurt greco setacciato', qt:125, unit:'g', kcal:100}
+      ]},
+      {nome:'Cena', emoji:'🌙', items:[
+        {nome:'Crema di legumi passata (lenticchie/piselli)', qt:300, unit:'mL', kcal:200},
+        {nome:'Pesce (sogliola) frullato passato al setaccio', qt:80, unit:'g', kcal:80},
+        {nome:'Olio extra vergine di oliva', qt:15, unit:'g', kcal:135},
+        {nome:'Crema dolce alla vaniglia', qt:100, unit:'g', kcal:110}
+      ]}
+    ]
+  },
+  3: {
+    kcal_base: 1804,
+    nota: 'Consistenza "Miele" — si può bere da un bicchiere ma non scorre liberamente. Frullare tutto finemente. Eliminare grumi, fibre dure, bucce. Usare ONS per supporto calorico.',
+    pasti: [
+      {nome:'Colazione', emoji:'🌅', items:[
+        {nome:'Latte intero con cereali frullati setacciati', qt:300, unit:'mL', kcal:220},
+        {nome:'Banana frullata fine (liquidizzata)', qt:100, unit:'g', kcal:89},
+        {nome:'Miele', qt:15, unit:'g', kcal:45}
+      ]},
+      {nome:'Spuntino Mattino', emoji:'🍊', items:[
+        {nome:'ONS crema (es. Ensure Plus Crema)', qt:200, unit:'mL', kcal:300}
+      ]},
+      {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:'Minestrone liquidizzato passato (senza bucce)', qt:400, unit:'mL', kcal:210},
+        {nome:'Carne frullata (consistenza liquidizzata)', qt:80, unit:'g', kcal:100},
+        {nome:'Olio extra vergine di oliva', qt:15, unit:'g', kcal:135},
+        {nome:'Composta di frutta frullata finissima', qt:120, unit:'g', kcal:60}
+      ]},
+      {nome:'Spuntino Pomeriggio', emoji:'☕', items:[
+        {nome:'Yogurt cremoso intero', qt:125, unit:'g', kcal:100}
+      ]},
+      {nome:'Cena', emoji:'🌙', items:[
+        {nome:'Passata di legumi densa (ceci/lenticchie)', qt:300, unit:'mL', kcal:200},
+        {nome:'Pesce frullato (liquidizzato, senza lische)', qt:80, unit:'g', kcal:80},
+        {nome:'Olio extra vergine di oliva', qt:15, unit:'g', kcal:135},
+        {nome:'Crema / budino denso', qt:120, unit:'g', kcal:130}
+      ]}
+    ]
+  },
+  4: {
+    kcal_base: 1806,
+    nota: 'Consistenza "Budino" — l\'alimento mantiene la forma ma cede facilmente alla pressione del cucchiaio. No grumi, no fibre, no pezzi. Preparare tutto in purè omogeneo.',
+    pasti: [
+      {nome:'Colazione', emoji:'🌅', items:[
+        {nome:'Porridge di farina di riso (latte + farina riso)', qt:250, unit:'g', kcal:280},
+        {nome:'Yogurt greco cremoso', qt:100, unit:'g', kcal:80},
+        {nome:'Miele', qt:15, unit:'g', kcal:45}
+      ]},
+      {nome:'Spuntino Mattino', emoji:'🍊', items:[
+        {nome:'Crema di frutta cotta frullata densa', qt:150, unit:'g', kcal:90},
+        {nome:'Biscotti ammollati e frullati (senza grumi)', qt:30, unit:'g', kcal:135}
+      ]},
+      {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:'Purè di verdure miste (zucca, patata, carota)', qt:300, unit:'g', kcal:180},
+        {nome:'Purè di pollo con besciamella morbida', qt:100, unit:'g', kcal:155},
+        {nome:'Olio extra vergine di oliva', qt:12, unit:'g', kcal:108},
+        {nome:'Purè di frutta cotta (mela/pera)', qt:100, unit:'g', kcal:60}
+      ]},
+      {nome:'Spuntino Pomeriggio', emoji:'☕', items:[
+        {nome:'Yogurt cremoso con frutta frullata', qt:150, unit:'g', kcal:130}
+      ]},
+      {nome:'Cena', emoji:'🌙', items:[
+        {nome:'Purè di patate morbido (senza grumi)', qt:200, unit:'g', kcal:170},
+        {nome:'Purè di merluzzo al latte (senza lische)', qt:100, unit:'g', kcal:135},
+        {nome:'Olio extra vergine di oliva', qt:12, unit:'g', kcal:108},
+        {nome:'Crema pasticcera densa', qt:100, unit:'g', kcal:130}
+      ]}
+    ]
+  },
+  5: {
+    kcal_base: 1753,
+    nota: 'Pezzi ≤ 4mm × 15mm, morbidi e umidi. La carne va tritata fine con sugo; il pesce sminuzzato. Verdure sempre cotte e tenere. Mantenere buona umidità degli alimenti per facilitare la deglutizione.',
+    pasti: [
+      {nome:'Colazione', emoji:'🌅', items:[
+        {nome:'Latte intero', qt:250, unit:'mL', kcal:163},
+        {nome:'Pane morbido bagnato nel latte (senza crosta)', qt:40, unit:'g', kcal:100},
+        {nome:'Miele', qt:15, unit:'g', kcal:45},
+        {nome:'Budino morbido', qt:100, unit:'g', kcal:115}
+      ]},
+      {nome:'Spuntino Mattino', emoji:'🍊', items:[
+        {nome:'Yogurt greco con frutta matura tritata fine', qt:150, unit:'g', kcal:130}
+      ]},
+      {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:'Pastina in brodo (ben cotta, grana fine)', qt:80, unit:'g', kcal:285},
+        {nome:'Carne macinata tenera in umido con sugo', qt:80, unit:'g', kcal:155},
+        {nome:'Verdure cotte tenere a piccoli pezzi (≤4mm)', qt:100, unit:'g', kcal:60},
+        {nome:'Olio extra vergine di oliva', qt:10, unit:'g', kcal:90}
+      ]},
+      {nome:'Spuntino Pomeriggio', emoji:'☕', items:[
+        {nome:'Crema / mousse di frutta morbida', qt:150, unit:'g', kcal:90}
+      ]},
+      {nome:'Cena', emoji:'🌙', items:[
+        {nome:'Riso stracotto in brodo (ben tenero)', qt:80, unit:'g', kcal:270},
+        {nome:'Pesce sminuzzato in umido con salsa (≤4mm)', qt:100, unit:'g', kcal:120},
+        {nome:'Carote / zucchine cotte a pezzetti (≤4mm)', qt:100, unit:'g', kcal:40},
+        {nome:'Olio extra vergine di oliva', qt:10, unit:'g', kcal:90}
+      ]}
+    ]
+  },
+  6: {
+    kcal_base: 1823,
+    nota: 'Pezzi ≤ 15mm × 15mm, morbidi, facilmente masticabili. Nessun alimento che richieda taglio con coltello. Evitare: pane croccante, carni dure/fibrose, noci, vegetali crudi, riso al dente.',
+    pasti: [
+      {nome:'Colazione', emoji:'🌅', items:[
+        {nome:'Latte intero', qt:250, unit:'mL', kcal:163},
+        {nome:'Pane morbido (senza crosta dura)', qt:60, unit:'g', kcal:150},
+        {nome:'Marmellata / confettura', qt:20, unit:'g', kcal:52},
+        {nome:'Burro morbido', qt:10, unit:'g', kcal:74}
+      ]},
+      {nome:'Spuntino Mattino', emoji:'🍊', items:[
+        {nome:'Yogurt greco con frutta morbida a pezzi', qt:150, unit:'g', kcal:130}
+      ]},
+      {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:'Pasta ben cotta con sugo morbido', qt:80, unit:'g', kcal:284},
+        {nome:'Pesce al forno morbido (merluzzo / orata)', qt:120, unit:'g', kcal:132},
+        {nome:'Verdure cotte morbide a pezzi (≤15mm)', qt:150, unit:'g', kcal:60},
+        {nome:'Olio extra vergine di oliva', qt:15, unit:'g', kcal:135}
+      ]},
+      {nome:'Spuntino Pomeriggio', emoji:'☕', items:[
+        {nome:'Frutta morbida matura (pesca, pera, banana)', qt:200, unit:'g', kcal:100}
+      ]},
+      {nome:'Cena', emoji:'🌙', items:[
+        {nome:'Riso ben cotto (risotto morbido)', qt:80, unit:'g', kcal:268},
+        {nome:'Uova strapazzate morbide (2 uova)', qt:100, unit:'g', kcal:145},
+        {nome:'Formaggio molle (ricotta / stracchino)', qt:50, unit:'g', kcal:130}
+      ]}
+    ]
+  },
+  7: {
+    kcal_base: 1845,
+    nota: 'Dieta normale ma con esclusione di alimenti duri, croccanti, appiccicosi o difficili da masticare. Adatta a disfagia lieve, stanchezza masticatoria e anziani con riduzione della forza masticatoria.',
+    pasti: [
+      {nome:'Colazione', emoji:'🌅', items:[
+        {nome:'Latte intero', qt:250, unit:'mL', kcal:163},
+        {nome:'Pane morbido / panino soffice (senza crosta dura)', qt:60, unit:'g', kcal:150},
+        {nome:'Marmellata / confettura', qt:20, unit:'g', kcal:52},
+        {nome:'Olio extra vergine di oliva', qt:10, unit:'g', kcal:90}
+      ]},
+      {nome:'Spuntino Mattino', emoji:'🍊', items:[
+        {nome:'Yogurt intero con frutta morbida', qt:150, unit:'g', kcal:130}
+      ]},
+      {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:'Pasta (formati morbidi: rigatoni, penne) ben cotta', qt:80, unit:'g', kcal:284},
+        {nome:'Pollo / tacchino arrosto morbido (senza cartilagini)', qt:120, unit:'g', kcal:166},
+        {nome:'Insalata tenera o verdure cotte', qt:150, unit:'g', kcal:30},
+        {nome:'Olio extra vergine di oliva', qt:15, unit:'g', kcal:135}
+      ]},
+      {nome:'Spuntino Pomeriggio', emoji:'☕', items:[
+        {nome:'Frutta matura morbida (pesca, pera, banana, kiwi)', qt:200, unit:'g', kcal:100}
+      ]},
+      {nome:'Cena', emoji:'🌙', items:[
+        {nome:'Riso / pasta ben cotta', qt:70, unit:'g', kcal:233},
+        {nome:'Pesce al forno (merluzzo, sogliola, salmone)', qt:120, unit:'g', kcal:132},
+        {nome:'Verdure cotte morbide (zucchine, carote, spinaci)', qt:150, unit:'g', kcal:60},
+        {nome:'Olio extra vergine di oliva', qt:15, unit:'g', kcal:135}
+      ]}
+    ]
+  }
+};
+
+const IDDSI_ALIMENTI = {
+  1: {
+    ok: ['Acqua addensata (livello 1)', 'Latte intero addensato', 'Succhi di frutta chiari setacciati + addensante', 'Brodo chiaro addensato', 'Tè/caffè addensato', 'ONS liquidi addensabili'],
+    mod: ['Succhi con polpa (setacciare prima)', 'Frullati densi molto diluiti + setacciati'],
+    no: ['Acqua non addensata', 'Bevande gassate', 'Qualsiasi alimento solido', 'Succhi con semi o fibre', 'Alcolici']
+  },
+  2: {
+    ok: ['Latte intero + addensante', 'Semolino fluido addensato', 'Creme vellutate setacciate finissime', 'ONS densi addensabili', 'Yogurt liquido setacciato', 'Succhi densi + addensante'],
+    mod: ['Frullati di frutta senza bucce né semi', 'Minestre passate molto fini'],
+    no: ['Liquidi sottili non addensati', 'Alimenti con grumi', 'Pezzi solidi anche piccoli', 'Alimenti filamentosi', 'Bevande gassate']
+  },
+  3: {
+    ok: ['Frullati densi (banana, avocado)', 'Crema di cereali frullata', 'Minestre liquidizzate passate', 'ONS crema', 'Yogurt cremoso senza grumi', 'Purè di patate molto fluido'],
+    mod: ['Composta di frutta frullata (rimuovere bucce/semi)', 'Creme di legumi passate finissime'],
+    no: ['Alimenti con grumi o fibre lunghe', 'Pane in qualsiasi forma', 'Carni non frullate', 'Verdure crude', 'Riso non frullato', 'Alimenti con doppia consistenza']
+  },
+  4: {
+    ok: ['Purè di patate denso', 'Purè di verdure omogeneo', 'Purè di carne / pesce con besciamella', 'Budino / panna cotta', 'Crema pasticcera', 'Yogurt greco denso', 'Purè di frutta cotta', 'Uova strapazzate morbidissime', 'Formaggio spalmabile'],
+    mod: ['Polenta morbida (senza grumi)', 'Semolino denso', 'Gelato cremoso senza pezzi'],
+    no: ['Qualsiasi alimento con grumi o pezzi', 'Pane', 'Pasta', 'Riso', 'Vegetali non frullati', 'Carni non frullate', 'Frutta intera', 'Noci / frutta secca', 'Alimenti appiccicosi']
+  },
+  5: {
+    ok: ['Carne macinata tenera in umido', 'Pesce sminuzzato (lische rimosse)', 'Pastina ben cotta in brodo', 'Riso stracotto morbido', 'Uova strapazzate', 'Verdure tenere cotte a pezzetti', 'Frutta morbida a pezzi fini', 'Yogurt con frutta tritata', 'Formaggi morbidi a pezzetti'],
+    mod: ['Gnocchi ben cotti e morbidi', 'Legumi ben cotti schiacciati parzialmente', 'Polenta morbida a pezzi piccoli'],
+    no: ['Carni fibrose o dure', 'Pane croccante / grissini', 'Verdure crude', 'Frutta con bucce/semi duri', 'Noci / nocciole / mandorle', 'Riso al dente', 'Alimenti appiccicosi (caramelle, gommose)']
+  },
+  6: {
+    ok: ['Pasta ben cotta con sugo', 'Riso morbido / risotto', 'Pesce al forno o al vapore', 'Pollo / tacchino morbido', 'Uova in qualsiasi cottura morbida', 'Formaggi molli', 'Verdure cotte morbide a pezzi', 'Legumi in umido', 'Frutta morbida matura', 'Pane morbido senza crosta'],
+    mod: ['Carne bovina magra ben cotta e umida', 'Insalata cotta', 'Banana, kiwi, fragole'],
+    no: ['Pane croccante', 'Carni dure o fibrose', 'Verdure crude croccanti', 'Noci / frutta secca', 'Alimenti molto appiccicosi', 'Salumi duri', 'Riso al dente', 'Alimenti che si sbriciolano']
+  },
+  7: {
+    ok: ['Pasta e riso normali ben cotti', 'Carni tenere (pollo, tacchino, pesce)', 'Uova in tutte le cotture', 'Formaggi', 'Legumi cotti', 'Verdure cotte o tenere crude', 'Frutta fresca morbida', 'Pane morbido', 'Yogurt', 'Prodotti latticini morbidi'],
+    mod: ['Carne bovina magra ben cotta', 'Pane con crosta leggera', 'Mela sbucciata tenera'],
+    no: ['Pane molto croccante / biscotti secchi duri', 'Carni particolarmente fibrose o dure', 'Noci intere', 'Caramelle dure / gomme', 'Alimenti che si attaccano al palato (burro di arachidi)', 'Crostacei con guscio']
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   STATO
+═══════════════════════════════════════════════ */
+let selIddsi = 4;
+let selKcal = 1800;
+const KCAL_TARGETS = [1200, 1400, 1600, 1800, 2000, 2200, 2400];
+
+/* ═══════════════════════════════════════════════
+   TAB SWITCHING
+═══════════════════════════════════════════════ */
+function showDisTab(id, ev) {
+  document.querySelectorAll('.dis-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.dis-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (ev && ev.target) ev.target.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════
+   MAPPA VISIVA IDDSI (Tab 1)
+═══════════════════════════════════════════════ */
+function buildMapCards() {
+  const allLevels = [
+    {id:0, nome:'Liquido Sottile', en:'Thin', bg:'#374151', text:'#fff'},
+    ...Object.entries(IDDSI_META).map(([id, m]) => ({id:parseInt(id), ...m}))
+  ];
+  const wrap = document.querySelector('#map-cards');
+  if (!wrap) return;
+  wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;width:100%';
+  wrap.innerHTML = allLevels.map(l => `
+    <div style="flex:1;min-width:130px;max-width:180px;border-radius:10px;overflow:hidden;border:1px solid ${l.border||'#E5E7EB'};box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="background:${l.bg};color:${l.text};padding:10px 12px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px">
+        <span style="background:rgba(255,255,255,.2);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900">${l.id}</span>
+        ${l.nome}
+      </div>
+      <div style="padding:8px 10px;background:${l.sfondo||'#F9FAFB'};font-size:11px;color:var(--slate-m);font-style:italic">${l.en}</div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   BOTTONI SELEZIONE (Tab 2)
+═══════════════════════════════════════════════ */
+function buildSelectors() {
+  const iBtns = document.getElementById('iddsi-btn-group');
+  const kBtns = document.getElementById('kcal-btn-group');
+  if (!iBtns || !kBtns) return;
+
+  iBtns.innerHTML = Object.entries(IDDSI_META).map(([id, m]) => `
+    <button class="iddsi-btn${parseInt(id)===selIddsi?' active':''}" 
+      style="${parseInt(id)===selIddsi?'background:'+m.bg+';color:'+m.text+';border-color:'+m.bg:''}"
+      onclick="selectIddsi(${id})"
+      data-id="${id}"
+      data-bg="${m.bg}"
+      data-text="${m.text}">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.12);font-size:11px;font-weight:900;margin-right:4px">${id}</span>${m.nome}
+    </button>
+  `).join('');
+
+  kBtns.innerHTML = KCAL_TARGETS.map(k => `
+    <button class="kcal-btn${k===selKcal?' active':''}" onclick="selectKcal(${k})">${k} kcal</button>
+  `).join('');
+}
+
+function selectIddsi(id) {
+  selIddsi = parseInt(id);
+  document.querySelectorAll('.iddsi-btn').forEach(b => {
+    const bid = parseInt(b.dataset.id);
+    b.classList.toggle('active', bid === selIddsi);
+    if (bid === selIddsi) {
+      b.style.background = b.dataset.bg;
+      b.style.color = b.dataset.text;
+      b.style.borderColor = b.dataset.bg;
+    } else {
+      b.style.background = '';
+      b.style.color = '';
+      b.style.borderColor = '';
+    }
+  });
+  renderPiano();
+}
+
+function selectKcal(k) {
+  selKcal = k;
+  document.querySelectorAll('.kcal-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.textContent) === k);
+  });
+  renderPiano();
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER PIANO DIETETICO
+═══════════════════════════════════════════════ */
+function renderPiano() {
+  const out = document.getElementById('piano-output');
+  if (!out) return;
+  const meta = IDDSI_META[selIddsi];
+  const dieta = IDDSI_DIETE[selIddsi];
+  if (!meta || !dieta) return;
+
+  const factor = selKcal / dieta.kcal_base;
+  let totalKcal = 0;
+  dieta.pasti.forEach(p => p.items.forEach(i => totalKcal += i.kcal));
+  const scaledTotal = Math.round(totalKcal * factor);
+
+  let html = `
+    <div style="background:${meta.sfondo};border:1.5px solid ${meta.border};border-radius:14px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span class="iddsi-badge" style="background:${meta.bg};color:${meta.text};width:40px;height:40px;font-size:16px">${selIddsi}</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--slate)">${meta.nome} <span style="font-size:12px;color:var(--slate-l);font-style:italic">(${meta.en})</span></div>
+          <div style="font-size:12px;color:var(--slate-m)">Target: <b>${selKcal} kcal/die</b> &nbsp;·&nbsp; Piano base: ${dieta.kcal_base} kcal &nbsp;·&nbsp; Fattore scala: <b>${factor.toFixed(2)}×</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="macro-totale no-print" style="margin-bottom:16px">
+      <div class="macro-pill">
+        <div class="mp-val">${scaledTotal}</div>
+        <div class="mp-lbl">Kcal Totali</div>
+      </div>
+      <div class="macro-pill">
+        <div class="mp-val">${Math.round(scaledTotal * 0.15 / 4)}</div>
+        <div class="mp-lbl">Proteine (g)</div>
+      </div>
+      <div class="macro-pill">
+        <div class="mp-val">${Math.round(scaledTotal * 0.55 / 4)}</div>
+        <div class="mp-lbl">Carboidrati (g)</div>
+      </div>
+      <div class="macro-pill">
+        <div class="mp-val">${Math.round(scaledTotal * 0.30 / 9)}</div>
+        <div class="mp-lbl">Grassi (g)</div>
+      </div>
+      <div class="macro-pill">
+        <div class="mp-val">${Math.round(scaledTotal / 5)}</div>
+        <div class="mp-lbl">Kcal/pasto</div>
+      </div>
+    </div>
+  `;
+
+  dieta.pasti.forEach(pasto => {
+    let pastoKcal = 0;
+    pasto.items.forEach(i => pastoKcal += i.kcal);
+    const pastoKcalScaled = Math.round(pastoKcal * factor);
+
+    html += `
+      <div class="pasto-card">
+        <div class="pasto-hdr" style="background:linear-gradient(135deg,${meta.bg},${meta.bg}cc)">
+          <span style="font-size:20px">${pasto.emoji}</span>
+          <span class="pasto-nome">${pasto.nome}</span>
+          <span class="pasto-kcal">≈ ${pastoKcalScaled} kcal</span>
+        </div>
+        <div class="pasto-items">
+          ${pasto.items.map(item => {
+            const qtScaled = factor >= 1
+              ? Math.round(item.qt * factor)
+              : +(item.qt * factor).toFixed(1);
+            const kcalScaled = Math.round(item.kcal * factor);
+            return `<div class="pasto-item">
+              <span class="pasto-item-nome">${item.nome}</span>
+              <span class="pasto-item-qt">${qtScaled} ${item.unit}</span>
+              <span class="pasto-item-kcal">${kcalScaled} kcal</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  if (dieta.nota) {
+    html += `<div class="nota-box">⚠️ <b>Nota clinica:</b> ${dieta.nota}</div>`;
+  }
+
+  out.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER ALIMENTI PER LIVELLO (Tab 3)
+═══════════════════════════════════════════════ */
+function buildAlimenti() {
+  const out = document.getElementById('alimenti-output');
+  if (!out) return;
+
+  let html = '';
+  Object.entries(IDDSI_META).forEach(([id, meta]) => {
+    const alim = IDDSI_ALIMENTI[id];
+    if (!alim) return;
+    html += `
+      <div class="alim-level-card">
+        <div class="alim-level-hdr">
+          <span class="iddsi-badge" style="background:${meta.bg};color:${meta.text};width:30px;height:30px;font-size:13px">${id}</span>
+          <span>${meta.nome}</span>
+          <span style="font-size:11px;color:var(--slate-l);font-style:italic">${meta.en}</span>
+        </div>
+        <div class="grid-3">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#059669;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">✅ Consentiti</div>
+            ${alim.ok.map(f => `<div class="food-item food-item-ok">✅ ${f}</div>`).join('')}
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">⚠️ Con moderazione</div>
+            ${alim.mod.map(f => `<div class="food-item food-item-mod">⚠️ ${f}</div>`).join('')}
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">❌ Da evitare</div>
+            ${alim.no.map(f => `<div class="food-item food-item-no">❌ ${f}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  out.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════
+   PAZIENTE / SALVATAGGIO
+═══════════════════════════════════════════════ */
+let editingDisNoteId = null;
+
+async function loadDisCartelle() {
+  if (!currentUser) return;
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  if (!data) return;
+  const sel = document.getElementById('dis-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>' +
+    data.map(c => `<option value="${c.id}"${c.id===cur?' selected':''}>${c.nome}</option>`).join('');
+}
+
+async function salvaDisfagia() {
+  if (!currentUser) { toast('⚠️ Accedi per salvare', 'warn'); return; }
+  const cartella_id = document.getElementById('dis-cartella').value || null;
+  const nota = document.getElementById('dis-nota').value.trim() || 'Scheda Disfagia';
+  const dati = JSON.stringify({iddsi: selIddsi, kcal: selKcal});
+  const payload = {user_id: currentUser.id, tipo: 'disfagia', cartella_id, nota, dati};
+  showLoading(true);
+  let result;
+  const wasNew = !editingDisNoteId;
+  if (editingDisNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDisNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  if (!editingDisNoteId && result.data?.[0]?.id) editingDisNoteId = result.data[0].id;
+  toast(!wasNew ? '✅ Scheda aggiornata!' : '✅ Scheda Disfagia salvata!', 'ok');
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', async () => {
+  buildMapCards();
+  buildSelectors();
+  buildAlimenti();
+  renderPiano();
+
+  if (typeof checkAuth === 'function') {
+    try {
+      await checkAuth(false);
+      if (currentUser) {
+        loadDisCartelle();
+        const noteId = new URLSearchParams(window.location.search).get('noteId');
+        if (noteId) {
+          const {data} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+          if (data) {
+            editingDisNoteId = noteId;
+            await loadDisCartelle();
+            const sel = document.getElementById('dis-cartella');
+            if (sel) sel.value = data.cartella_id || '';
+            const notaEl = document.getElementById('dis-nota');
+            if (notaEl) notaEl.value = data.nota || '';
+            try {
+              const d = JSON.parse(data.dati || '{}');
+              if (d.iddsi) { selIddsi = d.iddsi; }
+              if (d.kcal) { selKcal = d.kcal; }
+              buildSelectors();
+              renderPiano();
+            } catch(e) {}
+            toast('✅ Scheda Disfagia caricata', 'ok');
+          }
+        }
+      }
+    } catch(e) { console.error('Errore init disfagia:', e); }
+  } else if (typeof initAuth === 'function') initAuth();
+});
+</script>
+</body>
+</html>

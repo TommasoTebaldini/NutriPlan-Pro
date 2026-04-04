@@ -78,6 +78,106 @@
         </table>
       </div>
     </div>
+
+    <!-- ECM CORSI MANAGEMENT -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h3>🎓 Gestione Corsi ECM</h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="loadECMCorsi()">🔄 Aggiorna</button>
+          <button class="btn btn-primary btn-sm" onclick="mostraFormECM()">➕ Aggiungi Corso</button>
+        </div>
+      </div>
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;color:#1E3A5F">
+        ℹ️ I corsi con <b>data di fine passata</b> vengono nascosti automaticamente dalla pagina ECM. Corsi contrassegnati come <b>inattivi</b> non vengono mai mostrati.
+      </div>
+      <!-- Modulo aggiunta corso -->
+      <div id="ecm-form-wrap" style="display:none;background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px">
+        <h4 style="margin-bottom:14px;font-size:14px;color:var(--slate)">➕ Nuovo Corso ECM</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Titolo *</label>
+            <input id="ef-titolo" type="text" placeholder="Titolo del corso" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Provider / Organizzatore *</label>
+            <input id="ef-provider" type="text" placeholder="es. ANDID — Associazione Nazionale Dietisti" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Tipo *</label>
+            <select id="ef-tipo" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="fad">💻 FAD / Online</option>
+              <option value="residenziale">🏛️ Residenziale</option>
+              <option value="blended">🔀 Blended</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Crediti ECM *</label>
+            <input id="ef-crediti" type="number" min="1" max="50" placeholder="es. 12" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Data inizio</label>
+            <input id="ef-data-inizio" type="date" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Data fine <span style="font-weight:400;color:var(--slate-l)">(lascia vuoto = sempre disponibile)</span></label>
+            <input id="ef-data-fine" type="date" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Durata</label>
+            <input id="ef-durata" type="text" placeholder="es. 8 ore FAD" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Costo</label>
+            <input id="ef-costo" type="text" placeholder="es. € 80–150 oppure GRATUITO" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Link ufficiale *</label>
+            <input id="ef-link" type="url" placeholder="https://..." style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Descrizione *</label>
+            <textarea id="ef-descrizione" rows="3" placeholder="Descrizione del corso..." style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Argomenti <span style="font-weight:400">(separati da virgola)</span></label>
+            <input id="ef-argomenti" type="text" placeholder="es. Malnutrizione, NCP, Diabete" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Target <span style="font-weight:400">(separati da virgola)</span></label>
+            <input id="ef-target" type="text" placeholder="es. Dietisti, Medici, Infermieri" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Categorie <span style="font-weight:400">(separati da virgola — usare: nutrizione, patologie, pediatria, sport, fad)</span></label>
+            <input id="ef-cat" type="text" placeholder="es. nutrizione, patologie" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px">
+            <input id="ef-gratuito" type="checkbox" style="width:16px;height:16px;cursor:pointer">
+            <label for="ef-gratuito" style="font-size:13px;font-weight:600;cursor:pointer">🎁 Corso gratuito</label>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-primary btn-sm" onclick="salvaCorsoECM()">💾 Salva Corso</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ecm-form-wrap').style.display='none'">✕ Annulla</button>
+        </div>
+      </div>
+      <!-- Tabella corsi -->
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <thead>
+            <tr style="background:var(--slate);color:#CBD5E1">
+              <th style="padding:8px 10px;text-align:left">Titolo</th>
+              <th style="padding:8px 10px;text-align:center">Tipo</th>
+              <th style="padding:8px 10px;text-align:center">Crediti</th>
+              <th style="padding:8px 10px;text-align:center">Data fine</th>
+              <th style="padding:8px 10px;text-align:center">Stato</th>
+              <th style="padding:8px 10px;text-align:center">Azioni</th>
+            </tr>
+          </thead>
+          <tbody id="ecm-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div></main>
 <div id="toast"></div>
@@ -162,7 +262,111 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('admin-check').style.display = 'none';
   document.getElementById('admin-content').style.display = 'block';
   loadUtenti();
+  loadECMCorsi();
 });
+
+// ─── ECM Course Management ──────────────────────────────────────────
+async function loadECMCorsi() {
+  const tbody = document.getElementById('ecm-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Caricamento...</td></tr>';
+  const { data, error } = await sb.from('ecm_corsi').select('*').order('data_inizio', { ascending: true, nullsFirst: false });
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:#DC2626">Errore: ${esc(error.message)}<br><small>Assicurati di aver eseguito il file <b>supabase/ecm_corsi.sql</b> nel pannello Supabase.</small></td></tr>`;
+    return;
+  }
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Nessun corso trovato. Aggiungi il primo corso o esegui supabase/ecm_corsi.sql.</td></tr>';
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  tbody.innerHTML = data.map(c => {
+    const expired = c.data_fine && new Date(c.data_fine) < today;
+    const tipoIcon = c.tipo === 'fad' ? '💻' : c.tipo === 'residenziale' ? '🏛️' : '🔀';
+    const statoHtml = !c.attivo
+      ? '<span style="color:#64748B;font-weight:600">⏸ Inattivo</span>'
+      : expired
+        ? '<span style="color:#DC2626;font-weight:600">⛔ Scaduto</span>'
+        : '<span style="color:#15803D;font-weight:600">✅ Attivo</span>';
+    const dataFine = c.data_fine ? new Date(c.data_fine).toLocaleDateString('it') : '— (sempre)';
+    return `<tr style="border-bottom:1px solid var(--border);${expired||!c.attivo?'opacity:.6':''}">
+      <td style="padding:8px 10px;font-weight:500;max-width:280px">${esc(c.titolo)}<br><span style="font-size:11px;color:var(--slate-l)">${esc(c.provider)}</span></td>
+      <td style="padding:8px 10px;text-align:center">${tipoIcon} ${c.tipo}</td>
+      <td style="padding:8px 10px;text-align:center;font-weight:700;color:#4F46E5">${c.crediti}</td>
+      <td style="padding:8px 10px;text-align:center;font-size:12px">${dataFine}</td>
+      <td style="padding:8px 10px;text-align:center">${statoHtml}</td>
+      <td style="padding:8px 10px;text-align:center">
+        <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-xs" onclick="toggleCorsoECM(${c.id},${!c.attivo})">${c.attivo?'⏸ Disattiva':'▶️ Attiva'}</button>
+          <button class="btn btn-ghost btn-xs" style="color:#DC2626;border-color:#FECACA" onclick="eliminaCorsoECM(${c.id})">🗑️ Elimina</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function mostraFormECM() {
+  const f = document.getElementById('ecm-form-wrap');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  // Reset form
+  ['titolo','provider','durata','costo','link','descrizione','argomenti','target','cat'].forEach(id => {
+    const el = document.getElementById('ef-'+id);
+    if (el) el.value = '';
+  });
+  document.getElementById('ef-crediti').value = '';
+  document.getElementById('ef-data-inizio').value = '';
+  document.getElementById('ef-data-fine').value = '';
+  document.getElementById('ef-tipo').value = 'fad';
+  document.getElementById('ef-gratuito').checked = false;
+}
+
+async function salvaCorsoECM() {
+  const titolo = document.getElementById('ef-titolo').value.trim();
+  const provider = document.getElementById('ef-provider').value.trim();
+  const link = document.getElementById('ef-link').value.trim();
+  const descrizione = document.getElementById('ef-descrizione').value.trim();
+  const crediti = parseInt(document.getElementById('ef-crediti').value) || 0;
+  if (!titolo || !provider || !link || !descrizione || crediti < 1) {
+    toast('Compila i campi obbligatori (titolo, provider, link, descrizione, crediti)', 'err'); return;
+  }
+  const splitList = v => v.split(',').map(s => s.trim()).filter(Boolean);
+  const payload = {
+    titolo, provider, link, descrizione, crediti,
+    tipo: document.getElementById('ef-tipo').value,
+    durata: document.getElementById('ef-durata').value.trim() || '',
+    costo: document.getElementById('ef-costo').value.trim() || '',
+    gratuito: document.getElementById('ef-gratuito').checked,
+    argomenti: splitList(document.getElementById('ef-argomenti').value),
+    target: splitList(document.getElementById('ef-target').value),
+    cat: splitList(document.getElementById('ef-cat').value),
+    data_inizio: document.getElementById('ef-data-inizio').value || null,
+    data_fine: document.getElementById('ef-data-fine').value || null,
+    attivo: true,
+  };
+  showLoading(true);
+  const { error } = await sb.from('ecm_corsi').insert(payload);
+  showLoading(false);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  toast('✅ Corso aggiunto!', 'ok');
+  document.getElementById('ecm-form-wrap').style.display = 'none';
+  loadECMCorsi();
+}
+
+async function toggleCorsoECM(id, nuovoStato) {
+  showLoading(true);
+  await sb.from('ecm_corsi').update({ attivo: nuovoStato }).eq('id', id);
+  showLoading(false);
+  toast(nuovoStato ? '▶️ Corso attivato' : '⏸ Corso disattivato', 'info');
+  loadECMCorsi();
+}
+
+async function eliminaCorsoECM(id) {
+  if (!confirm('Eliminare definitivamente questo corso ECM?')) return;
+  showLoading(true);
+  await sb.from('ecm_corsi').delete().eq('id', id);
+  showLoading(false);
+  toast('🗑️ Corso eliminato', 'info');
+  loadECMCorsi();
+}
 </script>
 </body>
 </html>

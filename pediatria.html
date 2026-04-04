@@ -1129,7 +1129,7 @@ function drawGrowthChartType(type, sesso, ageMonthsPatient, weightPatient, heigh
   ctx.fillText(xLabel, PAD.l+chartW/2, H-2);
 
   // Patient dot
-  if (patientY && patientX >= 0 && patientX <= maxAge+6) {
+  if (patientY && patientX > 0 && (type === 'wh' || patientX <= maxAge+6)) {
     const px = toX(Math.min(patientX, maxAge));
     const py = toY(Math.min(Math.max(patientY, minY), maxY));
     // Shadow glow
@@ -1143,7 +1143,7 @@ function drawGrowthChartType(type, sesso, ageMonthsPatient, weightPatient, heigh
     ctx.fillStyle='#5B21B6'; ctx.font='bold 11px DM Sans,sans-serif'; ctx.textAlign='center';
     const label = type==='bmi' ? r1(patientY)+' kg/m²' : type==='height' ? patientY+'cm' : patientY+'kg';
     ctx.fillText(label, px, py-14);
-    ctx.fillText(patientX<24?patientX+'m':Math.round(patientX/12)+'a', px, py+20);
+    ctx.fillText(type==='wh'?patientX+'cm':patientX<24?patientX+'m':Math.round(patientX/12)+'a', px, py+20);
   }
 
   // Title / sex label

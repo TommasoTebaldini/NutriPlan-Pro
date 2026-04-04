@@ -9,21 +9,44 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
 .int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
-.int-cat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:box-shadow .2s,transform .2s}
+.int-cat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:box-shadow .25s,transform .25s,border-color .25s}
 .int-cat-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.12);transform:translateY(-2px)}
-.int-cat-hdr{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;color:white;min-height:90px;user-select:none}
-.int-cat-hdr h3{margin:0;font-size:14px;font-weight:700;line-height:1.35}
-.int-cat-body{padding:10px;display:none;flex-direction:column;gap:8px}
+.int-cat-hdr{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;color:white;min-height:80px;user-select:none}
+.int-cat-hdr h3{margin:0;font-size:14px;font-weight:700;line-height:1.35;flex:1}
+.int-cat-hdr-info{flex:1;min-width:0}
+.int-cat-hdr-sub{font-size:11px;color:rgba(255,255,255,.78);margin-top:3px;line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.int-cat-count{font-size:11px;background:rgba(255,255,255,.22);padding:3px 10px;border-radius:10px;font-weight:700;flex-shrink:0;backdrop-filter:blur(4px)}
+.int-cat-tog{width:26px;height:26px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;transition:background .15s,transform .2s}
+.int-cat-hdr:hover .int-cat-tog{background:rgba(255,255,255,.32)}
+.int-cat-body{padding:12px;padding-bottom:16px;display:none;flex-direction:column;gap:8px}
 .int-cat-body.open{display:flex}
-.int-item{padding:13px 14px;border-radius:10px;border:1px solid var(--border);border-left:4px solid var(--cat-color,#64748B);background:var(--cat-bg,#F8FAFC);transition:background .12s,box-shadow .12s}
-.int-item:hover{background:white;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.int-cat-body-desc{font-size:11.5px;color:var(--slate-m);padding:8px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--cat-color,#64748B);line-height:1.55;margin-bottom:2px}
+.int-item{padding:13px 14px;border-radius:10px;border:1px solid var(--border);border-left:4px solid var(--cat-color,#64748B);background:var(--cat-bg,#F8FAFC);transition:background .15s,box-shadow .15s,border-color .15s}
+.int-item:hover{background:white;box-shadow:0 2px 12px rgba(0,0,0,.09);border-color:var(--cat-color,#64748B)}
 .int-item-name{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:7px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .int-item-type{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap}
 .int-item-desc{font-size:12px;color:var(--slate-m);line-height:1.65;margin-bottom:8px}
 .int-item-use{font-size:11.5px;font-weight:600;padding:6px 10px;border-radius:8px;margin-bottom:5px;border-left:3px solid var(--cat-color,#10B981);background:var(--cat-mid,#F0FDF4);color:var(--cat-text,#0F766E);display:flex;align-items:flex-start;gap:4px}
 .int-item-dose{font-size:11.5px;font-weight:500;padding:6px 10px;border-radius:8px;border-left:3px solid #3B82F6;background:#EFF6FF;color:#1E40AF;display:flex;align-items:flex-start;gap:4px}
-.int-search{max-width:400px}
 .int-badge{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap}
+.int-empty{text-align:center;padding:40px 16px;color:var(--slate-l);grid-column:1/-1}
+.int-empty-icon{font-size:38px;margin-bottom:10px}
+.int-empty h4{font-size:14px;font-weight:700;color:var(--slate-m);margin-bottom:5px}
+.int-empty p{font-size:12.5px}
+@media(max-width:768px){
+  .int-grid{grid-template-columns:1fr;gap:10px}
+  .int-cat-hdr{min-height:68px;padding:12px 14px;gap:10px}
+  .int-cat-hdr h3{font-size:13px}
+  .int-cat-hdr-sub{-webkit-line-clamp:1}
+}
+@media(max-width:480px){
+  .int-cat-hdr{padding:10px 12px;gap:8px}
+  .int-cat-hdr h3{font-size:12.5px}
+  .int-cat-body{padding:10px;padding-bottom:12px;gap:7px}
+  .int-item{padding:10px 11px}
+  .int-item-name{font-size:12.5px}
+  .int-item-desc{font-size:11.5px}
+}
 </style>
 </head>
 <body>
@@ -236,7 +259,7 @@ function buildIntGrid(filter='') {
   const q = filter.toLowerCase();
   let totalVisible = 0;
   
-  grid.innerHTML = INT_DATA.map(cat => {
+  const cards = INT_DATA.map(cat => {
     const filteredItems = q 
       ? cat.items.filter(it => it.nome.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q) || it.uso.toLowerCase().includes(q) || it.tipo.toLowerCase().includes(q))
       : cat.items;
@@ -247,6 +270,7 @@ function buildIntGrid(filter='') {
     const catBg      = hexToRgba(cat.colore, 0.06);
     const catBadgeBg = hexToRgba(cat.colore, 0.14);
     const catText    = cat.colore;
+    const isOpen     = q ? ' open' : '';
 
     const itemsHtml = filteredItems.map(it => `
       <div class="int-item" style="--cat-color:${cat.colore};--cat-bg:${catBg};--cat-mid:${catBadgeBg};--cat-text:${catText}">
@@ -260,27 +284,36 @@ function buildIntGrid(filter='') {
         <div class="int-item-dose">💊 <b>Dosaggio:</b>&nbsp;${esc(it.dose)}</div>
       </div>`).join('');
     
-    return `<div class="int-cat-card" style="border-color:${hexToRgba(cat.colore,.25)}" id="cat-${cat.id}">
-      <div class="int-cat-hdr" style="background:linear-gradient(135deg,${cat.colore},${cat.colore}cc)" onclick="toggleCat('${cat.id}')">
-        <span style="font-size:28px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));flex-shrink:0">${cat.emoji}</span>
-        <div style="flex:1">
+    return `<div class="int-cat-card" style="border-color:${hexToRgba(cat.colore,.3)}" id="cat-${cat.id}">
+      <div class="int-cat-hdr" style="background:linear-gradient(135deg,${cat.colore} 0%,${cat.colore}bb 100%)" onclick="toggleCat('${cat.id}')">
+        <span style="font-size:30px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));flex-shrink:0">${cat.emoji}</span>
+        <div class="int-cat-hdr-info">
           <h3>${esc(cat.nome)}</h3>
-          <div style="font-size:11px;color:rgba(255,255,255,.82);margin-top:2px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(cat.desc)}</div>
+          <div class="int-cat-hdr-sub">${esc(cat.desc)}</div>
         </div>
-        <span style="font-size:11px;background:rgba(255,255,255,.25);padding:3px 10px;border-radius:10px;font-weight:700;flex-shrink:0">${filteredItems.length} prodotti</span>
-        <span id="tog-${cat.id}" style="font-size:15px;margin-left:6px;flex-shrink:0">▼</span>
+        <span class="int-cat-count">${filteredItems.length} prodotti</span>
+        <span class="int-cat-tog" id="tog-${cat.id}">▾</span>
       </div>
-      <div class="int-cat-body${q?' open':''}" id="body-${cat.id}">
+      <div class="int-cat-body${isOpen}" id="body-${cat.id}">
+        <div class="int-cat-body-desc" style="--cat-color:${cat.colore}">${esc(cat.desc)}</div>
         ${itemsHtml}
       </div>
     </div>`;
   }).join('');
+
+  const totalProducts = INT_DATA.reduce((a,c) => a + c.items.length, 0);
   
-  document.getElementById('int-count').textContent = filter ? `${totalVisible} risultati` : `${INT_DATA.reduce((a,c)=>a+c.items.length,0)} prodotti in ${INT_DATA.length} categorie`;
+  grid.innerHTML = (q && totalVisible === 0)
+    ? `<div class="int-empty">
+        <div class="int-empty-icon">🔍</div>
+        <h4>Nessun risultato</h4>
+        <p>Nessun integratore o AFMS trovato per "<b>${esc(filter)}</b>".<br>Prova con un termine diverso.</p>
+      </div>`
+    : cards;
   
-  if(filter) {
-    document.querySelectorAll('.int-cat-body').forEach(b => b.classList.add('open'));
-  }
+  document.getElementById('int-count').textContent = filter
+    ? `${totalVisible} risultat${totalVisible === 1 ? 'o' : 'i'} su ${totalProducts}`
+    : `${totalProducts} prodotti in ${INT_DATA.length} categorie`;
 }
 
 function typeColor(tipo) {
@@ -292,12 +325,12 @@ function toggleCat(id) {
   const body = document.getElementById('body-'+id);
   const tog = document.getElementById('tog-'+id);
   const open = body.classList.toggle('open');
-  tog.textContent = open ? '▲' : '▼';
+  tog.style.transform = open ? 'rotate(180deg)' : '';
 }
 
 function toggleAll(open) {
   document.querySelectorAll('.int-cat-body').forEach(b => b.classList.toggle('open', open));
-  document.querySelectorAll('[id^="tog-"]').forEach(t => t.textContent = open ? '▲' : '▼');
+  document.querySelectorAll('[id^="tog-"]').forEach(t => t.style.transform = open ? 'rotate(180deg)' : '');
 }
 
 function filterInt() {

@@ -52,6 +52,10 @@
 .ecm-empty{text-align:center;padding:40px;color:var(--slate-l);font-size:14px}
 .ecm-count{font-size:12px;color:var(--slate-l);margin-left:auto;padding:0 4px}
 
+.ecm-scadenza-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;white-space:nowrap}
+.ecm-date-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600;background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.ecm-db-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:8px;font-size:10.5px;font-weight:600;background:#F0FDF4;color:#15803D;border:1px solid #86EFAC}
+
 @media(max-width:640px){
   .ecm-card-inner{flex-direction:column}
   .ecm-card-left{min-width:unset;max-width:unset;flex-direction:row;padding:12px 16px;justify-content:flex-start;gap:12px}
@@ -155,9 +159,11 @@
     <button class="ecm-filter-btn active" onclick="filterECM('tutti',this)">📋 Tutti (<span id="count-tutti">0</span>)</button>
     <button class="ecm-filter-btn" onclick="filterECM('fad',this)">💻 FAD / Online</button>
     <button class="ecm-filter-btn" onclick="filterECM('residenziale',this)">🏛️ Residenziale</button>
+    <button class="ecm-filter-btn" onclick="filterECM('blended',this)">🔀 Blended</button>
     <button class="ecm-filter-btn" onclick="filterECM('nutrizione',this)">🥗 Nutrizione Clinica</button>
     <button class="ecm-filter-btn" onclick="filterECM('patologie',this)">🏥 Patologie</button>
     <button class="ecm-filter-btn" onclick="filterECM('pediatria',this)">👶 Pediatria</button>
+    <button class="ecm-filter-btn" onclick="filterECM('sport',this)">🏋️ Sport</button>
     <button class="ecm-filter-btn" onclick="filterECM('gratuito',this)">🎁 Gratuiti</button>
     <span class="ecm-count" id="ecm-count-label"></span>
   </div>
@@ -170,6 +176,9 @@
   </div>
 
   <!-- LISTA CORSI -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+    <span id="ecm-source-lbl" class="ecm-db-badge" style="display:none">🔄 Aggiornamento automatico attivo</span>
+  </div>
   <div id="ecm-list"></div>
 
   <!-- SEZIONE RISORSE UTILI -->
@@ -227,155 +236,378 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/utils.js"></script>
 <script>
-const ECM_DATA = [
-  {
-    id:1, cat:['nutrizione','fad'], tipo:'fad', gratuito:false,
-    provider:'ANDID — Associazione Nazionale Dietisti',
-    titolo:'Congresso Nazionale ANDID — Nutrizione e Innovazione Clinica',
-    crediti:16, durata:'2 giorni', costo:'€ 180–350 (soci/non soci)',
-    target:['Dietisti'],
-    descrizione:'Il principale evento formativo nazionale per i dietisti italiani. Aggiornamento su tutte le aree della nutrizione clinica con relatori italiani e internazionali. Include sessioni pratiche, workshop e networking professionale.',
-    argomenti:['Nutrizione clinica','NCP','Malnutrizione','Evidenze scientifiche'],
-    link:'https://www.andid.it/congresso',
-    scadenza:'Annuale — verificare date sul sito ANDID',
-    tipo_label:'🏛️ Residenziale'
-  },
-  {
-    id:2, cat:['nutrizione','fad'], tipo:'fad', gratuito:false,
-    provider:'SINU — Società Italiana di Nutrizione Umana',
-    titolo:'Nutrizione Clinica Avanzata: dalla Valutazione al Piano Terapeutico',
-    crediti:12, durata:'8 ore FAD',costo:'Gratuito per soci SINU / € 60 non soci',
-    target:['Dietisti','Medici','Biologi nutrizionisti'],
-    descrizione:'Corso FAD accreditato ECM su valutazione dello stato nutrizionale con strumenti validati (NRS-2002, MNA, MUST), diagnosi di malnutrizione secondo criteri GLIM, NCP (Nutrition Care Process) e formulazione di piani nutrizionali personalizzati.',
-    argomenti:['NRS-2002','MNA','GLIM','NCP','Malnutrizione'],
-    link:'https://www.sinu.it/formazione',
-    scadenza:'Accesso continuativo — verificare su sito SINU',
-    tipo_label:'💻 FAD'
-  },
-  {
-    id:3, cat:['patologie','fad'], tipo:'fad', gratuito:false,
-    provider:'ESPEN — European Society for Clinical Nutrition',
-    titolo:'ESPEN eLearning: Nutrition in Chronic Diseases',
-    crediti:8, durata:'6 ore FAD (in inglese)', costo:'Gratuito per soci ESPEN',
-    target:['Dietisti','Medici','Nutrizionisti'],
-    descrizione:'Moduli eLearning della European Society for Clinical Nutrition su nutrizione nelle malattie croniche: diabete, IRC, epatopatia, BPCO, oncologia e malattie cardiovascolari. Basati sulle linee guida ESPEN aggiornate.',
-    argomenti:['Diabete','IRC','Oncologia','BPCO','Epatopatie','Linee guida ESPEN'],
-    link:'https://www.espen.org/elearning',
-    scadenza:'Accesso permanente con registrazione ESPEN',
-    tipo_label:'💻 FAD'
-  },
-  {
-    id:4, cat:['patologie','residenziale'], tipo:'residenziale', gratuito:false,
-    provider:'Federazione COMLAS / ADI Italia',
-    titolo:'Nutrizione nell\'Insufficienza Renale Cronica: dalla teoria alla pratica',
-    crediti:10, durata:'1 giorno', costo:'€ 100–180',
-    target:['Dietisti','Medici nefrologi','Infermieri'],
-    descrizione:'Corso pratico sulla gestione nutrizionale del paziente con IRC: restrizione proteica (0.6–0.8 g/kg), gestione di potassio e fosforo, lisciviazione delle verdure, paziente dialitico (emodialitico e peritoneale), calcolo del fabbisogno e monitoraggio.',
-    argomenti:['IRC','Dialisi','Potassio','Fosforo','Proteine','Lisciviazione'],
-    link:'https://www.ecm.salute.gov.it',
-    scadenza:'Verificare calendario ECM regionale',
-    tipo_label:'🏛️ Residenziale'
-  },
-  {
-    id:5, cat:['pediatria','fad'], tipo:'fad', gratuito:false,
-    provider:'SIP — Società Italiana di Pediatria',
-    titolo:'Nutrizione Pediatrica: svezzamento, obesità e patologie specifiche',
-    crediti:10, durata:'8 ore FAD', costo:'€ 50–80',
-    target:['Dietisti','Pediatri','MMG','Infermieri pediatrici'],
-    descrizione:'Corso FAD su allattamento al seno (OMS/UNICEF), diversificazione alimentare (BLW e metodo tradizionale), APLV e gestione delle allergie alimentari in età pediatrica, obesità infantile, celiachia e diete speciali in età evolutiva.',
-    argomenti:['Allattamento','BLW','Svezzamento','APLV','Obesità infantile','Celiachia'],
-    link:'https://www.sip.it/formazione',
-    scadenza:'Verificare disponibilità sul sito SIP',
-    tipo_label:'💻 FAD'
-  },
-  {
-    id:6, cat:['pediatria','residenziale'], tipo:'residenziale', gratuito:false,
-    provider:'SIPPS — Società Italiana di Prevenzione e Igiene Pediatrica',
-    titolo:'Svezzamento Guidato dal Bambino (BLW) e Nutrizione 0–3 Anni',
-    crediti:8, durata:'1 giorno', costo:'€ 90–150',
-    target:['Pediatri','Dietisti','Ostetriche','MMG'],
-    descrizione:'Workshop pratico sul Baby-Led Weaning: basi teoriche e pratiche, sicurezza alimentare, prevenzione delle allergie con introduzione precoce, educazione alimentare precoce e linee guida WHO/ESPGHAN per l\'allattamento e lo svezzamento.',
-    argomenti:['BLW','Prevenzione allergie','ESPGHAN','WHO','Alimentazione complementare'],
-    link:'https://www.sipps.it',
-    scadenza:'Verificare calendario annuale SIPPS',
-    tipo_label:'🏛️ Residenziale'
-  },
-  {
-    id:7, cat:['nutrizione','fad'], tipo:'fad', gratuito:true,
-    provider:'ISS — Istituto Superiore di Sanità',
-    titolo:'Sorveglianza Nutrizionale e Indicatori di Salute nella Popolazione Italiana',
-    crediti:6, durata:'4 ore FAD', costo:'GRATUITO',
-    target:['Tutti i professionisti sanitari'],
-    descrizione:'Corso gratuito ISS su dati epidemiologici della nutrizione italiana, indagini OKkio alla SALUTE (obesità infantile), sistema di sorveglianza PASSI, PASSI d\'Argento e i principali indicatori di salute nutrizionale a livello nazionale e regionale.',
-    argomenti:['Epidemiologia','OKkio alla SALUTE','PASSI','Sorveglianza','Salute pubblica'],
-    link:'https://www.iss.it/formazione',
-    scadenza:'Accesso libero e continuativo',
-    tipo_label:'💻 FAD'
-  },
-  {
-    id:8, cat:['patologie','fad'], tipo:'fad', gratuito:false,
-    provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-    titolo:'Nutrizione Enterale e Parenterale: Gestione Pratica in Ospedale e a Domicilio',
-    crediti:14, durata:'10 ore FAD + 2 ore residenziale', costo:'€ 120–200 (soci/non soci)',
-    target:['Dietisti','Infermieri','Medici'],
-    descrizione:'Percorso formativo completo sulla nutrizione artificiale clinica: indicazioni e controindicazioni, accessi enterali (SNG, PEG, digiunostomia), miscele standard e modulari, nutrizione parenterale totale (NPT) e periferica, monitoraggio, NED domiciliare e gestione delle complicanze metaboliche.',
-    argomenti:['Nutrizione enterale','Nutrizione parenterale','PEG','NPT','NED','Complicanze'],
-    link:'https://www.adiitalia.net/formazione',
-    scadenza:'Verificare disponibilità su sito ADI Italia',
-    tipo_label:'🔀 Blended'
-  },
-  {
-    id:9, cat:['nutrizione','residenziale'], tipo:'residenziale', gratuito:false,
-    provider:'SINUPE — Società Italiana di Nutrizione Pediatrica',
-    titolo:'Obesità Infantile: dalla Prevenzione al Trattamento Multidisciplinare',
-    crediti:12, durata:'1,5 giorni', costo:'€ 180–280',
-    target:['Pediatri','Dietisti','Psicologi','MMG','Endocrinologi'],
-    descrizione:'Approccio integrato e multidisciplinare all\'obesità infantile: strumenti di diagnosi precoce (BMI/età, circonferenza addominale), intervento nutrizionale per età, attività fisica, aspetti psicologici e familiari, comorbilità metaboliche (insulino-resistenza, NAFLD, ipertensione) e indicazioni al trattamento farmacologico.',
-    argomenti:['Obesità pediatrica','BMI','Insulino-resistenza','NAFLD','Approccio multidisciplinare'],
-    link:'https://www.sinupe.it',
-    scadenza:'Verificare calendario annuale SINUPE',
-    tipo_label:'🏛️ Residenziale'
-  },
-  {
-    id:10, cat:['patologie','fad'], tipo:'fad', gratuito:false,
-    provider:'SID — Società Italiana di Diabetologia',
-    titolo:'Terapia Medica Nutrizionale nel Diabete Mellito Tipo 1 e Tipo 2',
-    crediti:10, durata:'8 ore FAD', costo:'€ 40–80',
-    target:['Dietisti','Medici diabetologi','MMG','Infermieri'],
-    descrizione:'Linee guida ADA/SID 2024 sulla terapia nutrizionale nel diabete: conteggio dei carboidrati, indice e carico glicemico, dieta mediterranea vs low-carb, gestione della terapia insulinica in relazione all\'alimentazione, time-restricted eating e gestione del paziente con complicanze.',
-    argomenti:['Diabete T1','Diabete T2','Conteggio CHO','Indice glicemico','Insulina','ADA 2024'],
-    link:'https://www.siditalia.it/formazione',
-    scadenza:'Verificare su sito SID',
-    tipo_label:'💻 FAD'
-  },
-  {
-    id:11, cat:['nutrizione','fad'], tipo:'fad', gratuito:true,
-    provider:'Humanitas Research Hospital / Fondazione Umberto Veronesi',
-    titolo:'Alimentazione e Prevenzione dei Tumori: evidenze e raccomandazioni',
-    crediti:8, durata:'6 ore FAD', costo:'GRATUITO',
-    target:['Tutti i professionisti sanitari'],
-    descrizione:'Corso gratuito sulle evidenze scientifiche sul legame tra alimentazione e rischio oncologico, raccomandazioni WCRF/AIRC aggiornate, nutrizione durante la chemioterapia e radioterapia, cachessia neoplastica, integrazione di omega-3 e arginina nella nutrizione oncologica.',
-    argomenti:['Oncologia','Prevenzione tumori','WCRF','Cachessia','Omega-3','Immunonutrizione'],
-    link:'https://www.fondazioneveronesi.it/formazione',
-    scadenza:'Accesso libero — verificare su sito',
-    tipo_label:'💻 FAD'
-  },
-  {
-    id:12, cat:['nutrizione','residenziale'], tipo:'residenziale', gratuito:false,
-    provider:'ANDID — Associazione Nazionale Dietisti',
-    titolo:'La Comunicazione Efficace con il Paziente: Counseling Motivazionale in Dietetica',
-    crediti:8, durata:'1 giorno', costo:'€ 100–180 (soci/non soci)',
-    target:['Dietisti','Nutrizionisti'],
-    descrizione:'Workshop pratico sul counseling motivazionale (Motivational Interviewing) applicato alla dietetica: tecniche di comunicazione empatica, gestione della resistenza al cambiamento, tecniche SMART per la definizione degli obiettivi, gestione del paziente obeso e aderenza alla terapia dietetica.',
-    argomenti:['Counseling','Motivational Interviewing','Comunicazione','Aderenza terapeutica','Psicologia dell\'alimentazione'],
-    link:'https://www.andid.it/formazione',
-    scadenza:'Verificare calendario ANDID regionale',
-    tipo_label:'🏛️ Residenziale'
-  },
+// ═══════════════════════════════════════════════════════════════════
+// ECM_DATA — dati di fallback (usati se Supabase non disponibile)
+// Per aggiornare i corsi in modo permanente: usa la sezione Admin → Corsi ECM
+// oppure esegui il file supabase/ecm_corsi.sql nel pannello Supabase.
+// ═══════════════════════════════════════════════════════════════════
+const ECM_DATA_FALLBACK = [
+  // ══ FAD ══
+  {id:1,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'SINU — Società Italiana di Nutrizione Umana',
+   titolo:'Nutrizione Clinica Avanzata: dalla Valutazione al Piano Terapeutico',
+   crediti:12,durata:'8 ore FAD',costo:'Gratuito per soci SINU / € 60 non soci',
+   target:['Dietisti','Medici','Biologi nutrizionisti'],
+   descrizione:'Corso FAD accreditato ECM su valutazione dello stato nutrizionale con strumenti validati (NRS-2002, MNA, MUST), diagnosi di malnutrizione secondo criteri GLIM, NCP (Nutrition Care Process) e formulazione di piani nutrizionali personalizzati.',
+   argomenti:['NRS-2002','MNA','GLIM','NCP','Malnutrizione'],
+   link:'https://www.sinu.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Accesso continuativo — verificare su sito SINU'},
+  {id:2,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'ESPEN — European Society for Clinical Nutrition',
+   titolo:'ESPEN eLearning: Nutrition in Chronic Diseases',
+   crediti:8,durata:'6 ore FAD (in inglese)',costo:'Gratuito per soci ESPEN',
+   target:['Dietisti','Medici','Nutrizionisti'],
+   descrizione:'Moduli eLearning della European Society for Clinical Nutrition su nutrizione nelle malattie croniche: diabete, IRC, epatopatia, BPCO, oncologia e malattie cardiovascolari. Basati sulle linee guida ESPEN aggiornate.',
+   argomenti:['Diabete','IRC','Oncologia','BPCO','Epatopatie','Linee guida ESPEN'],
+   link:'https://www.espen.org/elearning',
+   data_inizio:null,data_fine:null,
+   scadenza:'Accesso permanente con registrazione ESPEN'},
+  {id:3,cat:['pediatria','fad'],tipo:'fad',gratuito:false,
+   provider:'SIP — Società Italiana di Pediatria',
+   titolo:'Nutrizione Pediatrica: svezzamento, obesità e patologie specifiche',
+   crediti:10,durata:'8 ore FAD',costo:'€ 50–80',
+   target:['Dietisti','Pediatri','MMG','Infermieri pediatrici'],
+   descrizione:'Corso FAD su allattamento al seno (OMS/UNICEF), diversificazione alimentare (BLW e metodo tradizionale), APLV e gestione delle allergie alimentari in età pediatrica, obesità infantile, celiachia e diete speciali in età evolutiva.',
+   argomenti:['Allattamento','BLW','Svezzamento','APLV','Obesità infantile','Celiachia'],
+   link:'https://www.sip.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità sul sito SIP'},
+  {id:4,cat:['nutrizione','fad'],tipo:'fad',gratuito:true,
+   provider:'ISS — Istituto Superiore di Sanità',
+   titolo:'Sorveglianza Nutrizionale e Indicatori di Salute nella Popolazione Italiana',
+   crediti:6,durata:'4 ore FAD',costo:'GRATUITO',
+   target:['Tutti i professionisti sanitari'],
+   descrizione:'Corso gratuito ISS su dati epidemiologici della nutrizione italiana, indagini OKkio alla SALUTE (obesità infantile), sistema di sorveglianza PASSI, PASSI d\'Argento e i principali indicatori di salute nutrizionale a livello nazionale e regionale.',
+   argomenti:['Epidemiologia','OKkio alla SALUTE','PASSI','Sorveglianza','Salute pubblica'],
+   link:'https://www.iss.it/formazione',
+   data_inizio:null,data_fine:null,
+   scadenza:'Accesso libero e continuativo'},
+  {id:5,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'SID — Società Italiana di Diabetologia',
+   titolo:'Terapia Medica Nutrizionale nel Diabete Mellito Tipo 1 e Tipo 2',
+   crediti:10,durata:'8 ore FAD',costo:'€ 40–80',
+   target:['Dietisti','Medici diabetologi','MMG','Infermieri'],
+   descrizione:'Linee guida ADA/SID 2024 sulla terapia nutrizionale nel diabete: conteggio dei carboidrati, indice e carico glicemico, dieta mediterranea vs low-carb, gestione della terapia insulinica in relazione all\'alimentazione, time-restricted eating e gestione del paziente con complicanze.',
+   argomenti:['Diabete T1','Diabete T2','Conteggio CHO','Indice glicemico','Insulina','ADA 2024'],
+   link:'https://www.siditalia.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare su sito SID'},
+  {id:6,cat:['nutrizione','fad'],tipo:'fad',gratuito:true,
+   provider:'Humanitas Research Hospital / Fondazione Umberto Veronesi',
+   titolo:'Alimentazione e Prevenzione dei Tumori: evidenze e raccomandazioni',
+   crediti:8,durata:'6 ore FAD',costo:'GRATUITO',
+   target:['Tutti i professionisti sanitari'],
+   descrizione:'Corso gratuito sulle evidenze scientifiche sul legame tra alimentazione e rischio oncologico, raccomandazioni WCRF/AIRC aggiornate, nutrizione durante la chemioterapia e radioterapia, cachessia neoplastica, integrazione di omega-3 e arginina nella nutrizione oncologica.',
+   argomenti:['Oncologia','Prevenzione tumori','WCRF','Cachessia','Omega-3','Immunonutrizione'],
+   link:'https://www.fondazioneveronesi.it/formazione',
+   data_inizio:null,data_fine:null,
+   scadenza:'Accesso libero — verificare su sito'},
+  {id:7,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'SINPE — Società Italiana di Nutrizione Parenterale ed Enterale',
+   titolo:'Nutrizione Artificiale Domiciliare (NAD): indicazioni, gestione e complicanze',
+   crediti:10,durata:'8 ore FAD',costo:'€ 50–100',
+   target:['Dietisti','Infermieri','Medici'],
+   descrizione:'Corso FAD sulla gestione della Nutrizione Artificiale Domiciliare: indicazioni cliniche per NAD enterale e parenterale, selezione del paziente, formule e miscele nutrizionali, dispositivi per accesso vascolare, monitoraggio metabolico e laboratoristico, gestione delle complicanze infettive e metaboliche.',
+   argomenti:['NAD','NED','Nutrizione enterale domiciliare','Nutrizione parenterale','PICC','Gestione complicanze'],
+   link:'https://www.sinpe.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare su sito SINPE'},
+  {id:8,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+   titolo:'Sarcopenia, Fragilità e Malnutrizione: strategie nutrizionali nell\'anziano',
+   crediti:10,durata:'8 ore FAD',costo:'€ 60–100 (soci/non soci)',
+   target:['Dietisti','Geriatri','MMG','Infermieri','Fisioterapisti'],
+   descrizione:'Percorso formativo sulla gestione nutrizionale dell\'anziano fragile: criteri EWGSOP2 per la sarcopenia, MNA e valutazione multidimensionale geriatrica, fabbisogni proteici aumentati nell\'anziano, supplementazione con proteine e leucina, integrazione di vitamina D, esercizio fisico combinato.',
+   argomenti:['Sarcopenia','EWGSOP2','MNA','Anziano fragile','Fragilità','Vitamina D','Proteine'],
+   link:'https://www.adiitalia.net/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità su sito ADI Italia'},
+  {id:9,cat:['patologie','fad'],tipo:'fad',gratuito:true,
+   provider:'ISS — Istituto Superiore di Sanità / Ministero della Salute',
+   titolo:'Allergie e Intolleranze Alimentari: diagnosi, gestione e comunicazione al paziente',
+   crediti:6,durata:'5 ore FAD',costo:'GRATUITO',
+   target:['Tutti i professionisti sanitari'],
+   descrizione:'Corso gratuito su allergie IgE-mediate e non IgE-mediate, differenze con le intolleranze alimentari, APLV, celiachia e sensibilità al glutine non celiaca (SGNC), intolleranza al lattosio, FODMAP e IBS, gestione dell\'etichettatura degli allergeni e comunicazione corretta al paziente.',
+   argomenti:['Allergie alimentari','APLV','Celiachia','SGNC','Lattosio','FODMAP','IBS','Intolleranze'],
+   link:'https://www.iss.it/formazione',
+   data_inizio:null,data_fine:null,
+   scadenza:'Accesso libero e continuativo'},
+  {id:10,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'SINU — Società Italiana di Nutrizione Umana',
+   titolo:'Nutrizione Sostenibile e Planetary Health Diet: la dieta del futuro',
+   crediti:8,durata:'6 ore FAD',costo:'Gratuito per soci SINU / € 50 non soci',
+   target:['Dietisti','Medici','Biologi nutrizionisti','Professionisti della salute'],
+   descrizione:'Corso FAD sui principi della Planetary Health Diet (Commissione EAT-Lancet), impatto ambientale dell\'alimentazione (impronta di carbonio e idrica), diete plant-based e salute, riduzione degli sprechi alimentari, strategie pratiche per pazienti e comunità.',
+   argomenti:['Planetary Health Diet','Sostenibilità','Plant-based','EAT-Lancet','Impronta carbonica','Dieta mediterranea'],
+   link:'https://www.sinu.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Accesso continuativo — verificare su sito SINU'},
+  {id:11,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+   titolo:'Nutrizione nei Disturbi del Comportamento Alimentare (DCA): approccio clinico integrato',
+   crediti:10,durata:'8 ore FAD',costo:'€ 70–120 (soci/non soci)',
+   target:['Dietisti','Psicologi','Medici','Infermieri'],
+   descrizione:'Percorso FAD sulla gestione nutrizionale nei DCA: anoressia nervosa, bulimia nervosa, BED (Binge Eating Disorder), ARFID. Valutazione e ripristino nutrizionale nel paziente anoressico (refeeding syndrome), piano nutrizionale personalizzato, alleanza terapeutica e approccio multidisciplinare.',
+   argomenti:['DCA','Anoressia nervosa','Bulimia','BED','ARFID','Refeeding syndrome','Approccio multidisciplinare'],
+   link:'https://www.adiitalia.net/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità su sito ADI Italia'},
+  {id:12,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'SIC / SISA — Società Italiana di Cardiologia',
+   titolo:'Nutrizione e Rischio Cardiovascolare: dalla prevenzione alla gestione terapeutica',
+   crediti:8,durata:'6 ore FAD',costo:'€ 40–70',
+   target:['Dietisti','Cardiologi','MMG','Infermieri'],
+   descrizione:'Corso FAD su linee guida ESC 2023 per la prevenzione cardiovascolare tramite stile di vita, dieta mediterranea e riduzione del rischio CV, gestione dell\'ipercolesterolemia attraverso la dieta, approccio nutrizionale all\'ipertensione arteriosa (dieta DASH).',
+   argomenti:['Rischio cardiovascolare','Dieta DASH','Ipercolesterolemia','Ipertensione','ESC 2023','Prevenzione CV'],
+   link:'https://www.cardioitalia.net/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare su sito SIC'},
+  {id:13,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'FAND — Federazione Associazioni Nazionali Dietisti',
+   titolo:'Il Dietista nel Team Multiprofessionale: ruolo, responsabilità e NCP',
+   crediti:8,durata:'6 ore FAD',costo:'€ 50–80 (soci/non soci)',
+   target:['Dietisti'],
+   descrizione:'Corso FAD sul ruolo professionale del dietista nel team multiprofessionale sanitario, applicazione del Nutrition Care Process (NCP/NCPT) nella pratica clinica, documentazione nutrizionale e terminologia standardizzata, responsabilità professionale e collaborazione interprofessionale.',
+   argomenti:['NCP','NCPT','Team multiprofessionale','Documentazione','Ruolo professionale dietista','FNABI'],
+   link:'https://www.andid.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Accesso continuativo — verificare su sito ANDID'},
+  {id:14,cat:['nutrizione','fad'],tipo:'fad',gratuito:true,
+   provider:'CREA — Centro di Ricerca Alimenti e Nutrizione',
+   titolo:'Linee Guida per una Sana Alimentazione Italiana 2024: aggiornamento e applicazioni pratiche',
+   crediti:6,durata:'4 ore FAD',costo:'GRATUITO',
+   target:['Tutti i professionisti sanitari'],
+   descrizione:'Corso gratuito basato sulle nuove Linee Guida CREA 2024 per una sana alimentazione nella popolazione italiana: revisione delle porzioni e frequenze consigliate, aggiornamenti su legumi, pesce azzurro, frutta secca, sale e zuccheri, indicazioni specifiche per fasce di età.',
+   argomenti:['Linee guida CREA','Alimentazione italiana','Porzioni','Frequenza alimentare','Prevenzione','LARN'],
+   link:'https://www.crea.gov.it/alimenti-e-nutrizione',
+   data_inizio:null,data_fine:null,
+   scadenza:'Accesso libero e continuativo'},
+  {id:15,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+   titolo:'Nutrizione in Oncologia: screening, valutazione e supporto nutrizionale',
+   crediti:12,durata:'10 ore FAD',costo:'€ 80–140 (soci/non soci)',
+   target:['Dietisti','Oncologi','Infermieri oncologici','Medici'],
+   descrizione:'Percorso FAD completo sulla nutrizione oncologica: screening nutrizionale nel paziente oncologico (MST, MUST, PG-SGA), valutazione della composizione corporea, gestione degli effetti collaterali della chemio e radioterapia (mucosite, nausea, xerostomia), cachessia neoplastica e sarcopenia.',
+   argomenti:['Oncologia','Cachessia','PG-SGA','MST','Chemioterapia','Radioterapia','Mucosite','Sarcopenia oncologica'],
+   link:'https://www.adiitalia.net/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità su sito ADI Italia'},
+  {id:16,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'SIGE — Società Italiana di Gastroenterologia ed Endoscopia',
+   titolo:'Nutrizione nelle Malattie Infiammatorie Intestinali (IBD): Crohn e Colite Ulcerosa',
+   crediti:8,durata:'6 ore FAD',costo:'€ 50–90',
+   target:['Dietisti','Gastroenterologi','Medici','Infermieri'],
+   descrizione:'Corso FAD su valutazione e gestione nutrizionale nelle IBD: malnutrizione in Crohn e colite ulcerosa, nutrizione enterale esclusiva (NEE) come terapia d\'induzione nel Crohn, gestione del paziente con stomia, integrazione di probiotici e prebiotici nelle IBD.',
+   argomenti:['Malattia di Crohn','Colite ulcerosa','IBD','NEE','Stomia','Probiotici','Prebiotici','Malnutrizione IBD'],
+   link:'https://www.sige.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare su sito SIGE'},
+  // ══ BLENDED ══
+  {id:17,cat:['patologie','fad'],tipo:'blended',gratuito:false,
+   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+   titolo:'Nutrizione Enterale e Parenterale: Gestione Pratica in Ospedale e a Domicilio',
+   crediti:14,durata:'10 ore FAD + 2 ore residenziale',costo:'€ 120–200 (soci/non soci)',
+   target:['Dietisti','Infermieri','Medici'],
+   descrizione:'Percorso formativo completo sulla nutrizione artificiale clinica: indicazioni e controindicazioni, accessi enterali (SNG, PEG, digiunostomia), miscele standard e modulari, nutrizione parenterale totale (NPT) e periferica, monitoraggio, NED domiciliare e gestione delle complicanze metaboliche.',
+   argomenti:['Nutrizione enterale','Nutrizione parenterale','PEG','NPT','NED','Complicanze'],
+   link:'https://www.adiitalia.net/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità su sito ADI Italia'},
+  {id:18,cat:['nutrizione','fad'],tipo:'blended',gratuito:false,
+   provider:'SINU — Società Italiana di Nutrizione Umana',
+   titolo:'Il Caso Clinico in Nutrizione: percorso interattivo di valutazione e pianificazione',
+   crediti:12,durata:'8 ore FAD + 2 ore interazione online',costo:'€ 70–100',
+   target:['Dietisti','Medici','Biologi nutrizionisti'],
+   descrizione:'Corso blended con simulazioni di casi clinici reali in diverse aree della nutrizione clinica: malnutrizione ospedaliera, paziente critico in ICU, nutrizione pre e post operatoria, insufficienza renale cronica, epatopatia avanzata, obesità e sindrome metabolica. Include sessioni di discussione online con esperti.',
+   argomenti:['Casi clinici','Malnutrizione ospedaliera','ICU','Chirurgia','Sindrome metabolica','Valutazione nutrizionale'],
+   link:'https://www.sinu.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Accesso continuativo — verificare su sito SINU'},
+  // ══ RESIDENZIALE ══
+  {id:19,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+   titolo:'ADI Congress 2026 — Annual Meeting della Nutrizione Clinica Italiana',
+   crediti:18,durata:'3 giorni (22–24 maggio 2026)',costo:'€ 250–450 (soci/non soci)',
+   target:['Dietisti','Medici','Biologi nutrizionisti','Infermieri','Professionisti sanitari'],
+   descrizione:'Il principale congresso italiano di nutrizione clinica. Aggiornamento multidisciplinare su nutrizione ospedaliera e domiciliare, linee guida ESPEN/SINPE, innovazioni in nutrizione artificiale, oncologica, geriatrica e pediatrica. Sessioni parallele, workshop pratici, letture magistrali da esperti internazionali.',
+   argomenti:['Nutrizione clinica','ESPEN','Congresso ADI','Nutrizione artificiale','Aggiornamento multidisciplinare'],
+   link:'https://www.adiitalia.net/congresso',
+   data_inizio:'2026-05-22',data_fine:'2026-05-24',
+   scadenza:'Iscrizioni aperte — verificare su sito ADI'},
+  {id:20,cat:['nutrizione','sport','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'ANDID — Associazione Nazionale Dietisti',
+   titolo:'Nutrizione Sportiva e Performance Atletica: dalla Teoria al Campo',
+   crediti:10,durata:'2 giorni (29–30 maggio 2026)',costo:'€ 150–250 (soci/non soci)',
+   target:['Dietisti','Medici sportivi','Fisioterapisti'],
+   descrizione:'Workshop residenziale sulla nutrizione nello sport: fabbisogni energetici e macronutrienti per atleti, carboloading e strategie pre-gara, integrazione sportiva evidence-based (creatina, caffeina, beta-alanina, nitrati), RED-S (Relative Energy Deficiency in Sport) e Female Athlete Triad.',
+   argomenti:['Nutrizione sportiva','Carboloading','RED-S','Integrazione sportiva','Creatina','Caffeina','Performance atletica'],
+   link:'https://www.andid.it/formazione',
+   data_inizio:'2026-05-29',data_fine:'2026-05-30',
+   scadenza:'Iscrizioni aperte — verificare calendario ANDID'},
+  {id:21,cat:['pediatria','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SIPPS — Società Italiana di Prevenzione e Igiene Pediatrica',
+   titolo:'Svezzamento Guidato dal Bambino (BLW) e Alimentazione Complementare 0–3 Anni',
+   crediti:8,durata:'1 giorno (10 maggio 2026)',costo:'€ 90–150',
+   target:['Pediatri','Dietisti','Ostetriche','MMG'],
+   descrizione:'Workshop pratico sul Baby-Led Weaning: basi teoriche e pratiche, sicurezza alimentare e rischio soffocamento, prevenzione delle allergie con introduzione precoce degli allergeni (LEAP study), educazione alimentare responsiva, linee guida WHO/ESPGHAN 2024 per l\'allattamento e lo svezzamento.',
+   argomenti:['BLW','Prevenzione allergie','ESPGHAN','WHO','Alimentazione complementare','LEAP study'],
+   link:'https://www.sipps.it',
+   data_inizio:'2026-05-10',data_fine:'2026-05-10',
+   scadenza:'Iscrizioni aperte — verificare calendario SIPPS'},
+  {id:22,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'AISF — Associazione Italiana Studio Fegato',
+   titolo:'Malattie Epatiche e Nutrizione: NAFLD/MAFLD, Cirrosi e Trapianto di Fegato',
+   crediti:12,durata:'2 giorni (12–13 giugno 2026)',costo:'€ 150–250',
+   target:['Dietisti','Epatologi','Gastroenterologi','Medici','Infermieri'],
+   descrizione:'Corso residenziale sulla gestione nutrizionale delle malattie epatiche: NAFLD/MAFLD e dieta a basso contenuto di fruttosio/zuccheri, sarcopenia nella cirrosi epatica, prevenzione e trattamento dell\'encefalopatia epatica con BCAA, nutrizione nel post-trapianto epatico, gestione della ritenzione idrica e ascite con dieta iposodica.',
+   argomenti:['NAFLD','MAFLD','Cirrosi','Encefalopatia epatica','BCAA','Trapianto fegato','Ascite','Sarcopenia epatica'],
+   link:'https://www.webaisf.org',
+   data_inizio:'2026-06-12',data_fine:'2026-06-13',
+   scadenza:'Iscrizioni aperte — verificare su sito AISF'},
+  {id:23,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'ANDID — Associazione Nazionale Dietisti / GdL Disfagia',
+   titolo:'Disfagia e Texture Modified Foods: valutazione e gestione nutrizionale',
+   crediti:10,durata:'2 giorni (19–20 giugno 2026)',costo:'€ 150–240 (soci/non soci)',
+   target:['Dietisti','Logopedisti','Medici','Infermieri','Terapisti occupazionali'],
+   descrizione:'Corso residenziale sulla valutazione e gestione della disfagia: classificazione IDDSI, texture modified foods (TMF) e fluidi addensati, bedside swallowing assessment, videofluoroscopia e FEES, strategie di compensazione posturale, gestione nutrizionale del paziente disfagico neurologico (post-ictus, SLA, Parkinson).',
+   argomenti:['Disfagia','IDDSI','Texture modified foods','Addensanti','Videofluoroscopia','FEES','SLA','Ictus','Parkinson'],
+   link:'https://www.andid.it/formazione',
+   data_inizio:'2026-06-19',data_fine:'2026-06-20',
+   scadenza:'Iscrizioni aperte — verificare calendario ANDID'},
+  {id:24,cat:['pediatria','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SINUPE — Società Italiana di Nutrizione Pediatrica',
+   titolo:'Obesità Infantile e Adolescenziale: dalla Prevenzione al Trattamento Multidisciplinare',
+   crediti:12,durata:'2 giorni (5–6 giugno 2026)',costo:'€ 180–280',
+   target:['Pediatri','Dietisti','Psicologi','MMG','Endocrinologi'],
+   descrizione:'Approccio integrato e multidisciplinare all\'obesità infantile e adolescenziale: strumenti di diagnosi precoce (BMI/età, circonferenza addominale), intervento nutrizionale per fasce d\'età, aspetti psicologici e familiari, comorbilità metaboliche (insulino-resistenza, NAFLD, ipertensione) e indicazioni al trattamento farmacologico in adolescenza.',
+   argomenti:['Obesità pediatrica','BMI','Insulino-resistenza','NAFLD','Approccio multidisciplinare','Adolescenti'],
+   link:'https://www.sinupe.it',
+   data_inizio:'2026-06-05',data_fine:'2026-06-06',
+   scadenza:'Iscrizioni aperte — verificare su sito SINUPE'},
+  {id:25,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SIGE — Società Italiana di Gastroenterologia',
+   titolo:'Nutrizione nelle Malattie Gastrointestinali: dalla Celiachia alla IBS',
+   crediti:10,durata:'2 giorni (3–4 luglio 2026)',costo:'€ 160–260',
+   target:['Dietisti','Gastroenterologi','Medici internisti','Infermieri'],
+   descrizione:'Corso residenziale sulla nutrizione nelle principali patologie gastrointestinali: celiachia e dieta senza glutine (gestione della contaminazione, etichettatura), SGNC, IBS e dieta a basso contenuto di FODMAP (protocollo Monash), SIBO, reflusso gastroesofageo (GERD), malabsorzione e gestione nutrizionale post-chirurgia bariatrica.',
+   argomenti:['Celiachia','Dieta senza glutine','SGNC','IBS','FODMAP','SIBO','GERD','Chirurgia bariatrica','Malabsorzione'],
+   link:'https://www.sige.it/formazione',
+   data_inizio:'2026-07-03',data_fine:'2026-07-04',
+   scadenza:'Iscrizioni aperte — verificare su sito SIGE'},
+  {id:26,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+   titolo:'Nutrizione Oncologica Update 2026: nuove evidenze e strategie pratiche',
+   crediti:14,durata:'2 giorni (11–12 settembre 2026)',costo:'€ 200–350 (soci/non soci)',
+   target:['Dietisti','Oncologi','Infermieri oncologici','Medici'],
+   descrizione:'Congresso residenziale di aggiornamento in nutrizione oncologica: nuove linee guida ESPEN 2024/2025, immunonutrizione pre-operatoria (ERAS protocol), gestione della cachessia con anamorelina, nutrizione e immunoterapia, microbiota e risposta ai farmaci oncologici.',
+   argomenti:['Oncologia','Cachessia','ESPEN','ERAS','Immunonutrizione','Anamorelina','Immunoterapia','Microbiota oncologico'],
+   link:'https://www.adiitalia.net/congresso',
+   data_inizio:'2026-09-11',data_fine:'2026-09-12',
+   scadenza:'Iscrizioni aperte — verificare su sito ADI'},
+  {id:27,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'Federazione COMLAS / ADI Italia',
+   titolo:'Nutrizione nell\'Insufficienza Renale Cronica: dalla Teoria alla Pratica Clinica',
+   crediti:10,durata:'1 giorno (19 settembre 2026)',costo:'€ 100–180',
+   target:['Dietisti','Medici nefrologi','Infermieri'],
+   descrizione:'Corso pratico sulla gestione nutrizionale del paziente con IRC: restrizione proteica (0.6–0.8 g/kg), gestione di potassio e fosforo, lisciviazione delle verdure, paziente dialitico (emodialitico e peritoneale), CKD-MBD e osteopatia renale, calcolo del fabbisogno con eGFR, monitoraggio biochimico e nutrizionale.',
+   argomenti:['IRC','CKD','Dialisi','Potassio','Fosforo','Proteine','Lisciviazione','CKD-MBD'],
+   link:'https://www.ecm.salute.gov.it',
+   data_inizio:'2026-09-19',data_fine:'2026-09-19',
+   scadenza:'Iscrizioni aperte — verificare calendario ECM regionale'},
+  {id:28,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SID — Società Italiana di Diabetologia',
+   titolo:'Nutrizione nel Diabete Gestazionale e in Gravidanza: strategie pratiche 2026',
+   crediti:8,durata:'1 giorno (25 settembre 2026)',costo:'€ 80–150',
+   target:['Dietisti','Ginecologi','Diabetologi','Ostetriche','MMG'],
+   descrizione:'Corso residenziale sulla nutrizione in gravidanza e diabete gestazionale: nuovi criteri diagnostici IADPSG, terapia medica nutrizionale nel GDM (conteggio carboidrati, indice glicemico), obiettivi glicemici in gravidanza, gestione del peso gestazionale, fabbisogni di omega-3, DHA, folati, ferro e vitamina D.',
+   argomenti:['Diabete gestazionale','GDM','IADPSG','Gravidanza','DHA','Folati','Gestione glicemica'],
+   link:'https://www.siditalia.it/formazione',
+   data_inizio:'2026-09-25',data_fine:'2026-09-25',
+   scadenza:'Iscrizioni aperte — verificare su sito SID'},
+  {id:29,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SINU — Società Italiana di Nutrizione Umana',
+   titolo:'Microbiota Intestinale e Nutrizione: evidenze cliniche e applicazioni pratiche',
+   crediti:12,durata:'2 giorni (9–10 ottobre 2026)',costo:'€ 180–300',
+   target:['Dietisti','Medici','Biologi','Gastroenterologi'],
+   descrizione:'Congresso residenziale sulle più recenti evidenze scientifiche sul microbiota intestinale: composizione e funzione del microbioma umano, impatto della dieta sulla diversità microbiotica, probiotici e prebiotici evidence-based, trapianto di microbiota fecale (FMT), microbiota in IBD, diabete, obesità e salute mentale (asse intestino-cervello).',
+   argomenti:['Microbiota intestinale','Probiotici','Prebiotici','FMT','Asse intestino-cervello','Disbiosi','Psicobiotici'],
+   link:'https://www.sinu.it/formazione',
+   data_inizio:'2026-10-09',data_fine:'2026-10-10',
+   scadenza:'Iscrizioni aperte — verificare su sito SINU'},
+  {id:30,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'ANDID — Associazione Nazionale Dietisti',
+   titolo:'44° Congresso Nazionale ANDID 2026 — Nutrizione, Innovazione e Futuro della Dietetica',
+   crediti:16,durata:'3 giorni (15–17 ottobre 2026)',costo:'€ 180–380 (soci/non soci)',
+   target:['Dietisti'],
+   descrizione:'Il principale evento formativo nazionale per i dietisti italiani. Aggiornamento su tutte le aree della nutrizione clinica con relatori italiani e internazionali. Include sessioni plenarie, workshop paralleli, poster scientifici, symposia industriali e networking professionale.',
+   argomenti:['Nutrizione clinica','NCP','Innovazione','Ricerca','Network professionale','ANDID 2026'],
+   link:'https://www.andid.it/congresso',
+   data_inizio:'2026-10-15',data_fine:'2026-10-17',
+   scadenza:'Iscrizioni aperte fino a settembre 2026'},
+  {id:31,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'ANDID — Associazione Nazionale Dietisti',
+   titolo:'La Comunicazione Efficace con il Paziente: Counseling Motivazionale in Dietetica',
+   crediti:8,durata:'1 giorno (14 novembre 2026)',costo:'€ 100–180 (soci/non soci)',
+   target:['Dietisti','Nutrizionisti'],
+   descrizione:'Workshop pratico sul counseling motivazionale (Motivational Interviewing) applicato alla dietetica: tecniche di comunicazione empatica, gestione della resistenza al cambiamento, tecniche SMART per la definizione degli obiettivi, gestione del paziente obeso e aderenza alla terapia dietetica.',
+   argomenti:['Counseling','Motivational Interviewing','Comunicazione','Aderenza terapeutica','Psicologia alimentazione','Role-playing'],
+   link:'https://www.andid.it/formazione',
+   data_inizio:'2026-11-14',data_fine:'2026-11-14',
+   scadenza:'Iscrizioni aperte — verificare calendario ANDID regionale'},
+  {id:32,cat:['pediatria','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SINUPE — Società Italiana di Nutrizione Pediatrica',
+   titolo:'Nutrizione Neonatale e del Prematuro: dalle Linee Guida alla Pratica di Reparto',
+   crediti:10,durata:'2 giorni (6–7 novembre 2026)',costo:'€ 160–260',
+   target:['Dietisti','Neonatologi','Ostetriche','Infermieri neonatali','Pediatri'],
+   descrizione:'Corso residenziale sulla nutrizione neonatale: latte materno e fortification nel prematuro, formule per prematuri e neonati a termine, nutrizione parenterale in TIN, valutazione della crescita neonatale con curve WHO, allattamento al seno difficoltoso e supporto alla madre.',
+   argomenti:['Nutrizione neonatale','Prematuro','TIN','Latte materno','Fortification','Curva di crescita WHO','Allattamento'],
+   link:'https://www.sinupe.it',
+   data_inizio:'2026-11-06',data_fine:'2026-11-07',
+   scadenza:'Iscrizioni aperte — verificare su sito SINUPE'},
 ];
 
+let ECM_DATA = [];
 let ecmFilter = 'tutti';
+let ecmFromDB = false;
 
+// ─── helpers ────────────────────────────────────────────────────────
+function isExpired(e) {
+  if (!e.data_fine) return false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return new Date(e.data_fine) <= today;
+}
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.ceil((new Date(dateStr) - today) / 86400000);
+}
+
+function fmtDate(dateStr) {
+  if (!dateStr) return null;
+  return new Date(dateStr).toLocaleDateString('it-IT', {day:'numeric', month:'long', year:'numeric'});
+}
+
+// ─── load from Supabase ──────────────────────────────────────────────
+async function loadECMFromDB() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const { data, error } = await sb.from('ecm_corsi')
+      .select('*')
+      .eq('attivo', true)
+      .or('data_fine.is.null,data_fine.gte.' + today)
+      .order('data_inizio', { ascending: true, nullsFirst: false });
+    if (error || !data || !data.length) return false;
+    ECM_DATA = data;
+    ecmFromDB = true;
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+// ─── filter & render ────────────────────────────────────────────────
 function filterECM(cat, btn) {
   ecmFilter = cat;
   document.querySelectorAll('.ecm-filter-btn').forEach(b => b.classList.remove('active'));
@@ -386,32 +618,48 @@ function filterECM(cat, btn) {
 function renderECM() {
   const container = document.getElementById('ecm-list');
   const searchQ = (document.getElementById('ecm-search')?.value || '').toLowerCase().trim();
-  
-  let list = ECM_DATA;
-  
-  // Filter by category
+
+  // Remove expired from fallback data (Supabase already filters server-side)
+  let list = ECM_DATA.filter(e => !isExpired(e));
+
+  // Category filter
   if (ecmFilter !== 'tutti') {
     if (ecmFilter === 'fad') list = list.filter(e => e.tipo === 'fad');
     else if (ecmFilter === 'residenziale') list = list.filter(e => e.tipo === 'residenziale');
+    else if (ecmFilter === 'blended') list = list.filter(e => e.tipo === 'blended');
     else if (ecmFilter === 'gratuito') list = list.filter(e => e.gratuito);
-    else list = list.filter(e => e.cat.includes(ecmFilter));
+    else list = list.filter(e => Array.isArray(e.cat) && e.cat.includes(ecmFilter));
   }
-  
-  // Filter by search
+
+  // Search filter
   if (searchQ) {
     list = list.filter(e =>
       e.titolo.toLowerCase().includes(searchQ) ||
       e.provider.toLowerCase().includes(searchQ) ||
       e.descrizione.toLowerCase().includes(searchQ) ||
-      e.argomenti.some(a => a.toLowerCase().includes(searchQ))
+      (Array.isArray(e.argomenti) ? e.argomenti : []).some(a => a.toLowerCase().includes(searchQ))
     );
   }
-  
-  // Update count
-  document.getElementById('count-tutti').textContent = ECM_DATA.length;
+
+  // Sort: residenziali with date first (ascending), then blended, then FAD (by credits desc)
+  list.sort((a, b) => {
+    const aDate = a.data_inizio;
+    const bDate = b.data_inizio;
+    if (aDate && bDate) return new Date(aDate) - new Date(bDate);
+    if (aDate) return -1;
+    if (bDate) return 1;
+    return b.crediti - a.crediti;
+  });
+
+  // Update counts
+  document.getElementById('count-tutti').textContent = ECM_DATA.filter(e => !isExpired(e)).length;
   const lbl = document.getElementById('ecm-count-label');
   if (lbl) lbl.textContent = `${list.length} corso${list.length !== 1 ? 'i' : ''} trovato${list.length !== 1 ? 'i' : ''}`;
-  
+
+  // Source indicator
+  const src = document.getElementById('ecm-source-lbl');
+  if (src) src.style.display = ecmFromDB ? 'inline-flex' : 'none';
+
   if (!list.length) {
     container.innerHTML = `<div class="ecm-empty">
       <div style="font-size:40px;margin-bottom:12px">🔍</div>
@@ -419,34 +667,58 @@ function renderECM() {
     </div>`;
     return;
   }
-  
+
   container.innerHTML = list.map(e => {
     const tipoClass = e.tipo === 'fad' ? 'ecm-tipo-fad' : e.tipo === 'residenziale' ? 'ecm-tipo-res' : 'ecm-tipo-blended';
     const tipoIcon = e.tipo === 'fad' ? '💻' : e.tipo === 'residenziale' ? '🏛️' : '🔀';
-    
+    const tipoLbl = e.tipo === 'fad' ? 'FAD' : e.tipo === 'residenziale' ? 'Res.' : 'Blended';
+
+    // Date display
+    let dateHtml = '';
+    if (e.data_inizio) {
+      const d = daysUntil(e.data_inizio);
+      if (d !== null && d >= 0) {
+        dateHtml = `<span class="ecm-date-chip">📅 ${fmtDate(e.data_inizio)}${e.data_fine && e.data_fine !== e.data_inizio ? ' → ' + fmtDate(e.data_fine) : ''}</span>`;
+      }
+    }
+
+    // Expiry warning (within 30 days)
+    let scadenzaHtml = '';
+    const dFine = daysUntil(e.data_fine);
+    if (dFine !== null && dFine >= 0 && dFine <= 30) {
+      scadenzaHtml = `<span class="ecm-scadenza-badge">⏳ Scade tra ${dFine} giorn${dFine === 1 ? 'o' : 'i'}</span>`;
+    }
+
+    const argomenti = Array.isArray(e.argomenti) ? e.argomenti : [];
+    const target = Array.isArray(e.target) ? e.target : [];
+    const safeLink = /^https?:\/\//i.test(e.link) ? e.link : '#';
+
     return `<div class="ecm-card">
       <div class="ecm-card-inner">
         <div class="ecm-card-left">
           <div class="ecm-credits-num">${e.crediti}</div>
           <div class="ecm-credits-lbl">crediti ECM</div>
-          <span class="ecm-tipo-badge ${tipoClass}" style="margin-top:10px">${tipoIcon} ${e.tipo === 'fad' ? 'FAD' : e.tipo === 'residenziale' ? 'Res.' : 'Blended'}</span>
+          <span class="ecm-tipo-badge ${tipoClass}" style="margin-top:10px">${tipoIcon} ${tipoLbl}</span>
           ${e.gratuito ? '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:10px;font-size:9.5px;font-weight:800;margin-top:6px;white-space:nowrap">🎁 GRATIS</span>' : ''}
         </div>
         <div class="ecm-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px">
+            ${dateHtml}${scadenzaHtml}
+          </div>
           <div class="ecm-card-title">${esc(e.titolo)}</div>
           <div class="ecm-card-provider">📍 ${esc(e.provider)}</div>
           <div class="ecm-card-desc">${esc(e.descrizione)}</div>
           <div class="ecm-meta">
             <span>⏱️ ${esc(e.durata)}</span>
             <span>💰 ${esc(e.costo)}</span>
-            <span>👥 ${e.target.join(', ')}</span>
-            <span>📅 ${esc(e.scadenza)}</span>
+            <span>👥 ${target.map(t => esc(t)).join(', ')}</span>
+            <span>📅 ${esc(e.scadenza || '')}</span>
           </div>
           <div class="ecm-tags">
-            ${e.argomenti.map(a => `<span class="ecm-tag">${esc(a)}</span>`).join('')}
+            ${argomenti.map(a => `<span class="ecm-tag">${esc(a)}</span>`).join('')}
           </div>
           <div class="ecm-card-actions">
-            <a href="${e.link}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">
+            <a href="${safeLink}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">
               🔗 Vai al sito ufficiale
             </a>
             <span style="font-size:11.5px;color:var(--slate-l);font-style:italic">⚠️ Verifica l'accreditamento attuale prima di iscriverti</span>
@@ -458,8 +730,15 @@ function renderECM() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  renderECM();
   try { await checkAuth(false); } catch(e) {}
+  showLoading(true);
+  const fromDB = await loadECMFromDB();
+  if (!fromDB) {
+    // Use fallback data, filtering expired client-side
+    ECM_DATA = ECM_DATA_FALLBACK;
+  }
+  showLoading(false);
+  renderECM();
 });
 </script>
 </body>

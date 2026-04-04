@@ -256,14 +256,15 @@ function initCartellaWidget(cid, opts) {
   const labelColor = opts.labelColor || '#0F766E';
   const hiddenId = opts.hiddenInputId || (cid + '-val');
   const placeholder = opts.placeholder || '🔍 Cerca paziente...';
-  container.style.position = 'relative';
   container.innerHTML =
-    '<input type="text" id="' + cid + '-srch" placeholder="' + placeholder + '" autocomplete="off"' +
-    ' style="width:100%;padding:6px 10px;border:1.5px solid ' + border + ';border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none;background:white;box-sizing:border-box"' +
-    ' oninput="_cwFilter(\'' + cid + '\')"' +
-    ' onfocus="_cwShow(\'' + cid + '\')"' +
-    ' onblur="setTimeout(()=>_cwHide(\'' + cid + '\'),200)">' +
-    '<div id="' + cid + '-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15)"></div>' +
+    '<div style="position:relative">' +
+      '<input type="text" id="' + cid + '-srch" placeholder="' + placeholder + '" autocomplete="off"' +
+      ' style="width:100%;padding:6px 10px;border:1.5px solid ' + border + ';border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none;background:white;color:#1E293B;box-sizing:border-box"' +
+      ' oninput="_cwFilter(\'' + cid + '\')"' +
+      ' onfocus="_cwShow(\'' + cid + '\')"' +
+      ' onblur="setTimeout(()=>_cwHide(\'' + cid + '\'),200)">' +
+      '<div id="' + cid + '-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
+    '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
     '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:block;min-height:15px"></span>';
 }
@@ -290,7 +291,7 @@ async function _cwShow(cid, q) {
   } else {
     html += filtered.map(function(c){
       return '<div onclick="_cwSelect(\'' + cid + '\',\'' + escJS(c.id) + '\',\'' + escJS(c.nome) + '\')"' +
-        ' style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)"' +
+        ' style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border);color:#1E293B"' +
         ' onmouseover="this.style.background=\'' + hoverBg + '\'" onmouseout="this.style.background=\'\'">📁 ' + esc(c.nome) + '</div>';
     }).join('');
   }

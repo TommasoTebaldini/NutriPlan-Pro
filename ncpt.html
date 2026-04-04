@@ -213,14 +213,18 @@
 </div>
 
 <!-- CARTELLA SELECTION CARD -->
-<div id="cartella-select-card" class="no-print" style="background:white;border-radius:var(--r);border:2px dashed var(--border-d);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s">
+<div id="cartella-select-card" class="no-print" style="background:white;border-radius:var(--r);border:2px solid var(--border-d);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s">
   <span style="font-size:28px">📁</span>
   <div style="flex:1">
-    <div style="font-size:13px;font-weight:700;color:var(--slate);margin-bottom:4px">Seleziona Cartella Paziente</div>
-    <div style="position:relative">
-      <input type="text" id="cart-search-main" placeholder="🔍 Cerca paziente per nome..." autocomplete="off"
+    <div style="font-size:13px;font-weight:700;color:var(--slate);margin-bottom:8px">Seleziona Cartella Paziente</div>
+    <select id="cart-select-main" onchange="onCartSelectMain()"
+      style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none;box-sizing:border-box;background:white;cursor:pointer">
+      <option value="">-- Nessuna cartella selezionata --</option>
+    </select>
+    <div style="position:relative;margin-top:8px">
+      <input type="text" id="cart-search-main" placeholder="🔍 Oppure cerca per nome..." autocomplete="off"
         oninput="filterCartMain()" onfocus="showCartDDMain()" onblur="setTimeout(hideCartDDMain,200)"
-        style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none;box-sizing:border-box">
+        style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:12.5px;outline:none;box-sizing:border-box;color:var(--slate-m)">
       <div id="cart-dd-main" style="display:none;position:absolute;top:110%;left:0;right:0;background:white;border:2px solid var(--teal-l);border-radius:8px;max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15)"></div>
     </div>
   </div>
@@ -681,11 +685,32 @@ function showCartDDMain(q='') {
   dd.style.display = 'block';
 }
 function hideCartDDMain() { const dd=document.getElementById('cart-dd-main'); if(dd) dd.style.display='none'; }
+function populateCartSelect() {
+  const sel = document.getElementById('cart-select-main');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- Nessuna cartella selezionata --</option>';
+  allCartelle.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id;
+    o.textContent = '📁 ' + c.nome + (c.ddn ? ' (' + calcolaEta(c.ddn) + ' anni)' : '');
+    if (c.id === currentCartellaId) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+async function onCartSelectMain() {
+  const sel = document.getElementById('cart-select-main');
+  const id = sel.value;
+  if (!id) return;
+  const cart = allCartelle.find(c => c.id === id);
+  if (cart) await selCartella(id, cart.nome);
+}
 async function selCartella(id, nome) {
   currentCartellaId = id;
   document.getElementById('cart-search').value = nome;
   const mainInput = document.getElementById('cart-search-main');
-  if (mainInput) mainInput.value = nome;
+  if (mainInput) mainInput.value = '';
+  const sel = document.getElementById('cart-select-main');
+  if (sel) sel.value = id;
   hideCartDD();
   hideCartDDMain();
   // Load NCPt for this cartella
@@ -1192,6 +1217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
     const {data} = await sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',currentUser.id).order('nome');
     allCartelle = data || [];
+    populateCartSelect();
 
     // Check if we should open a specific NCPt or cartella
     const loadNcptId = sessionStorage.getItem('loadNcptId');

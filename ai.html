@@ -37,7 +37,16 @@
 .ai-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .ai-chip{padding:6px 14px;border-radius:20px;background:white;border:1.5px solid var(--border-d);font-size:12px;font-weight:500;cursor:pointer;color:var(--slate-m);transition:all .15s;white-space:nowrap}
 .ai-chip:hover{background:var(--teal);color:white;border-color:var(--teal)}
-.ai-header-box{background:linear-gradient(135deg,#0F766E,#0EA5E9);border-radius:var(--r);padding:16px 20px;margin-bottom:16px;color:white;display:flex;align-items:center;gap:14px}
+.ai-header-box{background:linear-gradient(135deg,#0F766E 0%,#0891B2 60%,#0EA5E9 100%);border-radius:var(--r);padding:20px 24px;margin-bottom:14px;color:white;display:flex;align-items:center;gap:18px;box-shadow:0 8px 32px rgba(15,118,110,.28);position:relative;overflow:hidden}
+.ai-header-box::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(255,255,255,.08);border-radius:50%}
+.ai-header-box::after{content:'';position:absolute;bottom:-30px;right:80px;width:100px;height:100px;background:rgba(255,255,255,.06);border-radius:50%}
+.ai-stats-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ai-stat-pill{background:white;border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--slate-m);display:flex;align-items:center;gap:5px}
+.ai-stat-pill span.dot{width:7px;height:7px;border-radius:50%;background:var(--teal);display:inline-block}
+.ai-chips-label{font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+.ai-chips-group{margin-bottom:10px}
+.ai-chip{padding:6px 13px;border-radius:20px;background:white;border:1.5px solid var(--border-d);font-size:11.5px;font-weight:500;cursor:pointer;color:var(--slate-m);transition:all .15s;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.ai-chip:hover{background:var(--teal);color:white;border-color:var(--teal);box-shadow:0 3px 10px rgba(15,118,110,.25);transform:translateY(-1px)}
 .dot-pulse{display:flex;gap:4px;align-items:center;padding:4px 0}
 .dot-pulse span{width:8px;height:8px;border-radius:50%;background:var(--teal-l);animation:dotPulse 1.2s infinite}
 .dot-pulse span:nth-child(2){animation-delay:.2s}
@@ -104,22 +113,37 @@
 <main id="main"><div class="page-content" style="height:calc(100vh - 60px);display:flex;flex-direction:column;padding-bottom:0">
 
   <div class="ai-header-box">
-    <div style="font-size:36px">🤖</div>
-    <div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Assistente Nutrizionale AI</div>
-      <div style="font-size:12.5px;opacity:.9">Supporto professionale basato su linee guida ESPEN, ESC, WHO. Usa per calcoli, approfondimenti clinici e supporto alla prescrizione dietetica. <b>Non sostituisce il giudizio clinico del professionista.</b></div>
+    <div style="font-size:44px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2));position:relative;z-index:1">🤖</div>
+    <div style="position:relative;z-index:1;flex:1">
+      <div style="font-size:16px;font-weight:700;margin-bottom:3px;letter-spacing:.2px">Assistente Nutrizionale AI</div>
+      <div style="font-size:12px;opacity:.9;line-height:1.6">Supporto professionale basato su <b>ESPEN · ESC · WHO · LARN</b>. Calcoli, approfondimenti clinici, diagnosi nutrizionale PES.</div>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:600">🧠 Llama 3.1</span>
+        <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:600">⚡ Groq API</span>
+        <span style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:500;opacity:.85">Solo uso professionale</span>
+      </div>
     </div>
   </div>
 
-  <div class="ai-chips" id="ai-chips">
-    <span class="ai-chip" onclick="sendChip(this)">📊 Calcola fabbisogno proteico per IRC 70kg</span>
-    <span class="ai-chip" onclick="sendChip(this)">🥗 Suggerisci un piano per diabete 1800kcal</span>
-    <span class="ai-chip" onclick="sendChip(this)">💊 Interazioni farmaco-nutriente warfarin</span>
-    <span class="ai-chip" onclick="sendChip(this)">🏥 Criteri diagnosi malnutrizione GLIM</span>
-    <span class="ai-chip" onclick="sendChip(this)">⚡ Fabbisogno energetico scompenso cardiaco</span>
-    <span class="ai-chip" onclick="sendChip(this)">🦴 Target calcio e vitamina D osteoporosi</span>
-    <span class="ai-chip" onclick="sendChip(this)">📋 Genera PES per paziente con cachessia</span>
-    <span class="ai-chip" onclick="sendChip(this)">🧪 Valori albumina e malnutrizione: correlazione</span>
+  <div class="ai-stats-bar no-print">
+    <span class="ai-stat-pill"><span class="dot"></span>Modello attivo</span>
+    <span class="ai-stat-pill">📚 ESPEN 2024</span>
+    <span class="ai-stat-pill">🇮🇹 Italiano</span>
+    <span class="ai-stat-pill">🔒 Nessun dato inviato</span>
+  </div>
+
+  <div class="ai-chips no-print" id="ai-chips">
+    <div class="ai-chips-label">Suggerimenti rapidi</div>
+    <div class="ai-chips-group" style="display:flex;flex-wrap:wrap;gap:6px">
+      <span class="ai-chip" onclick="sendChip(this)">📊 Calcola fabbisogno proteico per IRC 70kg</span>
+      <span class="ai-chip" onclick="sendChip(this)">🥗 Piano per diabete T2 1800 kcal</span>
+      <span class="ai-chip" onclick="sendChip(this)">💊 Interazioni warfarin e vitamina K</span>
+      <span class="ai-chip" onclick="sendChip(this)">🏥 Criteri GLIM malnutrizione</span>
+      <span class="ai-chip" onclick="sendChip(this)">⚡ Fabbisogno energetico scompenso cardiaco</span>
+      <span class="ai-chip" onclick="sendChip(this)">🦴 Calcio e vitamina D in osteoporosi</span>
+      <span class="ai-chip" onclick="sendChip(this)">📋 Genera PES per paziente con cachessia</span>
+      <span class="ai-chip" onclick="sendChip(this)">🧪 Albumina e malnutrizione: correlazione</span>
+    </div>
   </div>
 
   <div class="ai-messages" id="ai-messages">

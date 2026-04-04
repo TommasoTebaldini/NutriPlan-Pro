@@ -153,9 +153,8 @@
 <div class="paz-hdr no-print" id="dis-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
-    <select id="dis-cartella" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px" onfocus="loadDisCartelle()">
-      <option value="">-- Nessuna cartella --</option>
-    </select>
+    <div id="dis-cartella-cw"></div>
+    <input type="hidden" id="dis-cartella" value="">
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
@@ -756,19 +755,19 @@ function showDisTab(id, ev) {
 ═══════════════════════════════════════════════ */
 function buildMapCards() {
   const allLevels = [
-    {id:0, nome:'Liquido Sottile', en:'Thin', bg:'#374151', text:'#fff'},
+    {id:0, nome:'Liquido Sottile', en:'Thin', bg:'#374151', text:'#fff', sfondo:'#F3F4F6', border:'#6B7280'},
     ...Object.entries(IDDSI_META).map(([id, m]) => ({id:parseInt(id), ...m}))
   ];
   const wrap = document.querySelector('#map-cards');
   if (!wrap) return;
   wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;width:100%';
   wrap.innerHTML = allLevels.map(l => `
-    <div style="flex:1;min-width:130px;max-width:180px;border-radius:10px;overflow:hidden;border:1px solid ${l.border||'#E5E7EB'};box-shadow:0 1px 4px rgba(0,0,0,.06)">
-      <div style="background:${l.bg};color:${l.text};padding:10px 12px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px">
-        <span style="background:rgba(255,255,255,.2);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900">${l.id}</span>
+    <div style="flex:1;min-width:130px;max-width:180px;border-radius:10px;overflow:hidden;border:1px solid ${l.border};box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="background:${l.bg};color:${l.text};padding:10px 12px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;min-height:52px">
+        <span style="background:rgba(255,255,255,.2);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0">${l.id}</span>
         ${l.nome}
       </div>
-      <div style="padding:8px 10px;background:${l.sfondo||'#F9FAFB'};font-size:11px;color:var(--slate-m);font-style:italic">${l.en}</div>
+      <div style="padding:8px 10px;background:${l.sfondo};font-size:11px;color:var(--slate-m);font-style:italic">${l.en}</div>
     </div>
   `).join('');
 }
@@ -996,15 +995,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       await checkAuth(false);
       if (currentUser) {
-        loadDisCartelle();
+        initCartellaWidget('dis-cartella-cw', { hiddenInputId:'dis-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
         const noteId = new URLSearchParams(window.location.search).get('noteId');
         if (noteId) {
           const {data} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
           if (data) {
             editingDisNoteId = noteId;
-            await loadDisCartelle();
-            const sel = document.getElementById('dis-cartella');
-            if (sel) sel.value = data.cartella_id || '';
+            await _cwSetById('dis-cartella-cw', data.cartella_id);
             const notaEl = document.getElementById('dis-nota');
             if (notaEl) notaEl.value = data.nota || '';
             try {

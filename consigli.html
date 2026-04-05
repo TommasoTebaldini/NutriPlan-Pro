@@ -184,6 +184,12 @@
 
 <main id="main"><div class="page-content">
 
+<!-- print-only header (hidden on screen, shown when printing) -->
+<div class="print-header" style="display:none">
+  <h1 class="print-title">💡 Consigli Nutrizionali</h1>
+  <div class="print-subtitle">DietPlan Pro · Generato il <span id="print-date"></span></div>
+</div>
+
 <!-- hero gradient banner -->
 <div style="background:linear-gradient(135deg,#0F766E 0%,#0EA5E9 100%);border-radius:18px;padding:22px 28px;margin-bottom:18px;display:flex;align-items:center;gap:20px;color:white;box-shadow:0 6px 24px rgba(15,118,110,.28);position:relative;overflow:hidden">
   <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)"></div>
@@ -1183,7 +1189,8 @@ function buildConsiglio(c, isCustom = false) {
         <button class="btn btn-ghost btn-sm" onclick="stampaConsiglio('${c.id}')">🖨️ Stampa</button>
         <button class="btn btn-amber btn-sm" onclick="stampaPdfConsiglio('${c.id}')">📄 PDF</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleNotePaziente('${c.id}')" id="note-btn-${c.id}">✏️ Note paziente</button>
-        ${isCustom ? `<button class="btn btn-ghost btn-sm" onclick="editConsiglio('${c.id}')">✏️ Modifica</button><button class="btn btn-danger btn-sm" onclick="delConsiglio('${c.id}')">🗑️ Elimina</button>` : ''}
+        <button class="btn btn-ghost btn-sm" onclick="editConsiglio('${c.id}')" title="${isCustom ? 'Modifica consiglio personalizzato' : 'Personalizza questo consiglio'}">✏️ ${isCustom ? 'Modifica' : 'Personalizza'}</button>
+        ${isCustom ? `<button class="btn btn-danger btn-sm" onclick="delConsiglio('${c.id}')">🗑️ Elimina</button>` : ''}
       </div>
     </div>`;
   return div;
@@ -1315,7 +1322,9 @@ function renderConsigli(filter = '') {
   const list = document.getElementById('consigli-list');
   list.innerHTML = '';
   const q = filter.toLowerCase();
-  const all = [...CONSIGLI_BASE, ...consigliPersonalizzati];
+  // Custom entries override base entries with the same ID
+  const customIds = new Set(consigliPersonalizzati.map(c => c.id));
+  const all = [...CONSIGLI_BASE.filter(c => !customIds.has(c.id)), ...consigliPersonalizzati];
   const filtered = q ? all.filter(c => c.nome.toLowerCase().includes(q) || (c.id||'').includes(q)) : all;
   document.getElementById('cs-count').textContent = filtered.length + ' patologie';
   filtered.forEach(c => {
@@ -1374,10 +1383,20 @@ async function salvaConsiglio() {
   const payload = { user_id: currentUser.id, data_id: data.id, contenuto: JSON.stringify(data), updated_at: new Date().toISOString() };
   let result;
   if (editingId) {
-    result = await sb.from('consigli_custom').update(payload).eq('data_id', editingId).eq('user_id', currentUser.id);
-    if (!result.error) {
-      const idx = consigliPersonalizzati.findIndex(c => c.id === editingId);
-      if (idx >= 0) consigliPersonalizzati[idx] = data;
+    const existsCustom = consigliPersonalizzati.some(c => c.id === editingId);
+    if (existsCustom) {
+      // Update existing custom entry
+      result = await sb.from('consigli_custom').update(payload).eq('data_id', editingId).eq('user_id', currentUser.id);
+      if (!result.error) {
+        const idx = consigliPersonalizzati.findIndex(c => c.id === editingId);
+        if (idx >= 0) consigliPersonalizzati[idx] = data;
+        else consigliPersonalizzati.push(data);
+      }
+    } else {
+      // Creating a personalised version of a pre-made (base) consiglio
+      payload.created_at = new Date().toISOString();
+      result = await sb.from('consigli_custom').insert(payload);
+      if (!result.error) consigliPersonalizzati.push(data);
     }
   } else {
     payload.created_at = new Date().toISOString();
@@ -1398,7 +1417,7 @@ async function salvaConsiglio() {
 }
 
 function editConsiglio(id) {
-  const c = consigliPersonalizzati.find(x => x.id === id);
+  const c = consigliPersonalizzati.find(x => x.id === id) || CONSIGLI_BASE.find(x => x.id === id);
   if (c) openNuovoConsiglio(c);
 }
 

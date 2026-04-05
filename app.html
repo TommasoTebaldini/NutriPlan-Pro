@@ -8,6 +8,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
+/* Misura alternativa input (screen only) */
+.inp-misura{display:block;width:100%;margin-top:2px;padding:1px 4px;font-size:9px;font-family:inherit;border:none;border-top:1px dashed #CBD5E1;border-radius:0;background:transparent;color:#94A3B8;box-sizing:border-box}
+.inp-misura:focus{outline:none;border-top-color:#2DD4BF;color:#334155}
+.inp-misura::placeholder{color:#CBD5E1}
+/* Misura alternativa print label (screen: hidden, print: shown) */
+.misura-print{display:none;font-size:7px;color:#64748B;font-style:italic}
+/* Simple print area (screen: hidden) */
+#simple-print-area{display:none}
 @media print{
   @page{margin:1cm 1.2cm;size:A4 landscape}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -32,6 +40,13 @@
   .paz-hdr{page-break-inside:avoid;display:none!important}
   .vnd{color:#999!important}
   .ac-src{display:none!important}
+  .misura-print{display:block!important}
+  /* ── Simple print mode (no nutritional calculations) ── */
+  body[data-print-mode="simple"] #pasti-container{display:none!important}
+  body[data-print-mode="simple"] .macro-bar{display:none!important}
+  body[data-print-mode="simple"] #print-giorno-hdr{display:none!important}
+  body[data-print-mode="simple"] #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="simple"] @page{size:A4 portrait}
 }
 </style>
 </head>
@@ -89,7 +104,8 @@
     <button class="btn btn-ghost btn-sm" onclick="esportaExcel()">📥<span>Excel</span></button>
     <button class="btn btn-ghost btn-sm" onclick="salvaPiano()">💾<span>Salva</span></button>
     <span class="tbar-sep"></span>
-    <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF">🖨️</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
   </div>
 </div>
 
@@ -166,6 +182,9 @@
   <!-- PASTI CONTAINER -->
   <div id="pasti-container"></div>
   <div class="add-pasto-area no-print" onclick="openNewPasto()" style="margin-top:4px;border:2px dashed #14B8A6;background:linear-gradient(135deg,#F0FDFA,#ECFDF5);color:var(--teal-d);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;padding:16px"><span style="font-size:20px">＋</span><span>Aggiungi pasto</span></div>
+
+  <!-- SIMPLE PRINT AREA (hidden on screen, shown in simple print mode) -->
+  <div id="simple-print-area"></div>
 
 </div>
 </main>
@@ -362,12 +381,12 @@ function creaGiorno() {
   if (copiaFrom === '' || copiaFrom === undefined) {
     meals = [];
   } else if (copiaFrom === '_default') {
-    meals = DEFAULT_MEALS.map(m => ({ ...m, id: m.id + '_' + Date.now(), items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false }));
+    meals = DEFAULT_MEALS.map(m => ({ ...m, id: m.id + '_' + Date.now(), items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false }));
   } else {
     const srcIdx = parseInt(copiaFrom);
     meals = JSON.parse(JSON.stringify(giorni[srcIdx].meals)).map(m => ({
       ...m, id: m.id + '_' + Date.now(),
-      items: m.items.map(it => ({ ...it, altPrint: it.altPrint || [] })),
+      items: m.items.map(it => ({ ...it, altPrint: it.altPrint || [], misura: it.misura || '' })),
       collapsed: false
     }));
   }
@@ -498,6 +517,7 @@ function buildRow(mi, ii) {
   const item = meals[mi].items[ii];
   const f = lookup(item.nome);
   const qt = item.qt;
+  const misura = item.misura || '';
   const srcBadge = f ? `<span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span>` : '';
   const microTds = MICROS.map(m => `<td class="vc" style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(f, m.k, qt), 2)}</td>`).join('');
   const altRows = (item.altPrint || []).map((a, ai) => {
@@ -520,7 +540,11 @@ function buildRow(mi, ii) {
         onfocus="onFF(${mi},${ii},this)" onblur="onFB(${mi},${ii})">
       <div class="ac-list" id="ac-${mi}-${ii}"></div>
     </div></td>
-    <td><input class="inp-qt" type="number" min="0" step="any" value="${qt || ''}" placeholder="g" oninput="onQI(${mi},${ii},this)"></td>
+    <td>
+      <input class="inp-qt" type="number" min="0" step="any" value="${qt || ''}" placeholder="g" oninput="onQI(${mi},${ii},this)">
+      <input class="inp-misura no-print" type="text" value="${esc(misura)}" placeholder="es. 1 cucchiaio" oninput="onMI(${mi},${ii},this)" title="Misura alternativa (es: 1 manciata, 1 cucchiaio...)">
+      ${misura ? `<div class="misura-print">(${esc(misura)})</div>` : ''}
+    </td>
     <td class="vc" data-k="k">${fmtV(cv(f, 'k', qt))}</td>
     <td class="vc" data-k="p">${fmtV(cv(f, 'p', qt))}</td>
     <td class="vc" data-k="gs">${fmtV(cv(f, 'gs', qt))}</td>
@@ -615,6 +639,7 @@ function showAC(mi, ii, val) {
 function pickAC(mi, ii, ri) {
   const res = acRes[`${mi}-${ii}`]; if (!res || !res[ri]) return;
   getMeals()[mi].items[ii].nome = res[ri].n;
+  getMeals()[mi].items[ii].altPrint = []; // clear stale alternatives when food changes
   const el = document.getElementById(`ac-${mi}-${ii}`); if (el) el.style.display = 'none';
   const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.value = res[ri].n;
   refreshRow(mi, ii); refreshTot(mi); updateRiep();
@@ -632,7 +657,19 @@ function onFK(e, mi, ii) {
   items.forEach((el2, i) => el2.classList.toggle('sel', i === acIdx[k]));
   if (items[acIdx[k]]) items[acIdx[k]].scrollIntoView({ block: 'nearest' });
 }
-function onQI(mi, ii, inp) { getMeals()[mi].items[ii].qt = inp.value; markDirty(); refreshRow(mi, ii); refreshTot(mi); updateRiep(); }
+function onQI(mi, ii, inp) {
+  const item = getMeals()[mi].items[ii];
+  const oldQt = parseFloat(item.qt) || 0;
+  const newQt = parseFloat(inp.value) || 0;
+  // Scale alternative quantities proportionally when the main quantity changes
+  if (oldQt > 0 && newQt > 0 && item.altPrint && item.altPrint.length) {
+    const ratio = newQt / oldQt;
+    item.altPrint = item.altPrint.map(a => ({ ...a, qt: Math.round(a.qt * ratio * 10) / 10 }));
+  }
+  item.qt = inp.value;
+  markDirty(); refreshRow(mi, ii); refreshTot(mi); updateRiep();
+}
+function onMI(mi, ii, inp) { getMeals()[mi].items[ii].misura = inp.value; markDirty(); }
 
 function refreshRow(mi, ii) {
   const row = document.getElementById(`r-${mi}-${ii}`); if (!row) return;
@@ -666,14 +703,14 @@ function toggleM(mi) {
 }
 function addRow(mi) {
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
-  getMeals()[mi].items.push({ nome: '', qt: '', altPrint: [] });
+  getMeals()[mi].items.push({ nome: '', qt: '', altPrint: [], misura: '' });
   getMeals()[mi].collapsed = false; markDirty(); renderPiano();
   setTimeout(() => { const ii = getMeals()[mi].items.length - 1; const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.focus(); }, 80);
 }
 function delRow(mi, ii) {
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
   const meals = getMeals();
-  if (meals[mi].items.length <= 1) meals[mi].items[0] = { nome: '', qt: '', altPrint: [] };
+  if (meals[mi].items.length <= 1) meals[mi].items[0] = { nome: '', qt: '', altPrint: [], misura: '' };
   else meals[mi].items.splice(ii, 1);
   markDirty(); renderPiano();
 }
@@ -694,7 +731,7 @@ function eliminaVuote() {
   getMeals().forEach((m, mi) => {
     const b = m.items.length;
     m.items = m.items.filter(i => i.nome && i.nome.trim() !== '');
-    if (!m.items.length) m.items = [{ nome: '', qt: '', altPrint: [] }];
+    if (!m.items.length) m.items = [{ nome: '', qt: '', altPrint: [], misura: '' }];
     tot += b - m.items.length;
   });
   renderPiano(); toast(tot > 0 ? `✅ ${tot} righe vuote eliminate!` : 'Nessuna riga vuota.', 'ok');
@@ -733,7 +770,7 @@ function creaPasto() {
   if (!nome) { toast('Inserisci nome', 'err'); return; }
   const emoji = document.getElementById('np-emoji').value || '🍽️';
   const pos = parseInt(document.getElementById('np-pos').value);
-  const m = { id: 'c' + Date.now(), nome, emoji, note: '', items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false };
+  const m = { id: 'c' + Date.now(), nome, emoji, note: '', items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false };
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
   if (pos === -1) giorni[giornoCorrente].meals.unshift(m);
   else giorni[giornoCorrente].meals.splice(pos + 1, 0, m);
@@ -856,6 +893,7 @@ function removeAltPrint(mi, ii, ai) {
 }
 function applyAlt(mi, ii, nome, qt) {
   getMeals()[mi].items[ii].nome = nome; getMeals()[mi].items[ii].qt = qt;
+  getMeals()[mi].items[ii].altPrint = []; // clear alternatives when food is substituted
   markDirty(); closeM('modal-alt'); renderPiano();
   toast(`✅ Sostituito con ${nome} (${qt}g)!`, 'ok');
 }
@@ -865,7 +903,7 @@ function applyAlt(mi, ii, nome, qt) {
 // ═══════════════════════════════════════════════════
 function nuovoPiano() {
   if (dirty && !confirm('Modifiche non salvate. Continuare?')) return;
-  giorni = [{ id: 'g_' + Date.now(), nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false })) }];
+  giorni = [{ id: 'g_' + Date.now(), nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false })) }];
   giornoCorrente = 0;
   document.getElementById('inp-nome').value = '';
   document.getElementById('inp-data').value = todayISO();
@@ -1034,6 +1072,84 @@ function stampaPDF() {
   setTimeout(() => window.print(), 400);
 }
 
+function stampaSemplice() {
+  giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const dataPiano = document.getElementById('inp-data')?.value || '';
+  const nomePiano = document.getElementById('inp-nome')?.value || '';
+  const gNome = giorni.length > 1 ? giorni[giornoCorrente].nome : '';
+
+  let totKcal = 0, totProt = 0, totCho = 0, totFat = 0, totFib = 0;
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:680px;margin:0 auto;color:#1E293B">`;
+
+  // Header
+  html += `<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #0F766E">`;
+  html += `<div style="font-size:22px;font-weight:700;color:#0F766E">${esc(nomeP) || 'Piano Alimentare'}</div>`;
+  if (nomePiano) html += `<div style="font-size:13px;color:#475569;margin-top:4px">${esc(nomePiano)}</div>`;
+  if (dataPiano) {
+    const [y,m,d] = dataPiano.split('-').map(Number);
+    const dateFmt = new Date(y, m-1, d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    html += `<div style="font-size:12px;color:#94A3B8;margin-top:2px">${dateFmt}</div>`;
+  }
+  if (gNome) html += `<div style="font-size:12px;color:#0F766E;font-weight:600;margin-top:4px">📅 ${esc(gNome)}</div>`;
+  html += `</div>`;
+
+  // Meals
+  getMeals().forEach(meal => {
+    const foodItems = meal.items.filter(it => it.nome && it.nome.trim());
+    if (!foodItems.length) return;
+
+    html += `<div style="margin-bottom:18px;break-inside:avoid">`;
+    html += `<div style="font-size:14px;font-weight:700;color:#0F766E;padding:7px 12px;background:#F0FDFA;border-left:4px solid #0F766E;border-radius:4px;margin-bottom:6px">${esc(meal.emoji||'')} ${esc(meal.nome)}</div>`;
+
+    foodItems.forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt) || 0;
+      if (f && qt) {
+        totKcal += (f.k||0)/100*qt;
+        totProt  += (f.p||0)/100*qt;
+        totCho   += (f.ch||0)/100*qt;
+        totFat   += (f.g||0)/100*qt;
+        totFib   += (f.fi||0)/100*qt;
+      }
+      const misuraTxt = item.misura ? ` <span style="color:#94A3B8;font-size:10.5px">(${esc(item.misura)})</span>` : '';
+      const qtTxt = item.qt ? `<span style="font-weight:700;color:#334155">${item.qt}g</span>` : '';
+      html += `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 12px;border-bottom:1px solid #F1F5F9">`;
+      html += `<span style="font-size:13px">${esc(item.nome)}${misuraTxt}</span>`;
+      html += `<span style="font-size:13px;white-space:nowrap;padding-left:10px">${qtTxt}</span>`;
+      html += `</div>`;
+
+      if (item.altPrint && item.altPrint.length) {
+        item.altPrint.forEach(a => {
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 12px 4px 24px;background:#F0FDF4;border-bottom:1px solid #DCFCE7">`;
+          html += `<span style="font-size:11.5px;color:#15803D">↳ oppure: ${esc(a.nome)}</span>`;
+          html += `<span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:10px">${a.qt}g</span>`;
+          html += `</div>`;
+        });
+      }
+    });
+
+    if (meal.note && meal.note.trim()) {
+      html += `<div style="padding:5px 12px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB;border-radius:0 0 4px 4px">📝 ${esc(meal.note)}</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // Totals footer
+  html += `<div style="margin-top:20px;padding:11px 16px;background:#F0FDFA;border-radius:8px;border:1px solid #A7F3D0;font-size:12px;color:#0F766E;font-weight:600;text-align:center">`;
+  html += `🔥 ${Math.round(totKcal)} kcal &nbsp;·&nbsp; 💪 Proteine ${r1(totProt)}g &nbsp;·&nbsp; 🍞 CHO ${r1(totCho)}g &nbsp;·&nbsp; 🧈 Grassi ${r1(totFat)}g &nbsp;·&nbsp; 🌿 Fibra ${r1(totFib)}g`;
+  html += `</div>`;
+  html += `</div>`;
+
+  document.getElementById('simple-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'simple';
+  setTimeout(() => window.print(), 400);
+}
+
+window.addEventListener('afterprint', () => {
+  delete document.body.dataset.printMode;
+});
+
 // ═══════════════════════════════════════════════════
 // CARTELLE SEARCH DROPDOWN
 // ═══════════════════════════════════════════════════
@@ -1193,12 +1309,12 @@ async function caricaPianoById(id) {
     const parsed = JSON.parse(data.meals || '[]');
     if (parsed.length > 0 && parsed[0].meals !== undefined) {
       // New format: array of giorni
-      giorni = parsed.map(g => ({ ...g, meals: (g.meals || []).map(m => ({ ...m, note: m.note || '', collapsed: false, items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [] })) })) }));
+      giorni = parsed.map(g => ({ ...g, meals: (g.meals || []).map(m => ({ ...m, note: m.note || '', collapsed: false, items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [], misura: i.misura || '' })) })) }));
     } else {
       // Old format: flat array of meals
-      giorni = [{ id: 'g_legacy', nome: 'Giorno 1', meals: parsed.map(m => ({ ...m, note: m.note || '', collapsed: false, items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [] })) })) }];
+      giorni = [{ id: 'g_legacy', nome: 'Giorno 1', meals: parsed.map(m => ({ ...m, note: m.note || '', collapsed: false, items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [], misura: i.misura || '' })) })) }];
     }
-  } catch { giorni = [{ id: 'g_new', nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [] }], collapsed: false })) }]; }
+  } catch { giorni = [{ id: 'g_new', nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false })) }]; }
   giornoCorrente = 0;
   currentPianoId = id;
   dirty = false;
@@ -1223,7 +1339,7 @@ async function caricaPianoById(id) {
 window.loadPianoFromPatologia = function(giorni_data, nomePat) {
   if (dirty && !confirm('Modifiche non salvate nel giorno corrente. Sovrascrivere?')) return;
   const idx = giornoCorrente;
-  giorni[idx].meals = giorni_data.map(m => ({ ...m, id: m.id || ('m_' + Date.now() + Math.random()), items: m.items.map(i => ({ ...i, altPrint: [] })), collapsed: false }));
+  giorni[idx].meals = giorni_data.map(m => ({ ...m, id: m.id || ('m_' + Date.now() + Math.random()), items: m.items.map(i => ({ ...i, altPrint: [], misura: i.misura || '' })), collapsed: false }));
   markDirty();
   renderGiornoTabs();
   renderPiano();

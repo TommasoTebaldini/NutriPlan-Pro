@@ -230,8 +230,18 @@
 let events = JSON.parse(localStorage.getItem('dietplan_events') || '[]');
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
-let selectedDate = new Date().toISOString().split('T')[0];
+let selectedDate = localDateStr(new Date());
 let currentEventId = null;
+
+// Returns YYYY-MM-DD string using local timezone (avoids UTC offset issues)
+function localDateStr(date) {
+  return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+}
+// Formats a stored YYYY-MM-DD string for display in local timezone
+function formatStoredDate(dateStr, opts) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  return new Date(y, m-1, d).toLocaleDateString('it', opts);
+}
 
 const MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 const TIPO_COLORS = {visita:'visita',controllo:'controllo',reminder:'reminder',urgente:'urgente'};
@@ -253,7 +263,7 @@ function renderCalendar() {
   grid.innerHTML = '';
   headers.forEach(h => grid.appendChild(h));
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr(new Date());
   const firstDay = new Date(currentYear, currentMonth, 1);
   const lastDay = new Date(currentYear, currentMonth + 1, 0);
   
@@ -283,8 +293,8 @@ function renderCalendar() {
 }
 
 function makeDay(date, otherMonth) {
-  const dateStr = date.toISOString().split('T')[0];
-  const today = new Date().toISOString().split('T')[0];
+  const dateStr = localDateStr(date);
+  const today = localDateStr(new Date());
   const div = document.createElement('div');
   div.className = 'cal-day' + (otherMonth?' other-month':'') + (dateStr===today?' today':'') + (dateStr===selectedDate?' selected':'');
   div.onclick = () => selectDate(dateStr);
@@ -315,7 +325,7 @@ function selectDate(dateStr) {
   selectedDate = dateStr;
   const [y,m,d] = dateStr.split('-');
   document.getElementById('ev-data').value = dateStr;
-  const label = new Date(dateStr).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long'});
+  const label = formatStoredDate(dateStr, {weekday:'long',day:'numeric',month:'long'});
   document.getElementById('selected-date-label').textContent = label;
   renderCalendar();
 }
@@ -338,8 +348,8 @@ function renderDayEvents(dateStr) {
 
 function renderUpcoming() {
   const container = document.getElementById('upcoming-events');
-  const today = new Date().toISOString().split('T')[0];
-  const in7 = new Date(Date.now() + 7*24*3600*1000).toISOString().split('T')[0];
+  const today = localDateStr(new Date());
+  const in7 = localDateStr(new Date(Date.now() + 7*24*3600*1000));
   const upcoming = events
     .filter(e => e.data >= today && e.data <= in7)
     .sort((a,b) => (a.data+a.ora).localeCompare(b.data+b.ora))
@@ -349,7 +359,7 @@ function renderUpcoming() {
     return;
   }
   container.innerHTML = upcoming.map(ev => {
-    const d = new Date(ev.data).toLocaleDateString('it',{weekday:'short',day:'numeric',month:'short'});
+    const d = formatStoredDate(ev.data, {weekday:'short',day:'numeric',month:'short'});
     return `<div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
       <div class="event-title">${esc(ev.paziente||ev.titolo||'')}</div>
       <div class="event-time">📅 ${d} · ⏰ ${ev.ora||'--:--'}</div>
@@ -399,7 +409,7 @@ function openEventDetail(id) {
   const ev = events.find(e => e.id === id);
   if(!ev) return;
   currentEventId = id;
-  const d = new Date(ev.data).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const d = formatStoredDate(ev.data, {weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('modal-event-title').textContent = TIPO_LABELS[ev.tipo]||ev.tipo;
   document.getElementById('modal-event-hdr').style.background = 
     ev.tipo==='urgente'?'#EF4444':ev.tipo==='visita'?'#3B82F6':ev.tipo==='controllo'?'#10B981':'#F59E0B';
@@ -439,7 +449,7 @@ function goToday() {
   const now = new Date();
   currentYear = now.getFullYear();
   currentMonth = now.getMonth();
-  selectDate(now.toISOString().split('T')[0]);
+  selectDate(localDateStr(now));
 }
 
 // Check for notifications every minute
@@ -447,7 +457,7 @@ function checkNotifications() {
   if(Notification.permission !== 'granted') return;
   const now = new Date();
   const in15 = new Date(now.getTime() + 15*60*1000);
-  const todayStr = now.toISOString().split('T')[0];
+  const todayStr = localDateStr(now);
   events.filter(e => e.data === todayStr && e.ora).forEach(ev => {
     const [h,m] = ev.ora.split(':').map(Number);
     const evTime = new Date(now); evTime.setHours(h,m,0,0);
@@ -463,8 +473,8 @@ function checkNotifications() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('ev-data').value = new Date().toISOString().split('T')[0];
-  const d = new Date().toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('ev-data').value = localDateStr(new Date());
+  const d = formatStoredDate(localDateStr(new Date()), {weekday:'long',day:'numeric',month:'long'});
   document.getElementById('selected-date-label').textContent = d;
   renderCalendar();
   updateStats();
@@ -474,9 +484,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function updateStats() {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr(new Date());
   const now = new Date();
-  const in7 = new Date(now.getTime() + 7*24*60*60*1000).toISOString().split('T')[0];
+  const in7 = localDateStr(new Date(now.getTime() + 7*24*60*60*1000));
   const todayCount = events.filter(e => e.data === today).length;
   const weekCount = events.filter(e => e.data >= today && e.data <= in7).length;
   const urgCount = events.filter(e => e.tipo === 'urgente' && e.data >= today).length;

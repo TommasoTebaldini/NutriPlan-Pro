@@ -128,10 +128,7 @@
         <div style="font-size:17px;font-weight:700;letter-spacing:.2px;margin-bottom:3px">Piano Alimentare</div>
         <div style="font-size:12px;opacity:.82;line-height:1.5">Gestisci e salva i piani nutrizionali personalizzati per ogni paziente.</div>
       </div>
-      <div id="paz-hdr-badge" style="display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;flex-shrink:0;min-width:64px">
-        <div id="paz-hdr-badge-val" style="font-size:22px;font-weight:700;line-height:1">—</div>
-        <div style="font-size:10px;opacity:.8;text-align:center;margin-top:2px">Piani salvati</div>
-      </div>
+
     </div>
     <!-- Form fields row -->
     <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:flex-start">
@@ -622,19 +619,21 @@ function showAC(mi, ii, val) {
   acRes[`${mi}-${ii}`] = res;
   if (!res.length) { el.style.display = 'none'; return; }
   el.innerHTML = res.map((f, i) => `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(f.n)}</span><span class="ac-right"><span class="ac-cat">${esc(f.c || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
-  el.style.display = 'block';
-  // Smart position: show above if too close to bottom
-  const rect = el.getBoundingClientRect();
-  const spaceBelow = window.innerHeight - rect.top;
-  const spaceAbove = rect.top;
+  // Position fixed dropdown based on the input element's bounding rect (bypasses overflow:hidden parents)
+  const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`);
+  const rect = inp ? inp.getBoundingClientRect() : el.parentElement.getBoundingClientRect();
   const ddH = Math.min(res.length * 36, 210);
-  if (spaceBelow < ddH + 20 && spaceAbove > ddH) {
+  el.style.left = rect.left + 'px';
+  el.style.width = Math.max(rect.width, 290) + 'px';
+  const spaceBelow = window.innerHeight - rect.bottom;
+  if (spaceBelow < ddH + 20 && rect.top > ddH) {
     el.style.top = 'auto';
-    el.style.bottom = 'calc(100% + 2px)';
+    el.style.bottom = (window.innerHeight - rect.top + 2) + 'px';
   } else {
-    el.style.top = 'calc(100% + 2px)';
+    el.style.top = (rect.bottom + 2) + 'px';
     el.style.bottom = 'auto';
   }
+  el.style.display = 'block';
 }
 function pickAC(mi, ii, ri) {
   const res = acRes[`${mi}-${ii}`]; if (!res || !res[ri]) return;
@@ -944,10 +943,7 @@ async function salvaPiano() {
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   dirty = false;
   toast(`💾 "${nome}" salvato!`, 'ok');
-  sb.from('piani').select('id',{count:'exact',head:true}).eq('user_id', currentUser.id).then(({count}) => {
-    const el = document.getElementById('paz-hdr-badge-val');
-    if (el && count != null) el.textContent = count;
-  });
+
 }
 
 // ═══════════════════════════════════════════════════
@@ -1223,6 +1219,11 @@ function selectCartella(id, nome) {
 // INIT
 // ═══════════════════════════════════════════════════
 // Event delegation for cartella dropdown in app
+// Close fixed-position autocomplete dropdown when page scrolls or resizes
+function closeAllAutocompletes() { document.querySelectorAll('.ac-list').forEach(el => el.style.display = 'none'); }
+document.getElementById('main-content')?.addEventListener('scroll', closeAllAutocompletes);
+window.addEventListener('resize', closeAllAutocompletes);
+
 document.addEventListener('mousedown', function(e) {
   const cartItem = e.target.closest('[data-app-cart-idx]');
   if (cartItem) {
@@ -1241,10 +1242,6 @@ async function init() {
   if (!ok) return;
   rebuildDB();
   await loadCartelleAll();
-  sb.from('piani').select('id', {count:'exact',head:true}).eq('user_id', currentUser.id).then(({count}) => {
-    const el = document.getElementById('paz-hdr-badge-val');
-    if (el) el.textContent = count ?? '—';
-  });
 
   const pianoToLoad = sessionStorage.getItem('loadPianoId');
   const newCartellaId = sessionStorage.getItem('newPianoCartella');

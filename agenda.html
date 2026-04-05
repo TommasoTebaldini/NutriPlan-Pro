@@ -21,6 +21,10 @@
 .cal-day.today{background:#CCFBF1;border-color:var(--teal)}
 .cal-day.selected{background:#0F766E;border-color:var(--teal-d)}
 .cal-day.selected .cal-day-num{color:white}
+.cal-day.selected .cal-event-dot{background:rgba(255,255,255,0.25);color:white}
+.cal-day.selected .cal-event-dot.visita,.cal-day.selected .cal-event-dot.controllo,.cal-day.selected .cal-event-dot.reminder,.cal-day.selected .cal-event-dot.urgente{background:rgba(255,255,255,0.25);color:white}
+.cal-day-more{font-size:10px;color:var(--slate-l);padding:1px 4px}
+.cal-day.selected .cal-day-more{color:rgba(255,255,255,0.75)}
 .cal-day.other-month{opacity:.35}
 .cal-day-num{font-size:12px;font-weight:700;color:var(--slate);margin-bottom:3px}
 .cal-day.today .cal-day-num{color:var(--teal-d)}
@@ -107,6 +111,7 @@
   <h2>📅 Agenda Appuntamenti</h2>
   <div class="tbar-actions">
     <button class="btn btn-primary btn-sm" onclick="openNewEvent()">➕ Nuovo Appuntamento</button>
+    <button id="btn-gcal" class="btn btn-ghost btn-sm" onclick="connectGoogleCalendar()" style="display:none">📅 Connetti Google Calendar</button>
     <button class="today-btn" onclick="goToday()">Oggi</button>
   </div>
 </div>
@@ -314,7 +319,7 @@ function makeDay(date, otherMonth) {
   });
   if(dayEvents.length > 3) {
     const more = document.createElement('div');
-    more.style.cssText = 'font-size:10px;color:var(--slate-l);padding:1px 4px';
+    more.className = 'cal-day-more';
     more.textContent = '+' + (dayEvents.length-3) + ' altri';
     div.appendChild(more);
   }
@@ -391,6 +396,9 @@ function saveEvent() {
   
   selectDate(data);
   toast('✅ Appuntamento salvato!','ok');
+  
+  // Sync to Google Calendar if connected and token is valid
+  if (gcalTokenValid()) createGoogleCalendarEvent(ev);
   
   // Check notification permission
   if(Notification.permission === 'default') {
@@ -481,6 +489,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   setInterval(checkNotifications, 60000);
   if(Notification.permission === 'default') Notification.requestPermission();
   try { await checkAuth(); } catch(e) {}
+  // Load Google Identity Services if a Client ID is configured
+  if (GOOGLE_CLIENT_ID) {
+    document.getElementById('btn-gcal').style.display = '';
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.onload = initGoogleCalendar;
+    document.head.appendChild(script);
+  }
 });
 
 function updateStats() {
@@ -494,6 +510,124 @@ function updateStats() {
   document.getElementById('stat-settimana').textContent = weekCount;
   document.getElementById('stat-urgenti').textContent = urgCount;
   document.getElementById('stat-totale').textContent = events.length;
+}
+
+// ─── Google Calendar Integration ─────────────────────────────────────────────
+// To enable: create a Google Cloud project, enable the Google Calendar API,
+// create an OAuth 2.0 Web Application client ID and paste it below.
+// NOTE: The Client ID is not a secret — it is safe to include in client-side
+// JavaScript. Authorised JavaScript origins and redirect URIs must be
+// configured in the Google Cloud Console for your domain.
+const GOOGLE_CLIENT_ID = ''; // ← insert your Client ID here
+
+let gcalToken = null;
+let gcalTokenExpiry = 0;
+let gcalTokenClient = null;
+
+function gcalTokenValid() {
+  return gcalToken && Date.now() < gcalTokenExpiry;
+}
+
+function initGoogleCalendar() {
+  if (!GOOGLE_CLIENT_ID) return;
+  gcalTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/calendar.events',
+    callback: (response) => {
+      if (response.error) { toast('❌ Errore connessione Google Calendar', 'err'); return; }
+      gcalToken = response.access_token;
+      gcalTokenExpiry = Date.now() + (response.expires_in || 3600) * 1000;
+      sessionStorage.setItem('gcal_token', gcalToken);
+      sessionStorage.setItem('gcal_token_expiry', String(gcalTokenExpiry));
+      updateGCalButton(true);
+      toast('✅ Google Calendar connesso!', 'ok');
+    }
+  });
+  const stored = sessionStorage.getItem('gcal_token');
+  const storedExpiry = parseInt(sessionStorage.getItem('gcal_token_expiry') || '0');
+  if (stored && Date.now() < storedExpiry) {
+    gcalToken = stored;
+    gcalTokenExpiry = storedExpiry;
+    updateGCalButton(true);
+  }
+}
+
+function connectGoogleCalendar() {
+  if (!GOOGLE_CLIENT_ID) { toast('⚠️ Client ID Google non configurato', 'err'); return; }
+  if (gcalTokenValid()) {
+    google.accounts.oauth2.revoke(gcalToken, () => {
+      gcalToken = null;
+      gcalTokenExpiry = 0;
+      sessionStorage.removeItem('gcal_token');
+      sessionStorage.removeItem('gcal_token_expiry');
+      updateGCalButton(false);
+      toast('Google Calendar disconnesso', 'info');
+    });
+  } else {
+    gcalTokenClient.requestAccessToken();
+  }
+}
+
+function updateGCalButton(connected) {
+  const btn = document.getElementById('btn-gcal');
+  if (!btn) return;
+  if (connected) {
+    btn.textContent = '📅 Google Connesso';
+    btn.classList.add('btn-primary');
+    btn.classList.remove('btn-ghost');
+  } else {
+    btn.textContent = '📅 Connetti Google Calendar';
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-ghost');
+  }
+}
+
+async function createGoogleCalendarEvent(ev) {
+  if (!gcalTokenValid()) {
+    // Token absent or expired — prompt re-authorization
+    gcalToken = null;
+    gcalTokenExpiry = 0;
+    sessionStorage.removeItem('gcal_token');
+    sessionStorage.removeItem('gcal_token_expiry');
+    updateGCalButton(false);
+    toast('⚠️ Sessione Google Calendar scaduta. Riconnetti per sincronizzare.', 'err');
+    return;
+  }
+  const [y, m, d] = ev.data.split('-').map(Number);
+  const [h, min] = (ev.ora || '09:00').split(':').map(Number);
+  const start = new Date(y, m - 1, d, h, min);
+  const end = new Date(start.getTime() + (parseInt(ev.durata) || 60) * 60000);
+  const pad = n => String(n).padStart(2, '0');
+  const toLocalISO = dt => `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`;
+  const gcalEvent = {
+    summary: ev.paziente || ev.titolo || 'Appuntamento',
+    description: [TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join('\n'),
+    start: { dateTime: toLocalISO(start), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+    end:   { dateTime: toLocalISO(end),   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
+  };
+  try {
+    const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + gcalToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify(gcalEvent)
+    });
+    if (!res.ok) {
+      if (res.status === 401) {
+        gcalToken = null;
+        gcalTokenExpiry = 0;
+        sessionStorage.removeItem('gcal_token');
+        sessionStorage.removeItem('gcal_token_expiry');
+        updateGCalButton(false);
+        toast('⚠️ Sessione Google Calendar scaduta. Clicca "Connetti Google Calendar" per riautorizzare.', 'err');
+        return;
+      }
+      throw new Error('HTTP ' + res.status);
+    }
+    toast('📅 Aggiunto a Google Calendar!', 'ok');
+  } catch(e) {
+    console.error('Google Calendar error:', e);
+    toast('⚠️ Errore sincronizzazione Google Calendar', 'err');
+  }
 }
 </script>
 </body>

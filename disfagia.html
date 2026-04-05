@@ -1106,7 +1106,7 @@ function stampaCompattaDisfagia() {
   html += `</div>`;
   document.getElementById('compact-dis-print-area').innerHTML = html;
   document.body.dataset.printMode = 'compact-dis';
-  setTimeout(() => window.print(), 400);
+  setTimeout(() => window.print(), 400); // allow DOM to update before print dialog
 }
 
 window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; });

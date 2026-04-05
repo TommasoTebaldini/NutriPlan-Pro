@@ -16,6 +16,8 @@
 .misura-print{display:none;font-size:7px;color:#64748B;font-style:italic}
 /* Simple print area (screen: hidden) */
 #simple-print-area{display:none}
+/* Compact print area (screen: hidden) */
+#compact-print-area{display:none}
 @media print{
   @page{margin:1cm 1.2cm;size:A4 landscape}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -47,6 +49,13 @@
   body[data-print-mode="simple"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="simple"] #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
   body[data-print-mode="simple"] @page{size:A4 portrait}
+  /* ── Compact print mode (formatted like patient handout) ── */
+  body[data-print-mode="compact"] #pasti-container{display:none!important}
+  body[data-print-mode="compact"] .macro-bar{display:none!important}
+  body[data-print-mode="compact"] #print-giorno-hdr{display:none!important}
+  body[data-print-mode="compact"] #simple-print-area{display:none!important}
+  body[data-print-mode="compact"] #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="compact"] @page{size:A4 portrait;margin:1.2cm}
 }
 </style>
 </head>
@@ -106,6 +115,7 @@
     <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaCompatta()" title="Stampa scheda paziente compatta">🧾</button>
   </div>
 </div>
 
@@ -182,6 +192,9 @@
 
   <!-- SIMPLE PRINT AREA (hidden on screen, shown in simple print mode) -->
   <div id="simple-print-area"></div>
+
+  <!-- COMPACT PRINT AREA (hidden on screen, shown in compact print mode) -->
+  <div id="compact-print-area"></div>
 
 </div>
 </main>
@@ -1143,10 +1156,108 @@ function stampaSemplice() {
   setTimeout(() => window.print(), 400);
 }
 
+function stampaCompatta() {
+  giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
+  renderPiano();
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const dataPiano = document.getElementById('inp-data')?.value || '';
+  const nomePiano = document.getElementById('inp-nome')?.value || '';
+  const gNome = giorni.length > 1 ? giorni[giornoCorrente].nome : '';
+
+  let totKcal = 0;
+  getMeals().forEach(meal => {
+    meal.items.filter(it => it.nome?.trim()).forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt) || 0;
+      if (f && qt) totKcal += (f.k || 0) / 100 * qt;
+    });
+  });
+
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:600px;margin:0 auto;color:#1E293B">`;
+
+  // Header
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:18px;border-bottom:2px solid #0F766E">`;
+  html += `<div style="font-size:20px;font-weight:700;color:#0F766E">${esc(nomeP) || 'Piano Alimentare'}</div>`;
+  if (nomePiano) html += `<div style="font-size:12px;color:#475569;margin-top:3px">${esc(nomePiano)}</div>`;
+  if (dataPiano) {
+    const [dp_y, dp_m, dp_d] = dataPiano.split('-').map(Number);
+    const dateFmt = new Date(dp_y, dp_m-1, dp_d).toLocaleDateString('it', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    html += `<div style="font-size:11px;color:#94A3B8;margin-top:2px">${dateFmt}</div>`;
+  }
+  if (gNome) html += `<div style="font-size:11px;color:#0F766E;font-weight:600;margin-top:3px">📅 ${esc(gNome)}</div>`;
+  html += `</div>`;
+
+  // Meals
+  getMeals().forEach(meal => {
+    const foodItems = meal.items.filter(it => it.nome && it.nome.trim());
+    if (!foodItems.length) return;
+
+    let mealKcal = 0;
+    foodItems.forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt) || 0;
+      if (f && qt) mealKcal += (f.k || 0) / 100 * qt;
+    });
+
+    html += `<div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #CBD5E1;break-inside:avoid">`;
+    // Dark header row
+    html += `<div style="background:#1E2937;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center">`;
+    html += `<span style="font-weight:700;font-size:14px">${esc(meal.emoji || '')} ${esc(meal.nome)}</span>`;
+    if (mealKcal) html += `<span style="font-size:12px;opacity:.88">≈ ${Math.round(mealKcal)} kcal</span>`;
+    html += `</div>`;
+
+    // Food rows
+    foodItems.forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt) || 0;
+      const kcalItem = (f && qt) ? Math.round((f.k || 0) / 100 * qt) : 0;
+      const qtNum = parseFloat(item.qt);
+      const qtFmt = item.qt
+        ? (Number.isInteger(qtNum) ? item.qt : qtNum.toFixed(1))
+        : '';
+      const misuraTxt = item.misura
+        ? ` <span style="font-size:10px;color:#94A3B8">(${esc(item.misura)})</span>`
+        : '';
+
+      html += `<div style="display:flex;align-items:baseline;padding:8px 16px;border-bottom:1px solid #F1F5F9;background:white">`;
+      html += `<span style="flex:1;font-size:13px;color:#334155">${esc(item.nome)}${misuraTxt}</span>`;
+      if (qtFmt) html += `<span style="font-size:13px;font-weight:700;color:#334155;white-space:nowrap;margin-left:12px">${qtFmt} g</span>`;
+      if (kcalItem) html += `<span style="font-size:12px;color:#94A3B8;white-space:nowrap;margin-left:12px">${kcalItem} kcal</span>`;
+      html += `</div>`;
+
+      // Alternative measures
+      if (item.altPrint && item.altPrint.length) {
+        item.altPrint.forEach(a => {
+          html += `<div style="display:flex;align-items:baseline;padding:6px 16px 6px 28px;border-bottom:1px solid #DCFCE7;background:#F0FDF4">`;
+          html += `<span style="flex:1;font-size:11.5px;color:#15803D">↳ oppure: ${esc(a.nome)}</span>`;
+          html += `<span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;margin-left:12px">${a.qt} g</span>`;
+          html += `</div>`;
+        });
+      }
+    });
+
+    // Meal notes
+    if (meal.note && meal.note.trim()) {
+      html += `<div style="padding:7px 16px;font-size:11.5px;color:#92400E;font-style:italic;background:#FFFBEB;border-top:1px solid #FEF3C7">📝 ${esc(meal.note)}</div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  // Totals footer
+  html += `<div style="margin-top:14px;padding:10px 16px;background:#F0FDFA;border:1px solid #A7F3D0;border-radius:8px;font-size:12px;color:#0F766E;font-weight:600;text-align:center">`;
+  html += `🔥 Totale: ${Math.round(totKcal)} kcal`;
+  html += `</div>`;
+  html += `</div>`;
+
+  document.getElementById('compact-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact';
+  setTimeout(() => window.print(), 400);
+}
+
 window.addEventListener('afterprint', () => {
   delete document.body.dataset.printMode;
 });
-
 // ═══════════════════════════════════════════════════
 // CARTELLE SEARCH DROPDOWN
 // ═══════════════════════════════════════════════════

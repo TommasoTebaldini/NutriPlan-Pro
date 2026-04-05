@@ -78,7 +78,13 @@
   .dis-tabs{display:none!important}
   .dis-panel{display:none!important}
   .dis-panel.active{display:block!important}
+  .dis-edit-input{display:none!important}
+  .dis-print-nome{display:inline!important}
+  .dis-print-qt{display:inline!important}
+  body[data-print-mode="compact-dis"] .dis-panel,.dis-tabs,.dis-panel.active{display:none!important}
+  body[data-print-mode="compact-dis"] #compact-dis-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+#compact-dis-print-area{display:none}
 </style>
 </head>
 <body>
@@ -128,6 +134,7 @@
   <h2>🗣️ Disfagia — Dieta IDDSI</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaDisfagia()" title="Stampa scheda paziente compatta">🧾 Compatta</button>
   </div>
 </div>
 
@@ -471,6 +478,8 @@
 
 </div></main>
 
+<div id="compact-dis-print-area"></div>
+
 <script src="js/utils.js"></script>
 <script>
 /* ═══════════════════════════════════════════════
@@ -738,6 +747,7 @@ const IDDSI_ALIMENTI = {
 ═══════════════════════════════════════════════ */
 let selIddsi = 4;
 let selKcal = 1800;
+let curDieta = null; // mutable copy of current diet with user edits
 const KCAL_TARGETS = [1200, 1400, 1600, 1800, 2000, 2200, 2400];
 
 /* ═══════════════════════════════════════════════
@@ -811,6 +821,7 @@ function selectIddsi(id) {
       b.style.borderColor = '';
     }
   });
+  curDieta = null;
   renderPiano();
 }
 
@@ -819,7 +830,35 @@ function selectKcal(k) {
   document.querySelectorAll('.kcal-btn').forEach(b => {
     b.classList.toggle('active', parseInt(b.textContent) === k);
   });
+  curDieta = null;
   renderPiano();
+}
+
+/* ═══════════════════════════════════════════════
+   EDITABLE DIET HELPERS
+═══════════════════════════════════════════════ */
+function onDisQtChange(pi, ii, val) {
+  if (!curDieta?.pasti[pi]?.items[ii]) return;
+  const qt = parseFloat(val);
+  if (!isNaN(qt) && qt >= 0) {
+    const item = curDieta.pasti[pi].items[ii];
+    item.qt = qt;
+    item.kcal = Math.round(qt * item.kpu);
+    const kcalEl = document.getElementById('dis-kcal-' + pi + '-' + ii);
+    if (kcalEl) kcalEl.textContent = item.kcal + ' kcal';
+    const pKcal = curDieta.pasti[pi].items.reduce((s, it) => s + it.kcal, 0);
+    const phEl = document.getElementById('dis-pasto-kcal-' + pi);
+    if (phEl) phEl.textContent = '\u2248 ' + pKcal + ' kcal';
+  }
+}
+
+function onDisNomeChange(pi, ii, val) {
+  if (!curDieta?.pasti[pi]?.items[ii]) return;
+  curDieta.pasti[pi].items[ii].nome = val;
+}
+
+function onDisNotaChange(val) {
+  if (curDieta) curDieta.nota = val;
 }
 
 /* ═══════════════════════════════════════════════
@@ -832,10 +871,23 @@ function renderPiano() {
   const dieta = IDDSI_DIETE[selIddsi];
   if (!meta || !dieta) return;
 
-  const factor = selKcal / dieta.kcal_base;
-  let totalKcal = 0;
-  dieta.pasti.forEach(p => p.items.forEach(i => totalKcal += i.kcal));
-  const scaledTotal = Math.round(totalKcal * factor);
+  if (!curDieta) {
+    const factor = selKcal / dieta.kcal_base;
+    curDieta = {
+      nota: dieta.nota || '',
+      pasti: dieta.pasti.map(p => ({
+        emoji: p.emoji,
+        nome: p.nome,
+        items: p.items.map(i => {
+          const qtS = factor >= 1 ? Math.round(i.qt * factor) : +(i.qt * factor).toFixed(1);
+          const kcalS = Math.round(i.kcal * factor);
+          return { nome: i.nome, qt: qtS, unit: i.unit, kcal: kcalS, kpu: i.kcal / i.qt };
+        })
+      }))
+    };
+  }
+
+  let totalKcal = curDieta.pasti.reduce((s, p) => s + p.items.reduce((s2, i) => s2 + i.kcal, 0), 0);
 
   let html = `
     <div style="background:${meta.sfondo};border:1.5px solid ${meta.border};border-radius:14px;padding:16px;margin-bottom:16px">
@@ -843,66 +895,49 @@ function renderPiano() {
         <span class="iddsi-badge" style="background:${meta.bg};color:${meta.text};width:40px;height:40px;font-size:16px">${selIddsi}</span>
         <div>
           <div style="font-size:16px;font-weight:700;color:var(--slate)">${meta.nome} <span style="font-size:12px;color:var(--slate-l);font-style:italic">(${meta.en})</span></div>
-          <div style="font-size:12px;color:var(--slate-m)">Target: <b>${selKcal} kcal/die</b> &nbsp;·&nbsp; Piano base: ${dieta.kcal_base} kcal &nbsp;·&nbsp; Fattore scala: <b>${factor.toFixed(2)}×</b></div>
+          <div style="font-size:12px;color:var(--slate-m)">Target: <b>${selKcal} kcal/die</b> &nbsp;&middot;&nbsp; <span id="dis-total-kcal">${totalKcal}</span> kcal (piano corrente)</div>
         </div>
       </div>
     </div>
 
     <div class="macro-totale no-print" style="margin-bottom:16px">
-      <div class="macro-pill">
-        <div class="mp-val">${scaledTotal}</div>
-        <div class="mp-lbl">Kcal Totali</div>
-      </div>
-      <div class="macro-pill">
-        <div class="mp-val">${Math.round(scaledTotal * 0.15 / 4)}</div>
-        <div class="mp-lbl">Proteine (g)</div>
-      </div>
-      <div class="macro-pill">
-        <div class="mp-val">${Math.round(scaledTotal * 0.55 / 4)}</div>
-        <div class="mp-lbl">Carboidrati (g)</div>
-      </div>
-      <div class="macro-pill">
-        <div class="mp-val">${Math.round(scaledTotal * 0.30 / 9)}</div>
-        <div class="mp-lbl">Grassi (g)</div>
-      </div>
-      <div class="macro-pill">
-        <div class="mp-val">${Math.round(scaledTotal / 5)}</div>
-        <div class="mp-lbl">Kcal/pasto</div>
-      </div>
+      <div class="macro-pill"><div class="mp-val" id="dis-total-pill">${totalKcal}</div><div class="mp-lbl">Kcal Totali</div></div>
+      <div class="macro-pill"><div class="mp-val">${Math.round(totalKcal * 0.15 / 4)}</div><div class="mp-lbl">Proteine (g)</div></div>
+      <div class="macro-pill"><div class="mp-val">${Math.round(totalKcal * 0.55 / 4)}</div><div class="mp-lbl">Carboidrati (g)</div></div>
+      <div class="macro-pill"><div class="mp-val">${Math.round(totalKcal * 0.30 / 9)}</div><div class="mp-lbl">Grassi (g)</div></div>
     </div>
   `;
 
-  dieta.pasti.forEach(pasto => {
-    let pastoKcal = 0;
-    pasto.items.forEach(i => pastoKcal += i.kcal);
-    const pastoKcalScaled = Math.round(pastoKcal * factor);
-
+  curDieta.pasti.forEach((pasto, pi) => {
+    const pastoKcal = pasto.items.reduce((s, i) => s + i.kcal, 0);
     html += `
       <div class="pasto-card">
         <div class="pasto-hdr" style="background:linear-gradient(135deg,${meta.bg},${meta.bg}cc)">
           <span style="font-size:20px">${pasto.emoji}</span>
           <span class="pasto-nome">${pasto.nome}</span>
-          <span class="pasto-kcal">≈ ${pastoKcalScaled} kcal</span>
+          <span class="pasto-kcal" id="dis-pasto-kcal-${pi}">\u2248 ${pastoKcal} kcal</span>
         </div>
         <div class="pasto-items">
-          ${pasto.items.map(item => {
-            const qtScaled = factor >= 1
-              ? Math.round(item.qt * factor)
-              : +(item.qt * factor).toFixed(1);
-            const kcalScaled = Math.round(item.kcal * factor);
-            return `<div class="pasto-item">
-              <span class="pasto-item-nome">${item.nome}</span>
-              <span class="pasto-item-qt">${qtScaled} ${item.unit}</span>
-              <span class="pasto-item-kcal">${kcalScaled} kcal</span>
-            </div>`;
-          }).join('')}
+          ${pasto.items.map((item, ii) => `
+            <div class="pasto-item" style="gap:8px">
+              <input class="dis-edit-input no-print" type="text" value="${item.nome.replace(/"/g,'&quot;')}"
+                style="flex:1;border:none;border-bottom:1px dashed #CBD5E1;background:transparent;font-size:13px;font-family:inherit;color:var(--slate);outline:none;padding:2px 0;min-width:0"
+                oninput="onDisNomeChange(${pi},${ii},this.value)">
+              <span class="pasto-item-nome dis-print-nome" style="display:none;flex:1">${item.nome}</span>
+              <input class="dis-edit-input no-print" type="number" value="${item.qt}" min="0" step="0.1"
+                style="width:64px;text-align:right;border:1px solid #BFDBFE;border-radius:5px;padding:2px 5px;font-size:12.5px;font-weight:700;color:#0369A1;font-family:inherit;background:white"
+                oninput="onDisQtChange(${pi},${ii},this.value)">
+              <span class="pasto-item-qt dis-print-qt" style="display:none">${item.qt} ${item.unit}</span>
+              <span style="font-size:11px;color:var(--slate-l)">${item.unit}</span>
+              <span class="pasto-item-kcal" id="dis-kcal-${pi}-${ii}">${item.kcal} kcal</span>
+            </div>`).join('')}
         </div>
       </div>
     `;
   });
 
-  if (dieta.nota) {
-    html += `<div class="nota-box">⚠️ <b>Nota clinica:</b> ${dieta.nota}</div>`;
+  if (curDieta.nota) {
+    html += `<div class="nota-box">&#9888;&#65039; <b>Nota clinica:</b> ${curDieta.nota}</div>`;
   }
 
   out.innerHTML = html;
@@ -966,7 +1001,7 @@ async function salvaDisfagia() {
   if (!currentUser) { toast('⚠️ Accedi per salvare', 'warn'); return; }
   const cartella_id = document.getElementById('dis-cartella').value || null;
   const nota = document.getElementById('dis-nota').value.trim() || 'Scheda Disfagia';
-  const dati = JSON.stringify({iddsi: selIddsi, kcal: selKcal});
+  const dati = JSON.stringify({iddsi: selIddsi, kcal: selKcal, pasti: curDieta ? curDieta.pasti : null});
   const payload = {user_id: currentUser.id, tipo: 'disfagia', cartella_id, nota, dati};
   showLoading(true);
   let result;
@@ -1008,8 +1043,14 @@ document.addEventListener('DOMContentLoaded', async () => {
               const d = JSON.parse(data.dati || '{}');
               if (d.iddsi) { selIddsi = d.iddsi; }
               if (d.kcal) { selKcal = d.kcal; }
+              curDieta = null;
               buildSelectors();
               renderPiano();
+              // Restore custom edits if saved
+              if (d.pasti && Array.isArray(d.pasti)) {
+                curDieta.pasti = d.pasti;
+                renderPiano();
+              }
             } catch(e) {}
             toast('✅ Scheda Disfagia caricata', 'ok');
           }
@@ -1018,6 +1059,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(e) { console.error('Errore init disfagia:', e); }
   } else if (typeof initAuth === 'function') initAuth();
 });
+
+/* ═══════════════════════════════════════════════
+   COMPACT PRINT
+═══════════════════════════════════════════════ */
+function stampaCompattaDisfagia() {
+  if (!curDieta) renderPiano();
+  const meta = IDDSI_META[selIddsi];
+  const pazEl = document.querySelector('#dis-cartella-cw [data-cw-selected]') ||
+                document.querySelector('#dis-cartella-cw .cw-selected-nome');
+  const nomePaz = pazEl?.textContent?.trim().replace(/^✅\s*/, '') || '';
+  const nota = document.getElementById('dis-nota')?.value?.trim() || '';
+
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:600px;margin:0 auto;color:#1E293B">`;
+
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:18px;border-bottom:2px solid #0369A1">`;
+  html += `<div style="font-size:20px;font-weight:700;color:#0369A1">${nomePaz || 'Piano Alimentare'}</div>`;
+  if (nota) html += `<div style="font-size:12px;color:#475569;margin-top:3px">${nota.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+  if (meta) html += `<div style="font-size:11px;color:#94A3B8;margin-top:2px">IDDSI Livello ${selIddsi} \u2014 ${meta.nome} \u00b7 Target ${selKcal} kcal</div>`;
+  html += `</div>`;
+
+  curDieta.pasti.forEach(pasto => {
+    const pastoKcal = pasto.items.reduce((s, i) => s + i.kcal, 0);
+    html += `<div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #CBD5E1;break-inside:avoid">`;
+    html += `<div style="background:#1E2937;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center">`;
+    html += `<span style="font-weight:700;font-size:14px">${pasto.emoji} ${pasto.nome}</span>`;
+    html += `<span style="font-size:12px;opacity:.88">\u2248 ${pastoKcal} kcal</span>`;
+    html += `</div>`;
+    pasto.items.forEach(item => {
+      const qtFmt = Number.isInteger(item.qt) ? item.qt : item.qt.toFixed(1);
+      html += `<div style="display:flex;align-items:baseline;padding:8px 16px;border-bottom:1px solid #F1F5F9;background:white">`;
+      html += `<span style="flex:1;font-size:13px;color:#334155">${item.nome.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+      html += `<span style="font-size:13px;font-weight:700;color:#334155;white-space:nowrap;margin-left:12px">${qtFmt} ${item.unit}</span>`;
+      html += `<span style="font-size:12px;color:#94A3B8;white-space:nowrap;margin-left:12px">${item.kcal} kcal</span>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+
+  if (curDieta.nota) {
+    html += `<div style="margin-top:14px;padding:10px 16px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;font-size:12px;color:#92400E;line-height:1.6">`;
+    html += `&#9888;&#65039; <b>Nota clinica:</b> ${curDieta.nota.replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById('compact-dis-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact-dis';
+  setTimeout(() => window.print(), 400);
+}
+
+window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; });
 </script>
 </body>
 </html>

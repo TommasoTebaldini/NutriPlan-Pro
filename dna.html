@@ -57,6 +57,9 @@
   .dna-tabs{display:none!important}
   .dna-panel{display:none!important}
   .dna-panel.active{display:block!important}
+  body[data-print-mode="compact-dca"] #sidebar,body[data-print-mode="compact-dca"] #topbar,body[data-print-mode="compact-dca"] .no-print{display:none!important}
+  body[data-print-mode="compact-dca"] #compact-dca-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="compact-dca"] .dna-panel,body[data-print-mode="compact-dca"] .dna-tabs{display:none!important}
 }
 </style>
 </head>
@@ -106,6 +109,7 @@
   <h2>🫀 DCA — Disturbi del Comportamento Alimentare</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaDca()" title="Stampa scheda paziente compatta">🧾 Compatta</button>
   </div>
 </div>
 
@@ -695,6 +699,7 @@
   </div>
 </div>
 
+<div id="compact-dca-print-area" style="display:none"></div>
 </div></main>
 
 <!-- PIANO ALIMENTARE DCA TAB -->
@@ -889,6 +894,40 @@ async function salvaDca() {
   }
   toast(editingDcaNoteId ? '✅ Scheda DCA aggiornata!' : '✅ Scheda DCA salvata nella cartella!', 'ok');
 }
+
+function stampaCompattaDca() {
+  const nomePaz = (document.getElementById('dca-cartella-cw-srch') || {}).value || 'Piano Alimentare DCA';
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:600px;margin:0 auto;color:#1E293B">`;
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:18px;border-bottom:2px solid #0F766E">`;
+  html += `<div style="font-size:20px;font-weight:700;color:#0F766E">${nomePaz.replace(/</g,'&lt;').replace(/>/g,'&gt;') || 'Piano Alimentare DCA'}</div>`;
+  html += `</div>`;
+  for (let n = 1; n <= 6; n++) {
+    const nome = ((document.getElementById('dca-m'+n+'-nome') || {}).value || '').trim();
+    const alimenti = ((document.getElementById('dca-m'+n+'-alimenti') || {}).value || '').trim();
+    const note = ((document.getElementById('dca-m'+n+'-note') || {}).value || '').trim();
+    const kcalVal = ((document.getElementById('dca-m'+n+'-kcal') || {}).value || '').trim();
+    if (!nome && !alimenti) continue;
+    html += `<div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #CBD5E1;break-inside:avoid">`;
+    html += `<div style="background:#1E2937;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center">`;
+    html += `<span style="font-weight:700;font-size:14px">${(nome || 'Pasto').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+    if (kcalVal) html += `<span style="font-size:12px;opacity:.88">≈ ${kcalVal} kcal</span>`;
+    html += `</div>`;
+    if (alimenti) {
+      alimenti.split('\n').forEach(line => {
+        const l = line.trim();
+        if (!l) return;
+        html += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;background:white;font-size:13px;color:#334155">${l.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+      });
+    }
+    if (note) html += `<div style="padding:7px 16px;font-size:11.5px;color:#92400E;background:#FFFBEB;border-top:1px solid #FEF3C7">📝 ${note.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+    html += `</div>`;
+  }
+  html += `</div>`;
+  document.getElementById('compact-dca-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact-dca';
+  setTimeout(() => window.print(), 400);
+}
+window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; });
 
 async function caricaDcaDaNote(noteId) {
   showLoading(true);

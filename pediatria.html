@@ -46,6 +46,9 @@
   [style*="background:#FAF5FF;border-radius:14px"],[style*="background:#EDE9FE;border-radius:14px"],.ped-tabs-wrap{display:none!important}
   .ped-panel{display:none!important}
   .ped-panel.active{display:block!important}
+  body[data-print-mode="compact-ped"] #sidebar,body[data-print-mode="compact-ped"] #topbar,body[data-print-mode="compact-ped"] .no-print{display:none!important}
+  body[data-print-mode="compact-ped"] #compact-ped-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="compact-ped"] .ped-panel,body[data-print-mode="compact-ped"] .ped-tabs-wrap{display:none!important}
 }
 </style>
 </head>
@@ -95,6 +98,7 @@
   <h2>👶 Nutrizione Pediatrica — Crescita & Fabbisogni</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaPed()" title="Stampa scheda paziente compatta">🧾 Compatta</button>
   </div>
 </div>
 
@@ -595,6 +599,7 @@
   </div>
 </div>
 
+<div id="compact-ped-print-area" style="display:none"></div>
 </div></main>
 <script>
 (function() {
@@ -1264,6 +1269,40 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
   if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
   else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
 }
+
+function stampaCompattaPed() {
+  const nomePaz = (document.getElementById('ped-cartella-cw-srch') || {}).value || 'Piano Alimentare Pediatrico';
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:600px;margin:0 auto;color:#1E293B">`;
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:18px;border-bottom:2px solid #7C3AED">`;
+  html += `<div style="font-size:20px;font-weight:700;color:#7C3AED">${nomePaz.replace(/</g,'&lt;').replace(/>/g,'&gt;') || 'Piano Alimentare Pediatrico'}</div>`;
+  html += `</div>`;
+  for (let n = 1; n <= 5; n++) {
+    const nome = ((document.getElementById('ped-m'+n+'-nome') || {}).value || '').trim();
+    const alimenti = ((document.getElementById('ped-m'+n+'-alimenti') || {}).value || '').trim();
+    const note = ((document.getElementById('ped-m'+n+'-note') || {}).value || '').trim();
+    const kcalVal = ((document.getElementById('ped-m'+n+'-kcal') || {}).value || '').trim();
+    if (!nome && !alimenti) continue;
+    html += `<div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #CBD5E1;break-inside:avoid">`;
+    html += `<div style="background:#1E2937;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center">`;
+    html += `<span style="font-weight:700;font-size:14px">${(nome || 'Pasto').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+    if (kcalVal) html += `<span style="font-size:12px;opacity:.88">≈ ${kcalVal} kcal</span>`;
+    html += `</div>`;
+    if (alimenti) {
+      alimenti.split('\n').forEach(line => {
+        const l = line.trim();
+        if (!l) return;
+        html += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;background:white;font-size:13px;color:#334155">${l.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+      });
+    }
+    if (note) html += `<div style="padding:7px 16px;font-size:11.5px;color:#92400E;background:#FFFBEB;border-top:1px solid #FEF3C7">📝 ${note.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+    html += `</div>`;
+  }
+  html += `</div>`;
+  document.getElementById('compact-ped-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact-ped';
+  setTimeout(() => window.print(), 400);
+}
+window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; });
 
 async function caricaPedDaNote(noteId) {
   showLoading(true);

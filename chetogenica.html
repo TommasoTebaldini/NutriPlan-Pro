@@ -68,6 +68,10 @@
 .ketone-scale{display:flex;gap:0;border-radius:10px;overflow:hidden;margin-top:8px;border:1px solid var(--border)}
 .ketone-box{flex:1;padding:10px 6px;text-align:center;font-size:11px;font-weight:700}
 .gki-result{background:linear-gradient(135deg,#7C3AED,#5B21B6);border-radius:12px;padding:16px;color:white;text-align:center;margin-top:12px}
+#compact-keto-print-area{display:none}
+body[data-print-mode="compact-keto"] #sidebar,body[data-print-mode="compact-keto"] #topbar,body[data-print-mode="compact-keto"] .no-print{display:none!important}
+body[data-print-mode="compact-keto"] #compact-keto-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+body[data-print-mode="compact-keto"] .keto-tabs,body[data-print-mode="compact-keto"] .keto-panel{display:none!important}
 @media print{
   @page{margin:1cm 1.2cm;size:A4}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -127,6 +131,7 @@
   <h2>🥑 Dieta Chetogenica</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" id="keto-compact-btn" onclick="stampaCompattaKeto(ketoEditMode||'mad')" title="Stampa scheda paziente compatta" style="display:none">🧾 Compatta</button>
   </div>
 </div>
 
@@ -623,6 +628,20 @@
       </div>
     </div>
   </div>
+  <div style="margin-top:10px;text-align:right"><button onclick="apriEditKeto('mad')" class="btn btn-ghost btn-sm">✏️ Personalizza e Stampa</button></div>
+  <div id="keto-mad-edit" style="margin-top:12px;border:1.5px solid #DDD6FE;border-radius:12px;overflow:hidden;display:none">
+    <div style="background:linear-gradient(135deg,#3B0764,#7C3AED);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-weight:700;font-size:13px">✏️ Personalizza Menu MAD</span>
+      <button onclick="document.getElementById('keto-mad-edit').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:white;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px">✕ Chiudi</button>
+    </div>
+    <div style="padding:16px;background:white">
+      <div id="keto-mad-pasti" style="display:flex;flex-direction:column;gap:10px"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="salvaKeto('mad')" class="btn btn-primary btn-sm" style="background:#7C3AED">💾 Salva in Cartella</button>
+        <button onclick="stampaCompattaKeto('mad')" class="btn btn-ghost btn-sm">🧾 Stampa Compatta</button>
+      </div>
+    </div>
+  </div>
 
   <!-- MENU 2: VLCKD -->
   <div class="menu-card">
@@ -681,6 +700,20 @@
           <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">3g CHO</span>
           <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">24g G</span>
         </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:10px;text-align:right"><button onclick="apriEditKeto('vlckd')" class="btn btn-ghost btn-sm">✏️ Personalizza e Stampa</button></div>
+  <div id="keto-vlckd-edit" style="margin-top:12px;border:1.5px solid #A7F3D0;border-radius:12px;overflow:hidden;display:none">
+    <div style="background:linear-gradient(135deg,#064E3B,#059669);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-weight:700;font-size:13px">✏️ Personalizza Menu VLCKD</span>
+      <button onclick="document.getElementById('keto-vlckd-edit').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:white;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px">✕ Chiudi</button>
+    </div>
+    <div style="padding:16px;background:white">
+      <div id="keto-vlckd-pasti" style="display:flex;flex-direction:column;gap:10px"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="salvaKeto('vlckd')" class="btn btn-primary btn-sm" style="background:#059669">💾 Salva in Cartella</button>
+        <button onclick="stampaCompattaKeto('vlckd')" class="btn btn-ghost btn-sm">🧾 Stampa Compatta</button>
       </div>
     </div>
   </div>
@@ -864,6 +897,8 @@
 </div><!-- fine tab-monitoraggio -->
 
 </div></main>
+
+<div id="compact-keto-print-area"></div>
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
@@ -1060,6 +1095,113 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(e) { console.error('Errore init chetogenica:', e); }
   } else if (typeof initAuth === 'function') initAuth();
 });
+
+// ═══════════════════════════════════════
+// CHETOGENICA — DIET EDIT + COMPACT PRINT
+// ═══════════════════════════════════════
+const KETO_PASTI_MAD = [
+  {emoji:'🌅', nome:'Colazione', alimenti:'3 uova strapazzate in burro + 2 fette pancetta + ½ avocado + caffè con panna', kcal:480},
+  {emoji:'🍽️', nome:'Pranzo', alimenti:'Salmone al forno 150g + zucchine trifolate in olio EVO 150g + insalata mista + olio EVO 20ml', kcal:550},
+  {emoji:'🍎', nome:'Spuntino', alimenti:'30g noci + 30g parmigiano + 5 olive', kcal:280},
+  {emoji:'🌙', nome:'Cena', alimenti:'Petto di pollo 200g con crosta di erbe aromatiche + broccoli al vapore 200g con burro + 15ml olio EVO', kcal:490}
+];
+const KETO_PASTI_VLCKD = [
+  {emoji:'🌅', nome:'Colazione', alimenti:'2 uova sode + 100g ricotta intera + cannella + caffè amaro', kcal:310},
+  {emoji:'🍽️', nome:'Pranzo', alimenti:'Tonno al naturale 150g + insalata mista + pomodori ciliegini (<50g) + olio EVO 15ml + limone', kcal:340},
+  {emoji:'🍎', nome:'Spuntino', alimenti:'20g mandorle + 100g fragole', kcal:150},
+  {emoji:'🌙', nome:'Cena', alimenti:'Filetto di branzino 180g al vapore + spinaci saltati in olio EVO 200g + 10ml olio EVO', kcal:380}
+];
+
+let ketoEditMode = null;
+let ketoCurPasti = {mad: null, vlckd: null};
+
+function apriEditKeto(tipo) {
+  ketoEditMode = tipo;
+  const pasti = tipo === 'mad' ? KETO_PASTI_MAD : KETO_PASTI_VLCKD;
+  const container = document.getElementById('keto-' + tipo + '-pasti');
+  if (!container) return;
+  if (!ketoCurPasti[tipo]) ketoCurPasti[tipo] = pasti.map(p => ({...p}));
+  container.innerHTML = ketoCurPasti[tipo].map((p, i) => `
+    <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:10px 12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:18px">${p.emoji}</span>
+        <input type="text" id="keto-${tipo}-nome-${i}" value="${p.nome.replace(/"/g,'&quot;')}"
+          style="flex:1;border:none;border-bottom:1px dashed #C4B5FD;background:transparent;font-size:13px;font-weight:700;font-family:inherit;outline:none;padding:2px 0">
+        <input type="number" id="keto-${tipo}-kcal-${i}" value="${p.kcal}" placeholder="kcal"
+          style="width:70px;text-align:right;border:1px solid #DDD6FE;border-radius:5px;padding:3px 6px;font-size:12.5px;font-weight:700;color:#7C3AED;font-family:inherit">
+        <span style="font-size:11px;color:#94A3B8">kcal</span>
+      </div>
+      <textarea id="keto-${tipo}-alim-${i}" rows="2"
+        style="width:100%;padding:6px 8px;border:1px solid #DDD6FE;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box">${p.alimenti}</textarea>
+    </div>
+  `).join('');
+  document.getElementById('keto-' + tipo + '-edit').style.display = 'block';
+  const btn = document.getElementById('keto-compact-btn');
+  if (btn) btn.style.display = 'inline-flex';
+}
+
+function salvaKeto(tipo) {
+  if (!currentUser) { if(typeof toast==='function') toast('⚠️ Accedi per salvare','warn'); return; }
+  const n = (tipo === 'mad' ? KETO_PASTI_MAD : KETO_PASTI_VLCKD).length;
+  const pasti = [];
+  for (let i = 0; i < n; i++) {
+    pasti.push({
+      emoji: (tipo==='mad'?KETO_PASTI_MAD:KETO_PASTI_VLCKD)[i].emoji,
+      nome: document.getElementById('keto-'+tipo+'-nome-'+i)?.value||'',
+      alimenti: document.getElementById('keto-'+tipo+'-alim-'+i)?.value||'',
+      kcal: parseInt(document.getElementById('keto-'+tipo+'-kcal-'+i)?.value||'0')||0
+    });
+  }
+  ketoCurPasti[tipo] = pasti;
+  const cartella_id = document.getElementById('keto-cartella')?.value || null;
+  const payload = {user_id:currentUser.id, tipo:'keto_'+tipo, cartella_id, nota:'Piano chetogenico '+tipo.toUpperCase(), dati:JSON.stringify({pasti}), created_at:new Date().toISOString()};
+  sb.from('note_specialistiche').insert(payload).then(r => {
+    if (typeof toast==='function') toast(r.error ? '❌ '+r.error.message : '✅ Piano salvato!', r.error?'err':'ok');
+  });
+}
+
+function stampaCompattaKeto(tipo) {
+  const n = (tipo==='mad'?KETO_PASTI_MAD:KETO_PASTI_VLCKD).length;
+  const editVisible = document.getElementById('keto-'+tipo+'-edit')?.style.display !== 'none';
+  let pasti;
+  if (editVisible) {
+    pasti = [];
+    for (let i = 0; i < n; i++) {
+      pasti.push({
+        emoji:(tipo==='mad'?KETO_PASTI_MAD:KETO_PASTI_VLCKD)[i].emoji,
+        nome:document.getElementById('keto-'+tipo+'-nome-'+i)?.value||'',
+        alimenti:document.getElementById('keto-'+tipo+'-alim-'+i)?.value||'',
+        kcal:parseInt(document.getElementById('keto-'+tipo+'-kcal-'+i)?.value||'0')||0
+      });
+    }
+  } else {
+    pasti = ketoCurPasti[tipo] || (tipo==='mad'?KETO_PASTI_MAD:KETO_PASTI_VLCKD);
+  }
+  const titolo = tipo === 'mad' ? 'Piano Chetogenico — Atkins Modificata 1800 kcal' : 'Piano Chetogenico — VLCKD 1400 kcal';
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:600px;margin:0 auto;color:#1E293B">`;
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:18px;border-bottom:2px solid #7C3AED">`;
+  html += `<div style="font-size:20px;font-weight:700;color:#7C3AED">${titolo}</div>`;
+  html += `</div>`;
+  pasti.forEach(p => {
+    html += `<div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #CBD5E1;break-inside:avoid">`;
+    html += `<div style="background:#1E2937;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center">`;
+    html += `<span style="font-weight:700;font-size:14px">${p.emoji} ${(p.nome||'').replace(/</g,'&lt;')}</span>`;
+    if (p.kcal) html += `<span style="font-size:12px;opacity:.88">≈ ${p.kcal} kcal</span>`;
+    html += `</div>`;
+    if (p.alimenti) {
+      p.alimenti.split('\n').forEach(line => {
+        const l = line.trim();
+        if (l) html += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;background:white;font-size:13px;color:#334155">${l.replace(/</g,'&lt;')}</div>`;
+      });
+    }
+    html += `</div>`;
+  });
+  html += `</div>`;
+  document.getElementById('compact-keto-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact-keto';
+  setTimeout(() => window.print(), 400);
+}
+window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; });
 </script>
 </body>
 </html>

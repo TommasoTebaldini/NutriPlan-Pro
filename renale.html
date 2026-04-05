@@ -47,6 +47,10 @@
 .dialisi-card{background:white;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:14px}
 .dialisi-hdr{padding:14px 18px;color:white;font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px}
 .dialisi-body{padding:16px 18px}
+#compact-ren-print-area{display:none}
+body[data-print-mode="compact-ren"] #sidebar,body[data-print-mode="compact-ren"] #topbar,body[data-print-mode="compact-ren"] .no-print{display:none!important}
+body[data-print-mode="compact-ren"] #compact-ren-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+body[data-print-mode="compact-ren"] .ren-tabs,body[data-print-mode="compact-ren"] .ren-panel{display:none!important}
 @media print{
   @page{margin:1cm 1.2cm;size:A4}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -106,6 +110,7 @@
   <h2>🫘 Nefropatia Cronica / IRC</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" id="ren-compact-btn" onclick="stampaCompattaRenale(renEditMode||'hd')" title="Stampa scheda paziente compatta" style="display:none">🧾 Compatta</button>
   </div>
 </div>
 
@@ -660,6 +665,20 @@
           ⚠️ Questo schema è per un paziente di ~65 kg. Adattare sempre le quantità al peso del paziente. Esempio: paziente 70 kg → prot target ~77 g/die.
         </div>
       </div>
+      <div style="margin-top:10px;text-align:right"><button onclick="apriEditRenale('hd')" class="btn btn-ghost btn-sm">✏️ Personalizza e Stampa</button></div>
+      <div id="ren-hd-edit" style="margin-top:16px;border:1.5px solid #BFDBFE;border-radius:12px;overflow:hidden;display:none">
+        <div style="background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:700;font-size:13px">✏️ Personalizza Piano HD</span>
+          <button onclick="document.getElementById('ren-hd-edit').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:white;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px">✕ Chiudi</button>
+        </div>
+        <div style="padding:16px;background:white">
+          <div id="ren-hd-pasti" style="display:flex;flex-direction:column;gap:10px"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="salvaRenale('hd')" class="btn btn-primary btn-sm">💾 Salva in Cartella</button>
+            <button onclick="stampaCompattaRenale('hd')" class="btn btn-ghost btn-sm">🧾 Stampa Compatta</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -758,6 +777,20 @@
               <tr style="background:#FFEDD5;font-weight:700"><td>📊 TOTALE</td><td></td><td>2100</td><td>112</td><td>1620</td><td>1005</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+      <div style="margin-top:10px;text-align:right"><button onclick="apriEditRenale('dp')" class="btn btn-ghost btn-sm">✏️ Personalizza e Stampa</button></div>
+      <div id="ren-dp-edit" style="margin-top:16px;border:1.5px solid #D1FAE5;border-radius:12px;overflow:hidden;display:none">
+        <div style="background:linear-gradient(135deg,#1B4332,#059669);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:700;font-size:13px">✏️ Personalizza Piano DP</span>
+          <button onclick="document.getElementById('ren-dp-edit').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:white;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px">✕ Chiudi</button>
+        </div>
+        <div style="padding:16px;background:white">
+          <div id="ren-dp-pasti" style="display:flex;flex-direction:column;gap:10px"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="salvaRenale('dp')" class="btn btn-primary btn-sm">💾 Salva in Cartella</button>
+            <button onclick="stampaCompattaRenale('dp')" class="btn btn-ghost btn-sm">🧾 Stampa Compatta</button>
+          </div>
         </div>
       </div>
 
@@ -907,6 +940,8 @@
 </div><!-- fine tab-alimenti -->
 
 </div></main>
+
+<div id="compact-ren-print-area"></div>
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
@@ -1084,6 +1119,115 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(e) { console.error('Errore init renale:', e); }
   } else if (typeof initAuth === 'function') initAuth();
 });
+
+// ═══════════════════════════════════════
+// RENALE — DIET EDIT + COMPACT PRINT
+// ═══════════════════════════════════════
+const REN_PASTI_HD = [
+  {emoji:'🌅', nome:'Colazione', alimenti:'Riso soffiato 40g + latte parzialmente scremato 150ml + marmellata 20g + caffè', kcal:310},
+  {emoji:'🍎', nome:'Spuntino', alimenti:'Mela golden 150g (sbucciata)', kcal:78},
+  {emoji:'🍽️', nome:'Pranzo', alimenti:'Riso bianco 80g + petto pollo 100g + zucchine lisciviate 150g + olio EVO 10ml + pane senza sale 50g', kcal:520},
+  {emoji:'🍊', nome:'Spuntino pomeriggio', alimenti:'Pere 150g + 3 crackers senza sale', kcal:130},
+  {emoji:'🌙', nome:'Cena', alimenti:'Pasta 80g + olio EVO + filetto merluzzo 100g + insalata verde 100g + olio 10ml + pane senza sale 30g', kcal:490}
+];
+const REN_PASTI_DP = [
+  {emoji:'🌅', nome:'Colazione', alimenti:'Pane integrale 60g + affettato tacchino 40g + ricotta 50g + caffè con latte parz. scr. 100ml', kcal:350},
+  {emoji:'🍎', nome:'Spuntino', alimenti:'Yogurt greco magro 125g + fragole 100g', kcal:160},
+  {emoji:'🍽️', nome:'Pranzo', alimenti:'Pasta 90g + sugo pomodoro + petto tacchino 120g + insalata + spinaci lisciviati 100g + pane 40g', kcal:580},
+  {emoji:'🍊', nome:'Spuntino pomeriggio', alimenti:'Mela 150g + 5 mandorle', kcal:120},
+  {emoji:'🌙', nome:'Cena', alimenti:'Riso bianco 80g + filetto orata 150g al vapore + broccoli lisciviati 150g + olio EVO 15ml + pane senza sale 30g', kcal:570}
+];
+
+let renEditMode = null;
+let renCurPasti = {hd: null, dp: null};
+
+function apriEditRenale(tipo) {
+  renEditMode = tipo;
+  const pasti = tipo === 'hd' ? REN_PASTI_HD : REN_PASTI_DP;
+  const container = document.getElementById('ren-' + tipo + '-pasti');
+  if (!container) return;
+  if (!renCurPasti[tipo]) renCurPasti[tipo] = pasti.map(p => ({...p}));
+  container.innerHTML = renCurPasti[tipo].map((p, i) => `
+    <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:18px">${p.emoji}</span>
+        <input type="text" id="ren-${tipo}-nome-${i}" value="${p.nome.replace(/"/g,'&quot;')}"
+          style="flex:1;border:none;border-bottom:1px dashed #CBD5E1;background:transparent;font-size:13px;font-weight:700;font-family:inherit;outline:none;padding:2px 0">
+        <input type="number" id="ren-${tipo}-kcal-${i}" value="${p.kcal}" placeholder="kcal"
+          style="width:70px;text-align:right;border:1px solid #BFDBFE;border-radius:5px;padding:3px 6px;font-size:12.5px;font-weight:700;color:#1D4ED8;font-family:inherit">
+        <span style="font-size:11px;color:#94A3B8">kcal</span>
+      </div>
+      <textarea id="ren-${tipo}-alim-${i}" rows="2"
+        style="width:100%;padding:6px 8px;border:1px solid #BFDBFE;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box">${p.alimenti}</textarea>
+    </div>
+  `).join('');
+  document.getElementById('ren-' + tipo + '-edit').style.display = 'block';
+  const btn = document.getElementById('ren-compact-btn');
+  if (btn) btn.style.display = 'inline-flex';
+}
+
+function salvaRenale(tipo) {
+  if (!currentUser) { if(typeof toast==='function') toast('⚠️ Accedi per salvare','warn'); return; }
+  const n = tipo === 'hd' ? REN_PASTI_HD.length : REN_PASTI_DP.length;
+  const pasti = [];
+  for (let i = 0; i < n; i++) {
+    pasti.push({
+      emoji: (tipo==='hd'?REN_PASTI_HD:REN_PASTI_DP)[i].emoji,
+      nome: document.getElementById('ren-'+tipo+'-nome-'+i)?.value||'',
+      alimenti: document.getElementById('ren-'+tipo+'-alim-'+i)?.value||'',
+      kcal: parseInt(document.getElementById('ren-'+tipo+'-kcal-'+i)?.value||'0')||0
+    });
+  }
+  renCurPasti[tipo] = pasti;
+  const cartella_id = document.getElementById('ren-cartella')?.value || null;
+  const payload = {user_id:currentUser.id, tipo:'renale_'+tipo, cartella_id, nota:'Piano renale '+tipo.toUpperCase(), dati:JSON.stringify({pasti}), created_at:new Date().toISOString()};
+  sb.from('note_specialistiche').insert(payload).then(r => {
+    if (typeof toast==='function') toast(r.error ? '❌ '+r.error.message : '✅ Piano salvato!', r.error?'err':'ok');
+  });
+}
+
+function stampaCompattaRenale(tipo) {
+  const n = (tipo==='hd'?REN_PASTI_HD:REN_PASTI_DP).length;
+  const editVisible = document.getElementById('ren-'+tipo+'-edit')?.style.display !== 'none';
+  let pasti;
+  if (editVisible) {
+    pasti = [];
+    for (let i = 0; i < n; i++) {
+      pasti.push({
+        emoji:(tipo==='hd'?REN_PASTI_HD:REN_PASTI_DP)[i].emoji,
+        nome:document.getElementById('ren-'+tipo+'-nome-'+i)?.value||'',
+        alimenti:document.getElementById('ren-'+tipo+'-alim-'+i)?.value||'',
+        kcal:parseInt(document.getElementById('ren-'+tipo+'-kcal-'+i)?.value||'0')||0
+      });
+    }
+  } else {
+    pasti = renCurPasti[tipo] || (tipo==='hd'?REN_PASTI_HD:REN_PASTI_DP);
+  }
+  const titolo = tipo === 'hd' ? 'Piano Alimentare — Emodialisi' : 'Piano Alimentare — Dialisi Peritoneale';
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:600px;margin:0 auto;color:#1E293B">`;
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:18px;border-bottom:2px solid #C2410C">`;
+  html += `<div style="font-size:20px;font-weight:700;color:#C2410C">${titolo}</div>`;
+  html += `</div>`;
+  pasti.forEach(p => {
+    html += `<div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #CBD5E1;break-inside:avoid">`;
+    html += `<div style="background:#1E2937;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center">`;
+    html += `<span style="font-weight:700;font-size:14px">${p.emoji} ${(p.nome||'').replace(/</g,'&lt;')}</span>`;
+    if (p.kcal) html += `<span style="font-size:12px;opacity:.88">≈ ${p.kcal} kcal</span>`;
+    html += `</div>`;
+    if (p.alimenti) {
+      p.alimenti.split('\n').forEach(line => {
+        const l = line.trim();
+        if (l) html += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;background:white;font-size:13px;color:#334155">${l.replace(/</g,'&lt;')}</div>`;
+      });
+    }
+    html += `</div>`;
+  });
+  html += `</div>`;
+  document.getElementById('compact-ren-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact-ren';
+  setTimeout(() => window.print(), 400);
+}
+window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; });
 </script>
 </body>
 </html>

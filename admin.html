@@ -169,7 +169,7 @@
               <th style="padding:8px 10px;text-align:left">Titolo</th>
               <th style="padding:8px 10px;text-align:center">Tipo</th>
               <th style="padding:8px 10px;text-align:center">Crediti</th>
-              <th style="padding:8px 10px;text-align:center">Data fine</th>
+              <th style="padding:8px 10px;text-align:center;cursor:pointer;user-select:none;white-space:nowrap" onclick="toggleECMSort()" title="Ordina per data">Data fine <span id="ecm-sort-icon">⬆️</span></th>
               <th style="padding:8px 10px;text-align:center">Stato</th>
               <th style="padding:8px 10px;text-align:center">Azioni</th>
             </tr>
@@ -266,10 +266,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ─── ECM Course Management ──────────────────────────────────────────
+let ecmSortAsc = true;
+
+function toggleECMSort() {
+  ecmSortAsc = !ecmSortAsc;
+  const icon = document.getElementById('ecm-sort-icon');
+  if (icon) icon.textContent = ecmSortAsc ? '⬆️' : '⬇️';
+  loadECMCorsi();
+}
+
 async function loadECMCorsi() {
   const tbody = document.getElementById('ecm-tbody');
   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Caricamento...</td></tr>';
-  const { data, error } = await sb.from('ecm_corsi').select('*').order('data_inizio', { ascending: true, nullsFirst: false });
+  const { data, error } = await sb.from('ecm_corsi').select('*').order('data_inizio', { ascending: ecmSortAsc, nullsFirst: false });
   if (error) {
     tbody.innerHTML = `<tr><td colspan="6"><div style="margin:24px auto;max-width:520px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:20px 24px;text-align:left">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">

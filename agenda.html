@@ -568,8 +568,8 @@ async function saveEvent() {
   if(!paziente || !data) { toast('Inserisci paziente/titolo e data','err'); return; }
   
   const ev = {
-    id: 'ev_' + Date.now(),
-    paziente, data, ora, tipo, durata, note,
+    id: 'ev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    paziente, data, ora, tipo, durata: parseInt(durata, 10) || 60, note,
     created: new Date().toISOString()
   };
   events.push(ev);
@@ -626,7 +626,7 @@ async function deleteCurrentEvent() {
   if(!confirm('Eliminare questo appuntamento?')) return;
   const idToDelete = currentEventId;
   events = events.filter(e => e.id !== idToDelete);
-  await saveEvents();
+  localStorage.setItem('dietplan_events', JSON.stringify(events));
   if(currentUser && sb) {
     try {
       const { error } = await sb.from('agenda_events').delete().eq('id', idToDelete).eq('user_id', currentUser.id);
@@ -1170,7 +1170,7 @@ function exportICal() {
     if (ev.tipo === 'urgente') ics += 'PRIORITY:1\r\n';
     ics += 'END:VEVENT\r\n';
   });
-  ics += 'END:VCALENDAR';
+  ics += 'END:VCALENDAR\r\n';
   const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

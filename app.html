@@ -48,13 +48,11 @@
   body[data-print-mode="simple"] .macro-bar{display:none!important}
   body[data-print-mode="simple"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="simple"] #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  body[data-print-mode="simple"] @page{size:A4 portrait}
   /* ── Compact print mode (green meal headers + per-item kcal) ── */
   body[data-print-mode="compact"] #pasti-container{display:none!important}
   body[data-print-mode="compact"] .macro-bar{display:none!important}
   body[data-print-mode="compact"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="compact"] #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  body[data-print-mode="compact"] @page{size:A4 portrait}
 }
 </style>
 </head>
@@ -1151,6 +1149,7 @@ function stampaSemplice() {
 
   document.getElementById('simple-print-area').innerHTML = html;
   document.body.dataset.printMode = 'simple';
+  _applyPortraitPrint();
   setTimeout(() => window.print(), 400);
 }
 
@@ -1279,11 +1278,24 @@ function stampaCompatta() {
 
   document.getElementById('compact-print-area').innerHTML = html;
   document.body.dataset.printMode = 'compact';
+  _applyPortraitPrint();
   setTimeout(() => window.print(), 400);
+}
+
+function _applyPortraitPrint() {
+  let s = document.getElementById('_portrait-print-style');
+  if (!s) {
+    s = document.createElement('style');
+    s.id = '_portrait-print-style';
+    document.head.appendChild(s);
+  }
+  s.textContent = '@media print{@page{size:A4 portrait;margin:1cm 1.2cm}}';
 }
 
 window.addEventListener('afterprint', () => {
   delete document.body.dataset.printMode;
+  const s = document.getElementById('_portrait-print-style');
+  if (s) s.remove();
 });
 
 // ═══════════════════════════════════════════════════

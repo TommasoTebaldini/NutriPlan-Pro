@@ -57,7 +57,12 @@
   .dna-tabs{display:none!important}
   .dna-panel{display:none!important}
   .dna-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .dna-panel{display:none!important}
+  body[data-print-mode="compact"] .dna-tabs{display:none!important}
+  body[data-print-mode="compact"] #dca-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+#dca-compact-print-area{display:none}
 </style>
 </head>
 <body>
@@ -106,6 +111,7 @@
   <h2>🫀 DCA — Disturbi del Comportamento Alimentare</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaDca()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -695,7 +701,10 @@
   </div>
 </div>
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="dca-compact-print-area"></div>
+</main>
 
 <!-- PIANO ALIMENTARE DCA TAB -->
 <script>
@@ -1138,6 +1147,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) {}
 });
+
+function stampaCompattaDca() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const kcalTot = parseFloat(gv('dca-piano-kcal')) || 0;
+  const protPerc = parseFloat(gv('dca-prot-perc')) || 20;
+  const choPerc  = parseFloat(gv('dca-cho-perc'))  || 55;
+  const fatPerc  = parseFloat(gv('dca-fat-perc'))  || 25;
+  const prot = kcalTot ? Math.round(kcalTot * (protPerc/100) / 4) : 0;
+  const cho  = kcalTot ? Math.round(kcalTot * (choPerc/100) / 4) : 0;
+  const fat  = kcalTot ? Math.round(kcalTot * (fatPerc/100) / 9) : 0;
+  const nomeCartella = document.getElementById('dca-cartella')?.options[document.getElementById('dca-cartella')?.selectedIndex]?.text || '';
+  const tipo = gv('dca-piano-tipo');
+  const fase = gv('dca-piano-fase');
+
+  const pasti = [1,2,3,4,5,6].map(i => ({
+    nome: gv('dca-m'+i+'-nome'),
+    ora: gv('dca-m'+i+'-ora'),
+    kcal: gv('dca-m'+i+'-kcal'),
+    alimenti: gv('dca-m'+i+'-alimenti'),
+    note: gv('dca-m'+i+'-note')
+  })).filter(p => p.nome || p.alimenti);
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Piano Alimentare — DCA',
+    sottotitolo: [tipo, fase].filter(Boolean).join(' · '),
+    totKcal: kcalTot,
+    totProt: prot,
+    totCho: cho,
+    totFat: fat,
+    containerId: 'dca-compact-print-area'
+  });
+}
 </script>
 </body>
 </html>

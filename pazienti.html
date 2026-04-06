@@ -81,6 +81,22 @@
     </div>
   </div>
 </div>
+<!-- MODAL: CONFERMA ELIMINAZIONE -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal" style="max-width:360px">
+    <div class="mhdr">
+      <h2 id="modal-confirm-title">⚠️ Conferma</h2>
+      <button class="mclose" onclick="closeM('modal-confirm')">✕</button>
+    </div>
+    <div class="mbody" style="padding:20px 22px">
+      <p id="modal-confirm-msg" style="margin:0;font-size:14px;color:var(--slate-m);line-height:1.5"></p>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="_confirmCancel()">Annulla</button>
+      <button class="btn btn-sm" id="modal-confirm-ok" onclick="_confirmOk()">Continua</button>
+    </div>
+  </div>
+</div>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
@@ -88,6 +104,31 @@
 <script>
 let cartellaAperta = null;
 let editingCartellaId = null;
+
+// CUSTOM CONFIRM DIALOG
+let _confirmCallback = null;
+function customConfirm(msg, onConfirm, opts = {}) {
+  _confirmCallback = onConfirm;
+  document.getElementById('modal-confirm-msg').textContent = msg;
+  const title = document.getElementById('modal-confirm-title');
+  const okBtn = document.getElementById('modal-confirm-ok');
+  title.textContent = opts.title || '⚠️ Conferma';
+  if (opts.danger) {
+    okBtn.className = 'btn btn-sm';
+    okBtn.style.background = '#DC2626';
+    okBtn.style.color = '#fff';
+    okBtn.style.borderColor = '#DC2626';
+  } else {
+    okBtn.className = 'btn btn-primary btn-sm';
+    okBtn.style.background = '';
+    okBtn.style.color = '';
+    okBtn.style.borderColor = '';
+  }
+  okBtn.textContent = opts.okLabel || 'Continua';
+  openM('modal-confirm');
+}
+function _confirmOk() { closeM('modal-confirm'); if (_confirmCallback) { _confirmCallback(); _confirmCallback = null; } }
+function _confirmCancel() { closeM('modal-confirm'); _confirmCallback = null; }
 
 async function init() {
   await checkAuth();
@@ -335,12 +376,13 @@ function apriModificaBIA(biaId, cartellaId) {
 }
 
 async function delBIA(id, cartellaId) {
-  if (!confirm('Eliminare questa misurazione BIA?')) return;
-  showLoading(true);
-  await sb.from('bia_records').delete().eq('id', id);
-  showLoading(false);
-  await renderCartellaDetail(cartellaId);
-  toast('🗑️ BIA eliminata', 'info');
+  customConfirm('Eliminare questa misurazione BIA?', async () => {
+    showLoading(true);
+    await sb.from('bia_records').delete().eq('id', id);
+    showLoading(false);
+    await renderCartellaDetail(cartellaId);
+    toast('🗑️ BIA eliminata', 'info');
+  }, { danger: true, title: '⚠️ Elimina BIA', okLabel: 'Elimina' });
 }
 
 function apriNCPt(ncptId) {
@@ -367,39 +409,43 @@ function caricaPiano(id) {
 }
 
 async function delPiano(id) {
-  if (!confirm('Eliminare questo piano?')) return;
-  showLoading(true);
-  await sb.from('piani').delete().eq('id', id);
-  showLoading(false);
-  await renderCartellaDetail(cartellaAperta);
-  toast('🗑️ Piano eliminato', 'info');
+  customConfirm('Eliminare questo piano?', async () => {
+    showLoading(true);
+    await sb.from('piani').delete().eq('id', id);
+    showLoading(false);
+    await renderCartellaDetail(cartellaAperta);
+    toast('🗑️ Piano eliminato', 'info');
+  }, { danger: true, title: '⚠️ Elimina Piano', okLabel: 'Elimina' });
 }
 
 async function delNCPt(id) {
-  if (!confirm('Eliminare questa scheda NCPt?')) return;
-  showLoading(true);
-  await sb.from('ncpt').delete().eq('id', id);
-  showLoading(false);
-  await renderCartellaDetail(cartellaAperta);
-  toast('🗑️ NCPt eliminato', 'info');
+  customConfirm('Eliminare questa scheda NCPt?', async () => {
+    showLoading(true);
+    await sb.from('ncpt').delete().eq('id', id);
+    showLoading(false);
+    await renderCartellaDetail(cartellaAperta);
+    toast('🗑️ NCPt eliminato', 'info');
+  }, { danger: true, title: '⚠️ Elimina NCPt', okLabel: 'Elimina' });
 }
 
 async function delScheda(id) {
-  if (!confirm('Eliminare questa scheda valutazione?')) return;
-  showLoading(true);
-  await sb.from('schede_valutazione').delete().eq('id', id);
-  showLoading(false);
-  await renderCartellaDetail(cartellaAperta);
-  toast('🗑️ Scheda eliminata', 'info');
+  customConfirm('Eliminare questa scheda valutazione?', async () => {
+    showLoading(true);
+    await sb.from('schede_valutazione').delete().eq('id', id);
+    showLoading(false);
+    await renderCartellaDetail(cartellaAperta);
+    toast('🗑️ Scheda eliminata', 'info');
+  }, { danger: true, title: '⚠️ Elimina Scheda', okLabel: 'Elimina' });
 }
 
 async function delNoteSpec(id) {
-  if (!confirm('Eliminare questa scheda specialistica?')) return;
-  showLoading(true);
-  await sb.from('note_specialistiche').delete().eq('id', id);
-  showLoading(false);
-  await renderCartellaDetail(cartellaAperta);
-  toast('🗑️ Scheda eliminata', 'info');
+  customConfirm('Eliminare questa scheda specialistica?', async () => {
+    showLoading(true);
+    await sb.from('note_specialistiche').delete().eq('id', id);
+    showLoading(false);
+    await renderCartellaDetail(cartellaAperta);
+    toast('🗑️ Scheda eliminata', 'info');
+  }, { danger: true, title: '⚠️ Elimina Scheda', okLabel: 'Elimina' });
 }
 
 function openNewCartella() {
@@ -458,15 +504,16 @@ async function salvaCartella() {
 }
 
 async function delCartella(id) {
-  if (!confirm('Eliminare questa cartella e tutti i piani al suo interno?')) return;
-  showLoading(true);
-  await sb.from('piani').delete().eq('cartella_id', id);
-  await sb.from('cartelle').delete().eq('id', id);
-  showLoading(false);
-  cartellaAperta = null;
-  document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
-  loadCartelle();
-  toast('🗑️ Cartella eliminata', 'info');
+  customConfirm('Eliminare questa cartella e tutti i piani al suo interno?', async () => {
+    showLoading(true);
+    await sb.from('piani').delete().eq('cartella_id', id);
+    await sb.from('cartelle').delete().eq('id', id);
+    showLoading(false);
+    cartellaAperta = null;
+    document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
+    loadCartelle();
+    toast('🗑️ Cartella eliminata', 'info');
+  }, { danger: true, title: '⚠️ Elimina Cartella', okLabel: 'Elimina' });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

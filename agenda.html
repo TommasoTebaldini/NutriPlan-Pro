@@ -636,6 +636,20 @@ async function deleteCurrentEvent() {
       toast('⚠️ Errore eliminazione sul server: ' + e.message, 'err');
     }
   }
+  // Remove from Google Calendar if the event was synced there
+  const syncedIds = JSON.parse(localStorage.getItem('gcal_synced_ids') || '{}');
+  if (syncedIds[idToDelete] && gcalTokenValid()) {
+    try {
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${syncedIds[idToDelete]}`, {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + gcalToken }
+      });
+    } catch(e) {
+      console.warn('Google Calendar delete error:', e);
+    }
+    delete syncedIds[idToDelete];
+    localStorage.setItem('gcal_synced_ids', JSON.stringify(syncedIds));
+  }
   closeM('modal-event');
   renderCalendar();
   toast('🗑️ Appuntamento eliminato','info');
@@ -733,7 +747,7 @@ function showClientIdHelp() {
 }
 
 function initGoogleCalendar(loginHint) {
-  if (!GOOGLE_CLIENT_ID) return;
+  if (!GOOGLE_CLIENT_ID || typeof google === 'undefined' || !google.accounts) return;
   const cfg = {
     client_id: GOOGLE_CLIENT_ID,
     scope: 'https://www.googleapis.com/auth/calendar.events',
@@ -745,6 +759,8 @@ function initGoogleCalendar(loginHint) {
       sessionStorage.setItem('gcal_token_expiry', String(gcalTokenExpiry));
       updateGCalButton(true);
       toast('✅ Google Calendar connesso!', 'ok');
+      // Sync all existing events that haven't been pushed to Google Calendar yet
+      syncAllEventsToGCal();
     }
   };
   if (loginHint) cfg.login_hint = loginHint;
@@ -773,6 +789,10 @@ function connectGoogleCalendar() {
       toast('Google Calendar disconnesso', 'info');
     });
   } else {
+    if (!gcalTokenClient) {
+      toast('⚠️ Google Identity Services non ancora caricato. Riprova tra un momento.', 'err');
+      return;
+    }
     gcalTokenClient.requestAccessToken();
   }
 }
@@ -811,7 +831,7 @@ function updateGCalButton(connected) {
   }
 }
 
-async function createGoogleCalendarEvent(ev) {
+async function createGoogleCalendarEvent(ev, silent = false) {
   if (!gcalTokenValid()) {
     // Token absent or expired — prompt re-authorization
     gcalToken = null;
@@ -819,8 +839,8 @@ async function createGoogleCalendarEvent(ev) {
     sessionStorage.removeItem('gcal_token');
     sessionStorage.removeItem('gcal_token_expiry');
     updateGCalButton(false);
-    toast('⚠️ Sessione Google Calendar scaduta. Riconnetti per sincronizzare.', 'err');
-    return;
+    if (!silent) toast('⚠️ Sessione Google Calendar scaduta. Riconnetti per sincronizzare.', 'err');
+    return null;
   }
   const [y, m, d] = ev.data.split('-').map(Number);
   const [h, min] = (ev.ora || '09:00').split(':').map(Number);
@@ -847,15 +867,42 @@ async function createGoogleCalendarEvent(ev) {
         sessionStorage.removeItem('gcal_token');
         sessionStorage.removeItem('gcal_token_expiry');
         updateGCalButton(false);
-        toast('⚠️ Sessione Google Calendar scaduta. Clicca "Connetti Google Calendar" per riautorizzare.', 'err');
-        return;
+        if (!silent) toast('⚠️ Sessione Google Calendar scaduta. Clicca "Connetti Google Calendar" per riautorizzare.', 'err');
+        return null;
       }
       throw new Error('HTTP ' + res.status);
     }
-    toast('📅 Aggiunto a Google Calendar!', 'ok');
+    const created = await res.json();
+    // Persist the mapping so we can delete this event from GCal later
+    const syncedIds = JSON.parse(localStorage.getItem('gcal_synced_ids') || '{}');
+    syncedIds[ev.id] = created.id;
+    localStorage.setItem('gcal_synced_ids', JSON.stringify(syncedIds));
+    if (!silent) toast('📅 Aggiunto a Google Calendar!', 'ok');
+    return created.id;
   } catch(e) {
     console.error('Google Calendar error:', e);
-    toast('⚠️ Errore sincronizzazione Google Calendar', 'err');
+    if (!silent) toast('⚠️ Errore sincronizzazione Google Calendar', 'err');
+    return null;
+  }
+}
+
+// Bulk-sync all events that have not yet been pushed to Google Calendar.
+// Called automatically after a successful OAuth connection.
+async function syncAllEventsToGCal() {
+  if (!gcalTokenValid() || !events.length) return;
+  const syncedIds = JSON.parse(localStorage.getItem('gcal_synced_ids') || '{}');
+  const toSync = events.filter(e => !syncedIds[e.id]);
+  if (!toSync.length) {
+    toast('📅 Tutti gli appuntamenti sono già sincronizzati con Google Calendar', 'ok');
+    return;
+  }
+  let count = 0;
+  for (const ev of toSync) {
+    const gcalId = await createGoogleCalendarEvent(ev, true);
+    if (gcalId) count++;
+  }
+  if (count > 0) {
+    toast(`📅 ${count} appuntament${count === 1 ? 'o' : 'i'} sincronizzat${count === 1 ? 'o' : 'i'} su Google Calendar!`, 'ok');
   }
 }
 
@@ -887,14 +934,35 @@ function autoSyncCalendar() {
   const isGoogle = /^[^@]+@(gmail|googlemail)\.com$/.test(email);
 
   if (isGoogle) {
-    // Open Google Calendar's "add calendar by URL" page — user just clicks "Add"
-    const gcalAddUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
-    window.open(gcalAddUrl, '_blank');
-    if (statusEl) {
-      statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" nella nuova scheda per completare la sincronizzazione.';
-      statusEl.style.display = '';
+    // For Gmail users: if OAuth is configured, use it to sync directly to the primary calendar.
+    const gisReady = GOOGLE_CLIENT_ID && typeof google !== 'undefined' && google.accounts;
+    if (gisReady) {
+      if (gcalTokenValid()) {
+        // Already connected — sync all pending events immediately
+        syncAllEventsToGCal();
+        if (statusEl) {
+          statusEl.textContent = '✅ Google Calendar già connesso. Sincronizzazione in corso...';
+          statusEl.style.display = '';
+        }
+      } else {
+        // Trigger OAuth flow so the user authorises and all events get pushed
+        initGoogleCalendar(email);
+        if (gcalTokenClient) gcalTokenClient.requestAccessToken();
+        if (statusEl) {
+          statusEl.textContent = '✅ Autorizza l\'accesso a Google Calendar nella finestra pop-up per completare la sincronizzazione sul calendario personale.';
+          statusEl.style.display = '';
+        }
+      }
+    } else {
+      // OAuth not configured — fall back to WebCal subscription (creates a secondary calendar)
+      const gcalAddUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+      window.open(gcalAddUrl, '_blank');
+      if (statusEl) {
+        statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" nella nuova scheda per completare la sincronizzazione.';
+        statusEl.style.display = '';
+      }
+      toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
     }
-    toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
   } else {
     // For Apple Calendar / Outlook / other: trigger the webcal:// protocol handler
     window.location.href = webcalUrl;
@@ -965,7 +1033,7 @@ function connectGoogleCalendarFromModal() {
   if (!gcalTokenValid()) {
     const emailInput = document.getElementById('gcal-email-input');
     const email = emailInput ? emailInput.value.trim() : '';
-    if (email) {
+    if (email && typeof google !== 'undefined' && google.accounts) {
       localStorage.setItem('gcal_email', email);
       initGoogleCalendar(email);
     }

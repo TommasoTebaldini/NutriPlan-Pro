@@ -366,11 +366,17 @@ const MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio'
 const TIPO_COLORS = {visita:'visita',controllo:'controllo',reminder:'reminder',urgente:'urgente'};
 const TIPO_LABELS = {visita:'🩺 Prima Visita',controllo:'🔄 Controllo',reminder:'⏰ Promemoria',urgente:'🚨 Urgente'};
 
-function saveEvents() {
+async function saveEvents() {
   localStorage.setItem('dietplan_events', JSON.stringify(events));
   // If Supabase available, also save there
   if(currentUser && sb) {
-    sb.from('agenda_events').upsert(events.map(e=>({...e, user_id:currentUser.id}))).catch(()=>{});
+    try {
+      const { error } = await sb.from('agenda_events').upsert(events.map(e=>({...e, user_id:currentUser.id})));
+      if (error) throw error;
+    } catch(e) {
+      console.warn('Supabase saveEvents error:', e.message);
+      toast('⚠️ Errore salvataggio sul server: ' + e.message, 'err');
+    }
   }
 }
 
@@ -384,7 +390,20 @@ async function loadEventsFromSupabase() {
       .order('data', { ascending: true })
       .order('ora', { ascending: true });
     if (error) throw error;
-    if (!data || !data.length) return;
+    if (!data) return;
+    if (!data.length) {
+      // Supabase has no records — push any locally-cached events up so they are persisted
+      if (events.length) {
+        try {
+          const { error: upErr } = await sb.from('agenda_events')
+            .upsert(events.map(e => ({ ...e, user_id: currentUser.id })));
+          if (upErr) throw upErr;
+        } catch(e) {
+          console.warn('loadEventsFromSupabase: failed to push local events:', e.message);
+        }
+      }
+      return;
+    }
     // Merge: Supabase is authoritative; keep any local-only events not yet synced
     const sbIds = new Set(data.map(e => e.id));
     const localOnly = events.filter(e => !sbIds.has(e.id));
@@ -395,9 +414,13 @@ async function loadEventsFromSupabase() {
     updateStats();
     // Push any local-only events up to Supabase
     if (localOnly.length) {
-      sb.from('agenda_events')
-        .upsert(localOnly.map(e => ({ ...e, user_id: currentUser.id })))
-        .catch(() => {});
+      try {
+        const { error: upErr } = await sb.from('agenda_events')
+          .upsert(localOnly.map(e => ({ ...e, user_id: currentUser.id })));
+        if (upErr) throw upErr;
+      } catch(e) {
+        console.warn('loadEventsFromSupabase: failed to push local-only events:', e.message);
+      }
     }
   } catch(e) {
     console.warn('loadEventsFromSupabase error:', e.message);
@@ -516,7 +539,7 @@ function renderUpcoming() {
   }).join('');
 }
 
-function saveEvent() {
+async function saveEvent() {
   const paziente = document.getElementById('ev-paziente').value.trim();
   const data = document.getElementById('ev-data').value;
   const ora = document.getElementById('ev-ora').value;
@@ -532,7 +555,7 @@ function saveEvent() {
     created: new Date().toISOString()
   };
   events.push(ev);
-  saveEvents();
+  await saveEvents();
   
   // Clear form
   document.getElementById('ev-paziente').value = '';
@@ -580,13 +603,20 @@ function openEventDetail(id) {
   openM('modal-event');
 }
 
-function deleteCurrentEvent() {
+async function deleteCurrentEvent() {
   if(!currentEventId) return;
   if(!confirm('Eliminare questo appuntamento?')) return;
-  events = events.filter(e => e.id !== currentEventId);
-  saveEvents();
+  const idToDelete = currentEventId;
+  events = events.filter(e => e.id !== idToDelete);
+  await saveEvents();
   if(currentUser && sb) {
-    sb.from('agenda_events').delete().eq('id', currentEventId).eq('user_id', currentUser.id).catch(()=>{});
+    try {
+      const { error } = await sb.from('agenda_events').delete().eq('id', idToDelete).eq('user_id', currentUser.id);
+      if (error) throw error;
+    } catch(e) {
+      console.warn('Supabase delete error:', e.message);
+      toast('⚠️ Errore eliminazione sul server: ' + e.message, 'err');
+    }
   }
   closeM('modal-event');
   renderCalendar();

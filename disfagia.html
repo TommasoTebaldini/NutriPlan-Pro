@@ -78,7 +78,12 @@
   .dis-tabs{display:none!important}
   .dis-panel{display:none!important}
   .dis-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .dis-panel{display:none!important}
+  body[data-print-mode="compact"] #dis-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="compact"] @page{size:A4 portrait}
 }
+#dis-compact-print-area{display:none}
 </style>
 </head>
 <body>
@@ -128,6 +133,7 @@
   <h2>🗣️ Disfagia — Dieta IDDSI</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaDisfagia()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -469,7 +475,10 @@
 
 </div><!-- /tab-clinica -->
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="dis-compact-print-area"></div>
+</main>
 
 <script src="js/utils.js"></script>
 <script>
@@ -1018,6 +1027,87 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(e) { console.error('Errore init disfagia:', e); }
   } else if (typeof initAuth === 'function') initAuth();
 });
+
+function stampaCompattaDisfagia() {
+  const meta = IDDSI_META[selIddsi];
+  const dieta = IDDSI_DIETE[selIddsi];
+  if (!meta || !dieta) { alert('Seleziona prima un piano IDDSI'); return; }
+
+  const factor = selKcal / dieta.kcal_base;
+  let totKcal = 0;
+  dieta.pasti.forEach(p => p.items.forEach(i => { totKcal += Math.round(i.kcal * factor); }));
+  const nMeals = dieta.pasti.length;
+  const avgKcalPasto = nMeals ? Math.round(totKcal / nMeals) : 0;
+  const prot = Math.round(totKcal * 0.15 / 4);
+  const cho  = Math.round(totKcal * 0.55 / 4);
+  const fat  = Math.round(totKcal * 0.30 / 9);
+
+  const nomeP = document.getElementById('dis-paz-hdr')?.querySelector('[data-nome]')?.textContent || '';
+
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+
+  // Title
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
+  html += `<div style="font-size:18px;font-weight:700;color:#0369A1">Piano Dietetico IDDSI ${selIddsi} — ${meta.nome}</div>`;
+  html += `<div style="font-size:12px;color:#475569;margin-top:4px">Target: ${selKcal} kcal/die</div>`;
+  html += `</div>`;
+
+  // Stats header bar
+  const stats = [
+    { val: totKcal, lbl: 'KCAL TOTALI' },
+    { val: prot, lbl: 'PROTEINE (G)' },
+    { val: cho, lbl: 'CARBOIDRATI (G)' },
+    { val: fat, lbl: 'GRASSI (G)' },
+    { val: avgKcalPasto, lbl: 'KCAL/PASTO' }
+  ];
+  html += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
+  stats.forEach((s, i) => {
+    html += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length-1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
+    html += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
+    html += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  // Meals
+  dieta.pasti.forEach(pasto => {
+    let pastoKcal = 0;
+    pasto.items.forEach(i => { pastoKcal += Math.round(i.kcal * factor); });
+
+    html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,${meta.bg},${meta.bg}cc)">`;
+    html += `<div style="display:flex;align-items:center;gap:10px">`;
+    html += `<span style="font-size:18px">${pasto.emoji}</span>`;
+    html += `<span style="font-size:14px;font-weight:700;color:white">${pasto.nome}</span>`;
+    html += `</div>`;
+    html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${pastoKcal} kcal</span>`;
+    html += `</div>`;
+
+    pasto.items.forEach(item => {
+      const qtScaled = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
+      const kcalScaled = Math.round(item.kcal * factor);
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9">`;
+      html += `<span style="font-size:13px;color:#1E293B">${item.nome}</span>`;
+      html += `<div style="display:flex;align-items:center;gap:14px;white-space:nowrap;padding-left:12px">`;
+      html += `<span style="font-size:13px;font-weight:700;color:#0EA5E9">${qtScaled} ${item.unit}</span>`;
+      html += `<span style="font-size:12px;color:#94A3B8">${kcalScaled} kcal</span>`;
+      html += `</div></div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  if (dieta.nota) {
+    html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;border-left:3px solid #F97316;font-size:12px;color:#7C2D12">⚠️ ${dieta.nota}</div>`;
+  }
+
+  html += `</div>`;
+
+  document.getElementById('dis-compact-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact';
+  window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, { once: true });
+  setTimeout(() => window.print(), 300);
+}
 </script>
 </body>
 </html>

@@ -56,7 +56,17 @@
   .ren-tabs{display:none!important}
   .ren-panel{display:none!important}
   .ren-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .ren-panel{display:none!important}
+  body[data-print-mode="compact"] #ren-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="compact"] @page{size:A4 portrait}
 }
+#ren-compact-print-area{display:none}
+.esempio-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.esempio-toolbar button{padding:5px 14px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.esempio-toolbar button:hover{border-color:#C2410C;color:#C2410C}
+.esempio-toolbar .btn-edit-active{background:#FFF7ED;border-color:#C2410C;color:#C2410C}
+[contenteditable="true"]{outline:2px dashed #C2410C;outline-offset:2px;border-radius:4px}
 </style>
 </head>
 <body>
@@ -106,6 +116,7 @@
   <h2>🫘 Nefropatia Cronica / IRC</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaRenale()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -639,8 +650,14 @@
         </div>
       </div>
 
-      <div class="calc-box" style="border:1.5px solid #DBEAFE">
+      <div class="calc-box" style="border:1.5px solid #DBEAFE" id="ren-hd-piano">
         <h3>🍽️ Piano Alimentare Tipo HD — Giornata Senza Dialisi</h3>
+        <div class="esempio-toolbar no-print">
+          <button id="ren-btn-edit" onclick="toggleEditRenale()" title="Modifica gli alimenti e le quantità">✏️ Modifica</button>
+          <button onclick="salvaEsempiRenale()" title="Salva le modifiche in locale">💾 Salva</button>
+          <button onclick="stampaCompattaRenale()" title="Stampa per il paziente">📋 Stampa Compatta</button>
+          <button onclick="ripristinaEsempiRenale()" title="Ripristina esempio originale" style="color:#DC2626;border-color:#FECACA">↩ Ripristina</button>
+        </div>
         <div style="overflow-x:auto">
           <table class="ren-table">
             <thead>
@@ -906,7 +923,10 @@
 
 </div><!-- fine tab-alimenti -->
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="ren-compact-print-area"></div>
+</main>
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
@@ -1084,6 +1104,83 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(e) { console.error('Errore init renale:', e); }
   } else if (typeof initAuth === 'function') initAuth();
 });
+
+/* ── Piano HD: Edit / Save / Print ── */
+const REN_LS_KEY = 'nutriplan_ren_hd_piano';
+let _renEditMode = false;
+let _renOriginalHTML = null;
+
+(function initRenPiano() {
+  const el = document.getElementById('ren-hd-piano');
+  if (el) _renOriginalHTML = el.innerHTML;
+  try {
+    const saved = localStorage.getItem(REN_LS_KEY);
+    if (saved && el) el.innerHTML = saved;
+  } catch(e) {}
+})();
+
+function toggleEditRenale() {
+  _renEditMode = !_renEditMode;
+  const btn = document.getElementById('ren-btn-edit');
+  if (btn) { btn.classList.toggle('btn-edit-active', _renEditMode); btn.textContent = _renEditMode ? '✅ Fine Modifica' : '✏️ Modifica'; }
+  const table = document.querySelector('#ren-hd-piano .ren-table');
+  if (!table) return;
+  table.querySelectorAll('tbody td').forEach(td => {
+    td.contentEditable = _renEditMode ? 'true' : 'false';
+  });
+}
+
+function salvaEsempiRenale() {
+  if (_renEditMode) toggleEditRenale();
+  const el = document.getElementById('ren-hd-piano');
+  if (!el) return;
+  try {
+    localStorage.setItem(REN_LS_KEY, el.innerHTML);
+    if (typeof toast === 'function') toast('💾 Piano salvato!', 'ok');
+    else alert('Piano salvato!');
+  } catch(e) { alert('Errore nel salvataggio: ' + e.message); }
+}
+
+function ripristinaEsempiRenale() {
+  if (!confirm('Ripristinare il piano originale?')) return;
+  const el = document.getElementById('ren-hd-piano');
+  if (el && _renOriginalHTML) el.innerHTML = _renOriginalHTML;
+  localStorage.removeItem(REN_LS_KEY);
+  if (_renEditMode) { _renEditMode = false; const btn = document.getElementById('ren-btn-edit'); if (btn) { btn.classList.remove('btn-edit-active'); btn.textContent = '✏️ Modifica'; } }
+  if (typeof toast === 'function') toast('↩ Originale ripristinato', 'ok');
+}
+
+function stampaCompattaRenale() {
+  if (_renEditMode) toggleEditRenale();
+  const table = document.querySelector('#ren-hd-piano .ren-table');
+  let totKcal = 0, totProt = 0;
+  const pasti = [];
+  if (table) {
+    table.querySelectorAll('tbody tr:not([style*="DBEAFE"])').forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      if (tds.length < 3) return;
+      const nome = tds[0] ? tds[0].textContent.trim() : '';
+      const alim = tds[1] ? tds[1].textContent.trim() : '';
+      const kcal = parseFloat(tds[2]?.textContent) || 0;
+      const prot = parseFloat(tds[3]?.textContent) || 0;
+      totKcal += kcal;
+      totProt += prot;
+      pasti.push({ nome, alimenti: alim, kcal: kcal || '' });
+    });
+  }
+  const nomeCartella = document.getElementById('ren-cartella')?.options[document.getElementById('ren-cartella')?.selectedIndex]?.text || '';
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Piano Alimentare Tipo HD',
+    sottotitolo: 'Emodialisi — Giornata Senza Dialisi',
+    totKcal: Math.round(totKcal),
+    totProt: Math.round(totProt * 10) / 10,
+    totCho: 0,
+    totFat: 0,
+    containerId: 'ren-compact-print-area',
+    footerNote: '⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.'
+  });
+}
 </script>
 </body>
 </html>

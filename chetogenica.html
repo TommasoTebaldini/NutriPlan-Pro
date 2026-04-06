@@ -77,7 +77,17 @@
   .keto-tabs{display:none!important}
   .keto-panel{display:none!important}
   .keto-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .keto-panel{display:none!important}
+  body[data-print-mode="compact"] #keto-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="compact"] @page{size:A4 portrait}
 }
+#keto-compact-print-area{display:none}
+.esempio-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.esempio-toolbar button{padding:5px 14px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.esempio-toolbar button:hover{border-color:#7C3AED;color:#7C3AED}
+.esempio-toolbar .btn-edit-active{background:#EDE9FE;border-color:#7C3AED;color:#7C3AED}
+[contenteditable="true"]{outline:2px dashed #7C3AED;outline-offset:2px;border-radius:4px;min-height:1em}
 </style>
 </head>
 <body>
@@ -127,6 +137,7 @@
   <h2>🥑 Dieta Chetogenica</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaKeto()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -563,8 +574,15 @@
     <b>🍽️ Menu Esempio Chetogenici</b> — Esempi di piani alimentari giornalieri per i diversi tipi di KD. Le quantità sono indicative per un adulto di 70 kg con apporto di ~1800 kcal/die.
   </div>
 
+  <div class="esempio-toolbar no-print">
+    <button id="keto-btn-edit" onclick="toggleEditKeto()" title="Modifica le quantità e gli alimenti">✏️ Modifica</button>
+    <button onclick="salvaEsempiKeto()" title="Salva le modifiche in locale">💾 Salva</button>
+    <button onclick="stampaCompattaKeto()" title="Stampa per il paziente">📋 Stampa Compatta</button>
+    <button onclick="ripristinaEsempiKeto()" title="Ripristina gli esempi originali" style="color:#DC2626;border-color:#FECACA">↩ Ripristina Originale</button>
+  </div>
+
   <!-- MENU 1: MAD -->
-  <div class="menu-card">
+  <div class="menu-card" id="keto-menu-mad">
     <div class="menu-card-hdr" style="background:linear-gradient(135deg,#3B0764,#7C3AED)">
       <span style="font-size:20px">🥑</span>
       <div>
@@ -625,7 +643,7 @@
   </div>
 
   <!-- MENU 2: VLCKD -->
-  <div class="menu-card">
+  <div class="menu-card" id="keto-menu-vlckd">
     <div class="menu-card-hdr" style="background:linear-gradient(135deg,#064E3B,#059669)">
       <span style="font-size:20px">⚖️</span>
       <div>
@@ -863,7 +881,10 @@
 
 </div><!-- fine tab-monitoraggio -->
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="keto-compact-print-area"></div>
+</main>
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
@@ -1060,6 +1081,130 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(e) { console.error('Errore init chetogenica:', e); }
   } else if (typeof initAuth === 'function') initAuth();
 });
+
+/* ── Esempi Menu Chetogenici: Edit / Save / Print ── */
+const KETO_MENU_IDS = ['keto-menu-mad', 'keto-menu-vlckd'];
+const KETO_LS_KEY = 'nutriplan_keto_esempi';
+let _ketoEditMode = false;
+let _ketoOriginals = {};
+
+(function initKetoMenus() {
+  // Save originals on first load
+  KETO_MENU_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) _ketoOriginals[id] = el.innerHTML;
+  });
+  // Load saved content if any
+  try {
+    const saved = JSON.parse(localStorage.getItem(KETO_LS_KEY) || '{}');
+    KETO_MENU_IDS.forEach(id => {
+      if (saved[id]) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = saved[id];
+      }
+    });
+  } catch(e) {}
+})();
+
+function toggleEditKeto() {
+  _ketoEditMode = !_ketoEditMode;
+  const btn = document.getElementById('keto-btn-edit');
+  if (btn) btn.classList.toggle('btn-edit-active', _ketoEditMode);
+  if (btn) btn.textContent = _ketoEditMode ? '✅ Fine Modifica' : '✏️ Modifica';
+  KETO_MENU_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.querySelectorAll('.menu-row-food').forEach(f => {
+      f.contentEditable = _ketoEditMode ? 'true' : 'false';
+    });
+    el.querySelectorAll('.menu-card-hdr div:first-child').forEach(f => {
+      f.contentEditable = _ketoEditMode ? 'true' : 'false';
+    });
+    el.querySelectorAll('.mpill-sm').forEach(f => {
+      f.contentEditable = _ketoEditMode ? 'true' : 'false';
+    });
+  });
+}
+
+function salvaEsempiKeto() {
+  if (_ketoEditMode) toggleEditKeto();
+  const saved = {};
+  KETO_MENU_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) saved[id] = el.innerHTML;
+  });
+  try {
+    localStorage.setItem(KETO_LS_KEY, JSON.stringify(saved));
+    if (typeof toast === 'function') toast('💾 Esempi salvati!', 'ok');
+    else alert('Esempi salvati!');
+  } catch(e) { alert('Errore nel salvataggio: ' + e.message); }
+}
+
+function ripristinaEsempiKeto() {
+  if (!confirm('Ripristinare gli esempi originali? Le modifiche salvate andranno perse.')) return;
+  KETO_MENU_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && _ketoOriginals[id]) el.innerHTML = _ketoOriginals[id];
+  });
+  localStorage.removeItem(KETO_LS_KEY);
+  if (_ketoEditMode) toggleEditKeto();
+  if (typeof toast === 'function') toast('↩ Originali ripristinati', 'ok');
+}
+
+function stampaCompattaKeto() {
+  if (_ketoEditMode) toggleEditKeto();
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:18px;border-bottom:1.5px solid #E2E8F0">`;
+  html += `<div style="font-size:18px;font-weight:700;color:#5B21B6">Menu Esempio — Dieta Chetogenica</div>`;
+  html += `</div>`;
+
+  KETO_MENU_IDS.forEach(id => {
+    const card = document.getElementById(id);
+    if (!card) return;
+    const hdr = card.querySelector('.menu-card-hdr');
+    const hdrStyle = hdr ? (hdr.getAttribute('style') || '') : '';
+    const titleEl = hdr ? hdr.querySelector('div:first-child') : null;
+    const subtitleEl = hdr ? hdr.querySelector('div:last-child') : null;
+    const title = titleEl ? titleEl.textContent.trim() : '';
+    const subtitle = subtitleEl && subtitleEl !== titleEl ? subtitleEl.textContent.trim() : '';
+
+    html += `<div style="margin-bottom:18px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+    // Use gradient from original card
+    const bgMatch = hdrStyle.match(/background:[^;]+/);
+    const bg = bgMatch ? bgMatch[0].replace('background:', '').trim() : 'linear-gradient(135deg,#3B0764,#7C3AED)';
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;${bgMatch ? hdrStyle : 'background:linear-gradient(135deg,#3B0764,#7C3AED)'}">`;
+    html += `<div>`;
+    html += `<div style="font-size:14px;font-weight:700;color:white">${title}</div>`;
+    if (subtitle) html += `<div style="font-size:11px;color:rgba(255,255,255,.82);margin-top:2px">${subtitle}</div>`;
+    html += `</div></div>`;
+
+    card.querySelectorAll('.menu-row').forEach(row => {
+      const labelEl = row.querySelector('[style*="width:80px"]');
+      const foodEl = row.querySelector('.menu-row-food');
+      const kcalEl = row.querySelector('.mpill-sm');
+      const label = labelEl ? labelEl.textContent.trim() : '';
+      const food = foodEl ? foodEl.textContent.trim() : '';
+      const kcal = kcalEl ? kcalEl.textContent.trim() : '';
+
+      html += `<div style="display:flex;align-items:baseline;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9;gap:12px">`;
+      html += `<div>`;
+      if (label) html += `<div style="font-size:11px;font-weight:700;color:#7C3AED;margin-bottom:2px">${label}</div>`;
+      html += `<div style="font-size:13px;color:#1E293B">${food}</div>`;
+      html += `</div>`;
+      if (kcal) html += `<div style="white-space:nowrap;font-size:12px;font-weight:700;color:#0EA5E9">${kcal}</div>`;
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  html += `</div>`;
+
+  document.getElementById('keto-compact-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact';
+  window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, { once: true });
+  setTimeout(() => window.print(), 300);
+}
 </script>
 </body>
 </html>

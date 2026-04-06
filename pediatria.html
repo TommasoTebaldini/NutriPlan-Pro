@@ -46,7 +46,14 @@
   [style*="background:#FAF5FF;border-radius:14px"],[style*="background:#EDE9FE;border-radius:14px"],.ped-tabs-wrap{display:none!important}
   .ped-panel{display:none!important}
   .ped-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .ped-panel{display:none!important}
+  body[data-print-mode="compact"] [style*="background:#FAF5FF"]{display:none!important}
+  body[data-print-mode="compact"] .ped-tabs-wrap{display:none!important}
+  body[data-print-mode="compact"] #ped-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="compact"] @page{size:A4 portrait}
 }
+#ped-compact-print-area{display:none}
 </style>
 </head>
 <body>
@@ -95,6 +102,7 @@
   <h2>👶 Nutrizione Pediatrica — Crescita & Fabbisogni</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaPediatria()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -595,7 +603,10 @@
   </div>
 </div>
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="ped-compact-print-area"></div>
+</main>
 <script>
 (function() {
   var PED_MEALS = [
@@ -1276,6 +1287,35 @@ async function caricaPedDaNote(noteId) {
   try { ripristinaDatiPed(JSON.parse(data.dati || '{}')); } catch(e) {}
   syncSharedData();
   toast('✅ Scheda Pediatrica caricata','ok');
+}
+
+function stampaCompattaPediatria() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const kcalTot = parseFloat(gv('ped-piano-kcal')) || 0;
+  const prot = kcalTot ? Math.round(kcalTot * 0.15 / 4) : 0;
+  const cho  = kcalTot ? Math.round(kcalTot * 0.55 / 4) : 0;
+  const fat  = kcalTot ? Math.round(kcalTot * 0.30 / 9) : 0;
+  const nomeCartella = document.getElementById('ped-cartella')?.options[document.getElementById('ped-cartella')?.selectedIndex]?.text || '';
+  const eta = gv('ped-piano-eta');
+  const motivo = gv('ped-piano-motivo');
+
+  const pasti = [1,2,3,4,5].map(i => ({
+    nome: gv('ped-m'+i+'-nome'),
+    ora: gv('ped-m'+i+'-ora'),
+    kcal: gv('ped-m'+i+'-kcal'),
+    alimenti: gv('ped-m'+i+'-alimenti'),
+    note: gv('ped-m'+i+'-note')
+  })).filter(p => p.nome || p.alimenti);
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Piano Alimentare Pediatrico',
+    sottotitolo: [eta, motivo].filter(Boolean).join(' · '),
+    totKcal: kcalTot,
+    totProt: prot,
+    totCho: cho,
+    totFat: fat,
+    containerId: 'ped-compact-print-area'
+  });
 }
 </script>
 </body>

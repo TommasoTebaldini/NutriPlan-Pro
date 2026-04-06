@@ -311,23 +311,159 @@
     <div style="margin-top:14px;border:1.5px solid #FECACA;border-radius:12px;overflow:hidden">
       <div style="background:linear-gradient(135deg,#DC2626 0%,#F87171 100%);padding:12px 18px;display:flex;align-items:center;gap:10px">
         <span style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))">🚫</span>
-        <div>
+        <div style="flex:1">
           <div style="font-size:14px;font-weight:700;color:white;letter-spacing:.2px">Alimenti Fobici / Evitati</div>
           <div style="font-size:11.5px;color:rgba(255,255,255,.82);margin-top:2px">Alimenti temuti, evitati o fonte di forte ansia</div>
         </div>
+        <button type="button" onclick="aggiungiFobico()" style="background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.5);color:white;border-radius:8px;padding:5px 13px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s;white-space:nowrap" onmouseover="this.style.background='rgba(255,255,255,.35)'" onmouseout="this.style.background='rgba(255,255,255,.22)'">＋ Aggiungi alimento</button>
       </div>
       <div style="padding:14px 16px;background:#FEF2F2">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
-          <div class="nf"><label>Alimento fobico 1</label><input type="text" id="dca-fobico-1" placeholder="Es. carne rossa" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf"><label>Alimento fobico 2</label><input type="text" id="dca-fobico-2" placeholder="Es. dolci" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf"><label>Alimento fobico 3</label><input type="text" id="dca-fobico-3" placeholder="Es. pane bianco" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf"><label>Alimento fobico 4</label><input type="text" id="dca-fobico-4" placeholder="Es. grassi" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf"><label>Alimento fobico 5</label><input type="text" id="dca-fobico-5" placeholder="Es. formaggi" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf"><label>Alimento fobico 6</label><input type="text" id="dca-fobico-6" placeholder="Es. legumi" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+        <div id="dca-fobici-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+          <div class="nf dca-fobico-item"><label>Alimento fobico 1</label><input type="text" id="dca-fobico-1" placeholder="Es. carne rossa" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label>Alimento fobico 2</label><input type="text" id="dca-fobico-2" placeholder="Es. dolci" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label>Alimento fobico 3</label><input type="text" id="dca-fobico-3" placeholder="Es. pane bianco" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label>Alimento fobico 4</label><input type="text" id="dca-fobico-4" placeholder="Es. grassi" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label>Alimento fobico 5</label><input type="text" id="dca-fobico-5" placeholder="Es. formaggi" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label>Alimento fobico 6</label><input type="text" id="dca-fobico-6" placeholder="Es. legumi" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
         </div>
         <div class="nf">
           <label for="dca-fobici-note">Note sugli alimenti fobici</label>
           <textarea id="dca-fobici-note" rows="2" placeholder="Livello di ansia associato, contesto di evitamento, storia dell'avversione, comportamenti di compensazione..." style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meccanismi di Compenso -->
+    <div style="margin-top:14px;border:1.5px solid #DDD6FE;border-radius:12px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#7C3AED 0%,#A78BFA 100%);padding:12px 18px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))">⚖️</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:white;letter-spacing:.2px">Meccanismi di Compenso</div>
+          <div style="font-size:11.5px;color:rgba(255,255,255,.82);margin-top:2px">Comportamenti compensatori messi in atto dalla paziente</div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;background:#F5F3FF">
+        <div style="font-size:12px;color:#6D28D9;font-weight:600;margin-bottom:10px">Seleziona i meccanismi presenti:</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px">
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-attfisica" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('attfisica',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">🏃 Aumento attività fisica</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Esercizio fisico compulsivo/eccessivo per compensare i pasti</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-vomito" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('vomito',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">🤢 Vomito autoindotto</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Eliminazione del cibo dopo i pasti attraverso il vomito</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-diuretici" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('diuretici',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">💊 Diuretici</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Uso di diuretici per ridurre il peso corporeo</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-lassativi" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('lassativi',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">🌿 Lassativi</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Uso di lassativi dopo i pasti per eliminare calorie</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-digiuno" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('digiuno',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">🚫 Digiuno / Restrizione compensatoria</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Saltare pasti o digiunare dopo aver mangiato</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-enema" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('enema',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">🩺 Clisteri / Enteroclismi</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Uso di clisteri a scopo compensatorio</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-farmaci" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('farmaci',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">💉 Altri farmaci / Sostanze</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Uso di farmaci dimagranti, integratori, anoressizzanti, ecc.</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;background:white;border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#DDD6FE'">
+            <input type="checkbox" id="dca-comp-altro" style="margin-top:1px;accent-color:#7C3AED;flex-shrink:0" onchange="toggleCompensoDettaglio('altro',this.checked)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#4C1D95">➕ Altro</div>
+              <div style="font-size:11px;color:#6D28D9;margin-top:2px">Altri comportamenti compensatori non elencati</div>
+            </div>
+          </label>
+        </div>
+        <!-- Dettagli per ogni meccanismo attivo -->
+        <div id="dca-comp-dettaglio-attfisica" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">🏃 Dettagli — Attività fisica compensatoria</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="nf"><label>Tipo di attività</label><input type="text" id="dca-comp-attfisica-tipo" placeholder="Es. corsa, cyclette, pesi..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-attfisica-freq" placeholder="Es. ogni giorno, 2-3 volte/die..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Durata media/sessione</label><input type="text" id="dca-comp-attfisica-durata" placeholder="Es. 2-3 ore" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Grado di distress se non praticata</label><select id="dca-comp-attfisica-distress" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Lieve (lieve disagio)</option><option>Moderato (ansia significativa)</option><option>Severo (panico, rituali)</option></select></div>
+          </div>
+        </div>
+        <div id="dca-comp-dettaglio-vomito" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">🤢 Dettagli — Vomito autoindotto</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="nf"><label>Frequenza settimanale</label><input type="text" id="dca-comp-vomito-freq" placeholder="Es. 1-2 volte/settimana, quotidiano..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Momento rispetto al pasto</label><input type="text" id="dca-comp-vomito-momento" placeholder="Es. subito dopo, entro 1h..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Da quanti mesi/anni</label><input type="text" id="dca-comp-vomito-durata" placeholder="Es. 6 mesi, 2 anni..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Sintomi correlati</label><input type="text" id="dca-comp-vomito-sintomi" placeholder="Es. erosioni dentali, reflusso..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+          </div>
+        </div>
+        <div id="dca-comp-dettaglio-diuretici" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">💊 Dettagli — Diuretici</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="nf"><label>Tipo/nome farmaco</label><input type="text" id="dca-comp-diuretici-tipo" placeholder="Es. furosemide, tisane diuretiche..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Frequenza/dose</label><input type="text" id="dca-comp-diuretici-freq" placeholder="Es. quotidiano, 2 volte/settimana..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Prescritti o autoprescritti</label><select id="dca-comp-diuretici-prescrizione" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Prescritti dal medico</option><option>Autoprescritti</option><option>Prodotti erboristici / OTC</option></select></div>
+            <div class="nf"><label>Da quanto tempo</label><input type="text" id="dca-comp-diuretici-durata" placeholder="Es. 3 mesi, 1 anno..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+          </div>
+        </div>
+        <div id="dca-comp-dettaglio-lassativi" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">🌿 Dettagli — Lassativi</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="nf"><label>Tipo/nome prodotto</label><input type="text" id="dca-comp-lassativi-tipo" placeholder="Es. senna, bisacodile, macrogol..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-lassativi-freq" placeholder="Es. quotidiano, dopo ogni pasto..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Prescritti o autoprescritti</label><select id="dca-comp-lassativi-prescrizione" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Prescritti dal medico</option><option>Autoprescritti</option><option>Prodotti erboristici / OTC</option></select></div>
+            <div class="nf"><label>Da quanto tempo</label><input type="text" id="dca-comp-lassativi-durata" placeholder="Es. 3 mesi, 1 anno..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+          </div>
+        </div>
+        <div id="dca-comp-dettaglio-digiuno" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">🚫 Dettagli — Digiuno / Restrizione compensatoria</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="nf"><label>Modalità</label><input type="text" id="dca-comp-digiuno-modalita" placeholder="Es. salta colazione, digiuno intera giornata..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-digiuno-freq" placeholder="Es. dopo ogni eccesso, 2 volte/settimana..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+          </div>
+        </div>
+        <div id="dca-comp-dettaglio-enema" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">🩺 Dettagli — Clisteri / Enteroclismi</div>
+          <div class="nf"><label>Frequenza e modalità</label><input type="text" id="dca-comp-enema-dettaglio" placeholder="Es. 1 volta/settimana, autoprescritti..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+        </div>
+        <div id="dca-comp-dettaglio-farmaci" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">💉 Dettagli — Altri farmaci / Sostanze</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="nf"><label>Tipo di farmaco/sostanza</label><input type="text" id="dca-comp-farmaci-tipo" placeholder="Es. pillole dimagranti, termogenici..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-farmaci-freq" placeholder="Es. quotidiano, prima dei pasti..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+          </div>
+        </div>
+        <div id="dca-comp-dettaglio-altro" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
+          <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">➕ Dettagli — Altro</div>
+          <div class="nf"><label>Descrivere il meccanismo</label><textarea id="dca-comp-altro-desc" rows="2" placeholder="Descrivere il comportamento compensatorio..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></textarea></div>
+        </div>
+        <div class="nf" style="margin-top:4px">
+          <label for="dca-comp-note">Note cliniche sui meccanismi di compenso</label>
+          <textarea id="dca-comp-note" rows="2" placeholder="Intensità, contesto scatenante, durata, impatto sulla salute, consapevolezza della paziente..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></textarea>
         </div>
       </div>
     </div>
@@ -957,6 +1093,27 @@ async function loadDcaCartelle() {
   if (cur) sel.value = cur;
 }
 
+let _fobicoCount = 6;
+function aggiungiFobico(valore) {
+  _fobicoCount++;
+  const n = _fobicoCount;
+  const grid = document.getElementById('dca-fobici-grid');
+  if (!grid) return;
+  const div = document.createElement('div');
+  div.className = 'nf dca-fobico-item';
+  div.style.position = 'relative';
+  div.innerHTML = `<label>Alimento fobico ${n} <button type="button" onclick="this.closest('.dca-fobico-item').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:13px;padding:0 2px;margin-left:4px;line-height:1" title="Rimuovi">✕</button></label><input type="text" id="dca-fobico-${n}" placeholder="Inserisci alimento..." style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'">`;
+  grid.appendChild(div);
+  const inp = div.querySelector('input');
+  if (inp) { if (valore) inp.value = valore; inp.focus(); }
+}
+
+function toggleCompensoDettaglio(key, show) {
+  const el = document.getElementById('dca-comp-dettaglio-' + key);
+  if (el) el.style.display = show ? 'block' : 'none';
+}
+
+
 function raccogliDatiDca() {
   const gv = id => document.getElementById(id)?.value || '';
   return {
@@ -968,10 +1125,40 @@ function raccogliDatiDca() {
         pranzo: gv('dca-gt-pranzo'), spuntino_pomeriggio: gv('dca-gt-spuntino-pomeriggio'),
         cena: gv('dca-gt-cena'), spuntino_serale: gv('dca-gt-spuntino-serale')
       },
-      alimenti_fobici: {
-        f1: gv('dca-fobico-1'), f2: gv('dca-fobico-2'), f3: gv('dca-fobico-3'),
-        f4: gv('dca-fobico-4'), f5: gv('dca-fobico-5'), f6: gv('dca-fobico-6'),
-        note: gv('dca-fobici-note')
+      alimenti_fobici: (() => {
+        const grid = document.getElementById('dca-fobici-grid');
+        const inputs = grid ? grid.querySelectorAll('input[type="text"]') : [];
+        const extra = [];
+        inputs.forEach((inp, i) => { if (i >= 6) extra.push(inp.value || ''); });
+        return {
+          f1: gv('dca-fobico-1'), f2: gv('dca-fobico-2'), f3: gv('dca-fobico-3'),
+          f4: gv('dca-fobico-4'), f5: gv('dca-fobico-5'), f6: gv('dca-fobico-6'),
+          extra: extra,
+          note: gv('dca-fobici-note')
+        };
+      })(),
+      meccanismi_compenso: {
+        attfisica: document.getElementById('dca-comp-attfisica')?.checked || false,
+        attfisica_tipo: gv('dca-comp-attfisica-tipo'), attfisica_freq: gv('dca-comp-attfisica-freq'),
+        attfisica_durata: gv('dca-comp-attfisica-durata'), attfisica_distress: gv('dca-comp-attfisica-distress'),
+        vomito: document.getElementById('dca-comp-vomito')?.checked || false,
+        vomito_freq: gv('dca-comp-vomito-freq'), vomito_momento: gv('dca-comp-vomito-momento'),
+        vomito_durata: gv('dca-comp-vomito-durata'), vomito_sintomi: gv('dca-comp-vomito-sintomi'),
+        diuretici: document.getElementById('dca-comp-diuretici')?.checked || false,
+        diuretici_tipo: gv('dca-comp-diuretici-tipo'), diuretici_freq: gv('dca-comp-diuretici-freq'),
+        diuretici_prescrizione: gv('dca-comp-diuretici-prescrizione'), diuretici_durata: gv('dca-comp-diuretici-durata'),
+        lassativi: document.getElementById('dca-comp-lassativi')?.checked || false,
+        lassativi_tipo: gv('dca-comp-lassativi-tipo'), lassativi_freq: gv('dca-comp-lassativi-freq'),
+        lassativi_prescrizione: gv('dca-comp-lassativi-prescrizione'), lassativi_durata: gv('dca-comp-lassativi-durata'),
+        digiuno: document.getElementById('dca-comp-digiuno')?.checked || false,
+        digiuno_modalita: gv('dca-comp-digiuno-modalita'), digiuno_freq: gv('dca-comp-digiuno-freq'),
+        enema: document.getElementById('dca-comp-enema')?.checked || false,
+        enema_dettaglio: gv('dca-comp-enema-dettaglio'),
+        farmaci: document.getElementById('dca-comp-farmaci')?.checked || false,
+        farmaci_tipo: gv('dca-comp-farmaci-tipo'), farmaci_freq: gv('dca-comp-farmaci-freq'),
+        altro: document.getElementById('dca-comp-altro')?.checked || false,
+        altro_desc: gv('dca-comp-altro-desc'),
+        note: gv('dca-comp-note')
       }
     },
     scoff: { s1: document.getElementById('s1')?.checked, s2: document.getElementById('s2')?.checked, s3: document.getElementById('s3')?.checked, s4: document.getElementById('s4')?.checked, s5: document.getElementById('s5')?.checked },
@@ -1002,6 +1189,22 @@ function ripristinaDatiDca(dati) {
       sv('dca-fobico-1', af.f1); sv('dca-fobico-2', af.f2); sv('dca-fobico-3', af.f3);
       sv('dca-fobico-4', af.f4); sv('dca-fobico-5', af.f5); sv('dca-fobico-6', af.f6);
       sv('dca-fobici-note', af.note);
+      if (Array.isArray(af.extra) && af.extra.length > 0) {
+        af.extra.forEach(val => { if (val !== undefined && val !== null) aggiungiFobico(val); });
+      }
+    }
+    if (pan.meccanismi_compenso) {
+      const mc = pan.meccanismi_compenso;
+      const cb = (id, val) => { const el = document.getElementById(id); if (el) { el.checked = !!val; if (val) toggleCompensoDettaglio(id.replace('dca-comp-',''), true); } };
+      cb('dca-comp-attfisica', mc.attfisica); sv('dca-comp-attfisica-tipo', mc.attfisica_tipo); sv('dca-comp-attfisica-freq', mc.attfisica_freq); sv('dca-comp-attfisica-durata', mc.attfisica_durata); sv('dca-comp-attfisica-distress', mc.attfisica_distress);
+      cb('dca-comp-vomito', mc.vomito); sv('dca-comp-vomito-freq', mc.vomito_freq); sv('dca-comp-vomito-momento', mc.vomito_momento); sv('dca-comp-vomito-durata', mc.vomito_durata); sv('dca-comp-vomito-sintomi', mc.vomito_sintomi);
+      cb('dca-comp-diuretici', mc.diuretici); sv('dca-comp-diuretici-tipo', mc.diuretici_tipo); sv('dca-comp-diuretici-freq', mc.diuretici_freq); sv('dca-comp-diuretici-prescrizione', mc.diuretici_prescrizione); sv('dca-comp-diuretici-durata', mc.diuretici_durata);
+      cb('dca-comp-lassativi', mc.lassativi); sv('dca-comp-lassativi-tipo', mc.lassativi_tipo); sv('dca-comp-lassativi-freq', mc.lassativi_freq); sv('dca-comp-lassativi-prescrizione', mc.lassativi_prescrizione); sv('dca-comp-lassativi-durata', mc.lassativi_durata);
+      cb('dca-comp-digiuno', mc.digiuno); sv('dca-comp-digiuno-modalita', mc.digiuno_modalita); sv('dca-comp-digiuno-freq', mc.digiuno_freq);
+      cb('dca-comp-enema', mc.enema); sv('dca-comp-enema-dettaglio', mc.enema_dettaglio);
+      cb('dca-comp-farmaci', mc.farmaci); sv('dca-comp-farmaci-tipo', mc.farmaci_tipo); sv('dca-comp-farmaci-freq', mc.farmaci_freq);
+      cb('dca-comp-altro', mc.altro); sv('dca-comp-altro-desc', mc.altro_desc);
+      sv('dca-comp-note', mc.note);
     }
   }
   if (dati.scoff) { sc('s1',dati.scoff.s1); sc('s2',dati.scoff.s2); sc('s3',dati.scoff.s3); sc('s4',dati.scoff.s4); sc('s5',dati.scoff.s5); }

@@ -77,7 +77,7 @@
     <div style="font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">📚</div>
     <div style="flex:1">
       <div style="font-size:18px;font-weight:700;letter-spacing:.2px;margin-bottom:4px">Linee Guida Nutrizionali</div>
-      <div style="font-size:12.5px;opacity:.85;line-height:1.55">Sintesi delle più recenti linee guida internazionali <b>ESPEN · ESC · EASL · WHO</b> per la gestione nutrizionale delle principali patologie.</div>
+      <div style="font-size:12.5px;opacity:.85;line-height:1.55">Sintesi delle più recenti linee guida internazionali <b>ESPEN · ESC · EASL · WHO · LARN</b> per la gestione nutrizionale delle principali patologie e per la popolazione sana.</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;flex-shrink:0">
       <div id="lg-stat-n" style="font-size:24px;font-weight:700">—</div>
@@ -287,7 +287,163 @@ const LG_DATA = [
    ok:['Alimenti ricchi di DHA (pesce grasso)','Latte e latticini (calcio)','Verdure a foglia verde (calcio, folati)','Frutta fresca','Cereali integrali','Legumi (proteine)'],
    no:['Alcol','Caffeina in eccesso (>200 mg/die)','Pesce ad alto mercurio','Diete molto restrittive','Alcune erbe e integratori senza consulto medico'],
    science:'<b>Composizione del latte materno:</b> Dipende dall\'alimentazione materna, specialmente per vitamina D, B12, iodio, DHA. Una dieta carente compromette la qualità del latte.<br><b>DHA e sviluppo neurologico:</b> Il DHA è essenziale per lo sviluppo cerebrale del neonato nei primi mesi di vita. Fonti principali: pesce grasso, alghe.<br><b>Caffeina nel latte:</b> La caffeina passa nel latte. <200 mg/die (1-2 caffè) è considerato sicuro.',
-   fonte:'SIGO/LARN 2023 — Allattamento',url:'https://www.sigo.it/linee-guida-e-raccomandazioni/'}
+   fonte:'SIGO/LARN 2023 — Allattamento',url:'https://www.sigo.it/linee-guida-e-raccomandazioni/'},
+
+  {id:'larn_popolazione_sana',emoji:'🥗',nome:'Popolazione Sana — LARN V Revisione',badge:'LARN 2014/2023',colore:'#10B981',
+   desc:'Livelli di Assunzione di Riferimento di Nutrienti ed energia per la popolazione italiana (LARN, V revisione SINU). Fabbisogni per tutti i nutrienti per fascia d\'età, sesso e condizione fisiologica, con frequenze di consumo consigliate.',
+   target:'Energia: EAR (Fabbisogno Medio) e PRI (Assunzione Raccomandata) per fascia d\'età · Proteine: 0.9 g/kg/die (adulto) · CHO: 45-60% · Grassi: 20-35% · Fibra: 25 g/die (adulto) · Sale: <5 g/die',
+   note:'I LARN (V revisione, SINU 2014, aggiornamento 2023) sono i livelli di riferimento per la popolazione italiana sana. Distinguono: AR (fabbisogno medio), PRI (assunzione raccomandata per il 97.5% della popolazione), AI (assunzione adeguata) e UL (livello massimo tollerabile). L\'obiettivo è prevenire carenze e malattie cronico-degenerative attraverso un\'alimentazione varia ed equilibrata secondo il modello della Dieta Mediterranea.',
+   ok:['Cereali integrali (pane, pasta, riso) 3-4 porzioni/die','Frutta fresca 2-3 porzioni/die (150g/porzione)','Verdure 2-3 porzioni/die (200g/porzione)','Legumi 3-4 volte/settimana','Pesce 2-3 volte/settimana','Carne bianca 2-3 volte/settimana','Uova 2-4 volte/settimana','Latticini e formaggi 2-3 porzioni/die','Olio EVO come condimento principale','Frutta secca oleosa piccole quantità/die','Acqua ≥1.5-2 L/die'],
+   no:['Zuccheri semplici aggiunti >15% dell\'energia','Sale >5 g/die (OMS: <5 g/die)','Grassi saturi >10% dell\'energia','Grassi trans: minimizzare','Alcol: <10 g/die (donne), <20 g/die (uomini); nessuna quantità sicura in gravidanza','Carne rossa >500 g/settimana (peso cotto)','Carne processata: limitare','Bevande zuccherate: evitare','Cereali raffinati come principale fonte di CHO'],
+   science:`<b>Energia — Adulti (18-59 anni):</b><br>
+Uomini (70 kg, attività leggera): EAR ~2100 kcal/die; PRI ~2500 kcal/die<br>
+Donne (60 kg, attività leggera): EAR ~1700 kcal/die; PRI ~2000 kcal/die<br>
+Anziani (≥60 anni): riduzione ~3-5% per decade per diminuzione della massa metabolicamente attiva<br><br>
+
+<b>Proteine:</b><br>
+Lattanti 0-6 mesi: AI 9.5 g/die · 7-12 mesi: 14.5 g/die<br>
+Bambini 1-3 anni: PRI 1.2 g/kg/die · 4-6 anni: 1.1 g/kg/die · 7-10 anni: 1.0 g/kg/die<br>
+Adolescenti 11-17 anni: PRI 0.95 g/kg/die (picco di crescita)<br>
+Adulti 18-59 anni: PRI 0.9 g/kg/die<br>
+Anziani ≥60 anni: PRI 1.0-1.1 g/kg/die (per prevenire sarcopenia)<br>
+Gravidanza: +17 g/die (II trim.), +26 g/die (III trim.) · Allattamento: +21 g/die<br><br>
+
+<b>Carboidrati:</b><br>
+45-60% dell\'energia totale giornaliera per tutte le fasce d\'età adulte<br>
+Zuccheri semplici aggiunti: <15% dell\'energia (OMS raccomanda <10%)<br>
+Fibra alimentare: bambini 1-3 anni: 8-10 g/die · 4-6 anni: 10-12 g/die · 7-10 anni: 14-16 g/die<br>
+Adulti: AI 25 g/die (donne) / 30 g/die (uomini) · Anziani: 25-30 g/die<br>
+Fibra solubile vs. insolubile: rapporto ideale 1:3<br><br>
+
+<b>Lipidi:</b><br>
+Totali: 20-35% dell\'energia (bambini <3 anni: 35-40%; bambini 3-10 anni: 25-35%)<br>
+Grassi saturi: <10% dell\'energia (obiettivo <7% in sogg. con dislipidemia)<br>
+Grassi polinsaturi PUFA totali: 5-10% dell\'energia<br>
+Omega-6 (acido linoleico): AI 4% kcal · Omega-3 (ALA): AI 0.5% kcal<br>
+EPA+DHA: AI 250 mg/die (adulti) · Gravidanza/allattamento: AI 100-200 mg/die extra<br>
+Grassi trans: <1% dell\'energia (minimizzare al massimo)<br>
+Colesterolo: <300 mg/die (LARN 2014); l\'indicazione attuale suggerisce moderazione senza limite fisso<br><br>
+
+<b>Vitamina A (Retinolo Equivalenti):</b><br>
+Lattanti: AI 350 µg RE/die · Bambini 1-3 anni: PRI 400 µg RE/die<br>
+Bambini 4-10 anni: 450-500 µg RE/die · Adolescenti: 600-700 µg RE/die<br>
+Adulti: M 700 µg RE/die, F 600 µg RE/die · UL: 3000 µg RE/die<br>
+Fonti: fegato, uova, latte, carote, verdure a foglia verde (beta-carotene)<br><br>
+
+<b>Vitamina D:</b><br>
+Lattanti: AI 10 µg/die (400 UI) · Bambini e adulti: AI 15 µg/die (600 UI)<br>
+Anziani ≥65 anni: AI 20 µg/die (800 UI) — rischio aumentato per ridotta sintesi cutanea<br>
+UL: 100 µg/die (4000 UI) per adulti<br>
+Fonti: esposizione solare (principale), pesce grasso, uova, alimenti fortificati<br><br>
+
+<b>Vitamina E:</b><br>
+Adulti: AI 13 mg α-TE/die (uomini), 12 mg (donne) · UL: 300 mg/die<br>
+Fonti: oli vegetali, frutta secca, germe di grano, verdure a foglia verde<br><br>
+
+<b>Vitamina K:</b><br>
+Adulti: AI 140 µg/die (uomini), 140 µg/die (donne)<br>
+Fonti: verdure a foglia verde (cavolo, spinaci, broccoli), olio di soia<br><br>
+
+<b>Vitamina C:</b><br>
+Bambini 1-3 anni: PRI 35 mg/die · 4-10 anni: 45 mg/die · Adolescenti: 90-105 mg/die<br>
+Adulti: PRI 105 mg/die (uomini), 85 mg/die (donne) · Fumatori: +35 mg/die<br>
+UL: 1000 mg/die · Fonti: agrumi, kiwi, peperoni, fragole, broccoli<br><br>
+
+<b>Tiamina (B1):</b><br>
+Adulti: PRI 1.1-1.2 mg/die (correlato all\'apporto energetico: 0.4 mg/1000 kcal)<br>
+Fonti: cereali integrali, legumi, carne di maiale, lievito di birra<br><br>
+
+<b>Riboflavina (B2):</b><br>
+Adulti: PRI 1.6 mg/die (uomini), 1.3 mg/die (donne)<br>
+Fonti: latte, formaggi, uova, fegato, mandorle, cereali integrali<br><br>
+
+<b>Niacina (B3, PP):</b><br>
+Adulti: PRI 18 mg NE/die (uomini), 14 mg NE/die (donne) · UL: 60 mg/die (niacina preformata)<br>
+Fonti: carne, pesce, cereali, arachidi, funghi. Sintesi endogena da triptofano (60 mg trp = 1 mg niacina)<br><br>
+
+<b>Vitamina B6 (Piridossina):</b><br>
+Adulti: PRI 1.7 mg/die (uomini), 1.6 mg/die (donne) · Anziani: +0.2 mg/die<br>
+UL: 25 mg/die · Fonti: carne, pesce, patate, banane, cereali integrali<br><br>
+
+<b>Folati (B9):</b><br>
+Adulti: PRI 320 µg/die · Gravidanza: 600 µg/die (integrazione 400 µg/die pre-concepimento)<br>
+Allattamento: 500 µg/die · UL (acido folico sintetico): 1000 µg/die<br>
+Fonti: verdure a foglia verde, legumi, agrumi, fegato<br><br>
+
+<b>Vitamina B12:</b><br>
+Adulti: PRI 2.4 µg/die · Gravidanza: 2.6 µg/die · Allattamento: 2.8 µg/die<br>
+Fonti: esclusivamente animali (carne, pesce, uova, latticini) — integrazione necessaria nei vegani<br>
+Anziani: aumentato rischio di malassorbimento (gastrite atrofica), monitorare<br><br>
+
+<b>Calcio:</b><br>
+Lattanti 0-6 mesi: AI 200 mg/die · 7-12 mesi: AI 260 mg/die<br>
+1-3 anni: PRI 700 mg/die · 4-10 anni: 900-1000 mg/die<br>
+Adolescenti 11-17 anni: PRI 1200 mg/die (picco di massa ossea)<br>
+Adulti 18-59 anni: PRI 1000 mg/die · Adulti ≥60 anni: PRI 1200 mg/die<br>
+Gravidanza/allattamento: PRI 1000 mg/die · UL: 2500 mg/die<br>
+Fonti: latte, yogurt, formaggi, verdure a foglia (broccoli, cavolo), legumi, acque calciche<br><br>
+
+<b>Ferro:</b><br>
+Lattanti 7-12 mesi: PRI 11 mg/die · Bambini 1-10 anni: 8-11 mg/die<br>
+Adolescenti maschi 11-17 anni: PRI 13 mg/die · Adolescenti femmine: 18 mg/die (mestruazioni)<br>
+Uomini adulti: PRI 10 mg/die · Donne premenopausali: PRI 18 mg/die · Post-menopausa: 10 mg/die<br>
+Gravidanza: PRI 27 mg/die · Vegetariani: +80% (biodisponibilità ridotta del ferro non-eme) · UL: 45 mg/die<br>
+Fonti eme: carne rossa, pesce, pollame. Fonti non-eme: legumi, verdure verde scuro, cereali fortificati<br>
+Assorbimento potenziato da vitamina C; inibito da fitati (cereali integrali), tannini (tè, caffè), calcio<br><br>
+
+<b>Zinco:</b><br>
+Adulti: PRI 11 mg/die (uomini), 8 mg/die (donne) · UL: 25 mg/die<br>
+Gravidanza: +3 mg/die · Allattamento: +5 mg/die<br>
+Fonti: carne, crostacei, formaggi, legumi, noci, cereali integrali<br><br>
+
+<b>Magnesio:</b><br>
+Adulti: PRI 240-250 mg/die (uomini), 240 mg/die (donne) · Anziani: 260-300 mg/die<br>
+UL (supplementazione): 250 mg/die · Fonti: cereali integrali, legumi, frutta secca, verdure a foglia verde, acqua dura<br><br>
+
+<b>Fosforo:</b><br>
+Adulti: PRI 550 mg/die · UL: 3000 mg/die<br>
+Fonti: latte, carne, pesce, uova, cereali, legumi. Attenzione agli additivi alimentari (fosfati E338-E341: biodisponibilità quasi 100%)<br><br>
+
+<b>Iodio:</b><br>
+Bambini 1-6 anni: PRI 90 µg/die · 7-12 anni: 120 µg/die · Adolescenti e adulti: PRI 150 µg/die<br>
+Gravidanza: PRI 220 µg/die · Allattamento: PRI 290 µg/die · UL: 600 µg/die<br>
+Fonti: pesce di mare, molluschi, latte, sale iodato (principale misura di salute pubblica in Italia)<br><br>
+
+<b>Selenio:</b><br>
+Adulti: PRI 55 µg/die · UL: 300 µg/die<br>
+Fonti: noci del Brasile (attenzione: altissimo contenuto), pesce, carne, uova, cereali (variabile con il suolo)<br><br>
+
+<b>Potassio:</b><br>
+Adulti: AI 3500 mg/die (OMS raccomanda ≥3510 mg/die per prevenzione ipertensione)<br>
+Fonti: frutta (banane, albicocche), verdure (patate, pomodori, spinaci), legumi, frutta secca<br><br>
+
+<b>Sodio:</b><br>
+Adulti: AI 575 mg/die · Obiettivo di salute pubblica: <2000 mg/die di sodio (= <5 g/die di sale)<br>
+Ridurre il sale da cucina, scegliere prodotti a basso contenuto di sodio, leggere le etichette<br><br>
+
+<b>Acqua:</b><br>
+Lattanti 0-6 mesi: AI 680 mL/die (da latte) · 7-12 mesi: AI 800 mL/die<br>
+Bambini 1-3 anni: AI 1.3 L/die · 4-8 anni: 1.6 L/die · 9-13 anni: 2.1-2.4 L/die<br>
+Adolescenti 14-17 anni: 2.0-2.5 L/die<br>
+Adulti donne: AI 2.0 L/die · Adulti uomini: AI 2.5 L/die · Anziani: ≥1.5 L/die (ridotto senso della sete)<br>
+Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
+
+<b>Frequenze di consumo raccomandate (adulto sano):</b><br>
+🌾 Cereali e derivati: 4-6 porzioni/die (preferire integrali almeno 50%) — porzione: 80 g pasta/riso, 50 g pane<br>
+🥦 Verdure: ≥2-3 porzioni/die (200 g/porzione) — varietà e colori diversi<br>
+🍎 Frutta: 2-3 porzioni/die (150 g/porzione) — preferire fresca e di stagione<br>
+🥩 Carne: bianca 2-3×/settimana, rossa ≤1×/settimana (≤500 g/sett. cotta), processata: raramente<br>
+🐟 Pesce: 2-3 porzioni/settimana (150 g/porzione) — varietà tra grassi (salmone, sardine) e magri<br>
+🥚 Uova: 2-4/settimana (50 g/uovo)<br>
+🧀 Latte/yogurt: 2-3 porzioni/die (125 mL latte, 125 g yogurt)<br>
+🧀 Formaggi: stagionati 1-2×/settimana (50 g), freschi 2-3×/settimana (100 g)<br>
+🫘 Legumi: 3-4 porzioni/settimana (150 g cotti) — ottimi sostituti della carne<br>
+🌰 Frutta secca/semi: 1 piccola porzione/die (30 g) — frutta oleosa non salata<br>
+🫒 Olio EVO: 3-4 cucchiai/die come condimento principale (30-40 mL)<br>
+🧂 Sale: <5 g/die totali (incluso quello negli alimenti) — preferire sale iodato<br>
+💧 Acqua: almeno 6-8 bicchieri/die; la principale bevanda deve essere acqua<br>
+🍷 Alcol: se assunto, max 1 unità/die (donne), 2 unità/die (uomini); 1 UA = 12 g alcol = 125 mL vino 12%; controindicato in gravidanza, minori, guida`,
+   fonte:'SINU — LARN V Revisione (2014, aggiornamento 2023)',url:'https://www.sinu.it/it/pagine/larn.html'}
 ];
 
 function buildCard(d) {

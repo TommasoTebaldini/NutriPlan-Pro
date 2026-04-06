@@ -1188,9 +1188,12 @@ function stampaCompatta() {
     if (nomeP) html += `<div style="font-size:18px;font-weight:700;color:#0F766E">${esc(nomeP)}</div>`;
     if (nomePiano) html += `<div style="font-size:13px;color:#475569;margin-top:3px">${esc(nomePiano)}</div>`;
     if (dataPiano) {
-      const [dp_y, dp_m, dp_d] = dataPiano.split('-').map(Number);
-      const dateFmt = new Date(dp_y, dp_m-1, dp_d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-      html += `<div style="font-size:11.5px;color:#94A3B8;margin-top:2px">${dateFmt}</div>`;
+      const parts = dataPiano.split('-').map(Number);
+      if (parts.length === 3 && parts.every(n => !isNaN(n))) {
+        const [dp_y, dp_m, dp_d] = parts;
+        const dateFmt = new Date(dp_y, dp_m-1, dp_d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+        html += `<div style="font-size:11.5px;color:#94A3B8;margin-top:2px">${dateFmt}</div>`;
+      }
     }
     if (gNome) html += `<div style="font-size:11.5px;color:#0F766E;font-weight:600;margin-top:2px">📅 ${esc(gNome)}</div>`;
     html += `</div>`;

@@ -244,7 +244,7 @@
           <button class="btn btn-primary btn-sm" id="btn-gcal-modal" onclick="connectGoogleCalendarFromModal()">Connetti Google Calendar</button>
           <div id="gcal-sync-status" style="font-size:12px;margin-top:6px;color:var(--slate-m)"></div>
         </div>
-        <p id="gcal-config-warning" style="font-size:11px;color:#6B7280;margin-top:8px;display:none">⚠️ Richiede un Google Client ID configurato nelle impostazioni del progetto.</p>
+        <p id="gcal-config-warning" style="font-size:11px;color:#6B7280;margin-top:8px;display:none">⚠️ Google Client ID non configurato. Clicca il pulsante per le istruzioni su come abilitare questa funzionalità.</p>
       </div>
 
       <!-- WebCal subscription section -->
@@ -276,6 +276,35 @@
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sync')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-gcal-help">
+  <div class="modal" style="max-width:520px">
+    <div class="mhdr" style="background:#1D4ED8;color:white"><h2 style="color:white">⚙️ Configura Google Client ID</h2><button class="mclose" style="color:white" onclick="closeM('modal-gcal-help')">✕</button></div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:14px">Per abilitare la sincronizzazione con Google Calendar devi configurare un <strong>Google OAuth Client ID</strong>. Segui questi passaggi:</p>
+      <ol style="font-size:13px;color:var(--slate);line-height:1.9;padding-left:18px;margin-bottom:14px">
+        <li>Vai su <a href="https://console.cloud.google.com/" target="_blank" style="color:#1D4ED8">console.cloud.google.com</a></li>
+        <li>Seleziona il tuo progetto (o creane uno nuovo)</li>
+        <li>Vai su <strong>API e servizi → Credenziali</strong></li>
+        <li>Clicca <strong>Crea credenziali → ID client OAuth 2.0</strong></li>
+        <li>Tipo applicazione: <strong>Applicazione web</strong></li>
+        <li>In <em>Origini JavaScript autorizzate</em> aggiungi il tuo dominio (es. <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px">https://tuodominio.vercel.app</code>)</li>
+        <li>Copia il <strong>Client ID</strong> generato</li>
+        <li>Vai su <strong>Vercel → Settings → Environment Variables</strong> e aggiungi:<br>
+          <code style="background:#F1F5F9;padding:3px 8px;border-radius:4px;font-size:12px;display:inline-block;margin-top:4px">GOOGLE_CLIENT_ID = &lt;il tuo Client ID&gt;</code>
+        </li>
+        <li>Esegui un nuovo deploy su Vercel</li>
+      </ol>
+      <div style="background:#FEF3C7;border:1.5px solid #FDE68A;border-radius:8px;padding:10px;font-size:12px;color:#92400E">
+        💡 <strong>Suggerimento:</strong> Se vedi "Tipo utente: Interno", cambialo in <strong>Esterno</strong> nella schermata consenso OAuth prima di creare le credenziali.
+      </div>
+    </div>
+    <div class="mfoot">
+      <a href="https://console.cloud.google.com/apis/credentials" target="_blank" class="btn btn-primary btn-sm">Apri Google Cloud Console</a>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-gcal-help')">Chiudi</button>
     </div>
   </div>
 </div>
@@ -618,6 +647,10 @@ function gcalTokenValid() {
   return gcalToken && Date.now() < gcalTokenExpiry;
 }
 
+function showClientIdHelp() {
+  openM('modal-gcal-help');
+}
+
 function initGoogleCalendar() {
   if (!GOOGLE_CLIENT_ID) return;
   gcalTokenClient = google.accounts.oauth2.initTokenClient({
@@ -643,7 +676,10 @@ function initGoogleCalendar() {
 }
 
 function connectGoogleCalendar() {
-  if (!GOOGLE_CLIENT_ID) { toast('⚠️ Client ID Google non configurato', 'err'); return; }
+  if (!GOOGLE_CLIENT_ID) {
+    showClientIdHelp();
+    return;
+  }
   if (gcalTokenValid()) {
     google.accounts.oauth2.revoke(gcalToken, () => {
       gcalToken = null;
@@ -751,9 +787,10 @@ function openSyncModal() {
       gcalBtn.classList.remove('btn-primary');
     }
   } else {
-    gcalBtn.textContent = '⚠️ Client ID non configurato';
-    gcalBtn.disabled = true;
-    gcalBtn.title = 'Inserisci il Google Client ID nella variabile GOOGLE_CLIENT_ID nel codice.';
+    gcalBtn.textContent = '⚙️ Configura Google Client ID';
+    gcalBtn.disabled = false;
+    gcalBtn.title = 'Clicca per vedere le istruzioni di configurazione.';
+    gcalBtn.classList.remove('btn-primary');
     gcalWarning.style.display = '';
   }
   openM('modal-sync');

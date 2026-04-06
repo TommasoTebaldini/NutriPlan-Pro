@@ -1102,9 +1102,10 @@ function aggiungiFobico(valore) {
   const div = document.createElement('div');
   div.className = 'nf dca-fobico-item';
   div.style.position = 'relative';
-  div.innerHTML = `<label>Alimento fobico ${n} <button type="button" onclick="this.closest('.dca-fobico-item').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:13px;padding:0 2px;margin-left:4px;line-height:1" title="Rimuovi">✕</button></label><input type="text" id="dca-fobico-${n}" value="${(valore||'').replace(/"/g,'&quot;')}" placeholder="Inserisci alimento..." style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'">`;
+  div.innerHTML = `<label>Alimento fobico ${n} <button type="button" onclick="this.closest('.dca-fobico-item').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:13px;padding:0 2px;margin-left:4px;line-height:1" title="Rimuovi">✕</button></label><input type="text" id="dca-fobico-${n}" placeholder="Inserisci alimento..." style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'">`;
   grid.appendChild(div);
-  div.querySelector('input')?.focus();
+  const inp = div.querySelector('input');
+  if (inp) { if (valore) inp.value = valore; inp.focus(); }
 }
 
 function toggleCompensoDettaglio(key, show) {

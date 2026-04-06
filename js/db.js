@@ -239,12 +239,12 @@ const DB_CREA=[
 {n:"Fagioli di Spagna secchi",c:"Legumi",k:289,p:21,gs:0.1,g:0.8,z:0.5,ch:54,fi:15,ca:244,fe:6,mg:190,k2:1250,na:4,zn:3.1,fo:550,se:8,col:0,src:"CREA"},
 // ── FRUTTA SECCA E SEMI aggiuntivi ──
 {n:"Noci di Macadamia",c:"Frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:305,se:3.6,col:0,src:"CREA"},
-{n:"Noci Pecan",c:"Frutta secca",k:691,p:9.2,gs:6.2,g:72,z:4,ch:13.9,fi:9.6,ca:70,fe:2.5,mg:121,k2:410,na:0,zn:4.5,fo:22,se:3.8,col:0,src:"CREA"},
+{n:"Noci Pecan",c:"Frutta secca",k:691,p:9.2,gs:6.2,g:72,z:4,ch:13.9,fi:9.6,ca:70,fe:2.5,mg:121,k2:410,na:1,zn:4.5,fo:22,se:3.8,col:0,src:"CREA"},
 {n:"Pinoli",c:"Frutta secca",k:673,p:13.7,gs:4.9,g:68.4,z:3.6,ch:13.1,fi:3.7,ca:16,fe:5.5,mg:251,k2:597,na:2,zn:6.4,fo:58,se:0.7,col:0,src:"CREA"},
 {n:"Castagne fresche",c:"Frutta secca",k:213,p:1.6,gs:0.3,g:1.8,z:10.6,ch:45.5,fi:8.1,ca:27,fe:1,mg:32,k2:484,na:3,zn:0.5,fo:72,se:1.2,col:0,src:"CREA"},
 {n:"Castagne secche",c:"Frutta secca",k:324,p:3.7,gs:0.4,g:2.4,z:17,ch:72,fi:14,ca:46,fe:1.7,mg:50,k2:757,na:5,zn:0.7,fo:107,se:2,col:0,src:"CREA"},
 {n:"Cocco secco rapè",c:"Frutta secca",k:660,p:6.9,gs:59,g:64.5,z:6.2,ch:23.7,fi:16.3,ca:26,fe:3.3,mg:90,k2:543,na:37,zn:1.1,fo:260,se:18,col:0,src:"CREA"},
-{n:"Nocciole crude",c:"Frutta secca",k:628,p:14.9,gs:5.7,g:60.8,z:4.3,ch:16.7,fi:9.7,ca:114,fe:4.7,mg:163,k2:680,na:0,zn:2.4,fo:113,se:2.4,col:0,src:"CREA"},
+{n:"Nocciole crude",c:"Frutta secca",k:628,p:14.9,gs:5.7,g:60.8,z:4.3,ch:16.7,fi:9.7,ca:114,fe:4.7,mg:163,k2:680,na:1,zn:2.4,fo:113,se:2.4,col:0,src:"CREA"},
 // ── CONDIMENTI E SALSE aggiuntivi ──
 {n:"Passata di pomodoro",c:"Condimenti",k:25,p:1.2,gs:0,g:0.3,z:3.3,ch:4.5,fi:1.5,ca:20,fe:0.8,mg:15,k2:348,na:300,zn:0.15,fo:40,se:0.5,col:0,src:"CREA"},
 {n:"Concentrato di pomodoro",c:"Condimenti",k:82,p:4.5,gs:0,g:0.5,z:9.8,ch:17.5,fi:4,ca:55,fe:3.1,mg:42,k2:1010,na:230,zn:0.6,fo:110,se:1,col:0,src:"CREA"},

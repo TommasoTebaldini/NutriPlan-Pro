@@ -143,7 +143,7 @@
 <!-- SEARCH BAR -->
 <div style="margin-bottom:16px;position:relative" id="q-search-wrap">
   <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none">🔍</span>
-  <input type="text" id="q-search-input" placeholder="Cerca questionario... (es. MUST, PHQ-9, PREDIMED, SARC-F)" oninput="searchQuestionari(this.value)" style="width:100%;padding:10px 12px 10px 38px;border:1.5px solid var(--border-d);border-radius:10px;font-size:13px;font-family:inherit;color:var(--slate);outline:none;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s;box-sizing:border-box" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border-d)'">
+  <input type="text" id="q-search-input" placeholder="Cerca questionario... (es. MUST, PHQ-9, PREDIMED, SARC-F)" oninput="debouncedQSearch(this.value)" style="width:100%;padding:10px 12px 10px 38px;border:1.5px solid var(--border-d);border-radius:10px;font-size:13px;font-family:inherit;color:var(--slate);outline:none;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s;box-sizing:border-box" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border-d)'">
   <button onclick="clearQSearch()" id="q-search-clear" style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--slate-l)" title="Cancella ricerca">✕</button>
 </div>
 
@@ -1392,6 +1392,12 @@ function showQTab(id) {
   clearQSearch();
 }
 
+let _qSearchTimer = null;
+function debouncedQSearch(val) {
+  clearTimeout(_qSearchTimer);
+  _qSearchTimer = setTimeout(() => searchQuestionari(val), 200);
+}
+
 function searchQuestionari(query) {
   const q = query.trim().toLowerCase();
   const clearBtn = document.getElementById('q-search-clear');
@@ -1413,9 +1419,9 @@ function searchQuestionari(query) {
   // Filter cards
   let found = 0;
   document.querySelectorAll('.q-card').forEach(card => {
-    const text = card.innerText.toLowerCase();
+    const text = card.textContent.toLowerCase();
     const titleEl = card.querySelector('h3');
-    const title = titleEl ? titleEl.innerText.toLowerCase() : '';
+    const title = titleEl ? titleEl.textContent.toLowerCase() : '';
     const match = title.includes(q) || text.includes(q);
     card.style.display = match ? '' : 'none';
     if (match) found++;

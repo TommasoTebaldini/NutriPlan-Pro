@@ -4,11 +4,8 @@
 // The calendar app will auto-refresh this feed, keeping all devices in sync.
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
-// Prefer service-role key (set in Vercel env vars). Falls back to anon key for convenience.
-const SUPABASE_KEY =
-  process.env.SUPABASE_SERVICE_KEY ||
-  process.env.SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
+// Use environment variables — set SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY in Vercel project settings
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
 const TIPO_LABELS = {
   visita: 'Prima Visita',
@@ -21,6 +18,11 @@ const TIPO_LABELS = {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 module.exports = async (req, res) => {
+  if (!SUPABASE_KEY) {
+    res.status(500).send('Server configuration error: SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY must be set');
+    return;
+  }
+
   const { uid } = req.query;
 
   if (!uid || !UUID_RE.test(uid)) {
@@ -101,16 +103,17 @@ function generateICS(events) {
     return result + current;
   }
 
-  let ics =
-    'BEGIN:VCALENDAR\r\n' +
-    'VERSION:2.0\r\n' +
-    'PRODID:-//NutriPlan Pro//Agenda//IT\r\n' +
-    'CALSCALE:GREGORIAN\r\n' +
-    'METHOD:PUBLISH\r\n' +
-    'X-WR-CALNAME:NutriPlan Pro Agenda\r\n' +
-    'X-WR-TIMEZONE:Europe/Rome\r\n' +
-    'REFRESH-INTERVAL;VALUE=DURATION:PT1H\r\n' +
-    'X-PUBLISHED-TTL:PT1H\r\n';
+  const parts = [
+    'BEGIN:VCALENDAR\r\n',
+    'VERSION:2.0\r\n',
+    'PRODID:-//NutriPlan Pro//Agenda//IT\r\n',
+    'CALSCALE:GREGORIAN\r\n',
+    'METHOD:PUBLISH\r\n',
+    'X-WR-CALNAME:NutriPlan Pro Agenda\r\n',
+    'X-WR-TIMEZONE:Europe/Rome\r\n',
+    'REFRESH-INTERVAL;VALUE=DURATION:PT1H\r\n',
+    'X-PUBLISHED-TTL:PT1H\r\n',
+  ];
 
   (events || []).forEach((ev) => {
     if (!ev.data) return;
@@ -129,17 +132,17 @@ function generateICS(events) {
       [TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join(' - ')
     );
 
-    ics += 'BEGIN:VEVENT\r\n';
-    ics += foldLine('UID:' + (ev.id || `ev_${ev.created || Date.now()}`) + '@nutriplan-pro') + '\r\n';
-    ics += 'DTSTAMP:' + dtstamp + '\r\n';
-    ics += 'DTSTART;TZID=Europe/Rome:' + dtstart + '\r\n';
-    ics += 'DTEND;TZID=Europe/Rome:' + dtend + '\r\n';
-    ics += foldLine('SUMMARY:' + summary) + '\r\n';
-    if (desc) ics += foldLine('DESCRIPTION:' + desc) + '\r\n';
-    if (ev.tipo === 'urgente') ics += 'PRIORITY:1\r\n';
-    ics += 'END:VEVENT\r\n';
+    parts.push('BEGIN:VEVENT\r\n');
+    parts.push(foldLine('UID:' + (ev.id || `ev_${ev.created || Date.now()}`) + '@nutriplan-pro') + '\r\n');
+    parts.push('DTSTAMP:' + dtstamp + '\r\n');
+    parts.push('DTSTART;TZID=Europe/Rome:' + dtstart + '\r\n');
+    parts.push('DTEND;TZID=Europe/Rome:' + dtend + '\r\n');
+    parts.push(foldLine('SUMMARY:' + summary) + '\r\n');
+    if (desc) parts.push(foldLine('DESCRIPTION:' + desc) + '\r\n');
+    if (ev.tipo === 'urgente') parts.push('PRIORITY:1\r\n');
+    parts.push('END:VEVENT\r\n');
   });
 
-  ics += 'END:VCALENDAR';
-  return ics;
+  parts.push('END:VCALENDAR');
+  return parts.join('');
 }

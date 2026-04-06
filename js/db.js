@@ -1109,7 +1109,6 @@ const FABBISOGNO_PATOLOGIE={
   gerd:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'ACG 2022. Evitare cioccolato, menta, alcol, caffè, cibi grassi, agrumi, pomodoro, cibi piccanti. Pasti piccoli e frequenti (4-5/die). Cena 3h prima di coricarsi.'},
   gastrite:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'WCOG 2020. Evitare FANS, alcol, fumo, cibi piccanti e acidi. Pasti regolari. Cottura: vapore, bollitura (no frittura). Probiotici se H. pylori.'},
   stipsi:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'ACG 2021. Fibre ≥25-35g/die. Acqua ≥1.5-2L/die. Probiotici: evidenza moderata. Attività fisica quotidiana.'},
-  intolleranza_lattosio:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'WGO 2013. Soglia individuale variabile. Formaggi stagionati OK. Calcio 1000-1200mg/die da fonti alternative o supplementi.'},
   artrite_reumatoide:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'EULAR 2022. Omega-3 2-3g/die. Vitamina D target >40 ng/mL. Dieta mediterranea riduce DAS28. Folati se MTX.'},
   fibromialgia:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EULAR 2023. Dieta antiinfiammatoria. Vitamina D target >40 ng/mL. Magnesio 300-400mg/die. Trial gluten-free 3 mesi se sospetta sensibilità.'},
   parkinson:{kcal:'25-30 kcal/kg/die',prot:'1.0-1.2 g/kg/die',note:'ESPEN 2021. Levodopa: proteine ridotte a colazione e pranzo. Fibre ≥30g/die per stipsi. Vitamina D e B12. Texture modificata se disfagia.'},

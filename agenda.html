@@ -231,53 +231,81 @@
 
 <!-- MODAL SYNC CALENDAR -->
 <div class="modal-bg" id="modal-sync">
-  <div class="modal" style="max-width:540px">
-    <div class="mhdr" style="background:var(--teal);color:white"><h2 style="color:white">🔗 Sincronizzazione Calendario</h2><button class="mclose" style="color:white" onclick="closeM('modal-sync')">✕</button></div>
+  <div class="modal" style="max-width:500px">
+    <div class="mhdr" style="background:var(--teal);color:white"><h2 style="color:white">📅 Sincronizza Calendario</h2><button class="mclose" style="color:white" onclick="closeM('modal-sync')">✕</button></div>
     <div class="mbody">
-      <p style="font-size:13px;color:var(--slate-m);margin-bottom:16px">Il tuo calendario si aggiorna automaticamente su tutti i dispositivi. Scegli il metodo di sincronizzazione che preferisci.</p>
 
-      <!-- Google Calendar section -->
-      <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px;margin-bottom:14px">
-        <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:6px">📅 Google Calendar — Sync in tempo reale</div>
-        <p style="font-size:12px;color:#1e40af;margin-bottom:10px">Connetti il tuo account Google per sincronizzare automaticamente ogni nuovo appuntamento al momento del salvataggio.</p>
-        <div id="gcal-sync-area">
-          <div style="margin-bottom:10px">
-            <label for="gcal-email-input" style="font-size:12px;color:#1e40af;font-weight:600;display:block;margin-bottom:4px">📧 La tua email Google:</label>
-            <input type="email" id="gcal-email-input" placeholder="tuamail@gmail.com" style="width:100%;padding:8px 10px;border:1.5px solid #BFDBFE;border-radius:8px;font-size:13px;color:var(--slate);background:white;box-sizing:border-box">
-            <div style="font-size:11px;color:#6B7280;margin-top:3px">Inserisci la tua email Google per collegare automaticamente il tuo calendario personale.</div>
-          </div>
-          <button class="btn btn-primary btn-sm" id="btn-gcal-modal" onclick="connectGoogleCalendarFromModal()">Connetti Google Calendar</button>
-          <div id="gcal-sync-status" style="font-size:12px;margin-top:6px;color:var(--slate-m)"></div>
+      <!-- PRIMARY: Auto-sync by email -->
+      <div style="background:linear-gradient(135deg,#ECFDF5,#EFF6FF);border:2px solid #34D399;border-radius:12px;padding:18px;margin-bottom:16px">
+        <div style="font-size:15px;font-weight:700;color:var(--teal-d);margin-bottom:6px">⚡ Sincronizzazione Automatica</div>
+        <p style="font-size:13px;color:var(--slate-m);margin-bottom:14px">Inserisci la tua email e clicca <strong>Sincronizza</strong>: l'agenda si collega automaticamente al tuo calendario e si aggiorna da sola ad ogni nuovo appuntamento.</p>
+        <label style="font-size:12px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:5px">📧 La tua email:</label>
+        <div style="display:flex;gap:8px;align-items:stretch;margin-bottom:10px">
+          <input type="email" id="auto-sync-email" placeholder="tuamail@gmail.com"
+            style="flex:1;padding:10px 12px;border:1.5px solid #34D399;border-radius:8px;font-size:13px;color:var(--slate);background:white;box-sizing:border-box;outline:none"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();autoSyncCalendar()}"
+            oninput="document.getElementById('auto-sync-status').style.display='none'">
+          <button onclick="autoSyncCalendar()"
+            style="padding:10px 20px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s"
+            onmouseover="this.style.background='var(--teal-d)'" onmouseout="this.style.background='var(--teal)'">
+            📅 Sincronizza
+          </button>
         </div>
-        <p id="gcal-config-warning" style="font-size:11px;color:#6B7280;margin-top:8px;display:none">⚠️ Google Client ID non configurato. Clicca il pulsante per le istruzioni su come abilitare questa funzionalità.</p>
+        <div id="auto-sync-status" style="font-size:12px;color:#065F46;background:#D1FAE5;border-radius:7px;padding:8px 10px;margin-bottom:8px;display:none"></div>
+        <div style="font-size:11px;color:var(--slate-l)">✓ Funziona con Google Calendar · Apple Calendar · Outlook · qualsiasi app calendario</div>
       </div>
 
-      <!-- WebCal subscription section -->
-      <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:14px;margin-bottom:14px">
-        <div style="font-size:13px;font-weight:700;color:#065F46;margin-bottom:6px">🔗 Link di abbonamento — Tutti i dispositivi</div>
-        <p style="font-size:12px;color:#047857;margin-bottom:10px">Abbonati una volta sola e il calendario si aggiornerà automaticamente ogni ora su Google Calendar, Apple Calendar, Outlook e altri.</p>
-        <div id="sync-url-area" style="display:none">
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-            <input type="text" id="sync-url-input" readonly style="flex:1;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12px;font-family:monospace;color:var(--slate);background:#F8FAFC" placeholder="URL abbonamento...">
-            <button class="btn btn-primary btn-sm" onclick="copySyncUrl()">📋 Copia</button>
+      <!-- Advanced options (collapsed) -->
+      <details id="sync-advanced" style="border:1.5px solid var(--border-d);border-radius:10px;overflow:hidden">
+        <summary style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--slate-m);cursor:pointer;background:#F8FAFC;list-style:none;display:flex;align-items:center;justify-content:space-between">
+          <span>⚙️ Opzioni avanzate</span>
+          <span style="font-size:10px;color:var(--slate-l)">Google OAuth · URL abbonamento · Esporta ICS</span>
+        </summary>
+        <div style="padding:14px">
+
+          <!-- Google Calendar OAuth section -->
+          <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:6px">📅 Google Calendar OAuth — Sync immediato</div>
+            <p style="font-size:12px;color:#1e40af;margin-bottom:10px">Autorizza l'accesso diretto a Google Calendar per aggiungere ogni appuntamento in tempo reale al momento del salvataggio.</p>
+            <div id="gcal-sync-area">
+              <div style="margin-bottom:10px">
+                <label for="gcal-email-input" style="font-size:12px;color:#1e40af;font-weight:600;display:block;margin-bottom:4px">📧 Email Google:</label>
+                <input type="email" id="gcal-email-input" placeholder="tuamail@gmail.com" style="width:100%;padding:8px 10px;border:1.5px solid #BFDBFE;border-radius:8px;font-size:13px;color:var(--slate);background:white;box-sizing:border-box">
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-gcal-modal" onclick="connectGoogleCalendarFromModal()">Connetti Google Calendar</button>
+              <div id="gcal-sync-status" style="font-size:12px;margin-top:6px;color:var(--slate-m)"></div>
+            </div>
+            <p id="gcal-config-warning" style="font-size:11px;color:#6B7280;margin-top:8px;display:none">⚠️ Google Client ID non configurato. Clicca il pulsante per le istruzioni su come abilitare questa funzionalità.</p>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="openInCalendar()" style="width:100%;margin-bottom:6px">📅 Apri direttamente nel calendario</button>
-          <div style="font-size:11px;color:var(--slate-l);line-height:1.6">
-            <strong>Come abbonarcisi:</strong><br>
-            • <strong>Google Calendar</strong>: Impostazioni → Aggiungi calendario → Da URL → incolla il link<br>
-            • <strong>Apple Calendar</strong>: File → Nuovo abbonamento calendario → incolla il link<br>
-            • <strong>Outlook</strong>: Aggiungi calendario → Sottoscrivi da web → incolla il link
+
+          <!-- WebCal subscription URL -->
+          <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:14px;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:700;color:#065F46;margin-bottom:6px">🔗 URL di abbonamento</div>
+            <p style="font-size:12px;color:#047857;margin-bottom:10px">Copia il link e aggiungilo manualmente al tuo calendario.</p>
+            <div id="sync-url-area" style="display:none">
+              <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                <input type="text" id="sync-url-input" readonly style="flex:1;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12px;font-family:monospace;color:var(--slate);background:#F8FAFC">
+                <button class="btn btn-primary btn-sm" onclick="copySyncUrl()">📋 Copia</button>
+              </div>
+              <div style="font-size:11px;color:var(--slate-l);line-height:1.6">
+                • <strong>Google Calendar</strong>: Impostazioni → Aggiungi calendario → Da URL<br>
+                • <strong>Apple Calendar</strong>: File → Nuovo abbonamento calendario<br>
+                • <strong>Outlook</strong>: Aggiungi calendario → Sottoscrivi da web
+              </div>
+            </div>
+            <div id="sync-login-msg" style="font-size:12px;color:#065F46">⚠️ Accedi per generare il tuo link di abbonamento personale.</div>
           </div>
+
+          <!-- ICS export -->
+          <div style="background:#F8FAFC;border:1.5px solid var(--border);border-radius:10px;padding:12px">
+            <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px">📥 Esportazione manuale</div>
+            <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Scarica il file .ics per importarlo manualmente nel tuo calendario.</p>
+            <button class="btn btn-ghost btn-sm" onclick="exportICal()">📥 Scarica file .ics</button>
+          </div>
+
         </div>
-        <div id="sync-login-msg" style="font-size:12px;color:#065F46">⚠️ Accedi per generare il tuo link di abbonamento personale.</div>
-      </div>
+      </details>
 
-      <!-- Download fallback -->
-      <div style="background:#F8FAFC;border:1.5px solid var(--border);border-radius:10px;padding:12px">
-        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px">📥 Esportazione manuale (alternativa)</div>
-        <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Scarica il file .ics per importarlo manualmente nel tuo calendario.</p>
-        <button class="btn btn-ghost btn-sm" onclick="exportICal()">📥 Scarica file .ics</button>
-      </div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sync')">Chiudi</button>
@@ -764,6 +792,56 @@ async function createGoogleCalendarEvent(ev) {
 }
 
 // ─── Calendar Sync Modal ──────────────────────────────────────────────────────
+
+// Auto-sync by email: detect provider and open the appropriate subscription flow.
+function autoSyncCalendar() {
+  const emailInput = document.getElementById('auto-sync-email');
+  const email = (emailInput ? emailInput.value.trim() : '').toLowerCase();
+  const statusEl = document.getElementById('auto-sync-status');
+
+  if (!email) {
+    toast('Inserisci la tua email per continuare', 'err');
+    if (emailInput) emailInput.focus();
+    return;
+  }
+  if (!currentUser) {
+    toast('Devi essere autenticato per sincronizzare il calendario', 'err');
+    return;
+  }
+
+  // Persist email for future sessions and Google Calendar hint
+  localStorage.setItem('gcal_email', email);
+
+  const origin = window.location.origin;
+  const subscribeUrl = `${origin}/api/calendar?uid=${currentUser.id}`;
+  const webcalUrl = subscribeUrl.replace(/^https?:\/\//, 'webcal://');
+
+  const isGoogle = /^[^@]+@(gmail|googlemail)\.com$/.test(email);
+
+  if (isGoogle) {
+    // Open Google Calendar's "add calendar by URL" page — user just clicks "Add"
+    const gcalAddUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+    window.open(gcalAddUrl, '_blank');
+    if (statusEl) {
+      statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" nella nuova scheda per completare la sincronizzazione.';
+      statusEl.style.display = '';
+    }
+    toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
+  } else {
+    // For Apple Calendar / Outlook / other: trigger the webcal:// protocol handler
+    window.location.href = webcalUrl;
+    if (statusEl) {
+      statusEl.textContent = '✅ Link di abbonamento aperto! Accetta la richiesta nel tuo calendario per completare la sincronizzazione.';
+      statusEl.style.display = '';
+    }
+    toast('📅 Calendario aperto — accetta la richiesta per completare!', 'ok');
+  }
+
+  // Also sync gcal-email-input (used by OAuth flow in advanced options)
+  const gcalEmailInput = document.getElementById('gcal-email-input');
+  if (gcalEmailInput) gcalEmailInput.value = email;
+}
+
 function openSyncModal() {
   // Populate subscription URL if user is logged in
   if (currentUser) {
@@ -777,10 +855,15 @@ function openSyncModal() {
     document.getElementById('sync-url-area').style.display = 'none';
     document.getElementById('sync-login-msg').style.display = '';
   }
-  // Pre-fill Google email input with saved email or current user's email
+  // Pre-fill both email inputs with saved email or current user's email
   const savedEmail = localStorage.getItem('gcal_email') || (currentUser ? currentUser.email : '');
+  const autoSyncEmailInput = document.getElementById('auto-sync-email');
+  if (autoSyncEmailInput) autoSyncEmailInput.value = savedEmail;
   const emailInput = document.getElementById('gcal-email-input');
   if (emailInput) emailInput.value = savedEmail;
+  // Reset status message
+  const statusEl = document.getElementById('auto-sync-status');
+  if (statusEl) statusEl.style.display = 'none';
   // Update Google Calendar status
   const gcalBtn = document.getElementById('btn-gcal-modal');
   const gcalStatus = document.getElementById('gcal-sync-status');

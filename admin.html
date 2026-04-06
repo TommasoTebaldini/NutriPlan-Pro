@@ -278,7 +278,7 @@ function toggleECMSort() {
 async function loadECMCorsi() {
   const tbody = document.getElementById('ecm-tbody');
   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Caricamento...</td></tr>';
-  const { data, error } = await sb.from('ecm_corsi').select('*').order('data_inizio', { ascending: ecmSortAsc, nullsFirst: false });
+  const { data, error } = await sb.from('ecm_corsi').select('*').order('data_fine', { ascending: ecmSortAsc, nullsFirst: false });
   if (error) {
     tbody.innerHTML = `<tr><td colspan="6"><div style="margin:24px auto;max-width:520px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:20px 24px;text-align:left">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">

@@ -312,6 +312,36 @@ function saveEvents() {
   }
 }
 
+async function loadEventsFromSupabase() {
+  if (!currentUser || !sb) return;
+  try {
+    const { data, error } = await sb
+      .from('agenda_events')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('data', { ascending: true })
+      .order('ora', { ascending: true });
+    if (error) throw error;
+    if (!data || !data.length) return;
+    // Merge: Supabase is authoritative; keep any local-only events not yet synced
+    const sbIds = new Set(data.map(e => e.id));
+    const localOnly = events.filter(e => !sbIds.has(e.id));
+    // Strip user_id from in-memory objects to match the original event shape
+    events = [...data, ...localOnly].map(({ user_id: _u, ...rest }) => rest);
+    localStorage.setItem('dietplan_events', JSON.stringify(events));
+    renderCalendar();
+    updateStats();
+    // Push any local-only events up to Supabase
+    if (localOnly.length) {
+      sb.from('agenda_events')
+        .upsert(localOnly.map(e => ({ ...e, user_id: currentUser.id })))
+        .catch(() => {});
+    }
+  } catch(e) {
+    console.warn('loadEventsFromSupabase error:', e.message);
+  }
+}
+
 function renderCalendar() {
   document.getElementById('cal-title').textContent = MONTHS[currentMonth] + ' ' + currentYear;
   const grid = document.getElementById('cal-grid');
@@ -493,6 +523,9 @@ function deleteCurrentEvent() {
   if(!confirm('Eliminare questo appuntamento?')) return;
   events = events.filter(e => e.id !== currentEventId);
   saveEvents();
+  if(currentUser && sb) {
+    sb.from('agenda_events').delete().eq('id', currentEventId).eq('user_id', currentUser.id).catch(()=>{});
+  }
   closeM('modal-event');
   renderCalendar();
   toast('🗑️ Appuntamento eliminato','info');
@@ -540,7 +573,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateStats();
   setInterval(checkNotifications, 60000);
   if(Notification.permission === 'default') Notification.requestPermission();
-  try { await checkAuth(); } catch(e) {}
+  try { const ok = await checkAuth(); if (ok) await loadEventsFromSupabase(); } catch(e) {}
   // Load Google Identity Services if a Client ID is configured
   if (GOOGLE_CLIENT_ID) {
     document.getElementById('btn-gcal').style.display = '';

@@ -4,7 +4,9 @@
 // The calendar app will auto-refresh this feed, keeping all devices in sync.
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
-// Use environment variables — set SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY in Vercel project settings
+// Use SUPABASE_SERVICE_KEY (server-side, bypasses RLS) — required for this endpoint.
+// SUPABASE_ANON_KEY will not work here because RLS restricts reads to authenticated
+// users only; set SUPABASE_SERVICE_KEY in your Vercel project settings.
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
 const TIPO_LABELS = {

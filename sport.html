@@ -45,7 +45,11 @@
   .sport-tabs{display:none!important}
   .sport-panel{display:none!important}
   .sport-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .sport-panel{display:none!important}
+  body[data-print-mode="compact"] #sp-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+#sp-compact-print-area{display:none}
 </style>
 </head>
 <body>
@@ -94,6 +98,7 @@
   <h2>🏃 Nutrizione Sportiva</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaSport()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -527,7 +532,10 @@
   </div>
 </div>
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="sp-compact-print-area"></div>
+</main>
 <script>
 (function() {
   var SP_MEALS = [
@@ -872,6 +880,35 @@ async function caricaSportDaNote(noteId) {
   const notaEl = document.getElementById('sport-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiSport(JSON.parse(data.dati || '{}')); } catch(e) {}
   toast('✅ Scheda Sportiva caricata','ok');
+}
+
+function stampaCompattaSport() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const kcalTrain = parseFloat(gv('sp-piano-kcal-train')) || 0;
+  const prot = kcalTrain ? Math.round(kcalTrain * 0.25 / 4) : 0;
+  const fat  = kcalTrain ? Math.round(kcalTrain * 0.25 / 9) : 0;
+  const cho  = kcalTrain ? Math.round(kcalTrain * 0.50 / 4) : 0;
+  const nomeCartella = document.getElementById('sport-cartella')?.options[document.getElementById('sport-cartella')?.selectedIndex]?.text || '';
+  const sport = gv('sp-piano-sport');
+  const obiettivo = gv('sp-piano-obiettivo');
+
+  const pasti = [1,2,3,4,5,6,7].map(i => ({
+    nome: gv('sp-m'+i+'-nome'),
+    ora: gv('sp-m'+i+'-ora'),
+    kcal: gv('sp-m'+i+'-kcal'),
+    alimenti: gv('sp-m'+i+'-alimenti'),
+    note: gv('sp-m'+i+'-note')
+  })).filter(p => p.nome || p.alimenti);
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Piano Alimentare Sportivo',
+    sottotitolo: [sport, obiettivo].filter(Boolean).join(' · '),
+    totKcal: kcalTrain,
+    totProt: prot,
+    totCho: cho,
+    totFat: fat,
+    containerId: 'sp-compact-print-area'
+  });
 }
 </script>
 </body>

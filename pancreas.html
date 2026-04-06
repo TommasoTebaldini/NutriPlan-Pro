@@ -44,7 +44,12 @@
   [class$="-tabs"],.p-tabs-wrap{display:none!important}
   .p-panel{display:none!important}
   .p-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .p-panel{display:none!important}
+  body[data-print-mode="compact"] .p-tabs-wrap{display:none!important}
+  body[data-print-mode="compact"] #pan-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+#pan-compact-print-area{display:none}
 </style>
 </head>
 <body>
@@ -93,6 +98,7 @@
   <h2>🫁 Insufficienza Pancreatica Esocrina (IPE)</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaPancreas()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -485,7 +491,10 @@
   </div>
 </div>
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="pan-compact-print-area"></div>
+</main>
 <script>
 (function() {
   var PAN_MEALS = [
@@ -827,6 +836,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) {}
 });
+
+function stampaCompattaPancreas() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const kcalTot = parseFloat(gv('pan-piano-kcal')) || 0;
+  const grassiTot = parseFloat(gv('pan-piano-grassi-tot')) || 0;
+  const prot = kcalTot ? Math.round(kcalTot * 0.20 / 4) : 0;
+  const cho  = kcalTot ? Math.round(kcalTot * 0.45 / 4) : 0;
+  const fat  = grassiTot || (kcalTot ? Math.round(kcalTot * 0.35 / 9) : 0);
+  const nomeCartella = document.getElementById('pan-cartella')?.options[document.getElementById('pan-cartella')?.selectedIndex]?.text || '';
+  const causa = gv('pan-piano-causa');
+  const enzima = gv('pan-piano-enzima');
+
+  const pasti = [1,2,3,4,5].map(i => ({
+    nome: gv('pan-m'+i+'-nome'),
+    ora: gv('pan-m'+i+'-ora'),
+    kcal: '',
+    alimenti: gv('pan-m'+i+'-alimenti'),
+    note: gv('pan-m'+i+'-note') || (parseFloat(gv('pan-m'+i+'-grassi')) ? 'Grassi: ' + gv('pan-m'+i+'-grassi') + ' g' : '')
+  })).filter(p => p.nome || p.alimenti);
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Piano Alimentare — Insufficienza Pancreatica',
+    sottotitolo: [causa, enzima].filter(Boolean).join(' · '),
+    totKcal: kcalTot,
+    totProt: prot,
+    totCho: cho,
+    totFat: fat,
+    containerId: 'pan-compact-print-area',
+    footerNote: gv('pan-piano-note-cliniche') || undefined
+  });
+}
 </script>
 </body>
 </html>

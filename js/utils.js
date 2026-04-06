@@ -426,3 +426,94 @@ async function _gncCrea() {
     _gncCallback = null;
   }
 }
+
+/* ═══════════════════════════════════════════════════
+   STAMPA COMPATTA SPECIALISTICA — Utility condivisa
+   Genera HTML in formato "compatto paziente" da una
+   lista strutturata di pasti e lo mette in un div
+   nascosto, poi chiama window.print().
+
+   pasti: [{nome, emoji, ora, kcal, alimenti, note}, ...]
+   opts:  {titolo, sottotitolo, totKcal, totProt, totCho, totFat, containerId, footerNote}
+═══════════════════════════════════════════════════ */
+function stampaCompattaSpecialistica(pasti, opts) {
+  opts = opts || {};
+  const containerId = opts.containerId || 'spec-compact-print-area';
+  const container = document.getElementById(containerId);
+  if (!container) { console.error('Container non trovato:', containerId); return; }
+
+  const totKcal = opts.totKcal || 0;
+  const totProt = opts.totProt || 0;
+  const totCho  = opts.totCho  || 0;
+  const totFat  = opts.totFat  || 0;
+  const nMeals  = pasti.filter(p => p.alimenti && p.alimenti.trim()).length || pasti.length;
+  const avgKcal = totKcal && nMeals ? Math.round(totKcal / nMeals) : 0;
+
+  function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+
+  // Title block
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
+  if (opts.titolo) html += `<div style="font-size:18px;font-weight:700;color:#0F766E">${escH(opts.titolo)}</div>`;
+  if (opts.sottotitolo) html += `<div style="font-size:13px;color:#475569;margin-top:3px">${escH(opts.sottotitolo)}</div>`;
+  html += `</div>`;
+
+  // Stats header bar
+  const stats = [
+    { val: totKcal || '—', lbl: 'KCAL TOTALI' },
+    { val: totProt  || '—', lbl: 'PROTEINE (G)' },
+    { val: totCho   || '—', lbl: 'CARBOIDRATI (G)' },
+    { val: totFat   || '—', lbl: 'GRASSI (G)' },
+    { val: avgKcal  || '—', lbl: 'KCAL/PASTO' }
+  ];
+  html += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
+  stats.forEach((s, i) => {
+    html += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length-1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
+    html += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
+    html += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  // Meals
+  pasti.forEach(pasto => {
+    if (!pasto.nome && !pasto.alimenti) return;
+    html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+
+    // Green meal header
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981)">`;
+    html += `<div style="display:flex;align-items:center;gap:10px">`;
+    if (pasto.emoji) html += `<span style="font-size:18px">${escH(pasto.emoji)}</span>`;
+    html += `<span style="font-size:14px;font-weight:700;color:white">${escH(pasto.nome||'Pasto')}</span>`;
+    if (pasto.ora) html += `<span style="font-size:12px;color:rgba(255,255,255,.75)">${escH(pasto.ora)}</span>`;
+    html += `</div>`;
+    if (pasto.kcal) html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${escH(String(pasto.kcal))} kcal</span>`;
+    html += `</div>`;
+
+    // Food lines (from textarea text, one line per item)
+    if (pasto.alimenti && pasto.alimenti.trim()) {
+      const lines = pasto.alimenti.split('\n').map(l => l.trim()).filter(l => l);
+      lines.forEach(line => {
+        html += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${escH(line)}</div>`;
+      });
+    }
+
+    if (pasto.note && pasto.note.trim()) {
+      html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${escH(pasto.note)}</div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  if (opts.footerNote) {
+    html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${escH(opts.footerNote)}</div>`;
+  }
+
+  html += `</div>`;
+
+  container.innerHTML = html;
+  document.body.dataset.printMode = 'compact';
+  window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, { once: true });
+  setTimeout(() => window.print(), 300);
+}

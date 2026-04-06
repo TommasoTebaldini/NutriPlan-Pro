@@ -16,6 +16,8 @@
 .misura-print{display:none;font-size:7px;color:#64748B;font-style:italic}
 /* Simple print area (screen: hidden) */
 #simple-print-area{display:none}
+/* Compact print area (screen: hidden) */
+#compact-print-area{display:none}
 @media print{
   @page{margin:1cm 1.2cm;size:A4 landscape}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -46,7 +48,11 @@
   body[data-print-mode="simple"] .macro-bar{display:none!important}
   body[data-print-mode="simple"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="simple"] #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  body[data-print-mode="simple"] @page{size:A4 portrait}
+  /* ── Compact print mode (green meal headers + per-item kcal) ── */
+  body[data-print-mode="compact"] #pasti-container{display:none!important}
+  body[data-print-mode="compact"] .macro-bar{display:none!important}
+  body[data-print-mode="compact"] #print-giorno-hdr{display:none!important}
+  body[data-print-mode="compact"] #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
 </style>
 </head>
@@ -106,6 +112,7 @@
     <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaCompatta()" title="Stampa compatta con kcal per alimento (formato paziente)">📋</button>
   </div>
 </div>
 
@@ -182,6 +189,8 @@
 
   <!-- SIMPLE PRINT AREA (hidden on screen, shown in simple print mode) -->
   <div id="simple-print-area"></div>
+  <!-- COMPACT PRINT AREA (hidden on screen, shown in compact print mode) -->
+  <div id="compact-print-area"></div>
 
 </div>
 </main>
@@ -1140,11 +1149,156 @@ function stampaSemplice() {
 
   document.getElementById('simple-print-area').innerHTML = html;
   document.body.dataset.printMode = 'simple';
+  _applyPortraitPrint();
   setTimeout(() => window.print(), 400);
+}
+
+function stampaCompatta() {
+  giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const dataPiano = document.getElementById('inp-data')?.value || '';
+  const nomePiano = document.getElementById('inp-nome')?.value || '';
+  const gNome = giorni.length > 1 ? giorni[giornoCorrente].nome : '';
+
+  let totKcal = 0, totProt = 0, totCho = 0, totFat = 0, totFib = 0;
+  const mealList = getMeals().filter(m => m.items.some(it => it.nome && it.nome.trim()));
+
+  // First pass: calculate totals
+  mealList.forEach(meal => {
+    meal.items.filter(it => it.nome && it.nome.trim()).forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt) || 0;
+      if (f && qt) {
+        totKcal += (f.k||0)/100*qt;
+        totProt  += (f.p||0)/100*qt;
+        totCho   += (f.ch||0)/100*qt;
+        totFat   += (f.g||0)/100*qt;
+        totFib   += (f.fi||0)/100*qt;
+      }
+    });
+  });
+
+  const avgKcalPasto = mealList.length ? Math.round(totKcal / mealList.length) : 0;
+
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+
+  // Patient / plan header
+  if (nomeP || nomePiano || dataPiano) {
+    html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
+    if (nomeP) html += `<div style="font-size:18px;font-weight:700;color:#0F766E">${esc(nomeP)}</div>`;
+    if (nomePiano) html += `<div style="font-size:13px;color:#475569;margin-top:3px">${esc(nomePiano)}</div>`;
+    if (dataPiano) {
+      const parts = dataPiano.split('-').map(Number);
+      if (parts.length === 3 && parts.every(n => !isNaN(n))) {
+        const [dp_y, dp_m, dp_d] = parts;
+        const dateFmt = new Date(dp_y, dp_m-1, dp_d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+        html += `<div style="font-size:11.5px;color:#94A3B8;margin-top:2px">${dateFmt}</div>`;
+      }
+    }
+    if (gNome) html += `<div style="font-size:11.5px;color:#0F766E;font-weight:600;margin-top:2px">📅 ${esc(gNome)}</div>`;
+    html += `</div>`;
+  }
+
+  // Stats header bar (matches image format)
+  html += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
+  const stats = [
+    { val: Math.round(totKcal), lbl: 'KCAL TOTALI' },
+    { val: r1(totProt), lbl: 'PROTEINE (G)' },
+    { val: r1(totCho), lbl: 'CARBOIDRATI (G)' },
+    { val: r1(totFat), lbl: 'GRASSI (G)' },
+    { val: avgKcalPasto, lbl: 'KCAL/PASTO' }
+  ];
+  stats.forEach((s, i) => {
+    html += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length-1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
+    html += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
+    html += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  // Meals
+  mealList.forEach(meal => {
+    const foodItems = meal.items.filter(it => it.nome && it.nome.trim());
+    let mealKcal = 0;
+    foodItems.forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt) || 0;
+      if (f && qt) mealKcal += (f.k||0)/100*qt;
+    });
+
+    html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+
+    // Green meal header
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981)">`;
+    html += `<div style="display:flex;align-items:center;gap:10px">`;
+    html += `<span style="font-size:18px">${esc(meal.emoji||'')}</span>`;
+    html += `<span style="font-size:14px;font-weight:700;color:white">${esc(meal.nome)}</span>`;
+    html += `</div>`;
+    if (mealKcal > 0) html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${Math.round(mealKcal)} kcal</span>`;
+    html += `</div>`;
+
+    // Food items
+    foodItems.forEach(item => {
+      const f = lookup(item.nome);
+      const qt = parseFloat(item.qt) || 0;
+      const kcalItem = f && qt ? Math.round((f.k||0)/100*qt) : 0;
+      const misuraTxt = item.misura ? ` <span style="color:#94A3B8;font-size:10px">(${esc(item.misura)})</span>` : '';
+      const qtStr = item.qt ? `${item.qt} g` : '';
+
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9">`;
+      html += `<span style="font-size:13px;color:#1E293B">${esc(item.nome)}${misuraTxt}</span>`;
+      html += `<div style="display:flex;align-items:center;gap:14px;white-space:nowrap;padding-left:12px">`;
+      if (qtStr) html += `<span style="font-size:13px;font-weight:700;color:#0EA5E9">${qtStr}</span>`;
+      if (kcalItem > 0) html += `<span style="font-size:12px;color:#94A3B8">${kcalItem} kcal</span>`;
+      html += `</div>`;
+      html += `</div>`;
+
+      // Alternative measures
+      if (item.altPrint && item.altPrint.length) {
+        item.altPrint.forEach(a => {
+          html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 16px 5px 28px;background:#F0FDF4;border-bottom:1px solid #DCFCE7">`;
+          html += `<span style="font-size:11.5px;color:#15803D">↳ oppure: ${esc(a.nome)}</span>`;
+          html += `<span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:8px">${a.qt} g</span>`;
+          html += `</div>`;
+        });
+      }
+    });
+
+    // Meal notes
+    if (meal.note && meal.note.trim()) {
+      html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(meal.note)}</div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  // Fiber footer
+  if (totFib > 0) {
+    html += `<div style="margin-top:10px;padding:8px 16px;background:#F8FAFC;border-radius:8px;border:1.5px solid #E2E8F0;font-size:11.5px;color:#64748B;text-align:center">🌿 Fibra totale: ${r1(totFib)} g</div>`;
+  }
+
+  html += `</div>`;
+
+  document.getElementById('compact-print-area').innerHTML = html;
+  document.body.dataset.printMode = 'compact';
+  _applyPortraitPrint();
+  setTimeout(() => window.print(), 400);
+}
+
+function _applyPortraitPrint() {
+  let s = document.getElementById('_portrait-print-style');
+  if (!s) {
+    s = document.createElement('style');
+    s.id = '_portrait-print-style';
+    document.head.appendChild(s);
+  }
+  s.textContent = '@media print{@page{size:A4 portrait;margin:1cm 1.2cm}}';
 }
 
 window.addEventListener('afterprint', () => {
   delete document.body.dataset.printMode;
+  const s = document.getElementById('_portrait-print-style');
+  if (s) s.remove();
 });
 
 // ═══════════════════════════════════════════════════

@@ -46,7 +46,12 @@
   .rist-tabs{display:none!important}
   .rist-panel{display:none!important}
   .rist-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .rist-panel{display:none!important}
+  body[data-print-mode="compact"] .rist-tabs{display:none!important}
+  body[data-print-mode="compact"] #rist-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+#rist-compact-print-area{display:none}
 </style>
 </head>
 <body>
@@ -95,6 +100,7 @@
   <h2>🍽️ Ristorazione Collettiva</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaRistorazione()" title="Stampa compatta menu per utenti">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -598,7 +604,10 @@
   </div>
 </div>
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="rist-compact-print-area"></div>
+</main>
 <script>
 (function() {
   var RIST_PORTATE = [
@@ -948,6 +957,32 @@ function generaProto() {
   box.style.display = 'block';
   box.scrollIntoView({behavior:'smooth', block:'start'});
   toast('✅ Protocollo generato!', 'ok');
+}
+
+function stampaCompattaRistorazione() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const kcalPasto = parseFloat(gv('rist-piano-kcal')) || 0;
+  const tipo = gv('rist-piano-tipo');
+  const utenza = gv('rist-piano-utenza');
+  const coperti = gv('rist-piano-coperti');
+  const nomeCartella = document.getElementById('rist-cartella')?.options[document.getElementById('rist-cartella')?.selectedIndex]?.text || '';
+
+  const pasti = [1,2,3,4,5].map(i => ({
+    nome: gv('rist-m'+i+'-nome'),
+    kcal: '',
+    alimenti: [gv('rist-m'+i+'-porzione'), gv('rist-m'+i+'-menu')].filter(Boolean).join('\n'),
+    note: gv('rist-m'+i+'-note')
+  })).filter(p => p.nome || p.alimenti);
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Menu — Ristorazione Collettiva',
+    sottotitolo: [tipo, utenza, coperti ? coperti + ' coperti' : ''].filter(Boolean).join(' · '),
+    totKcal: 0,
+    totProt: 0,
+    totCho: 0,
+    totFat: 0,
+    containerId: 'rist-compact-print-area'
+  });
 }
 </script>
 </body>

@@ -49,7 +49,11 @@
   .dg-tabs{display:none!important}
   .dg-panel{display:none!important}
   .dg-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .dg-panel{display:none!important}
+  body[data-print-mode="compact"] #dg-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+#dg-compact-print-area{display:none}
 </style>
 </head>
 <body>
@@ -98,6 +102,7 @@
   <h2>🩸 Gestione Diabete — Counting CHO & Insulina</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaDiabete()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
   </div>
 </div>
 
@@ -507,7 +512,10 @@
   </div>
 </div>
 
-</div></main>
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="dg-compact-print-area"></div>
+</main>
 <script>
 (function() {
   var DG_MEALS = [
@@ -930,6 +938,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) {}
 });
+
+function stampaCompattaDiabete() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const kcalTot = parseFloat(gv('dg-piano-kcal')) || 0;
+  const choTot  = parseFloat(gv('dg-piano-cho-tot')) || 0;
+  const prot = kcalTot ? Math.round(kcalTot * 0.15 / 4) : 0;
+  const fat  = kcalTot ? Math.round(kcalTot * 0.25 / 9) : 0;
+  const nomeCartella = document.getElementById('dg-cartella')?.options[document.getElementById('dg-cartella')?.selectedIndex]?.text || '';
+
+  const pasti = [1,2,3,4,5].map(i => ({
+    nome: gv('dg-m'+i+'-nome'),
+    ora: gv('dg-m'+i+'-ora'),
+    kcal: '',
+    alimenti: gv('dg-m'+i+'-alimenti'),
+    note: gv('dg-m'+i+'-note') || (parseFloat(gv('dg-m'+i+'-cho')) ? 'CHO: ' + gv('dg-m'+i+'-cho') + ' g' : '')
+  })).filter(p => p.nome || p.alimenti);
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Piano Alimentare — Diabete',
+    sottotitolo: gv('dg-piano-tipo') ? 'Tipo: ' + gv('dg-piano-tipo') + (gv('dg-piano-insulina') ? ' · Insulina: ' + gv('dg-piano-insulina') : '') : '',
+    totKcal: kcalTot || 0,
+    totProt: prot,
+    totCho: choTot,
+    totFat: fat,
+    containerId: 'dg-compact-print-area'
+  });
+}
 </script>
 </body>
 </html>

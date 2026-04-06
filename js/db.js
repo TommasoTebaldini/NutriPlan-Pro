@@ -1280,6 +1280,86 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Pasta di semola cruda',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'stomia',emoji:'🩹',nome:'Stomia (Colostomia / Ileostomia)',badge:'ESPEN 2021',colore:'#92400E',
+   desc:"Dieta individualizzata per tipo di stomia. Ileostomia: basso residuo inizialmente, alta idratazione. Colostomia: progressiva normalizzazione.",
+   note:"ESPEN 2021 · Ileostomia: perdite di acqua 1-2L/die e sodio → idratazione ≥2.5L/die · Rischio carenza B12 se resezione ileale · Evitare cibi ad alto residuo nella fase iniziale · Cibi che causano odore/gas: identificarli individualmente · Proteine aumentate per cicatrizzazione.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco',qt:'70'},{nome:'Ricotta vaccina',qt:'80'},{nome:'Banana',qt:'120'},{nome:'Latte parz. scremato UHT',qt:'150'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'tumore_seno',emoji:'🎀',nome:'Tumore al Seno (Carcinoma Mammario)',badge:'ESPEN 2021',colore:'#BE185D',
+   desc:"Dieta antinfiammatoria e mantenimento del peso ottimale. Alcol zero. Fitoestrogeni dalla soia non controindicati. Omega-3 e vitamina D.",
+   note:"ESPEN 2021 · BMI 20-25 obiettivo (sovrappeso aumenta rischio recidiva del 30-40%) · Alcol: fattore di rischio indipendente → zero · Fitoestrogeni da soia alimentare: non controindicati (metanalisi 2019) · Omega-3 EPA/DHA 2g/die · Vitamina D target >40 ng/mL · Fibre ≥25g/die.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Fragola',qt:'150'},{nome:'Semi di lino',qt:'10'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Lenticchie secche',qt:'40'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'tumore_pancreas',emoji:'🔴',nome:'Tumore del Pancreas',badge:'ESPEN 2021',colore:'#B45309',
+   desc:"Elevato rischio di cachessia. PERT obbligatoria ad ogni pasto. Diabete pancreatico secondario frequente. Alta densità calorica e proteica. No alcol.",
+   note:"ESPEN 2021 · Cachessia nell'80% dei pazienti · PERT (Creon) 40.000-80.000 UI lipasi per pasto principale · Diabete tipo 3c: monitorare glicemia · Omega-3 EPA 2g/die anti-cachessico · ONS iperproteiche se intake <60% · No alcol assoluto.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco',qt:'70'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Yogurt intero bianco',qt:'125'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Ricotta vaccina',qt:'80'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'tumore_colon',emoji:'🎗️',nome:'Tumore del Colon-Retto',badge:'ESPEN 2021',colore:'#065F46',
+   desc:"Immunonutrizione preoperatoria. Rialimentazione precoce post-chirurgia. Dieta ricca di fibre nel mantenimento. No carni lavorate.",
+   note:"ESPEN 2021 · Immunonutrizione pre-op (arginina 15-20g + EPA + nucleotidi) 5-7gg · Rialimentazione orale precoce (entro 4h post-op) · Fibre ≥25-30g/die in mantenimento · Carni lavorate: IARC Gruppo 1 cancerogeno · Alcol: fattore di rischio.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Pera',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'diverticolosi',emoji:'💢',nome:'Diverticolosi',badge:'ACG 2015',colore:'#D97706',
+   desc:"Dieta ricca di fibre (≥25-35g/die). Opposta alla diverticolite acuta. Idratazione abbondante. Noci e semi non controindicati (mito sfatato).",
+   note:"ACG 2015 · Fibre ≥25-35g/die prevengono la progressione e le complicanze · Idratazione ≥1.5-2L/die · Noci e semi non controindicati (RCT negativi: Health Professionals Follow-up Study) · Attività fisica raccomandata · Evitare costipazione cronica.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'80'},{nome:'Yogurt intero bianco',qt:'125'},{nome:'Fragola',qt:'150'},{nome:'Semi di lino',qt:'10'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Mela',qt:'180'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Lenticchie secche',qt:'50'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'180'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Farro perlato crudo',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'allergia_pesce',emoji:'🐟',nome:'Allergia al Pesce',badge:'EAACI 2019',colore:'#0284C7',
+   desc:"Eliminazione totale del pesce e derivati. Omega-3 da fonti vegetali (semi di lino, noci) o alghe. Leggere sempre le etichette.",
+   note:"EAACI 2019 · Eliminare tutti i pesci (cross-reattività elevata: parvalbumina conservata tra specie) · Evitare anche: olio di pesce, collagene di pesce, gelatina di pesce · Omega-3 ALA da: semi di lino, noci, semi di chia · EPA/DHA da microalghe · Iodio da: sale iodato.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Banana',qt:'100'},{nome:'Noci',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Ceci secchi',qt:'60'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'allergia_molluschi',emoji:'🦞',nome:'Allergia ai Molluschi e Crostacei',badge:'EAACI 2019',colore:'#0E7490',
+   desc:"Eliminazione di crostacei (gamberi, granchio, aragosta) e molluschi (cozze, vongole, calamari). Il pesce è generalmente tollerato. Attenzione alla cross-contaminazione.",
+   note:"EAACI 2019 · Crostacei: tropomiosina (diversa dalla parvalbumina del pesce) · Cross-reattività tra crostacei molto elevata · Co-allergia con molluschi nel 40-50% · Pesce: proteina diversa, generalmente tollerato · Glucosamina da gamberi/granchio: verificare fonte del supplemento.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Fragola',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Kiwi',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'allergia_frutta_secca',emoji:'🥜',nome:'Allergia alla Frutta Secca (Tree Nuts)',badge:'EAACI 2019',colore:'#A16207',
+   desc:"Eliminazione di tutta la frutta secca a guscio. Alto rischio anafilassi. Cross-reattività elevata tra specie. Omega-3 da pesce e semi (lino, chia).",
+   note:"EAACI 2019 · Tree nuts: mandorle, noci, nocciole, pistacchi, anacardi, pinoli, noci di macadamia, noci pecan, noci del brasile · Cross-reattività elevata tra diverse noci · Arachidi = legume (co-allergia nel 40-60%) · Semi di sesamo: allergia separata ma comune · Portare sempre epinefrina auto-iniettabile.",
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Kiwi',qt:'150'},{nome:'Semi di lino',qt:'10'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]}
 ];
 let PATOLOGIE_CUSTOM=[];

@@ -386,7 +386,12 @@ async function saveEvents() {
   // If Supabase available, also save there
   if(currentUser && sb) {
     try {
-      const { error } = await sb.from('agenda_events').upsert(events.map(toDbRow), { onConflict: 'id' });
+      // Filter out events with a missing date field so that a single legacy/corrupt
+      // event cannot cause the entire batch upsert to fail (the `data` column is
+      // NOT NULL in Supabase, so sending null would roll back the whole transaction).
+      const toUpsert = events.filter(e => e.data != null && e.data !== '').map(toDbRow);
+      if (!toUpsert.length) return;
+      const { error } = await sb.from('agenda_events').upsert(toUpsert, { onConflict: 'id' });
       if (error) throw error;
     } catch(e) {
       console.warn('Supabase saveEvents error:', e.message);
@@ -410,9 +415,28 @@ async function loadEventsFromSupabase() {
       // Supabase has no records — push any locally-cached events up so they are persisted
       if (events.length) {
         try {
-          const { error: upErr } = await sb.from('agenda_events')
-            .upsert(events.map(toDbRow), { onConflict: 'id' });
-          if (upErr) throw upErr;
+          // Only upsert events that have a valid date field; a null/empty `data` value
+          // would violate the NOT NULL constraint and roll back the entire batch.
+          const toUpsert = events.filter(e => e.data != null && e.data !== '').map(toDbRow);
+          if (toUpsert.length) {
+            const { error: upErr } = await sb.from('agenda_events')
+              .upsert(toUpsert, { onConflict: 'id' });
+            if (upErr) throw upErr;
+            // Re-fetch from Supabase immediately so the UI reflects the confirmed
+            // persisted state and other devices see the events on their next load.
+            const { data: synced, error: syncErr } = await sb
+              .from('agenda_events')
+              .select('*')
+              .eq('user_id', currentUser.id)
+              .order('data', { ascending: true })
+              .order('ora', { ascending: true });
+            if (!syncErr && synced && synced.length) {
+              events = synced.map(({ user_id: _u, ...rest }) => rest);
+              localStorage.setItem('dietplan_events', JSON.stringify(events));
+              renderCalendar();
+              updateStats();
+            }
+          }
         } catch(e) {
           console.warn('loadEventsFromSupabase: failed to push local events:', e.message);
           toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');
@@ -431,9 +455,12 @@ async function loadEventsFromSupabase() {
     // Push any local-only events up to Supabase
     if (localOnly.length) {
       try {
-        const { error: upErr } = await sb.from('agenda_events')
-          .upsert(localOnly.map(toDbRow), { onConflict: 'id' });
-        if (upErr) throw upErr;
+        const toUpsert = localOnly.filter(e => e.data != null && e.data !== '').map(toDbRow);
+        if (toUpsert.length) {
+          const { error: upErr } = await sb.from('agenda_events')
+            .upsert(toUpsert, { onConflict: 'id' });
+          if (upErr) throw upErr;
+        }
       } catch(e) {
         console.warn('loadEventsFromSupabase: failed to push local-only events:', e.message);
         toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');

@@ -363,12 +363,30 @@ const MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio'
 const TIPO_COLORS = {visita:'visita',controllo:'controllo',reminder:'reminder',urgente:'urgente'};
 const TIPO_LABELS = {visita:'🩺 Prima Visita',controllo:'🔄 Controllo',reminder:'⏰ Promemoria',urgente:'🚨 Urgente'};
 
+// Returns a plain object containing only the columns present in agenda_events,
+// with correct types. Strips transient runtime flags (e.g. _notified) that
+// would be rejected by PostgREST with "column does not exist".
+function toDbRow(e) {
+  return {
+    id:       e.id,
+    paziente: e.paziente  ?? null,
+    titolo:   e.titolo    ?? null,
+    data:     e.data,
+    ora:      e.ora       || '09:00',
+    tipo:     e.tipo      || 'visita',
+    durata:   parseInt(e.durata, 10) || 60,
+    note:     e.note      ?? null,
+    created:  e.created,
+    user_id:  currentUser.id,
+  };
+}
+
 async function saveEvents() {
   localStorage.setItem('dietplan_events', JSON.stringify(events));
   // If Supabase available, also save there
   if(currentUser && sb) {
     try {
-      const { error } = await sb.from('agenda_events').upsert(events.map(e=>({...e, user_id:currentUser.id})));
+      const { error } = await sb.from('agenda_events').upsert(events.map(toDbRow), { onConflict: 'id' });
       if (error) throw error;
     } catch(e) {
       console.warn('Supabase saveEvents error:', e.message);
@@ -393,10 +411,11 @@ async function loadEventsFromSupabase() {
       if (events.length) {
         try {
           const { error: upErr } = await sb.from('agenda_events')
-            .upsert(events.map(e => ({ ...e, user_id: currentUser.id })));
+            .upsert(events.map(toDbRow), { onConflict: 'id' });
           if (upErr) throw upErr;
         } catch(e) {
           console.warn('loadEventsFromSupabase: failed to push local events:', e.message);
+          toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');
         }
       }
       return;
@@ -413,14 +432,16 @@ async function loadEventsFromSupabase() {
     if (localOnly.length) {
       try {
         const { error: upErr } = await sb.from('agenda_events')
-          .upsert(localOnly.map(e => ({ ...e, user_id: currentUser.id })));
+          .upsert(localOnly.map(toDbRow), { onConflict: 'id' });
         if (upErr) throw upErr;
       } catch(e) {
         console.warn('loadEventsFromSupabase: failed to push local-only events:', e.message);
+        toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');
       }
     }
   } catch(e) {
     console.warn('loadEventsFromSupabase error:', e.message);
+    toast('⚠️ Impossibile caricare gli appuntamenti dal server: ' + e.message, 'err');
   }
 }
 

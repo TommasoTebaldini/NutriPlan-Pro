@@ -1410,6 +1410,46 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'90'},{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'40'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Frullato proteico',qt:'250'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Carne bovina magra',qt:'150'},{nome:'Lenticchie secche',qt:'50'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'40'}]}
+   ]},
+  {id:'6fed',emoji:'🚫',nome:'Six Food Elimination Diet – 6FED (EoE)',badge:'ACG/AGA 2020',colore:'#7C3AED',
+   desc:'Eliminazione di 6 allergeni per Esofagite Eosinofilica: latte, frumento, uova, soia, frutta secca, pesce/crostacei.',
+   note:'ACG/AGA 2020 · Indicata per Esofagite Eosinofilica (EoE) · Elimina i 6 trigger principali: latte/latticini, frumento/glutine, uova, soia, frutta secca/arachidi, pesce/frutti di mare · Reintroduzione sequenziale (un alimento alla volta) con EGDS di controllo ogni 6-8 settimane per categoria · Supplementare: calcio 1000-1200mg/die, vitamina D, B12, omega-3 da alghe · Durata fase di eliminazione: 6 settimane.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'50'},{nome:'Marmellata / confettura',qt:'25'},{nome:'Banana',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'180'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'160'},{nome:'Zucchina',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Tacchino petto',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Spinaci crudi',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'4fed',emoji:'🟡',nome:'Four Food Elimination Diet – 4FED (EoE)',badge:'ACG/AGA 2020',colore:'#D97706',
+   desc:'Eliminazione di 4 allergeni principali per EoE: latte, frumento, uova, soia. Maggiore aderenza rispetto alla 6FED.',
+   note:'ACG/AGA 2020 · Indicata per Esofagite Eosinofilica (EoE) · Elimina i 4 trigger più frequenti: latte/latticini, frumento/glutine, uova, soia · Efficacia ~54-64% di remissione istologica con migliore compliance rispetto alla 6FED · Reintroduzione sequenziale con EGDS di controllo ogni 6-8 settimane · Monitorare calcio, vitamina D e adeguatezza proteica.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'50'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Banana',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'cded',emoji:'🫙',nome:'CDED – Crohn\'s Disease Exclusion Diet',badge:'Levine 2019',colore:'#059669',
+   desc:'Dieta di esclusione per Morbo di Crohn attivo. Fase 1 con 50% nutrizione enterale parziale (PEN). Esclude alimenti pro-infiammatori.',
+   note:'Levine et al. 2019 · ECCO 2022 · Indicata per Morbo di Crohn attivo (pediatrico e adulto) · Fase 1 (sett. 1-6): alimenti consentiti + 50% fabbisogno calorico da formula enterale polimerica (PEN) · Fase 2 (sett. 7-12): espansione dieta + 25% PEN · Esclude: carni processate/rosse, glutine, latticini ad alto contenuto di grassi, oli di semi, emulsionanti (E322, E471), conservanti e alimenti ultra-processati · Obiettivo: modulazione del microbiota pro-infiammatorio e riduzione della permeabilità intestinale.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Banana',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'180'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto (senza pelle)',qt:'160'},{nome:'Patata',qt:'200'},{nome:'Carota',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Fragola',qt:'150'},{nome:'Pera',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'scd',emoji:'🌿',nome:'SCD – Specific Carbohydrate Diet',badge:'CCF 2021',colore:'#166534',
+   desc:'Dieta dei carboidrati specifici per IBD. Elimina disaccaridi e polisaccaridi. Consente monosaccaridi e alimenti freschi non processati.',
+   note:'CCF 2021 · ECCO 2022 · Utilizzata per Morbo di Crohn e RCU · Elimina: disaccaridi (saccarosio, lattosio), tutti i cereali e amidi (grano, mais, riso, patata) · Consente: carne/pesce/uova freschi, frutta, verdure non amidacee, miele, frutta secca, legumi (da secco, cotti lungamente), yogurt fermentato 24h (privo di lattosio) · Crescenti evidenze soprattutto in età pediatrica · Richiede supervisione nutrizionale specializzata.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mirtilli',qt:'100'},{nome:'Noci',qt:'20'},{nome:'Miele millefiori',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'180'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto (senza pelle)',qt:'160'},{nome:'Lenticchie secche',qt:'50'},{nome:'Spinaci crudi',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Zucchina',qt:'200'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Pomodoro rosso',qt:'100'}]}
    ]}
 ];
 let PATOLOGIE_CUSTOM=[];
@@ -1481,7 +1521,11 @@ const FABBISOGNO_PATOLOGIE={
   epilessia:{kcal:'Normocalorica (adattata all\'età e all\'attività)',prot:'1.0-1.2 g/kg/die (non eccessiva: riduce chetosi)',note:'ILAE 2008 · ESPEN 2021. Dieta chetogenica classica ratio 3:1-4:1. CHO <20g/die. Grassi 65-75% energia. Monitorare lipidi, crescita, densità ossea. Supplementare vitamine e minerali. Modified Atkins Diet come alternativa meno restrittiva.'},
   alzheimer:{kcal:'25-30 kcal/kg/die (aumentare se malnutrizione)',prot:'1.0-1.2 g/kg/die',note:'ESPEN 2023. Dieta MIND (Mediterranea + DASH). Vitamina B12, folati, vitamina D, omega-3 DHA. Pasti piccoli, frequenti e appetibili. Texture adattata IDDSI se disfagia. ONS se intake <75% per >1 settimana. Team multidisciplinare (nutrizionista, logopedista).'},
   gastroparesi:{kcal:'Normocalorica (liquidi calorici se solidi non tollerati)',prot:'1.0 g/kg/die',note:'ADA/ACG 2022. Grassi <40g/die. Fibra <10g/die. 6-8 pasti piccoli e frequenti. Consistenza liquida/morbida. Non coricarsi entro 2h dal pasto. Controllo glicemico se diabete associato. Masticare bene. Liquidi calorici se solidi non tollerati.'},
-  sla:{kcal:'30-40 kcal/kg/die',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2023. Ipermetabolismo frequente. Valutare disfagia con logopedista (IDDSI). PEG precoce quando FVC >50% e calo ponderale progressivo. Omega-3 2g/die. Vitamina D. Monitorare peso ogni 2-4 settimane. Supporto nutrizionale specializzato obbligatorio.'}
+  sla:{kcal:'30-40 kcal/kg/die',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2023. Ipermetabolismo frequente. Valutare disfagia con logopedista (IDDSI). PEG precoce quando FVC >50% e calo ponderale progressivo. Omega-3 2g/die. Vitamina D. Monitorare peso ogni 2-4 settimane. Supporto nutrizionale specializzato obbligatorio.'},
+  '6fed':{kcal:'Normocalorica (30-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die',note:'ACG/AGA 2020. Eliminare completamente: latte/latticini, frumento/glutine, uova, soia, frutta secca/arachidi, pesce/frutti di mare. Supplementare obbligatoriamente: calcio 1000-1200mg/die, vitamina D 800-1000 UI/die, omega-3 da alghe, B12 se deficit. Reintroduzione un alimento alla volta ogni 6-8 settimane con controllo endoscopico (EGDS).'},
+  '4fed':{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ACG/AGA 2020. Eliminare: latte/latticini, frumento/glutine, uova, soia. Calcio: supplementare 1000-1200mg/die (latticini esclusi). Vitamina D adeguata. Pesce e frutta secca consentiti. Reintroduzione sequenziale con EGDS di controllo ogni 6-8 settimane.'},
+  cded:{kcal:'25-35 kcal/kg/die',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Fase 1 (sett. 1-6): 50% del fabbisogno calorico da formula enterale polimerica (PEN). Fase 2 (sett. 7-12): 25% PEN. Escludere: carni processate, glutine, grassi saturi animali, oli di semi, emulsionanti, conservanti. Monitorare: vitamina D, ferro, B12, zinco, PCR/calprotectina.'},
+  scd:{kcal:'Normocalorica (adeguata ad età e attività)',prot:'1.0-1.5 g/kg/die',note:'CCF 2021 · ECCO 2022. Eliminare tutti i disaccaridi e polisaccaridi (zucchero, lattosio, amido). Consentire solo monosaccaridi e alimenti non processati. Yogurt fermentato artigianale 24h (privo di lattosio residuo). Richiede supervisione nutrizionale specializzata. Monitorare: calcio, vitamina D, B12, adeguatezza calorica.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

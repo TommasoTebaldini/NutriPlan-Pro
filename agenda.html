@@ -112,7 +112,7 @@
   <div class="tbar-actions">
     <button class="btn btn-primary btn-sm" onclick="openNewEvent()">➕ Nuovo Appuntamento</button>
     <button id="btn-gcal" class="btn btn-ghost btn-sm" onclick="connectGoogleCalendar()" style="display:none">📅 Connetti Google Calendar</button>
-    <button class="btn btn-ghost btn-sm no-print" onclick="exportICal()" title="Esporta tutti gli appuntamenti come file .ics compatibile con Google Calendar, Apple Calendar, Outlook e altri">📥 Esporta Calendario</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="openSyncModal()" title="Sincronizza il calendario con Google Calendar, Apple Calendar, Outlook e altri dispositivi">🔗 Sincronizza Calendario</button>
     <button class="today-btn" onclick="goToday()">Oggi</button>
   </div>
 </div>
@@ -225,6 +225,57 @@
     <div class="mfoot">
       <button class="btn btn-danger btn-sm" id="btn-del-event" onclick="deleteCurrentEvent()">🗑️ Elimina</button>
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-event')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SYNC CALENDAR -->
+<div class="modal-bg" id="modal-sync">
+  <div class="modal" style="max-width:540px">
+    <div class="mhdr" style="background:var(--teal);color:white"><h2 style="color:white">🔗 Sincronizzazione Calendario</h2><button class="mclose" style="color:white" onclick="closeM('modal-sync')">✕</button></div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:16px">Il tuo calendario si aggiorna automaticamente su tutti i dispositivi. Scegli il metodo di sincronizzazione che preferisci.</p>
+
+      <!-- Google Calendar section -->
+      <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:6px">📅 Google Calendar — Sync in tempo reale</div>
+        <p style="font-size:12px;color:#1e40af;margin-bottom:10px">Connetti il tuo account Google per sincronizzare automaticamente ogni nuovo appuntamento al momento del salvataggio.</p>
+        <div id="gcal-sync-area">
+          <button class="btn btn-primary btn-sm" id="btn-gcal-modal" onclick="connectGoogleCalendarFromModal()">Connetti Google Calendar</button>
+          <div id="gcal-sync-status" style="font-size:12px;margin-top:6px;color:var(--slate-m)"></div>
+        </div>
+        <p style="font-size:11px;color:#6B7280;margin-top:8px">⚠️ Richiede un Google Client ID configurato nelle impostazioni del progetto.</p>
+      </div>
+
+      <!-- WebCal subscription section -->
+      <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:#065F46;margin-bottom:6px">🔗 Link di abbonamento — Tutti i dispositivi</div>
+        <p style="font-size:12px;color:#047857;margin-bottom:10px">Abbonati una volta sola e il calendario si aggiornerà automaticamente ogni ora su Google Calendar, Apple Calendar, Outlook e altri.</p>
+        <div id="sync-url-area" style="display:none">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <input type="text" id="sync-url-input" readonly style="flex:1;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12px;font-family:monospace;color:var(--slate);background:#F8FAFC" placeholder="URL abbonamento...">
+            <button class="btn btn-primary btn-sm" onclick="copySyncUrl()">📋 Copia</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="openInCalendar()" style="width:100%;margin-bottom:6px">📅 Apri direttamente nel calendario</button>
+          <div style="font-size:11px;color:var(--slate-l);line-height:1.6">
+            <strong>Come abbonarcisi:</strong><br>
+            • <strong>Google Calendar</strong>: Impostazioni → Aggiungi calendario → Da URL → incolla il link<br>
+            • <strong>Apple Calendar</strong>: File → Nuovo abbonamento calendario → incolla il link<br>
+            • <strong>Outlook</strong>: Aggiungi calendario → Sottoscrivi da web → incolla il link
+          </div>
+        </div>
+        <div id="sync-login-msg" style="font-size:12px;color:#065F46">⚠️ Accedi per generare il tuo link di abbonamento personale.</div>
+      </div>
+
+      <!-- Download fallback -->
+      <div style="background:#F8FAFC;border:1.5px solid var(--border);border-radius:10px;padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px">📥 Esportazione manuale (alternativa)</div>
+        <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Scarica il file .ics per importarlo manualmente nel tuo calendario.</p>
+        <button class="btn btn-ghost btn-sm" onclick="exportICal()">📥 Scarica file .ics</button>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sync')">Chiudi</button>
     </div>
   </div>
 </div>
@@ -631,7 +682,71 @@ async function createGoogleCalendarEvent(ev) {
   }
 }
 
-// ─── iCal Export ─────────────────────────────────────────────────────────────
+// ─── Calendar Sync Modal ──────────────────────────────────────────────────────
+function openSyncModal() {
+  // Populate subscription URL if user is logged in
+  if (currentUser) {
+    const origin = window.location.origin;
+    const subscribeUrl = `${origin}/api/calendar?uid=${currentUser.id}`;
+    const webcalUrl = subscribeUrl.replace(/^https?:\/\//, 'webcal://');
+    document.getElementById('sync-url-input').value = webcalUrl;
+    document.getElementById('sync-url-area').style.display = '';
+    document.getElementById('sync-login-msg').style.display = 'none';
+  } else {
+    document.getElementById('sync-url-area').style.display = 'none';
+    document.getElementById('sync-login-msg').style.display = '';
+  }
+  // Update Google Calendar status
+  const gcalBtn = document.getElementById('btn-gcal-modal');
+  const gcalStatus = document.getElementById('gcal-sync-status');
+  if (GOOGLE_CLIENT_ID) {
+    if (gcalTokenValid()) {
+      gcalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
+      gcalBtn.classList.add('btn-primary');
+      gcalStatus.textContent = 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
+    } else {
+      gcalBtn.textContent = '📅 Connetti Google Calendar';
+      gcalBtn.classList.remove('btn-primary');
+    }
+  } else {
+    gcalBtn.textContent = '⚠️ Client ID non configurato';
+    gcalBtn.disabled = true;
+    gcalBtn.title = 'Inserisci il Google Client ID nella variabile GOOGLE_CLIENT_ID nel codice.';
+  }
+  openM('modal-sync');
+}
+
+function connectGoogleCalendarFromModal() {
+  connectGoogleCalendar();
+  setTimeout(() => {
+    const gcalBtn = document.getElementById('btn-gcal-modal');
+    const gcalStatus = document.getElementById('gcal-sync-status');
+    if (gcalTokenValid()) {
+      gcalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
+      gcalBtn.classList.add('btn-primary');
+      gcalStatus.textContent = 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
+    }
+  }, 3000);
+}
+
+function copySyncUrl() {
+  const url = document.getElementById('sync-url-input').value;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => {
+    toast('📋 URL copiato negli appunti!', 'ok');
+  }).catch(() => {
+    document.getElementById('sync-url-input').select();
+    document.execCommand('copy');
+    toast('📋 URL copiato!', 'ok');
+  });
+}
+
+function openInCalendar() {
+  const url = document.getElementById('sync-url-input').value;
+  if (!url) return;
+  window.open(url, '_blank');
+}
+
 function exportICal() {
   if (!events.length) { toast('Nessun appuntamento da esportare', 'err'); return; }
   const pad = n => String(n).padStart(2, '0');

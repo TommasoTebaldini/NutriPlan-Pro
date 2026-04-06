@@ -989,8 +989,9 @@ function autoSyncCalendar() {
       toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
     }
   } else {
-    // For Apple Calendar / Outlook / other: trigger the webcal:// protocol handler
-    window.location.href = webcalUrl;
+    // For Apple Calendar / Outlook / other: trigger the webcal:// protocol handler.
+    // Use window.open instead of window.location.href so the user stays on this page.
+    window.open(webcalUrl);
     if (statusEl) {
       statusEl.textContent = '✅ Link di abbonamento aperto! Accetta la richiesta nel tuo calendario per completare la sincronizzazione.';
       statusEl.style.display = '';
@@ -1058,9 +1059,11 @@ function connectGoogleCalendarFromModal() {
   if (!gcalTokenValid()) {
     const emailInput = document.getElementById('gcal-email-input');
     const email = emailInput ? emailInput.value.trim() : '';
-    if (email && typeof google !== 'undefined' && google.accounts) {
-      localStorage.setItem('gcal_email', email);
-      initGoogleCalendar(email);
+    if (typeof google !== 'undefined' && google.accounts) {
+      if (email) localStorage.setItem('gcal_email', email);
+      // Always (re-)initialize with the latest email hint so the token client is
+      // ready even if the modal is opened before the GIS script's onload fires.
+      initGoogleCalendar(email || localStorage.getItem('gcal_email') || '');
     }
   }
   connectGoogleCalendar();
@@ -1121,7 +1124,33 @@ function exportICal() {
   }
   const now = new Date();
   const dtstamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
-  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//NutriPlan Pro//Agenda//IT\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n';
+  // RFC 5545 requires a VTIMEZONE component whenever TZID is referenced in events.
+  // Without it, Apple Calendar, Outlook and other strict clients silently discard
+  // events or display wrong times.
+  let ics = 'BEGIN:VCALENDAR\r\n' +
+    'VERSION:2.0\r\n' +
+    'PRODID:-//NutriPlan Pro//Agenda//IT\r\n' +
+    'CALSCALE:GREGORIAN\r\n' +
+    'METHOD:PUBLISH\r\n' +
+    'X-WR-CALNAME:NutriPlan Pro Agenda\r\n' +
+    'X-WR-TIMEZONE:Europe/Rome\r\n' +
+    'BEGIN:VTIMEZONE\r\n' +
+    'TZID:Europe/Rome\r\n' +
+    'BEGIN:DAYLIGHT\r\n' +
+    'TZOFFSETFROM:+0100\r\n' +
+    'TZOFFSETTO:+0200\r\n' +
+    'TZNAME:CEST\r\n' +
+    'DTSTART:19700329T020000\r\n' +
+    'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3\r\n' +
+    'END:DAYLIGHT\r\n' +
+    'BEGIN:STANDARD\r\n' +
+    'TZOFFSETFROM:+0200\r\n' +
+    'TZOFFSETTO:+0100\r\n' +
+    'TZNAME:CET\r\n' +
+    'DTSTART:19701025T030000\r\n' +
+    'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10\r\n' +
+    'END:STANDARD\r\n' +
+    'END:VTIMEZONE\r\n';
   events.forEach(ev => {
     const dtstart = toICalDate(ev.data, ev.ora);
     const durata = parseInt(ev.durata) || 60;
@@ -1134,10 +1163,11 @@ function exportICal() {
     ics += 'BEGIN:VEVENT\r\n';
     ics += foldLine('UID:' + ev.id + '@nutriplan-pro') + '\r\n';
     ics += 'DTSTAMP:' + dtstamp + '\r\n';
-    ics += 'DTSTART;TZID=' + Intl.DateTimeFormat().resolvedOptions().timeZone + ':' + dtstart + '\r\n';
-    ics += 'DTEND;TZID=' + Intl.DateTimeFormat().resolvedOptions().timeZone + ':' + dtend + '\r\n';
+    ics += 'DTSTART;TZID=Europe/Rome:' + dtstart + '\r\n';
+    ics += 'DTEND;TZID=Europe/Rome:' + dtend + '\r\n';
     ics += foldLine('SUMMARY:' + summary) + '\r\n';
     if (desc) ics += foldLine('DESCRIPTION:' + desc) + '\r\n';
+    if (ev.tipo === 'urgente') ics += 'PRIORITY:1\r\n';
     ics += 'END:VEVENT\r\n';
   });
   ics += 'END:VCALENDAR';

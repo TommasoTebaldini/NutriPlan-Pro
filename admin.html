@@ -271,7 +271,24 @@ async function loadECMCorsi() {
   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Caricamento...</td></tr>';
   const { data, error } = await sb.from('ecm_corsi').select('*').order('data_inizio', { ascending: true, nullsFirst: false });
   if (error) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:#DC2626">Errore: ${esc(error.message)}<br><small>Assicurati di aver eseguito il file <b>supabase/ecm_corsi.sql</b> nel pannello Supabase.</small></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div style="margin:24px auto;max-width:520px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:20px 24px;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:22px">⚠️</span>
+        <span style="font-weight:700;color:#B91C1C;font-size:15px">Tabella non trovata</span>
+      </div>
+      <p style="margin:0 0 8px;color:#7F1D1D;font-size:13px;line-height:1.5">La tabella <code style="background:#FEE2E2;border-radius:4px;padding:1px 5px;font-size:12px">ecm_corsi</code> non esiste nel database Supabase.</p>
+      <p style="margin:0 0 12px;color:#991B1B;font-size:13px;line-height:1.5"><strong>Come risolvere:</strong></p>
+      <ol style="margin:0 0 12px;padding-left:18px;color:#7F1D1D;font-size:13px;line-height:1.8">
+        <li>Apri il <strong>pannello Supabase</strong> del progetto</li>
+        <li>Vai su <strong>SQL Editor</strong></li>
+        <li>Incolla ed esegui il contenuto del file <code style="background:#FEE2E2;border-radius:4px;padding:1px 5px;font-size:12px">supabase/ecm_corsi.sql</code></li>
+        <li>Aggiorna questa pagina</li>
+      </ol>
+      <details style="margin-top:4px">
+        <summary style="cursor:pointer;font-size:12px;color:#B91C1C;font-weight:600">Dettaglio errore tecnico</summary>
+        <p style="margin:6px 0 0;font-size:11px;color:#9CA3AF;font-family:monospace;word-break:break-all">${esc(error.message)}</p>
+      </details>
+    </div></td></tr>`;
     return;
   }
   if (!data || !data.length) {

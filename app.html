@@ -300,6 +300,23 @@
   </div>
 </div>
 
+<!-- MODAL: CONFERMA (riutilizzabile) -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal" style="max-width:360px">
+    <div class="mhdr" id="modal-confirm-hdr">
+      <h2 id="modal-confirm-title">⚠️ Conferma</h2>
+      <button class="mclose" onclick="closeM('modal-confirm')">✕</button>
+    </div>
+    <div class="mbody" style="padding:20px 22px">
+      <p id="modal-confirm-msg" style="margin:0;font-size:14px;color:var(--slate-m);line-height:1.5"></p>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="_confirmCancel()">Annulla</button>
+      <button class="btn btn-sm" id="modal-confirm-ok" onclick="_confirmOk()">Continua</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
 
@@ -317,6 +334,33 @@ let currentPianoId = null;
 let renamingPastoIdx = null;
 let renamingGiornoIdx = null;
 let altMi = -1, altIi = -1, altNutrient = 'ch';
+
+// ═══════════════════════════════════════════════════
+// CUSTOM CONFIRM DIALOG
+// ═══════════════════════════════════════════════════
+let _confirmCallback = null;
+function customConfirm(msg, onConfirm, opts = {}) {
+  _confirmCallback = onConfirm;
+  document.getElementById('modal-confirm-msg').textContent = msg;
+  const title = document.getElementById('modal-confirm-title');
+  const okBtn = document.getElementById('modal-confirm-ok');
+  title.textContent = opts.title || '⚠️ Conferma';
+  if (opts.danger) {
+    okBtn.className = 'btn btn-sm';
+    okBtn.style.background = '#DC2626';
+    okBtn.style.color = '#fff';
+    okBtn.style.borderColor = '#DC2626';
+  } else {
+    okBtn.className = 'btn btn-primary btn-sm';
+    okBtn.style.background = '';
+    okBtn.style.color = '';
+    okBtn.style.borderColor = '';
+  }
+  okBtn.textContent = opts.okLabel || 'Continua';
+  openM('modal-confirm');
+}
+function _confirmOk() { closeM('modal-confirm'); if (_confirmCallback) { _confirmCallback(); _confirmCallback = null; } }
+function _confirmCancel() { closeM('modal-confirm'); _confirmCallback = null; }
 
 const DEFAULT_MEALS = [
   { id: 'colazione', nome: 'Colazione', emoji: '🌅', note: '' },
@@ -408,14 +452,15 @@ function creaGiorno() {
 
 function delGiorno(idx) {
   if (giorni.length <= 1) { toast('Almeno un giorno richiesto', 'err'); return; }
-  if (!confirm('Eliminare il giorno "' + giorni[idx].nome + '" e tutti i suoi pasti?')) return;
-  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
-  giorni.splice(idx, 1);
-  if (giornoCorrente >= giorni.length) giornoCorrente = giorni.length - 1;
-  markDirty();
-  renderGiornoTabs();
-  renderPiano();
-  toast('🗑️ Giorno eliminato', 'info');
+  customConfirm('Eliminare il giorno "' + giorni[idx].nome + '" e tutti i suoi pasti?', () => {
+    pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+    giorni.splice(idx, 1);
+    if (giornoCorrente >= giorni.length) giornoCorrente = giorni.length - 1;
+    markDirty();
+    renderGiornoTabs();
+    renderPiano();
+    toast('🗑️ Giorno eliminato', 'info');
+  }, { danger: true, okLabel: 'Elimina' });
 }
 
 function openRenameGiorno(idx) {
@@ -740,9 +785,10 @@ function swapM(a, b) {
 }
 function delMeal(mi) {
   if (getMeals().length <= 1) { toast('Almeno un pasto richiesto!', 'err'); return; }
-  if (!confirm(`Eliminare "${getMeals()[mi].nome}"?`)) return;
-  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
-  giorni[giornoCorrente].meals.splice(mi, 1); markDirty(); renderPiano();
+  customConfirm(`Eliminare "${getMeals()[mi].nome}"?`, () => {
+    pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+    giorni[giornoCorrente].meals.splice(mi, 1); markDirty(); renderPiano();
+  }, { danger: true, okLabel: 'Elimina' });
 }
 function eliminaVuote() {
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
@@ -921,7 +967,13 @@ function applyAlt(mi, ii, nome, qt) {
 // PIANO OPERATIONS (new/save/load)
 // ═══════════════════════════════════════════════════
 function nuovoPiano() {
-  if (dirty && !confirm('Modifiche non salvate. Continuare?')) return;
+  if (dirty) {
+    customConfirm('Modifiche non salvate. Continuare?', _eseguiNuovoPiano);
+    return;
+  }
+  _eseguiNuovoPiano();
+}
+function _eseguiNuovoPiano() {
   sessionStorage.removeItem('draftPiano');
   giorni = [{ id: 'g_' + Date.now(), nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false })) }];
   giornoCorrente = 0;
@@ -1551,13 +1603,19 @@ async function caricaPianoById(id) {
 
 // Expose for patologie page to load a plan
 window.loadPianoFromPatologia = function(giorni_data, nomePat) {
-  if (dirty && !confirm('Modifiche non salvate nel giorno corrente. Sovrascrivere?')) return;
-  const idx = giornoCorrente;
-  giorni[idx].meals = giorni_data.map(m => ({ ...m, id: m.id || ('m_' + Date.now() + Math.random()), items: m.items.map(i => ({ ...i, altPrint: [], misura: i.misura || '' })), collapsed: false }));
-  markDirty();
-  renderGiornoTabs();
-  renderPiano();
-  toast(`✅ Schema "${nomePat}" caricato nel giorno corrente!`, 'ok');
+  const doLoad = () => {
+    const idx = giornoCorrente;
+    giorni[idx].meals = giorni_data.map(m => ({ ...m, id: m.id || ('m_' + Date.now() + Math.random()), items: m.items.map(i => ({ ...i, altPrint: [], misura: i.misura || '' })), collapsed: false }));
+    markDirty();
+    renderGiornoTabs();
+    renderPiano();
+    toast(`✅ Schema "${nomePat}" caricato nel giorno corrente!`, 'ok');
+  };
+  if (dirty) {
+    customConfirm('Modifiche non salvate nel giorno corrente. Sovrascrivere?', doLoad);
+    return;
+  }
+  doLoad();
 };
 
 function saveDraftState() {

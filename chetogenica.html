@@ -577,6 +577,7 @@
     <button id="keto-btn-edit" onclick="toggleEditKeto()" title="Modifica le quantità e gli alimenti">✏️ Modifica</button>
     <button onclick="salvaEsempiKeto()" title="Salva le modifiche in locale">💾 Salva</button>
     <button onclick="stampaCompattaKeto()" title="Stampa per il paziente">📋 Stampa Compatta</button>
+    <button onclick="apriInPianoAlimentareKeto()" title="Copia i menu nel Piano Alimentare per modificarli e salvarli">📂 Apri in Piano</button>
     <button onclick="ripristinaEsempiKeto()" title="Ripristina gli esempi originali" style="color:#DC2626;border-color:#FECACA">↩ Ripristina Originale</button>
   </div>
 
@@ -1203,6 +1204,36 @@ function stampaCompattaKeto() {
   document.body.dataset.printMode = 'compact';
   window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, { once: true });
   setTimeout(() => window.print(), 300);
+}
+
+function apriInPianoAlimentareKeto() {
+  if (_ketoEditMode) toggleEditKeto();
+  const pasti = [];
+  KETO_MENU_IDS.forEach(menuId => {
+    const card = document.getElementById(menuId);
+    if (!card) return;
+    const titleEl = card.querySelector('.menu-card-hdr div:first-child');
+    const menuNome = titleEl ? titleEl.textContent.trim() : menuId;
+    card.querySelectorAll('.menu-row').forEach(row => {
+      const labelEl = row.querySelector('[style*="width:80px"]');
+      const foodEl = row.querySelector('.menu-row-food');
+      const label = labelEl ? labelEl.textContent.trim() : 'Pasto';
+      const food = foodEl ? foodEl.textContent.trim() : '';
+      pasti.push({
+        id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+        nome: label,
+        emoji: '🍽️',
+        items: [{ nome: food, qt: '', altPrint: [], misura: '' }],
+        note: menuNome,
+        collapsed: false
+      });
+    });
+  });
+  if (!pasti.length) { alert('Nessun menu da copiare'); return; }
+  const firstTitle = document.querySelector('#' + KETO_MENU_IDS[0] + ' .menu-card-hdr div:first-child')?.textContent.trim() || 'Menu Chetogenico';
+  const d = { nome: firstTitle, pasti };
+  sessionStorage.setItem('loadPatologia', JSON.stringify(d));
+  window.location.href = 'app.html';
 }
 </script>
 </body>

@@ -112,6 +112,7 @@
   <div class="tbar-actions">
     <button class="btn btn-primary btn-sm" onclick="openNewEvent()">➕ Nuovo Appuntamento</button>
     <button id="btn-gcal" class="btn btn-ghost btn-sm" onclick="connectGoogleCalendar()" style="display:none">📅 Connetti Google Calendar</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="exportICal()" title="Esporta tutti gli appuntamenti come file .ics compatibile con Google Calendar, Apple Calendar, Outlook e altri">📥 Esporta Calendario</button>
     <button class="today-btn" onclick="goToday()">Oggi</button>
   </div>
 </div>
@@ -628,6 +629,75 @@ async function createGoogleCalendarEvent(ev) {
     console.error('Google Calendar error:', e);
     toast('⚠️ Errore sincronizzazione Google Calendar', 'err');
   }
+}
+
+// ─── iCal Export ─────────────────────────────────────────────────────────────
+function exportICal() {
+  if (!events.length) { toast('Nessun appuntamento da esportare', 'err'); return; }
+  const pad = n => String(n).padStart(2, '0');
+  function toICalDate(dateStr, timeStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [h, min] = (timeStr || '09:00').split(':').map(Number);
+    return `${y}${pad(m)}${pad(d)}T${pad(h)}${pad(min)}00`;
+  }
+  function escIcal(s) {
+    return (s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  }
+  function charByteLen(cp) {
+    if (cp < 0x80) return 1;
+    if (cp < 0x800) return 2;
+    if (cp < 0x10000) return 3;
+    return 4;
+  }
+  function foldLine(line) {
+    let result = '';
+    let current = '';
+    let currentBytes = 0;
+    for (const ch of line) {
+      const chBytes = charByteLen(ch.codePointAt(0));
+      if (currentBytes + chBytes > 75) {
+        result += current + '\r\n ';
+        current = ch;
+        currentBytes = 1 + chBytes; // 1 for the leading space on continuation line
+      } else {
+        current += ch;
+        currentBytes += chBytes;
+      }
+    }
+    return result + current;
+  }
+  const now = new Date();
+  const dtstamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//NutriPlan Pro//Agenda//IT\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n';
+  events.forEach(ev => {
+    const dtstart = toICalDate(ev.data, ev.ora);
+    const durata = parseInt(ev.durata) || 60;
+    const [y, m, d] = ev.data.split('-').map(Number);
+    const [h, min] = (ev.ora || '09:00').split(':').map(Number);
+    const endDate = new Date(y, m - 1, d, h, min + durata);
+    const dtend = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
+    const summary = escIcal(ev.paziente || ev.titolo || 'Appuntamento');
+    const desc = escIcal([TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join(' - '));
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += foldLine('UID:' + ev.id + '@nutriplan-pro') + '\r\n';
+    ics += 'DTSTAMP:' + dtstamp + '\r\n';
+    ics += 'DTSTART;TZID=' + Intl.DateTimeFormat().resolvedOptions().timeZone + ':' + dtstart + '\r\n';
+    ics += 'DTEND;TZID=' + Intl.DateTimeFormat().resolvedOptions().timeZone + ':' + dtend + '\r\n';
+    ics += foldLine('SUMMARY:' + summary) + '\r\n';
+    if (desc) ics += foldLine('DESCRIPTION:' + desc) + '\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  ics += 'END:VCALENDAR';
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'nutriplan-agenda.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('📥 Calendario esportato! Importalo in Google Calendar, Apple Calendar o Outlook.', 'ok');
 }
 </script>
 </body>

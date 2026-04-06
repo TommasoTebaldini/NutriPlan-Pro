@@ -530,9 +530,9 @@ function buildRow(mi, ii) {
     const fa = lookup(a.nome);
     return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${ai}">
       <td style="padding-left:22px;text-align:left">↳ ALT: <b>${esc(a.nome)}</b></td>
-      <td>${a.qt}g</td>
-      <td>${fmtV(cv(fa, 'k', a.qt))}</td><td>${fmtV(cv(fa, 'p', a.qt))}</td>
-      <td></td><td></td><td></td><td>${fmtV(cv(fa, 'ch', a.qt))}</td><td>${fmtV(cv(fa, 'fi', a.qt))}</td>
+      <td class="alt-qt">${a.qt}g</td>
+      <td data-k="k">${fmtV(cv(fa, 'k', a.qt))}</td><td data-k="p">${fmtV(cv(fa, 'p', a.qt))}</td>
+      <td></td><td></td><td></td><td data-k="ch">${fmtV(cv(fa, 'ch', a.qt))}</td><td data-k="fi">${fmtV(cv(fa, 'fi', a.qt))}</td>
       ${MICROS.map(m => `<td style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(fa, m.k, a.qt), 2)}</td>`).join('')}
       <td></td>
       <td class="no-print"><button class="del-row" onclick="removeAltPrint(${mi},${ii},${ai})">✕</button></td>
@@ -673,6 +673,17 @@ function onQI(mi, ii, inp) {
   if (oldQt > 0 && newQt > 0 && item.altPrint && item.altPrint.length) {
     const ratio = newQt / oldQt;
     item.altPrint = item.altPrint.map(a => ({ ...a, qt: Math.round(a.qt * ratio * 10) / 10 }));
+    // Update the alt-print rows already in the DOM
+    item.altPrint.forEach((a, ai) => {
+      const aprRow = document.getElementById(`apr-${mi}-${ii}-${ai}`);
+      if (!aprRow) return;
+      const qtCell = aprRow.querySelector('.alt-qt');
+      if (qtCell) qtCell.textContent = a.qt + 'g';
+      const fa = lookup(a.nome);
+      aprRow.querySelectorAll('td[data-k]').forEach(td => {
+        td.innerHTML = fmtV(cv(fa, td.getAttribute('data-k'), a.qt));
+      });
+    });
   }
   item.qt = inp.value;
   markDirty(); refreshRow(mi, ii); refreshTot(mi); updateRiep();
@@ -939,6 +950,11 @@ async function salvaPiano() {
     }
   }
   const finalCartellaId = (cartellaEl && cartellaEl.value) ? cartellaEl.value : null;
+  if (!finalCartellaId) {
+    toast('⚠️ Seleziona una cartella paziente prima di salvare', 'err');
+    document.getElementById('cartella-search')?.focus();
+    return;
+  }
   const payload = {
     user_id: currentUser.id, nome, data_piano: data,
     meals: JSON.stringify(giorni),

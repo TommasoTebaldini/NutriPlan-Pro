@@ -667,6 +667,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
           setVal('v-plica',data.plica);
           setVal('v-note',data.note);
           try{const pat=JSON.parse(data.patologie||'[]');selectedPat=new Set(pat);renderPatChips();}catch(e){}
+          if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;}catch(e){}}
+          if(data.eta&&data.peso&&data.altezza)calcolaFabbisogno();
+          if(data.tdee_calcolato&&!isNaN(data.tdee_calcolato)){tdee=data.tdee_calcolato;renderMacroDist();}
           toast('📂 Scheda caricata per modifica!','ok');
         }
       } else if(preCartella){

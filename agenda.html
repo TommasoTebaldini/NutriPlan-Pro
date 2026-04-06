@@ -583,7 +583,7 @@ async function saveEvent() {
   toast('✅ Appuntamento salvato!','ok');
   
   // Sync to Google Calendar if connected and token is valid
-  if (gcalTokenValid()) createGoogleCalendarEvent(ev);
+  if (gcalTokenValid()) await createGoogleCalendarEvent(ev);
   
   // Check notification permission
   if(Notification.permission === 'default') {
@@ -779,15 +779,35 @@ function connectGoogleCalendar() {
 
 function updateGCalButton(connected) {
   const btn = document.getElementById('btn-gcal');
-  if (!btn) return;
-  if (connected) {
-    btn.textContent = '📅 Google Connesso';
-    btn.classList.add('btn-primary');
-    btn.classList.remove('btn-ghost');
-  } else {
-    btn.textContent = '📅 Connetti Google Calendar';
-    btn.classList.remove('btn-primary');
-    btn.classList.add('btn-ghost');
+  if (btn) {
+    if (connected) {
+      btn.textContent = '📅 Google Connesso';
+      btn.classList.add('btn-primary');
+      btn.classList.remove('btn-ghost');
+    } else {
+      btn.textContent = '📅 Connetti Google Calendar';
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-ghost');
+    }
+  }
+  // Keep modal button in sync if the modal is currently open
+  const modalBtn = document.getElementById('btn-gcal-modal');
+  const gcalStatus = document.getElementById('gcal-sync-status');
+  if (modalBtn) {
+    if (connected) {
+      modalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
+      modalBtn.classList.add('btn-primary');
+      if (gcalStatus) {
+        const connEmail = localStorage.getItem('gcal_email');
+        gcalStatus.textContent = connEmail
+          ? `Connesso come ${connEmail}. I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.`
+          : 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
+      }
+    } else {
+      modalBtn.textContent = '📅 Connetti Google Calendar';
+      modalBtn.classList.remove('btn-primary');
+      if (gcalStatus) gcalStatus.textContent = '';
+    }
   }
 }
 
@@ -951,18 +971,7 @@ function connectGoogleCalendarFromModal() {
     }
   }
   connectGoogleCalendar();
-  setTimeout(() => {
-    const gcalBtn = document.getElementById('btn-gcal-modal');
-    const gcalStatus = document.getElementById('gcal-sync-status');
-    if (gcalTokenValid()) {
-      gcalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
-      gcalBtn.classList.add('btn-primary');
-      const connEmail = localStorage.getItem('gcal_email');
-      gcalStatus.textContent = connEmail
-        ? `Connesso come ${connEmail}. I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.`
-        : 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
-    }
-  }, 3000);
+  // Modal button state is updated via updateGCalButton() called from the OAuth callback.
 }
 
 function copySyncUrl() {

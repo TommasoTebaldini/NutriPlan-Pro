@@ -5,9 +5,10 @@
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 // Use SUPABASE_SERVICE_KEY (server-side, bypasses RLS) — required for this endpoint.
-// SUPABASE_ANON_KEY will not work here because RLS restricts reads to authenticated
-// users only; set SUPABASE_SERVICE_KEY in your Vercel project settings.
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+// SUPABASE_ANON_KEY will NOT work here: RLS restricts reads to authenticated users only,
+// so any query made with the anon key will silently return 0 events.
+// Set SUPABASE_SERVICE_KEY in your Vercel project settings.
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 const TIPO_LABELS = {
   visita: 'Prima Visita',
@@ -21,7 +22,8 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 module.exports = async (req, res) => {
   if (!SUPABASE_KEY) {
-    res.status(500).send('Server configuration error: SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY must be set');
+    console.error('calendar.js: SUPABASE_SERVICE_KEY is not set. The anon key cannot be used here because Row Level Security would silently return 0 events.');
+    res.status(500).send('Server configuration error: SUPABASE_SERVICE_KEY not configured');
     return;
   }
 
@@ -115,6 +117,26 @@ function generateICS(events) {
     'X-WR-TIMEZONE:Europe/Rome\r\n',
     'REFRESH-INTERVAL;VALUE=DURATION:PT1H\r\n',
     'X-PUBLISHED-TTL:PT1H\r\n',
+    // VTIMEZONE component required by RFC 5545 when TZID is referenced in events.
+    // Without it, some calendar clients (Apple Calendar, Outlook) may display wrong
+    // times or silently discard events.
+    'BEGIN:VTIMEZONE\r\n',
+    'TZID:Europe/Rome\r\n',
+    'BEGIN:DAYLIGHT\r\n',
+    'TZOFFSETFROM:+0100\r\n',
+    'TZOFFSETTO:+0200\r\n',
+    'TZNAME:CEST\r\n',
+    'DTSTART:19700329T020000\r\n',
+    'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3\r\n',
+    'END:DAYLIGHT\r\n',
+    'BEGIN:STANDARD\r\n',
+    'TZOFFSETFROM:+0200\r\n',
+    'TZOFFSETTO:+0100\r\n',
+    'TZNAME:CET\r\n',
+    'DTSTART:19701025T030000\r\n',
+    'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10\r\n',
+    'END:STANDARD\r\n',
+    'END:VTIMEZONE\r\n',
   ];
 
   (events || []).forEach((ev) => {

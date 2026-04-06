@@ -637,7 +637,7 @@ async function deleteCurrentEvent() {
     }
   }
   // Remove from Google Calendar if the event was synced there
-  const syncedIds = JSON.parse(localStorage.getItem('gcal_synced_ids') || '{}');
+  const syncedIds = getGCalSyncedIds();
   if (syncedIds[idToDelete] && gcalTokenValid()) {
     try {
       await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${syncedIds[idToDelete]}`, {
@@ -648,7 +648,7 @@ async function deleteCurrentEvent() {
       console.warn('Google Calendar delete error:', e);
     }
     delete syncedIds[idToDelete];
-    localStorage.setItem('gcal_synced_ids', JSON.stringify(syncedIds));
+    setGCalSyncedIds(syncedIds);
   }
   closeM('modal-event');
   renderCalendar();
@@ -740,6 +740,25 @@ let gcalTokenClient = null;
 
 function gcalTokenValid() {
   return gcalToken && Date.now() < gcalTokenExpiry;
+}
+
+// Returns the localStorage key for the Google Calendar sync map, scoped to the
+// current user so that multiple users sharing a browser don't see each other's
+// sync state and don't accidentally skip events that were never pushed.
+// Returns null when no authenticated user is present — callers must treat null
+// as "no persisted state available" and skip write operations.
+function gcalSyncKey() {
+  return currentUser ? 'gcal_synced_ids_' + currentUser.id : null;
+}
+function getGCalSyncedIds() {
+  const key = gcalSyncKey();
+  if (!key) return {};
+  return JSON.parse(localStorage.getItem(key) || '{}');
+}
+function setGCalSyncedIds(ids) {
+  const key = gcalSyncKey();
+  if (!key) return;
+  localStorage.setItem(key, JSON.stringify(ids));
 }
 
 function showClientIdHelp() {
@@ -874,9 +893,9 @@ async function createGoogleCalendarEvent(ev, silent = false) {
     }
     const created = await res.json();
     // Persist the mapping so we can delete this event from GCal later
-    const syncedIds = JSON.parse(localStorage.getItem('gcal_synced_ids') || '{}');
+    const syncedIds = getGCalSyncedIds();
     syncedIds[ev.id] = created.id;
-    localStorage.setItem('gcal_synced_ids', JSON.stringify(syncedIds));
+    setGCalSyncedIds(syncedIds);
     if (!silent) toast('📅 Aggiunto a Google Calendar!', 'ok');
     return created.id;
   } catch(e) {
@@ -890,7 +909,7 @@ async function createGoogleCalendarEvent(ev, silent = false) {
 // Called automatically after a successful OAuth connection.
 async function syncAllEventsToGCal() {
   if (!gcalTokenValid() || !events.length) return;
-  const syncedIds = JSON.parse(localStorage.getItem('gcal_synced_ids') || '{}');
+  const syncedIds = getGCalSyncedIds();
   const toSync = events.filter(e => !syncedIds[e.id]);
   if (!toSync.length) {
     toast('📅 Tutti gli appuntamenti sono già sincronizzati con Google Calendar', 'ok');
@@ -903,6 +922,12 @@ async function syncAllEventsToGCal() {
   }
   if (count > 0) {
     toast(`📅 ${count} appuntament${count === 1 ? 'o' : 'i'} sincronizzat${count === 1 ? 'o' : 'i'} su Google Calendar!`, 'ok');
+  } else {
+    // If gcalToken was cleared during the loop, the session expired mid-sync
+    const msg = !gcalToken
+      ? '⚠️ Sessione Google Calendar scaduta durante la sincronizzazione. Riconnetti per riprovare.'
+      : '⚠️ Sincronizzazione Google Calendar non riuscita. Verifica la connessione e riprova.';
+    toast(msg, 'err');
   }
 }
 

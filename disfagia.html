@@ -133,6 +133,7 @@
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
     <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaDisfagia()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="apriInPianoAlimentareDisfagia()" title="Copia il piano IDDSI corrente nel Piano Alimentare per modificarlo e salvarlo">📂 Apri in Piano</button>
   </div>
 </div>
 
@@ -1106,6 +1107,29 @@ function stampaCompattaDisfagia() {
   document.body.dataset.printMode = 'compact';
   window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, { once: true });
   setTimeout(() => window.print(), 300);
+}
+
+function apriInPianoAlimentareDisfagia() {
+  const meta = IDDSI_META[selIddsi];
+  const dieta = IDDSI_DIETE[selIddsi];
+  if (!meta || !dieta) { alert('Seleziona prima un piano IDDSI'); return; }
+  const factor = selKcal / dieta.kcal_base;
+  const d = {
+    nome: 'IDDSI L' + selIddsi + ' — ' + meta.nome + ' ' + selKcal + ' kcal',
+    pasti: dieta.pasti.map(pasto => ({
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      nome: pasto.nome,
+      emoji: pasto.emoji,
+      items: pasto.items.map(item => {
+        const qtScaled = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
+        return { nome: item.nome, qt: String(qtScaled), altPrint: [], misura: item.unit };
+      }),
+      note: '',
+      collapsed: false
+    }))
+  };
+  sessionStorage.setItem('loadPatologia', JSON.stringify(d));
+  window.location.href = 'app.html';
 }
 </script>
 </body>

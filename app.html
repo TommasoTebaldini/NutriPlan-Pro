@@ -673,6 +673,18 @@ function onQI(mi, ii, inp) {
   if (oldQt > 0 && newQt > 0 && item.altPrint && item.altPrint.length) {
     const ratio = newQt / oldQt;
     item.altPrint = item.altPrint.map(a => ({ ...a, qt: Math.round(a.qt * ratio * 10) / 10 }));
+    // Update the alt-print rows already in the DOM
+    item.altPrint.forEach((a, ai) => {
+      const aprRow = document.getElementById(`apr-${mi}-${ii}-${ai}`);
+      if (!aprRow) return;
+      const cells = aprRow.querySelectorAll('td');
+      if (cells[1]) cells[1].textContent = a.qt + 'g';
+      const fa = lookup(a.nome);
+      if (cells[2]) cells[2].innerHTML = fmtV(cv(fa, 'k', a.qt));
+      if (cells[3]) cells[3].innerHTML = fmtV(cv(fa, 'p', a.qt));
+      if (cells[7]) cells[7].innerHTML = fmtV(cv(fa, 'ch', a.qt));
+      if (cells[8]) cells[8].innerHTML = fmtV(cv(fa, 'fi', a.qt));
+    });
   }
   item.qt = inp.value;
   markDirty(); refreshRow(mi, ii); refreshTot(mi); updateRiep();
@@ -939,6 +951,11 @@ async function salvaPiano() {
     }
   }
   const finalCartellaId = (cartellaEl && cartellaEl.value) ? cartellaEl.value : null;
+  if (!finalCartellaId) {
+    toast('⚠️ Seleziona una cartella paziente prima di salvare', 'err');
+    document.getElementById('cartella-search')?.focus();
+    return;
+  }
   const payload = {
     user_id: currentUser.id, nome, data_piano: data,
     meals: JSON.stringify(giorni),

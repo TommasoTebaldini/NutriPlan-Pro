@@ -244,7 +244,7 @@
           <button class="btn btn-primary btn-sm" id="btn-gcal-modal" onclick="connectGoogleCalendarFromModal()">Connetti Google Calendar</button>
           <div id="gcal-sync-status" style="font-size:12px;margin-top:6px;color:var(--slate-m)"></div>
         </div>
-        <p style="font-size:11px;color:#6B7280;margin-top:8px">⚠️ Richiede un Google Client ID configurato nelle impostazioni del progetto.</p>
+        <p id="gcal-config-warning" style="font-size:11px;color:#6B7280;margin-top:8px;display:none">⚠️ Richiede un Google Client ID configurato nelle impostazioni del progetto.</p>
       </div>
 
       <!-- WebCal subscription section -->
@@ -737,7 +737,11 @@ function openSyncModal() {
   // Update Google Calendar status
   const gcalBtn = document.getElementById('btn-gcal-modal');
   const gcalStatus = document.getElementById('gcal-sync-status');
+  const gcalWarning = document.getElementById('gcal-config-warning');
   if (GOOGLE_CLIENT_ID) {
+    gcalBtn.disabled = false;
+    gcalBtn.title = '';
+    gcalWarning.style.display = 'none';
     if (gcalTokenValid()) {
       gcalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
       gcalBtn.classList.add('btn-primary');
@@ -750,6 +754,7 @@ function openSyncModal() {
     gcalBtn.textContent = '⚠️ Client ID non configurato';
     gcalBtn.disabled = true;
     gcalBtn.title = 'Inserisci il Google Client ID nella variabile GOOGLE_CLIENT_ID nel codice.';
+    gcalWarning.style.display = '';
   }
   openM('modal-sync');
 }

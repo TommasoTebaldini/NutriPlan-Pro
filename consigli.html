@@ -1859,7 +1859,7 @@ async function salvaNotePaziente(consiglioId) {
   }
   showLoading(false);
   if (result.error) {
-    if (result.error.code === '42P01') {
+    if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
       mostraModalSetupSQL();
     } else {
       toast('❌ ' + result.error.message, 'err');
@@ -1887,7 +1887,10 @@ CREATE TABLE IF NOT EXISTS note_specialistiche (
 );
 ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Own note" ON note_specialistiche;
-CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);`;
+CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);
+
+-- Se la tabella esiste già ma manca la colonna updated_at, esegui:
+ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();`;
   console.error(sql);
   const modal = document.getElementById('modal-sql-setup');
   if (modal) {

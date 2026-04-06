@@ -922,6 +922,7 @@ function applyAlt(mi, ii, nome, qt) {
 // ═══════════════════════════════════════════════════
 function nuovoPiano() {
   if (dirty && !confirm('Modifiche non salvate. Continuare?')) return;
+  sessionStorage.removeItem('draftPiano');
   giorni = [{ id: 'g_' + Date.now(), nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false })) }];
   giornoCorrente = 0;
   document.getElementById('inp-nome').value = '';
@@ -967,6 +968,7 @@ async function salvaPiano() {
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   dirty = false;
+  sessionStorage.removeItem('draftPiano');
   toast(`💾 "${nome}" salvato!`, 'ok');
 
 }
@@ -1421,12 +1423,56 @@ async function init() {
   if (pianoToLoad) {
     sessionStorage.removeItem('loadPianoId');
     sessionStorage.removeItem('newPianoCartella');
+    sessionStorage.removeItem('draftPiano');
     await caricaPianoById(pianoToLoad);
-  } else {
+  } else if (newCartellaId) {
+    sessionStorage.removeItem('newPianoCartella');
+    sessionStorage.removeItem('draftPiano');
     nuovoPiano();
-    if (newCartellaId) {
-      sessionStorage.removeItem('newPianoCartella');
-      selectCartella(newCartellaId, allCartelle.find(c=>c.id===newCartellaId)?.nome || '');
+    selectCartella(newCartellaId, allCartelle.find(c=>c.id===newCartellaId)?.nome || '');
+  } else {
+    const savedDraft = sessionStorage.getItem('draftPiano');
+    if (savedDraft) {
+      try {
+        sessionStorage.removeItem('draftPiano');
+        const draft = JSON.parse(savedDraft);
+        giorni = draft.giorni.map(g => ({
+          ...g,
+          meals: (g.meals || []).map(m => ({
+            ...m, collapsed: false,
+            items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [] }))
+          }))
+        }));
+        giornoCorrente = draft.giornoCorrente || 0;
+        currentPianoId = draft.currentPianoId || null;
+        dirty = draft.dirty || false;
+        if (draft.cartellaId) {
+          const cartellaEl = document.getElementById('inp-cartella');
+          if (cartellaEl) cartellaEl.value = draft.cartellaId;
+        }
+        if (draft.cartellaNome) {
+          const cs = document.getElementById('cartella-search');
+          if (cs) cs.value = draft.cartellaNome;
+        }
+        if (draft.cartellaSelected) {
+          const csel = document.getElementById('cartella-selected');
+          if (csel) csel.textContent = draft.cartellaSelected;
+        }
+        if (draft.dataPiano) {
+          const dataEl = document.getElementById('inp-data');
+          if (dataEl) dataEl.value = draft.dataPiano;
+        }
+        if (draft.nomePiano) {
+          const nomeEl = document.getElementById('inp-nome');
+          if (nomeEl) nomeEl.value = draft.nomePiano;
+        }
+        renderGiornoTabs(); renderPiano();
+      } catch(e) {
+        console.error('Errore ripristino bozza:', e);
+        nuovoPiano();
+      }
+    } else {
+      nuovoPiano();
     }
   }
 
@@ -1513,6 +1559,25 @@ window.loadPianoFromPatologia = function(giorni_data, nomePat) {
   renderPiano();
   toast(`✅ Schema "${nomePat}" caricato nel giorno corrente!`, 'ok');
 };
+
+function saveDraftState() {
+  if (!giorni || !giorni.length) return;
+  const cartellaId = document.getElementById('inp-cartella')?.value || '';
+  const hasContent = cartellaId || currentPianoId ||
+    giorni.some(g => g.meals.some(m => m.items.some(i => i.nome && i.nome.trim())));
+  if (!hasContent) return;
+  try {
+    sessionStorage.setItem('draftPiano', JSON.stringify({
+      giorni, giornoCorrente, currentPianoId, dirty,
+      cartellaId,
+      cartellaNome: document.getElementById('cartella-search')?.value || '',
+      cartellaSelected: document.getElementById('cartella-selected')?.textContent || '',
+      dataPiano: document.getElementById('inp-data')?.value || '',
+      nomePiano: document.getElementById('inp-nome')?.value || ''
+    }));
+  } catch(e) { console.error('Errore salvataggio bozza:', e); }
+}
+window.addEventListener('pagehide', saveDraftState);
 
 document.addEventListener('DOMContentLoaded', init);
 </script>

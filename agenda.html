@@ -574,7 +574,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   setInterval(checkNotifications, 60000);
   if(Notification.permission === 'default') Notification.requestPermission();
   try { const ok = await checkAuth(); if (ok) await loadEventsFromSupabase(); } catch(e) {}
-  // Load Google Identity Services if a Client ID is configured
+  // Load Google Client ID from server config, then init Google Identity Services
+  try {
+    const cfg = await fetch('/api/config').then(r => r.json());
+    if (cfg && cfg.googleClientId) GOOGLE_CLIENT_ID = cfg.googleClientId;
+  } catch(e) {}
   if (GOOGLE_CLIENT_ID) {
     document.getElementById('btn-gcal').style.display = '';
     const script = document.createElement('script');
@@ -598,12 +602,13 @@ function updateStats() {
 }
 
 // ─── Google Calendar Integration ─────────────────────────────────────────────
-// To enable: create a Google Cloud project, enable the Google Calendar API,
-// create an OAuth 2.0 Web Application client ID and paste it below.
+// To enable: set the GOOGLE_CLIENT_ID environment variable in Vercel (or paste
+// the Client ID directly below). Create a Google Cloud project, enable the
+// Google Calendar API, create an OAuth 2.0 Web Application client ID, and add
+// your domain to the authorised JavaScript origins in the Google Cloud Console.
 // NOTE: The Client ID is not a secret — it is safe to include in client-side
-// JavaScript. Authorised JavaScript origins and redirect URIs must be
-// configured in the Google Cloud Console for your domain.
-const GOOGLE_CLIENT_ID = ''; // ← insert your Client ID here
+// JavaScript.
+let GOOGLE_CLIENT_ID = ''; // loaded from /api/config at startup
 
 let gcalToken = null;
 let gcalTokenExpiry = 0;

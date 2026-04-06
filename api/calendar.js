@@ -167,6 +167,6 @@ function generateICS(events) {
     parts.push('END:VEVENT\r\n');
   });
 
-  parts.push('END:VCALENDAR');
+  parts.push('END:VCALENDAR\r\n');
   return parts.join('');
 }

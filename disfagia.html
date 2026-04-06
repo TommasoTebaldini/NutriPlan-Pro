@@ -1047,7 +1047,7 @@ function stampaCompattaDisfagia() {
 
   // Title
   html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
-  html += `<div style="font-size:18px;font-weight:700;color:#0369A1">Piano Dietetico IDDSI ${selIddsi} — ${meta.nome}</div>`;
+  html += `<div style="font-size:18px;font-weight:700;color:#0369A1">Piano Dietetico IDDSI ${selIddsi} — ${esc(meta.nome)}</div>`;
   html += `<div style="font-size:12px;color:#475569;margin-top:4px">Target: ${selKcal} kcal/die</div>`;
   html += `</div>`;
 
@@ -1076,8 +1076,8 @@ function stampaCompattaDisfagia() {
     html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
     html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,${meta.bg},${meta.bg}cc)">`;
     html += `<div style="display:flex;align-items:center;gap:10px">`;
-    html += `<span style="font-size:18px">${pasto.emoji}</span>`;
-    html += `<span style="font-size:14px;font-weight:700;color:white">${pasto.nome}</span>`;
+    html += `<span style="font-size:18px">${esc(pasto.emoji)}</span>`;
+    html += `<span style="font-size:14px;font-weight:700;color:white">${esc(pasto.nome)}</span>`;
     html += `</div>`;
     html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${pastoKcal} kcal</span>`;
     html += `</div>`;
@@ -1086,9 +1086,9 @@ function stampaCompattaDisfagia() {
       const qtScaled = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
       const kcalScaled = Math.round(item.kcal * factor);
       html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9">`;
-      html += `<span style="font-size:13px;color:#1E293B">${item.nome}</span>`;
+      html += `<span style="font-size:13px;color:#1E293B">${esc(item.nome)}</span>`;
       html += `<div style="display:flex;align-items:center;gap:14px;white-space:nowrap;padding-left:12px">`;
-      html += `<span style="font-size:13px;font-weight:700;color:#0EA5E9">${qtScaled} ${item.unit}</span>`;
+      html += `<span style="font-size:13px;font-weight:700;color:#0EA5E9">${qtScaled} ${esc(item.unit)}</span>`;
       html += `<span style="font-size:12px;color:#94A3B8">${kcalScaled} kcal</span>`;
       html += `</div></div>`;
     });
@@ -1097,7 +1097,7 @@ function stampaCompattaDisfagia() {
   });
 
   if (dieta.nota) {
-    html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;border-left:3px solid #F97316;font-size:12px;color:#7C2D12">⚠️ ${dieta.nota}</div>`;
+    html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;border-left:3px solid #F97316;font-size:12px;color:#7C2D12">⚠️ ${esc(dieta.nota)}</div>`;
   }
 
   html += `</div>`;

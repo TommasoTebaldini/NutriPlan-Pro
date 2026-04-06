@@ -1124,8 +1124,11 @@ function toggleEditRenale() {
   if (btn) { btn.classList.toggle('btn-edit-active', _renEditMode); btn.textContent = _renEditMode ? '✅ Fine Modifica' : '✏️ Modifica'; }
   const table = document.querySelector('#ren-hd-piano .ren-table');
   if (!table) return;
-  table.querySelectorAll('tbody td').forEach(td => {
-    td.contentEditable = _renEditMode ? 'true' : 'false';
+  table.querySelectorAll('tbody tr').forEach(tr => {
+    if ((tr.getAttribute('style') || '').includes('DBEAFE')) return;
+    tr.querySelectorAll('td').forEach(td => {
+      td.contentEditable = _renEditMode ? 'true' : 'false';
+    });
   });
 }
 

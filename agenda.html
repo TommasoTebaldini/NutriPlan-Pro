@@ -643,15 +643,26 @@ function exportICal() {
   function escIcal(s) {
     return (s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
   }
+  function charByteLen(cp) {
+    if (cp < 0x80) return 1;
+    if (cp < 0x800) return 2;
+    if (cp < 0x10000) return 3;
+    return 4;
+  }
   function foldLine(line) {
-    const bytes = new TextEncoder().encode(line);
-    if (bytes.length <= 75) return line;
     let result = '';
     let current = '';
+    let currentBytes = 0;
     for (const ch of line) {
-      const testBytes = new TextEncoder().encode(current + ch);
-      if (testBytes.length > 75) { result += current + '\r\n '; current = ch; }
-      else { current += ch; }
+      const chBytes = charByteLen(ch.codePointAt(0));
+      if (currentBytes + chBytes > 75) {
+        result += current + '\r\n ';
+        current = ch;
+        currentBytes = 1 + chBytes; // 1 for the leading space on continuation line
+      } else {
+        current += ch;
+        currentBytes += chBytes;
+      }
     }
     return result + current;
   }

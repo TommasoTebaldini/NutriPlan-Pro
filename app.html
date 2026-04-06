@@ -530,9 +530,9 @@ function buildRow(mi, ii) {
     const fa = lookup(a.nome);
     return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${ai}">
       <td style="padding-left:22px;text-align:left">↳ ALT: <b>${esc(a.nome)}</b></td>
-      <td>${a.qt}g</td>
-      <td>${fmtV(cv(fa, 'k', a.qt))}</td><td>${fmtV(cv(fa, 'p', a.qt))}</td>
-      <td></td><td></td><td></td><td>${fmtV(cv(fa, 'ch', a.qt))}</td><td>${fmtV(cv(fa, 'fi', a.qt))}</td>
+      <td class="alt-qt">${a.qt}g</td>
+      <td data-k="k">${fmtV(cv(fa, 'k', a.qt))}</td><td data-k="p">${fmtV(cv(fa, 'p', a.qt))}</td>
+      <td></td><td></td><td></td><td data-k="ch">${fmtV(cv(fa, 'ch', a.qt))}</td><td data-k="fi">${fmtV(cv(fa, 'fi', a.qt))}</td>
       ${MICROS.map(m => `<td style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(fa, m.k, a.qt), 2)}</td>`).join('')}
       <td></td>
       <td class="no-print"><button class="del-row" onclick="removeAltPrint(${mi},${ii},${ai})">✕</button></td>
@@ -677,13 +677,12 @@ function onQI(mi, ii, inp) {
     item.altPrint.forEach((a, ai) => {
       const aprRow = document.getElementById(`apr-${mi}-${ii}-${ai}`);
       if (!aprRow) return;
-      const cells = aprRow.querySelectorAll('td');
-      if (cells[1]) cells[1].textContent = a.qt + 'g';
+      const qtCell = aprRow.querySelector('.alt-qt');
+      if (qtCell) qtCell.textContent = a.qt + 'g';
       const fa = lookup(a.nome);
-      if (cells[2]) cells[2].innerHTML = fmtV(cv(fa, 'k', a.qt));
-      if (cells[3]) cells[3].innerHTML = fmtV(cv(fa, 'p', a.qt));
-      if (cells[7]) cells[7].innerHTML = fmtV(cv(fa, 'ch', a.qt));
-      if (cells[8]) cells[8].innerHTML = fmtV(cv(fa, 'fi', a.qt));
+      aprRow.querySelectorAll('td[data-k]').forEach(td => {
+        td.innerHTML = fmtV(cv(fa, td.getAttribute('data-k'), a.qt));
+      });
     });
   }
   item.qt = inp.value;

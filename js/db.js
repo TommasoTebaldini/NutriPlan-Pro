@@ -1360,6 +1360,56 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Lattuga',qt:'100'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'fibrosi_cistica',emoji:'🌬️',nome:'Fibrosi Cistica',badge:'ECFS/ESPEN 2016',colore:'#0EA5E9',
+   desc:'Fabbisogno energetico molto elevato (110-200% del normale). PERT obbligatoria. Integrazione vitamine liposolubili.',
+   note:'ECFS 2016 · Energia 110-200% del fabbisogno normale (malassorbimento + lavoro respiratorio) · Proteine 1.5-2.0 g/kg/die · PERT ad ogni pasto e spuntino · Vitamine A,D,E,K · Sodio extra in estate e durante attività fisica · Diabete correlato a FC (CFRD): monitorare glicemia.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'60'},{nome:'Latte intero UHT',qt:'250'},{nome:'Banana',qt:'150'},{nome:'Burro di arachidi',qt:'20'},{nome:'Succo di frutta',qt:'150'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'150'},{nome:'Miele millefiori',qt:'20'},{nome:'Noci',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'100'},{nome:'Carne bovina magra',qt:'150'},{nome:'Parmigiano reggiano',qt:'20'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'50'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gelato alla crema',qt:'100'},{nome:'Crackers',qt:'30'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'160'},{nome:'Riso bianco crudo',qt:'90'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'50'}]}
+   ]},
+  {id:'epilessia',emoji:'🧠',nome:'Epilessia / Dieta Chetogenica',badge:'ILAE/ESPEN 2021',colore:'#7C3AED',
+   desc:'Dieta chetogenica ad alto contenuto di grassi e basso contenuto di carboidrati. Ratio 3:1-4:1 grassi:(proteine+CHO).',
+   note:'ILAE 2008 · ESPEN 2021 · Indicata in epilessia farmaco-resistente · Ratio 3:1-4:1 (classica) · Modified Atkins Diet come alternativa più flessibile · CHO <20g/die · Proteine adeguate (1.0-1.2 g/kg/die) · Monitorare: crescita, densità ossea, lipidi, funzionalità renale.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Uovo di gallina intero crudo',qt:'120'},{nome:'Pancetta/bacon',qt:'30'},{nome:'Burro',qt:'15'},{nome:'Panna fresca da cucina',qt:'50'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Formaggio grasso (es. brie)',qt:'40'},{nome:'Noci',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone atlantico',qt:'160'},{nome:'Olio extra vergine di oliva',qt:'25'},{nome:'Spinaci crudi',qt:'100'},{nome:'Panna fresca da cucina',qt:'40'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'30'},{nome:'Parmigiano reggiano',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Carne bovina magra',qt:'150'},{nome:'Burro',qt:'20'},{nome:'Zucchina',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'20'},{nome:'Panna fresca da cucina',qt:'30'}]}
+   ]},
+  {id:'alzheimer',emoji:'🧩',nome:'Malattia di Alzheimer / Demenza',badge:'ESPEN 2023',colore:'#6D28D9',
+   desc:'Prevenire la malnutrizione. Dieta mediterranea / MIND diet. Adattare texture se disfagia. Supporto nutrizionale precoce.',
+   note:'ESPEN 2023 · Alto rischio di malnutrizione (dimenticanza, disfagia, anoressia) · Vitamina B12, folati, vitamina D, omega-3 · Dieta MIND (Mediterranea + DASH) riduce il declino cognitivo · Piccoli pasti frequenti e appetibili · Texture adattata IDDSI se disfagia · ONS se intake <75% per >1 settimana.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Mirtilli',qt:'100'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Salmone atlantico',qt:'120'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Pomodoro rosso',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Noci',qt:'20'},{nome:'Mela',qt:'120'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Lenticchie secche',qt:'50'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'gastroparesi',emoji:'🌀',nome:'Gastroparesi',badge:'ADA/ACG 2022',colore:'#B45309',
+   desc:'Pasti piccoli e frequenti. Grassi ridotti e fibra ridotta. Preferire alimenti morbidi e liquidi. Evitare cibi ad alto residuo.',
+   note:'ADA/ACG 2022 · Grassi <40g/die · Fibra <10g/die · 6-8 pasti piccoli e frequenti · Consistenza: liquida/morbida/tritata · Controllo glicemico se diabete associato · Masticare bene · Non coricarsi entro 2h dal pasto · Liquidi calorici se solidi non tollerati.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Frullato di frutta',qt:'250'},{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Banana matura',qt:'100'},{nome:'Succo di frutta',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'70'},{nome:'Merluzzo',qt:'100'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Purea di mela',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Zucchina',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+   ]},
+  {id:'sla',emoji:'💪',nome:'Sclerosi Laterale Amiotrofica (SLA)',badge:'ESPEN 2023',colore:'#1E3A5F',
+   desc:'Fabbisogno energetico aumentato. Prevenzione della malnutrizione. Gestione della disfagia. PEG preventiva se necessario.',
+   note:'ESPEN 2023 · Energia 30-40 kcal/kg/die (ipermetabolismo + amiotrofia) · Proteine 1.5-2.0 g/kg/die · Valutare disfagia regolarmente (IDDSI) · PEG precoce quando FVC >50% e peso in calo · Omega-3 2g/die · Vitamina D · Monitorare peso ogni 2-4 settimane · Supporto nutrizionale specializzato obbligatorio.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'60'},{nome:'Latte intero UHT',qt:'250'},{nome:'Banana',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'150'},{nome:'Miele millefiori',qt:'15'},{nome:'Noci',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'90'},{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'40'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Frullato proteico',qt:'250'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Carne bovina magra',qt:'150'},{nome:'Lenticchie secche',qt:'50'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'40'}]}
    ]}
 ];
 let PATOLOGIE_CUSTOM=[];
@@ -1387,7 +1437,7 @@ const FABBISOGNO_PATOLOGIE={
   pancreatite:{kcal:'25-35 kcal/kg/die',prot:'1.0-1.5 g/kg/die',note:'AGA/ESPEN 2020. Alcol zero. Grassi <40g/die se steatorrea (poi liberalizzare). 5-6 pasti piccoli. Enzimi pancreatici se insufficienza esocrina. Vitamina D, B12, zinco.'},
   gravidanza:{kcal:'+350 kcal/die (II trim), +460 kcal/die (III trim)',prot:'+25g/die rispetto al fabbisogno base',note:'LARN 2023. Folati 600µg/die. Ferro 27mg/die. Calcio 1000mg/die. DHA 200mg/die extra. Iodio 220µg/die. Evitare: alcol, crudi animali, pesce ad alto Hg, fegato eccessivo.'},
   allattamento:{kcal:'+500 kcal/die',prot:'+28g/die rispetto al fabbisogno base',note:'LARN 2023. DHA 200mg/die extra. Calcio 1000mg/die. Vitamina D 1500 UI/die. Iodio 290µg/die. Liquidi ≥2L/die. Caffeina <200mg/die.'},
-  fenilchetonuria:{kcal:'Normocalorica',prot:'Fenilalanina <300mg/die (da alimenti naturali)',note:'ACMG 2014. Fenilalanina monitorata e limitata. Integratori di aminoacidi senza Phe obbligatori. Tirosina supplementata. Vitamina B12, D, selenio, zinco.'},
+  fenilchetonuria:{kcal:'Normocalorica per età',prot:'Phe <300mg/die da alimenti naturali',note:'ACMG 2014. Fenilalanina monitorata e limitata. Integratori di aminoacidi senza Phe obbligatori. Tirosina supplementata. Vitamina B12, D, selenio, zinco.'},
   hiv:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'WHO/ESPEN. Prevenire la malnutrizione. Micronutrienti: zinco, selenio, vitamina D, B12. Attenzione a interazioni farmaci-nutrienti (antiretrovirali). Lipodistrofia: limitare grassi saturi.'}
 ,
   gastrectomia:{kcal:'25-30 kcal/kg/die (inizialmente) → 30-35',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. Pasti piccoli e frequenti (6-8/die). Evitare liquidi ai pasti. Rischio: Dumping syndrome (evitare zuccheri semplici ai pasti). Supplementare: B12, Fe, Ca, vitamina D, folati. Rischio carenza vitamina B12 permanente (supplementazione parenterale).'},
@@ -1402,8 +1452,6 @@ const FABBISOGNO_PATOLOGIE={
   allergia_molluschi:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EAACI 2019. Eliminazione di crostacei e molluschi. Attenzione a contaminazione crociata nei ristoranti di pesce. Il glucosamina può dare cross-reattività.'},
   allergia_frutta_secca:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2019. Eliminazione della frutta secca specifica (o tutta in caso di allergia multipla). Attenzione a tracce in prodotti da forno, cioccolato, pesto. Portare sempre adrenalina auto-iniettabile.'},
   intolleranza_lattosio:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'WGO 2013. La soglia individuale varia (molti tollerano 12g/pasto = 1 bicchiere latte). Formaggi stagionati e yogurt sono meglio tollerati. Lattasi enzimatica disponibile. Calcio da fonti alternative o supplementi.'},
-  fenilchetonuria:{kcal:'Normocalorica per età',prot:'Phe <300mg/die da alimenti naturali',note:'ACMG 2014. Fenilalanina monitorata e limitata. Integratori di aminoacidi senza Phe obbligatori. Tirosina supplementata. Vitamina B12, D, selenio, zinco da monitorare.'},
-  hiv:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'WHO/ESPEN. Prevenire malnutrizione. Zinco, selenio, vitamina D, B12. Attenzione a interazioni farmaci-nutrienti (antiretrovirali). Lipodistrofia: limitare grassi saturi.'},
   gerd:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'ACG 2022. Evitare cioccolato, menta, alcol, caffè, cibi grassi, agrumi, pomodoro, cibi piccanti. Pasti piccoli e frequenti (4-5/die). Cena 3h prima di coricarsi.'},
   gastrite:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'WCOG 2020. Evitare FANS, alcol, fumo, cibi piccanti e acidi. Pasti regolari. Cottura: vapore, bollitura (no frittura). Probiotici se H. pylori.'},
   stipsi:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'ACG 2021. Fibre ≥25-35g/die. Acqua ≥1.5-2L/die. Probiotici: evidenza moderata. Attività fisica quotidiana.'},
@@ -1418,7 +1466,22 @@ const FABBISOGNO_PATOLOGIE={
   post_covid:{kcal:'25-35 kcal/kg/die (aumentato se cachessia)',prot:'1.2-1.5 g/kg/die',note:'OMS 2023. Vitamina D target >40 ng/mL. Zinco 10-15mg/die. Omega-3 2g/die. Vitamina B12 se carente. Probiotici per disbiosi.'},
   emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro.'},
   lupus:{kcal:'Normocalorica (monitorare con cortisonici)',prot:'1.0-1.2 g/kg/die',note:'EULAR 2023. Vitamina D spesso carente. Omega-3 2-3g/die. Calcio per osteoporosi corticosteroidea. Restrizione sodio se nefrite.'},
-  allergia_uova:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2019. Eliminazione completa di uova e derivati. Leggere etichette (ovoalbumina, lisozima). Vitamina D e B12 se dieta restrittiva.'}
+  allergia_uova:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2019. Eliminazione completa di uova e derivati. Leggere etichette (ovoalbumina, lisozima). Vitamina D e B12 se dieta restrittiva.'},
+  hashimoto:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'ETA 2022. Selenio 55-200 µg/die (selenometionina). Vitamina D target >40 ng/mL. Iodio: adeguato, non eccessivo. Levotiroxina a stomaco vuoto 30-60 min prima della colazione. Screening celiachia obbligatorio.'},
+  ibs:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'ACG 2021. Dieta Low-FODMAP: fase eliminazione 4-6 settimane poi reintroduzione sistematica. Psyllium utile in IBS-C. Evitare salti pasto. Probiotici (LGG, S. boulardii). Gestione dello stress.'},
+  pcos:{kcal:'Deficit moderato se sovrappeso (obiettivo -5-10% del peso)',prot:'1.0-1.2 g/kg/die',note:'ESHRE 2023. Dieta a basso indice glicemico. Mio-inositolo 2g + D-chiro-inositolo 200mg. Omega-3. Attività fisica 150-300 min/settimana. Vitamina D target >30 ng/mL.'},
+  ictus:{kcal:'25-30 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. Valutare deglutizione prima di alimentare oralmente. Texture IDDSI appropriata se disfagia. Omega-3 EPA+DHA 1-2g/die. Dieta DASH/Mediterranea per prevenzione recidive. Sodio <2g/die.'},
+  chirurgia_bariatrica:{kcal:'800-1200 kcal/die (fase post-operatoria precoce)',prot:'≥60-80 g/die (1.0-1.5 g/kg peso ideale)',note:'ASMBS 2021. Progressione dieta: liquidi → morbidi → solidi (settimane). Integratori obbligatori: multivitaminico, B12, ferro, calcio citrato, vitamina D. Pasti piccoli e frequenti (5-6/die). Masticare bene. No bevande durante i pasti.'},
+  disfagia:{kcal:'25-30 kcal/kg/die',prot:'1.0-1.2 g/kg/die',note:'ESPEN 2021 · IDDSI 2019. Classificazione IDDSI livelli 0-7. Liquidi addensati se necessario. Alimenti omogenei e compatti. Evitare alimenti a doppia consistenza. Idratazione adeguata (rischio disidratazione). Valutazione logopedica obbligatoria.'},
+  ipe:{kcal:'25-35 kcal/kg/die',prot:'1.0-1.5 g/kg/die',note:'UEG 2022. PERT obbligatoria ad ogni pasto: 40.000-80.000 UI lipasi per pasto principale. Grassi <40g/die se PERT non adeguata. Vitamine liposolubili A,D,E,K. No alcol assoluto. Pasti piccoli e frequenti (5-6/die).'},
+  malnutrizione:{kcal:'25-35 kcal/kg/die (fino a 35-40 kcal/kg se deplezione severa)',prot:'1.2-2.0 g/kg/die',note:'ESPEN 2018. Attenzione alla refeeding syndrome (monitorare P, K, Mg, tiamina). Renutrizione graduale. Supporto nutrizionale multidisciplinare. Identificare e trattare la causa. ONS o NE se intake orale insufficiente.'},
+  neoplasia:{kcal:'25-30 kcal/kg/die (cachessia: 30-35 kcal/kg)',prot:'1.2-2.0 g/kg/die',note:'ESPEN 2021. Supporto nutrizionale precoce se rischio malnutrizione. Omega-3 EPA 2g/die anti-cachessia. ONS se intake <60% per >7 gg. Nutrizione enterale se tratto GI funzionante. Controllo sintomi (nausea, mucosite, disgeusia).'},
+  sindrome_metabolica:{kcal:'Deficit 500 kcal/die sul TDEE (obiettivo -0.5-1 kg/settimana)',prot:'1.0-1.2 g/kg/die',note:'IDF/AHA 2009. Perdita del 5-10% del peso migliora tutti i parametri. Dieta mediterranea (PREDIMED). Fibre ≥30g/die. Limitare zuccheri semplici e grassi saturi. Attività fisica 150 min/settimana. Monitorare glicemia, lipidi, PA.'},
+  fibrosi_cistica:{kcal:'110-200% del fabbisogno basale (30-50 kcal/kg/die)',prot:'1.5-2.0 g/kg/die',note:'ECFS 2016. Energia molto aumentata per malassorbimento e lavoro respiratorio aumentato. PERT ad ogni pasto e spuntino. Vitamine liposolubili A,D,E,K supplementate. Sodio extra in estate. Monitorare glicemia (CFRD). Supplementi calorici se necessario.'},
+  epilessia:{kcal:'Normocalorica (adattata all\'età e all\'attività)',prot:'1.0-1.2 g/kg/die (non eccessiva: riduce chetosi)',note:'ILAE 2008 · ESPEN 2021. Dieta chetogenica classica ratio 3:1-4:1. CHO <20g/die. Grassi 65-75% energia. Monitorare lipidi, crescita, densità ossea. Supplementare vitamine e minerali. Modified Atkins Diet come alternativa meno restrittiva.'},
+  alzheimer:{kcal:'25-30 kcal/kg/die (aumentare se malnutrizione)',prot:'1.0-1.2 g/kg/die',note:'ESPEN 2023. Dieta MIND (Mediterranea + DASH). Vitamina B12, folati, vitamina D, omega-3 DHA. Pasti piccoli, frequenti e appetibili. Texture adattata IDDSI se disfagia. ONS se intake <75% per >1 settimana. Team multidisciplinare (nutrizionista, logopedista).'},
+  gastroparesi:{kcal:'Normocalorica (liquidi calorici se solidi non tollerati)',prot:'1.0 g/kg/die',note:'ADA/ACG 2022. Grassi <40g/die. Fibra <10g/die. 6-8 pasti piccoli e frequenti. Consistenza liquida/morbida. Non coricarsi entro 2h dal pasto. Controllo glicemico se diabete associato. Masticare bene. Liquidi calorici se solidi non tollerati.'},
+  sla:{kcal:'30-40 kcal/kg/die',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2023. Ipermetabolismo frequente. Valutare disfagia con logopedista (IDDSI). PEG precoce quando FVC >50% e calo ponderale progressivo. Omega-3 2g/die. Vitamina D. Monitorare peso ogni 2-4 settimane. Supporto nutrizionale specializzato obbligatorio.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

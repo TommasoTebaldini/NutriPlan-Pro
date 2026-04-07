@@ -621,8 +621,13 @@ async function saveEvent() {
 }
 
 function openNewEvent() {
+  const sidebar = document.querySelector('.sidebar-agenda');
+  if (sidebar) {
+    sidebar.style.display = 'flex';
+    sidebar.scrollIntoView({behavior:'smooth', block:'start'});
+  }
   document.getElementById('ev-data').value = selectedDate;
-  document.getElementById('ev-paziente').focus();
+  setTimeout(() => document.getElementById('ev-paziente').focus(), 100);
 }
 
 function openEventDetail(id) {

@@ -784,8 +784,10 @@ function initPianoEsempio(containerId, config) {
       nome: pasto.nome,
       emoji: pasto.emoji || '🍽️',
       items: pasto.items.map(item => ({
-        nome: item.nome + ' (' + (factor>=1?Math.round(item.qt*factor):+(item.qt*factor).toFixed(1)) + ' ' + item.unit + ')',
-        qt: '', altPrint: [], misura: ''
+        nome: item.nome,
+        qt: factor>=1 ? String(Math.round(item.qt*factor)) : String(+(item.qt*factor).toFixed(1)),
+        altPrint: [],
+        misura: item.unit || ''
       })),
       note: '',
       collapsed: false

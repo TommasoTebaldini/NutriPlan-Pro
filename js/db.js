@@ -400,7 +400,66 @@ const DB_BDA=[
   {n:"Tzatziki fatto in casa",c:"Condimenti",src:"BDA",k:90,p:5,gs:3,g:5.8,z:2,ch:4,fi:0.5,ca:90,fe:0.3,mg:15,k2:120,na:200,zn:0.3,fo:55,se:3,col:16},
   {n:"Salsa di soia ridotto sale",c:"Condimenti",src:"BDA",k:47,p:6.6,gs:0,g:0.1,z:3.9,ch:3.9,fi:0.8,ca:16,fe:2,mg:35,k2:175,na:2900,zn:0.4,fo:110,se:0.5,col:0},
   {n:"Olio di cocco vergine",c:"Grassi e oli",src:"BDA",k:892,p:0,gs:86,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
-  {n:"Olio di avocado",c:"Grassi e oli",src:"BDA",k:884,p:0,gs:11.6,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0}
+  {n:"Olio di avocado",c:"Grassi e oli",src:"BDA",k:884,p:0,gs:11.6,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  // ── FRUTTA fresca aggiuntiva ──
+  {n:"Pesca",c:"Frutta fresca",src:"BDA",k:39,p:0.9,gs:0,g:0.1,z:8.4,ch:9.5,fi:1.5,ca:6,fe:0.3,mg:9,k2:190,na:1,zn:0.17,fo:20,se:0.1,col:0},
+  {n:"Nespola",c:"Frutta fresca",src:"BDA",k:47,p:0.4,gs:0,g:0.2,z:9.6,ch:12.1,fi:1.7,ca:16,fe:0.3,mg:13,k2:266,na:1,zn:0.05,fo:27,se:0.6,col:0},
+  {n:"Cachi / Kaki",c:"Frutta fresca",src:"BDA",k:70,p:0.6,gs:0,g:0.2,z:12.5,ch:18.6,fi:3.6,ca:8,fe:0.3,mg:9,k2:161,na:1,zn:0.11,fo:17,se:0.6,col:0},
+  // ── PESCE aggiuntivo ──
+  {n:"Platessa",c:"Pesce",src:"BDA",k:91,p:18.8,gs:0.3,g:1.2,z:0,ch:0,fi:0,ca:51,fe:0.3,mg:28,k2:340,na:86,zn:0.5,fo:240,se:36,col:70},
+  {n:"Sogliola",c:"Pesce",src:"BDA",k:86,p:17.7,gs:0.2,g:1.2,z:0,ch:0,fi:0,ca:40,fe:0.4,mg:25,k2:300,na:81,zn:0.5,fo:210,se:32,col:48},
+  {n:"Pesce persico",c:"Pesce",src:"BDA",k:91,p:19.4,gs:0.3,g:1.0,z:0,ch:0,fi:0,ca:79,fe:0.9,mg:28,k2:350,na:57,zn:1.0,fo:215,se:10,col:60},
+  // ── BRODI E CONDIMENTI aggiuntivi ──
+  {n:"Brodo di pollo",c:"Condimenti",src:"BDA",k:18,p:2.8,gs:0.2,g:0.7,z:0,ch:0.2,fi:0,ca:10,fe:0.4,mg:8,k2:100,na:350,zn:0.4,fo:35,se:3,col:8},
+  {n:"Dado da brodo granulare",c:"Condimenti",src:"BDA",k:238,p:16.5,gs:3.5,g:11,z:2,ch:22,fi:0,ca:130,fe:2.5,mg:55,k2:900,na:18000,zn:1.5,fo:200,se:5,col:0},
+  // ── OLIVE E CAPPERI ──
+  {n:"Olive verdi denocciolate",c:"Condimenti",src:"BDA",k:145,p:1.0,gs:1.4,g:11.0,z:0,ch:3.8,fi:3.3,ca:96,fe:1.6,mg:11,k2:42,na:1560,zn:0.22,fo:4,se:0.9,col:0},
+  {n:"Olive nere in salamoia",c:"Condimenti",src:"BDA",k:116,p:0.8,gs:1.8,g:10.7,z:0,ch:2.0,fi:3.2,ca:94,fe:3.3,mg:4,k2:8,na:735,zn:0.22,fo:3,se:0.9,col:0},
+  {n:"Capperi sott'aceto",c:"Condimenti",src:"BDA",k:23,p:2.4,gs:0.1,g:0.9,z:0.4,ch:4.9,fi:3.2,ca:40,fe:1.7,mg:33,k2:40,na:2400,zn:0.32,fo:10,se:1.2,col:0},
+  {n:"Senape in grani",c:"Condimenti",src:"BDA",k:66,p:4.4,gs:0.3,g:3.4,z:2.5,ch:5.8,fi:3.4,ca:58,fe:1.8,mg:48,k2:152,na:1120,zn:0.7,fo:115,se:8,col:0},
+  // ── SPEZIE ED ERBE aromatiche ──
+  {n:"Zenzero fresco",c:"Condimenti",src:"BDA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.34,fo:34,se:0.7,col:0},
+  {n:"Timo essiccato",c:"Condimenti",src:"BDA",k:276,p:9.1,gs:0.5,g:7.4,z:1.7,ch:63.9,fi:37.0,ca:1890,fe:123,mg:160,k2:814,na:55,zn:1.81,fo:201,se:0,col:0},
+  {n:"Rosmarino essiccato",c:"Condimenti",src:"BDA",k:331,p:4.9,gs:1.5,g:15.2,z:3.1,ch:64.1,fi:42.6,ca:1280,fe:29.3,mg:91,k2:955,na:50,zn:1.04,fo:70,se:0,col:0},
+  {n:"Menta fresca",c:"Condimenti",src:"BDA",k:70,p:3.7,gs:0.1,g:0.9,z:0,ch:14.9,fi:8.0,ca:243,fe:5.1,mg:80,k2:569,na:31,zn:1.11,fo:73,se:0.9,col:0},
+  {n:"Salvia essiccata",c:"Condimenti",src:"BDA",k:315,p:10.6,gs:3.8,g:12.7,z:1.7,ch:60.7,fi:40.3,ca:1652,fe:28.1,mg:428,k2:1070,na:11,zn:4.70,fo:91,se:0,col:0},
+  {n:"Alloro essiccato",c:"Condimenti",src:"BDA",k:313,p:7.6,gs:2.3,g:8.4,z:0,ch:74.9,fi:26.3,ca:834,fe:43.0,mg:120,k2:529,na:23,zn:3.70,fo:113,se:0,col:0},
+  {n:"Erba cipollina fresca",c:"Condimenti",src:"BDA",k:30,p:3.3,gs:0.1,g:0.7,z:1.9,ch:4.4,fi:2.5,ca:92,fe:1.6,mg:42,k2:296,na:3,zn:0.56,fo:58,se:0.9,col:0},
+  {n:"Paprica dolce in polvere",c:"Condimenti",src:"BDA",k:282,p:14.1,gs:2.0,g:13.0,z:10.3,ch:53.9,fi:34.9,ca:229,fe:21.1,mg:178,k2:2280,na:68,zn:4.33,fo:314,se:0,col:0},
+  {n:"Noce moscata in polvere",c:"Condimenti",src:"BDA",k:525,p:5.8,gs:25.9,g:36.3,z:2.9,ch:49.3,fi:20.8,ca:184,fe:3.0,mg:183,k2:350,na:16,zn:2.15,fo:213,se:0,col:0},
+  // ── FARINE E DERIVATI ──
+  {n:"Farina di mandorle",c:"Cereali e derivati",src:"BDA",k:579,p:21.4,gs:3.8,g:49.9,z:4.4,ch:21.7,fi:10.5,ca:236,fe:3.7,mg:258,k2:733,na:1,zn:3.1,fo:469,se:4,col:0},
+  {n:"Farina di ceci",c:"Cereali e derivati",src:"BDA",k:387,p:22.4,gs:0.6,g:6.7,z:10.9,ch:57.8,fi:10.8,ca:45,fe:6.2,mg:115,k2:846,na:64,zn:3.4,fo:318,se:8,col:0},
+  {n:"Pangrattato",c:"Cereali e derivati",src:"BDA",k:395,p:13.7,gs:0.5,g:3.5,z:3.5,ch:76.6,fi:3.5,ca:100,fe:2.9,mg:34,k2:150,na:730,zn:1.0,fo:120,se:25,col:0},
+  {n:"Semolino di grano duro",c:"Cereali e derivati",src:"BDA",k:350,p:12.7,gs:0.2,g:1.0,z:0.5,ch:72.8,fi:3.9,ca:17,fe:1.3,mg:47,k2:186,na:1,zn:1.2,fo:136,se:8,col:0},
+  {n:"Amido di mais",c:"Cereali e derivati",src:"BDA",k:381,p:0.3,gs:0,g:0.1,z:0.9,ch:91.3,fi:0.9,ca:2,fe:0.3,mg:3,k2:3,na:9,zn:0.06,fo:13,se:2,col:0},
+  {n:"Fecola di patate",c:"Cereali e derivati",src:"BDA",k:357,p:0.1,gs:0,g:0.3,z:0,ch:83.1,fi:3.4,ca:12,fe:0.3,mg:11,k2:410,na:10,zn:0.12,fo:40,se:0.6,col:0},
+  // ── CEREALI COTTI ──
+  {n:"Riso bianco cotto",c:"Cereali e pasta",src:"BDA",k:130,p:2.7,gs:0.1,g:0.3,z:0,ch:28.2,fi:0.4,ca:10,fe:0.2,mg:12,k2:35,na:0,zn:0.5,fo:43,se:7,col:0},
+  {n:"Pasta di semola cotta",c:"Cereali e pasta",src:"BDA",k:157,p:5.8,gs:0.1,g:0.9,z:0.6,ch:30.6,fi:1.8,ca:7,fe:0.5,mg:18,k2:44,na:1,zn:0.5,fo:58,se:26,col:0},
+  {n:"Quinoa cotta",c:"Cereali e pasta",src:"BDA",k:120,p:4.4,gs:0.2,g:1.9,z:0,ch:21.3,fi:2.8,ca:17,fe:1.5,mg:64,k2:172,na:7,zn:1.1,fo:152,se:3,col:0},
+  {n:"Bulgur cotto",c:"Cereali e pasta",src:"BDA",k:83,p:3.1,gs:0.1,g:0.2,z:0.1,ch:18.6,fi:4.5,ca:10,fe:0.9,mg:32,k2:68,na:5,zn:0.8,fo:73,se:0.6,col:0},
+  {n:"Couscous cotto",c:"Cereali e pasta",src:"BDA",k:112,p:3.8,gs:0,g:0.2,z:0.1,ch:23.2,fi:1.4,ca:8,fe:0.4,mg:10,k2:58,na:5,zn:0.3,fo:35,se:27,col:0},
+  // ── ALGHE ──
+  {n:"Alghe Nori (essiccate)",c:"Verdure",src:"BDA",k:35,p:5.8,gs:0.1,g:0.3,z:0,ch:5.1,fi:0.3,ca:70,fe:1.8,mg:2,k2:356,na:48,zn:1.05,fo:58,se:0.7,col:0},
+  {n:"Alghe Wakame (essiccate)",c:"Verdure",src:"BDA",k:45,p:3.0,gs:0.1,g:0.6,z:0.5,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:50,na:872,zn:0.38,fo:80,se:0.7,col:0},
+  // ── MISO ──
+  {n:"Miso (pasta fermentata di soia)",c:"Condimenti",src:"BDA",k:199,p:11.7,gs:1.1,g:6.0,z:6.2,ch:26.5,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3728,zn:2.56,fo:159,se:7,col:0},
+  // ── GRASSI E OLI aggiuntivi ──
+  {n:"Margarina",c:"Grassi e oli",src:"BDA",k:720,p:0.3,gs:14.5,g:80.4,z:0,ch:0.4,fi:0,ca:4,fe:0.1,mg:2,k2:16,na:550,zn:0.04,fo:12,se:1,col:0},
+  {n:"Strutto",c:"Grassi e oli",src:"BDA",k:902,p:0,gs:39.2,g:100,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0.1,fo:0,se:0,col:95},
+  // ── CARNE AGGIUNTIVA ──
+  {n:"Porchetta",c:"Carni rosse",src:"BDA",k:305,p:23.8,gs:8.5,g:22.6,z:0,ch:0,fi:0,ca:9,fe:1.5,mg:22,k2:340,na:820,zn:2.8,fo:210,se:17,col:80},
+  {n:"Ciccioli",c:"Carni rosse",src:"BDA",k:561,p:27.7,gs:15.0,g:46.7,z:0,ch:2.8,fi:0,ca:8,fe:1.8,mg:15,k2:200,na:950,zn:2.0,fo:240,se:20,col:120},
+  // ── DOLCIFICANTI E SCIROPPI ──
+  {n:"Zucchero di canna grezzo",c:"Dolci",src:"BDA",k:380,p:0,gs:0,g:0,z:95,ch:98.1,fi:0,ca:85,fe:1.9,mg:29,k2:346,na:39,zn:0.18,fo:22,se:1,col:0},
+  {n:"Sciroppo d'acero",c:"Dolci",src:"BDA",k:260,p:0,gs:0,g:0.1,z:59.5,ch:67.1,fi:0,ca:102,fe:0.1,mg:21,k2:212,na:12,zn:3.7,fo:2,se:0.6,col:0},
+  {n:"Sciroppo di agave",c:"Dolci",src:"BDA",k:310,p:0.1,gs:0,g:0.1,z:74.9,ch:76.2,fi:0,ca:1,fe:0.1,mg:1,k2:4,na:4,zn:0.09,fo:1,se:0,col:0},
+  // ── LIEVITO E ADDENSANTI ──
+  {n:"Lievito di birra secco attivo",c:"Condimenti",src:"BDA",k:325,p:40.4,gs:0.8,g:7.6,z:0,ch:41.2,fi:26.9,ca:30,fe:17.6,mg:54,k2:2000,na:51,zn:7.94,fo:637,se:7,col:0},
+  {n:"Lievito nutrizionale in scaglie",c:"Condimenti",src:"BDA",k:325,p:50,gs:0.5,g:6.5,z:1,ch:29,fi:14,ca:24,fe:4,mg:97,k2:2100,na:40,zn:5.0,fo:600,se:98,col:0},
+  // ── SEMI AGGIUNTIVI ──
+  {n:"Semi di canapa decorticati",c:"Frutta secca",src:"BDA",k:553,p:31.6,gs:3.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.95,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:0,col:0}
 ];
 
 let CUSTOM_DB=[];
@@ -628,6 +687,13 @@ const DB_ONS = [
   // Pulmocare 250mL: 375kcal, alto lipidi (55%), basso CHO
   {n:"Pulmocare BPCO (porz. 250mL=375kcal, alto grassi)",c:"ONS Polmonare",src:"ONS",
    k:150,p:6.2,ch:10.6,g:9.3,fi:1.4,gs:1.1,z:4.5,ca:140,fe:2.5,mg:42,k2:235,na:130,zn:1.8,fo:105,se:9,col:8,porzione:250},
+  // ── ONS IBD / CDED specifico ──
+  // Modulen IBD: formula caseinica ad alta tolleranza per CDED. 150 kcal/100mL, 5.6g prot/100mL
+  {n:"Modulen IBD (porz. 100mL=150kcal)",c:"ONS IBD/CDED",src:"ONS",
+   k:150,p:5.6,ch:19.4,g:4.8,fi:0,gs:0.9,z:9.2,ca:95,fe:1.7,mg:28,k2:165,na:90,zn:1.2,fo:80,se:7,col:5,porzione:100},
+  // Pentasa / Fresubin IBD: formula alternativa per CDED
+  {n:"Peptamen Junior CDED (porz. 100mL=100kcal)",c:"ONS IBD/CDED",src:"ONS",
+   k:100,p:3.0,ch:13.7,g:3.8,fi:0,gs:0.5,z:6.0,ca:65,fe:1.2,mg:20,k2:120,na:65,zn:0.9,fo:58,se:5,col:3,porzione:100},
   // ── PROTEINE ──
   // Whey Protein concentrato: per 100g polvere (~30g porzione = 120kcal, 24g prot)
   {n:"Whey Protein concentrato (porz. 30g=120kcal)",c:"Proteine in Polvere",src:"INT",
@@ -1431,15 +1497,37 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'cded',emoji:'🫙',nome:'CDED – Crohn\'s Disease Exclusion Diet',badge:'Levine 2019',colore:'#059669',
-   desc:'Dieta di esclusione per Morbo di Crohn attivo. Fase 1 con 50% nutrizione enterale parziale (PEN). Esclude alimenti pro-infiammatori.',
-   note:'Levine et al. 2019 · ECCO 2022 · Indicata per Morbo di Crohn attivo (pediatrico e adulto) · Fase 1 (sett. 1-6): alimenti consentiti + 50% fabbisogno calorico da formula enterale polimerica (PEN) · Fase 2 (sett. 7-12): espansione dieta + 25% PEN · Esclude: carni processate/rosse, glutine, latticini ad alto contenuto di grassi, oli di semi, emulsionanti (E322, E471), conservanti e alimenti ultra-processati · Obiettivo: modulazione del microbiota pro-infiammatorio e riduzione della permeabilità intestinale.',
+  {id:'cded_fase1',emoji:'🫙',nome:'CDED Fase 1 – Settimane 1-6 (50% PEN)',badge:'Levine 2019',colore:'#059669',
+   desc:'CDED Fase 1 (sett. 1-6): alimenti consentiti + 50% del fabbisogno calorico da formula enterale polimerica (Modulen IBD o equivalente). Schema per 1800 kcal/die totali.',
+   note:'Levine et al. 2019 · ECCO 2022 · Fase 1 (sett. 1-6): 50% kcal da PEN (formula polimerica, es. Modulen IBD ~900 kcal da ~600 mL) + 50% da dieta solida (~900 kcal). Alimenti consentiti: pollo, pesce (non in scatola), uova, patata, carota, zucchina, banana, mela, pera, fragola, riso, gallette di riso, olio extravergine di oliva, miele. ESCLUSI: carni rosse/processate, glutine, latticini ad alto contenuto lipidico, oli di semi, emulsionanti (E322/E471), conservanti, UPF. Obiettivo: riduzione del microbiota pro-infiammatorio e ripristino della barriera intestinale.',
    pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Banana',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Banana',qt:'150'},{nome:'Gallette di riso',qt:'30'},{nome:'Miele millefiori',qt:'10'},{nome:'Olio extra vergine di oliva',qt:'5'}]},
     {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'180'}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto (senza pelle)',qt:'160'},{nome:'Patata',qt:'200'},{nome:'Carota',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
-    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Fragola',qt:'150'},{nome:'Pera',qt:'150'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Patata',qt:'180'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'130'},{nome:'Riso bianco crudo',qt:'60'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Formula PEN (≈50% kcal)',emoji:'🧪',items:[{nome:'Modulen IBD (porz. 100mL=150kcal)',qt:'600'}]}
+   ]},
+  {id:'cded_fase2',emoji:'🫙',nome:'CDED Fase 2 – Settimane 7-12 (25% PEN)',badge:'Levine 2019',colore:'#10B981',
+   desc:'CDED Fase 2 (sett. 7-12): dieta espansa + 25% del fabbisogno calorico da formula enterale polimerica. Maggiore varietà di alimenti rispetto alla Fase 1.',
+   note:'Levine et al. 2019 · ECCO 2022 · Fase 2 (sett. 7-12): 25% kcal da PEN (formula polimerica ~450 kcal da ~300 mL) + 75% da dieta solida (~1350 kcal). Rispetto alla Fase 1 si possono aggiungere: legumi cotti, più varietà di pesce, frutta di stagione, yogurt magro senza additivi. Rimangono ESCLUSI: carni rosse/processate, glutine, latticini grassi, oli di semi, emulsionanti, UPF. Continuare fino a remissione clinica e biochimica (PCR, calprotectina fecale).',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'40'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Banana',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'180'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'70'},{nome:'Broccoli',qt:'150'},{nome:'Carota',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Patata',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Formula PEN (≈25% kcal)',emoji:'🧪',items:[{nome:'Modulen IBD (porz. 100mL=150kcal)',qt:'300'}]}
+   ]},
+  {id:'cded_mant',emoji:'🌿',nome:'CDED Mantenimento – Oltre sett. 12',badge:'Levine 2019',colore:'#065F46',
+   desc:'CDED Mantenimento (sett. 12+): dieta completa senza formula, ampia varietà di alimenti non processati, esclusione mantenuta di carni rosse/processate e UPF.',
+   note:'Levine et al. 2019 · ECCO 2022 · Fase di mantenimento: dieta CDED completa senza PEN. Si aggiungono progressivamente: legumi, frutta secca, latte parzialmente scremato, formaggi magri senza additivi, uova, yogurt naturale. Rimangono ESCLUSI a vita: carni rosse e processate, glutine (da cereali industriali), oli di semi industriali, emulsionanti, alimenti ultra-processati. Monitoraggio periodico: PCR, calprotectina fecale, ferritina, vitamina D, B12, zinco ogni 3-6 mesi.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt intero bianco',qt:'150'},{nome:'Gallette di riso',qt:'40'},{nome:'Mirtilli',qt:'100'},{nome:'Miele millefiori',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Lenticchie secche',qt:'40'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
   {id:'scd',emoji:'🌿',nome:'SCD – Specific Carbohydrate Diet',badge:'CCF 2021',colore:'#166534',
    desc:'Dieta dei carboidrati specifici per IBD. Elimina disaccaridi e polisaccaridi. Consente monosaccaridi e alimenti freschi non processati.',
@@ -1524,7 +1612,9 @@ const FABBISOGNO_PATOLOGIE={
   sla:{kcal:'30-40 kcal/kg/die',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2023. Ipermetabolismo frequente. Valutare disfagia con logopedista (IDDSI). PEG precoce quando FVC >50% e calo ponderale progressivo. Omega-3 2g/die. Vitamina D. Monitorare peso ogni 2-4 settimane. Supporto nutrizionale specializzato obbligatorio.'},
   '6fed':{kcal:'Normocalorica (30-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die',note:'ACG/AGA 2020. Eliminare completamente: latte/latticini, frumento/glutine, uova, soia, frutta secca/arachidi, pesce/frutti di mare. Supplementare obbligatoriamente: calcio 1000-1200mg/die, vitamina D 800-1000 UI/die, omega-3 da alghe, B12 se deficit. Reintroduzione un alimento alla volta ogni 6-8 settimane con controllo endoscopico (EGDS).'},
   '4fed':{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ACG/AGA 2020. Eliminare: latte/latticini, frumento/glutine, uova, soia. Calcio: supplementare 1000-1200mg/die (latticini esclusi). Vitamina D adeguata. Pesce e frutta secca consentiti. Reintroduzione sequenziale con EGDS di controllo ogni 6-8 settimane.'},
-  cded:{kcal:'25-35 kcal/kg/die',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Fase 1 (sett. 1-6): 50% del fabbisogno calorico da formula enterale polimerica (PEN). Fase 2 (sett. 7-12): 25% PEN. Escludere: carni processate, glutine, grassi saturi animali, oli di semi, emulsionanti, conservanti. Monitorare: vitamina D, ferro, B12, zinco, PCR/calprotectina.'},
+  cded_fase1:{kcal:'25-35 kcal/kg/die (50% da PEN)',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Fase 1 (sett. 1-6): 50% del fabbisogno calorico da formula enterale polimerica (Modulen IBD o equivalente). Dieta solida ristretta: pollo, pesce fresco, uova, patata, carota, zucchina, frutta fresca semplice, riso, olio EVO. Monitorare PCR, calprotectina fecale, ferritina, vitamina D, zinco.'},
+  cded_fase2:{kcal:'25-35 kcal/kg/die (25% da PEN)',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Fase 2 (sett. 7-12): 25% kcal da PEN + dieta espansa. Aggiungere progressivamente: legumi, frutta secca, yogurt naturale senza additivi, maggiore varietà di pesce. Continuare ad escludere: glutine, carni rosse/processate, oli di semi, UPF. Monitorare PCR, calprotectina.'},
+  cded_mant:{kcal:'25-35 kcal/kg/die',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Mantenimento: dieta CDED completa senza PEN. Escludere permanentemente: carni rosse/processate, glutine industriale, oli di semi, emulsionanti, UPF. Monitorare ogni 3-6 mesi: PCR, calprotectina, ferritina, vitamina D, B12, zinco.'},
   scd:{kcal:'Normocalorica (adeguata ad età e attività)',prot:'1.0-1.5 g/kg/die',note:'CCF 2021 · ECCO 2022. Eliminare tutti i disaccaridi e polisaccaridi (zucchero, lattosio, amido). Consentire solo monosaccaridi e alimenti non processati. Yogurt fermentato artigianale 24h (privo di lattosio residuo). Richiede supervisione nutrizionale specializzata. Monitorare: calcio, vitamina D, B12, adeguatezza calorica.'}
 };
 const LAF_OPTIONS=[

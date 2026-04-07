@@ -658,6 +658,7 @@ const PORZIONI_FLAT = PORZIONI_DATA.flatMap(cat =>
 );
 
 function showTab(id) {
+  autoSavePage_diabete();
   document.querySelectorAll('.dg-tab').forEach((t,i) => t.classList.remove('active'));
   document.querySelectorAll('.dg-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById('tab-' + id);
@@ -965,10 +966,10 @@ const DIABETE_PE_CONFIG = {
     {id:'t2d_ipo', nome:'T2D Ipocalorica', nomeEsteso:'Diabete T2 — Schema Ipocalorico (-500 kcal)', colore:'#D97706', coloreT:'#fff'},
     {id:'t2d_lc', nome:'T2D Low-Carb', nomeEsteso:'Diabete T2 — Schema Low-Carb (45% CHO)', colore:'#7C3AED', coloreT:'#fff'}
   ],
-  kcals: [1400, 1600, 1800, 2000],
+  kcals: [1200, 1400, 1600, 1800, 2000, 2200, 2400],
   piani: {
     t1d: {
-      kcal_base: 1800,
+      kcal_base: 1699,
       macros: {p:18, cho:50, g:32},
       nota: 'T1D: Il counting dei CHO è fondamentale. Calcolare il rapporto I:C per ogni pasto. Pasti a orari fissi facilitano la gestione insulinica. Monitorare glicemia pre/post pasto. HbA1c target <7%.',
       pasti: [
@@ -1002,7 +1003,7 @@ const DIABETE_PE_CONFIG = {
       ]
     },
     t2d_med: {
-      kcal_base: 1800,
+      kcal_base: 1646,
       macros: {p:18, cho:50, g:32},
       nota: 'Dieta Mediterranea per T2D: Riduce HbA1c di 0.3-0.5%, migliora la sensibilità insulinica. Preferire CHO a basso GI, legumi 3-4 volte/settimana, pesce 2-3 volte/settimana, frutta secca quotidiana.',
       pasti: [
@@ -1035,7 +1036,7 @@ const DIABETE_PE_CONFIG = {
       ]
     },
     t2d_ipo: {
-      kcal_base: 1600,
+      kcal_base: 1162,
       macros: {p:22, cho:48, g:30},
       nota: 'Schema Ipocalorico T2D: Deficit ~500 kcal/die rispetto al fabbisogno per perdita 0.5 kg/settimana. Obiettivo: -5-10% del peso in 6-12 mesi. Distribuire i CHO equamente nei pasti. Monitorare glicemia.',
       pasti: [
@@ -1065,7 +1066,7 @@ const DIABETE_PE_CONFIG = {
       ]
     },
     t2d_lc: {
-      kcal_base: 1800,
+      kcal_base: 1517,
       macros: {p:25, cho:25, g:50},
       nota: 'Low-Carb T2D (CHO 25-40%): Migliora controllo glicemico e riduce HbA1c. Aumentare il monitoraggio glicemico nei primi 3 mesi. Può richiedere adeguamento della terapia ipoglicemizzante. NON è dieta chetogenica (CHO > 50g/die).',
       pasti: [
@@ -1161,6 +1162,57 @@ function eliminaPianoDiabete() {
     const el = document.getElementById(id); if (el) el.value = '';
   });
 }
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_diabete() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_diabete', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_diabete() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_diabete') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_diabete() {
+  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
+  const ap = document.querySelector('.dg-panel.active') || document.querySelector('main');
+  if (ap) {
+    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  }
+  localStorage.removeItem('nutriplan_autosave_diabete');
+  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  autoRestorePage_diabete();
+  // Insert "Svuota Sezione" button in each panel
+  document.querySelectorAll('.dg-panel').forEach(panel => {
+    if (panel.querySelector('.svuota-btn-diabete')) return;
+    const btn = document.createElement('button');
+    btn.className = 'svuota-btn-diabete no-print';
+    btn.innerHTML = '🗑️ Svuota Sezione';
+    btn.title = 'Svuota tutti i dati di questa sezione';
+    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
+    btn.onmouseover = function(){this.style.background='#FEE2E2'};
+    btn.onmouseout = function(){this.style.background='white'};
+    btn.onclick = svuotaSezione_diabete;
+    panel.insertBefore(btn, panel.firstChild);
+  });
+}, {once: false});
 </script>
 </body>
 </html>

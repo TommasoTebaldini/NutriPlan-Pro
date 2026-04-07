@@ -459,7 +459,92 @@ const DB_BDA=[
   {n:"Lievito di birra secco attivo",c:"Condimenti",src:"BDA",k:325,p:40.4,gs:0.8,g:7.6,z:0,ch:41.2,fi:26.9,ca:30,fe:17.6,mg:54,k2:2000,na:51,zn:7.94,fo:637,se:7,col:0},
   {n:"Lievito nutrizionale in scaglie",c:"Condimenti",src:"BDA",k:325,p:50,gs:0.5,g:6.5,z:1,ch:29,fi:14,ca:24,fe:4,mg:97,k2:2100,na:40,zn:5.0,fo:600,se:98,col:0},
   // ── SEMI AGGIUNTIVI ──
-  {n:"Semi di canapa decorticati",c:"Frutta secca",src:"BDA",k:553,p:31.6,gs:3.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.95,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:0,col:0}
+  {n:"Semi di canapa decorticati",c:"Frutta secca",src:"BDA",k:553,p:31.6,gs:3.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.95,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:0,col:0},
+  // ── VERDURE E ORTAGGI NON ANCORA PRESENTI ──
+  {n:"Okra (gombo)",c:"Verdure",src:"CREA",k:33,p:2.0,gs:0,g:0.2,z:1.5,ch:7.5,fi:3.2,ca:82,fe:0.8,mg:57,k2:303,na:8,zn:0.6,fo:88,se:0.2,col:0},
+  {n:"Ravanelli",c:"Verdure",src:"CREA",k:16,p:0.7,gs:0,g:0.1,z:1.9,ch:3.4,fi:1.6,ca:25,fe:0.3,mg:10,k2:233,na:39,zn:0.3,fo:25,se:0.7,col:0},
+  {n:"Puntarelle",c:"Verdure",src:"CREA",k:23,p:2.1,gs:0,g:0.4,z:0.3,ch:3.5,fi:3.0,ca:90,fe:1.6,mg:24,k2:400,na:52,zn:0.4,fo:75,se:0.3,col:0},
+  {n:"Lampascioni (cipollotti selvatici)",c:"Verdure",src:"CREA",k:35,p:1.5,gs:0,g:0.3,z:4.5,ch:6.8,fi:2.5,ca:30,fe:0.8,mg:20,k2:250,na:18,zn:0.3,fo:40,se:0.5,col:0},
+  {n:"Cuori di palma",c:"Verdure",src:"CREA",k:36,p:3.0,gs:0,g:0.3,z:2.5,ch:6.8,fi:3.5,ca:58,fe:1.7,mg:38,k2:177,na:141,zn:1.1,fo:35,se:0.5,col:0},
+  {n:"Germogli di soia",c:"Verdure",src:"CREA",k:30,p:3.1,gs:0,g:0.2,z:2.1,ch:5.9,fi:1.8,ca:13,fe:0.9,mg:21,k2:155,na:6,zn:0.4,fo:59,se:0.6,col:0},
+  {n:"Germogli di bambù",c:"Verdure",src:"BDA",k:27,p:2.6,gs:0,g:0.3,z:1.7,ch:5.2,fi:2.2,ca:13,fe:0.5,mg:3,k2:533,na:4,zn:1.1,fo:21,se:0.8,col:0},
+  {n:"Topinambur cotto",c:"Verdure",src:"BDA",k:70,p:1.9,gs:0,g:0.0,z:2.0,ch:16.5,fi:1.4,ca:14,fe:3.4,mg:17,k2:426,na:4,zn:0.1,fo:75,se:0.8,col:0},
+  {n:"Scorzonera",c:"Verdure",src:"CREA",k:73,p:2.0,gs:0,g:0.2,z:4.0,ch:17.5,fi:3.5,ca:78,fe:1.3,mg:25,k2:375,na:35,zn:0.5,fo:35,se:0.5,col:0},
+  {n:"Daikon (ravanello bianco giapponese)",c:"Verdure",src:"BDA",k:18,p:0.6,gs:0,g:0.1,z:2.5,ch:4.1,fi:1.6,ca:27,fe:0.4,mg:16,k2:227,na:21,zn:0.2,fo:28,se:0.7,col:0},
+  {n:"Cavolo rapa",c:"Verdure",src:"CREA",k:27,p:1.7,gs:0,g:0.1,z:3.6,ch:6.2,fi:3.6,ca:24,fe:0.5,mg:19,k2:350,na:20,zn:0.4,fo:20,se:0.4,col:0},
+  {n:"Bieta a coste cotta",c:"Verdure",src:"CREA",k:20,p:1.9,gs:0,g:0.2,z:1.1,ch:4.1,fi:2.1,ca:90,fe:2.0,mg:60,k2:450,na:170,zn:0.4,fo:12,se:1.5,col:0},
+  {n:"Broccoli cotti",c:"Verdure",src:"CREA",k:28,p:3.3,gs:0,g:0.4,z:1.8,ch:4.7,fi:3.0,ca:64,fe:0.9,mg:22,k2:293,na:41,zn:0.5,fo:91,se:2.5,col:0},
+  {n:"Cime di rapa cotte",c:"Verdure",src:"CREA",k:27,p:3.1,gs:0,g:0.5,z:1.0,ch:3.5,fi:3.2,ca:98,fe:2.5,mg:24,k2:235,na:38,zn:0.5,fo:120,se:1.5,col:0},
+  // ── FRUTTA NON ANCORA PRESENTE ──
+  {n:"Tamarindo fresco",c:"Frutta fresca",src:"BDA",k:239,p:2.8,gs:0,g:0.6,z:38,ch:62.5,fi:5.1,ca:74,fe:2.8,mg:92,k2:628,na:28,zn:0.1,fo:113,se:1.3,col:0},
+  {n:"Giuggiole fresche",c:"Frutta fresca",src:"CREA",k:79,p:1.2,gs:0,g:0.2,z:17.5,ch:20.2,fi:4.0,ca:21,fe:0.5,mg:10,k2:250,na:3,zn:0.05,fo:23,se:0.8,col:0},
+  {n:"Carambola (Starfruit)",c:"Frutta fresca",src:"BDA",k:31,p:1.0,gs:0,g:0.3,z:3.9,ch:6.7,fi:2.8,ca:3,fe:0.1,mg:10,k2:133,na:2,zn:0.12,fo:12,se:0.6,col:0},
+  {n:"Litchi",c:"Frutta fresca",src:"BDA",k:66,p:0.8,gs:0,g:0.4,z:14.3,ch:16.5,fi:1.3,ca:5,fe:0.3,mg:10,k2:171,na:1,zn:0.07,fo:14,se:0.6,col:0},
+  {n:"Guava fresca",c:"Frutta fresca",src:"BDA",k:68,p:2.6,gs:0,g:1.0,z:8.9,ch:14.3,fi:5.4,ca:18,fe:0.3,mg:22,k2:417,na:2,zn:0.23,fo:49,se:0.6,col:0},
+  {n:"Maracuja / Frutto della passione",c:"Frutta fresca",src:"BDA",k:97,p:2.2,gs:0,g:0.7,z:11.2,ch:23.4,fi:10.4,ca:12,fe:1.6,mg:29,k2:348,na:28,zn:0.1,fo:15,se:0.6,col:0},
+  {n:"Rambutano",c:"Frutta fresca",src:"BDA",k:82,p:0.9,gs:0,g:0.2,z:18,ch:20.9,fi:0.9,ca:22,fe:0.4,mg:7,k2:42,na:11,zn:0.08,fo:9,se:0.6,col:0},
+  {n:"Corbezzoli",c:"Frutta fresca",src:"CREA",k:50,p:0.5,gs:0,g:0.4,z:7.5,ch:11.4,fi:3.5,ca:16,fe:0.4,mg:9,k2:200,na:2,zn:0.1,fo:12,se:0.5,col:0},
+  {n:"Azuki (adzuki) fagioli rossi cotti",c:"Legumi",src:"BDA",k:128,p:7.5,gs:0.1,g:0.1,z:0.3,ch:24.8,fi:7.3,ca:28,fe:2.0,mg:52,k2:532,na:8,zn:2.0,fo:181,se:1.2,col:0},
+  {n:"Lupini in salamoia sgocciolati",c:"Legumi",src:"CREA",k:119,p:15.8,gs:0.3,g:2.8,z:0.4,ch:10.1,fi:2.0,ca:30,fe:1.6,mg:70,k2:242,na:390,zn:1.5,fo:66,se:2,col:0},
+  // ── CEREALI E FARINE NON ANCORA PRESENTI ──
+  {n:"Teff crudo",c:"Cereali",src:"BDA",k:367,p:13.3,gs:0.3,g:2.4,z:3.3,ch:73,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:272,se:6.3,col:0},
+  {n:"Freekeh (grano verde tostato)",c:"Cereali",src:"BDA",k:362,p:12.6,gs:0.5,g:2.7,z:2.5,ch:72,fi:16.5,ca:32,fe:3.6,mg:78,k2:347,na:18,zn:2.9,fo:220,se:8,col:0},
+  {n:"Riso integrale cotto",c:"Cereali e pasta",src:"CREA",k:110,p:2.6,gs:0.1,g:0.9,z:0.3,ch:23.0,fi:1.8,ca:10,fe:0.5,mg:44,k2:79,na:5,zn:0.6,fo:77,se:9.8,col:0},
+  {n:"Semola di mais (fioretto)",c:"Cereali",src:"CREA",k:358,p:8.7,gs:0.3,g:4.0,z:1.0,ch:76,fi:2.4,ca:4,fe:1.1,mg:29,k2:142,na:1,zn:0.8,fo:78,se:8,col:0},
+  {n:"Farina di riso integrale",c:"Cereali e derivati",src:"BDA",k:366,p:7.2,gs:0.2,g:2.8,z:0.5,ch:78.7,fi:4.6,ca:11,fe:1.8,mg:90,k2:289,na:5,zn:2.5,fo:317,se:36,col:0},
+  {n:"Farina di avena",c:"Cereali e derivati",src:"CREA",k:379,p:13.9,gs:1.1,g:7.0,z:0.7,ch:70,fi:6.5,ca:54,fe:4.7,mg:138,k2:429,na:6,zn:3.6,fo:523,se:34,col:0},
+  {n:"Pasta di grano saraceno cruda (soba)",c:"Cereali e pasta",src:"BDA",k:368,p:14.7,gs:0.5,g:3.4,z:0,ch:74.4,fi:8.5,ca:20,fe:2.2,mg:230,k2:440,na:5,zn:2.4,fo:347,se:8,col:0},
+  {n:"Pane di kamut crudo",c:"Cereali e derivati",src:"BDA",k:259,p:11.0,gs:0.5,g:3.5,z:3.0,ch:47.5,fi:4.0,ca:28,fe:2.5,mg:80,k2:210,na:480,zn:2.2,fo:225,se:12,col:0},
+  // ── FORMAGGI NON ANCORA PRESENTI ──
+  {n:"Castelmagno",c:"Formaggi",src:"CREA",k:390,p:28.8,gs:13,g:31.0,z:0.5,ch:0.5,fi:0,ca:680,fe:0.4,mg:25,k2:75,na:700,zn:3.5,fo:500,se:15,col:96},
+  {n:"Puzzone di Moena",c:"Formaggi",src:"CREA",k:360,p:26.5,gs:14,g:28.0,z:0.5,ch:0.5,fi:0,ca:750,fe:0.3,mg:28,k2:80,na:900,zn:3.2,fo:480,se:12,col:90},
+  {n:"Strachitunt (erborinato bergamasco)",c:"Formaggi",src:"CREA",k:368,p:22.5,gs:13.5,g:29.5,z:0.5,ch:0.5,fi:0,ca:520,fe:0.4,mg:22,k2:85,na:1100,zn:2.8,fo:440,se:11,col:88},
+  {n:"Cagliata fresca",c:"Formaggi",src:"CREA",k:90,p:9.5,gs:2.5,g:4.5,z:3.5,ch:4.0,fi:0,ca:165,fe:0.1,mg:12,k2:80,na:60,zn:0.9,fo:130,se:3,col:18},
+  {n:"Burrata",c:"Formaggi",src:"CREA",k:272,p:14.5,gs:12.5,g:24.5,z:0,ch:0.5,fi:0,ca:320,fe:0.1,mg:16,k2:75,na:280,zn:2.0,fo:310,se:5,col:80},
+  {n:"Stracciatella di bufala",c:"Formaggi",src:"CREA",k:307,p:12.8,gs:14,g:27.5,z:0,ch:1.5,fi:0,ca:285,fe:0.2,mg:14,k2:70,na:310,zn:1.8,fo:285,se:4,col:95},
+  {n:"Pecorino Romano grattugiato",c:"Formaggi",src:"CREA",k:387,p:31.8,gs:13,g:29.5,z:0.2,ch:0.2,fi:0,ca:1163,fe:0.3,mg:38,k2:90,na:1800,zn:4.5,fo:730,se:18,col:107},
+  {n:"Taleggio",c:"Formaggi",src:"CREA",k:309,p:20.5,gs:13,g:24.5,z:0.5,ch:0.5,fi:0,ca:500,fe:0.3,mg:24,k2:90,na:1580,zn:3.0,fo:440,se:10,col:80},
+  {n:"Quartirolo lombardo",c:"Formaggi",src:"CREA",k:253,p:17.5,gs:10.5,g:19.5,z:0.5,ch:0.5,fi:0,ca:480,fe:0.3,mg:18,k2:88,na:450,zn:2.2,fo:350,se:6,col:65},
+  {n:"Crescenza / Stracchino",c:"Formaggi",src:"CREA",k:247,p:15.8,gs:12.5,g:19.5,z:0,ch:1.0,fi:0,ca:550,fe:0.3,mg:17,k2:95,na:620,zn:2.0,fo:350,se:5,col:62},
+  // ── CARNI E DERIVATI NON ANCORA PRESENTI ──
+  {n:"Struzzo filetto",c:"Carni rosse",src:"CREA",k:105,p:22.4,gs:0.5,g:1.5,z:0,ch:0,fi:0,ca:6,fe:3.2,mg:25,k2:320,na:63,zn:3.8,fo:205,se:27,col:58},
+  {n:"Cervo coscia",c:"Carni rosse",src:"CREA",k:120,p:22.0,gs:0.5,g:2.4,z:0,ch:0,fi:0,ca:6,fe:4.5,mg:23,k2:330,na:55,zn:3.5,fo:200,se:12,col:65},
+  {n:"Capretto coscia",c:"Carni bianche",src:"CREA",k:109,p:20.6,gs:0.8,g:2.7,z:0,ch:0,fi:0,ca:10,fe:2.8,mg:20,k2:280,na:72,zn:4.5,fo:185,se:8,col:70},
+  {n:"Coniglio coscia",c:"Carni bianche",src:"CREA",k:136,p:21.0,gs:1.0,g:5.0,z:0,ch:0,fi:0,ca:19,fe:1.3,mg:25,k2:350,na:45,zn:1.9,fo:225,se:10,col:71},
+  {n:"Trippa di manzo",c:"Carni rosse",src:"CREA",k:84,p:15.4,gs:0.5,g:2.5,z:0,ch:0,fi:0,ca:88,fe:0.7,mg:18,k2:160,na:97,zn:2.5,fo:80,se:8,col:112},
+  {n:"Rognone (reni) di manzo",c:"Carni rosse",src:"CREA",k:99,p:17.4,gs:0.8,g:3.1,z:0,ch:0.8,fi:0,ca:13,fe:4.4,mg:18,k2:262,na:182,zn:2.4,fo:247,se:141,col:387},
+  {n:"Cuore di manzo",c:"Carni rosse",src:"CREA",k:112,p:17.1,gs:1.0,g:4.0,z:0,ch:0.1,fi:0,ca:6,fe:4.3,mg:22,k2:287,na:95,zn:1.7,fo:147,se:30,col:124},
+  // ── PESCE E FRUTTI DI MARE NON ANCORA PRESENTI ──
+  {n:"Tonno pinna gialla fresco",c:"Pesce",src:"CREA",k:108,p:23.3,gs:0.4,g:1.0,z:0,ch:0,fi:0,ca:8,fe:0.9,mg:35,k2:450,na:45,zn:0.4,fo:198,se:110,col:38},
+  {n:"Cernia di mare surgelata",c:"Pesce",src:"BDA",k:82,p:18.0,gs:0.4,g:1.1,z:0,ch:0,fi:0,ca:22,fe:0.7,mg:25,k2:390,na:60,zn:0.5,fo:175,se:28,col:48},
+  {n:"Calamaro surgelato",c:"Molluschi",src:"CREA",k:74,p:15.6,gs:0.2,g:1.0,z:0,ch:0.8,fi:0,ca:32,fe:0.9,mg:33,k2:246,na:220,zn:1.5,fo:149,se:42,col:233},
+  {n:"Lumache di mare (murici)",c:"Molluschi",src:"CREA",k:70,p:14.5,gs:0.1,g:0.6,z:0,ch:1.5,fi:0,ca:62,fe:0.7,mg:30,k2:210,na:295,zn:1.2,fo:140,se:38,col:65},
+  {n:"Ricci di mare",c:"Molluschi",src:"CREA",k:120,p:13.0,gs:0.4,g:5.0,z:0,ch:3.4,fi:0,ca:10,fe:0.7,mg:28,k2:225,na:220,zn:0.9,fo:130,se:42,col:290},
+  {n:"Ostrica",c:"Molluschi",src:"CREA",k:69,p:9.0,gs:0.5,g:2.5,z:0,ch:4.9,fi:0,ca:45,fe:5.1,mg:47,k2:168,na:185,zn:16.6,fo:162,se:16,col:55},
+  {n:"Granchio reale",c:"Crostacei",src:"BDA",k:84,p:18.0,gs:0.2,g:0.8,z:0,ch:0,fi:0,ca:36,fe:0.4,mg:45,k2:246,na:395,zn:3.5,fo:160,se:38,col:42},
+  {n:"Astice (aragosta)",c:"Crostacei",src:"CREA",k:90,p:18.8,gs:0.3,g:0.9,z:0,ch:0.5,fi:0,ca:61,fe:0.5,mg:37,k2:352,na:320,zn:2.5,fo:175,se:40,col:150},
+  {n:"Cannocchie / Pannocchie",c:"Crostacei",src:"CREA",k:83,p:14.4,gs:0.2,g:1.3,z:0,ch:1.4,fi:0,ca:55,fe:0.6,mg:40,k2:230,na:350,zn:2.0,fo:145,se:60,col:160},
+  // ── CONDIMENTI E ALIMENTI VARI NON ANCORA PRESENTI ──
+  {n:"Colatura di alici",c:"Condimenti",src:"CREA",k:26,p:5.0,gs:0.1,g:0.1,z:0,ch:1.0,fi:0,ca:40,fe:0.8,mg:18,k2:120,na:8100,zn:0.6,fo:50,se:10,col:30},
+  {n:"Olio di palma",c:"Grassi e oli",src:"BDA",k:884,p:0,gs:49.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Olio di sesamo",c:"Grassi e oli",src:"BDA",k:884,p:0,gs:14.2,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Olio di arachidi",c:"Grassi e oli",src:"BDA",k:884,p:0,gs:17.0,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Ghee (burro chiarificato)",c:"Grassi e oli",src:"BDA",k:900,p:0.1,gs:61.9,g:99.5,z:0,ch:0.1,fi:0,ca:4,fe:0.1,mg:0,k2:4,na:2,zn:0,fo:0,se:0,col:256},
+  {n:"Maionese light",c:"Condimenti",src:"BDA",k:313,p:1.4,gs:3.8,g:32,z:3.5,ch:5,fi:0,ca:15,fe:0.3,mg:3,k2:18,na:620,zn:0.1,fo:28,se:2,col:42},
+  {n:"Salsa Caesar industriale",c:"Condimenti",src:"BDA",k:388,p:2.5,gs:4.5,g:40,z:3.5,ch:5,fi:0.3,ca:60,fe:0.3,mg:5,k2:32,na:890,zn:0.2,fo:35,se:4,col:30},
+  {n:"Pasta al pistacchio (pesto)",c:"Condimenti",src:"BDA",k:480,p:8,gs:9,g:44,z:6,ch:18,fi:4,ca:70,fe:2.5,mg:75,k2:370,na:350,zn:1.5,fo:200,se:3,col:5},
+  {n:"Tahini / crema di sesamo",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:7.5,g:53.8,z:0.5,ch:21.2,fi:9.0,ca:426,fe:8.9,mg:95,k2:582,na:115,zn:4.6,fo:732,se:34,col:0},
+  {n:"Marmellata di arance",c:"Dolci",src:"BDA",k:258,p:0.4,gs:0,g:0.1,z:63.5,ch:65,fi:1.5,ca:22,fe:0.5,mg:5,k2:55,na:10,zn:0.05,fo:8,se:0,col:0},
+  {n:"Marmellata di albicocche",c:"Dolci",src:"BDA",k:251,p:0.4,gs:0,g:0.1,z:60,ch:65,fi:2.0,ca:11,fe:0.8,mg:7,k2:130,na:10,zn:0.1,fo:6,se:0.5,col:0},
+  {n:"Crema di pistacchi senza zucchero",c:"Creme e spalmate",src:"BDA",k:559,p:18.5,gs:4.5,g:44,z:3.5,ch:24,fi:10.5,ca:105,fe:3.5,mg:120,k2:990,na:5,zn:2.0,fo:480,se:7,col:0},
+  {n:"Cioccolato fondente 85%",c:"Dolci",src:"BDA",k:575,p:12.5,gs:17.5,g:42.5,z:26,ch:32.5,fi:12.5,ca:73,fe:12.5,mg:228,k2:715,na:20,zn:3.3,fo:308,se:6.8,col:0},
+  {n:"Cioccolato fondente 72%",c:"Dolci",src:"BDA",k:540,p:8,gs:13.5,g:36,z:33.5,ch:45,fi:10,ca:60,fe:8,mg:180,k2:560,na:22,zn:2.2,fo:240,se:5,col:3},
+  {n:"Cacao amaro in polvere",c:"Dolci",src:"CREA",k:228,p:19.6,gs:3.0,g:13.7,z:0,ch:57.9,fi:37.0,ca:128,fe:13.9,mg:499,k2:1524,na:21,zn:6.8,fo:734,se:14,col:0},
+  {n:"Cioccolato al latte 35%",c:"Dolci",src:"BDA",k:541,p:7.3,gs:17.5,g:30.7,z:55.5,ch:58.5,fi:1.5,ca:230,fe:2.5,mg:55,k2:380,na:95,zn:1.5,fo:215,se:4.5,col:18},
+  {n:"Menta piperita essiccata",c:"Condimenti",src:"BDA",k:285,p:14.8,gs:0.9,g:6.0,z:0,ch:60.7,fi:29.8,ca:1488,fe:31.8,mg:602,k2:1924,na:31,zn:1.1,fo:75,se:4.9,col:0},
+  {n:"Cardamomo in polvere",c:"Condimenti",src:"BDA",k:311,p:10.8,gs:0.7,g:6.7,z:4.0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:178,se:0.9,col:0},
+  {n:"Zafferano in polvere",c:"Condimenti",src:"BDA",k:310,p:11.4,gs:0.6,g:5.9,z:1.5,ch:65,fi:3.9,ca:111,fe:11.1,mg:264,k2:1724,na:148,zn:1.1,fo:252,se:5.6,col:0},
+  {n:"Aglio essiccato in polvere",c:"Condimenti",src:"BDA",k:331,p:16.8,gs:0.4,g:0.7,z:3.7,ch:72.7,fi:9.0,ca:79,fe:2.3,mg:77,k2:1193,na:60,zn:1.6,fo:153,se:14.2,col:0}
 ];
 
 let CUSTOM_DB=[];
@@ -635,6 +720,59 @@ const DB_UPF = [
   {n:"Granola industriale miele e frutta",c:"Cereali da colazione",src:"UPF",k:450,p:8.5,gs:3,g:16,z:32,ch:66,fi:5.5,ca:45,fe:3,mg:75,k2:310,na:120,zn:1.8,fo:180,se:7,col:0},
   {n:"Porridge industriale confezionato",c:"Cereali da colazione",src:"UPF",k:368,p:10,gs:1.4,g:7,z:12,ch:63,fi:8,ca:40,fe:3.5,mg:100,k2:300,na:350,zn:2.5,fo:320,se:8,col:0},
   {n:"Wafer al miele confezionato",c:"Dolci confezionati",src:"UPF",k:490,p:6.5,gs:7,g:22,z:42,ch:67,fi:1.5,ca:60,fe:1.5,mg:20,k2:130,na:200,zn:0.6,fo:80,se:5,col:30},
+
+  // ── PRODOTTI DA FORNO SALATI INDUSTRIALI ──
+  {n:"Focaccia industriale confezionata",c:"Snack salati",src:"UPF",k:310,p:7.5,gs:2.5,g:12,z:2.5,ch:44,fi:1.5,ca:30,fe:1.5,mg:15,k2:90,na:750,zn:0.5,fo:75,se:8,col:0},
+  {n:"Toast confezionato prosciutto e formaggio",c:"Fast food",src:"UPF",k:248,p:11,gs:4,g:11,z:3.5,ch:28,fi:1.5,ca:160,fe:1.2,mg:18,k2:150,na:780,zn:1.2,fo:110,se:10,col:35},
+  {n:"Wrap industriale pollo e verdure",c:"Fast food",src:"UPF",k:220,p:10,gs:2,g:8,z:3,ch:28,fi:2.5,ca:60,fe:1.5,mg:20,k2:190,na:680,zn:0.9,fo:95,se:9,col:20},
+  {n:"Panino hamburger industriale completo",c:"Fast food",src:"UPF",k:260,p:12,gs:4,g:10,z:4,ch:32,fi:2,ca:80,fe:2.5,mg:22,k2:230,na:750,zn:2,fo:120,se:10,col:40},
+  {n:"Piadina romagnola industriale",c:"Cereali e derivati",src:"UPF",k:338,p:9.5,gs:4.5,g:12,z:3,ch:48,fi:2,ca:55,fe:1.8,mg:18,k2:130,na:760,zn:0.7,fo:85,se:8,col:5},
+  {n:"Focaccine tipo Tigelle industriali",c:"Cereali e derivati",src:"UPF",k:305,p:8.5,gs:2,g:9,z:3,ch:47,fi:2,ca:45,fe:1.5,mg:16,k2:110,na:700,zn:0.6,fo:80,se:8,col:0},
+  {n:"Crackers wasa tipo crispbread",c:"Snack salati",src:"UPF",k:348,p:9.5,gs:0.4,g:2.5,z:1.5,ch:68,fi:12,ca:30,fe:3,mg:65,k2:240,na:410,zn:2,fo:260,se:15,col:0},
+  {n:"Chips di lenticchie BBQ",c:"Snack salati",src:"UPF",k:410,p:12,gs:1.5,g:16,z:4,ch:57,fi:7,ca:35,fe:3,mg:50,k2:380,na:620,zn:1.5,fo:200,se:5,col:0},
+  {n:"Rice cakes aromatizzate",c:"Snack salati",src:"UPF",k:396,p:7.5,gs:0.5,g:4,z:5,ch:80,fi:2.5,ca:10,fe:0.8,mg:42,k2:105,na:440,zn:0.5,fo:95,se:3,col:0},
+
+  // ── BEVANDE PROTEICHE E SPORTIVE ──
+  {n:"Frullato proteico industriale (330mL, 20g prot)",c:"Proteine in Polvere",src:"UPF",k:121,p:6.1,gs:1.2,g:3.3,z:10,ch:12,fi:0.3,ca:120,fe:0.5,mg:20,k2:155,na:100,zn:0.7,fo:85,se:5,col:12},
+  {n:"Bevanda proteica colazione (bottiglia 250mL)",c:"Bibite zuccherate",src:"UPF",k:95,p:8,gs:1.5,g:2.5,z:11,ch:12,fi:0,ca:230,fe:1.5,mg:30,k2:200,na:120,zn:0.9,fo:100,se:5,col:10},
+  {n:"Smoothie proteico alla banana industriale",c:"Bibite zuccherate",src:"UPF",k:78,p:5,gs:0.5,g:1.5,z:10,ch:12,fi:1,ca:90,fe:0.5,mg:18,k2:180,na:80,zn:0.4,fo:60,se:3,col:5},
+
+  // ── SALSE E CONDIMENTI INDUSTRIALI aggiuntivi ──
+  {n:"Salsa guacamole industriale in vaschetta",c:"Condimenti",src:"UPF",k:148,p:1.5,gs:3.5,g:14,z:1,ch:5,fi:4,ca:15,fe:0.5,mg:22,k2:320,na:480,zn:0.4,fo:38,se:0.3,col:0},
+  {n:"Salsa tzatziki industriale in vaschetta",c:"Condimenti",src:"UPF",k:85,p:4,gs:3.5,g:6,z:2.5,ch:3.5,fi:0.3,ca:80,fe:0.2,mg:13,k2:110,na:390,zn:0.3,fo:52,se:3,col:16},
+  {n:"Salsa Sriracha piccante",c:"Condimenti",src:"UPF",k:93,p:2,gs:0.1,g:0.5,z:14,ch:17,fi:1.5,ca:18,fe:0.5,mg:12,k2:180,na:2200,zn:0.2,fo:25,se:1,col:0},
+  {n:"Salsa Teriyaki industriale",c:"Condimenti",src:"UPF",k:89,p:4,gs:0,g:0.2,z:17,ch:17.5,fi:0.3,ca:10,fe:0.9,mg:20,k2:90,na:2500,zn:0.2,fo:25,se:1,col:0},
+  {n:"Burro di cocco industriale",c:"Grassi e oli",src:"UPF",k:700,p:2,gs:55,g:63,z:5.5,ch:23,fi:9,ca:20,fe:3,mg:90,k2:540,na:15,zn:1,fo:240,se:12,col:0},
+
+  // ── GELATI PARTICOLARI ──
+  {n:"Gelato alla fragola industriale",c:"Gelati",src:"UPF",k:102,p:2.5,gs:2.5,g:2.5,z:16,ch:18,fi:0.2,ca:80,fe:0.2,mg:8,k2:120,na:55,zn:0.3,fo:70,se:1,col:10},
+  {n:"Gelato vegan soia industriale",c:"Gelati",src:"UPF",k:150,p:2.5,gs:2,g:7,z:16,ch:20,fi:0.8,ca:110,fe:0.8,mg:12,k2:100,na:70,zn:0.4,fo:50,se:1,col:0},
+  {n:"Sorbetto limone industriale",c:"Gelati",src:"UPF",k:120,p:0.3,gs:0,g:0.1,z:29,ch:30,fi:0,ca:5,fe:0.1,mg:3,k2:30,na:10,zn:0,fo:3,se:0,col:0},
+
+  // ── PRODOTTI SENZA GLUTINE INDUSTRIALI ──
+  {n:"Pasta senza glutine di mais-riso (Barilla/Garofalo)",c:"Cereali e pasta",src:"UPF",k:360,p:4.5,gs:0.3,g:1.5,z:0.5,ch:79,fi:3,ca:20,fe:0.5,mg:20,k2:80,na:5,zn:0.3,fo:55,se:3,col:0},
+  {n:"Pane senza glutine confezionato",c:"Cereali e derivati",src:"UPF",k:255,p:3.5,gs:0.3,g:5.5,z:3.5,ch:48,fi:2.5,ca:50,fe:0.5,mg:12,k2:60,na:520,zn:0.3,fo:45,se:3,col:0},
+  {n:"Biscotti senza glutine al burro",c:"Dolci confezionati",src:"UPF",k:480,p:4.5,gs:15,g:22,z:28,ch:68,fi:1.5,ca:45,fe:0.8,mg:12,k2:80,na:350,zn:0.3,fo:50,se:4,col:70},
+  {n:"Fette biscottate senza glutine",c:"Biscotti e crackers",src:"UPF",k:405,p:4,gs:0.4,g:6.5,z:8,ch:80,fi:2,ca:30,fe:0.6,mg:10,k2:65,na:480,zn:0.2,fo:40,se:2,col:0},
+  {n:"Pizza base senza glutine surgelata",c:"Fast food",src:"UPF",k:215,p:4,gs:1,g:6,z:3.5,ch:36,fi:2,ca:60,fe:0.6,mg:12,k2:70,na:530,zn:0.3,fo:45,se:3,col:0},
+  {n:"Crackers senza glutine di mais",c:"Snack salati",src:"UPF",k:440,p:5,gs:0.5,g:10,z:2,ch:80,fi:2.5,ca:15,fe:0.5,mg:30,k2:80,na:680,zn:0.5,fo:60,se:4,col:0},
+
+  // ── PRODOTTI VEGETALI / SOSTITUTI CARNE ──
+  {n:"Burger vegetale Beyond Meat / simile",c:"Salumi processati",src:"UPF",k:250,p:20,gs:5,g:18,z:0,ch:3,fi:2,ca:80,fe:3.5,mg:25,k2:350,na:390,zn:2.5,fo:190,se:8,col:0},
+  {n:"Cotoletta di soia / seitan impanata",c:"Salumi processati",src:"UPF",k:230,p:16,gs:2,g:10,z:1,ch:20,fi:3,ca:50,fe:3,mg:30,k2:200,na:600,zn:1.5,fo:150,se:5,col:0},
+  {n:"Wurstel di soia vegetali",c:"Salumi processati",src:"UPF",k:185,p:14,gs:3,g:11,z:2,ch:8,fi:1.5,ca:60,fe:2.5,mg:20,k2:180,na:750,zn:1.2,fo:100,se:4,col:0},
+  {n:"Formaggio vegano fette (tipo violife)",c:"Latte e derivati",src:"UPF",k:280,p:1.5,gs:14,g:22,z:2.5,ch:12,fi:0.5,ca:550,fe:0.5,mg:5,k2:15,na:980,zn:0.2,fo:25,se:1,col:0},
+  {n:"Panna vegetale di soia UHT",c:"Latte e derivati",src:"UPF",k:195,p:3,gs:2.5,g:19,z:3.5,ch:4,fi:0.3,ca:120,fe:0.5,mg:18,k2:90,na:50,zn:0.3,fo:40,se:1,col:0},
+  {n:"Yogurt vegano cocco-ananas industriale",c:"Latte e derivati",src:"UPF",k:105,p:1.5,gs:4,g:7,z:8,ch:12,fi:0.5,ca:120,fe:0.3,mg:10,k2:85,na:30,zn:0.2,fo:30,se:1,col:0},
+  {n:"Tofu affumicato tipo naturli",c:"Legumi",src:"UPF",k:145,p:15,gs:2,g:8.5,z:0.5,ch:3,fi:0.5,ca:250,fe:3.5,mg:35,k2:150,na:550,zn:1.2,fo:120,se:10,col:0},
+
+  // ── BEVANDE PARTICOLARI ──
+  {n:"Bevanda al caffè latte zuccherato (lattina)",c:"Bibite zuccherate",src:"UPF",k:52,p:1.8,gs:1.5,g:2,z:7.5,ch:8.5,fi:0,ca:75,fe:0,mg:8,k2:140,na:60,zn:0.3,fo:75,se:2,col:8},
+  {n:"Kombucha commerciale zuccherato",c:"Bibite zuccherate",src:"UPF",k:30,p:0,gs:0,g:0,z:7,ch:7,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:10,zn:0,fo:5,se:0,col:0},
+  {n:"Acqua aromatizzata zuccherata",c:"Bibite zuccherate",src:"UPF",k:25,p:0,gs:0,g:0,z:6,ch:6,fi:0,ca:3,fe:0,mg:1,k2:8,na:8,zn:0,fo:1,se:0,col:0},
+  {n:"Acqua di cocco naturale (lattina)",c:"Bevande",src:"UPF",k:19,p:0.7,gs:0,g:0.2,z:2.6,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:600,na:105,zn:0.1,fo:10,se:1,col:0},
+  {n:"Latte di riso naturale",c:"Latte e derivati",src:"UPF",k:47,p:0.3,gs:0,g:1,z:5,ch:9.2,fi:0.3,ca:120,fe:0.2,mg:8,k2:25,na:50,zn:0.1,fo:10,se:0,col:0},
+  {n:"Latte di piselli (Ripple tipo)",c:"Latte e derivati",src:"UPF",k:52,p:8,gs:0.5,g:2.5,z:0,ch:1,fi:0,ca:450,fe:1,mg:15,k2:270,na:130,zn:0.8,fo:100,se:3,col:0},
 ];
 
 

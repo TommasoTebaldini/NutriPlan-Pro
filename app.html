@@ -1556,8 +1556,9 @@ async function init() {
         toast('✅ Schema "'+d.nome+'" caricato ('+d.giorni.length+' giorni)!','ok');
       } else {
         // Single-day format: {nome, pasti:[...]}
+        const ts = Date.now();
         giorni[giornoCorrente].meals = (d.pasti || []).map((m, mi) => ({
-          ...m, id: 'p_'+Date.now()+'_'+mi+'_'+Math.random().toString(36).slice(2),
+          ...m, id: 'p_' + ts + '_0_' + mi + '_' + Math.random().toString(36).slice(2),
           items: m.items.map(i => ({...i, altPrint:[]})),
           collapsed: false
         }));

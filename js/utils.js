@@ -72,8 +72,8 @@ async function loadProfile() {
     const div = document.createElement('div');
     div.innerHTML = `<div class="modal-bg" id="modal-profilo-op">
       <div class="modal" style="max-width:420px">
-        <div class="modal-hdr"><span>👤 Profilo Operatore</span><button onclick="closeM('modal-profilo-op')">✕</button></div>
-        <div class="modal-body">
+        <div class="mhdr"><span style="font-size:15px;font-weight:700;color:var(--slate)">👤 Profilo Operatore</span><button class="mclose" onclick="closeM('modal-profilo-op')">✕</button></div>
+        <div class="mbody">
           <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">Questi dati appariranno in calce a tutte le stampe (piani alimentari, consigli, schede specialistiche).</p>
           <div class="fg" style="margin-bottom:10px"><label>Nome</label><input type="text" id="profop-nome" placeholder="es. Maria" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
           <div class="fg" style="margin-bottom:10px"><label>Cognome</label><input type="text" id="profop-cognome" placeholder="es. Rossi" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>

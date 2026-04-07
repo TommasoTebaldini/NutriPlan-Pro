@@ -657,6 +657,7 @@
           <button onclick="salvaEsempiRenale()" title="Salva le modifiche in locale">💾 Salva</button>
           <button onclick="stampaCompattaRenale()" title="Stampa per il paziente">📋 Stampa Compatta</button>
           <button onclick="apriInPianoAlimentareRenale()" title="Copia il piano HD nel Piano Alimentare per modificarlo e salvarlo">📂 Apri in Piano</button>
+          <button onclick="eliminaPianoRenale()" title="Elimina il piano HD" style="color:#DC2626;border-color:#FECACA">🗑️ Elimina</button>
           <button onclick="ripristinaEsempiRenale()" title="Ripristina esempio originale" style="color:#DC2626;border-color:#FECACA">↩ Ripristina</button>
         </div>
         <div style="overflow-x:auto">
@@ -1397,6 +1398,13 @@ function apriInPianoAlimentareRenale() {
   const d = { nome: 'Piano Alimentare HD — Emodialisi', pasti };
   sessionStorage.setItem('loadPatologia', JSON.stringify(d));
   window.location.href = 'app.html';
+}
+function eliminaPianoRenale() {
+  if (typeof ripristinaEsempiRenale === 'function') { ripristinaEsempiRenale(); return; }
+  if (!confirm('Eliminare il piano? I dati verranno ripristinati.')) return;
+  if (_renEditMode) toggleEditRenale();
+  const el = document.getElementById('ren-hd-piano');
+  if (el) renderRenalePiano(el);
 }
 </script>
 </body>

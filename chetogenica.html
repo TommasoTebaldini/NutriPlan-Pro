@@ -179,6 +179,7 @@
   <button class="keto-tab" onclick="showKetoTab('alimenti')">🥩 Alimenti Consentiti</button>
   <button class="keto-tab" onclick="showKetoTab('menu')">🍽️ Menu Esempio</button>
   <button class="keto-tab" onclick="showKetoTab('monitoraggio')">🩺 Monitoraggio & Sicurezza</button>
+  <button class="keto-tab" onclick="showKetoTab('piano_esempio')">🍽️ Piano Esempio</button>
 </div>
 
 <!-- ══════════════════════════════════════════════════ -->
@@ -881,6 +882,14 @@
 
 </div><!-- fine tab-monitoraggio -->
 
+<!-- TAB: PIANO ESEMPIO -->
+<div class="keto-panel" id="tab-piano_esempio">
+  <div class="alert-info alert-box">
+    <b>🍽️ Piano Alimentare Chetogenico — Esempi Giornalieri</b> — Seleziona il tipo di dieta chetogenica e il target calorico per visualizzare un piano alimentare tipo. Le quantità si adattano automaticamente al target calorico selezionato.
+  </div>
+  <div id="pe-container-keto"></div>
+</div>
+
 </div>
 <!-- COMPACT PRINT AREA -->
 <div id="keto-compact-print-area"></div>
@@ -898,7 +907,7 @@ function showKetoTab(id) {
   const panel = document.getElementById('tab-' + id);
   if (panel) panel.classList.add('active');
   const tabs = document.querySelectorAll('.keto-tab');
-  const map = {principi:0, calcolo:1, alimenti:2, menu:3, monitoraggio:4};
+  const map = {principi:0, calcolo:1, alimenti:2, menu:3, monitoraggio:4, piano_esempio:5};
   if (tabs[map[id]]) tabs[map[id]].classList.add('active');
 }
 
@@ -1109,7 +1118,155 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     } catch(e) { console.error('Errore init chetogenica:', e); }
   } else if (typeof initAuth === 'function') initAuth();
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-keto', KETO_PE_CONFIG);
 });
+
+const KETO_PE_CONFIG = {
+  id: 'keto',
+  accentColor: '#7C3AED',
+  tipi: [
+    {id:'mad', nome:'MAD', nomeEsteso:'Atkins Modificata (MAD)', colore:'#7C3AED', coloreT:'#fff'},
+    {id:'vlckd', nome:'VLCKD', nomeEsteso:'VLCKD per Dimagrimento', colore:'#059669', coloreT:'#fff'},
+    {id:'std', nome:'Standard 4:1', nomeEsteso:'KD Classica Standard 4:1', colore:'#0369A1', coloreT:'#fff'},
+    {id:'mct', nome:'MCT', nomeEsteso:'Dieta MCT (50% MCT)', colore:'#D97706', coloreT:'#fff'}
+  ],
+  kcals: [1200, 1400, 1600, 1800, 2000],
+  piani: {
+    mad: {
+      kcal_base: 1800,
+      macros: {p:22, cho:5, g:73},
+      nota: 'MAD: CHO liberi ≤20g/die. Rapporto K:P+CHO non fisso. Più tollerabile delle diete classiche. Adatta ad adulti con epilessia farmacoresistente o per scopi metabolici.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Uova strapazzate in burro (3 uova)', qt:150, unit:'g', kcal:280},
+          {nome:'Pancetta affumicata', qt:30, unit:'g', kcal:120},
+          {nome:'Avocado (½ avocado)', qt:75, unit:'g', kcal:120},
+          {nome:'Caffè con panna fresca', qt:30, unit:'mL', kcal:100}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Noci sgusciate', qt:30, unit:'g', kcal:196},
+          {nome:'Parmigiano Reggiano', qt:25, unit:'g', kcal:97}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Salmone al forno', qt:150, unit:'g', kcal:280},
+          {nome:'Zucchine trifolate in olio EVO', qt:150, unit:'g', kcal:80},
+          {nome:'Insalata mista (lattuga, radicchio)', qt:60, unit:'g', kcal:12},
+          {nome:'Olio EVO', qt:20, unit:'mL', kcal:177}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🧀', items:[
+          {nome:'Mascarpone', qt:30, unit:'g', kcal:130},
+          {nome:'Olive nere denocciolate', qt:20, unit:'g', kcal:43}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Petto di pollo con erbe aromatiche', qt:200, unit:'g', kcal:220},
+          {nome:'Broccoli al vapore', qt:200, unit:'g', kcal:54},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        ]}
+      ]
+    },
+    vlckd: {
+      kcal_base: 1400,
+      macros: {p:28, cho:6, g:66},
+      nota: 'VLCKD: Ipocalorica (<800-1000 kcal/die in fase intensiva), iperproteica. Indicata per perdita di peso rapida in obesità. Fasi: attiva (1-3 mesi) → reintroduzione → mantenimento. Supervisione medica obbligatoria.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Uova sode (2 uova)', qt:100, unit:'g', kcal:155},
+          {nome:'Ricotta intera', qt:80, unit:'g', kcal:128},
+          {nome:'Cannella', qt:1, unit:'g', kcal:3},
+          {nome:'Caffè amaro', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Tonno al naturale', qt:80, unit:'g', kcal:88},
+          {nome:'Cetriolo', qt:100, unit:'g', kcal:13}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Tonno al naturale in scatola', qt:150, unit:'g', kcal:165},
+          {nome:'Insalata mista', qt:80, unit:'g', kcal:16},
+          {nome:'Pomodorini ciliegini', qt:50, unit:'g', kcal:18},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🥗', items:[
+          {nome:'Mandorle', qt:20, unit:'g', kcal:117},
+          {nome:'Fragole', qt:100, unit:'g', kcal:33}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Filetto di branzino al vapore', qt:180, unit:'g', kcal:189},
+          {nome:'Spinaci saltati in padella', qt:200, unit:'g', kcal:46},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    std: {
+      kcal_base: 1800,
+      macros: {p:10, cho:3, g:87},
+      nota: 'KD Classica 4:1: rapporto 4g grassi : 1g (proteine+CHO). Dieta molto restrittiva, richiede calcolo preciso e supervisione da parte di dietista esperto. Indicata per epilessia pediatrica e resistente.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Uova strapazzate in burro (2 uova)', qt:100, unit:'g', kcal:187},
+          {nome:'Burro', qt:20, unit:'g', kcal:149},
+          {nome:'Panna fresca (35% grassi)', qt:60, unit:'mL', kcal:207},
+          {nome:'Fragole fresche', qt:30, unit:'g', kcal:10}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Mascarpone', qt:40, unit:'g', kcal:173},
+          {nome:'Olio MCT', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pollo arrosto (solo petto)', qt:80, unit:'g', kcal:134},
+          {nome:'Burro', qt:25, unit:'g', kcal:186},
+          {nome:'Broccoli bolliti', qt:80, unit:'g', kcal:22},
+          {nome:'Olio MCT', qt:15, unit:'mL', kcal:133},
+          {nome:'Maionese (100% grassi)', qt:20, unit:'g', kcal:133}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🧀', items:[
+          {nome:'Panna montata (non zuccherata)', qt:60, unit:'g', kcal:207},
+          {nome:'Lamponi freschi', qt:20, unit:'g', kcal:10}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone al forno', qt:100, unit:'g', kcal:187},
+          {nome:'Burro', qt:20, unit:'g', kcal:149},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133},
+          {nome:'Cavolfiore bollito', qt:80, unit:'g', kcal:18},
+          {nome:'Panna fresca', qt:30, unit:'mL', kcal:104}
+        ]}
+      ]
+    },
+    mct: {
+      kcal_base: 1800,
+      macros: {p:15, cho:15, g:70},
+      nota: 'Dieta MCT: 50-70% dei grassi da olio MCT (trigliceridi a catena media). Permette CHO leggermente più elevati (15-20g). Spesso meglio tollerata rispetto alla KD classica. Iniziare con 5mL/die di MCT, aumentare gradualmente per evitare effetti GI.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Yogurt greco intero', qt:125, unit:'g', kcal:131},
+          {nome:'Olio MCT', qt:20, unit:'mL', kcal:178},
+          {nome:'Mirtilli freschi', qt:40, unit:'g', kcal:23},
+          {nome:'Noci sgusciate', qt:15, unit:'g', kcal:98},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frullato proteico con olio MCT', qt:250, unit:'mL', kcal:250}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pollo alla piastra', qt:130, unit:'g', kcal:218},
+          {nome:'Olio MCT (condimento)', qt:20, unit:'mL', kcal:178},
+          {nome:'Insalata verde mista', qt:80, unit:'g', kcal:16},
+          {nome:'Pomodoro fresco', qt:80, unit:'g', kcal:16},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🥜', items:[
+          {nome:'Burro di mandorle (senza zuccheri)', qt:30, unit:'g', kcal:180},
+          {nome:'Sedano', qt:50, unit:'g', kcal:8}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Merluzzo al vapore', qt:150, unit:'g', kcal:130},
+          {nome:'Olio MCT (sugo)', qt:20, unit:'mL', kcal:178},
+          {nome:'Zucchine trifolate', qt:150, unit:'g', kcal:27},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    }
+  }
+};
 
 /* ── Esempi Menu Chetogenici: Edit / Save / Print ── */
 const KETO_MENU_IDS = ['keto-menu-mad', 'keto-menu-vlckd'];

@@ -158,6 +158,7 @@
   <button class="ren-tab" onclick="showRenTab('emodialisi')">💉 Emodialisi (HD)</button>
   <button class="ren-tab" onclick="showRenTab('peritoneale')">🔄 Dialisi Peritoneale (DP)</button>
   <button class="ren-tab" onclick="showRenTab('alimenti')">🥦 Alimenti & Lisciviazione</button>
+  <button class="ren-tab" onclick="showRenTab('piano_esempio_ren')">🍽️ Piano Esempio</button>
 </div>
 
 <!-- ══════════════════════════════════ -->
@@ -923,6 +924,14 @@
 
 </div><!-- fine tab-alimenti -->
 
+<!-- TAB: PIANO ESEMPIO RENALE -->
+<div class="ren-panel" id="tab-piano_esempio_ren">
+  <div style="background:#FFF7ED;border-left:3px solid #EA580C;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#7C2D12">
+    <b>🫘 Piano Alimentare IRC — Esempi Clinici</b> — Piani adattati per stadio e tipo di trattamento dialitico. Includono restrizione di potassio, fosforo e proteine in base alle linee guida KDIGO/EDTNA-ERCA.
+  </div>
+  <div id="pe-container-ren"></div>
+</div>
+
 </div>
 <!-- COMPACT PRINT AREA -->
 <div id="ren-compact-print-area"></div>
@@ -939,7 +948,7 @@ function showRenTab(id) {
   document.querySelectorAll('.ren-tab').forEach(t => t.classList.remove('active'));
   const panel = document.getElementById('tab-' + id);
   if (panel) panel.classList.add('active');
-  const map = {stadiazione:0, calcolo:1, irc15:2, emodialisi:3, peritoneale:4, alimenti:5};
+  const map = {stadiazione:0, calcolo:1, irc15:2, emodialisi:3, peritoneale:4, alimenti:5, piano_esempio_ren:6};
   const tabs = document.querySelectorAll('.ren-tab');
   if (tabs[map[id]] !== undefined) tabs[map[id]].classList.add('active');
 }
@@ -1132,7 +1141,156 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     } catch(e) { console.error('Errore init renale:', e); }
   } else if (typeof initAuth === 'function') initAuth();
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-ren', REN_PE_CONFIG);
 });
+
+const REN_PE_CONFIG = {
+  id: 'ren',
+  accentColor: '#EA580C',
+  tipi: [
+    {id:'irc34', nome:'IRC 3-4', nomeEsteso:'IRC Conservativa Stadi 3-4 (eGFR 15-59)', colore:'#D97706', coloreT:'#fff'},
+    {id:'irc5', nome:'IRC 5/Pre-dialisi', nomeEsteso:'IRC Conservativa Stadio 5 / Pre-dialisi (eGFR <15)', colore:'#DC2626', coloreT:'#fff'},
+    {id:'hd', nome:'Emodialisi', nomeEsteso:'Emodialisi (HD) 3 sedute/settimana', colore:'#7C3AED', coloreT:'#fff'},
+    {id:'dp', nome:'Dialisi Peritoneale', nomeEsteso:'Dialisi Peritoneale (DP / CAPD)', colore:'#0369A1', coloreT:'#fff'}
+  ],
+  kcals: [1400, 1600, 1800],
+  piani: {
+    irc34: {
+      kcal_base: 1800,
+      macros: {p:17, cho:55, g:28},
+      nota: 'IRC Stadi 3-4: Proteine 0.8-1.0g/kg/die. K <2500mg/die, P <1000mg/die, Na <2300mg/die. Preferire proteine ad alto valore biologico. Lisciviazione degli ortaggi. Calcolo del fosforo additivo (additivi "–ate" e "–ite").',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane bianco (basso potassio)', qt:60, unit:'g', kcal:162},
+          {nome:'Miele o marmellata', qt:15, unit:'g', kcal:43},
+          {nome:'Latte di riso (senza fosfati)', qt:200, unit:'mL', kcal:96},
+          {nome:'Caffè (non superare 2 tazze/die)', qt:100, unit:'mL', kcal:3}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Mela (basso K) pelata', qt:150, unit:'g', kcal:78},
+          {nome:'Crackers non salati (4)', qt:28, unit:'g', kcal:109}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta di semola non integrale', qt:80, unit:'g', kcal:284},
+          {nome:'Pollo senza pelle bollito', qt:120, unit:'g', kcal:132},
+          {nome:'Cavolfiore liscivato e bollito', qt:150, unit:'g', kcal:33},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89},
+          {nome:'Pane bianco', qt:30, unit:'g', kcal:80}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍊', items:[
+          {nome:'Pesca o albicocca (frutto basso K)', qt:120, unit:'g', kcal:55},
+          {nome:'Biscotti secchi non integrali (3)', qt:20, unit:'g', kcal:87}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Riso bianco in brodo vegetale', qt:70, unit:'g', kcal:245},
+          {nome:'Uova strapazzate (2 uova)', qt:100, unit:'g', kcal:156},
+          {nome:'Zucchine lisciviate', qt:150, unit:'g', kcal:27},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    irc5: {
+      kcal_base: 1800,
+      macros: {p:13, cho:57, g:30},
+      nota: 'IRC Stadio 5 / Pre-dialisi: Proteine 0.6-0.8g/kg/die (con AA essenziali). K <2000mg/die, P <800mg/die, liquidi controllati. Può richiedere integratori di aminoacidi essenziali. Preparazione per RRT (dialisi/trapianto).',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane bianco tostato', qt:50, unit:'g', kcal:135},
+          {nome:'Marmellata senza K aggiunto', qt:20, unit:'g', kcal:49},
+          {nome:'Latte di mandorla non addizionato', qt:150, unit:'mL', kcal:23},
+          {nome:'Caffè ristretto (1 tazza)', qt:30, unit:'mL', kcal:1}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Fragole o mirtilli (basso K)', qt:100, unit:'g', kcal:40},
+          {nome:'Crackers non salati (3)', qt:21, unit:'g', kcal:82}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Riso bianco', qt:80, unit:'g', kcal:280},
+          {nome:'Uova (1 uovo + 2 albumi) strapazzate', qt:100, unit:'g', kcal:120},
+          {nome:'Verdure doppiolisciviate (carote/cavolo)', qt:150, unit:'g', kcal:45},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍬', items:[
+          {nome:'Caramelle dure non acide (no fosfati)', qt:20, unit:'g', kcal:76},
+          {nome:'Acqua (monitorare apporto totale)', qt:150, unit:'mL', kcal:0}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pasta in bianco', qt:70, unit:'g', kcal:248},
+          {nome:'Tonno al naturale (risciacquato)', qt:60, unit:'g', kcal:63},
+          {nome:'Zucchine doppiolisciviate', qt:150, unit:'g', kcal:27},
+          {nome:'Olio EVO', qt:8, unit:'mL', kcal:71}
+        ]}
+      ]
+    },
+    hd: {
+      kcal_base: 1800,
+      macros: {p:22, cho:52, g:26},
+      nota: 'Emodialisi: Proteine 1.2-1.4g/kg/die (catabolismo dialitico). K <2000mg/die, P <1000mg/die. Fluidi: diuresi residua + 500-750mL/die. Attenzione ai chelanti del fosforo e alla dialisi perdita di vitamine idrosolubili (integrare B6, B12, C, folati).',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane bianco', qt:60, unit:'g', kcal:162},
+          {nome:'Formaggio fresco spalmabile (basso P)', qt:30, unit:'g', kcal:78},
+          {nome:'Marmellata', qt:15, unit:'g', kcal:37},
+          {nome:'Caffè con latte di riso', qt:150, unit:'mL', kcal:50}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Mela verde pelata', qt:130, unit:'g', kcal:67},
+          {nome:'Crackers non salati (3)', qt:21, unit:'g', kcal:82}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta di semola', qt:80, unit:'g', kcal:284},
+          {nome:'Petto di pollo senza pelle', qt:150, unit:'g', kcal:165},
+          {nome:'Cavolfiore liscivato', qt:150, unit:'g', kcal:33},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107},
+          {nome:'Pane bianco', qt:40, unit:'g', kcal:107}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍡', items:[
+          {nome:'Anguria (basso K, alta acqua — monitorare)', qt:100, unit:'g', kcal:32},
+          {nome:'Biscotti secchi (2)', qt:16, unit:'g', kcal:70}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Riso bianco', qt:70, unit:'g', kcal:245},
+          {nome:'Merluzzo o pesce bianco al vapore', qt:150, unit:'g', kcal:120},
+          {nome:'Verdure a basso K lisciviate', qt:150, unit:'g', kcal:40},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    dp: {
+      kcal_base: 1800,
+      macros: {p:22, cho:50, g:28},
+      nota: 'Dialisi Peritoneale (CAPD): Proteine 1.2-1.3g/kg/die + 0.2g/kg di perdita peritoneale. K <3000mg/die (più liberale dell\'HD). Attenzione all\'apporto calorico dal glucosio del dialisato (200-800 kcal/die da assorbimento). Ridurre CHO alimentari in proporzione.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane integrale (K moderato)', qt:50, unit:'g', kcal:118},
+          {nome:'Uova sode (1 uovo)', qt:50, unit:'g', kcal:78},
+          {nome:'Yogurt bianco magro', qt:100, unit:'g', kcal:59},
+          {nome:'Caffè', qt:100, unit:'mL', kcal:3}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍊', items:[
+          {nome:'Arancia o mandarino (K moderato)', qt:120, unit:'g', kcal:45},
+          {nome:'Crackers (4)', qt:30, unit:'g', kcal:117}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta di semola (ridurre CHO per dialisato)', qt:70, unit:'g', kcal:248},
+          {nome:'Carne magra o pesce', qt:150, unit:'g', kcal:180},
+          {nome:'Verdure miste (lisciviazione normale)', qt:200, unit:'g', kcal:55},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🥛', items:[
+          {nome:'Yogurt magro bianco', qt:125, unit:'g', kcal:59},
+          {nome:'Frutta fresca (mela)', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Minestra di verdure (no integrale)', qt:300, unit:'mL', kcal:120},
+          {nome:'Secondo proteico (uova/pollo/pesce)', qt:120, unit:'g', kcal:155},
+          {nome:'Verdura cotta', qt:150, unit:'g', kcal:40},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    }
+  }
+};
 
 /* ── Piano HD: Edit / Save / Print ── */
 const REN_LS_KEY = 'nutriplan_ren_hd_piano';

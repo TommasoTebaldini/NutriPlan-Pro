@@ -190,6 +190,7 @@
   <button class="ped-tab" onclick="showPed('patologie')">🏥 Patologie Pediatriche</button>
   <button class="ped-tab" onclick="showPed('lg')">📚 Linee Guida</button>
   <button class="ped-tab" onclick="showPed('piano_ped')">🍽️ Piano Alimentare</button>
+  <button class="ped-tab" onclick="showPed('piano_esempio_ped')">🍽️ Piano Esempio</button>
 </div>
 
 <!-- CURVE DI CRESCITA -->
@@ -600,6 +601,14 @@
       <textarea id="ped-piano-note-generali" rows="2" placeholder="Rivalutazione tra: ... Parametri di crescita da monitorare: ..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#A7F3D0'"></textarea>
     </div>
   </div>
+</div>
+
+<!-- TAB: PIANO ESEMPIO PEDIATRICO -->
+<div class="ped-panel" id="tab-piano_esempio_ped">
+  <div style="background:#FAF5FF;border-left:3px solid #7C3AED;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#4C1D95">
+    <b>👶 Piani Alimentari Pediatrici — Esempi per Fascia d'Età</b> — Seleziona la fascia d'età per visualizzare un piano giornaliero tipo basato sui LARN (Livelli di Assunzione di Riferimento di Nutrienti) italiani e linee guida OMS.
+  </div>
+  <div id="pe-container-ped"></div>
 </div>
 
 </div>
@@ -1170,7 +1179,193 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (noteId) await caricaPedDaNote(noteId);
     }
   } catch(e) {}
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-ped', PED_PE_CONFIG);
 });
+
+const PED_PE_CONFIG = {
+  id: 'ped',
+  accentColor: '#7C3AED',
+  tipi: [
+    {id:'eta13', nome:'1-3 anni', nomeEsteso:'1-3 anni (900-1200 kcal/die)', colore:'#F59E0B', coloreT:'#fff'},
+    {id:'eta46', nome:'4-6 anni', nomeEsteso:'4-6 anni (1200-1400 kcal/die)', colore:'#10B981', coloreT:'#fff'},
+    {id:'eta710', nome:'7-10 anni', nomeEsteso:'7-10 anni (1600-1800 kcal/die)', colore:'#3B82F6', coloreT:'#fff'},
+    {id:'eta1114m', nome:'11-14 M', nomeEsteso:'11-14 anni — Maschi (2000-2200 kcal/die)', colore:'#0369A1', coloreT:'#fff'},
+    {id:'eta1114f', nome:'11-14 F', nomeEsteso:'11-14 anni — Femmine (1800-2000 kcal/die)', colore:'#7C3AED', coloreT:'#fff'}
+  ],
+  kcals: [],
+  piani: {
+    eta13: {
+      kcal_base: 1100,
+      macros: {p:12, cho:55, g:33},
+      nota: 'Bambini 1-3 anni: fabbisogno 900-1200 kcal/die. Latte materno o vaccino (500mL/die). Piccole porzioni frequenti (5-6 al giorno). Introduzione graduale di tutti gli alimenti. No sale aggiunto, no miele sotto 1 anno, no cibi solidi prima di 6 mesi.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte vaccino intero o latte materno', qt:150, unit:'mL', kcal:97},
+          {nome:'Biscotti per bambini (2)', qt:16, unit:'g', kcal:70},
+          {nome:'Banana frullata o frutta fresca', qt:50, unit:'g', kcal:45}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca frullata (mela/pera/pesca)', qt:80, unit:'g', kcal:42}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pastina in brodo vegetale', qt:40, unit:'g', kcal:141},
+          {nome:'Pollo o pesce lessato tritato', qt:40, unit:'g', kcal:48},
+          {nome:'Purea di verdure (carote, zucchine)', qt:100, unit:'g', kcal:28},
+          {nome:'Olio EVO', qt:5, unit:'mL', kcal:44}
+        ]},
+        {nome:'Merenda', emoji:'🥛', items:[
+          {nome:'Yogurt intero bianco', qt:100, unit:'g', kcal:61},
+          {nome:'Frutta fresca', qt:60, unit:'g', kcal:32}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Semolino o crema di riso', qt:30, unit:'g', kcal:106},
+          {nome:'Formaggio fresco (fiocchi di latte)', qt:40, unit:'g', kcal:48},
+          {nome:'Verdure lessate miste', qt:80, unit:'g', kcal:22},
+          {nome:'Olio EVO', qt:5, unit:'mL', kcal:44}
+        ]}
+      ]
+    },
+    eta46: {
+      kcal_base: 1300,
+      macros: {p:13, cho:55, g:32},
+      nota: 'Bambini 4-6 anni: fabbisogno 1200-1400 kcal/die. Struttura pasti simile agli adulti (3 pasti principali + 2 spuntini). Latte 2-3 porzioni/die. Varietà alimentare essenziale per micronutrienti. Limitare snack industriali e bevande zuccherate.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte vaccino parzialmente scremato', qt:200, unit:'mL', kcal:92},
+          {nome:'Pane bianco o fette biscottate (2)', qt:40, unit:'g', kcal:107},
+          {nome:'Marmellata (1 cucchiaino)', qt:10, unit:'g', kcal:24},
+          {nome:'Frutta fresca', qt:80, unit:'g', kcal:42}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca di stagione', qt:100, unit:'g', kcal:52},
+          {nome:'Crackers (3)', qt:18, unit:'g', kcal:70}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta o riso al pomodoro', qt:60, unit:'g', kcal:213},
+          {nome:'Secondo piatto leggero (pollo/pesce)', qt:70, unit:'g', kcal:77},
+          {nome:'Verdura cotta o cruda', qt:80, unit:'g', kcal:22},
+          {nome:'Pane', qt:30, unit:'g', kcal:80},
+          {nome:'Olio EVO', qt:8, unit:'mL', kcal:71}
+        ]},
+        {nome:'Merenda', emoji:'🥛', items:[
+          {nome:'Yogurt bianco intero', qt:125, unit:'g', kcal:76},
+          {nome:'Biscottini secchi (3)', qt:18, unit:'g', kcal:78}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Minestra di legumi con pastina', qt:200, unit:'g', kcal:130},
+          {nome:'Formaggio (es. mozzarella)', qt:40, unit:'g', kcal:88},
+          {nome:'Verdure crude (carote, pomodori)', qt:80, unit:'g', kcal:22},
+          {nome:'Olio EVO', qt:8, unit:'mL', kcal:71}
+        ]}
+      ]
+    },
+    eta710: {
+      kcal_base: 1700,
+      macros: {p:14, cho:55, g:31},
+      nota: 'Bambini 7-10 anni: fabbisogno 1600-1800 kcal/die. Aumenta il fabbisogno proteico e di Ca per la crescita. Attività fisica regolare (60 min/die). Prevenzione dell\'obesità infantile: porzioni adeguate, pasti regolari, limitare screen time.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
+          {nome:'Cereali integrali (es. muesli base)', qt:40, unit:'g', kcal:148},
+          {nome:'Frutta fresca', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca o macedonia', qt:150, unit:'g', kcal:78},
+          {nome:'Pane con marmellata', qt:30, unit:'g', kcal:90}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale al ragù leggero', qt:70, unit:'g', kcal:248},
+          {nome:'Parmigiano (1 cucchiaio)', qt:10, unit:'g', kcal:39},
+          {nome:'Insalata mista', qt:80, unit:'g', kcal:13},
+          {nome:'Pane integrale', qt:30, unit:'g', kcal:71},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Merenda', emoji:'🥛', items:[
+          {nome:'Yogurt al frutto', qt:125, unit:'g', kcal:96},
+          {nome:'Pane con ricotta (1 fetta)', qt:30, unit:'g', kcal:105}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pesce al forno (merluzzo/orata)', qt:120, unit:'g', kcal:120},
+          {nome:'Patate al forno', qt:150, unit:'g', kcal:126},
+          {nome:'Spinaci o broccoli', qt:150, unit:'g', kcal:35},
+          {nome:'Pane', qt:30, unit:'g', kcal:80},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    eta1114m: {
+      kcal_base: 2100,
+      macros: {p:15, cho:55, g:30},
+      nota: 'Adolescenti 11-14 anni (Maschi): fabbisogno 2000-2200 kcal/die. Picco di crescita: Ca 1300mg/die, Fe 11mg/die, Zn 9mg/die. Sport: aumentare kcal del 15-20%. Evitare diete restrittive. Colazione mai saltata.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte vaccino parzialmente scremato', qt:250, unit:'mL', kcal:115},
+          {nome:'Cereali integrali o muesli', qt:50, unit:'g', kcal:185},
+          {nome:'Pane tostato integrale (1 fetta)', qt:30, unit:'g', kcal:71},
+          {nome:'Frutta fresca', qt:120, unit:'g', kcal:62}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Panino con prosciutto cotto', qt:80, unit:'g', kcal:190},
+          {nome:'Frutta fresca', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta o riso', qt:90, unit:'g', kcal:320},
+          {nome:'Secondo piatto: carne/pesce/legumi', qt:130, unit:'g', kcal:150},
+          {nome:'Verdura mista cotta o cruda', qt:150, unit:'g', kcal:40},
+          {nome:'Pane integrale', qt:50, unit:'g', kcal:118},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        ]},
+        {nome:'Merenda', emoji:'🥛', items:[
+          {nome:'Yogurt greco proteico', qt:150, unit:'g', kcal:89},
+          {nome:'Noci o mandorle', qt:20, unit:'g', kcal:124},
+          {nome:'Frutta fresca', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Minestrone di verdure e legumi', qt:300, unit:'mL', kcal:150},
+          {nome:'Secondo piatto alternato (uova/formaggio)', qt:100, unit:'g', kcal:155},
+          {nome:'Pane', qt:40, unit:'g', kcal:107},
+          {nome:'Insalata', qt:80, unit:'g', kcal:13},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        ]}
+      ]
+    },
+    eta1114f: {
+      kcal_base: 1900,
+      macros: {p:15, cho:55, g:30},
+      nota: 'Adolescenti 11-14 anni (Femmine): fabbisogno 1800-2000 kcal/die. Menarca: +2mg/die di Fe (totale 18mg/die). Ca 1300mg/die per picco di massa ossea. Rischio anemia ferropriva e DCA: monitorare BMI, atteggiamento verso il cibo e crescita.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
+          {nome:'Pane integrale (2 fette)', qt:60, unit:'g', kcal:142},
+          {nome:'Marmellata o miele (1 cucchiaino)', qt:10, unit:'g', kcal:29},
+          {nome:'Frutta fresca', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Yogurt magro al frutto', qt:125, unit:'g', kcal:96},
+          {nome:'Crackers integrali (4)', qt:28, unit:'g', kcal:109}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale o riso integrale', qt:80, unit:'g', kcal:284},
+          {nome:'Legumi (lenticchie/ceci/fagioli)', qt:120, unit:'g', kcal:135},
+          {nome:'Verdura mista', qt:150, unit:'g', kcal:40},
+          {nome:'Pane integrale', qt:40, unit:'g', kcal:95},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Merenda', emoji:'🥛', items:[
+          {nome:'Yogurt greco magro', qt:125, unit:'g', kcal:72},
+          {nome:'Frutta secca (mandorle, noci)', qt:15, unit:'g', kcal:93},
+          {nome:'Frutta fresca', qt:80, unit:'g', kcal:42}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pesce al forno (salmone/tonno/branzino)', qt:130, unit:'g', kcal:180},
+          {nome:'Verdure grigliate miste', qt:200, unit:'g', kcal:60},
+          {nome:'Pane integrale', qt:40, unit:'g', kcal:95},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    }
+  }
+};
 
 // ── SAVE / LOAD PEDIATRIA ──
 let pedCartelle = [];

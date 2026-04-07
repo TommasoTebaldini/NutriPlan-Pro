@@ -1652,6 +1652,17 @@ function stampaConsiglioConNote(id) {
   stampaConsiglio(id);
 }
 
+function _buildProfiloFirmaStampa() {
+  try {
+    const p = JSON.parse(localStorage.getItem('nutriplan_profilo_operatore') || '{}');
+    const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
+    const albo = p.albo ? ' — N° Albo: ' + p.albo : '';
+    if (!nome && !albo) return '';
+    const safe = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<div style="margin-top:14px;padding-top:8px;border-top:1px solid #E2E8F0;text-align:right;font-size:9pt;color:#64748B;font-style:italic">${safe(nome)}${safe(albo)}</div>`;
+  } catch(e) { return ''; }
+}
+
 function buildStampaHTML(c, notePaziente = '') {
   const foodPill = (f, cls, col, bg) => 
     `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:500;margin:3px;background:${bg};color:${col}">${f}</span>`;
@@ -1729,6 +1740,7 @@ function buildStampaHTML(c, notePaziente = '') {
     <span>DietPlan Pro · Consigli Nutrizionali</span>
     <span>Generato il ${new Date().toLocaleDateString('it')}</span>
   </div>
+  ${_buildProfiloFirmaStampa()}
 </body>
 </html>`;
 }

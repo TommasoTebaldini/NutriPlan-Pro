@@ -155,6 +155,7 @@
   <button class="dna-tab" onclick="showDna('trattamento')">🤝 Approccio Terapeutico</button>
   <button class="dna-tab" onclick="showDna('linee_guida')">📚 Linee Guida</button>
   <button class="dna-tab" onclick="showDna('piano_dca')" style="background:white">🍽️ Piano Alimentare DCA</button>
+  <button class="dna-tab" onclick="showDna('piano_esempio_dca')">🍽️ Piano Esempio</button>
 </div>
 
 <!-- PANORAMICA -->
@@ -946,6 +947,15 @@
 </div>
 
 </div>
+<!-- PIANO ESEMPIO DCA -->
+<div class="dna-panel" id="tab-piano_esempio_dca">
+  <div style="background:#F0FDF4;border-left:3px solid #0F766E;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#064E3B">
+    <b>🌱 Piani Alimentari per DCA — Esempi Clinici</b> — Strumento di supporto clinico per la strutturazione dei pasti nelle diverse fasi del trattamento. Ogni piano deve essere adattato al singolo paziente con approccio multidisciplinare.
+  </div>
+  <div id="pe-container-dca"></div>
+</div>
+
+</div>
 <!-- COMPACT PRINT AREA -->
 <div id="dca-compact-print-area"></div>
 </main>
@@ -1491,7 +1501,158 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (noteId) await caricaDcaDaNote(noteId);
     }
   } catch(e) {}
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-dca', DCA_PE_CONFIG);
 });
+
+const DCA_PE_CONFIG = {
+  id: 'dca',
+  accentColor: '#0F766E',
+  tipi: [
+    {id:'an_renut', nome:'AN Renutrizione', nomeEsteso:'Anoressia Nervosa — Fase di Renutrizione Graduale', colore:'#DC2626', coloreT:'#fff'},
+    {id:'an_mant', nome:'AN Mantenimento', nomeEsteso:'Anoressia Nervosa — Fase di Mantenimento', colore:'#D97706', coloreT:'#fff'},
+    {id:'bn_bed', nome:'BN / BED', nomeEsteso:'Bulimia Nervosa / Binge Eating Disorder', colore:'#0369A1', coloreT:'#fff'},
+    {id:'ortoressia', nome:'Ortoressia', nomeEsteso:'Ortoressia Nervosa — Normalizzazione pattern', colore:'#059669', coloreT:'#fff'}
+  ],
+  kcals: [1200, 1400, 1600, 1800, 2000],
+  piani: {
+    an_renut: {
+      kcal_base: 1400,
+      macros: {p:18, cho:55, g:27},
+      nota: 'AN Renutrizione: Iniziare con 1000-1200 kcal/die, incremento settimanale di 200-300 kcal. Rischio di refeeding syndrome: monitorare P, K, Mg, tiamina. Pasti strutturati 3+3. Evitare alimenti "fear food" nelle prime fasi. Obiettivo: 0.5 kg/settimana.',
+      pasti: [
+        {nome:'Colazione (strutturata)', emoji:'🌅', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
+          {nome:'Fette biscottate (3)', qt:24, unit:'g', kcal:98},
+          {nome:'Marmellata (1 cucchiaino)', qt:10, unit:'g', kcal:24},
+          {nome:'Frutta fresca (banana)', qt:80, unit:'g', kcal:71}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', nota:'Spuntino obbligatorio — non saltare', items:[
+          {nome:'Yogurt bianco magro', qt:125, unit:'g', kcal:59},
+          {nome:'Crackers (4)', qt:30, unit:'g', kcal:117}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta in bianco con olio', qt:70, unit:'g', kcal:248},
+          {nome:'Petto di pollo al vapore', qt:100, unit:'g', kcal:110},
+          {nome:'Carote lessate', qt:100, unit:'g', kcal:35},
+          {nome:'Olio EVO', qt:8, unit:'mL', kcal:71},
+          {nome:'Pane bianco', qt:30, unit:'g', kcal:80}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🥛', nota:'Spuntino strutturato — no sostituti', items:[
+          {nome:'Latte', qt:200, unit:'mL', kcal:92},
+          {nome:'Biscotti secchi (3)', qt:20, unit:'g', kcal:87}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Riso in bianco', qt:70, unit:'g', kcal:245},
+          {nome:'Merluzzo al vapore', qt:100, unit:'g', kcal:80},
+          {nome:'Zucchine lessate', qt:100, unit:'g', kcal:18},
+          {nome:'Olio EVO', qt:8, unit:'mL', kcal:71},
+          {nome:'Pane bianco', qt:30, unit:'g', kcal:80}
+        ]}
+      ]
+    },
+    an_mant: {
+      kcal_base: 1800,
+      macros: {p:18, cho:52, g:30},
+      nota: 'AN Mantenimento: Obiettivo BMI ≥ 18.5 kg/m². Progressiva introduzione di alimenti "fear food". Struttura pasti regolare 3 pasti + 2 spuntini. Supervisione all\'autonomia progressiva. Continuare monitoraggio psicologico.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Yogurt greco intero', qt:125, unit:'g', kcal:131},
+          {nome:'Pane integrale (1 fetta)', qt:30, unit:'g', kcal:71},
+          {nome:'Miele (1 cucchiaino)', qt:10, unit:'g', kcal:31},
+          {nome:'Frutta fresca mista', qt:100, unit:'g', kcal:52},
+          {nome:'Caffè o tè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca', qt:150, unit:'g', kcal:78},
+          {nome:'Mandorle (piccola manciata)', qt:15, unit:'g', kcal:87}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta al pomodoro e basilico', qt:80, unit:'g', kcal:284},
+          {nome:'Parmigiano grattugiato', qt:10, unit:'g', kcal:39},
+          {nome:'Pollo ai ferri', qt:120, unit:'g', kcal:132},
+          {nome:'Insalata mista', qt:100, unit:'g', kcal:17},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        ]},
+        {nome:'Merenda', emoji:'🧁', items:[
+          {nome:'Dolce casalingo (es. crostata) piccola porzione', qt:60, unit:'g', kcal:210}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Zuppa di legumi e cereali', qt:300, unit:'mL', kcal:180},
+          {nome:'Formaggio (es. scamorza)', qt:50, unit:'g', kcal:140},
+          {nome:'Verdure miste grigliate', qt:150, unit:'g', kcal:45},
+          {nome:'Pane integrale', qt:40, unit:'g', kcal:95}
+        ]}
+      ]
+    },
+    bn_bed: {
+      kcal_base: 1800,
+      macros: {p:20, cho:52, g:28},
+      nota: 'BN/BED: Strutturazione rigida dei pasti per ridurre i cicli abbuffata-compensazione. Pasti ogni 3-4 ore. Eliminare il digiuno. Piano pasti scritto e supervisione. Nessun alimento vietato (demistificazione). CBT + intervento nutrizionale integrato.',
+      pasti: [
+        {nome:'Colazione (obbligatoria)', emoji:'🌅', nota:'Non saltare — riduce rischio abbuffata mattutina', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
+          {nome:'Cereali o pane integrale', qt:50, unit:'g', kcal:185},
+          {nome:'Frutta fresca', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Spuntino Mattino (obbligatorio)', emoji:'🍎', nota:'Spuntino programmato riduce fame eccessiva a pranzo', items:[
+          {nome:'Yogurt magro bianco', qt:125, unit:'g', kcal:59},
+          {nome:'Frutta fresca (piccola)', qt:80, unit:'g', kcal:42}
+        ]},
+        {nome:'Pranzo (orario fisso)', emoji:'🍽️', nota:'Pasto bilanciato — seduto, senza distrazioni', items:[
+          {nome:'Pasta integrale o riso', qt:80, unit:'g', kcal:284},
+          {nome:'Secondo (pesce/legumi/carne magra)', qt:130, unit:'g', kcal:150},
+          {nome:'Verdura abbondante', qt:200, unit:'g', kcal:54},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107},
+          {nome:'Pane (1 fetta)', qt:30, unit:'g', kcal:80}
+        ]},
+        {nome:'Spuntino Pomeriggio (obbligatorio)', emoji:'🥛', nota:'Critico per prevenire abbuffata serale', items:[
+          {nome:'Yogurt greco o latte', qt:150, unit:'g', kcal:89},
+          {nome:'Crackers o frutta secca (piccola dose)', qt:20, unit:'g', kcal:84}
+        ]},
+        {nome:'Cena (orario fisso, pasto completo)', emoji:'🌙', nota:'Pasto completo — no "cena dietetica" per compensare', items:[
+          {nome:'Primo piatto leggero o zuppa', qt:250, unit:'mL', kcal:180},
+          {nome:'Secondo piatto proteico', qt:120, unit:'g', kcal:140},
+          {nome:'Verdura', qt:150, unit:'g', kcal:40},
+          {nome:'Pane', qt:40, unit:'g', kcal:107},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    ortoressia: {
+      kcal_base: 1800,
+      macros: {p:17, cho:53, g:30},
+      nota: 'Ortoressia: Normalizzazione progressiva del pattern alimentare. Reintroduzione degli alimenti "evitati" (carne rossa, grassi, carboidrati raffinati). Riduzione del tempo dedicato alla pianificazione del cibo. Flessibilità come obiettivo. CBT focalizzata su cognizioni alimentari.',
+      pasti: [
+        {nome:'Colazione (con varietà)', emoji:'🌅', nota:'Alternare tra diverse opzioni — evitare monotonia', items:[
+          {nome:'Pane bianco OPPURE integrale (alternare)', qt:60, unit:'g', kcal:160},
+          {nome:'Burro (quantità normale) o ricotta', qt:15, unit:'g', kcal:107},
+          {nome:'Marmellata o miele', qt:10, unit:'g', kcal:29},
+          {nome:'Latte intero (non scremato)', qt:200, unit:'mL', kcal:130},
+          {nome:'Caffè con zucchero (1 cucchiaino)', qt:5, unit:'g', kcal:19}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍪', nota:'Includere occasionalmente dolci o snack "proibiti"', items:[
+          {nome:'Biscotto o merendina commerciale (1)', qt:30, unit:'g', kcal:128},
+          {nome:'Latte o yogurt', qt:125, unit:'g', kcal:76}
+        ]},
+        {nome:'Pranzo (con piatto "normale")', emoji:'🍽️', nota:'Obiettivo: mangiare come un pasto normale, senza calcoli', items:[
+          {nome:'Pasta al ragù (ricetta familiare normale)', qt:80, unit:'g', kcal:350},
+          {nome:'Parmigiano', qt:10, unit:'g', kcal:39},
+          {nome:'Insalata con condimento', qt:100, unit:'g', kcal:60},
+          {nome:'Pane bianco', qt:40, unit:'g', kcal:107}
+        ]},
+        {nome:'Merenda (prodotto commerciale)', emoji:'🧁', nota:'Includere prodotto commerciale — superare paura additivi', items:[
+          {nome:'Merendina confezionata (es. croissant) o gelato (1 pallina)', qt:50, unit:'g', kcal:200}
+        ]},
+        {nome:'Cena (flessibile)', emoji:'🌙', nota:'No restrizioni — cena normale con la famiglia', items:[
+          {nome:'Secondo piatto a scelta (anche carne rossa)', qt:150, unit:'g', kcal:260},
+          {nome:'Contorno e patate', qt:200, unit:'g', kcal:150},
+          {nome:'Pane', qt:40, unit:'g', kcal:107},
+          {nome:'Olio EVO o burro (normale)', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    }
+  }
+};
 
 function stampaCompattaDca() {
   const gv = id => (document.getElementById(id)?.value || '').trim();

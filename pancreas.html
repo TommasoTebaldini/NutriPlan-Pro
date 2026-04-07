@@ -140,6 +140,7 @@
   <button class="p-tab" onclick="showPTab('cause')">📋 Cause & Patologie</button>
   <button class="p-tab" onclick="showPTab('lg')">📚 Linee Guida</button>
   <button class="p-tab" onclick="showPTab('piano_ipe')">🍽️ Piano Alimentare</button>
+  <button class="p-tab" onclick="showPTab('piano_esempio_ipe')">🍽️ Piano Esempio</button>
 </div>
 
 <!-- TAB 1: CALCOLO PERT -->
@@ -491,6 +492,14 @@
   </div>
 </div>
 
+<!-- TAB: PIANO ESEMPIO IPE -->
+<div class="p-panel" id="tab-piano_esempio_ipe">
+  <div style="background:#FFF7ED;border-left:3px solid #F97316;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#7C2D12">
+    <b>🧈 Piano Alimentare IPE — Esempi Giornalieri</b> — Seleziona la fase clinica e il target calorico. I piani includono il timing della PERT e la distribuzione dei grassi compatibile con la funzione lipasica residua.
+  </div>
+  <div id="pe-container-ipe"></div>
+</div>
+
 </div>
 <!-- COMPACT PRINT AREA -->
 <div id="pan-compact-print-area"></div>
@@ -838,7 +847,122 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (noteId) await caricaPanDaNote(noteId);
     }
   } catch(e) {}
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-ipe', IPE_PE_CONFIG);
 });
+
+const IPE_PE_CONFIG = {
+  id: 'ipe',
+  accentColor: '#F97316',
+  tipi: [
+    {id:'acuta', nome:'Fase Acuta', nomeEsteso:'Post-Pancreatite Acuta (< 20g grassi/die)', colore:'#EF4444', coloreT:'#fff'},
+    {id:'cronica', nome:'IPE Cronica', nomeEsteso:'IPE Cronica Stabile con PERT (< 40g grassi/die)', colore:'#F97316', coloreT:'#fff'},
+    {id:'alta_densita', nome:'Alta Densità', nomeEsteso:'Malnutrizione / Alta Densità con PERT Ottimizzata', colore:'#059669', coloreT:'#fff'}
+  ],
+  kcals: [1400, 1600, 1800, 2000],
+  piani: {
+    acuta: {
+      kcal_base: 1600,
+      macros: {p:20, cho:65, g:15},
+      nota: 'Fase acuta post-pancreatite: grassi < 20g/die, proteine normali o aumentate, CHO come fonte principale. Alimenti a basso contenuto di grassi. Reidratazione orale prioritaria. PERT non necessaria se lipasi residua sufficiente.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane bianco tostato', qt:60, unit:'g', kcal:162},
+          {nome:'Marmellata senza grassi', qt:20, unit:'g', kcal:49},
+          {nome:'Latte scremato', qt:200, unit:'mL', kcal:68},
+          {nome:'Caffè', qt:100, unit:'mL', kcal:3}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍌', items:[
+          {nome:'Banana matura', qt:120, unit:'g', kcal:107},
+          {nome:'Crackers integrali (3)', qt:24, unit:'g', kcal:93}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Riso in bianco', qt:80, unit:'g', kcal:280},
+          {nome:'Petto di pollo bollito (senza pelle)', qt:120, unit:'g', kcal:132},
+          {nome:'Carote lessate', qt:150, unit:'g', kcal:52},
+          {nome:'Olio EVO (max 1 cucchiaino)', qt:5, unit:'mL', kcal:44}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍮', items:[
+          {nome:'Yogurt magro bianco', qt:125, unit:'g', kcal:59},
+          {nome:'Mela grattugiata', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pastina in brodo vegetale', qt:60, unit:'g', kcal:212},
+          {nome:'Merluzzo al vapore', qt:100, unit:'g', kcal:80},
+          {nome:'Zucchine lessate', qt:150, unit:'g', kcal:27},
+          {nome:'Olio EVO (max 1 cucchiaino)', qt:5, unit:'mL', kcal:44}
+        ]}
+      ]
+    },
+    cronica: {
+      kcal_base: 1800,
+      macros: {p:20, cho:55, g:25},
+      nota: 'IPE Cronica con PERT: enzimi somministrati all\'inizio e a metà pasto. Grassi < 40g/die totali. Pasti piccoli e frequenti (5-6/die). Monitorare steatosi, vitamina D, K, E, B12. Evitare alcol.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', nota:'💊 PERT prima del pasto', items:[
+          {nome:'Pane integrale', qt:50, unit:'g', kcal:118},
+          {nome:'Ricotta magra', qt:60, unit:'g', kcal:90},
+          {nome:'Miele (1 cucchiaino)', qt:10, unit:'g', kcal:31},
+          {nome:'Latte parzialmente scremato', qt:150, unit:'mL', kcal:51},
+          {nome:'Caffè', qt:100, unit:'mL', kcal:3}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Pera media', qt:130, unit:'g', kcal:52},
+          {nome:'Crackers al riso (4)', qt:30, unit:'g', kcal:120}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', nota:'💊 PERT suddivisa in 2 dosi', items:[
+          {nome:'Pasta di semola con verdure', qt:80, unit:'g', kcal:284},
+          {nome:'Tacchino alla piastra (senza grassi)', qt:130, unit:'g', kcal:144},
+          {nome:'Insalata verde', qt:80, unit:'g', kcal:13},
+          {nome:'Olio EVO', qt:8, unit:'mL', kcal:71}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🧃', items:[
+          {nome:'Composta di frutta (senza grassi)', qt:120, unit:'g', kcal:60},
+          {nome:'Grissini (4)', qt:24, unit:'g', kcal:95}
+        ]},
+        {nome:'Cena', emoji:'🌙', nota:'💊 PERT prima della cena', items:[
+          {nome:'Riso integrale bollito', qt:70, unit:'g', kcal:244},
+          {nome:'Platessa al vapore', qt:150, unit:'g', kcal:117},
+          {nome:'Spinaci lessati', qt:150, unit:'g', kcal:35},
+          {nome:'Olio EVO', qt:8, unit:'mL', kcal:71}
+        ]}
+      ]
+    },
+    alta_densita: {
+      kcal_base: 2000,
+      macros: {p:22, cho:50, g:28},
+      nota: 'Malnutrizione con IPE: incremento calorico graduale con PERT ottimizzata. Integratori orali ad alta densità energetica se necessario. Monitorare albumina, prealbumina, BMI. Considerare supplementazione vitamine liposolubili A, D, E, K.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', nota:'💊 PERT prima del pasto', items:[
+          {nome:'Pane integrale', qt:70, unit:'g', kcal:165},
+          {nome:'Uovo sodo', qt:50, unit:'g', kcal:78},
+          {nome:'Prosciutto cotto magro', qt:30, unit:'g', kcal:40},
+          {nome:'Yogurt greco magro', qt:125, unit:'g', kcal:72},
+          {nome:'Succo di frutta 100% (no zuccheri aggiunti)', qt:150, unit:'mL', kcal:65}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🥤', items:[
+          {nome:'Integratore orale ad alta densità (Ensure Plus o simile)', qt:200, unit:'mL', kcal:300}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', nota:'💊 PERT ottimizzata (dose aumentata)', items:[
+          {nome:'Pasta di semola', qt:90, unit:'g', kcal:320},
+          {nome:'Ragù di manzo magro', qt:80, unit:'g', kcal:130},
+          {nome:'Parmigiano (1 cucchiaino)', qt:10, unit:'g', kcal:39},
+          {nome:'Verdure grigliate', qt:150, unit:'g', kcal:45},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🧀', items:[
+          {nome:'Formaggino light', qt:50, unit:'g', kcal:80},
+          {nome:'Pane di riso', qt:40, unit:'g', kcal:148}
+        ]},
+        {nome:'Cena', emoji:'🌙', nota:'💊 PERT prima della cena', items:[
+          {nome:'Salmone al cartoccio (ricco di omega-3)', qt:150, unit:'g', kcal:280},
+          {nome:'Patate al vapore', qt:150, unit:'g', kcal:126},
+          {nome:'Carote e zucchine grigliate', qt:150, unit:'g', kcal:45},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    }
+  }
+};
 
 function stampaCompattaPancreas() {
   const gv = id => (document.getElementById(id)?.value || '').trim();

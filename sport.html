@@ -140,6 +140,7 @@
   <button class="sport-tab" onclick="showSport('integr')">💊 Integratori</button>
   <button class="sport-tab" onclick="showSport('lg')">📚 Linee Guida</button>
   <button class="sport-tab" onclick="showSport('piano_sport')">🍽️ Piano Alimentare</button>
+  <button class="sport-tab" onclick="showSport('piano_esempio_sport')">🍽️ Piano Esempio</button>
 </div>
 
 <!-- CALCOLATORE GENERALE -->
@@ -532,6 +533,14 @@
   </div>
 </div>
 
+<!-- TAB: PIANO ESEMPIO SPORT -->
+<div class="sport-panel" id="tab-piano_esempio_sport">
+  <div style="background:#ECFDF5;border-left:3px solid #10B981;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#065F46">
+    <b>🏃 Piano Alimentare Sportivo — Esempi Giornalieri</b> — Seleziona il tipo di sport e il target calorico. I piani includono il timing dei nutrienti rispetto all'allenamento, strategie pre/intra/post-workout e la periodizzazione nutrizionale.
+  </div>
+  <div id="pe-container-sport"></div>
+</div>
+
 </div>
 <!-- COMPACT PRINT AREA -->
 <div id="sp-compact-print-area"></div>
@@ -773,7 +782,179 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (noteId) await caricaSportDaNote(noteId);
     }
   } catch(e) {}
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-sport', SPORT_PE_CONFIG);
 });
+
+const SPORT_PE_CONFIG = {
+  id: 'sport',
+  accentColor: '#10B981',
+  tipi: [
+    {id:'endurance', nome:'Endurance', nomeEsteso:'Endurance (Ciclismo, Corsa, Nuoto)', colore:'#0369A1', coloreT:'#fff'},
+    {id:'forza', nome:'Forza / Potenza', nomeEsteso:'Forza e Potenza (Powerlifting, Bodybuilding)', colore:'#DC2626', coloreT:'#fff'},
+    {id:'misti', nome:'Sport Misti', nomeEsteso:'Sport Misti (Calcio, Rugby, Tennis)', colore:'#059669', coloreT:'#fff'},
+    {id:'riposo', nome:'Giorno di Riposo', nomeEsteso:'Giorno di Riposo / Recupero Attivo', colore:'#7C3AED', coloreT:'#fff'}
+  ],
+  kcals: [2000, 2400, 2800, 3200],
+  piani: {
+    endurance: {
+      kcal_base: 2800,
+      macros: {p:15, cho:60, g:25},
+      nota: 'Endurance: CHO come fonte primaria (6-10g/kg/die in allenamento intenso). Carico di CHO nelle 24-48h pre-gara. Rifornimento intra-gara (45g CHO/h per uscite >60min). Proteine 1.4-1.7g/kg/die per recupero.',
+      pasti: [
+        {nome:'Colazione (2h pre-allenamento)', emoji:'🌅', items:[
+          {nome:'Fiocchi d\'avena (porridge)', qt:80, unit:'g', kcal:296},
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:68},
+          {nome:'Banana', qt:120, unit:'g', kcal:107},
+          {nome:'Miele', qt:15, unit:'g', kcal:46},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Pre-Workout (30-60 min prima)', emoji:'⚡', items:[
+          {nome:'Gel energetico (CHO veloci)', qt:40, unit:'g', kcal:100},
+          {nome:'Acqua', qt:500, unit:'mL', kcal:0}
+        ]},
+        {nome:'Intra-Workout (ogni 30-45 min)', emoji:'🏃', nota:'Solo se durata > 60 minuti', items:[
+          {nome:'Banana o gel energetico', qt:60, unit:'g', kcal:54},
+          {nome:'Bevanda isotonica', qt:500, unit:'mL', kcal:125}
+        ]},
+        {nome:'Post-Workout (entro 30 min)', emoji:'💪', items:[
+          {nome:'Frullato recovery (proteina + CHO 4:1)', qt:300, unit:'mL', kcal:280},
+          {nome:'Pane bianco tostato', qt:40, unit:'g', kcal:108}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta di semola', qt:100, unit:'g', kcal:355},
+          {nome:'Pollo alla piastra', qt:150, unit:'g', kcal:165},
+          {nome:'Verdure miste grigliate', qt:200, unit:'g', kcal:60},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane integrale', qt:50, unit:'g', kcal:118}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍌', items:[
+          {nome:'Riso soffiato', qt:30, unit:'g', kcal:116},
+          {nome:'Ricotta', qt:80, unit:'g', kcal:120},
+          {nome:'Mela', qt:150, unit:'g', kcal:78}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Risotto con verdure', qt:90, unit:'g', kcal:315},
+          {nome:'Salmone al forno', qt:150, unit:'g', kcal:280},
+          {nome:'Insalata mista', qt:100, unit:'g', kcal:17},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    forza: {
+      kcal_base: 2800,
+      macros: {p:30, cho:45, g:25},
+      nota: 'Forza/Potenza: Proteine 1.6-2.2g/kg/die (max 3.1g/kg in deficit calorico). Timing proteico ogni 3-4h con 0.4g/kg per dose. Creatina monoidrato 3-5g/die documentata efficacia. Leucina 2-3g per dose ottimizza sintesi proteica.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Uova intere (3 uova)', qt:150, unit:'g', kcal:234},
+          {nome:'Albumi (3)', qt:99, unit:'g', kcal:51},
+          {nome:'Avena in fiocchi', qt:60, unit:'g', kcal:222},
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:68},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Pre-Allenamento (60-90 min prima)', emoji:'⚡', items:[
+          {nome:'Riso bianco cotto', qt:150, unit:'g', kcal:175},
+          {nome:'Petto di pollo', qt:100, unit:'g', kcal:110},
+          {nome:'Creatina monoidrato', qt:5, unit:'g', kcal:0}
+        ]},
+        {nome:'Post-Allenamento (entro 30 min)', emoji:'💪', items:[
+          {nome:'Proteine del siero del latte (whey)', qt:30, unit:'g', kcal:120},
+          {nome:'Banana grande', qt:150, unit:'g', kcal:134},
+          {nome:'Latte scremato', qt:200, unit:'mL', kcal:68}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale', qt:90, unit:'g', kcal:320},
+          {nome:'Manzo magro (fesa)', qt:200, unit:'g', kcal:260},
+          {nome:'Verdure miste', qt:200, unit:'g', kcal:60},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🧀', items:[
+          {nome:'Yogurt greco proteico (0%)', qt:200, unit:'g', kcal:118},
+          {nome:'Noci', qt:20, unit:'g', kcal:131},
+          {nome:'Frutti di bosco', qt:100, unit:'g', kcal:43}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone o tonno fresco', qt:200, unit:'g', kcal:373},
+          {nome:'Patate dolci al forno', qt:200, unit:'g', kcal:180},
+          {nome:'Broccoli al vapore', qt:200, unit:'g', kcal:54},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        ]}
+      ]
+    },
+    misti: {
+      kcal_base: 2800,
+      macros: {p:20, cho:52, g:28},
+      nota: 'Sport di squadra / misti: Periodizzazione nutrizionale in base ai giorni di allenamento vs. partita. Giorno gara: carico CHO +20%. Recupero post-gara entro 24-48h con proteine + CHO. Idratazione critica: 5-7ml/kg 4h prima.',
+      pasti: [
+        {nome:'Colazione (giorno allenamento)', emoji:'🌅', items:[
+          {nome:'Pane integrale', qt:70, unit:'g', kcal:165},
+          {nome:'Marmellata', qt:20, unit:'g', kcal:49},
+          {nome:'Uova strapazzate (2)', qt:100, unit:'g', kcal:156},
+          {nome:'Succo d\'arancia 100%', qt:200, unit:'mL', kcal:88},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Pre-Allenamento', emoji:'⚡', items:[
+          {nome:'Banana', qt:120, unit:'g', kcal:107},
+          {nome:'Yogurt greco magro', qt:125, unit:'g', kcal:72}
+        ]},
+        {nome:'Post-Allenamento', emoji:'💪', items:[
+          {nome:'Frullato proteico recovery', qt:300, unit:'mL', kcal:250},
+          {nome:'Crackers di riso (4)', qt:30, unit:'g', kcal:120}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Riso o pasta', qt:90, unit:'g', kcal:315},
+          {nome:'Pollo/tacchino/tonno', qt:150, unit:'g', kcal:165},
+          {nome:'Verdure miste cotte', qt:200, unit:'g', kcal:60},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane', qt:40, unit:'g', kcal:107}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍎', items:[
+          {nome:'Frutta fresca di stagione', qt:200, unit:'g', kcal:100},
+          {nome:'Mandorle (piccola manciata)', qt:20, unit:'g', kcal:116}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pasta integrale o quinoa', qt:80, unit:'g', kcal:284},
+          {nome:'Pesce bianco al forno', qt:180, unit:'g', kcal:177},
+          {nome:'Insalata mista abbondante', qt:150, unit:'g', kcal:25},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        ]}
+      ]
+    },
+    riposo: {
+      kcal_base: 2000,
+      macros: {p:25, cho:40, g:35},
+      nota: 'Giorno di riposo: Riduzione CHO del 20-30% rispetto al giorno di allenamento. Mantenere proteine costanti per recupero muscolare. Aumentare grassi sani e micronutrienti. Priorità: recupero, idratazione e sonno.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Uova sode (3)', qt:150, unit:'g', kcal:234},
+          {nome:'Avocado', qt:75, unit:'g', kcal:120},
+          {nome:'Pomodori ciliegini', qt:80, unit:'g', kcal:16},
+          {nome:'Caffè con latte', qt:150, unit:'mL', kcal:54}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🥜', items:[
+          {nome:'Noci miste (noci, mandorle, nocciole)', qt:25, unit:'g', kcal:155},
+          {nome:'Yogurt greco proteico', qt:150, unit:'g', kcal:89}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pollo arrosto con erbe', qt:200, unit:'g', kcal:220},
+          {nome:'Patate al forno', qt:150, unit:'g', kcal:126},
+          {nome:'Insalata verde abbondante', qt:150, unit:'g', kcal:25},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍓', items:[
+          {nome:'Fragole o frutti di bosco', qt:150, unit:'g', kcal:48},
+          {nome:'Ricotta magra', qt:80, unit:'g', kcal:120}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone alla piastra', qt:200, unit:'g', kcal:373},
+          {nome:'Verdure miste al vapore', qt:250, unit:'g', kcal:75},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane integrale (1 fetta)', qt:30, unit:'g', kcal:71}
+        ]}
+      ]
+    }
+  }
+};
 
 // ── SAVE / LOAD SPORT ──
 let sportCartelle = [];

@@ -144,6 +144,7 @@
   <button class="dg-tab" onclick="showTab('depliant')">📄 Depliant Paziente</button>
   <button class="dg-tab" onclick="showTab('lg')">📚 Linee Guida</button>
   <button class="dg-tab" onclick="showTab('piano_diabete')" style="background:white">🍽️ Piano Alimentare</button>
+  <button class="dg-tab" onclick="showTab('piano_esempio_dg')">🍽️ Piano Esempio</button>
 </div>
 
 <!-- TAB 1: RAPPORTO I:C -->
@@ -510,6 +511,14 @@
       <textarea id="dg-piano-note-generali" rows="2" placeholder="Prossima rivalutazione, obiettivi TIR, HbA1c target..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#A7F3D0'"></textarea>
     </div>
   </div>
+</div>
+
+<!-- TAB: PIANO ESEMPIO -->
+<div class="dg-panel" id="tab-piano_esempio_dg">
+  <div style="background:#DBEAFE;border-left:3px solid #1D4ED8;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#1E3A5F">
+    <b>🩸 Piano Alimentare per Diabete — Esempi Giornalieri</b> — Seleziona il tipo di schema dietetico e il target calorico. I piani integrano il conteggio dei carboidrati, la distribuzione glicemica ottimale e il timing con la terapia.
+  </div>
+  <div id="pe-container-dg"></div>
 </div>
 
 </div>
@@ -940,7 +949,152 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (noteId) await caricaDgDaNote(noteId);
     }
   } catch(e) {}
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-dg', DIABETE_PE_CONFIG);
 });
+
+const DIABETE_PE_CONFIG = {
+  id: 'dg',
+  accentColor: '#1D4ED8',
+  tipi: [
+    {id:'t1d', nome:'T1D Counting', nomeEsteso:'Diabete T1 — Counting CHO con Insulina', colore:'#1D4ED8', coloreT:'#fff'},
+    {id:'t2d_med', nome:'T2D Mediterranea', nomeEsteso:'Diabete T2 — Dieta Mediterranea Low-GI', colore:'#059669', coloreT:'#fff'},
+    {id:'t2d_ipo', nome:'T2D Ipocalorica', nomeEsteso:'Diabete T2 — Schema Ipocalorico (-500 kcal)', colore:'#D97706', coloreT:'#fff'},
+    {id:'t2d_lc', nome:'T2D Low-Carb', nomeEsteso:'Diabete T2 — Schema Low-Carb (45% CHO)', colore:'#7C3AED', coloreT:'#fff'}
+  ],
+  kcals: [1400, 1600, 1800, 2000],
+  piani: {
+    t1d: {
+      kcal_base: 1800,
+      macros: {p:18, cho:50, g:32},
+      nota: 'T1D: Il counting dei CHO è fondamentale. Calcolare il rapporto I:C per ogni pasto. Pasti a orari fissi facilitano la gestione insulinica. Monitorare glicemia pre/post pasto. HbA1c target <7%.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane integrale a fette', qt:60, unit:'g', kcal:141},
+          {nome:'Yogurt greco magro', qt:125, unit:'g', kcal:72},
+          {nome:'Marmellata senza zucchero', qt:15, unit:'g', kcal:20},
+          {nome:'Mandorle', qt:15, unit:'g', kcal:87},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Mela (media)', qt:150, unit:'g', kcal:78},
+          {nome:'Noci (2 noci)', qt:15, unit:'g', kcal:98}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale al pomodoro', qt:80, unit:'g', kcal:284},
+          {nome:'Pollo alla piastra', qt:120, unit:'g', kcal:134},
+          {nome:'Insalata mista con olio EVO', qt:150, unit:'g', kcal:80},
+          {nome:'Pane integrale', qt:30, unit:'g', kcal:71}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍊', items:[
+          {nome:'Pera (media)', qt:150, unit:'g', kcal:60},
+          {nome:'Ricotta magra', qt:50, unit:'g', kcal:60}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Riso basmati (GI basso)', qt:70, unit:'g', kcal:245},
+          {nome:'Merluzzo al vapore', qt:150, unit:'g', kcal:115},
+          {nome:'Verdure miste grigliate', qt:200, unit:'g', kcal:60},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    t2d_med: {
+      kcal_base: 1800,
+      macros: {p:18, cho:50, g:32},
+      nota: 'Dieta Mediterranea per T2D: Riduce HbA1c di 0.3-0.5%, migliora la sensibilità insulinica. Preferire CHO a basso GI, legumi 3-4 volte/settimana, pesce 2-3 volte/settimana, frutta secca quotidiana.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane di segale integrale', qt:60, unit:'g', kcal:131},
+          {nome:'Olio EVO (condimento pane)', qt:10, unit:'mL', kcal:89},
+          {nome:'Pomodoro fresco', qt:80, unit:'g', kcal:16},
+          {nome:'Caffè con latte parzialmente scremato', qt:150, unit:'mL', kcal:54}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍊', items:[
+          {nome:'Arancia media', qt:150, unit:'g', kcal:60},
+          {nome:'Mandorle (8-10 mandorle)', qt:15, unit:'g', kcal:87}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Lenticchie in umido', qt:200, unit:'g', kcal:230},
+          {nome:'Verdure miste grigliate', qt:200, unit:'g', kcal:60},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane di farro', qt:40, unit:'g', kcal:136}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🫐', items:[
+          {nome:'Mirtilli freschi', qt:100, unit:'g', kcal:57},
+          {nome:'Yogurt greco magro', qt:100, unit:'g', kcal:59}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone alla griglia', qt:150, unit:'g', kcal:280},
+          {nome:'Insalata di finocchi e arance', qt:150, unit:'g', kcal:50},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane integrale di grano duro', qt:30, unit:'g', kcal:71}
+        ]}
+      ]
+    },
+    t2d_ipo: {
+      kcal_base: 1600,
+      macros: {p:22, cho:48, g:30},
+      nota: 'Schema Ipocalorico T2D: Deficit ~500 kcal/die rispetto al fabbisogno per perdita 0.5 kg/settimana. Obiettivo: -5-10% del peso in 6-12 mesi. Distribuire i CHO equamente nei pasti. Monitorare glicemia.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:68},
+          {nome:'Fette biscottate integrali (3)', qt:30, unit:'g', kcal:122},
+          {nome:'Marmellata senza zuccheri aggiunti', qt:10, unit:'g', kcal:13}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Mela piccola', qt:120, unit:'g', kcal:62}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale (piatto unico)', qt:70, unit:'g', kcal:248},
+          {nome:'Legumi misti nella pasta', qt:80, unit:'g', kcal:80},
+          {nome:'Pomodoro e basilico', qt:80, unit:'g', kcal:16},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍊', items:[
+          {nome:'Yogurt magro bianco', qt:125, unit:'g', kcal:59}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pollo / tacchino alla piastra', qt:130, unit:'g', kcal:146},
+          {nome:'Verdure cotte miste (zucchine, melanzane)', qt:250, unit:'g', kcal:75},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89},
+          {nome:'Pane integrale', qt:40, unit:'g', kcal:95}
+        ]}
+      ]
+    },
+    t2d_lc: {
+      kcal_base: 1800,
+      macros: {p:25, cho:25, g:50},
+      nota: 'Low-Carb T2D (CHO 25-40%): Migliora controllo glicemico e riduce HbA1c. Aumentare il monitoraggio glicemico nei primi 3 mesi. Può richiedere adeguamento della terapia ipoglicemizzante. NON è dieta chetogenica (CHO > 50g/die).',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Uova alla coque (2 uova)', qt:100, unit:'g', kcal:144},
+          {nome:'Prosciutto cotto magro', qt:30, unit:'g', kcal:40},
+          {nome:'Pomodoro fresco', qt:80, unit:'g', kcal:16},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🥜', items:[
+          {nome:'Mix di frutta secca (noci, mandorle)', qt:20, unit:'g', kcal:124},
+          {nome:'Formaggio light', qt:30, unit:'g', kcal:60}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Carne magra (manzo magro) alla piastra', qt:150, unit:'g', kcal:234},
+          {nome:'Insalata verde abbondante', qt:150, unit:'g', kcal:25},
+          {nome:'Ceci lessati', qt:80, unit:'g', kcal:107},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍓', items:[
+          {nome:'Fragole o frutti di bosco', qt:150, unit:'g', kcal:48},
+          {nome:'Yogurt greco 0% grassi', qt:100, unit:'g', kcal:59}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone al cartoccio', qt:150, unit:'g', kcal:280},
+          {nome:'Broccoli al vapore', qt:200, unit:'g', kcal:54},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane di segale (1 fetta sottile)', qt:25, unit:'g', kcal:55}
+        ]}
+      ]
+    }
+  }
+};
 
 function stampaCompattaDiabete() {
   const gv = id => (document.getElementById(id)?.value || '').trim();

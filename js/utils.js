@@ -56,11 +56,75 @@ async function loadProfile() {
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
   // Load cartelle dropdown if present
   if (document.getElementById('inp-cartella')) loadCartelleDropdown();
+  // Add profile button to sidebar if not present
+  const sbBottom = document.querySelector('.sb-bottom');
+  if (sbBottom && !document.getElementById('btn-profilo-op')) {
+    const btn = document.createElement('button');
+    btn.id = 'btn-profilo-op';
+    btn.className = 'sb-logout';
+    btn.style.cssText = 'background:rgba(255,255,255,.08);margin-bottom:4px';
+    btn.textContent = '👤 Profilo Operatore';
+    btn.onclick = openProfiloModal;
+    sbBottom.insertBefore(btn, sbBottom.querySelector('.sb-logout'));
+  }
+  // Ensure profilo modal exists
+  if (!document.getElementById('modal-profilo-op')) {
+    const div = document.createElement('div');
+    div.innerHTML = `<div class="modal-bg" id="modal-profilo-op">
+      <div class="modal" style="max-width:420px">
+        <div class="modal-hdr"><span>👤 Profilo Operatore</span><button onclick="closeM('modal-profilo-op')">✕</button></div>
+        <div class="modal-body">
+          <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">Questi dati appariranno in calce a tutte le stampe (piani alimentari, consigli, schede specialistiche).</p>
+          <div class="fg" style="margin-bottom:10px"><label>Nome</label><input type="text" id="profop-nome" placeholder="es. Maria" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+          <div class="fg" style="margin-bottom:10px"><label>Cognome</label><input type="text" id="profop-cognome" placeholder="es. Rossi" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+          <div class="fg" style="margin-bottom:14px"><label>N° Iscrizione Albo</label><input type="text" id="profop-albo" placeholder="es. 12345 (Regione)" maxlength="80" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-ghost" onclick="closeM('modal-profilo-op')">Annulla</button>
+            <button class="btn btn-primary" onclick="salvaProfiloOp()">💾 Salva</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    document.body.appendChild(div.firstChild);
+  }
+}
+
+function openProfiloModal() {
+  const p = getProfiloOperatore();
+  const n = document.getElementById('profop-nome'); if (n) n.value = p.nome || '';
+  const c = document.getElementById('profop-cognome'); if (c) c.value = p.cognome || '';
+  const a = document.getElementById('profop-albo'); if (a) a.value = p.albo || '';
+  openM('modal-profilo-op');
+}
+function salvaProfiloOp() {
+  const d = {
+    nome: (document.getElementById('profop-nome')?.value || '').trim(),
+    cognome: (document.getElementById('profop-cognome')?.value || '').trim(),
+    albo: (document.getElementById('profop-albo')?.value || '').trim()
+  };
+  saveProfiloOperatore(d);
+  closeM('modal-profilo-op');
+  toast('✅ Profilo salvato!', 'ok');
 }
 
 async function doLogout() {
   await sb.auth.signOut();
   window.location.href = 'index.html';
+}
+
+/* ── Profilo Operatore ── */
+function getProfiloOperatore() {
+  try { return JSON.parse(localStorage.getItem('nutriplan_profilo_operatore') || '{}'); } catch(e) { return {}; }
+}
+function saveProfiloOperatore(d) {
+  localStorage.setItem('nutriplan_profilo_operatore', JSON.stringify(d));
+}
+function profiloFirmaHtml() {
+  const p = getProfiloOperatore();
+  const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
+  const albo = p.albo ? ' — N° Albo: ' + esc(p.albo) : '';
+  if (!nome && !albo) return '';
+  return '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #E2E8F0;text-align:right;font-size:11px;color:#64748B;font-style:italic">' + esc(nome) + albo + '</div>';
 }
 
 // ═══════════════════════════════════════════════════
@@ -223,6 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sb) sb.classList.add('collapsed');
     document.body.classList.add('sidebar-collapsed');
     if (btn) btn.innerHTML = '✕';
+  }
+  // Restore sidebar scroll position
+  const sbEl = document.getElementById('sidebar');
+  if (sbEl) {
+    const savedScroll = localStorage.getItem('nutriplan_sidebar_scroll');
+    if (savedScroll) sbEl.scrollTop = parseInt(savedScroll) || 0;
+    sbEl.addEventListener('scroll', () => {
+      localStorage.setItem('nutriplan_sidebar_scroll', sbEl.scrollTop);
+    }, { passive: true });
   }
 });
 
@@ -510,10 +583,224 @@ function stampaCompattaSpecialistica(pasti, opts) {
     html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${escH(opts.footerNote)}</div>`;
   }
 
+  html += profiloFirmaHtml();
   html += `</div>`;
 
   container.innerHTML = html;
   document.body.dataset.printMode = 'compact';
   window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, { once: true });
   setTimeout(() => window.print(), 300);
+}
+
+/* ═══════════════════════════════════════════════════
+   PIANO ESEMPIO SPECIALISTICO — Utility condivisa
+   initPianoEsempio(containerId, config)
+═══════════════════════════════════════════════════ */
+function initPianoEsempio(containerId, config) {
+  const container = document.getElementById(containerId);
+  if (!container) { console.warn('initPianoEsempio: container not found:', containerId); return; }
+
+  const _id = config.id;
+  const _tipi = config.tipi || [];
+  const _kcals = config.kcals || [];
+  const _piani = config.piani || {};
+  let _selTipo = _tipi.length ? _tipi[0].id : null;
+  let _selKcal = _kcals.length ? _kcals[Math.floor(_kcals.length / 2)] : null;
+
+  function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function _renderSelector() {
+    let html = `<div class="pe-selector no-print" style="background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:18px;box-shadow:var(--shadow)">`;
+    html += `<h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px">⚙️ Seleziona Tipo di Dieta${_kcals.length ? ' e Calorie Target' : ''}</h3>`;
+    html += `<div style="display:grid;grid-template-columns:${_kcals.length ? '1fr 1fr' : '1fr'};gap:16px;flex-wrap:wrap">`;
+    html += `<div><div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Tipo di Dieta</div>`;
+    html += `<div id="pe-tipo-btns-${_id}" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">`;
+    _tipi.forEach(t => {
+      const active = t.id === _selTipo;
+      html += `<button class="pe-tipo-btn${active?' active':''}" 
+        data-tipo="${escH(t.id)}"
+        data-col="${escH(t.colore)}"
+        data-colt="${escH(t.coloreT||'#fff')}"
+        style="padding:7px 14px;border-radius:8px;border:1.5px solid ${active?t.colore:'var(--border-d)'};background:${active?t.colore:'white'};color:${active?(t.coloreT||'#fff'):'var(--slate-m)'};font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s;font-family:inherit;line-height:1.3"
+        onclick="_peSel('${_id}','tipo','${escH(t.id)}')">${escH(t.nome)}</button>`;
+    });
+    html += `</div></div>`;
+    if (_kcals.length) {
+      html += `<div><div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Target Calorico</div>`;
+      html += `<div id="pe-kcal-btns-${_id}" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">`;
+      _kcals.forEach(k => {
+        const active = k === _selKcal;
+        html += `<button class="pe-kcal-btn${active?' active':''}"
+          style="padding:7px 16px;border-radius:8px;border:1.5px solid ${active?config.accentColor:'var(--border-d)'};background:${active?config.accentColor:'white'};color:${active?'white':'var(--slate-m)'};font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;font-family:inherit"
+          onclick="_peSel('${_id}','kcal',${k})">${k} kcal</button>`;
+      });
+      html += `</div></div>`;
+    }
+    html += `</div></div>`;
+    return html;
+  }
+
+  function _renderPiano() {
+    const piano = _piani[_selTipo];
+    if (!piano) return '<div style="color:var(--slate-l);font-size:13px;padding:20px">Seleziona un tipo di dieta.</div>';
+    const tipo = _tipi.find(t => t.id === _selTipo);
+    const factor = (_selKcal && piano.kcal_base) ? _selKcal / piano.kcal_base : 1;
+    let totKcal = 0;
+    piano.pasti.forEach(p => p.items.forEach(i => totKcal += (i.kcal||0)));
+    const scaledKcal = Math.round(totKcal * factor);
+    const macros = piano.macros || {p:15, cho:50, g:35};
+
+    let html = '';
+    html += `<div style="background:${tipo?tipo.colore+'18':'#f0fdf4'};border:1.5px solid ${tipo?tipo.colore+'40':'#a7f3d0'};border-radius:14px;padding:14px 16px;margin-bottom:14px">`;
+    html += `<div style="font-size:15px;font-weight:700;color:${tipo?tipo.colore:'var(--teal)'};margin-bottom:4px">${escH(tipo?tipo.nomeEsteso||tipo.nome:'')}</div>`;
+    if (_selKcal) html += `<div style="font-size:12px;color:var(--slate-m)">Target: <b>${_selKcal} kcal/die</b>&nbsp;·&nbsp;Piano base: ${piano.kcal_base} kcal&nbsp;·&nbsp;Scala: <b>${factor.toFixed(2)}×</b></div>`;
+    html += `</div>`;
+
+    html += `<div style="display:flex;flex-wrap:wrap;gap:10px;background:#F8FAFC;border-radius:10px;padding:12px 16px;margin-bottom:14px;border:1px solid var(--border)" class="no-print">`;
+    const prot = Math.round(scaledKcal * (macros.p||15) / 100 / 4);
+    const cho = Math.round(scaledKcal * (macros.cho||50) / 100 / 4);
+    const fat = Math.round(scaledKcal * (macros.g||35) / 100 / 9);
+    [{v:scaledKcal,l:'Kcal Totali',c:'#0EA5E9'},{v:prot+'g',l:'Proteine',c:'#22C55E'},{v:cho+'g',l:'CHO',c:'#F59E0B'},{v:fat+'g',l:'Grassi',c:'#EF4444'},{v:Math.round(scaledKcal/piano.pasti.length),l:'Kcal/Pasto',c:'#8B5CF6'}].forEach(m => {
+      html += `<div style="text-align:center;min-width:70px;flex:1"><div style="font-size:18px;font-weight:700;color:${m.c}">${m.v}</div><div style="font-size:9.5px;font-weight:600;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">${m.l}</div></div>`;
+    });
+    html += `</div>`;
+
+    piano.pasti.forEach(pasto => {
+      let pastoKcal = 0;
+      pasto.items.forEach(i => pastoKcal += (i.kcal||0));
+      const pastoKcalScaled = Math.round(pastoKcal * factor);
+      html += `<div style="background:white;border-radius:12px;border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)">`;
+      html += `<div style="padding:12px 16px;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,${tipo?tipo.colore:'#0F766E'},${tipo?tipo.colore+'cc':'#0D9488'});color:white">`;
+      html += `<span style="font-size:20px">${escH(pasto.emoji||'🍽️')}</span>`;
+      html += `<span style="font-weight:700;font-size:14px;flex:1">${escH(pasto.nome)}</span>`;
+      html += `<span style="font-size:12px;opacity:.88;font-weight:600">≈ ${pastoKcalScaled} kcal</span>`;
+      html += `</div>`;
+      pasto.items.forEach(item => {
+        const qtS = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
+        const kcalS = Math.round((item.kcal||0) * factor);
+        html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);font-size:13px">`;
+        html += `<span style="color:var(--slate);flex:1">${escH(item.nome)}</span>`;
+        html += `<div style="display:flex;align-items:center;gap:10px;white-space:nowrap;margin-left:10px">`;
+        html += `<span style="font-weight:700;color:${tipo?tipo.colore:'#0F766E'};font-size:12.5px">${qtS} ${escH(item.unit)}</span>`;
+        html += `<span style="font-size:11px;color:var(--slate-l);background:#F8FAFC;border-radius:6px;padding:2px 7px">${kcalS} kcal</span>`;
+        html += `</div></div>`;
+      });
+      if (pasto.nota) html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${escH(pasto.nota)}</div>`;
+      html += `</div>`;
+    });
+
+    if (piano.nota) html += `<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:10px 14px;font-size:12px;color:#7C2D12;margin-top:6px;line-height:1.7">⚠️ <b>Nota clinica:</b> ${escH(piano.nota)}</div>`;
+
+    return html;
+  }
+
+  function _render() {
+    const outEl = document.getElementById('pe-output-' + _id);
+    if (outEl) outEl.innerHTML = _renderPiano();
+  }
+
+  window._peSel = function(id, type, val) {
+    if (id !== _id) return;
+    if (type === 'tipo') {
+      _selTipo = val;
+      const btnGroup = document.getElementById('pe-tipo-btns-' + _id);
+      if (btnGroup) btnGroup.querySelectorAll('.pe-tipo-btn').forEach(b => {
+        const active = b.dataset.tipo === val;
+        b.classList.toggle('active', active);
+        b.style.background = active ? b.dataset.col : 'white';
+        b.style.color = active ? (b.dataset.colt || '#fff') : 'var(--slate-m)';
+        b.style.borderColor = active ? b.dataset.col : 'var(--border-d)';
+      });
+    } else if (type === 'kcal') {
+      _selKcal = parseInt(val);
+      const btnGroup = document.getElementById('pe-kcal-btns-' + _id);
+      if (btnGroup) btnGroup.querySelectorAll('.pe-kcal-btn').forEach(b => {
+        const active = parseInt(b.textContent) === _selKcal;
+        b.classList.toggle('active', active);
+        b.style.background = active ? config.accentColor : 'white';
+        b.style.color = active ? 'white' : 'var(--slate-m)';
+        b.style.borderColor = active ? config.accentColor : 'var(--border-d)';
+      });
+    }
+    _render();
+  };
+
+  window['_pePrint_' + _id] = function() {
+    const piano = _piani[_selTipo];
+    const tipo = _tipi.find(t => t.id === _selTipo);
+    if (!piano || !tipo) return;
+    const factor = (_selKcal && piano.kcal_base) ? _selKcal / piano.kcal_base : 1;
+    function escH2(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+    html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
+    html += `<div style="font-size:18px;font-weight:700;color:${tipo.colore}">${escH2(tipo.nomeEsteso||tipo.nome)}</div>`;
+    if (_selKcal) html += `<div style="font-size:13px;color:#475569;margin-top:3px">${_selKcal} kcal/die</div>`;
+    html += `</div>`;
+    const macros = piano.macros || {p:15, cho:50, g:35};
+    const scaledKcal = Math.round(piano.pasti.reduce((s,p) => s + p.items.reduce((si,i) => si+(i.kcal||0), 0), 0) * factor);
+    html += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
+    [{v:scaledKcal,l:'KCAL TOTALI'},{v:Math.round(scaledKcal*(macros.p||15)/100/4)+'g',l:'PROTEINE'},{v:Math.round(scaledKcal*(macros.cho||50)/100/4)+'g',l:'CARBOIDRATI'},{v:Math.round(scaledKcal*(macros.g||35)/100/9)+'g',l:'GRASSI'},{v:Math.round(scaledKcal/piano.pasti.length),l:'KCAL/PASTO'}].forEach((s,i,a) => {
+      html += `<div style="flex:1;text-align:center;padding:12px 6px;${i<a.length-1?'border-right:1.5px solid #CBD5E1':''}"><div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.v}</div><div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.l}</div></div>`;
+    });
+    html += `</div>`;
+    piano.pasti.forEach(pasto => {
+      let pastoKcal = 0; pasto.items.forEach(i => pastoKcal += (i.kcal||0));
+      html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,${tipo.colore},${tipo.colore}cc)">`;
+      html += `<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">${escH2(pasto.emoji||'🍽️')}</span><span style="font-size:14px;font-weight:700;color:white">${escH2(pasto.nome)}</span></div>`;
+      html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${Math.round(pastoKcal*factor)} kcal</span></div>`;
+      pasto.items.forEach(item => {
+        const qtS = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
+        html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9">`;
+        html += `<span style="font-size:13px;color:#1E293B">${escH2(item.nome)}</span>`;
+        html += `<span style="font-size:13px;font-weight:700;color:${tipo.colore};white-space:nowrap;padding-left:12px">${qtS} ${escH2(item.unit)}</span></div>`;
+      });
+      if (pasto.nota) html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${escH2(pasto.nota)}</div>`;
+      html += `</div>`;
+    });
+    if (piano.nota) html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${escH2(piano.nota)}</div>`;
+    html += profiloFirmaHtml();
+    html += `</div>`;
+    let pa = document.getElementById('pe-print-' + _id);
+    if (!pa) {
+      pa = document.createElement('div');
+      pa.id = 'pe-print-' + _id;
+      pa.style.cssText = 'display:none';
+      (document.querySelector('main') || document.body).appendChild(pa);
+    }
+    pa.innerHTML = html;
+    document.body.dataset.printMode = 'compact';
+    window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, {once:true});
+    setTimeout(() => window.print(), 300);
+  };
+
+  window['_peApri_' + _id] = function() {
+    const piano = _piani[_selTipo];
+    const tipo = _tipi.find(t => t.id === _selTipo);
+    if (!piano || !tipo) return;
+    const factor = (_selKcal && piano.kcal_base) ? _selKcal / piano.kcal_base : 1;
+    const pasti = piano.pasti.map(pasto => ({
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      nome: pasto.nome,
+      emoji: pasto.emoji || '🍽️',
+      items: pasto.items.map(item => ({
+        nome: item.nome + ' (' + (factor>=1?Math.round(item.qt*factor):+(item.qt*factor).toFixed(1)) + ' ' + item.unit + ')',
+        qt: '', altPrint: [], misura: ''
+      })),
+      note: '',
+      collapsed: false
+    }));
+    const d = { nome: (tipo.nomeEsteso||tipo.nome) + (_selKcal?' '+_selKcal+' kcal':''), pasti };
+    sessionStorage.setItem('loadPatologia', JSON.stringify(d));
+    window.location.href = 'app.html';
+  };
+
+  container.innerHTML = `
+    ${_renderSelector()}
+    <div id="pe-output-${_id}">${_renderPiano()}</div>
+    <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+      <button onclick="_pePrint_${_id}()" style="padding:7px 16px;border-radius:8px;border:1.5px solid var(--border-d);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='${config.accentColor}';this.style.color='${config.accentColor}'" onmouseout="this.style.borderColor='var(--border-d)';this.style.color=''">📋 Stampa Compatta</button>
+      <button onclick="_peApri_${_id}()" style="padding:7px 16px;border-radius:8px;border:1.5px solid var(--border-d);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='${config.accentColor}';this.style.color='${config.accentColor}'" onmouseout="this.style.borderColor='var(--border-d)';this.style.color=''">📂 Apri in Piano Alimentare</button>
+    </div>
+  `;
 }

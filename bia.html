@@ -297,6 +297,7 @@ let cartelleList = [];
 let currentBiaId = null;
 
 function showBIA(id) {
+  autoSavePage_bia();
   document.querySelectorAll('.bia-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.bia-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
@@ -1064,6 +1065,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) {}
 });
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_bia() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_bia', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_bia() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_bia') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_bia() {
+  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
+  const ap = document.querySelector('.bia-panel.active') || document.querySelector('main');
+  if (ap) {
+    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  }
+  localStorage.removeItem('nutriplan_autosave_bia');
+  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  autoRestorePage_bia();
+  document.querySelectorAll('.bia-panel').forEach(panel => {
+    if (panel.querySelector('.svuota-btn-bia')) return;
+    const btn = document.createElement('button');
+    btn.className = 'svuota-btn-bia no-print';
+    btn.innerHTML = '🗑️ Svuota Sezione';
+    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
+    btn.onmouseover = function(){this.style.background='#FEE2E2'};
+    btn.onmouseout = function(){this.style.background='white'};
+    btn.onclick = svuotaSezione_bia;
+    panel.insertBefore(btn, panel.firstChild);
+  });
+}, {once: false});
 </script>
 </body>
 </html>

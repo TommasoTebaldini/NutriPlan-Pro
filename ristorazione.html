@@ -143,6 +143,7 @@
   <button class="rist-tab" onclick="showRist('haccp')">🔒 HACCP &amp; Normativa</button>
   <button class="rist-tab" onclick="showRist('fabbisogni')">📊 Fabbisogni per Utenza</button>
   <button class="rist-tab" onclick="showRist('piano_rist')">🍽️ Piano Pasti</button>
+  <button class="rist-tab" onclick="showRist('piani_esempio_rist')">📋 Piani Esempio</button>
 </div>
 
 <!-- PANORAMICA -->
@@ -607,6 +608,10 @@
     </div>
   </div>
 </div>
+<!-- PIANI ESEMPIO RISTORAZIONE -->
+<div class="rist-panel" id="tab-piani_esempio_rist">
+  <div id="pe-container-rist"></div>
+</div>
 
 </div>
 <!-- COMPACT PRINT AREA -->
@@ -660,6 +665,7 @@
 <script src="js/utils.js"></script>
 <script>
 function showRist(id) {
+  autoSavePage_ristorazione();
   document.querySelectorAll('.rist-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.rist-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById('tab-' + id);
@@ -726,6 +732,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch(e) {}
   calcFabbisogno();
   initDieteSpeciali();
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-rist', RIST_PE_CONFIG);
 });
 
 // ── SAVE / LOAD RISTORAZIONE ──
@@ -1025,6 +1032,261 @@ function eliminaPianoRistorazione() {
     });
   });
 }
+
+/* ── Piani Esempio Ristorazione Collettiva ── */
+const RIST_PE_CONFIG = {
+  id: 'rist',
+  accentColor: '#2563EB',
+  tipi: [
+    {id:'asilo', nome:'Asilo (3-6 anni)', nomeEsteso:'Mensa Asilo Nido / Scuola Materna (3-6 anni)', colore:'#F59E0B', coloreT:'#fff'},
+    {id:'elementari', nome:'Elementari (6-10 anni)', nomeEsteso:'Mensa Scolastica — Scuola Primaria (6-10 anni)', colore:'#10B981', coloreT:'#fff'},
+    {id:'medie', nome:'Medie (11-13 anni)', nomeEsteso:'Mensa Scolastica — Scuola Secondaria I grado (11-13 anni)', colore:'#3B82F6', coloreT:'#fff'},
+    {id:'ospedale', nome:'Ospedale', nomeEsteso:'Vitto Ospedaliero Standard (adulto)', colore:'#EF4444', coloreT:'#fff'},
+    {id:'casa_riposo', nome:'Casa di Riposo', nomeEsteso:'Casa di Riposo / RSA (anziano)', colore:'#8B5CF6', coloreT:'#fff'},
+    {id:'mensa_az', nome:'Mensa Aziendale', nomeEsteso:'Mensa Aziendale / Caserma (adulto attivo)', colore:'#0369A1', coloreT:'#fff'}
+  ],
+  kcals: [1400, 1600, 1800, 2000, 2200],
+  piani: {
+    asilo: {
+      kcal_base: 1350,
+      macros: {p:14, cho:55, g:31},
+      nota: 'Mensa asilo 3-6 anni: il pasto scolastico copre ~35% del fabbisogno giornaliero (~450 kcal). Porzioni ridotte. Varietà di colori e sapori. No sale aggiunto in eccesso. Latte o yogurt come alternativa. Rispettare le linee guida MIUR.',
+      pasti: [
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca di stagione', qt:100, unit:'g', kcal:50},
+          {nome:'Acqua', qt:200, unit:'mL', kcal:0}
+        ]},
+        {nome:'Primo Piatto', emoji:'🍝', items:[
+          {nome:'Pasta con pomodoro e basilico', qt:60, unit:'g', kcal:213},
+          {nome:'Parmigiano grattugiato', qt:10, unit:'g', kcal:39}
+        ]},
+        {nome:'Secondo Piatto', emoji:'🍗', items:[
+          {nome:'Petto di pollo al forno', qt:80, unit:'g', kcal:88},
+          {nome:'Olio EVO', qt:5, unit:'mL', kcal:44}
+        ]},
+        {nome:'Contorno', emoji:'🥦', items:[
+          {nome:'Carote lessate condite', qt:100, unit:'g', kcal:35},
+          {nome:'Pane bianco', qt:25, unit:'g', kcal:66}
+        ]},
+        {nome:'Dessert / Frutta', emoji:'🍊', items:[
+          {nome:'Frutta fresca (mela/pera/banana)', qt:100, unit:'g', kcal:52}
+        ]}
+      ]
+    },
+    elementari: {
+      kcal_base: 1640,
+      macros: {p:15, cho:55, g:30},
+      nota: 'Mensa elementari 6-10 anni: pasto scolastico copre ~35-40% del fabbisogno (550-650 kcal). Linee guida MIUR. Frequenza pesce 2/sett, legumi 2/sett, carne rossa max 1/sett. Evitare fritti. Pane sempre presente.',
+      pasti: [
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca di stagione', qt:150, unit:'g', kcal:75},
+          {nome:'Acqua', qt:200, unit:'mL', kcal:0}
+        ]},
+        {nome:'Primo Piatto', emoji:'🍝', items:[
+          {nome:'Pasta integrale al ragù di verdure', qt:80, unit:'g', kcal:284},
+          {nome:'Parmigiano grattugiato', qt:10, unit:'g', kcal:39}
+        ]},
+        {nome:'Secondo Piatto', emoji:'🐟', items:[
+          {nome:'Merluzzo al forno con pomodoro', qt:100, unit:'g', kcal:80},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Contorno', emoji:'🥗', items:[
+          {nome:'Insalata mista con carote', qt:100, unit:'g', kcal:25},
+          {nome:'Pane di tipo 0 o integrale', qt:50, unit:'g', kcal:133}
+        ]},
+        {nome:'Frutta', emoji:'🍊', items:[
+          {nome:'Frutta fresca di stagione', qt:125, unit:'g', kcal:65}
+        ]},
+        {nome:'Merenda Pomeriggio', emoji:'🥛', items:[
+          {nome:'Yogurt bianco intero', qt:125, unit:'g', kcal:88},
+          {nome:'Crackers integrali', qt:15, unit:'g', kcal:62}
+        ]}
+      ]
+    },
+    medie: {
+      kcal_base: 1961,
+      macros: {p:15, cho:55, g:30},
+      nota: 'Mensa scuola media 11-13 anni: pasto copre ~35% del fabbisogno (700-800 kcal). Aumenta il fabbisogno per la crescita puberale. Attenzione a Ca (1300mg/die), Fe (11-18mg/die). Porzioni più abbondanti rispetto alle elementari.',
+      pasti: [
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca o succo 100%', qt:150, unit:'g', kcal:75},
+          {nome:'Crackers integrali', qt:20, unit:'g', kcal:82}
+        ]},
+        {nome:'Primo Piatto', emoji:'🍝', items:[
+          {nome:'Pasta di semola con legumi', qt:80, unit:'g', kcal:284},
+          {nome:'Legumi (fagioli/ceci/lenticchie) cotti', qt:80, unit:'g', kcal:80}
+        ]},
+        {nome:'Secondo Piatto', emoji:'🥩', items:[
+          {nome:'Pollo o tacchino alla piastra', qt:120, unit:'g', kcal:132},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Contorno', emoji:'🥦', items:[
+          {nome:'Verdure cotte miste di stagione', qt:150, unit:'g', kcal:45},
+          {nome:'Pane integrale', qt:50, unit:'g', kcal:118}
+        ]},
+        {nome:'Frutta', emoji:'🍊', items:[
+          {nome:'Frutta fresca di stagione', qt:150, unit:'g', kcal:75}
+        ]},
+        {nome:'Merenda', emoji:'🧀', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
+          {nome:'Biscotti secchi integrali', qt:25, unit:'g', kcal:109}
+        ]}
+      ]
+    },
+    ospedale: {
+      kcal_base: 1770,
+      macros: {p:18, cho:52, g:30},
+      nota: 'Vitto ospedaliero standard: 1800-2000 kcal/die. Dieta equilibrata, facilmente digeribile. Pasti distribuiti in 3 principali + 2 spuntini. Sale ridotto (< 5g/die). Evitare cibi a rischio microbiologico (carni crude, uova crude). Adattabile a diete speciali (diabetica, iposodica, ecc.).',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
+          {nome:'Fette biscottate integrali', qt:30, unit:'g', kcal:122},
+          {nome:'Marmellata', qt:20, unit:'g', kcal:49},
+          {nome:'Caffè o tè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Frutta fresca', qt:150, unit:'g', kcal:78}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta con verdure o pomodoro', qt:80, unit:'g', kcal:284},
+          {nome:'Pollo al forno o vitello lessato', qt:120, unit:'g', kcal:132},
+          {nome:'Verdure cotte di stagione', qt:150, unit:'g', kcal:45},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89},
+          {nome:'Pane bianco o integrale', qt:50, unit:'g', kcal:133},
+          {nome:'Frutta fresca', qt:100, unit:'g', kcal:52}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🥛', items:[
+          {nome:'Yogurt bianco magro', qt:125, unit:'g', kcal:59}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Minestrina di verdure con pastina', qt:250, unit:'mL', kcal:135},
+          {nome:'Pesce al vapore o uova sode', qt:120, unit:'g', kcal:96},
+          {nome:'Verdure lesse', qt:150, unit:'g', kcal:45},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89},
+          {nome:'Pane bianco', qt:25, unit:'g', kcal:66}
+        ]}
+      ]
+    },
+    casa_riposo: {
+      kcal_base: 1640,
+      macros: {p:18, cho:52, g:30},
+      nota: 'RSA/Casa di Riposo: 1600-1800 kcal/die in base all\'attività residua. Attenzione a disfagia (IDDSI), osteoporosi (Ca+D), sarcopenia (proteine 1.0-1.2g/kg/die). Consistenza adattata. Abbondante idratazione. Pasti in ambiente confortevole e socializzante.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte intero caldo', qt:200, unit:'mL', kcal:126},
+          {nome:'Fette biscottate morbide', qt:30, unit:'g', kcal:122},
+          {nome:'Miele o marmellata', qt:15, unit:'g', kcal:37}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍌', items:[
+          {nome:'Succo di frutta o frullato', qt:150, unit:'mL', kcal:75},
+          {nome:'Biscotti secchi morbidi', qt:20, unit:'g', kcal:87}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta o riso con sugo di pomodoro', qt:80, unit:'g', kcal:284},
+          {nome:'Parmigiano', qt:10, unit:'g', kcal:39},
+          {nome:'Carne macinata o pesce morbido', qt:100, unit:'g', kcal:110},
+          {nome:'Verdure lessate passate', qt:150, unit:'g', kcal:45},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89},
+          {nome:'Pane morbido o polenta', qt:50, unit:'g', kcal:133}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🧀', items:[
+          {nome:'Yogurt intero o budino', qt:125, unit:'g', kcal:110}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Semolino o crema di cereali', qt:60, unit:'g', kcal:218},
+          {nome:'Ricotta o formaggio fresco', qt:50, unit:'g', kcal:75},
+          {nome:'Verdure passate con olio', qt:150, unit:'g', kcal:50},
+          {nome:'Pane morbido', qt:25, unit:'g', kcal:40}
+        ]}
+      ]
+    },
+    mensa_az: {
+      kcal_base: 2012,
+      macros: {p:18, cho:50, g:32},
+      nota: 'Mensa aziendale / caserma: adulto attivo 25-55 anni. Il pasto copre ~35-40% del fabbisogno (700-900 kcal). Menù a rotazione 4 settimane. Almeno 2 linee: standard e vegetariana. Etichettatura allergeni obbligatoria. Self-service con porzioni indicate.',
+      pasti: [
+        {nome:'Primo Piatto (a scelta)', emoji:'🍝', items:[
+          {nome:'Pasta al ragù o pasta al sugo', qt:80, unit:'g', kcal:284},
+          {nome:'Parmigiano o pecorino', qt:10, unit:'g', kcal:39}
+        ]},
+        {nome:'Secondo Piatto (a scelta)', emoji:'🥩', items:[
+          {nome:'Petto di pollo o fesa di tacchino', qt:150, unit:'g', kcal:165},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Contorno (a scelta)', emoji:'🥗', items:[
+          {nome:'Insalata mista con pomodori', qt:150, unit:'g', kcal:40},
+          {nome:'Verdure cotte di stagione', qt:150, unit:'g', kcal:45}
+        ]},
+        {nome:'Pane', emoji:'🍞', items:[
+          {nome:'Pane di tipo 0 o integrale', qt:75, unit:'g', kcal:199}
+        ]},
+        {nome:'Frutta o Dessert', emoji:'🍊', items:[
+          {nome:'Frutta fresca di stagione', qt:150, unit:'g', kcal:78}
+        ]},
+        {nome:'Bevanda', emoji:'🥤', items:[
+          {nome:'Acqua naturale o frizzante', qt:500, unit:'mL', kcal:0},
+          {nome:'Caffè (opzionale)', qt:50, unit:'mL', kcal:1}
+        ]},
+        {nome:'Colazione (se inclusa)', emoji:'🌅', items:[
+          {nome:'Latte o cappuccino', qt:200, unit:'mL', kcal:92},
+          {nome:'Croissant o brioche semplice', qt:60, unit:'g', kcal:240},
+          {nome:'Succo di frutta 100%', qt:100, unit:'mL', kcal:45}
+        ]}
+      ]
+    }
+  }
+};
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_ristorazione() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_ristorazione', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_ristorazione() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_ristorazione') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_ristorazione() {
+  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
+  const ap = document.querySelector('.rist-panel.active') || document.querySelector('main');
+  if (ap) {
+    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  }
+  localStorage.removeItem('nutriplan_autosave_ristorazione');
+  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  autoRestorePage_ristorazione();
+  // Insert "Svuota Sezione" button in each panel
+  document.querySelectorAll('.rist-panel').forEach(panel => {
+    if (panel.querySelector('.svuota-btn-ristorazione')) return;
+    const btn = document.createElement('button');
+    btn.className = 'svuota-btn-ristorazione no-print';
+    btn.innerHTML = '🗑️ Svuota Sezione';
+    btn.title = 'Svuota tutti i dati di questa sezione';
+    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
+    btn.onmouseover = function(){this.style.background='#FEE2E2'};
+    btn.onmouseout = function(){this.style.background='white'};
+    btn.onclick = svuotaSezione_ristorazione;
+    panel.insertBefore(btn, panel.firstChild);
+  });
+}, {once: false});
 </script>
 </body>
 </html>

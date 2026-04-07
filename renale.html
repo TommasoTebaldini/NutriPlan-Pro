@@ -945,6 +945,7 @@
 <script src="js/utils.js"></script>
 <script>
 function showRenTab(id) {
+  autoSavePage_renale();
   document.querySelectorAll('.ren-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.ren-tab').forEach(t => t.classList.remove('active'));
   const panel = document.getElementById('tab-' + id);
@@ -1154,7 +1155,7 @@ const REN_PE_CONFIG = {
     {id:'hd', nome:'Emodialisi', nomeEsteso:'Emodialisi (HD) 3 sedute/settimana', colore:'#7C3AED', coloreT:'#fff'},
     {id:'dp', nome:'Dialisi Peritoneale', nomeEsteso:'Dialisi Peritoneale (DP / CAPD)', colore:'#0369A1', coloreT:'#fff'}
   ],
-  kcals: [1400, 1600, 1800],
+  kcals: [1200, 1400, 1600, 1800, 2000, 2200, 2400],
   piani: {
     irc34: {
       kcal_base: 1800,
@@ -1191,7 +1192,7 @@ const REN_PE_CONFIG = {
       ]
     },
     irc5: {
-      kcal_base: 1800,
+      kcal_base: 1349,
       macros: {p:13, cho:57, g:30},
       nota: 'IRC Stadio 5 / Pre-dialisi: Proteine 0.6-0.8g/kg/die (con AA essenziali). K <2000mg/die, P <800mg/die, liquidi controllati. Può richiedere integratori di aminoacidi essenziali. Preparazione per RRT (dialisi/trapianto).',
       pasti: [
@@ -1258,7 +1259,7 @@ const REN_PE_CONFIG = {
       ]
     },
     dp: {
-      kcal_base: 1800,
+      kcal_base: 1525,
       macros: {p:22, cho:50, g:28},
       nota: 'Dialisi Peritoneale (CAPD): Proteine 1.2-1.3g/kg/die + 0.2g/kg di perdita peritoneale. K <3000mg/die (più liberale dell\'HD). Attenzione all\'apporto calorico dal glucosio del dialisato (200-800 kcal/die da assorbimento). Ridurre CHO alimentari in proporzione.',
       pasti: [
@@ -1406,6 +1407,57 @@ function eliminaPianoRenale() {
   const el = document.getElementById('ren-hd-piano');
   if (el) renderRenalePiano(el);
 }
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_renale() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_renale', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_renale() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_renale') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_renale() {
+  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
+  const ap = document.querySelector('.ren-panel.active') || document.querySelector('main');
+  if (ap) {
+    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  }
+  localStorage.removeItem('nutriplan_autosave_renale');
+  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  autoRestorePage_renale();
+  // Insert "Svuota Sezione" button in each panel
+  document.querySelectorAll('.ren-panel').forEach(panel => {
+    if (panel.querySelector('.svuota-btn-renale')) return;
+    const btn = document.createElement('button');
+    btn.className = 'svuota-btn-renale no-print';
+    btn.innerHTML = '🗑️ Svuota Sezione';
+    btn.title = 'Svuota tutti i dati di questa sezione';
+    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
+    btn.onmouseover = function(){this.style.background='#FEE2E2'};
+    btn.onmouseout = function(){this.style.background='white'};
+    btn.onclick = svuotaSezione_renale;
+    panel.insertBefore(btn, panel.firstChild);
+  });
+}, {once: false});
 </script>
 </body>
 </html>

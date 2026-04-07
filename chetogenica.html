@@ -902,6 +902,7 @@
 <script src="js/utils.js"></script>
 <script>
 function showKetoTab(id) {
+  autoSavePage_chetogenica();
   document.querySelectorAll('.keto-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.keto-tab').forEach(t => t.classList.remove('active'));
   const panel = document.getElementById('tab-' + id);
@@ -1130,10 +1131,10 @@ const KETO_PE_CONFIG = {
     {id:'std', nome:'Standard 4:1', nomeEsteso:'KD Classica Standard 4:1', colore:'#0369A1', coloreT:'#fff'},
     {id:'mct', nome:'MCT', nomeEsteso:'Dieta MCT (50% MCT)', colore:'#D97706', coloreT:'#fff'}
   ],
-  kcals: [1200, 1400, 1600, 1800, 2000],
+  kcals: [1200, 1400, 1600, 1800, 2000, 2200, 2400],
   piani: {
     mad: {
-      kcal_base: 1800,
+      kcal_base: 2042,
       macros: {p:22, cho:5, g:73},
       nota: 'MAD: CHO liberi ≤20g/die. Rapporto K:P+CHO non fisso. Più tollerabile delle diete classiche. Adatta ad adulti con epilessia farmacoresistente o per scopi metabolici.',
       pasti: [
@@ -1165,7 +1166,7 @@ const KETO_PE_CONFIG = {
       ]
     },
     vlckd: {
-      kcal_base: 1400,
+      kcal_base: 1154,
       macros: {p:28, cho:6, g:66},
       nota: 'VLCKD: Ipocalorica (<800-1000 kcal/die in fase intensiva), iperproteica. Indicata per perdita di peso rapida in obesità. Fasi: attiva (1-3 mesi) → reintroduzione → mantenimento. Supervisione medica obbligatoria.',
       pasti: [
@@ -1197,7 +1198,7 @@ const KETO_PE_CONFIG = {
       ]
     },
     std: {
-      kcal_base: 1800,
+      kcal_base: 2231,
       macros: {p:10, cho:3, g:87},
       nota: 'KD Classica 4:1: rapporto 4g grassi : 1g (proteine+CHO). Dieta molto restrittiva, richiede calcolo preciso e supervisione da parte di dietista esperto. Indicata per epilessia pediatrica e resistente.',
       pasti: [
@@ -1441,6 +1442,57 @@ function apriInPianoAlimentareKeto() {
   sessionStorage.setItem('loadPatologia', JSON.stringify(d));
   window.location.href = 'app.html';
 }
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_chetogenica() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_chetogenica', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_chetogenica() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_chetogenica') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_chetogenica() {
+  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
+  const ap = document.querySelector('.keto-panel.active') || document.querySelector('main');
+  if (ap) {
+    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  }
+  localStorage.removeItem('nutriplan_autosave_chetogenica');
+  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  autoRestorePage_chetogenica();
+  // Insert "Svuota Sezione" button in each panel
+  document.querySelectorAll('.keto-panel').forEach(panel => {
+    if (panel.querySelector('.svuota-btn-chetogenica')) return;
+    const btn = document.createElement('button');
+    btn.className = 'svuota-btn-chetogenica no-print';
+    btn.innerHTML = '🗑️ Svuota Sezione';
+    btn.title = 'Svuota tutti i dati di questa sezione';
+    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
+    btn.onmouseover = function(){this.style.background='#FEE2E2'};
+    btn.onmouseout = function(){this.style.background='white'};
+    btn.onclick = svuotaSezione_chetogenica;
+    panel.insertBefore(btn, panel.firstChild);
+  });
+}, {once: false});
 </script>
 </body>
 </html>

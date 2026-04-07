@@ -559,6 +559,7 @@
 <script src="js/utils.js"></script>
 <script>
 function showPTab(id) {
+  autoSavePage_pancreas();
   document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.p-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById('tab-' + id);
@@ -862,10 +863,10 @@ const IPE_PE_CONFIG = {
     {id:'cronica', nome:'IPE Cronica', nomeEsteso:'IPE Cronica Stabile con PERT (< 40g grassi/die)', colore:'#F97316', coloreT:'#fff'},
     {id:'alta_densita', nome:'Alta Densità', nomeEsteso:'Malnutrizione / Alta Densità con PERT Ottimizzata', colore:'#059669', coloreT:'#fff'}
   ],
-  kcals: [1400, 1600, 1800, 2000],
+  kcals: [1200, 1400, 1600, 1800, 2000, 2200, 2400],
   piani: {
     acuta: {
-      kcal_base: 1600,
+      kcal_base: 1464,
       macros: {p:20, cho:65, g:15},
       nota: 'Fase acuta post-pancreatite: grassi < 20g/die, proteine normali o aumentate, CHO come fonte principale. Alimenti a basso contenuto di grassi. Reidratazione orale prioritaria. PERT non necessaria se lipasi residua sufficiente.',
       pasti: [
@@ -898,7 +899,7 @@ const IPE_PE_CONFIG = {
       ]
     },
     cronica: {
-      kcal_base: 1800,
+      kcal_base: 1599,
       macros: {p:20, cho:55, g:25},
       nota: 'IPE Cronica con PERT: enzimi somministrati all\'inizio e a metà pasto. Grassi < 40g/die totali. Pasti piccoli e frequenti (5-6/die). Monitorare steatosi, vitamina D, K, E, B12. Evitare alcol.',
       pasti: [
@@ -932,7 +933,7 @@ const IPE_PE_CONFIG = {
       ]
     },
     alta_densita: {
-      kcal_base: 2000,
+      kcal_base: 2111,
       macros: {p:22, cho:50, g:28},
       nota: 'Malnutrizione con IPE: incremento calorico graduale con PERT ottimizzata. Integratori orali ad alta densità energetica se necessario. Monitorare albumina, prealbumina, BMI. Considerare supplementazione vitamine liposolubili A, D, E, K.',
       pasti: [
@@ -1033,6 +1034,57 @@ function eliminaPianoPancreas() {
     const el = document.getElementById(id); if (el) el.value = '';
   });
 }
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_pancreas() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_pancreas', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_pancreas() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_pancreas') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_pancreas() {
+  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
+  const ap = document.querySelector('.p-panel.active') || document.querySelector('main');
+  if (ap) {
+    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  }
+  localStorage.removeItem('nutriplan_autosave_pancreas');
+  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  autoRestorePage_pancreas();
+  // Insert "Svuota Sezione" button in each panel
+  document.querySelectorAll('.p-panel').forEach(panel => {
+    if (panel.querySelector('.svuota-btn-pancreas')) return;
+    const btn = document.createElement('button');
+    btn.className = 'svuota-btn-pancreas no-print';
+    btn.innerHTML = '🗑️ Svuota Sezione';
+    btn.title = 'Svuota tutti i dati di questa sezione';
+    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
+    btn.onmouseover = function(){this.style.background='#FEE2E2'};
+    btn.onmouseout = function(){this.style.background='white'};
+    btn.onclick = svuotaSezione_pancreas;
+    panel.insertBefore(btn, panel.firstChild);
+  });
+}, {once: false});
 </script>
 </body>
 </html>

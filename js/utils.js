@@ -224,6 +224,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ═══════════════════════════════════════════════════
+// CUSTOM CONFIRM DIALOG (shared)
+// ═══════════════════════════════════════════════════
+var _customConfirmCallback = null;
+function customConfirm(msg, onConfirm, opts) {
+  opts = opts || {};
+  if (!document.getElementById('modal-custom-confirm')) {
+    var el = document.createElement('div');
+    el.id = 'modal-custom-confirm';
+    el.className = 'modal-bg';
+    el.innerHTML =
+      '<div class="modal" style="max-width:380px">' +
+        '<div class="mhdr"><h2 id="modal-cc-title">⚠️ Conferma</h2><button class="mclose" onclick="closeM(\'modal-custom-confirm\')">✕</button></div>' +
+        '<div class="mbody" style="padding:20px 22px"><p id="modal-cc-msg" style="margin:0;font-size:14px;color:var(--slate-m);line-height:1.5"></p></div>' +
+        '<div class="mfoot">' +
+          '<button class="btn btn-ghost btn-sm" onclick="closeM(\'modal-custom-confirm\');_customConfirmCallback=null;">Annulla</button>' +
+          '<button class="btn btn-sm" id="modal-cc-ok" onclick="closeM(\'modal-custom-confirm\');if(_customConfirmCallback){_customConfirmCallback();_customConfirmCallback=null;}">Continua</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(el);
+    el.addEventListener('click', function(e){ if (e.target === el) closeM('modal-custom-confirm'); });
+  }
+  _customConfirmCallback = onConfirm;
+  document.getElementById('modal-cc-msg').textContent = msg;
+  document.getElementById('modal-cc-title').textContent = opts.title || '⚠️ Conferma';
+  var okBtn = document.getElementById('modal-cc-ok');
+  okBtn.textContent = opts.okLabel || 'Continua';
+  if (opts.danger) {
+    okBtn.style.background = '#DC2626';
+    okBtn.style.color = '#fff';
+    okBtn.style.borderColor = '#DC2626';
+  } else {
+    okBtn.style.background = '';
+    okBtn.style.color = '';
+    okBtn.style.borderColor = '';
+    okBtn.className = 'btn btn-primary btn-sm';
+  }
+  openM('modal-custom-confirm');
+}
+
+// ═══════════════════════════════════════════════════
 // MICRO CONFIG (shared)
 // ═══════════════════════════════════════════════════
 const MICROS = [

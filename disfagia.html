@@ -134,6 +134,7 @@
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
     <button class="btn btn-ghost btn-sm no-print" onclick="stampaCompattaDisfagia()" title="Stampa compatta per paziente">📋 Stampa Compatta</button>
     <button class="btn btn-ghost btn-sm no-print" onclick="apriInPianoAlimentareDisfagia()" title="Copia il piano IDDSI corrente nel Piano Alimentare per modificarlo e salvarlo">📂 Apri in Piano</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="eliminaPianoDisfagia()" title="Reimposta il piano al livello IDDSI di default">🗑️ Reimposta Piano</button>
   </div>
 </div>
 
@@ -1160,6 +1161,11 @@ function apriInPianoAlimentareDisfagia() {
   };
   sessionStorage.setItem('loadPatologia', JSON.stringify(d));
   window.location.href = 'app.html';
+}
+function eliminaPianoDisfagia() {
+  if (!confirm('Reimposta il piano IDDSI ai valori predefiniti?')) return;
+  selIddsi = 4; selKcal = 1800;
+  renderPianoDisfagia();
 }
 </script>
 </body>

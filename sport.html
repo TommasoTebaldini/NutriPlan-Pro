@@ -461,6 +461,10 @@
   <div class="alert-info alert-box">
     <b>🍽️ Piano Alimentare Sportivo</b> — Struttura il piano alimentare personalizzato per l'atleta. Include la periodizzazione nutrizionale (training vs rest day), il timing rispetto all'allenamento e i target di CHO, proteine e grassi specifici per lo sport.
   </div>
+  <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="btn btn-primary btn-sm" onclick="apriInPianoAlimentareSport()" style="background:#10B981">📂 Apri in Piano Alimentare</button>
+    <button class="btn btn-ghost btn-sm" onclick="eliminaPianoSport()" style="color:#DC2626;border-color:#FECACA">🗑️ Elimina Piano</button>
+  </div>
   <div class="grid-2">
     <div class="calc-box">
       <h3>⚙️ Configurazione Piano Sportivo</h3>
@@ -1089,6 +1093,42 @@ function stampaCompattaSport() {
     totCho: cho,
     totFat: fat,
     containerId: 'sp-compact-print-area'
+  });
+}
+function apriInPianoAlimentareSport() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const pasti = [1,2,3,4,5,6,7].map(i => {
+    const nome = gv('sp-m'+i+'-nome');
+    const alimenti = gv('sp-m'+i+'-alimenti');
+    const items = alimenti
+      ? alimenti.split('\n').map(l => l.trim()).filter(l => l).map(l => ({ nome: l, qt: '', altPrint: [], misura: '' }))
+      : [{ nome: '', qt: '', altPrint: [], misura: '' }];
+    return {
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      nome: nome || ('Pasto ' + i),
+      emoji: '🍽️',
+      items,
+      note: gv('sp-m'+i+'-note'),
+      collapsed: false
+    };
+  }).filter(p => p.nome || (p.items[0] && p.items[0].nome));
+  if (!pasti.length) { alert('Nessun dato nel piano da esportare'); return; }
+  const sport = (document.getElementById('sp-piano-sport')?.value || '').trim();
+  const d = { nome: 'Piano Alimentare Sportivo' + (sport ? ' — ' + sport : ''), pasti };
+  sessionStorage.setItem('loadPatologia', JSON.stringify(d));
+  window.location.href = 'app.html';
+}
+function eliminaPianoSport() {
+  if (!confirm('Eliminare il piano? I dati inseriti verranno persi.')) return;
+  [1,2,3,4,5,6,7].forEach(i => {
+    ['nome','ora','kcal','alimenti','note'].forEach(f => {
+      const el = document.getElementById('sp-m'+i+'-'+f);
+      if (el) el.value = '';
+    });
+  });
+  ['sp-piano-kcal-train','sp-piano-kcal-rest','sp-piano-ora-train','sp-prot-per-kg','sp-piano-peso',
+   'sp-piano-note-cliniche','sp-piano-integr','sp-piano-gara','sp-piano-note-generali'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
   });
 }
 </script>

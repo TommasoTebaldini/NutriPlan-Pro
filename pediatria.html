@@ -532,6 +532,10 @@
   <div class="alert-info alert-box" style="background:#FAF5FF;border-color:#8B5CF6;color:#3B0764">
     <b>🍽️ Piano Alimentare Pediatrico</b> — Il piano alimentare pediatrico deve garantire adeguati apporti di energia e nutrienti per supportare la crescita e lo sviluppo. I fabbisogni variano significativamente per età, e devono essere individualizzati tenendo conto delle preferenze alimentari, della cultura familiare e di eventuali patologie.
   </div>
+  <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="btn btn-primary btn-sm" onclick="apriInPianoAlimentarePediatria()" style="background:#7C3AED">📂 Apri in Piano Alimentare</button>
+    <button class="btn btn-ghost btn-sm" onclick="eliminaPianoPediatria()" style="color:#DC2626;border-color:#FECACA">🗑️ Elimina Piano</button>
+  </div>
   <div class="grid-2">
     <div class="calc-box">
       <h3>⚙️ Dati Clinici e Obiettivi</h3>
@@ -1512,6 +1516,38 @@ function stampaCompattaPediatria() {
     totCho: cho,
     totFat: fat,
     containerId: 'ped-compact-print-area'
+  });
+}
+function apriInPianoAlimentarePediatria() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const pasti = [1,2,3,4,5].map(i => {
+    const nome = gv('ped-m'+i+'-nome');
+    const alimenti = gv('ped-m'+i+'-alimenti');
+    const items = alimenti
+      ? alimenti.split('\n').map(l => l.trim()).filter(l => l).map(l => ({ nome: l, qt: '', altPrint: [], misura: '' }))
+      : [{ nome: '', qt: '', altPrint: [], misura: '' }];
+    return {
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      nome: nome || ('Pasto ' + i),
+      emoji: '🍽️',
+      items,
+      note: gv('ped-m'+i+'-note'),
+      collapsed: false
+    };
+  }).filter(p => p.nome || (p.items[0] && p.items[0].nome));
+  if (!pasti.length) { alert('Nessun dato nel piano da esportare'); return; }
+  const eta = (document.getElementById('ped-piano-eta')?.value || '').trim();
+  const d = { nome: 'Piano Alimentare Pediatrico' + (eta ? ' — ' + eta : ''), pasti };
+  sessionStorage.setItem('loadPatologia', JSON.stringify(d));
+  window.location.href = 'app.html';
+}
+function eliminaPianoPediatria() {
+  if (!confirm('Eliminare il piano? I dati inseriti verranno persi.')) return;
+  [1,2,3,4,5].forEach(i => {
+    ['nome','ora','kcal','alimenti','note'].forEach(f => {
+      const el = document.getElementById('ped-m'+i+'-'+f);
+      if (el) el.value = '';
+    });
   });
 }
 </script>

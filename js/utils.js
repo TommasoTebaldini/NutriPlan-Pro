@@ -607,7 +607,7 @@ function initPianoEsempio(containerId, config) {
   let _selTipo = _tipi.length ? _tipi[0].id : null;
   let _selKcal = _kcals.length ? _kcals[Math.floor(_kcals.length / 2)] : null;
 
-  function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   function _renderSelector() {
     let html = `<div class="pe-selector no-print" style="background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:18px;box-shadow:var(--shadow)">`;
@@ -730,7 +730,7 @@ function initPianoEsempio(containerId, config) {
     const tipo = _tipi.find(t => t.id === _selTipo);
     if (!piano || !tipo) return;
     const factor = (_selKcal && piano.kcal_base) ? _selKcal / piano.kcal_base : 1;
-    function escH2(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escH2(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
     html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
     html += `<div style="font-size:18px;font-weight:700;color:${tipo.colore}">${escH2(tipo.nomeEsteso||tipo.nome)}</div>`;

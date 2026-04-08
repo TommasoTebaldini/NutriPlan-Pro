@@ -274,9 +274,13 @@ async function sendMessage(text) {
   }
 
   try {
+    const { data: { session: _aiSession } } = await sb.auth.getSession();
     const response = await fetch('/api/gemini', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': _aiSession?.access_token ? `Bearer ${_aiSession.access_token}` : ''
+      },
       body: JSON.stringify({
         system: SYSTEM_PROMPT + ctxNote,
         messages: apiMessages,

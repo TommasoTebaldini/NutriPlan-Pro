@@ -1,10 +1,30 @@
 // api/fetch-page.js — Vercel Serverless Function
 // Proxy per fetch di pagine web (risolve CORS per importazione ricette da URL)
 
+// Blocklist of private/internal IP ranges to prevent SSRF
+const PRIVATE_IP_PATTERNS = [
+  /^127\./,                          // loopback
+  /^10\./,                           // RFC1918
+  /^172\.(1[6-9]|2\d|3[01])\./,     // RFC1918
+  /^192\.168\./,                     // RFC1918
+  /^169\.254\./,                     // link-local / AWS metadata
+  /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./,  // CGNAT RFC6598
+  /^::1$/,                           // IPv6 loopback
+  /^fc00:/i,                         // IPv6 ULA
+  /^fe80:/i,                         // IPv6 link-local
+];
+
+function isPrivateHost(hostname) {
+  return PRIVATE_IP_PATTERNS.some(re => re.test(hostname)) || hostname === 'localhost';
+}
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '';
+  const allowedOrigin = process.env.ALLOWED_ORIGIN || origin;
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Vary', 'Origin');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -25,6 +45,11 @@ export default async function handler(req, res) {
     }
   } catch {
     return res.status(400).json({ error: 'URL non valido' });
+  }
+
+  // SSRF protection: block requests to private/internal network addresses
+  if (isPrivateHost(parsedUrl.hostname)) {
+    return res.status(400).json({ error: 'URL non consentito' });
   }
 
   try {

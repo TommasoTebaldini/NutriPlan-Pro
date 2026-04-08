@@ -284,7 +284,7 @@ function aggiornaSchemaCal() {
       ...pasto,
       items: pasto.items.map(item => ({
         ...item,
-        qt: String(Math.round(parseFloat(item.qt) * ratio))
+        qt: String(_snapPortion(parseFloat(item.qt), parseFloat(item.qt) * ratio))
       }))
     }))
   };

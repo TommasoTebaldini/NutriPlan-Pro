@@ -703,6 +703,28 @@ function stampaCompattaSpecialistica(pasti, opts) {
 }
 
 /* ═══════════════════════════════════════════════════
+   PORZIONI — Snap al multiplo/sottomultiplo più vicino
+   _snapPortion(std, scaled) → integer
+═══════════════════════════════════════════════════ */
+function _snapPortion(std, scaled) {
+  if (!std || std <= 0 || !scaled || scaled <= 0) return Math.round(scaled);
+  const maxK = Math.max(Math.ceil(scaled / std) + 2, 5);
+  let best = std;
+  let bestDiff = Math.abs(std - scaled);
+  for (let k = 1; k <= maxK; k++) {
+    const c = std * k;
+    const d = Math.abs(c - scaled);
+    if (d < bestDiff) { bestDiff = d; best = c; }
+  }
+  for (let k = 2; k <= 8; k++) {
+    const c = std / k;
+    const d = Math.abs(c - scaled);
+    if (d < bestDiff) { bestDiff = d; best = c; }
+  }
+  return Math.round(best);
+}
+
+/* ═══════════════════════════════════════════════════
    PIANO ESEMPIO SPECIALISTICO — Utility condivisa
    initPianoEsempio(containerId, config)
 ═══════════════════════════════════════════════════ */
@@ -761,9 +783,12 @@ function initPianoEsempio(containerId, config) {
     const macros = piano.macros || {p:15, cho:50, g:35};
 
     let html = '';
-    html += `<div style="background:${tipo?tipo.colore+'18':'#f0fdf4'};border:1.5px solid ${tipo?tipo.colore+'40':'#a7f3d0'};border-radius:14px;padding:14px 16px;margin-bottom:14px">`;
+    html += `<div style="background:${tipo?tipo.colore+'18':'#f0fdf4'};border:1.5px solid ${tipo?tipo.colore+'40':'#a7f3d0'};border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px">`;
+    html += `<div>`;
     html += `<div style="font-size:15px;font-weight:700;color:${tipo?tipo.colore:'var(--teal)'};margin-bottom:4px">${escH(tipo?tipo.nomeEsteso||tipo.nome:'')}</div>`;
     if (_selKcal) html += `<div style="font-size:12px;color:var(--slate-m)">Target: <b>${_selKcal} kcal/die</b>&nbsp;·&nbsp;Piano base: ${piano.kcal_base} kcal&nbsp;·&nbsp;Scala: <b>${factor.toFixed(2)}×</b></div>`;
+    html += `</div>`;
+    html += `<button class="no-print" onclick="_peApri_${_id}()" style="flex-shrink:0;padding:8px 16px;border-radius:8px;border:1.5px solid ${tipo?tipo.colore:'var(--teal)'};background:${tipo?tipo.colore:'var(--teal)'};color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">📂 Apri in Piano Alimentare</button>`;
     html += `</div>`;
 
     html += `<div style="display:flex;flex-wrap:wrap;gap:10px;background:#F8FAFC;border-radius:10px;padding:12px 16px;margin-bottom:14px;border:1px solid var(--border)" class="no-print">`;
@@ -786,8 +811,8 @@ function initPianoEsempio(containerId, config) {
       html += `<span style="font-size:12px;opacity:.88;font-weight:600">≈ ${pastoKcalScaled} kcal</span>`;
       html += `</div>`;
       pasto.items.forEach(item => {
-        const qtS = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
-        const kcalS = Math.round((item.kcal||0) * factor);
+        const qtS = _snapPortion(item.qt, item.qt * factor);
+        const kcalS = item.qt > 0 ? Math.round((item.kcal||0) * qtS / item.qt) : 0;
         html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);font-size:13px">`;
         html += `<span style="color:var(--slate);flex:1">${escH(item.nome)}</span>`;
         html += `<div style="display:flex;align-items:center;gap:10px;white-space:nowrap;margin-left:10px">`;
@@ -860,7 +885,7 @@ function initPianoEsempio(containerId, config) {
       html += `<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">${escH2(pasto.emoji||'🍽️')}</span><span style="font-size:14px;font-weight:700;color:white">${escH2(pasto.nome)}</span></div>`;
       html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${Math.round(pastoKcal*factor)} kcal</span></div>`;
       pasto.items.forEach(item => {
-        const qtS = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
+        const qtS = _snapPortion(item.qt, item.qt * factor);
         html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9">`;
         html += `<span style="font-size:13px;color:#1E293B">${escH2(item.nome)}</span>`;
         html += `<span style="font-size:13px;font-weight:700;color:${tipo.colore};white-space:nowrap;padding-left:12px">${qtS} ${escH2(item.unit)}</span></div>`;
@@ -895,7 +920,7 @@ function initPianoEsempio(containerId, config) {
       emoji: pasto.emoji || '🍽️',
       items: pasto.items.map(item => ({
         nome: item.nome,
-        qt: factor>=1 ? String(Math.round(item.qt*factor)) : String(+(item.qt*factor).toFixed(1)),
+        qt: String(_snapPortion(item.qt, item.qt * factor)),
         altPrint: [],
         misura: item.unit || ''
       })),
@@ -910,9 +935,5 @@ function initPianoEsempio(containerId, config) {
   container.innerHTML = `
     ${_renderSelector()}
     <div id="pe-output-${_id}">${_renderPiano()}</div>
-    <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-      <button onclick="_pePrint_${_id}()" style="padding:7px 16px;border-radius:8px;border:1.5px solid var(--border-d);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='${config.accentColor}';this.style.color='${config.accentColor}'" onmouseout="this.style.borderColor='var(--border-d)';this.style.color=''">📋 Stampa Compatta</button>
-      <button onclick="_peApri_${_id}()" style="padding:7px 16px;border-radius:8px;border:1.5px solid var(--border-d);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='${config.accentColor}';this.style.color='${config.accentColor}'" onmouseout="this.style.borderColor='var(--border-d)';this.style.color=''">📂 Apri in Piano Alimentare</button>
-    </div>
   `;
 }

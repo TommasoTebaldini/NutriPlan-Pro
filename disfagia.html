@@ -898,10 +898,8 @@ function renderPiano() {
         </div>
         <div class="pasto-items">
           ${pasto.items.map(item => {
-            const qtScaled = factor >= 1
-              ? Math.round(item.qt * factor)
-              : +(item.qt * factor).toFixed(1);
-            const kcalScaled = Math.round(item.kcal * factor);
+            const qtScaled = _snapPortion(item.qt, item.qt * factor);
+            const kcalScaled = item.qt > 0 ? Math.round(item.kcal * qtScaled / item.qt) : 0;
             return `<div class="pasto-item">
               <span class="pasto-item-nome">${item.nome}</span>
               <span class="pasto-item-qt">${qtScaled} ${item.unit}</span>
@@ -1116,8 +1114,8 @@ function stampaCompattaDisfagia() {
     html += `</div>`;
 
     pasto.items.forEach(item => {
-      const qtScaled = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
-      const kcalScaled = Math.round(item.kcal * factor);
+      const qtScaled = _snapPortion(item.qt, item.qt * factor);
+      const kcalScaled = item.qt > 0 ? Math.round(item.kcal * qtScaled / item.qt) : 0;
       html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9">`;
       html += `<span style="font-size:13px;color:#1E293B">${esc(item.nome)}</span>`;
       html += `<div style="display:flex;align-items:center;gap:14px;white-space:nowrap;padding-left:12px">`;
@@ -1154,7 +1152,7 @@ function apriInPianoAlimentareDisfagia() {
       nome: pasto.nome,
       emoji: pasto.emoji,
       items: pasto.items.map(item => {
-        const qtScaled = factor >= 1 ? Math.round(item.qt * factor) : +(item.qt * factor).toFixed(1);
+        const qtScaled = _snapPortion(item.qt, item.qt * factor);
         return { nome: item.nome, qt: String(qtScaled), altPrint: [], misura: item.unit };
       }),
       note: '',

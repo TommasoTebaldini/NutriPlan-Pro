@@ -800,7 +800,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateStats();
   setInterval(checkNotifications, 60000);
   if(Notification.permission === 'default') Notification.requestPermission();
-  try { const ok = await checkAuth(); if (ok) await loadEventsFromSupabase(); } catch(e) {}
+  try { const ok = await checkAuth(); if (ok) { await loadEventsFromSupabase(); startRealtimeSync(); } } catch(e) {}
+  // Periodic refresh every 2 minutes as a Realtime fallback (e.g. when the
+  // WebSocket connection is not available or Realtime is not enabled in the project).
+  setInterval(async () => { if (currentUser && sb) await loadEventsFromSupabase(); }, 2 * 60 * 1000);
   // Load Google Client ID from server config, then init Google Identity Services
   try {
     const cfg = await fetch('/api/config').then(r => r.json());
@@ -828,7 +831,38 @@ function updateStats() {
   document.getElementById('stat-totale').textContent = events.length;
 }
 
-// ─── Google Calendar Integration ─────────────────────────────────────────────
+// ─── Realtime sync ───────────────────────────────────────────────────────────
+// Subscribes to Supabase Realtime so that any INSERT / UPDATE / DELETE on
+// agenda_events is immediately reflected in the current browser tab without
+// requiring a page reload.
+let realtimeChannel = null;
+
+function startRealtimeSync() {
+  if (!currentUser || !sb || typeof sb.channel !== 'function') return;
+  // Remove any previous channel first (guard against double-init)
+  if (realtimeChannel) {
+    try { sb.removeChannel(realtimeChannel); } catch(e) {}
+    realtimeChannel = null;
+  }
+  realtimeChannel = sb
+    .channel('agenda_events_rt_' + currentUser.id)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'agenda_events',
+      filter: 'user_id=eq.' + currentUser.id
+    }, () => {
+      // Re-fetch all events from Supabase whenever a remote change arrives
+      loadEventsFromSupabase();
+    })
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('Agenda: Supabase Realtime attivo — sincronizzazione live abilitata.');
+      }
+    });
+}
+
+
 // To enable: set the GOOGLE_CLIENT_ID environment variable in Vercel (or paste
 // the Client ID directly below). Create a Google Cloud project, enable the
 // Google Calendar API, create an OAuth 2.0 Web Application client ID, and add
@@ -1263,9 +1297,13 @@ function exportICal() {
     const dtend = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
     const summary = escIcal(ev.paziente || ev.titolo || 'Appuntamento');
     const desc = escIcal([TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join(' - '));
+    const lm = ev.updated_at || ev.created ? new Date(ev.updated_at || ev.created) : now;
+    const lastModStr = `${lm.getUTCFullYear()}${pad(lm.getUTCMonth()+1)}${pad(lm.getUTCDate())}T${pad(lm.getUTCHours())}${pad(lm.getUTCMinutes())}${pad(lm.getUTCSeconds())}Z`;
     ics += 'BEGIN:VEVENT\r\n';
     ics += foldLine('UID:' + ev.id + '@nutriplan-pro') + '\r\n';
     ics += 'DTSTAMP:' + dtstamp + '\r\n';
+    ics += 'LAST-MODIFIED:' + lastModStr + '\r\n';
+    ics += 'SEQUENCE:0\r\n';
     ics += 'DTSTART;TZID=Europe/Rome:' + dtstart + '\r\n';
     ics += 'DTEND;TZID=Europe/Rome:' + dtend + '\r\n';
     ics += foldLine('SUMMARY:' + summary) + '\r\n';

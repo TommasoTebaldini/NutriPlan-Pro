@@ -576,15 +576,19 @@ async function importaRicetta() {
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 15000);
-    const pageRes = await fetch('/api/fetch-page?url=' + encodeURIComponent(url), { signal: controller.signal });
+    const { data: { session: _fpSession } } = await sb.auth.getSession();
+    const pageRes = await fetch('/api/fetch-page?url=' + encodeURIComponent(url), {
+      signal: controller.signal,
+      headers: _fpSession?.access_token ? { 'Authorization': `Bearer ${_fpSession.access_token}` } : {}
+    });
     clearTimeout(timer);
     if (pageRes.ok) {
       const pageData = await pageRes.json();
       const html = pageData.contents || '';
-      const tmp = document.createElement('div');
-      tmp.innerHTML = html;
-      tmp.querySelectorAll('script,style,nav,header,footer,aside').forEach(el => el.remove());
-      extractedText = tmp.textContent.replace(/\s+/g, ' ').trim().substring(0, 3000);
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      doc.querySelectorAll('script,style,nav,header,footer,aside').forEach(el => el.remove());
+      extractedText = (doc.body ? doc.body.textContent : '').replace(/\s+/g, ' ').trim().substring(0, 3000);
     }
   } catch(e) {
     console.warn('Page fetch failed:', e.message);

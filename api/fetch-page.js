@@ -1,6 +1,9 @@
 // api/fetch-page.js — Vercel Serverless Function
 // Proxy per fetch di pagine web (risolve CORS per importazione ricette da URL)
 
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
 // Blocklist of private/internal IP ranges to prevent SSRF
 const PRIVATE_IP_PATTERNS = [
   /^127\./,                          // loopback
@@ -18,16 +21,50 @@ function isPrivateHost(hostname) {
   return PRIVATE_IP_PATTERNS.some(re => re.test(hostname)) || hostname === 'localhost';
 }
 
-export default async function handler(req, res) {
+function setCorsHeaders(req, res) {
   const origin = req.headers.origin || '';
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || origin;
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  const configured = process.env.ALLOWED_ORIGIN || '';
+  const allowed = configured.split(',').map(s => s.trim()).filter(Boolean);
+  if (allowed.length > 0 && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
+
+async function verifySupabaseToken(token) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      apikey: SUPABASE_ANON_KEY,
+    },
+  });
+  if (!res.ok) return null;
+  return await res.json();
+}
+
+export default async function handler(req, res) {
+  setCorsHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Require authentication
+  const authHeader = req.headers.authorization || '';
+  if (!authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Non autorizzato: token mancante.' });
+  }
+  const token = authHeader.slice(7);
+  const user = await verifySupabaseToken(token);
+  if (!user?.id) {
+    return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
   }
 
   const { url } = req.query;

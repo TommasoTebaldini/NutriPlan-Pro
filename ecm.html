@@ -1067,11 +1067,11 @@ Rispondi SOLO con il JSON.`;
     const course = JSON.parse(jsonStr);
 
     // Sanitize
-    course.id = 'u' + Date.now();
+    course.id = 'u' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
     course.user_generated = true;
     course.link = url;
     course.crediti = Math.max(1, Math.min(50, parseInt(course.crediti) || 1));
-    course.gratuito = course.gratuito === true || String(course.costo || '').toLowerCase().includes('gratu');
+    course.gratuito = course.gratuito === true || /^gratu/i.test(String(course.costo || '')) || String(course.costo || '').toUpperCase() === 'GRATUITO';
     if (!Array.isArray(course.argomenti)) course.argomenti = [];
     if (!Array.isArray(course.target)) course.target = [];
     if (!Array.isArray(course.cat)) course.cat = ['nutrizione'];

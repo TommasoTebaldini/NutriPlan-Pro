@@ -67,6 +67,29 @@
   .ecm-card{page-break-inside:avoid;box-shadow:none!important;border:1px solid #CBD5E1!important}
   .ecm-card:hover{transform:none!important}
 }
+
+/* ── ECM Credit Counter ── */
+.ecm-counter{background:linear-gradient(135deg,#1D4ED8 0%,#4F46E5 100%);border-radius:16px;padding:20px 24px;margin-bottom:20px;color:white;box-shadow:0 4px 24px rgba(79,70,229,.25)}
+.ecm-counter-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;opacity:.8;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.ecm-progress{background:rgba(255,255,255,.2);border-radius:50px;height:14px;margin:10px 0 4px;overflow:hidden}
+.ecm-progress-bar{height:100%;border-radius:50px;background:white;transition:width .5s ease;min-width:0}
+.ecm-counter-num{font-size:40px;font-weight:800;line-height:1}
+.ecm-counter-sub{font-size:12px;opacity:.8;margin-top:4px}
+.ecm-counter-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ecm-counter-pill{background:rgba(255,255,255,.18);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px}
+
+/* ── Segna come svolto button ── */
+.ecm-done-btn{padding:5px 14px;border-radius:20px;border:2px solid #E2E8F0;background:white;color:var(--slate-l);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.ecm-done-btn.done{background:#DCFCE7;border-color:#22C55E;color:#15803D}
+.ecm-done-btn:hover:not(.done){border-color:#22C55E;color:#15803D}
+.ecm-card.completato{border-left:4px solid #22C55E}
+
+/* ── AI Modal ── */
+.ecm-ai-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.ecm-ai-modal-body{background:white;border-radius:16px;padding:24px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+
+/* ── User-generated badge ── */
+.ecm-user-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:8px;font-size:9.5px;font-weight:800;background:#FFF3CD;color:#854D0E;border:1px solid #FCD34D;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -149,9 +172,36 @@
     </div>
   </div>
 
+  <!-- CONTATORE ECM -->
+  <div class="ecm-counter no-print" id="ecm-counter-section">
+    <div class="ecm-counter-title">🏆 I miei crediti ECM — Triennio 2024–2026</div>
+    <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap">
+      <div>
+        <div class="ecm-counter-num" id="ecm-crediti-tot">0</div>
+        <div class="ecm-counter-sub">crediti conseguiti su 150</div>
+      </div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-size:11px;opacity:.75;margin-bottom:2px">Progresso verso l'obbligo triennale</div>
+        <div class="ecm-progress"><div class="ecm-progress-bar" id="ecm-progress-bar" style="width:0%"></div></div>
+        <div style="font-size:11px;opacity:.75;margin-top:3px" id="ecm-crediti-perc">0% completato</div>
+      </div>
+    </div>
+    <div class="ecm-counter-pills">
+      <span class="ecm-counter-pill">💻 FAD: <span id="ecm-cred-fad">0</span></span>
+      <span class="ecm-counter-pill">🏛️ Residenziale: <span id="ecm-cred-res">0</span></span>
+      <span class="ecm-counter-pill">🔀 Blended: <span id="ecm-cred-blended">0</span></span>
+      <span class="ecm-counter-pill">🎓 Corsi svolti: <span id="ecm-num-svolti">0</span></span>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button onclick="resetContatore()" style="background:rgba(255,255,255,.18);color:white;border:1.5px solid rgba(255,255,255,.4);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🗑️ Reset contatore</button>
+      <span style="font-size:11px;opacity:.7">Spunta «Segna come svolto» sui corsi completati per aggiornare il conteggio.</span>
+    </div>
+  </div>
+
   <!-- ALERT -->
   <div class="ecm-alert">
     ℹ️ <b>Importante:</b> I corsi mostrati sono a titolo informativo e orientativo. Date, costi e accreditamenti cambiano frequentemente. Verifica sempre la disponibilità e l'accreditamento attuale prima di iscriverti. Il portale ufficiale è <a href="https://www.ecm.salute.gov.it" target="_blank" style="color:#1D4ED8;font-weight:600">ecm.salute.gov.it</a>. Per i soci ANDID è disponibile un'area riservata su <a href="https://www.andid.it" target="_blank" style="color:#1D4ED8;font-weight:600">andid.it</a>.
+    <br>🗓️ <b>Aggiornamento automatico:</b> I corsi con data di scadenza passata vengono nascosti automaticamente dalla lista. Usa il filtro <b>👤 Miei corsi</b> per vedere i corsi aggiunti personalmente.
   </div>
 
   <!-- FILTRI -->
@@ -165,6 +215,8 @@
     <button class="ecm-filter-btn" onclick="filterECM('pediatria',this)">👶 Pediatria</button>
     <button class="ecm-filter-btn" onclick="filterECM('sport',this)">🏋️ Sport</button>
     <button class="ecm-filter-btn" onclick="filterECM('gratuito',this)">🎁 Gratuiti</button>
+    <button class="ecm-filter-btn" onclick="filterECM('personali',this)">👤 Miei corsi</button>
+    <button class="btn btn-primary btn-sm no-print" onclick="openAIModal()" style="margin-left:auto;white-space:nowrap;display:flex;align-items:center;gap:6px;border-radius:20px;font-size:12.5px">🤖 Aggiungi corso tramite AI</button>
     <span class="ecm-count" id="ecm-count-label"></span>
   </div>
 
@@ -227,6 +279,28 @@
           <div style="font-size:11.5px;color:#64748B">Società di Pediatria — corsi su svezzamento, obesità pediatrica, allergie</div>
         </div>
       </a>
+    </div>
+  </div>
+  <!-- AI MODAL -->
+  <div id="ecm-ai-modal" class="ecm-ai-modal-bg" style="display:none" onclick="if(event.target===this)closeAIModal()">
+    <div class="ecm-ai-modal-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="font-size:16px;font-weight:700;color:var(--slate);margin:0">🤖 Aggiungi corso tramite AI</h3>
+        <button onclick="closeAIModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate-l);line-height:1;padding:4px">✕</button>
+      </div>
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:16px;line-height:1.6">Inserisci il link al corso ECM. L'AI analizzerà la pagina e creerà automaticamente la scheda del corso con tutte le caratteristiche.</p>
+      <div style="margin-bottom:14px">
+        <label style="font-size:11.5px;font-weight:700;color:var(--slate-l);display:block;margin-bottom:5px">Link al corso *</label>
+        <input id="ai-course-url" type="url" placeholder="https://www.andid.it/corso-ecm-..." style="width:100%;padding:10px 14px;border:2px solid var(--border-d);border-radius:10px;font-size:13px;font-family:inherit;box-sizing:border-box;outline:none" onfocus="this.style.borderColor='#4F46E5'" onblur="this.style.borderColor='var(--border-d)'">
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="ai-gen-btn" class="btn btn-primary" onclick="generateCourseAI()">🤖 Genera scheda</button>
+        <button class="btn btn-ghost" onclick="closeAIModal()">Annulla</button>
+      </div>
+      <div id="ai-course-preview" style="display:none"></div>
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;font-size:11.5px;color:#1E3A5F;margin-top:8px">
+        ℹ️ I corsi aggiunti vengono salvati localmente nel browser e visibili solo a te. Verifica sempre i dati generati dall'AI prima di salvarli.
+      </div>
     </div>
   </div>
 
@@ -565,9 +639,104 @@ const ECM_DATA_FALLBACK = [
    link:'https://www.sinupe.it',
    data_inizio:'2026-11-06',data_fine:'2026-11-07',
    scadenza:'Iscrizioni aperte — verificare su sito SINUPE'},
+  // ══ Nuovi corsi FAD ══
+  {id:33,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'ADI / SINPE — Nutrizione Artificiale',
+   titolo:'Nutrizione nel Paziente Critico in ICU: dalle Linee Guida alla Pratica',
+   crediti:12,durata:'10 ore FAD',costo:'€ 80–140 (soci/non soci)',
+   target:['Dietisti','Medici intensivisti','Infermieri di area critica'],
+   descrizione:'Corso FAD sulla gestione nutrizionale del paziente critico in Terapia Intensiva: timing della nutrizione enterale precoce, protocolli ESPEN 2023 per ICU, gestione della nutrizione nel paziente con instabilità emodinamica, monitoraggio della tolleranza enterale, nutrizione nel paziente con ARDS e insufficienza multiorgano.',
+   argomenti:['ICU','Terapia intensiva','Nutrizione enterale precoce','ARDS','ESPEN ICU','Instabilità emodinamica','Insufficienza multiorgano'],
+   link:'https://www.sinpe.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare su sito SINPE'},
+  {id:34,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'SINU — Società Italiana di Nutrizione Umana',
+   titolo:'Interazioni Farmaco-Nutriente: dal Warfarin agli Inibitori di Pompa',
+   crediti:8,durata:'6 ore FAD',costo:'Gratuito per soci SINU / € 50 non soci',
+   target:['Dietisti','Farmacisti','Medici','Infermieri'],
+   descrizione:'Percorso FAD sulle principali interazioni clinicamente rilevanti tra farmaci e nutrienti: anticoagulanti orali (warfarin) e vitamina K, MAO-inibitori e tiramina, farmaci antiretrovirali e alimenti, interazioni con pompelmo, nutrizione enterale e assorbimento dei farmaci, gestione pratica nella prescrizione del piano alimentare.',
+   argomenti:['Warfarin','Vitamina K','Interazioni farmaco-nutriente','MAO-inibitori','Tiramina','Nutrizione enterale','Pompelmo'],
+   link:'https://www.sinu.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Accesso continuativo — verificare su sito SINU'},
+  {id:35,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+   titolo:'Nutrizione nella Chirurgia Bariatrica: Percorso Nutrizionale Pre e Post-operatorio',
+   crediti:10,durata:'8 ore FAD',costo:'€ 70–120 (soci/non soci)',
+   target:['Dietisti','Chirurghi bariatrici','Medici endocrinologi'],
+   descrizione:'Corso FAD sulla gestione nutrizionale del paziente bariatrico: valutazione preoperatoria, dieta pre-operatoria iperproteica ipocalorica, gestione post-operatoria per bypass gastrico e sleeve gastrectomy, supplementazione di micronutrienti (ferro, B12, calcio, vitamina D, tiamina), dumping syndrome e prevenzione delle carenze a lungo termine.',
+   argomenti:['Chirurgia bariatrica','Bypass gastrico','Sleeve gastrectomy','Dumping syndrome','Carenze micronutrienti','Supplementazione','Vitamina B12'],
+   link:'https://www.adiitalia.net/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità su sito ADI Italia'},
+  {id:36,cat:['patologie','fad'],tipo:'fad',gratuito:false,
+   provider:'AIC — Associazione Italiana Celiachia',
+   titolo:'Celiachia e Sensibilità al Glutine: dalla Diagnosi alla Gestione Dietetica Ottimale',
+   crediti:8,durata:'6 ore FAD',costo:'€ 40–70',
+   target:['Dietisti','Gastroenterologi','MMG','Infermieri'],
+   descrizione:'Corso FAD aggiornato sulla celiachia e condizioni correlate: nuovi criteri diagnostici ESPGHAN 2020, differenze tra celiachia, SGNC e allergia al frumento, dieta senza glutine in pratica (etichettatura, contaminazione crociata), rischio di carenze nella DSG, follow-up a lungo termine e complicanze.',
+   argomenti:['Celiachia','SGNC','Dieta senza glutine','ESPGHAN','Etichettatura','Contaminazione crociata','Anti-tTG','EMA'],
+   link:'https://www.celiachia.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità su sito AIC'},
+  {id:37,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'SIN — Società Italiana di Neonatologia / SID',
+   titolo:'Nutrizione e Integrazione in Gravidanza: Micronutrienti, DHA, Folati e Oltre',
+   crediti:10,durata:'8 ore FAD',costo:'€ 60–100',
+   target:['Dietisti','Ginecologi','Ostetriche','MMG'],
+   descrizione:'Percorso FAD sulla nutrizione ottimale in gravidanza e allattamento: fabbisogni calorici e proteici aumentati, supplementazione raccomandata (acido folico, ferro, iodio, vitamina D, DHA, zinco, B12), gestione del peso gestazionale secondo IOM, diete speciali in gravidanza, alimenti da evitare (listeria, mercurio), nausea e vomito gravidici.',
+   argomenti:['Gravidanza','Acido folico','DHA','Ferro in gravidanza','Vitamina D','Iodio','Peso gestazionale','Allattamento','Nausea gravidica'],
+   link:'https://www.siditalia.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Verificare disponibilità su sito SID'},
+  {id:38,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'ANDID — Associazione Nazionale Dietisti',
+   titolo:'Counseling Nutrizionale Motivazionale: Tecniche e Strumenti per il Dietista',
+   crediti:8,durata:'6 ore FAD',costo:'€ 50–80 (soci/non soci)',
+   target:['Dietisti','Nutrizionisti'],
+   descrizione:'Corso FAD sulle tecniche di counseling motivazionale applicate alla dietetica: principi del Motivational Interviewing (MI), ruolo dei processi cognitivi nel cambiamento delle abitudini alimentari, tecniche SMART per la definizione degli obiettivi, gestione dell\'ambivalenza, ascolto attivo e comunicazione empatica, educazione terapeutica strutturata.',
+   argomenti:['Motivational Interviewing','Counseling','Cambiamento comportamentale','SMART','Ascolto attivo','Educazione terapeutica','Aderenza'],
+   link:'https://www.andid.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Accesso continuativo — verificare su sito ANDID'},
+  {id:39,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
+   provider:'ANDID — Associazione Nazionale Dietisti',
+   titolo:'Dietetica Digitale e Telemedicina: Strumenti Innovativi per il Dietista',
+   crediti:6,durata:'5 ore FAD',costo:'€ 40–60 (soci/non soci)',
+   target:['Dietisti','Nutrizionisti'],
+   descrizione:'Corso FAD sulla trasformazione digitale della professione dietistica: software e app per la pianificazione alimentare e il monitoraggio del paziente, telemedicina e teleconsulto nutrizionale, wearables e sensori CGM nella gestione del diabete, intelligenza artificiale applicata alla nutrizione, aspetti etici e privacy (GDPR).',
+   argomenti:['Telemedicina','App nutrizionali','CGM','Intelligenza artificiale','GDPR','Telemonitoraggio','Digital health','Wearables'],
+   link:'https://www.andid.it/formazione',
+   data_inizio:null,data_fine:'2026-12-31',
+   scadenza:'Accesso continuativo — verificare su sito ANDID'},
+  // ══ Nuovi corsi Residenziali ══
+  {id:40,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SINPE — Società Italiana di Nutrizione Parenterale ed Enterale',
+   titolo:'Congresso Nazionale SINPE 2026 — Nutrizione Artificiale: Innovazioni e Nuove LG',
+   crediti:16,durata:'2 giorni (27–28 novembre 2026)',costo:'€ 200–380 (soci/non soci)',
+   target:['Dietisti','Medici','Infermieri','Farmacisti'],
+   descrizione:'Congresso annuale SINPE: aggiornamento su nutrizione enterale e parenterale, nuove linee guida ESPEN/SINPE 2025-2026, nutrizione artificiale domiciliare (NAD/NPD), gestione delle complicanze, innovazioni nelle miscele nutrizionali e nei dispositivi per accesso enterale e vascolare. Workshop pratici con simulatori.',
+   argomenti:['Nutrizione artificiale','SINPE','ESPEN','NAD','NPD','Nutrizione enterale','Nutrizione parenterale','Workshop'],
+   link:'https://www.sinpe.it/congresso',
+   data_inizio:'2026-11-27',data_fine:'2026-11-28',
+   scadenza:'Iscrizioni aperte — verificare su sito SINPE'},
+  {id:41,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
+   provider:'SIN — Società Italiana di Nefrologia',
+   titolo:'Congresso SIN 2026 — Gestione Nutrizionale Avanzata del Paziente Nefropatico',
+   crediti:12,durata:'2 giorni (6–7 novembre 2026)',costo:'€ 150–280',
+   target:['Dietisti','Nefrologi','Infermieri nefrologici'],
+   descrizione:'Sessioni dedicate alla nutrizione nel congresso SIN 2026: nuove linee guida KDIGO/ESPEN nella CKD, nutrizione nel trapianto renale, sindrome di malnutrizione-infiammazione (MIS), calcio e metabolismo osseo nella CKD-MBD, innovazioni nella dialisi e impatto nutrizionale.',
+   argomenti:['IRC','CKD','Dialisi peritoneale','Emodialisi','KDIGO','Trapianto renale','MIS','CKD-MBD'],
+   link:'https://www.sin-italy.org',
+   data_inizio:'2026-11-06',data_fine:'2026-11-07',
+   scadenza:'Iscrizioni aperte — verificare su sito SIN'},
 ];
 
 let ECM_DATA = [];
+let USER_COURSES = [];
+let COMPLETATI = new Set();
+let pendingCourse = null;
 let ecmFilter = 'tutti';
 let ecmFromDB = false;
 
@@ -619,8 +788,8 @@ function renderECM() {
   const container = document.getElementById('ecm-list');
   const searchQ = (document.getElementById('ecm-search')?.value || '').toLowerCase().trim();
 
-  // Remove expired from fallback data (Supabase already filters server-side)
-  let list = ECM_DATA.filter(e => !isExpired(e));
+  // Merge DB/fallback courses with user-added courses; remove expired
+  let list = [...ECM_DATA, ...USER_COURSES].filter(e => !isExpired(e));
 
   // Category filter
   if (ecmFilter !== 'tutti') {
@@ -628,6 +797,7 @@ function renderECM() {
     else if (ecmFilter === 'residenziale') list = list.filter(e => e.tipo === 'residenziale');
     else if (ecmFilter === 'blended') list = list.filter(e => e.tipo === 'blended');
     else if (ecmFilter === 'gratuito') list = list.filter(e => e.gratuito);
+    else if (ecmFilter === 'personali') list = list.filter(e => e.user_generated);
     else list = list.filter(e => Array.isArray(e.cat) && e.cat.includes(ecmFilter));
   }
 
@@ -652,7 +822,8 @@ function renderECM() {
   });
 
   // Update counts
-  document.getElementById('count-tutti').textContent = ECM_DATA.filter(e => !isExpired(e)).length;
+  const allVisible = [...ECM_DATA, ...USER_COURSES].filter(e => !isExpired(e));
+  document.getElementById('count-tutti').textContent = allVisible.length;
   const lbl = document.getElementById('ecm-count-label');
   if (lbl) lbl.textContent = `${list.length} corso${list.length !== 1 ? 'i' : ''} trovato${list.length !== 1 ? 'i' : ''}`;
 
@@ -662,8 +833,8 @@ function renderECM() {
 
   if (!list.length) {
     container.innerHTML = `<div class="ecm-empty">
-      <div style="font-size:40px;margin-bottom:12px">🔍</div>
-      <div>Nessun corso trovato per questa ricerca.</div>
+      <div style="font-size:40px;margin-bottom:12px">${ecmFilter === 'personali' ? '👤' : '🔍'}</div>
+      <div>${ecmFilter === 'personali' ? 'Non hai ancora aggiunto corsi personali. Usa il pulsante <b>🤖 Aggiungi corso tramite AI</b>.' : 'Nessun corso trovato per questa ricerca.'}</div>
     </div>`;
     return;
   }
@@ -672,6 +843,7 @@ function renderECM() {
     const tipoClass = e.tipo === 'fad' ? 'ecm-tipo-fad' : e.tipo === 'residenziale' ? 'ecm-tipo-res' : 'ecm-tipo-blended';
     const tipoIcon = e.tipo === 'fad' ? '💻' : e.tipo === 'residenziale' ? '🏛️' : '🔀';
     const tipoLbl = e.tipo === 'fad' ? 'FAD' : e.tipo === 'residenziale' ? 'Res.' : 'Blended';
+    const done = COMPLETATI.has(e.id);
 
     // Date display
     let dateHtml = '';
@@ -692,18 +864,22 @@ function renderECM() {
     const argomenti = Array.isArray(e.argomenti) ? e.argomenti : [];
     const target = Array.isArray(e.target) ? e.target : [];
     const safeLink = /^https?:\/\//i.test(e.link) ? e.link : '#';
+    const safeId = JSON.stringify(e.id);
 
-    return `<div class="ecm-card">
+    return `<div class="ecm-card${done ? ' completato' : ''}">
       <div class="ecm-card-inner">
         <div class="ecm-card-left">
           <div class="ecm-credits-num">${e.crediti}</div>
           <div class="ecm-credits-lbl">crediti ECM</div>
           <span class="ecm-tipo-badge ${tipoClass}" style="margin-top:10px">${tipoIcon} ${tipoLbl}</span>
           ${e.gratuito ? '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:10px;font-size:9.5px;font-weight:800;margin-top:6px;white-space:nowrap">🎁 GRATIS</span>' : ''}
+          ${e.user_generated ? '<span class="ecm-user-badge" style="margin-top:6px">👤 MIO</span>' : ''}
+          ${done ? '<span style="background:#DCFCE7;color:#166534;padding:3px 10px;border-radius:10px;font-size:9.5px;font-weight:800;margin-top:6px;white-space:nowrap">✅ SVOLTO</span>' : ''}
         </div>
         <div class="ecm-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px">
             ${dateHtml}${scadenzaHtml}
+            ${e.user_generated ? '<span class="ecm-user-badge">👤 Corso personale</span>' : ''}
           </div>
           <div class="ecm-card-title">${esc(e.titolo)}</div>
           <div class="ecm-card-provider">📍 ${esc(e.provider)}</div>
@@ -721,7 +897,11 @@ function renderECM() {
             <a href="${safeLink}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">
               🔗 Vai al sito ufficiale
             </a>
-            <span style="font-size:11.5px;color:var(--slate-l);font-style:italic">⚠️ Verifica l'accreditamento attuale prima di iscriverti</span>
+            <button class="ecm-done-btn${done ? ' done' : ''}" onclick="toggleCompletato(${safeId})">
+              ${done ? '✅ Svolto' : '☑️ Segna come svolto'}
+            </button>
+            ${e.user_generated ? `<button class="btn btn-ghost btn-xs" style="color:#DC2626;border-color:#FECACA" onclick="deleteUserCourse(${safeId})">🗑️ Rimuovi</button>` : ''}
+            ${!e.user_generated ? '<span style="font-size:11.5px;color:var(--slate-l);font-style:italic">⚠️ Verifica l\'accreditamento attuale prima di iscriverti</span>' : ''}
           </div>
         </div>
       </div>
@@ -729,8 +909,220 @@ function renderECM() {
   }).join('');
 }
 
+// ─── Contatore ECM ────────────────────────────────────────────────────
+function loadCompletati() {
+  try {
+    const saved = localStorage.getItem('ecm_completati_v1');
+    if (saved) COMPLETATI = new Set(JSON.parse(saved));
+  } catch(e) { COMPLETATI = new Set(); }
+}
+
+function saveCompletati() {
+  try { localStorage.setItem('ecm_completati_v1', JSON.stringify([...COMPLETATI])); } catch(e) {}
+}
+
+function toggleCompletato(id) {
+  if (COMPLETATI.has(id)) COMPLETATI.delete(id);
+  else COMPLETATI.add(id);
+  saveCompletati();
+  updateContatore();
+  renderECM();
+}
+
+function updateContatore() {
+  const allCourses = [...ECM_DATA, ...USER_COURSES];
+  const completati = allCourses.filter(e => COMPLETATI.has(e.id));
+  const tot = completati.reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
+  const fad = completati.filter(e => e.tipo === 'fad').reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
+  const res = completati.filter(e => e.tipo === 'residenziale').reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
+  const blended = completati.filter(e => e.tipo === 'blended').reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
+  const perc = Math.min(100, Math.round((tot / 150) * 100));
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('ecm-crediti-tot', tot);
+  set('ecm-crediti-perc', perc + '% completato');
+  set('ecm-cred-fad', fad);
+  set('ecm-cred-res', res);
+  set('ecm-cred-blended', blended);
+  set('ecm-num-svolti', completati.length);
+  const bar = document.getElementById('ecm-progress-bar');
+  if (bar) bar.style.width = perc + '%';
+}
+
+function resetContatore() {
+  if (!confirm('Vuoi resettare il contatore ECM? Perderai tutti i segni di corsi completati.')) return;
+  COMPLETATI.clear();
+  saveCompletati();
+  updateContatore();
+  renderECM();
+  toast('Contatore ECM resettato', 'info');
+}
+
+// ─── Corsi personali (localStorage) ─────────────────────────────────
+function loadUserCourses() {
+  try {
+    const saved = localStorage.getItem('ecm_user_courses_v1');
+    if (saved) USER_COURSES = JSON.parse(saved);
+  } catch(e) { USER_COURSES = []; }
+}
+
+function persistUserCourses() {
+  try { localStorage.setItem('ecm_user_courses_v1', JSON.stringify(USER_COURSES)); } catch(e) {}
+}
+
+function deleteUserCourse(id) {
+  if (!confirm('Rimuovere questo corso dai tuoi corsi personali?')) return;
+  USER_COURSES = USER_COURSES.filter(c => c.id !== id);
+  COMPLETATI.delete(id);
+  saveCompletati();
+  persistUserCourses();
+  updateContatore();
+  renderECM();
+  toast('Corso rimosso', 'info');
+}
+
+// ─── AI Course Modal ────────────────────────────────────────────────
+function openAIModal() {
+  const modal = document.getElementById('ecm-ai-modal');
+  if (modal) modal.style.display = 'flex';
+  const urlInput = document.getElementById('ai-course-url');
+  if (urlInput) urlInput.value = '';
+  const preview = document.getElementById('ai-course-preview');
+  if (preview) { preview.style.display = 'none'; preview.innerHTML = ''; }
+  pendingCourse = null;
+}
+
+function closeAIModal() {
+  const modal = document.getElementById('ecm-ai-modal');
+  if (modal) modal.style.display = 'none';
+  pendingCourse = null;
+}
+
+async function generateCourseAI() {
+  const urlInput = document.getElementById('ai-course-url');
+  const url = urlInput ? urlInput.value.trim() : '';
+  if (!url || !/^https?:\/\//i.test(url)) {
+    toast('Inserisci un URL valido (es. https://...)', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('ai-gen-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Analisi in corso...'; }
+
+  const preview = document.getElementById('ai-course-preview');
+  preview.style.display = 'block';
+  preview.innerHTML = '<div style="text-align:center;padding:24px;color:var(--slate-l)"><div style="font-size:28px;margin-bottom:8px">🤖</div>L\'AI sta analizzando il corso...</div>';
+
+  let pageContent = '';
+
+  // Try to fetch page content via server proxy
+  try {
+    if (window.location.protocol !== 'file:') {
+      const resp = await fetch('/api/fetch-page?url=' + encodeURIComponent(url));
+      if (resp.ok) {
+        const data = await resp.json();
+        const tmp = document.createElement('div');
+        tmp.innerHTML = data.contents || '';
+        pageContent = (tmp.innerText || tmp.textContent || '').replace(/\s+/g, ' ').trim().substring(0, 4000);
+      }
+    }
+  } catch(fe) { /* ignore, AI will work from URL alone */ }
+
+  const prompt = `Analizza questa pagina web relativa a un corso ECM per professionisti sanitari italiani e restituisci SOLO un oggetto JSON valido (nessun testo aggiuntivo, nessun blocco markdown) con questi campi esatti:
+{"titolo":"...","provider":"...","tipo":"fad","crediti":8,"durata":"8 ore FAD","costo":"€ 80","descrizione":"...","argomenti":["..."],"target":["Dietisti"],"cat":["nutrizione"],"gratuito":false,"data_inizio":null,"data_fine":null,"scadenza":"..."}
+Valori per tipo: "fad", "residenziale" o "blended". Valori per cat (array): nutrizione, patologie, pediatria, sport, fad.
+URL del corso: ${url}
+${pageContent ? 'Contenuto della pagina:\n' + pageContent : 'Nota: impossibile recuperare il contenuto. Genera dati plausibili basandoti sull\'URL e il dominio.'}
+Rispondi SOLO con il JSON.`;
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': session?.access_token ? `Bearer ${session.access_token}` : ''
+      },
+      body: JSON.stringify({
+        system: 'Sei un assistente ECM per dietisti italiani. Rispondi sempre e solo con JSON valido, senza markdown.',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 800
+      })
+    });
+
+    if (!response.ok) throw new Error('Errore API: ' + response.status);
+    const data = await response.json();
+    const text = (data.content?.[0]?.text || '').trim();
+    if (!text) throw new Error('Risposta vuota dall\'AI');
+
+    // Parse JSON (strip optional markdown code block)
+    let jsonStr = text;
+    const m = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (m) jsonStr = m[1].trim();
+    // Find first { ... }
+    const startIdx = jsonStr.indexOf('{');
+    const endIdx = jsonStr.lastIndexOf('}');
+    if (startIdx !== -1 && endIdx !== -1) jsonStr = jsonStr.substring(startIdx, endIdx + 1);
+
+    const course = JSON.parse(jsonStr);
+
+    // Sanitize
+    course.id = 'u' + Date.now();
+    course.user_generated = true;
+    course.link = url;
+    course.crediti = Math.max(1, Math.min(50, parseInt(course.crediti) || 1));
+    course.gratuito = course.gratuito === true || String(course.costo || '').toLowerCase().includes('gratu');
+    if (!Array.isArray(course.argomenti)) course.argomenti = [];
+    if (!Array.isArray(course.target)) course.target = [];
+    if (!Array.isArray(course.cat)) course.cat = ['nutrizione'];
+    if (!['fad','residenziale','blended'].includes(course.tipo)) course.tipo = 'fad';
+
+    pendingCourse = course;
+
+    const tipoMap = { fad: '💻 FAD', residenziale: '🏛️ Residenziale', blended: '🔀 Blended' };
+    preview.innerHTML = `
+      <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:16px">
+        <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:10px">✅ Scheda generata — verifica i dati prima di salvare</div>
+        <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:4px">${esc(course.titolo || '—')}</div>
+        <div style="font-size:12px;color:#4F46E5;margin-bottom:6px">📍 ${esc(course.provider || '—')}</div>
+        <div style="font-size:12px;color:var(--slate-m);line-height:1.6;margin-bottom:10px">${esc(course.descrizione || '—')}</div>
+        <div style="display:flex;gap:10px;font-size:11.5px;color:var(--slate-l);flex-wrap:wrap;margin-bottom:12px">
+          <span>🎓 ${course.crediti} crediti ECM</span>
+          <span>${tipoMap[course.tipo] || course.tipo}</span>
+          <span>⏱️ ${esc(course.durata || '—')}</span>
+          <span>💰 ${esc(course.costo || '—')}</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="confirmSaveCourse()">💾 Salva corso</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ai-course-preview').innerHTML='';document.getElementById('ai-course-url').value='';pendingCourse=null">✕ Scarta</button>
+        </div>
+      </div>`;
+
+  } catch(e) {
+    preview.innerHTML = `<div style="background:#FEE2E2;border-radius:8px;padding:14px 16px;color:#991B1B;font-size:13px">
+      ⚠️ <b>Errore nella generazione:</b> ${esc(e.message)}<br>
+      <small style="opacity:.75">Assicurati di essere connesso e che l'AI sia disponibile. Se il sito del corso blocca il fetch, l'AI tenterà ugualmente con l'URL.</small>
+    </div>`;
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = '🤖 Genera scheda'; }
+}
+
+function confirmSaveCourse() {
+  if (!pendingCourse) return;
+  USER_COURSES.push(pendingCourse);
+  persistUserCourses();
+  updateContatore();
+  renderECM();
+  closeAIModal();
+  toast('✅ Corso aggiunto ai tuoi corsi personali!', 'ok');
+  pendingCourse = null;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   try { await checkAuth(false); } catch(e) {}
+  loadCompletati();
+  loadUserCourses();
   showLoading(true);
   const fromDB = await loadECMFromDB();
   if (!fromDB) {
@@ -738,6 +1130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     ECM_DATA = ECM_DATA_FALLBACK;
   }
   showLoading(false);
+  updateContatore();
   renderECM();
 });
 </script>

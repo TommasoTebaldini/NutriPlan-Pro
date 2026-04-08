@@ -46,6 +46,7 @@
 .ib-red{background:#FEE2E2;border-color:#EF4444;color:#7F1D1D}
 .ib-teal{background:#F0FDFA;border-color:#14B8A6;color:#134E4A}
 .q-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--slate-l);margin:20px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--border)}
+.q-card-body > .btn-primary{margin-top:12px}
 .q-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:640px){.q-grid-2{grid-template-columns:1fr}}
 .q-num-input{width:80px;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:14px;font-weight:700;text-align:center;font-family:inherit;outline:none}
@@ -138,7 +139,22 @@
   <button class="q-tab" onclick="showQTab('assessment')">📊 Assessment DCA</button>
   <button class="q-tab" onclick="showQTab('nutrizione')">🍀 Nutrizione &amp; Stile di Vita</button>
   <button class="q-tab" onclick="showQTab('psicologici')">🧠 Psicologici &amp; Benessere</button>
-  <button class="btn btn-ghost btn-sm no-print" onclick="svuotaSezione_questionari()" style="margin-left:auto">🔄 Reset</button>
+</div>
+
+<!-- COMPACT SAVE STRIP -->
+<div class="no-print" style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+  <div style="flex:1;min-width:180px">
+    <div style="font-size:10.5px;font-weight:700;color:#D97706;margin-bottom:3px">📁 Cartella Paziente</div>
+    <div id="qbar-cartella-cw"></div>
+  </div>
+  <div style="flex:0 0 200px">
+    <div style="font-size:10.5px;font-weight:700;color:var(--slate-m);margin-bottom:3px">📝 Nota / Titolo sessione</div>
+    <input type="text" id="qbar-note" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
+  </div>
+  <div style="display:flex;gap:6px;flex-shrink:0;align-self:flex-end">
+    <button class="btn btn-primary btn-sm" onclick="salvaQFromBar()">💾 Salva in Cartella</button>
+    <button class="btn btn-ghost btn-sm" onclick="svuotaSezione_questionari()">↺ Reset</button>
+  </div>
 </div>
 
 <!-- SEARCH BAR -->
@@ -2273,6 +2289,33 @@ async function salvaQuestionarioInCartella() {
   toast('✅ Questionario salvato nella cartella paziente!', 'ok');
 }
 
+async function salvaQFromBar() {
+  if (!currentUser) { toast('Accedi per salvare i dati nelle cartelle pazienti', 'err'); return; }
+  if (!_qSaveNome) { toast('Completa prima un questionario per salvarlo', 'err'); return; }
+  const cartellaId = document.getElementById('qbar-cartella').value;
+  if (!cartellaId) { toast('Seleziona una cartella paziente', 'err'); return; }
+  const notaExtra = document.getElementById('qbar-note').value.trim();
+  const nota = `${_qSaveNome} — Score: ${_qSaveDati.score ?? _qSaveDati.global ?? ''}${_qSaveDati.label ? ' — ' + _qSaveDati.label.replace(/[🟢🟡🔴⚠️]/gu, '').trim() : ''}${notaExtra ? ' — ' + notaExtra : ''}`;
+  const now = new Date().toISOString();
+  const payload = {
+    cartella_id: cartellaId,
+    user_id: currentUser.id,
+    tipo: 'questionario',
+    nota,
+    dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
+    created_at: now,
+    updated_at: now
+  };
+  showLoading(true);
+  const { error } = await sb.from('note_specialistiche').insert(payload);
+  showLoading(false);
+  if (error) {
+    if (error.code === '42P01') { mostraSetupSQL(); } else { toast('❌ ' + error.message, 'err'); }
+    return;
+  }
+  toast('✅ Questionario salvato nella cartella paziente!', 'ok');
+}
+
 // ─────────────────────────────────
 // INIT
 // ─────────────────────────────────
@@ -2300,6 +2343,7 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
 document.addEventListener('DOMContentLoaded', async () => {
   try { await checkAuth(false); } catch(e) {}
   initCartellaWidget('sq-cartella-cw', { hiddenInputId:'sq-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
+  initCartellaWidget('qbar-cartella-cw', { hiddenInputId:'qbar-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
   renderEDEQItems();
   renderBESItems();
   renderPHQ9Items();

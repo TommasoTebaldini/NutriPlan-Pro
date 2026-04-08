@@ -1375,7 +1375,152 @@ const CONSIGLI_BASE = [
     mod:['Formaggi stagionati duri (parmigiano, grana) — lattosio residuo <0.1%: consentiti','Frutta disidratata senza zucchero aggiunto — in piccole quantità'],
     pratici:['Preparare lo yogurt SCD a casa con starter specifico e fermentazione 24h (abbatte il lattosio)','Cuocere i legumi da secco per molte ore (almeno 2-3h) per degradare i carboidrati complessi','Eliminare GRADUALMENTE i carboidrati non consentiti (non eliminare tutto in una settimana)','Tenere un diario alimentare e dei sintomi per monitorare la risposta','Collaborare sempre con un dietista specializzato: la SCD richiede pianificazione attenta per evitare carenze'],
     avvisi:['Dolore addominale, sangue nelle feci → gastroenterologo urgente','Calo ponderale > 5% in 3 mesi → valutazione nutrizionale urgente + ONS','Carenze nutrizionali ai controlli → integrare con il supporto del dietista','Recidiva dei sintomi → valutare con il team se continuare la SCD o passare ad altra dieta']
+  }  ,
+  {
+    id:'diabete_gestazionale', emoji:'\u{1F930}', nome:'Diabete Gestazionale (GDM)', colore:'#EC4899',
+    pasti:'3 pasti principali + 3 spuntini (colazione leggera in CHO)', porzioni:'CHO 40-50% kcal basso IG, proteine 1.1 g/kg',
+    idratazione:'>=2 L/die (acqua, tisane non zuccherate)',
+    nota:'ADA 2023 · ACOG 2023 · Prima linea: dieta + attivita fisica moderata. Colazione: max 15-30g CHO. Glicemia digiuno <95 mg/dL e 1h post-prandiale <140 mg/dL.',
+    ok:['Cereali integrali basso IG (avena, orzo, farro)','Legumi (basso IG, alta sazieta)','Verdure non amidacee abbondanti','Frutta basso IG (mirtilli, fragole, mela, pera)','Proteine magre (pollo, tacchino, pesce, uova)','Yogurt greco 0%','Noci e mandorle (piccole porzioni)','Olio EVO'],
+    no:['Zucchero, miele, sciroppi','Bevande zuccherate e succhi','Dolci, biscotti, merendine','Pane bianco e riso bianco in eccesso','Frutta ad alto IG in eccesso (uva, datteri, banane mature)','Alcol (controindicato in gravidanza)'],
+    mod:['Patate: media porzione, preferire lesse','Riso bianco: porzioni ridotte abbinate a proteine e verdure','Banana: al massimo mezza porzione alla volta'],
+    pratici:['Misurare la glicemia 1h dopo ogni pasto e annotare i cibi per individuare i picchi','Colazione con pochi CHO (max 30g): es. uova + verdure + 1 galletta di riso','Abbinare sempre CHO + proteina + grasso + fibra per rallentare l'assorbimento','Passeggiata di 15-20 min dopo i pasti: abbassa la glicemia del 15-20%','Spuntino serale (yogurt greco + mandorle): previene la chetosi notturna'],
+    avvisi:['Glicemia digiuno >=95 mg/dL o 1h post-prandiale >=140 mg/dL per 2+ giorni -> diabetologo','Chetoni nelle urine -> contattare il ginecologo subito','Movimenti fetali ridotti -> pronto soccorso ostetrico','Pressione >=140/90 mmHg -> ginecologo urgente (rischio pre-eclampsia)']
+  },
+  {
+    id:'diabete_t1', emoji:'\u{1F489}', nome:'Diabete Mellito Tipo 1', colore:'#1D4ED8',
+    pasti:'3 pasti + 2-3 spuntini (flessibili con CHO counting)', porzioni:'CHO conteggiati in grammi; ratio insulina/CHO personalizzato',
+    idratazione:'>=2 L/die (acqua, te non zuccherato)',
+    nota:'ISPAD 2022 · ADA 2022 · CHO counting gold standard. Ratio I:C personalizzato per pasto. CGM consigliato. Obiettivo TIR (70-180 mg/dL) >70%.',
+    ok:['Qualsiasi alimento con dose insulinica corretta','Cereali integrali (miglior prevedibilita glicemica)','Legumi (basso IG, alta fibra)','Verdure non amidacee','Frutta fresca (conteggiare CHO)','Proteine magre','Grassi insaturi (rallentano assorbimento CHO)'],
+    no:['Zuccheri liberi in eccesso (picchi rapidi)','Bevande zuccherate (azione troppo rapida)','Alcol a stomaco vuoto (ipoglicemia)','Pasti iperlipidici in eccesso (iperglicemia tardiva)'],
+    mod:['Frutta: conteggiare CHO (es. 1 mela media = ~25g CHO)','Dolci occasionali: bolus insulinico adeguato, preferire dopo i pasti','Alcol: solo con cibo e ridurre la dose insulinica basale'],
+    pratici:['Pesare i CHO nelle prime fasi: una bilancia da cucina e fondamentale','Imparare il proprio ratio I:C per colazione, pranzo e cena (varia significativamente)','Spuntino pre-esercizio aerobico: 15-30g CHO rapidi + ridurre basale se pompa','Tenere sempre con se: glucosio (15g gel) per ipoglicemia','Revisione del ratio I:C con il diabetologo ogni 3-6 mesi'],
+    avvisi:['Ipoglicemia <70 mg/dL -> regola del 15: 15g CHO rapidi, ricontrollare dopo 15 min','Ipoglicemia severa (<54 mg/dL o perdita di coscienza) -> glucagone + 118','Chetoacidosi (glicemia >250 + chetoni + nausea) -> pronto soccorso urgente','HbA1c >8% ai controlli -> revisione terapia con diabetologo']
+  },
+  {
+    id:'menopausa', emoji:'\u{1F338}', nome:'Menopausa / Perimenopausa', colore:'#DB2777',
+    pasti:'3 pasti principali + 1-2 spuntini', porzioni:'Calcio 1200 mg/die, Vitamina D 1500-2000 UI, Proteine 1.0-1.2 g/kg',
+    idratazione:'>=1.5 L/die (acqua, tisane; limitare caffeina)',
+    nota:'IMS 2022 · Prevenire osteoporosi e rischio cardiovascolare. Fitoestrogeni (isoflavoni soia, lignani lino) riducono le vampate del 20-30%. Attivita fisica 150 min/settimana essenziale.',
+    ok:['Latte e yogurt (calcio biodisponibile)','Formaggi magri (parmigiano, ricotta)','Tofu e latte di soia (calcio + isoflavoni)','Semi di lino (lignani fitoestrogeni)','Pesce grasso 2-3x/settimana (omega-3, vitamina D)','Verdure a foglia verde (calcio, vitamina K)','Legumi','Frutta fresca','Cereali integrali'],
+    no:['Alcol in eccesso (aumenta rischio fratture e carcinoma mammario)','Caffeina in eccesso >3 tazze/die (aumenta calciuria)','Sale in eccesso (aumenta perdita di calcio urinario)','Zuccheri raffinati in eccesso','Cibi ultra-processati'],
+    mod:['Caffe: max 2 tazze/die, lontano dai pasti ricchi di calcio','Vino rosso: max 1 bicchiere/die','Carne rossa: max 1-2 volte/settimana'],
+    pratici:['Calcolare l'apporto di calcio giornaliero: 1 bicchiere latte = 300 mg, 50g parmigiano = 580 mg','Vitamina D con il pasto piu grasso (liposolubile)','Soia o tofu almeno 3-4 volte/settimana per gli isoflavoni','Esercizi con i pesi 2-3 volte/settimana per preservare la densita ossea','Densitometria ossea (MOC) ogni 2 anni dopo la menopausa'],
+    avvisi:['Vampate molto frequenti e invalidanti -> ginecologo (valutare TOS)','Dolore osseo o frattura con trauma minimo -> ortopedico + MOC','Sanguinamento vaginale post-menopausa -> ginecologo urgente','Depressione o ansia severa -> medico di base']
+  },
+  {
+    id:'sibo', emoji:'\u{1F9A0}', nome:'SIBO (Sovracrescita Batterica Intestinale)', colore:'#F59E0B',
+    pasti:'5-6 pasti piccoli', porzioni:'Low-FODMAP durante trattamento (4-6 settimane); poi reintroduzione graduale',
+    idratazione:'>=1.5 L/die lontano dai pasti',
+    nota:'ACG 2020 · WGO 2021 · Trattamento: rifaximina +/- neomicina. Dieta Low-FODMAP supporta il trattamento. Monitorare B12, vitamina D, ferro.',
+    ok:['Riso bianco, pasta di semola, patate','Carni e pesce freschi','Uova','Verdure Low-FODMAP: zucchine, carote, cetriolo, lattuga, peperoni','Frutta Low-FODMAP: fragole, kiwi, arance, uva, ananas','Latte e yogurt senza lattosio','Olio EVO'],
+    no:['Aglio, cipolla, porro (alto fruttani)','Mele, pere, manghi, ciliegie (alto fruttosio/polioli)','Legumi in fase acuta (alto GOS)','Latte con lattosio','Frumento in eccesso (fruttani)','Alcol','Dolcificanti polioli (sorbitolo, mannitolo, xilitolo)'],
+    mod:['Yogurt: spesso tollerato (lattosio ridotto dalla fermentazione)','Pane a lievitazione naturale lunga: piccole quantita dopo il trattamento','Legumi: reintrodurre gradualmente dopo la fase acuta (ammollati e ben cotti)'],
+    pratici:['Iniziare Low-FODMAP solo dopo diagnosi di SIBO (breath test H2/CH4)','Evitare di bere durante i pasti: i liquidi diluiscono i succhi gastrici','Masticare lentamente per ridurre l'aria inghiottita','Passeggiata dopo i pasti: la motilita intestinale previene le recidive','Integrare B12, vitamina D, ferro se carenti (controllo ogni 3-6 mesi)'],
+    avvisi:['Perdita di peso involontaria >5% -> gastroenterologo urgente','Febbre + dolore addominale severo -> pronto soccorso','Sintomi persistenti dopo 2 cicli antibiotici -> gastroenterologo','Carenze nutrizionali severe -> dietista specializzato']
+  },
+  {
+    id:'allergia_arachidi', emoji:'\u{1F95C}', nome:'Allergia alle Arachidi', colore:'#D97706',
+    pasti:'Normali (nessuna restrizione calorica)', porzioni:'Normali — eliminare solo arachidi e prodotti contaminati',
+    idratazione:'>=2 L/die',
+    nota:'EAACI 2021 · EpiPen sempre con se e aggiornato. Piano di emergenza scritto. Cross-reattivita con lupini (~30%).',
+    ok:['Carni, pesce, pollame freschi non contaminati','Uova','Legumi (eccetto lupini con cautela)','Noci, mandorle, nocciole, semi (da stabilimenti senza arachidi)','Cereali e derivati non contaminati','Frutta e verdura','Latte e derivati'],
+    no:['Arachidi in qualsiasi forma (intere, tritate, burro di arachidi)','Olio di arachidi grezzo non raffinato','Lupini (alta cross-reattivita ~30%)','Prodotti "puo contenere tracce di arachidi"','Cucine asiatiche senza garanzie (satay, pad thai)','Dolci artigianali senza informazioni sugli allergeni'],
+    mod:['Olio di arachidi raffinato: spesso tollerato, ma verificare con allergologo','Lupini: cross-reattivita variabile — valutare con allergologo prima di consumare'],
+    pratici:['Portare SEMPRE l'EpiPen in doppia copia','Leggere l'etichetta di ogni prodotto confezionato, ogni volta','Avvisare sempre il personale del ristorante','Indossare un braccialetto medico con scritto "Allergia arachidi + EpiPen"','Rinnovare l'EpiPen ogni 18-24 mesi prima della scadenza'],
+    avvisi:['Orticaria + gonfiore labbra/lingua + respiro difficile -> EpiPen + 118 immediatamente','Rossore o prurito isolato in bocca -> antistaminico + osservazione + allergologo','Esposizione accidentale senza sintomi -> osservare 30 min, avvisare il medico','Aggiornare il piano di emergenza ogni anno']
+  },
+  {
+    id:'allergia_grano', emoji:'\u{1F33E}', nome:'Allergia al Grano (non-celiachia)', colore:'#92400E',
+    pasti:'Normali', porzioni:'Normali — eliminare solo grano e prodotti contaminati',
+    idratazione:'>=2 L/die',
+    nota:'EAACI 2021 · Distinguere da celiachia (anticorpi tTG) e NCWS. WDEIA: evitare grano 4-6h prima di esercizio fisico intenso.',
+    ok:['Riso, mais, quinoa, grano saraceno, miglio, amaranto, teff','Patate, tapioca','Legumi','Carni, pesce, uova freschi','Frutta e verdura','Orzo e segale (se tollerati individualmente)','Prodotti certificati senza grano'],
+    no:['Frumento in tutte le forme (pane, pasta, pizza, couscous, bulgur)','Spelta e kamut (proteine simili al grano)','Farro','Germe di grano e crusca di frumento','Amido di frumento anche se privo di glutine','Birra di frumento (weizen)'],
+    mod:['Orzo e segale: spesso tollerati nell'allergia al grano, valutare individualmente','Lievito di birra: non contiene frumento, generalmente tollerato'],
+    pratici:['Informare sempre il ristorante sulla propria allergia al grano','Per la WDEIA: evitare grano almeno 4-6h prima di sport intenso','Sostituire la pasta con riso, quinoa o grano saraceno','Leggere le etichette: "amido" senza specificazione puo essere di frumento','Tenere l'EpiPen con se se storia di reazioni sistemiche'],
+    avvisi:['Anafilassi -> EpiPen + 118','Sintomi durante o dopo l'esercizio fisico (WDEIA) -> smettere + EpiPen se grave','Sintomi GI persistenti -> escludere celiachia (anticorpi tTG-IgA + HLA)','Prima reazione sistemica -> allergologo per piano di emergenza']
+  },
+  {
+    id:'allergia_sesamo', emoji:'\u{1F330}', nome:'Allergia al Sesamo', colore:'#B45309',
+    pasti:'Normali', porzioni:'Normali — eliminare solo sesamo e derivati',
+    idratazione:'>=2 L/die',
+    nota:"EAACI 2023 · 15° allergene obbligatorio in etichetta UE dal 2023. Fonti nascoste: tahini, hummus, halva, pane da hamburger, cracker orientali.",
+    ok:['Cereali e pane senza semi di sesamo (verificare etichetta)','Carni, pesce, uova freschi','Latte e derivati','Legumi (senza tahini)','Frutta e verdura','Olio EVO, olio di girasole, olio di mais','Frutta secca senza sesamo'],
+    no:['Semi di sesamo (interi, tostati, decorticati, in crosta di pane)','Olio di sesamo','Tahini (pasta di sesamo)','Hummus (contiene tahini)','Halva','Gomashio (condimento giapponese)','Cucine asiatiche e mediorientali senza garanzie'],
+    mod:['Olio di sesamo raffinato: potrebbe essere tollerato da alcuni, verificare con allergologo'],
+    pratici:['Controllare le etichette per "sesamo", "til" (nome indiano), "gingelly"','Attenzione al pane da hamburger (semi di sesamo in superficie)','Nei ristoranti asiatici e mediorientali: avvisare sempre dell'allergia al sesamo','Portare l'EpiPen se storia di reazioni sistemiche','Aggiornare il piano di emergenza ogni anno'],
+    avvisi:['Gonfiore a labbra/lingua + respiro affannoso -> EpiPen + 118','Orticaria generalizzata dopo un pasto -> antistaminico + allergologo','Sospetta esposizione accidentale -> osservare almeno 60 min','Aggiornare piano di emergenza ogni anno con l'allergologo']
+  },
+  {
+    id:'intolleranza_istamina', emoji:'\u{1F321}\uFE0F', nome:"Intolleranza all'Istamina (HIT)", colore:'#7C3AED',
+    pasti:'3-4 pasti piccoli e freschi', porzioni:'Normali — eliminare alimenti ad alto contenuto di istamina',
+    idratazione:'>=2 L/die (acqua, tisane, te bianco)',
+    nota:'EAACI 2020 · Carenza enzimatica DAO. Diario alimentare per identificare soglia personale. Co-fattori DAO: vitamina B6, rame, vitamina C.',
+    ok:['Carni fresche (non affumicate, non in conserva)','Pesce fresco (consumare subito)','Uova fresche','Latte fresco, burro, ricotta fresca','Cereali freschi (riso, pasta, pane fresco)','Verdure a bassa istamina: zucchine, cavoli, carote, patate, cetrioli','Frutta a bassa istamina: mele, pere, mirtilli, uva, melone','Olio EVO'],
+    no:['Formaggi stagionati (parmigiano, grana, pecorino)','Vino, birra e alcolici','Pesce in scatola e affumicato (tonno, sgombro, acciughe)','Salumi e insaccati','Aceto','Pomodori e ketchup','Spinaci, melanzane','Fragole, lamponi, agrumi, banane mature','Cacao e cioccolato','Lievito di birra'],
+    mod:['Formaggi freschi: consumare entro 24h dall'apertura','Frutta secca: piccole quantita, non ossidata','Te verde: basso in istamina (diverso dal te nero)'],
+    pratici:['Acquistare pesce freschissimo e cucinarlo subito (l'istamina raddoppia ogni 1-2h a temperatura ambiente)','Non conservare avanzi per piu di 24h','Tenere un diario alimentare-sintomi per 4 settimane','Assumere vitamina C (1g) e vitamina B6 (50 mg/die) — co-fattori DAO','Supplemento DAO in gocce/capsule prima dei pasti fuori casa'],
+    avvisi:['Cefalea intensa + rossore cutaneo + ipotensione -> medico (diagnosi differenziale mastocitosi)','Sintomi respiratori -> allergologo (escludere allergia IgE-mediata)','Nessun miglioramento dopo 6 settimane -> gastroenterologo','Triptasi sierica elevata ai controlli -> ematologo (escludere mastocitosi)']
+  },
+  {
+    id:'intolleranza_nichel', emoji:'\u2699\uFE0F', nome:'Intolleranza al Nichel (SNAS)', colore:'#64748B',
+    pasti:'3 pasti + 1-2 spuntini (rotazione 4 giorni)', porzioni:'Normali — ridurre gradualmente alimenti ad alto nichel',
+    idratazione:'>=2 L/die (acqua a basso nichel; lasciare scorrere l'acqua del mattino)',
+    nota:"EAACI 2022 · SNAS: sindrome sistemica da ingestione di nichel. Dieta di esclusione 4-6 settimane + reintroduzione graduale. Vitamina C con i pasti riduce l'assorbimento.",
+    ok:['Riso bianco, pasta di semola, pane bianco','Latte, yogurt, formaggi freschi','Carni bianche e rosse fresche','Pesce fresco (non in scatola)','Uova','Patate, carote, cetrioli, zucchine, cavolfiore','Mele, pere, fragole, agrumi','Burro, olio EVO'],
+    no:['Cioccolato e cacao (altissimo nichel)','Noci, nocciole, mandorle, arachidi, semi','Legumi (soia, lenticchie, ceci, fagioli)','Cereali integrali (fiocchi di avena, pane integrale)','Spinaci, pomodori, asparagi, funghi','Te negro e caffe in eccesso','Cibi in scatola (nichel rilasciato dalla lattina)'],
+    mod:['Cereali integrali: reintrodurre gradualmente dopo la fase di esclusione','Legumi: porzioni ridotte dopo la fase di esclusione','Te verde: preferibile al te nero (meno fermentato, meno nichel)'],
+    pratici:['Bere il primo bicchiere d'acqua del mattino da una bottiglia (non dal rubinetto)','Usare pentole in ceramica, vetro o teflon — evitare acciaio inossidabile','Assumere vitamina C (500-1000 mg) con i pasti principali','Ruotare gli alimenti ogni 4 giorni','Tenere un diario sintomi-alimentazione'],
+    avvisi:['Dermatite diffusa o eczema che peggiora -> dermatologo (patch test al nichel)','Sintomi GI persistenti nonostante dieta -> gastroenterologo','Nessun miglioramento dopo 8 settimane -> rivalutare diagnosi con allergologo','Bambini con SNAS: monitorare la crescita']
+  },
+  {
+    id:'sindrome_nefrosica', emoji:'\u{1FAD8}', nome:'Sindrome Nefrosica', colore:'#0EA5E9',
+    pasti:'3-5 pasti piccoli e frequenti', porzioni:'Proteine 0.8-1.0 g/kg + perdite urinarie; Sodio <1.5 g/die',
+    idratazione:'Non ristretta (salvo iponatriemia)',
+    nota:'KDIGO 2021 · Proteinuria >3.5 g/die + ipoalbuminemia. Non iperalimentare proteine: aggrava la proteinuria. Iperlipidemia nefrosica: dieta antiaterosclerotica.',
+    ok:['Albume di uovo (alta qualita proteica, basso fosforo)','Pesce (omega-3, proteine ad alto valore biologico)','Legumi moderati (proteine vegetali)','Cereali raffinati (minor carico di fosforo)','Olio EVO','Verdure fresche (moderate in potassio se GFR ridotto)','Frutta a basso potassio (mele, pere, fragole)','Latte scremato'],
+    no:['Sale e cibi salati (edemi)','Formaggi stagionati (alto sodio e fosforo)','Carni grasse e insaccati','Cola e bevande con additivi fosfati (E338-341)','Integratori non prescritti','Alcol'],
+    mod:['Proteine animali: non superare il fabbisogno calcolato','Potassio: restringere solo se GFR <30 e K+ >5.5 mEq/L','Cereali integrali: utili per le fibre, bilanciare con il carico di fosforo'],
+    pratici:['Pesare il sale: <1.5 g/die corrisponde a evitare quasi tutto il sale aggiunto','Calcolare le proteine: es. 70 kg = max 70-80g/die + perdite urinarie','Monitorare il peso ogni mattina: +1 kg in 24h indica ritenzione idrica -> contattare il medico','Evitare FANS (ibuprofene, aspirina): peggiorano la funzione renale','Controllare albumina, lipidi, proteinuria ogni 1-3 mesi'],
+    avvisi:['Edemi che aumentano rapidamente + calo urine -> nefrologo urgente','Albumina <2 g/dL -> revisione terapia con nefrologo','Colesterolo LDL >190 mg/dL -> valutare statine con il medico','Dolore toracico o dispnea -> pronto soccorso (rischio tromboembolismo)']
+  },
+  {
+    id:'pancreatite_acuta', emoji:'\u{1F534}', nome:'Pancreatite Acuta', colore:'#DC2626',
+    pasti:'5-6 pasti piccoli nella fase di reintroduzione', porzioni:'Grassi <30 g/die nella fase orale iniziale; poi aumento progressivo',
+    idratazione:'>=2 L/die (orale o EV in fase acuta)',
+    nota:'IAP/APA 2020 · ESPEN 2020 · Il digiuno prolungato e CONTROINDICATO. Forme lievi: dieta solida morbida low-fat entro 24-48h. Forme gravi: NE precoce per SNG.',
+    ok:['Riso bianco, pasta di semola, patate lesse','Pane bianco, gallette di riso','Carni bianche magre al vapore (pollo, tacchino)','Pesce magro al vapore (merluzzo, sogliola)','Albume di uovo','Latte scremato, yogurt magro','Brodo vegetale sgrassato','Frutta matura sbucciata (banana, mela, pera)','Verdure cotte (carote, zucchine)'],
+    no:['Alcol (causa principale e fattore di recidiva — no a vita se pancreatite alcolica)','Cibi ad alto contenuto di grassi (fritti, salumi, formaggi grassi, panna)','Burro, lardo, strutto in eccesso','Uova intere in eccesso','Cioccolato e dolci elaborati','Legumi e cavoli in fase acuta','Caffe in eccesso','Bevande gassate'],
+    mod:['Olio EVO: max 1 cucchiaino per pasto nella fase iniziale, poi aumento graduale','Uova intere: 1-2 alla settimana nella fase di stabilizzazione','Legumi: reintrodurre dopo 4-6 settimane ben cotti'],
+    pratici:['Iniziare a mangiare appena il dolore si riduce: il digiuno peggiora la prognosi','Iniziare con alimenti facili: riso in bianco, banana, brodo, gallette','Pesare i grassi: 1 cucchiaio olio = 10g; mirare a <30g/die nelle prime 4 settimane','Mangiare lentamente in piccole quantita: 5-6 pasti piccoli','Diario alimentare e dei sintomi per monitorare la tolleranza individuale'],
+    avvisi:['Ricomparsa del dolore durante la reintroduzione -> stop e contattare il medico','Febbre >38C + peggioramento del dolore -> pronto soccorso (necrosi infetta)','Calo di peso >5 kg in 2 settimane -> dietista + gastroenterologo','Feci grasse e maleodoranti (steatorrea) -> enzimi pancreatici + gastroenterologo']
+  },
+  {
+    id:'trapianto', emoji:'\u{1F49A}', nome:"Post-Trapianto d'Organo", colore:'#059669',
+    pasti:'3 pasti principali + 1-2 spuntini (sicurezza alimentare assoluta)', porzioni:'Fase precoce: proteine 1.2-1.5 g/kg/die; lungo termine: normocalorica',
+    idratazione:'>=2 L/die (acqua potabile certificata)',
+    nota:'ESPEN 2019 · Sicurezza alimentare: no alimenti crudi o poco cotti. No pompelmo/pomelo/bergamotto (inibiscono CYP3A4 e aumentano livelli di ciclosporina/tacrolimus).',
+    ok:['Carni ben cotte (no carpaccio, tartare, bresaola artigianale)','Pesce cotto (no sushi, sashimi, ceviche)','Uova ben cotte (no alla coque, no crude)','Formaggi pastorizzati stagionati (parmigiano, emmenthal)','Frutta e verdura lavata e sbucciata','Cereali e derivati cotti','Legumi ben cotti','Yogurt pastorizzato','Olio EVO'],
+    no:['Pompelmo, pomelo, bergamotto, carambola (inibiscono CYP3A4)','Sushi, sashimi, carpaccio, tartare, ceviche','Uova crude o alla coque','Formaggi molli non pastorizzati (brie, camembert artigianale)','Latte crudo e derivati non pastorizzati','Germogli crudi','Acqua non potabile o di fonte non sicura','Supplementi a base di erbe non approvati dal medico'],
+    mod:['Frutta secca: tollerata se integra e non ossidata (non a contatto con prodotti non pastorizzati)','Alcol: limitare drasticamente (interazioni con immunosoppressori)'],
+    pratici:['Controllare sempre la data di scadenza e la pastorizzazione dei latticini','Lavare frutta e verdura con acqua corrente e sbucciare quando possibile','Evitare buffet e cibi esposti non coperti o tenuti a temperatura ambiente da ore','No pompelmo in qualsiasi forma (succo, frutto, marmellata): anche una piccola quantita altera i farmaci','Comunicare TUTTI i supplementi e integratori al medico (interazioni farmacologiche)'],
+    avvisi:['Febbre >38C senza causa apparente -> nefrologo/centro trapianti urgente (rischio rigetto o infezione)','Diarrea persistente (>3 giorni) -> medico (escludere colite da CMV o C. difficile)','Glicemia elevata (NODAT) -> diabetologo','Ipertensione non controllata -> nefrologo (effetto collaterale degli immunosoppressori)']
+  },
+  {
+    id:'colite_microscopica', emoji:'\u{1F52C}', nome:'Colite Microscopica (Collagena/Linfocitica)', colore:'#0D9488',
+    pasti:'5-6 pasti piccoli', porzioni:'Basso residuo in fase acuta; fibre insolubili ridotte',
+    idratazione:'>=2 L/die (perdite con diarrea acquosa)',
+    nota:'EMCG 2020 · ACG 2020 · Trattamento prima linea: budesonide. Identificare farmaci scatenanti (FANS, IPP, SSRI). Trial GFD 4-6 settimane nel 40-50% dei casi con sensibilita al glutine.',
+    ok:['Riso bianco, pasta di semola, patate','Gallette di riso, pane bianco','Carni bianche magre (pollo, tacchino)','Pesce magro al vapore','Uova (se tollerato)','Latte senza lattosio, yogurt senza lattosio','Verdure cotte (carote, zucchine)','Frutta sbucciata matura (banana, mela, pera)','Olio EVO'],
+    no:['Caffeina in eccesso (caffe, te forte, energy drink)','FANS (ibuprofene, aspirina) senza prescrizione — avvisare il medico','Cibi ad alto residuo in fase acuta (legumi, verdure crude, cereali integrali)','Alcol','Latticini con lattosio se intolleranza associata','Glutine se trial GFD positivo','Alimenti piccanti','Dolcificanti polioli (sorbitolo, mannitolo)'],
+    mod:['Glutine: trial senza glutine 4-6 settimane per verificare se migliora la diarrea','Lattosio: testare tolleranza individuale con yogurt senza lattosio','Caffe: limitare a 1-2 tazze/die'],
+    pratici:['Iniziare un diario alimentare + sintomi per identificare i cibi scatenanti','Ridurre gradualmente la caffeina (non eliminare di colpo: cefalea da astinenza)','Cuocere bene le verdure e sbucciare la frutta in fase acuta','Se in terapia con FANS o IPP: discutere con il medico se possono essere sospesi o sostituiti','Reidratarsi bene durante le fasi di diarrea intensa: acqua + un pizzico di sale e zucchero'],
+    avvisi:['Diarrea acquosa >10 scariche/die -> gastroenterologo urgente','Calo ponderale involontario >5% in 3 mesi -> gastroenterologo','Sangue nelle feci -> gastroenterologo urgente (escludere altre patologie)','Nessun miglioramento con budesonide -> rivalutare con gastroenterologo (diagnosi alternativa)']
   }
+];
+
 ];
 
 let consigliPersonalizzati = [];

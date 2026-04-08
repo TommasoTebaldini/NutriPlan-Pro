@@ -194,7 +194,57 @@ function setActiveNav(page) {
 // ═══════════════════════════════════════════════════
 // UTILS
 // ═══════════════════════════════════════════════════
-function lookup(n) { if (!n) return null; return FOOD_MAP[n.toLowerCase()] || null; }
+function lookup(n) {
+  if (!n) return null;
+  const lower = n.toLowerCase().trim();
+
+  // 1. Exact match
+  if (FOOD_MAP[lower]) return FOOD_MAP[lower];
+
+  // 2. Strip parenthetical content (e.g. "(media)", "(GI basso)", "(3 uova)") and try exact match
+  const clean = lower.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
+  if (clean !== lower && FOOD_MAP[clean]) return FOOD_MAP[clean];
+
+  // 3. Progressive prefix: remove trailing words until a match is found
+  // e.g. "Pane integrale a fette" → "Pane integrale a" → "Pane integrale"
+  const base = clean || lower;
+  const parts = base.split(/\s+/);
+  for (let len = parts.length - 1; len >= 2; len--) {
+    const sub = parts.slice(0, len).join(' ');
+    if (FOOD_MAP[sub]) return FOOD_MAP[sub];
+  }
+
+  // 4. Fuzzy word-coverage: find the DB entry whose tokens are most covered by the query tokens.
+  // Handles cases like "Yogurt greco magro" → "Yogurt greco 0% grassi",
+  // "Marmellata senza zucchero" → "Marmellata / confettura", "Salmone al forno" → "Salmone atlantico".
+  const qToks = base.split(/[\s,/\-+()[\]]+/).filter(t => t.length >= 3);
+  if (!qToks.length) return null;
+
+  const firstTok = qToks[0];
+  let best = null, bestCov = 0, bestMatch = 0;
+
+  for (const f of ALL_DB) {
+    const fn = f.n.toLowerCase();
+    if (!fn.includes(firstTok)) continue; // first query token must appear in the DB name
+
+    const fnToks = fn.split(/[\s,/\-+()[\]]+/).filter(t => t.length >= 3);
+    if (!fnToks.length) continue;
+
+    let matched = 0, total = 0;
+    for (const t of fnToks) {
+      total += t.length;
+      if (qToks.includes(t)) matched += t.length;
+    }
+    const cov = total ? matched / total : 0;
+    if (cov > bestCov || (cov === bestCov && matched > bestMatch)) {
+      best = f; bestCov = cov; bestMatch = matched;
+    }
+  }
+
+  // Threshold scales with the number of query tokens to balance sensitivity vs. false positives
+  const threshold = qToks.length === 1 ? 0.3 : qToks.length === 2 ? 0.38 : 0.45;
+  return bestCov >= threshold ? best : null;
+}
 function cv(f, key, qt) { if (!f || f[key] == null) return null; return (f[key] / 100) * (parseFloat(qt) || 0); }
 function r1(v) { return Math.round(v * 10) / 10; }
 function r2(v) { return Math.round(v * 100) / 100; }

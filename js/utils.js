@@ -124,7 +124,7 @@ function profiloFirmaHtml() {
   const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
   const albo = p.albo ? ' — N° Albo: ' + esc(p.albo) : '';
   if (!nome && !albo) return '';
-  return '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #E2E8F0;text-align:right;font-size:11px;color:#64748B;font-style:italic">' + esc(nome) + albo + '</div>';
+  return '<div style="position:fixed;bottom:8mm;right:15mm;font-size:11px;color:#64748B;font-style:italic">' + esc(nome) + albo + '</div>';
 }
 
 // Global beforeprint: inject firma for pages that use window.print() directly
@@ -138,10 +138,9 @@ window.addEventListener('beforeprint', function() {
   if (document.getElementById('_gprint_firma_')) return;
   const div = document.createElement('div');
   div.id = '_gprint_firma_';
-  div.style.cssText = 'margin-top:16px;padding-top:10px;border-top:1px solid #E2E8F0;text-align:right;font-size:11px;color:#64748B;font-style:italic';
+  div.style.cssText = 'position:fixed;bottom:8mm;right:15mm;font-size:11px;color:#64748B;font-style:italic';
   div.textContent = nome + albo;
-  const target = document.querySelector('#main .page-content') || document.getElementById('main') || document.body;
-  target.appendChild(div);
+  document.body.appendChild(div);
 });
 window.addEventListener('afterprint', function() {
   const el = document.getElementById('_gprint_firma_');

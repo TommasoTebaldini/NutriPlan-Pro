@@ -187,7 +187,7 @@
 <!-- print-only header (hidden on screen, shown when printing) -->
 <div class="print-header" style="display:none">
   <h1 class="print-title">💡 Consigli Nutrizionali</h1>
-  <div class="print-subtitle">DietPlan Pro · Generato il <span id="print-date"></span></div>
+  <div class="print-subtitle">DietPlan Pro</div>
 </div>
 
 <!-- hero gradient banner -->
@@ -1738,7 +1738,6 @@ function buildStampaHTML(c, notePaziente = '') {
 
   <div class="footer">
     <span>DietPlan Pro · Consigli Nutrizionali</span>
-    <span>Generato il ${new Date().toLocaleDateString('it')}</span>
   </div>
   ${_buildProfiloFirmaStampa()}
 </body>
@@ -1980,7 +1979,6 @@ ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('print-date').textContent = new Date().toLocaleDateString('it');
   document.body.dataset.printTab = 'patologie';
   initCartellaWidget('cs-cartella-cw', { hiddenInputId:'cs-cartella', accentColor:'#16A34A', labelColor:'#15803D', hoverBg:'#F0FDF4', nuovaBg:'#F0FDF4', onSelect:()=>onCartellaChange() });
   renderConsigli();

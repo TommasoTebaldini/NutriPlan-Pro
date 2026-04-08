@@ -3,10 +3,14 @@
 // Chiave gratuita su: https://console.groq.com/keys (registrazione con Google/GitHub)
 // Vercel: Settings → Environment Variables → GEMINI_API_KEY (stessa variabile, non cambiare nome)
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
+const MAX_TOKENS_LIMIT = 4096;
+const MAX_CONTENT_BYTES = 32768; // 32 KB per request body
 
 async function verifySupabaseToken(token) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
   const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -17,15 +21,28 @@ async function verifySupabaseToken(token) {
   return await res.json();
 }
 
-export default async function handler(req, res) {
+function setCorsHeaders(req, res) {
   const origin = req.headers.origin || '';
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || origin;
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  const configured = process.env.ALLOWED_ORIGIN || '';
+  const allowed = configured.split(',').map(s => s.trim()).filter(Boolean);
+  if (allowed.length > 0 && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Vary', 'Origin');
+}
+
+export default async function handler(req, res) {
+  setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Enforce request body size limit
+  const contentLength = parseInt(req.headers['content-length'] || '0', 10);
+  if (contentLength > MAX_CONTENT_BYTES) {
+    return res.status(413).json({ error: 'Richiesta troppo grande.' });
+  }
 
   const authHeader = req.headers.authorization || '';
   if (!authHeader.startsWith('Bearer ')) {
@@ -47,11 +64,17 @@ export default async function handler(req, res) {
   try {
     const { system, messages, max_tokens } = req.body;
 
+    // Validate and sanitize inputs
+    if (messages !== undefined && !Array.isArray(messages)) {
+      return res.status(400).json({ error: 'Parametro messages non valido.' });
+    }
+    const safeMaxTokens = Math.min(Math.max(parseInt(max_tokens) || 1024, 1), MAX_TOKENS_LIMIT);
+
     const allMessages = [
-      { role: 'system', content: system || 'Sei un assistente nutrizionale clinico per dietisti italiani. Rispondi in italiano in modo preciso e professionale.' },
+      { role: 'system', content: String(system || 'Sei un assistente nutrizionale clinico per dietisti italiani. Rispondi in italiano in modo preciso e professionale.').slice(0, 8192) },
       ...(messages || []).map(m => ({
         role: m.role === 'assistant' ? 'assistant' : 'user',
-        content: m.content
+        content: String(m.content || '').slice(0, 8192)
       }))
     ];
 
@@ -76,7 +99,7 @@ export default async function handler(req, res) {
           body: JSON.stringify({
             model,
             messages: allMessages,
-            max_tokens: max_tokens || 1024,
+            max_tokens: safeMaxTokens,
             temperature: 0.7,
             stream: false
           })

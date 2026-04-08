@@ -133,7 +133,7 @@ window.addEventListener('beforeprint', function() {
   if (document.body.dataset.printMode) return; // custom print area already has firma
   const p = getProfiloOperatore();
   const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
-  const albo = p.albo ? ' \u2014 N\u00b0 Albo: ' + esc(p.albo) : '';
+  const albo = p.albo ? ' \u2014 N\u00b0 Albo: ' + p.albo : '';
   if (!nome && !albo) return;
   if (document.getElementById('_gprint_firma_')) return;
   const div = document.createElement('div');

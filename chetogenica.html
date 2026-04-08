@@ -170,6 +170,7 @@
     <input type="text" id="keto-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
   </div>
   <button class="btn btn-primary btn-sm" onclick="salvaKeto()" style="margin-top:18px;background:linear-gradient(135deg,#7C3AED,#6D28D9)">💾 Salva in Cartella</button>
+  <button class="btn btn-ghost btn-sm no-print" onclick="svuotaSezione_chetogenica()" style="margin-top:18px">🔄 Reset</button>
 </div>
 
 <!-- TABS -->
@@ -1465,33 +1466,21 @@ function autoRestorePage_chetogenica() {
   } catch(e) {}
 }
 function svuotaSezione_chetogenica() {
-  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
-  const ap = document.querySelector('.keto-panel.active') || document.querySelector('main');
-  if (ap) {
-    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
-      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
-      else el.value = '';
-    });
-    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
-  }
-  localStorage.removeItem('nutriplan_autosave_chetogenica');
-  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+  customConfirm('Sei sicuro di voler svuotare tutti i dati di questa sezione? L\'operazione non può essere annullata.', function() {
+    const ap = document.querySelector('.keto-panel.active') || document.querySelector('main');
+    if (ap) {
+      ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+        else el.value = '';
+      });
+      ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    }
+    localStorage.removeItem('nutriplan_autosave_chetogenica');
+    if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+  }, { title: '⚠️ Conferma Reset', danger: true, okLabel: 'Sì, Reset' });
 }
 document.addEventListener('DOMContentLoaded', function() {
   autoRestorePage_chetogenica();
-  // Insert "Svuota Sezione" button in each panel
-  document.querySelectorAll('.keto-panel').forEach(panel => {
-    if (panel.querySelector('.svuota-btn-chetogenica')) return;
-    const btn = document.createElement('button');
-    btn.className = 'svuota-btn-chetogenica no-print';
-    btn.innerHTML = '🗑️ Svuota Sezione';
-    btn.title = 'Svuota tutti i dati di questa sezione';
-    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
-    btn.onmouseover = function(){this.style.background='#FEE2E2'};
-    btn.onmouseout = function(){this.style.background='white'};
-    btn.onclick = svuotaSezione_chetogenica;
-    panel.insertBefore(btn, panel.firstChild);
-  });
 }, {once: false});
 </script>
 </body>

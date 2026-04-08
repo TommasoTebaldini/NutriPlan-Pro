@@ -144,6 +144,7 @@
     <input type="text" id="dca-nota" placeholder="es. Prima visita DCA..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
   </div>
   <button class="btn btn-primary btn-sm" onclick="salvaDca()" style="margin-top:18px">💾 Salva in Cartella</button>
+  <button class="btn btn-ghost btn-sm no-print" onclick="svuotaSezione_dna()" style="margin-top:18px">🔄 Reset</button>
 </div>
 
 <div class="dna-tabs">
@@ -1751,33 +1752,21 @@ function autoRestorePage_dna() {
   } catch(e) {}
 }
 function svuotaSezione_dna() {
-  if (!confirm('Sei sicuro di voler svuotare tutti i dati di questa sezione?\nL\'operazione non può essere annullata.')) return;
-  const ap = document.querySelector('.dna-panel.active') || document.querySelector('main');
-  if (ap) {
-    ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
-      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
-      else el.value = '';
-    });
-    ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
-  }
-  localStorage.removeItem('nutriplan_autosave_dna');
-  if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+  customConfirm('Sei sicuro di voler svuotare tutti i dati di questa sezione? L\'operazione non può essere annullata.', function() {
+    const ap = document.querySelector('.dna-panel.active') || document.querySelector('main');
+    if (ap) {
+      ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+        else el.value = '';
+      });
+      ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    }
+    localStorage.removeItem('nutriplan_autosave_dna');
+    if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+  }, { title: '⚠️ Conferma Reset', danger: true, okLabel: 'Sì, Reset' });
 }
 document.addEventListener('DOMContentLoaded', function() {
   autoRestorePage_dna();
-  // Insert "Svuota Sezione" button in each panel
-  document.querySelectorAll('.dna-panel').forEach(panel => {
-    if (panel.querySelector('.svuota-btn-dna')) return;
-    const btn = document.createElement('button');
-    btn.className = 'svuota-btn-dna no-print';
-    btn.innerHTML = '🗑️ Svuota Sezione';
-    btn.title = 'Svuota tutti i dati di questa sezione';
-    btn.style.cssText = 'float:right;margin-bottom:10px;padding:6px 14px;border-radius:8px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
-    btn.onmouseover = function(){this.style.background='#FEE2E2'};
-    btn.onmouseout = function(){this.style.background='white'};
-    btn.onclick = svuotaSezione_dna;
-    panel.insertBefore(btn, panel.firstChild);
-  });
 }, {once: false});
 </script>
 </body>

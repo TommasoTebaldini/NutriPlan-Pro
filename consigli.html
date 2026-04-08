@@ -142,12 +142,12 @@
   <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
   <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
   <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
-  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
   <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
   <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
   <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
   <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
@@ -1734,7 +1734,7 @@ function buildConsiglio(c, isCustom = false) {
       </div>
       <div class="cc-actions no-print">
         <button class="btn btn-ghost btn-sm" onclick="stampaConsiglio('${c.id}')">🖨️ Stampa</button>
-        <button class="btn btn-amber btn-sm" onclick="stampaPdfConsiglio('${c.id}')">📄 PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="stampaPdfConsiglio('${c.id}')">📄 PDF</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleNotePaziente('${c.id}')" id="note-btn-${c.id}">✏️ Note paziente</button>
         <button class="btn btn-ghost btn-sm" onclick="editConsiglio('${c.id}')" title="${isCustom ? 'Modifica consiglio personalizzato' : 'Personalizza questo consiglio'}" aria-label="${isCustom ? 'Modifica' : 'Personalizza'}: ${esc(c.nome)}">✏️ ${isCustom ? 'Modifica' : 'Personalizza'}</button>
         ${isCustom ? `<button class="btn btn-danger btn-sm" onclick="delConsiglio('${c.id}')">🗑️ Elimina</button>` : ''}
@@ -2126,6 +2126,37 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadProfile().catch(()=>{});
         await loadConsigliCustom();
         if (consigliPersonalizzati.length) renderConsigli();
+        // Handle noteId from patient folder
+        const noteId = new URLSearchParams(window.location.search).get('noteId');
+        if (noteId) {
+          const {data} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+          if (data) {
+            await _cwSetById('cs-cartella-cw', data.cartella_id);
+            const hiddenEl = document.getElementById('cs-cartella');
+            if (hiddenEl) hiddenEl.value = data.cartella_id;
+            await caricaNoteConsigli(data.cartella_id);
+            try {
+              const d = JSON.parse(data.dati || '{}');
+              const cid = d.consiglio_id;
+              if (cid) {
+                const noteBox = document.getElementById('note-box-' + cid);
+                if (noteBox) {
+                  const ccBody = noteBox.closest('.cc-body');
+                  if (ccBody) {
+                    ccBody.classList.add('open');
+                    const tog = ccBody.previousElementSibling?.querySelector('.cc-toggle-btn');
+                    if (tog) tog.textContent = '▲';
+                  }
+                  noteBox.classList.add('visible');
+                  const btn = document.getElementById('note-btn-' + cid);
+                  if (btn) btn.textContent = '✖ Chiudi note';
+                  const card = noteBox.closest('.consiglio-card');
+                  if (card) setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+                }
+              }
+            } catch(e) {}
+          }
+        }
       }
     } catch(e) {}
   })();

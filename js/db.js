@@ -271,7 +271,87 @@ const DB_CREA=[
 {n:"Tuorlo d'uovo",c:"Uova",k:322,p:16.4,gs:9.5,g:26.5,z:3.6,ch:3.6,fi:0,ca:129,fe:2.7,mg:15,k2:109,na:48,zn:2.8,fo:391,se:56,col:1110,src:"CREA"},
 // ── ALTRI ALIMENTI ──
 {n:"Seitan",c:"Legumi",k:118,p:25,gs:0.2,g:1.7,z:0,ch:4.3,fi:0.6,ca:142,fe:3.5,mg:18,k2:150,na:660,zn:1.4,fo:108,se:15,col:0,src:"CREA"},
-{n:"Tofu affumicato",c:"Legumi",k:120,p:14,gs:2,g:7,z:0,ch:2.5,fi:0.5,ca:350,fe:5,mg:35,k2:160,na:600,zn:1,fo:100,se:12,col:0,src:"CREA"}
+{n:"Tofu affumicato",c:"Legumi",k:120,p:14,gs:2,g:7,z:0,ch:2.5,fi:0.5,ca:350,fe:5,mg:35,k2:160,na:600,zn:1,fo:100,se:12,col:0,src:"CREA"},
+// ── SEMI E SUPERFOOD ──
+{n:"Semi di sesamo crudi",c:"Frutta secca",k:573,p:17.7,gs:1.5,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:629,se:34,col:0,src:"CREA"},
+{n:"Arachidi crude (non tostate)",c:"Frutta secca",k:567,p:25.8,gs:6.9,g:49.2,z:3.6,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:336,se:7,col:0,src:"CREA"},
+{n:"Spirulina in polvere",c:"Verdure",k:290,p:57.5,gs:0.7,g:7.7,z:2.4,ch:23.9,fi:3.6,ca:120,fe:28.5,mg:195,k2:1363,na:1048,zn:2.0,fo:118,se:7,col:0,src:"CREA"},
+{n:"Bacche di goji secche",c:"Frutta secca",k:349,p:14.3,gs:0.3,g:0.4,z:45.6,ch:77.1,fi:13.0,ca:190,fe:6.8,mg:83,k2:1132,na:298,zn:2.0,fo:67,se:5,col:0,src:"CREA"},
+// ── FRUTTA ESOTICA aggiuntiva ──
+{n:"Pitaya / Dragon fruit (polpa)",c:"Frutta fresca",k:50,p:1.1,gs:0,g:0.4,z:9.2,ch:13.0,fi:3.0,ca:18,fe:1.9,mg:40,k2:436,na:39,zn:0.4,fo:34,se:0.6,col:0,src:"CREA"},
+{n:"Pomelo fresco",c:"Frutta fresca",k:38,p:0.8,gs:0,g:0.1,z:6.7,ch:9.6,fi:1.0,ca:4,fe:0.1,mg:6,k2:216,na:1,zn:0.08,fo:16,se:0.5,col:0,src:"CREA"},
+{n:"Noce di cocco fresca (polpa)",c:"Frutta lipidica",k:354,p:3.3,gs:29.7,g:33.5,z:6.2,ch:15.2,fi:9.0,ca:14,fe:2.4,mg:32,k2:356,na:20,zn:1.1,fo:113,se:10,col:0,src:"CREA"},
+{n:"Durian fresco",c:"Frutta fresca",k:147,p:1.5,gs:0.5,g:5.3,z:16.1,ch:27.1,fi:3.8,ca:6,fe:0.4,mg:30,k2:436,na:2,zn:0.3,fo:44,se:0.6,col:0,src:"CREA"},
+{n:"Guava fresca",c:"Frutta fresca",k:68,p:2.6,gs:0,g:1.0,z:8.9,ch:14.3,fi:5.4,ca:18,fe:0.3,mg:22,k2:417,na:2,zn:0.2,fo:49,se:0.6,col:0,src:"CREA"},
+{n:"Litchi fresco",c:"Frutta fresca",k:66,p:0.8,gs:0,g:0.4,z:15.2,ch:16.5,fi:1.3,ca:5,fe:0.3,mg:10,k2:171,na:1,zn:0.1,fo:14,se:0.6,col:0,src:"CREA"},
+{n:"Melograno / Melagrana (arilli)",c:"Frutta fresca",k:83,p:1.7,gs:0,g:1.2,z:13.7,ch:18.7,fi:4.0,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:36,se:0.5,col:0,src:"CREA"},
+{n:"Giuggiole fresche",c:"Frutta fresca",k:79,p:1.2,gs:0,g:0.2,z:17.4,ch:20.2,fi:0.6,ca:21,fe:0.5,mg:10,k2:250,na:3,zn:0.1,fo:23,se:0.3,col:0,src:"CREA"},
+// ── VERDURE aggiuntive ──
+{n:"Rucola selvatica",c:"Verdure",k:25,p:2.6,gs:0,g:0.7,z:2.0,ch:3.7,fi:1.6,ca:160,fe:1.5,mg:47,k2:369,na:27,zn:0.5,fo:97,se:0.3,col:0,src:"CREA"},
+{n:"Crescione d'acqua",c:"Verdure",k:11,p:2.3,gs:0,g:0.1,z:0.4,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.1,fo:9,se:0.9,col:0,src:"CREA"},
+{n:"Puntarelle (cicoria catalogna)",c:"Verdure",k:15,p:1.7,gs:0,g:0.2,z:0.7,ch:2.4,fi:2.6,ca:88,fe:1.2,mg:20,k2:342,na:50,zn:0.4,fo:70,se:0.4,col:0,src:"CREA"},
+{n:"Friarielli (cime di rapa napoletane)",c:"Verdure",k:22,p:2.9,gs:0,g:0.3,z:1.2,ch:3.2,fi:2.8,ca:82,fe:2.5,mg:22,k2:200,na:40,zn:0.4,fo:95,se:0.9,col:0,src:"CREA"},
+{n:"Cavolo nero toscano",c:"Verdure",k:35,p:3.3,gs:0,g:0.6,z:0.5,ch:6.7,fi:3.6,ca:157,fe:1.5,mg:34,k2:704,na:38,zn:0.4,fo:141,se:0.9,col:0,src:"CREA"},
+{n:"Carciofo crudo",c:"Verdure",k:47,p:3.3,gs:0,g:0.1,z:2.3,ch:10.5,fi:8.6,ca:44,fe:1.3,mg:60,k2:370,na:94,zn:0.5,fo:68,se:0.2,col:0,src:"CREA"},
+{n:"Topinambur",c:"Verdure",k:73,p:2.0,gs:0,g:0.1,z:13.1,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:14,se:0.7,col:0,src:"CREA"},
+{n:"Acetosella (Rumex acetosa)",c:"Verdure",k:22,p:2.0,gs:0,g:0.8,z:1.1,ch:3.2,fi:2.9,ca:44,fe:2.4,mg:103,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
+{n:"Erbette (bietola da coste lessata)",c:"Verdure",k:19,p:1.8,gs:0,g:0.3,z:0.5,ch:3.3,fi:2.1,ca:96,fe:1.2,mg:52,k2:475,na:179,zn:0.4,fo:47,se:1,col:0,src:"CREA"},
+{n:"Scorzonera",c:"Verdure",k:82,p:3.3,gs:0,g:0.5,z:7.9,ch:17.7,fi:3.3,ca:56,fe:0.8,mg:23,k2:380,na:20,zn:0.3,fo:75,se:0.5,col:0,src:"CREA"},
+// ── CEREALI aggiuntivi ──
+{n:"Grano saraceno crudo",c:"Cereali",k:343,p:13.3,gs:0.4,g:3.4,z:2.6,ch:71.5,fi:10.0,ca:18,fe:2.2,mg:231,k2:460,na:1,zn:2.4,fo:347,se:8,col:0,src:"CREA"},
+{n:"Quinoa rossa cruda",c:"Cereali",k:368,p:14.1,gs:0.4,g:6.1,z:4.8,ch:64.2,fi:7.0,ca:47,fe:4.6,mg:197,k2:563,na:5,zn:3.1,fo:457,se:8.5,col:0,src:"CREA"},
+{n:"Quinoa nera cruda",c:"Cereali",k:368,p:14.1,gs:0.4,g:6.1,z:4.8,ch:64.2,fi:7.0,ca:47,fe:4.6,mg:197,k2:563,na:5,zn:3.1,fo:457,se:8.5,col:0,src:"CREA"},
+{n:"Kamut (frumento khorasan) crudo",c:"Cereali",k:337,p:14.7,gs:0.4,g:2.6,z:1.8,ch:70.2,fi:9.1,ca:34,fe:3.8,mg:153,k2:446,na:5,zn:3.7,fo:443,se:11,col:0,src:"CREA"},
+{n:"Spelta (farro grande) cruda",c:"Cereali",k:338,p:15.0,gs:0.3,g:2.4,z:2.0,ch:70.2,fi:10.9,ca:27,fe:4.4,mg:136,k2:388,na:8,zn:3.3,fo:401,se:11,col:0,src:"CREA"},
+{n:"Farro monococco crudo",c:"Cereali",k:340,p:17.6,gs:0.4,g:2.5,z:1.5,ch:66.9,fi:8.4,ca:32,fe:4.0,mg:140,k2:359,na:4,zn:3.0,fo:375,se:8,col:0,src:"CREA"},
+{n:"Riso venere (riso nero) crudo",c:"Cereali",k:357,p:8.8,gs:0.2,g:2.7,z:0.5,ch:75.5,fi:4.9,ca:13,fe:1.5,mg:127,k2:163,na:9,zn:2.2,fo:289,se:7,col:0,src:"CREA"},
+{n:"Orzo integrale crudo",c:"Cereali",k:354,p:12.5,gs:0.3,g:2.3,z:1.6,ch:73.5,fi:17.3,ca:33,fe:3.6,mg:133,k2:452,na:12,zn:2.8,fo:264,se:37,col:0,src:"CREA"},
+{n:"Segale in chicchi cruda",c:"Cereali",k:335,p:14.8,gs:0.3,g:2.5,z:1.4,ch:69.8,fi:15.1,ca:33,fe:2.7,mg:121,k2:510,na:2,zn:3.7,fo:374,se:35,col:0,src:"CREA"},
+// ── LEGUMI aggiuntivi ──
+{n:"Ceci neri secchi",c:"Legumi",k:364,p:20.6,gs:0.4,g:6.0,z:2.5,ch:61.0,fi:15.0,ca:105,fe:6.2,mg:115,k2:875,na:24,zn:3.4,fo:322,se:6,col:0,src:"CREA"},
+{n:"Fagiolini di soia (edamame secchi)",c:"Legumi",k:471,p:36.5,gs:5.7,g:20.6,z:9.5,ch:30.2,fi:20.6,ca:277,fe:15.7,mg:280,k2:1797,na:15,zn:4.9,fo:704,se:17.3,col:0,src:"CREA"},
+{n:"Fagioli rossi kidney cotti",c:"Legumi",k:127,p:8.7,gs:0.1,g:0.5,z:0.4,ch:22.8,fi:6.4,ca:28,fe:2.9,mg:45,k2:403,na:2,zn:1.1,fo:130,se:1.2,col:0,src:"CREA"},
+{n:"Vigna dall'occhio (Black-eyed peas) secchi",c:"Legumi",k:336,p:23.5,gs:0.3,g:1.3,z:1.7,ch:60.0,fi:10.5,ca:110,fe:8.3,mg:184,k2:1112,na:58,zn:3.4,fo:441,se:9,col:0,src:"CREA"},
+{n:"Mungo secco (fagiolo verde mungo)",c:"Legumi",k:347,p:23.9,gs:0.2,g:1.2,z:6.6,ch:62.6,fi:16.3,ca:132,fe:6.7,mg:189,k2:1246,na:15,zn:2.7,fo:367,se:8.2,col:0,src:"CREA"},
+// ── LATTICINI aggiuntivi ──
+{n:"Kefir (latte fermentato)",c:"Latte e derivati",k:61,p:3.3,gs:2.5,g:3.5,z:4.2,ch:4.5,fi:0,ca:120,fe:0.1,mg:12,k2:150,na:50,zn:0.4,fo:92,se:3,col:12,src:"CREA"},
+{n:"Lassi naturale (bevanda yogurt)",c:"Latte e derivati",k:60,p:3.5,gs:1.8,g:3.0,z:6.8,ch:7.0,fi:0,ca:120,fe:0.1,mg:11,k2:145,na:42,zn:0.4,fo:90,se:3,col:12,src:"CREA"},
+{n:"Burrata fresca",c:"Latte e derivati",k:300,p:14.5,gs:18,g:26.0,z:1.5,ch:1.5,fi:0,ca:210,fe:0.1,mg:10,k2:70,na:350,zn:0.9,fo:175,se:5,col:75,src:"CREA"},
+{n:"Quark (fiocchi magri tedeschi)",c:"Latte e derivati",k:65,p:12.0,gs:0.3,g:0.2,z:4.1,ch:4.1,fi:0,ca:95,fe:0.1,mg:12,k2:110,na:65,zn:0.6,fo:115,se:8,col:3,src:"CREA"},
+{n:"Labneh (yogurt scolato medio-oriente)",c:"Latte e derivati",k:195,p:12.5,gs:9.0,g:15.8,z:3.3,ch:3.3,fi:0,ca:135,fe:0.1,mg:14,k2:120,na:300,zn:1.1,fo:165,se:8,col:44,src:"CREA"},
+// ── CARNI aggiuntive ──
+{n:"Vitello (macinato magro)",c:"Carni e derivati",k:119,p:20.5,gs:1.2,g:4.0,z:0,ch:0,fi:0,ca:10,fe:1.4,mg:22,k2:320,na:70,zn:3.0,fo:190,se:9,col:78,src:"CREA"},
+{n:"Maiale magro (filetto)",c:"Carni e derivati",k:143,p:22.0,gs:1.4,g:5.9,z:0,ch:0,fi:0,ca:6,fe:0.8,mg:25,k2:380,na:54,zn:2.0,fo:196,se:32,col:68,src:"CREA"},
+{n:"Agnello (coscia magra)",c:"Carni e derivati",k:162,p:22.3,gs:2.3,g:7.8,z:0,ch:0,fi:0,ca:15,fe:2.4,mg:22,k2:315,na:78,zn:4.0,fo:175,se:8,col:80,src:"CREA"},
+{n:"Struzzo (filetto)",c:"Carni e derivati",k:105,p:22.4,gs:0.5,g:1.7,z:0,ch:0,fi:0,ca:5,fe:3.0,mg:25,k2:350,na:67,zn:3.2,fo:198,se:25,col:58,src:"CREA"},
+{n:"Bufalo (macinato)",c:"Carni e derivati",k:130,p:20.5,gs:0.8,g:5.2,z:0,ch:0,fi:0,ca:12,fe:2.9,mg:20,k2:300,na:55,zn:3.8,fo:162,se:8,col:61,src:"CREA"},
+// ── PESCE E FRUTTI DI MARE aggiuntivi ──
+{n:"Orata fresca",c:"Pesce",k:96,p:18.5,gs:0.7,g:3.0,z:0,ch:0,fi:0,ca:26,fe:0.5,mg:26,k2:358,na:71,zn:0.5,fo:200,se:18,col:52,src:"CREA"},
+{n:"Rombo (sogliola piatta)",c:"Pesce",k:86,p:18.2,gs:0.4,g:1.2,z:0,ch:0,fi:0,ca:18,fe:0.3,mg:22,k2:300,na:80,zn:0.4,fo:185,se:20,col:50,src:"CREA"},
+{n:"Cernia fresca",c:"Pesce",k:92,p:19.2,gs:0.5,g:1.5,z:0,ch:0,fi:0,ca:23,fe:0.6,mg:28,k2:432,na:54,zn:0.5,fo:210,se:42,col:40,src:"CREA"},
+{n:"Calamaro fresco",c:"Pesce",k:92,p:15.6,gs:0.2,g:1.4,z:3.1,ch:3.1,fi:0,ca:32,fe:0.7,mg:33,k2:246,na:160,zn:1.5,fo:213,se:44,col:233,src:"CREA"},
+{n:"Polpo cotto",c:"Pesce",k:82,p:14.9,gs:0.4,g:1.0,z:2.2,ch:2.2,fi:0,ca:53,fe:5.3,mg:30,k2:350,na:196,zn:1.7,fo:200,se:45,col:48,src:"CREA"},
+{n:"Ostrica fresca",c:"Pesce",k:69,p:9.5,gs:1.0,g:2.5,z:4.2,ch:4.7,fi:0,ca:45,fe:5.5,mg:22,k2:168,na:510,zn:90.0,fo:162,se:77,col:50,src:"CREA"},
+{n:"Riccio di mare (polpa)",c:"Pesce",k:99,p:12.8,gs:0.7,g:3.3,z:3.7,ch:6.6,fi:0,ca:30,fe:1.1,mg:27,k2:220,na:220,zn:0.7,fo:148,se:30,col:150,src:"CREA"},
+// ── BEVANDE aggiuntive ──
+{n:"Succo di melograno 100%",c:"Bevande",k:54,p:0.2,gs:0,g:0.3,z:12.6,ch:13.4,fi:0.1,ca:11,fe:0.3,mg:7,k2:214,na:9,zn:0.2,fo:8,se:0.5,col:0,src:"CREA"},
+{n:"Tè verde infuso (non zuccherato)",c:"Bevande",k:1,p:0.2,gs:0,g:0,z:0,ch:0.3,fi:0,ca:1,fe:0.1,mg:2,k2:19,na:3,zn:0,fo:1,se:0,col:0,src:"CREA"},
+{n:"Tè nero infuso (non zuccherato)",c:"Bevande",k:1,p:0.1,gs:0,g:0,z:0,ch:0.3,fi:0,ca:1,fe:0.2,mg:3,k2:37,na:3,zn:0,fo:2,se:0,col:0,src:"CREA"},
+{n:"Tisana camomilla (infuso)",c:"Bevande",k:1,p:0,gs:0,g:0,z:0.2,ch:0.2,fi:0,ca:2,fe:0.1,mg:1,k2:8,na:1,zn:0,fo:1,se:0,col:0,src:"CREA"},
+{n:"Acqua di riso (bevanda)",c:"Bevande",k:10,p:0.1,gs:0,g:0.1,z:2.4,ch:2.5,fi:0,ca:2,fe:0.1,mg:3,k2:10,na:3,zn:0,fo:6,se:0,col:0,src:"CREA"},
+// ── FARINE E AMIDI aggiuntivi ──
+{n:"Farina di riso bianca",c:"Cereali e derivati",k:366,p:6.9,gs:0.2,g:1.4,z:0.5,ch:80.1,fi:2.4,ca:10,fe:0.5,mg:35,k2:76,na:0,zn:0.9,fo:98,se:15,col:0,src:"CREA"},
+{n:"Farina di mais (polenta)",c:"Cereali e derivati",k:362,p:8.7,gs:0.3,g:3.5,z:1.5,ch:76.8,fi:4.4,ca:7,fe:2.7,mg:127,k2:287,na:35,zn:2.2,fo:272,se:15,col:0,src:"CREA"},
+{n:"Farina di grano saraceno",c:"Cereali e derivati",k:335,p:12.6,gs:0.5,g:3.1,z:2.4,ch:70.6,fi:10.0,ca:41,fe:4.1,mg:251,k2:577,na:11,zn:3.1,fo:337,se:5,col:0,src:"CREA"},
+{n:"Amido di mais (maizena)",c:"Cereali e derivati",k:381,p:0.3,gs:0,g:0.1,z:0,ch:91.3,fi:0.5,ca:2,fe:0.2,mg:3,k2:3,na:9,zn:0.1,fo:13,se:3,col:0,src:"CREA"},
+{n:"Amido di tapioca",c:"Cereali e derivati",k:357,p:0.2,gs:0,g:0.0,z:0,ch:85.7,fi:0.9,ca:20,fe:1.6,mg:1,k2:11,na:1,zn:0.1,fo:7,se:0.8,col:0,src:"CREA"},
+{n:"Farina di cocco",c:"Cereali e derivati",k:424,p:6.1,gs:23.7,g:24.4,z:5.4,ch:57.3,fi:38.5,ca:26,fe:3.8,mg:90,k2:543,na:37,zn:1.1,fo:260,se:18,col:0,src:"CREA"},
+{n:"Farina di avena",c:"Cereali e derivati",k:379,p:13.2,gs:1.1,g:7.0,z:1.0,ch:65.7,fi:10.1,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:3.6,fo:523,se:34,col:0,src:"CREA"},
+// ── GRASSI E OLI aggiuntivi ──
+{n:"Olio di avocado",c:"Grassi e oli",k:884,p:0,gs:11.6,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di lino (flaxseed)",c:"Grassi e oli",k:884,p:0,gs:9.4,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Ghee (burro chiarificato)",c:"Grassi e oli",k:900,p:0,gs:61.9,g:99.8,z:0,ch:0,fi:0,ca:4,fe:0,mg:0,k2:0,na:2,zn:0,fo:0,se:0,col:256,src:"CREA"},
+{n:"Olio di sesamo",c:"Grassi e oli",k:884,p:0,gs:14.2,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"}
 ];
 
 const DB_BDA=[
@@ -846,6 +926,33 @@ const DB_UPF = [
   {n:"Acqua di cocco naturale (lattina)",c:"Bevande",src:"UPF",k:19,p:0.7,gs:0,g:0.2,z:2.6,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:600,na:105,zn:0.1,fo:10,se:1,col:0},
   {n:"Latte di riso naturale",c:"Latte e derivati",src:"UPF",k:47,p:0.3,gs:0,g:1,z:5,ch:9.2,fi:0.3,ca:120,fe:0.2,mg:8,k2:25,na:50,zn:0.1,fo:10,se:0,col:0},
   {n:"Latte di piselli (Ripple tipo)",c:"Latte e derivati",src:"UPF",k:52,p:8,gs:0.5,g:2.5,z:0,ch:1,fi:0,ca:450,fe:1,mg:15,k2:270,na:130,zn:0.8,fo:100,se:3,col:0},
+
+  // ── MERENDINE E DOLCI CONFEZIONATI aggiuntivi ──
+  {n:"Crostatina Mulino Bianco tipo",c:"Dolci confezionati",src:"UPF",k:385,p:5,gs:6,g:13,z:26,ch:61,fi:1.5,ca:40,fe:1.2,mg:12,k2:110,na:270,zn:0.4,fo:65,se:3,col:35},
+  {n:"Pan di Stelle tipo (biscotti cacao)",c:"Biscotti e crackers",src:"UPF",k:484,p:8,gs:9.5,g:20.5,z:31,ch:66,fi:2,ca:65,fe:3,mg:40,k2:280,na:260,zn:0.9,fo:130,se:4,col:10},
+  {n:"Merendina spugnosa tipo Twinkie",c:"Dolci confezionati",src:"UPF",k:393,p:4,gs:4.5,g:13,z:49,ch:62,fi:0.5,ca:35,fe:1,mg:8,k2:65,na:330,zn:0.3,fo:50,se:3,col:20},
+  {n:"Brioche con crema industriale",c:"Dolci confezionati",src:"UPF",k:340,p:6.5,gs:5,g:12,z:28,ch:52,fi:1,ca:55,fe:1.2,mg:14,k2:130,na:310,zn:0.4,fo:80,se:4,col:55},
+  {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:519,p:7.5,gs:18,g:27,z:58,ch:64,fi:1.5,ca:95,fe:1.8,mg:30,k2:220,na:95,zn:0.8,fo:105,se:3,col:10},
+
+  // ── FAST FOOD / STREET FOOD ──
+  {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:295,p:12,gs:7,g:14,z:24,ch:31,fi:1,ca:45,fe:2,mg:20,k2:195,na:820,zn:1.2,fo:115,se:8,col:45},
+  {n:"Panino da hamburger tipo Big Mac",c:"Fast food",src:"UPF",k:254,p:13,gs:5.5,g:12,z:22,ch:29,fi:1.5,ca:85,fe:2.5,mg:22,k2:200,na:570,zn:1.5,fo:120,se:10,col:40},
+  {n:"Patatine fritte fast food (porz. 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:3,ch:41,fi:3,ca:10,fe:0.7,mg:24,k2:420,na:300,zn:0.4,fo:90,se:1,col:0},
+  {n:"Nuggets di pollo industriali (100g)",c:"Fast food",src:"UPF",k:297,p:15,gs:2.5,g:18,z:0.5,ch:18,fi:0.5,ca:15,fe:1,mg:18,k2:260,na:580,zn:0.9,fo:145,se:12,col:40},
+  {n:"Arancino / supplì (fritto, 100g)",c:"Fast food",src:"UPF",k:207,p:5.5,gs:2.5,g:9,z:1.5,ch:27,fi:1.2,ca:30,fe:1,mg:18,k2:130,na:410,zn:0.6,fo:75,se:5,col:15},
+  {n:"Pizza margherita industriale surgelata",c:"Fast food",src:"UPF",k:210,p:8,gs:3.5,g:8,z:3,ch:27,fi:1.5,ca:150,fe:1.5,mg:20,k2:180,na:620,zn:1,fo:100,se:7,col:18},
+
+  // ── SALUMI E CARNI PROCESSATE aggiuntivi ──
+  {n:"Mortadella Bologna",c:"Salumi processati",src:"UPF",k:311,p:15,gs:9,g:28,z:0,ch:1.5,fi:0,ca:10,fe:1.5,mg:14,k2:240,na:1150,zn:1.5,fo:135,se:12,col:60},
+  {n:"Würstel di maiale e vitello",c:"Salumi processati",src:"UPF",k:274,p:12,gs:9,g:24,z:0,ch:1.5,fi:0,ca:15,fe:1.2,mg:12,k2:165,na:1100,zn:1.2,fo:120,se:10,col:55},
+  {n:"Bresaola della Valtellina",c:"Salumi processati",src:"UPF",k:151,p:32,gs:0.5,g:2.5,z:0,ch:0,fi:0,ca:12,fe:4,mg:22,k2:400,na:1400,zn:4,fo:175,se:12,col:60},
+  {n:"Coppa / Capocollo",c:"Salumi processati",src:"UPF",k:377,p:22,gs:11,g:32,z:0,ch:0,fi:0,ca:10,fe:2,mg:22,k2:370,na:1300,zn:2.2,fo:185,se:16,col:78},
+  {n:"Pancetta affumicata (bacon italiano)",c:"Salumi processati",src:"UPF",k:458,p:16,gs:17,g:43,z:0,ch:0,fi:0,ca:8,fe:0.9,mg:18,k2:280,na:1040,zn:1.5,fo:130,se:22,col:90},
+
+  // ── DOLCI / DESSERT PARTICOLARI ──
+  {n:"Panna cotta industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:210,p:3,gs:9,g:14,z:22,ch:24,fi:0,ca:95,fe:0.1,mg:8,k2:110,na:55,zn:0.2,fo:70,se:2,col:50},
+  {n:"Tiramisù industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:298,p:5.5,gs:10,g:19,z:25,ch:27,fi:0.3,ca:65,fe:0.6,mg:12,k2:130,na:120,zn:0.4,fo:90,se:4,col:145},
+  {n:"Crostata industriale marmellata",c:"Dolci confezionati",src:"UPF",k:398,p:5,gs:6.5,g:15,z:35,ch:61,fi:2,ca:40,fe:1.5,mg:15,k2:120,na:310,zn:0.5,fo:70,se:4,col:20},
 ];
 
 
@@ -1759,7 +1866,139 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Lenticchie secche',qt:'40'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Broccoli',qt:'150'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
-   ],giorni:[[{nome:"Colazione",emoji:"��",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Lenticchie secche",qt:"40"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Broccoli",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pera",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Riso integrale crudo",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fiocchi d'avena",qt:"40"},{nome:"Banana",qt:"120"},{nome:"Noci",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Arancia",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"80"},{nome:"Ceci secchi",qt:"50"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"150"},{nome:"Noci",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Farro perlato crudo",qt:"70"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Fagioli borlotti secchi",qt:"50"},{nome:"Pomodoro rosso",qt:"120"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Radicchio",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"160"},{nome:"Patata",qt:"150"},{nome:"Cavolfiore",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]}
+   ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Lenticchie secche",qt:"40"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Broccoli",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pera",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Riso integrale crudo",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fiocchi d'avena",qt:"40"},{nome:"Banana",qt:"120"},{nome:"Noci",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Arancia",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"80"},{nome:"Ceci secchi",qt:"50"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"150"},{nome:"Noci",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Farro perlato crudo",qt:"70"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Fagioli borlotti secchi",qt:"50"},{nome:"Pomodoro rosso",qt:"120"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Radicchio",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"160"},{nome:"Patata",qt:"150"},{nome:"Cavolfiore",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
+  // ── NUOVE PATOLOGIE ──
+  {id:'diabete_gestazionale',emoji:'🤰',nome:'Diabete Gestazionale (GDM)',badge:'ADA/ACOG 2023',colore:'#EC4899',
+   desc:'Controllo glicemico tramite distribuzione dei carboidrati, basso IG e monitoraggio postprandiale. No zuccheri semplici. Frazionamento in 5-6 pasti.',
+   note:'ADA 2023 · ACOG 2023 · CHO 40-50% kcal, basso IG · No zuccheri liberi · 3 pasti + 3 spuntini · Glicemia a digiuno <95 mg/dL, 1h postprandiale <140 mg/dL, 2h <120 mg/dL · Attività fisica moderata raccomandata · Monitorare aumento di peso (11-16 kg se normopeso, 7-11 kg se sovrappeso) · Integrare folati, ferro, DHA · Allattamento riduce rischio T2DM materno futuro.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'40'},{nome:'Latte parz. scremato UHT',qt:'150'},{nome:'Mirtilli',qt:'80'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Spinaci crudi',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'120'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'100'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino serale',emoji:'🌛',items:[{nome:'Yogurt greco 0% grassi',qt:'100'},{nome:'Semi di chia',qt:'5'}]}
+   ]},
+  {id:'diabete_t1',emoji:'💉',nome:'Diabete Mellito Tipo 1',badge:'ISPAD/ADA 2022',colore:'#1D4ED8',
+   desc:'Conteggio dei carboidrati (CHO counting) per adeguare la dose insulinica. Dieta flessibile. Monitoraggio glicemico continuo.',
+   note:'ISPAD 2022 · ADA 2022 · Conteggio CHO: 1 unità insulina rapida ogni 10-15g CHO (ratio personalizzato) · Sensibilità insulinica variabile · Attenzione a ipoglicemie: correzione con 15g CHO rapidi · Monitorare: HbA1c, TIR (Time in Range >70% obiettivo) · Snack proteici prima dell\'attività fisica · No restrizione CHO se insulina adeguata · Micronutrienti: vitamina D, Mg, Zn spesso deficitari.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'50'},{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Fragola',qt:'100'},{nome:'Mandorle dolci secche',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'130'},{nome:'Formaggio grana padano',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Lattuga',qt:'80'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'menopausa',emoji:'🌸',nome:'Menopausa / Perimenopausa',badge:'IMS/ESHRE 2022',colore:'#DB2777',
+   desc:'Dieta ad alto contenuto di calcio e vitamina D per prevenire l\'osteoporosi. Fitoestrogeni (soia, lino). Controllo del peso per ridurre i sintomi.',
+   note:'IMS 2022 · Calcio 1200 mg/die · Vitamina D 1500-2000 UI/die · Fitoestrogeni (isoflavoni soia, lignani lino) utili per vampate · Limitare alcol, caffeina · Proteine adeguate (1.0-1.2 g/kg) per preservare la massa muscolare · Fibre 25-30g/die · Omega-3 per umore e cardiovascolare · Restrizione calorica moderata se sovrappeso.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Semi di lino',qt:'10'},{nome:'Kiwi',qt:'120'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tofu',qt:'100'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pomodoro rosso',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'sibo',emoji:'🦠',nome:'SIBO (Sovracrescita Batterica Intestinale)',badge:'ACG/WGO 2020',colore:'#F59E0B',
+   desc:'Dieta a basso contenuto di FODMAP durante la fase di trattamento. Riduzione dei substrati fermentabili per limitare la crescita batterica.',
+   note:'ACG 2020 · WGO 2021 · Dieta Low-FODMAP nella fase acuta (4-6 settimane) · Poi reintroduzione graduale · Evitare eccessi di fibre fermentabili · Probiotici: evidenza limitata e controversa · Pasti piccoli e frequenti · Evitare alcol e zuccheri raffinati · Monitorare: malassorbimento vitamine B12, D, ferro, zinco.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Fragola',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'5'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mirtilli',qt:'80'},{nome:'Formaggio grana padano',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Zucchina',qt:'100'},{nome:'Carota',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'120'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'120'},{nome:'Peperone rosso',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'allergia_arachidi',emoji:'🥜',nome:'Allergia alle Arachidi',badge:'EAACI 2021',colore:'#D97706',
+   desc:'Eliminazione completa delle arachidi e dei prodotti che le contengono. Attenzione alla cross-contaminazione. Adrenalina autoiniettabile (EpiPen) sempre con sé.',
+   note:'EAACI 2021 · Allergia più pericolosa per rischio anafilassi · Etichette: leggere SEMPRE (E.U. Reg. 1169/2011 – allergene obbligatorio) · Cross-contaminazione frequente in oleifici, pasticcerie, pizzerie · Lupini cross-reattivi con arachidi in ~30% dei casi · OIT (immunoterapia orale): opzione in centri specializzati · Monitorare crescita in bambini.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Latte intero fresco',qt:'200'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'80'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Yogurt greco 0% grassi',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'allergia_grano',emoji:'🌾',nome:'Allergia al Grano (non-celiachia)',badge:'EAACI 2021',colore:'#92400E',
+   desc:'Eliminazione del grano e dei suoi derivati. Meno restrittiva della celiachia (orzo e segale tollerati in alcuni). Rischio anafilassi da sforzo fisico indotto da grano.',
+   note:'EAACI 2021 · Distinguere da celiachia (autoimmune) e NCWS (sensibilità) · Orzo e segale: spesso tollerati (allergia specifica alle proteine del grano, non al glutine) · WDEIA (Wheat-Dependent Exercise-Induced Anaphylaxis): evitare grano 4-6h prima dell\'esercizio · Leggere etichette: frumento, spelta, kamut, semola, amido di grano · EpiPen se storia di anafilassi.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'40'},{nome:'Latte intero fresco',qt:'200'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'allergia_sesamo',emoji:'🌰',nome:'Allergia al Sesamo',badge:'EAACI/EU 2023',colore:'#B45309',
+   desc:'Eliminazione completa del sesamo e dei suoi derivati (tahini, olio di sesamo, hummus). Nuovo allergene obbligatorio in etichetta UE dal 2023.',
+   note:'EAACI 2023 · Regolamento UE 2023: sesamo 15° allergene obbligatorio · Fonti nascoste: tahini, hummus, olio di sesamo, halva, pane da hamburger, cracker orientali, pangrattato etnico · Cross-contaminazione frequente in cucine asiatiche e mediorientali · Rischio anafilassi moderato · Leggere sempre le etichette di pane confezionato e cracker.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Kiwi',qt:'120'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Salmone atlantico',qt:'120'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'intolleranza_istamina',emoji:'🌡️',nome:'Intolleranza all\'Istamina (HIT)',badge:'EAACI/Maintz 2020',colore:'#7C3AED',
+   desc:'Dieta a basso contenuto di istamina e inibitori della DAO. Evitare alimenti fermentati, conserve, alcolici. Individuare soglia personale.',
+   note:'EAACI 2020 · Carenza/riduzione dell\'enzima DAO (diamino-ossidasi) · Sintomi: orticaria, cefalea, sintomi GI, congestione nasale · Alimenti ad alto contenuto: formaggi stagionati, vino, birra, aceto, conserve, tonno, sgombro, salumi · Inibitori DAO: alcol, farmaci (NSAIDs, metoclopramide, codeine) · Supplementazione DAO: evidenza emergente · Vitamina B6, rame, vitamina C co-fattori DAO.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Miele millefiori',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Mirtilli',qt:'80'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Branzino (spigola)',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'intolleranza_nichel',emoji:'⚙️',nome:'Intolleranza al Nichel (SNAS)',badge:'SNAS/EAACI 2022',colore:'#64748B',
+   desc:'Dieta a basso contenuto di nichel nella Sindrome Nichel-Correlata (SNAS). Rotazione degli alimenti e identificazione della soglia personale.',
+   note:'SNAS (Systemic Nickel Allergy Syndrome) · EAACI 2022 · Alimenti ad alto nichel: cioccolato, noci, legumi, cereali integrali, pomodori, spinaci · Dieta di esclusione 4-6 settimane poi reintroduzione graduale · Vitamina C riduce assorbimento del nichel · Cottura in acciaio inossidabile riduce rilascio · Acqua di rubinetto mattutina: lasciare scorrere · Tegami ceramica o vetro preferibili.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco',qt:'60'},{nome:'Latte intero fresco',qt:'200'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Lattuga',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Ricotta vaccina',qt:'60'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'sindrome_nefrosica',emoji:'🫘',nome:'Sindrome Nefrosica',badge:'KDIGO 2021',colore:'#0EA5E9',
+   desc:'Proteine moderate-alte per compensare le perdite urinarie. Sodio molto ridotto per contrastare gli edemi. Grassi saturi limitati (dislipidemia associata).',
+   note:'KDIGO 2021 · Proteine 0.8-1.0 g/kg/die (adulto, non in dialisi) + compensazione perdite urinarie · Sodio <1.5 g/die (edemi) · Grassi saturi <7% (ipercolesterolemia nefrosica) · Omega-3 benefici · Monitorare albumina, colesterolo, trigliceridi · Vitamina D spesso deficitaria · Calcio 1200 mg/die · Evitare supplementi non prescritti · Liquidi solo se iponatriemia.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mirtilli',qt:'80'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Lattuga',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'pancreatite_acuta',emoji:'🔴',nome:'Pancreatite Acuta',badge:'IAP/APA/ESPEN 2020',colore:'#DC2626',
+   desc:'Nutrizione enterale precoce (entro 24-48h) nelle forme moderate-severe. Nelle forme lievi ripresa dell\'alimentazione orale appena tollerata. Dieta a bassissimo contenuto di grassi.',
+   note:'IAP/APA 2020 · ESPEN 2020 · Forme lievi: dieta solida morbida a basso residuo precoce (entro 24-48h) · Forme gravi: NE per SNG precoce se via orale non tollerata · NP solo se NE non fattibile · No digiuno prolungato (aumenta traslocazione batterica) · Reintroduzione orale: liquidi → semiliquidi → solidi morbidi · Grassi <30g/die nella fase iniziale · No alcol a vita se pancreatite alcolica.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'40'},{nome:'Latte scremato',qt:'200'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Mela',qt:'130'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'5'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'25'},{nome:'Marmellata / confettura',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'100'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'5'}]}
+   ]},
+  {id:'trapianto',emoji:'💚',nome:'Post-Trapianto d\'Organo',badge:'ESPEN 2019',colore:'#059669',
+   desc:'Sicurezza alimentare prioritaria (immunosoppressione). Proteine aumentate nella fase precoce. Limitare potassio e fosforo se funzione renale ridotta. No succo di pompelmo.',
+   note:'ESPEN 2019 · Fase precoce (0-3 mesi): proteine 1.2-1.5 g/kg/die, apporto calorico 30-35 kcal/kg/die · Sicurezza alimentare: no crudi, no formaggi molli non pastorizzati, no frutti di mare crudi · No pompelmo/succo pompelmo (inibisce CYP3A4 metabolismo immunosoppressori) · Corticosteroidi: monitorare glicemia, osteoporosi (vit D+Ca), sodio · Lungo termine: rischio cardiovascolare e metabolico elevato · Peso: correggere sovrappeso da cortisonici.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Albume d'uovo",qt:'80'},{nome:'Marmellata / confettura',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'colite_microscopica',emoji:'🔬',nome:'Colite Microscopica (Collagena/Linfocitica)',badge:'EMCG/ACG 2020',colore:'#0D9488',
+   desc:'Dieta a basso residuo nelle fasi acute. Eliminare caffeina, FANS (se assunti), PPI se non necessari. Spesso associata a intolleranza al lattosio e al glutine.',
+   note:'EMCG 2020 · ACG 2020 · Trattamento: budesonide (4-8 settimane) + dieta · Fattori scatenanti da eliminare: FANS, statine (raro), PPI (frequente), sertralina · Sperimentare: dieta senza glutine (40-50% beneficio), senza lattosio · Caffeina: effetto secretivo → limitare · Fase acuta: dieta a basso residuo, semiliquida · Remissione: dieta equilibrata con graduale aumento fibre · Probiotici: nessuna evidenza robusta.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'40'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Banana',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Mela',qt:'130'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tacchino petto',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Ricotta vaccina',qt:'60'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]}
 ];
 let PATOLOGIE_CUSTOM=[];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}

@@ -544,7 +544,80 @@ const DB_BDA=[
   {n:"Menta piperita essiccata",c:"Condimenti",src:"BDA",k:285,p:14.8,gs:0.9,g:6.0,z:0,ch:60.7,fi:29.8,ca:1488,fe:31.8,mg:602,k2:1924,na:31,zn:1.1,fo:75,se:4.9,col:0},
   {n:"Cardamomo in polvere",c:"Condimenti",src:"BDA",k:311,p:10.8,gs:0.7,g:6.7,z:4.0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:178,se:0.9,col:0},
   {n:"Zafferano in polvere",c:"Condimenti",src:"BDA",k:310,p:11.4,gs:0.6,g:5.9,z:1.5,ch:65,fi:3.9,ca:111,fe:11.1,mg:264,k2:1724,na:148,zn:1.1,fo:252,se:5.6,col:0},
-  {n:"Aglio essiccato in polvere",c:"Condimenti",src:"BDA",k:331,p:16.8,gs:0.4,g:0.7,z:3.7,ch:72.7,fi:9.0,ca:79,fe:2.3,mg:77,k2:1193,na:60,zn:1.6,fo:153,se:14.2,col:0}
+  {n:"Aglio essiccato in polvere",c:"Condimenti",src:"BDA",k:331,p:16.8,gs:0.4,g:0.7,z:3.7,ch:72.7,fi:9.0,ca:79,fe:2.3,mg:77,k2:1193,na:60,zn:1.6,fo:153,se:14.2,col:0},
+  // ── FORMAGGI E LATTICINI AGGIUNTIVI ──
+  {n:"Fiocchi di latte",c:"Latticini",src:"CREA",k:85,p:11.2,gs:1.5,g:1.5,z:3.6,ch:3.8,fi:0,ca:90,fe:0.1,mg:11,k2:100,na:380,zn:0.5,fo:110,se:6,col:8},
+  {n:"Ricotta di bufala",c:"Latticini",src:"CREA",k:174,p:9.4,gs:6.5,g:14.0,z:0,ch:1.5,fi:0,ca:420,fe:0.4,mg:20,k2:110,na:120,zn:1.5,fo:370,se:5,col:60},
+  {n:"Mozzarella di bufala",c:"Latticini",src:"CREA",k:288,p:14.3,gs:12.0,g:24.5,z:0,ch:0.7,fi:0,ca:516,fe:0.3,mg:20,k2:85,na:270,zn:2.0,fo:340,se:5,col:80},
+  {n:"Asiago stagionato",c:"Formaggi",src:"CREA",k:385,p:33.0,gs:13.5,g:28.5,z:0,ch:0.3,fi:0,ca:1020,fe:0.3,mg:35,k2:90,na:950,zn:4.0,fo:600,se:16,col:98},
+  {n:"Caciocavallo",c:"Formaggi",src:"CREA",k:422,p:37.5,gs:15.5,g:31.5,z:0.5,ch:0.5,fi:0,ca:1190,fe:0.3,mg:28,k2:80,na:1050,zn:3.8,fo:650,se:18,col:102},
+  {n:"Squacquerone",c:"Formaggi",src:"CREA",k:213,p:11.5,gs:9.5,g:17.5,z:2.5,ch:2.5,fi:0,ca:320,fe:0.2,mg:15,k2:85,na:620,zn:1.5,fo:280,se:5,col:56},
+  {n:"Bitto",c:"Formaggi",src:"CREA",k:398,p:26.5,gs:14.5,g:32.0,z:0.3,ch:0.3,fi:0,ca:880,fe:0.3,mg:30,k2:80,na:700,zn:3.5,fo:540,se:15,col:100},
+  {n:"Grana Padano grattugiato",c:"Formaggi",src:"CREA",k:384,p:33.0,gs:14.0,g:28.0,z:0.1,ch:0.1,fi:0,ca:1165,fe:0.3,mg:53,k2:90,na:1090,zn:4.2,fo:680,se:22,col:100},
+  // ── PESCE AGGIUNTIVO ──
+  {n:"Tilapia",c:"Pesce",src:"CREA",k:96,p:20.1,gs:0.5,g:1.7,z:0,ch:0,fi:0,ca:10,fe:0.6,mg:27,k2:302,na:52,zn:0.3,fo:170,se:54,col:50},
+  {n:"Pangasio",c:"Pesce",src:"CREA",k:83,p:15.0,gs:0.7,g:2.3,z:0,ch:0,fi:0,ca:15,fe:0.4,mg:22,k2:250,na:60,zn:0.3,fo:160,se:12,col:42},
+  {n:"Rombo chiodato",c:"Pesce",src:"CREA",k:95,p:18.0,gs:0.5,g:2.5,z:0,ch:0,fi:0,ca:18,fe:0.5,mg:28,k2:370,na:80,zn:0.5,fo:195,se:40,col:55},
+  {n:"Palamita",c:"Pesce",src:"CREA",k:148,p:21.5,gs:2.0,g:7.0,z:0,ch:0,fi:0,ca:14,fe:1.8,mg:32,k2:420,na:52,zn:0.8,fo:220,se:60,col:60},
+  {n:"Spatola (pesce sciabola)",c:"Pesce",src:"CREA",k:109,p:18.5,gs:1.0,g:4.0,z:0,ch:0,fi:0,ca:22,fe:0.9,mg:30,k2:340,na:68,zn:0.6,fo:175,se:45,col:58},
+  {n:"Tonno fresco",c:"Pesce",src:"CREA",k:144,p:23.3,gs:2.0,g:4.9,z:0,ch:0,fi:0,ca:8,fe:1.0,mg:35,k2:450,na:39,zn:0.6,fo:190,se:108,col:38},
+  // ── CARNI AGGIUNTIVE ──
+  {n:"Anatra petto (senza pelle)",c:"Carni rosse",src:"CREA",k:140,p:23.5,gs:1.5,g:5.0,z:0,ch:0,fi:0,ca:10,fe:2.5,mg:22,k2:305,na:74,zn:2.4,fo:190,se:18,col:77},
+  {n:"Faraona petto",c:"Carni bianche",src:"CREA",k:110,p:22.5,gs:0.7,g:2.0,z:0,ch:0,fi:0,ca:12,fe:1.0,mg:23,k2:330,na:63,zn:1.8,fo:200,se:14,col:65},
+  {n:"Piccione",c:"Carni bianche",src:"CREA",k:142,p:17.5,gs:1.2,g:8.0,z:0,ch:0,fi:0,ca:12,fe:4.0,mg:22,k2:292,na:60,zn:2.2,fo:200,se:20,col:90},
+  // ── LEGUMI AGGIUNTIVI ──
+  {n:"Soia secca",c:"Legumi",src:"CREA",k:422,p:36.9,gs:2.0,g:19.9,z:0,ch:30.2,fi:15.7,ca:277,fe:8.8,mg:280,k2:1797,na:5,zn:4.9,fo:520,se:7,col:0},
+  {n:"Cicerchie secche",c:"Legumi",src:"CREA",k:316,p:28.4,gs:0.3,g:1.5,z:0,ch:60.1,fi:6.2,ca:91,fe:6.2,mg:96,k2:858,na:4,zn:2.9,fo:216,se:6,col:0},
+  {n:"Favino secco",c:"Legumi",src:"CREA",k:341,p:26.1,gs:0.3,g:1.5,z:0,ch:60.0,fi:19.0,ca:110,fe:6.7,mg:92,k2:1062,na:13,zn:3.1,fo:250,se:3,col:0},
+  // ── VERDURE AGGIUNTIVE ──
+  {n:"Borragine",c:"Verdure",src:"CREA",k:21,p:1.8,gs:0,g:0.7,z:0.5,ch:3.1,fi:2.5,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.5,fo:13,se:0.9,col:0},
+  {n:"Catalogna",c:"Verdure",src:"CREA",k:20,p:1.6,gs:0,g:0.3,z:1.7,ch:2.7,fi:2.8,ca:100,fe:0.9,mg:22,k2:380,na:45,zn:0.3,fo:90,se:0.5,col:0},
+  {n:"Coste di bietola crude",c:"Verdure",src:"CREA",k:19,p:1.6,gs:0,g:0.2,z:1.1,ch:3.6,fi:1.6,ca:51,fe:1.8,mg:81,k2:380,na:213,zn:0.4,fo:9,se:0.9,col:0},
+  {n:"Friarielli / Cime di rapa crude",c:"Verdure",src:"CREA",k:26,p:2.9,gs:0,g:0.4,z:1.4,ch:4.6,fi:2.6,ca:78,fe:2.3,mg:23,k2:389,na:30,zn:0.5,fo:87,se:0.8,col:0},
+  {n:"Agretti (barba di frate)",c:"Verdure",src:"CREA",k:17,p:1.8,gs:0,g:0.3,z:0.2,ch:1.9,fi:1.3,ca:130,fe:2.0,mg:57,k2:554,na:237,zn:0.4,fo:22,se:0.4,col:0},
+  {n:"Lamponi freschi",c:"Frutta fresca",src:"CREA",k:34,p:1.2,gs:0,g:0.7,z:5.4,ch:11.9,fi:6.5,ca:25,fe:0.7,mg:22,k2:151,na:1,zn:0.4,fo:21,se:0.2,col:0},
+  {n:"More fresche",c:"Frutta fresca",src:"CREA",k:43,p:1.4,gs:0,g:0.5,z:4.9,ch:9.6,fi:5.3,ca:29,fe:0.6,mg:20,k2:162,na:1,zn:0.5,fo:25,se:0.4,col:0},
+  {n:"Ribes nero fresco",c:"Frutta fresca",src:"CREA",k:63,p:1.4,gs:0,g:0.4,z:6.8,ch:15.4,fi:4.3,ca:55,fe:1.5,mg:24,k2:322,na:2,zn:0.3,fo:43,se:0.6,col:0},
+  {n:"Melograno",c:"Frutta fresca",src:"CREA",k:83,p:1.7,gs:0,g:1.2,z:13.7,ch:18.7,fi:4.0,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:107,se:0.5,col:0},
+  {n:"Fico fresco",c:"Frutta fresca",src:"CREA",k:47,p:0.7,gs:0,g:0.3,z:9.2,ch:12.4,fi:2.5,ca:35,fe:0.4,mg:11,k2:232,na:1,zn:0.2,fo:14,se:0.2,col:0},
+  {n:"Susina fresca",c:"Frutta fresca",src:"CREA",k:36,p:0.6,gs:0,g:0.1,z:7.5,ch:11.4,fi:1.4,ca:4,fe:0.2,mg:7,k2:157,na:0,zn:0.1,fo:5,se:0.5,col:0},
+  {n:"Uva rossa",c:"Frutta fresca",src:"CREA",k:57,p:0.6,gs:0,g:0.2,z:14.3,ch:15.5,fi:0.9,ca:10,fe:0.3,mg:7,k2:191,na:2,zn:0.1,fo:14,se:0.1,col:0},
+  {n:"Mandarino",c:"Frutta fresca",src:"CREA",k:53,p:0.8,gs:0,g:0.3,z:9.4,ch:13.3,fi:1.8,ca:36,fe:0.2,mg:11,k2:166,na:2,zn:0.1,fo:22,se:0.1,col:0},
+  {n:"Cedro",c:"Frutta fresca",src:"CREA",k:27,p:1.1,gs:0,g:0.3,z:3.2,ch:9.0,fi:4.7,ca:39,fe:0.5,mg:9,k2:130,na:4,zn:0.1,fo:20,se:0.4,col:0},
+  {n:"Pompelmo fresco",c:"Frutta fresca",src:"CREA",k:32,p:0.6,gs:0,g:0.1,z:6.2,ch:8.0,fi:1.1,ca:12,fe:0.1,mg:9,k2:135,na:0,zn:0.1,fo:11,se:0.1,col:0},
+  // ── PRODOTTI DA FORNO E CEREALI AGGIUNTIVI ──
+  {n:"Pane azzimo (non lievitato)",c:"Cereali e derivati",src:"CREA",k:368,p:10.5,gs:0.4,g:2.5,z:1.0,ch:78.6,fi:3.0,ca:25,fe:2.0,mg:30,k2:130,na:10,zn:0.8,fo:95,se:20,col:0},
+  {n:"Pane pita",c:"Cereali e derivati",src:"BDA",k:275,p:9.1,gs:0.3,g:1.2,z:0.5,ch:57.5,fi:3.0,ca:58,fe:2.3,mg:26,k2:120,na:540,zn:0.7,fo:95,se:15,col:0},
+  {n:"Tortilla di farina di mais",c:"Cereali e derivati",src:"BDA",k:234,p:5.7,gs:0.4,g:3.8,z:0.3,ch:47.4,fi:4.0,ca:81,fe:2.4,mg:55,k2:154,na:5,zn:0.8,fo:128,se:8,col:0},
+  {n:"Farro integrale crudo",c:"Cereali",src:"CREA",k:338,p:15.1,gs:0.3,g:2.5,z:2.2,ch:67.6,fi:9.4,ca:50,fe:3.7,mg:65,k2:320,na:8,zn:3.1,fo:340,se:7,col:0},
+  {n:"Orzo decorticato secco",c:"Cereali",src:"CREA",k:304,p:10.0,gs:0.2,g:1.4,z:0.8,ch:62.8,fi:15.6,ca:33,fe:2.5,mg:79,k2:280,na:6,zn:2.1,fo:264,se:37,col:0},
+  // ── CONDIMENTI E SALSE AGGIUNTIVE ──
+  {n:"Aceto di mele non filtrato",c:"Condimenti",src:"BDA",k:21,p:0.1,gs:0,g:0,z:0.9,ch:0.9,fi:0,ca:7,fe:0.2,mg:5,k2:73,na:5,zn:0.04,fo:11,se:0.1,col:0},
+  {n:"Ketchup industriale",c:"Condimenti",src:"UPF",k:101,p:1.5,gs:0.1,g:0.4,z:21.3,ch:25.0,fi:0.4,ca:14,fe:0.5,mg:10,k2:310,na:1100,zn:0.1,fo:14,se:1,col:0},
+  {n:"Salsa barbecue industriale",c:"Condimenti",src:"UPF",k:135,p:1.5,gs:0.1,g:0.5,z:28.5,ch:32.0,fi:0.5,ca:18,fe:0.8,mg:12,k2:250,na:1200,zn:0.2,fo:18,se:1,col:0},
+  {n:"Harissa (pasta di peperoncino)",c:"Condimenti",src:"BDA",k:75,p:3.5,gs:0.5,g:4.5,z:3.5,ch:6.0,fi:4.0,ca:30,fe:2.5,mg:35,k2:250,na:950,zn:0.5,fo:50,se:2,col:0},
+  {n:"Concentrato di pomodoro",c:"Condimenti",src:"CREA",k:82,p:4.8,gs:0,g:0.5,z:12.5,ch:16.8,fi:4.1,ca:55,fe:6.0,mg:59,k2:1014,na:59,zn:0.6,fo:50,se:1,col:0},
+  // ── DOLCI E PRODOTTI DA COLAZIONE AGGIUNTIVI ──
+  {n:"Biscotti frollini al burro",c:"Biscotti e crackers",src:"UPF",k:490,p:6.0,gs:14.0,g:19.5,z:24.0,ch:71.5,fi:1.5,ca:60,fe:2.0,mg:18,k2:110,na:340,zn:0.5,fo:85,se:6,col:50},
+  {n:"Merendina tipo Fiesta (Ferrero)",c:"Dolci confezionati",src:"UPF",k:461,p:5.4,gs:7.5,g:22,z:41,ch:62,fi:1.5,ca:80,fe:2,mg:25,k2:200,na:170,zn:0.6,fo:85,se:4,col:15},
+  {n:"Cornetto confezionato (Algida tipo)",c:"Gelati",src:"UPF",k:285,p:4.5,gs:6.0,g:16.0,z:27.0,ch:34.0,fi:0.5,ca:85,fe:0.6,mg:12,k2:130,na:90,zn:0.4,fo:70,se:3,col:15},
+  {n:"Tiramisù artigianale",c:"Dolci",src:"BDA",k:298,p:5.5,gs:8.5,g:18.5,z:27.5,ch:32.0,fi:0.3,ca:70,fe:0.8,mg:15,k2:115,na:90,zn:0.5,fo:95,se:4,col:175},
+  {n:"Panna cotta industriale",c:"Dolci confezionati",src:"UPF",k:199,p:3.5,gs:5.0,g:12.5,z:19.0,ch:21.5,fi:0,ca:75,fe:0.1,mg:8,k2:100,na:65,zn:0.3,fo:65,se:2,col:42},
+  // ── PIATTI PRONTI E PREPARATI INDUSTRIALI ──
+  {n:"Minestrone in busta surgelato",c:"Piatti pronti",src:"UPF",k:38,p:2.0,gs:0,g:0.5,z:3.5,ch:6.5,fi:2.5,ca:25,fe:0.8,mg:18,k2:230,na:320,zn:0.3,fo:35,se:1,col:0},
+  {n:"Pasta al pomodoro pronta in busta",c:"Piatti pronti",src:"UPF",k:135,p:4.5,gs:0.5,g:2.0,z:4.5,ch:25.0,fi:2.0,ca:25,fe:1.0,mg:18,k2:180,na:480,zn:0.5,fo:60,se:10,col:0},
+  {n:"Riso in busta pronto (basmati/thai)",c:"Piatti pronti",src:"UPF",k:128,p:2.7,gs:0.1,g:0.4,z:0.5,ch:27.5,fi:0.8,ca:5,fe:0.3,mg:10,k2:30,na:200,zn:0.4,fo:40,se:5,col:0},
+  {n:"Polpette di carne surgelate",c:"Piatti pronti",src:"UPF",k:218,p:14.0,gs:3.5,g:15.5,z:0.5,ch:6.5,fi:0.5,ca:30,fe:1.5,mg:18,k2:260,na:650,zn:2.0,fo:145,se:12,col:55},
+  {n:"Bastoncini di pesce surgelati",c:"Piatti pronti",src:"UPF",k:199,p:12.5,gs:1.5,g:9.0,z:1.5,ch:18.5,fi:0.8,ca:30,fe:0.6,mg:20,k2:220,na:500,zn:0.4,fo:130,se:20,col:30},
+  // ── BEVANDE AGGIUNTIVE ──
+  {n:"Succo di arancia 100% frutta",c:"Bevande",src:"CREA",k:38,p:0.7,gs:0,g:0.2,z:7.3,ch:8.8,fi:0.2,ca:11,fe:0.2,mg:11,k2:200,na:1,zn:0.1,fo:30,se:0.1,col:0},
+  {n:"Succo di mela 100% frutta",c:"Bevande",src:"CREA",k:47,p:0.1,gs:0,g:0.1,z:10.7,ch:11.5,fi:0.1,ca:7,fe:0.2,mg:5,k2:101,na:4,zn:0.02,fo:2,se:0.1,col:0},
+  {n:"Tè verde in foglie (infuso)",c:"Bevande",src:"BDA",k:1,p:0.2,gs:0,g:0,z:0.1,ch:0.2,fi:0,ca:3,fe:0.1,mg:3,k2:20,na:3,zn:0.1,fo:8,se:0,col:0},
+  {n:"Tè nero in foglie (infuso)",c:"Bevande",src:"BDA",k:1,p:0.1,gs:0,g:0,z:0.1,ch:0.2,fi:0,ca:2,fe:0.1,mg:2,k2:38,na:3,zn:0.1,fo:9,se:0,col:0},
+  {n:"Caffè espresso",c:"Bevande",src:"CREA",k:2,p:0.1,gs:0,g:0,z:0,ch:0.3,fi:0,ca:2,fe:0.1,mg:6,k2:116,na:4,zn:0.1,fo:4,se:0,col:0},
+  {n:"Birra chiara (330mL)",c:"Alcolici",src:"CREA",k:43,p:0.5,gs:0,g:0,z:3.6,ch:3.6,fi:0,ca:7,fe:0,mg:8,k2:43,na:6,zn:0.1,fo:21,se:1,col:0},
+  {n:"Vino rosso (125mL)",c:"Alcolici",src:"CREA",k:85,p:0.1,gs:0,g:0,z:0.3,ch:0.3,fi:0,ca:8,fe:0.4,mg:11,k2:127,na:6,zn:0.1,fo:3,se:0.1,col:0},
+  {n:"Vino bianco secco (125mL)",c:"Alcolici",src:"CREA",k:83,p:0.1,gs:0,g:0,z:0.6,ch:0.6,fi:0,ca:9,fe:0.4,mg:10,k2:71,na:6,zn:0.1,fo:2,se:0.1,col:0}
 ];
 
 let CUSTOM_DB=[];
@@ -1676,7 +1749,17 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto (senza pelle)',qt:'160'},{nome:'Lenticchie secche',qt:'50'},{nome:'Spinaci crudi',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Zucchina',qt:'200'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Pomodoro rosso',qt:'100'}]}
-   ]}
+   ]},
+  {id:'larn_popolazione_sana',emoji:'🥗',nome:'Popolazione Sana — LARN V Revisione',badge:'LARN 2014/2023',colore:'#10B981',
+   desc:'Dieta mediterranea equilibrata per la popolazione italiana sana. Energia e nutrienti secondo i LARN (V revisione SINU). Prevenzione primaria delle malattie cronico-degenerative.',
+   note:'LARN 2014 (V Revisione) — SINU · Energia adulto tipo: EAR ~1700-2100 kcal/die (F/M) · Proteine 0.9 g/kg/die (adulto) · CHO 45-60% kcal · Grassi 20-35% kcal · Fibra 25-30 g/die · Sale <5 g/die · Folati 400 µg/die · Vitamina D 15 µg/die · Calcio 1000 mg/die · Ferro 10-18 mg/die · Modello: Dieta Mediterranea.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Lenticchie secche',qt:'40'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Broccoli',qt:'150'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ],giorni:[[{nome:"Colazione",emoji:"��",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Lenticchie secche",qt:"40"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Broccoli",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pera",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Riso integrale crudo",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fiocchi d'avena",qt:"40"},{nome:"Banana",qt:"120"},{nome:"Noci",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Arancia",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"80"},{nome:"Ceci secchi",qt:"50"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"150"},{nome:"Noci",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Farro perlato crudo",qt:"70"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Fagioli borlotti secchi",qt:"50"},{nome:"Pomodoro rosso",qt:"120"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Radicchio",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"160"},{nome:"Patata",qt:"150"},{nome:"Cavolfiore",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]}
 ];
 let PATOLOGIE_CUSTOM=[];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}

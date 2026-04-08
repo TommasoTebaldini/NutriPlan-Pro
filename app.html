@@ -22,7 +22,7 @@
   @page{margin:0;size:A4 landscape}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   #sidebar,#topbar,.no-print,.undo-bar,#loading-overlay,#toast{display:none!important}
-  #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
+  #main{margin:0!important;padding:1cm 1.2cm 1cm!important}
   .page-content{padding:0!important}
   .pasto-body.collapsed{display:block!important}
   .pasto-card{page-break-inside:avoid;margin-bottom:5px!important;overflow:visible!important}
@@ -53,6 +53,11 @@
   body[data-print-mode="compact"] .macro-bar{display:none!important}
   body[data-print-mode="compact"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="compact"] #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  /* ── PDF all-days mode (all days, nutritional tables) ── */
+  body[data-print-mode="pdf-alldays"] #pasti-container{display:none!important}
+  body[data-print-mode="pdf-alldays"] .macro-bar{display:none!important}
+  body[data-print-mode="pdf-alldays"] #print-giorno-hdr{display:none!important}
+  body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
 </style>
 </head>
@@ -191,6 +196,8 @@
   <div id="simple-print-area"></div>
   <!-- COMPACT PRINT AREA (hidden on screen, shown in compact print mode) -->
   <div id="compact-print-area"></div>
+  <!-- PDF ALL-DAYS PRINT AREA (hidden on screen, shown when printing multi-day plans in PDF mode) -->
+  <div id="pdf-alldays-print-area" style="display:none"></div>
 
 </div>
 </main>
@@ -939,8 +946,10 @@ function showAlternatives() {
       <div style="font-weight:600;font-size:12.5px;flex:1;min-width:140px">${esc(a.food.n)} <span class="ac-src ${srcCls}">${a.food.src}</span></div>
       <span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700">${a.newQt}g</span>
       <span style="font-size:10.5px;color:var(--slate-l)">${a.kcal}kcal · P${a.prot}g</span>
-      <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">Sostituisci</button>
-      <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?'✅ In stampa':'📄 +Stampa'}</button>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">Sostituisci</button>
+        <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?'✅ In stampa':'📄 +Stampa'}</button>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('alt-results').innerHTML = `<p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">${introText}</p>${rows}<p style="font-size:11px;color:var(--slate-l);margin-top:6px">Mostrando ${alts.length} risultati. Usa la ricerca per filtrare.</p>`;
@@ -1141,82 +1150,168 @@ function esportaExcel() {
 
 
 function stampaPDF() {
-  // Expand all meals for print
-  giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
-  renderPiano();
-  setTimeout(() => window.print(), 400);
+  if (giorni.length > 1) {
+    document.getElementById('pdf-alldays-print-area').innerHTML = _buildPDFAllDaysHTML();
+    document.body.dataset.printMode = 'pdf-alldays';
+    setTimeout(() => window.print(), 400);
+  } else {
+    giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
+    renderPiano();
+    setTimeout(() => window.print(), 400);
+  }
 }
 
-function stampaSemplice() {
-  giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
+function _buildPDFAllDaysHTML() {
   const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
   const dataPiano = document.getElementById('inp-data')?.value || '';
   const nomePiano = document.getElementById('inp-nome')?.value || '';
-  const gNome = giorni.length > 1 ? giorni[giornoCorrente].nome : '';
-
-  let totKcal = 0, totProt = 0, totCho = 0, totFat = 0, totFib = 0;
-  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:680px;margin:0 auto;color:#1E293B">`;
-
-  // Header
-  html += `<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #0F766E">`;
-  html += `<div style="font-size:22px;font-weight:700;color:#0F766E">${esc(nomeP) || 'Piano Alimentare'}</div>`;
-  if (nomePiano) html += `<div style="font-size:13px;color:#475569;margin-top:4px">${esc(nomePiano)}</div>`;
-  if (dataPiano) {
-    // Parse date parts locally to avoid UTC timezone offset issues
-    const [dp_y, dp_m, dp_d] = dataPiano.split('-').map(Number);
-    const dateFmt = new Date(dp_y, dp_m-1, dp_d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    html += `<div style="font-size:12px;color:#94A3B8;margin-top:2px">${dateFmt}</div>`;
+  let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B">';
+  if (nomeP || nomePiano || dataPiano) {
+    html += '<div style="text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #0F766E">';
+    if (nomeP) html += '<div style="font-size:14px;font-weight:700;color:#0F766E">' + esc(nomeP) + '</div>';
+    if (nomePiano) html += '<div style="font-size:11px;color:#475569">' + esc(nomePiano) + '</div>';
+    if (dataPiano) {
+      const [dp_y,dp_m,dp_d] = dataPiano.split('-').map(Number);
+      html += '<div style="font-size:10px;color:#94A3B8">' + new Date(dp_y,dp_m-1,dp_d).toLocaleDateString('it',{day:'numeric',month:'long',year:'numeric'}) + '</div>';
+    }
+    html += '</div>';
   }
-  if (gNome) html += `<div style="font-size:12px;color:#0F766E;font-weight:600;margin-top:4px">📅 ${esc(gNome)}</div>`;
-  html += `</div>`;
+  giorni.forEach((giorno, gi) => {
+    let dk=0,dp2=0,dgs=0,dg=0,dz=0,dch=0,dfi=0;
+    giorno.meals.forEach(m => m.items.forEach(it => {
+      const f=lookup(it.nome); const qt=parseFloat(it.qt)||0;
+      if(f&&qt){dk+=(f.k||0)/100*qt;dp2+=(f.p||0)/100*qt;dgs+=(f.gs||0)/100*qt;dg+=(f.g||0)/100*qt;dz+=(f.z||0)/100*qt;dch+=(f.ch||0)/100*qt;dfi+=(f.fi||0)/100*qt;}
+    }));
+    html += '<div' + (gi > 0 ? ' style="break-before:page"' : '') + '>';
+    html += '<div style="background:#1E293B;color:white;padding:4px 8px;border-radius:4px 4px 0 0;font-size:10px;font-weight:700">📅 ' + esc(giorno.nome) + '</div>';
+    html += '<div style="background:#0F766E;color:white;padding:3px 8px;font-size:8px;font-weight:600;margin-bottom:4px">';
+    html += '🔥 ' + Math.round(dk) + ' kcal · P:' + r1(dp2) + 'g · Gr.Sat:' + r1(dgs) + 'g · Gr.Tot:' + r1(dg) + 'g · CHO:' + r1(dch) + 'g · Fi:' + r1(dfi) + 'g';
+    html += '</div>';
+    giorno.meals.forEach(meal => {
+      const fi2 = meal.items.filter(it => it.nome && it.nome.trim());
+      if (!fi2.length) return;
+      let mk=0,mp=0,mgs=0,mg=0,mz=0,mch=0,mfi=0;
+      fi2.forEach(it=>{const f=lookup(it.nome);const qt=parseFloat(it.qt)||0;if(f&&qt){mk+=(f.k||0)/100*qt;mp+=(f.p||0)/100*qt;mgs+=(f.gs||0)/100*qt;mg+=(f.g||0)/100*qt;mz+=(f.z||0)/100*qt;mch+=(f.ch||0)/100*qt;mfi+=(f.fi||0)/100*qt;}});
+      html += '<div style="margin-bottom:4px;border:1px solid #E2E8F0;border-radius:0 0 4px 4px;overflow:hidden;break-inside:avoid">';
+      html += '<div style="background:#334155;color:white;padding:3px 8px;font-size:8px;font-weight:700">' + esc(meal.emoji||'') + ' ' + esc(meal.nome) + '</div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:7.5px">';
+      html += '<thead><tr style="background:#475569;color:#E2E8F0"><th style="text-align:left;padding:2px 4px;min-width:120px">Alimento</th>';
+      html += '<th style="padding:2px 3px;min-width:38px">Qt(g)</th><th style="padding:2px 3px">Kcal</th><th style="padding:2px 3px">Prot</th>';
+      html += '<th style="padding:2px 3px">Gr.Sat</th><th style="padding:2px 3px">Gr.Tot</th><th style="padding:2px 3px">Zucc</th>';
+      html += '<th style="padding:2px 3px">CHO</th><th style="padding:2px 3px">Fibra</th><th style="padding:2px 3px;text-align:left">Fonte</th></tr></thead>';
+      html += '<tbody>';
+      fi2.forEach(it => {
+        const f=lookup(it.nome); const qt=it.qt;
+        const mis=it.misura?' <span style="color:#94A3B8;font-size:6px">('+esc(it.misura)+')</span>':'';
+        html += '<tr style="border-bottom:1px solid #F1F5F9"><td style="padding:2px 4px;text-align:left">' + esc(it.nome) + mis + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + (qt||'') + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'k',qt)) + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'p',qt)) + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'gs',qt)) + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'g',qt)) + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'z',qt)) + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'ch',qt)) + '</td>';
+        html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'fi',qt)) + '</td>';
+        html += '<td style="padding:2px 3px;font-size:6.5px;text-align:left">' + (f?esc(f.c||''):'') + '</td></tr>';
+        if (it.altPrint && it.altPrint.length) {
+          it.altPrint.forEach(a => {
+            const fa=lookup(a.nome);
+            html += '<tr style="background:#F0FDF4;border-bottom:1px solid #DCFCE7"><td style="padding:2px 4px 2px 16px;text-align:left;color:#065F46;font-size:7px">↳ ALT: ' + esc(a.nome) + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center;color:#065F46">' + a.qt + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'k',a.qt)) + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'p',a.qt)) + '</td>';
+            html += '<td></td><td></td><td></td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'ch',a.qt)) + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'fi',a.qt)) + '</td>';
+            html += '<td></td></tr>';
+          });
+        }
+      });
+      html += '<tr style="background:#0F766E;color:white"><td style="padding:2px 4px;text-align:left;font-size:7px;font-weight:700">∑ ' + esc(meal.nome.toUpperCase()) + '</td>';
+      html += '<td style="padding:2px 3px;text-align:center">—</td>';
+      html += '<td style="padding:2px 3px;text-align:center;font-weight:700">' + Math.round(mk) + '</td>';
+      html += '<td style="padding:2px 3px;text-align:center">' + r1(mp) + '</td>';
+      html += '<td style="padding:2px 3px;text-align:center">' + r1(mgs) + '</td>';
+      html += '<td style="padding:2px 3px;text-align:center">' + r1(mg) + '</td>';
+      html += '<td style="padding:2px 3px;text-align:center">' + r1(mz) + '</td>';
+      html += '<td style="padding:2px 3px;text-align:center">' + r1(mch) + '</td>';
+      html += '<td style="padding:2px 3px;text-align:center">' + r1(mfi) + '</td>';
+      html += '<td></td></tr>';
+      if (meal.note && meal.note.trim()) {
+        html += '<tr><td colspan="10" style="padding:3px 8px;font-size:7px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ' + esc(meal.note) + '</td></tr>';
+      }
+      html += '</tbody></table></div>';
+    });
+    html += '</div>';
+  });
+  if (typeof profiloFirmaHtml === 'function') html += profiloFirmaHtml();
+  html += '</div>';
+  return html;
+}
 
-  // Meals
-  getMeals().forEach(meal => {
+function _buildSimpleDayHTML(giorno, showDayHeader) {
+  let totKcal=0,totProt=0,totCho=0,totFat=0,totFib=0;
+  let html = '';
+  if (showDayHeader) {
+    html += '<div style="margin:16px 0 10px;padding:6px 12px;background:#F0FDFA;border-left:4px solid #0F766E;border-radius:4px;font-size:13px;font-weight:700;color:#0F766E">📅 ' + esc(giorno.nome) + '</div>';
+  }
+  giorno.meals.forEach(meal => {
     const foodItems = meal.items.filter(it => it.nome && it.nome.trim());
     if (!foodItems.length) return;
-
-    html += `<div style="margin-bottom:18px;break-inside:avoid">`;
-    html += `<div style="font-size:14px;font-weight:700;color:#0F766E;padding:7px 12px;background:#F0FDFA;border-left:4px solid #0F766E;border-radius:4px;margin-bottom:6px">${esc(meal.emoji||'')} ${esc(meal.nome)}</div>`;
-
+    html += '<div style="margin-bottom:18px;break-inside:avoid">';
+    html += '<div style="font-size:14px;font-weight:700;color:#0F766E;padding:7px 12px;background:#F0FDFA;border-left:4px solid #0F766E;border-radius:4px;margin-bottom:6px">' + esc(meal.emoji||'') + ' ' + esc(meal.nome) + '</div>';
     foodItems.forEach(item => {
-      const f = lookup(item.nome);
-      const qt = parseFloat(item.qt) || 0;
-      if (f && qt) {
-        totKcal += (f.k||0)/100*qt;
-        totProt  += (f.p||0)/100*qt;
-        totCho   += (f.ch||0)/100*qt;
-        totFat   += (f.g||0)/100*qt;
-        totFib   += (f.fi||0)/100*qt;
-      }
-      const misuraTxt = item.misura ? ` <span style="color:#94A3B8;font-size:10.5px">(${esc(item.misura)})</span>` : '';
-      const qtTxt = item.qt ? `<span style="font-weight:700;color:#334155">${item.qt}g</span>` : '';
-      html += `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 12px;border-bottom:1px solid #F1F5F9">`;
-      html += `<span style="font-size:13px">${esc(item.nome)}${misuraTxt}</span>`;
-      html += `<span style="font-size:13px;white-space:nowrap;padding-left:10px">${qtTxt}</span>`;
-      html += `</div>`;
-
+      const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
+      if(f&&qt){totKcal+=(f.k||0)/100*qt;totProt+=(f.p||0)/100*qt;totCho+=(f.ch||0)/100*qt;totFat+=(f.g||0)/100*qt;totFib+=(f.fi||0)/100*qt;}
+      const misuraTxt=item.misura?' <span style="color:#94A3B8;font-size:10.5px">('+esc(item.misura)+')</span>':'';
+      const qtTxt=item.qt?'<span style="font-weight:700;color:#334155">'+item.qt+'g</span>':'';
+      html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 12px;border-bottom:1px solid #F1F5F9"><span style="font-size:13px">' + esc(item.nome) + misuraTxt + '</span><span style="font-size:13px;white-space:nowrap;padding-left:10px">' + qtTxt + '</span></div>';
       if (item.altPrint && item.altPrint.length) {
         item.altPrint.forEach(a => {
-          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 12px 4px 24px;background:#F0FDF4;border-bottom:1px solid #DCFCE7">`;
-          html += `<span style="font-size:11.5px;color:#15803D">↳ oppure: ${esc(a.nome)}</span>`;
-          html += `<span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:10px">${a.qt}g</span>`;
-          html += `</div>`;
+          html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 12px 4px 24px;background:#F0FDF4;border-bottom:1px solid #DCFCE7"><span style="font-size:11.5px;color:#15803D">↳ oppure: ' + esc(a.nome) + '</span><span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:10px">' + a.qt + 'g</span></div>';
         });
       }
     });
+    if (meal.note && meal.note.trim()) html += '<div style="padding:5px 12px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB;border-radius:0 0 4px 4px">📝 ' + esc(meal.note) + '</div>';
+    html += '</div>';
+  });
+  html += '<div style="margin-top:12px;padding:10px 16px;background:#F0FDFA;border-radius:8px;border:1px solid #A7F3D0;font-size:12px;color:#0F766E;font-weight:600;text-align:center">';
+  html += '🔥 ' + Math.round(totKcal) + ' kcal &nbsp;·&nbsp; 💪 P:' + r1(totProt) + 'g &nbsp;·&nbsp; 🍞 CHO:' + r1(totCho) + 'g &nbsp;·&nbsp; 🧈 Gr:' + r1(totFat) + 'g &nbsp;·&nbsp; 🌿 Fi:' + r1(totFib) + 'g';
+  html += '</div>';
+  return { html, totKcal, totProt, totCho, totFat, totFib };
+}
 
-    if (meal.note && meal.note.trim()) {
-      html += `<div style="padding:5px 12px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB;border-radius:0 0 4px 4px">📝 ${esc(meal.note)}</div>`;
-    }
-    html += `</div>`;
+function stampaSemplice() {
+  giorni.forEach(g => g.meals.forEach(m => m.collapsed = false));
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const dataPiano = document.getElementById('inp-data')?.value || '';
+  const nomePiano = document.getElementById('inp-nome')?.value || '';
+  const isMultiDay = giorni.length > 1;
+
+  let html = '<div style="font-family:\'DM Sans\',sans-serif;max-width:680px;margin:0 auto;color:#1E293B">';
+  html += '<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #0F766E">';
+  html += '<div style="font-size:22px;font-weight:700;color:#0F766E">' + (esc(nomeP)||'Piano Alimentare') + '</div>';
+  if (nomePiano) html += '<div style="font-size:13px;color:#475569;margin-top:4px">' + esc(nomePiano) + '</div>';
+  if (dataPiano) {
+    const [dp_y,dp_m,dp_d] = dataPiano.split('-').map(Number);
+    html += '<div style="font-size:12px;color:#94A3B8;margin-top:2px">' + new Date(dp_y,dp_m-1,dp_d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + '</div>';
+  }
+  html += '</div>';
+
+  let gTotKcal=0,gTotProt=0,gTotCho=0,gTotFat=0,gTotFib=0;
+  giorni.forEach(giorno => {
+    const res = _buildSimpleDayHTML(giorno, isMultiDay);
+    html += res.html;
+    gTotKcal+=res.totKcal; gTotProt+=res.totProt; gTotCho+=res.totCho; gTotFat+=res.totFat; gTotFib+=res.totFib;
   });
 
-  // Totals footer
-  html += `<div style="margin-top:20px;padding:11px 16px;background:#F0FDFA;border-radius:8px;border:1px solid #A7F3D0;font-size:12px;color:#0F766E;font-weight:600;text-align:center">`;
-  html += `🔥 ${Math.round(totKcal)} kcal &nbsp;·&nbsp; 💪 Proteine ${r1(totProt)}g &nbsp;·&nbsp; 🍞 CHO ${r1(totCho)}g &nbsp;·&nbsp; 🧈 Grassi ${r1(totFat)}g &nbsp;·&nbsp; 🌿 Fibra ${r1(totFib)}g`;
-  html += `</div>`;
+  if (isMultiDay) {
+    html += '<div style="margin-top:20px;padding:11px 16px;background:#1E293B;border-radius:8px;font-size:12px;color:white;font-weight:600;text-align:center">';
+    html += '📊 Totale piano: 🔥 ' + Math.round(gTotKcal) + ' kcal · P:' + r1(gTotProt) + 'g · CHO:' + r1(gTotCho) + 'g · Gr:' + r1(gTotFat) + 'g · Fi:' + r1(gTotFib) + 'g';
+    html += '</div>';
+  }
   if (typeof profiloFirmaHtml === 'function') html += profiloFirmaHtml();
-  html += `</div>`;
+  html += '</div>';
 
   document.getElementById('simple-print-area').innerHTML = html;
   document.body.dataset.printMode = 'simple';
@@ -1224,132 +1319,97 @@ function stampaSemplice() {
   setTimeout(() => window.print(), 400);
 }
 
-function stampaCompatta() {
-  giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
-  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
-  const dataPiano = document.getElementById('inp-data')?.value || '';
-  const nomePiano = document.getElementById('inp-nome')?.value || '';
-  const gNome = giorni.length > 1 ? giorni[giornoCorrente].nome : '';
-
-  let totKcal = 0, totProt = 0, totCho = 0, totFat = 0, totFib = 0;
-  const mealList = getMeals().filter(m => m.items.some(it => it.nome && it.nome.trim()));
-
-  // First pass: calculate totals
-  mealList.forEach(meal => {
-    meal.items.filter(it => it.nome && it.nome.trim()).forEach(item => {
-      const f = lookup(item.nome);
-      const qt = parseFloat(item.qt) || 0;
-      if (f && qt) {
-        totKcal += (f.k||0)/100*qt;
-        totProt  += (f.p||0)/100*qt;
-        totCho   += (f.ch||0)/100*qt;
-        totFat   += (f.g||0)/100*qt;
-        totFib   += (f.fi||0)/100*qt;
-      }
-    });
-  });
-
-  const avgKcalPasto = mealList.length ? Math.round(totKcal / mealList.length) : 0;
-
-  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
-
-  // Patient / plan header
-  if (nomeP || nomePiano || dataPiano) {
-    html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
-    if (nomeP) html += `<div style="font-size:18px;font-weight:700;color:#0F766E">${esc(nomeP)}</div>`;
-    if (nomePiano) html += `<div style="font-size:13px;color:#475569;margin-top:3px">${esc(nomePiano)}</div>`;
-    if (dataPiano) {
-      const parts = dataPiano.split('-').map(Number);
-      if (parts.length === 3 && parts.every(n => !isNaN(n))) {
-        const [dp_y, dp_m, dp_d] = parts;
-        const dateFmt = new Date(dp_y, dp_m-1, dp_d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-        html += `<div style="font-size:11.5px;color:#94A3B8;margin-top:2px">${dateFmt}</div>`;
-      }
-    }
-    if (gNome) html += `<div style="font-size:11.5px;color:#0F766E;font-weight:600;margin-top:2px">📅 ${esc(gNome)}</div>`;
-    html += `</div>`;
+function _buildCompattaDayHTML(giorno, showDayHeader) {
+  const mealList = giorno.meals.filter(m => m.items.some(it => it.nome && it.nome.trim()));
+  let totKcal=0,totProt=0,totCho=0,totFat=0,totFib=0;
+  mealList.forEach(meal => meal.items.filter(it=>it.nome&&it.nome.trim()).forEach(item=>{
+    const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
+    if(f&&qt){totKcal+=(f.k||0)/100*qt;totProt+=(f.p||0)/100*qt;totCho+=(f.ch||0)/100*qt;totFat+=(f.g||0)/100*qt;totFib+=(f.fi||0)/100*qt;}
+  }));
+  const avgKcalPasto = mealList.length ? Math.round(totKcal/mealList.length) : 0;
+  let html = '';
+  if (showDayHeader) {
+    html += '<div style="margin:16px 0 10px;padding:8px 16px;background:#1E293B;border-radius:8px;font-size:14px;font-weight:700;color:white">📅 ' + esc(giorno.nome) + '</div>';
   }
-
-  // Stats header bar (matches image format)
-  html += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
   const stats = [
-    { val: Math.round(totKcal), lbl: 'KCAL TOTALI' },
-    { val: r1(totProt), lbl: 'PROTEINE (G)' },
-    { val: r1(totCho), lbl: 'CARBOIDRATI (G)' },
-    { val: r1(totFat), lbl: 'GRASSI (G)' },
-    { val: avgKcalPasto, lbl: 'KCAL/PASTO' }
+    {val:Math.round(totKcal),lbl:'KCAL TOTALI'},{val:r1(totProt),lbl:'PROTEINE (G)'},
+    {val:r1(totCho),lbl:'CARBOIDRATI (G)'},{val:r1(totFat),lbl:'GRASSI (G)'},{val:avgKcalPasto,lbl:'KCAL/PASTO'}
   ];
-  stats.forEach((s, i) => {
-    html += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length-1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
-    html += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
-    html += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
-    html += `</div>`;
+  html += '<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:14px">';
+  stats.forEach((s,i) => {
+    html += '<div style="flex:1;text-align:center;padding:10px 4px;' + (i<stats.length-1?'border-right:1.5px solid #CBD5E1':'') + '">';
+    html += '<div style="font-size:18px;font-weight:700;color:#0EA5E9">' + s.val + '</div>';
+    html += '<div style="font-size:8.5px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:1px">' + s.lbl + '</div></div>';
   });
-  html += `</div>`;
-
-  // Meals
+  html += '</div>';
   mealList.forEach(meal => {
-    const foodItems = meal.items.filter(it => it.nome && it.nome.trim());
-    let mealKcal = 0;
+    const foodItems=meal.items.filter(it=>it.nome&&it.nome.trim());
+    let mealKcal=0;
+    foodItems.forEach(it=>{const f=lookup(it.nome);const qt=parseFloat(it.qt)||0;if(f&&qt)mealKcal+=(f.k||0)/100*qt;});
+    html += '<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981)">';
+    html += '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">' + esc(meal.emoji||'') + '</span><span style="font-size:14px;font-weight:700;color:white">' + esc(meal.nome) + '</span></div>';
+    if (mealKcal>0) html += '<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ' + Math.round(mealKcal) + ' kcal</span>';
+    html += '</div>';
     foodItems.forEach(item => {
-      const f = lookup(item.nome);
-      const qt = parseFloat(item.qt) || 0;
-      if (f && qt) mealKcal += (f.k||0)/100*qt;
-    });
-
-    html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
-
-    // Green meal header
-    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981)">`;
-    html += `<div style="display:flex;align-items:center;gap:10px">`;
-    html += `<span style="font-size:18px">${esc(meal.emoji||'')}</span>`;
-    html += `<span style="font-size:14px;font-weight:700;color:white">${esc(meal.nome)}</span>`;
-    html += `</div>`;
-    if (mealKcal > 0) html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${Math.round(mealKcal)} kcal</span>`;
-    html += `</div>`;
-
-    // Food items
-    foodItems.forEach(item => {
-      const f = lookup(item.nome);
-      const qt = parseFloat(item.qt) || 0;
-      const kcalItem = f && qt ? Math.round((f.k||0)/100*qt) : 0;
-      const misuraTxt = item.misura ? ` <span style="color:#94A3B8;font-size:10px">(${esc(item.misura)})</span>` : '';
-      const qtStr = item.qt ? `${item.qt} g` : '';
-
-      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9">`;
-      html += `<span style="font-size:13px;color:#1E293B">${esc(item.nome)}${misuraTxt}</span>`;
-      html += `<div style="display:flex;align-items:center;gap:14px;white-space:nowrap;padding-left:12px">`;
-      if (qtStr) html += `<span style="font-size:13px;font-weight:700;color:#0EA5E9">${qtStr}</span>`;
-      if (kcalItem > 0) html += `<span style="font-size:12px;color:#94A3B8">${kcalItem} kcal</span>`;
-      html += `</div>`;
-      html += `</div>`;
-
-      // Alternative measures
-      if (item.altPrint && item.altPrint.length) {
-        item.altPrint.forEach(a => {
-          html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 16px 5px 28px;background:#F0FDF4;border-bottom:1px solid #DCFCE7">`;
-          html += `<span style="font-size:11.5px;color:#15803D">↳ oppure: ${esc(a.nome)}</span>`;
-          html += `<span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:8px">${a.qt} g</span>`;
-          html += `</div>`;
+      const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
+      const kcalItem=f&&qt?Math.round((f.k||0)/100*qt):0;
+      const misuraTxt=item.misura?' <span style="color:#94A3B8;font-size:10px">('+esc(item.misura)+')</span>':'';
+      const qtStr=item.qt?item.qt+' g':'';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9"><span style="font-size:13px;color:#1E293B">' + esc(item.nome) + misuraTxt + '</span>';
+      html += '<div style="display:flex;align-items:center;gap:14px;white-space:nowrap;padding-left:12px">';
+      if (qtStr) html += '<span style="font-size:13px;font-weight:700;color:#0EA5E9">' + qtStr + '</span>';
+      if (kcalItem>0) html += '<span style="font-size:12px;color:#94A3B8">' + kcalItem + ' kcal</span>';
+      html += '</div></div>';
+      if (item.altPrint&&item.altPrint.length) {
+        item.altPrint.forEach(a=>{
+          html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 16px 5px 28px;background:#F0FDF4;border-bottom:1px solid #DCFCE7"><span style="font-size:11.5px;color:#15803D">↳ oppure: ' + esc(a.nome) + '</span><span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:8px">' + a.qt + ' g</span></div>';
         });
       }
     });
-
-    // Meal notes
-    if (meal.note && meal.note.trim()) {
-      html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(meal.note)}</div>`;
-    }
-
-    html += `</div>`;
+    if (meal.note&&meal.note.trim()) html += '<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ' + esc(meal.note) + '</div>';
+    html += '</div>';
   });
+  if (totFib>0) html += '<div style="margin-top:8px;padding:6px 16px;background:#F8FAFC;border-radius:8px;border:1.5px solid #E2E8F0;font-size:11px;color:#64748B;text-align:center">🌿 Fibra totale: ' + r1(totFib) + ' g</div>';
+  return { html, totKcal, totProt, totCho, totFat, totFib };
+}
 
-  // Fiber footer
-  if (totFib > 0) {
-    html += `<div style="margin-top:10px;padding:8px 16px;background:#F8FAFC;border-radius:8px;border:1.5px solid #E2E8F0;font-size:11.5px;color:#64748B;text-align:center">🌿 Fibra totale: ${r1(totFib)} g</div>`;
+function stampaCompatta() {
+  giorni.forEach(g => g.meals.forEach(m => m.collapsed = false));
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const dataPiano = document.getElementById('inp-data')?.value || '';
+  const nomePiano = document.getElementById('inp-nome')?.value || '';
+  const isMultiDay = giorni.length > 1;
+
+  let html = '<div style="font-family:\'DM Sans\',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">';
+  if (nomeP||nomePiano||dataPiano) {
+    html += '<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">';
+    if (nomeP) html += '<div style="font-size:18px;font-weight:700;color:#0F766E">' + esc(nomeP) + '</div>';
+    if (nomePiano) html += '<div style="font-size:13px;color:#475569;margin-top:3px">' + esc(nomePiano) + '</div>';
+    if (dataPiano) {
+      const parts=dataPiano.split('-').map(Number);
+      if(parts.length===3&&parts.every(n=>!isNaN(n))){
+        const [dp_y,dp_m,dp_d]=parts;
+        html += '<div style="font-size:11.5px;color:#94A3B8;margin-top:2px">' + new Date(dp_y,dp_m-1,dp_d).toLocaleDateString('it',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + '</div>';
+      }
+    }
+    html += '</div>';
   }
 
+  let gTotKcal=0,gTotProt=0,gTotCho=0,gTotFat=0,gTotFib=0;
+  giorni.forEach(giorno => {
+    const res = _buildCompattaDayHTML(giorno, isMultiDay);
+    html += res.html;
+    gTotKcal+=res.totKcal; gTotProt+=res.totProt; gTotCho+=res.totCho; gTotFat+=res.totFat; gTotFib+=res.totFib;
+  });
+
+  if (isMultiDay) {
+    html += '<div style="margin-top:16px;padding:12px 16px;background:#1E293B;border-radius:8px;font-size:12px;color:white;font-weight:600;text-align:center">';
+    html += '📊 Totale piano: 🔥 ' + Math.round(gTotKcal) + ' kcal · P:' + r1(gTotProt) + 'g · CHO:' + r1(gTotCho) + 'g · Gr:' + r1(gTotFat) + 'g · Fi:' + r1(gTotFib) + 'g';
+    html += '</div>';
+  }
   if (typeof profiloFirmaHtml === 'function') html += profiloFirmaHtml();
-  html += `</div>`;
+  html += '</div>';
 
   document.getElementById('compact-print-area').innerHTML = html;
   document.body.dataset.printMode = 'compact';

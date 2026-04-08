@@ -937,3 +937,209 @@ function initPianoEsempio(containerId, config) {
     <div id="pe-output-${_id}">${_renderPiano()}</div>
   `;
 }
+
+// ═══════════════════════════════════════════════════
+// CUSTOM SELECT DROPDOWN
+// ═══════════════════════════════════════════════════
+(function() {
+  let _openWrap = null;
+
+  function _closeAll() {
+    if (_openWrap) { _closePanel(_openWrap); _openWrap = null; }
+  }
+
+  function _closePanel(wrap) {
+    const trig = wrap._cselTrigger;
+    const panel = wrap._cselPanel;
+    if (trig) { trig.classList.remove('open'); trig.setAttribute('aria-expanded', 'false'); }
+    if (panel) { panel.style.display = 'none'; }
+  }
+
+  function _buildOptions(panel, sel, wrap) {
+    panel.innerHTML = '';
+    const opts = sel.options;
+    for (let i = 0; i < opts.length; i++) {
+      const opt = opts[i];
+      if (opt.disabled && opt.value === '' && i === 0 && opts.length > 1) {
+        // skip empty placeholder disabled options
+        continue;
+      }
+      const item = document.createElement('div');
+      item.className = 'csel-option' + (i === sel.selectedIndex ? ' csel-selected' : '');
+      item.textContent = opt.text;
+      item.dataset.idx = i;
+      item.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        const idx = parseInt(this.dataset.idx);
+        sel.selectedIndex = idx;
+        _updateTrigger(wrap, sel);
+        _closePanel(wrap);
+        _openWrap = null;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      panel.appendChild(item);
+    }
+  }
+
+  function _updateTrigger(wrap, sel) {
+    const trig = wrap._cselTrigger;
+    if (!trig) return;
+    const span = trig.querySelector('.csel-val');
+    const opt = sel.options[sel.selectedIndex];
+    if (span) span.textContent = opt ? opt.text : '';
+  }
+
+  function _openPanel(wrap, sel) {
+    _closeAll();
+    const panel = wrap._cselPanel;
+    const trig = wrap._cselTrigger;
+    _buildOptions(panel, sel, wrap);
+    trig.classList.add('open');
+    trig.setAttribute('aria-expanded', 'true');
+    // Position using fixed coords
+    const rect = trig.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const panelH = Math.min(240, sel.options.length * 35 + 8);
+    panel.style.width = rect.width + 'px';
+    panel.style.left = rect.left + 'px';
+    if (spaceBelow < panelH + 8 && rect.top > panelH + 8) {
+      panel.style.top = '';
+      panel.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+    } else {
+      panel.style.bottom = '';
+      panel.style.top = (rect.bottom + 4) + 'px';
+    }
+    panel.style.display = 'block';
+    _openWrap = wrap;
+    // Scroll selected into view
+    const selEl = panel.querySelector('.csel-selected');
+    if (selEl) setTimeout(() => selEl.scrollIntoView({ block: 'nearest' }), 10);
+  }
+
+  function _initOne(sel) {
+    if (sel._cselDone || sel.closest('.csel-wrap') || sel.dataset.cselSkip || sel.multiple) return;
+    if (!sel.parentNode) return;
+    sel._cselDone = true;
+    sel.classList.add('csel-native');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'csel-wrap';
+    // Copy width/max-width/min-width from inline style
+    if (sel.style.width) wrap.style.width = sel.style.width;
+    if (sel.style.maxWidth) wrap.style.maxWidth = sel.style.maxWidth;
+    if (sel.style.minWidth) wrap.style.minWidth = sel.style.minWidth;
+
+    // Build trigger
+    const trig = document.createElement('div');
+    trig.className = 'csel-trigger';
+    trig.setAttribute('tabindex', '0');
+    trig.setAttribute('role', 'combobox');
+    trig.setAttribute('aria-haspopup', 'listbox');
+    trig.setAttribute('aria-expanded', 'false');
+
+    const valSpan = document.createElement('span');
+    valSpan.className = 'csel-val';
+    const curOpt = sel.options[sel.selectedIndex];
+    valSpan.textContent = curOpt ? curOpt.text : '';
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'csel-chevron');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2.5');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    poly.setAttribute('points', '6 9 12 15 18 9');
+    svg.appendChild(poly);
+
+    trig.appendChild(valSpan);
+    trig.appendChild(svg);
+
+    // Build panel (appended to body for z-index/overflow safety)
+    const panel = document.createElement('div');
+    panel.className = 'csel-panel';
+    panel.style.display = 'none';
+    panel.addEventListener('click', e => e.stopPropagation());
+    document.body.appendChild(panel);
+
+    wrap._cselTrigger = trig;
+    wrap._cselPanel = panel;
+
+    trig.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (_openWrap === wrap) { _closePanel(wrap); _openWrap = null; }
+      else { _openPanel(wrap, sel); }
+    });
+
+    trig.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (_openWrap === wrap) { _closePanel(wrap); _openWrap = null; }
+        else { _openPanel(wrap, sel); }
+      } else if (e.key === 'Escape') {
+        _closePanel(wrap); _openWrap = null;
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowDown' ? 1 : -1;
+        const ni = Math.max(0, Math.min(sel.options.length - 1, sel.selectedIndex + dir));
+        sel.selectedIndex = ni;
+        _updateTrigger(wrap, sel);
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    // Insert wrapper before select, then move select into wrap
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(trig);
+    wrap.appendChild(sel);
+
+    // Override value setter so external JS assignments update the trigger
+    const proto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    const idxProto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'selectedIndex');
+    Object.defineProperty(sel, 'value', {
+      get() { return proto.get.call(this); },
+      set(v) { proto.set.call(this, v); _updateTrigger(wrap, this); },
+      configurable: true
+    });
+    Object.defineProperty(sel, 'selectedIndex', {
+      get() { return idxProto.get.call(this); },
+      set(v) { idxProto.set.call(this, v); _updateTrigger(wrap, this); },
+      configurable: true
+    });
+
+    // Watch for options being added/removed/changed
+    new MutationObserver(() => _updateTrigger(wrap, sel))
+      .observe(sel, { childList: true, subtree: true, characterData: true });
+  }
+
+  function _initAll() {
+    document.querySelectorAll('select:not([data-csel-skip])').forEach(_initOne);
+  }
+
+  // Close on outside click
+  document.addEventListener('click', _closeAll);
+  // Close on scroll (reposition would be complex)
+  document.addEventListener('scroll', _closeAll, true);
+  // Close on resize
+  window.addEventListener('resize', _closeAll);
+
+  // Watch for new select elements added to DOM
+  new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      m.addedNodes.forEach(function(node) {
+        if (!node || node.nodeType !== 1) return;
+        if (node.tagName === 'SELECT') { _initOne(node); return; }
+        if (node.querySelectorAll) node.querySelectorAll('select:not([data-csel-skip])').forEach(_initOne);
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  // Initialize existing selects
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _initAll);
+  } else {
+    _initAll();
+  }
+})();

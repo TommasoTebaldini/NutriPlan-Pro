@@ -94,9 +94,34 @@ tbody tr:hover{background:#F8FBFF}
 tbody td{padding:4px 5px;vertical-align:middle;text-align:center}
 tbody td:first-child{padding-left:8px;text-align:left}
 
-/* ── SELECT (global custom styling) ── */
-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:14px;cursor:pointer;padding-right:32px}
-select:focus{outline:none;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
+/* ── SELECT (hidden when replaced by custom dropdown) ── */
+select.csel-native{display:none!important}
+
+/* ── CUSTOM SELECT DROPDOWN ── */
+.csel-wrap{position:relative;display:block}
+.csel-trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);background:white;cursor:pointer;font-size:13px;font-family:inherit;color:var(--slate);transition:border-color .15s,box-shadow .15s,background .15s;user-select:none;min-width:0;width:100%;line-height:1.4;box-sizing:border-box}
+.csel-trigger:hover{border-color:#94A3B8;background:#FAFCFF}
+.csel-trigger:focus{outline:none;border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.18)}
+.csel-trigger.open{border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.18);background:#FAFFFE}
+.csel-val{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.csel-chevron{width:15px;height:15px;flex-shrink:0;color:var(--slate-l);transition:transform .2s ease,color .15s}
+.csel-trigger.open .csel-chevron{transform:rotate(180deg);color:var(--teal-l)}
+.csel-panel{position:fixed;background:white;border:1.5px solid var(--teal-l);border-radius:var(--r-sm);box-shadow:0 8px 28px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.07);z-index:9800;max-height:240px;overflow-y:auto;overflow-x:hidden;animation:cselFade .13s ease;scrollbar-width:thin;scrollbar-color:var(--border-d) transparent}
+.csel-panel::-webkit-scrollbar{width:4px}
+.csel-panel::-webkit-scrollbar-thumb{background:var(--border-d);border-radius:4px}
+@keyframes cselFade{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.csel-option{padding:8px 13px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);color:var(--slate);transition:background .1s;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.csel-option:last-child{border-bottom:none}
+.csel-option:hover{background:#F0FDF4;color:var(--teal-d)}
+.csel-option.csel-selected{background:linear-gradient(90deg,rgba(20,184,166,.13),rgba(20,184,166,.05));color:var(--teal);font-weight:600}
+.csel-option.csel-selected:hover{background:linear-gradient(90deg,rgba(20,184,166,.2),rgba(20,184,166,.1))}
+/* Inherit size from parent contexts */
+.nf .csel-trigger{font-size:13.5px;padding:8px 11px}
+.fg .csel-trigger{font-size:13px;padding:7px 10px}
+.paz-hdr-field .csel-trigger{font-size:13px;padding:6px 10px}
+/* Keep native select styles working for non-replaced selects (fallback) */
+select:not(.csel-native){-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:14px;cursor:pointer;padding-right:32px}
+select:not(.csel-native):focus{outline:none;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
 
 /* ── INPUTS ── */
 .ac-wrap{position:relative}
@@ -271,6 +296,7 @@ select:focus{outline:none;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
   .mpill{border:1px solid #CBD5E1!important;border-radius:6px!important;font-size:8pt!important}
   .nf label{font-size:8pt!important;font-weight:700}
   .nf input,.nf select,.nf textarea{border:1px solid #CBD5E1!important;font-size:9pt!important;background:transparent!important}
+  .csel-panel{display:none!important}
 }
 
 /* ── FULL RESPONSIVE MOBILE ── */
@@ -348,6 +374,7 @@ select:focus{outline:none;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
   .nav-item:active{background:rgba(255,255,255,.08)}
   .pat-card:active{transform:scale(.98)}
   input,select,textarea{font-size:16px!important} /* prevent zoom on iOS */
+  .csel-trigger{font-size:16px!important}
   .paz-actions{opacity:1}
 }
 
@@ -382,6 +409,7 @@ select:focus{outline:none;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
   .micro-bar{display:none!important}
   .add-pasto-area{display:none!important}
   .pasto-footer .btn{display:none!important}
+  .csel-panel{display:none!important}
 }
 
 /* ── RESPONSIVE ── */

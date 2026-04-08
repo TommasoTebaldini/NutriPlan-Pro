@@ -72,6 +72,7 @@
         <div class="fg"><label>Cognome</label><input type="text" id="nc-cognome" placeholder="Cognome"></div>
         <div class="fg"><label>Data di nascita</label><input type="date" id="nc-ddn"></div>
         <div class="fg"><label>Sesso</label><select id="nc-sesso"><option value="">—</option><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+        <div class="fg full"><label>Codice Fiscale</label><input type="text" id="nc-cf" placeholder="Codice Fiscale" maxlength="16" style="text-transform:uppercase"></div>
         <div class="fg full"><label>Diagnosi / Note cliniche</label><textarea id="nc-note" placeholder="Diagnosi, allergie, farmaci..."></textarea></div>
       </div>
     </div>
@@ -267,6 +268,7 @@ async function renderCartellaDetail(id) {
       <h3 style="font-size:16px;font-weight:700">📁 ${esc(cart.nome)}</h3>
       ${eta !== null ? `<span class="paz-tag">${eta} anni</span>` : ''}
       ${cart.sesso ? `<span class="paz-tag">${cart.sesso==='M'?'♂️ M':'♀️ F'}</span>` : ''}
+      ${cart.codice_fiscale ? `<span class="paz-tag">🪪 ${esc(cart.codice_fiscale)}</span>` : ''}
       <button class="btn btn-ghost btn-sm" onclick="editCartella('${cart.id}')">✏️ Modifica</button>
     </div>
     ${cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
@@ -452,7 +454,7 @@ function openNewCartella() {
   editingCartellaId = null;
   document.getElementById('nc-title').textContent = '📁 Nuova Cartella Paziente';
   document.getElementById('nc-save-btn').textContent = '📁 Crea Cartella';
-  ['nc-nome','nc-cognome','nc-note'].forEach(id => document.getElementById(id).value = '');
+  ['nc-nome','nc-cognome','nc-cf','nc-note'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('nc-ddn').value = '';
   document.getElementById('nc-sesso').value = '';
   openM('modal-nc');
@@ -471,6 +473,7 @@ async function editCartella(id) {
   document.getElementById('nc-cognome').value = data.cognome || '';
   document.getElementById('nc-ddn').value = data.ddn || '';
   document.getElementById('nc-sesso').value = data.sesso || '';
+  document.getElementById('nc-cf').value = data.codice_fiscale || '';
   document.getElementById('nc-note').value = data.note || '';
   openM('modal-nc');
 }
@@ -484,6 +487,7 @@ async function salvaCartella() {
     cognome: document.getElementById('nc-cognome').value.trim(),
     ddn: document.getElementById('nc-ddn').value || null,
     sesso: document.getElementById('nc-sesso').value || null,
+    codice_fiscale: document.getElementById('nc-cf').value.trim().toUpperCase() || null,
     note: document.getElementById('nc-note').value.trim() || null,
   };
   showLoading(true);

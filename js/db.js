@@ -697,7 +697,77 @@ const DB_BDA=[
   {n:"Caffè espresso",c:"Bevande",src:"CREA",k:2,p:0.1,gs:0,g:0,z:0,ch:0.3,fi:0,ca:2,fe:0.1,mg:6,k2:116,na:4,zn:0.1,fo:4,se:0,col:0},
   {n:"Birra chiara (330mL)",c:"Alcolici",src:"CREA",k:43,p:0.5,gs:0,g:0,z:3.6,ch:3.6,fi:0,ca:7,fe:0,mg:8,k2:43,na:6,zn:0.1,fo:21,se:1,col:0},
   {n:"Vino rosso (125mL)",c:"Alcolici",src:"CREA",k:85,p:0.1,gs:0,g:0,z:0.3,ch:0.3,fi:0,ca:8,fe:0.4,mg:11,k2:127,na:6,zn:0.1,fo:3,se:0.1,col:0},
-  {n:"Vino bianco secco (125mL)",c:"Alcolici",src:"CREA",k:83,p:0.1,gs:0,g:0,z:0.6,ch:0.6,fi:0,ca:9,fe:0.4,mg:10,k2:71,na:6,zn:0.1,fo:2,se:0.1,col:0}
+  {n:"Vino bianco secco (125mL)",c:"Alcolici",src:"CREA",k:83,p:0.1,gs:0,g:0,z:0.6,ch:0.6,fi:0,ca:9,fe:0.4,mg:10,k2:71,na:6,zn:0.1,fo:2,se:0.1,col:0},
+
+  // ── VERDURE MANCANTI ──
+  {n:"Valerianella / Songino",c:"Verdure",src:"CREA",k:17,p:1.8,gs:0,g:0.4,z:0.7,ch:2.1,fi:1.5,ca:38,fe:2.2,mg:13,k2:459,na:77,zn:0.8,fo:14,se:0.3,col:0},
+  {n:"Cipollotto / Cipolla verde",c:"Verdure",src:"CREA",k:27,p:1.8,gs:0,g:0.2,z:3.0,ch:5.8,fi:2.6,ca:72,fe:1.2,mg:20,k2:276,na:16,zn:0.4,fo:64,se:0.6,col:0},
+  {n:"Scalogno",c:"Verdure",src:"CREA",k:72,p:2.5,gs:0,g:0.1,z:12.0,ch:16.8,fi:3.2,ca:37,fe:1.2,mg:21,k2:334,na:12,zn:0.4,fo:34,se:1.2,col:0},
+  {n:"Cavolo romanesco",c:"Verdure",src:"CREA",k:25,p:2.5,gs:0,g:0.3,z:2.4,ch:4.9,fi:2.5,ca:22,fe:0.6,mg:21,k2:299,na:15,zn:0.4,fo:57,se:0.6,col:0},
+  {n:"Finocchio selvatico (fresco)",c:"Verdure",src:"CREA",k:31,p:2.8,gs:0,g:0.6,z:1.0,ch:7.3,fi:5.3,ca:109,fe:6.4,mg:49,k2:414,na:88,zn:1.0,fo:27,se:0.7,col:0},
+  {n:"Peperoncino fresco rosso",c:"Verdure",src:"CREA",k:40,p:2.0,gs:0,g:0.4,z:5.7,ch:8.8,fi:1.5,ca:14,fe:1.0,mg:23,k2:322,na:9,zn:0.3,fo:34,se:0.5,col:0},
+  {n:"Zenzero fresco (radice)",c:"Verdure",src:"CREA",k:80,p:1.8,gs:0,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:11,se:0.6,col:0},
+  {n:"Curcuma fresca (radice)",c:"Verdure",src:"BDA",k:354,p:7.8,gs:0.6,g:9.9,z:3.8,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.5,fo:36,se:6.2,col:0},
+  {n:"Ravanello fresco",c:"Verdure",src:"CREA",k:16,p:0.7,gs:0,g:0.1,z:2.0,ch:3.4,fi:1.6,ca:25,fe:0.3,mg:10,k2:233,na:39,zn:0.3,fo:25,se:0.6,col:0},
+  {n:"Crescione d'acqua",c:"Verdure",src:"CREA",k:11,p:2.3,gs:0,g:0.1,z:0.4,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.4,fo:9,se:0.9,col:0},
+  {n:"Nasturzio (fiori e foglie)",c:"Verdure",src:"BDA",k:28,p:2.1,gs:0,g:0.5,z:3.5,ch:5.1,fi:1.8,ca:130,fe:1.6,mg:29,k2:272,na:17,zn:0.4,fo:24,se:0.4,col:0},
+
+  // ── FRUTTA SECCA E DISIDRATATA MANCANTE ──
+  {n:"Datteri secchi (Medjool o simili)",c:"Frutta secca",src:"CREA",k:282,p:2.5,gs:0,g:0.4,z:63.4,ch:74.9,fi:8.0,ca:39,fe:1.0,mg:43,k2:656,na:2,zn:0.4,fo:15,se:3,col:0},
+  {n:"Fichi secchi",c:"Frutta secca",src:"CREA",k:209,p:3.3,gs:0,g:0.9,z:42.3,ch:53.2,fi:9.8,ca:162,fe:2.0,mg:59,k2:680,na:10,zn:0.6,fo:14,se:0.6,col:0},
+  {n:"Mirtilli essiccati",c:"Frutta secca",src:"BDA",k:308,p:0.5,gs:0,g:1.0,z:72.0,ch:77.0,fi:5.5,ca:8,fe:0.3,mg:6,k2:60,na:2,zn:0.1,fo:3,se:0.1,col:0},
+  {n:"Castagne fresche",c:"Frutta fresca",src:"CREA",k:167,p:2.7,gs:0.1,g:1.3,z:23.0,ch:36.8,fi:6.8,ca:27,fe:1.0,mg:32,k2:518,na:3,zn:0.5,fo:58,se:1.8,col:0},
+  {n:"Castagne secche",c:"Frutta secca",src:"CREA",k:354,p:4.4,gs:0.2,g:2.0,z:47.0,ch:72.9,fi:14.0,ca:46,fe:1.7,mg:54,k2:847,na:7,zn:0.8,fo:95,se:3,col:0},
+  {n:"Farina di castagne",c:"Cereali e derivati",src:"CREA",k:362,p:5.5,gs:0.3,g:3.7,z:32.3,ch:77.8,fi:9.4,ca:42,fe:2.0,mg:50,k2:730,na:11,zn:0.7,fo:90,se:3,col:0},
+  {n:"Ribes rosso fresco",c:"Frutta fresca",src:"CREA",k:50,p:1.4,gs:0,g:0.2,z:7.4,ch:13.8,fi:4.3,ca:33,fe:1.0,mg:13,k2:275,na:1,zn:0.2,fo:14,se:0.6,col:0},
+  {n:"Cocco fresco (polpa)",c:"Frutta fresca",src:"CREA",k:354,p:3.3,gs:29.7,g:33.5,z:6.2,ch:15.2,fi:9.0,ca:14,fe:2.4,mg:32,k2:356,na:20,zn:1.1,fo:113,se:10,col:0},
+  {n:"Frutto della passione / Maracuja",c:"Frutta fresca",src:"CREA",k:97,p:2.2,gs:0.1,g:0.7,z:11.2,ch:23.4,fi:10.4,ca:12,fe:1.6,mg:29,k2:348,na:28,zn:0.1,fo:14,se:0.6,col:0},
+  {n:"Lychee fresco",c:"Frutta fresca",src:"BDA",k:66,p:0.8,gs:0,g:0.4,z:15.2,ch:16.5,fi:1.3,ca:5,fe:0.3,mg:10,k2:171,na:1,zn:0.1,fo:14,se:0.6,col:0},
+  {n:"Carambola / Starfruit",c:"Frutta fresca",src:"BDA",k:31,p:1.0,gs:0,g:0.3,z:4.9,ch:6.7,fi:2.8,ca:3,fe:0.1,mg:10,k2:133,na:2,zn:0.1,fo:12,se:0.6,col:0},
+
+  // ── LEGUMI MANCANTI ──
+  {n:"Fave secche sbucciate",c:"Legumi",src:"CREA",k:341,p:26.1,gs:0.3,g:1.5,z:0,ch:60.0,fi:19.0,ca:110,fe:6.7,mg:92,k2:1062,na:13,zn:3.1,fo:250,se:3,col:0},
+  {n:"Piselli secchi",c:"Legumi",src:"CREA",k:304,p:24.5,gs:0.2,g:1.5,z:3.5,ch:56.3,fi:25.5,ca:96,fe:5.0,mg:115,k2:990,na:15,zn:3.4,fo:274,se:2,col:0},
+  {n:"Fagioli Azuki secchi",c:"Legumi",src:"BDA",k:329,p:19.9,gs:0.1,g:0.5,z:0.5,ch:62.9,fi:7.3,ca:66,fe:4.98,mg:127,k2:1254,na:5,zn:5.3,fo:622,se:3,col:0},
+  {n:"Fagioli di Spagna secchi",c:"Legumi",src:"CREA",k:280,p:17.0,gs:0.1,g:0.9,z:0,ch:56.6,fi:26.1,ca:240,fe:7.5,mg:190,k2:1700,na:24,zn:3.7,fo:170,se:5,col:0},
+  {n:"Ceci lessati (in scatola sgocciolati)",c:"Legumi",src:"CREA",k:119,p:7.0,gs:0,g:1.9,z:0,ch:18.0,fi:7.6,ca:49,fe:2.9,mg:47,k2:291,na:240,zn:1.5,fo:165,se:4,col:0},
+  {n:"Lenticchie rosse decorticate secche",c:"Legumi",src:"CREA",k:318,p:23.8,gs:0.4,g:1.3,z:2.0,ch:56.3,fi:10.8,ca:35,fe:7.6,mg:107,k2:672,na:6,zn:3.3,fo:480,se:7,col:0},
+
+  // ── FORMAGGI MANCANTI ──
+  {n:"Emmental / Groviera svizzero",c:"Formaggi",src:"BDA",k:380,p:28.4,gs:11.0,g:29.0,z:0.4,ch:0.4,fi:0,ca:1000,fe:0.3,mg:36,k2:96,na:450,zn:4.0,fo:720,se:16,col:94},
+  {n:"Gruyère stagionato",c:"Formaggi",src:"BDA",k:413,p:29.8,gs:13.0,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:95,na:336,zn:3.9,fo:730,se:15,col:110},
+  {n:"Scamorza fresca bianca",c:"Formaggi",src:"CREA",k:270,p:22.5,gs:10.0,g:20.5,z:0.5,ch:0.5,fi:0,ca:490,fe:0.3,mg:18,k2:78,na:650,zn:2.5,fo:420,se:7,col:73},
+  {n:"Raclette",c:"Formaggi",src:"BDA",k:357,p:25.0,gs:11.5,g:28.5,z:0.5,ch:0.5,fi:0,ca:895,fe:0.3,mg:30,k2:88,na:750,zn:3.5,fo:660,se:14,col:92},
+  {n:"Edam (formaggio olandese)",c:"Formaggi",src:"BDA",k:357,p:25.0,gs:12.5,g:27.8,z:0.4,ch:0.4,fi:0,ca:731,fe:0.5,mg:32,k2:88,na:965,zn:3.75,fo:546,se:15,col:89},
+  {n:"Gouda stagionato",c:"Formaggi",src:"BDA",k:356,p:24.9,gs:13.1,g:27.4,z:2.2,ch:2.2,fi:0,ca:700,fe:0.2,mg:29,k2:95,na:819,zn:3.9,fo:603,se:15,col:114},
+
+  // ── LATTICINI E BEVANDE VEGETALI MANCANTI ──
+  {n:"Yogurt di soia naturale non zuccherato",c:"Latticini alternativi",src:"BDA",k:59,p:3.5,gs:0.3,g:2.0,z:3.5,ch:6.0,fi:0.5,ca:120,fe:0.4,mg:19,k2:110,na:30,zn:0.3,fo:55,se:2,col:0},
+  {n:"Yogurt vegetale al cocco naturale",c:"Latticini alternativi",src:"BDA",k:90,p:0.8,gs:4.5,g:7.0,z:7.5,ch:10.0,fi:0.5,ca:130,fe:0.2,mg:8,k2:60,na:35,zn:0.1,fo:20,se:1,col:0},
+  {n:"Bevanda di avena non zuccherata",c:"Latticini alternativi",src:"BDA",k:44,p:1.0,gs:0.1,g:1.5,z:3.5,ch:6.6,fi:1.0,ca:120,fe:0.2,mg:13,k2:58,na:55,zn:0.2,fo:7,se:1,col:0},
+  {n:"Bevanda di riso non zuccherata",c:"Latticini alternativi",src:"BDA",k:47,p:0.3,gs:0,g:1.0,z:5.1,ch:9.2,fi:0.3,ca:120,fe:0.2,mg:8,k2:25,na:50,zn:0.1,fo:10,se:0,col:0},
+  {n:"Panna fresca da cucina (30% grassi)",c:"Latticini",src:"CREA",k:292,p:2.7,gs:19.0,g:30.0,z:3.5,ch:4.0,fi:0,ca:75,fe:0.1,mg:9,k2:92,na:35,zn:0.2,fo:65,se:2,col:108},
+  {n:"Panna acida (sour cream)",c:"Latticini",src:"BDA",k:193,p:2.1,gs:11.5,g:19.0,z:3.8,ch:4.5,fi:0,ca:65,fe:0.1,mg:8,k2:85,na:28,zn:0.2,fo:50,se:2,col:52},
+  {n:"Crème fraîche (40% grassi)",c:"Latticini",src:"BDA",k:381,p:2.0,gs:23.0,g:40.0,z:3.1,ch:3.1,fi:0,ca:55,fe:0.1,mg:9,k2:90,na:35,zn:0.2,fo:55,se:2,col:137},
+
+  // ── CEREALI ALTERNATIVI COTTI ──
+  {n:"Avena cruda (chicchi interi)",c:"Cereali",src:"CREA",k:389,p:16.9,gs:1.2,g:6.9,z:1.0,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:3.97,fo:523,se:34,col:0},
+  {n:"Miglio crudo (chicchi)",c:"Cereali",src:"CREA",k:378,p:11.0,gs:0.9,g:4.2,z:1.0,ch:72.9,fi:8.5,ca:8,fe:3.0,mg:114,k2:195,na:5,zn:1.7,fo:85,se:2.7,col:0},
+  {n:"Sorgo crudo (chicchi)",c:"Cereali",src:"CREA",k:339,p:11.3,gs:0.6,g:3.3,z:2.0,ch:74.6,fi:6.7,ca:28,fe:4.4,mg:165,k2:350,na:6,zn:1.7,fo:287,se:10,col:0},
+  {n:"Teff crudo (grano etiope)",c:"Cereali",src:"BDA",k:367,p:13.3,gs:0.7,g:2.4,z:1.8,ch:73.1,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:272,se:8,col:0},
+  {n:"Amaranto crudo",c:"Cereali",src:"BDA",k:371,p:13.6,gs:1.0,g:7.0,z:1.7,ch:65.3,fi:6.7,ca:159,fe:7.6,mg:248,k2:508,na:4,zn:2.9,fo:148,se:19,col:0},
+  {n:"Riso Basmati bianco crudo",c:"Cereali",src:"CREA",k:349,p:7.1,gs:0.1,g:0.6,z:0.5,ch:79.3,fi:0.5,ca:10,fe:0.7,mg:22,k2:95,na:5,zn:0.9,fo:57,se:8,col:0},
+  {n:"Riso Jasmine bianco crudo",c:"Cereali",src:"BDA",k:350,p:7.0,gs:0.1,g:0.5,z:0.3,ch:79.5,fi:0.4,ca:9,fe:0.7,mg:21,k2:90,na:5,zn:0.9,fo:55,se:8,col:0},
+  {n:"Gnocchi di patate freschi",c:"Cereali e derivati",src:"CREA",k:136,p:3.0,gs:0,g:1.0,z:1.0,ch:28.5,fi:1.5,ca:12,fe:0.5,mg:14,k2:135,na:60,zn:0.3,fo:38,se:4,col:0},
+
+  // ── SEMI INTERI MANCANTI ──
+  {n:"Semi di lino interi crudi",c:"Semi oleosi",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0},
+  {n:"Semi di chia crudi",c:"Semi oleosi",src:"CREA",k:486,p:16.5,gs:3.3,g:30.7,z:0.3,ch:42.1,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:860,se:55,col:0},
+  {n:"Semi di zucca crudi (pepitas)",c:"Semi oleosi",src:"CREA",k:559,p:30.2,gs:5.6,g:49.1,z:1.4,ch:10.7,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:1174,se:9,col:0},
+  {n:"Semi di girasole crudi sbucciati",c:"Semi oleosi",src:"CREA",k:584,p:20.8,gs:4.5,g:51.5,z:2.4,ch:20.0,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5.0,fo:660,se:53,col:0},
+  {n:"Semi di sesamo crudi",c:"Semi oleosi",src:"CREA",k:573,p:17.7,gs:7.0,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:629,se:34,col:0},
+  {n:"Noci del Brasile crude",c:"Frutta secca a guscio",src:"CREA",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:725,se:1917,col:0},
+  {n:"Noci di Macadamia crude",c:"Frutta secca a guscio",src:"CREA",k:718,p:7.9,gs:12.1,g:75.8,z:1.3,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:160,se:3.6,col:0}
 ];
 
 let CUSTOM_DB=[];
@@ -953,6 +1023,45 @@ const DB_UPF = [
   {n:"Panna cotta industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:210,p:3,gs:9,g:14,z:22,ch:24,fi:0,ca:95,fe:0.1,mg:8,k2:110,na:55,zn:0.2,fo:70,se:2,col:50},
   {n:"Tiramisù industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:298,p:5.5,gs:10,g:19,z:25,ch:27,fi:0.3,ca:65,fe:0.6,mg:12,k2:130,na:120,zn:0.4,fo:90,se:4,col:145},
   {n:"Crostata industriale marmellata",c:"Dolci confezionati",src:"UPF",k:398,p:5,gs:6.5,g:15,z:35,ch:61,fi:2,ca:40,fe:1.5,mg:15,k2:120,na:310,zn:0.5,fo:70,se:4,col:20},
+
+  // ── BISCOTTI E CEREALI COLAZIONE AGGIUNTIVI ──
+  {n:"Biscotti Digestive (McVitie's tipo)",c:"Biscotti e crackers",src:"UPF",k:481,p:7.0,gs:9.0,g:20.0,z:22.5,ch:67.5,fi:3.5,ca:58,fe:2.5,mg:24,k2:180,na:490,zn:0.7,fo:85,se:6,col:0},
+  {n:"Cereali al miele tipo Cheerios",c:"Cereali da colazione",src:"UPF",k:375,p:8.0,gs:0.8,g:4.5,z:17.0,ch:73.0,fi:7.0,ca:130,fe:14.0,mg:80,k2:270,na:510,zn:5.0,fo:290,se:8,col:0},
+  {n:"Cereali al cacao tipo Chocapic",c:"Cereali da colazione",src:"UPF",k:386,p:7.5,gs:1.5,g:5.0,z:32.0,ch:78.5,fi:4.5,ca:90,fe:12.0,mg:55,k2:240,na:410,zn:4.0,fo:200,se:7,col:0},
+  {n:"Cereali tipo Frosties (mais zuccherato)",c:"Cereali da colazione",src:"UPF",k:378,p:6.0,gs:0.1,g:0.5,z:37.0,ch:88.0,fi:1.0,ca:10,fe:8.5,mg:10,k2:75,na:540,zn:0.3,fo:95,se:2,col:0},
+  {n:"Riso soffiato tipo Rice Krispies",c:"Cereali da colazione",src:"UPF",k:381,p:7.0,gs:0.1,g:1.0,z:9.5,ch:85.5,fi:1.2,ca:18,fe:11.0,mg:14,k2:103,na:690,zn:0.3,fo:90,se:3,col:0},
+  {n:"Musli svizzero industriale misto",c:"Cereali da colazione",src:"UPF",k:362,p:8.5,gs:2.5,g:7.0,z:23.0,ch:64.0,fi:7.0,ca:70,fe:3.0,mg:80,k2:350,na:85,zn:1.8,fo:180,se:7,col:0},
+
+  // ── PIATTI PRONTI AGGIUNTIVI ──
+  {n:"Lasagne al ragù surgelate (porz. 300g)",c:"Piatti pronti",src:"UPF",k:142,p:7.5,gs:3.5,g:7.5,z:4.5,ch:13.5,fi:1.5,ca:110,fe:1.5,mg:18,k2:200,na:560,zn:1.0,fo:120,se:8,col:30},
+  {n:"Risotto ai funghi pronto in busta",c:"Piatti pronti",src:"UPF",k:145,p:3.5,gs:0.5,g:2.5,z:3.0,ch:27.5,fi:1.5,ca:20,fe:0.8,mg:15,k2:110,na:620,zn:0.5,fo:55,se:5,col:0},
+  {n:"Pollo al curry pronto in vaschetta",c:"Piatti pronti",src:"UPF",k:118,p:10.0,gs:2.5,g:6.5,z:5.0,ch:7.5,fi:1.5,ca:30,fe:1.0,mg:22,k2:280,na:700,zn:0.8,fo:130,se:10,col:35},
+  {n:"Pasta carbonara pronta in vaschetta",c:"Piatti pronti",src:"UPF",k:195,p:9.0,gs:4.5,g:9.5,z:4.0,ch:21.0,fi:1.0,ca:75,fe:1.2,mg:18,k2:140,na:580,zn:0.8,fo:100,se:10,col:55},
+  {n:"Zuppa di legumi pronta in tetrapak",c:"Piatti pronti",src:"UPF",k:68,p:4.0,gs:0.2,g:1.5,z:5.5,ch:10.5,fi:3.5,ca:35,fe:1.5,mg:30,k2:350,na:720,zn:0.8,fo:100,se:2,col:0},
+  {n:"Gnocchi di patate surgelati",c:"Piatti pronti",src:"UPF",k:140,p:3.0,gs:0,g:1.5,z:1.5,ch:29.0,fi:1.5,ca:12,fe:0.6,mg:13,k2:140,na:290,zn:0.3,fo:38,se:4,col:0},
+  {n:"Cotoletta di pollo panata surgelata",c:"Piatti pronti",src:"UPF",k:225,p:14.5,gs:2.0,g:11.0,z:1.0,ch:18.5,fi:1.0,ca:20,fe:1.0,mg:20,k2:240,na:620,zn:1.0,fo:145,se:12,col:35},
+  {n:"Crocchette di patate tipo Tater Tots",c:"Piatti pronti",src:"UPF",k:217,p:2.5,gs:0.5,g:11.0,z:2.0,ch:27.0,fi:2.5,ca:10,fe:0.5,mg:15,k2:360,na:480,zn:0.3,fo:60,se:1,col:0},
+
+  // ── SNACK E DOLCI AGGIUNTIVI ──
+  {n:"Pop corn al burro commerciale (busta)",c:"Snack salati",src:"UPF",k:494,p:8.0,gs:10.5,g:28.5,z:6.5,ch:57.5,fi:8.5,ca:8,fe:2.5,mg:95,k2:330,na:730,zn:2.0,fo:270,se:5,col:15},
+  {n:"Biscotti Oreo (o tipo sandwich cacao)",c:"Biscotti e crackers",src:"UPF",k:481,p:5.0,gs:7.5,g:20.5,z:44.5,ch:71.0,fi:2.5,ca:33,fe:4.5,mg:25,k2:195,na:430,zn:0.5,fo:95,se:3,col:0},
+  {n:"Muffin ai mirtilli industriale",c:"Dolci confezionati",src:"UPF",k:361,p:5.5,gs:3.5,g:14.5,z:36.5,ch:55.0,fi:1.5,ca:45,fe:1.2,mg:12,k2:100,na:310,zn:0.4,fo:60,se:4,col:45},
+  {n:"Snickers / Mars tipo (barretta cioccolato)",c:"Dolci confezionati",src:"UPF",k:489,p:5.5,gs:11.0,g:20.0,z:59.0,ch:68.0,fi:1.0,ca:100,fe:1.0,mg:30,k2:230,na:200,zn:0.7,fo:80,se:2,col:8},
+  {n:"Ferrero Rocher (cioccolatino pralinato)",c:"Dolci confezionati",src:"UPF",k:567,p:8.5,gs:10.5,g:38.5,z:46.0,ch:54.0,fi:2.5,ca:85,fe:2.0,mg:45,k2:300,na:90,zn:0.7,fo:145,se:4,col:10},
+  {n:"Patatine soffiato tipo Cheetos",c:"Snack salati",src:"UPF",k:544,p:6.5,gs:3.0,g:30.5,z:5.0,ch:60.5,fi:1.5,ca:30,fe:1.5,mg:20,k2:250,na:900,zn:0.5,fo:65,se:2,col:5},
+
+  // ── FAST FOOD AGGIUNTIVI ──
+  {n:"Kebab in pita industriale",c:"Fast food",src:"UPF",k:235,p:14.0,gs:4.0,g:10.5,z:5.0,ch:24.5,fi:2.0,ca:55,fe:2.5,mg:25,k2:270,na:780,zn:2.0,fo:130,se:9,col:45},
+  {n:"Falafel industriale surgelato",c:"Fast food",src:"UPF",k:290,p:12.5,gs:2.0,g:16.0,z:3.5,ch:27.5,fi:6.5,ca:65,fe:3.5,mg:55,k2:410,na:650,zn:1.5,fo:185,se:5,col:0},
+  {n:"Spring roll / Rotoli primavera surgelati",c:"Fast food",src:"UPF",k:199,p:5.5,gs:2.0,g:9.5,z:2.5,ch:24.5,fi:2.0,ca:20,fe:1.0,mg:15,k2:135,na:520,zn:0.5,fo:75,se:5,col:10},
+  {n:"Onion rings surgelati (cipolla fritta)",c:"Fast food",src:"UPF",k:335,p:4.5,gs:1.5,g:18.0,z:6.5,ch:40.5,fi:2.5,ca:30,fe:0.8,mg:12,k2:145,na:650,zn:0.4,fo:55,se:4,col:0},
+  {n:"Panzerotto / calzone surgelato",c:"Fast food",src:"UPF",k:255,p:9.0,gs:4.5,g:10.5,z:4.0,ch:32.0,fi:2.0,ca:170,fe:1.8,mg:22,k2:190,na:700,zn:1.2,fo:110,se:8,col:25},
+
+  // ── BEVANDE AGGIUNTIVE ──
+  {n:"Succo di frutta multivitaminico zuccherato",c:"Bibite zuccherate",src:"UPF",k:47,p:0.2,gs:0,g:0.1,z:10.5,ch:11.5,fi:0.1,ca:10,fe:0.5,mg:5,k2:80,na:15,zn:0.1,fo:15,se:0,col:0},
+  {n:"Frullato di frutta industriale (smoothie)",c:"Bibite zuccherate",src:"UPF",k:65,p:0.5,gs:0,g:0.2,z:13.5,ch:16.0,fi:1.0,ca:12,fe:0.3,mg:10,k2:160,na:15,zn:0.1,fo:15,se:0,col:0},
+  {n:"Tè freddo zuccherato aromatizzato (bottiglia)",c:"Bibite zuccherate",src:"UPF",k:32,p:0.1,gs:0,g:0,z:7.8,ch:8.0,fi:0,ca:5,fe:0.1,mg:3,k2:30,na:10,zn:0,fo:5,se:0,col:0},
+  {n:"Succo di melograno zuccherato",c:"Bibite zuccherate",src:"UPF",k:54,p:0.2,gs:0,g:0.1,z:12.5,ch:13.5,fi:0.2,ca:11,fe:0.2,mg:5,k2:183,na:11,zn:0.1,fo:8,se:0,col:0}
 ];
 
 
@@ -1998,9 +2107,129 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tacchino petto',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Ricotta vaccina',qt:'60'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  // ── NUOVE PATOLOGIE AGGIUNTE ──
+  {id:'endometriosi',emoji:'🌷',nome:'Endometriosi',badge:'ASRM/ESHRE 2022',colore:'#BE185D',
+   desc:'Dieta anti-infiammatoria, ricca di omega-3 e fibre. Ridurre carni rosse, grassi saturi e alcol. Probiotici e vitamina D utili.',
+   note:'ASRM 2022 · ESHRE 2022 · Dieta mediterranea riduce rischio e sintomi · Omega-3 EPA/DHA 2-3g/die effetto anti-prostaglandinico (riduce dismenorrea) · Carni rosse: ≤2 porzioni/settimana (aumentano estrogeni circolanti) · Fibre ≥25g/die (favoriscono escrezione estrogeni fecali) · Vitamina D: target >40 ng/mL (modulazione immunità) · Magnesio 310-320 mg/die: riduce crampi · Curcumina 500mg/die: evidenza emergente anti-infiammatoria · Alcol: aumenta estrogeni → ridurre a 0 · Probiotici: migliorano disbiosi intestinale frequente · FODMAP ridotti se IBS coesistente · Soia: effetto estrogenico debole, uso moderato.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi d\'avena',qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Mirtilli freschi',qt:'80'},{nome:'Noci',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'110'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'prediabete',emoji:'🩺',nome:'Prediabete / Alterata Glicemia a Digiuno (IFG/IGT)',badge:'ADA 2024 / IDF 2022',colore:'#0369A1',
+   desc:'Dieta a basso indice glicemico, ricca di fibre. Riduzione del 5-10% del peso corporeo. Attività fisica 150 min/settimana. Obiettivo: prevenire la progressione a T2DM.',
+   note:'ADA 2024 · IDF 2022 · IFG: glicemia digiuno 100-125 mg/dL · IGT: glicemia 2h OGTT 140-199 mg/dL · HbA1c 5.7-6.4% · Riduzione peso 5-10%: riduce rischio T2DM del 58% (DPP) · CHO: prediligere basso IG (IG<55); fibre ≥30g/die (beta-glucani avena, psyllium) · Fruttosio aggiunto: ridurre al minimo · Grassi saturi <7%; omega-3 favorevoli · Alcol: non raccomandato (mascheramento ipoglicemie) · Metformina: considerare se BMI>35 o <60 anni · Monitorare glicemia a digiuno e HbA1c ogni 6-12 mesi.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi d\'avena',qt:'50'},{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mela',qt:'130'},{nome:'Mandorle dolci secche',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Pera',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Lenticchie secche',qt:'60'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'ipercolesterolemia_familiare',emoji:'🧬',nome:'Ipercolesterolemia Familiare (FH)',badge:'EAS 2023',colore:'#EF4444',
+   desc:'Dieta molto restrittiva per grassi saturi e colesterolo. Fitosteroli 2g/die obbligatori. Omega-3. Terapia farmacologica (statine, ezetimibe, PCSK9 inibitori) sempre necessaria.',
+   note:'EAS 2023 · Mutazione LDL-recettore, Apo B o PCSK9 · LDL-C >190 mg/dL (adulti), >160 mg/dL (bambini) · Dieta da sola riduce LDL max 15-25% · Grassi saturi <7% calorie totali (idealmente <5%) · Colesterolo alimentare <200 mg/die · Fitosteroli 2g/die (riduzione LDL 8-10%) · Beta-glucani avena 3g/die · Fibre solubili ≥10-15g/die · Omega-3 EPA/DHA 2-4g/die · Eliminare acidi grassi trans completamente · Alcol: limitare · Carne rossa: ≤1 volta/settimana · Farmacoterapia OBBLIGATORIA: statine ad alta intensità + ezetimibe (se necessario PCSK9i).',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi d\'avena',qt:'60'},{nome:'Latte scremato',qt:'200'},{nome:'Mirtilli freschi',qt:'80'},{nome:'Semi di chia crudi',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Arancia',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Ceci secchi',qt:'70'},{nome:'Pasta integrale cruda',qt:'60'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'psoriasi',emoji:'🌿',nome:'Psoriasi',badge:'BAD/EADV 2023',colore:'#7C3AED',
+   desc:'Dieta anti-infiammatoria (mediterranea). Riduzione peso se sovrappeso. Alcol zero. Omega-3 e vitamina D utili. Evitare trigger alimentari individuali.',
+   note:'BAD 2023 · EADV 2023 · La psoriasi è una malattia infiammatoria cronica cutanea con componente immuno-metabolica · Obesità: peggiora psoriasi e riduce risposta ai biologici → perdita peso prioritaria · Alcol: trigger e peggiorante → zero · Omega-3 EPA/DHA 2-3g/die: riducono IL-17, TNF-α · Vitamina D target >40 ng/mL (modula Th17/Treg) · Dieta mediterranea: riduce PASI in studi osservazionali · Glutine: trial GFD 3 mesi se AntiGliadina IgA positivi (15-25% pazienti) · Nachtshade (solanacea) intolleranza: evidenza aneddotica · Probiotici: asse intestino-pelle (microbiota alterato in psoriasi) · Sindrome metabolica frequente: monitorare glicemia, lipidi, PA.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'},{nome:'Noci',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Kiwi',qt:'110'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Farro perlato crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'dermatite_atopica',emoji:'🌸',nome:'Dermatite Atopica (Eczema)',badge:'EAACI/AAD 2022',colore:'#F59E0B',
+   desc:'Identificare e rimuovere allergeni alimentari scatenanti (principalmente latte, uova, grano, soia, pesce, frutta secca). Probiotici in prevenzione. Acidi grassi essenziali.',
+   note:'EAACI 2022 · AAD 2022 · Allergia alimentare è scatenante nel 30-40% dei bambini con DA grave, meno negli adulti · Test allergologici (ISAC, prick test, IgE specifiche) prima di eliminazioni dietetiche · Eliminazione cieca non raccomandata · Probiotici Lactobacillus rhamnosus GG: prevenzione e terapia (evidenza moderata) · Omega-3 EPA/DHA 1-2g/die: riduzione infiammazione Th2 · Vitamina D target >40 ng/mL · Allattamento materno esclusivo 6 mesi: previene DA · Latte materno: continuare se possibile · Diversificazione alimentare precoce (4-6 mesi) riduce sensibilizzazione · Prebiotici (FOS, GOS): evidenza emergente.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Banana',qt:'100'},{nome:'Marmellata / confettura',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Yogurt intero bianco',qt:'125'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Riso bianco crudo',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'acne',emoji:'✨',nome:'Acne Vulgaris / Dermatite Seborroica',badge:'JAAD/AAD 2022',colore:'#D97706',
+   desc:'Dieta a basso indice glicemico. Ridurre latte scremato, integratori proteici del siero del latte. Omega-3 anti-infiammatori. Zinco adeguato.',
+   note:'JAAD 2022 · AAD 2022 · IG elevato → iperinsulinemia → aumento IGF-1 → sebum + cheratinizzazione → acne · Dieta a basso IG riduce lesioni acneiche del 25-50% (RCT) · Latte scremato: più insulinogeno del latte intero; whey protein: aumento IGF-1 · Cioccolato: correlazione suggerita, meccanismo incerto · Omega-3 EPA 1-2g/die: riduce infiammazione follicolare · Zinco 30mg/die (glicinato o acetato): riduce P. acnes, anti-infiammatorio · Vitamina A da fonti alimentari (fegato, uova): non esagerare · Probiotici: modulano microbiota sebaceo ed intestinale · Lievito di birra: contenuto nichel può peggiorare · Idratazione: utile ma non risolve da sola.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi d\'avena',qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Mirtilli freschi',qt:'80'},{nome:'Semi di chia crudi',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'110'},{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'sjogren',emoji:'💧',nome:'Sindrome di Sjögren',badge:'EULAR 2020',colore:'#0369A1',
+   desc:'Adattare consistenza e umidità degli alimenti alla xerostomia (bocca secca). Stimolare salivazione. Idratazione frequente. Proteggere lo smalto dentale.',
+   note:'EULAR 2020 · Malattia autoimmune: distruzione ghiandole esocrine → xerostomia (bocca secca) + xeroftalmia (occhi secchi) · Xerostomia → difficoltà masticazione/deglutizione, carie, disfagia · Dieta: alimenti umidi, morbidi, non appiccicosi · Stimolanti salivari: agrumi (con attenzione all\'acidità), caramelle senza zucchero, gomme xilitolo · Evitare: alcol, caffeina (diuretici), cibi secchi/polverosi, alimenti acidi in eccesso (erosione smalto) · Igiene orale dopo ogni pasto (fluoruro) · Idratazione: sorsi frequenti di acqua durante i pasti · Omega-3 3g/die: riduce infiammazione ghiandolare · Vitamina D target >30 ng/mL · Monitorare: anemia, linfoma non-Hodgkin (rischio aumentato), neuropatia.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt intero bianco',qt:'150'},{nome:'Fiocchi d\'avena',qt:'40'},{nome:'Banana',qt:'100'},{nome:'Miele millefiori',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Pera',qt:'150'},{nome:'Ricotta vaccina',qt:'60'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kefir intero',qt:'125'},{nome:'Banana',qt:'80'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'200'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'talassemia',emoji:'🩸',nome:'Talassemia / Anemia Mediterranea',badge:'TIF 2021',colore:'#9F1239',
+   desc:'Evitare supplementi di ferro e vitamina C in eccesso (aumentano accumulo). Calcio e vitamina D per osteoporosi. Folati. Acido ascorbico limitato.',
+   note:'TIF 2021 · Malattia genetica: difetto sintesi emoglobina · Beta-talassemia major: trasfusioni regolari → sovraccarico di ferro (siderosi) · Trattamento: deplezione ferro con chelanti (deferoxamina, deferasirox, deferiprone) · Dieta: NON integrare ferro (già in eccesso da trasfusioni e aumentato assorbimento intestinale) · Vitamina C: non superare 200mg/die (mobilizza il ferro dai depositi → tossicità cardiaca) · Calcio 1200mg/die e Vitamina D 1000-2000 UI/die: osteoporosi frequente (ipogonadismo, chelanti) · Folati 1-5mg/die: eritropoiesi inefficace · Tè e caffè ai pasti: riducono assorbimento ferro non-eme (utile) · Alcol: epatotossico in sovraccarico marziale → zero · Zinco: spesso carente (chelanti) → monitorare.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Fiocchi d\'avena',qt:'50'},{nome:'Banana',qt:'100'},{nome:'Caffè espresso',qt:'1 tazzina'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Kiwi',qt:'110'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Lattuga',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'favismo',emoji:'🫘',nome:'Deficit di G6PD (Favismo)',badge:'WHO/ENERCA 2022',colore:'#065F46',
+   desc:'Evitare completamente le fave (Vicia faba) e le loro derivate. Attenzione a farmaci ossidanti. Evitare naftalene, coloranti azoici, stress ossidativo.',
+   note:'WHO 2022 · ENERCA 2022 · Deficit enzima glucosio-6-fosfato deidrogenasi (X-linked) · Fave (Vicia faba): contengono vicina e convicina → crisi emolitica acuta (spesso grave) · Alimenti da evitare: fave fresche/secche, piselli (cross-reazione possibile), prodotti contenenti farina di fave · Farmaci da evitare: primachina, dapsone, cotrimossazolo, nitrofurantoina, rasburicase, alcuni antimalarici · Alimenti con prudenza: lamponi neri, mirtilli neri (antociani ossidanti ad alte dosi) · Vitamina E e C moderate: effetto antiossidante protettivo · Alcol: evitare (aumenta stress ossidativo eritrocitario) · Monitorare Hb durante infezioni acute (crisi emolitica) · Portare sempre scheda medica con lista farmaci vietati.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Fiocchi d\'avena',qt:'50'},{nome:'Mela',qt:'130'},{nome:'Marmellata / confettura',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Banana',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'wilson',emoji:'🟤',nome:'Malattia di Wilson (Accumulo di Rame)',badge:'EASL 2012 / AASLD 2022',colore:'#92400E',
+   desc:'Dieta a basso contenuto di rame (<1 mg/die). Evitare fegato, crostacei, noci, cioccolato, funghi. Farmacoterapia chelante (penicillamina, trientina) o zinco obbligatoria.',
+   note:'EASL 2012 · AASLD 2022 · Deficit proteina trasportatrice ATP7B → accumulo rame in fegato, cervello, occhi · Anelli di Kayser-Fleischer patognomonici · Dieta a basso rame: <1 mg/die (rame normale 1.5-3mg/die) · Da evitare (alto rame): fegato di manzo/bovino (>15mg/100g), ostriche, gamberetti, granchio, crostacei, cioccolato fondente (>3mg/100g), noci, nocciole, funghi, frumento integrale, legumi · Acqua: preferire acqua imbottigliata in vetro (tubature rame) · Vitamina E 400-800 UI/die: effetto antiossidante utile (accumulo rame → stress ossidativo) · Farmacoterapia obbligatoria: penicillamina o trientina (chelanti) o zinco acetato (primo/mantenimento) · Monitorare: transaminasi, rame sierico/urinario 24h, ceruloplasmina.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Mela',qt:'150'},{nome:'Marmellata / confettura',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Pera',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Gallette di riso',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'200'},{nome:'Lattuga',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'lipedema',emoji:'🦵',nome:'Lipedema',badge:'NHLBI/ILA 2021',colore:'#A855F7',
+   desc:'Dieta anti-infiammatoria (mediterranea o chetogenica a basso IG). Ridurre zuccheri semplici e carboidrati raffinati. Attenzione alla perdita di peso: non riduce il lipedema stesso ma migliora la qualità di vita.',
+   note:'ILA 2021 · Condizione adiposo-linfatica cronica: accumulo patologico adiposo sottocutaneo simmetrico (gambe/fianchi/braccia) · Non risponde alla restrizione calorica convenzionale · Dieta anti-infiammatoria: riduce dolore e infiammazione del tessuto adiposo disfunzionale · Dieta chetogenica o low-carb: riduce ritenzione idrica linfatica e dolore (evidenza emergente) · CHO raffinati e zuccheri: aumentano insulinemia → edema adiposo → peggiorano sintomi · Omega-3 EPA/DHA 2-3g/die: anti-infiammatorio · Curcumina 500-1000mg/die: antifiammatoria sistemica · Vitamina D target >40 ng/mL · Selenio adeguato · Sale: limitare (<5g/die NaCl) · Liquidi: ≥2L/die (drenaggio linfatico) · Evitare: alcol, zuccheri aggiunti, farine raffinate.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Uovo di gallina intero crudo',qt:'1 uovo (55g)'},{nome:'Avocado',qt:'50'},{nome:'Pane integrale',qt:'40'},{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Noci',qt:'15'},{nome:'Mirtilli freschi',qt:'80'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'iperemesi_gravidica',emoji:'🤢',nome:'Iperemesi Gravidica (NVP/HG)',badge:'RCOG 2024 / ACOG 2022',colore:'#EC4899',
+   desc:'Frazionamento estremo dei pasti (6-10 piccoli pasti). Alimenti secchi, freddi, blandi. Zenzero 1g/die. Vitamina B6 10-25mg ogni 8h. Idratazione endovenosa se necessario.',
+   note:'RCOG 2024 · ACOG 2022 · NVP (Nausea e vomito in gravidanza): 70-80% delle gravide · HG (Iperemesi gravidica): 0.5-2%; diagnosi: vomito persistente + perdita peso >5% + chetosi · Causa: HCG elevata, fattori psicosociali, HP infection · Dieta: piccoli pasti frequenti (ogni 2-3h) · Alimenti consigliati: cracker, pane bianco, riso bianco, banana, mela, yogurt, brodo · Alimenti da evitare: cibi grassi, piccanti, odori forti, caffè · Temperature: alimenti freddi/temperatura ambiente tollerati meglio dei caldi · Zenzero (Zingiber officinale) 1g/die: riduce nausea (evidenza A) · Vitamina B6 10-25mg ogni 8h: prima linea farmacologica · Doxilamina: antiemetico sicuro in gravidanza · Integratori prenatali: assumere a stomaco pieno o sera · Idratazione IV (Ringer lattato) se >5% perdita peso o chetosi grave · Ricovero se: perdita peso >5%, ipokaliemia, coagulopatia, encefalopatia.',
+   pasti:[
+    {nome:'Colazione (piccola)',emoji:'🌅',items:[{nome:'Gallette di riso',qt:'20'},{nome:'Banana',qt:'80'}]},
+    {nome:'Spuntino 1',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Mela',qt:'100'}]},
+    {nome:'Pranzo (leggero)',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Carota',qt:'80'}]},
+    {nome:'Spuntino 2',emoji:'🍊',items:[{nome:'Pane bianco',qt:'40'},{nome:'Ricotta vaccina',qt:'50'}]},
+    {nome:'Cena (leggera)',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'60'},{nome:'Brodo di verdure',qt:'200ml'},{nome:'Patata',qt:'100'}]}
    ]}
 ];
-let PATOLOGIE_CUSTOM=[];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}
 
 const FABBISOGNO_PATOLOGIE={
@@ -2075,7 +2304,33 @@ const FABBISOGNO_PATOLOGIE={
   cded_fase1:{kcal:'25-35 kcal/kg/die (50% da PEN)',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Fase 1 (sett. 1-6): 50% del fabbisogno calorico da formula enterale polimerica (Modulen IBD o equivalente). Dieta solida ristretta: pollo, pesce fresco, uova, patata, carota, zucchina, frutta fresca semplice, riso, olio EVO. Monitorare PCR, calprotectina fecale, ferritina, vitamina D, zinco.'},
   cded_fase2:{kcal:'25-35 kcal/kg/die (25% da PEN)',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Fase 2 (sett. 7-12): 25% kcal da PEN + dieta espansa. Aggiungere progressivamente: legumi, frutta secca, yogurt naturale senza additivi, maggiore varietà di pesce. Continuare ad escludere: glutine, carni rosse/processate, oli di semi, UPF. Monitorare PCR, calprotectina.'},
   cded_mant:{kcal:'25-35 kcal/kg/die',prot:'1.0-1.2 g/kg/die',note:'Levine 2019 · ECCO 2022. Mantenimento: dieta CDED completa senza PEN. Escludere permanentemente: carni rosse/processate, glutine industriale, oli di semi, emulsionanti, UPF. Monitorare ogni 3-6 mesi: PCR, calprotectina, ferritina, vitamina D, B12, zinco.'},
-  scd:{kcal:'Normocalorica (adeguata ad età e attività)',prot:'1.0-1.5 g/kg/die',note:'CCF 2021 · ECCO 2022. Eliminare tutti i disaccaridi e polisaccaridi (zucchero, lattosio, amido). Consentire solo monosaccaridi e alimenti non processati. Yogurt fermentato artigianale 24h (privo di lattosio residuo). Richiede supervisione nutrizionale specializzata. Monitorare: calcio, vitamina D, B12, adeguatezza calorica.'}
+  scd:{kcal:'Normocalorica (adeguata ad età e attività)',prot:'1.0-1.5 g/kg/die',note:'CCF 2021 · ECCO 2022. Eliminare tutti i disaccaridi e polisaccaridi (zucchero, lattosio, amido). Consentire solo monosaccaridi e alimenti non processati. Yogurt fermentato artigianale 24h (privo di lattosio residuo). Richiede supervisione nutrizionale specializzata. Monitorare: calcio, vitamina D, B12, adeguatezza calorica.'},
+  larn_popolazione_sana:{kcal:'EAR ~1700 kcal/die (F) – ~2100 kcal/die (M) adulto tipo',prot:'0.9 g/kg/die (adulto)',note:'LARN 2014 (V Revisione) — SINU. CHO 45-60% kcal (preferire basso IG). Grassi 20-35% kcal (saturi <10%). Fibra 25-30 g/die. Sale <5 g/die. Folati 400 µg/die. Calcio 1000 mg/die adulto. Vitamina D 15 µg/die. Acqua ≥2L/die. Alcol: max 1 U/die F, 2 U/die M.'},
+  diabete_gestazionale:{kcal:'Normocalorica adattata al BMI pre-gravidico (non ipocalorica <1600 kcal)',prot:'1.1-1.3 g/kg/die',note:'ADA 2023 · ACOG 2023. CHO 40-50% kcal, basso IG. No zuccheri liberi. 3 pasti + 3 spuntini. Glicemia target: digiuno <95 mg/dL, 1h postprandiale <140 mg/dL, 2h <120 mg/dL. Attività fisica moderata raccomandata. Folati, ferro, DHA, iodio come in gravidanza fisiologica. Auto-monitoraggio glicemico.'},
+  diabete_t1:{kcal:'Normocalorica per peso e attività (TDEE individuale)',prot:'1.0-1.2 g/kg/die',note:'ISPAD 2022 · ADA 2022. Conteggio CHO preciso: ratio insulina/CHO personalizzato. Fibra ≥25 g/die (rallenta assorbimento). Correzione ipoglicemia: 15g CHO rapidi (regola del 15). Monitoraggio glicemico continuo (CGM) raccomandato. Alcol: rischio ipoglicemia ritardata.'},
+  menopausa:{kcal:'Normocalorica (ridurre se aumento ponderale)',prot:'1.0-1.2 g/kg/die',note:'IMS 2022. Calcio 1200 mg/die. Vitamina D 1500-2000 UI/die. Fitoestrogeni (isoflavoni soia, lignani lino) utili per vampate. Proteine adeguate per massa muscolare. Fibre ≥25 g/die. Limitare alcol, caffeina, sodio. Omega-3 2g/die. Attività fisica con carico.'},
+  sibo:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'ACG 2020 · WGO 2021. Dieta Low-FODMAP nella fase acuta (4-6 settimane). Poi reintroduzione graduale. Evitare eccessi di fibre fermentabili. Pasti piccoli e frequenti. Antibiotico-terapia ciclica (rifaximina). Probiotici: evidenza limitata. Trattare la causa di base. Monitorare: B12, ferro, vitamina D, zinco.'},
+  allergia_arachidi:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2021. Eliminazione totale di arachidi e prodotti derivati. Leggere SEMPRE le etichette (allergene obbligatorio EU). Cross-contaminazione frequente: evitare oleifici/pasticcerie/pizzerie senza certificazione. Portare sempre adrenalina auto-iniettabile. Omega-3 da fonti alternative (pesce, alghe, semi di lino).'},
+  allergia_grano:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2021. Distinguere da celiachia (autoimmune) e NCWS. Orzo e segale spesso tollerati (allergia specifica alle proteine del grano). Eliminare frumento e prodotti derivati. Cereali alternativi: riso, mais, grano saraceno, quinoa, amaranto. Supplementare ferro, fibre, vitamine del gruppo B se dieta restrittiva.'},
+  allergia_sesamo:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EAACI 2023 · Reg. UE 2023 (15° allergene obbligatorio). Eliminare sesamo e tutti i derivati: tahini, hummus, olio di sesamo, halva. Attenzione a pane da hamburger, cracker orientali, pangrattato etnico. Adrenalina auto-iniettabile sempre disponibile.'},
+  intolleranza_istamina:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EAACI 2020. Carenza/riduzione diaminossidasi (DAO). Dieta a basso contenuto di istamina (4-8 settimane di esclusione). Evitare: vino rosso, formaggi stagionati, pesce in scatola/affumicato, salumi, cibi fermentati, spinaci, pomodori, cioccolato. Poi reintroduzione graduale. Vitamina B6, vitamina C, rame cofactori DAO.'},
+  intolleranza_nichel:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'SNAS · EAACI 2022. Dieta di esclusione 4-6 settimane poi reintroduzione graduale. Alimenti ad alto nichel da limitare: cioccolato, noci, legumi, cereali integrali, pomodori, spinaci, asparagi. Vitamina C ai pasti riduce assorbimento nichel. Evitare cottura in pentole di acciaio inossidabile.'},
+  sindrome_nefrosica:{kcal:'30-35 kcal/kg/die',prot:'0.8-1.0 g/kg/die + compensazione perdite urinarie',note:'KDIGO 2021. Proteine non eccessive (peggiorano proteinuria). Sodio <1.5 g/die per edemi. Grassi saturi <7% per ipercolesterolemia nefrosica. Omega-3 benefici. Monitorare: proteinemia, lipidi, vitamina D (perdita proteina legante), zinco, rame. Liquidi adattati a edemi.'},
+  pancreatite_acuta:{kcal:'25-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'IAP/APA 2020 · ESPEN 2020. Forme lievi: dieta solida morbida a basso residuo precoce (entro 24-48h). Forme gravi: NE per SNG precoce se via orale non tollerata. NP solo se NE non fattibile. No digiuno prolungato. Grassi bassi inizialmente (<30 g/die). Alcol zero. Piccoli pasti frequenti.'},
+  trapianto:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die (fase precoce), 1.0-1.2 (mantenimento)',note:'ESPEN 2019. Sicurezza alimentare rigorosa: no crudi, no formaggi molli non pastorizzati, no frutti di mare crudi, no pompelmo (interazione immunosoppressori). Glucocorticoidi: limitare zuccheri e sodio. Calcio + vitamina D per osteoporosi da cortisonici. Monitorare peso, lipidi, glicemia (NODAT).'},
+  colite_microscopica:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EMCG 2020 · ACG 2020. Eliminare fattori scatenanti: FANS, PPI (se possibile), sertralina. Dieta senza glutine utile nel 40-50% dei casi. Latticini: limitare se lattosio scatenante. Ridurre fibre insolubili in fase acuta. Idratazione abbondante. Budesonide prima linea farmacologica.'},
+  endometriosi:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ASRM 2022 · ESHRE 2022. Dieta mediterranea riduce rischio e sintomi. Omega-3 EPA/DHA 2-3 g/die (anti-prostaglandinico, riduce dismenorrea). Carni rosse ≤2 porzioni/settimana. Limitare alcol. Vitamina D target >40 ng/mL. Fibre ≥25 g/die (metabolismo estrogenico). Curcuma 1 g/die: possibile beneficio antinfiammatorio.'},
+  prediabete:{kcal:'Deficit 500 kcal/die se sovrappeso (obiettivo -5-10% peso)',prot:'1.0-1.2 g/kg/die',note:'ADA 2024 · IDF 2022. IFG: glicemia digiuno 100-125 mg/dL; IGT: 2h OGTT 140-199 mg/dL. Riduzione peso 5-10% riduce rischio T2DM del 58% (DPP). CHO basso IG. Fibre ≥30 g/die. Attività fisica 150 min/settimana. Limitare zuccheri semplici e grassi saturi. Metformina se dieta insufficiente.'},
+  ipercolesterolemia_familiare:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'EAS 2023. Dieta da sola riduce LDL max 15-25% (terapia farmacologica quasi sempre necessaria). Grassi saturi <5-7% kcal totali. Colesterolo alimentare <200 mg/die. Fibre solubili ≥10 g/die (beta-glucani, pectina). Fitosteroli 2 g/die (-8-10% LDL). Omega-3 per trigliceridi. Eliminare alcol, fumo.'},
+  psoriasi:{kcal:'Ipocalorica se sovrappeso (obiettivo BMI <25)',prot:'1.0-1.2 g/kg/die',note:'BAD 2023 · EADV 2023. Perdita di peso migliora risposta ai biologici. Dieta mediterranea riduce PASI. Omega-3 EPA/DHA 2-3 g/die antinfiammatorio. Alcol zero (aggrava psoriasi e aumenta rischio epatico con MTX). Vitamina D target >40 ng/mL. Limitare grassi saturi e zuccheri.'},
+  dermatite_atopica:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2022 · AAD 2022. Eliminazione dietetica solo se allergia IgE-mediata documentata (test allergologici prima). Omega-3 2 g/die possibile beneficio. Vitamina D target >40 ng/mL. Probiotici Lactobacillus: evidenza moderata nel bambino. Evitare diete elimazione non necessarie (rischio malnutrizione).'},
+  acne:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0 g/kg/die',note:'JAAD 2022 · AAD 2022. Dieta a basso IG riduce lesioni acneiche del 25-50% (RCT). Limitare latte scremato (più insulinogeno del latte intero). Omega-3 2 g/die antinfiammatorio. Zinco 30 mg/die utile (forma lieve-moderata). Vitamina A da alimenti (non supplementi). Evitare siero di latte in polvere (whey).'},
+  sjogren:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EULAR 2020. Xerostomia → difficoltà masticazione/deglutizione: alimenti morbidi, umidi, in piccoli pezzi. Idratazione frequente. Evitare cibi secchi, acidi, alcolici, caffeina (peggiorano xerostomia). Omega-3 2-3 g/die (effetto antinfiammatorio). Vitamina D, calcio per osso. Igiene orale rigorosa (rischio carie elevato).'},
+  talassemia:{kcal:'Normocalorica (aumentata se anemia grave o fabbisogno energetico elevato)',prot:'1.0-1.2 g/kg/die',note:'TIF 2021. Beta-talassemia major: trasfusioni → sovraccarico ferro → evitare supplementi di ferro e vitamina C in eccesso. Folati 5 mg/die (aumentata eritropoiesi). Calcio 1000-1200 mg/die + vitamina D (osteoporosi frequente). Zinco spesso carente. Dieta sana: limitare grassi saturi e zuccheri.'},
+  favismo:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'WHO 2022 · ENERCA 2022. Deficit G6PD (X-linked). Evitare ASSOLUTAMENTE: fave (Vicia faba), vicina e convicina. Evitare anche: alcuni farmaci ossidanti (aspirina ad alte dosi, primachina, nitrofurantoina). In crisi emolitica: idratazione, trasfusioni se Hb <6 g/dL. Acido folico se anemia cronica. Dieta normale per il resto.'},
+  wilson:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EASL 2012 · AASLD 2022. Dieta a basso rame: <1 mg/die (apporto normale 1.5-3 mg/die). Evitare: fegato, molluschi (ostriche, vongole, capesante), noci, cioccolato, funghi secchi, acqua di pozzo (rame). Terapia chelante (penicillamina o trientina) o zinco per bloccare assorbimento intestinale. Vitamina B6 se penicillamina.'},
+  lipedema:{kcal:'Normocalorica (dieta ipocalorica convenzionale non efficace sul lipedema)',prot:'1.2-1.5 g/kg/die',note:'ILA 2021. Accumulo adiposo patologico simmetrico (gambe/fianchi/braccia) non responsivo alla restrizione calorica. Dieta anti-infiammatoria: Mediterranean o RAD (Rare Adipose Disorders). Omega-3 2-3 g/die. Limitare zuccheri semplici, glutine (possibile beneficio). Linfodrenaggio manuale + compressione essenziali. Vitamina D target >40 ng/mL.'},
+  iperemesi_gravidica:{kcal:'Obiettivo minimo 1500-1800 kcal/die; adattare alla tolleranza',prot:'1.0-1.2 g/kg/die',note:'RCOG 2024 · ACOG 2022. Frazionamento estremo (6-10 piccoli pasti/die). Alimenti secchi, freddi, blandi tollerati meglio. Zenzero 1 g/die (evidenza A per nausea). Vitamina B6 10-25 mg ogni 8h (prima linea farmacologica). Tiamina 100 mg/die se vomito prolungato >2-3 settimane (previene Wernicke). Idratazione EV se perdita peso >5% o chetosi. Integratori prenatali a stomaco pieno o sera.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

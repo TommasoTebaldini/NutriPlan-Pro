@@ -449,7 +449,7 @@ function initCartellaWidget(cid, opts) {
       '<div id="' + cid + '-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
     '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
-    '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:block;min-height:15px"></span>';
+    '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:none"></span>';
 }
 
 function _cwFilter(cid) {
@@ -499,7 +499,7 @@ function _cwUpdateDisplay(cid, id, nome) {
   const srch = document.getElementById(cid + '-srch');
   if (srch) srch.value = nome;
   const lbl = document.getElementById(cid + '-lbl');
-  if (lbl) lbl.textContent = nome ? '✅ ' + nome : '';
+  if (lbl) { lbl.textContent = nome ? '✅ ' + nome : ''; lbl.style.display = nome ? 'block' : 'none'; }
   _cwHide(cid);
 }
 
@@ -535,7 +535,7 @@ function _cwClear(cid) {
   const srch = document.getElementById(cid + '-srch');
   if (srch) srch.value = '';
   const lbl = document.getElementById(cid + '-lbl');
-  if (lbl) lbl.textContent = '';
+  if (lbl) { lbl.textContent = ''; lbl.style.display = 'none'; }
 }
 
 function _cwNuovaCartella(cid) {

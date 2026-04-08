@@ -15,8 +15,36 @@ CREATE TABLE IF NOT EXISTS agenda_events (
                CHECK (tipo IN ('visita','controllo','reminder','urgente')),
   durata     INTEGER     NOT NULL DEFAULT 60,       -- minuti
   note       TEXT,
-  created    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  created    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()     -- aggiornato automaticamente dal trigger
 );
+
+-- Aggiorna updated_at automaticamente ad ogni modifica della riga
+-- (usato da LAST-MODIFIED nel feed iCal per segnalare le modifiche ai client)
+CREATE OR REPLACE FUNCTION agenda_events_set_updated_at()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_agenda_events_updated_at ON agenda_events;
+CREATE TRIGGER trg_agenda_events_updated_at
+  BEFORE UPDATE ON agenda_events
+  FOR EACH ROW EXECUTE FUNCTION agenda_events_set_updated_at();
+
+-- Aggiunge la colonna updated_at se la tabella esiste già senza di essa
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'agenda_events' AND column_name = 'updated_at'
+  ) THEN
+    ALTER TABLE agenda_events ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+END;
+$$;
 
 -- Indice per query per utente e data (usato dal feed iCal e dalla pagina)
 CREATE INDEX IF NOT EXISTS agenda_events_user_data
@@ -46,3 +74,8 @@ CREATE POLICY "agenda_events_delete_own" ON agenda_events
 -- dell'utente specificato nel parametro ?uid=.
 -- Non impostare SUPABASE_ANON_KEY come fallback per questo endpoint:
 -- la anon key non può bypassare RLS e la query restituirebbe 0 risultati.
+
+-- ─── Realtime ────────────────────────────────────────────────────────────────
+-- Abilitare la replica Realtime per questa tabella nel pannello Supabase
+-- (Database → Replication → agenda_events) oppure eseguire:
+ALTER PUBLICATION supabase_realtime ADD TABLE agenda_events;

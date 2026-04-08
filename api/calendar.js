@@ -115,8 +115,8 @@ function generateICS(events) {
     'METHOD:PUBLISH\r\n',
     'X-WR-CALNAME:NutriPlan Pro Agenda\r\n',
     'X-WR-TIMEZONE:Europe/Rome\r\n',
-    'REFRESH-INTERVAL;VALUE=DURATION:PT1H\r\n',
-    'X-PUBLISHED-TTL:PT1H\r\n',
+    'REFRESH-INTERVAL;VALUE=DURATION:PT5M\r\n',
+    'X-PUBLISHED-TTL:PT5M\r\n',
     // VTIMEZONE component required by RFC 5545 when TZID is referenced in events.
     // Without it, some calendar clients (Apple Calendar, Outlook) may display wrong
     // times or silently discard events.
@@ -156,9 +156,23 @@ function generateICS(events) {
       [TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join(' - ')
     );
 
+    // LAST-MODIFIED: use the event's created/updated timestamp so that
+    // external calendar clients (Apple Calendar, Outlook, Google) can detect
+    // when an event has changed and refresh their local copy.
+    const lastMod = ev.updated_at || ev.created;
+    let lastModStr = dtstamp; // fallback to feed generation time
+    if (lastMod) {
+      const lm = new Date(lastMod);
+      if (!isNaN(lm)) {
+        lastModStr = `${lm.getUTCFullYear()}${pad(lm.getUTCMonth() + 1)}${pad(lm.getUTCDate())}T${pad(lm.getUTCHours())}${pad(lm.getUTCMinutes())}${pad(lm.getUTCSeconds())}Z`;
+      }
+    }
+
     parts.push('BEGIN:VEVENT\r\n');
     parts.push(foldLine('UID:' + (ev.id || `ev_${ev.created || Date.now()}`) + '@nutriplan-pro') + '\r\n');
     parts.push('DTSTAMP:' + dtstamp + '\r\n');
+    parts.push('LAST-MODIFIED:' + lastModStr + '\r\n');
+    parts.push('SEQUENCE:0\r\n');
     parts.push('DTSTART;TZID=Europe/Rome:' + dtstart + '\r\n');
     parts.push('DTEND;TZID=Europe/Rome:' + dtend + '\r\n');
     parts.push(foldLine('SUMMARY:' + summary) + '\r\n');

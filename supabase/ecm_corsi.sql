@@ -39,7 +39,7 @@ CREATE POLICY "ecm_corsi_admin_write" ON ecm_corsi
   );
 
 -- ═══════════════════════════════════════════════════════════════════
--- DATI INIZIALI — 32 corsi ECM per dietisti e professionisti sanitari
+-- DATI INIZIALI — 41 corsi ECM per dietisti e professionisti sanitari
 -- ═══════════════════════════════════════════════════════════════════
 
 INSERT INTO ecm_corsi (cat, tipo, gratuito, provider, titolo, crediti, durata, costo, target, descrizione, argomenti, link, data_inizio, data_fine, scadenza) VALUES
@@ -369,3 +369,99 @@ INSERT INTO ecm_corsi (cat, tipo, gratuito, provider, titolo, crediti, durata, c
  ARRAY['Nutrizione neonatale','Prematuro','TIN','Latte materno','Fortification','Curva di crescita WHO','Allattamento'],
  'https://www.sinupe.it',
  '2026-11-06', '2026-11-07', 'Iscrizioni aperte — verificare su sito SINUPE');
+
+-- ═══════════════════════════════════════════════════════════════════
+-- NUOVI CORSI (IDs 33–41) — aggiornamento 2026
+-- ═══════════════════════════════════════════════════════════════════
+
+INSERT INTO ecm_corsi (cat, tipo, gratuito, provider, titolo, crediti, durata, costo, target, descrizione, argomenti, link, data_inizio, data_fine, scadenza) VALUES
+
+(ARRAY['patologie','fad'], 'fad', false,
+ 'ADI / SINPE — Nutrizione Artificiale',
+ 'Nutrizione nel Paziente Critico in ICU: dalle Linee Guida alla Pratica',
+ 12, '10 ore FAD', '€ 80–140 (soci/non soci)',
+ ARRAY['Dietisti','Medici intensivisti','Infermieri di area critica'],
+ 'Corso FAD sulla gestione nutrizionale del paziente critico in Terapia Intensiva: timing della nutrizione enterale precoce, protocolli ESPEN 2023 per ICU, gestione della nutrizione nel paziente con instabilità emodinamica, monitoraggio della tolleranza enterale, nutrizione nel paziente con ARDS e insufficienza multiorgano.',
+ ARRAY['ICU','Terapia intensiva','Nutrizione enterale precoce','ARDS','ESPEN ICU','Instabilità emodinamica','Insufficienza multiorgano'],
+ 'https://www.sinpe.it/formazione',
+ NULL, '2026-12-31', 'Verificare su sito SINPE'),
+
+(ARRAY['nutrizione','fad'], 'fad', false,
+ 'SINU — Società Italiana di Nutrizione Umana',
+ 'Interazioni Farmaco-Nutriente: dal Warfarin agli Inibitori di Pompa',
+ 8, '6 ore FAD', 'Gratuito per soci SINU / € 50 non soci',
+ ARRAY['Dietisti','Farmacisti','Medici','Infermieri'],
+ 'Percorso FAD sulle principali interazioni clinicamente rilevanti tra farmaci e nutrienti: anticoagulanti orali (warfarin) e vitamina K, MAO-inibitori e tiramina, farmaci antiretrovirali e alimenti, interazioni con pompelmo, nutrizione enterale e assorbimento dei farmaci, gestione pratica nella prescrizione del piano alimentare.',
+ ARRAY['Warfarin','Vitamina K','Interazioni farmaco-nutriente','MAO-inibitori','Tiramina','Nutrizione enterale','Pompelmo'],
+ 'https://www.sinu.it/formazione',
+ NULL, '2026-12-31', 'Accesso continuativo — verificare su sito SINU'),
+
+(ARRAY['patologie','fad'], 'fad', false,
+ 'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
+ 'Nutrizione nella Chirurgia Bariatrica: Percorso Nutrizionale Pre e Post-operatorio',
+ 10, '8 ore FAD', '€ 70–120 (soci/non soci)',
+ ARRAY['Dietisti','Chirurghi bariatrici','Medici endocrinologi'],
+ 'Corso FAD sulla gestione nutrizionale del paziente bariatrico: valutazione preoperatoria, dieta pre-operatoria iperproteica ipocalorica, gestione post-operatoria per bypass gastrico e sleeve gastrectomy, supplementazione di micronutrienti (ferro, B12, calcio, vitamina D, tiamina), dumping syndrome e prevenzione delle carenze a lungo termine.',
+ ARRAY['Chirurgia bariatrica','Bypass gastrico','Sleeve gastrectomy','Dumping syndrome','Carenze micronutrienti','Supplementazione','Vitamina B12'],
+ 'https://www.adiitalia.net/formazione',
+ NULL, '2026-12-31', 'Verificare disponibilità su sito ADI Italia'),
+
+(ARRAY['patologie','fad'], 'fad', false,
+ 'AIC — Associazione Italiana Celiachia',
+ 'Celiachia e Sensibilità al Glutine: dalla Diagnosi alla Gestione Dietetica Ottimale',
+ 8, '6 ore FAD', '€ 40–70',
+ ARRAY['Dietisti','Gastroenterologi','MMG','Infermieri'],
+ 'Corso FAD aggiornato sulla celiachia e condizioni correlate: nuovi criteri diagnostici ESPGHAN 2020, differenze tra celiachia, SGNC e allergia al frumento, dieta senza glutine in pratica (etichettatura, contaminazione crociata), rischio di carenze nella DSG, follow-up a lungo termine e complicanze.',
+ ARRAY['Celiachia','SGNC','Dieta senza glutine','ESPGHAN','Etichettatura','Contaminazione crociata','Anti-tTG','EMA'],
+ 'https://www.celiachia.it/formazione',
+ NULL, '2026-12-31', 'Verificare disponibilità su sito AIC'),
+
+(ARRAY['nutrizione','fad'], 'fad', false,
+ 'SIN — Società Italiana di Neonatologia / SID',
+ 'Nutrizione e Integrazione in Gravidanza: Micronutrienti, DHA, Folati e Oltre',
+ 10, '8 ore FAD', '€ 60–100',
+ ARRAY['Dietisti','Ginecologi','Ostetriche','MMG'],
+ 'Percorso FAD sulla nutrizione ottimale in gravidanza e allattamento: fabbisogni calorici e proteici aumentati, supplementazione raccomandata (acido folico, ferro, iodio, vitamina D, DHA, zinco, B12), gestione del peso gestazionale secondo IOM, diete speciali in gravidanza, alimenti da evitare, nausea e vomito gravidici.',
+ ARRAY['Gravidanza','Acido folico','DHA','Ferro in gravidanza','Vitamina D','Iodio','Peso gestazionale','Allattamento','Nausea gravidica'],
+ 'https://www.siditalia.it/formazione',
+ NULL, '2026-12-31', 'Verificare disponibilità su sito SID'),
+
+(ARRAY['nutrizione','fad'], 'fad', false,
+ 'ANDID — Associazione Nazionale Dietisti',
+ 'Counseling Nutrizionale Motivazionale: Tecniche e Strumenti per il Dietista',
+ 8, '6 ore FAD', '€ 50–80 (soci/non soci)',
+ ARRAY['Dietisti','Nutrizionisti'],
+ 'Corso FAD sulle tecniche di counseling motivazionale applicate alla dietetica: principi del Motivational Interviewing (MI), ruolo dei processi cognitivi nel cambiamento delle abitudini alimentari, tecniche SMART per la definizione degli obiettivi, gestione dell''ambivalenza, ascolto attivo e comunicazione empatica, educazione terapeutica strutturata.',
+ ARRAY['Motivational Interviewing','Counseling','Cambiamento comportamentale','SMART','Ascolto attivo','Educazione terapeutica','Aderenza'],
+ 'https://www.andid.it/formazione',
+ NULL, '2026-12-31', 'Accesso continuativo — verificare su sito ANDID'),
+
+(ARRAY['nutrizione','fad'], 'fad', false,
+ 'ANDID — Associazione Nazionale Dietisti',
+ 'Dietetica Digitale e Telemedicina: Strumenti Innovativi per il Dietista',
+ 6, '5 ore FAD', '€ 40–60 (soci/non soci)',
+ ARRAY['Dietisti','Nutrizionisti'],
+ 'Corso FAD sulla trasformazione digitale della professione dietistica: software e app per la pianificazione alimentare e il monitoraggio del paziente, telemedicina e teleconsulto nutrizionale, wearables e sensori CGM nella gestione del diabete, intelligenza artificiale applicata alla nutrizione, aspetti etici e privacy (GDPR).',
+ ARRAY['Telemedicina','App nutrizionali','CGM','Intelligenza artificiale','GDPR','Telemonitoraggio','Digital health','Wearables'],
+ 'https://www.andid.it/formazione',
+ NULL, '2026-12-31', 'Accesso continuativo — verificare su sito ANDID'),
+
+(ARRAY['nutrizione','residenziale'], 'residenziale', false,
+ 'SINPE — Società Italiana di Nutrizione Parenterale ed Enterale',
+ 'Congresso Nazionale SINPE 2026 — Nutrizione Artificiale: Innovazioni e Nuove LG',
+ 16, '2 giorni (27–28 novembre 2026)', '€ 200–380 (soci/non soci)',
+ ARRAY['Dietisti','Medici','Infermieri','Farmacisti'],
+ 'Congresso annuale SINPE: aggiornamento su nutrizione enterale e parenterale, nuove linee guida ESPEN/SINPE 2025-2026, nutrizione artificiale domiciliare (NAD/NPD), gestione delle complicanze, innovazioni nelle miscele nutrizionali e nei dispositivi per accesso enterale e vascolare. Workshop pratici con simulatori.',
+ ARRAY['Nutrizione artificiale','SINPE','ESPEN','NAD','NPD','Nutrizione enterale','Nutrizione parenterale','Workshop'],
+ 'https://www.sinpe.it/congresso',
+ '2026-11-27', '2026-11-28', 'Iscrizioni aperte — verificare su sito SINPE'),
+
+(ARRAY['patologie','residenziale'], 'residenziale', false,
+ 'SIN — Società Italiana di Nefrologia',
+ 'Congresso SIN 2026 — Gestione Nutrizionale Avanzata del Paziente Nefropatico',
+ 12, '2 giorni (6–7 novembre 2026)', '€ 150–280',
+ ARRAY['Dietisti','Nefrologi','Infermieri nefrologici'],
+ 'Sessioni dedicate alla nutrizione nel congresso SIN 2026: nuove linee guida KDIGO/ESPEN nella CKD, nutrizione nel trapianto renale, sindrome di malnutrizione-infiammazione (MIS), calcio e metabolismo osseo nella CKD-MBD, innovazioni nella dialisi e impatto nutrizionale.',
+ ARRAY['IRC','CKD','Dialisi peritoneale','Emodialisi','KDIGO','Trapianto renale','MIS','CKD-MBD'],
+ 'https://www.sin-italy.org',
+ '2026-11-06', '2026-11-07', 'Iscrizioni aperte — verificare su sito SIN');

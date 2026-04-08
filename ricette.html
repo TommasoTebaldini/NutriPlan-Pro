@@ -604,9 +604,13 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
 {"nome":"nome ricetta","porzioni":4,"categoria":"Primo piatto","ingredienti":[{"nome":"pasta","qt":"80"}],"note":"breve nota"}`;
 
   try {
+    const { data: { session: _aiSession } } = await sb.auth.getSession();
     const response = await fetch('/api/claude', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': _aiSession?.access_token ? `Bearer ${_aiSession.access_token}` : ''
+      },
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
         max_tokens: 1000,

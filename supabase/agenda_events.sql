@@ -75,6 +75,27 @@ CREATE POLICY "agenda_events_delete_own" ON agenda_events
 -- Non impostare SUPABASE_ANON_KEY come fallback per questo endpoint:
 -- la anon key non può bypassare RLS e la query restituirebbe 0 risultati.
 
+-- ─── Fallback con anon key: funzione SECURITY DEFINER ─────────────────────────
+-- Quando SUPABASE_SERVICE_KEY non è configurata, /api/calendar chiama questa
+-- funzione RPC con la anon key pubblica.  Poiché la funzione è SECURITY DEFINER
+-- esegue con i permessi del proprietario (che può leggere tutti i record) e
+-- applica il filtro user_id internamente, restituendo solo gli eventi
+-- dell'utente richiesto.  Il parametro p_user_id (UUID v4) agisce da token
+-- di accesso al feed, esattamente come i "share link" di Google Calendar.
+CREATE OR REPLACE FUNCTION get_user_agenda_events(p_user_id UUID)
+RETURNS SETOF agenda_events
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT * FROM agenda_events
+  WHERE user_id = p_user_id
+  ORDER BY data ASC, ora ASC;
+$$;
+
+-- Concedi l'esecuzione alla anon role (chiamata senza autenticazione)
+GRANT EXECUTE ON FUNCTION get_user_agenda_events(UUID) TO anon;
+
 -- ─── Realtime ────────────────────────────────────────────────────────────────
 -- Abilitare la replica Realtime per questa tabella nel pannello Supabase
 -- (Database → Replication → agenda_events) oppure eseguire:

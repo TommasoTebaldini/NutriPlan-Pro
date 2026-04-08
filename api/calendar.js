@@ -4,11 +4,15 @@
 // The calendar app will auto-refresh this feed, keeping all devices in sync.
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
-// Use SUPABASE_SERVICE_KEY (server-side, bypasses RLS) — required for this endpoint.
-// SUPABASE_ANON_KEY will NOT work here: RLS restricts reads to authenticated users only,
-// so any query made with the anon key will silently return 0 events.
-// Set SUPABASE_SERVICE_KEY in your Vercel project settings.
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+// Prefer SUPABASE_SERVICE_KEY (bypasses RLS) for direct table access.
+// When it is not configured, fall back to SUPABASE_ANON_KEY and call the
+// get_user_agenda_events() SECURITY DEFINER RPC function instead, which
+// enforces the user_id filter server-side and is safe to invoke with the
+// public anon key.
+// At least one of SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY must be set in
+// the Vercel project settings.
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 const TIPO_LABELS = {
   visita: 'Prima Visita',
@@ -21,9 +25,9 @@ const TIPO_LABELS = {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 module.exports = async (req, res) => {
-  if (!SUPABASE_KEY) {
-    console.error('calendar.js: SUPABASE_SERVICE_KEY is not set. The anon key cannot be used here because Row Level Security would silently return 0 events.');
-    res.status(500).send('Server configuration error: SUPABASE_SERVICE_KEY not configured');
+  if (!SUPABASE_SERVICE_KEY && !SUPABASE_ANON_KEY) {
+    console.error('calendar.js: Neither SUPABASE_SERVICE_KEY nor SUPABASE_ANON_KEY is set. Set at least SUPABASE_ANON_KEY in Vercel project settings and run the get_user_agenda_events SQL function migration.');
+    res.status(500).send('Server configuration error: Supabase key not configured');
     return;
   }
 
@@ -35,23 +39,45 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const apiRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/agenda_events?user_id=eq.${encodeURIComponent(uid)}&select=*&order=data.asc,ora.asc`,
-      {
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'application/json',
-        },
+    let events;
+    if (SUPABASE_SERVICE_KEY) {
+      // Service key available — query the table directly (bypasses RLS).
+      const apiRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/agenda_events?user_id=eq.${encodeURIComponent(uid)}&select=*&order=data.asc,ora.asc`,
+        {
+          headers: {
+            apikey: SUPABASE_SERVICE_KEY,
+            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (!apiRes.ok) {
+        res.status(502).send('Error fetching calendar data');
+        return;
       }
-    );
-
-    if (!apiRes.ok) {
-      res.status(502).send('Error fetching calendar data');
-      return;
+      events = await apiRes.json();
+    } else {
+      // No service key — call the SECURITY DEFINER RPC function with the
+      // anon key.  The function enforces the user_id filter internally.
+      const rpcRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/rpc/get_user_agenda_events`,
+        {
+          method: 'POST',
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ p_user_id: uid }),
+        }
+      );
+      if (!rpcRes.ok) {
+        res.status(502).send('Error fetching calendar data');
+        return;
+      }
+      events = await rpcRes.json();
     }
-
-    const events = await apiRes.json();
     const ics = generateICS(events);
 
     res.setHeader('Content-Type', 'text/calendar; charset=utf-8');

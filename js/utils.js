@@ -942,6 +942,11 @@ function initPianoEsempio(containerId, config) {
 // CUSTOM SELECT DROPDOWN
 // ═══════════════════════════════════════════════════
 (function() {
+  const CSEL_MAX_H = 240;      // max-height of the dropdown panel (px) — must match CSS
+  const CSEL_OPT_H = 35;       // estimated height per option (px), used for open-above logic
+  const CSEL_MARGIN = 4;       // gap between trigger and panel (px)
+  const CSEL_SCROLL_DELAY = 10; // ms to wait before scrolling selected option into view
+
   let _openWrap = null;
 
   function _closeAll() {
@@ -999,21 +1004,21 @@ function initPianoEsempio(containerId, config) {
     // Position using fixed coords
     const rect = trig.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
-    const panelH = Math.min(240, sel.options.length * 35 + 8);
+    const panelH = Math.min(CSEL_MAX_H, sel.options.length * CSEL_OPT_H + 8);
     panel.style.width = rect.width + 'px';
     panel.style.left = rect.left + 'px';
-    if (spaceBelow < panelH + 8 && rect.top > panelH + 8) {
+    if (spaceBelow < panelH + CSEL_MARGIN && rect.top > panelH + CSEL_MARGIN) {
       panel.style.top = '';
-      panel.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+      panel.style.bottom = (window.innerHeight - rect.top + CSEL_MARGIN) + 'px';
     } else {
       panel.style.bottom = '';
-      panel.style.top = (rect.bottom + 4) + 'px';
+      panel.style.top = (rect.bottom + CSEL_MARGIN) + 'px';
     }
     panel.style.display = 'block';
     _openWrap = wrap;
-    // Scroll selected into view
+    // Scroll selected option into view after the panel becomes visible
     const selEl = panel.querySelector('.csel-selected');
-    if (selEl) setTimeout(() => selEl.scrollIntoView({ block: 'nearest' }), 10);
+    if (selEl) setTimeout(() => selEl.scrollIntoView({ block: 'nearest' }), CSEL_SCROLL_DELAY);
   }
 
   function _initOne(sel) {
@@ -1066,6 +1071,7 @@ function initPianoEsempio(containerId, config) {
 
     wrap._cselTrigger = trig;
     wrap._cselPanel = panel;
+    sel._cselPanel = panel; // stored on select for cleanup when select is removed
 
     trig.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -1095,19 +1101,23 @@ function initPianoEsempio(containerId, config) {
     wrap.appendChild(trig);
     wrap.appendChild(sel);
 
-    // Override value setter so external JS assignments update the trigger
-    const proto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
-    const idxProto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'selectedIndex');
-    Object.defineProperty(sel, 'value', {
-      get() { return proto.get.call(this); },
-      set(v) { proto.set.call(this, v); _updateTrigger(wrap, this); },
-      configurable: true
-    });
-    Object.defineProperty(sel, 'selectedIndex', {
-      get() { return idxProto.get.call(this); },
-      set(v) { idxProto.set.call(this, v); _updateTrigger(wrap, this); },
-      configurable: true
-    });
+    // Override value/selectedIndex setters so external JS assignments update the trigger
+    // Guard against re-defining if somehow called twice
+    if (!sel._cselPropsOverridden) {
+      sel._cselPropsOverridden = true;
+      const proto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+      const idxProto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'selectedIndex');
+      Object.defineProperty(sel, 'value', {
+        get() { return proto.get.call(this); },
+        set(v) { proto.set.call(this, v); _updateTrigger(wrap, this); },
+        configurable: true
+      });
+      Object.defineProperty(sel, 'selectedIndex', {
+        get() { return idxProto.get.call(this); },
+        set(v) { idxProto.set.call(this, v); _updateTrigger(wrap, this); },
+        configurable: true
+      });
+    }
 
     // Watch for options being added/removed/changed
     new MutationObserver(() => _updateTrigger(wrap, sel))
@@ -1125,13 +1135,22 @@ function initPianoEsempio(containerId, config) {
   // Close on resize
   window.addEventListener('resize', _closeAll);
 
-  // Watch for new select elements added to DOM
+  // Watch for new select elements added to DOM, and clean up panels for removed selects
   new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       m.addedNodes.forEach(function(node) {
         if (!node || node.nodeType !== 1) return;
         if (node.tagName === 'SELECT') { _initOne(node); return; }
         if (node.querySelectorAll) node.querySelectorAll('select:not([data-csel-skip])').forEach(_initOne);
+      });
+      m.removedNodes.forEach(function(node) {
+        if (!node || node.nodeType !== 1) return;
+        // Remove orphaned panels for any removed select elements
+        const selects = node.tagName === 'SELECT' ? [node]
+          : (node.querySelectorAll ? Array.from(node.querySelectorAll('select')) : []);
+        selects.forEach(function(s) {
+          if (s._cselPanel && s._cselPanel.parentNode) s._cselPanel.remove();
+        });
       });
     });
   }).observe(document.documentElement, { childList: true, subtree: true });

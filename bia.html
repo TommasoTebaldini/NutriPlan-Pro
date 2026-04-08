@@ -102,19 +102,19 @@
 
 <!-- COMPACT SAVE STRIP -->
 <div class="no-print" style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 4px rgba(0,0,0,.06)">
-  <div style="flex:1;min-width:180px">
-    <div style="font-size:10.5px;font-weight:700;color:#D97706;margin-bottom:3px">📁 Cartella Paziente</div>
-    <div id="bia-cartella-cw"></div>
+  <div style="flex:1;min-width:180px;display:flex;align-items:center;gap:6px">
+    <span style="font-size:10.5px;font-weight:700;color:#D97706;white-space:nowrap">📁 Cartella Paziente</span>
+    <div id="bia-cartella-cw" style="flex:1"></div>
   </div>
-  <div style="flex:0 0 200px">
-    <div style="font-size:10.5px;font-weight:700;color:var(--slate-m);margin-bottom:3px">📝 Nota / Titolo sessione</div>
-    <input type="text" id="bia-note" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:6px">
+    <span style="font-size:10.5px;font-weight:700;color:var(--slate-m);white-space:nowrap">📝 Nota / Titolo sessione</span>
+    <input type="text" id="bia-note" placeholder="es. Prima visita, follow-up..." style="width:200px;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
   </div>
-  <div style="flex:0 0 auto">
-    <div style="font-size:10.5px;font-weight:700;color:var(--slate-m);margin-bottom:3px">📅 Data misurazione</div>
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:6px">
+    <span style="font-size:10.5px;font-weight:700;color:var(--slate-m);white-space:nowrap">📅 Data misurazione</span>
     <input type="date" id="bia-data" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
   </div>
-  <div style="display:flex;gap:6px;flex-shrink:0;align-self:flex-end">
+  <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
     <button class="btn btn-primary btn-sm" onclick="salvaBIA()" id="btn-salva-bia">💾 Salva in Cartella</button>
     <button class="btn btn-ghost btn-sm" onclick="resetBIA()">↺ Reset</button>
   </div>
@@ -131,6 +131,25 @@
 <div class="bia-panel active" id="tab-inserimento">
   <div class="alert-info">
     <b>⚡ Importazione dati BIA</b> — Inserisci manualmente i valori del report BIA oppure copia il testo dal software dello strumento (Akern, SECA, InBody, Tanita, ecc.) e usa l'importazione automatica.
+  </div>
+
+  <!-- Selezione cartella paziente -->
+  <div class="calc-box">
+    <h3>👤 Associa a Cartella Paziente</h3>
+    <div class="grid-2">
+      <div class="nf">
+        <label style="color:#D97706">📁 Cartella Paziente</label>
+        <div id="bia-cartella-cw"></div>
+      </div>
+      <div class="nf">
+        <label>Data misurazione</label>
+        <input type="date" id="bia-data">
+      </div>
+    </div>
+    <div class="nf" style="margin-top:10px">
+      <label>Note cliniche (opzionale)</label>
+      <input type="text" id="bia-note" placeholder="es. Prima misurazione, post-dieta 3 mesi, ecc.">
+    </div>
   </div>
 
   <!-- Import automatico -->

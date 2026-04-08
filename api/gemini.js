@@ -68,7 +68,7 @@ export default async function handler(req, res) {
     if (messages !== undefined && !Array.isArray(messages)) {
       return res.status(400).json({ error: 'Parametro messages non valido.' });
     }
-    const safeMaxTokens = Math.min(Math.max(parseInt(max_tokens) || 1024, 1), MAX_TOKENS_LIMIT);
+    const safeMaxTokens = Math.min(Math.max(parseInt(max_tokens, 10) || 1024, 1), MAX_TOKENS_LIMIT);
 
     const allMessages = [
       { role: 'system', content: String(system || 'Sei un assistente nutrizionale clinico per dietisti italiani. Rispondi in italiano in modo preciso e professionale.').slice(0, 8192) },

@@ -19,11 +19,11 @@
 /* Compact print area (screen: hidden) */
 #compact-print-area{display:none}
 @media print{
-  @page{margin:1cm 1.2cm;size:A4 landscape}
+  @page{margin:0;size:A4 landscape}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   #sidebar,#topbar,.no-print,.undo-bar,#loading-overlay,#toast{display:none!important}
-  #main{margin:0!important;padding:0!important}
-  .page-content{padding:6px!important}
+  #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
+  .page-content{padding:0!important}
   .pasto-body.collapsed{display:block!important}
   .pasto-card{page-break-inside:avoid;margin-bottom:5px!important;overflow:visible!important}
   .table-wrap{overflow:visible!important;max-height:none!important;width:100%!important}
@@ -1364,7 +1364,7 @@ function _applyPortraitPrint() {
     s.id = '_portrait-print-style';
     document.head.appendChild(s);
   }
-  s.textContent = '@media print{@page{size:A4 portrait;margin:1cm 1.2cm}}';
+  s.textContent = '@media print{@page{size:A4 portrait;margin:0}}';
 }
 
 window.addEventListener('afterprint', () => {

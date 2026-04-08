@@ -1149,7 +1149,7 @@ function initPianoEsempio(containerId, config) {
         const selects = node.tagName === 'SELECT' ? [node]
           : (node.querySelectorAll ? Array.from(node.querySelectorAll('select')) : []);
         selects.forEach(function(s) {
-          if (s._cselPanel && s._cselPanel.parentNode) s._cselPanel.remove();
+          if (s._cselPanel && s._cselPanel.parentNode && !s.isConnected) s._cselPanel.remove();
         });
       });
     });

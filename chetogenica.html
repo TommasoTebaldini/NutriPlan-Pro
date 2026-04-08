@@ -149,11 +149,11 @@
   <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🥑</div>
   <div style="flex:1;position:relative">
     <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Dieta Chetogenica — Strumenti Clinici</div>
-    <div style="font-size:12px;opacity:.88;line-height:1.6">Calcolo macronutrienti, tipi di KD, alimenti consentiti, menu esempio, monitoraggio e sicurezza. Basato su <b>ILAE 2018 · AAN 2016 · ESPEN 2021</b>.</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Calcolo macronutrienti, tipi di KD, alimenti consentiti, consigli pratici, monitoraggio e sicurezza. Basato su <b>ILAE 2018 · AAN 2016 · ESPEN 2021</b>.</div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧮 Calcolo Macro</div>
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥩 Alimenti</div>
-      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📋 Menu Esempio</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">💡 Consigli</div>
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🩺 Monitoraggio</div>
     </div>
   </div>
@@ -180,7 +180,7 @@
   <button class="keto-tab active" onclick="showKetoTab('principi')">📖 Principi & Indicazioni</button>
   <button class="keto-tab" onclick="showKetoTab('calcolo')">🧮 Calcolo Macronutrienti</button>
   <button class="keto-tab" onclick="showKetoTab('alimenti')">🥩 Alimenti Consentiti</button>
-  <button class="keto-tab" onclick="showKetoTab('menu')">🍽️ Menu Esempio</button>
+  <button class="keto-tab" onclick="showKetoTab('menu')">💡 Consigli</button>
   <button class="keto-tab" onclick="showKetoTab('monitoraggio')">🩺 Monitoraggio & Sicurezza</button>
   <button class="keto-tab" onclick="showKetoTab('piano_esempio')">🍽️ Esempi</button>
 </div>
@@ -574,162 +574,176 @@
 <div class="keto-panel" id="tab-menu">
 
   <div class="alert-info alert-box">
-    <b>🍽️ Menu Esempio Chetogenici</b> — Esempi di piani alimentari giornalieri per i diversi tipi di KD. Le quantità sono indicative per un adulto di 70 kg con apporto di ~1800 kcal/die.
+    <b>💡 Consigli per la Dieta Chetogenica</b> — Indicazioni pratiche per l'implementazione, la gestione quotidiana e il monitoraggio della dieta chetogenica. Fonte: ILAE 2018, AAN 2016, ESPEN 2021.
   </div>
 
-  <div class="esempio-toolbar no-print">
-    <button id="keto-btn-edit" onclick="toggleEditKeto()" title="Modifica le quantità e gli alimenti">✏️ Modifica</button>
-    <button onclick="salvaEsempiKeto()" title="Salva le modifiche in locale">💾 Salva</button>
-    <button onclick="apriInPianoAlimentareKeto()" title="Copia i menu nel Piano Alimentare per modificarli e salvarli">📂 Apri in Piano</button>
-    <button onclick="ripristinaEsempiKeto()" title="Ripristina gli esempi originali" style="color:#DC2626;border-color:#FECACA">↩ Ripristina Originale</button>
-  </div>
-
-  <!-- MENU 1: MAD -->
-  <div class="menu-card" id="keto-menu-mad">
-    <div class="menu-card-hdr" style="background:linear-gradient(135deg,#3B0764,#7C3AED)">
-      <span style="font-size:20px">🥑</span>
-      <div>
-        <div>Atkins Modificata (MAD) — 1800 kcal</div>
-        <div style="font-size:11px;opacity:.85;font-weight:400">CHO ~20g · Grassi ~145g · Proteine ~90g · Rapporto ~2:1</div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="calc-box">
+      <h3>🧮 Gestione dei Carboidrati</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">📊 Conta i CHO netti</div>
+          <div style="font-size:12px;color:var(--slate-l)">Sottrai la fibra dai carboidrati totali. Es.: broccoli 4 g CHO − 2.6 g fibra = 1.4 g CHO netti. Molti valori nutrizionali europei riportano già i CHO netti.</div>
+        </div>
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">🏷️ Leggi sempre le etichette</div>
+          <div style="font-size:12px;color:var(--slate-l)">Molti prodotti "senza zucchero" o "light" contengono maltodestrine, sciroppo di glucosio, fruttosio o amidi modificati ad alto indice glicemico. Verificare sempre la tabella nutrizionale.</div>
+        </div>
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">⚠️ Alimenti "nascosti"</div>
+          <div style="font-size:12px;color:var(--slate-l)">Attenzione a salse, condimenti, yogurt aromatizzati, bevande energetiche, integratori masticabili e farmaci in sciroppo: possono contenere zuccheri sufficienti a interrompere la chetosi.</div>
+        </div>
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">📱 App di tracciamento</div>
+          <div style="font-size:12px;color:var(--slate-l)">Usare app come Cronometer o MyFitnessPal per tracciare i macronutrienti nei primi mesi di dieta, fino a quando si acquisisce familiarità con le porzioni.</div>
+        </div>
       </div>
     </div>
-    <div class="menu-card-body">
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🌅 Colazione</div>
-        <div class="menu-row-food">
-          3 uova strapazzate in burro + 2 fette pancetta + ½ avocado + caffè con panna
+
+    <div class="calc-box">
+      <h3>🌊 Idratazione ed Elettroliti</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+          <div style="font-weight:700;font-size:13px;color:#1E3A8A;margin-bottom:3px">💧 Fabbisogno idrico aumentato</div>
+          <div style="font-size:12px;color:var(--slate-l)">La riduzione dei CHO causa natriuresi e diuresi osmotica. Aumentare l'apporto di acqua a 2.5–3 L/die. In fase di adattamento possono servire anche 3.5 L/die.</div>
         </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">480 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">26g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">3g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">41g G</span>
+        <div style="padding:10px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+          <div style="font-weight:700;font-size:13px;color:#1E3A8A;margin-bottom:3px">🧂 Sodio (2–4 g/die)</div>
+          <div style="font-size:12px;color:var(--slate-l)">Aggiungere sale alle pietanze, brodo di ossa o acqua di mare diluita (Quinton). Il sodio riduce affaticamento, mal di testa e crampi muscolari.</div>
         </div>
-      </div>
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🍽️ Pranzo</div>
-        <div class="menu-row-food">
-          Salmone al forno 150g + zucchine trifolate in olio EVO 150g + insalata mista + olio EVO 20ml
+        <div style="padding:10px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+          <div style="font-weight:700;font-size:13px;color:#1E3A8A;margin-bottom:3px">🥗 Potassio (3–4 g/die)</div>
+          <div style="font-size:12px;color:var(--slate-l)">Fonti: avocado, spinaci, zucchine, salmone, noci. Oppure integrare con citrato di potassio. Il deficit di K+ provoca crampi e aritmie.</div>
         </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">550 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">35g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">5g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">44g G</span>
-        </div>
-      </div>
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🍎 Spuntino</div>
-        <div class="menu-row-food">
-          30g noci + 30g parmigiano + 5 olive
-        </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">280 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">11g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">4g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">24g G</span>
-        </div>
-      </div>
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#7C3AED;flex-shrink:0">🌙 Cena</div>
-        <div class="menu-row-food">
-          Petto di pollo 200g con crosta di erbe aromatiche + broccoli al vapore 200g con burro + 15ml olio EVO
-        </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">490 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">62g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">8g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">36g G</span>
+        <div style="padding:10px 12px;background:#EFF6FF;border-radius:8px;border-left:3px solid #2563EB">
+          <div style="font-weight:700;font-size:13px;color:#1E3A8A;margin-bottom:3px">🦴 Magnesio (300–400 mg/die)</div>
+          <div style="font-size:12px;color:var(--slate-l)">Preferire glicinato o malato di magnesio (migliore tollerabilità GI). Utile prima di dormire. Riduce crampi notturni e migliora la qualità del sonno.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MENU 2: VLCKD -->
-  <div class="menu-card" id="keto-menu-vlckd">
-    <div class="menu-card-hdr" style="background:linear-gradient(135deg,#064E3B,#059669)">
-      <span style="font-size:20px">⚖️</span>
-      <div>
-        <div>VLCKD per Dimagrimento — 1400 kcal</div>
-        <div style="font-size:11px;opacity:.85;font-weight:400">CHO &lt;30g · Grassi ~100g · Proteine ~80g · Deficit calorico 400 kcal</div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="calc-box">
+      <h3>🔄 Fase di Adattamento (Settimane 1–4)</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #D97706">
+          <div style="font-weight:700;font-size:13px;color:#78350F;margin-bottom:3px">🤒 Keto-Flu: cos'è e quanto dura</div>
+          <div style="font-size:12px;color:var(--slate-l)">Nei primi 3–7 giorni: mal di testa, affaticamento, irritabilità, nausea, difficoltà di concentrazione. È normale, transitoria e gestibile con adeguata idratazione ed elettroliti.</div>
+        </div>
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #D97706">
+          <div style="font-weight:700;font-size:13px;color:#78350F;margin-bottom:3px">⏱️ Timing dell'adattamento</div>
+          <div style="font-size:12px;color:var(--slate-l)">La chetosi nutrizionale completa si stabilizza in 2–4 settimane. L'adattamento metabolico ai grassi (fat-adaptation) richiede 6–12 settimane. La performance sportiva recupera dopo 3–4 settimane.</div>
+        </div>
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #D97706">
+          <div style="font-weight:700;font-size:13px;color:#78350F;margin-bottom:3px">🛌 Priorità nelle prime settimane</div>
+          <div style="font-size:12px;color:var(--slate-l)">Ridurre l'intensità degli allenamenti, privilegiare il sonno (8 ore), evitare stress intenso. Il cortisolo elevato può stimolare la gluconeogenesi e rallentare l'ingresso in chetosi.</div>
+        </div>
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #D97706">
+          <div style="font-weight:700;font-size:13px;color:#78350F;margin-bottom:3px">🔬 Verifica della chetosi</div>
+          <div style="font-size:12px;color:var(--slate-l)">Misurare i chetoni ematici (GKI ottimale &lt;3) è più preciso degli stix urinari. I chetoni urinari diminuiscono dopo 4–6 settimane anche in presenza di chetosi stabile (adattamento renale).</div>
+        </div>
       </div>
     </div>
-    <div class="menu-card-body">
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🌅 Colazione</div>
-        <div class="menu-row-food">
-          2 uova sode + 100g ricotta intera + cannella + caffè amaro
+
+    <div class="calc-box">
+      <h3>🍳 Grassi e Tecniche di Cucina</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">🥥 MCT Oil: introduzione graduale</div>
+          <div style="font-size:12px;color:var(--slate-l)">Iniziare con 5 ml/die a colazione e aumentare di 5 ml ogni 3–4 giorni fino a 20–30 ml/die. Assumerlo sempre con cibo per evitare diarrea e nausea. Non cuocere a fuoco vivo (basso punto di fumo).</div>
         </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">310 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">24g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">4g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">22g G</span>
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">🫒 Olio EVO: cottura ottimale</div>
+          <div style="font-size:12px;color:var(--slate-l)">Usare a crudo o a fuoco medio (max 180 °C). Burro chiarificato (ghee), strutto e olio di cocco sono più stabili alle alte temperature. Evitare oli di semi (omega-6 in eccesso).</div>
         </div>
-      </div>
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🍽️ Pranzo</div>
-        <div class="menu-row-food">
-          Tonno al naturale 150g + insalata mista + pomodori ciliegini (&lt;50g) + olio EVO 15ml + limone
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">🥚 Uova: alimento cardine</div>
+          <div style="font-size:12px;color:var(--slate-l)">Fonte proteica completa e di grassi di qualità. Non limitare a 3–4/settimana (indicazione obsoleta). Studi recenti non correlano consumo di uova intere a incremento del rischio cardiovascolare nella KD.</div>
         </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">340 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">34g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">6g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">22g G</span>
-        </div>
-      </div>
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🍎 Spuntino</div>
-        <div class="menu-row-food">
-          20g mandorle + 100g fragole
-        </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">150 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">5g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">9g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">10g G</span>
-        </div>
-      </div>
-      <div class="menu-row">
-        <div style="width:80px;font-size:12px;font-weight:700;color:#059669;flex-shrink:0">🌙 Cena</div>
-        <div class="menu-row-food">
-          Filetto di branzino 180g al vapore + spinaci saltati in olio EVO 200g + 10ml olio EVO
-        </div>
-        <div class="menu-row-macros">
-          <span class="mpill-sm" style="background:#FFF7ED;color:#C2410C">380 kcal</span>
-          <span class="mpill-sm" style="background:#F0FDF4;color:#15803D">40g P</span>
-          <span class="mpill-sm" style="background:#EFF6FF;color:#1D4ED8">3g CHO</span>
-          <span class="mpill-sm" style="background:#FFFBEB;color:#B45309">24g G</span>
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">🥑 Avocado e frutta secca</div>
+          <div style="font-size:12px;color:var(--slate-l)">Avocado: ~2 g CHO netti/100 g, ricco di potassio e grassi monoinsaturi. Noci (30 g): ~2 g CHO netti. Mandorle (30 g): ~3 g CHO netti. Pesare sempre con bilancia di precisione.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CONSIGLI PRATICI -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="calc-box">
+      <h3>💊 Farmaci e Supplementi</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:#FEE2E2;border-radius:8px;border-left:3px solid #DC2626">
+          <div style="font-weight:700;font-size:13px;color:#7F1D1D;margin-bottom:3px">⚕️ Farmaci antiepilettici</div>
+          <div style="font-size:12px;color:var(--slate-l)">La KD può potenziare l'effetto del valproato (rischio tossicità epatica), della fenitoina e del topiramato. Monitorare i livelli ematici e segnalare al neurologo l'inizio della dieta.</div>
+        </div>
+        <div style="padding:10px 12px;background:#FEE2E2;border-radius:8px;border-left:3px solid #DC2626">
+          <div style="font-weight:700;font-size:13px;color:#7F1D1D;margin-bottom:3px">💉 Ipoglicemizzanti e insulina</div>
+          <div style="font-size:12px;color:var(--slate-l)">Riduzione rapida della glicemia può richiedere aggiustamento delle dosi di insulina e secretagoghi già dal primo giorno. Monitoraggio glicemico intensivo (CGM ideale) nelle prime settimane.</div>
+        </div>
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #D97706">
+          <div style="font-weight:700;font-size:13px;color:#78350F;margin-bottom:3px">🦴 Calcio e vitamina D</div>
+          <div style="font-size:12px;color:var(--slate-l)">L'acidosi metabolica cronica aumenta il riassorbimento osseo. Supplementare Ca2+ 1000–1500 mg/die + Vitamina D3 2000 UI/die + citrato di potassio come tampone alcalinizzante.</div>
+        </div>
+        <div style="padding:10px 12px;background:#FEF3C7;border-radius:8px;border-left:3px solid #D97706">
+          <div style="font-weight:700;font-size:13px;color:#78350F;margin-bottom:3px">🔬 Selenio e zinco</div>
+          <div style="font-size:12px;color:var(--slate-l)">La restrizione di cereali può ridurre selenio e zinco. Supplementare se la dieta dura più di 3 mesi. Controllare con esami ematici periodici (ogni 3–6 mesi).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>🏋️ Sport e Attività Fisica</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">🚴 Attività aerobica (bassa intensità)</div>
+          <div style="font-size:12px;color:var(--slate-l)">Dopo 6–8 settimane di adattamento, l'ossidazione dei grassi durante attività a bassa-media intensità (60–70% VO2max) è superiore rispetto a una dieta ad alto contenuto di CHO.</div>
+        </div>
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">⚡ Attività anaerobica (alta intensità)</div>
+          <div style="font-size:12px;color:var(--slate-l)">Lo sprint e il sollevamento pesi richiedono glucosio. Valutare la Targeted KD (TKD): 20–50 g CHO prima del training. Oppure Cyclical KD (CKD): 1–2 giorni/settimana di ricarica carboidrati.</div>
+        </div>
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">💪 Massa muscolare</div>
+          <div style="font-size:12px;color:var(--slate-l)">Con adeguato apporto proteico (1.6–2.0 g/kg/die), l'ipertrofia muscolare è mantenibile anche in KD. Assicurare un surplus calorico modesto (+200–300 kcal) in fase di crescita muscolare.</div>
+        </div>
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">🔋 Creatina monoidrato</div>
+          <div style="font-size:12px;color:var(--slate-l)">5 g/die è il supplemento più supportato da evidenze per performance anaerobica in KD. Non richiede fase di carico. Sicura anche a lungo termine.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="calc-box">
-    <h3>💡 Consigli Pratici per la Cucina Chetogenica</h3>
+    <h3>📋 Monitoraggio Clinico e Aspetti Pratici</h3>
     <div class="grid-2">
       <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
-          <b>🧮 Conta i CHO netti:</b> Sottrai la fibra dai carboidrati totali. Es.: broccoli 4g CHO - 2.6g fibra = 1.4g CHO netti.
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">📅 Esami da monitorare</div>
+          <div style="font-size:12px;color:var(--slate-l)">Baseline e ogni 3 mesi: lipidogramma completo, glicemia, HbA1c, elettroliti, funzionalità epatica (ALT/AST), renale (creatinina), emocromo. Acido urico se iperuricemia preesistente.</div>
         </div>
-        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
-          <b>🫙 Elettroliti:</b> Aggiungere brodo di ossa, sale rosa, acqua di mare diluita. La KD causa natriuresi e perdita di elettroliti.
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">🧠 Salute intestinale</div>
+          <div style="font-size:12px;color:var(--slate-l)">La riduzione di cereali integrali e legumi può alterare il microbiota. Privilegiare verdure a foglia, probiotici (kefir, yogurt intero non zuccherato) e prebiotici tollerati (inulina, FOS a basse dosi).</div>
         </div>
-        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
-          <b>🥥 MCT Oil:</b> Iniziare con 5ml/die e aumentare gradualmente a 15–20ml per evitare disturbi gastrointestinali.
+        <div style="padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #059669">
+          <div style="font-weight:700;font-size:13px;color:#064E3B;margin-bottom:3px">🛒 Organizzazione pratica</div>
+          <div style="font-size:12px;color:var(--slate-l)">Preparare i pasti in anticipo (meal prep settimanale). Tenere sempre a disposizione snack keto-friendly (noci, formaggio, uova sode). Pianificare i pasti fuori casa in anticipo leggendo i menù online.</div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
-          <b>📅 Adattamento (settimane 1–4):</b> La "keto-flu" (affaticamento, mal di testa, crampi) è normale e transitoria. Idratazione abbondante.
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">🍽️ Pasti fuori casa</div>
+          <div style="font-size:12px;color:var(--slate-l)">In ristorante: scegliere secondi di carne/pesce con verdure cotte in olio, evitare pane, pasta, patate e salse. Grigliate, carpacci, insalate con proteine sono opzioni sicure. Chiedere di non portare il pane.</div>
         </div>
-        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
-          <b>🍽️ Etichette:</b> Leggere sempre le etichette nutrizionali. Molti alimenti "senza zucchero" contengono maltodestrine o sciroppi ad alto IG.
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">🧘 Aspetti psicologici</div>
+          <div style="font-size:12px;color:var(--slate-l)">Le restrizioni alimentari possono generare isolamento sociale e ansia. Educare il paziente sul "why" della dieta, coinvolgere la famiglia, impostare aspettative realistiche. La flessibilità nelle uscite occasionali migliora l'aderenza a lungo termine.</div>
         </div>
-        <div style="padding:8px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED;font-size:12.5px">
-          <b>💊 Farmaci:</b> La KD può modificare l'assorbimento di farmaci antiepilettici e ipoglicemizzanti. Sempre supervisione medica.
+        <div style="padding:10px 12px;background:#F5F3FF;border-radius:8px;border-left:3px solid #7C3AED">
+          <div style="font-weight:700;font-size:13px;color:#3B0764;margin-bottom:3px">⏳ Durata e sospensione</div>
+          <div style="font-size:12px;color:var(--slate-l)">In epilessia: solitamente 2 anni, poi riduzione graduale. In obesità/T2D: finché clinicamente indicata con rivalutazione periodica. La sospensione brusca può causare rimbalzo glicemico e peggioramento del controllo epilettico.</div>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@
   @page{margin:0;size:A4 landscape}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   #sidebar,#topbar,.no-print,.undo-bar,#loading-overlay,#toast{display:none!important}
-  #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
+  #main{margin:0!important;padding:1cm 1.2cm 1cm!important}
   .page-content{padding:0!important}
   .pasto-body.collapsed{display:block!important}
   .pasto-card{page-break-inside:avoid;margin-bottom:5px!important;overflow:visible!important}
@@ -53,6 +53,11 @@
   body[data-print-mode="compact"] .macro-bar{display:none!important}
   body[data-print-mode="compact"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="compact"] #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  /* ── PDF all-days mode (all days, nutritional tables) ── */
+  body[data-print-mode="pdf-alldays"] #pasti-container{display:none!important}
+  body[data-print-mode="pdf-alldays"] .macro-bar{display:none!important}
+  body[data-print-mode="pdf-alldays"] #print-giorno-hdr{display:none!important}
+  body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
 </style>
 </head>
@@ -191,6 +196,8 @@
   <div id="simple-print-area"></div>
   <!-- COMPACT PRINT AREA (hidden on screen, shown in compact print mode) -->
   <div id="compact-print-area"></div>
+  <!-- PDF ALL-DAYS PRINT AREA (hidden on screen, shown when printing multi-day plans in PDF mode) -->
+  <div id="pdf-alldays-print-area" style="display:none"></div>
 
 </div>
 </main>

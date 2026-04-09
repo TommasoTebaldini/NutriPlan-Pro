@@ -1399,14 +1399,54 @@
 // ── SCORES STATE ──
 const scaleState = {};
 let _qSaveNome = '', _qSaveDati = {};
+let _editingNoteSpecId = null;
+let _editingCartellaId = null;
+
+const _qNameToCard = {
+  'MUST':        { tab: 'screening',   card: 'must' },
+  'MNA-SF':      { tab: 'screening',   card: 'mna' },
+  'NRS-2002':    { tab: 'screening',   card: 'nrs' },
+  'SCOFF':       { tab: 'screening',   card: 'scoff' },
+  'PHQ-2':       { tab: 'screening',   card: 'phq2' },
+  'GAD-7':       { tab: 'screening',   card: 'gad7' },
+  'SGA':         { tab: 'screening',   card: 'sga' },
+  'SARC-F':      { tab: 'screening',   card: 'sarcf' },
+  'FRAIL Scale': { tab: 'screening',   card: 'frail' },
+  'STRONGkids':  { tab: 'screening',   card: 'strongkids' },
+  'GNRI':        { tab: 'screening',   card: 'gnri' },
+  'EDE-Q':       { tab: 'assessment',  card: 'edeq' },
+  'BES':         { tab: 'assessment',  card: 'bes' },
+  'PHQ-9':       { tab: 'assessment',  card: 'phq9' },
+  'ORTO-15':     { tab: 'assessment',  card: 'orto' },
+  'IES-2':       { tab: 'assessment',  card: 'ies' },
+  'EAT-26':      { tab: 'assessment',  card: 'eat26' },
+  'TFEQ-R18':    { tab: 'assessment',  card: 'tfeq' },
+  'PREDIMED':    { tab: 'nutrizione',  card: 'predimed' },
+  'AUDIT':       { tab: 'nutrizione',  card: 'audit' },
+  'MMAS-4':      { tab: 'psicologici', card: 'mmas4' },
+  'PSS-10':      { tab: 'psicologici', card: 'pss10' },
+};
+
+const _qTabOrder = ['screening', 'assessment', 'nutrizione', 'psicologici'];
+
+function _switchQTab(tabId) {
+  document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.q-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('qtab-' + tabId).classList.add('active');
+  const idx = _qTabOrder.indexOf(tabId);
+  const tabBtns = document.querySelectorAll('.q-tab');
+  if (idx >= 0 && tabBtns[idx]) tabBtns[idx].classList.add('active');
+}
+
+function _navigateBackToCartella(cartellaId) {
+  sessionStorage.setItem('openCartellaId', cartellaId);
+  // Short delay to allow the toast to be visible before navigating
+  setTimeout(() => { window.location.href = 'pazienti.html'; }, 900);
+}
 
 function showQTab(id) {
   autoSavePage_questionari();
-  document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.q-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('qtab-' + id).classList.add('active');
-  event.target.classList.add('active');
-  // Clear search when switching tabs
+  _switchQTab(id);
   clearQSearch();
 }
 
@@ -2255,7 +2295,11 @@ function apriSalvaQuestionario() {
   if (!_qSaveNome) return;
   document.getElementById('sq-nome').value = _qSaveNome;
   document.getElementById('sq-data').value = new Date().toISOString().slice(0, 10);
-  _cwClear('sq-cartella-cw');
+  if (_editingCartellaId) {
+    _cwSetById('sq-cartella-cw', _editingCartellaId);
+  } else {
+    _cwClear('sq-cartella-cw');
+  }
   openM('modal-salva-q');
 }
 
@@ -2265,17 +2309,28 @@ async function salvaQuestionarioInCartella() {
   const dataVal = document.getElementById('sq-data').value;
   const nota = `${_qSaveNome} — Score: ${_qSaveDati.score ?? _qSaveDati.global ?? ''}${_qSaveDati.label ? ' — ' + _qSaveDati.label.replace(/[🟢🟡🔴⚠️]/gu, '').trim() : ''}`;
   const now = dataVal ? new Date(dataVal + 'T12:00:00').toISOString() : new Date().toISOString();
-  const payload = {
-    cartella_id: cartellaId,
-    user_id: currentUser.id,
-    tipo: 'questionario',
-    nota,
-    dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
-    created_at: now,
-    updated_at: now
-  };
   showLoading(true);
-  const { error } = await sb.from('note_specialistiche').insert(payload);
+  let error;
+  if (_editingNoteSpecId) {
+    const res = await sb.from('note_specialistiche').update({
+      cartella_id: cartellaId,
+      nota,
+      dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
+      updated_at: new Date().toISOString()
+    }).eq('id', _editingNoteSpecId).eq('user_id', currentUser.id);
+    error = res.error;
+  } else {
+    const res = await sb.from('note_specialistiche').insert({
+      cartella_id: cartellaId,
+      user_id: currentUser.id,
+      tipo: 'questionario',
+      nota,
+      dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
+      created_at: now,
+      updated_at: now
+    });
+    error = res.error;
+  }
   showLoading(false);
   if (error) {
     if (error.code === '42P01') {
@@ -2285,8 +2340,17 @@ async function salvaQuestionarioInCartella() {
     }
     return;
   }
+  const wasEditing = !!_editingNoteSpecId;
+  const backCartellaId = _editingCartellaId;
+  _editingNoteSpecId = null;
+  _editingCartellaId = null;
   closeM('modal-salva-q');
-  toast('✅ Questionario salvato nella cartella paziente!', 'ok');
+  if (wasEditing && backCartellaId) {
+    toast('✅ Questionario aggiornato!', 'ok');
+    _navigateBackToCartella(backCartellaId);
+  } else {
+    toast('✅ Questionario salvato nella cartella paziente!', 'ok');
+  }
 }
 
 async function salvaQFromBar() {
@@ -2297,23 +2361,43 @@ async function salvaQFromBar() {
   const notaExtra = document.getElementById('qbar-note').value.trim();
   const nota = `${_qSaveNome} — Score: ${_qSaveDati.score ?? _qSaveDati.global ?? ''}${_qSaveDati.label ? ' — ' + _qSaveDati.label.replace(/[🟢🟡🔴⚠️]/gu, '').trim() : ''}${notaExtra ? ' — ' + notaExtra : ''}`;
   const now = new Date().toISOString();
-  const payload = {
-    cartella_id: cartellaId,
-    user_id: currentUser.id,
-    tipo: 'questionario',
-    nota,
-    dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
-    created_at: now,
-    updated_at: now
-  };
   showLoading(true);
-  const { error } = await sb.from('note_specialistiche').insert(payload);
+  let error;
+  if (_editingNoteSpecId) {
+    const res = await sb.from('note_specialistiche').update({
+      cartella_id: cartellaId,
+      nota,
+      dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
+      updated_at: now
+    }).eq('id', _editingNoteSpecId).eq('user_id', currentUser.id);
+    error = res.error;
+  } else {
+    const res = await sb.from('note_specialistiche').insert({
+      cartella_id: cartellaId,
+      user_id: currentUser.id,
+      tipo: 'questionario',
+      nota,
+      dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
+      created_at: now,
+      updated_at: now
+    });
+    error = res.error;
+  }
   showLoading(false);
   if (error) {
     if (error.code === '42P01') { mostraSetupSQL(); } else { toast('❌ ' + error.message, 'err'); }
     return;
   }
-  toast('✅ Questionario salvato nella cartella paziente!', 'ok');
+  const wasEditing = !!_editingNoteSpecId;
+  const backCartellaId = _editingCartellaId;
+  _editingNoteSpecId = null;
+  _editingCartellaId = null;
+  if (wasEditing && backCartellaId) {
+    toast('✅ Questionario aggiornato!', 'ok');
+    _navigateBackToCartella(backCartellaId);
+  } else {
+    toast('✅ Questionario salvato nella cartella paziente!', 'ok');
+  }
 }
 
 // ─────────────────────────────────
@@ -2351,6 +2435,36 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderIESItems();
   renderGAD7Items();
   renderEAT26Items();
+
+  // Check if opened from a patient folder (edit existing questionnaire)
+  const openQ = sessionStorage.getItem('openQuestionario');
+  if (openQ) {
+    sessionStorage.removeItem('openQuestionario');
+    try {
+      const { id, nome, cartellaId } = JSON.parse(openQ);
+      _editingNoteSpecId = id || null;
+      _editingCartellaId = cartellaId || null;
+      // Pre-select the patient folder in the quick bar
+      if (cartellaId) {
+        await _cwSetById('qbar-cartella-cw', cartellaId);
+      }
+      // Navigate to the correct tab and card
+      const mapping = _qNameToCard[nome];
+      if (mapping) {
+        _switchQTab(mapping.tab);
+        const card = document.getElementById('qcard-' + mapping.card);
+        const body = document.getElementById('qbody-' + mapping.card);
+        const tog  = document.getElementById(mapping.card + '-tog');
+        if (body && !body.classList.contains('open')) {
+          body.classList.add('open');
+          if (tog) tog.textContent = '▲';
+        }
+        if (card) setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+      }
+      // Show banner informing user they are editing
+      toast('📋 Modifica questionario: ' + nome + ' — compila le risposte e salva per aggiornare.', 'info');
+    } catch(e) { console.warn('openQuestionario parse error', e); }
+  }
 });
 
 // ─── SARC-F ──────────────────────────────────────────────────────────────────

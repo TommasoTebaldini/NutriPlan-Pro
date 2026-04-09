@@ -133,6 +133,11 @@ function _confirmCancel() { closeM('modal-confirm'); _confirmCallback = null; }
 
 async function init() {
   await checkAuth();
+  const savedCartella = sessionStorage.getItem('openCartellaId');
+  if (savedCartella) {
+    sessionStorage.removeItem('openCartellaId');
+    cartellaAperta = savedCartella;
+  }
   loadCartelle();
 }
 
@@ -266,8 +271,9 @@ async function renderCartellaDetail(id) {
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delScheda('${s.id}')">🗑️</button>
     </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna scheda salvata.</div>';
 
-  // Build questionari salvati list
-  const questionariHtml = questionariSalvati.length ? questionariSalvati.map(q => {
+  // Build questionari salvati list (newest first)
+  const questionariSalvatiOrd = [...questionariSalvati].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const questionariHtml = questionariSalvatiOrd.length ? questionariSalvatiOrd.map(q => {
     let qNome = '', qScore = '', qLabel = '', qDesc = '';
     try {
       const d = JSON.parse(q.dati || '{}');
@@ -278,12 +284,13 @@ async function renderCartellaDetail(id) {
     } catch(e) { console.warn('Failed to parse questionnaire data:', e); }
     if (!qNome) qNome = (q.nota || '').split(' — ')[0];
     const summary = q.nota || qNome;
+    const titleWithScore = qNome + (qScore !== '' ? ' — ' + qScore : '');
     const scoreChip = qScore ? `<span style="font-size:11px;background:#F0F9FF;color:#0369A1;padding:3px 9px;border-radius:8px;font-weight:700;flex-shrink:0">${qScore}</span>` : '';
     const descAttr = qDesc ? ` data-desc="${esc(qDesc)}"` : '';
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;transition:all .15s"${descAttr}>
+    return `<div onclick="apriQuestionario('${q.id}','${esc(qNome)}','${id}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;transition:all .15s;cursor:pointer" onmouseover="this.style.borderColor='#7DD3FC';this.style.background='#F0F9FF'" onmouseout="this.style.borderColor='var(--border)';this.style.background='white'"${descAttr}>
       <span style="font-size:22px;background:#F0F9FF;padding:6px;border-radius:8px">📋</span>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(qNome)}</div>
+        <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(titleWithScore)}</div>
         <div style="font-size:11.5px;color:var(--slate-l)">${esc(qLabel || summary)} · ${fmtDate(q.created_at)}</div>
         ${qDesc ? `<div style="font-size:11.5px;color:var(--slate-m);margin-top:3px;line-height:1.5">${esc(qDesc)}</div>` : ''}
       </div>
@@ -492,6 +499,11 @@ async function delNoteSpec(id) {
     await renderCartellaDetail(cartellaAperta);
     toast('🗑️ Scheda eliminata', 'info');
   }, { danger: true, title: '⚠️ Elimina Scheda', okLabel: 'Elimina' });
+}
+
+function apriQuestionario(id, nome, cartellaId) {
+  sessionStorage.setItem('openQuestionario', JSON.stringify({ id, nome, cartellaId }));
+  window.location.href = 'questionari.html';
 }
 
 function openNewCartella() {

@@ -2230,6 +2230,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena (leggera)',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'60'},{nome:'Brodo di verdure',qt:'200ml'},{nome:'Patata',qt:'100'}]}
    ]}
 ];
+const PATOLOGIE_CUSTOM = [];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}
 
 const FABBISOGNO_PATOLOGIE={

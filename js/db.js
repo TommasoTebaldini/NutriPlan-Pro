@@ -1182,7 +1182,77 @@ const DB_UPF = [
   {n:"Cola (tipo Coca-Cola, per 100mL)",c:"Bibite zuccherate",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:10,zn:0,fo:13,se:0,col:0},
   {n:"Cola Zero / Diet (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:0.3,p:0,gs:0,g:0,z:0,ch:0.1,fi:0,ca:0,fe:0,mg:0,k2:0,na:6,zn:0,fo:15,se:0,col:0},
   {n:"Bevanda isotonica sportiva tipo Gatorade (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:26,p:0,gs:0,g:0,z:6,ch:6.3,fi:0,ca:0,fe:0,mg:0,k2:52,na:110,zn:0,fo:8,se:0,col:0},
-  {n:"Succo di frutta 100% in brick (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:50,p:0.3,gs:0,g:0.1,z:10,ch:11.5,fi:0.2,ca:10,fe:0.3,mg:8,k2:150,na:8,zn:0.1,fo:15,se:0.3,col:0}
+  {n:"Succo di frutta 100% in brick (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:50,p:0.3,gs:0,g:0.1,z:10,ch:11.5,fi:0.2,ca:10,fe:0.3,mg:8,k2:150,na:8,zn:0.1,fo:15,se:0.3,col:0},
+
+  // ── DOLCIFICANTI E SOSTITUTI DELLO ZUCCHERO ──
+  {n:"Eritritolo (dolcificante naturale)",c:"Dolcificanti",src:"UPF",k:20,p:0,gs:0,g:0,z:5,ch:5,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Xilitolo (dolcificante betulla)",c:"Dolcificanti",src:"UPF",k:240,p:0,gs:0,g:0,z:60,ch:60,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Maltitolo (sciroppo/polvere)",c:"Dolcificanti",src:"UPF",k:210,p:0,gs:0,g:0,z:52,ch:52,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Sorbitolo (E420)",c:"Dolcificanti",src:"UPF",k:254,p:0,gs:0,g:0,z:63,ch:63,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Isomalto (E953)",c:"Dolcificanti",src:"UPF",k:200,p:0,gs:0,g:0,z:50,ch:50,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Sciroppo di agave biologico",c:"Dolcificanti",src:"UPF",k:310,p:0.1,gs:0,g:0.1,z:78,ch:76,fi:0,ca:1,fe:0.1,mg:1,k2:4,na:4,zn:0,fo:1,se:0,col:0},
+  {n:"Sciroppo d'acero (maple syrup)",c:"Dolcificanti",src:"UPF",k:260,p:0,gs:0,g:0.1,z:60,ch:67,fi:0,ca:102,fe:0.1,mg:21,k2:212,na:9,zn:4,fo:2,se:0.6,col:0},
+  {n:"Sciroppo di riso integrale",c:"Dolcificanti",src:"UPF",k:316,p:0.5,gs:0,g:0,z:79,ch:79,fi:0,ca:8,fe:0.3,mg:6,k2:30,na:15,zn:0.1,fo:10,se:1,col:0},
+
+  // ── PRODOTTI CHETOGENICI COMMERCIALI ──
+  {n:"Pane proteico keto commerciale",c:"Cereali e derivati",src:"UPF",k:245,p:18,gs:3,g:14,z:2,ch:8,fi:5,ca:180,fe:2.5,mg:40,k2:150,na:480,zn:1.5,fo:180,se:10,col:30},
+  {n:"Pasta proteica keto (lupin/konjac)",c:"Cereali e pasta",src:"UPF",k:90,p:8,gs:0.2,g:1.5,z:1,ch:8,fi:6,ca:35,fe:1.5,mg:20,k2:80,na:20,zn:0.8,fo:60,se:3,col:0},
+  {n:"Barretta keto con cioccolato fondente",c:"Dolci confezionati",src:"UPF",k:380,p:12,gs:10,g:28,z:8,ch:15,fi:8,ca:80,fe:2.5,mg:50,k2:200,na:120,zn:1,fo:120,se:5,col:0},
+  {n:"Cracker di semi misti keto",c:"Snack salati",src:"UPF",k:520,p:18,gs:5,g:42,z:4,ch:12,fi:8,ca:150,fe:4,mg:130,k2:350,na:320,zn:3,fo:390,se:15,col:0},
+  {n:"Farina di mandorle degraissata",c:"Cereali e derivati",src:"UPF",k:500,p:23,gs:4,g:30,z:5,ch:18,fi:10,ca:270,fe:4,mg:270,k2:650,na:5,zn:3,fo:430,se:3,col:0},
+  {n:"Farina di cocco disidratata",c:"Cereali e derivati",src:"UPF",k:415,p:17,gs:28,g:9,z:9,ch:58,fi:39,ca:22,fe:4.8,mg:110,k2:543,na:37,zn:2.2,fo:276,se:19,col:0},
+
+  // ── PRODOTTI AD ALTO CONTENUTO PROTEICO ──
+  {n:"Quark proteico 0% grassi",c:"Latte e derivati",src:"UPF",k:70,p:12,gs:0,g:0.2,z:4,ch:4,fi:0,ca:120,fe:0.1,mg:15,k2:140,na:45,zn:0.7,fo:110,se:5,col:2},
+  {n:"Fiocchi di latte proteici high-protein",c:"Latte e derivati",src:"UPF",k:78,p:14,gs:0.1,g:0.5,z:3,ch:3.5,fi:0,ca:130,fe:0.1,mg:14,k2:130,na:60,zn:0.6,fo:115,se:6,col:3},
+  {n:"Yogurt greco 17% proteine",c:"Latte e derivati",src:"UPF",k:96,p:17,gs:0.1,g:0.4,z:5.5,ch:6,fi:0,ca:180,fe:0.1,mg:18,k2:200,na:55,zn:0.9,fo:145,se:7,col:4},
+  {n:"Budino proteico (tipo FitBar/Max)",c:"Dolci confezionati",src:"UPF",k:105,p:20,gs:0.5,g:1.5,z:6,ch:8,fi:1,ca:200,fe:0.5,mg:30,k2:200,na:120,zn:0.8,fo:120,se:5,col:15},
+  {n:"Pasta di lenticchie rosse (alto prot.)",c:"Cereali e pasta",src:"UPF",k:342,p:25,gs:0.5,g:1.5,z:0.5,ch:58,fi:8,ca:35,fe:7.5,mg:100,k2:670,na:10,zn:3.2,fo:480,se:7,col:0},
+  {n:"Pasta di ceci (alto prot.)",c:"Cereali e pasta",src:"UPF",k:345,p:22,gs:0.5,g:6,z:1,ch:55,fi:9,ca:50,fe:5,mg:115,k2:800,na:35,zn:2.8,fo:320,se:6,col:0},
+  {n:"Pasta di soia (alto prot.)",c:"Cereali e pasta",src:"UPF",k:350,p:30,gs:0.8,g:4.5,z:0.5,ch:48,fi:4,ca:120,fe:6.5,mg:90,k2:250,na:15,zn:2,fo:490,se:8,col:0},
+  {n:"Gallette di riso proteiche",c:"Cereali e derivati",src:"UPF",k:380,p:18,gs:0.3,g:2.5,z:5,ch:60,fi:6,ca:100,fe:2,mg:60,k2:200,na:350,zn:1.5,fo:200,se:8,col:0},
+
+  // ── FORMAGGI LIGHT E SPECIALI ──
+  {n:"Mozzarella light (2% grassi)",c:"Latte e derivati",src:"UPF",k:125,p:20,gs:1.5,g:2.5,z:1,ch:2,fi:0,ca:500,fe:0.1,mg:18,k2:100,na:250,zn:1.5,fo:340,se:10,col:12},
+  {n:"Philadelphia light (spalmabile)",c:"Latte e derivati",src:"UPF",k:150,p:7,gs:7,g:9,z:3.5,ch:4,fi:0,ca:80,fe:0.1,mg:8,k2:90,na:470,zn:0.7,fo:95,se:4,col:30},
+  {n:"Feta light in salamoia",c:"Latte e derivati",src:"UPF",k:180,p:14,gs:6.5,g:12,z:1.5,ch:2,fi:0,ca:360,fe:0.3,mg:18,k2:120,na:1300,zn:1.6,fo:220,se:10,col:40},
+  {n:"Parmigiano Reggiano DOP 30 mesi",c:"Latte e derivati",src:"CREA",k:392,p:33,gs:17,g:28,z:0,ch:0,fi:0,ca:1180,fe:0.8,mg:43,k2:100,na:600,zn:4.5,fo:740,se:12,col:88},
+  {n:"Grana Padano DOP",c:"Latte e derivati",src:"CREA",k:384,p:33,gs:16.5,g:25.6,z:0,ch:0,fi:0,ca:1165,fe:0.7,mg:40,k2:95,na:590,zn:4.2,fo:720,se:11,col:80},
+
+  // ── PRODOTTI SENZA LATTOSIO ──
+  {n:"Latte senza lattosio intero",c:"Latte e derivati",src:"UPF",k:66,p:3.3,gs:1.5,g:3.7,z:4.8,ch:4.8,fi:0,ca:120,fe:0,mg:11,k2:145,na:43,zn:0.4,fo:92,se:3,col:14},
+  {n:"Latte senza lattosio parz. scremato",c:"Latte e derivati",src:"UPF",k:46,p:3.4,gs:0.5,g:1.5,z:4.8,ch:4.8,fi:0,ca:122,fe:0,mg:11,k2:146,na:43,zn:0.4,fo:93,se:3,col:5},
+  {n:"Yogurt senza lattosio naturale",c:"Latte e derivati",src:"UPF",k:58,p:4,gs:0.1,g:3.2,z:4.5,ch:4.7,fi:0,ca:120,fe:0.1,mg:12,k2:155,na:46,zn:0.6,fo:95,se:3,col:12},
+  {n:"Ricotta vaccina senza lattosio",c:"Latte e derivati",src:"UPF",k:134,p:10.5,gs:4.5,g:10.5,z:3.5,ch:3.5,fi:0,ca:250,fe:0.3,mg:15,k2:120,na:100,zn:1,fo:175,se:8,col:38},
+
+  // ── PRODOTTI SENZA GLUTINE INTEGRALI ──
+  {n:"Pasta integrale senza glutine (quinoa-mais)",c:"Cereali e pasta",src:"UPF",k:355,p:8,gs:0.5,g:3,z:1,ch:70,fi:6,ca:25,fe:1.5,mg:60,k2:250,na:10,zn:1.2,fo:150,se:5,col:0},
+  {n:"Pane integrale senza glutine con semi",c:"Cereali e derivati",src:"UPF",k:265,p:6,gs:0.8,g:7,z:4,ch:44,fi:7,ca:60,fe:1.5,mg:50,k2:200,na:500,zn:1,fo:100,se:6,col:0},
+  {n:"Fette biscottate integrali senza glutine",c:"Cereali e derivati",src:"UPF",k:395,p:7,gs:0.5,g:7.5,z:4,ch:76,fi:5,ca:40,fe:1,mg:30,k2:150,na:470,zn:0.6,fo:90,se:4,col:0},
+
+  // ── BEVERAGES FUNZIONALI ──
+  {n:"Kefir di capra intero",c:"Latte e derivati",src:"UPF",k:69,p:3.6,gs:2.7,g:4.2,z:4.8,ch:5,fi:0,ca:134,fe:0.1,mg:14,k2:180,na:50,zn:0.5,fo:110,se:3,col:14},
+  {n:"Latte di avena naturale non zuccherato",c:"Latte e derivati",src:"UPF",k:45,p:1,gs:0,g:1.5,z:4.5,ch:7.5,fi:0.8,ca:120,fe:0.4,mg:10,k2:60,na:50,zn:0.2,fo:20,se:1,col:0},
+  {n:"Latte di soia non zuccherato (UHT)",c:"Latte e derivati",src:"UPF",k:33,p:3.3,gs:0.4,g:1.9,z:0,ch:1.7,fi:0.3,ca:120,fe:0.5,mg:19,k2:118,na:50,zn:0.5,fo:52,se:3,col:0},
+  {n:"Latte di mandorla non zuccherato",c:"Latte e derivati",src:"UPF",k:15,p:0.5,gs:0,g:1.1,z:0,ch:0.4,fi:0.2,ca:120,fe:0.3,mg:8,k2:67,na:70,zn:0.1,fo:15,se:0,col:0},
+  {n:"Bevanda di farina di avena fermentata",c:"Bevande",src:"UPF",k:52,p:1.2,gs:0,g:1.8,z:4,ch:8,fi:1.2,ca:120,fe:0.5,mg:12,k2:70,na:55,zn:0.3,fo:22,se:1,col:0},
+
+  // ── SPEZIE E CONDIMENTI FUNZIONALI ──
+  {n:"Curcuma in polvere",c:"Spezie",src:"CREA",k:354,p:7.8,gs:1.7,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:268,se:6.2,col:0},
+  {n:"Zenzero fresco",c:"Spezie",src:"CREA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0},
+  {n:"Cannella in polvere",c:"Spezie",src:"CREA",k:247,p:3.9,gs:0.2,g:1.2,z:4.8,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0},
+  {n:"Pepe nero in grani",c:"Spezie",src:"CREA",k:251,p:10.4,gs:3.1,g:3.3,z:0.6,ch:63.9,fi:25.3,ca:443,fe:9.7,mg:171,k2:1329,na:20,zn:1.2,fo:173,se:4.9,col:0},
+  {n:"Aglio in polvere",c:"Spezie",src:"CREA",k:331,p:16.8,gs:0.1,g:0.7,z:5.3,ch:72.7,fi:9.0,ca:79,fe:2.3,mg:77,k2:1193,na:60,zn:1.9,fo:153,se:14.2,col:0},
+  {n:"Rosmarino fresco",c:"Spezie",src:"CREA",k:131,p:3.3,gs:0.2,g:5.9,z:6.6,ch:20.7,fi:14.1,ca:317,fe:6.7,mg:91,k2:955,na:26,zn:0.9,fo:68,se:1.8,col:0},
+  {n:"Origano essiccato",c:"Spezie",src:"CREA",k:265,p:9,gs:4.3,g:10.3,z:21,ch:68.9,fi:42.5,ca:1576,fe:44,mg:270,k2:1260,na:25,zn:2.7,fo:148,se:4.5,col:0},
+  {n:"Timo essiccato",c:"Spezie",src:"CREA",k:276,p:9.1,gs:2.7,g:7.4,z:15,ch:63.9,fi:37,ca:1890,fe:123.6,mg:220,k2:814,na:55,zn:6.2,fo:201,se:6.4,col:0},
+
+  // ── PRODOTTI PER NUTRIZIONE CLINICA ORALE ──
+  {n:"Polvere addensante (per disfagia, tipo Nutilis)",c:"Prodotti clinici",src:"UPF",k:370,p:0.5,gs:0,g:0.5,z:89,ch:90,fi:2,ca:20,fe:0.5,mg:5,k2:10,na:20,zn:0.1,fo:10,se:1,col:0},
+  {n:"Modulare calorico lipidico (Calogen)",c:"Prodotti clinici",src:"UPF",k:900,p:0,gs:38,g:100,fi:0,z:0,ch:0,ca:0,fe:0,mg:0,k2:0,na:3,zn:0,fo:0,se:0,col:0},
+  {n:"Modulare proteico (Protifar polvere, 100g)",c:"Prodotti clinici",src:"UPF",k:380,p:90,gs:0.1,g:0.5,z:0,ch:3,fi:0,ca:350,fe:0.5,mg:40,k2:100,na:150,zn:2,fo:500,se:10,col:15},
+  {n:"Modulare glucidico (Maxijul/Fantomalt)",c:"Prodotti clinici",src:"UPF",k:385,p:0,gs:0,g:0,z:96,ch:96,fi:0,ca:2,fe:0,mg:0,k2:0,na:80,zn:0,fo:5,se:0,col:0},
+  {n:"Soluzione reidratante orale (ORS WHO)",c:"Prodotti clinici",src:"UPF",k:17,p:0,gs:0,g:0,z:4.2,ch:4.2,fi:0,ca:0,fe:0,mg:0,k2:78,na:513,zn:0,fo:0,se:0,col:0}
 ];
 
 
@@ -2370,6 +2440,127 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tofu compatto',qt:'120'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'encefalopatia_epatica',cat:'epatiche',emoji:'🧠',nome:'Encefalopatia Epatica (EE)',badge:'EASL/ESPEN 2019',colore:'#7C2D12',
+   desc:'NON ridurre le proteine. BCAA se EE persistente. Pasti frequenti. Snack serale. Zinco supplementato.',
+   note:'EASL/ESPEN 2019 · Restrizione proteica CONTROINDICATA (aumenta mortalità) · Proteine 1.2-1.5 g/kg/die · BCAA 0.25g/kg/die se EE persistente · Preferire proteine vegetali e latticini (meno ammonio vs carni) · Pasti piccoli e frequenti (4-6/die) · Snack serale con CHO (riduce digiuno notturno) · Zinco spesso carente: supplementare 220 mg/die · Lattulosio e rifaximina per ridurre ammonio intestinale · Evitare digiuno >6h.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'40'},{nome:'Mela',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Pane di semola crudo',qt:'50'},{nome:'Marmellata / confettura',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Ricotta vaccina',qt:'100'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Kiwi',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'60'},{nome:'Riso bianco crudo',qt:'70'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Snack serale',emoji:'🌛',items:[{nome:'Crackers',qt:'30'},{nome:'Marmellata / confettura',qt:'20'}]}
+   ]},
+  {id:'tumore_testa_collo',cat:'oncologiche',emoji:'🎗️',nome:'Tumore Testa-Collo (nutrizione)',badge:'ESPEN 2021',colore:'#4C1D95',
+   desc:'Malnutrizione severa nel 40-70%. PEG profilattica pre-radioterapia. Mucositi: cibi morbidi e freddi. ONS ipercalorici.',
+   note:'ESPEN 2021 · Alta incidenza di malnutrizione (40-70%) · Disfagia e mucosite da radio/chemioterapia peggiorano intake · PEG profilattica raccomandata prima di radioterapia estesa · Obiettivo 30-35 kcal/kg/die · Proteine 1.5-2.0 g/kg/die · ONS ipercalorici e iperproteici · Mucositi: alimenti morbidi, freddi, non acidi, non speziati · Xerostomia: liquidi ai pasti, saliva artificiale · Monitorare peso ogni settimana · Zinco e vitamina D spesso carenti.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Crema di grano (semolino)',qt:'40'},{nome:'Miele millefiori',qt:'20'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Frullato di frutta (banana+latte)',qt:'250'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Crema di verdure',qt:'300'},{nome:'Merluzzo',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Fortimel Extra (porz. 200mL=300kcal)',qt:'200'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Purea di patate',qt:'200'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
+   ]},
+  {id:'nefropatia_diabetica',cat:'renali',emoji:'🩸',nome:'Nefropatia Diabetica (CKD-DM)',badge:'KDIGO 2022',colore:'#0C4A6E',
+   desc:'Restrizione proteica moderata + controllo glicemico + limitazione fosforo/potassio/sodio. CHO basso IG.',
+   note:'KDIGO 2022 · Proteine 0.6-0.8 g/kg/die (riduce progressione renale) · Controllo glicemico prioritario: HbA1c target 6.5-7.5% · CHO basso IG · Fosforo <800 mg/die · Potassio: adattare al GFR (restrizione se K >5 mEq/L) · Sodio <2g/die · Monitorare: vitamina D, ferro, bicarbonato · Evitare FANS.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte scremato',qt:'200'},{nome:'Fette biscottate',qt:'30'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Caffè espresso',qt:'60'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'25'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'70'},{nome:"Albume d'uovo",qt:'100'},{nome:'Cetriolo',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'ipertrigliceridemia_severa',cat:'metaboliche',emoji:'🩺',nome:'Ipertrigliceridemia Severa (>500 mg/dL)',badge:'EAS/AHA 2023',colore:'#7F1D1D',
+   desc:'Grassi totali <10-15%. Alcol zero assoluto. Zuccheri semplici: zero. Omega-3 4g/die. Rischio pancreatite acuta.',
+   note:'EAS 2023 · TG>500 mg/dL: rischio pancreatite acuta · Grassi totali <10-15% energia · Alcol: zero assoluto · Zuccheri semplici e fruttosio: zero · CHO complessi moderati · Omega-3 EPA+DHA 4g/die (riduce TG del 25-50%) · MCT come sostituto dei grassi normali · Monitorare amilasi/lipasi · Obiettivo urgente: TG <500 mg/dL.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte scremato',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'70'},{nome:'Merluzzo',qt:'150'},{nome:'Spinaci crudi',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'5'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'200'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'5'}]}
+   ]},
+  {id:'sindrome_refeeding',cat:'chirurgia',emoji:'⚠️',nome:'Refeeding Syndrome (Prevenzione)',badge:'ASPEN/ESPEN 2020',colore:'#DC2626',
+   desc:'Renutrizione graduale nei grandi malnutriti. Tiamina PRIMA di renutrire. Monitoraggio stretto P, K, Mg. Max 10 kcal/kg/die iniziali.',
+   note:'ASPEN 2020 · ESPEN 2018 · Rischio: anoressia, digiuno >5gg, alcolismo, malnutrizione severa (>15% peso), post-chirurgia · Fase 1 (gg 1-3): max 10 kcal/kg/die · Fase 2 (gg 4-7): 15-20 kcal/kg/die · Fase 3 (gg 8+): incremento graduale · PRIMA di renutrire: tiamina 200-300 mg EV x3/die · Monitorare ogni 12-24h: fosfato (target >0.6 mmol/L), potassio, magnesio · Stop se ipofosforemia severa (<0.3 mmol/L).',
+   pasti:[
+    {nome:'Giorno 1-3 (10 kcal/kg)',emoji:'🌅',items:[{nome:'Latte scremato',qt:'300'},{nome:'Crema di grano (semolino)',qt:'30'},{nome:'Olio extra vergine di oliva',qt:'5'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'}]},
+    {nome:'Pasto principale',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'50'},{nome:"Albume d'uovo",qt:'60'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'5'}]},
+    {nome:'Spuntino',emoji:'🍊',items:[{nome:'Banana',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'50'},{nome:'Pollo petto (senza pelle)',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'5'}]}
+   ]},
+  {id:'colangite_biliare_primitiva',cat:'epatiche',emoji:'💛',nome:'Colangite Biliare Primitiva / CSP (CBP)',badge:'EASL 2017',colore:'#78350F',
+   desc:'Steatorrea: grassi moderati (<40g/die). Vitamine liposolubili ADEK supplementate. No alcol. Calcio e vitamina D.',
+   note:'EASL 2017 · Colestasi → malassorbimento grassi → carenza vitamine liposolubili (A, D, E, K) · Vitamina D target 40-60 ng/mL (2000-4000 UI/die) · Vitamina K se PT allungato · Vitamina E 400 UI/die · Calcio 1000-1200 mg/die · Grassi <40g/die se steatorrea · Alcol zero · UDCA come terapia principale.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte scremato',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Miele millefiori',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Marmellata / confettura',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'nutrizione_preoperatoria',cat:'chirurgia',emoji:'🔵',nome:'Nutrizione Pre-Operatoria (Preabilitazione)',badge:'ESPEN/ERAS 2021',colore:'#1E40AF',
+   desc:'Identificare e correggere malnutrizione pre-chirurgica. Immunonutrizione 5-7 gg pre-op. CHO liquidi fino a 2h dall\'anestesia.',
+   note:'ESPEN 2021 · ERAS protocol · Identificazione malnutrizione (MNA, NRS-2002) · Se malnutrizione: supporto nutrizionale 7-14 gg pre-op · Immunonutrizione pre-op (arginina 15-20g/die + EPA 2g/die + nucleotidi) per 5-7 gg: riduce complicanze infettive del 30-40% · Bevanda glucidica 12.5% fino a 2h prima anestesia (400mL sera, 200mL mattina) · Proteine 1.2-1.5 g/kg/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Kiwi',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Frullato di frutta (banana+latte)',qt:'250'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'200'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
+   ]},
+  {id:'galattosemia',cat:'varie',emoji:'🧬',nome:'Galattosemia Classica (GALT)',badge:'SSIEM/ESPKU 2022',colore:'#4338CA',
+   desc:'Dieta a vita priva di galattosio. Tutti i latticini esclusi. Calcio da fonti alternative. Vitamina D supplementata.',
+   note:'SSIEM 2022 · Deficit enzima GALT · Eliminazione totale e permanente di latte e derivati (galattosio) · Attenzione a galattosio nascosto: alcuni frutti (papaia, datteri), legumi (fave), additivi · Alternative: bevanda di riso, avena, soia (verificare etichetta, senza galattosio) · Calcio supplementare 1000-1200 mg/die · Vitamina D 1000-2000 UI/die · Monitorare densità ossea · Follow-up multidisciplinare.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte di riso non zuccherato',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'25'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Crackers',qt:'30'},{nome:'Tonno in scatola al naturale',qt:'50'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'sindrome_cushing',cat:'endocrine',emoji:'🌙',nome:'Sindrome di Cushing (ipercortisolismo)',badge:'ES/ESE 2021',colore:'#7C3AED',
+   desc:'Ridurre sodio, aumentare calcio e vitamina D, proteine aumentate (catabolismo). Controllare glicemia. CHO basso IG.',
+   note:'ES 2021 · Ipercortisolismo causa: iperglicemia, ipertensione, osteoporosi, catabolismo muscolare · Sodio <2g/die · Calcio 1000-1200 mg/die + vitamina D 2000 UI/die · Proteine 1.2-1.5 g/kg/die · CHO basso IG (insulino-resistenza) · Limitare grassi saturi · Monitorare: glicemia, lipidi, densità ossea.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte scremato',qt:'200'},{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:"Fiocchi d'avena",qt:'40'},{nome:'Mirtilli',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Kiwi',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Lenticchie secche',qt:'50'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'neutropenia_oncologica',cat:'oncologiche',emoji:'🛡️',nome:'Neutropenia Oncologica (Dieta Neutropenica)',badge:'ESPEN 2021',colore:'#0F766E',
+   desc:'Sicurezza microbiologica rigida. No cibi crudi animali. No formaggi molli/erborinati. No succhi freschi. Cottura completa.',
+   note:'ESPEN 2021 · Neutropenia severa (PMN <500/µL) da chemioterapia · Obiettivo: prevenire infezioni alimentari · Vietati: carne cruda, sushi, formaggi molli non pastorizzati, uova crude, germogli, succhi freschi non pastorizzati, miele grezzo · Carne interna >75°C, uova sode, pesce ben cotto · Frutta/verdura: lavare accuratamente, preferire sbucciata.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Pane di semola crudo',qt:'40'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Banana',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'200'},{nome:'Biscotti secchi',qt:'30'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'epatite_cronica',cat:'epatiche',emoji:'🟡',nome:'Epatite Cronica B/C (HBV/HCV)',badge:'EASL 2024',colore:'#92400E',
+   desc:'Dieta equilibrata. Alcol: zero assoluto. Caffè: beneficio documentato. Evitare sovrappeso. Vitamina D supplementata.',
+   note:'EASL 2024 · Alcol: zero assoluto (cofatto di progressione a cirrosi e carcinoma) · Sovrappeso accelera la fibrosi → BMI 20-25 · Caffè 2-3 tazze/die: rallenta fibrosi · Fibre ≥25g/die, antiossidanti · Evitare supplementi di ferro · Vitamina D se <30 ng/mL · HCV guaribile con DAA in >95% casi · HBV: terapia antivirale a lungo termine.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Caffè espresso',qt:'60'},{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mirtilli',qt:'100'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Mela',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Merluzzo',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+   ]},
+  {id:'artrite_psoriasica',cat:'immunologiche',emoji:'🦱',nome:'Artrite Psoriasica (AP)',badge:'GRAPPA/EULAR 2022',colore:'#5B21B6',
+   desc:'Perdita di peso se sovrappeso (migliora biologici). Dieta mediterranea. Omega-3 3g/die. Alcol zero. Vitamina D.',
+   note:'GRAPPA 2022 · EULAR 2022 · Sovrappeso riduce efficacia dei biologici → perdita di peso è terapeutica · Dieta mediterranea riduce PCR e attività di malattia · Omega-3 EPA/DHA 3g/die anti-infiammatorio · Alcol zero (peggiora psoriasi e artrite) · Vitamina D target >40 ng/mL · Folati 5mg/die se MTX · Limitare grassi saturi e zuccheri.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Mirtilli',qt:'150'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Noci',qt:'25'},{nome:'Arancia',qt:'200'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Ceci secchi',qt:'60'},{nome:'Quinoa cruda',qt:'60'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]}
 ];
 const PATOLOGIE_CUSTOM = [];
@@ -2478,7 +2669,19 @@ const FABBISOGNO_PATOLOGIE={
   addison:{kcal:'Normocalorica (adeguata a peso e attività)',prot:'1.0-1.2 g/kg/die',note:'ES 2021 · ESE 2021. Aumentare sodio: 3-4g NaCl/die (estate: +1-2g; sport: +1g/ora). Pasti regolari 4-5/die per prevenire ipoglicemia. Vitamina D 1000-2000 UI/die + calcio 1000-1200mg/die. Potassio: non eccedere (rischio iperkaliemia).'},
   post_covid:{kcal:'25-35 kcal/kg/die (aumentato se cachessia)',prot:'1.2-1.5 g/kg/die',note:'OMS 2023. Vitamina D target >40 ng/mL. Zinco 10-15mg/die. Omega-3 2g/die. Vitamina B12 se carente. Probiotici per disbiosi. No restrizione calorica in fase acuta.'},
   sclerosi_multipla:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ECTRIMS 2023. Vitamina D target 40-60 ng/mL (2000-4000 UI/die). Omega-3 2g/die. Dieta a basso contenuto di grassi saturi. Probiotici per disbiosi. Alcol: evitare o ridurre.'},
-  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'}
+  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'},
+  encefalopatia_epatica:{kcal:'35-40 kcal/kg/die (peso secco)',prot:'1.2-1.5 g/kg/die (NON ridurre)',note:'EASL/ESPEN 2019. Restrizione proteica CONTROINDICATA. BCAA 0.25g/kg/die se EE persistente. Preferire proteine vegetali e latticini. 4-6 pasti/die. Snack serale con CHO. Zinco 220mg/die (solfato). Evitare digiuno >6h.'},
+  tumore_testa_collo:{kcal:'30-35 kcal/kg/die',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2021. Malnutrizione nel 40-70%. PEG profilattica pre-radioterapia. ONS ipercalorici e iperproteici. Mucositi: alimenti morbidi/freddi. Xerostomia: liquidi ai pasti. Zinco e vitamina D da supplementare. Monitorare peso ogni settimana.'},
+  nefropatia_diabetica:{kcal:'30-35 kcal/kg/die',prot:'0.6-0.8 g/kg/die',note:'KDIGO 2022. Proteine 0.6-0.8 g/kg/die riduce progressione renale. Controllo glicemico prioritario (HbA1c 6.5-7.5%). CHO basso IG. Fosforo <800mg/die. Potassio adattato al GFR. Sodio <2g/die.'},
+  ipertrigliceridemia_severa:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'EAS 2023. TG>500: rischio pancreatite. Grassi <10-15% en. Alcol zero assoluto. Zuccheri semplici e fruttosio: zero. Omega-3 EPA+DHA 4g/die (riduce TG 25-50%). MCT permessi. Monitorare amilasi/lipasi.'},
+  sindrome_refeeding:{kcal:'Iniziare 10 kcal/kg/die, incrementare gradualmente',prot:'0.8-1.0 g/kg/die (incrementare con cautela)',note:'ASPEN 2020 · ESPEN 2018. OBBLIGATORIO: tiamina 200-300mg EV prima di renutrire. Fase 1 (gg 1-3): 10 kcal/kg/die. Fase 2 (gg 4-7): 15-20 kcal/kg/die. Monitorare ogni 12-24h: fosfato (>0.6 mmol/L), K, Mg. Stop se ipofosforemia severa.'},
+  colangite_biliare_primitiva:{kcal:'Normocalorica (ipocalorica se steatosi associata)',prot:'1.0-1.2 g/kg/die',note:'EASL 2017. Vitamine liposolubili ADEK supplementate. Vitamina D target 40-60 ng/mL. Calcio 1000-1200mg/die. Grassi <40g/die se steatorrea. Alcol zero. UDCA come terapia principale.'},
+  nutrizione_preoperatoria:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021 · ERAS. Immunonutrizione pre-op 5-7 gg (arginina 15-20g + EPA 2g + nucleotidi). Bevanda glucidica 12.5% fino a 2h pre-anestesia. Correggere malnutrizione 7-14 gg pre-op.'},
+  galattosemia:{kcal:'Normocalorica per età e peso',prot:'1.0-1.2 g/kg/die (da fonti senza galattosio)',note:'SSIEM 2022. Eliminazione totale e permanente di latte e derivati. Calcio supplementare 1000-1200 mg/die. Vitamina D 1000-2000 UI/die. Monitorare densità ossea. Follow-up multidisciplinare.'},
+  sindrome_cushing:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.2-1.5 g/kg/die',note:'ES 2021. Sodio <2g/die. Calcio 1000-1200mg/die + vitamina D 2000 UI/die. Proteine aumentate (catabolismo da ipercortisolismo). CHO basso IG (insulino-resistenza). Monitorare glicemia, lipidi, densità ossea.'},
+  neutropenia_oncologica:{kcal:'25-35 kcal/kg/die (adeguata a trattamento)',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. Sicurezza microbiologica rigida: no crudi animali, no formaggi molli non pastorizzati, no succhi freschi, no germogli. Cottura completa a >75°C. Frutta/verdura lavata e sbucciata. Latte UHT o pastorizzato.'},
+  epatite_cronica:{kcal:'Normocalorica (ipocalorica se sovrappeso/steatosi)',prot:'1.0-1.2 g/kg/die',note:'EASL 2024. Alcol zero assoluto. Mantenere BMI 20-25. Caffè 2-3 tazze/die (rallenta fibrosi). Fibre ≥25g/die, antiossidanti. Evitare supplementi di ferro. Vitamina D se <30 ng/mL.'},
+  artrite_psoriasica:{kcal:'Ipocalorica se sovrappeso (BMI target <25)',prot:'1.0-1.2 g/kg/die',note:'GRAPPA 2022 · EULAR 2022. Perdita di peso migliora risposta ai biologici. Dieta mediterranea. Omega-3 3g/die. Alcol zero. Vitamina D target >40 ng/mL. Folati 5mg/die se MTX.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

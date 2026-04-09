@@ -1258,7 +1258,7 @@ let ALL_DB=[];
 let FOOD_MAP={};
 
 const PATOLOGIE_BASE=[
-  {id:'diabete',emoji:'🩸',nome:'Diabete Mellito Tipo 2',badge:'ESPEN 2023',colore:'#3B82F6',
+  {id:'diabete',cat:'metaboliche',emoji:'🩸',nome:'Diabete Mellito Tipo 2',badge:'ESPEN 2023',colore:'#3B82F6',
    desc:'Basso IG, ricca di fibre, grassi insaturi. Controllo glicemico e peso corporeo.',
    note:'ESPEN 2023 · CHO 45-60% (basso IG), fibra ≥25g/die, proteine 1.0-1.2g/kg/die, grassi saturi <10% energia totale. Monitorare HbA1c.',
    pasti:[
@@ -1268,7 +1268,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Fiocchi d'avena",qt:"50"},{nome:"Latte scremato",qt:"200"},{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Lenticchie secche",qt:"40"},{nome:"Pomodoro rosso",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Broccoli",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pera",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Patata",qt:"150"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fiocchi d'avena",qt:"40"},{nome:"Kiwi",qt:"150"},{nome:"Semi di chia",qt:"10"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Orzo perlato crudo",qt:"80"},{nome:"Fagioli borlotti secchi",qt:"50"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Arancia",qt:"150"},{nome:"Noci",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Riso integrale crudo",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Quinoa cruda",qt:"70"},{nome:"Ceci secchi",qt:"50"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Kiwi",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"160"},{nome:"Patata",qt:"120"},{nome:"Asparagi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'irc',emoji:'🫘',nome:'Insufficienza Renale Cronica (stadio 3-4)',badge:'ESPEN 2021',colore:'#F97316',
+  {id:'irc',cat:'renali',emoji:'🫘',nome:'Insufficienza Renale Cronica (stadio 3-4)',badge:'ESPEN 2021',colore:'#F97316',
    desc:'Proteine ridotte (0.6-0.8g/kg), fosforo <800mg, potassio <2000mg, sodio <2g/die.',
    note:'ESPEN 2021 · Proteine 0.6-0.8g/kg/die · Fosforo <800mg/die · Potassio <2000mg/die · Sodio <2g/die · Lisciviazione verdure (lessare in acqua abbondante e scolare).',
    pasti:[
@@ -1278,7 +1278,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'25'},{nome:'Marmellata / confettura',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:"Albume d'uovo",qt:'80'},{nome:'Cetriolo',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
    ]},
-  {id:'dialisi',emoji:'💧',nome:'Dialisi (Emodialisi / Peritoneale)',badge:'ESPEN 2021',colore:'#06B6D4',
+  {id:'dialisi',cat:'renali',emoji:'💧',nome:'Dialisi (Emodialisi / Peritoneale)',badge:'ESPEN 2021',colore:'#06B6D4',
    desc:'Proteine aumentate per perdite dialitiche. Fosforo <800mg, potassio <2000mg, liquidi controllati.',
    note:'ESPEN 2021 · Proteine 1.2-1.4g/kg/die · Energia 30-35 kcal/kg/die · K <2000mg/die · P <800mg/die · Liquidi 500ml + diuresi residua.',
    pasti:[
@@ -1288,7 +1288,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Miele millefiori',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Cetriolo',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'obesita',emoji:'⚖️',nome:'Obesità / Sovrappeso',badge:'ESPEN 2022',colore:'#22C55E',
+  {id:'obesita',cat:'metaboliche',emoji:'⚖️',nome:'Obesità / Sovrappeso',badge:'ESPEN 2022',colore:'#22C55E',
    desc:'Deficit calorico moderato (-500/750 kcal), alta densità nutrizionale, proteine aumentate.',
    note:'ESPEN 2022 · Deficit 500-750 kcal/die · Proteine 1.2-1.5g/kg peso ideale/die · Fibre ≥30g/die · Limitare zuccheri semplici e grassi saturi.',
    pasti:[
@@ -1298,7 +1298,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'250'},{nome:'Patata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fiocchi d'avena",qt:"30"},{nome:"Fragola",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Mela",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"70"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Tonno in scatola al naturale",qt:"80"},{nome:"Olio extra vergine di oliva",qt:"8"},{nome:"Lattuga",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Broccoli",qt:"250"},{nome:"Patata",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"8"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Fiocchi d'avena",qt:"30"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Orzo perlato crudo",qt:"70"},{nome:"Lenticchie secche",qt:"50"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"8"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"200"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"160"},{nome:"Zucchina",qt:"200"},{nome:"Carota",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"8"},{nome:"Pane integrale",qt:"30"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"150"},{nome:"Mandorle dolci secche",qt:"10"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Pera",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"70"},{nome:"Ceci secchi",qt:"50"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"8"},{nome:"Lattuga",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Arancia",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Tacchino petto",qt:"150"},{nome:"Asparagi",qt:"200"},{nome:"Patata",qt:"80"},{nome:"Olio extra vergine di oliva",qt:"8"}]}]]},
-  {id:'dislipidemia',emoji:'🫀',nome:'Dislipidemia',badge:'ESC/EAS 2019',colore:'#EF4444',
+  {id:'dislipidemia',cat:'metaboliche',emoji:'🫀',nome:'Dislipidemia',badge:'ESC/EAS 2019',colore:'#EF4444',
    desc:'Riduzione grassi saturi e colesterolo. Omega-3, fibre solubili, fitosteroli.',
    note:'ESC/EAS 2019 · Grassi saturi <7% energia · Colesterolo alimentare <200mg/die · Omega-3 ≥2g/die · Fibre solubili ≥10g/die · Fitosteroli 2g/die.',
    pasti:[
@@ -1308,7 +1308,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Semi di chia',qt:'10'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Orzo perlato crudo',qt:'70'},{nome:'Ceci secchi',qt:'50'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Fiocchi d'avena",qt:"60"},{nome:"Latte scremato",qt:"200"},{nome:"Noci",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Mandorle dolci secche",qt:"20"},{nome:"Mela",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Salmone atlantico",qt:"120"},{nome:"Pomodoro rosso",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Spinaci crudi",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Semi di chia",qt:"10"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Orzo perlato crudo",qt:"70"},{nome:"Ceci secchi",qt:"50"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Fiocchi d'avena",qt:"60"},{nome:"Latte scremato",qt:"200"},{nome:"Kiwi",qt:"150"},{nome:"Noci",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Farro perlato crudo",qt:"80"},{nome:"Lenticchie secche",qt:"50"},{nome:"Pomodoro rosso",qt:"100"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Semi di chia",qt:"10"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Sgombro",qt:"150"},{nome:"Riso integrale crudo",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Fragola",qt:"150"},{nome:"Semi di chia",qt:"10"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Noci",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Quinoa cruda",qt:"80"},{nome:"Fagioli borlotti secchi",qt:"50"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Lattuga",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Tonno in scatola al naturale",qt:"130"},{nome:"Pasta integrale cruda",qt:"70"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'ipertensione',emoji:'💊',nome:'Ipertensione Arteriosa',badge:'DASH/ESH 2023',colore:'#6366F1',
+  {id:'ipertensione',cat:'metaboliche',emoji:'💊',nome:'Ipertensione Arteriosa',badge:'DASH/ESH 2023',colore:'#6366F1',
    desc:'DASH-mediterranea. Sodio <2g/die, ricca di K, Ca, Mg. No sale aggiunto, no salumi.',
    note:'ESH 2023 + DASH · Sodio <2g/die · Potassio ≥3.5g/die · Calcio ≥1000mg/die · Magnesio ≥300mg/die · Evitare assolutamente salumi, scatolame, formaggi stagionati.',
    pasti:[
@@ -1318,7 +1318,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'200'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Branzino (spigola)',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'celiachia',emoji:'🌾',nome:'Celiachia / Gluten-Free',badge:'AIC/ESPEN',colore:'#EAB308',
+  {id:'celiachia',cat:'gastroenterologiche',emoji:'🌾',nome:'Celiachia / Gluten-Free',badge:'AIC/ESPEN',colore:'#EAB308',
    desc:'Completamente priva di glutine. Attenzione a cross-contaminazione. Reintegro Fe, Ca, folati.',
    note:'AIC/ESPEN · Dieta rigorosamente GF a vita · Monitorare Fe, Ca, folati, B12, vitamina D · Evitare cross-contaminazione · Preferire cereali naturalmente GF.',
    pasti:[
@@ -1328,7 +1328,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pera',qt:'150'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"200"},{nome:"Gallette di riso",qt:"40"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Quinoa cruda",qt:"80"},{nome:"Salmone atlantico",qt:"150"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pera",qt:"150"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"200"},{nome:"Gallette di riso",qt:"40"},{nome:"Miele millefiori",qt:"15"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"90"},{nome:"Tacchino petto",qt:"150"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Patata",qt:"180"},{nome:"Merluzzo",qt:"150"},{nome:"Carota",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"200"},{nome:"Gallette di riso",qt:"50"},{nome:"Burro di arachidi",qt:"20"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Mela",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Uovo di gallina intero crudo",qt:"120"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Lattuga",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Arancia",qt:"150"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Quinoa cruda",qt:"80"},{nome:"Branzino (spigola)",qt:"150"},{nome:"Asparagi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'ibd',emoji:'🦠',nome:'IBD - Crohn / RCU (remissione)',badge:'ECCO/ESPEN 2023',colore:'#14B8A6',
+  {id:'ibd',cat:'gastroenterologiche',emoji:'🦠',nome:'IBD - Crohn / RCU (remissione)',badge:'ECCO/ESPEN 2023',colore:'#14B8A6',
    desc:'Anti-infiammatoria, facilmente digeribile. Adattata alla fase di remissione.',
    note:'ECCO-ESPEN 2023 · In remissione: dieta mediterranea a basso residuo · Omega-3 benefici · Evitare cibi pro-infiammatori · In riacutizzazione: nutrizione enterale esclusiva.',
    pasti:[
@@ -1338,7 +1338,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Ricotta vaccina',qt:'60'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tacchino petto',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Fette biscottate",qt:"40"},{nome:"Marmellata / confettura",qt:"20"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"125"},{nome:"Banana",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Merluzzo",qt:"150"},{nome:"Carota",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Gallette di riso",qt:"30"},{nome:"Ricotta vaccina",qt:"60"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Tacchino petto",qt:"150"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Fette biscottate",qt:"40"},{nome:"Miele millefiori",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"125"},{nome:"Pera",qt:"130"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"130"},{nome:"Carota",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Gallette di riso",qt:"30"},{nome:"Ricotta vaccina",qt:"60"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Branzino (spigola)",qt:"150"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Pane bianco",qt:"50"},{nome:"Marmellata / confettura",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Banana",qt:"150"},{nome:"Yogurt intero bianco",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Tacchino petto",qt:"130"},{nome:"Melanzana",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fette biscottate",qt:"30"},{nome:"Ricotta vaccina",qt:"60"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Merluzzo",qt:"150"},{nome:"Cetriolo",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'sarcopenia',emoji:'💪',nome:'Sarcopenia / Anziano Fragile',badge:'ESPEN 2018',colore:'#A855F7',
+  {id:'sarcopenia',cat:'osteomuscolari',emoji:'💪',nome:'Sarcopenia / Anziano Fragile',badge:'ESPEN 2018',colore:'#A855F7',
    desc:'Alto apporto proteico per prevenire la sarcopenia. Leucina, vitamina D, omega-3.',
    note:'ESPEN 2018 · Proteine ≥1.2-1.5g/kg/die · Leucina ≥3g/pasto · Vitamina D 800-1000 UI/die · Omega-3 · Attività fisica di resistenza raccomandata.',
    pasti:[
@@ -1348,7 +1348,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Ricotta vaccina',qt:'150'},{nome:'Noci',qt:'20'},{nome:'Arancia',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'180'},{nome:'Quinoa cruda',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Uovo di gallina intero crudo",qt:"120"},{nome:"Latte intero fresco",qt:"200"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Mandorle dolci secche",qt:"25"},{nome:"Banana",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Manzo magro",qt:"150"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"15"},{nome:"Parmigiano Reggiano",qt:"20"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Ricotta vaccina",qt:"150"},{nome:"Noci",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"180"},{nome:"Quinoa cruda",qt:"80"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Uovo di gallina intero crudo",qt:"120"},{nome:"Latte intero fresco",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Noci",qt:"25"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Farro perlato crudo",qt:"80"},{nome:"Pollo petto (senza pelle)",qt:"180"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"15"},{nome:"Parmigiano Reggiano",qt:"20"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Ricotta vaccina",qt:"150"},{nome:"Mandorle dolci secche",qt:"20"},{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Manzo magro",qt:"150"},{nome:"Riso integrale crudo",qt:"80"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Albume d'uovo",qt:"180"},{nome:"Latte intero fresco",qt:"200"},{nome:"Pane integrale",qt:"60"},{nome:"Miele millefiori",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Mandorle dolci secche",qt:"25"},{nome:"Arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Tonno in scatola al naturale",qt:"160"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"20"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Ricotta vaccina",qt:"150"},{nome:"Noci",qt:"25"},{nome:"Banana",qt:"100"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"180"},{nome:"Patata",qt:"150"},{nome:"Asparagi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}]]},
-  {id:'steatosi',emoji:'🫁',nome:'Steatosi Epatica (NAFLD/MASLD)',badge:'EASL/ESPEN 2024',colore:'#F59E0B',
+  {id:'steatosi',cat:'epatiche',emoji:'🫁',nome:'Steatosi Epatica (NAFLD/MASLD)',badge:'EASL/ESPEN 2024',colore:'#F59E0B',
    desc:'Restrizione calorica moderata, eliminazione fruttosio e alcol, dieta mediterranea.',
    note:'EASL 2024 · Riduzione peso 7-10% se sovrappeso · Eliminare alcol e fruttosio aggiunto · Dieta mediterranea · Omega-3 EPA/DHA 2-4g/die · Vitamina E 800 UI/die (selezionati) · Caffeina permessa.',
    pasti:[
@@ -1358,7 +1358,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Arancia',qt:'150'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Caffè espresso",qt:"60"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Noci",qt:"25"},{nome:"Mela",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Sgombro",qt:"150"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Spinaci crudi",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Yogurt greco 0% grassi",qt:"125"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Quinoa cruda",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Arancia",qt:"150"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Caffè espresso",qt:"60"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Latte scremato",qt:"200"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Mandorle dolci secche",qt:"20"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"80"},{nome:"Lenticchie secche",qt:"60"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Lattuga",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Yogurt greco 0% grassi",qt:"125"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Orzo perlato crudo",qt:"70"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Caffè espresso",qt:"60"},{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Semi di chia",qt:"15"},{nome:"Fragola",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Noci",qt:"20"},{nome:"Pera",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Farro perlato crudo",qt:"80"},{nome:"Ceci secchi",qt:"50"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Yogurt greco 0% grassi",qt:"125"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Tonno in scatola al naturale",qt:"130"},{nome:"Patata",qt:"130"},{nome:"Asparagi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'cirrosi',emoji:'🏥',nome:'Cirrosi Epatica',badge:'EASL/ESPEN 2019',colore:'#DC2626',
+  {id:'cirrosi',cat:'epatiche',emoji:'🏥',nome:'Cirrosi Epatica',badge:'EASL/ESPEN 2019',colore:'#DC2626',
    desc:'Apporto energetico aumentato, proteine non ridotte. Piccoli pasti frequenti. Snack serale.',
    note:'EASL/ESPEN 2019 · Energia 35-40 kcal/kg/die · Proteine 1.2-1.5g/kg/die (non limitare) · 4-6 pasti/die · Snack a base di CHO la sera (50g CHO) · Na <2g/die se ascite · BCAA se encefalopatia.',
    pasti:[
@@ -1369,7 +1369,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
     {nome:'Spuntino serale (CHO)',emoji:'🌛',items:[{nome:'Pane bianco',qt:'50'},{nome:'Miele millefiori',qt:'15'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"200"},{nome:"Fette biscottate",qt:"40"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Uovo di gallina intero crudo",qt:"60"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"125"},{nome:"Banana",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"120"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pane integrale",qt:"40"},{nome:"Ricotta vaccina",qt:"80"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Merluzzo",qt:"150"},{nome:"Carota",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino serale",emoji:"🌛",items:[{nome:"Pane bianco",qt:"50"},{nome:"Miele millefiori",qt:"15"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"200"},{nome:"Pane bianco",qt:"50"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Uovo di gallina intero crudo",qt:"60"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"125"},{nome:"Arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Tacchino petto",qt:"120"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pane integrale",qt:"40"},{nome:"Ricotta vaccina",qt:"80"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Salmone atlantico",qt:"130"},{nome:"Cetriolo",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino serale",emoji:"🌛",items:[{nome:"Fette biscottate",qt:"30"},{nome:"Marmellata / confettura",qt:"15"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"200"},{nome:"Fette biscottate",qt:"40"},{nome:"Miele millefiori",qt:"20"},{nome:"Albume d'uovo",qt:"120"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Banana",qt:"150"},{nome:"Yogurt intero bianco",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Coniglio",qt:"130"},{nome:"Carota",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pane bianco",qt:"40"},{nome:"Ricotta vaccina",qt:"80"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Branzino (spigola)",qt:"150"},{nome:"Finocchio",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino serale",emoji:"🌛",items:[{nome:"Pane bianco",qt:"40"},{nome:"Miele millefiori",qt:"15"}]}]]},
-  {id:'bpco',emoji:'🫁',nome:'BPCO (Broncopneumopatia Cronica)',badge:'ESPEN 2021',colore:'#0EA5E9',
+  {id:'bpco',cat:'respiratorie',emoji:'🫁',nome:'BPCO (Broncopneumopatia Cronica)',badge:'ESPEN 2021',colore:'#0EA5E9',
    desc:'Alto apporto calorico, limitare eccesso di CHO (aumenta CO2). Grassi come fonte energetica.',
    note:'ESPEN 2021 · Energia 30-40 kcal/kg/die · Proteine 1.2-1.5g/kg/die · CHO non >50% per limitare produzione di CO2 · Grassi 35-45% · Pasti piccoli e frequenti · Vitamina D, calcio.',
    pasti:[
@@ -1379,7 +1379,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'30'},{nome:'Pera',qt:'130'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Manzo magro',qt:'150'},{nome:'Patata',qt:'120'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Uovo di gallina intero crudo",qt:"120"},{nome:"Pane integrale",qt:"50"},{nome:"Avocado",qt:"60"},{nome:"Latte intero fresco",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Noci",qt:"25"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"70"},{nome:"Salmone atlantico",qt:"150"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mandorle dolci secche",qt:"30"},{nome:"Pera",qt:"130"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Manzo magro",qt:"150"},{nome:"Patata",qt:"120"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"15"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Uovo di gallina intero crudo",qt:"120"},{nome:"Pane integrale",qt:"50"},{nome:"Burro di arachidi",qt:"15"},{nome:"Latte intero fresco",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Quinoa cruda",qt:"70"},{nome:"Pollo petto (senza pelle)",qt:"160"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Noci",qt:"30"},{nome:"Arancia",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Sgombro",qt:"150"},{nome:"Patata",qt:"130"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"15"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Uovo di gallina intero crudo",qt:"120"},{nome:"Pane integrale",qt:"50"},{nome:"Avocado",qt:"70"},{nome:"Caffè espresso",qt:"60"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Farro perlato crudo",qt:"70"},{nome:"Tonno in scatola al naturale",qt:"140"},{nome:"Lattuga",qt:"100"},{nome:"Pomodoro rosso",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mandorle dolci secche",qt:"25"},{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Vitello fettina",qt:"150"},{nome:"Riso integrale crudo",qt:"70"},{nome:"Asparagi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}]]},
-  {id:'calcolosi',emoji:'💎',nome:'Calcolosi Renale (ossalato Ca)',badge:'EAU 2022',colore:'#64748B',
+  {id:'calcolosi',cat:'renali',emoji:'💎',nome:'Calcolosi Renale (ossalato Ca)',badge:'EAU 2022',colore:'#64748B',
    desc:'Idratazione abbondante, calcio adeguato, ridurre ossalati, sale e proteine animali.',
    note:'EAU 2022 · Liquidi ≥2.5L/die (diuresi >2L) · Calcio 1000-1200mg/die (non ridurre) · Sodio <5g NaCl/die · Ossalati limitati · Proteine animali <0.8g/kg/die · Vitamina C <1000mg/die.',
    pasti:[
@@ -1389,7 +1389,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'120'},{nome:'Patata',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pane integrale',qt:'40'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"250"},{nome:"Fette biscottate",qt:"40"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"125"},{nome:"Mela",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Zucchina",qt:"200"},{nome:"Ricotta vaccina",qt:"80"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pera",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"120"},{nome:"Patata",qt:"150"},{nome:"Carota",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pane integrale",qt:"40"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"250"},{nome:"Pane bianco",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Kiwi",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"125"},{nome:"Arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Pollo petto (senza pelle)",qt:"100"},{nome:"Finocchio",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mela",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Branzino (spigola)",qt:"130"},{nome:"Patata",qt:"150"},{nome:"Cetriolo",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pane integrale",qt:"40"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"250"},{nome:"Fette biscottate",qt:"40"},{nome:"Miele millefiori",qt:"15"},{nome:"Pera",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"125"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Uovo di gallina intero crudo",qt:"60"},{nome:"Lattuga",qt:"100"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Arancia",qt:"200"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"130"},{nome:"Riso bianco crudo",qt:"70"},{nome:"Carota",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'gotta',emoji:'🦶',nome:'Iperuricemia / Gotta',badge:'ACR/EULAR 2020',colore:'#EC4899',
+  {id:'gotta',cat:'osteomuscolari',emoji:'🦶',nome:'Iperuricemia / Gotta',badge:'ACR/EULAR 2020',colore:'#EC4899',
    desc:'Riduzione purine, alcol zero, abbondante idratazione, controllo fruttosio.',
    note:'ACR/EULAR 2020 · Evitare carni rosse, frattaglie, pesce grasso, alcol (soprattutto birra) · Fruttosio limitato · Latticini scremati protettivi · Idratazione ≥2L/die · Vitamina C utile.',
    pasti:[
@@ -1399,7 +1399,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Lattuga',qt:'100'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"250"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Fragola",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Mela",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"100"},{nome:"Zucchina",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Merluzzo",qt:"120"},{nome:"Lattuga",qt:"100"},{nome:"Carota",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"250"},{nome:"Fette biscottate",qt:"40"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Ricotta vaccina",qt:"100"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Lattuga",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pera",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Branzino (spigola)",qt:"120"},{nome:"Finocchio",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Fiocchi d'avena",qt:"40"},{nome:"Kiwi",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Latte scremato",qt:"200"},{nome:"Mela",qt:"130"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Orzo perlato crudo",qt:"80"},{nome:"Pollo petto (senza pelle)",qt:"100"},{nome:"Zucchina",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Arancia",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Uovo di gallina intero crudo",qt:"60"},{nome:"Cetriolo",qt:"150"},{nome:"Lattuga",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'anemia',emoji:'🩸',nome:'Anemia Sideropenica',badge:'WHO/LARN 2022',colore:'#B91C1C',
+  {id:'anemia',cat:'ematologiche',emoji:'🩸',nome:'Anemia Sideropenica',badge:'WHO/LARN 2022',colore:'#B91C1C',
    desc:'Ferro eme e non-eme, vitamina C per assorbimento, evitare inibitori del ferro ai pasti.',
    note:'WHO/LARN 2022 · Ferro eme (carni) + non-eme (legumi, verdure) · Vitamina C ai pasti aumenta assorbimento · Evitare tè/caffè/calcio ai pasti principali · Folati e B12 adeguati.',
    pasti:[
@@ -1409,7 +1409,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Fragola',qt:'200'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Fagioli borlotti secchi',qt:'60'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Succo di arancia",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Latte scremato",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Kiwi",qt:"150"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Lenticchie secche",qt:"80"},{nome:"Spinaci crudi",qt:"150"},{nome:"Manzo magro",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Succo di arancia",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"200"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Fagioli borlotti secchi",qt:"60"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Succo di arancia",qt:"200"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Latte scremato",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Fragola",qt:"200"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"80"},{nome:"Manzo magro",qt:"120"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Succo di arancia",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Farro perlato crudo",qt:"80"},{nome:"Ceci secchi",qt:"60"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Succo di arancia",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Yogurt greco 0% grassi",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Kiwi",qt:"200"},{nome:"Semi di chia",qt:"10"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Lenticchie secche",qt:"60"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"200"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Manzo magro",qt:"130"},{nome:"Quinoa cruda",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'oncologia',emoji:'🎗️',nome:'Oncologia / Cachessia Neoplastica',badge:'ESPEN 2021',colore:'#7C3AED',
+  {id:'oncologia',cat:'oncologiche',emoji:'🎗️',nome:'Oncologia / Cachessia Neoplastica',badge:'ESPEN 2021',colore:'#7C3AED',
    desc:'Prevenire la cachessia: alto apporto proteico e calorico, omega-3, nutrizione adattata.',
    note:'ESPEN 2021 · Energia 25-30 kcal/kg/die (cachessia: 30-35) · Proteine 1.2-2.0g/kg/die · Omega-3 EPA 2g/die · Supporto nutrizionale precoce · ONS se intake <60% per >1 settimana.',
    pasti:[
@@ -1419,7 +1419,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Ricotta vaccina',qt:'150'},{nome:'Miele millefiori',qt:'20'},{nome:'Banana',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'180'},{nome:'Riso bianco crudo',qt:'90'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Pane integrale",qt:"60"},{nome:"Burro di arachidi",qt:"20"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"150"},{nome:"Noci",qt:"30"},{nome:"Miele millefiori",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Manzo magro",qt:"150"},{nome:"Parmigiano Reggiano",qt:"20"},{nome:"Olio extra vergine di oliva",qt:"15"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Ricotta vaccina",qt:"150"},{nome:"Miele millefiori",qt:"20"},{nome:"Banana",qt:"100"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"180"},{nome:"Riso bianco crudo",qt:"90"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"15"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Fiocchi d'avena",qt:"60"},{nome:"Noci",qt:"20"},{nome:"Banana",qt:"120"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Mandorle dolci secche",qt:"25"},{nome:"Miele millefiori",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"180"},{nome:"Parmigiano Reggiano",qt:"20"},{nome:"Olio extra vergine di oliva",qt:"15"},{nome:"Zucchina",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Ricotta vaccina",qt:"150"},{nome:"Noci",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Manzo magro",qt:"160"},{nome:"Patata",qt:"150"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"15"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Pane integrale",qt:"60"},{nome:"Miele millefiori",qt:"20"},{nome:"Uovo di gallina intero crudo",qt:"60"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Burro di arachidi",qt:"20"},{nome:"Banana",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Salmone atlantico",qt:"160"},{nome:"Parmigiano Reggiano",qt:"20"},{nome:"Olio extra vergine di oliva",qt:"15"},{nome:"Spinaci crudi",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Ricotta vaccina",qt:"150"},{nome:"Mandorle dolci secche",qt:"25"},{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Tacchino petto",qt:"160"},{nome:"Quinoa cruda",qt:"80"},{nome:"Asparagi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"15"}]}]]},
-  {id:'osteoporosi',emoji:'🦴',nome:'Osteoporosi',badge:'IOF/ESPEN 2021',colore:'#9CA3AF',
+  {id:'osteoporosi',cat:'osteomuscolari',emoji:'🦴',nome:'Osteoporosi',badge:'IOF/ESPEN 2021',colore:'#9CA3AF',
    desc:'Calcio, vitamina D, proteine adeguate. Limitare alcol, sale, caffeina eccessiva.',
    note:'IOF 2021 · Calcio 1000-1200mg/die · Vitamina D 800-2000 UI/die · Proteine 1.0-1.2g/kg/die · Limitare alcol e sodio · Vitamina K2 90-120µg/die · Attività fisica con carico.',
    pasti:[
@@ -1429,7 +1429,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Tofu naturale',qt:'150'},{nome:'Riso integrale crudo',qt:'80'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Mandorle dolci secche",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Kiwi",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Salmone atlantico",qt:"150"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Tofu naturale",qt:"150"},{nome:"Riso integrale crudo",qt:"80"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Kiwi",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"80"},{nome:"Manzo magro",qt:"130"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Noci",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Quinoa cruda",qt:"80"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Fragola",qt:"150"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Farro perlato crudo",qt:"80"},{nome:"Ceci secchi",qt:"60"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Branzino (spigola)",qt:"160"},{nome:"Patata",qt:"150"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
-  {id:'scompenso',emoji:'❤️',nome:'Scompenso Cardiaco',badge:'ESC 2021',colore:'#E11D48',
+  {id:'scompenso',cat:'metaboliche',emoji:'❤️',nome:'Scompenso Cardiaco',badge:'ESC 2021',colore:'#E11D48',
    desc:'Sodio <2g/die, liquidi controllati, piccoli pasti frequenti. No sale aggiunto.',
    note:'ESC 2021 · Sodio <2g/die · Liquidi 1.5-2L/die se edemi · Energia 25-30 kcal/kg/die · Monitorare K con diuretici · Peso quotidiano.',
    pasti:[
@@ -1439,7 +1439,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'130'},{nome:'Patata',qt:'130'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'pancreatite',emoji:'🔴',nome:'Pancreatite Cronica',badge:'AGA/ESPEN 2020',colore:'#F97316',
+  {id:'pancreatite',cat:'epatiche',emoji:'🔴',nome:'Pancreatite Cronica',badge:'AGA/ESPEN 2020',colore:'#F97316',
    desc:'Grassi limitati, pasti piccoli e frequenti, no alcol, enzimi pancreatici se insufficienza.',
    note:'AGA/ESPEN 2020 · Grassi <40g/die in fase acuta (poi liberalizzare) · Alcol zero · Pasti 5-6/die piccoli · Se steatorrea: enzimi pancreatici · Vitamina D, B12, zinco da monitorare.',
    pasti:[
@@ -1449,7 +1449,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Ricotta vaccina',qt:'60'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Fette biscottate",qt:"40"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Mela",qt:"130"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"130"},{nome:"Carota",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"8"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Gallette di riso",qt:"30"},{nome:"Ricotta vaccina",qt:"60"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Merluzzo",qt:"130"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"8"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Pane bianco",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Arancia",qt:"130"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Pera",qt:"130"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Tacchino petto",qt:"130"},{nome:"Finocchio",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"8"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fette biscottate",qt:"30"},{nome:"Ricotta vaccina",qt:"60"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"80"},{nome:"Branzino (spigola)",qt:"130"},{nome:"Cetriolo",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"8"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Fette biscottate",qt:"40"},{nome:"Miele millefiori",qt:"15"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Mela",qt:"130"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Coniglio",qt:"130"},{nome:"Carota",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"8"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Gallette di riso",qt:"30"},{nome:"Ricotta vaccina",qt:"60"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Merluzzo",qt:"130"},{nome:"Lattuga",qt:"100"},{nome:"Olio extra vergine di oliva",qt:"8"}]}]]},
-  {id:'gravidanza',emoji:'🤰',nome:'Gravidanza (II-III trimestre)',badge:'LARN 2023/ACOG',colore:'#EC4899',
+  {id:'gravidanza',cat:'gravidanza',emoji:'🤰',nome:'Gravidanza (II-III trimestre)',badge:'LARN 2023/ACOG',colore:'#EC4899',
    desc:'Aumento fabbisogno energetico, folati, ferro, calcio, iodio, DHA.',
    note:'LARN 2023 · +350 kcal/die (II trim) / +460 kcal/die (III trim) · Folati 600µg/die · Ferro 27mg/die · Calcio 1000mg/die · DHA 200mg/die extra · Iodio 220µg/die · Evitare alimenti a rischio.',
    pasti:[
@@ -1459,7 +1459,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'40'},{nome:'Ricotta vaccina',qt:'80'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Fragola",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Lenticchie secche",qt:"60"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pane integrale",qt:"40"},{nome:"Ricotta vaccina",qt:"80"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Riso integrale crudo",qt:"80"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Pane integrale",qt:"60"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Arancia",qt:"200"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"90"},{nome:"Ceci secchi",qt:"60"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Manzo magro",qt:"130"},{nome:"Quinoa cruda",qt:"80"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Kiwi",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Farro perlato crudo",qt:"80"},{nome:"Uovo di gallina intero crudo",qt:"120"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pane integrale",qt:"40"},{nome:"Ricotta vaccina",qt:"80"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Branzino (spigola)",qt:"150"},{nome:"Patata",qt:"150"},{nome:"Asparagi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}]]},
-  {id:'allattamento',emoji:'🍼',nome:'Allattamento',badge:'LARN 2023',colore:'#F472B6',
+  {id:'allattamento',cat:'gravidanza',emoji:'🍼',nome:'Allattamento',badge:'LARN 2023',colore:'#F472B6',
    desc:'Fabbisogno calorico aumentato, DHA, calcio, vitamina D, idratazione abbondante.',
    note:'LARN 2023 · +500 kcal/die · DHA 200mg/die extra · Calcio 1000mg/die · Vitamina D 1500 UI/die · Iodio 290µg/die · Liquidi ≥2L/die · Limitare caffeina <200mg/die.',
    pasti:[
@@ -1470,19 +1470,19 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Manzo magro',qt:'150'},{nome:'Spinaci crudi',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"300"},{nome:"Fiocchi d'avena",qt:"60"},{nome:"Banana",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt intero bianco",qt:"150"},{nome:"Fragola",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Salmone atlantico",qt:"150"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pane integrale",qt:"50"},{nome:"Ricotta vaccina",qt:"100"},{nome:"Miele millefiori",qt:"10"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Manzo magro",qt:"150"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"300"},{nome:"Pane integrale",qt:"60"},{nome:"Burro di arachidi",qt:"20"},{nome:"Arancia",qt:"200"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"160"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Latte parz. scremato UHT",qt:"250"},{nome:"Mandorle dolci secche",qt:"25"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"160"},{nome:"Quinoa cruda",qt:"80"},{nome:"Asparagi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"300"},{nome:"Fiocchi d'avena",qt:"60"},{nome:"Fragola",qt:"150"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"200"},{nome:"Banana",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Ceci secchi",qt:"60"},{nome:"Spinaci crudi",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Parmigiano Reggiano",qt:"15"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pane integrale",qt:"50"},{nome:"Ricotta vaccina",qt:"100"},{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Manzo magro",qt:"150"},{nome:"Riso integrale crudo",qt:"80"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}]]}
 ,
-  {id:'fenilchetonuria',emoji:'🧬',nome:'Fenilchetonuria (PKU)',badge:'ACMG 2014',colore:'#7C3AED',
+  {id:'fenilchetonuria',cat:'varie',emoji:'🧬',nome:'Fenilchetonuria (PKU)',badge:'ACMG 2014',colore:'#7C3AED',
    desc:'Restrizione di fenilalanina. Alimenti proteici naturali limitatissimi. Integratori amino acidi senza Phe.',
    note:'ACMG 2014 · Fenilalanina <300mg/die da alimenti naturali · Integratori aa senza Phe obbligatori · Tirosina supplementata · Vitamina B12, D, selenio, zinco da monitorare.',
    pasti:[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Gallette di riso",qt:"40"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino",emoji:"🍎",items:[{nome:"Fragola",qt:"200"},{nome:"Succo di arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Zucchina",qt:"200"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Gallette di riso",qt:"30"},{nome:"Marmellata / confettura",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Patata",qt:"200"},{nome:"Melanzana",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Pane bianco",qt:"40"}]}],
    giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Gallette di riso",qt:"40"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Banana",qt:"100"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Fragola",qt:"200"},{nome:"Succo di arancia",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Zucchina",qt:"200"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Carota",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Gallette di riso",qt:"30"},{nome:"Marmellata / confettura",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Patata",qt:"200"},{nome:"Melanzana",qt:"200"},{nome:"Peperone rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Pane bianco",qt:"40"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Pane bianco",qt:"50"},{nome:"Miele millefiori",qt:"20"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Kiwi",qt:"200"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Carota",qt:"200"},{nome:"Cipolla",qt:"50"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Gallette di riso",qt:"30"},{nome:"Marmellata / confettura",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Patata",qt:"200"},{nome:"Zucchina",qt:"200"},{nome:"Cetriolo",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Pane bianco",qt:"40"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte scremato",qt:"200"},{nome:"Gallette di riso",qt:"50"},{nome:"Marmellata / confettura",qt:"20"},{nome:"Banana",qt:"120"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Fragola",qt:"200"},{nome:"Banana",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso bianco crudo",qt:"90"},{nome:"Peperone rosso",qt:"200"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Lattuga",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Succo di arancia",qt:"200"},{nome:"Gallette di riso",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Patata",qt:"200"},{nome:"Finocchio",qt:"200"},{nome:"Carota",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"},{nome:"Miele millefiori",qt:"15"}]}]]},
-  {id:'hiv',emoji:'🎗️',nome:'HIV/AIDS',badge:'WHO/ESPEN',colore:'#DC2626',
+  {id:'hiv',cat:'ematologiche',emoji:'🎗️',nome:'HIV/AIDS',badge:'WHO/ESPEN',colore:'#DC2626',
    desc:'Prevenire malnutrizione e perdita di massa magra. Attenzione a interazioni farmaci-nutrienti.',
    note:'WHO/ESPEN · Energia 30-35 kcal/kg/die · Proteine 1.2-1.5g/kg/die · Zinco, selenio, vitamina D, B12 · Attenzione a interazioni antiretrovirali · Lipodistrofia: limitare saturi.',
    pasti:[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte intero fresco",qt:"250"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Banana",qt:"120"},{nome:"Mandorle dolci secche",qt:"20"}]},{nome:"Spuntino",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"90"},{nome:"Pollo petto (senza pelle)",qt:"160"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"12"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Ricotta vaccina",qt:"120"},{nome:"Kiwi",qt:"150"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"160"},{nome:"Riso integrale crudo",qt:"80"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"12"}]}]},
 
 
 // Merge base + custom user patologie,
-  {id:'gastrectomia',emoji:'🔪',nome:'Gastrectomia (parziale/totale)',badge:'ESPEN 2021',colore:'#64748B',
+  {id:'gastrectomia',cat:'chirurgia',emoji:'🔪',nome:'Gastrectomia (parziale/totale)',badge:'ESPEN 2021',colore:'#64748B',
    desc:'Pasti piccoli e frequenti (6-8/die). Sindrome di Dumping: evitare zuccheri semplici ai pasti.',
    note:'ESPEN 2021 · Frazionare in 6-8 pasti/die · Evitare liquidi durante i pasti · Supplementare: B12 parenterale, Fe, Ca, vitamina D, folati · Rischio Dumping syndrome.',
    pasti:[
@@ -1493,7 +1493,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'60'},{nome:'Merluzzo',qt:'100'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino serale',emoji:'🌛',items:[{nome:'Latte parz. scremato UHT',qt:'150'},{nome:'Fette biscottate',qt:'20'}]}
    ]},
-  {id:'diverticolite',emoji:'💢',nome:'Diverticolite/Diverticolosi',badge:'ACG 2015',colore:'#B45309',
+  {id:'diverticolite',cat:'gastroenterologiche',emoji:'💢',nome:'Diverticolite/Diverticolosi',badge:'ACG 2015',colore:'#B45309',
    desc:'Fase acuta: dieta liquida o a basso residuo. In remissione: fibre abbondanti (25-35g/die).',
    note:'ACG 2015 · Fase acuta: dieta liquida o semiliquida · Remissione: fibra ≥25-35g/die · Nuts e semi NON controindicati in remissione (mito sfatato) · Idratazione abbondante.',
    pasti:[
@@ -1503,7 +1503,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'chirurgia_bariatrica',emoji:'⚖️',nome:'Chirurgia Bariatrica (bypass/sleeve)',badge:'IFSO 2022',colore:'#7C3AED',
+  {id:'chirurgia_bariatrica',cat:'chirurgia',emoji:'⚖️',nome:'Chirurgia Bariatrica (bypass/sleeve)',badge:'IFSO 2022',colore:'#7C3AED',
    desc:'Post-operatorio: progressione dieta liquida → frullata → morbida → solida. Supplementazione a vita.',
    note:'IFSO 2022 · Fase 1 (0-2 sett): liquidi chiari · Fase 2 (2-4 sett): liquidi proteici · Fase 3 (1-3 mesi): frullati/purè · Fase 4 (3+ mesi): solidi morbidi · Supplementi a vita: MVM, Fe, Ca citrato, B12, vitamina D.',
    pasti:[
@@ -1513,7 +1513,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Latte parz. scremato UHT',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'120'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
    ]},
-  {id:'disfagia',emoji:'🗣️',nome:'Disfagia (disturbo della deglutizione)',badge:'IDDSI 2019',colore:'#0EA5E9',
+  {id:'disfagia',cat:'neurologiche',emoji:'🗣️',nome:'Disfagia (disturbo della deglutizione)',badge:'IDDSI 2019',colore:'#0EA5E9',
    desc:'Terapia dietetica basata sui livelli IDDSI (0-7). Texture modificata: purè, minestrati, frullati.',
    note:'IDDSI 2019 · Classificazione: 0 (liquido sottile) → 7 (solido normale) · Dieta a texture modificata · Evitare cibi scivolosi, appiccicosi, doppia consistenza · Addensanti se necessari · Rischio ab ingestis.',
    pasti:[
@@ -1523,7 +1523,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Banana',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Semolino',qt:'80'},{nome:'Merluzzo',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'malnutrizione',emoji:'⚠️',nome:'Malnutrizione per Difetto',badge:'ESPEN 2022',colore:'#DC2626',
+  {id:'malnutrizione',cat:'chirurgia',emoji:'⚠️',nome:'Malnutrizione per Difetto',badge:'ESPEN 2022',colore:'#DC2626',
    desc:'Alto contenuto energetico e proteico. ONS se intake insufficiente. Refeeding syndrome: attenzione.',
    note:'ESPEN 2022 · Energia: 30-35 kcal/kg/die · Proteine: 1.5-2.0 g/kg/die · Attenzione alla sindrome da refeeding (ipofosforemia) · ONS 2-3/die se necessario · Monitorare elettroliti.',
    pasti:[
@@ -1534,7 +1534,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'18'}]},
     {nome:'Spuntino serale',emoji:'🌛',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Fette biscottate',qt:'30'},{nome:'Marmellata / confettura',qt:'20'}]}
    ]},
-  {id:'neoplasia',emoji:'🎗️',nome:'Neoplasie / Terapia Oncologica',badge:'ESPEN 2021',colore:'#BE185D',
+  {id:'neoplasia',cat:'oncologiche',emoji:'🎗️',nome:'Neoplasie / Terapia Oncologica',badge:'ESPEN 2021',colore:'#BE185D',
    desc:'Prevenire la cachessia. Energia 25-35 kcal/kg, proteine 1.2-1.5 g/kg. ONS precoci. Omega-3 EPA.',
    note:'ESPEN 2021 · Energia 25-35 kcal/kg/die · Proteine 1.2-1.5 g/kg/die (cachessia 2.0) · EPA 2g/die · ONS se intake <60% fabbisogno per >1 settimana · Immunonutrizione perioperatoria.',
    pasti:[
@@ -1544,7 +1544,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Banana',qt:'100'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]}
    ]},
-  {id:'allergia_latte',emoji:'🥛',nome:"Allergia Proteine Latte Vaccino (APLV)",badge:'EAACI 2019',colore:'#64748B',
+  {id:'allergia_latte',cat:'allergie',emoji:'🥛',nome:"Allergia Proteine Latte Vaccino (APLV)",badge:'EAACI 2019',colore:'#64748B',
    desc:"Eliminazione totale di latte e derivati. Sostituire calcio con alternative vegetali arricchite.",
    note:"EAACI 2019 · Eliminare caseina, sieroproteine, lattoalbumina, lattoglobulina · Calcio target 1000-1200mg/die da fonti alternative · Vitamina D 800-2000 UI/die · Senza lattosio non significa senza APLV.",
    pasti:[
@@ -1554,7 +1554,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Riso bianco crudo',qt:'70'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'ibs',emoji:'🔄',nome:"Sindrome dell'Intestino Irritabile (IBS)",badge:'ACG 2021',colore:'#D97706',
+  {id:'ibs',cat:'gastroenterologiche',emoji:'🔄',nome:"Sindrome dell'Intestino Irritabile (IBS)",badge:'ACG 2021',colore:'#D97706',
    desc:"Dieta Low-FODMAP nelle fasi sintomatiche. Reintroduzione graduale. Fibra solubile raccomandata.",
    note:"ACG 2021 · Dieta Low-FODMAP riduce sintomi nel 70% dei pazienti · Fase eliminazione 4-6 settimane · Reintroduzione graduale per identificare trigger · Psyllium utile per IBS-C.",
    pasti:[
@@ -1564,7 +1564,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'120'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'sindrome_metabolica',emoji:'⚡',nome:'Sindrome Metabolica',badge:'IDF/AHA 2009',colore:'#7C3AED',
+  {id:'sindrome_metabolica',cat:'metaboliche',emoji:'⚡',nome:'Sindrome Metabolica',badge:'IDF/AHA 2009',colore:'#7C3AED',
    desc:"Dieta mediterranea + deficit calorico. Riduzione peso del 5-10%. Esercizio fisico fondamentale.",
    note:"IDF/AHA 2009 · Criteri: obesità addominale + 2 tra: glicemia ≥100, TG ≥150, HDL basso, PA ≥130/85 · Obiettivo: -500 kcal/die, attività fisica 150 min/settimana · Pattern mediterraneo (PREDIMED).",
    pasti:[
@@ -1574,7 +1574,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'}]},
     {nome:'Cena',emoji:'��',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'pcos',emoji:'🌸',nome:"Sindrome dell'Ovaio Policistico (PCOS)",badge:'ESHRE 2023',colore:'#EC4899',
+  {id:'pcos',cat:'metaboliche',emoji:'🌸',nome:"Sindrome dell'Ovaio Policistico (PCOS)",badge:'ESHRE 2023',colore:'#EC4899',
    desc:"Dieta a basso IG, riduzione insulino-resistenza. Perdita del 5-10% del peso migliora i sintomi ormonali.",
    note:"ESHRE 2023 · Insulino-resistenza presente nel 70-80% · Dieta basso IG + antiinfiammatoria · Omega-3 utili · Mio-inositolo 2g + D-chiro-inositolo 200mg · Attività fisica 150-300 min/settimana.",
    pasti:[
@@ -1584,7 +1584,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'hashimoto',emoji:'🦋',nome:"Tiroidite di Hashimoto / Ipotiroidismo",badge:'ETA 2022',colore:'#0891B2',
+  {id:'hashimoto',cat:'endocrine',emoji:'🦋',nome:"Tiroidite di Hashimoto / Ipotiroidismo",badge:'ETA 2022',colore:'#0891B2',
    desc:"Dieta antiinfiammatoria. Selenio e vitamina D importanti. Screening celiachia associata.",
    note:"ETA 2022 · Associazione con celiachia (screening obbligatorio) · Selenio 55-200 µg/die · Vitamina D target >40 ng/mL · Levotiroxina a stomaco vuoto 30-60 min prima della colazione · Soia e calcio distanziati di 4h dal farmaco.",
    pasti:[
@@ -1594,7 +1594,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'ipe',emoji:'🫁',nome:"Insufficienza Pancreatica Esocrina (IPE)",badge:'UEG 2022',colore:'#B45309',
+  {id:'ipe',cat:'epatiche',emoji:'🫁',nome:"Insufficienza Pancreatica Esocrina (IPE)",badge:'UEG 2022',colore:'#B45309',
    desc:"Pasti frequenti e piccoli, grassi ridotti. PERT obbligatoria ad ogni pasto. No alcol assoluto.",
    note:"UEG 2022 · PERT (Creon): 40.000-80.000 UI lipasi per pasto principale, 20.000-40.000 per spuntino · Grassi <40g/die se PERT non adeguata · Supplementare vitamine liposolubili A,D,E,K · No alcol assoluto.",
    pasti:[
@@ -1604,7 +1604,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Gallette di riso',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
    ]},
-  {id:'ictus',emoji:'🧠',nome:"Post-Ictus / Riabilitazione Neurologica",badge:'ESPEN 2021',colore:'#1D4ED8',
+  {id:'ictus',cat:'neurologiche',emoji:'🧠',nome:"Post-Ictus / Riabilitazione Neurologica",badge:'ESPEN 2021',colore:'#1D4ED8',
    desc:"Prevenire disfagia e malnutrizione post-ictus. Pattern mediterraneo per prevenzione recidive.",
    note:"ESPEN 2021 · Valutare sempre la deglutizione · Texture adattata IDDSI se disfagia · Energia 25-30 kcal/kg/die · Proteine 1.2-1.5 g/kg/die · Omega-3 (EPA+DHA) 1-2g/die · DASH/Mediterranea per prevenzione recidive.",
    pasti:[
@@ -1614,7 +1614,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'gerd',emoji:'🔥',nome:'GERD / Reflusso Gastroesofageo',badge:'ACG 2022',colore:'#F97316',
+  {id:'gerd',cat:'gastroenterologiche',emoji:'🔥',nome:'GERD / Reflusso Gastroesofageo',badge:'ACG 2022',colore:'#F97316',
    desc:"Dieta anti-reflusso: pasti piccoli e frequenti, evitare alimenti trigger. Perdita di peso se sovrappeso.",
    note:"ACG 2022 · Evitare: cioccolato, menta, alcolici, caffè, cibi grassi, agrumi, pomodoro, cibi piccanti · Pasti piccoli e frequenti (4-5/die) · Cena almeno 3h prima di coricarsi · Elevare testata del letto 15-20cm · Perdita del 10% del peso riduce significativamente i sintomi.",
    pasti:[
@@ -1624,7 +1624,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Pera',qt:'120'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
    ]},
-  {id:'gastrite',emoji:'🫃',nome:'Gastrite Cronica / Ulcera Peptica',badge:'ESPEN/WCOG 2020',colore:'#DC2626',
+  {id:'gastrite',cat:'gastroenterologiche',emoji:'🫃',nome:'Gastrite Cronica / Ulcera Peptica',badge:'ESPEN/WCOG 2020',colore:'#DC2626',
    desc:"Dieta leggera, pasti regolari, evitare irritanti gastrici. Eradicazione H. pylori se indicata.",
    note:"WCOG 2020 · Evitare: FANS, alcol, fumo, cibi piccanti, acidi · Pasti regolari (non saltare) · Metodo di cottura: vapore, bollitura, griglia (no frittura) · Probiotici possono supportare eradicazione H. pylori · Vitamina B12 se gastrite atrofica.",
    pasti:[
@@ -1634,7 +1634,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Banana',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
    ]},
-  {id:'stipsi',emoji:'💩',nome:'Stipsi Cronica Funzionale',badge:'ACG 2021',colore:'#92400E',
+  {id:'stipsi',cat:'gastroenterologiche',emoji:'💩',nome:'Stipsi Cronica Funzionale',badge:'ACG 2021',colore:'#92400E',
    desc:"Aumentare fibre e idratazione. Regolarità nei pasti. Attività fisica quotidiana.",
    note:"ACG 2021 · Fibre ≥25-35g/die (incremento graduale) · Acqua ≥1.5-2L/die · Probiotici (Lactobacillus, Bifidobacterium): evidenza moderata · Prugne/aloe vera: possibile beneficio · Evitare diete molto povere di fibre.",
    pasti:[
@@ -1644,7 +1644,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Farro perlato crudo',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'intolleranza_lattosio',emoji:'🥛',nome:'Intolleranza al Lattosio',badge:'WGO 2013',colore:'#0284C7',
+  {id:'intolleranza_lattosio',cat:'allergie',emoji:'🥛',nome:'Intolleranza al Lattosio',badge:'WGO 2013',colore:'#0284C7',
    desc:"Riduzione/eliminazione del lattosio. Molti tollerano piccole quantità. Attenzione al calcio.",
    note:"WGO 2013 · Soglia individuale variabile (molti tollerano 12g/pasto) · Formaggi stagionati (Parmigiano, Grana, Pecorino) praticamente privi di lattosio · Yogurt fermentato meglio tollerato · Lattasi enzimatica disponibile · Calcio: 1000-1200mg/die da fonti alternative o supplementi.",
    pasti:[
@@ -1654,7 +1654,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'60'},{nome:'Verdure miste',qt:'200'},{nome:'Pane integrale',qt:'50'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'artrite_reumatoide',emoji:'🦱',nome:'Artrite Reumatoide',badge:'EULAR/ESPEN 2022',colore:'#7C3AED',
+  {id:'artrite_reumatoide',cat:'osteomuscolari',emoji:'🦱',nome:'Artrite Reumatoide',badge:'EULAR/ESPEN 2022',colore:'#7C3AED',
    desc:"Dieta antiinfiammatoria mediterranea. Omega-3 utili. Gestione del peso per ridurre carico articolare.",
    note:"EULAR 2022 · Omega-3 (EPA+DHA) 2-3g/die (azione anti-infiammatoria) · Vitamina D: target >40 ng/mL · Dieta mediterranea riduce DAS28 · Evitare sovrappeso (peggiora carico articolare) · Folati adeguati se MTX · Antinfiammatori naturali: curcuma, zenzero.",
    pasti:[
@@ -1664,7 +1664,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Sgombro',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'fibromialgia',emoji:'🌡️',nome:'Fibromialgia',badge:'EULAR 2023',colore:'#EC4899',
+  {id:'fibromialgia',cat:'osteomuscolari',emoji:'🌡️',nome:'Fibromialgia',badge:'EULAR 2023',colore:'#EC4899',
    desc:"Dieta antiinfiammatoria, attenzione a sensibilità alimentare. Vitamina D e magnesio importanti.",
    note:"EULAR 2023 · Non esiste dieta specifica validata · Dieta antiinfiammatoria / mediterranea: possibile beneficio · Vitamina D (carenza frequente): target >40 ng/mL · Magnesio 300-400mg/die · Evitare eccitatori (glutammato, aspartame in alcuni casi) · Gluten sensitivity non celiaca: trial 3 mesi.",
    pasti:[
@@ -1674,7 +1674,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'parkinson',emoji:'🧠',nome:'Morbo di Parkinson',badge:'ESPEN 2021',colore:'#1D4ED8',
+  {id:'parkinson',cat:'neurologiche',emoji:'🧠',nome:'Morbo di Parkinson',badge:'ESPEN 2021',colore:'#1D4ED8',
    desc:"Gestire la disfagia se presente. Levodopa: attenzione alle proteine ai pasti principali. Stitichezza frequente.",
    note:"ESPEN 2021 · Levodopa: ridurre proteine a colazione e pranzo (si consuma nelle ore di attività) · Proteine concentrate alla sera se necessario · Stipsi: fibre ≥30g/die, idratazione ≥2L/die · Texture modificata se disfagia · Vitamina D e B12 · Antiossidanti: frutta e verdura colorata.",
    pasti:[
@@ -1684,7 +1684,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Banana',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'sclerosi_multipla',emoji:'🧬',nome:'Sclerosi Multipla',badge:'ECTRIMS/ESPEN 2023',colore:'#0284C7',
+  {id:'sclerosi_multipla',cat:'neurologiche',emoji:'🧬',nome:'Sclerosi Multipla',badge:'ECTRIMS/ESPEN 2023',colore:'#0284C7',
    desc:"Dieta antiinfiammatoria. Vitamina D cardine. Omega-3 e antiossidanti. Gestire stipsi e peso.",
    note:"ECTRIMS 2023 · Vitamina D target 40-60 ng/mL (possibile effetto immunomodulante) · Omega-3 2g/die · Dieta a basso contenuto di grassi saturi (Swank diet) · Fibre per stipsi · Probiotici per disbiosi intestinale · Evitare sovrappeso.",
    pasti:[
@@ -1694,7 +1694,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'ipertiroidismo',emoji:'🦋',nome:'Ipertiroidismo',badge:'ETA 2023',colore:'#F59E0B',
+  {id:'ipertiroidismo',cat:'endocrine',emoji:'🦋',nome:'Ipertiroidismo',badge:'ETA 2023',colore:'#F59E0B',
    desc:"Alto fabbisogno calorico e proteico. Calcio e vitamina D per prevenire osteoporosi. Moderare iodio.",
    note:"ETA 2023 · Energia aumentata del 20-30% (aumentato metabolismo basale) · Proteine 1.2-1.5 g/kg/die (catabolismo aumentato) · Calcio 1000-1200mg/die e vitamina D ≥1000 UI/die (rischio osteoporosi) · Iodio: non eccedere (può peggiorare ipertiroidismo) · Selenio 200µg/die (utile in morbo di Graves) · Caffeina: limitare (può esacerbare tachicardia).",
    pasti:[
@@ -1704,7 +1704,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'50'},{nome:'Ricotta vaccina',qt:'80'},{nome:'Arancia',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'180'},{nome:'Riso bianco crudo',qt:'90'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'anoressia',emoji:'🚨',nome:'Anoressia Nervosa',badge:'ESPEN/APA 2022',colore:'#DC2626',
+  {id:'anoressia',cat:'dca',emoji:'🚨',nome:'Anoressia Nervosa',badge:'ESPEN/APA 2022',colore:'#DC2626',
    desc:"Renutrizione graduale e controllata. Refeeding syndrome: monitorare fosforo, potassio, magnesio. Team multidisciplinare.",
    note:"ESPEN 2022 · Refeeding syndrome: rischio con apporto iniziale >10 kcal/kg/die → iniziare 5-10 kcal/kg e incrementare gradualmente · Fosforo, potassio, magnesio: supplementare profilatticamente · Tiamina (B1) prima di iniziare renutrizione · Apporto calorico target: 30-40 kcal/kg/die (individuale) · Monitoraggio laboratoristico frequente · Trattamento multidisciplinare obbligatorio.",
    pasti:[
@@ -1714,7 +1714,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane bianco',qt:'50'},{nome:'Burro di arachidi',qt:'20'},{nome:'Mela',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'bulimia',emoji:'🌀',nome:'Bulimia Nervosa',badge:'ESPEN/APA 2022',colore:'#7C3AED',
+  {id:'bulimia',cat:'dca',emoji:'🌀',nome:'Bulimia Nervosa',badge:'ESPEN/APA 2022',colore:'#7C3AED',
    desc:"Regolarizzare i pasti, evitare restrizioni eccessive. Reintegro elettroliti se vomito frequente. Terapia psicologica.",
    note:"ESPEN 2022 · Pasti regolari (3 pasti + 2-3 spuntini) per ridurre abbuffate · Evitare diete restrittive (triggers abbuffate) · Se vomito: ipopotassiemia, erosione dentale (acidi), danni esofagei · Supplementare potassio, magnesio se carenti · Alimentazione intuitiva supportata · Team multidisciplinare essenziale.",
    pasti:[
@@ -1724,7 +1724,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'50'},{nome:'Ricotta vaccina',qt:'60'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'bed',emoji:'🍽️',nome:'Binge Eating Disorder (BED)',badge:'ESPEN/DSM-5 2022',colore:'#F97316',
+  {id:'bed',cat:'dca',emoji:'🍽️',nome:'Binge Eating Disorder (BED)',badge:'ESPEN/DSM-5 2022',colore:'#F97316',
    desc:"Regolarizzare i pasti, evitare restrizioni. Alimentazione mindful. Terapia cognitivo-comportamentale.",
    note:"DSM-5/ESPEN 2022 · Abbuffate ricorrenti senza comportamenti compensatori · Pasti regolari e strutturati riducono le abbuffate · Evitare diete molto restrittive (triggers) · Mindful eating: mangiare lentamente, senza distrazioni · Approccio non basato su peso ma su comportamento alimentare · Psicoterapia (CBT) elemento cardine.",
    pasti:[
@@ -1734,7 +1734,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'post_covid',emoji:'🦠',nome:'Sindrome Post-COVID (Long COVID)',badge:'OMS/ESPEN 2023',colore:'#0891B2',
+  {id:'post_covid',cat:'varie',emoji:'🦠',nome:'Sindrome Post-COVID (Long COVID)',badge:'OMS/ESPEN 2023',colore:'#0891B2',
    desc:"Supporto nutrizionale per recupero energetico e muscolare. Antiossidanti e antiinfiammatori. Gestire fatigue.",
    note:"OMS 2023 · Proteine 1.2-1.5 g/kg/die per recupero muscolare · Vitamina D target >40 ng/mL · Vitamina C ≥200mg/die · Zinco 10-15mg/die · Omega-3 EPA+DHA 2g/die (antiinfiammatorio) · Vitamina B12 se carente · Probiotici per disbiosi post-COVID · Ferro se anemia post-infettiva · Pasti piccoli e frequenti se fatigue.",
    pasti:[
@@ -1744,7 +1744,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'40'},{nome:'Ricotta vaccina',qt:'60'},{nome:'Fragola',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'60'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'emocromatosi',emoji:'🔴',nome:'Emocromatosi Ereditaria',badge:'EASL 2022',colore:'#B91C1C',
+  {id:'emocromatosi',cat:'epatiche',emoji:'🔴',nome:'Emocromatosi Ereditaria',badge:'EASL 2022',colore:'#B91C1C',
    desc:"Ridurre apporti di ferro eme e promotori assorbimento. Evitare alcol. Vitamina C lontano dai pasti principali.",
    note:"EASL 2022 · Evitare carni rosse eccessive e frattaglie (alto ferro eme) · Non assumere supplementi di ferro o vitamina C ai pasti · Alcol zero (aggrava danno epatico) · Tè e caffè ai pasti possono ridurre assorbimento ferro · Non eccedere con vitamina C · Latticini e calcio ai pasti principali (chelano il ferro).",
    pasti:[
@@ -1754,7 +1754,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'lupus',emoji:'🦋',nome:'Lupus Eritematoso Sistemico (LES)',badge:'EULAR 2023',colore:'#A855F7',
+  {id:'lupus',cat:'immunologiche',emoji:'🦋',nome:'Lupus Eritematoso Sistemico (LES)',badge:'EULAR 2023',colore:'#A855F7',
    desc:"Dieta antiinfiammatoria mediterranea. Vitamina D fondamentale. Attenzione alla fotosensibilità (vitamina D ridotta).",
    note:"EULAR 2023 · Vitamina D: spesso carente per fotoprotezione e cortisonici · Omega-3 2-3g/die (effetto immunomodulante) · Dieta mediterranea riduce l'attività di malattia · Cortisonici: monitorare glicemia, pressione, peso · Nefrite lupica associata: restrizione sodio e proteine se necessario · Calcio per prevenire osteoporosi corticosteroidea.",
    pasti:[
@@ -1764,7 +1764,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'allergia_uova',emoji:'🥚',nome:'Allergia alle Uova',badge:'EAACI 2019',colore:'#D97706',
+  {id:'allergia_uova',cat:'allergie',emoji:'🥚',nome:'Allergia alle Uova',badge:'EAACI 2019',colore:'#D97706',
    desc:"Eliminazione completa di uova e derivati. Attenzione alle etichette alimentari e prodotti da forno.",
    note:"EAACI 2019 · Eliminare uova intere, albume, tuorlo e tutti i derivati · Leggere etichette: ovoalbumina, lisozima, mayonese, lecitina (d'uovo) · Cross-reattività con penne di uccelli rara · Fonti alternative di proteine complete · Vitamina D e B12 se dieta restrittiva · Adrenalina auto-iniettabile se anafilassi.",
    pasti:[
@@ -1774,7 +1774,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Pasta di semola cruda',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'stomia',emoji:'🩹',nome:'Stomia (Colostomia / Ileostomia)',badge:'ESPEN 2021',colore:'#92400E',
+  {id:'stomia',cat:'chirurgia',emoji:'🩹',nome:'Stomia (Colostomia / Ileostomia)',badge:'ESPEN 2021',colore:'#92400E',
    desc:"Dieta individualizzata per tipo di stomia. Ileostomia: basso residuo inizialmente, alta idratazione. Colostomia: progressiva normalizzazione.",
    note:"ESPEN 2021 · Ileostomia: perdite di acqua 1-2L/die e sodio → idratazione ≥2.5L/die · Rischio carenza B12 se resezione ileale · Evitare cibi ad alto residuo nella fase iniziale · Cibi che causano odore/gas: identificarli individualmente · Proteine aumentate per cicatrizzazione.",
    pasti:[
@@ -1784,7 +1784,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'tumore_seno',emoji:'🎀',nome:'Tumore al Seno (Carcinoma Mammario)',badge:'ESPEN 2021',colore:'#BE185D',
+  {id:'tumore_seno',cat:'oncologiche',emoji:'🎀',nome:'Tumore al Seno (Carcinoma Mammario)',badge:'ESPEN 2021',colore:'#BE185D',
    desc:"Dieta antinfiammatoria e mantenimento del peso ottimale. Alcol zero. Fitoestrogeni dalla soia non controindicati. Omega-3 e vitamina D.",
    note:"ESPEN 2021 · BMI 20-25 obiettivo (sovrappeso aumenta rischio recidiva del 30-40%) · Alcol: fattore di rischio indipendente → zero · Fitoestrogeni da soia alimentare: non controindicati (metanalisi 2019) · Omega-3 EPA/DHA 2g/die · Vitamina D target >40 ng/mL · Fibre ≥25g/die.",
    pasti:[
@@ -1794,7 +1794,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'tumore_pancreas',emoji:'🔴',nome:'Tumore del Pancreas',badge:'ESPEN 2021',colore:'#B45309',
+  {id:'tumore_pancreas',cat:'oncologiche',emoji:'🔴',nome:'Tumore del Pancreas',badge:'ESPEN 2021',colore:'#B45309',
    desc:"Elevato rischio di cachessia. PERT obbligatoria ad ogni pasto. Diabete pancreatico secondario frequente. Alta densità calorica e proteica. No alcol.",
    note:"ESPEN 2021 · Cachessia nell'80% dei pazienti · PERT (Creon) 40.000-80.000 UI lipasi per pasto principale · Diabete tipo 3c: monitorare glicemia · Omega-3 EPA 2g/die anti-cachessico · ONS iperproteiche se intake <60% · No alcol assoluto.",
    pasti:[
@@ -1804,7 +1804,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Ricotta vaccina',qt:'80'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'tumore_colon',emoji:'🎗️',nome:'Tumore del Colon-Retto',badge:'ESPEN 2021',colore:'#065F46',
+  {id:'tumore_colon',cat:'oncologiche',emoji:'🎗️',nome:'Tumore del Colon-Retto',badge:'ESPEN 2021',colore:'#065F46',
    desc:"Immunonutrizione preoperatoria. Rialimentazione precoce post-chirurgia. Dieta ricca di fibre nel mantenimento. No carni lavorate.",
    note:"ESPEN 2021 · Immunonutrizione pre-op (arginina 15-20g + EPA + nucleotidi) 5-7gg · Rialimentazione orale precoce (entro 4h post-op) · Fibre ≥25-30g/die in mantenimento · Carni lavorate: IARC Gruppo 1 cancerogeno · Alcol: fattore di rischio.",
    pasti:[
@@ -1814,7 +1814,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'diverticolosi',emoji:'💢',nome:'Diverticolosi',badge:'ACG 2015',colore:'#D97706',
+  {id:'diverticolosi',cat:'gastroenterologiche',emoji:'💢',nome:'Diverticolosi',badge:'ACG 2015',colore:'#D97706',
    desc:"Dieta ricca di fibre (≥25-35g/die). Opposta alla diverticolite acuta. Idratazione abbondante. Noci e semi non controindicati (mito sfatato).",
    note:"ACG 2015 · Fibre ≥25-35g/die prevengono la progressione e le complicanze · Idratazione ≥1.5-2L/die · Noci e semi non controindicati (RCT negativi: Health Professionals Follow-up Study) · Attività fisica raccomandata · Evitare costipazione cronica.",
    pasti:[
@@ -1824,7 +1824,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'180'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Farro perlato crudo',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'allergia_pesce',emoji:'🐟',nome:'Allergia al Pesce',badge:'EAACI 2019',colore:'#0284C7',
+  {id:'allergia_pesce',cat:'allergie',emoji:'🐟',nome:'Allergia al Pesce',badge:'EAACI 2019',colore:'#0284C7',
    desc:"Eliminazione totale del pesce e derivati. Omega-3 da fonti vegetali (semi di lino, noci) o alghe. Leggere sempre le etichette.",
    note:"EAACI 2019 · Eliminare tutti i pesci (cross-reattività elevata: parvalbumina conservata tra specie) · Evitare anche: olio di pesce, collagene di pesce, gelatina di pesce · Omega-3 ALA da: semi di lino, noci, semi di chia · EPA/DHA da microalghe · Iodio da: sale iodato.",
    pasti:[
@@ -1834,7 +1834,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Arancia',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'allergia_molluschi',emoji:'🦞',nome:'Allergia ai Molluschi e Crostacei',badge:'EAACI 2019',colore:'#0E7490',
+  {id:'allergia_molluschi',cat:'allergie',emoji:'🦞',nome:'Allergia ai Molluschi e Crostacei',badge:'EAACI 2019',colore:'#0E7490',
    desc:"Eliminazione di crostacei (gamberi, granchio, aragosta) e molluschi (cozze, vongole, calamari). Il pesce è generalmente tollerato. Attenzione alla cross-contaminazione.",
    note:"EAACI 2019 · Crostacei: tropomiosina (diversa dalla parvalbumina del pesce) · Cross-reattività tra crostacei molto elevata · Co-allergia con molluschi nel 40-50% · Pesce: proteina diversa, generalmente tollerato · Glucosamina da gamberi/granchio: verificare fonte del supplemento.",
    pasti:[
@@ -1844,7 +1844,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'allergia_frutta_secca',emoji:'🥜',nome:'Allergia alla Frutta Secca (Tree Nuts)',badge:'EAACI 2019',colore:'#A16207',
+  {id:'allergia_frutta_secca',cat:'allergie',emoji:'🥜',nome:'Allergia alla Frutta Secca (Tree Nuts)',badge:'EAACI 2019',colore:'#A16207',
    desc:"Eliminazione di tutta la frutta secca a guscio. Alto rischio anafilassi. Cross-reattività elevata tra specie. Omega-3 da pesce e semi (lino, chia).",
    note:"EAACI 2019 · Tree nuts: mandorle, noci, nocciole, pistacchi, anacardi, pinoli, noci di macadamia, noci pecan, noci del brasile · Cross-reattività elevata tra diverse noci · Arachidi = legume (co-allergia nel 40-60%) · Semi di sesamo: allergia separata ma comune · Portare sempre epinefrina auto-iniettabile.",
    pasti:[
@@ -1854,7 +1854,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'fibrosi_cistica',emoji:'🌬️',nome:'Fibrosi Cistica',badge:'ECFS/ESPEN 2016',colore:'#0EA5E9',
+  {id:'fibrosi_cistica',cat:'respiratorie',emoji:'🌬️',nome:'Fibrosi Cistica',badge:'ECFS/ESPEN 2016',colore:'#0EA5E9',
    desc:'Fabbisogno energetico molto elevato (110-200% del normale). PERT obbligatoria. Integrazione vitamine liposolubili.',
    note:'ECFS 2016 · Energia 110-200% del fabbisogno normale (malassorbimento + lavoro respiratorio) · Proteine 1.5-2.0 g/kg/die · PERT ad ogni pasto e spuntino · Vitamine A,D,E,K · Sodio extra in estate e durante attività fisica · Diabete correlato a FC (CFRD): monitorare glicemia.',
    pasti:[
@@ -1864,7 +1864,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gelato alla crema',qt:'100'},{nome:'Crackers',qt:'30'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'160'},{nome:'Riso bianco crudo',qt:'90'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'50'}]}
    ]},
-  {id:'epilessia',emoji:'🧠',nome:'Epilessia / Dieta Chetogenica',badge:'ILAE/ESPEN 2021',colore:'#7C3AED',
+  {id:'epilessia',cat:'neurologiche',emoji:'🧠',nome:'Epilessia / Dieta Chetogenica',badge:'ILAE/ESPEN 2021',colore:'#7C3AED',
    desc:'Dieta chetogenica ad alto contenuto di grassi e basso contenuto di carboidrati. Ratio 3:1-4:1 grassi:(proteine+CHO).',
    note:'ILAE 2008 · ESPEN 2021 · Indicata in epilessia farmaco-resistente · Ratio 3:1-4:1 (classica) · Modified Atkins Diet come alternativa più flessibile · CHO <20g/die · Proteine adeguate (1.0-1.2 g/kg/die) · Monitorare: crescita, densità ossea, lipidi, funzionalità renale.',
    pasti:[
@@ -1874,7 +1874,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'30'},{nome:'Parmigiano reggiano',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Carne bovina magra',qt:'150'},{nome:'Burro',qt:'20'},{nome:'Zucchina',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'20'},{nome:'Panna fresca da cucina',qt:'30'}]}
    ]},
-  {id:'alzheimer',emoji:'🧩',nome:'Malattia di Alzheimer / Demenza',badge:'ESPEN 2023',colore:'#6D28D9',
+  {id:'alzheimer',cat:'neurologiche',emoji:'🧩',nome:'Malattia di Alzheimer / Demenza',badge:'ESPEN 2023',colore:'#6D28D9',
    desc:'Prevenire la malnutrizione. Dieta mediterranea / MIND diet. Adattare texture se disfagia. Supporto nutrizionale precoce.',
    note:'ESPEN 2023 · Alto rischio di malnutrizione (dimenticanza, disfagia, anoressia) · Vitamina B12, folati, vitamina D, omega-3 · Dieta MIND (Mediterranea + DASH) riduce il declino cognitivo · Piccoli pasti frequenti e appetibili · Texture adattata IDDSI se disfagia · ONS se intake <75% per >1 settimana.',
    pasti:[
@@ -1884,7 +1884,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Noci',qt:'20'},{nome:'Mela',qt:'120'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Lenticchie secche',qt:'50'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'gastroparesi',emoji:'🌀',nome:'Gastroparesi',badge:'ADA/ACG 2022',colore:'#B45309',
+  {id:'gastroparesi',cat:'gastroenterologiche',emoji:'🌀',nome:'Gastroparesi',badge:'ADA/ACG 2022',colore:'#B45309',
    desc:'Pasti piccoli e frequenti. Grassi ridotti e fibra ridotta. Preferire alimenti morbidi e liquidi. Evitare cibi ad alto residuo.',
    note:'ADA/ACG 2022 · Grassi <40g/die · Fibra <10g/die · 6-8 pasti piccoli e frequenti · Consistenza: liquida/morbida/tritata · Controllo glicemico se diabete associato · Masticare bene · Non coricarsi entro 2h dal pasto · Liquidi calorici se solidi non tollerati.',
    pasti:[
@@ -1894,7 +1894,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Purea di mela',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Zucchina',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
    ]},
-  {id:'sla',emoji:'💪',nome:'Sclerosi Laterale Amiotrofica (SLA)',badge:'ESPEN 2023',colore:'#1E3A5F',
+  {id:'sla',cat:'neurologiche',emoji:'💪',nome:'Sclerosi Laterale Amiotrofica (SLA)',badge:'ESPEN 2023',colore:'#1E3A5F',
    desc:'Fabbisogno energetico aumentato. Prevenzione della malnutrizione. Gestione della disfagia. PEG preventiva se necessario.',
    note:'ESPEN 2023 · Energia 30-40 kcal/kg/die (ipermetabolismo + amiotrofia) · Proteine 1.5-2.0 g/kg/die · Valutare disfagia regolarmente (IDDSI) · PEG precoce quando FVC >50% e peso in calo · Omega-3 2g/die · Vitamina D · Monitorare peso ogni 2-4 settimane · Supporto nutrizionale specializzato obbligatorio.',
    pasti:[
@@ -1904,7 +1904,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Frullato proteico',qt:'250'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Carne bovina magra',qt:'150'},{nome:'Lenticchie secche',qt:'50'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'},{nome:'Pane bianco',qt:'40'}]}
    ]},
-  {id:'6fed',emoji:'🚫',nome:'Six Food Elimination Diet – 6FED (EoE)',badge:'ACG/AGA 2020',colore:'#7C3AED',
+  {id:'6fed',cat:'gastroenterologiche',emoji:'🚫',nome:'Six Food Elimination Diet – 6FED (EoE)',badge:'ACG/AGA 2020',colore:'#7C3AED',
    desc:'Eliminazione di 6 allergeni per Esofagite Eosinofilica: latte, frumento, uova, soia, frutta secca, pesce/crostacei.',
    note:'ACG/AGA 2020 · Indicata per Esofagite Eosinofilica (EoE) · Elimina i 6 trigger principali: latte/latticini, frumento/glutine, uova, soia, frutta secca/arachidi, pesce/frutti di mare · Reintroduzione sequenziale (un alimento alla volta) con EGDS di controllo ogni 6-8 settimane per categoria · Supplementare: calcio 1000-1200mg/die, vitamina D, B12, omega-3 da alghe · Durata fase di eliminazione: 6 settimane.',
    pasti:[
@@ -1914,7 +1914,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Tacchino petto',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Spinaci crudi',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'4fed',emoji:'🟡',nome:'Four Food Elimination Diet – 4FED (EoE)',badge:'ACG/AGA 2020',colore:'#D97706',
+  {id:'4fed',cat:'gastroenterologiche',emoji:'🟡',nome:'Four Food Elimination Diet – 4FED (EoE)',badge:'ACG/AGA 2020',colore:'#D97706',
    desc:'Eliminazione di 4 allergeni principali per EoE: latte, frumento, uova, soia. Maggiore aderenza rispetto alla 6FED.',
    note:'ACG/AGA 2020 · Indicata per Esofagite Eosinofilica (EoE) · Elimina i 4 trigger più frequenti: latte/latticini, frumento/glutine, uova, soia · Efficacia ~54-64% di remissione istologica con migliore compliance rispetto alla 6FED · Reintroduzione sequenziale con EGDS di controllo ogni 6-8 settimane · Monitorare calcio, vitamina D e adeguatezza proteica.',
    pasti:[
@@ -1924,7 +1924,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'cded_fase1',emoji:'🫙',nome:'CDED Fase 1 – Settimane 1-6 (50% PEN)',badge:'Levine 2019',colore:'#059669',
+  {id:'cded_fase1',cat:'gastroenterologiche',emoji:'🫙',nome:'CDED Fase 1 – Settimane 1-6 (50% PEN)',badge:'Levine 2019',colore:'#059669',
    desc:'CDED Fase 1 (sett. 1-6): alimenti consentiti + 50% del fabbisogno calorico da formula enterale polimerica (Modulen IBD o equivalente). Schema per 1800 kcal/die totali.',
    note:'Levine et al. 2019 · ECCO 2022 · Fase 1 (sett. 1-6): 50% kcal da PEN (formula polimerica, es. Modulen IBD ~900 kcal da ~600 mL) + 50% da dieta solida (~900 kcal). Alimenti consentiti: pollo, pesce (non in scatola), uova, patata, carota, zucchina, banana, mela, pera, fragola, riso, gallette di riso, olio extravergine di oliva, miele. ESCLUSI: carni rosse/processate, glutine, latticini ad alto contenuto lipidico, oli di semi, emulsionanti (E322/E471), conservanti, UPF. Obiettivo: riduzione del microbiota pro-infiammatorio e ripristino della barriera intestinale.',
    pasti:[
@@ -1935,7 +1935,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'130'},{nome:'Riso bianco crudo',qt:'60'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Formula PEN (≈50% kcal)',emoji:'🧪',items:[{nome:'Modulen IBD (porz. 100mL=150kcal)',qt:'600'}]}
    ]},
-  {id:'cded_fase2',emoji:'🫙',nome:'CDED Fase 2 – Settimane 7-12 (25% PEN)',badge:'Levine 2019',colore:'#10B981',
+  {id:'cded_fase2',cat:'gastroenterologiche',emoji:'🫙',nome:'CDED Fase 2 – Settimane 7-12 (25% PEN)',badge:'Levine 2019',colore:'#10B981',
    desc:'CDED Fase 2 (sett. 7-12): dieta espansa + 25% del fabbisogno calorico da formula enterale polimerica. Maggiore varietà di alimenti rispetto alla Fase 1.',
    note:'Levine et al. 2019 · ECCO 2022 · Fase 2 (sett. 7-12): 25% kcal da PEN (formula polimerica ~450 kcal da ~300 mL) + 75% da dieta solida (~1350 kcal). Rispetto alla Fase 1 si possono aggiungere: legumi cotti, più varietà di pesce, frutta di stagione, yogurt magro senza additivi. Rimangono ESCLUSI: carni rosse/processate, glutine, latticini grassi, oli di semi, emulsionanti, UPF. Continuare fino a remissione clinica e biochimica (PCR, calprotectina fecale).',
    pasti:[
@@ -1946,7 +1946,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Patata',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Formula PEN (≈25% kcal)',emoji:'🧪',items:[{nome:'Modulen IBD (porz. 100mL=150kcal)',qt:'300'}]}
    ]},
-  {id:'cded_mant',emoji:'🌿',nome:'CDED Mantenimento – Oltre sett. 12',badge:'Levine 2019',colore:'#065F46',
+  {id:'cded_mant',cat:'gastroenterologiche',emoji:'🌿',nome:'CDED Mantenimento – Oltre sett. 12',badge:'Levine 2019',colore:'#065F46',
    desc:'CDED Mantenimento (sett. 12+): dieta completa senza formula, ampia varietà di alimenti non processati, esclusione mantenuta di carni rosse/processate e UPF.',
    note:'Levine et al. 2019 · ECCO 2022 · Fase di mantenimento: dieta CDED completa senza PEN. Si aggiungono progressivamente: legumi, frutta secca, latte parzialmente scremato, formaggi magri senza additivi, uova, yogurt naturale. Rimangono ESCLUSI a vita: carni rosse e processate, glutine (da cereali industriali), oli di semi industriali, emulsionanti, alimenti ultra-processati. Monitoraggio periodico: PCR, calprotectina fecale, ferritina, vitamina D, B12, zinco ogni 3-6 mesi.',
    pasti:[
@@ -1956,7 +1956,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
-  {id:'scd',emoji:'🌿',nome:'SCD – Specific Carbohydrate Diet',badge:'CCF 2021',colore:'#166534',
+  {id:'scd',cat:'gastroenterologiche',emoji:'🌿',nome:'SCD – Specific Carbohydrate Diet',badge:'CCF 2021',colore:'#166534',
    desc:'Dieta dei carboidrati specifici per IBD. Elimina disaccaridi e polisaccaridi. Consente monosaccaridi e alimenti freschi non processati.',
    note:'CCF 2021 · ECCO 2022 · Utilizzata per Morbo di Crohn e RCU · Elimina: disaccaridi (saccarosio, lattosio), tutti i cereali e amidi (grano, mais, riso, patata) · Consente: carne/pesce/uova freschi, frutta, verdure non amidacee, miele, frutta secca, legumi (da secco, cotti lungamente), yogurt fermentato 24h (privo di lattosio) · Crescenti evidenze soprattutto in età pediatrica · Richiede supervisione nutrizionale specializzata.',
    pasti:[
@@ -1966,7 +1966,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Zucchina',qt:'200'},{nome:'Uovo di gallina intero crudo',qt:'55'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Pomodoro rosso',qt:'100'}]}
    ]},
-  {id:'larn_popolazione_sana',emoji:'🥗',nome:'Popolazione Sana — LARN V Revisione',badge:'LARN 2014/2023',colore:'#10B981',
+  {id:'larn_popolazione_sana',cat:'metaboliche',emoji:'🥗',nome:'Popolazione Sana — LARN V Revisione',badge:'LARN 2014/2023',colore:'#10B981',
    desc:'Dieta mediterranea equilibrata per la popolazione italiana sana. Energia e nutrienti secondo i LARN (V revisione SINU). Prevenzione primaria delle malattie cronico-degenerative.',
    note:'LARN 2014 (V Revisione) — SINU · Energia adulto tipo: EAR ~1700-2100 kcal/die (F/M) · Proteine 0.9 g/kg/die (adulto) · CHO 45-60% kcal · Grassi 20-35% kcal · Fibra 25-30 g/die · Sale <5 g/die · Folati 400 µg/die · Vitamina D 15 µg/die · Calcio 1000 mg/die · Ferro 10-18 mg/die · Modello: Dieta Mediterranea.',
    pasti:[
@@ -1977,7 +1977,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ],giorni:[[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Fiocchi d'avena",qt:"50"},{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"125"},{nome:"Kiwi",qt:"150"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta di semola cruda",qt:"80"},{nome:"Lenticchie secche",qt:"40"},{nome:"Pomodoro rosso",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Broccoli",qt:"150"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Pera",qt:"150"},{nome:"Noci",qt:"20"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Salmone atlantico",qt:"150"},{nome:"Riso integrale crudo",qt:"70"},{nome:"Broccoli",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fiocchi d'avena",qt:"40"},{nome:"Banana",qt:"120"},{nome:"Noci",qt:"15"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Arancia",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Riso integrale crudo",qt:"80"},{nome:"Ceci secchi",qt:"50"},{nome:"Zucchina",qt:"150"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Pomodoro rosso",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Fragola",qt:"150"},{nome:"Noci",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Pollo petto (senza pelle)",qt:"150"},{nome:"Farro perlato crudo",qt:"70"},{nome:"Spinaci crudi",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}],[{nome:"Colazione",emoji:"🌅",items:[{nome:"Latte parz. scremato UHT",qt:"200"},{nome:"Pane integrale",qt:"50"},{nome:"Marmellata / confettura",qt:"15"},{nome:"Arancia",qt:"150"}]},{nome:"Spuntino mattina",emoji:"🍎",items:[{nome:"Yogurt greco 0% grassi",qt:"150"},{nome:"Fragola",qt:"100"}]},{nome:"Pranzo",emoji:"🍽️",items:[{nome:"Pasta integrale cruda",qt:"80"},{nome:"Fagioli borlotti secchi",qt:"50"},{nome:"Pomodoro rosso",qt:"120"},{nome:"Olio extra vergine di oliva",qt:"10"},{nome:"Radicchio",qt:"100"}]},{nome:"Spuntino pomeriggio",emoji:"🍊",items:[{nome:"Mela",qt:"150"},{nome:"Mandorle dolci secche",qt:"15"}]},{nome:"Cena",emoji:"🌙",items:[{nome:"Merluzzo",qt:"160"},{nome:"Patata",qt:"150"},{nome:"Cavolfiore",qt:"200"},{nome:"Olio extra vergine di oliva",qt:"10"}]}]]},
   // ── NUOVE PATOLOGIE ──
-  {id:'diabete_gestazionale',emoji:'🤰',nome:'Diabete Gestazionale (GDM)',badge:'ADA/ACOG 2023',colore:'#EC4899',
+  {id:'diabete_gestazionale',cat:'metaboliche',emoji:'🤰',nome:'Diabete Gestazionale (GDM)',badge:'ADA/ACOG 2023',colore:'#EC4899',
    desc:'Controllo glicemico tramite distribuzione dei carboidrati, basso IG e monitoraggio postprandiale. No zuccheri semplici. Frazionamento in 5-6 pasti.',
    note:'ADA 2023 · ACOG 2023 · CHO 40-50% kcal, basso IG · No zuccheri liberi · 3 pasti + 3 spuntini · Glicemia a digiuno <95 mg/dL, 1h postprandiale <140 mg/dL, 2h <120 mg/dL · Attività fisica moderata raccomandata · Monitorare aumento di peso (11-16 kg se normopeso, 7-11 kg se sovrappeso) · Integrare folati, ferro, DHA · Allattamento riduce rischio T2DM materno futuro.',
    pasti:[
@@ -1988,7 +1988,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'100'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino serale',emoji:'🌛',items:[{nome:'Yogurt greco 0% grassi',qt:'100'},{nome:'Semi di chia',qt:'5'}]}
    ]},
-  {id:'diabete_t1',emoji:'💉',nome:'Diabete Mellito Tipo 1',badge:'ISPAD/ADA 2022',colore:'#1D4ED8',
+  {id:'diabete_t1',cat:'metaboliche',emoji:'💉',nome:'Diabete Mellito Tipo 1',badge:'ISPAD/ADA 2022',colore:'#1D4ED8',
    desc:'Conteggio dei carboidrati (CHO counting) per adeguare la dose insulinica. Dieta flessibile. Monitoraggio glicemico continuo.',
    note:'ISPAD 2022 · ADA 2022 · Conteggio CHO: 1 unità insulina rapida ogni 10-15g CHO (ratio personalizzato) · Sensibilità insulinica variabile · Attenzione a ipoglicemie: correzione con 15g CHO rapidi · Monitorare: HbA1c, TIR (Time in Range >70% obiettivo) · Snack proteici prima dell\'attività fisica · No restrizione CHO se insulina adeguata · Micronutrienti: vitamina D, Mg, Zn spesso deficitari.',
    pasti:[
@@ -1998,7 +1998,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Salmone atlantico',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'menopausa',emoji:'🌸',nome:'Menopausa / Perimenopausa',badge:'IMS/ESHRE 2022',colore:'#DB2777',
+  {id:'menopausa',cat:'endocrine',emoji:'🌸',nome:'Menopausa / Perimenopausa',badge:'IMS/ESHRE 2022',colore:'#DB2777',
    desc:'Dieta ad alto contenuto di calcio e vitamina D per prevenire l\'osteoporosi. Fitoestrogeni (soia, lino). Controllo del peso per ridurre i sintomi.',
    note:'IMS 2022 · Calcio 1200 mg/die · Vitamina D 1500-2000 UI/die · Fitoestrogeni (isoflavoni soia, lignani lino) utili per vampate · Limitare alcol, caffeina · Proteine adeguate (1.0-1.2 g/kg) per preservare la massa muscolare · Fibre 25-30g/die · Omega-3 per umore e cardiovascolare · Restrizione calorica moderata se sovrappeso.',
    pasti:[
@@ -2008,7 +2008,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'sibo',emoji:'🦠',nome:'SIBO (Sovracrescita Batterica Intestinale)',badge:'ACG/WGO 2020',colore:'#F59E0B',
+  {id:'sibo',cat:'gastroenterologiche',emoji:'🦠',nome:'SIBO (Sovracrescita Batterica Intestinale)',badge:'ACG/WGO 2020',colore:'#F59E0B',
    desc:'Dieta a basso contenuto di FODMAP durante la fase di trattamento. Riduzione dei substrati fermentabili per limitare la crescita batterica.',
    note:'ACG 2020 · WGO 2021 · Dieta Low-FODMAP nella fase acuta (4-6 settimane) · Poi reintroduzione graduale · Evitare eccessi di fibre fermentabili · Probiotici: evidenza limitata e controversa · Pasti piccoli e frequenti · Evitare alcol e zuccheri raffinati · Monitorare: malassorbimento vitamine B12, D, ferro, zinco.',
    pasti:[
@@ -2018,7 +2018,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'120'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'120'},{nome:'Peperone rosso',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'allergia_arachidi',emoji:'🥜',nome:'Allergia alle Arachidi',badge:'EAACI 2021',colore:'#D97706',
+  {id:'allergia_arachidi',cat:'allergie',emoji:'🥜',nome:'Allergia alle Arachidi',badge:'EAACI 2021',colore:'#D97706',
    desc:'Eliminazione completa delle arachidi e dei prodotti che le contengono. Attenzione alla cross-contaminazione. Adrenalina autoiniettabile (EpiPen) sempre con sé.',
    note:'EAACI 2021 · Allergia più pericolosa per rischio anafilassi · Etichette: leggere SEMPRE (E.U. Reg. 1169/2011 – allergene obbligatorio) · Cross-contaminazione frequente in oleifici, pasticcerie, pizzerie · Lupini cross-reattivi con arachidi in ~30% dei casi · OIT (immunoterapia orale): opzione in centri specializzati · Monitorare crescita in bambini.',
    pasti:[
@@ -2028,7 +2028,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Yogurt greco 0% grassi',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'allergia_grano',emoji:'🌾',nome:'Allergia al Grano (non-celiachia)',badge:'EAACI 2021',colore:'#92400E',
+  {id:'allergia_grano',cat:'allergie',emoji:'🌾',nome:'Allergia al Grano (non-celiachia)',badge:'EAACI 2021',colore:'#92400E',
    desc:'Eliminazione del grano e dei suoi derivati. Meno restrittiva della celiachia (orzo e segale tollerati in alcuni). Rischio anafilassi da sforzo fisico indotto da grano.',
    note:'EAACI 2021 · Distinguere da celiachia (autoimmune) e NCWS (sensibilità) · Orzo e segale: spesso tollerati (allergia specifica alle proteine del grano, non al glutine) · WDEIA (Wheat-Dependent Exercise-Induced Anaphylaxis): evitare grano 4-6h prima dell\'esercizio · Leggere etichette: frumento, spelta, kamut, semola, amido di grano · EpiPen se storia di anafilassi.',
    pasti:[
@@ -2038,7 +2038,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Noci',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'allergia_sesamo',emoji:'🌰',nome:'Allergia al Sesamo',badge:'EAACI/EU 2023',colore:'#B45309',
+  {id:'allergia_sesamo',cat:'allergie',emoji:'🌰',nome:'Allergia al Sesamo',badge:'EAACI/EU 2023',colore:'#B45309',
    desc:'Eliminazione completa del sesamo e dei suoi derivati (tahini, olio di sesamo, hummus). Nuovo allergene obbligatorio in etichetta UE dal 2023.',
    note:'EAACI 2023 · Regolamento UE 2023: sesamo 15° allergene obbligatorio · Fonti nascoste: tahini, hummus, olio di sesamo, halva, pane da hamburger, cracker orientali, pangrattato etnico · Cross-contaminazione frequente in cucine asiatiche e mediorientali · Rischio anafilassi moderato · Leggere sempre le etichette di pane confezionato e cracker.',
    pasti:[
@@ -2048,7 +2048,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Fragola',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'intolleranza_istamina',emoji:'🌡️',nome:'Intolleranza all\'Istamina (HIT)',badge:'EAACI/Maintz 2020',colore:'#7C3AED',
+  {id:'intolleranza_istamina',cat:'allergie',emoji:'🌡️',nome:'Intolleranza all\'Istamina (HIT)',badge:'EAACI/Maintz 2020',colore:'#7C3AED',
    desc:'Dieta a basso contenuto di istamina e inibitori della DAO. Evitare alimenti fermentati, conserve, alcolici. Individuare soglia personale.',
    note:'EAACI 2020 · Carenza/riduzione dell\'enzima DAO (diamino-ossidasi) · Sintomi: orticaria, cefalea, sintomi GI, congestione nasale · Alimenti ad alto contenuto: formaggi stagionati, vino, birra, aceto, conserve, tonno, sgombro, salumi · Inibitori DAO: alcol, farmaci (NSAIDs, metoclopramide, codeine) · Supplementazione DAO: evidenza emergente · Vitamina B6, rame, vitamina C co-fattori DAO.',
    pasti:[
@@ -2058,7 +2058,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Branzino (spigola)',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'intolleranza_nichel',emoji:'⚙️',nome:'Intolleranza al Nichel (SNAS)',badge:'SNAS/EAACI 2022',colore:'#64748B',
+  {id:'intolleranza_nichel',cat:'allergie',emoji:'⚙️',nome:'Intolleranza al Nichel (SNAS)',badge:'SNAS/EAACI 2022',colore:'#64748B',
    desc:'Dieta a basso contenuto di nichel nella Sindrome Nichel-Correlata (SNAS). Rotazione degli alimenti e identificazione della soglia personale.',
    note:'SNAS (Systemic Nickel Allergy Syndrome) · EAACI 2022 · Alimenti ad alto nichel: cioccolato, noci, legumi, cereali integrali, pomodori, spinaci · Dieta di esclusione 4-6 settimane poi reintroduzione graduale · Vitamina C riduce assorbimento del nichel · Cottura in acciaio inossidabile riduce rilascio · Acqua di rubinetto mattutina: lasciare scorrere · Tegami ceramica o vetro preferibili.',
    pasti:[
@@ -2068,7 +2068,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Ricotta vaccina',qt:'60'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'sindrome_nefrosica',emoji:'🫘',nome:'Sindrome Nefrosica',badge:'KDIGO 2021',colore:'#0EA5E9',
+  {id:'sindrome_nefrosica',cat:'renali',emoji:'🫘',nome:'Sindrome Nefrosica',badge:'KDIGO 2021',colore:'#0EA5E9',
    desc:'Proteine moderate-alte per compensare le perdite urinarie. Sodio molto ridotto per contrastare gli edemi. Grassi saturi limitati (dislipidemia associata).',
    note:'KDIGO 2021 · Proteine 0.8-1.0 g/kg/die (adulto, non in dialisi) + compensazione perdite urinarie · Sodio <1.5 g/die (edemi) · Grassi saturi <7% (ipercolesterolemia nefrosica) · Omega-3 benefici · Monitorare albumina, colesterolo, trigliceridi · Vitamina D spesso deficitaria · Calcio 1200 mg/die · Evitare supplementi non prescritti · Liquidi solo se iponatriemia.',
    pasti:[
@@ -2078,7 +2078,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'pancreatite_acuta',emoji:'🔴',nome:'Pancreatite Acuta',badge:'IAP/APA/ESPEN 2020',colore:'#DC2626',
+  {id:'pancreatite_acuta',cat:'epatiche',emoji:'🔴',nome:'Pancreatite Acuta',badge:'IAP/APA/ESPEN 2020',colore:'#DC2626',
    desc:'Nutrizione enterale precoce (entro 24-48h) nelle forme moderate-severe. Nelle forme lievi ripresa dell\'alimentazione orale appena tollerata. Dieta a bassissimo contenuto di grassi.',
    note:'IAP/APA 2020 · ESPEN 2020 · Forme lievi: dieta solida morbida a basso residuo precoce (entro 24-48h) · Forme gravi: NE per SNG precoce se via orale non tollerata · NP solo se NE non fattibile · No digiuno prolungato (aumenta traslocazione batterica) · Reintroduzione orale: liquidi → semiliquidi → solidi morbidi · Grassi <30g/die nella fase iniziale · No alcol a vita se pancreatite alcolica.',
    pasti:[
@@ -2088,7 +2088,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Gallette di riso',qt:'25'},{nome:'Marmellata / confettura',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'100'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'5'}]}
    ]},
-  {id:'trapianto',emoji:'💚',nome:'Post-Trapianto d\'Organo',badge:'ESPEN 2019',colore:'#059669',
+  {id:'trapianto',cat:'chirurgia',emoji:'💚',nome:'Post-Trapianto d\'Organo',badge:'ESPEN 2019',colore:'#059669',
    desc:'Sicurezza alimentare prioritaria (immunosoppressione). Proteine aumentate nella fase precoce. Limitare potassio e fosforo se funzione renale ridotta. No succo di pompelmo.',
    note:'ESPEN 2019 · Fase precoce (0-3 mesi): proteine 1.2-1.5 g/kg/die, apporto calorico 30-35 kcal/kg/die · Sicurezza alimentare: no crudi, no formaggi molli non pastorizzati, no frutti di mare crudi · No pompelmo/succo pompelmo (inibisce CYP3A4 metabolismo immunosoppressori) · Corticosteroidi: monitorare glicemia, osteoporosi (vit D+Ca), sodio · Lungo termine: rischio cardiovascolare e metabolico elevato · Peso: correggere sovrappeso da cortisonici.',
    pasti:[
@@ -2098,7 +2098,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'colite_microscopica',emoji:'🔬',nome:'Colite Microscopica (Collagena/Linfocitica)',badge:'EMCG/ACG 2020',colore:'#0D9488',
+  {id:'colite_microscopica',cat:'gastroenterologiche',emoji:'🔬',nome:'Colite Microscopica (Collagena/Linfocitica)',badge:'EMCG/ACG 2020',colore:'#0D9488',
    desc:'Dieta a basso residuo nelle fasi acute. Eliminare caffeina, FANS (se assunti), PPI se non necessari. Spesso associata a intolleranza al lattosio e al glutine.',
    note:'EMCG 2020 · ACG 2020 · Trattamento: budesonide (4-8 settimane) + dieta · Fattori scatenanti da eliminare: FANS, statine (raro), PPI (frequente), sertralina · Sperimentare: dieta senza glutine (40-50% beneficio), senza lattosio · Caffeina: effetto secretivo → limitare · Fase acuta: dieta a basso residuo, semiliquida · Remissione: dieta equilibrata con graduale aumento fibre · Probiotici: nessuna evidenza robusta.',
    pasti:[
@@ -2109,7 +2109,7 @@ const PATOLOGIE_BASE=[
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
   // ── NUOVE PATOLOGIE AGGIUNTE ──
-  {id:'endometriosi',emoji:'🌷',nome:'Endometriosi',badge:'ASRM/ESHRE 2022',colore:'#BE185D',
+  {id:'endometriosi',cat:'varie',emoji:'🌷',nome:'Endometriosi',badge:'ASRM/ESHRE 2022',colore:'#BE185D',
    desc:'Dieta anti-infiammatoria, ricca di omega-3 e fibre. Ridurre carni rosse, grassi saturi e alcol. Probiotici e vitamina D utili.',
    note:'ASRM 2022 · ESHRE 2022 · Dieta mediterranea riduce rischio e sintomi · Omega-3 EPA/DHA 2-3g/die effetto anti-prostaglandinico (riduce dismenorrea) · Carni rosse: ≤2 porzioni/settimana (aumentano estrogeni circolanti) · Fibre ≥25g/die (favoriscono escrezione estrogeni fecali) · Vitamina D: target >40 ng/mL (modulazione immunità) · Magnesio 310-320 mg/die: riduce crampi · Curcumina 500mg/die: evidenza emergente anti-infiammatoria · Alcol: aumenta estrogeni → ridurre a 0 · Probiotici: migliorano disbiosi intestinale frequente · FODMAP ridotti se IBS coesistente · Soia: effetto estrogenico debole, uso moderato.',
    pasti:[
@@ -2119,7 +2119,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Arancia',qt:'150'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'prediabete',emoji:'🩺',nome:'Prediabete / Alterata Glicemia a Digiuno (IFG/IGT)',badge:'ADA 2024 / IDF 2022',colore:'#0369A1',
+  {id:'prediabete',cat:'metaboliche',emoji:'🩺',nome:'Prediabete / Alterata Glicemia a Digiuno (IFG/IGT)',badge:'ADA 2024 / IDF 2022',colore:'#0369A1',
    desc:'Dieta a basso indice glicemico, ricca di fibre. Riduzione del 5-10% del peso corporeo. Attività fisica 150 min/settimana. Obiettivo: prevenire la progressione a T2DM.',
    note:'ADA 2024 · IDF 2022 · IFG: glicemia digiuno 100-125 mg/dL · IGT: glicemia 2h OGTT 140-199 mg/dL · HbA1c 5.7-6.4% · Riduzione peso 5-10%: riduce rischio T2DM del 58% (DPP) · CHO: prediligere basso IG (IG<55); fibre ≥30g/die (beta-glucani avena, psyllium) · Fruttosio aggiunto: ridurre al minimo · Grassi saturi <7%; omega-3 favorevoli · Alcol: non raccomandato (mascheramento ipoglicemie) · Metformina: considerare se BMI>35 o <60 anni · Monitorare glicemia a digiuno e HbA1c ogni 6-12 mesi.',
    pasti:[
@@ -2129,7 +2129,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Fragola',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Lenticchie secche',qt:'60'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'ipercolesterolemia_familiare',emoji:'🧬',nome:'Ipercolesterolemia Familiare (FH)',badge:'EAS 2023',colore:'#EF4444',
+  {id:'ipercolesterolemia_familiare',cat:'metaboliche',emoji:'🧬',nome:'Ipercolesterolemia Familiare (FH)',badge:'EAS 2023',colore:'#EF4444',
    desc:'Dieta molto restrittiva per grassi saturi e colesterolo. Fitosteroli 2g/die obbligatori. Omega-3. Terapia farmacologica (statine, ezetimibe, PCSK9 inibitori) sempre necessaria.',
    note:'EAS 2023 · Mutazione LDL-recettore, Apo B o PCSK9 · LDL-C >190 mg/dL (adulti), >160 mg/dL (bambini) · Dieta da sola riduce LDL max 15-25% · Grassi saturi <7% calorie totali (idealmente <5%) · Colesterolo alimentare <200 mg/die · Fitosteroli 2g/die (riduzione LDL 8-10%) · Beta-glucani avena 3g/die · Fibre solubili ≥10-15g/die · Omega-3 EPA/DHA 2-4g/die · Eliminare acidi grassi trans completamente · Alcol: limitare · Carne rossa: ≤1 volta/settimana · Farmacoterapia OBBLIGATORIA: statine ad alta intensità + ezetimibe (se necessario PCSK9i).',
    pasti:[
@@ -2139,7 +2139,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Ceci secchi',qt:'70'},{nome:'Pasta integrale cruda',qt:'60'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'psoriasi',emoji:'🌿',nome:'Psoriasi',badge:'BAD/EADV 2023',colore:'#7C3AED',
+  {id:'psoriasi',cat:'immunologiche',emoji:'🌿',nome:'Psoriasi',badge:'BAD/EADV 2023',colore:'#7C3AED',
    desc:'Dieta anti-infiammatoria (mediterranea). Riduzione peso se sovrappeso. Alcol zero. Omega-3 e vitamina D utili. Evitare trigger alimentari individuali.',
    note:'BAD 2023 · EADV 2023 · La psoriasi è una malattia infiammatoria cronica cutanea con componente immuno-metabolica · Obesità: peggiora psoriasi e riduce risposta ai biologici → perdita peso prioritaria · Alcol: trigger e peggiorante → zero · Omega-3 EPA/DHA 2-3g/die: riducono IL-17, TNF-α · Vitamina D target >40 ng/mL (modula Th17/Treg) · Dieta mediterranea: riduce PASI in studi osservazionali · Glutine: trial GFD 3 mesi se AntiGliadina IgA positivi (15-25% pazienti) · Nachtshade (solanacea) intolleranza: evidenza aneddotica · Probiotici: asse intestino-pelle (microbiota alterato in psoriasi) · Sindrome metabolica frequente: monitorare glicemia, lipidi, PA.',
    pasti:[
@@ -2149,7 +2149,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Kiwi',qt:'110'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Farro perlato crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'dermatite_atopica',emoji:'🌸',nome:'Dermatite Atopica (Eczema)',badge:'EAACI/AAD 2022',colore:'#F59E0B',
+  {id:'dermatite_atopica',cat:'immunologiche',emoji:'🌸',nome:'Dermatite Atopica (Eczema)',badge:'EAACI/AAD 2022',colore:'#F59E0B',
    desc:'Identificare e rimuovere allergeni alimentari scatenanti (principalmente latte, uova, grano, soia, pesce, frutta secca). Probiotici in prevenzione. Acidi grassi essenziali.',
    note:'EAACI 2022 · AAD 2022 · Allergia alimentare è scatenante nel 30-40% dei bambini con DA grave, meno negli adulti · Test allergologici (ISAC, prick test, IgE specifiche) prima di eliminazioni dietetiche · Eliminazione cieca non raccomandata · Probiotici Lactobacillus rhamnosus GG: prevenzione e terapia (evidenza moderata) · Omega-3 EPA/DHA 1-2g/die: riduzione infiammazione Th2 · Vitamina D target >40 ng/mL · Allattamento materno esclusivo 6 mesi: previene DA · Latte materno: continuare se possibile · Diversificazione alimentare precoce (4-6 mesi) riduce sensibilizzazione · Prebiotici (FOS, GOS): evidenza emergente.',
    pasti:[
@@ -2159,7 +2159,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Riso bianco crudo',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'acne',emoji:'✨',nome:'Acne Vulgaris / Dermatite Seborroica',badge:'JAAD/AAD 2022',colore:'#D97706',
+  {id:'acne',cat:'immunologiche',emoji:'✨',nome:'Acne Vulgaris / Dermatite Seborroica',badge:'JAAD/AAD 2022',colore:'#D97706',
    desc:'Dieta a basso indice glicemico. Ridurre latte scremato, integratori proteici del siero del latte. Omega-3 anti-infiammatori. Zinco adeguato.',
    note:'JAAD 2022 · AAD 2022 · IG elevato → iperinsulinemia → aumento IGF-1 → sebum + cheratinizzazione → acne · Dieta a basso IG riduce lesioni acneiche del 25-50% (RCT) · Latte scremato: più insulinogeno del latte intero; whey protein: aumento IGF-1 · Cioccolato: correlazione suggerita, meccanismo incerto · Omega-3 EPA 1-2g/die: riduce infiammazione follicolare · Zinco 30mg/die (glicinato o acetato): riduce P. acnes, anti-infiammatorio · Vitamina A da fonti alimentari (fegato, uova): non esagerare · Probiotici: modulano microbiota sebaceo ed intestinale · Lievito di birra: contenuto nichel può peggiorare · Idratazione: utile ma non risolve da sola.',
    pasti:[
@@ -2169,7 +2169,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'110'},{nome:'Yogurt greco 0% grassi',qt:'125'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'sjogren',emoji:'💧',nome:'Sindrome di Sjögren',badge:'EULAR 2020',colore:'#0369A1',
+  {id:'sjogren',cat:'immunologiche',emoji:'💧',nome:'Sindrome di Sjögren',badge:'EULAR 2020',colore:'#0369A1',
    desc:'Adattare consistenza e umidità degli alimenti alla xerostomia (bocca secca). Stimolare salivazione. Idratazione frequente. Proteggere lo smalto dentale.',
    note:'EULAR 2020 · Malattia autoimmune: distruzione ghiandole esocrine → xerostomia (bocca secca) + xeroftalmia (occhi secchi) · Xerostomia → difficoltà masticazione/deglutizione, carie, disfagia · Dieta: alimenti umidi, morbidi, non appiccicosi · Stimolanti salivari: agrumi (con attenzione all\'acidità), caramelle senza zucchero, gomme xilitolo · Evitare: alcol, caffeina (diuretici), cibi secchi/polverosi, alimenti acidi in eccesso (erosione smalto) · Igiene orale dopo ogni pasto (fluoruro) · Idratazione: sorsi frequenti di acqua durante i pasti · Omega-3 3g/die: riduce infiammazione ghiandolare · Vitamina D target >30 ng/mL · Monitorare: anemia, linfoma non-Hodgkin (rischio aumentato), neuropatia.',
    pasti:[
@@ -2179,7 +2179,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kefir intero',qt:'125'},{nome:'Banana',qt:'80'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'200'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'talassemia',emoji:'🩸',nome:'Talassemia / Anemia Mediterranea',badge:'TIF 2021',colore:'#9F1239',
+  {id:'talassemia',cat:'ematologiche',emoji:'🩸',nome:'Talassemia / Anemia Mediterranea',badge:'TIF 2021',colore:'#9F1239',
    desc:'Evitare supplementi di ferro e vitamina C in eccesso (aumentano accumulo). Calcio e vitamina D per osteoporosi. Folati. Acido ascorbico limitato.',
    note:'TIF 2021 · Malattia genetica: difetto sintesi emoglobina · Beta-talassemia major: trasfusioni regolari → sovraccarico di ferro (siderosi) · Trattamento: deplezione ferro con chelanti (deferoxamina, deferasirox, deferiprone) · Dieta: NON integrare ferro (già in eccesso da trasfusioni e aumentato assorbimento intestinale) · Vitamina C: non superare 200mg/die (mobilizza il ferro dai depositi → tossicità cardiaca) · Calcio 1200mg/die e Vitamina D 1000-2000 UI/die: osteoporosi frequente (ipogonadismo, chelanti) · Folati 1-5mg/die: eritropoiesi inefficace · Tè e caffè ai pasti: riducono assorbimento ferro non-eme (utile) · Alcol: epatotossico in sovraccarico marziale → zero · Zinco: spesso carente (chelanti) → monitorare.',
    pasti:[
@@ -2189,7 +2189,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'favismo',emoji:'🫘',nome:'Deficit di G6PD (Favismo)',badge:'WHO/ENERCA 2022',colore:'#065F46',
+  {id:'favismo',cat:'ematologiche',emoji:'🫘',nome:'Deficit di G6PD (Favismo)',badge:'WHO/ENERCA 2022',colore:'#065F46',
    desc:'Evitare completamente le fave (Vicia faba) e le loro derivate. Attenzione a farmaci ossidanti. Evitare naftalene, coloranti azoici, stress ossidativo.',
    note:'WHO 2022 · ENERCA 2022 · Deficit enzima glucosio-6-fosfato deidrogenasi (X-linked) · Fave (Vicia faba): contengono vicina e convicina → crisi emolitica acuta (spesso grave) · Alimenti da evitare: fave fresche/secche, piselli (cross-reazione possibile), prodotti contenenti farina di fave · Farmaci da evitare: primachina, dapsone, cotrimossazolo, nitrofurantoina, rasburicase, alcuni antimalarici · Alimenti con prudenza: lamponi neri, mirtilli neri (antociani ossidanti ad alte dosi) · Vitamina E e C moderate: effetto antiossidante protettivo · Alcol: evitare (aumenta stress ossidativo eritrocitario) · Monitorare Hb durante infezioni acute (crisi emolitica) · Portare sempre scheda medica con lista farmaci vietati.',
    pasti:[
@@ -2199,7 +2199,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'wilson',emoji:'🟤',nome:'Malattia di Wilson (Accumulo di Rame)',badge:'EASL 2012 / AASLD 2022',colore:'#92400E',
+  {id:'wilson',cat:'epatiche',emoji:'🟤',nome:'Malattia di Wilson (Accumulo di Rame)',badge:'EASL 2012 / AASLD 2022',colore:'#92400E',
    desc:'Dieta a basso contenuto di rame (<1 mg/die). Evitare fegato, crostacei, noci, cioccolato, funghi. Farmacoterapia chelante (penicillamina, trientina) o zinco obbligatoria.',
    note:'EASL 2012 · AASLD 2022 · Deficit proteina trasportatrice ATP7B → accumulo rame in fegato, cervello, occhi · Anelli di Kayser-Fleischer patognomonici · Dieta a basso rame: <1 mg/die (rame normale 1.5-3mg/die) · Da evitare (alto rame): fegato di manzo/bovino (>15mg/100g), ostriche, gamberetti, granchio, crostacei, cioccolato fondente (>3mg/100g), noci, nocciole, funghi, frumento integrale, legumi · Acqua: preferire acqua imbottigliata in vetro (tubature rame) · Vitamina E 400-800 UI/die: effetto antiossidante utile (accumulo rame → stress ossidativo) · Farmacoterapia obbligatoria: penicillamina o trientina (chelanti) o zinco acetato (primo/mantenimento) · Monitorare: transaminasi, rame sierico/urinario 24h, ceruloplasmina.',
    pasti:[
@@ -2209,7 +2209,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Gallette di riso',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'200'},{nome:'Lattuga',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'lipedema',emoji:'🦵',nome:'Lipedema',badge:'NHLBI/ILA 2021',colore:'#A855F7',
+  {id:'lipedema',cat:'varie',emoji:'🦵',nome:'Lipedema',badge:'NHLBI/ILA 2021',colore:'#A855F7',
    desc:'Dieta anti-infiammatoria (mediterranea o chetogenica a basso IG). Ridurre zuccheri semplici e carboidrati raffinati. Attenzione alla perdita di peso: non riduce il lipedema stesso ma migliora la qualità di vita.',
    note:'ILA 2021 · Condizione adiposo-linfatica cronica: accumulo patologico adiposo sottocutaneo simmetrico (gambe/fianchi/braccia) · Non risponde alla restrizione calorica convenzionale · Dieta anti-infiammatoria: riduce dolore e infiammazione del tessuto adiposo disfunzionale · Dieta chetogenica o low-carb: riduce ritenzione idrica linfatica e dolore (evidenza emergente) · CHO raffinati e zuccheri: aumentano insulinemia → edema adiposo → peggiorano sintomi · Omega-3 EPA/DHA 2-3g/die: anti-infiammatorio · Curcumina 500-1000mg/die: antifiammatoria sistemica · Vitamina D target >40 ng/mL · Selenio adeguato · Sale: limitare (<5g/die NaCl) · Liquidi: ≥2L/die (drenaggio linfatico) · Evitare: alcol, zuccheri aggiunti, farine raffinate.',
    pasti:[
@@ -2219,7 +2219,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Noci',qt:'15'},{nome:'Mirtilli freschi',qt:'80'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patata',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'iperemesi_gravidica',emoji:'🤢',nome:'Iperemesi Gravidica (NVP/HG)',badge:'RCOG 2024 / ACOG 2022',colore:'#EC4899',
+  {id:'iperemesi_gravidica',cat:'gravidanza',emoji:'🤢',nome:'Iperemesi Gravidica (NVP/HG)',badge:'RCOG 2024 / ACOG 2022',colore:'#EC4899',
    desc:'Frazionamento estremo dei pasti (6-10 piccoli pasti). Alimenti secchi, freddi, blandi. Zenzero 1g/die. Vitamina B6 10-25mg ogni 8h. Idratazione endovenosa se necessario.',
    note:'RCOG 2024 · ACOG 2022 · NVP (Nausea e vomito in gravidanza): 70-80% delle gravide · HG (Iperemesi gravidica): 0.5-2%; diagnosi: vomito persistente + perdita peso >5% + chetosi · Causa: HCG elevata, fattori psicosociali, HP infection · Dieta: piccoli pasti frequenti (ogni 2-3h) · Alimenti consigliati: cracker, pane bianco, riso bianco, banana, mela, yogurt, brodo · Alimenti da evitare: cibi grassi, piccanti, odori forti, caffè · Temperature: alimenti freddi/temperatura ambiente tollerati meglio dei caldi · Zenzero (Zingiber officinale) 1g/die: riduce nausea (evidenza A) · Vitamina B6 10-25mg ogni 8h: prima linea farmacologica · Doxilamina: antiemetico sicuro in gravidanza · Integratori prenatali: assumere a stomaco pieno o sera · Idratazione IV (Ringer lattato) se >5% perdita peso o chetosi grave · Ricovero se: perdita peso >5%, ipokaliemia, coagulopatia, encefalopatia.',
    pasti:[

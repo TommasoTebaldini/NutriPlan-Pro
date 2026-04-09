@@ -193,7 +193,7 @@ async function renderCartellaDetail(id) {
     safeQuery(sb.from('ncpt').select('id,created_at,updated_at,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('schede_valutazione').select('id,created_at,nome,cognome,patologie').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,note').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
-    safeQuery(sb.from('note_specialistiche').select('id,created_at,tipo,nota').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('note_specialistiche').select('id,created_at,tipo,nota,dati').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
   ]);
   
   const cart = cartResult.data;
@@ -203,6 +203,10 @@ async function renderCartellaDetail(id) {
     cartellaAperta = null;
     return; 
   }
+
+  // Split questionnaires from other specialist notes
+  const questionariSalvati = (noteSpec || []).filter(n => n.tipo === 'questionario');
+  const noteSpecAltre = (noteSpec || []).filter(n => n.tipo !== 'questionario');
   document.getElementById('page-title').textContent = '📁 ' + cart.nome;
   const eta = cart.ddn ? calcolaEta(cart.ddn) : null;
 
@@ -262,6 +266,32 @@ async function renderCartellaDetail(id) {
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delScheda('${s.id}')">🗑️</button>
     </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna scheda salvata.</div>';
 
+  // Build questionari salvati list
+  const questionariHtml = questionariSalvati.length ? questionariSalvati.map(q => {
+    let qNome = '', qScore = '', qLabel = '', qDesc = '';
+    try {
+      const d = JSON.parse(q.dati || '{}');
+      qNome = d.questionario || '';
+      qScore = d.score !== undefined ? String(d.score) : (d.global !== undefined ? String(d.global) : '');
+      qLabel = (d.label || '').replace(/[🟢🟡🔴🟠⚠️]/gu, '').trim();
+      qDesc = d.desc || '';
+    } catch(e) {}
+    if (!qNome) qNome = (q.nota || '').split(' — ')[0];
+    const summary = q.nota || qNome;
+    const scoreChip = qScore ? `<span style="font-size:11px;background:#F0F9FF;color:#0369A1;padding:3px 9px;border-radius:8px;font-weight:700;flex-shrink:0">${qScore}</span>` : '';
+    const descAttr = qDesc ? ` data-desc="${esc(qDesc)}"` : '';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;transition:all .15s"${descAttr}>
+      <span style="font-size:22px;background:#F0F9FF;padding:6px;border-radius:8px">📋</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(qNome)}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${esc(qLabel || summary)} · ${fmtDate(q.created_at)}</div>
+        ${qDesc ? `<div style="font-size:11.5px;color:var(--slate-m);margin-top:3px;line-height:1.5">${esc(qDesc)}</div>` : ''}
+      </div>
+      ${scoreChip}
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${q.id}')">🗑️</button>
+    </div>`;
+  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun questionario salvato.</div>';
+
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
       <button class="btn btn-ghost btn-sm" onclick="cartellaAperta=null;document.getElementById('page-title').textContent='📁 Cartelle Pazienti';loadCartelle()">← Tutte le cartelle</button>
@@ -310,7 +340,7 @@ async function renderCartellaDetail(id) {
     </div>
 
     <!-- BIA Records -->
-    <div class="card" style="margin-bottom:16px">
+    <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap">
         <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
           ⚡ BIA — Bioimpedenziometria
@@ -321,13 +351,25 @@ async function renderCartellaDetail(id) {
       <div style="padding:10px 14px">${biaHtml}</div>
     </div>
 
+    <!-- Questionari Salvati -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
+          📋 Questionari Salvati
+          <span style="background:#F0F9FF;color:#0369A1;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${questionariSalvati.length}</span>
+        </h4>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0369A1,#38BDF8);color:white;box-shadow:0 2px 8px rgba(3,105,161,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(3,105,161,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(3,105,161,.3)';this.style.transform=''" onclick="window.location.href='questionari.html'">📋 Vai ai Questionari</button>
+      </div>
+      <div style="padding:10px 14px">${questionariHtml}</div>
+    </div>
+
     <!-- Note Specialistiche (Diabete, Pancreas, ecc.) -->
-    ${(noteSpec && noteSpec.length) ? `
+    ${(noteSpecAltre && noteSpecAltre.length) ? `
     <div class="card" style="margin-bottom:16px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <h4 style="font-size:14px;margin:0">📌 Schede Specialistiche <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${noteSpec.length}</span></h4>
+        <h4 style="font-size:14px;margin:0">📌 Schede Specialistiche <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${noteSpecAltre.length}</span></h4>
       </div>
-      <div style="padding:10px 14px">${noteSpec.map(n => {
+      <div style="padding:10px 14px">${noteSpecAltre.map(n => {
         const specMap = {
           'diabete':      {icon:'🩸', label:'Diabete',            page:'diabete.html',     bg:'#DBEAFE', col:'#1D4ED8'},
           'pancreas':     {icon:'🫁', label:'IPE — Pancreas',     page:'pancreas.html',    bg:'#FFF7ED', col:'#C2410C'},
@@ -339,7 +381,6 @@ async function renderCartellaDetail(id) {
           'renale':       {icon:'🫘', label:'Nefropatia / IRC',  page:'renale.html',      bg:'#CCFBF1', col:'#0F766E'},
           'disfagia':     {icon:'🗣️', label:'Disfagia',          page:'disfagia.html',    bg:'#E0F2FE', col:'#0369A1'},
           'consiglio':    {icon:'💡', label:'Consiglio Nutrizionale', page:'consigli.html', bg:'#F0FDF4', col:'#16A34A'},
-          'questionario': {icon:'📋', label:'Questionario',       page:null,               bg:'#F0F9FF', col:'#0369A1'},
         };
         const s = specMap[n.tipo] || {icon:'📌', label:n.tipo, page:null, bg:'#F8FAFC', col:'#475569'};
         const openBtn = s.page ? `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','${n.tipo}')">✏️ Apri</button>` : '';

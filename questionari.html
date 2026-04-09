@@ -1427,13 +1427,21 @@ const _qNameToCard = {
   'PSS-10':      { tab: 'psicologici', card: 'pss10' },
 };
 
+const _qTabOrder = ['screening', 'assessment', 'nutrizione', 'psicologici'];
+
 function _switchQTab(tabId) {
   document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.q-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('qtab-' + tabId).classList.add('active');
-  document.querySelectorAll('.q-tab').forEach(t => {
-    if ((t.getAttribute('onclick') || '').includes("'" + tabId + "'")) t.classList.add('active');
-  });
+  const idx = _qTabOrder.indexOf(tabId);
+  const tabBtns = document.querySelectorAll('.q-tab');
+  if (idx >= 0 && tabBtns[idx]) tabBtns[idx].classList.add('active');
+}
+
+function _navigateBackToCartella(cartellaId) {
+  sessionStorage.setItem('openCartellaId', cartellaId);
+  // Short delay to allow the toast to be visible before navigating
+  setTimeout(() => { window.location.href = 'pazienti.html'; }, 900);
 }
 
 function showQTab(id) {
@@ -2339,8 +2347,7 @@ async function salvaQuestionarioInCartella() {
   closeM('modal-salva-q');
   if (wasEditing && backCartellaId) {
     toast('✅ Questionario aggiornato!', 'ok');
-    sessionStorage.setItem('openCartellaId', backCartellaId);
-    setTimeout(() => { window.location.href = 'pazienti.html'; }, 900);
+    _navigateBackToCartella(backCartellaId);
   } else {
     toast('✅ Questionario salvato nella cartella paziente!', 'ok');
   }
@@ -2387,8 +2394,7 @@ async function salvaQFromBar() {
   _editingCartellaId = null;
   if (wasEditing && backCartellaId) {
     toast('✅ Questionario aggiornato!', 'ok');
-    sessionStorage.setItem('openCartellaId', backCartellaId);
-    setTimeout(() => { window.location.href = 'pazienti.html'; }, 900);
+    _navigateBackToCartella(backCartellaId);
   } else {
     toast('✅ Questionario salvato nella cartella paziente!', 'ok');
   }

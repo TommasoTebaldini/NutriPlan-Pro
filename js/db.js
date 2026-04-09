@@ -1142,7 +1142,47 @@ const DB_UPF = [
   {n:"Succo di frutta multivitaminico zuccherato",c:"Bibite zuccherate",src:"UPF",k:47,p:0.2,gs:0,g:0.1,z:10.5,ch:11.5,fi:0.1,ca:10,fe:0.5,mg:5,k2:80,na:15,zn:0.1,fo:15,se:0,col:0},
   {n:"Frullato di frutta industriale (smoothie)",c:"Bibite zuccherate",src:"UPF",k:65,p:0.5,gs:0,g:0.2,z:13.5,ch:16.0,fi:1.0,ca:12,fe:0.3,mg:10,k2:160,na:15,zn:0.1,fo:15,se:0,col:0},
   {n:"Tè freddo zuccherato aromatizzato (bottiglia)",c:"Bibite zuccherate",src:"UPF",k:32,p:0.1,gs:0,g:0,z:7.8,ch:8.0,fi:0,ca:5,fe:0.1,mg:3,k2:30,na:10,zn:0,fo:5,se:0,col:0},
-  {n:"Succo di melograno zuccherato",c:"Bibite zuccherate",src:"UPF",k:54,p:0.2,gs:0,g:0.1,z:12.5,ch:13.5,fi:0.2,ca:11,fe:0.2,mg:5,k2:183,na:11,zn:0.1,fo:8,se:0,col:0}
+  {n:"Succo di melograno zuccherato",c:"Bibite zuccherate",src:"UPF",k:54,p:0.2,gs:0,g:0.1,z:12.5,ch:13.5,fi:0.2,ca:11,fe:0.2,mg:5,k2:183,na:11,zn:0.1,fo:8,se:0,col:0},
+  // ── FAST FOOD ──
+  {n:"Hamburger fast food classico",c:"Fast food",src:"UPF",k:296,p:13,gs:5.5,g:13,z:7,ch:30,fi:1,ca:100,fe:2.5,mg:25,k2:250,na:490,zn:2,fo:150,se:12,col:45},
+  {n:"Cheeseburger doppio fast food",c:"Fast food",src:"UPF",k:380,p:22,gs:12,g:22,z:8,ch:27,fi:1.5,ca:200,fe:3,mg:30,k2:300,na:780,zn:3.5,fo:250,se:18,col:80},
+  {n:"Nuggets di pollo (tipo fast food, 100g)",c:"Fast food",src:"UPF",k:250,p:14,gs:3,g:14,z:1,ch:20,fi:0.5,ca:10,fe:1.5,mg:20,k2:200,na:550,zn:1.5,fo:160,se:10,col:40},
+  {n:"Patate fritte fast food (porzione media, 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:0.5,ch:41,fi:3,ca:10,fe:0.7,mg:25,k2:480,na:400,zn:0.4,fo:75,se:0.5,col:0},
+  {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:290,p:11,gs:6,g:16,z:4,ch:28,fi:1.5,ca:55,fe:1.8,mg:18,k2:210,na:770,zn:1.8,fo:140,se:10,col:48},
+  // ── PIATTI PRONTI SURGELATI ──
+  {n:"Pizza surgelata margherita",c:"Piatti pronti",src:"UPF",k:222,p:8,gs:3.5,g:7.5,z:4,ch:32,fi:2,ca:150,fe:2,mg:20,k2:200,na:540,zn:1,fo:130,se:8,col:12},
+  {n:"Lasagne surgelate bolognese",c:"Piatti pronti",src:"UPF",k:130,p:7,gs:3.5,g:6.5,z:3,ch:11.5,fi:1,ca:80,fe:1.5,mg:15,k2:200,na:450,zn:1,fo:100,se:6,col:25},
+  {n:"Sofficini di formaggio surgelati",c:"Piatti pronti",src:"UPF",k:230,p:8,gs:3,g:10,z:2,ch:27,fi:1.5,ca:120,fe:1.2,mg:15,k2:160,na:500,zn:0.8,fo:110,se:5,col:18},
+  {n:"Bastoncini di pesce impanati surgelati",c:"Piatti pronti",src:"UPF",k:195,p:11,gs:1.2,g:7,z:1.5,ch:23,fi:1.2,ca:50,fe:0.8,mg:22,k2:250,na:480,zn:0.7,fo:175,se:18,col:30},
+  {n:"Pasta istantanea (ramen industriale, 100g cotto)",c:"Piatti pronti",src:"UPF",k:436,p:9,gs:7.5,g:17,z:1,ch:62,fi:2,ca:18,fe:3.5,mg:25,k2:150,na:1700,zn:0.9,fo:90,se:5,col:0},
+  {n:"Minestra in busta liofilizzata",c:"Piatti pronti",src:"UPF",k:85,p:3,gs:1.5,g:3.5,z:5,ch:11,fi:1,ca:20,fe:0.8,mg:10,k2:95,na:800,zn:0.4,fo:50,se:2,col:5},
+  // ── SALUMI E INSACCATI INDUSTRIALI ──
+  {n:"Wurstel di pollo e maiale",c:"Salumi",src:"UPF",k:289,p:13,gs:8,g:25,z:0.5,ch:3,fi:0,ca:15,fe:1.2,mg:12,k2:195,na:950,zn:1.5,fo:120,se:12,col:65},
+  {n:"Salamino piccante tipo pepperoni",c:"Salumi",src:"UPF",k:490,p:20,gs:19,g:44,z:0.5,ch:1,fi:0,ca:8,fe:1.5,mg:18,k2:290,na:1900,zn:3,fo:155,se:20,col:105},
+  {n:"Pancetta affumicata (bacon)",c:"Salumi",src:"UPF",k:540,p:14.5,gs:17,g:50,z:0,ch:0.5,fi:0,ca:8,fe:0.7,mg:13,k2:260,na:1700,zn:1.8,fo:130,se:24,col:110},
+  {n:"Prosciutto cotto affumicato industriale",c:"Salumi",src:"UPF",k:170,p:18,gs:3,g:9,z:2,ch:3.5,fi:0,ca:10,fe:1.2,mg:16,k2:310,na:1100,zn:2,fo:200,se:18,col:62},
+  // ── DOLCI CONFEZIONATI ──
+  {n:"Barretta cioccolato tipo Snickers (100g)",c:"Dolci confezionati",src:"UPF",k:455,p:5,gs:10,g:18,z:48,ch:64,fi:1,ca:100,fe:1,mg:25,k2:220,na:150,zn:0.8,fo:120,se:3,col:10},
+  {n:"Cioccolato al latte confezionato (tipo Milka, 100g)",c:"Dolci confezionati",src:"UPF",k:535,p:7.5,gs:17.5,g:30,z:53,ch:58,fi:1.5,ca:225,fe:2.5,mg:55,k2:400,na:120,zn:1.5,fo:235,se:5,col:15},
+  {n:"Budino confezionato alla vaniglia",c:"Dolci confezionati",src:"UPF",k:110,p:3.5,gs:1.5,g:3.5,z:14.5,ch:17,fi:0,ca:110,fe:0.1,mg:10,k2:140,na:65,zn:0.4,fo:80,se:2,col:10},
+  {n:"Gelato confezionato tipo Oreo",c:"Dolci confezionati",src:"UPF",k:275,p:3.5,gs:7.5,g:15,z:28,ch:33,fi:0.5,ca:90,fe:0.8,mg:12,k2:130,na:110,zn:0.4,fo:80,se:2,col:22},
+  {n:"Torta confezionata tipo plumcake (per 100g)",c:"Dolci confezionati",src:"UPF",k:385,p:5.5,gs:4,g:10,z:38,ch:68,fi:1,ca:100,fe:1.5,mg:10,k2:90,na:520,zn:0.5,fo:110,se:4,col:0},
+  // ── CEREALI DA COLAZIONE ──
+  {n:"Cereali zuccherati tipo Corn Flakes",c:"Cereali confezionati",src:"UPF",k:381,p:6.5,gs:0.3,g:1.5,z:37,ch:84,fi:3,ca:5,fe:8.3,mg:22,k2:150,na:660,zn:0.3,fo:80,se:2,col:0},
+  {n:"Muesli con cioccolato industriale",c:"Cereali confezionati",src:"UPF",k:395,p:8,gs:3,g:10,z:22,ch:65,fi:6,ca:60,fe:4,mg:60,k2:380,na:120,zn:1.5,fo:210,se:5,col:0},
+  {n:"Barretta ai cereali e miele industriale",c:"Cereali confezionati",src:"UPF",k:420,p:5.5,gs:4,g:12,z:30,ch:68,fi:3.5,ca:40,fe:3,mg:35,k2:200,na:250,zn:1,fo:140,se:4,col:0},
+  // ── CONDIMENTI INDUSTRIALI ──
+  {n:"Dado da brodo industriale (per 100g)",c:"Condimenti",src:"UPF",k:195,p:20,gs:3,g:11,z:0.5,ch:15,fi:0,ca:40,fe:1.5,mg:20,k2:200,na:4000,zn:0.8,fo:100,se:5,col:5},
+  {n:"Salsa di soia industriale",c:"Condimenti",src:"UPF",k:53,p:8.1,gs:0,g:0,z:0.6,ch:4.9,fi:0.8,ca:17,fe:2.4,mg:40,k2:356,na:5637,zn:0.4,fo:130,se:0.6,col:0},
+  {n:"Ketchup industriale",c:"Condimenti",src:"UPF",k:112,p:1.5,gs:0,g:0.2,z:22.5,ch:25,fi:0.3,ca:14,fe:1.0,mg:19,k2:378,na:1100,zn:0.2,fo:33,se:0.7,col:0},
+  {n:"Maionese industriale",c:"Condimenti",src:"UPF",k:680,p:1.5,gs:11,g:75,z:1.5,ch:3.5,fi:0,ca:10,fe:0.3,mg:4,k2:30,na:620,zn:0.2,fo:25,se:2,col:65},
+  {n:"Salsa barbecue industriale",c:"Condimenti",src:"UPF",k:172,p:1.5,gs:0.1,g:0.5,z:34,ch:38,fi:0.5,ca:30,fe:1.0,mg:12,k2:230,na:950,zn:0.3,fo:35,se:1,col:0},
+  // ── BEVANDE ──
+  {n:"Energy drink tipo Red Bull (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:45,p:0.4,gs:0,g:0,z:10.3,ch:11.3,fi:0,ca:0,fe:0,mg:0,k2:0,na:40,zn:0,fo:0,se:0,col:0},
+  {n:"Cola (tipo Coca-Cola, per 100mL)",c:"Bibite zuccherate",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:10,zn:0,fo:13,se:0,col:0},
+  {n:"Cola Zero / Diet (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:0.3,p:0,gs:0,g:0,z:0,ch:0.1,fi:0,ca:0,fe:0,mg:0,k2:0,na:6,zn:0,fo:15,se:0,col:0},
+  {n:"Bevanda isotonica sportiva tipo Gatorade (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:26,p:0,gs:0,g:0,z:6,ch:6.3,fi:0,ca:0,fe:0,mg:0,k2:52,na:110,zn:0,fo:8,se:0,col:0},
+  {n:"Succo di frutta 100% in brick (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:50,p:0.3,gs:0,g:0.1,z:10,ch:11.5,fi:0.2,ca:10,fe:0.3,mg:8,k2:150,na:8,zn:0.1,fo:15,se:0.3,col:0}
 ];
 
 
@@ -2309,6 +2349,57 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo (leggero)',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Carota',qt:'80'}]},
     {nome:'Spuntino 2',emoji:'🍊',items:[{nome:'Pane bianco',qt:'40'},{nome:'Ricotta vaccina',qt:'50'}]},
     {nome:'Cena (leggera)',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'60'},{nome:'Brodo di verdure',qt:'200ml'},{nome:'Patata',qt:'100'}]}
+   ]},
+  {id:'sbs',cat:'chirurgia',emoji:'🔄',nome:"Sindrome dell'Intestino Corto (SBS)",badge:'ESPEN/AGA 2022',colore:'#9333EA',
+   desc:'Nutrizione parenterale o enterale supplementare. Alto rischio malnutrizione e deplezione micronutrienti. Adattamento intestinale progressivo.',
+   note:'ESPEN 2022 · AGA 2020. Resezione intestino >70% → SBS. Fasi: parenterale → enterale → orale. Colostomia prossimale: perdite elettrolitiche massicce (Na 100-140 mEq/L). Colon conservato: dieta a basso grasso + CHO complessi. Glutammina 0.5g/kg/die + GLP-2 (teduglutide) per adattamento. Monitorare: B12, ferro, calcio, magnesio, zinco, selenio, vitamine liposolubili A,D,E,K. ONS ad alto contenuto energetico.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Banana',qt:'80'},{nome:'Burro',qt:'5'}]},
+    {nome:'Spuntino 1',emoji:'🍎',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Marmellata / confettura',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Carota',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino 2',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Mela',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Patata',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino serale',emoji:'🌜',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Fette biscottate',qt:'20'}]}
+   ]},
+  {id:'addison',cat:'endocrine',emoji:'💛',nome:"Insufficienza Surrenalica / Malattia di Addison",badge:'ES/ESE 2021',colore:'#F59E0B',
+   desc:'Dieta ricca di sodio. Pasti regolari per prevenire ipoglicemia. Vitamina D e calcio. Potassio da non eccedere.',
+   note:'ES 2021 · ESE 2021. Terapia sostitutiva obbligatoria (idrocortisone + fludrocortisone). Dieta: aumentare sodio (3-4g NaCl/die) soprattutto in estate o con esercizio fisico. In crisi addisoniana: Na EV urgente. Pasti regolari con CHO a medio IG per prevenire ipoglicemia. Potassio: non eccedere (rischio iperkaliemia). Vitamina D 1000-2000 UI/die + calcio 1000-1200mg/die (per osteoporosi da cortisonici). Pasti piccoli e frequenti (4-5/die).',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane comune',qt:'60'},{nome:'Uovo di gallina intero crudo',qt:'60'},{nome:'Latte intero fresco',qt:'200'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Banana',qt:'120'},{nome:'Noci',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Crackers',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'post_covid',cat:'varie',emoji:'🦠',nome:'Long COVID / Post-COVID-19',badge:'OMS 2023',colore:'#7C3AED',
+   desc:'Dieta anti-infiammatoria. Vitamina D, zinco, omega-3. Pasti piccoli se fatigue. Probiotici per disbiosi post-virale.',
+   note:'OMS 2023. Long COVID: sintomi persistenti >12 settimane. Nutrizione: anti-infiammatoria (Mediterranea). Vitamina D target >40 ng/mL (spesso carente). Zinco 10-15mg/die. Omega-3 EPA+DHA 2g/die (antinfiammatorio). Vitamina B12 se carenza (neuropatia). Probiotici: evidenza emergente per disbiosi post-virale. Se foggy: evitare alcol e zuccheri semplici. Energia adeguata: no restrizione calorica severa in fase acuta. Idratazione ≥2L/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'40'},{nome:'Mirtilli freschi',qt:'80'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Salmone atlantico',qt:'130'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'120'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'60'},{nome:'Quinoa cruda',qt:'60'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'sclerosi_multipla',cat:'neurologiche',emoji:'🧬',nome:'Sclerosi Multipla',badge:'ECTRIMS 2023',colore:'#0284C7',
+   desc:'Dieta mediterranea. Vitamina D target 40-60 ng/mL. Omega-3 2g/die. Fibre per disbiosi. Probiotici.',
+   note:'ECTRIMS 2023. Vitamina D: target sierico 40-60 ng/mL (supplementare 2000-4000 UI/die). Omega-3 EPA+DHA 2g/die (effetto neuroprotettivo e antinfiammatorio). Dieta a basso contenuto di grassi saturi. Fibre ≥30g/die per microbiota intestinale. Probiotici per disbiosi (evidenza crescente). Alcol: evitare o ridurre al minimo. Peso corporeo ottimale riduce carico neurologico. Disbiosi intestinale correlata con attività di malattia.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Quinoa cruda',qt:'70'},{nome:'Salmone atlantico',qt:'130'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Ceci secchi',qt:'50'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'emocromatosi',cat:'epatiche',emoji:'🟤',nome:'Emocromatosi Ereditaria',badge:'EASL 2022',colore:'#B45309',
+   desc:'Evitare supplementi di ferro e vitamina C. Calcio e tannini riducono assorbimento ferro. Alcol zero. Limitare carni rosse.',
+   note:'EASL 2022. Accumulo di ferro ereditario. Dieta: evitare assolutamente supplementi di ferro e vitamina C (potenzia assorbimento Fe). Calcio, tè, caffè ai pasti riducono assorbimento ferro. Alcol zero (aggrava danno epatico da Fe). Limitare carni rosse e frattaglie (alto Fe eme). Vongole, ostriche, cozze: ricchissime di ferro, da evitare. Vitamina C da alimenti è accettabile se assunta lontano dai pasti principali.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Tè verde',qt:'200'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tofu compatto',qt:'120'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]}
 ];
 const PATOLOGIE_CUSTOM = [];
@@ -2412,7 +2503,12 @@ const FABBISOGNO_PATOLOGIE={
   favismo:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'WHO 2022 · ENERCA 2022. Deficit G6PD (X-linked). Evitare ASSOLUTAMENTE: fave (Vicia faba), vicina e convicina. Evitare anche: alcuni farmaci ossidanti (aspirina ad alte dosi, primachina, nitrofurantoina). In crisi emolitica: idratazione, trasfusioni se Hb <6 g/dL. Acido folico se anemia cronica. Dieta normale per il resto.'},
   wilson:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EASL 2012 · AASLD 2022. Dieta a basso rame: <1 mg/die (apporto normale 1.5-3 mg/die). Evitare: fegato, molluschi (ostriche, vongole, capesante), noci, cioccolato, funghi secchi, acqua di pozzo (rame). Terapia chelante (penicillamina o trientina) o zinco per bloccare assorbimento intestinale. Vitamina B6 se penicillamina.'},
   lipedema:{kcal:'Normocalorica (dieta ipocalorica convenzionale non efficace sul lipedema)',prot:'1.2-1.5 g/kg/die',note:'ILA 2021. Accumulo adiposo patologico simmetrico (gambe/fianchi/braccia) non responsivo alla restrizione calorica. Dieta anti-infiammatoria: Mediterranean o RAD (Rare Adipose Disorders). Omega-3 2-3 g/die. Limitare zuccheri semplici, glutine (possibile beneficio). Linfodrenaggio manuale + compressione essenziali. Vitamina D target >40 ng/mL.'},
-  iperemesi_gravidica:{kcal:'Obiettivo minimo 1500-1800 kcal/die; adattare alla tolleranza',prot:'1.0-1.2 g/kg/die',note:'RCOG 2024 · ACOG 2022. Frazionamento estremo (6-10 piccoli pasti/die). Alimenti secchi, freddi, blandi tollerati meglio. Zenzero 1 g/die (evidenza A per nausea). Vitamina B6 10-25 mg ogni 8h (prima linea farmacologica). Tiamina 100 mg/die se vomito prolungato >2-3 settimane (previene Wernicke). Idratazione EV se perdita peso >5% o chetosi. Integratori prenatali a stomaco pieno o sera.'}
+  iperemesi_gravidica:{kcal:'Obiettivo minimo 1500-1800 kcal/die; adattare alla tolleranza',prot:'1.0-1.2 g/kg/die',note:'RCOG 2024 · ACOG 2022. Frazionamento estremo (6-10 piccoli pasti/die). Alimenti secchi, freddi, blandi tollerati meglio. Zenzero 1 g/die (evidenza A per nausea). Vitamina B6 10-25 mg ogni 8h (prima linea farmacologica). Tiamina 100 mg/die se vomito prolungato >2-3 settimane (previene Wernicke). Idratazione EV se perdita peso >5% o chetosi. Integratori prenatali a stomaco pieno o sera.'},
+  sbs:{kcal:'25-40 kcal/kg/die (aumentato per malassorbimento)',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2022 · AGA 2020. NPD se intestino residuo <100cm senza colon o <50cm con colon. Glutammina 0.5g/kg/die. GLP-2 (teduglutide) per adattamento. Vitamine B12, D, A, K; magnesio, zinco, selenio da supplementare. Monitorare ogni 3-6 mesi: micronutrienti, parametri renali, densità ossea.'},
+  addison:{kcal:'Normocalorica (adeguata a peso e attività)',prot:'1.0-1.2 g/kg/die',note:'ES 2021 · ESE 2021. Aumentare sodio: 3-4g NaCl/die (estate: +1-2g; sport: +1g/ora). Pasti regolari 4-5/die per prevenire ipoglicemia. Vitamina D 1000-2000 UI/die + calcio 1000-1200mg/die. Potassio: non eccedere (rischio iperkaliemia).'},
+  post_covid:{kcal:'25-35 kcal/kg/die (aumentato se cachessia)',prot:'1.2-1.5 g/kg/die',note:'OMS 2023. Vitamina D target >40 ng/mL. Zinco 10-15mg/die. Omega-3 2g/die. Vitamina B12 se carente. Probiotici per disbiosi. No restrizione calorica in fase acuta.'},
+  sclerosi_multipla:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ECTRIMS 2023. Vitamina D target 40-60 ng/mL (2000-4000 UI/die). Omega-3 2g/die. Dieta a basso contenuto di grassi saturi. Probiotici per disbiosi. Alcol: evitare o ridurre.'},
+  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

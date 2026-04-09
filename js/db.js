@@ -351,7 +351,88 @@ const DB_CREA=[
 {n:"Olio di avocado",c:"Grassi e oli",k:884,p:0,gs:11.6,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di lino (flaxseed)",c:"Grassi e oli",k:884,p:0,gs:9.4,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Ghee (burro chiarificato)",c:"Grassi e oli",k:900,p:0,gs:61.9,g:99.8,z:0,ch:0,fi:0,ca:4,fe:0,mg:0,k2:0,na:2,zn:0,fo:0,se:0,col:256,src:"CREA"},
-{n:"Olio di sesamo",c:"Grassi e oli",k:884,p:0,gs:14.2,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"}
+{n:"Olio di sesamo",c:"Grassi e oli",k:884,p:0,gs:14.2,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+  // ── PRODOTTI DA FORNO E CEREALI MANCANTI ──
+  {n:"Pane di segale integrale",c:"Cereali e pane",k:259,p:8.5,gs:0.2,g:1.7,z:1.5,ch:48.3,fi:6.2,ca:24,fe:2.0,mg:40,k2:250,na:450,zn:1.8,fo:200,se:6,col:0,src:"CREA"},
+  {n:"Pane con noci",c:"Cereali e pane",k:290,p:9.0,gs:0.8,g:6.0,z:2.0,ch:50.0,fi:4.0,ca:60,fe:2.2,mg:50,k2:230,na:480,zn:1.5,fo:180,se:5,col:0,src:"CREA"},
+  {n:"Pane di farro integrale",c:"Cereali e pane",k:248,p:9.2,gs:0.3,g:1.5,z:1.8,ch:46.5,fi:5.8,ca:30,fe:2.5,mg:50,k2:280,na:400,zn:2.0,fo:220,se:8,col:0,src:"CREA"},
+  {n:"Pane multicereali",c:"Cereali e pane",k:260,p:9.5,gs:0.3,g:2.5,z:2.0,ch:47.5,fi:5.5,ca:40,fe:2.8,mg:55,k2:260,na:420,zn:2.0,fo:230,se:9,col:0,src:"CREA"},
+  {n:"Focaccia genovese",c:"Cereali e pane",k:289,p:7.5,gs:1.2,g:8.0,z:2.5,ch:45.5,fi:2.0,ca:25,fe:1.5,mg:22,k2:120,na:680,zn:0.8,fo:100,se:5,col:0,src:"CREA"},
+  {n:"Ciabatta",c:"Cereali e pane",k:270,p:8.5,gs:0.4,g:2.8,z:1.5,ch:52,fi:2.5,ca:22,fe:1.8,mg:24,k2:130,na:540,zn:0.9,fo:110,se:6,col:0,src:"CREA"},
+  {n:"Riso parboiled crudo",c:"Cereali e pasta",k:349,p:7.2,gs:0.2,g:1.2,z:0.2,ch:78.5,fi:1.4,ca:16,fe:1.5,mg:42,k2:155,na:5,zn:1.4,fo:190,se:15,col:0,src:"CREA"},
+  {n:"Pasta di farro cruda",c:"Cereali e pasta",k:343,p:14.0,gs:0.3,g:2.5,z:3.5,ch:65.5,fi:6.5,ca:30,fe:3.8,mg:130,k2:410,na:5,zn:3.0,fo:360,se:15,col:0,src:"CREA"},
+  // ── VERDURE MANCANTI ──
+  {n:"Cardo",c:"Verdure",k:17,p:0.7,gs:0,g:0.1,z:0.4,ch:3.5,fi:1.6,ca:70,fe:0.8,mg:42,k2:400,na:170,zn:0.2,fo:23,se:0.5,col:0,src:"CREA"},
+  {n:"Fave fresche sgranate",c:"Verdure",k:66,p:5.6,gs:0,g:0.4,z:1.5,ch:9.9,fi:4.9,ca:18,fe:1.5,mg:33,k2:250,na:25,zn:0.7,fo:125,se:1.2,col:0,src:"CREA"},
+  {n:"Lattuga romana",c:"Verdure",k:15,p:1.2,gs:0,g:0.2,z:0.6,ch:2.9,fi:2.1,ca:33,fe:0.9,mg:14,k2:247,na:8,zn:0.2,fo:30,se:0.4,col:0,src:"CREA"},
+  {n:"Cicoria di campo",c:"Verdure",k:22,p:1.8,gs:0,g:0.3,z:0.9,ch:3.1,fi:4.0,ca:100,fe:1.0,mg:30,k2:418,na:80,zn:0.4,fo:110,se:0.4,col:0,src:"CREA"},
+  {n:"Porro",c:"Verdure",k:31,p:1.5,gs:0,g:0.3,z:3.9,ch:7.2,fi:1.8,ca:59,fe:2.1,mg:28,k2:180,na:20,zn:0.1,fo:35,se:1.0,col:0,src:"CREA"},
+  {n:"Kohlrabi (cavolo rapa)",c:"Verdure",k:27,p:1.7,gs:0,g:0.1,z:3.5,ch:6.2,fi:3.6,ca:24,fe:0.4,mg:19,k2:350,na:20,zn:0.3,fo:46,se:0.7,col:0,src:"CREA"},
+  {n:"Germogli di soia",c:"Verdure",k:30,p:3.0,gs:0,g:0.2,z:1.0,ch:5.9,fi:0.8,ca:13,fe:0.9,mg:21,k2:149,na:6,zn:0.5,fo:56,se:0.6,col:0,src:"CREA"},
+  {n:"Germogli di lenticchie",c:"Verdure",k:106,p:9.0,gs:0,g:0.5,z:1.5,ch:22.0,fi:4.5,ca:25,fe:3.0,mg:37,k2:322,na:11,zn:1.5,fo:173,se:0.6,col:0,src:"CREA"},
+  {n:"Okra / Gombo",c:"Verdure",k:33,p:1.9,gs:0,g:0.2,z:1.5,ch:7.5,fi:3.2,ca:82,fe:0.8,mg:57,k2:303,na:8,zn:0.6,fo:63,se:0.7,col:0,src:"CREA"},
+  {n:"Melanzana lunga asiatica",c:"Verdure",k:25,p:0.8,gs:0,g:0.2,z:2.9,ch:5.9,fi:3.0,ca:9,fe:0.3,mg:14,k2:229,na:2,zn:0.2,fo:25,se:0.3,col:0,src:"CREA"},
+  // ── FRUTTA MANCANTE ──
+  {n:"Kumquat fresco",c:"Frutta fresca",k:71,p:1.9,gs:0,g:0.9,z:9.4,ch:15.9,fi:6.5,ca:62,fe:0.9,mg:20,k2:186,na:10,zn:0.17,fo:19,se:0.5,col:0,src:"CREA"},
+  {n:"Tamarindo (polpa fresca)",c:"Frutta fresca",k:239,p:2.8,gs:0.3,g:0.6,z:12.5,ch:62.5,fi:5.1,ca:74,fe:2.8,mg:92,k2:628,na:28,zn:0.1,fo:113,se:1.3,col:0,src:"CREA"},
+  {n:"Jackfruit (frutto del pane) fresco",c:"Frutta fresca",k:95,p:1.7,gs:0,g:0.6,z:19.1,ch:23.2,fi:1.5,ca:24,fe:0.2,mg:29,k2:303,na:2,zn:0.1,fo:21,se:0.6,col:0,src:"CREA"},
+  // ── LATTICINI MANCANTI ──
+  {n:"Stracciatella di bufala",c:"Formaggi",k:310,p:13.5,gs:18.5,g:26.5,z:3.0,ch:3.0,fi:0,ca:275,fe:0.1,mg:12,k2:48,na:380,zn:1.4,fo:230,se:4,col:90,src:"CREA"},
+  {n:"Ricotta di bufala",c:"Formaggi",k:175,p:11.0,gs:6.5,g:11.5,z:4.5,ch:4.5,fi:0,ca:450,fe:0.2,mg:18,k2:65,na:115,zn:1.2,fo:200,se:5,col:55,src:"CREA"},
+  {n:"Mascarpone",c:"Formaggi",k:450,p:4.5,gs:28.0,g:47.0,z:3.5,ch:4.0,fi:0,ca:105,fe:0.1,mg:9,k2:80,na:90,zn:0.3,fo:90,se:2,col:145,src:"CREA"},
+  {n:"Yogurt intero alla frutta",c:"Latte e derivati",k:100,p:3.5,gs:1.0,g:2.0,z:12.5,ch:16.0,fi:0.1,ca:110,fe:0.1,mg:12,k2:155,na:50,zn:0.5,fo:90,se:2,col:7,src:"CREA"},
+  // ── PROTEINE ANIMALI MANCANTI ──
+  {n:"Bresaola della Valtellina IGP",c:"Salumi",k:151,p:32.5,gs:0.4,g:2.1,z:0,ch:0,fi:0,ca:8,fe:3.5,mg:25,k2:320,na:1780,zn:4.5,fo:245,se:35,col:55,src:"CREA"},
+  {n:"Coppa / Capocollo",c:"Salumi",k:341,p:18.0,gs:9.0,g:29.0,z:0.5,ch:0.5,fi:0,ca:10,fe:1.5,mg:18,k2:270,na:1600,zn:2.0,fo:175,se:15,col:72,src:"CREA"},
+  {n:"Lardo stagionato",c:"Salumi",k:760,p:2.5,gs:29.0,g:77.0,z:0,ch:0,fi:0,ca:5,fe:0.3,mg:2,k2:40,na:900,zn:0.4,fo:30,se:4,col:90,src:"CREA"},
+  {n:"Porchetta",c:"Carni rosse",k:395,p:18.0,gs:11.0,g:35.0,z:0,ch:0,fi:0,ca:8,fe:1.5,mg:18,k2:280,na:1100,zn:2.0,fo:155,se:22,col:85,src:"CREA"},
+  {n:"Faraona petto senza pelle",c:"Carni bianche",k:119,p:22.5,gs:0.5,g:3.3,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:25,k2:310,na:60,zn:1.5,fo:200,se:15,col:72,src:"CREA"},
+  {n:"Quaglia intera eviscerata",c:"Carni bianche",k:192,p:22.6,gs:2.5,g:11.5,z:0,ch:0,fi:0,ca:15,fe:3.5,mg:24,k2:235,na:51,zn:2.7,fo:235,se:14,col:76,src:"CREA"},
+  {n:"Cervo filetto",c:"Carni rosse",k:120,p:22.5,gs:0.5,g:2.1,z:0,ch:0,fi:0,ca:6,fe:3.2,mg:25,k2:295,na:54,zn:3.5,fo:205,se:7,col:65,src:"CREA"},
+  {n:"Capriolo coscia",c:"Carni rosse",k:113,p:21.8,gs:0.4,g:2.0,z:0,ch:0,fi:0,ca:7,fe:3.0,mg:24,k2:310,na:52,zn:3.2,fo:195,se:6,col:58,src:"CREA"},
+  // ── PESCE MANCANTE ──
+  {n:"Cefalo muggine",c:"Pesce",k:117,p:18.5,gs:1.0,g:4.8,z:0,ch:0,fi:0,ca:30,fe:1.5,mg:28,k2:385,na:65,zn:0.8,fo:255,se:36,col:58,src:"CREA"},
+  {n:"Pagello",c:"Pesce",k:84,p:17.8,gs:0.3,g:1.3,z:0,ch:0,fi:0,ca:22,fe:0.7,mg:27,k2:390,na:82,zn:0.5,fo:178,se:28,col:53,src:"CREA"},
+  {n:"Anguilla affumicata",c:"Pesce",k:289,p:18.5,gs:4.5,g:23.5,z:0,ch:0,fi:0,ca:25,fe:1.0,mg:28,k2:280,na:700,zn:1.7,fo:240,se:22,col:155,src:"CREA"},
+  {n:"Caviale (uova di storione)",c:"Pesce",k:264,p:25.0,gs:4.0,g:17.9,z:4.0,ch:4.0,fi:0,ca:275,fe:11.9,mg:300,k2:181,na:1500,zn:0.9,fo:356,se:65,col:588,src:"CREA"},
+  {n:"Astice (aragosta) fresco",c:"Crostacei",k:90,p:18.8,gs:0.2,g:1.1,z:0,ch:0.5,fi:0,ca:52,fe:0.4,mg:27,k2:320,na:380,zn:3.5,fo:220,se:42,col:95,src:"CREA"},
+  {n:"Granchio fresco",c:"Crostacei",k:72,p:16.0,gs:0.1,g:0.6,z:0,ch:0,fi:0,ca:89,fe:0.4,mg:42,k2:329,na:275,zn:3.5,fo:175,se:37,col:64,src:"CREA"},
+  {n:"Ostriche fresche",c:"Molluschi",k:69,p:9.0,gs:0.5,g:2.0,z:4.3,ch:4.9,fi:0,ca:80,fe:6.0,mg:47,k2:156,na:417,zn:59.0,fo:162,se:23,col:55,src:"CREA"},
+  {n:"Spigola al sale (branzino) cotto",c:"Pesce",k:125,p:23.0,gs:0.5,g:3.2,z:0,ch:0,fi:0,ca:20,fe:0.6,mg:28,k2:350,na:250,zn:0.5,fo:200,se:18,col:62,src:"CREA"},
+  // ── LEGUMI MANCANTI ──
+  {n:"Lenticchie beluga secche (nere)",c:"Legumi",k:338,p:26.0,gs:0.2,g:1.0,z:1.5,ch:57.5,fi:10.9,ca:36,fe:8.4,mg:115,k2:681,na:6,zn:3.5,fo:453,se:8,col:0,src:"CREA"},
+  {n:"Lupini secchi",c:"Legumi",k:370,p:40.0,gs:1.8,g:9.5,z:0,ch:40.0,fi:22.0,ca:176,fe:4.4,mg:173,k2:1013,na:55,zn:4.9,fo:440,se:5,col:0,src:"CREA"},
+  {n:"Edamame (soia immatura)",c:"Legumi",k:121,p:11.9,gs:0.8,g:5.2,z:2.2,ch:8.9,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:6,zn:1.4,fo:161,se:1.5,col:0,src:"CREA"},
+  {n:"Fagioli mung secchi",c:"Legumi",k:347,p:23.9,gs:0.3,g:1.2,z:6.6,ch:62.6,fi:16.3,ca:132,fe:6.7,mg:189,k2:1246,na:15,zn:2.7,fo:367,se:8,col:0,src:"CREA"},
+  // ── FRUTTA SECCA E SEMI MANCANTI ──
+  {n:"Arachidi crude con pellicola",c:"Frutta secca",k:567,p:25.8,gs:6.8,g:49.2,z:4.7,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7.2,col:0,src:"CREA"},
+  {n:"Burro di mandorle",c:"Frutta secca",k:614,p:21.1,gs:4.5,g:55.5,z:5.0,ch:18.8,fi:10.3,ca:347,fe:3.7,mg:303,k2:740,na:7,zn:3.1,fo:481,se:2.6,col:0,src:"CREA"},
+  {n:"Burro di sesamo (tahini)",c:"Frutta secca",k:595,p:17.0,gs:7.8,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.5,fo:592,se:34,col:0,src:"CREA"},
+  {n:"Semi di canapa sgusciati",c:"Semi oleosi",k:553,p:31.6,gs:4.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:14,col:0,src:"CREA"},
+  {n:"Pistacchi tostati salati",c:"Frutta secca",k:573,p:21.4,gs:5.9,g:45.4,z:7.0,ch:27.2,fi:10.6,ca:107,fe:4.2,mg:109,k2:1025,na:490,zn:2.2,fo:490,se:10,col:0,src:"CREA"},
+  // ── GRASSI E OLI MANCANTI ──
+  {n:"Olio di cocco vergine",c:"Grassi",k:862,p:0,gs:82.5,g:99.0,z:0,ch:0,fi:0,ca:1,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+  {n:"Olio di noce",c:"Grassi",k:884,p:0,gs:9.1,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0,mg:1,k2:2,na:0,zn:0,fo:2,se:0,col:0,src:"CREA"},
+  {n:"Margarina vegetale 70% grassi",c:"Grassi",k:630,p:0.5,gs:20.0,g:70.0,z:0.1,ch:0.3,fi:0,ca:2,fe:0.1,mg:2,k2:10,na:650,zn:0.1,fo:8,se:0,col:0,src:"CREA"},
+  // ── DOLCI E SPEZIE MANCANTI ──
+  {n:"Sciroppo d'acero puro",c:"Dolcificanti",k:260,p:0,gs:0,g:0.1,z:60.5,ch:67.0,fi:0,ca:102,fe:0.1,mg:21,k2:212,na:9,zn:1.5,fo:2,se:0.6,col:0,src:"CREA"},
+  {n:"Sciroppo di agave",c:"Dolcificanti",k:310,p:0.1,gs:0,g:0.3,z:70.0,ch:76.0,fi:0,ca:1,fe:0.1,mg:1,k2:4,na:4,zn:0.1,fo:1,se:0,col:0,src:"CREA"},
+  {n:"Stevia (foglie essiccate)",c:"Dolcificanti",k:290,p:13.5,gs:0,g:4.0,z:0,ch:62.5,fi:18.0,ca:464,fe:10.0,mg:77,k2:3816,na:190,zn:2.1,fo:24,se:0,col:0,src:"CREA"},
+  {n:"Cardamomo macinato",c:"Spezie",k:311,p:10.8,gs:0.7,g:6.7,z:0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:178,se:0.9,col:0,src:"CREA"},
+  {n:"Zenzero in polvere",c:"Spezie",k:335,p:8.9,gs:0.5,g:4.2,z:3.4,ch:71.6,fi:14.1,ca:116,fe:19.8,mg:214,k2:1320,na:27,zn:3.6,fo:168,se:55,col:0,src:"CREA"},
+  {n:"Peperoncino piccante in polvere",c:"Spezie",k:282,p:13.5,gs:1.1,g:14.3,z:10.3,ch:49.7,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:293,se:8.8,col:0,src:"CREA"},
+  // ── BEVANDE FERMENTATE ──
+  {n:"Kombucha (bevanda fermentata tè)",c:"Bevande",k:9,p:0.2,gs:0,g:0.1,z:1.0,ch:2.5,fi:0,ca:8,fe:0.2,mg:4,k2:50,na:10,zn:0.1,fo:5,se:0,col:0,src:"CREA"},
+  {n:"Kefir d'acqua probiotico",c:"Bevande",k:15,p:0.5,gs:0,g:0.1,z:3.0,ch:3.5,fi:0,ca:10,fe:0.1,mg:5,k2:30,na:5,zn:0.1,fo:8,se:0,col:0,src:"CREA"},
+  {n:"Birra artigianale chiara (330mL)",c:"Alcolici",k:43,p:0.5,gs:0,g:0,z:1.0,ch:3.5,fi:0,ca:7,fe:0.1,mg:10,k2:35,na:7,zn:0.1,fo:15,se:2,col:0,src:"CREA"},
+  {n:"Sidro di mele secco (100mL)",c:"Alcolici",k:38,p:0,gs:0,g:0,z:1.5,ch:2.6,fi:0,ca:5,fe:0.1,mg:3,k2:80,na:2,zn:0.1,fo:5,se:0,col:0,src:"CREA"},
+  // ── ALIMENTI FERMENTATI ──
+  {n:"Kimchi (cavolo fermentato coreano)",c:"Verdure",k:15,p:1.1,gs:0.1,g:0.5,z:1.3,ch:2.4,fi:1.6,ca:45,fe:0.5,mg:13,k2:151,na:700,zn:0.3,fo:33,se:0.5,col:0,src:"CREA"},
+  {n:"Crauti (cavolo fermentato)",c:"Verdure",k:19,p:0.9,gs:0,g:0.1,z:0.5,ch:4.3,fi:2.9,ca:30,fe:1.5,mg:13,k2:170,na:661,zn:0.2,fo:20,se:0.6,col:0,src:"CREA"},
+  {n:"Miso bianco (shiro miso)",c:"Condimenti",k:198,p:11.7,gs:0.5,g:6.0,z:4.8,ch:26.2,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3930,zn:2.6,fo:159,se:3.7,col:0,src:"CREA"},
+  {n:"Natto (soia fermentata)",c:"Legumi",k:212,p:17.7,gs:2.7,g:11.0,z:4.7,ch:14.4,fi:5.4,ca:217,fe:8.6,mg:115,k2:729,na:6,zn:3.0,fo:174,se:13,col:0,src:"CREA"},
+  {n:"Tofu compatto (silken)",c:"Legumi",k:53,p:4.9,gs:0.3,g:2.7,z:1.0,ch:2.0,fi:0.3,ca:130,fe:1.0,mg:27,k2:121,na:12,zn:0.6,fo:97,se:8.9,col:0,src:"CREA"},
+  {n:"Tofu solido (firm tofu)",c:"Legumi",k:76,p:8.0,gs:0.5,g:4.5,z:0.9,ch:2.0,fi:0.3,ca:350,fe:2.7,mg:37,k2:150,na:7,zn:0.8,fo:120,se:11,col:0,src:"CREA"}
 ];
 
 const DB_BDA=[
@@ -1061,7 +1142,47 @@ const DB_UPF = [
   {n:"Succo di frutta multivitaminico zuccherato",c:"Bibite zuccherate",src:"UPF",k:47,p:0.2,gs:0,g:0.1,z:10.5,ch:11.5,fi:0.1,ca:10,fe:0.5,mg:5,k2:80,na:15,zn:0.1,fo:15,se:0,col:0},
   {n:"Frullato di frutta industriale (smoothie)",c:"Bibite zuccherate",src:"UPF",k:65,p:0.5,gs:0,g:0.2,z:13.5,ch:16.0,fi:1.0,ca:12,fe:0.3,mg:10,k2:160,na:15,zn:0.1,fo:15,se:0,col:0},
   {n:"Tè freddo zuccherato aromatizzato (bottiglia)",c:"Bibite zuccherate",src:"UPF",k:32,p:0.1,gs:0,g:0,z:7.8,ch:8.0,fi:0,ca:5,fe:0.1,mg:3,k2:30,na:10,zn:0,fo:5,se:0,col:0},
-  {n:"Succo di melograno zuccherato",c:"Bibite zuccherate",src:"UPF",k:54,p:0.2,gs:0,g:0.1,z:12.5,ch:13.5,fi:0.2,ca:11,fe:0.2,mg:5,k2:183,na:11,zn:0.1,fo:8,se:0,col:0}
+  {n:"Succo di melograno zuccherato",c:"Bibite zuccherate",src:"UPF",k:54,p:0.2,gs:0,g:0.1,z:12.5,ch:13.5,fi:0.2,ca:11,fe:0.2,mg:5,k2:183,na:11,zn:0.1,fo:8,se:0,col:0},
+  // ── FAST FOOD ──
+  {n:"Hamburger fast food classico",c:"Fast food",src:"UPF",k:296,p:13,gs:5.5,g:13,z:7,ch:30,fi:1,ca:100,fe:2.5,mg:25,k2:250,na:490,zn:2,fo:150,se:12,col:45},
+  {n:"Cheeseburger doppio fast food",c:"Fast food",src:"UPF",k:380,p:22,gs:12,g:22,z:8,ch:27,fi:1.5,ca:200,fe:3,mg:30,k2:300,na:780,zn:3.5,fo:250,se:18,col:80},
+  {n:"Nuggets di pollo (tipo fast food, 100g)",c:"Fast food",src:"UPF",k:250,p:14,gs:3,g:14,z:1,ch:20,fi:0.5,ca:10,fe:1.5,mg:20,k2:200,na:550,zn:1.5,fo:160,se:10,col:40},
+  {n:"Patate fritte fast food (porzione media, 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:0.5,ch:41,fi:3,ca:10,fe:0.7,mg:25,k2:480,na:400,zn:0.4,fo:75,se:0.5,col:0},
+  {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:290,p:11,gs:6,g:16,z:4,ch:28,fi:1.5,ca:55,fe:1.8,mg:18,k2:210,na:770,zn:1.8,fo:140,se:10,col:48},
+  // ── PIATTI PRONTI SURGELATI ──
+  {n:"Pizza surgelata margherita",c:"Piatti pronti",src:"UPF",k:222,p:8,gs:3.5,g:7.5,z:4,ch:32,fi:2,ca:150,fe:2,mg:20,k2:200,na:540,zn:1,fo:130,se:8,col:12},
+  {n:"Lasagne surgelate bolognese",c:"Piatti pronti",src:"UPF",k:130,p:7,gs:3.5,g:6.5,z:3,ch:11.5,fi:1,ca:80,fe:1.5,mg:15,k2:200,na:450,zn:1,fo:100,se:6,col:25},
+  {n:"Sofficini di formaggio surgelati",c:"Piatti pronti",src:"UPF",k:230,p:8,gs:3,g:10,z:2,ch:27,fi:1.5,ca:120,fe:1.2,mg:15,k2:160,na:500,zn:0.8,fo:110,se:5,col:18},
+  {n:"Bastoncini di pesce impanati surgelati",c:"Piatti pronti",src:"UPF",k:195,p:11,gs:1.2,g:7,z:1.5,ch:23,fi:1.2,ca:50,fe:0.8,mg:22,k2:250,na:480,zn:0.7,fo:175,se:18,col:30},
+  {n:"Pasta istantanea (ramen industriale, 100g cotto)",c:"Piatti pronti",src:"UPF",k:436,p:9,gs:7.5,g:17,z:1,ch:62,fi:2,ca:18,fe:3.5,mg:25,k2:150,na:1700,zn:0.9,fo:90,se:5,col:0},
+  {n:"Minestra in busta liofilizzata",c:"Piatti pronti",src:"UPF",k:85,p:3,gs:1.5,g:3.5,z:5,ch:11,fi:1,ca:20,fe:0.8,mg:10,k2:95,na:800,zn:0.4,fo:50,se:2,col:5},
+  // ── SALUMI E INSACCATI INDUSTRIALI ──
+  {n:"Wurstel di pollo e maiale",c:"Salumi",src:"UPF",k:289,p:13,gs:8,g:25,z:0.5,ch:3,fi:0,ca:15,fe:1.2,mg:12,k2:195,na:950,zn:1.5,fo:120,se:12,col:65},
+  {n:"Salamino piccante tipo pepperoni",c:"Salumi",src:"UPF",k:490,p:20,gs:19,g:44,z:0.5,ch:1,fi:0,ca:8,fe:1.5,mg:18,k2:290,na:1900,zn:3,fo:155,se:20,col:105},
+  {n:"Pancetta affumicata (bacon)",c:"Salumi",src:"UPF",k:540,p:14.5,gs:17,g:50,z:0,ch:0.5,fi:0,ca:8,fe:0.7,mg:13,k2:260,na:1700,zn:1.8,fo:130,se:24,col:110},
+  {n:"Prosciutto cotto affumicato industriale",c:"Salumi",src:"UPF",k:170,p:18,gs:3,g:9,z:2,ch:3.5,fi:0,ca:10,fe:1.2,mg:16,k2:310,na:1100,zn:2,fo:200,se:18,col:62},
+  // ── DOLCI CONFEZIONATI ──
+  {n:"Barretta cioccolato tipo Snickers (100g)",c:"Dolci confezionati",src:"UPF",k:455,p:5,gs:10,g:18,z:48,ch:64,fi:1,ca:100,fe:1,mg:25,k2:220,na:150,zn:0.8,fo:120,se:3,col:10},
+  {n:"Cioccolato al latte confezionato (tipo Milka, 100g)",c:"Dolci confezionati",src:"UPF",k:535,p:7.5,gs:17.5,g:30,z:53,ch:58,fi:1.5,ca:225,fe:2.5,mg:55,k2:400,na:120,zn:1.5,fo:235,se:5,col:15},
+  {n:"Budino confezionato alla vaniglia",c:"Dolci confezionati",src:"UPF",k:110,p:3.5,gs:1.5,g:3.5,z:14.5,ch:17,fi:0,ca:110,fe:0.1,mg:10,k2:140,na:65,zn:0.4,fo:80,se:2,col:10},
+  {n:"Gelato confezionato tipo Oreo",c:"Dolci confezionati",src:"UPF",k:275,p:3.5,gs:7.5,g:15,z:28,ch:33,fi:0.5,ca:90,fe:0.8,mg:12,k2:130,na:110,zn:0.4,fo:80,se:2,col:22},
+  {n:"Torta confezionata tipo plumcake (per 100g)",c:"Dolci confezionati",src:"UPF",k:385,p:5.5,gs:4,g:10,z:38,ch:68,fi:1,ca:100,fe:1.5,mg:10,k2:90,na:520,zn:0.5,fo:110,se:4,col:0},
+  // ── CEREALI DA COLAZIONE ──
+  {n:"Cereali zuccherati tipo Corn Flakes",c:"Cereali confezionati",src:"UPF",k:381,p:6.5,gs:0.3,g:1.5,z:37,ch:84,fi:3,ca:5,fe:8.3,mg:22,k2:150,na:660,zn:0.3,fo:80,se:2,col:0},
+  {n:"Muesli con cioccolato industriale",c:"Cereali confezionati",src:"UPF",k:395,p:8,gs:3,g:10,z:22,ch:65,fi:6,ca:60,fe:4,mg:60,k2:380,na:120,zn:1.5,fo:210,se:5,col:0},
+  {n:"Barretta ai cereali e miele industriale",c:"Cereali confezionati",src:"UPF",k:420,p:5.5,gs:4,g:12,z:30,ch:68,fi:3.5,ca:40,fe:3,mg:35,k2:200,na:250,zn:1,fo:140,se:4,col:0},
+  // ── CONDIMENTI INDUSTRIALI ──
+  {n:"Dado da brodo industriale (per 100g)",c:"Condimenti",src:"UPF",k:195,p:20,gs:3,g:11,z:0.5,ch:15,fi:0,ca:40,fe:1.5,mg:20,k2:200,na:4000,zn:0.8,fo:100,se:5,col:5},
+  {n:"Salsa di soia industriale",c:"Condimenti",src:"UPF",k:53,p:8.1,gs:0,g:0,z:0.6,ch:4.9,fi:0.8,ca:17,fe:2.4,mg:40,k2:356,na:5637,zn:0.4,fo:130,se:0.6,col:0},
+  {n:"Ketchup industriale",c:"Condimenti",src:"UPF",k:112,p:1.5,gs:0,g:0.2,z:22.5,ch:25,fi:0.3,ca:14,fe:1.0,mg:19,k2:378,na:1100,zn:0.2,fo:33,se:0.7,col:0},
+  {n:"Maionese industriale",c:"Condimenti",src:"UPF",k:680,p:1.5,gs:11,g:75,z:1.5,ch:3.5,fi:0,ca:10,fe:0.3,mg:4,k2:30,na:620,zn:0.2,fo:25,se:2,col:65},
+  {n:"Salsa barbecue industriale",c:"Condimenti",src:"UPF",k:172,p:1.5,gs:0.1,g:0.5,z:34,ch:38,fi:0.5,ca:30,fe:1.0,mg:12,k2:230,na:950,zn:0.3,fo:35,se:1,col:0},
+  // ── BEVANDE ──
+  {n:"Energy drink tipo Red Bull (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:45,p:0.4,gs:0,g:0,z:10.3,ch:11.3,fi:0,ca:0,fe:0,mg:0,k2:0,na:40,zn:0,fo:0,se:0,col:0},
+  {n:"Cola (tipo Coca-Cola, per 100mL)",c:"Bibite zuccherate",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:10,zn:0,fo:13,se:0,col:0},
+  {n:"Cola Zero / Diet (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:0.3,p:0,gs:0,g:0,z:0,ch:0.1,fi:0,ca:0,fe:0,mg:0,k2:0,na:6,zn:0,fo:15,se:0,col:0},
+  {n:"Bevanda isotonica sportiva tipo Gatorade (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:26,p:0,gs:0,g:0,z:6,ch:6.3,fi:0,ca:0,fe:0,mg:0,k2:52,na:110,zn:0,fo:8,se:0,col:0},
+  {n:"Succo di frutta 100% in brick (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:50,p:0.3,gs:0,g:0.1,z:10,ch:11.5,fi:0.2,ca:10,fe:0.3,mg:8,k2:150,na:8,zn:0.1,fo:15,se:0.3,col:0}
 ];
 
 
@@ -2228,6 +2349,57 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo (leggero)',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Carota',qt:'80'}]},
     {nome:'Spuntino 2',emoji:'🍊',items:[{nome:'Pane bianco',qt:'40'},{nome:'Ricotta vaccina',qt:'50'}]},
     {nome:'Cena (leggera)',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'60'},{nome:'Brodo di verdure',qt:'200ml'},{nome:'Patata',qt:'100'}]}
+   ]},
+  {id:'sbs',cat:'chirurgia',emoji:'🔄',nome:"Sindrome dell'Intestino Corto (SBS)",badge:'ESPEN/AGA 2022',colore:'#9333EA',
+   desc:'Nutrizione parenterale o enterale supplementare. Alto rischio malnutrizione e deplezione micronutrienti. Adattamento intestinale progressivo.',
+   note:'ESPEN 2022 · AGA 2020. Resezione intestino >70% → SBS. Fasi: parenterale → enterale → orale. Colostomia prossimale: perdite elettrolitiche massicce (Na 100-140 mEq/L). Colon conservato: dieta a basso grasso + CHO complessi. Glutammina 0.5g/kg/die + GLP-2 (teduglutide) per adattamento. Monitorare: B12, ferro, calcio, magnesio, zinco, selenio, vitamine liposolubili A,D,E,K. ONS ad alto contenuto energetico.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Riso bianco crudo',qt:'60'},{nome:'Banana',qt:'80'},{nome:'Burro',qt:'5'}]},
+    {nome:'Spuntino 1',emoji:'🍎',items:[{nome:'Gallette di riso',qt:'30'},{nome:'Marmellata / confettura',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'100'},{nome:'Carota',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino 2',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Mela',qt:'100'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo',qt:'120'},{nome:'Patata',qt:'120'},{nome:'Olio extra vergine di oliva',qt:'8'}]},
+    {nome:'Spuntino serale',emoji:'🌜',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Fette biscottate',qt:'20'}]}
+   ]},
+  {id:'addison',cat:'endocrine',emoji:'💛',nome:"Insufficienza Surrenalica / Malattia di Addison",badge:'ES/ESE 2021',colore:'#F59E0B',
+   desc:'Dieta ricca di sodio. Pasti regolari per prevenire ipoglicemia. Vitamina D e calcio. Potassio da non eccedere.',
+   note:'ES 2021 · ESE 2021. Terapia sostitutiva obbligatoria (idrocortisone + fludrocortisone). Dieta: aumentare sodio (3-4g NaCl/die) soprattutto in estate o con esercizio fisico. In crisi addisoniana: Na EV urgente. Pasti regolari con CHO a medio IG per prevenire ipoglicemia. Potassio: non eccedere (rischio iperkaliemia). Vitamina D 1000-2000 UI/die + calcio 1000-1200mg/die (per osteoporosi da cortisonici). Pasti piccoli e frequenti (4-5/die).',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane comune',qt:'60'},{nome:'Uovo di gallina intero crudo',qt:'60'},{nome:'Latte intero fresco',qt:'200'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Banana',qt:'120'},{nome:'Noci',qt:'15'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Crackers',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'post_covid',cat:'varie',emoji:'🦠',nome:'Long COVID / Post-COVID-19',badge:'OMS 2023',colore:'#7C3AED',
+   desc:'Dieta anti-infiammatoria. Vitamina D, zinco, omega-3. Pasti piccoli se fatigue. Probiotici per disbiosi post-virale.',
+   note:'OMS 2023. Long COVID: sintomi persistenti >12 settimane. Nutrizione: anti-infiammatoria (Mediterranea). Vitamina D target >40 ng/mL (spesso carente). Zinco 10-15mg/die. Omega-3 EPA+DHA 2g/die (antinfiammatorio). Vitamina B12 se carenza (neuropatia). Probiotici: evidenza emergente per disbiosi post-virale. Se foggy: evitare alcol e zuccheri semplici. Energia adeguata: no restrizione calorica severa in fase acuta. Idratazione ≥2L/die.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'40'},{nome:'Mirtilli freschi',qt:'80'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mandorle dolci secche',qt:'20'},{nome:'Arancia',qt:'150'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Salmone atlantico',qt:'130'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'120'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'60'},{nome:'Quinoa cruda',qt:'60'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'sclerosi_multipla',cat:'neurologiche',emoji:'🧬',nome:'Sclerosi Multipla',badge:'ECTRIMS 2023',colore:'#0284C7',
+   desc:'Dieta mediterranea. Vitamina D target 40-60 ng/mL. Omega-3 2g/die. Fibre per disbiosi. Probiotici.',
+   note:'ECTRIMS 2023. Vitamina D: target sierico 40-60 ng/mL (supplementare 2000-4000 UI/die). Omega-3 EPA+DHA 2g/die (effetto neuroprotettivo e antinfiammatorio). Dieta a basso contenuto di grassi saturi. Fibre ≥30g/die per microbiota intestinale. Probiotici per disbiosi (evidenza crescente). Alcol: evitare o ridurre al minimo. Peso corporeo ottimale riduce carico neurologico. Disbiosi intestinale correlata con attività di malattia.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'15'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Semi di chia',qt:'10'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Quinoa cruda',qt:'70'},{nome:'Salmone atlantico',qt:'130'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Ceci secchi',qt:'50'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+  {id:'emocromatosi',cat:'epatiche',emoji:'🟤',nome:'Emocromatosi Ereditaria',badge:'EASL 2022',colore:'#B45309',
+   desc:'Evitare supplementi di ferro e vitamina C. Calcio e tannini riducono assorbimento ferro. Alcol zero. Limitare carni rosse.',
+   note:'EASL 2022. Accumulo di ferro ereditario. Dieta: evitare assolutamente supplementi di ferro e vitamina C (potenzia assorbimento Fe). Calcio, tè, caffè ai pasti riducono assorbimento ferro. Alcol zero (aggrava danno epatico da Fe). Limitare carni rosse e frattaglie (alto Fe eme). Vongole, ostriche, cozze: ricchissime di ferro, da evitare. Vitamina C da alimenti è accettabile se assunta lontano dai pasti principali.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Tè verde',qt:'200'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tofu compatto',qt:'120'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]}
 ];
 const PATOLOGIE_CUSTOM = [];
@@ -2331,7 +2503,12 @@ const FABBISOGNO_PATOLOGIE={
   favismo:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'WHO 2022 · ENERCA 2022. Deficit G6PD (X-linked). Evitare ASSOLUTAMENTE: fave (Vicia faba), vicina e convicina. Evitare anche: alcuni farmaci ossidanti (aspirina ad alte dosi, primachina, nitrofurantoina). In crisi emolitica: idratazione, trasfusioni se Hb <6 g/dL. Acido folico se anemia cronica. Dieta normale per il resto.'},
   wilson:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EASL 2012 · AASLD 2022. Dieta a basso rame: <1 mg/die (apporto normale 1.5-3 mg/die). Evitare: fegato, molluschi (ostriche, vongole, capesante), noci, cioccolato, funghi secchi, acqua di pozzo (rame). Terapia chelante (penicillamina o trientina) o zinco per bloccare assorbimento intestinale. Vitamina B6 se penicillamina.'},
   lipedema:{kcal:'Normocalorica (dieta ipocalorica convenzionale non efficace sul lipedema)',prot:'1.2-1.5 g/kg/die',note:'ILA 2021. Accumulo adiposo patologico simmetrico (gambe/fianchi/braccia) non responsivo alla restrizione calorica. Dieta anti-infiammatoria: Mediterranean o RAD (Rare Adipose Disorders). Omega-3 2-3 g/die. Limitare zuccheri semplici, glutine (possibile beneficio). Linfodrenaggio manuale + compressione essenziali. Vitamina D target >40 ng/mL.'},
-  iperemesi_gravidica:{kcal:'Obiettivo minimo 1500-1800 kcal/die; adattare alla tolleranza',prot:'1.0-1.2 g/kg/die',note:'RCOG 2024 · ACOG 2022. Frazionamento estremo (6-10 piccoli pasti/die). Alimenti secchi, freddi, blandi tollerati meglio. Zenzero 1 g/die (evidenza A per nausea). Vitamina B6 10-25 mg ogni 8h (prima linea farmacologica). Tiamina 100 mg/die se vomito prolungato >2-3 settimane (previene Wernicke). Idratazione EV se perdita peso >5% o chetosi. Integratori prenatali a stomaco pieno o sera.'}
+  iperemesi_gravidica:{kcal:'Obiettivo minimo 1500-1800 kcal/die; adattare alla tolleranza',prot:'1.0-1.2 g/kg/die',note:'RCOG 2024 · ACOG 2022. Frazionamento estremo (6-10 piccoli pasti/die). Alimenti secchi, freddi, blandi tollerati meglio. Zenzero 1 g/die (evidenza A per nausea). Vitamina B6 10-25 mg ogni 8h (prima linea farmacologica). Tiamina 100 mg/die se vomito prolungato >2-3 settimane (previene Wernicke). Idratazione EV se perdita peso >5% o chetosi. Integratori prenatali a stomaco pieno o sera.'},
+  sbs:{kcal:'25-40 kcal/kg/die (aumentato per malassorbimento)',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2022 · AGA 2020. NPD se intestino residuo <100cm senza colon o <50cm con colon. Glutammina 0.5g/kg/die. GLP-2 (teduglutide) per adattamento. Vitamine B12, D, A, K; magnesio, zinco, selenio da supplementare. Monitorare ogni 3-6 mesi: micronutrienti, parametri renali, densità ossea.'},
+  addison:{kcal:'Normocalorica (adeguata a peso e attività)',prot:'1.0-1.2 g/kg/die',note:'ES 2021 · ESE 2021. Aumentare sodio: 3-4g NaCl/die (estate: +1-2g; sport: +1g/ora). Pasti regolari 4-5/die per prevenire ipoglicemia. Vitamina D 1000-2000 UI/die + calcio 1000-1200mg/die. Potassio: non eccedere (rischio iperkaliemia).'},
+  post_covid:{kcal:'25-35 kcal/kg/die (aumentato se cachessia)',prot:'1.2-1.5 g/kg/die',note:'OMS 2023. Vitamina D target >40 ng/mL. Zinco 10-15mg/die. Omega-3 2g/die. Vitamina B12 se carente. Probiotici per disbiosi. No restrizione calorica in fase acuta.'},
+  sclerosi_multipla:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ECTRIMS 2023. Vitamina D target 40-60 ng/mL (2000-4000 UI/die). Omega-3 2g/die. Dieta a basso contenuto di grassi saturi. Probiotici per disbiosi. Alcol: evitare o ridurre.'},
+  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

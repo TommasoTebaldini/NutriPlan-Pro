@@ -2370,6 +2370,48 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'150'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt intero bianco',qt:'125'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Tofu compatto',qt:'120'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+   ]},
+
+  /* ── STILI ALIMENTARI ────────────────────────────── */
+  {id:'vegetariana',cat:'stili_alimentari',emoji:'🥦',nome:'Dieta Vegetariana (Latto-Ovo)',badge:'SINU/EFSA 2022',colore:'#16A34A',
+   desc:'Esclude carne e pesce. Include uova e latticini. Proteggere dall\'apporto di ferro, zinco, B12 e omega-3.',
+   note:'SINU 2022 · EFSA 2022 · ADA 2016. Proteina: privilegiare associazione cereali + legumi. Fe non-eme: abbinare vitamina C. B12: monitorare (uova e latticini presenti ma apporto variabile). Omega-3 ALA da semi di lino/chia; EPA/DHA da alghe se necessario. Zinco: legumi, semi di zucca, cereali integrali. Calcio: latticini, broccoli, tofu, bevande vegetali arricchite. Pianificazione adeguata assicura piena adeguatezza nutrizionale.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Mirtillo',qt:'100'},{nome:'Noci',qt:'20'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'120'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Lenticchie secche',qt:'50'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Broccoli',qt:'150'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Uova intere',qt:'120'},{nome:'Spinaci crudi',qt:'200'},{nome:'Quinoa cruda',qt:'60'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Limone (succo)',qt:'30'}]}
+   ]},
+  {id:'vegana',cat:'stili_alimentari',emoji:'🌱',nome:'Dieta Vegana',badge:'SINU/AND 2022',colore:'#15803D',
+   desc:'Esclude tutti i prodotti animali. Richiede supplementazione di B12; attenzione a ferro, calcio, zinco, omega-3, vitamina D e iodio.',
+   note:'SINU 2022 · AND 2016 · EFSA 2019. B12: supplemento OBBLIGATORIO (250 µg/die o 2500 µg/settimana). Calcio: bevande vegetali arricchite, tofu con sali di calcio, broccoli, cavolo, sesamo. Fe: legumi + vitamina C ai pasti; evitare tè/caffè durante i pasti. Zinco: legumi germogliati, semi di zucca, cereali integrali. Omega-3: semi di lino, chia, noci (ALA); supplemento EPA/DHA da alghe raccomandato. Vitamina D: supplemento 800-2000 UI/die. Iodio: sale iodato o supplemento. Dieta vegana ben pianificata è nutrizionalmente adeguata per tutte le fasi della vita.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'60'},{nome:'Latte di soia non zuccherato',qt:'250'},{nome:'Banana',qt:'100'},{nome:'Semi di chia',qt:'15'},{nome:'Mirtillo',qt:'80'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Quinoa cruda',qt:'70'},{nome:'Ceci secchi',qt:'60'},{nome:'Spinaci crudi',qt:'150'},{nome:'Pomodoro rosso',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'},{nome:'Limone (succo)',qt:'20'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Arancia',qt:'180'},{nome:'Noci',qt:'25'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Tofu compatto',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Zenzero in polvere',qt:'2'}]}
+   ]},
+  {id:'latto_vegetariana',cat:'stili_alimentari',emoji:'🥛',nome:'Dieta Latto-Vegetariana',badge:'SINU 2022',colore:'#0D9488',
+   desc:'Esclude carne, pesce e uova. Include latticini. Attenzione a ferro (no uova), zinco, omega-3 e vitamina B12.',
+   note:'SINU 2022 · EFSA 2022. Proteina completa: cereali + legumi + latticini. Fe non-eme da legumi, cereali integrali e verdure a foglia; abbinare sempre vitamina C. B12: presente nei latticini ma monitorare periodicamente. Omega-3: semi di lino/chia/noci (ALA); valutare supplemento EPA/DHA da alghe. Zinco: latticini, legumi, cereali integrali. Calcio: latticini, broccoli, tofu. Esclusione di uova non crea criticità se i latticini sono variati e regolari.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Kiwi',qt:'120'},{nome:'Semi di lino',qt:'10'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Fragola',qt:'100'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Fagioli borlotti secchi',qt:'50'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Spinaci crudi',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Ricotta vaccina',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Broccoli',qt:'100'}]}
+   ]},
+  {id:'ovo_vegetariana',cat:'stili_alimentari',emoji:'🥚',nome:'Dieta Ovo-Vegetariana',badge:'SINU 2022',colore:'#CA8A04',
+   desc:'Esclude carne, pesce e latticini. Include uova. Attenzione a calcio (no latticini), B12, vitamina D e omega-3.',
+   note:'SINU 2022 · EFSA 2022. Proteina: uova + legumi + cereali integrali. Calcio: crucifere (broccoli, cavolo), tofu con sali di calcio, bevande vegetali arricchite, mandorle, sesamo. B12: nelle uova ma concentrazione variabile; monitorare livelli sierici e integrare se necessario. Vitamina D: uova (tuorlo) + supplemento 800-1000 UI/die se esposizione solare ridotta. Omega-3: semi di lino, chia, noci (ALA); valutare supplemento EPA/DHA da alghe. Fe: legumi + vitamina C; uova contengono Fe non-eme con bassa biodisponibilità.',
+   pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte di soia non zuccherato',qt:'200'},{nome:'Arancia',qt:'150'},{nome:'Semi di chia',qt:'12'}]},
+    {nome:'Spuntino',emoji:'🍎',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'70'},{nome:'Lenticchie secche',qt:'50'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Pomodoro rosso',qt:'100'}]},
+    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'20'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Uova intere',qt:'120'},{nome:'Broccoli',qt:'200'},{nome:'Quinoa cruda',qt:'60'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Limone (succo)',qt:'20'}]}
    ]}
 ];
 const PATOLOGIE_CUSTOM = [];
@@ -2425,6 +2467,10 @@ const FABBISOGNO_PATOLOGIE={
   bed:{kcal:'Normocalorica o moderato deficit se sovrappeso',prot:'1.0-1.2 g/kg/die',note:'DSM-5/ESPEN 2022. Pasti regolari strutturati. Evitare diete restrittive. Mindful eating. CBT elemento cardine.'},
   post_covid:{kcal:'25-35 kcal/kg/die (aumentato se cachessia)',prot:'1.2-1.5 g/kg/die',note:'OMS 2023. Vitamina D target >40 ng/mL. Zinco 10-15mg/die. Omega-3 2g/die. Vitamina B12 se carente. Probiotici per disbiosi.'},
   emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro.'},
+  vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (completezza aminoacidica con abbinamento cereali+legumi)',note:'SINU 2022 · EFSA 2022. Fe non-eme: abbinare vitamina C ai pasti; evitare tè/caffè. B12: monitorare. Omega-3: semi di lino/chia/noci; considerare EPA/DHA da alghe. Zinco: semi, legumi, integrali. Calcio: latticini, tofu.'},
+  vegana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (privilegiare legumi, soia, tofu, tempeh)',note:'SINU 2022 · AND 2016. B12: supplemento OBBLIGATORIO 250 µg/die. Vitamina D: supplemento 800-2000 UI/die. Calcio: bevande vegetali arricchite, tofu, crucifere. Fe+vitamina C ai pasti. Iodio: sale iodato o supplemento. Omega-3 EPA/DHA: supplemento da alghe.'},
+  latto_vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (latticini + legumi + cereali integrali)',note:'SINU 2022. B12: monitorare (presente nei latticini). Fe non-eme: legumi + vitamina C ai pasti. Omega-3: semi di lino/chia/noci; valutare supplemento EPA/DHA da alghe. Calcio: latticini, tofu, broccoli.'},
+  ovo_vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (uova + legumi + cereali)',note:'SINU 2022. Calcio: bevande vegetali arricchite, tofu, crucifere, mandorle. B12: monitorare (uova, variabile). Vitamina D: supplemento se esposizione solare ridotta. Omega-3: semi di lino/chia/noci; valutare supplemento EPA/DHA da alghe.'},
   lupus:{kcal:'Normocalorica (monitorare con cortisonici)',prot:'1.0-1.2 g/kg/die',note:'EULAR 2023. Vitamina D spesso carente. Omega-3 2-3g/die. Calcio per osteoporosi corticosteroidea. Restrizione sodio se nefrite.'},
   allergia_uova:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2019. Eliminazione completa di uova e derivati. Leggere etichette (ovoalbumina, lisozima). Vitamina D e B12 se dieta restrittiva.'},
   hashimoto:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'ETA 2022. Selenio 55-200 µg/die (selenometionina). Vitamina D target >40 ng/mL. Iodio: adeguato, non eccessivo. Levotiroxina a stomaco vuoto 30-60 min prima della colazione. Screening celiachia obbligatorio.'},
@@ -2478,7 +2524,11 @@ const FABBISOGNO_PATOLOGIE={
   addison:{kcal:'Normocalorica (adeguata a peso e attività)',prot:'1.0-1.2 g/kg/die',note:'ES 2021 · ESE 2021. Aumentare sodio: 3-4g NaCl/die (estate: +1-2g; sport: +1g/ora). Pasti regolari 4-5/die per prevenire ipoglicemia. Vitamina D 1000-2000 UI/die + calcio 1000-1200mg/die. Potassio: non eccedere (rischio iperkaliemia).'},
   post_covid:{kcal:'25-35 kcal/kg/die (aumentato se cachessia)',prot:'1.2-1.5 g/kg/die',note:'OMS 2023. Vitamina D target >40 ng/mL. Zinco 10-15mg/die. Omega-3 2g/die. Vitamina B12 se carente. Probiotici per disbiosi. No restrizione calorica in fase acuta.'},
   sclerosi_multipla:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ECTRIMS 2023. Vitamina D target 40-60 ng/mL (2000-4000 UI/die). Omega-3 2g/die. Dieta a basso contenuto di grassi saturi. Probiotici per disbiosi. Alcol: evitare o ridurre.'},
-  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'}
+  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'},
+  vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (completezza aminoacidica con abbinamento cereali+legumi)',note:'SINU 2022 · EFSA 2022. Fe non-eme: abbinare vitamina C ai pasti; evitare tè/caffè. B12: monitorare. Omega-3: semi di lino/chia/noci; considerare EPA/DHA da alghe. Zinco: semi, legumi, integrali. Calcio: latticini, tofu.'},
+  vegana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (privilegiare legumi, soia, tofu, tempeh)',note:'SINU 2022 · AND 2016. B12: supplemento OBBLIGATORIO 250 µg/die. Vitamina D: supplemento 800-2000 UI/die. Calcio: bevande vegetali arricchite, tofu, crucifere. Fe+vitamina C ai pasti. Iodio: sale iodato o supplemento. Omega-3 EPA/DHA: supplemento da alghe.'},
+  latto_vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (latticini + legumi + cereali integrali)',note:'SINU 2022. B12: monitorare (presente nei latticini). Fe non-eme: legumi + vitamina C ai pasti. Omega-3: semi di lino/chia/noci; valutare supplemento EPA/DHA da alghe. Calcio: latticini, tofu, broccoli.'},
+  ovo_vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (uova + legumi + cereali)',note:'SINU 2022. Calcio: bevande vegetali arricchite, tofu, crucifere, mandorle. B12: monitorare (uova, variabile). Vitamina D: supplemento se esposizione solare ridotta. Omega-3: semi di lino/chia/noci; valutare supplemento EPA/DHA da alghe.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

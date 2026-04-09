@@ -275,7 +275,7 @@ async function renderCartellaDetail(id) {
       qScore = d.score !== undefined ? String(d.score) : (d.global !== undefined ? String(d.global) : '');
       qLabel = (d.label || '').replace(/[🟢🟡🔴🟠⚠️]/gu, '').trim();
       qDesc = d.desc || '';
-    } catch(e) {}
+    } catch(e) { console.warn('Failed to parse questionnaire data:', e); }
     if (!qNome) qNome = (q.nota || '').split(' — ')[0];
     const summary = q.nota || qNome;
     const scoreChip = qScore ? `<span style="font-size:11px;background:#F0F9FF;color:#0369A1;padding:3px 9px;border-radius:8px;font-weight:700;flex-shrink:0">${qScore}</span>` : '';

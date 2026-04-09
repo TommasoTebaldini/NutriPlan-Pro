@@ -2374,7 +2374,7 @@ const PATOLOGIE_BASE=[
 
   /* ── STILI ALIMENTARI ────────────────────────────── */
   {id:'vegetariana',cat:'stili_alimentari',emoji:'🥦',nome:'Dieta Vegetariana (Latto-Ovo)',badge:'SINU/EFSA 2022',colore:'#16A34A',
-   desc:'Esclude carne e pesce. Include uova e latticini. Proteggere dall\'apporto di ferro, zinco, B12 e omega-3.',
+   desc:'Esclude carne e pesce. Include uova e latticini. Assicurare l\'apporto di ferro, zinco, B12 e omega-3.',
    note:'SINU 2022 · EFSA 2022 · ADA 2016. Proteina: privilegiare associazione cereali + legumi. Fe non-eme: abbinare vitamina C. B12: monitorare (uova e latticini presenti ma apporto variabile). Omega-3 ALA da semi di lino/chia; EPA/DHA da alghe se necessario. Zinco: legumi, semi di zucca, cereali integrali. Calcio: latticini, broccoli, tofu, bevande vegetali arricchite. Pianificazione adeguata assicura piena adeguatezza nutrizionale.',
    pasti:[
     {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Mirtillo',qt:'100'},{nome:'Noci',qt:'20'}]},
@@ -2524,11 +2524,7 @@ const FABBISOGNO_PATOLOGIE={
   addison:{kcal:'Normocalorica (adeguata a peso e attività)',prot:'1.0-1.2 g/kg/die',note:'ES 2021 · ESE 2021. Aumentare sodio: 3-4g NaCl/die (estate: +1-2g; sport: +1g/ora). Pasti regolari 4-5/die per prevenire ipoglicemia. Vitamina D 1000-2000 UI/die + calcio 1000-1200mg/die. Potassio: non eccedere (rischio iperkaliemia).'},
   post_covid:{kcal:'25-35 kcal/kg/die (aumentato se cachessia)',prot:'1.2-1.5 g/kg/die',note:'OMS 2023. Vitamina D target >40 ng/mL. Zinco 10-15mg/die. Omega-3 2g/die. Vitamina B12 se carente. Probiotici per disbiosi. No restrizione calorica in fase acuta.'},
   sclerosi_multipla:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ECTRIMS 2023. Vitamina D target 40-60 ng/mL (2000-4000 UI/die). Omega-3 2g/die. Dieta a basso contenuto di grassi saturi. Probiotici per disbiosi. Alcol: evitare o ridurre.'},
-  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'},
-  vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (completezza aminoacidica con abbinamento cereali+legumi)',note:'SINU 2022 · EFSA 2022. Fe non-eme: abbinare vitamina C ai pasti; evitare tè/caffè. B12: monitorare. Omega-3: semi di lino/chia/noci; considerare EPA/DHA da alghe. Zinco: semi, legumi, integrali. Calcio: latticini, tofu.'},
-  vegana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (privilegiare legumi, soia, tofu, tempeh)',note:'SINU 2022 · AND 2016. B12: supplemento OBBLIGATORIO 250 µg/die. Vitamina D: supplemento 800-2000 UI/die. Calcio: bevande vegetali arricchite, tofu, crucifere. Fe+vitamina C ai pasti. Iodio: sale iodato o supplemento. Omega-3 EPA/DHA: supplemento da alghe.'},
-  latto_vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (latticini + legumi + cereali integrali)',note:'SINU 2022. B12: monitorare (presente nei latticini). Fe non-eme: legumi + vitamina C ai pasti. Omega-3: semi di lino/chia/noci; valutare supplemento EPA/DHA da alghe. Calcio: latticini, tofu, broccoli.'},
-  ovo_vegetariana:{kcal:'Normocalorica (25-35 kcal/kg/die)',prot:'1.0-1.2 g/kg/die (uova + legumi + cereali)',note:'SINU 2022. Calcio: bevande vegetali arricchite, tofu, crucifere, mandorle. B12: monitorare (uova, variabile). Vitamina D: supplemento se esposizione solare ridotta. Omega-3: semi di lino/chia/noci; valutare supplemento EPA/DHA da alghe.'}
+  emocromatosi:{kcal:'Normocalorica',prot:'1.0 g/kg/die (limitare carni rosse)',note:'EASL 2022. Evitare supplementi di ferro e vitamina C. Alcol zero. Calcio e tè/caffè ai pasti riducono assorbimento ferro. Limitare carni rosse e frattaglie.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

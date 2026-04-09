@@ -77,7 +77,16 @@ async function loadProfile() {
           <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">Questi dati appariranno in calce a tutte le stampe (piani alimentari, consigli, schede specialistiche).</p>
           <div class="fg" style="margin-bottom:10px"><label>Nome</label><input type="text" id="profop-nome" placeholder="es. Maria" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
           <div class="fg" style="margin-bottom:10px"><label>Cognome</label><input type="text" id="profop-cognome" placeholder="es. Rossi" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
-          <div class="fg" style="margin-bottom:14px"><label>N° Iscrizione Albo</label><input type="text" id="profop-albo" placeholder="es. 12345 (Regione)" maxlength="80" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+          <div class="fg" style="margin-bottom:10px"><label>N° Iscrizione Albo</label><input type="text" id="profop-albo" placeholder="es. 12345 (Regione)" maxlength="80" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+          <div class="fg" style="margin-bottom:14px">
+            <label for="profop-logo-file">Logo / Timbro (opzionale)</label>
+            <div id="profop-logo-preview" style="display:none;margin-bottom:8px;text-align:center">
+              <img id="profop-logo-img" src="" alt="Logo" style="max-height:72px;max-width:100%;border-radius:6px;border:1px solid var(--border-d)">
+              <br><button type="button" onclick="rimuoviLogoOp()" style="margin-top:6px;font-size:11px;color:#EF4444;background:none;border:none;cursor:pointer;padding:2px 0">✕ Rimuovi logo</button>
+            </div>
+            <input type="file" id="profop-logo-file" accept="image/*" style="width:100%;font-size:12.5px;font-family:inherit;cursor:pointer">
+            <p style="font-size:11px;color:var(--slate-m);margin-top:4px">Immagine PNG/JPG, max 200 KB. Apparirà in alto a sinistra su ogni stampa.</p>
+          </div>
           <div style="display:flex;gap:8px;justify-content:flex-end">
             <button class="btn btn-ghost" onclick="closeM('modal-profilo-op')">Annulla</button>
             <button class="btn btn-primary" onclick="salvaProfiloOp()">💾 Salva</button>
@@ -86,6 +95,8 @@ async function loadProfile() {
       </div>
     </div>`;
     document.body.appendChild(div.firstChild);
+    // Attach file-change handler after DOM insertion
+    document.getElementById('profop-logo-file').addEventListener('change', function() { anteprimaLogoOp(this); });
   }
 }
 
@@ -94,13 +105,57 @@ function openProfiloModal() {
   const n = document.getElementById('profop-nome'); if (n) n.value = p.nome || '';
   const c = document.getElementById('profop-cognome'); if (c) c.value = p.cognome || '';
   const a = document.getElementById('profop-albo'); if (a) a.value = p.albo || '';
+  // Reset file input so re-selecting the same file triggers change event
+  const f = document.getElementById('profop-logo-file'); if (f) f.value = '';
+  _aggiornaAnteprimaLogo(p.logo || null);
   openM('modal-profilo-op');
 }
+function _aggiornaAnteprimaLogo(dataUrl) {
+  const preview = document.getElementById('profop-logo-preview');
+  const img = document.getElementById('profop-logo-img');
+  if (!preview || !img) return;
+  if (dataUrl && _isValidImageDataUrl(dataUrl)) {
+    img.src = dataUrl;
+    preview.style.display = 'block';
+  } else {
+    img.src = '';
+    preview.style.display = 'none';
+  }
+}
+function anteprimaLogoOp(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  if (!['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'].includes(file.type)) {
+    toast('⚠️ Formato non supportato. Usa PNG, JPG, GIF o WebP.', 'warn');
+    input.value = '';
+    return;
+  }
+  if (file.size > 200 * 1024) {
+    toast('⚠️ L\'immagine supera i 200 KB. Scegli un\'immagine più piccola.', 'warn');
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) { _aggiornaAnteprimaLogo(e.target.result); };
+  reader.readAsDataURL(file);
+}
+function rimuoviLogoOp() {
+  _aggiornaAnteprimaLogo(null);
+  const f = document.getElementById('profop-logo-file'); if (f) f.value = '';
+}
 function salvaProfiloOp() {
+  // Determine logo: keep existing if the preview is shown, clear if removed
+  const preview = document.getElementById('profop-logo-preview');
+  const img = document.getElementById('profop-logo-img');
+  let logo = null;
+  if (preview && img && preview.style.display !== 'none' && img.src && img.src.startsWith('data:')) {
+    logo = img.src;
+  }
   const d = {
     nome: (document.getElementById('profop-nome')?.value || '').trim(),
     cognome: (document.getElementById('profop-cognome')?.value || '').trim(),
-    albo: (document.getElementById('profop-albo')?.value || '').trim()
+    albo: (document.getElementById('profop-albo')?.value || '').trim(),
+    logo: logo || null
   };
   saveProfiloOperatore(d);
   closeM('modal-profilo-op');
@@ -119,12 +174,31 @@ function getProfiloOperatore() {
 function saveProfiloOperatore(d) {
   localStorage.setItem('nutriplan_profilo_operatore', JSON.stringify(d));
 }
+function _isValidImageDataUrl(s) {
+  return typeof s === 'string' && /^data:image\/(png|jpeg|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/.test(s);
+}
 function profiloFirmaHtml() {
   const p = getProfiloOperatore();
   const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
   const albo = p.albo ? ' — N° Albo: ' + esc(p.albo) : '';
-  if (!nome && !albo) return '';
-  return '<div style="position:fixed;bottom:8mm;right:15mm;font-size:11px;color:#64748B;font-style:italic">' + esc(nome) + albo + '</div>';
+  const hasText = nome || albo;
+  const hasLogo = _isValidImageDataUrl(p.logo);
+  if (!hasText && !hasLogo) return '';
+  let html = '';
+  if (hasLogo) {
+    const img = document.createElement('img');
+    img.src = p.logo;
+    img.alt = 'Logo';
+    img.style.cssText = 'max-height:20mm;max-width:45mm;object-fit:contain';
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:fixed;top:6mm;left:15mm';
+    wrapper.appendChild(img);
+    html += wrapper.outerHTML;
+  }
+  if (hasText) {
+    html += '<div style="position:fixed;bottom:8mm;right:15mm;font-size:11px;color:#64748B;font-style:italic">' + esc(nome) + albo + '</div>';
+  }
+  return html;
 }
 
 // Global beforeprint: inject firma for pages that use window.print() directly
@@ -134,17 +208,29 @@ window.addEventListener('beforeprint', function() {
   const p = getProfiloOperatore();
   const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
   const albo = p.albo ? ' \u2014 N\u00b0 Albo: ' + p.albo : '';
-  if (!nome && !albo) return;
-  if (document.getElementById('_gprint_firma_')) return;
-  const div = document.createElement('div');
-  div.id = '_gprint_firma_';
-  div.style.cssText = 'position:fixed;bottom:8mm;right:15mm;font-size:11px;color:#64748B;font-style:italic';
-  div.textContent = nome + albo;
-  document.body.appendChild(div);
+  const hasLogo = _isValidImageDataUrl(p.logo);
+  if (!nome && !albo && !hasLogo) return;
+  if (!document.getElementById('_gprint_firma_')) {
+    const div = document.createElement('div');
+    div.id = '_gprint_firma_';
+    div.style.cssText = 'position:fixed;bottom:8mm;right:15mm;font-size:11px;color:#64748B;font-style:italic';
+    div.textContent = nome + albo;
+    document.body.appendChild(div);
+  }
+  if (hasLogo && !document.getElementById('_gprint_logo_')) {
+    const img = document.createElement('img');
+    img.id = '_gprint_logo_';
+    img.src = p.logo;
+    img.alt = 'Logo';
+    img.style.cssText = 'position:fixed;top:6mm;left:15mm;max-height:20mm;max-width:45mm;object-fit:contain';
+    document.body.appendChild(img);
+  }
 });
 window.addEventListener('afterprint', function() {
   const el = document.getElementById('_gprint_firma_');
   if (el) el.remove();
+  const logo = document.getElementById('_gprint_logo_');
+  if (logo) logo.remove();
 });
 
 // ═══════════════════════════════════════════════════

@@ -1805,16 +1805,6 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Banana',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
-  {id:'sclerosi_multipla',cat:'neurologiche',emoji:'🧬',nome:'Sclerosi Multipla',badge:'ECTRIMS/ESPEN 2023',colore:'#0284C7',
-   desc:"Dieta antiinfiammatoria. Vitamina D cardine. Omega-3 e antiossidanti. Gestire stipsi e peso.",
-   note:"ECTRIMS 2023 · Vitamina D target 40-60 ng/mL (possibile effetto immunomodulante) · Omega-3 2g/die · Dieta a basso contenuto di grassi saturi (Swank diet) · Fibre per stipsi · Probiotici per disbiosi intestinale · Evitare sovrappeso.",
-   pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Arancia',qt:'150'},{nome:'Noci',qt:'15'}]},
-    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Legumi misti',qt:'50'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
-    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Kiwi',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
-   ]},
   {id:'ipertiroidismo',cat:'endocrine',emoji:'🦋',nome:'Ipertiroidismo',badge:'ETA 2023',colore:'#F59E0B',
    desc:"Alto fabbisogno calorico e proteico. Calcio e vitamina D per prevenire osteoporosi. Moderare iodio.",
    note:"ETA 2023 · Energia aumentata del 20-30% (aumentato metabolismo basale) · Proteine 1.2-1.5 g/kg/die (catabolismo aumentato) · Calcio 1000-1200mg/die e vitamina D ≥1000 UI/die (rischio osteoporosi) · Iodio: non eccedere (può peggiorare ipertiroidismo) · Selenio 200µg/die (utile in morbo di Graves) · Caffeina: limitare (può esacerbare tachicardia).",
@@ -1854,26 +1844,6 @@ const PATOLOGIE_BASE=[
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Verdure miste',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pera',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
-   ]},
-  {id:'post_covid',cat:'varie',emoji:'🦠',nome:'Sindrome Post-COVID (Long COVID)',badge:'OMS/ESPEN 2023',colore:'#0891B2',
-   desc:"Supporto nutrizionale per recupero energetico e muscolare. Antiossidanti e antiinfiammatori. Gestire fatigue.",
-   note:"OMS 2023 · Proteine 1.2-1.5 g/kg/die per recupero muscolare · Vitamina D target >40 ng/mL · Vitamina C ≥200mg/die · Zinco 10-15mg/die · Omega-3 EPA+DHA 2g/die (antiinfiammatorio) · Vitamina B12 se carente · Probiotici per disbiosi post-COVID · Ferro se anemia post-infettiva · Pasti piccoli e frequenti se fatigue.",
-   pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Arancia',qt:'180'},{nome:'Mandorle dolci secche',qt:'20'}]},
-    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Kiwi',qt:'150'}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'80'},{nome:'Salmone atlantico',qt:'150'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
-    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Pane integrale',qt:'40'},{nome:'Ricotta vaccina',qt:'60'},{nome:'Fragola',qt:'100'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie secche',qt:'60'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
-   ]},
-  {id:'emocromatosi',cat:'epatiche',emoji:'🔴',nome:'Emocromatosi Ereditaria',badge:'EASL 2022',colore:'#B91C1C',
-   desc:"Ridurre apporti di ferro eme e promotori assorbimento. Evitare alcol. Vitamina C lontano dai pasti principali.",
-   note:"EASL 2022 · Evitare carni rosse eccessive e frattaglie (alto ferro eme) · Non assumere supplementi di ferro o vitamina C ai pasti · Alcol zero (aggrava danno epatico) · Tè e caffè ai pasti possono ridurre assorbimento ferro · Non eccedere con vitamina C · Latticini e calcio ai pasti principali (chelano il ferro).",
-   pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte intero fresco',qt:'200'},{nome:'Pera',qt:'150'}]},
-    {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt intero bianco',qt:'125'},{nome:'Banana',qt:'120'}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
-    {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
   {id:'lupus',cat:'immunologiche',emoji:'🦋',nome:'Lupus Eritematoso Sistemico (LES)',badge:'EULAR 2023',colore:'#A855F7',
    desc:"Dieta antiinfiammatoria mediterranea. Vitamina D fondamentale. Attenzione alla fotosensibilità (vitamina D ridotta).",

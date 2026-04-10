@@ -306,9 +306,9 @@
 </div>
 
 <div class="ns">
-  <h3>🍽️ Anamnesi Alimentare</h3>
+  <h3>📋 Recall Alimentare 24h</h3>
   <div class="fgrid">
-    <div class="nf full"><label>📋 Recall 24h — Abitudini Alimentari</label>
+    <div class="nf full">
       <div class="recall-grid">
         <div class="recall-box" style="border:1.5px solid #FDE68A">
           <div class="recall-hdr" style="background:#FEF3C7;color:#B45309;border-bottom-color:#FDE68A">☀️ COLAZIONE</div>
@@ -339,6 +339,100 @@
     <div class="nf"><label>Apporti stimati (kcal/die)</label><input type="text" id="v-kcal-att"></div>
     <div class="nf"><label>Appetito</label>
       <select id="v-appetito"><option>Normale</option><option>Ridotto</option><option>Aumentato</option><option>Molto ridotto / anoressia</option></select></div>
+  </div>
+</div>
+
+<div class="ns">
+  <h3>🥤 Idratazione e Bevande</h3>
+  <div class="fgrid c3">
+    <div class="nf"><label>Acqua (mL/die)</label>
+      <input type="text" id="v-acqua" placeholder="Es. 1500 mL, 6-8 bicchieri..."></div>
+    <div class="nf"><label>Frequenza consumo alcol</label>
+      <select id="v-alcol-freq">
+        <option value="">— seleziona —</option>
+        <option>Mai</option>
+        <option>Occasionale (&lt; 1 v/sett)</option>
+        <option>1–3 volte/settimana</option>
+        <option>Quasi quotidiano</option>
+        <option>Quotidiano</option>
+      </select></div>
+    <div class="nf"><label>Tipo di bevanda alcolica</label>
+      <input type="text" id="v-alcol-tipo" placeholder="Es. Vino, birra, liquori..."></div>
+    <div class="nf"><label>Caffè / tè (tazze/die)</label>
+      <input type="text" id="v-caffe" placeholder="Es. 2 caffè, 1 tè..."></div>
+    <div class="nf"><label>Bevande zuccherate / energy drink</label>
+      <select id="v-bev-zucc">
+        <option value="">— seleziona —</option>
+        <option>Mai</option>
+        <option>Raramente</option>
+        <option>1–3 volte/settimana</option>
+        <option>Quotidiano</option>
+      </select></div>
+    <div class="nf"><label>Note idratazione</label>
+      <input type="text" id="v-idrat-note" placeholder="Es. Scarsa idratazione, polidipsia..."></div>
+  </div>
+</div>
+
+<div class="ns">
+  <h3>🍴 Abitudini e Comportamento Alimentare</h3>
+  <div class="fgrid c3">
+    <div class="nf"><label>Numero di pasti/spuntini al giorno</label>
+      <select id="v-n-pasti">
+        <option value="">— seleziona —</option>
+        <option>1–2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6 o più</option>
+      </select></div>
+    <div class="nf"><label>Dove consuma i pasti</label>
+      <select id="v-luogo-pasti">
+        <option value="">— seleziona —</option>
+        <option>Prevalentemente a casa</option>
+        <option>Mensa aziendale/scolastica</option>
+        <option>Ristorante / bar</option>
+        <option>Misto</option>
+      </select></div>
+    <div class="nf"><label>Chi prepara i pasti</label>
+      <select id="v-chi-cucina">
+        <option value="">— seleziona —</option>
+        <option>Il paziente stesso</option>
+        <option>Familiare</option>
+        <option>Acquista pasti pronti</option>
+        <option>Misto</option>
+      </select></div>
+    <div class="nf"><label>Salta i pasti</label>
+      <select id="v-saltapasti">
+        <option value="">— seleziona —</option>
+        <option>Mai</option>
+        <option>Raramente</option>
+        <option>A volte</option>
+        <option>Spesso (≥ 3 v/sett)</option>
+      </select></div>
+    <div class="nf"><label>Velocità consumo pasti</label>
+      <select id="v-velocita-pasto">
+        <option value="">— seleziona —</option>
+        <option>Lento (&gt; 20 min)</option>
+        <option>Normale (15–20 min)</option>
+        <option>Rapido (&lt; 15 min)</option>
+      </select></div>
+    <div class="nf"><label>Fame emotiva / alimentazione compulsiva</label>
+      <select id="v-fame-emotiva">
+        <option value="">— seleziona —</option>
+        <option>No</option>
+        <option>A volte</option>
+        <option>Sì, frequente</option>
+      </select></div>
+    <div class="nf full"><label>Diete precedentemente seguite</label>
+      <textarea id="v-diete-prec" rows="2" placeholder="Es. Dieta ipocalorica, VLCD, digiuno intermittente, durata, risultati..."></textarea></div>
+    <div class="nf full"><label>Storia ponderale (peso minimo, massimo, abituale)</label>
+      <textarea id="v-storia-peso" rows="2" placeholder="Es. Peso a 20 anni 65 kg, massimo 90 kg, minimo 58 kg..."></textarea></div>
+  </div>
+</div>
+
+<div class="ns">
+  <h3>⚠️ Allergie, Intolleranze, Farmaci e Attività Fisica</h3>
+  <div class="fgrid">
     <div class="nf full"><label>Intolleranze, allergie, preferenze etiche/religiose</label>
       <textarea id="v-intoll" rows="2" placeholder="Celiachia, intolleranza lattosio, vegano, halal..."></textarea></div>
     <div class="nf full"><label>Attività fisica</label>
@@ -1012,6 +1106,11 @@ function raccogliDati() {
       colazione:g('v-colazione'),spunt1:g('v-spunt1'),pranzo:g('v-pranzo'),
       spunt2:g('v-spunt2'),cena:g('v-cena'),fuori:g('v-fuori'),
       kcal_att:g('v-kcal-att'),appetito:g('v-appetito'),
+      acqua:g('v-acqua'),alcol_freq:g('v-alcol-freq'),alcol_tipo:g('v-alcol-tipo'),
+      caffe:g('v-caffe'),bev_zucc:g('v-bev-zucc'),idrat_note:g('v-idrat-note'),
+      n_pasti:g('v-n-pasti'),luogo_pasti:g('v-luogo-pasti'),chi_cucina:g('v-chi-cucina'),
+      saltapasti:g('v-saltapasti'),velocita_pasto:g('v-velocita-pasto'),
+      fame_emotiva:g('v-fame-emotiva'),diete_prec:g('v-diete-prec'),storia_peso:g('v-storia-peso'),
       intoll:g('v-intoll'),attiv:g('v-attiv'),farmaci:g('v-farmaci'),
       formula:g('v-formula'),mb:g('v-mb'),laf:g('v-laf'),tdee:g('v-tdee'),
       prot:g('v-prot'),kcal_tgt:g('v-kcal-tgt'),note_fabb:g('v-note-fabb')

@@ -29,7 +29,7 @@
 .val-section-hdr{background:linear-gradient(135deg,#0F766E,#0EA5E9);padding:14px 18px;margin:-18px -18px 18px;border-radius:calc(var(--r) - 1px) calc(var(--r) - 1px) 0 0;display:flex;align-items:center;gap:10px}
 .val-section-hdr-text{font-size:13.5px;font-weight:700;color:white;letter-spacing:.2px}
 .val-section-hdr-sub{font-size:11px;color:rgba(255,255,255,.82);margin-top:2px}
-@media(max-width:900px){#val-grid{grid-template-columns:1fr!important}}
+@media(max-width:900px){#risultati-col .result-grid-2col{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
@@ -82,10 +82,9 @@
   </div>
 </div>
 <main id="main"><div class="page-content">
-<div style="display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start" id="val-grid">
+<div id="val-grid">
 
-<!-- SINISTRA INPUT -->
-<div>
+<!-- INPUT -->
 <div class="val-section" style="border-top:3px solid #0F766E">
   <h3>👤 Dati Anagrafici</h3>
   <div class="fgrid">
@@ -116,11 +115,19 @@
 
 <div class="val-section" style="border-top:3px solid #14B8A6">
   <h3>📐 Circonferenze</h3>
-  <div class="fgrid">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
     <div class="fg"><label>Collo (cm)</label><input type="number" id="v-collo" step="0.1" placeholder="es. 37"></div>
-    <div class="fg"><label>Coscia (cm)</label><input type="number" id="v-coscia" step="0.1" placeholder="es. 55"></div>
-    <div class="fg"><label>Polpaccio (cm)</label><input type="number" id="v-polpaccio" step="0.1" placeholder="es. 35"></div>
+    <div class="fg"><label>Spalla (cm)</label><input type="number" id="v-spalla" step="0.1" placeholder="es. 105"></div>
+    <div class="fg"><label>Torace (cm)</label><input type="number" id="v-torace" step="0.1" placeholder="es. 90"></div>
+    <div class="fg"><label>Braccio rilassato (cm)</label><input type="number" id="v-braccio-r" step="0.1" placeholder="es. 30"></div>
+    <div class="fg"><label>Braccio contratto (cm)</label><input type="number" id="v-braccio-c" step="0.1" placeholder="es. 32"></div>
+    <div class="fg"><label>Avambraccio (cm)</label><input type="number" id="v-avambraccio" step="0.1" placeholder="es. 25"></div>
     <div class="fg"><label>Polso (cm)</label><input type="number" id="v-polso" step="0.1" placeholder="es. 16"></div>
+    <div class="fg"><label>Ombelico (cm)</label><input type="number" id="v-ombelico" step="0.1" placeholder="es. 85"></div>
+    <div class="fg"><label>Addome (cm)</label><input type="number" id="v-addome" step="0.1" placeholder="es. 90"></div>
+    <div class="fg"><label>Coscia dx (cm)</label><input type="number" id="v-coscia" step="0.1" placeholder="es. 55"></div>
+    <div class="fg"><label>Polpaccio dx (cm)</label><input type="number" id="v-polpaccio" step="0.1" placeholder="es. 35"></div>
+    <div class="fg"><label>Caviglia (cm)</label><input type="number" id="v-caviglia" step="0.1" placeholder="es. 22"></div>
   </div>
 </div>
 
@@ -188,7 +195,7 @@
 
 <div class="val-section" style="border-top:3px solid #0EA5E9">
   <h3>🍽️ Indagine Alimentare</h3>
-  <div class="fgrid">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
     <div class="fg"><label>N° pasti/die</label>
       <select id="v-npasti">
         <option value="">— seleziona —</option>
@@ -212,14 +219,48 @@
         <option>Mai</option><option>Occasionale</option><option>1–3 volte/settimana</option><option>Quotidiano</option>
       </select></div>
   </div>
-  <div class="fgrid" style="margin-top:8px">
+  <div class="fgrid" style="margin-top:10px">
     <div class="fg"><label>Alimenti più graditi</label>
       <textarea id="v-alim-graditi" rows="2" placeholder="Es. Pasta, pizza, dolci..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
     <div class="fg"><label>Alimenti meno graditi</label>
       <textarea id="v-alim-non-graditi" rows="2" placeholder="Es. Verdure crude, pesce..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
   </div>
-  <div class="fg" style="margin-top:8px"><label>Recall 24h</label>
-    <textarea id="v-recall" rows="3" placeholder="Es. Colazione: latte+biscotti. Pranzo: pasta, pollo, insalata. Cena: minestra, formaggio, pane..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+  <!-- Recall 24h per pasti -->
+  <div style="margin-top:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:10px;padding-bottom:7px;border-bottom:1.5px solid var(--border)">📋 Diario Alimentare — Recall 24h per pasto</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:8px">🌅 Colazione</div>
+        <div class="fg"><label>Alimenti</label><textarea id="v-pasto-colazione" rows="2" placeholder="Es. Latte intero 200 mL, biscotti secchi 30 g..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-top:6px"><label>Note (orario, luogo...)</label><input type="text" id="v-note-colazione" placeholder="Es. Ore 7:30, in piedi, frettolosa" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
+      </div>
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:#0284C7;margin-bottom:8px">🍎 Spuntino mattina</div>
+        <div class="fg"><label>Alimenti</label><textarea id="v-pasto-spuntino-m" rows="2" placeholder="Es. Yogurt 125 g, frutta..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-top:6px"><label>Note</label><input type="text" id="v-note-spuntino-m" placeholder="Es. Ore 10:30, in ufficio" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
+      </div>
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:#0F766E;margin-bottom:8px">🍝 Pranzo</div>
+        <div class="fg"><label>Alimenti</label><textarea id="v-pasto-pranzo" rows="2" placeholder="Es. Pasta al pomodoro 80 g, insalata mista..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-top:6px"><label>Note</label><input type="text" id="v-note-pranzo" placeholder="Es. Ore 13:00, mensa aziendale" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
+      </div>
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:#7C3AED;margin-bottom:8px">🍊 Merenda</div>
+        <div class="fg"><label>Alimenti</label><textarea id="v-pasto-merenda" rows="2" placeholder="Es. Frutta, crackers, succo..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-top:6px"><label>Note</label><input type="text" id="v-note-merenda" placeholder="Es. Ore 16:30, a casa" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
+      </div>
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:8px">🌙 Cena</div>
+        <div class="fg"><label>Alimenti</label><textarea id="v-pasto-cena" rows="2" placeholder="Es. Minestrone, formaggio, pane 50 g..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-top:6px"><label>Note</label><input type="text" id="v-note-cena" placeholder="Es. Ore 20:00, in famiglia" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
+      </div>
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:8px">🌛 Spuntino sera</div>
+        <div class="fg"><label>Alimenti</label><textarea id="v-pasto-spuntino-s" rows="2" placeholder="Es. Tisana, frutta secca, latte..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-top:6px"><label>Note</label><input type="text" id="v-note-spuntino-s" placeholder="Es. Ore 22:30, davanti alla tv" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="val-section" style="border-top:3px solid #06B6D4">
@@ -265,7 +306,7 @@
 
 <div class="val-section" style="border-top:3px solid #DC2626">
   <h3>🔬 Esami del Sangue</h3>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 12px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 12px">
     <div class="fg"><label>Glicemia (mg/dL)</label><input type="number" id="v-es-glicemia" step="0.1" placeholder="es. 95"></div>
     <div class="fg"><label>Insulina (mU/L)</label><input type="number" id="v-es-insulina" step="0.1" placeholder="es. 8"></div>
     <div class="fg"><label>HbA1c (%)</label><input type="number" id="v-es-hba1c" step="0.1" placeholder="es. 5.4"></div>
@@ -308,9 +349,8 @@
 </div>
 
 <button class="btn btn-primary" style="width:100%;padding:13px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#0F766E,#0EA5E9);border:none;font-weight:700;letter-spacing:.3px" onclick="calcolaFabbisogno()">📊 Calcola Fabbisogno</button>
-</div>
 
-<!-- DESTRA RISULTATI -->
+<!-- RISULTATI -->
 <div id="risultati-col">
   <div style="text-align:center;padding:48px 20px;color:var(--slate-l)">
     <div style="font-size:44px;margin-bottom:14px">📊</div>
@@ -661,6 +701,9 @@ function calcolaFabbisogno(){
   const whtr=vita?vita/alt:null;
   const col=document.getElementById('risultati-col');
   col.innerHTML=`
+  <div style="border-bottom:2px solid var(--border);margin-bottom:16px;padding-bottom:4px"><div style="font-size:13px;font-weight:700;color:var(--teal-d);letter-spacing:.2px">📊 Risultati Valutazione</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start" class="result-grid-2col">
+  <div>
   <div class="val-section"><h3>📐 Indici Antropometrici</h3>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
     <div class="result-pill"><div><div class="rp-label">BMI</div><div class="rp-badge" style="color:${bmiCol}">${bmiCat}</div></div><div class="rp-val" style="color:${bmiCol}">${Math.round(bmi*10)/10}</div></div>
@@ -676,7 +719,9 @@ function calcolaFabbisogno(){
   ${formule.map((f,i)=>`<div class="formula-row${i===1?' best':''}"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div class="fv">${f.val} kcal</div></div>`).join('')}
   <div style="background:var(--teal);color:white;padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:8px"><b>Media formule</b><span style="font-size:22px;font-weight:700">${mbM} kcal</span></div>
   </div>
+  </div>
 
+  <div>
   <div class="val-section"><h3>⚡ Fabbisogno Totale (TDEE)</h3>
   <div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden;margin-bottom:14px">
     <button id="met-btn-formula" onclick="setMetodoTDEE('formula')" style="flex:1;padding:8px 6px;border:none;background:var(--teal);color:white;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700">⚗️ Formule MB×LAF</button>
@@ -711,8 +756,12 @@ function calcolaFabbisogno(){
   <div id="macro-dist-body"></div></div>
 
   <div class="val-section"><h3>🥩 Fabbisogno Proteico</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
   ${[1.0,1.2,1.5,2.0].map(v=>`<div class="result-pill"><div><div class="rp-label">${v} g/kg/die</div></div><div class="rp-val">${Math.round(pesoF*v*10)/10} g</div></div>`).join('')}
+  </div>
   <div style="font-size:11px;color:var(--slate-l);margin-top:6px">Peso: ${Math.round(pesoF*10)/10} kg${bmi>=30?' (aggiustato)':''}</div>
+  </div>
+  </div>
   </div>
 
   <div class="val-section"><h3>🏥 Raccomandazioni per le Patologie</h3><div id="pat-lg-notes"></div></div>`;
@@ -827,9 +876,17 @@ async function doSalva(cartellaId){
     tdee_calcolato:tdee||null,
     dati_extra:JSON.stringify({
       collo:document.getElementById('v-collo').value||null,
+      spalla:document.getElementById('v-spalla').value||null,
+      torace:document.getElementById('v-torace').value||null,
+      braccio_r:document.getElementById('v-braccio-r').value||null,
+      braccio_c:document.getElementById('v-braccio-c').value||null,
+      avambraccio:document.getElementById('v-avambraccio').value||null,
       coscia:document.getElementById('v-coscia').value||null,
       polpaccio:document.getElementById('v-polpaccio').value||null,
       polso:document.getElementById('v-polso').value||null,
+      ombelico:document.getElementById('v-ombelico').value||null,
+      addome:document.getElementById('v-addome').value||null,
+      caviglia:document.getElementById('v-caviglia').value||null,
       pl_tri:document.getElementById('v-pl-tri').value||null,
       pl_bi:document.getElementById('v-pl-bi').value||null,
       pl_ss:document.getElementById('v-pl-ss').value||null,
@@ -859,7 +916,18 @@ async function doSalva(cartellaId){
       alcol:document.getElementById('v-alcol').value||null,
       alim_graditi:document.getElementById('v-alim-graditi').value||null,
       alim_non_graditi:document.getElementById('v-alim-non-graditi').value||null,
-      recall:document.getElementById('v-recall').value||null,
+      pasto_colazione:document.getElementById('v-pasto-colazione').value||null,
+      note_colazione:document.getElementById('v-note-colazione').value||null,
+      pasto_spuntino_m:document.getElementById('v-pasto-spuntino-m').value||null,
+      note_spuntino_m:document.getElementById('v-note-spuntino-m').value||null,
+      pasto_pranzo:document.getElementById('v-pasto-pranzo').value||null,
+      note_pranzo:document.getElementById('v-note-pranzo').value||null,
+      pasto_merenda:document.getElementById('v-pasto-merenda').value||null,
+      note_merenda:document.getElementById('v-note-merenda').value||null,
+      pasto_cena:document.getElementById('v-pasto-cena').value||null,
+      note_cena:document.getElementById('v-note-cena').value||null,
+      pasto_spuntino_s:document.getElementById('v-pasto-spuntino-s').value||null,
+      note_spuntino_s:document.getElementById('v-note-spuntino-s').value||null,
       ffq_cereali:document.getElementById('v-ffq-cereali').value||null,
       ffq_legumi:document.getElementById('v-ffq-legumi').value||null,
       ffq_verdure:document.getElementById('v-ffq-verdure').value||null,
@@ -898,6 +966,13 @@ async function doSalva(cartellaId){
       es_pcr:document.getElementById('v-es-pcr').value||null,
       es_data:document.getElementById('v-es-data').value||null,
       es_note:document.getElementById('v-es-note').value||null,
+      // Fabbisogni scelti (calcolati)
+      metodo_tdee:metodoTDEE||null,
+      laf:document.getElementById('val-laf')?.value||null,
+      fc:document.getElementById('val-fc')?.value||null,
+      kcalkg_val:document.getElementById('kcalkg-input')?.value||null,
+      kcalkg_peso_tipo:document.getElementById('kcalkg-peso-tipo')?.value||null,
+      mb_globale:mbGlobale||null,
     }),
     saved_at:new Date().toISOString()
   };
@@ -1023,12 +1098,15 @@ function calcolaPliche() {
 }
 function resetVal(){
   ['v-nome','v-cognome','v-eta','v-peso','v-altezza','v-pi','v-pa','v-vita','v-fianchi','v-braccio','v-plica','v-mg','v-mm','v-note',
-   'v-collo','v-coscia','v-polpaccio','v-polso',
+   'v-collo','v-spalla','v-torace','v-braccio-r','v-braccio-c','v-avambraccio','v-coscia','v-polpaccio','v-polso','v-ombelico','v-addome','v-caviglia',
    'v-pl-tri','v-pl-bi','v-pl-ss','v-pl-si','v-pl-add','v-pl-cos','v-pl-pet','v-pl-asc',
    'v-peso-min','v-peso-max','v-variaz-peso','v-n-cicli',
    'v-sigarette','v-sonno-ore','v-lavoro',
    'v-farmaci','v-integr','v-interaz',
-   'v-allergie','v-acqua','v-alim-graditi','v-alim-non-graditi','v-recall',
+   'v-allergie','v-acqua','v-alim-graditi','v-alim-non-graditi',
+   'v-pasto-colazione','v-note-colazione','v-pasto-spuntino-m','v-note-spuntino-m',
+   'v-pasto-pranzo','v-note-pranzo','v-pasto-merenda','v-note-merenda',
+   'v-pasto-cena','v-note-cena','v-pasto-spuntino-s','v-note-spuntino-s',
    'v-diagn','v-anno-diag','v-comorbid','v-chirurgia',
    'v-es-glicemia','v-es-insulina','v-es-hba1c','v-es-col-tot','v-es-ldl','v-es-hdl',
    'v-es-trig','v-es-creat','v-es-azot','v-es-uric','v-es-got','v-es-gpt','v-es-ggt',
@@ -1083,9 +1161,40 @@ document.addEventListener('DOMContentLoaded',async()=>{
           setVal('v-note',data.note);
           try{const pat=JSON.parse(data.patologie||'[]');selectedPat=new Set(pat);renderPatChips();}catch(e){}
           if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;}catch(e){}}
-          if(data.dati_extra){try{const ex=typeof data.dati_extra==='string'?JSON.parse(data.dati_extra):data.dati_extra;const sv2=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};sv2('v-collo',ex.collo);sv2('v-coscia',ex.coscia);sv2('v-polpaccio',ex.polpaccio);sv2('v-polso',ex.polso);sv2('v-pl-tri',ex.pl_tri);sv2('v-pl-bi',ex.pl_bi);sv2('v-pl-ss',ex.pl_ss);sv2('v-pl-si',ex.pl_si);sv2('v-pl-add',ex.pl_add);sv2('v-pl-cos',ex.pl_cos);sv2('v-pl-pet',ex.pl_pet);sv2('v-pl-asc',ex.pl_asc);sv2('v-peso-min',ex.peso_min);sv2('v-peso-max',ex.peso_max);sv2('v-variaz-peso',ex.variaz_peso);sv2('v-n-cicli',ex.n_cicli);sv2('v-fumo',ex.fumo);if(ex.fumo==='Fumatore attivo'){const sw=document.getElementById('v-sigarette-wrap');if(sw)sw.style.display='block';}sv2('v-sigarette',ex.sigarette);sv2('v-sonno-q',ex.sonno_q);sv2('v-sonno-ore',ex.sonno_ore);sv2('v-attfis',ex.attfis);sv2('v-lavoro',ex.lavoro);sv2('v-farmaci',ex.farmaci);sv2('v-integr',ex.integr);sv2('v-interaz',ex.interaz);sv2('v-npasti',ex.npasti);sv2('v-luogo',ex.luogo);sv2('v-appetito',ex.appetito);sv2('v-allergie',ex.allergie);sv2('v-acqua',ex.acqua);sv2('v-alcol',ex.alcol);sv2('v-alim-graditi',ex.alim_graditi);sv2('v-alim-non-graditi',ex.alim_non_graditi);sv2('v-recall',ex.recall);['cereali','legumi','verdure','frutta','carne_r','carne_b','pesce','uova','latte','formaggi','dolci','junk','frutta_s'].forEach(k=>{sv2('v-ffq-'+k,ex['ffq_'+k]);});sv2('v-diagn',ex.diagn);sv2('v-anno-diag',ex.anno_diag);sv2('v-comorbid',ex.comorbid);sv2('v-chirurgia',ex.chirurgia);['glicemia','insulina','hba1c','col_tot','ldl','hdl','trig','creat','azot','uric','got','gpt','ggt','hb','ferr','vitd','vitb12','tsh','pcr','data','note'].forEach(k=>{sv2('v-es-'+k,ex['es_'+k]);});if(ex.pl_tri||ex.pl_bi||ex.pl_ss||ex.pl_si)calcolaPliche();}catch(e){}}
-          if(data.eta&&data.peso&&data.altezza)calcolaFabbisogno();
-          if(data.tdee_calcolato&&!isNaN(data.tdee_calcolato)){tdee=data.tdee_calcolato;renderMacroDist();}
+          if(data.dati_extra){try{const ex=typeof data.dati_extra==='string'?JSON.parse(data.dati_extra):data.dati_extra;const sv2=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};
+            sv2('v-collo',ex.collo);sv2('v-spalla',ex.spalla);sv2('v-torace',ex.torace);
+            sv2('v-braccio-r',ex.braccio_r);sv2('v-braccio-c',ex.braccio_c);sv2('v-avambraccio',ex.avambraccio);
+            sv2('v-coscia',ex.coscia);sv2('v-polpaccio',ex.polpaccio);sv2('v-polso',ex.polso);
+            sv2('v-ombelico',ex.ombelico);sv2('v-addome',ex.addome);sv2('v-caviglia',ex.caviglia);
+            sv2('v-pl-tri',ex.pl_tri);sv2('v-pl-bi',ex.pl_bi);sv2('v-pl-ss',ex.pl_ss);sv2('v-pl-si',ex.pl_si);sv2('v-pl-add',ex.pl_add);sv2('v-pl-cos',ex.pl_cos);sv2('v-pl-pet',ex.pl_pet);sv2('v-pl-asc',ex.pl_asc);
+            sv2('v-peso-min',ex.peso_min);sv2('v-peso-max',ex.peso_max);sv2('v-variaz-peso',ex.variaz_peso);sv2('v-n-cicli',ex.n_cicli);
+            sv2('v-fumo',ex.fumo);if(ex.fumo==='Fumatore attivo'){const sw=document.getElementById('v-sigarette-wrap');if(sw)sw.style.display='block';}sv2('v-sigarette',ex.sigarette);
+            sv2('v-sonno-q',ex.sonno_q);sv2('v-sonno-ore',ex.sonno_ore);sv2('v-attfis',ex.attfis);sv2('v-lavoro',ex.lavoro);
+            sv2('v-farmaci',ex.farmaci);sv2('v-integr',ex.integr);sv2('v-interaz',ex.interaz);
+            sv2('v-npasti',ex.npasti);sv2('v-luogo',ex.luogo);sv2('v-appetito',ex.appetito);sv2('v-allergie',ex.allergie);sv2('v-acqua',ex.acqua);sv2('v-alcol',ex.alcol);
+            sv2('v-alim-graditi',ex.alim_graditi);sv2('v-alim-non-graditi',ex.alim_non_graditi);
+            sv2('v-pasto-colazione',ex.pasto_colazione);sv2('v-note-colazione',ex.note_colazione);
+            sv2('v-pasto-spuntino-m',ex.pasto_spuntino_m);sv2('v-note-spuntino-m',ex.note_spuntino_m);
+            sv2('v-pasto-pranzo',ex.pasto_pranzo);sv2('v-note-pranzo',ex.note_pranzo);
+            sv2('v-pasto-merenda',ex.pasto_merenda);sv2('v-note-merenda',ex.note_merenda);
+            sv2('v-pasto-cena',ex.pasto_cena);sv2('v-note-cena',ex.note_cena);
+            sv2('v-pasto-spuntino-s',ex.pasto_spuntino_s);sv2('v-note-spuntino-s',ex.note_spuntino_s);
+            ['cereali','legumi','verdure','frutta','carne_r','carne_b','pesce','uova','latte','formaggi','dolci','junk','frutta_s'].forEach(k=>{sv2('v-ffq-'+k,ex['ffq_'+k]);});
+            sv2('v-diagn',ex.diagn);sv2('v-anno-diag',ex.anno_diag);sv2('v-comorbid',ex.comorbid);sv2('v-chirurgia',ex.chirurgia);
+            ['glicemia','insulina','hba1c','col_tot','ldl','hdl','trig','creat','azot','uric','got','gpt','ggt','hb','ferr','vitd','vitb12','tsh','pcr','data','note'].forEach(k=>{sv2('v-es-'+k,ex['es_'+k]);});
+            if(ex.pl_tri||ex.pl_bi||ex.pl_ss||ex.pl_si)calcolaPliche();
+            if(data.eta&&data.peso&&data.altezza)calcolaFabbisogno();
+            if(data.tdee_calcolato&&!isNaN(data.tdee_calcolato)){tdee=data.tdee_calcolato;renderMacroDist();}
+            // Restore fabbisogni scelti (LAF, FC, method) after calcolaFabbisogno generates the selectors
+            if(ex.mb_globale)mbGlobale=ex.mb_globale;
+            if(ex.metodo_tdee){metodoTDEE=ex.metodo_tdee;}
+            if(ex.laf){const lafEl=document.getElementById('val-laf');if(lafEl)lafEl.value=ex.laf;}
+            if(ex.fc){const fcEl=document.getElementById('val-fc');if(fcEl)fcEl.value=ex.fc;}
+            if(ex.kcalkg_val){const ki=document.getElementById('kcalkg-input');if(ki)ki.value=ex.kcalkg_val;}
+            if(ex.kcalkg_peso_tipo){const kp=document.getElementById('kcalkg-peso-tipo');if(kp)kp.value=ex.kcalkg_peso_tipo;}
+            if(ex.metodo_tdee==='kcalkg')calcolaKcalKgDie();else if(ex.laf||ex.fc)aggiornaTDEE(mbGlobale);
+            if(ex.metodo_tdee){setMetodoTDEE(ex.metodo_tdee);}
+          }catch(e){}}
           toast('📂 Scheda caricata per modifica!','ok');
         }
       } else if(preCartella){

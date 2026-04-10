@@ -114,6 +114,183 @@
   </div>
 </div>
 
+<div class="val-section" style="border-top:3px solid #14B8A6">
+  <h3>📐 Circonferenze</h3>
+  <div class="fgrid">
+    <div class="fg"><label>Collo (cm)</label><input type="number" id="v-collo" step="0.1" placeholder="es. 37"></div>
+    <div class="fg"><label>Coscia (cm)</label><input type="number" id="v-coscia" step="0.1" placeholder="es. 55"></div>
+    <div class="fg"><label>Polpaccio (cm)</label><input type="number" id="v-polpaccio" step="0.1" placeholder="es. 35"></div>
+    <div class="fg"><label>Polso (cm)</label><input type="number" id="v-polso" step="0.1" placeholder="es. 16"></div>
+  </div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #6366F1">
+  <h3>📌 Pliche Cutanee</h3>
+  <div class="fgrid">
+    <div class="fg"><label>Tricipite (mm)</label><input type="number" id="v-pl-tri" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+    <div class="fg"><label>Bicipite (mm)</label><input type="number" id="v-pl-bi" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+    <div class="fg"><label>Sottoscapolare (mm)</label><input type="number" id="v-pl-ss" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+    <div class="fg"><label>Sovrailiaca (mm)</label><input type="number" id="v-pl-si" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+    <div class="fg"><label>Addominale (mm)</label><input type="number" id="v-pl-add" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+    <div class="fg"><label>Coscia (mm)</label><input type="number" id="v-pl-cos" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+    <div class="fg"><label>Pettorale (mm)</label><input type="number" id="v-pl-pet" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+    <div class="fg"><label>Ascellare media (mm)</label><input type="number" id="v-pl-asc" step="0.1" placeholder="mm" oninput="calcolaPliche()"></div>
+  </div>
+  <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%" onclick="calcolaPliche()">📊 Calcola Composizione Corporea dalle Pliche</button>
+  <div id="pliche-results" style="margin-top:10px"><p style="font-size:12px;color:var(--slate-l)">Inserisci le misure richieste per calcolare la composizione corporea.</p></div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #EC4899">
+  <h3>⚖️ Storia del Peso</h3>
+  <div class="fgrid">
+    <div class="fg"><label>Peso minimo vita (kg)</label><input type="number" id="v-peso-min" step="0.1" placeholder="es. 58"></div>
+    <div class="fg"><label>Peso massimo vita (kg)</label><input type="number" id="v-peso-max" step="0.1" placeholder="es. 95"></div>
+    <div class="fg"><label>N° cicli dietetici precedenti</label><input type="number" id="v-n-cicli" min="0" placeholder="es. 3"></div>
+  </div>
+  <div class="fg" style="margin-top:8px"><label>Variazioni recenti</label><textarea id="v-variaz-peso" rows="2" placeholder="Es. -5 kg in 3 mesi, +2 kg dopo chirurgia..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #F97316">
+  <h3>🏃 Abitudini di Vita</h3>
+  <div class="fgrid">
+    <div class="fg"><label>Fumo</label>
+      <select id="v-fumo" onchange="document.getElementById('v-sigarette-wrap').style.display=this.value==='Fumatore attivo'?'block':'none'">
+        <option value="">— seleziona —</option>
+        <option>Non fumatore</option><option>Ex fumatore</option><option>Fumatore attivo</option>
+      </select></div>
+    <div class="fg" id="v-sigarette-wrap" style="display:none"><label>Sigarette/die</label><input type="number" id="v-sigarette" min="0" placeholder="es. 10"></div>
+    <div class="fg"><label>Qualità del sonno</label>
+      <select id="v-sonno-q">
+        <option value="">— seleziona —</option>
+        <option>Buona</option><option>Discreta</option><option>Scarsa</option><option>Pessima</option>
+      </select></div>
+    <div class="fg"><label>Ore di sonno/notte</label><input type="number" id="v-sonno-ore" step="0.5" min="1" max="14" placeholder="es. 7"></div>
+    <div class="fg"><label>Attività fisica</label>
+      <select id="v-attfis">
+        <option value="">— seleziona —</option>
+        <option>Sedentario</option><option>Leggera (&lt;2h/sett)</option><option>Moderata (2–4h/sett)</option><option>Intensa (&gt;4h/sett)</option><option>Agonistica</option>
+      </select></div>
+    <div class="fg"><label>Lavoro / stile di vita</label><input type="text" id="v-lavoro" placeholder="Es. Lavoro sedentario, turnista..."></div>
+  </div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #EF4444">
+  <h3>💊 Farmaci e Integratori</h3>
+  <div class="fg"><label>Farmaci in uso (nome · dose · frequenza)</label>
+    <textarea id="v-farmaci" rows="4" placeholder="Es. Metformina 1000 mg × 2/die, Lisinopril 10 mg × 1/die..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+  <div class="fgrid" style="margin-top:8px">
+    <div class="fg"><label>Integratori in uso</label>
+      <textarea id="v-integr" rows="3" placeholder="Es. Vitamina D 1000 UI/die, Omega-3..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+    <div class="fg"><label>Interazioni farmaco-nutrizione</label>
+      <textarea id="v-interaz" rows="2" placeholder="Es. Warfarin → limitare vit. K..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+  </div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #0EA5E9">
+  <h3>🍽️ Indagine Alimentare</h3>
+  <div class="fgrid">
+    <div class="fg"><label>N° pasti/die</label>
+      <select id="v-npasti">
+        <option value="">— seleziona —</option>
+        <option>1–2</option><option>3</option><option>4</option><option>5</option><option>6 o più</option>
+      </select></div>
+    <div class="fg"><label>Dove consuma i pasti</label>
+      <select id="v-luogo">
+        <option value="">— seleziona —</option>
+        <option>Prevalentemente a casa</option><option>Mensa</option><option>Ristorante/bar</option><option>Misto</option>
+      </select></div>
+    <div class="fg"><label>Appetito</label>
+      <select id="v-appetito">
+        <option value="">— seleziona —</option>
+        <option>Normale</option><option>Ridotto</option><option>Aumentato</option><option>Molto ridotto/anoressia</option>
+      </select></div>
+    <div class="fg"><label>Allergie / intolleranze</label><input type="text" id="v-allergie" placeholder="Es. lattosio, glutine..."></div>
+    <div class="fg"><label>Acqua (mL/die)</label><input type="text" id="v-acqua" placeholder="Es. 1500 mL"></div>
+    <div class="fg"><label>Consumo di alcol</label>
+      <select id="v-alcol">
+        <option value="">— seleziona —</option>
+        <option>Mai</option><option>Occasionale</option><option>1–3 volte/settimana</option><option>Quotidiano</option>
+      </select></div>
+  </div>
+  <div class="fgrid" style="margin-top:8px">
+    <div class="fg"><label>Alimenti più graditi</label>
+      <textarea id="v-alim-graditi" rows="2" placeholder="Es. Pasta, pizza, dolci..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+    <div class="fg"><label>Alimenti meno graditi</label>
+      <textarea id="v-alim-non-graditi" rows="2" placeholder="Es. Verdure crude, pesce..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+  </div>
+  <div class="fg" style="margin-top:8px"><label>Recall 24h</label>
+    <textarea id="v-recall" rows="3" placeholder="Es. Colazione: latte+biscotti. Pranzo: pasta, pollo, insalata. Cena: minestra, formaggio, pane..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #06B6D4">
+  <h3>📊 Frequenze di Consumo (FFQ)</h3>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      <thead><tr style="background:#F1F5F9">
+        <th style="text-align:left;padding:7px 10px;font-weight:700;color:var(--slate);border-bottom:2px solid var(--border)">Gruppo alimentare</th>
+        <th style="padding:7px 10px;font-weight:700;color:var(--slate);border-bottom:2px solid var(--border);min-width:160px">Frequenza</th>
+      </tr></thead>
+      <tbody>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🌾 Cereali (pane, pasta, riso, patate)</td><td style="padding:4px 10px"><select id="v-ffq-cereali" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🫘 Legumi (fagioli, lenticchie, ceci)</td><td style="padding:4px 10px"><select id="v-ffq-legumi" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥦 Verdure e ortaggi</td><td style="padding:4px 10px"><select id="v-ffq-verdure" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🍎 Frutta fresca</td><td style="padding:4px 10px"><select id="v-ffq-frutta" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥩 Carne rossa (manzo, maiale, agnello)</td><td style="padding:4px 10px"><select id="v-ffq-carne_r" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🐔 Carne bianca (pollo, tacchino)</td><td style="padding:4px 10px"><select id="v-ffq-carne_b" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🐟 Pesce e frutti di mare</td><td style="padding:4px 10px"><select id="v-ffq-pesce" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥚 Uova</td><td style="padding:4px 10px"><select id="v-ffq-uova" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥛 Latte, yogurt</td><td style="padding:4px 10px"><select id="v-ffq-latte" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🧀 Formaggi e latticini</td><td style="padding:4px 10px"><select id="v-ffq-formaggi" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🍬 Dolci, snack, merendine</td><td style="padding:4px 10px"><select id="v-ffq-dolci" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🍔 Fast food, prodotti ultraprocessati</td><td style="padding:4px 10px"><select id="v-ffq-junk" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥜 Frutta secca e semi oleosi</td><td style="padding:4px 10px"><select id="v-ffq-frutta_s" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #8B5CF6">
+  <h3>🏥 Patologie e Interventi Chirurgici</h3>
+  <div class="fgrid" style="margin-bottom:12px">
+    <div class="fg"><label>Diagnosi principale / Motivo consulenza</label>
+      <input type="text" id="v-diagn" placeholder="Es. IRC stadio 3, Diabete tipo 2, Obesità..."></div>
+    <div class="fg"><label>Anno diagnosi</label>
+      <input type="number" id="v-anno-diag" placeholder="es. 2018" min="1940" max="2099"></div>
+  </div>
+  <div class="fg"><label>Patologie associate / Comorbidità</label>
+    <textarea id="v-comorbid" rows="3" placeholder="Es. Ipertensione arteriosa, dislipidemia, ipotiroidismo..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+  <div class="fg" style="margin-top:8px"><label>Interventi chirurgici / Procedure rilevanti</label>
+    <textarea id="v-chirurgia" rows="3" placeholder="Es. Bypass gastrico 2020, colecistectomia, dialisi..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+</div>
+
+<div class="val-section" style="border-top:3px solid #DC2626">
+  <h3>🔬 Esami del Sangue</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 12px">
+    <div class="fg"><label>Glicemia (mg/dL)</label><input type="number" id="v-es-glicemia" step="0.1" placeholder="es. 95"></div>
+    <div class="fg"><label>Insulina (mU/L)</label><input type="number" id="v-es-insulina" step="0.1" placeholder="es. 8"></div>
+    <div class="fg"><label>HbA1c (%)</label><input type="number" id="v-es-hba1c" step="0.1" placeholder="es. 5.4"></div>
+    <div class="fg"><label>Colesterolo tot. (mg/dL)</label><input type="number" id="v-es-col-tot" step="0.1" placeholder="es. 180"></div>
+    <div class="fg"><label>LDL (mg/dL)</label><input type="number" id="v-es-ldl" step="0.1" placeholder="es. 110"></div>
+    <div class="fg"><label>HDL (mg/dL)</label><input type="number" id="v-es-hdl" step="0.1" placeholder="es. 55"></div>
+    <div class="fg"><label>Trigliceridi (mg/dL)</label><input type="number" id="v-es-trig" step="0.1" placeholder="es. 120"></div>
+    <div class="fg"><label>Creatinina (mg/dL)</label><input type="number" id="v-es-creat" step="0.1" placeholder="es. 0.9"></div>
+    <div class="fg"><label>Azotemia (mg/dL)</label><input type="number" id="v-es-azot" step="0.1" placeholder="es. 35"></div>
+    <div class="fg"><label>Uricemia (mg/dL)</label><input type="number" id="v-es-uric" step="0.1" placeholder="es. 5.5"></div>
+    <div class="fg"><label>GOT/AST (U/L)</label><input type="number" id="v-es-got" step="0.1" placeholder="es. 25"></div>
+    <div class="fg"><label>GPT/ALT (U/L)</label><input type="number" id="v-es-gpt" step="0.1" placeholder="es. 28"></div>
+    <div class="fg"><label>GGT (U/L)</label><input type="number" id="v-es-ggt" step="0.1" placeholder="es. 30"></div>
+    <div class="fg"><label>Emoglobina (g/dL)</label><input type="number" id="v-es-hb" step="0.1" placeholder="es. 13.5"></div>
+    <div class="fg"><label>Ferritina (ng/mL)</label><input type="number" id="v-es-ferr" step="0.1" placeholder="es. 70"></div>
+    <div class="fg"><label>Vitamina D (ng/mL)</label><input type="number" id="v-es-vitd" step="0.1" placeholder="es. 30"></div>
+    <div class="fg"><label>Vitamina B12 (pg/mL)</label><input type="number" id="v-es-vitb12" step="0.1" placeholder="es. 350"></div>
+    <div class="fg"><label>TSH (mU/L)</label><input type="number" id="v-es-tsh" step="0.01" placeholder="es. 2.1"></div>
+    <div class="fg"><label>PCR (mg/L)</label><input type="number" id="v-es-pcr" step="0.1" placeholder="es. 1.5"></div>
+    <div class="fg"><label>Data esami</label><input type="date" id="v-es-data"></div>
+  </div>
+  <div class="fg" style="margin-top:8px"><label>Note esami</label>
+    <textarea id="v-es-note" rows="2" placeholder="Es. In attesa di referto, valori su terapia..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+</div>
+
 <div class="val-section" style="border-top:3px solid #8B5CF6">
   <h3>🏥 Patologie (multi-selezione)</h3>
   <input type="text" id="pat-search" placeholder="🔍 Filtra patologie..." 
@@ -596,6 +773,7 @@ create table if not exists schede_valutazione (
   massa_grassa_pct numeric, massa_magra numeric,
   vita numeric, fianchi numeric, braccio numeric, plica numeric,
   patologie text, note text, macro_dist text, tdee_calcolato numeric,
+  dati_extra jsonb,
   saved_at timestamptz default now()
 );
 alter table schede_valutazione enable row level security;
@@ -647,6 +825,80 @@ async function doSalva(cartellaId){
     note:document.getElementById('v-note').value.trim()||null,
     macro_dist:JSON.stringify(macroDist),
     tdee_calcolato:tdee||null,
+    dati_extra:JSON.stringify({
+      collo:document.getElementById('v-collo').value||null,
+      coscia:document.getElementById('v-coscia').value||null,
+      polpaccio:document.getElementById('v-polpaccio').value||null,
+      polso:document.getElementById('v-polso').value||null,
+      pl_tri:document.getElementById('v-pl-tri').value||null,
+      pl_bi:document.getElementById('v-pl-bi').value||null,
+      pl_ss:document.getElementById('v-pl-ss').value||null,
+      pl_si:document.getElementById('v-pl-si').value||null,
+      pl_add:document.getElementById('v-pl-add').value||null,
+      pl_cos:document.getElementById('v-pl-cos').value||null,
+      pl_pet:document.getElementById('v-pl-pet').value||null,
+      pl_asc:document.getElementById('v-pl-asc').value||null,
+      peso_min:document.getElementById('v-peso-min').value||null,
+      peso_max:document.getElementById('v-peso-max').value||null,
+      variaz_peso:document.getElementById('v-variaz-peso').value||null,
+      n_cicli:document.getElementById('v-n-cicli').value||null,
+      fumo:document.getElementById('v-fumo').value||null,
+      sigarette:document.getElementById('v-sigarette').value||null,
+      sonno_q:document.getElementById('v-sonno-q').value||null,
+      sonno_ore:document.getElementById('v-sonno-ore').value||null,
+      attfis:document.getElementById('v-attfis').value||null,
+      lavoro:document.getElementById('v-lavoro').value||null,
+      farmaci:document.getElementById('v-farmaci').value||null,
+      integr:document.getElementById('v-integr').value||null,
+      interaz:document.getElementById('v-interaz').value||null,
+      npasti:document.getElementById('v-npasti').value||null,
+      luogo:document.getElementById('v-luogo').value||null,
+      appetito:document.getElementById('v-appetito').value||null,
+      allergie:document.getElementById('v-allergie').value||null,
+      acqua:document.getElementById('v-acqua').value||null,
+      alcol:document.getElementById('v-alcol').value||null,
+      alim_graditi:document.getElementById('v-alim-graditi').value||null,
+      alim_non_graditi:document.getElementById('v-alim-non-graditi').value||null,
+      recall:document.getElementById('v-recall').value||null,
+      ffq_cereali:document.getElementById('v-ffq-cereali').value||null,
+      ffq_legumi:document.getElementById('v-ffq-legumi').value||null,
+      ffq_verdure:document.getElementById('v-ffq-verdure').value||null,
+      ffq_frutta:document.getElementById('v-ffq-frutta').value||null,
+      ffq_carne_r:document.getElementById('v-ffq-carne_r').value||null,
+      ffq_carne_b:document.getElementById('v-ffq-carne_b').value||null,
+      ffq_pesce:document.getElementById('v-ffq-pesce').value||null,
+      ffq_uova:document.getElementById('v-ffq-uova').value||null,
+      ffq_latte:document.getElementById('v-ffq-latte').value||null,
+      ffq_formaggi:document.getElementById('v-ffq-formaggi').value||null,
+      ffq_dolci:document.getElementById('v-ffq-dolci').value||null,
+      ffq_junk:document.getElementById('v-ffq-junk').value||null,
+      ffq_frutta_s:document.getElementById('v-ffq-frutta_s').value||null,
+      diagn:document.getElementById('v-diagn').value||null,
+      anno_diag:document.getElementById('v-anno-diag').value||null,
+      comorbid:document.getElementById('v-comorbid').value||null,
+      chirurgia:document.getElementById('v-chirurgia').value||null,
+      es_glicemia:document.getElementById('v-es-glicemia').value||null,
+      es_insulina:document.getElementById('v-es-insulina').value||null,
+      es_hba1c:document.getElementById('v-es-hba1c').value||null,
+      es_col_tot:document.getElementById('v-es-col-tot').value||null,
+      es_ldl:document.getElementById('v-es-ldl').value||null,
+      es_hdl:document.getElementById('v-es-hdl').value||null,
+      es_trig:document.getElementById('v-es-trig').value||null,
+      es_creat:document.getElementById('v-es-creat').value||null,
+      es_azot:document.getElementById('v-es-azot').value||null,
+      es_uric:document.getElementById('v-es-uric').value||null,
+      es_got:document.getElementById('v-es-got').value||null,
+      es_gpt:document.getElementById('v-es-gpt').value||null,
+      es_ggt:document.getElementById('v-es-ggt').value||null,
+      es_hb:document.getElementById('v-es-hb').value||null,
+      es_ferr:document.getElementById('v-es-ferr').value||null,
+      es_vitd:document.getElementById('v-es-vitd').value||null,
+      es_vitb12:document.getElementById('v-es-vitb12').value||null,
+      es_tsh:document.getElementById('v-es-tsh').value||null,
+      es_pcr:document.getElementById('v-es-pcr').value||null,
+      es_data:document.getElementById('v-es-data').value||null,
+      es_note:document.getElementById('v-es-note').value||null,
+    }),
     saved_at:new Date().toISOString()
   };
   showLoading(true);
@@ -699,10 +951,97 @@ async function loadCartelleDropdown2(){
   }catch(e){console.warn('loadCartelleDropdown2 error:',e.message);}
 }
 
+function calcolaPliche() {
+  const eta = parseFloat(document.getElementById('v-eta').value);
+  const peso = parseFloat(document.getElementById('v-peso').value);
+  const sesso = document.getElementById('v-sesso').value;
+  const tri = parseFloat(document.getElementById('v-pl-tri').value) || 0;
+  const bi = parseFloat(document.getElementById('v-pl-bi').value) || 0;
+  const ss = parseFloat(document.getElementById('v-pl-ss').value) || 0;
+  const si = parseFloat(document.getElementById('v-pl-si').value) || 0;
+  const add = parseFloat(document.getElementById('v-pl-add').value) || 0;
+  const cos = parseFloat(document.getElementById('v-pl-cos').value) || 0;
+  const pet = parseFloat(document.getElementById('v-pl-pet').value) || 0;
+  const asc = parseFloat(document.getElementById('v-pl-asc').value) || 0;
+  const results = [];
+  if (eta && peso) {
+    if (sesso === 'M' && pet > 0 && add > 0 && cos > 0) {
+      const S3 = pet + add + cos;
+      const BD = 1.10938 - 0.0008267*S3 + 0.0000016*S3*S3 - 0.0002574*eta;
+      const bf = (495/BD) - 450;
+      if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'3-pliche JP (M)',sites:'Petto+Addome+Coscia',bf,fm,lm:peso-fm}); }
+    }
+    if (sesso === 'F' && tri > 0 && si > 0 && cos > 0) {
+      const S3 = tri + si + cos;
+      const BD = 1.0994921 - 0.0009929*S3 + 0.0000023*S3*S3 - 0.0001392*eta;
+      const bf = (495/BD) - 450;
+      if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'3-pliche JP (F)',sites:'Tricipite+Sovrailiaca+Coscia',bf,fm,lm:peso-fm}); }
+    }
+  }
+  if (eta && peso && bi > 0 && tri > 0 && ss > 0 && si > 0) {
+    const S4 = bi + tri + ss + si;
+    const logS4 = Math.log10(S4);
+    let D = 0;
+    if (sesso === 'M') {
+      if (eta <= 19) D = 1.1620 - 0.0630*logS4;
+      else if (eta <= 29) D = 1.1631 - 0.0632*logS4;
+      else if (eta <= 39) D = 1.1422 - 0.0544*logS4;
+      else if (eta <= 49) D = 1.1620 - 0.0700*logS4;
+      else D = 1.1715 - 0.0779*logS4;
+    } else {
+      if (eta <= 19) D = 1.1549 - 0.0678*logS4;
+      else if (eta <= 29) D = 1.1599 - 0.0717*logS4;
+      else if (eta <= 39) D = 1.1423 - 0.0632*logS4;
+      else if (eta <= 49) D = 1.1333 - 0.0612*logS4;
+      else D = 1.1339 - 0.0645*logS4;
+    }
+    if (D > 0) {
+      const bf = (495/D) - 450;
+      if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'4-pliche (Durnin-Womersley)',sites:'Bicipite+Tricipite+Sottoscapolare+Sovrailiaca',bf,fm,lm:peso-fm}); }
+    }
+  }
+  if (eta && peso && pet > 0 && asc > 0 && tri > 0 && ss > 0 && add > 0 && si > 0 && cos > 0) {
+    const S7 = pet + asc + tri + ss + add + si + cos;
+    let BD;
+    if (sesso === 'M') BD = 1.112 - 0.00043499*S7 + 0.00000055*S7*S7 - 0.00028826*eta;
+    else BD = 1.097 - 0.00046971*S7 + 0.00000056*S7*S7 - 0.00012828*eta;
+    const bf = (495/BD) - 450;
+    if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'7-pliche JP',sites:'Tutti 7 siti',bf,fm,lm:peso-fm}); }
+  }
+  const res = document.getElementById('pliche-results');
+  if (!res) return;
+  if (!results.length) {
+    res.innerHTML = '<p style="font-size:12px;color:var(--slate-l)">Inserisci le misure richieste per calcolare la composizione corporea.</p>';
+    return;
+  }
+  res.innerHTML = results.map((r,i) => `<div class="formula-row${i===results.length-1?' best':''}"><div><div class="fn">${r.label}</div><div class="fb">${r.sites}</div></div><div style="text-align:right"><div class="fv" style="font-size:14px">${Math.round(r.bf*10)/10}% BF</div><div style="font-size:11px;color:var(--slate-l)">${Math.round(r.fm*10)/10} kg grasso · ${Math.round(r.lm*10)/10} kg magra</div></div></div>`).join('');
+  const best = results[results.length-1];
+  const mgEl = document.getElementById('v-mg');
+  const mmEl = document.getElementById('v-mm');
+  if (mgEl && !mgEl._userEdited) { mgEl.value = Math.round(best.bf*10)/10; aggiornaCalcoli(); }
+  if (mmEl && !mmEl._userEdited) { mmEl.value = Math.round(best.lm*10)/10; }
+}
 function resetVal(){
-  ['v-nome','v-cognome','v-eta','v-peso','v-altezza','v-pi','v-pa','v-vita','v-fianchi','v-braccio','v-plica','v-mg','v-mm','v-note'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el._userEdited=false;}});
+  ['v-nome','v-cognome','v-eta','v-peso','v-altezza','v-pi','v-pa','v-vita','v-fianchi','v-braccio','v-plica','v-mg','v-mm','v-note',
+   'v-collo','v-coscia','v-polpaccio','v-polso',
+   'v-pl-tri','v-pl-bi','v-pl-ss','v-pl-si','v-pl-add','v-pl-cos','v-pl-pet','v-pl-asc',
+   'v-peso-min','v-peso-max','v-variaz-peso','v-n-cicli',
+   'v-sigarette','v-sonno-ore','v-lavoro',
+   'v-farmaci','v-integr','v-interaz',
+   'v-allergie','v-acqua','v-alim-graditi','v-alim-non-graditi','v-recall',
+   'v-diagn','v-anno-diag','v-comorbid','v-chirurgia',
+   'v-es-glicemia','v-es-insulina','v-es-hba1c','v-es-col-tot','v-es-ldl','v-es-hdl',
+   'v-es-trig','v-es-creat','v-es-azot','v-es-uric','v-es-got','v-es-gpt','v-es-ggt',
+   'v-es-hb','v-es-ferr','v-es-vitd','v-es-vitb12','v-es-tsh','v-es-pcr','v-es-data','v-es-note',
+  ].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el._userEdited=false;}});
   document.getElementById('v-ddn').value='';
   document.getElementById('v-sesso').value='M';
+  ['v-fumo','v-sonno-q','v-attfis','v-npasti','v-luogo','v-appetito','v-alcol',
+   'v-ffq-cereali','v-ffq-legumi','v-ffq-verdure','v-ffq-frutta','v-ffq-carne_r','v-ffq-carne_b',
+   'v-ffq-pesce','v-ffq-uova','v-ffq-latte','v-ffq-formaggi','v-ffq-dolci','v-ffq-junk','v-ffq-frutta_s',
+  ].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const sw=document.getElementById('v-sigarette-wrap');if(sw)sw.style.display='none';
+  const pr=document.getElementById('pliche-results');if(pr)pr.innerHTML='<p style="font-size:12px;color:var(--slate-l)">Inserisci le misure richieste per calcolare la composizione corporea.</p>';
   selectedPat.clear();renderPatChips();
   document.getElementById('risultati-col').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--slate-l)"><div style="font-size:44px;margin-bottom:14px">📊</div><p>Inserisci i dati e clicca Calcola Fabbisogno</p></div>';
   tdee=0;schedaId=null;
@@ -710,7 +1049,7 @@ function resetVal(){
 
 document.addEventListener('DOMContentLoaded',async()=>{
   renderPatChips();
-  ['v-pi','v-pa','v-mm'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el._userEdited=true);});
+  ['v-pi','v-pa','v-mm','v-mg'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el._userEdited=true);});
   const preCartella = sessionStorage.getItem('valCartella');
   const loadSchedaId = sessionStorage.getItem('loadSchedaId');
   try {
@@ -744,6 +1083,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
           setVal('v-note',data.note);
           try{const pat=JSON.parse(data.patologie||'[]');selectedPat=new Set(pat);renderPatChips();}catch(e){}
           if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;}catch(e){}}
+          if(data.dati_extra){try{const ex=typeof data.dati_extra==='string'?JSON.parse(data.dati_extra):data.dati_extra;const sv2=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};sv2('v-collo',ex.collo);sv2('v-coscia',ex.coscia);sv2('v-polpaccio',ex.polpaccio);sv2('v-polso',ex.polso);sv2('v-pl-tri',ex.pl_tri);sv2('v-pl-bi',ex.pl_bi);sv2('v-pl-ss',ex.pl_ss);sv2('v-pl-si',ex.pl_si);sv2('v-pl-add',ex.pl_add);sv2('v-pl-cos',ex.pl_cos);sv2('v-pl-pet',ex.pl_pet);sv2('v-pl-asc',ex.pl_asc);sv2('v-peso-min',ex.peso_min);sv2('v-peso-max',ex.peso_max);sv2('v-variaz-peso',ex.variaz_peso);sv2('v-n-cicli',ex.n_cicli);sv2('v-fumo',ex.fumo);if(ex.fumo==='Fumatore attivo'){const sw=document.getElementById('v-sigarette-wrap');if(sw)sw.style.display='block';}sv2('v-sigarette',ex.sigarette);sv2('v-sonno-q',ex.sonno_q);sv2('v-sonno-ore',ex.sonno_ore);sv2('v-attfis',ex.attfis);sv2('v-lavoro',ex.lavoro);sv2('v-farmaci',ex.farmaci);sv2('v-integr',ex.integr);sv2('v-interaz',ex.interaz);sv2('v-npasti',ex.npasti);sv2('v-luogo',ex.luogo);sv2('v-appetito',ex.appetito);sv2('v-allergie',ex.allergie);sv2('v-acqua',ex.acqua);sv2('v-alcol',ex.alcol);sv2('v-alim-graditi',ex.alim_graditi);sv2('v-alim-non-graditi',ex.alim_non_graditi);sv2('v-recall',ex.recall);['cereali','legumi','verdure','frutta','carne_r','carne_b','pesce','uova','latte','formaggi','dolci','junk','frutta_s'].forEach(k=>{sv2('v-ffq-'+k,ex['ffq_'+k]);});sv2('v-diagn',ex.diagn);sv2('v-anno-diag',ex.anno_diag);sv2('v-comorbid',ex.comorbid);sv2('v-chirurgia',ex.chirurgia);['glicemia','insulina','hba1c','col_tot','ldl','hdl','trig','creat','azot','uric','got','gpt','ggt','hb','ferr','vitd','vitb12','tsh','pcr','data','note'].forEach(k=>{sv2('v-es-'+k,ex['es_'+k]);});if(ex.pl_tri||ex.pl_bi||ex.pl_ss||ex.pl_si)calcolaPliche();}catch(e){}}
           if(data.eta&&data.peso&&data.altezza)calcolaFabbisogno();
           if(data.tdee_calcolato&&!isNaN(data.tdee_calcolato)){tdee=data.tdee_calcolato;renderMacroDist();}
           toast('📂 Scheda caricata per modifica!','ok');
@@ -792,3 +1132,4 @@ function mostraBannerSQL(){
 </script>
 </body>
 </html>
+

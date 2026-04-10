@@ -519,7 +519,7 @@ async function renderCartellaDetail(id) {
             <div class="wellness-emoji">${moodEmoji}</div>
             <div class="wellness-info">
               <div class="wellness-mood">Umore: ${w.mood || '—'}/5</div>
-              ${w.symptoms ? `<div class="wellness-symptoms">Sintomi: ${esc(typeof w.symptoms === 'string' ? w.symptoms : JSON.stringify(w.symptoms))}</div>` : ''}
+              ${w.symptoms ? `<div class="wellness-symptoms">Sintomi: ${esc(Array.isArray(w.symptoms) ? w.symptoms.join(', ') : (typeof w.symptoms === 'string' ? w.symptoms : Object.values(w.symptoms).join(', ')))}</div>` : ''}
               ${w.notes ? `<div class="wellness-symptoms">${esc(w.notes)}</div>` : ''}
             </div>
             <div class="wellness-date">${fmtDate(w.logged_at)}</div>
@@ -733,6 +733,8 @@ async function cercaPazienteEmail() {
   confirmBtn.style.display = 'none';
 
   if (!email) { resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">Inserisci un\'email.</div>'; return; }
+  // Basic email format validation
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">Formato email non valido.</div>'; return; }
 
   resultEl.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">Ricerca in corso...</div>';
 
@@ -812,8 +814,10 @@ async function salvaDocumento() {
   // Handle file upload if present
   if (fileInput.files && fileInput.files[0]) {
     const file = fileInput.files[0];
-    fileName = file.name;
-    const filePath = `documents/${currentUser.id}/${docCartellaId}/${Date.now()}_${file.name}`;
+    // Sanitize filename: remove path traversal and special characters
+    const safeName = file.name.replace(/[^a-zA-Z0-9._\-]/g, '_').replace(/\.{2,}/g, '.');
+    fileName = safeName;
+    const filePath = `documents/${currentUser.id}/${docCartellaId}/${Date.now()}_${safeName}`;
     const { data: uploadData, error: uploadErr } = await sb.storage.from('patient-files').upload(filePath, file);
     if (uploadErr) {
       // If storage bucket doesn't exist, store file as base64 in content

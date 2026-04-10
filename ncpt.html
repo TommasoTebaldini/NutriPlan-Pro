@@ -256,8 +256,8 @@
   <h3>👤 Dati Anagrafici e Clinici</h3>
   <div class="fgrid">
     <div class="nf"><label>Nome e Cognome</label><input type="text" id="v-nome" placeholder="Cognome Nome"></div>
-    <div class="nf"><label>Data di nascita</label><input type="date" id="v-ddn"></div>
-    <div class="nf"><label>Sesso</label><select id="v-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+    <div class="nf"><label>Data di nascita</label><input type="date" id="v-ddn" onchange="calcAntropo()"></div>
+    <div class="nf"><label>Sesso</label><select id="v-sesso" onchange="calcAntropo()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
     <div class="nf"><label>Data valutazione</label><input type="date" id="v-data"></div>
     <div class="nf full"><label>Diagnosi medica / Motivo della consulenza</label>
       <textarea id="v-diag" placeholder="Es. Diabete mellito tipo 2, ipertensione, calo ponderale..."></textarea></div>
@@ -279,7 +279,7 @@
     <div class="nf"><label>Circ. fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1" oninput="calcAntropo()"></div>
     <div class="nf"><label>WHR (auto)</label><input type="text" id="v-whr" readonly style="background:#F8FAFC"></div>
     <div class="nf"><label>Massa grassa (%)</label><input type="number" id="v-mg" step="0.1"></div>
-    <div class="nf"><label>Massa magra (kg)</label><input type="number" id="v-mm" step="0.1"></div>
+    <div class="nf"><label>Massa magra (kg)</label><input type="number" id="v-mm" step="0.1" oninput="calcMB()"></div>
     <div class="nf"><label>Circ. braccio (cm)</label><input type="number" id="v-braccio" step="0.1"></div>
   </div>
   <div id="antr-result" style="margin-top:8px;font-size:12.5px;color:var(--slate-m);background:#F8FAFC;border-radius:7px;padding:8px 12px;display:none"></div>
@@ -352,11 +352,11 @@
   <h3>⚡ Fabbisogno Energetico Stimato</h3>
   <div class="fgrid c3">
     <div class="nf"><label>Formula MB usata</label>
-      <select id="v-formula"><option>Harris-Benedict</option><option>Mifflin-St Jeor</option><option>Schofield (LARN)</option><option>FAO/WHO 1985</option><option>Katch-McArdle</option></select></div>
-    <div class="nf"><label>MB calcolato (kcal)</label><input type="text" id="v-mb" placeholder="es. 1650"></div>
+      <select id="v-formula" onchange="calcMB()"><option>Harris-Benedict</option><option>Mifflin-St Jeor</option><option>Schofield (LARN)</option><option>FAO/WHO 1985</option><option>Katch-McArdle</option></select></div>
+    <div class="nf"><label>MB calcolato (kcal)</label><input type="text" id="v-mb" placeholder="es. 1650" readonly style="background:#F8FAFC"></div>
     <div class="nf"><label>LAF</label>
-      <select id="v-laf"><option value="1.2">1.2 — Sedentario</option><option value="1.375" selected>1.375 — Leggermente attivo</option><option value="1.55">1.55 — Moderatamente attivo</option><option value="1.725">1.725 — Molto attivo</option><option value="1.9">1.9 — Atleta</option></select></div>
-    <div class="nf"><label>TDEE stimato (kcal)</label><input type="text" id="v-tdee" placeholder="es. 2100"></div>
+      <select id="v-laf" onchange="calcMB()"><option value="1.2">1.2 — Sedentario</option><option value="1.375" selected>1.375 — Leggermente attivo</option><option value="1.55">1.55 — Moderatamente attivo</option><option value="1.725">1.725 — Molto attivo</option><option value="1.9">1.9 — Atleta</option></select></div>
+    <div class="nf"><label>TDEE stimato (kcal)</label><input type="text" id="v-tdee" placeholder="es. 2100" readonly style="background:#F8FAFC"></div>
     <div class="nf"><label>Fabbisogno proteico (g/die)</label><input type="text" id="v-prot" placeholder="es. 75-90 g"></div>
     <div class="nf"><label>Kcal target prescritte</label><input type="text" id="v-kcal-tgt" placeholder="es. 1600"></div>
     <div class="nf full"><label>Note fabbisogno</label>
@@ -746,6 +746,46 @@ function calcAntropo() {
   const res=document.getElementById('antr-result');
   res.style.display='block';
   res.innerHTML=`<span style="font-weight:700;color:${col}">${cat}</span> · BMI: <b>${Math.round(bmi*10)/10}</b> · Peso ideale: <b>${Math.round(pi*10)/10}kg</b> · Peso aggiustato: <b>${Math.round(pa*10)/10}kg</b>`;
+  calcMB();
+}
+
+function schofieldMB(sesso,eta,peso){
+  let MJ;
+  if(sesso==='M'){if(eta<3)MJ=0.249*peso-0.127;else if(eta<10)MJ=0.095*peso+2.110;else if(eta<18)MJ=0.074*peso+2.754;else if(eta<30)MJ=0.063*peso+2.896;else if(eta<60)MJ=0.048*peso+3.653;else MJ=0.049*peso+2.459;}
+  else{if(eta<3)MJ=0.244*peso-0.130;else if(eta<10)MJ=0.085*peso+2.033;else if(eta<18)MJ=0.056*peso+2.898;else if(eta<30)MJ=0.062*peso+2.036;else if(eta<60)MJ=0.034*peso+3.538;else MJ=0.038*peso+2.755;}
+  return Math.round(MJ*1000/4.184);
+}
+function faoWhoMB(sesso,eta,peso){
+  let k;
+  if(sesso==='M'){if(eta<3)k=60.9*peso-54;else if(eta<10)k=22.7*peso+495;else if(eta<18)k=17.5*peso+651;else if(eta<30)k=15.3*peso+679;else if(eta<60)k=11.6*peso+879;else k=13.5*peso+487;}
+  else{if(eta<3)k=61.0*peso-51;else if(eta<10)k=22.5*peso+499;else if(eta<18)k=12.2*peso+746;else if(eta<30)k=14.7*peso+496;else if(eta<60)k=8.7*peso+829;else k=10.5*peso+596;}
+  return Math.round(k);
+}
+function calcMB(){
+  const peso=parseFloat(document.getElementById('v-peso').value);
+  const alt=parseFloat(document.getElementById('v-altezza').value);
+  const sesso=document.getElementById('v-sesso').value;
+  const ddn=document.getElementById('v-ddn').value;
+  const mm=parseFloat(document.getElementById('v-mm').value)||null;
+  const formula=document.getElementById('v-formula').value;
+  const laf=parseFloat(document.getElementById('v-laf').value)||1.375;
+  if(!peso||!alt) return;
+  let eta=null;
+  if(ddn){const oggi=new Date(),n=new Date(ddn);eta=oggi.getFullYear()-n.getFullYear();if(oggi<new Date(oggi.getFullYear(),n.getMonth(),n.getDate()))eta--;}
+  if(eta===null||eta<0) return;
+  const bmi=peso/(alt/100)**2;
+  const pi=sesso==='M'?(alt-100)-((alt-150)/4):(alt-100)-((alt-150)/2.5);
+  const pa=pi+0.25*(peso-pi);
+  const pesoF=bmi>=30?pa:peso;
+  let mb=null;
+  if(formula==='Harris-Benedict'){mb=Math.round(sesso==='M'?66.47+13.75*pesoF+5.003*alt-6.755*eta:655.1+9.563*pesoF+1.85*alt-4.676*eta);}
+  else if(formula==='Mifflin-St Jeor'){mb=Math.round(sesso==='M'?10*pesoF+6.25*alt-5*eta+5:10*pesoF+6.25*alt-5*eta-161);}
+  else if(formula==='Schofield (LARN)'){mb=schofieldMB(sesso,eta,pesoF);}
+  else if(formula==='FAO/WHO 1985'){mb=faoWhoMB(sesso,eta,pesoF);}
+  else if(formula==='Katch-McArdle'){if(!mm)return;mb=Math.round(370+21.6*mm);}
+  if(mb===null||isNaN(mb)) return;
+  document.getElementById('v-mb').value=mb;
+  document.getElementById('v-tdee').value=Math.round(mb*laf);
 }
 
 // ═══════════════════════════════════════════════════

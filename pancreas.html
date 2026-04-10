@@ -23,7 +23,8 @@
 .alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
 .alert-ok{background:#F0FDF4;border-left:3px solid #10B981;color:#14532D}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:700px){.grid-2{grid-template-columns:1fr}}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
 .food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
 .food-table th{background:#7C2D12;color:#FED7AA;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
 .food-table th:first-child{text-align:left}
@@ -72,7 +73,7 @@
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
-  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete per Patologia</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
   <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
   <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
@@ -137,7 +138,8 @@
 </div>
 
 <div class="p-tabs-wrap" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#FFF7ED;border-radius:14px;border:1px solid #FED7AA;box-shadow:0 1px 4px rgba(249,115,22,.1)">
-  <button class="p-tab active" onclick="showPTab('calc')">💊 Calcolo PERT</button>
+  <button class="p-tab active" onclick="showPTab('valutazione_ipe')">🩺 Valutazione Paziente</button>
+  <button class="p-tab" onclick="showPTab('calc')">💊 Calcolo PERT</button>
   <button class="p-tab" onclick="showPTab('grassi')">🧈 Grassi & Lipasi</button>
   <button class="p-tab" onclick="showPTab('dieta')">🥗 Schema Dietetico</button>
   <button class="p-tab" onclick="showPTab('cause')">📋 Cause & Patologie</button>
@@ -147,7 +149,142 @@
 </div>
 
 <!-- TAB 1: CALCOLO PERT -->
-<div class="p-panel active" id="tab-calc">
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB VALUTAZIONE PAZIENTE                          -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="p-panel active" id="tab-valutazione_ipe">
+
+<div class="calc-box">
+  <h3>📏 Misure Antropometriche</h3>
+  <div class="grid-3">
+    <div class="nf"><label>Peso attuale (kg)</label><input type="number" id="ipe-val-peso" step="0.1" placeholder="es. 78.5" oninput="calcVal_ipe()"></div>
+    <div class="nf"><label>Altezza (cm)</label><input type="number" id="ipe-val-altezza" placeholder="es. 170" oninput="calcVal_ipe()"></div>
+    <div class="nf"><label>BMI (auto)</label><input type="text" id="ipe-val-bmi" readonly style="background:#F8FAFC;cursor:default"></div>
+    <div class="nf"><label>Variazione peso recente</label><input type="text" id="ipe-val-dpeso" placeholder="es. -3 kg in 2 mesi"></div>
+    <div class="nf"><label>Circ. vita (cm)</label><input type="number" id="ipe-val-vita" step="0.1" placeholder="es. 88"></div>
+    <div class="nf"><label>Circ. fianchi (cm)</label><input type="number" id="ipe-val-fianchi" step="0.1" placeholder="es. 100"></div>
+    <div class="nf"><label>Massa grassa (%)</label><input type="number" id="ipe-val-mg" step="0.1" placeholder="es. 28"></div>
+    <div class="nf"><label>Massa magra (kg)</label><input type="number" id="ipe-val-mm" step="0.1" placeholder="es. 56"></div>
+    <div class="nf"><label>Circ. braccio (cm)</label><input type="number" id="ipe-val-braccio" step="0.1" placeholder="es. 31"></div>
+  </div>
+  <div id="ipe-val-bmi-res" style="margin-top:8px;font-size:12.5px;background:#F8FAFC;border-radius:7px;padding:8px 12px;display:none"></div>
+</div>
+
+<div class="calc-box">
+  <h3>🍽️ Indagine Alimentare e Frequenze di Consumo</h3>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="nf"><label>N° pasti/die</label>
+      <select id="ipe-val-npasti">
+        <option value="">— seleziona —</option>
+        <option>1–2</option><option>3</option><option>4</option><option>5</option><option>6 o più</option>
+      </select></div>
+    <div class="nf"><label>Dove consuma i pasti</label>
+      <select id="ipe-val-luogo">
+        <option value="">— seleziona —</option>
+        <option>Prevalentemente a casa</option><option>Mensa aziendale/scolastica</option>
+        <option>Ristorante / bar</option><option>Misto</option>
+      </select></div>
+    <div class="nf"><label>Appetito</label>
+      <select id="ipe-val-appetito">
+        <option value="">— seleziona —</option>
+        <option>Normale</option><option>Ridotto</option><option>Aumentato</option><option>Molto ridotto / anoressia</option>
+      </select></div>
+    <div class="nf"><label>Allergie / intolleranze alimentari</label>
+      <input type="text" id="ipe-val-allergie" placeholder="Es. lattosio, glutine, arachidi..."></div>
+    <div class="nf"><label>Acqua (mL/die)</label>
+      <input type="text" id="ipe-val-acqua" placeholder="Es. 1500 mL"></div>
+    <div class="nf"><label>Consumo di alcol</label>
+      <select id="ipe-val-alcol">
+        <option value="">— seleziona —</option>
+        <option>Mai</option><option>Occasionale</option><option>1–3 volte/settimana</option><option>Quotidiano</option>
+      </select></div>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Frequenze di Consumo Settimanale</div>
+  <div style="overflow-x:auto;margin-bottom:12px">
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      <thead><tr style="background:#F1F5F9">
+        <th style="text-align:left;padding:7px 10px;font-weight:700;color:var(--slate);border-bottom:2px solid var(--border)">Gruppo alimentare</th>
+        <th style="padding:7px 10px;font-weight:700;color:var(--slate);border-bottom:2px solid var(--border);min-width:160px">Frequenza</th>
+      </tr></thead>
+      <tbody>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🌾 Cereali (pane, pasta, riso, patate)</td><td style="padding:4px 10px"><select id="ipe-val-ffq-cereali" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🫘 Legumi (fagioli, lenticchie, ceci)</td><td style="padding:4px 10px"><select id="ipe-val-ffq-legumi" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥦 Verdure e ortaggi</td><td style="padding:4px 10px"><select id="ipe-val-ffq-verdure" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🍎 Frutta fresca</td><td style="padding:4px 10px"><select id="ipe-val-ffq-frutta" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥩 Carne rossa (manzo, maiale, agnello)</td><td style="padding:4px 10px"><select id="ipe-val-ffq-carne_r" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🐔 Carne bianca (pollo, tacchino)</td><td style="padding:4px 10px"><select id="ipe-val-ffq-carne_b" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🐟 Pesce e frutti di mare</td><td style="padding:4px 10px"><select id="ipe-val-ffq-pesce" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥚 Uova</td><td style="padding:4px 10px"><select id="ipe-val-ffq-uova" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥛 Latte, yogurt</td><td style="padding:4px 10px"><select id="ipe-val-ffq-latte" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🧀 Formaggi e latticini</td><td style="padding:4px 10px"><select id="ipe-val-ffq-formaggi" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">�� Dolci, snack, merendine</td><td style="padding:4px 10px"><select id="ipe-val-ffq-dolci" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🍔 Fast food, prodotti ultraprocessati</td><td style="padding:4px 10px"><select id="ipe-val-ffq-junk" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px">🥜 Frutta secca e semi oleosi</td><td style="padding:4px 10px"><select id="ipe-val-ffq-frutta_s" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">< 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="nf"><label>Recall 24h — note generali</label>
+    <textarea id="ipe-val-recall" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Es. Colazione: latte+biscotti. Pranzo: pasta, pollo, insalata. Cena: minestra, formaggio, pane..."></textarea>
+  </div>
+</div>
+
+<div class="calc-box">
+  <h3>🏥 Patologie e Interventi Chirurgici</h3>
+  <div class="grid-2" style="margin-bottom:12px">
+    <div class="nf"><label>Diagnosi principale / Motivo consulenza</label>
+      <input type="text" id="ipe-val-diagn" placeholder="Es. IRC stadio 3, Diabete tipo 2, Obesità..."></div>
+    <div class="nf"><label>Anno diagnosi</label>
+      <input type="number" id="ipe-val-anno-diag" placeholder="es. 2018" min="1940" max="2099"></div>
+  </div>
+  <div class="nf"><label>Patologie associate / Comorbidità</label>
+    <textarea id="ipe-val-comorbid" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Es. Ipertensione arteriosa, dislipidemia, ipotiroidismo, NAFLD..."></textarea>
+  </div>
+  <div class="nf"><label>Interventi chirurgici / Procedure rilevanti</label>
+    <textarea id="ipe-val-chirurgia" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Es. Bypass gastrico 2020, colecistectomia, resezione intestinale, dialisi..."></textarea>
+  </div>
+</div>
+
+<div class="calc-box">
+  <h3>💊 Farmaci e Integratori</h3>
+  <div class="nf"><label>Farmaci in uso (nome · dose · frequenza)</label>
+    <textarea id="ipe-val-farmaci" rows="4" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Es. Metformina 1000 mg × 2/die, Lisinopril 10 mg × 1/die, Levotiroxina 50 mcg × 1/die..."></textarea>
+  </div>
+  <div class="grid-2">
+    <div class="nf"><label>Integratori in uso</label>
+      <textarea id="ipe-val-integr" rows="2" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Es. Vitamina D 1000 UI/die, Omega-3, Magnesio..."></textarea>
+    </div>
+    <div class="nf"><label>Interazioni farmaco-nutrizione di rilievo</label>
+      <textarea id="ipe-val-interaz" rows="2" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Es. Warfarin → limitare vit. K, MAOI → evitare tiramina, Orlistat → riduce vit. liposolubili..."></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="calc-box">
+  <h3>📝 Altre Note di Interesse</h3>
+  <div class="grid-2" style="margin-bottom:12px">
+    <div class="nf"><label>Attività fisica svolta</label>
+      <select id="ipe-val-attfis">
+        <option value="">— seleziona —</option>
+        <option>Sedentario</option><option>Leggera (&lt;2h/sett)</option>
+        <option>Moderata (2–4h/sett)</option><option>Intensa (&gt;4h/sett)</option><option>Agonistica</option>
+      </select></div>
+    <div class="nf"><label>Condizione lavorativa / stile di vita</label>
+      <input type="text" id="ipe-val-lavoro" placeholder="Es. Lavoro sedentario, turnista, lavoro fisico..."></div>
+  </div>
+  <div class="nf"><label>Note cliniche / anamnesi nutrizionale</label>
+    <textarea id="ipe-val-note-clin" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Motivazione al cambiamento, aspetti psicosociali, supporto familiare, eventuali difficoltà..."></textarea>
+  </div>
+  <div class="nf"><label>Obiettivi del paziente</label>
+    <textarea id="ipe-val-obiettivi" rows="2" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Es. Perdere peso, migliorare glicemia, ridurre farmaci, migliorare composizione corporea..."></textarea>
+  </div>
+  <div class="nf"><label>Note del nutrizionista</label>
+    <textarea id="ipe-val-note-nutr" rows="2" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box" placeholder="Impressioni cliniche, priorità di intervento, prossimi passi da concordare..."></textarea>
+  </div>
+</div>
+
+</div><!-- fine tab-valutazione_ipe -->
+
+<div class="p-panel" id="tab-calc">
   <div class="alert-info alert-box">
     <b>🎯 PERT (Pancreatic Enzyme Replacement Therapy)</b> — La terapia enzimatica sostitutiva con lipasi pancreatica (Creon®, Panzytrat®, ecc.) è il cardine del trattamento dell'IPE. Il dosaggio si calcola in Unità Lipasi (UL) per grammo di grasso assunto o per kg di peso corporeo.
   </div>
@@ -763,6 +900,7 @@ function calcolaPanPiano() {
 function raccogliDatiPan() {
   const gv = id => document.getElementById(id)?.value || '';
   return {
+    valutazione: raccogliVal_ipe(),
     pert: { peso: document.getElementById('pert-peso')?.value, grassi: document.getElementById('pert-grassi')?.value, patologia: document.getElementById('pert-pat')?.value, metodo: document.getElementById('pert-metodo')?.value, risultato_ul: document.getElementById('pert-ul')?.textContent },
     grassi_calc: { totale: document.getElementById('grassi-tot')?.textContent, ul: document.getElementById('grassi-ul')?.textContent, creon: document.getElementById('grassi-creon')?.textContent },
     piano: {
@@ -777,6 +915,7 @@ function raccogliDatiPan() {
 
 function ripristinaDatiPan(dati) {
   const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.valutazione) ripristinaVal_ipe(dati.valutazione);
   if (dati.pert) { sv('pert-peso',dati.pert.peso); sv('pert-grassi',dati.pert.grassi); sv('pert-pat',dati.pert.patologia); sv('pert-metodo',dati.pert.metodo); }
   if (dati.piano) {
     const p = dati.piano;
@@ -1076,6 +1215,93 @@ function svuotaSezione_pancreas() {
 document.addEventListener('DOMContentLoaded', function() {
   autoRestorePage_pancreas();
 }, {once: false});
+
+function calcVal_ipe() {
+  const peso = parseFloat(document.getElementById('ipe-val-peso')?.value);
+  const alt  = parseFloat(document.getElementById('ipe-val-altezza')?.value);
+  const bmiEl = document.getElementById('ipe-val-bmi');
+  const resEl = document.getElementById('ipe-val-bmi-res');
+  if (!bmiEl) return;
+  if (peso > 0 && alt > 0) {
+    const bmi = peso / ((alt/100) ** 2);
+    bmiEl.value = bmi.toFixed(1);
+    let cat = '', color = '';
+    if      (bmi < 18.5) { cat = 'Sottopeso';          color = '#3B82F6'; }
+    else if (bmi < 25)   { cat = 'Normopeso';           color = '#22C55E'; }
+    else if (bmi < 30)   { cat = 'Sovrappeso';          color = '#F59E0B'; }
+    else if (bmi < 35)   { cat = 'Obesità classe I';    color = '#F97316'; }
+    else if (bmi < 40)   { cat = 'Obesità classe II';   color = '#EF4444'; }
+    else                  { cat = 'Obesità classe III';  color = '#DC2626'; }
+    if (resEl) {
+      resEl.style.display = 'block';
+      resEl.innerHTML = `BMI <b style="color:${color}">${bmi.toFixed(1)} kg/m²</b> — <b style="color:${color}">${cat}</b>`;
+    }
+  } else {
+    bmiEl.value = '';
+    if (resEl) resEl.style.display = 'none';
+  }
+}
+
+function raccogliVal_ipe() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    peso: gv('ipe-val-peso'), altezza: gv('ipe-val-altezza'), bmi: gv('ipe-val-bmi'),
+    dpeso: gv('ipe-val-dpeso'), vita: gv('ipe-val-vita'), fianchi: gv('ipe-val-fianchi'),
+    mg: gv('ipe-val-mg'), mm: gv('ipe-val-mm'), braccio: gv('ipe-val-braccio'),
+    npasti: gv('ipe-val-npasti'), luogo: gv('ipe-val-luogo'), appetito: gv('ipe-val-appetito'),
+    allergie: gv('ipe-val-allergie'), acqua: gv('ipe-val-acqua'), alcol: gv('ipe-val-alcol'),
+    recall: gv('ipe-val-recall'),
+        ffq_cereali: gv("ipe-val-ffq-cereali"),
+        ffq_legumi: gv("ipe-val-ffq-legumi"),
+        ffq_verdure: gv("ipe-val-ffq-verdure"),
+        ffq_frutta: gv("ipe-val-ffq-frutta"),
+        ffq_carne_r: gv("ipe-val-ffq-carne_r"),
+        ffq_carne_b: gv("ipe-val-ffq-carne_b"),
+        ffq_pesce: gv("ipe-val-ffq-pesce"),
+        ffq_uova: gv("ipe-val-ffq-uova"),
+        ffq_latte: gv("ipe-val-ffq-latte"),
+        ffq_formaggi: gv("ipe-val-ffq-formaggi"),
+        ffq_dolci: gv("ipe-val-ffq-dolci"),
+        ffq_junk: gv("ipe-val-ffq-junk"),
+        ffq_frutta_s: gv("ipe-val-ffq-frutta_s"),
+    diagn: gv('ipe-val-diagn'), anno_diag: gv('ipe-val-anno-diag'),
+    comorbid: gv('ipe-val-comorbid'), chirurgia: gv('ipe-val-chirurgia'),
+    farmaci: gv('ipe-val-farmaci'), integr: gv('ipe-val-integr'), interaz: gv('ipe-val-interaz'),
+    attfis: gv('ipe-val-attfis'), lavoro: gv('ipe-val-lavoro'),
+    note_clin: gv('ipe-val-note-clin'), obiettivi: gv('ipe-val-obiettivi'), note_nutr: gv('ipe-val-note-nutr'),
+  };
+}
+
+function ripristinaVal_ipe(d) {
+  if (!d) return;
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  sv('ipe-val-peso', d.peso); sv('ipe-val-altezza', d.altezza); sv('ipe-val-dpeso', d.dpeso);
+  sv('ipe-val-vita', d.vita); sv('ipe-val-fianchi', d.fianchi);
+  sv('ipe-val-mg', d.mg); sv('ipe-val-mm', d.mm); sv('ipe-val-braccio', d.braccio);
+  sv('ipe-val-npasti', d.npasti); sv('ipe-val-luogo', d.luogo); sv('ipe-val-appetito', d.appetito);
+  sv('ipe-val-allergie', d.allergie); sv('ipe-val-acqua', d.acqua); sv('ipe-val-alcol', d.alcol);
+  sv('ipe-val-recall', d.recall);
+      sv("ipe-val-ffq-cereali", d.ffq_cereali);
+      sv("ipe-val-ffq-legumi", d.ffq_legumi);
+      sv("ipe-val-ffq-verdure", d.ffq_verdure);
+      sv("ipe-val-ffq-frutta", d.ffq_frutta);
+      sv("ipe-val-ffq-carne_r", d.ffq_carne_r);
+      sv("ipe-val-ffq-carne_b", d.ffq_carne_b);
+      sv("ipe-val-ffq-pesce", d.ffq_pesce);
+      sv("ipe-val-ffq-uova", d.ffq_uova);
+      sv("ipe-val-ffq-latte", d.ffq_latte);
+      sv("ipe-val-ffq-formaggi", d.ffq_formaggi);
+      sv("ipe-val-ffq-dolci", d.ffq_dolci);
+      sv("ipe-val-ffq-junk", d.ffq_junk);
+      sv("ipe-val-ffq-frutta_s", d.ffq_frutta_s);
+  sv('ipe-val-diagn', d.diagn); sv('ipe-val-anno-diag', d.anno_diag);
+  sv('ipe-val-comorbid', d.comorbid); sv('ipe-val-chirurgia', d.chirurgia);
+  sv('ipe-val-farmaci', d.farmaci); sv('ipe-val-integr', d.integr); sv('ipe-val-interaz', d.interaz);
+  sv('ipe-val-attfis', d.attfis); sv('ipe-val-lavoro', d.lavoro);
+  sv('ipe-val-note-clin', d.note_clin); sv('ipe-val-obiettivi', d.obiettivi); sv('ipe-val-note-nutr', d.note_nutr);
+  if (d.peso && d.altezza) calcVal_ipe();
+}
+
 </script>
 </body>
 </html>

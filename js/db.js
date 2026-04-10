@@ -530,7 +530,9 @@ const DB_CREA=[
   {n:"Cicerchie secche",c:"Legumi",k:327,p:23,gs:0.4,g:1.8,z:5.0,ch:55,fi:10,ca:90,fe:7.0,mg:95,k2:990,na:3,zn:2.9,fo:410,se:7,col:0,src:"CREA"},
   {n:"Fagioli Zolfini del Pratomagno secchi",c:"Legumi",k:314,p:22,gs:0.3,g:1.5,z:4.0,ch:56,fi:11,ca:70,fe:6.5,mg:90,k2:970,na:5,zn:2.8,fo:380,se:7,col:0,src:"CREA"},
   {n:"Roveja (pisello selvatico umbro) secca",c:"Legumi",k:320,p:22,gs:0.3,g:1.5,z:6.0,ch:57,fi:10,ca:75,fe:6.0,mg:88,k2:920,na:4,zn:2.5,fo:360,se:6,col:0,src:"CREA"},
-  {n:"Ceci neri / Cicerchie nere secche",c:"Legumi",k:318,p:21,gs:0.5,g:1.8,z:6.0,ch:56,fi:11,ca:95,fe:7.5,mg:100,k2:1000,na:3,zn:3.0,fo:420,se:7,col:0,src:"CREA"}
+  {n:"Ceci neri / Cicerchie nere secche",c:"Legumi",k:318,p:21,gs:0.5,g:1.8,z:6.0,ch:56,fi:11,ca:95,fe:7.5,mg:100,k2:1000,na:3,zn:3.0,fo:420,se:7,col:0,src:"CREA"},
+  {n:"Uovo sodo intero",c:"Uova",k:130,p:12.6,gs:3.8,g:9.5,z:0.6,ch:0.6,fi:0,ca:54,fe:1.8,mg:12,k2:138,na:140,zn:1.4,fo:191,se:31,col:373,src:"CREA"},
+  {n:"Verdure miste",c:"Verdure",k:30,p:2.0,gs:0.1,g:0.3,z:3.5,ch:5.0,fi:2.5,ca:40,fe:1.0,mg:20,k2:290,na:30,zn:0.4,fo:50,se:1,col:0,src:"CREA"}
 ];
 
 const DB_BDA=[
@@ -2845,7 +2847,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino 1',emoji:'🍎',items:[{nome:'Uovo sodo intero',qt:'50'},{nome:'Gallette di riso',qt:'20'}]},
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Riso bianco crudo',qt:'50'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino 2',emoji:'🍊',items:[{nome:'Ricotta vaccina',qt:'80'},{nome:'Pera',qt:'100'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'120'},{nome:'Patate',qt:'100'},{nome:'Fagiolini',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'120'},{nome:'Patata',qt:'100'},{nome:'Fagiolini',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino serale',emoji:'🌛',items:[{nome:'Latte parz. scremato UHT',qt:'150'},{nome:'Biscotti secchi (tipo petit beurre)',qt:'20'}]}
    ]},
   {id:'malassorbimento_fruttosio',cat:'gastroenterologiche',emoji:'🍇',nome:'Malassorbimento del Fruttosio / Sorbitolo',badge:'ACG 2021',colore:'#7C3AED',
@@ -2854,7 +2856,7 @@ const PATOLOGIE_BASE=[
    pasti:[
     {nome:'Colazione',emoji:'🌅',items:[{nome:"Fiocchi d'avena",qt:'50'},{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Banana',qt:'100'}]},
     {nome:'Spuntino',emoji:'🍎',items:[{nome:'Fragola',qt:'150'}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carote',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Kiwi',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'80'},{nome:'Lattuga',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
@@ -2864,7 +2866,7 @@ const PATOLOGIE_BASE=[
    pasti:[
     {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte senza lattosio intero',qt:'200'},{nome:'Gallette di riso',qt:'40'},{nome:'Banana',qt:'100'},{nome:'Burro',qt:'10'}]},
     {nome:'Spuntino',emoji:'🍎',items:[{nome:'Arancia',qt:'200'},{nome:'Mandorle dolci secche',qt:'20'}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Carote',qt:'150'},{nome:'Zucchina',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Carota',qt:'150'},{nome:'Zucchina',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt senza lattosio naturale',qt:'125'},{nome:'Fragola',qt:'100'}]},
     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Peperone rosso',qt:'100'},{nome:'Lattuga',qt:'80'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
@@ -2876,7 +2878,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino',emoji:'🍎',items:[{nome:'Banana',qt:'120'},{nome:'Gallette di riso',qt:'20'}]},
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo',qt:'130'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carote',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
    ]},
   {id:'deficit_vitamina_d',cat:'metaboliche',emoji:'☀️',nome:'Deficit di Vitamina D (Ipovitaminosi D)',badge:'SIOMMMS/ESPEN 2022',colore:'#F59E0B',
    desc:'25-OH-D <20 ng/mL. Supplementazione 1000-4000 UI/die. Alimenti ricchi di vitamina D. Esposizione solare.',
@@ -2886,7 +2888,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso integrale crudo',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Noci',qt:'25'},{nome:'Arancia',qt:'150'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Uova intere',qt:'100'},{nome:'Patata dolce',qt:'200'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Uovo di gallina intero crudo',qt:'100'},{nome:'Patata dolce',qt:'200'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
   {id:'deficit_b12_folati',cat:'ematologiche',emoji:'💊',nome:'Deficit di B12 e Folati (Anemia Megaloblastica)',badge:'BSH/ESPEN 2022',colore:'#DC2626',
    desc:'Anemia macrocitica. B12 supplementata (spesso parenterale). Folati alimentari e supplementari. Monitoraggio neurologico.',
@@ -2946,7 +2948,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Mirtilli freschi',qt:'100'}]},
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
     {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Noci',qt:'25'},{nome:'Fragola',qt:'100'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'150'},{nome:'Carote',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Quinoa cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
    ]},
   {id:'ipoglicemia_reattiva',cat:'metaboliche',emoji:'📉',nome:'Ipoglicemia Reattiva (Post-Prandiale)',badge:'Endocrine Society 2022',colore:'#0369A1',
    desc:'Pasti piccoli e frequenti. Carboidrati a basso IG. Proteine e grassi ad ogni pasto. No zuccheri semplici.',
@@ -2956,7 +2958,7 @@ const PATOLOGIE_BASE=[
     {nome:'Spuntino 1 (10:00)',emoji:'🍎',items:[{nome:'Yogurt greco 0% grassi',qt:'125'},{nome:'Noci',qt:'20'}]},
     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Pollo petto (senza pelle)',qt:'120'},{nome:'Verdure miste',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
     {nome:'Spuntino 2 (15:30)',emoji:'🍊',items:[{nome:'Mela',qt:'120'},{nome:'Formaggio Cottage',qt:'50'}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Patate',qt:'100'},{nome:'Fagiolini',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Patata',qt:'100'},{nome:'Fagiolini',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
     {nome:'Spuntino serale',emoji:'🌛',items:[{nome:'Latte parz. scremato UHT',qt:'150'},{nome:'Biscotti secchi (tipo petit beurre)',qt:'20'}]}
    ]}
 ];

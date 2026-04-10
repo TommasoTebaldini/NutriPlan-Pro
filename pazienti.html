@@ -146,11 +146,11 @@
       <div class="fg" style="margin-bottom:10px">
         <label>Tipo</label>
         <select id="doc-type" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;background:white">
-          <option value="document">📄 Documento</option>
           <option value="diet">🥗 Dieta</option>
-          <option value="advice">💡 Consiglio</option>
+          <option value="advice">💡 Consigli nutrizionali</option>
           <option value="recipe">🍳 Ricetta</option>
-          <option value="education">📚 Materiale Educativo</option>
+          <option value="document" selected>📄 Documento</option>
+          <option value="education">📚 Materiale educativo</option>
         </select>
       </div>
       <div class="fg" style="margin-bottom:10px">
@@ -161,8 +161,12 @@
         <label>Oppure carica un file</label>
         <input type="file" id="doc-file" style="width:100%;font-size:12.5px;font-family:inherit">
       </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Tag <span style="font-weight:400;color:var(--slate-l)">(separati da virgola, opzionale)</span></label>
+        <input type="text" id="doc-tags" placeholder="es: dieta mediterranea, celiachia, follow-up" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+      </div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-        <button class="doc-toggle on" id="doc-visible-toggle" onclick="this.classList.toggle('on')" type="button"></button>
+        <button class="doc-toggle" id="doc-visible-toggle" onclick="this.classList.toggle('on')" type="button"></button>
         <span style="font-size:12.5px;color:var(--slate-m)">Visibile al paziente</span>
       </div>
     </div>
@@ -386,7 +390,7 @@ async function renderCartellaDetail(id) {
       ${cart.sesso ? `<span class="paz-tag">${cart.sesso==='M'?'♂️ M':'♀️ F'}</span>` : ''}
       ${cart.codice_fiscale ? `<span class="paz-tag">🪪 ${esc(cart.codice_fiscale)}</span>` : ''}
       <button class="btn btn-ghost btn-sm" onclick="editCartella('${cart.id}')">✏️ Modifica</button>
-      ${patientLink.length ? `<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span>` : `<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente('${cart.id}')">🔗 Collega paziente</button>`}
+      ${patientLink.length ? `<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente('${patientLink[0].patient_id}','${cart.id}')" title="Scollega paziente">🔗✂️ Scollega</button>` : `<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente('${cart.id}')">🔗 Collega paziente</button>`}
     </div>
     ${cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
 
@@ -782,6 +786,17 @@ async function confermaCollegamento() {
   await renderCartellaDetail(collegaCartellaId);
 }
 
+function scollegaPaziente(patientId, cartellaId) {
+  customConfirm('Sei sicuro di voler scollegare questo paziente? Non perderà i suoi dati, ma non sarà più associato a questa cartella.', async () => {
+    showLoading(true);
+    const { error } = await sb.from('patient_dietitian').delete().eq('patient_id', patientId).eq('dietitian_id', currentUser.id).eq('cartella_id', cartellaId);
+    showLoading(false);
+    if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+    toast('🔓 Paziente scollegato dalla cartella', 'ok');
+    await renderCartellaDetail(cartellaId);
+  }, { danger: true, title: '⚠️ Scollega Paziente', okLabel: 'Scollega' });
+}
+
 // ═══════════════════════════════════════════════════
 // DOCUMENTI PAZIENTE
 // ═══════════════════════════════════════════════════
@@ -793,8 +808,9 @@ function openNuovoDocumento(cartellaId) {
   document.getElementById('doc-type').value = 'document';
   document.getElementById('doc-content').value = '';
   document.getElementById('doc-file').value = '';
+  document.getElementById('doc-tags').value = '';
   const toggle = document.getElementById('doc-visible-toggle');
-  if (toggle && !toggle.classList.contains('on')) toggle.classList.add('on');
+  if (toggle) toggle.classList.remove('on');
   openM('modal-doc');
   setTimeout(() => document.getElementById('doc-title').focus(), 200);
 }
@@ -807,6 +823,8 @@ async function salvaDocumento() {
   const content = document.getElementById('doc-content').value.trim();
   const fileInput = document.getElementById('doc-file');
   const visible = document.getElementById('doc-visible-toggle').classList.contains('on');
+  const tagsRaw = (document.getElementById('doc-tags').value || '').trim();
+  const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : null;
 
   let fileUrl = null;
   let fileName = null;
@@ -842,6 +860,7 @@ async function salvaDocumento() {
     content: content || null,
     file_url: fileUrl || null,
     file_name: fileName || null,
+    tags: tags,
     visible: visible
   });
   showLoading(false);
@@ -857,22 +876,24 @@ function buildDocsHtml(documents, cartellaId) {
     return '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun documento.</div>';
   }
   const typeIcons = { diet: '🥗', advice: '💡', recipe: '🍳', document: '📄', education: '📚' };
-  const typeLabels = { diet: 'Dieta', advice: 'Consiglio', recipe: 'Ricetta', document: 'Documento', education: 'Educazione' };
+  const typeLabels = { diet: 'Dieta', advice: 'Consigli nutrizionali', recipe: 'Ricetta', document: 'Documento', education: 'Materiale educativo' };
   const fmtDate = d => d ? new Date(d).toLocaleDateString('it', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
 
   return documents.map(d => {
     const icon = typeIcons[d.type] || '📄';
     const label = typeLabels[d.type] || d.type;
     const isOn = d.visible !== false;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;transition:all .15s">
+    const tagsHtml = (d.tags && d.tags.length) ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:3px">${d.tags.map(t => `<span style="font-size:10px;background:#F1F5F9;color:#475569;padding:1px 7px;border-radius:8px;font-weight:500">${esc(t)}</span>`).join('')}</div>` : '';
+    return `<div id="doc-row-${d.id}" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;transition:all .15s">
       <span style="font-size:22px">${icon}</span>
       <div style="flex:1;min-width:0">
         <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(d.title)}</div>
         <div style="font-size:11.5px;color:var(--slate-l)">${label} · ${fmtDate(d.created_at)}${d.file_name ? ' · 📎 ' + esc(d.file_name) : ''}</div>
+        ${tagsHtml}
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <span style="font-size:10.5px;color:var(--slate-l)">${isOn ? 'Visibile' : 'Nascosto'}</span>
-        <button class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}"></button>
+        <span id="doc-vis-label-${d.id}" style="font-size:10.5px;color:var(--slate-l)">${isOn ? 'Visibile' : 'Nascosto'}</span>
+        <button id="doc-vis-btn-${d.id}" class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}"></button>
       </div>
       <button class="btn btn-ghost btn-xs" onclick="delDocument('${d.id}', '${cartellaId}')">🗑️</button>
     </div>`;
@@ -880,10 +901,29 @@ function buildDocsHtml(documents, cartellaId) {
 }
 
 async function toggleDocVisibility(docId, newVisible, cartellaId) {
+  // Optimistic UI update
+  const btn = document.getElementById('doc-vis-btn-' + docId);
+  const lbl = document.getElementById('doc-vis-label-' + docId);
+  if (btn) {
+    if (newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
+    btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${!newVisible}, '${cartellaId}')`);
+    btn.title = newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
+  }
+  if (lbl) { lbl.textContent = newVisible ? 'Visibile' : 'Nascosto'; }
+
   const { error } = await sb.from('patient_documents').update({ visible: newVisible }).eq('id', docId);
-  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  if (error) {
+    // Revert optimistic update on error
+    if (btn) {
+      if (!newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
+      btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${newVisible}, '${cartellaId}')`);
+      btn.title = !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
+    }
+    if (lbl) { lbl.textContent = !newVisible ? 'Visibile' : 'Nascosto'; }
+    toast('❌ Errore: ' + error.message, 'err');
+    return;
+  }
   toast(newVisible ? '👁️ Documento visibile' : '🙈 Documento nascosto', 'ok');
-  await renderCartellaDetail(cartellaId);
 }
 
 async function delDocument(docId, cartellaId) {

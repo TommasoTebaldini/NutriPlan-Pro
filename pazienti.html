@@ -789,9 +789,10 @@ async function confermaCollegamento() {
 function scollegaPaziente(patientId, cartellaId) {
   customConfirm('Sei sicuro di voler scollegare questo paziente? Non perderà i suoi dati, ma non sarà più associato a questa cartella.', async () => {
     showLoading(true);
-    const { error } = await sb.from('patient_dietitian').delete().eq('patient_id', patientId).eq('dietitian_id', currentUser.id).eq('cartella_id', cartellaId);
+    const { data, error } = await sb.from('patient_dietitian').delete().eq('patient_id', patientId).eq('dietitian_id', currentUser.id).eq('cartella_id', cartellaId).select();
     showLoading(false);
     if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+    if (!data || data.length === 0) { toast('❌ Impossibile scollegare: il collegamento non è stato trovato o non hai i permessi necessari. Contatta l\'amministratore.', 'err'); return; }
     toast('🔓 Paziente scollegato dalla cartella', 'ok');
     await renderCartellaDetail(cartellaId);
   }, { danger: true, title: '⚠️ Scollega Paziente', okLabel: 'Scollega' });

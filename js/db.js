@@ -438,7 +438,7 @@ const DB_CREA=[
   {n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:336,p:2.1,gs:19.8,g:35.0,z:3.2,ch:3.2,fi:0,ca:65,fe:0.1,mg:8,k2:97,na:39,zn:0.2,fo:62,se:1,col:138,src:"CREA"},
   {n:"Biscotti secchi (tipo petit beurre)",c:"Biscotti e crackers",k:430,p:8.0,gs:5.0,g:14.0,z:20.0,ch:72.0,fi:2.0,ca:60,fe:2.0,mg:15,k2:120,na:300,zn:0.5,fo:80,se:5,col:20,src:"CREA"},
   {n:"Pane di semola (rimacinata)",c:"Cereali e derivati",k:268,p:8.5,gs:0.3,g:1.5,z:3.0,ch:54.0,fi:2.5,ca:30,fe:1.8,mg:25,k2:105,na:490,zn:0.8,fo:90,se:15,col:0,src:"CREA"},
-  {n:"Purea di patate (pronta)",c:"Cereali e derivati",k:85,p:2.0,gs:0.5,g:2.0,z:0.2,ch:15.0,fi:1.5,ca:30,fe:0.3,mg:12,k2:280,na:180,zn:0.2,fo:35,se:1,col:5,src:"CREA"}
+  {n:"Purea di patate (pronta)",c:"Verdure",k:85,p:2.0,gs:0.5,g:2.0,z:0.2,ch:15.0,fi:1.5,ca:30,fe:0.3,mg:12,k2:280,na:180,zn:0.2,fo:35,se:1,col:5,src:"CREA"}
 ];
 
 const DB_BDA=[

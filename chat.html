@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Chat Pazienti — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.chat-container{display:flex;height:calc(100vh - 54px - 36px);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:white;box-shadow:var(--shadow)}
+.chat-sidebar{width:280px;min-width:220px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:#FAFBFC;flex-shrink:0}
+.chat-sidebar-hdr{padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:8px}
+.chat-search{padding:8px 12px;border-bottom:1px solid var(--border)}
+.chat-search input{width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:12.5px;font-family:inherit;outline:none}
+.chat-search input:focus{border-color:var(--teal-l)}
+.chat-list{flex:1;overflow-y:auto}
+.chat-patient{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s}
+.chat-patient:hover{background:#F1F5F9}
+.chat-patient.active{background:#E0F2F1;border-left:3px solid var(--teal)}
+.chat-patient-avatar{width:36px;height:36px;border-radius:50%;background:var(--teal-l);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.chat-patient-info{flex:1;min-width:0}
+.chat-patient-name{font-size:13px;font-weight:600;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-patient-last{font-size:11.5px;color:var(--slate-l);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-patient-time{font-size:10px;color:var(--slate-l);flex-shrink:0}
+.chat-unread{background:var(--teal);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;flex-shrink:0}
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.chat-main-hdr{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:white}
+.chat-main-hdr h3{font-size:14px;font-weight:700;color:var(--slate);flex:1}
+.chat-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:8px;background:#F8FAFC}
+.chat-msg{max-width:70%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.45;word-break:break-word;position:relative}
+.chat-msg.sent{align-self:flex-end;background:var(--teal);color:white;border-bottom-right-radius:4px}
+.chat-msg.received{align-self:flex-start;background:white;color:var(--slate);border:1px solid var(--border);border-bottom-left-radius:4px}
+.chat-msg-time{font-size:10px;opacity:.65;margin-top:4px;text-align:right}
+.chat-input-area{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;background:white}
+.chat-input-area textarea{flex:1;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:13px;font-family:inherit;resize:none;outline:none;min-height:40px;max-height:120px;line-height:1.4}
+.chat-input-area textarea:focus{border-color:var(--teal-l)}
+.chat-send-btn{background:var(--teal);color:white;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;flex-shrink:0}
+.chat-send-btn:hover{background:var(--teal-d)}
+.chat-send-btn:disabled{opacity:.5;cursor:not-allowed}
+.chat-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--slate-l);font-size:14px;gap:8px}
+.chat-empty .ei{font-size:48px}
+.chat-date-sep{text-align:center;font-size:11px;color:var(--slate-l);margin:10px 0;font-weight:600}
+@media(max-width:768px){
+  .chat-sidebar{width:100%;position:absolute;z-index:10;left:0;top:0;bottom:0;transform:translateX(0);transition:transform .25s}
+  .chat-sidebar.hidden{transform:translateX(-100%)}
+  .chat-container{position:relative}
+  .chat-back-btn{display:inline-flex!important}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item active" href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">💬 Chat Pazienti</h2>
+  <div class="tbar-actions"></div>
+</div>
+<main id="main">
+<div class="page-content" style="padding:14px">
+  <div class="chat-container" id="chat-container">
+    <!-- Left: Patient list -->
+    <div class="chat-sidebar" id="chat-sidebar-panel">
+      <div class="chat-sidebar-hdr">💬 Conversazioni</div>
+      <div class="chat-search"><input type="text" id="chat-search-input" placeholder="Cerca paziente..." oninput="filterChatPatients()"></div>
+      <div class="chat-list" id="chat-patient-list">
+        <div style="padding:20px;text-align:center;color:var(--slate-l);font-size:12.5px">Caricamento...</div>
+      </div>
+    </div>
+    <!-- Right: Messages -->
+    <div class="chat-main" id="chat-main-panel">
+      <div class="chat-empty" id="chat-placeholder">
+        <div class="ei">💬</div>
+        <div>Seleziona un paziente per iniziare una conversazione</div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<script src="js/utils.js"></script>
+<script>
+let chatPatients = [];
+let selectedPatientId = null;
+let chatMessages = [];
+let realtimeChannel = null;
+
+async function init() {
+  await checkAuth();
+  await loadChatPatients();
+}
+
+async function loadChatPatients() {
+  const listEl = document.getElementById('chat-patient-list');
+  // Get patients linked via patient_dietitian
+  const { data: links, error: linkErr } = await sb.from('patient_dietitian')
+    .select('patient_id')
+    .eq('dietitian_id', currentUser.id);
+
+  if (linkErr || !links || !links.length) {
+    listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:12.5px">Nessun paziente collegato.<br><br><span style="font-size:11px">Collega i pazienti dalla loro cartella.</span></div>';
+    chatPatients = [];
+    return;
+  }
+
+  const patientIds = links.map(l => l.patient_id);
+
+  // Get patient profiles
+  const { data: profiles } = await sb.from('profiles')
+    .select('id,username,email')
+    .in('id', patientIds);
+
+  // Get last message + unread count for each patient
+  const patients = [];
+  for (const p of (profiles || [])) {
+    const { data: lastMsgs } = await sb.from('chat_messages')
+      .select('content,created_at,sender_role')
+      .or(`and(patient_id.eq.${p.id},sender_id.eq.${currentUser.id}),and(patient_id.eq.${p.id},sender_id.eq.${p.id})`)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    const { count } = await sb.from('chat_messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('patient_id', p.id)
+      .eq('sender_role', 'patient')
+      .is('read_at', null);
+
+    patients.push({
+      id: p.id,
+      name: p.username || p.email || 'Paziente',
+      email: p.email || '',
+      lastMessage: lastMsgs?.[0]?.content || '',
+      lastTime: lastMsgs?.[0]?.created_at || null,
+      unread: count || 0
+    });
+  }
+
+  // Sort by last message time
+  patients.sort((a, b) => {
+    if (!a.lastTime && !b.lastTime) return 0;
+    if (!a.lastTime) return 1;
+    if (!b.lastTime) return -1;
+    return new Date(b.lastTime) - new Date(a.lastTime);
+  });
+
+  chatPatients = patients;
+  renderPatientList();
+}
+
+function renderPatientList() {
+  const listEl = document.getElementById('chat-patient-list');
+  const filter = (document.getElementById('chat-search-input')?.value || '').toLowerCase();
+  const filtered = filter ? chatPatients.filter(p => p.name.toLowerCase().includes(filter) || p.email.toLowerCase().includes(filter)) : chatPatients;
+
+  if (!filtered.length) {
+    listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:12.5px">Nessun risultato</div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(p => {
+    const initials = p.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    const timeStr = p.lastTime ? formatChatTime(p.lastTime) : '';
+    const lastMsg = p.lastMessage ? esc(p.lastMessage.substring(0, 40)) + (p.lastMessage.length > 40 ? '...' : '') : '<i>Nessun messaggio</i>';
+    const isActive = selectedPatientId === p.id;
+    return `<div class="chat-patient${isActive ? ' active' : ''}" onclick="selectPatient('${p.id}')">
+      <div class="chat-patient-avatar">${initials || '?'}</div>
+      <div class="chat-patient-info">
+        <div class="chat-patient-name">${esc(p.name)}</div>
+        <div class="chat-patient-last">${lastMsg}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div class="chat-patient-time">${timeStr}</div>
+        ${p.unread > 0 ? `<div class="chat-unread">${p.unread}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterChatPatients() {
+  renderPatientList();
+}
+
+async function selectPatient(patientId) {
+  selectedPatientId = patientId;
+  renderPatientList();
+  const p = chatPatients.find(x => x.id === patientId);
+  if (!p) return;
+
+  const mainPanel = document.getElementById('chat-main-panel');
+  const initials = p.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+
+  mainPanel.innerHTML = `
+    <div class="chat-main-hdr">
+      <button class="btn btn-ghost btn-xs chat-back-btn" style="display:none" onclick="deselectPatient()">←</button>
+      <div class="chat-patient-avatar" style="width:32px;height:32px;font-size:12px">${initials || '?'}</div>
+      <h3>${esc(p.name)}</h3>
+    </div>
+    <div class="chat-messages" id="chat-messages-area">
+      <div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px">Caricamento messaggi...</div>
+    </div>
+    <div class="chat-input-area">
+      <textarea id="chat-input" placeholder="Scrivi un messaggio..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+      <button class="chat-send-btn" onclick="sendMessage()">Invia</button>
+    </div>
+  `;
+
+  // Hide sidebar on mobile
+  if (window.innerWidth <= 768) {
+    document.getElementById('chat-sidebar-panel').classList.add('hidden');
+  }
+
+  await loadMessages(patientId);
+  setupRealtime(patientId);
+  markMessagesAsRead(patientId);
+}
+
+function deselectPatient() {
+  selectedPatientId = null;
+  document.getElementById('chat-sidebar-panel').classList.remove('hidden');
+  document.getElementById('chat-main-panel').innerHTML = `
+    <div class="chat-empty" id="chat-placeholder">
+      <div class="ei">💬</div>
+      <div>Seleziona un paziente per iniziare una conversazione</div>
+    </div>`;
+}
+
+async function loadMessages(patientId) {
+  const { data, error } = await sb.from('chat_messages')
+    .select('*')
+    .eq('patient_id', patientId)
+    .order('created_at', { ascending: true });
+
+  chatMessages = data || [];
+  renderMessages();
+}
+
+function renderMessages() {
+  const area = document.getElementById('chat-messages-area');
+  if (!area) return;
+
+  if (!chatMessages.length) {
+    area.innerHTML = '<div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:40px 20px">Nessun messaggio. Inizia la conversazione!</div>';
+    return;
+  }
+
+  let html = '';
+  let lastDate = '';
+  for (const m of chatMessages) {
+    const msgDate = new Date(m.created_at).toLocaleDateString('it', { day: '2-digit', month: 'long', year: 'numeric' });
+    if (msgDate !== lastDate) {
+      html += `<div class="chat-date-sep">${msgDate}</div>`;
+      lastDate = msgDate;
+    }
+    const isSent = m.sender_id === currentUser.id;
+    const time = new Date(m.created_at).toLocaleTimeString('it', { hour: '2-digit', minute: '2-digit' });
+    html += `<div class="chat-msg ${isSent ? 'sent' : 'received'}">
+      <div>${esc(m.content)}</div>
+      <div class="chat-msg-time">${time}</div>
+    </div>`;
+  }
+
+  area.innerHTML = html;
+  area.scrollTop = area.scrollHeight;
+}
+
+function setupRealtime(patientId) {
+  // Unsubscribe from previous channel
+  if (realtimeChannel) {
+    sb.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+
+  realtimeChannel = sb.channel('chat-' + patientId)
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'chat_messages',
+      filter: 'patient_id=eq.' + patientId
+    }, (payload) => {
+      const msg = payload.new;
+      // Avoid duplicates
+      if (!chatMessages.find(m => m.id === msg.id)) {
+        chatMessages.push(msg);
+        renderMessages();
+        // Mark as read if from patient
+        if (msg.sender_role === 'patient') {
+          markMessagesAsRead(patientId);
+        }
+        // Update patient list
+        const p = chatPatients.find(x => x.id === patientId);
+        if (p) {
+          p.lastMessage = msg.content;
+          p.lastTime = msg.created_at;
+          renderPatientList();
+        }
+      }
+    })
+    .subscribe();
+}
+
+async function sendMessage() {
+  if (!selectedPatientId) return;
+  const input = document.getElementById('chat-input');
+  const content = (input?.value || '').trim();
+  if (!content) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+
+  const { error } = await sb.from('chat_messages').insert({
+    patient_id: selectedPatientId,
+    sender_id: currentUser.id,
+    sender_role: 'dietitian',
+    content: content
+  });
+
+  if (error) {
+    toast('❌ Errore invio messaggio: ' + error.message, 'err');
+    input.value = content;
+  }
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+  // Auto-resize textarea
+  const ta = e.target;
+  setTimeout(() => {
+    ta.style.height = 'auto';
+    ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+  }, 0);
+}
+
+async function markMessagesAsRead(patientId) {
+  await sb.from('chat_messages')
+    .update({ read_at: new Date().toISOString() })
+    .eq('patient_id', patientId)
+    .eq('sender_role', 'patient')
+    .is('read_at', null);
+
+  // Update unread count in list
+  const p = chatPatients.find(x => x.id === patientId);
+  if (p) {
+    p.unread = 0;
+    renderPatientList();
+  }
+}
+
+function formatChatTime(isoStr) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr);
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 86400000 && d.getDate() === now.getDate()) {
+    return d.toLocaleTimeString('it', { hour: '2-digit', minute: '2-digit' });
+  }
+  if (diff < 172800000) return 'Ieri';
+  return d.toLocaleDateString('it', { day: '2-digit', month: '2-digit' });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await init(); } catch(e) { console.log('Auth error:', e); }
+});
+</script>
+</body>
+</html>

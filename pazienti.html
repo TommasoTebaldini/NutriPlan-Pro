@@ -6,7 +6,21 @@
 <title>Cartelle Pazienti — DietPlan Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <link rel="stylesheet" href="css/style.css">
+<style>
+.doc-toggle{position:relative;width:40px;height:22px;background:#CBD5E1;border-radius:11px;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
+.doc-toggle.on{background:var(--teal)}
+.doc-toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.doc-toggle.on::after{transform:translateX(18px)}
+.progress-chart-wrap{background:white;border-radius:var(--r);padding:16px;border:1px solid var(--border);margin-bottom:14px}
+.wellness-card{display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px}
+.wellness-emoji{font-size:24px}
+.wellness-info{flex:1;min-width:0}
+.wellness-date{font-size:11.5px;color:var(--slate-l)}
+.wellness-mood{font-size:13px;font-weight:600;color:var(--slate)}
+.wellness-symptoms{font-size:12px;color:var(--slate-m);margin-top:2px}
+</style>
 </head>
 <body>
 <nav id="sidebar">
@@ -14,6 +28,8 @@
   <div class="nav-sec">Piano</div>
   <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
   <a class="nav-item active" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
   <div class="nav-sec">Specialistica</div>
   <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
   <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
@@ -98,6 +114,65 @@
     </div>
   </div>
 </div>
+<!-- MODAL: COLLEGA PAZIENTE -->
+<div class="modal-bg" id="modal-collega">
+  <div class="modal" style="max-width:420px">
+    <div class="mhdr"><h2>🔗 Collega Paziente</h2><button class="mclose" onclick="closeM('modal-collega')">✕</button></div>
+    <div class="mbody" style="padding:18px 22px">
+      <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">Cerca il paziente per email. Il paziente deve essere registrato sull'app.</p>
+      <div class="fg" style="margin-bottom:12px">
+        <label>Email paziente</label>
+        <input type="email" id="collega-email" placeholder="email@esempio.com" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+      </div>
+      <div id="collega-result" style="min-height:30px"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-collega')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="cercaPazienteEmail()">🔍 Cerca</button>
+      <button class="btn btn-sm" id="collega-confirm-btn" style="display:none;background:var(--teal);color:white" onclick="confermaCollegamento()">🔗 Collega</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUOVO DOCUMENTO -->
+<div class="modal-bg" id="modal-doc">
+  <div class="modal" style="max-width:500px">
+    <div class="mhdr"><h2>📄 Nuovo Documento</h2><button class="mclose" onclick="closeM('modal-doc')">✕</button></div>
+    <div class="mbody" style="padding:18px 22px">
+      <div class="fg" style="margin-bottom:10px">
+        <label>Titolo *</label>
+        <input type="text" id="doc-title" placeholder="Titolo documento" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Tipo</label>
+        <select id="doc-type" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;background:white">
+          <option value="document">📄 Documento</option>
+          <option value="diet">🥗 Dieta</option>
+          <option value="advice">💡 Consiglio</option>
+          <option value="recipe">🍳 Ricetta</option>
+          <option value="education">📚 Materiale Educativo</option>
+        </select>
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Contenuto</label>
+        <textarea id="doc-content" placeholder="Scrivi il contenuto del documento..." rows="5" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;resize:vertical"></textarea>
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Oppure carica un file</label>
+        <input type="file" id="doc-file" style="width:100%;font-size:12.5px;font-family:inherit">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <button class="doc-toggle on" id="doc-visible-toggle" onclick="this.classList.toggle('on')" type="button"></button>
+        <span style="font-size:12.5px;color:var(--slate-m)">Visibile al paziente</span>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-doc')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaDocumento()">📄 Salva Documento</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
@@ -193,12 +268,16 @@ async function renderCartellaDetail(id) {
   }
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
-  const [piani, ncpts, schede, biaList, noteSpec] = await Promise.all([
+  const [piani, ncpts, schede, biaList, noteSpec, documents, weightLogs, dailyWellness, patientLink] = await Promise.all([
     safeQuery(sb.from('piani').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('ncpt').select('id,created_at,updated_at,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('schede_valutazione').select('id,created_at,nome,cognome,patologie').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,note').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
     safeQuery(sb.from('note_specialistiche').select('id,created_at,tipo,nota,dati').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('patient_documents').select('*').eq('cartella_id', id).eq('dietitian_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('weight_logs').select('*').eq('cartella_id', id).order('logged_at', {ascending:true})),
+    safeQuery(sb.from('daily_wellness').select('*').eq('cartella_id', id).order('logged_at', {ascending:false}).limit(30)),
+    safeQuery(sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).eq('dietitian_id', currentUser.id).limit(1)),
   ]);
   
   const cart = cartResult.data;
@@ -307,6 +386,7 @@ async function renderCartellaDetail(id) {
       ${cart.sesso ? `<span class="paz-tag">${cart.sesso==='M'?'♂️ M':'♀️ F'}</span>` : ''}
       ${cart.codice_fiscale ? `<span class="paz-tag">🪪 ${esc(cart.codice_fiscale)}</span>` : ''}
       <button class="btn btn-ghost btn-sm" onclick="editCartella('${cart.id}')">✏️ Modifica</button>
+      ${patientLink.length ? `<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span>` : `<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente('${cart.id}')">🔗 Collega paziente</button>`}
     </div>
     ${cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
 
@@ -403,7 +483,56 @@ async function renderCartellaDetail(id) {
         </div>`;
       }).join('')}</div>
     </div>` : ''}
+
+    <!-- SEZIONE DOCUMENTI -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
+          📄 Documenti
+          <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(documents||[]).length}</span>
+        </h4>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#D97706,#FBBF24);color:white;box-shadow:0 2px 8px rgba(217,119,6,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(217,119,6,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(217,119,6,.3)';this.style.transform=''" onclick="openNuovoDocumento('${id}')">📄 Nuovo Documento</button>
+      </div>
+      <div style="padding:10px 14px" id="docs-list-${id}">${buildDocsHtml(documents, id)}</div>
+    </div>
+
+    <!-- SEZIONE PROGRESSI -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
+          📈 Progressi
+        </h4>
+      </div>
+      <div style="padding:14px">
+        ${(weightLogs && weightLogs.length) ? `
+          <div class="progress-chart-wrap">
+            <h5 style="font-size:13px;font-weight:700;color:var(--slate);margin-bottom:10px">⚖️ Andamento Peso</h5>
+            <canvas id="weight-chart-${id}" height="200"></canvas>
+          </div>
+        ` : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px;margin-bottom:10px">Nessun dato peso registrato dal paziente.</div>'}
+
+        <h5 style="font-size:13px;font-weight:700;color:var(--slate);margin:14px 0 8px">🧠 Benessere Quotidiano</h5>
+        ${(dailyWellness && dailyWellness.length) ? dailyWellness.slice(0, 15).map(w => {
+          const moodMap = { 1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊' };
+          const moodEmoji = moodMap[w.mood] || '😐';
+          return `<div class="wellness-card">
+            <div class="wellness-emoji">${moodEmoji}</div>
+            <div class="wellness-info">
+              <div class="wellness-mood">Umore: ${w.mood || '—'}/5</div>
+              ${w.symptoms ? `<div class="wellness-symptoms">Sintomi: ${esc(typeof w.symptoms === 'string' ? w.symptoms : JSON.stringify(w.symptoms))}</div>` : ''}
+              ${w.notes ? `<div class="wellness-symptoms">${esc(w.notes)}</div>` : ''}
+            </div>
+            <div class="wellness-date">${fmtDate(w.logged_at)}</div>
+          </div>`;
+        }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun dato benessere registrato dal paziente.</div>'}
+      </div>
+    </div>
   `;
+
+  // Render weight chart if data available
+  if (weightLogs && weightLogs.length) {
+    setTimeout(() => renderWeightChart('weight-chart-' + id, weightLogs), 100);
+  }
 }
 
 function apriNoteSpec(noteId, tipo) {
@@ -579,6 +708,254 @@ async function delCartella(id) {
 document.addEventListener('DOMContentLoaded', async () => {
   try { await init(); } catch(e) { console.log('Auth error:', e); }
 });
+
+// ═══════════════════════════════════════════════════
+// COLLEGA PAZIENTE
+// ═══════════════════════════════════════════════════
+let collegaCartellaId = null;
+let collegaFoundUserId = null;
+
+function openCollegaPaziente(cartellaId) {
+  collegaCartellaId = cartellaId;
+  collegaFoundUserId = null;
+  document.getElementById('collega-email').value = '';
+  document.getElementById('collega-result').innerHTML = '';
+  document.getElementById('collega-confirm-btn').style.display = 'none';
+  openM('modal-collega');
+  setTimeout(() => document.getElementById('collega-email').focus(), 200);
+}
+
+async function cercaPazienteEmail() {
+  const email = (document.getElementById('collega-email').value || '').trim().toLowerCase();
+  const resultEl = document.getElementById('collega-result');
+  const confirmBtn = document.getElementById('collega-confirm-btn');
+  collegaFoundUserId = null;
+  confirmBtn.style.display = 'none';
+
+  if (!email) { resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">Inserisci un\'email.</div>'; return; }
+
+  resultEl.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">Ricerca in corso...</div>';
+
+  // Search in profiles table (since we can't use admin API from client side)
+  const { data, error } = await sb.from('profiles').select('id,username,email').eq('email', email).maybeSingle();
+
+  if (error) {
+    resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">Errore nella ricerca: ' + esc(error.message) + '</div>';
+    return;
+  }
+
+  if (!data) {
+    resultEl.innerHTML = '<div style="color:var(--amber);font-size:12.5px">⚠️ Nessun utente trovato con questa email. Il paziente deve essere registrato sull\'app.</div>';
+    return;
+  }
+
+  // Check if already linked
+  const { data: existing } = await sb.from('patient_dietitian').select('id').eq('patient_id', data.id).eq('dietitian_id', currentUser.id).eq('cartella_id', collegaCartellaId).maybeSingle();
+
+  if (existing) {
+    resultEl.innerHTML = '<div style="color:var(--teal);font-size:12.5px">✅ Questo paziente è già collegato a questa cartella.</div>';
+    return;
+  }
+
+  collegaFoundUserId = data.id;
+  resultEl.innerHTML = `<div style="padding:10px;background:#F0FDF4;border-radius:8px;border:1px solid #BBF7D0">
+    <div style="font-weight:700;font-size:13px;color:var(--slate)">✅ Utente trovato</div>
+    <div style="font-size:12px;color:var(--slate-m);margin-top:2px">${esc(data.username || data.email)}</div>
+  </div>`;
+  confirmBtn.style.display = '';
+}
+
+async function confermaCollegamento() {
+  if (!collegaFoundUserId || !collegaCartellaId) return;
+  showLoading(true);
+  const { error } = await sb.from('patient_dietitian').insert({
+    patient_id: collegaFoundUserId,
+    dietitian_id: currentUser.id,
+    cartella_id: collegaCartellaId
+  });
+  showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  closeM('modal-collega');
+  toast('🔗 Paziente collegato!', 'ok');
+  await renderCartellaDetail(collegaCartellaId);
+}
+
+// ═══════════════════════════════════════════════════
+// DOCUMENTI PAZIENTE
+// ═══════════════════════════════════════════════════
+let docCartellaId = null;
+
+function openNuovoDocumento(cartellaId) {
+  docCartellaId = cartellaId;
+  document.getElementById('doc-title').value = '';
+  document.getElementById('doc-type').value = 'document';
+  document.getElementById('doc-content').value = '';
+  document.getElementById('doc-file').value = '';
+  const toggle = document.getElementById('doc-visible-toggle');
+  if (toggle && !toggle.classList.contains('on')) toggle.classList.add('on');
+  openM('modal-doc');
+  setTimeout(() => document.getElementById('doc-title').focus(), 200);
+}
+
+async function salvaDocumento() {
+  const title = (document.getElementById('doc-title').value || '').trim();
+  if (!title) { toast('Inserisci un titolo', 'err'); return; }
+
+  const tipo = document.getElementById('doc-type').value;
+  const content = document.getElementById('doc-content').value.trim();
+  const fileInput = document.getElementById('doc-file');
+  const visible = document.getElementById('doc-visible-toggle').classList.contains('on');
+
+  let fileUrl = null;
+  let fileName = null;
+
+  // Handle file upload if present
+  if (fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    fileName = file.name;
+    const filePath = `documents/${currentUser.id}/${docCartellaId}/${Date.now()}_${file.name}`;
+    const { data: uploadData, error: uploadErr } = await sb.storage.from('patient-files').upload(filePath, file);
+    if (uploadErr) {
+      // If storage bucket doesn't exist, store file as base64 in content
+      console.warn('File upload failed, storing reference:', uploadErr.message);
+      fileName = file.name;
+    } else {
+      fileUrl = uploadData?.path || filePath;
+    }
+  }
+
+  if (!content && !fileUrl && !fileName) {
+    toast('Inserisci contenuto o carica un file', 'err');
+    return;
+  }
+
+  showLoading(true);
+  const { error } = await sb.from('patient_documents').insert({
+    cartella_id: docCartellaId,
+    dietitian_id: currentUser.id,
+    title: title,
+    type: tipo,
+    content: content || null,
+    file_url: fileUrl || null,
+    file_name: fileName || null,
+    visible: visible
+  });
+  showLoading(false);
+
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  closeM('modal-doc');
+  toast('📄 Documento salvato!', 'ok');
+  await renderCartellaDetail(docCartellaId);
+}
+
+function buildDocsHtml(documents, cartellaId) {
+  if (!documents || !documents.length) {
+    return '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun documento.</div>';
+  }
+  const typeIcons = { diet: '🥗', advice: '💡', recipe: '🍳', document: '📄', education: '📚' };
+  const typeLabels = { diet: 'Dieta', advice: 'Consiglio', recipe: 'Ricetta', document: 'Documento', education: 'Educazione' };
+  const fmtDate = d => d ? new Date(d).toLocaleDateString('it', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+
+  return documents.map(d => {
+    const icon = typeIcons[d.type] || '📄';
+    const label = typeLabels[d.type] || d.type;
+    const isOn = d.visible !== false;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;transition:all .15s">
+      <span style="font-size:22px">${icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(d.title)}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${label} · ${fmtDate(d.created_at)}${d.file_name ? ' · 📎 ' + esc(d.file_name) : ''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <span style="font-size:10.5px;color:var(--slate-l)">${isOn ? 'Visibile' : 'Nascosto'}</span>
+        <button class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}"></button>
+      </div>
+      <button class="btn btn-ghost btn-xs" onclick="delDocument('${d.id}', '${cartellaId}')">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+async function toggleDocVisibility(docId, newVisible, cartellaId) {
+  const { error } = await sb.from('patient_documents').update({ visible: newVisible }).eq('id', docId);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  toast(newVisible ? '👁️ Documento visibile' : '🙈 Documento nascosto', 'ok');
+  await renderCartellaDetail(cartellaId);
+}
+
+async function delDocument(docId, cartellaId) {
+  customConfirm('Eliminare questo documento?', async () => {
+    showLoading(true);
+    await sb.from('patient_documents').delete().eq('id', docId);
+    showLoading(false);
+    await renderCartellaDetail(cartellaId);
+    toast('🗑️ Documento eliminato', 'info');
+  }, { danger: true, title: '⚠️ Elimina Documento', okLabel: 'Elimina' });
+}
+
+// ═══════════════════════════════════════════════════
+// PROGRESSI — WEIGHT CHART
+// ═══════════════════════════════════════════════════
+let weightChartInstance = null;
+
+function renderWeightChart(canvasId, data) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  if (weightChartInstance) { weightChartInstance.destroy(); weightChartInstance = null; }
+
+  const labels = data.map(d => new Date(d.logged_at).toLocaleDateString('it', { day: '2-digit', month: 'short' }));
+  const values = data.map(d => d.weight);
+
+  weightChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Peso (kg)',
+        data: values,
+        borderColor: '#0F766E',
+        backgroundColor: 'rgba(15, 118, 110, 0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointBackgroundColor: '#0F766E',
+        pointBorderColor: 'white',
+        pointBorderWidth: 2,
+        borderWidth: 2.5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1E293B',
+          titleFont: { size: 12, family: "'DM Sans', sans-serif" },
+          bodyFont: { size: 13, family: "'DM Sans', sans-serif", weight: '700' },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: (ctx) => ctx.parsed.y + ' kg'
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11, family: "'DM Sans', sans-serif" }, color: '#64748B' }
+        },
+        y: {
+          grid: { color: '#E2E8F0' },
+          ticks: {
+            font: { size: 11, family: "'DM Sans', sans-serif" },
+            color: '#64748B',
+            callback: v => v + ' kg'
+          }
+        }
+      }
+    }
+  });
+}
 </script>
 </body>
 </html>

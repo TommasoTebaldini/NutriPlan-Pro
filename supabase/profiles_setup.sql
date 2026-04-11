@@ -64,6 +64,16 @@ END $$;
 -- ─── 3. Abilita RLS ──────────────────────────────────────────────────────────
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
+-- ─── 3.5. Funzione SECURITY DEFINER per il controllo admin ───────────────────
+-- Necessaria per evitare la ricorsione infinita nelle policy RLS:
+-- le policy che usano EXISTS (SELECT ... FROM profiles ...) creano un ciclo
+-- perché PostgreSQL rievaluta le stesse policy sulla subquery.
+-- Con SECURITY DEFINER la funzione bypassa RLS ed esegue senza ricorsione.
+CREATE OR REPLACE FUNCTION check_is_admin()
+RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  SELECT COALESCE((SELECT is_admin FROM profiles WHERE id = auth.uid()), false);
+$$;
+
 -- ─── 4. Policy SELECT: ogni utente può leggere il proprio profilo ─────────────
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_select_own' AND tablename = 'profiles') THEN
@@ -73,17 +83,11 @@ DO $$ BEGIN
 END $$;
 
 -- ─── 5. Policy SELECT: l'admin può leggere tutti i profili ───────────────────
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_select_admin' AND tablename = 'profiles') THEN
-    CREATE POLICY "profiles_select_admin" ON profiles
-      FOR SELECT USING (
-        EXISTS (
-          SELECT 1 FROM profiles p
-          WHERE p.id = auth.uid() AND p.is_admin = true
-        )
-      );
-  END IF;
-END $$;
+-- Usa check_is_admin() per evitare ricorsione infinita.
+-- DROP + CREATE per sostituire versioni precedenti con policy ricorsive.
+DROP POLICY IF EXISTS "profiles_select_admin" ON profiles;
+CREATE POLICY "profiles_select_admin" ON profiles
+  FOR SELECT USING (check_is_admin());
 
 -- ─── 6. Policy UPDATE: ogni utente può aggiornare il proprio profilo ─────────
 DO $$ BEGIN
@@ -94,17 +98,11 @@ DO $$ BEGIN
 END $$;
 
 -- ─── 7. Policy UPDATE: l'admin può aggiornare qualsiasi profilo ──────────────
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_update_admin' AND tablename = 'profiles') THEN
-    CREATE POLICY "profiles_update_admin" ON profiles
-      FOR UPDATE USING (
-        EXISTS (
-          SELECT 1 FROM profiles p
-          WHERE p.id = auth.uid() AND p.is_admin = true
-        )
-      );
-  END IF;
-END $$;
+-- Usa check_is_admin() per evitare ricorsione infinita.
+-- DROP + CREATE per sostituire versioni precedenti con policy ricorsive.
+DROP POLICY IF EXISTS "profiles_update_admin" ON profiles;
+CREATE POLICY "profiles_update_admin" ON profiles
+  FOR UPDATE USING (check_is_admin());
 
 -- ─── 8. Policy INSERT: solo utenti autenticati possono inserire il proprio profilo
 DO $$ BEGIN
@@ -147,4 +145,9 @@ CREATE TRIGGER on_auth_user_created
 --   WHERE email = 'tua-email@example.com';
 --
 -- Dopodiché il pannello Admin Utenti sarà visibile nell'app.
+-- ─────────────────────────────────────────────────────────────────
+-- NOTA: questo script è idempotente e può essere ri-eseguito.
+-- Le policy profiles_select_admin e profiles_update_admin vengono
+-- sempre ricreate (DROP + CREATE) usando la funzione check_is_admin()
+-- con SECURITY DEFINER per evitare la ricorsione infinita RLS.
 -- ═══════════════════════════════════════════════════════════════════

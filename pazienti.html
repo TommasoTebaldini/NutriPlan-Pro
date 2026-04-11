@@ -9,10 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.doc-toggle{position:relative;width:40px;height:22px;background:#CBD5E1;border-radius:11px;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
-.doc-toggle.on{background:var(--teal)}
-.doc-toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
-.doc-toggle.on::after{transform:translateX(18px)}
+.doc-visible-cb{width:16px;height:16px;cursor:pointer;accent-color:var(--teal);flex-shrink:0}
 .progress-chart-wrap{background:white;border-radius:var(--r);padding:16px;border:1px solid var(--border);margin-bottom:14px}
 .wellness-card{display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px}
 .wellness-emoji{font-size:24px}
@@ -166,8 +163,8 @@
         <input type="text" id="doc-tags" placeholder="es: dieta mediterranea, celiachia, follow-up" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-        <button class="doc-toggle" id="doc-visible-toggle" onclick="this.classList.toggle('on')" type="button"></button>
-        <span style="font-size:12.5px;color:var(--slate-m)">Visibile al paziente</span>
+        <input type="checkbox" class="doc-visible-cb" id="doc-visible-toggle">
+        <label for="doc-visible-toggle" style="font-size:12.5px;color:var(--slate-m);cursor:pointer">Visibile al paziente</label>
       </div>
     </div>
     <div class="mfoot">
@@ -810,7 +807,7 @@ function openNuovoDocumento(cartellaId) {
   document.getElementById('doc-file').value = '';
   document.getElementById('doc-tags').value = '';
   const toggle = document.getElementById('doc-visible-toggle');
-  if (toggle) toggle.classList.remove('on');
+  if (toggle) toggle.checked = false;
   openM('modal-doc');
   setTimeout(() => document.getElementById('doc-title').focus(), 200);
 }
@@ -822,7 +819,7 @@ async function salvaDocumento() {
   const tipo = document.getElementById('doc-type').value;
   const content = document.getElementById('doc-content').value.trim();
   const fileInput = document.getElementById('doc-file');
-  const visible = document.getElementById('doc-visible-toggle').classList.contains('on');
+  const visible = document.getElementById('doc-visible-toggle').checked;
   const tagsRaw = (document.getElementById('doc-tags').value || '').trim();
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : null;
 
@@ -892,8 +889,8 @@ function buildDocsHtml(documents, cartellaId) {
         ${tagsHtml}
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <button id="doc-vis-btn-${d.id}" class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}" aria-label="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}" aria-pressed="${isOn}"></button>
-        <span id="doc-vis-label-${d.id}" style="font-size:11px;font-weight:600;color:${isOn ? '#0F766E' : '#94A3B8'}">${isOn ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'}</span>
+        <input type="checkbox" class="doc-visible-cb" id="doc-vis-btn-${d.id}" ${isOn ? 'checked' : ''} onchange="toggleDocVisibility('${d.id}', this.checked, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}">
+        <label for="doc-vis-btn-${d.id}" id="doc-vis-label-${d.id}" style="font-size:11px;font-weight:600;color:${isOn ? '#0F766E' : '#94A3B8'};cursor:pointer">${isOn ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'}</label>
       </div>
       <button class="btn btn-ghost btn-xs" onclick="delDocument('${d.id}', '${cartellaId}')">🗑️</button>
     </div>`;
@@ -905,11 +902,8 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
   const btn = document.getElementById('doc-vis-btn-' + docId);
   const lbl = document.getElementById('doc-vis-label-' + docId);
   if (btn) {
-    if (newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
-    btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${!newVisible}, '${cartellaId}')`);
+    btn.checked = newVisible;
     btn.title = newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
-    btn.setAttribute('aria-label', newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
-    btn.setAttribute('aria-pressed', String(newVisible));
   }
   if (lbl) { lbl.style.color = newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
 
@@ -917,11 +911,8 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
   if (error) {
     // Revert optimistic update on error
     if (btn) {
-      if (!newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
-      btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${newVisible}, '${cartellaId}')`);
+      btn.checked = !newVisible;
       btn.title = !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
-      btn.setAttribute('aria-label', !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
-      btn.setAttribute('aria-pressed', String(!newVisible));
     }
     if (lbl) { lbl.style.color = !newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = !newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
     toast('❌ Errore: ' + error.message, 'err');

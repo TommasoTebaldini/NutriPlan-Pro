@@ -74,43 +74,42 @@ RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
   SELECT COALESCE((SELECT is_admin FROM profiles WHERE id = auth.uid()), false);
 $$;
 
--- ─── 4. Policy SELECT: ogni utente può leggere il proprio profilo ─────────────
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_select_own' AND tablename = 'profiles') THEN
-    CREATE POLICY "profiles_select_own" ON profiles
-      FOR SELECT USING (auth.uid() = id);
-  END IF;
+-- Garantisce che i ruoli autenticati/anonimi possano eseguire la funzione
+GRANT EXECUTE ON FUNCTION check_is_admin() TO authenticated, anon;
+
+-- ─── 3.6. Rimozione di TUTTE le policy esistenti sulla tabella profiles ───────
+-- IMPORTANTE: questo blocco elimina qualsiasi vecchia policy ricorsiva che
+-- potrebbe essere rimasta da versioni precedenti dello script, garantendo
+-- uno stato pulito prima di ricreare le policy corrette.
+DO $$ DECLARE
+  pol record;
+BEGIN
+  FOR pol IN SELECT policyname FROM pg_policies WHERE tablename = 'profiles' AND schemaname = 'public' LOOP
+    EXECUTE 'DROP POLICY IF EXISTS ' || quote_ident(pol.policyname) || ' ON profiles';
+  END LOOP;
 END $$;
+
+-- ─── 4. Policy SELECT: ogni utente può leggere il proprio profilo ─────────────
+CREATE POLICY "profiles_select_own" ON profiles
+  FOR SELECT USING (auth.uid() = id);
 
 -- ─── 5. Policy SELECT: l'admin può leggere tutti i profili ───────────────────
 -- Usa check_is_admin() per evitare ricorsione infinita.
--- DROP + CREATE per sostituire versioni precedenti con policy ricorsive.
-DROP POLICY IF EXISTS "profiles_select_admin" ON profiles;
 CREATE POLICY "profiles_select_admin" ON profiles
   FOR SELECT USING (check_is_admin());
 
 -- ─── 6. Policy UPDATE: ogni utente può aggiornare il proprio profilo ─────────
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_update_own' AND tablename = 'profiles') THEN
-    CREATE POLICY "profiles_update_own" ON profiles
-      FOR UPDATE USING (auth.uid() = id);
-  END IF;
-END $$;
+CREATE POLICY "profiles_update_own" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
 
 -- ─── 7. Policy UPDATE: l'admin può aggiornare qualsiasi profilo ──────────────
 -- Usa check_is_admin() per evitare ricorsione infinita.
--- DROP + CREATE per sostituire versioni precedenti con policy ricorsive.
-DROP POLICY IF EXISTS "profiles_update_admin" ON profiles;
 CREATE POLICY "profiles_update_admin" ON profiles
   FOR UPDATE USING (check_is_admin());
 
 -- ─── 8. Policy INSERT: solo utenti autenticati possono inserire il proprio profilo
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_insert_own' AND tablename = 'profiles') THEN
-    CREATE POLICY "profiles_insert_own" ON profiles
-      FOR INSERT WITH CHECK (auth.uid() = id);
-  END IF;
-END $$;
+CREATE POLICY "profiles_insert_own" ON profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- ─── 9. Trigger per creare automaticamente il profilo alla registrazione ──────
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -147,7 +146,7 @@ CREATE TRIGGER on_auth_user_created
 -- Dopodiché il pannello Admin Utenti sarà visibile nell'app.
 -- ─────────────────────────────────────────────────────────────────
 -- NOTA: questo script è idempotente e può essere ri-eseguito.
--- Le policy profiles_select_admin e profiles_update_admin vengono
--- sempre ricreate (DROP + CREATE) usando la funzione check_is_admin()
--- con SECURITY DEFINER per evitare la ricorsione infinita RLS.
+-- Alla ri-esecuzione TUTTE le policy sulla tabella profiles vengono
+-- eliminate e ricreate da zero, eliminando qualsiasi vecchia policy
+-- ricorsiva che potrebbe impedire la lettura del profilo admin.
 -- ═══════════════════════════════════════════════════════════════════

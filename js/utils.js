@@ -18,6 +18,7 @@ try {
 let currentUser = null;
 let isAdmin = false;
 let currentProfile = null;
+let loadProfileError = null;
 
 // ═══════════════════════════════════════════════════
 // AUTH
@@ -42,8 +43,12 @@ async function checkAuth(redirectIfNotLogged = true) {
 
 async function loadProfile() {
   if (!currentUser) return;
+  loadProfileError = null;
   const { data, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
-  if (error) console.warn('loadProfile error:', error.message);
+  if (error) {
+    console.warn('loadProfile error:', error.message);
+    loadProfileError = error;
+  }
   currentProfile = data;
   isAdmin = data?.is_admin === true;
   if (data && !data.approved && !data.is_admin) {

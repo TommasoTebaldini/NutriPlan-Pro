@@ -271,10 +271,10 @@ async function renderCartellaDetail(id) {
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
   const [piani, ncpts, schede, biaList, noteSpec, documents, weightLogs, dailyWellness, patientLink] = await Promise.all([
     safeQuery(sb.from('piani').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
-    safeQuery(sb.from('ncpt').select('id,created_at,updated_at,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('schede_valutazione').select('id,created_at,nome,cognome,patologie').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,note').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
-    safeQuery(sb.from('note_specialistiche').select('id,created_at,tipo,nota,dati').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('ncpt').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('schede_valutazione').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('bia_records').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
+    safeQuery(sb.from('note_specialistiche').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('patient_documents').select('*').eq('cartella_id', id).eq('dietitian_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('weight_logs').select('*').eq('cartella_id', id).order('logged_at', {ascending:true})),
     safeQuery(sb.from('daily_wellness').select('*').eq('cartella_id', id).order('logged_at', {ascending:false}).limit(30)),
@@ -380,6 +380,7 @@ async function renderCartellaDetail(id) {
         ${qDesc ? `<div style="font-size:11.5px;color:var(--slate-m);margin-top:3px;line-height:1.5">${esc(qDesc)}</div>` : ''}
       </div>
       ${scoreChip}
+      <button id="vis-btn-note_specialistiche-${q.id}" class="btn btn-ghost btn-xs" data-visible="${q.visible_to_patient!==false}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${q.id}')" style="color:${q.visible_to_patient!==false?'#0F766E':'#94A3B8'}" title="${q.visible_to_patient!==false?'Nascondi al paziente':'Mostra al paziente'}">${q.visible_to_patient!==false?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${q.id}')">🗑️</button>
     </div>`;
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun questionario salvato.</div>';
@@ -471,6 +472,7 @@ async function renderCartellaDetail(id) {
             <div style="font-size:11.5px;color:var(--slate-l)">Consiglio Nutrizionale · ${fmtDate(n.created_at)}</div>
           </div>
           <span style="font-size:11px;background:#F0FDF4;color:#16A34A;padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">Consiglio Nutrizionale</span>
+          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient!==false}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient!==false?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient!==false?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient!==false?'👁️':'🙈'}</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','consiglio')">✏️ Apri</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
         </div>`;
@@ -505,6 +507,7 @@ async function renderCartellaDetail(id) {
             <div style="font-size:11.5px;color:var(--slate-l)">${s.label} · ${fmtDate(n.created_at)}</div>
           </div>
           <span style="font-size:11px;background:${s.bg};color:${s.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${s.label}</span>
+          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient!==false}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient!==false?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient!==false?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient!==false?'👁️':'🙈'}</button>
           ${openBtn}
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
         </div>`;
@@ -956,7 +959,10 @@ async function toggleItemVisibility(table, itemId) {
       btn.title = !newVisible ? 'Nascondi al paziente' : 'Mostra al paziente';
       btn.textContent = !newVisible ? '👁️' : '🙈';
     }
-    toast('❌ Errore: ' + error.message, 'err');
+    const msg = error.message && error.message.includes('visible_to_patient')
+      ? '⚠️ Migrazione DB richiesta: esegui add_visible_to_patient.sql in Supabase'
+      : '❌ Errore: ' + error.message;
+    toast(msg, 'err');
     return;
   }
   toast(newVisible ? '👁️ Visibile al paziente' : '🙈 Nascosto al paziente', 'ok');

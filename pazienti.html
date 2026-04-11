@@ -892,8 +892,8 @@ function buildDocsHtml(documents, cartellaId) {
         ${tagsHtml}
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <button id="doc-vis-btn-${d.id}" class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}"></button>
-        <span id="doc-vis-label-${d.id}" style="font-size:11px;font-weight:600;color:${isOn ? '#0F766E' : '#94A3B8'}">👁 Visibile al paziente</span>
+        <button id="doc-vis-btn-${d.id}" class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}" aria-label="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}" aria-pressed="${isOn}"></button>
+        <span id="doc-vis-label-${d.id}" style="font-size:11px;font-weight:600;color:${isOn ? '#0F766E' : '#94A3B8'}">${isOn ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'}</span>
       </div>
       <button class="btn btn-ghost btn-xs" onclick="delDocument('${d.id}', '${cartellaId}')">🗑️</button>
     </div>`;
@@ -908,8 +908,10 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
     if (newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
     btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${!newVisible}, '${cartellaId}')`);
     btn.title = newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
+    btn.setAttribute('aria-label', newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
+    btn.setAttribute('aria-pressed', String(newVisible));
   }
-  if (lbl) { lbl.style.color = newVisible ? '#0F766E' : '#94A3B8'; }
+  if (lbl) { lbl.style.color = newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
 
   const { error } = await sb.from('patient_documents').update({ visible: newVisible }).eq('id', docId);
   if (error) {
@@ -918,8 +920,10 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
       if (!newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
       btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${newVisible}, '${cartellaId}')`);
       btn.title = !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
+      btn.setAttribute('aria-label', !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
+      btn.setAttribute('aria-pressed', String(!newVisible));
     }
-    if (lbl) { lbl.style.color = !newVisible ? '#0F766E' : '#94A3B8'; }
+    if (lbl) { lbl.style.color = !newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = !newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
     toast('❌ Errore: ' + error.message, 'err');
     return;
   }

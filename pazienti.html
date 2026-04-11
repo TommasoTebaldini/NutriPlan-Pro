@@ -394,7 +394,7 @@ async function renderCartellaDetail(id) {
     </div>
     ${cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
 
-    <!-- SEZIONE PIANI -->
+    <!-- SEZIONE PIANI + CONTENUTO VISIBILE AL PAZIENTE -->
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap">
         <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
@@ -404,6 +404,17 @@ async function renderCartellaDetail(id) {
         <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;box-shadow:0 2px 8px rgba(15,118,110,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(15,118,110,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(15,118,110,.3)';this.style.transform=''" onclick="nuovoPianoInCartella('${cart.id}')">📋 Nuovo Piano</button>
       </div>
       <div style="padding:10px 14px">${pianiHtml}</div>
+      <!-- SOTTO-SEZIONE: CONTENUTO VISIBILE AL PAZIENTE (note, consigli, documenti allegati) -->
+      <div style="border-top:1px solid var(--border);padding:10px 14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:13px;font-weight:700;color:var(--slate)">📄 Note, consigli e allegati per il paziente</span>
+            <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700">${(documents||[]).length}</span>
+          </div>
+          <button style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:10px;border:none;font-size:11.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#D97706,#FBBF24);color:white;box-shadow:0 2px 8px rgba(217,119,6,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(217,119,6,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(217,119,6,.3)';this.style.transform=''" onclick="openNuovoDocumento('${id}')">📄 Aggiungi</button>
+        </div>
+        <div id="docs-list-${id}">${buildDocsHtml(documents, id)}</div>
+      </div>
     </div>
 
     <!-- SEZIONE NCPt -->
@@ -487,18 +498,6 @@ async function renderCartellaDetail(id) {
         </div>`;
       }).join('')}</div>
     </div>` : ''}
-
-    <!-- SEZIONE DOCUMENTI -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap">
-        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
-          📄 Documenti
-          <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(documents||[]).length}</span>
-        </h4>
-        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#D97706,#FBBF24);color:white;box-shadow:0 2px 8px rgba(217,119,6,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(217,119,6,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(217,119,6,.3)';this.style.transform=''" onclick="openNuovoDocumento('${id}')">📄 Nuovo Documento</button>
-      </div>
-      <div style="padding:10px 14px" id="docs-list-${id}">${buildDocsHtml(documents, id)}</div>
-    </div>
 
     <!-- SEZIONE PROGRESSI -->
     <div class="card" style="margin-bottom:12px">
@@ -893,8 +892,8 @@ function buildDocsHtml(documents, cartellaId) {
         ${tagsHtml}
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <span id="doc-vis-label-${d.id}" style="font-size:10.5px;color:var(--slate-l)">${isOn ? 'Visibile' : 'Nascosto'}</span>
-        <button id="doc-vis-btn-${d.id}" class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}"></button>
+        <button id="doc-vis-btn-${d.id}" class="doc-toggle${isOn ? ' on' : ''}" onclick="toggleDocVisibility('${d.id}', ${!isOn}, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}" aria-label="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}" aria-pressed="${isOn}"></button>
+        <span id="doc-vis-label-${d.id}" style="font-size:11px;font-weight:600;color:${isOn ? '#0F766E' : '#94A3B8'}">${isOn ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'}</span>
       </div>
       <button class="btn btn-ghost btn-xs" onclick="delDocument('${d.id}', '${cartellaId}')">🗑️</button>
     </div>`;
@@ -909,8 +908,10 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
     if (newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
     btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${!newVisible}, '${cartellaId}')`);
     btn.title = newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
+    btn.setAttribute('aria-label', newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
+    btn.setAttribute('aria-pressed', String(newVisible));
   }
-  if (lbl) { lbl.textContent = newVisible ? 'Visibile' : 'Nascosto'; }
+  if (lbl) { lbl.style.color = newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
 
   const { error } = await sb.from('patient_documents').update({ visible: newVisible }).eq('id', docId);
   if (error) {
@@ -919,8 +920,10 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
       if (!newVisible) { btn.classList.add('on'); } else { btn.classList.remove('on'); }
       btn.setAttribute('onclick', `toggleDocVisibility('${docId}', ${newVisible}, '${cartellaId}')`);
       btn.title = !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
+      btn.setAttribute('aria-label', !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
+      btn.setAttribute('aria-pressed', String(!newVisible));
     }
-    if (lbl) { lbl.textContent = !newVisible ? 'Visibile' : 'Nascosto'; }
+    if (lbl) { lbl.style.color = !newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = !newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
     toast('❌ Errore: ' + error.message, 'err');
     return;
   }

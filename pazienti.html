@@ -889,7 +889,7 @@ function buildDocsHtml(documents, cartellaId) {
         ${tagsHtml}
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <input type="checkbox" class="doc-visible-cb" id="doc-vis-btn-${d.id}" ${isOn ? 'checked' : ''} onchange="toggleDocVisibility('${d.id}', this.checked, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}" aria-label="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}">
+        <input type="checkbox" class="doc-visible-cb" id="doc-vis-btn-${d.id}" ${isOn ? 'checked' : ''} onchange="toggleDocVisibility('${d.id}', this.checked, '${cartellaId}')" title="${isOn ? 'Nascondi al paziente' : 'Rendi visibile al paziente'}">
         <label for="doc-vis-btn-${d.id}" id="doc-vis-label-${d.id}" style="font-size:11px;font-weight:600;color:${isOn ? '#0F766E' : '#94A3B8'};cursor:pointer">${isOn ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'}</label>
       </div>
       <button class="btn btn-ghost btn-xs" onclick="delDocument('${d.id}', '${cartellaId}')">🗑️</button>
@@ -904,7 +904,6 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
   if (btn) {
     btn.checked = newVisible;
     btn.title = newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
-    btn.setAttribute('aria-label', newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
   }
   if (lbl) { lbl.style.color = newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
 
@@ -914,7 +913,6 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
     if (btn) {
       btn.checked = !newVisible;
       btn.title = !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente';
-      btn.setAttribute('aria-label', !newVisible ? 'Nascondi al paziente' : 'Rendi visibile al paziente');
     }
     if (lbl) { lbl.style.color = !newVisible ? '#0F766E' : '#94A3B8'; lbl.textContent = !newVisible ? '👁 Visibile al paziente' : '👁 Nascosto al paziente'; }
     toast('❌ Errore: ' + error.message, 'err');

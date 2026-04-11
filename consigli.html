@@ -2425,9 +2425,10 @@ async function salvaSelezioneInCartella() {
   if (!selected.length) { toast('Nessun consiglio selezionato', 'err'); return; }
   showLoading(true);
   let saved = 0, errors = 0;
+  const tuttiConsigli = getAllConsigli();
   for (const cb of selected) {
     const consiglioId = cb.dataset.id;
-    const c = getAllConsigli().find(x => x.id === consiglioId);
+    const c = tuttiConsigli.find(x => x.id === consiglioId);
     const testo = document.getElementById('note-text-' + consiglioId)?.value || '';
     const dati = { consiglio_id: consiglioId, consiglio_nome: c?.nome || consiglioId, note_paziente: testo };
     const payload = { cartella_id, user_id: currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
@@ -2449,10 +2450,6 @@ async function salvaSelezioneInCartella() {
   }
   showLoading(false);
   await caricaNoteConsigli(cartella_id);
-  selected.forEach(cb => {
-    const stato = document.getElementById('note-stato-' + cb.dataset.id);
-    if (stato) stato.textContent = '✅ Nota salvata in cartella';
-  });
   if (errors) {
     toast(`⚠️ ${saved} salvati, ${errors} errori`, 'err');
   } else {

@@ -261,6 +261,11 @@
         <div class="fg"><label>Alimenti</label><textarea id="v-pasto-spuntino-s" rows="2" placeholder="Es. Tisana, frutta secca, latte..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
         <div class="fg" style="margin-top:6px"><label>Note</label><input type="text" id="v-note-spuntino-s" placeholder="Es. Ore 22:30, davanti alla tv" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
       </div>
+      <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:#64748B;margin-bottom:8px">➕ Altri alimenti / Note aggiuntive</div>
+        <div class="fg"><label>Alimenti dimenticati o altro</label><textarea id="v-pasto-altri" rows="2" placeholder="Es. Caffè, gomme da masticare, integratori, bibite..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-top:6px"><label>Note aggiuntive</label><input type="text" id="v-note-altri" placeholder="Es. Condimenti, salse, olio..." style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -930,6 +935,8 @@ async function doSalva(cartellaId){
       note_cena:document.getElementById('v-note-cena').value||null,
       pasto_spuntino_s:document.getElementById('v-pasto-spuntino-s').value||null,
       note_spuntino_s:document.getElementById('v-note-spuntino-s').value||null,
+      pasto_altri:document.getElementById('v-pasto-altri').value||null,
+      note_altri:document.getElementById('v-note-altri').value||null,
       ffq_cereali:document.getElementById('v-ffq-cereali').value||null,
       ffq_legumi:document.getElementById('v-ffq-legumi').value||null,
       ffq_verdure:document.getElementById('v-ffq-verdure').value||null,
@@ -1108,7 +1115,7 @@ function resetVal(){
    'v-allergie','v-acqua','v-alim-graditi','v-alim-non-graditi',
    'v-pasto-colazione','v-note-colazione','v-pasto-spuntino-m','v-note-spuntino-m',
    'v-pasto-pranzo','v-note-pranzo','v-pasto-merenda','v-note-merenda',
-   'v-pasto-cena','v-note-cena','v-pasto-spuntino-s','v-note-spuntino-s',
+   'v-pasto-cena','v-note-cena','v-pasto-spuntino-s','v-note-spuntino-s','v-pasto-altri','v-note-altri',
    'v-diagn','v-anno-diag','v-comorbid','v-chirurgia',
    'v-es-glicemia','v-es-insulina','v-es-hba1c','v-es-col-tot','v-es-ldl','v-es-hdl',
    'v-es-trig','v-es-creat','v-es-azot','v-es-uric','v-es-got','v-es-gpt','v-es-ggt',
@@ -1181,6 +1188,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
             sv2('v-pasto-merenda',ex.pasto_merenda);sv2('v-note-merenda',ex.note_merenda);
             sv2('v-pasto-cena',ex.pasto_cena);sv2('v-note-cena',ex.note_cena);
             sv2('v-pasto-spuntino-s',ex.pasto_spuntino_s);sv2('v-note-spuntino-s',ex.note_spuntino_s);
+            sv2('v-pasto-altri',ex.pasto_altri);sv2('v-note-altri',ex.note_altri);
             ['cereali','legumi','verdure','frutta','carne_r','carne_b','pesce','uova','latte','formaggi','dolci','junk','frutta_s'].forEach(k=>{sv2('v-ffq-'+k,ex['ffq_'+k]);});
             sv2('v-diagn',ex.diagn);sv2('v-anno-diag',ex.anno_diag);sv2('v-comorbid',ex.comorbid);sv2('v-chirurgia',ex.chirurgia);
             ['glicemia','insulina','hba1c','col_tot','ldl','hdl','trig','creat','azot','uric','got','gpt','ggt','hb','ferr','vitd','vitb12','tsh','pcr','data','note'].forEach(k=>{sv2('v-es-'+k,ex['es_'+k]);});

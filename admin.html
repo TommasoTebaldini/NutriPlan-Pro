@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ok = await checkAuth();
   if(!ok) return;
   if(!isAdmin) {
-    document.getElementById('admin-check').innerHTML = '<div class="ei">🔒</div><h3>Accesso negato</h3><p>Solo gli amministratori possono accedere a questa sezione.</p><br><a href="app.html" class="btn btn-primary" style="width:auto;padding:8px 20px">← Torna al Piano</a>';
+    document.getElementById('admin-check').innerHTML = `<div class="ei">🔒</div><h3>Accesso negato</h3><p>Solo gli amministratori possono accedere a questa sezione.</p><div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;margin-top:14px;text-align:left;max-width:520px;margin-left:auto;margin-right:auto"><p style="font-size:12.5px;color:#475569;margin-bottom:8px">ℹ️ Per abilitare l'accesso admin, esegui questo comando nel <b>SQL Editor di Supabase</b> (dopo aver eseguito <code>supabase/profiles_setup.sql</code>):</p><pre style="background:#1E293B;color:#94F3B8;border-radius:6px;padding:10px 14px;font-size:12px;overflow-x:auto;margin:0">UPDATE profiles\nSET is_admin = true, approved = true\nWHERE email = '${esc(currentUser?.email || 'tua-email@example.com')}';</pre></div><br><a href="app.html" class="btn btn-primary" style="width:auto;padding:8px 20px">← Torna al Piano</a>`;
     return;
   }
   document.getElementById('admin-check').style.display = 'none';

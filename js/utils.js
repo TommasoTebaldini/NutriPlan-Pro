@@ -42,9 +42,10 @@ async function checkAuth(redirectIfNotLogged = true) {
 
 async function loadProfile() {
   if (!currentUser) return;
-  const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  const { data, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+  if (error) console.warn('loadProfile error:', error.message);
   currentProfile = data;
-  isAdmin = data?.is_admin || false;
+  isAdmin = data?.is_admin === true;
   if (data && !data.approved && !data.is_admin) {
     window.location.href = 'index.html?waiting=1';
     return;

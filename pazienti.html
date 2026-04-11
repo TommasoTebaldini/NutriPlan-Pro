@@ -271,10 +271,10 @@ async function renderCartellaDetail(id) {
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
   const [piani, ncpts, schede, biaList, noteSpec, documents, weightLogs, dailyWellness, patientLink] = await Promise.all([
     safeQuery(sb.from('piani').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
-    safeQuery(sb.from('ncpt').select('id,created_at,updated_at,valutazione,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('schede_valutazione').select('id,created_at,nome,cognome,patologie,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,note,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
-    safeQuery(sb.from('note_specialistiche').select('id,created_at,tipo,nota,dati,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('ncpt').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('schede_valutazione').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('bia_records').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
+    safeQuery(sb.from('note_specialistiche').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('patient_documents').select('*').eq('cartella_id', id).eq('dietitian_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('weight_logs').select('*').eq('cartella_id', id).order('logged_at', {ascending:true})),
     safeQuery(sb.from('daily_wellness').select('*').eq('cartella_id', id).order('logged_at', {ascending:false}).limit(30)),
@@ -959,7 +959,10 @@ async function toggleItemVisibility(table, itemId) {
       btn.title = !newVisible ? 'Nascondi al paziente' : 'Mostra al paziente';
       btn.textContent = !newVisible ? '👁️' : '🙈';
     }
-    toast('❌ Errore: ' + error.message, 'err');
+    const msg = error.message && error.message.includes('visible_to_patient')
+      ? '⚠️ Migrazione DB richiesta: esegui add_visible_to_patient.sql in Supabase'
+      : '❌ Errore: ' + error.message;
+    toast(msg, 'err');
     return;
   }
   toast(newVisible ? '👁️ Visibile al paziente' : '🙈 Nascosto al paziente', 'ok');

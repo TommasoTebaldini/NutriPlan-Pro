@@ -308,6 +308,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">Salvato: ${fmtDate(p.saved_at||p.data_piano)}</div>
       </div>
       <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">Piano</span>
+      <button id="vis-btn-piani-${p.id}" class="btn btn-ghost btn-xs" data-visible="${p.visible_to_patient!==false}" onclick="event.stopPropagation();toggleItemVisibility('piani','${p.id}')" style="color:${p.visible_to_patient!==false?'#0F766E':'#94A3B8'}" title="${p.visible_to_patient!==false?'Nascondi al paziente':'Mostra al paziente'}">${p.visible_to_patient!==false?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPiano('${p.id}')">🗑️</button>
     </div>`).join('') :
     '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun piano salvato.</div>';
@@ -324,6 +325,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">Aggiornato: ${fmtDate(n.updated_at||n.created_at)}</div>
       </div>
       <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:3px 9px;border-radius:8px;font-weight:600">NCPt</span>
+      <button id="vis-btn-ncpt-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient!==false}" onclick="event.stopPropagation();toggleItemVisibility('ncpt','${n.id}')" style="color:${n.visible_to_patient!==false?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient!==false?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient!==false?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNCPt('${n.id}')">🗑️</button>
     </div>`;
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun NCPt salvato.</div>';
@@ -337,6 +339,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">${b.peso ? 'Peso: ' + b.peso + ' kg' : ''}${b.bf_pct ? ' · BF: ' + b.bf_pct + '%' : ''}${b.ffm_kg ? ' · FFM: ' + b.ffm_kg + ' kg' : ''}${b.angolo_fase ? ' · φ: ' + b.angolo_fase + '°' : ''}</div>
       </div>
       <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">BIA</span>
+      <button id="vis-btn-bia_records-${b.id}" class="btn btn-ghost btn-xs" data-visible="${b.visible_to_patient!==false}" onclick="event.stopPropagation();toggleItemVisibility('bia_records','${b.id}')" style="color:${b.visible_to_patient!==false?'#0F766E':'#94A3B8'}" title="${b.visible_to_patient!==false?'Nascondi al paziente':'Mostra al paziente'}">${b.visible_to_patient!==false?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delBIA('${b.id}','${id}')">🗑️</button>
     </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna misurazione BIA salvata.</div>';
 
@@ -349,6 +352,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">Salvata: ${fmtDate(s.created_at)}</div>
       </div>
       <span style="font-size:11px;background:#F0FDF4;color:#15803D;padding:3px 9px;border-radius:8px;font-weight:600">Valutazione</span>
+      <button id="vis-btn-schede_valutazione-${s.id}" class="btn btn-ghost btn-xs" data-visible="${s.visible_to_patient!==false}" onclick="event.stopPropagation();toggleItemVisibility('schede_valutazione','${s.id}')" style="color:${s.visible_to_patient!==false?'#0F766E':'#94A3B8'}" title="${s.visible_to_patient!==false?'Nascondi al paziente':'Mostra al paziente'}">${s.visible_to_patient!==false?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delScheda('${s.id}')">🗑️</button>
     </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna scheda salvata.</div>';
 
@@ -402,17 +406,6 @@ async function renderCartellaDetail(id) {
         <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;box-shadow:0 2px 8px rgba(15,118,110,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(15,118,110,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(15,118,110,.3)';this.style.transform=''" onclick="nuovoPianoInCartella('${cart.id}')">📋 Nuovo Piano</button>
       </div>
       <div style="padding:10px 14px">${pianiHtml}</div>
-      <!-- SOTTO-SEZIONE: CONTENUTO VISIBILE AL PAZIENTE (note, consigli, documenti allegati) -->
-      <div style="border-top:1px solid var(--border);padding:10px 14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;margin-bottom:10px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:13px;font-weight:700;color:var(--slate)">📄 Note, consigli e allegati per il paziente</span>
-            <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700">${(documents||[]).length}</span>
-          </div>
-          <button style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:10px;border:none;font-size:11.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#D97706,#FBBF24);color:white;box-shadow:0 2px 8px rgba(217,119,6,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(217,119,6,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(217,119,6,.3)';this.style.transform=''" onclick="openNuovoDocumento('${id}')">📄 Aggiungi</button>
-        </div>
-        <div id="docs-list-${id}">${buildDocsHtml(documents, id)}</div>
-      </div>
     </div>
 
     <!-- SEZIONE NCPt -->
@@ -941,6 +934,32 @@ async function toggleDocVisibility(docId, newVisible, cartellaId) {
     return;
   }
   toast(newVisible ? '👁️ Documento visibile' : '🙈 Documento nascosto', 'ok');
+}
+
+async function toggleItemVisibility(table, itemId) {
+  const btn = document.getElementById('vis-btn-' + table + '-' + itemId);
+  const isCurrentlyVisible = btn ? btn.dataset.visible !== 'false' : true;
+  const newVisible = !isCurrentlyVisible;
+
+  if (btn) {
+    btn.dataset.visible = newVisible;
+    btn.style.color = newVisible ? '#0F766E' : '#94A3B8';
+    btn.title = newVisible ? 'Nascondi al paziente' : 'Mostra al paziente';
+    btn.textContent = newVisible ? '👁️' : '🙈';
+  }
+
+  const { error } = await sb.from(table).update({ visible_to_patient: newVisible }).eq('id', itemId);
+  if (error) {
+    if (btn) {
+      btn.dataset.visible = !newVisible;
+      btn.style.color = !newVisible ? '#0F766E' : '#94A3B8';
+      btn.title = !newVisible ? 'Nascondi al paziente' : 'Mostra al paziente';
+      btn.textContent = !newVisible ? '👁️' : '🙈';
+    }
+    toast('❌ Errore: ' + error.message, 'err');
+    return;
+  }
+  toast(newVisible ? '👁️ Visibile al paziente' : '🙈 Nascosto al paziente', 'ok');
 }
 
 async function delDocument(docId, cartellaId) {

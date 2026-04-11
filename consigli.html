@@ -227,8 +227,6 @@
   <div class="cs-paz-bar no-print" id="cs-paz-bar">
     <label>📁 Cartella Paziente</label>
     <div id="cs-cartella-cw" style="flex:1;min-width:200px"></div>
-    <span id="cs-sel-count" class="cs-sel-count" style="display:none"></span>
-    <button id="cs-salva-sel-btn" class="btn btn-primary btn-sm no-print" onclick="salvaSelezioneInCartella()" style="display:none;flex-shrink:0">💾 Salva selezionati</button>
     <span id="cs-paz-hint" style="font-size:12px;color:var(--slate-l);flex-shrink:0">Seleziona una cartella per aggiungere note personalizzate ai consigli</span>
   </div>
 
@@ -2009,7 +2007,6 @@ function buildConsiglio(c, isCustom = false) {
   const hex = c.colore || '#0F766E';
   div.innerHTML = `
     <div class="cc-hdr" style="border-left:4px solid ${hex}" onclick="toggleCC(this)">
-      <input type="checkbox" class="cc-sel-cb" id="sel-cb-${c.id}" data-id="${c.id}" onclick="event.stopPropagation();aggiornaCountSelezione()" title="Seleziona questo consiglio per salvarlo in cartella">
       <span class="cc-emoji" style="color:${hex}">${c.emoji}</span>
       <h3 style="color:${hex}">${esc(c.nome)}</h3>
       ${isCustom ? `<span class="cc-badge" style="background:${hex}18;border-color:${hex}30;color:${hex}">✏️ Personalizzato</span>` : ''}

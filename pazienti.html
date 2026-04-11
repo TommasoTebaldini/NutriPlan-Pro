@@ -289,9 +289,10 @@ async function renderCartellaDetail(id) {
     return; 
   }
 
-  // Split questionnaires from other specialist notes
+  // Split questionnaires, consigli nutrizionali, and other specialist notes
   const questionariSalvati = (noteSpec || []).filter(n => n.tipo === 'questionario');
-  const noteSpecAltre = (noteSpec || []).filter(n => n.tipo !== 'questionario');
+  const consigliNutrizionali = (noteSpec || []).filter(n => n.tipo === 'consiglio');
+  const noteSpecAltre = (noteSpec || []).filter(n => n.tipo !== 'questionario' && n.tipo !== 'consiglio');
   document.getElementById('page-title').textContent = '📁 ' + cart.nome;
   const eta = cart.ddn ? calcolaEta(cart.ddn) : null;
 
@@ -461,6 +462,27 @@ async function renderCartellaDetail(id) {
       </div>
       <div style="padding:10px 14px">${questionariHtml}</div>
     </div>
+
+    <!-- Consigli Nutrizionali -->
+    ${(consigliNutrizionali && consigliNutrizionali.length) ? `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h4 style="font-size:14px;margin:0">💡 Consigli Nutrizionali <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${consigliNutrizionali.length}</span></h4>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:10px;border:none;font-size:11.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#16A34A,#4ADE80);color:white;box-shadow:0 2px 8px rgba(22,163,74,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(22,163,74,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,74,.3)';this.style.transform=''" onclick="window.location.href='consigli.html?cartella=${id}'">💡 Vai ai Consigli</button>
+      </div>
+      <div style="padding:10px 14px">${consigliNutrizionali.map(n => {
+        return `<div onclick="apriNoteSpec('${n.id}','consiglio')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#16A34A'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="font-size:22px;background:#F0FDF4;padding:6px;border-radius:8px">💡</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(n.nota||'Consiglio Nutrizionale')}</div>
+            <div style="font-size:11.5px;color:var(--slate-l)">Consiglio Nutrizionale · ${fmtDate(n.created_at)}</div>
+          </div>
+          <span style="font-size:11px;background:#F0FDF4;color:#16A34A;padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">Consiglio Nutrizionale</span>
+          <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','consiglio')">✏️ Apri</button>
+          <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
+        </div>`;
+      }).join('')}</div>
+    </div>` : ''}
 
     <!-- Note Specialistiche (Diabete, Pancreas, ecc.) -->
     ${(noteSpecAltre && noteSpecAltre.length) ? `

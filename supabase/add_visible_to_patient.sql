@@ -12,3 +12,6 @@ ALTER TABLE schede_valutazione
 
 ALTER TABLE bia_records
   ADD COLUMN IF NOT EXISTS visible_to_patient BOOLEAN NOT NULL DEFAULT TRUE;
+
+ALTER TABLE note_specialistiche
+  ADD COLUMN IF NOT EXISTS visible_to_patient BOOLEAN NOT NULL DEFAULT TRUE;

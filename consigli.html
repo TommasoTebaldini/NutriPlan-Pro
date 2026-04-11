@@ -47,6 +47,8 @@
 .cs-paz-bar label{font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .cs-paz-bar select{flex:1;min-width:200px;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none}
 .cs-paz-bar select:focus{border-color:var(--teal-l)}
+.cc-sel-cb{width:17px;height:17px;cursor:pointer;accent-color:#16A34A;flex-shrink:0;margin-right:2px}
+.cs-sel-count{font-size:12px;color:#15803D;background:#D1FAE5;padding:4px 10px;border-radius:8px;font-weight:700;flex-shrink:0;border:1px solid #A7F3D0}
 
 /* ── SEARCH BAR ── */
 .cs-search-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;background:white;border:1.5px solid var(--border-d);border-radius:14px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
@@ -225,7 +227,9 @@
   <div class="cs-paz-bar no-print" id="cs-paz-bar">
     <label>📁 Cartella Paziente</label>
     <div id="cs-cartella-cw" style="flex:1;min-width:200px"></div>
-    <span style="font-size:12px;color:var(--slate-l);flex-shrink:0">Seleziona una cartella per aggiungere note personalizzate ai consigli</span>
+    <span id="cs-sel-count" class="cs-sel-count" style="display:none"></span>
+    <button id="cs-salva-sel-btn" class="btn btn-primary btn-sm no-print" onclick="salvaSelezioneInCartella()" style="display:none;flex-shrink:0">💾 Salva selezionati</button>
+    <span id="cs-paz-hint" style="font-size:12px;color:var(--slate-l);flex-shrink:0">Seleziona una cartella per aggiungere note personalizzate ai consigli</span>
   </div>
 
   <div class="cs-search-bar no-print">
@@ -2005,6 +2009,7 @@ function buildConsiglio(c, isCustom = false) {
   const hex = c.colore || '#0F766E';
   div.innerHTML = `
     <div class="cc-hdr" style="border-left:4px solid ${hex}" onclick="toggleCC(this)">
+      <input type="checkbox" class="cc-sel-cb" id="sel-cb-${c.id}" data-id="${c.id}" onclick="event.stopPropagation();aggiornaCountSelezione()" title="Seleziona questo consiglio per salvarlo in cartella">
       <span class="cc-emoji" style="color:${hex}">${c.emoji}</span>
       <h3 style="color:${hex}">${esc(c.nome)}</h3>
       ${isCustom ? `<span class="cc-badge" style="background:${hex}18;border-color:${hex}30;color:${hex}">✏️ Personalizzato</span>` : ''}
@@ -2334,8 +2339,9 @@ async function loadCSCartelle() {
 
 async function onCartellaChange() {
   const cartella_id = document.getElementById('cs-cartella')?.value;
-  if (!cartella_id || !currentUser) { noteConsigli = {}; return; }
+  if (!cartella_id || !currentUser) { noteConsigli = {}; aggiornaCountSelezione(); return; }
   await caricaNoteConsigli(cartella_id);
+  aggiornaCountSelezione();
 }
 
 async function caricaNoteConsigli(cartella_id) {
@@ -2391,6 +2397,69 @@ async function salvaNotePaziente(consiglioId) {
   if (stato) stato.textContent = '✅ Nota salvata in cartella';
   toast('✅ Nota salvata!', 'ok');
 }
+
+function aggiornaCountSelezione() {
+  const selected = document.querySelectorAll('.cc-sel-cb:checked');
+  const count = selected.length;
+  const countEl = document.getElementById('cs-sel-count');
+  const btn = document.getElementById('cs-salva-sel-btn');
+  const hint = document.getElementById('cs-paz-hint');
+  const cartella_id = document.getElementById('cs-cartella')?.value;
+  if (countEl) {
+    if (count > 0) {
+      countEl.textContent = count + ' selezionat' + (count === 1 ? 'o' : 'i');
+      countEl.style.display = 'inline-block';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+  if (btn) btn.style.display = (count > 0 && cartella_id) ? 'inline-flex' : 'none';
+  if (hint) hint.style.display = count > 0 ? 'none' : '';
+}
+
+async function salvaSelezioneInCartella() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartella_id = document.getElementById('cs-cartella')?.value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente nella barra in alto', 'err'); return; }
+  const selected = [...document.querySelectorAll('.cc-sel-cb:checked')];
+  if (!selected.length) { toast('Nessun consiglio selezionato', 'err'); return; }
+  showLoading(true);
+  let saved = 0, errors = 0;
+  for (const cb of selected) {
+    const consiglioId = cb.dataset.id;
+    const c = getAllConsigli().find(x => x.id === consiglioId);
+    const testo = document.getElementById('note-text-' + consiglioId)?.value || '';
+    const dati = { consiglio_id: consiglioId, consiglio_nome: c?.nome || consiglioId, note_paziente: testo };
+    const payload = { cartella_id, user_id: currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
+    const existing = noteConsigli[consiglioId];
+    let result;
+    if (existing?.id) {
+      result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', existing.id);
+    } else {
+      result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString() });
+    }
+    if (result.error) {
+      if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
+        showLoading(false); mostraModalSetupSQL(); return;
+      }
+      errors++;
+    } else {
+      saved++;
+    }
+  }
+  showLoading(false);
+  await caricaNoteConsigli(cartella_id);
+  selected.forEach(cb => {
+    const stato = document.getElementById('note-stato-' + cb.dataset.id);
+    if (stato) stato.textContent = '✅ Nota salvata in cartella';
+  });
+  if (errors) {
+    toast(`⚠️ ${saved} salvati, ${errors} errori`, 'err');
+  } else {
+    toast(`✅ ${saved} consiglio${saved !== 1 ? 'i' : ''} salvat${saved !== 1 ? 'i' : 'o'} in cartella!`, 'ok');
+  }
+}
+
 
 function mostraModalSetupSQL() {
   const sql = `-- Esegui questo SQL nel tuo pannello Supabase (SQL Editor):

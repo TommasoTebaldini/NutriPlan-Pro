@@ -9,10 +9,11 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.s
 // get_user_agenda_events() SECURITY DEFINER RPC function instead, which
 // enforces the user_id filter server-side and is safe to invoke with the
 // public anon key.
-// At least one of SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY must be set in
-// the Vercel project settings.
+// The anon key is public (also hardcoded in js/utils.js) so it is safe to
+// embed here as a fallback when the Vercel environment variable is not set.
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
 
 const TIPO_LABELS = {
   visita: 'Prima Visita',
@@ -26,7 +27,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 module.exports = async (req, res) => {
   if (!SUPABASE_SERVICE_KEY && !SUPABASE_ANON_KEY) {
-    console.error('calendar.js: Neither SUPABASE_SERVICE_KEY nor SUPABASE_ANON_KEY is set. Set at least SUPABASE_ANON_KEY in Vercel project settings and run the get_user_agenda_events SQL function migration.');
+    console.error('calendar.js: SUPABASE_ANON_KEY is empty. Check the Vercel environment variables and ensure the get_user_agenda_events SQL migration has been applied.');
     res.status(500).send('Server configuration error: Supabase key not configured');
     return;
   }

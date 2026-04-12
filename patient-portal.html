@@ -58,6 +58,7 @@
 <div class="pp-container">
   <div class="pp-tab-bar">
     <div class="pp-tab active" onclick="switchPPTab('profile')" id="pp-tab-profile">👤 Dati Personali</div>
+    <div class="pp-tab" onclick="switchPPTab('dieta')" id="pp-tab-dieta">🥗 Dieta</div>
     <div class="pp-tab" onclick="switchPPTab('docs')" id="pp-tab-docs">📄 Documenti</div>
     <div class="pp-tab" onclick="switchPPTab('chat')" id="pp-tab-chat">💬 Chat</div>
   </div>
@@ -81,6 +82,16 @@
           <input type="email" id="pp-email" disabled style="background:#F1F5F9;color:var(--slate-l)">
         </div>
         <button onclick="salvaProfiloPaziente()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px">💾 Salva Dati</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIETA TAB -->
+  <div id="pp-panel-dieta" style="display:none">
+    <div class="pp-section">
+      <div class="pp-section-hdr">🥗 La Mia Dieta</div>
+      <div class="pp-section-body" id="pp-dieta-list">
+        <div class="pp-empty">Caricamento piano alimentare...</div>
       </div>
     </div>
   </div>
@@ -162,6 +173,7 @@ async function init() {
 
   // Load linked cartelle
   await loadLinkedData();
+  await loadDiete();
   await loadDocuments();
   await loadChat();
 }
@@ -175,7 +187,7 @@ async function doLogout() {
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════
 function switchPPTab(tab) {
-  ['profile', 'docs', 'chat'].forEach(t => {
+  ['profile', 'dieta', 'docs', 'chat'].forEach(t => {
     document.getElementById('pp-panel-' + t).style.display = t === tab ? '' : 'none';
     document.getElementById('pp-tab-' + t).classList.toggle('active', t === tab);
   });
@@ -227,6 +239,47 @@ async function loadLinkedData() {
 }
 
 // ═══════════════════════════════════════════════════
+// DIETA (Piani Alimentari)
+// ═══════════════════════════════════════════════════
+async function loadDiete() {
+  const container = document.getElementById('pp-dieta-list');
+
+  if (!linkedCartelle.length) {
+    container.innerHTML = '<div class="pp-empty">Non sei ancora collegato a nessun nutrizionista. Chiedi al tuo nutrizionista di collegarti alla tua cartella.</div>';
+    return;
+  }
+
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+
+  const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
+
+  const piani = await safeQuery(sb.from('piani').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('saved_at', { ascending: false }));
+
+  const fmtDate = d => d ? new Date(d).toLocaleDateString('it', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+
+  let html = '';
+
+  for (const p of piani) {
+    html += `<div class="pp-doc-item">
+      <span class="pp-doc-icon">📋</span>
+      <div class="pp-doc-info">
+        <div class="pp-doc-title">${esc(p.nome || 'Piano alimentare')}</div>
+        <div class="pp-doc-meta">Piano alimentare · ${fmtDate(p.saved_at || p.data_piano)}</div>
+      </div>
+      <span class="pp-doc-badge" style="background:#EFF6FF;color:#1D4ED8">Piano</span>
+      <button onclick="toggleDocContent('piano-${p.id}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>
+    </div>
+    <div class="pp-doc-content" id="doc-piano-${p.id}">${renderPianoContent(p)}</div>`;
+  }
+
+  if (!html) {
+    container.innerHTML = '<div class="pp-empty">Nessun piano alimentare condiviso dal tuo nutrizionista. La dieta apparirà qui quando il tuo nutrizionista la renderà visibile.</div>';
+  } else {
+    container.innerHTML = html;
+  }
+}
+
+// ═══════════════════════════════════════════════════
 // DOCUMENTS
 // ═══════════════════════════════════════════════════
 async function loadDocuments() {
@@ -242,9 +295,8 @@ async function loadDocuments() {
   // Safe query helper
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
 
-  // Query all visible documents from linked cartelle
-  const [piani, ncpts, biaRecords, schede, noteSpec, documents] = await Promise.all([
-    safeQuery(sb.from('piani').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('saved_at', { ascending: false })),
+  // Query all visible documents from linked cartelle (excluding piani, which are in Dieta tab)
+  const [ncpts, biaRecords, schede, noteSpec, documents] = await Promise.all([
     safeQuery(sb.from('ncpt').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('created_at', { ascending: false })),
     safeQuery(sb.from('bia_records').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('data_misura', { ascending: false })),
     safeQuery(sb.from('schede_valutazione').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('created_at', { ascending: false })),
@@ -255,20 +307,6 @@ async function loadDocuments() {
   const fmtDate = d => d ? new Date(d).toLocaleDateString('it', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
 
   let html = '';
-
-  // Render Piani
-  for (const p of piani) {
-    html += `<div class="pp-doc-item">
-      <span class="pp-doc-icon">📋</span>
-      <div class="pp-doc-info">
-        <div class="pp-doc-title">${esc(p.nome || 'Piano alimentare')}</div>
-        <div class="pp-doc-meta">Piano alimentare · ${fmtDate(p.saved_at || p.data_piano)}</div>
-      </div>
-      <span class="pp-doc-badge" style="background:#EFF6FF;color:#1D4ED8">Piano</span>
-      <button onclick="toggleDocContent('piano-${p.id}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>
-    </div>
-    <div class="pp-doc-content" id="doc-piano-${p.id}">${renderPianoContent(p)}</div>`;
-  }
 
   // Render NCPt
   for (const n of ncpts) {

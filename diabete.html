@@ -902,7 +902,7 @@ async function salvaDiabete() {
   if (editingDgNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDgNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString()});
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false});
   }
   showLoading(false);
   if (result.error) {

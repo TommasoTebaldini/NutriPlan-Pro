@@ -1203,6 +1203,7 @@ async function salvaNCPt() {
     result = await sb.from('ncpt').update(payload).eq('id',currentNcptId);
   } else {
     payload.created_at = new Date().toISOString();
+    payload.visible_to_patient = false;
     result = await sb.from('ncpt').insert(payload).select().single();
     if(result.data) currentNcptId = result.data.id;
   }

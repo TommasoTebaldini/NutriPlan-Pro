@@ -1027,7 +1027,7 @@ async function salvaPiano() {
   showLoading(true);
   let result;
   if (currentPianoId) { result = await sb.from('piani').update(payload).eq('id', currentPianoId); }
-  else { result = await sb.from('piani').insert(payload).select().single(); if (result.data) currentPianoId = result.data.id; }
+  else { payload.visible_to_patient = false; result = await sb.from('piani').insert(payload).select().single(); if (result.data) currentPianoId = result.data.id; }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   dirty = false;

@@ -170,7 +170,8 @@ async function salvaProfiloOp() {
   saveProfiloOperatore(d);
   // Also save nome and cognome to Supabase profiles table for cross-user visibility
   if (currentUser) {
-    await sb.from('profiles').update({ nome: d.nome || null, cognome: d.cognome || null, albo: d.albo || null }).eq('id', currentUser.id);
+    const { error: dbErr } = await sb.from('profiles').update({ nome: d.nome || null, cognome: d.cognome || null, albo: d.albo || null }).eq('id', currentUser.id);
+    if (dbErr) console.warn('Profile DB update failed:', dbErr.message);
   }
   closeM('modal-profilo-op');
   toast('✅ Profilo salvato!', 'ok');

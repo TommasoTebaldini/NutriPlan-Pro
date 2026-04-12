@@ -273,7 +273,7 @@ async function loadDocuments() {
   // Render NCPt
   for (const n of ncpts) {
     let pNome = '';
-    try { const v = JSON.parse(n.valutazione || '{}'); pNome = v.nome || ''; } catch(e) {}
+    try { const v = JSON.parse(n.valutazione || '{}'); pNome = v.nome || ''; } catch(e) { /* valutazione may not be valid JSON */ }
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">📝</span>
       <div class="pp-doc-info">
@@ -315,8 +315,8 @@ async function loadDocuments() {
     let title = n.nota || 'Nota specialistica';
     let badge = 'Nota';
     let badgeColor = 'background:#FEF3C7;color:#92400E';
-    if (isQ) { badge = 'Questionario'; badgeColor = 'background:#F0F9FF;color:#0369A1'; try { const d = JSON.parse(n.dati || '{}'); title = d.questionario || title; } catch(e){} }
-    if (isC) { badge = 'Consiglio'; badgeColor = 'background:#FEF3C7;color:#92400E'; try { const d = JSON.parse(n.dati || '{}'); title = d.consiglio_nome || title; } catch(e){} }
+    if (isQ) { badge = 'Questionario'; badgeColor = 'background:#F0F9FF;color:#0369A1'; try { const d = JSON.parse(n.dati || '{}'); title = d.questionario || title; } catch(e) { /* dati may not be valid JSON */ } }
+    if (isC) { badge = 'Consiglio'; badgeColor = 'background:#FEF3C7;color:#92400E'; try { const d = JSON.parse(n.dati || '{}'); title = d.consiglio_nome || title; } catch(e) { /* dati may not be valid JSON */ } }
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">${isQ ? '📋' : isC ? '💡' : '🗒️'}</span>
       <div class="pp-doc-info">
@@ -376,7 +376,7 @@ function renderPianoContent(piano) {
         html += '</div>';
       }
     }
-  } catch(e) { /* ignore parse errors */ }
+  } catch(e) { /* piano data may not be parseable JSON */ }
   return html || '<em>Contenuto del piano disponibile.</em>';
 }
 

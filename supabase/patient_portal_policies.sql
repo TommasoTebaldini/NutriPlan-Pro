@@ -13,7 +13,7 @@ RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS
   );
 $$;
 
-GRANT EXECUTE ON FUNCTION is_linked_patient(UUID) TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION is_linked_patient(UUID) TO authenticated;
 
 -- ─── Profiles: allow dietitians to read profiles of their linked patients ──
 DO $$ BEGIN

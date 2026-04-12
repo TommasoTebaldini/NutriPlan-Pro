@@ -112,7 +112,9 @@ DO $$ BEGIN
 END $$;
 
 -- ═══════════════════════════════════════════════════════════════════
--- NOTE: Run this script AFTER add_visible_to_patient.sql and
--- patient_dietitian.sql have been executed. This script is
--- idempotent and can be re-run safely.
+-- NOTE: Run this script AFTER the following scripts have been executed:
+--   1. create_patient_documents.sql  (creates the patient_documents table)
+--   2. add_visible_to_patient.sql    (adds visibility columns)
+--   3. patient_dietitian.sql         (creates the patient_dietitian link table)
+-- This script is idempotent and can be re-run safely.
 -- ═══════════════════════════════════════════════════════════════════

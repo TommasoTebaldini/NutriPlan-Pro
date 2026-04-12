@@ -1,6 +1,7 @@
 -- Migration: add visible_to_patient column to clinical document tables
 -- Run this script in your Supabase SQL editor.
--- Safe to re-run: uses IF NOT EXISTS and idempotent updates.
+-- WARNING: Step 4 resets ALL documents to hidden. Only run once, or after
+--          confirming that no intentionally-visible documents will be lost.
 
 -- 1. Add columns (if missing) with DEFAULT FALSE
 ALTER TABLE piani

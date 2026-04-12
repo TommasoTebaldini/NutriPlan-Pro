@@ -830,7 +830,8 @@ create table if not exists schede_valutazione (
   vita numeric, fianchi numeric, braccio numeric, plica numeric,
   patologie text, note text, macro_dist text, tdee_calcolato numeric,
   dati_extra jsonb,
-  saved_at timestamptz default now()
+  saved_at timestamptz default now(),
+  visible_to_patient boolean not null default false
 );
 alter table schede_valutazione enable row level security;
 create policy "Proprie schede" on schede_valutazione

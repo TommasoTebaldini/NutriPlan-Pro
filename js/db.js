@@ -37,7 +37,7 @@ const DB_CREA=[
 {n:"Parmigiano Reggiano",c:"Formaggi",k:400,p:33,gs:18.5,g:28.4,z:0,ch:0,fi:0,ca:1160,fe:0.3,mg:43,k2:100,na:600,zn:4,fo:692,se:12,col:88,src:"CREA"},
 {n:"Grana Padano",c:"Formaggi",k:395,p:33,gs:18.4,g:28,z:0,ch:0,fi:0,ca:1165,fe:0.3,mg:41,k2:120,na:600,zn:4,fo:692,se:12,col:98,src:"CREA"},
 {n:"Mela",c:"Frutta fresca",k:53,p:0.2,gs:0,g:0.2,z:12.9,ch:13.7,fi:2.6,ca:6,fe:0.1,mg:5,k2:125,na:2,zn:0.04,fo:6,se:0,col:0,src:"CREA"},
-{n:"Banana",c:"Frutta fresca",k:89,p:1.1,gs:0.1,g:0.3,z:12.2,ch:23,fi:2.6,ca:5,fe:0.3,mg:27,k2:358,na:1,zn:0.15,fo:22,se:1,col:0,src:"CREA"},
+{n:"Banana",c:"Frutta fresca",k:76,p:1.2,gs:0.1,g:0.3,z:12.8,ch:17,fi:1.8,ca:7,fe:0.3,mg:27,k2:350,na:1,zn:0.15,fo:28,se:1,col:0,src:"CREA"},
 {n:"Arancia",c:"Frutta fresca",k:34,p:0.7,gs:0,g:0.2,z:7.8,ch:7.8,fi:1.6,ca:49,fe:0.2,mg:10,k2:200,na:3,zn:0.07,fo:22,se:0.4,col:0,src:"CREA"},
 {n:"Pera",c:"Frutta fresca",k:41,p:0.3,gs:0,g:0.1,z:8.8,ch:10.2,fi:3.8,ca:9,fe:0.2,mg:7,k2:127,na:2,zn:0.1,fo:12,se:0.1,col:0,src:"CREA"},
 {n:"Fragola",c:"Frutta fresca",k:27,p:0.9,gs:0,g:0.4,z:5.3,ch:5.3,fi:1.6,ca:16,fe:0.4,mg:13,k2:153,na:1,zn:0.14,fo:26,se:0.4,col:0,src:"CREA"},
@@ -101,7 +101,7 @@ const DB_CREA=[
 {n:"Latte di avena",c:"Latte e derivati",k:47,p:1.0,gs:0.1,g:1.5,z:4,ch:6.5,fi:0.5,ca:120,fe:0.3,mg:10,k2:65,na:50,zn:0.1,fo:25,se:0.5,col:0,src:"CREA"},
 {n:"Latte di mandorla non zuccherato",c:"Latte e derivati",k:24,p:0.8,gs:0.1,g:1.5,z:0.2,ch:0.3,fi:0.1,ca:120,fe:0.3,mg:9,k2:60,na:60,zn:0.1,fo:15,se:0,col:0,src:"CREA"},
 // ── CARNI aggiuntive ──
-{n:"Agnello coscia",c:"Carni rosse",k:206,p:18.2,gs:4.8,g:14.9,z:0,ch:0,fi:0,ca:9,fe:1.8,mg:20,k2:290,na:67,zn:4.3,fo:188,se:5,col:76,src:"CREA"},
+{n:"Agnello coscia",c:"Carni rosse",k:102,p:20,gs:1.0,g:2.5,z:0,ch:0,fi:0,ca:10,fe:2.0,mg:20,k2:338,na:68,zn:4.3,fo:213,se:5,col:71,src:"CREA"},
 {n:"Anatra petto (senza pelle)",c:"Carni bianche",k:135,p:19.0,gs:2.0,g:6.0,z:0,ch:0,fi:0,ca:10,fe:2.5,mg:20,k2:310,na:65,zn:2.0,fo:192,se:14,col:78,src:"CREA"},
 {n:"Fegato di vitello",c:"Carni rosse",k:155,p:19.5,gs:1.8,g:7.8,z:0,ch:4.0,fi:0,ca:8,fe:7.1,mg:19,k2:335,na:79,zn:11,fo:380,se:16,col:360,src:"CREA"},
 {n:"Fegato di pollo",c:"Carni bianche",k:136,p:19.0,gs:1.4,g:5.7,z:0,ch:0.9,fi:0,ca:8,fe:8.3,mg:24,k2:290,na:75,zn:3.9,fo:338,se:67,col:350,src:"CREA"},
@@ -175,7 +175,7 @@ const DB_CREA=[
 {n:"Cavallo filetto",c:"Carni rosse",k:133,p:21,gs:1,g:4.6,z:0,ch:0,fi:0,ca:7,fe:3.8,mg:27,k2:330,na:58,zn:3.2,fo:200,se:8,col:65,src:"CREA"},
 {n:"Salsiccia fresca di maiale",c:"Carni rosse",k:339,p:14.4,gs:11,g:30.1,z:0.4,ch:0.4,fi:0,ca:10,fe:1.2,mg:17,k2:280,na:900,zn:2,fo:140,se:18,col:76,src:"CREA"},
 // ── PESCE aggiuntivo ──
-{n:"Pesce spada",c:"Pesce",k:121,p:19.8,gs:1.5,g:4.2,z:0,ch:0,fi:0,ca:16,fe:1,mg:30,k2:430,na:100,zn:0.7,fo:215,se:59,col:50,src:"CREA"},
+{n:"Pesce spada",c:"Pesce",k:121,p:19.8,gs:1.6,g:4.2,z:0,ch:0,fi:0,ca:5,fe:0.4,mg:30,k2:418,na:81,zn:0.7,fo:255,se:57,col:50,src:"CREA"},
 {n:"Dentice",c:"Pesce",k:82,p:17.4,gs:0.4,g:1.2,z:0,ch:0,fi:0,ca:20,fe:0.8,mg:26,k2:395,na:90,zn:0.5,fo:180,se:25,col:55,src:"CREA"},
 {n:"Nasello",c:"Pesce",k:74,p:16.3,gs:0.1,g:0.7,z:0,ch:0,fi:0,ca:24,fe:0.4,mg:25,k2:340,na:90,zn:0.5,fo:170,se:35,col:42,src:"CREA"},
 {n:"Rombo",c:"Pesce",k:79,p:15.9,gs:0.3,g:1.4,z:0,ch:0,fi:0,ca:21,fe:0.7,mg:24,k2:380,na:75,zn:0.5,fo:168,se:30,col:50,src:"CREA"},
@@ -586,7 +586,7 @@ const DB_BDA=[
   {n:"Lupini",c:"Legumi",src:"CREA",k:114,p:15.6,ch:9.9,g:2.7,fi:1.8,ca:29,fe:1.7,mg:67,k2:240,na:387,zn:1.5,fo:65,se:2,col:0},
   // ── FRUTTA SECCA e SEMI ──
   {n:"Semi di zucca",c:"Frutta secca",src:"CREA",k:559,p:30.2,ch:10.7,g:49.1,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:1233,se:9,col:0},
-  {n:"Semi di lino",c:"Frutta secca",src:"CREA",k:530,p:18.3,ch:28.9,g:42.2,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0},
+  {n:"Semi di lino",c:"Frutta secca",src:"CREA",k:534,p:18.3,ch:28.9,g:42.2,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0},
   {n:"Semi di chia",c:"Frutta secca",src:"BDA",k:486,p:16.5,ch:42.1,g:30.7,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:860,se:55,col:0},
   {n:"Pistacchi tostati",c:"Frutta secca",src:"CREA",k:601,p:20.2,ch:27.5,g:48.4,fi:10.3,ca:107,fe:4.0,mg:120,k2:1042,na:6,zn:2.2,fo:490,se:7,col:0},
   {n:"Anacardi",c:"Frutta secca",src:"CREA",k:553,p:15.3,ch:30.5,g:43.8,fi:3.3,ca:37,fe:6.0,mg:292,k2:565,na:12,zn:5.8,fo:593,se:20,col:0},
@@ -904,7 +904,7 @@ const DB_BDA=[
 
   // ── LEGUMI MANCANTI ──
   {n:"Fave secche sbucciate",c:"Legumi",src:"CREA",k:341,p:26.1,gs:0.3,g:1.5,z:0,ch:60.0,fi:19.0,ca:110,fe:6.7,mg:92,k2:1062,na:13,zn:3.1,fo:250,se:3,col:0},
-  {n:"Piselli secchi",c:"Legumi",src:"CREA",k:304,p:24.5,gs:0.2,g:1.5,z:3.5,ch:56.3,fi:25.5,ca:96,fe:5.0,mg:115,k2:990,na:15,zn:3.4,fo:274,se:2,col:0},
+  {n:"Piselli secchi",c:"Legumi",src:"CREA",k:285,p:21.7,gs:0.2,g:2.0,z:2.9,ch:48.2,fi:15.7,ca:48,fe:4.5,mg:115,k2:990,na:38,zn:3.4,fo:320,se:2,col:0},
   {n:"Fagioli Azuki secchi",c:"Legumi",src:"BDA",k:329,p:19.9,gs:0.1,g:0.5,z:0.5,ch:62.9,fi:7.3,ca:66,fe:4.98,mg:127,k2:1254,na:5,zn:5.3,fo:622,se:3,col:0},
   {n:"Fagioli di Spagna secchi",c:"Legumi",src:"CREA",k:280,p:17.0,gs:0.1,g:0.9,z:0,ch:56.6,fi:26.1,ca:240,fe:7.5,mg:190,k2:1700,na:24,zn:3.7,fo:170,se:5,col:0},
   {n:"Ceci lessati (in scatola sgocciolati)",c:"Legumi",src:"CREA",k:119,p:7.0,gs:0,g:1.9,z:0,ch:18.0,fi:7.6,ca:49,fe:2.9,mg:47,k2:291,na:240,zn:1.5,fo:165,se:4,col:0},

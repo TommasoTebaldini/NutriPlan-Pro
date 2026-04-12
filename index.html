@@ -178,10 +178,19 @@ async function doRegister() {
 async function checkAndRedirect(user) {
   document.getElementById('loading').classList.add('show');
   const {data:profile,error} = await sb.from('profiles').select('*').eq('id',user.id).single();
-  document.getElementById('loading').classList.remove('show');
-  if (error||!profile) { window.location.href='app.html'; return; }
-  if (profile.approved||profile.is_admin) { window.location.href='app.html'; }
+  if (error||!profile) { document.getElementById('loading').classList.remove('show'); window.location.href='app.html'; return; }
+  if (profile.approved||profile.is_admin) {
+    // Check if user is a patient (has patient_dietitian links as patient)
+    const {data:patientLinks} = await sb.from('patient_dietitian').select('id').eq('patient_id',user.id).limit(1);
+    document.getElementById('loading').classList.remove('show');
+    if (patientLinks && patientLinks.length > 0 && !profile.is_admin) {
+      window.location.href='patient-portal.html';
+    } else {
+      window.location.href='app.html';
+    }
+  }
   else {
+    document.getElementById('loading').classList.remove('show');
     document.getElementById('auth-box').style.display='none';
     document.getElementById('waiting-box').classList.add('show');
     document.getElementById('waiting-email').textContent='Account: '+user.email;

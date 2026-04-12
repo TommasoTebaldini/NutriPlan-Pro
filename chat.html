@@ -152,9 +152,9 @@ async function loadChatPatients() {
 
   const patientIds = links.map(l => l.patient_id);
 
-  // Get patient profiles
+  // Get patient profiles (include nome and cognome for display)
   const { data: profiles } = await sb.from('profiles')
-    .select('id,username,email')
+    .select('id,username,email,nome,cognome')
     .in('id', patientIds);
 
   // Get last message + unread count for each patient
@@ -172,9 +172,13 @@ async function loadChatPatients() {
       .eq('sender_role', 'patient')
       .is('read_at', null);
 
+    // Use nome + cognome from personal data if available, otherwise fallback to email
+    const fullName = [p.nome, p.cognome].filter(Boolean).join(' ');
+    const displayName = fullName || p.email || 'Paziente';
+
     patients.push({
       id: p.id,
-      name: p.username || p.email || 'Paziente',
+      name: displayName,
       email: p.email || '',
       lastMessage: lastMsgs?.[0]?.content || '',
       lastTime: lastMsgs?.[0]?.created_at || null,

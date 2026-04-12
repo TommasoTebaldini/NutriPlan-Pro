@@ -108,9 +108,13 @@ async function loadProfile() {
 
 function openProfiloModal() {
   const p = getProfiloOperatore();
-  const n = document.getElementById('profop-nome'); if (n) n.value = p.nome || '';
-  const c = document.getElementById('profop-cognome'); if (c) c.value = p.cognome || '';
-  const a = document.getElementById('profop-albo'); if (a) a.value = p.albo || '';
+  // Prefer DB values from currentProfile if available
+  const nome = (currentProfile?.nome || p.nome || '');
+  const cognome = (currentProfile?.cognome || p.cognome || '');
+  const albo = (currentProfile?.albo || p.albo || '');
+  const n = document.getElementById('profop-nome'); if (n) n.value = nome;
+  const c = document.getElementById('profop-cognome'); if (c) c.value = cognome;
+  const a = document.getElementById('profop-albo'); if (a) a.value = albo;
   // Reset file input so re-selecting the same file triggers change event
   const f = document.getElementById('profop-logo-file'); if (f) f.value = '';
   _aggiornaAnteprimaLogo(p.logo || null);
@@ -149,7 +153,7 @@ function rimuoviLogoOp() {
   _aggiornaAnteprimaLogo(null);
   const f = document.getElementById('profop-logo-file'); if (f) f.value = '';
 }
-function salvaProfiloOp() {
+async function salvaProfiloOp() {
   // Determine logo: keep existing if the preview is shown, clear if removed
   const preview = document.getElementById('profop-logo-preview');
   const img = document.getElementById('profop-logo-img');
@@ -164,6 +168,10 @@ function salvaProfiloOp() {
     logo: logo || null
   };
   saveProfiloOperatore(d);
+  // Also save nome and cognome to Supabase profiles table for cross-user visibility
+  if (currentUser) {
+    await sb.from('profiles').update({ nome: d.nome || null, cognome: d.cognome || null, albo: d.albo || null }).eq('id', currentUser.id);
+  }
   closeM('modal-profilo-op');
   toast('✅ Profilo salvato!', 'ok');
 }

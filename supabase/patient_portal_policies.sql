@@ -101,6 +101,10 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- ─── Patient Documents: ensure cartella_id column exists before creating the policy ──
+ALTER TABLE patient_documents
+  ADD COLUMN IF NOT EXISTS cartella_id UUID REFERENCES cartelle(id) ON DELETE CASCADE;
+
 -- ─── Patient Documents: patients can read visible documents from their linked cartelle ──
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'patient_documents_select_patient_visible' AND tablename = 'patient_documents') THEN

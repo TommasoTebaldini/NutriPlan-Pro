@@ -87,7 +87,7 @@ const DB_CREA=[
 {n:"Cozze",c:"Molluschi",k:84,p:11.7,gs:0.8,g:2.7,z:0,ch:3.4,fi:0,ca:88,fe:3.2,mg:37,k2:320,na:290,zn:2.1,fo:236,se:89,col:50,src:"CREA"},
 {n:"Vongole",c:"Molluschi",k:74,p:10.2,gs:0.4,g:1.7,z:0,ch:3.6,fi:0,ca:92,fe:2.8,mg:38,k2:260,na:200,zn:1.5,fo:181,se:24,col:34,src:"CREA"},
 // ── FORMAGGI aggiuntivi ──
-{n:"Burrata",c:"Formaggi",k:295,p:14,gs:14,g:26,z:1.5,ch:1.5,fi:0,ca:240,fe:0.1,mg:15,k2:80,na:260,zn:2,fo:150,se:4,col:70,src:"CREA"},
+{n:"Burrata",c:"Formaggi",k:295,p:14,gs:14,g:26,z:1.5,ch:1.5,fi:0,ca:329,fe:0.1,mg:15,k2:80,na:130,zn:2,fo:205,se:4,col:106,src:"CREA"},
 {n:"Feta",c:"Formaggi",k:264,p:14,gs:12,g:21,z:0,ch:4,fi:0,ca:493,fe:0.6,mg:19,k2:62,na:1116,zn:2.9,fo:480,se:15,col:89,src:"CREA"},
 {n:"Pecorino romano",c:"Formaggi",k:388,p:25.8,gs:17.1,g:31.5,z:0,ch:0,fi:0,ca:1064,fe:0.5,mg:43,k2:90,na:1800,zn:3,fo:640,se:14,col:93,src:"CREA"},
 {n:"Gorgonzola",c:"Formaggi",k:358,p:19.4,gs:16,g:29.5,z:0,ch:1,fi:0,ca:395,fe:0.3,mg:22,k2:85,na:900,zn:2.6,fo:320,se:4,col:90,src:"CREA"},
@@ -107,7 +107,7 @@ const DB_CREA=[
 {n:"Fegato di pollo",c:"Carni bianche",k:136,p:19.0,gs:1.4,g:5.7,z:0,ch:0.9,fi:0,ca:8,fe:8.3,mg:24,k2:290,na:75,zn:3.9,fo:338,se:67,col:350,src:"CREA"},
 // ── PESCE aggiuntivo ──
 {n:"Orata",c:"Pesce",k:96,p:18.4,gs:0.4,g:2.9,z:0,ch:0,fi:0,ca:29,fe:0.6,mg:23,k2:415,na:85,zn:0.5,fo:175,se:30,col:61,src:"CREA"},
-{n:"Sardine fresche",c:"Pesce",k:131,p:19.8,gs:1.5,g:5.6,z:0,ch:0,fi:0,ca:119,fe:1.4,mg:32,k2:300,na:90,zn:1.4,fo:170,se:52,col:120,src:"CREA"},
+{n:"Sardine fresche",c:"Pesce",k:129,p:20.3,gs:1.3,g:4.5,z:0,ch:0,fi:0,ca:85,fe:2.4,mg:32,k2:630,na:110,zn:1.4,fo:260,se:58,col:65,src:"CREA"},
 {n:"Calamaro",c:"Pesce",k:74,p:15.6,gs:0.2,g:1.0,z:0,ch:0.8,fi:0,ca:32,fe:0.9,mg:33,k2:246,na:220,zn:1.5,fo:149,se:42,col:233,src:"CREA"},
 {n:"Polpo",c:"Pesce",k:57,p:10.6,gs:0.2,g:0.7,z:0,ch:1.1,fi:0,ca:53,fe:0.5,mg:30,k2:350,na:230,zn:1.7,fo:100,se:45,col:48,src:"CREA"},
 {n:"Sgombro fresco",c:"Pesce",k:170,p:17.0,gs:2.6,g:11.1,z:0,ch:0.5,fi:0,ca:38,fe:1.2,mg:30,k2:360,na:130,zn:0.6,fo:264,se:10,col:95,src:"CREA"},
@@ -126,7 +126,7 @@ const DB_CREA=[
 {n:"Mirtilli freschi",c:"Frutta fresca",k:57,p:0.7,gs:0,g:0.3,z:10,ch:14.5,fi:2.4,ca:6,fe:0.3,mg:6,k2:77,na:1,zn:0.16,fo:6,se:0.1,col:0,src:"CREA"},
 {n:"Fichi freschi",c:"Frutta fresca",k:74,p:0.8,gs:0,g:0.3,z:16.3,ch:19.2,fi:2.9,ca:35,fe:0.4,mg:17,k2:232,na:1,zn:0.15,fo:14,se:0.2,col:0,src:"CREA"},
 // ── VERDURE aggiuntive ──
-{n:"Bietola",c:"Verdure",k:14,p:1.8,gs:0,g:0.2,z:1.1,ch:2.2,fi:1.6,ca:51,fe:2.2,mg:81,k2:379,na:213,zn:0.4,fo:9,se:0.7,col:0,src:"CREA"},
+{n:"Bietola",c:"Verdure",k:15,p:1.3,gs:0,g:0.2,z:1.1,ch:1.8,fi:1.2,ca:67,fe:1.0,mg:38,k2:196,na:10,zn:0.4,fo:29,se:0.7,col:0,src:"CREA"},
 {n:"Rape",c:"Verdure",k:28,p:0.9,gs:0,g:0.1,z:3.8,ch:4.6,fi:1.8,ca:30,fe:0.3,mg:11,k2:191,na:67,zn:0.3,fo:15,se:0.7,col:0,src:"CREA"},
 {n:"Zucca gialla",c:"Verdure",k:26,p:1.0,gs:0,g:0.1,z:2.8,ch:6.5,fi:0.5,ca:21,fe:0.8,mg:12,k2:340,na:1,zn:0.3,fo:41,se:0.3,col:0,src:"CREA"},
 {n:"Indivia / belga",c:"Verdure",k:17,p:1.8,gs:0,g:0.2,z:0.1,ch:3.1,fi:3.1,ca:41,fe:0.8,mg:10,k2:314,na:10,zn:0.5,fo:37,se:0.2,col:0,src:"CREA"},
@@ -173,7 +173,7 @@ const DB_CREA=[
 {n:"Maiale pancetta cruda",c:"Carni rosse",k:500,p:8.1,gs:18,g:50,z:0,ch:0,fi:0,ca:10,fe:0.8,mg:15,k2:210,na:600,zn:1.2,fo:110,se:15,col:95,src:"CREA"},
 {n:"Agnello bistecca coscia",c:"Carni rosse",k:170,p:20.5,gs:3,g:9.5,z:0,ch:0,fi:0,ca:9,fe:2,mg:22,k2:300,na:65,zn:4.2,fo:195,se:5,col:78,src:"CREA"},
 {n:"Cavallo filetto",c:"Carni rosse",k:133,p:21,gs:1,g:4.6,z:0,ch:0,fi:0,ca:7,fe:3.8,mg:27,k2:330,na:58,zn:3.2,fo:200,se:8,col:65,src:"CREA"},
-{n:"Salsiccia fresca di maiale",c:"Carni rosse",k:339,p:14.4,gs:11,g:30.1,z:0.4,ch:0.4,fi:0,ca:10,fe:1.2,mg:17,k2:280,na:900,zn:2,fo:140,se:18,col:76,src:"CREA"},
+{n:"Salsiccia fresca di maiale",c:"Carni rosse",k:304,p:15.5,gs:9.9,g:26.5,z:0.4,ch:0.4,fi:0,ca:28,fe:0.5,mg:17,k2:248,na:846,zn:2,fo:140,se:18,col:72,src:"CREA"},
 // ── PESCE aggiuntivo ──
 {n:"Pesce spada",c:"Pesce",k:121,p:19.8,gs:1.6,g:4.2,z:0,ch:0,fi:0,ca:5,fe:0.4,mg:30,k2:418,na:81,zn:0.7,fo:255,se:57,col:50,src:"CREA"},
 {n:"Dentice",c:"Pesce",k:82,p:17.4,gs:0.4,g:1.2,z:0,ch:0,fi:0,ca:20,fe:0.8,mg:26,k2:395,na:90,zn:0.5,fo:180,se:25,col:55,src:"CREA"},
@@ -187,7 +187,7 @@ const DB_CREA=[
 {n:"Aringa fresca",c:"Pesce",k:158,p:17.8,gs:1.5,g:9,z:0,ch:0,fi:0,ca:57,fe:1.1,mg:35,k2:327,na:79,zn:1.1,fo:210,se:47,col:60,src:"CREA"},
 {n:"Baccalà dissalato",c:"Pesce",k:82,p:18.9,gs:0.2,g:0.7,z:0,ch:0,fi:0,ca:136,fe:1.1,mg:32,k2:320,na:400,zn:0.9,fo:190,se:36,col:65,src:"CREA"},
 {n:"Trota arcobaleno",c:"Pesce",k:119,p:19,gs:1.5,g:4.3,z:0,ch:0,fi:0,ca:47,fe:0.7,mg:27,k2:400,na:57,zn:0.7,fo:230,se:13,col:59,src:"CREA"},
-{n:"Alici fresche",c:"Pesce",k:96,p:17,gs:0.8,g:2.6,z:0,ch:0,fi:0,ca:50,fe:1.5,mg:31,k2:383,na:110,zn:1.8,fo:171,se:36,col:54,src:"CREA"},
+{n:"Alici fresche",c:"Pesce",k:96,p:16.8,gs:0.8,g:2.6,z:0,ch:1.5,fi:0,ca:148,fe:2.8,mg:31,k2:278,na:110,zn:1.8,fo:196,se:36,col:61,src:"CREA"},
 // ── VERDURE aggiuntive ──
 {n:"Fagiolini",c:"Verdure",k:31,p:1.8,gs:0,g:0.2,z:2.9,ch:5.7,fi:3.4,ca:37,fe:0.8,mg:25,k2:209,na:4,zn:0.24,fo:33,se:0.7,col:0,src:"CREA"},
 {n:"Mais dolce chicchi freschi",c:"Verdure",k:86,p:3.2,gs:0.2,g:1.2,z:3.2,ch:18.7,fi:2.7,ca:2,fe:0.5,mg:37,k2:270,na:15,zn:0.5,fo:45,se:0.6,col:0,src:"CREA"},

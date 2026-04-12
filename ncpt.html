@@ -1211,7 +1211,7 @@ async function salvaNCPt() {
   if(result.error){
     if(result.error.code==='42P01'){
       toast('Tabella "ncpt" mancante — esegui SQL','err');
-      console.error('SQL:\ncreate table ncpt(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,valutazione text,diagnosi text,intervento text,monitoraggio text,created_at timestamptz default now(),updated_at timestamptz default now());\nalter table ncpt enable row level security;\ncreate policy "Proprio ncpt" on ncpt for all using(auth.uid()=user_id);');
+      console.error('SQL:\ncreate table ncpt(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,valutazione text,diagnosi text,intervento text,monitoraggio text,created_at timestamptz default now(),updated_at timestamptz default now(),visible_to_patient boolean not null default false);\nalter table ncpt enable row level security;\ncreate policy "Proprio ncpt" on ncpt for all using(auth.uid()=user_id);');
     } else { toast('❌ '+result.error.message,'err'); }
     return;
   }

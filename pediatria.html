@@ -1477,7 +1477,8 @@ CREATE TABLE IF NOT EXISTS note_specialistiche (
   nota text,
   dati jsonb,
   created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now(),
+  visible_to_patient boolean NOT NULL DEFAULT FALSE
 );
 ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Own note" ON note_specialistiche;

@@ -139,9 +139,9 @@ async function init() {
 
 async function loadChatPatients() {
   const listEl = document.getElementById('chat-patient-list');
-  // Get patients linked via patient_dietitian
+  // Get patients linked via patient_dietitian (include cartella_id for name fallback)
   const { data: links, error: linkErr } = await sb.from('patient_dietitian')
-    .select('patient_id')
+    .select('patient_id,cartella_id')
     .eq('dietitian_id', currentUser.id);
 
   if (linkErr || !links || !links.length) {
@@ -150,12 +150,31 @@ async function loadChatPatients() {
     return;
   }
 
-  const patientIds = links.map(l => l.patient_id);
+  const patientIds = [...new Set(links.map(l => l.patient_id))];
 
   // Get patient profiles (include nome and cognome for display)
   const { data: profiles } = await sb.from('profiles')
     .select('id,username,email,nome,cognome')
     .in('id', patientIds);
+
+  // Get cartelle names as fallback for display name
+  const cartellaIds = [...new Set(links.map(l => l.cartella_id).filter(Boolean))];
+  let cartelle = [];
+  if (cartellaIds.length) {
+    const { data: cartelleData } = await sb.from('cartelle')
+      .select('id,nome')
+      .in('id', cartellaIds);
+    cartelle = cartelleData || [];
+  }
+
+  // Build patient_id -> cartella name map
+  const patientCartellaNameMap = {};
+  for (const link of links) {
+    if (!patientCartellaNameMap[link.patient_id] && link.cartella_id) {
+      const cart = cartelle.find(c => c.id === link.cartella_id);
+      if (cart && cart.nome) patientCartellaNameMap[link.patient_id] = cart.nome;
+    }
+  }
 
   // Get last message + unread count for each patient
   const patients = [];
@@ -172,9 +191,10 @@ async function loadChatPatients() {
       .eq('sender_role', 'patient')
       .is('read_at', null);
 
-    // Use nome + cognome from personal data if available, otherwise fallback to email
+    // Use nome + cognome from profile, then cartella name as fallback, then email
     const fullName = [p.nome, p.cognome].filter(Boolean).join(' ');
-    const displayName = fullName || p.email || 'Paziente';
+    const cartellaName = patientCartellaNameMap[p.id] || '';
+    const displayName = fullName || cartellaName || p.email || 'Paziente';
 
     patients.push({
       id: p.id,

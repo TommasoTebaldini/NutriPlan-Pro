@@ -849,6 +849,7 @@ async function salvaBIA() {
   if (currentBiaId) {
     ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId));
   } else {
+    record.visible_to_patient = false;
     const result = await sb.from('bia_records').insert(record).select().single();
     error = result.error;
     if (result.data) currentBiaId = result.data.id;

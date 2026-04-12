@@ -2377,7 +2377,7 @@ async function salvaNotePaziente(consiglioId) {
   if (existing?.id) {
     result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', existing.id);
   } else {
-    result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString() });
+    result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false });
   }
   showLoading(false);
   if (result.error) {
@@ -2434,7 +2434,7 @@ async function salvaSelezioneInCartella() {
     if (existing?.id) {
       result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', existing.id);
     } else {
-      result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString() });
+      result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false });
     }
     if (result.error) {
       if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {

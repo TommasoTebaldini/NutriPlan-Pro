@@ -120,5 +120,6 @@ END $$;
 --   1. create_patient_documents.sql  (creates the patient_documents table)
 --   2. add_visible_to_patient.sql    (adds visibility columns)
 --   3. patient_dietitian.sql         (creates the patient_dietitian link table)
+--   4. clinical_tables_rls.sql       (enables RLS & adds dietitian CRUD policies)
 -- This script is idempotent and can be re-run safely.
 -- ═══════════════════════════════════════════════════════════════════

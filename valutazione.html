@@ -837,6 +837,9 @@ alter table schede_valutazione enable row level security;
 create policy "Proprie schede" on schede_valutazione
   for all using (auth.uid() = user_id);`;
 
+const SQL_ADD_DATI_EXTRA = `-- Esegui questo SQL nel tuo progetto Supabase (SQL Editor):
+ALTER TABLE schede_valutazione ADD COLUMN IF NOT EXISTS dati_extra jsonb;`;
+
 function mostraModalSQL(){
   const existing=document.getElementById('modal-sql');
   if(existing){existing.classList.add('open');return;}
@@ -1008,6 +1011,9 @@ async function doSalva(cartellaId){
     if(err.code==='42P01'){
       mostraBannerSQL();
       toast('❌ Tabella mancante — segui le istruzioni in pagina','err');
+    } else if(err.code==='PGRST204' && err.message && err.message.includes('dati_extra')){
+      mostraBannerColonna();
+      toast('❌ Colonna dati_extra mancante — segui le istruzioni in pagina','err');
     } else if(err.code==='23503'){
       toast('❌ Cartella non trovata (FK error). Ricarica la pagina.','err');
     } else if(err.message&&err.message.includes('row-level security')){
@@ -1225,6 +1231,18 @@ async function verificaTabella(){
     if(error && error.code==='42P01'){
       // Table missing — show persistent banner
       mostraBannerSQL();
+      return;
+    }
+    // Table exists — remove table-missing banner if present
+    const bSQL = document.getElementById('banner-sql');
+    if(bSQL) bSQL.remove();
+    // Check if dati_extra column is present
+    const {error:colErr} = await sb.from('schede_valutazione').select('dati_extra').limit(1);
+    if(colErr && colErr.code==='PGRST204' && colErr.message && colErr.message.includes('dati_extra')){
+      mostraBannerColonna();
+    } else {
+      const bCol = document.getElementById('banner-col');
+      if(bCol) bCol.remove();
     }
   } catch(e){}
 }
@@ -1247,6 +1265,27 @@ function mostraBannerSQL(){
       </div>
     </div>`;
   // Insert at top of page-content
+  const pageContent = document.querySelector('.page-content');
+  if(pageContent) pageContent.insertBefore(banner, pageContent.firstChild);
+}
+
+function mostraBannerColonna(){
+  if(document.getElementById('banner-col')) return;
+  const banner = document.createElement('div');
+  banner.id = 'banner-col';
+  banner.style.cssText = 'background:#FEF3C7;border:2px solid #F59E0B;border-radius:10px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;';
+  banner.innerHTML = `
+    <div style="font-size:24px;flex-shrink:0">⚠️</div>
+    <div style="flex:1">
+      <div style="font-weight:700;color:#92400E;margin-bottom:4px">Colonna mancante su Supabase</div>
+      <div style="font-size:12.5px;color:#78350F;margin-bottom:10px">La colonna <b>dati_extra</b> non esiste nella tabella <b>schede_valutazione</b>. Il salvataggio non funzionerà finché non esegui questo SQL:</div>
+      <textarea readonly id="sql-col-text" style="width:100%;height:60px;font-family:monospace;font-size:10.5px;padding:8px;border:1px solid #F59E0B;border-radius:6px;background:#FFFBEB;resize:none;display:block">${SQL_ADD_DATI_EXTRA}</textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-col-text').value).then(()=>toast('✅ SQL copiato! Incollalo nell\'SQL Editor di Supabase','ok'))">📋 Copia SQL</button>
+        <a href="https://supabase.com/dashboard" target="_blank" class="btn btn-ghost btn-sm">🔗 Apri Supabase Dashboard</a>
+        <button class="btn btn-ghost btn-sm" onclick="verificaTabella().then(()=>{const b=document.getElementById('banner-col');if(b)b.remove();toast('✅ Colonna trovata!','ok')})">🔄 Ho eseguito l'SQL</button>
+      </div>
+    </div>`;
   const pageContent = document.querySelector('.page-content');
   if(pageContent) pageContent.insertBefore(banner, pageContent.firstChild);
 }

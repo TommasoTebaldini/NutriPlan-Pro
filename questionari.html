@@ -1524,10 +1524,59 @@ function getRadio(name) {
   return el ? parseFloat(el.value) : null;
 }
 
+function _collectCardAnswers(cardEl) {
+  if (!cardEl) return {};
+  const answers = {};
+  cardEl.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+    if (el.name) answers[el.name] = el.value;
+  });
+  cardEl.querySelectorAll('input[type="checkbox"]:checked').forEach(el => {
+    if (el.name) answers[el.name] = el.value || 'true';
+  });
+  cardEl.querySelectorAll('input[id]:not([type="radio"]):not([type="checkbox"]), select[id], textarea[id]').forEach(el => {
+    if (el.value) answers['_id_' + el.id] = el.value;
+  });
+  return answers;
+}
+
+function _restoreCardAnswers(cardId, answers) {
+  if (!answers || typeof answers !== 'object') return;
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  Object.entries(answers).forEach(([key, value]) => {
+    if (key.startsWith('_id_')) {
+      const el = document.getElementById(key.slice(4));
+      if (el) el.value = value;
+    } else {
+      const radio = card.querySelector('input[name="' + key + '"][value="' + CSS.escape(value) + '"]');
+      if (radio) { radio.checked = true; return; }
+      const cb = card.querySelector('input[name="' + key + '"][type="checkbox"]');
+      if (cb) { cb.checked = true; return; }
+      const input = card.querySelector('input[name="' + key + '"]:not([type="radio"]):not([type="checkbox"])');
+      if (input) input.value = value;
+    }
+  });
+}
+
+const _qCalcMap = {
+  'MUST': calcMUST, 'MNA-SF': calcMNA, 'NRS-2002': calcNRS,
+  'SCOFF': calcSCOFF, 'PHQ-2': calcPHQ2, 'GAD-7': calcGAD7,
+  'SGA': calcSGA, 'SARC-F': calcSARCF, 'FRAIL Scale': calcFRAIL,
+  'STRONGkids': calcSTRONGkids, 'GNRI': calcGNRI,
+  'EDE-Q': calcEDEQ, 'BES': calcBES, 'PHQ-9': calcPHQ9,
+  'ORTO-15': calcORTO, 'IES-2': calcIES, 'EAT-26': calcEAT26,
+  'TFEQ-R18': calcTFEQ, 'PREDIMED': calcPREDIMED, 'AUDIT': calcAUDIT,
+  'MMAS-4': calcMMAS4, 'PSS-10': calcPSS10,
+};
+
 function showResult(id, html, color, nomeQ, dati) {
   const box = document.getElementById(id);
   if (!box) return;
-  if (nomeQ) { _qSaveNome = nomeQ; _qSaveDati = dati || {}; }
+  if (nomeQ) {
+    const card = box.closest('.q-card');
+    if (card && dati) dati.answers = _collectCardAnswers(card);
+    _qSaveNome = nomeQ; _qSaveDati = dati || {};
+  }
   const saveBtn = nomeQ ? `<div style="margin-top:12px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="apriSalvaQuestionario()" style="font-size:12px">💾 Salva in cartella paziente</button></div>` : '';
   box.innerHTML = html + saveBtn;
   box.style.background = color || '#F0FDF4';
@@ -2451,9 +2500,61 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (cartellaId) {
         await _cwSetById('qbar-cartella-cw', cartellaId);
       }
-      // Navigate to the correct tab and card
-      const mapping = _qNameToCard[nome];
+
+      // Fetch saved data from DB and restore answers
+      let savedDati = null;
+      if (id && typeof sb !== 'undefined') {
+        try {
+          const {data: noteData} = await sb.from('note_specialistiche').select('*').eq('id', id).single();
+          if (noteData && noteData.dati) {
+            savedDati = typeof noteData.dati === 'string' ? JSON.parse(noteData.dati) : noteData.dati;
+          }
+        } catch(e) { console.warn('Error loading questionnaire data:', e); }
+      }
+
+      // Determine questionnaire name from saved data or from the folder
+      const qNome = (savedDati && savedDati.questionario) || nome;
+      const mapping = _qNameToCard[qNome] || _qNameToCard[nome];
+
       if (mapping) {
+        // Restore saved answers if available
+        if (savedDati && savedDati.answers) {
+          _restoreCardAnswers('qcard-' + mapping.card, savedDati.answers);
+        }
+
+        // Set save state so user can update
+        if (savedDati) {
+          _qSaveNome = qNome;
+          _qSaveDati = savedDati;
+        }
+
+        // Try to recalculate to show the result (only if answers were restored)
+        if (savedDati && savedDati.answers && _qCalcMap[qNome]) {
+          try { _qCalcMap[qNome](true); } catch(e) {}
+        } else if (savedDati) {
+          // No saved answers — show a summary of the saved result
+          const resultId = mapping.card + '-result';
+          const resultBox = document.getElementById(resultId);
+          if (resultBox) {
+            const scoreText = savedDati.score !== undefined ? savedDati.score :
+                              (savedDati.global !== undefined ? savedDati.global :
+                              (savedDati.categoria || ''));
+            resultBox.innerHTML = `
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+                ${scoreText !== '' ? `<div><div style="font-size:10px;color:var(--slate-l)">Punteggio salvato</div><div class="q-result-score">${scoreText}</div></div>` : ''}
+                <div class="q-result-label">${savedDati.label || ''}</div>
+              </div>
+              ${savedDati.desc ? `<div class="q-result-desc">${savedDati.desc}</div>` : ''}
+              <div style="margin-top:10px;padding:8px 12px;background:#FEF3C7;border-radius:8px;font-size:12px;color:#92400E">
+                ℹ️ Le risposte individuali non sono state salvate per questo questionario. Compila le domande e ricalcola per aggiornare.
+              </div>
+              <div style="margin-top:12px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="apriSalvaQuestionario()" style="font-size:12px">💾 Salva in cartella paziente</button></div>`;
+            resultBox.style.background = '#F0F9FF';
+            resultBox.classList.add('show');
+          }
+        }
+
+        // Navigate to the correct tab and card
         _switchQTab(mapping.tab);
         const card = document.getElementById('qcard-' + mapping.card);
         const body = document.getElementById('qbody-' + mapping.card);
@@ -2465,7 +2566,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (card) setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
       }
       // Show banner informing user they are editing
-      toast('📋 Modifica questionario: ' + nome + ' — compila le risposte e salva per aggiornare.', 'info');
+      const hasAnswers = savedDati && savedDati.answers;
+      toast(hasAnswers ? '📂 Questionario caricato con i dati salvati!' : '📋 Modifica questionario: ' + (qNome || nome), 'ok');
     } catch(e) { console.warn('openQuestionario parse error', e); }
   }
 });
@@ -2489,6 +2591,8 @@ function calcSARCF(show) {
   box.style.border = `1.5px solid ${col}`;
   box.innerHTML = `<div class="q-result-score" style="color:${col}">${score}<span style="font-size:16px">/10</span></div><div class="q-result-label" style="color:${col}">${label}</div><div class="q-result-desc">${desc}</div>`;
   _qSaveNome = 'SARC-F'; _qSaveDati = { score, label, desc };
+  const sarcfCard = document.getElementById('qcard-sarcf');
+  if (sarcfCard) _qSaveDati.answers = _collectCardAnswers(sarcfCard);
 }
 
 // ─── FRAIL Scale ─────────────────────────────────────────────────────────────
@@ -2513,6 +2617,8 @@ function calcFRAIL(show) {
   box.style.border = `1.5px solid ${col}`;
   box.innerHTML = `<div class="q-result-score" style="color:${col}">${score}<span style="font-size:16px">/5</span></div><div class="q-result-label" style="color:${col}">${label}</div><div class="q-result-desc">${desc}</div>`;
   _qSaveNome = 'FRAIL Scale'; _qSaveDati = { score, label, desc };
+  const frailCard = document.getElementById('qcard-frail');
+  if (frailCard) _qSaveDati.answers = _collectCardAnswers(frailCard);
 }
 
 // ─── STRONGkids ───────────────────────────────────────────────────────────────
@@ -2537,6 +2643,8 @@ function calcSTRONGkids(show) {
   box.style.border = `1.5px solid ${col}`;
   box.innerHTML = `<div class="q-result-score" style="color:${col}">${score}<span style="font-size:16px">/5</span></div><div class="q-result-label" style="color:${col}">${label}</div><div class="q-result-desc">${desc}</div>`;
   _qSaveNome = 'STRONGkids'; _qSaveDati = { score, label, desc };
+  const strongCard = document.getElementById('qcard-strongkids');
+  if (strongCard) _qSaveDati.answers = _collectCardAnswers(strongCard);
 }
 
 // ─── GNRI ─────────────────────────────────────────────────────────────────────
@@ -2578,6 +2686,8 @@ function calcGNRI(show) {
   box.style.border = `1.5px solid ${col}`;
   box.innerHTML = `<div class="q-result-score" style="color:${col}">${gnri}</div><div class="q-result-label" style="color:${col}">${label}</div><div class="q-result-desc">${desc}</div>`;
   _qSaveNome = 'GNRI'; _qSaveDati = { score: gnri, label, desc };
+  const gnriCard = document.getElementById('qcard-gnri');
+  if (gnriCard) _qSaveDati.answers = _collectCardAnswers(gnriCard);
 }
 
 // ─── TFEQ-R18 ─────────────────────────────────────────────────────────────────
@@ -2624,6 +2734,8 @@ function calcTFEQ(show) {
       </div>
     </div>`;
   _qSaveNome = 'TFEQ-R18'; _qSaveDati = { cr: cr100, ue: ue100, ee: ee100, label: `CR:${crLevel} UE:${ueLevel} EE:${eeLevel}` };
+  const tfeqCard = document.getElementById('qcard-tfeq');
+  if (tfeqCard) _qSaveDati.answers = _collectCardAnswers(tfeqCard);
 }
 
 // ─── PSS-10 ───────────────────────────────────────────────────────────────────
@@ -2651,6 +2763,8 @@ function calcPSS10(show) {
   box.style.border = `1.5px solid ${col}`;
   box.innerHTML = `<div class="q-result-score" style="color:${col}">${score}<span style="font-size:16px">/40</span></div><div class="q-result-label" style="color:${col}">${label}</div><div class="q-result-desc">${desc}</div>`;
   _qSaveNome = 'PSS-10'; _qSaveDati = { score, label, desc };
+  const pss10Card = document.getElementById('qcard-pss10');
+  if (pss10Card) _qSaveDati.answers = _collectCardAnswers(pss10Card);
 }
 
 /* ── Auto-save & Clear section ── */
@@ -2689,7 +2803,7 @@ function svuotaSezione_questionari() {
   }, { title: '⚠️ Conferma Reset', danger: true, okLabel: 'Sì, Reset' });
 }
 document.addEventListener('DOMContentLoaded', function() {
-  autoRestorePage_questionari();
+  if (!sessionStorage.getItem('openQuestionario')) autoRestorePage_questionari();
 }, {once: false});
 </script>
 </body>

@@ -711,7 +711,8 @@ function goTab(n) {
 // CARTELLE SEARCH
 // ═══════════════════════════════════════════════════
 function filterCart() {
-  const q = document.getElementById('cart-search').value.toLowerCase();
+  const el = document.getElementById('ncpt-cartella-cw-srch');
+  const q = el ? el.value.toLowerCase() : '';
   showCartDD(q);
 }
 function showCartDD(q='') {
@@ -743,7 +744,8 @@ function showCartDD(q='') {
 function hideCartDD() { const dd=document.getElementById('cart-dd'); if(dd) dd.style.display='none'; }
 
 function filterCartMain() {
-  const q = document.getElementById('cart-search-main').value.toLowerCase();
+  const el = document.getElementById('ncpt-cartella-cw-srch');
+  const q = el ? el.value.toLowerCase() : '';
   showCartDDMain(q);
 }
 function showCartDDMain(q='') {
@@ -793,10 +795,9 @@ async function onCartSelectMain() {
 }
 async function selCartella(id, nome) {
   currentCartellaId = id;
-  document.getElementById('cart-search').value = nome;
-  // Update main card widget display without triggering onSelect (avoid recursion)
+  // Update widget display
   _cwUpdateDisplay('ncpt-cartella-cw', id, nome);
-  hideCartDD();
+  _cwHide('ncpt-cartella-cw');
   // Load NCPt for this cartella
   showLoading(true);
   const {data} = await sb.from('ncpt').select('*').eq('cartella_id',id).eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(1);
@@ -1171,7 +1172,7 @@ function raccogliDati() {
       vita_b:g('mp-vita-b'),vita_t:g('mp-vita-t'),vita_a:g('mp-vita-a'),
       hba1c_b:g('mp-hba1c-b'),hba1c_t:g('mp-hba1c-t'),hba1c_a:g('mp-hba1c-a'),
       col_b:g('mp-col-b'),col_t:g('mp-col-t'),col_a:g('mp-col-a'),
-      storici, monitExtra, riesame:g('m-riesame'), esito:g('m-esito')
+      storici, monitExtra: monitExtra.map(x=>({id:x.id,nome:x.nome,b:g(x.id+'-b'),t:g(x.id+'-t'),a:g(x.id+'-a')})), riesame:g('m-riesame'), esito:g('m-esito')
     }),
     updated_at: new Date().toISOString()
   };
@@ -1181,7 +1182,8 @@ async function salvaNCPt() {
   if(!currentUser){ toast('Effettua il login per salvare','err'); return; }
   // If no cartella selected but only one result in search, auto-select it
   if(!currentCartellaId){
-    const q = document.getElementById('cart-search').value.trim().toLowerCase();
+    const srch = document.getElementById('ncpt-cartella-cw-srch');
+    const q = (srch ? srch.value.trim().toLowerCase() : '');
     if(q) {
       const match = allCartelle.filter(c => c.nome.toLowerCase().includes(q));
       if(match.length === 1) {
@@ -1191,8 +1193,7 @@ async function salvaNCPt() {
     }
     if(!currentCartellaId){
       toast('⚠️ Seleziona una cartella paziente dalla lista','err');
-      // Show dropdown
-      showCartDD(document.getElementById('cart-search').value.toLowerCase());
+      _cwShow('ncpt-cartella-cw', q);
       return;
     }
   }
@@ -1254,6 +1255,21 @@ function caricaDati(data) {
     });
     storici=m.storici||[];
     renderStor();
+    // Restore extra monitoring parameters
+    monitExtra=m.monitExtra||[];
+    const meC=document.getElementById('monit-extra');
+    if(meC) meC.innerHTML='';
+    monitExtra.forEach(x=>{
+      const div=document.createElement('div');
+      div.className='monit-grid';
+      div.id='div-'+x.id;
+      div.innerHTML=`<span style="font-weight:600;font-size:12.5px">${esc(x.nome)}</span>
+        <input class="mi" id="${x.id}-b" placeholder="—" value="${esc(x.b||'')}">
+        <input class="mi" id="${x.id}-t" placeholder="—" value="${esc(x.t||'')}">
+        <input class="mi" id="${x.id}-a" placeholder="—" value="${esc(x.a||'')}">
+        <button class="del-row" onclick="document.getElementById('div-${x.id}').remove();monitExtra=monitExtra.filter(z=>z.id!=='${x.id}')">✕</button>`;
+      if(meC) meC.appendChild(div);
+    });
   } catch(e){ console.error(e); }
 }
 
@@ -1266,8 +1282,9 @@ function nuovoNCPt(clearCart=true) {
   document.getElementById('v-data').value=new Date().toISOString().split('T')[0];
   const titoloEl = document.getElementById('ncpt-titolo-sessione');
   if (titoloEl) titoloEl.value = '';
-  if(clearCart){currentCartellaId=null;document.getElementById('cart-search').value='';document.getElementById('paz-bar').style.display='none';}
+  if(clearCart){currentCartellaId=null;var _s=document.getElementById('ncpt-cartella-cw-srch');if(_s)_s.value='';document.getElementById('paz-bar').style.display='none';}
   renderPES(); renderObiettivi(); renderStor();
+  const meC=document.getElementById('monit-extra');if(meC)meC.innerHTML='';
 }
 
 // ═══════════════════════════════════════════════════
@@ -1364,7 +1381,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentCartellaId = ncptData.cartella_id;
         const cart = allCartelle.find(c => c.id === currentCartellaId);
         if(cart) {
-          document.getElementById('cart-search').value = cart.nome;
           _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
           document.getElementById('paz-bar').style.display='flex';
           document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
@@ -1378,7 +1394,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       currentCartellaId = newNcptCartella;
       const cart = allCartelle.find(c => c.id === newNcptCartella);
       if(cart) {
-        document.getElementById('cart-search').value = cart.nome;
         _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
         document.getElementById('paz-bar').style.display='flex';
         document.getElementById('pb-nome').textContent = '👤 '+cart.nome;

@@ -60,6 +60,7 @@
     <div class="pp-tab active" onclick="switchPPTab('profile')" id="pp-tab-profile">👤 Dati Personali</div>
     <div class="pp-tab" onclick="switchPPTab('dieta')" id="pp-tab-dieta">🥗 Dieta</div>
     <div class="pp-tab" onclick="switchPPTab('docs')" id="pp-tab-docs">📄 Documenti</div>
+    <div class="pp-tab" onclick="switchPPTab('diary')" id="pp-tab-diary">📓 Diario</div>
     <div class="pp-tab" onclick="switchPPTab('chat')" id="pp-tab-chat">💬 Chat</div>
   </div>
 
@@ -106,6 +107,50 @@
     </div>
   </div>
 
+  <!-- DIARY TAB -->
+  <div id="pp-panel-diary" style="display:none">
+    <div class="pp-section">
+      <div class="pp-section-hdr">📓 Diario Alimentare e Benessere</div>
+      <div class="pp-section-body">
+        <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Registra i tuoi pasti, il tuo stato d'umore e i sintomi giornalieri. Il tuo nutrizionista li potrà consultare.</p>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin-bottom:16px">
+          <div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">✏️ Nuova registrazione</div>
+          <div class="pp-field">
+            <label>Data</label>
+            <input type="date" id="diary-date" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
+          </div>
+          <div class="pp-field">
+            <label>Umore (1 = molto negativo, 5 = ottimo)</label>
+            <select id="diary-mood" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;background:white">
+              <option value="">— Seleziona —</option>
+              <option value="1">😞 1 — Molto negativo</option>
+              <option value="2">😕 2 — Negativo</option>
+              <option value="3">😐 3 — Neutro</option>
+              <option value="4">🙂 4 — Positivo</option>
+              <option value="5">😊 5 — Ottimo</option>
+            </select>
+          </div>
+          <div class="pp-field">
+            <label>Pasti e alimentazione (descrivi brevemente)</label>
+            <textarea id="diary-notes" placeholder="Es: Colazione: yogurt con cereali. Pranzo: pasta al pomodoro..." rows="4" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;resize:vertical"></textarea>
+          </div>
+          <div class="pp-field">
+            <label>Sintomi / Note aggiuntive (opzionale)</label>
+            <input type="text" id="diary-symptoms" placeholder="Es: gonfiore addominale, stanchezza..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
+          </div>
+          <div class="pp-field">
+            <label>Peso corporeo kg (opzionale)</label>
+            <input type="number" id="diary-weight" placeholder="Es: 70.5" step="0.1" min="20" max="300" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;max-width:160px">
+          </div>
+          <button onclick="salvaDiario()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px">📓 Salva registrazione</button>
+        </div>
+        <div id="pp-diary-list">
+          <div class="pp-empty">Caricamento diario...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CHAT TAB -->
   <div id="pp-panel-chat" style="display:none">
     <div class="pp-section">
@@ -135,6 +180,7 @@ let chatDietitianId = null;
 let chatMessages = [];
 let realtimeChannel = null;
 let docsRealtimeChannel = null;
+let diaryRealtimeChannel = null;
 let _docsRefreshTimer = null;
 
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -178,6 +224,8 @@ async function init() {
   await loadDiete();
   await loadDocuments();
   setupDocsRealtime();
+  await loadDiary();
+  setupDiaryRealtime();
   await loadChat();
 }
 
@@ -190,7 +238,7 @@ async function doLogout() {
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════
 function switchPPTab(tab) {
-  ['profile', 'dieta', 'docs', 'chat'].forEach(t => {
+  ['profile', 'dieta', 'docs', 'diary', 'chat'].forEach(t => {
     document.getElementById('pp-panel-' + t).style.display = t === tab ? '' : 'none';
     document.getElementById('pp-tab-' + t).classList.toggle('active', t === tab);
   });
@@ -415,41 +463,44 @@ function setupDocsRealtime() {
   if (!linkedCartelle.length) return;
 
   const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
-  const filterStr = cartellaIds.length === 1
-    ? `cartella_id=eq.${cartellaIds[0]}`
-    : `cartella_id=in.(${cartellaIds.join(',')})`;
 
+  // Create one channel and subscribe once per cartella_id (Supabase postgres_changes
+  // only supports simple eq filters; `in` is not supported).
   let channel = sb.channel(`patient-docs-${currentUser.id}`);
 
-  // patient_documents (uses `visible` column)
-  for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
-    channel = channel.on('postgres_changes', {
-      event,
-      schema: 'public',
-      table: 'patient_documents',
-      filter: filterStr
-    }, () => scheduleDocsRefresh(false));
-  }
+  for (const cid of cartellaIds) {
+    const filter = `cartella_id=eq.${cid}`;
 
-  // piani live in the Dieta tab — refresh both tabs
-  for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
-    channel = channel.on('postgres_changes', {
-      event,
-      schema: 'public',
-      table: 'piani',
-      filter: filterStr
-    }, () => scheduleDocsRefresh(true));
-  }
-
-  // remaining document tables (use `visible_to_patient` column)
-  for (const table of ['ncpt', 'bia_records', 'schede_valutazione', 'note_specialistiche']) {
+    // patient_documents (uses `visible` column)
     for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
       channel = channel.on('postgres_changes', {
         event,
         schema: 'public',
-        table,
-        filter: filterStr
+        table: 'patient_documents',
+        filter
       }, () => scheduleDocsRefresh(false));
+    }
+
+    // piani live in the Dieta tab — refresh both tabs
+    for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
+      channel = channel.on('postgres_changes', {
+        event,
+        schema: 'public',
+        table: 'piani',
+        filter
+      }, () => scheduleDocsRefresh(true));
+    }
+
+    // remaining document tables (use `visible_to_patient` column)
+    for (const table of ['ncpt', 'bia_records', 'schede_valutazione', 'note_specialistiche']) {
+      for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
+        channel = channel.on('postgres_changes', {
+          event,
+          schema: 'public',
+          table,
+          filter
+        }, () => scheduleDocsRefresh(false));
+      }
     }
   }
 
@@ -485,6 +536,141 @@ function toggleDocContent(id) {
   const el = document.getElementById('doc-' + id);
   if (!el) return;
   el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+// ═══════════════════════════════════════════════════
+// DIARY (Diario Alimentare e Benessere)
+// ═══════════════════════════════════════════════════
+async function loadDiary() {
+  const container = document.getElementById('pp-diary-list');
+  if (!container) return;
+
+  // Pre-fill date with today
+  const todayInput = document.getElementById('diary-date');
+  if (todayInput && !todayInput.value) {
+    todayInput.value = new Date().toISOString().split('T')[0];
+  }
+
+  if (!linkedCartelle.length) {
+    container.innerHTML = '<div class="pp-empty">Non sei ancora collegato a nessun nutrizionista.</div>';
+    return;
+  }
+
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; } };
+
+  const entries = await safeQuery(
+    sb.from('daily_wellness')
+      .select('*')
+      .in('cartella_id', cartellaIds)
+      .order('logged_at', { ascending: false })
+      .limit(30)
+  );
+
+  const fmtDate = d => d ? new Date(d).toLocaleDateString('it', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+  const moodMap = { 1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊' };
+
+  if (!entries.length) {
+    container.innerHTML = '<div class="pp-empty">Nessuna registrazione ancora. Inizia a compilare il tuo diario!</div>';
+    return;
+  }
+
+  let html = '';
+  for (const w of entries) {
+    const moodEmoji = moodMap[w.mood] || '😐';
+    const symptomsText = w.symptoms
+      ? (Array.isArray(w.symptoms) ? w.symptoms.join(', ') : (typeof w.symptoms === 'string' ? w.symptoms : ''))
+      : '';
+    html += `<div class="pp-doc-item" style="flex-direction:column;align-items:flex-start">
+      <div style="display:flex;align-items:center;gap:10px;width:100%">
+        <span class="pp-doc-icon">${moodEmoji}</span>
+        <div class="pp-doc-info">
+          <div class="pp-doc-title">${fmtDate(w.logged_at)}</div>
+          <div class="pp-doc-meta">Umore: ${w.mood || '—'}/5${symptomsText ? ' · ' + esc(symptomsText) : ''}</div>
+        </div>
+      </div>
+      ${w.notes ? `<div style="margin-top:8px;font-size:12.5px;color:var(--slate-m);line-height:1.6;white-space:pre-wrap">${esc(w.notes)}</div>` : ''}
+    </div>`;
+  }
+  container.innerHTML = html;
+}
+
+async function salvaDiario() {
+  if (!linkedCartelle.length) {
+    toast('Non sei collegato a nessun nutrizionista', 'err');
+    return;
+  }
+
+  const dateVal = document.getElementById('diary-date').value;
+  const mood = document.getElementById('diary-mood').value;
+  const notes = (document.getElementById('diary-notes').value || '').trim();
+  const symptomsRaw = (document.getElementById('diary-symptoms').value || '').trim();
+  const weightVal = document.getElementById('diary-weight').value;
+
+  if (!notes && !mood) {
+    toast("Inserisci almeno l'umore o i pasti", 'err');
+    return;
+  }
+
+  const cartellaId = linkedCartelle[0].cartella_id;
+  const loggedAt = dateVal ? new Date(dateVal).toISOString() : new Date().toISOString();
+
+  const wellnessPayload = {
+    cartella_id: cartellaId,
+    patient_id: currentUser.id,
+    logged_at: loggedAt,
+    mood: mood ? parseInt(mood) : null,
+    notes: notes || null,
+    symptoms: symptomsRaw ? symptomsRaw : null
+  };
+
+  const { error: wellErr } = await sb.from('daily_wellness').insert(wellnessPayload);
+  if (wellErr) {
+    toast('❌ Errore salvataggio: ' + wellErr.message, 'err');
+    return;
+  }
+
+  // Optionally log weight
+  if (weightVal) {
+    const weight = parseFloat(weightVal);
+    if (!isNaN(weight) && weight > 0) {
+      await sb.from('weight_logs').insert({
+        cartella_id: cartellaId,
+        patient_id: currentUser.id,
+        logged_at: loggedAt,
+        weight: weight
+      });
+    }
+  }
+
+  // Reset form
+  document.getElementById('diary-mood').value = '';
+  document.getElementById('diary-notes').value = '';
+  document.getElementById('diary-symptoms').value = '';
+  document.getElementById('diary-weight').value = '';
+
+  toast('✅ Registrazione salvata!', 'ok');
+  await loadDiary();
+}
+
+function setupDiaryRealtime() {
+  if (diaryRealtimeChannel) {
+    diaryRealtimeChannel.unsubscribe();
+    diaryRealtimeChannel = null;
+  }
+  if (!linkedCartelle.length) return;
+
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  let channel = sb.channel(`patient-diary-${currentUser.id}`);
+
+  for (const cid of cartellaIds) {
+    const filter = `cartella_id=eq.${cid}`;
+    channel = channel
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'daily_wellness', filter }, () => loadDiary())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'weight_logs', filter }, () => loadDiary());
+  }
+
+  diaryRealtimeChannel = channel.subscribe();
 }
 
 // ═══════════════════════════════════════════════════

@@ -186,6 +186,7 @@
 <script>
 let cartellaAperta = null;
 let editingCartellaId = null;
+let diaryRealtimeChannel = null;
 
 // CUSTOM CONFIRM DIALOG
 let _confirmCallback = null;
@@ -519,6 +520,18 @@ async function renderCartellaDetail(id) {
       }).join('')}</div>
     </div>` : ''}
 
+    <!-- SEZIONE DOCUMENTI PAZIENTE -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
+          📄 Documenti Paziente
+          <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(documents||[]).length}</span>
+        </h4>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;box-shadow:0 2px 8px rgba(15,118,110,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(15,118,110,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(15,118,110,.3)';this.style.transform=''" onclick="openNuovoDocumento('${cart.id}')">📄 Nuovo Documento</button>
+      </div>
+      <div style="padding:10px 14px">${buildDocsHtml(documents, cart.id)}</div>
+    </div>
+
     <!-- SEZIONE PROGRESSI -->
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -556,6 +569,9 @@ async function renderCartellaDetail(id) {
   if (weightLogs && weightLogs.length) {
     setTimeout(() => renderWeightChart('weight-chart-' + id, weightLogs), 100);
   }
+
+  // Subscribe to live patient diary updates for this cartella
+  setupDiaryRealtime(id);
 }
 
 function apriNoteSpec(noteId, tipo) {
@@ -731,6 +747,27 @@ async function delCartella(id) {
 document.addEventListener('DOMContentLoaded', async () => {
   try { await init(); } catch(e) { console.log('Auth error:', e); }
 });
+
+// ═══════════════════════════════════════════════════
+// DIARIO PAZIENTE — REALTIME
+// When the patient logs a diary entry the dietitian's
+// "Progressi" section refreshes automatically.
+// ═══════════════════════════════════════════════════
+function setupDiaryRealtime(cartellaId) {
+  if (diaryRealtimeChannel) {
+    diaryRealtimeChannel.unsubscribe();
+    diaryRealtimeChannel = null;
+  }
+  const filter = `cartella_id=eq.${cartellaId}`;
+  diaryRealtimeChannel = sb.channel(`diary-dietitian-${cartellaId}`)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'daily_wellness', filter }, () => {
+      if (cartellaAperta === cartellaId) renderCartellaDetail(cartellaId);
+    })
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'weight_logs', filter }, () => {
+      if (cartellaAperta === cartellaId) renderCartellaDetail(cartellaId);
+    })
+    .subscribe();
+}
 
 // ═══════════════════════════════════════════════════
 // COLLEGA PAZIENTE

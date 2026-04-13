@@ -9,13 +9,17 @@
 -- This script is idempotent and can be re-run safely.
 -- ═══════════════════════════════════════════════════════════════════
 
--- ─── 1. Ensure daily_wellness has a patient_id column ───────────────
+-- ─── 1. Ensure daily_wellness has required columns ──────────────────
 ALTER TABLE daily_wellness
-  ADD COLUMN IF NOT EXISTS patient_id UUID REFERENCES auth.users;
+  ADD COLUMN IF NOT EXISTS patient_id  UUID REFERENCES auth.users;
+ALTER TABLE daily_wellness
+  ADD COLUMN IF NOT EXISTS cartella_id UUID REFERENCES cartelle(id) ON DELETE CASCADE;
 
--- ─── 2. Ensure weight_logs has a patient_id column ──────────────────
+-- ─── 2. Ensure weight_logs has required columns ─────────────────────
 ALTER TABLE weight_logs
-  ADD COLUMN IF NOT EXISTS patient_id UUID REFERENCES auth.users;
+  ADD COLUMN IF NOT EXISTS patient_id  UUID REFERENCES auth.users;
+ALTER TABLE weight_logs
+  ADD COLUMN IF NOT EXISTS cartella_id UUID REFERENCES cartelle(id) ON DELETE CASCADE;
 
 -- ─── 3. RLS: patients can INSERT their own daily_wellness entries ────
 ALTER TABLE daily_wellness ENABLE ROW LEVEL SECURITY;

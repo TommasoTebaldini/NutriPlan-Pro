@@ -548,9 +548,9 @@ function initCartellaWidget(cid, opts) {
       ' onfocus="_cwShow(\'' + cid + '\')"' +
       ' onblur="setTimeout(()=>_cwHide(\'' + cid + '\'),200)">' +
       '<div id="' + cid + '-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
+      '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;position:absolute;left:0;top:100%;margin-top:2px;white-space:nowrap;display:none"></span>' +
     '</div>' +
-    '<input type="hidden" id="' + hiddenId + '" value="">' +
-    '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:none"></span>';
+    '<input type="hidden" id="' + hiddenId + '" value="">';
 }
 
 function _cwFilter(cid) {

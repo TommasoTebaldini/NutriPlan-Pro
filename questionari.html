@@ -1548,11 +1548,12 @@ function _restoreCardAnswers(cardId, answers) {
       const el = document.getElementById(key.slice(4));
       if (el) el.value = value;
     } else {
-      const radio = card.querySelector('input[name="' + key + '"][value="' + CSS.escape(value) + '"]');
+      const ek = CSS.escape(key);
+      const radio = card.querySelector('input[name="' + ek + '"][value="' + CSS.escape(value) + '"]');
       if (radio) { radio.checked = true; return; }
-      const cb = card.querySelector('input[name="' + key + '"][type="checkbox"]');
+      const cb = card.querySelector('input[name="' + ek + '"][type="checkbox"]');
       if (cb) { cb.checked = true; return; }
-      const input = card.querySelector('input[name="' + key + '"]:not([type="radio"]):not([type="checkbox"])');
+      const input = card.querySelector('input[name="' + ek + '"]:not([type="radio"]):not([type="checkbox"])');
       if (input) input.value = value;
     }
   });
@@ -2530,7 +2531,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Try to recalculate to show the result (only if answers were restored)
         if (savedDati && savedDati.answers && _qCalcMap[qNome]) {
-          try { _qCalcMap[qNome](true); } catch(e) {}
+          try { _qCalcMap[qNome](true); } catch(e) { console.warn('Failed to recalculate questionnaire:', e); }
         } else if (savedDati) {
           // No saved answers — show a summary of the saved result
           const resultId = mapping.card + '-result';

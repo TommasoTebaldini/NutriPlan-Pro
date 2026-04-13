@@ -134,6 +134,8 @@ let linkedCartelle = [];
 let chatDietitianId = null;
 let chatMessages = [];
 let realtimeChannel = null;
+let docsRealtimeChannel = null;
+let _docsRefreshTimer = null;
 
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
@@ -175,6 +177,7 @@ async function init() {
   await loadLinkedData();
   await loadDiete();
   await loadDocuments();
+  setupDocsRealtime();
   await loadChat();
 }
 
@@ -391,6 +394,66 @@ async function loadDocuments() {
   } else {
     container.innerHTML = html;
   }
+}
+
+// ═══════════════════════════════════════════════════
+// DOCUMENTS REALTIME
+// ═══════════════════════════════════════════════════
+function scheduleDocsRefresh(includeDiete) {
+  clearTimeout(_docsRefreshTimer);
+  _docsRefreshTimer = setTimeout(async () => {
+    await loadDocuments();
+    if (includeDiete) await loadDiete();
+  }, 400);
+}
+
+function setupDocsRealtime() {
+  if (docsRealtimeChannel) {
+    docsRealtimeChannel.unsubscribe();
+    docsRealtimeChannel = null;
+  }
+  if (!linkedCartelle.length) return;
+
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  const filterStr = cartellaIds.length === 1
+    ? `cartella_id=eq.${cartellaIds[0]}`
+    : `cartella_id=in.(${cartellaIds.join(',')})`;
+
+  let channel = sb.channel(`patient-docs-${currentUser.id}`);
+
+  // patient_documents (uses `visible` column)
+  for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
+    channel = channel.on('postgres_changes', {
+      event,
+      schema: 'public',
+      table: 'patient_documents',
+      filter: filterStr
+    }, () => scheduleDocsRefresh(false));
+  }
+
+  // piani live in the Dieta tab — refresh both tabs
+  for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
+    channel = channel.on('postgres_changes', {
+      event,
+      schema: 'public',
+      table: 'piani',
+      filter: filterStr
+    }, () => scheduleDocsRefresh(true));
+  }
+
+  // remaining document tables (use `visible_to_patient` column)
+  for (const table of ['ncpt', 'bia_records', 'schede_valutazione', 'note_specialistiche']) {
+    for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
+      channel = channel.on('postgres_changes', {
+        event,
+        schema: 'public',
+        table,
+        filter: filterStr
+      }, () => scheduleDocsRefresh(false));
+    }
+  }
+
+  docsRealtimeChannel = channel.subscribe();
 }
 
 function renderPianoContent(piano) {

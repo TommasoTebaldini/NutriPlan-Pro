@@ -1144,88 +1144,37 @@ function resetVal(){
 }
 
 function stampaSchedaValutazione(){
-  const esc = (v)=>String(v ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
-  const cleanLabel = (v)=>String(v || '').replace(/\s+/g, ' ').replace(/\*+/g, '').trim();
-  const normalizeValue = (el)=>{
-    if(!el) return '—';
-    if(el.tagName === 'SELECT'){
-      const selectedText = el.options[el.selectedIndex]?.text?.trim() || '';
-      return (!selectedText || selectedText.startsWith('—')) ? '—' : selectedText;
-    }
-    const value = (el.value ?? el.textContent ?? '').toString().trim();
-    return value || '—';
-  };
-  const pushUniqueRow = (rows, label, value, seen)=>{
-    const safeLabel = cleanLabel(label) || 'Campo';
-    const safeValue = (value ?? '—').toString().trim() || '—';
-    const key = `${safeLabel}__${safeValue}`;
-    if(seen.has(key)) return;
-    seen.add(key);
-    rows.push({label: safeLabel, value: safeValue});
-  };
-  const extractSectionRows = (sectionEl)=>{
-    const rows = [];
-    const seen = new Set();
-    const controls = sectionEl.querySelectorAll('input, select, textarea');
-    controls.forEach(el=>{
-      if(!el.id) return;
-      const labelEl = sectionEl.querySelector(`label[for="${el.id}"]`) || el.closest('.fg')?.querySelector('label');
-      const label = cleanLabel(labelEl?.textContent || el.id);
-      pushUniqueRow(rows, label, normalizeValue(el), seen);
-    });
-    return rows;
-  };
-  const renderRowsTable = (rows)=>{
-    if(!rows.length) return '<p style="margin:0 0 10px 0;font-size:12px;color:#475569">Nessun campo disponibile.</p>';
-    return `<table>
-      <thead><tr><th>Campo</th><th>Valore</th></tr></thead>
-      <tbody>${rows.map(r=>`<tr><td>${esc(r.label)}</td><td>${esc(r.value)}</td></tr>`).join('')}</tbody>
-    </table>`;
-  };
+  const pageContent = document.querySelector('#main .page-content');
+  if(!pageContent){
+    toast('Contenuto scheda non trovato', 'err');
+    return;
+  }
+
+  const clone = pageContent.cloneNode(true);
+  clone.querySelectorAll('script').forEach(el=>el.remove());
+  clone.querySelectorAll('.modal-bg,#toast,#loading-overlay').forEach(el=>el.remove());
+  clone.querySelectorAll('button').forEach(btn=>{
+    btn.removeAttribute('onclick');
+    if(btn.closest('.tbar-actions')) btn.remove();
+  });
 
   const nome = (document.getElementById('v-nome')?.value || '').trim();
   const cognome = (document.getElementById('v-cognome')?.value || '').trim();
   const paziente = [nome, cognome].filter(Boolean).join(' ') || 'Paziente non specificato';
   const dataScheda = new Date().toLocaleDateString('it-IT');
   const professionista = (document.getElementById('sb-user-email')?.textContent || '').trim() || 'Professionista';
-  const schedaSectionsHtml = [];
-  document.querySelectorAll('#val-grid > .val-section').forEach(section=>{
-    const sectionTitle = cleanLabel(section.querySelector('h3')?.textContent || 'Sezione');
-    const rows = extractSectionRows(section);
-    schedaSectionsHtml.push(`<div class="section-title">${esc(sectionTitle)}</div>${renderRowsTable(rows)}`);
+
+  const headParts = [];
+  document.querySelectorAll('link[rel="stylesheet"], style').forEach(node=>{
+    if(node.tagName === 'LINK'){
+      const href = node.getAttribute('href');
+      if(!href) return;
+      const absHref = new URL(href, window.location.href).href;
+      headParts.push(`<link rel="stylesheet" href="${absHref}">`);
+      return;
+    }
+    headParts.push(node.outerHTML);
   });
-
-  const risultatiRows = [];
-  const risultatiSeen = new Set();
-  const risultatiCol = document.getElementById('risultati-col');
-  const hasCalcoli = !!risultatiCol?.querySelector('.result-pill, .formula-row, .val-section');
-  if(risultatiCol){
-    risultatiCol.querySelectorAll('.result-pill').forEach(box=>{
-      const label = cleanLabel(box.querySelector('.rp-label')?.textContent || '');
-      const val = cleanLabel(box.querySelector('.rp-val')?.textContent || '');
-      const badge = cleanLabel(box.querySelector('.rp-badge')?.textContent || '');
-      if(label) pushUniqueRow(risultatiRows, label, badge ? `${val || '—'} (${badge})` : (val || '—'), risultatiSeen);
-    });
-    risultatiCol.querySelectorAll('.formula-row').forEach(box=>{
-      const label = cleanLabel(box.querySelector('.fn')?.textContent || '');
-      const valueMain = cleanLabel(box.querySelector('.fv')?.textContent || '');
-      const valueSub = cleanLabel(box.querySelector('.fb')?.textContent || '');
-      if(label) pushUniqueRow(risultatiRows, label, [valueMain, valueSub].filter(Boolean).join(' — ') || '—', risultatiSeen);
-    });
-    risultatiCol.querySelectorAll('.val-section input, .val-section select').forEach(el=>{
-      const section = el.closest('.val-section');
-      const labelEl = section?.querySelector(`label[for="${el.id}"]`) || el.closest('.fg')?.querySelector('label');
-      const label = cleanLabel(labelEl?.textContent || el.id || '');
-      if(label) pushUniqueRow(risultatiRows, label, normalizeValue(el), risultatiSeen);
-    });
-  }
-
-  const noteCliniche = (document.getElementById('v-note')?.value || '').trim();
 
   const printHtml = `<!DOCTYPE html>
 <html lang="it">
@@ -1233,36 +1182,47 @@ function stampaSchedaValutazione(){
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stampa Scheda Valutazione</title>
+  ${headParts.join('\n')}
   <style>
-    @page { size: A4; margin: 18mm; }
-    body { font-family: Arial, Helvetica, sans-serif; color: #1e293b; margin: 0; }
-    .head { border-bottom: 2px solid #0f766e; padding-bottom: 10px; margin-bottom: 18px; }
-    .title { font-size: 22px; font-weight: 700; color: #0f766e; margin: 0 0 6px 0; }
-    .meta { font-size: 13px; color: #334155; margin: 2px 0; }
-    .section-title { font-size: 14px; font-weight: 700; margin: 16px 0 8px; color: #0f172a; page-break-after: avoid; }
-    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-    th, td { border: 1px solid #cbd5e1; padding: 7px 9px; vertical-align: top; text-align: left; }
-    th { background: #e2e8f0; font-weight: 700; color: #0f172a; }
-    tr:nth-child(even) td { background: #f8fafc; }
-    .section-block { margin-bottom: 10px; page-break-inside: avoid; }
-    .note-box { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 6px; padding: 10px; white-space: pre-wrap; font-size: 12.5px; line-height: 1.5; }
-    .footer { margin-top: 20px; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 11px; color: #64748b; }
+    @page { size: A4; margin: 12mm; }
+    body { background: #fff !important; margin: 0 !important; }
+    #print-wrap { padding: 0; }
+    .print-header {
+      background: linear-gradient(135deg,#0F766E,#0EA5E9);
+      color: #fff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 0 0 12px 0;
+      box-shadow: 0 4px 16px rgba(14,165,233,.15);
+      page-break-inside: avoid;
+    }
+    .print-header h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 700; font-family: 'DM Sans',sans-serif; }
+    .print-meta { margin: 2px 0; font-size: 12px; opacity: .95; font-family: 'DM Sans',sans-serif; }
+    #print-wrap #val-grid { display: block !important; }
+    #print-wrap #val-grid > .val-section,
+    #print-wrap #val-grid > #risultati-col,
+    #print-wrap #val-grid > .btn { width: 100% !important; margin-bottom: 12px !important; }
+    #print-wrap #val-grid > .btn { display: none !important; }
+    #print-wrap input, #print-wrap select, #print-wrap textarea {
+      color: #0f172a !important;
+      -webkit-text-fill-color: #0f172a !important;
+      opacity: 1 !important;
+    }
+    #print-wrap textarea { min-height: 58px; }
+    #print-wrap .btn, #print-wrap .mclose, #print-wrap .sb-logout { display: none !important; }
+    #print-wrap .val-section { page-break-inside: avoid; break-inside: avoid; }
   </style>
 </head>
 <body>
-  <div class="head">
-    <h1 class="title">NutriPlan Pro - Scheda Valutazione</h1>
-    <div class="meta"><strong>Paziente:</strong> ${esc(paziente)}</div>
-    <div class="meta"><strong>Data:</strong> ${esc(dataScheda)}</div>
+  <div id="print-wrap">
+    <div class="print-header">
+      <h1>NutriPlan Pro - Scheda Valutazione</h1>
+      <div class="print-meta"><strong>Paziente:</strong> ${paziente}</div>
+      <div class="print-meta"><strong>Data:</strong> ${dataScheda}</div>
+      <div class="print-meta"><strong>Professionista:</strong> ${professionista}</div>
+    </div>
+    ${clone.innerHTML}
   </div>
-  <div class="section-title">Valutazione completa</div>
-  ${(schedaSectionsHtml.map(s=>`<div class="section-block">${s}</div>`).join('')) || '<p>Nessuna sezione trovata.</p>'}
-  <div class="section-block">
-    <div class="section-title">Calcoli e risultati</div>
-    ${hasCalcoli ? renderRowsTable(risultatiRows) : '<p style="margin:0 0 10px 0;font-size:12px;color:#475569">Nessun calcolo disponibile (premi "Calcola Fabbisogno" per includerli).</p>'}
-  </div>
-  ${noteCliniche ? `<div class="section-title">Note cliniche</div><div class="note-box">${esc(noteCliniche)}</div>` : ''}
-  <div class="footer">Stampato il ${esc(new Date().toLocaleString('it-IT'))} — Professionista: ${esc(professionista)}</div>
 </body>
 </html>`;
 

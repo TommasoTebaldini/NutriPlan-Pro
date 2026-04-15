@@ -24,7 +24,22 @@
 .src-aprot{background:#EDE9FE;color:#5B21B6}
 .src-int{background:#FEF3C7;color:#B45309}
 .src-upf{background:#FEE2E2;color:#991B1B}
+.src-pers{background:#DCFCE7;color:#15803D}
 .nd{color:#CBD5E1;font-style:italic;font-size:10px}
+#modal-add-food{display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.45);align-items:center;justify-content:center;padding:16px}
+#modal-add-food.open{display:flex}
+#modal-add-food .mbox{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.18);width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+#modal-add-food .mhead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border)}
+#modal-add-food .mhead h3{margin:0;font-size:16px;color:var(--slate)}
+#modal-add-food .mbody{padding:20px 22px;overflow-y:auto;flex:1}
+#modal-add-food .mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+#modal-add-food .fg{display:flex;flex-direction:column;gap:4px}
+#modal-add-food label{font-size:11.5px;font-weight:600;color:var(--slate-l)}
+#modal-add-food input{padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+#modal-add-food input:focus{border-color:#06B6D4}
+#modal-add-food .sec-title{font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.05em;grid-column:1/-1;margin-top:8px;padding-top:10px;border-top:1px solid var(--border)}
+.btn-del-food{background:none;border:none;cursor:pointer;font-size:13px;padding:0 4px;opacity:.5;vertical-align:middle;line-height:1}
+.btn-del-food:hover{opacity:1}
 </style>
 </head>
 <body>
@@ -85,7 +100,9 @@
       <option value="APROT">🟣 Aproteici</option>
       <option value="INT">🟡 Integratori/ONS</option>
       <option value="UPF">🔴 Ultra-processati (UPF)</option>
+      <option value="PERS">🟢 Personalizzati</option>
     </select>
+    <button onclick="openAddFood()" style="padding:7px 14px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">➕ Aggiungi alimento</button>
     <span id="db-count" style="font-size:12px;color:var(--slate-l)"></span>
   </div>
   <div id="db-table-wrap">
@@ -107,6 +124,107 @@
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
+
+<!-- Modal: aggiungi alimento personalizzato -->
+<div id="modal-add-food" onclick="if(event.target===this)closeAddFood()">
+  <div class="mbox">
+    <div class="mhead">
+      <h3>➕ Aggiungi alimento al database personale</h3>
+      <button onclick="closeAddFood()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate-l);line-height:1">×</button>
+    </div>
+    <div class="mbody">
+      <form id="af-form" onsubmit="event.preventDefault();saveFood()">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px">
+
+          <div class="fg" style="grid-column:1/-1">
+            <label>Nome alimento *</label>
+            <input id="af-nome" type="text" placeholder="es. Tortino di quinoa e verdure" required>
+          </div>
+          <div class="fg" style="grid-column:1/-1">
+            <label>Categoria</label>
+            <input id="af-cat" type="text" list="af-cat-list" placeholder="es. Piatti pronti, Cereali, Pesce…">
+            <datalist id="af-cat-list"></datalist>
+          </div>
+
+          <div class="sec-title">Macronutrienti (per 100 g)</div>
+
+          <div class="fg">
+            <label>Energia (kcal)</label>
+            <input id="af-kcal" type="number" min="0" step="0.1" placeholder="es. 250">
+          </div>
+          <div class="fg">
+            <label>Proteine (g)</label>
+            <input id="af-prot" type="number" min="0" step="0.1" placeholder="es. 12">
+          </div>
+          <div class="fg">
+            <label>Grassi totali (g)</label>
+            <input id="af-gtot" type="number" min="0" step="0.1" placeholder="es. 8">
+          </div>
+          <div class="fg">
+            <label>Grassi saturi (g)</label>
+            <input id="af-gs" type="number" min="0" step="0.1" placeholder="es. 2">
+          </div>
+          <div class="fg">
+            <label>Carboidrati (g)</label>
+            <input id="af-cho" type="number" min="0" step="0.1" placeholder="es. 30">
+          </div>
+          <div class="fg">
+            <label>Zuccheri (g)</label>
+            <input id="af-zucc" type="number" min="0" step="0.1" placeholder="es. 5">
+          </div>
+          <div class="fg">
+            <label>Fibre (g)</label>
+            <input id="af-fi" type="number" min="0" step="0.1" placeholder="es. 3">
+          </div>
+          <div class="fg">
+            <label>Colesterolo (mg)</label>
+            <input id="af-col" type="number" min="0" step="0.1" placeholder="es. 40">
+          </div>
+
+          <div class="sec-title">Minerali (per 100 g)</div>
+
+          <div class="fg">
+            <label>Calcio — Ca (mg)</label>
+            <input id="af-ca" type="number" min="0" step="0.1" placeholder="es. 120">
+          </div>
+          <div class="fg">
+            <label>Ferro — Fe (mg)</label>
+            <input id="af-fe" type="number" min="0" step="0.01" placeholder="es. 1.5">
+          </div>
+          <div class="fg">
+            <label>Magnesio — Mg (mg)</label>
+            <input id="af-mgval" type="number" min="0" step="0.1" placeholder="es. 40">
+          </div>
+          <div class="fg">
+            <label>Potassio — K (mg)</label>
+            <input id="af-k" type="number" min="0" step="0.1" placeholder="es. 350">
+          </div>
+          <div class="fg">
+            <label>Sodio — Na (mg)</label>
+            <input id="af-na" type="number" min="0" step="0.1" placeholder="es. 200">
+          </div>
+          <div class="fg">
+            <label>Zinco — Zn (mg)</label>
+            <input id="af-zn" type="number" min="0" step="0.01" placeholder="es. 1.2">
+          </div>
+          <div class="fg">
+            <label>Fosforo — P (mg)</label>
+            <input id="af-fo" type="number" min="0" step="0.1" placeholder="es. 180">
+          </div>
+          <div class="fg">
+            <label>Selenio — Se (µg)</label>
+            <input id="af-se" type="number" min="0" step="0.1" placeholder="es. 10">
+          </div>
+
+        </div>
+      </form>
+    </div>
+    <div class="mfoot">
+      <button onclick="closeAddFood()" style="padding:8px 18px;border:1.5px solid var(--border-d);background:#fff;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--slate)">Annulla</button>
+      <button onclick="saveFood()" style="padding:8px 20px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">💾 Salva alimento</button>
+    </div>
+  </div>
+</div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
 <script>
@@ -123,9 +241,9 @@ function renderDB(list) {
   }
   document.getElementById('db-count').textContent = list.length + ' alimenti';
   tbody.innerHTML = list.map(f => `<tr>
-    <td>${esc(f.n)}</td>
+    <td>${esc(f.n)}${f.src==='PERS'?` <button class="btn-del-food" onclick="deleteCustomFood('${f._id}')" title="Elimina alimento">🗑️</button>`:''}</td>
     <td>${esc(f.c||'')}</td>
-    <td><span class="src-badge src-${f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':'int'}">${f.src}</span></td>
+    <td><span class="src-badge src-${f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int'}">${f.src==='PERS'?'PERS':f.src}</span></td>
     <td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td>
     <td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td>
     <td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td>
@@ -150,15 +268,112 @@ function filterDB() {
 function populateCats() {
   const cats = [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort();
   const sel = document.getElementById('db-cat');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Tutte le categorie</option>';
   cats.forEach(c => {
     const o = document.createElement('option');
     o.value=c; o.textContent=c; sel.appendChild(o);
   });
+  sel.value = prev;
+}
+
+async function loadCustomFoods() {
+  if (!currentUser) return;
+  const { data, error } = await sb.from('alimenti_custom').select('*').eq('user_id', currentUser.id).order('nome');
+  if (error) { console.warn('loadCustomFoods:', error.message); return; }
+  CUSTOM_DB = (data || []).map(r => ({
+    _id: r.id,
+    n: r.nome,
+    c: r.categoria || '',
+    src: 'PERS',
+    k: r.kcal,
+    p: r.proteine,
+    gs: r.grassi_saturi,
+    g: r.grassi_tot,
+    z: r.zuccheri,
+    ch: r.carboidrati,
+    fi: r.fibre,
+    ca: r.calcio,
+    fe: r.ferro,
+    mg: r.magnesio,
+    k2: r.potassio,
+    na: r.sodio,
+    zn: r.zinco,
+    fo: r.fosforo,
+    se: r.selenio,
+    col: r.colesterolo
+  }));
+  rebuildDB();
+}
+
+function openAddFood() {
+  document.getElementById('af-form').reset();
+  // popola datalist categorie
+  const dl = document.getElementById('af-cat-list');
+  dl.innerHTML = '';
+  [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort().forEach(c => {
+    const o = document.createElement('option'); o.value = c; dl.appendChild(o);
+  });
+  document.getElementById('modal-add-food').classList.add('open');
+  setTimeout(()=>document.getElementById('af-nome').focus(), 80);
+}
+
+function closeAddFood() {
+  document.getElementById('modal-add-food').classList.remove('open');
+}
+
+async function saveFood() {
+  const nome = document.getElementById('af-nome').value.trim();
+  if (!nome) { toast('Inserisci il nome dell\'alimento', 'err'); return; }
+  if (!currentUser) { toast('Devi effettuare il login', 'err'); return; }
+
+  const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
+  const row = {
+    user_id: currentUser.id,
+    nome,
+    categoria: document.getElementById('af-cat').value.trim() || null,
+    kcal: num('af-kcal'),
+    proteine: num('af-prot'),
+    grassi_saturi: num('af-gs'),
+    grassi_tot: num('af-gtot'),
+    zuccheri: num('af-zucc'),
+    carboidrati: num('af-cho'),
+    fibre: num('af-fi'),
+    calcio: num('af-ca'),
+    ferro: num('af-fe'),
+    magnesio: num('af-mgval'),
+    potassio: num('af-k'),
+    sodio: num('af-na'),
+    zinco: num('af-zn'),
+    fosforo: num('af-fo'),
+    selenio: num('af-se'),
+    colesterolo: num('af-col')
+  };
+
+  const { error } = await sb.from('alimenti_custom').insert(row);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+
+  toast('Alimento aggiunto ✓', 'ok');
+  closeAddFood();
+  await loadCustomFoods();
+  populateCats();
+  filterDB();
+}
+
+async function deleteCustomFood(id) {
+  if (!confirm('Eliminare questo alimento dal database personale?')) return;
+  const { error } = await sb.from('alimenti_custom').delete().eq('id', id);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  toast('Alimento eliminato', 'ok');
+  await loadCustomFoods();
+  populateCats();
+  filterDB();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   try { await checkAuth(false); } catch(e) {}
   rebuildDB();
+  await loadCustomFoods();
   populateCats();
   renderDB(ALL_DB);
 });

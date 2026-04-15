@@ -1233,13 +1233,7 @@ function stampaSchedaValutazione(){
     ? uniqueRows.map(r=>`<tr><td>${esc(r.label)}</td><td>${esc(r.value)}</td></tr>`).join('')
     : '<tr><td colspan="2">Nessun valore compilato.</td></tr>';
 
-  const printWindow = window.open('', '_blank', 'noopener,noreferrer,width=950,height=900');
-  if(!printWindow){
-    toast('Popup bloccato dal browser: abilita le finestre per la stampa', 'err');
-    return;
-  }
-
-  printWindow.document.write(`<!DOCTYPE html>
+  const printHtml = `<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
@@ -1274,11 +1268,43 @@ function stampaSchedaValutazione(){
   ${noteCliniche ? `<div class="section-title">Note cliniche</div><div class="note-box">${esc(noteCliniche)}</div>` : ''}
   <div class="footer">Stampato il ${esc(new Date().toLocaleString('it-IT'))} — Professionista: ${esc(professionista)}</div>
 </body>
-</html>`);
-  printWindow.document.close();
-  printWindow.focus();
+</html>`;
+
+  const printWindow = window.open('', 'nutriplan-print', 'width=950,height=900');
+  if(printWindow){
+    printWindow.document.open();
+    printWindow.document.write(printHtml);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(()=>{
+      printWindow.print();
+    }, 250);
+    return;
+  }
+
+  // Fallback when popup is blocked: print through hidden iframe
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  iframe.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(iframe);
+  const frameDoc = iframe.contentWindow?.document;
+  if(!frameDoc){
+    toast('Impossibile avviare la stampa su questo browser', 'err');
+    iframe.remove();
+    return;
+  }
+  frameDoc.open();
+  frameDoc.write(printHtml);
+  frameDoc.close();
   setTimeout(()=>{
-    printWindow.print();
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
+    setTimeout(()=>iframe.remove(), 1500);
   }, 250);
 }
 

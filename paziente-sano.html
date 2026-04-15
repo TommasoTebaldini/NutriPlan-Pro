@@ -27,12 +27,28 @@
 .nf input,.nf select,.nf textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s;box-sizing:border-box}
 .nf input:focus,.nf select:focus,.nf textarea:focus{border-color:#22C55E}
 /* LARN table */
-.larn-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.larn-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin-top:0}
 .larn-table th{background:#15803D;color:white;padding:8px 10px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.3px}
+.larn-table th:first-child{border-top-left-radius:var(--r)}
+.larn-table th:last-child{border-top-right-radius:var(--r)}
 .larn-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
-.larn-table tbody tr:nth-child(even){background:#F0FDF4}
-.larn-table tbody tr:hover{background:#DCFCE7}
-.larn-cat-hdr td{background:#166534;color:white;font-weight:700;font-size:11.5px;padding:6px 10px;letter-spacing:.3px}
+.larn-table tbody tr:nth-child(even) td{background:#F0FDF4}
+.larn-table tbody tr:hover td{background:#DCFCE7}
+/* Rimuove il border-bottom dalla riga precedente a ogni header di categoria */
+.larn-table tr:has(+ .larn-cat-hdr) td{border-bottom:none}
+/* Header di categoria: aspetto integrato, non blocchi rettangolari separati */
+.larn-cat-hdr td{
+  background:#ECFDF5;
+  color:#15803D;
+  font-weight:700;
+  font-size:11.5px;
+  padding:9px 14px;
+  border-top:2px solid #22C55E !important;
+  border-bottom:1px solid #86EFAC !important;
+  letter-spacing:.4px;
+}
+/* Il primo header di categoria (inizio tabella) non ha bisogno del bordo superiore */
+.larn-table tbody tr:first-child.larn-cat-hdr td{border-top:none !important}
 .larn-badge{display:inline-block;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:700}
 .larn-pri{background:#D1FAE5;color:#065F46}
 .larn-ar{background:#DBEAFE;color:#1D4ED8}
@@ -150,6 +166,7 @@
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
     <label>📁 Cartella Paziente</label>
     <div id="ps-cartella-cw"></div>
+    <input type="hidden" id="ps-cartella">
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota sessione</label>
@@ -1024,19 +1041,123 @@ function copiaPianoTesto() {
   navigator.clipboard.writeText(txt).then(()=>toast('Piano copiato negli appunti ✓','ok')).catch(()=>toast('Copia non supportata','err'));
 }
 
-function salvaPazienteSano() { toast('Funzione di salvataggio in cartella in arrivo', 'ok'); }
+// ── Salvataggio / caricamento cartella ──
+let editingPsNoteId = null;
+
+function raccogliDatiPS() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    valutazione: {
+      sesso: gv('ps-sesso'), eta: gv('ps-eta'), peso: gv('ps-peso'),
+      altezza: gv('ps-altezza'), pal: gv('ps-pal'), obiettivo: gv('ps-obiettivo'),
+      bmi: document.getElementById('ps-bmi')?.textContent || '',
+      bmr: document.getElementById('ps-bmr')?.textContent || '',
+      tdee: document.getElementById('ps-tdee')?.textContent || '',
+      target: document.getElementById('ps-target')?.textContent || ''
+    },
+    piano_config: {
+      sesso: gv('ai-sesso'), eta: gv('ai-eta'), peso: gv('ai-peso'),
+      altezza: gv('ai-altezza'), pal: gv('ai-pal'), obiettivo: gv('ai-obiettivo'),
+      kcal: gv('ai-kcal'), npasti: gv('ai-npasti'), schema: gv('ai-schema'),
+      stagione: gv('ai-stagione'), preferiti: gv('ai-preferiti'),
+      evitare: gv('ai-evitare'), note_extra: gv('ai-note-extra'),
+      freq_carne_r: gv('ai-f-carne-r'), freq_carne_b: gv('ai-f-carne-b'),
+      freq_pesce: gv('ai-f-pesce'), freq_uova: gv('ai-f-uova'),
+      freq_legumi: gv('ai-f-legumi'), freq_latticini: gv('ai-f-latticini'),
+      freq_formaggi: gv('ai-f-formaggi'), freq_fsecca: gv('ai-f-fsecca')
+    },
+    piano_ai: window._ultimoPianoAI || null
+  };
+}
+
+function ripristinaDatiPS(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.valutazione) {
+    const v = dati.valutazione;
+    sv('ps-sesso', v.sesso); sv('ps-eta', v.eta); sv('ps-peso', v.peso);
+    sv('ps-altezza', v.altezza); sv('ps-pal', v.pal); sv('ps-obiettivo', v.obiettivo);
+    calcolaPS();
+  }
+  if (dati.piano_config) {
+    const c = dati.piano_config;
+    sv('ai-sesso', c.sesso); sv('ai-eta', c.eta); sv('ai-peso', c.peso);
+    sv('ai-altezza', c.altezza); sv('ai-pal', c.pal); sv('ai-obiettivo', c.obiettivo);
+    sv('ai-kcal', c.kcal); sv('ai-npasti', c.npasti); sv('ai-schema', c.schema);
+    sv('ai-stagione', c.stagione); sv('ai-preferiti', c.preferiti);
+    sv('ai-evitare', c.evitare); sv('ai-note-extra', c.note_extra);
+    sv('ai-f-carne-r', c.freq_carne_r); sv('ai-f-carne-b', c.freq_carne_b);
+    sv('ai-f-pesce', c.freq_pesce); sv('ai-f-uova', c.freq_uova);
+    sv('ai-f-legumi', c.freq_legumi); sv('ai-f-latticini', c.freq_latticini);
+    sv('ai-f-formaggi', c.freq_formaggi); sv('ai-f-fsecca', c.freq_fsecca);
+  }
+  if (dati.piano_ai) {
+    window._ultimoPianoAI = dati.piano_ai;
+    renderPianoAI(dati.piano_ai);
+    document.getElementById('piano-ai-output').style.display = '';
+  }
+}
+
+async function salvaPazienteSano() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartella_id = document.getElementById('ps-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
+  const nota = document.getElementById('ps-nota').value.trim() || 'Sessione paziente sano ' + new Date().toLocaleDateString('it');
+  const dati = raccogliDatiPS();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'paziente_sano', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingPsNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPsNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false});
+  }
+  showLoading(false);
+  if (result.error) {
+    if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
+      toast('⚠️ Tabella note_specialistiche mancante — eseguire il setup SQL da Gestione Diabete', 'err');
+    } else { toast('❌ ' + result.error.message, 'err'); }
+    return;
+  }
+  toast(editingPsNoteId ? '✅ Scheda aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
+  if (!editingPsNoteId && result.data?.[0]?.id) editingPsNoteId = result.data[0].id;
+}
+
+async function caricaPsDaNota(noteId) {
+  showLoading(true);
+  const { data, error } = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
+  editingPsNoteId = noteId;
+  await _cwSetById('ps-cartella-cw', data.cartella_id);
+  const notaEl = document.getElementById('ps-nota');
+  if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiPS(JSON.parse(data.dati || '{}')); } catch(e) {}
+  toast('✅ Scheda paziente sano caricata', 'ok');
+}
+
 function resetPS() {
   ['ps-eta','ps-peso','ps-altezza','ps-acqua-kg'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('ps-result-box').style.display='none';
   document.getElementById('ps-acqua-result').style.display='none';
   document.getElementById('ps-acqua-calc').textContent='';
   document.getElementById('ps-macro-table').innerHTML='<i>Inserisci i dati antropometrici per calcolare la ripartizione.</i>';
+  document.getElementById('piano-ai-output').style.display='none';
+  window._ultimoPianoAI = null;
+  editingPsNoteId = null;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   try { await checkAuth(); } catch(e) {}
-  if (typeof initCartellaCW === 'function') {
-    initCartellaCW('ps-cartella-cw');
+  initCartellaWidget('ps-cartella-cw', {
+    hiddenInputId: 'ps-cartella',
+    accentColor: '#16A34A',
+    labelColor: '#15803D',
+    hoverBg: '#F0FDF4',
+    nuovaBg: '#F0FDF4'
+  });
+  if (currentUser) {
+    const noteId = new URLSearchParams(window.location.search).get('noteId');
+    if (noteId) await caricaPsDaNota(noteId);
   }
 });
 </script>

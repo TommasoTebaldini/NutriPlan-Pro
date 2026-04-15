@@ -80,6 +80,7 @@
   <h2>📊 Valutazione Paziente</h2>
   <div class="tbar-actions">
     <button class="btn btn-primary btn-sm" onclick="salvaScheda()">💾 Salva Scheda</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaSchedaValutazione()">🖨️ Stampa</button>
     <button class="btn btn-ghost btn-sm" onclick="resetVal()">🔄 Reset</button>
   </div>
 </div>
@@ -1140,6 +1141,145 @@ function resetVal(){
   selectedPat.clear();renderPatChips();
   document.getElementById('risultati-col').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--slate-l)"><div style="font-size:44px;margin-bottom:14px">📊</div><p>Inserisci i dati e clicca Calcola Fabbisogno</p></div>';
   tdee=0;schedaId=null;
+}
+
+function stampaSchedaValutazione(){
+  const formatDate = (dateStr)=>{
+    if(!dateStr) return '—';
+    const d = new Date(dateStr);
+    if(Number.isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('it-IT');
+  };
+  const esc = (v)=>String(v ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+  const pushRow = (rows, label, value)=>{
+    if(value == null) return;
+    const text = String(value).trim();
+    if(!text) return;
+    rows.push({label, value:text});
+  };
+
+  const nome = (document.getElementById('v-nome')?.value || '').trim();
+  const cognome = (document.getElementById('v-cognome')?.value || '').trim();
+  const paziente = [nome, cognome].filter(Boolean).join(' ') || 'Paziente non specificato';
+  const dataScheda = new Date().toLocaleDateString('it-IT');
+  const professionista = (document.getElementById('sb-user-email')?.textContent || '').trim() || 'Professionista';
+  const rows = [];
+
+  document.querySelectorAll('.val-section').forEach(section=>{
+    const sectionTitle = section.querySelector('h3')?.textContent?.trim() || '';
+    const controls = section.querySelectorAll('input, select, textarea');
+    controls.forEach(el=>{
+      const id = el.id;
+      if(!id) return;
+      const labelEl = section.querySelector(`label[for="${id}"]`) || el.closest('.fg')?.querySelector('label');
+      let label = labelEl?.textContent?.replace(/\*+/g, '').trim() || id;
+      if(sectionTitle && !label.startsWith(sectionTitle)) label = `${sectionTitle} — ${label}`;
+
+      let val = '';
+      if(el.tagName === 'SELECT'){
+        val = el.options[el.selectedIndex]?.text?.trim() || '';
+        if(val.startsWith('—')) val = '';
+      } else {
+        val = (el.value || '').trim();
+      }
+      pushRow(rows, label, val);
+    });
+  });
+
+  const addById = (id, label)=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const raw = ('value' in el) ? el.value : el.textContent;
+    pushRow(rows, label, raw);
+  };
+
+  addById('v-pi','Dati Antropometrici — Peso ideale (kg)');
+  addById('v-pa','Dati Antropometrici — Peso aggiustato (kg)');
+  addById('v-mm','Dati Antropometrici — Massa magra (kg)');
+  addById('v-mg','Dati Antropometrici — Massa grassa (%)');
+
+  const risultatiRows = [];
+  const risultatiCol = document.getElementById('risultati-col');
+  if(risultatiCol){
+    risultatiCol.querySelectorAll('.result-pill, .formula-row').forEach(box=>{
+      const label = box.querySelector('.rp-label, .fn')?.textContent?.trim();
+      let value = box.querySelector('.rp-val, .fv')?.textContent?.trim() || '';
+      const badge = box.querySelector('.rp-badge, .fb')?.textContent?.trim();
+      if(!label || !value) return;
+      if(badge) value += ` (${badge})`;
+      risultatiRows.push({label:`Risultati calcolati — ${label}`, value});
+    });
+  }
+
+  const patologieTxt = document.getElementById('pat-selezionate')?.textContent?.replace(/^Selezionate:\s*/,'').trim() || '';
+  pushRow(rows, 'Patologie selezionate', patologieTxt);
+
+  const noteCliniche = (document.getElementById('v-note')?.value || '').trim();
+  const uniqueRows = [];
+  const seen = new Set();
+  [...rows, ...risultatiRows].forEach(r=>{
+    const key = `${r.label}__${r.value}`;
+    if(seen.has(key)) return;
+    seen.add(key);
+    uniqueRows.push(r);
+  });
+
+  const tableHtml = uniqueRows.length
+    ? uniqueRows.map(r=>`<tr><td>${esc(r.label)}</td><td>${esc(r.value)}</td></tr>`).join('')
+    : '<tr><td colspan="2">Nessun valore compilato.</td></tr>';
+
+  const printWindow = window.open('', '_blank', 'noopener,noreferrer,width=950,height=900');
+  if(!printWindow){
+    toast('Popup bloccato dal browser: abilita le finestre per la stampa', 'err');
+    return;
+  }
+
+  printWindow.document.write(`<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stampa Scheda Valutazione</title>
+  <style>
+    @page { size: A4; margin: 18mm; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #1e293b; margin: 0; }
+    .head { border-bottom: 2px solid #0f766e; padding-bottom: 10px; margin-bottom: 18px; }
+    .title { font-size: 22px; font-weight: 700; color: #0f766e; margin: 0 0 6px 0; }
+    .meta { font-size: 13px; color: #334155; margin: 2px 0; }
+    .section-title { font-size: 14px; font-weight: 700; margin: 16px 0 8px; color: #0f172a; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th, td { border: 1px solid #cbd5e1; padding: 7px 9px; vertical-align: top; text-align: left; }
+    th { background: #e2e8f0; font-weight: 700; color: #0f172a; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .note-box { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 6px; padding: 10px; white-space: pre-wrap; font-size: 12.5px; line-height: 1.5; }
+    .footer { margin-top: 20px; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <h1 class="title">NutriPlan Pro - Scheda Valutazione</h1>
+    <div class="meta"><strong>Paziente:</strong> ${esc(paziente)}</div>
+    <div class="meta"><strong>Data:</strong> ${esc(dataScheda)}</div>
+  </div>
+  <div class="section-title">Valori della scheda</div>
+  <table>
+    <thead><tr><th>Campo</th><th>Valore</th></tr></thead>
+    <tbody>${tableHtml}</tbody>
+  </table>
+  ${noteCliniche ? `<div class="section-title">Note cliniche</div><div class="note-box">${esc(noteCliniche)}</div>` : ''}
+  <div class="footer">Stampato il ${esc(new Date().toLocaleString('it-IT'))} — Professionista: ${esc(professionista)}</div>
+</body>
+</html>`);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(()=>{
+    printWindow.print();
+  }, 250);
 }
 
 document.addEventListener('DOMContentLoaded',async()=>{

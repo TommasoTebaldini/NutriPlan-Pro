@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Paziente Sano — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.ps-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ps-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
+.ps-tab:hover{background:rgba(34,197,94,.12);color:#15803D}
+.ps-tab.active{background:linear-gradient(135deg,#15803D,#22C55E);color:white;box-shadow:0 3px 10px rgba(34,197,94,.3);font-weight:700}
+.ps-panel{display:none}.ps-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:28px;font-weight:700;color:#16A34A;margin:8px 0}
+.result-note{font-size:12px;color:var(--slate-l)}
+.alert-green{background:#F0FDF4;border-left:3px solid #22C55E;color:#14532D;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-blue{background:#EFF6FF;border-left:3px solid #3B82F6;color:#1E3A5F;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-amber{background:#FFFBEB;border-left:3px solid #F59E0B;color:#78350F;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select,.nf textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s;box-sizing:border-box}
+.nf input:focus,.nf select:focus,.nf textarea:focus{border-color:#22C55E}
+/* LARN table */
+.larn-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.larn-table th{background:#15803D;color:white;padding:8px 10px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.3px}
+.larn-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.larn-table tbody tr:nth-child(even){background:#F0FDF4}
+.larn-table tbody tr:hover{background:#DCFCE7}
+.larn-cat-hdr td{background:#166534;color:white;font-weight:700;font-size:11.5px;padding:6px 10px;letter-spacing:.3px}
+.larn-badge{display:inline-block;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:700}
+.larn-pri{background:#D1FAE5;color:#065F46}
+.larn-ar{background:#DBEAFE;color:#1D4ED8}
+.larn-ai{background:#FEF3C7;color:#B45309}
+.larn-ul{background:#FEE2E2;color:#991B1B}
+/* Porzioni */
+.pyr-group{border-radius:12px;overflow:hidden;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.pyr-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;color:white;font-weight:700;font-size:13px}
+.pyr-body{padding:12px 16px;background:#FAFAFA;font-size:12.5px;line-height:1.8}
+.pyr-freq{display:inline-flex;align-items:center;gap:5px;background:#DCFCE7;color:#15803D;padding:2px 10px;border-radius:20px;font-size:11.5px;font-weight:700;margin:2px}
+/* Piano AI */
+.ai-day-card{border-radius:12px;overflow:hidden;margin-bottom:12px;border:1.5px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.ai-day-hdr{background:linear-gradient(135deg,#15803D,#22C55E);color:white;padding:10px 16px;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:space-between}
+.ai-day-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0;background:white}
+.ai-meal{padding:12px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.ai-meal:last-child{border-right:none}
+.ai-meal-name{font-size:11px;font-weight:800;color:#15803D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.ai-meal-items{font-size:12.5px;color:var(--slate);line-height:1.8}
+.ai-meal-item::before{content:"• ";color:#22C55E;font-weight:700}
+.freq-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.freq-row label{font-size:12.5px;color:var(--slate);flex:1;min-width:130px}
+.freq-row select{padding:5px 8px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12px;font-family:inherit;outline:none;min-width:140px}
+.freq-row select:focus{border-color:#22C55E}
+.linee-guida-item{background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+.lg-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.lg-content h4{font-size:13px;font-weight:700;color:var(--slate);margin:0 0 4px}
+.lg-content p{font-size:12.5px;color:var(--slate-l);margin:0;line-height:1.7}
+.badge-green{background:#D1FAE5;color:#065F46;padding:2px 9px;border-radius:8px;font-size:11px;font-weight:700;display:inline-block;margin-top:4px}
+.badge-larn{background:#EDE9FE;color:#5B21B6;padding:2px 9px;border-radius:8px;font-size:11px;font-weight:700;display:inline-block;margin-top:4px;margin-left:4px}
+@media print{
+  @page{margin:0;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast,#ps-paz-hdr{display:none!important}
+  #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
+  .page-content{padding:0!important}
+  .ps-tabs{display:none!important}
+  .ps-panel{display:none!important}
+  .ps-panel.active{display:block!important}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item" href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item active" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🌿 Paziente Sano — Nutrizione in Salute</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#14532D 0%,#16A34A 55%,#22C55E 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(21,128,61,.3);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🌿</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Nutrizione per il Paziente Sano</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Valutazione del fabbisogno, apporti di riferimento LARN V revisione, porzioni raccomandate e piano settimanale generato dall'AI. Basato su <b>LARN V rev. · CREA 2018 · OMS 2023 · Dieta Mediterranea UNESCO</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📊 Valutazione</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📋 LARN V</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🍽️ Porzioni</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🤖 Piano AI</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="ps-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <div id="ps-cartella-cw"></div>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota sessione</label>
+    <input type="text" id="ps-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <button class="btn btn-sm no-print" style="background:#16A34A;color:white;border:none" onclick="salvaPazienteSano()">💾 Salva in Cartella</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="resetPS()">🔄 Reset</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="ps-tabs">
+  <button class="ps-tab active" onclick="showPSTab('valutazione')">📊 Valutazione</button>
+  <button class="ps-tab" onclick="showPSTab('larn')">📋 LARN V</button>
+  <button class="ps-tab" onclick="showPSTab('porzioni')">🍽️ Porzioni & Frequenze</button>
+  <button class="ps-tab" onclick="showPSTab('linee')">💡 Linee Guida</button>
+  <button class="ps-tab" onclick="showPSTab('piano')">🤖 Piano Settimanale AI</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 1: VALUTAZIONE                                -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="ps-panel active" id="tab-valutazione">
+  <div class="alert-green">
+    <b>📊 Valutazione Nutrizionale del Paziente Sano</b> — Calcola BMI, peso ideale, fabbisogno energetico basale e totale con i metodi validati (Mifflin-St Jeor). I valori vengono automaticamente utilizzati nel generatore del Piano AI.
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>👤 Dati Antropometrici</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="nf"><label>Sesso</label>
+          <select id="ps-sesso" onchange="calcolaPS()"><option value="M">Maschio</option><option value="F">Femmina</option></select>
+        </div>
+        <div class="nf"><label>Età (anni)</label>
+          <input type="number" id="ps-eta" placeholder="es. 35" min="18" max="100" oninput="calcolaPS()">
+        </div>
+        <div class="nf"><label>Peso attuale (kg)</label>
+          <input type="number" id="ps-peso" placeholder="es. 70" step="0.1" oninput="calcolaPS()">
+        </div>
+        <div class="nf"><label>Altezza (cm)</label>
+          <input type="number" id="ps-altezza" placeholder="es. 170" oninput="calcolaPS()">
+        </div>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Livello di attività fisica (PAL)</label>
+        <select id="ps-pal" onchange="calcolaPS()">
+          <option value="1.2">Sedentario (no esercizio)</option>
+          <option value="1.375">Leggermente attivo (1-2 gg/sett)</option>
+          <option value="1.55" selected>Moderatamente attivo (3-5 gg/sett)</option>
+          <option value="1.725">Molto attivo (6-7 gg/sett)</option>
+          <option value="1.9">Estremamente attivo (atleta/lavoro fisico)</option>
+        </select>
+      </div>
+      <div class="nf"><label>Obiettivo nutrizionale</label>
+        <select id="ps-obiettivo" onchange="calcolaPS()">
+          <option value="mantenimento">Mantenimento del peso</option>
+          <option value="perdita_lieve">Lieve calo ponderale (−300 kcal)</option>
+          <option value="perdita">Calo ponderale (−500 kcal)</option>
+          <option value="aumento">Aumento massa (+300 kcal)</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <div class="calc-box" id="ps-result-box" style="display:none">
+        <h3>📈 Risultati</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="background:#F0FDF4;border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:11px;color:var(--slate-l);font-weight:600;margin-bottom:4px">BMI</div>
+            <div class="result-big" id="ps-bmi">—</div>
+            <div class="result-note" id="ps-bmi-cat"></div>
+          </div>
+          <div style="background:#F0FDF4;border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:11px;color:var(--slate-l);font-weight:600;margin-bottom:4px">Peso Ideale</div>
+            <div class="result-big" id="ps-pi">—</div>
+            <div class="result-note">formula Lorentz</div>
+          </div>
+        </div>
+        <div style="background:#F0FDF4;border-radius:10px;padding:14px;margin-bottom:10px">
+          <div style="font-size:11px;color:var(--slate-l);font-weight:600;margin-bottom:8px">FABBISOGNO ENERGETICO</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+            <div>
+              <div style="font-size:11px;color:var(--slate-l)">MBR / BMR</div>
+              <div style="font-size:18px;font-weight:700;color:#15803D" id="ps-bmr">—</div>
+              <div style="font-size:10px;color:var(--slate-l)">kcal/die</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--slate-l)">TDEE (PAL)</div>
+              <div style="font-size:18px;font-weight:700;color:#15803D" id="ps-tdee">—</div>
+              <div style="font-size:10px;color:var(--slate-l)">kcal/die</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--slate-l)">Target</div>
+              <div style="font-size:18px;font-weight:700;color:#D97706" id="ps-target">—</div>
+              <div style="font-size:10px;color:var(--slate-l)">kcal/die</div>
+            </div>
+          </div>
+        </div>
+        <div id="ps-macro-result" style="font-size:12.5px"></div>
+      </div>
+      <div class="calc-box">
+        <h3>💧 Fabbisogno Idrico</h3>
+        <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:10px">AI LARN V: <b>2,0 L/die</b> (donne) · <b>2,5 L/die</b> (uomini), inclusa l'acqua degli alimenti (~700 mL). Aumenta con sudorazione, febbre, temperature elevate.</p>
+        <div id="ps-acqua-result" style="background:#EFF6FF;border-radius:8px;padding:12px;font-size:13px;text-align:center;display:none">
+          <div style="font-size:11px;color:var(--slate-l)">Acqua raccomandata (da bere)</div>
+          <div style="font-size:24px;font-weight:700;color:#3B82F6" id="ps-acqua">—</div>
+        </div>
+        <div class="nf" style="margin-top:10px"><label>Calcolo rapido (35 mL/kg peso corporeo)</label>
+          <input type="number" id="ps-acqua-kg" placeholder="es. 70 kg" oninput="calcolaAcqua()" style="max-width:200px">
+        </div>
+        <div id="ps-acqua-calc" style="font-size:13px;color:#3B82F6;font-weight:700;margin-top:6px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🔢 Ripartizione Macronutrienti Raccomandata (LARN V)</h3>
+    <div id="ps-macro-table" style="font-size:12.5px;color:var(--slate-l)"><i>Inserisci i dati antropometrici per calcolare la ripartizione.</i></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 2: LARN V                                     -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="ps-panel" id="tab-larn">
+  <div class="alert-green">
+    <b>📋 LARN V Revisione — Livelli di Assunzione di Riferimento di Nutrienti ed Energia per la popolazione italiana</b> (SINU, 2014 con aggiornamenti 2023). <span class="larn-badge larn-pri">PRI</span> = Population Reference Intake · <span class="larn-badge larn-ar">AR</span> = Average Requirement · <span class="larn-badge larn-ai">AI</span> = Adequate Intake · <span class="larn-badge larn-ul">UL</span> = Upper Level
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" onclick="filtraLARN('tutti')">Tutti</button>
+    <button class="btn btn-ghost btn-sm" onclick="filtraLARN('energia')">Energia & Macro</button>
+    <button class="btn btn-ghost btn-sm" onclick="filtraLARN('vitamine')">Vitamine</button>
+    <button class="btn btn-ghost btn-sm" onclick="filtraLARN('minerali')">Minerali</button>
+  </div>
+
+  <div class="calc-box" style="padding:0;overflow:hidden">
+    <table class="larn-table" id="larn-main-table">
+      <thead><tr>
+        <th style="min-width:200px">Nutriente</th>
+        <th>Unità</th>
+        <th>Uomo 18–59 a</th>
+        <th>Donna 18–59 a</th>
+        <th>≥60 anni</th>
+        <th>In gravidanza</th>
+        <th>Allattamento</th>
+        <th>Tipo</th>
+        <th>UL</th>
+        <th>Note cliniche</th>
+      </tr></thead>
+      <tbody id="larn-tbody">
+      <!-- Energia -->
+      <tr class="larn-cat-hdr larn-cat-energia"><td colspan="10">⚡ ENERGIA & MACRONUTRIENTI</td></tr>
+      <tr class="larn-row larn-cat-energia"><td><b>Energia</b></td><td>kcal/die</td><td>dipende da PAL</td><td>dipende da PAL</td><td>−10%</td><td>+350 (II trim)<br>+500 (III trim)</td><td>+330 (I sem)<br>+270 (II sem)</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Calcolare con equazione Mifflin-St Jeor × PAL</td></tr>
+      <tr class="larn-row larn-cat-energia"><td><b>Proteine</b></td><td>g/kg/die</td><td>0,90</td><td>0,90</td><td>1,0–1,2</td><td>+29 g/die (III trim)</td><td>+28 g/die</td><td><span class="larn-badge larn-pri">PRI</span></td><td>—</td><td>Anziani: aumentare per prevenire sarcopenia. Fonte prevalente animale + vegetale.</td></tr>
+      <tr class="larn-row larn-cat-energia"><td><b>Lipidi totali</b></td><td>% En</td><td>20–35</td><td>20–35</td><td>20–35</td><td>20–35</td><td>20–35</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Preferire MUFA (olio EVO) e PUFA; ridurre SFA e trans</td></tr>
+      <tr class="larn-row larn-cat-energia"><td>— Acidi grassi saturi (SFA)</td><td>% En</td><td>&lt;10</td><td>&lt;10</td><td>&lt;10</td><td>&lt;10</td><td>&lt;10</td><td><span class="larn-badge larn-ul">UL</span></td><td>&lt;10%</td><td>Rischio cardiovascolare aumentato con SFA elevati</td></tr>
+      <tr class="larn-row larn-cat-energia"><td>— PUFA n-6 (LA)</td><td>% En</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Olio di girasole, mais</td></tr>
+      <tr class="larn-row larn-cat-energia"><td>— PUFA n-3 (ALA)</td><td>% En</td><td>0,5</td><td>0,5</td><td>0,5</td><td>0,5</td><td>0,5</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Olio di lino, noci</td></tr>
+      <tr class="larn-row larn-cat-energia"><td>— EPA+DHA</td><td>mg/die</td><td>250</td><td>250</td><td>250</td><td>250+100 DHA</td><td>250+100 DHA</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Pesce 2–3 volte/settimana</td></tr>
+      <tr class="larn-row larn-cat-energia"><td><b>Carboidrati</b></td><td>% En</td><td>45–60</td><td>45–60</td><td>45–60</td><td>45–60</td><td>45–60</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Preferire complessi, cereali integrali</td></tr>
+      <tr class="larn-row larn-cat-energia"><td>— Zuccheri liberi</td><td>% En</td><td>&lt;10</td><td>&lt;10</td><td>&lt;10</td><td>&lt;10</td><td>&lt;10</td><td><span class="larn-badge larn-ul">UL</span></td><td>&lt;10%</td><td>OMS 2023: idealmente &lt;5%</td></tr>
+      <tr class="larn-row larn-cat-energia"><td><b>Fibra alimentare</b></td><td>g/die</td><td>30</td><td>25</td><td>25–30</td><td>28</td><td>28</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Verdure, legumi, cereali integrali, frutta</td></tr>
+      <tr class="larn-row larn-cat-energia"><td><b>Acqua totale</b></td><td>L/die</td><td>2,5</td><td>2,0</td><td>2,0–2,5</td><td>2,3</td><td>2,7</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Include acqua degli alimenti (~700 mL). Aumentare in estate/sport.</td></tr>
+      <tr class="larn-row larn-cat-energia"><td><b>Sodio</b></td><td>g/die</td><td>&lt;2,0</td><td>&lt;2,0</td><td>&lt;2,0</td><td>&lt;2,0</td><td>&lt;2,0</td><td><span class="larn-badge larn-ul">UL</span></td><td>&lt;2g Na (5g NaCl)</td><td>SDT per riduzione rischio cardiovascolare</td></tr>
+      <!-- Vitamine liposolubili -->
+      <tr class="larn-cat-hdr larn-cat-vitamine"><td colspan="10">🌞 VITAMINE LIPOSOLUBILI</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Vitamina A</b></td><td>µg RE/die</td><td>800</td><td>700</td><td>700–800</td><td>+100</td><td>+350</td><td><span class="larn-badge larn-pri">PRI</span></td><td>3000 µg</td><td>Retinolo + β-carotene. Fegato, latticini, carote, verdure verdi.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Vitamina D</b></td><td>µg/die</td><td>15</td><td>15</td><td>20</td><td>15</td><td>15</td><td><span class="larn-badge larn-ai">AI</span></td><td>100 µg</td><td>Sintesi cutanea principale. Integrare in inverno e anziani. 1 µg = 40 UI.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Vitamina E</b></td><td>mg α-TE/die</td><td>13</td><td>12</td><td>13</td><td>13</td><td>15</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Olio EVO, frutta secca, germe di grano.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Vitamina K</b></td><td>µg/die</td><td>140</td><td>140</td><td>140</td><td>140</td><td>140</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Verdure a foglia verde. Attenzione con anticoagulanti.</td></tr>
+      <!-- Vitamine idrosolubili -->
+      <tr class="larn-cat-hdr larn-cat-vitamine"><td colspan="10">💊 VITAMINE IDROSOLUBILI</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Vitamina C</b></td><td>mg/die</td><td>105</td><td>85</td><td>105/85</td><td>105</td><td>130</td><td><span class="larn-badge larn-pri">PRI</span></td><td>1000 mg</td><td>Fumatori: +35 mg. Frutta fresca, peperoni, kiwi.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Tiamina (B1)</b></td><td>mg/die</td><td>1,2</td><td>1,1</td><td>1,1–1,2</td><td>1,4</td><td>1,5</td><td><span class="larn-badge larn-pri">PRI</span></td><td>—</td><td>Cereali integrali, legumi, carne. Necessità aumenta con intake CHO.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Riboflavina (B2)</b></td><td>mg/die</td><td>1,6</td><td>1,3</td><td>1,3–1,6</td><td>1,6</td><td>1,7</td><td><span class="larn-badge larn-pri">PRI</span></td><td>—</td><td>Latte, uova, carne, mandorle.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Niacina (B3)</b></td><td>mg NE/die</td><td>18</td><td>14</td><td>14–18</td><td>17</td><td>17</td><td><span class="larn-badge larn-pri">PRI</span></td><td>35 mg</td><td>Carne, pesce, cereali arricchiti.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Vitamina B6</b></td><td>mg/die</td><td>1,3</td><td>1,3</td><td>1,7</td><td>1,9</td><td>2,0</td><td><span class="larn-badge larn-pri">PRI</span></td><td>25 mg</td><td>Pesce, patate, banane, legumi.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Folato (B9)</b></td><td>µg DFE/die</td><td>320</td><td>320</td><td>320</td><td>600</td><td>500</td><td><span class="larn-badge larn-pri">PRI</span></td><td>1000 µg</td><td><b>Età fertile: 400 µg/die</b> (prevenzione difetti del tubo neurale). Verdure a foglia, legumi.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Vitamina B12</b></td><td>µg/die</td><td>4,0</td><td>4,0</td><td>4,0</td><td>4,5</td><td>5,0</td><td><span class="larn-badge larn-pri">PRI</span></td><td>—</td><td>Solo in alimenti animali. Vegani: integrare obbligatoriamente.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Biotina (B7)</b></td><td>µg/die</td><td>40</td><td>40</td><td>40</td><td>40</td><td>45</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Uova, noci, fegato.</td></tr>
+      <tr class="larn-row larn-cat-vitamine"><td><b>Ac. pantotenico (B5)</b></td><td>mg/die</td><td>5</td><td>5</td><td>5</td><td>6</td><td>7</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>Ampiamente distribuito negli alimenti.</td></tr>
+      <!-- Macrominerali -->
+      <tr class="larn-cat-hdr larn-cat-minerali"><td colspan="10">🪨 MACROMINERALI</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Calcio</b></td><td>mg/die</td><td>1000</td><td>1000</td><td>1200</td><td>1000</td><td>1000</td><td><span class="larn-badge larn-pri">PRI</span></td><td>2500 mg</td><td>Latte, formaggi, verdure a foglia. Assorbimento ridotto con eccesso fibre/ossalati.</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Fosforo</b></td><td>mg/die</td><td>700</td><td>700</td><td>700</td><td>700</td><td>700</td><td><span class="larn-badge larn-pri">PRI</span></td><td>3000 mg</td><td>Ampiamente presente. Eccesso da alimenti processati.</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Magnesio</b></td><td>mg/die</td><td>300</td><td>240</td><td>300/240</td><td>240</td><td>255</td><td><span class="larn-badge larn-pri">PRI</span></td><td>—</td><td>Verdure verdi, legumi, frutta secca, cereali integrali.</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Potassio</b></td><td>g/die</td><td>3,9</td><td>3,9</td><td>3,9</td><td>3,9</td><td>3,9</td><td><span class="larn-badge larn-ai">AI</span></td><td>—</td><td>SDT cardiovascolare. Frutta, verdura, legumi, patate.</td></tr>
+      <!-- Oligoelementi -->
+      <tr class="larn-cat-hdr larn-cat-minerali"><td colspan="10">⚗️ OLIGOELEMENTI</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Ferro</b></td><td>mg/die</td><td>10</td><td>18</td><td>10</td><td>27</td><td>10</td><td><span class="larn-badge larn-pri">PRI</span></td><td>45 mg</td><td>Donne in età fertile: 18 mg. Post-menopausa: 10 mg. Eme (carne) vs non-eme (vegetali).</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Zinco</b></td><td>mg/die</td><td>11</td><td>8</td><td>11/8</td><td>11</td><td>12</td><td><span class="larn-badge larn-pri">PRI</span></td><td>25 mg</td><td>Carne, frutti di mare, legumi, noci.</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Iodio</b></td><td>µg/die</td><td>150</td><td>150</td><td>150</td><td>200</td><td>200</td><td><span class="larn-badge larn-pri">PRI</span></td><td>600 µg</td><td>Sale iodato, pesce, latte. Gravidanza: critico per neurosviluppo.</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Selenio</b></td><td>µg/die</td><td>55</td><td>55</td><td>55</td><td>60</td><td>70</td><td><span class="larn-badge larn-pri">PRI</span></td><td>300 µg</td><td>Pesce, carne, cereali (variabile per contenuto suolo). Noce brasiliana.</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Rame</b></td><td>µg/die</td><td>900</td><td>900</td><td>900</td><td>1000</td><td>1300</td><td><span class="larn-badge larn-ai">AI</span></td><td>5000 µg</td><td>Fegato, frutti di mare, noci, legumi.</td></tr>
+      <tr class="larn-row larn-cat-minerali"><td><b>Fluoro</b></td><td>mg/die</td><td>3,4</td><td>3,1</td><td>3,1–3,4</td><td>3,1</td><td>3,1</td><td><span class="larn-badge larn-ai">AI</span></td><td>7 mg</td><td>Acqua fluorurata, tè, pesce. Prevenzione carie.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 3: PORZIONI & FREQUENZE                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="ps-panel" id="tab-porzioni">
+  <div class="alert-green">
+    <b>🍽️ Porzioni e Frequenze di Consumo</b> — Basate su <b>LARN V</b>, <b>Linee Guida per una Sana Alimentazione (CREA 2018)</b> e principi della <b>Dieta Mediterranea UNESCO</b>. Le frequenze si riferiscono a un adulto sano normopeso con apporto di circa 2000 kcal/die.
+  </div>
+  <div class="grid-2">
+    <div>
+      <!-- Cereali -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#D97706,#F59E0B)">🌾 Cereali, Pane, Pasta, Riso, Patate</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> Pasta/riso crudi 80 g · Pane 50 g · Patate 200 g · Cereali colazione 30 g<br>
+          <b>Frequenza:</b> <span class="pyr-freq">3–5 porzioni/die</span><br>
+          Privilegiare versioni integrali ≥50% dei pasti (fibra, micronutrienti). Limitare pasta all'uovo e prodotti raffinati.
+        </div>
+      </div>
+      <!-- Verdure -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#15803D,#22C55E)">🥦 Verdure e Ortaggi</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> Verdure cotte 250 g · Verdure crude 80–100 g<br>
+          <b>Frequenza:</b> <span class="pyr-freq">≥2–3 porzioni/die</span><br>
+          Varietà di colori (crucifere, a foglia verde, arancioni/rossi). Almeno una porzione cruda. Cottura preferibilmente a vapore.
+        </div>
+      </div>
+      <!-- Frutta -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#DC2626,#EF4444)">🍎 Frutta Fresca</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> 150 g (frutta media 1 pezzo)<br>
+          <b>Frequenza:</b> <span class="pyr-freq">2–3 porzioni/die</span><br>
+          Preferire intera (non centrifugata). Variare specie e stagionalità. Frutta secca da non confondere con frutta fresca.
+        </div>
+      </div>
+      <!-- Legumi -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#92400E,#B45309)">🫘 Legumi</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> Legumi secchi 50 g · Legumi cotti/in scatola 150 g<br>
+          <b>Frequenza:</b> <span class="pyr-freq">3–4 volte/settimana</span><br>
+          Ottima fonte proteica vegetale + fibra + ferro non eme. Combinare con cereali per profilo amminoacidico completo.
+        </div>
+      </div>
+      <!-- Olio -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#4D7C0F,#65A30D)">🫒 Olio Extravergine d'Oliva</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> 10 mL (1 cucchiaio)<br>
+          <b>Frequenza:</b> <span class="pyr-freq">3–4 porzioni/die</span> (30–40 mL/die)<br>
+          Condimento principale della Dieta Mediterranea. Ricco di MUFA e polifenoli. Preferire a crudo.
+        </div>
+      </div>
+    </div>
+    <div>
+      <!-- Latte e derivati -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#1D4ED8,#3B82F6)">🥛 Latte, Yogurt, Formaggi</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> Latte/yogurt 125 mL · Formaggi freschi 100 g · Formaggi stagionati 50 g<br>
+          <b>Frequenza:</b> <span class="pyr-freq">2–3 porzioni/die</span> (latte/yogurt) · <span class="pyr-freq">2–3 volte/sett</span> (formaggi)<br>
+          Fonte principale di calcio. Preferire prodotti parzialmente scremati. Formaggi stagionati usare con moderazione (sale).
+        </div>
+      </div>
+      <!-- Carne -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#7F1D1D,#DC2626)">🥩 Carne</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> Carne fresca 100–150 g · Salumi 50 g<br>
+          <b>Frequenza:</b> <span class="pyr-freq">Carne bianca 3–4 volte/sett</span> · <span class="pyr-freq">Carne rossa ≤2 volte/sett</span> · <span class="pyr-freq">Salumi ≤1–2 volte/sett</span><br>
+          Carni rosse processate: limitare (IARC gruppo 1). Scegliere tagli magri.
+        </div>
+      </div>
+      <!-- Pesce -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#0E7490,#06B6D4)">🐟 Pesce e Prodotti Ittici</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> 150 g<br>
+          <b>Frequenza:</b> <span class="pyr-freq">2–3 volte/settimana</span><br>
+          Fonte di EPA+DHA (n-3). Privilegiare pesce azzurro (sardine, alici, sgombro). Variare specie per ridurre accumulo metalli pesanti.
+        </div>
+      </div>
+      <!-- Uova -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#B45309,#D97706)">🥚 Uova</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> 2 uova<br>
+          <b>Frequenza:</b> <span class="pyr-freq">2–4 volte/settimana</span><br>
+          Ottima qualità proteica. Non aumentano significativamente il rischio CV in soggetti sani se consumate entro le frequenze indicate.
+        </div>
+      </div>
+      <!-- Frutta secca -->
+      <div class="pyr-group">
+        <div class="pyr-hdr" style="background:linear-gradient(90deg,#5B21B6,#7C3AED)">🥜 Frutta Secca e Semi Oleosi</div>
+        <div class="pyr-body">
+          <b>Porzione:</b> 30 g<br>
+          <b>Frequenza:</b> <span class="pyr-freq">3–7 volte/settimana</span><br>
+          Mandorle, noci, nocciole. Ricchi di PUFA, vitamina E, Mg. Non aggiunta di sale o zucchero. Moderare se obiettivo calo ponderale.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="calc-box" style="margin-top:4px">
+    <h3>⚠️ Alimenti da Limitare (LARN V · OMS 2023 · EAT-Lancet 2024)</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;font-size:12.5px">
+      <div style="background:#FEF2F2;border-radius:8px;padding:10px 12px"><b>🍬 Zuccheri liberi</b><br>&lt;10% En/die · preferibilmente &lt;5%<br><span style="color:#DC2626;font-size:11px">Rischio carie, obesità, DM2</span></div>
+      <div style="background:#FEF2F2;border-radius:8px;padding:10px 12px"><b>🧂 Sale (sodio)</b><br>&lt;5 g NaCl/die (&lt;2 g Na)<br><span style="color:#DC2626;font-size:11px">Rischio ipertensione, ictus</span></div>
+      <div style="background:#FEF2F2;border-radius:8px;padding:10px 12px"><b>🍺 Alcol</b><br>0 unità ideale · max 1–2 u/die<br><span style="color:#DC2626;font-size:11px">Cancerogeno di gruppo 1 (IARC)</span></div>
+      <div style="background:#FEF2F2;border-radius:8px;padding:10px 12px"><b>🍔 Carne rossa processata</b><br>Limitare al massimo<br><span style="color:#DC2626;font-size:11px">IARC: cancerogeno gruppo 1</span></div>
+      <div style="background:#FEF2F2;border-radius:8px;padding:10px 12px"><b>🍟 Alimenti ultra-processati</b><br>Minimizzare (NOVA 4)<br><span style="color:#DC2626;font-size:11px">Associati a mortalità aumentata</span></div>
+      <div style="background:#FEF2F2;border-radius:8px;padding:10px 12px"><b>🧈 Grassi idrogenati/trans</b><br>&lt;1% En/die<br><span style="color:#DC2626;font-size:11px">Rischio cardiovascolare elevato</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 4: LINEE GUIDA                                -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="ps-panel" id="tab-linee">
+  <div class="alert-green">
+    <b>💡 Linee Guida per una Sana Alimentazione</b> — Sintesi operativa basata su LARN V revisione (SINU 2014), Linee Guida CREA 2018, OMS 2023, EAT-Lancet Commission 2024, Dieta Mediterranea (patrimonio UNESCO).
+  </div>
+
+  <div class="linee-guida-item">
+    <div class="lg-icon">🌿</div>
+    <div class="lg-content">
+      <h4>Adotta uno schema alimentare di tipo Mediterraneo</h4>
+      <p>Abbondanza di vegetali, frutta, legumi, cereali integrali, pesce, olio EVO. Moderazione in carne rossa, latticini, dolci. Studi prospettici (PREDIMED, EPIC) mostrano riduzione del 30% degli eventi cardiovascolari maggiori e riduzione della mortalità totale.</p>
+      <span class="badge-larn">LARN V</span><span class="badge-green">Dieta Mediterranea UNESCO</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🥦</div>
+    <div class="lg-content">
+      <h4>Verdura e frutta: almeno 5 porzioni al giorno</h4>
+      <p>≥400 g/die di frutta e verdura combinata (OMS). Aumenta apporto di fibra, antiossidanti, potassio, folato. Ogni porzione aggiuntiva oltre 2/die si associa a riduzione dell'8% della mortalità cardiovascolare (metanalisi Aune 2017, Lancet).</p>
+      <span class="badge-larn">LARN V · OMS 2023</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🌾</div>
+    <div class="lg-content">
+      <h4>Cereali: preferire integrali per almeno il 50% dei consumi</h4>
+      <p>I cereali integrali apportano fibra (β-glucani, arabinoxilani), magnesio, vitamina B e antiossidanti. L'indice glicemico dei cereali raffinati è associato a rischio aumentato di DM2 e malattie cardiovascolari. Sostituire gradualmente pane bianco e pasta raffinata.</p>
+      <span class="badge-larn">LARN V · CREA 2018</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🫘</div>
+    <div class="lg-content">
+      <h4>Legumi: almeno 3–4 volte a settimana</h4>
+      <p>Eccellente fonte di proteine vegetali (24–36% proteine su secco), fibra prebiotica, ferro non-eme, folato e zinco. Sostituire parzialmente le proteine animali riduce l'impronta carbonica alimentare del 30-50% (EAT-Lancet 2024). Associarli a vitamina C per ottimizzare l'assorbimento del ferro.</p>
+      <span class="badge-larn">LARN V · EAT-Lancet</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🐟</div>
+    <div class="lg-content">
+      <h4>Pesce: 2–3 porzioni a settimana, privilegiare pesce azzurro</h4>
+      <p>Fonte principale di EPA e DHA (AI LARN V: 250 mg/die). Il consumo regolare è associato a riduzione del rischio cardiovascolare, anti-infiammatorio, supporto cognitivo. Sardine, alici, sgombro, salmone selvatico. Limitare tonno rosso e pesce spada per accumulo di metilmercurio (attenzione in gravidanza).</p>
+      <span class="badge-larn">LARN V</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🧂</div>
+    <div class="lg-content">
+      <h4>Ridurre il sale a meno di 5 g/die</h4>
+      <p>L'eccesso di sodio è il principale fattore di rischio modificabile per l'ipertensione arteriosa (causa del 40% degli ictus e del 25% delle malattie coronariche). Il 70-75% del sale consumato proviene da prodotti industriali (pane, insaccati, formaggi). Usare erbe aromatiche come sostituti. Sale iodato per prevenire carenza di iodio.</p>
+      <span class="badge-green">SDT LARN V · OMS 2023</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🍬</div>
+    <div class="lg-content">
+      <h4>Limitare gli zuccheri liberi a meno del 10% dell'energia</h4>
+      <p>L'OMS raccomanda idealmente &lt;5% dell'energia da zuccheri liberi (includono zucchero aggiunto, miele, sciroppi, succhi di frutta). A 2000 kcal/die: &lt;50 g/die (preferibilmente &lt;25 g). Bevande zuccherate: principale fonte nascosta. Non sostituire sistematicamente con dolcificanti artificiali.</p>
+      <span class="badge-larn">LARN V · OMS 2023</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">💧</div>
+    <div class="lg-content">
+      <h4>Idratazione: preferire acqua, evitare bevande zuccherate</h4>
+      <p>Bevanda principale: acqua (del rubinetto o minerale). Tè e caffè senza zucchero sono accettabili. Evitare bevande zuccherate, energy drink, succhi di frutta industriali. L'acqua del rubinetto in Italia è sicura e controllata; quella naturalmente ricca di calcio può contribuire al fabbisogno di Ca.</p>
+      <span class="badge-larn">LARN V · CREA 2018</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🏃</div>
+    <div class="lg-content">
+      <h4>Attività fisica: almeno 150–300 min/settimana di intensità moderata</h4>
+      <p>Le Linee Guida OMS 2020 raccomandano 150–300 min/settimana di attività aerobica moderata (o 75–150 min intensa) + 2 sessioni/settimana di rinforzo muscolare. L'inattività fisica è il 4° fattore di rischio per mortalità globale. L'alimentazione sana e l'attività fisica sono sinergici nella prevenzione delle malattie non trasmissibili.</p>
+      <span class="badge-green">OMS 2020</span>
+    </div>
+  </div>
+  <div class="linee-guida-item">
+    <div class="lg-icon">🌍</div>
+    <div class="lg-content">
+      <h4>Sostenibilità alimentare: ridurre l'impronta ambientale</h4>
+      <p>La EAT-Lancet Commission (2024) indica che una dieta sana per la salute è anche sostenibile per il pianeta: ridurre carne rossa e alimenti di origine animale, aumentare proteine vegetali (legumi, cereali, noci), ridurre sprechi alimentari. Le emissioni di CO₂ di una dieta plant-based sono del 40-50% inferiori a una dieta onnivora ricca di carne rossa.</p>
+      <span class="badge-larn">EAT-Lancet 2024</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB 5: PIANO SETTIMANALE AI                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="ps-panel" id="tab-piano">
+  <div class="alert-green">
+    <b>🤖 Generatore Piano Settimanale AI</b> — Configura le caratteristiche del paziente e le preferenze alimentari. L'AI genererà un piano completo di 7 giorni (colazione, spuntino, pranzo, merenda, cena) personalizzato sui parametri inseriti, rispettando le linee guida LARN V e la Dieta Mediterranea.
+  </div>
+
+  <div class="grid-2">
+    <!-- CONFIGURAZIONE -->
+    <div class="calc-box">
+      <h3>⚙️ Parametri del Paziente</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div class="nf"><label>Sesso</label>
+          <select id="ai-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select>
+        </div>
+        <div class="nf"><label>Età</label>
+          <input type="number" id="ai-eta" placeholder="es. 35" min="18" max="99">
+        </div>
+        <div class="nf"><label>Peso (kg)</label>
+          <input type="number" id="ai-peso" placeholder="es. 70" step="0.5" oninput="syncAIFromValutazione()">
+        </div>
+        <div class="nf"><label>Altezza (cm)</label>
+          <input type="number" id="ai-altezza" placeholder="es. 170" oninput="syncAIFromValutazione()">
+        </div>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Livello attività fisica</label>
+        <select id="ai-pal">
+          <option value="sedentario">Sedentario</option>
+          <option value="leggermente_attivo">Leggermente attivo (1-2 gg/sett)</option>
+          <option value="moderato" selected>Moderatamente attivo (3-5 gg/sett)</option>
+          <option value="molto_attivo">Molto attivo (6-7 gg/sett)</option>
+          <option value="intensivo">Molto intenso / atleta</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Obiettivo</label>
+        <select id="ai-obiettivo">
+          <option value="mantenimento">Mantenimento peso</option>
+          <option value="calo_lieve">Lieve calo ponderale</option>
+          <option value="calo">Calo ponderale</option>
+          <option value="aumento_massa">Aumento massa muscolare</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal target/die (lascia vuoto per calcolo automatico)</label>
+        <input type="number" id="ai-kcal" placeholder="es. 1800 (auto se vuoto)">
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>N° pasti al giorno</label>
+        <select id="ai-npasti">
+          <option value="3">3 pasti (senza spuntini)</option>
+          <option value="4">4 pasti (1 spuntino)</option>
+          <option value="5" selected>5 pasti (2 spuntini)</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Schema alimentare preferito</label>
+        <select id="ai-schema">
+          <option value="mediterraneo" selected>Dieta Mediterranea</option>
+          <option value="vegetariano">Vegetariano (no carne/pesce)</option>
+          <option value="latto_ovo_vegetariano">Latto-ovo vegetariano</option>
+          <option value="vegano">Vegano</option>
+          <option value="onnivoro_bilanciato">Onnivoro bilanciato</option>
+          <option value="low_carb">Low-carb / ridotto in CHO</option>
+        </select>
+      </div>
+      <div class="nf"><label>Stagione / contesto culinario</label>
+        <select id="ai-stagione">
+          <option value="primavera_estate">Primavera / Estate</option>
+          <option value="autunno_inverno">Autunno / Inverno</option>
+          <option value="qualsiasi" selected>Qualsiasi stagione</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- PREFERENZE ALIMENTARI -->
+    <div>
+      <div class="calc-box">
+        <h3>🍽️ Frequenze di Consumo Settimanale</h3>
+        <div class="freq-row"><label>🥩 Carne rossa</label>
+          <select id="ai-f-carne-r"><option value="mai">Mai</option><option value="1" selected>1 volta/sett</option><option value="2">2 volte/sett</option><option value="3">3 volte/sett</option></select>
+        </div>
+        <div class="freq-row"><label>🐔 Carne bianca (pollo/tacchino)</label>
+          <select id="ai-f-carne-b"><option value="mai">Mai</option><option value="1">1 volta/sett</option><option value="2">2 volte/sett</option><option value="3" selected>3 volte/sett</option><option value="4">4 volte/sett</option></select>
+        </div>
+        <div class="freq-row"><label>🐟 Pesce fresco</label>
+          <select id="ai-f-pesce"><option value="mai">Mai</option><option value="1">1 volta/sett</option><option value="2" selected>2 volte/sett</option><option value="3">3 volte/sett</option></select>
+        </div>
+        <div class="freq-row"><label>🥚 Uova</label>
+          <select id="ai-f-uova"><option value="1">1 volta/sett</option><option value="2" selected>2 volte/sett</option><option value="3">3 volte/sett</option><option value="4">4 volte/sett</option></select>
+        </div>
+        <div class="freq-row"><label>🫘 Legumi</label>
+          <select id="ai-f-legumi"><option value="1">1 volta/sett</option><option value="2">2 volte/sett</option><option value="3" selected>3 volte/sett</option><option value="4">4 volte/sett</option><option value="5">5+ volte/sett</option></select>
+        </div>
+        <div class="freq-row"><label>🥛 Latticini (latte/yogurt)</label>
+          <select id="ai-f-latticini"><option value="qualche_volta">Qualche volta/sett</option><option value="ogni_giorno" selected>Ogni giorno</option><option value="due_volte_die">2 volte/die</option></select>
+        </div>
+        <div class="freq-row"><label>🧀 Formaggi</label>
+          <select id="ai-f-formaggi"><option value="mai">Mai</option><option value="1">1 volta/sett</option><option value="2" selected>2 volte/sett</option><option value="3">3 volte/sett</option></select>
+        </div>
+        <div class="freq-row"><label>🥜 Frutta secca/semi</label>
+          <select id="ai-f-fsecca"><option value="raramente">Raramente</option><option value="3" selected>3–4 volte/sett</option><option value="ogni_giorno">Ogni giorno</option></select>
+        </div>
+      </div>
+
+      <div class="calc-box">
+        <h3>❤️ Preferenze e Restrizioni</h3>
+        <div class="nf" style="margin-bottom:10px"><label>Alimenti preferiti dal paziente</label>
+          <textarea id="ai-preferiti" rows="2" placeholder="es. Pasta, pollo, broccoli, yogurt greco, noci, salmone…"></textarea>
+        </div>
+        <div class="nf" style="margin-bottom:10px"><label>Alimenti non graditi / da evitare</label>
+          <textarea id="ai-evitare" rows="2" placeholder="es. Pesce azzurro, legumi, cipolla, funghi…"></textarea>
+        </div>
+        <div class="nf" style="margin-bottom:10px"><label>Intolleranze / Allergie</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px" id="allergie-chips">
+            <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-glutine"> Glutine</label>
+            <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-lattosio"> Lattosio</label>
+            <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-uova"> Uova</label>
+            <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-fruttasecca"> Frutta secca</label>
+            <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-pesce"> Pesce</label>
+            <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-soia"> Soia</label>
+            <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-nichel"> Nichel</label>
+          </div>
+        </div>
+        <div class="nf"><label>Note aggiuntive per l'AI</label>
+          <textarea id="ai-note-extra" rows="2" placeholder="es. Lavora fuori casa (pranzo al sacco), abitudini di cucina semplici, non mangia cibi piccanti…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERA BUTTON -->
+  <div style="text-align:center;margin:16px 0">
+    <button onclick="generaPianoAI()" id="btn-genera" style="padding:13px 36px;background:linear-gradient(135deg,#15803D,#22C55E);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(34,197,94,.3);transition:all .2s">
+      🤖 Genera Piano Settimanale AI
+    </button>
+    <div style="font-size:12px;color:var(--slate-l);margin-top:8px">Generazione richiede 15–30 secondi</div>
+  </div>
+
+  <!-- OUTPUT PIANO -->
+  <div id="piano-ai-output" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <h3 style="margin:0;font-size:15px;color:var(--slate)">📅 Piano Settimanale Generato</h3>
+      <div style="display:flex;gap:8px">
+        <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">🖨️ Stampa</button>
+        <button onclick="copiaPianoTesto()" class="btn btn-ghost btn-sm no-print">📋 Copia testo</button>
+        <button onclick="generaPianoAI()" class="btn btn-sm no-print" style="background:#15803D;color:white;border:none">🔄 Rigenera</button>
+      </div>
+    </div>
+    <div id="piano-ai-cards"></div>
+    <div id="piano-ai-note" style="margin-top:12px"></div>
+  </div>
+  <div id="piano-ai-error" style="display:none"></div>
+</div>
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+// ── Tab switching ──
+function showPSTab(id) {
+  document.querySelectorAll('.ps-tab').forEach((t,i) => t.classList.toggle('active', t.getAttribute('onclick').includes("'"+id+"'")));
+  document.querySelectorAll('.ps-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ── LARN filter ──
+function filtraLARN(cat) {
+  document.querySelectorAll('.larn-row').forEach(r => {
+    if (cat === 'tutti') { r.style.display = ''; return; }
+    r.style.display = r.classList.contains('larn-cat-'+cat) ? '' : 'none';
+  });
+  document.querySelectorAll('.larn-cat-hdr').forEach(r => {
+    if (cat === 'tutti') { r.style.display = ''; return; }
+    r.style.display = r.classList.contains('larn-cat-'+cat) ? '' : 'none';
+  });
+}
+
+// ── Calcola Valutazione ──
+function calcolaPS() {
+  const sesso = document.getElementById('ps-sesso').value;
+  const eta   = parseFloat(document.getElementById('ps-eta').value);
+  const peso  = parseFloat(document.getElementById('ps-peso').value);
+  const alt   = parseFloat(document.getElementById('ps-altezza').value);
+  const pal   = parseFloat(document.getElementById('ps-pal').value);
+  const obiet = document.getElementById('ps-obiettivo').value;
+
+  if (!eta || !peso || !alt) { document.getElementById('ps-result-box').style.display='none'; return; }
+
+  // BMI
+  const hm = alt/100;
+  const bmi = (peso/(hm*hm)).toFixed(1);
+  const bmiCat = bmi<18.5?'Sottopeso':bmi<25?'Normopeso':bmi<30?'Sovrappeso':bmi<35?'Obesità I°':bmi<40?'Obesità II°':'Obesità III°';
+
+  // Peso ideale (Lorentz)
+  const pi = sesso==='M' ? (alt-100)-(alt-150)/4 : (alt-100)-(alt-150)/2;
+
+  // BMR Mifflin-St Jeor
+  let bmr = sesso==='M'
+    ? 10*peso + 6.25*alt - 5*eta + 5
+    : 10*peso + 6.25*alt - 5*eta - 161;
+  bmr = Math.round(bmr);
+
+  // TDEE
+  const tdee = Math.round(bmr * pal);
+
+  // Target
+  const delta = {mantenimento:0, perdita_lieve:-300, perdita:-500, aumento:300}[obiet] || 0;
+  const target = tdee + delta;
+
+  document.getElementById('ps-bmi').textContent = bmi;
+  document.getElementById('ps-bmi-cat').textContent = bmiCat;
+  document.getElementById('ps-pi').textContent = pi.toFixed(1)+' kg';
+  document.getElementById('ps-bmr').textContent = bmr;
+  document.getElementById('ps-tdee').textContent = tdee;
+  document.getElementById('ps-target').textContent = target;
+  document.getElementById('ps-result-box').style.display = '';
+  document.getElementById('ps-acqua-result').style.display = '';
+  document.getElementById('ps-acqua').textContent = (sesso==='M'?'1,8 L':'1,4 L') + ' min';
+
+  // Macronutrienti
+  const prot_g = Math.round(peso * 0.9);
+  const prot_k = prot_g * 4;
+  const lip_k  = Math.round(target * 0.30);
+  const lip_g  = Math.round(lip_k / 9);
+  const cho_k  = target - prot_k - lip_k;
+  const cho_g  = Math.round(cho_k / 4);
+  const fibra  = sesso==='M' ? 30 : 25;
+
+  document.getElementById('ps-macro-table').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:6px">
+      <div style="background:#F0FDF4;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700">ENERGIA TARGET</div>
+        <div style="font-size:22px;font-weight:700;color:#15803D">${target}</div>
+        <div style="font-size:11px;color:var(--slate-l)">kcal/die</div>
+      </div>
+      <div style="background:#EFF6FF;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700">PROTEINE</div>
+        <div style="font-size:22px;font-weight:700;color:#3B82F6">${prot_g} g</div>
+        <div style="font-size:11px;color:var(--slate-l)">${(prot_k/target*100).toFixed(0)}% En (0,9 g/kg)</div>
+      </div>
+      <div style="background:#FFFBEB;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700">LIPIDI</div>
+        <div style="font-size:22px;font-weight:700;color:#D97706">${lip_g} g</div>
+        <div style="font-size:11px;color:var(--slate-l)">30% En · SFA &lt;${Math.round(target*0.10/9)}g</div>
+      </div>
+      <div style="background:#FDF4FF;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700">CARBOIDRATI</div>
+        <div style="font-size:22px;font-weight:700;color:#9333EA">${cho_g} g</div>
+        <div style="font-size:11px;color:var(--slate-l)">Zuccheri &lt;${Math.round(target*0.10/4)}g</div>
+      </div>
+      <div style="background:#F0FDF4;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700">FIBRA (AI)</div>
+        <div style="font-size:22px;font-weight:700;color:#15803D">${fibra} g</div>
+        <div style="font-size:11px;color:var(--slate-l)">LARN V</div>
+      </div>
+    </div>`;
+
+  // Sync al tab AI
+  document.getElementById('ai-sesso').value = sesso;
+  document.getElementById('ai-eta').value = eta;
+  document.getElementById('ai-peso').value = peso;
+  document.getElementById('ai-altezza').value = alt;
+  document.getElementById('ai-kcal').value = target;
+}
+
+function syncAIFromValutazione() {}
+
+function calcolaAcqua() {
+  const kg = parseFloat(document.getElementById('ps-acqua-kg').value);
+  if (!kg) { document.getElementById('ps-acqua-calc').textContent=''; return; }
+  const ml = Math.round(kg * 35);
+  document.getElementById('ps-acqua-calc').textContent = `→ Fabbisogno idrico stimato: ${ml} mL/die (${(ml/1000).toFixed(1)} L/die)`;
+}
+
+// ── GENERA PIANO AI ──
+async function generaPianoAI() {
+  const btn = document.getElementById('btn-genera');
+  const outDiv = document.getElementById('piano-ai-output');
+  const errDiv = document.getElementById('piano-ai-error');
+  const cardsDiv = document.getElementById('piano-ai-cards');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Generazione in corso…';
+  outDiv.style.display = 'none';
+  errDiv.style.display = 'none';
+
+  // Raccoglie parametri
+  const sesso   = document.getElementById('ai-sesso').value === 'M' ? 'maschio' : 'femmina';
+  const eta     = document.getElementById('ai-eta').value || '35';
+  const peso    = document.getElementById('ai-peso').value || '70';
+  const alt     = document.getElementById('ai-altezza').value || '170';
+  const pal     = document.getElementById('ai-pal').value.replace(/_/g,' ');
+  const obiet   = document.getElementById('ai-obiettivo').value.replace(/_/g,' ');
+  const kcal    = document.getElementById('ai-kcal').value || 'da calcolare automaticamente in base ai dati';
+  const npasti  = document.getElementById('ai-npasti').value;
+  const schema  = document.getElementById('ai-schema').value.replace(/_/g,' ');
+  const stagione= document.getElementById('ai-stagione').value.replace(/_/g,' ');
+  const pref    = document.getElementById('ai-preferiti').value || 'nessuna preferenza specifica';
+  const evita   = document.getElementById('ai-evitare').value || 'nessuno';
+  const noteEx  = document.getElementById('ai-note-extra').value || '';
+
+  const freqCR  = document.getElementById('ai-f-carne-r').value;
+  const freqCB  = document.getElementById('ai-f-carne-b').value;
+  const freqP   = document.getElementById('ai-f-pesce').value;
+  const freqU   = document.getElementById('ai-f-uova').value;
+  const freqL   = document.getElementById('ai-f-legumi').value;
+  const freqLatt= document.getElementById('ai-f-latticini').value;
+  const freqFor = document.getElementById('ai-f-formaggi').value;
+  const freqFS  = document.getElementById('ai-f-fsecca').value;
+
+  const allergie = [
+    document.getElementById('al-glutine').checked ? 'celiaco/intollerante al glutine' : '',
+    document.getElementById('al-lattosio').checked ? 'intollerante al lattosio' : '',
+    document.getElementById('al-uova').checked ? 'allergico alle uova' : '',
+    document.getElementById('al-fruttasecca').checked ? 'allergico alla frutta secca' : '',
+    document.getElementById('al-pesce').checked ? 'allergico al pesce' : '',
+    document.getElementById('al-soia').checked ? 'intollerante alla soia' : '',
+    document.getElementById('al-nichel').checked ? 'intollerante al nichel' : '',
+  ].filter(Boolean).join(', ') || 'nessuna';
+
+  const prompt = `Sei un dietista esperto di nutrizione clinica italiana. Crea un piano alimentare settimanale completo di 7 giorni per un paziente con le seguenti caratteristiche:
+
+PAZIENTE:
+- Sesso: ${sesso}, Età: ${eta} anni, Peso: ${peso} kg, Altezza: ${alt} cm
+- Livello attività fisica: ${pal}
+- Obiettivo: ${obiet}
+- Energia target: ${kcal} kcal/die
+- Numero pasti/die: ${npasti}
+- Schema alimentare: ${schema}
+- Stagione/contesto: ${stagione}
+- Alimenti preferiti: ${pref}
+- Alimenti da evitare: ${evita}
+- Allergie/intolleranze: ${allergie}
+- Note: ${noteEx}
+
+FREQUENZE SETTIMANALI RICHIESTE:
+- Carne rossa: ${freqCR} volta/e a settimana
+- Carne bianca: ${freqCB} volta/e a settimana
+- Pesce: ${freqP} volta/e a settimana
+- Uova: ${freqU} volta/e a settimana
+- Legumi: ${freqL} volta/e a settimana
+- Latticini (latte/yogurt): ${freqLatt}
+- Formaggi: ${freqFor} volta/e a settimana
+- Frutta secca/semi: ${freqFS}
+
+LINEE GUIDA DA RISPETTARE:
+- LARN V revisione (SINU 2014): proteine 0,9 g/kg/die, grassi 25-35% En, CHO 45-60% En, fibra 25-30 g/die
+- Dieta Mediterranea: olio EVO, verdure ad ogni pasto, pesce 2-3x/sett, legumi 3-4x/sett
+- Varietà degli alimenti durante la settimana, stagionalità italiana
+- Porzioni appropriate: pasta/riso 70-80g crudi, carne 100-150g, pesce 150g, pane 50g, verdure 200-250g/pasto
+
+Rispondi SOLO con un oggetto JSON valido nel seguente formato (nessun testo prima o dopo):
+{
+  "kcal_die": 1900,
+  "note_generali": "breve nota sul piano",
+  "piano": [
+    {
+      "giorno": "Lunedì",
+      "kcal_stimate": 1880,
+      "pasti": [
+        {"nome": "Colazione", "emoji": "🌅", "items": ["Latte parzialmente scremato 200ml", "Fiocchi d'avena 40g", "Mela 150g"]},
+        {"nome": "Spuntino mattina", "emoji": "🍎", "items": ["Yogurt greco bianco 125g"]},
+        {"nome": "Pranzo", "emoji": "🍽️", "items": ["Pasta integrale al pomodoro 80g", "Insalata mista 150g", "Olio EVO 10ml"]},
+        {"nome": "Merenda", "emoji": "🌤️", "items": ["Mandorle 25g", "Arancia 150g"]},
+        {"nome": "Cena", "emoji": "🌙", "items": ["Salmone al vapore 150g", "Broccoli 200g", "Pane integrale 50g", "Olio EVO 10ml"]}
+      ]
+    }
+  ]
+}`;
+
+  try {
+    const { data: { session: _s } } = await sb.auth.getSession();
+    const resp = await fetch('/api/claude', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': _s?.access_token ? `Bearer ${_s.access_token}` : ''
+      },
+      body: JSON.stringify({
+        model: 'mixtral-8x7b-32768',
+        max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!resp.ok) {
+      const e = await resp.json().catch(()=>({}));
+      throw new Error(e.error || 'HTTP ' + resp.status);
+    }
+
+    const data = await resp.json();
+    const raw = data.content?.map(b => b.type==='text'?b.text:'').join('') || '';
+
+    // Estrai JSON robusto
+    let piano = null;
+    let depth = 0, start = -1, allMatch = [];
+    for (let i=0;i<raw.length;i++) {
+      if (raw[i]==='{'){if(depth===0)start=i;depth++;}
+      else if(raw[i]==='}'){depth--;if(depth===0&&start>=0){allMatch.push(raw.slice(start,i+1));start=-1;}}
+    }
+    for (const m of allMatch.sort((a,b)=>b.length-a.length)) {
+      try{const p=JSON.parse(m);if(p.piano&&Array.isArray(p.piano)){piano=p;break;}}catch(e){}
+    }
+    if (!piano) throw new Error('Formato JSON non valido — riprova');
+
+    renderPianoAI(piano);
+    outDiv.style.display = '';
+    toast('Piano settimanale generato ✓', 'ok');
+
+  } catch(e) {
+    errDiv.style.display = '';
+    errDiv.innerHTML = `<div class="alert-amber"><b>⚠️ Errore generazione:</b> ${esc(e.message)}. Riprova o verifica la connessione.</div>`;
+    toast('Errore generazione piano', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🤖 Genera Piano Settimanale AI';
+  }
+}
+
+function renderPianoAI(data) {
+  const cards = document.getElementById('piano-ai-cards');
+  const pasti5 = ['Colazione','Spuntino mattina','Pranzo','Merenda','Cena'];
+  const pasti3 = ['Colazione','Pranzo','Cena'];
+  const npasti = parseInt(document.getElementById('ai-npasti').value);
+
+  cards.innerHTML = (data.piano || []).map(g => {
+    const pastiHtml = (g.pasti || []).map(p => `
+      <div class="ai-meal">
+        <div class="ai-meal-name">${p.emoji||''} ${esc(p.nome)}</div>
+        <div class="ai-meal-items">${(p.items||[]).map(i=>`<div class="ai-meal-item">${esc(i)}</div>`).join('')}</div>
+      </div>`).join('');
+    return `<div class="ai-day-card">
+      <div class="ai-day-hdr">
+        <span>${esc(g.giorno)}</span>
+        <span style="font-size:12px;font-weight:500;opacity:.85">~${g.kcal_stimate||'—'} kcal</span>
+      </div>
+      <div class="ai-day-body">${pastiHtml}</div>
+    </div>`;
+  }).join('');
+
+  const noteDiv = document.getElementById('piano-ai-note');
+  if (data.note_generali) {
+    noteDiv.innerHTML = `<div class="alert-green"><b>📝 Note del piano:</b> ${esc(data.note_generali)}</div>`;
+  } else {
+    noteDiv.innerHTML = '';
+  }
+  // salva testo per copia
+  window._ultimoPianoAI = data;
+}
+
+function copiaPianoTesto() {
+  const p = window._ultimoPianoAI;
+  if (!p) return;
+  let txt = 'PIANO ALIMENTARE SETTIMANALE\n\n';
+  (p.piano||[]).forEach(g => {
+    txt += `═══ ${g.giorno.toUpperCase()} (~${g.kcal_stimate||'—'} kcal) ═══\n`;
+    (g.pasti||[]).forEach(pa => {
+      txt += `  ${pa.emoji||''} ${pa.nome}:\n`;
+      (pa.items||[]).forEach(i => txt += `    • ${i}\n`);
+    });
+    txt += '\n';
+  });
+  if (p.note_generali) txt += `Note: ${p.note_generali}\n`;
+  navigator.clipboard.writeText(txt).then(()=>toast('Piano copiato negli appunti ✓','ok')).catch(()=>toast('Copia non supportata','err'));
+}
+
+function salvaPazienteSano() { toast('Funzione di salvataggio in cartella in arrivo', 'ok'); }
+function resetPS() {
+  ['ps-eta','ps-peso','ps-altezza','ps-acqua-kg'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('ps-result-box').style.display='none';
+  document.getElementById('ps-acqua-result').style.display='none';
+  document.getElementById('ps-acqua-calc').textContent='';
+  document.getElementById('ps-macro-table').innerHTML='<i>Inserisci i dati antropometrici per calcolare la ripartizione.</i>';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await checkAuth(); } catch(e) {}
+  if (typeof initCartellaCW === 'function') {
+    initCartellaCW('ps-cartella-cw');
+  }
+});
+</script>
+</body>
+</html>

@@ -14,6 +14,10 @@
 .inp-misura::placeholder{color:#CBD5E1}
 /* Misura alternativa print label (screen: hidden, print: shown) */
 .misura-print{display:none;font-size:7px;color:#64748B;font-style:italic}
+.alt-inline-wrap{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.alt-grammatura-input{width:64px;padding:2px 6px;border:1px solid #6EE7B7;border-radius:6px;background:#ECFDF5;color:#065F46;font-size:11px;font-weight:700;font-family:inherit;line-height:1.2}
+.alt-grammatura-input:focus{outline:none;border-color:#0F766E;box-shadow:0 0 0 2px rgba(15,118,110,.12)}
+.alt-grammatura-unit{font-size:10px;font-weight:700;color:#065F46}
 /* Simple print area (screen: hidden) */
 #simple-print-area{display:none}
 /* Compact print area (screen: hidden) */
@@ -580,13 +584,20 @@ function buildRow(mi, ii) {
   const misura = item.misura || '';
   const srcBadge = f ? `<span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span>` : '';
   const microTds = MICROS.map(m => `<td class="vc" style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(f, m.k, qt), 2)}</td>`).join('');
+  item.altPrint = (item.altPrint || []).map(a => normalizeAltEntry(a));
   const altRows = (item.altPrint || []).map((a, ai) => {
     const fa = lookup(a.nome);
+    const av = getAltComputedValues(a);
     return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${ai}">
-      <td style="padding-left:22px;text-align:left">↳ ALT: <b>${esc(a.nome)}</b></td>
+      <td style="padding-left:22px;text-align:left">
+        <span class="alt-inline-wrap">↳ ALT: <b>${esc(a.nome)}</b>
+          <input class="alt-grammatura-input" type="number" min="1" step="1" value="${a.qt}" oninput="onAltQtInput(${mi},${ii},${ai},this)" title="Grammatura alternativa">
+          <span class="alt-grammatura-unit">g</span>
+        </span>
+      </td>
       <td class="alt-qt">${a.qt}g</td>
-      <td data-k="k">${fmtV(cv(fa, 'k', a.qt))}</td><td data-k="p">${fmtV(cv(fa, 'p', a.qt))}</td>
-      <td></td><td></td><td></td><td data-k="ch">${fmtV(cv(fa, 'ch', a.qt))}</td><td data-k="fi">${fmtV(cv(fa, 'fi', a.qt))}</td>
+      <td data-k="k">${fmtV(av.k)}</td><td data-k="p">${fmtV(av.p)}</td>
+      <td></td><td data-k="g">${fmtV(av.g)}</td><td></td><td data-k="ch">${fmtV(av.ch)}</td><td data-k="fi">${fmtV(av.fi)}</td>
       ${MICROS.map(m => `<td style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(fa, m.k, a.qt), 2)}</td>`).join('')}
       <td></td>
       <td class="no-print"><button class="del-row" onclick="removeAltPrint(${mi},${ii},${ai})">✕</button></td>
@@ -726,16 +737,17 @@ function onQI(mi, ii, inp) {
   // Scale alternative quantities proportionally when the main quantity changes
   if (oldQt > 0 && newQt > 0 && item.altPrint && item.altPrint.length) {
     const ratio = newQt / oldQt;
-    item.altPrint = item.altPrint.map(a => ({ ...a, qt: Math.round(a.qt * ratio * 10) / 10 }));
+    item.altPrint = item.altPrint.map(a => scaleAltEntry(a, ratio));
     // Update the alt-print rows already in the DOM
     item.altPrint.forEach((a, ai) => {
       const aprRow = document.getElementById(`apr-${mi}-${ii}-${ai}`);
       if (!aprRow) return;
       const qtCell = aprRow.querySelector('.alt-qt');
       if (qtCell) qtCell.textContent = a.qt + 'g';
-      const fa = lookup(a.nome);
+      const av = getAltComputedValues(a);
       aprRow.querySelectorAll('td[data-k]').forEach(td => {
-        td.innerHTML = fmtV(cv(fa, td.getAttribute('data-k'), a.qt));
+        const key = td.getAttribute('data-k');
+        td.innerHTML = fmtV(av[key]);
       });
     });
   }
@@ -887,6 +899,83 @@ function doUndo() {
 // ═══════════════════════════════════════════════════
 // ALTERNATIVE
 // ═══════════════════════════════════════════════════
+function buildAltOriginalValues(nome, qt) {
+  const fa = lookup(nome);
+  const baseQt = parseFloat(qt) || 0;
+  return {
+    k: fa ? ((fa.k || 0) / 100 * baseQt) : 0,
+    p: fa ? ((fa.p || 0) / 100 * baseQt) : 0,
+    ch: fa ? ((fa.ch || 0) / 100 * baseQt) : 0,
+    g: fa ? ((fa.g || 0) / 100 * baseQt) : 0,
+    fi: fa ? ((fa.fi || 0) / 100 * baseQt) : 0
+  };
+}
+function normalizeAltEntry(a) {
+  const qt = Math.max(1, Math.round(parseFloat(a?.qt) || 1));
+  const originalQt = Math.max(1, parseFloat(a?.originalQt) || qt);
+  let originalValues = a?.originalValues;
+  if (!originalValues || typeof originalValues !== 'object') {
+    originalValues = buildAltOriginalValues(a?.nome || '', originalQt);
+  }
+  return {
+    nome: a?.nome || '',
+    qt,
+    originalQt,
+    originalValues: {
+      k: parseFloat(originalValues.k) || 0,
+      p: parseFloat(originalValues.p) || 0,
+      ch: parseFloat(originalValues.ch) || 0,
+      g: parseFloat(originalValues.g) || 0,
+      fi: parseFloat(originalValues.fi) || 0
+    }
+  };
+}
+function getAltComputedValues(alt) {
+  const a = normalizeAltEntry(alt);
+  const ratio = a.originalQt > 0 ? (a.qt / a.originalQt) : 1;
+  return {
+    k: a.originalValues.k * ratio,
+    p: a.originalValues.p * ratio,
+    ch: a.originalValues.ch * ratio,
+    g: a.originalValues.g * ratio,
+    fi: a.originalValues.fi * ratio
+  };
+}
+function scaleAltEntry(alt, ratio) {
+  const a = normalizeAltEntry(alt);
+  const safeRatio = ratio > 0 ? ratio : 1;
+  const nextQt = Math.max(1, Math.round(a.qt * safeRatio));
+  const nextOriginalQt = Math.max(1, a.originalQt * safeRatio);
+  return {
+    ...a,
+    qt: nextQt,
+    originalQt: nextOriginalQt,
+    originalValues: {
+      k: a.originalValues.k * safeRatio,
+      p: a.originalValues.p * safeRatio,
+      ch: a.originalValues.ch * safeRatio,
+      g: a.originalValues.g * safeRatio,
+      fi: a.originalValues.fi * safeRatio
+    }
+  };
+}
+function onAltQtInput(mi, ii, ai, inp) {
+  const item = getMeals()[mi]?.items[ii];
+  if (!item || !item.altPrint || !item.altPrint[ai]) return;
+  const newQt = Math.max(1, Math.round(parseFloat(inp.value) || 1));
+  item.altPrint[ai] = normalizeAltEntry({ ...item.altPrint[ai], qt: newQt });
+  markDirty();
+  const row = document.getElementById(`apr-${mi}-${ii}-${ai}`);
+  if (!row) return;
+  const av = getAltComputedValues(item.altPrint[ai]);
+  const qtCell = row.querySelector('.alt-qt');
+  if (qtCell) qtCell.textContent = newQt + 'g';
+  ['k', 'p', 'g', 'ch', 'fi'].forEach(k => {
+    const td = row.querySelector(`td[data-k="${k}"]`);
+    if (!td) return;
+    td.textContent = fmtV(av[k]);
+  });
+}
 function openAlt(mi, ii) {
   altMi = mi; altIi = ii;
   const item = getMeals()[mi].items[ii];
@@ -961,7 +1050,15 @@ function toggleAltPrint(mi, ii, nome, qt) {
   if (!getMeals()[mi].items[ii].altPrint) getMeals()[mi].items[ii].altPrint = [];
   const idx = getMeals()[mi].items[ii].altPrint.findIndex(a => a.nome === nome);
   if (idx >= 0) { getMeals()[mi].items[ii].altPrint.splice(idx, 1); toast('🗑️ Rimosso dalla stampa', 'info'); }
-  else { getMeals()[mi].items[ii].altPrint.push({ nome, qt }); toast('📄 Aggiunto alla stampa!', 'ok'); }
+  else {
+    getMeals()[mi].items[ii].altPrint.push(normalizeAltEntry({
+      nome,
+      qt,
+      originalQt: qt,
+      originalValues: buildAltOriginalValues(nome, qt)
+    }));
+    toast('📄 Aggiunto alla stampa!', 'ok');
+  }
   markDirty(); showAlternatives(); renderPiano();
 }
 function removeAltPrint(mi, ii, ai) {

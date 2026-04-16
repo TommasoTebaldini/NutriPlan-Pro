@@ -178,13 +178,20 @@
     <span id="cartella-selected" style="font-size:11px;color:white;font-weight:600;margin-top:4px;display:block"></span>
   </div>
 
+  <!-- OBIETTIVI DALLA VALUTAZIONE PAZIENTE -->
+  <div id="obj-val-box" class="no-print" style="display:none;background:white;border:1.5px solid #BAE6FD;border-radius:12px;padding:11px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(15,118,110,.07)">
+    <div style="font-size:10px;color:#0369A1;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">🎯 Obiettivi dalla Valutazione Paziente</div>
+    <div id="obj-val-grid" style="display:flex;flex-wrap:wrap;gap:7px;align-items:center"></div>
+    <div id="obj-val-fonte" style="font-size:10.5px;color:#64748B;font-style:italic;margin-top:6px"></div>
+  </div>
+
   <!-- MACRO BAR TOTALE -->
   <div class="macro-bar" id="macro-bar-totale" style="background:#ffffff;border:1.5px solid #D1FAE5;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 20px rgba(26,168,152,.18)">
     <span style="font-size:10px;color:#0F766E;font-weight:700;white-space:nowrap;letter-spacing:.8px;text-transform:uppercase;align-self:center">📅 TOTALE</span>
     <div class="mpill" style="background:rgba(249,115,22,.15);color:#C2410C;border:1px solid rgba(249,115,22,.5)">🔥<span class="v" id="tot-kcal" style="font-size:17px;font-weight:800;margin:0 2px">0</span><span class="u">kcal</span></div>
-    <div class="mpill" style="background:rgba(34,197,94,.15);color:#15803D;border:1px solid rgba(34,197,94,.5)">💪<span class="v" id="tot-prot">0</span><span class="u">g prot</span></div>
-    <div class="mpill" style="background:rgba(59,130,246,.15);color:#1D4ED8;border:1px solid rgba(59,130,246,.5)">🍞<span class="v" id="tot-cho">0</span><span class="u">g CHO</span></div>
-    <div class="mpill" style="background:rgba(234,179,8,.15);color:#A16207;border:1px solid rgba(234,179,8,.5)">🧈<span class="v" id="tot-fat">0</span><span class="u">g grassi</span></div>
+    <div class="mpill" style="background:rgba(34,197,94,.15);color:#15803D;border:1px solid rgba(34,197,94,.5)">💪<span class="v" id="tot-prot">0</span><span class="u">g prot</span><span id="tot-prot-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
+    <div class="mpill" style="background:rgba(59,130,246,.15);color:#1D4ED8;border:1px solid rgba(59,130,246,.5)">🍞<span class="v" id="tot-cho">0</span><span class="u">g CHO</span><span id="tot-cho-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
+    <div class="mpill" style="background:rgba(234,179,8,.15);color:#A16207;border:1px solid rgba(234,179,8,.5)">🧈<span class="v" id="tot-fat">0</span><span class="u">g grassi</span><span id="tot-fat-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
     <div class="mpill" style="background:rgba(168,85,247,.15);color:#7E22CE;border:1px solid rgba(168,85,247,.5)">🌿<span class="v" id="tot-fibra">0</span><span class="u">g fibra</span></div>
     <div id="macro-micro-extra" style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:5px;-webkit-overflow-scrolling:touch;max-width:100%;scrollbar-width:thin"></div>
   </div>
@@ -662,6 +669,14 @@ function updateRiep() {
   document.getElementById('tot-cho').textContent = r1(ch);
   document.getElementById('tot-fat').textContent = r1(g);
   document.getElementById('tot-fibra').textContent = r1(fi);
+  // % energia in tempo reale
+  if (k > 0) {
+    const pp = document.getElementById('tot-prot-pct'); if (pp) pp.textContent = '(' + Math.round(p*4/k*100) + '%)';
+    const cp = document.getElementById('tot-cho-pct');  if (cp) cp.textContent = '(' + Math.round(ch*4/k*100) + '%)';
+    const fp = document.getElementById('tot-fat-pct');  if (fp) fp.textContent = '(' + Math.round(g*9/k*100) + '%)';
+  } else {
+    ['tot-prot-pct','tot-cho-pct','tot-fat-pct'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
+  }
   // Micro extra totals
   const extra = document.getElementById('macro-micro-extra');
   if (extra) {
@@ -1092,6 +1107,7 @@ function _eseguiNuovoPiano() {
   const cs = document.getElementById('cartella-search'); if (cs) cs.value = '';
   const csel = document.getElementById('cartella-selected'); if (csel) csel.textContent = '';
   dirty = false; currentPianoId = null; undoStack = []; hideUndoBar();
+  const objBox = document.getElementById('obj-val-box'); if (objBox) objBox.style.display = 'none';
   renderGiornoTabs(); renderPiano();
   toast('🔄 Nuovo piano', 'info');
 }
@@ -1599,6 +1615,47 @@ function selectCartella(id, nome) {
   if (sel) sel.textContent = '✅ ' + nome;
   hideCartelleList();
   markDirty();
+  caricaObiettiviValutazione(id);
+}
+
+// ── Obiettivi macro dalla Valutazione Paziente più recente ──
+async function caricaObiettiviValutazione(cartellaId) {
+  const box = document.getElementById('obj-val-box');
+  if (!box) return;
+  if (!cartellaId || !currentUser) { box.style.display = 'none'; return; }
+  const { data, error } = await sb.from('schede_valutazione')
+    .select('macro_dist, tdee_calcolato, created_at, nome, cognome')
+    .eq('cartella_id', cartellaId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error || !data || !data.tdee_calcolato) { box.style.display = 'none'; return; }
+  let md = { prot: 20, cho: 50, fat: 30, fibra: 25 };
+  try { if (data.macro_dist) { const p = JSON.parse(data.macro_dist); if (p) md = { ...md, ...p }; } } catch(e) {}
+  const tdee = data.tdee_calcolato;
+  const prot_g = Math.round(tdee * md.prot / 100 / 4);
+  const cho_g  = Math.round(tdee * md.cho  / 100 / 4);
+  const fat_g  = Math.round(tdee * md.fat  / 100 / 9);
+  const fibra  = md.fibra || 25;
+  const pills = [
+    { label:'Energia target', val: tdee + ' kcal', bg:'rgba(249,115,22,.12)', col:'#C2410C' },
+    { label:'Proteine',  val: prot_g + 'g', sub: md.prot + '% En', bg:'rgba(34,197,94,.12)',  col:'#15803D' },
+    { label:'CHO',       val: cho_g  + 'g', sub: md.cho  + '% En', bg:'rgba(59,130,246,.12)', col:'#1D4ED8' },
+    { label:'Grassi',    val: fat_g  + 'g', sub: md.fat  + '% En', bg:'rgba(234,179,8,.12)',  col:'#A16207' },
+    { label:'Fibra',     val: fibra  + 'g/die', bg:'rgba(168,85,247,.12)', col:'#7E22CE' },
+  ];
+  document.getElementById('obj-val-grid').innerHTML = pills.map(p =>
+    `<div style="background:${p.bg};border-radius:9px;padding:6px 12px;text-align:center;min-width:80px">
+       <div style="font-size:9.5px;color:${p.col};font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px">${p.label}</div>
+       <div style="font-size:16px;font-weight:800;color:${p.col};line-height:1.1">${p.val}</div>
+       ${p.sub ? `<div style="font-size:10px;color:${p.col};opacity:.75">${p.sub}</div>` : ''}
+     </div>`
+  ).join('');
+  const nome = [data.cognome, data.nome].filter(Boolean).join(' ');
+  const data_str = new Date(data.created_at).toLocaleDateString('it');
+  document.getElementById('obj-val-fonte').textContent =
+    '📅 Valutazione del ' + data_str + (nome ? ' — ' + nome : '');
+  box.style.display = '';
 }
 
 // ═══════════════════════════════════════════════════
@@ -1781,6 +1838,7 @@ async function caricaPianoById(id) {
         const csel = document.getElementById('cartella-selected'); if (csel) csel.textContent = '✅ ' + cart.nome;
       }
     }
+    caricaObiettiviValutazione(data.cartella_id);
   }
   renderGiornoTabs();
   renderPiano();

@@ -78,15 +78,6 @@
 .lg-content p{font-size:12.5px;color:var(--slate-l);margin:0;line-height:1.7}
 .badge-green{background:#D1FAE5;color:#065F46;padding:2px 9px;border-radius:8px;font-size:11px;font-weight:700;display:inline-block;margin-top:4px}
 .badge-larn{background:#EDE9FE;color:#5B21B6;padding:2px 9px;border-radius:8px;font-size:11px;font-weight:700;display:inline-block;margin-top:4px;margin-left:4px}
-/* Box obiettivi macro in cima al Piano */
-#piano-macro-box{background:white;border:1.5px solid #86EFAC;border-radius:12px;padding:14px 18px;margin-bottom:16px;display:none}
-#piano-macro-box .pmb-title{font-size:11px;font-weight:700;color:#15803D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-#piano-macro-box .pmb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
-.pmb-card{background:#F0FDF4;border-radius:9px;padding:10px 12px;text-align:center}
-.pmb-card .pmb-label{font-size:10.5px;color:var(--slate-l);font-weight:700;margin-bottom:3px}
-.pmb-card .pmb-val{font-size:19px;font-weight:700;line-height:1.1}
-.pmb-card .pmb-pct{font-size:11px;color:var(--slate-l);margin-top:2px}
-.pmb-source{font-size:11px;color:#15803D;font-style:italic;margin-top:8px}
 @media print{
   @page{margin:0;size:A4}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -591,19 +582,6 @@
     <b>🤖 Generatore Piano Settimanale AI</b> — Configura le caratteristiche del paziente e le preferenze alimentari. L'AI genererà un piano completo di 7 giorni (colazione, spuntino, pranzo, merenda, cena) personalizzato sui parametri inseriti, rispettando le linee guida LARN V e la Dieta Mediterranea.
   </div>
 
-  <!-- BOX OBIETTIVI MACRONUTRIENTI -->
-  <div id="piano-macro-box">
-    <div class="pmb-title">🎯 Obiettivi macronutrienti dalla Valutazione</div>
-    <div class="pmb-grid">
-      <div class="pmb-card"><div class="pmb-label">Energia target</div><div class="pmb-val" id="pmb-kcal" style="color:#15803D">—</div><div class="pmb-pct">kcal/die</div></div>
-      <div class="pmb-card"><div class="pmb-label">Proteine</div><div class="pmb-val" id="pmb-prot-g" style="color:#3B82F6">—</div><div class="pmb-pct" id="pmb-prot-pct">— % En</div></div>
-      <div class="pmb-card"><div class="pmb-label">Lipidi</div><div class="pmb-val" id="pmb-lip-g" style="color:#F59E0B">—</div><div class="pmb-pct" id="pmb-lip-pct">— % En</div></div>
-      <div class="pmb-card"><div class="pmb-label">Carboidrati</div><div class="pmb-val" id="pmb-cho-g" style="color:#9333EA">—</div><div class="pmb-pct" id="pmb-cho-pct">— % En</div></div>
-      <div class="pmb-card"><div class="pmb-label">Fibra (AI LARN V)</div><div class="pmb-val" id="pmb-fibra" style="color:#15803D">—</div><div class="pmb-pct">g/die</div></div>
-    </div>
-    <div class="pmb-source" id="pmb-source"></div>
-  </div>
-
   <div class="grid-2">
     <!-- CONFIGURAZIONE -->
     <div class="calc-box">
@@ -640,7 +618,7 @@
         </select>
       </div>
       <div class="nf" style="margin-bottom:10px"><label>Kcal target/die (lascia vuoto per calcolo automatico)</label>
-        <input type="number" id="ai-kcal" placeholder="es. 1800 (auto se vuoto)" oninput="aggiornaPctPiano(this.value)">
+        <input type="number" id="ai-kcal" placeholder="es. 1800 (auto se vuoto)">
       </div>
       <div class="nf" style="margin-bottom:10px"><label>N° pasti al giorno</label>
         <select id="ai-npasti">
@@ -860,62 +838,9 @@ function calcolaPS() {
   document.getElementById('ai-peso').value = peso;
   document.getElementById('ai-altezza').value = alt;
   document.getElementById('ai-kcal').value = target;
-
-  // Aggiorna box obiettivi piano
-  aggiornaBoxMacroPiano(target, prot_g, lip_g, cho_g, fibra, 'Valutazione corrente');
 }
 
 function syncAIFromValutazione() {}
-
-// ── Box obiettivi macronutrienti nel Piano ──
-window._macroObiettivi = null;
-
-function aggiornaBoxMacroPiano(kcal, prot_g, lip_g, cho_g, fibra, fonte) {
-  window._macroObiettivi = { kcal, prot_g, lip_g, cho_g, fibra };
-  const prot_k = prot_g * 4, lip_k = lip_g * 9, cho_k = cho_g * 4;
-  const tot = kcal || (prot_k + lip_k + cho_k);
-  document.getElementById('pmb-kcal').textContent   = kcal + ' kcal';
-  document.getElementById('pmb-prot-g').textContent = prot_g + ' g';
-  document.getElementById('pmb-lip-g').textContent  = lip_g + ' g';
-  document.getElementById('pmb-cho-g').textContent  = cho_g + ' g';
-  document.getElementById('pmb-fibra').textContent  = fibra + ' g';
-  document.getElementById('pmb-prot-pct').textContent = (prot_k/tot*100).toFixed(0) + '% En';
-  document.getElementById('pmb-lip-pct').textContent  = (lip_k/tot*100).toFixed(0) + '% En';
-  document.getElementById('pmb-cho-pct').textContent  = (cho_k/tot*100).toFixed(0) + '% En';
-  if (fonte) document.getElementById('pmb-source').textContent = '📅 ' + fonte;
-  document.getElementById('piano-macro-box').style.display = '';
-}
-
-function aggiornaPctPiano(kcalStr) {
-  const m = window._macroObiettivi;
-  if (!m) return;
-  const kcal = parseFloat(kcalStr) || m.kcal;
-  if (!kcal) return;
-  const prot_k = m.prot_g * 4, lip_k = m.lip_g * 9, cho_k = m.cho_g * 4;
-  document.getElementById('pmb-prot-pct').textContent = (prot_k/kcal*100).toFixed(0) + '% En';
-  document.getElementById('pmb-lip-pct').textContent  = (lip_k/kcal*100).toFixed(0) + '% En';
-  document.getElementById('pmb-cho-pct').textContent  = (cho_k/kcal*100).toFixed(0) + '% En';
-}
-
-async function caricaMacroValutazionePiuRecente(cartellaId) {
-  if (!cartellaId || !currentUser) return;
-  const { data, error } = await sb.from('note_specialistiche')
-    .select('dati, created_at, nota')
-    .eq('cartella_id', cartellaId)
-    .eq('tipo', 'paziente_sano')
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (error || !data) return;
-  try {
-    const dati = JSON.parse(data.dati || '{}');
-    const v = dati.valutazione || {};
-    if (v.target_kcal && v.prot_g && v.lip_g && v.cho_g) {
-      const fonte = 'Valutazione del ' + new Date(data.created_at).toLocaleDateString('it') + (data.nota ? ' — ' + data.nota : '');
-      aggiornaBoxMacroPiano(v.target_kcal, v.prot_g, v.lip_g, v.cho_g, v.fibra || 25, fonte);
-    }
-  } catch(e) {}
-}
 
 function calcolaAcqua() {
   const kg = parseFloat(document.getElementById('ps-acqua-kg').value);
@@ -1128,12 +1053,7 @@ function raccogliDatiPS() {
       bmi: document.getElementById('ps-bmi')?.textContent || '',
       bmr: document.getElementById('ps-bmr')?.textContent || '',
       tdee: document.getElementById('ps-tdee')?.textContent || '',
-      target: document.getElementById('ps-target')?.textContent || '',
-      target_kcal: window._macroObiettivi?.kcal || 0,
-      prot_g: window._macroObiettivi?.prot_g || 0,
-      lip_g: window._macroObiettivi?.lip_g || 0,
-      cho_g: window._macroObiettivi?.cho_g || 0,
-      fibra: window._macroObiettivi?.fibra || 0
+      target: document.getElementById('ps-target')?.textContent || ''
     },
     piano_config: {
       sesso: gv('ai-sesso'), eta: gv('ai-eta'), peso: gv('ai-peso'),
@@ -1222,9 +1142,7 @@ function resetPS() {
   document.getElementById('ps-acqua-calc').textContent='';
   document.getElementById('ps-macro-table').innerHTML='<i>Inserisci i dati antropometrici per calcolare la ripartizione.</i>';
   document.getElementById('piano-ai-output').style.display='none';
-  document.getElementById('piano-macro-box').style.display='none';
   window._ultimoPianoAI = null;
-  window._macroObiettivi = null;
   editingPsNoteId = null;
 }
 
@@ -1235,8 +1153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     accentColor: '#16A34A',
     labelColor: '#15803D',
     hoverBg: '#F0FDF4',
-    nuovaBg: '#F0FDF4',
-    onSelect: (id) => caricaMacroValutazionePiuRecente(id)
+    nuovaBg: '#F0FDF4'
   });
   if (currentUser) {
     const noteId = new URLSearchParams(window.location.search).get('noteId');

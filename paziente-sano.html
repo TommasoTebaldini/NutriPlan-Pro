@@ -718,6 +718,7 @@
         <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">🖨️ Stampa</button>
         <button onclick="copiaPianoTesto()" class="btn btn-ghost btn-sm no-print">📋 Copia testo</button>
         <button onclick="generaPianoAI()" class="btn btn-sm no-print" style="background:#15803D;color:white;border:none">🔄 Rigenera</button>
+        <button onclick="apriPianoInApp()" class="btn btn-sm no-print" style="background:#0369A1;color:white;border:none">📋 Apri nel Piano Alimentare</button>
       </div>
     </div>
     <div id="piano-ai-cards"></div>
@@ -1039,6 +1040,46 @@ function copiaPianoTesto() {
   });
   if (p.note_generali) txt += `Note: ${p.note_generali}\n`;
   navigator.clipboard.writeText(txt).then(()=>toast('Piano copiato negli appunti ✓','ok')).catch(()=>toast('Copia non supportata','err'));
+}
+
+// ── Apertura piano AI nel Piano Alimentare principale ──
+function parseAIItem(str) {
+  // Greedy: cerca l'ULTIMO numero+unità nella stringa
+  // es. "Pasta integrale al pomodoro 80g crudi" → {nome:"Pasta integrale al pomodoro", qt:"80"}
+  // es. "Olio EVO 10ml" → {nome:"Olio EVO", qt:"10"}
+  const m = str.match(/^(.*)\s+(\d+(?:[,.]\d+)?)\s*(g|gr|ml|mL|l|L|cl|dl|kg)\b/i);
+  if (m && m[1].trim()) return { nome: m[1].trim(), qt: m[2].replace(',', '.') };
+  // Numero senza unità (es. "Uova 2")
+  const m2 = str.match(/^(.+?)\s+(\d+)\s*$/);
+  if (m2) return { nome: m2[1].trim(), qt: m2[2] };
+  return { nome: str.trim(), qt: '' };
+}
+
+function apriPianoInApp() {
+  const piano = window._ultimoPianoAI;
+  if (!piano?.piano?.length) { toast('Genera prima il piano settimanale', 'err'); return; }
+  const ts = Date.now();
+  const converted = {
+    nome: 'Piano AI ' + new Date().toLocaleDateString('it-IT'),
+    giorni: piano.piano.map((g, gi) => ({
+      nome: g.giorno,
+      pasti: g.pasti.map((p, pi) => ({
+        id: 'p_ai_' + ts + '_' + gi + '_' + pi,
+        nome: p.nome,
+        emoji: p.emoji || '🍽️',
+        note: '',
+        items: (p.items || []).map(item => {
+          const { nome, qt } = parseAIItem(String(item));
+          return { nome, qt, altPrint: [], misura: '' };
+        })
+      }))
+    }))
+  };
+  sessionStorage.setItem('loadPatologia', JSON.stringify(converted));
+  // Passa la cartella paziente se già selezionata
+  const cartellaId = document.getElementById('ps-cartella')?.value;
+  if (cartellaId) sessionStorage.setItem('newPianoCartella', cartellaId);
+  window.location.href = 'app.html';
 }
 
 // ── Salvataggio / caricamento cartella ──

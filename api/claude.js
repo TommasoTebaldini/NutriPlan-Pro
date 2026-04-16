@@ -61,7 +61,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { system, messages, max_tokens } = req.body;
+    const { system, messages, max_tokens, json_mode } = req.body;
 
     // Validate and sanitize inputs
     if (messages !== undefined && !Array.isArray(messages)) {
@@ -76,23 +76,32 @@ export default async function handler(req, res) {
       content: String(m.content || '').slice(0, 8192)
     }));
 
-    const MODELS = ['llama-3.1-8b-instant', 'llama3-8b-8192', 'gemma2-9b-it'];
+    // json_mode=true: use 70B model first (much more reliable for structured JSON output)
+    const MODELS = json_mode
+      ? ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it']
+      : ['llama-3.1-8b-instant', 'llama3-8b-8192', 'gemma2-9b-it'];
+    // Models that support response_format json_object on Groq
+    const JSON_MODE_MODELS = new Set(['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']);
     let lastError = null;
 
     for (const model of MODELS) {
       try {
+        const reqBody = {
+          model,
+          messages: allMessages,
+          max_tokens: safeMaxTokens,
+          temperature: 0.3
+        };
+        if (json_mode && JSON_MODE_MODELS.has(model)) {
+          reqBody.response_format = { type: 'json_object' };
+        }
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
           },
-          body: JSON.stringify({
-            model,
-            messages: allMessages,
-            max_tokens: safeMaxTokens,
-            temperature: 0.3
-          })
+          body: JSON.stringify(reqBody)
         });
 
         const data = await response.json();

@@ -980,7 +980,63 @@ const DB_BDA=[
   {n:"Tonno fresco grigliato (senza olio)",c:"Pesce",src:"BDA",k:145,p:31,gs:1.0,g:2.5,z:0,ch:0,fi:0,ca:30,fe:1.0,mg:50,k2:440,na:50,zn:0.8,fo:278,se:90,col:75},
   {n:"Baccalà dissalato al vapore",c:"Pesce",src:"BDA",k:110,p:25,gs:0.3,g:1.0,z:0,ch:0,fi:0,ca:63,fe:0.6,mg:50,k2:320,na:3600,zn:0.6,fo:210,se:35,col:55},
   {n:"Cozze in guazzetto (al pomodoro)",c:"Pesce",src:"BDA",k:90,p:11,gs:1.0,g:2.5,z:2.0,ch:4.5,fi:0.5,ca:70,fe:4.5,mg:32,k2:280,na:380,zn:2.5,fo:180,se:48,col:55},
-  {n:"Sarde al forno in porchetta (con finocchietto)",c:"Pesce",src:"BDA",k:180,p:20,gs:1.5,g:9.5,z:1.0,ch:2.5,fi:0.5,ca:90,fe:2.5,mg:35,k2:300,na:380,zn:1.2,fo:220,se:40,col:70}
+  {n:"Sarde al forno in porchetta (con finocchietto)",c:"Pesce",src:"BDA",k:180,p:20,gs:1.5,g:9.5,z:1.0,ch:2.5,fi:0.5,ca:90,fe:2.5,mg:35,k2:300,na:380,zn:1.2,fo:220,se:40,col:70},
+
+  // ── VERDURE E CONSERVE ──
+  {n:"Pomodori pelati (in scatola)",c:"Verdure",src:"CREA",k:21,p:1.1,gs:0,g:0.2,z:2.8,ch:4.0,fi:1.4,ca:13,fe:0.8,mg:14,k2:270,na:160,zn:0.2,fo:35,se:0.5,col:0},
+  // ── VERDURE AGGIUNTIVE ──
+  {n:"Broccolo romano",c:"Verdure",src:"CREA",k:26,p:3.0,gs:0,g:0.3,z:1.5,ch:3.6,fi:2.8,ca:28,fe:0.8,mg:21,k2:450,na:15,zn:0.4,fo:72,se:0.8,col:0},
+  {n:"Friggitello (peperone friggitello)",c:"Verdure",src:"CREA",k:22,p:1.2,gs:0,g:0.3,z:2.5,ch:4.6,fi:2.0,ca:10,fe:0.5,mg:11,k2:175,na:3,zn:0.2,fo:22,se:0.3,col:0},
+  {n:"Scalogno",c:"Verdure",src:"CREA",k:72,p:2.5,gs:0,g:0.1,z:14.8,ch:16.8,fi:3.2,ca:37,fe:1.2,mg:21,k2:334,na:12,zn:0.4,fo:60,se:1.0,col:0},
+  {n:"Cipolla rossa",c:"Verdure",src:"CREA",k:40,p:1.1,gs:0,g:0.1,z:7.6,ch:9.3,fi:1.7,ca:23,fe:0.2,mg:10,k2:146,na:4,zn:0.21,fo:29,se:0.6,col:0},
+  {n:"Funghi porcini freschi",c:"Verdure",src:"CREA",k:25,p:3.7,gs:0.1,g:0.7,z:1.6,ch:4.4,fi:2.5,ca:2,fe:0.5,mg:9,k2:490,na:9,zn:0.5,fo:130,se:2.2,col:0},
+  {n:"Funghi porcini secchi",c:"Verdure",src:"CREA",k:280,p:19.0,gs:0.8,g:3.5,z:7.0,ch:47,fi:28.0,ca:30,fe:4.0,mg:60,k2:1450,na:30,zn:4.0,fo:800,se:6.0,col:0},
+
+  // ── PESCE E CROSTACEI AGGIUNTIVI ──
+  {n:"Scampi crudi",c:"Crostacei",src:"CREA",k:77,p:14.7,gs:0.1,g:1.0,z:0,ch:0.3,fi:0,ca:88,fe:0.5,mg:38,k2:230,na:780,zn:2.0,fo:340,se:40,col:150},
+
+  // ── CARNI AGGIUNTIVE ──
+  {n:"Costata di manzo",c:"Carni rosse",src:"CREA",k:175,p:19.5,gs:4.0,g:10.5,z:0,ch:0,fi:0,ca:10,fe:2.2,mg:20,k2:320,na:64,zn:4.0,fo:195,se:18,col:75},
+  {n:"Hamburger di manzo crudo",c:"Carni rosse",src:"CREA",k:218,p:17.5,gs:6.5,g:16.5,z:0,ch:0,fi:0,ca:12,fe:2.5,mg:18,k2:290,na:65,zn:3.8,fo:178,se:14,col:78},
+  // ── FORMAGGI AGGIUNTIVI ──
+  {n:"Ricotta di pecora",c:"Formaggi",src:"CREA",k:157,p:9.5,gs:7.5,g:13.0,z:3.0,ch:3.0,fi:0,ca:253,fe:0.5,mg:17,k2:100,na:104,zn:1.5,fo:180,se:4,col:52},
+  {n:"Formaggio spalmabile (Philadelphia tipo)",c:"Formaggi",src:"BDA",k:342,p:6.2,gs:21.3,g:34.0,z:3.0,ch:3.2,fi:0,ca:98,fe:0.2,mg:8,k2:138,na:360,zn:0.5,fo:106,se:3,col:97},
+  {n:"Primosale (pecorino giovane)",c:"Formaggi",src:"CREA",k:295,p:18.5,gs:14.5,g:24.0,z:0.5,ch:0.5,fi:0,ca:680,fe:0.4,mg:18,k2:65,na:550,zn:2.5,fo:360,se:8,col:72},
+  {n:"Gruviera (Gruyère)",c:"Formaggi",src:"BDA",k:413,p:29.8,gs:19.9,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:95,na:336,zn:3.9,fo:605,se:14,col:110},
+
+  // ── CEREALI AGGIUNTIVI ──
+  {n:"Segale integrale cruda",c:"Cereali e pasta",src:"CREA",k:338,p:14.8,gs:0.3,g:2.5,z:1.0,ch:69.8,fi:15.1,ca:33,fe:2.6,mg:121,k2:510,na:2,zn:3.7,fo:374,se:35,col:0},
+  {n:"Avena grains (chicchi interi)",c:"Cereali e pasta",src:"CREA",k:389,p:16.9,gs:1.3,g:6.9,z:0.9,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:4.0,fo:523,se:34,col:0},
+
+  // ── BEVANDE AGGIUNTIVE ──
+  {n:"Cappuccino (latte intero + caffè)",c:"Bevande",src:"CREA",k:40,p:1.8,gs:0.9,g:1.6,z:2.4,ch:2.4,fi:0,ca:65,fe:0.1,mg:7,k2:85,na:22,zn:0.2,fo:52,se:1,col:6},
+  {n:"Orzo solubile / tisana orzo",c:"Bevande",src:"CREA",k:3,p:0.1,gs:0,g:0,z:0.5,ch:0.5,fi:0,ca:2,fe:0.1,mg:2,k2:15,na:2,zn:0,fo:2,se:0,col:0},
+  {n:"Latte di cocco light (in lattina)",c:"Bevande",src:"BDA",k:77,p:1.0,gs:7.0,g:8.0,z:2.2,ch:3.3,fi:0,ca:12,fe:1.0,mg:15,k2:100,na:10,zn:0.2,fo:30,se:2,col:0},
+
+  // ── CONDIMENTI AGGIUNTIVI ──
+  {n:"Aceto di vino bianco",c:"Condimenti",src:"CREA",k:18,p:0.1,gs:0,g:0,z:0.2,ch:1.7,fi:0,ca:6,fe:0.1,mg:3,k2:28,na:7,zn:0.03,fo:5,se:1,col:0},
+  {n:"Burro chiarificato (ghee)",c:"Grassi",src:"BDA",k:876,p:0.3,gs:60.0,g:99.5,z:0,ch:0,fi:0,ca:4,fe:0,mg:0,k2:3,na:2,zn:0,fo:3,se:0,col:256},
+  {n:"Senape classica (tipo Dijon)",c:"Condimenti",src:"BDA",k:67,p:4.4,gs:0.3,g:3.3,z:2.5,ch:6.4,fi:3.4,ca:58,fe:1.8,mg:48,k2:152,na:1020,zn:0.7,fo:115,se:8,col:0},
+
+  // ── DOLCIFICANTI AGGIUNTIVI ──
+  {n:"Stevia (estratto in polvere)",c:"Dolcificanti",src:"BDA",k:0,p:0,gs:0,g:0,z:0,ch:3.8,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
+  {n:"Zucchero di cocco",c:"Dolci",src:"BDA",k:375,p:1.4,gs:0,g:0.5,z:85.0,ch:90.0,fi:0,ca:33,fe:2.8,mg:29,k2:1030,na:45,zn:0.6,fo:79,se:1,col:0},
+
+  // ── LEGUMI AGGIUNTIVI ──
+  {n:"Fagioli dall'occhio secchi",c:"Legumi",src:"CREA",k:336,p:23.0,gs:0.3,g:1.0,z:2.5,ch:60.0,fi:11.0,ca:110,fe:8.0,mg:184,k2:1112,na:16,zn:3.4,fo:424,se:7,col:0},
+  {n:"Ceci rossi secchi",c:"Legumi",src:"BDA",k:308,p:19.0,gs:0.5,g:4.5,z:5.0,ch:56.5,fi:13.0,ca:95,fe:7.0,mg:105,k2:875,na:3,zn:2.8,fo:390,se:6,col:0},
+
+  // ── FRUTTA SECCA E SEMI AGGIUNTIVI ──
+  {n:"Noci di macadamia",c:"Frutta secca",src:"BDA",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:188,se:3.6,col:0},
+  {n:"Noci pecan",c:"Frutta secca",src:"BDA",k:691,p:9.2,gs:6.2,g:71.9,z:3.97,ch:13.9,fi:9.6,ca:70,fe:2.5,mg:121,k2:410,na:0,zn:4.5,fo:277,se:3.8,col:0},
+  {n:"Semi di papavero",c:"Frutta secca",src:"BDA",k:525,p:17.9,gs:4.5,g:41.6,z:2.1,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:870,se:13,col:0},
+
+  // ── PIATTI PRONTI ──
+  {n:"Risotto bianco cotto (riso+brodo+olio)",c:"Piatti pronti",src:"CREA",k:140,p:2.8,gs:0.5,g:3.5,z:0.5,ch:24,fi:0.5,ca:12,fe:0.5,mg:12,k2:55,na:250,zn:0.5,fo:55,se:7,col:0},
+  {n:"Minestrone di verdure miste cotto",c:"Piatti pronti",src:"CREA",k:42,p:2.2,gs:0.1,g:1.0,z:2.0,ch:6.5,fi:2.5,ca:28,fe:0.9,mg:18,k2:250,na:250,zn:0.4,fo:52,se:1.5,col:0},
+  {n:"Sugo al pomodoro semplice (olio+pomodoro+basilico)",c:"Condimenti",src:"CREA",k:68,p:1.5,gs:0.5,g:4.5,z:3.5,ch:7.0,fi:1.8,ca:22,fe:0.6,mg:16,k2:330,na:15,zn:0.2,fo:40,se:0.5,col:0},
+  {n:"Frittata di verdure cotta",c:"Uova",src:"CREA",k:145,p:9.5,gs:3.5,g:10.5,z:1.5,ch:3.5,fi:0.8,ca:60,fe:1.5,mg:18,k2:200,na:200,zn:1.0,fo:160,se:8,col:270},
+  {n:"Uova strapazzate con olio",c:"Uova",src:"CREA",k:165,p:11.0,gs:4.5,g:12.5,z:0.5,ch:0.6,fi:0,ca:55,fe:1.8,mg:12,k2:138,na:170,zn:1.3,fo:200,se:10,col:380}
 ];
 
 let CUSTOM_DB=[];
@@ -1650,6 +1706,54 @@ function rebuildDB() {
   ALL_DB=[...DB_CREA,...DB_BDA,...DB_ONS,...DB_APROTEICI,...DB_FLAVIS,...DB_UPF,...CUSTOM_DB,...RICETTE_DB.map(r=>r._dbEntry).filter(Boolean)];
   FOOD_MAP={};
   ALL_DB.forEach(f=>{FOOD_MAP[f.n.toLowerCase()]=f;});
+}
+
+// Carica gli alimenti personalizzati dell'utente da Supabase e ricostruisce ALL_DB.
+// Disponibile in tutte le pagine che includono db.js + utils.js.
+async function loadCustomFoods() {
+  if (!currentUser || !sb) {
+    console.warn('loadCustomFoods: currentUser o sb non disponibili');
+    return;
+  }
+  try {
+    const { data, error } = await sb
+      .from('alimenti_custom')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('nome');
+    if (error) {
+      console.error('loadCustomFoods error:', error.message);
+      if (typeof toast === 'function') toast('Errore caricamento alimenti personalizzati: ' + error.message, 'err');
+      return;
+    }
+    CUSTOM_DB = (data || []).map(r => ({
+      _id:  r.id,
+      n:    r.nome,
+      c:    r.categoria || '',
+      src:  'PERS',
+      k:    r.kcal,
+      p:    r.proteine,
+      gs:   r.grassi_saturi,
+      g:    r.grassi_tot,
+      z:    r.zuccheri,
+      ch:   r.carboidrati,
+      fi:   r.fibre,
+      ca:   r.calcio,
+      fe:   r.ferro,
+      mg:   r.magnesio,
+      k2:   r.potassio,
+      na:   r.sodio,
+      zn:   r.zinco,
+      fo:   r.fosforo,
+      se:   r.selenio,
+      col:  r.colesterolo
+    }));
+    rebuildDB();
+    console.log('loadCustomFoods: caricati', CUSTOM_DB.length, 'alimenti personalizzati');
+  } catch(e) {
+    console.error('loadCustomFoods exception:', e.message);
+    if (typeof toast === 'function') toast('Errore alimenti personalizzati: ' + e.message, 'err');
+  }
 }
 
 let ALL_DB=[];

@@ -689,7 +689,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   rebuildDB();
   try {
     const ok = await checkAuth();
-    if (ok) loadRicette();
+    if (ok) {
+      await loadCustomFoods();
+      loadRicette();
+    }
   } catch(e) { console.warn(e); }
 });
 </script>

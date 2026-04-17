@@ -38,8 +38,8 @@
 #modal-add-food input{padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
 #modal-add-food input:focus{border-color:#06B6D4}
 #modal-add-food .sec-title{font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.05em;grid-column:1/-1;margin-top:8px;padding-top:10px;border-top:1px solid var(--border)}
-.btn-del-food{background:none;border:none;cursor:pointer;font-size:13px;padding:0 4px;opacity:.5;vertical-align:middle;line-height:1}
-.btn-del-food:hover{opacity:1}
+.btn-food-action{background:none;border:none;cursor:pointer;font-size:13px;padding:0 3px;opacity:.5;vertical-align:middle;line-height:1}
+.btn-food-action:hover{opacity:1}
 </style>
 </head>
 <body>
@@ -126,11 +126,11 @@
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
-<!-- Modal: aggiungi alimento personalizzato -->
+<!-- Modal: aggiungi / modifica alimento personalizzato -->
 <div id="modal-add-food" onclick="if(event.target===this)closeAddFood()">
   <div class="mbox">
     <div class="mhead">
-      <h3>➕ Aggiungi alimento al database personale</h3>
+      <h3 id="modal-food-title">➕ Aggiungi alimento al database personale</h3>
       <button onclick="closeAddFood()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate-l);line-height:1">×</button>
     </div>
     <div class="mbody">
@@ -229,6 +229,8 @@
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
 <script>
+let _editingFoodId = null; // null = nuovo alimento, stringa UUID = modifica
+
 function nd(v){ return (v===null||v===undefined||v==='')
   ? '<span class="nd">—</span>'
   : (v===0?'<span style="color:#CBD5E1">0</span>':v); }
@@ -241,16 +243,23 @@ function renderDB(list) {
     return;
   }
   document.getElementById('db-count').textContent = list.length + ' alimenti';
-  tbody.innerHTML = list.map(f => `<tr>
-    <td>${esc(f.n)}${f.src==='PERS'?` <button class="btn-del-food" onclick="deleteCustomFood('${f._id}')" title="Elimina alimento">🗑️</button>`:''}</td>
-    <td>${esc(f.c||'')}</td>
-    <td><span class="src-badge src-${f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int'}">${f.src==='PERS'?'PERS':f.src}</span></td>
-    <td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td>
-    <td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td>
-    <td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td>
-    <td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td>
-    <td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td>
-  </tr>`).join('');
+  tbody.innerHTML = list.map(f => {
+    const srcKey = f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int';
+    const persActions = f.src==='PERS'
+      ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="Modifica">✏️</button>`
+        + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="Elimina">🗑️</button>`
+      : '';
+    return `<tr>
+      <td>${esc(f.n)}${persActions}</td>
+      <td>${esc(f.c||'')}</td>
+      <td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td>
+      <td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td>
+      <td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td>
+      <td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td>
+      <td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td>
+      <td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td>
+    </tr>`;
+  }).join('');
 }
 
 function filterDB() {
@@ -278,38 +287,30 @@ function populateCats() {
   sel.value = prev;
 }
 
-async function loadCustomFoods() {
-  if (!currentUser) return;
-  const { data, error } = await sb.from('alimenti_custom').select('*').eq('user_id', currentUser.id).order('nome');
-  if (error) { console.warn('loadCustomFoods:', error.message); return; }
-  CUSTOM_DB = (data || []).map(r => ({
-    _id: r.id,
-    n: r.nome,
-    c: r.categoria || '',
-    src: 'PERS',
-    k: r.kcal,
-    p: r.proteine,
-    gs: r.grassi_saturi,
-    g: r.grassi_tot,
-    z: r.zuccheri,
-    ch: r.carboidrati,
-    fi: r.fibre,
-    ca: r.calcio,
-    fe: r.ferro,
-    mg: r.magnesio,
-    k2: r.potassio,
-    na: r.sodio,
-    zn: r.zinco,
-    fo: r.fosforo,
-    se: r.selenio,
-    col: r.colesterolo
-  }));
-  rebuildDB();
+
+function _populateFoodModal(food) {
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = (val===null||val===undefined) ? '' : val; };
+  set('af-nome',  food.n   ?? '');
+  set('af-cat',   food.c   ?? '');
+  set('af-kcal',  food.k   ?? '');
+  set('af-prot',  food.p   ?? '');
+  set('af-gtot',  food.g   ?? '');
+  set('af-gs',    food.gs  ?? '');
+  set('af-cho',   food.ch  ?? '');
+  set('af-zucc',  food.z   ?? '');
+  set('af-fi',    food.fi  ?? '');
+  set('af-col',   food.col ?? '');
+  set('af-ca',    food.ca  ?? '');
+  set('af-fe',    food.fe  ?? '');
+  set('af-mgval', food.mg  ?? '');
+  set('af-k',     food.k2  ?? '');
+  set('af-na',    food.na  ?? '');
+  set('af-zn',    food.zn  ?? '');
+  set('af-fo',    food.fo  ?? '');
+  set('af-se',    food.se  ?? '');
 }
 
-function openAddFood() {
-  document.getElementById('af-form').reset();
-  // popola datalist categorie
+function _openFoodModal() {
   const dl = document.getElementById('af-cat-list');
   dl.innerHTML = '';
   [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort().forEach(c => {
@@ -319,8 +320,26 @@ function openAddFood() {
   setTimeout(()=>document.getElementById('af-nome').focus(), 80);
 }
 
+function openAddFood() {
+  _editingFoodId = null;
+  document.getElementById('af-form').reset();
+  document.getElementById('modal-food-title').textContent = '➕ Aggiungi alimento al database personale';
+  _openFoodModal();
+}
+
+function openEditFood(id) {
+  const food = CUSTOM_DB.find(f => f._id === id);
+  if (!food) { toast('Alimento non trovato', 'err'); return; }
+  _editingFoodId = id;
+  document.getElementById('af-form').reset();
+  document.getElementById('modal-food-title').textContent = '✏️ Modifica alimento personalizzato';
+  _populateFoodModal(food);
+  _openFoodModal();
+}
+
 function closeAddFood() {
   document.getElementById('modal-add-food').classList.remove('open');
+  _editingFoodId = null;
 }
 
 async function saveFood() {
@@ -330,49 +349,58 @@ async function saveFood() {
 
   const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
   const row = {
-    user_id: currentUser.id,
     nome,
-    categoria: document.getElementById('af-cat').value.trim() || null,
-    kcal: num('af-kcal'),
-    proteine: num('af-prot'),
-    grassi_saturi: num('af-gs'),
-    grassi_tot: num('af-gtot'),
-    zuccheri: num('af-zucc'),
-    carboidrati: num('af-cho'),
-    fibre: num('af-fi'),
-    calcio: num('af-ca'),
-    ferro: num('af-fe'),
-    magnesio: num('af-mgval'),
-    potassio: num('af-k'),
-    sodio: num('af-na'),
-    zinco: num('af-zn'),
-    fosforo: num('af-fo'),
-    selenio: num('af-se'),
-    colesterolo: num('af-col')
+    categoria:      document.getElementById('af-cat').value.trim() || null,
+    kcal:           num('af-kcal'),
+    proteine:       num('af-prot'),
+    grassi_saturi:  num('af-gs'),
+    grassi_tot:     num('af-gtot'),
+    zuccheri:       num('af-zucc'),
+    carboidrati:    num('af-cho'),
+    fibre:          num('af-fi'),
+    calcio:         num('af-ca'),
+    ferro:          num('af-fe'),
+    magnesio:       num('af-mgval'),
+    potassio:       num('af-k'),
+    sodio:          num('af-na'),
+    zinco:          num('af-zn'),
+    fosforo:        num('af-fo'),
+    selenio:        num('af-se'),
+    colesterolo:    num('af-col')
   };
 
-  const { error } = await sb.from('alimenti_custom').insert(row);
+  let error;
+  if (_editingFoodId) {
+    ({ error } = await sb.from('alimenti_custom').update(row).eq('id', _editingFoodId).eq('user_id', currentUser.id));
+    if (!error) toast('Alimento aggiornato ✓', 'ok');
+  } else {
+    row.user_id = currentUser.id;
+    ({ error } = await sb.from('alimenti_custom').insert(row));
+    if (!error) toast('Alimento aggiunto ✓', 'ok');
+  }
+
   if (error) { toast('Errore: ' + error.message, 'err'); return; }
 
-  toast('Alimento aggiunto ✓', 'ok');
   closeAddFood();
   await loadCustomFoods();
   populateCats();
   filterDB();
 }
 
-async function deleteCustomFood(id) {
-  if (!confirm('Eliminare questo alimento dal database personale?')) return;
-  const { error } = await sb.from('alimenti_custom').delete().eq('id', id);
-  if (error) { toast('Errore: ' + error.message, 'err'); return; }
-  toast('Alimento eliminato', 'ok');
-  await loadCustomFoods();
-  populateCats();
-  filterDB();
+function deleteCustomFood(id) {
+  customConfirm('Eliminare questo alimento dal database personale?', async () => {
+    const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', currentUser.id);
+    if (error) { toast('Errore: ' + error.message, 'err'); return; }
+    toast('Alimento eliminato', 'ok');
+    await loadCustomFoods();
+    populateCats();
+    filterDB();
+  }, { okLabel: 'Elimina', danger: true });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
+  const ok = await checkAuth();
+  if (!ok) return;
   rebuildDB();
   await loadCustomFoods();
   populateCats();

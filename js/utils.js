@@ -547,7 +547,7 @@ function initCartellaWidget(cid, opts) {
       ' oninput="_cwFilter(\'' + cid + '\')"' +
       ' onfocus="_cwShow(\'' + cid + '\')"' +
       ' onblur="setTimeout(()=>_cwHide(\'' + cid + '\'),200)">' +
-      '<div id="' + cid + '-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
+      '<div id="' + cid + '-dd" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
     '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
     '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:none"></span>';
@@ -1231,8 +1231,11 @@ function initPianoEsempio(containerId, config) {
 
   // Close on outside click
   document.addEventListener('click', _closeAll);
-  // Close on scroll (reposition would be complex)
-  document.addEventListener('scroll', _closeAll, true);
+  // Close on scroll only when scrolling outside the open panel
+  document.addEventListener('scroll', function(e) {
+    if (_openWrap && _openWrap._cselPanel && _openWrap._cselPanel.contains(e.target)) return;
+    _closeAll();
+  }, true);
   // Close on resize
   window.addEventListener('resize', _closeAll);
 

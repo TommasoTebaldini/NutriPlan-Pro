@@ -2479,7 +2479,8 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
+  const ok = await checkAuth();
+  if (!ok) return;
   initCartellaWidget('sq-cartella-cw', { hiddenInputId:'sq-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
   initCartellaWidget('qbar-cartella-cw', { hiddenInputId:'qbar-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
   renderEDEQItems();

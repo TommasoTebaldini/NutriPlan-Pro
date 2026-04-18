@@ -345,9 +345,10 @@ function filterInt() {
   buildIntGrid(document.getElementById('int-search').value);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await checkAuth();
+  if (!ok) return;
   buildIntGrid();
-  try { checkAuth(); } catch(e) {}
 });
 </script>
 </body>

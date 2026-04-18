@@ -1,7 +1,10 @@
 // api/calendar.js — NutriPlan Pro
 // Serves a live iCalendar (ICS) feed for a user's agenda events stored in Supabase.
-// Subscribe in any calendar app via: webcal://YOUR_DOMAIN/api/calendar?uid=USER_UUID
+// Subscribe in any calendar app via: webcal://YOUR_DOMAIN/api/calendar?uid=USER_UUID&token=HMAC_TOKEN
+// The token is obtained from /api/calendar-token (requires login).
 // The calendar app will auto-refresh this feed, keeping all devices in sync.
+
+const crypto = require('crypto');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 // Prefer SUPABASE_SERVICE_KEY (bypasses RLS) for direct table access.
@@ -14,6 +17,27 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.s
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
+
+// When set, calendar URLs must include ?token=HMAC-SHA256(uid, CALENDAR_SECRET).
+// Without this env var the feed accepts the bare uid (legacy / backward compat).
+// Set CALENDAR_SECRET in the Vercel dashboard to enable token verification.
+const CALENDAR_SECRET = process.env.CALENDAR_SECRET || '';
+
+function deriveCalendarToken(uid) {
+  return crypto.createHmac('sha256', CALENDAR_SECRET).update(uid).digest('hex');
+}
+
+function verifyCalendarToken(uid, token) {
+  if (!CALENDAR_SECRET) return true; // secret not configured — skip verification
+  if (!token) return false;
+  const expected = deriveCalendarToken(uid);
+  // Use timingSafeEqual to prevent timing attacks
+  try {
+    return crypto.timingSafeEqual(Buffer.from(token, 'hex'), Buffer.from(expected, 'hex'));
+  } catch {
+    return false;
+  }
+}
 
 const TIPO_LABELS = {
   visita: 'Prima Visita',
@@ -32,10 +56,18 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const { uid } = req.query;
+  const { uid, token } = req.query;
 
   if (!uid || !UUID_RE.test(uid)) {
     res.status(400).send('Missing or invalid uid parameter');
+    return;
+  }
+
+  // Token verification: when CALENDAR_SECRET is configured, the ?token=HMAC
+  // parameter is required. Without it anyone knowing a user UUID could read
+  // their full appointment calendar (including patient names).
+  if (!verifyCalendarToken(uid, token)) {
+    res.status(401).send('Invalid or missing calendar token. Regenerate your calendar link from the Agenda page.');
     return;
   }
 

@@ -1035,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       await _cwSetById('bia-cartella-cw', cartellaParam);
       onCartellaChange();
     }
-    if (biaIdParam) {
+    if (biaIdParam && currentUser) {
       showLoading(true);
       const { data } = await sb.from('bia_records').select('*').eq('id', biaIdParam).single();
       showLoading(false);

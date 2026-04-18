@@ -1139,8 +1139,32 @@ async function syncAllEventsToGCal() {
 
 // ─── Calendar Sync Modal ──────────────────────────────────────────────────────
 
+// Returns a secured calendar feed URL for the current user.
+// Calls /api/calendar-token (requires auth) to get the HMAC token.
+// Falls back to uid-only URL if the endpoint fails or secret is not configured.
+async function getCalendarUrl() {
+  if (!currentUser) return null;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const jwt = session?.access_token;
+    if (!jwt) throw new Error('no session');
+    const res = await fetch('/api/calendar-token', {
+      headers: { Authorization: 'Bearer ' + jwt }
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return { subscribe: json.url, webcal: json.webcal };
+    }
+  } catch(e) {
+    console.warn('getCalendarUrl fallback:', e.message);
+  }
+  // Fallback: uid-only (no CALENDAR_SECRET configured on server)
+  const base = `${window.location.origin}/api/calendar?uid=${currentUser.id}`;
+  return { subscribe: base, webcal: base.replace(/^https?:\/\//, 'webcal://') };
+}
+
 // Auto-sync by email: detect provider and open the appropriate subscription flow.
-function autoSyncCalendar() {
+async function autoSyncCalendar() {
   const emailInput = document.getElementById('auto-sync-email');
   const email = (emailInput ? emailInput.value.trim() : '').toLowerCase();
   const statusEl = document.getElementById('auto-sync-status');
@@ -1158,9 +1182,10 @@ function autoSyncCalendar() {
   // Persist email for future sessions and Google Calendar hint
   localStorage.setItem('gcal_email', email);
 
-  const origin = window.location.origin;
-  const subscribeUrl = `${origin}/api/calendar?uid=${currentUser.id}`;
-  const webcalUrl = subscribeUrl.replace(/^https?:\/\//, 'webcal://');
+  const calUrls = await getCalendarUrl();
+  if (!calUrls) { toast('Errore generazione link calendario', 'err'); return; }
+  const subscribeUrl = calUrls.subscribe;
+  const webcalUrl = calUrls.webcal;
 
   const isGoogle = /^[^@]+@(gmail|googlemail)\.com$/.test(email);
 
@@ -1210,15 +1235,16 @@ function autoSyncCalendar() {
   if (gcalEmailInput) gcalEmailInput.value = email;
 }
 
-function openSyncModal() {
+async function openSyncModal() {
   // Populate subscription URL if user is logged in
   if (currentUser) {
-    const origin = window.location.origin;
-    const subscribeUrl = `${origin}/api/calendar?uid=${currentUser.id}`;
-    const webcalUrl = subscribeUrl.replace(/^https?:\/\//, 'webcal://');
-    document.getElementById('sync-url-input').value = webcalUrl;
+    document.getElementById('sync-url-input').value = 'Generazione link...';
     document.getElementById('sync-url-area').style.display = '';
     document.getElementById('sync-login-msg').style.display = 'none';
+    const calUrls = await getCalendarUrl();
+    if (calUrls) {
+      document.getElementById('sync-url-input').value = calUrls.webcal;
+    }
   } else {
     document.getElementById('sync-url-area').style.display = 'none';
     document.getElementById('sync-login-msg').style.display = '';

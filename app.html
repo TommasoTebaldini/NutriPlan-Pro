@@ -1157,110 +1157,124 @@ function getSelectedMicros() {
   return [...visM];
 }
 
-function esportaExcel() {
+async function esportaExcel() {
+  // Carica SheetJS al primo utilizzo (genera vero .xlsx, senza avvisi di sicurezza)
+  if (typeof XLSX === 'undefined') {
+    toast('⏳ Preparazione Excel...', 'info');
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Impossibile caricare la libreria Excel'));
+      document.head.appendChild(s);
+    });
+  }
+
   const nomePaz = document.getElementById('inp-nome')?.value || 'Piano Alimentare';
   const dataStr = document.getElementById('inp-data')?.value || todayISO();
   const selMicros = getSelectedMicros();
-  const MICRO_LABELS = {ca:'Ca(mg)',fe:'Fe(mg)',mg:'Mg(mg)',k2:'K(mg)',na:'Na(mg)',zn:'Zn(mg)',fo:'Fo(mg)',se:'Se(µg)',col:'Col(mg)'};
+  const MICRO_LABELS = {ca:'Ca (mg)',fe:'Fe (mg)',mg:'Mg (mg)',k2:'K (mg)',na:'Na (mg)',zn:'Zn (mg)',fo:'Fo (mg)',se:'Se (µg)',col:'Col (mg)'};
 
-  function xs(v) {
-    if(v===undefined||v===null||v===0||v==='') return '';
-    return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-  function xn(v) { const n=parseFloat(v); return isNaN(n)?0:Math.round(n*10)/10; }
+  function xn(v) { const n = parseFloat(v); return isNaN(n) ? 0 : Math.round(n * 10) / 10; }
+  function r1(v) { return Math.round((v || 0) * 10) / 10; }
+  function num(v) { const n = r1(v); return n === 0 ? '' : n; }
 
-  // Stili CSS inline per Excel HTML
-  const css = `
-    body{font-family:Calibri,Arial,sans-serif;font-size:10pt}
-    .t-title{background:#0F2027;color:#FFFFFF;font-size:14pt;font-weight:bold;padding:8px 12px}
-    .t-sub{background:#0F2027;color:#94A3B8;font-size:9pt;padding:4px 12px}
-    .t-day{background:#0F766E;color:#FFFFFF;font-size:12pt;font-weight:bold;padding:6px 10px}
-    .t-meal{background:#DCFCE7;color:#14532D;font-size:11pt;font-weight:bold;padding:5px 10px}
-    .t-hdr{background:#1E293B;color:#FFFFFF;font-size:9pt;font-weight:bold;text-align:center;padding:4px 6px;border:1px solid #0F766E}
-    .t-hdr-l{background:#1E293B;color:#FFFFFF;font-size:9pt;font-weight:bold;text-align:left;padding:4px 6px;border:1px solid #0F766E}
-    .t-food{font-size:10pt;color:#1E293B;padding:3px 6px;border-bottom:1px solid #E2E8F0}
-    .t-num{font-size:10pt;color:#1E293B;text-align:right;padding:3px 6px;border-bottom:1px solid #E2E8F0}
-    .t-kcal{font-size:10pt;color:#0F766E;font-weight:bold;text-align:right;padding:3px 6px;border-bottom:1px solid #E2E8F0}
-    .t-sub-lbl{background:#1E293B;color:#CCFBF1;font-weight:bold;font-size:10pt;padding:4px 6px}
-    .t-sub-num{background:#1E293B;color:#CCFBF1;font-weight:bold;font-size:10pt;text-align:right;padding:4px 6px}
-    .t-day-tot{background:#CCFBF1;color:#0F766E;font-weight:bold;font-size:11pt;padding:6px 10px}
-    .t-empty{background:#F8FAFC;height:8px}
-    td,th{white-space:nowrap}
-  `;
+  // Intestazioni fisse — ora include Zuccheri e Grassi saturi
+  const fixedHdr = ['Alimento', 'Qt (g)', 'Kcal', 'Prot (g)', 'CHO (g)', 'Zuccheri (g)', 'Gr tot (g)', 'Gr sat (g)', 'Fibra (g)'];
+  const microHdr = selMicros.map(k => MICRO_LABELS[k] || k);
+  const allHdr   = [...fixedHdr, ...microHdr];
 
-  let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-<x:Name>Piano Alimentare</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
-</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-<style>${css}</style></head><body><table border="0" cellspacing="0" cellpadding="0" width="100%">`;
+  const rows = [];
 
-  const totalCols = 7 + selMicros.length;
-
-  // Titolo
-  html += `<tr><td class="t-title" colspan="${totalCols}">${xs(nomePaz)} — Piano Alimentare</td></tr>`;
-  html += `<tr><td class="t-sub" colspan="${totalCols}">Data: ${xs(dataStr)} &nbsp;·&nbsp; Generato con DietPlan Pro</td></tr>`;
-  html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
+  // Intestazione documento
+  rows.push([`${nomePaz} — Piano Alimentare`]);
+  rows.push([`Data: ${dataStr}   Generato con DietPlan Pro`]);
+  rows.push([]);
 
   giorni.forEach((giorno, gi) => {
-    const gNome = giorno.nome || ('Giorno ' + (gi+1));
-
-    let dK=0,dP=0,dCH=0,dG=0,dFi=0;
-    const dM = selMicros.map(()=>0);
+    const gNome = giorno.nome || ('Giorno ' + (gi + 1));
+    let dK=0, dP=0, dCH=0, dZ=0, dG=0, dGS=0, dFi=0;
+    const dM = selMicros.map(() => 0);
     let hasFood = false;
 
     giorno.meals.forEach(pasto => {
-      const items = (pasto.items||[]).filter(it=>it.nome&&it.nome.trim());
-      if(!items.length) return;
+      const items = (pasto.items || []).filter(it => it.nome && it.nome.trim());
+      if (!items.length) return;
       hasFood = true;
 
-      let pK=0,pP=0,pCH=0,pG=0,pFi=0;
-      const pM = selMicros.map(()=>0);
+      let pK=0, pP=0, pCH=0, pZ=0, pG=0, pGS=0, pFi=0;
+      const pM = selMicros.map(() => 0);
 
-      // Intestazione pasto
-      html += `<tr><td class="t-meal" colspan="${totalCols}">${xs(pasto.emoji+' '+pasto.nome)} &nbsp;—&nbsp; ${xs(gNome)}</td></tr>`;
+      // Riga intestazione pasto
+      rows.push([`${pasto.emoji || ''} ${pasto.nome} — ${gNome}`]);
+      rows.push(allHdr);
 
-      // Intestazione colonne
-      html += `<tr><th class="t-hdr-l">Alimento</th><th class="t-hdr">Qt (g)</th><th class="t-hdr">Kcal</th><th class="t-hdr">Prot (g)</th><th class="t-hdr">CHO (g)</th><th class="t-hdr">Gr (g)</th><th class="t-hdr">Fibra (g)</th>${selMicros.map(k=>`<th class="t-hdr">${xs(MICRO_LABELS[k]||k)}</th>`).join('')}</tr>`;
-
-      // Alimenti
       items.forEach(item => {
-        const f = lookup(item.nome);
-        const qt = parseFloat(item.qt)||0;
-        const k=f?xn((f.k||0)/100*qt):0;
-        const p=f?xn((f.p||0)/100*qt):0;
-        const ch=f?xn((f.ch||0)/100*qt):0;
-        const g=f?xn((f.g||0)/100*qt):0;
-        const fi=f?xn((f.fi||0)/100*qt):0;
-        pK+=k;pP+=p;pCH+=ch;pG+=g;pFi+=fi;
-        const mVals = selMicros.map((mk,mi)=>{ const v=f?xn((f[mk]||0)/100*qt):0; pM[mi]+=v; return v; });
-        const alt = item.altPrint&&item.altPrint.length&&item.altPrint[0]?.nome ? ` <span style="color:#64748B;font-size:9pt">(Alt: ${xs(item.altPrint[0].nome)} ${item.altPrint[0].qt}g)</span>` : '';
-        html += `<tr><td class="t-food">${xs(item.nome)}${alt}</td><td class="t-num">${qt||''}</td><td class="t-kcal">${k||''}</td><td class="t-num">${p||''}</td><td class="t-num">${ch||''}</td><td class="t-num">${g||''}</td><td class="t-num">${fi||''}</td>${mVals.map(v=>`<td class="t-num">${v||''}</td>`).join('')}</tr>`;
+        const f   = lookup(item.nome);
+        const qt  = parseFloat(item.qt) || 0;
+        const k   = f ? xn((f.k  || 0) / 100 * qt) : 0;
+        const p   = f ? xn((f.p  || 0) / 100 * qt) : 0;
+        const ch  = f ? xn((f.ch || 0) / 100 * qt) : 0;
+        const z   = f ? xn((f.z  || 0) / 100 * qt) : 0;
+        const g   = f ? xn((f.g  || 0) / 100 * qt) : 0;
+        const gs  = f ? xn((f.gs || 0) / 100 * qt) : 0;
+        const fi  = f ? xn((f.fi || 0) / 100 * qt) : 0;
+        pK+=k; pP+=p; pCH+=ch; pZ+=z; pG+=g; pGS+=gs; pFi+=fi;
+        const mVals = selMicros.map((mk, mi) => {
+          const v = f ? xn((f[mk] || 0) / 100 * qt) : 0;
+          pM[mi] += v;
+          return num(v);
+        });
+        const altNote = item.altPrint?.length && item.altPrint[0]?.nome
+          ? ` (Alt: ${item.altPrint[0].nome} ${item.altPrint[0].qt}g)` : '';
+        rows.push([item.nome + altNote, qt || '', num(k), num(p), num(ch), num(z), num(g), num(gs), num(fi), ...mVals]);
       });
 
+      dK+=pK; dP+=pP; dCH+=pCH; dZ+=pZ; dG+=pG; dGS+=pGS; dFi+=pFi;
+      pM.forEach((v, i) => dM[i] += v);
+
       // Subtotale pasto
-      dK+=pK;dP+=pP;dCH+=pCH;dG+=pG;dFi+=pFi;
-      pM.forEach((v,i)=>dM[i]+=v);
-      html += `<tr><td class="t-sub-lbl">SUBTOTALE ${xs(pasto.nome)}</td><td class="t-sub-num"></td><td class="t-sub-num">${Math.round(pK)}</td><td class="t-sub-num">${r1(pP)}</td><td class="t-sub-num">${r1(pCH)}</td><td class="t-sub-num">${r1(pG)}</td><td class="t-sub-num">${r1(pFi)}</td>${pM.map(v=>`<td class="t-sub-num">${r1(v)||''}</td>`).join('')}</tr>`;
-      html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
+      rows.push([
+        `SUBTOTALE ${pasto.nome}`, '',
+        Math.round(pK), r1(pP), r1(pCH), r1(pZ), r1(pG), r1(pGS), r1(pFi),
+        ...pM.map(v => r1(v) || '')
+      ]);
+      rows.push([]);
     });
 
-    if(hasFood) {
-      html += `<tr><td class="t-day-tot" colspan="${totalCols}">TOTALE ${xs(gNome.toUpperCase())}: &nbsp;<strong>${Math.round(dK)} kcal</strong> &nbsp;·&nbsp; Proteine ${r1(dP)}g &nbsp;·&nbsp; CHO ${r1(dCH)}g &nbsp;·&nbsp; Grassi ${r1(dG)}g &nbsp;·&nbsp; Fibra ${r1(dFi)}g${selMicros.map((mk,i)=>` &nbsp;·&nbsp; ${MICRO_LABELS[mk]||mk} ${r1(dM[i])}`).join('')}</td></tr>`;
-      html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
-      html += `<tr><td class="t-empty" colspan="${totalCols}"></td></tr>`;
+    if (hasFood) {
+      // Totale giornaliero
+      rows.push([
+        `TOTALE ${gNome.toUpperCase()}`, '',
+        Math.round(dK), r1(dP), r1(dCH), r1(dZ), r1(dG), r1(dGS), r1(dFi),
+        ...dM.map(v => r1(v) || '')
+      ]);
+      rows.push([]);
+      rows.push([]);
     }
   });
 
-  html += `</table></body></html>`;
+  const ws = XLSX.utils.aoa_to_sheet(rows);
 
-  const blob = new Blob([html], {type:'application/vnd.ms-excel;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${nomePaz.replace(/[^a-zA-Z0-9_\- ]/g,'_').trim()}_${dataStr}.xls`;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  // Larghezze colonne per leggibilità
+  ws['!cols'] = [
+    {wch: 36}, // Alimento
+    {wch:  8}, // Qt
+    {wch:  8}, // Kcal
+    {wch:  9}, // Prot
+    {wch:  9}, // CHO
+    {wch: 12}, // Zuccheri
+    {wch:  9}, // Gr tot
+    {wch:  9}, // Gr sat
+    {wch:  9}, // Fibra
+    ...selMicros.map(() => ({wch: 9}))
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Piano Alimentare');
+
+  const filename = `${nomePaz.replace(/[^a-zA-Z0-9_\- ]/g, '_').trim()}_${dataStr}.xlsx`;
+  XLSX.writeFile(wb, filename);
   toast('📥 Excel esportato!', 'ok');
 }
 

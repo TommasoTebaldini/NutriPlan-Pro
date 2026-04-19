@@ -117,6 +117,25 @@
     </div>
   </div>
 </div>
+<!-- MODAL: SEZIONI VISIBILI SPECIALISTICA -->
+<div class="modal-bg" id="modal-spec-sections">
+  <div class="modal" style="max-width:480px">
+    <div class="mhdr">
+      <h2 id="spec-sections-title">👁️ Scegli sezioni da mostrare</h2>
+      <button class="mclose" onclick="closeM('modal-spec-sections')">✕</button>
+    </div>
+    <div class="mbody" style="padding:20px 22px">
+      <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:18px;line-height:1.5">
+        Seleziona le sezioni che il paziente potrà visualizzare nella sua app. Le sezioni non selezionate resteranno private.
+      </p>
+      <div id="spec-sections-checkboxes" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-spec-sections')">Annulla</button>
+      <button class="btn btn-primary btn-sm" id="spec-sections-ok" onclick="_specSectionsOk()">👁️ Rendi visibile</button>
+    </div>
+  </div>
+</div>
 <!-- MODAL: COLLEGA PAZIENTE -->
 <div class="modal-bg" id="modal-collega">
   <div class="modal" style="max-width:420px">
@@ -437,7 +456,7 @@ async function renderCartellaDetail(id) {
             <div style="font-size:11.5px;color:var(--slate-l)">Consiglio Nutrizionale · ${fmtDate(n.created_at)}</div>
           </div>
           <span style="font-size:11px;background:#F0FDF4;color:#16A34A;padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">Consiglio Nutrizionale</span>
-          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
+          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','consiglio')">✏️ Apri</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
         </div>`;
@@ -472,7 +491,7 @@ async function renderCartellaDetail(id) {
             <div style="font-size:11.5px;color:var(--slate-l)">${s.label} · ${fmtDate(n.created_at)}</div>
           </div>
           <span style="font-size:11px;background:${s.bg};color:${s.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${s.label}</span>
-          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
+          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
           ${openBtn}
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
         </div>`;
@@ -805,8 +824,129 @@ function scollegaPaziente(patientId, cartellaId) {
 // VISIBILITÀ DOCUMENTI AL PAZIENTE
 // ═══════════════════════════════════════════════════
 
-async function toggleItemVisibility(table, itemId) {
-  const btn = document.getElementById('vis-btn-' + table + '-' + itemId);
+// Sottosezioni disponibili per ogni tipo di specialistica
+const SPEC_SUBSECTIONS = {
+  diabete: [
+    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Pasti, orari e alimenti' },
+    { key: 'terapia_insulinica', label: '💉 Terapia insulinica',       desc: 'Rapporto I/C, dosi pasto, FSI' },
+    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni cliniche personalizzate' },
+    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Avvertenze e consigli generali' },
+    { key: 'depliant',          label: '📖 Depliant informativo',      desc: 'Materiale educativo sul diabete' },
+  ],
+  pediatria: [
+    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Pasti e alimenti per il bambino' },
+    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni cliniche' },
+    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Consigli e avvertenze' },
+  ],
+  sport: [
+    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Piano nutrizionale sportivo' },
+    { key: 'supplementazione',  label: '💊 Supplementazione',          desc: 'Integratori e protocollo' },
+    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Consigli per la performance' },
+  ],
+  pancreas: [
+    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Pasti e dosi enzimatiche' },
+    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni cliniche' },
+    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Avvertenze e consigli' },
+  ],
+  chetogenica: [
+    { key: 'valutazione',       label: '📊 Valutazione',               desc: 'Dati antropometrici e clinici' },
+    { key: 'calcolo',           label: '🧮 Parametri calcolo',         desc: 'Peso, altezza, attività, obiettivo' },
+    { key: 'gki',               label: '🔬 GKI — Indice Chetogenico', desc: 'Glicemia e chetoni' },
+  ],
+  renale: [
+    { key: 'valutazione',       label: '📊 Valutazione',               desc: 'Dati clinici del paziente' },
+    { key: 'calcolo',           label: '🧮 Parametri calcolo',         desc: 'Stadio IRC, peso ideale, attività' },
+  ],
+  disfagia: [
+    { key: 'iddsi',             label: '🗣️ Livello IDDSI',            desc: 'Classificazione della disfagia' },
+    { key: 'kcal',              label: '🔥 Fabbisogno calorico',       desc: 'Obiettivo energetico giornaliero' },
+  ],
+  ristorazione: [
+    { key: 'piano_alimentare',  label: '🍽️ Menù / Portate',           desc: 'Piatti e composizione dei menù' },
+    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Avvertenze e note operative' },
+  ],
+  dca: [
+    { key: 'valutazione',       label: '📊 Valutazione',               desc: 'Profilo e anamnesi' },
+    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni terapeutiche' },
+    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Consigli e obiettivi' },
+  ],
+  consiglio: [
+    { key: 'consigli_base',     label: '✅ Consigli nutrizionali',     desc: 'Alimenti ok, da evitare, moderazione' },
+    { key: 'note_paziente',     label: '✏️ Note specifiche',           desc: 'Note personalizzate per il paziente' },
+  ],
+};
+
+let _specSectionsPending = null; // { itemId, tipo, btn }
+
+function openSpecSectionsModal(itemId, tipo, btn) {
+  const subs = SPEC_SUBSECTIONS[tipo];
+  if (!subs || !subs.length) {
+    // Nessuna sottosezione definita: usa il toggle normale
+    _doToggleVisibility('note_specialistiche', itemId, btn);
+    return;
+  }
+
+  _specSectionsPending = { itemId, tipo, btn };
+
+  const label = (tipo.charAt(0).toUpperCase() + tipo.slice(1));
+  document.getElementById('spec-sections-title').textContent = '👁️ Sezioni visibili — ' + label;
+
+  const container = document.getElementById('spec-sections-checkboxes');
+  container.innerHTML = subs.map(s => `
+    <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='#0F766E'" onmouseout="this.style.borderColor='var(--border)'">
+      <input type="checkbox" name="spec_section" value="${s.key}" checked
+        style="margin-top:3px;width:16px;height:16px;accent-color:#0F766E;flex-shrink:0">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--slate)">${s.label}</div>
+        <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">${s.desc}</div>
+      </div>
+    </label>
+  `).join('');
+
+  openM('modal-spec-sections');
+}
+
+async function _specSectionsOk() {
+  if (!_specSectionsPending) return;
+  const { itemId, tipo, btn } = _specSectionsPending;
+  _specSectionsPending = null;
+  closeM('modal-spec-sections');
+
+  const checked = [...document.querySelectorAll('#spec-sections-checkboxes input[name="spec_section"]:checked')]
+    .map(cb => cb.value);
+
+  if (!checked.length) {
+    toast('⚠️ Seleziona almeno una sezione', 'warn');
+    return;
+  }
+
+  // Aggiorna btn ottimisticamente
+  if (btn) {
+    btn.dataset.visible = 'true';
+    btn.style.color = '#0F766E';
+    btn.title = 'Nascondi al paziente';
+    btn.textContent = '👁️';
+  }
+
+  // Leggi dati correnti
+  const { data: row, error: fetchErr } = await sb.from('note_specialistiche').select('dati').eq('id', itemId).maybeSingle();
+  if (fetchErr) { toast('❌ ' + fetchErr.message, 'err'); return; }
+
+  let dati = row?.dati || {};
+  if (typeof dati === 'string') { try { dati = JSON.parse(dati) } catch { dati = {} } }
+  dati.visible_sections = checked;
+
+  const { error } = await sb.from('note_specialistiche').update({ visible_to_patient: true, dati }).eq('id', itemId);
+  if (error) {
+    if (btn) { btn.dataset.visible = 'false'; btn.style.color = '#94A3B8'; btn.title = 'Mostra al paziente'; btn.textContent = '🙈'; }
+    toast('❌ ' + error.message, 'err');
+    return;
+  }
+  toast('👁️ Visibile al paziente — ' + checked.length + ' sezione/i', 'ok');
+}
+
+async function _doToggleVisibility(table, itemId, btn) {
   const isCurrentlyVisible = btn ? btn.dataset.visible !== 'false' : true;
   const newVisible = !isCurrentlyVisible;
 
@@ -832,6 +972,24 @@ async function toggleItemVisibility(table, itemId) {
     return;
   }
   toast(newVisible ? '👁️ Visibile al paziente' : '🙈 Nascosto al paziente', 'ok');
+}
+
+async function toggleItemVisibility(table, itemId) {
+  const btn = document.getElementById('vis-btn-' + table + '-' + itemId);
+
+  // Per le note specialistiche: se si sta rendendo visibile, apri modal sezioni
+  if (table === 'note_specialistiche') {
+    const isCurrentlyVisible = btn ? btn.dataset.visible !== 'false' : true;
+    if (!isCurrentlyVisible) {
+      // Sta rendendo visibile → mostra modal sezioni
+      const tipo = btn ? (btn.dataset.tipo || '') : '';
+      openSpecSectionsModal(itemId, tipo, btn);
+      return;
+    }
+    // Sta nascondendo → toggle diretto
+  }
+
+  await _doToggleVisibility(table, itemId, btn);
 }
 
 // ═══════════════════════════════════════════════════

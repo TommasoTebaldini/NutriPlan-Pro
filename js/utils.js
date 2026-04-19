@@ -822,13 +822,18 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
   const colore = COLORI[tipo]  || '#1a7f5a';
   const nome   = nota || label;
   const piano  = dati.piano || {};
+  const WRAP = inner => `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${esc(nome)}</title>
+<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:11pt;line-height:1.5;padding:1.5cm 2cm 2.5cm}
+@media screen{body{padding:20px}}</style></head><body>${inner}</body></html>`;
 
-  const infoGrid = items => {
+  const infoGrid = (items, col) => {
     const vis = items.filter(i => i.val);
     if (!vis.length) return '';
+    const c = col || colore;
     let h = `<div style="display:grid;grid-template-columns:repeat(${Math.min(vis.length,3)},1fr);gap:10px;margin-bottom:14px">`;
     vis.forEach(i => {
-      h += `<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${colore}">
+      h += `<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${c}">
         <div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${i.label}</div>
         <div style="font-size:11pt;font-weight:700;color:#1E293B">${esc(String(i.val))}</div>
       </div>`;
@@ -836,34 +841,122 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
     return h + '</div>';
   };
 
+  // ── Pasti-based types: exact stampaCompattaSpecialistica layout ───────────
+  const PASTI_TIPI = ['diabete', 'pediatria', 'sport', 'pancreas'];
+  if (PASTI_TIPI.includes(tipo)) {
+    const totKcal = parseFloat(piano.kcal) || 0;
+    const totCho  = parseFloat(piano.cho_tot) || 0;
+    const totProt = parseFloat(piano.prot_tot) || (totKcal ? Math.round(totKcal * 0.15 / 4) : 0);
+    const totFat  = parseFloat(piano.grassi_tot) || (totKcal ? Math.round(totKcal * 0.25 / 9) : 0);
+    const pasti = (piano.pasti || dati.pasti || []).filter(p => p.alimenti?.trim());
+    const avgKcal = totKcal && pasti.length ? Math.round(totKcal / pasti.length) : 0;
+
+    let sub = '';
+    if (tipo === 'diabete' && piano.tipo) sub = 'Tipo: ' + piano.tipo + (piano.insulina ? ' · Insulina: ' + piano.insulina : '');
+    else if (tipo === 'sport' && (piano.sport || piano.obiettivo)) sub = piano.sport || piano.obiettivo;
+    else if (tipo === 'pancreas' && piano.enzima) sub = 'Enzima: ' + piano.enzima;
+
+    const stats = [
+      { val: totKcal || '—', lbl: 'KCAL TOTALI' },
+      { val: totProt || '—', lbl: 'PROTEINE (G)' },
+      { val: totCho  || '—', lbl: 'CARBOIDRATI (G)' },
+      { val: totFat  || '—', lbl: 'GRASSI (G)' },
+      { val: avgKcal || '—', lbl: 'KCAL/PASTO' },
+    ];
+
+    let body = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+    body += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
+    body += `<div style="font-size:18px;font-weight:700;color:#0F766E">${esc(nome)}</div>`;
+    if (sub) body += `<div style="font-size:13px;color:#475569;margin-top:3px">${esc(sub)}</div>`;
+    body += `</div>`;
+
+    body += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
+    stats.forEach((s, i) => {
+      body += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length - 1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
+      body += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
+      body += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
+      body += `</div>`;
+    });
+    body += `</div>`;
+
+    if (piano.note_cliniche?.trim()) {
+      body += `<div style="background:#EFF6FF;border-left:4px solid #3B82F6;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#1E3A5F;white-space:pre-wrap">📋 ${esc(piano.note_cliniche)}</div>`;
+    }
+
+    pasti.forEach(pasto => {
+      const energia = pasto.kcal ? `≈ ${pasto.kcal} kcal` : (pasto.cho ? `${pasto.cho} g CHO` : '');
+      body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+      body += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">`;
+      body += `<div style="display:flex;align-items:center;gap:10px">`;
+      if (pasto.emoji) body += `<span style="font-size:18px">${esc(pasto.emoji)}</span>`;
+      body += `<span style="font-size:14px;font-weight:700;color:white">${esc(pasto.nome || 'Pasto')}</span>`;
+      if (pasto.ora) body += `<span style="font-size:12px;color:rgba(255,255,255,.75)">${esc(pasto.ora)}</span>`;
+      body += `</div>`;
+      if (energia) body += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">${esc(energia)}</span>`;
+      body += `</div>`;
+      pasto.alimenti.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
+        body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${esc(line)}</div>`;
+      });
+      const noteText = (pasto.note?.trim()) || (pasto.cho && !pasto.kcal ? `CHO: ${pasto.cho} g` : '');
+      if (noteText) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(noteText)}</div>`;
+      body += `</div>`;
+    });
+
+    if (piano.note_generali?.trim()) {
+      body += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${esc(piano.note_generali)}</div>`;
+    }
+    body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div></div>`;
+    return WRAP(body);
+  }
+
+  // ── Ristorazione: portate layout ──────────────────────────────────────────
+  if (tipo === 'ristorazione') {
+    const portate = (piano.portate || []).filter(p => p.menu?.trim());
+    let body = `<div style="background:${colore};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+      <div style="font-size:18pt;font-weight:700">${esc(nome)}</div>
+      <div style="font-size:10pt;opacity:.8;margin-top:4px">${esc(label)} · DietPlan Pro</div>
+    </div>`;
+    body += infoGrid([
+      { label:'🏛️ Struttura', val: piano.tipo },
+      { label:'👥 Coperti',   val: piano.coperti },
+      { label:'🔥 Kcal/die',  val: piano.kcal },
+      { label:'👤 Utenza',    val: piano.utenza },
+    ]);
+    if (piano.diete?.trim()) body += `<div style="background:#F0FDF4;border-left:4px solid #16A34A;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#14532D;white-space:pre-wrap">🥗 Diete speciali: ${esc(piano.diete)}</div>`;
+    if (piano.allergeni?.trim()) body += `<div style="background:#FEF2F2;border-left:4px solid #EF4444;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#7F1D1D;white-space:pre-wrap">⚠️ Allergeni: ${esc(piano.allergeni)}</div>`;
+    portate.forEach(portata => {
+      body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">
+        <div style="padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:14px;font-weight:700;color:white">${esc(portata.nome || 'Portata')}</span>
+          ${portata.porzione ? `<span style="font-size:12px;color:rgba(255,255,255,.9)">${esc(portata.porzione)}</span>` : ''}
+        </div>`;
+      portata.menu.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
+        body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px">${esc(line)}</div>`;
+      });
+      if (portata.note?.trim()) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(portata.note)}</div>`;
+      body += `</div>`;
+    });
+    if (piano.note_generali?.trim()) body += `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:10pt;color:#78350F;white-space:pre-wrap">📌 ${esc(piano.note_generali)}</div>`;
+    body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div>`;
+    return WRAP(body);
+  }
+
+  // ── Chetogenica / Renale / Disfagia / altro: info grid layout ────────────
   let body = `<div style="background:${colore};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
     <div style="font-size:18pt;font-weight:700">${esc(nome)}</div>
     <div style="font-size:10pt;opacity:.8;margin-top:4px">${esc(label)} · DietPlan Pro</div>
   </div>`;
 
-  // Info grid per sezioni con piano (diabete, pediatria, sport, pancreas)
-  if (piano.kcal || piano.cho_tot || piano.prot_per_kg || piano.grassi_tot) {
-    body += infoGrid([
-      { label:'🔥 Kcal/die', val: piano.kcal },
-      { label:'🍞 CHO tot',  val: piano.cho_tot   ? piano.cho_tot + ' g'   : '' },
-      { label:'💪 Prot/kg',  val: piano.prot_per_kg ? piano.prot_per_kg + ' g' : '' },
-      { label:'🫁 Grassi',   val: piano.grassi_tot ? piano.grassi_tot + ' g' : '' },
-    ]);
-  }
-
-  // Info grid per chetogenica (dati.calcolo)
   if (tipo === 'chetogenica') {
     const c = dati.calcolo || {};
-    if (c.peso || c.tipo || c.obiettivo || c.attivita) {
-      body += infoGrid([
-        { label:'⚖️ Peso',       val: c.peso     ? c.peso     + ' kg'   : '' },
-        { label:'📏 Altezza',    val: c.altezza  ? c.altezza  + ' cm'   : '' },
-        { label:'🎂 Età',        val: c.eta      ? c.eta      + ' anni' : '' },
-        { label:'🚶 Attività',   val: c.attivita },
-        { label:'🥑 Tipo dieta', val: c.tipo },
-        { label:'🎯 Obiettivo',  val: c.obiettivo },
-      ]);
-    }
+    body += infoGrid([
+      { label:'⚖️ Peso',       val: c.peso    ? c.peso    + ' kg'   : '' },
+      { label:'📏 Altezza',    val: c.altezza ? c.altezza + ' cm'   : '' },
+      { label:'🎂 Età',        val: c.eta     ? c.eta     + ' anni' : '' },
+      { label:'🚶 Attività',   val: c.attivita },
+      { label:'🥑 Tipo dieta', val: c.tipo },
+      { label:'🎯 Obiettivo',  val: c.obiettivo },
+    ]);
     if (dati.gki?.glicemia || dati.gki?.chetoni) {
       body += infoGrid([
         { label:'🩸 Glicemia', val: dati.gki.glicemia ? dati.gki.glicemia + ' mg/dL'  : '' },
@@ -872,22 +965,18 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
     }
   }
 
-  // Info grid per renale (dati.calcolo)
   if (tipo === 'renale') {
     const c = dati.calcolo || {};
-    if (c.peso || c.stadio || c.altezza) {
-      body += infoGrid([
-        { label:'⚖️ Peso',        val: c.peso        ? c.peso        + ' kg'   : '' },
-        { label:'🏋️ Peso ideale', val: c.peso_ideale ? c.peso_ideale + ' kg'   : '' },
-        { label:'📏 Altezza',     val: c.altezza     ? c.altezza     + ' cm'   : '' },
-        { label:'🎂 Età',         val: c.eta         ? c.eta         + ' anni' : '' },
-        { label:'🏥 Stadio IRC',  val: c.stadio },
-        { label:'🚶 Attività',    val: c.attivita },
-      ]);
-    }
+    body += infoGrid([
+      { label:'⚖️ Peso',        val: c.peso        ? c.peso        + ' kg'   : '' },
+      { label:'🏋️ Peso ideale', val: c.peso_ideale ? c.peso_ideale + ' kg'   : '' },
+      { label:'📏 Altezza',     val: c.altezza     ? c.altezza     + ' cm'   : '' },
+      { label:'🎂 Età',         val: c.eta         ? c.eta         + ' anni' : '' },
+      { label:'🏥 Stadio IRC',  val: c.stadio },
+      { label:'🚶 Attività',    val: c.attivita },
+    ]);
   }
 
-  // Disfagia
   if (tipo === 'disfagia') {
     if (dati.iddsi) {
       body += `<div style="background:#F0FDFA;border-left:4px solid #0D9488;border-radius:6px;padding:12px 16px;margin-bottom:14px">
@@ -902,10 +991,9 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
     body += `<div style="background:#EFF6FF;border-left:4px solid #3B82F6;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#1E3A5F;white-space:pre-wrap">📋 ${esc(piano.note_cliniche)}</div>`;
   }
 
-  // Pasti
   const pasti = piano.pasti || dati.pasti || [];
   pasti.filter(p => p.alimenti?.trim()).forEach(pasto => {
-    const energia = pasto.kcal ? `≈ ${pasto.kcal} kcal` : (pasto.cho ? `${pasto.cho} g CHO` : (pasto.grassi ? `${pasto.grassi} g grassi` : ''));
+    const energia = pasto.kcal ? `≈ ${pasto.kcal} kcal` : (pasto.cho ? `${pasto.cho} g CHO` : '');
     body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">
         <div style="display:flex;align-items:center;gap:10px">
@@ -921,31 +1009,12 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
     body += `</div>`;
   });
 
-  // Portate per ristorazione
-  const portate = piano.portate || [];
-  portate.filter(p => p.menu?.trim()).forEach(portata => {
-    body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">
-      <div style="padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;align-items:center;justify-content:space-between">
-        <span style="font-size:14px;font-weight:700;color:white">${esc(portata.nome||'Portata')}</span>
-        ${portata.porzione ? `<span style="font-size:12px;color:rgba(255,255,255,.9)">${esc(portata.porzione)}</span>` : ''}
-      </div>`;
-    portata.menu.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
-      body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px">${esc(line)}</div>`;
-    });
-    if (portata.note?.trim()) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(portata.note)}</div>`;
-    body += `</div>`;
-  });
-
   if (piano.note_generali?.trim()) {
     body += `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:10pt;color:#78350F;white-space:pre-wrap">📌 ${esc(piano.note_generali)}</div>`;
   }
 
   body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div>`;
-
-  return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${esc(nome)}</title>
-<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-body{font-family:'Segoe UI',Arial,sans-serif;color:#1E293B;font-size:11pt;line-height:1.5;padding:1.5cm 2cm 2.5cm}</style>
-</head><body>${body}</body></html>`;
+  return WRAP(body);
 }
 
 /* ═══════════════════════════════════════════════════

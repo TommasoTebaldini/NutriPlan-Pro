@@ -2524,7 +2524,13 @@ async function salvaNotePaziente(consiglioId) {
   if (!cartella_id) { toast('Seleziona una cartella paziente nella barra in alto', 'err'); return; }
   const testo = document.getElementById('note-text-' + consiglioId)?.value || '';
   const c = getAllConsigli().find(x => x.id === consiglioId);
-  const dati = { consiglio_id: consiglioId, consiglio_nome: c?.nome || consiglioId, note_paziente: testo };
+  const dati = {
+    consiglio_id: consiglioId, consiglio_nome: c?.nome || consiglioId, note_paziente: testo,
+    ok: c?.ok || [], no: c?.no || [], mod: c?.mod || [],
+    pratici: c?.pratici || [], avvisi: c?.avvisi || [],
+    pasti: c?.pasti || '', porzioni: c?.porzioni || '', idratazione: c?.idratazione || '',
+    stampa_html: c ? buildStampaHTML(c, testo) : '',
+  };
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -2582,7 +2588,13 @@ async function salvaSelezioneInCartella() {
     const consiglioId = cb.dataset.id;
     const c = tuttiConsigli.find(x => x.id === consiglioId);
     const testo = document.getElementById('note-text-' + consiglioId)?.value || '';
-    const dati = { consiglio_id: consiglioId, consiglio_nome: c?.nome || consiglioId, note_paziente: testo };
+    const dati = {
+      consiglio_id: consiglioId, consiglio_nome: c?.nome || consiglioId, note_paziente: testo,
+      ok: c?.ok || [], no: c?.no || [], mod: c?.mod || [],
+      pratici: c?.pratici || [], avvisi: c?.avvisi || [],
+      pasti: c?.pasti || '', porzioni: c?.porzioni || '', idratazione: c?.idratazione || '',
+      stampa_html: c ? buildStampaHTML(c, testo) : '',
+    };
     const payload = { cartella_id, user_id: currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
     const existing = noteConsigli[consiglioId];
     let result;

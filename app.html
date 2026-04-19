@@ -1158,12 +1158,12 @@ function getSelectedMicros() {
 }
 
 async function esportaExcel() {
-  // Carica SheetJS al primo utilizzo (genera vero .xlsx, senza avvisi di sicurezza)
-  if (typeof XLSX === 'undefined') {
+  // Carica ExcelJS al primo utilizzo (supporta colori, grassetto, bordi)
+  if (typeof ExcelJS === 'undefined') {
     toast('⏳ Preparazione Excel...', 'info');
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js';
       s.onload = resolve;
       s.onerror = () => reject(new Error('Impossibile caricare la libreria Excel'));
       document.head.appendChild(s);
@@ -1179,102 +1179,217 @@ async function esportaExcel() {
   function r1(v) { return Math.round((v || 0) * 10) / 10; }
   function num(v) { const n = r1(v); return n === 0 ? '' : n; }
 
-  // Intestazioni fisse — ora include Zuccheri e Grassi saturi
   const fixedHdr = ['Alimento', 'Qt (g)', 'Kcal', 'Prot (g)', 'CHO (g)', 'Zuccheri (g)', 'Gr tot (g)', 'Gr sat (g)', 'Fibra (g)'];
   const microHdr = selMicros.map(k => MICRO_LABELS[k] || k);
   const allHdr   = [...fixedHdr, ...microHdr];
+  const nCols    = allHdr.length;
 
-  const rows = [];
+  // ── Colori palette ──────────────────────────────────────────────
+  const C = {
+    titleBg   : 'FF0F2027', titleFg   : 'FFFFFFFF',
+    subFg     : 'FF94A3B8',
+    mealBg    : 'FFDCFCE7', mealFg    : 'FF14532D',
+    hdrBg     : 'FF1E293B', hdrFg     : 'FFFFFFFF', hdrBorder : 'FF0F766E',
+    rowEven   : 'FFFFFFFF', rowOdd    : 'FFF1F5F9',
+    kcalFg    : 'FF0F766E',
+    subBg     : 'FF1E293B', subFg     : 'FFCCFBF1',
+    dayBg     : 'FFCCFBF1', dayFg     : 'FF0F766E', dayBorder : 'FF0F766E',
+    altFg     : 'FF64748B',
+  };
 
-  // Intestazione documento
-  rows.push([`${nomePaz} — Piano Alimentare`]);
-  rows.push([`Data: ${dataStr}   Generato con DietPlan Pro`]);
-  rows.push([]);
+  // ── Funzioni helper stile ────────────────────────────────────────
+  function solid(argb)  { return { type: 'pattern', pattern: 'solid', fgColor: { argb } }; }
+  function font(size, bold, argb, italic) { return { name: 'Calibri', size, bold: !!bold, color: { argb }, italic: !!italic }; }
+  function align(h, v)  { return { horizontal: h || 'left', vertical: v || 'middle', wrapText: false }; }
+  function thinBorder(argb) {
+    const s = { style: 'thin', color: { argb } };
+    return { top: s, bottom: s, left: s, right: s };
+  }
 
+  // Riempie l'intera riga con un colore di sfondo (serve per celle della merge)
+  function paintRow(row, bgArgb) {
+    for (let c = 1; c <= nCols; c++) {
+      row.getCell(c).fill = solid(bgArgb);
+    }
+  }
+
+  // Applica stile uniforme a tutte le celle di una riga
+  function styleAllCells(row, fontObj, bgArgb, alignObj, borderObj) {
+    for (let c = 1; c <= nCols; c++) {
+      const cell = row.getCell(c);
+      if (bgArgb)   cell.fill      = solid(bgArgb);
+      if (fontObj)  cell.font      = fontObj;
+      if (alignObj) cell.alignment = alignObj;
+      if (borderObj) cell.border   = borderObj;
+    }
+  }
+
+  // ── Workbook / Worksheet ─────────────────────────────────────────
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'DietPlan Pro';
+  wb.created = new Date();
+  const ws = wb.addWorksheet('Piano Alimentare', { views: [{ showGridLines: false }] });
+
+  ws.columns = [
+    { width: 38 }, // Alimento
+    { width:  9 }, // Qt
+    { width:  9 }, // Kcal
+    { width: 10 }, // Prot
+    { width: 10 }, // CHO
+    { width: 13 }, // Zuccheri
+    { width: 10 }, // Gr tot
+    { width: 10 }, // Gr sat
+    { width: 10 }, // Fibra
+    ...selMicros.map(() => ({ width: 10 })),
+  ];
+
+  // ── Intestazione documento ───────────────────────────────────────
+  const rTitle = ws.addRow([`${nomePaz} — Piano Alimentare`]);
+  paintRow(rTitle, C.titleBg);
+  ws.mergeCells(rTitle.number, 1, rTitle.number, nCols);
+  const cTitle = rTitle.getCell(1);
+  cTitle.font      = font(16, true, C.titleFg);
+  cTitle.alignment = align('left', 'middle');
+  rTitle.height    = 30;
+
+  const rSub = ws.addRow([`Data: ${dataStr}   ·   Generato con DietPlan Pro`]);
+  paintRow(rSub, C.titleBg);
+  ws.mergeCells(rSub.number, 1, rSub.number, nCols);
+  rSub.getCell(1).font      = font(10, false, C.subFg, true);
+  rSub.getCell(1).alignment = align('left', 'middle');
+  rSub.height = 18;
+
+  ws.addRow([]).height = 6; // piccolo spazio
+
+  // ── Giorni e pasti ───────────────────────────────────────────────
   giorni.forEach((giorno, gi) => {
     const gNome = giorno.nome || ('Giorno ' + (gi + 1));
     let dK=0, dP=0, dCH=0, dZ=0, dG=0, dGS=0, dFi=0;
     const dM = selMicros.map(() => 0);
     let hasFood = false;
+    let rowIdx  = 0; // alternanza righe
+
+    // Intestazione giorno (solo per piani multi-giorno)
+    if (giorni.length > 1) {
+      const rDay0 = ws.addRow([gNome.toUpperCase()]);
+      paintRow(rDay0, 'FF0F766E');
+      ws.mergeCells(rDay0.number, 1, rDay0.number, nCols);
+      rDay0.getCell(1).font      = font(13, true, 'FFFFFFFF');
+      rDay0.getCell(1).alignment = align('left', 'middle');
+      rDay0.height = 24;
+    }
 
     giorno.meals.forEach(pasto => {
       const items = (pasto.items || []).filter(it => it.nome && it.nome.trim());
       if (!items.length) return;
       hasFood = true;
+      rowIdx  = 0;
 
       let pK=0, pP=0, pCH=0, pZ=0, pG=0, pGS=0, pFi=0;
       const pM = selMicros.map(() => 0);
 
-      // Riga intestazione pasto
-      rows.push([`${pasto.emoji || ''} ${pasto.nome} — ${gNome}`]);
-      rows.push(allHdr);
+      // Intestazione pasto
+      const rMeal = ws.addRow([`${pasto.emoji || ''}  ${pasto.nome}`]);
+      paintRow(rMeal, C.mealBg);
+      ws.mergeCells(rMeal.number, 1, rMeal.number, nCols);
+      rMeal.getCell(1).font      = font(12, true, C.mealFg);
+      rMeal.getCell(1).alignment = align('left', 'middle');
+      rMeal.height = 22;
 
+      // Intestazione colonne
+      const rHdr = ws.addRow(allHdr);
+      rHdr.height = 18;
+      for (let c = 1; c <= nCols; c++) {
+        const cell = rHdr.getCell(c);
+        cell.fill      = solid(C.hdrBg);
+        cell.font      = font(9, true, C.hdrFg);
+        cell.alignment = align(c === 1 ? 'left' : 'center', 'middle');
+        cell.border    = thinBorder(C.hdrBorder);
+      }
+
+      // Alimenti
       items.forEach(item => {
-        const f   = lookup(item.nome);
-        const qt  = parseFloat(item.qt) || 0;
-        const k   = f ? xn((f.k  || 0) / 100 * qt) : 0;
-        const p   = f ? xn((f.p  || 0) / 100 * qt) : 0;
-        const ch  = f ? xn((f.ch || 0) / 100 * qt) : 0;
-        const z   = f ? xn((f.z  || 0) / 100 * qt) : 0;
-        const g   = f ? xn((f.g  || 0) / 100 * qt) : 0;
-        const gs  = f ? xn((f.gs || 0) / 100 * qt) : 0;
-        const fi  = f ? xn((f.fi || 0) / 100 * qt) : 0;
+        const f  = lookup(item.nome);
+        const qt = parseFloat(item.qt) || 0;
+        const k  = f ? xn((f.k  || 0) / 100 * qt) : 0;
+        const p  = f ? xn((f.p  || 0) / 100 * qt) : 0;
+        const ch = f ? xn((f.ch || 0) / 100 * qt) : 0;
+        const z  = f ? xn((f.z  || 0) / 100 * qt) : 0;
+        const g  = f ? xn((f.g  || 0) / 100 * qt) : 0;
+        const gs = f ? xn((f.gs || 0) / 100 * qt) : 0;
+        const fi = f ? xn((f.fi || 0) / 100 * qt) : 0;
         pK+=k; pP+=p; pCH+=ch; pZ+=z; pG+=g; pGS+=gs; pFi+=fi;
-        const mVals = selMicros.map((mk, mi) => {
-          const v = f ? xn((f[mk] || 0) / 100 * qt) : 0;
-          pM[mi] += v;
-          return num(v);
-        });
+        const mVals = selMicros.map((mk, mi) => { const v = f ? xn((f[mk]||0)/100*qt) : 0; pM[mi]+=v; return num(v); });
+
         const altNote = item.altPrint?.length && item.altPrint[0]?.nome
           ? ` (Alt: ${item.altPrint[0].nome} ${item.altPrint[0].qt}g)` : '';
-        rows.push([item.nome + altNote, qt || '', num(k), num(p), num(ch), num(z), num(g), num(gs), num(fi), ...mVals]);
+        const bg = rowIdx++ % 2 === 0 ? C.rowEven : C.rowOdd;
+        const rFood = ws.addRow([item.nome + altNote, qt||'', num(k), num(p), num(ch), num(z), num(g), num(gs), num(fi), ...mVals]);
+        rFood.height = 16;
+        for (let c = 1; c <= nCols; c++) {
+          const cell = rFood.getCell(c);
+          cell.fill      = solid(bg);
+          cell.alignment = align(c === 1 ? 'left' : 'right', 'middle');
+          cell.border    = { bottom: { style: 'hair', color: { argb: 'FFE2E8F0' } } };
+          // Alimento
+          if (c === 1) { cell.font = font(10, false, 'FF1E293B'); }
+          // Kcal → verde grassetto
+          else if (c === 3) { cell.font = font(10, true, C.kcalFg); }
+          // Nota alternativa → grigio più piccolo
+          else { cell.font = font(10, false, 'FF475569'); }
+        }
+        // Se c'è nota alternativa, la cella nome va in grigio
+        if (altNote) rFood.getCell(1).font = font(10, false, C.altFg);
       });
 
       dK+=pK; dP+=pP; dCH+=pCH; dZ+=pZ; dG+=pG; dGS+=pGS; dFi+=pFi;
       pM.forEach((v, i) => dM[i] += v);
 
       // Subtotale pasto
-      rows.push([
-        `SUBTOTALE ${pasto.nome}`, '',
+      const rSt = ws.addRow([
+        `SUBTOTALE  ${pasto.nome}`, '',
         Math.round(pK), r1(pP), r1(pCH), r1(pZ), r1(pG), r1(pGS), r1(pFi),
-        ...pM.map(v => r1(v) || '')
+        ...pM.map(v => r1(v)||'')
       ]);
-      rows.push([]);
+      rSt.height = 17;
+      styleAllCells(rSt, font(10, true, C.subFg), C.subBg, null, null);
+      for (let c = 2; c <= nCols; c++) rSt.getCell(c).alignment = align('right', 'middle');
+      rSt.getCell(1).alignment = align('left', 'middle');
+
+      ws.addRow([]).height = 5;
     });
 
     if (hasFood) {
       // Totale giornaliero
-      rows.push([
-        `TOTALE ${gNome.toUpperCase()}`, '',
+      const rTot = ws.addRow([
+        `TOTALE  ${gNome.toUpperCase()}`, '',
         Math.round(dK), r1(dP), r1(dCH), r1(dZ), r1(dG), r1(dGS), r1(dFi),
-        ...dM.map(v => r1(v) || '')
+        ...dM.map(v => r1(v)||'')
       ]);
-      rows.push([]);
-      rows.push([]);
+      rTot.height = 20;
+      const totBorder = {
+        top:    { style: 'medium', color: { argb: C.dayBorder } },
+        bottom: { style: 'medium', color: { argb: C.dayBorder } },
+      };
+      styleAllCells(rTot, font(11, true, C.dayFg), C.dayBg, null, totBorder);
+      for (let c = 2; c <= nCols; c++) rTot.getCell(c).alignment = align('right', 'middle');
+      rTot.getCell(1).alignment = align('left', 'middle');
+
+      ws.addRow([]).height = 4;
+      ws.addRow([]).height = 4;
     }
   });
 
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-
-  // Larghezze colonne per leggibilità
-  ws['!cols'] = [
-    {wch: 36}, // Alimento
-    {wch:  8}, // Qt
-    {wch:  8}, // Kcal
-    {wch:  9}, // Prot
-    {wch:  9}, // CHO
-    {wch: 12}, // Zuccheri
-    {wch:  9}, // Gr tot
-    {wch:  9}, // Gr sat
-    {wch:  9}, // Fibra
-    ...selMicros.map(() => ({wch: 9}))
-  ];
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Piano Alimentare');
-
-  const filename = `${nomePaz.replace(/[^a-zA-Z0-9_\- ]/g, '_').trim()}_${dataStr}.xlsx`;
-  XLSX.writeFile(wb, filename);
+  // ── Download ────────────────────────────────────────────────────
+  const buffer   = await wb.xlsx.writeBuffer();
+  const blob     = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  a.href         = url;
+  a.download     = `${nomePaz.replace(/[^a-zA-Z0-9_\- ]/g, '_').trim()}_${dataStr}.xlsx`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
   toast('📥 Excel esportato!', 'ok');
 }
 

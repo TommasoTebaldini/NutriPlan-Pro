@@ -841,7 +841,7 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
     <div style="font-size:10pt;opacity:.8;margin-top:4px">${esc(label)} · DietPlan Pro</div>
   </div>`;
 
-  // Info grid per sezioni con piano
+  // Info grid per sezioni con piano (diabete, pediatria, sport, pancreas)
   if (piano.kcal || piano.cho_tot || piano.prot_per_kg || piano.grassi_tot) {
     body += infoGrid([
       { label:'🔥 Kcal/die', val: piano.kcal },
@@ -849,6 +849,53 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
       { label:'💪 Prot/kg',  val: piano.prot_per_kg ? piano.prot_per_kg + ' g' : '' },
       { label:'🫁 Grassi',   val: piano.grassi_tot ? piano.grassi_tot + ' g' : '' },
     ]);
+  }
+
+  // Info grid per chetogenica (dati.calcolo)
+  if (tipo === 'chetogenica') {
+    const c = dati.calcolo || {};
+    if (c.peso || c.tipo || c.obiettivo || c.attivita) {
+      body += infoGrid([
+        { label:'⚖️ Peso',       val: c.peso     ? c.peso     + ' kg'   : '' },
+        { label:'📏 Altezza',    val: c.altezza  ? c.altezza  + ' cm'   : '' },
+        { label:'🎂 Età',        val: c.eta      ? c.eta      + ' anni' : '' },
+        { label:'🚶 Attività',   val: c.attivita },
+        { label:'🥑 Tipo dieta', val: c.tipo },
+        { label:'🎯 Obiettivo',  val: c.obiettivo },
+      ]);
+    }
+    if (dati.gki?.glicemia || dati.gki?.chetoni) {
+      body += infoGrid([
+        { label:'🩸 Glicemia', val: dati.gki.glicemia ? dati.gki.glicemia + ' mg/dL'  : '' },
+        { label:'🔬 Chetoni',  val: dati.gki.chetoni  ? dati.gki.chetoni  + ' mmol/L' : '' },
+      ]);
+    }
+  }
+
+  // Info grid per renale (dati.calcolo)
+  if (tipo === 'renale') {
+    const c = dati.calcolo || {};
+    if (c.peso || c.stadio || c.altezza) {
+      body += infoGrid([
+        { label:'⚖️ Peso',        val: c.peso        ? c.peso        + ' kg'   : '' },
+        { label:'🏋️ Peso ideale', val: c.peso_ideale ? c.peso_ideale + ' kg'   : '' },
+        { label:'📏 Altezza',     val: c.altezza     ? c.altezza     + ' cm'   : '' },
+        { label:'🎂 Età',         val: c.eta         ? c.eta         + ' anni' : '' },
+        { label:'🏥 Stadio IRC',  val: c.stadio },
+        { label:'🚶 Attività',    val: c.attivita },
+      ]);
+    }
+  }
+
+  // Disfagia
+  if (tipo === 'disfagia') {
+    if (dati.iddsi) {
+      body += `<div style="background:#F0FDFA;border-left:4px solid #0D9488;border-radius:6px;padding:12px 16px;margin-bottom:14px">
+        <div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Livello IDDSI</div>
+        <div style="font-size:16pt;font-weight:700;color:#0F766E">${esc(dati.iddsi)}</div>
+      </div>`;
+    }
+    if (dati.kcal) body += `<div style="background:#F8FAFC;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:11pt;color:#1E293B">${esc(dati.kcal)}</div>`;
   }
 
   if (piano.note_cliniche?.trim()) {

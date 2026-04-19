@@ -280,24 +280,29 @@ function renderConsiglio(dati) {
   if (dati.descrizione||dati.indicazioni) {
     frag.appendChild(el('div',{class:'info-box blue'},dati.descrizione||dati.indicazioni))
   }
-  if (dati.alimenti_consentiti?.length) {
-    frag.appendChild(el('div',{class:'list-section'},
-      el('div',{class:'list-head green'},'✅ Alimenti consentiti'),
-      el('ul',{class:'items'},...dati.alimenti_consentiti.map(a=>el('li',{},a)))
-    ))
-  }
-  if (dati.alimenti_limitare?.length) {
-    frag.appendChild(el('div',{class:'list-section'},
-      el('div',{class:'list-head yellow'},'⚠️ Da limitare'),
-      el('ul',{class:'items'},...dati.alimenti_limitare.map(a=>el('li',{},a)))
-    ))
-  }
-  if (dati.alimenti_evitare?.length) {
-    frag.appendChild(el('div',{class:'list-section'},
-      el('div',{class:'list-head red'},'🚫 Da evitare'),
-      el('ul',{class:'items'},...dati.alimenti_evitare.map(a=>el('li',{},a)))
-    ))
-  }
+  // Info generale (pasti, porzioni, idratazione)
+  const infoRows=[['Distribuzione pasti',dati.pasti],['Porzioni',dati.porzioni],['Idratazione',dati.idratazione]].filter(([,v])=>v)
+  if (infoRows.length) { const t=secTable('Indicazioni generali',infoRows,'ℹ️'); if(t) frag.appendChild(t) }
+  // Alimenti (supporta sia i vecchi campi che i nuovi ok/no/mod)
+  const consentiti = dati.alimenti_consentiti?.length ? dati.alimenti_consentiti : (dati.ok||[])
+  const limitare   = dati.alimenti_limitare?.length   ? dati.alimenti_limitare   : (dati.mod||[])
+  const evitare    = dati.alimenti_evitare?.length    ? dati.alimenti_evitare    : (dati.no||[])
+  if (consentiti.length) frag.appendChild(el('div',{class:'list-section'},
+    el('div',{class:'list-head green'},'✅ Alimenti consigliati'),
+    el('ul',{class:'items'},...consentiti.map(a=>el('li',{},a)))))
+  if (limitare.length) frag.appendChild(el('div',{class:'list-section'},
+    el('div',{class:'list-head yellow'},'⚠️ Da limitare'),
+    el('ul',{class:'items'},...limitare.map(a=>el('li',{},a)))))
+  if (evitare.length) frag.appendChild(el('div',{class:'list-section'},
+    el('div',{class:'list-head red'},'🚫 Da evitare'),
+    el('ul',{class:'items'},...evitare.map(a=>el('li',{},a)))))
+  if (dati.pratici?.length) frag.appendChild(el('div',{class:'list-section'},
+    el('div',{class:'list-head green'},'💡 Consigli pratici'),
+    el('ul',{class:'items'},...dati.pratici.map(a=>el('li',{},a)))))
+  if (dati.avvisi?.length) frag.appendChild(el('div',{class:'list-section'},
+    el('div',{class:'list-head red'},'🚨 Avvisi importanti'),
+    el('ul',{class:'items'},...dati.avvisi.map(a=>el('li',{},a)))))
+  if (dati.note_paziente) frag.appendChild(el('div',{class:'note-box',style:'margin:0 0 16px'},'📝 '+dati.note_paziente))
   if (dati.note) frag.appendChild(el('div',{class:'note-box',style:'margin:0 0 16px'},'💡 '+dati.note))
   return frag
 }
@@ -374,6 +379,10 @@ function render() {
       dati.consiglio_nome||nota
     ))
     fr.appendChild(renderConsiglio(dati))
+    content = fr
+  } else if (dati.descrizione||dati.testo||dati.contenuto) {
+    const fr = document.createDocumentFragment()
+    fr.appendChild(el('div',{class:'info-box blue'},dati.descrizione||dati.testo||dati.contenuto))
     content = fr
   } else {
     // Calcolo clinico generico

@@ -1086,6 +1086,7 @@ async function salvaRenale() {
   if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
   const nota = document.getElementById('ren-nota').value.trim() || 'Sessione Nefropatia ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiRen();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'renale', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'renale', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

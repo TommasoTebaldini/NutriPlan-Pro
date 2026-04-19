@@ -1452,6 +1452,7 @@ async function salvaPediatria() {
   if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
   const nota = document.getElementById('ped-nota').value.trim() || 'Sessione pediatria ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiPed();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'pediatria', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'pediatria', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

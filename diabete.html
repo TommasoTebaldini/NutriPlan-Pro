@@ -897,6 +897,7 @@ async function salvaDiabete() {
   if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
   const nota = document.getElementById('dg-nota').value.trim() || 'Sessione diabete ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiDg();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'diabete', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

@@ -804,6 +804,104 @@ function stampaCompattaSpecialistica(pasti, opts) {
 }
 
 /* ═══════════════════════════════════════════════════
+   buildStampaSpecialisticaHTML — genera HTML di stampa da dati JSON
+   (usato dalle funzioni salva* per precalcolare stampa_html)
+═══════════════════════════════════════════════════ */
+function buildStampaSpecialisticaHTML(dati, tipo, nota) {
+  const esc = s => (s == null ? '' : String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const LABELS = {
+    diabete:'🩸 Diabete', pediatria:'👶 Pediatria', sport:'🏃 Nutrizione Sportiva',
+    pancreas:'🫁 Pancreas', disfagia:'💧 Disfagia', dca:'🧠 Sessione DCA',
+    ristorazione:'🍽️ Ristorazione', renale:'🫘 Nefropatia', chetogenica:'🥑 Chetogenica',
+  };
+  const COLORI = {
+    diabete:'#3B82F6', pediatria:'#EC4899', sport:'#F97316', pancreas:'#8B5CF6',
+    disfagia:'#06B6D4', dca:'#7C3AED', ristorazione:'#0F766E', renale:'#f97316', chetogenica:'#0891b2',
+  };
+  const label  = LABELS[tipo]  || tipo;
+  const colore = COLORI[tipo]  || '#1a7f5a';
+  const nome   = nota || label;
+  const piano  = dati.piano || {};
+
+  const infoGrid = items => {
+    const vis = items.filter(i => i.val);
+    if (!vis.length) return '';
+    let h = `<div style="display:grid;grid-template-columns:repeat(${Math.min(vis.length,3)},1fr);gap:10px;margin-bottom:14px">`;
+    vis.forEach(i => {
+      h += `<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${colore}">
+        <div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${i.label}</div>
+        <div style="font-size:11pt;font-weight:700;color:#1E293B">${esc(String(i.val))}</div>
+      </div>`;
+    });
+    return h + '</div>';
+  };
+
+  let body = `<div style="background:${colore};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+    <div style="font-size:18pt;font-weight:700">${esc(nome)}</div>
+    <div style="font-size:10pt;opacity:.8;margin-top:4px">${esc(label)} · DietPlan Pro</div>
+  </div>`;
+
+  // Info grid per sezioni con piano
+  if (piano.kcal || piano.cho_tot || piano.prot_per_kg || piano.grassi_tot) {
+    body += infoGrid([
+      { label:'🔥 Kcal/die', val: piano.kcal },
+      { label:'🍞 CHO tot',  val: piano.cho_tot   ? piano.cho_tot + ' g'   : '' },
+      { label:'💪 Prot/kg',  val: piano.prot_per_kg ? piano.prot_per_kg + ' g' : '' },
+      { label:'🫁 Grassi',   val: piano.grassi_tot ? piano.grassi_tot + ' g' : '' },
+    ]);
+  }
+
+  if (piano.note_cliniche?.trim()) {
+    body += `<div style="background:#EFF6FF;border-left:4px solid #3B82F6;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#1E3A5F;white-space:pre-wrap">📋 ${esc(piano.note_cliniche)}</div>`;
+  }
+
+  // Pasti
+  const pasti = piano.pasti || dati.pasti || [];
+  pasti.filter(p => p.alimenti?.trim()).forEach(pasto => {
+    const energia = pasto.kcal ? `≈ ${pasto.kcal} kcal` : (pasto.cho ? `${pasto.cho} g CHO` : (pasto.grassi ? `${pasto.grassi} g grassi` : ''));
+    body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:14px;font-weight:700;color:white">${esc(pasto.nome||'Pasto')}</span>
+          ${pasto.ora ? `<span style="font-size:12px;color:rgba(255,255,255,.75)">${esc(pasto.ora)}</span>` : ''}
+        </div>
+        ${energia ? `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">${esc(energia)}</span>` : ''}
+      </div>`;
+    pasto.alimenti.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
+      body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${esc(line)}</div>`;
+    });
+    if (pasto.note?.trim()) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(pasto.note)}</div>`;
+    body += `</div>`;
+  });
+
+  // Portate per ristorazione
+  const portate = piano.portate || [];
+  portate.filter(p => p.menu?.trim()).forEach(portata => {
+    body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">
+      <div style="padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:700;color:white">${esc(portata.nome||'Portata')}</span>
+        ${portata.porzione ? `<span style="font-size:12px;color:rgba(255,255,255,.9)">${esc(portata.porzione)}</span>` : ''}
+      </div>`;
+    portata.menu.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
+      body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px">${esc(line)}</div>`;
+    });
+    if (portata.note?.trim()) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(portata.note)}</div>`;
+    body += `</div>`;
+  });
+
+  if (piano.note_generali?.trim()) {
+    body += `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:10pt;color:#78350F;white-space:pre-wrap">📌 ${esc(piano.note_generali)}</div>`;
+  }
+
+  body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div>`;
+
+  return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${esc(nome)}</title>
+<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:'Segoe UI',Arial,sans-serif;color:#1E293B;font-size:11pt;line-height:1.5;padding:1.5cm 2cm 2.5cm}</style>
+</head><body>${body}</body></html>`;
+}
+
+/* ═══════════════════════════════════════════════════
    PORZIONI — Snap al multiplo/sottomultiplo più vicino
    _snapPortion(std, scaled) → integer
 ═══════════════════════════════════════════════════ */

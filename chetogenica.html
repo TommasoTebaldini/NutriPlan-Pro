@@ -1055,6 +1055,7 @@ async function salvaKeto() {
   if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
   const nota = document.getElementById('keto-nota').value.trim() || 'Sessione Chetogenica ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiKeto();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'chetogenica', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

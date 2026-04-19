@@ -1044,6 +1044,7 @@ async function salvaSport() {
   if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
   const nota = document.getElementById('sport-nota').value.trim() || 'Sessione sport ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiSport();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'sport', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'sport', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

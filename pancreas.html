@@ -804,6 +804,7 @@ async function salvaPancreas() {
   if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
   const nota = document.getElementById('pan-nota').value.trim() || 'Sessione pancreas ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiPan();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'pancreas', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'pancreas', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

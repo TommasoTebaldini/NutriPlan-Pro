@@ -944,6 +944,7 @@ async function salvaRistorazione() {
   if (!cartella_id) { toast('Seleziona una cartella / progetto','err'); return; }
   const nota = document.getElementById('rist-nota').value.trim() || 'Menu ristorazione ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiRist();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'ristorazione', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'ristorazione', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

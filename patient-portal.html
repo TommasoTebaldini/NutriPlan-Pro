@@ -404,8 +404,15 @@ async function loadDocuments() {
     let title = n.nota || 'Nota specialistica';
     let badge = 'Nota';
     let badgeColor = 'background:#FEF3C7;color:#92400E';
-    if (isQ) { badge = 'Questionario'; badgeColor = 'background:#F0F9FF;color:#0369A1'; try { const d = JSON.parse(n.dati || '{}'); title = d.questionario || title; } catch(e) { /* dati may not be valid JSON */ } }
-    if (isC) { badge = 'Consiglio'; badgeColor = 'background:#FEF3C7;color:#92400E'; try { const d = JSON.parse(n.dati || '{}'); title = d.consiglio_nome || title; } catch(e) { /* dati may not be valid JSON */ } }
+    let stampaHtml = null;
+    try {
+      const d = JSON.parse(n.dati || '{}');
+      if (isQ) { badge = 'Questionario'; badgeColor = 'background:#F0F9FF;color:#0369A1'; title = d.questionario || title; }
+      if (isC) { badge = 'Consiglio'; badgeColor = 'background:#FEF3C7;color:#92400E'; title = d.consiglio_nome || title; }
+      if (d.stampa_html) stampaHtml = d.stampa_html;
+    } catch(e) { /* dati may not be valid JSON */ }
+    const mapKey = 'ns-' + n.id;
+    if (stampaHtml) _stampaHtmlMap[mapKey] = stampaHtml;
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">${isQ ? '📋' : isC ? '💡' : '🗒️'}</span>
       <div class="pp-doc-info">
@@ -413,6 +420,7 @@ async function loadDocuments() {
         <div class="pp-doc-meta">${badge} · ${fmtDate(n.created_at)}</div>
       </div>
       <span class="pp-doc-badge" style="${badgeColor}">${badge}</span>
+      ${stampaHtml ? `<button onclick="apriStampaSpec('${mapKey}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>` : ''}
     </div>`;
   }
 
@@ -536,6 +544,18 @@ function toggleDocContent(id) {
   const el = document.getElementById('doc-' + id);
   if (!el) return;
   el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+// Map per tenere stampa_html in memoria senza inlinearli negli onclick
+const _stampaHtmlMap = {};
+function apriStampaSpec(key) {
+  const html = _stampaHtmlMap[key];
+  if (!html) return;
+  const win = window.open('', '_blank');
+  if (!win) return;
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
 }
 
 // ═══════════════════════════════════════════════════

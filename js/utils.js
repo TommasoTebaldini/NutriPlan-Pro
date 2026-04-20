@@ -545,12 +545,12 @@ function initCartellaWidget(cid, opts) {
       '<input type="text" id="' + cid + '-srch" placeholder="' + placeholder + '" autocomplete="off"' +
       ' style="width:100%;padding:6px 10px;border:1.5px solid ' + border + ';border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none;background:white;color:#1E293B;box-sizing:border-box"' +
       ' oninput="_cwFilter(\'' + cid + '\')"' +
-      ' onfocus="_cwShow(\'' + cid + '\')"' +
-      ' onblur="setTimeout(()=>_cwHide(\'' + cid + '\'),200)">' +
+      ' onfocus="_cwFocus(\'' + cid + '\')"' +
+      ' onblur="setTimeout(()=>_cwBlur(\'' + cid + '\'),200)">' +
       '<div id="' + cid + '-dd" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
     '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
-    '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:none"></span>';
+    '<span id="' + cid + '-lbl" style="display:none"></span>';
 }
 
 function _cwFilter(cid) {
@@ -591,16 +591,47 @@ function _cwHide(cid) {
   if (dd) dd.style.display = 'none';
 }
 
+function _cwFocus(cid) {
+  const srch = document.getElementById(cid + '-srch');
+  if (srch && srch.getAttribute('data-cw-selected') === '1') {
+    // User is editing — clear display so they can type to search
+    srch.value = '';
+    srch.style.color = '#1E293B';
+    srch.style.fontWeight = '';
+    srch.setAttribute('data-cw-selected', 'editing');
+  }
+  _cwShow(cid, '');
+}
+
+function _cwBlur(cid) {
+  const srch = document.getElementById(cid + '-srch');
+  if (srch && srch.getAttribute('data-cw-selected') === 'editing') {
+    // User didn't pick a new cartella — restore previous selection display
+    const nome = srch.getAttribute('data-cw-nome') || '';
+    const opts = (document.getElementById(cid) || {})._cwOpts || {};
+    srch.value = nome ? '✅ ' + nome : '';
+    srch.setAttribute('data-cw-selected', nome ? '1' : '');
+    srch.style.color = nome ? (opts.labelColor || '#0F766E') : '#1E293B';
+    srch.style.fontWeight = nome ? '600' : '';
+  }
+  setTimeout(() => _cwHide(cid), 200);
+}
+
 function _cwUpdateDisplay(cid, id, nome) {
   const container = document.getElementById(cid);
   const opts = (container || {})._cwOpts || {};
   const hiddenId = opts.hiddenInputId || (cid + '-val');
   const hidden = document.getElementById(hiddenId);
-  if (hidden) hidden.value = id;
+  if (hidden) hidden.value = id || '';
   const srch = document.getElementById(cid + '-srch');
-  if (srch) srch.value = nome;
-  const lbl = document.getElementById(cid + '-lbl');
-  if (lbl) { lbl.textContent = nome ? '✅ ' + nome : ''; lbl.style.display = nome ? 'block' : 'none'; }
+  if (srch) {
+    srch.value = nome ? '✅ ' + nome : '';
+    srch.setAttribute('data-cw-nome', nome || '');
+    srch.setAttribute('data-cw-selected', nome ? '1' : '');
+    const opts2 = (container || {})._cwOpts || {};
+    srch.style.color = nome ? (opts2.labelColor || '#0F766E') : '#1E293B';
+    srch.style.fontWeight = nome ? '600' : '';
+  }
   _cwHide(cid);
 }
 

@@ -24,7 +24,7 @@
 .chat-patient-last{font-size:11.5px;color:var(--slate-l);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chat-patient-time{font-size:10px;color:var(--slate-l);flex-shrink:0}
 .chat-unread{background:var(--teal);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;flex-shrink:0}
-.chat-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
 .chat-main-hdr{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:white}
 .chat-main-hdr h3{font-size:14px;font-weight:700;color:var(--slate);flex:1}
 .chat-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:8px;background:#F8FAFC}
@@ -41,11 +41,44 @@
 .chat-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--slate-l);font-size:14px;gap:8px}
 .chat-empty .ei{font-size:48px}
 .chat-date-sep{text-align:center;font-size:11px;color:var(--slate-l);margin:10px 0;font-weight:600}
+/* Tab bar */
+.chat-tabs{display:flex;border-bottom:2px solid var(--border);background:white}
+.chat-tab{padding:10px 18px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;white-space:nowrap}
+.chat-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.chat-tab:hover:not(.active){color:var(--slate)}
+/* Andamento panel */
+.and-panel{flex:1;overflow-y:auto;padding:16px 18px;background:#F8FAFC}
+.and-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--slate-l);font-size:13.5px;gap:8px;padding:48px 24px;text-align:center}
+.and-card{background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.and-card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.and-date{font-size:11.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px}
+.and-mood-badge{font-size:22px;line-height:1}
+.and-section{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.and-section-lbl{font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.and-section-val{font-size:12.5px;color:var(--slate);line-height:1.45}
+.and-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.and-pill{padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.and-pill.mood{background:#E0F2F1;color:var(--teal-d)}
+.and-pill.sleep{background:#EEF2FF;color:#4338CA}
+.and-pill.weight{background:#FEF3C7;color:#92400E}
+.and-pill.activity{background:#ECFDF5;color:#065F46}
+.and-mood-bar{display:flex;gap:4px;align-items:center;margin-top:10px}
+.and-mood-bar-label{font-size:11px;color:var(--slate-l);width:70px;flex-shrink:0}
+.and-mood-track{flex:1;height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden}
+.and-mood-fill{height:100%;border-radius:3px;background:var(--teal);transition:width .3s}
+.and-stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.and-stat{background:white;border:1px solid var(--border);border-radius:10px;padding:12px 16px;flex:1;min-width:100px;text-align:center}
+.and-stat-val{font-size:22px;font-weight:800;color:var(--teal-d);line-height:1.1}
+.and-stat-lbl{font-size:11px;color:var(--slate-l);margin-top:3px}
+.and-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.and-filter-bar select{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:12px;font-family:inherit;outline:none;background:white;cursor:pointer}
+.and-filter-bar select:focus{border-color:var(--teal-l)}
 @media(max-width:768px){
   .chat-sidebar{width:100%;position:absolute;z-index:10;left:0;top:0;bottom:0;transform:translateX(0);transition:transform .25s}
   .chat-sidebar.hidden{transform:translateX(-100%)}
   .chat-container{position:relative}
   .chat-back-btn{display:inline-flex!important}
+  .and-stats-row{gap:8px}
 }
 </style>
 </head>
@@ -126,8 +159,11 @@
 <script>
 let chatPatients = [];
 let selectedPatientId = null;
+let selectedPatientCartellaId = null;
 let chatMessages = [];
 let realtimeChannel = null;
+let currentChatTab = 'chat'; // 'chat' | 'andamento'
+let andamentoPeriodDays = 30;
 
 function getInitials(name) {
   return (name || '?').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || '?';
@@ -201,6 +237,7 @@ async function loadChatPatients() {
       id: p.id,
       name: displayName,
       email: p.email || '',
+      cartellaId: links.find(l => l.patient_id === p.id)?.cartella_id || null,
       lastMessage: lastMsgs?.[0]?.content || '',
       lastTime: lastMsgs?.[0]?.created_at || null,
       unread: count || 0
@@ -254,10 +291,12 @@ function filterChatPatients() {
 
 async function selectPatient(patientId) {
   selectedPatientId = patientId;
+  currentChatTab = 'chat';
   renderPatientList();
   const p = chatPatients.find(x => x.id === patientId);
   if (!p) return;
 
+  selectedPatientCartellaId = p.cartellaId || null;
   const mainPanel = document.getElementById('chat-main-panel');
   const initials = getInitials(p.name);
 
@@ -267,12 +306,18 @@ async function selectPatient(patientId) {
       <div class="chat-patient-avatar" style="width:32px;height:32px;font-size:12px">${initials || '?'}</div>
       <h3>${esc(p.name)}</h3>
     </div>
-    <div class="chat-messages" id="chat-messages-area">
-      <div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px">Caricamento messaggi...</div>
+    <div class="chat-tabs">
+      <div class="chat-tab active" id="tab-chat" onclick="switchChatTab('chat')">💬 Messaggi</div>
+      <div class="chat-tab" id="tab-andamento" onclick="switchChatTab('andamento')">📈 Andamento</div>
     </div>
-    <div class="chat-input-area">
-      <textarea id="chat-input" placeholder="Scrivi un messaggio..." rows="1" onkeydown="handleChatKey(event)"></textarea>
-      <button class="chat-send-btn" onclick="sendMessage()">Invia</button>
+    <div id="chat-tab-body" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
+      <div class="chat-messages" id="chat-messages-area">
+        <div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px">Caricamento messaggi...</div>
+      </div>
+      <div class="chat-input-area">
+        <textarea id="chat-input" placeholder="Scrivi un messaggio..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+        <button class="chat-send-btn" onclick="sendMessage()">Invia</button>
+      </div>
     </div>
   `;
 
@@ -284,6 +329,156 @@ async function selectPatient(patientId) {
   await loadMessages(patientId);
   setupRealtime(patientId);
   markMessagesAsRead(patientId);
+}
+
+function switchChatTab(tab) {
+  currentChatTab = tab;
+  document.getElementById('tab-chat')?.classList.toggle('active', tab === 'chat');
+  document.getElementById('tab-andamento')?.classList.toggle('active', tab === 'andamento');
+
+  if (tab === 'chat') {
+    document.getElementById('chat-tab-body').innerHTML = `
+      <div class="chat-messages" id="chat-messages-area"></div>
+      <div class="chat-input-area">
+        <textarea id="chat-input" placeholder="Scrivi un messaggio..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+        <button class="chat-send-btn" onclick="sendMessage()">Invia</button>
+      </div>
+    `;
+    renderMessages();
+  } else {
+    document.getElementById('chat-tab-body').innerHTML = `<div class="and-panel" id="andamento-panel"><div class="and-empty"><div style="font-size:36px">⏳</div><div>Caricamento andamento...</div></div></div>`;
+    loadAndamento();
+  }
+}
+
+async function loadAndamento() {
+  const panel = document.getElementById('andamento-panel');
+  if (!panel) return;
+
+  if (!selectedPatientCartellaId) {
+    panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📭</div><div>Nessuna cartella collegata a questo paziente.<br>Collega il paziente a una cartella per vedere il diario.</div></div>';
+    return;
+  }
+
+  // Fetch wellness entries
+  let wellnessQuery = sb.from('daily_wellness')
+    .select('*')
+    .eq('cartella_id', selectedPatientCartellaId)
+    .order('logged_at', { ascending: false })
+    .limit(90);
+  if (andamentoPeriodDays > 0) {
+    const since = new Date(Date.now() - andamentoPeriodDays * 86400000).toISOString();
+    wellnessQuery = wellnessQuery.gte('logged_at', since);
+  }
+  const { data: wellness, error } = await wellnessQuery;
+
+  // Fetch weight logs
+  let weightQuery = sb.from('weight_logs')
+    .select('*')
+    .eq('cartella_id', selectedPatientCartellaId)
+    .order('logged_at', { ascending: false })
+    .limit(90);
+  if (andamentoPeriodDays > 0) {
+    const since = new Date(Date.now() - andamentoPeriodDays * 86400000).toISOString();
+    weightQuery = weightQuery.gte('logged_at', since);
+  }
+  const { data: weights } = await weightQuery;
+
+  if (error) {
+    panel.innerHTML = `<div class="and-empty"><div style="font-size:36px">❌</div><div>Errore caricamento: ${esc(error.message)}</div></div>`;
+    return;
+  }
+
+  if (!wellness || !wellness.length) {
+    panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📓</div><div>Il paziente non ha ancora registrato dati nel diario.<br><span style="font-size:12px;color:var(--slate-l)">I dati appariranno qui non appena il paziente utilizzerà l\'app.</span></div></div>';
+    return;
+  }
+
+  // Build weight map by date string
+  const weightMap = {};
+  for (const w of (weights || [])) {
+    const dk = new Date(w.logged_at).toDateString();
+    if (!weightMap[dk]) weightMap[dk] = w.weight;
+  }
+
+  const moodMap = { 1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊' };
+  const moodColorMap = { 1: '#FEE2E2', 2: '#FEF3C7', 3: '#F1F5F9', 4: '#DCFCE7', 5: '#CCFBF1' };
+  const moodBorderMap = { 1: '#FECACA', 2: '#FDE68A', 3: '#CBD5E1', 4: '#86EFAC', 5: '#5EEAD4' };
+  const moodTextMap = { 1: 'Molto negativo', 2: 'Negativo', 3: 'Neutro', 4: 'Positivo', 5: 'Ottimo' };
+
+  // Stats
+  const moods = wellness.filter(w => w.mood).map(w => w.mood);
+  const avgMood = moods.length ? (moods.reduce((a, b) => a + b, 0) / moods.length).toFixed(1) : null;
+  const sleeps = wellness.filter(w => w.sleep_hours != null).map(w => parseFloat(w.sleep_hours));
+  const avgSleep = sleeps.length ? (sleeps.reduce((a, b) => a + b, 0) / sleeps.length).toFixed(1) : null;
+  const withActivity = wellness.filter(w => w.activity).length;
+  const withNotes = wellness.filter(w => w.notes).length;
+
+  // Filter options
+  const filterSel = `<div class="and-filter-bar">
+    <span style="font-size:12px;color:var(--slate-l);font-weight:600">Periodo:</span>
+    <select id="and-period-filter" onchange="filterAndamento(this.value)">
+      <option value="30" ${andamentoPeriodDays===30?'selected':''}>Ultimi 30 giorni</option>
+      <option value="60" ${andamentoPeriodDays===60?'selected':''}>Ultimi 60 giorni</option>
+      <option value="0" ${andamentoPeriodDays===0?'selected':''}>Tutto</option>
+    </select>
+  </div>`;
+
+  let statsHtml = `<div class="and-stats-row">
+    ${avgMood ? `<div class="and-stat"><div class="and-stat-val">${moodMap[Math.round(avgMood)]} ${avgMood}</div><div class="and-stat-lbl">Umore medio</div></div>` : ''}
+    ${avgSleep ? `<div class="and-stat"><div class="and-stat-val">🌙 ${avgSleep}h</div><div class="and-stat-lbl">Sonno medio</div></div>` : ''}
+    ${withActivity ? `<div class="and-stat"><div class="and-stat-val">🏃 ${withActivity}</div><div class="and-stat-lbl">Sessioni attività</div></div>` : ''}
+    ${withNotes ? `<div class="and-stat"><div class="and-stat-val">📓 ${withNotes}</div><div class="and-stat-lbl">Registrazioni diario</div></div>` : ''}
+  </div>`;
+
+  let cardsHtml = '';
+  for (const w of wellness) {
+    const dk = new Date(w.logged_at).toDateString();
+    const wt = weightMap[dk];
+    const moodEmoji = w.mood ? moodMap[w.mood] : null;
+    const moodLabel = w.mood ? moodTextMap[w.mood] : null;
+    const moodBorder = w.mood ? moodBorderMap[w.mood] : 'var(--border)';
+    const dateStr = new Date(w.logged_at).toLocaleDateString('it', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+
+    let pills = '';
+    if (w.mood) pills += `<span class="and-pill mood">${moodEmoji} ${moodLabel}</span>`;
+    if (w.sleep_hours != null) pills += `<span class="and-pill sleep">🌙 ${w.sleep_hours}h sonno</span>`;
+    if (wt) pills += `<span class="and-pill weight">⚖️ ${wt} kg</span>`;
+    if (w.activity) pills += `<span class="and-pill activity">🏃 ${esc(w.activity)}</span>`;
+
+    let sections = '';
+    if (w.notes) {
+      sections += `<div class="and-section">
+        <div class="and-section-lbl">📓 Diario alimentare</div>
+        <div class="and-section-val">${esc(w.notes)}</div>
+      </div>`;
+    }
+    if (w.symptoms) {
+      sections += `<div class="and-section">
+        <div class="and-section-lbl">⚠️ Sintomi / note</div>
+        <div class="and-section-val">${esc(typeof w.symptoms === 'string' ? w.symptoms : JSON.stringify(w.symptoms))}</div>
+      </div>`;
+    }
+
+    cardsHtml += `<div class="and-card" style="border-left:4px solid ${moodBorder}">
+      <div class="and-card-hdr">
+        ${moodEmoji ? `<div class="and-mood-badge">${moodEmoji}</div>` : '<div class="and-mood-badge" style="font-size:18px">📋</div>'}
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--slate)">${dateStr}</div>
+          ${moodLabel ? `<div style="font-size:11.5px;color:var(--slate-l)">Umore: ${moodLabel}</div>` : ''}
+        </div>
+      </div>
+      ${pills ? `<div class="and-pills">${pills}</div>` : ''}
+      ${sections}
+    </div>`;
+  }
+
+  panel.innerHTML = filterSel + statsHtml + cardsHtml;
+}
+
+function filterAndamento(days) {
+  andamentoPeriodDays = parseInt(days) || 0;
+  loadAndamento();
 }
 
 function deselectPatient() {

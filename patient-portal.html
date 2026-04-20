@@ -135,6 +135,14 @@
             <textarea id="diary-notes" placeholder="Es: Colazione: yogurt con cereali. Pranzo: pasta al pomodoro..." rows="4" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;resize:vertical"></textarea>
           </div>
           <div class="pp-field">
+            <label>Ore di sonno (opzionale)</label>
+            <input type="number" id="diary-sleep" placeholder="Es: 7.5" step="0.5" min="0" max="24" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;max-width:160px">
+          </div>
+          <div class="pp-field">
+            <label>Attività fisica (opzionale)</label>
+            <input type="text" id="diary-activity" placeholder="Es: camminata 30 min, palestra, nuoto..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
+          </div>
+          <div class="pp-field">
             <label>Sintomi / Note aggiuntive (opzionale)</label>
             <input type="text" id="diary-symptoms" placeholder="Es: gonfiore addominale, stanchezza..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
           </div>
@@ -624,6 +632,8 @@ async function salvaDiario() {
   const dateVal = document.getElementById('diary-date').value;
   const mood = document.getElementById('diary-mood').value;
   const notes = (document.getElementById('diary-notes').value || '').trim();
+  const sleepVal = document.getElementById('diary-sleep').value;
+  const activityRaw = (document.getElementById('diary-activity').value || '').trim();
   const symptomsRaw = (document.getElementById('diary-symptoms').value || '').trim();
   const weightVal = document.getElementById('diary-weight').value;
 
@@ -641,6 +651,8 @@ async function salvaDiario() {
     logged_at: loggedAt,
     mood: mood ? parseInt(mood) : null,
     notes: notes || null,
+    sleep_hours: sleepVal ? parseFloat(sleepVal) : null,
+    activity: activityRaw || null,
     symptoms: symptomsRaw ? symptomsRaw : null
   };
 
@@ -666,6 +678,8 @@ async function salvaDiario() {
   // Reset form
   document.getElementById('diary-mood').value = '';
   document.getElementById('diary-notes').value = '';
+  document.getElementById('diary-sleep').value = '';
+  document.getElementById('diary-activity').value = '';
   document.getElementById('diary-symptoms').value = '';
   document.getElementById('diary-weight').value = '';
 

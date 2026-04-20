@@ -1063,9 +1063,29 @@ async function loadRenCartelle() {
 
 function raccogliDatiRen() {
   const gv = id => document.getElementById(id)?.value || '';
+  // Collect piano pasti from table (same logic as stampaCompattaRenale)
+  const piano_pasti = [];
+  let piano_kcal = 0, piano_prot = 0;
+  const table = document.querySelector('#ren-hd-piano .ren-table');
+  if (table) {
+    table.querySelectorAll('tbody tr:not([style*="DBEAFE"])').forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      if (tds.length < 2) return;
+      const nome = tds[0] ? tds[0].textContent.trim() : '';
+      const alim = tds[1] ? tds[1].textContent.trim() : '';
+      const kcal = parseFloat(tds[2]?.textContent) || 0;
+      const prot = parseFloat(tds[3]?.textContent) || 0;
+      if (!nome) return;
+      piano_kcal += kcal;
+      piano_prot += prot;
+      piano_pasti.push({ nome, alimenti: alim, kcal: kcal || '' });
+    });
+  }
   return {
     valutazione: raccogliVal_ren(),
-    calcolo: { peso: gv('r-peso'), peso_ideale: gv('r-peso-ideale'), altezza: gv('r-altezza'), eta: gv('r-eta'), sesso: gv('r-sesso'), stadio: gv('r-stadio'), attivita: gv('r-attivita'), diabete: gv('r-diabete') }
+    calcolo: { peso: gv('r-peso'), peso_ideale: gv('r-peso-ideale'), altezza: gv('r-altezza'), eta: gv('r-eta'), sesso: gv('r-sesso'), stadio: gv('r-stadio'), attivita: gv('r-attivita'), diabete: gv('r-diabete') },
+    piano: { pasti: piano_pasti, kcal: Math.round(piano_kcal), prot_tot: Math.round(piano_prot * 10) / 10,
+      note_generali: '⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.' }
   };
 }
 

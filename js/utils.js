@@ -807,6 +807,66 @@ function stampaCompattaSpecialistica(pasti, opts) {
    buildStampaSpecialisticaHTML — genera HTML di stampa da dati JSON
    (usato dalle funzioni salva* per precalcolare stampa_html)
 ═══════════════════════════════════════════════════ */
+
+// Dati IDDSI per disfagia (mirror di disfagia.html)
+const _IDDSI_META = {
+  1:{nome:'Leggermente Addensato',bg:'#9CA3AF'},2:{nome:'Moderatamente Addensato',bg:'#EC4899'},
+  3:{nome:'Liquidizzato',bg:'#F59E0B'},4:{nome:'Frullato / Passato',bg:'#10B981'},
+  5:{nome:'Tritato Umido',bg:'#EF4444'},6:{nome:'Morbido a Pezzi',bg:'#3B82F6'},
+  7:{nome:'Facile da Masticare',bg:'#F97316'}
+};
+const _IDDSI_DIETE = {
+  1:{kcal_base:1785,nota:'⚠️ Tutti i liquidi devono essere addensati con addensante certificato. ONS spesso necessari.',pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero + addensante',qt:300,unit:'mL',kcal:195},{nome:'Succo di arancia setacciato + addensante',qt:150,unit:'mL',kcal:60},{nome:'Maltodestrine in polvere',qt:40,unit:'g',kcal:155}]},
+    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'ONS liquido addensato (es. Ensure Plus)',qt:200,unit:'mL',kcal:300}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Vellutata di verdure passata al setaccio fine',qt:350,unit:'mL',kcal:170},{nome:'Frullato di pollo passato al setaccio',qt:80,unit:'g',kcal:100},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Succo di pesca + addensante',qt:100,unit:'mL',kcal:40}]},
+    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt bianco intero setacciato',qt:125,unit:'g',kcal:100}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Crema di patate + brodo addensato',qt:350,unit:'mL',kcal:200},{nome:'Frullato di merluzzo passato al setaccio',qt:80,unit:'g',kcal:80},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Budino / crema fluida dolce',qt:100,unit:'g',kcal:115}]}
+  ]},
+  2:{kcal_base:1807,nota:'⚠️ Consistenza "Nectare" — addensare tutte le bevande. Monitorare idratazione.',pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero + addensante',qt:300,unit:'mL',kcal:195},{nome:'Semolino cotto fluido addensato',qt:80,unit:'g',kcal:197},{nome:'Miele',qt:10,unit:'g',kcal:30}]},
+    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'ONS denso addensato (es. Fortisip Compact)',qt:200,unit:'mL',kcal:300}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Vellutata di zucca passata finissima',qt:350,unit:'mL',kcal:175},{nome:'Carne (tacchino) frullata passata al setaccio',qt:80,unit:'g',kcal:100},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Composta di frutta passata finissima',qt:100,unit:'g',kcal:50}]},
+    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt greco setacciato',qt:125,unit:'g',kcal:100}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Crema di legumi passata (lenticchie/piselli)',qt:300,unit:'mL',kcal:200},{nome:'Pesce (sogliola) frullato passato al setaccio',qt:80,unit:'g',kcal:80},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Crema dolce alla vaniglia',qt:100,unit:'g',kcal:110}]}
+  ]},
+  3:{kcal_base:1804,nota:'Consistenza "Miele" — frullare tutto finemente. Eliminare grumi, fibre dure, bucce.',pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero con cereali frullati setacciati',qt:300,unit:'mL',kcal:220},{nome:'Banana frullata fine (liquidizzata)',qt:100,unit:'g',kcal:89},{nome:'Miele',qt:15,unit:'g',kcal:45}]},
+    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'ONS crema (es. Ensure Plus Crema)',qt:200,unit:'mL',kcal:300}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Minestrone liquidizzato passato (senza bucce)',qt:400,unit:'mL',kcal:210},{nome:'Carne frullata (consistenza liquidizzata)',qt:80,unit:'g',kcal:100},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Composta di frutta frullata finissima',qt:120,unit:'g',kcal:60}]},
+    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt cremoso intero',qt:125,unit:'g',kcal:100}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Passata di legumi densa (ceci/lenticchie)',qt:300,unit:'mL',kcal:200},{nome:'Pesce frullato (liquidizzato, senza lische)',qt:80,unit:'g',kcal:80},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Crema / budino denso',qt:120,unit:'g',kcal:130}]}
+  ]},
+  4:{kcal_base:1806,nota:'Consistenza "Budino" — no grumi, no fibre, no pezzi. Preparare tutto in purè omogeneo.',pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Porridge di farina di riso (latte + farina riso)',qt:250,unit:'g',kcal:280},{nome:'Yogurt greco cremoso',qt:100,unit:'g',kcal:80},{nome:'Miele',qt:15,unit:'g',kcal:45}]},
+    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Crema di frutta cotta frullata densa',qt:150,unit:'g',kcal:90},{nome:'Biscotti ammollati e frullati (senza grumi)',qt:30,unit:'g',kcal:135}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Purè di verdure miste (zucca, patata, carota)',qt:300,unit:'g',kcal:180},{nome:'Purè di pollo con besciamella morbida',qt:100,unit:'g',kcal:155},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90},{nome:'Purè di frutta cotta (mela/pera)',qt:100,unit:'g',kcal:60}]},
+    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt cremoso con frutta frullata',qt:150,unit:'g',kcal:130}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Purè di patate morbido (senza grumi)',qt:200,unit:'g',kcal:170},{nome:'Purè di merluzzo al latte (senza lische)',qt:100,unit:'g',kcal:135},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90},{nome:'Crema pasticcera densa',qt:100,unit:'g',kcal:130}]}
+  ]},
+  5:{kcal_base:1753,nota:'Pezzi ≤ 4mm × 15mm, morbidi e umidi. Carne tritata fine con sugo; pesce sminuzzato.',pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero',qt:250,unit:'mL',kcal:163},{nome:'Pane morbido bagnato nel latte (senza crosta)',qt:40,unit:'g',kcal:100},{nome:'Miele',qt:15,unit:'g',kcal:45},{nome:'Budino morbido',qt:100,unit:'g',kcal:115}]},
+    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Yogurt greco con frutta matura tritata fine',qt:150,unit:'g',kcal:130}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pastina in brodo (ben cotta, grana fine)',qt:80,unit:'g',kcal:285},{nome:'Carne macinata tenera in umido con sugo',qt:80,unit:'g',kcal:155},{nome:'Verdure cotte tenere a piccoli pezzi (≤4mm)',qt:100,unit:'g',kcal:60},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90}]},
+    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Crema / mousse di frutta morbida',qt:150,unit:'g',kcal:90}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso stracotto in brodo (ben tenero)',qt:80,unit:'g',kcal:270},{nome:'Pesce sminuzzato in umido con salsa (≤4mm)',qt:100,unit:'g',kcal:120},{nome:'Carote / zucchine cotte a pezzetti (≤4mm)',qt:100,unit:'g',kcal:40},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90}]}
+  ]},
+  6:{kcal_base:1823,nota:'Pezzi ≤ 15mm × 15mm, morbidi, facilmente masticabili. Evitare pane croccante, carni dure, noci, vegetali crudi.',pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero',qt:250,unit:'mL',kcal:163},{nome:'Pane morbido (senza crosta dura)',qt:60,unit:'g',kcal:150},{nome:'Marmellata / confettura',qt:20,unit:'g',kcal:52},{nome:'Burro morbido',qt:10,unit:'g',kcal:74}]},
+    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Yogurt greco con frutta morbida a pezzi',qt:150,unit:'g',kcal:130}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta ben cotta con sugo morbido',qt:80,unit:'g',kcal:284},{nome:'Pesce al forno morbido (merluzzo / orata)',qt:120,unit:'g',kcal:132},{nome:'Verdure cotte morbide a pezzi (≤15mm)',qt:150,unit:'g',kcal:60},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135}]},
+    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Frutta morbida matura (pesca, pera, banana)',qt:200,unit:'g',kcal:100}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso ben cotto (risotto morbido)',qt:80,unit:'g',kcal:268},{nome:'Uova strapazzate morbide (2 uova)',qt:100,unit:'g',kcal:145},{nome:'Formaggio molle (ricotta / stracchino)',qt:50,unit:'g',kcal:130}]}
+  ]},
+  7:{kcal_base:1845,nota:'Dieta normale ma con esclusione di alimenti duri, croccanti, appiccicosi o difficili da masticare.',pasti:[
+    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero',qt:250,unit:'mL',kcal:163},{nome:'Pane morbido / panino soffice (senza crosta dura)',qt:60,unit:'g',kcal:150},{nome:'Marmellata / confettura',qt:20,unit:'g',kcal:52},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90}]},
+    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Yogurt intero con frutta morbida',qt:150,unit:'g',kcal:130}]},
+    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta (formati morbidi: rigatoni, penne) ben cotta',qt:80,unit:'g',kcal:284},{nome:'Pollo / tacchino arrosto morbido (senza cartilagini)',qt:120,unit:'g',kcal:166},{nome:'Insalata tenera o verdure cotte',qt:150,unit:'g',kcal:30},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135}]},
+    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Frutta matura morbida (pesca, pera, banana, kiwi)',qt:200,unit:'g',kcal:100}]},
+    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso / pasta ben cotta',qt:70,unit:'g',kcal:233},{nome:'Pesce al forno (merluzzo, sogliola, salmone)',qt:120,unit:'g',kcal:132},{nome:'Verdure cotte morbide (zucchine, carote, spinaci)',qt:150,unit:'g',kcal:60},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135}]}
+  ]}
+};
+
 function buildStampaSpecialisticaHTML(dati, tipo, nota) {
   const esc = s => (s == null ? '' : String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const LABELS = {
@@ -842,7 +902,7 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
   };
 
   // ── Pasti-based types: exact stampaCompattaSpecialistica layout ───────────
-  const PASTI_TIPI = ['diabete', 'pediatria', 'sport', 'pancreas', 'dca'];
+  const PASTI_TIPI = ['diabete', 'pediatria', 'sport', 'pancreas', 'dca', 'renale'];
   if (PASTI_TIPI.includes(tipo)) {
     const totKcal = parseFloat(piano.kcal) || 0;
     const totCho  = parseFloat(piano.cho_tot) || 0;
@@ -855,6 +915,7 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
     if (tipo === 'diabete' && piano.tipo) sub = 'Tipo: ' + piano.tipo + (piano.insulina ? ' · Insulina: ' + piano.insulina : '');
     else if (tipo === 'sport' && (piano.sport || piano.obiettivo)) sub = piano.sport || piano.obiettivo;
     else if (tipo === 'pancreas' && piano.enzima) sub = 'Enzima: ' + piano.enzima;
+    else if (tipo === 'renale') sub = 'Emodialisi — Giornata Senza Dialisi';
 
     const stats = [
       { val: totKcal || '—', lbl: 'KCAL TOTALI' },
@@ -941,7 +1002,68 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
     return WRAP(body);
   }
 
-  // ── Chetogenica / Renale / Disfagia / altro: info grid layout ────────────
+  // ── Disfagia: IDDSI full meal plan ────────────────────────────────────────
+  if (tipo === 'disfagia' && dati.iddsi && _IDDSI_DIETE[dati.iddsi]) {
+    const meta  = _IDDSI_META[dati.iddsi]  || { nome: 'Livello ' + dati.iddsi, bg: '#06B6D4' };
+    const dieta = _IDDSI_DIETE[dati.iddsi];
+    const targetKcal = parseFloat(dati.kcal) || dieta.kcal_base;
+    const scale = targetKcal / dieta.kcal_base;
+
+    let totKcal = 0;
+    dieta.pasti.forEach(p => { totKcal += p.items.reduce((s, it) => s + it.kcal, 0); });
+    totKcal = Math.round(totKcal * scale);
+    const avgKcal = dieta.pasti.length ? Math.round(totKcal / dieta.pasti.length) : 0;
+    const totProt = Math.round(totKcal * 0.16 / 4);
+    const totCho  = Math.round(totKcal * 0.50 / 4);
+    const totFat  = Math.round(totKcal * 0.34 / 9);
+
+    let body = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+    body += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
+    body += `<div style="font-size:18px;font-weight:700;color:#0F766E">${esc(nome)}</div>`;
+    body += `<div style="display:inline-flex;align-items:center;gap:8px;margin-top:6px;background:${meta.bg};color:white;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">IDDSI ${esc(String(dati.iddsi))} · ${esc(meta.nome)}</div>`;
+    body += `</div>`;
+
+    const stats = [
+      { val: totKcal || '—', lbl: 'KCAL TOTALI' },
+      { val: totProt || '—', lbl: 'PROTEINE (G)' },
+      { val: totCho  || '—', lbl: 'CARBOIDRATI (G)' },
+      { val: totFat  || '—', lbl: 'GRASSI (G)' },
+      { val: avgKcal || '—', lbl: 'KCAL/PASTO' },
+    ];
+    body += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
+    stats.forEach((s, i) => {
+      body += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length - 1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
+      body += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
+      body += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
+      body += `</div>`;
+    });
+    body += `</div>`;
+
+    dieta.pasti.forEach(pasto => {
+      const pKcal = Math.round(pasto.items.reduce((s, it) => s + it.kcal, 0) * scale);
+      body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+      body += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">`;
+      body += `<div style="display:flex;align-items:center;gap:10px">`;
+      if (pasto.emoji) body += `<span style="font-size:18px">${pasto.emoji}</span>`;
+      body += `<span style="font-size:14px;font-weight:700;color:white">${esc(pasto.nome)}</span>`;
+      body += `</div>`;
+      body += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${pKcal} kcal</span>`;
+      body += `</div>`;
+      pasto.items.forEach(item => {
+        const qt = Math.round(item.qt * scale);
+        body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${esc(item.nome)} — ${qt} ${esc(item.unit)}</div>`;
+      });
+      body += `</div>`;
+    });
+
+    if (dieta.nota) {
+      body += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">${esc(dieta.nota)}</div>`;
+    }
+    body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div></div>`;
+    return WRAP(body);
+  }
+
+  // ── Chetogenica / Renale / altro: info grid layout ────────────────────────
   let body = `<div style="background:${colore};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
     <div style="font-size:18pt;font-weight:700">${esc(nome)}</div>
     <div style="font-size:10pt;opacity:.8;margin-top:4px">${esc(label)} · DietPlan Pro</div>
@@ -975,16 +1097,6 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
       { label:'🏥 Stadio IRC',  val: c.stadio },
       { label:'🚶 Attività',    val: c.attivita },
     ]);
-  }
-
-  if (tipo === 'disfagia') {
-    if (dati.iddsi) {
-      body += `<div style="background:#F0FDFA;border-left:4px solid #0D9488;border-radius:6px;padding:12px 16px;margin-bottom:14px">
-        <div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Livello IDDSI</div>
-        <div style="font-size:16pt;font-weight:700;color:#0F766E">${esc(dati.iddsi)}</div>
-      </div>`;
-    }
-    if (dati.kcal) body += `<div style="background:#F8FAFC;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:11pt;color:#1E293B">${esc(dati.kcal)}</div>`;
   }
 
   if (piano.note_cliniche?.trim()) {

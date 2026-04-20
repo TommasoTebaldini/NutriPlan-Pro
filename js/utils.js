@@ -804,6 +804,78 @@ function stampaCompattaSpecialistica(pasti, opts) {
 }
 
 /* ═══════════════════════════════════════════════════
+   buildStampaCompattaHtml — identica a stampaCompattaSpecialistica
+   ma RITORNA l'HTML come stringa documento completo invece di stampare.
+   Usata dalle funzioni salva* per memorizzare stampa_html nel DB.
+═══════════════════════════════════════════════════ */
+function buildStampaCompattaHtml(pasti, opts) {
+  opts = opts || {};
+  const totKcal = opts.totKcal || 0;
+  const totProt = opts.totProt || 0;
+  const totCho  = opts.totCho  || 0;
+  const totFat  = opts.totFat  || 0;
+  const nMeals  = pasti.filter(p => p.alimenti && p.alimenti.trim()).length || pasti.length;
+  const avgKcal = totKcal && nMeals ? Math.round(totKcal / nMeals) : 0;
+  const escH = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
+  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
+  if (opts.titolo) html += `<div style="font-size:18px;font-weight:700;color:#0F766E">${escH(opts.titolo)}</div>`;
+  if (opts.sottotitolo) html += `<div style="font-size:13px;color:#475569;margin-top:3px">${escH(opts.sottotitolo)}</div>`;
+  html += `</div>`;
+
+  const stats = [
+    { val: totKcal || '—', lbl: 'KCAL TOTALI' },
+    { val: totProt  || '—', lbl: 'PROTEINE (G)' },
+    { val: totCho   || '—', lbl: 'CARBOIDRATI (G)' },
+    { val: totFat   || '—', lbl: 'GRASSI (G)' },
+    { val: avgKcal  || '—', lbl: 'KCAL/PASTO' }
+  ];
+  html += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
+  stats.forEach((s, i) => {
+    html += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length-1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
+    html += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
+    html += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  pasti.forEach(pasto => {
+    if (!pasto.nome && !pasto.alimenti) return;
+    html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">`;
+    html += `<div style="display:flex;align-items:center;gap:10px">`;
+    if (pasto.emoji) html += `<span style="font-size:18px">${escH(pasto.emoji)}</span>`;
+    html += `<span style="font-size:14px;font-weight:700;color:white">${escH(pasto.nome||'Pasto')}</span>`;
+    if (pasto.ora) html += `<span style="font-size:12px;color:rgba(255,255,255,.75)">${escH(pasto.ora)}</span>`;
+    html += `</div>`;
+    if (pasto.kcal) html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${escH(String(pasto.kcal))} kcal</span>`;
+    html += `</div>`;
+    if (pasto.alimenti && pasto.alimenti.trim()) {
+      pasto.alimenti.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
+        html += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${escH(line)}</div>`;
+      });
+    }
+    if (pasto.note && pasto.note.trim()) {
+      html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${escH(pasto.note)}</div>`;
+    }
+    html += `</div>`;
+  });
+
+  if (opts.footerNote) {
+    html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${escH(opts.footerNote)}</div>`;
+  }
+  html += profiloFirmaHtml();
+  html += `</div>`;
+
+  const title = escH(opts.titolo || 'Stampa');
+  return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${title}</title>
+<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:11pt;line-height:1.5;padding:1.5cm 2cm 2.5cm}
+@media screen{body{padding:20px}}</style></head><body>${html}</body></html>`;
+}
+
+/* ═══════════════════════════════════════════════════
    buildStampaSpecialisticaHTML — genera HTML di stampa da dati JSON
    (usato dalle funzioni salva* per precalcolare stampa_html)
 ═══════════════════════════════════════════════════ */
@@ -965,121 +1037,6 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
 
     if (piano.note_generali?.trim()) {
       body += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${esc(piano.note_generali)}</div>`;
-    }
-
-    // ── Sezioni aggiuntive per tipo (oltre ai pasti) ─────────────────────────
-    const renderSez = (title, items, col) => {
-      const vis = items.filter(i => i.val && String(i.val).trim());
-      if (!vis.length) return '';
-      let h = `<div style="margin-bottom:16px;margin-top:14px"><div style="font-size:9.5pt;font-weight:700;color:${col};text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #E2E8F0">${title}</div>`;
-      h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
-      vis.forEach(i => {
-        h += `<div style="${i.wide?'grid-column:1/-1;':''}background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${col}">`;
-        if (i.label) h += `<div style="font-size:8.5pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">${i.label}</div>`;
-        h += `<div style="font-size:11pt;color:#1E293B;white-space:pre-wrap">${esc(String(i.val))}</div></div>`;
-      });
-      return h + '</div></div>';
-    };
-
-    if (tipo === 'diabete') {
-      const ri = dati.rapporto_ic || {}, dp = dati.dose_pasto || {}, fs = dati.fsi || {}, dep = dati.depliant || {};
-      body += renderSez('💉 Rapporto Insulina/Carboidrati', [
-        {label:'Peso',val:ri.peso?ri.peso+' kg':''},{label:'Tipo IC',val:ri.tipo},
-        {label:'TDD',val:ri.tdd},{label:'Metodo',val:ri.metodo},{label:'Risultato',val:ri.risultato}
-      ], '#3B82F6');
-      body += renderSez('🍽️ Dose per Pasto', [
-        {label:'CHO/pasto',val:dp.cho},{label:'Rapporto IC',val:dp.ic},
-        {label:'Glicemia pre-pasto',val:dp.glicemia},{label:'Target glicemico',val:dp.target},{label:'FSI',val:dp.fsi}
-      ], '#3B82F6');
-      body += renderSez('🔢 Fattore Sensibilità Insulinica (FSI)', [
-        {label:'TDD',val:fs.tdd},{label:'Metodo',val:fs.metodo},{label:'Risultato',val:fs.risultato}
-      ], '#3B82F6');
-      body += renderSez('📖 Depliant Informativo', [
-        {label:'Rapporto IC',val:dep.ic,wide:true},{label:'Target glicemico',val:dep.target,wide:true},{label:'FSI',val:dep.fsi,wide:true}
-      ], '#3B82F6');
-    }
-
-    if (tipo === 'sport') {
-      const calc = dati.calc || {};
-      body += renderSez('🏋️ Parametri Atleta', [
-        {label:'Peso',val:calc.peso?calc.peso+' kg':''},{label:'Altezza',val:calc.alt?calc.alt+' cm':''},
-        {label:'Età',val:calc.eta?calc.eta+' anni':''},{label:'Sesso',val:calc.sesso},
-        {label:'Sport praticato',val:calc.sport},{label:'Sessioni/settimana',val:calc.sess}
-      ], '#F97316');
-      body += renderSez('⚡ Piano Energetico', [
-        {label:'Kcal giorno allenamento',val:piano.kcal_train},{label:'Kcal giorno riposo',val:piano.kcal_rest},
-        {label:'Proteine per kg',val:piano.prot_per_kg?piano.prot_per_kg+' g/kg':''},{label:'Orario allenamento',val:piano.ora_train}
-      ], '#F97316');
-      if (piano.integr?.trim()) body += renderSez('💊 Integratori', [{label:'',val:piano.integr,wide:true}], '#F97316');
-      if (piano.gara?.trim()) body += renderSez('🏅 Indicazioni Gara/Competizione', [{label:'',val:piano.gara,wide:true}], '#F97316');
-    }
-
-    if (tipo === 'pancreas') {
-      const pert = dati.pert || {}, gc = dati.grassi_calc || {};
-      body += renderSez('🧪 Calcolo PERT', [
-        {label:'Peso',val:pert.peso?pert.peso+' kg':''},{label:'Grassi dieta',val:pert.grassi?pert.grassi+' g':''},
-        {label:'Patologia',val:pert.patologia},{label:'Metodo',val:pert.metodo},{label:'Risultato (UI/pasto)',val:pert.risultato_ul}
-      ], '#8B5CF6');
-      body += renderSez('🔬 Calcolo Grassi', [
-        {label:'Grassi totali/die',val:gc.totale},{label:'UI totali/die',val:gc.ul},{label:'Capsule Creon',val:gc.creon}
-      ], '#8B5CF6');
-      const vit = [{label:'Vitamina D',val:piano.vitD},{label:'Vitamina E',val:piano.vitE},{label:'Vitamina A',val:piano.vitA},{label:'Vitamina K',val:piano.vitK}];
-      body += renderSez('💊 Supplementazione Vitamine Liposolubili', vit, '#8B5CF6');
-    }
-
-    if (tipo === 'pediatria') {
-      const paz = dati.paziente || {};
-      const etaStr = [paz.anni&&paz.anni+' anni', paz.mesi&&paz.mesi+' mesi'].filter(Boolean).join(', ');
-      body += renderSez('👶 Dati Paziente', [
-        {label:'Età',val:etaStr},{label:'Sesso',val:paz.sesso},
-        {label:'Peso',val:paz.peso?paz.peso+' kg':''},{label:'Altezza',val:paz.altezza?paz.altezza+' cm':''}
-      ], '#EC4899');
-      if (piano.motivo?.trim()) body += renderSez('📋 Motivo Consulto', [{label:'',val:piano.motivo,wide:true}], '#EC4899');
-      if (piano.suppl?.trim()) body += renderSez('💊 Supplementi', [{label:'',val:piano.suppl,wide:true}], '#EC4899');
-      if (piano.edu?.trim()) body += renderSez('📚 Educazione Alimentare', [{label:'',val:piano.edu,wide:true}], '#EC4899');
-    }
-
-    if (tipo === 'dca') {
-      const pan = dati.panoramica || {}, gt = pan.giornata_tipo || {}, af = pan.alimenti_fobici || {}, mc = pan.meccanismi_compenso || {};
-      body += renderSez('📖 Anamnesi', [
-        {label:'Storia del paziente',val:pan.storia_paziente,wide:true},{label:'Storia del peso',val:pan.storia_peso,wide:true},
-        {label:'Contesto familiare',val:pan.famiglia,wide:true},{label:'Altre informazioni',val:pan.altre_info,wide:true}
-      ], '#7C3AED');
-      const giornataItems = [
-        {label:'Colazione',val:gt.colazione,wide:true},{label:'Spuntino mattina',val:gt.spuntino_mattina,wide:true},
-        {label:'Pranzo',val:gt.pranzo,wide:true},{label:'Spuntino pomeriggio',val:gt.spuntino_pomeriggio,wide:true},
-        {label:'Cena',val:gt.cena,wide:true},{label:'Spuntino serale',val:gt.spuntino_serale,wide:true}
-      ].filter(i => i.val?.trim());
-      if (giornataItems.length) body += renderSez('🕐 Giornata Tipo Attuale', giornataItems, '#7C3AED');
-      const fobici = [af.f1,af.f2,af.f3,af.f4,af.f5,af.f6,...(af.extra||[])].filter(Boolean);
-      if (fobici.length) {
-        body += `<div style="margin-bottom:14px;margin-top:14px"><div style="font-size:9.5pt;font-weight:700;color:#7C3AED;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #E2E8F0">🚫 Alimenti Fobici</div>`;
-        body += `<div style="display:flex;flex-wrap:wrap;gap:6px">`;
-        fobici.forEach(f => { body += `<span style="background:#FEE2E2;color:#991B1B;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:500">${esc(f)}</span>`; });
-        body += `</div>`;
-        if (af.note?.trim()) body += `<div style="margin-top:8px;font-size:11pt;color:#64748B;font-style:italic">${esc(af.note)}</div>`;
-        body += `</div>`;
-      }
-      const compensi = [];
-      if (mc.attfisica) compensi.push('Attività fisica' + (mc.attfisica_tipo ? ': '+mc.attfisica_tipo : '') + (mc.attfisica_freq ? ' · '+mc.attfisica_freq : ''));
-      if (mc.vomito) compensi.push('Vomito' + (mc.vomito_freq ? ': '+mc.vomito_freq : '') + (mc.vomito_momento ? ' · '+mc.vomito_momento : ''));
-      if (mc.diuretici) compensi.push('Diuretici' + (mc.diuretici_tipo ? ': '+mc.diuretici_tipo : '') + (mc.diuretici_freq ? ' · '+mc.diuretici_freq : ''));
-      if (mc.lassativi) compensi.push('Lassativi' + (mc.lassativi_tipo ? ': '+mc.lassativi_tipo : '') + (mc.lassativi_freq ? ' · '+mc.lassativi_freq : ''));
-      if (mc.digiuno) compensi.push('Digiuno' + (mc.digiuno_modalita ? ': '+mc.digiuno_modalita : '') + (mc.digiuno_freq ? ' · '+mc.digiuno_freq : ''));
-      if (mc.farmaci) compensi.push('Farmaci: ' + (mc.farmaci_tipo || ''));
-      if (mc.altro && mc.altro_desc) compensi.push('Altro: ' + mc.altro_desc);
-      if (mc.note?.trim()) compensi.push('Note: ' + mc.note);
-      if (compensi.length) {
-        body += `<div style="margin-bottom:14px;margin-top:14px"><div style="font-size:9.5pt;font-weight:700;color:#7C3AED;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #E2E8F0">⚠️ Meccanismi di Compenso</div>`;
-        compensi.forEach(c => { body += `<div style="padding:6px 12px;border-bottom:1px solid #F1F5F9;font-size:12px;color:#1E293B">${esc(c)}</div>`; });
-        body += `</div>`;
-      }
-      body += renderSez('🎯 Piano Terapeutico', [
-        {label:'Tipo DCA',val:piano.tipo},{label:'Fase',val:piano.fase},
-        {label:'Approccio',val:piano.approccio},{label:'Macros',val:[piano.prot_perc&&'P:'+piano.prot_perc+'%',piano.cho_perc&&'C:'+piano.cho_perc+'%',piano.fat_perc&&'G:'+piano.fat_perc+'%'].filter(Boolean).join(' · ')},
-      ], '#7C3AED');
-      if (piano.intro_foods?.trim()) body += renderSez('🥗 Introduzione Cibi', [{label:'',val:piano.intro_foods,wide:true}], '#7C3AED');
-      if (piano.comportamento?.trim()) body += renderSez('🧠 Indicazioni Comportamentali', [{label:'',val:piano.comportamento,wide:true}], '#7C3AED');
     }
 
     body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div></div>`;

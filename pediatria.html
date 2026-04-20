@@ -1452,7 +1452,8 @@ async function salvaPediatria() {
   if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
   const nota = document.getElementById('ped-nota').value.trim() || 'Sessione pediatria ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiPed();
-  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'pediatria', nota);
+  { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_prot=_kcal?Math.round(_kcal*.15/4):0,_cho=_kcal?Math.round(_kcal*.55/4):0,_fat=_kcal?Math.round(_kcal*.30/9):0,_nc=(document.getElementById('ped-cartella-cw-srch')?.value||'').trim();
+    dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:p.kcal,alimenti:p.alimenti,note:p.note})),{titolo:_nc||nota,sottotitolo:[_p.eta,_p.motivo].filter(Boolean).join(' · '),totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat}); }
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'pediatria', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

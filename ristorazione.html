@@ -944,7 +944,8 @@ async function salvaRistorazione() {
   if (!cartella_id) { toast('Seleziona una cartella / progetto','err'); return; }
   const nota = document.getElementById('rist-nota').value.trim() || 'Menu ristorazione ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiRist();
-  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'ristorazione', nota);
+  { const _p=dati.piano||{},_nc=(document.getElementById('rist-cartella-cw-srch')?.value||'').trim(),_tipo=_p.tipo||'',_utenza=_p.utenza||'',_coperti=_p.coperti||'';
+    dati.stampa_html=buildStampaCompattaHtml((_p.portate||[]).filter(p=>p.nome||p.menu).map(p=>({nome:p.nome,kcal:'',alimenti:[p.porzione,p.menu].filter(Boolean).join('\n'),note:p.note})),{titolo:_nc||nota,sottotitolo:[_tipo,_utenza,_coperti?_coperti+' coperti':''].filter(Boolean).join(' · '),totKcal:0,totProt:0,totCho:0,totFat:0}); }
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'ristorazione', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

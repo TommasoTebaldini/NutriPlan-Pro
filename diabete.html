@@ -897,7 +897,8 @@ async function salvaDiabete() {
   if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
   const nota = document.getElementById('dg-nota').value.trim() || 'Sessione diabete ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiDg();
-  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'diabete', nota);
+  { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_cho=parseFloat(_p.cho_tot)||0,_prot=_kcal?Math.round(_kcal*.15/4):0,_fat=_kcal?Math.round(_kcal*.25/9):0,_nc=(document.getElementById('dg-cartella-cw-srch')?.value||'').trim();
+    dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:'',alimenti:p.alimenti,note:p.note||(parseFloat(p.cho)?'CHO: '+p.cho+' g':'')})),{titolo:_nc||nota,sottotitolo:_p.tipo?'Tipo: '+_p.tipo+(_p.insulina?' · Insulina: '+_p.insulina:''):'',totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat}); }
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

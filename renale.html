@@ -1106,7 +1106,8 @@ async function salvaRenale() {
   if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
   const nota = document.getElementById('ren-nota').value.trim() || 'Sessione Nefropatia ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiRen();
-  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'renale', nota);
+  { const _p=dati.piano||{},_nc=(document.getElementById('ren-cartella-cw-srch')?.value||'').trim();
+    dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,alimenti:p.alimenti,kcal:p.kcal})),{titolo:_nc||nota,sottotitolo:'Emodialisi — Giornata Senza Dialisi',totKcal:_p.kcal||0,totProt:_p.prot_tot||0,totCho:0,totFat:0,footerNote:'⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.'}); }
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'renale', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

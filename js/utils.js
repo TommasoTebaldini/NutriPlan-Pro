@@ -842,7 +842,7 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
   };
 
   // ── Pasti-based types: exact stampaCompattaSpecialistica layout ───────────
-  const PASTI_TIPI = ['diabete', 'pediatria', 'sport', 'pancreas'];
+  const PASTI_TIPI = ['diabete', 'pediatria', 'sport', 'pancreas', 'dca'];
   if (PASTI_TIPI.includes(tipo)) {
     const totKcal = parseFloat(piano.kcal) || 0;
     const totCho  = parseFloat(piano.cho_tot) || 0;

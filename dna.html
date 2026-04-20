@@ -1247,6 +1247,7 @@ async function salvaDca() {
   if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
   const nota = document.getElementById('dca-nota').value.trim() || 'Sessione DCA ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiDca();
+  dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'dca', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'dca', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

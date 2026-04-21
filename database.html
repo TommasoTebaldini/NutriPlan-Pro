@@ -3,43 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Database Alimenti — DietPlan Pro</title>
+<title>BIA — DietPlan Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-#db-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--border)}
-#db-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:900px}
-#db-table thead th{background:var(--slate);color:#CBD5E1;padding:7px 8px;text-align:center;font-size:10.5px;font-weight:700;white-space:nowrap;position:sticky;top:0;z-index:10}
-#db-table thead th:first-child{text-align:left;padding-left:12px;min-width:180px}
-#db-table thead th:nth-child(2){text-align:left;min-width:120px}
-#db-table tbody tr:nth-child(even){background:#F8FAFC}
-#db-table tbody tr:hover{background:#E0F2F1}
-#db-table tbody td{padding:5px 7px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
-#db-table tbody td:first-child{text-align:left;padding-left:12px;font-weight:600;color:var(--slate)}
-#db-table tbody td:nth-child(2){text-align:left;font-size:11px;color:var(--slate-l)}
-.src-badge{font-size:9px;padding:1px 5px;border-radius:6px;font-weight:700}
-.src-crea{background:#DBEAFE;color:#1D4ED8}
-.src-bda{background:#D1FAE5;color:#065F46}
-.src-aprot{background:#EDE9FE;color:#5B21B6}
-.src-int{background:#FEF3C7;color:#B45309}
-.src-upf{background:#FEE2E2;color:#991B1B}
-.src-pers{background:#DCFCE7;color:#15803D}
-.nd{color:#CBD5E1;font-style:italic;font-size:10px}
-#modal-add-food{display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.45);align-items:center;justify-content:center;padding:16px}
-#modal-add-food.open{display:flex}
-#modal-add-food .mbox{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.18);width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
-#modal-add-food .mhead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border)}
-#modal-add-food .mhead h3{margin:0;font-size:16px;color:var(--slate)}
-#modal-add-food .mbody{padding:20px 22px;overflow-y:auto;flex:1}
-#modal-add-food .mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
-#modal-add-food .fg{display:flex;flex-direction:column;gap:4px}
-#modal-add-food label{font-size:11.5px;font-weight:600;color:var(--slate-l)}
-#modal-add-food input{padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
-#modal-add-food input:focus{border-color:#06B6D4}
-#modal-add-food .sec-title{font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.05em;grid-column:1/-1;margin-top:8px;padding-top:10px;border-top:1px solid var(--border)}
-.btn-food-action{background:none;border:none;cursor:pointer;font-size:13px;padding:0 3px;opacity:.5;vertical-align:middle;line-height:1}
-.btn-food-action:hover{opacity:1}
+.bia-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.bia-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
+.bia-tab:hover{background:rgba(59,130,246,.12);color:#3B82F6}
+.bia-tab.active{background:white;color:#1D4ED8;box-shadow:0 3px 10px rgba(59,130,246,.2);font-weight:700;letter-spacing:.2px}
+.bia-panel{display:none}.bia-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus{border-color:#3B82F6}
+.alert-info{background:#EFF6FF;border-left:3px solid #3B82F6;color:#1E3A5F;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr}}
+.result-card{border-radius:10px;padding:14px;text-align:center}
+.result-card .val{font-size:24px;font-weight:700;margin:6px 0}
+.result-card .lbl{font-size:11px;color:var(--slate-l)}
+.result-card .sub{font-size:11.5px;font-weight:600}
+.bia-bar{height:20px;border-radius:10px;background:#E2E8F0;overflow:hidden;margin:6px 0}
+.bia-bar-fill{height:100%;border-radius:10px;transition:width .4s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10px;font-weight:700;color:white}
+.food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.food-table th{background:#1E3A5F;color:#E2E8F0;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.food-table th:first-child{text-align:left}
+.food-table td{padding:7px 12px;border-bottom:1px solid #EFF6FF;text-align:center;vertical-align:middle}
+.food-table td:first-child{text-align:left;font-weight:600}
+.food-table tbody tr:nth-child(even){background:#F8FBFF}
+.food-table tr:hover td{background:#DBEAFE}
+.import-area{border:2px dashed #93C5FD;border-radius:12px;padding:24px;text-align:center;background:#F0F9FF;cursor:pointer;transition:all .2s}
+.import-area:hover{border-color:#3B82F6;background:#EFF6FF}
 </style>
 </head>
 <body>
@@ -67,14 +66,14 @@
   <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
   <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
   <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item active" href="bia.html"><span class="ni">⚡</span>BIA</a>
   <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
   <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
   <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
   <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
   <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
   <div class="nav-sec">Database</div>
-  <a class="nav-item active" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
   <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
   <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
   <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
@@ -88,324 +87,1030 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>🔬 Database Alimenti CREA 2019 + BDA INRAN</h2>
+  <h2>⚡ Bioimpedenziometria (BIA)</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+  </div>
 </div>
-<main id="main"><div class="page-content">
-  <div class="db-filters" style="margin-bottom:12px">
-    <input type="text" id="db-search" class="db-search" placeholder="🔍 Cerca alimento..." oninput="filterDB()" style="max-width:320px">
-    <select id="db-cat" class="db-cat" onchange="filterDB()"><option value="">Tutte le categorie</option></select>
-    <select id="db-src" class="db-cat" onchange="filterDB()">
-      <option value="">Tutte le fonti</option>
-      <option value="CREA">CREA 2019</option>
-      <option value="BDA">BDA INRAN</option>
-      <option value="APROT">🟣 Aproteici</option>
-      <option value="INT">🟡 Integratori/ONS</option>
-      <option value="UPF">🔴 Ultra-processati (UPF)</option>
-      <option value="PERS">🟢 Personalizzati</option>
-    </select>
-    <button onclick="openAddFood()" style="padding:7px 14px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">➕ Aggiungi alimento</button>
-    <span id="db-count" style="font-size:12px;color:var(--slate-l)"></span>
-  </div>
-  <div id="db-table-wrap">
-    <table id="db-table">
-      <thead><tr>
-        <th style="text-align:left">Alimento</th>
-        <th style="text-align:left">Categoria</th>
-        <th>Fonte</th>
-        <th>Kcal</th><th>Prot(g)</th><th>Gr.Sat(g)</th><th>Gr.Tot(g)</th>
-        <th>Zucc(g)</th><th>CHO(g)</th><th>Fibra(g)</th>
-        <th>Ca(mg)</th><th>Fe(mg)</th><th>Mg(mg)</th>
-        <th>K(mg)</th><th>Na(mg)</th><th>Zn(mg)</th>
-        <th>Fo(mg)</th><th>Se(µg)</th><th>Col(mg)</th>
-      </tr></thead>
-      <tbody id="db-tbody"></tbody>
-    </table>
-  </div>
-</div></main>
 
+<main id="main"><div class="page-content">
+
+<div style="background:linear-gradient(135deg,#1E3A5F,#3B82F6);border-radius:14px;padding:18px 24px;margin-bottom:18px;color:white;display:flex;align-items:center;gap:16px;box-shadow:0 4px 18px rgba(59,130,246,.25)">
+  <div style="font-size:38px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">⚡</div>
+  <div>
+    <div style="font-size:17px;font-weight:700;letter-spacing:.2px;margin-bottom:3px">Bioimpedenziometria (BIA)</div>
+    <div style="font-size:12px;opacity:.85;line-height:1.55">Inserisci i dati del report BIA per analizzare la composizione corporea: <b>massa magra · massa grassa · acqua corporea · metabolismo basale</b>.</div>
+  </div>
+</div>
+
+<!-- COMPACT SAVE STRIP -->
+<div class="no-print" style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+  <div style="flex:1;min-width:180px;display:flex;align-items:center;gap:6px">
+    <span style="font-size:10.5px;font-weight:700;color:#1E293B;white-space:nowrap">📁 Cartella Paziente</span>
+    <div id="bia-cartella-cw" style="flex:1"></div>
+  </div>
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:6px">
+    <span style="font-size:10.5px;font-weight:700;color:var(--slate-m);white-space:nowrap">📝 Nota / Titolo sessione</span>
+    <input type="text" id="bia-note" placeholder="es. Prima visita, follow-up..." style="width:200px;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
+  </div>
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:6px">
+    <span style="font-size:10.5px;font-weight:700;color:var(--slate-m);white-space:nowrap">📅 Data misurazione</span>
+    <input type="date" id="bia-data" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
+  </div>
+  <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
+    <button class="btn btn-primary btn-sm" onclick="salvaBIA()" id="btn-salva-bia">💾 Salva in Cartella</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetBIA()">🔄 Reset</button>
+  </div>
+</div>
+
+<div class="bia-tabs">
+  <button class="bia-tab active" onclick="showBIA('inserimento')">📥 Inserimento Dati</button>
+  <button class="bia-tab" onclick="showBIA('risultati')">📊 Analisi Composizione</button>
+  <button class="bia-tab" onclick="showBIA('storico')">📈 Storico & Trend</button>
+  <button class="bia-tab" onclick="showBIA('lg')">📚 Valori di Riferimento</button>
+</div>
+
+<!-- TAB 1: INSERIMENTO DATI -->
+<div class="bia-panel active" id="tab-inserimento">
+  <div class="alert-info">
+    <b>⚡ Importazione dati BIA</b> — Inserisci manualmente i valori del report BIA oppure copia il testo dal software dello strumento (Akern, SECA, InBody, Tanita, ecc.) e usa l'importazione automatica.
+  </div>
+
+  <!-- Import automatico -->
+  <div class="calc-box">
+    <h3>🤖 Importazione Automatica da Report</h3>
+    <div class="import-area" onclick="document.getElementById('bia-file').click()" id="import-area">
+      <div style="font-size:32px;margin-bottom:8px">📄</div>
+      <div style="font-size:14px;font-weight:600;color:#1D4ED8">Carica file report BIA</div>
+      <div style="font-size:12px;color:var(--slate-l);margin-top:4px">Supportati: CSV, TXT (export da Akern BIA 101, SECA, InBody, Tanita)</div>
+      <input type="file" id="bia-file" accept=".csv,.txt,.xls,.xlsx" style="display:none" onchange="parseFile(this)">
+    </div>
+    <div style="margin-top:12px">
+      <label style="font-size:12px;font-weight:700;color:var(--slate-m);display:block;margin-bottom:6px">Oppure incolla il testo del report:</label>
+      <textarea id="bia-paste" rows="5" placeholder="Incolla qui il testo del report BIA (dati numerici)..."
+        style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;outline:none"></textarea>
+      <button class="btn btn-primary btn-sm" onclick="parsePastedText()" style="margin-top:8px">🔍 Analizza testo</button>
+    </div>
+  </div>
+
+  <!-- Inserimento manuale -->
+  <div class="calc-box">
+    <h3>✏️ Inserimento Manuale Parametri BIA</h3>
+    <div class="grid-3" style="margin-bottom:14px">
+      <div class="nf"><label>Peso (kg)</label><input type="number" id="bia-peso" placeholder="es. 75.4" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>Altezza (cm)</label><input type="number" id="bia-alt" placeholder="es. 172" oninput="calcBIA()"></div>
+      <div class="nf"><label>Età (anni)</label><input type="number" id="bia-eta" placeholder="es. 45" oninput="calcBIA()"></div>
+      <div class="nf"><label>Sesso</label>
+        <select id="bia-sesso" onchange="calcBIA()">
+          <option value="M">Maschio</option>
+          <option value="F">Femmina</option>
+        </select>
+      </div>
+      <div class="nf"><label>Attività fisica</label>
+        <select id="bia-attiv" onchange="calcBIA()">
+          <option value="sedentario">Sedentario</option>
+          <option value="leggero">Leggera (1-2 volte/sett)</option>
+          <option value="moderato" selected>Moderata (3-4 volte/sett)</option>
+          <option value="intenso">Intensa (5+ volte/sett)</option>
+          <option value="atleta">Atleta professionista</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:10px;padding:8px 12px;background:#EFF6FF;border-radius:8px">
+      📡 Parametri elettrici BIA (se disponibili dallo strumento)
+    </div>
+    <div class="grid-4" style="margin-bottom:14px">
+      <div class="nf"><label>Resistenza R (Ω)</label><input type="number" id="bia-R" placeholder="es. 520" oninput="calcBIA()"></div>
+      <div class="nf"><label>Reattanza Xc (Ω)</label><input type="number" id="bia-Xc" placeholder="es. 65" oninput="calcBIA()"></div>
+      <div class="nf"><label>Angolo di fase (°)</label><input type="number" id="bia-af" placeholder="es. 7.1" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>Impedenza Z (Ω)</label><input type="number" id="bia-Z" placeholder="es. 524" oninput="calcBIA()"></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:#7C3AED;margin-bottom:10px;padding:8px 12px;background:#FAF5FF;border-radius:8px">
+      🔢 Valori calcolati dallo strumento (se disponibili — sovrascrivono il calcolo automatico)
+    </div>
+    <div class="grid-4">
+      <div class="nf"><label>Massa Grassa % (BF%)</label><input type="number" id="bia-bf" placeholder="es. 28.4" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>Massa Magra FFM (kg)</label><input type="number" id="bia-ffm" placeholder="es. 53.9" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>Acqua Totale TBW (L)</label><input type="number" id="bia-tbw" placeholder="es. 39.5" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>Massa Cellulare BCM (kg)</label><input type="number" id="bia-bcm" placeholder="es. 28.1" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>Massa Ossea (kg)</label><input type="number" id="bia-bone" placeholder="es. 2.8" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>Massa Muscolare (kg)</label><input type="number" id="bia-muscle" placeholder="es. 38.2" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>ICW — Intra (L)</label><input type="number" id="bia-icw" placeholder="es. 26.0" step="0.1" oninput="calcBIA()"></div>
+      <div class="nf"><label>ECW — Extra (L)</label><input type="number" id="bia-ecw" placeholder="es. 13.5" step="0.1" oninput="calcBIA()"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showBIA('risultati');calcBIA()">📊 Vedi Analisi →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: RISULTATI -->
+<div class="bia-panel" id="tab-risultati">
+  <div id="bia-results-wrap">
+    <div class="alert-info">Inserisci i dati nella scheda "Inserimento Dati" per vedere l'analisi.</div>
+  </div>
+</div>
+
+<!-- TAB 3: STORICO -->
+<div class="bia-panel" id="tab-storico">
+  <div class="calc-box">
+    <h3>📈 Storico Misurazioni BIA</h3>
+    <div class="nf" style="max-width:300px;margin-bottom:14px">
+      <label>Filtra per paziente</label>
+      <div id="storico-cartella-cw"></div>
+    </div>
+    <div id="storico-table-wrap">
+      <div class="alert-info">Seleziona un paziente per vedere lo storico.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: VALORI RIFERIMENTO -->
+<div class="bia-panel" id="tab-lg">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📊 Percentuale di Massa Grassa — Valori Normali</h3>
+      <table class="food-table">
+        <thead><tr><th>Categoria</th><th>Maschi</th><th>Femmine</th></tr></thead>
+        <tbody>
+          <tr><td><b>Atleti</b></td><td>6–13%</td><td>14–20%</td></tr>
+          <tr><td><b>Forma fisica ottimale</b></td><td>14–17%</td><td>21–24%</td></tr>
+          <tr><td><b>Nella norma</b></td><td>18–24%</td><td>25–31%</td></tr>
+          <tr><td><b>Sovrappeso</b></td><td>25–29%</td><td>32–36%</td></tr>
+          <tr><td><b>Obesità</b></td><td>≥30%</td><td>≥37%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>🔬 Angolo di Fase — Valori di Riferimento</h3>
+      <table class="food-table">
+        <thead><tr><th>Valore</th><th>Interpretazione</th></tr></thead>
+        <tbody>
+          <tr><td><b>&lt; 4°</b></td><td style="color:#DC2626">Stato nutrizionale critico. Rischio elevato.</td></tr>
+          <tr><td><b>4–5°</b></td><td style="color:#F59E0B">Moderata compromissione cellulare.</td></tr>
+          <tr><td><b>5–7°</b></td><td style="color:#10B981">Normale (adulto sano, 18-40 anni)</td></tr>
+          <tr><td><b>7–9°</b></td><td style="color:#3B82F6">Ottimo stato cellulare. Atleta.</td></tr>
+          <tr><td><b>&gt; 9°</b></td><td>Eccellente. Atleti d'élite.</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-warn" style="margin-top:10px">L'angolo di fase dipende da età, sesso e idratazione. Valutare sempre nel contesto clinico.</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>💧 Idratazione — ECW/TBW Ratio</h3>
+      <table class="food-table">
+        <thead><tr><th>ECW/TBW</th><th>Stato</th></tr></thead>
+        <tbody>
+          <tr><td><b>&lt; 0.360</b></td><td style="color:#1D4ED8">Disidratazione</td></tr>
+          <tr><td><b>0.360–0.390</b></td><td style="color:#10B981">Normovolemia ✅</td></tr>
+          <tr><td><b>0.390–0.410</b></td><td style="color:#F59E0B">Ritenzione idrica lieve</td></tr>
+          <tr><td><b>&gt; 0.410</b></td><td style="color:#DC2626">Edema / Ritenzione severa</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="calc-box">
+      <h3>💪 FFMI — Fat Free Mass Index</h3>
+      <table class="food-table">
+        <thead><tr><th>FFMI (M/F)</th><th>Categoria</th></tr></thead>
+        <tbody>
+          <tr><td><b>&lt; 16 / &lt; 14</b></td><td style="color:#DC2626">Cachessia / Denutrito</td></tr>
+          <tr><td><b>16–18 / 14–16</b></td><td style="color:#F59E0B">Bassa massa magra</td></tr>
+          <tr><td><b>18–21 / 16–18</b></td><td style="color:#10B981">Nella norma ✅</td></tr>
+          <tr><td><b>21–24 / 18–20</b></td><td style="color:#3B82F6">Buona massa muscolare</td></tr>
+          <tr><td><b>&gt; 25 / &gt; 21</b></td><td>Atleta / Elevata massa magra</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div></main>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
-
-<!-- Modal: aggiungi / modifica alimento personalizzato -->
-<div id="modal-add-food" onclick="if(event.target===this)closeAddFood()">
-  <div class="mbox">
-    <div class="mhead">
-      <h3 id="modal-food-title">➕ Aggiungi alimento al database personale</h3>
-      <button onclick="closeAddFood()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate-l);line-height:1">×</button>
-    </div>
-    <div class="mbody">
-      <form id="af-form" onsubmit="event.preventDefault();saveFood()">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px">
-
-          <div class="fg" style="grid-column:1/-1">
-            <label>Nome alimento *</label>
-            <input id="af-nome" type="text" placeholder="es. Tortino di quinoa e verdure" required>
-          </div>
-          <div class="fg" style="grid-column:1/-1">
-            <label>Categoria</label>
-            <input id="af-cat" type="text" list="af-cat-list" placeholder="es. Piatti pronti, Cereali, Pesce…">
-            <datalist id="af-cat-list"></datalist>
-          </div>
-
-          <div class="sec-title">Macronutrienti (per 100 g)</div>
-
-          <div class="fg">
-            <label>Energia (kcal)</label>
-            <input id="af-kcal" type="number" min="0" step="0.1" placeholder="es. 250">
-          </div>
-          <div class="fg">
-            <label>Proteine (g)</label>
-            <input id="af-prot" type="number" min="0" step="0.1" placeholder="es. 12">
-          </div>
-          <div class="fg">
-            <label>Grassi totali (g)</label>
-            <input id="af-gtot" type="number" min="0" step="0.1" placeholder="es. 8">
-          </div>
-          <div class="fg">
-            <label>Grassi saturi (g)</label>
-            <input id="af-gs" type="number" min="0" step="0.1" placeholder="es. 2">
-          </div>
-          <div class="fg">
-            <label>Carboidrati (g)</label>
-            <input id="af-cho" type="number" min="0" step="0.1" placeholder="es. 30">
-          </div>
-          <div class="fg">
-            <label>Zuccheri (g)</label>
-            <input id="af-zucc" type="number" min="0" step="0.1" placeholder="es. 5">
-          </div>
-          <div class="fg">
-            <label>Fibre (g)</label>
-            <input id="af-fi" type="number" min="0" step="0.1" placeholder="es. 3">
-          </div>
-          <div class="fg">
-            <label>Colesterolo (mg)</label>
-            <input id="af-col" type="number" min="0" step="0.1" placeholder="es. 40">
-          </div>
-
-          <div class="sec-title">Minerali (per 100 g)</div>
-
-          <div class="fg">
-            <label>Calcio — Ca (mg)</label>
-            <input id="af-ca" type="number" min="0" step="0.1" placeholder="es. 120">
-          </div>
-          <div class="fg">
-            <label>Ferro — Fe (mg)</label>
-            <input id="af-fe" type="number" min="0" step="0.01" placeholder="es. 1.5">
-          </div>
-          <div class="fg">
-            <label>Magnesio — Mg (mg)</label>
-            <input id="af-mgval" type="number" min="0" step="0.1" placeholder="es. 40">
-          </div>
-          <div class="fg">
-            <label>Potassio — K (mg)</label>
-            <input id="af-k" type="number" min="0" step="0.1" placeholder="es. 350">
-          </div>
-          <div class="fg">
-            <label>Sodio — Na (mg)</label>
-            <input id="af-na" type="number" min="0" step="0.1" placeholder="es. 200">
-          </div>
-          <div class="fg">
-            <label>Zinco — Zn (mg)</label>
-            <input id="af-zn" type="number" min="0" step="0.01" placeholder="es. 1.2">
-          </div>
-          <div class="fg">
-            <label>Fosforo — P (mg)</label>
-            <input id="af-fo" type="number" min="0" step="0.1" placeholder="es. 180">
-          </div>
-          <div class="fg">
-            <label>Selenio — Se (µg)</label>
-            <input id="af-se" type="number" min="0" step="0.1" placeholder="es. 10">
-          </div>
-
-        </div>
-      </form>
-    </div>
-    <div class="mfoot">
-      <button onclick="closeAddFood()" style="padding:8px 18px;border:1.5px solid var(--border-d);background:#fff;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--slate)">Annulla</button>
-      <button onclick="saveFood()" style="padding:8px 20px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">💾 Salva alimento</button>
-    </div>
-  </div>
-</div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
 <script>
-let _editingFoodId = null; // null = nuovo alimento, stringa UUID = modifica
+let biaData = {};
+let cartelleList = [];
+let currentBiaId = null;
 
-function nd(v){ return (v===null||v===undefined||v==='')
-  ? '<span class="nd">—</span>'
-  : (v===0?'<span style="color:#CBD5E1">0</span>':v); }
+function showBIA(id) {
+  autoSavePage_bia();
+  document.querySelectorAll('.bia-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bia-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'storico') loadStorico();
+}
 
-function renderDB(list) {
-  const tbody = document.getElementById('db-tbody');
-  if(!list.length){
-    tbody.innerHTML='<tr><td colspan="19" style="text-align:center;padding:24px;color:var(--slate-l)">Nessun alimento trovato</td></tr>';
-    document.getElementById('db-count').textContent='0 alimenti';
-    return;
+function r1(v){ return Math.round(v * 10) / 10; }
+function r2(v){ return Math.round(v * 100) / 100; }
+
+function getBIAInputs() {
+  return {
+    peso: parseFloat(document.getElementById('bia-peso').value),
+    alt:  parseFloat(document.getElementById('bia-alt').value),
+    eta:  parseFloat(document.getElementById('bia-eta').value),
+    sesso: document.getElementById('bia-sesso').value,
+    R:    parseFloat(document.getElementById('bia-R').value),
+    Xc:   parseFloat(document.getElementById('bia-Xc').value),
+    af:   parseFloat(document.getElementById('bia-af').value),
+    bf:   parseFloat(document.getElementById('bia-bf').value),
+    ffm:  parseFloat(document.getElementById('bia-ffm').value),
+    tbw:  parseFloat(document.getElementById('bia-tbw').value),
+    bcm:  parseFloat(document.getElementById('bia-bcm').value),
+    bone: parseFloat(document.getElementById('bia-bone').value),
+    muscle: parseFloat(document.getElementById('bia-muscle').value),
+    icw:  parseFloat(document.getElementById('bia-icw').value),
+    ecw:  parseFloat(document.getElementById('bia-ecw').value),
+  };
+}
+
+function calcBIA() {
+  const d = getBIAInputs();
+  if (!d.peso || !d.alt) return;
+
+  // Calculate BMI
+  const bmi = d.peso / (d.alt/100)**2;
+
+  // If direct values provided by device, use them; otherwise estimate from BIA equations
+  let bf_pct, ffm_kg, tbw_L, fm_kg;
+
+  if (!isNaN(d.bf)) {
+    bf_pct = d.bf;
+    fm_kg = d.peso * d.bf / 100;
+    ffm_kg = d.peso - fm_kg;
+  } else if (!isNaN(d.ffm)) {
+    ffm_kg = d.ffm;
+    fm_kg = d.peso - ffm_kg;
+    bf_pct = (fm_kg / d.peso) * 100;
+  } else if (!isNaN(d.R) && d.alt && d.eta) {
+    // Lukaski BIA equation
+    const h2R = (d.alt**2) / d.R;
+    ffm_kg = d.sesso === 'M'
+      ? 0.756 * h2R + 0.110 * d.peso - 0.136 * d.eta + 0.251 * d.alt - 19.152
+      : 0.735 * h2R + 0.116 * d.peso - 0.073 * d.eta + 0.250 * d.alt - 18.461;
+    fm_kg = d.peso - ffm_kg;
+    bf_pct = (fm_kg / d.peso) * 100;
+  } else {
+    // Use BMI-based estimate (less accurate)
+    if (d.sesso === 'M') bf_pct = 1.20 * bmi + 0.23 * (d.eta || 35) - 10.8 - 5.4;
+    else bf_pct = 1.20 * bmi + 0.23 * (d.eta || 35) - 5.4;
+    fm_kg = d.peso * bf_pct / 100;
+    ffm_kg = d.peso - fm_kg;
   }
-  document.getElementById('db-count').textContent = list.length + ' alimenti';
-  tbody.innerHTML = list.map(f => {
-    const srcKey = f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int';
-    const persActions = f.src==='PERS'
-      ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="Modifica">✏️</button>`
-        + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="Elimina">🗑️</button>`
-      : '';
-    return `<tr>
-      <td>${esc(f.n)}${persActions}</td>
-      <td>${esc(f.c||'')}</td>
-      <td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td>
-      <td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td>
-      <td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td>
-      <td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td>
-      <td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td>
-      <td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td>
-    </tr>`;
-  }).join('');
+
+  const tbw = !isNaN(d.tbw) ? d.tbw : ffm_kg * 0.732;
+  const icw = !isNaN(d.icw) ? d.icw : tbw * 0.605;
+  const ecw = !isNaN(d.ecw) ? d.ecw : tbw * 0.395;
+  const bcm = !isNaN(d.bcm) ? d.bcm : icw * 1.1;
+  const muscle = !isNaN(d.muscle) ? d.muscle : ffm_kg * 0.76;
+  const bone = !isNaN(d.bone) ? d.bone : ffm_kg * 0.06;
+  const ffmi = ffm_kg / (d.alt/100)**2;
+  const ecwTbw = tbw > 0 ? ecw / tbw : 0;
+
+  // Angle of phase (if not provided, estimate)
+  const af_val = !isNaN(d.af) ? d.af : (!isNaN(d.Xc) && !isNaN(d.R) ? Math.atan(d.Xc / d.R) * (180/Math.PI) : null);
+
+  biaData = {bmi, bf_pct, fm_kg, ffm_kg, tbw, icw, ecw, bcm, muscle, bone, ffmi, ecwTbw, af_val, peso: d.peso, alt: d.alt, eta: d.eta, sesso: d.sesso};
+
+  renderResults(biaData, d);
 }
 
-function filterDB() {
-  const q = document.getElementById('db-search').value.toLowerCase();
-  const cat = document.getElementById('db-cat').value;
-  const src = document.getElementById('db-src').value;
-  let list = ALL_DB.filter(f => {
-    if(q && !f.n.toLowerCase().includes(q)) return false;
-    if(cat && f.c !== cat) return false;
-    if(src && f.src !== src) return false;
-    return true;
+function getCategory(bf, sesso) {
+  const m = sesso === 'M';
+  if (m) return bf < 6 ? {l:'Essenziale',c:'#7C3AED'} : bf < 14 ? {l:'Atleta',c:'#3B82F6'} : bf < 18 ? {l:'Fitness',c:'#10B981'} : bf < 25 ? {l:'Normale',c:'#059669'} : bf < 30 ? {l:'Sovrappeso',c:'#F59E0B'} : {l:'Obesità',c:'#DC2626'};
+  return bf < 14 ? {l:'Essenziale',c:'#7C3AED'} : bf < 21 ? {l:'Atleta',c:'#3B82F6'} : bf < 25 ? {l:'Fitness',c:'#10B981'} : bf < 32 ? {l:'Normale',c:'#059669'} : bf < 37 ? {l:'Sovrappeso',c:'#F59E0B'} : {l:'Obesità',c:'#DC2626'};
+}
+
+function renderResults(d, inp) {
+  const wrap = document.getElementById('bia-results-wrap');
+  const bfCat = getCategory(d.bf_pct, d.sesso);
+  const afColor = !d.af_val ? '#94A3B8' : d.af_val < 4 ? '#DC2626' : d.af_val < 5 ? '#F59E0B' : d.af_val < 7 ? '#10B981' : '#3B82F6';
+  const ecwColor = d.ecwTbw < 0.36 ? '#1D4ED8' : d.ecwTbw < 0.39 ? '#10B981' : d.ecwTbw < 0.41 ? '#F59E0B' : '#DC2626';
+  const ref = getBIAReference(d.sesso, d.eta || 35);
+  const ffmiColor = d.ffmi < ref.ffmi_low ? '#DC2626' : d.ffmi < ref.ffmi_ok ? '#F59E0B' : '#10B981';
+  const comments = generateClinicalComment(d, ref, inp);
+
+  wrap.innerHTML = `
+  <!-- ① Gauges row -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:18px">
+    ${buildGauge('Massa Grassa', d.bf_pct, '%', ref.bf_low, ref.bf_high, bfCat.c, bfCat.l)}
+    ${buildGauge('Massa Magra FFM', d.ffm_kg/d.peso*100, '%', 60, 85, '#1D4ED8', r1(d.ffm_kg)+'kg')}
+    ${buildGauge('FFMI', d.ffmi, 'kg/m²', ref.ffmi_ok, ref.ffmi_good+3, ffmiColor, d.ffmi<ref.ffmi_low?'Basso':d.ffmi<ref.ffmi_ok?'Normale':'Buono')}
+    ${buildGauge('Idratazione ECW/TBW', d.ecwTbw*100, '%×100', 36, 39, ecwColor, d.ecwTbw<0.36?'Disidrataz.':d.ecwTbw<0.39?'Normale':d.ecwTbw<0.41?'Ritenzione':'Edema')}
+    ${d.af_val ? buildGauge('Angolo di Fase', d.af_val, '°', 5, 7, afColor, d.af_val<4?'Critico':d.af_val<5?'Ridotto':d.af_val<7?'Normale':'Ottimo') : ''}
+    ${buildGauge('BMI', d.bmi, 'kg/m²', 18.5, 25, d.bmi<18.5||d.bmi>=30?'#DC2626':d.bmi>=25?'#F59E0B':'#10B981', d.bmi<18.5?'Sottopeso':d.bmi<25?'Normopeso':d.bmi<30?'Sovrappeso':'Obesità')}
+  </div>
+
+  <!-- ② Composition bar chart -->
+  <div class="calc-box" style="margin-bottom:14px">
+    <h3 style="margin-bottom:14px">📊 Composizione Corporea — ${r1(inp.peso)} kg</h3>
+    <canvas id="bia-comp-chart" width="600" height="200" style="max-width:100%"></canvas>
+  </div>
+
+  <!-- ③ Radar + Water side by side -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div class="calc-box">
+      <h3 style="margin-bottom:10px">🕸️ Profilo vs Riferimento</h3>
+      <canvas id="bia-radar" width="280" height="240" style="max-width:100%"></canvas>
+    </div>
+    <div class="calc-box">
+      <h3 style="margin-bottom:10px">💧 Distribuzione Idrica</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:10px">
+        ${buildWaterBar('ICW (Intracellulare)', d.icw, d.tbw, '#1D4ED8')}
+        ${buildWaterBar('ECW (Extracellulare)', d.ecw, d.tbw, d.ecwTbw>0.39?'#F59E0B':'#0EA5E9')}
+      </div>
+      <div style="background:#EFF6FF;border-radius:8px;padding:10px 14px;font-size:12.5px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="color:var(--slate-m)">Acqua Totale TBW</span>
+          <span style="font-weight:700;color:#0EA5E9">${r1(d.tbw)} L (${r1(d.tbw/inp.peso*100)}%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:var(--slate-m)">ECW/TBW ratio</span>
+          <span style="font-weight:700;color:${ecwColor}">${r2(d.ecwTbw)} ${d.ecwTbw<0.36?'⚠️':d.ecwTbw<0.39?'✅':d.ecwTbw<0.41?'⚠️':'🔴'}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ Clinical comments -->
+  <div class="calc-box" style="margin-bottom:14px">
+    <h3 style="margin-bottom:12px">🔬 Analisi Clinica — ${inp.sesso==='M'?'♂ Maschio':'♀ Femmina'}, ${inp.eta||'?'} anni</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${comments.map(c=>`
+        <div style="padding:12px 16px;background:${c.bg};border-radius:10px;border-left:4px solid ${c.col}">
+          <div style="font-size:13px;font-weight:700;color:${c.col};margin-bottom:5px">${c.icon} ${c.title}</div>
+          <div style="font-size:12.5px;color:#334155;line-height:1.75">${c.text}</div>
+          ${c.rec?`<div style="font-size:12px;color:${c.col};margin-top:7px;padding-top:7px;border-top:1px solid ${c.col}22;font-style:italic">💡 ${c.rec}</div>`:''}
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- ⑤ Full values table -->
+  <div class="calc-box">
+    <h3 style="margin-bottom:12px">📋 Tutti i Valori con Riferimenti</h3>
+    <div style="overflow-x:auto">
+      <table class="food-table">
+        <thead><tr><th>Parametro</th><th>Valore</th><th>Rif. normale</th><th>Stato</th></tr></thead>
+        <tbody>${buildBIATable(d, ref, inp)}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="salvaBIA()">💾 Salva in Cartella Paziente</button>
+    <button class="btn btn-ghost" onclick="window.print()">🖨️ Stampa Report</button>
+  </div>`;
+
+  setTimeout(() => {
+    drawBIACompChart(d, inp);
+    drawRadarChart(d, ref);
+  }, 80);
+}
+
+function buildGauge(label, value, unit, low, high, color, sublabel) {
+  const val = isNaN(value) ? null : Math.round(value * 10) / 10;
+  if (val === null) return '';
+  // Calculate fill %: clamp value between 0 and high*1.3
+  const maxVal = high * 1.4;
+  const fillPct = Math.min(100, Math.max(0, (val / maxVal) * 100));
+  // Zone colors on bar
+  const lowPct  = (low  / maxVal) * 100;
+  const highPct = (high / maxVal) * 100;
+  return `<div style="background:white;border:1.5px solid #E2E8F0;border-radius:12px;padding:14px;position:relative;overflow:hidden">
+    <div style="font-size:11px;color:var(--slate-l);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.4px">${label}</div>
+    <div style="font-size:26px;font-weight:700;color:${color};line-height:1;margin-bottom:4px">${val}<span style="font-size:13px;font-weight:500;color:var(--slate-l);margin-left:3px">${unit}</span></div>
+    <div style="font-size:12px;font-weight:600;color:${color};margin-bottom:8px">${sublabel}</div>
+    <div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden;position:relative">
+      <div style="position:absolute;left:${lowPct}%;width:${highPct-lowPct}%;height:100%;background:${color}22;border-left:2px solid ${color}66;border-right:2px solid ${color}66"></div>
+      <div style="height:100%;width:${fillPct}%;background:${color};border-radius:4px;transition:width .5s;min-width:4px"></div>
+    </div>
+    <div style="font-size:10px;color:var(--slate-l);margin-top:4px">Normale: ${low}–${high} ${unit}</div>
+  </div>`;
+}
+
+function buildWaterBar(label, val, total, color) {
+  if (!total) return '';
+  const pct = Math.round(val / total * 100);
+  return `<div>
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px">
+      <span style="font-weight:600;color:${color}">${label}</span>
+      <span style="font-weight:700">${r1(val)}L <span style="color:${color}">(${pct}%)</span></span>
+    </div>
+    <div style="height:18px;background:#E2E8F0;border-radius:9px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:${color};border-radius:9px;transition:width .5s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px">
+        <span style="font-size:10px;font-weight:700;color:white">${pct}%</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function drawBIACompChart(d, inp) {
+  const canvas = document.getElementById('bia-comp-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const PAD = {l:130, r:80, t:16, b:16};
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#FAFAFA'; ctx.fillRect(0,0,W,H);
+
+  const items = [
+    {l:'Massa Grassa',     v:d.fm_kg,    col:'#F59E0B', pct:d.bf_pct},
+    {l:'Massa Muscolare',  v:d.muscle,   col:'#3B82F6', pct:d.muscle/inp.peso*100},
+    {l:'Acqua Totale TBW', v:d.tbw,      col:'#0EA5E9', pct:d.tbw/inp.peso*100},
+    {l:'Massa Ossea',      v:d.bone,     col:'#8B5CF6', pct:d.bone/inp.peso*100},
+    {l:'BCM (Attiva)',     v:d.bcm,      col:'#10B981', pct:d.bcm/inp.peso*100},
+  ].filter(i => i.v > 0);
+
+  const maxV = Math.max(...items.map(i => i.v));
+  const barH = (H - PAD.t - PAD.b - (items.length-1)*8) / items.length;
+  const barW = W - PAD.l - PAD.r;
+
+  items.forEach((item, i) => {
+    const y = PAD.t + i * (barH + 8);
+    const bw = (item.v / maxV) * barW;
+
+    // Label
+    ctx.fillStyle = '#334155';
+    ctx.font = 'bold 11.5px DM Sans, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(item.l, PAD.l - 8, y + barH/2 + 4);
+
+    // Background bar
+    ctx.fillStyle = '#F1F5F9';
+    ctx.beginPath(); ctx.roundRect(PAD.l, y, barW, barH, 5); ctx.fill();
+
+    // Value bar with gradient
+    const grad = ctx.createLinearGradient(PAD.l, 0, PAD.l+bw, 0);
+    grad.addColorStop(0, item.col);
+    grad.addColorStop(1, item.col + '99');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(PAD.l, y, bw, barH, 5); ctx.fill();
+
+    // Value text
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 11px DM Sans, sans-serif';
+    ctx.textAlign = 'left';
+    if (bw > 60) ctx.fillText(r1(item.v)+'kg', PAD.l+8, y+barH/2+4);
+
+    // Percentage
+    ctx.fillStyle = item.col;
+    ctx.font = 'bold 11px DM Sans, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(r1(item.pct)+'%', PAD.l + bw + 6, y + barH/2 + 4);
   });
-  renderDB(list);
 }
 
-function populateCats() {
-  const cats = [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort();
-  const sel = document.getElementById('db-cat');
-  const prev = sel.value;
-  sel.innerHTML = '<option value="">Tutte le categorie</option>';
-  cats.forEach(c => {
-    const o = document.createElement('option');
-    o.value=c; o.textContent=c; sel.appendChild(o);
+
+function getBIAReference(sesso, eta) {
+  const m = sesso === 'M';
+  // Age-adjusted references
+  const young = eta < 35, mid = eta < 55;
+  return {
+    bf_low: m ? (young?8:10) : (young?16:20),
+    bf_high: m ? (young?20:24) : (young?28:33),
+    bf_opt:  m ? (young?15:18) : (young?22:26),
+    ffmi_low: m ? 18 : 15,
+    ffmi_ok:  m ? 20 : 17,
+    ffmi_good: m ? 22 : 19,
+    af_low: 4.5, af_ok: 5.5, af_good: 7.0,
+    ecw_low: 0.360, ecw_ok: 0.390, ecw_high: 0.410,
+    tbw_low: m ? 55 : 50,  // % peso
+    tbw_high: m ? 65 : 60,
+    muscle_low: m ? 35 : 28, // % peso
+    muscle_ok: m ? 40 : 32,
+  };
+}
+
+function generateClinicalComment(d, ref, inp) {
+  const comments = [];
+  const m = inp.sesso === 'M';
+  const eta = inp.eta || 35;
+
+  // 1. Body fat analysis
+  if (d.bf_pct < ref.bf_low) {
+    comments.push({icon:'⚠️', title:'Massa Grassa: SOTTOPESO LIPIDICO', col:'#DC2626', bg:'#FEF2F2',
+      text:`La percentuale di grasso corporeo (${r1(d.bf_pct)}%) è inferiore al range normale (${ref.bf_low}–${ref.bf_high}% per ${m?'uomini':'donne'} di ${eta} anni). Una percentuale troppo bassa può indicare malnutrizione, rischio di disfunzioni ormonali${m?'':' e amenorrea'} e ridotta protezione degli organi vitali.`,
+      rec:`Aumentare l'apporto calorico con particolare attenzione ai grassi insaturi (EVO, avocado, frutta secca) e alle proteine di qualità.`});
+  } else if (d.bf_pct <= ref.bf_high) {
+    comments.push({icon:'✅', title:`Massa Grassa: NELLA NORMA (${r1(d.bf_pct)}%)`, col:'#10B981', bg:'#F0FDF4',
+      text:`La percentuale di grasso corporeo rientra nell'intervallo ottimale per ${m?'uomo':'donna'} di ${eta} anni (${ref.bf_low}–${ref.bf_high}%). Il grasso viscerale (stimato dal rapporto ECW/TBW e dall'angolo di fase) è probabilmente nella norma. Questa composizione corporea è associata a ridotto rischio cardiovascolare e metabolico.`,
+      rec:null});
+  } else if (d.bf_pct < ref.bf_high + 8) {
+    comments.push({icon:'⚠️', title:`Massa Grassa: SOVRAPPESO (${r1(d.bf_pct)}%)`, col:'#F59E0B', bg:'#FEF3C7',
+      text:`La percentuale di grasso è superiore alla norma per ${m?'uomini':'donne'} di ${eta} anni (normale: ${ref.bf_low}–${ref.bf_high}%). Il grasso in eccesso, specie se viscerale, aumenta il rischio di insulino-resistenza, dislipidemia e patologie cardiovascolari. La massa magra è ${r1(d.ffm_kg)} kg — importante preservarla durante il dimagrimento.`,
+      rec:`Deficit calorico moderato (300-500 kcal/die), proteine 1.6-2.0 g/kg/die, resistenza muscolare 2-3x/settimana per preservare la FFM.`});
+  } else {
+    comments.push({icon:'🔴', title:`Massa Grassa: OBESITÀ (${r1(d.bf_pct)}%)`, col:'#DC2626', bg:'#FEF2F2',
+      text:`La percentuale di grasso corporeo (${r1(d.bf_pct)}%) supera significativamente i valori normali. Il rischio associato di comorbilità metaboliche (T2DM, ipertensione, NAFLD) è elevato. La massa magra attuale di ${r1(d.ffm_kg)} kg è il patrimonio da tutelare.`,
+      rec:`Intervento nutrizionale strutturato con deficit di 500-750 kcal/die, approccio proteico elevato (1.8-2.4 g/kg), esercizio aerobico e di resistenza combinati.`});
+  }
+
+  // 2. FFM / muscle mass
+  if (d.ffmi < ref.ffmi_low) {
+    comments.push({icon:'⚠️', title:`Massa Magra (FFM): RIDOTTA — FFMI ${r1(d.ffmi)}`, col:'#DC2626', bg:'#FEF2F2',
+      text:`L'FFMI (Fat Free Mass Index = ${r1(d.ffmi)} kg/m²) è inferiore al limite normale (${ref.ffmi_low} per ${m?'uomini':'donne'}). Questo indica sarcopenia o sottopeso muscolare. La massa muscolare stimata è ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% del peso). La sarcopenia è associata a ridotta capacità funzionale, maggior rischio di cadute e peggior prognosi nelle malattie croniche.`,
+      rec:`Aumentare l'introito proteico a 1.6–2.0 g/kg/die con distribuzione in 4-5 pasti. Esercizio di resistenza progressivo 3x/settimana. Valutare supplementazione con creatina 3-5g/die.`});
+  } else if (d.ffmi >= ref.ffmi_good) {
+    comments.push({icon:'💪', title:`Massa Magra: OTTIMA — FFMI ${r1(d.ffmi)}`, col:'#10B981', bg:'#F0FDF4',
+      text:`L'FFMI di ${r1(d.ffmi)} kg/m² indica una massa muscolare sopra la media per ${m?'uomini':'donne'} di ${eta} anni. La massa muscolare stimata è ${r1(d.muscle)} kg. Una buona massa muscolare è protettiva contro la sarcopenia, migliora la sensibilità insulinica e il metabolismo basale.`,
+      rec:null});
+  } else {
+    comments.push({icon:'✅', title:`Massa Magra: NELLA NORMA — FFMI ${r1(d.ffmi)}`, col:'#3B82F6', bg:'#EFF6FF',
+      text:`L'FFMI di ${r1(d.ffmi)} kg/m² è nella norma. La massa muscolare stimata è ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% del peso corporeo).`,
+      rec:`Mantenere con adeguato apporto proteico (1.2-1.6 g/kg/die) e attività fisica regolare.`});
+  }
+
+  // 3. Hydration / ECW
+  if (d.ecwTbw < ref.ecw_low) {
+    comments.push({icon:'💧', title:'Idratazione: DISIDRATAZIONE', col:'#1D4ED8', bg:'#EFF6FF',
+      text:`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è inferiore a 0.360, indicando una condizione di disidratazione. L'acqua totale è ${r1(d.tbw)} L (${r1(d.tbw/inp.peso*100)}% del peso). La disidratazione altera i parametri BIA, riduce la performance fisica e cognitiva, e può influenzare negativamente la funzione renale.`,
+      rec:`Incrementare l'idratazione a 30-35 mL/kg/die. Monitorare il colore delle urine (obiettivo: giallo paglierino).`});
+  } else if (d.ecwTbw >= ref.ecw_high) {
+    comments.push({icon:'💦', title:`Idratazione: RITENZIONE IDRICA${d.ecwTbw > 0.41 ? '/EDEMA' : ' LIEVE'}`, col:'#F59E0B', bg:'#FEF3C7',
+      text:`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è superiore a ${ref.ecw_ok}, indicando un'eccessiva quota di acqua extracellulare. Questo può essere associato a ${d.ecwTbw > 0.41 ? 'edema, scompenso cardiaco, ipoalbuminemia o patologia renale/epatica' : 'infiammazione, inattività fisica prolungata o eccesso di sale'}. ECW = ${r1(d.ecw)} L (${r1(d.ecw/d.tbw*100)}% del TBW vs normale 36-39%).`,
+      rec:`Ridurre l'apporto di sodio. Se ECW/TBW > 0.41 con segni clinici, approfondimento medico indicato (albumina, funzione renale/cardiaca).`});
+  } else {
+    comments.push({icon:'💧', title:'Idratazione: NELLA NORMA', col:'#10B981', bg:'#F0FDF4',
+      text:`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è nella norma (0.360–0.390). L'acqua intracellulare (ICW = ${r1(d.icw)} L) è adeguata, indicando buona integrità cellulare. L'acqua totale rappresenta il ${r1(d.tbw/inp.peso*100)}% del peso corporeo.`,
+      rec:null});
+  }
+
+  // 4. Angle of phase
+  if (d.af_val) {
+    if (d.af_val < 4) {
+      comments.push({icon:'🔴', title:`Angolo di Fase: CRITICO (${r1(d.af_val)}°)`, col:'#DC2626', bg:'#FEF2F2',
+        text:`L'angolo di fase di ${r1(d.af_val)}° è al di sotto del valore critico di 4°. È un indicatore prognostico negativo: indica compromissione della membrana cellulare, ridotta vitalità cellulare e stato nutrizionale compromesso. Valori < 4° sono associati ad aumentata mortalità nei pazienti critici e oncologici (Gupta 2008, Norman 2012).`,
+        rec:`Rivalutazione nutrizionale urgente. Considerare supporto nutrizionale intensivo (ONS o NE). Escludere patologie sottostanti: malnutrizione severa, sepsi, insufficienza epatica.`});
+    } else if (d.af_val < ref.af_low) {
+      comments.push({icon:'⚠️', title:`Angolo di Fase: RIDOTTO (${r1(d.af_val)}°)`, col:'#F59E0B', bg:'#FEF3C7',
+        text:`L'angolo di fase (${r1(d.af_val)}°) è inferiore al normale (>5° per adulti). Indica una riduzione della qualità cellulare, possibile infiammazione cronica o malnutrizione moderata. L'angolo di fase è correlato con la massa cellulare attiva (BCM = ${r1(d.bcm)} kg) e riflette l'integrità delle membrane cellulari.`,
+        rec:`Ottimizzare lo stato nutrizionale. Proteine 1.5-1.8 g/kg/die, omega-3 2-4 g/die (effetto antinfiammatorio). Rivalutare in 4-6 settimane.`});
+    } else if (d.af_val < ref.af_good) {
+      comments.push({icon:'✅', title:`Angolo di Fase: NORMALE (${r1(d.af_val)}°)`, col:'#10B981', bg:'#F0FDF4',
+        text:`L'angolo di fase (${r1(d.af_val)}°) è nella norma per adulti (5–7°). Indica buona integrità delle membrane cellulari e adeguato stato nutrizionale cellulare. Il BCM (Massa Cellulare Attiva) stimato è ${r1(d.bcm)} kg.`,
+        rec:null});
+    } else {
+      comments.push({icon:'⭐', title:`Angolo di Fase: OTTIMO (${r1(d.af_val)}°)`, col:'#3B82F6', bg:'#EFF6FF',
+        text:`L'angolo di fase (${r1(d.af_val)}°) è superiore alla media, tipico di atleti e soggetti con ottimo stato nutrizionale e muscolare. Indica eccellente integrità delle membrane cellulari e alta vitalità cellulare.`,
+        rec:null});
+    }
+  }
+
+  return comments;
+}
+
+function buildBIATable(d, ref, inp) {
+  const rows = [
+    ['BMI', r1(d.bmi)+' kg/m²', '18.5–24.9', d.bmi<18.5||d.bmi>=30?'🔴':d.bmi>=25?'🟡':'✅'],
+    ['Massa Grassa BF%', r1(d.bf_pct)+'%', ref.bf_low+'–'+ref.bf_high+'%', d.bf_pct<ref.bf_low||d.bf_pct>ref.bf_high+8?'🔴':d.bf_pct>ref.bf_high?'🟡':'✅'],
+    ['Massa Grassa FM', r1(d.fm_kg)+' kg', '—', '—'],
+    ['Massa Magra FFM', r1(d.ffm_kg)+' kg', '—', '—'],
+    ['FFMI', r1(d.ffmi)+' kg/m²', (inp.sesso==='M'?'18–25':'15–22'), d.ffmi<ref.ffmi_low?'🔴':d.ffmi<ref.ffmi_ok?'🟡':'✅'],
+    ['Massa Muscolare', r1(d.muscle)+' kg', inp.sesso==='M'?'≥35% peso':'≥28% peso', d.muscle/d.peso*100<(inp.sesso==='M'?35:28)?'🟡':'✅'],
+    ['Massa Ossea', r1(d.bone)+' kg', '—', '—'],
+    ['BCM (Massa Cellulare Attiva)', r1(d.bcm)+' kg', '—', '—'],
+    ['Acqua Totale TBW', r1(d.tbw)+' L', (ref.tbw_low+'–'+ref.tbw_high+'% peso'), d.tbw/d.peso*100<ref.tbw_low?'🟡':d.tbw/d.peso*100>ref.tbw_high?'🟡':'✅'],
+    ['Acqua ICW (intracellulare)', r1(d.icw)+' L', '~60–65% TBW', d.icw/d.tbw<0.55?'🟡':'✅'],
+    ['Acqua ECW (extracellulare)', r1(d.ecw)+' L', '~35–40% TBW', d.ecwTbw>0.41?'🔴':d.ecwTbw>0.39?'🟡':'✅'],
+    ['ECW/TBW', r2(d.ecwTbw), '0.360–0.390', d.ecwTbw<0.36||d.ecwTbw>0.41?'🔴':d.ecwTbw>0.39?'🟡':'✅'],
+    d.af_val ? ['Angolo di Fase', r1(d.af_val)+'°', '5.0–7.0°', d.af_val<4?'🔴':d.af_val<5?'🟡':d.af_val<7?'✅':'⭐'] : null,
+  ].filter(Boolean);
+  return rows.map(([param,val,rif,stato])=>`<tr>
+    <td>${param}</td>
+    <td style="font-weight:700">${val}</td>
+    <td style="font-size:11.5px;color:var(--slate-l)">${rif}</td>
+    <td style="text-align:center;font-size:16px">${stato}</td>
+  </tr>`).join('');
+}
+
+function drawRadarChart(d, ref) {
+  const canvas = document.getElementById('bia-radar');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H/2, R = Math.min(cx,cy) - 40;
+
+  const axes = [
+    {l:'BF%', val: Math.max(0, 100 - Math.abs(d.bf_pct - ref.bf_opt) / ref.bf_opt * 200)},
+    {l:'FFMI', val: Math.min(100, (d.ffmi / ref.ffmi_good) * 80)},
+    {l:'Angolo di Fase', val: d.af_val ? Math.min(100, d.af_val / 9 * 100) : 50},
+    {l:'Idratazione', val: d.ecwTbw > 0 ? Math.max(0, 100 - Math.abs(d.ecwTbw - 0.375) / 0.375 * 500) : 50},
+    {l:'TBW%', val: Math.min(100, (d.tbw/d.peso*100) / ref.tbw_high * 100)},
+    {l:'Muscolo%', val: Math.min(100, (d.muscle/d.peso*100) / (d.sesso==='M'?45:38) * 100)},
+  ];
+
+  const N = axes.length;
+  const angleStep = (2 * Math.PI) / N;
+
+  // Grid rings
+  for (let r = 0.2; r <= 1.0; r += 0.2) {
+    ctx.beginPath();
+    ctx.strokeStyle = '#E2E8F0';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i <= N; i++) {
+      const a = i * angleStep - Math.PI/2;
+      const x = cx + R * r * Math.cos(a);
+      const y = cy + R * r * Math.sin(a);
+      i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.closePath(); ctx.stroke();
+  }
+
+  // Axis lines
+  axes.forEach((_,i) => {
+    const a = i * angleStep - Math.PI/2;
+    ctx.beginPath();
+    ctx.strokeStyle = '#CBD5E1';
+    ctx.lineWidth = 0.8;
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+    ctx.stroke();
   });
-  sel.value = prev;
-}
 
-
-function _populateFoodModal(food) {
-  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = (val===null||val===undefined) ? '' : val; };
-  set('af-nome',  food.n   ?? '');
-  set('af-cat',   food.c   ?? '');
-  set('af-kcal',  food.k   ?? '');
-  set('af-prot',  food.p   ?? '');
-  set('af-gtot',  food.g   ?? '');
-  set('af-gs',    food.gs  ?? '');
-  set('af-cho',   food.ch  ?? '');
-  set('af-zucc',  food.z   ?? '');
-  set('af-fi',    food.fi  ?? '');
-  set('af-col',   food.col ?? '');
-  set('af-ca',    food.ca  ?? '');
-  set('af-fe',    food.fe  ?? '');
-  set('af-mgval', food.mg  ?? '');
-  set('af-k',     food.k2  ?? '');
-  set('af-na',    food.na  ?? '');
-  set('af-zn',    food.zn  ?? '');
-  set('af-fo',    food.fo  ?? '');
-  set('af-se',    food.se  ?? '');
-}
-
-function _openFoodModal() {
-  const dl = document.getElementById('af-cat-list');
-  dl.innerHTML = '';
-  [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort().forEach(c => {
-    const o = document.createElement('option'); o.value = c; dl.appendChild(o);
+  // Reference polygon (100%)
+  ctx.beginPath();
+  ctx.strokeStyle = '#10B981';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  axes.forEach((ax,i) => {
+    const a = i * angleStep - Math.PI/2;
+    const x = cx + R * Math.cos(a);
+    const y = cy + R * Math.sin(a);
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
   });
-  document.getElementById('modal-add-food').classList.add('open');
-  setTimeout(()=>document.getElementById('af-nome').focus(), 80);
+  ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+
+  // Patient polygon
+  ctx.beginPath();
+  ctx.fillStyle = 'rgba(59,130,246,0.18)';
+  ctx.strokeStyle = '#3B82F6';
+  ctx.lineWidth = 2.5;
+  axes.forEach((ax,i) => {
+    const a = i * angleStep - Math.PI/2;
+    const v = Math.min(100, Math.max(0, ax.val)) / 100;
+    const x = cx + R * v * Math.cos(a);
+    const y = cy + R * v * Math.sin(a);
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Labels
+  ctx.font = '11px DM Sans, sans-serif';
+  ctx.fillStyle = '#334155';
+  ctx.textAlign = 'center';
+  axes.forEach((ax,i) => {
+    const a = i * angleStep - Math.PI/2;
+    const x = cx + (R+22) * Math.cos(a);
+    const y = cy + (R+22) * Math.sin(a);
+    ctx.fillText(ax.l, x, y+4);
+  });
+
+  // Legend
+  ctx.font = '11px DM Sans, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.setLineDash([4,3]); ctx.strokeStyle = '#10B981'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(W-120,15); ctx.lineTo(W-95,15); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#10B981'; ctx.fillText('Ottimale', W-90, 19);
+  ctx.strokeStyle = '#3B82F6'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(W-120,32); ctx.lineTo(W-95,32); ctx.stroke();
+  ctx.fillStyle = '#3B82F6'; ctx.fillText('Paziente', W-90, 36);
 }
 
-function openAddFood() {
-  _editingFoodId = null;
-  document.getElementById('af-form').reset();
-  document.getElementById('modal-food-title').textContent = '➕ Aggiungi alimento al database personale';
-  _openFoodModal();
+function drawWaterChart(d) {
+  const canvas = document.getElementById('bia-water-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#F8FAFC';
+  ctx.fillRect(0,0,W,H);
+
+  const barH = 38, barY = (H-barH*2-20)/2;
+  const labels = ['ICW (intracellulare)', 'ECW (extracellulare)'];
+  const vals = [d.icw, d.ecw];
+  const cols = ['#1D4ED8','#0EA5E9'];
+  const maxVal = d.tbw || 50;
+
+  vals.forEach((v,i) => {
+    const y = barY + i*(barH+16);
+    const bw = Math.min(W-180, (v/maxVal)*(W-180));
+    ctx.fillStyle = cols[i];
+    ctx.beginPath();
+    ctx.roundRect(130, y, bw, barH, 8);
+    ctx.fill();
+    ctx.fillStyle = '#334155';
+    ctx.font = 'bold 12px DM Sans, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(labels[i], 122, y + barH/2 + 4);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 12px DM Sans, sans-serif';
+    ctx.textAlign = 'left';
+    if (bw > 60) ctx.fillText(r1(v)+'L ('+r1(v/d.tbw*100)+'%)', 140, y+barH/2+4);
+    else {
+      ctx.fillStyle = '#334155';
+      ctx.fillText(r1(v)+'L', 134+bw, y+barH/2+4);
+    }
+  });
 }
 
-function openEditFood(id) {
-  const food = CUSTOM_DB.find(f => f._id === id);
-  if (!food) { toast('Alimento non trovato', 'err'); return; }
-  _editingFoodId = id;
-  document.getElementById('af-form').reset();
-  document.getElementById('modal-food-title').textContent = '✏️ Modifica alimento personalizzato';
-  _populateFoodModal(food);
-  _openFoodModal();
-}
 
-function closeAddFood() {
-  document.getElementById('modal-add-food').classList.remove('open');
-  _editingFoodId = null;
-}
+async function salvaBIA() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartella_id = document.getElementById('bia-cartella').value;
+  if (!cartella_id) { toast('Seleziona prima una cartella paziente', 'err'); return; }
 
-async function saveFood() {
-  const nome = document.getElementById('af-nome').value.trim();
-  if (!nome) { toast('Inserisci il nome dell\'alimento', 'err'); return; }
-  if (!currentUser) { toast('Devi effettuare il login', 'err'); return; }
+  const d = getBIAInputs();
+  calcBIA();
 
-  const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
-  const row = {
-    nome,
-    categoria:      document.getElementById('af-cat').value.trim() || null,
-    kcal:           num('af-kcal'),
-    proteine:       num('af-prot'),
-    grassi_saturi:  num('af-gs'),
-    grassi_tot:     num('af-gtot'),
-    zuccheri:       num('af-zucc'),
-    carboidrati:    num('af-cho'),
-    fibre:          num('af-fi'),
-    calcio:         num('af-ca'),
-    ferro:          num('af-fe'),
-    magnesio:       num('af-mgval'),
-    potassio:       num('af-k'),
-    sodio:          num('af-na'),
-    zinco:          num('af-zn'),
-    fosforo:        num('af-fo'),
-    selenio:        num('af-se'),
-    colesterolo:    num('af-col')
+  const record = {
+    cartella_id,
+    user_id: currentUser.id,
+    data_misura: document.getElementById('bia-data').value || new Date().toISOString().split('T')[0],
+    note: document.getElementById('bia-note').value,
+    peso: d.peso, altezza: d.alt, eta: d.eta, sesso: d.sesso,
+    resistenza: d.R || null, reattanza: d.Xc || null, angolo_fase: d.af || null,
+    bf_pct: biaData.bf_pct || null, fm_kg: biaData.fm_kg || null,
+    ffm_kg: biaData.ffm_kg || null, tbw: biaData.tbw || null,
+    icw: biaData.icw || null, ecw: biaData.ecw || null,
+    bcm: biaData.bcm || null, muscle: biaData.muscle || null,
+    bone: biaData.bone || null, ffmi: biaData.ffmi || null,
+    raw_data: JSON.stringify(d)
   };
 
+  showLoading(true);
   let error;
-  if (_editingFoodId) {
-    ({ error } = await sb.from('alimenti_custom').update(row).eq('id', _editingFoodId).eq('user_id', currentUser.id));
-    if (!error) toast('Alimento aggiornato ✓', 'ok');
+  const isUpdate = !!currentBiaId;
+  if (currentBiaId) {
+    ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId));
   } else {
-    row.user_id = currentUser.id;
-    ({ error } = await sb.from('alimenti_custom').insert(row));
-    if (!error) toast('Alimento aggiunto ✓', 'ok');
+    record.visible_to_patient = false;
+    const result = await sb.from('bia_records').insert(record).select().single();
+    error = result.error;
+    if (result.data) currentBiaId = result.data.id;
   }
+  showLoading(false);
 
-  if (error) { toast('Errore: ' + error.message, 'err'); return; }
-
-  closeAddFood();
-  await loadCustomFoods();
-  populateCats();
-  filterDB();
+  if (error) {
+    if (error.message.includes('does not exist')) {
+      toast('Tabella BIA non creata su Supabase — esegui il SQL di setup', 'err');
+    } else {
+      toast('Errore salvataggio: ' + error.message, 'err');
+    }
+  } else {
+    toast(isUpdate ? '✅ BIA aggiornata!' : '✅ BIA salvata nella cartella paziente!', 'ok');
+    loadStorico();
+  }
 }
 
-function deleteCustomFood(id) {
-  customConfirm('Eliminare questo alimento dal database personale?', async () => {
-    const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', currentUser.id);
-    if (error) { toast('Errore: ' + error.message, 'err'); return; }
-    toast('Alimento eliminato', 'ok');
-    await loadCustomFoods();
-    populateCats();
-    filterDB();
-  }, { okLabel: 'Elimina', danger: true });
+async function loadStorico() {
+  if (!currentUser) return;
+  const cartellaFilt = document.getElementById('storico-cartella')?.value || '';
+  let query = sb.from('bia_records').select('*').eq('user_id', currentUser.id).order('data_misura', {ascending: false});
+  if (cartellaFilt) query = query.eq('cartella_id', cartellaFilt);
+
+  const { data, error } = await query;
+  const wrap = document.getElementById('storico-table-wrap');
+
+  if (error) {
+    wrap.innerHTML = `<div class="alert-warn">Tabella bia_records non trovata. Esegui il SQL di setup su Supabase:<br><br>
+    <code style="font-size:11px;background:#1E293B;color:#E2E8F0;padding:8px;border-radius:6px;display:block">CREATE TABLE IF NOT EXISTS bia_records (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  data_misura date, note text, peso numeric, altezza numeric, eta int,
+  sesso text, resistenza numeric, reattanza numeric, angolo_fase numeric,
+  bf_pct numeric, fm_kg numeric, ffm_kg numeric, tbw numeric,
+  icw numeric, ecw numeric, bcm numeric, muscle numeric, bone numeric,
+  ffmi numeric, raw_data jsonb, created_at timestamptz DEFAULT now(),
+  visible_to_patient boolean NOT NULL DEFAULT FALSE
+);
+ALTER TABLE bia_records DISABLE ROW LEVEL SECURITY;</code></div>`;
+    return;
+  }
+
+  if (!data || !data.length) {
+    wrap.innerHTML = '<div class="alert-info">Nessuna misurazione BIA salvata.</div>';
+    return;
+  }
+
+  const fmtDate = d => d ? new Date(d).toLocaleDateString('it') : '—';
+  wrap.innerHTML = `<div style="overflow-x:auto"><table class="food-table">
+    <thead><tr>
+      <th>Data</th><th>Paziente</th><th>Peso</th><th>BF%</th><th>FFM</th>
+      <th>TBW</th><th>Angolo°</th><th>FFMI</th><th>Note</th>
+    </tr></thead>
+    <tbody>${data.map(r => `<tr>
+      <td>${fmtDate(r.data_misura)}</td>
+      <td>${r.cartella_id ? cartelleList.find(c=>c.id===r.cartella_id)?.nome || r.cartella_id.slice(0,8)+'…' : '—'}</td>
+      <td>${r.peso ? r.peso+'kg' : '—'}</td>
+      <td style="color:${r.bf_pct>30?'#DC2626':r.bf_pct<15?'#3B82F6':'#10B981'};font-weight:700">${r.bf_pct ? r1(r.bf_pct)+'%' : '—'}</td>
+      <td>${r.ffm_kg ? r1(r.ffm_kg)+'kg' : '—'}</td>
+      <td>${r.tbw ? r1(r.tbw)+'L' : '—'}</td>
+      <td style="font-weight:700">${r.angolo_fase ? r1(r.angolo_fase)+'°' : '—'}</td>
+      <td>${r.ffmi ? r1(r.ffmi) : '—'}</td>
+      <td style="font-size:11.5px;color:var(--slate-l)">${r.note || '—'}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function parsePastedText() {
+  const txt = document.getElementById('bia-paste').value;
+  if (!txt.trim()) { toast('Incolla prima il testo del report', 'err'); return; }
+
+  // Extract numbers with their context
+  const patterns = [
+    {keys: ['peso','weight'], field: 'bia-peso'},
+    {keys: ['altezza','height','statura'], field: 'bia-alt'},
+    {keys: ['resistenza','resistance','r:'], field: 'bia-R'},
+    {keys: ['reattanza','reactance','xc:'], field: 'bia-Xc'},
+    {keys: ['angolo','phase angle','af:'], field: 'bia-af'},
+    {keys: ['massa grassa','fat mass','bf%','grasso%'], field: 'bia-bf'},
+    {keys: ['massa magra','ffm','fat free','lean'], field: 'bia-ffm'},
+    {keys: ['acqua totale','total body water','tbw'], field: 'bia-tbw'},
+    {keys: ['intracellulare','icw'], field: 'bia-icw'},
+    {keys: ['extracellulare','ecw'], field: 'bia-ecw'},
+    {keys: ['massa cellulare','bcm'], field: 'bia-bcm'},
+    {keys: ['muscolo','muscle'], field: 'bia-muscle'},
+    {keys: ['osso','bone','ossea'], field: 'bia-bone'},
+  ];
+
+  const lines = txt.toLowerCase().split(/\n/);
+  let found = 0;
+  lines.forEach(line => {
+    const numMatch = line.match(/[\d]+[.,]?[\d]*/g);
+    if (!numMatch) return;
+    patterns.forEach(p => {
+      if (p.keys.some(k => line.includes(k))) {
+        const val = parseFloat(numMatch[numMatch.length-1].replace(',','.'));
+        if (!isNaN(val) && val > 0) {
+          const el = document.getElementById(p.field);
+          if (el && !el.value) { el.value = val; found++; }
+        }
+      }
+    });
+  });
+
+  if (found > 0) {
+    toast(`✅ Trovati ${found} parametri dal testo`, 'ok');
+    calcBIA();
+    showBIA('risultati');
+  } else {
+    toast('Nessun parametro riconosciuto nel testo incollato. Inserisci manualmente.', 'err');
+  }
+}
+
+function parseFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('bia-paste').value = e.target.result;
+    parsePastedText();
+  };
+  reader.readAsText(file);
+}
+
+function resetBIA() {
+  ['bia-peso','bia-alt','bia-eta','bia-R','bia-Xc','bia-af','bia-bf','bia-ffm',
+   'bia-tbw','bia-bcm','bia-bone','bia-muscle','bia-icw','bia-ecw'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('bia-paste').value = '';
+  document.getElementById('bia-results-wrap').innerHTML = '<div class="alert-info">Inserisci i dati per vedere l\'analisi.</div>';
+  biaData = {};
+  currentBiaId = null;
+  const btnSalva = document.getElementById('btn-salva-bia');
+  if (btnSalva) btnSalva.textContent = '💾 Salva in Cartella';
+  const noteEl = document.getElementById('bia-note');
+  if (noteEl) noteEl.value = '';
+  document.getElementById('bia-data').value = new Date().toISOString().split('T')[0];
+}
+
+function onCartellaChange() {
+  const id = document.getElementById('bia-cartella').value;
+  if (!id) { _cwClear('storico-cartella-cw'); return; }
+  _cwLoadCache().then(function(cartelle) {
+    const cart = cartelle.find(function(c){ return c.id === id; });
+    if (cart) _cwSelect('storico-cartella-cw', cart.id, cart.nome);
+  });
+}
+
+async function loadCartellePaz() {
+  if (!currentUser) return;
+  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  cartelleList = data || [];
+  ['bia-cartella','storico-cartella'].forEach(selId => {
+    const sel = document.getElementById(selId);
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+    cartelleList.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = '📁 ' + c.nome;
+      sel.appendChild(o);
+    });
+    if (cur) sel.value = cur;
+  });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const ok = await checkAuth();
-  if (!ok) return;
-  rebuildDB();
-  await loadCustomFoods();
-  populateCats();
-  renderDB(ALL_DB);
+  document.getElementById('bia-data').value = new Date().toISOString().split('T')[0];
+  try {
+    await checkAuth(false);
+    initCartellaWidget('bia-cartella-cw', { hiddenInputId:'bia-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF', onSelect:(id,nome)=>{ _cwSelect('storico-cartella-cw',id,nome); loadStorico(); } });
+    initCartellaWidget('storico-cartella-cw', { hiddenInputId:'storico-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF', onSelect:()=>loadStorico() });
+    // Pre-select cartella from URL parameter
+    const params = new URLSearchParams(window.location.search);
+    const cartellaParam = params.get('cartella');
+    const biaIdParam = params.get('biaId');
+    if (cartellaParam) {
+      await _cwSetById('bia-cartella-cw', cartellaParam);
+      onCartellaChange();
+    }
+    if (biaIdParam && currentUser) {
+      showLoading(true);
+      const { data } = await sb.from('bia_records').select('*').eq('id', biaIdParam).single();
+      showLoading(false);
+      if (data) {
+        currentBiaId = data.id;
+        // Populate cartella
+        if (data.cartella_id) { await _cwSetById('bia-cartella-cw', data.cartella_id); onCartellaChange(); }
+        // Populate date and note
+        if (data.data_misura) document.getElementById('bia-data').value = data.data_misura;
+        if (data.note) document.getElementById('bia-note').value = data.note;
+        // Populate manual fields from raw_data if available
+        let raw = {};
+        try { if (data.raw_data) raw = JSON.parse(data.raw_data); } catch(e) { console.warn('BIA raw_data parse error:', e); }
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+        setVal('bia-peso', raw.peso ?? data.peso);
+        setVal('bia-alt', raw.alt ?? data.altezza);
+        setVal('bia-eta', raw.eta ?? data.eta);
+        if (data.sesso) document.getElementById('bia-sesso').value = data.sesso;
+        setVal('bia-R', raw.R ?? data.resistenza);
+        setVal('bia-Xc', raw.Xc ?? data.reattanza);
+        setVal('bia-af', raw.af ?? data.angolo_fase);
+        setVal('bia-bf', data.bf_pct);
+        setVal('bia-ffm', data.ffm_kg);
+        setVal('bia-tbw', data.tbw);
+        setVal('bia-bcm', data.bcm);
+        setVal('bia-bone', data.bone);
+        setVal('bia-muscle', data.muscle);
+        setVal('bia-icw', data.icw);
+        setVal('bia-ecw', data.ecw);
+        calcBIA();
+        toast('📂 BIA caricata per modifica!', 'ok');
+        document.getElementById('btn-salva-bia').textContent = '💾 Aggiorna BIA';
+      }
+    }
+  } catch(e) {}
 });
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_bia() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_bia', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_bia() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_bia') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_bia() {
+  customConfirm('Sei sicuro di voler svuotare tutti i dati di questa sezione? L\'operazione non può essere annullata.', function() {
+    const ap = document.querySelector('.bia-panel.active') || document.querySelector('main');
+    if (ap) {
+      ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+        else el.value = '';
+      });
+      ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    }
+    localStorage.removeItem('nutriplan_autosave_bia');
+    if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+  }, { title: '⚠️ Conferma Reset', danger: true, okLabel: 'Sì, Reset' });
+}
+document.addEventListener('DOMContentLoaded', function() {
+  if (!new URLSearchParams(window.location.search).get('biaId')) autoRestorePage_bia();
+}, {once: false});
 </script>
 </body>
 </html>

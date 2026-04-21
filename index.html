@@ -3,209 +3,1250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>DietPlan Pro — Accedi</title>
+<title>Gestione Diabete — DietPlan Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradient(135deg,#0F766E 0%,#1E293B 60%,#0C5F58 100%);display:flex;align-items:center;justify-content:center;padding:16px}
-.box{background:white;border-radius:20px;padding:40px 36px;max-width:420px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.35);animation:fadeIn .4s cubic-bezier(.4,0,.2,1)}
-@keyframes fadeIn{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
-.logo{text-align:center;margin-bottom:28px}
-.logo h1{font-family:'DM Serif Display',serif;font-size:32px;color:#0F766E;line-height:1.1}
-.logo p{font-size:11px;color:#64748B;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
-.tabs{display:flex;border-bottom:2px solid #E2E8F0;margin-bottom:24px}
-.tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-weight:600;font-size:13.5px;color:#64748B;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
-.tab.active{color:#0F766E;border-bottom-color:#0F766E}
-.panel{display:none}.panel.active{display:block}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
-.fg label{font-size:12px;font-weight:600;color:#334155}
-.fg input{padding:10px 13px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
-.fg input:focus{border-color:#14B8A6}
-.btn{width:100%;padding:12px;background:#0F766E;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:6px}
-.btn:hover{background:#0C5F58}
-.btn:disabled{background:#94A3B8;cursor:not-allowed}
-.err{background:#FEE2E2;color:#DC2626;padding:9px 13px;border-radius:8px;font-size:12.5px;font-weight:600;margin-bottom:12px;display:none}
-.err.show{display:block}
-.ok{background:#D1FAE5;color:#065F46;padding:9px 13px;border-radius:8px;font-size:12.5px;font-weight:600;margin-bottom:12px;display:none}
-.ok.show{display:block}
-.note{font-size:11.5px;color:#64748B;text-align:center;margin-top:14px}
-.waiting{text-align:center;padding:16px;display:none}
-.waiting.show{display:block}
-#loading{position:fixed;inset:0;background:rgba(255,255,255,.85);display:none;align-items:center;justify-content:center;font-size:14px;color:#64748B;gap:12px}
-#loading.show{display:flex}
-.spinner{width:28px;height:28px;border:3px solid #E2E8F0;border-top-color:#0F766E;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── Tab buttons: pill style ── */
+.dg-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.dg-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
+.dg-tab:hover{background:rgba(59,130,246,.1);color:#3B82F6}
+.dg-tab.active{background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:white;box-shadow:0 3px 10px rgba(59,130,246,.3);font-weight:700;letter-spacing:.2px}
+.dg-panel{display:none}.dg-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:28px;font-weight:700;color:#3B82F6;margin:8px 0}
+.result-note{font-size:12px;color:var(--slate-l)}
+.food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.food-table th{background:#1E3A5F;color:#E2E8F0;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.food-table th:first-child{text-align:left}
+.food-table td{padding:7px 12px;border-bottom:1px solid #EFF6FF;text-align:center;vertical-align:middle}
+.food-table td:first-child{text-align:left;font-weight:600;color:var(--slate)}
+.food-table tbody tr:nth-child(even){background:#F8FBFF}
+.food-table tr:hover td{background:#DBEAFE}
+.porzione-pill{display:inline-flex;align-items:center;gap:5px;background:#DBEAFE;color:#1D4ED8;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin:3px}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#EFF6FF;border-left:3px solid #3B82F6;color:#1E3A5F}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.step-box{background:#F8FAFC;border-radius:8px;padding:14px;margin-bottom:10px;border-left:3px solid #3B82F6}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#3B82F6;color:white;border-radius:50%;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
+.porz-category{margin-bottom:24px;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.porz-cat-hdr{font-size:12px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.7px;padding:10px 16px;background:linear-gradient(90deg,#1E3A5F,#2563EB);display:flex;align-items:center;gap:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus{border-color:#3B82F6}
+.badge-blu{background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700}
+@media print{
+  @page{margin:0;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast,#dg-paz-hdr{display:none!important}
+  #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
+  .page-content{padding:0!important}
+  .dg-tabs{display:none!important}
+  .dg-panel{display:none!important}
+  .dg-panel.active{display:block!important}
+  /* ── Compact print mode ── */
+  body[data-print-mode="compact"] .dg-panel{display:none!important}
+  body[data-print-mode="compact"] #dg-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+}
+#dg-compact-print-area{display:none}
 </style>
 </head>
 <body>
-<div class="box">
-  <div class="logo">
-    <h1>DietPlan Pro</h1>
-    <p>CREA 2019 + BDA INRAN · v1.0</p>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+    <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+<a class="nav-item active" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
   </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🩸 Gestione Diabete — Counting CHO & Insulina</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
 
-  <!-- WAITING -->
-  <div class="waiting" id="waiting-box">
-    <div style="font-size:40px;margin-bottom:12px">⏳</div>
-    <h3 style="font-size:16px;font-weight:700;color:#D97706;margin-bottom:8px">Account in attesa di approvazione</h3>
-    <p style="font-size:13px;color:#334155;margin-bottom:12px">Il tuo account è registrato. Un amministratore lo attiverà a breve.</p>
-    <p style="font-size:12px;color:#64748B" id="waiting-email"></p>
-    <button onclick="doLogout()" style="width:100%;padding:10px;background:#1E293B;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px">Esci</button>
   </div>
+</div>
 
-  <!-- LOGIN/REGISTER -->
-  <div id="auth-box">
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('login')">Accedi</div>
-      <div class="tab" onclick="switchTab('register')">Registrati</div>
-    </div>
+<main id="main"><div class="page-content">
 
-    <div class="panel active" id="p-login">
-      <div class="err" id="login-err"></div>
-      <div class="fg"><label>Email</label><input type="email" id="login-email" placeholder="la-tua@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="btn" id="login-btn" onclick="doLogin()">Accedi</button>
-      <p class="note">I tuoi dati sono salvati in modo sicuro. <a href="privacy.html" style="color:#0F766E;font-weight:600">Privacy Policy</a></p>
-    </div>
-
-    <div class="panel" id="p-register">
-      <div class="err" id="reg-err"></div>
-      <div class="ok" id="reg-ok"></div>
-      <div class="fg"><label>Email</label><input type="email" id="reg-email" placeholder="la-tua@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Password</label><input type="password" id="reg-pw" placeholder="Minimo 6 caratteri" autocomplete="new-password"></div>
-      <div class="fg"><label>Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
-      <button class="btn" id="reg-btn" onclick="doRegister()">Crea Account</button>
-      <p class="note">Dopo la registrazione attendi l'approvazione dell'amministratore.</p>
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 60%,#3B82F6 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(30,58,95,.3);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🩸</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Gestione Diabete — Counting CHO &amp; Insulina</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Strumenti per il calcolo del rapporto I:C, counting dei carboidrati, porzioni isoglucidiche e depliant paziente. Basato su <b>ADA 2024 · EASD · AMD-SID 2023</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">⚖️ Rapporto I:C</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🔢 Counting CHO</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📄 Depliant Paziente</div>
     </div>
   </div>
 </div>
 
-<div id="loading"><div class="spinner"></div>Caricamento...</div>
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="dg-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <div id="dg-cartella-cw"></div>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="dg-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <button class="btn btn-primary btn-sm" onclick="salvaDiabete()">💾 Salva in Cartella</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="svuotaSezione_diabete()">🔄 Reset</button>
+  </div>
+</div>
 
+<div class="dg-tabs">
+  <button class="dg-tab active" onclick="showTab('rapporto')">⚖️ Rapporto I:C</button>
+  <button class="dg-tab" onclick="showTab('counting')">🔢 Counting CHO</button>
+  <button class="dg-tab" onclick="showTab('porzioni')">🍽️ Porzioni Isoglucidiche</button>
+  <button class="dg-tab" onclick="showTab('depliant')">📄 Depliant Paziente</button>
+  <button class="dg-tab" onclick="showTab('lg')">📚 Linee Guida</button>
+  <button class="dg-tab" onclick="showTab('piano_diabete')">🍽️ Piano Alimentare</button>
+  <button class="dg-tab" onclick="showTab('piano_esempio_dg')">🍽️ Esempi</button>
+</div>
+
+<!-- TAB 1: RAPPORTO I:C -->
+<!-- ══════════════════════════════════════════════════ -->
+<!-- TAB VALUTAZIONE PAZIENTE                          -->
+<!-- ══════════════════════════════════════════════════ -->
+
+<div class="dg-panel active" id="tab-rapporto">
+  <div class="alert-info alert-box">
+    <b>🎯 Rapporto Insulina:Carboidrati (I:C)</b> — Indica quanti grammi di CHO sono coperti da 1 unità di insulina rapida. È individuale e può variare per pasto e momento della giornata.
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚖️ Calcolo Rapporto I:C</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso corporeo (kg)</label><input type="number" id="ic-peso" placeholder="es. 70" step="0.5" oninput="calcIC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Tipo diabete</label>
+        <select id="ic-tipo" onchange="calcIC()">
+          <option value="t1">Diabete Tipo 1</option>
+          <option value="t2">Diabete Tipo 2 in terapia insulinica</option>
+          <option value="mody">MODY / altri</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Dose totale giornaliera insulina (TDD, unità)</label><input type="number" id="ic-tdd" placeholder="es. 40" oninput="calcIC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Metodo calcolo</label>
+        <select id="ic-metodo" onchange="calcIC()">
+          <option value="500">Regola del 500 (CHO counting)</option>
+          <option value="450">Regola del 450 (dieta mista)</option>
+          <option value="peso">Formula basata sul peso (T1D)</option>
+        </select>
+      </div>
+      <div id="ic-result" style="background:#EFF6FF;border-radius:8px;padding:14px;margin-top:10px;display:none">
+        <div style="font-size:12px;color:var(--slate-l);margin-bottom:4px">Rapporto I:C stimato</div>
+        <div class="result-big" id="ic-val">—</div>
+        <div class="result-note" id="ic-note"></div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>💉 Calcolo Dose Insulina per Pasto</h3>
+      <div class="nf" style="margin-bottom:10px"><label>CHO del pasto (g)</label><input type="number" id="pasto-cho" placeholder="es. 60" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Rapporto I:C del pasto</label><input type="number" id="pasto-ic" placeholder="es. 10" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Glicemia attuale (mg/dL)</label><input type="number" id="pasto-glic" placeholder="es. 160" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Target glicemia (mg/dL)</label><input type="number" id="pasto-target" placeholder="es. 100" value="100" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Fattore di sensibilità insulinica FSI (mg/dL per 1U)</label><input type="number" id="pasto-fsi" placeholder="es. 50" oninput="calcDose()"></div>
+      <div id="dose-result" style="background:#F0FDF4;border-radius:8px;padding:14px;margin-top:10px;display:none">
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div><div style="font-size:11.5px;color:var(--slate-l)">Dose per CHO</div><div class="result-big" id="dose-cho" style="color:#15803D">—</div></div>
+          <div><div style="font-size:11.5px;color:var(--slate-l)">Correzione glicemica</div><div class="result-big" id="dose-corr" style="color:#D97706">—</div></div>
+          <div><div style="font-size:11.5px;color:var(--slate-l);font-weight:700">DOSE TOTALE</div><div class="result-big" id="dose-tot" style="font-size:36px">—</div></div>
+        </div>
+        <div class="result-note" style="margin-top:6px">⚠️ La dose finale va sempre confermata con il team diabetologico</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📊 Fattore di Sensibilità Insulinica (FSI)</h3>
+    <div class="alert-info alert-box" style="margin-bottom:12px">Il FSI indica di quanti mg/dL scende la glicemia con 1 unità di insulina rapida.</div>
+    <div class="grid-3">
+      <div class="nf"><label>TDD (unità/die)</label><input type="number" id="fsi-tdd" placeholder="es. 40" oninput="calcFSI()"></div>
+      <div class="nf">
+        <label>Metodo</label>
+        <select id="fsi-metodo" onchange="calcFSI()">
+          <option value="1800">Regola del 1800 (insulina rapida)</option>
+          <option value="1700">Regola del 1700</option>
+          <option value="1500">Regola del 1500 (insulina regolare)</option>
+        </select>
+      </div>
+      <div id="fsi-result" style="background:#EFF6FF;border-radius:8px;padding:12px;display:flex;flex-direction:column;justify-content:center">
+        <div style="font-size:11px;color:var(--slate-l)">FSI stimato</div>
+        <div class="result-big" id="fsi-val" style="font-size:22px">—</div>
+        <div style="font-size:11px;color:var(--slate-l)">mg/dL per 1 unità</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: COUNTING CHO -->
+<div class="dg-panel" id="tab-counting">
+  <div class="alert-info alert-box">
+    <b>🔢 CHO Counting</b> — Metodo per stimare i grammi di carboidrati dei pasti per calcolare la dose di insulina rapida. Esistono 3 livelli di complessità crescente.
+  </div>
+
+  <div class="calc-box">
+    <h3>📱 Calcolatore CHO del Pasto</h3>
+    <div id="cho-items"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addCHOItem()" style="margin-bottom:12px">➕ Aggiungi alimento</button>
+    <div style="background:#EFF6FF;border-radius:8px;padding:14px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div><div style="font-size:12px;color:var(--slate-l)">Totale CHO pasto</div><div class="result-big" id="cho-tot">0 g</div></div>
+      <div><div style="font-size:12px;color:var(--slate-l)">Con I:C</div>
+        <input type="number" id="cho-ic-val" placeholder="I:C es. 10" style="width:80px;padding:5px 8px;border:1.5px solid #BFDBFE;border-radius:6px;font-family:inherit;font-size:13px" oninput="calcCHODose()">
+      </div>
+      <div><div style="font-size:12px;color:var(--slate-l)">Dose insulina stimata</div><div class="result-big" id="cho-dose" style="color:#15803D">— U</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📚 Livelli di CHO Counting</h3>
+      <div class="step-box"><span class="step-num">1</span><b>Livello Base:</b> Distinguere gli alimenti contenenti CHO (pane, pasta, riso, frutta, latte, legumi) da quelli senza (carne, pesce, verdure, formaggi, olio). Stimare le porzioni visivamente.</div>
+      <div class="step-box"><span class="step-num">2</span><b>Livello Intermedio:</b> Usare le porzioni isoglucidiche (10g CHO per porzione). Pesare gli alimenti principali. Leggere le etichette nutrizionali.</div>
+      <div class="step-box"><span class="step-num">3</span><b>Livello Avanzato:</b> Pesare tutti gli alimenti, calcolare grammi esatti di CHO, usare app (GlycoLeap, MyFitnessPal, DiabApp), calcolare la dose insulina con I:C e FSI.</div>
+    </div>
+    <div class="calc-box">
+      <h3>📋 Come Leggere l'Etichetta</h3>
+      <div class="alert-warn alert-box">Cerca "Carboidrati" o "Carboidrati totali" — NON "di cui zuccheri" che è solo una parte.</div>
+      <div style="background:#1E293B;color:#E2E8F0;border-radius:8px;padding:14px;font-size:12.5px;line-height:2">
+        <div>Valori nutrizionali per <b style="color:#60A5FA">100g</b></div>
+        <div>Calorie: 340 kcal</div>
+        <div>Grassi: 2.5g</div>
+        <div style="color:#FCD34D;font-weight:700">→ Carboidrati: <b>72g</b> ← QUESTO</div>
+        <div style="padding-left:16px;color:#94A3B8">di cui zuccheri: 3g</div>
+        <div>Proteine: 12g</div>
+        <div style="color:#6EE7B7;font-size:11px;margin-top:6px">→ Per 80g di alimento: 72 × 0.80 = <b>57.6g CHO</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: PORZIONI ISOGLUCIDICHE -->
+<div class="dg-panel" id="tab-porzioni">
+  <div class="alert-info alert-box">
+    <b>🍽️ Porzioni Isoglucidiche</b> — Una porzione isoglucidica (PI) = <b>10g di CHO</b>. Ogni alimento ha un peso diverso per raggiungere 10g CHO. Utile per sostituire alimenti mantenendo lo stesso apporto glucidico.
+  </div>
+  <div class="nf no-print" style="margin-bottom:16px;max-width:300px">
+    <label>Cerca alimento</label>
+    <input type="text" id="porz-search" placeholder="es. pasta, pane, mela..." oninput="filterPorzioni()">
+  </div>
+  <div id="porzioni-grid"></div>
+</div>
+
+<!-- TAB 4: DEPLIANT PAZIENTE -->
+<div class="dg-panel" id="tab-depliant">
+  <div class="alert-info alert-box no-print">
+    📄 Depliant stampabile per il paziente. Personalizza il rapporto I:C nella casella in fondo, poi clicca <b>Stampa</b> in alto a destra.
+  </div>
+
+  <div style="max-width:820px;margin:0 auto;background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12)">
+    <!-- Header depliant -->
+    <div style="background:linear-gradient(135deg,#1E3A5F,#3B82F6);padding:28px 32px;color:white;display:flex;align-items:center;gap:20px">
+      <div style="font-size:48px">🩸</div>
+      <div>
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:4px">Guida al Counting dei Carboidrati</h2>
+        <p style="font-size:13px;opacity:.85">Come gestire i carboidrati con l'insulina · DietPlan Pro</p>
+      </div>
+    </div>
+
+    <div style="padding:24px 28px">
+      <!-- Box Cos'è -->
+      <div style="background:#EFF6FF;border-radius:10px;padding:14px 18px;margin-bottom:18px;border-left:4px solid #3B82F6">
+        <h3 style="color:#1D4ED8;font-size:14px;margin-bottom:6px">💡 Cos'è il Counting dei Carboidrati?</h3>
+        <p style="font-size:13px;line-height:1.7;color:#1E3A5F">È un metodo per calcolare i grammi di carboidrati in ogni pasto, in modo da adattare la dose di insulina rapida. Più precisamente si calcola, migliore sarà il controllo della glicemia.</p>
+      </div>
+
+      <!-- Alimenti con e senza CHO -->
+      <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:10px">Quali alimenti contengono carboidrati?</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+        <div style="background:#FEF3C7;border-radius:10px;padding:14px;border-left:4px solid #F59E0B">
+          <div style="font-weight:700;color:#92400E;font-size:13px;margin-bottom:8px">⚠️ CONTENGONO CHO — da pesare/contare</div>
+          <div style="font-size:12.5px;line-height:2;color:#451A03">
+            🌾 Pane, pasta, riso, crackers, grissini<br>
+            🥔 Patate, mais<br>
+            🍎 Tutta la frutta fresca e secca<br>
+            🥛 Latte, yogurt (non formaggi)<br>
+            🫘 Legumi (ceci, fagioli, lenticchie)<br>
+            🍫 Dolci, biscotti, succhi, bevande
+          </div>
+        </div>
+        <div style="background:#F0FDF4;border-radius:10px;padding:14px;border-left:4px solid #10B981">
+          <div style="font-weight:700;color:#065F46;font-size:13px;margin-bottom:8px">✅ SENZA CHO — non influenzano la glicemia</div>
+          <div style="font-size:12.5px;line-height:2;color:#052E16">
+            🥩 Carne, pesce, uova<br>
+            🧀 Formaggi, affettati<br>
+            🫒 Olio, burro, margarina<br>
+            🥦 Verdure (tranne patate e mais)<br>
+            🥜 Frutta a guscio (noci, mandorle)<br>
+            💧 Acqua, caffè, tè non zuccherati
+          </div>
+        </div>
+      </div>
+
+      <!-- Come calcolare -->
+      <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:10px">Come si calcola?</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+        <div style="background:#F8FAFC;border-radius:10px;padding:14px;border:1.5px solid #E2E8F0">
+          <div style="font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:6px">📦 METODO ETICHETTA</div>
+          <div style="font-size:12px;line-height:1.8;color:#334155">
+            1. Guarda i <b>Carboidrati per 100g</b><br>
+            2. Pesa l'alimento<br>
+            3. Calcola: <b>(CHO ÷ 100) × grammi pesati</b><br><br>
+            <span style="background:#DBEAFE;padding:4px 8px;border-radius:6px;font-size:11px">Es: 80g pasta con 72g CHO/100g → <b>80×72÷100 = 57.6g CHO</b></span>
+          </div>
+        </div>
+        <div style="background:#F8FAFC;border-radius:10px;padding:14px;border:1.5px solid #E2E8F0">
+          <div style="font-size:12px;font-weight:700;color:#7C3AED;margin-bottom:6px">🍽️ METODO PORZIONI (PI)</div>
+          <div style="font-size:12px;line-height:1.8;color:#334155">
+            1 Porzione Isoglucidica (PI) = <b>10g di CHO</b><br>
+            Conta quante PI mangi:<br>
+            1 PI = ⚖️ 14g pasta cruda<br>
+            1 PI = ⚖️ 19g pane<br>
+            1 PI = ⚖️ 91g mela<br>
+            <span style="background:#EDE9FE;padding:4px 8px;border-radius:6px;font-size:11px">Pasto con 6 PI = <b>60g CHO</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabella porzioni rapide -->
+      <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:10px">📊 Tabella Porzioni Rapide (10g CHO = 1 PI)</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden;margin-bottom:18px">
+        <thead>
+          <tr style="background:#1E3A5F;color:#E2E8F0">
+            <th style="padding:8px 12px;text-align:left">Gruppo</th>
+            <th style="padding:8px 12px;text-align:left">Alimento</th>
+            <th style="padding:8px 12px;text-align:center">⚖️ g per 1 PI (10g CHO)</th>
+            <th style="padding:8px 12px;text-align:center">CHO per 100g</th>
+          </tr>
+        </thead>
+        <tbody id="depliant-table"></tbody>
+      </table>
+
+      <!-- Box personalizzato -->
+      <div style="background:#FFF7ED;border-radius:10px;padding:16px 18px;border:2px solid #F59E0B">
+        <div style="font-weight:700;color:#92400E;font-size:13px;margin-bottom:8px">⚕️ I tuoi dati personalizzati (compilare con il dietista)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px">
+          <div>
+            <label style="font-size:11px;font-weight:700;color:#78350F;display:block;margin-bottom:4px">Rapporto I:C</label>
+            <div style="display:flex;align-items:center;gap:6px">
+              1 U insulina =
+              <input type="text" id="dep-ic" placeholder="__" style="width:40px;border:none;border-bottom:2px solid #F59E0B;outline:none;text-align:center;font-weight:700;background:transparent;font-size:14px">
+              g CHO
+            </div>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:#78350F;display:block;margin-bottom:4px">Target glicemia</label>
+            <input type="text" id="dep-target" placeholder="es. 100 mg/dL" style="width:100%;border:none;border-bottom:2px solid #F59E0B;outline:none;background:transparent;font-size:13px;padding:2px 0">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:#78350F;display:block;margin-bottom:4px">FSI</label>
+            <div style="display:flex;align-items:center;gap:4px">
+              1 U → −
+              <input type="text" id="dep-fsi" placeholder="__" style="width:35px;border:none;border-bottom:2px solid #F59E0B;outline:none;text-align:center;font-weight:700;background:transparent;font-size:14px">
+              mg/dL
+            </div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:#92400E;margin-top:10px">⚠️ Non modificare mai la terapia insulinica senza consultare il tuo medico o diabetologo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- TAB 5: LINEE GUIDA -->
+<div class="dg-panel" id="tab-lg">
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📚 Linee Guida Principali</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="padding:12px 14px;background:#EFF6FF;border-radius:10px;border-left:4px solid #3B82F6">
+          <div style="font-weight:700;color:#1E3A5F;margin-bottom:4px">ISPAD 2022 — Diabete T1D Pediatrico</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">CHO counting + MDI/SAP. Target HbA1c &lt;7% senza ipoglicemie severe.</div>
+          <a href="https://www.ispad.org/page/ISPADGuidelines2022" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Vai alle Linee Guida ISPAD →</a>
+        </div>
+        <div style="padding:12px 14px;background:#F0FDF4;border-radius:10px;border-left:4px solid #10B981">
+          <div style="font-weight:700;color:#064E3B;margin-bottom:4px">ADA Standards of Care 2024</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">CHO counting raccomandato per tutti i pazienti in terapia insulinica intensiva.</div>
+          <a href="https://diabetesjournals.org/care/issue/47/Supplement_1" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#10B981;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Vai alle Linee Guida ADA →</a>
+        </div>
+        <div style="padding:12px 14px;background:#FEF3C7;border-radius:10px;border-left:4px solid #F59E0B">
+          <div style="font-weight:700;color:#78350F;margin-bottom:4px">EASD/ADA Consensus 2022</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">Nessun macronutriente ottimale universale. Personalizzazione. Fibre ≥14g/1000kcal.</div>
+          <a href="https://link.springer.com/article/10.1007/s00125-022-05787-6" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#F59E0B;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Vai alle Linee Guida EASD →</a>
+        </div>
+        <div style="padding:12px 14px;background:#EDE9FE;border-radius:10px;border-left:4px solid #7C3AED">
+          <div style="font-weight:700;color:#3B0764;margin-bottom:4px">AMD-SID Standard di Cura 2023</div>
+          <div style="font-size:12px;color:#334155;margin-bottom:8px">CHO counting di 3° livello raccomandato in T1D con MDI o microinfusore.</div>
+          <a href="https://www.standarditaliani.it" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#7C3AED;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Vai agli Standard Italiani →</a>
+        </div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>🎯 Target Glicemici Raccomandati</h3>
+      <table class="food-table">
+        <thead><tr><th>Parametro</th><th>Target adulti T1D/T2D</th></tr></thead>
+        <tbody>
+          <tr><td><b>HbA1c</b></td><td>&lt;7.0% (individuale)</td></tr>
+          <tr><td><b>Glicemia a digiuno</b></td><td>80–130 mg/dL</td></tr>
+          <tr><td><b>Post-prandiale 2h</b></td><td>&lt;180 mg/dL</td></tr>
+          <tr><td><b>Time in Range (70-180)</b></td><td>&gt;70% del tempo</td></tr>
+          <tr><td><b>Tempo &lt;70 mg/dL</b></td><td>&lt;4%</td></tr>
+          <tr><td><b>Tempo &lt;54 mg/dL</b></td><td>&lt;1%</td></tr>
+          <tr><td><b>Tempo &gt;250 mg/dL</b></td><td>&lt;5%</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-warn alert-box" style="margin-top:12px">⚠️ I target in gravidanza, bambini piccoli e anziani sono diversi — sempre individualizzare con il team clinico.</div>
+    </div>
+  </div>
+</div>
+<!-- PIANO ALIMENTARE DIABETE -->
+<div class="dg-panel" id="tab-piano_diabete">
+  <div class="alert-info alert-box">
+    <b>🍽️ Piano Alimentare per Diabete</b> — Struttura il piano alimentare integrando il counting dei carboidrati, la distribuzione glicemica ottimale e il timing con la terapia insulinica.
+  </div>
+  <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="btn btn-primary btn-sm" onclick="apriInPianoAlimentareDiabete()" style="background:#1D4ED8">📂 Apri in Piano Alimentare</button>
+    <button class="btn btn-primary btn-sm" onclick="eliminaPianoDiabete()" style="background:#DC2626">🗑️ Elimina Piano</button>
+  </div>
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚙️ Configurazione Piano</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Tipo Diabete</label>
+        <select id="dg-piano-tipo"><option value="T1">Tipo 1</option><option value="T2">Tipo 2</option><option value="LADA">LADA</option><option value="GDM">Gestazionale</option><option value="altro">Altro</option></select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Terapia insulinica</label>
+        <select id="dg-piano-insulina"><option value="basal_bolus">Basal-Bolus (MDI)</option><option value="csii">Pompa (CSII)</option><option value="basale">Solo basale</option><option value="nessuna">Non insulino-dipendente</option></select>
+      </div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="dg-piano-kcal" placeholder="es. 1800" oninput="calcolaDgPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>CHO target totale (g/die)</label><input type="number" id="dg-piano-cho-tot" placeholder="es. 220" oninput="calcolaDgPiano()"></div>
+      <div style="margin-bottom:10px;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="background:#DBEAFE;color:#1D4ED8;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📋</span>
+          <span style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.6px;font-family:'DM Sans',sans-serif">Note Cliniche sul Paziente</span>
+        </div>
+        <textarea id="dg-piano-note-cliniche" rows="3" placeholder="HbA1c, TIR attuale, complicanze, altri farmaci..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
+      </div>
+    </div>
+    <div class="calc-box">
+      <h3>📊 Distribuzione CHO per Pasto</h3>
+      <div id="dg-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#F0F9FF;border-radius:8px;font-size:13px"><i>Inserisci CHO totale per calcolare la distribuzione.</i></div>
+      <div class="alert-info alert-box" style="font-size:12px">
+        <b>💡 Distribuzione CHO raccomandata nel diabete:</b><br>
+        Colazione 15–20% · Spuntino 5–10% · Pranzo 30–35% · Spuntino 5–10% · Cena 25–30%<br>
+        Evitare pasti con >60g CHO in una singola seduta. Privilegiare alimenti a basso IG.
+      </div>
+    </div>
+  </div>
+  <div class="calc-box">
+    <h3>🗓️ Schema Pasti con Counting CHO</h3>
+    <div id="dg-pasti-container">
+    </div>
+  </div>
+  <div class="calc-box" style="padding:0;overflow:hidden;border:1.5px solid #BFDBFE">
+    <div style="background:linear-gradient(135deg,#1E3A5F 0%,#1D4ED8 100%);padding:14px 20px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))">📝</span>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:white;letter-spacing:.2px">Note Generali e Raccomandazioni</div>
+        <div style="font-size:11.5px;color:rgba(255,255,255,.82);margin-top:2px">Indicazioni personalizzate su alimentazione, attività fisica e follow-up</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;background:#EFF6FF">
+      <div style="padding:16px 18px;border-right:1.5px solid #BFDBFE">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="background:#DBEAFE;color:#1D4ED8;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🚫</span>
+          <span style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.6px">Alimenti da Limitare / Monitorare</span>
+        </div>
+        <textarea id="dg-piano-limita" rows="4" placeholder="Alimenti ad alto IG da limitare, porzioni critiche..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
+      </div>
+      <div style="padding:16px 18px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="background:#DBEAFE;color:#1D4ED8;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🏃</span>
+          <span style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.6px">Attività Fisica — Indicazioni Nutrizionali</span>
+        </div>
+        <textarea id="dg-piano-sport" rows="4" placeholder="Timing del pasto pre-attività, gestione ipoglicemia da sforzo..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
+      </div>
+    </div>
+    <div style="padding:14px 18px;background:white;border-top:1.5px solid #BFDBFE">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="background:#ECFDF5;color:#065F46;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📅</span>
+        <span style="font-size:11px;font-weight:800;color:#065F46;text-transform:uppercase;letter-spacing:.6px">Note Generali e Piano di Follow-up</span>
+      </div>
+      <textarea id="dg-piano-note-generali" rows="2" placeholder="Prossima rivalutazione, obiettivi TIR, HbA1c target..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#A7F3D0'"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: PIANO ESEMPIO -->
+<div class="dg-panel" id="tab-piano_esempio_dg">
+  <div style="background:#DBEAFE;border-left:3px solid #1D4ED8;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#1E3A5F">
+    <b>🩸 Piano Alimentare per Diabete — Esempi Giornalieri</b> — Seleziona il tipo di schema dietetico e il target calorico. I piani integrano il conteggio dei carboidrati, la distribuzione glicemica ottimale e il timing con la terapia.
+  </div>
+  <div id="pe-container-dg"></div>
+</div>
+
+</div>
+<!-- COMPACT PRINT AREA -->
+<div id="dg-compact-print-area"></div>
+</main>
 <script>
-const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-function switchTab(t) {
-  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('p-'+t).classList.add('active');
-}
-
-async function doLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  const pw = document.getElementById('login-pw').value;
-  const err = document.getElementById('login-err');
-  err.classList.remove('show');
-  if (!email||!pw){err.textContent='Inserisci email e password.';err.classList.add('show');return;}
-  const btn = document.getElementById('login-btn');
-  btn.disabled=true;btn.textContent='Accesso...';
-  const {data,error} = await sb.auth.signInWithPassword({email,password:pw});
-  btn.disabled=false;btn.textContent='Accedi';
-  if (error){err.textContent=error.message==='Invalid login credentials'?'Email o password errata.':error.message;err.classList.add('show');return;}
-  await checkAndRedirect(data.user);
-}
-
-async function doRegister() {
-  const email = document.getElementById('reg-email').value.trim();
-  const pw = document.getElementById('reg-pw').value;
-  const pw2 = document.getElementById('reg-pw2').value;
-  const err = document.getElementById('reg-err');
-  const ok = document.getElementById('reg-ok');
-  err.classList.remove('show');ok.classList.remove('show');
-  if (!email||!pw){err.textContent='Compila tutti i campi.';err.classList.add('show');return;}
-  if (pw!==pw2){err.textContent='Le password non coincidono.';err.classList.add('show');return;}
-  if (pw.length<6){err.textContent='Password minimo 6 caratteri.';err.classList.add('show');return;}
-  const btn = document.getElementById('reg-btn');
-  btn.disabled=true;btn.textContent='Registrazione...';
-  // Attempt registration
-  const {data, error} = await sb.auth.signUp({
-    email,
-    password: pw,
-    options: { data: { approved: false } }
+(function() {
+  var DG_MEALS = [
+    {id:1,icon:'☀️',nome:'Colazione',ora:'07:30',cho:40,note:'IG basso, associare proteina per ridurre picco'},
+    {id:2,icon:'🍎',nome:'Spuntino mattina',ora:'10:30',cho:20,note:'Opzionale in base alla glicemia'},
+    {id:3,icon:'🍽️',nome:'Pranzo',ora:'12:30',cho:70,note:'Pasto principale — contare CHO per bolus'},
+    {id:4,icon:'🥜',nome:'Spuntino pomeriggio',ora:'16:00',cho:20,note:'Prima dell\'attività fisica se prevista'},
+    {id:5,icon:'🌙',nome:'Cena',ora:'19:30',cho:60,note:'CHO moderato — evitare ipoglicemia notturna'}
+  ];
+  document.addEventListener('DOMContentLoaded', function() {
+    var c = document.getElementById('dg-pasti-container');
+    if (!c) return;
+    c.innerHTML = DG_MEALS.map(function(m) {
+      return '<div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:10px">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">'
+        + '<span style="font-size:20px;flex-shrink:0">' + m.icon + '</span>'
+        + '<input type="text" id="dg-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">'
+        + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+        + '<input type="text" id="dg-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Ora" style="width:60px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
+        + '<span style="font-size:11px;font-weight:700;color:#1D4ED8">CHO:</span>'
+        + '<input type="number" id="dg-m' + m.id + '-cho" value="' + m.cho + '" placeholder="g" style="width:60px;padding:5px 8px;border:1.5px solid #93C5FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none;color:#1D4ED8">'
+        + '<span style="font-size:11px;color:var(--slate-l)">g</span>'
+        + '</div>'
+        + '</div>'
+        + '<textarea id="dg-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti (es. Pane integrale 80g=40gCHO, Latte 250mL=12gCHO, Frutta 150g=18gCHO)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<input type="text" id="dg-m' + m.id + '-note" placeholder="Note: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
+        + '</div>';
+    }).join('');
   });
-  btn.disabled=false; btn.textContent='Crea Account';
+})();
+</script>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
 
-  if (error) {
-    const msgs = {
-      'User already registered': 'Email già registrata. Prova ad accedere.',
-      'Password should be at least 6 characters': 'Password troppo corta (min. 6 caratteri).',
-      'Unable to validate email address: invalid format': 'Formato email non valido.',
-      'Email rate limit exceeded': 'Troppe richieste. Riprova tra un minuto.',
-      'Database error saving new user': 'Errore DB — esegui il SQL di setup (vedi istruzioni qui sotto)',
-      'Error sending confirmation email': '⚠️ Email conferma non inviata. In Supabase → Authentication → Providers → Email: disabilita "Confirm email"',
-      'signup is disabled': 'Registrazione disabilitata.',
-    };
-    err.textContent = msgs[error.message] || ('Errore: ' + error.message);
-    err.classList.add('show');
-    if (error.message.includes('Database error') || error.message.includes('confirmation email')) {
-      showSetupGuide();
-    }
-    console.error('SignUp error:', error);
-    return;
-  }
+<!-- Modale Setup SQL -->
+<div class="modal-bg" id="modal-sql-setup">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-hdr"><span>⚙️ Setup Database — Tabella Mancante</span><button onclick="closeM('modal-sql-setup')">✕</button></div>
+    <div style="padding:18px">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
+      <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
+        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script>
+// ── Porzioni Isoglucidiche (10g CHO) ──
+const PORZIONI_DATA = [
+  {cat:'Cereali e derivati',items:[
+    {nome:'Pasta cruda',g100cho:72,tipo:'pesare'},
+    {nome:'Riso crudo',g100cho:79,tipo:'pesare'},
+    {nome:'Pane comune',g100cho:53,tipo:'pesare'},
+    {nome:'Pane integrale',g100cho:44,tipo:'pesare'},
+    {nome:'Grissini',g100cho:70,tipo:'pesare'},
+    {nome:'Fette biscottate',g100cho:74,tipo:'pesare'},
+    {nome:'Crackers',g100cho:68,tipo:'pesare'},
+    {nome:'Farina bianca',g100cho:76,tipo:'pesare'},
+    {nome:'Fiocchi d\'avena',g100cho:60,tipo:'pesare'},
+    {nome:'Polenta secca (farina)',g100cho:78,tipo:'pesare'},
+    {nome:'Farro crudo',g100cho:67,tipo:'pesare'},
+    {nome:'Orzo perlato crudo',g100cho:72,tipo:'pesare'},
+    {nome:'Riso basmati crudo',g100cho:77,tipo:'pesare'},
+    {nome:'Gnocchi di patate',g100cho:17,tipo:'pesare'},
+    {nome:'Cornflakes',g100cho:84,tipo:'pesare'},
+  ]},
+  {cat:'Legumi',items:[
+    {nome:'Lenticchie secche',g100cho:52,tipo:'pesare'},
+    {nome:'Ceci secchi',g100cho:54,tipo:'pesare'},
+    {nome:'Fagioli secchi',g100cho:47,tipo:'pesare'},
+    {nome:'Piselli freschi',g100cho:10,tipo:'pesare'},
+    {nome:'Fagioli in scatola',g100cho:11,tipo:'pesare'},
+    {nome:'Ceci in scatola',g100cho:14,tipo:'pesare'},
+    {nome:'Lenticchie in scatola',g100cho:11,tipo:'pesare'},
+  ]},
+  {cat:'Frutta fresca',items:[
+    {nome:'Mela',g100cho:11,tipo:'pesare'},
+    {nome:'Pera',g100cho:10,tipo:'pesare'},
+    {nome:'Banana',g100cho:20,tipo:'pesare'},
+    {nome:'Arancia',g100cho:8,tipo:'pesare'},
+    {nome:'Kiwi',g100cho:9,tipo:'pesare'},
+    {nome:'Pesca',g100cho:9,tipo:'pesare'},
+    {nome:'Uva',g100cho:16,tipo:'pesare'},
+    {nome:'Fragole',g100cho:6,tipo:'pesare'},
+    {nome:'Mandarino',g100cho:9,tipo:'pesare'},
+    {nome:'Anguria',g100cho:7,tipo:'pesare'},
+    {nome:'Melone',g100cho:8,tipo:'pesare'},
+    {nome:'Ciliegie',g100cho:12,tipo:'pesare'},
+  ]},
+  {cat:'Frutta secca',items:[
+    {nome:'Datteri',g100cho:66,tipo:'pesare'},
+    {nome:'Albicocche secche',g100cho:53,tipo:'pesare'},
+    {nome:'Fichi secchi',g100cho:53,tipo:'pesare'},
+    {nome:'Uvetta',g100cho:70,tipo:'pesare'},
+    {nome:'Prugne secche',g100cho:45,tipo:'pesare'},
+  ]},
+  {cat:'Latte e yogurt',items:[
+    {nome:'Latte intero',g100cho:5,tipo:'mL'},
+    {nome:'Latte parzialmente scremato',g100cho:5,tipo:'mL'},
+    {nome:'Yogurt bianco intero',g100cho:4,tipo:'pesare'},
+    {nome:'Yogurt greco 0%',g100cho:4,tipo:'pesare'},
+    {nome:'Latte di soia non zuccherato',g100cho:2,tipo:'mL'},
+  ]},
+  {cat:'Verdure amidacee',items:[
+    {nome:'Patate',g100cho:17,tipo:'pesare'},
+    {nome:'Patate dolci',g100cho:20,tipo:'pesare'},
+    {nome:'Mais in scatola',g100cho:14,tipo:'pesare'},
+    {nome:'Zucca',g100cho:5,tipo:'pesare'},
+  ]},
+  {cat:'Verdure (basso contenuto CHO)',items:[
+    {nome:'Pomodoro',g100cho:3,tipo:'pesare',note:'Oltre 300g influenza glicemia'},
+    {nome:'Carota',g100cho:7,tipo:'pesare'},
+    {nome:'Barbabietola',g100cho:9,tipo:'pesare'},
+    {nome:'Cipolla',g100cho:8,tipo:'pesare'},
+    {nome:'Zucchina',g100cho:3,tipo:'pesare'},
+    {nome:'Peperone',g100cho:5,tipo:'pesare'},
+  ]},
+];
 
-  if (!data.user) {
-    err.textContent = 'Registrazione non riuscita. Riprova.';
-    err.classList.add('show');
-    return;
-  }
+const PORZIONI_FLAT = PORZIONI_DATA.flatMap(cat =>
+  cat.items.map(i => ({...i, cat: cat.cat, g_per_10: Math.round(10 / i.g100cho * 100)}))
+);
 
-  // Try to insert profile - use insert instead of upsert, ignore errors
-  try {
-    await sb.from('profiles').insert({
-      id: data.user.id,
-      email: email,
-      approved: false,
-      is_admin: false
-    });
-  } catch(e) {
-    console.warn('Profile insert skipped (trigger may handle it):', e.message);
-  }
+function showTab(id) {
+  autoSavePage_diabete();
+  document.querySelectorAll('.dg-tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.dg-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'porzioni') renderPorzioni(PORZIONI_FLAT);
+  if (id === 'depliant') renderDepliant();
+}
 
-  if (data.session) {
-    ok.textContent = '✅ Account creato! Reindirizzamento...';
-    ok.classList.add('show');
-    setTimeout(() => checkAndRedirect(data.user), 1200);
+// ── Calcolo I:C ──
+function calcIC() {
+  const peso = parseFloat(document.getElementById('ic-peso').value);
+  const tdd = parseFloat(document.getElementById('ic-tdd').value);
+  const metodo = document.getElementById('ic-metodo').value;
+  const res = document.getElementById('ic-result');
+  const val = document.getElementById('ic-val');
+  const note = document.getElementById('ic-note');
+
+  if (!tdd && !peso) return;
+  let ic, metodoDef;
+  if (metodo === 'peso' && peso) {
+    ic = Math.round(500 / (peso * 0.5));
+    metodoDef = 'Formula peso: 500 / (peso × 0.5)';
   } else {
-    ok.textContent = '✅ Registrato! Controlla la tua email per confermare il tuo account.';
-    ok.classList.add('show');
+    const divisore = parseInt(metodo);
+    if (!tdd) return;
+    ic = Math.round(divisore / tdd);
+    metodoDef = `Regola del ${divisore}: ${divisore} ÷ ${tdd}TDD`;
+  }
+  val.textContent = `1U : ${ic}g CHO`;
+  note.textContent = `${metodoDef} — Verificare con glicemia post-prandiale`;
+  res.style.display = 'block';
+}
+
+// ── Calcolo Dose Insulina ──
+function calcDose() {
+  const cho = parseFloat(document.getElementById('pasto-cho').value);
+  const ic = parseFloat(document.getElementById('pasto-ic').value);
+  const glic = parseFloat(document.getElementById('pasto-glic').value);
+  const target = parseFloat(document.getElementById('pasto-target').value) || 100;
+  const fsi = parseFloat(document.getElementById('pasto-fsi').value);
+  const res = document.getElementById('dose-result');
+
+  if (!cho || !ic) return;
+  const doseCHO = cho / ic;
+  const doseCorr = glic && fsi ? (glic - target) / fsi : 0;
+  const doseTot = Math.max(0, doseCHO + doseCorr);
+
+  document.getElementById('dose-cho').textContent = r1(doseCHO) + ' U';
+  document.getElementById('dose-corr').textContent = (doseCorr >= 0 ? '+' : '') + r1(doseCorr) + ' U';
+  document.getElementById('dose-tot').textContent = r1(doseTot) + ' U';
+  res.style.display = 'block';
+}
+
+// ── FSI ──
+function calcFSI() {
+  const tdd = parseFloat(document.getElementById('fsi-tdd').value);
+  const div = parseInt(document.getElementById('fsi-metodo').value);
+  if (!tdd) return;
+  document.getElementById('fsi-val').textContent = Math.round(div / tdd) + ' mg/dL';
+}
+
+// ── CHO Counting Calcolatore ──
+let choItems = [];
+function addCHOItem() {
+  choItems.push({nome:'', cho:0});
+  renderCHOItems();
+}
+function renderCHOItems() {
+  const c = document.getElementById('cho-items');
+  if (!choItems.length) { c.innerHTML = ''; return; }
+  c.innerHTML = choItems.map((it, i) => `
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+      <input type="text" value="${esc(it.nome)}" placeholder="Alimento" 
+        oninput="choItems[${i}].nome=this.value"
+        style="flex:2;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <input type="number" value="${it.cho||''}" placeholder="g CHO"
+        oninput="choItems[${i}].cho=parseFloat(this.value)||0;calcCHOTot()"
+        style="flex:1;max-width:90px;padding:7px 8px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <button onclick="choItems.splice(${i},1);renderCHOItems();calcCHOTot()" 
+        style="background:none;border:none;color:#DC2626;font-size:16px;cursor:pointer;padding:0 4px">✕</button>
+    </div>`).join('');
+}
+function calcCHOTot() {
+  const tot = choItems.reduce((s, it) => s + (it.cho || 0), 0);
+  document.getElementById('cho-tot').textContent = r1(tot) + ' g';
+  calcCHODose();
+}
+function calcCHODose() {
+  const tot = choItems.reduce((s, it) => s + (it.cho || 0), 0);
+  const ic = parseFloat(document.getElementById('cho-ic-val').value);
+  document.getElementById('cho-dose').textContent = ic ? r1(tot / ic) + ' U' : '— U';
+}
+
+// ── Porzioni Isoglucidiche ──
+const CAT_ICONS = {
+  'Cereali e derivati':'🌾','Legumi':'🫘','Frutta fresca':'🍎','Frutta secca':'🍇',
+  'Latte e yogurt':'🥛','Verdure amidacee':'🥔','Verdure (basso contenuto CHO)':'🥦'
+};
+const CAT_COLORS = {
+  'Cereali e derivati':'#B45309','Legumi':'#065F46','Frutta fresca':'#B91C1C',
+  'Frutta secca':'#7C3AED','Latte e yogurt':'#1D4ED8','Verdure amidacee':'#D97706',
+  'Verdure (basso contenuto CHO)':'#15803D'
+};
+
+function renderPorzioni(list) {
+  const g = document.getElementById('porzioni-grid');
+  const bycat = {};
+  PORZIONI_DATA.forEach(cat => bycat[cat.cat] = []);
+  list.forEach(it => { if (bycat[it.cat]) bycat[it.cat].push(it); else { if(!bycat[it.cat]) bycat[it.cat]=[]; bycat[it.cat].push(it); } });
+  g.innerHTML = Object.entries(bycat).filter(([,items]) => items.length > 0).map(([cat, items]) => {
+    const icon = CAT_ICONS[cat] || '🍽️';
+    const col = CAT_COLORS[cat] || '#1E3A5F';
+    return `<div class="porz-category">
+      <div class="porz-cat-hdr" style="background:linear-gradient(90deg,${col}dd,${col}99)">${icon} ${cat} <span style="margin-left:auto;font-size:11px;opacity:.8">${items.length} alimenti</span></div>
+      <table class="food-table" style="border-radius:0;table-layout:fixed">
+        <thead><tr>
+          <th style="text-align:left;width:30%">Alimento</th>
+          <th style="width:15%">CHO/100g</th>
+          <th style="width:20%">1 PI = g (10g CHO)</th>
+          <th style="width:18%">Equivalenti visivi</th>
+          <th style="width:17%">Note</th>
+        </tr></thead>
+        <tbody>${items.map((it,idx) => `<tr>
+          <td><b>${esc(it.nome)}</b></td>
+          <td><span style="font-weight:700;color:#1D4ED8">${it.g100cho}g</span></td>
+          <td><span class="porzione-pill">⚖️ ${it.g_per_10}g</span></td>
+          <td style="font-size:11px;color:#64748B">${getPorzEquiv(it)}</td>
+          <td style="font-size:11px;color:var(--slate-l)">${it.note||''}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+function getPorzEquiv(it) {
+  const g = it.g_per_10;
+  if (it.nome.includes('pasta') || it.nome.includes('riso')) return `~${Math.round(g)} g crudi`;
+  if (it.nome.includes('Pane')) return `~${Math.round(g/25)} fetta da 25g`;
+  if (it.nome.includes('Mela') || it.nome.includes('Pera')) return `~½ frutto medio`;
+  if (it.nome.includes('Banana')) return `~½ banana media`;
+  if (it.nome.includes('Latte')) return `~${g} mL (1 tazza)`;
+  if (it.nome.includes('Yogurt')) return `~${g}g (¼ vasetto 500g)`;
+  if (it.nome.includes('Patate')) return `~1 patata piccola`;
+  if (g < 20) return `pesare accuratamente`;
+  return `${g}g`;
+}
+function filterPorzioni() {
+  const q = document.getElementById('porz-search').value.toLowerCase();
+  renderPorzioni(q ? PORZIONI_FLAT.filter(it => it.nome.toLowerCase().includes(q) || it.cat.toLowerCase().includes(q)) : PORZIONI_FLAT);
+}
+
+// ── Depliant ──
+function renderDepliant() {
+  const tbody = document.getElementById('depliant-table');
+  if (!tbody) return;
+  const sample = PORZIONI_FLAT.filter(i => ['Pasta cruda','Riso crudo','Pane comune','Mela','Banana','Patate','Latte intero','Yogurt bianco intero','Lenticchie secche','Mais in scatola'].includes(i.nome));
+  tbody.innerHTML = sample.map(it => `<tr>
+    <td>${esc(it.nome)}</td>
+    <td style="text-align:center"><b>${it.g_per_10}g</b></td>
+    <td style="text-align:center">${it.g100cho}g</td>
+  </tr>`).join('');
+}
+
+// ── Init ──
+let dgCartelle = [];
+let editingDgNoteId = null;
+
+async function loadDgCartelle() {
+  if (!currentUser) return;
+  if (dgCartelle.length) return; // already loaded
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  dgCartelle = data || [];
+  const sel = document.getElementById('dg-cartella');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  dgCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+
+function calcolaDgPiano() {
+  const cho = parseFloat(document.getElementById('dg-piano-cho-tot')?.value);
+  const el = document.getElementById('dg-piano-macro-result');
+  if (!el) return;
+  if (!cho) { el.innerHTML = '<i>Inserisci CHO totale per calcolare la distribuzione.</i>'; return; }
+  const dist = [{n:'Colazione',p:0.18},{n:'Spuntino M',p:0.08},{n:'Pranzo',p:0.32},{n:'Spuntino P',p:0.08},{n:'Cena',p:0.29},{n:'Serale',p:0.05}];
+  el.innerHTML = dist.map(d => `<span style="display:inline-block;margin:3px;padding:4px 8px;background:#DBEAFE;color:#1D4ED8;border-radius:8px;font-size:12px;font-weight:700">${d.n}: ${Math.round(cho*d.p)}g CHO</span>`).join('');
+}
+
+function raccogliDatiDg() {
+  const gv = id => document.getElementById(id)?.value || '';
+  return {
+    valutazione: raccogliVal_dg(),
+    rapporto_ic: { peso: document.getElementById('ic-peso')?.value, tipo: document.getElementById('ic-tipo')?.value, tdd: document.getElementById('ic-tdd')?.value, metodo: document.getElementById('ic-metodo')?.value, risultato: document.getElementById('ic-val')?.textContent },
+    dose_pasto: { cho: document.getElementById('pasto-cho')?.value, ic: document.getElementById('pasto-ic')?.value, glicemia: document.getElementById('pasto-glic')?.value, target: document.getElementById('pasto-target')?.value, fsi: document.getElementById('pasto-fsi')?.value },
+    fsi: { tdd: document.getElementById('fsi-tdd')?.value, metodo: document.getElementById('fsi-metodo')?.value, risultato: document.getElementById('fsi-val')?.textContent },
+    depliant: { ic: gv('dep-ic'), target: gv('dep-target'), fsi: gv('dep-fsi') },
+    piano: {
+      tipo: gv('dg-piano-tipo'), insulina: gv('dg-piano-insulina'), kcal: gv('dg-piano-kcal'), cho_tot: gv('dg-piano-cho-tot'),
+      note_cliniche: gv('dg-piano-note-cliniche'), limita: gv('dg-piano-limita'), sport: gv('dg-piano-sport'), note_generali: gv('dg-piano-note-generali'),
+      pasti: [1,2,3,4,5].map(i => ({ nome: gv('dg-m'+i+'-nome'), ora: gv('dg-m'+i+'-ora'), cho: gv('dg-m'+i+'-cho'), alimenti: gv('dg-m'+i+'-alimenti'), note: gv('dg-m'+i+'-note') }))
+    }
+  };
+}
+
+function ripristinaDatiDg(dati) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  if (dati.valutazione) ripristinaVal_dg(dati.valutazione);
+  if (dati.rapporto_ic) { sv('ic-peso',dati.rapporto_ic.peso); sv('ic-tipo',dati.rapporto_ic.tipo); sv('ic-tdd',dati.rapporto_ic.tdd); sv('ic-metodo',dati.rapporto_ic.metodo); }
+  if (dati.dose_pasto) { sv('pasto-cho',dati.dose_pasto.cho); sv('pasto-ic',dati.dose_pasto.ic); sv('pasto-glic',dati.dose_pasto.glicemia); sv('pasto-target',dati.dose_pasto.target); sv('pasto-fsi',dati.dose_pasto.fsi); }
+  if (dati.fsi) { sv('fsi-tdd',dati.fsi.tdd); sv('fsi-metodo',dati.fsi.metodo); }
+  if (dati.depliant) { sv('dep-ic',dati.depliant.ic); sv('dep-target',dati.depliant.target); sv('dep-fsi',dati.depliant.fsi); }
+  if (dati.piano) {
+    const p = dati.piano;
+    sv('dg-piano-tipo',p.tipo); sv('dg-piano-insulina',p.insulina); sv('dg-piano-kcal',p.kcal); sv('dg-piano-cho-tot',p.cho_tot);
+    sv('dg-piano-note-cliniche',p.note_cliniche); sv('dg-piano-limita',p.limita); sv('dg-piano-sport',p.sport); sv('dg-piano-note-generali',p.note_generali);
+    if (Array.isArray(p.pasti)) p.pasti.forEach((m, i) => { const n=i+1; sv('dg-m'+n+'-nome',m.nome); sv('dg-m'+n+'-ora',m.ora); sv('dg-m'+n+'-cho',m.cho); sv('dg-m'+n+'-alimenti',m.alimenti); sv('dg-m'+n+'-note',m.note); });
+    calcolaDgPiano();
   }
 }
 
-async function checkAndRedirect(user) {
-  document.getElementById('loading').classList.add('show');
-  const {data:profile,error} = await sb.from('profiles').select('*').eq('id',user.id).single();
-  if (error||!profile) { document.getElementById('loading').classList.remove('show'); window.location.href='app.html'; return; }
-  if (profile.approved||profile.is_admin) {
-    // Check if user is a patient (has patient_dietitian links as patient)
-    const {data:patientLinks} = await sb.from('patient_dietitian').select('id').eq('patient_id',user.id).limit(1);
-    document.getElementById('loading').classList.remove('show');
-    if (patientLinks && patientLinks.length > 0 && !profile.is_admin) {
-      window.location.href='patient-portal.html';
-    } else {
-      window.location.href='app.html';
+async function salvaDiabete() {
+  if (!currentUser) { toast('Effettua il login per salvare','err'); return; }
+  const cartella_id = document.getElementById('dg-cartella').value;
+  if (!cartella_id) { toast('Seleziona una cartella paziente','err'); return; }
+  const nota = document.getElementById('dg-nota').value.trim() || 'Sessione diabete ' + new Date().toLocaleDateString('it');
+  const dati = raccogliDatiDg();
+  { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_cho=parseFloat(_p.cho_tot)||0,_prot=_kcal?Math.round(_kcal*.15/4):0,_fat=_kcal?Math.round(_kcal*.25/9):0,_nc=(document.getElementById('dg-cartella-cw-srch')?.value||'').trim();
+    dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:'',alimenti:p.alimenti,note:p.note||(parseFloat(p.cho)?'CHO: '+p.cho+' g':'')})),{titolo:_nc||nota,sottotitolo:_p.tipo?'Tipo: '+_p.tipo+(_p.insulina?' · Insulina: '+_p.insulina:''):'',totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat}); }
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingDgNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDgNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false});
+  }
+  showLoading(false);
+  if (result.error) {
+    if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
+      mostraSetupSQL();
+    } else { toast('❌ '+result.error.message,'err'); }
+    return;
+  }
+  toast(editingDgNoteId ? '✅ Scheda Diabete aggiornata!' : '✅ Dati diabete salvati nella cartella!','ok');
+  if (!editingDgNoteId && result.data?.[0]?.id) editingDgNoteId = result.data[0].id;
+}
+
+function mostraSetupSQL() {
+  const sql = `-- Esegui questo SQL nel pannello Supabase (SQL Editor → New Query):
+CREATE TABLE IF NOT EXISTS note_specialistiche (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  cartella_id uuid REFERENCES cartelle(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users NOT NULL,
+  tipo text NOT NULL,
+  nota text,
+  dati jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  visible_to_patient boolean NOT NULL DEFAULT FALSE
+);
+ALTER TABLE note_specialistiche ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Own note" ON note_specialistiche;
+CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user_id);
+
+-- Se la tabella esiste già ma manca la colonna updated_at, esegui:
+ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();`;
+  console.error('SQL da eseguire:\n' + sql);
+  const modal = document.getElementById('modal-sql-setup');
+  if (modal) {
+    document.getElementById('sql-setup-text').value = sql;
+    openM('modal-sql-setup');
+  } else {
+    toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err');
+  }
+}
+
+async function caricaDgDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
+  editingDgNoteId = noteId;
+  await _cwSetById('dg-cartella-cw', data.cartella_id);
+  const notaEl = document.getElementById('dg-nota');
+  if (notaEl) notaEl.value = data.nota || '';
+  try { ripristinaDatiDg(JSON.parse(data.dati || '{}')); } catch(e) {}
+  toast('✅ Scheda Diabete caricata','ok');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await checkAuth(false);
+    initCartellaWidget('dg-cartella-cw', { hiddenInputId:'dg-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF' });
+    if (currentUser) {
+      const noteId = new URLSearchParams(window.location.search).get('noteId');
+      if (noteId) await caricaDgDaNote(noteId);
+    }
+  } catch(e) {}
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-dg', DIABETE_PE_CONFIG);
+});
+
+const DIABETE_PE_CONFIG = {
+  id: 'dg',
+  accentColor: '#1D4ED8',
+  tipi: [
+    {id:'t1d', nome:'T1D Counting', nomeEsteso:'Diabete T1 — Counting CHO con Insulina', colore:'#1D4ED8', coloreT:'#fff'},
+    {id:'t2d_med', nome:'T2D Mediterranea', nomeEsteso:'Diabete T2 — Dieta Mediterranea Low-GI', colore:'#059669', coloreT:'#fff'},
+    {id:'t2d_ipo', nome:'T2D Ipocalorica', nomeEsteso:'Diabete T2 — Schema Ipocalorico (-500 kcal)', colore:'#D97706', coloreT:'#fff'},
+    {id:'t2d_lc', nome:'T2D Low-Carb', nomeEsteso:'Diabete T2 — Schema Low-Carb (45% CHO)', colore:'#7C3AED', coloreT:'#fff'}
+  ],
+  kcals: [1200, 1400, 1600, 1800, 2000, 2200, 2400],
+  piani: {
+    t1d: {
+      kcal_base: 1699,
+      macros: {p:18, cho:50, g:32},
+      nota: 'T1D: Il counting dei CHO è fondamentale. Calcolare il rapporto I:C per ogni pasto. Pasti a orari fissi facilitano la gestione insulinica. Monitorare glicemia pre/post pasto. HbA1c target <7%.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane integrale a fette', qt:60, unit:'g', kcal:141},
+          {nome:'Yogurt greco magro', qt:125, unit:'g', kcal:72},
+          {nome:'Marmellata senza zucchero', qt:15, unit:'g', kcal:20},
+          {nome:'Mandorle', qt:15, unit:'g', kcal:87},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Mela (media)', qt:150, unit:'g', kcal:78},
+          {nome:'Noci (2 noci)', qt:15, unit:'g', kcal:98}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale al pomodoro', qt:80, unit:'g', kcal:284},
+          {nome:'Pollo alla piastra', qt:120, unit:'g', kcal:134},
+          {nome:'Insalata mista con olio EVO', qt:150, unit:'g', kcal:80},
+          {nome:'Pane integrale', qt:30, unit:'g', kcal:71}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍊', items:[
+          {nome:'Pera (media)', qt:150, unit:'g', kcal:60},
+          {nome:'Ricotta magra', qt:50, unit:'g', kcal:60}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Riso basmati (GI basso)', qt:70, unit:'g', kcal:245},
+          {nome:'Merluzzo al vapore', qt:150, unit:'g', kcal:115},
+          {nome:'Verdure miste grigliate', qt:200, unit:'g', kcal:60},
+          {nome:'Olio extra vergine di oliva', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    t2d_med: {
+      kcal_base: 1646,
+      macros: {p:18, cho:50, g:32},
+      nota: 'Dieta Mediterranea per T2D: Riduce HbA1c di 0.3-0.5%, migliora la sensibilità insulinica. Preferire CHO a basso GI, legumi 3-4 volte/settimana, pesce 2-3 volte/settimana, frutta secca quotidiana.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Pane di segale integrale', qt:60, unit:'g', kcal:131},
+          {nome:'Olio EVO (condimento pane)', qt:10, unit:'mL', kcal:89},
+          {nome:'Pomodoro fresco', qt:80, unit:'g', kcal:16},
+          {nome:'Caffè con latte parzialmente scremato', qt:150, unit:'mL', kcal:54}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍊', items:[
+          {nome:'Arancia media', qt:150, unit:'g', kcal:60},
+          {nome:'Mandorle (8-10 mandorle)', qt:15, unit:'g', kcal:87}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Lenticchie in umido', qt:200, unit:'g', kcal:230},
+          {nome:'Verdure miste grigliate', qt:200, unit:'g', kcal:60},
+          {nome:'Olio extra vergine di oliva', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane di farro', qt:40, unit:'g', kcal:136}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🫐', items:[
+          {nome:'Mirtilli freschi', qt:100, unit:'g', kcal:57},
+          {nome:'Yogurt greco magro', qt:100, unit:'g', kcal:59}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone alla griglia', qt:150, unit:'g', kcal:280},
+          {nome:'Insalata di finocchi e arance', qt:150, unit:'g', kcal:50},
+          {nome:'Olio extra vergine di oliva', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane integrale di grano duro', qt:30, unit:'g', kcal:71}
+        ]}
+      ]
+    },
+    t2d_ipo: {
+      kcal_base: 1162,
+      macros: {p:22, cho:48, g:30},
+      nota: 'Schema Ipocalorico T2D: Deficit ~500 kcal/die rispetto al fabbisogno per perdita 0.5 kg/settimana. Obiettivo: -5-10% del peso in 6-12 mesi. Distribuire i CHO equamente nei pasti. Monitorare glicemia.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:68},
+          {nome:'Fette biscottate integrali (3)', qt:30, unit:'g', kcal:122},
+          {nome:'Marmellata senza zuccheri aggiunti', qt:10, unit:'g', kcal:13}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+          {nome:'Mela piccola', qt:120, unit:'g', kcal:62}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale (piatto unico)', qt:70, unit:'g', kcal:248},
+          {nome:'Legumi misti nella pasta', qt:80, unit:'g', kcal:80},
+          {nome:'Pomodoro e basilico', qt:80, unit:'g', kcal:16},
+          {nome:'Olio extra vergine di oliva', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍊', items:[
+          {nome:'Yogurt magro bianco', qt:125, unit:'g', kcal:59}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pollo / tacchino alla piastra', qt:130, unit:'g', kcal:146},
+          {nome:'Verdure cotte miste (zucchine, melanzane)', qt:250, unit:'g', kcal:75},
+          {nome:'Olio extra vergine di oliva', qt:10, unit:'mL', kcal:89},
+          {nome:'Pane integrale', qt:40, unit:'g', kcal:95}
+        ]}
+      ]
+    },
+    t2d_lc: {
+      kcal_base: 1517,
+      macros: {p:25, cho:25, g:50},
+      nota: 'Low-Carb T2D (CHO 25-40%): Migliora controllo glicemico e riduce HbA1c. Aumentare il monitoraggio glicemico nei primi 3 mesi. Può richiedere adeguamento della terapia ipoglicemizzante. NON è dieta chetogenica (CHO > 50g/die).',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Uova alla coque (2 uova)', qt:100, unit:'g', kcal:144},
+          {nome:'Prosciutto cotto magro', qt:30, unit:'g', kcal:40},
+          {nome:'Pomodoro fresco', qt:80, unit:'g', kcal:16},
+          {nome:'Caffè', qt:200, unit:'mL', kcal:5}
+        ]},
+        {nome:'Spuntino Mattino', emoji:'🥜', items:[
+          {nome:'Mix di frutta secca (noci, mandorle)', qt:20, unit:'g', kcal:124},
+          {nome:'Formaggio light', qt:30, unit:'g', kcal:60}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Carne magra (manzo magro) alla piastra', qt:150, unit:'g', kcal:234},
+          {nome:'Insalata verde abbondante', qt:150, unit:'g', kcal:25},
+          {nome:'Ceci lessati', qt:80, unit:'g', kcal:107},
+          {nome:'Olio extra vergine di oliva', qt:15, unit:'mL', kcal:133}
+        ]},
+        {nome:'Spuntino Pomeriggio', emoji:'🍓', items:[
+          {nome:'Fragole o frutti di bosco', qt:150, unit:'g', kcal:48},
+          {nome:'Yogurt greco 0% grassi', qt:100, unit:'g', kcal:59}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone al cartoccio', qt:150, unit:'g', kcal:280},
+          {nome:'Broccoli al vapore', qt:200, unit:'g', kcal:54},
+          {nome:'Olio extra vergine di oliva', qt:15, unit:'mL', kcal:133},
+          {nome:'Pane di segale (1 fetta sottile)', qt:25, unit:'g', kcal:55}
+        ]}
+      ]
     }
   }
-  else {
-    document.getElementById('loading').classList.remove('show');
-    document.getElementById('auth-box').style.display='none';
-    document.getElementById('waiting-box').classList.add('show');
-    document.getElementById('waiting-email').textContent='Account: '+user.email;
+};
+
+function stampaCompattaDiabete() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const kcalTot = parseFloat(gv('dg-piano-kcal')) || 0;
+  const choTot  = parseFloat(gv('dg-piano-cho-tot')) || 0;
+  const prot = kcalTot ? Math.round(kcalTot * 0.15 / 4) : 0;
+  const fat  = kcalTot ? Math.round(kcalTot * 0.25 / 9) : 0;
+  const nomeCartella = document.getElementById('dg-cartella-cw-srch')?.value?.trim() || '';
+
+  const pasti = [1,2,3,4,5].map(i => ({
+    nome: gv('dg-m'+i+'-nome'),
+    ora: gv('dg-m'+i+'-ora'),
+    kcal: '',
+    alimenti: gv('dg-m'+i+'-alimenti'),
+    note: gv('dg-m'+i+'-note') || (parseFloat(gv('dg-m'+i+'-cho')) ? 'CHO: ' + gv('dg-m'+i+'-cho') + ' g' : '')
+  })).filter(p => p.nome || p.alimenti);
+
+  stampaCompattaSpecialistica(pasti, {
+    titolo: nomeCartella || 'Piano Alimentare — Diabete',
+    sottotitolo: gv('dg-piano-tipo') ? 'Tipo: ' + gv('dg-piano-tipo') + (gv('dg-piano-insulina') ? ' · Insulina: ' + gv('dg-piano-insulina') : '') : '',
+    totKcal: kcalTot || 0,
+    totProt: prot,
+    totCho: choTot,
+    totFat: fat,
+    containerId: 'dg-compact-print-area'
+  });
+}
+function apriInPianoAlimentareDiabete() {
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const pasti = [1,2,3,4,5].map(i => {
+    const nome = gv('dg-m'+i+'-nome');
+    const alimenti = gv('dg-m'+i+'-alimenti');
+    const items = alimenti
+      ? alimenti.split('\n').map(l => l.trim()).filter(l => l).map(l => ({ nome: l, qt: '', altPrint: [], misura: '' }))
+      : [{ nome: '', qt: '', altPrint: [], misura: '' }];
+    return {
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      nome: nome || ('Pasto ' + i),
+      emoji: '🍽️',
+      items,
+      note: gv('dg-m'+i+'-note') || (gv('dg-m'+i+'-cho') ? 'CHO: ' + gv('dg-m'+i+'-cho') + 'g' : ''),
+      collapsed: false
+    };
+  }).filter(p => p.nome || (p.items[0] && p.items[0].nome));
+  if (!pasti.length) { alert('Nessun dato nel piano da esportare'); return; }
+  const tipo = (document.getElementById('dg-piano-tipo')?.value || '').trim();
+  const d = { nome: 'Piano Alimentare — Diabete' + (tipo ? ' (' + tipo + ')' : ''), pasti };
+  sessionStorage.setItem('loadPatologia', JSON.stringify(d));
+  window.location.href = 'app.html';
+}
+function eliminaPianoDiabete() {
+  if (!confirm('Eliminare il piano? I dati inseriti verranno persi.')) return;
+  [1,2,3,4,5].forEach(i => {
+    ['nome','ora','cho','alimenti','note'].forEach(f => {
+      const el = document.getElementById('dg-m'+i+'-'+f);
+      if (el) el.value = '';
+    });
+  });
+  ['dg-piano-kcal','dg-piano-cho-tot','dg-piano-note-cliniche','dg-piano-limita','dg-piano-sport','dg-piano-note-generali'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+}
+
+/* ── Auto-save & Clear section ── */
+function autoSavePage_diabete() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    localStorage.setItem('nutriplan_autosave_diabete', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_diabete() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_diabete') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+  } catch(e) {}
+}
+function svuotaSezione_diabete() {
+  customConfirm('Sei sicuro di voler svuotare tutti i dati di questa sezione? L\'operazione non può essere annullata.', function() {
+    const ap = document.querySelector('.dg-panel.active') || document.querySelector('main');
+    if (ap) {
+      ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+        else el.value = '';
+      });
+      ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    }
+    localStorage.removeItem('nutriplan_autosave_diabete');
+    if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
+  }, { title: '⚠️ Conferma Reset', danger: true, okLabel: 'Sì, Reset' });
+}
+document.addEventListener('DOMContentLoaded', function() {
+  if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_diabete();
+}, {once: false});
+
+function calcVal_dg() {
+  const peso = parseFloat(document.getElementById('dg-val-peso')?.value);
+  const alt  = parseFloat(document.getElementById('dg-val-altezza')?.value);
+  const bmiEl = document.getElementById('dg-val-bmi');
+  const resEl = document.getElementById('dg-val-bmi-res');
+  if (!bmiEl) return;
+  if (peso > 0 && alt > 0) {
+    const bmi = peso / ((alt/100) ** 2);
+    bmiEl.value = bmi.toFixed(1);
+    let cat = '', color = '';
+    if      (bmi < 18.5) { cat = 'Sottopeso';          color = '#3B82F6'; }
+    else if (bmi < 25)   { cat = 'Normopeso';           color = '#22C55E'; }
+    else if (bmi < 30)   { cat = 'Sovrappeso';          color = '#F59E0B'; }
+    else if (bmi < 35)   { cat = 'Obesità classe I';    color = '#F97316'; }
+    else if (bmi < 40)   { cat = 'Obesità classe II';   color = '#EF4444'; }
+    else                  { cat = 'Obesità classe III';  color = '#DC2626'; }
+    if (resEl) {
+      resEl.style.display = 'block';
+      resEl.innerHTML = `BMI <b style="color:${color}">${bmi.toFixed(1)} kg/m²</b> — <b style="color:${color}">${cat}</b>`;
+    }
+  } else {
+    bmiEl.value = '';
+    if (resEl) resEl.style.display = 'none';
   }
 }
 
-async function doLogout() { await sb.auth.signOut(); location.reload(); }
+function raccogliVal_dg() { return {}; }
 
-async function init() {
-  document.getElementById('loading').classList.add('show');
-  const {data:{session}} = await sb.auth.getSession();
-  document.getElementById('loading').classList.remove('show');
-  if (session?.user) await checkAndRedirect(session.user);
-}
-init();
+function ripristinaVal_dg(d) { return; }
+
 </script>
 </body>
 </html>

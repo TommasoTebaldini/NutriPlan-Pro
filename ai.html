@@ -1,385 +1,125 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Assistente AI — DietPlan Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="css/style.css">
-<style>
-.ai-wrap{display:flex;flex-direction:column;height:calc(100vh - 60px);max-width:900px;margin:0 auto}
-.ai-messages{flex:1;overflow-y:auto;padding:16px 0;display:flex;flex-direction:column;gap:14px}
-.ai-msg{display:flex;gap:12px;align-items:flex-start;animation:fadeInUp .2s ease}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.ai-msg.user{flex-direction:row-reverse}
-.ai-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12)}
-.ai-avatar.bot{background:linear-gradient(135deg,var(--teal),#0EA5E9);color:white}
-.ai-avatar.user{background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white}
-.ai-bubble{max-width:75%;padding:12px 16px;border-radius:16px;font-size:13.5px;line-height:1.7;position:relative}
-.ai-bubble.bot{background:white;border:1px solid var(--border);color:var(--slate);border-radius:4px 16px 16px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.ai-bubble.user{background:linear-gradient(135deg,var(--teal),#0EA5E9);color:white;border-radius:16px 4px 16px 16px}
-.ai-bubble.loading{background:white;border:1px solid var(--border)}
-.ai-bubble.bot p{margin-bottom:8px}.ai-bubble.bot p:last-child{margin-bottom:0}
-.ai-bubble.bot strong{color:var(--teal-d)}
-.ai-bubble.bot ul,.ai-bubble.bot ol{padding-left:18px;margin:6px 0}
-.ai-bubble.bot li{margin-bottom:4px}
-.ai-bubble.bot table{border-collapse:collapse;width:100%;margin:8px 0;font-size:12.5px}
-.ai-bubble.bot th{background:var(--slate);color:#CBD5E1;padding:5px 8px;text-align:left}
-.ai-bubble.bot td{padding:4px 8px;border-bottom:1px solid var(--border)}
-.ai-input-area{padding:14px 0 8px;border-top:1.5px solid var(--border)}
-.ai-input-row{display:flex;gap:10px;align-items:flex-end}
-.ai-textarea{flex:1;padding:12px 16px;border:2px solid var(--border-d);border-radius:14px;font-family:inherit;font-size:13.5px;outline:none;resize:none;min-height:52px;max-height:180px;transition:border-color .15s;line-height:1.5;overflow-y:auto}
-.ai-textarea:focus{border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
-.ai-send{width:48px;height:48px;border-radius:50%;background:var(--teal);color:white;border:none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
-.ai-send:hover{background:var(--teal-d);transform:scale(1.05)}
-.ai-send:disabled{background:#CBD5E1;cursor:not-allowed;transform:none}
-.ai-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.ai-chip{padding:6px 14px;border-radius:20px;background:white;border:1.5px solid var(--border-d);font-size:12px;font-weight:500;cursor:pointer;color:var(--slate-m);transition:all .15s;white-space:nowrap}
-.ai-chip:hover{background:var(--teal);color:white;border-color:var(--teal)}
-.ai-header-box{background:linear-gradient(135deg,#0F766E 0%,#0891B2 60%,#0EA5E9 100%);border-radius:var(--r);padding:20px 24px;margin-bottom:14px;color:white;display:flex;align-items:center;gap:18px;box-shadow:0 8px 32px rgba(15,118,110,.28);position:relative;overflow:hidden}
-.ai-header-box::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(255,255,255,.08);border-radius:50%}
-.ai-header-box::after{content:'';position:absolute;bottom:-30px;right:80px;width:100px;height:100px;background:rgba(255,255,255,.06);border-radius:50%}
-.ai-stats-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.ai-stat-pill{background:white;border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--slate-m);display:flex;align-items:center;gap:5px}
-.ai-stat-pill span.dot{width:7px;height:7px;border-radius:50%;background:var(--teal);display:inline-block}
-.ai-chips-label{font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
-.ai-chips-group{margin-bottom:10px}
-.ai-chip{padding:6px 13px;border-radius:20px;background:white;border:1.5px solid var(--border-d);font-size:11.5px;font-weight:500;cursor:pointer;color:var(--slate-m);transition:all .15s;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.ai-chip:hover{background:var(--teal);color:white;border-color:var(--teal);box-shadow:0 3px 10px rgba(15,118,110,.25);transform:translateY(-1px)}
-.dot-pulse{display:flex;gap:4px;align-items:center;padding:4px 0}
-.dot-pulse span{width:8px;height:8px;border-radius:50%;background:var(--teal-l);animation:dotPulse 1.2s infinite}
-.dot-pulse span:nth-child(2){animation-delay:.2s}
-.dot-pulse span:nth-child(3){animation-delay:.4s}
-@keyframes dotPulse{0%,80%,100%{opacity:.3}40%{opacity:1}}
-.ai-time{font-size:10px;color:var(--slate-l);margin-top:4px;text-align:right}
-.ai-msg.user .ai-time{text-align:left;color:rgba(255,255,255,.6)}
-.context-select{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:12.5px;outline:none;color:var(--slate);max-width:200px}
-</style>
-</head>
-<body>
-<nav id="sidebar">
-  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
-  <div class="nav-sec">Piano</div>
-  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
-  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
-  <div class="nav-sec">Comunicazione</div>
-  <a class="nav-item " href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
-  <div class="nav-sec">Specialistica</div>
-    <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
-<a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
-  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
-  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
-  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
-  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
-  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
-  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
-  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
-  <div class="nav-sec">Strumenti</div>
-  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
-  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
-  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
-  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
-  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
-  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
-  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
-  <a class="nav-item active" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
-  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
-  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
-  <div class="nav-sec">Database</div>
-  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
-  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
-  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
-  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
-  <div class="sb-bottom">
-    <div class="sb-user" id="sb-user-email"></div>
-    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
-    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
-  </div>
-</nav>
-<div id="sb-overlay" onclick="closeSB()"></div>
-<div id="topbar">
-  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>🤖 Assistente AI Nutrizionale</h2>
-  <div class="tbar-actions">
-    <select class="context-select" id="ai-context" title="Seleziona contesto">
-      <option value="">Contesto generale</option>
-      <option value="diabete">Diabete</option>
-      <option value="irc">Insufficienza renale</option>
-      <option value="oncologia">Oncologia</option>
-      <option value="pediatria">Pediatria</option>
-      <option value="sport">Sport e performance</option>
-    </select>
-    <button class="btn btn-ghost btn-sm" onclick="clearChat()">🗑️ Pulisci</button>
-  </div>
-</div>
+-- ═══════════════════════════════════════════════════════════════════
+-- PATIENT PORTAL — RLS policies for patient access to shared documents
+-- Run this script in the Supabase SQL Editor to enable patients to
+-- view documents their dietitian has marked as visible.
+-- ═══════════════════════════════════════════════════════════════════
 
-<main id="main"><div class="page-content" style="height:calc(100vh - 60px);display:flex;flex-direction:column;padding-bottom:0">
+-- ─── Helper function: check if current user is a linked patient for a given cartella ──
+CREATE OR REPLACE FUNCTION is_linked_patient(cart_id UUID)
+RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM patient_dietitian
+    WHERE patient_id = auth.uid() AND cartella_id = cart_id
+  );
+$$;
 
-  <div class="ai-header-box">
-    <div style="font-size:44px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2));position:relative;z-index:1">🤖</div>
-    <div style="position:relative;z-index:1;flex:1">
-      <div style="font-size:16px;font-weight:700;margin-bottom:3px;letter-spacing:.2px">Assistente Nutrizionale AI</div>
-      <div style="font-size:12px;opacity:.9;line-height:1.6">Supporto professionale basato su <b>ESPEN · ESC · WHO · LARN</b>. Calcoli, approfondimenti clinici, diagnosi nutrizionale PES.</div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-        <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:600">🧠 Llama 3.1</span>
-        <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:600">⚡ Groq API</span>
-        <span style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:500;opacity:.85">Solo uso professionale</span>
-      </div>
-    </div>
-  </div>
+GRANT EXECUTE ON FUNCTION is_linked_patient(UUID) TO authenticated;
 
-  <div class="ai-stats-bar no-print">
-    <span class="ai-stat-pill"><span class="dot"></span>Modello attivo</span>
-    <span class="ai-stat-pill">📚 ESPEN 2024</span>
-    <span class="ai-stat-pill">🇮🇹 Italiano</span>
-    <span class="ai-stat-pill">🔒 Nessun dato inviato</span>
-  </div>
+-- ─── Profiles: allow dietitians to read profiles of their linked patients ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_select_linked_patients' AND tablename = 'profiles') THEN
+    CREATE POLICY "profiles_select_linked_patients" ON profiles
+      FOR SELECT USING (
+        EXISTS (
+          SELECT 1 FROM patient_dietitian
+          WHERE patient_dietitian.patient_id = profiles.id
+            AND patient_dietitian.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-  <div class="ai-chips no-print" id="ai-chips">
-    <div class="ai-chips-label">Suggerimenti rapidi</div>
-    <div class="ai-chips-group" style="display:flex;flex-wrap:wrap;gap:6px">
-      <span class="ai-chip" onclick="sendChip(this)">📊 Calcola fabbisogno proteico per IRC 70kg</span>
-      <span class="ai-chip" onclick="sendChip(this)">🥗 Piano per diabete T2 1800 kcal</span>
-      <span class="ai-chip" onclick="sendChip(this)">💊 Interazioni warfarin e vitamina K</span>
-      <span class="ai-chip" onclick="sendChip(this)">🏥 Criteri GLIM malnutrizione</span>
-      <span class="ai-chip" onclick="sendChip(this)">⚡ Fabbisogno energetico scompenso cardiaco</span>
-      <span class="ai-chip" onclick="sendChip(this)">🦴 Calcio e vitamina D in osteoporosi</span>
-      <span class="ai-chip" onclick="sendChip(this)">📋 Genera PES per paziente con cachessia</span>
-      <span class="ai-chip" onclick="sendChip(this)">🧪 Albumina e malnutrizione: correlazione</span>
-    </div>
-  </div>
+-- ─── Profiles: allow patients to read profiles of their linked dietitians ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_select_linked_dietitians' AND tablename = 'profiles') THEN
+    CREATE POLICY "profiles_select_linked_dietitians" ON profiles
+      FOR SELECT USING (
+        EXISTS (
+          SELECT 1 FROM patient_dietitian
+          WHERE patient_dietitian.dietitian_id = profiles.id
+            AND patient_dietitian.patient_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-  <div class="ai-messages" id="ai-messages">
-    <!-- messages injected here -->
-  </div>
+-- ─── Cartelle: patients can read their linked cartelle ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'cartelle_select_linked_patient' AND tablename = 'cartelle') THEN
+    CREATE POLICY "cartelle_select_linked_patient" ON cartelle
+      FOR SELECT USING (is_linked_patient(id));
+  END IF;
+END $$;
 
-  <div class="ai-input-area">
-    <div class="ai-input-row">
-      <textarea class="ai-textarea" id="ai-input" placeholder="Chiedi qualcosa di clinico, nutrizionale o sulle linee guida..." rows="1"
-        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-      <button class="ai-send" id="ai-send-btn" onclick="sendMessage()" title="Invia">➤</button>
-    </div>
-    <div style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center">
-      Powered by Groq AI — Llama 3.1 · Gemma 2 · Mixtral · Le risposte sono a scopo professionale e non sostituiscono la consulenza medica
-    </div>
-  </div>
+-- ─── Piani: patients can read visible plans from their linked cartelle ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'piani_select_patient_visible' AND tablename = 'piani') THEN
+    CREATE POLICY "piani_select_patient_visible" ON piani
+      FOR SELECT USING (
+        visible_to_patient = TRUE AND is_linked_patient(cartella_id)
+      );
+  END IF;
+END $$;
 
-</div></main>
+-- ─── NCPt: patients can read visible NCPt from their linked cartelle ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'ncpt_select_patient_visible' AND tablename = 'ncpt') THEN
+    CREATE POLICY "ncpt_select_patient_visible" ON ncpt
+      FOR SELECT USING (
+        visible_to_patient = TRUE AND is_linked_patient(cartella_id)
+      );
+  END IF;
+END $$;
 
-<div id="toast"></div>
-<script src="js/utils.js"></script>
-<script>
-const SYSTEM_PROMPT_SHORT = 'Sei un assistente nutrizionale clinico per dietisti italiani. Rispondi in italiano in modo professionale e conciso. Fornisci calcoli nutrizionali precisi, cita le linee guida ESPEN/WHO quando rilevante, usa la terminologia clinica corretta.';
-const SYSTEM_PROMPT = `Sei un assistente nutrizionale clinico avanzato integrato in DietPlan Pro, software professionale per dietisti e nutrizionisti. 
+-- ─── BIA Records: patients can read visible BIA records from their linked cartelle ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'bia_records_select_patient_visible' AND tablename = 'bia_records') THEN
+    CREATE POLICY "bia_records_select_patient_visible" ON bia_records
+      FOR SELECT USING (
+        visible_to_patient = TRUE AND is_linked_patient(cartella_id)
+      );
+  END IF;
+END $$;
 
-RUOLO: Supporto professionale per dietisti e nutrizionisti clinici in ambito ospedaliero e ambulatoriale.
+-- ─── Schede Valutazione: patients can read visible evaluation sheets from their linked cartelle ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'schede_valutazione_select_patient_visible' AND tablename = 'schede_valutazione') THEN
+    CREATE POLICY "schede_valutazione_select_patient_visible" ON schede_valutazione
+      FOR SELECT USING (
+        visible_to_patient = TRUE AND is_linked_patient(cartella_id)
+      );
+  END IF;
+END $$;
 
-COMPETENZE:
-- Calcoli nutrizionali (fabbisogno energetico, proteico, micronutrienti)  
-- Interpretazione esami biochimici in chiave nutrizionale
-- Linee guida ESPEN, ESC, WHO, LARN, INRAN aggiornate
-- NCP (Nutrition Care Process) e diagnosi nutrizionale PES
-- Interazioni farmaco-nutriente
-- Patologie metaboliche, renali, epatiche, oncologiche, neurologiche, gastroenterologiche
-- Nutrizione clinica (enterale, parenterale, ONS)
-- Integratori e AFMS (Alimenti a Fini Medici Speciali)
+-- ─── Note Specialistiche: patients can read visible specialist notes from their linked cartelle ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'note_specialistiche_select_patient_visible' AND tablename = 'note_specialistiche') THEN
+    CREATE POLICY "note_specialistiche_select_patient_visible" ON note_specialistiche
+      FOR SELECT USING (
+        visible_to_patient = TRUE AND is_linked_patient(cartella_id)
+      );
+  END IF;
+END $$;
 
-FORMATO RISPOSTE:
-- Rispondi in italiano in modo chiaro e professionale
-- Usa tabelle quando utile per comparazioni o dati numerici
-- Cita le fonti (es. ESPEN 2021, LARN 2014) quando rilevante
-- Per calcoli, mostra il procedimento passo passo
-- Sii preciso ma conciso
+-- ─── Patient Documents: ensure cartella_id column exists before creating the policy ──
+ALTER TABLE patient_documents
+  ADD COLUMN IF NOT EXISTS cartella_id UUID REFERENCES cartelle(id) ON DELETE CASCADE;
 
-AVVERTENZA: Specifica sempre che le tue indicazioni supportano ma non sostituiscono il giudizio clinico del professionista.`;
+-- ─── Patient Documents: patients can read visible documents from their linked cartelle ──
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'patient_documents_select_patient_visible' AND tablename = 'patient_documents') THEN
+    CREATE POLICY "patient_documents_select_patient_visible" ON patient_documents
+      FOR SELECT USING (
+        visible = TRUE AND is_linked_patient(cartella_id)
+      );
+  END IF;
+END $$;
 
-let messages = [];
-let isLoading = false;
-
-function addMessage(role, content, isLoading=false) {
-  const container = document.getElementById('ai-messages');
-  const div = document.createElement('div');
-  div.className = `ai-msg ${role}`;
-  const time = new Date().toLocaleTimeString('it', {hour:'2-digit',minute:'2-digit'});
-  const avatarContent = role === 'bot' ? '🤖' : '👤';
-  const bubbleContent = isLoading 
-    ? `<div class="dot-pulse"><span></span><span></span><span></span></div>`
-    : formatMessage(content);
-  div.innerHTML = `
-    <div class="ai-avatar ${role}">${avatarContent}</div>
-    <div>
-      <div class="ai-bubble ${role}${isLoading?' loading':''}">${bubbleContent}</div>
-      <div class="ai-time">${time}</div>
-    </div>`;
-  div.dataset.role = role;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-  return div;
-}
-
-function formatMessage(text) {
-  // Convert markdown-like formatting to HTML
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`(.*?)`/g, '<code style="background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12px">$1</code>')
-    .replace(/^### (.*$)/gm, '<h4 style="font-size:13px;font-weight:700;color:var(--teal-d);margin:10px 0 4px">$1</h4>')
-    .replace(/^## (.*$)/gm, '<h3 style="font-size:14px;font-weight:700;color:var(--slate);margin:10px 0 5px">$1</h3>')
-    .replace(/^- (.*$)/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/^(?!<[hul])/gm, '')
-    .replace(/\n/g, '<br>');
-}
-
-async function sendMessage(text) {
-  const input = document.getElementById('ai-input');
-  const msg = text || input.value.trim();
-  if (!msg || isLoading) return;
-
-  input.value = '';
-  autoResize(input);
-  document.getElementById('ai-chips').style.display = 'none';
-  addMessage('user', msg);
-  messages.push({role:'user', content: msg});
-
-  const loadingDiv = addMessage('bot', '', true);
-  isLoading = true;
-  document.getElementById('ai-send-btn').disabled = true;
-
-  const ctx = document.getElementById('ai-context').value;
-  const ctxNote = ctx ? `\n[Contesto patologico: ${ctx}]` : '';
-
-  // Build conversation history (last 10 messages)
-  const apiMessages = messages.slice(-10).map(m => ({
-    role: m.role === 'bot' ? 'assistant' : 'user',
-    content: m.content
-  }));
-
-  let replyText = '';
-  let errorMsg = '';
-
-  // Check if running locally (file://) — API not available
-  if (window.location.protocol === 'file:') {
-    const bubble = loadingDiv.querySelector('.ai-bubble');
-    bubble.className = 'ai-bubble bot';
-    bubble.innerHTML = `<div style="background:#FEF3C7;border-radius:8px;padding:12px 16px;font-size:13px;color:#92400E;border-left:3px solid #F59E0B">
-      ⚠️ <b>L'AI funziona solo dalla versione online.</b><br>
-      Carica il progetto su Vercel e configura la variabile <code>GEMINI_API_KEY</code> per abilitare l'assistente.
-    </div>`;
-    isLoading = false;
-    document.getElementById('ai-send-btn').disabled = false;
-    return;
-  }
-
-  try {
-    const { data: { session: _aiSession } } = await sb.auth.getSession();
-    const response = await fetch('/api/gemini', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': _aiSession?.access_token ? `Bearer ${_aiSession.access_token}` : ''
-      },
-      body: JSON.stringify({
-        system: SYSTEM_PROMPT + ctxNote,
-        messages: apiMessages,
-        max_tokens: 1024
-      })
-    });
-
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      errorMsg = errData.error || 'HTTP ' + response.status;
-      throw new Error(errorMsg);
-    }
-
-    const data = await response.json();
-    replyText = data.content?.[0]?.text || '';
-    if (!replyText) throw new Error('Risposta vuota');
-
-  } catch(e) {
-    console.warn('Gemini API error:', e.message);
-    errorMsg = e.message;
-  }
-
-  const bubble = loadingDiv.querySelector('.ai-bubble');
-  bubble.className = 'ai-bubble bot';
-
-  if (replyText && replyText.length > 10) {
-    bubble.innerHTML = formatMessage(replyText);
-    messages.push({role:'bot', content: replyText});
-    if (messages.length > 30) messages = messages.slice(-30);
-  } else {
-    const isKeyMissing = errorMsg.includes('GEMINI_API_KEY') || errorMsg.includes('non configurata');
-    const isQuota = errorMsg.toLowerCase().includes('quota') || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('esaurita');
-    bubble.innerHTML = `<div style="background:#FEE2E2;border-radius:8px;padding:12px 16px;font-size:12.5px;color:#991B1B;border-left:3px solid #DC2626">
-      ⚠️ <b>Errore AI:</b> ${
-        isKeyMissing
-          ? 'Chiave API non configurata. Registrati gratis su <a href="https://console.groq.com/keys" target="_blank" style="color:#1D4ED8">console.groq.com/keys</a>, crea una chiave e aggiungila in Vercel → Settings → Environment Variables come <code>GEMINI_API_KEY</code>.'
-          : isQuota
-          ? '⏱️ Limite richieste superato. <b>Soluzione:</b> Riprova tra qualche secondo. Se l\'errore persiste, aggiorna la chiave in Vercel → Environment Variables → GEMINI_API_KEY con una nuova chiave da <a href="https://console.groq.com/keys" target="_blank" style="color:#1D4ED8">console.groq.com/keys</a>.'
-          : esc(errorMsg)
-      }
-    </div>`
-  }
-
-  isLoading = false;
-  document.getElementById('ai-send-btn').disabled = false;
-  document.getElementById('ai-messages').scrollTop = document.getElementById('ai-messages').scrollHeight;
-}
-
-
-function sendChip(el) {
-  sendMessage(el.textContent.replace(/^[^\s]+ /, '').trim());
-}
-
-function clearChat() {
-  messages = [];
-  document.getElementById('ai-messages').innerHTML = '';
-  document.getElementById('ai-chips').style.display = 'flex';
-  addWelcomeMsg();
-}
-
-function addWelcomeMsg() {
-  addMessage('bot', `Ciao! Sono il tuo assistente nutrizionale AI. 
-
-Posso aiutarti con:
-- **Calcoli clinici** (fabbisogno energetico, proteico, micronutrienti)
-- **Interpretazione esami** biochimici in chiave nutrizionale
-- **Linee guida** ESPEN, WHO, ESC e nazionali
-- **Diagnosi PES** e NCP (Nutrition Care Process)
-- **Interazioni farmaco-nutriente**
-- **ONS e AFMS**: quale scegliere e come usarli
-
-Seleziona un contesto in alto a destra per risposte più mirate, oppure fai la tua domanda direttamente!`);
-}
-
-function handleKey(e) {
-  if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 180) + 'px';
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  addWelcomeMsg();
-  try {
-    const ok = await checkAuth(); // redirects to index.html if not logged in
-    if (!ok) {
-      // Disable send if not authenticated
-      const sendBtn = document.getElementById('ai-send-btn');
-      if (sendBtn) sendBtn.disabled = true;
-      const input = document.getElementById('ai-input');
-      if (input) input.placeholder = 'Effettua il login per usare l\'AI...';
-    }
-  } catch(e) {}
-});
-</script>
-</body>
-</html>
+-- ═══════════════════════════════════════════════════════════════════
+-- NOTE: Run this script AFTER the following scripts have been executed:
+--   1. create_patient_documents.sql  (creates the patient_documents table)
+--   2. add_visible_to_patient.sql    (adds visibility columns)
+--   3. patient_dietitian.sql         (creates the patient_dietitian link table)
+--   4. clinical_tables_rls.sql       (enables RLS & adds dietitian CRUD policies)
+-- This script is idempotent and can be re-run safely.
+-- ═══════════════════════════════════════════════════════════════════

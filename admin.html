@@ -1,117 +1,404 @@
--- ═══════════════════════════════════════════════════════════════════
--- Migration: enable patients to write their food/wellness diary and
---            enable Supabase Realtime on diary tables so the dietitian
---            sees updates live.
---
--- Run this script in the Supabase SQL Editor AFTER:
---   1. patient_dietitian.sql
---   2. patient_portal_policies.sql
--- This script is idempotent and can be re-run safely.
--- ═══════════════════════════════════════════════════════════════════
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Admin Utenti — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+    <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+<a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>⚙️ Gestione Utenti</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary btn-sm" onclick="loadUtenti()">🔄 Aggiorna</button>
+  </div>
+</div>
+<main id="main"><div class="page-content">
+  <div id="admin-check" class="empty-state">
+    <div class="ei">🔒</div><h3>Verifica accesso...</h3>
+  </div>
+  <div id="admin-content" style="display:none">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr"><h3>👥 Utenti Registrati</h3></div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:var(--slate);color:#CBD5E1">
+              <th style="padding:8px 12px;text-align:left">Email</th>
+              <th style="padding:8px 12px;text-align:center">Approvato</th>
+              <th style="padding:8px 12px;text-align:center">Admin</th>
+              <th style="padding:8px 12px;text-align:center">Registrato</th>
+              <th style="padding:8px 12px;text-align:center">Azioni</th>
+            </tr>
+          </thead>
+          <tbody id="utenti-tbody"></tbody>
+        </table>
+      </div>
+    </div>
 
--- ─── 1. Ensure daily_wellness has required columns ──────────────────
-ALTER TABLE daily_wellness
-  ADD COLUMN IF NOT EXISTS patient_id  UUID REFERENCES auth.users;
-ALTER TABLE daily_wellness
-  ADD COLUMN IF NOT EXISTS cartella_id UUID REFERENCES cartelle(id) ON DELETE CASCADE;
+    <!-- ECM CORSI MANAGEMENT -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h3>🎓 Gestione Corsi ECM</h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="loadECMCorsi()">🔄 Aggiorna</button>
+          <button class="btn btn-primary btn-sm" onclick="mostraFormECM()">➕ Aggiungi Corso</button>
+        </div>
+      </div>
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;color:#1E3A5F">
+        ℹ️ I corsi con <b>data di fine passata</b> vengono nascosti automaticamente dalla pagina ECM. Corsi contrassegnati come <b>inattivi</b> non vengono mai mostrati.
+      </div>
+      <!-- Modulo aggiunta corso -->
+      <div id="ecm-form-wrap" style="display:none;background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px">
+        <h4 style="margin-bottom:14px;font-size:14px;color:var(--slate)">➕ Nuovo Corso ECM</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Titolo *</label>
+            <input id="ef-titolo" type="text" placeholder="Titolo del corso" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Provider / Organizzatore *</label>
+            <input id="ef-provider" type="text" placeholder="es. ANDID — Associazione Nazionale Dietisti" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Tipo *</label>
+            <select id="ef-tipo" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="fad">💻 FAD / Online</option>
+              <option value="residenziale">🏛️ Residenziale</option>
+              <option value="blended">🔀 Blended</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Crediti ECM *</label>
+            <input id="ef-crediti" type="number" min="1" max="50" placeholder="es. 12" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Data inizio</label>
+            <input id="ef-data-inizio" type="date" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Data fine <span style="font-weight:400;color:var(--slate-l)">(lascia vuoto = sempre disponibile)</span></label>
+            <input id="ef-data-fine" type="date" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Durata</label>
+            <input id="ef-durata" type="text" placeholder="es. 8 ore FAD" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Costo</label>
+            <input id="ef-costo" type="text" placeholder="es. € 80–150 oppure GRATUITO" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Link ufficiale *</label>
+            <input id="ef-link" type="url" placeholder="https://..." style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Descrizione *</label>
+            <textarea id="ef-descrizione" rows="3" placeholder="Descrizione del corso..." style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Argomenti <span style="font-weight:400">(separati da virgola)</span></label>
+            <input id="ef-argomenti" type="text" placeholder="es. Malnutrizione, NCP, Diabete" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Target <span style="font-weight:400">(separati da virgola)</span></label>
+            <input id="ef-target" type="text" placeholder="es. Dietisti, Medici, Infermieri" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Categorie <span style="font-weight:400">(separati da virgola — usare: nutrizione, patologie, pediatria, sport, fad)</span></label>
+            <input id="ef-cat" type="text" placeholder="es. nutrizione, patologie" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px">
+            <input id="ef-gratuito" type="checkbox" style="width:16px;height:16px;cursor:pointer">
+            <label for="ef-gratuito" style="font-size:13px;font-weight:600;cursor:pointer">🎁 Corso gratuito</label>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-primary btn-sm" onclick="salvaCorsoECM()">💾 Salva Corso</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ecm-form-wrap').style.display='none'">✕ Annulla</button>
+        </div>
+      </div>
+      <!-- Tabella corsi -->
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <thead>
+            <tr style="background:var(--slate);color:#CBD5E1">
+              <th style="padding:8px 10px;text-align:left">Titolo</th>
+              <th style="padding:8px 10px;text-align:center">Tipo</th>
+              <th style="padding:8px 10px;text-align:center">Crediti</th>
+              <th style="padding:8px 10px;text-align:center;cursor:pointer;user-select:none;white-space:nowrap" onclick="toggleECMSort()" title="Ordina per data">Data fine <span id="ecm-sort-icon">⬆️</span></th>
+              <th style="padding:8px 10px;text-align:center">Stato</th>
+              <th style="padding:8px 10px;text-align:center">Azioni</th>
+            </tr>
+          </thead>
+          <tbody id="ecm-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div></main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+async function loadUtenti() {
+  showLoading(true);
+  const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+  showLoading(false);
+  if(error){ toast('Errore: ' + error.message, 'err'); return; }
+  const tbody = document.getElementById('utenti-tbody');
+  if(!data || !data.length){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--slate-l)">Nessun utente trovato</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(u => `<tr style="border-bottom:1px solid var(--border)">
+    <td style="padding:8px 12px;font-weight:500">${esc(u.email||u.username||u.id)}</td>
+    <td style="padding:8px 12px;text-align:center">
+      ${u.approved
+        ? '<span style="color:#15803D;font-weight:700">✅ Sì</span>'
+        : '<span style="color:#DC2626;font-weight:700">❌ No</span>'}
+    </td>
+    <td style="padding:8px 12px;text-align:center">
+      ${u.is_admin ? '<span style="color:#7C3AED;font-weight:700">👑 Admin</span>' : '—'}
+    </td>
+    <td style="padding:8px 12px;text-align:center;font-size:12px;color:var(--slate-l)">
+      ${u.created_at ? new Date(u.created_at).toLocaleDateString('it') : '—'}
+    </td>
+    <td style="padding:8px 12px;text-align:center">
+      <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+        ${!u.approved
+          ? `<button class="btn btn-primary btn-xs" onclick="approvaUtente('${u.id}')">✅ Approva</button>`
+          : `<button class="btn btn-ghost btn-xs" onclick="revokaUtente('${u.id}')">❌ Revoca</button>`}
+        ${!u.is_admin
+          ? `<button class="btn btn-ghost btn-xs" style="color:#7C3AED;border-color:#DDD6FE" onclick="makeAdmin('${u.id}')">👑 Admin</button>`
+          : `<button class="btn btn-ghost btn-xs" onclick="removeAdmin('${u.id}')">Remove Admin</button>`}
+      </div>
+    </td>
+  </tr>`).join('');
+}
 
--- ─── 2. Ensure weight_logs has required columns ─────────────────────
-ALTER TABLE weight_logs
-  ADD COLUMN IF NOT EXISTS patient_id  UUID REFERENCES auth.users;
-ALTER TABLE weight_logs
-  ADD COLUMN IF NOT EXISTS cartella_id UUID REFERENCES cartelle(id) ON DELETE CASCADE;
+async function approvaUtente(id) {
+  showLoading(true);
+  await sb.from('profiles').update({ approved: true }).eq('id', id);
+  showLoading(false);
+  toast('✅ Utente approvato!', 'ok');
+  loadUtenti();
+}
+async function revokaUtente(id) {
+  if(!confirm('Revocare accesso a questo utente?')) return;
+  showLoading(true);
+  await sb.from('profiles').update({ approved: false }).eq('id', id);
+  showLoading(false);
+  toast('❌ Accesso revocato', 'info');
+  loadUtenti();
+}
+async function makeAdmin(id) {
+  if(!confirm('Rendere admin questo utente?')) return;
+  showLoading(true);
+  await sb.from('profiles').update({ is_admin: true }).eq('id', id);
+  showLoading(false);
+  toast('👑 Admin impostato!', 'ok');
+  loadUtenti();
+}
+async function removeAdmin(id) {
+  if(!confirm('Rimuovere privilegi admin?')) return;
+  showLoading(true);
+  await sb.from('profiles').update({ is_admin: false }).eq('id', id);
+  showLoading(false);
+  toast('Admin rimosso', 'info');
+  loadUtenti();
+}
 
--- ─── 3. RLS: patients can INSERT their own daily_wellness entries ────
-ALTER TABLE daily_wellness ENABLE ROW LEVEL SECURITY;
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await checkAuth();
+  if(!ok) return;
+  if(!isAdmin) {
+    const errDetail = loadProfileError
+      ? `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;margin-top:12px;text-align:left;max-width:520px;margin-left:auto;margin-right:auto"><p style="font-size:12.5px;color:#991B1B;margin:0"><b>⚠️ Errore lettura profilo:</b> ${esc(loadProfileError.message)}</p><p style="font-size:12px;color:#7F1D1D;margin-top:6px">Se hai già eseguito <code>supabase/profiles_setup.sql</code>, potrebbe esserci una versione precedente con policy RLS ricorsive. <b>Ri-esegui il file SQL aggiornato</b> per correggere le policy.</p></div>`
+      : '';
+    document.getElementById('admin-check').innerHTML = `<div class="ei">🔒</div><h3>Accesso negato</h3><p>Solo gli amministratori possono accedere a questa sezione.</p>${errDetail}<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;margin-top:14px;text-align:left;max-width:520px;margin-left:auto;margin-right:auto"><p style="font-size:12.5px;color:#475569;margin-bottom:8px">ℹ️ <b>Passo 1</b> — Esegui <code>supabase/profiles_setup.sql</code> nel <b>SQL Editor di Supabase</b> (ri-eseguilo se già fatto in precedenza per aggiornare le policy).</p><p style="font-size:12.5px;color:#475569;margin-bottom:8px"><b>Passo 2</b> — Poi esegui questo comando per abilitare il tuo account admin:</p><pre style="background:#1E293B;color:#94F3B8;border-radius:6px;padding:10px 14px;font-size:12px;overflow-x:auto;margin:0">UPDATE profiles\nSET is_admin = true, approved = true\nWHERE email = '${esc(currentUser?.email || 'tua-email@example.com')}';</pre></div><br><a href="app.html" class="btn btn-primary" style="width:auto;padding:8px 20px">← Torna al Piano</a>`;
+    return;
+  }
+  document.getElementById('admin-check').style.display = 'none';
+  document.getElementById('admin-content').style.display = 'block';
+  loadUtenti();
+  loadECMCorsi();
+});
 
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE policyname = 'daily_wellness_insert_patient' AND tablename = 'daily_wellness'
-  ) THEN
-    CREATE POLICY "daily_wellness_insert_patient" ON daily_wellness
-      FOR INSERT WITH CHECK (
-        auth.uid() = patient_id
-        AND EXISTS (
-          SELECT 1 FROM patient_dietitian
-          WHERE patient_dietitian.patient_id = auth.uid()
-            AND patient_dietitian.cartella_id = daily_wellness.cartella_id
-        )
-      );
-  END IF;
-END $$;
+// ─── ECM Course Management ──────────────────────────────────────────
+let ecmSortAsc = true;
 
--- ─── 4. RLS: patients can SELECT their own daily_wellness entries ────
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE policyname = 'daily_wellness_select_patient' AND tablename = 'daily_wellness'
-  ) THEN
-    CREATE POLICY "daily_wellness_select_patient" ON daily_wellness
-      FOR SELECT USING (
-        auth.uid() = patient_id
-        OR EXISTS (
-          SELECT 1 FROM patient_dietitian
-          WHERE patient_dietitian.patient_id = auth.uid()
-            AND patient_dietitian.cartella_id = daily_wellness.cartella_id
-        )
-      );
-  END IF;
-END $$;
+function toggleECMSort() {
+  ecmSortAsc = !ecmSortAsc;
+  const icon = document.getElementById('ecm-sort-icon');
+  if (icon) icon.textContent = ecmSortAsc ? '⬆️' : '⬇️';
+  loadECMCorsi();
+}
 
--- ─── 5. RLS: patients can INSERT their own weight_logs entries ───────
-ALTER TABLE weight_logs ENABLE ROW LEVEL SECURITY;
+async function loadECMCorsi() {
+  const tbody = document.getElementById('ecm-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Caricamento...</td></tr>';
+  const { data, error } = await sb.from('ecm_corsi').select('*').order('data_fine', { ascending: ecmSortAsc, nullsFirst: false });
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="6"><div style="margin:24px auto;max-width:520px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:20px 24px;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:22px">⚠️</span>
+        <span style="font-weight:700;color:#B91C1C;font-size:15px">Tabella non trovata</span>
+      </div>
+      <p style="margin:0 0 8px;color:#7F1D1D;font-size:13px;line-height:1.5">La tabella <code style="background:#FEE2E2;border-radius:4px;padding:1px 5px;font-size:12px">ecm_corsi</code> non esiste nel database Supabase.</p>
+      <p style="margin:0 0 12px;color:#991B1B;font-size:13px;line-height:1.5"><strong>Come risolvere:</strong></p>
+      <ol style="margin:0 0 12px;padding-left:18px;color:#7F1D1D;font-size:13px;line-height:1.8">
+        <li>Apri il <strong>pannello Supabase</strong> del progetto</li>
+        <li>Vai su <strong>SQL Editor</strong></li>
+        <li>Incolla ed esegui il contenuto del file <code style="background:#FEE2E2;border-radius:4px;padding:1px 5px;font-size:12px">supabase/ecm_corsi.sql</code></li>
+        <li>Aggiorna questa pagina</li>
+      </ol>
+      <details style="margin-top:4px">
+        <summary style="cursor:pointer;font-size:12px;color:#B91C1C;font-weight:600">Dettaglio errore tecnico</summary>
+        <p style="margin:6px 0 0;font-size:11px;color:#9CA3AF;font-family:monospace;word-break:break-all">${esc(error.message)}</p>
+      </details>
+    </div></td></tr>`;
+    return;
+  }
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Nessun corso trovato. Aggiungi il primo corso o esegui supabase/ecm_corsi.sql.</td></tr>';
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  tbody.innerHTML = data.map(c => {
+    const expired = c.data_fine && new Date(c.data_fine) <= today;
+    const tipoIcon = c.tipo === 'fad' ? '💻' : c.tipo === 'residenziale' ? '🏛️' : '🔀';
+    const statoHtml = !c.attivo
+      ? '<span style="color:#64748B;font-weight:600">⏸ Inattivo</span>'
+      : expired
+        ? '<span style="color:#DC2626;font-weight:600">⛔ Scaduto</span>'
+        : '<span style="color:#15803D;font-weight:600">✅ Attivo</span>';
+    const dataFine = c.data_fine ? new Date(c.data_fine).toLocaleDateString('it') : '— (sempre)';
+    return `<tr style="border-bottom:1px solid var(--border);${expired||!c.attivo?'opacity:.6':''}">
+      <td style="padding:8px 10px;font-weight:500;max-width:280px">${esc(c.titolo)}<br><span style="font-size:11px;color:var(--slate-l)">${esc(c.provider)}</span></td>
+      <td style="padding:8px 10px;text-align:center">${tipoIcon} ${c.tipo}</td>
+      <td style="padding:8px 10px;text-align:center;font-weight:700;color:#4F46E5">${c.crediti}</td>
+      <td style="padding:8px 10px;text-align:center;font-size:12px">${dataFine}</td>
+      <td style="padding:8px 10px;text-align:center">${statoHtml}</td>
+      <td style="padding:8px 10px;text-align:center">
+        <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-xs" onclick="toggleCorsoECM(${c.id},${!c.attivo})">${c.attivo?'⏸ Disattiva':'▶️ Attiva'}</button>
+          <button class="btn btn-ghost btn-xs" style="color:#DC2626;border-color:#FECACA" onclick="eliminaCorsoECM(${c.id})">🗑️ Elimina</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
 
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE policyname = 'weight_logs_insert_patient' AND tablename = 'weight_logs'
-  ) THEN
-    CREATE POLICY "weight_logs_insert_patient" ON weight_logs
-      FOR INSERT WITH CHECK (
-        auth.uid() = patient_id
-        AND EXISTS (
-          SELECT 1 FROM patient_dietitian
-          WHERE patient_dietitian.patient_id = auth.uid()
-            AND patient_dietitian.cartella_id = weight_logs.cartella_id
-        )
-      );
-  END IF;
-END $$;
+function mostraFormECM() {
+  const f = document.getElementById('ecm-form-wrap');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  // Reset form
+  ['titolo','provider','durata','costo','link','descrizione','argomenti','target','cat'].forEach(id => {
+    const el = document.getElementById('ef-'+id);
+    if (el) el.value = '';
+  });
+  document.getElementById('ef-crediti').value = '';
+  document.getElementById('ef-data-inizio').value = '';
+  document.getElementById('ef-data-fine').value = '';
+  document.getElementById('ef-tipo').value = 'fad';
+  document.getElementById('ef-gratuito').checked = false;
+}
 
--- ─── 6. RLS: patients can SELECT their own weight_logs entries ───────
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE policyname = 'weight_logs_select_patient' AND tablename = 'weight_logs'
-  ) THEN
-    CREATE POLICY "weight_logs_select_patient" ON weight_logs
-      FOR SELECT USING (
-        auth.uid() = patient_id
-        OR EXISTS (
-          SELECT 1 FROM patient_dietitian
-          WHERE patient_dietitian.patient_id = auth.uid()
-            AND patient_dietitian.cartella_id = weight_logs.cartella_id
-        )
-      );
-  END IF;
-END $$;
+async function salvaCorsoECM() {
+  const titolo = document.getElementById('ef-titolo').value.trim();
+  const provider = document.getElementById('ef-provider').value.trim();
+  const link = document.getElementById('ef-link').value.trim();
+  const descrizione = document.getElementById('ef-descrizione').value.trim();
+  const crediti = parseInt(document.getElementById('ef-crediti').value) || 0;
+  if (!titolo || !provider || !link || !descrizione || crediti < 1) {
+    toast('Compila i campi obbligatori (titolo, provider, link, descrizione, crediti)', 'err'); return;
+  }
+  const splitList = inputValue => inputValue.split(',').map(s => s.trim()).filter(Boolean);
+  const payload = {
+    titolo, provider, link, descrizione, crediti,
+    tipo: document.getElementById('ef-tipo').value,
+    durata: document.getElementById('ef-durata').value.trim() || '',
+    costo: document.getElementById('ef-costo').value.trim() || '',
+    gratuito: document.getElementById('ef-gratuito').checked,
+    argomenti: splitList(document.getElementById('ef-argomenti').value),
+    target: splitList(document.getElementById('ef-target').value),
+    cat: splitList(document.getElementById('ef-cat').value),
+    data_inizio: document.getElementById('ef-data-inizio').value || null,
+    data_fine: document.getElementById('ef-data-fine').value || null,
+    attivo: true,
+  };
+  showLoading(true);
+  const { error } = await sb.from('ecm_corsi').insert(payload);
+  showLoading(false);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  toast('✅ Corso aggiunto!', 'ok');
+  document.getElementById('ecm-form-wrap').style.display = 'none';
+  loadECMCorsi();
+}
 
--- ─── 7. REPLICA IDENTITY FULL for Realtime RLS enforcement ──────────
-ALTER TABLE daily_wellness REPLICA IDENTITY FULL;
-ALTER TABLE weight_logs    REPLICA IDENTITY FULL;
+async function toggleCorsoECM(id, nuovoStato) {
+  showLoading(true);
+  await sb.from('ecm_corsi').update({ attivo: nuovoStato }).eq('id', id);
+  showLoading(false);
+  toast(nuovoStato ? '▶️ Corso attivato' : '⏸ Corso disattivato', 'info');
+  loadECMCorsi();
+}
 
--- ─── 8. Add diary tables to supabase_realtime publication ───────────
-DO $$
-DECLARE
-  t TEXT;
-BEGIN
-  FOREACH t IN ARRAY ARRAY['daily_wellness', 'weight_logs'] LOOP
-    IF NOT EXISTS (
-      SELECT 1 FROM pg_publication_tables
-      WHERE pubname = 'supabase_realtime' AND tablename = t
-    ) THEN
-      EXECUTE format('ALTER PUBLICATION supabase_realtime ADD TABLE %I', t);
-    END IF;
-  END LOOP;
-END $$;
+async function eliminaCorsoECM(id) {
+  if (!confirm('Eliminare definitivamente questo corso ECM?')) return;
+  showLoading(true);
+  await sb.from('ecm_corsi').delete().eq('id', id);
+  showLoading(false);
+  toast('🗑️ Corso eliminato', 'info');
+  loadECMCorsi();
+}
+</script>
+</body>
+</html>

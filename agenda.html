@@ -1,49 +1,1423 @@
--- ═══════════════════════════════════════════════════════════════════
--- PATIENT_DIETITIAN — Tabella di collegamento pazienti-nutrizionisti
--- Eseguire questo script nel SQL Editor del progetto Supabase
--- per creare la tabella (se non esiste) e configurare le policy RLS
--- necessarie per collegare/scollegare i pazienti dalle cartelle.
--- ═══════════════════════════════════════════════════════════════════
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Agenda — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.agenda-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;height:calc(100vh - 90px)}
+.cal-wrap{background:white;border-radius:var(--r);border:1px solid var(--border);padding:16px;box-shadow:var(--shadow);overflow:hidden}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-nav h3{font-size:16px;font-weight:700;color:var(--slate)}
+.cal-nav-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border-d);background:white;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cal-nav-btn:hover{background:var(--teal);color:white;border-color:var(--teal)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day-hdr{text-align:center;font-size:11px;font-weight:700;color:var(--slate-l);padding:4px 0}
+.cal-day{min-height:80px;border-radius:8px;padding:4px;cursor:pointer;transition:all .15s;position:relative;border:1.5px solid transparent}
+.cal-day:hover{background:#F0FDF4;border-color:var(--teal-l)}
+.cal-day.today{background:#CCFBF1;border-color:var(--teal)}
+.cal-day.selected{background:#99F6E4;border-color:var(--teal-d);border-width:2px}
+.cal-day.selected .cal-day-num{color:var(--teal-d)}
+.cal-day-more{font-size:10px;color:var(--slate-l);padding:1px 4px}
+.cal-day.other-month{opacity:.35}
+.cal-day-num{font-size:12px;font-weight:700;color:var(--slate);margin-bottom:3px}
+.cal-day.today .cal-day-num{color:var(--teal-d)}
+.cal-holiday{font-size:9.5px;border-radius:4px;padding:1px 5px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;background:#FEF9C3;color:#854D0E;border-left:2px solid #EAB308}
+.cal-event-dot{font-size:10px;border-radius:4px;padding:1px 5px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;cursor:pointer}
+.cal-event-dot.visita{background:#DBEAFE;color:#1D4ED8}
+.cal-event-dot.controllo{background:#D1FAE5;color:#065F46}
+.cal-event-dot.reminder{background:#FEF3C7;color:#B45309}
+.cal-event-dot.urgente{background:#FEE2E2;color:#991B1B}
+.sidebar-agenda{display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.app-card{background:white;border-radius:var(--r);border:1px solid var(--border);padding:14px;box-shadow:var(--shadow)}
+.app-card h4{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.event-item{padding:10px 12px;border-radius:8px;margin-bottom:8px;border-left:4px solid;cursor:pointer;transition:all .15s}
+.event-item:hover{transform:translateX(3px)}
+.event-item.visita{background:#EFF6FF;border-color:#3B82F6}
+.event-item.controllo{background:#F0FDF4;border-color:#10B981}
+.event-item.reminder{background:#FEF3C7;border-color:#F59E0B}
+.event-item.urgente{background:#FEF2F2;border-color:#EF4444}
+.event-title{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:2px}
+.event-time{font-size:11.5px;color:var(--slate-l);display:flex;align-items:center;gap:5px}
+.event-patient{font-size:11.5px;color:var(--teal-d);font-weight:500;margin-top:3px}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select,.nf textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;color:var(--slate);outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus,.nf textarea:focus{border-color:var(--teal-l)}
+.today-btn{padding:5px 12px;background:var(--teal);color:white;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:.2px;transition:all .15s}
+.today-btn:hover{background:var(--teal-d)}
+.view-toggle{display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden}
+.view-btn{padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:white;color:var(--slate-m);transition:all .15s}
+.view-btn.active{background:var(--teal);color:white}
 
-CREATE TABLE IF NOT EXISTS patient_dietitian (
-  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  patient_id    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  dietitian_id  UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  cartella_id   UUID        REFERENCES cartelle(id) ON DELETE CASCADE,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(patient_id, dietitian_id, cartella_id)
-);
+@media(max-width:900px){
+  .agenda-layout{grid-template-columns:1fr}
+  .sidebar-agenda{display:none}
+}
+.agenda-stat-bar{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.agenda-stat{background:white;border-radius:12px;padding:12px 18px;border:1.5px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;flex:1;min-width:150px}
+.agenda-stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.agenda-stat-val{font-size:22px;font-weight:800;color:var(--slate);line-height:1}
+.agenda-stat-lbl{font-size:11px;color:var(--slate-l);font-weight:600;margin-top:2px}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+    <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+<a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item active" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📅 Agenda Appuntamenti</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary btn-sm" onclick="openNewEvent()">➕ Nuovo Appuntamento</button>
+    <button id="btn-gcal" class="btn btn-ghost btn-sm" onclick="connectGoogleCalendar()" style="display:none">📅 Connetti Google Calendar</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="openSyncModal()" title="Sincronizza il calendario con Google Calendar, Apple Calendar, Outlook e altri dispositivi">🔗 Sincronizza Calendario</button>
+    <button class="today-btn" onclick="goToday()">Oggi</button>
+  </div>
+</div>
 
--- Indice per le query più frequenti
-CREATE INDEX IF NOT EXISTS patient_dietitian_dietitian_cartella
-  ON patient_dietitian (dietitian_id, cartella_id);
+<main id="main"><div class="page-content" style="padding-bottom:0">
 
-CREATE INDEX IF NOT EXISTS patient_dietitian_patient
-  ON patient_dietitian (patient_id);
+<!-- STATS BAR -->
+<div class="agenda-stat-bar">
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#DBEAFE">📅</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-oggi">0</div>
+      <div class="agenda-stat-lbl">Appuntamenti Oggi</div>
+    </div>
+  </div>
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#D1FAE5">🗓️</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-settimana">0</div>
+      <div class="agenda-stat-lbl">Questa Settimana</div>
+    </div>
+  </div>
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#FEE2E2">🚨</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-urgenti">0</div>
+      <div class="agenda-stat-lbl">Urgenti</div>
+    </div>
+  </div>
+  <div class="agenda-stat">
+    <div class="agenda-stat-icon" style="background:#EDE9FE">📋</div>
+    <div>
+      <div class="agenda-stat-val" id="stat-totale">0</div>
+      <div class="agenda-stat-lbl">Totale Appuntamenti</div>
+    </div>
+  </div>
+</div>
 
--- ─── Row Level Security ───────────────────────────────────────────────────────
-ALTER TABLE patient_dietitian ENABLE ROW LEVEL SECURITY;
+<div class="agenda-layout">
+  <!-- CALENDAR -->
+  <div class="cal-wrap">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+      <h3 id="cal-title"></h3>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid">
+      <div class="cal-day-hdr">Lun</div>
+      <div class="cal-day-hdr">Mar</div>
+      <div class="cal-day-hdr">Mer</div>
+      <div class="cal-day-hdr">Gio</div>
+      <div class="cal-day-hdr">Ven</div>
+      <div class="cal-day-hdr">Sab</div>
+      <div class="cal-day-hdr">Dom</div>
+    </div>
+  </div>
 
--- Il nutrizionista può vedere i propri collegamenti
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'patient_dietitian_select_own' AND tablename = 'patient_dietitian') THEN
-    CREATE POLICY "patient_dietitian_select_own" ON patient_dietitian
-      FOR SELECT USING (auth.uid() = dietitian_id OR auth.uid() = patient_id);
-  END IF;
-END $$;
+  <!-- SIDEBAR -->
+  <div class="sidebar-agenda">
+    <!-- Upcoming events -->
+    <div class="app-card">
+      <h4>📋 Appuntamenti — <span id="selected-date-label">Oggi</span></h4>
+      <div id="day-events"><p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessun appuntamento per questa data.</p></div>
+    </div>
 
--- Il nutrizionista può creare nuovi collegamenti
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'patient_dietitian_insert_own' AND tablename = 'patient_dietitian') THEN
-    CREATE POLICY "patient_dietitian_insert_own" ON patient_dietitian
-      FOR INSERT WITH CHECK (auth.uid() = dietitian_id);
-  END IF;
-END $$;
+    <!-- Quick add -->
+    <div class="app-card">
+      <h4>➕ Nuovo Appuntamento</h4>
+      <div class="nf" style="margin-bottom:8px"><label>Tipo</label>
+        <select id="ev-tipo">
+          <option value="visita">🩺 Prima Visita</option>
+          <option value="controllo">🔄 Controllo / Follow-up</option>
+          <option value="reminder">⏰ Promemoria</option>
+          <option value="urgente">🚨 Urgente</option>
+        </select></div>
+      <div class="nf" style="margin-bottom:8px"><label>Paziente / Titolo</label>
+        <input type="text" id="ev-paziente" placeholder="Nome paziente o titolo evento"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="nf"><label>Data</label><input type="date" id="ev-data"></div>
+        <div class="nf"><label>Ora</label><input type="time" id="ev-ora" value="09:00"></div>
+      </div>
+      <div class="nf" style="margin-bottom:8px"><label>Durata</label>
+        <select id="ev-durata">
+          <option value="30">30 minuti</option>
+          <option value="45">45 minuti</option>
+          <option value="60" selected>1 ora</option>
+          <option value="90">1 ora 30 min</option>
+          <option value="120">2 ore</option>
+        </select></div>
+      <div class="nf" style="margin-bottom:10px"><label>Note</label>
+        <textarea id="ev-note" rows="2" placeholder="Note appuntamento..."></textarea></div>
+      <button class="btn btn-primary btn-sm" style="width:100%" onclick="saveEvent()">💾 Salva Appuntamento</button>
+    </div>
 
--- Il nutrizionista può eliminare (scollegare) i propri collegamenti
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'patient_dietitian_delete_own' AND tablename = 'patient_dietitian') THEN
-    CREATE POLICY "patient_dietitian_delete_own" ON patient_dietitian
-      FOR DELETE USING (auth.uid() = dietitian_id);
-  END IF;
-END $$;
+    <!-- Upcoming 7 days -->
+    <div class="app-card">
+      <h4>🗓️ Prossimi 7 Giorni</h4>
+      <div id="upcoming-events"></div>
+    </div>
+  </div>
+</div>
+
+</div></main>
+
+<!-- MODAL EVENT DETAIL -->
+<div class="modal-bg" id="modal-event">
+  <div class="modal" style="max-width:480px">
+    <div class="mhdr" id="modal-event-hdr"><h2 id="modal-event-title">Appuntamento</h2><button class="mclose" onclick="closeM('modal-event')">✕</button></div>
+    <div class="mbody" id="modal-event-body"></div>
+    <div class="mfoot">
+      <button class="btn btn-danger btn-sm" id="btn-del-event" onclick="deleteCurrentEvent()">🗑️ Elimina</button>
+      <button class="btn btn-primary btn-sm" onclick="openEditEvent(currentEventId)">✏️ Modifica</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-event')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EVENT EDIT -->
+<div class="modal-bg" id="modal-event-edit">
+  <div class="modal" style="max-width:480px">
+    <div class="mhdr" style="background:var(--teal);color:white"><h2 style="color:white">✏️ Modifica Appuntamento</h2><button class="mclose" style="color:white" onclick="closeM('modal-event-edit')">✕</button></div>
+    <div class="mbody">
+      <div class="nf" style="margin-bottom:8px"><label>Tipo</label>
+        <select id="edit-ev-tipo">
+          <option value="visita">🩺 Prima Visita</option>
+          <option value="controllo">🔄 Controllo / Follow-up</option>
+          <option value="reminder">⏰ Promemoria</option>
+          <option value="urgente">🚨 Urgente</option>
+        </select></div>
+      <div class="nf" style="margin-bottom:8px"><label>Paziente / Titolo</label>
+        <input type="text" id="edit-ev-paziente" placeholder="Nome paziente o titolo evento"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="nf"><label>Data</label><input type="date" id="edit-ev-data"></div>
+        <div class="nf"><label>Ora</label><input type="time" id="edit-ev-ora"></div>
+      </div>
+      <div class="nf" style="margin-bottom:8px"><label>Durata</label>
+        <select id="edit-ev-durata">
+          <option value="30">30 minuti</option>
+          <option value="45">45 minuti</option>
+          <option value="60">1 ora</option>
+          <option value="90">1 ora 30 min</option>
+          <option value="120">2 ore</option>
+        </select></div>
+      <div class="nf"><label>Note</label>
+        <textarea id="edit-ev-note" rows="2" placeholder="Note appuntamento..."></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-primary btn-sm" onclick="saveEditedEvent()">💾 Salva Modifiche</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-event-edit')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SYNC CALENDAR -->
+<div class="modal-bg" id="modal-sync">
+  <div class="modal" style="max-width:500px">
+    <div class="mhdr" style="background:var(--teal);color:white"><h2 style="color:white">📅 Sincronizza Calendario</h2><button class="mclose" style="color:white" onclick="closeM('modal-sync')">✕</button></div>
+    <div class="mbody">
+
+      <!-- PRIMARY: Auto-sync by email -->
+      <div style="background:linear-gradient(135deg,#ECFDF5,#EFF6FF);border:2px solid #34D399;border-radius:12px;padding:18px;margin-bottom:16px">
+        <div style="font-size:15px;font-weight:700;color:var(--teal-d);margin-bottom:6px">⚡ Sincronizzazione Automatica</div>
+        <p style="font-size:13px;color:var(--slate-m);margin-bottom:14px">Inserisci la tua email e clicca <strong>Sincronizza</strong>: l'agenda si collega automaticamente al tuo calendario e si aggiorna da sola ad ogni nuovo appuntamento.</p>
+        <label style="font-size:12px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:5px">📧 La tua email:</label>
+        <div style="display:flex;gap:8px;align-items:stretch;margin-bottom:10px">
+          <input type="email" id="auto-sync-email" placeholder="tuamail@gmail.com"
+            style="flex:1;padding:10px 12px;border:1.5px solid #34D399;border-radius:8px;font-size:13px;color:var(--slate);background:white;box-sizing:border-box;outline:none"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();autoSyncCalendar()}"
+            oninput="document.getElementById('auto-sync-status').style.display='none'">
+          <button onclick="autoSyncCalendar()"
+            style="padding:10px 20px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s"
+            onmouseover="this.style.background='var(--teal-d)'" onmouseout="this.style.background='var(--teal)'">
+            📅 Sincronizza
+          </button>
+        </div>
+        <div id="auto-sync-status" style="font-size:12px;color:#065F46;background:#D1FAE5;border-radius:7px;padding:8px 10px;margin-bottom:8px;display:none"></div>
+        <div style="font-size:11px;color:var(--slate-l)">✓ Funziona con Google Calendar · Apple Calendar · Outlook · qualsiasi app calendario</div>
+      </div>
+
+      <!-- Advanced options (collapsed) -->
+      <details id="sync-advanced" style="border:1.5px solid var(--border-d);border-radius:10px;overflow:hidden">
+        <summary style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--slate-m);cursor:pointer;background:#F8FAFC;list-style:none;display:flex;align-items:center;justify-content:space-between">
+          <span>⚙️ Opzioni avanzate</span>
+          <span style="font-size:10px;color:var(--slate-l)">Google OAuth · URL abbonamento · Esporta ICS</span>
+        </summary>
+        <div style="padding:14px">
+
+          <!-- Google Calendar OAuth section -->
+          <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:6px">📅 Google Calendar OAuth — Sync immediato</div>
+            <p style="font-size:12px;color:#1e40af;margin-bottom:10px">Autorizza l'accesso diretto a Google Calendar per aggiungere ogni appuntamento in tempo reale al momento del salvataggio.</p>
+            <div id="gcal-sync-area">
+              <div style="margin-bottom:10px">
+                <label for="gcal-email-input" style="font-size:12px;color:#1e40af;font-weight:600;display:block;margin-bottom:4px">📧 Email Google:</label>
+                <input type="email" id="gcal-email-input" placeholder="tuamail@gmail.com" style="width:100%;padding:8px 10px;border:1.5px solid #BFDBFE;border-radius:8px;font-size:13px;color:var(--slate);background:white;box-sizing:border-box">
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-gcal-modal" onclick="connectGoogleCalendarFromModal()">Connetti Google Calendar</button>
+              <div id="gcal-sync-status" style="font-size:12px;margin-top:6px;color:var(--slate-m)"></div>
+            </div>
+            <p id="gcal-config-warning" style="font-size:11px;color:#6B7280;margin-top:8px;display:none">⚠️ Google Client ID non configurato. Clicca il pulsante per le istruzioni su come abilitare questa funzionalità.</p>
+          </div>
+
+          <!-- WebCal subscription URL -->
+          <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:14px;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:700;color:#065F46;margin-bottom:6px">🔗 URL di abbonamento</div>
+            <p style="font-size:12px;color:#047857;margin-bottom:10px">Copia il link e aggiungilo manualmente al tuo calendario.</p>
+            <div id="sync-url-area" style="display:none">
+              <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                <input type="text" id="sync-url-input" readonly style="flex:1;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12px;font-family:monospace;color:var(--slate);background:#F8FAFC">
+                <button class="btn btn-primary btn-sm" onclick="copySyncUrl()">📋 Copia</button>
+              </div>
+              <div style="font-size:11px;color:var(--slate-l);line-height:1.6">
+                • <strong>Google Calendar</strong>: Impostazioni → Aggiungi calendario → Da URL<br>
+                • <strong>Apple Calendar</strong>: File → Nuovo abbonamento calendario<br>
+                • <strong>Outlook</strong>: Aggiungi calendario → Sottoscrivi da web
+              </div>
+            </div>
+            <div id="sync-login-msg" style="font-size:12px;color:#065F46">⚠️ Accedi per generare il tuo link di abbonamento personale.</div>
+          </div>
+
+          <!-- ICS export -->
+          <div style="background:#F8FAFC;border:1.5px solid var(--border);border-radius:10px;padding:12px">
+            <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px">📥 Esportazione manuale</div>
+            <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Scarica il file .ics per importarlo manualmente nel tuo calendario.</p>
+            <button class="btn btn-ghost btn-sm" onclick="exportICal()">📥 Scarica file .ics</button>
+          </div>
+
+        </div>
+      </details>
+
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sync')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-gcal-help">
+  <div class="modal" style="max-width:520px">
+    <div class="mhdr" style="background:#1D4ED8;color:white"><h2 style="color:white">⚙️ Configura Google Client ID</h2><button class="mclose" style="color:white" onclick="closeM('modal-gcal-help')">✕</button></div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:14px">Per abilitare la sincronizzazione con Google Calendar devi configurare un <strong>Google OAuth Client ID</strong>. Segui questi passaggi:</p>
+      <ol style="font-size:13px;color:var(--slate);line-height:1.9;padding-left:18px;margin-bottom:14px">
+        <li>Vai su <a href="https://console.cloud.google.com/" target="_blank" style="color:#1D4ED8">console.cloud.google.com</a></li>
+        <li>Seleziona il tuo progetto (o creane uno nuovo)</li>
+        <li>Vai su <strong>API e servizi → Credenziali</strong></li>
+        <li>Clicca <strong>Crea credenziali → ID client OAuth 2.0</strong></li>
+        <li>Tipo applicazione: <strong>Applicazione web</strong></li>
+        <li>In <em>Origini JavaScript autorizzate</em> aggiungi il tuo dominio (es. <code style="background:#F1F5F9;padding:1px 5px;border-radius:4px">https://tuodominio.vercel.app</code>)</li>
+        <li>Copia il <strong>Client ID</strong> generato</li>
+        <li>Vai su <strong>Vercel → Settings → Environment Variables</strong> e aggiungi:<br>
+          <code style="background:#F1F5F9;padding:3px 8px;border-radius:4px;font-size:12px;display:inline-block;margin-top:4px">GOOGLE_CLIENT_ID = &lt;il tuo Client ID&gt;</code>
+        </li>
+        <li>Esegui un nuovo deploy su Vercel</li>
+      </ol>
+      <div style="background:#FEF3C7;border:1.5px solid #FDE68A;border-radius:8px;padding:10px;font-size:12px;color:#92400E">
+        💡 <strong>Suggerimento:</strong> Se vedi "Tipo utente: Interno", cambialo in <strong>Esterno</strong> nella schermata consenso OAuth prima di creare le credenziali.
+      </div>
+    </div>
+    <div class="mfoot">
+      <a href="https://console.cloud.google.com/apis/credentials" target="_blank" class="btn btn-primary btn-sm">Apri Google Cloud Console</a>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-gcal-help')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<script src="js/utils.js"></script>
+<script>
+let events = JSON.parse(localStorage.getItem('dietplan_events') || '[]');
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth();
+let selectedDate = localDateStr(new Date());
+let currentEventId = null;
+
+// Returns YYYY-MM-DD string using local timezone (avoids UTC offset issues)
+function localDateStr(date) {
+  return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+}
+// Formats a stored YYYY-MM-DD string for display in local timezone
+function formatStoredDate(dateStr, opts) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  return new Date(y, m-1, d).toLocaleDateString('it', opts);
+}
+
+const MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const TIPO_COLORS = {visita:'visita',controllo:'controllo',reminder:'reminder',urgente:'urgente'};
+const TIPO_LABELS = {visita:'🩺 Prima Visita',controllo:'🔄 Controllo',reminder:'⏰ Promemoria',urgente:'🚨 Urgente'};
+
+// ─── Italian public holidays ──────────────────────────────────────────────────
+// Returns the Easter Sunday date for a given year using the
+// Meeus/Jones/Butcher algorithm (valid for all Gregorian years).
+function easterDate(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31); // 1-based
+  const day   = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+
+// Returns a Map of YYYY-MM-DD → holiday name for the given year.
+function italianHolidays(year) {
+  const map = new Map();
+  const add = (m, d, name) => {
+    const key = year + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    map.set(key, name);
+  };
+  // Fixed holidays
+  add(1,  1,  'Capodanno');
+  add(1,  6,  'Epifania');
+  add(4,  25, 'Festa della Liberazione');
+  add(5,  1,  'Festa del Lavoro');
+  add(6,  2,  'Festa della Repubblica');
+  add(8,  15, 'Ferragosto');
+  add(11, 1,  'Ognissanti');
+  add(12, 8,  'Immacolata Concezione');
+  add(12, 25, 'Natale');
+  add(12, 26, 'Santo Stefano');
+  // Variable holidays (Easter-dependent)
+  const easter = easterDate(year);
+  map.set(localDateStr(easter), 'Pasqua');
+  const pasquetta = new Date(easter); pasquetta.setDate(easter.getDate() + 1);
+  map.set(localDateStr(pasquetta), 'Lunedì di Pasquetta');
+  return map;
+}
+
+// Cache holidays per year so we don't recompute on every cell render
+const _holidayCache = new Map();
+function getHolidays(year) {
+  if (!_holidayCache.has(year)) _holidayCache.set(year, italianHolidays(year));
+  return _holidayCache.get(year);
+}
+
+// Returns a plain object containing only the columns present in agenda_events,
+// with correct types. Strips transient runtime flags (e.g. _notified) that
+// would be rejected by PostgREST with "column does not exist".
+function toDbRow(e) {
+  return {
+    id:       e.id,
+    paziente: e.paziente  ?? null,
+    titolo:   e.titolo    ?? null,
+    data:     e.data,
+    ora:      e.ora       || '09:00',
+    tipo:     e.tipo      || 'visita',
+    durata:   parseInt(e.durata, 10) || 60,
+    note:     e.note      ?? null,
+    created:  e.created,
+    user_id:  currentUser.id,
+  };
+}
+
+async function saveEvents() {
+  localStorage.setItem('dietplan_events', JSON.stringify(events));
+  // If Supabase available, also save there
+  if(currentUser && sb) {
+    try {
+      // Filter out events with a missing date field so that a single legacy/corrupt
+      // event cannot cause the entire batch upsert to fail (the `data` column is
+      // NOT NULL in Supabase, so sending null would roll back the whole transaction).
+      const toUpsert = events.filter(e => e.data != null && e.data !== '').map(toDbRow);
+      if (!toUpsert.length) return;
+      const { error } = await sb.from('agenda_events').upsert(toUpsert, { onConflict: 'id' });
+      if (error) throw error;
+    } catch(e) {
+      console.warn('Supabase saveEvents error:', e.message);
+      toast('⚠️ Errore salvataggio sul server: ' + e.message, 'err');
+    }
+  }
+}
+
+async function loadEventsFromSupabase() {
+  if (!currentUser || !sb) return;
+  try {
+    const { data, error } = await sb
+      .from('agenda_events')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('data', { ascending: true })
+      .order('ora', { ascending: true });
+    if (error) throw error;
+    if (!data) return;
+    if (!data.length) {
+      // Supabase has no records — push any locally-cached events up so they are persisted
+      if (events.length) {
+        try {
+          // Only upsert events that have a valid date field; a null/empty `data` value
+          // would violate the NOT NULL constraint and roll back the entire batch.
+          const toUpsert = events.filter(e => e.data != null && e.data !== '').map(toDbRow);
+          if (toUpsert.length) {
+            const { error: upErr } = await sb.from('agenda_events')
+              .upsert(toUpsert, { onConflict: 'id' });
+            if (upErr) throw upErr;
+            // Re-fetch from Supabase immediately so the UI reflects the confirmed
+            // persisted state and other devices see the events on their next load.
+            const { data: synced, error: syncErr } = await sb
+              .from('agenda_events')
+              .select('*')
+              .eq('user_id', currentUser.id)
+              .order('data', { ascending: true })
+              .order('ora', { ascending: true });
+            if (!syncErr && synced && synced.length) {
+              events = synced.map(({ user_id: _u, ...rest }) => rest);
+              localStorage.setItem('dietplan_events', JSON.stringify(events));
+              renderCalendar();
+              updateStats();
+            }
+          }
+        } catch(e) {
+          console.warn('loadEventsFromSupabase: failed to push local events:', e.message);
+          toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');
+        }
+      }
+      return;
+    }
+    // Merge: Supabase is authoritative; keep any local-only events not yet synced
+    const sbIds = new Set(data.map(e => e.id));
+    const localOnly = events.filter(e => !sbIds.has(e.id));
+    // Strip user_id from in-memory objects to match the original event shape
+    events = [...data, ...localOnly].map(({ user_id: _u, ...rest }) => rest);
+    localStorage.setItem('dietplan_events', JSON.stringify(events));
+    renderCalendar();
+    updateStats();
+    // Push any local-only events up to Supabase
+    if (localOnly.length) {
+      try {
+        const toUpsert = localOnly.filter(e => e.data != null && e.data !== '').map(toDbRow);
+        if (toUpsert.length) {
+          const { error: upErr } = await sb.from('agenda_events')
+            .upsert(toUpsert, { onConflict: 'id' });
+          if (upErr) throw upErr;
+        }
+      } catch(e) {
+        console.warn('loadEventsFromSupabase: failed to push local-only events:', e.message);
+        toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');
+      }
+    }
+  } catch(e) {
+    console.warn('loadEventsFromSupabase error:', e.message);
+    toast('⚠️ Impossibile caricare gli appuntamenti dal server: ' + e.message, 'err');
+  }
+}
+
+function renderCalendar() {
+  document.getElementById('cal-title').textContent = MONTHS[currentMonth] + ' ' + currentYear;
+  const grid = document.getElementById('cal-grid');
+  // Remove old day cells (keep headers)
+  const headers = [...grid.querySelectorAll('.cal-day-hdr')];
+  grid.innerHTML = '';
+  headers.forEach(h => grid.appendChild(h));
+
+  const today = localDateStr(new Date());
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const lastDay = new Date(currentYear, currentMonth + 1, 0);
+  
+  // Day of week (Mon=0)
+  let startDow = firstDay.getDay() - 1;
+  if(startDow < 0) startDow = 6;
+
+  // Prev month days
+  for(let i = 0; i < startDow; i++) {
+    const d = new Date(currentYear, currentMonth, -startDow + i + 1);
+    grid.appendChild(makeDay(d, true));
+  }
+  // Current month
+  for(let d = 1; d <= lastDay.getDate(); d++) {
+    const date = new Date(currentYear, currentMonth, d);
+    grid.appendChild(makeDay(date, false));
+  }
+  // Fill remaining
+  const totalCells = startDow + lastDay.getDate();
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for(let i = 1; i <= remaining; i++) {
+    grid.appendChild(makeDay(new Date(currentYear, currentMonth+1, i), true));
+  }
+
+  renderDayEvents(selectedDate);
+  renderUpcoming();
+}
+
+function makeDay(date, otherMonth) {
+  const dateStr = localDateStr(date);
+  const today = localDateStr(new Date());
+  const div = document.createElement('div');
+  div.className = 'cal-day' + (otherMonth?' other-month':'') + (dateStr===today?' today':'') + (dateStr===selectedDate?' selected':'');
+  div.onclick = () => selectDate(dateStr);
+  
+  const dayEvents = events.filter(e => e.data === dateStr);
+  const numEl = document.createElement('div');
+  numEl.className = 'cal-day-num';
+  numEl.textContent = date.getDate();
+  div.appendChild(numEl);
+
+  // Italian public holiday badge
+  const holidayName = getHolidays(date.getFullYear()).get(dateStr);
+  if (holidayName) {
+    const badge = document.createElement('div');
+    badge.className = 'cal-holiday';
+    badge.title = holidayName;
+    badge.textContent = holidayName;
+    div.appendChild(badge);
+  }
+  
+  dayEvents.slice(0,3).forEach(ev => {
+    const dot = document.createElement('div');
+    dot.className = 'cal-event-dot ' + (ev.tipo||'visita');
+    dot.textContent = (ev.ora||'') + ' ' + (ev.paziente||ev.titolo||'');
+    dot.onclick = (e) => { e.stopPropagation(); openEventDetail(ev.id); };
+    div.appendChild(dot);
+  });
+  if(dayEvents.length > 3) {
+    const more = document.createElement('div');
+    more.className = 'cal-day-more';
+    more.textContent = '+' + (dayEvents.length-3) + ' altri';
+    div.appendChild(more);
+  }
+  return div;
+}
+
+function selectDate(dateStr) {
+  selectedDate = dateStr;
+  const [y,m,d] = dateStr.split('-');
+  document.getElementById('ev-data').value = dateStr;
+  const label = formatStoredDate(dateStr, {weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('selected-date-label').textContent = label;
+  renderCalendar();
+}
+
+function renderDayEvents(dateStr) {
+  const container = document.getElementById('day-events');
+  const dayEvs = events.filter(e => e.data === dateStr).sort((a,b) => (a.ora||'').localeCompare(b.ora||''));
+  if(!dayEvs.length) {
+    container.innerHTML = '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessun appuntamento.</p>';
+    return;
+  }
+  container.innerHTML = dayEvs.map(ev => `
+    <div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
+      <div class="event-title">${esc(ev.paziente||ev.titolo||'Appuntamento')}</div>
+      <div class="event-time">⏰ ${ev.ora||'--:--'} ${ev.durata?'('+ev.durata+' min)':''}</div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:2px">${TIPO_LABELS[ev.tipo]||ev.tipo}</div>
+      ${ev.note?`<div style="font-size:11px;color:var(--slate-l);margin-top:3px;font-style:italic">${esc(ev.note)}</div>`:''}
+    </div>`).join('');
+}
+
+function renderUpcoming() {
+  const container = document.getElementById('upcoming-events');
+  const today = localDateStr(new Date());
+  const in7 = localDateStr(new Date(Date.now() + 7*24*3600*1000));
+  const upcoming = events
+    .filter(e => e.data >= today && e.data <= in7)
+    .sort((a,b) => (a.data+a.ora).localeCompare(b.data+b.ora))
+    .slice(0, 8);
+  if(!upcoming.length) {
+    container.innerHTML = '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessun appuntamento nei prossimi 7 giorni.</p>';
+    return;
+  }
+  container.innerHTML = upcoming.map(ev => {
+    const d = formatStoredDate(ev.data, {weekday:'short',day:'numeric',month:'short'});
+    return `<div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
+      <div class="event-title">${esc(ev.paziente||ev.titolo||'')}</div>
+      <div class="event-time">📅 ${d} · ⏰ ${ev.ora||'--:--'}</div>
+    </div>`;
+  }).join('');
+}
+
+async function saveEvent() {
+  const paziente = document.getElementById('ev-paziente').value.trim();
+  const data = document.getElementById('ev-data').value;
+  const ora = document.getElementById('ev-ora').value;
+  const tipo = document.getElementById('ev-tipo').value;
+  const durata = document.getElementById('ev-durata').value;
+  const note = document.getElementById('ev-note').value;
+  
+  if(!paziente || !data) { toast('Inserisci paziente/titolo e data','err'); return; }
+  
+  const ev = {
+    id: 'ev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    paziente, data, ora, tipo, durata: parseInt(durata, 10) || 60, note,
+    created: new Date().toISOString()
+  };
+  events.push(ev);
+  await saveEvents();
+  
+  // Clear form
+  document.getElementById('ev-paziente').value = '';
+  document.getElementById('ev-note').value = '';
+  
+  selectDate(data);
+  updateStats();
+  toast('✅ Appuntamento salvato!','ok');
+  
+  // Sync to Google Calendar if connected and token is valid
+  if (gcalTokenValid()) await createGoogleCalendarEvent(ev);
+  
+  // Check notification permission
+  if(Notification.permission === 'default') {
+    Notification.requestPermission().then(p => {
+      if(p === 'granted') toast('🔔 Notifiche attivate!','ok');
+    });
+  }
+}
+
+function openNewEvent() {
+  const sidebar = document.querySelector('.sidebar-agenda');
+  if (sidebar) {
+    sidebar.style.display = 'flex';
+    sidebar.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  document.getElementById('ev-data').value = selectedDate;
+  setTimeout(() => document.getElementById('ev-paziente').focus(), 100);
+}
+
+function openEventDetail(id) {
+  const ev = events.find(e => e.id === id);
+  if(!ev) return;
+  currentEventId = id;
+  const d = formatStoredDate(ev.data, {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('modal-event-title').textContent = TIPO_LABELS[ev.tipo]||ev.tipo;
+  document.getElementById('modal-event-hdr').style.background = 
+    ev.tipo==='urgente'?'#EF4444':ev.tipo==='visita'?'#3B82F6':ev.tipo==='controllo'?'#10B981':'#F59E0B';
+  document.getElementById('modal-event-hdr').style.color = 'white';
+  document.getElementById('modal-event-hdr').querySelector('h2').style.color = 'white';
+  document.getElementById('modal-event-hdr').querySelector('.mclose').style.color = 'white';
+  document.getElementById('modal-event-body').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:16px;font-weight:700;color:var(--slate)">${esc(ev.paziente||ev.titolo||'Appuntamento')}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span style="background:#EFF6FF;color:#1D4ED8;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">📅 ${d}</span>
+        <span style="background:#F0FDF4;color:#15803D;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">⏰ ${ev.ora||'--:--'} (${ev.durata||60} min)</span>
+      </div>
+      ${ev.note?`<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;font-size:13px;color:var(--slate-m);line-height:1.6">${esc(ev.note)}</div>`:''}
+    </div>`;
+  openM('modal-event');
+}
+
+async function deleteCurrentEvent() {
+  if(!currentEventId) return;
+  if(!confirm('Eliminare questo appuntamento?')) return;
+  const idToDelete = currentEventId;
+  events = events.filter(e => e.id !== idToDelete);
+  localStorage.setItem('dietplan_events', JSON.stringify(events));
+  if(currentUser && sb) {
+    try {
+      const { error } = await sb.from('agenda_events').delete().eq('id', idToDelete).eq('user_id', currentUser.id);
+      if (error) throw error;
+    } catch(e) {
+      console.warn('Supabase delete error:', e.message);
+      toast('⚠️ Errore eliminazione sul server: ' + e.message, 'err');
+    }
+  }
+  // Remove from Google Calendar if the event was synced there
+  const syncedIds = getGCalSyncedIds();
+  if (syncedIds[idToDelete] && gcalTokenValid()) {
+    try {
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${syncedIds[idToDelete]}`, {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + gcalToken }
+      });
+    } catch(e) {
+      console.warn('Google Calendar delete error:', e);
+    }
+    delete syncedIds[idToDelete];
+    setGCalSyncedIds(syncedIds);
+  }
+  closeM('modal-event');
+  renderCalendar();
+  updateStats();
+  toast('🗑️ Appuntamento eliminato','info');
+}
+
+function openEditEvent(id) {
+  const ev = events.find(e => e.id === id);
+  if (!ev) return;
+  currentEventId = id;
+  document.getElementById('edit-ev-tipo').value = ev.tipo || 'visita';
+  document.getElementById('edit-ev-paziente').value = ev.paziente || ev.titolo || '';
+  document.getElementById('edit-ev-data').value = ev.data || '';
+  document.getElementById('edit-ev-ora').value = ev.ora || '09:00';
+  document.getElementById('edit-ev-durata').value = String(ev.durata || 60);
+  document.getElementById('edit-ev-note').value = ev.note || '';
+  closeM('modal-event');
+  openM('modal-event-edit');
+  setTimeout(() => document.getElementById('edit-ev-paziente').focus(), 100);
+}
+
+async function saveEditedEvent() {
+  const paziente = document.getElementById('edit-ev-paziente').value.trim();
+  const data = document.getElementById('edit-ev-data').value;
+  const ora = document.getElementById('edit-ev-ora').value;
+  const tipo = document.getElementById('edit-ev-tipo').value;
+  const durata = document.getElementById('edit-ev-durata').value;
+  const note = document.getElementById('edit-ev-note').value;
+  if (!paziente || !data) { toast('Inserisci paziente/titolo e data', 'err'); return; }
+  const idx = events.findIndex(e => e.id === currentEventId);
+  if (idx === -1) { toast('Appuntamento non trovato', 'err'); return; }
+  events[idx] = { ...events[idx], paziente, data, ora, tipo, durata: parseInt(durata, 10) || 60, note };
+  await saveEvents();
+  closeM('modal-event-edit');
+  selectDate(data);
+  updateStats();
+  toast('✅ Appuntamento aggiornato!', 'ok');
+}
+
+function changeMonth(delta) {
+  currentMonth += delta;
+  if(currentMonth < 0) { currentMonth = 11; currentYear--; }
+  if(currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar();
+}
+
+function goToday() {
+  const now = new Date();
+  currentYear = now.getFullYear();
+  currentMonth = now.getMonth();
+  selectDate(localDateStr(now));
+}
+
+// Check for notifications every minute
+function checkNotifications() {
+  if(Notification.permission !== 'granted') return;
+  const now = new Date();
+  const in15 = new Date(now.getTime() + 15*60*1000);
+  const todayStr = localDateStr(now);
+  events.filter(e => e.data === todayStr && e.ora).forEach(ev => {
+    const [h,m] = ev.ora.split(':').map(Number);
+    const evTime = new Date(now); evTime.setHours(h,m,0,0);
+    const diff = evTime - now;
+    if(diff > 0 && diff <= 15*60*1000 && !ev._notified) {
+      new Notification('DietPlan Pro — Appuntamento tra 15 min', {
+        body: `${ev.paziente||''} · ${ev.ora}`,
+        icon: '/favicon.ico'
+      });
+      ev._notified = true;
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('ev-data').value = localDateStr(new Date());
+  const d = formatStoredDate(localDateStr(new Date()), {weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('selected-date-label').textContent = d;
+  renderCalendar();
+  updateStats();
+  setInterval(checkNotifications, 60000);
+  if(Notification.permission === 'default') Notification.requestPermission();
+  try { const ok = await checkAuth(); if (ok) { await loadEventsFromSupabase(); startRealtimeSync(); } } catch(e) {}
+  // Periodic refresh every 2 minutes as a Realtime fallback (e.g. when the
+  // WebSocket connection is not available or Realtime is not enabled in the project).
+  setInterval(async () => { if (currentUser && sb) await loadEventsFromSupabase(); }, 2 * 60 * 1000);
+  // Load Google Client ID from server config, then init Google Identity Services
+  try {
+    const cfg = await fetch('/api/config').then(r => r.json());
+    if (cfg && cfg.googleClientId) GOOGLE_CLIENT_ID = cfg.googleClientId;
+  } catch(e) {}
+  if (GOOGLE_CLIENT_ID) {
+    document.getElementById('btn-gcal').style.display = '';
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.onload = () => initGoogleCalendar(localStorage.getItem('gcal_email') || '');
+    document.head.appendChild(script);
+  }
+});
+
+function updateStats() {
+  const today = localDateStr(new Date());
+  const now = new Date();
+  const in7 = localDateStr(new Date(now.getTime() + 7*24*60*60*1000));
+  const todayCount = events.filter(e => e.data === today).length;
+  const weekCount = events.filter(e => e.data >= today && e.data <= in7).length;
+  const urgCount = events.filter(e => e.tipo === 'urgente' && e.data >= today).length;
+  document.getElementById('stat-oggi').textContent = todayCount;
+  document.getElementById('stat-settimana').textContent = weekCount;
+  document.getElementById('stat-urgenti').textContent = urgCount;
+  document.getElementById('stat-totale').textContent = events.length;
+}
+
+// ─── Realtime sync ───────────────────────────────────────────────────────────
+// Subscribes to Supabase Realtime so that any INSERT / UPDATE / DELETE on
+// agenda_events is immediately reflected in the current browser tab without
+// requiring a page reload.
+let realtimeChannel = null;
+
+function startRealtimeSync() {
+  if (!currentUser || !sb || typeof sb.channel !== 'function') return;
+  // Remove any previous channel first (guard against double-init)
+  if (realtimeChannel) {
+    try { sb.removeChannel(realtimeChannel); } catch(e) {}
+    realtimeChannel = null;
+  }
+  realtimeChannel = sb
+    .channel('agenda_events_rt_' + currentUser.id)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'agenda_events',
+      filter: 'user_id=eq.' + currentUser.id
+    }, () => {
+      // Re-fetch all events from Supabase whenever a remote change arrives
+      loadEventsFromSupabase();
+    })
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('Agenda: Supabase Realtime attivo — sincronizzazione live abilitata.');
+      }
+    });
+}
+
+
+// To enable: set the GOOGLE_CLIENT_ID environment variable in Vercel (or paste
+// the Client ID directly below). Create a Google Cloud project, enable the
+// Google Calendar API, create an OAuth 2.0 Web Application client ID, and add
+// your domain to the authorised JavaScript origins in the Google Cloud Console.
+// NOTE: The Client ID is not a secret — it is safe to include in client-side
+// JavaScript.
+let GOOGLE_CLIENT_ID = ''; // loaded from /api/config at startup
+
+let gcalToken = null;
+let gcalTokenExpiry = 0;
+let gcalTokenClient = null;
+
+function gcalTokenValid() {
+  return gcalToken && Date.now() < gcalTokenExpiry;
+}
+
+// Returns the localStorage key for the Google Calendar sync map, scoped to the
+// current user so that multiple users sharing a browser don't see each other's
+// sync state and don't accidentally skip events that were never pushed.
+// Returns null when no authenticated user is present — callers must treat null
+// as "no persisted state available" and skip write operations.
+function gcalSyncKey() {
+  return currentUser ? 'gcal_synced_ids_' + currentUser.id : null;
+}
+function getGCalSyncedIds() {
+  const key = gcalSyncKey();
+  if (!key) return {};
+  return JSON.parse(localStorage.getItem(key) || '{}');
+}
+function setGCalSyncedIds(ids) {
+  const key = gcalSyncKey();
+  if (!key) return;
+  localStorage.setItem(key, JSON.stringify(ids));
+}
+
+function showClientIdHelp() {
+  openM('modal-gcal-help');
+}
+
+function initGoogleCalendar(loginHint) {
+  if (!GOOGLE_CLIENT_ID || typeof google === 'undefined' || !google.accounts) return;
+  const cfg = {
+    client_id: GOOGLE_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/calendar.events',
+    callback: (response) => {
+      if (response.error) { toast('❌ Errore connessione Google Calendar', 'err'); return; }
+      gcalToken = response.access_token;
+      gcalTokenExpiry = Date.now() + (response.expires_in || 3600) * 1000;
+      sessionStorage.setItem('gcal_token', gcalToken);
+      sessionStorage.setItem('gcal_token_expiry', String(gcalTokenExpiry));
+      updateGCalButton(true);
+      toast('✅ Google Calendar connesso!', 'ok');
+      // Sync all existing events that haven't been pushed to Google Calendar yet
+      syncAllEventsToGCal();
+    }
+  };
+  if (loginHint) cfg.login_hint = loginHint;
+  gcalTokenClient = google.accounts.oauth2.initTokenClient(cfg);
+  const stored = sessionStorage.getItem('gcal_token');
+  const storedExpiry = parseInt(sessionStorage.getItem('gcal_token_expiry') || '0');
+  if (stored && Date.now() < storedExpiry) {
+    gcalToken = stored;
+    gcalTokenExpiry = storedExpiry;
+    updateGCalButton(true);
+  }
+}
+
+function connectGoogleCalendar() {
+  if (!GOOGLE_CLIENT_ID) {
+    showClientIdHelp();
+    return;
+  }
+  if (gcalTokenValid()) {
+    google.accounts.oauth2.revoke(gcalToken, () => {
+      gcalToken = null;
+      gcalTokenExpiry = 0;
+      sessionStorage.removeItem('gcal_token');
+      sessionStorage.removeItem('gcal_token_expiry');
+      updateGCalButton(false);
+      toast('Google Calendar disconnesso', 'info');
+    });
+  } else {
+    if (!gcalTokenClient) {
+      toast('⚠️ Google Identity Services non ancora caricato. Riprova tra un momento.', 'err');
+      return;
+    }
+    gcalTokenClient.requestAccessToken();
+  }
+}
+
+function updateGCalButton(connected) {
+  const btn = document.getElementById('btn-gcal');
+  if (btn) {
+    if (connected) {
+      btn.textContent = '📅 Google Connesso';
+      btn.classList.add('btn-primary');
+      btn.classList.remove('btn-ghost');
+    } else {
+      btn.textContent = '📅 Connetti Google Calendar';
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-ghost');
+    }
+  }
+  // Keep modal button in sync if the modal is currently open
+  const modalBtn = document.getElementById('btn-gcal-modal');
+  const gcalStatus = document.getElementById('gcal-sync-status');
+  if (modalBtn) {
+    if (connected) {
+      modalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
+      modalBtn.classList.add('btn-primary');
+      if (gcalStatus) {
+        const connEmail = localStorage.getItem('gcal_email');
+        gcalStatus.textContent = connEmail
+          ? `Connesso come ${connEmail}. I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.`
+          : 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
+      }
+    } else {
+      modalBtn.textContent = '📅 Connetti Google Calendar';
+      modalBtn.classList.remove('btn-primary');
+      if (gcalStatus) gcalStatus.textContent = '';
+    }
+  }
+}
+
+async function createGoogleCalendarEvent(ev, silent = false) {
+  if (!gcalTokenValid()) {
+    // Token absent or expired — prompt re-authorization
+    gcalToken = null;
+    gcalTokenExpiry = 0;
+    sessionStorage.removeItem('gcal_token');
+    sessionStorage.removeItem('gcal_token_expiry');
+    updateGCalButton(false);
+    if (!silent) toast('⚠️ Sessione Google Calendar scaduta. Riconnetti per sincronizzare.', 'err');
+    return null;
+  }
+  const [y, m, d] = ev.data.split('-').map(Number);
+  const [h, min] = (ev.ora || '09:00').split(':').map(Number);
+  const start = new Date(y, m - 1, d, h, min);
+  const end = new Date(start.getTime() + (parseInt(ev.durata) || 60) * 60000);
+  const pad = n => String(n).padStart(2, '0');
+  const toLocalISO = dt => `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`;
+  const gcalEvent = {
+    summary: ev.paziente || ev.titolo || 'Appuntamento',
+    description: [TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join('\n'),
+    start: { dateTime: toLocalISO(start), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+    end:   { dateTime: toLocalISO(end),   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
+  };
+  try {
+    const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + gcalToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify(gcalEvent)
+    });
+    if (!res.ok) {
+      if (res.status === 401) {
+        gcalToken = null;
+        gcalTokenExpiry = 0;
+        sessionStorage.removeItem('gcal_token');
+        sessionStorage.removeItem('gcal_token_expiry');
+        updateGCalButton(false);
+        if (!silent) toast('⚠️ Sessione Google Calendar scaduta. Clicca "Connetti Google Calendar" per riautorizzare.', 'err');
+        return null;
+      }
+      throw new Error('HTTP ' + res.status);
+    }
+    const created = await res.json();
+    // Persist the mapping so we can delete this event from GCal later
+    const syncedIds = getGCalSyncedIds();
+    syncedIds[ev.id] = created.id;
+    setGCalSyncedIds(syncedIds);
+    if (!silent) toast('📅 Aggiunto a Google Calendar!', 'ok');
+    return created.id;
+  } catch(e) {
+    console.error('Google Calendar error:', e);
+    if (!silent) toast('⚠️ Errore sincronizzazione Google Calendar', 'err');
+    return null;
+  }
+}
+
+// Bulk-sync all events that have not yet been pushed to Google Calendar.
+// Called automatically after a successful OAuth connection.
+async function syncAllEventsToGCal() {
+  if (!gcalTokenValid() || !events.length) return;
+  const syncedIds = getGCalSyncedIds();
+  const toSync = events.filter(e => !syncedIds[e.id]);
+  if (!toSync.length) {
+    toast('📅 Tutti gli appuntamenti sono già sincronizzati con Google Calendar', 'ok');
+    return;
+  }
+  let count = 0;
+  for (const ev of toSync) {
+    const gcalId = await createGoogleCalendarEvent(ev, true);
+    if (gcalId) count++;
+  }
+  if (count > 0) {
+    toast(`📅 ${count} appuntament${count === 1 ? 'o' : 'i'} sincronizzat${count === 1 ? 'o' : 'i'} su Google Calendar!`, 'ok');
+  } else {
+    // If gcalToken was cleared during the loop, the session expired mid-sync
+    const msg = !gcalToken
+      ? '⚠️ Sessione Google Calendar scaduta durante la sincronizzazione. Riconnetti per riprovare.'
+      : '⚠️ Sincronizzazione Google Calendar non riuscita. Verifica la connessione e riprova.';
+    toast(msg, 'err');
+  }
+}
+
+// ─── Calendar Sync Modal ──────────────────────────────────────────────────────
+
+// Returns a secured calendar feed URL for the current user.
+// Calls /api/calendar-token (requires auth) to get the HMAC token.
+// Falls back to uid-only URL if the endpoint fails or secret is not configured.
+async function getCalendarUrl() {
+  if (!currentUser) return null;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const jwt = session?.access_token;
+    if (!jwt) throw new Error('no session');
+    const res = await fetch('/api/calendar-token', {
+      headers: { Authorization: 'Bearer ' + jwt }
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return { subscribe: json.url, webcal: json.webcal };
+    }
+  } catch(e) {
+    console.warn('getCalendarUrl fallback:', e.message);
+  }
+  // Fallback: uid-only (no CALENDAR_SECRET configured on server)
+  const base = `${window.location.origin}/api/calendar?uid=${currentUser.id}`;
+  return { subscribe: base, webcal: base.replace(/^https?:\/\//, 'webcal://') };
+}
+
+// Auto-sync by email: detect provider and open the appropriate subscription flow.
+async function autoSyncCalendar() {
+  const emailInput = document.getElementById('auto-sync-email');
+  const email = (emailInput ? emailInput.value.trim() : '').toLowerCase();
+  const statusEl = document.getElementById('auto-sync-status');
+
+  if (!email) {
+    toast('Inserisci la tua email per continuare', 'err');
+    if (emailInput) emailInput.focus();
+    return;
+  }
+  if (!currentUser) {
+    toast('Devi essere autenticato per sincronizzare il calendario', 'err');
+    return;
+  }
+
+  // Persist email for future sessions and Google Calendar hint
+  localStorage.setItem('gcal_email', email);
+
+  const calUrls = await getCalendarUrl();
+  if (!calUrls) { toast('Errore generazione link calendario', 'err'); return; }
+  const subscribeUrl = calUrls.subscribe;
+  const webcalUrl = calUrls.webcal;
+
+  const isGoogle = /^[^@]+@(gmail|googlemail)\.com$/.test(email);
+
+  if (isGoogle) {
+    // For Gmail users: if OAuth is configured, use it to sync directly to the primary calendar.
+    const gisReady = GOOGLE_CLIENT_ID && typeof google !== 'undefined' && google.accounts;
+    if (gisReady) {
+      if (gcalTokenValid()) {
+        // Already connected — sync all pending events immediately
+        syncAllEventsToGCal();
+        if (statusEl) {
+          statusEl.textContent = '✅ Google Calendar già connesso. Sincronizzazione in corso...';
+          statusEl.style.display = '';
+        }
+      } else {
+        // Trigger OAuth flow so the user authorises and all events get pushed
+        initGoogleCalendar(email);
+        if (gcalTokenClient) gcalTokenClient.requestAccessToken();
+        if (statusEl) {
+          statusEl.textContent = '✅ Autorizza l\'accesso a Google Calendar nella finestra pop-up per completare la sincronizzazione sul calendario personale.';
+          statusEl.style.display = '';
+        }
+      }
+    } else {
+      // OAuth not configured — fall back to WebCal subscription (creates a secondary calendar)
+      const gcalAddUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+      window.open(gcalAddUrl, '_blank');
+      if (statusEl) {
+        statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" nella nuova scheda per completare la sincronizzazione.';
+        statusEl.style.display = '';
+      }
+      toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
+    }
+  } else {
+    // For Apple Calendar / Outlook / other: trigger the webcal:// protocol handler.
+    // Use window.open instead of window.location.href so the user stays on this page.
+    window.open(webcalUrl);
+    if (statusEl) {
+      statusEl.textContent = '✅ Link di abbonamento aperto! Accetta la richiesta nel tuo calendario per completare la sincronizzazione.';
+      statusEl.style.display = '';
+    }
+    toast('📅 Calendario aperto — accetta la richiesta per completare!', 'ok');
+  }
+
+  // Also sync gcal-email-input (used by OAuth flow in advanced options)
+  const gcalEmailInput = document.getElementById('gcal-email-input');
+  if (gcalEmailInput) gcalEmailInput.value = email;
+}
+
+async function openSyncModal() {
+  // Populate subscription URL if user is logged in
+  if (currentUser) {
+    document.getElementById('sync-url-input').value = 'Generazione link...';
+    document.getElementById('sync-url-area').style.display = '';
+    document.getElementById('sync-login-msg').style.display = 'none';
+    const calUrls = await getCalendarUrl();
+    if (calUrls) {
+      document.getElementById('sync-url-input').value = calUrls.webcal;
+    }
+  } else {
+    document.getElementById('sync-url-area').style.display = 'none';
+    document.getElementById('sync-login-msg').style.display = '';
+  }
+  // Pre-fill both email inputs with saved email or current user's email
+  const savedEmail = localStorage.getItem('gcal_email') || (currentUser ? currentUser.email : '');
+  const autoSyncEmailInput = document.getElementById('auto-sync-email');
+  if (autoSyncEmailInput) autoSyncEmailInput.value = savedEmail;
+  const emailInput = document.getElementById('gcal-email-input');
+  if (emailInput) emailInput.value = savedEmail;
+  // Reset status message
+  const statusEl = document.getElementById('auto-sync-status');
+  if (statusEl) statusEl.style.display = 'none';
+  // Update Google Calendar status
+  const gcalBtn = document.getElementById('btn-gcal-modal');
+  const gcalStatus = document.getElementById('gcal-sync-status');
+  const gcalWarning = document.getElementById('gcal-config-warning');
+  if (GOOGLE_CLIENT_ID) {
+    gcalBtn.disabled = false;
+    gcalBtn.title = '';
+    gcalWarning.style.display = 'none';
+    if (gcalTokenValid()) {
+      gcalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
+      gcalBtn.classList.add('btn-primary');
+      const connEmail = localStorage.getItem('gcal_email');
+      gcalStatus.textContent = connEmail
+        ? `Connesso come ${connEmail}. I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.`
+        : 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
+    } else {
+      gcalBtn.textContent = '📅 Connetti Google Calendar';
+      gcalBtn.classList.remove('btn-primary');
+    }
+  } else {
+    gcalBtn.textContent = '⚙️ Configura Google Client ID';
+    gcalBtn.disabled = false;
+    gcalBtn.title = 'Clicca per vedere le istruzioni di configurazione.';
+    gcalBtn.classList.remove('btn-primary');
+    gcalWarning.style.display = '';
+  }
+  openM('modal-sync');
+}
+
+function connectGoogleCalendarFromModal() {
+  if (!gcalTokenValid()) {
+    const emailInput = document.getElementById('gcal-email-input');
+    const email = emailInput ? emailInput.value.trim() : '';
+    if (typeof google !== 'undefined' && google.accounts) {
+      if (email) localStorage.setItem('gcal_email', email);
+      // Always (re-)initialize with the latest email hint so the token client is
+      // ready even if the modal is opened before the GIS script's onload fires.
+      initGoogleCalendar(email || localStorage.getItem('gcal_email') || '');
+    }
+  }
+  connectGoogleCalendar();
+  // Modal button state is updated via updateGCalButton() called from the OAuth callback.
+}
+
+function copySyncUrl() {
+  const url = document.getElementById('sync-url-input').value;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => {
+    toast('📋 URL copiato negli appunti!', 'ok');
+  }).catch(() => {
+    document.getElementById('sync-url-input').select();
+    document.execCommand('copy');
+    toast('📋 URL copiato!', 'ok');
+  });
+}
+
+function openInCalendar() {
+  const url = document.getElementById('sync-url-input').value;
+  if (!url) return;
+  window.open(url, '_blank');
+}
+
+function exportICal() {
+  if (!events.length) { toast('Nessun appuntamento da esportare', 'err'); return; }
+  const pad = n => String(n).padStart(2, '0');
+  function toICalDate(dateStr, timeStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [h, min] = (timeStr || '09:00').split(':').map(Number);
+    return `${y}${pad(m)}${pad(d)}T${pad(h)}${pad(min)}00`;
+  }
+  function escIcal(s) {
+    return (s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  }
+  function charByteLen(cp) {
+    if (cp < 0x80) return 1;
+    if (cp < 0x800) return 2;
+    if (cp < 0x10000) return 3;
+    return 4;
+  }
+  function foldLine(line) {
+    let result = '';
+    let current = '';
+    let currentBytes = 0;
+    for (const ch of line) {
+      const chBytes = charByteLen(ch.codePointAt(0));
+      if (currentBytes + chBytes > 75) {
+        result += current + '\r\n ';
+        current = ch;
+        currentBytes = 1 + chBytes; // 1 for the leading space on continuation line
+      } else {
+        current += ch;
+        currentBytes += chBytes;
+      }
+    }
+    return result + current;
+  }
+  const now = new Date();
+  const dtstamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+  // RFC 5545 requires a VTIMEZONE component whenever TZID is referenced in events.
+  // Without it, Apple Calendar, Outlook and other strict clients silently discard
+  // events or display wrong times.
+  let ics = 'BEGIN:VCALENDAR\r\n' +
+    'VERSION:2.0\r\n' +
+    'PRODID:-//NutriPlan Pro//Agenda//IT\r\n' +
+    'CALSCALE:GREGORIAN\r\n' +
+    'METHOD:PUBLISH\r\n' +
+    'X-WR-CALNAME:NutriPlan Pro Agenda\r\n' +
+    'X-WR-TIMEZONE:Europe/Rome\r\n' +
+    'BEGIN:VTIMEZONE\r\n' +
+    'TZID:Europe/Rome\r\n' +
+    'BEGIN:DAYLIGHT\r\n' +
+    'TZOFFSETFROM:+0100\r\n' +
+    'TZOFFSETTO:+0200\r\n' +
+    'TZNAME:CEST\r\n' +
+    'DTSTART:19700329T020000\r\n' +
+    'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3\r\n' +
+    'END:DAYLIGHT\r\n' +
+    'BEGIN:STANDARD\r\n' +
+    'TZOFFSETFROM:+0200\r\n' +
+    'TZOFFSETTO:+0100\r\n' +
+    'TZNAME:CET\r\n' +
+    'DTSTART:19701025T030000\r\n' +
+    'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10\r\n' +
+    'END:STANDARD\r\n' +
+    'END:VTIMEZONE\r\n';
+  events.forEach(ev => {
+    const dtstart = toICalDate(ev.data, ev.ora);
+    const durata = parseInt(ev.durata) || 60;
+    const [y, m, d] = ev.data.split('-').map(Number);
+    const [h, min] = (ev.ora || '09:00').split(':').map(Number);
+    const endDate = new Date(y, m - 1, d, h, min + durata);
+    const dtend = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
+    const summary = escIcal(ev.paziente || ev.titolo || 'Appuntamento');
+    const desc = escIcal([TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join(' - '));
+    const lm = ev.updated_at || ev.created ? new Date(ev.updated_at || ev.created) : now;
+    const lastModStr = `${lm.getUTCFullYear()}${pad(lm.getUTCMonth()+1)}${pad(lm.getUTCDate())}T${pad(lm.getUTCHours())}${pad(lm.getUTCMinutes())}${pad(lm.getUTCSeconds())}Z`;
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += foldLine('UID:' + ev.id + '@nutriplan-pro') + '\r\n';
+    ics += 'DTSTAMP:' + dtstamp + '\r\n';
+    ics += 'LAST-MODIFIED:' + lastModStr + '\r\n';
+    ics += 'SEQUENCE:0\r\n';
+    ics += 'DTSTART;TZID=Europe/Rome:' + dtstart + '\r\n';
+    ics += 'DTEND;TZID=Europe/Rome:' + dtend + '\r\n';
+    ics += foldLine('SUMMARY:' + summary) + '\r\n';
+    if (desc) ics += foldLine('DESCRIPTION:' + desc) + '\r\n';
+    if (ev.tipo === 'urgente') ics += 'PRIORITY:1\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  ics += 'END:VCALENDAR\r\n';
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'nutriplan-agenda.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('📥 Calendario esportato! Importalo in Google Calendar, Apple Calendar o Outlook.', 'ok');
+}
+</script>
+</body>
+</html>

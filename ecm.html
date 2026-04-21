@@ -3,1132 +3,408 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Corsi ECM — DietPlan Pro</title>
+<title>Database Alimenti — DietPlan Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.ecm-hero{background:linear-gradient(135deg,#1D4ED8 0%,#4F46E5 100%);border-radius:16px;padding:22px 28px;margin-bottom:20px;display:flex;align-items:center;gap:20px;color:white;box-shadow:0 4px 24px rgba(29,78,216,.3)}
-.ecm-hero-icon{font-size:52px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25))}
-.ecm-hero h2{font-size:20px;font-weight:700;margin-bottom:6px}
-.ecm-hero p{font-size:13px;opacity:.9;line-height:1.6}
-
-.ecm-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.ecm-filter-btn{padding:8px 18px;border-radius:20px;border:2px solid var(--border-d);background:white;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap}
-.ecm-filter-btn:hover{border-color:#4F46E5;color:#4F46E5;background:#EEF2FF}
-.ecm-filter-btn.active{background:#4F46E5;color:white;border-color:#4F46E5;box-shadow:0 2px 8px rgba(79,70,229,.3)}
-
-.ecm-card{background:white;border-radius:14px;padding:0;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px;overflow:hidden;transition:box-shadow .2s,transform .15s}
-.ecm-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.12);transform:translateY(-2px)}
-.ecm-card-inner{display:flex;gap:0;align-items:stretch}
-.ecm-card-left{min-width:90px;max-width:90px;background:linear-gradient(135deg,#1D4ED8,#4F46E5);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;gap:4px;flex-shrink:0}
-.ecm-credits-num{font-size:30px;font-weight:800;color:white;line-height:1}
-.ecm-credits-lbl{font-size:9px;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-.ecm-tipo-badge{margin-top:10px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
-.ecm-tipo-fad{background:#BFDBFE;color:#1E40AF}
-.ecm-tipo-res{background:#BBF7D0;color:#14532D}
-.ecm-tipo-blended{background:#DDD6FE;color:#4C1D95}
-
-.ecm-card-body{padding:16px 20px;flex:1;min-width:0}
-.ecm-card-title{font-size:14.5px;font-weight:700;color:var(--slate);margin-bottom:4px;line-height:1.4}
-.ecm-card-provider{font-size:12px;color:#4F46E5;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.ecm-card-desc{font-size:12.5px;color:var(--slate-m);line-height:1.65;margin-bottom:10px}
-.ecm-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--slate-l);margin-bottom:12px}
-.ecm-meta span{display:flex;align-items:center;gap:4px}
-.ecm-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
-.ecm-tag{padding:2px 9px;border-radius:10px;font-size:10.5px;font-weight:600;background:#F1F5F9;color:var(--slate-m)}
-.ecm-card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-
-.ecm-alert{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1px solid #93C5FD;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:#1E3A5F;line-height:1.7}
-.ecm-alert b{color:#1D4ED8}
-
-.ecm-section-title{font-size:13px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
-
-.ecm-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
-.ecm-info-box{background:white;border-radius:12px;padding:16px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05);text-align:center}
-.ecm-info-val{font-size:28px;font-weight:800;color:#4F46E5;line-height:1;margin-bottom:4px}
-.ecm-info-lbl{font-size:12px;color:var(--slate-l);font-weight:500}
-
-.ecm-empty{text-align:center;padding:40px;color:var(--slate-l);font-size:14px}
-.ecm-count{font-size:12px;color:var(--slate-l);margin-left:auto;padding:0 4px}
-
-.ecm-scadenza-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;white-space:nowrap}
-.ecm-date-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600;background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
-.ecm-db-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:8px;font-size:10.5px;font-weight:600;background:#F0FDF4;color:#15803D;border:1px solid #86EFAC}
-
-@media(max-width:640px){
-  .ecm-card-inner{flex-direction:column}
-  .ecm-card-left{min-width:unset;max-width:unset;flex-direction:row;padding:12px 16px;justify-content:flex-start;gap:12px}
-  .ecm-hero{flex-direction:column;text-align:center;padding:18px}
-}
-@media print{
-  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
-  #main{margin:0!important;padding:0!important}
-  .ecm-card{page-break-inside:avoid;box-shadow:none!important;border:1px solid #CBD5E1!important}
-  .ecm-card:hover{transform:none!important}
-}
-
-/* ── ECM Credit Counter ── */
-.ecm-counter{background:linear-gradient(135deg,#1D4ED8 0%,#4F46E5 100%);border-radius:16px;padding:20px 24px;margin-bottom:20px;color:white;box-shadow:0 4px 24px rgba(79,70,229,.25)}
-.ecm-counter-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;opacity:.8;margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.ecm-progress{background:rgba(255,255,255,.2);border-radius:50px;height:14px;margin:10px 0 4px;overflow:hidden}
-.ecm-progress-bar{height:100%;border-radius:50px;background:white;transition:width .5s ease;min-width:0}
-.ecm-counter-num{font-size:40px;font-weight:800;line-height:1}
-.ecm-counter-sub{font-size:12px;opacity:.8;margin-top:4px}
-.ecm-counter-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.ecm-counter-pill{background:rgba(255,255,255,.18);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px}
-
-/* ── Segna come svolto button ── */
-.ecm-done-btn{padding:5px 14px;border-radius:20px;border:2px solid #E2E8F0;background:white;color:var(--slate-l);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;white-space:nowrap}
-.ecm-done-btn.done{background:#DCFCE7;border-color:#22C55E;color:#15803D}
-.ecm-done-btn:hover:not(.done){border-color:#22C55E;color:#15803D}
-.ecm-card.completato{border-left:4px solid #22C55E}
-
-/* ── AI Modal ── */
-.ecm-ai-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
-.ecm-ai-modal-body{background:white;border-radius:16px;padding:24px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25)}
-
-/* ── User-generated badge ── */
-.ecm-user-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:8px;font-size:9.5px;font-weight:800;background:#FFF3CD;color:#854D0E;border:1px solid #FCD34D;white-space:nowrap}
+#db-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--border)}
+#db-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:900px}
+#db-table thead th{background:var(--slate);color:#CBD5E1;padding:7px 8px;text-align:center;font-size:10.5px;font-weight:700;white-space:nowrap;position:sticky;top:0;z-index:10}
+#db-table thead th:first-child{text-align:left;padding-left:12px;min-width:180px}
+#db-table thead th:nth-child(2){text-align:left;min-width:120px}
+#db-table tbody tr:nth-child(even){background:#F8FAFC}
+#db-table tbody tr:hover{background:#E0F2F1}
+#db-table tbody td{padding:5px 7px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
+#db-table tbody td:first-child{text-align:left;padding-left:12px;font-weight:600;color:var(--slate)}
+#db-table tbody td:nth-child(2){text-align:left;font-size:11px;color:var(--slate-l)}
+.src-badge{font-size:9px;padding:1px 5px;border-radius:6px;font-weight:700}
+.src-crea{background:#DBEAFE;color:#1D4ED8}
+.src-bda{background:#D1FAE5;color:#065F46}
+.src-aprot{background:#EDE9FE;color:#5B21B6}
+.src-int{background:#FEF3C7;color:#B45309}
+.src-upf{background:#FEE2E2;color:#991B1B}
+.src-pers{background:#DCFCE7;color:#15803D}
+.nd{color:#CBD5E1;font-style:italic;font-size:10px}
+#modal-add-food{display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.45);align-items:center;justify-content:center;padding:16px}
+#modal-add-food.open{display:flex}
+#modal-add-food .mbox{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.18);width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+#modal-add-food .mhead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border)}
+#modal-add-food .mhead h3{margin:0;font-size:16px;color:var(--slate)}
+#modal-add-food .mbody{padding:20px 22px;overflow-y:auto;flex:1}
+#modal-add-food .mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+#modal-add-food .fg{display:flex;flex-direction:column;gap:4px}
+#modal-add-food label{font-size:11.5px;font-weight:600;color:var(--slate-l)}
+#modal-add-food input{padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+#modal-add-food input:focus{border-color:#06B6D4}
+#modal-add-food .sec-title{font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.05em;grid-column:1/-1;margin-top:8px;padding-top:10px;border-top:1px solid var(--border)}
+.btn-food-action{background:none;border:none;cursor:pointer;font-size:13px;padding:0 3px;opacity:.5;vertical-align:middle;line-height:1}
+.btn-food-action:hover{opacity:1}
 </style>
 </head>
 <body>
 <nav id="sidebar">
   <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
   <div class="nav-sec">Piano</div>
-  <a class="nav-item  " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
-  <a class="nav-item  " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
   <div class="nav-sec">Comunicazione</div>
-  <a class="nav-item  " href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
+  <a class="nav-item " href="chat.html"><span class="ni">💬</span>Chat Pazienti</a>
   <div class="nav-sec">Specialistica</div>
-  <a class="nav-item  " href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
-  <a class="nav-item  " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
-  <a class="nav-item  " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
-  <a class="nav-item  " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
-  <a class="nav-item  " href="dna.html"><span class="ni">🫀</span>DCA</a>
-  <a class="nav-item  " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
-  <a class="nav-item  " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
-  <a class="nav-item  " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
-  <a class="nav-item  " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
-  <a class="nav-item  " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+    <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+<a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
   <div class="nav-sec">Strumenti</div>
-  <a class="nav-item  " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
-  <a class="nav-item  " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
-  <a class="nav-item  " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
-  <a class="nav-item  " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
-  <a class="nav-item  " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
-  <a class="nav-item  " href="bia.html"><span class="ni">⚡</span>BIA</a>
-  <a class="nav-item  " href="questionari.html"><span class="ni">📋</span>Questionari</a>
-  <a class="nav-item  " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
-  <a class="nav-item  " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
-  <a class="nav-item  " href="agenda.html"><span class="ni">📅</span>Agenda</a>
-  <a class="nav-item active" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
   <div class="nav-sec">Database</div>
-  <a class="nav-item  " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
-  <a class="nav-item  " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
-  <a class="nav-item  " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item active" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
   <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>🎓 Corsi ECM</h2>
-  <div class="tbar-actions no-print">
-    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
-  </div>
+  <h2>🔬 Database Alimenti CREA 2019 + BDA INRAN</h2>
 </div>
-
 <main id="main"><div class="page-content">
-
-  <!-- HERO -->
-  <div class="ecm-hero">
-    <div class="ecm-hero-icon">🎓</div>
-    <div>
-      <h2>Educazione Continua in Medicina — Corsi per Dietisti</h2>
-      <p>Corsi accreditati ECM per dietisti, nutrizionisti e professionisti della salute. Obbligo triennale: <b>150 crediti ogni 3 anni</b>. Verifica sempre l'accreditamento attivo su <b>ECM.salute.gov.it</b> prima di iscriverti.</p>
-    </div>
+  <div class="db-filters" style="margin-bottom:12px">
+    <input type="text" id="db-search" class="db-search" placeholder="🔍 Cerca alimento..." oninput="filterDB()" style="max-width:320px">
+    <select id="db-cat" class="db-cat" onchange="filterDB()"><option value="">Tutte le categorie</option></select>
+    <select id="db-src" class="db-cat" onchange="filterDB()">
+      <option value="">Tutte le fonti</option>
+      <option value="CREA">CREA 2019</option>
+      <option value="BDA">BDA INRAN</option>
+      <option value="APROT">🟣 Aproteici</option>
+      <option value="INT">🟡 Integratori/ONS</option>
+      <option value="UPF">🔴 Ultra-processati (UPF)</option>
+      <option value="PERS">🟢 Personalizzati</option>
+    </select>
+    <button onclick="openAddFood()" style="padding:7px 14px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">➕ Aggiungi alimento</button>
+    <span id="db-count" style="font-size:12px;color:var(--slate-l)"></span>
   </div>
-
-  <!-- INFO BOXES -->
-  <div class="ecm-info-grid no-print">
-    <div class="ecm-info-box">
-      <div class="ecm-info-val">150</div>
-      <div class="ecm-info-lbl">Crediti ECM obbligatori ogni 3 anni</div>
-    </div>
-    <div class="ecm-info-box">
-      <div class="ecm-info-val">50</div>
-      <div class="ecm-info-lbl">Crediti minimi annuali consigliati</div>
-    </div>
-    <div class="ecm-info-box">
-      <div class="ecm-info-val">50%</div>
-      <div class="ecm-info-lbl">Max crediti da FAD (formazione online)</div>
-    </div>
-    <div class="ecm-info-box">
-      <div class="ecm-info-val" style="font-size:20px">2026</div>
-      <div class="ecm-info-lbl">Fine triennio ECM corrente 2024–2026</div>
-    </div>
+  <div id="db-table-wrap">
+    <table id="db-table">
+      <thead><tr>
+        <th style="text-align:left">Alimento</th>
+        <th style="text-align:left">Categoria</th>
+        <th>Fonte</th>
+        <th>Kcal</th><th>Prot(g)</th><th>Gr.Sat(g)</th><th>Gr.Tot(g)</th>
+        <th>Zucc(g)</th><th>CHO(g)</th><th>Fibra(g)</th>
+        <th>Ca(mg)</th><th>Fe(mg)</th><th>Mg(mg)</th>
+        <th>K(mg)</th><th>Na(mg)</th><th>Zn(mg)</th>
+        <th>Fo(mg)</th><th>Se(µg)</th><th>Col(mg)</th>
+      </tr></thead>
+      <tbody id="db-tbody"></tbody>
+    </table>
   </div>
-
-  <!-- CONTATORE ECM -->
-  <div class="ecm-counter no-print" id="ecm-counter-section">
-    <div class="ecm-counter-title">🏆 I miei crediti ECM — Triennio 2024–2026</div>
-    <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap">
-      <div>
-        <div class="ecm-counter-num" id="ecm-crediti-tot">0</div>
-        <div class="ecm-counter-sub">crediti conseguiti su 150</div>
-      </div>
-      <div style="flex:1;min-width:180px">
-        <div style="font-size:11px;opacity:.75;margin-bottom:2px">Progresso verso l'obbligo triennale</div>
-        <div class="ecm-progress"><div class="ecm-progress-bar" id="ecm-progress-bar" style="width:0%"></div></div>
-        <div style="font-size:11px;opacity:.75;margin-top:3px" id="ecm-crediti-perc">0% completato</div>
-      </div>
-    </div>
-    <div class="ecm-counter-pills">
-      <span class="ecm-counter-pill">💻 FAD: <span id="ecm-cred-fad">0</span></span>
-      <span class="ecm-counter-pill">🏛️ Residenziale: <span id="ecm-cred-res">0</span></span>
-      <span class="ecm-counter-pill">🔀 Blended: <span id="ecm-cred-blended">0</span></span>
-      <span class="ecm-counter-pill">🎓 Corsi svolti: <span id="ecm-num-svolti">0</span></span>
-    </div>
-    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <button onclick="resetContatore()" style="background:rgba(255,255,255,.18);color:white;border:1.5px solid rgba(255,255,255,.4);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🗑️ Reset contatore</button>
-      <span style="font-size:11px;opacity:.7">Spunta «Segna come svolto» sui corsi completati per aggiornare il conteggio.</span>
-    </div>
-  </div>
-
-  <!-- ALERT -->
-  <div class="ecm-alert">
-    ℹ️ <b>Importante:</b> I corsi mostrati sono a titolo informativo e orientativo. Date, costi e accreditamenti cambiano frequentemente. Verifica sempre la disponibilità e l'accreditamento attuale prima di iscriverti. Il portale ufficiale è <a href="https://www.ecm.salute.gov.it" target="_blank" style="color:#1D4ED8;font-weight:600">ecm.salute.gov.it</a>. Per i soci ANDID è disponibile un'area riservata su <a href="https://www.andid.it" target="_blank" style="color:#1D4ED8;font-weight:600">andid.it</a>.
-    <br>🗓️ <b>Aggiornamento automatico:</b> I corsi con data di scadenza passata vengono nascosti automaticamente dalla lista. Usa il filtro <b>👤 Miei corsi</b> per vedere i corsi aggiunti personalmente.
-  </div>
-
-  <!-- FILTRI -->
-  <div class="ecm-filters no-print">
-    <button class="ecm-filter-btn active" onclick="filterECM('tutti',this)">📋 Tutti (<span id="count-tutti">0</span>)</button>
-    <button class="ecm-filter-btn" onclick="filterECM('fad',this)">💻 FAD / Online</button>
-    <button class="ecm-filter-btn" onclick="filterECM('residenziale',this)">🏛️ Residenziale</button>
-    <button class="ecm-filter-btn" onclick="filterECM('blended',this)">🔀 Blended</button>
-    <button class="ecm-filter-btn" onclick="filterECM('nutrizione',this)">🥗 Nutrizione Clinica</button>
-    <button class="ecm-filter-btn" onclick="filterECM('patologie',this)">🏥 Patologie</button>
-    <button class="ecm-filter-btn" onclick="filterECM('pediatria',this)">👶 Pediatria</button>
-    <button class="ecm-filter-btn" onclick="filterECM('sport',this)">🏋️ Sport</button>
-    <button class="ecm-filter-btn" onclick="filterECM('gratuito',this)">🎁 Gratuiti</button>
-    <button class="ecm-filter-btn" onclick="filterECM('personali',this)">👤 Miei corsi</button>
-    <button class="btn btn-primary btn-sm no-print" onclick="openAIModal()" style="margin-left:auto;white-space:nowrap;display:flex;align-items:center;gap:6px;border-radius:20px;font-size:12.5px">🤖 Aggiungi corso tramite AI</button>
-    <span class="ecm-count" id="ecm-count-label"></span>
-  </div>
-
-  <!-- SEARCH -->
-  <div class="no-print" style="margin-bottom:16px">
-    <input type="text" id="ecm-search" placeholder="🔍 Cerca per titolo, provider o argomento..." oninput="renderECM()"
-      style="width:100%;padding:10px 16px;border:2px solid var(--border-d);border-radius:50px;font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s"
-      onfocus="this.style.borderColor='#4F46E5'" onblur="this.style.borderColor='var(--border-d)'">
-  </div>
-
-  <!-- LISTA CORSI -->
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-    <span id="ecm-source-lbl" class="ecm-db-badge" style="display:none">🔄 Aggiornamento automatico attivo</span>
-  </div>
-  <div id="ecm-list"></div>
-
-  <!-- SEZIONE RISORSE UTILI -->
-  <div style="background:white;border-radius:14px;padding:22px;margin-top:24px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06)">
-    <div class="ecm-section-title">🔗 Risorse e Link Utili</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">
-      <a href="https://www.ecm.salute.gov.it" target="_blank" rel="noopener" style="text-decoration:none">
-        <div style="border:1.5px solid #BFDBFE;border-radius:12px;padding:14px 16px;transition:all .15s;background:#EFF6FF" onmouseover="this.style.borderColor='#3B82F6'" onmouseout="this.style.borderColor='#BFDBFE'">
-          <div style="font-size:18px;margin-bottom:6px">🏛️</div>
-          <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:3px">ECM.salute.gov.it</div>
-          <div style="font-size:11.5px;color:#64748B">Portale ufficiale Ministero della Salute — ricerca tutti i corsi accreditati</div>
-        </div>
-      </a>
-      <a href="https://www.andid.it" target="_blank" rel="noopener" style="text-decoration:none">
-        <div style="border:1.5px solid #A7F3D0;border-radius:12px;padding:14px 16px;transition:all .15s;background:#F0FDF4" onmouseover="this.style.borderColor='#10B981'" onmouseout="this.style.borderColor='#A7F3D0'">
-          <div style="font-size:18px;margin-bottom:6px">👩‍⚕️</div>
-          <div style="font-size:13px;font-weight:700;color:#065F46;margin-bottom:3px">ANDID.it</div>
-          <div style="font-size:11.5px;color:#64748B">Associazione Nazionale Dietisti — corsi, congresso nazionale, area soci</div>
-        </div>
-      </a>
-      <a href="https://www.sinu.it" target="_blank" rel="noopener" style="text-decoration:none">
-        <div style="border:1.5px solid #DDD6FE;border-radius:12px;padding:14px 16px;transition:all .15s;background:#FAF5FF" onmouseover="this.style.borderColor='#7C3AED'" onmouseout="this.style.borderColor='#DDD6FE'">
-          <div style="font-size:18px;margin-bottom:6px">🔬</div>
-          <div style="font-size:13px;font-weight:700;color:#4C1D95;margin-bottom:3px">SINU.it</div>
-          <div style="font-size:11.5px;color:#64748B">Società Italiana di Nutrizione Umana — formazione scientifica avanzata</div>
-        </div>
-      </a>
-      <a href="https://www.espen.org/elearning" target="_blank" rel="noopener" style="text-decoration:none">
-        <div style="border:1.5px solid #FDE68A;border-radius:12px;padding:14px 16px;transition:all .15s;background:#FFFBEB" onmouseover="this.style.borderColor='#F59E0B'" onmouseout="this.style.borderColor='#FDE68A'">
-          <div style="font-size:18px;margin-bottom:6px">🌍</div>
-          <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:3px">ESPEN eLearning</div>
-          <div style="font-size:11.5px;color:#64748B">European Society for Clinical Nutrition — moduli FAD in inglese, gratuiti per soci</div>
-        </div>
-      </a>
-      <a href="https://www.adiitalia.net" target="_blank" rel="noopener" style="text-decoration:none">
-        <div style="border:1.5px solid #FCA5A5;border-radius:12px;padding:14px 16px;transition:all .15s;background:#FEF2F2" onmouseover="this.style.borderColor='#EF4444'" onmouseout="this.style.borderColor='#FCA5A5'">
-          <div style="font-size:18px;margin-bottom:6px">📖</div>
-          <div style="font-size:13px;font-weight:700;color:#991B1B;margin-bottom:3px">ADI Italia</div>
-          <div style="font-size:11.5px;color:#64748B">Associazione Italiana di Dietetica e Nutrizione Clinica</div>
-        </div>
-      </a>
-      <a href="https://www.sipps.it" target="_blank" rel="noopener" style="text-decoration:none">
-        <div style="border:1.5px solid #99F6E4;border-radius:12px;padding:14px 16px;transition:all .15s;background:#F0FDFA" onmouseover="this.style.borderColor='#0D9488'" onmouseout="this.style.borderColor='#99F6E4'">
-          <div style="font-size:18px;margin-bottom:6px">👶</div>
-          <div style="font-size:13px;font-weight:700;color:#134E4A;margin-bottom:3px">SIPPS / SIP</div>
-          <div style="font-size:11.5px;color:#64748B">Società di Pediatria — corsi su svezzamento, obesità pediatrica, allergie</div>
-        </div>
-      </a>
-    </div>
-  </div>
-  <!-- AI MODAL -->
-  <div id="ecm-ai-modal" class="ecm-ai-modal-bg" style="display:none" onclick="if(event.target===this)closeAIModal()">
-    <div class="ecm-ai-modal-body">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <h3 style="font-size:16px;font-weight:700;color:var(--slate);margin:0">🤖 Aggiungi corso tramite AI</h3>
-        <button onclick="closeAIModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate-l);line-height:1;padding:4px">✕</button>
-      </div>
-      <p style="font-size:13px;color:var(--slate-m);margin-bottom:16px;line-height:1.6">Inserisci il link al corso ECM. L'AI analizzerà la pagina e creerà automaticamente la scheda del corso con tutte le caratteristiche.</p>
-      <div style="margin-bottom:14px">
-        <label style="font-size:11.5px;font-weight:700;color:var(--slate-l);display:block;margin-bottom:5px">Link al corso *</label>
-        <input id="ai-course-url" type="url" placeholder="https://www.andid.it/corso-ecm-..." style="width:100%;padding:10px 14px;border:2px solid var(--border-d);border-radius:10px;font-size:13px;font-family:inherit;box-sizing:border-box;outline:none" onfocus="this.style.borderColor='#4F46E5'" onblur="this.style.borderColor='var(--border-d)'">
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:16px">
-        <button id="ai-gen-btn" class="btn btn-primary" onclick="generateCourseAI()">🤖 Genera scheda</button>
-        <button class="btn btn-ghost" onclick="closeAIModal()">Annulla</button>
-      </div>
-      <div id="ai-course-preview" style="display:none"></div>
-      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;font-size:11.5px;color:#1E3A5F;margin-top:8px">
-        ℹ️ I corsi aggiunti vengono salvati localmente nel browser e visibili solo a te. Verifica sempre i dati generati dall'AI prima di salvarli.
-      </div>
-    </div>
-  </div>
-
 </div></main>
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
+
+<!-- Modal: aggiungi / modifica alimento personalizzato -->
+<div id="modal-add-food" onclick="if(event.target===this)closeAddFood()">
+  <div class="mbox">
+    <div class="mhead">
+      <h3 id="modal-food-title">➕ Aggiungi alimento al database personale</h3>
+      <button onclick="closeAddFood()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate-l);line-height:1">×</button>
+    </div>
+    <div class="mbody">
+      <form id="af-form" onsubmit="event.preventDefault();saveFood()">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px">
+
+          <div class="fg" style="grid-column:1/-1">
+            <label>Nome alimento *</label>
+            <input id="af-nome" type="text" placeholder="es. Tortino di quinoa e verdure" required>
+          </div>
+          <div class="fg" style="grid-column:1/-1">
+            <label>Categoria</label>
+            <input id="af-cat" type="text" list="af-cat-list" placeholder="es. Piatti pronti, Cereali, Pesce…">
+            <datalist id="af-cat-list"></datalist>
+          </div>
+
+          <div class="sec-title">Macronutrienti (per 100 g)</div>
+
+          <div class="fg">
+            <label>Energia (kcal)</label>
+            <input id="af-kcal" type="number" min="0" step="0.1" placeholder="es. 250">
+          </div>
+          <div class="fg">
+            <label>Proteine (g)</label>
+            <input id="af-prot" type="number" min="0" step="0.1" placeholder="es. 12">
+          </div>
+          <div class="fg">
+            <label>Grassi totali (g)</label>
+            <input id="af-gtot" type="number" min="0" step="0.1" placeholder="es. 8">
+          </div>
+          <div class="fg">
+            <label>Grassi saturi (g)</label>
+            <input id="af-gs" type="number" min="0" step="0.1" placeholder="es. 2">
+          </div>
+          <div class="fg">
+            <label>Carboidrati (g)</label>
+            <input id="af-cho" type="number" min="0" step="0.1" placeholder="es. 30">
+          </div>
+          <div class="fg">
+            <label>Zuccheri (g)</label>
+            <input id="af-zucc" type="number" min="0" step="0.1" placeholder="es. 5">
+          </div>
+          <div class="fg">
+            <label>Fibre (g)</label>
+            <input id="af-fi" type="number" min="0" step="0.1" placeholder="es. 3">
+          </div>
+          <div class="fg">
+            <label>Colesterolo (mg)</label>
+            <input id="af-col" type="number" min="0" step="0.1" placeholder="es. 40">
+          </div>
+
+          <div class="sec-title">Minerali (per 100 g)</div>
+
+          <div class="fg">
+            <label>Calcio — Ca (mg)</label>
+            <input id="af-ca" type="number" min="0" step="0.1" placeholder="es. 120">
+          </div>
+          <div class="fg">
+            <label>Ferro — Fe (mg)</label>
+            <input id="af-fe" type="number" min="0" step="0.01" placeholder="es. 1.5">
+          </div>
+          <div class="fg">
+            <label>Magnesio — Mg (mg)</label>
+            <input id="af-mgval" type="number" min="0" step="0.1" placeholder="es. 40">
+          </div>
+          <div class="fg">
+            <label>Potassio — K (mg)</label>
+            <input id="af-k" type="number" min="0" step="0.1" placeholder="es. 350">
+          </div>
+          <div class="fg">
+            <label>Sodio — Na (mg)</label>
+            <input id="af-na" type="number" min="0" step="0.1" placeholder="es. 200">
+          </div>
+          <div class="fg">
+            <label>Zinco — Zn (mg)</label>
+            <input id="af-zn" type="number" min="0" step="0.01" placeholder="es. 1.2">
+          </div>
+          <div class="fg">
+            <label>Fosforo — P (mg)</label>
+            <input id="af-fo" type="number" min="0" step="0.1" placeholder="es. 180">
+          </div>
+          <div class="fg">
+            <label>Selenio — Se (µg)</label>
+            <input id="af-se" type="number" min="0" step="0.1" placeholder="es. 10">
+          </div>
+
+        </div>
+      </form>
+    </div>
+    <div class="mfoot">
+      <button onclick="closeAddFood()" style="padding:8px 18px;border:1.5px solid var(--border-d);background:#fff;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--slate)">Annulla</button>
+      <button onclick="saveFood()" style="padding:8px 20px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">💾 Salva alimento</button>
+    </div>
+  </div>
+</div>
+<script src="js/db.js"></script>
 <script src="js/utils.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// ECM_DATA — dati di fallback (usati se Supabase non disponibile)
-// Per aggiornare i corsi in modo permanente: usa la sezione Admin → Corsi ECM
-// oppure esegui il file supabase/ecm_corsi.sql nel pannello Supabase.
-// ═══════════════════════════════════════════════════════════════════
-const ECM_DATA_FALLBACK = [
-  // ══ FAD ══
-  {id:1,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'SINU — Società Italiana di Nutrizione Umana',
-   titolo:'Nutrizione Clinica Avanzata: dalla Valutazione al Piano Terapeutico',
-   crediti:12,durata:'8 ore FAD',costo:'Gratuito per soci SINU / € 60 non soci',
-   target:['Dietisti','Medici','Biologi nutrizionisti'],
-   descrizione:'Corso FAD accreditato ECM su valutazione dello stato nutrizionale con strumenti validati (NRS-2002, MNA, MUST), diagnosi di malnutrizione secondo criteri GLIM, NCP (Nutrition Care Process) e formulazione di piani nutrizionali personalizzati.',
-   argomenti:['NRS-2002','MNA','GLIM','NCP','Malnutrizione'],
-   link:'https://www.sinu.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Accesso continuativo — verificare su sito SINU'},
-  {id:2,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'ESPEN — European Society for Clinical Nutrition',
-   titolo:'ESPEN eLearning: Nutrition in Chronic Diseases',
-   crediti:8,durata:'6 ore FAD (in inglese)',costo:'Gratuito per soci ESPEN',
-   target:['Dietisti','Medici','Nutrizionisti'],
-   descrizione:'Moduli eLearning della European Society for Clinical Nutrition su nutrizione nelle malattie croniche: diabete, IRC, epatopatia, BPCO, oncologia e malattie cardiovascolari. Basati sulle linee guida ESPEN aggiornate.',
-   argomenti:['Diabete','IRC','Oncologia','BPCO','Epatopatie','Linee guida ESPEN'],
-   link:'https://www.espen.org/elearning',
-   data_inizio:null,data_fine:null,
-   scadenza:'Accesso permanente con registrazione ESPEN'},
-  {id:3,cat:['pediatria','fad'],tipo:'fad',gratuito:false,
-   provider:'SIP — Società Italiana di Pediatria',
-   titolo:'Nutrizione Pediatrica: svezzamento, obesità e patologie specifiche',
-   crediti:10,durata:'8 ore FAD',costo:'€ 50–80',
-   target:['Dietisti','Pediatri','MMG','Infermieri pediatrici'],
-   descrizione:'Corso FAD su allattamento al seno (OMS/UNICEF), diversificazione alimentare (BLW e metodo tradizionale), APLV e gestione delle allergie alimentari in età pediatrica, obesità infantile, celiachia e diete speciali in età evolutiva.',
-   argomenti:['Allattamento','BLW','Svezzamento','APLV','Obesità infantile','Celiachia'],
-   link:'https://www.sip.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità sul sito SIP'},
-  {id:4,cat:['nutrizione','fad'],tipo:'fad',gratuito:true,
-   provider:'ISS — Istituto Superiore di Sanità',
-   titolo:'Sorveglianza Nutrizionale e Indicatori di Salute nella Popolazione Italiana',
-   crediti:6,durata:'4 ore FAD',costo:'GRATUITO',
-   target:['Tutti i professionisti sanitari'],
-   descrizione:'Corso gratuito ISS su dati epidemiologici della nutrizione italiana, indagini OKkio alla SALUTE (obesità infantile), sistema di sorveglianza PASSI, PASSI d\'Argento e i principali indicatori di salute nutrizionale a livello nazionale e regionale.',
-   argomenti:['Epidemiologia','OKkio alla SALUTE','PASSI','Sorveglianza','Salute pubblica'],
-   link:'https://www.iss.it/formazione',
-   data_inizio:null,data_fine:null,
-   scadenza:'Accesso libero e continuativo'},
-  {id:5,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'SID — Società Italiana di Diabetologia',
-   titolo:'Terapia Medica Nutrizionale nel Diabete Mellito Tipo 1 e Tipo 2',
-   crediti:10,durata:'8 ore FAD',costo:'€ 40–80',
-   target:['Dietisti','Medici diabetologi','MMG','Infermieri'],
-   descrizione:'Linee guida ADA/SID 2024 sulla terapia nutrizionale nel diabete: conteggio dei carboidrati, indice e carico glicemico, dieta mediterranea vs low-carb, gestione della terapia insulinica in relazione all\'alimentazione, time-restricted eating e gestione del paziente con complicanze.',
-   argomenti:['Diabete T1','Diabete T2','Conteggio CHO','Indice glicemico','Insulina','ADA 2024'],
-   link:'https://www.siditalia.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare su sito SID'},
-  {id:6,cat:['nutrizione','fad'],tipo:'fad',gratuito:true,
-   provider:'Humanitas Research Hospital / Fondazione Umberto Veronesi',
-   titolo:'Alimentazione e Prevenzione dei Tumori: evidenze e raccomandazioni',
-   crediti:8,durata:'6 ore FAD',costo:'GRATUITO',
-   target:['Tutti i professionisti sanitari'],
-   descrizione:'Corso gratuito sulle evidenze scientifiche sul legame tra alimentazione e rischio oncologico, raccomandazioni WCRF/AIRC aggiornate, nutrizione durante la chemioterapia e radioterapia, cachessia neoplastica, integrazione di omega-3 e arginina nella nutrizione oncologica.',
-   argomenti:['Oncologia','Prevenzione tumori','WCRF','Cachessia','Omega-3','Immunonutrizione'],
-   link:'https://www.fondazioneveronesi.it/formazione',
-   data_inizio:null,data_fine:null,
-   scadenza:'Accesso libero — verificare su sito'},
-  {id:7,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'SINPE — Società Italiana di Nutrizione Parenterale ed Enterale',
-   titolo:'Nutrizione Artificiale Domiciliare (NAD): indicazioni, gestione e complicanze',
-   crediti:10,durata:'8 ore FAD',costo:'€ 50–100',
-   target:['Dietisti','Infermieri','Medici'],
-   descrizione:'Corso FAD sulla gestione della Nutrizione Artificiale Domiciliare: indicazioni cliniche per NAD enterale e parenterale, selezione del paziente, formule e miscele nutrizionali, dispositivi per accesso vascolare, monitoraggio metabolico e laboratoristico, gestione delle complicanze infettive e metaboliche.',
-   argomenti:['NAD','NED','Nutrizione enterale domiciliare','Nutrizione parenterale','PICC','Gestione complicanze'],
-   link:'https://www.sinpe.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare su sito SINPE'},
-  {id:8,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-   titolo:'Sarcopenia, Fragilità e Malnutrizione: strategie nutrizionali nell\'anziano',
-   crediti:10,durata:'8 ore FAD',costo:'€ 60–100 (soci/non soci)',
-   target:['Dietisti','Geriatri','MMG','Infermieri','Fisioterapisti'],
-   descrizione:'Percorso formativo sulla gestione nutrizionale dell\'anziano fragile: criteri EWGSOP2 per la sarcopenia, MNA e valutazione multidimensionale geriatrica, fabbisogni proteici aumentati nell\'anziano, supplementazione con proteine e leucina, integrazione di vitamina D, esercizio fisico combinato.',
-   argomenti:['Sarcopenia','EWGSOP2','MNA','Anziano fragile','Fragilità','Vitamina D','Proteine'],
-   link:'https://www.adiitalia.net/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità su sito ADI Italia'},
-  {id:9,cat:['patologie','fad'],tipo:'fad',gratuito:true,
-   provider:'ISS — Istituto Superiore di Sanità / Ministero della Salute',
-   titolo:'Allergie e Intolleranze Alimentari: diagnosi, gestione e comunicazione al paziente',
-   crediti:6,durata:'5 ore FAD',costo:'GRATUITO',
-   target:['Tutti i professionisti sanitari'],
-   descrizione:'Corso gratuito su allergie IgE-mediate e non IgE-mediate, differenze con le intolleranze alimentari, APLV, celiachia e sensibilità al glutine non celiaca (SGNC), intolleranza al lattosio, FODMAP e IBS, gestione dell\'etichettatura degli allergeni e comunicazione corretta al paziente.',
-   argomenti:['Allergie alimentari','APLV','Celiachia','SGNC','Lattosio','FODMAP','IBS','Intolleranze'],
-   link:'https://www.iss.it/formazione',
-   data_inizio:null,data_fine:null,
-   scadenza:'Accesso libero e continuativo'},
-  {id:10,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'SINU — Società Italiana di Nutrizione Umana',
-   titolo:'Nutrizione Sostenibile e Planetary Health Diet: la dieta del futuro',
-   crediti:8,durata:'6 ore FAD',costo:'Gratuito per soci SINU / € 50 non soci',
-   target:['Dietisti','Medici','Biologi nutrizionisti','Professionisti della salute'],
-   descrizione:'Corso FAD sui principi della Planetary Health Diet (Commissione EAT-Lancet), impatto ambientale dell\'alimentazione (impronta di carbonio e idrica), diete plant-based e salute, riduzione degli sprechi alimentari, strategie pratiche per pazienti e comunità.',
-   argomenti:['Planetary Health Diet','Sostenibilità','Plant-based','EAT-Lancet','Impronta carbonica','Dieta mediterranea'],
-   link:'https://www.sinu.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Accesso continuativo — verificare su sito SINU'},
-  {id:11,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-   titolo:'Nutrizione nei Disturbi del Comportamento Alimentare (DCA): approccio clinico integrato',
-   crediti:10,durata:'8 ore FAD',costo:'€ 70–120 (soci/non soci)',
-   target:['Dietisti','Psicologi','Medici','Infermieri'],
-   descrizione:'Percorso FAD sulla gestione nutrizionale nei DCA: anoressia nervosa, bulimia nervosa, BED (Binge Eating Disorder), ARFID. Valutazione e ripristino nutrizionale nel paziente anoressico (refeeding syndrome), piano nutrizionale personalizzato, alleanza terapeutica e approccio multidisciplinare.',
-   argomenti:['DCA','Anoressia nervosa','Bulimia','BED','ARFID','Refeeding syndrome','Approccio multidisciplinare'],
-   link:'https://www.adiitalia.net/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità su sito ADI Italia'},
-  {id:12,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'SIC / SISA — Società Italiana di Cardiologia',
-   titolo:'Nutrizione e Rischio Cardiovascolare: dalla prevenzione alla gestione terapeutica',
-   crediti:8,durata:'6 ore FAD',costo:'€ 40–70',
-   target:['Dietisti','Cardiologi','MMG','Infermieri'],
-   descrizione:'Corso FAD su linee guida ESC 2023 per la prevenzione cardiovascolare tramite stile di vita, dieta mediterranea e riduzione del rischio CV, gestione dell\'ipercolesterolemia attraverso la dieta, approccio nutrizionale all\'ipertensione arteriosa (dieta DASH).',
-   argomenti:['Rischio cardiovascolare','Dieta DASH','Ipercolesterolemia','Ipertensione','ESC 2023','Prevenzione CV'],
-   link:'https://www.cardioitalia.net/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare su sito SIC'},
-  {id:13,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'FAND — Federazione Associazioni Nazionali Dietisti',
-   titolo:'Il Dietista nel Team Multiprofessionale: ruolo, responsabilità e NCP',
-   crediti:8,durata:'6 ore FAD',costo:'€ 50–80 (soci/non soci)',
-   target:['Dietisti'],
-   descrizione:'Corso FAD sul ruolo professionale del dietista nel team multiprofessionale sanitario, applicazione del Nutrition Care Process (NCP/NCPT) nella pratica clinica, documentazione nutrizionale e terminologia standardizzata, responsabilità professionale e collaborazione interprofessionale.',
-   argomenti:['NCP','NCPT','Team multiprofessionale','Documentazione','Ruolo professionale dietista','FNABI'],
-   link:'https://www.andid.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Accesso continuativo — verificare su sito ANDID'},
-  {id:14,cat:['nutrizione','fad'],tipo:'fad',gratuito:true,
-   provider:'CREA — Centro di Ricerca Alimenti e Nutrizione',
-   titolo:'Linee Guida per una Sana Alimentazione Italiana 2024: aggiornamento e applicazioni pratiche',
-   crediti:6,durata:'4 ore FAD',costo:'GRATUITO',
-   target:['Tutti i professionisti sanitari'],
-   descrizione:'Corso gratuito basato sulle nuove Linee Guida CREA 2024 per una sana alimentazione nella popolazione italiana: revisione delle porzioni e frequenze consigliate, aggiornamenti su legumi, pesce azzurro, frutta secca, sale e zuccheri, indicazioni specifiche per fasce di età.',
-   argomenti:['Linee guida CREA','Alimentazione italiana','Porzioni','Frequenza alimentare','Prevenzione','LARN'],
-   link:'https://www.crea.gov.it/alimenti-e-nutrizione',
-   data_inizio:null,data_fine:null,
-   scadenza:'Accesso libero e continuativo'},
-  {id:15,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-   titolo:'Nutrizione in Oncologia: screening, valutazione e supporto nutrizionale',
-   crediti:12,durata:'10 ore FAD',costo:'€ 80–140 (soci/non soci)',
-   target:['Dietisti','Oncologi','Infermieri oncologici','Medici'],
-   descrizione:'Percorso FAD completo sulla nutrizione oncologica: screening nutrizionale nel paziente oncologico (MST, MUST, PG-SGA), valutazione della composizione corporea, gestione degli effetti collaterali della chemio e radioterapia (mucosite, nausea, xerostomia), cachessia neoplastica e sarcopenia.',
-   argomenti:['Oncologia','Cachessia','PG-SGA','MST','Chemioterapia','Radioterapia','Mucosite','Sarcopenia oncologica'],
-   link:'https://www.adiitalia.net/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità su sito ADI Italia'},
-  {id:16,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'SIGE — Società Italiana di Gastroenterologia ed Endoscopia',
-   titolo:'Nutrizione nelle Malattie Infiammatorie Intestinali (IBD): Crohn e Colite Ulcerosa',
-   crediti:8,durata:'6 ore FAD',costo:'€ 50–90',
-   target:['Dietisti','Gastroenterologi','Medici','Infermieri'],
-   descrizione:'Corso FAD su valutazione e gestione nutrizionale nelle IBD: malnutrizione in Crohn e colite ulcerosa, nutrizione enterale esclusiva (NEE) come terapia d\'induzione nel Crohn, gestione del paziente con stomia, integrazione di probiotici e prebiotici nelle IBD.',
-   argomenti:['Malattia di Crohn','Colite ulcerosa','IBD','NEE','Stomia','Probiotici','Prebiotici','Malnutrizione IBD'],
-   link:'https://www.sige.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare su sito SIGE'},
-  // ══ BLENDED ══
-  {id:17,cat:['patologie','fad'],tipo:'blended',gratuito:false,
-   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-   titolo:'Nutrizione Enterale e Parenterale: Gestione Pratica in Ospedale e a Domicilio',
-   crediti:14,durata:'10 ore FAD + 2 ore residenziale',costo:'€ 120–200 (soci/non soci)',
-   target:['Dietisti','Infermieri','Medici'],
-   descrizione:'Percorso formativo completo sulla nutrizione artificiale clinica: indicazioni e controindicazioni, accessi enterali (SNG, PEG, digiunostomia), miscele standard e modulari, nutrizione parenterale totale (NPT) e periferica, monitoraggio, NED domiciliare e gestione delle complicanze metaboliche.',
-   argomenti:['Nutrizione enterale','Nutrizione parenterale','PEG','NPT','NED','Complicanze'],
-   link:'https://www.adiitalia.net/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità su sito ADI Italia'},
-  {id:18,cat:['nutrizione','fad'],tipo:'blended',gratuito:false,
-   provider:'SINU — Società Italiana di Nutrizione Umana',
-   titolo:'Il Caso Clinico in Nutrizione: percorso interattivo di valutazione e pianificazione',
-   crediti:12,durata:'8 ore FAD + 2 ore interazione online',costo:'€ 70–100',
-   target:['Dietisti','Medici','Biologi nutrizionisti'],
-   descrizione:'Corso blended con simulazioni di casi clinici reali in diverse aree della nutrizione clinica: malnutrizione ospedaliera, paziente critico in ICU, nutrizione pre e post operatoria, insufficienza renale cronica, epatopatia avanzata, obesità e sindrome metabolica. Include sessioni di discussione online con esperti.',
-   argomenti:['Casi clinici','Malnutrizione ospedaliera','ICU','Chirurgia','Sindrome metabolica','Valutazione nutrizionale'],
-   link:'https://www.sinu.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Accesso continuativo — verificare su sito SINU'},
-  // ══ RESIDENZIALE ══
-  {id:19,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-   titolo:'ADI Congress 2026 — Annual Meeting della Nutrizione Clinica Italiana',
-   crediti:18,durata:'3 giorni (22–24 maggio 2026)',costo:'€ 250–450 (soci/non soci)',
-   target:['Dietisti','Medici','Biologi nutrizionisti','Infermieri','Professionisti sanitari'],
-   descrizione:'Il principale congresso italiano di nutrizione clinica. Aggiornamento multidisciplinare su nutrizione ospedaliera e domiciliare, linee guida ESPEN/SINPE, innovazioni in nutrizione artificiale, oncologica, geriatrica e pediatrica. Sessioni parallele, workshop pratici, letture magistrali da esperti internazionali.',
-   argomenti:['Nutrizione clinica','ESPEN','Congresso ADI','Nutrizione artificiale','Aggiornamento multidisciplinare'],
-   link:'https://www.adiitalia.net/congresso',
-   data_inizio:'2026-05-22',data_fine:'2026-05-24',
-   scadenza:'Iscrizioni aperte — verificare su sito ADI'},
-  {id:20,cat:['nutrizione','sport','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'ANDID — Associazione Nazionale Dietisti',
-   titolo:'Nutrizione Sportiva e Performance Atletica: dalla Teoria al Campo',
-   crediti:10,durata:'2 giorni (29–30 maggio 2026)',costo:'€ 150–250 (soci/non soci)',
-   target:['Dietisti','Medici sportivi','Fisioterapisti'],
-   descrizione:'Workshop residenziale sulla nutrizione nello sport: fabbisogni energetici e macronutrienti per atleti, carboloading e strategie pre-gara, integrazione sportiva evidence-based (creatina, caffeina, beta-alanina, nitrati), RED-S (Relative Energy Deficiency in Sport) e Female Athlete Triad.',
-   argomenti:['Nutrizione sportiva','Carboloading','RED-S','Integrazione sportiva','Creatina','Caffeina','Performance atletica'],
-   link:'https://www.andid.it/formazione',
-   data_inizio:'2026-05-29',data_fine:'2026-05-30',
-   scadenza:'Iscrizioni aperte — verificare calendario ANDID'},
-  {id:21,cat:['pediatria','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SIPPS — Società Italiana di Prevenzione e Igiene Pediatrica',
-   titolo:'Svezzamento Guidato dal Bambino (BLW) e Alimentazione Complementare 0–3 Anni',
-   crediti:8,durata:'1 giorno (10 maggio 2026)',costo:'€ 90–150',
-   target:['Pediatri','Dietisti','Ostetriche','MMG'],
-   descrizione:'Workshop pratico sul Baby-Led Weaning: basi teoriche e pratiche, sicurezza alimentare e rischio soffocamento, prevenzione delle allergie con introduzione precoce degli allergeni (LEAP study), educazione alimentare responsiva, linee guida WHO/ESPGHAN 2024 per l\'allattamento e lo svezzamento.',
-   argomenti:['BLW','Prevenzione allergie','ESPGHAN','WHO','Alimentazione complementare','LEAP study'],
-   link:'https://www.sipps.it',
-   data_inizio:'2026-05-10',data_fine:'2026-05-10',
-   scadenza:'Iscrizioni aperte — verificare calendario SIPPS'},
-  {id:22,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'AISF — Associazione Italiana Studio Fegato',
-   titolo:'Malattie Epatiche e Nutrizione: NAFLD/MAFLD, Cirrosi e Trapianto di Fegato',
-   crediti:12,durata:'2 giorni (12–13 giugno 2026)',costo:'€ 150–250',
-   target:['Dietisti','Epatologi','Gastroenterologi','Medici','Infermieri'],
-   descrizione:'Corso residenziale sulla gestione nutrizionale delle malattie epatiche: NAFLD/MAFLD e dieta a basso contenuto di fruttosio/zuccheri, sarcopenia nella cirrosi epatica, prevenzione e trattamento dell\'encefalopatia epatica con BCAA, nutrizione nel post-trapianto epatico, gestione della ritenzione idrica e ascite con dieta iposodica.',
-   argomenti:['NAFLD','MAFLD','Cirrosi','Encefalopatia epatica','BCAA','Trapianto fegato','Ascite','Sarcopenia epatica'],
-   link:'https://www.webaisf.org',
-   data_inizio:'2026-06-12',data_fine:'2026-06-13',
-   scadenza:'Iscrizioni aperte — verificare su sito AISF'},
-  {id:23,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'ANDID — Associazione Nazionale Dietisti / GdL Disfagia',
-   titolo:'Disfagia e Texture Modified Foods: valutazione e gestione nutrizionale',
-   crediti:10,durata:'2 giorni (19–20 giugno 2026)',costo:'€ 150–240 (soci/non soci)',
-   target:['Dietisti','Logopedisti','Medici','Infermieri','Terapisti occupazionali'],
-   descrizione:'Corso residenziale sulla valutazione e gestione della disfagia: classificazione IDDSI, texture modified foods (TMF) e fluidi addensati, bedside swallowing assessment, videofluoroscopia e FEES, strategie di compensazione posturale, gestione nutrizionale del paziente disfagico neurologico (post-ictus, SLA, Parkinson).',
-   argomenti:['Disfagia','IDDSI','Texture modified foods','Addensanti','Videofluoroscopia','FEES','SLA','Ictus','Parkinson'],
-   link:'https://www.andid.it/formazione',
-   data_inizio:'2026-06-19',data_fine:'2026-06-20',
-   scadenza:'Iscrizioni aperte — verificare calendario ANDID'},
-  {id:24,cat:['pediatria','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SINUPE — Società Italiana di Nutrizione Pediatrica',
-   titolo:'Obesità Infantile e Adolescenziale: dalla Prevenzione al Trattamento Multidisciplinare',
-   crediti:12,durata:'2 giorni (5–6 giugno 2026)',costo:'€ 180–280',
-   target:['Pediatri','Dietisti','Psicologi','MMG','Endocrinologi'],
-   descrizione:'Approccio integrato e multidisciplinare all\'obesità infantile e adolescenziale: strumenti di diagnosi precoce (BMI/età, circonferenza addominale), intervento nutrizionale per fasce d\'età, aspetti psicologici e familiari, comorbilità metaboliche (insulino-resistenza, NAFLD, ipertensione) e indicazioni al trattamento farmacologico in adolescenza.',
-   argomenti:['Obesità pediatrica','BMI','Insulino-resistenza','NAFLD','Approccio multidisciplinare','Adolescenti'],
-   link:'https://www.sinupe.it',
-   data_inizio:'2026-06-05',data_fine:'2026-06-06',
-   scadenza:'Iscrizioni aperte — verificare su sito SINUPE'},
-  {id:25,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SIGE — Società Italiana di Gastroenterologia',
-   titolo:'Nutrizione nelle Malattie Gastrointestinali: dalla Celiachia alla IBS',
-   crediti:10,durata:'2 giorni (3–4 luglio 2026)',costo:'€ 160–260',
-   target:['Dietisti','Gastroenterologi','Medici internisti','Infermieri'],
-   descrizione:'Corso residenziale sulla nutrizione nelle principali patologie gastrointestinali: celiachia e dieta senza glutine (gestione della contaminazione, etichettatura), SGNC, IBS e dieta a basso contenuto di FODMAP (protocollo Monash), SIBO, reflusso gastroesofageo (GERD), malabsorzione e gestione nutrizionale post-chirurgia bariatrica.',
-   argomenti:['Celiachia','Dieta senza glutine','SGNC','IBS','FODMAP','SIBO','GERD','Chirurgia bariatrica','Malabsorzione'],
-   link:'https://www.sige.it/formazione',
-   data_inizio:'2026-07-03',data_fine:'2026-07-04',
-   scadenza:'Iscrizioni aperte — verificare su sito SIGE'},
-  {id:26,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-   titolo:'Nutrizione Oncologica Update 2026: nuove evidenze e strategie pratiche',
-   crediti:14,durata:'2 giorni (11–12 settembre 2026)',costo:'€ 200–350 (soci/non soci)',
-   target:['Dietisti','Oncologi','Infermieri oncologici','Medici'],
-   descrizione:'Congresso residenziale di aggiornamento in nutrizione oncologica: nuove linee guida ESPEN 2024/2025, immunonutrizione pre-operatoria (ERAS protocol), gestione della cachessia con anamorelina, nutrizione e immunoterapia, microbiota e risposta ai farmaci oncologici.',
-   argomenti:['Oncologia','Cachessia','ESPEN','ERAS','Immunonutrizione','Anamorelina','Immunoterapia','Microbiota oncologico'],
-   link:'https://www.adiitalia.net/congresso',
-   data_inizio:'2026-09-11',data_fine:'2026-09-12',
-   scadenza:'Iscrizioni aperte — verificare su sito ADI'},
-  {id:27,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'Federazione COMLAS / ADI Italia',
-   titolo:'Nutrizione nell\'Insufficienza Renale Cronica: dalla Teoria alla Pratica Clinica',
-   crediti:10,durata:'1 giorno (19 settembre 2026)',costo:'€ 100–180',
-   target:['Dietisti','Medici nefrologi','Infermieri'],
-   descrizione:'Corso pratico sulla gestione nutrizionale del paziente con IRC: restrizione proteica (0.6–0.8 g/kg), gestione di potassio e fosforo, lisciviazione delle verdure, paziente dialitico (emodialitico e peritoneale), CKD-MBD e osteopatia renale, calcolo del fabbisogno con eGFR, monitoraggio biochimico e nutrizionale.',
-   argomenti:['IRC','CKD','Dialisi','Potassio','Fosforo','Proteine','Lisciviazione','CKD-MBD'],
-   link:'https://www.ecm.salute.gov.it',
-   data_inizio:'2026-09-19',data_fine:'2026-09-19',
-   scadenza:'Iscrizioni aperte — verificare calendario ECM regionale'},
-  {id:28,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SID — Società Italiana di Diabetologia',
-   titolo:'Nutrizione nel Diabete Gestazionale e in Gravidanza: strategie pratiche 2026',
-   crediti:8,durata:'1 giorno (25 settembre 2026)',costo:'€ 80–150',
-   target:['Dietisti','Ginecologi','Diabetologi','Ostetriche','MMG'],
-   descrizione:'Corso residenziale sulla nutrizione in gravidanza e diabete gestazionale: nuovi criteri diagnostici IADPSG, terapia medica nutrizionale nel GDM (conteggio carboidrati, indice glicemico), obiettivi glicemici in gravidanza, gestione del peso gestazionale, fabbisogni di omega-3, DHA, folati, ferro e vitamina D.',
-   argomenti:['Diabete gestazionale','GDM','IADPSG','Gravidanza','DHA','Folati','Gestione glicemica'],
-   link:'https://www.siditalia.it/formazione',
-   data_inizio:'2026-09-25',data_fine:'2026-09-25',
-   scadenza:'Iscrizioni aperte — verificare su sito SID'},
-  {id:29,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SINU — Società Italiana di Nutrizione Umana',
-   titolo:'Microbiota Intestinale e Nutrizione: evidenze cliniche e applicazioni pratiche',
-   crediti:12,durata:'2 giorni (9–10 ottobre 2026)',costo:'€ 180–300',
-   target:['Dietisti','Medici','Biologi','Gastroenterologi'],
-   descrizione:'Congresso residenziale sulle più recenti evidenze scientifiche sul microbiota intestinale: composizione e funzione del microbioma umano, impatto della dieta sulla diversità microbiotica, probiotici e prebiotici evidence-based, trapianto di microbiota fecale (FMT), microbiota in IBD, diabete, obesità e salute mentale (asse intestino-cervello).',
-   argomenti:['Microbiota intestinale','Probiotici','Prebiotici','FMT','Asse intestino-cervello','Disbiosi','Psicobiotici'],
-   link:'https://www.sinu.it/formazione',
-   data_inizio:'2026-10-09',data_fine:'2026-10-10',
-   scadenza:'Iscrizioni aperte — verificare su sito SINU'},
-  {id:30,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'ANDID — Associazione Nazionale Dietisti',
-   titolo:'44° Congresso Nazionale ANDID 2026 — Nutrizione, Innovazione e Futuro della Dietetica',
-   crediti:16,durata:'3 giorni (15–17 ottobre 2026)',costo:'€ 180–380 (soci/non soci)',
-   target:['Dietisti'],
-   descrizione:'Il principale evento formativo nazionale per i dietisti italiani. Aggiornamento su tutte le aree della nutrizione clinica con relatori italiani e internazionali. Include sessioni plenarie, workshop paralleli, poster scientifici, symposia industriali e networking professionale.',
-   argomenti:['Nutrizione clinica','NCP','Innovazione','Ricerca','Network professionale','ANDID 2026'],
-   link:'https://www.andid.it/congresso',
-   data_inizio:'2026-10-15',data_fine:'2026-10-17',
-   scadenza:'Iscrizioni aperte fino a settembre 2026'},
-  {id:31,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'ANDID — Associazione Nazionale Dietisti',
-   titolo:'La Comunicazione Efficace con il Paziente: Counseling Motivazionale in Dietetica',
-   crediti:8,durata:'1 giorno (14 novembre 2026)',costo:'€ 100–180 (soci/non soci)',
-   target:['Dietisti','Nutrizionisti'],
-   descrizione:'Workshop pratico sul counseling motivazionale (Motivational Interviewing) applicato alla dietetica: tecniche di comunicazione empatica, gestione della resistenza al cambiamento, tecniche SMART per la definizione degli obiettivi, gestione del paziente obeso e aderenza alla terapia dietetica.',
-   argomenti:['Counseling','Motivational Interviewing','Comunicazione','Aderenza terapeutica','Psicologia alimentazione','Role-playing'],
-   link:'https://www.andid.it/formazione',
-   data_inizio:'2026-11-14',data_fine:'2026-11-14',
-   scadenza:'Iscrizioni aperte — verificare calendario ANDID regionale'},
-  {id:32,cat:['pediatria','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SINUPE — Società Italiana di Nutrizione Pediatrica',
-   titolo:'Nutrizione Neonatale e del Prematuro: dalle Linee Guida alla Pratica di Reparto',
-   crediti:10,durata:'2 giorni (6–7 novembre 2026)',costo:'€ 160–260',
-   target:['Dietisti','Neonatologi','Ostetriche','Infermieri neonatali','Pediatri'],
-   descrizione:'Corso residenziale sulla nutrizione neonatale: latte materno e fortification nel prematuro, formule per prematuri e neonati a termine, nutrizione parenterale in TIN, valutazione della crescita neonatale con curve WHO, allattamento al seno difficoltoso e supporto alla madre.',
-   argomenti:['Nutrizione neonatale','Prematuro','TIN','Latte materno','Fortification','Curva di crescita WHO','Allattamento'],
-   link:'https://www.sinupe.it',
-   data_inizio:'2026-11-06',data_fine:'2026-11-07',
-   scadenza:'Iscrizioni aperte — verificare su sito SINUPE'},
-  // ══ Nuovi corsi FAD ══
-  {id:33,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'ADI / SINPE — Nutrizione Artificiale',
-   titolo:'Nutrizione nel Paziente Critico in ICU: dalle Linee Guida alla Pratica',
-   crediti:12,durata:'10 ore FAD',costo:'€ 80–140 (soci/non soci)',
-   target:['Dietisti','Medici intensivisti','Infermieri di area critica'],
-   descrizione:'Corso FAD sulla gestione nutrizionale del paziente critico in Terapia Intensiva: timing della nutrizione enterale precoce, protocolli ESPEN 2023 per ICU, gestione della nutrizione nel paziente con instabilità emodinamica, monitoraggio della tolleranza enterale, nutrizione nel paziente con ARDS e insufficienza multiorgano.',
-   argomenti:['ICU','Terapia intensiva','Nutrizione enterale precoce','ARDS','ESPEN ICU','Instabilità emodinamica','Insufficienza multiorgano'],
-   link:'https://www.sinpe.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare su sito SINPE'},
-  {id:34,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'SINU — Società Italiana di Nutrizione Umana',
-   titolo:'Interazioni Farmaco-Nutriente: dal Warfarin agli Inibitori di Pompa',
-   crediti:8,durata:'6 ore FAD',costo:'Gratuito per soci SINU / € 50 non soci',
-   target:['Dietisti','Farmacisti','Medici','Infermieri'],
-   descrizione:'Percorso FAD sulle principali interazioni clinicamente rilevanti tra farmaci e nutrienti: anticoagulanti orali (warfarin) e vitamina K, MAO-inibitori e tiramina, farmaci antiretrovirali e alimenti, interazioni con pompelmo, nutrizione enterale e assorbimento dei farmaci, gestione pratica nella prescrizione del piano alimentare.',
-   argomenti:['Warfarin','Vitamina K','Interazioni farmaco-nutriente','MAO-inibitori','Tiramina','Nutrizione enterale','Pompelmo'],
-   link:'https://www.sinu.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Accesso continuativo — verificare su sito SINU'},
-  {id:35,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'ADI — Associazione Italiana di Dietetica e Nutrizione Clinica',
-   titolo:'Nutrizione nella Chirurgia Bariatrica: Percorso Nutrizionale Pre e Post-operatorio',
-   crediti:10,durata:'8 ore FAD',costo:'€ 70–120 (soci/non soci)',
-   target:['Dietisti','Chirurghi bariatrici','Medici endocrinologi'],
-   descrizione:'Corso FAD sulla gestione nutrizionale del paziente bariatrico: valutazione preoperatoria, dieta pre-operatoria iperproteica ipocalorica, gestione post-operatoria per bypass gastrico e sleeve gastrectomy, supplementazione di micronutrienti (ferro, B12, calcio, vitamina D, tiamina), dumping syndrome e prevenzione delle carenze a lungo termine.',
-   argomenti:['Chirurgia bariatrica','Bypass gastrico','Sleeve gastrectomy','Dumping syndrome','Carenze micronutrienti','Supplementazione','Vitamina B12'],
-   link:'https://www.adiitalia.net/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità su sito ADI Italia'},
-  {id:36,cat:['patologie','fad'],tipo:'fad',gratuito:false,
-   provider:'AIC — Associazione Italiana Celiachia',
-   titolo:'Celiachia e Sensibilità al Glutine: dalla Diagnosi alla Gestione Dietetica Ottimale',
-   crediti:8,durata:'6 ore FAD',costo:'€ 40–70',
-   target:['Dietisti','Gastroenterologi','MMG','Infermieri'],
-   descrizione:'Corso FAD aggiornato sulla celiachia e condizioni correlate: nuovi criteri diagnostici ESPGHAN 2020, differenze tra celiachia, SGNC e allergia al frumento, dieta senza glutine in pratica (etichettatura, contaminazione crociata), rischio di carenze nella DSG, follow-up a lungo termine e complicanze.',
-   argomenti:['Celiachia','SGNC','Dieta senza glutine','ESPGHAN','Etichettatura','Contaminazione crociata','Anti-tTG','EMA'],
-   link:'https://www.celiachia.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità su sito AIC'},
-  {id:37,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'SIN — Società Italiana di Neonatologia / SID',
-   titolo:'Nutrizione e Integrazione in Gravidanza: Micronutrienti, DHA, Folati e Oltre',
-   crediti:10,durata:'8 ore FAD',costo:'€ 60–100',
-   target:['Dietisti','Ginecologi','Ostetriche','MMG'],
-   descrizione:'Percorso FAD sulla nutrizione ottimale in gravidanza e allattamento: fabbisogni calorici e proteici aumentati, supplementazione raccomandata (acido folico, ferro, iodio, vitamina D, DHA, zinco, B12), gestione del peso gestazionale secondo IOM, diete speciali in gravidanza, alimenti da evitare (listeria, mercurio), nausea e vomito gravidici.',
-   argomenti:['Gravidanza','Acido folico','DHA','Ferro in gravidanza','Vitamina D','Iodio','Peso gestazionale','Allattamento','Nausea gravidica'],
-   link:'https://www.siditalia.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Verificare disponibilità su sito SID'},
-  {id:38,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'ANDID — Associazione Nazionale Dietisti',
-   titolo:'Counseling Nutrizionale Motivazionale: Tecniche e Strumenti per il Dietista',
-   crediti:8,durata:'6 ore FAD',costo:'€ 50–80 (soci/non soci)',
-   target:['Dietisti','Nutrizionisti'],
-   descrizione:'Corso FAD sulle tecniche di counseling motivazionale applicate alla dietetica: principi del Motivational Interviewing (MI), ruolo dei processi cognitivi nel cambiamento delle abitudini alimentari, tecniche SMART per la definizione degli obiettivi, gestione dell\'ambivalenza, ascolto attivo e comunicazione empatica, educazione terapeutica strutturata.',
-   argomenti:['Motivational Interviewing','Counseling','Cambiamento comportamentale','SMART','Ascolto attivo','Educazione terapeutica','Aderenza'],
-   link:'https://www.andid.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Accesso continuativo — verificare su sito ANDID'},
-  {id:39,cat:['nutrizione','fad'],tipo:'fad',gratuito:false,
-   provider:'ANDID — Associazione Nazionale Dietisti',
-   titolo:'Dietetica Digitale e Telemedicina: Strumenti Innovativi per il Dietista',
-   crediti:6,durata:'5 ore FAD',costo:'€ 40–60 (soci/non soci)',
-   target:['Dietisti','Nutrizionisti'],
-   descrizione:'Corso FAD sulla trasformazione digitale della professione dietistica: software e app per la pianificazione alimentare e il monitoraggio del paziente, telemedicina e teleconsulto nutrizionale, wearables e sensori CGM nella gestione del diabete, intelligenza artificiale applicata alla nutrizione, aspetti etici e privacy (GDPR).',
-   argomenti:['Telemedicina','App nutrizionali','CGM','Intelligenza artificiale','GDPR','Telemonitoraggio','Digital health','Wearables'],
-   link:'https://www.andid.it/formazione',
-   data_inizio:null,data_fine:'2026-12-31',
-   scadenza:'Accesso continuativo — verificare su sito ANDID'},
-  // ══ Nuovi corsi Residenziali ══
-  {id:40,cat:['nutrizione','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SINPE — Società Italiana di Nutrizione Parenterale ed Enterale',
-   titolo:'Congresso Nazionale SINPE 2026 — Nutrizione Artificiale: Innovazioni e Nuove LG',
-   crediti:16,durata:'2 giorni (27–28 novembre 2026)',costo:'€ 200–380 (soci/non soci)',
-   target:['Dietisti','Medici','Infermieri','Farmacisti'],
-   descrizione:'Congresso annuale SINPE: aggiornamento su nutrizione enterale e parenterale, nuove linee guida ESPEN/SINPE 2025-2026, nutrizione artificiale domiciliare (NAD/NPD), gestione delle complicanze, innovazioni nelle miscele nutrizionali e nei dispositivi per accesso enterale e vascolare. Workshop pratici con simulatori.',
-   argomenti:['Nutrizione artificiale','SINPE','ESPEN','NAD','NPD','Nutrizione enterale','Nutrizione parenterale','Workshop'],
-   link:'https://www.sinpe.it/congresso',
-   data_inizio:'2026-11-27',data_fine:'2026-11-28',
-   scadenza:'Iscrizioni aperte — verificare su sito SINPE'},
-  {id:41,cat:['patologie','residenziale'],tipo:'residenziale',gratuito:false,
-   provider:'SIN — Società Italiana di Nefrologia',
-   titolo:'Congresso SIN 2026 — Gestione Nutrizionale Avanzata del Paziente Nefropatico',
-   crediti:12,durata:'2 giorni (6–7 novembre 2026)',costo:'€ 150–280',
-   target:['Dietisti','Nefrologi','Infermieri nefrologici'],
-   descrizione:'Sessioni dedicate alla nutrizione nel congresso SIN 2026: nuove linee guida KDIGO/ESPEN nella CKD, nutrizione nel trapianto renale, sindrome di malnutrizione-infiammazione (MIS), calcio e metabolismo osseo nella CKD-MBD, innovazioni nella dialisi e impatto nutrizionale.',
-   argomenti:['IRC','CKD','Dialisi peritoneale','Emodialisi','KDIGO','Trapianto renale','MIS','CKD-MBD'],
-   link:'https://www.sin-italy.org',
-   data_inizio:'2026-11-06',data_fine:'2026-11-07',
-   scadenza:'Iscrizioni aperte — verificare su sito SIN'},
-];
+let _editingFoodId = null; // null = nuovo alimento, stringa UUID = modifica
 
-let ECM_DATA = [];
-let USER_COURSES = [];
-let COMPLETATI = new Set();
-let pendingCourse = null;
-let ecmFilter = 'tutti';
-let ecmFromDB = false;
+function nd(v){ return (v===null||v===undefined||v==='')
+  ? '<span class="nd">—</span>'
+  : (v===0?'<span style="color:#CBD5E1">0</span>':v); }
 
-// ─── helpers ────────────────────────────────────────────────────────
-function isExpired(e) {
-  if (!e.data_fine) return false;
-  const today = new Date(); today.setHours(0,0,0,0);
-  return new Date(e.data_fine) <= today;
-}
-
-function daysUntil(dateStr) {
-  if (!dateStr) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  return Math.ceil((new Date(dateStr) - today) / 86400000);
-}
-
-function fmtDate(dateStr) {
-  if (!dateStr) return null;
-  return new Date(dateStr).toLocaleDateString('it-IT', {day:'numeric', month:'long', year:'numeric'});
-}
-
-// ─── load from Supabase ──────────────────────────────────────────────
-async function loadECMFromDB() {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    const { data, error } = await sb.from('ecm_corsi')
-      .select('*')
-      .eq('attivo', true)
-      .or('data_fine.is.null,data_fine.gte.' + today)
-      .order('data_inizio', { ascending: true, nullsFirst: false });
-    if (error || !data || !data.length) return false;
-    ECM_DATA = data;
-    ecmFromDB = true;
-    return true;
-  } catch(e) {
-    return false;
-  }
-}
-
-// ─── filter & render ────────────────────────────────────────────────
-function filterECM(cat, btn) {
-  ecmFilter = cat;
-  document.querySelectorAll('.ecm-filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderECM();
-}
-
-function renderECM() {
-  const container = document.getElementById('ecm-list');
-  const searchQ = (document.getElementById('ecm-search')?.value || '').toLowerCase().trim();
-
-  // Merge DB/fallback courses with user-added courses; remove expired
-  let list = [...ECM_DATA, ...USER_COURSES].filter(e => !isExpired(e));
-
-  // Category filter
-  if (ecmFilter !== 'tutti') {
-    if (ecmFilter === 'fad') list = list.filter(e => e.tipo === 'fad');
-    else if (ecmFilter === 'residenziale') list = list.filter(e => e.tipo === 'residenziale');
-    else if (ecmFilter === 'blended') list = list.filter(e => e.tipo === 'blended');
-    else if (ecmFilter === 'gratuito') list = list.filter(e => e.gratuito);
-    else if (ecmFilter === 'personali') list = list.filter(e => e.user_generated);
-    else list = list.filter(e => Array.isArray(e.cat) && e.cat.includes(ecmFilter));
-  }
-
-  // Search filter
-  if (searchQ) {
-    list = list.filter(e =>
-      e.titolo.toLowerCase().includes(searchQ) ||
-      e.provider.toLowerCase().includes(searchQ) ||
-      e.descrizione.toLowerCase().includes(searchQ) ||
-      (Array.isArray(e.argomenti) ? e.argomenti : []).some(a => a.toLowerCase().includes(searchQ))
-    );
-  }
-
-  // Sort: residenziali with date first (ascending), then blended, then FAD (by credits desc)
-  list.sort((a, b) => {
-    const aDate = a.data_inizio;
-    const bDate = b.data_inizio;
-    if (aDate && bDate) return new Date(aDate) - new Date(bDate);
-    if (aDate) return -1;
-    if (bDate) return 1;
-    return b.crediti - a.crediti;
-  });
-
-  // Update counts
-  const allVisible = [...ECM_DATA, ...USER_COURSES].filter(e => !isExpired(e));
-  document.getElementById('count-tutti').textContent = allVisible.length;
-  const lbl = document.getElementById('ecm-count-label');
-  if (lbl) lbl.textContent = `${list.length} corso${list.length !== 1 ? 'i' : ''} trovato${list.length !== 1 ? 'i' : ''}`;
-
-  // Source indicator
-  const src = document.getElementById('ecm-source-lbl');
-  if (src) src.style.display = ecmFromDB ? 'inline-flex' : 'none';
-
-  if (!list.length) {
-    container.innerHTML = `<div class="ecm-empty">
-      <div style="font-size:40px;margin-bottom:12px">${ecmFilter === 'personali' ? '👤' : '🔍'}</div>
-      <div>${ecmFilter === 'personali' ? 'Non hai ancora aggiunto corsi personali. Usa il pulsante <b>🤖 Aggiungi corso tramite AI</b>.' : 'Nessun corso trovato per questa ricerca.'}</div>
-    </div>`;
+function renderDB(list) {
+  const tbody = document.getElementById('db-tbody');
+  if(!list.length){
+    tbody.innerHTML='<tr><td colspan="19" style="text-align:center;padding:24px;color:var(--slate-l)">Nessun alimento trovato</td></tr>';
+    document.getElementById('db-count').textContent='0 alimenti';
     return;
   }
-
-  container.innerHTML = list.map(e => {
-    const tipoClass = e.tipo === 'fad' ? 'ecm-tipo-fad' : e.tipo === 'residenziale' ? 'ecm-tipo-res' : 'ecm-tipo-blended';
-    const tipoIcon = e.tipo === 'fad' ? '💻' : e.tipo === 'residenziale' ? '🏛️' : '🔀';
-    const tipoLbl = e.tipo === 'fad' ? 'FAD' : e.tipo === 'residenziale' ? 'Res.' : 'Blended';
-    const done = COMPLETATI.has(e.id);
-
-    // Date display
-    let dateHtml = '';
-    if (e.data_inizio) {
-      const d = daysUntil(e.data_inizio);
-      if (d !== null && d >= 0) {
-        dateHtml = `<span class="ecm-date-chip">📅 ${fmtDate(e.data_inizio)}${e.data_fine && e.data_fine !== e.data_inizio ? ' → ' + fmtDate(e.data_fine) : ''}</span>`;
-      }
-    }
-
-    // Expiry warning (within 30 days)
-    let scadenzaHtml = '';
-    const dFine = daysUntil(e.data_fine);
-    if (dFine !== null && dFine >= 0 && dFine <= 30) {
-      scadenzaHtml = `<span class="ecm-scadenza-badge">⏳ Scade tra ${dFine} giorn${dFine === 1 ? 'o' : 'i'}</span>`;
-    }
-
-    const argomenti = Array.isArray(e.argomenti) ? e.argomenti : [];
-    const target = Array.isArray(e.target) ? e.target : [];
-    const safeLink = /^https?:\/\//i.test(e.link) ? e.link : '#';
-    const safeId = JSON.stringify(e.id);
-
-    return `<div class="ecm-card${done ? ' completato' : ''}">
-      <div class="ecm-card-inner">
-        <div class="ecm-card-left">
-          <div class="ecm-credits-num">${e.crediti}</div>
-          <div class="ecm-credits-lbl">crediti ECM</div>
-          <span class="ecm-tipo-badge ${tipoClass}" style="margin-top:10px">${tipoIcon} ${tipoLbl}</span>
-          ${e.gratuito ? '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:10px;font-size:9.5px;font-weight:800;margin-top:6px;white-space:nowrap">🎁 GRATIS</span>' : ''}
-          ${e.user_generated ? '<span class="ecm-user-badge" style="margin-top:6px">👤 MIO</span>' : ''}
-          ${done ? '<span style="background:#DCFCE7;color:#166534;padding:3px 10px;border-radius:10px;font-size:9.5px;font-weight:800;margin-top:6px;white-space:nowrap">✅ SVOLTO</span>' : ''}
-        </div>
-        <div class="ecm-card-body">
-          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px">
-            ${dateHtml}${scadenzaHtml}
-            ${e.user_generated ? '<span class="ecm-user-badge">👤 Corso personale</span>' : ''}
-          </div>
-          <div class="ecm-card-title">${esc(e.titolo)}</div>
-          <div class="ecm-card-provider">📍 ${esc(e.provider)}</div>
-          <div class="ecm-card-desc">${esc(e.descrizione)}</div>
-          <div class="ecm-meta">
-            <span>⏱️ ${esc(e.durata)}</span>
-            <span>💰 ${esc(e.costo)}</span>
-            <span>👥 ${target.map(t => esc(t)).join(', ')}</span>
-            <span>📅 ${esc(e.scadenza || '')}</span>
-          </div>
-          <div class="ecm-tags">
-            ${argomenti.map(a => `<span class="ecm-tag">${esc(a)}</span>`).join('')}
-          </div>
-          <div class="ecm-card-actions">
-            <a href="${safeLink}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none">
-              🔗 Vai al sito ufficiale
-            </a>
-            <button class="ecm-done-btn${done ? ' done' : ''}" onclick="toggleCompletato(${safeId})">
-              ${done ? '✅ Svolto' : '☑️ Segna come svolto'}
-            </button>
-            ${e.user_generated ? `<button class="btn btn-ghost btn-xs" style="color:#DC2626;border-color:#FECACA" onclick="deleteUserCourse(${safeId})">🗑️ Rimuovi</button>` : ''}
-            ${!e.user_generated ? '<span style="font-size:11.5px;color:var(--slate-l);font-style:italic">⚠️ Verifica l\'accreditamento attuale prima di iscriverti</span>' : ''}
-          </div>
-        </div>
-      </div>
-    </div>`;
+  document.getElementById('db-count').textContent = list.length + ' alimenti';
+  tbody.innerHTML = list.map(f => {
+    const srcKey = f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int';
+    const persActions = f.src==='PERS'
+      ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="Modifica">✏️</button>`
+        + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="Elimina">🗑️</button>`
+      : '';
+    return `<tr>
+      <td>${esc(f.n)}${persActions}</td>
+      <td>${esc(f.c||'')}</td>
+      <td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td>
+      <td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td>
+      <td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td>
+      <td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td>
+      <td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td>
+      <td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td>
+    </tr>`;
   }).join('');
 }
 
-// ─── Contatore ECM ────────────────────────────────────────────────────
-function loadCompletati() {
-  try {
-    const saved = localStorage.getItem('ecm_completati_v1');
-    if (saved) COMPLETATI = new Set(JSON.parse(saved));
-  } catch(e) { COMPLETATI = new Set(); }
+function filterDB() {
+  const q = document.getElementById('db-search').value.toLowerCase();
+  const cat = document.getElementById('db-cat').value;
+  const src = document.getElementById('db-src').value;
+  let list = ALL_DB.filter(f => {
+    if(q && !f.n.toLowerCase().includes(q)) return false;
+    if(cat && f.c !== cat) return false;
+    if(src && f.src !== src) return false;
+    return true;
+  });
+  renderDB(list);
 }
 
-function saveCompletati() {
-  try { localStorage.setItem('ecm_completati_v1', JSON.stringify([...COMPLETATI])); } catch(e) {}
+function populateCats() {
+  const cats = [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort();
+  const sel = document.getElementById('db-cat');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Tutte le categorie</option>';
+  cats.forEach(c => {
+    const o = document.createElement('option');
+    o.value=c; o.textContent=c; sel.appendChild(o);
+  });
+  sel.value = prev;
 }
 
-function toggleCompletato(id) {
-  if (COMPLETATI.has(id)) COMPLETATI.delete(id);
-  else COMPLETATI.add(id);
-  saveCompletati();
-  updateContatore();
-  renderECM();
+
+function _populateFoodModal(food) {
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = (val===null||val===undefined) ? '' : val; };
+  set('af-nome',  food.n   ?? '');
+  set('af-cat',   food.c   ?? '');
+  set('af-kcal',  food.k   ?? '');
+  set('af-prot',  food.p   ?? '');
+  set('af-gtot',  food.g   ?? '');
+  set('af-gs',    food.gs  ?? '');
+  set('af-cho',   food.ch  ?? '');
+  set('af-zucc',  food.z   ?? '');
+  set('af-fi',    food.fi  ?? '');
+  set('af-col',   food.col ?? '');
+  set('af-ca',    food.ca  ?? '');
+  set('af-fe',    food.fe  ?? '');
+  set('af-mgval', food.mg  ?? '');
+  set('af-k',     food.k2  ?? '');
+  set('af-na',    food.na  ?? '');
+  set('af-zn',    food.zn  ?? '');
+  set('af-fo',    food.fo  ?? '');
+  set('af-se',    food.se  ?? '');
 }
 
-function updateContatore() {
-  const allCourses = [...ECM_DATA, ...USER_COURSES];
-  const completati = allCourses.filter(e => COMPLETATI.has(e.id));
-  const tot = completati.reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
-  const fad = completati.filter(e => e.tipo === 'fad').reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
-  const res = completati.filter(e => e.tipo === 'residenziale').reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
-  const blended = completati.filter(e => e.tipo === 'blended').reduce((s, e) => s + (parseInt(e.crediti) || 0), 0);
-  const perc = Math.min(100, Math.round((tot / 150) * 100));
-
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  set('ecm-crediti-tot', tot);
-  set('ecm-crediti-perc', perc + '% completato');
-  set('ecm-cred-fad', fad);
-  set('ecm-cred-res', res);
-  set('ecm-cred-blended', blended);
-  set('ecm-num-svolti', completati.length);
-  const bar = document.getElementById('ecm-progress-bar');
-  if (bar) bar.style.width = perc + '%';
+function _openFoodModal() {
+  const dl = document.getElementById('af-cat-list');
+  dl.innerHTML = '';
+  [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort().forEach(c => {
+    const o = document.createElement('option'); o.value = c; dl.appendChild(o);
+  });
+  document.getElementById('modal-add-food').classList.add('open');
+  setTimeout(()=>document.getElementById('af-nome').focus(), 80);
 }
 
-function resetContatore() {
-  if (!confirm('Vuoi resettare il contatore ECM? Perderai tutti i segni di corsi completati.')) return;
-  COMPLETATI.clear();
-  saveCompletati();
-  updateContatore();
-  renderECM();
-  toast('Contatore ECM resettato', 'info');
+function openAddFood() {
+  _editingFoodId = null;
+  document.getElementById('af-form').reset();
+  document.getElementById('modal-food-title').textContent = '➕ Aggiungi alimento al database personale';
+  _openFoodModal();
 }
 
-// ─── Corsi personali (localStorage) ─────────────────────────────────
-function loadUserCourses() {
-  try {
-    const saved = localStorage.getItem('ecm_user_courses_v1');
-    if (saved) USER_COURSES = JSON.parse(saved);
-  } catch(e) { USER_COURSES = []; }
+function openEditFood(id) {
+  const food = CUSTOM_DB.find(f => f._id === id);
+  if (!food) { toast('Alimento non trovato', 'err'); return; }
+  _editingFoodId = id;
+  document.getElementById('af-form').reset();
+  document.getElementById('modal-food-title').textContent = '✏️ Modifica alimento personalizzato';
+  _populateFoodModal(food);
+  _openFoodModal();
 }
 
-function persistUserCourses() {
-  try { localStorage.setItem('ecm_user_courses_v1', JSON.stringify(USER_COURSES)); } catch(e) {}
+function closeAddFood() {
+  document.getElementById('modal-add-food').classList.remove('open');
+  _editingFoodId = null;
 }
 
-function deleteUserCourse(id) {
-  if (!confirm('Rimuovere questo corso dai tuoi corsi personali?')) return;
-  USER_COURSES = USER_COURSES.filter(c => c.id !== id);
-  COMPLETATI.delete(id);
-  saveCompletati();
-  persistUserCourses();
-  updateContatore();
-  renderECM();
-  toast('Corso rimosso', 'info');
-}
+async function saveFood() {
+  const nome = document.getElementById('af-nome').value.trim();
+  if (!nome) { toast('Inserisci il nome dell\'alimento', 'err'); return; }
+  if (!currentUser) { toast('Devi effettuare il login', 'err'); return; }
 
-// ─── AI Course Modal ────────────────────────────────────────────────
-function openAIModal() {
-  const modal = document.getElementById('ecm-ai-modal');
-  if (modal) modal.style.display = 'flex';
-  const urlInput = document.getElementById('ai-course-url');
-  if (urlInput) urlInput.value = '';
-  const preview = document.getElementById('ai-course-preview');
-  if (preview) { preview.style.display = 'none'; preview.innerHTML = ''; }
-  pendingCourse = null;
-}
+  const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
+  const row = {
+    nome,
+    categoria:      document.getElementById('af-cat').value.trim() || null,
+    kcal:           num('af-kcal'),
+    proteine:       num('af-prot'),
+    grassi_saturi:  num('af-gs'),
+    grassi_tot:     num('af-gtot'),
+    zuccheri:       num('af-zucc'),
+    carboidrati:    num('af-cho'),
+    fibre:          num('af-fi'),
+    calcio:         num('af-ca'),
+    ferro:          num('af-fe'),
+    magnesio:       num('af-mgval'),
+    potassio:       num('af-k'),
+    sodio:          num('af-na'),
+    zinco:          num('af-zn'),
+    fosforo:        num('af-fo'),
+    selenio:        num('af-se'),
+    colesterolo:    num('af-col')
+  };
 
-function closeAIModal() {
-  const modal = document.getElementById('ecm-ai-modal');
-  if (modal) modal.style.display = 'none';
-  pendingCourse = null;
-}
-
-async function generateCourseAI() {
-  const urlInput = document.getElementById('ai-course-url');
-  const url = urlInput ? urlInput.value.trim() : '';
-  if (!url || !/^https?:\/\//i.test(url)) {
-    toast('Inserisci un URL valido (es. https://...)', 'err');
-    return;
+  let error;
+  if (_editingFoodId) {
+    ({ error } = await sb.from('alimenti_custom').update(row).eq('id', _editingFoodId).eq('user_id', currentUser.id));
+    if (!error) toast('Alimento aggiornato ✓', 'ok');
+  } else {
+    row.user_id = currentUser.id;
+    ({ error } = await sb.from('alimenti_custom').insert(row));
+    if (!error) toast('Alimento aggiunto ✓', 'ok');
   }
 
-  const btn = document.getElementById('ai-gen-btn');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Analisi in corso...'; }
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
 
-  const preview = document.getElementById('ai-course-preview');
-  preview.style.display = 'block';
-  preview.innerHTML = '<div style="text-align:center;padding:24px;color:var(--slate-l)"><div style="font-size:28px;margin-bottom:8px">🤖</div>L\'AI sta analizzando il corso...</div>';
-
-  let pageContent = '';
-
-  // Try to fetch page content via server proxy
-  try {
-    if (window.location.protocol !== 'file:') {
-      const resp = await fetch('/api/fetch-page?url=' + encodeURIComponent(url));
-      if (resp.ok) {
-        const data = await resp.json();
-        const tmp = document.createElement('div');
-        tmp.innerHTML = data.contents || '';
-        pageContent = (tmp.innerText || tmp.textContent || '').replace(/\s+/g, ' ').trim().substring(0, 4000);
-      }
-    }
-  } catch(fe) { /* ignore, AI will work from URL alone */ }
-
-  const prompt = `Analizza questa pagina web relativa a un corso ECM per professionisti sanitari italiani e restituisci SOLO un oggetto JSON valido (nessun testo aggiuntivo, nessun blocco markdown) con questi campi esatti:
-{"titolo":"...","provider":"...","tipo":"fad","crediti":8,"durata":"8 ore FAD","costo":"€ 80","descrizione":"...","argomenti":["..."],"target":["Dietisti"],"cat":["nutrizione"],"gratuito":false,"data_inizio":null,"data_fine":null,"scadenza":"..."}
-Valori per tipo: "fad", "residenziale" o "blended". Valori per cat (array): nutrizione, patologie, pediatria, sport, fad.
-URL del corso: ${url}
-${pageContent ? 'Contenuto della pagina:\n' + pageContent : 'Nota: impossibile recuperare il contenuto. Genera dati plausibili basandoti sull\'URL e il dominio.'}
-Rispondi SOLO con il JSON.`;
-
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    const response = await fetch('/api/gemini', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': session?.access_token ? `Bearer ${session.access_token}` : ''
-      },
-      body: JSON.stringify({
-        system: 'Sei un assistente ECM per dietisti italiani. Rispondi sempre e solo con JSON valido, senza markdown.',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 800
-      })
-    });
-
-    if (!response.ok) throw new Error('Errore API: ' + response.status);
-    const data = await response.json();
-    const text = (data.content?.[0]?.text || '').trim();
-    if (!text) throw new Error('Risposta vuota dall\'AI');
-
-    // Parse JSON (strip optional markdown code block)
-    let jsonStr = text;
-    const m = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (m) jsonStr = m[1].trim();
-    // Find first { ... }
-    const startIdx = jsonStr.indexOf('{');
-    const endIdx = jsonStr.lastIndexOf('}');
-    if (startIdx !== -1 && endIdx !== -1) jsonStr = jsonStr.substring(startIdx, endIdx + 1);
-
-    const course = JSON.parse(jsonStr);
-
-    // Sanitize
-    course.id = 'u' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-    course.user_generated = true;
-    course.link = url;
-    course.crediti = Math.max(1, Math.min(50, parseInt(course.crediti) || 1));
-    course.gratuito = course.gratuito === true || /^gratu/i.test(String(course.costo || '')) || String(course.costo || '').toUpperCase() === 'GRATUITO';
-    if (!Array.isArray(course.argomenti)) course.argomenti = [];
-    if (!Array.isArray(course.target)) course.target = [];
-    if (!Array.isArray(course.cat)) course.cat = ['nutrizione'];
-    if (!['fad','residenziale','blended'].includes(course.tipo)) course.tipo = 'fad';
-
-    pendingCourse = course;
-
-    const tipoMap = { fad: '💻 FAD', residenziale: '🏛️ Residenziale', blended: '🔀 Blended' };
-    preview.innerHTML = `
-      <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:16px">
-        <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:10px">✅ Scheda generata — verifica i dati prima di salvare</div>
-        <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:4px">${esc(course.titolo || '—')}</div>
-        <div style="font-size:12px;color:#4F46E5;margin-bottom:6px">📍 ${esc(course.provider || '—')}</div>
-        <div style="font-size:12px;color:var(--slate-m);line-height:1.6;margin-bottom:10px">${esc(course.descrizione || '—')}</div>
-        <div style="display:flex;gap:10px;font-size:11.5px;color:var(--slate-l);flex-wrap:wrap;margin-bottom:12px">
-          <span>🎓 ${course.crediti} crediti ECM</span>
-          <span>${tipoMap[course.tipo] || course.tipo}</span>
-          <span>⏱️ ${esc(course.durata || '—')}</span>
-          <span>💰 ${esc(course.costo || '—')}</span>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-primary btn-sm" onclick="confirmSaveCourse()">💾 Salva corso</button>
-          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ai-course-preview').innerHTML='';document.getElementById('ai-course-url').value='';pendingCourse=null">✕ Scarta</button>
-        </div>
-      </div>`;
-
-  } catch(e) {
-    preview.innerHTML = `<div style="background:#FEE2E2;border-radius:8px;padding:14px 16px;color:#991B1B;font-size:13px">
-      ⚠️ <b>Errore nella generazione:</b> ${esc(e.message)}<br>
-      <small style="opacity:.75">Assicurati di essere connesso e che l'AI sia disponibile. Se il sito del corso blocca il fetch, l'AI tenterà ugualmente con l'URL.</small>
-    </div>`;
-  }
-
-  if (btn) { btn.disabled = false; btn.textContent = '🤖 Genera scheda'; }
+  closeAddFood();
+  await loadCustomFoods();
+  populateCats();
+  filterDB();
 }
 
-function confirmSaveCourse() {
-  if (!pendingCourse) return;
-  USER_COURSES.push(pendingCourse);
-  persistUserCourses();
-  updateContatore();
-  renderECM();
-  closeAIModal();
-  toast('✅ Corso aggiunto ai tuoi corsi personali!', 'ok');
-  pendingCourse = null;
+function deleteCustomFood(id) {
+  customConfirm('Eliminare questo alimento dal database personale?', async () => {
+    const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', currentUser.id);
+    if (error) { toast('Errore: ' + error.message, 'err'); return; }
+    toast('Alimento eliminato', 'ok');
+    await loadCustomFoods();
+    populateCats();
+    filterDB();
+  }, { okLabel: 'Elimina', danger: true });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await checkAuth(false); } catch(e) {}
-  loadCompletati();
-  loadUserCourses();
-  showLoading(true);
-  const fromDB = await loadECMFromDB();
-  if (!fromDB) {
-    // Use fallback data, filtering expired client-side
-    ECM_DATA = ECM_DATA_FALLBACK;
-  }
-  showLoading(false);
-  updateContatore();
-  renderECM();
+  const ok = await checkAuth();
+  if (!ok) return;
+  rebuildDB();
+  await loadCustomFoods();
+  populateCats();
+  renderDB(ALL_DB);
 });
 </script>
 </body>

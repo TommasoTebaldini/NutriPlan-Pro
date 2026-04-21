@@ -19,12 +19,30 @@ let currentUser = null;
 let isAdmin = false;
 let currentProfile = null;
 let loadProfileError = null;
+const FORCE_LOGOUT_KEY = 'nutriplan_force_logout';
+
+// Global guard: when forced logout is active, protected pages must go back to login.
+if (localStorage.getItem(FORCE_LOGOUT_KEY) === '1') {
+  const path = (window.location.pathname || '').toLowerCase();
+  const onIndex = path.endsWith('/index.html') || path.endsWith('index.html') || path === '/' || path === '';
+  if (!onIndex && window.location.protocol !== 'file:') {
+    window.location.replace('index.html?logged_out=1');
+  }
+}
 
 // ═══════════════════════════════════════════════════
 // AUTH
 // ═══════════════════════════════════════════════════
 async function checkAuth(redirectIfNotLogged = true) {
   try {
+    // If a forced logout has been requested, never treat the user as logged in.
+    if (localStorage.getItem(FORCE_LOGOUT_KEY) === '1') {
+      try { await sb.auth.signOut({ scope: 'local' }); } catch (_) { /* ignore */ }
+      if (window.location.protocol !== 'file:') {
+        window.location.href = 'index.html';
+      }
+      return false;
+    }
     const { data: { session } } = await sb.auth.getSession();
     if (!session?.user) {
       if (redirectIfNotLogged && window.location.protocol !== 'file:') {
@@ -181,13 +199,22 @@ async function doLogout() {
   const loading = document.getElementById('loading-overlay');
   if (loading) loading.classList.add('active');
   const signOutTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Logout timeout')), 6000));
+  localStorage.setItem(FORCE_LOGOUT_KEY, '1');
+  const clearLocalAuth = () => {
+    try {
+      Object.keys(localStorage).forEach(k => {
+        if (k.includes('supabase.auth.token') || k.startsWith('sb-')) localStorage.removeItem(k);
+      });
+    } catch (_) { /* ignore storage cleanup errors */ }
+    try { sessionStorage.clear(); } catch (_) { /* ignore */ }
+  };
   try {
-    // Prefer local signout to avoid global token-revoke delays blocking the UI.
-    await Promise.race([sb.auth.signOut({ scope: 'local' }), signOutTimeout]);
+    await Promise.race([sb.auth.signOut(), signOutTimeout]);
   } catch (e) {
     console.warn('Logout fallback redirect:', e?.message || e);
   } finally {
-    window.location.replace('index.html');
+    clearLocalAuth();
+    window.location.replace('index.html?logged_out=1');
   }
 }
 
@@ -554,12 +581,12 @@ function initCartellaWidget(cid, opts) {
       '<input type="text" id="' + cid + '-srch" placeholder="' + placeholder + '" autocomplete="off"' +
       ' style="width:100%;padding:6px 10px;border:1.5px solid ' + border + ';border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none;background:white;color:#1E293B;box-sizing:border-box"' +
       ' oninput="_cwFilter(\'' + cid + '\')"' +
-      ' onfocus="_cwFocus(\'' + cid + '\')"' +
-      ' onblur="setTimeout(()=>_cwBlur(\'' + cid + '\'),200)">' +
-      '<div id="' + cid + '-dd" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
+      ' onfocus="_cwShow(\'' + cid + '\')"' +
+      ' onblur="setTimeout(()=>_cwHide(\'' + cid + '\'),200)">' +
+      '<div id="' + cid + '-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
     '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
-    '<span id="' + cid + '-lbl" style="display:none"></span>';
+    '<span id="' + cid + '-lbl" style="font-size:11px;color:' + labelColor + ';font-weight:600;margin-top:3px;display:none"></span>';
 }
 
 function _cwFilter(cid) {
@@ -600,47 +627,16 @@ function _cwHide(cid) {
   if (dd) dd.style.display = 'none';
 }
 
-function _cwFocus(cid) {
-  const srch = document.getElementById(cid + '-srch');
-  if (srch && srch.getAttribute('data-cw-selected') === '1') {
-    // User is editing — clear display so they can type to search
-    srch.value = '';
-    srch.style.color = '#1E293B';
-    srch.style.fontWeight = '';
-    srch.setAttribute('data-cw-selected', 'editing');
-  }
-  _cwShow(cid, '');
-}
-
-function _cwBlur(cid) {
-  const srch = document.getElementById(cid + '-srch');
-  if (srch && srch.getAttribute('data-cw-selected') === 'editing') {
-    // User didn't pick a new cartella — restore previous selection display
-    const nome = srch.getAttribute('data-cw-nome') || '';
-    const opts = (document.getElementById(cid) || {})._cwOpts || {};
-    srch.value = nome ? '✅ ' + nome : '';
-    srch.setAttribute('data-cw-selected', nome ? '1' : '');
-    srch.style.color = nome ? (opts.labelColor || '#0F766E') : '#1E293B';
-    srch.style.fontWeight = nome ? '600' : '';
-  }
-  setTimeout(() => _cwHide(cid), 200);
-}
-
 function _cwUpdateDisplay(cid, id, nome) {
   const container = document.getElementById(cid);
   const opts = (container || {})._cwOpts || {};
   const hiddenId = opts.hiddenInputId || (cid + '-val');
   const hidden = document.getElementById(hiddenId);
-  if (hidden) hidden.value = id || '';
+  if (hidden) hidden.value = id;
   const srch = document.getElementById(cid + '-srch');
-  if (srch) {
-    srch.value = nome ? '✅ ' + nome : '';
-    srch.setAttribute('data-cw-nome', nome || '');
-    srch.setAttribute('data-cw-selected', nome ? '1' : '');
-    const opts2 = (container || {})._cwOpts || {};
-    srch.style.color = nome ? (opts2.labelColor || '#0F766E') : '#1E293B';
-    srch.style.fontWeight = nome ? '600' : '';
-  }
+  if (srch) srch.value = nome;
+  const lbl = document.getElementById(cid + '-lbl');
+  if (lbl) { lbl.textContent = nome ? '✅ ' + nome : ''; lbl.style.display = nome ? 'block' : 'none'; }
   _cwHide(cid);
 }
 
@@ -841,405 +837,6 @@ function stampaCompattaSpecialistica(pasti, opts) {
   document.body.dataset.printMode = 'compact';
   window.addEventListener('afterprint', () => { delete document.body.dataset.printMode; }, { once: true });
   setTimeout(() => window.print(), 300);
-}
-
-/* ═══════════════════════════════════════════════════
-   buildStampaCompattaHtml — identica a stampaCompattaSpecialistica
-   ma RITORNA l'HTML come stringa documento completo invece di stampare.
-   Usata dalle funzioni salva* per memorizzare stampa_html nel DB.
-═══════════════════════════════════════════════════ */
-function buildStampaCompattaHtml(pasti, opts) {
-  opts = opts || {};
-  const totKcal = opts.totKcal || 0;
-  const totProt = opts.totProt || 0;
-  const totCho  = opts.totCho  || 0;
-  const totFat  = opts.totFat  || 0;
-  const nMeals  = pasti.filter(p => p.alimenti && p.alimenti.trim()).length || pasti.length;
-  const avgKcal = totKcal && nMeals ? Math.round(totKcal / nMeals) : 0;
-  const escH = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-  let html = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
-  html += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
-  if (opts.titolo) html += `<div style="font-size:18px;font-weight:700;color:#0F766E">${escH(opts.titolo)}</div>`;
-  if (opts.sottotitolo) html += `<div style="font-size:13px;color:#475569;margin-top:3px">${escH(opts.sottotitolo)}</div>`;
-  html += `</div>`;
-
-  const stats = [
-    { val: totKcal || '—', lbl: 'KCAL TOTALI' },
-    { val: totProt  || '—', lbl: 'PROTEINE (G)' },
-    { val: totCho   || '—', lbl: 'CARBOIDRATI (G)' },
-    { val: totFat   || '—', lbl: 'GRASSI (G)' },
-    { val: avgKcal  || '—', lbl: 'KCAL/PASTO' }
-  ];
-  html += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
-  stats.forEach((s, i) => {
-    html += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length-1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
-    html += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
-    html += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
-    html += `</div>`;
-  });
-  html += `</div>`;
-
-  pasti.forEach(pasto => {
-    if (!pasto.nome && !pasto.alimenti) return;
-    html += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
-    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">`;
-    html += `<div style="display:flex;align-items:center;gap:10px">`;
-    if (pasto.emoji) html += `<span style="font-size:18px">${escH(pasto.emoji)}</span>`;
-    html += `<span style="font-size:14px;font-weight:700;color:white">${escH(pasto.nome||'Pasto')}</span>`;
-    if (pasto.ora) html += `<span style="font-size:12px;color:rgba(255,255,255,.75)">${escH(pasto.ora)}</span>`;
-    html += `</div>`;
-    if (pasto.kcal) html += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${escH(String(pasto.kcal))} kcal</span>`;
-    html += `</div>`;
-    if (pasto.alimenti && pasto.alimenti.trim()) {
-      pasto.alimenti.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
-        html += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${escH(line)}</div>`;
-      });
-    }
-    if (pasto.note && pasto.note.trim()) {
-      html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${escH(pasto.note)}</div>`;
-    }
-    html += `</div>`;
-  });
-
-  if (opts.footerNote) {
-    html += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${escH(opts.footerNote)}</div>`;
-  }
-  html += profiloFirmaHtml();
-  html += `</div>`;
-
-  const title = escH(opts.titolo || 'Stampa');
-  return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${title}</title>
-<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:11pt;line-height:1.5;padding:1.5cm 2cm 2.5cm}
-@media screen{body{padding:20px}}</style></head><body>${html}</body></html>`;
-}
-
-/* ═══════════════════════════════════════════════════
-   buildStampaSpecialisticaHTML — genera HTML di stampa da dati JSON
-   (usato dalle funzioni salva* per precalcolare stampa_html)
-═══════════════════════════════════════════════════ */
-
-// Dati IDDSI per disfagia (mirror di disfagia.html)
-const _IDDSI_META = {
-  1:{nome:'Leggermente Addensato',bg:'#9CA3AF'},2:{nome:'Moderatamente Addensato',bg:'#EC4899'},
-  3:{nome:'Liquidizzato',bg:'#F59E0B'},4:{nome:'Frullato / Passato',bg:'#10B981'},
-  5:{nome:'Tritato Umido',bg:'#EF4444'},6:{nome:'Morbido a Pezzi',bg:'#3B82F6'},
-  7:{nome:'Facile da Masticare',bg:'#F97316'}
-};
-const _IDDSI_DIETE = {
-  1:{kcal_base:1785,nota:'⚠️ Tutti i liquidi devono essere addensati con addensante certificato. ONS spesso necessari.',pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero + addensante',qt:300,unit:'mL',kcal:195},{nome:'Succo di arancia setacciato + addensante',qt:150,unit:'mL',kcal:60},{nome:'Maltodestrine in polvere',qt:40,unit:'g',kcal:155}]},
-    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'ONS liquido addensato (es. Ensure Plus)',qt:200,unit:'mL',kcal:300}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Vellutata di verdure passata al setaccio fine',qt:350,unit:'mL',kcal:170},{nome:'Frullato di pollo passato al setaccio',qt:80,unit:'g',kcal:100},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Succo di pesca + addensante',qt:100,unit:'mL',kcal:40}]},
-    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt bianco intero setacciato',qt:125,unit:'g',kcal:100}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Crema di patate + brodo addensato',qt:350,unit:'mL',kcal:200},{nome:'Frullato di merluzzo passato al setaccio',qt:80,unit:'g',kcal:80},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Budino / crema fluida dolce',qt:100,unit:'g',kcal:115}]}
-  ]},
-  2:{kcal_base:1807,nota:'⚠️ Consistenza "Nectare" — addensare tutte le bevande. Monitorare idratazione.',pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero + addensante',qt:300,unit:'mL',kcal:195},{nome:'Semolino cotto fluido addensato',qt:80,unit:'g',kcal:197},{nome:'Miele',qt:10,unit:'g',kcal:30}]},
-    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'ONS denso addensato (es. Fortisip Compact)',qt:200,unit:'mL',kcal:300}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Vellutata di zucca passata finissima',qt:350,unit:'mL',kcal:175},{nome:'Carne (tacchino) frullata passata al setaccio',qt:80,unit:'g',kcal:100},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Composta di frutta passata finissima',qt:100,unit:'g',kcal:50}]},
-    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt greco setacciato',qt:125,unit:'g',kcal:100}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Crema di legumi passata (lenticchie/piselli)',qt:300,unit:'mL',kcal:200},{nome:'Pesce (sogliola) frullato passato al setaccio',qt:80,unit:'g',kcal:80},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Crema dolce alla vaniglia',qt:100,unit:'g',kcal:110}]}
-  ]},
-  3:{kcal_base:1804,nota:'Consistenza "Miele" — frullare tutto finemente. Eliminare grumi, fibre dure, bucce.',pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero con cereali frullati setacciati',qt:300,unit:'mL',kcal:220},{nome:'Banana frullata fine (liquidizzata)',qt:100,unit:'g',kcal:89},{nome:'Miele',qt:15,unit:'g',kcal:45}]},
-    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'ONS crema (es. Ensure Plus Crema)',qt:200,unit:'mL',kcal:300}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Minestrone liquidizzato passato (senza bucce)',qt:400,unit:'mL',kcal:210},{nome:'Carne frullata (consistenza liquidizzata)',qt:80,unit:'g',kcal:100},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Composta di frutta frullata finissima',qt:120,unit:'g',kcal:60}]},
-    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt cremoso intero',qt:125,unit:'g',kcal:100}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Passata di legumi densa (ceci/lenticchie)',qt:300,unit:'mL',kcal:200},{nome:'Pesce frullato (liquidizzato, senza lische)',qt:80,unit:'g',kcal:80},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135},{nome:'Crema / budino denso',qt:120,unit:'g',kcal:130}]}
-  ]},
-  4:{kcal_base:1806,nota:'Consistenza "Budino" — no grumi, no fibre, no pezzi. Preparare tutto in purè omogeneo.',pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Porridge di farina di riso (latte + farina riso)',qt:250,unit:'g',kcal:280},{nome:'Yogurt greco cremoso',qt:100,unit:'g',kcal:80},{nome:'Miele',qt:15,unit:'g',kcal:45}]},
-    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Crema di frutta cotta frullata densa',qt:150,unit:'g',kcal:90},{nome:'Biscotti ammollati e frullati (senza grumi)',qt:30,unit:'g',kcal:135}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Purè di verdure miste (zucca, patata, carota)',qt:300,unit:'g',kcal:180},{nome:'Purè di pollo con besciamella morbida',qt:100,unit:'g',kcal:155},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90},{nome:'Purè di frutta cotta (mela/pera)',qt:100,unit:'g',kcal:60}]},
-    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Yogurt cremoso con frutta frullata',qt:150,unit:'g',kcal:130}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Purè di patate morbido (senza grumi)',qt:200,unit:'g',kcal:170},{nome:'Purè di merluzzo al latte (senza lische)',qt:100,unit:'g',kcal:135},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90},{nome:'Crema pasticcera densa',qt:100,unit:'g',kcal:130}]}
-  ]},
-  5:{kcal_base:1753,nota:'Pezzi ≤ 4mm × 15mm, morbidi e umidi. Carne tritata fine con sugo; pesce sminuzzato.',pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero',qt:250,unit:'mL',kcal:163},{nome:'Pane morbido bagnato nel latte (senza crosta)',qt:40,unit:'g',kcal:100},{nome:'Miele',qt:15,unit:'g',kcal:45},{nome:'Budino morbido',qt:100,unit:'g',kcal:115}]},
-    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Yogurt greco con frutta matura tritata fine',qt:150,unit:'g',kcal:130}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pastina in brodo (ben cotta, grana fine)',qt:80,unit:'g',kcal:285},{nome:'Carne macinata tenera in umido con sugo',qt:80,unit:'g',kcal:155},{nome:'Verdure cotte tenere a piccoli pezzi (≤4mm)',qt:100,unit:'g',kcal:60},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90}]},
-    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Crema / mousse di frutta morbida',qt:150,unit:'g',kcal:90}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso stracotto in brodo (ben tenero)',qt:80,unit:'g',kcal:270},{nome:'Pesce sminuzzato in umido con salsa (≤4mm)',qt:100,unit:'g',kcal:120},{nome:'Carote / zucchine cotte a pezzetti (≤4mm)',qt:100,unit:'g',kcal:40},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90}]}
-  ]},
-  6:{kcal_base:1823,nota:'Pezzi ≤ 15mm × 15mm, morbidi, facilmente masticabili. Evitare pane croccante, carni dure, noci, vegetali crudi.',pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero',qt:250,unit:'mL',kcal:163},{nome:'Pane morbido (senza crosta dura)',qt:60,unit:'g',kcal:150},{nome:'Marmellata / confettura',qt:20,unit:'g',kcal:52},{nome:'Burro morbido',qt:10,unit:'g',kcal:74}]},
-    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Yogurt greco con frutta morbida a pezzi',qt:150,unit:'g',kcal:130}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta ben cotta con sugo morbido',qt:80,unit:'g',kcal:284},{nome:'Pesce al forno morbido (merluzzo / orata)',qt:120,unit:'g',kcal:132},{nome:'Verdure cotte morbide a pezzi (≤15mm)',qt:150,unit:'g',kcal:60},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135}]},
-    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Frutta morbida matura (pesca, pera, banana)',qt:200,unit:'g',kcal:100}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso ben cotto (risotto morbido)',qt:80,unit:'g',kcal:268},{nome:'Uova strapazzate morbide (2 uova)',qt:100,unit:'g',kcal:145},{nome:'Formaggio molle (ricotta / stracchino)',qt:50,unit:'g',kcal:130}]}
-  ]},
-  7:{kcal_base:1845,nota:'Dieta normale ma con esclusione di alimenti duri, croccanti, appiccicosi o difficili da masticare.',pasti:[
-    {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero',qt:250,unit:'mL',kcal:163},{nome:'Pane morbido / panino soffice (senza crosta dura)',qt:60,unit:'g',kcal:150},{nome:'Marmellata / confettura',qt:20,unit:'g',kcal:52},{nome:'Olio extra vergine di oliva',qt:10,unit:'g',kcal:90}]},
-    {nome:'Spuntino Mattino',emoji:'🍊',items:[{nome:'Yogurt intero con frutta morbida',qt:150,unit:'g',kcal:130}]},
-    {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta (formati morbidi: rigatoni, penne) ben cotta',qt:80,unit:'g',kcal:284},{nome:'Pollo / tacchino arrosto morbido (senza cartilagini)',qt:120,unit:'g',kcal:166},{nome:'Insalata tenera o verdure cotte',qt:150,unit:'g',kcal:30},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135}]},
-    {nome:'Spuntino Pomeriggio',emoji:'☕',items:[{nome:'Frutta matura morbida (pesca, pera, banana, kiwi)',qt:200,unit:'g',kcal:100}]},
-    {nome:'Cena',emoji:'🌙',items:[{nome:'Riso / pasta ben cotta',qt:70,unit:'g',kcal:233},{nome:'Pesce al forno (merluzzo, sogliola, salmone)',qt:120,unit:'g',kcal:132},{nome:'Verdure cotte morbide (zucchine, carote, spinaci)',qt:150,unit:'g',kcal:60},{nome:'Olio extra vergine di oliva',qt:15,unit:'g',kcal:135}]}
-  ]}
-};
-
-function buildStampaSpecialisticaHTML(dati, tipo, nota) {
-  const esc = s => (s == null ? '' : String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const LABELS = {
-    diabete:'🩸 Diabete', pediatria:'👶 Pediatria', sport:'🏃 Nutrizione Sportiva',
-    pancreas:'🫁 Pancreas', disfagia:'💧 Disfagia', dca:'🧠 Sessione DCA',
-    ristorazione:'🍽️ Ristorazione', renale:'🫘 Nefropatia', chetogenica:'🥑 Chetogenica',
-  };
-  const COLORI = {
-    diabete:'#3B82F6', pediatria:'#EC4899', sport:'#F97316', pancreas:'#8B5CF6',
-    disfagia:'#06B6D4', dca:'#7C3AED', ristorazione:'#0F766E', renale:'#f97316', chetogenica:'#0891b2',
-  };
-  const label  = LABELS[tipo]  || tipo;
-  const colore = COLORI[tipo]  || '#1a7f5a';
-  const nome   = nota || label;
-  const piano  = dati.piano || {};
-  const WRAP = inner => `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${esc(nome)}</title>
-<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:11pt;line-height:1.5;padding:1.5cm 2cm 2.5cm}
-@media screen{body{padding:20px}}</style></head><body>${inner}</body></html>`;
-
-  const infoGrid = (items, col) => {
-    const vis = items.filter(i => i.val);
-    if (!vis.length) return '';
-    const c = col || colore;
-    let h = `<div style="display:grid;grid-template-columns:repeat(${Math.min(vis.length,3)},1fr);gap:10px;margin-bottom:14px">`;
-    vis.forEach(i => {
-      h += `<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${c}">
-        <div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${i.label}</div>
-        <div style="font-size:11pt;font-weight:700;color:#1E293B">${esc(String(i.val))}</div>
-      </div>`;
-    });
-    return h + '</div>';
-  };
-
-  // ── Pasti-based types: exact stampaCompattaSpecialistica layout ───────────
-  const PASTI_TIPI = ['diabete', 'pediatria', 'sport', 'pancreas', 'dca', 'renale'];
-  if (PASTI_TIPI.includes(tipo)) {
-    const totKcal = parseFloat(piano.kcal) || 0;
-    const totCho  = parseFloat(piano.cho_tot) || 0;
-    const totProt = parseFloat(piano.prot_tot) || (totKcal ? Math.round(totKcal * 0.15 / 4) : 0);
-    const totFat  = parseFloat(piano.grassi_tot) || (totKcal ? Math.round(totKcal * 0.25 / 9) : 0);
-    const pasti = (piano.pasti || dati.pasti || []).filter(p => p.alimenti?.trim());
-    const avgKcal = totKcal && pasti.length ? Math.round(totKcal / pasti.length) : 0;
-
-    let sub = '';
-    if (tipo === 'diabete' && piano.tipo) sub = 'Tipo: ' + piano.tipo + (piano.insulina ? ' · Insulina: ' + piano.insulina : '');
-    else if (tipo === 'sport' && (piano.sport || piano.obiettivo)) sub = piano.sport || piano.obiettivo;
-    else if (tipo === 'pancreas' && piano.enzima) sub = 'Enzima: ' + piano.enzima;
-    else if (tipo === 'renale') sub = 'Emodialisi — Giornata Senza Dialisi';
-
-    const stats = [
-      { val: totKcal || '—', lbl: 'KCAL TOTALI' },
-      { val: totProt || '—', lbl: 'PROTEINE (G)' },
-      { val: totCho  || '—', lbl: 'CARBOIDRATI (G)' },
-      { val: totFat  || '—', lbl: 'GRASSI (G)' },
-      { val: avgKcal || '—', lbl: 'KCAL/PASTO' },
-    ];
-
-    let body = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
-    body += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
-    body += `<div style="font-size:18px;font-weight:700;color:#0F766E">${esc(nome)}</div>`;
-    if (sub) body += `<div style="font-size:13px;color:#475569;margin-top:3px">${esc(sub)}</div>`;
-    body += `</div>`;
-
-    body += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
-    stats.forEach((s, i) => {
-      body += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length - 1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
-      body += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
-      body += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
-      body += `</div>`;
-    });
-    body += `</div>`;
-
-    if (piano.note_cliniche?.trim()) {
-      body += `<div style="background:#EFF6FF;border-left:4px solid #3B82F6;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#1E3A5F;white-space:pre-wrap">📋 ${esc(piano.note_cliniche)}</div>`;
-    }
-
-    pasti.forEach(pasto => {
-      const energia = pasto.kcal ? `≈ ${pasto.kcal} kcal` : (pasto.cho ? `${pasto.cho} g CHO` : '');
-      body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
-      body += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">`;
-      body += `<div style="display:flex;align-items:center;gap:10px">`;
-      if (pasto.emoji) body += `<span style="font-size:18px">${esc(pasto.emoji)}</span>`;
-      body += `<span style="font-size:14px;font-weight:700;color:white">${esc(pasto.nome || 'Pasto')}</span>`;
-      if (pasto.ora) body += `<span style="font-size:12px;color:rgba(255,255,255,.75)">${esc(pasto.ora)}</span>`;
-      body += `</div>`;
-      if (energia) body += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">${esc(energia)}</span>`;
-      body += `</div>`;
-      pasto.alimenti.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
-        body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${esc(line)}</div>`;
-      });
-      const noteText = (pasto.note?.trim()) || (pasto.cho && !pasto.kcal ? `CHO: ${pasto.cho} g` : '');
-      if (noteText) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(noteText)}</div>`;
-      body += `</div>`;
-    });
-
-    if (piano.note_generali?.trim()) {
-      body += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">⚠️ ${esc(piano.note_generali)}</div>`;
-    }
-
-    body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div></div>`;
-    return WRAP(body);
-  }
-
-  // ── Ristorazione: portate layout ──────────────────────────────────────────
-  if (tipo === 'ristorazione') {
-    const portate = (piano.portate || []).filter(p => p.menu?.trim());
-    let body = `<div style="background:${colore};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
-      <div style="font-size:18pt;font-weight:700">${esc(nome)}</div>
-      <div style="font-size:10pt;opacity:.8;margin-top:4px">${esc(label)} · DietPlan Pro</div>
-    </div>`;
-    body += infoGrid([
-      { label:'🏛️ Struttura', val: piano.tipo },
-      { label:'👥 Coperti',   val: piano.coperti },
-      { label:'🔥 Kcal/die',  val: piano.kcal },
-      { label:'👤 Utenza',    val: piano.utenza },
-    ]);
-    if (piano.diete?.trim()) body += `<div style="background:#F0FDF4;border-left:4px solid #16A34A;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#14532D;white-space:pre-wrap">🥗 Diete speciali: ${esc(piano.diete)}</div>`;
-    if (piano.allergeni?.trim()) body += `<div style="background:#FEF2F2;border-left:4px solid #EF4444;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#7F1D1D;white-space:pre-wrap">⚠️ Allergeni: ${esc(piano.allergeni)}</div>`;
-    portate.forEach(portata => {
-      body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">
-        <div style="padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:14px;font-weight:700;color:white">${esc(portata.nome || 'Portata')}</span>
-          ${portata.porzione ? `<span style="font-size:12px;color:rgba(255,255,255,.9)">${esc(portata.porzione)}</span>` : ''}
-        </div>`;
-      portata.menu.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
-        body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px">${esc(line)}</div>`;
-      });
-      if (portata.note?.trim()) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(portata.note)}</div>`;
-      body += `</div>`;
-    });
-    if (piano.note_generali?.trim()) body += `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:10pt;color:#78350F;white-space:pre-wrap">📌 ${esc(piano.note_generali)}</div>`;
-    body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div>`;
-    return WRAP(body);
-  }
-
-  // ── Disfagia: IDDSI full meal plan ────────────────────────────────────────
-  if (tipo === 'disfagia' && dati.iddsi && _IDDSI_DIETE[dati.iddsi]) {
-    const meta  = _IDDSI_META[dati.iddsi]  || { nome: 'Livello ' + dati.iddsi, bg: '#06B6D4' };
-    const dieta = _IDDSI_DIETE[dati.iddsi];
-    const targetKcal = parseFloat(dati.kcal) || dieta.kcal_base;
-    const scale = targetKcal / dieta.kcal_base;
-
-    let totKcal = 0;
-    dieta.pasti.forEach(p => { totKcal += p.items.reduce((s, it) => s + it.kcal, 0); });
-    totKcal = Math.round(totKcal * scale);
-    const avgKcal = dieta.pasti.length ? Math.round(totKcal / dieta.pasti.length) : 0;
-    const totProt = Math.round(totKcal * 0.16 / 4);
-    const totCho  = Math.round(totKcal * 0.50 / 4);
-    const totFat  = Math.round(totKcal * 0.34 / 9);
-
-    let body = `<div style="font-family:'DM Sans',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">`;
-    body += `<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">`;
-    body += `<div style="font-size:18px;font-weight:700;color:#0F766E">${esc(nome)}</div>`;
-    body += `<div style="display:inline-flex;align-items:center;gap:8px;margin-top:6px;background:${meta.bg};color:white;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">IDDSI ${esc(String(dati.iddsi))} · ${esc(meta.nome)}</div>`;
-    body += `</div>`;
-
-    const stats = [
-      { val: totKcal || '—', lbl: 'KCAL TOTALI' },
-      { val: totProt || '—', lbl: 'PROTEINE (G)' },
-      { val: totCho  || '—', lbl: 'CARBOIDRATI (G)' },
-      { val: totFat  || '—', lbl: 'GRASSI (G)' },
-      { val: avgKcal || '—', lbl: 'KCAL/PASTO' },
-    ];
-    body += `<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:18px">`;
-    stats.forEach((s, i) => {
-      body += `<div style="flex:1;text-align:center;padding:12px 6px;${i < stats.length - 1 ? 'border-right:1.5px solid #CBD5E1' : ''}">`;
-      body += `<div style="font-size:20px;font-weight:700;color:#0EA5E9">${s.val}</div>`;
-      body += `<div style="font-size:9px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:2px">${s.lbl}</div>`;
-      body += `</div>`;
-    });
-    body += `</div>`;
-
-    dieta.pasti.forEach(pasto => {
-      const pKcal = Math.round(pasto.items.reduce((s, it) => s + it.kcal, 0) * scale);
-      body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">`;
-      body += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">`;
-      body += `<div style="display:flex;align-items:center;gap:10px">`;
-      if (pasto.emoji) body += `<span style="font-size:18px">${pasto.emoji}</span>`;
-      body += `<span style="font-size:14px;font-weight:700;color:white">${esc(pasto.nome)}</span>`;
-      body += `</div>`;
-      body += `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ${pKcal} kcal</span>`;
-      body += `</div>`;
-      pasto.items.forEach(item => {
-        const qt = Math.round(item.qt * scale);
-        body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${esc(item.nome)} — ${qt} ${esc(item.unit)}</div>`;
-      });
-      body += `</div>`;
-    });
-
-    if (dieta.nota) {
-      body += `<div style="margin-top:10px;padding:10px 14px;background:#FFF7ED;border-radius:8px;font-size:12px;color:#7C2D12">${esc(dieta.nota)}</div>`;
-    }
-    body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div></div>`;
-    return WRAP(body);
-  }
-
-  // ── Chetogenica / Renale / altro: info grid layout ────────────────────────
-  let body = `<div style="background:${colore};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
-    <div style="font-size:18pt;font-weight:700">${esc(nome)}</div>
-    <div style="font-size:10pt;opacity:.8;margin-top:4px">${esc(label)} · DietPlan Pro</div>
-  </div>`;
-
-  if (tipo === 'chetogenica') {
-    const c = dati.calcolo || {};
-    body += infoGrid([
-      { label:'⚖️ Peso',       val: c.peso    ? c.peso    + ' kg'   : '' },
-      { label:'📏 Altezza',    val: c.altezza ? c.altezza + ' cm'   : '' },
-      { label:'🎂 Età',        val: c.eta     ? c.eta     + ' anni' : '' },
-      { label:'🚶 Attività',   val: c.attivita },
-      { label:'🥑 Tipo dieta', val: c.tipo },
-      { label:'🎯 Obiettivo',  val: c.obiettivo },
-    ]);
-    if (dati.gki?.glicemia || dati.gki?.chetoni) {
-      body += infoGrid([
-        { label:'🩸 Glicemia', val: dati.gki.glicemia ? dati.gki.glicemia + ' mg/dL'  : '' },
-        { label:'🔬 Chetoni',  val: dati.gki.chetoni  ? dati.gki.chetoni  + ' mmol/L' : '' },
-      ]);
-    }
-  }
-
-  if (tipo === 'renale') {
-    const c = dati.calcolo || {};
-    body += infoGrid([
-      { label:'⚖️ Peso',        val: c.peso        ? c.peso        + ' kg'   : '' },
-      { label:'🏋️ Peso ideale', val: c.peso_ideale ? c.peso_ideale + ' kg'   : '' },
-      { label:'📏 Altezza',     val: c.altezza     ? c.altezza     + ' cm'   : '' },
-      { label:'🎂 Età',         val: c.eta         ? c.eta         + ' anni' : '' },
-      { label:'🏥 Stadio IRC',  val: c.stadio },
-      { label:'🚶 Attività',    val: c.attivita },
-    ]);
-  }
-
-  if (piano.note_cliniche?.trim()) {
-    body += `<div style="background:#EFF6FF;border-left:4px solid #3B82F6;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:10pt;color:#1E3A5F;white-space:pre-wrap">📋 ${esc(piano.note_cliniche)}</div>`;
-  }
-
-  const pasti = piano.pasti || dati.pasti || [];
-  pasti.filter(p => p.alimenti?.trim()).forEach(pasto => {
-    const energia = pasto.kcal ? `≈ ${pasto.kcal} kcal` : (pasto.cho ? `${pasto.cho} g CHO` : '');
-    body += `<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981);-webkit-print-color-adjust:exact;print-color-adjust:exact">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:14px;font-weight:700;color:white">${esc(pasto.nome||'Pasto')}</span>
-          ${pasto.ora ? `<span style="font-size:12px;color:rgba(255,255,255,.75)">${esc(pasto.ora)}</span>` : ''}
-        </div>
-        ${energia ? `<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">${esc(energia)}</span>` : ''}
-      </div>`;
-    pasto.alimenti.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
-      body += `<div style="padding:8px 16px;border-bottom:1px solid #F1F5F9;font-size:13px;color:#1E293B">${esc(line)}</div>`;
-    });
-    if (pasto.note?.trim()) body += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${esc(pasto.note)}</div>`;
-    body += `</div>`;
-  });
-
-  if (piano.note_generali?.trim()) {
-    body += `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:10pt;color:#78350F;white-space:pre-wrap">📌 ${esc(piano.note_generali)}</div>`;
-  }
-
-  body += `<div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:9pt;color:#94A3B8;text-align:center">DietPlan Pro · ${esc(label)}</div>`;
-  return WRAP(body);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1670,11 +1267,8 @@ function initPianoEsempio(containerId, config) {
 
   // Close on outside click
   document.addEventListener('click', _closeAll);
-  // Close on scroll only when scrolling outside the open panel
-  document.addEventListener('scroll', function(e) {
-    if (_openWrap && _openWrap._cselPanel && _openWrap._cselPanel.contains(e.target)) return;
-    _closeAll();
-  }, true);
+  // Close on scroll (reposition would be complex)
+  document.addEventListener('scroll', _closeAll, true);
   // Close on resize
   window.addEventListener('resize', _closeAll);
 

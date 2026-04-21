@@ -135,14 +135,6 @@
             <textarea id="diary-notes" placeholder="Es: Colazione: yogurt con cereali. Pranzo: pasta al pomodoro..." rows="4" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;resize:vertical"></textarea>
           </div>
           <div class="pp-field">
-            <label>Ore di sonno (opzionale)</label>
-            <input type="number" id="diary-sleep" placeholder="Es: 7.5" step="0.5" min="0" max="24" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;max-width:160px">
-          </div>
-          <div class="pp-field">
-            <label>Attività fisica (opzionale)</label>
-            <input type="text" id="diary-activity" placeholder="Es: camminata 30 min, palestra, nuoto..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
-          </div>
-          <div class="pp-field">
             <label>Sintomi / Note aggiuntive (opzionale)</label>
             <input type="text" id="diary-symptoms" placeholder="Es: gonfiore addominale, stanchezza..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
           </div>
@@ -180,6 +172,7 @@
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const FORCE_LOGOUT_KEY = 'nutriplan_force_logout';
 
 let currentUser = null;
 let currentProfile = null;
@@ -205,6 +198,7 @@ function toast(msg, type = 'ok') {
 // AUTH
 // ═══════════════════════════════════════════════════
 async function init() {
+  if (localStorage.getItem(FORCE_LOGOUT_KEY) === '1') { window.location.href = 'index.html'; return; }
   const { data: { session } } = await sb.auth.getSession();
   if (!session?.user) { window.location.href = 'index.html'; return; }
   currentUser = session.user;
@@ -239,12 +233,22 @@ async function init() {
 
 async function doLogout() {
   const signOutTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Logout timeout')), 6000));
+  localStorage.setItem(FORCE_LOGOUT_KEY, '1');
+  const clearLocalAuth = () => {
+    try {
+      Object.keys(localStorage).forEach(k => {
+        if (k.includes('supabase.auth.token') || k.startsWith('sb-')) localStorage.removeItem(k);
+      });
+    } catch (_) { /* ignore storage cleanup errors */ }
+    try { sessionStorage.clear(); } catch (_) { /* ignore */ }
+  };
   try {
-    await Promise.race([sb.auth.signOut({ scope: 'local' }), signOutTimeout]);
+    await Promise.race([sb.auth.signOut(), signOutTimeout]);
   } catch (e) {
     console.warn('Logout fallback redirect:', e?.message || e);
   } finally {
-    window.location.replace('index.html');
+    clearLocalAuth();
+    window.location.replace('index.html?logged_out=1');
   }
 }
 
@@ -418,15 +422,8 @@ async function loadDocuments() {
     let title = n.nota || 'Nota specialistica';
     let badge = 'Nota';
     let badgeColor = 'background:#FEF3C7;color:#92400E';
-    let stampaHtml = null;
-    try {
-      const d = JSON.parse(n.dati || '{}');
-      if (isQ) { badge = 'Questionario'; badgeColor = 'background:#F0F9FF;color:#0369A1'; title = d.questionario || title; }
-      if (isC) { badge = 'Consiglio'; badgeColor = 'background:#FEF3C7;color:#92400E'; title = d.consiglio_nome || title; }
-      if (d.stampa_html) stampaHtml = d.stampa_html;
-    } catch(e) { /* dati may not be valid JSON */ }
-    const mapKey = 'ns-' + n.id;
-    if (stampaHtml) _stampaHtmlMap[mapKey] = stampaHtml;
+    if (isQ) { badge = 'Questionario'; badgeColor = 'background:#F0F9FF;color:#0369A1'; try { const d = JSON.parse(n.dati || '{}'); title = d.questionario || title; } catch(e) { /* dati may not be valid JSON */ } }
+    if (isC) { badge = 'Consiglio'; badgeColor = 'background:#FEF3C7;color:#92400E'; try { const d = JSON.parse(n.dati || '{}'); title = d.consiglio_nome || title; } catch(e) { /* dati may not be valid JSON */ } }
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">${isQ ? '📋' : isC ? '💡' : '🗒️'}</span>
       <div class="pp-doc-info">
@@ -434,7 +431,6 @@ async function loadDocuments() {
         <div class="pp-doc-meta">${badge} · ${fmtDate(n.created_at)}</div>
       </div>
       <span class="pp-doc-badge" style="${badgeColor}">${badge}</span>
-      ${stampaHtml ? `<button onclick="apriStampaSpec('${mapKey}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>` : ''}
     </div>`;
   }
 
@@ -560,18 +556,6 @@ function toggleDocContent(id) {
   el.style.display = el.style.display === 'none' ? '' : 'none';
 }
 
-// Map per tenere stampa_html in memoria senza inlinearli negli onclick
-const _stampaHtmlMap = {};
-function apriStampaSpec(key) {
-  const html = _stampaHtmlMap[key];
-  if (!html) return;
-  const win = window.open('', '_blank');
-  if (!win) return;
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
-}
-
 // ═══════════════════════════════════════════════════
 // DIARY (Diario Alimentare e Benessere)
 // ═══════════════════════════════════════════════════
@@ -638,8 +622,6 @@ async function salvaDiario() {
   const dateVal = document.getElementById('diary-date').value;
   const mood = document.getElementById('diary-mood').value;
   const notes = (document.getElementById('diary-notes').value || '').trim();
-  const sleepVal = document.getElementById('diary-sleep').value;
-  const activityRaw = (document.getElementById('diary-activity').value || '').trim();
   const symptomsRaw = (document.getElementById('diary-symptoms').value || '').trim();
   const weightVal = document.getElementById('diary-weight').value;
 
@@ -657,8 +639,6 @@ async function salvaDiario() {
     logged_at: loggedAt,
     mood: mood ? parseInt(mood) : null,
     notes: notes || null,
-    sleep_hours: sleepVal ? parseFloat(sleepVal) : null,
-    activity: activityRaw || null,
     symptoms: symptomsRaw ? symptomsRaw : null
   };
 
@@ -684,8 +664,6 @@ async function salvaDiario() {
   // Reset form
   document.getElementById('diary-mood').value = '';
   document.getElementById('diary-notes').value = '';
-  document.getElementById('diary-sleep').value = '';
-  document.getElementById('diary-activity').value = '';
   document.getElementById('diary-symptoms').value = '';
   document.getElementById('diary-weight').value = '';
 

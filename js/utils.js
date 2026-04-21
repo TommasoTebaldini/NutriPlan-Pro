@@ -178,8 +178,17 @@ async function salvaProfiloOp() {
 }
 
 async function doLogout() {
-  await sb.auth.signOut();
-  window.location.href = 'index.html';
+  const loading = document.getElementById('loading-overlay');
+  if (loading) loading.classList.add('active');
+  const signOutTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Logout timeout')), 6000));
+  try {
+    // Prefer local signout to avoid global token-revoke delays blocking the UI.
+    await Promise.race([sb.auth.signOut({ scope: 'local' }), signOutTimeout]);
+  } catch (e) {
+    console.warn('Logout fallback redirect:', e?.message || e);
+  } finally {
+    window.location.replace('index.html');
+  }
 }
 
 /* ── Profilo Operatore ── */

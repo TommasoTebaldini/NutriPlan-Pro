@@ -1243,9 +1243,23 @@ function calcVal_dg() {
   }
 }
 
+<<<<<<< HEAD
 function raccogliVal_dg() { return {}; }
 
 function ripristinaVal_dg(d) { return; }
+=======
+async function doLogout() {
+  document.getElementById('loading').classList.add('show');
+  const signOutTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Logout timeout')), 6000));
+  try {
+    await Promise.race([sb.auth.signOut({ scope: 'local' }), signOutTimeout]);
+  } catch (e) {
+    console.warn('Logout fallback redirect:', e?.message || e);
+  } finally {
+    window.location.replace('index.html');
+  }
+}
+>>>>>>> ab0961e (fix logout freeze by adding resilient sign-out fallback)
 
 </script>
 </body>

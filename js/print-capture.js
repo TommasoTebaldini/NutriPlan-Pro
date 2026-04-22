@@ -69,6 +69,16 @@
     const html2canvas = await loadHtml2Canvas();
     const target = container || document.body;
     const printMode = opts.printMode || 'compact';
+    
+    // Populate the appropriate print area before capturing
+    if (typeof window.stampaCompatta === 'function' && printMode === 'compact') {
+      window.stampaCompatta();
+    } else if (typeof window.stampaSemplice === 'function' && printMode === 'simple') {
+      window.stampaSemplice();
+    } else if (typeof window.stampaPDF === 'function' && printMode === 'alldays') {
+      window.stampaPDF();
+    }
+    
     const canvas = await html2canvas(target, {
       backgroundColor: '#ffffff',
       scale: opts.scale || 1.5,

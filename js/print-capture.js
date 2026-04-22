@@ -12,9 +12,11 @@
 //     container,   // optional DOM element to capture (default: body)
 //     silent,      // optional — suppress success toast
 //     onclone,     // optional html2canvas onclone hook
+//     modes,       // optional — array of print modes to capture (default: ['compact'])
+//                       // options: 'compact', 'simple', 'alldays'
 //   })
 //
-// Storage path: <patient_id>/<table>_<record_id>.png
+// Storage path: <patient_id>/<table>_<recordId>_<mode>.png
 //
 // Requires `sb` (Supabase client) from js/utils.js.
 // ═══════════════════════════════════════════════════════════════════
@@ -66,6 +68,7 @@
   async function renderToBlob(container, opts = {}) {
     const html2canvas = await loadHtml2Canvas();
     const target = container || document.body;
+    const printMode = opts.printMode || 'compact';
     const canvas = await html2canvas(target, {
       backgroundColor: '#ffffff',
       scale: opts.scale || 1.5,
@@ -78,9 +81,8 @@
           if (el) el.style.display = 'none';
         });
         doc.querySelectorAll('.no-print').forEach((el) => { el.style.display = 'none'; });
-        if (doc.querySelector('[data-print-mode], #ped-compact-print-area, #pan-compact-print-area')) {
-          doc.body.setAttribute('data-print-mode', 'compact');
-        }
+        // Set the print mode for the captured image
+        doc.body.setAttribute('data-print-mode', printMode);
         if (typeof opts.onclone === 'function') opts.onclone(doc);
       },
     });
@@ -109,6 +111,7 @@
     const table = opts.table;
     const recordId = opts.recordId;
     const cartellaId = opts.cartellaId || window.currentCartellaId || null;
+    const modes = opts.modes || ['compact']; // Default to compact mode
 
     if (!table || !isUuid(recordId)) {
       console.warn('print-capture: missing table or recordId', { table, recordId });
@@ -124,27 +127,39 @@
       return null;
     }
 
-    const path = `${patientId}/${table}_${recordId}.png`;
     try {
-      const blob = await renderToBlob(opts.container, opts);
-      const url = await uploadBlob(blob, path);
-      if (!url) throw new Error('URL non disponibile');
+      const urls = {};
+      for (const mode of modes) {
+        const path = `${patientId}/${table}_${recordId}_${mode}.png`;
+        const blob = await renderToBlob(opts.container, { ...opts, printMode: mode });
+        const url = await uploadBlob(blob, path);
+        if (!url) throw new Error(`URL non disponibile per mode: ${mode}`);
+        urls[mode] = url;
+      }
+
+      // Update database with all URLs
+      const updateData = {};
+      if (urls.compact) updateData.print_image_url_compact = urls.compact;
+      if (urls.simple) updateData.print_image_url_simple = urls.simple;
+      if (urls.alldays) updateData.print_image_url_alldays = urls.alldays;
+      // Set default to compact if not specified
+      if (!updateData.print_image_url) updateData.print_image_url = urls.compact;
 
       const { error } = await sb
         .from(table)
-        .update({ print_image_url: url })
+        .update(updateData)
         .eq('id', recordId);
       if (error) {
         console.warn(`print-capture: ${table}.update failed`, error.message);
-        if (window.toast && opts.silent !== true) toast('⚠️ Immagine caricata ma update fallito: ' + error.message, 'err');
-        return url;
+        if (window.toast && opts.silent !== true) toast('⚠️ Immagini caricate ma update fallito: ' + error.message, 'err');
+        return urls.compact;
       }
 
-      if (window.toast && opts.silent !== true) toast('🖼️ Immagine documento salvata', 'ok');
-      return url;
+      if (window.toast && opts.silent !== true) toast('🖼️ Immagini documento salvate', 'ok');
+      return urls.compact;
     } catch (e) {
       console.error('print-capture failed:', e);
-      if (window.toast && opts.silent !== true) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
+      if (window.toast && opts.silent !== true) toast('❌ Salvataggio immagini fallito: ' + (e.message || e), 'err');
       return null;
     }
   }

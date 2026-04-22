@@ -149,11 +149,11 @@
 
       // Update database with all URLs
       const updateData = {};
-      if (urls.compact) updateData.print_image_url_compact = urls.compact;
-      if (urls.simple) updateData.print_image_url_simple = urls.simple;
-      if (urls.alldays) updateData.print_image_url_alldays = urls.alldays;
+      if (urls.compact) updateData.prin_image_url_compact = urls.compact;
+      if (urls.simple) updateData.prin_image_url_simple = urls.simple;
+      if (urls.alldays) updateData.prin_image_url_alldays = urls.alldays;
       // Set default to compact if not specified
-      if (!updateData.print_image_url) updateData.print_image_url = urls.compact;
+      if (!updateData.prin_image_url) updateData.prin_image_url = urls.compact;
 
       const { error } = await sb
         .from(table)

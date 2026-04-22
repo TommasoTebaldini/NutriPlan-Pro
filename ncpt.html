@@ -636,6 +636,7 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 
 <script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
 <script>
 // ═══════════════════════════════════════════════════
 // CONSTANTS
@@ -1218,6 +1219,12 @@ async function salvaNCPt() {
     return;
   }
   toast('💾 NCPt salvato nella cartella!','ok');
+  if (window.capturePrintAndSave && currentNcptId) {
+    capturePrintAndSave({
+      table: 'ncpt', recordId: currentNcptId, cartellaId: currentCartellaId,
+      type: 'ncpt', title: 'NCPt — ' + new Date().toLocaleDateString('it'), silent: true
+    }).catch(() => {});
+  }
 }
 
 function caricaDati(data) {

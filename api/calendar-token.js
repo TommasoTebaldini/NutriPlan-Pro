@@ -7,7 +7,7 @@
 //   Authorization: Bearer <supabase-jwt>
 // Response: { token: "<hex>", url: "webcal://..." }
 
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ||
@@ -35,7 +35,7 @@ function deriveCalendarToken(uid) {
   return crypto.createHmac('sha256', CALENDAR_SECRET).update(uid).digest('hex');
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // CORS — only used from our own origin
   res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');

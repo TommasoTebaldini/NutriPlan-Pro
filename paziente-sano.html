@@ -733,6 +733,7 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
 <script>
 // ── Tab switching ──
 function showPSTab(id) {
@@ -1161,6 +1162,12 @@ async function salvaPazienteSano() {
   }
   toast(editingPsNoteId ? '✅ Scheda aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
   if (!editingPsNoteId && result.data?.[0]?.id) editingPsNoteId = result.data[0].id;
+  if (window.capturePrintAndSave && editingPsNoteId) {
+    capturePrintAndSave({
+      table: 'note_specialistiche', recordId: editingPsNoteId, cartellaId: cartella_id,
+      type: 'paziente_sano', title: nota, silent: true
+    }).catch(() => {});
+  }
 }
 
 async function caricaPsDaNota(noteId) {

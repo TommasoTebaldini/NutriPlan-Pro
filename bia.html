@@ -293,6 +293,7 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
 <script>
 let biaData = {};
 let cartelleList = [];
@@ -866,6 +867,12 @@ async function salvaBIA() {
   } else {
     toast(isUpdate ? '✅ BIA aggiornata!' : '✅ BIA salvata nella cartella paziente!', 'ok');
     loadStorico();
+    if (window.capturePrintAndSave && currentBiaId) {
+      capturePrintAndSave({
+        table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id,
+        type: 'bia', title: 'BIA — ' + (record.data_misura || ''), silent: true
+      }).catch(() => {});
+    }
   }
 }
 

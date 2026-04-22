@@ -4,7 +4,7 @@
 // The token is obtained from /api/calendar-token (requires login).
 // The calendar app will auto-refresh this feed, keeping all devices in sync.
 
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 // Prefer SUPABASE_SERVICE_KEY (bypasses RLS) for direct table access.
@@ -49,7 +49,7 @@ const TIPO_LABELS = {
 // Validate UUID v4 format
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (!SUPABASE_SERVICE_KEY && !SUPABASE_ANON_KEY) {
     console.error('calendar.js: SUPABASE_ANON_KEY is empty. Check the Vercel environment variables and ensure the get_user_agenda_events SQL migration has been applied.');
     res.status(500).send('Server configuration error: Supabase key not configured');

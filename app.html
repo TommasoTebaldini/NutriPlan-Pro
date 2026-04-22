@@ -343,6 +343,7 @@
 
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
 <script>
 // ═══════════════════════════════════════════════════
 // STATE
@@ -1147,7 +1148,12 @@ async function salvaPiano() {
   dirty = false;
   sessionStorage.removeItem('draftPiano');
   toast(`💾 "${nome}" salvato!`, 'ok');
-
+  if (window.capturePrintAndSave && currentPianoId) {
+    capturePrintAndSave({
+      table: 'piani', recordId: currentPianoId, cartellaId: finalCartellaId,
+      type: 'piano_alimentare', title: nome, silent: true
+    }).catch(() => {});
+  }
 }
 
 // ═══════════════════════════════════════════════════

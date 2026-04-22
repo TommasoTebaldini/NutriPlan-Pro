@@ -390,6 +390,7 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
 <script>
 // FC_OPTIONS, LAF_OPTIONS, FABBISOGNO_PATOLOGIE already defined in db.js — do NOT redeclare
 
@@ -1034,6 +1035,12 @@ async function doSalva(cartellaId){
   // Success
   const nomePaz = document.getElementById('v-nome').value.trim();
   toast('✅ Scheda di '+nomePaz+' salvata nella cartella!','ok');
+  if (window.capturePrintAndSave && schedaId) {
+    capturePrintAndSave({
+      table: 'schede_valutazione', recordId: schedaId, cartellaId: cartellaId,
+      type: 'valutazione', title: 'Valutazione — ' + nomePaz, silent: true
+    }).catch(() => {});
+  }
 }
 
 async function loadCartelleDropdown2(){

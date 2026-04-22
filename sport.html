@@ -610,6 +610,7 @@
 </div>
 <script src="js/db.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
 <script>
 const SPORT_PARAMS = {
   corsa_rec:    {laf:1.6, cho_g:6, prot_g:1.5, grassi_g:1.2, acqua_L:2.5},
@@ -1060,6 +1061,13 @@ async function salvaSport() {
     return;
   }
   toast(editingSportNoteId ? '✅ Scheda Sport aggiornata!' : '✅ Scheda Sportiva salvata nella cartella!','ok');
+  if (!editingSportNoteId && result.data?.[0]?.id) editingSportNoteId = result.data[0].id;
+  if (window.capturePrintAndSave && editingSportNoteId) {
+    capturePrintAndSave({
+      table: 'note_specialistiche', recordId: editingSportNoteId, cartellaId: cartella_id,
+      type: 'sport', title: nota, silent: true
+    }).catch(() => {});
+  }
 }
 
 function mostraSetupSQL() {

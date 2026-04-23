@@ -70,6 +70,10 @@
     const target = container || document.body;
     const printMode = opts.printMode || 'compact';
     
+    // Temporarily disable window.print to prevent print dialog from opening
+    const originalPrint = window.print;
+    window.print = function() {};
+    
     // Populate the appropriate print area before capturing
     if (typeof window.stampaCompatta === 'function' && printMode === 'compact') {
       window.stampaCompatta();
@@ -78,6 +82,12 @@
     } else if (typeof window.stampaPDF === 'function' && printMode === 'alldays') {
       window.stampaPDF();
     }
+    
+    // Restore window.print
+    window.print = originalPrint;
+    
+    // Small delay to ensure DOM is fully updated
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     const canvas = await html2canvas(target, {
       backgroundColor: '#ffffff',
@@ -149,11 +159,11 @@
 
       // Update database with all URLs
       const updateData = {};
-      if (urls.compact) updateData.prin_image_url_compact = urls.compact;
-      if (urls.simple) updateData.prin_image_url_simple = urls.simple;
-      if (urls.alldays) updateData.prin_image_url_alldays = urls.alldays;
+      if (urls.compact) updateData.print_image_url_compact = urls.compact;
+      if (urls.simple) updateData.print_image_url_simple = urls.simple;
+      if (urls.alldays) updateData.print_image_url_alldays = urls.alldays;
       // Set default to compact if not specified
-      if (!updateData.prin_image_url) updateData.prin_image_url = urls.compact;
+      if (!updateData.print_image_url) updateData.print_image_url = urls.compact;
 
       const { error } = await sb
         .from(table)

@@ -67,7 +67,6 @@
 
   async function renderToBlob(container, opts = {}) {
     const html2canvas = await loadHtml2Canvas();
-    const target = container || document.body;
     const printMode = opts.printMode || 'compact';
     
     // Temporarily disable window.print to prevent print dialog from opening
@@ -89,6 +88,22 @@
     // Small delay to ensure DOM is fully updated
     await new Promise(resolve => setTimeout(resolve, 100));
     
+    // Get the appropriate print area element
+    let target;
+    if (printMode === 'compact') {
+      target = document.getElementById('compact-print-area') || container || document.body;
+    } else if (printMode === 'simple') {
+      target = document.getElementById('simple-print-area') || container || document.body;
+    } else if (printMode === 'alldays') {
+      target = document.getElementById('pdf-alldays-print-area') || container || document.body;
+    } else {
+      target = container || document.body;
+    }
+    
+    // Make sure the print area is visible for capture
+    const originalDisplay = target.style.display;
+    target.style.display = 'block';
+    
     const canvas = await html2canvas(target, {
       backgroundColor: '#ffffff',
       scale: opts.scale || 1.5,
@@ -103,9 +118,18 @@
         doc.querySelectorAll('.no-print').forEach((el) => { el.style.display = 'none'; });
         // Set the print mode for the captured image
         doc.body.setAttribute('data-print-mode', printMode);
+        // Ensure print area is visible in cloned document
+        const printAreaId = printMode === 'compact' ? 'compact-print-area' : 
+                           printMode === 'simple' ? 'simple-print-area' : 'pdf-alldays-print-area';
+        const printArea = doc.getElementById(printAreaId);
+        if (printArea) printArea.style.display = 'block';
         if (typeof opts.onclone === 'function') opts.onclone(doc);
       },
     });
+    
+    // Restore original display
+    target.style.display = originalDisplay;
+    
     return new Promise((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error('Canvas vuoto'))),

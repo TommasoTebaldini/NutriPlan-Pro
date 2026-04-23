@@ -1335,11 +1335,11 @@ function stampaPDF() {
   if (giorni.length > 1) {
     document.getElementById('pdf-alldays-print-area').innerHTML = _buildPDFAllDaysHTML();
     document.body.dataset.printMode = 'pdf-alldays';
-    setTimeout(() => window.print(), 400);
+    setTimeout(() => { if (!window._capturingPrint) window.print(); }, 400);
   } else {
     giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
     renderPiano();
-    setTimeout(() => window.print(), 400);
+    setTimeout(() => { if (!window._capturingPrint) window.print(); }, 400);
   }
 }
 
@@ -1497,8 +1497,7 @@ function stampaSemplice() {
 
   document.getElementById('simple-print-area').innerHTML = html;
   document.body.dataset.printMode = 'simple';
-  _applyPortraitPrint();
-  setTimeout(() => window.print(), 400);
+  setTimeout(() => { if (!window._capturingPrint && !document.body.dataset.printMode) window.print(); }, 400);
 }
 
 function _buildCompattaDayHTML(giorno, showDayHeader) {
@@ -1596,7 +1595,7 @@ function stampaCompatta() {
   document.getElementById('compact-print-area').innerHTML = html;
   document.body.dataset.printMode = 'compact';
   _applyPortraitPrint();
-  setTimeout(() => window.print(), 400);
+  setTimeout(() => { if (!window._capturingPrint) window.print(); }, 400);
 }
 
 function _applyPortraitPrint() {

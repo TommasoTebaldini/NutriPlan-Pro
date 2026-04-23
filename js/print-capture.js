@@ -69,9 +69,8 @@
     const html2canvas = await loadHtml2Canvas();
     const printMode = opts.printMode || 'compact';
     
-    // Temporarily disable window.print to prevent print dialog from opening
-    const originalPrint = window.print;
-    window.print = function() {};
+    // Set flag to prevent print dialog from opening (functions check this flag)
+    window._capturingPrint = true;
     
     // Populate the appropriate print area before capturing
     if (typeof window.stampaCompatta === 'function' && printMode === 'compact') {
@@ -82,11 +81,11 @@
       window.stampaPDF();
     }
     
-    // Restore window.print
-    window.print = originalPrint;
+    // Wait longer than the setTimeout(400) in stampa functions
+    await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Small delay to ensure DOM is fully updated
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Clear flag
+    window._capturingPrint = false;
     
     // Get the appropriate print area element
     let target;

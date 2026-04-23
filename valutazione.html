@@ -30,20 +30,6 @@
 .val-section-hdr-text{font-size:13.5px;font-weight:700;color:white;letter-spacing:.2px}
 .val-section-hdr-sub{font-size:11px;color:rgba(255,255,255,.82);margin-top:2px}
 @media(max-width:900px){#risultati-col .result-grid-2col{grid-template-columns:1fr!important}}
-/* Print areas */
-#simple-print-area,#compact-print-area,#pdf-alldays-print-area{display:none}
-@media print{
-  @page{margin:0;size:A4}
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  #sidebar,#sb-overlay,#topbar,.no-print{display:none!important}
-  #main{margin:0!important;padding:1cm 1.5cm!important}
-  body[data-print-mode="simple"] #val-grid{display:none!important}
-  body[data-print-mode="simple"] #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  body[data-print-mode="compact"] #val-grid{display:none!important}
-  body[data-print-mode="compact"] #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  body[data-print-mode="pdf-alldays"] #val-grid{display:none!important}
-  body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-}
 </style>
 </head>
 <body>
@@ -1052,8 +1038,7 @@ async function doSalva(cartellaId){
   if (window.capturePrintAndSave && schedaId) {
     capturePrintAndSave({
       table: 'schede_valutazione', recordId: schedaId, cartellaId: cartellaId,
-      type: 'valutazione', title: 'Valutazione — ' + nomePaz, silent: true,
-      modes: ['compact', 'simple', 'alldays']
+      type: 'valutazione', title: 'Valutazione — ' + nomePaz, silent: true
     }).catch(() => {});
   }
 }
@@ -1171,7 +1156,6 @@ function resetVal(){
 }
 
 function stampaSchedaValutazione(){
-  if (window._capturingPrint) return; // Skip during capture
   const pageContent = document.querySelector('#main .page-content');
   if(!pageContent){
     toast('Contenuto scheda non trovato', 'err');
@@ -1439,87 +1423,7 @@ function mostraBannerColonna(){
   const pageContent = document.querySelector('.page-content');
   if(pageContent) pageContent.insertBefore(banner, pageContent.firstChild);
 }
-
-// Print functions for schede_valutazione
-function stampaSempliceValutazione(){
-  const nome=document.getElementById('v-nome').value||'';
-  const cognome=document.getElementById('v-cognome').value||'';
-  const cartellaEl=document.getElementById('v-cartella');
-  const cartellaId=cartellaEl?cartellaEl.value:null;
-  
-  // Build simple HTML
-  let html='<div style="font-family:\'DM Sans\',sans-serif;max-width:680px;margin:0 auto;color:#1E293B;padding:20px;">';
-  html+='<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #0F766E">';
-  html+='<div style="font-size:22px;font-weight:700;color:#0F766E">Scheda Valutazione</div>';
-  html+='<div style="font-size:16px;color:#475569;margin-top:4px">'+esc(nome+' '+cognome)+'</div>';
-  html+='</div>';
-  
-  // Dati anagrafici
-  html+='<div style="margin-bottom:16px;">';
-  html+='<h4 style="color:#0F766E;font-size:14px;margin-bottom:8px;">Dati Anagrafici</h4>';
-  html+='<table style="width:100%;font-size:11px;border-collapse:collapse;">';
-  html+='<tr><td style="padding:4px;border-bottom:1px solid #E2E8F0;"><b>Età:</b></td><td style="padding:4px;border-bottom:1px solid #E2E8F0;">'+(document.getElementById('v-eta').value||'-')+' anni</td></tr>';
-  html+='<tr><td style="padding:4px;border-bottom:1px solid #E2E8F0;"><b>Sesso:</b></td><td style="padding:4px;border-bottom:1px solid #E2E8F0;">'+(document.getElementById('v-sesso').value==='M'?'Maschio':'Femmina')+'</td></tr>';
-  html+='<tr><td style="padding:4px;border-bottom:1px solid #E2E8F0;"><b>Peso:</b></td><td style="padding:4px;border-bottom:1px solid #E2E8F0;">'+(document.getElementById('v-peso').value||'-')+' kg</td></tr>';
-  html+='<tr><td style="padding:4px;border-bottom:1px solid #E2E8F0;"><b>Altezza:</b></td><td style="padding:4px;border-bottom:1px solid #E2E8F0;">'+(document.getElementById('v-altezza').value||'-')+' cm</td></tr>';
-  html+='</table></div>';
-  
-  // TDEE
-  const tdee=document.getElementById('val-tdee')?.value;
-  if(tdee){html+='<div style="background:#F0FDF4;border:1px solid #6EE7B7;padding:12px;border-radius:8px;margin-bottom:16px;"><b>Fabbisogno Energetico (TDEE):</b> '+tdee+' kcal</div>';}
-  
-  // Macro
-  html+='<div style="margin-bottom:16px;">';
-  html+='<h4 style="color:#0F766E;font-size:14px;margin-bottom:8px;">Distribuzione Macronutrienti</h4>';
-  html+='<table style="width:100%;font-size:11px;border-collapse:collapse;">';
-  html+='<tr style="background:#1E293B;color:white;"><th style="padding:6px;text-align:left;">Nutriente</th><th style="padding:6px;text-align:right;">Grammi</th><th style="padding:6px;text-align:right;">kcal</th></tr>';
-  const macroDist=window.macroDist||{};
-  const prot=parseFloat(macroDist.prot)||0, cho=parseFloat(macroDist.cho)||0, fat=parseFloat(macroDist.fat)||0;
-  html+='<tr><td style="padding:6px;border-bottom:1px solid #E2E8F0;">Proteine</td><td style="padding:6px;text-align:right;border-bottom:1px solid #E2E8F0;">'+prot.toFixed(1)+'g</td><td style="padding:6px;text-align:right;border-bottom:1px solid #E2E8F0;">'+(prot*4).toFixed(0)+'</td></tr>';
-  html+='<tr><td style="padding:6px;border-bottom:1px solid #E2E8F0;">Carboidrati</td><td style="padding:6px;text-align:right;border-bottom:1px solid #E2E8F0;">'+cho.toFixed(1)+'g</td><td style="padding:6px;text-align:right;border-bottom:1px solid #E2E8F0;">'+(cho*4).toFixed(0)+'</td></tr>';
-  html+='<tr><td style="padding:6px;border-bottom:1px solid #E2E8F0;">Grassi</td><td style="padding:6px;text-align:right;border-bottom:1px solid #E2E8F0;">'+fat.toFixed(1)+'g</td><td style="padding:6px;text-align:right;border-bottom:1px solid #E2E8F0;">'+(fat*9).toFixed(0)+'</td></tr>';
-  html+='</table></div>';
-  
-  if(typeof profiloFirmaHtml==='function') html+=profiloFirmaHtml();
-  html+='</div>';
-  
-  document.getElementById('simple-print-area').innerHTML=html;
-  document.body.dataset.printMode='simple';
-}
-
-function stampaCompattaValutazione(){
-  stampaSempliceValutazione(); // Same as simple for now
-  document.body.dataset.printMode='compact';
-}
-
-function stampaPDFValutazione(){
-  stampaSempliceValutazione(); // Same as simple for now
-  document.body.dataset.printMode='pdf-alldays';
-}
-
-async function captureSchedaValutazione(schedaId,cartellaId){
-  if(!schedaId||!cartellaId||!window.capturePrintAndSave) return;
-  try{
-    await window.capturePrintAndSave({
-      table:'schede_valutazione',
-      recordId:schedaId,
-      cartellaId:cartellaId,
-      type:'scheda_valutazione',
-      title:'Scheda Valutazione',
-      silent:true,
-      modes:['compact','simple','alldays']
-    });
-  }catch(e){ console.warn('captureSchedaValutazione failed:',e); }
-}
-
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
-
-<!-- Print areas -->
-<div id="simple-print-area"></div>
-<div id="compact-print-area"></div>
-<div id="pdf-alldays-print-area"></div>
-
 </body>
 </html>
 

@@ -906,7 +906,7 @@ async function salvaDiabete() {
   if (editingDgNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDgNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false});
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
   }
   showLoading(false);
   if (result.error) {
@@ -916,7 +916,10 @@ async function salvaDiabete() {
     return;
   }
   toast(editingDgNoteId ? '✅ Scheda Diabete aggiornata!' : '✅ Dati diabete salvati nella cartella!','ok');
-  if (!editingDgNoteId && result.data?.[0]?.id) editingDgNoteId = result.data[0].id;
+  if (!editingDgNoteId && result.data?.id) editingDgNoteId = result.data.id;
+  if (window.capturePrintAndSave && editingDgNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDgNoteId, cartellaId: cartella_id, silent: true }).catch(()=>{});
+  }
 }
 
 function mostraSetupSQL() {

@@ -1,0 +1,60 @@
+Devi implementare la generazione automatica di un PNG di stampa ogni volta che si salva un documento, e salvarne l'URL nel database in modo che l'app paziente possa mostrarlo. Il database è già stato preparato: ogni tabella documenti ha una colonna print_image_url text e c'è un bucket Storage privato document-prints.
+
+Requisiti precisi:
+
+Quando: ogni volta che il dietista clicca "Salva" su uno di questi documenti:
+
+note_specialistiche (tutti i sottotipi: consiglio, dieta, ristorazione, pediatria, dca, questionario, ecc.)
+piani (piani alimentari)
+ncpt
+schede_valutazione
+bia_records
+Cosa generare: il PNG deve essere identico al foglio di stampa che già esiste nell'app dietista (quello mostrato dal pulsante Stampa / "Print Sheet"). Non reinventarlo: prendi il componente DOM della stampa esistente e usalo. Tipicamente si fa con html2canvas:
+
+import html2canvas from 'html2canvas'
+const node = document.getElementById('print-sheet')   // il nodo del foglio di stampa esistente
+const canvas = await html2canvas(node, { scale: 2, backgroundColor: '#ffffff', useCORS: true })
+const blob = await new Promise(r => canvas.toBlob(r, 'image/png'))
+
+Se il foglio di stampa non è montato in DOM al momento del salvataggio, montalo temporaneamente off-screen (es. position:absolute; left:-99999px; top:0;), aspetta await new Promise(r => requestAnimationFrame(r)), fai html2canvas, poi smontalo.
+
+Dove caricarlo: bucket Supabase Storage document-prints (privato), path:
+
+<patient_id>/<table>_<record_id>.png
+
+Trova il patient_id partendo dalla cartella_id del record con select patient_id from patient_dietitian where cartella_id = ....
+
+const path = `${patientId}/${table}_${recordId}.png`
+await supabase.storage.from('document-prints').upload(path, blob, {
+  contentType: 'image/png', upsert: true
+})
+
+Ottieni l'URL leggibile dal paziente: il bucket è privato, quindi NON usare getPublicUrl. Crea un signed URL di lunga durata (10 anni) e salvalo:
+
+const { data: signed } = await supabase.storage
+  .from('document-prints')
+  .createSignedUrl(path, 60 * 60 * 24 * 365 * 10)
+const printImageUrl = signed.signedUrl
+
+Salva l'URL nel record: aggiorna la colonna print_image_url della stessa tabella e dello stesso id:
+
+await supabase.from(table).update({ print_image_url: printImageUrl }).eq('id', recordId)
+
+NON metterlo dentro JSON (dati, meals, dati_extra, raw_data): deve stare nella colonna dedicata.
+
+Visibilità: il flag esistente visible_to_patient continua a controllare se il paziente vede il documento. Quando il dietista lo mette su false, il paziente non lo vede a prescindere dall'immagine. Quando è true, il paziente vede l'immagine PNG appena generata.
+
+Fai questo per TUTTI i tipi di documento, non solo BIA e NCPT. Attualmente sembra funzionare solo per quelli due — verifica e aggiungi anche per note_specialistiche, piani, schede_valutazione.
+
+RLS sullo Storage: le policy del bucket document-prints sono già configurate per permettere ai pazienti di leggere i propri file (path inizia col loro auth.uid()) e ai dietisti collegati di leggere/scrivere. Se l'upload fallisce con errore di permessi, il problema è nelle policy — segnalami.
+
+Test finale: dopo aver implementato, salva un documento di prova per ogni tipo, poi esegui in SQL Editor:
+
+select 'note_specialistiche' t, count(*) tot, count(print_image_url) imgs from note_specialistiche
+union all select 'piani', count(*), count(print_image_url) from piani
+union all select 'ncpt', count(*), count(print_image_url) from ncpt
+union all select 'schede_valutazione', count(*), count(print_image_url) from schede_valutazione
+union all select 'bia_records', count(*), count(print_image_url) from bia_records;
+
+Tutti i record nuovi devono avere imgs = tot (o crescere ad ogni salvataggio).
+

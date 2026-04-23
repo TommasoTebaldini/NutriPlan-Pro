@@ -2536,9 +2536,9 @@ async function salvaNotePaziente(consiglioId) {
   let result;
   const existing = noteConsigli[consiglioId];
   if (existing?.id) {
-    result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', existing.id);
+    result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', existing.id).select().single();
   } else {
-    result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false });
+    result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select().single();
   }
   showLoading(false);
   if (result.error) {
@@ -2549,11 +2549,15 @@ async function salvaNotePaziente(consiglioId) {
     }
     return;
   }
+  const savedId = result.data?.id || existing?.id;
   // Reload notes to get the new ID
   await caricaNoteConsigli(cartella_id);
   const stato = document.getElementById('note-stato-' + consiglioId);
   if (stato) stato.textContent = '✅ Nota salvata in cartella';
   toast('✅ Nota salvata!', 'ok');
+  if (window.capturePrintAndSave && savedId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedId, cartellaId: cartella_id, silent: true }).catch(()=>{});
+  }
 }
 
 function aggiornaCountSelezione() {

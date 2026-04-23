@@ -1053,7 +1053,7 @@ async function salvaSport() {
   if (editingSportNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingSportNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false});
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
   }
   showLoading(false);
   if (result.error) {
@@ -1061,12 +1061,9 @@ async function salvaSport() {
     return;
   }
   toast(editingSportNoteId ? '✅ Scheda Sport aggiornata!' : '✅ Scheda Sportiva salvata nella cartella!','ok');
-  if (!editingSportNoteId && result.data?.[0]?.id) editingSportNoteId = result.data[0].id;
+  if (!editingSportNoteId && result.data?.id) editingSportNoteId = result.data.id;
   if (window.capturePrintAndSave && editingSportNoteId) {
-    capturePrintAndSave({
-      table: 'note_specialistiche', recordId: editingSportNoteId, cartellaId: cartella_id,
-      type: 'sport', title: nota, silent: true
-    }).catch(() => {});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingSportNoteId, cartellaId: cartella_id, silent: true }).catch(()=>{});
   }
 }
 

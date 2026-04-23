@@ -996,7 +996,7 @@ async function salvaDisfagia() {
   if (editingDisNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDisNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false});
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
   }
   showLoading(false);
   if (result.error) {
@@ -1005,8 +1005,11 @@ async function salvaDisfagia() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (!editingDisNoteId && result.data?.[0]?.id) editingDisNoteId = result.data[0].id;
+  if (!editingDisNoteId && result.data?.id) editingDisNoteId = result.data.id;
   toast(!wasNew ? '✅ Scheda aggiornata!' : '✅ Scheda Disfagia salvata!', 'ok');
+  if (window.capturePrintAndSave && editingDisNoteId && cartella_id) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDisNoteId, cartellaId: cartella_id, silent: true }).catch(()=>{});
+  }
 }
 
 function mostraSetupSQL() {

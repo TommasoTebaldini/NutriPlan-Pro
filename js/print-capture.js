@@ -1,28 +1,27 @@
 // ═══════════════════════════════════════════════════════════════════
-// PRINT CAPTURE — render the on-screen "print sheet" to PNG, upload it
-// to the Supabase Storage bucket `document-prints` and store the public
-// URL in print_image_url on the source-table row (piani / ncpt /
-// bia_records / schede_valutazione / note_specialistiche).
+// PRINT CAPTURE — render the on-screen "print sheet" to PNG(s), upload
+// to the Supabase Storage bucket `document-prints` and store the signed
+// URL(s) in print_image_url on the source-table row.
+//
+// Long documents are sliced into A4-portrait pages. Each page is a
+// centered, white A4 sheet. Pages are uploaded as
+//   <patient_id>/<table>_<recordId>_p<N>.png
+// and a JSON array of signed URLs is saved when there are >1 pages.
+// Single-page documents keep the legacy plain-string URL for
+// backwards-compatibility with existing patient viewers.
 //
 // Public API:
-//   await capturePrintAndSave({
-//     table,       // required — source table name
-//     recordId,    // required — uuid of the row to update
-//     cartellaId,  // required — used to look up patient_id
-//     container,   // optional DOM element to capture (default: body)
-//     silent,      // optional — suppress success toast
-//     onclone,     // optional html2canvas onclone hook
-//     modes,       // optional — array of print modes to capture (default: ['compact'])
-//                       // options: 'compact', 'simple', 'alldays'
-//   })
-//
-// Storage path: <patient_id>/<table>_<recordId>_<mode>.png
+//   await capturePrintAndSave({ table, recordId, cartellaId,
+//                               container, silent, onclone })
 //
 // Requires `sb` (Supabase client) from js/utils.js.
 // ═══════════════════════════════════════════════════════════════════
 (function () {
-  const HTML2CANVAS_SRC = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+  const HTML2CANVAS_SRC = '/vendor/html2canvas.min.js';
   const BUCKET = 'document-prints';
+  // A4 portrait at ~96 DPI: 794 × 1123 px (ratio 1 : 1.4142)
+  const A4_RATIO = 297 / 210;            // height / width
+  const A4_RENDER_WIDTH = 850;           // px — html2canvas windowWidth
   let html2canvasPromise = null;
 
   function loadHtml2Canvas() {
@@ -65,88 +64,132 @@
     }
   }
 
-  async function renderToBlob(container, opts = {}) {
+  // Render the target into ONE big canvas, then slice into A4-portrait
+  // pages. Returns an array of PNG blobs (one per page).
+  async function renderToPagedBlobs(container, opts = {}) {
     const html2canvas = await loadHtml2Canvas();
-    const printMode = opts.printMode || 'compact';
-    
-    // Set flag to prevent print dialog from opening (functions check this flag)
-    window._capturingPrint = true;
-    
-    // Populate the appropriate print area before capturing
-    if (typeof window.stampaCompatta === 'function' && printMode === 'compact') {
-      window.stampaCompatta();
-    } else if (typeof window.stampaSemplice === 'function' && printMode === 'simple') {
-      window.stampaSemplice();
-    } else if (typeof window.stampaPDF === 'function' && printMode === 'alldays') {
-      window.stampaPDF();
-    }
-    
-    // Wait longer than the setTimeout(400) in stampa functions
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Clear flag
-    window._capturingPrint = false;
-    
-    // Get the appropriate print area element
-    let target;
-    if (printMode === 'compact') {
-      target = document.getElementById('compact-print-area') || container || document.body;
-    } else if (printMode === 'simple') {
-      target = document.getElementById('simple-print-area') || container || document.body;
-    } else if (printMode === 'alldays') {
-      target = document.getElementById('pdf-alldays-print-area') || container || document.body;
-    } else {
-      target = container || document.body;
-    }
-    
-    // Make sure the print area is visible for capture
-    const originalDisplay = target.style.display;
-    target.style.display = 'block';
-    
-    const canvas = await html2canvas(target, {
+    const target = container || document.body;
+
+    const fullCanvas = await html2canvas(target, {
       backgroundColor: '#ffffff',
       scale: opts.scale || 1.5,
       useCORS: true,
       logging: false,
-      windowWidth: opts.windowWidth || Math.max(1200, target.scrollWidth || 1200),
+      windowWidth: opts.windowWidth || A4_RENDER_WIDTH,
       onclone: (doc) => {
-        ['sidebar', 'sb-overlay', 'topbar'].forEach((id) => {
+        // Hide app chrome that should never appear in the printed sheet.
+        ['sidebar', 'sb-overlay', 'topbar', 'toast'].forEach((id) => {
           const el = doc.getElementById(id);
           if (el) el.style.display = 'none';
         });
-        doc.querySelectorAll('.no-print').forEach((el) => { el.style.display = 'none'; });
-        // Set the print mode for the captured image
-        doc.body.setAttribute('data-print-mode', printMode);
-        // Ensure print area is visible in cloned document
-        const printAreaId = printMode === 'compact' ? 'compact-print-area' : 
-                           printMode === 'simple' ? 'simple-print-area' : 'pdf-alldays-print-area';
-        const printArea = doc.getElementById(printAreaId);
-        if (printArea) printArea.style.display = 'block';
+        // Hide any toast / notification element regardless of id.
+        doc.querySelectorAll(
+          '.toast, .notification, [role="status"], [role="alert"], .no-print'
+        ).forEach((el) => { el.style.display = 'none'; });
+        if (doc.querySelector('[data-print-mode], #ped-compact-print-area, #pan-compact-print-area')) {
+          doc.body.setAttribute('data-print-mode', 'compact');
+        }
         if (typeof opts.onclone === 'function') opts.onclone(doc);
       },
     });
-    
-    // Restore original display
-    target.style.display = originalDisplay;
-    
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(
-        (b) => (b ? resolve(b) : reject(new Error('Canvas vuoto'))),
-        'image/png'
+
+    // Compute page height that preserves A4 portrait ratio for the
+    // captured width.
+    const pageWidth  = fullCanvas.width;
+    const pageHeight = Math.round(pageWidth * A4_RATIO);
+    const totalH    = fullCanvas.height;
+    const numPages  = Math.max(1, Math.ceil(totalH / pageHeight));
+
+    const blobs = [];
+    for (let i = 0; i < numPages; i++) {
+      const sliceY      = i * pageHeight;
+      const sliceHeight = Math.min(pageHeight, totalH - sliceY);
+
+      // Build a fresh A4 page with white background.
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width  = pageWidth;
+      pageCanvas.height = pageHeight;
+      const ctx = pageCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, pageWidth, pageHeight);
+
+      // For the LAST page, vertically-center any leftover content so it
+      // doesn't sit at the very top with empty space below.
+      const offsetY = (i === numPages - 1 && sliceHeight < pageHeight)
+        ? Math.round((pageHeight - sliceHeight) / 2)
+        : 0;
+
+      ctx.drawImage(
+        fullCanvas,
+        0, sliceY, pageWidth, sliceHeight,   // src
+        0, offsetY, pageWidth, sliceHeight   // dst
       );
-    });
+
+      const blob = await new Promise((res, rej) => {
+        pageCanvas.toBlob(
+          (b) => (b ? res(b) : rej(new Error('Canvas vuoto'))),
+          'image/png'
+        );
+      });
+      blobs.push(blob);
+    }
+    return blobs;
   }
 
-  async function uploadBlob(blob, path) {
+  async function uploadPage(blob, path) {
     const { error } = await sb.storage.from(BUCKET).upload(path, blob, {
       contentType: 'image/png',
       upsert: true,
       cacheControl: '3600',
     });
     if (error) throw error;
-    const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
-    return data?.publicUrl || null;
+    const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+    const { data, error: signErr } = await sb.storage
+      .from(BUCKET)
+      .createSignedUrl(path, TEN_YEARS);
+    if (signErr) throw signErr;
+    return data?.signedUrl || null;
   }
+
+  // Best-effort cleanup of stale pages from a previous save with more
+  // pages (e.g. content shrank). Ignores errors (file may not exist).
+  async function cleanupOldPages(folder, table, recordId, fromPageNum) {
+    try {
+      const { data: list } = await sb.storage.from(BUCKET).list(folder, {
+        limit: 100,
+        search: `${table}_${recordId}_p`,
+      });
+      if (!Array.isArray(list)) return;
+      const toRemove = list
+        .map((f) => f.name)
+        .filter((name) => {
+          const m = name.match(new RegExp(`^${table}_${recordId}_p(\\d+)\\.png$`));
+          return m && parseInt(m[1], 10) >= fromPageNum;
+        })
+        .map((name) => `${folder}/${name}`);
+      if (toRemove.length) await sb.storage.from(BUCKET).remove(toRemove);
+    } catch (_) { /* non-fatal */ }
+  }
+
+  // Diagnostic helper — call from browser console: testStorage()
+  window.testStorage = async function () {
+    console.log('=== STORAGE TEST ===');
+    if (typeof sb === 'undefined') { console.error('sb not defined'); return; }
+    if (!currentUser) { console.error('Not logged in'); return; }
+    console.log('User:', currentUser.id);
+    try {
+      const { data: buckets, error: lbErr } = await sb.storage.listBuckets();
+      if (lbErr) console.error('listBuckets error:', lbErr);
+      else console.log('Buckets visible:', buckets.map(b => b.name));
+    } catch (e) { console.error('listBuckets threw:', e); }
+    try {
+      const tinyBlob = new Blob([new Uint8Array([137,80,78,71,13,10,26,10])], { type: 'image/png' });
+      const path = `${currentUser.id}/__test_${Date.now()}.png`;
+      const { data, error } = await sb.storage.from(BUCKET).upload(path, tinyBlob, { upsert: true, contentType: 'image/png' });
+      if (error) console.error('Upload FAILED:', error);
+      else console.log('Upload OK:', data);
+    } catch (e) { console.error('Upload threw:', e); }
+  };
 
   async function capturePrintAndSave(opts = {}) {
     if (typeof sb === 'undefined') return null;
@@ -154,7 +197,6 @@
     const table = opts.table;
     const recordId = opts.recordId;
     const cartellaId = opts.cartellaId || window.currentCartellaId || null;
-    const modes = opts.modes || ['compact']; // Default to compact mode
 
     if (!table || !isUuid(recordId)) {
       console.warn('print-capture: missing table or recordId', { table, recordId });
@@ -171,38 +213,45 @@
     }
 
     try {
-      const urls = {};
-      for (const mode of modes) {
-        const path = `${patientId}/${table}_${recordId}_${mode}.png`;
-        const blob = await renderToBlob(opts.container, { ...opts, printMode: mode });
-        const url = await uploadBlob(blob, path);
-        if (!url) throw new Error(`URL non disponibile per mode: ${mode}`);
-        urls[mode] = url;
+      const blobs = await renderToPagedBlobs(opts.container, opts);
+      const numPages = blobs.length;
+
+      // Upload all pages → collect signed URLs
+      const urls = [];
+      for (let i = 0; i < numPages; i++) {
+        const path = `${patientId}/${table}_${recordId}_p${i + 1}.png`;
+        const url = await uploadPage(blobs[i], path);
+        if (!url) throw new Error(`URL pagina ${i + 1} non disponibile`);
+        urls.push(url);
       }
 
-      // Update database with all URLs
-      const updateData = {};
-      if (urls.compact) updateData.print_image_url_compact = urls.compact;
-      if (urls.simple) updateData.print_image_url_simple = urls.simple;
-      if (urls.alldays) updateData.print_image_url_alldays = urls.alldays;
-      // Set default to compact if not specified
-      if (!updateData.print_image_url) updateData.print_image_url = urls.compact;
+      // Remove stale pages from a previous (longer) save
+      await cleanupOldPages(patientId, table, recordId, numPages + 1);
+
+      // Backwards-compatible storage:
+      //   1 page  → plain URL string
+      //   N pages → JSON array string
+      const value = numPages === 1 ? urls[0] : JSON.stringify(urls);
 
       const { error } = await sb
         .from(table)
-        .update(updateData)
+        .update({ print_image_url: value })
         .eq('id', recordId);
       if (error) {
         console.warn(`print-capture: ${table}.update failed`, error.message);
-        if (window.toast && opts.silent !== true) toast('⚠️ Immagini caricate ma update fallito: ' + error.message, 'err');
-        return urls.compact;
+        if (window.toast && opts.silent !== true) toast('⚠️ Immagine caricata ma update fallito: ' + error.message, 'err');
+        return value;
       }
 
-      if (window.toast && opts.silent !== true) toast('🖼️ Immagini documento salvate', 'ok');
-      return urls.compact;
+      if (window.toast && opts.silent !== true) {
+        toast(numPages > 1
+          ? `🖼️ Documento salvato (${numPages} pagine)`
+          : '🖼️ Immagine documento salvata', 'ok');
+      }
+      return value;
     } catch (e) {
       console.error('print-capture failed:', e);
-      if (window.toast && opts.silent !== true) toast('❌ Salvataggio immagini fallito: ' + (e.message || e), 'err');
+      if (window.toast && opts.silent !== true) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
       return null;
     }
   }

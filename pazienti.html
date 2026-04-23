@@ -136,47 +136,6 @@
     </div>
   </div>
 </div>
-<!-- MODAL: SELEZIONE FORMATO STAMPA -->
-<div class="modal-bg" id="modal-print-format">
-  <div class="modal" style="max-width:480px">
-    <div class="mhdr">
-      <h2>🖼️ Scegli formato stampa</h2>
-      <button class="mclose" onclick="closeM('modal-print-format')">✕</button>
-    </div>
-    <div class="mbody" style="padding:20px 22px">
-      <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:18px;line-height:1.5">
-        Seleziona il formato di stampa che il paziente potrà visualizzare nella sua app.
-      </p>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <label style="display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);cursor:pointer;transition:border-color 0.2s">
-          <input type="radio" name="print-format" value="compact" checked style="width:18px;height:18px;accent-color:var(--teal)">
-          <div>
-            <div style="font-weight:600;font-size:13px;color:var(--slate-d)">📋 Compatta</div>
-            <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">Formato compatto con intestazioni verdi e kcal per alimento</div>
-          </div>
-        </label>
-        <label style="display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);cursor:pointer;transition:border-color 0.2s">
-          <input type="radio" name="print-format" value="simple" style="width:18px;height:18px;accent-color:var(--teal)">
-          <div>
-            <div style="font-weight:600;font-size:13px;color:var(--slate-d)">📄 Semplice</div>
-            <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">Formato semplice senza calcoli nutrizionali</div>
-          </div>
-        </label>
-        <label style="display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);cursor:pointer;transition:border-color 0.2s">
-          <input type="radio" name="print-format" value="alldays" style="width:18px;height:18px;accent-color:var(--teal)">
-          <div>
-            <div style="font-weight:600;font-size:13px;color:var(--slate-d)">📚 Completa</div>
-            <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">Tutti i giorni con tabelle nutrizionali complete</div>
-          </div>
-        </label>
-      </div>
-    </div>
-    <div class="mfoot">
-      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-print-format')">Annulla</button>
-      <button class="btn btn-primary btn-sm" onclick="_printFormatOk()">👁️ Rendi visibile</button>
-    </div>
-  </div>
-</div>
 <!-- MODAL: COLLEGA PAZIENTE -->
 <div class="modal-bg" id="modal-collega">
   <div class="modal" style="max-width:420px">
@@ -1016,66 +975,8 @@ async function _doToggleVisibility(table, itemId, btn) {
   toast(newVisible ? '👁️ Visibile al paziente' : '🙈 Nascosto al paziente', 'ok');
 }
 
-let currentPianoIdForFormat = null;
-let currentPianoBtnForFormat = null;
-
-function openPrintFormatModal(itemId, btn) {
-  currentPianoIdForFormat = itemId;
-  currentPianoBtnForFormat = btn;
-  // Reset to default
-  document.querySelector('input[name="print-format"][value="compact"]').checked = true;
-  openM('modal-print-format');
-}
-
-async function _printFormatOk() {
-  if (!currentPianoIdForFormat || !currentPianoBtnForFormat) {
-    closeM('modal-print-format');
-    return;
-  }
-  
-  const selectedFormat = document.querySelector('input[name="print-format"]:checked').value;
-  const btn = currentPianoBtnForFormat;
-  
-  // Update button state
-  btn.dataset.visible = 'true';
-  btn.style.color = '#0F766E';
-  btn.title = 'Nascondi al paziente';
-  btn.textContent = '👁️';
-  
-  // Update database
-  const { error } = await sb.from('piani').update({ 
-    visible_to_patient: true, 
-    print_format: selectedFormat 
-  }).eq('id', currentPianoIdForFormat);
-  
-  if (error) {
-    btn.dataset.visible = 'false';
-    btn.style.color = '#94A3B8';
-    btn.title = 'Mostra al paziente';
-    btn.textContent = '🙈';
-    toast('❌ ' + error.message, 'err');
-  } else {
-    toast('👁️ Visibile al paziente — formato: ' + selectedFormat, 'ok');
-  }
-  
-  closeM('modal-print-format');
-  currentPianoIdForFormat = null;
-  currentPianoBtnForFormat = null;
-}
-
 async function toggleItemVisibility(table, itemId) {
   const btn = document.getElementById('vis-btn-' + table + '-' + itemId);
-
-  // Per i piani: se si sta rendendo visibile, apri modal formato stampa
-  if (table === 'piani') {
-    const isCurrentlyVisible = btn ? btn.dataset.visible !== 'false' : true;
-    if (!isCurrentlyVisible) {
-      // Sta rendendo visibile → mostra modal formato stampa
-      openPrintFormatModal(itemId, btn);
-      return;
-    }
-    // Sta nascondendo → toggle diretto
-  }
 
   // Per le note specialistiche: se si sta rendendo visibile, apri modal sezioni
   if (table === 'note_specialistiche') {

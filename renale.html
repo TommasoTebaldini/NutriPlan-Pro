@@ -1116,7 +1116,7 @@ async function salvaRenale() {
   if (editingRenNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRenNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false});
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
   }
   showLoading(false);
   if (result.error) {
@@ -1125,8 +1125,11 @@ async function salvaRenale() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (!editingRenNoteId && result.data?.[0]?.id) editingRenNoteId = result.data[0].id;
+  if (!editingRenNoteId && result.data?.id) editingRenNoteId = result.data.id;
   toast(!wasNew ? '✅ Scheda IRC aggiornata!' : '✅ Dati IRC salvati nella cartella!', 'ok');
+  if (window.capturePrintAndSave && editingRenNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRenNoteId, cartellaId: cartella_id, silent: true }).catch(()=>{});
+  }
 }
 
 function mostraSetupSQL() {

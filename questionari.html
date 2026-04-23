@@ -2363,6 +2363,7 @@ async function salvaQuestionarioInCartella() {
   const now = dataVal ? new Date(dataVal + 'T12:00:00').toISOString() : new Date().toISOString();
   showLoading(true);
   let error;
+  let savedId = _editingNoteSpecId;
   if (_editingNoteSpecId) {
     const res = await sb.from('note_specialistiche').update({
       cartella_id: cartellaId,
@@ -2381,8 +2382,9 @@ async function salvaQuestionarioInCartella() {
       created_at: now,
       updated_at: now,
       visible_to_patient: false
-    });
+    }).select().single();
     error = res.error;
+    if (res.data?.id) savedId = res.data.id;
   }
   showLoading(false);
   if (error) {
@@ -2392,6 +2394,9 @@ async function salvaQuestionarioInCartella() {
       toast('❌ ' + error.message, 'err');
     }
     return;
+  }
+  if (window.capturePrintAndSave && savedId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedId, cartellaId: cartellaId, silent: true }).catch(()=>{});
   }
   const wasEditing = !!_editingNoteSpecId;
   const backCartellaId = _editingCartellaId;
@@ -2416,6 +2421,7 @@ async function salvaQFromBar() {
   const now = new Date().toISOString();
   showLoading(true);
   let error;
+  let savedId = _editingNoteSpecId;
   if (_editingNoteSpecId) {
     const res = await sb.from('note_specialistiche').update({
       cartella_id: cartellaId,
@@ -2434,13 +2440,17 @@ async function salvaQFromBar() {
       created_at: now,
       updated_at: now,
       visible_to_patient: false
-    });
+    }).select().single();
     error = res.error;
+    if (res.data?.id) savedId = res.data.id;
   }
   showLoading(false);
   if (error) {
     if (error.code === '42P01') { mostraSetupSQL(); } else { toast('❌ ' + error.message, 'err'); }
     return;
+  }
+  if (window.capturePrintAndSave && savedId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedId, cartellaId: cartellaId, silent: true }).catch(()=>{});
   }
   const wasEditing = !!_editingNoteSpecId;
   const backCartellaId = _editingCartellaId;

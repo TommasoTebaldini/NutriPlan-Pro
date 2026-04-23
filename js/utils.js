@@ -394,6 +394,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Global copyright footer on all DietPlan Pro pages using utils.js
+function ensureGlobalCopyright() {
+  if (document.getElementById('global-copyright')) return;
+  const el = document.createElement('footer');
+  el.id = 'global-copyright';
+  el.className = 'global-copyright';
+  el.textContent = `© ${new Date().getFullYear()} DietPlan Pro — Tutti i diritti riservati.`;
+  document.body.appendChild(el);
+}
+
+document.addEventListener('DOMContentLoaded', ensureGlobalCopyright);
+
 // ═══════════════════════════════════════════════════
 // CUSTOM CONFIRM DIALOG (shared)
 // ═══════════════════════════════════════════════════

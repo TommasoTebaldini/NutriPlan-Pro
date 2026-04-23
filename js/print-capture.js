@@ -64,13 +64,43 @@
     }
   }
 
+  // Hide toasts/notifications on the LIVE DOM while html2canvas works.
+  // Returns a restore() callback to undo the changes.
+  function hideTransientUI() {
+    const selectors = [
+      '#toast', '.toast',
+      '.notification',
+      '[role="status"]', '[role="alert"]',
+      '.no-print',
+    ];
+    const restored = [];
+    selectors.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el) => {
+        restored.push([el, el.style.visibility, el.style.opacity]);
+        el.style.visibility = 'hidden';
+        el.style.opacity = '0';
+      });
+    });
+    return function restore() {
+      restored.forEach(([el, vis, op]) => {
+        el.style.visibility = vis || '';
+        el.style.opacity = op || '';
+      });
+    };
+  }
+
   // Render the target into ONE big canvas, then slice into A4-portrait
   // pages. Returns an array of PNG blobs (one per page).
   async function renderToPagedBlobs(container, opts = {}) {
     const html2canvas = await loadHtml2Canvas();
     const target = container || document.body;
 
-    const fullCanvas = await html2canvas(target, {
+    // Hide toast/etc on the live DOM so html2canvas never sees them.
+    const restoreUI = hideTransientUI();
+
+    let fullCanvas;
+    try {
+    fullCanvas = await html2canvas(target, {
       backgroundColor: '#ffffff',
       scale: opts.scale || 1.5,
       useCORS: true,
@@ -134,6 +164,9 @@
       blobs.push(blob);
     }
     return blobs;
+    } finally {
+      restoreUI();
+    }
   }
 
   async function uploadPage(blob, path) {

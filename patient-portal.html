@@ -45,6 +45,20 @@
 .pp-tab.active{color:var(--teal);border-bottom-color:var(--teal);background:#F0FDF4}
 .pp-tab:hover{color:var(--slate-m);background:#F8FAFC}
 .pp-doc-content{background:#F8FAFC;border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:8px;font-size:13px;line-height:1.6;color:var(--slate-m);display:none}
+/* Image viewer modal */
+.iv-bg{position:fixed;inset:0;background:rgba(15,23,42,.85);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px}
+.iv-bg.open{display:flex}
+.iv-box{background:white;border-radius:12px;max-width:min(900px,95vw);width:100%;max-height:95vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.iv-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:#FAFBFC}
+.iv-title{flex:1;font-size:14px;font-weight:700;color:var(--slate);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.iv-pageinfo{font-size:12px;color:var(--slate-l);font-weight:600}
+.iv-close{background:#1E293B;color:white;border:none;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;font-family:inherit;line-height:1;display:flex;align-items:center;justify-content:center}
+.iv-body{flex:1;overflow:auto;background:#E2E8F0;display:flex;align-items:flex-start;justify-content:center;padding:16px;position:relative}
+.iv-body img{max-width:100%;height:auto;background:white;box-shadow:0 8px 24px rgba(0,0,0,.18);border-radius:4px}
+.iv-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);background:#FAFBFC;gap:8px}
+.iv-btn{background:var(--teal);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
+.iv-btn:disabled{background:#CBD5E1;cursor:not-allowed}
+.iv-dl{background:#1E293B;color:white;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 </style>
 </head>
 <body style="background:var(--bg)">
@@ -170,6 +184,26 @@
   </div>
 </div>
 
+<!-- Image viewer modal (multi-page documents) -->
+<div class="iv-bg" id="iv-bg" onclick="if(event.target===this)closeImageViewer()">
+  <div class="iv-box">
+    <div class="iv-hdr">
+      <span style="font-size:18px" id="iv-icon">📄</span>
+      <div class="iv-title" id="iv-title">Documento</div>
+      <span class="iv-pageinfo" id="iv-pageinfo"></span>
+      <button class="iv-close" onclick="closeImageViewer()" title="Chiudi">×</button>
+    </div>
+    <div class="iv-body" id="iv-body">
+      <img id="iv-img" alt="Pagina documento">
+    </div>
+    <div class="iv-nav">
+      <button class="iv-btn" id="iv-prev" onclick="ivPrev()">◀ Precedente</button>
+      <a class="iv-dl" id="iv-download" download target="_blank">⬇️ Scarica pagina</a>
+      <button class="iv-btn" id="iv-next" onclick="ivNext()">Successiva ▶</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
@@ -192,6 +226,75 @@ let diaryRealtimeChannel = null;
 let _docsRefreshTimer = null;
 
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// ═══════════════════════════════════════════════════
+// IMAGE VIEWER (multi-page print PNGs)
+// ═══════════════════════════════════════════════════
+// `print_image_url` may be either a single URL string OR a JSON array
+// string of URLs (one per A4 page). Parse defensively.
+function parsePrintUrls(value) {
+  if (!value || typeof value !== 'string') return [];
+  const trimmed = value.trim();
+  if (trimmed.startsWith('[')) {
+    try {
+      const arr = JSON.parse(trimmed);
+      return Array.isArray(arr) ? arr.filter(u => typeof u === 'string' && u) : [];
+    } catch(e) { /* fall through */ }
+  }
+  return [trimmed];
+}
+
+let _ivUrls = [];
+let _ivIdx = 0;
+function openImageViewer(urls, title, icon) {
+  if (!urls || !urls.length) { toast('Documento non disponibile', 'err'); return; }
+  _ivUrls = urls;
+  _ivIdx = 0;
+  document.getElementById('iv-title').textContent = title || 'Documento';
+  document.getElementById('iv-icon').textContent = icon || '📄';
+  ivShow();
+  document.getElementById('iv-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeImageViewer() {
+  document.getElementById('iv-bg').classList.remove('open');
+  document.body.style.overflow = '';
+  _ivUrls = []; _ivIdx = 0;
+}
+function ivShow() {
+  const total = _ivUrls.length;
+  const url = _ivUrls[_ivIdx];
+  document.getElementById('iv-img').src = url;
+  document.getElementById('iv-pageinfo').textContent = total > 1 ? `Pagina ${_ivIdx + 1} di ${total}` : '';
+  document.getElementById('iv-download').href = url;
+  document.getElementById('iv-prev').disabled = (_ivIdx === 0);
+  document.getElementById('iv-next').disabled = (_ivIdx >= total - 1);
+  // Reset scroll on page change
+  document.getElementById('iv-body').scrollTop = 0;
+}
+function ivPrev(){ if (_ivIdx > 0) { _ivIdx--; ivShow(); } }
+function ivNext(){ if (_ivIdx < _ivUrls.length - 1) { _ivIdx++; ivShow(); } }
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('iv-bg')?.classList.contains('open')) return;
+  if (e.key === 'Escape') closeImageViewer();
+  else if (e.key === 'ArrowLeft') ivPrev();
+  else if (e.key === 'ArrowRight') ivNext();
+});
+
+// Build a "👁 Visualizza" button HTML if the record has print images.
+// `key` is a unique id (table+recordId) that we use to look up urls
+// from a temporary in-memory map (avoids embedding full URLs in HTML).
+const _ivMap = {};
+function imgViewerBtn(key, title, icon) {
+  if (!_ivMap[key] || !_ivMap[key].length) return '';
+  const t = (title || '').replace(/'/g, "\\'");
+  const ic = (icon || '📄').replace(/'/g, "\\'");
+  return `<button onclick="openImageViewer(_ivMap['${key}'], '${esc(t)}', '${ic}')" style="background:var(--teal);color:white;border:none;border-radius:6px;padding:6px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit">👁 Visualizza</button>`;
+}
+function registerPrintUrls(key, value) {
+  const urls = parsePrintUrls(value);
+  if (urls.length) _ivMap[key] = urls;
+}
 
 let _tT = null;
 function toast(msg, type = 'ok') {
@@ -319,16 +422,23 @@ async function loadDiete() {
   let html = '';
 
   for (const p of piani) {
+    const nome = p.nome || 'Piano alimentare';
+    const ivKey = 'piani-' + p.id;
+    registerPrintUrls(ivKey, p.print_image_url);
+    const ivBtn = imgViewerBtn(ivKey, nome, '📋');
+    // If we have the printed image, use that as the primary viewer.
+    // Otherwise fall back to the existing structured-content toggle.
+    const fallbackBtn = ivBtn ? '' : `<button onclick="toggleDocContent('piano-${p.id}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>`;
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">📋</span>
       <div class="pp-doc-info">
-        <div class="pp-doc-title">${esc(p.nome || 'Piano alimentare')}</div>
+        <div class="pp-doc-title">${esc(nome)}</div>
         <div class="pp-doc-meta">Piano alimentare · ${fmtDate(p.saved_at || p.data_piano)}</div>
       </div>
       <span class="pp-doc-badge" style="background:#EFF6FF;color:#1D4ED8">Piano</span>
-      <button onclick="toggleDocContent('piano-${p.id}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>
+      ${ivBtn || fallbackBtn}
     </div>
-    <div class="pp-doc-content" id="doc-piano-${p.id}">${renderPianoContent(p)}</div>`;
+    ${ivBtn ? '' : `<div class="pp-doc-content" id="doc-piano-${p.id}">${renderPianoContent(p)}</div>`}`;
   }
 
   if (!html) {
@@ -371,64 +481,102 @@ async function loadDocuments() {
   for (const n of ncpts) {
     let pNome = '';
     try { const v = JSON.parse(n.valutazione || '{}'); pNome = v.nome || ''; } catch(e) { /* valutazione may not be valid JSON */ }
+    const title = 'NCPt' + (pNome ? ' — ' + pNome : '');
+    const ivKey = 'ncpt-' + n.id;
+    registerPrintUrls(ivKey, n.print_image_url);
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">📝</span>
       <div class="pp-doc-info">
-        <div class="pp-doc-title">NCPt${pNome ? ' — ' + esc(pNome) : ''}</div>
+        <div class="pp-doc-title">${esc(title)}</div>
         <div class="pp-doc-meta">Percorso nutrizionale · ${fmtDate(n.updated_at || n.created_at)}</div>
       </div>
       <span class="pp-doc-badge" style="background:#EDE9FE;color:#5B21B6">NCPt</span>
+      ${imgViewerBtn(ivKey, title, '📝')}
     </div>`;
   }
 
   // Render BIA records
   for (const b of biaRecords) {
+    const title = 'Misurazione BIA — ' + fmtDate(b.data_misura);
+    const ivKey = 'bia-' + b.id;
+    registerPrintUrls(ivKey, b.print_image_url);
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">⚡</span>
       <div class="pp-doc-info">
-        <div class="pp-doc-title">Misurazione BIA — ${fmtDate(b.data_misura)}</div>
+        <div class="pp-doc-title">${esc(title)}</div>
         <div class="pp-doc-meta">${b.peso ? 'Peso: ' + b.peso + ' kg' : ''}${b.bf_pct ? ' · BF: ' + b.bf_pct + '%' : ''}${b.ffm_kg ? ' · FFM: ' + b.ffm_kg + ' kg' : ''}${b.angolo_fase ? ' · φ: ' + b.angolo_fase + '°' : ''}</div>
       </div>
       <span class="pp-doc-badge" style="background:#EFF6FF;color:#1D4ED8">BIA</span>
+      ${imgViewerBtn(ivKey, title, '⚡')}
     </div>`;
   }
 
   // Render Schede Valutazione
   for (const s of schede) {
+    const title = 'Scheda valutazione' + (s.nome ? ' — ' + s.nome : '');
+    const ivKey = 'sched-' + s.id;
+    registerPrintUrls(ivKey, s.print_image_url);
     html += `<div class="pp-doc-item">
       <span class="pp-doc-icon">📊</span>
       <div class="pp-doc-info">
-        <div class="pp-doc-title">Scheda valutazione${s.nome ? ' — ' + esc(s.nome) : ''}</div>
+        <div class="pp-doc-title">${esc(title)}</div>
         <div class="pp-doc-meta">Valutazione · ${fmtDate(s.created_at)}</div>
       </div>
       <span class="pp-doc-badge" style="background:#F0FDF4;color:#15803D">Valutazione</span>
+      ${imgViewerBtn(ivKey, title, '📊')}
     </div>`;
   }
 
-  // Render Note Specialistiche (filter out questionari type)
+  // Render Note Specialistiche — show SPECIFIC name per record
+  // (e.g. "Consigli per Diabete tipo 2", "Scheda Sport — Calcio", etc.)
+  const NOTE_LABELS = {
+    questionario:  { badge: 'Questionario', icon: '📋', col: 'background:#F0F9FF;color:#0369A1' },
+    consiglio:     { badge: 'Consiglio',    icon: '💡', col: 'background:#FEF3C7;color:#92400E' },
+    sport:         { badge: 'Sport',        icon: '🏃', col: 'background:#FEF2F2;color:#B91C1C' },
+    diabete:       { badge: 'Diabete',      icon: '🩺', col: 'background:#FEF2F2;color:#9D174D' },
+    renale:        { badge: 'Renale',       icon: '🧪', col: 'background:#EEF2FF;color:#3730A3' },
+    pancreas:      { badge: 'Pancreas',     icon: '🩻', col: 'background:#FFF7ED;color:#9A3412' },
+    disfagia:      { badge: 'Disfagia',     icon: '🥄', col: 'background:#F0FDFA;color:#0F766E' },
+    chetogenica:   { badge: 'Chetogenica',  icon: '🥑', col: 'background:#ECFDF5;color:#047857' },
+    pediatria:     { badge: 'Pediatria',    icon: '👶', col: 'background:#FDF2F8;color:#9D174D' },
+    dna:           { badge: 'Nutrigenetica',icon: '🧬', col: 'background:#F5F3FF;color:#6D28D9' },
+    ristorazione:  { badge: 'Ristorazione', icon: '🍽️', col: 'background:#FFF7ED;color:#7C2D12' },
+    paziente_sano: { badge: 'Paziente Sano',icon: '🌿', col: 'background:#F0FDF4;color:#15803D' },
+  };
+  function noteTitle(n, d) {
+    // Pick the most descriptive name available in the JSON `dati` payload,
+    // falling back to the free-text `nota` and finally to the label.
+    if (n.tipo === 'consiglio')    return d.consiglio_nome || n.nota || 'Consiglio';
+    if (n.tipo === 'questionario') return d.questionario   || n.nota || 'Questionario';
+    const candidates = [
+      d.titolo, d.nome, d.title, d.diagnosi, d.patologia, d.sport,
+      d.fase, d.tipo_dieta, d.protocollo, n.nota,
+    ].filter(x => typeof x === 'string' && x.trim());
+    return candidates[0] || (NOTE_LABELS[n.tipo]?.badge || 'Nota specialistica');
+  }
   for (const n of noteSpec) {
-    const isQ = n.tipo === 'questionario';
-    const isC = n.tipo === 'consiglio';
-    let title = n.nota || 'Nota specialistica';
-    let badge = 'Nota';
-    let badgeColor = 'background:#FEF3C7;color:#92400E';
+    let d = {};
     let stampaHtml = null;
     try {
-      const d = JSON.parse(n.dati || '{}');
-      if (isQ) { badge = 'Questionario'; badgeColor = 'background:#F0F9FF;color:#0369A1'; title = d.questionario || title; }
-      if (isC) { badge = 'Consiglio'; badgeColor = 'background:#FEF3C7;color:#92400E'; title = d.consiglio_nome || title; }
+      d = JSON.parse(n.dati || '{}');
       if (d.stampa_html) stampaHtml = d.stampa_html;
     } catch(e) { /* dati may not be valid JSON */ }
-    const mapKey = 'ns-' + n.id;
-    if (stampaHtml) _stampaHtmlMap[mapKey] = stampaHtml;
+    const meta = NOTE_LABELS[n.tipo] || { badge: 'Nota', icon: '🗒️', col: 'background:#FEF3C7;color:#92400E' };
+    const title = noteTitle(n, d);
+    const ivKey = 'ns-' + n.id;
+    registerPrintUrls(ivKey, n.print_image_url);
+    if (stampaHtml) _stampaHtmlMap[ivKey] = stampaHtml;
+    const ivBtn = imgViewerBtn(ivKey, title, meta.icon);
+    // Prefer the printed image; fall back to legacy stampa_html viewer.
+    const viewBtn = ivBtn || (stampaHtml ? `<button onclick="apriStampaSpec('${ivKey}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>` : '');
     html += `<div class="pp-doc-item">
-      <span class="pp-doc-icon">${isQ ? '📋' : isC ? '💡' : '🗒️'}</span>
+      <span class="pp-doc-icon">${meta.icon}</span>
       <div class="pp-doc-info">
-        <div class="pp-doc-title">${esc(title.substring(0, 80))}${title.length > 80 ? '...' : ''}</div>
-        <div class="pp-doc-meta">${badge} · ${fmtDate(n.created_at)}</div>
+        <div class="pp-doc-title">${esc(title.substring(0, 90))}${title.length > 90 ? '…' : ''}</div>
+        <div class="pp-doc-meta">${meta.badge} · ${fmtDate(n.created_at)}</div>
       </div>
-      <span class="pp-doc-badge" style="${badgeColor}">${badge}</span>
-      ${stampaHtml ? `<button onclick="apriStampaSpec('${mapKey}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>` : ''}
+      <span class="pp-doc-badge" style="${meta.col}">${meta.badge}</span>
+      ${viewBtn}
     </div>`;
   }
 

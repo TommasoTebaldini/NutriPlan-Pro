@@ -116,6 +116,13 @@
         doc.querySelectorAll(
           '.toast, .notification, [role="status"], [role="alert"], .no-print'
         ).forEach((el) => { el.style.display = 'none'; });
+        // Remove sidebar-related layout offset so content is horizontally centred.
+        const mainEl = doc.getElementById('main');
+        if (mainEl) {
+          mainEl.style.marginLeft = '0';
+          mainEl.style.paddingLeft = '16px';
+          mainEl.style.paddingRight = '16px';
+        }
         if (doc.querySelector('[data-print-mode], #ped-compact-print-area, #pan-compact-print-area')) {
           doc.body.setAttribute('data-print-mode', 'compact');
         }

@@ -158,6 +158,47 @@
 
 <!-- MODAL: NUOVO DOCUMENTO -->
 
+<!-- MODAL: FORMATO PIANO PAZIENTE -->
+<div class="modal-bg" id="modal-piano-formato">
+  <div class="modal" style="max-width:460px">
+    <div class="mhdr">
+      <h2>📋 Scegli il formato per il paziente</h2>
+      <button class="mclose" onclick="closeM('modal-piano-formato')">✕</button>
+    </div>
+    <div class="mbody" style="padding:20px 22px">
+      <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:18px;line-height:1.5">
+        Il piano verrà convertito in immagine nel formato scelto e reso visibile al paziente nell'app. Sarai reindirizzato all'editor per generare l'immagine.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="_pianoFormatoOk('compatta')" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:all .15s" onmouseover="this.style.borderColor='#16A34A'" onmouseout="this.style.borderColor='#86EFAC'">
+          <span style="font-size:22px">📋</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#15803D">Compatta</div>
+            <div style="font-size:11.5px;color:#166534;margin-top:2px">Layout moderno con kcal per pasto, intestazione colorata e box macronutrienti. Consigliato per la maggior parte dei pazienti.</div>
+          </div>
+        </button>
+        <button onclick="_pianoFormatoOk('semplice')" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#F0F9FF;border:1.5px solid #7DD3FC;border-radius:10px;cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:all .15s" onmouseover="this.style.borderColor='#0369A1'" onmouseout="this.style.borderColor='#7DD3FC'">
+          <span style="font-size:22px">📄</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#0369A1">Semplice</div>
+            <div style="font-size:11.5px;color:#1e40af;margin-top:2px">Solo alimenti e grammaggi senza valori nutrizionali dettagliati. Ideale per pazienti che preferiscono un formato pulito e leggibile.</div>
+          </div>
+        </button>
+        <button onclick="_pianoFormatoOk('normale')" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#FAFBFC;border:1.5px solid var(--border-d);border-radius:10px;cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:all .15s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-d)'">
+          <span style="font-size:22px">📊</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--slate)">Normale (tabella completa)</div>
+            <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">Tabella dettagliata con tutti i valori nutrizionali per ogni alimento. Per pazienti avanzati o con esigenze specifiche.</div>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-piano-formato')">Annulla</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
@@ -878,6 +919,23 @@ const SPEC_SUBSECTIONS = {
 };
 
 let _specSectionsPending = null; // { itemId, tipo, btn }
+let _pianoFormatoPending = null; // { pianoId, btn }
+
+function openPianoFormatoModal(pianoId, btn) {
+  _pianoFormatoPending = { pianoId, btn };
+  openM('modal-piano-formato');
+}
+
+function _pianoFormatoOk(formato) {
+  if (!_pianoFormatoPending) return;
+  const { pianoId } = _pianoFormatoPending;
+  _pianoFormatoPending = null;
+  closeM('modal-piano-formato');
+  sessionStorage.setItem('loadPianoId', pianoId);
+  sessionStorage.setItem('impostaVisibile_formato', formato);
+  sessionStorage.setItem('impostaVisibile_cartellaId', cartellaAperta || '');
+  window.location.href = 'app.html';
+}
 
 function openSpecSectionsModal(itemId, tipo, btn) {
   const subs = SPEC_SUBSECTIONS[tipo];
@@ -977,6 +1035,16 @@ async function _doToggleVisibility(table, itemId, btn) {
 
 async function toggleItemVisibility(table, itemId) {
   const btn = document.getElementById('vis-btn-' + table + '-' + itemId);
+
+  // Per i piani: se si sta rendendo visibile, chiedi il formato PNG
+  if (table === 'piani') {
+    const isCurrentlyVisible = btn ? btn.dataset.visible !== 'false' : true;
+    if (!isCurrentlyVisible) {
+      openPianoFormatoModal(itemId, btn);
+      return;
+    }
+    // Nascondere → toggle diretto (senza scegliere formato)
+  }
 
   // Per le note specialistiche: se si sta rendendo visibile, apri modal sezioni
   if (table === 'note_specialistiche') {

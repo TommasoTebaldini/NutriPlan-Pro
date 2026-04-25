@@ -59,6 +59,20 @@
 .iv-btn{background:var(--teal);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
 .iv-btn:disabled{background:#CBD5E1;cursor:not-allowed}
 .iv-dl{background:#1E293B;color:white;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+/* Privacy / Consent styles */
+.pc-card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.pc-card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pc-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0}
+.pc-badge.pending{background:#FEF3C7;color:#92400E}
+.pc-badge.signed{background:#DCFCE7;color:#166534}
+.pc-consent-text{font-size:11.5px;color:var(--slate);line-height:1.75;max-height:380px;overflow-y:auto;padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);white-space:pre-wrap;font-family:'DM Sans',sans-serif;margin-bottom:12px}
+.pc-consent-text h3{font-size:12.5px;font-weight:700;margin:14px 0 5px;color:var(--slate)}
+.pc-sign-area{background:#F0FDF4;border:1.5px solid #A7F3D0;border-radius:10px;padding:14px 16px;margin-top:8px}
+.pc-sign-area label{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--slate);line-height:1.5;cursor:pointer}
+.pc-sign-area input[type=checkbox]{width:16px;height:16px;flex-shrink:0;margin-top:2px;accent-color:var(--teal)}
+.pc-sign-btn{margin-top:12px;background:var(--teal);color:white;border:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.pc-sign-btn:hover{background:var(--teal-d)}
+.pc-sign-btn:disabled{opacity:.5;cursor:not-allowed}
 </style>
 </head>
 <body style="background:var(--bg)">
@@ -76,6 +90,7 @@
     <div class="pp-tab" onclick="switchPPTab('docs')" id="pp-tab-docs">📄 Documenti</div>
     <div class="pp-tab" onclick="switchPPTab('diary')" id="pp-tab-diary">📓 Diario</div>
     <div class="pp-tab" onclick="switchPPTab('chat')" id="pp-tab-chat">💬 Chat</div>
+    <div class="pp-tab" onclick="switchPPTab('privacy')" id="pp-tab-privacy">📋 Privacy</div>
   </div>
 
   <!-- PROFILE TAB -->
@@ -169,6 +184,16 @@
         <div id="pp-diary-list">
           <div class="pp-empty">Caricamento diario...</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY TAB -->
+  <div id="pp-panel-privacy" style="display:none">
+    <div class="pp-section">
+      <div class="pp-section-hdr">📋 Privacy e Consenso al Trattamento dei Dati</div>
+      <div class="pp-section-body" id="pp-consents-list">
+        <div class="pp-empty">Caricamento...</div>
       </div>
     </div>
   </div>
@@ -338,6 +363,20 @@ async function init() {
   await loadDiary();
   setupDiaryRealtime();
   await loadChat();
+  await checkPendingConsents();
+}
+
+async function checkPendingConsents() {
+  if (!linkedCartelle.length) return;
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  const { data } = await sb.from('patient_consents')
+    .select('id').in('cartella_id', cartellaIds)
+    .eq('visible_to_patient', true).is('signed_at', null);
+  const pending = (data || []).length;
+  if (pending > 0) {
+    const tabEl = document.getElementById('pp-tab-privacy');
+    if (tabEl) tabEl.innerHTML = `📋 Privacy <span style="background:#EF4444;color:white;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:4px">${pending}</span>`;
+  }
 }
 
 async function doLogout() {
@@ -349,10 +388,11 @@ async function doLogout() {
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════
 function switchPPTab(tab) {
-  ['profile', 'dieta', 'docs', 'diary', 'chat'].forEach(t => {
+  ['profile', 'dieta', 'docs', 'diary', 'chat', 'privacy'].forEach(t => {
     document.getElementById('pp-panel-' + t).style.display = t === tab ? '' : 'none';
     document.getElementById('pp-tab-' + t).classList.toggle('active', t === tab);
   });
+  if (tab === 'privacy') loadConsents();
 }
 
 // ═══════════════════════════════════════════════════
@@ -994,6 +1034,86 @@ async function markDietitianMessagesAsRead() {
     .eq('patient_id', currentUser.id)
     .eq('sender_role', 'dietitian')
     .is('read_at', null);
+}
+
+// ═══════════════════════════════════════════════════
+// PRIVACY / CONSENSO
+// ═══════════════════════════════════════════════════
+async function loadConsents() {
+  const container = document.getElementById('pp-consents-list');
+  if (!container) return;
+
+  if (!linkedCartelle.length) {
+    container.innerHTML = '<div class="pp-empty">Non sei ancora collegato a nessun nutrizionista.</div>';
+    return;
+  }
+
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  const { data: consents, error } = await sb.from('patient_consents')
+    .select('*')
+    .in('cartella_id', cartellaIds)
+    .eq('visible_to_patient', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    container.innerHTML = `<div class="pp-empty">Errore caricamento: ${esc(error.message)}</div>`;
+    return;
+  }
+
+  if (!consents || !consents.length) {
+    container.innerHTML = '<div class="pp-empty" style="padding:32px 16px"><div style="font-size:36px;margin-bottom:8px">📋</div><div>Nessun modulo di consenso da firmare al momento.<br><span style="font-size:11.5px">Apparirà qui quando il tuo nutrizionista lo invierà.</span></div></div>';
+    return;
+  }
+
+  const fmtDate = d => d ? new Date(d).toLocaleString('it', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+
+  let html = '';
+  for (const c of consents) {
+    const isSigned = !!c.signed_at;
+    const badgeHtml = isSigned
+      ? `<span class="pc-badge signed">✅ Firmato il ${fmtDate(c.signed_at)}</span>`
+      : `<span class="pc-badge pending">⏳ In attesa di firma</span>`;
+
+    const signAreaHtml = isSigned ? '' : `
+      <div class="pc-sign-area">
+        <label>
+          <input type="checkbox" id="consent-check-${c.id}" onchange="document.getElementById('consent-btn-${c.id}').disabled = !this.checked">
+          Ho letto e compreso l'informativa. Acconsento al trattamento dei miei dati personali e sanitari secondo quanto descritto, ai sensi dell'art. 9 del Reg. UE 2016/679 (GDPR).
+        </label>
+        <button class="pc-sign-btn" id="consent-btn-${c.id}" disabled onclick="signConsent('${c.id}')">✍️ Firma il consenso</button>
+      </div>`;
+
+    html += `<div class="pc-card" id="consent-card-${c.id}">
+      <div class="pc-card-hdr">
+        <div style="flex:1">
+          <div style="font-size:13.5px;font-weight:700;color:var(--slate)">📋 Informativa Privacy e Consenso al Trattamento dei Dati</div>
+          <div style="font-size:11.5px;color:var(--slate-l);margin-top:3px">Versione ${esc(c.consent_version || '1.0')} · Inviato il ${fmtDate(c.created_at)}</div>
+        </div>
+        ${badgeHtml}
+      </div>
+      <div class="pc-consent-text">${c.consent_text || ''}</div>
+      ${signAreaHtml}
+    </div>`;
+  }
+  container.innerHTML = html;
+}
+
+async function signConsent(consentId) {
+  const btn = document.getElementById('consent-btn-' + consentId);
+  if (btn) { btn.disabled = true; btn.textContent = 'Firma in corso...'; }
+
+  const { error } = await sb.from('patient_consents')
+    .update({ signed_at: new Date().toISOString(), sign_method: 'digital_checkbox' })
+    .eq('id', consentId);
+
+  if (error) {
+    toast('❌ Errore firma: ' + error.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = '✍️ Firma il consenso'; }
+    return;
+  }
+
+  toast('✅ Consenso firmato con successo!', 'ok');
+  await loadConsents();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

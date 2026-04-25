@@ -106,6 +106,7 @@
 .stor-chart-full{grid-column:span 2}
 .stor-chart-card{background:white;border:1px solid var(--border);border-radius:10px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .stor-chart-card h4{font-size:10.5px;font-weight:700;color:var(--slate-m);margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.4px}
+.stor-chart-wrap{position:relative;height:120px}
 .stor-no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:var(--slate-l);font-size:13px;gap:8px;text-align:center}
 /* Print styles */
 @media print{
@@ -182,8 +183,8 @@
   <div class="chat-container" id="chat-container">
     <!-- Left: Patient list -->
     <div class="chat-sidebar" id="chat-sidebar-panel">
-      <div class="chat-sidebar-hdr">💬 Conversazioni</div>
-      <div class="chat-search"><input type="text" id="chat-search-input" placeholder="Cerca paziente..." oninput="filterChatPatients()"></div>
+      <div class="chat-sidebar-hdr">💬 <span data-i18n="chat.conversations">Conversazioni</span></div>
+      <div class="chat-search"><input type="text" id="chat-search-input" data-i18n-placeholder="chat.search_patient" placeholder="Cerca paziente..." oninput="filterChatPatients()"></div>
       <div class="chat-list" id="chat-patient-list">
         <div style="padding:20px;text-align:center;color:var(--slate-l);font-size:12.5px">Caricamento...</div>
       </div>
@@ -201,6 +202,7 @@
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
+<script src="js/lang.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/print-capture.js"></script>
 <script>
@@ -354,10 +356,10 @@ async function selectPatient(patientId) {
       <h3>${esc(p.name)}</h3>
     </div>
     <div class="chat-tabs">
-      <div class="chat-tab active" id="tab-chat" onclick="switchChatTab('chat')">💬 Messaggi</div>
-      <div class="chat-tab" id="tab-andamento" onclick="switchChatTab('andamento')">📈 Diario</div>
-      <div class="chat-tab" id="tab-privacy" onclick="switchChatTab('privacy')">📋 Privacy</div>
-      <div class="chat-tab" id="tab-storico" onclick="switchChatTab('storico')">📊 Storico Clinico</div>
+      <div class="chat-tab active" id="tab-chat" onclick="switchChatTab('chat')"><span data-i18n="chat.tab_chat">💬 Messaggi</span></div>
+      <div class="chat-tab" id="tab-andamento" onclick="switchChatTab('andamento')"><span data-i18n="chat.tab_andamento">📈 Diario</span></div>
+      <div class="chat-tab" id="tab-privacy" onclick="switchChatTab('privacy')"><span data-i18n="chat.tab_privacy">📋 Privacy</span></div>
+      <div class="chat-tab" id="tab-storico" onclick="switchChatTab('storico')"><span data-i18n="chat.tab_storico">📊 Storico Clinico</span></div>
     </div>
     <div id="chat-tab-body" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
       <div class="chat-messages" id="chat-messages-area">
@@ -761,37 +763,37 @@ async function loadPrivacy() {
     ? 'background:#D1FAE5;color:#065F46'
     : consent ? 'background:#FEF3C7;color:#92400E' : 'background:#F1F5F9;color:#475569';
   const statusLabel = isSigned
-    ? '✅ Firmato il ' + signedDate
-    : consent ? '⏳ In attesa di firma del paziente' : '📭 Nessun modulo inviato';
+    ? t('priv.signed') + ' ' + signedDate
+    : consent ? t('priv.pending') : t('priv.none');
 
   panel.innerHTML = `<div class="priv-panel">
     <div class="priv-card">
       <div class="priv-card-hdr">
         <span class="priv-status-badge" style="${statusStyle}">${statusLabel}</span>
         <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm no-print" onclick="printPrivacy()">🖨️ Stampa</button>
-          ${!consent ? `<button class="btn btn-primary btn-sm no-print" onclick="createConsent('${p.cartellaId}','${esc(p.name)}','${esc(dietEmail)}')">📤 Crea e invia</button>` : ''}
-          ${consent && !isSigned ? `<button class="btn btn-ghost btn-sm no-print" style="color:#DC2626" onclick="revokeConsent('${consentId}')">🗑️ Annulla</button>` : ''}
+          <button class="btn btn-ghost btn-sm no-print" onclick="printPrivacy()">${t('priv.print')}</button>
+          ${!consent ? `<button class="btn btn-primary btn-sm no-print" onclick="createConsent('${p.cartellaId}','${esc(p.name)}','${esc(dietEmail)}')">${t('priv.create')}</button>` : ''}
+          ${consent && !isSigned ? `<button class="btn btn-ghost btn-sm no-print" style="color:#DC2626" onclick="revokeConsent('${consentId}')">${t('priv.revoke')}</button>` : ''}
         </div>
       </div>
     </div>
 
     <div class="priv-card" id="privacy-doc-wrap">
       <div class="priv-card-hdr">
-        <span style="font-size:12px;font-weight:700;color:var(--slate);flex:1">📄 Testo del consenso informato</span>
-        ${!isSigned ? `<button class="btn btn-ghost btn-sm no-print" id="priv-edit-btn" onclick="toggleConsentEdit('${consentId||''}')">✏️ Modifica</button>` : ''}
+        <span style="font-size:12px;font-weight:700;color:var(--slate);flex:1">📄 ${t('priv.title')}</span>
+        ${!isSigned ? `<button class="btn btn-ghost btn-sm no-print" id="priv-edit-btn" onclick="toggleConsentEdit('${consentId||''}')">${t('priv.edit')}</button>` : ''}
       </div>
       <div class="priv-card-body">
         <div class="priv-consent-view" id="consent-view">${consentText}</div>
         <div id="consent-edit-wrap" style="display:none">
           <div class="priv-edit-area" id="consent-editor" contenteditable="true"></div>
           <div class="priv-edit-actions">
-            ${consentId ? `<button class="btn btn-primary btn-sm" onclick="saveConsentForPatient('${consentId}')">💾 Salva per questo paziente</button>` : ''}
-            <button class="btn btn-ghost btn-sm" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE" onclick="saveConsentAsTemplate()">🌐 Salva come modello per tutti i pazienti</button>
-            <button class="btn btn-ghost btn-sm" onclick="toggleConsentEdit()">✕ Annulla</button>
+            ${consentId ? `<button class="btn btn-primary btn-sm" onclick="saveConsentForPatient('${consentId}')">${t('priv.save_patient')}</button>` : ''}
+            <button class="btn btn-ghost btn-sm" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE" onclick="saveConsentAsTemplate()">${t('priv.save_template')}</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleConsentEdit()">${t('priv.cancel_edit')}</button>
           </div>
         </div>
-        ${isSigned ? `<div style="margin-top:12px;padding:10px 14px;background:#D1FAE5;border-radius:8px;font-size:12px;color:#065F46;font-weight:700">✅ Consenso firmato digitalmente dal paziente il ${signedDate}</div>` : ''}
+        ${isSigned ? `<div style="margin-top:12px;padding:10px 14px;background:#D1FAE5;border-radius:8px;font-size:12px;color:#065F46;font-weight:700">✅ ${t('priv.signed')} ${signedDate}</div>` : ''}
       </div>
     </div>
   </div>`;
@@ -974,13 +976,13 @@ async function loadStorico(limitMonths) {
 
   const months = limitMonths || 0;
   const filterHTML = `<div class="stor-filter-bar no-print">
-    <span style="font-size:12px;color:var(--slate-l);font-weight:600">Periodo:</span>
+    <span style="font-size:12px;color:var(--slate-l);font-weight:600">${t('stor.period')}</span>
     <select onchange="loadStorico(parseInt(this.value)||0)">
-      <option value="0" ${!months?'selected':''}>Tutto</option>
-      <option value="6" ${months===6?'selected':''}>Ultimi 6 mesi</option>
-      <option value="12" ${months===12?'selected':''}>Ultimo anno</option>
+      <option value="0" ${!months?'selected':''}>${t('stor.all')}</option>
+      <option value="6" ${months===6?'selected':''}>${t('stor.last6')}</option>
+      <option value="12" ${months===12?'selected':''}>${t('stor.last12')}</option>
     </select>
-    <button class="btn btn-ghost btn-sm" onclick="printStorico()">🖨️ Stampa report</button>
+    <button class="btn btn-ghost btn-sm" onclick="printStorico()">🖨️ ${t('stor.print')}</button>
   </div>`;
 
   const prev = schede.length >= 2 ? schede[schede.length-2] : null;
@@ -993,24 +995,24 @@ async function loadStorico(limitMonths) {
     return `<div class="stor-stat-delta" style="color:${color}">${d>0?'+':''}${d}</div>`;
   }
 
-  const headerHTML = `<div class="stor-header no-print"><span style="font-size:22px">📊</span><h3>Storico Clinico — ${esc(p.name)}</h3><span style="font-size:11px;opacity:.75">${schede.length} valutazion${schede.length===1?'e':'i'}</span></div>`;
+  const headerHTML = `<div class="stor-header no-print"><span style="font-size:22px">📊</span><h3>${t('stor.title')} — ${esc(p.name)}</h3><span style="font-size:11px;opacity:.75">${schede.length} ${schede.length===1?t('stor.valutazione'):t('stor.valutazioni')}</span></div>`;
 
   const summaryHTML = `<div class="stor-stat-grid">
-    ${last.peso ? `<div class="stor-stat"><div class="stor-stat-val">${last.peso}</div><div class="stor-stat-lbl">Peso kg</div>${dlt(last.peso,prev?.peso)}</div>` : ''}
-    ${lastBMI ? `<div class="stor-stat"><div class="stor-stat-val">${lastBMI}</div><div class="stor-stat-lbl">BMI</div>${dlt(lastBMI,prevBMI)}</div>` : ''}
-    ${last.massa_grassa_pct ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_grassa_pct}%</div><div class="stor-stat-lbl">Massa grassa</div>${dlt(last.massa_grassa_pct,prev?.massa_grassa_pct)}</div>` : ''}
-    ${last.massa_magra ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_magra}</div><div class="stor-stat-lbl">Massa magra kg</div>${dlt(last.massa_magra,prev?.massa_magra)}</div>` : ''}
-    ${last.vita ? `<div class="stor-stat"><div class="stor-stat-val">${last.vita}</div><div class="stor-stat-lbl">Vita cm</div>${dlt(last.vita,prev?.vita)}</div>` : ''}
-    <div class="stor-stat"><div class="stor-stat-val">${schede.length}</div><div class="stor-stat-lbl">Valutazioni</div></div>
+    ${last.peso ? `<div class="stor-stat"><div class="stor-stat-val">${last.peso}</div><div class="stor-stat-lbl">${t('stor.peso')}</div>${dlt(last.peso,prev?.peso)}</div>` : ''}
+    ${lastBMI ? `<div class="stor-stat"><div class="stor-stat-val">${lastBMI}</div><div class="stor-stat-lbl">${t('stor.bmi')}</div>${dlt(lastBMI,prevBMI)}</div>` : ''}
+    ${last.massa_grassa_pct ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_grassa_pct}%</div><div class="stor-stat-lbl">${t('stor.massa_grassa')}</div>${dlt(last.massa_grassa_pct,prev?.massa_grassa_pct)}</div>` : ''}
+    ${last.massa_magra ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_magra}</div><div class="stor-stat-lbl">${t('stor.massa_magra')}</div>${dlt(last.massa_magra,prev?.massa_magra)}</div>` : ''}
+    ${last.vita ? `<div class="stor-stat"><div class="stor-stat-val">${last.vita}</div><div class="stor-stat-lbl">${t('stor.vita')}</div>${dlt(last.vita,prev?.vita)}</div>` : ''}
+    <div class="stor-stat"><div class="stor-stat-val">${schede.length}</div><div class="stor-stat-lbl">${t('stor.valutazioni')}</div></div>
   </div>`;
 
   const chartsHTML = `<div class="stor-charts-grid">
-    ${schede.length>1&&pesi.some(v=>v) ? `<div class="stor-chart-card"><h4>⚖️ Peso corporeo${wLogs&&wLogs.length>schede.length?' & diario':''}</h4><canvas id="chart-peso" height="100"></canvas></div>` : ''}
-    ${schede.length>1&&bmis.some(v=>v) ? `<div class="stor-chart-card"><h4>📐 BMI</h4><canvas id="chart-bmi" height="100"></canvas></div>` : ''}
-    ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 Composizione corporea</h4><canvas id="chart-comp" height="100"></canvas></div>` : ''}
-    ${schede.length>1&&(vite.some(v=>v)||fianchi.some(v=>v)||coscia.some(v=>v)) ? `<div class="stor-chart-card"><h4>📏 Circonferenze (cm)</h4><canvas id="chart-circ" height="100"></canvas></div>` : ''}
-    ${schede.length>1&&(plTri.some(v=>v)||plSS.some(v=>v)||plSI.some(v=>v)) ? `<div class="stor-chart-card"><h4>📌 Pliche cutanee (mm)</h4><canvas id="chart-pliche" height="100"></canvas></div>` : ''}
-    ${schede.length>1&&(glicemia.some(v=>v)||colTot.some(v=>v)||vitD.some(v=>v)) ? `<div class="stor-chart-card stor-chart-full"><h4>🔬 Esami ematochimici</h4><canvas id="chart-labs" height="110"></canvas></div>` : ''}
+    ${schede.length>1&&pesi.some(v=>v) ? `<div class="stor-chart-card"><h4>⚖️ ${t('stor.chart_peso'+(wLogs&&wLogs.length>schede.length?'_diary':''))}</h4><div class="stor-chart-wrap"><canvas id="chart-peso"></canvas></div></div>` : ''}
+    ${schede.length>1&&bmis.some(v=>v) ? `<div class="stor-chart-card"><h4>📐 ${t('stor.chart_bmi')}</h4><div class="stor-chart-wrap"><canvas id="chart-bmi"></canvas></div></div>` : ''}
+    ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 ${t('stor.chart_comp')}</h4><div class="stor-chart-wrap"><canvas id="chart-comp"></canvas></div></div>` : ''}
+    ${schede.length>1&&(vite.some(v=>v)||fianchi.some(v=>v)||coscia.some(v=>v)) ? `<div class="stor-chart-card"><h4>📏 ${t('stor.chart_circ')}</h4><div class="stor-chart-wrap"><canvas id="chart-circ"></canvas></div></div>` : ''}
+    ${schede.length>1&&(plTri.some(v=>v)||plSS.some(v=>v)||plSI.some(v=>v)) ? `<div class="stor-chart-card"><h4>📌 ${t('stor.chart_pliche')}</h4><div class="stor-chart-wrap"><canvas id="chart-pliche"></canvas></div></div>` : ''}
+    ${schede.length>1&&(glicemia.some(v=>v)||colTot.some(v=>v)||vitD.some(v=>v)) ? `<div class="stor-chart-card stor-chart-full"><h4>🔬 ${t('stor.chart_labs')}</h4><div class="stor-chart-wrap" style="height:130px"><canvas id="chart-labs"></canvas></div></div>` : ''}
   </div>`;
 
   panel.innerHTML = headerHTML + filterHTML + summaryHTML + chartsHTML;

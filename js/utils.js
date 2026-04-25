@@ -69,10 +69,13 @@ async function loadProfile() {
     btn.id = 'btn-profilo-op';
     btn.className = 'sb-logout';
     btn.style.cssText = 'background:rgba(255,255,255,.08);margin-bottom:4px';
-    btn.textContent = '👤 Profilo Operatore';
+    btn.textContent = (typeof t === 'function') ? '👤 ' + t('nav.profilo') : '👤 Profilo Operatore';
     btn.onclick = openProfiloModal;
     sbBottom.insertBefore(btn, sbBottom.querySelector('.sb-logout'));
   }
+  // i18n: re-apply after profile loads (profile button is now in DOM)
+  if (typeof translateSidebarNav === 'function') translateSidebarNav();
+  if (typeof initLangSwitcher === 'function') initLangSwitcher();
   // Ensure profilo modal exists
   if (!document.getElementById('modal-profilo-op')) {
     const div = document.createElement('div');

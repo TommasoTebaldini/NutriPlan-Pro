@@ -6,6 +6,7 @@
 <title>Area Paziente — DietPlan Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/lang.js"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
 .pp-container{max-width:900px;margin:0 auto;padding:20px 16px}
@@ -78,40 +79,41 @@
 <body style="background:var(--bg)">
 <div class="pp-topbar">
   <span style="font-size:20px">🥗</span>
-  <h2>DietPlan Pro — Area Paziente</h2>
+  <h2>DietPlan Pro — <span data-i18n="pp.title">Area Paziente</span></h2>
   <span id="pp-user-email" style="font-size:12px;color:var(--slate-l)"></span>
-  <button class="pp-logout" onclick="doLogout()">🚪 Esci</button>
+  <div id="pp-lang-slot" style="display:flex;gap:2px;align-items:center"></div>
+  <button class="pp-logout" onclick="doLogout()" data-i18n="pp.logout">🚪 Esci</button>
 </div>
 
 <div class="pp-container">
   <div class="pp-tab-bar">
-    <div class="pp-tab active" onclick="switchPPTab('profile')" id="pp-tab-profile">👤 Dati Personali</div>
-    <div class="pp-tab" onclick="switchPPTab('dieta')" id="pp-tab-dieta">🥗 Dieta</div>
-    <div class="pp-tab" onclick="switchPPTab('docs')" id="pp-tab-docs">📄 Documenti</div>
-    <div class="pp-tab" onclick="switchPPTab('diary')" id="pp-tab-diary">📓 Diario</div>
-    <div class="pp-tab" onclick="switchPPTab('chat')" id="pp-tab-chat">💬 Chat</div>
-    <div class="pp-tab" onclick="switchPPTab('privacy')" id="pp-tab-privacy">📋 Privacy</div>
+    <div class="pp-tab active" onclick="switchPPTab('profile')" id="pp-tab-profile"><span data-i18n="pp.tab_profile">👤 Dati Personali</span></div>
+    <div class="pp-tab" onclick="switchPPTab('dieta')" id="pp-tab-dieta"><span data-i18n="pp.tab_dieta">🥗 Dieta</span></div>
+    <div class="pp-tab" onclick="switchPPTab('docs')" id="pp-tab-docs"><span data-i18n="pp.tab_docs">📄 Documenti</span></div>
+    <div class="pp-tab" onclick="switchPPTab('diary')" id="pp-tab-diary"><span data-i18n="pp.tab_diary">📓 Diario</span></div>
+    <div class="pp-tab" onclick="switchPPTab('chat')" id="pp-tab-chat"><span data-i18n="pp.tab_chat">💬 Chat</span></div>
+    <div class="pp-tab" onclick="switchPPTab('privacy')" id="pp-tab-privacy"><span data-i18n="pp.tab_privacy">📋 Privacy</span></div>
   </div>
 
   <!-- PROFILE TAB -->
   <div id="pp-panel-profile">
     <div class="pp-section">
-      <div class="pp-section-hdr">👤 Dati Personali</div>
+      <div class="pp-section-hdr" data-i18n="pp.profile_hdr">👤 Dati Personali</div>
       <div class="pp-section-body">
-        <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Inserisci i tuoi dati personali. Il tuo nutrizionista li vedrà per identificarti.</p>
+        <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px" data-i18n="pp.profile_note">Inserisci i tuoi dati personali. Il tuo nutrizionista li vedrà per identificarti.</p>
         <div class="pp-field">
-          <label>Nome</label>
+          <label data-i18n="pp.nome">Nome</label>
           <input type="text" id="pp-nome" placeholder="es. Mario" maxlength="60">
         </div>
         <div class="pp-field">
-          <label>Cognome</label>
+          <label data-i18n="pp.cognome">Cognome</label>
           <input type="text" id="pp-cognome" placeholder="es. Rossi" maxlength="60">
         </div>
         <div class="pp-field">
-          <label>Email</label>
+          <label data-i18n="pp.email">Email</label>
           <input type="email" id="pp-email" disabled style="background:#F1F5F9;color:var(--slate-l)">
         </div>
-        <button onclick="salvaProfiloPaziente()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px">💾 Salva Dati</button>
+        <button onclick="salvaProfiloPaziente()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px" data-i18n="pp.save_profile">💾 Salva Dati</button>
       </div>
     </div>
   </div>
@@ -347,6 +349,7 @@ async function init() {
   }
 
   document.getElementById('pp-user-email').textContent = currentUser.email;
+  if (typeof initLangSwitcher === 'function') initLangSwitcher(document.getElementById('pp-lang-slot'));
   document.getElementById('pp-email').value = currentUser.email;
 
   // Load personal data into form

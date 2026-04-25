@@ -80,18 +80,33 @@
 .consent-doc{font-size:12px;color:var(--slate);line-height:1.75;max-height:420px;overflow-y:auto;padding:14px 18px;background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);white-space:pre-wrap;font-family:'DM Sans',sans-serif}
 .consent-doc h3{font-size:13px;font-weight:700;margin:14px 0 6px;color:var(--slate)}
 .consent-signed-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700}
+/* Privacy panel */
+.priv-panel{flex:1;overflow-y:auto;padding:14px 18px;background:#F8FAFC}
+.priv-card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:12px}
+.priv-card-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#FAFBFC}
+.priv-card-body{padding:14px 16px}
+.priv-status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:700;flex-shrink:0}
+.priv-consent-view{font-size:11.5px;color:var(--slate);line-height:1.8;max-height:360px;overflow-y:auto;padding:12px 16px;background:#F8FAFC;border-radius:8px;border:1px solid var(--border)}
+.priv-consent-view h3{font-size:12.5px;font-weight:700;margin:12px 0 5px;color:var(--slate)}
+.priv-edit-area{width:100%;min-height:260px;padding:12px 14px;font-size:11.5px;font-family:'DM Sans',sans-serif;line-height:1.8;border:2px solid var(--teal-l);border-radius:8px;outline:none;resize:vertical;background:white;box-sizing:border-box;color:var(--slate)}
+.priv-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 /* Storico panel */
-.stor-panel{flex:1;overflow-y:auto;padding:14px 18px;background:#F8FAFC}
-.stor-chart-card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.stor-chart-card h4{font-size:12.5px;font-weight:700;color:var(--slate);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.stor-no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:var(--slate-l);font-size:13px;gap:8px;text-align:center}
-.stor-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:12px}
-.stor-stat{background:#F0FDF4;border-radius:10px;padding:10px 12px;text-align:center;border:1.5px solid #A7F3D0}
-.stor-stat-val{font-size:19px;font-weight:800;color:var(--teal-d)}
-.stor-stat-lbl{font-size:10px;color:var(--slate-l);margin-top:2px}
-.stor-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.stor-filter-bar select{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:12px;font-family:inherit;outline:none;background:white}
+.stor-panel{flex:1;overflow-y:auto;padding:12px 16px;background:#F8FAFC}
+.stor-header{background:linear-gradient(135deg,#0F766E,#0EA5E9);border-radius:10px;padding:12px 16px;margin-bottom:12px;color:white;display:flex;align-items:center;gap:10px}
+.stor-header h3{font-size:14px;font-weight:700;margin:0;flex:1}
+.stor-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.stor-filter-bar select{padding:5px 9px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:12px;font-family:inherit;outline:none;background:white}
 .stor-filter-bar select:focus{border-color:var(--teal-l)}
+.stor-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px;margin-bottom:10px}
+.stor-stat{background:white;border-radius:8px;padding:8px 10px;text-align:center;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stor-stat-val{font-size:16px;font-weight:800;color:var(--teal-d);line-height:1.15}
+.stor-stat-lbl{font-size:9px;color:var(--slate-l);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.stor-stat-delta{font-size:9px;margin-top:2px;font-weight:600}
+.stor-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stor-chart-full{grid-column:span 2}
+.stor-chart-card{background:white;border:1px solid var(--border);border-radius:10px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stor-chart-card h4{font-size:10.5px;font-weight:700;color:var(--slate-m);margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.4px}
+.stor-no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:var(--slate-l);font-size:13px;gap:8px;text-align:center}
 /* Print styles */
 @media print{
   #sidebar,#topbar,.no-print,#loading-overlay,#toast,.chat-sidebar{display:none!important}
@@ -735,33 +750,56 @@ async function loadPrivacy() {
     .select('*').eq('cartella_id', p.cartellaId)
     .order('created_at', {ascending:false}).limit(1).maybeSingle();
 
-  const { data: me } = await sb.from('profiles').select('email').eq('id', currentUser.id).maybeSingle();
+  const { data: me } = await sb.from('profiles').select('email,consent_template').eq('id', currentUser.id).maybeSingle();
   const dietEmail = me?.email || currentUser.email || '';
-  const text = buildConsentText(p.name, dietEmail);
+  const consentText = consent?.consent_text || me?.consent_template || buildConsentText(p.name, dietEmail);
   const isSigned = !!consent?.signed_at;
   const signedDate = isSigned ? new Date(consent.signed_at).toLocaleString('it-IT') : null;
   const consentId = consent?.id || null;
 
-  panel.innerHTML = `
-    <div style="padding:16px 4px">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-        <span class="consent-signed-badge" style="${isSigned ? 'background:#D1FAE5;color:#065F46' : 'background:#FEF3C7;color:#92400E'}">
-          ${isSigned ? '✅ Firmato il ' + signedDate : '⏳ In attesa di firma del paziente'}
-        </span>
-        <button class="btn btn-ghost btn-sm no-print" onclick="printPrivacy()">🖨️ Stampa modulo</button>
-        ${!consent ? `<button class="btn btn-primary btn-sm no-print" onclick="createConsent('${p.cartellaId}','${esc(p.name)}','${esc(dietEmail)}')">📤 Crea e invia al paziente</button>` : ''}
-        ${consent && !isSigned ? `<button class="btn btn-ghost btn-sm no-print" onclick="revokeConsent('${consentId}')">🗑️ Annulla invio</button>` : ''}
+  const statusStyle = isSigned
+    ? 'background:#D1FAE5;color:#065F46'
+    : consent ? 'background:#FEF3C7;color:#92400E' : 'background:#F1F5F9;color:#475569';
+  const statusLabel = isSigned
+    ? '✅ Firmato il ' + signedDate
+    : consent ? '⏳ In attesa di firma del paziente' : '📭 Nessun modulo inviato';
+
+  panel.innerHTML = `<div class="priv-panel">
+    <div class="priv-card">
+      <div class="priv-card-hdr">
+        <span class="priv-status-badge" style="${statusStyle}">${statusLabel}</span>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm no-print" onclick="printPrivacy()">🖨️ Stampa</button>
+          ${!consent ? `<button class="btn btn-primary btn-sm no-print" onclick="createConsent('${p.cartellaId}','${esc(p.name)}','${esc(dietEmail)}')">📤 Crea e invia</button>` : ''}
+          ${consent && !isSigned ? `<button class="btn btn-ghost btn-sm no-print" style="color:#DC2626" onclick="revokeConsent('${consentId}')">🗑️ Annulla</button>` : ''}
+        </div>
       </div>
-      <div class="priv-section" id="privacy-doc-wrap">
-        <h4>📄 Testo del consenso</h4>
-        <div class="consent-doc" id="consent-doc-text">${text}</div>
-        ${isSigned ? `<div style="margin-top:12px;padding:10px 14px;background:#D1FAE5;border-radius:8px;font-size:12px;color:#065F46;font-weight:600">✅ Consenso firmato digitalmente dal paziente il ${signedDate}</div>` : ''}
+    </div>
+
+    <div class="priv-card" id="privacy-doc-wrap">
+      <div class="priv-card-hdr">
+        <span style="font-size:12px;font-weight:700;color:var(--slate);flex:1">📄 Testo del consenso informato</span>
+        ${!isSigned ? `<button class="btn btn-ghost btn-sm no-print" id="priv-edit-btn" onclick="toggleConsentEdit('${consentId||''}')">✏️ Modifica</button>` : ''}
       </div>
-    </div>`;
+      <div class="priv-card-body">
+        <div class="priv-consent-view" id="consent-view">${consentText}</div>
+        <div id="consent-edit-wrap" style="display:none">
+          <div class="priv-edit-area" id="consent-editor" contenteditable="true"></div>
+          <div class="priv-edit-actions">
+            ${consentId ? `<button class="btn btn-primary btn-sm" onclick="saveConsentForPatient('${consentId}')">💾 Salva per questo paziente</button>` : ''}
+            <button class="btn btn-ghost btn-sm" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE" onclick="saveConsentAsTemplate()">🌐 Salva come modello per tutti i pazienti</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleConsentEdit()">✕ Annulla</button>
+          </div>
+        </div>
+        ${isSigned ? `<div style="margin-top:12px;padding:10px 14px;background:#D1FAE5;border-radius:8px;font-size:12px;color:#065F46;font-weight:700">✅ Consenso firmato digitalmente dal paziente il ${signedDate}</div>` : ''}
+      </div>
+    </div>
+  </div>`;
 }
 
 async function createConsent(cartellaId, patientName, dietEmail) {
-  const text = buildConsentText(patientName, dietEmail);
+  const template = await getConsentTemplate();
+  const text = template || buildConsentText(patientName, dietEmail);
   const pid = chatPatients.find(x => x.id === selectedPatientId)?.id || null;
   const {error} = await sb.from('patient_consents').insert({
     cartella_id: cartellaId,
@@ -776,6 +814,55 @@ async function createConsent(cartellaId, patientName, dietEmail) {
   loadPrivacy();
 }
 
+async function getConsentTemplate() {
+  const {data} = await sb.from('profiles').select('consent_template').eq('id', currentUser.id).maybeSingle();
+  return data?.consent_template || null;
+}
+
+function toggleConsentEdit(consentId) {
+  const view = document.getElementById('consent-view');
+  const editWrap = document.getElementById('consent-edit-wrap');
+  const editor = document.getElementById('consent-editor');
+  const editBtn = document.getElementById('priv-edit-btn');
+  if (!editWrap) return;
+  const isEditing = editWrap.style.display !== 'none';
+  if (isEditing) {
+    editWrap.style.display = 'none';
+    if (view) view.style.display = '';
+    if (editBtn) editBtn.textContent = '✏️ Modifica';
+  } else {
+    if (view) { editor.innerHTML = view.innerHTML; view.style.display = 'none'; }
+    editWrap.style.display = '';
+    if (editBtn) editBtn.textContent = '✕ Chiudi editor';
+    editor.focus();
+  }
+}
+
+async function saveConsentForPatient(consentId) {
+  const editor = document.getElementById('consent-editor');
+  if (!editor || !consentId) return;
+  const newText = editor.innerHTML;
+  const {error} = await sb.from('patient_consents').update({consent_text: newText}).eq('id', consentId);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  toast('✅ Testo aggiornato per questo paziente', 'ok');
+  loadPrivacy();
+}
+
+async function saveConsentAsTemplate() {
+  const editor = document.getElementById('consent-editor');
+  if (!editor) return;
+  const newText = editor.innerHTML;
+  const {error: pErr} = await sb.from('profiles').update({consent_template: newText}).eq('id', currentUser.id);
+  if (pErr) { toast('❌ Errore salvataggio modello: ' + pErr.message, 'err'); return; }
+  const {error: cErr} = await sb.from('patient_consents')
+    .update({consent_text: newText})
+    .eq('dietitian_id', currentUser.id)
+    .is('signed_at', null);
+  if (cErr) { toast('⚠️ Modello salvato, errore su consensi esistenti: ' + cErr.message, 'warn'); return; }
+  toast('✅ Modello salvato e applicato a tutti i consensi non ancora firmati', 'ok');
+  loadPrivacy();
+}
+
 async function revokeConsent(consentId) {
   if (!confirm('Annullare l\'invio del modulo? Il paziente non potrà più firmarlo.')) return;
   await sb.from('patient_consents').delete().eq('id', consentId);
@@ -784,7 +871,8 @@ async function revokeConsent(consentId) {
 }
 
 function printPrivacy() {
-  const content = document.getElementById('privacy-doc-wrap');
+  const consentView = document.getElementById('consent-view');
+  const content = consentView || document.getElementById('privacy-doc-wrap');
   if (!content) { window.print(); return; }
   const p = chatPatients.find(x => x.id === selectedPatientId);
   const printWin = window.open('', 'privacy-print', 'width=900,height=800');
@@ -895,23 +983,37 @@ async function loadStorico(limitMonths) {
     <button class="btn btn-ghost btn-sm" onclick="printStorico()">🖨️ Stampa report</button>
   </div>`;
 
+  const prev = schede.length >= 2 ? schede[schede.length-2] : null;
+  const prevBMI = schede.length >= 2 ? bmis[bmis.length-2] : null;
+  function dlt(curr, prevVal) {
+    if (curr == null || prevVal == null) return '';
+    const d = Math.round((curr - prevVal) * 10) / 10;
+    if (d === 0) return '';
+    const color = d < 0 ? '#10B981' : '#EF4444';
+    return `<div class="stor-stat-delta" style="color:${color}">${d>0?'+':''}${d}</div>`;
+  }
+
+  const headerHTML = `<div class="stor-header no-print"><span style="font-size:22px">📊</span><h3>Storico Clinico — ${esc(p.name)}</h3><span style="font-size:11px;opacity:.75">${schede.length} valutazion${schede.length===1?'e':'i'}</span></div>`;
+
   const summaryHTML = `<div class="stor-stat-grid">
-    ${last.peso ? `<div class="stor-stat"><div class="stor-stat-val">${last.peso} kg</div><div class="stor-stat-lbl">Peso attuale</div></div>` : ''}
-    ${lastBMI ? `<div class="stor-stat"><div class="stor-stat-val">${lastBMI}</div><div class="stor-stat-lbl">BMI attuale</div></div>` : ''}
-    ${last.massa_grassa_pct ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_grassa_pct}%</div><div class="stor-stat-lbl">Massa grassa</div></div>` : ''}
-    ${last.massa_magra ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_magra} kg</div><div class="stor-stat-lbl">Massa magra</div></div>` : ''}
-    ${last.vita ? `<div class="stor-stat"><div class="stor-stat-val">${last.vita} cm</div><div class="stor-stat-lbl">Vita</div></div>` : ''}
+    ${last.peso ? `<div class="stor-stat"><div class="stor-stat-val">${last.peso}</div><div class="stor-stat-lbl">Peso kg</div>${dlt(last.peso,prev?.peso)}</div>` : ''}
+    ${lastBMI ? `<div class="stor-stat"><div class="stor-stat-val">${lastBMI}</div><div class="stor-stat-lbl">BMI</div>${dlt(lastBMI,prevBMI)}</div>` : ''}
+    ${last.massa_grassa_pct ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_grassa_pct}%</div><div class="stor-stat-lbl">Massa grassa</div>${dlt(last.massa_grassa_pct,prev?.massa_grassa_pct)}</div>` : ''}
+    ${last.massa_magra ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_magra}</div><div class="stor-stat-lbl">Massa magra kg</div>${dlt(last.massa_magra,prev?.massa_magra)}</div>` : ''}
+    ${last.vita ? `<div class="stor-stat"><div class="stor-stat-val">${last.vita}</div><div class="stor-stat-lbl">Vita cm</div>${dlt(last.vita,prev?.vita)}</div>` : ''}
     <div class="stor-stat"><div class="stor-stat-val">${schede.length}</div><div class="stor-stat-lbl">Valutazioni</div></div>
   </div>`;
 
-  panel.innerHTML = filterHTML + summaryHTML + `
-    ${schede.length>1&&pesi.some(v=>v) ? `<div class="stor-chart-card"><h4>⚖️ Peso corporeo${wLogs&&wLogs.length>schede.length?' & Diario peso':''}</h4><canvas id="chart-peso" height="160"></canvas></div>` : ''}
-    ${schede.length>1&&bmis.some(v=>v) ? `<div class="stor-chart-card"><h4>📐 BMI nel tempo</h4><canvas id="chart-bmi" height="140"></canvas></div>` : ''}
-    ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 Composizione corporea</h4><canvas id="chart-comp" height="160"></canvas></div>` : ''}
-    ${schede.length>1&&(vite.some(v=>v)||fianchi.some(v=>v)||coscia.some(v=>v)) ? `<div class="stor-chart-card"><h4>📐 Circonferenze principali (cm)</h4><canvas id="chart-circ" height="160"></canvas></div>` : ''}
-    ${schede.length>1&&(plTri.some(v=>v)||plSS.some(v=>v)||plSI.some(v=>v)) ? `<div class="stor-chart-card"><h4>📌 Pliche cutanee (mm)</h4><canvas id="chart-pliche" height="160"></canvas></div>` : ''}
-    ${schede.length>1&&(glicemia.some(v=>v)||colTot.some(v=>v)||vitD.some(v=>v)) ? `<div class="stor-chart-card"><h4>🔬 Esami ematochimici selezionati</h4><canvas id="chart-labs" height="200"></canvas></div>` : ''}
-  `;
+  const chartsHTML = `<div class="stor-charts-grid">
+    ${schede.length>1&&pesi.some(v=>v) ? `<div class="stor-chart-card"><h4>⚖️ Peso corporeo${wLogs&&wLogs.length>schede.length?' & diario':''}</h4><canvas id="chart-peso" height="100"></canvas></div>` : ''}
+    ${schede.length>1&&bmis.some(v=>v) ? `<div class="stor-chart-card"><h4>📐 BMI</h4><canvas id="chart-bmi" height="100"></canvas></div>` : ''}
+    ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 Composizione corporea</h4><canvas id="chart-comp" height="100"></canvas></div>` : ''}
+    ${schede.length>1&&(vite.some(v=>v)||fianchi.some(v=>v)||coscia.some(v=>v)) ? `<div class="stor-chart-card"><h4>📏 Circonferenze (cm)</h4><canvas id="chart-circ" height="100"></canvas></div>` : ''}
+    ${schede.length>1&&(plTri.some(v=>v)||plSS.some(v=>v)||plSI.some(v=>v)) ? `<div class="stor-chart-card"><h4>📌 Pliche cutanee (mm)</h4><canvas id="chart-pliche" height="100"></canvas></div>` : ''}
+    ${schede.length>1&&(glicemia.some(v=>v)||colTot.some(v=>v)||vitD.some(v=>v)) ? `<div class="stor-chart-card stor-chart-full"><h4>🔬 Esami ematochimici</h4><canvas id="chart-labs" height="110"></canvas></div>` : ''}
+  </div>`;
+
+  panel.innerHTML = headerHTML + filterHTML + summaryHTML + chartsHTML;
 
   requestAnimationFrame(() => {
     const defaults = { borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:.35, fill:false };

@@ -99,6 +99,11 @@ DO $$ BEGIN
     ALTER TABLE profiles ADD COLUMN logo TEXT;
   END IF;
 END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='consent_template') THEN
+    ALTER TABLE profiles ADD COLUMN consent_template TEXT;
+  END IF;
+END $$;
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 

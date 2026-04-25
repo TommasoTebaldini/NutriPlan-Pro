@@ -30,6 +30,11 @@
 .val-section-hdr-text{font-size:13.5px;font-weight:700;color:white;letter-spacing:.2px}
 .val-section-hdr-sub{font-size:11px;color:rgba(255,255,255,.82);margin-top:2px}
 @media(max-width:900px){#risultati-col .result-grid-2col{grid-template-columns:1fr!important}}
+.ref-range{font-size:10px;color:var(--slate-l);margin-top:3px;line-height:1.4;padding:2px 0}
+.es-ok>input,.es-ok input{border-color:#22C55E!important;background:#F0FDF4!important}
+.es-warn>input,.es-warn input{border-color:#F59E0B!important;background:#FFFBEB!important}
+.es-bad>input,.es-bad input{border-color:#EF4444!important;background:#FEF2F2!important}
+.es-ok input,.es-warn input,.es-bad input{transition:border-color .2s,background .2s}
 </style>
 </head>
 <body>
@@ -108,10 +113,6 @@
     <div class="fg"><label>Altezza (cm)</label><input type="number" id="v-altezza" placeholder="170" oninput="aggiornaCalcoli()"></div>
     <div class="fg"><label>Peso ideale (kg)</label><input type="number" id="v-pi" step="0.1" placeholder="auto"></div>
     <div class="fg"><label>Peso aggiustato (kg)</label><input type="number" id="v-pa" step="0.1" placeholder="auto"></div>
-    <div class="fg"><label>Circ. vita (cm)</label><input type="number" id="v-vita" step="0.1" oninput="aggiornaCalcoli()"></div>
-    <div class="fg"><label>Circ. fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1" oninput="aggiornaCalcoli()"></div>
-    <div class="fg"><label>Circ. braccio (cm)</label><input type="number" id="v-braccio" step="0.1"></div>
-    <div class="fg"><label>Plica tricipitale (mm)</label><input type="number" id="v-plica" step="0.1"></div>
     <div class="fg"><label>Massa grassa (%)</label><input type="number" id="v-mg" step="0.1" oninput="aggiornaCalcoli()"></div>
     <div class="fg"><label>Massa magra (kg)</label><input type="number" id="v-mm" step="0.1"></div>
   </div>
@@ -119,20 +120,36 @@
 
 <div class="val-section" style="border-top:3px solid #14B8A6">
   <h3>📐 Circonferenze</h3>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
-    <div class="fg"><label>Collo (cm)</label><input type="number" id="v-collo" step="0.1" placeholder="es. 37"></div>
-    <div class="fg"><label>Spalla (cm)</label><input type="number" id="v-spalla" step="0.1" placeholder="es. 105"></div>
+  <div style="font-size:10px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Tronco</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:12px">
+    <div class="fg"><label>Vita (cm)</label><input type="number" id="v-vita" step="0.1" placeholder="es. 82" oninput="calcolaCirconferenze()"></div>
+    <div class="fg"><label>Fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1" placeholder="es. 98" oninput="calcolaCirconferenze()"></div>
+    <div class="fg"><label>Collo (cm)</label><input type="number" id="v-collo" step="0.1" placeholder="es. 37" oninput="calcolaCirconferenze()"></div>
+    <div class="fg"><label>Ombelico (cm)</label><input type="number" id="v-ombelico" step="0.1" placeholder="es. 85" oninput="calcolaCirconferenze()"></div>
+    <div class="fg"><label>Addome (cm)</label><input type="number" id="v-addome" step="0.1" placeholder="es. 90"></div>
     <div class="fg"><label>Torace (cm)</label><input type="number" id="v-torace" step="0.1" placeholder="es. 90"></div>
-    <div class="fg"><label>Braccio rilassato (cm)</label><input type="number" id="v-braccio-r" step="0.1" placeholder="es. 30"></div>
-    <div class="fg"><label>Braccio contratto (cm)</label><input type="number" id="v-braccio-c" step="0.1" placeholder="es. 32"></div>
+    <div class="fg"><label>Spalla (cm)</label><input type="number" id="v-spalla" step="0.1" placeholder="es. 105"></div>
+  </div>
+  <div style="font-size:10px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Arto superiore</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:12px">
+    <div class="fg"><label>Braccio rilassato dx (cm)</label><input type="number" id="v-braccio-r" step="0.1" placeholder="es. 30"></div>
+    <div class="fg"><label>Braccio rilassato sx (cm)</label><input type="number" id="v-braccio-r-sx" step="0.1" placeholder="es. 30"></div>
+    <div class="fg"><label>Braccio contratto dx (cm)</label><input type="number" id="v-braccio-c" step="0.1" placeholder="es. 32"></div>
+    <div class="fg"><label>Braccio contratto sx (cm)</label><input type="number" id="v-braccio-c-sx" step="0.1" placeholder="es. 32"></div>
+    <div class="fg"><label>Braccio (cm)</label><input type="number" id="v-braccio" step="0.1" placeholder="es. 31"></div>
     <div class="fg"><label>Avambraccio (cm)</label><input type="number" id="v-avambraccio" step="0.1" placeholder="es. 25"></div>
     <div class="fg"><label>Polso (cm)</label><input type="number" id="v-polso" step="0.1" placeholder="es. 16"></div>
-    <div class="fg"><label>Ombelico (cm)</label><input type="number" id="v-ombelico" step="0.1" placeholder="es. 85"></div>
-    <div class="fg"><label>Addome (cm)</label><input type="number" id="v-addome" step="0.1" placeholder="es. 90"></div>
+  </div>
+  <div style="font-size:10px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Arto inferiore</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px">
     <div class="fg"><label>Coscia dx (cm)</label><input type="number" id="v-coscia" step="0.1" placeholder="es. 55"></div>
+    <div class="fg"><label>Coscia sx (cm)</label><input type="number" id="v-coscia-sx" step="0.1" placeholder="es. 55"></div>
     <div class="fg"><label>Polpaccio dx (cm)</label><input type="number" id="v-polpaccio" step="0.1" placeholder="es. 35"></div>
+    <div class="fg"><label>Polpaccio sx (cm)</label><input type="number" id="v-polpaccio-sx" step="0.1" placeholder="es. 35"></div>
     <div class="fg"><label>Caviglia (cm)</label><input type="number" id="v-caviglia" step="0.1" placeholder="es. 22"></div>
   </div>
+  <button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="calcolaCirconferenze()">📐 Calcola Composizione Corporea dalle Circonferenze</button>
+  <div id="circonf-results" style="margin-top:10px"><p style="font-size:12px;color:var(--slate-l)">Inserisci vita, collo e altezza (+ fianchi per le donne) per calcolare la composizione corporea.</p></div>
 </div>
 
 <div class="val-section" style="border-top:3px solid #6366F1">
@@ -316,29 +333,131 @@
 </div>
 
 <div class="val-section" style="border-top:3px solid #DC2626">
-  <h3>🔬 Esami del Sangue</h3>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 12px">
-    <div class="fg"><label>Glicemia (mg/dL)</label><input type="number" id="v-es-glicemia" step="0.1" placeholder="es. 95"></div>
-    <div class="fg"><label>Insulina (mU/L)</label><input type="number" id="v-es-insulina" step="0.1" placeholder="es. 8"></div>
-    <div class="fg"><label>HbA1c (%)</label><input type="number" id="v-es-hba1c" step="0.1" placeholder="es. 5.4"></div>
-    <div class="fg"><label>Colesterolo tot. (mg/dL)</label><input type="number" id="v-es-col-tot" step="0.1" placeholder="es. 180"></div>
-    <div class="fg"><label>LDL (mg/dL)</label><input type="number" id="v-es-ldl" step="0.1" placeholder="es. 110"></div>
-    <div class="fg"><label>HDL (mg/dL)</label><input type="number" id="v-es-hdl" step="0.1" placeholder="es. 55"></div>
-    <div class="fg"><label>Trigliceridi (mg/dL)</label><input type="number" id="v-es-trig" step="0.1" placeholder="es. 120"></div>
-    <div class="fg"><label>Creatinina (mg/dL)</label><input type="number" id="v-es-creat" step="0.1" placeholder="es. 0.9"></div>
-    <div class="fg"><label>Azotemia (mg/dL)</label><input type="number" id="v-es-azot" step="0.1" placeholder="es. 35"></div>
-    <div class="fg"><label>Uricemia (mg/dL)</label><input type="number" id="v-es-uric" step="0.1" placeholder="es. 5.5"></div>
-    <div class="fg"><label>GOT/AST (U/L)</label><input type="number" id="v-es-got" step="0.1" placeholder="es. 25"></div>
-    <div class="fg"><label>GPT/ALT (U/L)</label><input type="number" id="v-es-gpt" step="0.1" placeholder="es. 28"></div>
-    <div class="fg"><label>GGT (U/L)</label><input type="number" id="v-es-ggt" step="0.1" placeholder="es. 30"></div>
-    <div class="fg"><label>Emoglobina (g/dL)</label><input type="number" id="v-es-hb" step="0.1" placeholder="es. 13.5"></div>
-    <div class="fg"><label>Ferritina (ng/mL)</label><input type="number" id="v-es-ferr" step="0.1" placeholder="es. 70"></div>
-    <div class="fg"><label>Vitamina D (ng/mL)</label><input type="number" id="v-es-vitd" step="0.1" placeholder="es. 30"></div>
-    <div class="fg"><label>Vitamina B12 (pg/mL)</label><input type="number" id="v-es-vitb12" step="0.1" placeholder="es. 350"></div>
-    <div class="fg"><label>TSH (mU/L)</label><input type="number" id="v-es-tsh" step="0.01" placeholder="es. 2.1"></div>
-    <div class="fg"><label>PCR (mg/L)</label><input type="number" id="v-es-pcr" step="0.1" placeholder="es. 1.5"></div>
-    <div class="fg"><label>Data esami</label><input type="date" id="v-es-data"></div>
+  <h3>🔬 Esami Ematochimici</h3>
+  <p style="font-size:11px;color:var(--slate-l);margin-bottom:12px;margin-top:-6px">I range normali indicati sono valori di riferimento generali per adulti. La colorazione verde/gialla/rossa indica la normalità rispetto ai range standard (dipendenti dal sesso dove specificato).</p>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Metabolismo glucidico</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 12px;margin-bottom:14px">
+    <div class="fg" id="es-glicemia-wrap">
+      <label>Glicemia a digiuno (mg/dL)</label>
+      <input type="number" id="v-es-glicemia" step="0.1" placeholder="es. 95" oninput="esCheck('es-glicemia-wrap',this.value,70,99,100,125)">
+      <div class="ref-range">🟢 Normale: 70–99 · 🟡 Prediabete: 100–125 · 🔴 Diabete: ≥126</div>
+    </div>
+    <div class="fg" id="es-insulina-wrap">
+      <label>Insulina a digiuno (mU/L)</label>
+      <input type="number" id="v-es-insulina" step="0.1" placeholder="es. 8" oninput="esCheck('es-insulina-wrap',this.value,2.6,12,12,24.9)">
+      <div class="ref-range">🟢 Normale: 2.6–12 · 🟡 Borderline: 12–24.9 · 🔴 Alto: >25 (ins. resistenza)</div>
+    </div>
+    <div class="fg" id="es-hba1c-wrap">
+      <label>HbA1c (%)</label>
+      <input type="number" id="v-es-hba1c" step="0.1" placeholder="es. 5.4" oninput="esCheck('es-hba1c-wrap',this.value,4,5.6,5.7,6.4)">
+      <div class="ref-range">🟢 Normale: &lt;5.7% · 🟡 Prediabete: 5.7–6.4% · 🔴 Diabete: ≥6.5%</div>
+    </div>
   </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Lipidi</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 12px;margin-bottom:14px">
+    <div class="fg" id="es-col-tot-wrap">
+      <label>Colesterolo tot. (mg/dL)</label>
+      <input type="number" id="v-es-col-tot" step="0.1" placeholder="es. 180" oninput="esCheck('es-col-tot-wrap',this.value,0,199,200,239)">
+      <div class="ref-range">🟢 Desiderabile: &lt;200 · 🟡 Borderline: 200–239 · 🔴 Alto: ≥240</div>
+    </div>
+    <div class="fg" id="es-ldl-wrap">
+      <label>LDL (mg/dL)</label>
+      <input type="number" id="v-es-ldl" step="0.1" placeholder="es. 110" oninput="esCheck('es-ldl-wrap',this.value,0,129,130,159)">
+      <div class="ref-range">🟢 Ottimale: &lt;100 · Normale: &lt;130 · 🟡 Borderline: 130–159 · 🔴 Alto: ≥160</div>
+    </div>
+    <div class="fg" id="es-hdl-wrap">
+      <label>HDL (mg/dL)</label>
+      <input type="number" id="v-es-hdl" step="0.1" placeholder="es. 55" oninput="esCheckHDL('es-hdl-wrap',this.value)">
+      <div class="ref-range">🟢 Normale: M≥40 / F≥50 · 🔴 Basso (&lt;40M/&lt;50F) = rischio CV aumentato</div>
+    </div>
+    <div class="fg" id="es-trig-wrap">
+      <label>Trigliceridi (mg/dL)</label>
+      <input type="number" id="v-es-trig" step="0.1" placeholder="es. 120" oninput="esCheck('es-trig-wrap',this.value,0,149,150,199)">
+      <div class="ref-range">🟢 Normale: &lt;150 · 🟡 Borderline: 150–199 · 🔴 Alto: ≥200 · Molto alto: ≥500</div>
+    </div>
+  </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Funzionalità renale</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 12px;margin-bottom:14px">
+    <div class="fg" id="es-creat-wrap">
+      <label>Creatinina (mg/dL)</label>
+      <input type="number" id="v-es-creat" step="0.1" placeholder="es. 0.9" oninput="esCheckSesso('es-creat-wrap',this.value,0.7,1.2,0.5,1.1)">
+      <div class="ref-range">🟢 Normale: M 0.7–1.2 · F 0.5–1.1 · ↑Alta = possibile IRC o ridotta massa muscolare</div>
+    </div>
+    <div class="fg" id="es-azot-wrap">
+      <label>Azotemia (mg/dL)</label>
+      <input type="number" id="v-es-azot" step="0.1" placeholder="es. 35" oninput="esCheck('es-azot-wrap',this.value,15,50,51,70)">
+      <div class="ref-range">🟢 Normale: 15–50 · 🔴 Alta: >70 (insufficienza renale, disidratazione)</div>
+    </div>
+    <div class="fg" id="es-uric-wrap">
+      <label>Uricemia (mg/dL)</label>
+      <input type="number" id="v-es-uric" step="0.1" placeholder="es. 5.5" oninput="esCheckSesso('es-uric-wrap',this.value,2.4,7.0,2.4,6.0)">
+      <div class="ref-range">🟢 Normale: M 3.4–7.0 · F 2.4–6.0 · 🔴 >7 rischio gotta/cristalli urici</div>
+    </div>
+  </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Funzionalità epatica</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 12px;margin-bottom:14px">
+    <div class="fg" id="es-got-wrap">
+      <label>GOT/AST (U/L)</label>
+      <input type="number" id="v-es-got" step="0.1" placeholder="es. 25" oninput="esCheck('es-got-wrap',this.value,10,40,41,80)">
+      <div class="ref-range">🟢 Normale: 10–40 · 🟡 Lievemente alto: 41–80 · 🔴 Molto alto: >80 (danno epatico/muscolare)</div>
+    </div>
+    <div class="fg" id="es-gpt-wrap">
+      <label>GPT/ALT (U/L)</label>
+      <input type="number" id="v-es-gpt" step="0.1" placeholder="es. 28" oninput="esCheck('es-gpt-wrap',this.value,7,40,41,80)">
+      <div class="ref-range">🟢 Normale: 7–40 · 🟡 Borderline: 41–80 · 🔴 Alto: >80 (steatosi, epatiti)</div>
+    </div>
+    <div class="fg" id="es-ggt-wrap">
+      <label>GGT (U/L)</label>
+      <input type="number" id="v-es-ggt" step="0.1" placeholder="es. 30" oninput="esCheckSesso('es-ggt-wrap',this.value,12,64,9,36)">
+      <div class="ref-range">🟢 Normale: M 12–64 · F 9–36 · 🔴 Alto: alcol, farmaci, colestasi</div>
+    </div>
+  </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Emocromo e micronutrienti</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 12px;margin-bottom:14px">
+    <div class="fg" id="es-hb-wrap">
+      <label>Emoglobina (g/dL)</label>
+      <input type="number" id="v-es-hb" step="0.1" placeholder="es. 13.5" oninput="esCheckSesso('es-hb-wrap',this.value,13.5,17.5,12.0,16.0)">
+      <div class="ref-range">🟢 Normale: M 13.5–17.5 · F 12.0–16.0 · 🔴 &lt;12(F)/&lt;13(M) = anemia</div>
+    </div>
+    <div class="fg" id="es-ferr-wrap">
+      <label>Ferritina (ng/mL)</label>
+      <input type="number" id="v-es-ferr" step="0.1" placeholder="es. 70" oninput="esCheckSesso('es-ferr-wrap',this.value,30,300,13,150)">
+      <div class="ref-range">🟢 Normale: M 30–300 · F 13–150 · 🔴 Bassa = carenza ferro · Alta = infiammazione</div>
+    </div>
+    <div class="fg" id="es-vitd-wrap">
+      <label>Vitamina D 25-OH (ng/mL)</label>
+      <input type="number" id="v-es-vitd" step="0.1" placeholder="es. 30" oninput="esCheck('es-vitd-wrap',this.value,30,100,20,29)">
+      <div class="ref-range">🔴 Deficienza: &lt;20 · 🟡 Insufficienza: 20–29 · 🟢 Sufficiente: 30–100 · ⚠️ Tossicità: >100</div>
+    </div>
+    <div class="fg" id="es-vitb12-wrap">
+      <label>Vitamina B12 (pg/mL)</label>
+      <input type="number" id="v-es-vitb12" step="0.1" placeholder="es. 350" oninput="esCheck('es-vitb12-wrap',this.value,200,900,150,199)">
+      <div class="ref-range">🟢 Normale: 200–900 · 🟡 Borderline basso: 150–199 · 🔴 Deficienza: &lt;150 (veg*, elderly)</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 12px;margin-bottom:8px">
+    <div class="fg" id="es-tsh-wrap">
+      <label>TSH (mU/L)</label>
+      <input type="number" id="v-es-tsh" step="0.01" placeholder="es. 2.1" oninput="esCheck('es-tsh-wrap',this.value,0.27,4.2,0.1,0.26)">
+      <div class="ref-range">🟢 Normale: 0.27–4.2 · 🔴 &lt;0.27 ipertiroidismo · &gt;4.2 ipotiroidismo</div>
+    </div>
+    <div class="fg" id="es-pcr-wrap">
+      <label>PCR (mg/L)</label>
+      <input type="number" id="v-es-pcr" step="0.1" placeholder="es. 1.5" oninput="esCheck('es-pcr-wrap',this.value,0,1,1,3)">
+      <div class="ref-range">🟢 Basso rischio CV: &lt;1 · 🟡 Rischio medio: 1–3 · 🔴 Rischio alto: &gt;3 · Infezione: &gt;10</div>
+    </div>
+    <div class="fg">
+      <label>Data esami</label>
+      <input type="date" id="v-es-data">
+    </div>
+  </div>
+
   <div class="fg" style="margin-top:8px"><label>Note esami</label>
     <textarea id="v-es-note" rows="2" placeholder="Es. In attesa di referto, valori su terapia..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
 </div>
@@ -884,8 +1003,8 @@ async function doSalva(cartellaId){
     massa_magra:parseFloat(document.getElementById('v-mm').value)||null,
     vita:parseFloat(document.getElementById('v-vita').value)||null,
     fianchi:parseFloat(document.getElementById('v-fianchi').value)||null,
-    braccio:parseFloat(document.getElementById('v-braccio').value)||null,
-    plica:parseFloat(document.getElementById('v-plica').value)||null,
+    braccio:parseFloat(document.getElementById('v-braccio')?.value)||null,
+    plica:parseFloat(document.getElementById('v-plica')?.value)||null,
     patologie:JSON.stringify([...selectedPat]),
     note:document.getElementById('v-note').value.trim()||null,
     macro_dist:JSON.stringify(macroDist),
@@ -895,10 +1014,14 @@ async function doSalva(cartellaId){
       spalla:document.getElementById('v-spalla').value||null,
       torace:document.getElementById('v-torace').value||null,
       braccio_r:document.getElementById('v-braccio-r').value||null,
+      braccio_r_sx:document.getElementById('v-braccio-r-sx').value||null,
       braccio_c:document.getElementById('v-braccio-c').value||null,
+      braccio_c_sx:document.getElementById('v-braccio-c-sx').value||null,
       avambraccio:document.getElementById('v-avambraccio').value||null,
       coscia:document.getElementById('v-coscia').value||null,
+      coscia_sx:document.getElementById('v-coscia-sx').value||null,
       polpaccio:document.getElementById('v-polpaccio').value||null,
+      polpaccio_sx:document.getElementById('v-polpaccio-sx').value||null,
       polso:document.getElementById('v-polso').value||null,
       ombelico:document.getElementById('v-ombelico').value||null,
       addome:document.getElementById('v-addome').value||null,
@@ -1126,9 +1249,124 @@ function calcolaPliche() {
   if (mgEl && !mgEl._userEdited) { mgEl.value = Math.round(best.bf*10)/10; aggiornaCalcoli(); }
   if (mmEl && !mmEl._userEdited) { mmEl.value = Math.round(best.lm*10)/10; }
 }
+// ── Composizione corporea dalle circonferenze ────────────────────────
+function calcolaCirconferenze() {
+  const eta   = parseFloat(document.getElementById('v-eta').value);
+  const peso  = parseFloat(document.getElementById('v-peso').value);
+  const alt   = parseFloat(document.getElementById('v-altezza').value);
+  const sesso = document.getElementById('v-sesso').value;
+  const vita  = parseFloat(document.getElementById('v-vita').value)     || 0;
+  const collo = parseFloat(document.getElementById('v-collo').value)    || 0;
+  const fianchi = parseFloat(document.getElementById('v-fianchi').value)|| 0;
+  const omb   = parseFloat(document.getElementById('v-ombelico').value) || 0;
+  const res   = document.getElementById('circonf-results');
+  if (!res) return;
+  const results = [];
+
+  // 1. US Navy (Hodgdon & Beckett, 1984) — richiede vita, collo, altezza (+ fianchi per F)
+  if (alt > 0 && vita > 0 && collo > 0) {
+    if (sesso === 'M' && vita > collo) {
+      const bf = 495 / (1.0324 - 0.19077 * Math.log10(vita - collo) + 0.15456 * Math.log10(alt)) - 450;
+      if (bf > 2 && bf < 65) {
+        const fm = peso ? peso * bf / 100 : null;
+        results.push({ label: 'US Navy (Hodgdon & Beckett, 1984)', sites: 'Vita + Collo + Altezza', bf, fm, lm: fm && peso ? peso - fm : null });
+      }
+    }
+    if (sesso === 'F' && vita > 0 && fianchi > 0 && collo > 0 && (vita + fianchi) > collo) {
+      const bf = 495 / (1.29579 - 0.35004 * Math.log10(vita + fianchi - collo) + 0.22100 * Math.log10(alt)) - 450;
+      if (bf > 2 && bf < 65) {
+        const fm = peso ? peso * bf / 100 : null;
+        results.push({ label: 'US Navy (Hodgdon & Beckett, 1984)', sites: 'Vita + Fianchi + Collo + Altezza', bf, fm, lm: fm && peso ? peso - fm : null });
+      }
+    }
+  }
+
+  // 2. YMCA (Golding et al.) — richiede vita e peso
+  if (vita > 0 && peso > 0) {
+    const vita_in = vita / 2.54;
+    const peso_lb = peso / 0.453592;
+    const bf = sesso === 'M'
+      ? -98.42 + 4.15 * vita_in - 0.082 * peso_lb
+      : -76.76 + 4.15 * vita_in - 0.082 * peso_lb;
+    if (bf > 2 && bf < 65) {
+      const fm = peso * bf / 100;
+      results.push({ label: 'YMCA (Golding et al.)', sites: 'Vita + Peso', bf, fm, lm: peso - fm });
+    }
+  }
+
+  // 3. Weltman et al. (1987/1988) — usa addome/ombelico, peso, altezza
+  const addOmb = omb || vita;
+  if (addOmb > 0 && peso > 0 && alt > 0) {
+    let bf;
+    if (sesso === 'M') {
+      bf = 0.31457 * addOmb - 0.10969 * peso + 10.8336;
+    } else {
+      bf = 0.11077 * addOmb - 0.17666 * alt + 0.14354 * peso + 51.033;
+    }
+    if (bf > 2 && bf < 65) {
+      const fm = peso * bf / 100;
+      results.push({ label: 'Weltman et al. (1987/1988)', sites: sesso === 'M' ? 'Addome + Peso' : 'Addome + Altezza + Peso', bf, fm, lm: peso - fm });
+    }
+  }
+
+  if (!results.length) {
+    res.innerHTML = '<p style="font-size:12px;color:var(--slate-l)">Inserisci vita, collo e altezza (+ fianchi per le donne) per calcolare la composizione corporea.</p>';
+    return;
+  }
+
+  res.innerHTML = results.map((r, i) => `
+    <div class="formula-row${i === results.length - 1 ? ' best' : ''}">
+      <div>
+        <div class="fn">${r.label}</div>
+        <div class="fb">${r.sites}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="fv" style="font-size:14px">${Math.round(r.bf * 10) / 10}% BF</div>
+        ${r.fm && r.lm ? `<div style="font-size:11px;color:var(--slate-l)">${Math.round(r.fm * 10) / 10} kg grasso · ${Math.round(r.lm * 10) / 10} kg magra</div>` : ''}
+      </div>
+    </div>`).join('');
+
+  // Propaga il valore migliore (ultimo = più dati) in massa grassa/magra se non già editato manualmente
+  const best = results[results.length - 1];
+  const mgEl = document.getElementById('v-mg');
+  const mmEl = document.getElementById('v-mm');
+  if (mgEl && !mgEl._userEdited) { mgEl.value = Math.round(best.bf * 10) / 10; aggiornaCalcoli(); }
+  if (mmEl && !mmEl._userEdited && best.lm) mmEl.value = Math.round(best.lm * 10) / 10;
+}
+
+// ── Evidenziazione esami ─────────────────────────────────────────────
+function esCheck(wrapId, val, loOk, hiOk, loBorder, hiBorder) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  wrap.classList.remove('es-ok', 'es-warn', 'es-bad');
+  const v = parseFloat(val);
+  if (!val || isNaN(v)) return;
+  if (v >= loOk && v <= hiOk) wrap.classList.add('es-ok');
+  else if (loBorder !== undefined && hiBorder !== undefined && v >= loBorder && v <= hiBorder) wrap.classList.add('es-warn');
+  else wrap.classList.add('es-bad');
+}
+function esCheckHDL(wrapId, val) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  wrap.classList.remove('es-ok', 'es-warn', 'es-bad');
+  const v = parseFloat(val);
+  if (!val || isNaN(v)) return;
+  const sesso = document.getElementById('v-sesso')?.value || 'M';
+  const lo = sesso === 'M' ? 40 : 50;
+  if (v >= lo) wrap.classList.add('es-ok');
+  else if (v >= lo - 8) wrap.classList.add('es-warn');
+  else wrap.classList.add('es-bad');
+}
+function esCheckSesso(wrapId, val, loM, hiM, loF, hiF) {
+  const sesso = document.getElementById('v-sesso')?.value || 'M';
+  const lo = sesso === 'M' ? loM : loF;
+  const hi = sesso === 'M' ? hiM : hiF;
+  esCheck(wrapId, val, lo, hi);
+}
+
 function resetVal(){
   ['v-nome','v-cognome','v-eta','v-peso','v-altezza','v-pi','v-pa','v-vita','v-fianchi','v-braccio','v-plica','v-mg','v-mm','v-note',
-   'v-collo','v-spalla','v-torace','v-braccio-r','v-braccio-c','v-avambraccio','v-coscia','v-polpaccio','v-polso','v-ombelico','v-addome','v-caviglia',
+   'v-collo','v-spalla','v-torace','v-braccio-r','v-braccio-r-sx','v-braccio-c','v-braccio-c-sx','v-coscia','v-coscia-sx','v-polpaccio','v-polpaccio-sx','v-polso','v-ombelico','v-addome','v-caviglia',
    'v-pl-tri','v-pl-bi','v-pl-ss','v-pl-si','v-pl-add','v-pl-cos','v-pl-pet','v-pl-asc',
    'v-peso-min','v-peso-max','v-variaz-peso','v-n-cicli',
    'v-sigarette','v-sonno-ore','v-lavoro',
@@ -1150,6 +1388,8 @@ function resetVal(){
   ].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const sw=document.getElementById('v-sigarette-wrap');if(sw)sw.style.display='none';
   const pr=document.getElementById('pliche-results');if(pr)pr.innerHTML='<p style="font-size:12px;color:var(--slate-l)">Inserisci le misure richieste per calcolare la composizione corporea.</p>';
+  const cr=document.getElementById('circonf-results');if(cr)cr.innerHTML='<p style="font-size:12px;color:var(--slate-l)">Inserisci vita, collo e altezza (+ fianchi per le donne) per calcolare la composizione corporea.</p>';
+  ['es-glicemia-wrap','es-insulina-wrap','es-hba1c-wrap','es-col-tot-wrap','es-ldl-wrap','es-hdl-wrap','es-trig-wrap','es-creat-wrap','es-azot-wrap','es-uric-wrap','es-got-wrap','es-gpt-wrap','es-ggt-wrap','es-hb-wrap','es-ferr-wrap','es-vitd-wrap','es-vitb12-wrap','es-tsh-wrap','es-pcr-wrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('es-ok','es-warn','es-bad');});
   selectedPat.clear();renderPatChips();
   document.getElementById('risultati-col').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--slate-l)"><div style="font-size:44px;margin-bottom:14px">📊</div><p>Inserisci i dati e clicca Calcola Fabbisogno</p></div>';
   tdee=0;schedaId=null;
@@ -1307,15 +1547,15 @@ document.addEventListener('DOMContentLoaded',async()=>{
           setVal('v-mm',data.massa_magra);
           setVal('v-vita',data.vita);
           setVal('v-fianchi',data.fianchi);
-          setVal('v-braccio',data.braccio);
-          setVal('v-plica',data.plica);
+          if(document.getElementById('v-braccio'))setVal('v-braccio',data.braccio);
+          if(document.getElementById('v-plica'))setVal('v-plica',data.plica);
           setVal('v-note',data.note);
           try{const pat=JSON.parse(data.patologie||'[]');selectedPat=new Set(pat);renderPatChips();}catch(e){}
           if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;}catch(e){}}
           if(data.dati_extra){try{const ex=typeof data.dati_extra==='string'?JSON.parse(data.dati_extra):data.dati_extra;const sv2=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};
             sv2('v-collo',ex.collo);sv2('v-spalla',ex.spalla);sv2('v-torace',ex.torace);
-            sv2('v-braccio-r',ex.braccio_r);sv2('v-braccio-c',ex.braccio_c);sv2('v-avambraccio',ex.avambraccio);
-            sv2('v-coscia',ex.coscia);sv2('v-polpaccio',ex.polpaccio);sv2('v-polso',ex.polso);
+            sv2('v-braccio-r',ex.braccio_r);sv2('v-braccio-r-sx',ex.braccio_r_sx);sv2('v-braccio-c',ex.braccio_c);sv2('v-braccio-c-sx',ex.braccio_c_sx);sv2('v-avambraccio',ex.avambraccio);
+            sv2('v-coscia',ex.coscia);sv2('v-coscia-sx',ex.coscia_sx);sv2('v-polpaccio',ex.polpaccio);sv2('v-polpaccio-sx',ex.polpaccio_sx);sv2('v-polso',ex.polso);
             sv2('v-ombelico',ex.ombelico);sv2('v-addome',ex.addome);sv2('v-caviglia',ex.caviglia);
             sv2('v-pl-tri',ex.pl_tri);sv2('v-pl-bi',ex.pl_bi);sv2('v-pl-ss',ex.pl_ss);sv2('v-pl-si',ex.pl_si);sv2('v-pl-add',ex.pl_add);sv2('v-pl-cos',ex.pl_cos);sv2('v-pl-pet',ex.pl_pet);sv2('v-pl-asc',ex.pl_asc);
             sv2('v-peso-min',ex.peso_min);sv2('v-peso-max',ex.peso_max);sv2('v-variaz-peso',ex.variaz_peso);sv2('v-n-cicli',ex.n_cicli);
@@ -1335,6 +1575,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
             sv2('v-diagn',ex.diagn);sv2('v-anno-diag',ex.anno_diag);sv2('v-comorbid',ex.comorbid);sv2('v-chirurgia',ex.chirurgia);
             ['glicemia','insulina','hba1c','col_tot','ldl','hdl','trig','creat','azot','uric','got','gpt','ggt','hb','ferr','vitd','vitb12','tsh','pcr','data','note'].forEach(k=>{sv2('v-es-'+k,ex['es_'+k]);});
             if(ex.pl_tri||ex.pl_bi||ex.pl_ss||ex.pl_si)calcolaPliche();
+            if(ex.vita||ex.collo)calcolaCirconferenze();
             if(data.eta&&data.peso&&data.altezza)calcolaFabbisogno();
             if(data.tdee_calcolato&&!isNaN(data.tdee_calcolato)){tdee=data.tdee_calcolato;renderMacroDist();}
             // Restore fabbisogni scelti (LAF, FC, method) after calcolaFabbisogno generates the selectors

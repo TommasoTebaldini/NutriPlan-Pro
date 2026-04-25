@@ -255,6 +255,139 @@
     <button class="btn btn-sm no-print" onclick="stampaPaginaAttiva()" style="margin-left:auto;background:rgba(255,255,255,.2);color:white;border:none">🖨️ Stampa</button>
   </div>
 
+  <!-- IL PIATTO DELLA SALUTE -->
+  <div style="background:white;border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)">
+    <h3 style="font-size:16px;font-weight:700;color:var(--slate);margin-bottom:4px;display:flex;align-items:center;gap:8px">🍽️ Il Piatto della Salute — Linee Guida Harvard / CREA 2018</h3>
+    <p style="font-size:12px;color:var(--slate-l);margin-bottom:18px">Strumento visivo per costruire un pasto equilibrato. Fonte: <b>Harvard T.H. Chan School of Public Health, Healthy Eating Plate (2011)</b> — adattato alle Linee Guida CREA 2018 per la popolazione italiana.</p>
+
+    <div style="display:flex;align-items:flex-start;gap:28px;flex-wrap:wrap;justify-content:center">
+
+      <!-- SVG PIATTO -->
+      <div style="flex-shrink:0">
+        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:260px;height:260px">
+          <!-- ombra piatto -->
+          <ellipse cx="152" cy="158" rx="114" ry="114" fill="rgba(0,0,0,.08)"/>
+          <!-- bordo piatto -->
+          <circle cx="148" cy="148" r="120" fill="#E2E8F0"/>
+          <!-- superficie piatto -->
+          <circle cx="148" cy="148" r="111" fill="white"/>
+
+          <!-- Verdure 30% (0°→108° da cima, senso orario) -->
+          <!-- 0°: 148,37  108°: 148+111*sin108=148+105.5=253.5, 148-111*cos108=148+34.3=182.3 -->
+          <path d="M 148 148 L 148 37 A 111 111 0 0 1 254 182 Z" fill="#4ADE80"/>
+          <!-- Frutta 20% (108°→180°) -->
+          <!-- 108°→180°: 254,182 → 148,259 -->
+          <path d="M 148 148 L 254 182 A 111 111 0 0 1 148 259 Z" fill="#FB923C"/>
+          <!-- Cereali Integrali 25% (180°→270°) -->
+          <!-- 180°→270°: 148,259 → 37,148 -->
+          <path d="M 148 148 L 148 259 A 111 111 0 0 1 37 148 Z" fill="#FCD34D"/>
+          <!-- Proteine Sane 25% (270°→360°) -->
+          <!-- 270°→360°: 37,148 → 148,37 -->
+          <path d="M 148 148 L 37 148 A 111 111 0 0 1 148 37 Z" fill="#60A5FA"/>
+
+          <!-- linee divisorie bianche -->
+          <line x1="148" y1="148" x2="148" y2="37" stroke="white" stroke-width="3.5"/>
+          <line x1="148" y1="148" x2="254" y2="182" stroke="white" stroke-width="3.5"/>
+          <line x1="148" y1="148" x2="148" y2="259" stroke="white" stroke-width="3.5"/>
+          <line x1="148" y1="148" x2="37" y2="148" stroke="white" stroke-width="3.5"/>
+
+          <!-- cerchio bianco centrale -->
+          <circle cx="148" cy="148" r="28" fill="white" stroke="#E2E8F0" stroke-width="1.5"/>
+          <text x="148" y="144" text-anchor="middle" font-size="18" font-family="DM Sans,sans-serif">🍽️</text>
+          <text x="148" y="157" text-anchor="middle" fill="#64748B" font-size="7.5" font-weight="700" font-family="DM Sans,sans-serif">IL PIATTO</text>
+          <text x="148" y="166" text-anchor="middle" fill="#64748B" font-size="7.5" font-weight="700" font-family="DM Sans,sans-serif">DELLA SALUTE</text>
+
+          <!-- ETICHETTE SEZIONI -->
+          <!-- Verdure (centro arco 54°): x=148+74*sin54=148+59.9=208, y=148-74*cos54=148-43.5=105 -->
+          <text x="207" y="100" text-anchor="middle" font-size="18" font-family="DM Sans,sans-serif">🥦</text>
+          <text x="207" y="114" text-anchor="middle" fill="#166534" font-size="10" font-weight="800" font-family="DM Sans,sans-serif">VERDURE</text>
+          <text x="207" y="124" text-anchor="middle" fill="#166534" font-size="9" font-family="DM Sans,sans-serif">½ piatto</text>
+          <text x="207" y="133" text-anchor="middle" fill="#166534" font-size="8.5" font-family="DM Sans,sans-serif">con frutta</text>
+
+          <!-- Frutta (centro arco 144°): x=148+74*sin144=148+43.5=192, y=148-74*cos144=148+60=208 -->
+          <text x="193" y="203" text-anchor="middle" font-size="15" font-family="DM Sans,sans-serif">🍎</text>
+          <text x="193" y="215" text-anchor="middle" fill="#9A3412" font-size="9" font-weight="800" font-family="DM Sans,sans-serif">FRUTTA</text>
+          <text x="193" y="224" text-anchor="middle" fill="#9A3412" font-size="8" font-family="DM Sans,sans-serif">variare</text>
+
+          <!-- Cereali (centro arco 225°): x=148+74*sin225=148-52.3=96, y=148-74*cos225=148+52.3=200 -->
+          <text x="93" y="193" text-anchor="middle" font-size="15" font-family="DM Sans,sans-serif">🌾</text>
+          <text x="93" y="205" text-anchor="middle" fill="#92400E" font-size="9" font-weight="800" font-family="DM Sans,sans-serif">CEREALI INT.</text>
+          <text x="93" y="214" text-anchor="middle" fill="#92400E" font-size="8" font-family="DM Sans,sans-serif">¼ piatto</text>
+
+          <!-- Proteine (centro arco 315°): x=148+74*sin315=148-52.3=96, y=148-74*cos315=148-52.3=96 -->
+          <text x="93" y="89" text-anchor="middle" font-size="15" font-family="DM Sans,sans-serif">🐟</text>
+          <text x="93" y="101" text-anchor="middle" fill="#1E3A8A" font-size="9" font-weight="800" font-family="DM Sans,sans-serif">PROTEINE</text>
+          <text x="93" y="110" text-anchor="middle" fill="#1E3A8A" font-size="9" font-weight="800" font-family="DM Sans,sans-serif">SANE</text>
+          <text x="93" y="119" text-anchor="middle" fill="#1E3A8A" font-size="8" font-family="DM Sans,sans-serif">¼ piatto</text>
+
+          <!-- bordo superiore piatto -->
+          <circle cx="148" cy="148" r="111" fill="none" stroke="white" stroke-width="4"/>
+          <circle cx="148" cy="148" r="120" fill="none" stroke="#CBD5E1" stroke-width="1.5"/>
+
+          <!-- Bicchiere acqua (a destra) -->
+          <rect x="272" y="112" width="24" height="30" rx="4" fill="#BAE6FD" opacity=".85"/>
+          <rect x="272" y="108" width="24" height="8" rx="3" fill="#7DD3FC" opacity=".9"/>
+          <text x="284" y="152" text-anchor="middle" fill="#0369A1" font-size="8" font-weight="700" font-family="DM Sans,sans-serif">ACQUA</text>
+
+          <!-- Bottiglia olio (a sinistra) -->
+          <rect x="4" y="114" width="18" height="28" rx="4" fill="#FEF08A" opacity=".85"/>
+          <rect x="7" y="108" width="12" height="9" rx="2" fill="#FDE047" opacity=".9"/>
+          <text x="13" y="153" text-anchor="middle" fill="#713F12" font-size="7" font-weight="700" font-family="DM Sans,sans-serif">EVO</text>
+        </svg>
+      </div>
+
+      <!-- LEGENDA E PRINCIPI -->
+      <div style="flex:1;min-width:240px">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:10px;background:#F0FDF4;border-left:4px solid #22C55E">
+            <div style="width:14px;height:14px;border-radius:3px;background:#4ADE80;flex-shrink:0;margin-top:2px"></div>
+            <div>
+              <div style="font-size:12.5px;font-weight:700;color:#166534">🥦 Verdure e Frutta — ½ del piatto</div>
+              <div style="font-size:11.5px;color:#15803D;margin-top:3px">Obiettivo: colori variati ogni giorno. ≥3 porzioni verdure (200-300g) + ≥2 frutta (150-200g). <b>Le patate non contano come verdura.</b></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:10px;background:#FFFBEB;border-left:4px solid #FCD34D">
+            <div style="width:14px;height:14px;border-radius:3px;background:#FCD34D;flex-shrink:0;margin-top:2px"></div>
+            <div>
+              <div style="font-size:12.5px;font-weight:700;color:#78350F">🌾 Cereali Integrali — ¼ del piatto</div>
+              <div style="font-size:11.5px;color:#92400E;margin-top:3px">Pasta/riso/pane integrali, orzo, farro, avena. <b>Preferire sempre integrali ai raffinati</b>: più fibra, minor picco glicemico.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:10px;background:#EFF6FF;border-left:4px solid #60A5FA">
+            <div style="width:14px;height:14px;border-radius:3px;background:#60A5FA;flex-shrink:0;margin-top:2px"></div>
+            <div>
+              <div style="font-size:12.5px;font-weight:700;color:#1E3A8A">🐟 Proteine Sane — ¼ del piatto</div>
+              <div style="font-size:11.5px;color:#1D4ED8;margin-top:3px">Pesce azzurro, legumi, uova, pollo, tofu. <b>Limitare carne rossa a max 1-2×/sett. Evitare carni processate</b> (salumi, insaccati).</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:10px;background:#FEF9C3;border-left:4px solid #EAB308">
+            <div style="font-size:18px;flex-shrink:0">🫒</div>
+            <div>
+              <div style="font-size:12.5px;font-weight:700;color:#713F12">Oli Sani — condimento principale</div>
+              <div style="font-size:11.5px;color:#92400E;margin-top:3px">Olio EVO 2-4 cucchiai/die. <b>Evitare burro, margarina e oli tropicali.</b> Limitare cibi fritti e trasformati.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:10px;background:#F0F9FF;border-left:4px solid #7DD3FC">
+            <div style="font-size:18px;flex-shrink:0">💧</div>
+            <div>
+              <div style="font-size:12.5px;font-weight:700;color:#0369A1">Bevande — acqua come prima scelta</div>
+              <div style="font-size:11.5px;color:#0284C7;margin-top:3px">Almeno 1.5–2 L di acqua/die. Tè e caffè non zuccherati. <b>Eliminare bibite zuccherate e succhi di frutta industriali.</b></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">⚖️ Principi chiave (Harvard, 2011)</div>
+          <ul style="margin:0;padding-left:16px;font-size:11.5px;color:var(--slate-m);line-height:1.8">
+            <li>La <b>qualità</b> dei carboidrati è più importante della quantità: scegliere integrali</li>
+            <li>La <b>fonte proteica</b> conta: pesce e legumi > carne rossa processata</li>
+            <li>I <b>grassi sani</b> (olio EVO, frutta secca) sono parte di una dieta equilibrata</li>
+            <li>Il piatto si applica al <b>singolo pasto</b>, non all'intera giornata</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PIRAMIDE ALIMENTARE -->
   <div style="background:white;border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)">
     <h3 style="font-size:16px;font-weight:700;color:var(--slate);margin-bottom:6px;display:flex;align-items:center;gap:8px">🔺 Piramide Alimentare Mediterranea Aggiornata</h3>

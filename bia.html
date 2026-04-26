@@ -39,6 +39,20 @@
 .food-table tr:hover td{background:#DBEAFE}
 .import-area{border:2px dashed #93C5FD;border-radius:12px;padding:24px;text-align:center;background:#F0F9FF;cursor:pointer;transition:all .2s}
 .import-area:hover{border-color:#3B82F6;background:#EFF6FF}
+@media print{
+  @page{margin:10mm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin:0!important;padding:0!important}
+  .page-content{padding:0!important}
+  .bia-tabs{display:none!important}
+  .bia-panel{display:none!important}
+  .bia-panel.active{display:block!important}
+  .calc-box{page-break-inside:avoid;break-inside:avoid}
+  .result-card{page-break-inside:avoid;break-inside:avoid}
+  #bia-results-wrap{display:block!important}
+  canvas{max-width:100%!important}
+}
 </style>
 </head>
 <body>
@@ -89,7 +103,7 @@
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>⚡ Bioimpedenziometria (BIA)</h2>
   <div class="tbar-actions">
-    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm" onclick="printBIAReport()">🖨️ Stampa</button>
   </div>
 </div>
 
@@ -308,6 +322,20 @@ function showBIA(id) {
   if (id === 'storico') loadStorico();
 }
 
+function printBIAReport() {
+  // Ensure the risultati tab is active before printing
+  const risultatiPanel = document.getElementById('tab-risultati');
+  if (risultatiPanel && !risultatiPanel.classList.contains('active')) {
+    document.querySelectorAll('.bia-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.bia-panel').forEach(p => p.classList.remove('active'));
+    risultatiPanel.classList.add('active');
+    // Activate the corresponding tab button (2nd button = Analisi Composizione)
+    const tabBtns = document.querySelectorAll('.bia-tab');
+    if (tabBtns[1]) tabBtns[1].classList.add('active');
+  }
+  setTimeout(() => window.print(), 150);
+}
+
 function r1(v){ return Math.round(v * 10) / 10; }
 function r2(v){ return Math.round(v * 100) / 100; }
 
@@ -465,7 +493,7 @@ function renderResults(d, inp) {
 
   <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
     <button class="btn btn-primary" onclick="salvaBIA()">💾 Salva in Cartella Paziente</button>
-    <button class="btn btn-ghost" onclick="window.print()">🖨️ Stampa Report</button>
+    <button class="btn btn-ghost" onclick="printBIAReport()">🖨️ Stampa Report</button>
   </div>`;
 
   setTimeout(() => {

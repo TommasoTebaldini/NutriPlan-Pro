@@ -113,7 +113,7 @@
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>📋 Questionari Nutrizionali</h2>
   <div class="tbar-actions">
-    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm" onclick="printQuestionnaire()">🖨️ Stampa</button>
   </div>
 </div>
 
@@ -1504,6 +1504,23 @@ function clearQSearch() {
   if (inp) inp.value = '';
   searchQuestionari('');
 }
+
+function printQuestionnaire() {
+  clearQSearch();
+  // Small delay to let CSS transitions settle before browser opens print dialog
+  setTimeout(() => window.print(), 80);
+}
+
+// Ensure search-injected inline styles don't leak into print
+window.addEventListener('beforeprint', function() {
+  document.querySelectorAll('.q-panel').forEach(p => { p.style.display = ''; });
+  document.querySelectorAll('.q-tabs').forEach(t => { t.style.display = ''; });
+  document.querySelectorAll('.q-card').forEach(c => { c.style.display = ''; });
+});
+window.addEventListener('afterprint', function() {
+  const q = document.getElementById('q-search-input')?.value?.trim();
+  if (q) searchQuestionari(q);
+});
 
 
 function toggleQCard(id) {

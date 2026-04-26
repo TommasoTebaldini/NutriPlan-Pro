@@ -242,13 +242,26 @@
       console.warn('print-capture: missing table or recordId', { table, recordId });
       return null;
     }
-    if (!cartellaId) {
-      if (window.toast && opts.silent !== true) toast('⚠️ Cartella mancante — immagine non salvata', 'err');
-      return null;
+    // Resolve the folder: patient_id if cartella is linked, otherwise current user
+    let folderId = null;
+    if (cartellaId) {
+      folderId = await getPatientIdForCartella(cartellaId);
     }
-    const patientId = await getPatientIdForCartella(cartellaId);
-    if (!patientId) {
-      if (window.toast && opts.silent !== true) toast('⚠️ Nessun paziente collegato a questa cartella', 'err');
+    if (!folderId) {
+      // Fallback: store in the dietitian's own folder so the upload never fails
+      // due to a missing patient link. The signed URL will still be readable
+      // by the patient app via print_image_url.
+      if (typeof currentUser !== 'undefined' && currentUser?.id) {
+        folderId = currentUser.id;
+      } else {
+        try {
+          const { data: { user } } = await sb.auth.getUser();
+          folderId = user?.id || null;
+        } catch (_) {}
+      }
+    }
+    if (!folderId) {
+      if (window.toast && opts.silent !== true) toast('⚠️ Utente non autenticato — immagine non salvata', 'err');
       return null;
     }
 
@@ -259,14 +272,14 @@
       // Upload all pages → collect signed URLs
       const urls = [];
       for (let i = 0; i < numPages; i++) {
-        const path = `${patientId}/${table}_${recordId}_p${i + 1}.png`;
+        const path = `${folderId}/${table}_${recordId}_p${i + 1}.png`;
         const url = await uploadPage(blobs[i], path);
         if (!url) throw new Error(`URL pagina ${i + 1} non disponibile`);
         urls.push(url);
       }
 
       // Remove stale pages from a previous (longer) save
-      await cleanupOldPages(patientId, table, recordId, numPages + 1);
+      await cleanupOldPages(folderId, table, recordId, numPages + 1);
 
       // Backwards-compatible storage:
       //   1 page  → plain URL string

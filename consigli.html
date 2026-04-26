@@ -2598,30 +2598,44 @@ let noteConsigli = {}; // { consiglio_id: { id (supabase row id), testo } }
 
 async function _buildAndCaptureCons(c, testo, savedId, cartella_id) {
   if (!window.capturePrintAndSave || !savedId || !c) return;
-  const htmlStr = buildStampaHTML(c, testo);
-  const parser = new DOMParser();
-  const htmlDoc = parser.parseFromString(htmlStr, 'text/html');
-  const rawStyle = (htmlDoc.head.querySelector('style')?.textContent || '')
-    .replace(/@page\s*\{[^}]*\}/g, '')
-    .replace(/\*\s*\{[^}]*\}/g, '')
-    .replace(/\.print-firma\s*\{[^}]*\}/g, '')
-    .replace(/\bbody\b/g, '#cons-print-area');
+  const _e = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const hex = c.colore || '#0F766E';
+  const pill = (f, bg, col) => `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:500;margin:3px;background:${bg};color:${col}">${_e(f)}</span>`;
+  const okPills = (c.ok||[]).map(f => pill(f,'#D1FAE5','#065F46')).join('');
+  const noPills = (c.no||[]).map(f => pill(f,'#FEE2E2','#991B1B')).join('');
+  const modPills = (c.mod||[]).map(f => pill(f,'#FEF3C7','#92400E')).join('');
+  const noteHtml = testo ? `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;font-size:13px;color:#78350F;margin-bottom:14px;line-height:1.6;white-space:pre-wrap"><b>✏️ Note per il paziente:</b><br>${_e(testo)}</div>` : '';
+  const secTitle = label => `<div style="font-size:11pt;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #E2E8F0">${label}</div>`;
+  const html = `<div style="font-family:'DM Sans',Arial,sans-serif;color:#1E293B;font-size:14px;line-height:1.5;padding:24px">
+    <div style="background:${hex};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+      <span style="font-size:32px">${c.emoji||'🥗'}</span>
+      <div><div style="font-size:18px;font-weight:700">${_e(c.nome)}</div><div style="font-size:11px;opacity:.8;margin-top:4px">Consigli Nutrizionali · DietPlan Pro</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${hex}"><div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🍽️ Pasti/die</div><div style="font-size:11pt;font-weight:700">${_e(c.pasti||'—')}</div></div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${hex}"><div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🥣 Porzioni</div><div style="font-size:11pt;font-weight:700">${_e(c.porzioni||'—')}</div></div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${hex}"><div style="font-size:9pt;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">💧 Idratazione</div><div style="font-size:11pt;font-weight:700">${_e(c.idratazione||'—')}</div></div>
+    </div>
+    ${c.nota ? `<div style="background:#EFF6FF;border-left:4px solid #3B82F6;border-radius:6px;padding:10px 14px;font-size:13px;color:#1E3A5F;margin-bottom:14px;line-height:1.6">📚 ${_e(c.nota)}</div>` : ''}
+    ${noteHtml}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>${secTitle('✅ Alimenti Consigliati')}<div>${okPills}</div></div>
+      <div>${secTitle('❌ Da Evitare / Limitare')}<div>${noPills}</div></div>
+    </div>
+    ${modPills ? `<div style="margin-bottom:14px">${secTitle('⚠️ Con Moderazione')}<div>${modPills}</div></div>` : ''}
+    ${(c.pratici||[]).length ? `<div style="margin-bottom:14px">${secTitle('💡 Consigli Pratici')}<ul style="list-style:none;padding:0">${(c.pratici||[]).map(p=>`<li style="padding:5px 0;border-bottom:1px solid #E2E8F0;font-size:13px;color:#334155">→ ${_e(p)}</li>`).join('')}</ul></div>` : ''}
+    ${(c.avvisi||[]).length ? `<div style="background:#FEF2F2;border-radius:8px;padding:12px;border:1.5px solid #FEE2E2;margin-bottom:14px">${secTitle('🚨 Avvertenze')}<div>${(c.avvisi||[]).map(a=>`<div style="padding:5px 8px;border-bottom:1px solid #FEE2E2;font-size:12px;color:#991B1B">⚠️ ${_e(a)}</div>`).join('')}</div></div>` : ''}
+    <div style="margin-top:20px;padding-top:10px;border-top:1px solid #E2E8F0;font-size:11px;color:#94A3B8">DietPlan Pro · Consigli Nutrizionali</div>
+  </div>`;
   let printDiv = document.getElementById('cons-print-area');
-  if (!printDiv) {
-    printDiv = document.createElement('div');
-    printDiv.id = 'cons-print-area';
-    document.body.appendChild(printDiv);
-  }
-  printDiv.innerHTML = '<style>' + rawStyle + '</style>' + htmlDoc.body.innerHTML;
-  printDiv.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;overflow:hidden';
+  if (!printDiv) { printDiv = document.createElement('div'); printDiv.id = 'cons-print-area'; document.body.appendChild(printDiv); }
+  printDiv.innerHTML = html;
+  printDiv.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1';
   await new Promise(r => setTimeout(r, 200));
   try {
-    await capturePrintAndSave({
-      table: 'note_specialistiche', recordId: savedId, cartellaId: cartella_id,
-      container: printDiv, windowWidth: 850, silent: true
-    });
+    await capturePrintAndSave({ table: 'note_specialistiche', recordId: savedId, cartellaId: cartella_id, container: printDiv, windowWidth: 850, silent: true });
   } catch (_) {}
-  if (printDiv) { printDiv.innerHTML = ''; printDiv.style.cssText = 'display:none'; }
+  printDiv.innerHTML = ''; printDiv.style.cssText = 'display:none';
 }
 
 function toggleNotePaziente(id) {

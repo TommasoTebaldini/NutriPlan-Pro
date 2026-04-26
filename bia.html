@@ -871,18 +871,33 @@ async function salvaBIA() {
       showBIA('risultati');
       calcBIA();
       await new Promise(r => setTimeout(r, 400));
-      capturePrintAndSave({
-        table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id,
-        container: document.getElementById('main'),
-        onclone: (doc) => {
-          doc.querySelectorAll('.bia-panel').forEach(p => { p.style.display = 'none'; });
-          const res = doc.getElementById('tab-risultati');
-          if (res) res.style.display = 'block';
-          const tabsBar = doc.querySelector('.bia-tabs');
-          if (tabsBar) tabsBar.style.display = 'none';
-        },
-        type: 'bia', title: 'BIA — ' + (record.data_misura || ''), silent: true
-      }).catch(() => {});
+      (async () => {
+        try {
+          const compCanvas = document.getElementById('bia-comp-chart');
+          const radarCanvas = document.getElementById('bia-radar');
+          const compDataUrl = compCanvas ? compCanvas.toDataURL('image/png') : null;
+          const radarDataUrl = radarCanvas ? radarCanvas.toDataURL('image/png') : null;
+          const resultsWrap = document.getElementById('bia-results-wrap');
+          if (!resultsWrap) return;
+          const clone = resultsWrap.cloneNode(true);
+          if (compDataUrl) {
+            const cc = clone.querySelector('#bia-comp-chart');
+            if (cc) { const img = document.createElement('img'); img.src = compDataUrl; img.style.cssText = 'width:100%;display:block;max-width:600px'; cc.parentNode.replaceChild(img, cc); }
+          }
+          if (radarDataUrl) {
+            const rc = clone.querySelector('#bia-radar');
+            if (rc) { const img = document.createElement('img'); img.src = radarDataUrl; img.style.cssText = 'max-width:100%;display:block'; rc.parentNode.replaceChild(img, rc); }
+          }
+          clone.querySelectorAll('.no-print').forEach(el => el.remove());
+          let pd = document.getElementById('bia-print-area');
+          if (!pd) { pd = document.createElement('div'); pd.id = 'bia-print-area'; document.body.appendChild(pd); }
+          pd.innerHTML = '';
+          pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1';
+          pd.appendChild(clone);
+          await capturePrintAndSave({ table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id, container: pd, windowWidth: 850, silent: true });
+          pd.innerHTML = ''; pd.style.cssText = 'display:none';
+        } catch(_) {}
+      })();
     }
   }
 }

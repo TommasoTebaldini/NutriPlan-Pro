@@ -2355,16 +2355,17 @@ async function _captureQForStorage(savedId, cartellaId) {
     document.body.appendChild(printDiv);
   }
   const cardClone = cardEl.cloneNode(true);
+  cardClone.style.display = 'block';
   const cloneBody = cardClone.querySelector('.q-card-body');
   if (cloneBody) cloneBody.style.display = 'block';
-  cardClone.querySelectorAll('.no-print').forEach(el => el.remove());
+  cardClone.querySelectorAll('.no-print, button.btn').forEach(el => el.remove());
   printDiv.innerHTML = '';
   const hdiv = document.createElement('div');
   hdiv.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:14px';
   hdiv.innerHTML = '<div style="font-size:17px;font-weight:700">📋 ' + _qSaveNome + '</div><div style="font-size:10px;opacity:.8;margin-top:3px">Questionario Clinico · DietPlan Pro</div>';
   printDiv.appendChild(hdiv);
   printDiv.appendChild(cardClone);
-  printDiv.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px 24px;box-sizing:border-box';
+  printDiv.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px 24px;box-sizing:border-box';
   await new Promise(r => setTimeout(r, 150));
   try {
     await capturePrintAndSave({

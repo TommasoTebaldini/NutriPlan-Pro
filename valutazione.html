@@ -1159,11 +1159,25 @@ async function doSalva(cartellaId){
   const nomePaz = document.getElementById('v-nome').value.trim();
   toast('✅ Scheda di '+nomePaz+' salvata nella cartella!','ok');
   if (window.capturePrintAndSave && schedaId) {
-    capturePrintAndSave({
-      table: 'schede_valutazione', recordId: schedaId, cartellaId: cartellaId,
-      container: document.getElementById('main'),
-      type: 'valutazione', title: 'Valutazione — ' + nomePaz, silent: true
-    }).catch(() => {});
+    (async () => {
+      try {
+        const valGrid = document.getElementById('val-grid');
+        if (!valGrid) return;
+        const clone = valGrid.cloneNode(true);
+        clone.querySelectorAll('.no-print').forEach(el => el.remove());
+        let pd = document.getElementById('val-print-area');
+        if (!pd) { pd = document.createElement('div'); pd.id = 'val-print-area'; document.body.appendChild(pd); }
+        pd.innerHTML = '';
+        pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box';
+        const hdr = document.createElement('div');
+        hdr.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0EA5E9);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px';
+        hdr.innerHTML = '<div style="font-size:17px;font-weight:700">📋 Valutazione Paziente</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + (nomePaz || '') + '</div>';
+        pd.appendChild(hdr);
+        pd.appendChild(clone);
+        await capturePrintAndSave({ table: 'schede_valutazione', recordId: schedaId, cartellaId: cartellaId, container: pd, windowWidth: 850, silent: true });
+        pd.innerHTML = ''; pd.style.cssText = 'display:none';
+      } catch(_) {}
+    })();
   }
 }
 

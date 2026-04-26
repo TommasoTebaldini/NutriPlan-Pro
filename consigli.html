@@ -2596,6 +2596,34 @@ async function loadConsigliCustom() {
 // ═══════════════════════════════
 let noteConsigli = {}; // { consiglio_id: { id (supabase row id), testo } }
 
+async function _buildAndCaptureCons(c, testo, savedId, cartella_id) {
+  if (!window.capturePrintAndSave || !savedId || !c) return;
+  const htmlStr = buildStampaHTML(c, testo);
+  const parser = new DOMParser();
+  const htmlDoc = parser.parseFromString(htmlStr, 'text/html');
+  const rawStyle = (htmlDoc.head.querySelector('style')?.textContent || '')
+    .replace(/@page\s*\{[^}]*\}/g, '')
+    .replace(/\*\s*\{[^}]*\}/g, '')
+    .replace(/\.print-firma\s*\{[^}]*\}/g, '')
+    .replace(/\bbody\b/g, '#cons-print-area');
+  let printDiv = document.getElementById('cons-print-area');
+  if (!printDiv) {
+    printDiv = document.createElement('div');
+    printDiv.id = 'cons-print-area';
+    document.body.appendChild(printDiv);
+  }
+  printDiv.innerHTML = '<style>' + rawStyle + '</style>' + htmlDoc.body.innerHTML;
+  printDiv.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;overflow:hidden';
+  await new Promise(r => setTimeout(r, 200));
+  try {
+    await capturePrintAndSave({
+      table: 'note_specialistiche', recordId: savedId, cartellaId: cartella_id,
+      container: printDiv, windowWidth: 850, silent: true
+    });
+  } catch (_) {}
+  if (printDiv) { printDiv.innerHTML = ''; printDiv.style.cssText = 'display:none'; }
+}
+
 function toggleNotePaziente(id) {
   const box = document.getElementById('note-box-' + id);
   if (!box) return;
@@ -2685,9 +2713,7 @@ async function salvaNotePaziente(consiglioId) {
   const stato = document.getElementById('note-stato-' + consiglioId);
   if (stato) stato.textContent = '✅ Nota salvata in cartella';
   toast('✅ Nota salvata!', 'ok');
-  if (window.capturePrintAndSave && savedId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedId, cartellaId: cartella_id, silent: true }).catch(()=>{});
-  }
+  _buildAndCaptureCons(c, testo, savedId, cartella_id);
 }
 
 function aggiornaCountSelezione() {
@@ -2718,6 +2744,7 @@ async function salvaSelezioneInCartella() {
   showLoading(true);
   let saved = 0, errors = 0;
   const tuttiConsigli = getAllConsigli();
+  const captureItems = [];
   for (const cb of selected) {
     const consiglioId = cb.dataset.id;
     const c = tuttiConsigli.find(x => x.id === consiglioId);
@@ -2735,7 +2762,7 @@ async function salvaSelezioneInCartella() {
     if (existing?.id) {
       result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', existing.id);
     } else {
-      result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false });
+      result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select('id').single();
     }
     if (result.error) {
       if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
@@ -2744,6 +2771,8 @@ async function salvaSelezioneInCartella() {
       errors++;
     } else {
       saved++;
+      const savedId = result.data?.id || existing?.id;
+      if (c && savedId) captureItems.push({ c, testo, savedId });
     }
   }
   showLoading(false);
@@ -2752,6 +2781,13 @@ async function salvaSelezioneInCartella() {
     toast(`⚠️ ${saved} salvati, ${errors} errori`, 'err');
   } else {
     toast(`✅ ${saved} consiglio${saved !== 1 ? 'i' : ''} salvat${saved !== 1 ? 'i' : 'o'} in cartella!`, 'ok');
+  }
+  if (captureItems.length) {
+    (async () => {
+      for (const item of captureItems) {
+        await _buildAndCaptureCons(item.c, item.testo, item.savedId, cartella_id);
+      }
+    })();
   }
 }
 

@@ -1222,6 +1222,11 @@ async function salvaNCPt() {
   if (window.capturePrintAndSave && currentNcptId) {
     capturePrintAndSave({
       table: 'ncpt', recordId: currentNcptId, cartellaId: currentCartellaId,
+      container: document.getElementById('main'),
+      onclone: (doc) => {
+        doc.querySelectorAll('.ncpt-panel').forEach(p => { p.style.display = 'block'; });
+        doc.querySelectorAll('.ncpt-nav').forEach(el => { el.style.display = 'none'; });
+      },
       type: 'ncpt', title: 'NCPt — ' + new Date().toLocaleDateString('it'), silent: true
     }).catch(() => {});
   }

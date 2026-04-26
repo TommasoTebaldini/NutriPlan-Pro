@@ -2342,6 +2342,39 @@ async function loadCartellePazienti() {
   } catch(e) {}
 }
 
+async function _captureQForStorage(savedId, cartellaId) {
+  if (!window.capturePrintAndSave || !savedId || !_qSaveNome) return;
+  const cardMap = _qNameToCard[_qSaveNome];
+  if (!cardMap) return;
+  const cardEl = document.getElementById('qcard-' + cardMap.card);
+  if (!cardEl) return;
+  let printDiv = document.getElementById('questionario-print-area');
+  if (!printDiv) {
+    printDiv = document.createElement('div');
+    printDiv.id = 'questionario-print-area';
+    document.body.appendChild(printDiv);
+  }
+  const cardClone = cardEl.cloneNode(true);
+  const cloneBody = cardClone.querySelector('.q-card-body');
+  if (cloneBody) cloneBody.style.display = 'block';
+  cardClone.querySelectorAll('.no-print').forEach(el => el.remove());
+  printDiv.innerHTML = '';
+  const hdiv = document.createElement('div');
+  hdiv.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:14px';
+  hdiv.innerHTML = '<div style="font-size:17px;font-weight:700">📋 ' + _qSaveNome + '</div><div style="font-size:10px;opacity:.8;margin-top:3px">Questionario Clinico · DietPlan Pro</div>';
+  printDiv.appendChild(hdiv);
+  printDiv.appendChild(cardClone);
+  printDiv.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px 24px;box-sizing:border-box';
+  await new Promise(r => setTimeout(r, 150));
+  try {
+    await capturePrintAndSave({
+      table: 'note_specialistiche', recordId: savedId, cartellaId: cartellaId,
+      container: printDiv, windowWidth: 850, silent: true
+    });
+  } catch (_) {}
+  if (printDiv) { printDiv.innerHTML = ''; printDiv.style.cssText = 'display:none'; }
+}
+
 function apriSalvaQuestionario() {
   if (!currentUser) { toast('Accedi per salvare i dati nelle cartelle pazienti', 'err'); return; }
   if (!_qSaveNome) return;
@@ -2395,9 +2428,7 @@ async function salvaQuestionarioInCartella() {
     }
     return;
   }
-  if (window.capturePrintAndSave && savedId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedId, cartellaId: cartellaId, silent: true }).catch(()=>{});
-  }
+  _captureQForStorage(savedId, cartellaId);
   const wasEditing = !!_editingNoteSpecId;
   const backCartellaId = _editingCartellaId;
   _editingNoteSpecId = null;
@@ -2449,9 +2480,7 @@ async function salvaQFromBar() {
     if (error.code === '42P01') { mostraSetupSQL(); } else { toast('❌ ' + error.message, 'err'); }
     return;
   }
-  if (window.capturePrintAndSave && savedId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedId, cartellaId: cartellaId, silent: true }).catch(()=>{});
-  }
+  _captureQForStorage(savedId, cartellaId);
   const wasEditing = !!_editingNoteSpecId;
   const backCartellaId = _editingCartellaId;
   _editingNoteSpecId = null;

@@ -868,8 +868,19 @@ async function salvaBIA() {
     toast(isUpdate ? '✅ BIA aggiornata!' : '✅ BIA salvata nella cartella paziente!', 'ok');
     loadStorico();
     if (window.capturePrintAndSave && currentBiaId) {
+      showBIA('risultati');
+      calcBIA();
+      await new Promise(r => setTimeout(r, 400));
       capturePrintAndSave({
         table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id,
+        container: document.getElementById('main'),
+        onclone: (doc) => {
+          doc.querySelectorAll('.bia-panel').forEach(p => { p.style.display = 'none'; });
+          const res = doc.getElementById('tab-risultati');
+          if (res) res.style.display = 'block';
+          const tabsBar = doc.querySelector('.bia-tabs');
+          if (tabsBar) tabsBar.style.display = 'none';
+        },
         type: 'bia', title: 'BIA — ' + (record.data_misura || ''), silent: true
       }).catch(() => {});
     }

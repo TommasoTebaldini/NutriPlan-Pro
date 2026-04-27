@@ -678,6 +678,10 @@ BEGIN
   END LOOP;
 END $$;
 
+-- Explicit safety net: tables may have been created after the DO block ran
+ALTER TABLE IF EXISTS bia_records ADD COLUMN IF NOT EXISTS print_image_url TEXT;
+ALTER TABLE IF EXISTS ncpt         ADD COLUMN IF NOT EXISTS print_image_url TEXT;
+
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- SEZIONE 9 — STORAGE BUCKET document-prints

@@ -150,7 +150,7 @@
     let pd = document.getElementById(areaId);
     if (!pd) { pd = document.createElement('div'); pd.id = areaId; document.body.appendChild(pd); }
     pd.innerHTML = '';
-    pd.style.cssText = 'display:block;position:absolute;top:-9999px;left:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box;pointer-events:none';
+    pd.style.cssText = 'display:block;position:absolute;top:0;left:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box;pointer-events:none';
 
     if (opts.titleHtml) {
       const hdr = document.createElement('div');
@@ -198,6 +198,8 @@
       logging: false,
       windowWidth: opts.windowWidth || A4_RENDER_WIDTH,
       onclone: (doc) => {
+        // Remove overflow clipping so off-screen print areas (z-index:-1, top:0) render fully.
+        doc.body.style.overflow = 'visible';
         // Hide app chrome that should never appear in the printed sheet.
         ['sidebar', 'sb-overlay', 'topbar', 'toast'].forEach((id) => {
           const el = doc.getElementById(id);
@@ -342,7 +344,12 @@
         titleHtml: opts.titleHtml,
         removeSelectors: opts.removeSelectors,
       });
-      if (autoPrintArea) opts = Object.assign({}, opts, { container: autoPrintArea });
+      if (autoPrintArea) {
+        opts = Object.assign({}, opts, { container: autoPrintArea });
+        // Wait one animation frame so the browser computes the full layout of the
+        // newly-appended print area before html2canvas measures its dimensions.
+        await new Promise((r) => requestAnimationFrame(r));
+      }
     }
 
     // Resolve the folder: patient_id if cartella is linked, otherwise current user

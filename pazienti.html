@@ -308,6 +308,18 @@ async function renderCartellaDetail(id) {
   ]);
   
   const cart = cartResult.data;
+  const patientId = patientLink[0]?.patient_id || null;
+  let privacyDocs = [];
+  if (patientId) {
+    privacyDocs = await safeQuery(
+      sb.from('patient_documents')
+        .select('id, title, signed_at, signature_accepted, created_at')
+        .eq('patient_id', patientId)
+        .eq('type', 'privacy')
+        .eq('dietitian_id', currentUser.id)
+        .order('created_at', { ascending: false })
+    );
+  }
 
   if (!cart) { 
     wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>Cartella non trovata</h3><p style="color:var(--slate-l);font-size:13px">Cartella non accessibile o inesistente.</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">← Torna all'elenco</button></div>`;
@@ -571,6 +583,37 @@ async function renderCartellaDetail(id) {
         }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun dato benessere registrato dal paziente.</div>'}
       </div>
     </div>
+
+    <!-- PRIVACY DOCUMENT -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
+          🔒 Informativa Privacy
+        </h4>
+        ${patientId ? `<button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#475569,#64748B);color:white;box-shadow:0 2px 8px rgba(71,85,105,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(71,85,105,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(71,85,105,.3)';this.style.transform=''" onclick="inviaPrivacy('${patientId}','${id}')">🔒 ${privacyDocs.length ? 'Rinvia Privacy' : 'Invia Privacy'}</button>` : ''}
+      </div>
+      <div style="padding:10px 14px">
+        ${!patientId ? '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Collega il paziente all\'app per inviare il documento privacy.</div>' :
+          privacyDocs.length === 0 ? '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun documento privacy inviato.</div>' :
+          privacyDocs.map(d => {
+            const signed = !!d.signed_at;
+            const accepted = d.signature_accepted;
+            const statusBg = signed ? (accepted ? '#D1FAE5' : '#FEE2E2') : '#FEF3C7';
+            const statusColor = signed ? (accepted ? '#065F46' : '#991B1B') : '#92400E';
+            const statusText = signed ? (accepted ? '✅ Firmato e accettato' : '❌ Rifiutato') : '⏳ In attesa di firma';
+            const statusDate = signed ? ` · ${fmtDate(d.signed_at)}` : '';
+            return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px">
+              <span style="font-size:22px">🔒</span>
+              <div style="flex:1">
+                <div style="font-weight:700;font-size:13px;color:var(--slate)">Informativa Privacy</div>
+                <div style="font-size:11.5px;color:var(--slate-l)">Inviata: ${fmtDate(d.created_at)}</div>
+              </div>
+              <span style="font-size:11px;padding:3px 9px;border-radius:8px;font-weight:700;background:${statusBg};color:${statusColor}">${statusText}${statusDate}</span>
+            </div>`;
+          }).join('')
+        }
+      </div>
+    </div>
   `;
 
   // Render weight chart if data available
@@ -593,6 +636,26 @@ function apriNoteSpec(noteId, tipo) {
   const page = pageMap[tipo];
   if (!page) return;
   window.location.href = page + '?noteId=' + encodeURIComponent(noteId);
+}
+
+async function inviaPrivacy(patientId, cartellaId) {
+  if (!patientId || !currentUser) { toast('Paziente non collegato', 'err'); return; }
+  try {
+    const { error } = await sb.from('patient_documents').insert({
+      patient_id: patientId,
+      dietitian_id: currentUser.id,
+      title: 'Informativa Privacy',
+      type: 'privacy',
+      content: 'Il paziente è informato che i propri dati personali e sanitari vengono trattati ai sensi del Regolamento (UE) 2016/679 (GDPR) e del D.Lgs. 196/2003 come modificato dal D.Lgs. 101/2018. I dati sono trattati per finalità di assistenza nutrizionale e non vengono comunicati a terzi senza consenso esplicito. Il paziente ha diritto di accedere, rettificare, cancellare i propri dati e di revocare il consenso in qualsiasi momento.',
+      visible: true,
+      requires_signature: true,
+    });
+    if (error) throw error;
+    toast('✅ Documento privacy inviato al paziente', 'ok');
+    await renderCartellaDetail(cartellaId);
+  } catch (e) {
+    toast('❌ Errore: ' + (e.message || e), 'err');
+  }
 }
 
 function apriScheda(schedaId) {

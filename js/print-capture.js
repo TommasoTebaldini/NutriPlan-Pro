@@ -150,7 +150,7 @@
     let pd = document.getElementById(areaId);
     if (!pd) { pd = document.createElement('div'); pd.id = areaId; document.body.appendChild(pd); }
     pd.innerHTML = '';
-    pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box';
+    pd.style.cssText = 'display:block;position:absolute;top:-9999px;left:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box;pointer-events:none';
 
     if (opts.titleHtml) {
       const hdr = document.createElement('div');

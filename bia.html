@@ -903,10 +903,45 @@ async function salvaBIA() {
       if (risultatiPanel) risultatiPanel.classList.add('active');
       document.querySelectorAll('.bia-tab').forEach((t, i) => t.classList.toggle('active', i === 1));
       calcBIA();
-      // Wait for charts to render, then capture the live results panel directly.
-      // html2canvas reads canvas pixel data from the live DOM, so no cloning needed.
-      await new Promise(r => setTimeout(r, 500));
-      capturePrintAndSave({ table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id, container: risultatiPanel, windowWidth: 850, silent: true }).catch(err => console.warn('BIA capture failed:', err));
+      // Wait for charts to render fully before capturing.
+      await new Promise(r => setTimeout(r, 800));
+      // Capture canvas toDataURL() BEFORE html2canvas clones the DOM — canvas pixel data
+      // is not preserved by cloneNode(), so we replace canvas elements with <img> tags.
+      const resultsWrap = document.getElementById('bia-results-wrap');
+      const canvasData = {};
+      if (resultsWrap) {
+        resultsWrap.querySelectorAll('canvas').forEach(c => {
+          try { if (c.id) canvasData[c.id] = c.toDataURL('image/png'); } catch(_) {}
+        });
+      }
+      // Build off-screen print area positioned above the viewport (top:-9999px avoids
+      // the body overflow-x:hidden clipping that occurs with left:-9999px).
+      let biaPd = document.getElementById('bia-print-area');
+      if (!biaPd) { biaPd = document.createElement('div'); biaPd.id = 'bia-print-area'; document.body.appendChild(biaPd); }
+      biaPd.innerHTML = '';
+      biaPd.style.cssText = 'display:block;position:absolute;top:-9999px;left:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box;pointer-events:none';
+      const biaHdr = document.createElement('div');
+      biaHdr.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px';
+      biaHdr.innerHTML = '<div style="font-size:17px;font-weight:700">📊 Analisi BIA — Bioimpedenziometria</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString('it') + '</div>';
+      biaPd.appendChild(biaHdr);
+      if (resultsWrap) {
+        const clone = resultsWrap.cloneNode(true);
+        clone.querySelectorAll('canvas').forEach(c => {
+          const dataUrl = canvasData[c.id];
+          if (!dataUrl || !c.parentNode) return;
+          const img = document.createElement('img');
+          img.src = dataUrl;
+          img.style.cssText = 'max-width:100%;display:block';
+          c.parentNode.replaceChild(img, c);
+        });
+        biaPd.appendChild(clone);
+      }
+      capturePrintAndSave({ table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id, container: biaPd, windowWidth: 850, silent: true }).then(() => {
+        biaPd.innerHTML = ''; biaPd.style.cssText = 'display:none';
+      }).catch(err => {
+        console.warn('BIA capture failed:', err);
+        biaPd.innerHTML = ''; biaPd.style.cssText = 'display:none';
+      });
     }
   }
 }

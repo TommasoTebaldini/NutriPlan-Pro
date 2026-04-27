@@ -12,7 +12,15 @@
 //
 // Public API:
 //   await capturePrintAndSave({ table, recordId, cartellaId,
-//                               container, silent, onclone })
+//                               container, silent, onclone,
+//                               panelSelector, titleHtml, removeSelectors })
+//
+//   panelSelector — CSS selector for tab/panel elements to combine into
+//                   a single off-screen container (auto-builds when set
+//                   and no container is provided).
+//   titleHtml     — optional header HTML prepended to the combined area.
+//   removeSelectors — extra CSS selectors to remove from each panel clone
+//                     (e.g. ['.ncpt-nav']).
 //
 // Requires `sb` (Supabase client) from js/utils.js.
 // ═══════════════════════════════════════════════════════════════════
@@ -88,6 +96,89 @@
       });
     };
   }
+
+  // ─── staticifyFormElements ─────────────────────────────────────────────────
+  // Replace form inputs/textareas/selects in cloneEl with static text elements,
+  // reading the live values from matching elements in origEl.
+  // This is necessary because cloneNode(true) copies DOM attributes but NOT
+  // the JavaScript .value property set by user interaction.
+  function staticifyFormElements(cloneEl, origEl) {
+    const origArr = Array.from(origEl.querySelectorAll('input, textarea, select'));
+    const cloneArr = Array.from(cloneEl.querySelectorAll('input, textarea, select'));
+    cloneArr.forEach(function (cl, idx) {
+      const orig = origArr[idx];
+      if (!orig || !cl.parentNode) return;
+      const val = orig.value || '';
+      if (orig.type === 'checkbox' || orig.type === 'radio') {
+        cl.checked = orig.checked;
+        return;
+      }
+      if (orig.tagName === 'TEXTAREA') {
+        const div = document.createElement('div');
+        div.style.cssText = 'font-family:inherit;font-size:13px;line-height:1.6;color:#1E293B;white-space:pre-wrap;padding:6px 0;min-height:18px;word-break:break-word';
+        div.textContent = val;
+        cl.parentNode.replaceChild(div, cl);
+      } else if (orig.tagName === 'SELECT') {
+        const span = document.createElement('span');
+        span.style.cssText = 'font-family:inherit;font-size:13px;font-weight:600;color:#1E293B;display:inline-block';
+        const selOpt = orig.options[orig.selectedIndex];
+        span.textContent = (selOpt ? selOpt.text : null) || val || '—';
+        cl.parentNode.replaceChild(span, cl);
+      } else {
+        const span = document.createElement('span');
+        span.style.cssText = 'font-family:inherit;font-size:13px;font-weight:600;color:#1E293B;display:inline-block';
+        span.textContent = val || '—';
+        cl.parentNode.replaceChild(span, cl);
+      }
+    });
+  }
+
+  // ─── buildAllPanelsPrintArea ───────────────────────────────────────────────
+  // Build an off-screen combined print div from all elements matching
+  // panelSelector. Each panel is cloned, forced visible, and staticified
+  // (form elements replaced with static text). Returns the div, or null.
+  // Options:
+  //   areaId         — id for the off-screen wrapper element
+  //   titleHtml      — HTML string prepended as a header
+  //   removeSelectors — array of additional CSS selectors to remove from clones
+  function buildAllPanelsPrintArea(panelSelector, opts) {
+    opts = opts || {};
+    const panels = Array.from(document.querySelectorAll(panelSelector));
+    if (!panels.length) return null;
+
+    const areaId = opts.areaId || 'spec-print-area';
+    let pd = document.getElementById(areaId);
+    if (!pd) { pd = document.createElement('div'); pd.id = areaId; document.body.appendChild(pd); }
+    pd.innerHTML = '';
+    pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box';
+
+    if (opts.titleHtml) {
+      const hdr = document.createElement('div');
+      hdr.innerHTML = opts.titleHtml;
+      pd.appendChild(hdr);
+    }
+
+    const extraRemove = opts.removeSelectors || [];
+
+    panels.forEach(function (panel, pi) {
+      const pc = panel.cloneNode(true);
+      pc.style.display = 'block';
+      const removeList = ['.no-print'].concat(extraRemove);
+      pc.querySelectorAll(removeList.join(', ')).forEach(function (el) { el.remove(); });
+      staticifyFormElements(pc, panel);
+      pd.appendChild(pc);
+      if (pi < panels.length - 1) {
+        const hr = document.createElement('hr');
+        hr.style.cssText = 'border:none;border-top:1px solid #E2E8F0;margin:16px 0';
+        pd.appendChild(hr);
+      }
+    });
+
+    return pd;
+  }
+
+  window.staticifyFormElements = staticifyFormElements;
+  window.buildAllPanelsPrintArea = buildAllPanelsPrintArea;
 
   // Render the target into ONE big canvas, then slice into A4-portrait
   // pages. Returns an array of PNG blobs (one per page).
@@ -242,6 +333,18 @@
       console.warn('print-capture: missing table or recordId', { table, recordId });
       return null;
     }
+
+    // Auto-build combined print area when panelSelector is given and no container
+    let autoPrintArea = null;
+    if (opts.panelSelector && !opts.container) {
+      autoPrintArea = buildAllPanelsPrintArea(opts.panelSelector, {
+        areaId: (table || 'spec') + '-print-area',
+        titleHtml: opts.titleHtml,
+        removeSelectors: opts.removeSelectors,
+      });
+      if (autoPrintArea) opts = Object.assign({}, opts, { container: autoPrintArea });
+    }
+
     // Resolve the folder: patient_id if cartella is linked, otherwise current user
     let folderId = null;
     if (cartellaId) {
@@ -262,6 +365,7 @@
     }
     if (!folderId) {
       if (window.toast && opts.silent !== true) toast('⚠️ Utente non autenticato — immagine non salvata', 'err');
+      if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
       return null;
     }
 
@@ -293,6 +397,7 @@
       if (error) {
         console.warn(`print-capture: ${table}.update failed`, error.message);
         if (window.toast && opts.silent !== true) toast('⚠️ Immagine caricata ma update fallito: ' + error.message, 'err');
+        if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
         return value;
       }
 
@@ -301,10 +406,12 @@
           ? `🖼️ Documento salvato (${numPages} pagine)`
           : '🖼️ Immagine documento salvata', 'ok');
       }
+      if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
       return value;
     } catch (e) {
       console.error('print-capture failed:', e);
       if (window.toast && opts.silent !== true) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
+      if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
       return null;
     }
   }

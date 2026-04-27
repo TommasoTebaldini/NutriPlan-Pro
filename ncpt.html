@@ -1220,28 +1220,16 @@ async function salvaNCPt() {
   }
   toast('💾 NCPt salvato nella cartella!','ok');
   if (window.capturePrintAndSave && currentNcptId) {
-    (async () => {
-      try {
-        let pd = document.getElementById('ncpt-print-area');
-        if (!pd) { pd = document.createElement('div'); pd.id = 'ncpt-print-area'; document.body.appendChild(pd); }
-        pd.innerHTML = '';
-        pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box';
-        const hdr = document.createElement('div');
-        hdr.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px';
-        hdr.innerHTML = '<div style="font-size:17px;font-weight:700">📋 NCPt — Nutrition Care Process</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString('it') + '</div>';
-        pd.appendChild(hdr);
-        for (let i = 0; i < 4; i++) {
-          const panel = document.getElementById('tab-' + i);
-          if (!panel) continue;
-          const pc = panel.cloneNode(true);
-          pc.style.display = 'block';
-          pc.querySelectorAll('.ncpt-nav, .no-print').forEach(el => el.remove());
-          pd.appendChild(pc);
-        }
-        await capturePrintAndSave({ table: 'ncpt', recordId: currentNcptId, cartellaId: currentCartellaId, container: pd, windowWidth: 850, silent: true });
-        pd.innerHTML = ''; pd.style.cssText = 'display:none';
-      } catch(_) {}
-    })();
+    capturePrintAndSave({
+      table: 'ncpt',
+      recordId: currentNcptId,
+      cartellaId: currentCartellaId,
+      panelSelector: '.ncpt-panel',
+      removeSelectors: ['.ncpt-nav'],
+      titleHtml: '<div style="background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px"><div style="font-size:17px;font-weight:700">📋 NCPt — Nutrition Care Process</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString('it') + '</div></div>',
+      windowWidth: 850,
+      silent: true,
+    }).catch(function () {});
   }
 }
 

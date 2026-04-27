@@ -903,34 +903,10 @@ async function salvaBIA() {
       if (risultatiPanel) risultatiPanel.classList.add('active');
       document.querySelectorAll('.bia-tab').forEach((t, i) => t.classList.toggle('active', i === 1));
       calcBIA();
+      // Wait for charts to render, then capture the live results panel directly.
+      // html2canvas reads canvas pixel data from the live DOM, so no cloning needed.
       await new Promise(r => setTimeout(r, 500));
-      (async () => {
-        try {
-          const compCanvas = document.getElementById('bia-comp-chart');
-          const radarCanvas = document.getElementById('bia-radar');
-          const compDataUrl = compCanvas ? compCanvas.toDataURL('image/png') : null;
-          const radarDataUrl = radarCanvas ? radarCanvas.toDataURL('image/png') : null;
-          const resultsWrap = document.getElementById('bia-results-wrap');
-          if (!resultsWrap) return;
-          const clone = resultsWrap.cloneNode(true);
-          if (compDataUrl) {
-            const cc = clone.querySelector('#bia-comp-chart');
-            if (cc) { const img = document.createElement('img'); img.src = compDataUrl; img.style.cssText = 'width:100%;display:block;max-width:600px'; cc.parentNode.replaceChild(img, cc); }
-          }
-          if (radarDataUrl) {
-            const rc = clone.querySelector('#bia-radar');
-            if (rc) { const img = document.createElement('img'); img.src = radarDataUrl; img.style.cssText = 'max-width:100%;display:block'; rc.parentNode.replaceChild(img, rc); }
-          }
-          clone.querySelectorAll('.no-print').forEach(el => el.remove());
-          let pd = document.getElementById('bia-print-area');
-          if (!pd) { pd = document.createElement('div'); pd.id = 'bia-print-area'; document.body.appendChild(pd); }
-          pd.innerHTML = '';
-          pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:16px;box-sizing:border-box';
-          pd.appendChild(clone);
-          await capturePrintAndSave({ table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id, container: pd, windowWidth: 850, silent: true });
-          pd.innerHTML = ''; pd.style.cssText = 'display:none';
-        } catch(err) { console.warn('BIA capture failed:', err); }
-      })();
+      capturePrintAndSave({ table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id, container: risultatiPanel, windowWidth: 850, silent: true }).catch(err => console.warn('BIA capture failed:', err));
     }
   }
 }

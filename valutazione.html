@@ -1165,6 +1165,9 @@ async function doSalva(cartellaId){
         if (!valGrid) return;
         const clone = valGrid.cloneNode(true);
         clone.querySelectorAll('.no-print').forEach(el => el.remove());
+        // Copy live form values to clone and replace with static elements for html2canvas.
+        // cloneNode(true) copies DOM attributes but not the JS .value property.
+        if (window.staticifyFormElements) window.staticifyFormElements(clone, valGrid);
         let pd = document.getElementById('val-print-area');
         if (!pd) { pd = document.createElement('div'); pd.id = 'val-print-area'; document.body.appendChild(pd); }
         pd.innerHTML = '';

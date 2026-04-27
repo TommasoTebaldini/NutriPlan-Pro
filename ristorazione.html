@@ -963,7 +963,7 @@ async function salvaRistorazione() {
   toast(editingRistNoteId ? '✅ Piano Ristorazione aggiornato!' : '✅ Piano Ristorazione salvato!','ok');
   if (!editingRistNoteId && result.data?.id) editingRistNoteId = result.data.id;
   if (window.capturePrintAndSave && editingRistNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRistNoteId, cartellaId: cartella_id, silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRistNoteId, cartellaId: cartella_id, panelSelector: '.rist-panel', silent: true }).catch(()=>{});
   }
 }
 

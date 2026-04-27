@@ -1471,7 +1471,7 @@ async function salvaPediatria() {
   toast(editingPedNoteId ? '✅ Scheda Pediatrica aggiornata!' : '✅ Scheda Pediatrica salvata nella cartella!','ok');
   if (!editingPedNoteId && result.data?.id) editingPedNoteId = result.data.id;
   if (window.capturePrintAndSave && editingPedNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPedNoteId, cartellaId: cartella_id, silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPedNoteId, cartellaId: cartella_id, panelSelector: '.ped-panel', silent: true }).catch(()=>{});
   }
 }
 

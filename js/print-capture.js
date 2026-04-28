@@ -150,10 +150,11 @@
     let pd = document.getElementById(areaId);
     if (!pd) { pd = document.createElement('div'); pd.id = areaId; document.body.appendChild(pd); }
     pd.innerHTML = '';
-    // position:fixed keeps the element out of the document scroll area (no page doubling).
-    // It is repositioned to top:0;left:0 inside the html2canvas onclone callback so
-    // the renderer captures the full content height.
-    pd.style.cssText = 'display:block;position:fixed;top:9999px;left:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none';
+    // position:fixed;top:0 keeps the element out of document flow (no page doubling) but
+    // within the viewport origin so the browser computes the full intrinsic height.
+    // visibility:hidden prevents the user from seeing it; onclone will flip it visible
+    // and hide the rest of the page so html2canvas captures only this print area.
+    pd.style.cssText = 'display:block;position:fixed;top:0;left:0;visibility:hidden;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
 
     if (opts.titleHtml) {
       const hdr = document.createElement('div');
@@ -201,28 +202,31 @@
       logging: false,
       windowWidth: opts.windowWidth || A4_RENDER_WIDTH,
       onclone: (doc) => {
-        // Remove overflow clipping (belt-and-suspenders).
         doc.body.style.overflow = 'visible';
-        // Print areas use position:fixed;top:9999px in the live DOM so they stay off-screen.
-        // Reposition to top:0;left:0 in the clone so html2canvas captures the full height.
+        // Hide the entire cloned page so only the print area is rendered cleanly.
+        // The print area is at position:fixed;top:0 in the live DOM with visibility:hidden.
+        // We flip it visible here and keep everything else hidden so html2canvas captures
+        // the full content height without any page chrome bleeding through.
+        doc.body.style.visibility = 'hidden';
         if (target !== document.body && target.id) {
           const cloneEl = doc.getElementById(target.id);
           if (cloneEl) {
+            cloneEl.style.visibility = 'visible';
+            // Switch to absolute so the clone document can scroll past it if needed.
             cloneEl.style.position = 'absolute';
             cloneEl.style.top = '0';
             cloneEl.style.left = '0';
+            cloneEl.style.zIndex = 'auto';
           }
         }
-        // Hide app chrome that should never appear in the printed sheet.
+        // Belt-and-suspenders: also hide specific chrome elements.
         ['sidebar', 'sb-overlay', 'topbar', 'toast'].forEach((id) => {
           const el = doc.getElementById(id);
           if (el) el.style.display = 'none';
         });
-        // Hide any toast / notification element regardless of id.
         doc.querySelectorAll(
           '.toast, .notification, [role="status"], [role="alert"], .no-print'
         ).forEach((el) => { el.style.display = 'none'; });
-        // Remove sidebar-related layout offset so content is horizontally centred.
         const mainEl = doc.getElementById('main');
         if (mainEl) {
           mainEl.style.marginLeft = '0';
@@ -359,11 +363,14 @@
       });
       if (autoPrintArea) {
         opts = Object.assign({}, opts, { container: autoPrintArea });
-        // Wait one animation frame so the browser computes the full layout of the
-        // newly-appended print area before html2canvas measures its dimensions.
-        await new Promise((r) => requestAnimationFrame(r));
       }
     }
+
+    // Always wait two animation frames so the browser computes the full intrinsic
+    // height of the print area (position:fixed;top:0;visibility:hidden) before
+    // html2canvas measures its getBoundingClientRect().
+    await new Promise((r) => requestAnimationFrame(r));
+    await new Promise((r) => requestAnimationFrame(r));
 
     // Resolve the folder: patient_id if cartella is linked, otherwise current user
     let folderId = null;

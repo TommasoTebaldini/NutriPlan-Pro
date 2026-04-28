@@ -914,12 +914,12 @@ async function salvaBIA() {
           try { if (c.id) canvasData[c.id] = c.toDataURL('image/png'); } catch(_) {}
         });
       }
-      // Build off-screen print area positioned above the viewport (top:-9999px avoids
-      // the body overflow-x:hidden clipping that occurs with left:-9999px).
+      // Build print area at position:fixed;top:0 with visibility:hidden — browser computes
+      // full intrinsic height; onclone makes it visible while hiding the rest of the page.
       let biaPd = document.getElementById('bia-print-area');
       if (!biaPd) { biaPd = document.createElement('div'); biaPd.id = 'bia-print-area'; document.body.appendChild(biaPd); }
       biaPd.innerHTML = '';
-      biaPd.style.cssText = 'display:block;position:fixed;top:9999px;left:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none';
+      biaPd.style.cssText = 'display:block;position:fixed;top:0;left:0;visibility:hidden;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
       const biaHdr = document.createElement('div');
       biaHdr.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px';
       biaHdr.innerHTML = '<div style="font-size:17px;font-weight:700">📊 Analisi BIA — Bioimpedenziometria</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString('it') + '</div>';

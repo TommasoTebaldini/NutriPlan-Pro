@@ -1168,10 +1168,15 @@ async function doSalva(cartellaId){
         // Copy live form values to clone and replace with static elements for html2canvas.
         // cloneNode(true) copies DOM attributes but not the JS .value property.
         if (window.staticifyFormElements) window.staticifyFormElements(clone, valGrid);
+        // Force single-column layout inside the clone so all sections stack vertically
+        // and content spans multiple A4 pages instead of fitting in one wide grid.
+        clone.style.display = 'block';
+        clone.querySelectorAll('.fgrid').forEach(el => { el.style.gridTemplateColumns = '1fr'; });
+        clone.querySelectorAll('.val-section, #risultati-col').forEach(el => { el.style.width = '100%'; });
         let pd = document.getElementById('val-print-area');
         if (!pd) { pd = document.createElement('div'); pd.id = 'val-print-area'; document.body.appendChild(pd); }
         pd.innerHTML = '';
-        pd.style.cssText = 'display:block;position:fixed;top:0;left:0;visibility:hidden;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
+        pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
         const hdr = document.createElement('div');
         hdr.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0EA5E9);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px';
         hdr.innerHTML = '<div style="font-size:17px;font-weight:700">📋 Valutazione Paziente</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + (nomePaz || '') + '</div>';

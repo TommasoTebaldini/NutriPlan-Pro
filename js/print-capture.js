@@ -150,11 +150,11 @@
     let pd = document.getElementById(areaId);
     if (!pd) { pd = document.createElement('div'); pd.id = areaId; document.body.appendChild(pd); }
     pd.innerHTML = '';
-    // position:fixed;top:0 keeps the element out of document flow (no page doubling) but
-    // within the viewport origin so the browser computes the full intrinsic height.
-    // visibility:hidden prevents the user from seeing it; onclone will flip it visible
-    // and hide the rest of the page so html2canvas captures only this print area.
-    pd.style.cssText = 'display:block;position:fixed;top:0;left:0;visibility:hidden;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
+    // position:absolute;left:-9999px;top:0 keeps the element off-screen horizontally
+    // (body{overflow-x:hidden} clips it visually) while the browser computes the full
+    // intrinsic height at top:0. onclone moves it to left:0 and sets body visibility:hidden
+    // so html2canvas renders only this area cleanly. Matches the approach used in questionari.html.
+    pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
 
     if (opts.titleHtml) {
       const hdr = document.createElement('div');
@@ -190,6 +190,11 @@
     const html2canvas = await loadHtml2Canvas();
     const target = container || document.body;
 
+    const bcr = target.getBoundingClientRect();
+    console.log('[print-capture] renderToPagedBlobs: id=' + (target.id || '(body)') +
+      ' bcr=' + Math.round(bcr.left) + ',' + Math.round(bcr.top) +
+      ' ' + Math.round(bcr.width) + 'x' + Math.round(bcr.height));
+
     // Hide toast/etc on the live DOM so html2canvas never sees them.
     const restoreUI = hideTransientUI();
 
@@ -202,24 +207,23 @@
       logging: false,
       windowWidth: opts.windowWidth || A4_RENDER_WIDTH,
       onclone: (doc) => {
+        // Remove overflow-x:hidden so the off-screen print area (left:-9999px) is reachable.
         doc.body.style.overflow = 'visible';
-        // Hide the entire cloned page so only the print area is rendered cleanly.
-        // The print area is at position:fixed;top:0 in the live DOM with visibility:hidden.
-        // We flip it visible here and keep everything else hidden so html2canvas captures
-        // the full content height without any page chrome bleeding through.
+        doc.body.style.overflowX = 'visible';
+        // Hide the rest of the page so only the print area is rendered.
         doc.body.style.visibility = 'hidden';
         if (target !== document.body && target.id) {
           const cloneEl = doc.getElementById(target.id);
           if (cloneEl) {
+            // Make print area visible and move it to origin so html2canvas crops correctly.
             cloneEl.style.visibility = 'visible';
-            // Switch to absolute so the clone document can scroll past it if needed.
             cloneEl.style.position = 'absolute';
             cloneEl.style.top = '0';
             cloneEl.style.left = '0';
             cloneEl.style.zIndex = 'auto';
           }
         }
-        // Belt-and-suspenders: also hide specific chrome elements.
+        // Belt-and-suspenders: hide specific chrome elements.
         ['sidebar', 'sb-overlay', 'topbar', 'toast'].forEach((id) => {
           const el = doc.getElementById(id);
           if (el) el.style.display = 'none';
@@ -246,6 +250,7 @@
     const pageHeight = Math.round(pageWidth * A4_RATIO);
     const totalH    = fullCanvas.height;
     const numPages  = Math.max(1, Math.ceil(totalH / pageHeight));
+    console.log('[print-capture] canvas=' + pageWidth + 'x' + totalH + ' pageH=' + pageHeight + ' numPages=' + numPages);
 
     const blobs = [];
     for (let i = 0; i < numPages; i++) {
@@ -402,10 +407,12 @@
 
       // Upload all pages → collect signed URLs
       const urls = [];
+      console.log('[print-capture] uploading ' + numPages + ' page(s) to folder=' + folderId);
       for (let i = 0; i < numPages; i++) {
         const path = `${folderId}/${table}_${recordId}_p${i + 1}.png`;
         const url = await uploadPage(blobs[i], path);
         if (!url) throw new Error(`URL pagina ${i + 1} non disponibile`);
+        console.log('[print-capture] uploaded p' + (i + 1) + ':', path);
         urls.push(url);
       }
 
@@ -423,11 +430,13 @@
         .eq('id', recordId);
       if (error) {
         console.warn(`print-capture: ${table}.update failed`, error.message);
-        if (window.toast && opts.silent !== true) toast('⚠️ Immagine caricata ma update fallito: ' + error.message, 'err');
+        // Show error toast even if silent so the dietitian knows something went wrong.
+        if (window.toast) toast('⚠️ Immagine caricata ma update DB fallito: ' + error.message, 'err');
         if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
         return value;
       }
 
+      console.log('[print-capture] DB updated ok:', table, recordId);
       if (window.toast && opts.silent !== true) {
         toast(numPages > 1
           ? `🖼️ Documento salvato (${numPages} pagine)`
@@ -437,7 +446,8 @@
       return value;
     } catch (e) {
       console.error('print-capture failed:', e);
-      if (window.toast && opts.silent !== true) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
+      // Always show error toast so dietitian knows something went wrong.
+      if (window.toast) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
       if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
       return null;
     }

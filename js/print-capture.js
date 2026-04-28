@@ -434,6 +434,26 @@
         return value;
       }
 
+      // Verify the update actually took effect (silent RLS failures return error=null with 0 rows changed)
+      const { data: verif, error: verifErr } = await sb
+        .from(table)
+        .select('id, print_image_url')
+        .eq('id', recordId)
+        .maybeSingle();
+      if (verifErr) {
+        console.warn('[print-capture] Verify SELECT failed:', verifErr.message);
+      } else if (!verif) {
+        console.warn('[print-capture] RECORD NOT FOUND in DB! recordId:', recordId,
+          '— the capture saved files to storage but the DB row does not exist or is invisible to this user. ' +
+          'Make sure you load an existing record before saving, or that the record was already saved first.');
+        if (window.toast) toast('⚠️ Record non trovato nel DB — ricarica la pagina e salva di nuovo', 'err');
+      } else if (!verif.print_image_url) {
+        console.warn('[print-capture] DB update silently blocked (RLS or wrong user)! print_image_url is still null for', recordId);
+        if (window.toast) toast('⚠️ Aggiornamento DB bloccato (RLS). Controlla le policy.', 'err');
+      } else {
+        console.log('[print-capture] DB verified ok:', table, recordId, numPages + ' page(s)');
+      }
+
       console.log('[print-capture] DB updated ok:', table, recordId);
       if (window.toast && opts.silent !== true) {
         toast(numPages > 1

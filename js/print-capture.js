@@ -295,15 +295,13 @@
     const { error } = await sb.storage.from(BUCKET).upload(path, blob, {
       contentType: 'image/png',
       upsert: true,
-      cacheControl: '3600',
+      cacheControl: '31536000',
     });
     if (error) throw error;
-    const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
-    const { data, error: signErr } = await sb.storage
-      .from(BUCKET)
-      .createSignedUrl(path, TEN_YEARS);
-    if (signErr) throw signErr;
-    return data?.signedUrl || null;
+    // Public bucket → use permanent public URL (no token, no expiry)
+    const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
+    if (!data?.publicUrl) throw new Error('URL pubblico non disponibile');
+    return data.publicUrl;
   }
 
   // Best-effort cleanup of stale pages from a previous save with more

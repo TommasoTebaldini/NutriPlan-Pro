@@ -150,7 +150,10 @@
     let pd = document.getElementById(areaId);
     if (!pd) { pd = document.createElement('div'); pd.id = areaId; document.body.appendChild(pd); }
     pd.innerHTML = '';
-    pd.style.cssText = 'display:block;position:absolute;top:0;left:0;width:794px;background:white;z-index:-1;padding:20px;box-sizing:border-box;pointer-events:none';
+    // position:fixed keeps the element out of the document scroll area (no page doubling).
+    // It is repositioned to top:0;left:0 inside the html2canvas onclone callback so
+    // the renderer captures the full content height.
+    pd.style.cssText = 'display:block;position:fixed;top:9999px;left:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none';
 
     if (opts.titleHtml) {
       const hdr = document.createElement('div');
@@ -198,8 +201,18 @@
       logging: false,
       windowWidth: opts.windowWidth || A4_RENDER_WIDTH,
       onclone: (doc) => {
-        // Remove overflow clipping so off-screen print areas (z-index:-1, top:0) render fully.
+        // Remove overflow clipping (belt-and-suspenders).
         doc.body.style.overflow = 'visible';
+        // Print areas use position:fixed;top:9999px in the live DOM so they stay off-screen.
+        // Reposition to top:0;left:0 in the clone so html2canvas captures the full height.
+        if (target !== document.body && target.id) {
+          const cloneEl = doc.getElementById(target.id);
+          if (cloneEl) {
+            cloneEl.style.position = 'absolute';
+            cloneEl.style.top = '0';
+            cloneEl.style.left = '0';
+          }
+        }
         // Hide app chrome that should never appear in the printed sheet.
         ['sidebar', 'sb-overlay', 'topbar', 'toast'].forEach((id) => {
           const el = doc.getElementById(id);

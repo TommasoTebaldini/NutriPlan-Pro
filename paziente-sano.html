@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -1163,7 +1163,7 @@ async function salvaPazienteSano() {
   toast(editingPsNoteId ? '✅ Scheda aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
   if (!editingPsNoteId && result.data?.id) editingPsNoteId = result.data.id;
   if (window.capturePrintAndSave && editingPsNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPsNoteId, cartellaId: cartella_id, panelSelector: '.ps-panel', silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPsNoteId, cartellaId: cartella_id, panelSelector: '.ps-panel', silent: true }).catch(err => console.warn('paziente-sano.html capture failed:', err));
   }
 }
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -823,7 +823,7 @@ async function salvaPancreas() {
   toast(editingPanNoteId ? '✅ Scheda IPE aggiornata!' : '✅ Dati IPE salvati nella cartella!','ok');
   if (!editingPanNoteId && result.data?.id) editingPanNoteId = result.data.id;
   if (window.capturePrintAndSave && editingPanNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPanNoteId, cartellaId: cartella_id, panelSelector: '.p-panel', silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPanNoteId, cartellaId: cartella_id, panelSelector: '.p-panel', silent: true }).catch(err => console.warn('pancreas.html capture failed:', err));
   }
 }
 

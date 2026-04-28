@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -1128,7 +1128,7 @@ async function salvaRenale() {
   if (!editingRenNoteId && result.data?.id) editingRenNoteId = result.data.id;
   toast(!wasNew ? '✅ Scheda IRC aggiornata!' : '✅ Dati IRC salvati nella cartella!', 'ok');
   if (window.capturePrintAndSave && editingRenNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRenNoteId, cartellaId: cartella_id, panelSelector: '.ren-panel', silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRenNoteId, cartellaId: cartella_id, panelSelector: '.ren-panel', silent: true }).catch(err => console.warn('renale.html capture failed:', err));
   }
 }
 

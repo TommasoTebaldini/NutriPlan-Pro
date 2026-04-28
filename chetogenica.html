@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -1076,7 +1076,7 @@ async function salvaKeto() {
   if (!editingKetoNoteId && result.data?.id) editingKetoNoteId = result.data.id;
   toast(!wasNew ? '✅ Scheda Chetogenica aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
   if (window.capturePrintAndSave && editingKetoNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingKetoNoteId, cartellaId: cartella_id, panelSelector: '.keto-panel', silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingKetoNoteId, cartellaId: cartella_id, panelSelector: '.keto-panel', silent: true }).catch(err => console.warn('chetogenica.html capture failed:', err));
   }
 }
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -1063,7 +1063,7 @@ async function salvaSport() {
   toast(editingSportNoteId ? '✅ Scheda Sport aggiornata!' : '✅ Scheda Sportiva salvata nella cartella!','ok');
   if (!editingSportNoteId && result.data?.id) editingSportNoteId = result.data.id;
   if (window.capturePrintAndSave && editingSportNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingSportNoteId, cartellaId: cartella_id, panelSelector: '.sport-panel', silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingSportNoteId, cartellaId: cartella_id, panelSelector: '.sport-panel', silent: true }).catch(err => console.warn('sport.html capture failed:', err));
   }
 }
 

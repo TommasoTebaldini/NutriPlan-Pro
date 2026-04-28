@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -1266,7 +1266,7 @@ async function salvaDca() {
   toast(editingDcaNoteId ? '✅ Scheda DCA aggiornata!' : '✅ Scheda DCA salvata nella cartella!', 'ok');
   if (!editingDcaNoteId && result.data?.id) editingDcaNoteId = result.data.id;
   if (window.capturePrintAndSave && editingDcaNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDcaNoteId, cartellaId: cartella_id, panelSelector: '.dna-panel', silent: true }).catch(()=>{});
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDcaNoteId, cartellaId: cartella_id, panelSelector: '.dna-panel', silent: true }).catch(err => console.warn('dna.html capture failed:', err));
   }
 }
 

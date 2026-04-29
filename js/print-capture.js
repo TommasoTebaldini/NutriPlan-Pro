@@ -32,6 +32,53 @@
   const A4_RENDER_WIDTH = 850;           // px — html2canvas windowWidth
   let html2canvasPromise = null;
 
+  // ─── Capture-in-progress bar ──────────────────────────────────────────────────
+  // While PNG capture + upload is running, show a fixed bar at the bottom of the
+  // screen and block page navigation so the user doesn't unload the page mid-capture.
+  let _captureCount = 0;
+
+  function _beforeUnloadCapture(e) {
+    e.preventDefault();
+    e.returnValue = 'Salvataggio immagini in corso. Attendere prima di uscire.';
+    return e.returnValue;
+  }
+
+  function _showCaptureBar() {
+    let bar = document.getElementById('_capture-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = '_capture-bar';
+      bar.className = 'no-print';
+      bar.style.cssText =
+        'position:fixed;bottom:0;left:0;right:0;z-index:99999;' +
+        'background:linear-gradient(135deg,#0369A1,#0EA5E9);' +
+        'color:#fff;padding:11px 18px;display:flex;align-items:center;gap:10px;' +
+        'font-size:13px;font-weight:600;font-family:inherit;' +
+        'box-shadow:0 -4px 20px rgba(0,0,0,.25)';
+      bar.innerHTML =
+        '<div style="width:18px;height:18px;border:3px solid rgba(255,255,255,.35);' +
+        'border-top-color:#fff;border-radius:50%;flex-shrink:0;' +
+        'animation:_cbar-spin .75s linear infinite"></div>' +
+        '<span>🖼️ Salvataggio immagini in corso… <b>non cambiare scheda</b></span>';
+      if (!document.getElementById('_cbar-style')) {
+        const st = document.createElement('style');
+        st.id = '_cbar-style';
+        st.textContent = '@keyframes _cbar-spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(st);
+      }
+      document.body.appendChild(bar);
+    }
+    bar.style.display = 'flex';
+    if (_captureCount === 1) window.addEventListener('beforeunload', _beforeUnloadCapture);
+  }
+
+  function _hideCaptureBar() {
+    const bar = document.getElementById('_capture-bar');
+    if (bar) bar.style.display = 'none';
+    if (_captureCount === 0) window.removeEventListener('beforeunload', _beforeUnloadCapture);
+  }
+  // ─────────────────────────────────────────────────────────────────────────────
+
   function loadHtml2Canvas() {
     if (window.html2canvas) return Promise.resolve(window.html2canvas);
     if (html2canvasPromise) return html2canvasPromise;
@@ -397,7 +444,7 @@
       return null;
     }
 
-    // Auto-build combined print area when panelSelector is given and no container
+    // Auto-build combined print area when panelSelector is given and no container.
     let autoPrintArea = null;
     if (opts.panelSelector && !opts.container) {
       autoPrintArea = buildAllPanelsPrintArea(opts.panelSelector, {
@@ -410,41 +457,43 @@
       }
     }
 
-    // Always wait two animation frames so the browser computes the full intrinsic
-    // height of the print area (position:fixed;top:0;visibility:hidden) before
-    // html2canvas measures its getBoundingClientRect().
-    await new Promise((r) => requestAnimationFrame(r));
-    await new Promise((r) => requestAnimationFrame(r));
-
-    // Resolve the folder: patient_id if cartella is linked, otherwise current user
-    let folderId = null;
-    if (cartellaId) {
-      folderId = await getPatientIdForCartella(cartellaId);
-    }
-    if (!folderId) {
-      // Fallback: store in the dietitian's own folder so the upload never fails
-      // due to a missing patient link. The signed URL will still be readable
-      // by the patient app via print_image_url.
-      if (typeof currentUser !== 'undefined' && currentUser?.id) {
-        folderId = currentUser.id;
-      } else {
-        try {
-          const { data: { user } } = await sb.auth.getUser();
-          folderId = user?.id || null;
-        } catch (_) {}
-      }
-    }
-    if (!folderId) {
-      if (window.toast && opts.silent !== true) toast('⚠️ Utente non autenticato — immagine non salvata', 'err');
-      if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
-      return null;
-    }
+    // Show the progress bar and block page navigation for the entire async operation.
+    _captureCount++;
+    _showCaptureBar();
 
     try {
+      // Always wait two animation frames so the browser computes the full intrinsic
+      // height of the print area before html2canvas measures its getBoundingClientRect().
+      await new Promise((r) => requestAnimationFrame(r));
+      await new Promise((r) => requestAnimationFrame(r));
+
+      // Resolve the folder: patient_id if cartella is linked, otherwise current user.
+      let folderId = null;
+      if (cartellaId) {
+        folderId = await getPatientIdForCartella(cartellaId);
+      }
+      if (!folderId) {
+        // Fallback: store in the dietitian's own folder so the upload never fails
+        // due to a missing patient link. The signed URL will still be readable
+        // by the patient app via print_image_url.
+        if (typeof currentUser !== 'undefined' && currentUser?.id) {
+          folderId = currentUser.id;
+        } else {
+          try {
+            const { data: { user } } = await sb.auth.getUser();
+            folderId = user?.id || null;
+          } catch (_) {}
+        }
+      }
+      if (!folderId) {
+        if (window.toast && opts.silent !== true) toast('⚠️ Utente non autenticato — immagine non salvata', 'err');
+        return null;
+      }
+
       const blobs = await renderToPagedBlobs(opts.container, opts);
       const numPages = blobs.length;
 
-      // Upload all pages → collect signed URLs
+      // Upload all pages → collect public URLs.
       const urls = [];
       console.log('[print-capture] uploading ' + numPages + ' page(s) to folder=' + folderId);
       for (let i = 0; i < numPages; i++) {
@@ -455,7 +504,7 @@
         urls.push(url);
       }
 
-      // Remove stale pages from a previous (longer) save
+      // Remove stale pages from a previous (longer) save.
       await cleanupOldPages(folderId, table, recordId, numPages + 1);
 
       // Backwards-compatible storage:
@@ -469,13 +518,11 @@
         .eq('id', recordId);
       if (error) {
         console.warn(`print-capture: ${table}.update failed`, error.message);
-        // Show error toast even if silent so the dietitian knows something went wrong.
         if (window.toast) toast('⚠️ Immagine caricata ma update DB fallito: ' + error.message, 'err');
-        if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
         return value;
       }
 
-      // Verify the update actually took effect (silent RLS failures return error=null with 0 rows changed)
+      // Verify the update actually took effect (silent RLS failures return error=null with 0 rows changed).
       const { data: verif, error: verifErr } = await sb
         .from(table)
         .select('id, print_image_url')
@@ -484,9 +531,7 @@
       if (verifErr) {
         console.warn('[print-capture] Verify SELECT failed:', verifErr.message);
       } else if (!verif) {
-        console.warn('[print-capture] RECORD NOT FOUND in DB! recordId:', recordId,
-          '— the capture saved files to storage but the DB row does not exist or is invisible to this user. ' +
-          'Make sure you load an existing record before saving, or that the record was already saved first.');
+        console.warn('[print-capture] RECORD NOT FOUND in DB! recordId:', recordId);
         if (window.toast) toast('⚠️ Record non trovato nel DB — ricarica la pagina e salva di nuovo', 'err');
       } else if (!verif.print_image_url) {
         console.warn('[print-capture] DB update silently blocked (RLS or wrong user)! print_image_url is still null for', recordId);
@@ -501,14 +546,15 @@
           ? `🖼️ Documento salvato (${numPages} pagine)`
           : '🖼️ Immagine documento salvata', 'ok');
       }
-      if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
       return value;
     } catch (e) {
       console.error('print-capture failed:', e);
-      // Always show error toast so dietitian knows something went wrong.
       if (window.toast) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
-      if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
       return null;
+    } finally {
+      _captureCount--;
+      _hideCaptureBar();
+      if (autoPrintArea) { autoPrintArea.innerHTML = ''; autoPrintArea.style.cssText = 'display:none'; }
     }
   }
 

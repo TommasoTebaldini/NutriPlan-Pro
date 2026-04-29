@@ -15,6 +15,20 @@ try {
   };
 }
 
+// Add a preconnect hint for Supabase so the TLS handshake is resolved before
+// the first query fires, saving ~100-200ms per cold page load.
+(function() {
+  try {
+    if (!document.querySelector('link[rel="preconnect"][href*="supabase.co"]')) {
+      var lnk = document.createElement('link');
+      lnk.rel = 'preconnect';
+      lnk.href = SUPABASE_URL;
+      lnk.crossOrigin = 'anonymous';
+      document.head.appendChild(lnk);
+    }
+  } catch(e) {}
+})();
+
 let currentUser = null;
 let isAdmin = false;
 let currentProfile = null;
@@ -44,10 +58,14 @@ async function checkAuth(redirectIfNotLogged = true) {
 async function loadProfile() {
   if (!currentUser) return;
   loadProfileError = null;
-  const { data, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
-  if (error) {
-    console.warn('loadProfile error:', error.message);
-    loadProfileError = error;
+  let data = null;
+  const _profKey = 'dpp_profile_' + currentUser.id;
+  try { const c = sessionStorage.getItem(_profKey); if (c) data = JSON.parse(c); } catch(e) {}
+  if (!data) {
+    const { data: fetched, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    if (error) { console.warn('loadProfile error:', error.message); loadProfileError = error; }
+    data = fetched;
+    if (data) { try { sessionStorage.setItem(_profKey, JSON.stringify(data)); } catch(e) {} }
   }
   currentProfile = data;
   isAdmin = data?.is_admin === true;
@@ -176,11 +194,16 @@ async function salvaProfiloOp() {
     const { error: dbErr } = await sb.from('profiles').update({ nome: d.nome || null, cognome: d.cognome || null, albo: d.albo || null }).eq('id', currentUser.id);
     if (dbErr) console.warn('Profile DB update failed:', dbErr.message);
   }
+  try { if (currentUser) sessionStorage.removeItem('dpp_profile_' + currentUser.id); } catch(e) {}
   closeM('modal-profilo-op');
   toast('✅ Profilo salvato!', 'ok');
 }
 
 async function doLogout() {
+  try {
+    const uid = currentUser?.id || '';
+    if (uid) { sessionStorage.removeItem('dpp_profile_' + uid); sessionStorage.removeItem('dpp_cartelle_' + uid); }
+  } catch(e) {}
   await sb.auth.signOut();
   window.location.href = 'index.html';
 }
@@ -539,10 +562,13 @@ window._cartelleCache = null;
 async function _cwLoadCache() {
   if (window._cartelleCache) return window._cartelleCache;
   if (!currentUser) return [];
+  const _cartKey = 'dpp_cartelle_' + currentUser.id;
+  try { const c = sessionStorage.getItem(_cartKey); if (c) { window._cartelleCache = JSON.parse(c); return window._cartelleCache; } } catch(e) {}
   try {
     const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
     window._cartelleCache = data || [];
   } catch(e) { window._cartelleCache = []; }
+  try { sessionStorage.setItem('dpp_cartelle_' + currentUser.id, JSON.stringify(window._cartelleCache)); } catch(e) {}
   return window._cartelleCache;
 }
 
@@ -689,6 +715,7 @@ function _cwNuovaCartella(cid) {
   _cwHide(cid);
   openNuovaCartellaModal(async function(id, nome) {
     window._cartelleCache = null;
+    try { if (currentUser) sessionStorage.removeItem('dpp_cartelle_' + currentUser.id); } catch(e) {}
     if (typeof allCartelle !== 'undefined') allCartelle = await _cwLoadCache();
     _cwSelect(cid, id, nome);
   });

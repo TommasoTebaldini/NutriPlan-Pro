@@ -143,8 +143,12 @@
   //   removeSelectors — array of additional CSS selectors to remove from clones
   function buildAllPanelsPrintArea(panelSelector, opts) {
     opts = opts || {};
-    const panels = Array.from(document.querySelectorAll(panelSelector));
-    if (!panels.length) return null;
+    const allPanels = Array.from(document.querySelectorAll(panelSelector));
+    if (!allPanels.length) return null;
+
+    // Filter out panels that are descendants of other panels in the list
+    // (e.g. sport.html has .sport-panel children inside a .sport-panel parent).
+    const panels = allPanels.filter(p => !allPanels.some(other => other !== p && other.contains(p)));
 
     const areaId = opts.areaId || 'spec-print-area';
     let pd = document.getElementById(areaId);
@@ -155,6 +159,9 @@
     // intrinsic height at top:0. onclone moves it to left:0 and sets body visibility:hidden
     // so html2canvas renders only this area cleanly. Matches the approach used in questionari.html.
     pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
+    // Mark so onclone knows this is a panel-based print area and must NOT apply
+    // data-print-mode="compact" (which would hide all panels via !important CSS).
+    pd.dataset.panelPrintArea = '1';
 
     if (opts.titleHtml) {
       const hdr = document.createElement('div');
@@ -237,8 +244,15 @@
           mainEl.style.paddingLeft = '16px';
           mainEl.style.paddingRight = '16px';
         }
-        if (doc.querySelector('[data-print-mode], #ped-compact-print-area, #pan-compact-print-area')) {
-          doc.body.setAttribute('data-print-mode', 'compact');
+        // Only apply compact-print-mode when capturing the compact area directly
+        // (NOT when capturing a panel print area built by buildAllPanelsPrintArea,
+        // because compact CSS uses !important which overrides inline display:block).
+        const cloneTarget = (target !== document.body && target.id)
+          ? doc.getElementById(target.id) : null;
+        if (!cloneTarget?.dataset?.panelPrintArea) {
+          if (doc.querySelector('[data-print-mode], #ped-compact-print-area, #pan-compact-print-area')) {
+            doc.body.setAttribute('data-print-mode', 'compact');
+          }
         }
         if (typeof opts.onclone === 'function') opts.onclone(doc);
       },

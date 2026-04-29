@@ -939,6 +939,32 @@ ALTER TABLE note_specialistiche  REPLICA IDENTITY FULL;
 ALTER TABLE daily_wellness       REPLICA IDENTITY FULL;
 ALTER TABLE weight_logs          REPLICA IDENTITY FULL;
 
+-- SEZIONE 13 — RLS: DIARIO PAZIENTE (water_logs + activity_logs per dietista)
+-- Permette al dietista di leggere i log idrici e attività del paziente collegato.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='water_logs_dietitian_read' AND tablename='water_logs') THEN
+    CREATE POLICY "water_logs_dietitian_read" ON water_logs
+      FOR SELECT USING (
+        EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = water_logs.user_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='activity_logs_dietitian_read' AND tablename='activity_logs') THEN
+    CREATE POLICY "activity_logs_dietitian_read" ON activity_logs
+      FOR SELECT USING (
+        EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = activity_logs.user_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
 -- Aggiunge le tabelle alla pubblicazione Realtime (idempotente)
 DO $$
 DECLARE t TEXT;

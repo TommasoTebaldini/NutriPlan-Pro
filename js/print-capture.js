@@ -131,6 +131,7 @@
     const restored = [];
     selectors.forEach((sel) => {
       document.querySelectorAll(sel).forEach((el) => {
+        if (el.id === '_capture-bar') return; // keep capture progress bar visible during render
         restored.push([el, el.style.visibility, el.style.opacity]);
         el.style.visibility = 'hidden';
         el.style.opacity = '0';

@@ -405,8 +405,10 @@ function toast(msg, type = 'ok') {
 // LOADING
 // ═══════════════════════════════════════════════════
 function showLoading(v) {
-  const el = document.getElementById('loading-overlay');
-  if (el) el.classList.toggle('active', v);
+  // Quick saves (200-400ms) don't need a full-page overlay — the overlay covers
+  // the topbar and paz-bar causing visible flicker. Use cursor:wait instead;
+  // the capture bar in print-capture.js handles the longer PNG upload phase.
+  document.body.style.cursor = v ? 'wait' : '';
 }
 
 // ═══════════════════════════════════════════════════

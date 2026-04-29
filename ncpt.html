@@ -138,6 +138,19 @@
   .monit-grid{grid-template-columns:1fr;gap:4px}
   .fgrid.c3{grid-template-columns:1fr 1fr}
 }
+
+/* ── Formula rows (composizione corporea, fabbisogno) ── */
+.formula-row{display:flex;justify-content:space-between;align-items:center;padding:8px 13px;background:#F8FAFC;border-radius:9px;margin-bottom:6px;border:1.5px solid var(--border);transition:all .12s}
+.formula-row:hover{background:#F0FDF4;border-color:var(--teal-l)}
+.formula-row.best{background:#F0FDF4;border-color:var(--teal-l);box-shadow:0 2px 8px rgba(15,118,110,.12)}
+.fn{font-size:12px;font-weight:600;color:var(--slate-m)}
+.fb{font-size:10px;color:var(--slate-l)}
+.fv{font-size:16px;font-weight:700;color:var(--teal)}
+/* ── Esami colori ── */
+.es-ok>input,.es-ok input{border-color:#22C55E!important;background:#F0FDF4!important}
+.es-warn>input,.es-warn input{border-color:#F59E0B!important;background:#FFFBEB!important}
+.es-bad>input,.es-bad input{border-color:#EF4444!important;background:#FEF2F2!important}
+.es-ok input,.es-warn input,.es-bad input{transition:border-color .2s,background .2s}
 </style>
 </head>
 <body>
@@ -278,31 +291,50 @@
     <div class="nf"><label>Peso Ideale — Lorenz (kg)</label><input type="text" id="v-pi" readonly style="background:#F8FAFC"></div>
     <div class="nf"><label>Peso Aggiustato (kg)</label><input type="text" id="v-pa" readonly style="background:#F8FAFC"></div>
     <div class="nf"><label>Variazione peso recente</label><input type="text" id="v-dpeso" placeholder="es. -3 kg in 2 mesi"></div>
-    <div class="nf"><label>Circ. vita (cm)</label><input type="number" id="v-vita" step="0.1" oninput="calcAntropo()"></div>
-    <div class="nf"><label>Circ. fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1" oninput="calcAntropo()"></div>
+    <div class="nf"><label>Circ. vita (cm)</label><input type="number" id="v-vita" step="0.1" oninput="calcAntropo();calcolaCirconferenze()"></div>
+    <div class="nf"><label>Circ. fianchi (cm)</label><input type="number" id="v-fianchi" step="0.1" oninput="calcAntropo();calcolaCirconferenze()"></div>
     <div class="nf"><label>WHR (auto)</label><input type="text" id="v-whr" readonly style="background:#F8FAFC"></div>
     <div class="nf"><label>Massa grassa (%)</label><input type="number" id="v-mg" step="0.1"></div>
     <div class="nf"><label>Massa magra (kg)</label><input type="number" id="v-mm" step="0.1" oninput="calcMB()"></div>
     <div class="nf"><label>Circ. braccio (cm)</label><input type="number" id="v-braccio" step="0.1"></div>
+    <div class="nf"><label>Circ. collo (cm)</label><input type="number" id="v-collo" step="0.1" oninput="calcolaCirconferenze()"></div>
+    <div class="nf"><label>Circ. ombelico (cm)</label><input type="number" id="v-ombelico" step="0.1" oninput="calcolaCirconferenze()"></div>
   </div>
   <div id="antr-result" style="margin-top:8px;font-size:12.5px;color:var(--slate-m);background:#F8FAFC;border-radius:7px;padding:8px 12px;display:none"></div>
+  <div id="circonf-results" style="margin-top:10px"></div>
 </div>
 
 <div class="ns">
-  <h3>🔬 Esami Biochimici</h3>
+  <h3>📐 Composizione Corporea — Plicometria</h3>
+  <p style="font-size:12px;color:var(--slate-l);margin-bottom:12px">Inserisci le pliche disponibili. Il calcolo si aggiorna automaticamente con i metodi applicabili (Jackson-Pollock 3/7 pliche, Durnin-Womersley 4 pliche).</p>
   <div class="fgrid c3">
-    <div class="nf"><label>Glicemia (mg/dL)</label><input type="text" id="b-glic"></div>
-    <div class="nf"><label>HbA1c (%)</label><input type="text" id="b-hba1c"></div>
-    <div class="nf"><label>Colesterolo tot. (mg/dL)</label><input type="text" id="b-col"></div>
-    <div class="nf"><label>LDL (mg/dL)</label><input type="text" id="b-ldl"></div>
-    <div class="nf"><label>HDL (mg/dL)</label><input type="text" id="b-hdl"></div>
-    <div class="nf"><label>Trigliceridi (mg/dL)</label><input type="text" id="b-tg"></div>
-    <div class="nf"><label>Creatinina (mg/dL)</label><input type="text" id="b-creat"></div>
-    <div class="nf"><label>eGFR (mL/min)</label><input type="text" id="b-egfr"></div>
-    <div class="nf"><label>Albumina (g/dL)</label><input type="text" id="b-alb"></div>
-    <div class="nf"><label>Emoglobina (g/dL)</label><input type="text" id="b-hb"></div>
-    <div class="nf"><label>Ferritina (ng/mL)</label><input type="text" id="b-ferr"></div>
-    <div class="nf"><label>Vitamina D (ng/mL)</label><input type="text" id="b-vitd"></div>
+    <div class="nf"><label>Plica Tricipite (mm)</label><input type="number" id="v-pl-tri" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Bicipite (mm)</label><input type="number" id="v-pl-bi" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Sottoscapolare (mm)</label><input type="number" id="v-pl-ss" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Sovrailiaca (mm)</label><input type="number" id="v-pl-si" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Addome (mm)</label><input type="number" id="v-pl-add" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Coscia (mm)</label><input type="number" id="v-pl-cos" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Petto (mm) — ♂</label><input type="number" id="v-pl-pet" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Ascellare (mm)</label><input type="number" id="v-pl-asc" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+  </div>
+  <div id="pliche-results" style="margin-top:10px"></div>
+</div>
+
+<div class="ns">
+  <h3>🔬 Esami Biochimici <span style="font-size:10.5px;font-weight:400;color:var(--slate-l);margin-left:6px">🟢 normale &nbsp; 🟡 borderline &nbsp; 🔴 patologico</span></h3>
+  <div class="fgrid c3">
+    <div class="nf" id="b-glic-wrap"><label>Glicemia (mg/dL)</label><input type="text" id="b-glic" oninput="esCheck('b-glic-wrap',this.value,70,99,60,125)"></div>
+    <div class="nf" id="b-hba1c-wrap"><label>HbA1c (%)</label><input type="text" id="b-hba1c" oninput="esCheck('b-hba1c-wrap',this.value,4,5.6,5.7,6.4)"></div>
+    <div class="nf" id="b-col-wrap"><label>Colesterolo tot. (mg/dL)</label><input type="text" id="b-col" oninput="esCheck('b-col-wrap',this.value,0,199,200,239)"></div>
+    <div class="nf" id="b-ldl-wrap"><label>LDL (mg/dL)</label><input type="text" id="b-ldl" oninput="esCheck('b-ldl-wrap',this.value,0,99,100,129)"></div>
+    <div class="nf" id="b-hdl-wrap"><label>HDL (mg/dL)</label><input type="text" id="b-hdl" oninput="esCheckHDL('b-hdl-wrap',this.value)"></div>
+    <div class="nf" id="b-tg-wrap"><label>Trigliceridi (mg/dL)</label><input type="text" id="b-tg" oninput="esCheck('b-tg-wrap',this.value,0,149,150,199)"></div>
+    <div class="nf" id="b-creat-wrap"><label>Creatinina (mg/dL)</label><input type="text" id="b-creat" oninput="esCheckSesso('b-creat-wrap',this.value,0.7,1.2,0.5,1.0)"></div>
+    <div class="nf" id="b-egfr-wrap"><label>eGFR (mL/min)</label><input type="text" id="b-egfr" oninput="esCheck('b-egfr-wrap',this.value,90,999,60,89)"></div>
+    <div class="nf" id="b-alb-wrap"><label>Albumina (g/dL)</label><input type="text" id="b-alb" oninput="esCheck('b-alb-wrap',this.value,3.5,5.0,3.0,3.4)"></div>
+    <div class="nf" id="b-hb-wrap"><label>Emoglobina (g/dL)</label><input type="text" id="b-hb" oninput="esCheckSesso('b-hb-wrap',this.value,13.5,17.5,12.0,15.5)"></div>
+    <div class="nf" id="b-ferr-wrap"><label>Ferritina (ng/mL)</label><input type="text" id="b-ferr" oninput="esCheckSesso('b-ferr-wrap',this.value,12,300,12,150)"></div>
+    <div class="nf" id="b-vitd-wrap"><label>Vitamina D (ng/mL)</label><input type="text" id="b-vitd" oninput="esCheck('b-vitd-wrap',this.value,30,100,20,29)"></div>
     <div class="nf full"><label>Altri esami rilevanti</label>
       <textarea id="b-altri" rows="2" placeholder="TSH, PCR, azotemia, elettroliti, B12..."></textarea></div>
   </div>
@@ -454,11 +486,12 @@
     <div class="nf"><label>LAF</label>
       <select id="v-laf" onchange="calcMB()"><option value="1.2">1.2 — Sedentario</option><option value="1.375" selected>1.375 — Leggermente attivo</option><option value="1.55">1.55 — Moderatamente attivo</option><option value="1.725">1.725 — Molto attivo</option><option value="1.9">1.9 — Atleta</option></select></div>
     <div class="nf"><label>TDEE stimato (kcal)</label><input type="text" id="v-tdee" placeholder="es. 2100" readonly style="background:#F8FAFC"></div>
-    <div class="nf"><label>Fabbisogno proteico (g/die)</label><input type="text" id="v-prot" placeholder="es. 75-90 g"></div>
     <div class="nf"><label>Kcal target prescritte</label><input type="text" id="v-kcal-tgt" placeholder="es. 1600"></div>
+    <div class="nf"><label>Fabbisogno proteico (g/die)</label><input type="text" id="v-prot" placeholder="es. 75-90 g"></div>
     <div class="nf full"><label>Note fabbisogno</label>
       <textarea id="v-note-fabb" rows="2" placeholder="Motivazione scelta calorica, peso di riferimento..."></textarea></div>
   </div>
+  <div id="fabb-results" style="margin-top:14px"></div>
 </div>
 
 
@@ -884,7 +917,193 @@ function calcMB(){
   else if(formula==='Katch-McArdle'){if(!mm)return;mb=Math.round(370+21.6*mm);}
   if(mb===null||isNaN(mb)) return;
   document.getElementById('v-mb').value=mb;
-  document.getElementById('v-tdee').value=Math.round(mb*laf);
+  const tdee=Math.round(mb*laf);
+  document.getElementById('v-tdee').value=tdee;
+  // Populate results panel
+  const fabbRes=document.getElementById('fabb-results');
+  if(!fabbRes) return;
+  const hb=Math.round(sesso==='M'?66.47+13.75*pesoF+5.003*alt-6.755*eta:655.1+9.563*pesoF+1.85*alt-4.676*eta);
+  const miff=Math.round(sesso==='M'?10*pesoF+6.25*alt-5*eta+5:10*pesoF+6.25*alt-5*eta-161);
+  const schof=schofieldMB(sesso,eta,pesoF);
+  const fao=faoWhoMB(sesso,eta,pesoF);
+  const kma=mm?Math.round(370+21.6*mm):null;
+  const formule=[
+    {nome:'Harris-Benedict (1919)',val:hb,nota:'Più usata clinicamente'},
+    {nome:'Mifflin-St Jeor (1990)',val:miff,nota:'Più accurata in generale'},
+    {nome:'Schofield (1985) LARN',val:schof,nota:'Standard OMS/LARN'},
+    {nome:'FAO/WHO (1985)',val:fao,nota:'Standard internazionale'},
+    ...(kma?[{nome:'Katch-McArdle (massa magra)',val:kma,nota:'Richiede massa magra nota'}]:[])
+  ];
+  const media=Math.round(formule.reduce((s,f)=>s+f.val,0)/formule.length);
+  const lafLbl={1.2:'Sedentario',1.375:'Leggermente attivo',1.55:'Moderatamente attivo',1.725:'Molto attivo',1.9:'Atleta'}[laf]||'';
+  fabbRes.innerHTML=`
+  <div style="margin-bottom:10px">
+    <div style="font-size:11.5px;font-weight:700;color:var(--slate-m);margin-bottom:7px;text-transform:uppercase;letter-spacing:.4px">🔥 Confronto formule MB — Peso usato: <b>${Math.round(pesoF*10)/10} kg</b>${bmi>=30?' (aggiustato, BMI≥30)':''}</div>
+    ${formule.map(f=>`<div class="formula-row${f.nome===formula||f.nome.startsWith(formula.split(' ')[0])?' best':''}"><div><div class="fn">${f.nome}</div><div class="fb">${f.nota}</div></div><div class="fv">${f.val} kcal</div></div>`).join('')}
+    <div style="background:var(--teal);color:white;padding:9px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span style="font-size:12px;font-weight:600">Media formule</span><span style="font-size:20px;font-weight:700">${media} kcal</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+    <div style="background:#F0FDF4;border:1.5px solid #A7F3D0;border-radius:10px;padding:12px">
+      <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">⚡ TDEE (MB × LAF)</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal)">${tdee} kcal</div>
+      <div style="font-size:11px;color:#065F46;margin-top:3px">LAF ${laf} — ${lafLbl}</div>
+    </div>
+    <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:12px">
+      <div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">🥩 Fabbisogno Proteico</div>
+      ${[1.0,1.2,1.5,2.0].map(v=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0"><span style="color:var(--slate-m)">${v} g/kg/die</span><b>${Math.round(pesoF*v*10)/10} g</b></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── Eta helper ──────────────────────────────────────
+function getEtaNCPT() {
+  const ddn = document.getElementById('v-ddn').value;
+  if (!ddn) return null;
+  const oggi = new Date(), n = new Date(ddn);
+  let eta = oggi.getFullYear() - n.getFullYear();
+  if (oggi < new Date(oggi.getFullYear(), n.getMonth(), n.getDate())) eta--;
+  return eta >= 0 ? eta : null;
+}
+
+// ── Composizione corporea dalle pliche ──────────────
+function calcolaPliche() {
+  const eta  = getEtaNCPT();
+  const peso = parseFloat(document.getElementById('v-peso').value);
+  const sesso = document.getElementById('v-sesso').value;
+  const tri = parseFloat(document.getElementById('v-pl-tri').value) || 0;
+  const bi  = parseFloat(document.getElementById('v-pl-bi').value)  || 0;
+  const ss  = parseFloat(document.getElementById('v-pl-ss').value)  || 0;
+  const si  = parseFloat(document.getElementById('v-pl-si').value)  || 0;
+  const add = parseFloat(document.getElementById('v-pl-add').value) || 0;
+  const cos = parseFloat(document.getElementById('v-pl-cos').value) || 0;
+  const pet = parseFloat(document.getElementById('v-pl-pet').value) || 0;
+  const asc = parseFloat(document.getElementById('v-pl-asc').value) || 0;
+  const res = document.getElementById('pliche-results');
+  if (!res) return;
+  const results = [];
+  if (eta && peso) {
+    if (sesso === 'M' && pet > 0 && add > 0 && cos > 0) {
+      const S3 = pet + add + cos;
+      const BD = 1.10938 - 0.0008267*S3 + 0.0000016*S3*S3 - 0.0002574*eta;
+      const bf = (495/BD) - 450;
+      if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'3-pliche JP (♂)',sites:'Petto + Addome + Coscia',bf,fm,lm:peso-fm}); }
+    }
+    if (sesso === 'F' && tri > 0 && si > 0 && cos > 0) {
+      const S3 = tri + si + cos;
+      const BD = 1.0994921 - 0.0009929*S3 + 0.0000023*S3*S3 - 0.0001392*eta;
+      const bf = (495/BD) - 450;
+      if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'3-pliche JP (♀)',sites:'Tricipite + Sovrailiaca + Coscia',bf,fm,lm:peso-fm}); }
+    }
+  }
+  if (eta && peso && bi > 0 && tri > 0 && ss > 0 && si > 0) {
+    const S4 = bi + tri + ss + si, logS4 = Math.log10(S4);
+    let D = 0;
+    if (sesso === 'M') {
+      if (eta <= 19) D = 1.1620 - 0.0630*logS4; else if (eta <= 29) D = 1.1631 - 0.0632*logS4;
+      else if (eta <= 39) D = 1.1422 - 0.0544*logS4; else if (eta <= 49) D = 1.1620 - 0.0700*logS4;
+      else D = 1.1715 - 0.0779*logS4;
+    } else {
+      if (eta <= 19) D = 1.1549 - 0.0678*logS4; else if (eta <= 29) D = 1.1599 - 0.0717*logS4;
+      else if (eta <= 39) D = 1.1423 - 0.0632*logS4; else if (eta <= 49) D = 1.1333 - 0.0612*logS4;
+      else D = 1.1339 - 0.0645*logS4;
+    }
+    if (D > 0) {
+      const bf = (495/D) - 450;
+      if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'4-pliche (Durnin-Womersley)',sites:'Bicipite + Tricipite + Sottoscapolare + Sovrailiaca',bf,fm,lm:peso-fm}); }
+    }
+  }
+  if (eta && peso && pet > 0 && asc > 0 && tri > 0 && ss > 0 && add > 0 && si > 0 && cos > 0) {
+    const S7 = pet + asc + tri + ss + add + si + cos;
+    let BD;
+    if (sesso === 'M') BD = 1.112 - 0.00043499*S7 + 0.00000055*S7*S7 - 0.00028826*eta;
+    else BD = 1.097 - 0.00046971*S7 + 0.00000056*S7*S7 - 0.00012828*eta;
+    const bf = (495/BD) - 450;
+    if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'7-pliche JP',sites:'Tutti 7 siti',bf,fm,lm:peso-fm}); }
+  }
+  if (!results.length) {
+    res.innerHTML = '<p style="font-size:12px;color:var(--slate-l)">Inserisci le misure richieste per calcolare la composizione corporea.</p>';
+    return;
+  }
+  res.innerHTML = results.map((r,i) => `<div class="formula-row${i===results.length-1?' best':''}"><div><div class="fn">${r.label}</div><div class="fb">${r.sites}</div></div><div style="text-align:right"><div class="fv" style="font-size:14px">${Math.round(r.bf*10)/10}% BF</div><div style="font-size:11px;color:var(--slate-l)">${Math.round(r.fm*10)/10} kg grasso · ${Math.round(r.lm*10)/10} kg magra</div></div></div>`).join('');
+  const best = results[results.length-1];
+  const mgEl = document.getElementById('v-mg');
+  const mmEl = document.getElementById('v-mm');
+  if (mgEl && !mgEl._userEdited) { mgEl.value = Math.round(best.bf*10)/10; }
+  if (mmEl && !mmEl._userEdited) { mmEl.value = Math.round(best.lm*10)/10; calcMB(); }
+}
+
+// ── Composizione corporea dalle circonferenze ────────
+function calcolaCirconferenze() {
+  const peso  = parseFloat(document.getElementById('v-peso').value);
+  const alt   = parseFloat(document.getElementById('v-altezza').value);
+  const sesso = document.getElementById('v-sesso').value;
+  const vita  = parseFloat(document.getElementById('v-vita').value)    || 0;
+  const collo = parseFloat(document.getElementById('v-collo').value)   || 0;
+  const fianchi = parseFloat(document.getElementById('v-fianchi').value) || 0;
+  const omb   = parseFloat(document.getElementById('v-ombelico').value) || 0;
+  const res   = document.getElementById('circonf-results');
+  if (!res) return;
+  const results = [];
+  if (alt > 0 && vita > 0 && collo > 0) {
+    if (sesso === 'M' && vita > collo) {
+      const bf = 495 / (1.0324 - 0.19077*Math.log10(vita-collo) + 0.15456*Math.log10(alt)) - 450;
+      if (bf > 2 && bf < 65) { const fm = peso ? peso*bf/100 : null; results.push({label:'US Navy (Hodgdon & Beckett, 1984)',sites:'Vita + Collo + Altezza',bf,fm,lm:fm&&peso?peso-fm:null}); }
+    }
+    if (sesso === 'F' && vita > 0 && fianchi > 0 && collo > 0 && (vita+fianchi) > collo) {
+      const bf = 495 / (1.29579 - 0.35004*Math.log10(vita+fianchi-collo) + 0.22100*Math.log10(alt)) - 450;
+      if (bf > 2 && bf < 65) { const fm = peso ? peso*bf/100 : null; results.push({label:'US Navy (Hodgdon & Beckett, 1984)',sites:'Vita + Fianchi + Collo + Altezza',bf,fm,lm:fm&&peso?peso-fm:null}); }
+    }
+  }
+  if (vita > 0 && peso > 0) {
+    const vita_in = vita/2.54, peso_lb = peso/0.453592;
+    const bf = sesso === 'M' ? -98.42 + 4.15*vita_in - 0.082*peso_lb : -76.76 + 4.15*vita_in - 0.082*peso_lb;
+    if (bf > 2 && bf < 65) { const fm = peso*bf/100; results.push({label:'YMCA (Golding et al.)',sites:'Vita + Peso',bf,fm,lm:peso-fm}); }
+  }
+  const addOmb = omb || vita;
+  if (addOmb > 0 && peso > 0 && alt > 0) {
+    let bf;
+    if (sesso === 'M') bf = 0.31457*addOmb - 0.10969*peso + 10.8336;
+    else bf = 0.11077*addOmb - 0.17666*alt + 0.14354*peso + 51.033;
+    if (bf > 2 && bf < 65) { const fm = peso*bf/100; results.push({label:'Weltman et al. (1987/1988)',sites:sesso==='M'?'Addome + Peso':'Addome + Altezza + Peso',bf,fm,lm:peso-fm}); }
+  }
+  if (!results.length) {
+    res.innerHTML = '<p style="font-size:12px;color:var(--slate-l)">Inserisci vita, collo e altezza (+ fianchi per le donne) per calcolare la % massa grassa.</p>';
+    return;
+  }
+  res.innerHTML = results.map((r,i) => `<div class="formula-row${i===results.length-1?' best':''}"><div><div class="fn">${r.label}</div><div class="fb">${r.sites}</div></div><div style="text-align:right"><div class="fv" style="font-size:14px">${Math.round(r.bf*10)/10}% BF</div>${r.fm&&r.lm?`<div style="font-size:11px;color:var(--slate-l)">${Math.round(r.fm*10)/10} kg grasso · ${Math.round(r.lm*10)/10} kg magra</div>`:''}</div></div>`).join('');
+  const best = results[results.length-1];
+  const mgEl = document.getElementById('v-mg');
+  const mmEl = document.getElementById('v-mm');
+  if (mgEl && !mgEl._userEdited) { mgEl.value = Math.round(best.bf*10)/10; }
+  if (mmEl && !mmEl._userEdited && best.lm) { mmEl.value = Math.round(best.lm*10)/10; calcMB(); }
+}
+
+// ── Evidenziazione esami biochimici ─────────────────
+function esCheck(wrapId, val, loOk, hiOk, loBorder, hiBorder) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  wrap.classList.remove('es-ok','es-warn','es-bad');
+  const v = parseFloat(val);
+  if (!val || isNaN(v)) return;
+  if (v >= loOk && v <= hiOk) wrap.classList.add('es-ok');
+  else if (loBorder !== undefined && hiBorder !== undefined && v >= loBorder && v <= hiBorder) wrap.classList.add('es-warn');
+  else wrap.classList.add('es-bad');
+}
+function esCheckHDL(wrapId, val) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  wrap.classList.remove('es-ok','es-warn','es-bad');
+  const v = parseFloat(val);
+  if (!val || isNaN(v)) return;
+  const sesso = document.getElementById('v-sesso')?.value || 'M';
+  const lo = sesso === 'M' ? 40 : 50;
+  if (v >= lo) wrap.classList.add('es-ok');
+  else if (v >= lo - 8) wrap.classList.add('es-warn');
+  else wrap.classList.add('es-bad');
+}
+function esCheckSesso(wrapId, val, loM, hiM, loF, hiF) {
+  const sesso = document.getElementById('v-sesso')?.value || 'M';
+  esCheck(wrapId, val, sesso==='M'?loM:loF, sesso==='M'?hiM:hiF);
 }
 
 // ═══════════════════════════════════════════════════
@@ -1085,49 +1304,62 @@ function salvaStorEntry() {
 }
 
 function renderStor() {
-  const c=document.getElementById('stor-list');
-  if(!c) return;
-  if(!storici.length){c.innerHTML='<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessuna misurazione registrata.</p>';return;}
-  if(storView){
-    c.innerHTML=storici.map((m,i)=>`
-      <div class="stor-card">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+  const c = document.getElementById('stor-list');
+  if (!c) return;
+  if (!storici.length) {
+    c.innerHTML = '<div style="text-align:center;padding:24px 12px;color:var(--slate-l);font-size:13px;background:#F8FAFC;border-radius:10px;border:1.5px dashed var(--border)">📊 Nessuna misurazione registrata.<br><span style="font-size:11.5px;opacity:.75">Clicca "➕ Aggiungi Misurazione" per iniziare il monitoraggio.</span></div>';
+    return;
+  }
+  if (storView) {
+    c.innerHTML = storici.map((m, i) => `
+      <div class="stor-card" style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <span style="font-weight:700;color:var(--teal-d);font-size:13px">📅 ${esc(m.data)}</span>
-          <button class="del-row" onclick="storici.splice(${i},1);renderStor()">✕</button>
+          <button class="del-row no-print" onclick="storici.splice(${i},1);renderStor()" style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);background:white;color:var(--slate-l);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.borderColor='#EF4444';this.style.color='#EF4444'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--slate-l)'">✕</button>
         </div>
-        <div class="stor-pills">
-          ${m.peso?`<span class="stor-pill" style="background:#F0FDF4;color:#15803D">⚖️ ${m.peso}kg</span>`:''}
-          ${m.bmi?`<span class="stor-pill" style="background:#EFF6FF;color:#1D4ED8">BMI ${m.bmi}</span>`:''}
-          ${m.vita?`<span class="stor-pill" style="background:#FEF3C7;color:#B45309">Vita ${m.vita}cm</span>`:''}
-          ${m.mg?`<span class="stor-pill" style="background:#FAF5FF;color:#7E22CE">MG ${m.mg}%</span>`:''}
-          ${m.kcal?`<span class="stor-pill" style="background:#FFF7ED;color:#C2410C">🔥${m.kcal}kcal</span>`:''}
-          ${m.hba1c?`<span class="stor-pill" style="background:#FEE2E2;color:#991B1B">HbA1c ${m.hba1c}%</span>`:''}
-          ${m.pa?`<span class="stor-pill" style="background:#EDE9FE;color:#5B21B6">PA ${m.pa}</span>`:''}
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${m.peso?`<span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">⚖️ ${m.peso} kg</span>`:''}
+          ${m.bmi?`<span style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">BMI ${m.bmi}</span>`:''}
+          ${m.vita?`<span style="background:#FEF3C7;color:#B45309;border:1px solid #FDE68A;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">Vita ${m.vita} cm</span>`:''}
+          ${m.mg?`<span style="background:#FAF5FF;color:#7E22CE;border:1px solid #DDD6FE;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">MG ${m.mg}%</span>`:''}
+          ${m.kcal?`<span style="background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">🔥 ${m.kcal} kcal</span>`:''}
+          ${m.hba1c?`<span style="background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">HbA1c ${m.hba1c}%</span>`:''}
+          ${m.pa?`<span style="background:#EDE9FE;color:#5B21B6;border:1px solid #C4B5FD;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">PA ${m.pa}</span>`:''}
         </div>
-        ${m.note?`<div style="margin-top:6px;font-size:12px;color:var(--slate-l);font-style:italic">📝 ${esc(m.note)}</div>`:''}
+        ${m.note?`<div style="margin-top:8px;font-size:11.5px;color:var(--slate-l);padding:6px 10px;background:#F8FAFC;border-radius:6px;border-left:3px solid var(--teal-l)">📝 ${esc(m.note)}</div>`:''}
       </div>`).join('');
   } else {
-    c.innerHTML=`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead><tr style="background:var(--slate);color:#CBD5E1">
-        <th style="padding:6px 10px;text-align:left">Data</th>
-        <th style="padding:6px 8px;text-align:center">Peso</th><th style="padding:6px 8px;text-align:center">BMI</th>
-        <th style="padding:6px 8px;text-align:center">Vita</th><th style="padding:6px 8px;text-align:center">Kcal</th>
-        <th style="padding:6px 8px;text-align:center">HbA1c</th><th style="padding:6px 8px;text-align:center">PA</th>
-        <th style="padding:6px 8px;text-align:left">Note</th><th></th>
-      </tr></thead>
-      <tbody>${storici.map((m,i)=>`
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:5px 10px;font-weight:600">${esc(m.data)}</td>
-          <td style="text-align:center;padding:5px 7px">${m.peso||'—'}</td>
-          <td style="text-align:center;padding:5px 7px">${m.bmi||'—'}</td>
-          <td style="text-align:center;padding:5px 7px">${m.vita||'—'}</td>
-          <td style="text-align:center;padding:5px 7px">${m.kcal||'—'}</td>
-          <td style="text-align:center;padding:5px 7px">${m.hba1c||'—'}</td>
-          <td style="text-align:center;padding:5px 7px">${m.pa||'—'}</td>
-          <td style="padding:5px 7px;font-size:11px;color:var(--slate-l)">${esc(m.note||'')}</td>
-          <td><button class="del-row" onclick="storici.splice(${i},1);renderStor()">✕</button></td>
-        </tr>`).join('')}
-      </tbody></table></div>`;
+    c.innerHTML = `<div style="overflow-x:auto;border-radius:12px;border:1.5px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:520px">
+        <thead>
+          <tr style="background:#F0FDF4;border-bottom:2px solid #A7F3D0">
+            <th style="padding:9px 14px;text-align:left;color:#0F766E;font-weight:700;font-size:11.5px;white-space:nowrap">📅 Data</th>
+            <th style="padding:9px 8px;text-align:center;color:#15803D;font-size:11px;font-weight:700">⚖️ Peso</th>
+            <th style="padding:9px 8px;text-align:center;color:#1D4ED8;font-size:11px;font-weight:700">BMI</th>
+            <th style="padding:9px 8px;text-align:center;color:#B45309;font-size:11px;font-weight:700">Vita</th>
+            <th style="padding:9px 8px;text-align:center;color:#7E22CE;font-size:11px;font-weight:700">MG%</th>
+            <th style="padding:9px 8px;text-align:center;color:#C2410C;font-size:11px;font-weight:700">Kcal</th>
+            <th style="padding:9px 8px;text-align:center;color:#991B1B;font-size:11px;font-weight:700">HbA1c</th>
+            <th style="padding:9px 8px;text-align:center;color:#5B21B6;font-size:11px;font-weight:700">PA</th>
+            <th style="padding:9px 14px;text-align:left;color:var(--slate-l);font-size:11px;font-weight:700">Note</th>
+            <th class="no-print" style="width:32px"></th>
+          </tr>
+        </thead>
+        <tbody>${storici.map((m, i) => `
+          <tr style="border-bottom:1px solid var(--border);background:${i % 2 === 1 ? '#F8FAFC' : 'white'};transition:background .1s" onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background='${i % 2 === 1 ? '#F8FAFC' : 'white'}'">
+            <td style="padding:8px 14px;font-weight:700;color:var(--teal-d);white-space:nowrap">${esc(m.data)}</td>
+            <td style="text-align:center;padding:8px 6px">${m.peso ? `<b style="color:#15803D">${m.peso}</b><span style="font-size:10px;color:var(--slate-l)"> kg</span>` : '<span style="color:var(--border-d)">—</span>'}</td>
+            <td style="text-align:center;padding:8px 6px">${m.bmi ? `<b style="color:#1D4ED8">${m.bmi}</b>` : '<span style="color:var(--border-d)">—</span>'}</td>
+            <td style="text-align:center;padding:8px 6px">${m.vita ? `${m.vita}<span style="font-size:10px;color:var(--slate-l)"> cm</span>` : '<span style="color:var(--border-d)">—</span>'}</td>
+            <td style="text-align:center;padding:8px 6px">${m.mg ? `${m.mg}<span style="font-size:10px;color:var(--slate-l)">%</span>` : '<span style="color:var(--border-d)">—</span>'}</td>
+            <td style="text-align:center;padding:8px 6px">${m.kcal || '<span style="color:var(--border-d)">—</span>'}</td>
+            <td style="text-align:center;padding:8px 6px">${m.hba1c ? `${m.hba1c}<span style="font-size:10px;color:var(--slate-l)">%</span>` : '<span style="color:var(--border-d)">—</span>'}</td>
+            <td style="text-align:center;padding:8px 6px">${m.pa || '<span style="color:var(--border-d)">—</span>'}</td>
+            <td style="padding:8px 14px;font-size:11.5px;color:var(--slate-l);max-width:160px">${esc(m.note || '')}</td>
+            <td class="no-print" style="padding:6px"><button style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:white;color:var(--slate-l);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .15s" onclick="storici.splice(${i},1);renderStor()" onmouseover="this.style.borderColor='#EF4444';this.style.color='#EF4444'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--slate-l)'">✕</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`;
   }
 }
 
@@ -1144,7 +1376,9 @@ function raccogliDati() {
       diag:g('v-diag'),anamnesi:g('v-anamnesi'),
       peso:g('v-peso'),altezza:g('v-altezza'),bmi:g('v-bmi'),pi:g('v-pi'),pa:g('v-pa'),
       dpeso:g('v-dpeso'),vita:g('v-vita'),fianchi:g('v-fianchi'),whr:g('v-whr'),
-      mg:g('v-mg'),mm:g('v-mm'),braccio:g('v-braccio'),
+      mg:g('v-mg'),mm:g('v-mm'),braccio:g('v-braccio'),collo:g('v-collo'),ombelico:g('v-ombelico'),
+      pl_tri:g('v-pl-tri'),pl_bi:g('v-pl-bi'),pl_ss:g('v-pl-ss'),pl_si:g('v-pl-si'),
+      pl_add:g('v-pl-add'),pl_cos:g('v-pl-cos'),pl_pet:g('v-pl-pet'),pl_asc:g('v-pl-asc'),
       glic:g('b-glic'),hba1c:g('b-hba1c'),col:g('b-col'),ldl:g('b-ldl'),hdl:g('b-hdl'),
       tg:g('b-tg'),creat:g('b-creat'),egfr:g('b-egfr'),alb:g('b-alb'),
       hb:g('b-hb'),ferr:g('b-ferr'),vitd:g('b-vitd'),altri:g('b-altri'),

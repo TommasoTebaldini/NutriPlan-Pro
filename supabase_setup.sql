@@ -632,6 +632,7 @@ ALTER TABLE ncpt                 ADD COLUMN IF NOT EXISTS visible_to_patient BOO
 ALTER TABLE schede_valutazione   ADD COLUMN IF NOT EXISTS visible_to_patient BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE bia_records          ADD COLUMN IF NOT EXISTS visible_to_patient BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE note_specialistiche  ADD COLUMN IF NOT EXISTS visible_to_patient BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE note_specialistiche  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
 ALTER TABLE piani                ALTER COLUMN visible_to_patient SET DEFAULT FALSE;
 ALTER TABLE ncpt                 ALTER COLUMN visible_to_patient SET DEFAULT FALSE;

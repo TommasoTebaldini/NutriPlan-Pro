@@ -991,10 +991,12 @@ function buildStampaSpecialisticaHTML(dati, tipo, nota) {
     diabete:'🩸 Diabete', pediatria:'👶 Pediatria', sport:'🏃 Nutrizione Sportiva',
     pancreas:'🫁 Pancreas', disfagia:'💧 Disfagia', dca:'🧠 Sessione DCA',
     ristorazione:'🍽️ Ristorazione', renale:'🫘 Nefropatia', chetogenica:'🥑 Chetogenica',
+    paziente_sano:'🌿 Paziente Sano',
   };
   const COLORI = {
     diabete:'#3B82F6', pediatria:'#EC4899', sport:'#F97316', pancreas:'#8B5CF6',
     disfagia:'#06B6D4', dca:'#7C3AED', ristorazione:'#0F766E', renale:'#f97316', chetogenica:'#0891b2',
+    paziente_sano:'#16A34A',
   };
   const label  = LABELS[tipo]  || tipo;
   const colore = COLORI[tipo]  || '#1a7f5a';

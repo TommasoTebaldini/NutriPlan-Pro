@@ -987,7 +987,7 @@ async function salvaDisfagia() {
   const cartella_id = document.getElementById('dis-cartella').value || null;
   const nota = document.getElementById('dis-nota').value.trim() || 'Scheda Disfagia';
   const datiObj = {iddsi: selIddsi, kcal: selKcal, valutazione: raccogliVal_dis()};
-  datiObj.stampa_html = buildStampaSpecialisticaHTML(datiObj, 'disfagia', nota);
+  try { datiObj.stampa_html = buildStampaSpecialisticaHTML(datiObj, 'disfagia', nota); } catch(e) { console.warn('buildStampaSpecialisticaHTML failed:', e); }
   const dati = JSON.stringify(datiObj);
   const payload = {user_id: currentUser.id, tipo: 'disfagia', cartella_id, nota, dati};
   showLoading(true);

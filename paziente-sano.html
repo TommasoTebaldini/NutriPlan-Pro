@@ -1145,6 +1145,9 @@ async function salvaPazienteSano() {
   if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
   const nota = document.getElementById('ps-nota').value.trim() || 'Sessione paziente sano ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiPS();
+  if (typeof buildStampaSpecialisticaHTML === 'function') {
+    try { dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'paziente_sano', nota); } catch(e) {}
+  }
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'paziente_sano', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;

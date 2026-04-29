@@ -171,11 +171,25 @@
 
     const extraRemove = opts.removeSelectors || [];
 
+    // Force each panel visible in the LIVE DOM before cloning.
+    // When a panel is display:none the browser skips layout for it; cloning a
+    // never-laid-out element produces clones with zero intrinsic height even
+    // after we set display:block on them. By showing the panel first, the
+    // browser computes full layout for all descendants, and the clone captures
+    // that computed state.
+    const savedDisplays = panels.map(function(p) {
+      return { el: p, val: p.style.getPropertyValue('display'), pri: p.style.getPropertyPriority('display') };
+    });
+    panels.forEach(function(p) { p.style.setProperty('display', 'block', 'important'); });
+    // Synchronous reflow: reading offsetHeight forces the browser to flush
+    // pending style/layout changes for all panels before we clone them.
+    void panels.reduce(function(acc, p) { return acc + p.offsetHeight; }, 0);
+
     panels.forEach(function (panel, pi) {
       const pc = panel.cloneNode(true);
-      // Use !important so the inline style wins over ANY stylesheet rule
-      // (including body[data-print-mode] overrides with !important).
-      pc.style.setProperty('display', 'block', 'important');
+      // display:block!important is already on the clone (inherited from the live
+      // panel). Set visibility explicitly so html2canvas renders the element even
+      // when body visibility:hidden is applied in the onclone callback.
       pc.style.setProperty('visibility', 'visible', 'important');
       const removeList = ['.no-print'].concat(extraRemove);
       pc.querySelectorAll(removeList.join(', ')).forEach(function (el) { el.remove(); });
@@ -186,6 +200,12 @@
         hr.style.cssText = 'border:none;border-top:1px solid #E2E8F0;margin:16px 0';
         pd.appendChild(hr);
       }
+    });
+
+    // Restore each live panel's original display state.
+    savedDisplays.forEach(function(saved) {
+      saved.el.style.removeProperty('display');
+      if (saved.val) saved.el.style.setProperty('display', saved.val, saved.pri || '');
     });
 
     // Diagnostic: log panel count and container height so we can diagnose 1-page issues.

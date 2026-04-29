@@ -173,7 +173,10 @@
 
     panels.forEach(function (panel, pi) {
       const pc = panel.cloneNode(true);
-      pc.style.display = 'block';
+      // Use !important so the inline style wins over ANY stylesheet rule
+      // (including body[data-print-mode] overrides with !important).
+      pc.style.setProperty('display', 'block', 'important');
+      pc.style.setProperty('visibility', 'visible', 'important');
       const removeList = ['.no-print'].concat(extraRemove);
       pc.querySelectorAll(removeList.join(', ')).forEach(function (el) { el.remove(); });
       staticifyFormElements(pc, panel);
@@ -185,6 +188,10 @@
       }
     });
 
+    // Diagnostic: log panel count and container height so we can diagnose 1-page issues.
+    console.log('[buildAllPanelsPrintArea] selector=' + panelSelector +
+      ' panels=' + panels.length + ' pd.scrollHeight=' + pd.scrollHeight +
+      ' pd.bcr.height=' + Math.round(pd.getBoundingClientRect().height));
     return pd;
   }
 

@@ -1151,7 +1151,7 @@ async function salvaPazienteSano() {
   if (editingPsNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPsNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
   if (result.error) {
@@ -1161,7 +1161,7 @@ async function salvaPazienteSano() {
     return;
   }
   toast(editingPsNoteId ? '✅ Scheda aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
-  if (!editingPsNoteId && result.data?.id) editingPsNoteId = result.data.id;
+  if (!editingPsNoteId && result.data?.[0]?.id) editingPsNoteId = result.data[0].id;
   if (window.capturePrintAndSave && editingPsNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPsNoteId, cartellaId: cartella_id, panelSelector: '.ps-panel', silent: true }).catch(err => console.warn('paziente-sano.html capture failed:', err));
   }

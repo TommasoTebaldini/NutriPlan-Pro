@@ -1461,7 +1461,7 @@ async function salvaPediatria() {
   if (editingPedNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPedNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
   if (result.error) {
@@ -1469,7 +1469,7 @@ async function salvaPediatria() {
     return;
   }
   toast(editingPedNoteId ? '✅ Scheda Pediatrica aggiornata!' : '✅ Scheda Pediatrica salvata nella cartella!','ok');
-  if (!editingPedNoteId && result.data?.id) editingPedNoteId = result.data.id;
+  if (!editingPedNoteId && result.data?.[0]?.id) editingPedNoteId = result.data[0].id;
   if (window.capturePrintAndSave && editingPedNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPedNoteId, cartellaId: cartella_id, panelSelector: '.ped-panel', silent: true }).catch(err => console.warn('pediatria.html capture failed:', err));
   }

@@ -813,7 +813,7 @@ async function salvaPancreas() {
   if (editingPanNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPanNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
   if (result.error) {
@@ -821,7 +821,7 @@ async function salvaPancreas() {
     return;
   }
   toast(editingPanNoteId ? '✅ Scheda IPE aggiornata!' : '✅ Dati IPE salvati nella cartella!','ok');
-  if (!editingPanNoteId && result.data?.id) editingPanNoteId = result.data.id;
+  if (!editingPanNoteId && result.data?.[0]?.id) editingPanNoteId = result.data[0].id;
   if (window.capturePrintAndSave && editingPanNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPanNoteId, cartellaId: cartella_id, panelSelector: '.p-panel', silent: true }).catch(err => console.warn('pancreas.html capture failed:', err));
   }

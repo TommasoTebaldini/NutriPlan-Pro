@@ -953,7 +953,7 @@ async function salvaRistorazione() {
   if (editingRistNoteId) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRistNoteId);
   } else {
-    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select().single();
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
   if (result.error) {
@@ -961,7 +961,7 @@ async function salvaRistorazione() {
     return;
   }
   toast(editingRistNoteId ? '✅ Piano Ristorazione aggiornato!' : '✅ Piano Ristorazione salvato!','ok');
-  if (!editingRistNoteId && result.data?.id) editingRistNoteId = result.data.id;
+  if (!editingRistNoteId && result.data?.[0]?.id) editingRistNoteId = result.data[0].id;
   if (window.capturePrintAndSave && editingRistNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRistNoteId, cartellaId: cartella_id, panelSelector: '.rist-panel', silent: true }).catch(err => console.warn('ristorazione.html capture failed:', err));
   }

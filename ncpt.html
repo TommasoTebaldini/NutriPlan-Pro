@@ -159,6 +159,8 @@
 .es-warn>input,.es-warn input{border-color:#F59E0B!important;background:#FFFBEB!important}
 .es-bad>input,.es-bad input{border-color:#EF4444!important;background:#FEF2F2!important}
 .es-ok input,.es-warn input,.es-bad input{transition:border-color .2s,background .2s}
+.ref-range{font-size:10px;color:var(--slate-l);margin-top:3px;line-height:1.4;padding:2px 0}
+.circ-group-lbl{font-size:10px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.8px;margin:10px 0 6px}
 </style>
 </head>
 <body>
@@ -310,6 +312,29 @@
     <div class="nf"><label>Circ. ombelico (cm)</label><input type="number" id="v-ombelico" step="0.1" oninput="calcolaCirconferenze()"></div>
   </div>
   <div id="antr-result" style="margin-top:8px;font-size:12.5px;color:var(--slate-m);background:#F8FAFC;border-radius:7px;padding:8px 12px;display:none"></div>
+  <div class="circ-group-lbl">Tronco</div>
+  <div class="fgrid c3">
+    <div class="nf"><label>Addome (cm)</label><input type="number" id="v-addome" step="0.1" placeholder="es. 90"></div>
+    <div class="nf"><label>Torace (cm)</label><input type="number" id="v-torace" step="0.1" placeholder="es. 90"></div>
+    <div class="nf"><label>Spalla (cm)</label><input type="number" id="v-spalla" step="0.1" placeholder="es. 105"></div>
+  </div>
+  <div class="circ-group-lbl">Arto superiore</div>
+  <div class="fgrid c3">
+    <div class="nf"><label>Braccio rilassato dx (cm)</label><input type="number" id="v-braccio-r" step="0.1" placeholder="es. 30"></div>
+    <div class="nf"><label>Braccio rilassato sx (cm)</label><input type="number" id="v-braccio-r-sx" step="0.1" placeholder="es. 30"></div>
+    <div class="nf"><label>Braccio contratto dx (cm)</label><input type="number" id="v-braccio-c" step="0.1" placeholder="es. 32"></div>
+    <div class="nf"><label>Braccio contratto sx (cm)</label><input type="number" id="v-braccio-c-sx" step="0.1" placeholder="es. 32"></div>
+    <div class="nf"><label>Avambraccio (cm)</label><input type="number" id="v-avambraccio" step="0.1" placeholder="es. 25"></div>
+    <div class="nf"><label>Polso (cm)</label><input type="number" id="v-polso" step="0.1" placeholder="es. 16"></div>
+  </div>
+  <div class="circ-group-lbl">Arto inferiore</div>
+  <div class="fgrid c3">
+    <div class="nf"><label>Coscia dx (cm)</label><input type="number" id="v-coscia" step="0.1" placeholder="es. 55"></div>
+    <div class="nf"><label>Coscia sx (cm)</label><input type="number" id="v-coscia-sx" step="0.1" placeholder="es. 55"></div>
+    <div class="nf"><label>Polpaccio dx (cm)</label><input type="number" id="v-polpaccio" step="0.1" placeholder="es. 35"></div>
+    <div class="nf"><label>Polpaccio sx (cm)</label><input type="number" id="v-polpaccio-sx" step="0.1" placeholder="es. 35"></div>
+    <div class="nf"><label>Caviglia (cm)</label><input type="number" id="v-caviglia" step="0.1" placeholder="es. 22"></div>
+  </div>
   <div id="circonf-results" style="margin-top:10px"></div>
 </div>
 
@@ -324,29 +349,104 @@
     <div class="nf"><label>Plica Addome (mm)</label><input type="number" id="v-pl-add" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
     <div class="nf"><label>Plica Coscia (mm)</label><input type="number" id="v-pl-cos" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
     <div class="nf"><label>Plica Petto (mm) — ♂</label><input type="number" id="v-pl-pet" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
-    <div class="nf"><label>Plica Ascellare (mm)</label><input type="number" id="v-pl-asc" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
+    <div class="nf"><label>Plica Ascellare media (mm)</label><input type="number" id="v-pl-asc" step="0.1" placeholder="—" oninput="calcolaPliche()"></div>
   </div>
   <div id="pliche-results" style="margin-top:10px"></div>
 </div>
 
 <div class="ns">
-  <h3>🔬 Esami Biochimici <span style="font-size:10.5px;font-weight:400;color:var(--slate-l);margin-left:6px">🟢 normale &nbsp; 🟡 borderline &nbsp; 🔴 patologico</span></h3>
-  <div class="fgrid c3">
-    <div class="nf" id="b-glic-wrap"><label>Glicemia (mg/dL)</label><input type="text" id="b-glic" oninput="esCheck('b-glic-wrap',this.value,70,99,60,125)"></div>
-    <div class="nf" id="b-hba1c-wrap"><label>HbA1c (%)</label><input type="text" id="b-hba1c" oninput="esCheck('b-hba1c-wrap',this.value,4,5.6,5.7,6.4)"></div>
-    <div class="nf" id="b-col-wrap"><label>Colesterolo tot. (mg/dL)</label><input type="text" id="b-col" oninput="esCheck('b-col-wrap',this.value,0,199,200,239)"></div>
-    <div class="nf" id="b-ldl-wrap"><label>LDL (mg/dL)</label><input type="text" id="b-ldl" oninput="esCheck('b-ldl-wrap',this.value,0,99,100,129)"></div>
-    <div class="nf" id="b-hdl-wrap"><label>HDL (mg/dL)</label><input type="text" id="b-hdl" oninput="esCheckHDL('b-hdl-wrap',this.value)"></div>
-    <div class="nf" id="b-tg-wrap"><label>Trigliceridi (mg/dL)</label><input type="text" id="b-tg" oninput="esCheck('b-tg-wrap',this.value,0,149,150,199)"></div>
-    <div class="nf" id="b-creat-wrap"><label>Creatinina (mg/dL)</label><input type="text" id="b-creat" oninput="esCheckSesso('b-creat-wrap',this.value,0.7,1.2,0.5,1.0)"></div>
-    <div class="nf" id="b-egfr-wrap"><label>eGFR (mL/min)</label><input type="text" id="b-egfr" oninput="esCheck('b-egfr-wrap',this.value,90,999,60,89)"></div>
-    <div class="nf" id="b-alb-wrap"><label>Albumina (g/dL)</label><input type="text" id="b-alb" oninput="esCheck('b-alb-wrap',this.value,3.5,5.0,3.0,3.4)"></div>
-    <div class="nf" id="b-hb-wrap"><label>Emoglobina (g/dL)</label><input type="text" id="b-hb" oninput="esCheckSesso('b-hb-wrap',this.value,13.5,17.5,12.0,15.5)"></div>
-    <div class="nf" id="b-ferr-wrap"><label>Ferritina (ng/mL)</label><input type="text" id="b-ferr" oninput="esCheckSesso('b-ferr-wrap',this.value,12,300,12,150)"></div>
-    <div class="nf" id="b-vitd-wrap"><label>Vitamina D (ng/mL)</label><input type="text" id="b-vitd" oninput="esCheck('b-vitd-wrap',this.value,30,100,20,29)"></div>
-    <div class="nf full"><label>Altri esami rilevanti</label>
-      <textarea id="b-altri" rows="2" placeholder="TSH, PCR, azotemia, elettroliti, B12..."></textarea></div>
+  <h3>🔬 Esami Ematochimici <span style="font-size:10.5px;font-weight:400;color:var(--slate-l);margin-left:6px">🟢 normale &nbsp; 🟡 borderline &nbsp; 🔴 patologico</span></h3>
+  <p style="font-size:11px;color:var(--slate-l);margin-bottom:12px;margin-top:-4px">Range di riferimento generali per adulti. Colorazione verde/gialla/rossa in base ai valori normali (dipendenti dal sesso dove indicato).</p>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Metabolismo glucidico</div>
+  <div class="fgrid c3" style="margin-bottom:14px">
+    <div class="nf" id="b-glic-wrap"><label>Glicemia a digiuno (mg/dL)</label>
+      <input type="number" id="b-glic" step="0.1" placeholder="es. 95" oninput="esCheck('b-glic-wrap',this.value,70,99,100,125)">
+      <div class="ref-range">🟢 Normale: 70–99 · 🟡 Prediabete: 100–125 · 🔴 Diabete: ≥126</div></div>
+    <div class="nf" id="b-insulina-wrap"><label>Insulina a digiuno (mU/L)</label>
+      <input type="number" id="b-insulina" step="0.1" placeholder="es. 8" oninput="esCheck('b-insulina-wrap',this.value,2.6,12,12,24.9)">
+      <div class="ref-range">🟢 Normale: 2.6–12 · 🟡 Borderline: 12–24.9 · 🔴 Alto: >25 (ins. resistenza)</div></div>
+    <div class="nf" id="b-hba1c-wrap"><label>HbA1c (%)</label>
+      <input type="number" id="b-hba1c" step="0.1" placeholder="es. 5.4" oninput="esCheck('b-hba1c-wrap',this.value,4,5.6,5.7,6.4)">
+      <div class="ref-range">🟢 Normale: &lt;5.7% · 🟡 Prediabete: 5.7–6.4% · 🔴 Diabete: ≥6.5%</div></div>
   </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Lipidi</div>
+  <div class="fgrid c3" style="margin-bottom:14px">
+    <div class="nf" id="b-col-wrap"><label>Colesterolo tot. (mg/dL)</label>
+      <input type="number" id="b-col" step="0.1" placeholder="es. 180" oninput="esCheck('b-col-wrap',this.value,0,199,200,239)">
+      <div class="ref-range">🟢 Desiderabile: &lt;200 · 🟡 Borderline: 200–239 · 🔴 Alto: ≥240</div></div>
+    <div class="nf" id="b-ldl-wrap"><label>LDL (mg/dL)</label>
+      <input type="number" id="b-ldl" step="0.1" placeholder="es. 110" oninput="esCheck('b-ldl-wrap',this.value,0,129,130,159)">
+      <div class="ref-range">🟢 Ottimale: &lt;100 · Normale: &lt;130 · 🟡 Borderline: 130–159 · 🔴 Alto: ≥160</div></div>
+    <div class="nf" id="b-hdl-wrap"><label>HDL (mg/dL)</label>
+      <input type="number" id="b-hdl" step="0.1" placeholder="es. 55" oninput="esCheckHDL('b-hdl-wrap',this.value)">
+      <div class="ref-range">🟢 Normale: M≥40 / F≥50 · 🔴 Basso (&lt;40M/&lt;50F) = rischio CV aumentato</div></div>
+    <div class="nf" id="b-tg-wrap"><label>Trigliceridi (mg/dL)</label>
+      <input type="number" id="b-tg" step="0.1" placeholder="es. 120" oninput="esCheck('b-tg-wrap',this.value,0,149,150,199)">
+      <div class="ref-range">🟢 Normale: &lt;150 · 🟡 Borderline: 150–199 · 🔴 Alto: ≥200 · Molto alto: ≥500</div></div>
+  </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Funzionalità renale</div>
+  <div class="fgrid c3" style="margin-bottom:14px">
+    <div class="nf" id="b-creat-wrap"><label>Creatinina (mg/dL)</label>
+      <input type="number" id="b-creat" step="0.1" placeholder="es. 0.9" oninput="esCheckSesso('b-creat-wrap',this.value,0.7,1.2,0.5,1.1)">
+      <div class="ref-range">🟢 Normale: M 0.7–1.2 · F 0.5–1.1 · ↑Alta = possibile IRC</div></div>
+    <div class="nf" id="b-egfr-wrap"><label>eGFR (mL/min/1.73m²)</label>
+      <input type="number" id="b-egfr" step="0.1" placeholder="es. 95" oninput="esCheck('b-egfr-wrap',this.value,90,999,60,89)">
+      <div class="ref-range">🟢 Normale: ≥90 · 🟡 Lieve riduzione: 60–89 · 🔴 IRC: &lt;60</div></div>
+    <div class="nf" id="b-azot-wrap"><label>Azotemia (mg/dL)</label>
+      <input type="number" id="b-azot" step="0.1" placeholder="es. 35" oninput="esCheck('b-azot-wrap',this.value,15,50,51,70)">
+      <div class="ref-range">🟢 Normale: 15–50 · 🔴 Alta: >70 (ins. renale, disidratazione)</div></div>
+    <div class="nf" id="b-uric-wrap"><label>Uricemia (mg/dL)</label>
+      <input type="number" id="b-uric" step="0.1" placeholder="es. 5.5" oninput="esCheckSesso('b-uric-wrap',this.value,2.4,7.0,2.4,6.0)">
+      <div class="ref-range">🟢 Normale: M 3.4–7.0 · F 2.4–6.0 · 🔴 >7 rischio gotta</div></div>
+    <div class="nf" id="b-alb-wrap"><label>Albumina (g/dL)</label>
+      <input type="number" id="b-alb" step="0.1" placeholder="es. 4.2" oninput="esCheck('b-alb-wrap',this.value,3.5,5.0,3.0,3.4)">
+      <div class="ref-range">🟢 Normale: 3.5–5.0 · 🟡 Lieve deplezione: 3.0–3.4 · 🔴 Grave: &lt;3.0</div></div>
+  </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Funzionalità epatica</div>
+  <div class="fgrid c3" style="margin-bottom:14px">
+    <div class="nf" id="b-got-wrap"><label>GOT/AST (U/L)</label>
+      <input type="number" id="b-got" step="0.1" placeholder="es. 25" oninput="esCheck('b-got-wrap',this.value,10,40,41,80)">
+      <div class="ref-range">🟢 Normale: 10–40 · 🟡 Lievemente alto: 41–80 · 🔴 >80 (danno epatico)</div></div>
+    <div class="nf" id="b-gpt-wrap"><label>GPT/ALT (U/L)</label>
+      <input type="number" id="b-gpt" step="0.1" placeholder="es. 28" oninput="esCheck('b-gpt-wrap',this.value,7,40,41,80)">
+      <div class="ref-range">🟢 Normale: 7–40 · 🟡 Borderline: 41–80 · 🔴 Alto: >80 (steatosi, epatiti)</div></div>
+    <div class="nf" id="b-ggt-wrap"><label>GGT (U/L)</label>
+      <input type="number" id="b-ggt" step="0.1" placeholder="es. 30" oninput="esCheckSesso('b-ggt-wrap',this.value,12,64,9,36)">
+      <div class="ref-range">🟢 Normale: M 12–64 · F 9–36 · 🔴 Alto: alcol, farmaci, colestasi</div></div>
+  </div>
+
+  <div style="font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Emocromo e micronutrienti</div>
+  <div class="fgrid c3" style="margin-bottom:14px">
+    <div class="nf" id="b-hb-wrap"><label>Emoglobina (g/dL)</label>
+      <input type="number" id="b-hb" step="0.1" placeholder="es. 13.5" oninput="esCheckSesso('b-hb-wrap',this.value,13.5,17.5,12.0,16.0)">
+      <div class="ref-range">🟢 Normale: M 13.5–17.5 · F 12.0–16.0 · 🔴 &lt;12(F)/&lt;13(M) = anemia</div></div>
+    <div class="nf" id="b-ferr-wrap"><label>Ferritina (ng/mL)</label>
+      <input type="number" id="b-ferr" step="0.1" placeholder="es. 70" oninput="esCheckSesso('b-ferr-wrap',this.value,30,300,13,150)">
+      <div class="ref-range">🟢 Normale: M 30–300 · F 13–150 · 🔴 Bassa = carenza ferro · Alta = infiamm.</div></div>
+    <div class="nf" id="b-vitd-wrap"><label>Vitamina D 25-OH (ng/mL)</label>
+      <input type="number" id="b-vitd" step="0.1" placeholder="es. 30" oninput="esCheck('b-vitd-wrap',this.value,30,100,20,29)">
+      <div class="ref-range">🔴 Deficienza: &lt;20 · 🟡 Insufficienza: 20–29 · 🟢 Sufficiente: 30–100</div></div>
+    <div class="nf" id="b-vitb12-wrap"><label>Vitamina B12 (pg/mL)</label>
+      <input type="number" id="b-vitb12" step="0.1" placeholder="es. 350" oninput="esCheck('b-vitb12-wrap',this.value,200,900,150,199)">
+      <div class="ref-range">🟢 Normale: 200–900 · 🟡 Borderline: 150–199 · 🔴 Deficienza: &lt;150</div></div>
+  </div>
+
+  <div class="fgrid c3">
+    <div class="nf" id="b-tsh-wrap"><label>TSH (mU/L)</label>
+      <input type="number" id="b-tsh" step="0.01" placeholder="es. 2.1" oninput="esCheck('b-tsh-wrap',this.value,0.27,4.2,0.1,0.26)">
+      <div class="ref-range">🟢 Normale: 0.27–4.2 · 🔴 &lt;0.27 ipertiroidismo · &gt;4.2 ipotiroidismo</div></div>
+    <div class="nf" id="b-pcr-wrap"><label>PCR (mg/L)</label>
+      <input type="number" id="b-pcr" step="0.1" placeholder="es. 1.5" oninput="esCheck('b-pcr-wrap',this.value,0,1,1,3)">
+      <div class="ref-range">🟢 Basso rischio CV: &lt;1 · 🟡 Rischio medio: 1–3 · 🔴 Rischio alto: >3</div></div>
+    <div class="nf"><label>Data esami</label>
+      <input type="date" id="b-data-esami"></div>
+  </div>
+  <div class="nf" style="margin-top:8px"><label>Note esami</label>
+    <textarea id="b-note-esami" rows="2" placeholder="Es. In attesa di referto, valori su terapia..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
 </div>
 
 <div class="ns">
@@ -1436,11 +1536,20 @@ function raccogliDati() {
       peso:g('v-peso'),altezza:g('v-altezza'),bmi:g('v-bmi'),pi:g('v-pi'),pa:g('v-pa'),
       dpeso:g('v-dpeso'),vita:g('v-vita'),fianchi:g('v-fianchi'),whr:g('v-whr'),
       mg:g('v-mg'),mm:g('v-mm'),braccio:g('v-braccio'),collo:g('v-collo'),ombelico:g('v-ombelico'),
+      addome:g('v-addome'),torace:g('v-torace'),spalla:g('v-spalla'),
+      braccio_r:g('v-braccio-r'),braccio_r_sx:g('v-braccio-r-sx'),
+      braccio_c:g('v-braccio-c'),braccio_c_sx:g('v-braccio-c-sx'),
+      avambraccio:g('v-avambraccio'),polso:g('v-polso'),
+      coscia:g('v-coscia'),coscia_sx:g('v-coscia-sx'),
+      polpaccio:g('v-polpaccio'),polpaccio_sx:g('v-polpaccio-sx'),caviglia:g('v-caviglia'),
       pl_tri:g('v-pl-tri'),pl_bi:g('v-pl-bi'),pl_ss:g('v-pl-ss'),pl_si:g('v-pl-si'),
       pl_add:g('v-pl-add'),pl_cos:g('v-pl-cos'),pl_pet:g('v-pl-pet'),pl_asc:g('v-pl-asc'),
-      glic:g('b-glic'),hba1c:g('b-hba1c'),col:g('b-col'),ldl:g('b-ldl'),hdl:g('b-hdl'),
-      tg:g('b-tg'),creat:g('b-creat'),egfr:g('b-egfr'),alb:g('b-alb'),
-      hb:g('b-hb'),ferr:g('b-ferr'),vitd:g('b-vitd'),altri:g('b-altri'),
+      glic:g('b-glic'),insulina:g('b-insulina'),hba1c:g('b-hba1c'),
+      col:g('b-col'),ldl:g('b-ldl'),hdl:g('b-hdl'),tg:g('b-tg'),
+      creat:g('b-creat'),egfr:g('b-egfr'),azot:g('b-azot'),uric:g('b-uric'),alb:g('b-alb'),
+      got:g('b-got'),gpt:g('b-gpt'),ggt:g('b-ggt'),
+      hb:g('b-hb'),ferr:g('b-ferr'),vitd:g('b-vitd'),vitb12:g('b-vitb12'),
+      tsh:g('b-tsh'),pcr:g('b-pcr'),data_esami:g('b-data-esami'),note_esami:g('b-note-esami'),
       colazione:g('v-colazione'),spunt1:g('v-spunt1'),pranzo:g('v-pranzo'),
       spunt2:g('v-spunt2'),cena:g('v-cena'),fuori:g('v-fuori'),
       kcal_att:g('v-kcal-att'),appetito:g('v-appetito'),
@@ -1540,7 +1649,9 @@ function caricaDati(data) {
     const fieldMap = {
       colazione:'v-colazione',spunt1:'v-spunt1',pranzo:'v-pranzo',
       spunt2:'v-spunt2',cena:'v-cena',fuori:'v-fuori',
-      kcal_att:'v-kcal-att'
+      kcal_att:'v-kcal-att',
+      data_esami:'b-data-esami',note_esami:'b-note-esami',
+      altri:'b-note-esami'
     };
     Object.entries(v).forEach(([k,val])=>{
       if(!val) return;
@@ -1591,6 +1702,7 @@ function nuovoNCPt(clearCart=true) {
   pesList=[]; obiettiviList=[]; storici=[]; monitExtra=[];
   document.querySelectorAll('.ncpt-panel input, .ncpt-panel textarea, .recall-ta').forEach(el=>{
     if(el.type!=='date') el.value='';
+    else if(el.id==='v-data') el.value=new Date().toISOString().split('T')[0];
   });
   document.getElementById('v-data').value=new Date().toISOString().split('T')[0];
   const titoloEl = document.getElementById('ncpt-titolo-sessione');
@@ -1598,6 +1710,47 @@ function nuovoNCPt(clearCart=true) {
   if(clearCart){currentCartellaId=null;var _s=document.getElementById('ncpt-cartella-cw-srch');if(_s)_s.value='';document.getElementById('paz-bar').style.display='none';}
   renderPES(); renderObiettivi(); renderStor();
   const meC=document.getElementById('monit-extra');if(meC)meC.innerHTML='';
+  try { localStorage.removeItem('nutriplan_autosave_ncpt'); } catch(e){}
+}
+
+// ── Auto-save / Restore ─────────────────────────────
+let _ncptAutoSaveTimer = null;
+function autoSavePage_ncpt() {
+  try {
+    const d = {};
+    document.querySelectorAll('.ncpt-panel input[id], .ncpt-panel select[id], .ncpt-panel textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    d['__pesList'] = JSON.stringify(pesList);
+    d['__obiettiviList'] = JSON.stringify(obiettiviList);
+    d['__storici'] = JSON.stringify(storici);
+    d['__cartellaId'] = currentCartellaId || '';
+    d['__ncptId'] = currentNcptId || '';
+    localStorage.setItem('nutriplan_autosave_ncpt', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_ncpt() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_ncpt') || 'null');
+    if (!saved) return;
+    Object.entries(saved).forEach(([id, val]) => {
+      if (id.startsWith('__')) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+    if (saved.__pesList) { try { pesList = JSON.parse(saved.__pesList); renderPES(); } catch(e){} }
+    if (saved.__obiettiviList) { try { obiettiviList = JSON.parse(saved.__obiettiviList); renderObiettivi(); } catch(e){} }
+    if (saved.__storici) { try { storici = JSON.parse(saved.__storici); renderStor(); } catch(e){} }
+    if (saved.__ncptId) currentNcptId = saved.__ncptId;
+    // Re-trigger calculations
+    setTimeout(()=>{ try{calcAntropo();calcolaPliche();calcolaCirconferenze();}catch(e){} }, 100);
+  } catch(e) {}
+}
+function scheduleAutoSave_ncpt() {
+  clearTimeout(_ncptAutoSaveTimer);
+  _ncptAutoSaveTimer = setTimeout(autoSavePage_ncpt, 600);
 }
 
 // ═══════════════════════════════════════════════════
@@ -1714,8 +1867,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('v-nome').value = cart.nome;
         toast('📋 Nuovo NCPt per: '+cart.nome,'info');
       }
+    } else {
+      autoRestorePage_ncpt();
     }
   } catch(e) { console.log('Auth not available'); }
+
+  // Auto-save on any input/change inside the ncpt panels
+  document.getElementById('main').addEventListener('input', scheduleAutoSave_ncpt);
+  document.getElementById('main').addEventListener('change', scheduleAutoSave_ncpt);
+  // Save before navigating away
+  window.addEventListener('beforeunload', autoSavePage_ncpt);
 });
 </script>
 </body>

@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Obesità — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.ob-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ob-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.ob-tab:hover{background:rgba(234,88,12,.1);color:#EA580C}
+.ob-tab.active{background:linear-gradient(135deg,#C2410C,#EA580C);color:white;box-shadow:0 3px 10px rgba(234,88,12,.3);font-weight:700}
+.ob-panel{display:none}.ob-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:26px;font-weight:700;color:#EA580C;margin:8px 0}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#FFF7ED;border-left:3px solid #EA580C;color:#7C2D12}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.alert-danger{background:#FEF2F2;border-left:3px solid #EF4444;color:#7F1D1D}
+.alert-ok{background:#F0FDF4;border-left:3px solid #22C55E;color:#14532D}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select,.nf textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus,.nf textarea:focus{border-color:#EA580C}
+.bmi-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;margin-top:6px}
+.bmi-sottopeso{background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE}
+.bmi-normale{background:#F0FDF4;color:#15803D;border:1.5px solid #86EFAC}
+.bmi-sovrappeso{background:#FEF3C7;color:#B45309;border:1.5px solid #FDE68A}
+.bmi-ob1{background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA}
+.bmi-ob2{background:#FFF0F0;color:#991B1B;border:1.5px solid #FECACA}
+.bmi-ob3{background:#FEE2E2;color:#7F1D1D;border:1.5px solid #FCA5A5}
+.guide-section{margin-bottom:20px}
+.guide-section h4{font-size:13px;font-weight:700;color:#C2410C;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #FFEDD5}
+.guide-item{background:#FFF7ED;border-radius:8px;padding:11px 14px;margin-bottom:8px;border-left:4px solid #EA580C;font-size:12.5px;line-height:1.75;color:#431407}
+.comor-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
+@media(max-width:600px){.comor-grid{grid-template-columns:1fr 1fr}}
+.comor-chk{display:flex;align-items:center;gap:7px;font-size:12.5px;padding:7px 10px;background:#FFF7ED;border-radius:8px;border:1px solid #FFEDD5;cursor:pointer}
+.comor-chk input{accent-color:#EA580C;width:15px;height:15px;flex-shrink:0}
+.comor-chk:has(input:checked){background:#FFEDD5;border-color:#EA580C;font-weight:600}
+@media print{
+  @page{margin:0;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast,#ob-paz-hdr{display:none!important}
+  #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
+  .page-content{padding:0!important}
+  .ob-tabs{display:none!important}
+  .ob-panel{display:block!important}
+  .calc-box{box-shadow:none!important;border:1px solid #E2E8F0!important;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item" href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item active" href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>⚖️ Gestione Obesità</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#7C2D12 0%,#C2410C 55%,#EA580C 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(194,65,12,.35);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">⚖️</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">Gestione Nutrizionale dell'Obesità</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Valutazione BMI e rischio metabolico, calcolo fabbisogno calorico, pianificazione del deficit energetico e supporto comportamentale. Basato su <b>EASO 2023 · FAND · SINPE · SISDCA</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📊 Classificazione WHO</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧮 Deficit Energetico</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🩺 Comorbidità</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥗 Piano Alimentare</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="ob-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <div id="ob-cartella-cw"></div>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="ob-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <button class="btn btn-primary btn-sm" onclick="salvaObesita()" style="background:linear-gradient(135deg,#C2410C,#EA580C)">💾 Salva in Cartella</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="svuotaObesita()">🔄 Reset</button>
+  </div>
+</div>
+
+<input type="hidden" id="ob-cartella" value="">
+
+<div class="ob-tabs no-print">
+  <button class="ob-tab active" onclick="showObTab('valutazione')">📊 Valutazione</button>
+  <button class="ob-tab" onclick="showObTab('fabbisogno')">🧮 Fabbisogno</button>
+  <button class="ob-tab" onclick="showObTab('comportamento')">🧠 Comportamento</button>
+  <button class="ob-tab" onclick="showObTab('piano')">🍽️ Piano Alimentare</button>
+  <button class="ob-tab" onclick="showObTab('lg')">📚 Linee Guida</button>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 1: VALUTAZIONE                -->
+<!-- ══════════════════════════════════ -->
+<div class="ob-panel active" id="tab-valutazione">
+
+  <div class="alert-info alert-box">
+    <b>📊 Valutazione Nutrizionale nell'Obesità</b> — La classificazione WHO si basa su BMI, ma la distribuzione del grasso corporeo (circonferenza vita, WHR) è determinante per la stratificazione del rischio cardiovascolare e metabolico. EASO 2023 raccomanda la valutazione multidimensionale includendo composizione corporea, storia del peso e comorbidità.
+  </div>
+
+  <div class="grid-2">
+    <!-- Dati antropometrici -->
+    <div class="calc-box">
+      <h3>📏 Dati Antropometrici</h3>
+      <div class="grid-2" style="margin-bottom:10px">
+        <div class="nf"><label>Nome e Cognome</label><input type="text" id="ob-nome" placeholder="Cognome Nome"></div>
+        <div class="nf"><label>Data di nascita</label><input type="date" id="ob-ddn" onchange="calcBMIOb()"></div>
+        <div class="nf"><label>Sesso</label>
+          <select id="ob-sesso" onchange="calcBMIOb()">
+            <option value="M">Maschio</option>
+            <option value="F">Femmina</option>
+          </select></div>
+        <div class="nf"><label>Data valutazione</label><input type="date" id="ob-data"></div>
+      </div>
+      <div class="grid-3">
+        <div class="nf"><label>Peso attuale (kg)</label><input type="number" id="ob-peso" step="0.1" placeholder="es. 98.5" oninput="calcBMIOb()"></div>
+        <div class="nf"><label>Altezza (cm)</label><input type="number" id="ob-alt" step="0.1" placeholder="es. 170" oninput="calcBMIOb()"></div>
+        <div class="nf"><label>BMI (auto)</label><input type="text" id="ob-bmi" readonly style="background:#F8FAFC"></div>
+        <div class="nf"><label>Circ. vita (cm)</label><input type="number" id="ob-vita" step="0.1" oninput="calcBMIOb()"></div>
+        <div class="nf"><label>Circ. fianchi (cm)</label><input type="number" id="ob-fianchi" step="0.1" oninput="calcBMIOb()"></div>
+        <div class="nf"><label>WHR (auto)</label><input type="text" id="ob-whr" readonly style="background:#F8FAFC"></div>
+      </div>
+      <div id="ob-bmi-result" style="margin-top:10px"></div>
+    </div>
+
+    <!-- Storia del peso -->
+    <div class="calc-box">
+      <h3>📈 Storia del Peso</h3>
+      <div class="grid-2">
+        <div class="nf"><label>Peso massimo storico (kg)</label><input type="number" id="ob-peso-max" step="0.1" placeholder="es. 115"></div>
+        <div class="nf"><label>Peso minimo (adulto, kg)</label><input type="number" id="ob-peso-min" step="0.1" placeholder="es. 72"></div>
+        <div class="nf"><label>Peso a 18 anni (kg)</label><input type="number" id="ob-peso-18" step="0.1" placeholder="es. 80"></div>
+        <div class="nf"><label>Variazione recente</label><input type="text" id="ob-dpeso" placeholder="es. +5 kg in 3 mesi"></div>
+        <div class="nf"><label>Durata sovrappeso/obesità</label><input type="text" id="ob-durata" placeholder="es. da 10 anni"></div>
+        <div class="nf"><label>N° tentativi dietetici</label><input type="number" id="ob-tentativi" placeholder="es. 4" min="0"></div>
+      </div>
+      <div class="nf" style="margin-top:8px"><label>Note anamnesi ponderale</label>
+        <textarea id="ob-note-anamnesi" rows="3" placeholder="Diete precedenti, farmaci per il peso, interventi, yo-yo..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- Comorbidità -->
+  <div class="calc-box">
+    <h3>🩺 Comorbidità Correlate all'Obesità</h3>
+    <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Seleziona le condizioni presenti. Influenzano il piano dietoterapico e la definizione degli obiettivi.</p>
+    <div class="comor-grid">
+      <label class="comor-chk"><input type="checkbox" id="c-dm2"> Diabete mellito T2</label>
+      <label class="comor-chk"><input type="checkbox" id="c-prediab"> Prediabete / IGT</label>
+      <label class="comor-chk"><input type="checkbox" id="c-ipert"> Ipertensione arteriosa</label>
+      <label class="comor-chk"><input type="checkbox" id="c-dislipi"> Dislipidemia</label>
+      <label class="comor-chk"><input type="checkbox" id="c-steatosi"> Steatosi epatica (MASLD)</label>
+      <label class="comor-chk"><input type="checkbox" id="c-osas"> OSAS / disturbi sonno</label>
+      <label class="comor-chk"><input type="checkbox" id="c-artrosi"> Artrosi / dolori articolari</label>
+      <label class="comor-chk"><input type="checkbox" id="c-sop"> Sindrome ovaio policistico</label>
+      <label class="comor-chk"><input type="checkbox" id="c-ipotiroidismo"> Ipotiroidismo</label>
+      <label class="comor-chk"><input type="checkbox" id="c-depressione"> Depressione / ansia</label>
+      <label class="comor-chk"><input type="checkbox" id="c-reflusso"> Reflusso gastroesofageo</label>
+      <label class="comor-chk"><input type="checkbox" id="c-irc"> Insufficienza renale</label>
+    </div>
+    <div class="nf" style="margin-top:10px"><label>Farmaci in uso (rilevanti per il peso)</label>
+      <input type="text" id="ob-farmaci" placeholder="es. insulina, cortisone, antidepressivi, metformina..."></div>
+    <div class="nf" style="margin-top:8px"><label>Terapia bariatrica / farmacologica</label>
+      <select id="ob-bariatrica">
+        <option value="">Nessuna</option>
+        <option value="bypass">Bypass gastrico (RYGB)</option>
+        <option value="sleeve">Sleeve gastrectomy</option>
+        <option value="banding">Bendaggio gastrico</option>
+        <option value="pallone">Pallone intragastrico</option>
+        <option value="semaglutide">Semaglutide (Ozempic/Wegovy)</option>
+        <option value="liraglutide">Liraglutide (Saxenda)</option>
+        <option value="orlistat">Orlistat</option>
+        <option value="altra">Altra</option>
+      </select></div>
+    <div class="nf" style="margin-top:8px"><label>Note cliniche</label>
+      <textarea id="ob-note-clinica" rows="2" placeholder="Patologie, limitazioni fisiche, controindicazioni..."></textarea></div>
+  </div>
+
+  <!-- Attività fisica -->
+  <div class="calc-box">
+    <h3>🏃 Attività Fisica e Stile di Vita</h3>
+    <div class="grid-3">
+      <div class="nf"><label>Livello attività fisica</label>
+        <select id="ob-laf">
+          <option value="1.2">Sedentario (lavoro d'ufficio, no sport)</option>
+          <option value="1.375" selected>Leggero (1–2 sessioni/settimana)</option>
+          <option value="1.55">Moderato (3–4 sessioni/settimana)</option>
+          <option value="1.725">Intenso (5+ sessioni/settimana)</option>
+        </select></div>
+      <div class="nf"><label>Limitazioni motorie</label>
+        <select id="ob-limitazioni">
+          <option value="no">Nessuna</option>
+          <option value="lieve">Lievi (dolori articolari occasionali)</option>
+          <option value="moderate">Moderate (difficoltà deambulazione)</option>
+          <option value="gravi">Gravi (mobilità ridotta)</option>
+        </select></div>
+      <div class="nf"><label>Orari pasti irregolari</label>
+        <select id="ob-orari">
+          <option value="no">No, pasti regolari</option>
+          <option value="salti">Salta pasti frequentemente</option>
+          <option value="lavoro">Irregolari per lavoro</option>
+          <option value="notte">Mangia di notte</option>
+        </select></div>
+    </div>
+    <div class="nf" style="margin-top:8px"><label>Note stile di vita</label>
+      <textarea id="ob-note-stile" rows="2" placeholder="Abitudini, lavoro, situazione familiare..."></textarea></div>
+  </div>
+
+</div><!-- end tab-valutazione -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 2: FABBISOGNO                 -->
+<!-- ══════════════════════════════════ -->
+<div class="ob-panel" id="tab-fabbisogno">
+
+  <div class="alert-info alert-box">
+    <b>🧮 Fabbisogno Energetico e Deficit Calorico</b> — EASO 2023 raccomanda un deficit di 500–750 kcal/die rispetto al TDEE, con un obiettivo di calo ponderale dello 0,5–1 kg/settimana. Diete con apporto inferiore a 800 kcal/die (VLCD) devono essere supervisionate da professionisti specializzati.
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚙️ Parametri di Calcolo</h3>
+      <div class="grid-2">
+        <div class="nf"><label>Peso attuale (kg)</label><input type="number" id="f-peso" step="0.1" placeholder="es. 98.5" oninput="calcFabbOb()"></div>
+        <div class="nf"><label>Altezza (cm)</label><input type="number" id="f-alt" step="0.1" placeholder="es. 170" oninput="calcFabbOb()"></div>
+        <div class="nf"><label>Età (anni)</label><input type="number" id="f-eta" placeholder="es. 45" oninput="calcFabbOb()"></div>
+        <div class="nf"><label>Sesso</label>
+          <select id="f-sesso" onchange="calcFabbOb()">
+            <option value="M">Maschio</option>
+            <option value="F">Femmina</option>
+          </select></div>
+        <div class="nf"><label>Livello attività (LAF)</label>
+          <select id="f-laf" onchange="calcFabbOb()">
+            <option value="1.2">1.2 — Sedentario</option>
+            <option value="1.375" selected>1.375 — Leggero</option>
+            <option value="1.55">1.55 — Moderato</option>
+            <option value="1.725">1.725 — Intenso</option>
+          </select></div>
+        <div class="nf"><label>Formula MB</label>
+          <select id="f-formula" onchange="calcFabbOb()">
+            <option value="hb">Harris-Benedict</option>
+            <option value="mifflin" selected>Mifflin-St Jeor (raccomandata ob.)</option>
+            <option value="owen">Owen</option>
+          </select></div>
+      </div>
+      <div class="nf" style="margin-top:8px"><label>Deficit calorico obiettivo</label>
+        <select id="f-deficit" onchange="calcFabbOb()">
+          <option value="500" selected>-500 kcal/die (–0,5 kg/settimana)</option>
+          <option value="750">-750 kcal/die (–0,75 kg/settimana)</option>
+          <option value="1000">-1000 kcal/die (–1 kg/settimana)</option>
+          <option value="personalizzato">Personalizzato</option>
+        </select></div>
+      <div class="nf" id="deficit-custom-wrap" style="display:none;margin-top:6px">
+        <label>Deficit personalizzato (kcal/die)</label>
+        <input type="number" id="f-deficit-custom" placeholder="es. 600" oninput="calcFabbOb()">
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>📊 Risultato Calcolo Energetico</h3>
+      <div id="f-result" style="font-size:13px;color:var(--slate-l)">Inserisci i dati per calcolare.</div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🎯 Obiettivi Ponderali</h3>
+    <div class="grid-3">
+      <div class="nf"><label>Peso target (kg)</label><input type="number" id="f-peso-target" step="0.1" placeholder="es. 85" oninput="calcObiettivoOb()"></div>
+      <div class="nf"><label>Calo ponderale atteso (kg)</label><input type="text" id="f-calo-target" readonly style="background:#F8FAFC"></div>
+      <div class="nf"><label>Tempo stimato (settimane)</label><input type="text" id="f-tempo-target" readonly style="background:#F8FAFC"></div>
+    </div>
+    <div id="f-obiettivo-result" style="margin-top:10px"></div>
+    <div class="nf" style="margin-top:10px"><label>Note fabbisogno</label>
+      <textarea id="f-note" rows="2" placeholder="Motivazione scelte caloriche, considerazioni cliniche..."></textarea></div>
+  </div>
+
+  <!-- Tabella ripartizione macronutrienti -->
+  <div class="calc-box">
+    <h3>🥗 Ripartizione Macronutrienti Raccomandata</h3>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+        <thead>
+          <tr style="background:#EA580C;color:white">
+            <th style="padding:9px 12px;text-align:left">Approccio</th>
+            <th style="padding:9px 12px">CHO</th>
+            <th style="padding:9px 12px">Proteine</th>
+            <th style="padding:9px 12px">Grassi</th>
+            <th style="padding:9px 12px;text-align:left">Indicazione</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#FFF7ED"><td style="padding:8px 12px;font-weight:600">Ipocalorica bilanciata</td><td style="padding:8px 12px;text-align:center">45–55%</td><td style="padding:8px 12px;text-align:center">25–30%</td><td style="padding:8px 12px;text-align:center">20–30%</td><td style="padding:8px 12px">Prima scelta EASO. Mantenibile a lungo termine.</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:600">Alto contenuto proteico</td><td style="padding:8px 12px;text-align:center">40–45%</td><td style="padding:8px 12px;text-align:center">30–35%</td><td style="padding:8px 12px;text-align:center">20–25%</td><td style="padding:8px 12px">Migliore sazietà, preservazione massa magra.</td></tr>
+          <tr style="background:#FFF7ED"><td style="padding:8px 12px;font-weight:600">Low-Carb (LCD)</td><td style="padding:8px 12px;text-align:center">&lt;130 g/die</td><td style="padding:8px 12px;text-align:center">30–35%</td><td style="padding:8px 12px;text-align:center">40–50%</td><td style="padding:8px 12px">Efficace per calo rapido, migliora glicemia T2DM.</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:600">Chetogenica (VLCKD)</td><td style="padding:8px 12px;text-align:center">&lt;50 g/die</td><td style="padding:8px 12px;text-align:center">35–45%</td><td style="padding:8px 12px;text-align:center">50–60%</td><td style="padding:8px 12px">Supervisione medica. Max 3–6 mesi.</td></tr>
+          <tr style="background:#FFF7ED"><td style="padding:8px 12px;font-weight:600">Mediterranea</td><td style="padding:8px 12px;text-align:center">45–55%</td><td style="padding:8px 12px;text-align:center">20–25%</td><td style="padding:8px 12px;text-align:center">25–35%</td><td style="padding:8px 12px">Alto indice di aderenza a lungo termine. Cardioprotettiva.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="nf" style="margin-top:12px"><label>Approccio dietetico scelto</label>
+      <select id="f-approccio">
+        <option value="">-- Seleziona --</option>
+        <option value="bilanciata">Ipocalorica bilanciata</option>
+        <option value="proteica">Alto contenuto proteico</option>
+        <option value="lcd">Low-Carb (LCD)</option>
+        <option value="vlckd">Chetogenica (VLCKD)</option>
+        <option value="mediterranea">Mediterranea ipocalorica</option>
+        <option value="vlcd">VLCD (&lt;800 kcal — supervisione medica)</option>
+        <option value="altro">Altro / personalizzato</option>
+      </select></div>
+  </div>
+
+</div><!-- end tab-fabbisogno -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- TAB 3: COMPORTAMENTO ALIMENTARE              -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="ob-panel" id="tab-comportamento">
+
+  <div class="alert-info alert-box">
+    <b>🧠 Valutazione del Comportamento Alimentare</b> — EASO 2023 sottolinea che l'approccio puramente dietetico senza sostegno comportamentale ha tassi di ricaduta elevati. L'identificazione dei pattern alimentari disfunzionali consente di personalizzare l'intervento con strategie cognitive-comportamentali (CBT).
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🍽️ Pattern Alimentare</h3>
+      <div class="nf"><label>Comportamento alimentare prevalente</label>
+        <select id="b-pattern">
+          <option value="">-- Seleziona --</option>
+          <option value="restrittivo">Restrittivo con abbuffate</option>
+          <option value="emotivo">Mangiatore emotivo</option>
+          <option value="notturno">Sindrome da alimentazione notturna</option>
+          <option value="veloce">Mangiatore rapido / scarsa masticazione</option>
+          <option value="abbuffate">Binge eating disorder (BED)</option>
+          <option value="salti">Salto pasti + eccessi serali</option>
+          <option value="none">Nessun pattern disfunzionale evidente</option>
+        </select></div>
+      <div class="nf" style="margin-top:8px"><label>Trigger alimentari identificati</label>
+        <textarea id="b-trigger" rows="3" placeholder="es. stress lavorativo, noia, solitudine, stanchezza serale, conflitti familiari..."></textarea></div>
+      <div class="nf" style="margin-top:8px"><label>Alimenti a rischio (preferiti in eccesso)</label>
+        <textarea id="b-alimenti-rischio" rows="2" placeholder="es. dolci, snack salati, bevande zuccherate, alcol..."></textarea></div>
+    </div>
+
+    <div class="calc-box">
+      <h3>📋 Abitudini Alimentari</h3>
+      <div class="nf"><label>N° pasti al giorno (media)</label>
+        <select id="b-pasti">
+          <option value="1">1 pasto</option>
+          <option value="2">2 pasti</option>
+          <option value="3" selected>3 pasti</option>
+          <option value="4">3 pasti + 1 spuntino</option>
+          <option value="5">5 pasti</option>
+          <option value="6">Pasti continui / grazing</option>
+        </select></div>
+      <div class="nf" style="margin-top:8px"><label>Colazione</label>
+        <select id="b-colazione">
+          <option value="no">Non fa colazione</option>
+          <option value="leggera">Colazione leggera (caffè/yogurt)</option>
+          <option value="completa">Colazione completa</option>
+          <option value="abbondante">Colazione abbondante</option>
+        </select></div>
+      <div class="nf" style="margin-top:8px"><label>Consumo di alcol</label>
+        <select id="b-alcol">
+          <option value="no">Astinente</option>
+          <option value="occasionale">Occasionale (&lt;1 UA/settimana)</option>
+          <option value="moderato">Moderato (1–7 UA/settimana)</option>
+          <option value="elevato">Elevato (&gt;7 UA/settimana)</option>
+        </select></div>
+      <div class="nf" style="margin-top:8px"><label>Consumo fuori casa / delivery</label>
+        <select id="b-fuoricasa">
+          <option value="raro">Raro (&lt;1 volta/settimana)</option>
+          <option value="2-3">2–3 volte/settimana</option>
+          <option value="frequente">&gt;3 volte/settimana</option>
+          <option value="quotidiano">Quotidiano</option>
+        </select></div>
+      <div class="nf" style="margin-top:8px"><label>Cucina autonoma</label>
+        <select id="b-cucina">
+          <option value="si">Sì, cucina regolarmente</option>
+          <option value="spesso">Spesso, ma non sempre</option>
+          <option value="poco">Raramente</option>
+          <option value="no">No, non cucina</option>
+        </select></div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🎯 Motivazione e Obiettivi Personali</h3>
+    <div class="grid-2">
+      <div class="nf"><label>Motivazione al cambiamento</label>
+        <select id="b-motivazione">
+          <option value="alta">Alta (vuole cambiare attivamente)</option>
+          <option value="buona" selected>Buona (consapevole del problema)</option>
+          <option value="ambivalente">Ambivalente (vorrebbe ma difficoltà)</option>
+          <option value="bassa">Bassa (spinto da altri)</option>
+        </select></div>
+      <div class="nf"><label>Supporto familiare/sociale</label>
+        <select id="b-supporto">
+          <option value="ottimo">Ottimo (famiglia coinvolta)</option>
+          <option value="buono" selected>Buono</option>
+          <option value="scarso">Scarso (ambiente non favorevole)</option>
+          <option value="ostacolante">Ostacolante</option>
+        </select></div>
+    </div>
+    <div class="nf" style="margin-top:8px"><label>Obiettivo principale del paziente</label>
+      <textarea id="b-obiettivo" rows="2" placeholder="es. migliorare la salute, ridurre i farmaci, problemi estetici, matrimonio, gravidanza pianificata..."></textarea></div>
+    <div class="nf" style="margin-top:8px"><label>Strategie di coping proposte / note comportamentali</label>
+      <textarea id="b-coping" rows="3" placeholder="es. diario alimentare, mindful eating, tecniche di gestione dello stress, supporto psicologico raccomandato..."></textarea></div>
+  </div>
+
+</div><!-- end tab-comportamento -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 4: PIANO ALIMENTARE           -->
+<!-- ══════════════════════════════════ -->
+<div class="ob-panel" id="tab-piano">
+
+  <div class="alert-info alert-box">
+    <b>🍽️ Piano Alimentare Personalizzato</b> — Il piano deve tenere conto delle preferenze del paziente, delle sue comorbidità, del profilo comportamentale e degli obiettivi a lungo termine. La compliance è il fattore predittivo più importante per il successo.
+  </div>
+
+  <div class="calc-box">
+    <h3>📋 Prescrizione Dietetica</h3>
+    <div class="grid-3">
+      <div class="nf"><label>Kcal/die prescritte</label><input type="text" id="p-kcal" placeholder="es. 1400"></div>
+      <div class="nf"><label>Proteine (g o %)</label><input type="text" id="p-prot" placeholder="es. 100–120 g / 30%"></div>
+      <div class="nf"><label>CHO (g o %)</label><input type="text" id="p-cho" placeholder="es. 150 g / 45%"></div>
+      <div class="nf"><label>Grassi (g o %)</label><input type="text" id="p-grassi" placeholder="es. 50–60 g / 25%"></div>
+      <div class="nf"><label>Fibra (g/die)</label><input type="text" id="p-fibra" placeholder="es. 25–35 g"></div>
+      <div class="nf"><label>Liquidi (mL/die)</label><input type="text" id="p-liquidi" placeholder="es. 2000"></div>
+    </div>
+    <div class="nf" style="margin-top:8px"><label>Distribuzione pasti</label>
+      <textarea id="p-distrib" rows="2" placeholder="es. 3 pasti principali + 2 spuntini: colazione 20%, spuntino 5%, pranzo 35%, spuntino 5%, cena 35%"></textarea></div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🥗 Piano Alimentare Tipo</h3>
+    <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap" class="no-print">
+      <button class="btn btn-ghost btn-sm" onclick="generaPianoOb('bilanciata')">Bilanciata</button>
+      <button class="btn btn-ghost btn-sm" onclick="generaPianoOb('proteica')">Alto proteica</button>
+      <button class="btn btn-ghost btn-sm" onclick="generaPianoOb('mediterranea')">Mediterranea</button>
+    </div>
+    <div class="nf"><label>Piano alimentare (modifica liberamente)</label>
+      <textarea id="p-piano" rows="14" style="font-family:monospace;font-size:12px" placeholder="Colazione: ...&#10;Spuntino: ...&#10;Pranzo: ...&#10;Merenda: ...&#10;Cena: ..."></textarea></div>
+    <div class="nf" style="margin-top:8px"><label>Alimenti da privilegiare</label>
+      <textarea id="p-privilegiare" rows="2" placeholder="es. verdure, legumi, proteine magre, cereali integrali, frutta a basso IG..."></textarea></div>
+    <div class="nf" style="margin-top:8px"><label>Alimenti da limitare / evitare</label>
+      <textarea id="p-limitare" rows="2" placeholder="es. bevande zuccherate, dolci, insaccati, alcol, snack ultra-processati..."></textarea></div>
+    <div class="nf" style="margin-top:8px"><label>Integrazione raccomandata</label>
+      <textarea id="p-integrazione" rows="2" placeholder="es. vitamina D 1000 UI/die, omega-3, multivitaminico (se VLCD)..."></textarea></div>
+    <div class="nf" style="margin-top:8px"><label>Note al piano</label>
+      <textarea id="p-note" rows="2" placeholder="Frequenza follow-up, obiettivi intermedi, monitoraggio peso..."></textarea></div>
+  </div>
+
+  <!-- Follow-up -->
+  <div class="calc-box">
+    <h3>📅 Follow-up e Monitoraggio</h3>
+    <div class="grid-3">
+      <div class="nf"><label>Frequenza follow-up</label>
+        <select id="p-followup">
+          <option value="settimanale">Settimanale (fase intensiva)</option>
+          <option value="quindicinale" selected>Quindicinale</option>
+          <option value="mensile">Mensile</option>
+          <option value="bimestrale">Bimestrale (fase mantenimento)</option>
+        </select></div>
+      <div class="nf"><label>Parametri da monitorare</label>
+        <input type="text" id="p-monitoraggio" placeholder="es. peso, girovita, glicemia..."></div>
+      <div class="nf"><label>Prossima visita</label><input type="date" id="p-prossima-visita"></div>
+    </div>
+  </div>
+
+</div><!-- end tab-piano -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 5: LINEE GUIDA               -->
+<!-- ══════════════════════════════════ -->
+<div class="ob-panel" id="tab-lg">
+
+  <div class="guide-section">
+    <h4>📌 EASO 2023 — Raccomandazioni Principali</h4>
+    <div class="guide-item">L'obesità è riconosciuta come malattia cronica recidivante che richiede gestione a lungo termine. Il trattamento deve essere multidisciplinare: dietista, medico, psicologo, fisiatra.</div>
+    <div class="guide-item">Il calo ponderale del <b>5–10% del peso corporeo iniziale</b> è sufficiente a produrre benefici clinicamente significativi su glicemia, pressione arteriosa, lipidi e qualità della vita.</div>
+    <div class="guide-item">Un deficit di <b>500–750 kcal/die</b> rispetto al TDEE induce un calo di 0,5–1 kg/settimana. Deficit maggiori possono aumentare il rischio di perdita di massa magra.</div>
+    <div class="guide-item">La fase di <b>mantenimento del peso</b> è spesso più difficile della perdita. Richiede follow-up attivo, monitoraggio regolare e strategie comportamentali adattive.</div>
+    <div class="guide-item"><b>Nessuna dieta è superiore alle altre</b> in termini di efficacia a lungo termine: la migliore è quella a cui il paziente riesce ad aderire (evidence level A).</div>
+  </div>
+
+  <div class="guide-section">
+    <h4>⚖️ Classificazione WHO dell'Obesità</h4>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+        <thead>
+          <tr style="background:#EA580C;color:white">
+            <th style="padding:9px 12px;text-align:left">Categoria</th>
+            <th style="padding:9px 12px">BMI (kg/m²)</th>
+            <th style="padding:9px 12px;text-align:left">Rischio comorbidità</th>
+            <th style="padding:9px 12px;text-align:left">Intervento raccomandato</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#EFF6FF"><td style="padding:8px 12px">Sottopeso</td><td style="padding:8px 12px;text-align:center">&lt;18.5</td><td style="padding:8px 12px">Aumentato</td><td style="padding:8px 12px">Valutazione cause, supporto nutrizionale</td></tr>
+          <tr><td style="padding:8px 12px">Normopeso</td><td style="padding:8px 12px;text-align:center">18.5–24.9</td><td style="padding:8px 12px">Normale</td><td style="padding:8px 12px">Prevenzione, mantenimento</td></tr>
+          <tr style="background:#FEF3C7"><td style="padding:8px 12px;font-weight:600">Sovrappeso</td><td style="padding:8px 12px;text-align:center">25.0–29.9</td><td style="padding:8px 12px">Leggermente aumentato</td><td style="padding:8px 12px">Modifiche stile di vita, prevenzione progressione</td></tr>
+          <tr style="background:#FEF2F2"><td style="padding:8px 12px;font-weight:600">Obesità I</td><td style="padding:8px 12px;text-align:center">30.0–34.9</td><td style="padding:8px 12px">Moderato</td><td style="padding:8px 12px">Intervento dietetico + attività fisica + supporto comp.</td></tr>
+          <tr style="background:#FEF2F2"><td style="padding:8px 12px;font-weight:600">Obesità II</td><td style="padding:8px 12px;text-align:center">35.0–39.9</td><td style="padding:8px 12px">Grave</td><td style="padding:8px 12px">Come sopra + valutare farmacoterapia</td></tr>
+          <tr style="background:#FEE2E2"><td style="padding:8px 12px;font-weight:600">Obesità III (grave)</td><td style="padding:8px 12px;text-align:center">≥40.0</td><td style="padding:8px 12px">Molto grave</td><td style="padding:8px 12px">Multidisciplinare + valutare chirurgia bariatrica</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="guide-section">
+    <h4>📏 Rischio Metabolico da Circonferenza Vita (IDF/EASO)</h4>
+    <div class="grid-2">
+      <div style="background:#FFF7ED;border-radius:10px;padding:14px;border:1.5px solid #FFEDD5">
+        <div style="font-weight:700;color:#C2410C;margin-bottom:8px">👨 Uomini</div>
+        <div style="font-size:12.5px;line-height:2">🟢 Normale: &lt; 94 cm<br>🟡 Rischio aumentato: 94–102 cm<br>🔴 Rischio molto aumentato: &gt; 102 cm</div>
+      </div>
+      <div style="background:#FFF7ED;border-radius:10px;padding:14px;border:1.5px solid #FFEDD5">
+        <div style="font-weight:700;color:#C2410C;margin-bottom:8px">👩 Donne</div>
+        <div style="font-size:12.5px;line-height:2">🟢 Normale: &lt; 80 cm<br>🟡 Rischio aumentato: 80–88 cm<br>🔴 Rischio molto aumentato: &gt; 88 cm</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-section">
+    <h4>🩺 Gestione per Comorbidità Principali</h4>
+    <div class="grid-2">
+      <div style="background:#FFF7ED;border-radius:10px;padding:14px;border:1px solid #FFEDD5">
+        <div style="font-weight:700;color:#C2410C;margin-bottom:6px">🩸 Diabete T2 / Prediabete</div>
+        <div style="font-size:12px;line-height:1.8;color:#431407">Calo del 5–10% migliora HbA1c di ~1%. LCD &lt;130g CHO/die: riduzione rapida glicemia. Chetogenica: efficace ma supervisione medica necessaria. Monitoraggio ipoglicemia se in terapia insulinica.</div>
+      </div>
+      <div style="background:#FFF7ED;border-radius:10px;padding:14px;border:1px solid #FFEDD5">
+        <div style="font-weight:700;color:#C2410C;margin-bottom:6px">❤️ Ipertensione / Dislipidem.</div>
+        <div style="font-size:12px;line-height:1.8;color:#431407">Calo 5 kg = –5 mmHg sistolica. Ridurre sodio &lt;5 g/die (NaCl). Privilegiare MUFA e PUFA (omega-3). Dieta DASH e Mediterranea dimostrano efficacia CV.</div>
+      </div>
+      <div style="background:#FFF7ED;border-radius:10px;padding:14px;border:1px solid #FFEDD5">
+        <div style="font-weight:700;color:#C2410C;margin-bottom:6px">🫀 Steatosi epatica (MASLD)</div>
+        <div style="font-size:12px;line-height:1.8;color:#431407">Calo &gt;7–10% essenziale per ridurre la fibrosi. Evitare alcol. Limitare fruttosio libero e grassi saturi. Omega-3 per trigliceridi. Vitamina E in casi selezionati.</div>
+      </div>
+      <div style="background:#FFF7ED;border-radius:10px;padding:14px;border:1px solid #FFEDD5">
+        <div style="font-weight:700;color:#C2410C;margin-bottom:6px">💪 Preservazione massa magra</div>
+        <div style="font-size:12px;line-height:1.8;color:#431407">Proteine ≥1.2–1.5 g/kg peso ideale/die. Attività fisica con resistenza (almeno 2×/settimana). Evitare deficit calorici &gt;1000 kcal/die. VLCD solo se supervisionate.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-section">
+    <h4>🔄 Fase di Mantenimento (EASO 2023)</h4>
+    <div class="guide-item">Il mantenimento richiede un apporto energetico inferiore rispetto al normopeso dello stesso soggetto (–200/–400 kcal/die) perché il metabolismo si adatta al ribasso dopo il calo ponderale ("adaptive thermogenesis").</div>
+    <div class="guide-item">L'attività fisica è il predittore più forte del mantenimento: 200–300 minuti/settimana di attività aerobica moderata (evidenza A). Il monitoraggio continuo del peso (almeno settimanale) è associato a maggiore successo nel mantenimento.</div>
+    <div class="guide-item">La farmacoterapia (semaglutide, liraglutide) può essere considerata per BMI ≥30 o ≥27 con comorbidità, come supplemento, non sostituto, dell'intervento dietetico.</div>
+  </div>
+
+</div><!-- end tab-lg -->
+
+</div></main>
+
+<script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
+<script>
+let editingObNoteId = null;
+
+function showObTab(name) {
+  document.querySelectorAll('.ob-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ob-tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  const btn = [...document.querySelectorAll('.ob-tab')].find(t => t.getAttribute('onclick')?.includes("'" + name + "'"));
+  if (btn) btn.classList.add('active');
+  scheduleAutoSave_ob();
+}
+
+// ── BMI / WHR calc ────────────────────────────────
+function calcBMIOb() {
+  const peso = parseFloat(document.getElementById('ob-peso')?.value);
+  const alt = parseFloat(document.getElementById('ob-alt')?.value);
+  const vita = parseFloat(document.getElementById('ob-vita')?.value);
+  const fianchi = parseFloat(document.getElementById('ob-fianchi')?.value);
+  const sesso = document.getElementById('ob-sesso')?.value || 'M';
+  const bmiEl = document.getElementById('ob-bmi');
+  const whrEl = document.getElementById('ob-whr');
+  const resEl = document.getElementById('ob-bmi-result');
+
+  if (bmiEl && peso && alt) {
+    const bmi = peso / ((alt / 100) ** 2);
+    bmiEl.value = bmi.toFixed(1);
+    if (resEl) {
+      let cat = '', cls = '';
+      if (bmi < 18.5)       { cat = 'Sottopeso'; cls = 'bmi-sottopeso'; }
+      else if (bmi < 25)    { cat = 'Normopeso'; cls = 'bmi-normale'; }
+      else if (bmi < 30)    { cat = 'Sovrappeso'; cls = 'bmi-sovrappeso'; }
+      else if (bmi < 35)    { cat = 'Obesità Grado I'; cls = 'bmi-ob1'; }
+      else if (bmi < 40)    { cat = 'Obesità Grado II'; cls = 'bmi-ob2'; }
+      else                  { cat = 'Obesità Grado III (grave)'; cls = 'bmi-ob3'; }
+      let vitaRisk = '';
+      if (vita) {
+        const high = sesso === 'M' ? 102 : 88;
+        const mid  = sesso === 'M' ? 94  : 80;
+        if (vita >= high) vitaRisk = `<span class="bmi-badge bmi-ob1" style="margin-left:8px">📍 Vita: rischio molto aumentato (${vita} cm)</span>`;
+        else if (vita >= mid) vitaRisk = `<span class="bmi-badge bmi-sovrappeso" style="margin-left:8px">📍 Vita: rischio aumentato (${vita} cm)</span>`;
+        else vitaRisk = `<span class="bmi-badge bmi-normale" style="margin-left:8px">📍 Vita: normale (${vita} cm)</span>`;
+      }
+      resEl.innerHTML = `<span class="bmi-badge ${cls}">BMI ${bmi.toFixed(1)} kg/m² — ${cat}</span>${vitaRisk}`;
+    }
+  } else if (bmiEl) { bmiEl.value = ''; }
+
+  if (whrEl && vita && fianchi) {
+    whrEl.value = (vita / fianchi).toFixed(2);
+  } else if (whrEl) { whrEl.value = ''; }
+
+  scheduleAutoSave_ob();
+}
+
+// ── Fabbisogno calc ───────────────────────────────
+function calcFabbOb() {
+  const peso = parseFloat(document.getElementById('f-peso')?.value);
+  const alt  = parseFloat(document.getElementById('f-alt')?.value);
+  const eta  = parseFloat(document.getElementById('f-eta')?.value);
+  const sesso = document.getElementById('f-sesso')?.value || 'M';
+  const laf  = parseFloat(document.getElementById('f-laf')?.value) || 1.375;
+  const formula = document.getElementById('f-formula')?.value || 'mifflin';
+  const deficitSel = document.getElementById('f-deficit')?.value || '500';
+  const deficitCustomWrap = document.getElementById('deficit-custom-wrap');
+  if (deficitCustomWrap) deficitCustomWrap.style.display = deficitSel === 'personalizzato' ? 'block' : 'none';
+  const deficit = deficitSel === 'personalizzato'
+    ? (parseFloat(document.getElementById('f-deficit-custom')?.value) || 0)
+    : parseInt(deficitSel);
+  const resEl = document.getElementById('f-result');
+  if (!peso || !resEl) return;
+  let mb = 0;
+  if (formula === 'hb') {
+    mb = sesso === 'M'
+      ? Math.round(66.47 + 13.75*peso + 5.003*(alt||170) - 6.755*(eta||40))
+      : Math.round(655.1 + 9.563*peso + 1.85*(alt||170) - 4.676*(eta||40));
+  } else if (formula === 'mifflin') {
+    mb = sesso === 'M'
+      ? Math.round(10*peso + 6.25*(alt||170) - 5*(eta||40) + 5)
+      : Math.round(10*peso + 6.25*(alt||170) - 5*(eta||40) - 161);
+  } else { // owen
+    mb = sesso === 'M' ? Math.round(879 + 10.2*peso) : Math.round(795 + 7.18*peso);
+  }
+  const tdee = Math.round(mb * laf);
+  const kcalTarget = tdee - deficit;
+  const caloSettimana = deficit * 7;
+  const kgSettimana = (caloSettimana / 7700).toFixed(2);
+  resEl.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:#FFF7ED;border-radius:10px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:#C2410C;margin-bottom:4px;text-transform:uppercase">MB (${formula === 'hb' ? 'Harris-Benedict' : formula === 'mifflin' ? 'Mifflin-St Jeor' : 'Owen'})</div>
+        <div class="result-big">${mb} kcal</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#C2410C,#EA580C);border-radius:10px;padding:12px;color:white">
+        <div style="font-size:11px;font-weight:700;opacity:.8;margin-bottom:4px;text-transform:uppercase">TDEE (MB × LAF ${laf})</div>
+        <div style="font-size:26px;font-weight:700">${tdee} kcal</div>
+      </div>
+    </div>
+    <div style="background:#F0FDF4;border-radius:10px;padding:12px;border:1.5px solid #86EFAC">
+      <div style="font-size:11px;font-weight:700;color:#15803D;margin-bottom:4px">🎯 KCAL TARGET (TDEE − ${deficit} kcal)</div>
+      <div style="font-size:24px;font-weight:700;color:#15803D">${kcalTarget} kcal/die</div>
+      <div style="font-size:12px;color:#15803D;margin-top:4px">Calo stimato: ~${kgSettimana} kg/settimana</div>
+    </div>`;
+  calcObiettivoOb(peso, deficit);
+  scheduleAutoSave_ob();
+}
+
+function calcObiettivoOb(pesoCorrente, deficitPerGiorno) {
+  const pesoTarget = parseFloat(document.getElementById('f-peso-target')?.value);
+  const resEl = document.getElementById('f-obiettivo-result');
+  const caloEl = document.getElementById('f-calo-target');
+  const tempoEl = document.getElementById('f-tempo-target');
+  if (!pesoTarget || !pesoCorrente) return;
+  const calo = (pesoCorrente - pesoTarget).toFixed(1);
+  if (caloEl) caloEl.value = calo + ' kg';
+  if (tempoEl && deficitPerGiorno) {
+    const settimane = Math.round(calo * 7700 / (deficitPerGiorno * 7));
+    tempoEl.value = settimane + ' settimane (~' + (settimane / 4.3).toFixed(1) + ' mesi)';
+    if (resEl) {
+      const percCalo = ((calo / pesoCorrente) * 100).toFixed(1);
+      const color = percCalo >= 5 ? '#15803D' : '#D97706';
+      resEl.innerHTML = `<div style="background:#F8FAFC;border-radius:8px;padding:10px;font-size:12.5px">
+        Calo di <b>${calo} kg</b> = <b style="color:${color}">${percCalo}% del peso corporeo</b>.
+        ${percCalo >= 10 ? '✅ Obiettivo clinicamente rilevante (EASO: ≥10%).' : percCalo >= 5 ? '✅ Obiettivo minimo raggiunto (EASO: 5–10%).' : '⚠️ Calo inferiore al 5%: rivalutare obiettivo.'}
+      </div>`;
+    }
+  }
+}
+
+// ── Genera piani template ──────────────────────────
+const _pianiOb = {
+  bilanciata: `COLAZIONE:
+- Latte parzialmente scremato 200 mL
+- Pane integrale 40 g + marmellata senza zucchero 15 g
+- Caffè/tè senza zucchero
+
+SPUNTINO MATTINA:
+- Frutta fresca 150 g (mela, pera, agrumi)
+
+PRANZO:
+- Pasta integrale 60 g con pomodoro, basilico, 1 cucchiaino olio EVO
+- Petto di pollo 100 g alla griglia / legumi 100 g
+- Verdure crude o cotte a volontà
+- 1/2 cucchiaio olio EVO
+
+SPUNTINO POMERIGGIO:
+- Yogurt greco 0% 125 g
+
+CENA:
+- Pesce 150 g al forno / uova 2 / legumi 100 g
+- Verdure cotte/crude a volontà
+- Pane integrale 30 g
+- 1/2 cucchiaio olio EVO`,
+  proteica: `COLAZIONE:
+- Uova strapazzate 2 (o whites 4) + 1 fetta pane integrale
+- Yogurt greco proteico 150 g
+- Caffè/tè senza zucchero
+
+SPUNTINO MATTINA:
+- Fiocchi di latte 100 g + 10 mandorle
+
+PRANZO:
+- Riso integrale 50 g (crudo) o legumi 100 g
+- Petto di pollo/tacchino 150 g / tonno 120 g / tofu 150 g
+- Verdure abbondanti
+- 1 cucchiaino olio EVO
+
+SPUNTINO POMERIGGIO:
+- Proteina in shaker / ricotta 80 g + frutta 100 g
+
+CENA:
+- Pesce magro 180 g / manzo magro 130 g / legumi + uova
+- Verdure cotte abbondanti
+- Pane integrale 20 g o patate 80 g
+- 1 cucchiaino olio EVO`,
+  mediterranea: `COLAZIONE:
+- Latte vegetale o vaccino 150 mL
+- Pane integrale 40 g + olio EVO 5 g + pomodoro
+- Frutta fresca 100 g + caffè
+
+SPUNTINO MATTINA:
+- Frutta fresca 150 g o 10 noci
+
+PRANZO:
+- Pasta integrale 70 g al sugo di verdure + legumi 50 g
+- Insalata mista abbondante + olio EVO 1 cucchiaio
+
+SPUNTINO POMERIGGIO:
+- Yogurt bianco intero 125 g
+
+CENA:
+- Pesce (salmone/sgombro/merluzzo) 150 g al forno
+- Verdure miste al forno + olio EVO 1 cucchiaino
+- Pane integrale 30 g + 1 bicchiere vino rosso (facoltativo)`
+};
+
+function generaPianoOb(tipo) {
+  const el = document.getElementById('p-piano');
+  if (el && _pianiOb[tipo]) { el.value = _pianiOb[tipo]; scheduleAutoSave_ob(); }
+}
+
+// ── Auto-save ──────────────────────────────────────
+let _obAutoSaveTimer = null;
+function scheduleAutoSave_ob() {
+  clearTimeout(_obAutoSaveTimer);
+  _obAutoSaveTimer = setTimeout(autoSavePage_ob, 600);
+}
+function autoSavePage_ob() {
+  try {
+    const g = id => document.getElementById(id)?.value || '';
+    const gc = id => document.getElementById(id)?.checked || false;
+    const d = {
+      nome: g('ob-nome'), ddn: g('ob-ddn'), sesso: g('ob-sesso'), data: g('ob-data'),
+      peso: g('ob-peso'), alt: g('ob-alt'), vita: g('ob-vita'), fianchi: g('ob-fianchi'),
+      peso_max: g('ob-peso-max'), peso_min: g('ob-peso-min'), peso_18: g('ob-peso-18'),
+      dpeso: g('ob-dpeso'), durata: g('ob-durata'), tentativi: g('ob-tentativi'),
+      note_anamnesi: g('ob-note-anamnesi'), farmaci: g('ob-farmaci'), bariatrica: g('ob-bariatrica'),
+      note_clinica: g('ob-note-clinica'), laf: g('ob-laf'), limitazioni: g('ob-limitazioni'),
+      orari: g('ob-orari'), note_stile: g('ob-note-stile'),
+      comor: { dm2: gc('c-dm2'), prediab: gc('c-prediab'), ipert: gc('c-ipert'), dislipi: gc('c-dislipi'), steatosi: gc('c-steatosi'), osas: gc('c-osas'), artrosi: gc('c-artrosi'), sop: gc('c-sop'), ipotiroidismo: gc('c-ipotiroidismo'), depressione: gc('c-depressione'), reflusso: gc('c-reflusso'), irc: gc('c-irc') },
+      fabb: { peso: g('f-peso'), alt: g('f-alt'), eta: g('f-eta'), sesso: g('f-sesso'), laf: g('f-laf'), formula: g('f-formula'), deficit: g('f-deficit'), deficit_custom: g('f-deficit-custom'), peso_target: g('f-peso-target'), approccio: g('f-approccio'), note: g('f-note') },
+      comp: { pattern: g('b-pattern'), trigger: g('b-trigger'), alimenti_rischio: g('b-alimenti-rischio'), pasti: g('b-pasti'), colazione: g('b-colazione'), alcol: g('b-alcol'), fuoricasa: g('b-fuoricasa'), cucina: g('b-cucina'), motivazione: g('b-motivazione'), supporto: g('b-supporto'), obiettivo: g('b-obiettivo'), coping: g('b-coping') },
+      piano: { kcal: g('p-kcal'), prot: g('p-prot'), cho: g('p-cho'), grassi: g('p-grassi'), fibra: g('p-fibra'), liquidi: g('p-liquidi'), distrib: g('p-distrib'), piano: g('p-piano'), privilegiare: g('p-privilegiare'), limitare: g('p-limitare'), integrazione: g('p-integrazione'), note: g('p-note'), followup: g('p-followup'), monitoraggio: g('p-monitoraggio'), prossima: g('p-prossima-visita') },
+      nota: g('ob-nota'), editingId: editingObNoteId
+    };
+    localStorage.setItem('nutriplan_autosave_ob', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_ob() {
+  try {
+    const raw = localStorage.getItem('nutriplan_autosave_ob');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    const sv = (id, val) => { const el = document.getElementById(id); if (el && val != null && val !== '') el.value = val; };
+    const sc = (id, val) => { const el = document.getElementById(id); if (el && val) el.checked = true; };
+    sv('ob-nome', d.nome); sv('ob-ddn', d.ddn); sv('ob-sesso', d.sesso); sv('ob-data', d.data);
+    sv('ob-peso', d.peso); sv('ob-alt', d.alt); sv('ob-vita', d.vita); sv('ob-fianchi', d.fianchi);
+    sv('ob-peso-max', d.peso_max); sv('ob-peso-min', d.peso_min); sv('ob-peso-18', d.peso_18);
+    sv('ob-dpeso', d.dpeso); sv('ob-durata', d.durata); sv('ob-tentativi', d.tentativi);
+    sv('ob-note-anamnesi', d.note_anamnesi); sv('ob-farmaci', d.farmaci); sv('ob-bariatrica', d.bariatrica);
+    sv('ob-note-clinica', d.note_clinica); sv('ob-laf', d.laf); sv('ob-limitazioni', d.limitazioni);
+    sv('ob-orari', d.orari); sv('ob-note-stile', d.note_stile);
+    if (d.comor) { Object.entries(d.comor).forEach(([k,v]) => sc('c-' + k.replace(/_/g,''), v)); }
+    if (d.fabb) {
+      sv('f-peso', d.fabb.peso); sv('f-alt', d.fabb.alt); sv('f-eta', d.fabb.eta);
+      sv('f-sesso', d.fabb.sesso); sv('f-laf', d.fabb.laf); sv('f-formula', d.fabb.formula);
+      sv('f-deficit', d.fabb.deficit); sv('f-deficit-custom', d.fabb.deficit_custom);
+      sv('f-peso-target', d.fabb.peso_target); sv('f-approccio', d.fabb.approccio); sv('f-note', d.fabb.note);
+    }
+    if (d.comp) {
+      sv('b-pattern', d.comp.pattern); sv('b-trigger', d.comp.trigger); sv('b-alimenti-rischio', d.comp.alimenti_rischio);
+      sv('b-pasti', d.comp.pasti); sv('b-colazione', d.comp.colazione); sv('b-alcol', d.comp.alcol);
+      sv('b-fuoricasa', d.comp.fuoricasa); sv('b-cucina', d.comp.cucina);
+      sv('b-motivazione', d.comp.motivazione); sv('b-supporto', d.comp.supporto);
+      sv('b-obiettivo', d.comp.obiettivo); sv('b-coping', d.comp.coping);
+    }
+    if (d.piano) {
+      sv('p-kcal', d.piano.kcal); sv('p-prot', d.piano.prot); sv('p-cho', d.piano.cho);
+      sv('p-grassi', d.piano.grassi); sv('p-fibra', d.piano.fibra); sv('p-liquidi', d.piano.liquidi);
+      sv('p-distrib', d.piano.distrib); sv('p-piano', d.piano.piano);
+      sv('p-privilegiare', d.piano.privilegiare); sv('p-limitare', d.piano.limitare);
+      sv('p-integrazione', d.piano.integrazione); sv('p-note', d.piano.note);
+      sv('p-followup', d.piano.followup); sv('p-monitoraggio', d.piano.monitoraggio);
+      sv('p-prossima-visita', d.piano.prossima);
+    }
+    sv('ob-nota', d.nota);
+    if (d.editingId) editingObNoteId = d.editingId;
+    setTimeout(() => { calcBMIOb(); calcFabbOb(); }, 120);
+  } catch(e) {}
+}
+
+// ── Raccolta dati ──────────────────────────────────
+function raccogliDatiOB() {
+  const g = id => document.getElementById(id)?.value || '';
+  const gc = id => document.getElementById(id)?.checked || false;
+  return {
+    valutazione: {
+      nome: g('ob-nome'), ddn: g('ob-ddn'), sesso: g('ob-sesso'), data: g('ob-data'),
+      peso: g('ob-peso'), alt: g('ob-alt'), vita: g('ob-vita'), fianchi: g('ob-fianchi'),
+      bmi: g('ob-bmi'), whr: g('ob-whr'),
+      peso_max: g('ob-peso-max'), peso_min: g('ob-peso-min'), peso_18: g('ob-peso-18'),
+      dpeso: g('ob-dpeso'), durata: g('ob-durata'), tentativi: g('ob-tentativi'),
+      note_anamnesi: g('ob-note-anamnesi'), farmaci: g('ob-farmaci'), bariatrica: g('ob-bariatrica'),
+      note_clinica: g('ob-note-clinica'), laf: g('ob-laf'), limitazioni: g('ob-limitazioni'),
+      orari: g('ob-orari'), note_stile: g('ob-note-stile'),
+      comor: { dm2: gc('c-dm2'), prediab: gc('c-prediab'), ipert: gc('c-ipert'), dislipi: gc('c-dislipi'), steatosi: gc('c-steatosi'), osas: gc('c-osas'), artrosi: gc('c-artrosi'), sop: gc('c-sop'), ipotiroidismo: gc('c-ipotiroidismo'), depressione: gc('c-depressione'), reflusso: gc('c-reflusso'), irc: gc('c-irc') }
+    },
+    fabbisogno: {
+      peso: g('f-peso'), alt: g('f-alt'), eta: g('f-eta'), sesso: g('f-sesso'),
+      laf: g('f-laf'), formula: g('f-formula'), deficit: g('f-deficit'),
+      deficit_custom: g('f-deficit-custom'), peso_target: g('f-peso-target'),
+      approccio: g('f-approccio'), note: g('f-note')
+    },
+    comportamento: {
+      pattern: g('b-pattern'), trigger: g('b-trigger'), alimenti_rischio: g('b-alimenti-rischio'),
+      pasti: g('b-pasti'), colazione: g('b-colazione'), alcol: g('b-alcol'),
+      fuoricasa: g('b-fuoricasa'), cucina: g('b-cucina'),
+      motivazione: g('b-motivazione'), supporto: g('b-supporto'),
+      obiettivo: g('b-obiettivo'), coping: g('b-coping')
+    },
+    piano: {
+      kcal: g('p-kcal'), prot: g('p-prot'), cho: g('p-cho'), grassi: g('p-grassi'),
+      fibra: g('p-fibra'), liquidi: g('p-liquidi'), distrib: g('p-distrib'),
+      piano: g('p-piano'), privilegiare: g('p-privilegiare'), limitare: g('p-limitare'),
+      integrazione: g('p-integrazione'), note: g('p-note'),
+      followup: g('p-followup'), monitoraggio: g('p-monitoraggio'), prossima: g('p-prossima-visita')
+    }
+  };
+}
+
+// ── Salva ──────────────────────────────────────────
+async function salvaObesita() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartellaEl = document.getElementById('ob-cartella');
+  const cartella_id = cartellaEl?.value || null;
+  if (!cartella_id) { toast('⚠️ Seleziona una cartella paziente', 'err'); return; }
+  const nota = document.getElementById('ob-nota')?.value || '';
+  const dati = raccogliDatiOB();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'obesita', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingObNoteId) {
+    result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editingObNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select('id');
+    if (result.data?.[0]?.id) editingObNoteId = result.data[0].id;
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  toast('💾 Scheda obesità salvata!', 'ok');
+  autoSavePage_ob();
+  if (window.capturePrintAndSave && editingObNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingObNoteId, cartellaId: cartella_id, panelSelector: '.ob-panel', silent: true }).catch(err => console.warn('obesita.html capture failed:', err));
+  }
+}
+
+// ── Reset ──────────────────────────────────────────
+function svuotaObesita() {
+  document.querySelectorAll('#tab-valutazione input[type=text], #tab-valutazione input[type=number], #tab-valutazione input[type=date], #tab-valutazione textarea, #tab-fabbisogno input, #tab-fabbisogno textarea, #tab-comportamento input[type=text], #tab-comportamento textarea, #tab-piano input, #tab-piano textarea').forEach(el => { el.value = ''; });
+  document.querySelectorAll('.comor-chk input[type=checkbox]').forEach(el => { el.checked = false; });
+  ['ob-sesso','ob-bariatrica','ob-laf','ob-limitazioni','ob-orari','f-sesso','f-laf','f-formula','f-deficit','b-pattern','b-pasti','b-colazione','b-alcol','b-fuoricasa','b-cucina','b-motivazione','b-supporto','p-followup'].forEach(id => { const el = document.getElementById(id); if (el) el.selectedIndex = 0; });
+  ['ob-bmi','ob-whr','f-calo-target','f-tempo-target'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['ob-bmi-result','f-result','f-obiettivo-result'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
+  try { localStorage.removeItem('nutriplan_autosave_ob'); } catch(e) {}
+  editingObNoteId = null;
+  toast('🔄 Sezione reimpostata', 'ok');
+}
+
+// ── Carica nota ────────────────────────────────────
+async function loadNoteIfPresent() {
+  const p = new URLSearchParams(window.location.search);
+  const noteId = p.get('noteId');
+  if (!noteId) return;
+  showLoading(true);
+  const { data } = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (!data) return;
+  editingObNoteId = data.id;
+  if (data.cartella_id) await _cwSetById('ob-cartella-cw', data.cartella_id);
+  if (data.nota) { const el = document.getElementById('ob-nota'); if (el) el.value = data.nota; }
+  try {
+    const d = JSON.parse(data.dati || '{}');
+    const sv = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+    const sc = (id, val) => { const el = document.getElementById(id); if (el && val) el.checked = true; };
+    if (d.valutazione) {
+      const v = d.valutazione;
+      ['nome','ddn','sesso','data','peso','alt','vita','fianchi','peso_max','peso_min','peso_18','dpeso','durata','tentativi','note_anamnesi','farmaci','bariatrica','note_clinica','laf','limitazioni','orari','note_stile'].forEach(k => sv('ob-' + k.replace(/_/g,'-'), v[k]));
+      if (v.comor) Object.entries(v.comor).forEach(([k,val]) => sc('c-' + k.replace(/_/g,''), val));
+    }
+    if (d.fabbisogno) {
+      const f = d.fabbisogno;
+      sv('f-peso', f.peso); sv('f-alt', f.alt); sv('f-eta', f.eta); sv('f-sesso', f.sesso);
+      sv('f-laf', f.laf); sv('f-formula', f.formula); sv('f-deficit', f.deficit);
+      sv('f-deficit-custom', f.deficit_custom); sv('f-peso-target', f.peso_target);
+      sv('f-approccio', f.approccio); sv('f-note', f.note);
+    }
+    if (d.comportamento) {
+      const c = d.comportamento;
+      sv('b-pattern', c.pattern); sv('b-trigger', c.trigger); sv('b-alimenti-rischio', c.alimenti_rischio);
+      sv('b-pasti', c.pasti); sv('b-colazione', c.colazione); sv('b-alcol', c.alcol);
+      sv('b-fuoricasa', c.fuoricasa); sv('b-cucina', c.cucina);
+      sv('b-motivazione', c.motivazione); sv('b-supporto', c.supporto);
+      sv('b-obiettivo', c.obiettivo); sv('b-coping', c.coping);
+    }
+    if (d.piano) {
+      const p = d.piano;
+      ['kcal','prot','cho','grassi','fibra','liquidi','distrib','piano','privilegiare','limitare','integrazione','note','followup','monitoraggio'].forEach(k => sv('p-' + k, p[k]));
+      sv('p-prossima-visita', p.prossima);
+    }
+    setTimeout(() => { calcBMIOb(); calcFabbOb(); }, 120);
+  } catch(e) { console.warn('Errore caricamento dati obesita:', e); }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const ok = await checkAuth();
+    if (ok) {
+      initCartellaWidget('ob-cartella-cw', { hiddenInputId: 'ob-cartella', accentColor: '#EA580C', labelColor: '#C2410C', hoverBg: '#FFF7ED', nuovaBg: '#FFF7ED' });
+      const noteId = new URLSearchParams(window.location.search).get('noteId');
+      if (noteId) {
+        await loadNoteIfPresent();
+      } else {
+        autoRestorePage_ob();
+      }
+    }
+  } catch(e) { console.error('Init obesita error:', e); }
+  document.getElementById('main')?.addEventListener('input', scheduleAutoSave_ob);
+  document.getElementById('main')?.addEventListener('change', scheduleAutoSave_ob);
+  window.addEventListener('beforeunload', autoSavePage_ob);
+});
+</script>
+</body>
+</html>

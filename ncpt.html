@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -92,6 +92,14 @@
   #tab-3::before{content:"4. MONITORAGGIO"}
   /* Page breaks between sections */
   #tab-1, #tab-2, #tab-3{page-break-before:always}
+  /* Storico-only print mode */
+  body[data-print-storico] #sidebar,body[data-print-storico] #topbar,body[data-print-storico] #paz-bar,body[data-print-storico] .no-print{display:none!important}
+  body[data-print-storico] .ncpt-progress{display:none!important}
+  body[data-print-storico] .ncpt-panel{display:none!important}
+  body[data-print-storico] #tab-3{display:block!important}
+  body[data-print-storico] #tab-3 .ns:not(#storico-ns){display:none!important}
+  body[data-print-storico] #storico-ns{display:block!important;border:none!important;box-shadow:none!important}
+  body[data-print-storico] #main{margin:0!important;padding:1cm 1.5cm!important}
   .ns{box-shadow:none!important;border:1px solid #CBD5E1!important;page-break-inside:avoid;margin-bottom:10px!important}
   .pes-card{border:1px solid #BFDBFE!important;box-shadow:none!important;page-break-inside:avoid}
   .pes-label-p,.pes-label-e,.pes-label-s{-webkit-print-color-adjust:exact}
@@ -170,6 +178,7 @@
   <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
   <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
   <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
   <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
   <div class="nav-sec">Strumenti</div>
@@ -466,6 +475,42 @@
 </div>
 
 <div class="ns">
+  <h3>📊 Frequenze di Consumo Alimentare (FFQ)</h3>
+  <div style="overflow-x:auto;border-radius:10px;border:1px solid var(--border)">
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      <thead><tr style="background:#F0FDF4;border-bottom:2px solid #A7F3D0">
+        <th style="padding:8px 14px;text-align:left;color:#0F766E;font-weight:700;font-size:11.5px">Alimento</th>
+        <th style="padding:8px 14px;text-align:left;color:#0F766E;font-weight:700;font-size:11.5px;min-width:160px">Frequenza</th>
+      </tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🌾 Cereali (pane, pasta, riso, patate)</td><td style="padding:4px 14px"><select id="v-ffq-cereali" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🫘 Legumi (fagioli, lenticchie, ceci)</td><td style="padding:4px 14px"><select id="v-ffq-legumi" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🥦 Verdure e ortaggi</td><td style="padding:4px 14px"><select id="v-ffq-verdure" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🍎 Frutta fresca</td><td style="padding:4px 14px"><select id="v-ffq-frutta" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🥩 Carne rossa (manzo, maiale, agnello)</td><td style="padding:4px 14px"><select id="v-ffq-carne_r" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🐔 Carne bianca (pollo, tacchino)</td><td style="padding:4px 14px"><select id="v-ffq-carne_b" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🐟 Pesce e frutti di mare</td><td style="padding:4px 14px"><select id="v-ffq-pesce" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🥫 Pesce conservato (tonno, sardine, sgombro)</td><td style="padding:4px 14px"><select id="v-ffq-pesce_c" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🍖 Affettati (prosciutto, salame, bresaola)</td><td style="padding:4px 14px"><select id="v-ffq-salumi" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🥚 Uova</td><td style="padding:4px 14px"><select id="v-ffq-uova" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🥛 Latte, yogurt</td><td style="padding:4px 14px"><select id="v-ffq-latte" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🧀 Formaggi e latticini</td><td style="padding:4px 14px"><select id="v-ffq-formaggi" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🍬 Dolci, snack, merendine</td><td style="padding:4px 14px"><select id="v-ffq-dolci" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🍔 Fast food, prodotti ultraprocessati</td><td style="padding:4px 14px"><select id="v-ffq-junk" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🥜 Frutta secca e semi oleosi</td><td style="padding:4px 14px"><select id="v-ffq-frutta_s" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🍬 Caramelle</td><td style="padding:4px 14px"><select id="v-ffq-caramelle" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🍫 Cioccolato</td><td style="padding:4px 14px"><select id="v-ffq-cioccolato" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🧂 Snack salati (patatine, crackers...)</td><td style="padding:4px 14px"><select id="v-ffq-snack_salati" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🍦 Gelato</td><td style="padding:4px 14px"><select id="v-ffq-gelato" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">☕ Caffè</td><td style="padding:4px 14px"><select id="v-ffq-caffe_freq" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 14px">🫙 Salse e condimenti (maionese, ketchup...)</td><td style="padding:4px 14px"><select id="v-ffq-salse" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+        <tr><td style="padding:6px 14px">🍟 Fritti e prefritti</td><td style="padding:4px 14px"><select id="v-ffq-fritti" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none"><option value="">— frequenza —</option><option value="mai">Mai</option><option value="lt1">&lt; 1 volta/sett</option><option value="1-2">1–2 volte/sett</option><option value="3-4">3–4 volte/sett</option><option value="ge5">≥ 5 volte/sett</option><option value="quot">Quotidianamente</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="ns">
   <h3>⚠️ Allergie, Intolleranze, Farmaci e Attività Fisica</h3>
   <div class="fgrid">
     <div class="nf full"><label>Intolleranze, allergie, preferenze etiche/religiose</label>
@@ -618,10 +663,13 @@
   <button class="btn btn-ghost btn-sm" onclick="addMonitParam()" style="margin-top:10px">➕ Parametro personalizzato</button>
 </div>
 
-<div class="ns">
+<div class="ns" id="storico-ns">
   <h3>📅 Storico Misurazioni</h3>
-  <button class="btn btn-primary btn-sm" onclick="toggleStorForm()" style="margin-bottom:10px">➕ Aggiungi Misurazione</button>
-  <button class="btn btn-ghost btn-sm" onclick="storView=!storView;renderStor()" style="margin-bottom:10px">🔀 Vista</button>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+    <button class="btn btn-primary btn-sm" onclick="toggleStorForm()">➕ Aggiungi Misurazione</button>
+    <button class="btn btn-ghost btn-sm" onclick="storView=!storView;renderStor()">🔀 Vista</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="printStorico()" title="Stampa storico come immagine">🖨️ Stampa</button>
+  </div>
   <div id="stor-form" style="display:none;background:#F0FDF4;border-radius:10px;padding:14px;margin-bottom:12px;border:1.5px solid var(--teal-l)">
     <div style="font-size:12px;font-weight:700;color:var(--teal-d);margin-bottom:10px">📅 Nuova Misurazione</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:10px">
@@ -1303,6 +1351,17 @@ function salvaStorEntry() {
   toast('📊 Misurazione salvata!','ok');
 }
 
+function printStorico() {
+  if (!storici.length) { toast('Nessuna misurazione da stampare', 'warn'); return; }
+  document.body.dataset.printStorico = '1';
+  window.print();
+  window.addEventListener('afterprint', function cb() {
+    delete document.body.dataset.printStorico;
+    window.removeEventListener('afterprint', cb);
+  }, { once: true });
+  setTimeout(() => { delete document.body.dataset.printStorico; }, 3000);
+}
+
 function renderStor() {
   const c = document.getElementById('stor-list');
   if (!c) return;
@@ -1390,6 +1449,12 @@ function raccogliDati() {
       n_pasti:g('v-n-pasti'),luogo_pasti:g('v-luogo-pasti'),chi_cucina:g('v-chi-cucina'),
       saltapasti:g('v-saltapasti'),velocita_pasto:g('v-velocita-pasto'),
       fame_emotiva:g('v-fame-emotiva'),diete_prec:g('v-diete-prec'),storia_peso:g('v-storia-peso'),
+      ffq_cereali:g('v-ffq-cereali'),ffq_legumi:g('v-ffq-legumi'),ffq_verdure:g('v-ffq-verdure'),ffq_frutta:g('v-ffq-frutta'),
+      ffq_carne_r:g('v-ffq-carne_r'),ffq_carne_b:g('v-ffq-carne_b'),ffq_pesce:g('v-ffq-pesce'),ffq_pesce_c:g('v-ffq-pesce_c'),
+      ffq_salumi:g('v-ffq-salumi'),ffq_uova:g('v-ffq-uova'),ffq_latte:g('v-ffq-latte'),ffq_formaggi:g('v-ffq-formaggi'),
+      ffq_dolci:g('v-ffq-dolci'),ffq_junk:g('v-ffq-junk'),ffq_frutta_s:g('v-ffq-frutta_s'),
+      ffq_caramelle:g('v-ffq-caramelle'),ffq_cioccolato:g('v-ffq-cioccolato'),ffq_snack_salati:g('v-ffq-snack_salati'),
+      ffq_gelato:g('v-ffq-gelato'),ffq_caffe_freq:g('v-ffq-caffe_freq'),ffq_salse:g('v-ffq-salse'),ffq_fritti:g('v-ffq-fritti'),
       intoll:g('v-intoll'),attiv:g('v-attiv'),farmaci:g('v-farmaci'),
       formula:g('v-formula'),mb:g('v-mb'),laf:g('v-laf'),tdee:g('v-tdee'),
       prot:g('v-prot'),kcal_tgt:g('v-kcal-tgt'),note_fabb:g('v-note-fabb')

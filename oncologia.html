@@ -1,0 +1,943 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Oncologia — DietPlan Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.onc-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.onc-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.onc-tab:hover{background:rgba(124,58,237,.1);color:#7C3AED}
+.onc-tab.active{background:linear-gradient(135deg,#5B21B6,#7C3AED);color:white;box-shadow:0 3px 10px rgba(124,58,237,.3);font-weight:700}
+.onc-panel{display:none}.onc-panel.active{display:block}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-big{font-size:26px;font-weight:700;color:#7C3AED;margin:8px 0}
+.alert-box{border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;line-height:1.7}
+.alert-info{background:#F5F3FF;border-left:3px solid #7C3AED;color:#3B0764}
+.alert-warn{background:#FEF3C7;border-left:3px solid #F59E0B;color:#78350F}
+.alert-danger{background:#FEF2F2;border-left:3px solid #EF4444;color:#7F1D1D}
+.alert-ok{background:#F0FDF4;border-left:3px solid #22C55E;color:#14532D}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select,.nf textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.nf input:focus,.nf select:focus,.nf textarea:focus{border-color:#7C3AED}
+.score-btn{padding:6px 14px;border-radius:8px;border:1.5px solid var(--border-d);background:white;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--slate-m);transition:all .15s;margin:3px}
+.score-btn.sel{background:linear-gradient(135deg,#5B21B6,#7C3AED);color:white;border-color:#7C3AED;box-shadow:0 2px 8px rgba(124,58,237,.25)}
+.risk-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700}
+.risk-low{background:#F0FDF4;color:#15803D;border:1.5px solid #86EFAC}
+.risk-mid{background:#FEF3C7;color:#B45309;border:1.5px solid #FDE68A}
+.risk-high{background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA}
+.guide-section{margin-bottom:20px}
+.guide-section h4{font-size:13px;font-weight:700;color:#5B21B6;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #DDD6FE}
+.guide-item{background:#F5F3FF;border-radius:8px;padding:11px 14px;margin-bottom:8px;border-left:4px solid #7C3AED;font-size:12.5px;line-height:1.75;color:#1E1B4B}
+.symp-card{background:white;border-radius:10px;border:1.5px solid #DDD6FE;padding:14px;margin-bottom:10px}
+.symp-card h4{font-size:13px;font-weight:700;color:#5B21B6;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.food-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:10px;overflow:hidden}
+.food-table th{background:#5B21B6;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.food-table td{padding:7px 12px;border-bottom:1px solid #F5F3FF}
+.food-table tbody tr:nth-child(even){background:#FAF5FF}
+.food-table tr:hover td{background:#EDE9FE}
+@media print{
+  @page{margin:0;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #sidebar,#topbar,.no-print,#loading-overlay,#toast,#onc-paz-hdr{display:none!important}
+  #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
+  .page-content{padding:0!important}
+  .onc-tabs{display:none!important}
+  .onc-panel{display:block!important}
+  .calc-box{box-shadow:none!important;border:1px solid #E2E8F0!important;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item active" href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🎗️ Nutrizione Oncologica</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</div>
+
+<main id="main"><div class="page-content">
+
+<!-- HERO BANNER -->
+<div class="no-print" style="background:linear-gradient(135deg,#3B0764 0%,#5B21B6 55%,#7C3AED 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(91,33,182,.35);position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+  <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🎗️</div>
+  <div style="flex:1;position:relative">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">Nutrizione Oncologica</div>
+    <div style="font-size:12px;opacity:.88;line-height:1.6">Screening nutrizionale, calcolo fabbisogno, supporto nutrizionale e gestione dei sintomi da trattamento. Basato su <b>ESPEN 2021 · AIOM · SINPE 2022</b>.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📋 PG-SGA / NRS-2002</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧮 Fabbisogno Energetico</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">💊 Immunonutrizione</div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🤢 Gestione Sintomi</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAZIENTE BAR -->
+<div class="paz-hdr no-print" id="onc-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 Cartella Paziente</label>
+    <div id="onc-cartella-cw"></div>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 Nota / Titolo sessione</label>
+    <input type="text" id="onc-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <button class="btn btn-primary btn-sm" onclick="salvaOncologia()" style="background:linear-gradient(135deg,#5B21B6,#7C3AED)">💾 Salva in Cartella</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="svuotaOncologia()">🔄 Reset</button>
+  </div>
+</div>
+
+<div class="onc-tabs">
+  <button class="onc-tab active" onclick="showOncTab('screening')">📋 Screening</button>
+  <button class="onc-tab" onclick="showOncTab('fabbisogno')">🧮 Fabbisogno</button>
+  <button class="onc-tab" onclick="showOncTab('supporto')">💊 Supporto Nutrizionale</button>
+  <button class="onc-tab" onclick="showOncTab('sintomi')">🤢 Sintomi e Gestione</button>
+  <button class="onc-tab" onclick="showOncTab('lg')">📚 Linee Guida</button>
+  <button class="onc-tab" onclick="showOncTab('piano')">🍽️ Piano Alimentare</button>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 1: SCREENING NUTRIZIONALE     -->
+<!-- ══════════════════════════════════ -->
+<div class="onc-panel active" id="tab-screening">
+
+  <div class="alert-info alert-box">
+    <b>📋 Screening Nutrizionale in Oncologia</b> — ESPEN 2021 raccomanda lo screening nutrizionale sistematico per tutti i pazienti oncologici. Il PG-SGA è lo strumento validato di riferimento; NRS-2002 è alternativa accettata per pazienti ospedalizzati.
+  </div>
+
+  <div class="grid-2">
+    <!-- NRS-2002 -->
+    <div class="calc-box">
+      <h3>🔍 NRS-2002 (Nutritional Risk Screening)</h3>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px">Pre-screening: se anche solo 1 risposta è SÌ → procedere con lo screening completo.</p>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px">PRE-SCREENING</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps1" onchange="calcNRS()"> BMI &lt; 20,5 kg/m²</label>
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps2" onchange="calcNRS()"> Perdita di peso nelle ultime settimane</label>
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps3" onchange="calcNRS()"> Riduzione apporto alimentare nella settimana corrente</label>
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps4" onchange="calcNRS()"> Paziente con patologia grave / terapia intensiva</label>
+        </div>
+      </div>
+      <div id="nrs-full" style="display:none">
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px;margin-top:12px">STATO NUTRIZIONALE (0–3)</div>
+        <div id="nrs-stato-btns" style="margin-bottom:8px">
+          <button class="score-btn" data-nrs-stato="0" onclick="selNRS('stato',0)">0 — Normale</button>
+          <button class="score-btn" data-nrs-stato="1" onclick="selNRS('stato',1)">1 — Lieve (perdita 5–10% in 3 mesi, ridotto 50–75%)</button>
+          <button class="score-btn" data-nrs-stato="2" onclick="selNRS('stato',2)">2 — Moderato (perdita &gt;10% in 2 mesi, ridotto 25–50%)</button>
+          <button class="score-btn" data-nrs-stato="3" onclick="selNRS('stato',3)">3 — Grave (perdita &gt;10–15%, ridotto &lt;25% o BMI &lt;18,5)</button>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">GRAVITÀ MALATTIA (0–3)</div>
+        <div id="nrs-mal-btns" style="margin-bottom:12px">
+          <button class="score-btn" data-nrs-mal="0" onclick="selNRS('mal',0)">0 — Normale</button>
+          <button class="score-btn" data-nrs-mal="1" onclick="selNRS('mal',1)">1 — Lieve (frattura anca, pazienti cronici, BPCO, dialisi)</button>
+          <button class="score-btn" data-nrs-mal="2" onclick="selNRS('mal',2)">2 — Moderato (chirurgia addominale, stroke, polmonite, ematologia)</button>
+          <button class="score-btn" data-nrs-mal="3" onclick="selNRS('mal',3)">3 — Grave (TI, trapianto, chirurgia addominale maggiore)</button>
+        </div>
+        <div class="nf" style="max-width:150px;margin-bottom:12px">
+          <label>Età (anni)</label>
+          <input type="number" id="nrs-eta" placeholder="es. 65" oninput="calcNRS()">
+        </div>
+      </div>
+      <div id="nrs-result" style="margin-top:8px"></div>
+    </div>
+
+    <!-- PG-SGA Semplificato -->
+    <div class="calc-box">
+      <h3>🩺 PG-SGA Semplificato (oncologico)</h3>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px">Patient-Generated Subjective Global Assessment — strumento specifico per oncologia (Ottery, 1994).</p>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Variazione di peso (1 mese)</label>
+        <select id="pgsga-peso" onchange="calcPGSGA()">
+          <option value="">— seleziona —</option>
+          <option value="0">Nessuna perdita / aumento</option>
+          <option value="1">Perdita &lt; 2% (minima)</option>
+          <option value="2">Perdita 2–5%</option>
+          <option value="3">Perdita &gt; 5%</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Introito alimentare attuale vs normale</label>
+        <select id="pgsga-intake" onchange="calcPGSGA()">
+          <option value="">— seleziona —</option>
+          <option value="0">Invariato</option>
+          <option value="1">Ridotto di poco</option>
+          <option value="2">Cibi solidi ridotti / solo liquidi</option>
+          <option value="3">Solo integratori liquidi / pochissimo</option>
+          <option value="4">Quasi niente per bocca</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:10px">
+        <label>Sintomi nutrizionali (negli ultimi 2 settimane)</label>
+        <select id="pgsga-sintomi" onchange="calcPGSGA()">
+          <option value="">— seleziona —</option>
+          <option value="0">Nessun sintomo</option>
+          <option value="1">Nausea o perdita appetito</option>
+          <option value="2">Vomito o diarrea o mucosite</option>
+          <option value="3">Disfagia o odinofagia grave</option>
+        </select>
+      </div>
+      <div class="nf" style="margin-bottom:12px">
+        <label>Capacità funzionale</label>
+        <select id="pgsga-funz" onchange="calcPGSGA()">
+          <option value="">— seleziona —</option>
+          <option value="0">Normale</option>
+          <option value="1">Ridotta ma deambula</option>
+          <option value="2">Ridotta notevolmente</option>
+          <option value="3">Allettato / dipendente</option>
+        </select>
+      </div>
+      <div id="pgsga-result"></div>
+    </div>
+  </div>
+
+  <!-- Dati clinici oncologici -->
+  <div class="calc-box">
+    <h3>📝 Dati Clinici Oncologici</h3>
+    <div class="grid-3">
+      <div class="nf"><label>Tipo di neoplasia</label>
+        <select id="onc-tipo">
+          <option value="">— seleziona —</option>
+          <option>Testa e collo</option>
+          <option>Esofago / gastrico</option>
+          <option>Pancreas / fegato / vie biliari</option>
+          <option>Colon-retto</option>
+          <option>Polmone</option>
+          <option>Mammella</option>
+          <option>Prostata</option>
+          <option>Ematologica (linfoma, leucemia, mieloma)</option>
+          <option>Ginecologica</option>
+          <option>Sistema nervoso centrale</option>
+          <option>Renale / urologica</option>
+          <option>Altro</option>
+        </select></div>
+      <div class="nf"><label>Stadio tumorale</label>
+        <select id="onc-stadio">
+          <option value="">— seleziona —</option>
+          <option>Stadio I (localizzato)</option>
+          <option>Stadio II (localmente avanzato)</option>
+          <option>Stadio III (regionale)</option>
+          <option>Stadio IV (metastatico)</option>
+          <option>In remissione</option>
+        </select></div>
+      <div class="nf"><label>Trattamento in corso</label>
+        <select id="onc-tratt" onchange="aggiornaCachessia()">
+          <option value="">— seleziona —</option>
+          <option>Chemioterapia</option>
+          <option>Radioterapia</option>
+          <option>Chirurgia (pre-operatoria)</option>
+          <option>Chirurgia (post-operatoria)</option>
+          <option>Immunoterapia / target therapy</option>
+          <option>Chemio + radio (combinata)</option>
+          <option>Cure palliative</option>
+          <option>Follow-up / sorveglianza</option>
+        </select></div>
+      <div class="nf"><label>Peso attuale (kg)</label><input type="number" id="onc-peso" step="0.1" oninput="calcFabbONC()"></div>
+      <div class="nf"><label>Altezza (cm)</label><input type="number" id="onc-alt" oninput="calcFabbONC()"></div>
+      <div class="nf"><label>Perdita di peso recente</label>
+        <input type="text" id="onc-dpeso" placeholder="es. -4 kg in 2 mesi"></div>
+      <div class="nf"><label>ECOG Performance Status</label>
+        <select id="onc-ecog">
+          <option value="">— seleziona —</option>
+          <option value="0">0 — Asintomatico, attività normale</option>
+          <option value="1">1 — Sintomi lievi, deambulante</option>
+          <option value="2">2 — &lt;50% a letto, cura personale autonoma</option>
+          <option value="3">3 — &gt;50% a letto, cura limitata</option>
+          <option value="4">4 — Completamente dipendente</option>
+        </select></div>
+      <div class="nf"><label>Albumina sierica (g/dL)</label><input type="text" id="onc-alb" placeholder="es. 3.2"></div>
+      <div class="nf"><label>PCR (mg/L)</label><input type="text" id="onc-pcr" placeholder="es. 25"></div>
+    </div>
+    <div id="cachessia-result" style="margin-top:10px"></div>
+  </div>
+
+</div><!-- end tab-screening -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 2: FABBISOGNO ENERGETICO      -->
+<!-- ══════════════════════════════════ -->
+<div class="onc-panel" id="tab-fabbisogno">
+
+  <div class="alert-info alert-box">
+    <b>🧮 Fabbisogno Energetico in Oncologia (ESPEN 2021)</b> — Il fabbisogno varia in base alla fase del trattamento e allo stato nutrizionale. In assenza di REE misurata, si usa il range 25–30 kcal/kg/die per pazienti non ipercatabolici. Monitorare periodicamente.
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>⚡ Calcolo Fabbisogno Energetico</h3>
+      <div class="nf" style="margin-bottom:10px"><label>Peso (kg) — usa peso aggiustato se obeso</label><input type="number" id="f-peso" step="0.1" oninput="calcFabbONC()" placeholder="es. 65"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="f-alt" oninput="calcFabbONC()" placeholder="es. 165"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="f-eta" oninput="calcFabbONC()" placeholder="es. 58"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Sesso</label>
+        <select id="f-sesso" onchange="calcFabbONC()">
+          <option value="M">Maschio</option>
+          <option value="F">Femmina</option>
+        </select></div>
+      <div class="nf" style="margin-bottom:10px"><label>Livello attività fisica (LAF)</label>
+        <select id="f-laf" onchange="calcFabbONC()">
+          <option value="1.2">1.2 — Allettato / sedentario totale</option>
+          <option value="1.3" selected>1.3 — Mobilizzazione limitata</option>
+          <option value="1.45">1.45 — Deambulante</option>
+          <option value="1.6">1.6 — Attivo</option>
+        </select></div>
+      <div class="nf" style="margin-bottom:12px"><label>Fattore di stress / ipercatabolismo</label>
+        <select id="f-stress" onchange="calcFabbONC()">
+          <option value="1.0">1.0 — Stabile / follow-up</option>
+          <option value="1.1">1.1 — Chirurgia minore / lieve catabolismo</option>
+          <option value="1.2" selected>1.2 — Chemioterapia / radioterapia attiva</option>
+          <option value="1.3">1.3 — Cachessia / catabolismo moderato</option>
+          <option value="1.4">1.4 — Sepsi / catabolismo grave</option>
+        </select></div>
+      <div id="f-result"></div>
+    </div>
+
+    <div class="calc-box">
+      <h3>🥩 Fabbisogno Proteico</h3>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:12px">ESPEN 2021: obiettivo ≥ 1,0 g/kg/die; ottimale 1,2–1,5 g/kg/die; cachessia grave fino a 2,0 g/kg/die.</p>
+      <div id="prot-result"></div>
+      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">OBIETTIVO PERSONALIZZATO</div>
+        <div class="nf"><label>g/kg/die scelto</label>
+          <input type="number" id="f-prot-scelto" step="0.1" min="0.8" max="2.5" value="1.2" oninput="calcFabbONC()" placeholder="es. 1.2">
+        </div>
+        <div id="prot-custom-result" style="margin-top:8px"></div>
+      </div>
+      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">💧 IDRATAZIONE</div>
+        <div style="font-size:12.5px;color:var(--slate-m)" id="idrat-result">Calcola prima il peso corporeo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📊 Range kcal/kg/die per fase clinica (ESPEN 2021)</h3>
+    <table class="food-table">
+      <thead><tr><th>Situazione clinica</th><th>kcal/kg/die</th><th>Proteine g/kg/die</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Stabile / remissione</td><td><b>25–30</b></td><td>1,0–1,2</td><td>Mantenimento peso corporeo</td></tr>
+        <tr><td>Chemioterapia / radioterapia</td><td><b>25–30</b></td><td>1,2–1,5</td><td>Adeguare ai sintomi e tolleranza</td></tr>
+        <tr><td>Post-chirurgia addominale</td><td><b>25–30</b></td><td>1,2–1,5</td><td>Progressione dieta orale rapida</td></tr>
+        <tr><td>Cachessia (perdita &gt;5%)</td><td><b>28–35</b></td><td>1,5–2,0</td><td>Supporto nutrizionale intensivo</td></tr>
+        <tr><td>Cure palliative / terminale</td><td><b>20–25</b></td><td>1,0–1,2</td><td>Confort, qualità di vita</td></tr>
+        <tr><td>Allettato / catabolismo grave</td><td><b>20–25</b></td><td>1,2–1,5</td><td>Evitare sovralimentazione</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="calc-box">
+    <h3>📝 Note Cliniche Fabbisogno</h3>
+    <div class="nf"><label>Note fabbisogno energetico/proteico</label>
+      <textarea id="f-note" rows="3" placeholder="Motivazione delle scelte caloriche, peso di riferimento, adeguamenti per tolleranza..."></textarea>
+    </div>
+    <div class="nf" style="margin-top:8px"><label>Obiettivo nutrizionale pianificato (kcal/die)</label>
+      <input type="number" id="f-kcal-target" placeholder="es. 1800">
+    </div>
+    <div class="nf" style="margin-top:8px"><label>Obiettivo proteico pianificato (g/die)</label>
+      <input type="number" id="f-prot-target" placeholder="es. 90">
+    </div>
+  </div>
+
+</div><!-- end tab-fabbisogno -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 3: SUPPORTO NUTRIZIONALE      -->
+<!-- ══════════════════════════════════ -->
+<div class="onc-panel" id="tab-supporto">
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🥤 Integrazione Nutrizionale Orale (ONS)</h3>
+      <div class="alert-info alert-box" style="margin-bottom:12px">
+        ESPEN 2021: preferire la via orale/enterale. ONS indicata quando l'apporto orale è &lt; 60% del fabbisogno per &gt; 1–2 settimane nonostante counseling nutrizionale.
+      </div>
+      <table class="food-table">
+        <thead><tr><th>Formulazione</th><th>Indicazione</th><th>Apporto tipico</th></tr></thead>
+        <tbody>
+          <tr><td><b>Ipercalorica ipoproteica</b> (es. 1,5–2,4 kcal/mL)</td><td>Cachessia, ridotta tolleranza volumi</td><td>200–300 mL × 2/die</td></tr>
+          <tr><td><b>Immunonutrizionale</b> (arginina, ω-3, glutammina)</td><td>Pre/post-chirurgia, chemio attiva</td><td>200 mL × 2/die × 5–7 gg preop</td></tr>
+          <tr><td><b>Specifica per oncologia</b> (EPA 2g/die)</td><td>Cachessia, stabilizzare peso</td><td>250 mL × 2/die</td></tr>
+          <tr><td><b>Modulare proteica</b></td><td>Insufficienza proteica isolata</td><td>20–30 g proteine/giorno</td></tr>
+          <tr><td><b>Semi-elementare</b></td><td>Mucosite grave, malassorbimento</td><td>Secondo prescrizione</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="calc-box">
+      <h3>🔬 Immunonutrizione e Supplementi</h3>
+      <div class="guide-item" style="margin-bottom:8px">
+        <b>🐟 Omega-3 (EPA/DHA)</b> — 2–4 g EPA/die: rallenta la progressione della cachessia, riduce l'infiammazione (PCR ↓, citochine ↓). Indicato in pazienti con perdita di peso &gt; 5% o cachessia attiva.
+      </div>
+      <div class="guide-item" style="margin-bottom:8px">
+        <b>💪 Glutammina</b> — 0,5 g/kg/die: riduce mucosite da radioterapia oro-faringea e neuropatia periferica da oxaliplatino. Non indicata in LLA e nei tumori solidi in fase di crescita attiva.
+      </div>
+      <div class="guide-item" style="margin-bottom:8px">
+        <b>🥩 Arginina</b> — 12–15 g/die (immunonutrizione pre-chirurgica): migliora risposta immunitaria e cicatrizzazione. Usare con cautela in cachessia avanzata.
+      </div>
+      <div class="guide-item" style="margin-bottom:8px">
+        <b>☀️ Vitamina D</b> — Carenza comune (&lt; 20 ng/mL): 1000–2000 UI/die come mantenimento. Dosi terapeutiche se grave carenza (50.000 UI/settimana × 8 settimane).
+      </div>
+      <div class="guide-item">
+        <b>⚠️ Antiossidanti (C, E, beta-carotene)</b> — Evitare alte dosi durante chemioterapia/radioterapia: possono ridurre l'efficacia del trattamento interferendo con i meccanismi ossidativi citotossici.
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🏥 Nutrizione Artificiale in Oncologia</h3>
+    <table class="food-table">
+      <thead><tr><th>Via</th><th>Indicazione</th><th>Durata prevista</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><b>NED (sondino)</b></td><td>Tumori testa-collo, esofago; mucosite grave</td><td>&gt; 2 settimane</td><td>Preferire PEG se &gt; 4 settimane</td></tr>
+        <tr><td><b>PEG/PEG-J</b></td><td>Neoplasie testa-collo in radioterapia; gastroparesi</td><td>Lungo termine</td><td>Posizionare prima di radioterapia</td></tr>
+        <tr><td><b>Parenterale supplementare</b></td><td>NED non sufficiente; malassorbimento grave</td><td>Fino a recupero via enterale</td><td>Ridurre quando possibile</td></tr>
+        <tr><td><b>NPT domiciliare</b></td><td>Ostruzione intestinale cronica; cure palliative selezionate</td><td>Settimane-mesi</td><td>Valutare QoL e aspettativa di vita</td></tr>
+      </tbody>
+    </table>
+    <div class="nf" style="margin-top:14px"><label>Piano di supporto nutrizionale prescelto</label>
+      <textarea id="s-piano" rows="3" placeholder="Descrivere il piano di supporto nutrizionale scelto, incluso tipo di formulazione, volumi, timing..."></textarea>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📝 Note Supplementazione e Supporto</h3>
+    <div class="grid-2">
+      <div class="nf"><label>Integratori prescritti</label>
+        <textarea id="s-integr" rows="3" placeholder="es. Omega-3 2g/die, Vit. D 2000 UI/die..."></textarea></div>
+      <div class="nf"><label>ONS prescritta</label>
+        <textarea id="s-ons" rows="3" placeholder="es. Fortimel 1.5 kcal — 200 mL × 2/die tra i pasti..."></textarea></div>
+    </div>
+  </div>
+
+</div><!-- end tab-supporto -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 4: SINTOMI E GESTIONE         -->
+<!-- ══════════════════════════════════ -->
+<div class="onc-panel" id="tab-sintomi">
+
+  <div class="alert-info alert-box">
+    <b>🤢 Gestione Nutrizionale dei Sintomi</b> — I trattamenti oncologici causano spesso effetti collaterali che impattano l'alimentazione. La gestione nutrizionale personalizzata riduce la malnutrizione e migliora la tolleranza al trattamento.
+  </div>
+
+  <div class="grid-2">
+    <div class="symp-card">
+      <h4>🤢 Nausea e Vomito</h4>
+      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+        <li>Pasti piccoli e frequenti (5–6/die), a temperatura ambiente o freddi</li>
+        <li>Evitare odori forti, cibi grassi, fritti, speziati</li>
+        <li>Preferire: crackers, riso, toast, banana, brodo</li>
+        <li>Bere liquidi freddi lentamente tra i pasti (non durante)</li>
+        <li>Gengivale allo zenzero può ridurre la nausea</li>
+        <li>Coordinare i pasti con l'antiemetico (assumere 30 min prima)</li>
+      </ul>
+    </div>
+
+    <div class="symp-card">
+      <h4>😮 Mucosite / Stomatite</h4>
+      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+        <li>Cibi morbidi, frullati, puree, budini, gelato (freddo analgesico)</li>
+        <li>Evitare cibi acidi (agrumi, pomodoro), piccanti, duri, croccanti</li>
+        <li>Sciacqui con soluzione salina 0,9% prima e dopo i pasti</li>
+        <li>Temperatura tiepida/fredda — evitare il caldo</li>
+        <li>Se grado 3–4 → valutare ONS semi-elementare o NED</li>
+        <li>Glutammina 15 g × 2/die in mucosite da radioterapia orale</li>
+      </ul>
+    </div>
+
+    <div class="symp-card">
+      <h4>💧 Diarrea (da chemio/radioterapia)</h4>
+      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+        <li>Dieta a basso residuo (BRAT: banana, riso, mela cotta, toast)</li>
+        <li>Evitare fibre insolubili, latticini (tranne yogurt), grassi, spezie</li>
+        <li>Idratazione intensiva: ≥ 2 L/die (ORS in caso di grave disidratazione)</li>
+        <li>Probiotici: L. rhamnosus GG utile in diarrea da radioterapia pelvica</li>
+        <li>Diarrea da irinotecano: loperamide ad alte dosi (protocollo medico)</li>
+        <li>Latticini ridotti se sospetta intolleranza transitoria al lattosio</li>
+      </ul>
+    </div>
+
+    <div class="symp-card">
+      <h4>🚫 Anoressia / Cachessia</h4>
+      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+        <li>Cibi preferiti del paziente, elevata densità calorica</li>
+        <li>Arricchire i pasti con olio, burro, panna, parmigiano, proteine in polvere</li>
+        <li>Corticosteroidi a breve termine (prednisone 20 mg/die) possono stimolare appetito</li>
+        <li>Megestrolo acetato: ultima opzione in cachessia refrattaria (rischio trombosi)</li>
+        <li>Omega-3 EPA 2g/die: rallenta progressione della cachessia</li>
+        <li>ONS ipercalorica ipoproteica: 200 mL × 2–3 volte/die</li>
+      </ul>
+    </div>
+
+    <div class="symp-card">
+      <h4>🌡️ Xerostomia (secchezza delle fauci)</h4>
+      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+        <li>Idratare frequentemente a piccoli sorsi (acqua, ghiaccio tritato)</li>
+        <li>Cibi morbidi, bagnati, con salse e sughi</li>
+        <li>Evitare alcolici, caffeina, tabacco, cibi secchi/duri</li>
+        <li>Sostituti salivari spray (mucina artificiale)</li>
+        <li>Stimolanti salivari: gomme xilitolo, caramelle senza zucchero</li>
+      </ul>
+    </div>
+
+    <div class="symp-card">
+      <h4>🤕 Alterazioni del Gusto (Disgeusia)</h4>
+      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+        <li>Marinature con agrumi, erbe aromatiche per potenziare i sapori</li>
+        <li>Sostituire la carne rossa con pesce o proteine vegetali se sapore metallico</li>
+        <li>Posate in plastica invece di metallo per il sapore metallico</li>
+        <li>Cibi freddi o a temperatura ambiente hanno meno odore</li>
+        <li>Zinco solfato 220 mg × 2/die: può migliorare la disgeusia da platino</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📝 Sintomi presenti e gestione attuale</h3>
+    <div class="nf"><label>Sintomi riferiti dal paziente</label>
+      <textarea id="sint-note" rows="3" placeholder="Descrivere i sintomi nutrizionali presenti, gravità, impatto sull'alimentazione..."></textarea></div>
+    <div class="nf" style="margin-top:8px"><label>Interventi nutrizionali adottati</label>
+      <textarea id="sint-int" rows="3" placeholder="Consigli forniti, modifiche dietetiche suggerite, integratori, ONS..."></textarea></div>
+  </div>
+
+</div><!-- end tab-sintomi -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 5: LINEE GUIDA               -->
+<!-- ══════════════════════════════════ -->
+<div class="onc-panel" id="tab-lg">
+
+  <div class="alert-info alert-box">
+    <b>📚 Linee Guida di Riferimento</b>: ESPEN Guidelines on Clinical Nutrition in Cancer (2021) · AIOM Linee Guida Supporto Nutrizionale · SINPE 2022 · WCRF/AICR Cancer Prevention Recommendations (2018).
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>🎯 Raccomandazioni ESPEN 2021 — Chiave</h3>
+      <div class="guide-section">
+        <h4>Screening e Valutazione</h4>
+        <div class="guide-item"><b>GPP:</b> Screening nutrizionale sistematico in tutti i pazienti oncologici a ogni contatto con il sistema sanitario (NRS-2002 per ospedalizzati, MUST per territorio).</div>
+        <div class="guide-item"><b>Grado A:</b> Valutazione nutrizionale completa per i pazienti a rischio identificati con lo screening, includendo composizione corporea (DEXA, BIA, TC).</div>
+        <div class="guide-item"><b>GPP:</b> Usare PG-SGA per valutazione nutrizionale specifica in oncologia.</div>
+      </div>
+      <div class="guide-section">
+        <h4>Intervento Nutrizionale</h4>
+        <div class="guide-item"><b>Grado A:</b> Counseling nutrizionale individuale come primo intervento in tutti i pazienti con ridotto apporto alimentare.</div>
+        <div class="guide-item"><b>Grado A:</b> ONS se apporto orale &lt; 60% del fabbisogno &gt; 1–2 settimane nonostante counseling.</div>
+        <div class="guide-item"><b>Grado B:</b> Nutrizione enterale (NED/PEG) se ONS non sufficiente e tratto GI funzionante.</div>
+        <div class="guide-item"><b>Grado C:</b> Nutrizione parenterale solo se via enterale non praticabile o insufficiente.</div>
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>🏗️ Fabbisogni ESPEN 2021</h3>
+      <div class="guide-section">
+        <h4>Energia</h4>
+        <div class="guide-item"><b>25–30 kcal/kg/die</b> in pazienti ambulatoriali oncologici (REE × 1,3 se misurata con calorimetria indiretta). Evitare ipo- e ipercalosia.</div>
+        <div class="guide-item">In cachessia avanzata / catabolismo grave: aumentare a <b>30–35 kcal/kg/die</b>. In cure palliative terminali: ridurre le aspettative.</div>
+      </div>
+      <div class="guide-section">
+        <h4>Proteine</h4>
+        <div class="guide-item"><b>≥ 1,0 g/kg/die</b> come minimo; <b>ottimale 1,2–1,5 g/kg/die</b>; in cachessia grave con funzione renale conservata: fino a <b>2,0 g/kg/die</b>.</div>
+      </div>
+      <div class="guide-section">
+        <h4>Chirurgia Oncologica</h4>
+        <div class="guide-item"><b>Grado A:</b> Supporto nutrizionale pre-operatorio (7–14 gg) se paziente malnutrito grave. Immunonutrizione orale (arginina, omega-3, nucleotidi) per 5–7 gg pre-op nella chirurgia addominale maggiore.</div>
+        <div class="guide-item"><b>Grado A:</b> Rialimentazione precoce (entro 24h) dopo chirurgia GI oncologica; via enterale preferita.</div>
+      </div>
+      <div class="guide-section">
+        <h4>Immunonutrizione</h4>
+        <div class="guide-item"><b>Omega-3 (EPA 2g/die):</b> raccomandato per stabilizzare/aumentare il peso in cachessia (Grado B). In pazienti in chemioterapia con perdita di peso.</div>
+        <div class="guide-item"><b>Vitamina D:</b> correggere la carenza (&lt;20 ng/mL) in tutti i pazienti oncologici (GPP).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🚫 Controindicazioni e Avvertenze</h3>
+    <div class="grid-2">
+      <div>
+        <div class="alert-danger alert-box">
+          <b>⛔ Antiossidanti ad alte dosi durante chemio/radio</b> — Non raccomandati (potenziale interferenza con la citotossicità). Evitare vitamina C &gt;1g, vitamina E &gt;200 UI, beta-carotene durante il trattamento attivo.
+        </div>
+        <div class="alert-warn alert-box">
+          <b>⚠️ Succo di pompelmo</b> — Interagisce con molti chemioterapici (inibisce CYP3A4): evitare durante terapia con imatinib, erlotinib, ciclosporina e molti altri.
+        </div>
+        <div class="alert-warn alert-box">
+          <b>⚠️ Integratori a base di erbe</b> — Molte erbe officinali interferiscono con chemioterapici (es. iperico con molti agenti). Sempre segnalare all'oncologo.
+        </div>
+      </div>
+      <div>
+        <div class="alert-warn alert-box">
+          <b>⚠️ Glutammina</b> — Evitare in leucemia linfoblastica acuta (LLA) e nei tumori con elevata dipendenza dalla glutammina come substrato energetico.
+        </div>
+        <div class="alert-ok alert-box">
+          <b>✅ Soia e fitoestrogeni</b> — Dosi alimentari sicure anche nel carcinoma mammario estrogeno-dipendente. Integratori ad alte dosi: sconsigliati per incertezza.
+        </div>
+        <div class="alert-ok alert-box">
+          <b>✅ Attività fisica</b> — Raccomandata in tutti i pazienti oncologici tolleranti (150 min/settimana di esercizio aerobico moderato + esercizio di resistenza). Migliora QoL, riduce cachessia.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>📖 Prevenzione Oncologica (WCRF/AICR 2018)</h3>
+    <table class="food-table">
+      <thead><tr><th>Raccomandazione</th><th>Evidenza</th></tr></thead>
+      <tbody>
+        <tr><td>Mantenere un peso corporeo sano (BMI 18,5–25 kg/m²)</td><td>Forte</td></tr>
+        <tr><td>Essere fisicamente attivi ogni giorno; ridurre il tempo sedentario</td><td>Forte</td></tr>
+        <tr><td>Privilegiare alimenti ricchi di fibre, cereali integrali, verdure, frutta, legumi</td><td>Forte</td></tr>
+        <tr><td>Limitare carne rossa (&lt; 500 g/settimana) e processata (il meno possibile)</td><td>Forte</td></tr>
+        <tr><td>Limitare bevande zuccherate e alimenti ad alta densità energetica</td><td>Forte</td></tr>
+        <tr><td>Limitare alcol (meglio non bere per la prevenzione del cancro)</td><td>Forte</td></tr>
+        <tr><td>Non usare integratori per la prevenzione del cancro</td><td>Forte</td></tr>
+        <tr><td>Allattamento al seno almeno 6 mesi (protezione mamma e bambino)</td><td>Forte</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- end tab-lg -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 6: PIANO ALIMENTARE           -->
+<!-- ══════════════════════════════════ -->
+<div class="onc-panel" id="tab-piano">
+
+  <div class="alert-info alert-box">
+    <b>🍽️ Piano Alimentare in Oncologia</b> — Il piano alimentare deve essere personalizzato in base al tipo di neoplasia, trattamento in corso, sintomi presenti e preferenze del paziente. Privilegiare densità calorico-proteica e adattabilità ai sintomi.
+  </div>
+
+  <div class="grid-2">
+    <div class="calc-box">
+      <h3>📋 Consigli Generali per Chemioterapia</h3>
+      <ul style="font-size:12.5px;color:var(--slate-m);line-height:2;padding-left:16px">
+        <li>Pasti piccoli e frequenti: 5–6 al giorno (ogni 2–3 ore)</li>
+        <li>Non saltare la colazione — primo pasto entro 1 ora dal risveglio</li>
+        <li>Spuntini proteici tra i pasti: yogurt, ricotta, uova sode, frutta secca</li>
+        <li>Arricchire i piatti: olio EVO crudo, parmigiano, frutta secca tritata</li>
+        <li>Privilegiare proteine nobili: uova, pesce, latticini, legumi+cereali</li>
+        <li>Evitare cibi crudi di origine animale (immunosoppressione)</li>
+        <li>Non mangiare pasti abbondanti nelle 2 ore prima della chemio</li>
+        <li>Preferire cibi familiari e graditi; non obbligarsi a mangiare cibi indigesti</li>
+      </ul>
+    </div>
+
+    <div class="calc-box">
+      <h3>📋 Alimenti Consigliati per Neutropenia</h3>
+      <div class="alert-warn alert-box" style="margin-bottom:10px">In caso di neutropenia (PMN &lt; 500/μL): dieta a basso contenuto microbico.</div>
+      <table class="food-table">
+        <thead><tr><th>Categoria</th><th>Consentiti</th><th>Da evitare</th></tr></thead>
+        <tbody>
+          <tr><td>Carne/pesce</td><td>Ben cotti (T &gt; 70°C)</td><td>Crudi, sushi, carpaccio, tartare</td></tr>
+          <tr><td>Uova</td><td>Ben cotte (T &gt; 70°C)</td><td>Crude, alla coque, bavose</td></tr>
+          <tr><td>Latticini</td><td>Pastorizzati, formaggi cotti</td><td>Formaggi erborinati, latte crudo</td></tr>
+          <tr><td>Frutta/verdura</td><td>Cotte o lavate accuratamente</td><td>Germogli, insalate pronte</td></tr>
+          <tr><td>Acqua</td><td>Minerale confezionata</td><td>Dal rubinetto (se qualità dubbia)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h3>🍽️ Schema Alimentare — Esempio per Chemioterapia</h3>
+    <table class="food-table">
+      <thead><tr><th>Pasto</th><th>Proposta</th><th>Apporto stimato</th></tr></thead>
+      <tbody>
+        <tr><td><b>🌅 Colazione</b></td><td>Latte intero 200 mL + cereali integrali 40 g + frutta fresca</td><td>~350 kcal · 12 g prot</td></tr>
+        <tr><td><b>🍎 Spuntino mat.</b></td><td>Yogurt greco 150 g + 1 cucchiaio mandorle tritate</td><td>~200 kcal · 15 g prot</td></tr>
+        <tr><td><b>🍽️ Pranzo</b></td><td>Pasta integrale 80 g con legumi + olio EVO; oppure riso + salmone 120 g cotto</td><td>~500–550 kcal · 25 g prot</td></tr>
+        <tr><td><b>🍊 Merenda</b></td><td>Ricotta 80 g + crackers 4–5 + frutta</td><td>~250 kcal · 12 g prot</td></tr>
+        <tr><td><b>🌙 Cena</b></td><td>Petto di pollo/merluzzo 150 g cotto + patate o riso 80 g + verdure cotte</td><td>~500 kcal · 30 g prot</td></tr>
+        <tr><td><b>🌜 Spuntino sera</b></td><td>Latte caldo 200 mL + 2–3 biscotti secchi</td><td>~180 kcal · 7 g prot</td></tr>
+        <tr><td colspan="2"><b>TOTALE STIMATO</b></td><td><b>~1980 kcal · ~101 g prot</b></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--slate-l);margin-top:8px">Schema indicativo da adattare alle preferenze, ai sintomi presenti e al fabbisogno calcolato. Integrare con ONS se necessario.</p>
+  </div>
+
+  <div class="calc-box">
+    <h3>📝 Piano Personalizzato</h3>
+    <div class="nf"><label>Piano alimentare personalizzato</label>
+      <textarea id="piano-text" rows="6" placeholder="Inserire il piano alimentare personalizzato del paziente, con indicazioni specifiche per i suoi sintomi e preferenze..."></textarea>
+    </div>
+    <div class="nf" style="margin-top:8px"><label>Note dietista / raccomandazioni finali</label>
+      <textarea id="piano-note" rows="3" placeholder="Note conclusive, follow-up previsto, obiettivi da monitorare..."></textarea>
+    </div>
+  </div>
+
+</div><!-- end tab-piano -->
+
+</div></main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<script src="js/utils.js"></script>
+<script src="js/print-capture.js"></script>
+<script>
+let editingOncNoteId = null;
+const nrsScores = { stato: 0, mal: 0 };
+
+function showOncTab(tab) {
+  document.querySelectorAll('.onc-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.onc-tab').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('tab-' + tab);
+  if (panel) panel.classList.add('active');
+  const btns = document.querySelectorAll('.onc-tab');
+  btns.forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + tab + "'")) b.classList.add('active'); });
+}
+
+// ── NRS-2002 ─────────────────────────────────────
+function calcNRS() {
+  const ps = ['nrs-ps1','nrs-ps2','nrs-ps3','nrs-ps4'].some(id => document.getElementById(id)?.checked);
+  const fullDiv = document.getElementById('nrs-full');
+  if (ps) fullDiv.style.display = 'block';
+  const stato = nrsScores.stato || 0;
+  const mal = nrsScores.mal || 0;
+  const eta = parseInt(document.getElementById('nrs-eta')?.value) || 0;
+  const ageBonus = eta >= 70 ? 1 : 0;
+  const tot = stato + mal + ageBonus;
+  const res = document.getElementById('nrs-result');
+  if (!ps) { res.innerHTML = ''; return; }
+  let badge, rec;
+  if (tot < 3) { badge = '<span class="risk-badge risk-low">✅ Score ' + tot + ' — Basso rischio</span>'; rec = 'Rivalutare settimanalmente. Counseling preventivo se trattamento oncologico attivo.'; }
+  else { badge = '<span class="risk-badge risk-high">🔴 Score ' + tot + ' — Rischio nutrizionale</span>'; rec = 'Intervento nutrizionale immediato. Valutazione completa + piano nutrizionale personalizzato entro 24–48h.'; }
+  res.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">' + badge + '<div style="font-size:12px;color:var(--slate-m);background:#F8FAFC;border-radius:8px;padding:10px">' + rec + '</div></div>';
+}
+
+function selNRS(type, val) {
+  nrsScores[type] = val;
+  document.querySelectorAll('[data-nrs-' + type + ']').forEach(b => b.classList.toggle('sel', parseInt(b.dataset['nrs' + type.charAt(0).toUpperCase() + type.slice(1)]) === val));
+  calcNRS();
+}
+
+// ── PG-SGA ───────────────────────────────────────
+function calcPGSGA() {
+  const p = parseInt(document.getElementById('pgsga-peso')?.value) || 0;
+  const i = parseInt(document.getElementById('pgsga-intake')?.value) || 0;
+  const s = parseInt(document.getElementById('pgsga-sintomi')?.value) || 0;
+  const f = parseInt(document.getElementById('pgsga-funz')?.value) || 0;
+  const tot = p + i + s + f;
+  const res = document.getElementById('pgsga-result');
+  if (!document.getElementById('pgsga-peso')?.value) { res.innerHTML = ''; return; }
+  let badge, rec;
+  if (tot <= 1) { badge = '<span class="risk-badge risk-low">✅ PG-SGA A — Ben nutrito</span>'; rec = 'Monitoraggio periodico. Counseling preventivo.'; }
+  else if (tot <= 8) { badge = '<span class="risk-badge risk-mid">⚠️ PG-SGA B — Moderatamente malnutrito (Score ' + tot + ')</span>'; rec = 'Intervento nutrizionale: counseling + ONS se apporto insufficiente.'; }
+  else { badge = '<span class="risk-badge risk-high">🔴 PG-SGA C — Gravemente malnutrito (Score ' + tot + ')</span>'; rec = 'Intervento nutrizionale urgente: ONS/NE/NP secondo tolleranza. Rivalutazione settimanale.'; }
+  res.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">' + badge + '<div style="font-size:12px;color:var(--slate-m);background:#F8FAFC;border-radius:8px;padding:10px">' + rec + '</div></div>';
+}
+
+// ── Cachessia ────────────────────────────────────
+function aggiornaCachessia() {
+  const peso = parseFloat(document.getElementById('onc-peso')?.value);
+  const alt = parseFloat(document.getElementById('onc-alt')?.value);
+  const alb = parseFloat(document.getElementById('onc-alb')?.value) || null;
+  const pcr = parseFloat(document.getElementById('onc-pcr')?.value) || null;
+  const res = document.getElementById('cachessia-result');
+  if (!res) return;
+  if (!peso || !alt) { res.innerHTML = ''; return; }
+  const bmi = peso / (alt / 100) ** 2;
+  const items = [];
+  items.push('<span style="background:#EDE9FE;color:#5B21B6;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600">BMI ' + Math.round(bmi * 10) / 10 + ' kg/m²</span>');
+  if (alb !== null) {
+    const col = alb < 3.0 ? '#DC2626' : alb < 3.5 ? '#D97706' : '#15803D';
+    items.push('<span style="background:' + (alb<3?'#FEF2F2':'#FEF3C7') + ';color:' + col + ';border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600">Albumina ' + alb + ' g/dL</span>');
+  }
+  if (pcr !== null) {
+    const col = pcr > 50 ? '#DC2626' : pcr > 10 ? '#D97706' : '#15803D';
+    items.push('<span style="background:' + (pcr>50?'#FEF2F2':'#FEF3C7') + ';color:' + col + ';border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600">PCR ' + pcr + ' mg/L</span>');
+  }
+  res.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:6px">' + items.join('') + '</div>';
+}
+
+// ── Fabbisogno ───────────────────────────────────
+function calcFabbONC() {
+  const peso = parseFloat(document.getElementById('f-peso')?.value) || parseFloat(document.getElementById('onc-peso')?.value);
+  const alt  = parseFloat(document.getElementById('f-alt')?.value)  || parseFloat(document.getElementById('onc-alt')?.value);
+  const eta  = parseInt(document.getElementById('f-eta')?.value);
+  const sesso = document.getElementById('f-sesso')?.value || 'M';
+  const laf   = parseFloat(document.getElementById('f-laf')?.value) || 1.3;
+  const stress = parseFloat(document.getElementById('f-stress')?.value) || 1.2;
+  const protKg = parseFloat(document.getElementById('f-prot-scelto')?.value) || 1.2;
+  const fRes = document.getElementById('f-result');
+  const pRes = document.getElementById('prot-result');
+  const pCust = document.getElementById('prot-custom-result');
+  const idratRes = document.getElementById('idrat-result');
+  if (!peso) return;
+  // MB Harris-Benedict
+  let mb = 0;
+  if (eta && alt) {
+    mb = sesso === 'M' ? Math.round(66.47 + 13.75*peso + 5.003*alt - 6.755*eta) : Math.round(655.1 + 9.563*peso + 1.85*alt - 4.676*eta);
+  } else {
+    mb = Math.round(22 * peso); // fallback basato sul peso
+  }
+  const tdee = Math.round(mb * laf * stress);
+  const range25 = Math.round(peso * 25), range30 = Math.round(peso * 30);
+  if (fRes) fRes.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="background:#F5F3FF;border-radius:10px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:#5B21B6;margin-bottom:4px;text-transform:uppercase">MB (Harris-Benedict)</div>
+        <div class="result-big">${mb} kcal</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#5B21B6,#7C3AED);border-radius:10px;padding:12px;color:white">
+        <div style="font-size:11px;font-weight:700;opacity:.8;margin-bottom:4px;text-transform:uppercase">TDEE (MB × ${laf} × ${stress})</div>
+        <div style="font-size:26px;font-weight:700">${tdee} kcal</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:12px;color:var(--slate-l)">Range 25–30 kcal/kg: <b>${range25}–${range30} kcal/die</b></div>`;
+  if (pRes) {
+    const p10 = Math.round(peso*1.0), p12 = Math.round(peso*1.2), p15 = Math.round(peso*1.5), p20 = Math.round(peso*2.0);
+    pRes.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      ${[[1.0,p10],[1.2,p12],[1.5,p15],[2.0,p20]].map(([v,g])=>`<div style="background:#F5F3FF;border-radius:8px;padding:10px"><div style="font-size:11px;font-weight:700;color:#5B21B6">${v} g/kg/die</div><div style="font-size:18px;font-weight:700;color:var(--teal)">${g} g</div></div>`).join('')}
+    </div>`;
+  }
+  if (pCust) pCust.innerHTML = `<div style="background:#F0FDF4;border-radius:8px;padding:10px"><b style="color:#15803D">${protKg} g/kg/die = ${Math.round(peso * protKg)} g/die</b></div>`;
+  if (idratRes) idratRes.innerHTML = `<b>Fabbisogno idrico:</b> ${Math.round(peso * 30)}–${Math.round(peso * 35)} mL/die (30–35 mL/kg). Aumentare in caso di febbre, diarrea o vomito.`;
+
+  // Sync peso/alt fields
+  if (document.getElementById('onc-peso') && !document.getElementById('onc-peso').value) document.getElementById('onc-peso').value = peso;
+  aggiornaCachessia();
+}
+
+// ── Salva/Svuota ─────────────────────────────────
+function raccogliDatiONC() {
+  const g = id => document.getElementById(id)?.value || '';
+  return {
+    screening: { nrs_stato: nrsScores.stato, nrs_mal: nrsScores.mal, nrs_eta: g('nrs-eta'), pgsga_peso: g('pgsga-peso'), pgsga_intake: g('pgsga-intake'), pgsga_sintomi: g('pgsga-sintomi'), pgsga_funz: g('pgsga-funz') },
+    clinica: { tipo: g('onc-tipo'), stadio: g('onc-stadio'), tratt: g('onc-tratt'), peso: g('onc-peso'), alt: g('onc-alt'), dpeso: g('onc-dpeso'), ecog: g('onc-ecog'), alb: g('onc-alb'), pcr: g('onc-pcr') },
+    fabbisogno: { peso: g('f-peso'), alt: g('f-alt'), eta: g('f-eta'), sesso: g('f-sesso'), laf: g('f-laf'), stress: g('f-stress'), prot_scelto: g('f-prot-scelto'), note: g('f-note'), kcal_target: g('f-kcal-target'), prot_target: g('f-prot-target') },
+    supporto: { piano: g('s-piano'), integr: g('s-integr'), ons: g('s-ons') },
+    sintomi: { note: g('sint-note'), int: g('sint-int') },
+    piano: { text: g('piano-text'), note: g('piano-note') }
+  };
+}
+
+async function salvaOncologia() {
+  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  const cartellaEl = document.getElementById('onc-cartella');
+  const cartella_id = cartellaEl?.value || null;
+  if (!cartella_id) { toast('⚠️ Seleziona una cartella paziente', 'err'); return; }
+  const nota = document.getElementById('onc-nota')?.value || '';
+  const dati = raccogliDatiONC();
+  const payload = { cartella_id, user_id: currentUser.id, tipo: 'oncologia', nota, dati: JSON.stringify(dati) };
+  showLoading(true);
+  let result;
+  if (editingOncNoteId) {
+    result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editingOncNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select('id');
+    if (result.data?.[0]?.id) editingOncNoteId = result.data[0].id;
+  }
+  showLoading(false);
+  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  toast('💾 Scheda oncologica salvata!', 'ok');
+  if (window.capturePrintAndSave && editingOncNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingOncNoteId, cartellaId: cartella_id, panelSelector: '.onc-panel', silent: true }).catch(err => console.warn('oncologia.html capture failed:', err));
+  }
+}
+
+function svuotaOncologia() {
+  ['nrs-ps1','nrs-ps2','nrs-ps3','nrs-ps4'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+  ['pgsga-peso','pgsga-intake','pgsga-sintomi','pgsga-funz','onc-tipo','onc-stadio','onc-tratt','onc-ecog','f-sesso'].forEach(id => { const el = document.getElementById(id); if (el) el.selectedIndex = 0; });
+  ['nrs-eta','onc-peso','onc-alt','onc-dpeso','onc-alb','onc-pcr','f-peso','f-alt','f-eta','f-note','f-kcal-target','f-prot-target','s-piano','s-integr','s-ons','sint-note','sint-int','piano-text','piano-note'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  nrsScores.stato = 0; nrsScores.mal = 0;
+  document.querySelectorAll('.score-btn').forEach(b => b.classList.remove('sel'));
+  ['nrs-result','pgsga-result','f-result','prot-result','prot-custom-result','cachessia-result'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
+  document.getElementById('nrs-full').style.display = 'none';
+  editingOncNoteId = null;
+  toast('🔄 Sezione reimpostata', 'ok');
+}
+
+async function loadNoteIfPresent() {
+  const p = new URLSearchParams(window.location.search);
+  const noteId = p.get('noteId');
+  if (!noteId) return;
+  showLoading(true);
+  const { data } = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (!data) return;
+  editingOncNoteId = data.id;
+  if (data.cartella_id) await _cwSetById('onc-cartella-cw', data.cartella_id);
+  if (data.nota) { const el = document.getElementById('onc-nota'); if (el) el.value = data.nota; }
+  try {
+    const d = JSON.parse(data.dati || '{}');
+    const sv = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+    if (d.screening) { sv('nrs-eta', d.screening.nrs_eta); nrsScores.stato = d.screening.nrs_stato || 0; nrsScores.mal = d.screening.nrs_mal || 0; sv('pgsga-peso', d.screening.pgsga_peso); sv('pgsga-intake', d.screening.pgsga_intake); sv('pgsga-sintomi', d.screening.pgsga_sintomi); sv('pgsga-funz', d.screening.pgsga_funz); calcPGSGA(); }
+    if (d.clinica) { ['tipo','stadio','tratt','peso','alt','dpeso','ecog','alb','pcr'].forEach(k => sv('onc-' + k, d.clinica[k])); aggiornaCachessia(); }
+    if (d.fabbisogno) { const f = d.fabbisogno; ['peso','alt','eta','laf','stress','prot_scelto','note','kcal_target','prot_target'].forEach(k => sv('f-' + k.replace(/_/g,'-'), f[k])); if (f.sesso) { const sel = document.getElementById('f-sesso'); if (sel) sel.value = f.sesso; } calcFabbONC(); }
+    if (d.supporto) { sv('s-piano', d.supporto.piano); sv('s-integr', d.supporto.integr); sv('s-ons', d.supporto.ons); }
+    if (d.sintomi) { sv('sint-note', d.sintomi.note); sv('sint-int', d.sintomi.int); }
+    if (d.piano) { sv('piano-text', d.piano.text); sv('piano-note', d.piano.note); }
+  } catch(e) { console.warn('Errore caricamento dati oncologia:', e); }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const ok = await checkAuth();
+    if (ok) {
+      initCartellaWidget('onc-cartella-cw', { hiddenInputId: 'onc-cartella', accentColor: '#7C3AED', labelColor: '#5B21B6', hoverBg: '#F5F3FF', nuovaBg: '#F5F3FF' });
+      const noteId = new URLSearchParams(window.location.search).get('noteId');
+      if (noteId) await loadNoteIfPresent();
+    }
+  } catch(e) { console.error('Init oncologia error:', e); }
+});
+</script>
+</body>
+</html>

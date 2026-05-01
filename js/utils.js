@@ -1285,20 +1285,14 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
 ═══════════════════════════════════════════════════ */
 function _snapPortion(std, scaled) {
   if (!std || std <= 0 || !scaled || scaled <= 0) return Math.round(scaled);
-  const maxK = Math.max(Math.ceil(scaled / std) + 2, 5);
-  let best = std;
-  let bestDiff = Math.abs(std - scaled);
-  for (let k = 1; k <= maxK; k++) {
-    const c = std * k;
-    const d = Math.abs(c - scaled);
-    if (d < bestDiff) { bestDiff = d; best = c; }
-  }
-  for (let k = 2; k <= 8; k++) {
-    const c = std / k;
-    const d = Math.abs(c - scaled);
-    if (d < bestDiff) { bestDiff = d; best = c; }
-  }
-  return Math.round(best);
+  // Round proportionally to a sensible precision based on magnitude
+  let step;
+  if (scaled >= 200) step = 25;
+  else if (scaled >= 100) step = 10;
+  else if (scaled >= 20) step = 5;
+  else if (scaled >= 5) step = 1;
+  else step = 0.5;
+  return Math.round(scaled / step) * step || step;
 }
 
 /* ═══════════════════════════════════════════════════

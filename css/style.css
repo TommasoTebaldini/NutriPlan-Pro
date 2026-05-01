@@ -13,8 +13,11 @@
   font-size:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--slate);min-height:100vh;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--slate);min-height:100vh;overflow-x:hidden;text-rendering:optimizeSpeed}
 body{padding-bottom:36px}
+/* Improve font loading performance */
+@font-face{font-family:'DM Sans';font-display:swap}
+@font-face{font-family:'DM Serif Display';font-display:swap}
 
 /* ── SIDEBAR ── */
 #sidebar{position:fixed;top:0;left:0;bottom:0;width:248px;background:var(--slate);color:#CBD5E1;display:flex;flex-direction:column;z-index:200;transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto}
@@ -41,7 +44,8 @@ body{padding-bottom:36px}
 
 /* ── MAIN ── */
 #main{margin-left:248px;padding-top:54px;min-height:100vh}
-.page-content{padding:18px}
+.page-content{padding:18px;contain:layout style}
+.paz-grid,.pat-grid{contain:layout style}
 
 /* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r-sm);border:none;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;letter-spacing:.2px;text-decoration:none}

@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Agenda — DietPlan Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
@@ -31,6 +35,9 @@
 .cal-event-dot.controllo{background:#D1FAE5;color:#065F46}
 .cal-event-dot.reminder{background:#FEF3C7;color:#B45309}
 .cal-event-dot.urgente{background:#FEE2E2;color:#991B1B}
+.cal-event-dot.gcal{background:#EEF2FF;color:#4338CA;border-left:2px solid #4285F4;font-style:italic}
+.gcal-g{display:inline-block;background:#4285F4;color:white;font-size:7px;font-weight:800;border-radius:2px;padding:0 3px;margin-right:2px;vertical-align:middle;line-height:1.6;letter-spacing:0}
+.event-item.gcal{background:#F5F3FF;border-color:#818CF8}
 .sidebar-agenda{display:flex;flex-direction:column;gap:12px;overflow-y:auto}
 .app-card{background:white;border-radius:var(--r);border:1px solid var(--border);padding:14px;box-shadow:var(--shadow)}
 .app-card h4{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
@@ -115,6 +122,7 @@
   <div class="tbar-actions">
     <button class="btn btn-primary btn-sm" onclick="openNewEvent()">➕ Nuovo Appuntamento</button>
     <button id="btn-gcal" class="btn btn-ghost btn-sm" onclick="connectGoogleCalendar()" style="display:none">📅 Connetti Google Calendar</button>
+    <button id="btn-gcal-toggle" class="btn btn-ghost btn-sm" onclick="toggleGcalEvents()" style="display:none" title="Mostra/nascondi gli eventi del tuo Google Calendar personale sull'agenda">🗓️ Cal. personale: ✓</button>
     <button class="btn btn-ghost btn-sm no-print" onclick="openSyncModal()" title="Sincronizza il calendario con Google Calendar, Apple Calendar, Outlook e altri dispositivi">🔗 Sincronizza Calendario</button>
     <button class="today-btn" onclick="goToday()">Oggi</button>
   </div>
@@ -614,7 +622,9 @@ function makeDay(date, otherMonth) {
   div.className = 'cal-day' + (otherMonth?' other-month':'') + (dateStr===today?' today':'') + (dateStr===selectedDate?' selected':'');
   div.onclick = () => selectDate(dateStr);
   
-  const dayEvents = events.filter(e => e.data === dateStr);
+  const dayEvents    = events.filter(e => e.data === dateStr);
+  const gcalDayEvs   = showGcalEvents ? gcalEvents.filter(e => e.data === dateStr) : [];
+  const allDayEvents = [...dayEvents, ...gcalDayEvs];
   const numEl = document.createElement('div');
   numEl.className = 'cal-day-num';
   numEl.textContent = date.getDate();
@@ -629,18 +639,27 @@ function makeDay(date, otherMonth) {
     badge.textContent = holidayName;
     div.appendChild(badge);
   }
-  
-  dayEvents.slice(0,3).forEach(ev => {
+
+  allDayEvents.slice(0, 3).forEach(ev => {
     const dot = document.createElement('div');
-    dot.className = 'cal-event-dot ' + (ev.tipo||'visita');
-    dot.textContent = (ev.ora||'') + ' ' + (ev.paziente||ev.titolo||'');
-    dot.onclick = (e) => { e.stopPropagation(); openEventDetail(ev.id); };
+    if (ev._isGcal) {
+      dot.className = 'cal-event-dot gcal';
+      const g = document.createElement('span');
+      g.className = 'gcal-g';
+      g.textContent = 'G';
+      dot.appendChild(g);
+      dot.appendChild(document.createTextNode((ev.ora ? ev.ora + ' ' : '') + (ev.titolo || '')));
+    } else {
+      dot.className = 'cal-event-dot ' + (ev.tipo || 'visita');
+      dot.textContent = (ev.ora || '') + ' ' + (ev.paziente || ev.titolo || '');
+      dot.onclick = (e) => { e.stopPropagation(); openEventDetail(ev.id); };
+    }
     div.appendChild(dot);
   });
-  if(dayEvents.length > 3) {
+  if (allDayEvents.length > 3) {
     const more = document.createElement('div');
     more.className = 'cal-day-more';
-    more.textContent = '+' + (dayEvents.length-3) + ' altri';
+    more.textContent = '+' + (allDayEvents.length - 3) + ' altri';
     div.appendChild(more);
   }
   return div;
@@ -657,18 +676,28 @@ function selectDate(dateStr) {
 
 function renderDayEvents(dateStr) {
   const container = document.getElementById('day-events');
-  const dayEvs = events.filter(e => e.data === dateStr).sort((a,b) => (a.ora||'').localeCompare(b.ora||''));
-  if(!dayEvs.length) {
+  const appEvs    = events.filter(e => e.data === dateStr);
+  const gcalDayEvs = showGcalEvents ? gcalEvents.filter(e => e.data === dateStr) : [];
+  const dayEvs    = [...appEvs, ...gcalDayEvs].sort((a, b) => (a.ora||'').localeCompare(b.ora||''));
+  if (!dayEvs.length) {
     container.innerHTML = '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessun appuntamento.</p>';
     return;
   }
-  container.innerHTML = dayEvs.map(ev => `
-    <div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
+  container.innerHTML = dayEvs.map(ev => {
+    if (ev._isGcal) {
+      return `<div class="event-item gcal">
+        <div class="event-title"><span class="gcal-g">G</span> ${esc(ev.titolo||'Evento')}</div>
+        <div class="event-time">⏰ ${ev.ora||'Tutto il giorno'}</div>
+        <div style="font-size:11px;color:#6366F1;margin-top:2px;font-style:italic">Google Calendar personale</div>
+      </div>`;
+    }
+    return `<div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
       <div class="event-title">${esc(ev.paziente||ev.titolo||'Appuntamento')}</div>
       <div class="event-time">⏰ ${ev.ora||'--:--'} ${ev.durata?'('+ev.durata+' min)':''}</div>
       <div style="font-size:11px;color:var(--slate-l);margin-top:2px">${TIPO_LABELS[ev.tipo]||ev.tipo}</div>
       ${ev.note?`<div style="font-size:11px;color:var(--slate-l);margin-top:3px;font-style:italic">${esc(ev.note)}</div>`:''}
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderUpcoming() {
@@ -835,6 +864,7 @@ function changeMonth(delta) {
   if(currentMonth < 0) { currentMonth = 11; currentYear--; }
   if(currentMonth > 11) { currentMonth = 0; currentYear++; }
   renderCalendar();
+  if (gcalTokenValid() && showGcalEvents) fetchGCalEventsForMonth();
 }
 
 function goToday() {
@@ -946,6 +976,8 @@ let GOOGLE_CLIENT_ID = ''; // loaded from /api/config at startup
 let gcalToken = null;
 let gcalTokenExpiry = 0;
 let gcalTokenClient = null;
+let gcalEvents = []; // events fetched from personal Google Calendar
+let showGcalEvents = JSON.parse(localStorage.getItem('gcal_show_personal') ?? 'true');
 
 function gcalTokenValid() {
   return gcalToken && Date.now() < gcalTokenExpiry;
@@ -978,8 +1010,8 @@ function initGoogleCalendar(loginHint) {
   if (!GOOGLE_CLIENT_ID || typeof google === 'undefined' || !google.accounts) return;
   const cfg = {
     client_id: GOOGLE_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/calendar.events',
-    callback: (response) => {
+    scope: 'https://www.googleapis.com/auth/calendar',
+    callback: async (response) => {
       if (response.error) { toast('❌ Errore connessione Google Calendar', 'err'); return; }
       gcalToken = response.access_token;
       gcalTokenExpiry = Date.now() + (response.expires_in || 3600) * 1000;
@@ -989,6 +1021,7 @@ function initGoogleCalendar(loginHint) {
       toast('✅ Google Calendar connesso!', 'ok');
       // Sync all existing events that haven't been pushed to Google Calendar yet
       syncAllEventsToGCal();
+      await fetchGCalEventsForMonth();
     }
   };
   if (loginHint) cfg.login_hint = loginHint;
@@ -999,6 +1032,7 @@ function initGoogleCalendar(loginHint) {
     gcalToken = stored;
     gcalTokenExpiry = storedExpiry;
     updateGCalButton(true);
+    fetchGCalEventsForMonth();
   }
 }
 
@@ -1038,6 +1072,13 @@ function updateGCalButton(connected) {
       btn.classList.add('btn-ghost');
     }
   }
+  // Show/hide personal-calendar toggle button
+  const toggleBtn = document.getElementById('btn-gcal-toggle');
+  if (toggleBtn) {
+    toggleBtn.style.display = connected ? '' : 'none';
+    if (connected) updateGCalToggleBtn();
+  }
+  if (!connected) gcalEvents = [];
   // Keep modal button in sync if the modal is currently open
   const modalBtn = document.getElementById('btn-gcal-modal');
   const gcalStatus = document.getElementById('gcal-sync-status');
@@ -1111,6 +1152,68 @@ async function createGoogleCalendarEvent(ev, silent = false) {
     console.error('Google Calendar error:', e);
     if (!silent) toast('⚠️ Errore sincronizzazione Google Calendar', 'err');
     return null;
+  }
+}
+
+// Fetch personal Google Calendar events for the currently-displayed month
+// and store them in gcalEvents. Filters out events already synced from this app.
+async function fetchGCalEventsForMonth() {
+  if (!gcalTokenValid()) return;
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const lastDay  = new Date(currentYear, currentMonth + 1, 0);
+  const timeMin  = new Date(firstDay.getTime() - 7 * 24 * 3600 * 1000).toISOString();
+  const timeMax  = new Date(lastDay.getTime()  + 7 * 24 * 3600 * 1000).toISOString();
+  try {
+    const res = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime&maxResults=250`,
+      { headers: { Authorization: 'Bearer ' + gcalToken } }
+    );
+    if (!res.ok) {
+      if (res.status === 401) {
+        gcalToken = null; gcalTokenExpiry = 0;
+        sessionStorage.removeItem('gcal_token');
+        sessionStorage.removeItem('gcal_token_expiry');
+        updateGCalButton(false);
+      }
+      return;
+    }
+    const data = await res.json();
+    // Exclude events that originated from this app (already shown as regular events)
+    const ourGCalIds = new Set(Object.values(getGCalSyncedIds()));
+    gcalEvents = (data.items || [])
+      .filter(item => !ourGCalIds.has(item.id))
+      .map(item => ({
+        id: 'gcal_' + item.id,
+        gcal_id: item.id,
+        titolo: item.summary || 'Evento',
+        data: (item.start.dateTime || item.start.date || '').substring(0, 10),
+        ora: item.start.dateTime ? item.start.dateTime.substring(11, 16) : '',
+        _isGcal: true
+      }));
+    if (showGcalEvents) renderCalendar();
+  } catch(e) {
+    console.warn('fetchGCalEventsForMonth error:', e);
+  }
+}
+
+function toggleGcalEvents() {
+  showGcalEvents = !showGcalEvents;
+  localStorage.setItem('gcal_show_personal', JSON.stringify(showGcalEvents));
+  updateGCalToggleBtn();
+  renderCalendar();
+}
+
+function updateGCalToggleBtn() {
+  const btn = document.getElementById('btn-gcal-toggle');
+  if (!btn) return;
+  if (showGcalEvents) {
+    btn.textContent = '🗓️ Cal. personale: ✓';
+    btn.classList.add('btn-primary');
+    btn.classList.remove('btn-ghost');
+  } else {
+    btn.textContent = '🗓️ Cal. personale: ✗';
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-ghost');
   }
 }
 

@@ -155,6 +155,7 @@
   <button class="onc-tab" onclick="showOncTab('sintomi')">🤢 Sintomi e Gestione</button>
   <button class="onc-tab" onclick="showOncTab('lg')">📚 Linee Guida</button>
   <button class="onc-tab" onclick="showOncTab('piano')">🍽️ Piano Alimentare</button>
+  <button class="onc-tab" onclick="showOncTab('esempi')">📊 Esempi</button>
 </div>
 
 <!-- ══════════════════════════════════ -->
@@ -729,6 +730,13 @@
 
 </div><!-- end tab-piano -->
 
+<div class="onc-panel" id="tab-esempi">
+  <div class="alert-info alert-box">
+    <b>📊 Piani Alimentari in Oncologia — Esempi Giornalieri</b> — Seleziona il tipo di schema dietetico in base alla patologia oncologica e al target calorico. Le quantità si adattano automaticamente alle calorie selezionate.
+  </div>
+  <div id="pe-container-onc"></div>
+</div><!-- end tab-esempi -->
+
 </div></main>
 
 <div id="toast"></div>
@@ -942,7 +950,199 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (noteId) await loadNoteIfPresent();
     }
   } catch(e) { console.error('Init oncologia error:', e); }
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-onc', ONC_PE_CONFIG);
 });
+
+const ONC_PE_CONFIG = {
+  id: 'onc',
+  accentColor: '#7C3AED',
+  tipi: [
+    {id:'chemo',       nome:'Chemioterapia',       nomeEsteso:'Chemioterapia — Schema Standard',                  colore:'#7C3AED', coloreT:'#fff'},
+    {id:'cachessia',   nome:'Anti-Cachessia',       nomeEsteso:'Cachessia Oncologica — Alta Densità Calorica',     colore:'#DC2626', coloreT:'#fff'},
+    {id:'testa_collo', nome:'Testa/Collo',          nomeEsteso:'Ca. Testa e Collo — Disfagia (cibi morbidi)',      colore:'#0891B2', coloreT:'#fff'},
+    {id:'pelvi',       nome:'Radioterapia Pelvica', nomeEsteso:'Radioterapia Pelvica — Basso Residuo',             colore:'#059669', coloreT:'#fff'},
+    {id:'leucemia',    nome:'Leucemia/Neutropenia', nomeEsteso:'Leucemia / Neutropenia — Dieta a Basso Rischio',   colore:'#D97706', coloreT:'#fff'},
+  ],
+  kcals: [1400, 1600, 1800, 2000, 2200, 2400, 2600],
+  piani: {
+    chemo: {
+      kcal_base: 2083,
+      macros: {p:20, cho:50, g:30},
+      nota: 'Pasti piccoli e frequenti (5–6/die). Privilegiare proteine nobili (uova, pesce, latticini). Evitare cibi crudi di origine animale. Non mangiare abbondantemente nelle 2h prima dell\'infusione. Idratazione ≥2L/die.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte intero', qt:200, unit:'mL', kcal:130},
+          {nome:'Pane integrale tostato', qt:50, unit:'g', kcal:133},
+          {nome:'Ricotta fresca', qt:80, unit:'g', kcal:127},
+          {nome:'Miele', qt:10, unit:'g', kcal:32}
+        ]},
+        {nome:'Spuntino mattino', emoji:'🍎', items:[
+          {nome:'Yogurt greco intero', qt:150, unit:'g', kcal:130},
+          {nome:'Noci sgusciate', qt:25, unit:'g', kcal:163}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta integrale', qt:80, unit:'g', kcal:280},
+          {nome:'Merluzzo al forno', qt:120, unit:'g', kcal:100},
+          {nome:'Verdure miste al vapore', qt:150, unit:'g', kcal:45},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        ]},
+        {nome:'Spuntino pomeriggio', emoji:'🍊', items:[
+          {nome:'Banana matura', qt:100, unit:'g', kcal:89},
+          {nome:'Mandorle', qt:20, unit:'g', kcal:117}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Petto di pollo al vapore', qt:150, unit:'g', kcal:165},
+          {nome:'Patate lesse', qt:150, unit:'g', kcal:117},
+          {nome:'Fagiolini bolliti', qt:150, unit:'g', kcal:42},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino sera', emoji:'🌜', items:[
+          {nome:'Latte intero tiepido', qt:200, unit:'mL', kcal:130},
+          {nome:'Biscotti secchi', qt:20, unit:'g', kcal:87}
+        ]}
+      ]
+    },
+    cachessia: {
+      kcal_base: 2477,
+      macros: {p:25, cho:45, g:30},
+      nota: 'Massima densità calorico-proteica. Arricchire ogni piatto con olio EVO, parmigiano, frutta secca. Frazionare in 6–7 mini-pasti. Valutare ONS (1–2 flaconi/die) se apporto orale insufficiente. Monitorare peso 2×/settimana.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte intero arricchito (+ polvere latte)', qt:200, unit:'mL', kcal:200},
+          {nome:'Pane bianco', qt:60, unit:'g', kcal:160},
+          {nome:'Burro', qt:10, unit:'g', kcal:74},
+          {nome:'Marmellata', qt:20, unit:'g', kcal:55}
+        ]},
+        {nome:'Spuntino mattino', emoji:'🧀', items:[
+          {nome:'Yogurt intero', qt:150, unit:'g', kcal:92},
+          {nome:'Frutta secca mista', qt:30, unit:'g', kcal:196}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta all\'uovo', qt:80, unit:'g', kcal:280},
+          {nome:'Ragù di carne bianca', qt:80, unit:'g', kcal:130},
+          {nome:'Parmigiano Reggiano', qt:15, unit:'g', kcal:58},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino pomeriggio', emoji:'🍮', items:[
+          {nome:'Budino al latte', qt:150, unit:'g', kcal:165},
+          {nome:'Banana', qt:100, unit:'g', kcal:89}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Salmone al forno', qt:150, unit:'g', kcal:275},
+          {nome:'Riso bianco', qt:80, unit:'g', kcal:280},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        ]},
+        {nome:'Spuntino sera', emoji:'🌜', items:[
+          {nome:'Latte intero caldo', qt:200, unit:'mL', kcal:130},
+          {nome:'Pane tostato con miele', qt:30, unit:'g', kcal:97}
+        ]}
+      ]
+    },
+    testa_collo: {
+      kcal_base: 2030,
+      macros: {p:18, cho:52, g:30},
+      nota: 'Tutti i cibi devono essere morbidi, tritati o in purea (IDDSI 4–6). Evitare cibi duri, croccanti, filamentosi, acidi, speziati. Adeguare la consistenza alla fase deglutitoria. Valutare SNG/PEG se apporto orale insufficiente (<60% del fabbisogno per >5 giorni).',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Crema di cereali (polentina di mais)', qt:200, unit:'g', kcal:140},
+          {nome:'Latte intero', qt:150, unit:'mL', kcal:98},
+          {nome:'Ricotta cremosa', qt:80, unit:'g', kcal:127},
+          {nome:'Miele', qt:15, unit:'g', kcal:48}
+        ]},
+        {nome:'Frullato mattino', emoji:'🥤', items:[
+          {nome:'Banana', qt:120, unit:'g', kcal:107},
+          {nome:'Yogurt intero', qt:150, unit:'g', kcal:92},
+          {nome:'Latte intero', qt:100, unit:'mL', kcal:65}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Crema di verdure passata', qt:250, unit:'mL', kcal:80},
+          {nome:'Purea di patate', qt:180, unit:'g', kcal:150},
+          {nome:'Merluzzo bollito frullato', qt:100, unit:'g', kcal:83},
+          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        ]},
+        {nome:'Spuntino pomeriggio', emoji:'🍮', items:[
+          {nome:'Gelato alla crema', qt:100, unit:'g', kcal:200},
+          {nome:'Mousse di frutta', qt:120, unit:'g', kcal:100}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Risotto mantecato', qt:80, unit:'g', kcal:310},
+          {nome:'Petto di pollo tritato fine', qt:120, unit:'g', kcal:132},
+          {nome:'Parmigiano Reggiano', qt:15, unit:'g', kcal:58},
+          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        ]}
+      ]
+    },
+    pelvi: {
+      kcal_base: 1834,
+      macros: {p:18, cho:57, g:25},
+      nota: 'Dieta a basso residuo per ridurre la stimolazione intestinale durante la radioterapia pelvica. Senza lattosio. Evitare fibre, legumi, frutta e verdura cruda, cibi flatulenti. Reidratare adeguatamente (≥2L/die). Riprendere la dieta normale gradualmente post-trattamento.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte senza lattosio', qt:200, unit:'mL', kcal:130},
+          {nome:'Riso soffiato', qt:40, unit:'g', kcal:148},
+          {nome:'Miele', qt:15, unit:'g', kcal:48}
+        ]},
+        {nome:'Spuntino mattino', emoji:'☕', items:[
+          {nome:'Cracker di riso', qt:30, unit:'g', kcal:120},
+          {nome:'Prosciutto cotto', qt:50, unit:'g', kcal:66}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Riso bianco', qt:80, unit:'g', kcal:280},
+          {nome:'Pollo arrosto ben cotto', qt:150, unit:'g', kcal:225},
+          {nome:'Carote bollite', qt:100, unit:'g', kcal:30},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino pomeriggio', emoji:'🍪', items:[
+          {nome:'Biscotti secchi senza lattosio', qt:30, unit:'g', kcal:130},
+          {nome:'Succo di mela non acido', qt:150, unit:'mL', kcal:70}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Pasta bianca', qt:80, unit:'g', kcal:280},
+          {nome:'Merluzzo al forno', qt:130, unit:'g', kcal:108},
+          {nome:'Zucchine ben cotte', qt:100, unit:'g', kcal:21},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]}
+      ]
+    },
+    leucemia: {
+      kcal_base: 2197,
+      macros: {p:20, cho:50, g:30},
+      nota: 'Dieta a basso contenuto microbico per neutropenia (PMN <500/μL). TUTTI i cibi cotti (T>70°C). Vietati: crudi animali, formaggi erborinati, latte crudo, germogli, insalate pronte, acqua del rubinetto. Preferire confezioni sigillate monoporzione. Massima igiene delle mani.',
+      pasti: [
+        {nome:'Colazione', emoji:'🌅', items:[
+          {nome:'Latte UHT pastorizzato', qt:200, unit:'mL', kcal:130},
+          {nome:'Pane in cassetta (confezione sigillata)', qt:60, unit:'g', kcal:155},
+          {nome:'Marmellata (vasetto sigillato)', qt:20, unit:'g', kcal:55},
+          {nome:'Formaggio morbido pastorizzato', qt:40, unit:'g', kcal:100}
+        ]},
+        {nome:'Spuntino mattino', emoji:'🍌', items:[
+          {nome:'Banana sbucciata al momento', qt:120, unit:'g', kcal:107},
+          {nome:'Crackers sigillati', qt:25, unit:'g', kcal:102}
+        ]},
+        {nome:'Pranzo', emoji:'🍽️', items:[
+          {nome:'Pasta di semola', qt:80, unit:'g', kcal:280},
+          {nome:'Ragù di carne ben cotta', qt:80, unit:'g', kcal:140},
+          {nome:'Parmigiano pastorizzato', qt:15, unit:'g', kcal:58},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino pomeriggio', emoji:'🍮', items:[
+          {nome:'Yogurt UHT pastorizzato', qt:150, unit:'g', kcal:92},
+          {nome:'Frutta in scatola pastorizzata', qt:100, unit:'g', kcal:80}
+        ]},
+        {nome:'Cena', emoji:'🌙', items:[
+          {nome:'Riso bianco ben cotto', qt:80, unit:'g', kcal:280},
+          {nome:'Uova strapazzate ben cotte', qt:2, unit:'uova', kcal:160},
+          {nome:'Verdure surgelate cotte a vapore', qt:150, unit:'g', kcal:50},
+          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        ]},
+        {nome:'Spuntino sera', emoji:'🌜', items:[
+          {nome:'Latte UHT caldo', qt:200, unit:'mL', kcal:130},
+          {nome:'Fette biscottate sigillate', qt:25, unit:'g', kcal:100}
+        ]}
+      ]
+    }
+  }
+};
 </script>
 </body>
 </html>

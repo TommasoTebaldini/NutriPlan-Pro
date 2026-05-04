@@ -243,7 +243,279 @@ const LANGS = {
   }
 };
 
-// ── Helpers ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// LABEL & CONTENT TRANSLATIONS (text-matching)
+// Covers ALL admin pages without per-element data-i18n
+// ═══════════════════════════════════════════════════
+const LABEL_TR = {
+  en: {
+    // ── Common buttons ──
+    'Salva in Cartella':'Save to File','Salva Scheda':'Save Record','Salva':'Save',
+    'Stampa':'Print','Reset':'Reset','Calcola':'Calculate','Annulla':'Cancel',
+    'Modifica':'Edit','Elimina':'Delete','Chiudi':'Close','Invia':'Send',
+    'Conferma':'Confirm','Carica':'Load','Esporta':'Export',
+    'Nuova Sessione':'New Session','Nuovo':'New','Aggiungi':'Add',
+    'Salva in Database':'Save to Database',
+    // ── Common labels ──
+    'Nome e Cognome':'Full Name','Nome':'First Name','Cognome':'Last Name',
+    'Data di nascita':'Date of birth','Data valutazione':'Assessment date',
+    'Data':'Date','Sesso':'Sex','Maschio':'Male','Femmina':'Female',
+    'Nota / Titolo sessione':'Session note / title',
+    'Nota':'Note','Note':'Notes','Note cliniche':'Clinical notes',
+    'Note al piano':'Plan notes','Note aggiuntive':'Additional notes',
+    // ── Anthropometric ──
+    'Dati Antropometrici':'Anthropometric Data',
+    'Peso attuale (kg)':'Current weight (kg)','Peso (kg)':'Weight (kg)',
+    'Altezza (cm)':'Height (cm)','BMI (auto)':'BMI (auto)',
+    'Circ. vita (cm)':'Waist circumference (cm)','Circ. fianchi (cm)':'Hip circumference (cm)',
+    'WHR (auto)':'WHR (auto)','Peso ideale (kg)':'Ideal weight (kg)',
+    'Peso aggiustato (kg)':'Adjusted weight (kg)','Massa grassa (%)':'Body fat (%)',
+    'Massa magra (kg)':'Lean mass (kg)','Peso target (kg)':'Target weight (kg)',
+    'Peso massimo storico (kg)':'Maximum historical weight (kg)',
+    'Peso minimo storico (kg)':'Minimum historical weight (kg)',
+    'Peso a 18 anni (kg)':'Weight at 18 years (kg)',
+    'Vita (cm)':'Waist (cm)','Fianchi (cm)':'Hips (cm)','Collo (cm)':'Neck (cm)',
+    'Ombelico (cm)':'Umbilicus (cm)','Addome (cm)':'Abdomen (cm)',
+    'Torace (cm)':'Chest (cm)','Spalla (cm)':'Shoulder (cm)',
+    'Braccio rilassato dx (cm)':'Right arm relaxed (cm)','Braccio rilassato sx (cm)':'Left arm relaxed (cm)',
+    'Braccio contratto dx (cm)':'Right arm contracted (cm)','Braccio contratto sx (cm)':'Left arm contracted (cm)',
+    'Braccio (cm)':'Arm (cm)','Avambraccio (cm)':'Forearm (cm)','Polso (cm)':'Wrist (cm)',
+    'Coscia dx (cm)':'Right thigh (cm)','Coscia sx (cm)':'Left thigh (cm)',
+    'Polpaccio dx (cm)':'Right calf (cm)','Polpaccio sx (cm)':'Left calf (cm)',
+    'Caviglia (cm)':'Ankle (cm)',
+    // ── Clinical section headers ──
+    'Dati Anagrafici':'Personal Data','Storia del Peso':'Weight History',
+    'Anamnesi Clinica':'Clinical Anamnesis','Stile di Vita':'Lifestyle',
+    'Comorbidità':'Comorbidities','Fabbisogno Energetico':'Energy Requirements',
+    'Obiettivo Ponderale':'Weight Goal','Prescrizione Dietetica':'Dietary Prescription',
+    'Piano Alimentare Tipo':'Sample Meal Plan','Follow-up e Monitoraggio':'Follow-up & Monitoring',
+    'Profilo Comportamentale':'Behavioural Profile','Motivazione e Supporto':'Motivation & Support',
+    'Valutazione Nutrizionale':'Nutritional Assessment',
+    'Composizione Corporea':'Body Composition','Circonferenze':'Circumferences',
+    'Pliche Cutanee':'Skinfold Measurements','Metabolismo Basale':'Basal Metabolic Rate',
+    'TDEE e Fabbisogno':'TDEE & Requirements','Macronutrienti':'Macronutrients',
+    'Micronutrienti':'Micronutrients','Esami di Laboratorio':'Laboratory Tests',
+    'Diario Alimentare':'Food Diary','Questionario Alimentare':'Food Questionnaire',
+    'Diagnosi Nutrizionale':'Nutritional Diagnosis','Piano di Intervento':'Intervention Plan',
+    'Monitoraggio':'Monitoring','Integrazione raccomandata':'Recommended supplementation',
+    // ── Tabs ──
+    'Valutazione':'Assessment','Fabbisogno':'Requirements','Comportamento':'Behaviour',
+    'Piano Alimentare':'Meal Plan','Linee Guida':'Guidelines','Esempi':'Examples',
+    'Anamnesi':'Anamnesis','Obiettivi':'Goals','Follow-up':'Follow-up',
+    'Diagnosi':'Diagnosis','Intervento':'Intervention','Monitoraggio':'Monitoring',
+    'Pliche':'Skinfolds','Laboratorio':'Laboratory','Schema Dietetico':'Dietary Scheme',
+    'Dieta':'Diet','Calcolo':'Calculation','Protocollo':'Protocol',
+    'Terapia':'Therapy','Supplementazione':'Supplementation','Idratazione':'Hydration',
+    'Attività Fisica':'Physical Activity','BIA':'BIA',
+    // ── Form fields ──
+    'Età (anni)':'Age (years)','Eta (anni)':'Age (years)',
+    'Livello attività fisica':'Physical activity level',
+    'Formula':'Formula','Deficit calorico (kcal/die)':'Caloric deficit (kcal/day)',
+    'TDEE calcolato (kcal/die)':'Calculated TDEE (kcal/day)',
+    'Kcal/die prescritte':'Prescribed kcal/day',
+    'Proteine (g o %)':'Proteins (g or %)','CHO (g o %)':'Carbs (g or %)',
+    'Grassi (g o %)':'Fats (g or %)','Fibra (g/die)':'Fibre (g/day)',
+    'Liquidi (mL/die)':'Fluids (mL/day)','Distribuzione pasti':'Meal distribution',
+    'Alimenti da privilegiare':'Foods to favour','Alimenti da limitare / evitare':'Foods to limit / avoid',
+    'Frequenza follow-up':'Follow-up frequency','Parametri da monitorare':'Parameters to monitor',
+    'Prossima visita':'Next appointment','Obiettivi terapeutici':'Therapeutic goals',
+    'Farmaci in corso':'Current medications','Patologie':'Medical conditions',
+    'Allergie / Intolleranze':'Allergies / Intolerances','Chirurgia bariatrica precedente':'Previous bariatric surgery',
+    'Livello di attività':'Activity level','Limitazioni fisiche':'Physical limitations',
+    'Orari pasti abituali':'Usual meal times','Note su stile di vita':'Lifestyle notes',
+    // ── Obesity specific ──
+    'Storia del peso':'Weight history','Variazione peso recente':'Recent weight change',
+    'Durata attuale del sovrappeso (anni)':'Current overweight duration (years)',
+    'Tentativi dimagrimento precedenti':'Previous weight loss attempts',
+    'Approccio dietetico':'Dietary approach',
+    'Calo di peso atteso (kg)':'Expected weight loss (kg)',
+    'Tempo stimato (settimane)':'Estimated time (weeks)',
+    'Pattern alimentare problematico':'Problematic eating pattern',
+    'Trigger emotivi':'Emotional triggers','Alimenti a rischio':'Risk foods',
+    'Consumo alcol':'Alcohol consumption','Pasti fuori casa':'Meals outside home',
+    'Competenze in cucina':'Cooking skills','Obiettivo del paziente':'Patient goal',
+    'Strategie coping':'Coping strategies',
+    // ── Diabetes specific ──
+    'Tipo di diabete':'Type of diabetes','Terapia farmacologica':'Drug therapy',
+    'Glicemia a digiuno':'Fasting blood glucose','HbA1c (%)':'HbA1c (%)',
+    'Glicemia postprandiale':'Postprandial blood glucose','Complicanze':'Complications',
+    'Frequenza automonitoraggio':'Self-monitoring frequency',
+    'Pressione arteriosa':'Blood pressure','Colesterolo totale':'Total cholesterol',
+    'LDL':'LDL','HDL':'HDL','Trigliceridi':'Triglycerides',
+    // ── Cancer / Oncology ──
+    'Tipo di tumore':'Cancer type','Stadio':'Stage','Terapia oncologica':'Oncology therapy',
+    'Effetti collaterali':'Side effects','Stato nutrizionale':'Nutritional status',
+    'Rischio nutrizionale':'Nutritional risk','Screening nutrizionale':'Nutritional screening',
+    'Nausea':'Nausea','Vomito':'Vomiting','Mucositi':'Mucositis','Xerostomia':'Xerostomia',
+    'Disfagia':'Dysphagia','Diarrea':'Diarrhea','Costipazione':'Constipation',
+    'Perdita di appetito':'Loss of appetite','Perdita di peso':'Weight loss',
+    'Cachessia':'Cachexia','Sarcopenia':'Sarcopenia',
+    // ── Sports nutrition ──
+    'Sport praticato':'Sport practised','Livello agonistico':'Competitive level',
+    'Frequenza allenamenti':'Training frequency','Durata sessione':'Session duration',
+    'Obiettivo sportivo':'Sports goal','Peso gara (kg)':'Race weight (kg)',
+    'Fase di preparazione':'Preparation phase',
+    // ── Renal ──
+    'Stadio IRC':'CKD stage','GFR stimato':'Estimated GFR',
+    'Proteinuria':'Proteinuria','In dialisi':'On dialysis',
+    'Tipo di dialisi':'Type of dialysis','Restrizione proteica':'Protein restriction',
+    'Restrizione potassio':'Potassium restriction','Restrizione fosforo':'Phosphorus restriction',
+    'Restrizione liquidi':'Fluid restriction','Restrizione sodio':'Sodium restriction',
+    // ── Pediatrics ──
+    'Età del bambino':'Child age','Percentile peso':'Weight percentile',
+    'Percentile altezza':'Height percentile','Percentile BMI':'BMI percentile',
+    'Allattamento':'Breastfeeding','Svezzamento':'Weaning','Alimentazione complementare':'Complementary feeding',
+    // ── Dysphagia ──
+    'Grado di disfagia':'Dysphagia grade','Consistenza liquidi':'Liquid consistency',
+    'Consistenza solidi':'Solid consistency','Rischio inalazione':'Aspiration risk',
+    // ── BIA ──
+    'Impedenza (Ω)':'Impedance (Ω)','Reattanza (Ω)':'Reactance (Ω)',
+    'Angolo di fase (°)':'Phase angle (°)','Acqua totale corporea (L)':'Total body water (L)',
+    'Acqua intracellulare (L)':'Intracellular water (L)','Acqua extracellulare (L)':'Extracellular water (L)',
+    'Massa grassa (kg)':'Fat mass (kg)','Massa cellulare (BCM, kg)':'Cell mass (BCM, kg)',
+    'Massa minerale ossea (kg)':'Bone mineral mass (kg)',
+    // ── Common assessment ──
+    'Pliche tricipitale (mm)':'Triceps skinfold (mm)','Pliche bicipitale (mm)':'Biceps skinfold (mm)',
+    'Pliche sottoscapolare (mm)':'Subscapular skinfold (mm)','Pliche sovrailiaca (mm)':'Suprailiac skinfold (mm)',
+    'Pliche addominale (mm)':'Abdominal skinfold (mm)','Pliche coscia (mm)':'Thigh skinfold (mm)',
+    'Pliche polpaccio (mm)':'Calf skinfold (mm)',
+    // ── Lab values ──
+    'Glicemia (mg/dL)':'Blood glucose (mg/dL)','Emoglobina (g/dL)':'Haemoglobin (g/dL)',
+    'Ematocrito (%)':'Haematocrit (%)','Ferritina (ng/mL)':'Ferritin (ng/mL)',
+    'Vitamina D (ng/mL)':'Vitamin D (ng/mL)','Vitamina B12 (pg/mL)':'Vitamin B12 (pg/mL)',
+    'Folati (ng/mL)':'Folate (ng/mL)','Creatinina (mg/dL)':'Creatinine (mg/dL)',
+    'Urea (mg/dL)':'Urea (mg/dL)','Albumina (g/dL)':'Albumin (g/dL)',
+    'Prealbumina (mg/dL)':'Prealbumin (mg/dL)','Proteina C reattiva (mg/L)':'C-reactive protein (mg/L)',
+    'TSH (mUI/L)':'TSH (mUI/L)','Insulina (μU/mL)':'Insulin (μU/mL)',
+    // ── Follow-up options ──
+    'Settimanale (fase intensiva)':'Weekly (intensive phase)',
+    'Quindicinale':'Fortnightly','Mensile':'Monthly',
+    'Bimestrale (fase mantenimento)':'Bimonthly (maintenance phase)',
+    // ── Topbar / misc ──
+    'Cartella Paziente':'Patient File','Nessuna cartella':'No file',
+    'Seleziona cartella':'Select file','Nuova cartella':'New file',
+    'Piano Alimentare Personalizzato':'Personalised Meal Plan',
+    'Scegli un modello di partenza:':'Choose a starting template:',
+    'Mostra textarea modificabile':'Show editable text area',
+    'Calcola Fabbisogno':'Calculate Requirements',
+    'Genera Piano':'Generate Plan','Apri in Piano Alimentare':'Open in Meal Plan',
+    'Stampa piano':'Print plan',
+  },
+  de: {
+    // ── Common buttons ──
+    'Salva in Cartella':'In Akte speichern','Salva Scheda':'Karte speichern','Salva':'Speichern',
+    'Stampa':'Drucken','Reset':'Zurücksetzen','Calcola':'Berechnen','Annulla':'Abbrechen',
+    'Modifica':'Bearbeiten','Elimina':'Löschen','Chiudi':'Schließen','Invia':'Senden',
+    'Conferma':'Bestätigen','Carica':'Laden','Esporta':'Exportieren',
+    'Nuova Sessione':'Neue Sitzung','Nuovo':'Neu','Aggiungi':'Hinzufügen',
+    'Salva in Database':'In Datenbank speichern',
+    // ── Common labels ──
+    'Nome e Cognome':'Vollständiger Name','Nome':'Vorname','Cognome':'Nachname',
+    'Data di nascita':'Geburtsdatum','Data valutazione':'Bewertungsdatum',
+    'Data':'Datum','Sesso':'Geschlecht','Maschio':'Männlich','Femmina':'Weiblich',
+    'Nota / Titolo sessione':'Sitzungsnotiz / Titel',
+    'Nota':'Notiz','Note':'Notizen','Note cliniche':'Klinische Notizen',
+    'Note al piano':'Plananmerkungen','Note aggiuntive':'Zusätzliche Notizen',
+    // ── Anthropometric ──
+    'Dati Antropometrici':'Anthropometrische Daten',
+    'Peso attuale (kg)':'Aktuelles Gewicht (kg)','Peso (kg)':'Gewicht (kg)',
+    'Altezza (cm)':'Körpergröße (cm)','BMI (auto)':'BMI (auto)',
+    'Circ. vita (cm)':'Taillenumfang (cm)','Circ. fianchi (cm)':'Hüftumfang (cm)',
+    'WHR (auto)':'WHR (auto)','Peso ideale (kg)':'Idealgewicht (kg)',
+    'Peso aggiustato (kg)':'Angepasstes Gewicht (kg)','Massa grassa (%)':'Körperfett (%)',
+    'Massa magra (kg)':'Magermasse (kg)','Peso target (kg)':'Zielgewicht (kg)',
+    'Peso massimo storico (kg)':'Maximales Historisches Gewicht (kg)',
+    'Peso minimo storico (kg)':'Minimales Historisches Gewicht (kg)',
+    'Peso a 18 anni (kg)':'Gewicht mit 18 Jahren (kg)',
+    'Vita (cm)':'Taille (cm)','Fianchi (cm)':'Hüfte (cm)','Collo (cm)':'Hals (cm)',
+    'Ombelico (cm)':'Nabel (cm)','Addome (cm)':'Bauch (cm)',
+    'Torace (cm)':'Brust (cm)','Spalla (cm)':'Schulter (cm)',
+    'Braccio rilassato dx (cm)':'Rechter Arm entspannt (cm)','Braccio rilassato sx (cm)':'Linker Arm entspannt (cm)',
+    'Braccio contratto dx (cm)':'Rechter Arm angespannt (cm)','Braccio contratto sx (cm)':'Linker Arm angespannt (cm)',
+    'Braccio (cm)':'Arm (cm)','Avambraccio (cm)':'Unterarm (cm)','Polso (cm)':'Handgelenk (cm)',
+    'Coscia dx (cm)':'Rechter Oberschenkel (cm)','Coscia sx (cm)':'Linker Oberschenkel (cm)',
+    'Polpaccio dx (cm)':'Rechte Wade (cm)','Polpaccio sx (cm)':'Linke Wade (cm)',
+    'Caviglia (cm)':'Knöchel (cm)',
+    // ── Clinical section headers ──
+    'Dati Anagrafici':'Persönliche Daten','Storia del Peso':'Gewichtsgeschichte',
+    'Anamnesi Clinica':'Klinische Anamnese','Stile di Vita':'Lebensstil',
+    'Comorbidità':'Komorbiditäten','Fabbisogno Energetico':'Energiebedarf',
+    'Obiettivo Ponderale':'Gewichtsziel','Prescrizione Dietetica':'Ernährungsvorschrift',
+    'Piano Alimentare Tipo':'Beispiel-Ernährungsplan','Follow-up e Monitoraggio':'Nachsorge & Überwachung',
+    'Profilo Comportamentale':'Verhaltensprofil','Motivazione e Supporto':'Motivation & Unterstützung',
+    'Valutazione Nutrizionale':'Ernährungsbewertung',
+    'Composizione Corporea':'Körperzusammensetzung','Circonferenze':'Körperumfänge',
+    'Pliche Cutanee':'Hautfaltenmessung','Metabolismo Basale':'Grundumsatz',
+    'TDEE e Fabbisogno':'TDEE & Bedarf','Macronutrienti':'Makronährstoffe',
+    'Micronutrienti':'Mikronährstoffe','Esami di Laboratorio':'Laboruntersuchungen',
+    'Diario Alimentare':'Ernährungstagebuch','Questionario Alimentare':'Ernährungsfragebogen',
+    'Diagnosi Nutrizionale':'Ernährungsdiagnose','Piano di Intervento':'Interventionsplan',
+    'Monitoraggio':'Überwachung','Integrazione raccomandata':'Empfohlene Ergänzung',
+    // ── Tabs ──
+    'Valutazione':'Bewertung','Fabbisogno':'Bedarf','Comportamento':'Verhalten',
+    'Piano Alimentare':'Ernährungsplan','Linee Guida':'Leitlinien','Esempi':'Beispiele',
+    'Anamnesi':'Anamnese','Obiettivi':'Ziele','Follow-up':'Nachsorge',
+    'Diagnosi':'Diagnose','Intervento':'Intervention','Monitoraggio':'Überwachung',
+    'Pliche':'Hautfalten','Laboratorio':'Labor','Schema Dietetico':'Ernährungsschema',
+    'Dieta':'Diät','Calcolo':'Berechnung','Protocollo':'Protokoll',
+    'Terapia':'Therapie','Supplementazione':'Supplementierung','Idratazione':'Hydratation',
+    'Attività Fisica':'Körperliche Aktivität','BIA':'BIA',
+    // ── Form fields ──
+    'Età (anni)':'Alter (Jahre)','Eta (anni)':'Alter (Jahre)',
+    'Livello attività fisica':'Niveau körperlicher Aktivität',
+    'Formula':'Formel','Deficit calorico (kcal/die)':'Kaloriendefizit (kcal/Tag)',
+    'TDEE calcolato (kcal/die)':'Berechneter TDEE (kcal/Tag)',
+    'Kcal/die prescritte':'Verordnete kcal/Tag',
+    'Proteine (g o %)':'Proteine (g oder %)','CHO (g o %)':'Kohlenhydrate (g oder %)',
+    'Grassi (g o %)':'Fette (g oder %)','Fibra (g/die)':'Ballaststoffe (g/Tag)',
+    'Liquidi (mL/die)':'Flüssigkeit (mL/Tag)','Distribuzione pasti':'Mahlzeitenverteilung',
+    'Alimenti da privilegiare':'Bevorzugte Lebensmittel',
+    'Alimenti da limitare / evitare':'Zu begrenzende / meidende Lebensmittel',
+    'Frequenza follow-up':'Nachsorgfrequenz','Parametri da monitorare':'Zu überwachende Parameter',
+    'Prossima visita':'Nächster Termin','Obiettivi terapeutici':'Therapeutische Ziele',
+    'Farmaci in corso':'Aktuelle Medikamente','Patologie':'Erkrankungen',
+    'Allergie / Intolleranze':'Allergien / Unverträglichkeiten',
+    'Chirurgia bariatrica precedente':'Frühere bariatrische Chirurgie',
+    'Livello di attività':'Aktivitätsniveau','Limitazioni fisiche':'Körperliche Einschränkungen',
+    'Orari pasti abituali':'Übliche Mahlzeiten-Zeiten','Note su stile di vita':'Lebensstil-Notizen',
+    // ── Obesity specific ──
+    'Storia del peso':'Gewichtsgeschichte','Variazione peso recente':'Aktuelle Gewichtsveränderung',
+    'Durata attuale del sovrappeso (anni)':'Aktuelle Übergewichtsdauer (Jahre)',
+    'Tentativi dimagrimento precedenti':'Frühere Abnehmversuche',
+    'Approccio dietetico':'Ernährungsansatz',
+    'Calo di peso atteso (kg)':'Erwarteter Gewichtsverlust (kg)',
+    'Tempo stimato (settimane)':'Geschätzte Zeit (Wochen)',
+    'Pattern alimentare problematico':'Problematisches Essverhalten',
+    'Trigger emotivi':'Emotionale Auslöser','Alimenti a rischio':'Risikonahrungsmittel',
+    'Consumo alcol':'Alkoholkonsum','Pasti fuori casa':'Mahlzeiten außer Haus',
+    'Competenze in cucina':'Kochkenntnisse','Obiettivo del paziente':'Patientenziel',
+    'Strategie coping':'Bewältigungsstrategien',
+    // ── Diabetes specific ──
+    'Tipo di diabete':'Diabetestyp','Terapia farmacologica':'Medikamentöse Therapie',
+    'Glicemia a digiuno':'Nüchternblutzucker','HbA1c (%)':'HbA1c (%)',
+    'Glicemia postprandiale':'Postprandialer Blutzucker','Complicanze':'Komplikationen',
+    'Frequenza automonitoraggio':'Selbstüberwachungsfrequenz',
+    'Pressione arteriosa':'Blutdruck','Colesterolo totale':'Gesamtcholesterin',
+    'LDL':'LDL','HDL':'HDL','Trigliceridi':'Triglyzeride',
+    // ── Follow-up options ──
+    'Settimanale (fase intensiva)':'Wöchentlich (intensive Phase)',
+    'Quindicinale':'Zweiwöchentlich','Mensile':'Monatlich',
+    'Bimestrale (fase mantenimento)':'Zweimonatlich (Erhaltungsphase)',
+    // ── Topbar / misc ──
+    'Cartella Paziente':'Patientenakte','Nessuna cartella':'Keine Akte',
+    'Seleziona cartella':'Akte auswählen','Nuova cartella':'Neue Akte',
+    'Piano Alimentare Personalizzato':'Personalisierter Ernährungsplan',
+    'Scegli un modello di partenza:':'Wählen Sie eine Vorlage:',
+    'Mostra textarea modificabile':'Bearbeitbares Textfeld anzeigen',
+    'Calcola Fabbisogno':'Bedarf berechnen',
+    'Genera Piano':'Plan erstellen','Apri in Piano Alimentare':'In Ernährungsplan öffnen',
+    'Stampa piano':'Plan drucken',
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
 function getLang() { return localStorage.getItem('nlang') || 'it'; }
 
 function t(key) {
@@ -256,7 +528,7 @@ function setLang(lang) {
   location.reload();
 }
 
-// ── Apply data-i18n attributes ────────────────────────
+// ─── Apply data-i18n attributes ───────────────────
 function applyLang() {
   const l = getLang();
   document.documentElement.lang = l;
@@ -274,9 +546,87 @@ function applyLang() {
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     document.title = t(el.dataset.i18nTitle);
   });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const val = t(el.dataset.i18nHtml);
+    if (val && val !== el.dataset.i18nHtml) el.innerHTML = val;
+  });
+  // Show/hide language-specific blocks
+  document.querySelectorAll('[data-only-lang]').forEach(el => {
+    el.style.display = (el.dataset.onlyLang === l) ? '' : 'none';
+  });
 }
 
-// ── Translate sidebar nav items (works on all 28 app pages) ──
+// ─── Smart label translation (no per-element markup) ──
+function translateLabels() {
+  const l = getLang();
+  if (l === 'it') return;
+  const dict = LABEL_TR[l];
+  if (!dict) return;
+
+  // Translate <label> elements
+  document.querySelectorAll('label').forEach(el => {
+    const txt = el.childNodes[0]?.nodeType === 3
+      ? el.childNodes[0].textContent.trim()
+      : el.textContent.trim();
+    if (dict[txt]) {
+      if (el.childNodes[0]?.nodeType === 3) {
+        el.childNodes[0].textContent = dict[txt];
+      } else {
+        el.textContent = dict[txt];
+      }
+    }
+  });
+
+  // Translate <h3> section headers (strip emoji prefix for lookup)
+  document.querySelectorAll('.calc-box h3, .card-section h3, .guide-section h4, section h3').forEach(el => {
+    const full = el.textContent.trim();
+    // strip leading emoji/symbols for lookup
+    const bare = full.replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}\s📊📏📈🧮🧠🍽️📚🩺⚖️🥗📅🔬💊🏋️💼🎯🩸💉🧪📋👤📐🏃🎽]+/u, '').trim();
+    if (dict[bare]) {
+      // Replace text but keep the emoji prefix
+      const prefix = full.slice(0, full.length - bare.length);
+      el.textContent = prefix + dict[bare];
+    } else if (dict[full]) {
+      el.textContent = dict[full];
+    }
+  });
+
+  // Translate tab buttons
+  document.querySelectorAll('.ob-tab, .onc-tab, .val-tab, .spe-tab, .tab-btn, [class$="-tab"]:not(.btn)').forEach(el => {
+    const full = el.textContent.trim();
+    const bare = full.replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}\s📊📏📈🧮🧠🍽️📚🩺⚖️🥗📅🔬💊🏋️💼🎯]+/u, '').trim();
+    if (dict[bare]) {
+      const prefix = full.slice(0, full.length - bare.length);
+      el.textContent = prefix + dict[bare];
+    }
+  });
+
+  // Translate key buttons (save, print, reset, calculate)
+  document.querySelectorAll('button.btn, .btn').forEach(el => {
+    const full = el.textContent.trim();
+    const bare = full.replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\s💾🖨️🔄🧮✅❌📤📥📂]+/u, '').trim();
+    if (dict[bare]) {
+      const prefix = full.slice(0, full.length - bare.length);
+      el.textContent = prefix + dict[bare];
+    } else if (dict[full]) {
+      el.textContent = dict[full];
+    }
+  });
+
+  // Translate <select> <option> texts
+  document.querySelectorAll('select option').forEach(el => {
+    const txt = el.textContent.trim();
+    if (dict[txt]) el.textContent = dict[txt];
+  });
+
+  // Translate topbar / page headers
+  document.querySelectorAll('.tbar-title, .page-title, .section-title').forEach(el => {
+    const txt = el.textContent.trim();
+    if (dict[txt]) el.textContent = dict[txt];
+  });
+}
+
+// ─── Translate sidebar nav items (works on all app pages) ──
 function translateSidebarNav() {
   const navMap = {
     'app.html':'nav.piano_alimentare','pazienti.html':'nav.cartelle_pazienti',
@@ -290,8 +640,8 @@ function translateSidebarNav() {
     'studi.html':'nav.studi','ai.html':'nav.ai','agenda.html':'nav.agenda',
     'ecm.html':'nav.ecm','database.html':'nav.database','integratori.html':'nav.integratori',
     'ricette.html':'nav.ricette','admin.html':'nav.admin',
+    'obesita.html':'nav.patologie','oncologia.html':'nav.patologie',
   };
-  // Known section labels in all 3 languages → key
   const secMap = {};
   ['it','en','de'].forEach(l => {
     ['nav.sec.piano','nav.sec.comunicazione','nav.sec.specialistica','nav.sec.strumenti','nav.sec.database'].forEach(k => {
@@ -324,12 +674,14 @@ function translateSidebarNav() {
   if (profileBtn) profileBtn.innerHTML = '👤 ' + t('nav.profilo');
 }
 
-// ── Language switcher widget ──────────────────────────
+// ─── Language switcher widget ──────────────────────
 function initLangSwitcher(container) {
   if (document.getElementById('lang-switcher')) return;
   const el = container
     || document.querySelector('.tbar-actions')
-    || document.querySelector('.pp-topbar');
+    || document.querySelector('.pp-topbar')
+    || document.querySelector('#topbar .tbar-right')
+    || document.querySelector('#topbar');
   if (!el) return;
   const lang = getLang();
   const div = document.createElement('div');
@@ -350,9 +702,10 @@ function initLangSwitcher(container) {
   el.appendChild(div);
 }
 
-// ── Auto-init on DOMContentLoaded ─────────────────────
+// ─── Auto-init on DOMContentLoaded ───────────────────
 document.addEventListener('DOMContentLoaded', function() {
   applyLang();
   translateSidebarNav();
+  translateLabels();
   initLangSwitcher();
 });

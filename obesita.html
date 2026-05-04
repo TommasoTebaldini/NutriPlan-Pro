@@ -155,6 +155,7 @@
   <button class="ob-tab" onclick="showObTab('comportamento')">🧠 Comportamento</button>
   <button class="ob-tab" onclick="showObTab('piano')">🍽️ Piano Alimentare</button>
   <button class="ob-tab" onclick="showObTab('lg')">📚 Linee Guida</button>
+  <button class="ob-tab" onclick="showObTab('esempi')">📊 Esempi</button>
 </div>
 
 <!-- ══════════════════════════════════ -->
@@ -501,13 +502,23 @@
 
   <div class="calc-box">
     <h3>🥗 Piano Alimentare Tipo</h3>
-    <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap" class="no-print">
-      <button class="btn btn-ghost btn-sm" onclick="generaPianoOb('bilanciata')">Bilanciata</button>
-      <button class="btn btn-ghost btn-sm" onclick="generaPianoOb('proteica')">Alto proteica</button>
-      <button class="btn btn-ghost btn-sm" onclick="generaPianoOb('mediterranea')">Mediterranea</button>
+    <div class="no-print" style="margin-bottom:14px">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Scegli un modello di partenza:</div>
+      <div id="ob-piano-btns" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="ob-piano-btn" onclick="generaPianoOb('bilanciata')" data-tipo="bilanciata" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:2px solid #E5E7EB;background:white;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;color:var(--text-primary)">⚖️ Bilanciata</button>
+        <button class="ob-piano-btn" onclick="generaPianoOb('proteica')" data-tipo="proteica" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:2px solid #E5E7EB;background:white;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;color:var(--text-primary)">💪 Alto Proteica</button>
+        <button class="ob-piano-btn" onclick="generaPianoOb('mediterranea')" data-tipo="mediterranea" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:2px solid #E5E7EB;background:white;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;color:var(--text-primary)">🫒 Mediterranea</button>
+        <button class="ob-piano-btn" onclick="generaPianoOb('lowcarb')" data-tipo="lowcarb" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:2px solid #E5E7EB;background:white;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;color:var(--text-primary)">🥑 Low-Carb</button>
+      </div>
     </div>
-    <div class="nf"><label>Piano alimentare (modifica liberamente)</label>
-      <textarea id="p-piano" rows="14" style="font-family:monospace;font-size:12px" placeholder="Colazione: ...&#10;Spuntino: ...&#10;Pranzo: ...&#10;Merenda: ...&#10;Cena: ..."></textarea></div>
+    <div id="ob-piano-cards" style="display:none;margin-bottom:14px"></div>
+    <details style="margin-bottom:12px">
+      <summary style="cursor:pointer;font-size:12.5px;color:#EA580C;font-weight:600;padding:6px 0;user-select:none">✏️ Mostra textarea modificabile</summary>
+      <div class="nf" style="margin-top:8px">
+        <label>Piano alimentare (modifica liberamente)</label>
+        <textarea id="p-piano" rows="14" style="font-family:monospace;font-size:12px" placeholder="Colazione: ...&#10;Spuntino: ...&#10;Pranzo: ...&#10;Merenda: ...&#10;Cena: ..."></textarea>
+      </div>
+    </details>
     <div class="nf" style="margin-top:8px"><label>Alimenti da privilegiare</label>
       <textarea id="p-privilegiare" rows="2" placeholder="es. verdure, legumi, proteine magre, cereali integrali, frutta a basso IG..."></textarea></div>
     <div class="nf" style="margin-top:8px"><label>Alimenti da limitare / evitare</label>
@@ -536,6 +547,16 @@
   </div>
 
 </div><!-- end tab-piano -->
+
+<!-- ══════════════════════════════════ -->
+<!-- TAB 6: ESEMPI                     -->
+<!-- ══════════════════════════════════ -->
+<div class="ob-panel" id="tab-esempi">
+  <div class="alert-info alert-box">
+    <b>📊 Piani Alimentari nell'Obesità — Esempi Giornalieri</b> — Seleziona il tipo di approccio dietetico e il target calorico. Le quantità si adattano automaticamente. Esporta direttamente nel Piano Alimentare per personalizzare.
+  </div>
+  <div id="pe-container-ob"></div>
+</div><!-- end tab-esempi -->
 
 <!-- ══════════════════════════════════ -->
 <!-- TAB 5: LINEE GUIDA               -->
@@ -752,6 +773,133 @@ function calcObiettivoOb(pesoCorrente, deficitPerGiorno) {
   }
 }
 
+// ── Strutturato per visual cards ──────────────────
+const _pianiObStruct = {
+  bilanciata: {
+    nome: 'Bilanciata', colore: '#EA580C', coloreT: '#FFF7ED', kcal_ref: 1400,
+    macros: { p: '20%', cho: '50%', g: '30%' },
+    nota: 'Approccio equilibrato indicato per obesità I–II. Deficit moderato di 500–600 kcal/die.',
+    pasti: [
+      { nome: 'Colazione', emoji: '☀️', items: [
+        { nome: 'Latte parzialmente scremato', qt: 200, unit: 'mL', kcal: 68 },
+        { nome: 'Pane integrale', qt: 40, unit: 'g', kcal: 96 },
+        { nome: 'Marmellata senza zucchero', qt: 15, unit: 'g', kcal: 22 },
+        { nome: 'Caffè / tè senza zucchero', qt: 1, unit: 'tazza', kcal: 2 }
+      ]},
+      { nome: 'Spuntino mattina', emoji: '🍎', items: [
+        { nome: 'Frutta fresca (mela/pera/agrumi)', qt: 150, unit: 'g', kcal: 70 }
+      ]},
+      { nome: 'Pranzo', emoji: '🍝', items: [
+        { nome: 'Pasta integrale', qt: 60, unit: 'g', kcal: 200 },
+        { nome: 'Petto di pollo alla griglia', qt: 100, unit: 'g', kcal: 110 },
+        { nome: 'Verdure crude/cotte', qt: 200, unit: 'g', kcal: 40 },
+        { nome: 'Olio EVO', qt: 7, unit: 'g', kcal: 62 }
+      ]},
+      { nome: 'Spuntino pomeriggio', emoji: '🥛', items: [
+        { nome: 'Yogurt greco 0%', qt: 125, unit: 'g', kcal: 66 }
+      ]},
+      { nome: 'Cena', emoji: '🐟', items: [
+        { nome: 'Pesce al forno', qt: 150, unit: 'g', kcal: 150 },
+        { nome: 'Verdure miste', qt: 200, unit: 'g', kcal: 40 },
+        { nome: 'Pane integrale', qt: 30, unit: 'g', kcal: 72 },
+        { nome: 'Olio EVO', qt: 7, unit: 'g', kcal: 62 }
+      ]}
+    ]
+  },
+  proteica: {
+    nome: 'Alto Proteica', colore: '#7C3AED', coloreT: '#F5F3FF', kcal_ref: 1400,
+    macros: { p: '35%', cho: '35%', g: '30%' },
+    nota: 'Schema iperproteico (1.2–1.6 g/kg peso ideale). Preserva la massa magra durante il dimagrimento.',
+    pasti: [
+      { nome: 'Colazione', emoji: '☀️', items: [
+        { nome: 'Uova intere', qt: 2, unit: 'unità', kcal: 140 },
+        { nome: 'Yogurt greco proteico', qt: 150, unit: 'g', kcal: 90 },
+        { nome: 'Pane integrale', qt: 25, unit: 'g', kcal: 60 }
+      ]},
+      { nome: 'Spuntino mattina', emoji: '🥜', items: [
+        { nome: 'Fiocchi di latte', qt: 100, unit: 'g', kcal: 85 },
+        { nome: 'Mandorle', qt: 15, unit: 'g', kcal: 90 }
+      ]},
+      { nome: 'Pranzo', emoji: '🍗', items: [
+        { nome: 'Petto di pollo/tacchino', qt: 150, unit: 'g', kcal: 165 },
+        { nome: 'Riso integrale cotto', qt: 80, unit: 'g', kcal: 112 },
+        { nome: 'Verdure abbondanti', qt: 200, unit: 'g', kcal: 40 },
+        { nome: 'Olio EVO', qt: 5, unit: 'g', kcal: 44 }
+      ]},
+      { nome: 'Spuntino pomeriggio', emoji: '🥗', items: [
+        { nome: 'Ricotta magra', qt: 80, unit: 'g', kcal: 88 },
+        { nome: 'Frutta fresca', qt: 100, unit: 'g', kcal: 47 }
+      ]},
+      { nome: 'Cena', emoji: '🐟', items: [
+        { nome: 'Pesce magro / manzo magro', qt: 180, unit: 'g', kcal: 180 },
+        { nome: 'Verdure cotte abbondanti', qt: 200, unit: 'g', kcal: 40 },
+        { nome: 'Pane integrale', qt: 20, unit: 'g', kcal: 48 },
+        { nome: 'Olio EVO', qt: 5, unit: 'g', kcal: 44 }
+      ]}
+    ]
+  },
+  mediterranea: {
+    nome: 'Mediterranea', colore: '#059669', coloreT: '#ECFDF5', kcal_ref: 1500,
+    macros: { p: '18%', cho: '52%', g: '30%' },
+    nota: 'Aderenza al modello mediterraneo. Ottimo per comorbidità cardiovascolari e metaboliche.',
+    pasti: [
+      { nome: 'Colazione', emoji: '☀️', items: [
+        { nome: 'Latte vegetale/vaccino', qt: 150, unit: 'mL', kcal: 50 },
+        { nome: 'Pane integrale', qt: 40, unit: 'g', kcal: 96 },
+        { nome: 'Olio EVO', qt: 5, unit: 'g', kcal: 44 },
+        { nome: 'Frutta fresca', qt: 100, unit: 'g', kcal: 47 }
+      ]},
+      { nome: 'Spuntino mattina', emoji: '🌰', items: [
+        { nome: 'Frutta fresca o noci (10 g)', qt: 150, unit: 'g', kcal: 75 }
+      ]},
+      { nome: 'Pranzo', emoji: '🍝', items: [
+        { nome: 'Pasta integrale al sugo verdure', qt: 70, unit: 'g', kcal: 234 },
+        { nome: 'Legumi', qt: 50, unit: 'g cotti', kcal: 55 },
+        { nome: 'Insalata mista', qt: 150, unit: 'g', kcal: 25 },
+        { nome: 'Olio EVO', qt: 10, unit: 'g', kcal: 88 }
+      ]},
+      { nome: 'Spuntino pomeriggio', emoji: '🥛', items: [
+        { nome: 'Yogurt bianco intero', qt: 125, unit: 'g', kcal: 100 }
+      ]},
+      { nome: 'Cena', emoji: '🐟', items: [
+        { nome: 'Pesce (salmone/sgombro/merluzzo)', qt: 150, unit: 'g', kcal: 180 },
+        { nome: 'Verdure miste al forno', qt: 200, unit: 'g', kcal: 60 },
+        { nome: 'Pane integrale', qt: 30, unit: 'g', kcal: 72 },
+        { nome: 'Olio EVO', qt: 7, unit: 'g', kcal: 62 }
+      ]}
+    ]
+  },
+  lowcarb: {
+    nome: 'Low-Carb', colore: '#D97706', coloreT: '#FFFBEB', kcal_ref: 1300,
+    macros: { p: '30%', cho: '20%', g: '50%' },
+    nota: 'Riduzione dei carboidrati a <90 g/die. Utile per insulino-resistenza e diabete tipo 2.',
+    pasti: [
+      { nome: 'Colazione', emoji: '☀️', items: [
+        { nome: 'Uova intere', qt: 2, unit: 'unità', kcal: 140 },
+        { nome: 'Avocado', qt: 50, unit: 'g', kcal: 80 },
+        { nome: 'Caffè senza zucchero', qt: 1, unit: 'tazza', kcal: 2 }
+      ]},
+      { nome: 'Spuntino mattina', emoji: '🥜', items: [
+        { nome: 'Noci / mandorle', qt: 25, unit: 'g', kcal: 155 }
+      ]},
+      { nome: 'Pranzo', emoji: '🥗', items: [
+        { nome: 'Petto di pollo / tonno al naturale', qt: 150, unit: 'g', kcal: 165 },
+        { nome: 'Verdure a foglia verde', qt: 200, unit: 'g', kcal: 30 },
+        { nome: 'Feta o parmigiano', qt: 30, unit: 'g', kcal: 90 },
+        { nome: 'Olio EVO', qt: 10, unit: 'g', kcal: 88 }
+      ]},
+      { nome: 'Spuntino pomeriggio', emoji: '🧀', items: [
+        { nome: 'Fiocchi di latte', qt: 100, unit: 'g', kcal: 85 }
+      ]},
+      { nome: 'Cena', emoji: '🥩', items: [
+        { nome: 'Salmone / carne rossa magra', qt: 180, unit: 'g', kcal: 290 },
+        { nome: 'Zucchine / broccoli / cavolfiore', qt: 250, unit: 'g', kcal: 60 },
+        { nome: 'Olio EVO', qt: 10, unit: 'g', kcal: 88 }
+      ]}
+    ]
+  }
+};
+
 // ── Genera piani template ──────────────────────────
 const _pianiOb = {
   bilanciata: `COLAZIONE:
@@ -822,6 +970,52 @@ CENA:
 function generaPianoOb(tipo) {
   const el = document.getElementById('p-piano');
   if (el && _pianiOb[tipo]) { el.value = _pianiOb[tipo]; scheduleAutoSave_ob(); }
+
+  // Update button active states
+  document.querySelectorAll('.ob-piano-btn').forEach(b => {
+    const active = b.dataset.tipo === tipo;
+    b.style.borderColor = active ? '#EA580C' : '#E5E7EB';
+    b.style.background = active ? '#FFF7ED' : 'white';
+    b.style.color = active ? '#EA580C' : 'var(--text-primary)';
+  });
+
+  // Render visual cards
+  const s = _pianiObStruct[tipo];
+  const cardsEl = document.getElementById('ob-piano-cards');
+  if (!s || !cardsEl) return;
+  cardsEl.style.display = 'block';
+
+  const totalKcal = s.pasti.reduce((sum, p) => sum + p.items.reduce((s2, i) => s2 + i.kcal, 0), 0);
+  let html = `<div style="background:linear-gradient(135deg,${s.colore},${s.colore}CC);border-radius:12px;padding:14px 18px;color:white;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:3px">${s.nome}</div>
+      <div style="font-size:12px;opacity:.9">${s.nota}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:22px;font-weight:800">${totalKcal} kcal</div>
+      <div style="font-size:11px;opacity:.85">P ${s.macros.p} · CHO ${s.macros.cho} · G ${s.macros.g}</div>
+    </div>
+  </div>
+  <div style="display:grid;gap:8px">`;
+
+  for (const pasto of s.pasti) {
+    const pastoKcal = pasto.items.reduce((sum, i) => sum + i.kcal, 0);
+    html += `<div style="background:${s.coloreT};border:1.5px solid ${s.colore}33;border-radius:10px;padding:10px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-weight:700;font-size:13.5px;color:${s.colore}">${pasto.emoji} ${pasto.nome}</span>
+        <span style="font-size:11.5px;font-weight:600;background:${s.colore};color:white;padding:2px 8px;border-radius:10px">${pastoKcal} kcal</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">`;
+    for (const item of pasto.items) {
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:2px 0;border-bottom:1px solid ${s.colore}22">
+        <span style="color:var(--text-primary)">${item.nome}</span>
+        <span style="color:${s.colore};font-weight:600;white-space:nowrap;margin-left:8px">${item.qt} ${item.unit}</span>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+  html += `</div>`;
+  cardsEl.innerHTML = html;
 }
 
 // ── Auto-save ──────────────────────────────────────
@@ -1016,6 +1210,170 @@ async function loadNoteIfPresent() {
   } catch(e) { console.warn('Errore caricamento dati obesita:', e); }
 }
 
+const OB_PE_CONFIG = {
+  id: 'ob',
+  accentColor: '#EA580C',
+  tipi: [
+    { id: 'bilanciata',  nome: 'Bilanciata',      nomeEsteso: 'Ipocalorica Bilanciata',  colore: '#EA580C', coloreT: '#FFF7ED' },
+    { id: 'proteica',    nome: 'Alto Proteica',    nomeEsteso: 'Schema Iperproteico',     colore: '#7C3AED', coloreT: '#F5F3FF' },
+    { id: 'vlcd',        nome: 'VLCD',             nomeEsteso: 'Very Low Calorie Diet',   colore: '#DC2626', coloreT: '#FEF2F2' },
+    { id: 'mediterranea',nome: 'Mediterranea',     nomeEsteso: 'Stile Mediterraneo',      colore: '#059669', coloreT: '#ECFDF5' },
+    { id: 'lowcarb',     nome: 'Low-Carb',         nomeEsteso: 'Basso Contenuto Glucidico', colore: '#D97706', coloreT: '#FFFBEB' }
+  ],
+  kcals: [800, 1000, 1200, 1400, 1600, 1800, 2000],
+  piani: {
+    bilanciata: {
+      kcal_base: 1400,
+      macros: { p: '20%', cho: '50%', g: '30%' },
+      nota: 'Deficit di 500–600 kcal/die. Indicata per obesità I–II con buona aderenza. Preserva la qualità nutrizionale.',
+      pasti: [
+        { nome: 'Colazione', emoji: '☀️', items: [
+          { nome: 'Latte p.scremato', qt: 200, unit: 'mL', kcal: 68 },
+          { nome: 'Pane integrale', qt: 40, unit: 'g', kcal: 96 },
+          { nome: 'Marmellata s.z.', qt: 15, unit: 'g', kcal: 22 },
+          { nome: 'Caffè/tè s.z.', qt: 1, unit: 'tazza', kcal: 2 }
+        ]},
+        { nome: 'Spuntino mattina', emoji: '🍎', items: [
+          { nome: 'Frutta fresca', qt: 150, unit: 'g', kcal: 70 }
+        ]},
+        { nome: 'Pranzo', emoji: '🍝', items: [
+          { nome: 'Pasta integrale', qt: 60, unit: 'g', kcal: 200 },
+          { nome: 'Petto di pollo', qt: 100, unit: 'g', kcal: 110 },
+          { nome: 'Verdure', qt: 200, unit: 'g', kcal: 40 },
+          { nome: 'Olio EVO', qt: 7, unit: 'g', kcal: 62 }
+        ]},
+        { nome: 'Spuntino', emoji: '🥛', items: [
+          { nome: 'Yogurt greco 0%', qt: 125, unit: 'g', kcal: 66 }
+        ]},
+        { nome: 'Cena', emoji: '🐟', items: [
+          { nome: 'Pesce al forno', qt: 150, unit: 'g', kcal: 150 },
+          { nome: 'Verdure miste', qt: 200, unit: 'g', kcal: 40 },
+          { nome: 'Pane integrale', qt: 30, unit: 'g', kcal: 72 },
+          { nome: 'Olio EVO', qt: 7, unit: 'g', kcal: 62 }
+        ]}
+      ]
+    },
+    proteica: {
+      kcal_base: 1400,
+      macros: { p: '35%', cho: '35%', g: '30%' },
+      nota: 'Schema iperproteico (≥1.2 g/kg peso ideale). Preserva la massa magra. Indicato nelle prime fasi di perdita peso.',
+      pasti: [
+        { nome: 'Colazione', emoji: '☀️', items: [
+          { nome: 'Uova intere', qt: 2, unit: 'unità', kcal: 140 },
+          { nome: 'Yogurt greco proteico', qt: 150, unit: 'g', kcal: 90 },
+          { nome: 'Pane integrale', qt: 25, unit: 'g', kcal: 60 }
+        ]},
+        { nome: 'Spuntino mattina', emoji: '🥜', items: [
+          { nome: 'Fiocchi di latte', qt: 100, unit: 'g', kcal: 85 },
+          { nome: 'Mandorle', qt: 15, unit: 'g', kcal: 90 }
+        ]},
+        { nome: 'Pranzo', emoji: '🍗', items: [
+          { nome: 'Petto di pollo', qt: 150, unit: 'g', kcal: 165 },
+          { nome: 'Riso integrale cotto', qt: 80, unit: 'g', kcal: 112 },
+          { nome: 'Verdure', qt: 200, unit: 'g', kcal: 40 },
+          { nome: 'Olio EVO', qt: 5, unit: 'g', kcal: 44 }
+        ]},
+        { nome: 'Spuntino', emoji: '🥗', items: [
+          { nome: 'Ricotta magra', qt: 80, unit: 'g', kcal: 88 },
+          { nome: 'Frutta fresca', qt: 100, unit: 'g', kcal: 47 }
+        ]},
+        { nome: 'Cena', emoji: '🐟', items: [
+          { nome: 'Pesce magro', qt: 180, unit: 'g', kcal: 180 },
+          { nome: 'Verdure cotte', qt: 200, unit: 'g', kcal: 40 },
+          { nome: 'Pane integrale', qt: 20, unit: 'g', kcal: 48 },
+          { nome: 'Olio EVO', qt: 5, unit: 'g', kcal: 44 }
+        ]}
+      ]
+    },
+    vlcd: {
+      kcal_base: 800,
+      macros: { p: '35%', cho: '35%', g: '30%' },
+      nota: 'VLCD (<800 kcal/die): solo sotto stretto controllo medico. Indicata per obesità grave (BMI≥35) prima di chirurgia o come induzione. Durata max 12–16 settimane.',
+      pasti: [
+        { nome: 'Colazione', emoji: '☀️', items: [
+          { nome: 'Sostituto pasto (shaker)', qt: 1, unit: 'bustina', kcal: 200 },
+          { nome: 'Caffè/tè s.z.', qt: 1, unit: 'tazza', kcal: 2 }
+        ]},
+        { nome: 'Spuntino mattina', emoji: '🥦', items: [
+          { nome: 'Verdure crude a volontà', qt: 100, unit: 'g', kcal: 20 }
+        ]},
+        { nome: 'Pranzo', emoji: '🍽️', items: [
+          { nome: 'Sostituto pasto (shaker)', qt: 1, unit: 'bustina', kcal: 200 },
+          { nome: 'Brodo vegetale', qt: 200, unit: 'mL', kcal: 10 }
+        ]},
+        { nome: 'Spuntino', emoji: '🥦', items: [
+          { nome: 'Verdure crude', qt: 100, unit: 'g', kcal: 20 }
+        ]},
+        { nome: 'Cena', emoji: '🐟', items: [
+          { nome: 'Petto di pollo/pesce magro', qt: 120, unit: 'g', kcal: 130 },
+          { nome: 'Verdure al vapore', qt: 200, unit: 'g', kcal: 40 },
+          { nome: 'Olio EVO', qt: 5, unit: 'g', kcal: 44 }
+        ]}
+      ]
+    },
+    mediterranea: {
+      kcal_base: 1500,
+      macros: { p: '18%', cho: '52%', g: '30%' },
+      nota: 'Aderenza al pattern mediterraneo. Ottimo per comorbidità cardiovascolari, dislipidemie, sindrome metabolica.',
+      pasti: [
+        { nome: 'Colazione', emoji: '☀️', items: [
+          { nome: 'Latte/bevanda vegetale', qt: 150, unit: 'mL', kcal: 50 },
+          { nome: 'Pane integrale', qt: 40, unit: 'g', kcal: 96 },
+          { nome: 'Olio EVO', qt: 5, unit: 'g', kcal: 44 },
+          { nome: 'Frutta fresca', qt: 100, unit: 'g', kcal: 47 }
+        ]},
+        { nome: 'Spuntino mattina', emoji: '🌰', items: [
+          { nome: 'Frutta / noci miste', qt: 150, unit: 'g', kcal: 75 }
+        ]},
+        { nome: 'Pranzo', emoji: '🍝', items: [
+          { nome: 'Pasta integrale', qt: 70, unit: 'g', kcal: 234 },
+          { nome: 'Legumi cotti', qt: 50, unit: 'g', kcal: 55 },
+          { nome: 'Insalata mista', qt: 150, unit: 'g', kcal: 25 },
+          { nome: 'Olio EVO', qt: 10, unit: 'g', kcal: 88 }
+        ]},
+        { nome: 'Spuntino', emoji: '🥛', items: [
+          { nome: 'Yogurt bianco intero', qt: 125, unit: 'g', kcal: 100 }
+        ]},
+        { nome: 'Cena', emoji: '🐟', items: [
+          { nome: 'Pesce (salmone/sgombro)', qt: 150, unit: 'g', kcal: 180 },
+          { nome: 'Verdure al forno', qt: 200, unit: 'g', kcal: 60 },
+          { nome: 'Pane integrale', qt: 30, unit: 'g', kcal: 72 },
+          { nome: 'Olio EVO', qt: 7, unit: 'g', kcal: 62 }
+        ]}
+      ]
+    },
+    lowcarb: {
+      kcal_base: 1300,
+      macros: { p: '30%', cho: '20%', g: '50%' },
+      nota: 'CHO <90 g/die. Utile per insulino-resistenza e DM2. Migliora glicemia e trigliceridi nelle prime settimane.',
+      pasti: [
+        { nome: 'Colazione', emoji: '☀️', items: [
+          { nome: 'Uova intere', qt: 2, unit: 'unità', kcal: 140 },
+          { nome: 'Avocado', qt: 50, unit: 'g', kcal: 80 },
+          { nome: 'Caffè s.z.', qt: 1, unit: 'tazza', kcal: 2 }
+        ]},
+        { nome: 'Spuntino mattina', emoji: '🥜', items: [
+          { nome: 'Noci / mandorle', qt: 25, unit: 'g', kcal: 155 }
+        ]},
+        { nome: 'Pranzo', emoji: '🥗', items: [
+          { nome: 'Pollo / tonno al naturale', qt: 150, unit: 'g', kcal: 165 },
+          { nome: 'Verdure a foglia verde', qt: 200, unit: 'g', kcal: 30 },
+          { nome: 'Feta / parmigiano', qt: 30, unit: 'g', kcal: 90 },
+          { nome: 'Olio EVO', qt: 10, unit: 'g', kcal: 88 }
+        ]},
+        { nome: 'Spuntino', emoji: '🧀', items: [
+          { nome: 'Fiocchi di latte', qt: 100, unit: 'g', kcal: 85 }
+        ]},
+        { nome: 'Cena', emoji: '🥩', items: [
+          { nome: 'Salmone / carne magra', qt: 180, unit: 'g', kcal: 290 },
+          { nome: 'Zucchine / broccoli', qt: 250, unit: 'g', kcal: 60 },
+          { nome: 'Olio EVO', qt: 10, unit: 'g', kcal: 88 }
+        ]}
+      ]
+    }
+  }
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const ok = await checkAuth();
@@ -1032,6 +1390,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('main')?.addEventListener('input', scheduleAutoSave_ob);
   document.getElementById('main')?.addEventListener('change', scheduleAutoSave_ob);
   window.addEventListener('beforeunload', autoSavePage_ob);
+  if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-ob', OB_PE_CONFIG);
 });
 </script>
 </body>

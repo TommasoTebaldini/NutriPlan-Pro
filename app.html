@@ -1858,7 +1858,15 @@ function stampaCompatta() {
 
 function stampaSettimanale() {
   const lyt = getActivePianoLayout();
-  document.getElementById('weekly-print-area').innerHTML = _buildWeeklyHTML(lyt);
+  const nDays = giorni.length;
+  const mealOrderTmp = [];
+  giorni.forEach(g => g.meals.forEach(m => { if (!mealOrderTmp.includes(m.nome)) mealOrderTmp.push(m.nome); }));
+  const nMeals = mealOrderTmp.length;
+  // Auto-zoom to fit A4 landscape (297×210mm usable area at ~96dpi)
+  const estW = 90 + nDays * 120;
+  const estH = 60 + nMeals * 46;
+  const zoom = Math.min(1, 1060 / estW, 750 / estH);
+  document.getElementById('weekly-print-area').innerHTML = _buildWeeklyHTML(lyt, zoom);
   document.body.dataset.printMode = 'weekly';
   setTimeout(() => {
     window.print();
@@ -1866,7 +1874,8 @@ function stampaSettimanale() {
   }, 400);
 }
 
-function _buildWeeklyHTML(lyt) {
+function _buildWeeklyHTML(lyt, zoom) {
+  zoom = zoom || 1;
   const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
   const dataPiano = document.getElementById('inp-data')?.value || '';
   const nomePiano = document.getElementById('inp-nome')?.value || '';
@@ -1877,7 +1886,7 @@ function _buildWeeklyHTML(lyt) {
     if (!mealOrder.includes(m.nome)) { mealOrder.push(m.nome); mealEmojis[m.nome] = m.emoji || ''; }
   }));
 
-  let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B">';
+  let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B;zoom:'+zoom+';width:100%">';
 
   // ── Header banner ──
   html += '<div style="background:linear-gradient(135deg,'+lyt.gradStart+','+lyt.gradEnd+');color:white;padding:14px 20px;border-radius:8px 8px 0 0;margin-bottom:0;display:flex;align-items:center;justify-content:space-between">';
@@ -1896,7 +1905,7 @@ function _buildWeeklyHTML(lyt) {
 
   // ── Table ──
   const cellBase = 'padding:7px 9px;font-size:10.5px;border:1px solid '+lyt.paleBorder+';vertical-align:top;';
-  html += '<table style="width:100%;border-collapse:collapse;font-size:10.5px;border:1.5px solid '+lyt.paleBorder+';border-top:none">';
+  html += '<table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:10.5px;border:1.5px solid '+lyt.paleBorder+';border-top:none">';
 
   // Header row — days
   html += '<thead><tr>';
@@ -1918,7 +1927,7 @@ function _buildWeeklyHTML(lyt) {
     giorni.forEach(g => {
       const meal = g.meals.find(m => m.nome === mNome);
       const foods = meal ? meal.items.filter(it => it.nome && it.nome.trim()).map(it => esc(it.nome)) : [];
-      html += '<td style="'+cellBase+'background:'+rowBg+';line-height:1.65;border-left:1.5px solid '+lyt.paleBorder+'">';
+      html += '<td style="'+cellBase+'background:'+rowBg+';line-height:1.65;border-left:1.5px solid '+lyt.paleBorder+';word-wrap:break-word;overflow-wrap:break-word">';
       html += foods.length ? foods.join('<br>') : '<span style="color:#CBD5E1">—</span>';
       html += '</td>';
     });

@@ -56,6 +56,20 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
 
+-- create_profile_for_new_user(): chiamata dal client (anon key) subito dopo signUp()
+-- SECURITY DEFINER + GRANT anon → inserisce il profilo bypassando RLS anche senza sessione
+CREATE OR REPLACE FUNCTION create_profile_for_new_user(uid UUID, user_email TEXT)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, approved, is_admin)
+  VALUES (uid, user_email, false, false)
+  ON CONFLICT (id) DO NOTHING;
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION create_profile_for_new_user(UUID, TEXT) TO anon, authenticated;
+
 -- is_linked_patient(): usata nelle policy del patient portal
 CREATE OR REPLACE FUNCTION is_linked_patient(cart_id UUID)
 RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS $$
@@ -123,6 +137,11 @@ END $$;
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='consent_template') THEN
     ALTER TABLE profiles ADD COLUMN consent_template TEXT;
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='sections_enabled') THEN
+    ALTER TABLE profiles ADD COLUMN sections_enabled TEXT[];
   END IF;
 END $$;
 

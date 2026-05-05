@@ -78,6 +78,34 @@ async function loadProfile() {
   if (el) el.textContent = data?.username || currentUser.email;
   const adminNav = document.getElementById('nav-admin');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
+
+  // Apply per-user section restrictions (non-admin only)
+  if (!isAdmin && data?.sections_enabled && Array.isArray(data.sections_enabled)) {
+    const allowed = data.sections_enabled;
+    const _SECTION_MAP = {
+      'paziente-sano.html':'paziente_sano','diabete.html':'diabete','pancreas.html':'pancreas',
+      'sport.html':'sport','dna.html':'dca','chetogenica.html':'chetogenica','renale.html':'renale',
+      'disfagia.html':'disfagia','oncologia.html':'oncologia','obesita.html':'obesita',
+      'pediatria.html':'pediatria','ristorazione.html':'ristorazione','linee-guida.html':'linee_guida',
+      'valutazione.html':'valutazione','ncpt.html':'ncpt','patologie.html':'patologie',
+      'consigli.html':'consigli','bia.html':'bia','questionari.html':'questionari',
+      'studi.html':'studi','ai.html':'ai','agenda.html':'agenda','ecm.html':'ecm',
+      'database.html':'database','integratori.html':'integratori','ricette.html':'ricette',
+    };
+    // Hide nav links for restricted sections
+    document.querySelectorAll('#sidebar a.nav-item[href]').forEach(link => {
+      const key = _SECTION_MAP[link.getAttribute('href')];
+      if (key && !allowed.includes(key)) link.style.display = 'none';
+    });
+    // Redirect if the current page is restricted
+    const currentPage = window.location.pathname.split('/').pop() || '';
+    const currentKey = _SECTION_MAP[currentPage];
+    if (currentKey && !allowed.includes(currentKey)) {
+      window.location.href = 'app.html';
+      return;
+    }
+  }
+
   // Load cartelle dropdown if present
   if (document.getElementById('inp-cartella')) loadCartelleDropdown();
   // Add profile button to sidebar if not present

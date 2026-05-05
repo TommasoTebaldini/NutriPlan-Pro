@@ -161,22 +161,15 @@ async function doRegister() {
     return;
   }
 
-  // If we have a session, try to create the profile (might fail if trigger already created it — that's OK)
+  // Always call the RPC to ensure the profile exists (works with anon key, no session needed)
+  await sb.rpc('create_profile_for_new_user', { uid: data.user.id, user_email: email });
+
   if (data.session) {
-    const {error: insErr} = await sb.from('profiles').insert({
-      id: data.user.id,
-      email: email,
-      approved: false,
-      is_admin: false
-    });
-    if (insErr && !insErr.message.includes('duplicate') && !insErr.message.includes('unique')) {
-      console.warn('Profile insert warning:', insErr.message);
-    }
     ok.textContent = '✅ Account creato! Reindirizzamento...';
     ok.classList.add('show');
     setTimeout(() => checkAndRedirect(data.user), 1200);
   } else {
-    // Email confirmation required — profile will be created by DB trigger or on first login
+    // Email confirmation required
     ok.textContent = '✅ Registrato! Controlla la tua email per confermare il tuo account.';
     ok.classList.add('show');
   }

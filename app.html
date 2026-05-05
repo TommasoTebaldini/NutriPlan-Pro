@@ -13,12 +13,37 @@
 <link rel="stylesheet" href="css/style.css">
 <script>
 (function(){
-  var LMAP={classico:{t:'#0F766E',tl:'#14B8A6',td:'#0C5F58'},elegante:{t:'#2563EB',tl:'#60A5FA',td:'#1D4ED8'},caldo:{t:'#D97706',tl:'#F59E0B',td:'#B45309'},fresco:{t:'#7C3AED',tl:'#A78BFA',td:'#6D28D9'}};
+  var L={
+    classico:{t:'#0F766E',tl:'#14B8A6',td:'#0C5F58',inp:'#FFFBEB',
+      h1:'linear-gradient(135deg,#92400E,#D97706)',h2:'linear-gradient(135deg,#065F46,#059669)',
+      h3:'linear-gradient(135deg,#1E3A8A,#2563EB)',h4:'linear-gradient(135deg,#4C1D95,#7C3AED)',
+      h5:'linear-gradient(135deg,#9D174D,#DB2777)',h6:'linear-gradient(135deg,#065F46,#0F766E)',
+      hd:'linear-gradient(135deg,#334155,#475569)'},
+    elegante:{t:'#2563EB',tl:'#60A5FA',td:'#1D4ED8',inp:'#EFF6FF',
+      h1:'linear-gradient(135deg,#1E40AF,#3B82F6)',h2:'linear-gradient(135deg,#0369A1,#0EA5E9)',
+      h3:'linear-gradient(135deg,#1D4ED8,#6366F1)',h4:'linear-gradient(135deg,#4338CA,#7C3AED)',
+      h5:'linear-gradient(135deg,#0369A1,#38BDF8)',h6:'linear-gradient(135deg,#1D4ED8,#60A5FA)',
+      hd:'linear-gradient(135deg,#1D4ED8,#6366F1)'},
+    caldo:{t:'#D97706',tl:'#F59E0B',td:'#B45309',inp:'#FFFBEB',
+      h1:'linear-gradient(135deg,#92400E,#D97706)',h2:'linear-gradient(135deg,#B45309,#F59E0B)',
+      h3:'linear-gradient(135deg,#7C2D12,#EA580C)',h4:'linear-gradient(135deg,#9A3412,#F97316)',
+      h5:'linear-gradient(135deg,#B91C1C,#EF4444)',h6:'linear-gradient(135deg,#92400E,#D97706)',
+      hd:'linear-gradient(135deg,#B45309,#F59E0B)'},
+    fresco:{t:'#7C3AED',tl:'#A78BFA',td:'#6D28D9',inp:'#F5F3FF',
+      h1:'linear-gradient(135deg,#5B21B6,#8B5CF6)',h2:'linear-gradient(135deg,#4C1D95,#6D28D9)',
+      h3:'linear-gradient(135deg,#6D28D9,#8B5CF6)',h4:'linear-gradient(135deg,#4C1D95,#7C3AED)',
+      h5:'linear-gradient(135deg,#BE185D,#EC4899)',h6:'linear-gradient(135deg,#5B21B6,#7C3AED)',
+      hd:'linear-gradient(135deg,#6D28D9,#8B5CF6)'}
+  };
   var id=localStorage.getItem('nutriplan_piano_layout')||'classico';
-  var l=LMAP[id]||LMAP.classico;
-  document.documentElement.style.setProperty('--teal',l.t);
-  document.documentElement.style.setProperty('--teal-l',l.tl);
-  document.documentElement.style.setProperty('--teal-d',l.td);
+  var l=L[id]||L.classico;
+  var s=document.createElement('style');
+  s.textContent='#main{'
+    +'--teal:'+l.t+';--teal-l:'+l.tl+';--teal-d:'+l.td
+    +';--ph1:'+l.h1+';--ph2:'+l.h2+';--ph3:'+l.h3
+    +';--ph4:'+l.h4+';--ph5:'+l.h5+';--ph6:'+l.h6
+    +';--phd:'+l.hd+';--pinp:'+l.inp+'}';
+  document.head.appendChild(s);
 })();
 </script>
 <style>
@@ -77,6 +102,11 @@
   body[data-print-mode="pdf-alldays"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+/* ── Piano section live theming ── */
+#pasti-container thead th{background:var(--teal)!important;color:white!important;}
+#pasti-container .tr-tot td{background:linear-gradient(90deg,var(--teal),var(--teal-l))!important;}
+#pasti-container .inp-food,#pasti-container .inp-qt{background:var(--pinp,#FFFBEB)!important;}
+#macro-bar-totale{border-color:var(--teal-l)!important;box-shadow:0 4px 20px color-mix(in srgb,var(--teal) 18%,transparent)!important;}
 </style>
 </head>
 <body>
@@ -156,7 +186,7 @@
 <div class="page-content">
 
   <!-- PAZIENTE HDR -->
-  <div class="no-print" style="background:linear-gradient(135deg,#0F766E,#0C5F58);border-radius:14px;padding:20px 24px;margin-bottom:14px;color:white;box-shadow:0 4px 18px rgba(15,118,110,.35)">
+  <div class="no-print" style="background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:14px;padding:20px 24px;margin-bottom:14px;color:white;box-shadow:0 4px 18px rgba(0,0,0,.18)">
     <!-- Banner top row: icon + title/subtitle + badge -->
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
       <div style="font-size:38px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));flex-shrink:0">📋</div>
@@ -533,13 +563,13 @@ function renderPiano() {
 
 function getMealColor(nome) {
   const n = (nome || '').toLowerCase();
-  if (n.includes('colaz')) return 'linear-gradient(135deg,#92400E,#D97706)';
-  if (n.includes('spunt') || n.includes('merend')) return 'linear-gradient(135deg,#065F46,#059669)';
-  if (n.includes('pranzo')) return 'linear-gradient(135deg,#1E3A8A,#2563EB)';
-  if (n.includes('cena')) return 'linear-gradient(135deg,#4C1D95,#7C3AED)';
-  if (n.includes('pre-') || n.includes('pre ')) return 'linear-gradient(135deg,#9D174D,#DB2777)';
-  if (n.includes('post') || n.includes('recup')) return 'linear-gradient(135deg,#065F46,#0F766E)';
-  return 'linear-gradient(135deg,var(--slate),var(--slate-m))';
+  if (n.includes('colaz')) return 'var(--ph1)';
+  if (n.includes('spunt') || n.includes('merend')) return 'var(--ph2)';
+  if (n.includes('pranzo')) return 'var(--ph3)';
+  if (n.includes('cena')) return 'var(--ph4)';
+  if (n.includes('pre-') || n.includes('pre ')) return 'var(--ph5)';
+  if (n.includes('post') || n.includes('recup')) return 'var(--ph6)';
+  return 'var(--phd)';
 }
 
 function buildCard(mi) {

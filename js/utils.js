@@ -59,14 +59,9 @@ async function loadProfile() {
   if (!currentUser) return;
   loadProfileError = null;
   let data = null;
-  const _profKey = 'dpp_profile_' + currentUser.id;
-  try { const c = sessionStorage.getItem(_profKey); if (c) data = JSON.parse(c); } catch(e) {}
-  if (!data) {
-    const { data: fetched, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
-    if (error) { console.warn('loadProfile error:', error.message); loadProfileError = error; }
-    data = fetched;
-    if (data) { try { sessionStorage.setItem(_profKey, JSON.stringify(data)); } catch(e) {} }
-  }
+  const { data: fetched, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+  if (error) { console.warn('loadProfile error:', error.message); loadProfileError = error; }
+  data = fetched;
   currentProfile = data;
   isAdmin = data?.is_admin === true;
   if (data && !data.approved && !data.is_admin) {
@@ -79,7 +74,7 @@ async function loadProfile() {
   const adminNav = document.getElementById('nav-admin');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
 
-  // Apply per-user section restrictions (non-admin only)
+  // Hide nav items for sections the user doesn't have access to (non-admin only)
   if (!isAdmin && data?.sections_enabled && Array.isArray(data.sections_enabled)) {
     const allowed = data.sections_enabled;
     const _SECTION_MAP = {
@@ -92,28 +87,10 @@ async function loadProfile() {
       'studi.html':'studi','ai.html':'ai','agenda.html':'agenda','ecm.html':'ecm',
       'database.html':'database','integratori.html':'integratori','ricette.html':'ricette',
     };
-    // Hide nav links for restricted sections
     document.querySelectorAll('#sidebar a.nav-item[href]').forEach(link => {
       const key = _SECTION_MAP[link.getAttribute('href')];
       if (key && !allowed.includes(key)) link.style.display = 'none';
     });
-    // Hide nav-sec group headers that have no visible items underneath
-    document.querySelectorAll('#sidebar .nav-sec').forEach(sec => {
-      let el = sec.nextElementSibling;
-      let hasVisible = false;
-      while (el && !el.classList.contains('nav-sec') && !el.classList.contains('sb-bottom')) {
-        if (el.classList.contains('nav-item') && el.style.display !== 'none') { hasVisible = true; break; }
-        el = el.nextElementSibling;
-      }
-      if (!hasVisible) sec.style.display = 'none';
-    });
-    // Redirect if the current page is restricted
-    const currentPage = window.location.pathname.split('/').pop() || '';
-    const currentKey = _SECTION_MAP[currentPage];
-    if (currentKey && !allowed.includes(currentKey)) {
-      window.location.href = 'app.html';
-      return;
-    }
   }
 
   // Load cartelle dropdown if present

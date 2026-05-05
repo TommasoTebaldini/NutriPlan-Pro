@@ -1860,24 +1860,24 @@ function stampaCompatta() {
 
 function stampaSettimanale() {
   const lyt = getActivePianoLayout();
-  const el = document.getElementById('weekly-print-area');
-
-  // Step 1: render at zoom:1, off-screen, to measure the ACTUAL content height
-  el.innerHTML = _buildWeeklyHTML(lyt, 1);
-  el.style.cssText = 'display:block!important;position:fixed!important;top:-9999px!important;left:0!important;width:1100px!important;opacity:0!important;pointer-events:none!important';
-  const measuredH = el.scrollHeight;
-  el.style.cssText = ''; // restore (CSS rule display:none takes over again)
-
-  // Step 2: zoom to fit A4 landscape usable height (~760px at 96dpi with no margin)
-  const zoom = Math.min(1, 760 / Math.max(measuredH, 50));
-
-  // Step 3: re-render with the correct zoom
-  el.innerHTML = _buildWeeklyHTML(lyt, zoom);
-  document.body.dataset.printMode = 'weekly';
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => { delete document.body.dataset.printMode; }, 800);
-  }, 400);
+  const bodyHTML = _buildWeeklyHTML(lyt, 1);
+  const w = window.open('', '_blank', 'width=1220,height=850');
+  if (!w) { toast('Abilita i popup del browser per la stampa settimanale', 'warn'); return; }
+  // A4 landscape at 96dpi: 297mm × 210mm = 1122 × 794px
+  const pageW = 1122, pageH = 794;
+  const printJS = 'window.onload=function(){var pw=document.getElementById("pw");var h=pw.scrollHeight;if(h>'+pageH+'){pw.style.zoom=('+pageH+'/h).toFixed(4);}setTimeout(function(){window.print();window.close();},350);};';
+  w.document.write(
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><style>' +
+    '@page{size:A4 landscape;margin:0}' +
+    '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}' +
+    'html,body{margin:0;padding:0}' +
+    '#pw{width:'+pageW+'px}' +
+    '</style></head><body>' +
+    '<div id="pw">'+bodyHTML+'</div>' +
+    '<scr'+'ipt>'+printJS+'</'+'script>' +
+    '</body></html>'
+  );
+  w.document.close();
 }
 
 function _buildWeeklyHTML(lyt, zoom) {

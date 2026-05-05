@@ -112,6 +112,10 @@
   body[data-print-mode="pdf-alldays"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
+/* ── Row move buttons ── */
+.row-mv{background:none;border:none;cursor:pointer;font-size:11px;padding:2px 3px;border-radius:3px;color:#94A3B8;transition:color .12s,background .12s;line-height:1;font-family:inherit}
+.row-mv:hover:not(:disabled){color:var(--teal);background:rgba(15,118,110,.1)}
+.row-mv:disabled{opacity:.2;cursor:default}
 /* ── Piano section live theming ── */
 #pasti-container thead th{background:var(--teal)!important;color:white!important;}
 #pasti-container .tr-tot td{background:linear-gradient(90deg,var(--teal),var(--teal-l))!important;}
@@ -692,7 +696,11 @@ function buildRow(mi, ii) {
     <td class="vc" data-k="fi">${fmtV(cv(f, 'fi', qt))}</td>
     ${microTds}
     <td style="font-size:10px;white-space:nowrap;text-align:left">${f ? esc(f.c || '') + ' ' : ''}${srcBadge}</td>
-    <td class="no-print"><button class="alt-btn" onclick="openAlt(${mi},${ii})" title="Alternative equivalenti">⇄</button></td>
+    <td class="no-print" style="white-space:nowrap">
+      <button class="row-mv" onclick="moveRowUp(${mi},${ii})" title="Sposta su" ${ii===0?'disabled':''}>▲</button>
+      <button class="row-mv" onclick="moveRowDown(${mi},${ii})" title="Sposta giù" ${ii>=getMeals()[mi].items.length-1?'disabled':''}>▼</button>
+      <button class="alt-btn" onclick="openAlt(${mi},${ii})" title="Alternative equivalenti">⇄</button>
+    </td>
     <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})">✕</button></td>
   </tr>${altRows}`;
 }
@@ -768,20 +776,13 @@ function showAC(mi, ii, val) {
   acRes[`${mi}-${ii}`] = res;
   if (!res.length) { el.style.display = 'none'; return; }
   el.innerHTML = res.map((f, i) => `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(f.n)}</span><span class="ac-right"><span class="ac-cat">${esc(f.c || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
-  // Position fixed dropdown based on the input element's bounding rect (bypasses overflow:hidden parents)
+  // Position dropdown always below the input row
   const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`);
   const rect = inp ? inp.getBoundingClientRect() : el.parentElement.getBoundingClientRect();
-  const ddH = Math.min(res.length * 36, 210);
   el.style.left = rect.left + 'px';
   el.style.width = Math.max(rect.width, 290) + 'px';
-  const spaceBelow = window.innerHeight - rect.bottom;
-  if (spaceBelow < ddH + 20 && rect.top > ddH) {
-    el.style.top = 'auto';
-    el.style.bottom = (window.innerHeight - rect.top + 2) + 'px';
-  } else {
-    el.style.top = (rect.bottom + 2) + 'px';
-    el.style.bottom = 'auto';
-  }
+  el.style.top = (rect.bottom + 2) + 'px';
+  el.style.bottom = 'auto';
   el.style.display = 'block';
 }
 function pickAC(mi, ii, ri) {
@@ -873,6 +874,22 @@ function delRow(mi, ii) {
   if (meals[mi].items.length <= 1) meals[mi].items[0] = { nome: '', qt: '', altPrint: [], misura: '' };
   else meals[mi].items.splice(ii, 1);
   markDirty(); renderPiano();
+}
+function moveRowUp(mi, ii) {
+  if (ii <= 0) return;
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  const items = getMeals()[mi].items;
+  [items[ii - 1], items[ii]] = [items[ii], items[ii - 1]];
+  markDirty(); renderPiano();
+  setTimeout(() => { const inp = document.querySelector(`#r-${mi}-${ii-1} .inp-food`); if (inp) inp.focus(); }, 80);
+}
+function moveRowDown(mi, ii) {
+  const items = getMeals()[mi].items;
+  if (ii >= items.length - 1) return;
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  [items[ii], items[ii + 1]] = [items[ii + 1], items[ii]];
+  markDirty(); renderPiano();
+  setTimeout(() => { const inp = document.querySelector(`#r-${mi}-${ii+1} .inp-food`); if (inp) inp.focus(); }, 80);
 }
 function swapM(a, b) {
   if (a === b) return;

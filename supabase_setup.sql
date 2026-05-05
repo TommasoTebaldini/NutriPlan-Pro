@@ -35,6 +35,23 @@ RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
 $$;
 GRANT EXECUTE ON FUNCTION check_is_admin() TO authenticated, anon;
 
+-- handle_new_user(): crea automaticamente il profilo quando si registra un nuovo utente
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, approved, is_admin)
+  VALUES (NEW.id, NEW.email, false, false)
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION handle_new_user() TO authenticated, anon;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
+
 -- is_linked_patient(): usata nelle policy del patient portal
 CREATE OR REPLACE FUNCTION is_linked_patient(cart_id UUID)
 RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS $$

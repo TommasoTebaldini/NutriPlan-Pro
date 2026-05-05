@@ -93,7 +93,6 @@ async function loadProfile() {
   }
   // i18n: re-apply after profile loads (profile button is now in DOM)
   if (typeof translateSidebarNav === 'function') translateSidebarNav();
-  if (typeof initLangSwitcher === 'function') initLangSwitcher();
   // Ensure profilo modal exists
   if (!document.getElementById('modal-profilo-op')) {
     const div = document.createElement('div');

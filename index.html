@@ -93,10 +93,6 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-// Init language switcher on login page
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof initLangSwitcher === 'function') initLangSwitcher(document.getElementById('login-lang-slot'));
-});
 
 function switchTab(t) {
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));
@@ -134,21 +130,28 @@ async function doRegister() {
   const {data, error} = await sb.auth.signUp({
     email,
     password: pw,
-    options: { data: { approved: false } }
+    options: {
+      data: { approved: false },
+      emailRedirectTo: window.location.origin + '/index.html'
+    }
   });
   btn.disabled=false; btn.textContent='Crea Account';
 
   if (error) {
     const msgs = {
       'User already registered': 'Email già registrata. Prova ad accedere.',
+      'user_already_exists': 'Email già registrata. Prova ad accedere.',
       'Password should be at least 6 characters': 'Password troppo corta (min. 6 caratteri).',
       'Unable to validate email address: invalid format': 'Formato email non valido.',
       'Email rate limit exceeded': 'Troppe richieste. Riprova tra un minuto.',
+      'over_email_send_rate_limit': 'Troppe richieste. Riprova tra qualche minuto.',
       'Database error saving new user': 'Errore DB — esegui il SQL di setup (vedi istruzioni qui sotto)',
       'Error sending confirmation email': '⚠️ Email conferma non inviata. In Supabase → Authentication → Providers → Email: disabilita "Confirm email"',
-      'signup is disabled': 'Registrazione disabilitata.',
+      'signup is disabled': 'Registrazione disabilitata. Attiva "Enable Sign Ups" in Supabase → Authentication → Providers → Email.',
+      'Signups not allowed for this instance': 'Registrazione disabilitata. Attiva "Enable Sign Ups" in Supabase → Authentication.',
     };
-    err.textContent = msgs[error.message] || ('Errore: ' + error.message);
+    const msg = msgs[error.message] || msgs[error.code] || ('Errore: ' + error.message + (error.code ? ' [' + error.code + ']' : ''));
+    err.textContent = msg;
     err.classList.add('show');
     if (error.message.includes('Database error') || error.message.includes('confirmation email')) {
       showSetupGuide();
@@ -163,23 +166,22 @@ async function doRegister() {
     return;
   }
 
-  // Try to insert profile - use insert instead of upsert, ignore errors
-  try {
-    await sb.from('profiles').insert({
+  // If we have a session, try to create the profile (might fail if trigger already created it — that's OK)
+  if (data.session) {
+    const {error: insErr} = await sb.from('profiles').insert({
       id: data.user.id,
       email: email,
       approved: false,
       is_admin: false
     });
-  } catch(e) {
-    console.warn('Profile insert skipped (trigger may handle it):', e.message);
-  }
-
-  if (data.session) {
+    if (insErr && !insErr.message.includes('duplicate') && !insErr.message.includes('unique')) {
+      console.warn('Profile insert warning:', insErr.message);
+    }
     ok.textContent = '✅ Account creato! Reindirizzamento...';
     ok.classList.add('show');
     setTimeout(() => checkAndRedirect(data.user), 1200);
   } else {
+    // Email confirmation required — profile will be created by DB trigger or on first login
     ok.textContent = '✅ Registrato! Controlla la tua email per confermare il tuo account.';
     ok.classList.add('show');
   }
@@ -187,8 +189,16 @@ async function doRegister() {
 
 async function checkAndRedirect(user) {
   document.getElementById('loading').classList.add('show');
-  const {data:profile,error} = await sb.from('profiles').select('*').eq('id',user.id).single();
-  if (error||!profile) { document.getElementById('loading').classList.remove('show'); window.location.href='app.html'; return; }
+  let {data:profile,error} = await sb.from('profiles').select('*').eq('id',user.id).single();
+  if (error||!profile) {
+    // Profile missing (email-confirm flow without trigger) — create it now
+    const {error: insErr} = await sb.from('profiles').insert({id:user.id, email:user.email, approved:false, is_admin:false});
+    if (!insErr) {
+      const res = await sb.from('profiles').select('*').eq('id',user.id).single();
+      profile = res.data;
+    }
+  }
+  if (!profile) { document.getElementById('loading').classList.remove('show'); window.location.href='app.html'; return; }
   if (profile.approved||profile.is_admin) {
     // Check if user is a patient (has patient_dietitian links as patient)
     const {data:patientLinks} = await sb.from('patient_dietitian').select('id').eq('patient_id',user.id).limit(1);

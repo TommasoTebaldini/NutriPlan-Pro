@@ -130,10 +130,7 @@ async function doRegister() {
   const {data, error} = await sb.auth.signUp({
     email,
     password: pw,
-    options: {
-      data: { approved: false },
-      emailRedirectTo: window.location.origin + '/index.html'
-    }
+    options: { data: { approved: false } }
   });
   btn.disabled=false; btn.textContent='Crea Account';
 
@@ -142,20 +139,18 @@ async function doRegister() {
       'User already registered': 'Email già registrata. Prova ad accedere.',
       'user_already_exists': 'Email già registrata. Prova ad accedere.',
       'Password should be at least 6 characters': 'Password troppo corta (min. 6 caratteri).',
-      'Unable to validate email address: invalid format': 'Formato email non valido.',
+      'Unable to validate email address: invalid format': 'Formato email non valido. Controlla che l\'email sia corretta (es: nome@dominio.it).',
       'Email rate limit exceeded': 'Troppe richieste. Riprova tra un minuto.',
       'over_email_send_rate_limit': 'Troppe richieste. Riprova tra qualche minuto.',
-      'Database error saving new user': 'Errore DB — esegui il SQL di setup (vedi istruzioni qui sotto)',
-      'Error sending confirmation email': '⚠️ Email conferma non inviata. In Supabase → Authentication → Providers → Email: disabilita "Confirm email"',
-      'signup is disabled': 'Registrazione disabilitata. Attiva "Enable Sign Ups" in Supabase → Authentication → Providers → Email.',
-      'Signups not allowed for this instance': 'Registrazione disabilitata. Attiva "Enable Sign Ups" in Supabase → Authentication.',
+      'Database error saving new user': 'Errore database. Assicurati di aver eseguito il file supabase_setup.sql nel tuo progetto Supabase.',
+      'Error sending confirmation email': '⚠️ Email di conferma non inviata. In Supabase → Authentication → Providers → Email: disabilita "Confirm email".',
+      'signup is disabled': 'Registrazione disabilitata. In Supabase → Authentication → Providers → Email: abilita "Enable Sign Ups".',
+      'Signups not allowed for this instance': 'Registrazione disabilitata. In Supabase → Authentication → Providers → Email: abilita "Enable Sign Ups".',
+      'Email not confirmed': 'Email non ancora confermata. Controlla la tua casella di posta.',
     };
     const msg = msgs[error.message] || msgs[error.code] || ('Errore: ' + error.message + (error.code ? ' [' + error.code + ']' : ''));
     err.textContent = msg;
     err.classList.add('show');
-    if (error.message.includes('Database error') || error.message.includes('confirmation email')) {
-      showSetupGuide();
-    }
     console.error('SignUp error:', error);
     return;
   }

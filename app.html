@@ -112,10 +112,11 @@
   body[data-print-mode="pdf-alldays"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
-/* ── Row move buttons ── */
-.row-mv{background:none;border:none;cursor:pointer;font-size:11px;padding:2px 3px;border-radius:3px;color:#94A3B8;transition:color .12s,background .12s;line-height:1;font-family:inherit}
-.row-mv:hover:not(:disabled){color:var(--teal);background:rgba(15,118,110,.1)}
-.row-mv:disabled{opacity:.2;cursor:default}
+/* ── Row drag handle ── */
+.row-drag-handle{cursor:grab;font-size:14px;padding:2px 4px;color:#CBD5E1;transition:color .12s;user-select:none;line-height:1;display:inline-block}
+.row-drag-handle:hover{color:var(--teal)}
+.row-drag-handle:active{cursor:grabbing}
+tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset 0 2px 0 var(--teal-l)}
 /* ── Piano section live theming ── */
 #pasti-container thead th{background:var(--teal)!important;color:white!important;}
 #pasti-container .tr-tot td{background:linear-gradient(90deg,var(--teal),var(--teal-l))!important;}
@@ -399,6 +400,7 @@
   </div>
 </div>
 
+<div class="ac-list" id="ac-global" onmousedown="event.preventDefault()"></div>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
 
@@ -675,12 +677,15 @@ function buildRow(mi, ii) {
       <td></td>
     </tr>`;
   }).join('');
-  return `<tr id="r-${mi}-${ii}">
+  return `<tr id="r-${mi}-${ii}"
+    ondragover="rowDragOver(${mi},${ii},event)"
+    ondrop="rowDrop(${mi},${ii},event)"
+    ondragend="rowDragEnd(event)"
+    ondragleave="this.classList.remove('row-drop-target')">
     <td><div class="ac-wrap">
       <input class="inp-food" type="text" value="${esc(item.nome)}" placeholder="Cerca alimento..." autocomplete="off"
         oninput="onFI(${mi},${ii},this)" onkeydown="onFK(event,${mi},${ii})"
         onfocus="onFF(${mi},${ii},this)" onblur="onFB(${mi},${ii})">
-      <div class="ac-list" id="ac-${mi}-${ii}" onmousedown="event.preventDefault()"></div>
     </div></td>
     <td>
       <input class="inp-qt" type="number" min="0" step="any" value="${qt || ''}" placeholder="g" oninput="onQI(${mi},${ii},this)">
@@ -697,8 +702,8 @@ function buildRow(mi, ii) {
     ${microTds}
     <td style="font-size:10px;white-space:nowrap;text-align:left">${f ? esc(f.c || '') + ' ' : ''}${srcBadge}</td>
     <td class="no-print" style="white-space:nowrap">
-      <button class="row-mv" onclick="moveRowUp(${mi},${ii})" title="Sposta su" ${ii===0?'disabled':''}>▲</button>
-      <button class="row-mv" onclick="moveRowDown(${mi},${ii})" title="Sposta giù" ${ii>=getMeals()[mi].items.length-1?'disabled':''}>▼</button>
+      <span class="row-drag-handle no-print" title="Trascina per riordinare"
+        onmousedown="enableRowDrag(${mi},${ii})">⠿</span>
       <button class="alt-btn" onclick="openAlt(${mi},${ii})" title="Alternative equivalenti">⇄</button>
     </td>
     <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})">✕</button></td>
@@ -768,7 +773,7 @@ function onFI(mi, ii, inp) {
   clearTimeout(acT); acT = setTimeout(() => showAC(mi, ii, inp.value), 80);
 }
 function showAC(mi, ii, val) {
-  const el = document.getElementById(`ac-${mi}-${ii}`);
+  const el = document.getElementById('ac-global');
   if (!el) return; acIdx[`${mi}-${ii}`] = -1;
   if (!val || val.length < 1) { el.style.display = 'none'; return; }
   const q = val.toLowerCase();
@@ -776,9 +781,9 @@ function showAC(mi, ii, val) {
   acRes[`${mi}-${ii}`] = res;
   if (!res.length) { el.style.display = 'none'; return; }
   el.innerHTML = res.map((f, i) => `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(f.n)}</span><span class="ac-right"><span class="ac-cat">${esc(f.c || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
-  // Position dropdown always below the input row
   const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`);
-  const rect = inp ? inp.getBoundingClientRect() : el.parentElement.getBoundingClientRect();
+  if (!inp) { el.style.display = 'none'; return; }
+  const rect = inp.getBoundingClientRect();
   el.style.left = rect.left + 'px';
   el.style.width = Math.max(rect.width, 290) + 'px';
   el.style.top = (rect.bottom + 2) + 'px';
@@ -788,16 +793,16 @@ function showAC(mi, ii, val) {
 function pickAC(mi, ii, ri) {
   const res = acRes[`${mi}-${ii}`]; if (!res || !res[ri]) return;
   getMeals()[mi].items[ii].nome = res[ri].n;
-  getMeals()[mi].items[ii].altPrint = []; // clear stale alternatives when food changes
-  const el = document.getElementById(`ac-${mi}-${ii}`); if (el) el.style.display = 'none';
+  getMeals()[mi].items[ii].altPrint = [];
+  const el = document.getElementById('ac-global'); if (el) el.style.display = 'none';
   const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.value = res[ri].n;
   refreshRow(mi, ii); refreshTot(mi); updateRiep();
   const qt = document.querySelector(`#r-${mi}-${ii} .inp-qt`); if (qt) { qt.focus(); qt.select(); }
 }
 function onFF(mi, ii, inp) { if (inp.value.length >= 1) showAC(mi, ii, inp.value); }
-function onFB(mi, ii) { setTimeout(() => { const el = document.getElementById(`ac-${mi}-${ii}`); if (el) el.style.display = 'none'; refreshRow(mi, ii); refreshTot(mi); updateRiep(); }, 200); }
+function onFB(mi, ii) { setTimeout(() => { const el = document.getElementById('ac-global'); if (el) el.style.display = 'none'; refreshRow(mi, ii); refreshTot(mi); updateRiep(); }, 200); }
 function onFK(e, mi, ii) {
-  const el = document.getElementById(`ac-${mi}-${ii}`); if (!el || el.style.display === 'none') return;
+  const el = document.getElementById('ac-global'); if (!el || el.style.display === 'none') return;
   const items = el.querySelectorAll('.ac-item'); const k = `${mi}-${ii}`;
   if (e.key === 'ArrowDown') { acIdx[k] = Math.min((acIdx[k] || 0) + 1, items.length - 1); e.preventDefault(); }
   else if (e.key === 'ArrowUp') { acIdx[k] = Math.max((acIdx[k] || -1) - 1, 0); e.preventDefault(); }
@@ -875,21 +880,37 @@ function delRow(mi, ii) {
   else meals[mi].items.splice(ii, 1);
   markDirty(); renderPiano();
 }
-function moveRowUp(mi, ii) {
-  if (ii <= 0) return;
-  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
-  const items = getMeals()[mi].items;
-  [items[ii - 1], items[ii]] = [items[ii], items[ii - 1]];
-  markDirty(); renderPiano();
-  setTimeout(() => { const inp = document.querySelector(`#r-${mi}-${ii-1} .inp-food`); if (inp) inp.focus(); }, 80);
+let rowDragMi = -1, rowDragIi = -1;
+function enableRowDrag(mi, ii) {
+  const tr = document.getElementById(`r-${mi}-${ii}`);
+  if (tr) { tr.setAttribute('draggable', 'true'); tr.ondragstart = e => rowDragStart(mi, ii, e); }
 }
-function moveRowDown(mi, ii) {
-  const items = getMeals()[mi].items;
-  if (ii >= items.length - 1) return;
+function rowDragStart(mi, ii, e) {
+  rowDragMi = mi; rowDragIi = ii;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', `${mi}-${ii}`);
+}
+function rowDragOver(mi, ii, e) {
+  if (rowDragMi !== mi || rowDragIi === ii) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('tr.row-drop-target').forEach(el => el.classList.remove('row-drop-target'));
+  document.getElementById(`r-${mi}-${ii}`)?.classList.add('row-drop-target');
+}
+function rowDrop(mi, ii, e) {
+  e.preventDefault();
+  document.querySelectorAll('tr.row-drop-target').forEach(el => el.classList.remove('row-drop-target'));
+  if (rowDragMi !== mi || rowDragIi === ii) { rowDragMi = -1; rowDragIi = -1; return; }
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
-  [items[ii], items[ii + 1]] = [items[ii + 1], items[ii]];
+  const items = getMeals()[mi].items;
+  const [moved] = items.splice(rowDragIi, 1);
+  items.splice(ii, 0, moved);
+  rowDragMi = -1; rowDragIi = -1;
   markDirty(); renderPiano();
-  setTimeout(() => { const inp = document.querySelector(`#r-${mi}-${ii+1} .inp-food`); if (inp) inp.focus(); }, 80);
+}
+function rowDragEnd(e) {
+  document.querySelectorAll('tr.row-drop-target').forEach(el => el.classList.remove('row-drop-target'));
+  document.querySelectorAll('[id^="r-"][draggable]').forEach(el => el.removeAttribute('draggable'));
+  rowDragMi = -1; rowDragIi = -1;
 }
 function swapM(a, b) {
   if (a === b) return;

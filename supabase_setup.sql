@@ -36,16 +36,20 @@ $$;
 GRANT EXECUTE ON FUNCTION check_is_admin() TO authenticated, anon;
 
 -- handle_new_user(): crea automaticamente il profilo quando si registra un nuovo utente
+-- IMPORTANTE: l'eccezione è gestita internamente per non bloccare l'INSERT in auth.users
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, approved, is_admin)
-  VALUES (NEW.id, NEW.email, false, false)
-  ON CONFLICT (id) DO NOTHING;
+  BEGIN
+    INSERT INTO public.profiles (id, email, approved, is_admin)
+    VALUES (NEW.id, NEW.email, false, false)
+    ON CONFLICT (id) DO NOTHING;
+  EXCEPTION WHEN OTHERS THEN
+    NULL; -- Ignora errori per non bloccare la registrazione utente
+  END;
   RETURN NEW;
 END;
 $$;
-GRANT EXECUTE ON FUNCTION handle_new_user() TO authenticated, anon;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created

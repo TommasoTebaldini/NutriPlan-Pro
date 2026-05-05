@@ -71,6 +71,8 @@
 #simple-print-area{display:none}
 /* Compact print area (screen: hidden) */
 #compact-print-area{display:none}
+/* Weekly print area (screen: hidden) */
+#weekly-print-area{display:none}
 @media print{
   @page{margin:0;size:A4 landscape}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -111,6 +113,11 @@
   body[data-print-mode="pdf-alldays"] .macro-bar{display:none!important}
   body[data-print-mode="pdf-alldays"] #print-giorno-hdr{display:none!important}
   body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  /* ── Weekly overview mode (food names only, day×meal table) ── */
+  body[data-print-mode="weekly"] #pasti-container{display:none!important}
+  body[data-print-mode="weekly"] .macro-bar{display:none!important}
+  body[data-print-mode="weekly"] #print-giorno-hdr{display:none!important}
+  body[data-print-mode="weekly"] #weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif}
 }
 /* ── Row drag handle ── */
 .row-drag-handle{cursor:grab;font-size:14px;padding:2px 4px;color:#CBD5E1;transition:color .12s;user-select:none;line-height:1;display:inline-block}
@@ -187,6 +194,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaCompatta()" title="Stampa compatta con kcal per alimento (formato paziente)">📋</button>
+    <button class="btn btn-ghost btn-sm" onclick="stampaSettimanale()" title="Prospetto settimanale — tabella alimenti per giorno">📅</button>
   </div>
 </div>
 
@@ -274,6 +282,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
   <div id="compact-print-area"></div>
   <!-- PDF ALL-DAYS PRINT AREA (hidden on screen, shown when printing multi-day plans in PDF mode) -->
   <div id="pdf-alldays-print-area" style="display:none"></div>
+  <!-- WEEKLY OVERVIEW PRINT AREA (hidden on screen, shown in weekly print mode) -->
+  <div id="weekly-print-area"></div>
 
 </div>
 </main>
@@ -1844,6 +1854,81 @@ function stampaCompatta() {
   document.body.dataset.printMode = 'compact';
   _applyPortraitPrint();
   setTimeout(() => window.print(), 400);
+}
+
+function stampaSettimanale() {
+  const lyt = getActivePianoLayout();
+  document.getElementById('weekly-print-area').innerHTML = _buildWeeklyHTML(lyt);
+  document.body.dataset.printMode = 'weekly';
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => { delete document.body.dataset.printMode; }, 800);
+  }, 400);
+}
+
+function _buildWeeklyHTML(lyt) {
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const dataPiano = document.getElementById('inp-data')?.value || '';
+  const nomePiano = document.getElementById('inp-nome')?.value || '';
+
+  // Collect all unique meal names in order of appearance
+  const mealOrder = [], mealEmojis = {};
+  giorni.forEach(g => g.meals.forEach(m => {
+    if (!mealOrder.includes(m.nome)) { mealOrder.push(m.nome); mealEmojis[m.nome] = m.emoji || ''; }
+  }));
+
+  let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B">';
+
+  // ── Header banner ──
+  html += '<div style="background:linear-gradient(135deg,'+lyt.gradStart+','+lyt.gradEnd+');color:white;padding:14px 20px;border-radius:8px 8px 0 0;margin-bottom:0;display:flex;align-items:center;justify-content:space-between">';
+  html += '<div>';
+  if (nomeP) html += '<div style="font-size:17px;font-weight:700;letter-spacing:.2px">'+esc(nomeP)+'</div>';
+  if (nomePiano) html += '<div style="font-size:12px;opacity:.88;margin-top:2px">'+esc(nomePiano)+'</div>';
+  if (dataPiano) {
+    const parts=dataPiano.split('-').map(Number);
+    if(parts.length===3&&parts.every(n=>!isNaN(n))){
+      html += '<div style="font-size:11px;opacity:.75;margin-top:1px">'+new Date(parts[0],parts[1]-1,parts[2]).toLocaleDateString('it',{day:'numeric',month:'long',year:'numeric'})+'</div>';
+    }
+  }
+  html += '</div>';
+  html += '<div style="text-align:right"><div style="font-size:22px">📅</div><div style="font-size:11px;opacity:.85;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:2px">Prospetto Settimanale</div></div>';
+  html += '</div>';
+
+  // ── Table ──
+  const cellBase = 'padding:7px 9px;font-size:10.5px;border:1px solid '+lyt.paleBorder+';vertical-align:top;';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:10.5px;border:1.5px solid '+lyt.paleBorder+';border-top:none">';
+
+  // Header row — days
+  html += '<thead><tr>';
+  html += '<th style="'+cellBase+'background:'+lyt.primaryDark+';color:white;font-weight:700;white-space:nowrap;min-width:80px;font-size:11px;text-align:left">Pasto</th>';
+  giorni.forEach(g => {
+    html += '<th style="'+cellBase+'background:'+lyt.primary+';color:white;font-weight:700;text-align:center;font-size:11px;border-left:1.5px solid rgba(255,255,255,.18)">'+esc(g.nome)+'</th>';
+  });
+  html += '</tr></thead>';
+
+  // Body rows — one per meal type
+  html += '<tbody>';
+  mealOrder.forEach((mNome, rowIdx) => {
+    const rowBg = rowIdx % 2 === 0 ? '#FFFFFF' : lyt.pale;
+    html += '<tr>';
+    // Meal label cell
+    html += '<td style="'+cellBase+'background:'+lyt.pale+';font-weight:700;color:'+lyt.headerText+';white-space:nowrap;font-size:11px">';
+    html += (mealEmojis[mNome] ? mealEmojis[mNome]+' ' : '') + esc(mNome) + '</td>';
+    // One cell per day
+    giorni.forEach(g => {
+      const meal = g.meals.find(m => m.nome === mNome);
+      const foods = meal ? meal.items.filter(it => it.nome && it.nome.trim()).map(it => esc(it.nome)) : [];
+      html += '<td style="'+cellBase+'background:'+rowBg+';line-height:1.65;border-left:1.5px solid '+lyt.paleBorder+'">';
+      html += foods.length ? foods.join('<br>') : '<span style="color:#CBD5E1">—</span>';
+      html += '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+
+  if (typeof profiloFirmaHtml === 'function') html += profiloFirmaHtml();
+  html += '</div>';
+  return html;
 }
 
 function _applyPortraitPrint() {

@@ -255,7 +255,7 @@ async function loadUtenti() {
         ${!u.is_admin
           ? `<button class="btn btn-ghost btn-xs" style="color:#7C3AED;border-color:#DDD6FE" onclick="makeAdmin('${u.id}')">👑 Admin</button>`
           : `<button class="btn btn-ghost btn-xs" onclick="removeAdmin('${u.id}')">Remove Admin</button>`}
-        <button class="btn btn-ghost btn-xs" style="color:#0369A1;border-color:#BAE6FD" onclick="openSections('${u.id}',${JSON.stringify(u.email||u.id)},${JSON.stringify(u.sections_enabled||null)})">🔧 Sezioni</button>
+        <button class="btn btn-ghost btn-xs" style="color:#0369A1;border-color:#BAE6FD" data-uid="${u.id}" data-email="${esc(u.email||u.id)}" data-sections="${esc(JSON.stringify(u.sections_enabled||null))}" onclick="openSectionsBtn(this)">🔧 Sezioni</button>
       </div>
     </td>
   </tr>`).join('');
@@ -471,6 +471,11 @@ const MANAGED_SECTIONS = [
 
 let _sectionsUserId = null;
 let _sectionsAllNull = false; // true = save NULL (unrestricted)
+
+function openSectionsBtn(btn) {
+  const sections = JSON.parse(btn.dataset.sections);
+  openSections(btn.dataset.uid, btn.dataset.email, sections);
+}
 
 function openSections(userId, email, currentSections) {
   _sectionsUserId = userId;

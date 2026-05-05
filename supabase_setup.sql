@@ -35,26 +35,9 @@ RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
 $$;
 GRANT EXECUTE ON FUNCTION check_is_admin() TO authenticated, anon;
 
--- handle_new_user(): crea automaticamente il profilo quando si registra un nuovo utente
--- IMPORTANTE: l'eccezione è gestita internamente per non bloccare l'INSERT in auth.users
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-BEGIN
-  BEGIN
-    INSERT INTO public.profiles (id, email, approved, is_admin)
-    VALUES (NEW.id, NEW.email, false, false)
-    ON CONFLICT (id) DO NOTHING;
-  EXCEPTION WHEN OTHERS THEN
-    NULL; -- Ignora errori per non bloccare la registrazione utente
-  END;
-  RETURN NEW;
-END;
-$$;
-
+-- Trigger rimosso: la creazione del profilo avviene via RPC client-side (create_profile_for_new_user).
+-- Qualsiasi trigger su auth.users rischia di far fallire il signUp con un 500 da GoTrue.
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
 
 -- create_profile_for_new_user(): chiamata dal client (anon key) subito dopo signUp()
 -- SECURITY DEFINER + GRANT anon → inserisce il profilo bypassando RLS anche senza sessione
@@ -185,26 +168,8 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Trigger: crea automaticamente il profilo alla registrazione
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
-BEGIN
-  INSERT INTO profiles (id, email, approved, is_admin)
-  VALUES (
-    NEW.id,
-    NEW.email,
-    COALESCE((NEW.raw_user_meta_data->>'approved')::boolean, false),
-    false
-  )
-  ON CONFLICT (id) DO NOTHING;
-  RETURN NEW;
-END;
-$$;
-
+-- Trigger rimosso (duplicato): la creazione del profilo avviene via RPC client-side.
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
 -- ─── NOTA ADMIN ──────────────────────────────────────────────────────────────
 -- Per promuovere il primo utente ad admin eseguire:

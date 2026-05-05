@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>⚙️ Impostazioni — DietPlan Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.lang-section { margin-bottom: 32px; }
+.lang-section h3 { font-size: 16px; font-weight: 700; color: var(--slate); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.lang-cards { display: flex; gap: 14px; flex-wrap: wrap; }
+.lang-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 32px;
+  border-radius: var(--r);
+  border: 2px solid var(--border);
+  background: white;
+  cursor: pointer;
+  transition: all .15s;
+  min-width: 140px;
+  position: relative;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.lang-card:hover {
+  border-color: #6366F1;
+  box-shadow: 0 6px 20px rgba(99,102,241,.14);
+  transform: translateY(-2px);
+}
+.lang-card.active {
+  border-color: #22C55E;
+  box-shadow: 0 6px 20px rgba(34,197,94,.18);
+}
+.lang-card .flag { font-size: 40px; line-height: 1; }
+.lang-card .lang-name { font-size: 14px; font-weight: 700; color: var(--slate); }
+.lang-card .checkmark {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 16px;
+  display: none;
+}
+.lang-card.active .checkmark { display: block; }
+.settings-hero {
+  background: linear-gradient(135deg, #4F46E5, #6366F1 60%, #818CF8 100%);
+  border-radius: 18px;
+  padding: 20px 26px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: white;
+  box-shadow: 0 6px 24px rgba(99,102,241,.28);
+  position: relative;
+  overflow: hidden;
+}
+.settings-hero::before {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+}
+.settings-hero .hero-icon { font-size: 42px; filter: drop-shadow(0 2px 8px rgba(0,0,0,.25)); flex-shrink: 0; }
+.settings-hero .hero-text { flex: 1; position: relative; }
+.settings-hero .hero-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; letter-spacing: .2px; }
+.settings-hero .hero-desc { font-size: 12px; opacity: .88; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item " href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item active" href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" class="no-print" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">⚙️ Impostazioni</h2>
+  <div class="tbar-actions no-print"></div>
+</div>
+
+<!-- MAIN -->
+<main id="main">
+<div class="page-content">
+
+  <!-- HERO BANNER -->
+  <div class="settings-hero">
+    <div class="hero-icon">⚙️</div>
+    <div class="hero-text">
+      <div class="hero-title">Impostazioni</div>
+      <div class="hero-desc">Personalizza lingua e preferenze dell'applicazione DietPlan Pro.</div>
+    </div>
+  </div>
+
+  <!-- LINGUA SECTION -->
+  <div class="lang-section">
+    <h3>🌐 Lingua / Language / Sprache</h3>
+    <div class="lang-cards">
+
+      <button class="lang-card" id="lang-card-it" onclick="setLang('it')">
+        <span class="flag">🇮🇹</span>
+        <span class="lang-name">Italiano</span>
+        <span class="checkmark">✅</span>
+      </button>
+
+      <button class="lang-card" id="lang-card-en" onclick="setLang('en')">
+        <span class="flag">🇬🇧</span>
+        <span class="lang-name">English</span>
+        <span class="checkmark">✅</span>
+      </button>
+
+      <button class="lang-card" id="lang-card-de" onclick="setLang('de')">
+        <span class="flag">🇩🇪</span>
+        <span class="lang-name">Deutsch</span>
+        <span class="checkmark">✅</span>
+      </button>
+
+    </div>
+  </div>
+
+</div>
+</main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
+
+<script src="js/db.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/utils.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await checkAuth();
+  } catch(e) { console.warn(e); }
+
+  // Highlight the currently active language card
+  const currentLang = getLang();
+  ['it','en','de'].forEach(l => {
+    const card = document.getElementById('lang-card-' + l);
+    if (card) {
+      if (l === currentLang) {
+        card.classList.add('active');
+      } else {
+        card.classList.remove('active');
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>

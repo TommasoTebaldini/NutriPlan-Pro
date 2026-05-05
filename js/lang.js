@@ -16,7 +16,7 @@ const LANGS = {
     'nav.consigli':'Consigli Nutrizionali','nav.bia':'BIA','nav.questionari':'Questionari',
     'nav.studi':'Studi Scientifici','nav.ai':'Assistente AI','nav.agenda':'Agenda',
     'nav.ecm':'Corsi ECM','nav.database':'Alimenti CREA+BDA','nav.integratori':'Integratori e AFMS',
-    'nav.ricette':'Ricette','nav.admin':'Admin Utenti','nav.profilo':'Profilo Operatore','nav.esci':'Esci',
+    'nav.ricette':'Ricette','nav.impostazioni':'Impostazioni','nav.admin':'Admin Utenti','nav.profilo':'Profilo Operatore','nav.esci':'Esci',
     // Index / Login
     'index.title':'DietPlan Pro — Accedi','index.login_tab':'Accedi','index.register_tab':'Registrati',
     'index.email':'Email','index.password':'Password','index.confirm_password':'Conferma Password',
@@ -99,7 +99,7 @@ const LANGS = {
     'nav.consigli':'Nutritional Advice','nav.bia':'BIA','nav.questionari':'Questionnaires',
     'nav.studi':'Scientific Studies','nav.ai':'AI Assistant','nav.agenda':'Calendar',
     'nav.ecm':'CME Courses','nav.database':'Foods CREA+BDA','nav.integratori':'Supplements & FSFs',
-    'nav.ricette':'Recipes','nav.admin':'User Admin','nav.profilo':'Operator Profile','nav.esci':'Log Out',
+    'nav.ricette':'Recipes','nav.impostazioni':'Settings','nav.admin':'User Admin','nav.profilo':'Operator Profile','nav.esci':'Log Out',
     'index.title':'DietPlan Pro — Sign In','index.login_tab':'Sign In','index.register_tab':'Register',
     'index.email':'Email','index.password':'Password','index.confirm_password':'Confirm Password',
     'index.login_btn':'Sign In','index.register_btn':'Create Account',
@@ -176,7 +176,7 @@ const LANGS = {
     'nav.consigli':'Ernährungsberatung','nav.bia':'BIA','nav.questionari':'Fragebögen',
     'nav.studi':'Wissenschaftliche Studien','nav.ai':'KI-Assistent','nav.agenda':'Kalender',
     'nav.ecm':'CME-Kurse','nav.database':'Lebensmittel CREA+BDA','nav.integratori':'Nahrungsergänzungsmittel',
-    'nav.ricette':'Rezepte','nav.admin':'Benutzerverwaltung','nav.profilo':'Operateurprofil','nav.esci':'Abmelden',
+    'nav.ricette':'Rezepte','nav.impostazioni':'Einstellungen','nav.admin':'Benutzerverwaltung','nav.profilo':'Operateurprofil','nav.esci':'Abmelden',
     'index.title':'DietPlan Pro — Anmelden','index.login_tab':'Anmelden','index.register_tab':'Registrieren',
     'index.email':'E-Mail','index.password':'Passwort','index.confirm_password':'Passwort bestätigen',
     'index.login_btn':'Anmelden','index.register_btn':'Konto erstellen',
@@ -639,7 +639,7 @@ function translateSidebarNav() {
     'consigli.html':'nav.consigli','bia.html':'nav.bia','questionari.html':'nav.questionari',
     'studi.html':'nav.studi','ai.html':'nav.ai','agenda.html':'nav.agenda',
     'ecm.html':'nav.ecm','database.html':'nav.database','integratori.html':'nav.integratori',
-    'ricette.html':'nav.ricette','admin.html':'nav.admin',
+    'ricette.html':'nav.ricette','impostazioni.html':'nav.impostazioni','admin.html':'nav.admin',
     'obesita.html':'nav.patologie','oncologia.html':'nav.patologie',
   };
   const secMap = {};
@@ -707,5 +707,4 @@ document.addEventListener('DOMContentLoaded', function() {
   applyLang();
   translateSidebarNav();
   translateLabels();
-  initLangSwitcher();
 });

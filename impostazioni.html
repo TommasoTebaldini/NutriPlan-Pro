@@ -270,6 +270,36 @@
         <div class="lc-label">Fresco Viola <span class="lc-check">✅</span></div>
       </button>
 
+      <!-- Neutro Pietra -->
+      <button class="layout-card" id="layout-card-neutro" onclick="setPianoLayout('neutro')">
+        <div class="lc-preview" style="background:#F1F5F9">
+          <div class="lc-header" style="background:linear-gradient(90deg,#1E293B,#475569);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#334155,#64748B);width:70%"></div>
+          <div class="lc-row lc-row-mid" style="background:#CBD5E1"></div>
+          <div class="lc-row lc-row-short" style="background:#CBD5E1"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#1E293B,#334155);width:55%"></div>
+          <div class="lc-row lc-row-mid" style="background:#CBD5E1"></div>
+          <div class="lc-row lc-row-short" style="background:#CBD5E1"></div>
+          <div class="lc-footer" style="background:#94A3B8;width:100%"></div>
+        </div>
+        <div class="lc-label">Neutro Pietra <span class="lc-check">✅</span></div>
+      </button>
+
+      <!-- Vivace Arcobaleno -->
+      <button class="layout-card" id="layout-card-vivace" onclick="setPianoLayout('vivace')">
+        <div class="lc-preview" style="background:#FEFCE8">
+          <div class="lc-header" style="background:linear-gradient(90deg,#047857,#34D399);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#B45309,#FBBF24);width:70%"></div>
+          <div class="lc-row lc-row-mid" style="background:#FEF9C3"></div>
+          <div class="lc-row lc-row-short" style="background:#FEF9C3"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#0369A1,#38BDF8);width:55%"></div>
+          <div class="lc-row lc-row-mid" style="background:#E0F2FE"></div>
+          <div class="lc-row lc-row-short" style="background:#E0F2FE"></div>
+          <div class="lc-footer" style="background:linear-gradient(90deg,#6D28D9,#F472B6);width:100%"></div>
+        </div>
+        <div class="lc-label">Vivace Arcobaleno <span class="lc-check">✅</span></div>
+      </button>
+
     </div>
   </div>
 
@@ -309,13 +339,14 @@
 <script src="js/lang.js"></script>
 <script src="js/utils.js"></script>
 <script>
+const LAYOUT_NAMES = {classico:'Classico Verde',elegante:'Elegante Blu',caldo:'Caldo Ambra',fresco:'Fresco Viola',neutro:'Neutro Pietra',vivace:'Vivace Arcobaleno'};
 function setPianoLayout(id) {
   localStorage.setItem('nutriplan_piano_layout', id);
-  ['classico','elegante','caldo','fresco'].forEach(k => {
+  ['classico','elegante','caldo','fresco','neutro','vivace'].forEach(k => {
     const card = document.getElementById('layout-card-' + k);
     if (card) card.classList.toggle('active', k === id);
   });
-  if (typeof toast === 'function') toast('🎨 Layout "' + id.charAt(0).toUpperCase() + id.slice(1) + '" selezionato!', 'ok');
+  if (typeof toast === 'function') toast('🎨 Layout "' + (LAYOUT_NAMES[id]||id) + '" selezionato!', 'ok');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -338,7 +369,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Highlight the currently active layout card
   const currentLayout = localStorage.getItem('nutriplan_piano_layout') || 'classico';
-  ['classico','elegante','caldo','fresco'].forEach(k => {
+  ['classico','elegante','caldo','fresco','neutro','vivace'].forEach(k => {
     const card = document.getElementById('layout-card-' + k);
     if (card) card.classList.toggle('active', k === currentLayout);
   });

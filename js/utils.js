@@ -97,6 +97,16 @@ async function loadProfile() {
       const key = _SECTION_MAP[link.getAttribute('href')];
       if (key && !allowed.includes(key)) link.style.display = 'none';
     });
+    // Hide nav-sec group headers that have no visible items underneath
+    document.querySelectorAll('#sidebar .nav-sec').forEach(sec => {
+      let el = sec.nextElementSibling;
+      let hasVisible = false;
+      while (el && !el.classList.contains('nav-sec') && !el.classList.contains('sb-bottom')) {
+        if (el.classList.contains('nav-item') && el.style.display !== 'none') { hasVisible = true; break; }
+        el = el.nextElementSibling;
+      }
+      if (!hasVisible) sec.style.display = 'none';
+    });
     // Redirect if the current page is restricted
     const currentPage = window.location.pathname.split('/').pop() || '';
     const currentKey = _SECTION_MAP[currentPage];

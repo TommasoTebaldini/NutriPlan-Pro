@@ -117,7 +117,9 @@
   body[data-print-mode="weekly"] #pasti-container{display:none!important}
   body[data-print-mode="weekly"] .macro-bar{display:none!important}
   body[data-print-mode="weekly"] #print-giorno-hdr{display:none!important}
-  body[data-print-mode="weekly"] #weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body[data-print-mode="weekly"] #main{padding:0!important;margin:0!important}
+  body[data-print-mode="weekly"] #weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif;page-break-inside:avoid;break-inside:avoid}
+  body[data-print-mode="weekly"] #weekly-print-area>div{page-break-inside:avoid;break-inside:avoid}
 }
 /* ── Row drag handle ── */
 .row-drag-handle{cursor:grab;font-size:14px;padding:2px 4px;color:#CBD5E1;transition:color .12s;user-select:none;line-height:1;display:inline-block}
@@ -1858,25 +1860,19 @@ function stampaCompatta() {
 
 function stampaSettimanale() {
   const lyt = getActivePianoLayout();
-  const nDays = giorni.length;
-  const mealOrderTmp = [];
-  giorni.forEach(g => g.meals.forEach(m => { if (!mealOrderTmp.includes(m.nome)) mealOrderTmp.push(m.nome); }));
-  // Estimate actual row heights based on max food count per meal across all days
-  const LINE_H = 18; const ROW_PAD = 14; const MIN_ROW = 36;
-  let estH = 72; // header banner
-  mealOrderTmp.forEach(mNome => {
-    let maxItems = 0;
-    giorni.forEach(g => {
-      const meal = g.meals.find(m => m.nome === mNome);
-      const cnt = meal ? meal.items.filter(it => it.nome?.trim()).length : 0;
-      if (cnt > maxItems) maxItems = cnt;
-    });
-    estH += Math.max(MIN_ROW, maxItems * LINE_H + ROW_PAD);
-  });
-  const estW = 90 + nDays * 120;
-  // A4 landscape: 297mm × 210mm; at 96dpi ≈ 1122 × 794px. Keep 20px buffer.
-  const zoom = Math.min(1, 1100 / estW, 770 / estH);
-  document.getElementById('weekly-print-area').innerHTML = _buildWeeklyHTML(lyt, zoom);
+  const el = document.getElementById('weekly-print-area');
+
+  // Step 1: render at zoom:1, off-screen, to measure the ACTUAL content height
+  el.innerHTML = _buildWeeklyHTML(lyt, 1);
+  el.style.cssText = 'display:block!important;position:fixed!important;top:-9999px!important;left:0!important;width:1100px!important;opacity:0!important;pointer-events:none!important';
+  const measuredH = el.scrollHeight;
+  el.style.cssText = ''; // restore (CSS rule display:none takes over again)
+
+  // Step 2: zoom to fit A4 landscape usable height (~760px at 96dpi with no margin)
+  const zoom = Math.min(1, 760 / Math.max(measuredH, 50));
+
+  // Step 3: re-render with the correct zoom
+  el.innerHTML = _buildWeeklyHTML(lyt, zoom);
   document.body.dataset.printMode = 'weekly';
   setTimeout(() => {
     window.print();

@@ -1233,6 +1233,7 @@ function svuotaSezione_disfagia() {
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_disfagia();
 }, {once: false});
+window.addEventListener('beforeunload', autoSavePage_disfagia);
 
 function calcVal_dis() {
   const peso = parseFloat(document.getElementById('dis-val-peso')?.value);

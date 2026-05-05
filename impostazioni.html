@@ -78,6 +78,60 @@
 .settings-hero .hero-text { flex: 1; position: relative; }
 .settings-hero .hero-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; letter-spacing: .2px; }
 .settings-hero .hero-desc { font-size: 12px; opacity: .88; line-height: 1.6; }
+
+/* Layout section */
+.layout-section { margin-bottom: 32px; }
+.layout-section h3 { font-size: 16px; font-weight: 700; color: var(--slate); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.layout-cards { display: flex; gap: 14px; flex-wrap: wrap; }
+.layout-card {
+  width: 175px;
+  border-radius: var(--r);
+  border: 2px solid var(--border);
+  background: white;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  overflow: hidden;
+}
+.layout-card:hover { border-color: #6366F1; box-shadow: 0 6px 20px rgba(99,102,241,.14); transform: translateY(-2px); }
+.layout-card.active { border-color: #22C55E; box-shadow: 0 6px 20px rgba(34,197,94,.18); }
+.layout-card .lc-preview {
+  height: 108px;
+  padding: 10px 10px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: #F8FAFC;
+  overflow: hidden;
+}
+.layout-card .lc-header {
+  height: 14px; border-radius: 4px; margin-bottom: 3px;
+}
+.layout-card .lc-meal {
+  height: 10px; border-radius: 3px;
+}
+.layout-card .lc-row {
+  height: 7px; border-radius: 3px; background: #E2E8F0; margin-left: 6px;
+}
+.layout-card .lc-row-short { width: 60%; }
+.layout-card .lc-row-mid { width: 80%; }
+.layout-card .lc-footer {
+  height: 8px; border-radius: 3px; margin-top: 4px;
+}
+.layout-card .lc-label {
+  padding: 8px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--slate);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1.5px solid var(--border);
+}
+.layout-card .lc-check { font-size: 14px; display: none; }
+.layout-card.active .lc-check { display: block; }
 </style>
 </head>
 <body>
@@ -150,6 +204,75 @@
     </div>
   </div>
 
+  <!-- LAYOUT PIANO ALIMENTARE -->
+  <div class="layout-section">
+    <h3>🎨 Layout Piano Alimentare</h3>
+    <p style="font-size:13px;color:var(--slate-l);margin-bottom:16px;margin-top:-8px">Scegli il tema grafico usato quando stampi o esporti il piano alimentare per i tuoi pazienti.</p>
+    <div class="layout-cards">
+
+      <!-- Classico Verde -->
+      <button class="layout-card" id="layout-card-classico" onclick="setPianoLayout('classico')">
+        <div class="lc-preview">
+          <div class="lc-header" style="background:#0F766E;opacity:.9"></div>
+          <div class="lc-meal" style="background:#0F766E;width:70%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-meal" style="background:#0F766E;width:55%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-footer" style="background:#A7F3D0;width:100%"></div>
+        </div>
+        <div class="lc-label">Classico Verde <span class="lc-check">✅</span></div>
+      </button>
+
+      <!-- Elegante Blu -->
+      <button class="layout-card" id="layout-card-elegante" onclick="setPianoLayout('elegante')">
+        <div class="lc-preview">
+          <div class="lc-header" style="background:linear-gradient(90deg,#3B82F6,#6366F1);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#3B82F6,#6366F1);width:70%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#3B82F6,#6366F1);width:55%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-footer" style="background:#BFDBFE;width:100%"></div>
+        </div>
+        <div class="lc-label">Elegante Blu <span class="lc-check">✅</span></div>
+      </button>
+
+      <!-- Caldo Ambra -->
+      <button class="layout-card" id="layout-card-caldo" onclick="setPianoLayout('caldo')">
+        <div class="lc-preview">
+          <div class="lc-header" style="background:linear-gradient(90deg,#F59E0B,#EA580C);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#F59E0B,#EA580C);width:70%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#F59E0B,#EA580C);width:55%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-footer" style="background:#FCD34D;width:100%"></div>
+        </div>
+        <div class="lc-label">Caldo Ambra <span class="lc-check">✅</span></div>
+      </button>
+
+      <!-- Fresco Viola -->
+      <button class="layout-card" id="layout-card-fresco" onclick="setPianoLayout('fresco')">
+        <div class="lc-preview">
+          <div class="lc-header" style="background:linear-gradient(90deg,#8B5CF6,#EC4899);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#8B5CF6,#EC4899);width:70%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#8B5CF6,#EC4899);width:55%"></div>
+          <div class="lc-row lc-row-mid"></div>
+          <div class="lc-row lc-row-short"></div>
+          <div class="lc-footer" style="background:#C4B5FD;width:100%"></div>
+        </div>
+        <div class="lc-label">Fresco Viola <span class="lc-check">✅</span></div>
+      </button>
+
+    </div>
+  </div>
+
   <!-- LINGUA SECTION -->
   <div class="lang-section">
     <h3>🌐 Lingua / Language / Sprache</h3>
@@ -186,6 +309,15 @@
 <script src="js/lang.js"></script>
 <script src="js/utils.js"></script>
 <script>
+function setPianoLayout(id) {
+  localStorage.setItem('nutriplan_piano_layout', id);
+  ['classico','elegante','caldo','fresco'].forEach(k => {
+    const card = document.getElementById('layout-card-' + k);
+    if (card) card.classList.toggle('active', k === id);
+  });
+  if (typeof toast === 'function') toast('🎨 Layout "' + id.charAt(0).toUpperCase() + id.slice(1) + '" selezionato!', 'ok');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth();
@@ -202,6 +334,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         card.classList.remove('active');
       }
     }
+  });
+
+  // Highlight the currently active layout card
+  const currentLayout = localStorage.getItem('nutriplan_piano_layout') || 'classico';
+  ['classico','elegante','caldo','fresco'].forEach(k => {
+    const card = document.getElementById('layout-card-' + k);
+    if (card) card.classList.toggle('active', k === currentLayout);
   });
 });
 </script>

@@ -1327,6 +1327,7 @@ function svuotaSezione_chetogenica() {
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_chetogenica();
 }, {once: false});
+window.addEventListener('beforeunload', autoSavePage_chetogenica);
 
 function calcVal_ket() {
   const peso = parseFloat(document.getElementById('ket-val-peso')?.value);

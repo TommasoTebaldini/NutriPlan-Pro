@@ -1627,6 +1627,7 @@ function resetVal(){
   selectedPat.clear();renderPatChips();
   document.getElementById('risultati-col').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--slate-l)"><div style="font-size:44px;margin-bottom:14px">📊</div><p>Inserisci i dati e clicca Calcola Fabbisogno</p></div>';
   tdee=0;schedaId=null;
+  localStorage.removeItem('nutriplan_autosave_valutazione');
 }
 
 function stampaSchedaValutazione(){
@@ -1750,11 +1751,41 @@ function stampaSchedaValutazione(){
   }, 250);
 }
 
+function autoSavePage_valutazione() {
+  try {
+    const d = {};
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+      d[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+    });
+    d['_selectedPat'] = [...selectedPat];
+    localStorage.setItem('nutriplan_autosave_valutazione', JSON.stringify(d));
+  } catch(e) {}
+}
+function autoRestorePage_valutazione() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nutriplan_autosave_valutazione') || '{}');
+    if (!Object.keys(saved).length) return;
+    Object.entries(saved).forEach(([id, val]) => {
+      if (id.startsWith('_')) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = val;
+      else el.value = val;
+    });
+    const fumoEl = document.getElementById('v-fumo');
+    const sw = document.getElementById('v-sigarette-wrap');
+    if (fumoEl && sw) sw.style.display = fumoEl.value === 'Fumatore attivo' ? 'block' : 'none';
+    if (saved._selectedPat) { selectedPat = new Set(saved._selectedPat); renderPatChips(); }
+  } catch(e) {}
+}
+window.addEventListener('beforeunload', autoSavePage_valutazione);
+
 document.addEventListener('DOMContentLoaded',async()=>{
   renderPatChips();
   ['v-pi','v-pa','v-mm','v-mg'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el._userEdited=true);});
   const preCartella = sessionStorage.getItem('valCartella');
   const loadSchedaId = sessionStorage.getItem('loadSchedaId');
+  if (!loadSchedaId) autoRestorePage_valutazione();
   try {
     const ok = await checkAuth();
     if(ok) {

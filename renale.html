@@ -1492,6 +1492,7 @@ function svuotaSezione_renale() {
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_renale();
 }, {once: false});
+window.addEventListener('beforeunload', autoSavePage_renale);
 
 function calcVal_ren() {
   const peso = parseFloat(document.getElementById('ren-val-peso')?.value);

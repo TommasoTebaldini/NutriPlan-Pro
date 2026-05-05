@@ -1471,9 +1471,21 @@ function esportaExcel() {
 }
 
 
+const PIANO_LAYOUTS = {
+  classico: { id:'classico', name:'Classico Verde', primary:'#0F766E', primaryDark:'#0C5F58', pale:'#F0FDFA', paleBorder:'#A7F3D0', accent:'#0EA5E9', gradStart:'#0D9488', gradEnd:'#10B981', headerText:'#0F766E' },
+  elegante: { id:'elegante', name:'Elegante Blu', primary:'#2563EB', primaryDark:'#1D4ED8', pale:'#EFF6FF', paleBorder:'#BFDBFE', accent:'#3B82F6', gradStart:'#3B82F6', gradEnd:'#6366F1', headerText:'#1D4ED8' },
+  caldo:    { id:'caldo',    name:'Caldo Ambra',   primary:'#D97706', primaryDark:'#B45309', pale:'#FFFBEB', paleBorder:'#FCD34D', accent:'#F59E0B', gradStart:'#F59E0B', gradEnd:'#EA580C', headerText:'#92400E' },
+  fresco:   { id:'fresco',   name:'Fresco Viola',  primary:'#7C3AED', primaryDark:'#6D28D9', pale:'#F5F3FF', paleBorder:'#C4B5FD', accent:'#8B5CF6', gradStart:'#8B5CF6', gradEnd:'#EC4899', headerText:'#5B21B6' }
+};
+function getActivePianoLayout() {
+  const id = localStorage.getItem('nutriplan_piano_layout') || 'classico';
+  return PIANO_LAYOUTS[id] || PIANO_LAYOUTS.classico;
+}
+
 function stampaPDF() {
   if (giorni.length > 1) {
-    document.getElementById('pdf-alldays-print-area').innerHTML = _buildPDFAllDaysHTML();
+    const lyt = getActivePianoLayout();
+    document.getElementById('pdf-alldays-print-area').innerHTML = _buildPDFAllDaysHTML(lyt);
     document.body.dataset.printMode = 'pdf-alldays';
     setTimeout(() => window.print(), 400);
   } else {
@@ -1483,14 +1495,15 @@ function stampaPDF() {
   }
 }
 
-function _buildPDFAllDaysHTML() {
+function _buildPDFAllDaysHTML(lyt) {
+  lyt = lyt || PIANO_LAYOUTS.classico;
   const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
   const dataPiano = document.getElementById('inp-data')?.value || '';
   const nomePiano = document.getElementById('inp-nome')?.value || '';
   let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B">';
   if (nomeP || nomePiano || dataPiano) {
-    html += '<div style="text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #0F766E">';
-    if (nomeP) html += '<div style="font-size:14px;font-weight:700;color:#0F766E">' + esc(nomeP) + '</div>';
+    html += '<div style="text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+lyt.primary+'">';
+    if (nomeP) html += '<div style="font-size:14px;font-weight:700;color:'+lyt.primary+'">' + esc(nomeP) + '</div>';
     if (nomePiano) html += '<div style="font-size:11px;color:#475569">' + esc(nomePiano) + '</div>';
     if (dataPiano) {
       const [dp_y,dp_m,dp_d] = dataPiano.split('-').map(Number);
@@ -1505,8 +1518,8 @@ function _buildPDFAllDaysHTML() {
       if(f&&qt){dk+=(f.k||0)/100*qt;dp2+=(f.p||0)/100*qt;dgs+=(f.gs||0)/100*qt;dg+=(f.g||0)/100*qt;dz+=(f.z||0)/100*qt;dch+=(f.ch||0)/100*qt;dfi+=(f.fi||0)/100*qt;}
     }));
     html += '<div' + (gi > 0 ? ' style="break-before:page"' : '') + '>';
-    html += '<div style="background:#1E293B;color:white;padding:4px 8px;border-radius:4px 4px 0 0;font-size:10px;font-weight:700">📅 ' + esc(giorno.nome) + '</div>';
-    html += '<div style="background:#0F766E;color:white;padding:3px 8px;font-size:8px;font-weight:600;margin-bottom:4px">';
+    html += '<div style="background:'+lyt.primaryDark+';color:white;padding:4px 8px;border-radius:4px 4px 0 0;font-size:10px;font-weight:700">📅 ' + esc(giorno.nome) + '</div>';
+    html += '<div style="background:'+lyt.primary+';color:white;padding:3px 8px;font-size:8px;font-weight:600;margin-bottom:4px">';
     html += '🔥 ' + Math.round(dk) + ' kcal · P:' + r1(dp2) + 'g · Gr.Sat:' + r1(dgs) + 'g · Gr.Tot:' + r1(dg) + 'g · CHO:' + r1(dch) + 'g · Fi:' + r1(dfi) + 'g';
     html += '</div>';
     giorno.meals.forEach(meal => {
@@ -1549,7 +1562,7 @@ function _buildPDFAllDaysHTML() {
           });
         }
       });
-      html += '<tr style="background:#0F766E;color:white"><td style="padding:2px 4px;text-align:left;font-size:7px;font-weight:700">∑ ' + esc(meal.nome.toUpperCase()) + '</td>';
+      html += '<tr style="background:'+lyt.primary+';color:white"><td style="padding:2px 4px;text-align:left;font-size:7px;font-weight:700">∑ ' + esc(meal.nome.toUpperCase()) + '</td>';
       html += '<td style="padding:2px 3px;text-align:center">—</td>';
       html += '<td style="padding:2px 3px;text-align:center;font-weight:700">' + Math.round(mk) + '</td>';
       html += '<td style="padding:2px 3px;text-align:center">' + r1(mp) + '</td>';
@@ -1571,17 +1584,18 @@ function _buildPDFAllDaysHTML() {
   return html;
 }
 
-function _buildSimpleDayHTML(giorno, showDayHeader) {
+function _buildSimpleDayHTML(giorno, showDayHeader, lyt) {
+  lyt = lyt || PIANO_LAYOUTS.classico;
   let totKcal=0,totProt=0,totCho=0,totFat=0,totFib=0;
   let html = '';
   if (showDayHeader) {
-    html += '<div style="margin:16px 0 10px;padding:6px 12px;background:#F0FDFA;border-left:4px solid #0F766E;border-radius:4px;font-size:13px;font-weight:700;color:#0F766E">📅 ' + esc(giorno.nome) + '</div>';
+    html += '<div style="margin:16px 0 10px;padding:6px 12px;background:'+lyt.pale+';border-left:4px solid '+lyt.primary+';border-radius:4px;font-size:13px;font-weight:700;color:'+lyt.headerText+'">📅 ' + esc(giorno.nome) + '</div>';
   }
   giorno.meals.forEach(meal => {
     const foodItems = meal.items.filter(it => it.nome && it.nome.trim());
     if (!foodItems.length) return;
     html += '<div style="margin-bottom:18px;break-inside:avoid">';
-    html += '<div style="font-size:14px;font-weight:700;color:#0F766E;padding:7px 12px;background:#F0FDFA;border-left:4px solid #0F766E;border-radius:4px;margin-bottom:6px">' + esc(meal.emoji||'') + ' ' + esc(meal.nome) + '</div>';
+    html += '<div style="font-size:14px;font-weight:700;color:'+lyt.headerText+';padding:7px 12px;background:'+lyt.pale+';border-left:4px solid '+lyt.primary+';border-radius:4px;margin-bottom:6px">' + esc(meal.emoji||'') + ' ' + esc(meal.nome) + '</div>';
     foodItems.forEach(item => {
       const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
       if(f&&qt){totKcal+=(f.k||0)/100*qt;totProt+=(f.p||0)/100*qt;totCho+=(f.ch||0)/100*qt;totFat+=(f.g||0)/100*qt;totFib+=(f.fi||0)/100*qt;}
@@ -1597,7 +1611,7 @@ function _buildSimpleDayHTML(giorno, showDayHeader) {
     if (meal.note && meal.note.trim()) html += '<div style="padding:5px 12px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB;border-radius:0 0 4px 4px">📝 ' + esc(meal.note) + '</div>';
     html += '</div>';
   });
-  html += '<div style="margin-top:12px;padding:10px 16px;background:#F0FDFA;border-radius:8px;border:1px solid #A7F3D0;font-size:12px;color:#0F766E;font-weight:600;text-align:center">';
+  html += '<div style="margin-top:12px;padding:10px 16px;background:'+lyt.pale+';border-radius:8px;border:1px solid '+lyt.paleBorder+';font-size:12px;color:'+lyt.headerText+';font-weight:600;text-align:center">';
   html += '🔥 ' + Math.round(totKcal) + ' kcal &nbsp;·&nbsp; 💪 P:' + r1(totProt) + 'g &nbsp;·&nbsp; 🍞 CHO:' + r1(totCho) + 'g &nbsp;·&nbsp; 🧈 Gr:' + r1(totFat) + 'g &nbsp;·&nbsp; 🌿 Fi:' + r1(totFib) + 'g';
   html += '</div>';
   return { html, totKcal, totProt, totCho, totFat, totFib };
@@ -1609,10 +1623,11 @@ function stampaSemplice() {
   const dataPiano = document.getElementById('inp-data')?.value || '';
   const nomePiano = document.getElementById('inp-nome')?.value || '';
   const isMultiDay = giorni.length > 1;
+  const lyt = getActivePianoLayout();
 
   let html = '<div style="font-family:\'DM Sans\',sans-serif;max-width:680px;margin:0 auto;color:#1E293B">';
-  html += '<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #0F766E">';
-  html += '<div style="font-size:22px;font-weight:700;color:#0F766E">' + (esc(nomeP)||'Piano Alimentare') + '</div>';
+  html += '<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid '+lyt.primary+'">';
+  html += '<div style="font-size:22px;font-weight:700;color:'+lyt.primary+'">' + (esc(nomeP)||'Piano Alimentare') + '</div>';
   if (nomePiano) html += '<div style="font-size:13px;color:#475569;margin-top:4px">' + esc(nomePiano) + '</div>';
   if (dataPiano) {
     const [dp_y,dp_m,dp_d] = dataPiano.split('-').map(Number);
@@ -1622,13 +1637,13 @@ function stampaSemplice() {
 
   let gTotKcal=0,gTotProt=0,gTotCho=0,gTotFat=0,gTotFib=0;
   giorni.forEach(giorno => {
-    const res = _buildSimpleDayHTML(giorno, isMultiDay);
+    const res = _buildSimpleDayHTML(giorno, isMultiDay, lyt);
     html += res.html;
     gTotKcal+=res.totKcal; gTotProt+=res.totProt; gTotCho+=res.totCho; gTotFat+=res.totFat; gTotFib+=res.totFib;
   });
 
   if (isMultiDay) {
-    html += '<div style="margin-top:20px;padding:11px 16px;background:#1E293B;border-radius:8px;font-size:12px;color:white;font-weight:600;text-align:center">';
+    html += '<div style="margin-top:20px;padding:11px 16px;background:'+lyt.primaryDark+';border-radius:8px;font-size:12px;color:white;font-weight:600;text-align:center">';
     html += '📊 Totale piano: 🔥 ' + Math.round(gTotKcal) + ' kcal · P:' + r1(gTotProt) + 'g · CHO:' + r1(gTotCho) + 'g · Gr:' + r1(gTotFat) + 'g · Fi:' + r1(gTotFib) + 'g';
     html += '</div>';
   }
@@ -1641,7 +1656,8 @@ function stampaSemplice() {
   setTimeout(() => window.print(), 400);
 }
 
-function _buildCompattaDayHTML(giorno, showDayHeader) {
+function _buildCompattaDayHTML(giorno, showDayHeader, lyt) {
+  lyt = lyt || PIANO_LAYOUTS.classico;
   const mealList = giorno.meals.filter(m => m.items.some(it => it.nome && it.nome.trim()));
   let totKcal=0,totProt=0,totCho=0,totFat=0,totFib=0;
   mealList.forEach(meal => meal.items.filter(it=>it.nome&&it.nome.trim()).forEach(item=>{
@@ -1651,16 +1667,16 @@ function _buildCompattaDayHTML(giorno, showDayHeader) {
   const avgKcalPasto = mealList.length ? Math.round(totKcal/mealList.length) : 0;
   let html = '';
   if (showDayHeader) {
-    html += '<div style="margin:16px 0 10px;padding:8px 16px;background:#1E293B;border-radius:8px;font-size:14px;font-weight:700;color:white">📅 ' + esc(giorno.nome) + '</div>';
+    html += '<div style="margin:16px 0 10px;padding:8px 16px;background:'+lyt.primaryDark+';border-radius:8px;font-size:14px;font-weight:700;color:white">📅 ' + esc(giorno.nome) + '</div>';
   }
   const stats = [
     {val:Math.round(totKcal),lbl:'KCAL TOTALI'},{val:r1(totProt),lbl:'PROTEINE (G)'},
     {val:r1(totCho),lbl:'CARBOIDRATI (G)'},{val:r1(totFat),lbl:'GRASSI (G)'},{val:avgKcalPasto,lbl:'KCAL/PASTO'}
   ];
-  html += '<div style="display:flex;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;margin-bottom:14px">';
+  html += '<div style="display:flex;border:1.5px solid '+lyt.paleBorder+';border-radius:10px;overflow:hidden;margin-bottom:14px">';
   stats.forEach((s,i) => {
-    html += '<div style="flex:1;text-align:center;padding:10px 4px;' + (i<stats.length-1?'border-right:1.5px solid #CBD5E1':'') + '">';
-    html += '<div style="font-size:18px;font-weight:700;color:#0EA5E9">' + s.val + '</div>';
+    html += '<div style="flex:1;text-align:center;padding:10px 4px;' + (i<stats.length-1?'border-right:1.5px solid '+lyt.paleBorder:'') + '">';
+    html += '<div style="font-size:18px;font-weight:700;color:'+lyt.accent+'">' + s.val + '</div>';
     html += '<div style="font-size:8.5px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-top:1px">' + s.lbl + '</div></div>';
   });
   html += '</div>';
@@ -1668,8 +1684,8 @@ function _buildCompattaDayHTML(giorno, showDayHeader) {
     const foodItems=meal.items.filter(it=>it.nome&&it.nome.trim());
     let mealKcal=0;
     foodItems.forEach(it=>{const f=lookup(it.nome);const qt=parseFloat(it.qt)||0;if(f&&qt)mealKcal+=(f.k||0)/100*qt;});
-    html += '<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #E2E8F0;break-inside:avoid">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,#0D9488,#10B981)">';
+    html += '<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid '+lyt.paleBorder+';break-inside:avoid">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(135deg,'+lyt.gradStart+','+lyt.gradEnd+')">';
     html += '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">' + esc(meal.emoji||'') + '</span><span style="font-size:14px;font-weight:700;color:white">' + esc(meal.nome) + '</span></div>';
     if (mealKcal>0) html += '<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ' + Math.round(mealKcal) + ' kcal</span>';
     html += '</div>';
@@ -1680,7 +1696,7 @@ function _buildCompattaDayHTML(giorno, showDayHeader) {
       const qtStr=item.qt?item.qt+' g':'';
       html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F1F5F9"><span style="font-size:13px;color:#1E293B">' + esc(item.nome) + misuraTxt + '</span>';
       html += '<div style="display:flex;align-items:center;gap:14px;white-space:nowrap;padding-left:12px">';
-      if (qtStr) html += '<span style="font-size:13px;font-weight:700;color:#0EA5E9">' + qtStr + '</span>';
+      if (qtStr) html += '<span style="font-size:13px;font-weight:700;color:'+lyt.accent+'">' + qtStr + '</span>';
       if (kcalItem>0) html += '<span style="font-size:12px;color:#94A3B8">' + kcalItem + ' kcal</span>';
       html += '</div></div>';
       if (item.altPrint&&item.altPrint.length) {
@@ -1692,7 +1708,7 @@ function _buildCompattaDayHTML(giorno, showDayHeader) {
     if (meal.note&&meal.note.trim()) html += '<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ' + esc(meal.note) + '</div>';
     html += '</div>';
   });
-  if (totFib>0) html += '<div style="margin-top:8px;padding:6px 16px;background:#F8FAFC;border-radius:8px;border:1.5px solid #E2E8F0;font-size:11px;color:#64748B;text-align:center">🌿 Fibra totale: ' + r1(totFib) + ' g</div>';
+  if (totFib>0) html += '<div style="margin-top:8px;padding:6px 16px;background:'+lyt.pale+';border-radius:8px;border:1.5px solid '+lyt.paleBorder+';font-size:11px;color:#64748B;text-align:center">🌿 Fibra totale: ' + r1(totFib) + ' g</div>';
   return { html, totKcal, totProt, totCho, totFat, totFib };
 }
 
@@ -1702,11 +1718,12 @@ function stampaCompatta() {
   const dataPiano = document.getElementById('inp-data')?.value || '';
   const nomePiano = document.getElementById('inp-nome')?.value || '';
   const isMultiDay = giorni.length > 1;
+  const lyt = getActivePianoLayout();
 
   let html = '<div style="font-family:\'DM Sans\',sans-serif;max-width:700px;margin:0 auto;color:#1E293B">';
   if (nomeP||nomePiano||dataPiano) {
-    html += '<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid #E2E8F0">';
-    if (nomeP) html += '<div style="font-size:18px;font-weight:700;color:#0F766E">' + esc(nomeP) + '</div>';
+    html += '<div style="text-align:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1.5px solid '+lyt.paleBorder+'">';
+    if (nomeP) html += '<div style="font-size:18px;font-weight:700;color:'+lyt.primary+'">' + esc(nomeP) + '</div>';
     if (nomePiano) html += '<div style="font-size:13px;color:#475569;margin-top:3px">' + esc(nomePiano) + '</div>';
     if (dataPiano) {
       const parts=dataPiano.split('-').map(Number);
@@ -1720,13 +1737,13 @@ function stampaCompatta() {
 
   let gTotKcal=0,gTotProt=0,gTotCho=0,gTotFat=0,gTotFib=0;
   giorni.forEach(giorno => {
-    const res = _buildCompattaDayHTML(giorno, isMultiDay);
+    const res = _buildCompattaDayHTML(giorno, isMultiDay, lyt);
     html += res.html;
     gTotKcal+=res.totKcal; gTotProt+=res.totProt; gTotCho+=res.totCho; gTotFat+=res.totFat; gTotFib+=res.totFib;
   });
 
   if (isMultiDay) {
-    html += '<div style="margin-top:16px;padding:12px 16px;background:#1E293B;border-radius:8px;font-size:12px;color:white;font-weight:600;text-align:center">';
+    html += '<div style="margin-top:16px;padding:12px 16px;background:'+lyt.primaryDark+';border-radius:8px;font-size:12px;color:white;font-weight:600;text-align:center">';
     html += '📊 Totale piano: 🔥 ' + Math.round(gTotKcal) + ' kcal · P:' + r1(gTotProt) + 'g · CHO:' + r1(gTotCho) + 'g · Gr:' + r1(gTotFat) + 'g · Fi:' + r1(gTotFib) + 'g';
     html += '</div>';
   }

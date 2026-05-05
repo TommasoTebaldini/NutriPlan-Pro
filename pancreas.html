@@ -1102,6 +1102,7 @@ function svuotaSezione_pancreas() {
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_pancreas();
 }, {once: false});
+window.addEventListener('beforeunload', autoSavePage_pancreas);
 
 function calcVal_ipe() {
   const peso = parseFloat(document.getElementById('ipe-val-peso')?.value);

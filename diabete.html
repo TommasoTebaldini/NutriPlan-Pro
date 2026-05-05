@@ -1228,6 +1228,7 @@ function svuotaSezione_diabete() {
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_diabete();
 }, {once: false});
+window.addEventListener('beforeunload', autoSavePage_diabete);
 
 function calcVal_dg() {
   const peso = parseFloat(document.getElementById('dg-val-peso')?.value);

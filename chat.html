@@ -95,23 +95,25 @@
 .priv-edit-area{width:100%;min-height:260px;padding:12px 14px;font-size:11.5px;font-family:'DM Sans',sans-serif;line-height:1.8;border:2px solid var(--teal-l);border-radius:8px;outline:none;resize:vertical;background:white;box-sizing:border-box;color:var(--slate)}
 .priv-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 /* Storico panel */
-.stor-panel{flex:1;overflow-y:auto;padding:12px 16px;background:#F8FAFC}
-.stor-header{background:linear-gradient(135deg,#0F766E,#0EA5E9);border-radius:10px;padding:12px 16px;margin-bottom:12px;color:white;display:flex;align-items:center;gap:10px}
-.stor-header h3{font-size:14px;font-weight:700;margin:0;flex:1}
-.stor-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
-.stor-filter-bar select{padding:5px 9px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:12px;font-family:inherit;outline:none;background:white}
+.stor-panel{flex:1;overflow-y:auto;padding:14px 18px;background:#F8FAFC}
+.stor-header{background:linear-gradient(135deg,#0F766E 0%,#0D9488 50%,#0EA5E9 100%);border-radius:14px;padding:16px 20px;margin-bottom:16px;color:white;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(15,118,110,.25)}
+.stor-header h3{font-size:15px;font-weight:700;margin:0;flex:1;font-family:'DM Serif Display',serif}
+.stor-header-icon{font-size:28px;line-height:1;flex-shrink:0}
+.stor-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.stor-filter-bar select{padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:12px;font-family:inherit;outline:none;background:white;color:var(--slate);cursor:pointer}
 .stor-filter-bar select:focus{border-color:var(--teal-l)}
-.stor-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px;margin-bottom:10px}
-.stor-stat{background:white;border-radius:8px;padding:8px 10px;text-align:center;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.stor-stat-val{font-size:16px;font-weight:800;color:var(--teal-d);line-height:1.15}
-.stor-stat-lbl{font-size:9px;color:var(--slate-l);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
-.stor-stat-delta{font-size:9px;margin-top:2px;font-weight:600}
-.stor-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stor-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:14px}
+.stor-stat{background:white;border-radius:10px;padding:12px 10px;text-align:center;border:1px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);transition:transform .15s,box-shadow .15s}
+.stor-stat:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.stor-stat-val{font-size:18px;font-weight:800;color:var(--teal-d);line-height:1.2;font-family:'DM Serif Display',serif}
+.stor-stat-lbl{font-size:9.5px;color:var(--slate-l);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.stor-stat-delta{font-size:10px;margin-top:3px;font-weight:700;border-radius:20px;display:inline-block;padding:1px 8px}
+.stor-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .stor-chart-full{grid-column:span 2}
-.stor-chart-card{background:white;border:1px solid var(--border);border-radius:10px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.stor-chart-card h4{font-size:10.5px;font-weight:700;color:var(--slate-m);margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.4px}
-.stor-chart-wrap{position:relative;height:120px}
-.stor-no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:var(--slate-l);font-size:13px;gap:8px;text-align:center}
+.stor-chart-card{background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.stor-chart-card h4{font-size:11px;font-weight:700;color:var(--slate);margin-bottom:12px;display:flex;align-items:center;gap:6px;letter-spacing:.2px}
+.stor-chart-wrap{position:relative;height:140px}
+.stor-no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--slate-l);font-size:13px;gap:10px;text-align:center}
 /* Print styles */
 @media print{
   #sidebar,#topbar,.no-print,#loading-overlay,#toast,.chat-sidebar{display:none!important}
@@ -218,8 +220,8 @@ let selectedPatientId = null;
 let selectedPatientCartellaId = null;
 let chatMessages = [];
 let realtimeChannel = null;
-let currentChatTab = 'chat'; // 'chat' | 'andamento'
-let andamentoPeriodDays = 30;
+let currentChatTab = 'chat';
+let andamentoPeriodDays = 14;
 
 function getInitials(name) {
   return (name || '?').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || '?';
@@ -420,129 +422,165 @@ async function loadAndamento() {
   const panel = document.getElementById('andamento-panel');
   if (!panel) return;
 
-  if (!selectedPatientCartellaId) {
-    panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📭</div><div>Nessuna cartella collegata a questo paziente.<br>Collega il paziente a una cartella per vedere il diario.</div></div>';
+  const safeQ = async (q) => { try { const r = await q; return r.data || []; } catch(_) { return []; } };
+
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - (andamentoPeriodDays > 0 ? andamentoPeriodDays : 365));
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+
+  // Queries by user_id (patient auth ID) — food diary data
+  const foodQ  = selectedPatientId ? safeQ(sb.from('food_logs').select('date,meal_type,food_name,kcal,proteins,carbs,fats,grams').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).order('created_at',{ascending:false}).limit(500)) : Promise.resolve([]);
+  const totQ   = selectedPatientId ? safeQ(sb.from('daily_logs').select('date,kcal,proteins,carbs,fats').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
+  const waterQ = selectedPatientId ? safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
+  const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
+
+  // Queries by cartella_id — clinical diary data
+  const wellQ  = selectedPatientCartellaId ? safeQ(sb.from('daily_wellness').select('*').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
+  const wtQ    = selectedPatientCartellaId ? safeQ(sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
+
+  panel.innerHTML = '<div class="and-empty"><div class="spinner"></div><div>Caricamento diario...</div></div>';
+
+  const [foodLogs, dailyTotals, waterLogs, activityLogs, wellness, weightLogs] = await Promise.all([foodQ, totQ, waterQ, actQ, wellQ, wtQ]);
+
+  const hasAny = foodLogs.length || waterLogs.length || activityLogs.length || wellness.length || weightLogs.length;
+  if (!hasAny) {
+    if (!selectedPatientId && !selectedPatientCartellaId) {
+      panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📭</div><div>Paziente non completamente configurato.<br><span style="font-size:12px;color:var(--slate-l)">Assicurati che il paziente abbia sia un account app che una cartella collegata.</span></div></div>';
+    } else {
+      panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📓</div><div>Nessun dato registrato in questo periodo.<br><span style="font-size:12px;color:var(--slate-l)">I dati appariranno quando il paziente utilizzerà l\'app NutriPlan.</span></div></div>';
+    }
     return;
   }
 
-  // Fetch wellness entries
-  let wellnessQuery = sb.from('daily_wellness')
-    .select('*')
-    .eq('cartella_id', selectedPatientCartellaId)
-    .order('logged_at', { ascending: false })
-    .limit(90);
-  if (andamentoPeriodDays > 0) {
-    const since = new Date(Date.now() - andamentoPeriodDays * 86400000).toISOString();
-    wellnessQuery = wellnessQuery.gte('logged_at', since);
-  }
-  const { data: wellness, error } = await wellnessQuery;
+  // Build date-indexed maps
+  const foodByDate = {};
+  foodLogs.forEach(f => { if (!foodByDate[f.date]) foodByDate[f.date] = []; foodByDate[f.date].push(f); });
+  const totalsByDate = {};
+  dailyTotals.forEach(d => { totalsByDate[d.date] = d; });
+  const waterByDate = {};
+  waterLogs.forEach(w => { waterByDate[w.date] = (waterByDate[w.date] || 0) + (w.amount_ml || 0); });
+  const wellByDate = {};
+  wellness.forEach(w => { const d = (w.logged_at || '').split('T')[0]; if (d) wellByDate[d] = w; });
+  const actByDate = {};
+  activityLogs.forEach(a => { if (!actByDate[a.date]) actByDate[a.date] = []; actByDate[a.date].push(a); });
+  const weightByDate = {};
+  weightLogs.forEach(w => { const d = (w.logged_at || '').split('T')[0]; if (d && !weightByDate[d]) weightByDate[d] = w.weight; });
 
-  // Fetch weight logs
-  let weightQuery = sb.from('weight_logs')
-    .select('*')
-    .eq('cartella_id', selectedPatientCartellaId)
-    .order('logged_at', { ascending: false })
-    .limit(90);
-  if (andamentoPeriodDays > 0) {
-    const since = new Date(Date.now() - andamentoPeriodDays * 86400000).toISOString();
-    weightQuery = weightQuery.gte('logged_at', since);
-  }
-  const { data: weights } = await weightQuery;
-
-  if (error) {
-    panel.innerHTML = `<div class="and-empty"><div style="font-size:36px">❌</div><div>Errore caricamento: ${esc(error.message)}</div></div>`;
-    return;
-  }
-
-  if (!wellness || !wellness.length) {
-    panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📓</div><div>Il paziente non ha ancora registrato dati nel diario.<br><span style="font-size:12px;color:var(--slate-l)">I dati appariranno qui non appena il paziente utilizzerà l\'app.</span></div></div>';
-    return;
-  }
-
-  // Build weight map by date string
-  const weightMap = {};
-  for (const w of (weights || [])) {
-    const dk = new Date(w.logged_at).toDateString();
-    if (!weightMap[dk]) weightMap[dk] = w.weight;
-  }
+  // Collect all dates with data
+  const allDates = [...new Set([
+    ...Object.keys(foodByDate),
+    ...Object.keys(totalsByDate),
+    ...Object.keys(waterByDate),
+    ...Object.keys(wellByDate),
+    ...Object.keys(actByDate),
+    ...Object.keys(weightByDate),
+  ])].sort((a, b) => b.localeCompare(a));
 
   const moodMap = { 1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊' };
-  const moodColorMap = { 1: '#FEE2E2', 2: '#FEF3C7', 3: '#F1F5F9', 4: '#DCFCE7', 5: '#CCFBF1' };
-  const moodBorderMap = { 1: '#FECACA', 2: '#FDE68A', 3: '#CBD5E1', 4: '#86EFAC', 5: '#5EEAD4' };
   const moodTextMap = { 1: 'Molto negativo', 2: 'Negativo', 3: 'Neutro', 4: 'Positivo', 5: 'Ottimo' };
+  const moodBorderMap = { 1: '#FECACA', 2: '#FDE68A', 3: '#CBD5E1', 4: '#86EFAC', 5: '#5EEAD4' };
+  const mealLabel = { colazione: '☀️ Colazione', spuntino_mattina: '🍎 Spuntino mat.', pranzo: '🍽️ Pranzo', spuntino_pomeriggio: '🍊 Spuntino pom.', cena: '🌙 Cena' };
 
-  // Stats
+  // Summary stats
   const moods = wellness.filter(w => w.mood).map(w => w.mood);
   const avgMood = moods.length ? (moods.reduce((a, b) => a + b, 0) / moods.length).toFixed(1) : null;
   const sleeps = wellness.filter(w => w.sleep_hours != null).map(w => parseFloat(w.sleep_hours));
   const avgSleep = sleeps.length ? (sleeps.reduce((a, b) => a + b, 0) / sleeps.length).toFixed(1) : null;
-  const withActivity = wellness.filter(w => w.activity).length;
-  const withNotes = wellness.filter(w => w.notes).length;
+  const kcals = dailyTotals.filter(d => d.kcal).map(d => d.kcal);
+  const avgKcal = kcals.length ? Math.round(kcals.reduce((a, b) => a + b, 0) / kcals.length) : null;
+  const totalActivityMin = activityLogs.reduce((s, a) => s + (a.duration_minutes || 0), 0);
 
-  // Filter options
   const filterSel = `<div class="and-filter-bar">
     <span style="font-size:12px;color:var(--slate-l);font-weight:600">Periodo:</span>
     <select id="and-period-filter" onchange="filterAndamento(this.value)">
+      <option value="14" ${andamentoPeriodDays===14?'selected':''}>Ultimi 14 giorni</option>
       <option value="30" ${andamentoPeriodDays===30?'selected':''}>Ultimi 30 giorni</option>
       <option value="60" ${andamentoPeriodDays===60?'selected':''}>Ultimi 60 giorni</option>
       <option value="0" ${andamentoPeriodDays===0?'selected':''}>Tutto</option>
     </select>
   </div>`;
 
-  let statsHtml = `<div class="and-stats-row">
+  const statsHtml = `<div class="and-stats-row">
+    ${avgKcal ? `<div class="and-stat"><div class="and-stat-val">🔥 ${avgKcal}</div><div class="and-stat-lbl">kcal/giorno</div></div>` : ''}
     ${avgMood ? `<div class="and-stat"><div class="and-stat-val">${moodMap[Math.round(avgMood)]} ${avgMood}</div><div class="and-stat-lbl">Umore medio</div></div>` : ''}
     ${avgSleep ? `<div class="and-stat"><div class="and-stat-val">🌙 ${avgSleep}h</div><div class="and-stat-lbl">Sonno medio</div></div>` : ''}
-    ${withActivity ? `<div class="and-stat"><div class="and-stat-val">🏃 ${withActivity}</div><div class="and-stat-lbl">Sessioni attività</div></div>` : ''}
-    ${withNotes ? `<div class="and-stat"><div class="and-stat-val">📓 ${withNotes}</div><div class="and-stat-lbl">Registrazioni diario</div></div>` : ''}
+    ${totalActivityMin ? `<div class="and-stat"><div class="and-stat-val">🏃 ${totalActivityMin}</div><div class="and-stat-lbl">min attività</div></div>` : ''}
+    <div class="and-stat"><div class="and-stat-val">📅 ${allDates.length}</div><div class="and-stat-lbl">giorni registrati</div></div>
   </div>`;
 
-  let cardsHtml = '';
-  for (const w of wellness) {
-    const dk = new Date(w.logged_at).toDateString();
-    const wt = weightMap[dk];
-    const moodEmoji = w.mood ? moodMap[w.mood] : null;
-    const moodLabel = w.mood ? moodTextMap[w.mood] : null;
-    const moodBorder = w.mood ? moodBorderMap[w.mood] : 'var(--border)';
-    const dateStr = new Date(w.logged_at).toLocaleDateString('it', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const cardsHtml = allDates.map(date => {
+    const tot = totalsByDate[date];
+    const meals = foodByDate[date] || [];
+    const water = waterByDate[date];
+    const well = wellByDate[date];
+    const acts = actByDate[date] || [];
+    const weight = weightByDate[date];
 
-    let pills = '';
-    if (w.mood) pills += `<span class="and-pill mood">${moodEmoji} ${moodLabel}</span>`;
-    if (w.sleep_hours != null) pills += `<span class="and-pill sleep">🌙 ${w.sleep_hours}h sonno</span>`;
-    if (wt) pills += `<span class="and-pill weight">⚖️ ${wt} kg</span>`;
-    if (w.activity) pills += `<span class="and-pill activity">🏃 ${esc(w.activity)}</span>`;
+    const mealGroups = {};
+    meals.forEach(f => { const k = f.meal_type || 'altro'; if (!mealGroups[k]) mealGroups[k] = []; mealGroups[k].push(f); });
 
-    let sections = '';
-    if (w.notes) {
-      sections += `<div class="and-section">
-        <div class="and-section-lbl">📓 Diario alimentare</div>
-        <div class="and-section-val">${esc(w.notes)}</div>
-      </div>`;
-    }
-    if (w.symptoms) {
-      sections += `<div class="and-section">
-        <div class="and-section-lbl">⚠️ Sintomi / note</div>
-        <div class="and-section-val">${esc(typeof w.symptoms === 'string' ? w.symptoms : JSON.stringify(w.symptoms))}</div>
-      </div>`;
-    }
+    const dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('it', { weekday: 'short', day: '2-digit', month: 'short' });
+    const moodBorder = well?.mood ? moodBorderMap[well.mood] : 'var(--border)';
+    const totalKcal = tot?.kcal || meals.reduce((s, f) => s + (f.kcal || 0), 0);
 
-    cardsHtml += `<div class="and-card" style="border-left:4px solid ${moodBorder}">
-      <div class="and-card-hdr">
-        ${moodEmoji ? `<div class="and-mood-badge">${moodEmoji}</div>` : '<div class="and-mood-badge" style="font-size:18px">📋</div>'}
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--slate)">${dateStr}</div>
-          ${moodLabel ? `<div style="font-size:11.5px;color:var(--slate-l)">Umore: ${moodLabel}</div>` : ''}
+    return `<details style="margin-bottom:8px;border:1.5px solid var(--border);border-left:4px solid ${moodBorder};border-radius:12px;overflow:hidden;background:white;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+      <summary style="padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#F8FAFC;list-style:none;user-select:none" onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background='#F8FAFC'">
+        <span style="font-weight:700;color:var(--teal-d);font-size:13px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📅 ${dateLabel}</span>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;flex-shrink:0">
+          ${totalKcal ? `<span style="background:#FEF3C7;color:#B45309;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">🔥 ${Math.round(totalKcal)} kcal</span>` : ''}
+          ${water ? `<span style="background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">💧 ${(water/1000).toFixed(1)}L</span>` : ''}
+          ${well?.mood ? `<span style="background:#F0FDF4;color:#15803D;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">${moodMap[well.mood]} ${well.mood}/5</span>` : ''}
+          ${well?.sleep_hours ? `<span style="background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">😴 ${well.sleep_hours}h</span>` : ''}
+          ${acts.length ? `<span style="background:#ECFDF5;color:#065F46;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">🏃 ${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)} min</span>` : ''}
+          ${weight ? `<span style="background:#FFF7ED;color:#9A3412;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700">⚖️ ${weight} kg</span>` : ''}
         </div>
+        <span style="color:var(--teal-l);font-size:12px;margin-left:4px;flex-shrink:0">▼</span>
+      </summary>
+      <div style="padding:12px 14px;display:grid;gap:10px">
+        ${(tot || meals.length) ? `<div style="display:flex;gap:8px;flex-wrap:wrap;padding:8px 12px;background:#FFF9F0;border-radius:8px;border:1px solid #FED7AA">
+          <span style="font-size:12px;font-weight:700;color:#C2410C">🔥 ${Math.round(tot?.kcal || meals.reduce((s,f)=>s+(f.kcal||0),0))} kcal</span>
+          ${tot ? `<span style="color:var(--slate-l);font-size:11px">·</span><span style="font-size:12px;color:#1D4ED8">P: ${Math.round(tot.proteins||0)}g</span><span style="color:var(--slate-l);font-size:11px">·</span><span style="font-size:12px;color:#15803D">C: ${Math.round(tot.carbs||0)}g</span><span style="color:var(--slate-l);font-size:11px">·</span><span style="font-size:12px;color:#B45309">G: ${Math.round(tot.fats||0)}g</span>` : ''}
+        </div>` : ''}
+        ${Object.keys(mealGroups).map(mealType => {
+          const items = mealGroups[mealType];
+          const lbl = mealLabel[mealType] || ('🍴 ' + mealType);
+          const mKcal = items.reduce((s,f)=>s+(f.kcal||0),0);
+          return `<div>
+            <div style="font-size:12px;font-weight:700;color:var(--slate);margin-bottom:5px">${lbl} <span style="font-weight:400;color:var(--slate-l)">(${Math.round(mKcal)} kcal)</span></div>
+            ${items.map(f=>`<div style="display:flex;align-items:center;gap:8px;padding:4px 10px;background:#F8FAFC;border-radius:6px;margin-bottom:3px;font-size:12px">
+              <span style="flex:1;color:var(--slate)">${esc(f.food_name||'—')}</span>
+              ${f.grams?`<span style="color:var(--slate-l);font-size:11px">${f.grams}g</span>`:''}
+              ${f.kcal?`<span style="color:#C2410C;font-weight:600;font-size:11px">${Math.round(f.kcal)} kcal</span>`:''}
+            </div>`).join('')}
+          </div>`;
+        }).join('')}
+        ${well ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;padding:8px 12px;background:#F0FDF4;border-radius:8px;border:1px solid #BBF7D0">
+          ${well.mood?`<div style="font-size:11.5px"><span style="font-weight:700;color:var(--slate-l)">Umore</span><br><span style="font-size:16px">${moodMap[well.mood]||'?'}</span> <b>${well.mood}/5</b> <span style="color:var(--slate-l);font-size:11px">${moodTextMap[well.mood]||''}</span></div>`:''}
+          ${well.energy?`<div style="font-size:11.5px"><span style="font-weight:700;color:var(--slate-l)">Energia</span><br><b>${well.energy}/5</b></div>`:''}
+          ${well.sleep_hours?`<div style="font-size:11.5px"><span style="font-weight:700;color:var(--slate-l)">Sonno</span><br><b>${well.sleep_hours}h</b></div>`:''}
+          ${well.sleep_quality?`<div style="font-size:11.5px"><span style="font-weight:700;color:var(--slate-l)">Qualità sonno</span><br><b>${well.sleep_quality}/5</b></div>`:''}
+          ${well.symptoms&&(Array.isArray(well.symptoms)?well.symptoms.length:well.symptoms)?`<div style="font-size:11px;grid-column:1/-1"><span style="font-weight:700;color:var(--slate-l)">Sintomi: </span>${esc(Array.isArray(well.symptoms)?well.symptoms.join(', '):String(well.symptoms))}</div>`:''}
+          ${well.notes?`<div style="font-size:11px;grid-column:1/-1;color:var(--slate-l)">📝 ${esc(well.notes)}</div>`:''}
+        </div>` : ''}
+        ${acts.length ? `<div style="padding:8px 12px;background:#ECFDF5;border-radius:8px;border:1px solid #A7F3D0">
+          ${acts.map(a=>`<div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:4px">
+            <span style="font-weight:600;color:#065F46">🏃 ${esc(a.activity_type||'Attività')}</span>
+            <span style="color:var(--slate-l)">${a.duration_minutes} min</span>
+            ${a.calories_burned?`<span style="color:#C2410C;font-size:11px">· ${a.calories_burned} kcal</span>`:''}
+            ${a.steps?`<span style="color:#1D4ED8;font-size:11px">· ${a.steps} passi</span>`:''}
+          </div>`).join('')}
+        </div>` : ''}
+        ${water ? `<div style="font-size:12px;color:#1D4ED8;padding:5px 10px;background:#EFF6FF;border-radius:6px;border:1px solid #BFDBFE">💧 Acqua: <b>${Math.round(water)} ml (${(water/1000).toFixed(2)}L)</b></div>` : ''}
+        ${weight ? `<div style="font-size:12px;color:#9A3412;padding:5px 10px;background:#FFF7ED;border-radius:6px;border:1px solid #FDBA74">⚖️ Peso registrato: <b>${weight} kg</b></div>` : ''}
       </div>
-      ${pills ? `<div class="and-pills">${pills}</div>` : ''}
-      ${sections}
-    </div>`;
-  }
+    </details>`;
+  }).join('');
 
-  panel.innerHTML = filterSel + statsHtml + cardsHtml;
+  panel.innerHTML = filterSel + statsHtml + (allDates.length ? cardsHtml : '<div class="and-empty"><div style="font-size:36px">📓</div><div>Nessun dato per il periodo selezionato.</div></div>');
 }
 
 function filterAndamento(days) {
-  andamentoPeriodDays = parseInt(days) || 0;
+  andamentoPeriodDays = parseInt(days);
   loadAndamento();
 }
 
@@ -998,88 +1036,144 @@ async function loadStorico(limitMonths) {
     if (curr == null || prevVal == null) return '';
     const d = Math.round((curr - prevVal) * 10) / 10;
     if (d === 0) return '';
-    const color = d < 0 ? '#10B981' : '#EF4444';
-    return `<div class="stor-stat-delta" style="color:${color}">${d>0?'+':''}${d}</div>`;
+    const isGood = d < 0;
+    const bg = isGood ? '#D1FAE5' : '#FEE2E2';
+    const color = isGood ? '#065F46' : '#991B1B';
+    return `<div class="stor-stat-delta" style="background:${bg};color:${color}">${d>0?'▲ +':'▼ '}${d}</div>`;
   }
 
-  const headerHTML = `<div class="stor-header no-print"><span style="font-size:22px">📊</span><h3>${t('stor.title')} — ${esc(p.name)}</h3><span style="font-size:11px;opacity:.75">${schede.length} ${schede.length===1?t('stor.valutazione'):t('stor.valutazioni')}</span></div>`;
+  function bmiCategory(bmi) {
+    if (!bmi) return '';
+    if (bmi < 18.5) return { label: 'Sottopeso', color: '#3B82F6' };
+    if (bmi < 25)   return { label: 'Normopeso', color: '#10B981' };
+    if (bmi < 30)   return { label: 'Sovrappeso', color: '#F59E0B' };
+    return { label: 'Obesità', color: '#EF4444' };
+  }
+  const lastBmiCat = bmiCategory(lastBMI);
+
+  const headerHTML = `<div class="stor-header no-print">
+    <div class="stor-header-icon">📊</div>
+    <div style="flex:1;min-width:0">
+      <h3>${t('stor.title')} — ${esc(p.name)}</h3>
+      <div style="font-size:11px;opacity:.8;margin-top:3px">${schede.length} ${schede.length===1?t('stor.valutazione'):t('stor.valutazioni')} · Prima: ${labels[0]} · Ultima: ${labels[labels.length-1]}</div>
+    </div>
+    ${lastBmiCat ? `<div style="background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;white-space:nowrap">${lastBmiCat.label}</div>` : ''}
+  </div>`;
 
   const summaryHTML = `<div class="stor-stat-grid">
-    ${last.peso ? `<div class="stor-stat"><div class="stor-stat-val">${last.peso}</div><div class="stor-stat-lbl">${t('stor.peso')}</div>${dlt(last.peso,prev?.peso)}</div>` : ''}
-    ${lastBMI ? `<div class="stor-stat"><div class="stor-stat-val">${lastBMI}</div><div class="stor-stat-lbl">${t('stor.bmi')}</div>${dlt(lastBMI,prevBMI)}</div>` : ''}
-    ${last.massa_grassa_pct ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_grassa_pct}%</div><div class="stor-stat-lbl">${t('stor.massa_grassa')}</div>${dlt(last.massa_grassa_pct,prev?.massa_grassa_pct)}</div>` : ''}
-    ${last.massa_magra ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_magra}</div><div class="stor-stat-lbl">${t('stor.massa_magra')}</div>${dlt(last.massa_magra,prev?.massa_magra)}</div>` : ''}
-    ${last.vita ? `<div class="stor-stat"><div class="stor-stat-val">${last.vita}</div><div class="stor-stat-lbl">${t('stor.vita')}</div>${dlt(last.vita,prev?.vita)}</div>` : ''}
-    <div class="stor-stat"><div class="stor-stat-val">${schede.length}</div><div class="stor-stat-lbl">${t('stor.valutazioni')}</div></div>
+    ${last.peso ? `<div class="stor-stat"><div class="stor-stat-val">${last.peso}</div><div class="stor-stat-lbl">kg peso</div>${dlt(last.peso,prev?.peso)}</div>` : ''}
+    ${lastBMI ? `<div class="stor-stat"><div class="stor-stat-val">${lastBMI}</div><div class="stor-stat-lbl">BMI</div>${dlt(lastBMI,prevBMI)}</div>` : ''}
+    ${last.massa_grassa_pct ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_grassa_pct}%</div><div class="stor-stat-lbl">massa grassa</div>${dlt(last.massa_grassa_pct,prev?.massa_grassa_pct)}</div>` : ''}
+    ${last.massa_magra ? `<div class="stor-stat"><div class="stor-stat-val">${last.massa_magra}</div><div class="stor-stat-lbl">kg massa magra</div>${dlt(last.massa_magra,prev?.massa_magra)}</div>` : ''}
+    ${last.vita ? `<div class="stor-stat"><div class="stor-stat-val">${last.vita}</div><div class="stor-stat-lbl">cm vita</div>${dlt(last.vita,prev?.vita)}</div>` : ''}
+    ${last.fianchi ? `<div class="stor-stat"><div class="stor-stat-val">${last.fianchi}</div><div class="stor-stat-lbl">cm fianchi</div>${dlt(last.fianchi,prev?.fianchi)}</div>` : ''}
+    <div class="stor-stat"><div class="stor-stat-val">${schede.length}</div><div class="stor-stat-lbl">valutazioni</div></div>
   </div>`;
 
   const chartsHTML = `<div class="stor-charts-grid">
-    ${schede.length>1&&pesi.some(v=>v) ? `<div class="stor-chart-card"><h4>⚖️ ${t('stor.chart_peso'+(wLogs&&wLogs.length>schede.length?'_diary':''))}</h4><div class="stor-chart-wrap"><canvas id="chart-peso"></canvas></div></div>` : ''}
-    ${schede.length>1&&bmis.some(v=>v) ? `<div class="stor-chart-card"><h4>📐 ${t('stor.chart_bmi')}</h4><div class="stor-chart-wrap"><canvas id="chart-bmi"></canvas></div></div>` : ''}
-    ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 ${t('stor.chart_comp')}</h4><div class="stor-chart-wrap"><canvas id="chart-comp"></canvas></div></div>` : ''}
-    ${schede.length>1&&(vite.some(v=>v)||fianchi.some(v=>v)||coscia.some(v=>v)) ? `<div class="stor-chart-card"><h4>📏 ${t('stor.chart_circ')}</h4><div class="stor-chart-wrap"><canvas id="chart-circ"></canvas></div></div>` : ''}
-    ${schede.length>1&&(plTri.some(v=>v)||plSS.some(v=>v)||plSI.some(v=>v)) ? `<div class="stor-chart-card"><h4>📌 ${t('stor.chart_pliche')}</h4><div class="stor-chart-wrap"><canvas id="chart-pliche"></canvas></div></div>` : ''}
-    ${schede.length>1&&(glicemia.some(v=>v)||colTot.some(v=>v)||vitD.some(v=>v)) ? `<div class="stor-chart-card stor-chart-full"><h4>🔬 ${t('stor.chart_labs')}</h4><div class="stor-chart-wrap" style="height:130px"><canvas id="chart-labs"></canvas></div></div>` : ''}
+    ${schede.length>1&&(pesi.some(v=>v)||(wLogs&&wLogs.length)) ? `<div class="stor-chart-card"><h4>⚖️ Andamento Peso</h4><div class="stor-chart-wrap"><canvas id="chart-peso"></canvas></div></div>` : ''}
+    ${schede.length>1&&bmis.some(v=>v) ? `<div class="stor-chart-card"><h4>📐 Indice di Massa Corporea (BMI)</h4><div class="stor-chart-wrap"><canvas id="chart-bmi"></canvas></div></div>` : ''}
+    ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 Composizione Corporea</h4><div class="stor-chart-wrap"><canvas id="chart-comp"></canvas></div></div>` : ''}
+    ${schede.length>1&&(vite.some(v=>v)||fianchi.some(v=>v)||coscia.some(v=>v)) ? `<div class="stor-chart-card"><h4>📏 Circonferenze</h4><div class="stor-chart-wrap"><canvas id="chart-circ"></canvas></div></div>` : ''}
+    ${schede.length>1&&(plTri.some(v=>v)||plSS.some(v=>v)||plSI.some(v=>v)) ? `<div class="stor-chart-card"><h4>📌 Pliche Cutanee</h4><div class="stor-chart-wrap"><canvas id="chart-pliche"></canvas></div></div>` : ''}
+    ${schede.length>1&&(glicemia.some(v=>v)||colTot.some(v=>v)||vitD.some(v=>v)||hba1c.some(v=>v)) ? `<div class="stor-chart-card stor-chart-full"><h4>🔬 Esami di Laboratorio</h4><div class="stor-chart-wrap" style="height:160px"><canvas id="chart-labs"></canvas></div></div>` : ''}
   </div>`;
 
   panel.innerHTML = headerHTML + filterHTML + summaryHTML + chartsHTML;
 
   requestAnimationFrame(() => {
-    const defaults = { borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:.35, fill:false };
-    const gridOpts = { color:'#F1F5F9' };
-    const tickFont = { size:11 };
-    function mkChart(id, datasets, yLabel, sugMin, sugMax, extra={}) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const c = new Chart(el, { type:'line', data:{ labels, datasets }, options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ labels:{ font:{size:11}, boxWidth:14 } }, tooltip:{ mode:'index', intersect:false } },
-        scales:{ x:{ grid:gridOpts, ticks:{font:tickFont,maxTicksLimit:8} }, y:{ grid:gridOpts, ticks:{font:tickFont}, title:{display:!!yLabel,text:yLabel,font:{size:10}}, suggestedMin:sugMin, suggestedMax:sugMax, ...extra.yScale } },
-        ...extra
-      }});
-      _storicoCharts.push(c);
+    const font = { family: "'DM Sans', sans-serif" };
+    const defaults = { borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 7, tension: .42, fill: false, pointBackgroundColor: 'white', pointBorderWidth: 2 };
+    const gridOpts = { color: 'rgba(226,232,240,.7)', lineWidth: 1 };
+    const tickFont = { size: 11, family: "'DM Sans', sans-serif" };
+    const tooltipOpts = { mode: 'index', intersect: false, backgroundColor: 'rgba(15,23,42,.92)', titleFont: { size: 12, family: "'DM Sans', sans-serif", weight: '700' }, bodyFont: { size: 11, family: "'DM Sans', sans-serif" }, padding: 10, cornerRadius: 8, displayColors: true, boxWidth: 10 };
+    const legendOpts = { labels: { font: { size: 11, family: "'DM Sans', sans-serif" }, boxWidth: 12, padding: 12, usePointStyle: true, pointStyleWidth: 10 } };
+
+    function mkGrad(ctx, color, alpha = .18) {
+      if (!ctx) return 'transparent';
+      const g = ctx.createLinearGradient(0, 0, 0, 140);
+      g.addColorStop(0, color.replace(')', `, ${alpha})`).replace('rgb', 'rgba'));
+      g.addColorStop(1, color.replace(')', ', 0)').replace('rgb', 'rgba'));
+      return g;
     }
 
-    // Peso chart (may include weight_logs as secondary dataset)
-    if (document.getElementById('chart-peso')) {
-      const ds = [{ label:'Peso (kg)', data:pesi, borderColor:'#0F766E', backgroundColor:'rgba(15,118,110,.08)', fill:true, ...defaults }];
-      if (wLabels.length > schede.length) ds.push({ label:'Diario peso (kg)', data:wValues, borderColor:'#0EA5E9', borderDash:[4,3], ...defaults, pointRadius:2 });
-      const el = document.getElementById('chart-peso');
-      const c = new Chart(el, { type:'line', data:{ labels: wLabels.length > schede.length ? [...wLabels] : labels, datasets: wLabels.length > schede.length ? [{ label:'Diario peso (kg)', data:wValues, borderColor:'#0EA5E9', fill:true, backgroundColor:'rgba(14,165,233,.07)', ...defaults, pointRadius:2 }] : ds },
-        options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{size:11},boxWidth:14 } }, tooltip:{ mode:'index', intersect:false } }, scales:{ x:{ grid:gridOpts, ticks:{font:tickFont,maxTicksLimit:10} }, y:{ grid:gridOpts, ticks:{font:tickFont}, title:{display:true,text:'kg',font:{size:10}} } } }
+    function mkChart(id, datasets, yLabel, extra = {}) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const ctx = el.getContext('2d');
+      const c = new Chart(el, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: legendOpts, tooltip: tooltipOpts },
+          scales: {
+            x: { grid: gridOpts, ticks: { font: tickFont, maxTicksLimit: 8, color: '#64748B' }, border: { color: '#CBD5E1' } },
+            y: { grid: gridOpts, ticks: { font: tickFont, color: '#64748B' }, border: { color: '#CBD5E1' }, title: { display: !!yLabel, text: yLabel, font: { size: 10, family: "'DM Sans', sans-serif" }, color: '#94A3B8' }, ...extra.yScale }
+          },
+          animation: { duration: 600, easing: 'easeOutQuart' },
+          ...extra
+        }
       });
       _storicoCharts.push(c);
     }
 
-    mkChart('chart-bmi', [{ label:'BMI', data:bmis, borderColor:'#7C3AED', backgroundColor:'rgba(124,58,237,.08)', fill:true, ...defaults }], 'kg/m²');
+    // Peso chart
+    if (document.getElementById('chart-peso')) {
+      const el = document.getElementById('chart-peso');
+      const ctx = el.getContext('2d');
+      const useWeightLogs = wLabels.length > schede.length;
+      const lbl = useWeightLogs ? wLabels : labels;
+      const ds = useWeightLogs
+        ? [{ label: 'Peso (kg)', data: wValues, borderColor: '#0F766E', backgroundColor: (ctx2 => { const g = ctx2.createLinearGradient(0,0,0,140); g.addColorStop(0,'rgba(15,118,110,.25)'); g.addColorStop(1,'rgba(15,118,110,0)'); return g; })(ctx), fill: true, ...defaults, pointRadius: 2.5 }]
+        : [{ label: 'Peso (kg)', data: pesi, borderColor: '#0F766E', backgroundColor: (ctx2 => { const g = ctx2.createLinearGradient(0,0,0,140); g.addColorStop(0,'rgba(15,118,110,.22)'); g.addColorStop(1,'rgba(15,118,110,0)'); return g; })(ctx), fill: true, ...defaults }];
+      const c = new Chart(el, { type: 'line', data: { labels: lbl, datasets: ds }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: legendOpts, tooltip: tooltipOpts }, scales: { x: { grid: gridOpts, ticks: { font: tickFont, maxTicksLimit: 10, color: '#64748B' }, border: { color: '#CBD5E1' } }, y: { grid: gridOpts, ticks: { font: tickFont, color: '#64748B' }, border: { color: '#CBD5E1' }, title: { display: true, text: 'kg', font: { size: 10 }, color: '#94A3B8' } } }, animation: { duration: 600, easing: 'easeOutQuart' } } });
+      _storicoCharts.push(c);
+    }
 
-    mkChart('chart-comp', [
-      { label:'Massa grassa (%)', data:mgrasSS, borderColor:'#EF4444', ...defaults },
-      { label:'Massa magra (kg)', data:mmagraKg, borderColor:'#22C55E', ...defaults }
-    ], '');
+    if (document.getElementById('chart-bmi')) {
+      const el = document.getElementById('chart-bmi');
+      const ctx = el.getContext('2d');
+      const g = ctx.createLinearGradient(0,0,0,140); g.addColorStop(0,'rgba(124,58,237,.22)'); g.addColorStop(1,'rgba(124,58,237,0)');
+      mkChart('chart-bmi', [{ label: 'BMI', data: bmis, borderColor: '#7C3AED', backgroundColor: g, fill: true, ...defaults }], 'kg/m²', {
+        yScale: { suggestedMin: 16, suggestedMax: 40, afterDataLimits: (axis) => { axis.min = Math.min(axis.min, 16); } }
+      });
+    }
+
+    if (document.getElementById('chart-comp')) {
+      const el = document.getElementById('chart-comp');
+      const ctx = el.getContext('2d');
+      const gR = ctx.createLinearGradient(0,0,0,140); gR.addColorStop(0,'rgba(239,68,68,.18)'); gR.addColorStop(1,'rgba(239,68,68,0)');
+      const gG = ctx.createLinearGradient(0,0,0,140); gG.addColorStop(0,'rgba(34,197,94,.18)'); gG.addColorStop(1,'rgba(34,197,94,0)');
+      mkChart('chart-comp', [
+        mgrasSS.some(v=>v) && { label: 'Massa grassa (%)', data: mgrasSS, borderColor: '#EF4444', backgroundColor: gR, fill: true, ...defaults },
+        mmagraKg.some(v=>v) && { label: 'Massa magra (kg)', data: mmagraKg, borderColor: '#22C55E', backgroundColor: gG, fill: true, ...defaults }
+      ].filter(Boolean), '');
+    }
 
     mkChart('chart-circ', [
-      vite.some(v=>v) && { label:'Vita (cm)', data:vite, borderColor:'#F97316', ...defaults },
-      fianchi.some(v=>v) && { label:'Fianchi (cm)', data:fianchi, borderColor:'#EC4899', ...defaults },
-      coscia.some(v=>v) && { label:'Coscia dx (cm)', data:coscia, borderColor:'#3B82F6', ...defaults },
-      collo.some(v=>v) && { label:'Collo (cm)', data:collo, borderColor:'#14B8A6', ...defaults }
+      vite.some(v=>v)    && { label: 'Vita (cm)', data: vite, borderColor: '#F97316', ...defaults },
+      fianchi.some(v=>v) && { label: 'Fianchi (cm)', data: fianchi, borderColor: '#EC4899', ...defaults },
+      coscia.some(v=>v)  && { label: 'Coscia dx (cm)', data: coscia, borderColor: '#3B82F6', ...defaults },
+      collo.some(v=>v)   && { label: 'Collo (cm)', data: collo, borderColor: '#14B8A6', ...defaults }
     ].filter(Boolean), 'cm');
 
     mkChart('chart-pliche', [
-      plTri.some(v=>v) && { label:'Tricipite (mm)', data:plTri, borderColor:'#8B5CF6', ...defaults },
-      plBi.some(v=>v)  && { label:'Bicipite (mm)', data:plBi, borderColor:'#06B6D4', ...defaults },
-      plSS.some(v=>v)  && { label:'Sottoscapolare (mm)', data:plSS, borderColor:'#F59E0B', ...defaults },
-      plSI.some(v=>v)  && { label:'Sovrailiaca (mm)', data:plSI, borderColor:'#10B981', ...defaults }
+      plTri.some(v=>v) && { label: 'Tricipite (mm)', data: plTri, borderColor: '#8B5CF6', ...defaults },
+      plBi.some(v=>v)  && { label: 'Bicipite (mm)', data: plBi, borderColor: '#06B6D4', ...defaults },
+      plSS.some(v=>v)  && { label: 'Sottoscapolare (mm)', data: plSS, borderColor: '#F59E0B', ...defaults },
+      plSI.some(v=>v)  && { label: 'Sovrailiaca (mm)', data: plSI, borderColor: '#10B981', ...defaults }
     ].filter(Boolean), 'mm');
 
     mkChart('chart-labs', [
-      glicemia.some(v=>v) && { label:'Glicemia (mg/dL)', data:glicemia, borderColor:'#DC2626', ...defaults },
-      colTot.some(v=>v)   && { label:'Col. tot. (mg/dL)', data:colTot, borderColor:'#EA580C', ...defaults },
-      ldl.some(v=>v)      && { label:'LDL (mg/dL)', data:ldl, borderColor:'#CA8A04', ...defaults },
-      hdl.some(v=>v)      && { label:'HDL (mg/dL)', data:hdl, borderColor:'#16A34A', ...defaults },
-      trig.some(v=>v)     && { label:'Trigliceridi (mg/dL)', data:trig, borderColor:'#7C3AED', ...defaults },
-      hba1c.some(v=>v)    && { label:'HbA1c (%×10)', data:hba1c.map(v=>v?v*10:null), borderColor:'#0284C7', borderDash:[5,3], ...defaults },
-      vitD.some(v=>v)     && { label:'Vit.D (ng/mL)', data:vitD, borderColor:'#0891B2', borderDash:[3,3], ...defaults }
+      glicemia.some(v=>v) && { label: 'Glicemia (mg/dL)', data: glicemia, borderColor: '#DC2626', ...defaults },
+      colTot.some(v=>v)   && { label: 'Col. tot. (mg/dL)', data: colTot, borderColor: '#EA580C', ...defaults },
+      ldl.some(v=>v)      && { label: 'LDL (mg/dL)', data: ldl, borderColor: '#CA8A04', ...defaults },
+      hdl.some(v=>v)      && { label: 'HDL (mg/dL)', data: hdl, borderColor: '#16A34A', ...defaults },
+      trig.some(v=>v)     && { label: 'Trigliceridi (mg/dL)', data: trig, borderColor: '#7C3AED', ...defaults },
+      hba1c.some(v=>v)    && { label: 'HbA1c (%×10)', data: hba1c.map(v=>v?v*10:null), borderColor: '#0284C7', borderDash: [6,3], ...defaults },
+      vitD.some(v=>v)     && { label: 'Vit.D (ng/mL)', data: vitD, borderColor: '#0891B2', borderDash: [3,3], ...defaults }
     ].filter(Boolean), '');
   });
 }

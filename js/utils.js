@@ -91,6 +91,16 @@ async function loadProfile() {
       const key = _SECTION_MAP[link.getAttribute('href')];
       if (key && !allowed.includes(key)) link.style.display = 'none';
     });
+    // Hide nav-sec group headers when all their items are hidden
+    document.querySelectorAll('#sidebar .nav-sec').forEach(sec => {
+      let el = sec.nextElementSibling;
+      let hasVisible = false;
+      while (el && !el.classList.contains('nav-sec') && !el.classList.contains('sb-bottom')) {
+        if (el.classList.contains('nav-item') && el.style.display !== 'none') { hasVisible = true; break; }
+        el = el.nextElementSibling;
+      }
+      if (!hasVisible) sec.style.display = 'none';
+    });
   }
 
   // Load cartelle dropdown if present

@@ -1001,6 +1001,8 @@ async function confermaCollegamento() {
   });
   showLoading(false);
   if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  // Imposta role='patient' sul profilo del paziente collegato
+  await sb.from('profiles').update({ role: 'patient' }).eq('id', collegaFoundUserId);
   closeM('modal-collega');
   toast('🔗 Paziente collegato!', 'ok');
   await renderCartellaDetail(collegaCartellaId);

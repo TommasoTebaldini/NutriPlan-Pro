@@ -128,6 +128,22 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- Colonna role: 'dietitian' di default (tutti gli account admin panel sono dietisti)
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'dietitian';
+
+-- Imposta role='patient' per account che sono SOLO patient_id (non dietitian_id) in patient_dietitian
+UPDATE public.profiles
+SET role = 'patient'
+WHERE is_admin = false
+  AND (role IS NULL OR role = 'dietitian')
+  AND id IN (SELECT DISTINCT patient_id FROM public.patient_dietitian WHERE patient_id IS NOT NULL)
+  AND id NOT IN (SELECT DISTINCT dietitian_id FROM public.patient_dietitian WHERE dietitian_id IS NOT NULL);
+
+-- Tutti gli altri account approvati rimangono/diventano 'dietitian'
+UPDATE public.profiles
+SET role = 'dietitian'
+WHERE role IS NULL AND approved = true;
+
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Rimuove tutte le vecchie policy per ripartire puliti (evita ricorsione)

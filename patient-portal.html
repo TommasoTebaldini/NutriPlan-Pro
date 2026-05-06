@@ -352,15 +352,10 @@ async function init() {
     return;
   }
 
-  // Admins and dietitians must not access the patient portal
-  if (profile && (profile.is_admin || profile.role === 'dietitian')) {
+  // Solo i pazienti accedono al portale — tutti gli altri (dietisti, admin, ruolo null) → admin panel
+  if (!profile || profile.role !== 'patient') {
     window.location.href = 'app.html';
     return;
-  }
-  // Fallback: if user has no patient role but is approved (legacy null-role dietitian), go to admin
-  if (profile && profile.approved && profile.role !== 'patient') {
-    const { data: dietLinks } = await sb.from('patient_dietitian').select('id').eq('dietitian_id', currentUser.id).limit(1);
-    if (dietLinks && dietLinks.length > 0) { window.location.href = 'app.html'; return; }
   }
 
   document.getElementById('pp-user-email').textContent = currentUser.email;

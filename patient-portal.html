@@ -352,11 +352,9 @@ async function init() {
     return;
   }
 
-  // Solo i pazienti accedono al portale — tutti gli altri (dietisti, admin, ruolo null) → admin panel
-  if (!profile || profile.role !== 'patient') {
-    window.location.href = 'app.html';
-    return;
-  }
+  // Questo sito è solo per dietisti — chiunque arrivi qui viene rimandato al pannello admin
+  window.location.href = 'app.html';
+  return;
 
   document.getElementById('pp-user-email').textContent = currentUser.email;
   if (typeof initLangSwitcher === 'function') initLangSwitcher(document.getElementById('pp-lang-slot'));

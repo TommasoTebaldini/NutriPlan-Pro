@@ -987,3 +987,15 @@ BEGIN
     END IF;
   END LOOP;
 END $$;
+
+-- Fix ruoli: imposta 'dietitian' per tutti gli account approvati che non sono esplicitamente pazienti
+-- (corregge account legacy con role = NULL)
+UPDATE public.profiles
+SET role = 'dietitian'
+WHERE approved = true
+  AND is_admin = false
+  AND (role IS NULL OR role != 'patient')
+  AND id NOT IN (
+    SELECT DISTINCT patient_id FROM public.patient_dietitian
+    WHERE patient_id IS NOT NULL
+  );

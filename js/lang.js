@@ -13,6 +13,7 @@ const LANGS = {
     'nav.chetogenica':'Dieta Chetogenica','nav.renale':'Nefropatia / IRC','nav.disfagia':'Disfagia',
     'nav.pediatria':'Pediatria','nav.ristorazione':'Ristorazione Collettiva','nav.linee_guida':'Linee Guida',
     'nav.valutazione':'Valutazione Paziente','nav.ncpt':'NCPt','nav.patologie':'Diete Speciali',
+    'nav.obesita':'Obesità','nav.oncologia':'Oncologia',
     'nav.consigli':'Consigli Nutrizionali','nav.bia':'BIA','nav.questionari':'Questionari',
     'nav.studi':'Studi Scientifici','nav.ai':'Assistente AI','nav.agenda':'Agenda',
     'nav.ecm':'Corsi ECM','nav.database':'Alimenti CREA+BDA','nav.integratori':'Integratori e AFMS',
@@ -96,6 +97,7 @@ const LANGS = {
     'nav.chetogenica':'Ketogenic Diet','nav.renale':'Kidney Disease / CKD','nav.disfagia':'Dysphagia',
     'nav.pediatria':'Pediatrics','nav.ristorazione':'Food Service','nav.linee_guida':'Guidelines',
     'nav.valutazione':'Patient Assessment','nav.ncpt':'NCPt','nav.patologie':'Special Diets',
+    'nav.obesita':'Obesity','nav.oncologia':'Oncology',
     'nav.consigli':'Nutritional Advice','nav.bia':'BIA','nav.questionari':'Questionnaires',
     'nav.studi':'Scientific Studies','nav.ai':'AI Assistant','nav.agenda':'Calendar',
     'nav.ecm':'CME Courses','nav.database':'Foods CREA+BDA','nav.integratori':'Supplements & FSFs',
@@ -173,6 +175,7 @@ const LANGS = {
     'nav.chetogenica':'Ketogene Diät','nav.renale':'Nierenerkrankung / CKD','nav.disfagia':'Dysphagie',
     'nav.pediatria':'Pädiatrie','nav.ristorazione':'Gemeinschaftsverpflegung','nav.linee_guida':'Leitlinien',
     'nav.valutazione':'Patientenbewertung','nav.ncpt':'NCPt','nav.patologie':'Spezialdiäten',
+    'nav.obesita':'Adipositas','nav.oncologia':'Onkologie',
     'nav.consigli':'Ernährungsberatung','nav.bia':'BIA','nav.questionari':'Fragebögen',
     'nav.studi':'Wissenschaftliche Studien','nav.ai':'KI-Assistent','nav.agenda':'Kalender',
     'nav.ecm':'CME-Kurse','nav.database':'Lebensmittel CREA+BDA','nav.integratori':'Nahrungsergänzungsmittel',
@@ -640,7 +643,7 @@ function translateSidebarNav() {
     'studi.html':'nav.studi','ai.html':'nav.ai','agenda.html':'nav.agenda',
     'ecm.html':'nav.ecm','database.html':'nav.database','integratori.html':'nav.integratori',
     'ricette.html':'nav.ricette','impostazioni.html':'nav.impostazioni','admin.html':'nav.admin',
-    'obesita.html':'nav.patologie','oncologia.html':'nav.patologie',
+    'obesita.html':'nav.obesita','oncologia.html':'nav.oncologia',
   };
   const secMap = {};
   ['it','en','de'].forEach(l => {

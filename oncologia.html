@@ -47,6 +47,10 @@
 .food-table td{padding:7px 12px;border-bottom:1px solid #F5F3FF}
 .food-table tbody tr:nth-child(even){background:#FAF5FF}
 .food-table tr:hover td{background:#EDE9FE}
+/* ── Piano Alimentare tab overrides ── */
+#tab-piano .calc-box{border-top:3px solid #7C3AED}
+#tab-piano .calc-box h3{color:#5B21B6}
+#tab-piano .nf input:focus,#tab-piano .nf select:focus,#tab-piano .nf textarea:focus{border-color:#7C3AED}
 @media print{
   @page{margin:0;size:A4}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -667,8 +671,18 @@
 <!-- ══════════════════════════════════ -->
 <div class="onc-panel" id="tab-piano">
 
-  <div class="alert-info alert-box">
-    <b>🍽️ Piano Alimentare in Oncologia</b> — Il piano alimentare deve essere personalizzato in base al tipo di neoplasia, trattamento in corso, sintomi presenti e preferenze del paziente. Privilegiare densità calorico-proteica e adattabilità ai sintomi.
+  <!-- Section header banner -->
+  <div style="background:linear-gradient(135deg,#2E1065 0%,#5B21B6 55%,#7C3AED 100%);border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;color:white;box-shadow:0 4px 16px rgba(92,33,182,.35)" class="no-print">
+    <div style="font-size:34px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">🍽️</div>
+    <div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:3px">Piano Alimentare in Oncologia</div>
+      <div style="font-size:11.5px;opacity:.9;line-height:1.6">Personalizzare in base a neoplasia, trattamento e sintomi. Privilegiare densità calorico-proteica e adattabilità. Monitorare peso e stato nutrizionale settimanalmente.</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700">🧬 Oncologia</span>
+        <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700">💊 Chemio/Radio</span>
+        <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700">⚖️ Cachessia</span>
+      </div>
+    </div>
   </div>
 
   <div class="grid-2">
@@ -721,11 +735,18 @@
 
   <div class="calc-box">
     <h3>📝 Piano Personalizzato</h3>
-    <div class="nf"><label>Piano alimentare personalizzato</label>
-      <textarea id="piano-text" rows="6" placeholder="Inserire il piano alimentare personalizzato del paziente, con indicazioni specifiche per i suoi sintomi e preferenze..."></textarea>
+    <div style="background:#F5F3FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #7C3AED;font-size:12px;color:#3B0764;line-height:1.7">
+      💡 Indicare pasti, quantità e frequenza in base al piano di tipo selezionato nella sezione <b>Esempi</b>. Specificare le modifiche per i sintomi presenti (nausea, mucosite, disfagia, diarrea).
     </div>
-    <div class="nf" style="margin-top:8px"><label>Note dietista / raccomandazioni finali</label>
-      <textarea id="piano-note" rows="3" placeholder="Note conclusive, follow-up previsto, obiettivi da monitorare..."></textarea>
+    <div class="nf"><label>Piano alimentare personalizzato</label>
+      <textarea id="piano-text" rows="8" placeholder="Colazione: ...&#10;Spuntino mattino: ...&#10;Pranzo: ...&#10;Spuntino pomeriggio: ...&#10;Cena: ...&#10;Spuntino sera (se necessario): ..."></textarea>
+    </div>
+    <div class="nf" style="margin-top:10px"><label>Note dietista / raccomandazioni finali</label>
+      <textarea id="piano-note" rows="4" placeholder="Follow-up previsto, obiettivi da monitorare, indicazioni per supplementi ONS, parametri da controllare..."></textarea>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm no-print" onclick="salvaOncologia()" style="background:linear-gradient(135deg,#5B21B6,#7C3AED);color:white;border:none;padding:8px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px">💾 Salva Piano</button>
+      <button class="btn btn-ghost btn-sm no-print" onclick="window.print()" style="padding:8px 14px;border-radius:8px;font-size:13px">🖨️ Stampa</button>
     </div>
   </div>
 

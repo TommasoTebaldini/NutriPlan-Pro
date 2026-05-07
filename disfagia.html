@@ -1070,7 +1070,7 @@ let selEsempiIddsi = 4;
 function buildEsempiSelectors() {
   const wrap = document.getElementById('esempi-iddsi-btns');
   if (!wrap) return;
-  const levels = [4, 5, 6, 7];
+  const levels = [1, 2, 3, 4, 5, 6, 7];
   wrap.innerHTML = levels.map(id => {
     const m = IDDSI_META[id];
     const active = id === selEsempiIddsi;
@@ -1091,47 +1091,55 @@ function renderEsempi() {
 
   let totKcal = 0;
   dieta.pasti.forEach(p => p.items.forEach(i => totKcal += i.kcal));
-  const prot  = Math.round(totKcal * 0.15 / 4);
-  const cho   = Math.round(totKcal * 0.50 / 4);
+  const prot   = Math.round(totKcal * 0.15 / 4);
+  const cho    = Math.round(totKcal * 0.50 / 4);
   const grassi = Math.round(totKcal * 0.35 / 9);
 
-  let html = `<div style="border-radius:14px;overflow:hidden;border:2px solid ${meta.border};box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:16px">`;
-  html += `<div style="background:${meta.bg};color:${meta.text};padding:16px 20px;display:flex;align-items:center;gap:14px">`;
-  html += `<span style="background:rgba(255,255,255,.2);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0">${selEsempiIddsi}</span>`;
-  html += `<div style="flex:1"><div style="font-size:17px;font-weight:700">${meta.nome}</div><div style="font-size:12px;opacity:.88">${meta.en} — Schema ~${totKcal} kcal/die</div></div>`;
-  html += `<div style="display:flex;gap:8px;flex-wrap:wrap">`;
-  html += `<span style="background:rgba(255,255,255,.2);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">P: ~${prot}g</span>`;
-  html += `<span style="background:rgba(255,255,255,.2);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">CHO: ~${cho}g</span>`;
-  html += `<span style="background:rgba(255,255,255,.2);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">G: ~${grassi}g</span>`;
-  html += `</div></div>`;
+  let html = '<div>';
 
-  if (dieta.nota) {
-    html += `<div style="padding:12px 16px;background:#FFF7ED;border-bottom:1px solid ${meta.border};font-size:12px;color:#7C2D12;line-height:1.7">${dieta.nota}</div>`;
-  }
+  // ── Header row: level name + kcal info on left, "Apri" button on right ──
+  html += `<div style="background:${meta.bg}18;border:1.5px solid ${meta.bg}40;border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px">`;
+  html += `<div>`;
+  html += `<div style="font-size:15px;font-weight:700;color:${meta.bg};margin-bottom:4px">${selEsempiIddsi} — ${meta.nome}</div>`;
+  html += `<div style="font-size:12px;color:var(--slate-m)">${meta.en} &nbsp;·&nbsp; Schema base: <b>~${totKcal} kcal/die</b></div>`;
+  html += `</div>`;
+  html += `<button class="no-print" onclick="selIddsi=selEsempiIddsi;buildSelectors();renderPiano();showDisTab('piano',{target:document.querySelector('.dis-tab:nth-child(2)')||document.querySelectorAll('.dis-tab')[1]})" style="flex-shrink:0;padding:8px 16px;border-radius:8px;border:1.5px solid ${meta.bg};background:${meta.bg};color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">📂 Apri nel Piano Dietetico</button>`;
+  html += `</div>`;
 
-  html += `<div style="background:${meta.sfondo};padding:16px">`;
-  html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">`;
-  dieta.pasti.forEach(pasto => {
-    const pastoKcal = pasto.items.reduce((s, i) => s + i.kcal, 0);
-    html += `<div style="background:white;border-radius:10px;border:1px solid ${meta.border};overflow:hidden">`;
-    html += `<div style="background:${meta.bg};color:${meta.text};padding:9px 13px;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:7px">`;
-    html += `<span style="font-size:15px">${pasto.emoji}</span>${pasto.nome}<span style="margin-left:auto;font-size:11px;opacity:.85">${pastoKcal} kcal</span></div>`;
-    html += `<div style="padding:10px 13px">`;
-    pasto.items.forEach(item => {
-      html += `<div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;padding:3px 0;border-bottom:1px solid ${meta.sfondo}">`;
-      html += `<span style="color:var(--slate)">${item.nome}</span>`;
-      html += `<span style="color:var(--slate-m);white-space:nowrap;margin-left:8px;font-size:11px">${item.qt} ${item.unit}</span>`;
-      html += `</div>`;
-    });
-    html += `</div></div>`;
+  // ── Macro summary bar ──
+  html += `<div style="display:flex;flex-wrap:wrap;gap:10px;background:#F8FAFC;border-radius:10px;padding:12px 16px;margin-bottom:14px;border:1px solid var(--border)" class="no-print">`;
+  [{v:totKcal,l:'Kcal Totali',c:'#0EA5E9'},{v:prot+'g',l:'Proteine',c:'#22C55E'},{v:cho+'g',l:'CHO',c:'#F59E0B'},{v:grassi+'g',l:'Grassi',c:'#EF4444'}].forEach(m => {
+    html += `<div style="text-align:center;min-width:70px;flex:1"><div style="font-size:18px;font-weight:700;color:${m.c}">${m.v}</div><div style="font-size:9.5px;font-weight:600;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">${m.l}</div></div>`;
   });
   html += `</div>`;
 
-  html += `<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">`;
-  html += `<button onclick="selIddsi=selEsempiIddsi;buildSelectors();renderPiano();showDisTab('piano',{target:document.querySelector('.dis-tab:nth-child(2)')})" style="display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;border:none;background:${meta.bg};color:${meta.text};font-size:13px;font-weight:700;cursor:pointer">🍽️ Apri nel Piano Dietetico</button>`;
-  html += `</div>`;
-  html += `</div></div>`;
+  // ── Clinical note ──
+  if (dieta.nota) {
+    html += `<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:10px 14px;font-size:12px;color:#7C2D12;margin-bottom:14px;line-height:1.7">${dieta.nota}</div>`;
+  }
 
+  // ── Meal cards ──
+  dieta.pasti.forEach(pasto => {
+    const pastoKcal = pasto.items.reduce((s, i) => s + i.kcal, 0);
+    html += `<div style="background:white;border-radius:12px;border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)">`;
+    html += `<div style="padding:12px 16px;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,${meta.bg},${meta.bg}cc);color:white">`;
+    html += `<span style="font-size:20px">${pasto.emoji}</span>`;
+    html += `<span style="font-weight:700;font-size:14px;flex:1">${pasto.nome}</span>`;
+    html += `<span style="font-size:12px;opacity:.88;font-weight:600">≈ ${pastoKcal} kcal</span>`;
+    html += `</div>`;
+    pasto.items.forEach(item => {
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);font-size:13px">`;
+      html += `<span style="color:var(--slate);flex:1">${item.nome}</span>`;
+      html += `<div style="display:flex;align-items:center;gap:10px;white-space:nowrap;margin-left:10px">`;
+      html += `<span style="font-weight:700;color:${meta.bg};font-size:12.5px">${item.qt} ${item.unit}</span>`;
+      html += `<span style="font-size:11px;color:var(--slate-l);background:#F8FAFC;border-radius:6px;padding:2px 7px">${item.kcal} kcal</span>`;
+      html += `</div></div>`;
+    });
+    if (pasto.nota) html += `<div style="padding:6px 16px;font-size:11.5px;color:#64748B;font-style:italic;background:#FFFBEB">📝 ${pasto.nota}</div>`;
+    html += `</div>`;
+  });
+
+  html += `</div>`;
   wrap.innerHTML = html;
 }
 

@@ -959,6 +959,7 @@ ALTER TABLE schede_valutazione   REPLICA IDENTITY FULL;
 ALTER TABLE note_specialistiche  REPLICA IDENTITY FULL;
 ALTER TABLE daily_wellness       REPLICA IDENTITY FULL;
 ALTER TABLE weight_logs          REPLICA IDENTITY FULL;
+ALTER TABLE agenda_events        REPLICA IDENTITY FULL;
 
 -- SEZIONE 13 — RLS: DIARIO PAZIENTE (water_logs + activity_logs per dietista)
 -- Permette al dietista di leggere i log idrici e attività del paziente collegato.

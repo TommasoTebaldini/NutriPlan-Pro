@@ -377,7 +377,7 @@ async function renderCartellaDetail(id) {
   const [piani, ncpts, schede, biaList, noteSpec, patientLink] = await Promise.all([
     safeQuery(sb.from('piani').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('ncpt').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('schede_valutazione').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('schede_valutazione').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('bia_records').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
     safeQuery(sb.from('note_specialistiche').select('*').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).eq('dietitian_id', currentUser.id).limit(1)),
@@ -453,7 +453,7 @@ async function renderCartellaDetail(id) {
       <span style="font-size:22px">📊</span>
       <div style="flex:1">
         <div style="font-weight:700;font-size:13px;color:var(--slate)">Scheda valutazione${s.nome?' — '+esc(s.nome):''}</div>
-        <div style="font-size:11.5px;color:var(--slate-l)">Salvata: ${fmtDate(s.created_at)}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">Salvata: ${fmtDate(s.saved_at||s.created_at)}</div>
       </div>
       <span style="font-size:11px;background:#F0FDF4;color:#15803D;padding:3px 9px;border-radius:8px;font-weight:600">Valutazione</span>
       <button id="vis-btn-schede_valutazione-${s.id}" class="btn btn-ghost btn-xs" data-visible="${s.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('schede_valutazione','${s.id}')" style="color:${s.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${s.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${s.visible_to_patient===true?'👁️':'🙈'}</button>

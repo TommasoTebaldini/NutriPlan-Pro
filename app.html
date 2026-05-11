@@ -2039,13 +2039,15 @@ async function caricaObiettiviValutazione(cartellaId) {
   const box = document.getElementById('obj-val-box');
   if (!box) return;
   if (!cartellaId || !currentUser) { box.style.display = 'none'; return; }
+  // NOTE: schede_valutazione uses 'saved_at' (not 'created_at') as its timestamp column.
   const { data, error } = await sb.from('schede_valutazione')
-    .select('macro_dist, tdee_calcolato, created_at, nome, cognome')
+    .select('macro_dist, tdee_calcolato, saved_at, nome, cognome')
     .eq('cartella_id', cartellaId)
-    .order('created_at', { ascending: false })
+    .order('saved_at', { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (error || !data || !data.tdee_calcolato) { box.style.display = 'none'; return; }
+  if (error) { console.error('[caricaObiettiviValutazione]', error.message); box.style.display = 'none'; return; }
+  if (!data || !data.tdee_calcolato) { box.style.display = 'none'; return; }
   let md = { prot: 20, cho: 50, fat: 30, fibra: 25 };
   try { if (data.macro_dist) { const p = JSON.parse(data.macro_dist); if (p) md = { ...md, ...p }; } } catch(e) {}
   const tdee = data.tdee_calcolato;
@@ -2068,7 +2070,7 @@ async function caricaObiettiviValutazione(cartellaId) {
      </div>`
   ).join('');
   const nome = [data.cognome, data.nome].filter(Boolean).join(' ');
-  const data_str = new Date(data.created_at).toLocaleDateString('it');
+  const data_str = new Date(data.saved_at).toLocaleDateString('it');
   document.getElementById('obj-val-fonte').textContent =
     '📅 Valutazione del ' + data_str + (nome ? ' — ' + nome : '');
   box.style.display = '';
@@ -2161,6 +2163,7 @@ async function init() {
           const nomeEl = document.getElementById('inp-nome');
           if (nomeEl) nomeEl.value = draft.nomePiano;
         }
+        if (draft.cartellaId) caricaObiettiviValutazione(draft.cartellaId);
         renderGiornoTabs(); renderPiano();
       } catch(e) {
         console.error('Errore ripristino bozza:', e);

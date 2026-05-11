@@ -1316,50 +1316,61 @@ async function autoSyncCalendar() {
     return;
   }
 
-  // Persist email for future sessions and Google Calendar hint
   localStorage.setItem('gcal_email', email);
 
-  const calUrls = await getCalendarUrl();
-  if (!calUrls) { toast('Errore generazione link calendario', 'err'); return; }
-  const subscribeUrl = calUrls.subscribe;
-  const webcalUrl = calUrls.webcal;
-
   const isGoogle = /^[^@]+@(gmail|googlemail)\.com$/.test(email);
+  const gisReady = isGoogle && GOOGLE_CLIENT_ID && typeof google !== 'undefined' && google.accounts;
 
-  if (isGoogle) {
-    // For Gmail users: if OAuth is configured, use it to sync directly to the primary calendar.
-    const gisReady = GOOGLE_CLIENT_ID && typeof google !== 'undefined' && google.accounts;
-    if (gisReady) {
-      if (gcalTokenValid()) {
-        // Already connected — sync all pending events immediately
-        syncAllEventsToGCal();
-        if (statusEl) {
-          statusEl.textContent = '✅ Google Calendar già connesso. Sincronizzazione in corso...';
-          statusEl.style.display = '';
-        }
-      } else {
-        // Trigger OAuth flow so the user authorises and all events get pushed
-        initGoogleCalendar(email);
-        if (gcalTokenClient) gcalTokenClient.requestAccessToken();
+  if (gisReady) {
+    // OAuth path — requestAccessToken() must be called SYNCHRONOUSLY (before any await)
+    // because browsers block popups opened after an async operation.
+    if (gcalTokenValid()) {
+      syncAllEventsToGCal();
+      if (statusEl) {
+        statusEl.textContent = '✅ Google Calendar già connesso. Sincronizzazione in corso...';
+        statusEl.style.display = '';
+      }
+    } else {
+      initGoogleCalendar(email);
+      if (gcalTokenClient) {
+        gcalTokenClient.requestAccessToken();
         if (statusEl) {
           statusEl.textContent = '✅ Autorizza l\'accesso a Google Calendar nella finestra pop-up per completare la sincronizzazione sul calendario personale.';
           statusEl.style.display = '';
         }
+      } else {
+        toast('⚠️ Google Identity Services non ancora caricato. Riprova tra un momento.', 'err');
       }
-    } else {
-      // OAuth not configured — fall back to WebCal subscription (creates a secondary calendar)
-      const gcalAddUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
-      window.open(gcalAddUrl, '_blank');
-      if (statusEl) {
-        statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" nella nuova scheda per completare la sincronizzazione.';
-        statusEl.style.display = '';
-      }
-      toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
     }
+    const gcalEmailInput = document.getElementById('gcal-email-input');
+    if (gcalEmailInput) gcalEmailInput.value = email;
+    return;
+  }
+
+  // WebCal path — open the destination window NOW (synchronous, preserves user gesture)
+  // so the browser does not block it after the async getCalendarUrl() call below.
+  const tempWin = window.open('', '_blank');
+
+  const calUrls = await getCalendarUrl();
+  if (!calUrls) {
+    toast('Errore generazione link calendario', 'err');
+    if (tempWin) tempWin.close();
+    return;
+  }
+  const webcalUrl = calUrls.webcal;
+
+  if (isGoogle) {
+    // Gmail but OAuth not configured — Google Calendar subscription page (secondary calendar)
+    const gcalAddUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+    if (tempWin) { tempWin.location.href = gcalAddUrl; } else { window.open(gcalAddUrl, '_blank'); }
+    if (statusEl) {
+      statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" nella nuova scheda per completare la sincronizzazione.';
+      statusEl.style.display = '';
+    }
+    toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
   } else {
-    // For Apple Calendar / Outlook / other: trigger the webcal:// protocol handler.
-    // Use window.open instead of window.location.href so the user stays on this page.
-    window.open(webcalUrl);
+    // Apple Calendar / Outlook / other: webcal:// protocol handler
+    if (tempWin) { tempWin.location.href = webcalUrl; } else { window.open(webcalUrl); }
     if (statusEl) {
       statusEl.textContent = '✅ Link di abbonamento aperto! Accetta la richiesta nel tuo calendario per completare la sincronizzazione.';
       statusEl.style.display = '';
@@ -1367,7 +1378,6 @@ async function autoSyncCalendar() {
     toast('📅 Calendario aperto — accetta la richiesta per completare!', 'ok');
   }
 
-  // Also sync gcal-email-input (used by OAuth flow in advanced options)
   const gcalEmailInput = document.getElementById('gcal-email-input');
   if (gcalEmailInput) gcalEmailInput.value = email;
 }

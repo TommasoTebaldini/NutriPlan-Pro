@@ -3,6 +3,6 @@
 export default function handler(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=3600');
   res.json({
-    googleClientId: process.env.GOOGLE_CLIENT_ID || ''
+    googleClientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || ''
   });
 }

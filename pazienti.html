@@ -216,6 +216,7 @@
 let cartellaAperta = null;
 let editingCartellaId = null;
 let diaryRealtimeChannel = null;
+let _altroCartellaId = null;
 
 // CUSTOM CONFIRM DIALOG
 let _confirmCallback = null;
@@ -252,32 +253,101 @@ async function init() {
   loadCartelle();
 }
 
+// ═══════════════════════════════════════════════════
+// CARTELLA "ALTRO" — SISTEMA
+// Auto-created once per dietitian; always pinned at
+// the end of the grid. Identified by note='__altro__'.
+// ═══════════════════════════════════════════════════
+function _altroKey() {
+  return currentUser ? `altro_cartella_${currentUser.id}` : null;
+}
+
+async function ensureAltroCartella(allCartelle) {
+  const key = _altroKey();
+  if (!key) return null;
+
+  // Check if we already know the ID and it's in the fetched list
+  const storedId = localStorage.getItem(key);
+  if (storedId) {
+    const found = allCartelle.find(c => c.id === storedId);
+    if (found) { _altroCartellaId = storedId; return found; }
+  }
+
+  // Look for one marked as system "Altro" in the fetched list
+  const existing = allCartelle.find(c => c.note === '__altro__');
+  if (existing) {
+    localStorage.setItem(key, existing.id);
+    _altroCartellaId = existing.id;
+    return existing;
+  }
+
+  // First time: create the "Altro" folder
+  const { data, error } = await sb.from('cartelle').insert({
+    user_id: currentUser.id,
+    nome: 'Altro',
+    note: '__altro__',
+    created_at: new Date().toISOString()
+  }).select().single();
+
+  if (error || !data) return null;
+  localStorage.setItem(key, data.id);
+  _altroCartellaId = data.id;
+  return data;
+}
+
 async function loadCartelle() {
   const wrap = document.getElementById('main-content');
-  if (cartellaAperta) { await renderCartellaDetail(cartellaAperta); return; }
   wrap.innerHTML = '<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
   const { data, error } = await sb.from('cartelle').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   if (error || !data) { wrap.innerHTML = '<div class="empty-state"><div class="ei">❌</div><h3>Errore</h3></div>'; return; }
-  if (!data.length) {
-    wrap.innerHTML = `<div class="empty-state"><div class="ei">📁</div><h3>Nessuna cartella</h3><p>Crea la prima cartella paziente con il pulsante in alto a destra.</p></div>`;
+
+  // Ensure "Altro" default folder exists (creates it if missing)
+  const altroObj = await ensureAltroCartella(data);
+
+  if (cartellaAperta) { await renderCartellaDetail(cartellaAperta); return; }
+
+  const normalCartelle = data.filter(c => c.id !== _altroCartellaId);
+
+  const renderCard = (c) => {
+    const isAltro = c.id === _altroCartellaId;
+    if (isAltro) {
+      return `<div class="paz-card" onclick="apriCartella('${c.id}')" style="border:2px dashed var(--border-d);background:#F8FAFC;cursor:pointer">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:24px">📂</span>
+          <div><h4 style="color:var(--slate-m)">Altro</h4><div class="paz-meta" style="font-size:11px">File e documenti non categorizzati</div></div>
+        </div>
+        <div class="paz-tag" style="margin-top:6px;background:#F1F5F9;color:var(--slate-l)">📂 Cartella predefinita</div>
+      </div>`;
+    }
+    const eta = c.ddn ? calcolaEta(c.ddn) : null;
+    const noteDisplay = (c.note && c.note !== '__altro__') ? '<div style="font-size:11px;color:var(--slate-l);font-style:italic;margin-top:4px">' + esc(c.note.substring(0, 70)) + (c.note.length > 70 ? '...' : '') + '</div>' : '';
+    return `<div class="paz-card" onclick="apriCartella('${c.id}')">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:24px">📁</span>
+        <div><h4>${esc(c.nome)}</h4><div class="paz-meta">${eta !== null ? eta + ' anni · ' : ''}${c.sesso || ''}</div></div>
+      </div>
+      ${noteDisplay}
+      <div class="paz-tag" style="margin-top:6px">📅 ${new Date(c.created_at).toLocaleDateString('it')}</div>
+      <div class="paz-actions">
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editCartella('${c.id}')">✏️</button>
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delCartella('${c.id}')">🗑️</button>
+      </div>
+    </div>`;
+  };
+
+  // Normal folders first, then "Altro" pinned at the end
+  const cardsHtml = [
+    ...normalCartelle.map(renderCard),
+    altroObj ? renderCard(altroObj) : ''
+  ].join('');
+
+  if (!normalCartelle.length) {
+    wrap.innerHTML = `<div style="margin-bottom:14px;padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">
+      Crea la prima cartella paziente con il pulsante in alto a destra. La cartella <b>Altro</b> è sempre disponibile per file non categorizzati.
+    </div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">${cardsHtml}</div>`;
     return;
   }
-  wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">` +
-    data.map(c => {
-      const eta = c.ddn ? calcolaEta(c.ddn) : null;
-      return `<div class="paz-card" onclick="apriCartella('${c.id}')">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <span style="font-size:24px">📁</span>
-          <div><h4>${esc(c.nome)}</h4><div class="paz-meta">${eta !== null ? eta + ' anni · ' : ''}${c.sesso || ''}</div></div>
-        </div>
-        ${c.note ? '<div style="font-size:11px;color:var(--slate-l);font-style:italic;margin-top:4px">' + esc(c.note.substring(0, 70)) + (c.note.length > 70 ? '...' : '') + '</div>' : ''}
-        <div class="paz-tag" style="margin-top:6px">📅 ${new Date(c.created_at).toLocaleDateString('it')}</div>
-        <div class="paz-actions">
-          <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editCartella('${c.id}')">✏️</button>
-          <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delCartella('${c.id}')">🗑️</button>
-        </div>
-      </div>`;
-    }).join('') + '</div>';
+  wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">${cardsHtml}</div>`;
 }
 
 async function apriCartella(id) {
@@ -315,11 +385,12 @@ async function renderCartellaDetail(id) {
 
   const cart = cartResult.data;
   const patientId = patientLink[0]?.patient_id || null;
+  const isAltro = (id === _altroCartellaId);
 
-  if (!cart) { 
+  if (!cart) {
     wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>Cartella non trovata</h3><p style="color:var(--slate-l);font-size:13px">Cartella non accessibile o inesistente.</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">← Torna all'elenco</button></div>`;
     cartellaAperta = null;
-    return; 
+    return;
   }
 
   // Split questionnaires, consigli nutrizionali, and other specialist notes
@@ -421,14 +492,15 @@ async function renderCartellaDetail(id) {
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
       <button class="btn btn-ghost btn-sm" onclick="cartellaAperta=null;document.getElementById('page-title').textContent='📁 Cartelle Pazienti';loadCartelle()">← Tutte le cartelle</button>
-      <h3 style="font-size:16px;font-weight:700">📁 ${esc(cart.nome)}</h3>
-      ${eta !== null ? `<span class="paz-tag">${eta} anni</span>` : ''}
-      ${cart.sesso ? `<span class="paz-tag">${cart.sesso==='M'?'♂️ M':'♀️ F'}</span>` : ''}
-      ${cart.codice_fiscale ? `<span class="paz-tag">🪪 ${esc(cart.codice_fiscale)}</span>` : ''}
-      <button class="btn btn-ghost btn-sm" onclick="editCartella('${cart.id}')">✏️ Modifica</button>
-      ${patientLink.length ? `<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente('${patientLink[0].patient_id}','${cart.id}')" title="Scollega paziente">🔗✂️ Scollega</button>` : `<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente('${cart.id}')">🔗 Collega paziente</button>`}
+      <h3 style="font-size:16px;font-weight:700">${isAltro ? '📂' : '📁'} ${esc(cart.nome)}</h3>
+      ${!isAltro && eta !== null ? `<span class="paz-tag">${eta} anni</span>` : ''}
+      ${!isAltro && cart.sesso ? `<span class="paz-tag">${cart.sesso==='M'?'♂️ M':'♀️ F'}</span>` : ''}
+      ${!isAltro && cart.codice_fiscale ? `<span class="paz-tag">🪪 ${esc(cart.codice_fiscale)}</span>` : ''}
+      ${!isAltro ? `<button class="btn btn-ghost btn-sm" onclick="editCartella('${cart.id}')">✏️ Modifica</button>` : ''}
+      ${!isAltro ? (patientLink.length ? `<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente('${patientLink[0].patient_id}','${cart.id}')" title="Scollega paziente">🔗✂️ Scollega</button>` : `<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente('${cart.id}')">🔗 Collega paziente</button>`) : ''}
     </div>
-    ${cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
+    ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
+    ${!isAltro && cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
 
     <!-- SEZIONE PIANI + CONTENUTO VISIBILE AL PAZIENTE -->
     <div class="card" style="margin-bottom:12px">
@@ -685,6 +757,7 @@ function openNewCartella() {
 }
 
 async function editCartella(id) {
+  if (id === _altroCartellaId) { toast('⚠️ La cartella "Altro" non può essere modificata.', 'warn'); return; }
   showLoading(true);
   const { data } = await sb.from('cartelle').select('*').eq('id', id).single();
   showLoading(false);
@@ -731,6 +804,7 @@ async function salvaCartella() {
 }
 
 async function delCartella(id) {
+  if (id === _altroCartellaId) { toast('⚠️ La cartella "Altro" non può essere eliminata.', 'warn'); return; }
   customConfirm('Eliminare questa cartella e tutti i piani al suo interno?', async () => {
     showLoading(true);
     await sb.from('piani').delete().eq('cartella_id', id);

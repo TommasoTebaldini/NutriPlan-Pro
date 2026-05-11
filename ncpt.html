@@ -638,7 +638,20 @@
       <select id="v-laf" onchange="calcMB()"><option value="1.2">1.2 — Sedentario</option><option value="1.375" selected>1.375 — Leggermente attivo</option><option value="1.55">1.55 — Moderatamente attivo</option><option value="1.725">1.725 — Molto attivo</option><option value="1.9">1.9 — Atleta</option></select></div>
     <div class="nf"><label>TDEE stimato (kcal)</label><input type="text" id="v-tdee" placeholder="es. 2100" readonly style="background:#F8FAFC"></div>
     <div class="nf"><label>Kcal target prescritte</label><input type="text" id="v-kcal-tgt" placeholder="es. 1600"></div>
-    <div class="nf"><label>Fabbisogno proteico (g/die)</label><input type="text" id="v-prot" placeholder="es. 75-90 g"></div>
+    <div class="nf">
+      <label style="display:flex;align-items:center;justify-content:space-between">
+        Fabbisogno proteico
+        <button id="prot-mode-btn" onclick="toggleNcptProtMode()" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1.5px solid #1D4ED8;background:transparent;color:#1D4ED8;cursor:pointer;font-weight:700;font-family:inherit;line-height:1.4">g/die</button>
+      </label>
+      <div id="prot-gdie-row"><input type="text" id="v-prot" placeholder="es. 75-90 g"></div>
+      <div id="prot-gkg-row" style="display:none">
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="number" id="v-prot-gkg" min="0.5" max="4" step="0.1" placeholder="es. 1.2" style="flex:1" oninput="onNcptProtGkgInput()">
+          <span style="font-size:12px;font-weight:600;color:#1D4ED8;white-space:nowrap">g/kg</span>
+        </div>
+        <div id="prot-gkg-calc" style="font-size:11px;color:#1D4ED8;margin-top:3px;font-weight:600"></div>
+      </div>
+    </div>
     <div class="nf full"><label>Note fabbisogno</label>
       <textarea id="v-note-fabb" rows="2" placeholder="Motivazione scelta calorica, peso di riferimento..."></textarea></div>
   </div>
@@ -1048,6 +1061,38 @@ function faoWhoMB(sesso,eta,peso){
   else{if(eta<3)k=61.0*peso-51;else if(eta<10)k=22.5*peso+499;else if(eta<18)k=12.2*peso+746;else if(eta<30)k=14.7*peso+496;else if(eta<60)k=8.7*peso+829;else k=10.5*peso+596;}
   return Math.round(k);
 }
+let ncptProtMode='gdie';
+
+function toggleNcptProtMode(){
+  ncptProtMode=ncptProtMode==='gdie'?'gkg':'gdie';
+  const btn=document.getElementById('prot-mode-btn');
+  const gdieRow=document.getElementById('prot-gdie-row');
+  const gkgRow=document.getElementById('prot-gkg-row');
+  if(!btn||!gdieRow||!gkgRow)return;
+  const isGkg=ncptProtMode==='gkg';
+  btn.textContent=isGkg?'g/kg·d':'g/die';
+  btn.style.background=isGkg?'#1D4ED8':'transparent';
+  btn.style.color=isGkg?'white':'#1D4ED8';
+  gdieRow.style.display=isGkg?'none':'';
+  gkgRow.style.display=isGkg?'':'none';
+  if(isGkg)onNcptProtGkgInput();
+}
+
+function onNcptProtGkgInput(){
+  const v=parseFloat(document.getElementById('v-prot-gkg')?.value);
+  const peso=parseFloat(document.getElementById('v-peso')?.value);
+  const alt=parseFloat(document.getElementById('v-altezza')?.value)||170;
+  const sesso=document.getElementById('v-sesso')?.value||'F';
+  const calc=document.getElementById('prot-gkg-calc');
+  if(isNaN(v)||v<=0||!peso){if(calc)calc.textContent='';return;}
+  const bmi=peso/(alt/100)**2;
+  const pi=sesso==='M'?(alt-100)-((alt-150)/4):(alt-100)-((alt-150)/2.5);
+  const pa=pi+0.25*(peso-pi);
+  const pesoRef=bmi>=30?pa:peso;
+  const g=Math.round(v*pesoRef*10)/10;
+  if(calc)calc.textContent=`→ ${g} g/die (${Math.round(pesoRef*10)/10} kg)`;
+}
+
 function calcMB(){
   const peso=parseFloat(document.getElementById('v-peso').value);
   const alt=parseFloat(document.getElementById('v-altezza').value);
@@ -1573,7 +1618,7 @@ function raccogliDati() {
       ffq_gelato:g('v-ffq-gelato'),ffq_caffe_freq:g('v-ffq-caffe_freq'),ffq_salse:g('v-ffq-salse'),ffq_fritti:g('v-ffq-fritti'),
       intoll:g('v-intoll'),attiv:g('v-attiv'),farmaci:g('v-farmaci'),
       formula:g('v-formula'),mb:g('v-mb'),laf:g('v-laf'),tdee:g('v-tdee'),
-      prot:g('v-prot'),kcal_tgt:g('v-kcal-tgt'),note_fabb:g('v-note-fabb')
+      prot:g('v-prot'),prot_mode:ncptProtMode,prot_gkg:g('v-prot-gkg')||null,kcal_tgt:g('v-kcal-tgt'),note_fabb:g('v-note-fabb')
     }),
     diagnosi: JSON.stringify({pes: pesList}),
     intervento: JSON.stringify({
@@ -1672,6 +1717,9 @@ function caricaDati(data) {
     if(v.appetito) s('v-appetito',v.appetito);
     if(v.formula) s('v-formula',v.formula);
     if(v.laf) s('v-laf',v.laf);
+    if(v.prot_mode&&v.prot_mode!=='gdie'){ncptProtMode='gdie';toggleNcptProtMode();}
+    if(v.prot_gkg) s('v-prot-gkg',v.prot_gkg);
+    if(v.prot_mode==='gkg') onNcptProtGkgInput();
     const d=JSON.parse(data.diagnosi||'{}');
     pesList = d.pes||[];
     renderPES();
@@ -1707,6 +1755,7 @@ function caricaDati(data) {
 function nuovoNCPt(clearCart=true) {
   currentNcptId=null;
   pesList=[]; obiettiviList=[]; storici=[]; monitExtra=[];
+  if(ncptProtMode==='gkg'){ncptProtMode='gdie';toggleNcptProtMode();}
   document.querySelectorAll('.ncpt-panel input, .ncpt-panel textarea, .recall-ta').forEach(el=>{
     if(el.type!=='date') el.value='';
     else if(el.id==='v-data') el.value=new Date().toISOString().split('T')[0];

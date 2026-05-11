@@ -39,6 +39,8 @@
 .es-warn>input,.es-warn input{border-color:#F59E0B!important;background:#FFFBEB!important}
 .es-bad>input,.es-bad input{border-color:#EF4444!important;background:#FEF2F2!important}
 .es-ok input,.es-warn input,.es-bad input{transition:border-color .2s,background .2s}
+.formula-row{cursor:pointer}
+.formula-row.selected{background:#FFF7ED!important;border-color:#C2410C!important;box-shadow:0 2px 8px rgba(194,65,12,.15)}
 </style>
 </head>
 <body>
@@ -721,7 +723,8 @@ let tdee=0,mbGlobale=0;
 let pesoAttualeGlobale=0,piGlobale=0,paGlobale=0,pesoFGlobale=0;
 let metodoTDEE='formula';
 let schedaId=null;
-const macroDist={prot:20,cho:50,fat:30,fibra:25};
+let formuleGlobali=[],selectedFormula=null;
+const macroDist={prot:20,cho:50,fat:30,fibra:25,prot_mode:'pct',prot_gkg:0};
 
 function renderPatChips(filter=''){
   const container = document.getElementById('pat-chips');
@@ -869,6 +872,32 @@ function renderMacroDist(){
   ${MACRO_ITEMS.map(it=>{
     const g=Math.round(tdee*macroDist[it.key]/100/it.kcalpg);
     const kcal=Math.round(tdee*macroDist[it.key]/100);
+    if(it.key==='prot'){
+      const isGkg=macroDist.prot_mode==='gkg';
+      const gFromGkg=pesoAttualeGlobale?Math.round(macroDist.prot_gkg*pesoAttualeGlobale):g;
+      const kcalFromGkg=Math.round(gFromGkg*4);
+      return `<div id="mdiv-prot" style="background:${it.bg};border-radius:10px;padding:12px;border:2px solid ${totOk?it.col+'33':'#FCA5A5'}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:700;color:${it.col}">${it.icon} ${it.label}</div>
+        <button onclick="toggleProtMode()" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1.5px solid ${it.col};background:${isGkg?it.col:'transparent'};color:${isGkg?'white':it.col};cursor:pointer;font-weight:700;font-family:inherit;line-height:1.4">${isGkg?'g/kg\u00b7d':'%'}</button>
+      </div>
+      ${isGkg?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <input type="number" id="inp-prot" min="0.5" max="4" step="0.1" value="${macroDist.prot_gkg}"
+          oninput="onProtGkgInput(this)"
+          style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
+        <span style="font-size:13px;font-weight:700;color:${it.col}">g/kg</span>
+      </div>
+      <div id="mg-prot" style="font-size:11.5px;color:${it.col};font-weight:600">${macroDist.prot}% \u00b7 ${gFromGkg}g \u00a0|\u00a0 ${kcalFromGkg} kcal</div>`
+      :`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <input type="number" id="inp-prot" min="5" max="80" value="${macroDist.prot}"
+          oninput="onMacroInput('prot',this)"
+          onblur="onMacroBlur('prot',this)"
+          style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
+        <span style="font-size:18px;font-weight:700;color:${it.col}">%</span>
+      </div>
+      <div id="mg-prot" style="font-size:11.5px;color:${it.col};font-weight:600">${g}g \u00a0|\u00a0 ${kcal} kcal</div>`}
+    </div>`;
+    }
     return `<div id="mdiv-${it.key}" style="background:${it.bg};border-radius:10px;padding:12px;border:2px solid ${totOk?it.col+'33':'#FCA5A5'}">
       <div style="font-size:12px;font-weight:700;color:${it.col};margin-bottom:8px">${it.icon} ${it.label}</div>
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
@@ -905,6 +934,54 @@ function autoBalance(){
   const diff=100-(macroDist.prot+macroDist.cho+macroDist.fat);
   macroDist.cho=Math.max(5,macroDist.cho+diff);
   renderMacroDist();
+}
+
+function selectFormula(nome){
+  selectedFormula=(nome==='__media__'||nome===selectedFormula)?null:nome;
+  const sf=selectedFormula?formuleGlobali.find(f=>f.nome===selectedFormula):null;
+  const mbM=formuleGlobali.length?Math.round(formuleGlobali.reduce((s,f)=>s+f.val,0)/formuleGlobali.length):mbGlobale;
+  mbGlobale=sf?sf.val:mbM;
+  renderFormuleRows();
+  aggiornaTDEE(mbGlobale);
+}
+
+function renderFormuleRows(){
+  const container=document.getElementById('formula-list');
+  const mediaRow=document.getElementById('mb-media-row');
+  if(!container||!formuleGlobali.length)return;
+  const mbM=Math.round(formuleGlobali.reduce((s,f)=>s+f.val,0)/formuleGlobali.length);
+  container.innerHTML=formuleGlobali.map(f=>{
+    const sel=selectedFormula===f.nome;
+    return `<div class="formula-row${sel?' selected':''}" onclick="selectFormula('${f.nome.replace(/'/g,"\\'")}')"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div style="text-align:right"><div class="fv">${f.val} kcal</div>${sel?'<div style="font-size:10px;color:#C2410C;font-weight:700;margin-top:2px">✓ In uso</div>':''}</div></div>`;
+  }).join('');
+  if(mediaRow){
+    const active=!selectedFormula;
+    mediaRow.style.background=active?'var(--teal)':'#94A3B8';
+    mediaRow.innerHTML=`<b>${active?'✓ ':''}Media formule</b><span style="font-size:22px;font-weight:700">${mbM} kcal</span>`;
+  }
+}
+
+function toggleProtMode(){
+  if(macroDist.prot_mode==='pct'){
+    macroDist.prot_mode='gkg';
+    if(tdee&&pesoAttualeGlobale){
+      const g=tdee*macroDist.prot/100/4;
+      macroDist.prot_gkg=Math.round(g/pesoAttualeGlobale*10)/10;
+    }else{macroDist.prot_gkg=1.0;}
+  }else{
+    macroDist.prot_mode='pct';
+  }
+  renderMacroDist();
+}
+
+function onProtGkgInput(input){
+  const v=parseFloat(input.value);
+  if(isNaN(v)||v<=0||!pesoAttualeGlobale||!tdee)return;
+  macroDist.prot_gkg=v;
+  const g=v*pesoAttualeGlobale;
+  const kcal=g*4;
+  macroDist.prot=Math.max(5,Math.min(80,Math.round(kcal/tdee*100)));
+  updateMacroCalcs();
 }
 
 function aggiornaTDEE(mb){
@@ -996,8 +1073,11 @@ function calcolaFabbisogno(){
   const fao=faoWhoFn(sesso,eta,pesoF);
   const kma=mm?Math.round(370+21.6*mm):null;
   const formule=[{nome:'Harris-Benedict (1919)',val:hb,note:'Piu usata clinicamente'},{nome:'Mifflin-St Jeor (1990)',val:miff,note:'Piu accurata in generale'},{nome:'Schofield (1985) LARN',val:schof,note:'Standard OMS/LARN - corretta'},{nome:'FAO/WHO (1985)',val:fao,note:'Standard internazionale'},...(kma?[{nome:'Katch-McArdle (MM)',val:kma,note:'Se massa magra nota'}]:[])];
+  formuleGlobali=formule;
   const mbM=Math.round(formule.reduce((s,f)=>s+f.val,0)/formule.length);
-  mbGlobale=mbM;tdee=Math.round(mbM*1.375);
+  const sfObj=selectedFormula?formule.find(f=>f.nome===selectedFormula):null;
+  mbGlobale=sfObj?sfObj.val:mbM;
+  tdee=Math.round(mbGlobale*1.375);
   let bmiCat='',bmiCol='var(--teal)';
   if(bmi<18.5){bmiCat='Sottopeso';bmiCol='#0EA5E9';}else if(bmi<25){bmiCat='Normopeso';bmiCol='#15803D';}else if(bmi<30){bmiCat='Sovrappeso';bmiCol='#D97706';}else if(bmi<35){bmiCat='Obesita I';bmiCol='#DC2626';}else if(bmi<40){bmiCat='Obesita II';bmiCol='#DC2626';}else{bmiCat='Obesita III';bmiCol='#991B1B';}
   const whr=vita&&fianchi?vita/fianchi:null;
@@ -1018,9 +1098,9 @@ function calcolaFabbisogno(){
   </div></div>
 
   <div class="val-section"><h3>🔥 Metabolismo Basale</h3>
-  <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:10px">Peso usato: <b>${Math.round(pesoF*10)/10} kg</b>${bmi>=30?' (aggiustato)':''}</div>
-  ${formule.map((f,i)=>`<div class="formula-row${i===1?' best':''}"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div class="fv">${f.val} kcal</div></div>`).join('')}
-  <div style="background:var(--teal);color:white;padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:8px"><b>Media formule</b><span style="font-size:22px;font-weight:700">${mbM} kcal</span></div>
+  <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:10px">Peso usato: <b>${Math.round(pesoF*10)/10} kg</b>${bmi>=30?' (aggiustato)':''}  <span style="color:var(--slate-l);font-style:italic">Clicca una formula per usarla</span></div>
+  <div id="formula-list"></div>
+  <div id="mb-media-row" onclick="selectFormula('__media__')" style="padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;cursor:pointer"></div>
   </div>
   </div>
 
@@ -1032,11 +1112,11 @@ function calcolaFabbisogno(){
   </div>
   <div id="met-formula-section">
   <div class="fg" style="margin-bottom:10px"><label>Livello Attivita Fisica (LAF)</label>
-  <select id="val-laf" onchange="aggiornaTDEE(${mbM})" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
+  <select id="val-laf" onchange="aggiornaTDEE(mbGlobale)" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
     ${LAF_OPTIONS.map((l,i)=>`<option value="${l.val}" ${i===1?'selected':''}>${l.label} (x${l.val})</option>`).join('')}
   </select></div>
   <div class="fg" style="margin-bottom:12px"><label>Fattore di Correzione (FC)</label>
-  <select id="val-fc" onchange="aggiornaTDEE(${mbM})" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
+  <select id="val-fc" onchange="aggiornaTDEE(mbGlobale)" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
     ${FC_OPTIONS.map((f,i)=>`<option value="${f.val}" ${i===0?'selected':''}>${f.label}</option>`).join('')}
   </select></div>
   </div>
@@ -1069,7 +1149,7 @@ function calcolaFabbisogno(){
 
   <div class="val-section"><h3>🏥 Raccomandazioni per le Patologie</h3><div id="pat-lg-notes"></div></div>`;
 
-  setMetodoTDEE(metodoTDEE);renderKcalKgSuggBox();renderLGNotes(document.getElementById('pat-lg-notes'));
+  setMetodoTDEE(metodoTDEE);renderKcalKgSuggBox();renderLGNotes(document.getElementById('pat-lg-notes'));renderFormuleRows();
 }
 
 async function salvaScheda(){
@@ -1323,6 +1403,7 @@ async function doSalva(cartellaId){
       kcalkg_val:document.getElementById('kcalkg-input')?.value||null,
       kcalkg_peso_tipo:document.getElementById('kcalkg-peso-tipo')?.value||null,
       mb_globale:mbGlobale||null,
+      selected_formula:selectedFormula||null,
     }),
     saved_at:new Date().toISOString()
   };
@@ -1816,7 +1897,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
           if(document.getElementById('v-plica'))setVal('v-plica',data.plica);
           setVal('v-note',data.note);
           try{const pat=JSON.parse(data.patologie||'[]');selectedPat=new Set(pat);renderPatChips();}catch(e){}
-          if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;}catch(e){}}
+          if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;if(md.prot_mode)macroDist.prot_mode=md.prot_mode;if(md.prot_gkg!=null)macroDist.prot_gkg=md.prot_gkg;}catch(e){}}
           if(data.dati_extra){try{const ex=typeof data.dati_extra==='string'?JSON.parse(data.dati_extra):data.dati_extra;const sv2=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};
             sv2('v-collo',ex.collo);sv2('v-spalla',ex.spalla);sv2('v-torace',ex.torace);
             sv2('v-braccio-r',ex.braccio_r);sv2('v-braccio-r-sx',ex.braccio_r_sx);sv2('v-braccio-c',ex.braccio_c);sv2('v-braccio-c-sx',ex.braccio_c_sx);sv2('v-avambraccio',ex.avambraccio);
@@ -1850,6 +1931,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
             if(data.tdee_calcolato&&!isNaN(data.tdee_calcolato)){tdee=data.tdee_calcolato;renderMacroDist();}
             // Restore fabbisogni scelti (LAF, FC, method) after calcolaFabbisogno generates the selectors
             if(ex.mb_globale)mbGlobale=ex.mb_globale;
+            if(ex.selected_formula)selectedFormula=ex.selected_formula;
             if(ex.metodo_tdee){metodoTDEE=ex.metodo_tdee;}
             if(ex.laf){const lafEl=document.getElementById('val-laf');if(lafEl)lafEl.value=ex.laf;}
             if(ex.fc){const fcEl=document.getElementById('val-fc');if(fcEl)fcEl.value=ex.fc;}
@@ -1857,6 +1939,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
             if(ex.kcalkg_peso_tipo){const kp=document.getElementById('kcalkg-peso-tipo');if(kp)kp.value=ex.kcalkg_peso_tipo;}
             if(ex.metodo_tdee==='kcalkg')calcolaKcalKgDie();else if(ex.laf||ex.fc)aggiornaTDEE(mbGlobale);
             if(ex.metodo_tdee){setMetodoTDEE(ex.metodo_tdee);}
+            renderFormuleRows();
           }catch(e){}}
           toast('📂 Scheda caricata per modifica!','ok');
         }

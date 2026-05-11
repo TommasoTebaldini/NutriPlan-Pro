@@ -2039,18 +2039,41 @@ async function caricaObiettiviValutazione(cartellaId) {
   const box = document.getElementById('obj-val-box');
   if (!box) return;
   if (!cartellaId || !currentUser) { box.style.display = 'none'; return; }
-  // NOTE: schede_valutazione uses 'saved_at' (not 'created_at') as its timestamp column.
-  const { data, error } = await sb.from('schede_valutazione')
-    .select('macro_dist, tdee_calcolato, saved_at, nome, cognome')
+
+  // Use select('*') to avoid errors from column-name differences across DB versions
+  // (some tables have 'saved_at', others 'created_at' depending on how they were created).
+  const { data: rows, error } = await sb.from('schede_valutazione')
+    .select('*')
     .eq('cartella_id', cartellaId)
-    .order('saved_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (error) { console.error('[caricaObiettiviValutazione]', error.message); box.style.display = 'none'; return; }
-  if (!data || !data.tdee_calcolato) { box.style.display = 'none'; return; }
+    .limit(20);
+
+  if (error) {
+    console.error('[caricaObiettiviValutazione] query error:', error.message);
+    box.style.display = 'none';
+    return;
+  }
+  if (!rows || !rows.length) {
+    console.log('[caricaObiettiviValutazione] nessuna scheda valutazione per cartella', cartellaId);
+    box.style.display = 'none';
+    return;
+  }
+
+  // Sort client-side: most recently saved first (handles both saved_at and created_at)
+  rows.sort((a, b) =>
+    new Date(b.saved_at || b.created_at || 0) - new Date(a.saved_at || a.created_at || 0)
+  );
+
+  // Pick the most recent evaluation that has TDEE calculated
+  const data = rows.find(r => r.tdee_calcolato && Number(r.tdee_calcolato) > 0);
+  if (!data) {
+    console.log('[caricaObiettiviValutazione] schede trovate ma nessuna con tdee_calcolato valorizzato', rows.map(r => ({id:r.id, tdee:r.tdee_calcolato})));
+    box.style.display = 'none';
+    return;
+  }
+
   let md = { prot: 20, cho: 50, fat: 30, fibra: 25 };
   try { if (data.macro_dist) { const p = JSON.parse(data.macro_dist); if (p) md = { ...md, ...p }; } } catch(e) {}
-  const tdee = data.tdee_calcolato;
+  const tdee = Number(data.tdee_calcolato);
   const prot_g = Math.round(tdee * md.prot / 100 / 4);
   const cho_g  = Math.round(tdee * md.cho  / 100 / 4);
   const fat_g  = Math.round(tdee * md.fat  / 100 / 9);
@@ -2069,10 +2092,12 @@ async function caricaObiettiviValutazione(cartellaId) {
        ${p.sub ? `<div style="font-size:10px;color:${p.col};opacity:.75">${p.sub}</div>` : ''}
      </div>`
   ).join('');
-  const nome = [data.cognome, data.nome].filter(Boolean).join(' ');
-  const data_str = new Date(data.saved_at).toLocaleDateString('it');
+  const nomePaz = [data.cognome, data.nome].filter(Boolean).join(' ');
+  const ts = data.saved_at || data.created_at;
+  const data_str = ts ? new Date(ts).toLocaleDateString('it') : '';
   document.getElementById('obj-val-fonte').textContent =
-    '📅 Valutazione del ' + data_str + (nome ? ' — ' + nome : '');
+    (data_str ? '📅 Valutazione del ' + data_str : '📅 Valutazione recente') +
+    (nomePaz ? ' — ' + nomePaz : '');
   box.style.display = '';
 }
 

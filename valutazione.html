@@ -40,7 +40,7 @@
 .es-bad>input,.es-bad input{border-color:#EF4444!important;background:#FEF2F2!important}
 .es-ok input,.es-warn input,.es-bad input{transition:border-color .2s,background .2s}
 .formula-row{cursor:pointer}
-.formula-row.selected{background:#FFF7ED!important;border-color:#C2410C!important;box-shadow:0 2px 8px rgba(194,65,12,.15)}
+.formula-row.selected{background:#F0FDF4!important;border-color:#15803D!important;box-shadow:0 2px 8px rgba(21,128,61,.15)}
 </style>
 </head>
 <body>
@@ -724,7 +724,7 @@ let pesoAttualeGlobale=0,piGlobale=0,paGlobale=0,pesoFGlobale=0;
 let metodoTDEE='formula';
 let schedaId=null;
 let formuleGlobali=[],selectedFormula=null;
-const macroDist={prot:20,cho:50,fat:30,fibra:25,prot_mode:'pct',prot_gkg:0};
+const macroDist={prot:20,cho:50,fat:30,fibra:25,prot_mode:'pct',prot_gkg:0,cho_mode:'pct',cho_gkg:0,fat_mode:'pct',fat_gkg:0};
 
 function renderPatChips(filter=''){
   const container = document.getElementById('pat-chips');
@@ -829,7 +829,7 @@ function faoWhoFn(sesso,eta,peso){
   return Math.round(k);
 }
 
-const MACRO_ITEMS=[{key:'prot',label:'Proteine',icon:'🥩',col:'#15803D',bg:'#F0FDF4',kcalpg:4},{key:'cho',label:'CHO',icon:'🌾',col:'#1D4ED8',bg:'#EFF6FF',kcalpg:4},{key:'fat',label:'Grassi',icon:'🫒',col:'#B45309',bg:'#FEF3C7',kcalpg:9}];
+const MACRO_ITEMS=[{key:'prot',label:'Proteine',icon:'🥩',col:'#15803D',bg:'#F0FDF4',kcalpg:4,minGkg:0.5,maxGkg:4},{key:'cho',label:'CHO',icon:'🌾',col:'#1D4ED8',bg:'#EFF6FF',kcalpg:4,minGkg:1,maxGkg:10},{key:'fat',label:'Grassi',icon:'🫒',col:'#B45309',bg:'#FEF3C7',kcalpg:9,minGkg:0.3,maxGkg:3}];
 
 function onMacroInput(key, input){
   const v=parseInt(input.value);
@@ -845,10 +845,12 @@ function updateMacroCalcs(){
   const tot=macroDist.prot+macroDist.cho+macroDist.fat;
   const totOk=tot===100;
   MACRO_ITEMS.forEach(it=>{
-    const g=Math.round(tdee*macroDist[it.key]/100/it.kcalpg);
+    const isGkg=macroDist[it.key+'_mode']==='gkg';
+    const gFromGkg=isGkg&&pesoAttualeGlobale?Math.round(macroDist[it.key+'_gkg']*pesoAttualeGlobale):0;
+    const g=isGkg?gFromGkg:Math.round(tdee*macroDist[it.key]/100/it.kcalpg);
     const kcal=Math.round(tdee*macroDist[it.key]/100);
     const mgEl=document.getElementById('mg-'+it.key);
-    if(mgEl)mgEl.textContent=g+'g \u00a0|\u00a0 '+kcal+' kcal';
+    if(mgEl)mgEl.textContent=(isGkg?macroDist[it.key]+'% \u00b7 ':'')+g+'g \u00a0|\u00a0 '+kcal+' kcal';
     const div=document.getElementById('mdiv-'+it.key);
     if(div)div.style.borderColor=totOk?it.col+'33':'#FCA5A5';
   });
@@ -870,44 +872,31 @@ function renderMacroDist(){
   el.innerHTML=`
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
   ${MACRO_ITEMS.map(it=>{
-    const g=Math.round(tdee*macroDist[it.key]/100/it.kcalpg);
-    const kcal=Math.round(tdee*macroDist[it.key]/100);
-    if(it.key==='prot'){
-      const isGkg=macroDist.prot_mode==='gkg';
-      const gFromGkg=pesoAttualeGlobale?Math.round(macroDist.prot_gkg*pesoAttualeGlobale):g;
-      const kcalFromGkg=Math.round(gFromGkg*4);
-      return `<div id="mdiv-prot" style="background:${it.bg};border-radius:10px;padding:12px;border:2px solid ${totOk?it.col+'33':'#FCA5A5'}">
+    const isGkg=macroDist[it.key+'_mode']==='gkg';
+    const gkg=macroDist[it.key+'_gkg']||0;
+    const gFromGkg=isGkg&&pesoAttualeGlobale?Math.round(gkg*pesoAttualeGlobale):0;
+    const g=isGkg?gFromGkg:Math.round(tdee*macroDist[it.key]/100/it.kcalpg);
+    const kcal=isGkg?Math.round(gFromGkg*it.kcalpg):Math.round(tdee*macroDist[it.key]/100);
+    return `<div id="mdiv-${it.key}" style="background:${it.bg};border-radius:10px;padding:12px;border:2px solid ${totOk?it.col+'33':'#FCA5A5'}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:12px;font-weight:700;color:${it.col}">${it.icon} ${it.label}</div>
-        <button onclick="toggleProtMode()" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1.5px solid ${it.col};background:${isGkg?it.col:'transparent'};color:${isGkg?'white':it.col};cursor:pointer;font-weight:700;font-family:inherit;line-height:1.4">${isGkg?'g/kg\u00b7d':'%'}</button>
+        <button onclick="toggleMacroMode('${it.key}')" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1.5px solid ${it.col};background:${isGkg?it.col:'transparent'};color:${isGkg?'white':it.col};cursor:pointer;font-weight:700;font-family:inherit;line-height:1.4">${isGkg?'g/kg\u00b7d':'%'}</button>
       </div>
       ${isGkg?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-        <input type="number" id="inp-prot" min="0.5" max="4" step="0.1" value="${macroDist.prot_gkg}"
-          oninput="onProtGkgInput(this)"
+        <input type="number" id="inp-${it.key}" min="${it.minGkg}" max="${it.maxGkg}" step="0.1" value="${gkg}"
+          oninput="onMacroGkgInput('${it.key}',this)"
           style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
         <span style="font-size:13px;font-weight:700;color:${it.col}">g/kg</span>
       </div>
-      <div id="mg-prot" style="font-size:11.5px;color:${it.col};font-weight:600">${macroDist.prot}% \u00b7 ${gFromGkg}g \u00a0|\u00a0 ${kcalFromGkg} kcal</div>`
+      <div id="mg-${it.key}" style="font-size:11.5px;color:${it.col};font-weight:600">${macroDist[it.key]}% \u00b7 ${g}g \u00a0|\u00a0 ${kcal} kcal</div>`
       :`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-        <input type="number" id="inp-prot" min="5" max="80" value="${macroDist.prot}"
-          oninput="onMacroInput('prot',this)"
-          onblur="onMacroBlur('prot',this)"
-          style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
-        <span style="font-size:18px;font-weight:700;color:${it.col}">%</span>
-      </div>
-      <div id="mg-prot" style="font-size:11.5px;color:${it.col};font-weight:600">${g}g \u00a0|\u00a0 ${kcal} kcal</div>`}
-    </div>`;
-    }
-    return `<div id="mdiv-${it.key}" style="background:${it.bg};border-radius:10px;padding:12px;border:2px solid ${totOk?it.col+'33':'#FCA5A5'}">
-      <div style="font-size:12px;font-weight:700;color:${it.col};margin-bottom:8px">${it.icon} ${it.label}</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
         <input type="number" id="inp-${it.key}" min="5" max="80" value="${macroDist[it.key]}"
           oninput="onMacroInput('${it.key}',this)"
           onblur="onMacroBlur('${it.key}',this)"
           style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
         <span style="font-size:18px;font-weight:700;color:${it.col}">%</span>
       </div>
-      <div id="mg-${it.key}" style="font-size:11.5px;color:${it.col};font-weight:600">${g}g \u00a0|\u00a0 ${kcal} kcal</div>
+      <div id="mg-${it.key}" style="font-size:11.5px;color:${it.col};font-weight:600">${g}g \u00a0|\u00a0 ${kcal} kcal</div>`}
     </div>`;
   }).join('')}
   </div>
@@ -952,35 +941,41 @@ function renderFormuleRows(){
   const mbM=Math.round(formuleGlobali.reduce((s,f)=>s+f.val,0)/formuleGlobali.length);
   container.innerHTML=formuleGlobali.map(f=>{
     const sel=selectedFormula===f.nome;
-    return `<div class="formula-row${sel?' selected':''}" onclick="selectFormula('${f.nome.replace(/'/g,"\\'")}')"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div style="text-align:right"><div class="fv">${f.val} kcal</div>${sel?'<div style="font-size:10px;color:#C2410C;font-weight:700;margin-top:2px">✓ In uso</div>':''}</div></div>`;
+    return `<div class="formula-row${sel?' selected':''}" onclick="selectFormula('${f.nome.replace(/'/g,"\\'")}')"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div style="text-align:right"><div class="fv">${f.val} kcal</div>${sel?'<div style="font-size:10px;color:#15803D;font-weight:700;margin-top:2px">✓ In uso</div>':''}</div></div>`;
   }).join('');
   if(mediaRow){
     const active=!selectedFormula;
-    mediaRow.style.background=active?'var(--teal)':'#94A3B8';
+    mediaRow.style.background=active?'var(--teal)':'#CBD5E1';
+    mediaRow.style.color=active?'white':'#475569';
     mediaRow.innerHTML=`<b>${active?'✓ ':''}Media formule</b><span style="font-size:22px;font-weight:700">${mbM} kcal</span>`;
   }
 }
 
-function toggleProtMode(){
-  if(macroDist.prot_mode==='pct'){
-    macroDist.prot_mode='gkg';
+function toggleMacroMode(key){
+  const item=MACRO_ITEMS.find(m=>m.key===key);
+  const kcalpg=item?item.kcalpg:4;
+  const modeKey=key+'_mode';
+  if(macroDist[modeKey]==='pct'){
+    macroDist[modeKey]='gkg';
     if(tdee&&pesoAttualeGlobale){
-      const g=tdee*macroDist.prot/100/4;
-      macroDist.prot_gkg=Math.round(g/pesoAttualeGlobale*10)/10;
-    }else{macroDist.prot_gkg=1.0;}
+      const g=tdee*macroDist[key]/100/kcalpg;
+      macroDist[key+'_gkg']=Math.round(g/pesoAttualeGlobale*10)/10;
+    }else{macroDist[key+'_gkg']=key==='cho'?3.0:1.0;}
   }else{
-    macroDist.prot_mode='pct';
+    macroDist[modeKey]='pct';
   }
   renderMacroDist();
 }
 
-function onProtGkgInput(input){
+function onMacroGkgInput(key, input){
   const v=parseFloat(input.value);
+  const item=MACRO_ITEMS.find(m=>m.key===key);
+  const kcalpg=item?item.kcalpg:4;
   if(isNaN(v)||v<=0||!pesoAttualeGlobale||!tdee)return;
-  macroDist.prot_gkg=v;
+  macroDist[key+'_gkg']=v;
   const g=v*pesoAttualeGlobale;
-  const kcal=g*4;
-  macroDist.prot=Math.max(5,Math.min(80,Math.round(kcal/tdee*100)));
+  const kcal=g*kcalpg;
+  macroDist[key]=Math.max(5,Math.min(80,Math.round(kcal/tdee*100)));
   updateMacroCalcs();
 }
 
@@ -1897,7 +1892,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
           if(document.getElementById('v-plica'))setVal('v-plica',data.plica);
           setVal('v-note',data.note);
           try{const pat=JSON.parse(data.patologie||'[]');selectedPat=new Set(pat);renderPatChips();}catch(e){}
-          if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;if(md.prot_mode)macroDist.prot_mode=md.prot_mode;if(md.prot_gkg!=null)macroDist.prot_gkg=md.prot_gkg;}catch(e){}}
+          if(data.macro_dist){try{const md=JSON.parse(data.macro_dist);if(md.prot!=null)macroDist.prot=md.prot;if(md.cho!=null)macroDist.cho=md.cho;if(md.fat!=null)macroDist.fat=md.fat;if(md.fibra!=null)macroDist.fibra=md.fibra;if(md.prot_mode)macroDist.prot_mode=md.prot_mode;if(md.prot_gkg!=null)macroDist.prot_gkg=md.prot_gkg;if(md.cho_mode)macroDist.cho_mode=md.cho_mode;if(md.cho_gkg!=null)macroDist.cho_gkg=md.cho_gkg;if(md.fat_mode)macroDist.fat_mode=md.fat_mode;if(md.fat_gkg!=null)macroDist.fat_gkg=md.fat_gkg;}catch(e){}}
           if(data.dati_extra){try{const ex=typeof data.dati_extra==='string'?JSON.parse(data.dati_extra):data.dati_extra;const sv2=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};
             sv2('v-collo',ex.collo);sv2('v-spalla',ex.spalla);sv2('v-torace',ex.torace);
             sv2('v-braccio-r',ex.braccio_r);sv2('v-braccio-r-sx',ex.braccio_r_sx);sv2('v-braccio-c',ex.braccio_c);sv2('v-braccio-c-sx',ex.braccio_c_sx);sv2('v-avambraccio',ex.avambraccio);

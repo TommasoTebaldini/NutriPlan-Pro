@@ -300,6 +300,51 @@
         <div class="lc-label">Vivace Arcobaleno <span class="lc-check">✅</span></div>
       </button>
 
+      <!-- Tramonto -->
+      <button class="layout-card" id="layout-card-tramonto" onclick="setPianoLayout('tramonto')">
+        <div class="lc-preview" style="background:#FFF7ED">
+          <div class="lc-header" style="background:linear-gradient(90deg,#D97706,#EF4444);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#C2410C,#FB923C);width:70%"></div>
+          <div class="lc-row lc-row-mid" style="background:#FED7AA"></div>
+          <div class="lc-row lc-row-short" style="background:#FED7AA"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#B91C1C,#F97316);width:55%"></div>
+          <div class="lc-row lc-row-mid" style="background:#FFEDD5"></div>
+          <div class="lc-row lc-row-short" style="background:#FFEDD5"></div>
+          <div class="lc-footer" style="background:#FED7AA;width:100%"></div>
+        </div>
+        <div class="lc-label">Tramonto <span class="lc-check">✅</span></div>
+      </button>
+
+      <!-- Oceano -->
+      <button class="layout-card" id="layout-card-oceano" onclick="setPianoLayout('oceano')">
+        <div class="lc-preview" style="background:#F0F9FF">
+          <div class="lc-header" style="background:linear-gradient(90deg,#0C4A6E,#38BDF8);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#0369A1,#0EA5E9);width:70%"></div>
+          <div class="lc-row lc-row-mid" style="background:#BAE6FD"></div>
+          <div class="lc-row lc-row-short" style="background:#BAE6FD"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#0891B2,#22D3EE);width:55%"></div>
+          <div class="lc-row lc-row-mid" style="background:#E0F2FE"></div>
+          <div class="lc-row lc-row-short" style="background:#E0F2FE"></div>
+          <div class="lc-footer" style="background:#BAE6FD;width:100%"></div>
+        </div>
+        <div class="lc-label">Oceano <span class="lc-check">✅</span></div>
+      </button>
+
+      <!-- Rosa -->
+      <button class="layout-card" id="layout-card-rosa" onclick="setPianoLayout('rosa')">
+        <div class="lc-preview" style="background:#FFF1F2">
+          <div class="lc-header" style="background:linear-gradient(90deg,#9D174D,#F472B6);opacity:.9"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#BE185D,#DB2777);width:70%"></div>
+          <div class="lc-row lc-row-mid" style="background:#FECDD3"></div>
+          <div class="lc-row lc-row-short" style="background:#FECDD3"></div>
+          <div class="lc-meal" style="background:linear-gradient(90deg,#C026D3,#E879F9);width:55%"></div>
+          <div class="lc-row lc-row-mid" style="background:#F5D0FE"></div>
+          <div class="lc-row lc-row-short" style="background:#F5D0FE"></div>
+          <div class="lc-footer" style="background:#FECDD3;width:100%"></div>
+        </div>
+        <div class="lc-label">Rosa <span class="lc-check">✅</span></div>
+      </button>
+
     </div>
   </div>
 
@@ -339,10 +384,11 @@
 <script src="js/lang.js"></script>
 <script src="js/utils.js"></script>
 <script>
-const LAYOUT_NAMES = {classico:'Classico Verde',elegante:'Elegante Blu',caldo:'Caldo Ambra',fresco:'Fresco Viola',neutro:'Neutro Pietra',vivace:'Vivace Arcobaleno'};
+const LAYOUT_NAMES = {classico:'Classico Verde',elegante:'Elegante Blu',caldo:'Caldo Ambra',fresco:'Fresco Viola',neutro:'Neutro Pietra',vivace:'Vivace Arcobaleno',tramonto:'Tramonto',oceano:'Oceano',rosa:'Rosa'};
+const ALL_LAYOUTS = ['classico','elegante','caldo','fresco','neutro','vivace','tramonto','oceano','rosa'];
 function setPianoLayout(id) {
   localStorage.setItem('nutriplan_piano_layout', id);
-  ['classico','elegante','caldo','fresco','neutro','vivace'].forEach(k => {
+  ALL_LAYOUTS.forEach(k => {
     const card = document.getElementById('layout-card-' + k);
     if (card) card.classList.toggle('active', k === id);
   });
@@ -369,7 +415,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Highlight the currently active layout card
   const currentLayout = localStorage.getItem('nutriplan_piano_layout') || 'classico';
-  ['classico','elegante','caldo','fresco','neutro','vivace'].forEach(k => {
+  ALL_LAYOUTS.forEach(k => {
     const card = document.getElementById('layout-card-' + k);
     if (card) card.classList.toggle('active', k === currentLayout);
   });

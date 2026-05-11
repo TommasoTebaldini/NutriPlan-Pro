@@ -1585,6 +1585,7 @@ function getActivePianoLayout() {
 }
 
 function stampaPDF() {
+  _applyLandscapePrint();
   if (giorni.length > 1) {
     const lyt = getActivePianoLayout();
     document.getElementById('pdf-alldays-print-area').innerHTML = _buildPDFAllDaysHTML(lyt);
@@ -1860,28 +1861,13 @@ function stampaCompatta() {
 
 function stampaSettimanale() {
   const lyt = getActivePianoLayout();
-  const bodyHTML = _buildWeeklyHTML(lyt, 1);
-  const w = window.open('', '_blank', 'width=1220,height=850');
-  if (!w) { toast('Abilita i popup del browser per la stampa settimanale', 'warn'); return; }
-  // A4 landscape at 96dpi: 297mm × 210mm = 1122 × 794px
-  const pageW = 1122, pageH = 794;
-  const printJS = 'window.onload=function(){var pw=document.getElementById("pw");var h=pw.scrollHeight;if(h>'+pageH+'){pw.style.zoom=('+pageH+'/h).toFixed(4);}setTimeout(function(){window.print();window.close();},350);};';
-  w.document.write(
-    '<!DOCTYPE html><html><head><meta charset="utf-8"><style>' +
-    '@page{size:A4 landscape;margin:0}' +
-    '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}' +
-    'html,body{margin:0;padding:0}' +
-    '#pw{width:'+pageW+'px}' +
-    '</style></head><body>' +
-    '<div id="pw">'+bodyHTML+'</div>' +
-    '<scr'+'ipt>'+printJS+'</'+'script>' +
-    '</body></html>'
-  );
-  w.document.close();
+  document.getElementById('weekly-print-area').innerHTML = _buildWeeklyHTML(lyt);
+  document.body.dataset.printMode = 'weekly';
+  _applyLandscapePrint();
+  setTimeout(() => window.print(), 400);
 }
 
-function _buildWeeklyHTML(lyt, zoom) {
-  zoom = zoom || 1;
+function _buildWeeklyHTML(lyt) {
   const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
   const dataPiano = document.getElementById('inp-data')?.value || '';
   const nomePiano = document.getElementById('inp-nome')?.value || '';
@@ -1892,7 +1878,12 @@ function _buildWeeklyHTML(lyt, zoom) {
     if (!mealOrder.includes(m.nome)) { mealOrder.push(m.nome); mealEmojis[m.nome] = m.emoji || ''; }
   }));
 
-  let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B;zoom:'+zoom+';width:100%">';
+  // Row height to fill the full A4 landscape page (210mm, margin:0).
+  // Header banner ≈ 22mm, table thead ≈ 9mm → body rows get ~179mm split equally.
+  const nRows = mealOrder.length;
+  const rowHmm = nRows > 0 ? Math.max(12, +(179 / nRows).toFixed(1)) : 22;
+
+  let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B;width:100%">';
 
   // ── Header banner ──
   html += '<div style="background:linear-gradient(135deg,'+lyt.gradStart+','+lyt.gradEnd+');color:white;padding:14px 20px;border-radius:8px 8px 0 0;margin-bottom:0;display:flex;align-items:center;justify-content:space-between">';
@@ -1925,15 +1916,15 @@ function _buildWeeklyHTML(lyt, zoom) {
   html += '<tbody>';
   mealOrder.forEach((mNome, rowIdx) => {
     const rowBg = rowIdx % 2 === 0 ? '#FFFFFF' : lyt.pale;
-    html += '<tr>';
+    html += '<tr style="height:'+rowHmm+'mm">';
     // Meal label cell
-    html += '<td style="'+cellBase+'background:'+lyt.pale+';font-weight:700;color:'+lyt.headerText+';white-space:nowrap;font-size:11px">';
+    html += '<td style="'+cellBase+'background:'+lyt.pale+';font-weight:700;color:'+lyt.headerText+';white-space:nowrap;font-size:11px;vertical-align:top">';
     html += (mealEmojis[mNome] ? mealEmojis[mNome]+' ' : '') + esc(mNome) + '</td>';
     // One cell per day
     giorni.forEach(g => {
       const meal = g.meals.find(m => m.nome === mNome);
       const foods = meal ? meal.items.filter(it => it.nome && it.nome.trim()).map(it => esc(it.nome)) : [];
-      html += '<td style="'+cellBase+'background:'+rowBg+';line-height:1.65;border-left:1.5px solid '+lyt.paleBorder+';word-wrap:break-word;overflow-wrap:break-word">';
+      html += '<td style="'+cellBase+'background:'+rowBg+';line-height:1.65;border-left:1.5px solid '+lyt.paleBorder+';word-wrap:break-word;overflow-wrap:break-word;vertical-align:top">';
       html += foods.length ? foods.join('<br>') : '<span style="color:#CBD5E1">—</span>';
       html += '</td>';
     });
@@ -1953,13 +1944,25 @@ function _applyPortraitPrint() {
     s.id = '_portrait-print-style';
     document.head.appendChild(s);
   }
-  s.textContent = '@media print{@page{size:A4 portrait;margin:0}}';
+  s.textContent = '@page{size:A4 portrait;margin:0}';
+}
+
+function _applyLandscapePrint() {
+  let s = document.getElementById('_landscape-print-style');
+  if (!s) {
+    s = document.createElement('style');
+    s.id = '_landscape-print-style';
+    document.head.appendChild(s);
+  }
+  s.textContent = '@page{size:A4 landscape;margin:0}';
 }
 
 window.addEventListener('afterprint', () => {
   delete document.body.dataset.printMode;
-  const s = document.getElementById('_portrait-print-style');
-  if (s) s.remove();
+  ['_portrait-print-style', '_landscape-print-style'].forEach(id => {
+    const s = document.getElementById(id);
+    if (s) s.remove();
+  });
 });
 
 // ═══════════════════════════════════════════════════

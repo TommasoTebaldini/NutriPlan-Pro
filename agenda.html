@@ -695,7 +695,7 @@ function renderDayEvents(dateStr) {
   }
   container.innerHTML = dayEvs.map(ev => {
     if (ev._isGcal) {
-      return `<div class="event-item gcal">
+      return `<div class="event-item gcal" onclick="openGCalEventDetail('${esc(ev.id)}')" style="cursor:pointer">
         <div class="event-title"><span class="gcal-g">G</span> ${esc(ev.titolo||'Evento')}</div>
         <div class="event-time">⏰ ${ev.ora||'Tutto il giorno'}</div>
         <div style="font-size:11px;color:#6366F1;margin-top:2px;font-style:italic">Google Calendar personale</div>
@@ -838,9 +838,98 @@ async function deleteCurrentEvent() {
   toast('🗑️ Appuntamento eliminato','info');
 }
 
+// ─── Google Calendar event editing ───────────────────────────────────────────
+let _editingGCalId = null; // gcal_id of the GCal event being edited (null = editing our own event)
+
+function openGCalEventDetail(id) {
+  const ev = gcalEvents.find(e => e.id === id);
+  if (!ev) return;
+  currentEventId = id;
+  const d = ev.data ? formatStoredDate(ev.data, {weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
+  document.getElementById('modal-event-title').textContent = ev.titolo || 'Evento Google Calendar';
+  document.getElementById('modal-event-hdr').style.background = '#6366F1';
+  document.getElementById('modal-event-hdr').style.color = 'white';
+  document.getElementById('modal-event-hdr').querySelector('h2').style.color = 'white';
+  document.getElementById('modal-event-hdr').querySelector('.mclose').style.color = 'white';
+  document.getElementById('modal-event-body').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:16px;font-weight:700;color:var(--slate)">${esc(ev.titolo||'Evento')}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span style="background:#EEF2FF;color:#4338CA;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">📅 ${d}</span>
+        ${ev.ora?`<span style="background:#F0FDF4;color:#15803D;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">⏰ ${ev.ora}</span>`:''}
+      </div>
+      <div style="font-size:12px;color:#6366F1;font-style:italic">Evento dal tuo Google Calendar personale</div>
+      ${gcalTokenValid()?`<div style="display:flex;gap:8px;margin-top:4px">
+        <button onclick="openEditGCalEvent('${esc(id)}')" class="btn btn-primary btn-sm">✏️ Modifica</button>
+        <button onclick="deleteGCalEvent('${esc(id)}')" class="btn btn-ghost btn-sm" style="color:#EF4444">🗑️ Elimina</button>
+      </div>`:'<div style="font-size:12px;color:#92400E;background:#FEF3C7;border-radius:6px;padding:6px 10px">Connetti Google Calendar per modificare questo evento.</div>'}
+    </div>`;
+  openM('modal-event');
+}
+
+function openEditGCalEvent(id) {
+  const ev = gcalEvents.find(e => e.id === id);
+  if (!ev) return;
+  _editingGCalId = ev.gcal_id;
+  currentEventId = id;
+  document.getElementById('edit-ev-tipo').value = 'visita';
+  document.getElementById('edit-ev-paziente').value = ev.titolo || '';
+  document.getElementById('edit-ev-data').value = ev.data || '';
+  document.getElementById('edit-ev-ora').value = ev.ora || '09:00';
+  document.getElementById('edit-ev-durata').value = '60';
+  document.getElementById('edit-ev-note').value = '';
+  closeM('modal-event');
+  openM('modal-event-edit');
+  setTimeout(() => document.getElementById('edit-ev-paziente').focus(), 100);
+}
+
+async function deleteGCalEvent(id) {
+  const ev = gcalEvents.find(e => e.id === id);
+  if (!ev || !ev.gcal_id) return;
+  if (!confirm('Eliminare questo evento da Google Calendar?')) return;
+  if (!gcalTokenValid()) { toast('⚠️ Riconnetti Google Calendar per eliminare questo evento.', 'err'); return; }
+  try {
+    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${ev.gcal_id}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + gcalToken }
+    });
+    if (res.status === 401) { gcalToken = null; gcalTokenExpiry = 0; localStorage.removeItem('gcal_token'); localStorage.removeItem('gcal_token_expiry'); updateGCalButton(false); showGcalReconnectBanner(); return; }
+    gcalEvents = gcalEvents.filter(e => e.id !== id);
+    closeM('modal-event');
+    renderCalendar();
+    toast('🗑️ Evento eliminato da Google Calendar', 'info');
+  } catch(e) {
+    toast('⚠️ Errore eliminazione da Google Calendar', 'err');
+  }
+}
+
+async function updateGoogleCalendarEvent(ev, gcalId) {
+  if (!gcalTokenValid()) return;
+  const [y, m, d] = ev.data.split('-').map(Number);
+  const [h, min] = (ev.ora || '09:00').split(':').map(Number);
+  const start = new Date(y, m - 1, d, h, min);
+  const end = new Date(start.getTime() + (parseInt(ev.durata) || 60) * 60000);
+  const pad = n => String(n).padStart(2, '0');
+  const toLocalISO = dt => `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`;
+  try {
+    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${gcalId}`, {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + gcalToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        summary: ev.paziente || ev.titolo || 'Appuntamento',
+        description: [TIPO_LABELS[ev.tipo] || ev.tipo, ev.note].filter(Boolean).join('\n'),
+        start: { dateTime: toLocalISO(start), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+        end:   { dateTime: toLocalISO(end),   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
+      })
+    });
+    if (res.status === 401) { gcalToken = null; gcalTokenExpiry = 0; localStorage.removeItem('gcal_token'); localStorage.removeItem('gcal_token_expiry'); updateGCalButton(false); showGcalReconnectBanner(); }
+  } catch(e) { console.warn('GCal update error:', e); }
+}
+
 function openEditEvent(id) {
   const ev = events.find(e => e.id === id);
   if (!ev) return;
+  _editingGCalId = null;
   currentEventId = id;
   document.getElementById('edit-ev-tipo').value = ev.tipo || 'visita';
   document.getElementById('edit-ev-paziente').value = ev.paziente || ev.titolo || '';
@@ -861,10 +950,51 @@ async function saveEditedEvent() {
   const durata = document.getElementById('edit-ev-durata').value;
   const note = document.getElementById('edit-ev-note').value;
   if (!paziente || !data) { toast('Inserisci paziente/titolo e data', 'err'); return; }
+
+  if (_editingGCalId) {
+    // Editing a pure Google Calendar event → PATCH directly to GCal API
+    if (!gcalTokenValid()) { toast('⚠️ Riconnetti Google Calendar per modificare questo evento.', 'err'); return; }
+    const [y, m, d2] = data.split('-').map(Number);
+    const [h, min] = (ora || '09:00').split(':').map(Number);
+    const start = new Date(y, m - 1, d2, h, min);
+    const end = new Date(start.getTime() + (parseInt(durata) || 60) * 60000);
+    const pad = n => String(n).padStart(2, '0');
+    const toLocalISO = dt => `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`;
+    try {
+      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${_editingGCalId}`, {
+        method: 'PATCH',
+        headers: { Authorization: 'Bearer ' + gcalToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          summary: paziente,
+          description: note || '',
+          start: { dateTime: toLocalISO(start), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+          end:   { dateTime: toLocalISO(end),   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
+        })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      _editingGCalId = null;
+      closeM('modal-event-edit');
+      toast('✅ Evento Google Calendar aggiornato!', 'ok');
+      await fetchGCalEventsForMonth();
+    } catch(e) {
+      toast('⚠️ Errore aggiornamento Google Calendar: ' + e.message, 'err');
+    }
+    return;
+  }
+
+  // Editing one of our own events
   const idx = events.findIndex(e => e.id === currentEventId);
   if (idx === -1) { toast('Appuntamento non trovato', 'err'); return; }
   events[idx] = { ...events[idx], paziente, data, ora, tipo, durata: parseInt(durata, 10) || 60, note };
   await saveEvents();
+
+  // If this event was already synced to Google Calendar, update it there too
+  if (gcalTokenValid()) {
+    const syncedIds = getGCalSyncedIds();
+    const gcalId = syncedIds[currentEventId];
+    if (gcalId) await updateGoogleCalendarEvent(events[idx], gcalId);
+  }
+
   closeM('modal-event-edit');
   selectDate(data);
   updateStats();

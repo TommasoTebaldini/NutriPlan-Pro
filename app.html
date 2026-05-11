@@ -1918,13 +1918,13 @@ function _buildWeeklyHTML(lyt) {
     const rowBg = rowIdx % 2 === 0 ? '#FFFFFF' : lyt.pale;
     html += '<tr style="height:'+rowHmm+'mm">';
     // Meal label cell
-    html += '<td style="'+cellBase+'background:'+lyt.pale+';font-weight:700;color:'+lyt.headerText+';white-space:nowrap;font-size:11px;vertical-align:top">';
+    html += '<td style="'+cellBase+'background:'+lyt.pale+';font-weight:700;color:'+lyt.headerText+';white-space:nowrap;font-size:11px;vertical-align:middle">';
     html += (mealEmojis[mNome] ? mealEmojis[mNome]+' ' : '') + esc(mNome) + '</td>';
     // One cell per day
     giorni.forEach(g => {
       const meal = g.meals.find(m => m.nome === mNome);
       const foods = meal ? meal.items.filter(it => it.nome && it.nome.trim()).map(it => esc(it.nome)) : [];
-      html += '<td style="'+cellBase+'background:'+rowBg+';line-height:1.65;border-left:1.5px solid '+lyt.paleBorder+';word-wrap:break-word;overflow-wrap:break-word;vertical-align:top">';
+      html += '<td style="'+cellBase+'background:'+rowBg+';line-height:1.65;border-left:1.5px solid '+lyt.paleBorder+';word-wrap:break-word;overflow-wrap:break-word;vertical-align:middle;text-align:center">';
       html += foods.length ? foods.join('<br>') : '<span style="color:#CBD5E1">—</span>';
       html += '</td>';
     });

@@ -1024,7 +1024,15 @@ function initGoogleCalendar(loginHint) {
     client_id: GOOGLE_CLIENT_ID,
     scope: 'https://www.googleapis.com/auth/calendar',
     callback: async (response) => {
-      if (response.error) { toast('❌ Errore connessione Google Calendar', 'err'); return; }
+      if (response.error) {
+        const msg = response.error === 'access_denied' ? 'Accesso negato — hai annullato l\'autorizzazione.' :
+          response.error === 'popup_closed_by_user' ? 'Finestra chiusa prima dell\'autorizzazione.' :
+          response.error === 'popup_blocked_by_browser' ? 'Popup bloccato dal browser — abilita i popup per questo sito.' :
+          'Errore OAuth: ' + response.error;
+        toast('❌ ' + msg, 'err');
+        console.error('[GCal OAuth error]', response.error, response);
+        return;
+      }
       gcalToken = response.access_token;
       gcalTokenExpiry = Date.now() + (response.expires_in || 3600) * 1000;
       localStorage.setItem('gcal_token', gcalToken);
@@ -1319,7 +1327,12 @@ async function autoSyncCalendar() {
   localStorage.setItem('gcal_email', email);
 
   const isGoogle = /^[^@]+@(gmail|googlemail)\.com$/.test(email);
-  const gisReady = isGoogle && GOOGLE_CLIENT_ID && typeof google !== 'undefined' && google.accounts;
+  const clientIdLoaded = !!GOOGLE_CLIENT_ID;
+  const gisLoaded = typeof google !== 'undefined' && !!google.accounts;
+  const gisReady = isGoogle && clientIdLoaded && gisLoaded;
+
+  // Diagnostic: show what's happening so the user doesn't need the browser console
+  console.log('[GCal sync] clientIdLoaded:', clientIdLoaded, '| gisLoaded:', gisLoaded, '| gisReady:', gisReady, '| tokenValid:', gcalTokenValid());
 
   if (gisReady) {
     // OAuth path — requestAccessToken() must be called SYNCHRONOUSLY (before any await)
@@ -1335,15 +1348,42 @@ async function autoSyncCalendar() {
       if (gcalTokenClient) {
         gcalTokenClient.requestAccessToken();
         if (statusEl) {
-          statusEl.textContent = '✅ Autorizza l\'accesso a Google Calendar nella finestra pop-up per completare la sincronizzazione sul calendario personale.';
+          statusEl.textContent = '⏳ Finestra di autorizzazione Google aperta — autorizza l\'accesso e gli appuntamenti si sincronizzeranno automaticamente.';
+          statusEl.style.color = '#1D4ED8';
+          statusEl.style.background = '#EFF6FF';
           statusEl.style.display = '';
         }
       } else {
+        if (statusEl) {
+          statusEl.textContent = '⚠️ Google Identity Services non ancora caricato. Attendi 2 secondi e riprova.';
+          statusEl.style.display = '';
+        }
         toast('⚠️ Google Identity Services non ancora caricato. Riprova tra un momento.', 'err');
       }
     }
     const gcalEmailInput = document.getElementById('gcal-email-input');
     if (gcalEmailInput) gcalEmailInput.value = email;
+    return;
+  }
+
+  // Diagnostic: tell the user why OAuth path was skipped
+  if (isGoogle && !clientIdLoaded) {
+    if (statusEl) {
+      statusEl.textContent = '⚠️ Google Client ID non configurato sul server. Contatta l\'amministratore.';
+      statusEl.style.color = '#92400E';
+      statusEl.style.background = '#FEF3C7';
+      statusEl.style.display = '';
+    }
+    toast('⚠️ Google Client ID non caricato — verifica la variabile NEXT_PUBLIC_GOOGLE_CLIENT_ID su Vercel', 'err');
+    return;
+  }
+  if (isGoogle && clientIdLoaded && !gisLoaded) {
+    if (statusEl) {
+      statusEl.textContent = '⚠️ Google Identity Services non ancora caricato. Attendi 2-3 secondi dalla apertura della pagina e riprova.';
+      statusEl.style.color = '#92400E';
+      statusEl.style.background = '#FEF3C7';
+      statusEl.style.display = '';
+    }
     return;
   }
 

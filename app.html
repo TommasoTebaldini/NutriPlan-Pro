@@ -113,28 +113,6 @@
   .vnd{color:#999!important}
   .ac-src{display:none!important}
   .misura-print{display:block!important}
-  /* ── Simple print mode (no nutritional calculations) ── */
-  body[data-print-mode="simple"] #pasti-container{display:none!important}
-  body[data-print-mode="simple"] .macro-bar{display:none!important}
-  body[data-print-mode="simple"] #print-giorno-hdr{display:none!important}
-  body[data-print-mode="simple"] #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  /* ── Compact print mode (green meal headers + per-item kcal) ── */
-  body[data-print-mode="compact"] #pasti-container{display:none!important}
-  body[data-print-mode="compact"] .macro-bar{display:none!important}
-  body[data-print-mode="compact"] #print-giorno-hdr{display:none!important}
-  body[data-print-mode="compact"] #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  /* ── PDF all-days mode (all days, nutritional tables) ── */
-  body[data-print-mode="pdf-alldays"] #pasti-container{display:none!important}
-  body[data-print-mode="pdf-alldays"] .macro-bar{display:none!important}
-  body[data-print-mode="pdf-alldays"] #print-giorno-hdr{display:none!important}
-  body[data-print-mode="pdf-alldays"] #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
-  /* ── Weekly overview mode (food names only, day×meal table) ── */
-  body[data-print-mode="weekly"] #pasti-container{display:none!important}
-  body[data-print-mode="weekly"] .macro-bar{display:none!important}
-  body[data-print-mode="weekly"] #print-giorno-hdr{display:none!important}
-  body[data-print-mode="weekly"] #main{padding:0!important;margin:0!important}
-  body[data-print-mode="weekly"] #weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif;page-break-inside:avoid;break-inside:avoid}
-  body[data-print-mode="weekly"] #weekly-print-area>div{page-break-inside:avoid;break-inside:avoid}
 }
 /* ── Row drag handle ── */
 .row-drag-handle{cursor:grab;font-size:14px;padding:2px 4px;color:#CBD5E1;transition:color .12s;user-select:none;line-height:1;display:inline-block}
@@ -1607,7 +1585,7 @@ function stampaPDF() {
   if (giorni.length > 1) {
     const lyt = getActivePianoLayout();
     document.getElementById('pdf-alldays-print-area').innerHTML = _buildPDFAllDaysHTML(lyt);
-    document.body.dataset.printMode = 'pdf-alldays';
+    _activatePrintMode('pdf-alldays');
     setTimeout(() => window.print(), 400);
   } else {
     giorni[giornoCorrente].meals.forEach(m => m.collapsed = false);
@@ -1772,7 +1750,7 @@ function stampaSemplice() {
   html += '</div>';
 
   document.getElementById('simple-print-area').innerHTML = html;
-  document.body.dataset.printMode = 'simple';
+  _activatePrintMode('simple');
   _applyPortraitPrint();
   setTimeout(() => window.print(), 400);
 }
@@ -1872,7 +1850,7 @@ function stampaCompatta() {
   html += '</div>';
 
   document.getElementById('compact-print-area').innerHTML = html;
-  document.body.dataset.printMode = 'compact';
+  _activatePrintMode('compact');
   _applyPortraitPrint();
   setTimeout(() => window.print(), 400);
 }
@@ -1880,7 +1858,7 @@ function stampaCompatta() {
 function stampaSettimanale() {
   const lyt = getActivePianoLayout();
   document.getElementById('weekly-print-area').innerHTML = _buildWeeklyHTML(lyt);
-  document.body.dataset.printMode = 'weekly';
+  _activatePrintMode('weekly');
   _applyLandscapePrint();
   setTimeout(() => window.print(), 400);
 }
@@ -1955,6 +1933,25 @@ function _buildWeeklyHTML(lyt) {
   return html;
 }
 
+// Injects explicit @media print CSS for the given mode, without relying on
+// body[data-print-mode] attribute selectors which are unreliable on iPadOS Safari.
+function _activatePrintMode(mode) {
+  let s = document.getElementById('_print-mode-css');
+  if (!s) { s = document.createElement('style'); s.id = '_print-mode-css'; document.head.appendChild(s); }
+  const hide = '#pasti-container{display:none!important}.macro-bar{display:none!important}#print-giorno-hdr{display:none!important}';
+  if (mode === 'simple') {
+    s.textContent = "@media print{" + hide + "#simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}}";
+  } else if (mode === 'compact') {
+    s.textContent = "@media print{" + hide + "#compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}}";
+  } else if (mode === 'pdf-alldays') {
+    s.textContent = "@media print{" + hide + "#pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}}";
+  } else if (mode === 'weekly') {
+    s.textContent = "@media print{" + hide + "#main{padding:0!important;margin:0!important}#weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif;page-break-inside:avoid;break-inside:avoid}#weekly-print-area>div{page-break-inside:avoid;break-inside:avoid}}";
+  } else {
+    s.textContent = '';
+  }
+}
+
 function _applyPortraitPrint() {
   let s = document.getElementById('_portrait-print-style');
   if (!s) {
@@ -1976,8 +1973,7 @@ function _applyLandscapePrint() {
 }
 
 window.addEventListener('afterprint', () => {
-  delete document.body.dataset.printMode;
-  ['_portrait-print-style', '_landscape-print-style'].forEach(id => {
+  ['_print-mode-css', '_portrait-print-style', '_landscape-print-style'].forEach(id => {
     const s = document.getElementById(id);
     if (s) s.remove();
   });

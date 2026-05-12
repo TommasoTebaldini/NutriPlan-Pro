@@ -108,7 +108,123 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 
 <div id="loading"><div class="spinner"></div><span data-i18n="index.loading">Caricamento...</span></div>
 
+<!-- MODAL DPA — appare solo al primo accesso dopo l'approvazione -->
+<div id="dpa-modal">
+  <div class="dpa-box">
+    <div class="dpa-head">
+      <h2>Accordo sul Trattamento dei Dati (DPA)</h2>
+      <p>Ai sensi dell'art. 28 del Regolamento (UE) 2016/679 — GDPR &nbsp;·&nbsp; Lettura obbligatoria prima dell'accesso</p>
+    </div>
+    <div class="dpa-body" id="dpa-scroll" onscroll="checkDpaScroll()">
+
+      <div class="highlight">
+        ⚠️ Il presente accordo è obbligatorio ai sensi dell'art. 28 GDPR. Scorrere fino in fondo e accettare per accedere alla piattaforma. In caso di rifiuto l'accesso non sarà consentito.
+      </div>
+
+      <h3>PARTI DELL'ACCORDO</h3>
+      <p><strong>Titolare del Trattamento:</strong> il professionista sanitario o la struttura che ha attivato e utilizza l'account DietPlan Pro (di seguito "Titolare").</p>
+      <p><strong>Responsabile del Trattamento:</strong> DietPlan Pro, fornitore della piattaforma software per la gestione dei piani alimentari (di seguito "Responsabile").</p>
+
+      <h3>1. OGGETTO E DURATA</h3>
+      <p>Il presente Accordo disciplina le condizioni in base alle quali il Responsabile tratta dati personali per conto del Titolare nell'ambito dell'utilizzo della piattaforma DietPlan Pro. L'Accordo ha la stessa durata del contratto di servizio tra le Parti e cessa automaticamente al termine del medesimo.</p>
+
+      <h3>2. NATURA E FINALITÀ DEL TRATTAMENTO</h3>
+      <p>Il Responsabile tratta dati personali esclusivamente per fornire i servizi della piattaforma DietPlan Pro, che includono:</p>
+      <ul>
+        <li>Gestione dei piani alimentari e delle cartelle cliniche nutrizionali dei pazienti</li>
+        <li>Analisi della composizione corporea (BIA) e valutazione nutrizionale</li>
+        <li>Elaborazione di questionari nutrizionali e screening clinici</li>
+        <li>Supporto AI per la generazione di piani dietetici personalizzati</li>
+        <li>Gestione dell'agenda professionale e comunicazione con i pazienti</li>
+        <li>Produzione di documenti clinici e report nutrizionali</li>
+      </ul>
+
+      <h3>3. TIPOLOGIA DI DATI E CATEGORIE DI INTERESSATI</h3>
+      <p><strong>Dati trattati:</strong> dati anagrafici e di contatto; dati antropometrici (peso, altezza, BMI, composizione corporea); dati clinici e sanitari (patologie, farmaci, allergie, intolleranze) — categorie speciali ai sensi dell'art. 9 GDPR; piani alimentari prescritti; referti, note cliniche e risultati di valutazioni nutrizionali.</p>
+      <p><strong>Categorie di interessati:</strong> pazienti del Titolare e professionisti sanitari che utilizzano la piattaforma.</p>
+
+      <h3>4. OBBLIGHI DEL RESPONSABILE (art. 28.3 GDPR)</h3>
+      <p>Il Responsabile si impegna a:</p>
+      <ul>
+        <li><strong>(a)</strong> Trattare i dati personali soltanto su istruzione documentata del Titolare, salvo obblighi derivanti dal diritto dell'Unione o dello Stato membro;</li>
+        <li><strong>(b)</strong> Garantire che le persone autorizzate al trattamento si siano impegnate alla riservatezza o siano soggette a un adeguato obbligo legale di riservatezza;</li>
+        <li><strong>(c)</strong> Adottare tutte le misure di sicurezza richieste dall'art. 32 GDPR (cifratura dei dati in transito e a riposo, controllo degli accessi basato su ruoli, backup regolari, monitoraggio delle anomalie);</li>
+        <li><strong>(d)</strong> Rispettare le condizioni per il ricorso a un sub-responsabile del trattamento, informando preventivamente il Titolare di eventuali modifiche;</li>
+        <li><strong>(e)</strong> Assistere il Titolare, tramite misure tecniche e organizzative adeguate, per adempiere all'obbligo di rispondere alle richieste degli interessati circa l'esercizio dei loro diritti (accesso, rettifica, cancellazione, portabilità, opposizione);</li>
+        <li><strong>(f)</strong> Assistere il Titolare nel garantire il rispetto degli obblighi di sicurezza, notifica delle violazioni dei dati (data breach), valutazione d'impatto (DPIA) e consultazione preventiva con l'Autorità di controllo;</li>
+        <li><strong>(g)</strong> Cancellare o restituire tutti i dati personali al Titolare al termine del contratto, cancellando le copie esistenti salvo diverso obbligo normativo;</li>
+        <li><strong>(h)</strong> Mettere a disposizione del Titolare tutte le informazioni necessarie per dimostrare il rispetto del presente articolo, consentire e contribuire alle attività di revisione, comprese le ispezioni, realizzate dal Titolare o da altro soggetto da questi incaricato.</li>
+      </ul>
+
+      <h3>5. SUB-RESPONSABILI DEL TRATTAMENTO</h3>
+      <p>Il Responsabile autorizza il ricorso ai seguenti sub-responsabili, tutti operanti con adeguate garanzie ai sensi dell'art. 46 GDPR (Clausole Contrattuali Standard):</p>
+      <ul>
+        <li><strong>Supabase Inc.</strong> (USA) — database, autenticazione e storage dei dati</li>
+        <li><strong>Anthropic PBC</strong> (USA) — modello linguistico AI per la generazione di piani e suggerimenti clinici</li>
+        <li><strong>Google LLC</strong> (USA) — modello AI Gemini per funzionalità di analisi</li>
+        <li><strong>Vercel Inc.</strong> (USA) — hosting e distribuzione dell'applicazione web</li>
+      </ul>
+      <p>Il Responsabile notificherà al Titolare eventuali modifiche relative all'aggiunta o alla sostituzione di sub-responsabili con un preavviso minimo di 30 giorni, consentendo al Titolare di opporsi a tali modifiche.</p>
+
+      <h3>6. MISURE DI SICUREZZA (art. 32 GDPR)</h3>
+      <p>Il Responsabile garantisce l'adozione delle seguenti misure tecniche e organizzative:</p>
+      <ul>
+        <li>Cifratura dei dati in transito (TLS 1.3) e a riposo (AES-256)</li>
+        <li>Autenticazione con password hashata (bcrypt) e gestione sicura delle sessioni</li>
+        <li>Controllo degli accessi basato su ruoli tramite Row Level Security (RLS) su database</li>
+        <li>Backup automatici giornalieri con retention di 30 giorni e ripristino verificato</li>
+        <li>Monitoraggio degli accessi e audit log delle operazioni sensibili</li>
+        <li>Aggiornamenti di sicurezza regolari dell'infrastruttura e dei componenti software</li>
+        <li>Accesso ai dati di produzione limitato al personale strettamente necessario</li>
+      </ul>
+
+      <h3>7. NOTIFICA DELLE VIOLAZIONI (Data Breach)</h3>
+      <p>In caso di violazione dei dati personali, il Responsabile notificherà al Titolare, senza ingiustificato ritardo e ove possibile entro <strong>72 ore</strong> dalla scoperta, le seguenti informazioni:</p>
+      <ul>
+        <li>Natura della violazione e categorie di dati coinvolti</li>
+        <li>Numero approssimativo di interessati e di registrazioni di dati coinvolti</li>
+        <li>Nome e dati di contatto del referente per la protezione dei dati</li>
+        <li>Probabili conseguenze della violazione</li>
+        <li>Misure adottate o proposte per porre rimedio alla violazione</li>
+      </ul>
+      <p>Il Titolare rimane responsabile della valutazione circa la necessità di notifica all'Autorità di controllo (Garante Privacy) e agli interessati.</p>
+
+      <h3>8. TRASFERIMENTI INTERNAZIONALI DI DATI</h3>
+      <p>I trasferimenti di dati verso paesi terzi (USA) avvengono esclusivamente sulla base di Clausole Contrattuali Standard approvate dalla Commissione Europea ai sensi dell'art. 46.2.c GDPR. I sub-responsabili elencati nella sezione 5 dispongono di garanzie adeguate documentate.</p>
+
+      <h3>9. RESPONSABILITÀ DEL TITOLARE</h3>
+      <p>Il Titolare è il solo soggetto responsabile della liceità del trattamento dei dati dei propri pazienti, ivi inclusi:</p>
+      <ul>
+        <li>L'acquisizione del consenso informato degli interessati ai sensi dell'art. 9.2.a GDPR</li>
+        <li>La fornitura dell'informativa privacy agli interessati (artt. 13-14 GDPR)</li>
+        <li>Il rispetto dei principi di minimizzazione, limitazione della conservazione e correttezza</li>
+        <li>La tenuta del Registro delle Attività di Trattamento (art. 30 GDPR)</li>
+        <li>La valutazione circa la necessità di un DPIA per trattamenti ad alto rischio</li>
+      </ul>
+
+      <h3>10. DURATA E CESSAZIONE</h3>
+      <p>Il presente Accordo entra in vigore al momento dell'accettazione e rimane in vigore per tutta la durata dell'utilizzo della piattaforma DietPlan Pro. In caso di cessazione del servizio, il Responsabile garantirà la restituzione o cancellazione sicura dei dati entro 30 giorni dalla richiesta del Titolare.</p>
+
+      <h3>11. LEGGE APPLICABILE E FORO COMPETENTE</h3>
+      <p>Il presente Accordo è soggetto alla legge italiana e al Regolamento (UE) 2016/679. Per qualsiasi controversia relativa all'interpretazione o esecuzione del presente Accordo è competente in via esclusiva il Foro del luogo di stabilimento del Titolare del Trattamento.</p>
+
+      <div class="highlight" style="margin-top:18px">
+        ✅ Accettando il presente Accordo, il Titolare conferma di aver letto e compreso le condizioni di trattamento dei dati, di agire in qualità di Titolare del Trattamento ai sensi dell'art. 4.7 GDPR, e di accettare gli obblighi derivanti dall'utilizzo della piattaforma DietPlan Pro.
+      </div>
+
+      <div id="dpa-end"></div>
+    </div>
+    <div class="dpa-foot">
+      <span class="dpa-hint" id="dpa-hint">↓ Scorri fino in fondo per abilitare il pulsante di accettazione</span>
+      <button class="dpa-reject" onclick="doLogout()">Rifiuto (Esci)</button>
+      <button class="dpa-accept" id="dpa-accept-btn" disabled onclick="acceptDPA()">Accetto il DPA</button>
+    </div>
+  </div>
+</div>
+
 <script>
+let _dpaUserId = null;
+
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -208,7 +324,12 @@ async function checkAndRedirect(user) {
   if (!profile) { document.getElementById('loading').classList.remove('show'); window.location.href='app.html'; return; }
   if (profile.approved||profile.is_admin) {
     document.getElementById('loading').classList.remove('show');
-    window.location.href='app.html';
+    if (!profile.dpa_accepted_at) {
+      _dpaUserId = user.id;
+      document.getElementById('dpa-modal').classList.add('show');
+    } else {
+      window.location.href='app.html';
+    }
   }
   else {
     document.getElementById('loading').classList.remove('show');
@@ -219,6 +340,31 @@ async function checkAndRedirect(user) {
 }
 
 async function doLogout() { await sb.auth.signOut(); location.reload(); }
+
+function checkDpaScroll() {
+  const el = document.getElementById('dpa-scroll');
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 20) {
+    document.getElementById('dpa-accept-btn').disabled = false;
+    document.getElementById('dpa-hint').textContent = '✓ Documento letto — puoi ora accettare';
+    document.getElementById('dpa-hint').style.color = '#059669';
+  }
+}
+
+async function acceptDPA() {
+  const btn = document.getElementById('dpa-accept-btn');
+  btn.disabled = true;
+  btn.textContent = 'Salvataggio...';
+  const { error } = await sb.from('profiles')
+    .update({ dpa_accepted_at: new Date().toISOString() })
+    .eq('id', _dpaUserId);
+  if (error) {
+    btn.disabled = false;
+    btn.textContent = 'Accetto il DPA';
+    alert('Errore nel salvataggio dell\'accettazione. Riprova.');
+    return;
+  }
+  window.location.href = 'app.html';
+}
 
 async function init() {
   document.getElementById('loading').classList.add('show');

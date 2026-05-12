@@ -1910,9 +1910,19 @@ function _buildWeeklyHTML(lyt) {
   }));
 
   // Row height to fill the full A4 landscape page (210mm, margin:0).
-  // Header banner ≈ 22mm, table thead ≈ 9mm → body rows get ~179mm split equally.
+  // Header banner ≈ 22mm, table thead ≈ 9mm, totals row ≈ 22mm → meal rows get ~147mm.
   const nRows = mealOrder.length;
-  const rowHmm = nRows > 0 ? Math.max(12, +(179 / nRows).toFixed(1)) : 22;
+  const rowHmm = nRows > 0 ? Math.max(12, +(147 / nRows).toFixed(1)) : 22;
+
+  // Pre-compute per-day macro totals
+  const _dayTotals = giorni.map(g => {
+    let k=0,p=0,ch=0,gr=0,fi=0;
+    g.meals.forEach(m => m.items.forEach(it => {
+      const f=lookup(it.nome); const qt=parseFloat(it.qt)||0;
+      if(f&&qt){k+=(f.k||0)/100*qt;p+=(f.p||0)/100*qt;ch+=(f.ch||0)/100*qt;gr+=(f.g||0)/100*qt;fi+=(f.fi||0)/100*qt;}
+    }));
+    return {k:Math.round(k),p:r1(p),ch:r1(ch),gr:r1(gr),fi:r1(fi)};
+  });
 
   let html = '<div style="font-family:\'DM Sans\',sans-serif;color:#1E293B;width:100%">';
 
@@ -1961,6 +1971,17 @@ function _buildWeeklyHTML(lyt) {
     });
     html += '</tr>';
   });
+  // ── Per-day totals row ──
+  html += '<tr>';
+  html += '<td style="'+cellBase+'background:'+lyt.primaryDark+';color:white;font-weight:700;white-space:nowrap;font-size:10px;vertical-align:middle;text-align:left">📊 Totali<br>giornalieri</td>';
+  _dayTotals.forEach(dt => {
+    html += '<td style="'+cellBase+'background:'+lyt.pale+';border-left:1.5px solid '+lyt.paleBorder+';text-align:center;vertical-align:middle;font-size:9px;padding:6px 4px">';
+    html += '<div style="font-size:12px;font-weight:800;color:'+lyt.accent+'">'+dt.k+' kcal</div>';
+    html += '<div style="color:#334155;margin-top:2px">💪 <b>'+dt.p+'g</b> &nbsp; 🍞 <b>'+dt.ch+'g</b></div>';
+    html += '<div style="color:#64748B;margin-top:1px">🧈 <b>'+dt.gr+'g</b> &nbsp; 🌿 <b>'+dt.fi+'g</b></div>';
+    html += '</td>';
+  });
+  html += '</tr>';
   html += '</tbody></table>';
 
   let _totKW=0,_totPW=0,_totChW=0,_totGW=0,_totFiW=0;

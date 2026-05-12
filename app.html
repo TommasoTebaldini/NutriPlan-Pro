@@ -1972,13 +1972,13 @@ function _buildWeeklyHTML(lyt) {
     html += '</tr>';
   });
   // ── Per-day totals row ──
-  html += '<tr>';
-  html += '<td style="'+cellBase+'background:'+lyt.primaryDark+';color:white;font-weight:700;white-space:nowrap;font-size:10px;vertical-align:middle;text-align:left">📊 Totali<br>giornalieri</td>';
+  html += '<tr style="border-top:3px solid '+lyt.primary+'">';
+  html += '<td style="'+cellBase+'background:'+lyt.primaryDark+';color:white;font-weight:700;white-space:nowrap;font-size:10px;vertical-align:middle;text-align:left;border-top:3px solid '+lyt.primary+'">Totali<br>giornalieri</td>';
   _dayTotals.forEach(dt => {
-    html += '<td style="'+cellBase+'background:'+lyt.pale+';border-left:1.5px solid '+lyt.paleBorder+';text-align:center;vertical-align:middle;font-size:9px;padding:6px 4px">';
+    html += '<td style="'+cellBase+'background:'+lyt.pale+';border-left:1.5px solid '+lyt.paleBorder+';border-top:3px solid '+lyt.primary+';text-align:center;vertical-align:middle;font-size:9px;padding:6px 4px">';
     html += '<div style="font-size:12px;font-weight:800;color:'+lyt.accent+'">'+dt.k+' kcal</div>';
-    html += '<div style="color:#334155;margin-top:2px">💪 <b>'+dt.p+'g</b> &nbsp; 🍞 <b>'+dt.ch+'g</b></div>';
-    html += '<div style="color:#64748B;margin-top:1px">🧈 <b>'+dt.gr+'g</b> &nbsp; 🌿 <b>'+dt.fi+'g</b></div>';
+    html += '<div style="color:#334155;margin-top:3px"><span style="font-size:8px;letter-spacing:.3px;text-transform:uppercase;color:#64748B">Prot</span> <b>'+dt.p+'g</b> &nbsp; <span style="font-size:8px;letter-spacing:.3px;text-transform:uppercase;color:#64748B">CHO</span> <b>'+dt.ch+'g</b></div>';
+    html += '<div style="color:#64748B;margin-top:1px"><span style="font-size:8px;letter-spacing:.3px;text-transform:uppercase;color:#64748B">Lip</span> <b style="color:#334155">'+dt.gr+'g</b> &nbsp; <span style="font-size:8px;letter-spacing:.3px;text-transform:uppercase;color:#64748B">Fib</span> <b style="color:#334155">'+dt.fi+'g</b></div>';
     html += '</td>';
   });
   html += '</tr>';

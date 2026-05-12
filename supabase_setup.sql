@@ -127,6 +127,11 @@ DO $$ BEGIN
     ALTER TABLE profiles ADD COLUMN sections_enabled TEXT[];
   END IF;
 END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='dpa_accepted_at') THEN
+    ALTER TABLE profiles ADD COLUMN dpa_accepted_at TIMESTAMPTZ;
+  END IF;
+END $$;
 
 -- Colonna role: 'dietitian' di default (tutti gli account admin panel sono dietisti)
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'dietitian';

@@ -59,9 +59,11 @@
 .larn-ai{background:#FEF3C7;color:#B45309}
 .larn-ul{background:#FEE2E2;color:#991B1B}
 /* Porzioni */
-.pyr-group{border-radius:12px;overflow:hidden;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.pyr-group{border-radius:12px;overflow:hidden;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;flex-direction:column}
 .pyr-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;color:white;font-weight:700;font-size:13px}
-.pyr-body{padding:12px 16px;background:#FAFAFA;font-size:12.5px;line-height:1.8}
+.pyr-body{padding:12px 16px;background:#FAFAFA;font-size:12.5px;line-height:1.8;flex:1}
+/* In the portions grid, gap is handled by grid so no extra bottom margin needed */
+#tab-porzioni .grid-2>.pyr-group{margin-bottom:0}
 .pyr-freq{display:inline-flex;align-items:center;gap:5px;background:#DCFCE7;color:#15803D;padding:2px 10px;border-radius:20px;font-size:11.5px;font-weight:700;margin:2px}
 /* Piano AI */
 .ai-day-card{border-radius:12px;overflow:hidden;margin-bottom:12px;border:1.5px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.06)}
@@ -383,98 +385,89 @@
     <b>🍽️ Porzioni e Frequenze di Consumo</b> — Basate su <b>LARN V</b>, <b>Linee Guida per una Sana Alimentazione (CREA 2018)</b> e principi della <b>Dieta Mediterranea UNESCO</b>. Le frequenze si riferiscono a un adulto sano normopeso con apporto di circa 2000 kcal/die.
   </div>
   <div class="grid-2">
-    <div>
-      <!-- Cereali -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#D97706,#F59E0B)">🌾 Cereali, Pane, Pasta, Riso, Patate</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> Pasta/riso crudi 80 g · Pane 50 g · Patate 200 g · Cereali colazione 30 g<br>
-          <b>Frequenza:</b> <span class="pyr-freq">3–5 porzioni/die</span><br>
-          Privilegiare versioni integrali ≥50% dei pasti (fibra, micronutrienti). Limitare pasta all'uovo e prodotti raffinati.
-        </div>
-      </div>
-      <!-- Verdure -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#15803D,#22C55E)">🥦 Verdure e Ortaggi</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> Verdure cotte 250 g · Verdure crude 80–100 g<br>
-          <b>Frequenza:</b> <span class="pyr-freq">≥2–3 porzioni/die</span><br>
-          Varietà di colori (crucifere, a foglia verde, arancioni/rossi). Almeno una porzione cruda. Cottura preferibilmente a vapore.
-        </div>
-      </div>
-      <!-- Frutta -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#DC2626,#EF4444)">🍎 Frutta Fresca</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> 150 g (frutta media 1 pezzo)<br>
-          <b>Frequenza:</b> <span class="pyr-freq">2–3 porzioni/die</span><br>
-          Preferire intera (non centrifugata). Variare specie e stagionalità. Frutta secca da non confondere con frutta fresca.
-        </div>
-      </div>
-      <!-- Legumi -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#92400E,#B45309)">🫘 Legumi</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> Legumi secchi 50 g · Legumi cotti/in scatola 150 g<br>
-          <b>Frequenza:</b> <span class="pyr-freq">3–4 volte/settimana</span><br>
-          Ottima fonte proteica vegetale + fibra + ferro non eme. Combinare con cereali per profilo amminoacidico completo.
-        </div>
-      </div>
-      <!-- Olio -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#4D7C0F,#65A30D)">🫒 Olio Extravergine d'Oliva</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> 10 mL (1 cucchiaio)<br>
-          <b>Frequenza:</b> <span class="pyr-freq">3–4 porzioni/die</span> (30–40 mL/die)<br>
-          Condimento principale della Dieta Mediterranea. Ricco di MUFA e polifenoli. Preferire a crudo.
-        </div>
+    <!-- Row 1 -->
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#D97706,#F59E0B)">🌾 Cereali, Pane, Pasta, Riso, Patate</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> Pasta/riso crudi 80 g · Pane 50 g · Patate 200 g · Cereali colazione 30 g<br>
+        <b>Frequenza:</b> <span class="pyr-freq">3–5 porzioni/die</span><br>
+        Privilegiare versioni integrali ≥50% dei pasti (fibra, micronutrienti). Limitare pasta all'uovo e prodotti raffinati.
       </div>
     </div>
-    <div>
-      <!-- Latte e derivati -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#1D4ED8,#3B82F6)">🥛 Latte, Yogurt, Formaggi</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> Latte/yogurt 125 mL · Formaggi freschi 100 g · Formaggi stagionati 50 g<br>
-          <b>Frequenza:</b> <span class="pyr-freq">2–3 porzioni/die</span> (latte/yogurt) · <span class="pyr-freq">2–3 volte/sett</span> (formaggi)<br>
-          Fonte principale di calcio. Preferire prodotti parzialmente scremati. Formaggi stagionati usare con moderazione (sale).
-        </div>
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#1D4ED8,#3B82F6)">🥛 Latte, Yogurt, Formaggi</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> Latte/yogurt 125 mL · Formaggi freschi 100 g · Formaggi stagionati 50 g<br>
+        <b>Frequenza:</b> <span class="pyr-freq">2–3 porzioni/die</span> (latte/yogurt) · <span class="pyr-freq">2–3 volte/sett</span> (formaggi)<br>
+        Fonte principale di calcio. Preferire prodotti parzialmente scremati. Formaggi stagionati usare con moderazione (sale).
       </div>
-      <!-- Carne -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#7F1D1D,#DC2626)">🥩 Carne</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> Carne fresca 100–150 g · Salumi 50 g<br>
-          <b>Frequenza:</b> <span class="pyr-freq">Carne bianca 3–4 volte/sett</span> · <span class="pyr-freq">Carne rossa ≤2 volte/sett</span> · <span class="pyr-freq">Salumi ≤1–2 volte/sett</span><br>
-          Carni rosse processate: limitare (IARC gruppo 1). Scegliere tagli magri.
-        </div>
+    </div>
+    <!-- Row 2 -->
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#15803D,#22C55E)">🥦 Verdure e Ortaggi</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> Verdure cotte 250 g · Verdure crude 80–100 g<br>
+        <b>Frequenza:</b> <span class="pyr-freq">≥2–3 porzioni/die</span><br>
+        Varietà di colori (crucifere, a foglia verde, arancioni/rossi). Almeno una porzione cruda. Cottura preferibilmente a vapore.
       </div>
-      <!-- Pesce -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#0E7490,#06B6D4)">🐟 Pesce e Prodotti Ittici</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> 150 g<br>
-          <b>Frequenza:</b> <span class="pyr-freq">2–3 volte/settimana</span><br>
-          Fonte di EPA+DHA (n-3). Privilegiare pesce azzurro (sardine, alici, sgombro). Variare specie per ridurre accumulo metalli pesanti.
-        </div>
+    </div>
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#7F1D1D,#DC2626)">🥩 Carne</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> Carne fresca 100–150 g · Salumi 50 g<br>
+        <b>Frequenza:</b> <span class="pyr-freq">Carne bianca 3–4 volte/sett</span> · <span class="pyr-freq">Carne rossa ≤2 volte/sett</span> · <span class="pyr-freq">Salumi ≤1–2 volte/sett</span><br>
+        Carni rosse processate: limitare (IARC gruppo 1). Scegliere tagli magri.
       </div>
-      <!-- Uova -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#B45309,#D97706)">🥚 Uova</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> 2 uova<br>
-          <b>Frequenza:</b> <span class="pyr-freq">2–4 volte/settimana</span><br>
-          Ottima qualità proteica. Non aumentano significativamente il rischio CV in soggetti sani se consumate entro le frequenze indicate.
-        </div>
+    </div>
+    <!-- Row 3 -->
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#DC2626,#EF4444)">🍎 Frutta Fresca</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> 150 g (frutta media 1 pezzo)<br>
+        <b>Frequenza:</b> <span class="pyr-freq">2–3 porzioni/die</span><br>
+        Preferire intera (non centrifugata). Variare specie e stagionalità. Frutta secca da non confondere con frutta fresca.
       </div>
-      <!-- Frutta secca -->
-      <div class="pyr-group">
-        <div class="pyr-hdr" style="background:linear-gradient(90deg,#5B21B6,#7C3AED)">🥜 Frutta Secca e Semi Oleosi</div>
-        <div class="pyr-body">
-          <b>Porzione:</b> 30 g<br>
-          <b>Frequenza:</b> <span class="pyr-freq">3–7 volte/settimana</span><br>
-          Mandorle, noci, nocciole. Ricchi di PUFA, vitamina E, Mg. Non aggiunta di sale o zucchero. Moderare se obiettivo calo ponderale.
-        </div>
+    </div>
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#0E7490,#06B6D4)">🐟 Pesce e Prodotti Ittici</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> 150 g<br>
+        <b>Frequenza:</b> <span class="pyr-freq">2–3 volte/settimana</span><br>
+        Fonte di EPA+DHA (n-3). Privilegiare pesce azzurro (sardine, alici, sgombro). Variare specie per ridurre accumulo metalli pesanti.
+      </div>
+    </div>
+    <!-- Row 4 -->
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#92400E,#B45309)">🫘 Legumi</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> Legumi secchi 50 g · Legumi cotti/in scatola 150 g<br>
+        <b>Frequenza:</b> <span class="pyr-freq">3–4 volte/settimana</span><br>
+        Ottima fonte proteica vegetale + fibra + ferro non eme. Combinare con cereali per profilo amminoacidico completo.
+      </div>
+    </div>
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#B45309,#D97706)">🥚 Uova</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> 2 uova<br>
+        <b>Frequenza:</b> <span class="pyr-freq">2–4 volte/settimana</span><br>
+        Ottima qualità proteica. Non aumentano significativamente il rischio CV in soggetti sani se consumate entro le frequenze indicate.
+      </div>
+    </div>
+    <!-- Row 5 -->
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#4D7C0F,#65A30D)">🫒 Olio Extravergine d'Oliva</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> 10 mL (1 cucchiaio)<br>
+        <b>Frequenza:</b> <span class="pyr-freq">3–4 porzioni/die</span> (30–40 mL/die)<br>
+        Condimento principale della Dieta Mediterranea. Ricco di MUFA e polifenoli. Preferire a crudo.
+      </div>
+    </div>
+    <div class="pyr-group">
+      <div class="pyr-hdr" style="background:linear-gradient(90deg,#5B21B6,#7C3AED)">🥜 Frutta Secca e Semi Oleosi</div>
+      <div class="pyr-body">
+        <b>Porzione:</b> 30 g<br>
+        <b>Frequenza:</b> <span class="pyr-freq">3–7 volte/settimana</span><br>
+        Mandorle, noci, nocciole. Ricchi di PUFA, vitamina E, Mg. Non aggiunta di sale o zucchero. Moderare se obiettivo calo ponderale.
       </div>
     </div>
   </div>

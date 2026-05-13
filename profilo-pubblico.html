@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>👤 Profilo Pubblico — DietPlan Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.profile-hero{background:linear-gradient(135deg,#0F766E,#0D9488 55%,#14B8A6 100%);border-radius:18px;padding:22px 26px;margin-bottom:24px;display:flex;align-items:center;gap:20px;color:white;box-shadow:0 6px 24px rgba(15,118,110,.28);position:relative;overflow:hidden}
+.profile-hero::before{content:'';position:absolute;right:-24px;top:-24px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.07)}
+.profile-hero-avatar{width:72px;height:72px;border-radius:50%;border:3px solid rgba(255,255,255,.4);object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:white;position:relative}
+.profile-hero-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.avatar-upload-btn{position:absolute;bottom:-4px;right:-4px;width:24px;height:24px;background:var(--teal);border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:background .15s}
+.avatar-upload-btn:hover{background:var(--teal-d)}
+.profile-hero-info{flex:1;position:relative}
+.profile-hero-name{font-size:19px;font-weight:700;margin-bottom:4px}
+.profile-hero-sub{font-size:12px;opacity:.85;line-height:1.5}
+.visibility-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:7px}
+.visibility-badge.visible{background:rgba(255,255,255,.2);color:white}
+.visibility-badge.hidden{background:rgba(0,0,0,.2);color:rgba(255,255,255,.75)}
+
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.profile-grid{grid-template-columns:1fr}}
+
+.form-section{background:white;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
+.form-section h3{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:7px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.form-row{display:flex;gap:12px}
+.form-row .form-group{flex:1}
+.form-group{margin-bottom:13px}
+.form-group:last-child{margin-bottom:0}
+.form-group label{display:block;font-size:11.5px;font-weight:600;color:var(--slate-m);margin-bottom:5px;letter-spacing:.2px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;color:var(--slate);background:white;outline:none;transition:border-color .15s,box-shadow .15s;box-sizing:border-box}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.1)}
+.form-group textarea{resize:vertical;min-height:100px;line-height:1.55}
+.char-count{font-size:10.5px;color:var(--slate-l);margin-top:3px;text-align:right}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border)}
+.toggle-label{font-size:13px;font-weight:600;color:var(--slate)}
+.toggle-sub{font-size:11.5px;color:var(--slate-l);margin-top:2px;line-height:1.5}
+.toggle-switch{position:relative;width:46px;height:26px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border-d);border-radius:13px;cursor:pointer;transition:background .2s}
+.toggle-slider:before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle-switch input:checked+.toggle-slider{background:var(--teal)}
+.toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px)}
+
+.preview-card{background:white;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.preview-card h3{font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.preview-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-l));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;flex-shrink:0;overflow:hidden}
+.preview-avatar img{width:100%;height:100%;object-fit:cover}
+.preview-name{font-size:15px;font-weight:700;color:var(--slate)}
+.preview-title{font-size:12px;color:var(--teal-d);font-weight:500;margin-top:2px}
+.preview-city{font-size:11.5px;color:var(--slate-l);margin-top:3px;display:flex;align-items:center;gap:3px}
+.preview-desc{font-size:12.5px;color:var(--slate-m);line-height:1.55;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+
+.save-bar{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.save-msg{font-size:12.5px;font-weight:600;color:var(--teal-d);display:none}
+.save-msg.visible{display:flex;align-items:center;gap:5px}
+
+.photo-upload-area{border:2px dashed var(--border-d);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.photo-upload-area:hover{border-color:var(--teal-l);background:#F0FDF9}
+.photo-upload-area p{font-size:12.5px;color:var(--slate-l);margin-top:6px}
+.photo-upload-area input{display:none}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item active" href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item " href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item " href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">👤 Profilo Pubblico</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary" onclick="saveProfile()" id="btn-save">💾 Salva</button>
+  </div>
+</div>
+
+<main id="main">
+<div class="page-content">
+
+  <!-- Hero -->
+  <div class="profile-hero">
+    <div class="profile-hero-avatar" id="hero-avatar-wrap">
+      <span id="hero-initials">?</span>
+      <img id="hero-avatar-img" src="" alt="" style="display:none;position:absolute;inset:0;border-radius:50%">
+      <label class="avatar-upload-btn" for="avatar-file-input" title="Cambia foto">📷</label>
+      <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+    </div>
+    <div class="profile-hero-info">
+      <div class="profile-hero-name" id="hero-name">Il tuo nome</div>
+      <div class="profile-hero-sub" id="hero-sub">Imposta le tue informazioni qui sotto per essere trovato dai pazienti</div>
+      <div class="visibility-badge visible" id="hero-badge">👁 Profilo pubblico</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start">
+    <!-- Left: Forms -->
+    <div>
+
+      <!-- Foto profilo -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>📷 Foto profilo</h3>
+        <label class="photo-upload-area" for="avatar-file-input" id="photo-drop-area">
+          <div id="photo-preview-wrap" style="display:none;margin-bottom:10px">
+            <img id="photo-preview-img" src="" alt="Anteprima" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">
+          </div>
+          <div style="font-size:28px" id="photo-icon">🖼️</div>
+          <p id="photo-label">Clicca per caricare una foto · max 5 MB</p>
+          <input type="file" id="avatar-file-input-2" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+        </label>
+        <div id="photo-upload-status" style="font-size:12px;color:var(--teal-d);margin-top:8px;display:none"></div>
+      </div>
+
+      <!-- Info personali -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>👤 Informazioni personali</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome *</label>
+            <input type="text" id="f-nome" placeholder="es. Marco" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label>Cognome</label>
+            <input type="text" id="f-cognome" placeholder="es. Rossi" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Titoli di studio / Qualifiche</label>
+          <input type="text" id="f-titoli" placeholder="es. Dietista · Laurea magistrale in Nutrizione Umana" oninput="updatePreview()">
+        </div>
+      </div>
+
+      <!-- Presentazione -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>📝 Presentazione</h3>
+        <div class="form-group">
+          <label>Descrizione (visibile ai pazienti)</label>
+          <textarea id="f-descrizione" rows="5" placeholder="Presentati ai tuoi futuri pazienti: la tua esperienza, le tue specializzazioni, il tuo approccio..." oninput="updateCharCount();updatePreview()"></textarea>
+          <div class="char-count"><span id="desc-count">0</span> / consigliato max 400 caratteri</div>
+        </div>
+      </div>
+
+      <!-- Metodi di lavoro -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>💼 Metodi di lavoro</h3>
+        <div class="form-group">
+          <label>Come lavori con i pazienti</label>
+          <textarea id="f-metodi" rows="4" placeholder="es. Approccio personalizzato basato sulla bioimpedenziometria, colloqui mensili in studio o online, supporto continuo via app..."></textarea>
+        </div>
+      </div>
+
+      <!-- Sede e contatti -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>📍 Sede e contatti</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Città dove operi</label>
+            <input type="text" id="f-citta" placeholder="es. Milano" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label>Telefono</label>
+            <input type="tel" id="f-telefono" placeholder="es. +39 02 1234567">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Indirizzo dello studio (opzionale)</label>
+          <input type="text" id="f-indirizzo" placeholder="es. Via Roma 12, 20121 Milano">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email di contatto</label>
+            <input type="email" id="f-email" placeholder="es. info@studiodietistico.it">
+          </div>
+          <div class="form-group">
+            <label>Sito web (opzionale)</label>
+            <input type="text" id="f-sito" placeholder="es. www.miostudio.it">
+          </div>
+        </div>
+      </div>
+
+      <!-- Visibilità -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>🔍 Visibilità</h3>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Profilo pubblico</div>
+            <div class="toggle-sub">Se attivo, i pazienti possono trovarti nella sezione "Dietisti" dell'app NutriPlan e prenotare un colloquio.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="f-visible" checked onchange="updatePreview()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="form-error" style="display:none;background:#FEE2E2;border:1px solid #FECACA;border-radius:10px;padding:10px 14px;color:#DC2626;font-size:13px;margin-bottom:12px"></div>
+
+      <div class="save-bar">
+        <div class="save-msg" id="save-msg">✅ Profilo salvato!</div>
+        <button class="btn btn-ghost" onclick="resetForm()">↩ Ripristina</button>
+        <button class="btn btn-primary" onclick="saveProfile()" id="btn-save-bottom">💾 Salva profilo</button>
+      </div>
+    </div>
+
+    <!-- Right: Preview -->
+    <div style="position:sticky;top:72px">
+      <div class="preview-card">
+        <h3>Anteprima · App pazienti</h3>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div class="preview-avatar" id="preview-avatar">
+            <span id="preview-initials">?</span>
+            <img id="preview-avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%">
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="preview-name" id="preview-name">Il tuo nome</div>
+            <div class="preview-title" id="preview-title" style="display:none"></div>
+            <div class="preview-city" id="preview-city" style="display:none">📍 <span id="preview-city-txt"></span></div>
+          </div>
+        </div>
+        <div class="preview-desc" id="preview-desc" style="display:none"></div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+          <div id="preview-visibility" style="font-size:11px;display:flex;align-items:center;gap:4px;font-weight:600"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;background:#F0FDF9;border:1px solid #CCFBF1;border-radius:12px;padding:14px 16px">
+        <p style="font-size:12px;color:var(--teal-d);font-weight:600;margin-bottom:6px">💡 Come funziona</p>
+        <ul style="font-size:11.5px;color:var(--slate-m);line-height:1.8;padding-left:16px">
+          <li>Il tuo profilo appare nella sezione <b>Dietisti</b> dell'app NutriPlan</li>
+          <li>I pazienti possono cercarti per nome o <b>città</b></li>
+          <li>Dalla tua pagina possono <b>prenotare un colloquio</b></li>
+          <li>Disattiva la visibilità per nasconderti dalla lista</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center">
+    <div style="width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px"></div>
+    <p style="font-size:13px;color:var(--slate-l)" id="loading-text">Caricamento...</p>
+  </div>
+</div>
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:var(--slate);color:white;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;display:none;box-shadow:0 4px 20px rgba(0,0,0,.25);max-width:340px;line-height:1.5"></div>
+
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script src="js/utils.js"></script>
+<script>
+const BUCKET = 'dietitian-avatars';
+let avatarUrl = '';
+let originalData = null;
+
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.style.display = 'none', duration);
+}
+
+function showLoading(text = 'Caricamento...') {
+  document.getElementById('loading-text').textContent = text;
+  document.getElementById('loading-overlay').style.display = 'flex';
+}
+function hideLoading() {
+  document.getElementById('loading-overlay').style.display = 'none';
+}
+
+function getInitials(nome, cognome) {
+  return ((nome?.[0] || '') + (cognome?.[0] || '')).toUpperCase() || '?';
+}
+
+function updatePreview() {
+  const nome = document.getElementById('f-nome').value.trim();
+  const cognome = document.getElementById('f-cognome').value.trim();
+  const titoli = document.getElementById('f-titoli').value.trim();
+  const citta = document.getElementById('f-citta').value.trim();
+  const desc = document.getElementById('f-descrizione').value.trim();
+  const visible = document.getElementById('f-visible').checked;
+  const fullName = [nome, cognome].filter(Boolean).join(' ') || 'Il tuo nome';
+  const initials = getInitials(nome, cognome);
+
+  // Hero
+  document.getElementById('hero-name').textContent = fullName;
+  document.getElementById('hero-initials').textContent = initials;
+  document.getElementById('hero-sub').textContent = titoli || (citta ? `📍 ${citta}` : 'Imposta le tue informazioni qui sotto');
+  const badge = document.getElementById('hero-badge');
+  badge.className = 'visibility-badge ' + (visible ? 'visible' : 'hidden');
+  badge.textContent = visible ? '👁 Profilo pubblico' : '🔒 Profilo nascosto';
+
+  // Preview card
+  document.getElementById('preview-name').textContent = fullName;
+  document.getElementById('preview-initials').textContent = initials;
+
+  const titleEl = document.getElementById('preview-title');
+  titleEl.textContent = titoli;
+  titleEl.style.display = titoli ? 'block' : 'none';
+
+  const cityEl = document.getElementById('preview-city');
+  document.getElementById('preview-city-txt').textContent = citta;
+  cityEl.style.display = citta ? 'flex' : 'none';
+
+  const descEl = document.getElementById('preview-desc');
+  descEl.textContent = desc.slice(0, 160) + (desc.length > 160 ? '…' : '');
+  descEl.style.display = desc ? 'block' : 'none';
+
+  const visEl = document.getElementById('preview-visibility');
+  visEl.innerHTML = visible
+    ? '<span style="color:var(--teal)">●</span> <span style="color:var(--teal-d)">Visibile ai pazienti</span>'
+    : '<span style="color:var(--slate-l)">●</span> <span style="color:var(--slate-l)">Profilo nascosto</span>';
+}
+
+function updateCharCount() {
+  const len = document.getElementById('f-descrizione').value.length;
+  const el = document.getElementById('desc-count');
+  el.textContent = len;
+  el.style.color = len > 400 ? 'var(--red)' : 'var(--slate-l)';
+}
+
+function setAvatarUI(url) {
+  avatarUrl = url || '';
+  const hasImg = !!url;
+  ['hero-avatar-img', 'preview-avatar-img'].forEach(id => {
+    const img = document.getElementById(id);
+    img.src = url || '';
+    img.style.display = hasImg ? 'block' : 'none';
+  });
+  const prevImg = document.getElementById('photo-preview-img');
+  const prevWrap = document.getElementById('photo-preview-wrap');
+  prevImg.src = url || '';
+  prevWrap.style.display = hasImg ? 'block' : 'none';
+  document.getElementById('photo-label').textContent = hasImg ? 'Clicca per cambiare la foto · max 5 MB' : 'Clicca per caricare una foto · max 5 MB';
+  document.getElementById('photo-icon').style.display = hasImg ? 'none' : 'block';
+}
+
+async function handleAvatarUpload(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('❌ La foto non deve superare 5 MB'); return; }
+
+  const statusEl = document.getElementById('photo-upload-status');
+  statusEl.style.display = 'block';
+  statusEl.textContent = '⏳ Caricamento foto...';
+
+  const ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+  const path = `${currentUser.id}/avatar.${ext}`;
+
+  const { error: uploadErr } = await sb.storage.from(BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+  if (uploadErr) {
+    statusEl.textContent = '';
+    showToast('❌ Errore nel caricamento. Verifica che il bucket "dietitian-avatars" sia configurato in Supabase.');
+    return;
+  }
+
+  const { data: urlData } = sb.storage.from(BUCKET).getPublicUrl(path);
+  const url = urlData?.publicUrl + `?t=${Date.now()}`;
+  setAvatarUI(url);
+  statusEl.textContent = '✅ Foto caricata — ricorda di salvare il profilo';
+}
+
+function fillForm(data) {
+  document.getElementById('f-nome').value = data.nome || '';
+  document.getElementById('f-cognome').value = data.cognome || '';
+  document.getElementById('f-titoli').value = data.titoli || '';
+  document.getElementById('f-descrizione').value = data.descrizione || '';
+  document.getElementById('f-metodi').value = data.metodi_lavoro || '';
+  document.getElementById('f-citta').value = data.citta || '';
+  document.getElementById('f-indirizzo').value = data.indirizzo || '';
+  document.getElementById('f-telefono').value = data.telefono || '';
+  document.getElementById('f-email').value = data.email_contatto || '';
+  document.getElementById('f-sito').value = data.sito_web || '';
+  document.getElementById('f-visible').checked = data.visible !== false;
+  if (data.avatar_url) setAvatarUI(data.avatar_url);
+  updateCharCount();
+  updatePreview();
+}
+
+function resetForm() {
+  if (originalData) fillForm(originalData);
+}
+
+async function saveProfile() {
+  const nome = document.getElementById('f-nome').value.trim();
+  if (!nome) {
+    document.getElementById('form-error').textContent = 'Il nome è obbligatorio.';
+    document.getElementById('form-error').style.display = 'block';
+    return;
+  }
+  document.getElementById('form-error').style.display = 'none';
+
+  const payload = {
+    dietitian_id: currentUser.id,
+    nome,
+    cognome: document.getElementById('f-cognome').value.trim(),
+    titoli: document.getElementById('f-titoli').value.trim(),
+    descrizione: document.getElementById('f-descrizione').value.trim(),
+    metodi_lavoro: document.getElementById('f-metodi').value.trim(),
+    citta: document.getElementById('f-citta').value.trim(),
+    indirizzo: document.getElementById('f-indirizzo').value.trim(),
+    telefono: document.getElementById('f-telefono').value.trim(),
+    email_contatto: document.getElementById('f-email').value.trim(),
+    sito_web: document.getElementById('f-sito').value.trim(),
+    avatar_url: avatarUrl,
+    visible: document.getElementById('f-visible').checked,
+    updated_at: new Date().toISOString(),
+  };
+
+  ['btn-save','btn-save-bottom'].forEach(id => { document.getElementById(id).disabled = true; document.getElementById(id).textContent = '…'; });
+
+  const { error } = await sb.from('dietitian_profiles').upsert(payload, { onConflict: 'dietitian_id' });
+
+  ['btn-save','btn-save-bottom'].forEach(id => { document.getElementById(id).disabled = false; document.getElementById(id).innerHTML = '💾 Salva' + (id === 'btn-save-bottom' ? ' profilo' : ''); });
+
+  if (error) {
+    showToast('❌ Errore nel salvataggio: ' + error.message);
+    return;
+  }
+
+  originalData = payload;
+  const msg = document.getElementById('save-msg');
+  msg.classList.add('visible');
+  setTimeout(() => msg.classList.remove('visible'), 3500);
+  showToast('✅ Profilo salvato con successo!');
+  updatePreview();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  showLoading('Caricamento profilo...');
+  const ok = await checkAuth();
+  if (!ok) return;
+
+  // Show user email in sidebar
+  const emailEl = document.getElementById('sb-user-email');
+  if (emailEl) { emailEl.textContent = currentUser.email; emailEl.style.display = 'block'; }
+  if (isAdmin) { const navAdmin = document.getElementById('nav-admin'); if (navAdmin) navAdmin.style.display = 'flex'; }
+
+  // Load existing profile
+  const { data } = await sb.from('dietitian_profiles').select('*').eq('dietitian_id', currentUser.id).maybeSingle();
+
+  if (data) {
+    originalData = data;
+    fillForm(data);
+  } else {
+    // Pre-fill from auth profile if available
+    const prefill = {
+      nome: currentProfile?.first_name || '',
+      cognome: currentProfile?.last_name || '',
+      email_contatto: currentUser.email || '',
+      visible: true,
+    };
+    originalData = prefill;
+    fillForm(prefill);
+  }
+
+  hideLoading();
+});
+</script>
+</body>
+</html>

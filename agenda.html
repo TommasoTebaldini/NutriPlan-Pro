@@ -407,6 +407,7 @@
 <script src="js/print-capture.js"></script>
 <script>
 let events = JSON.parse(localStorage.getItem('dietplan_events') || '[]');
+let patientAppts = []; // appointments booked by patients from the app (read-only from appointments table)
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 let selectedDate = localDateStr(new Date());
@@ -415,6 +416,73 @@ let currentEventId = null;
 // Returns YYYY-MM-DD string using local timezone (avoids UTC offset issues)
 function localDateStr(date) {
   return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+}
+
+// Load patient-booked appointments from the appointments table
+async function loadPatientAppointments() {
+  if (!currentUser || !sb) return;
+  try {
+    const { data: appts, error } = await sb
+      .from('appointments')
+      .select('id, appointment_date, duration_minutes, notes, booked_by_patient, status, patient_id')
+      .eq('dietitian_id', currentUser.id)
+      .neq('status', 'cancelled')
+      .order('appointment_date', { ascending: true });
+    if (error || !appts || !appts.length) return;
+
+    // Fetch patient names in one query
+    const patientIds = [...new Set(appts.map(a => a.patient_id))];
+    const { data: profiles } = await sb
+      .from('profiles')
+      .select('id, first_name, last_name, full_name')
+      .in('id', patientIds);
+    const nameMap = {};
+    (profiles || []).forEach(p => {
+      nameMap[p.id] = [p.first_name, p.last_name].filter(Boolean).join(' ') || p.full_name || 'Paziente';
+    });
+
+    patientAppts = appts.map(a => {
+      const d = new Date(a.appointment_date);
+      const localHH = String(d.getHours()).padStart(2,'0');
+      const localMM = String(d.getMinutes()).padStart(2,'0');
+      const patientName = nameMap[a.patient_id] || 'Paziente';
+      return {
+        _apptId: a.id,
+        _isPatientAppt: true,
+        paziente: 'Colloquio di conoscimento — ' + patientName + (a.booked_by_patient ? ' 📱' : ''),
+        titolo: 'Colloquio di conoscimento',
+        data: localDateStr(d),
+        ora: localHH + ':' + localMM,
+        tipo: 'controllo',
+        durata: a.duration_minutes || 60,
+        note: a.notes || '',
+        booked_by_patient: a.booked_by_patient,
+        status: a.status,
+      };
+    });
+    renderCalendar();
+    updateStats();
+  } catch(e) {
+    console.warn('loadPatientAppointments error:', e.message);
+  }
+}
+
+async function cancelPatientAppt(apptId) {
+  if (!confirm('Rimuovere questo appuntamento dall\'agenda? Il paziente vedrà l\'annullamento nell\'app.')) return;
+  try {
+    const { error } = await sb.from('appointments')
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+      .eq('id', apptId)
+      .eq('dietitian_id', currentUser.id);
+    if (error) throw error;
+    patientAppts = patientAppts.filter(a => a._apptId !== apptId);
+    closeM('modal-event');
+    renderCalendar();
+    updateStats();
+    toast('🗑️ Appuntamento rimosso', 'info');
+  } catch(e) {
+    toast('❌ Errore: ' + e.message, 'err');
+  }
 }
 // Formats a stored YYYY-MM-DD string for display in local timezone
 function formatStoredDate(dateStr, opts) {
@@ -635,7 +703,8 @@ function makeDay(date, otherMonth) {
   
   const dayEvents    = events.filter(e => e.data === dateStr);
   const gcalDayEvs   = showGcalEvents ? gcalEvents.filter(e => e.data === dateStr) : [];
-  const allDayEvents = [...dayEvents, ...gcalDayEvs];
+  const patientDayEvs = patientAppts.filter(a => a.data === dateStr);
+  const allDayEvents = [...dayEvents, ...patientDayEvs, ...gcalDayEvs];
   const numEl = document.createElement('div');
   numEl.className = 'cal-day-num';
   numEl.textContent = date.getDate();
@@ -660,6 +729,13 @@ function makeDay(date, otherMonth) {
       g.textContent = 'G';
       dot.appendChild(g);
       dot.appendChild(document.createTextNode((ev.ora ? ev.ora + ' ' : '') + (ev.titolo || '')));
+    } else if (ev._isPatientAppt) {
+      dot.className = 'cal-event-dot controllo';
+      dot.style.borderLeft = '2px solid #7C3AED';
+      dot.style.background = '#F5F3FF';
+      dot.style.color = '#5B21B6';
+      dot.textContent = (ev.ora || '') + ' ' + (ev.paziente || '');
+      dot.onclick = (e) => { e.stopPropagation(); openPatientApptDetail(ev._apptId); };
     } else {
       dot.className = 'cal-event-dot ' + (ev.tipo || 'visita');
       dot.textContent = (ev.ora || '') + ' ' + (ev.paziente || ev.titolo || '');
@@ -685,11 +761,39 @@ function selectDate(dateStr) {
   renderCalendar();
 }
 
+function openPatientApptDetail(apptId) {
+  const appt = patientAppts.find(a => a._apptId === apptId);
+  if (!appt) return;
+  currentEventId = 'appt_' + apptId;
+  const d = formatStoredDate(appt.data, {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('modal-event-title').textContent = '📱 Prenotazione da app';
+  document.getElementById('modal-event-hdr').style.background = '#7C3AED';
+  document.getElementById('modal-event-hdr').style.color = 'white';
+  document.getElementById('modal-event-hdr').querySelector('h2').style.color = 'white';
+  document.getElementById('modal-event-hdr').querySelector('.mclose').style.color = 'white';
+  document.getElementById('modal-event-body').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:15px;font-weight:700;color:var(--slate)">${esc(appt.paziente)}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span style="background:#EFF6FF;color:#1D4ED8;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">📅 ${d}</span>
+        <span style="background:#F0FDF4;color:#15803D;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">⏰ ${appt.ora} (${appt.durata||60} min)</span>
+      </div>
+      <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:8px 12px;font-size:12px;color:#5B21B6">
+        📱 Colloquio prenotato dal paziente tramite l'app NutriPlan
+      </div>
+      ${appt.note?`<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;font-size:13px;color:var(--slate-m);line-height:1.6">${esc(appt.note)}</div>`:''}
+    </div>`;
+  document.getElementById('btn-del-event').onclick = () => cancelPatientAppt(apptId);
+  document.getElementById('btn-del-event').textContent = '🗑️ Rimuovi';
+  openM('modal-event');
+}
+
 function renderDayEvents(dateStr) {
   const container = document.getElementById('day-events');
   const appEvs    = events.filter(e => e.data === dateStr);
   const gcalDayEvs = showGcalEvents ? gcalEvents.filter(e => e.data === dateStr) : [];
-  const dayEvs    = [...appEvs, ...gcalDayEvs].sort((a, b) => (a.ora||'').localeCompare(b.ora||''));
+  const patientDayEvs = patientAppts.filter(a => a.data === dateStr);
+  const dayEvs    = [...appEvs, ...patientDayEvs, ...gcalDayEvs].sort((a, b) => (a.ora||'').localeCompare(b.ora||''));
   if (!dayEvs.length) {
     container.innerHTML = '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessun appuntamento.</p>';
     return;
@@ -700,6 +804,14 @@ function renderDayEvents(dateStr) {
         <div class="event-title"><span class="gcal-g">G</span> ${esc(ev.titolo||'Evento')}</div>
         <div class="event-time">⏰ ${ev.ora||'Tutto il giorno'}</div>
         <div style="font-size:11px;color:#6366F1;margin-top:2px;font-style:italic">Google Calendar personale</div>
+      </div>`;
+    }
+    if (ev._isPatientAppt) {
+      return `<div class="event-item" style="background:#F5F3FF;border-color:#7C3AED;cursor:pointer" onclick="openPatientApptDetail('${esc(ev._apptId)}')">
+        <div class="event-title" style="color:#4C1D95">${esc(ev.paziente)}</div>
+        <div class="event-time">⏰ ${ev.ora||'--:--'} (${ev.durata||60} min)</div>
+        <div style="font-size:11px;color:#7C3AED;margin-top:2px;font-weight:600">📱 Prenotazione da app</div>
+        ${ev.note?`<div style="font-size:11px;color:var(--slate-l);margin-top:3px;font-style:italic">${esc(ev.note)}</div>`:''}
       </div>`;
     }
     return `<div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
@@ -715,16 +827,25 @@ function renderUpcoming() {
   const container = document.getElementById('upcoming-events');
   const today = localDateStr(new Date());
   const in7 = localDateStr(new Date(Date.now() + 7*24*3600*1000));
-  const upcoming = events
-    .filter(e => e.data >= today && e.data <= in7)
+  const allEvts = [
+    ...events.filter(e => e.data >= today && e.data <= in7),
+    ...patientAppts.filter(a => a.data >= today && a.data <= in7),
+  ];
+  const upcoming = allEvts
     .sort((a,b) => (a.data+a.ora).localeCompare(b.data+b.ora))
-    .slice(0, 8);
+    .slice(0, 10);
   if(!upcoming.length) {
     container.innerHTML = '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic">Nessun appuntamento nei prossimi 7 giorni.</p>';
     return;
   }
   container.innerHTML = upcoming.map(ev => {
     const d = formatStoredDate(ev.data, {weekday:'short',day:'numeric',month:'short'});
+    if (ev._isPatientAppt) {
+      return `<div class="event-item" style="background:#F5F3FF;border-color:#7C3AED;cursor:pointer" onclick="openPatientApptDetail('${esc(ev._apptId)}')">
+        <div class="event-title" style="color:#4C1D95;font-size:12px">${esc(ev.paziente)}</div>
+        <div class="event-time">📅 ${d} · ⏰ ${ev.ora||'--:--'} <span style="color:#7C3AED;font-size:10px">📱</span></div>
+      </div>`;
+    }
     return `<div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
       <div class="event-title">${esc(ev.paziente||ev.titolo||'')}</div>
       <div class="event-time">📅 ${d} · ⏰ ${ev.ora||'--:--'}</div>
@@ -1045,10 +1166,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateStats();
   setInterval(checkNotifications, 60000);
   if(Notification.permission === 'default') Notification.requestPermission();
-  try { const ok = await checkAuth(); if (ok) { await loadEventsFromSupabase(); startRealtimeSync(); } } catch(e) {}
-  // Periodic refresh every 2 minutes as a Realtime fallback (e.g. when the
-  // WebSocket connection is not available or Realtime is not enabled in the project).
-  setInterval(async () => { if (currentUser && sb) await loadEventsFromSupabase(); }, 2 * 60 * 1000);
+  try {
+    const ok = await checkAuth();
+    if (ok) {
+      await loadEventsFromSupabase();
+      await loadPatientAppointments();
+      startRealtimeSync();
+    }
+  } catch(e) {}
+  // Periodic refresh every 2 minutes as a Realtime fallback.
+  setInterval(async () => {
+    if (currentUser && sb) {
+      await loadEventsFromSupabase();
+      await loadPatientAppointments();
+    }
+  }, 2 * 60 * 1000);
   // Load Google Client ID from server config, then init Google Identity Services
   try {
     const cfg = await fetch('/api/config').then(r => r.json());
@@ -1067,13 +1199,13 @@ function updateStats() {
   const today = localDateStr(new Date());
   const now = new Date();
   const in7 = localDateStr(new Date(now.getTime() + 7*24*60*60*1000));
-  const todayCount = events.filter(e => e.data === today).length;
-  const weekCount = events.filter(e => e.data >= today && e.data <= in7).length;
-  const urgCount = events.filter(e => e.tipo === 'urgente' && e.data >= today).length;
+  const todayCount = events.filter(e => e.data === today).length + patientAppts.filter(a => a.data === today).length;
+  const weekCount  = events.filter(e => e.data >= today && e.data <= in7).length + patientAppts.filter(a => a.data >= today && a.data <= in7).length;
+  const urgCount   = events.filter(e => e.tipo === 'urgente' && e.data >= today).length;
   document.getElementById('stat-oggi').textContent = todayCount;
   document.getElementById('stat-settimana').textContent = weekCount;
   document.getElementById('stat-urgenti').textContent = urgCount;
-  document.getElementById('stat-totale').textContent = events.length;
+  document.getElementById('stat-totale').textContent = events.length + patientAppts.length;
 }
 
 // ─── Realtime sync ───────────────────────────────────────────────────────────

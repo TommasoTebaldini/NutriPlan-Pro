@@ -67,6 +67,15 @@
 .photo-upload-area:hover{border-color:var(--teal-l);background:#F0FDF9}
 .photo-upload-area p{font-size:12.5px;color:var(--slate-l);margin-top:6px}
 .photo-upload-area input{display:none}
+
+.av-day-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.av-day-row:last-child{border-bottom:none}
+.av-day-name{width:82px;font-size:13px;font-weight:600;color:var(--slate);padding-top:3px;flex-shrink:0}
+.av-times{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1}
+.av-times input[type=time]{padding:6px 8px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12px;font-family:inherit;color:var(--slate);background:white;outline:none;width:96px}
+.av-times input[type=time]:focus{border-color:var(--teal-l)}
+.av-sep{font-size:11px;color:var(--slate-l)}
+.av-session-label{font-size:11px;font-weight:700;color:var(--slate-m);letter-spacing:.2px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -243,6 +252,24 @@
         </div>
       </div>
 
+      <!-- Disponibilità -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>📅 Disponibilità per prenotazioni</h3>
+        <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px">Imposta i giorni e orari in cui i pazienti possono prenotare un colloquio di conoscimento dall'app. Gli slot già occupati vengono bloccati automaticamente.</p>
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Durata di ogni slot</label>
+          <select id="f-slot-duration">
+            <option value="30">30 minuti</option>
+            <option value="45">45 minuti</option>
+            <option value="60" selected>1 ora</option>
+            <option value="90">1 ora e 30 min</option>
+          </select>
+        </div>
+        <div id="av-days-wrap">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
       <!-- Error -->
       <div id="form-error" style="display:none;background:#FEE2E2;border:1px solid #FECACA;border-radius:10px;padding:10px 14px;color:#DC2626;font-size:13px;margin-bottom:12px"></div>
 
@@ -303,6 +330,95 @@
 const BUCKET = 'dietitian-avatars';
 let avatarUrl = '';
 let originalData = null;
+
+// ─── Disponibilità settimanale ──────────────────────────────────────────────
+const DAYS_IT = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+let availabilityData = []; // rows loaded from dietitian_availability
+
+function buildAvailabilityUI() {
+  const wrap = document.getElementById('av-days-wrap');
+  wrap.innerHTML = '';
+  DAYS_IT.forEach((dayName, dow) => {
+    const row = document.createElement('div');
+    row.className = 'av-day-row';
+    row.innerHTML = `
+      <label class="toggle-switch" style="margin-top:2px;flex-shrink:0">
+        <input type="checkbox" id="av-en-${dow}" onchange="toggleAvDay(${dow})">
+        <span class="toggle-slider"></span>
+      </label>
+      <div class="av-day-name">${dayName}</div>
+      <div class="av-times" id="av-times-${dow}" style="display:none">
+        <span class="av-session-label">Mat.</span>
+        <input type="time" id="av-s1-${dow}" value="09:00">
+        <span class="av-sep">–</span>
+        <input type="time" id="av-e1-${dow}" value="13:00">
+        <span class="av-sep" style="margin-left:6px">|</span>
+        <span class="av-session-label">Pom.</span>
+        <input type="time" id="av-s2-${dow}" value="15:00">
+        <span class="av-sep">–</span>
+        <input type="time" id="av-e2-${dow}" value="18:00">
+      </div>
+      <div id="av-off-${dow}" style="font-size:12px;color:var(--slate-l);padding-top:3px">Non disponibile</div>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+function toggleAvDay(dow) {
+  const enabled = document.getElementById(`av-en-${dow}`).checked;
+  document.getElementById(`av-times-${dow}`).style.display = enabled ? 'flex' : 'none';
+  document.getElementById(`av-off-${dow}`).style.display = enabled ? 'none' : 'block';
+}
+
+function fillAvailabilityUI(rows) {
+  DAYS_IT.forEach((_, dow) => {
+    const row = rows.find(r => r.day_of_week === dow);
+    const enabled = row?.enabled || false;
+    const cb = document.getElementById(`av-en-${dow}`);
+    if (cb) cb.checked = enabled;
+    toggleAvDay(dow);
+    if (row && enabled) {
+      const s1 = document.getElementById(`av-s1-${dow}`);
+      const e1 = document.getElementById(`av-e1-${dow}`);
+      const s2 = document.getElementById(`av-s2-${dow}`);
+      const e2 = document.getElementById(`av-e2-${dow}`);
+      if (s1) s1.value = (row.start_time_1 || '09:00').slice(0, 5);
+      if (e1) e1.value = (row.end_time_1   || '13:00').slice(0, 5);
+      if (s2) s2.value = (row.start_time_2 || '15:00').slice(0, 5);
+      if (e2) e2.value = (row.end_time_2   || '18:00').slice(0, 5);
+    }
+  });
+  const slotDur = rows.find(r => r.slot_duration_minutes)?.slot_duration_minutes || 60;
+  document.getElementById('f-slot-duration').value = String(slotDur);
+}
+
+function collectAvailabilityPayload() {
+  const dur = parseInt(document.getElementById('f-slot-duration').value, 10) || 60;
+  return DAYS_IT.map((_, dow) => ({
+    dietitian_id: currentUser.id,
+    day_of_week: dow,
+    enabled: document.getElementById(`av-en-${dow}`)?.checked || false,
+    start_time_1: document.getElementById(`av-s1-${dow}`)?.value || '09:00',
+    end_time_1:   document.getElementById(`av-e1-${dow}`)?.value || '13:00',
+    start_time_2: document.getElementById(`av-s2-${dow}`)?.value || '15:00',
+    end_time_2:   document.getElementById(`av-e2-${dow}`)?.value || '18:00',
+    slot_duration_minutes: dur,
+    updated_at: new Date().toISOString(),
+  }));
+}
+
+async function geocodeCity(city) {
+  if (!city) return null;
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1&accept-language=it`,
+      { headers: { 'Accept-Language': 'it' } }
+    );
+    const data = await res.json();
+    if (data.length > 0) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+  } catch {}
+  return null;
+}
 
 function showToast(msg, duration = 3000) {
   const t = document.getElementById('toast');
@@ -442,6 +558,13 @@ async function saveProfile() {
   }
   document.getElementById('form-error').style.display = 'none';
 
+  const citta = document.getElementById('f-citta').value.trim();
+
+  // Geocode city for distance filter (non-blocking, best effort)
+  let latitude = null, longitude = null;
+  const coords = await geocodeCity(citta);
+  if (coords) { latitude = coords.lat; longitude = coords.lon; }
+
   const payload = {
     dietitian_id: currentUser.id,
     nome,
@@ -449,7 +572,7 @@ async function saveProfile() {
     titoli: document.getElementById('f-titoli').value.trim(),
     descrizione: document.getElementById('f-descrizione').value.trim(),
     metodi_lavoro: document.getElementById('f-metodi').value.trim(),
-    citta: document.getElementById('f-citta').value.trim(),
+    citta,
     indirizzo: document.getElementById('f-indirizzo').value.trim(),
     telefono: document.getElementById('f-telefono').value.trim(),
     email_contatto: document.getElementById('f-email').value.trim(),
@@ -458,10 +581,17 @@ async function saveProfile() {
     visible: document.getElementById('f-visible').checked,
     updated_at: new Date().toISOString(),
   };
+  if (latitude != null) { payload.latitude = latitude; payload.longitude = longitude; }
 
   ['btn-save','btn-save-bottom'].forEach(id => { document.getElementById(id).disabled = true; document.getElementById(id).textContent = '…'; });
 
   const { error } = await sb.from('dietitian_profiles').upsert(payload, { onConflict: 'dietitian_id' });
+
+  // Save availability separately
+  if (!error) {
+    const avPayload = collectAvailabilityPayload();
+    await sb.from('dietitian_availability').upsert(avPayload, { onConflict: 'dietitian_id,day_of_week' });
+  }
 
   ['btn-save','btn-save-bottom'].forEach(id => { document.getElementById(id).disabled = false; document.getElementById(id).innerHTML = '💾 Salva' + (id === 'btn-save-bottom' ? ' profilo' : ''); });
 
@@ -474,12 +604,16 @@ async function saveProfile() {
   const msg = document.getElementById('save-msg');
   msg.classList.add('visible');
   setTimeout(() => msg.classList.remove('visible'), 3500);
-  showToast('✅ Profilo salvato con successo!');
+  showToast('✅ Profilo e disponibilità salvati!');
   updatePreview();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   showLoading('Caricamento profilo...');
+
+  // Build availability UI before auth (it doesn't need user data)
+  buildAvailabilityUI();
+
   const ok = await checkAuth();
   if (!ok) return;
 
@@ -488,14 +622,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (emailEl) { emailEl.textContent = currentUser.email; emailEl.style.display = 'block'; }
   if (isAdmin) { const navAdmin = document.getElementById('nav-admin'); if (navAdmin) navAdmin.style.display = 'flex'; }
 
-  // Load existing profile
-  const { data } = await sb.from('dietitian_profiles').select('*').eq('dietitian_id', currentUser.id).maybeSingle();
+  // Load existing profile and availability in parallel
+  const [{ data }, { data: avData }] = await Promise.all([
+    sb.from('dietitian_profiles').select('*').eq('dietitian_id', currentUser.id).maybeSingle(),
+    sb.from('dietitian_availability').select('*').eq('dietitian_id', currentUser.id),
+  ]);
 
   if (data) {
     originalData = data;
     fillForm(data);
   } else {
-    // Pre-fill from auth profile if available
     const prefill = {
       nome: currentProfile?.first_name || '',
       cognome: currentProfile?.last_name || '',
@@ -504,6 +640,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     originalData = prefill;
     fillForm(prefill);
+  }
+
+  if (avData && avData.length > 0) {
+    availabilityData = avData;
+    fillAvailabilityUI(avData);
   }
 
   hideLoading();

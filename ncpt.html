@@ -1007,15 +1007,7 @@ async function selCartella(id, nome) {
   const {data} = await sb.from('ncpt').select('*').eq('cartella_id',id).eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(1);
   showLoading(false);
   if (data && data.length) { caricaDati(data[0]); toast('📂 NCPt caricato!','ok'); }
-  else {
-    // If user already typed unsaved data (no previously loaded NCPt), preserve it
-    if (currentNcptId === null && formHasData()) {
-      toast('📋 Nuovo NCPt per questo paziente','info');
-    } else {
-      nuovoNCPt(false);
-      toast('📋 Nuovo NCPt per questo paziente','info');
-    }
-  }
+  else { currentNcptId = null; toast('📋 Nuovo NCPt per questo paziente','info'); }
   // Show paz bar
   const cart = allCartelle.find(c=>c.id===id);
   if (cart) {

@@ -89,7 +89,7 @@
 /* Weekly print area (screen: hidden) */
 #weekly-print-area{display:none}
 @media print{
-  @page{margin:0;size:A4 landscape}
+  @page{margin:0}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   #sidebar,#topbar,.no-print,.undo-bar,#loading-overlay,#toast{display:none!important}
   #main{margin:0!important;padding:1cm 1.2cm 1cm!important}
@@ -113,6 +113,18 @@
   .vnd{color:#999!important}
   .ac-src{display:none!important}
   .misura-print{display:block!important}
+  /* ── Formati stampa: class-based (compatibile Safari/iPadOS) ── */
+  body.pm-simple #pasti-container,body.pm-simple .macro-bar,body.pm-simple #print-giorno-hdr,body.pm-simple #pdf-day-medie,body.pm-simple #pdf-alldays-print-area,body.pm-simple #compact-print-area,body.pm-simple #weekly-print-area{display:none!important}
+  body.pm-simple #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body.pm-compact #pasti-container,body.pm-compact .macro-bar,body.pm-compact #print-giorno-hdr,body.pm-compact #pdf-day-medie,body.pm-compact #pdf-alldays-print-area,body.pm-compact #simple-print-area,body.pm-compact #weekly-print-area{display:none!important}
+  body.pm-compact #compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body.pm-pdfalldays #pasti-container,body.pm-pdfalldays .macro-bar,body.pm-pdfalldays #print-giorno-hdr,body.pm-pdfalldays #pdf-day-medie,body.pm-pdfalldays #simple-print-area,body.pm-pdfalldays #compact-print-area,body.pm-pdfalldays #weekly-print-area{display:none!important}
+  body.pm-pdfalldays #pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  body.pm-weekly #pasti-container,body.pm-weekly .macro-bar,body.pm-weekly #print-giorno-hdr,body.pm-weekly #pdf-day-medie,body.pm-weekly #simple-print-area,body.pm-weekly #compact-print-area,body.pm-weekly #pdf-alldays-print-area{display:none!important}
+  body.pm-weekly #main{padding:0!important;margin:0!important}
+  body.pm-weekly #weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif;page-break-inside:avoid;break-inside:avoid}
+  body.pm-weekly #weekly-print-area>div{page-break-inside:avoid;break-inside:avoid}
+  body.pm-pdfsingleday #pdf-day-medie{display:block!important;font-family:'DM Sans',sans-serif}
 }
 /* ── Row drag handle ── */
 .row-drag-handle{cursor:grab;font-size:14px;padding:2px 4px;color:#CBD5E1;transition:color .12s;user-select:none;line-height:1;display:inline-block}
@@ -1995,25 +2007,11 @@ function _buildWeeklyHTML(lyt) {
   return html;
 }
 
-// Injects explicit @media print CSS for the given mode, without relying on
-// body[data-print-mode] attribute selectors which are unreliable on iPadOS Safari.
 function _activatePrintMode(mode) {
-  let s = document.getElementById('_print-mode-css');
-  if (!s) { s = document.createElement('style'); s.id = '_print-mode-css'; document.head.appendChild(s); }
-  const hide = '#pasti-container{display:none!important}.macro-bar{display:none!important}#print-giorno-hdr{display:none!important}#pdf-day-medie{display:none!important}';
-  if (mode === 'simple') {
-    s.textContent = "@media print{" + hide + "#simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}}";
-  } else if (mode === 'compact') {
-    s.textContent = "@media print{" + hide + "#compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}}";
-  } else if (mode === 'pdf-alldays') {
-    s.textContent = "@media print{" + hide + "#pdf-alldays-print-area{display:block!important;font-family:'DM Sans',sans-serif}}";
-  } else if (mode === 'weekly') {
-    s.textContent = "@media print{" + hide + "#main{padding:0!important;margin:0!important}#weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif;page-break-inside:avoid;break-inside:avoid}#weekly-print-area>div{page-break-inside:avoid;break-inside:avoid}}";
-  } else if (mode === 'pdf-singleday') {
-    s.textContent = "@media print{#pdf-day-medie{display:block!important;font-family:'DM Sans',sans-serif}}";
-  } else {
-    s.textContent = '';
-  }
+  const allCls = ['pm-simple','pm-compact','pm-pdfalldays','pm-weekly','pm-pdfsingleday'];
+  document.body.classList.remove(...allCls);
+  const map = {'simple':'pm-simple','compact':'pm-compact','pdf-alldays':'pm-pdfalldays','weekly':'pm-weekly','pdf-singleday':'pm-pdfsingleday'};
+  if (mode && map[mode]) document.body.classList.add(map[mode]);
 }
 
 function _applyPortraitPrint() {
@@ -2037,9 +2035,9 @@ function _applyLandscapePrint() {
 }
 
 window.addEventListener('afterprint', () => {
-  ['_print-mode-css', '_portrait-print-style', '_landscape-print-style'].forEach(id => {
-    const s = document.getElementById(id);
-    if (s) s.remove();
+  document.body.classList.remove('pm-simple','pm-compact','pm-pdfalldays','pm-weekly','pm-pdfsingleday');
+  ['_print-mode-css','_portrait-print-style','_landscape-print-style'].forEach(id => {
+    const s = document.getElementById(id); if (s) s.remove();
   });
 });
 

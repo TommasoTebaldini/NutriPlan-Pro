@@ -530,7 +530,29 @@ const DB_CREA=[
   {n:"Roveja (pisello selvatico umbro) secca",c:"Legumi",k:320,p:22,gs:0.3,g:1.5,z:6.0,ch:57,fi:10,ca:75,fe:6.0,mg:88,k2:920,na:4,zn:2.5,fo:360,se:6,col:0,src:"CREA"},
   {n:"Ceci neri / Cicerchie nere secche",c:"Legumi",k:318,p:21,gs:0.5,g:1.8,z:6.0,ch:56,fi:11,ca:95,fe:7.5,mg:100,k2:1000,na:3,zn:3.0,fo:420,se:7,col:0,src:"CREA"},
   {n:"Uovo sodo intero",c:"Uova",k:130,p:12.6,gs:3.8,g:9.5,z:0.6,ch:0.6,fi:0,ca:54,fe:1.8,mg:12,k2:138,na:140,zn:1.4,fo:191,se:31,col:373,src:"CREA"},
-  {n:"Verdure miste",c:"Verdure",k:30,p:2.0,gs:0.1,g:0.3,z:3.5,ch:5.0,fi:2.5,ca:40,fe:1.0,mg:20,k2:290,na:30,zn:0.4,fo:50,se:1,col:0,src:"CREA"}
+  {n:"Verdure miste",c:"Verdure",k:30,p:2.0,gs:0.1,g:0.3,z:3.5,ch:5.0,fi:2.5,ca:40,fe:1.0,mg:20,k2:290,na:30,zn:0.4,fo:50,se:1,col:0,src:"CREA"},
+  // ── PANE E DERIVATI — denominazioni CREA mancanti ──
+  {n:"Pane comune",c:"Pane",k:267,p:8.5,gs:0.1,g:0.5,z:2.0,ch:56.8,fi:2.9,ca:17,fe:0.7,mg:25,k2:120,na:480,zn:0.7,fo:77,se:15,col:0,src:"CREA"},
+  {n:"Grissini",c:"Pane",k:422,p:10.6,gs:1.2,g:9.8,z:1.5,ch:72.3,fi:2.8,ca:25,fe:2.0,mg:20,k2:95,na:660,zn:0.6,fo:90,se:8,col:0,src:"CREA"},
+  {n:"Pancarrè / Pane in cassetta",c:"Pane",k:281,p:8.4,gs:1.1,g:4.7,z:5.5,ch:50.3,fi:2.5,ca:35,fe:1.4,mg:17,k2:110,na:540,zn:0.4,fo:80,se:10,col:0,src:"CREA"},
+  {n:"Taralli classici",c:"Pane",k:430,p:11.0,gs:2.5,g:13.5,z:1.5,ch:65.0,fi:2.8,ca:30,fe:2.0,mg:25,k2:130,na:660,zn:0.8,fo:100,se:8,col:0,src:"CREA"},
+  {n:"Fette biscottate integrali",c:"Biscotti e crackers",k:381,p:11.5,gs:0.5,g:4.0,z:5.0,ch:70.5,fi:7.0,ca:50,fe:2.5,mg:60,k2:200,na:420,zn:1.0,fo:200,se:10,col:0,src:"CREA"},
+  {n:"Crackers integrali",c:"Biscotti e crackers",k:411,p:10.5,gs:0.8,g:7.5,z:1.0,ch:68.5,fi:7.5,ca:35,fe:2.5,mg:55,k2:200,na:560,zn:1.2,fo:220,se:8,col:0,src:"CREA"},
+  {n:"Pane azzimo (matza)",c:"Pane",k:395,p:10.0,gs:0.3,g:1.5,z:0.5,ch:83.0,fi:2.5,ca:15,fe:2.5,mg:25,k2:110,na:5,zn:0.8,fo:110,se:10,col:0,src:"CREA"},
+  {n:"Pane di Altamura (DOP)",c:"Pane",k:263,p:8.3,gs:0.2,g:0.9,z:2.5,ch:55.2,fi:2.8,ca:22,fe:1.3,mg:28,k2:125,na:460,zn:0.9,fo:85,se:16,col:0,src:"CREA"},
+  // ── YOGURT — denominazioni mancanti ──
+  {n:"Yogurt intero bianco",c:"Latte e derivati",k:66,p:3.8,gs:2.0,g:3.5,z:4.5,ch:4.8,fi:0,ca:120,fe:0.1,mg:12,k2:155,na:46,zn:0.5,fo:90,se:3,col:13,src:"CREA"},
+  {n:"Yogurt magro bianco",c:"Latte e derivati",k:36,p:3.5,gs:0.1,g:0.1,z:4.5,ch:4.8,fi:0,ca:122,fe:0.1,mg:12,k2:155,na:46,zn:0.5,fo:95,se:3,col:2,src:"CREA"},
+  {n:"Yogurt greco intero (10% grassi)",c:"Latte e derivati",k:133,p:5.7,gs:5.0,g:9.0,z:4.0,ch:4.5,fi:0,ca:110,fe:0.1,mg:11,k2:150,na:35,zn:0.5,fo:85,se:9,col:32,src:"CREA"},
+  {n:"Yogurt greco magro (0% grassi)",c:"Latte e derivati",k:59,p:10.2,gs:0.1,g:0.3,z:3.6,ch:4.0,fi:0,ca:115,fe:0.1,mg:12,k2:160,na:40,zn:0.6,fo:100,se:9,col:5,src:"CREA"},
+  // ── FORMAGGI — denominazioni mancanti ──
+  {n:"Formaggio spalmabile tipo Philadelphia",c:"Formaggi",k:267,p:6.5,gs:17.5,g:25.5,z:3.5,ch:3.7,fi:0,ca:80,fe:0.1,mg:8,k2:115,na:380,zn:0.7,fo:85,se:4,col:88,src:"CREA"},
+  {n:"Ricotta di capra",c:"Formaggi",k:140,p:9.5,gs:6.0,g:9.5,z:3.0,ch:3.5,fi:0,ca:180,fe:0.5,mg:17,k2:115,na:85,zn:0.8,fo:155,se:4,col:40,src:"CREA"},
+  // ── PIATTI PRONTI — denominazioni CREA mancanti ──
+  {n:"Pasta cotta con pomodoro (piatto pronto)",c:"Piatti pronti",k:145,p:4.8,gs:0.5,g:3.0,z:3.5,ch:26.5,fi:2.0,ca:18,fe:0.7,mg:15,k2:180,na:320,zn:0.4,fo:55,se:5,col:0,src:"CREA"},
+  {n:"Minestrone (zuppa di verdure cotto)",c:"Piatti pronti",k:42,p:2.2,gs:0.2,g:1.0,z:2.5,ch:6.5,fi:2.0,ca:25,fe:0.7,mg:15,k2:220,na:290,zn:0.3,fo:40,se:1,col:0,src:"CREA"},
+  {n:"Risotto al pomodoro (cotto)",c:"Piatti pronti",k:140,p:3.5,gs:0.5,g:2.5,z:1.0,ch:27.0,fi:0.8,ca:12,fe:0.5,mg:12,k2:90,na:280,zn:0.5,fo:55,se:5,col:0,src:"CREA"},
+  {n:"Polpette di carne al sugo",c:"Piatti pronti",k:175,p:12.0,gs:3.5,g:10.5,z:2.5,ch:8.5,fi:0.5,ca:25,fe:1.5,mg:18,k2:270,na:480,zn:2.0,fo:130,se:8,col:55,src:"CREA"}
 ];
 
 const DB_BDA=[

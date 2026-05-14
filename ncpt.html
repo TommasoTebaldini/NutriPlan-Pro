@@ -1007,7 +1007,15 @@ async function selCartella(id, nome) {
   const {data} = await sb.from('ncpt').select('*').eq('cartella_id',id).eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(1);
   showLoading(false);
   if (data && data.length) { caricaDati(data[0]); toast('📂 NCPt caricato!','ok'); }
-  else { nuovoNCPt(false); toast('📋 Nuovo NCPt per questo paziente','info'); }
+  else {
+    // If user already typed unsaved data (no previously loaded NCPt), preserve it
+    if (currentNcptId === null && formHasData()) {
+      toast('📋 Nuovo NCPt per questo paziente','info');
+    } else {
+      nuovoNCPt(false);
+      toast('📋 Nuovo NCPt per questo paziente','info');
+    }
+  }
   // Show paz bar
   const cart = allCartelle.find(c=>c.id===id);
   if (cart) {
@@ -1578,6 +1586,14 @@ function renderStor() {
 // ═══════════════════════════════════════════════════
 // SALVA / CARICA
 // ═══════════════════════════════════════════════════
+function formHasData() {
+  if (pesList.length > 0 || obiettiviList.length > 0) return true;
+  const checkIds = ['i-kcal','i-prot','i-cho','i-grassi','i-fibra','i-liquidi',
+    'i-distrib','i-restr','i-edu','i-mat','i-motiv','i-suppl','i-coord',
+    'm-next','m-freq','m-mod','m-riesame','m-esito'];
+  return checkIds.some(id => { const el = document.getElementById(id); return el && el.value && el.value.trim(); });
+}
+
 function raccogliDati() {
   const g=id=>document.getElementById(id)?.value||'';
   return {

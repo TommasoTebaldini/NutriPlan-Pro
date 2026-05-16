@@ -74,9 +74,16 @@ async function loadProfile() {
   const adminNav = document.getElementById('nav-admin');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
 
-  // Hide nav items for sections the user doesn't have access to (non-admin only)
-  if (!isAdmin && data?.sections_enabled && Array.isArray(data.sections_enabled)) {
-    const allowed = data.sections_enabled;
+  // ── Subscription-aware access control ──────────────────────────────────────
+  // Three tiers:
+  //   Free (no active sub) → only _FREE_SECTIONS visible
+  //   Pro (active sub)     → _FREE_SECTIONS + _PRO_SECTIONS + admin-granted _SPECIALIZED
+  //   Specialized          → Pro + explicit admin grant via sections_enabled
+  //
+  // PAYMENTS NOT YET ACTIVE → override: treat every approved user as Pro.
+  // To activate payments: remove the _paymentsActive = false override below.
+  // ───────────────────────────────────────────────────────────────────────────
+  if (!isAdmin) {
     const _SECTION_MAP = {
       'paziente-sano.html':'paziente_sano','diabete.html':'diabete','pancreas.html':'pancreas',
       'sport.html':'sport','dna.html':'dca','chetogenica.html':'chetogenica','renale.html':'renale',
@@ -86,7 +93,28 @@ async function loadProfile() {
       'consigli.html':'consigli','bia.html':'bia','questionari.html':'questionari',
       'studi.html':'studi','ai.html':'ai','agenda.html':'agenda','ecm.html':'ecm',
       'database.html':'database','integratori.html':'integratori','ricette.html':'ricette',
+      'abbonamento.html':'abbonamento',
     };
+    const _FREE_SECTIONS = ['linee_guida','consigli','studi','database','valutazione','patologie','agenda'];
+    const _PRO_SECTIONS  = ['ai','bia','ricette','questionari','integratori','ncpt'];
+    const _SPECIALIZED   = ['paziente_sano','diabete','pancreas','sport','dca','chetogenica','renale','disfagia','oncologia','obesita','pediatria','ristorazione','ecm'];
+
+    const _paymentsActive = false; // ← set to true when Stripe is live
+
+    const plan    = data?.subscription_plan || 'free';
+    const expires = data?.subscription_expires_at;
+    const isPro   = _paymentsActive
+      ? (plan === 'pro' && (!expires || new Date(expires) > new Date()))
+      : true; // treat everyone as Pro while payments are inactive
+
+    const adminGranted = (data?.sections_enabled && Array.isArray(data.sections_enabled))
+      ? data.sections_enabled.filter(s => _SPECIALIZED.includes(s))
+      : [];
+
+    const allowed = isPro
+      ? [..._FREE_SECTIONS, ..._PRO_SECTIONS, ...adminGranted]
+      : [..._FREE_SECTIONS];
+
     document.querySelectorAll('#sidebar a.nav-item[href]').forEach(link => {
       const key = _SECTION_MAP[link.getAttribute('href')];
       if (key && !allowed.includes(key)) link.style.display = 'none';
@@ -101,7 +129,41 @@ async function loadProfile() {
       }
       if (!hasVisible) sec.style.display = 'none';
     });
+
+    // Gate page content if accessed directly without permission
+    const _pageKey = _SECTION_MAP[location.pathname.split('/').pop()];
+    if (_pageKey && !allowed.includes(_pageKey)) {
+      const isSpecialized = _SPECIALIZED.includes(_pageKey);
+      document.body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;font-family:inherit">
+        <div style="font-size:48px">🔒</div>
+        <h2 style="margin:0;color:#1e293b">${isSpecialized ? 'Sezione Specialistica' : 'Sezione Riservata'}</h2>
+        <p style="color:#64748b;margin:0;text-align:center">${isSpecialized ? "L'accesso a questa sezione deve essere abilitato dall'amministratore." : "Questa sezione richiede un abbonamento Professional."}</p>
+        ${!isSpecialized ? '<a href="abbonamento.html" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Upgrade a Professional →</a>' : ''}
+        <a href="linee-guida.html" style="color:#64748b;font-size:13px">← Torna alle linee guida</a>
+      </div>`;
+    }
+
+    // Subscription badge in sidebar
+    const sbSub = document.getElementById('sb-subscription');
+    if (sbSub) {
+      if (_paymentsActive) {
+        sbSub.textContent = isPro ? '⭐ Professional' : '🔓 Piano Gratuito';
+        sbSub.style.cssText = isPro
+          ? 'display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;margin:8px 12px 4px'
+          : 'display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);margin:8px 12px 4px';
+      } else {
+        sbSub.style.display = 'none';
+      }
+    }
+
+    // Hide "Abbonamento" nav link while payments are inactive
+    if (!_paymentsActive) {
+      document.querySelectorAll('#sidebar a.nav-item[href="abbonamento.html"]').forEach(el => el.style.display = 'none');
+    }
   }
+
+  // Always hide "Abbonamento" link for everyone while payments are inactive
+  document.querySelectorAll('#sidebar a.nav-item[href="abbonamento.html"]').forEach(el => el.style.display = 'none');
 
   // Load cartelle dropdown if present
   if (document.getElementById('inp-cartella')) loadCartelleDropdown();

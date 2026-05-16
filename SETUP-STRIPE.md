@@ -16,15 +16,20 @@ Questa guida ti permette di attivare i pagamenti automatici su NutriPlan Pro in 
 
 Nel dashboard Stripe → **Prodotti** → **Aggiungi prodotto**:
 
-### Piano Mensile
-- Nome: `NutriPlan Pro — Mensile`
+### Sito Dietisti — Piano Mensile
+- Nome: `NutriPlan Pro — Mensile (Dietisti)`
 - Prezzo: **€35,00 / mese** (ricorrente, mensile)
 - Copia l'ID → tipo `price_xxxxxxxxxx` → salva come `STRIPE_PRICE_MONTHLY`
 
-### Piano Annuale
-- Nome: `NutriPlan Pro — Annuale`
+### Sito Dietisti — Piano Annuale
+- Nome: `NutriPlan Pro — Annuale (Dietisti)`
 - Prezzo: **€350,00 / anno** (ricorrente, annuale)
 - Copia l'ID → salva come `STRIPE_PRICE_ANNUAL`
+
+### App Pazienti — Piano Mensile
+- Nome: `NutriPlan App — Pro Mensile (Pazienti)`
+- Prezzo: **€5,99 / mese** (ricorrente, mensile)
+- Copia l'ID → salva come `STRIPE_PATIENT_PRICE_MONTHLY`
 
 ---
 
@@ -62,6 +67,7 @@ supabase login
 Dal terminale nella cartella del progetto:
 ```bash
 supabase functions deploy create-checkout-session
+supabase functions deploy create-patient-checkout-session
 supabase functions deploy stripe-webhook
 supabase functions deploy stripe-portal
 ```
@@ -76,6 +82,7 @@ Nel dashboard Supabase → **Edge Functions** → **Secrets** (oppure via CLI):
 supabase secrets set STRIPE_SECRET_KEY=sk_live_...
 supabase secrets set STRIPE_PRICE_MONTHLY=price_...
 supabase secrets set STRIPE_PRICE_ANNUAL=price_...
+supabase secrets set STRIPE_PATIENT_PRICE_MONTHLY=price_...
 ```
 
 `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` sono già disponibili automaticamente nelle edge functions.
@@ -150,3 +157,28 @@ Le sezioni cliniche avanzate (Diabete, Renale, DCA, ecc.) richiedono:
 2. Abilitazione manuale dall'admin in `admin.html` → bottone **🔧 Sezioni**
 
 Anche se un utente paga, le sezioni specialistiche rimangono bloccate finché non le abiliti tu.
+
+---
+
+## Attivazione pagamenti — App Pazienti
+
+Quando sei pronto ad attivare i pagamenti nell'app pazienti (`Diet-Plan-Pro-app-claude`):
+
+1. Apri `src/hooks/useSubscription.js`
+2. Cambia `export const PAYMENTS_ACTIVE = false` → `export const PAYMENTS_ACTIVE = true`
+3. Il link "Abbonamento" appare automaticamente nel menu
+4. Il paywall `ProGate` si attiva su statistiche, attività avanzata, ecc.
+5. Il webhook esistente (`stripe-webhook`) gestisce già i pagamenti pazienti — nessuna modifica necessaria
+
+Aggiungere il secret:
+```bash
+supabase secrets set STRIPE_PATIENT_PRICE_MONTHLY=price_...
+supabase functions deploy create-patient-checkout-session
+```
+
+## Attivazione pagamenti — Sito Dietisti
+
+1. Apri `js/utils.js` nel sito NutriPlan-Pro
+2. Cambia `const _paymentsActive = false` → `const _paymentsActive = true`
+3. Il badge e il link abbonamento tornano visibili in sidebar
+4. Il gate Free/Pro si attiva automaticamente

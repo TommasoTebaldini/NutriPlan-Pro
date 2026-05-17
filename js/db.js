@@ -1308,7 +1308,145 @@ const DB_BDA=[
 // ── Latticini ──
 {n:"Provola affumicata",c:"Formaggi",k:335,p:25.0,gs:14.0,g:25.5,z:0,ch:0.5,fi:0,ca:560,fe:0.3,mg:30,k2:120,na:650,zn:3.5,fo:480,se:15,col:75,src:"CREA"},
 {n:"Ricotta affumicata",c:"Formaggi",k:220,p:18.5,gs:8.0,g:15.5,z:0,ch:2.0,fi:0,ca:310,fe:0.5,mg:20,k2:110,na:600,zn:2.5,fo:280,se:10,col:60,src:"CREA"},
-{n:"Ricotta romana (di pecora)",c:"Formaggi",k:158,p:11.4,gs:6.0,g:11.5,z:3.2,ch:3.2,fi:0,ca:254,fe:0.4,mg:14,k2:133,na:104,zn:1.3,fo:202,se:10,col:50,src:"CREA"}
+{n:"Ricotta romana (di pecora)",c:"Formaggi",k:158,p:11.4,gs:6.0,g:11.5,z:3.2,ch:3.2,fi:0,ca:254,fe:0.4,mg:14,k2:133,na:104,zn:1.3,fo:202,se:10,col:50,src:"CREA"},
+
+// ── FORMAGGI E LATTICINI MANCANTI ──
+{n:"Mascarpone",c:"Formaggi",k:429,p:7.4,gs:28.0,g:43.5,z:2.3,ch:2.6,fi:0,ca:196,fe:0.2,mg:14,k2:109,na:52,zn:0.5,fo:116,se:3,col:138,src:"CREA"},
+{n:"Fiordilatte (mozzarella vaccina fresca)",c:"Formaggi",k:250,p:17.9,gs:12.0,g:19.0,z:0.7,ch:0.7,fi:0,ca:340,fe:0.4,mg:10,k2:145,na:195,zn:2.4,fo:340,se:3,col:44,src:"CREA"},
+{n:"Latte di bufala intero",c:"Latte e derivati",k:97,p:4.5,gs:4.8,g:7.5,z:5.1,ch:5.1,fi:0,ca:195,fe:0.1,mg:18,k2:175,na:52,zn:0.4,fo:135,se:3,col:24,src:"CREA"},
+{n:"Ricotta di capra",c:"Formaggi",k:145,p:9.5,gs:7.5,g:11.0,z:3.5,ch:3.5,fi:0,ca:280,fe:0.3,mg:14,k2:110,na:90,zn:0.8,fo:200,se:3,col:48,src:"CREA"},
+
+// ── PESCE MANCANTE (specie mediterranee CREA) ──
+{n:"Grongo fresco",c:"Pesce",k:109,p:16.3,gs:0.9,g:4.7,z:0,ch:0,fi:0,ca:28,fe:0.6,mg:26,k2:350,na:58,zn:0.5,fo:175,se:28,col:50,src:"CREA"},
+{n:"Ombrina fresca",c:"Pesce",k:85,p:17.8,gs:0.3,g:1.5,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:25,k2:350,na:68,zn:0.4,fo:190,se:22,col:52,src:"CREA"},
+{n:"Pesce San Pietro fresco",c:"Pesce",k:90,p:18.5,gs:0.3,g:1.4,z:0,ch:0,fi:0,ca:20,fe:0.9,mg:28,k2:380,na:72,zn:0.5,fo:200,se:38,col:55,src:"CREA"},
+{n:"Leccia amia fresca",c:"Pesce",k:121,p:19.8,gs:1.0,g:4.8,z:0,ch:0,fi:0,ca:22,fe:0.7,mg:29,k2:400,na:65,zn:0.5,fo:210,se:40,col:58,src:"CREA"},
+{n:"Passera di mare fresca",c:"Pesce",k:78,p:15.5,gs:0.3,g:1.3,z:0,ch:0,fi:0,ca:30,fe:0.4,mg:26,k2:320,na:80,zn:0.4,fo:200,se:28,col:48,src:"CREA"},
+{n:"Mormora fresca",c:"Pesce",k:90,p:18.0,gs:0.4,g:1.9,z:0,ch:0,fi:0,ca:30,fe:0.5,mg:26,k2:340,na:72,zn:0.4,fo:185,se:26,col:50,src:"CREA"},
+{n:"Saragò (sargo) fresco",c:"Pesce",k:95,p:19.0,gs:0.4,g:2.1,z:0,ch:0,fi:0,ca:25,fe:0.5,mg:27,k2:350,na:70,zn:0.5,fo:195,se:28,col:52,src:"CREA"},
+{n:"Occhiata fresca",c:"Pesce",k:88,p:18.2,gs:0.3,g:1.5,z:0,ch:0,fi:0,ca:22,fe:0.4,mg:27,k2:345,na:68,zn:0.4,fo:188,se:25,col:50,src:"CREA"},
+{n:"Zerro fresco",c:"Pesce",k:93,p:19.0,gs:0.4,g:2.0,z:0,ch:0,fi:0,ca:35,fe:1.0,mg:28,k2:360,na:65,zn:0.5,fo:190,se:30,col:55,src:"CREA"},
+{n:"Aguglia fresca",c:"Pesce",k:98,p:19.5,gs:0.5,g:2.0,z:0,ch:0,fi:0,ca:30,fe:1.0,mg:35,k2:380,na:70,zn:0.6,fo:200,se:35,col:60,src:"CREA"},
+{n:"Pagello fragolino fresco",c:"Pesce",k:105,p:20.0,gs:0.5,g:2.5,z:0,ch:0,fi:0,ca:28,fe:0.7,mg:30,k2:380,na:75,zn:0.5,fo:210,se:40,col:60,src:"CREA"},
+{n:"Boga (boghe) fresca",c:"Pesce",k:104,p:19.5,gs:0.5,g:2.8,z:0,ch:0,fi:0,ca:38,fe:1.5,mg:30,k2:340,na:85,zn:0.8,fo:205,se:28,col:62,src:"CREA"},
+{n:"Murena fresca",c:"Pesce",k:107,p:19.8,gs:0.7,g:2.8,z:0,ch:0,fi:0,ca:22,fe:1.0,mg:28,k2:340,na:70,zn:0.5,fo:185,se:35,col:58,src:"CREA"},
+
+// ── FUNGHI E VERDURE MANCANTI ──
+{n:"Gallinacci / Finferli freschi",c:"Verdure",k:38,p:1.5,gs:0.1,g:0.5,z:1.1,ch:6.9,fi:3.8,ca:15,fe:3.5,mg:12,k2:506,na:17,zn:0.7,fo:57,se:2,col:0,src:"CREA"},
+{n:"Funghi Pleurotus / Orecchione freschi",c:"Verdure",k:33,p:3.3,gs:0,g:0.4,z:2.2,ch:6.1,fi:2.3,ca:3,fe:1.3,mg:18,k2:420,na:18,zn:0.8,fo:120,se:3,col:0,src:"BDA"},
+{n:"Funghi shiitake secchi",c:"Verdure",k:296,p:9.7,gs:0.1,g:1.0,z:3.8,ch:57.6,fi:38.0,ca:11,fe:1.7,mg:132,k2:1534,na:13,zn:7.7,fo:294,se:46,col:0,src:"BDA"},
+{n:"Tartufo nero estivo fresco",c:"Verdure",k:50,p:6.0,gs:0.1,g:0.5,z:0,ch:8.5,fi:8.5,ca:10,fe:7.0,mg:18,k2:320,na:15,zn:1.0,fo:100,se:21,col:0,src:"CREA"},
+{n:"Cardi freschi",c:"Verdure",k:17,p:0.7,gs:0,g:0.1,z:1.2,ch:3.7,fi:1.6,ca:70,fe:0.7,mg:42,k2:400,na:169,zn:0.2,fo:23,se:1,col:0,src:"CREA"},
+{n:"Pomodoro verde acerbo",c:"Verdure",k:19,p:0.9,gs:0,g:0.2,z:2.8,ch:3.9,fi:1.1,ca:12,fe:0.3,mg:9,k2:180,na:5,zn:0.1,fo:20,se:0,col:0,src:"BDA"},
+{n:"Radicchio di Chioggia",c:"Verdure",k:23,p:1.4,gs:0,g:0.3,z:2.4,ch:3.6,fi:1.7,ca:36,fe:0.6,mg:13,k2:302,na:22,zn:0.3,fo:29,se:0.7,col:0,src:"CREA"},
+{n:"Castagna d'acqua",c:"Verdure",k:97,p:1.4,gs:0,g:0.1,z:4.9,ch:23.9,fi:3.0,ca:11,fe:0.6,mg:22,k2:584,na:14,zn:0.5,fo:63,se:0.7,col:0,src:"BDA"},
+
+// ── FRUTTA MANCANTE ──
+{n:"Lime / Limetta fresca",c:"Frutta fresca",k:30,p:0.7,gs:0,g:0.2,z:1.7,ch:10.5,fi:2.8,ca:33,fe:0.6,mg:6,k2:102,na:2,zn:0.1,fo:18,se:0.4,col:0,src:"CREA"},
+{n:"Pompelmo rosa fresco",c:"Frutta fresca",k:32,p:0.8,gs:0,g:0.1,z:7.5,ch:8.3,fi:1.4,ca:22,fe:0.1,mg:9,k2:162,na:0,zn:0.1,fo:12,se:0.1,col:0,src:"BDA"},
+
+// ── CARNI MANCANTI ──
+{n:"Guanciale",c:"Salumi",k:655,p:11.5,gs:25.0,g:68.0,z:0,ch:0,fi:0,ca:5,fe:0.5,mg:10,k2:150,na:1600,zn:1.5,fo:90,se:8,col:100,src:"CREA"},
+
+// ── LEGUMI COTTI MANCANTI ──
+{n:"Fave lessate",c:"Legumi",k:110,p:7.6,gs:0.1,g:0.5,z:2.5,ch:19.7,fi:7.0,ca:36,fe:2.0,mg:45,k2:390,na:9,zn:1.0,fo:115,se:2,col:0,src:"BDA"},
+
+// ── CEREALI MANCANTI ──
+{n:"Avena soffiata",c:"Cereali e pasta",k:374,p:14.9,gs:1.3,g:7.2,z:0,ch:69.9,fi:6.5,ca:53,fe:4.5,mg:143,k2:390,na:8,zn:3.6,fo:450,se:30,col:0,src:"BDA"},
+{n:"Mais da pop corn (chicchi secchi)",c:"Cereali e pasta",k:358,p:8.1,gs:0.6,g:3.8,z:0.6,ch:74.3,fi:7.3,ca:3,fe:2.7,mg:127,k2:287,na:35,zn:2.2,fo:210,se:15,col:0,src:"CREA"},
+{n:"Popcorn soffiato non condito",c:"Cereali e pasta",k:387,p:12.1,gs:0.6,g:4.5,z:0.7,ch:77.9,fi:14.5,ca:7,fe:3.0,mg:144,k2:329,na:8,zn:2.9,fo:358,se:9,col:0,src:"BDA"},
+
+// ── CARNI MANCANTI (CREA) ──
+{n:"Quaglie intere eviscerate crude",c:"Carni e derivati",k:111,p:21.8,gs:0.6,g:2.8,z:0,ch:0,fi:0,ca:12,fe:1.9,mg:24,k2:238,na:55,zn:2.5,fo:200,se:14,col:72,src:"CREA"},
+{n:"Gallina (carne, senza pelle)",c:"Carni e derivati",k:185,p:18.5,gs:2.0,g:12.5,z:0,ch:0,fi:0,ca:11,fe:1.2,mg:20,k2:260,na:75,zn:2.0,fo:180,se:10,col:90,src:"CREA"},
+{n:"Lingua di manzo",c:"Carni e derivati",k:192,p:16.0,gs:5.0,g:14.0,z:0,ch:0,fi:0,ca:6,fe:2.7,mg:15,k2:200,na:65,zn:2.8,fo:155,se:10,col:93,src:"CREA"},
+{n:"Animelle di vitello",c:"Carni e derivati",k:121,p:16.5,gs:1.0,g:6.5,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:22,k2:280,na:70,zn:1.8,fo:300,se:12,col:220,src:"CREA"},
+{n:"Cuore di manzo",c:"Carni e derivati",k:118,p:19.5,gs:1.0,g:4.2,z:0,ch:0.2,fi:0,ca:7,fe:4.4,mg:22,k2:280,na:80,zn:1.7,fo:210,se:20,col:124,src:"CREA"},
+{n:"Rognone di vitello (rene)",c:"Carni e derivati",k:96,p:17.0,gs:0.7,g:3.0,z:0,ch:0,fi:0,ca:10,fe:5.0,mg:17,k2:230,na:200,zn:1.7,fo:230,se:120,col:380,src:"CREA"},
+
+// ── OLI MANCANTI (CREA) ──
+{n:"Olio di vinaccioli (semi di uva)",c:"Grassi e oli",k:900,p:0,gs:9.6,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di palma",c:"Grassi e oli",k:884,p:0,gs:49.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di cocco vergine",c:"Grassi e oli",k:892,p:0,gs:86.5,g:99.1,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
+
+// ── FARINE MANCANTI ──
+{n:"Farina di soia intera",c:"Cereali e derivati",k:374,p:36.8,gs:2.5,g:17.0,z:0,ch:25.0,fi:11.9,ca:241,fe:9.0,mg:280,k2:1797,na:5,zn:3.9,fo:670,se:6,col:0,src:"CREA"},
+{n:"Farina di farro",c:"Cereali e derivati",k:339,p:14.5,gs:0.4,g:2.5,z:0,ch:67.0,fi:7.5,ca:43,fe:4.0,mg:95,k2:350,na:4,zn:2.8,fo:330,se:38,col:0,src:"BDA"},
+{n:"Farina di segale integrale",c:"Cereali e derivati",k:325,p:10.8,gs:0.3,g:1.7,z:0,ch:69.5,fi:11.5,ca:32,fe:2.7,mg:92,k2:510,na:2,zn:2.5,fo:320,se:35,col:0,src:"BDA"},
+{n:"Farina di grano tenero tipo 2",c:"Cereali e derivati",k:343,p:12.5,gs:0.2,g:1.8,z:2.0,ch:70.3,fi:4.5,ca:24,fe:1.8,mg:50,k2:200,na:3,zn:1.2,fo:200,se:18,col:0,src:"CREA"},
+{n:"Farina di canapa decorticata",c:"Cereali e derivati",k:357,p:30.8,gs:3.0,g:10.5,z:0,ch:27.8,fi:9.8,ca:70,fe:7.5,mg:400,k2:1200,na:5,zn:7.0,fo:1160,se:14,col:0,src:"BDA"},
+
+// ── VERDURE MANCANTI (CREA/BDA) ──
+{n:"Pastinaca cruda",c:"Ortaggi",k:75,p:1.4,gs:0.1,g:0.5,z:4.8,ch:17.9,fi:4.9,ca:36,fe:0.6,mg:29,k2:375,na:10,zn:0.6,fo:71,se:1.8,col:0,src:"CREA"},
+{n:"Rapa (navone) cruda",c:"Ortaggi",k:28,p:0.9,gs:0,g:0.1,z:3.8,ch:6.4,fi:1.8,ca:30,fe:0.3,mg:11,k2:233,na:67,zn:0.3,fo:27,se:0.7,col:0,src:"CREA"},
+{n:"Rapa rossa (barbabietola) cruda",c:"Ortaggi",k:43,p:1.6,gs:0,g:0.1,z:6.8,ch:9.6,fi:2.8,ca:16,fe:0.8,mg:23,k2:325,na:78,zn:0.4,fo:40,se:0.6,col:0,src:"CREA"},
+{n:"Topinambur crudo",c:"Ortaggi",k:73,p:2.0,gs:0,g:0.0,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:78,se:0.7,col:0,src:"CREA"},
+{n:"Crescione d'acqua fresco",c:"Ortaggi",k:22,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:282,na:41,zn:0.1,fo:60,se:0.9,col:0,src:"BDA"},
+{n:"Acetosella fresca (Rumex acetosa)",c:"Ortaggi",k:22,p:2.0,gs:0,g:0.3,z:0.5,ch:3.2,fi:3.0,ca:44,fe:2.4,mg:16,k2:390,na:4,zn:0.2,fo:62,se:0.9,col:0,src:"CREA"},
+{n:"Broccoletti cime di rapa",c:"Ortaggi",k:25,p:2.9,gs:0,g:0.3,z:1.2,ch:2.6,fi:2.6,ca:97,fe:1.6,mg:22,k2:196,na:28,zn:0.6,fo:63,se:1.0,col:0,src:"CREA"},
+{n:"Ortiche fresche (foglie)",c:"Ortaggi",k:42,p:7.2,gs:0,g:0.5,z:0,ch:7.5,fi:6.9,ca:481,fe:41.8,mg:57,k2:334,na:4,zn:0.3,fo:71,se:0.7,col:0,src:"CREA"},
+
+// ── FRUTTA MANCANTE ──
+{n:"Nespola del Giappone (loquat) fresca",c:"Frutta",k:47,p:0.4,gs:0,g:0.2,z:7.3,ch:12.1,fi:1.7,ca:16,fe:0.3,mg:13,k2:266,na:1,zn:0.1,fo:27,se:0.5,col:0,src:"CREA"},
+{n:"Corbezzolo (arbutus) fresco",c:"Frutta",k:34,p:0.6,gs:0,g:0.2,z:9.7,ch:9.9,fi:3.3,ca:29,fe:0.5,mg:7,k2:272,na:2,zn:0.1,fo:22,se:0.5,col:0,src:"CREA"},
+{n:"Sorbo domestico fresco",c:"Frutta",k:66,p:0.7,gs:0,g:0.2,z:11.0,ch:17.0,fi:2.7,ca:52,fe:0.3,mg:10,k2:270,na:3,zn:0.1,fo:35,se:0.5,col:0,src:"CREA"},
+{n:"Carambola (star fruit) fresca",c:"Frutta",k:31,p:1.0,gs:0,g:0.3,z:3.9,ch:6.7,fi:2.8,ca:3,fe:0.1,mg:10,k2:133,na:2,zn:0.1,fo:12,se:0.6,col:0,src:"BDA"},
+{n:"Feijoa fresca",c:"Frutta",k:55,p:1.2,gs:0,g:0.6,z:3.7,ch:12.4,fi:6.4,ca:17,fe:0.1,mg:9,k2:155,na:3,zn:0.1,fo:20,se:0.6,col:0,src:"BDA"},
+
+// ── FORMAGGI MANCANTI ──
+{n:"Pecorino sardo stagionato",c:"Formaggi",k:392,p:25.5,gs:22.0,g:31.5,z:0,ch:0,fi:0,ca:1120,fe:0.5,mg:28,k2:90,na:1800,zn:3.5,fo:700,se:15,col:95,src:"CREA"},
+{n:"Ragusano DOP",c:"Formaggi",k:385,p:25.0,gs:21.0,g:30.5,z:0,ch:0,fi:0,ca:1080,fe:0.5,mg:30,k2:85,na:1750,zn:3.2,fo:680,se:14,col:90,src:"CREA"},
+{n:"Canestrato pugliese",c:"Formaggi",k:388,p:24.8,gs:21.5,g:31.0,z:0,ch:0,fi:0,ca:1100,fe:0.5,mg:28,k2:88,na:1820,zn:3.3,fo:690,se:14,col:92,src:"CREA"},
+{n:"Murazzano DOP (pecorino piemontese)",c:"Formaggi",k:290,p:20.5,gs:13.5,g:22.0,z:0.5,ch:0.5,fi:0,ca:730,fe:0.3,mg:20,k2:75,na:900,zn:2.0,fo:420,se:10,col:70,src:"CREA"},
+
+// ── CROSTACEI E MOLLUSCHI MANCANTI (CREA) ──
+{n:"Mazzancolla (gambero imperiale) cruda",c:"Pesce",k:73,p:14.7,gs:0.2,g:0.9,z:0,ch:0,fi:0,ca:80,fe:1.1,mg:38,k2:260,na:190,zn:1.1,fo:250,se:38,col:140,src:"CREA"},
+{n:"Granchio comune crudo",c:"Pesce",k:78,p:16.5,gs:0.2,g:1.0,z:0,ch:0,fi:0,ca:62,fe:0.5,mg:45,k2:260,na:370,zn:3.0,fo:200,se:40,col:60,src:"CREA"},
+{n:"Canestrello (mollusco) fresco",c:"Pesce",k:68,p:12.7,gs:0.2,g:1.1,z:2.6,ch:2.6,fi:0,ca:30,fe:6.5,mg:30,k2:220,na:265,zn:1.5,fo:180,se:25,col:50,src:"CREA"},
+{n:"Fasolaro (Callista chione) fresco",c:"Pesce",k:65,p:10.2,gs:0.2,g:1.0,z:3.5,ch:3.5,fi:0,ca:92,fe:14.0,mg:22,k2:188,na:255,zn:1.3,fo:185,se:30,col:40,src:"CREA"},
+{n:"Cicala di mare (Scyllarus)",c:"Pesce",k:90,p:18.0,gs:0.3,g:1.2,z:0,ch:0,fi:0,ca:70,fe:0.6,mg:40,k2:280,na:350,zn:2.0,fo:230,se:42,col:130,src:"CREA"},
+{n:"Tartufo di mare (Venerupis decussata)",c:"Pesce",k:62,p:10.5,gs:0.2,g:1.0,z:2.8,ch:2.8,fi:0,ca:106,fe:13.5,mg:18,k2:195,na:260,zn:1.4,fo:175,se:28,col:38,src:"CREA"},
+{n:"Cannolicchio (Ensis siliqua) fresco",c:"Pesce",k:60,p:10.8,gs:0.1,g:0.5,z:3.0,ch:3.0,fi:0,ca:58,fe:6.0,mg:22,k2:180,na:290,zn:1.2,fo:160,se:20,col:35,src:"CREA"},
+{n:"Dattero di mare (Lithophaga) fresco",c:"Pesce",k:75,p:13.0,gs:0.3,g:1.5,z:2.5,ch:2.5,fi:0,ca:102,fe:19.0,mg:26,k2:200,na:310,zn:1.8,fo:195,se:32,col:45,src:"CREA"},
+
+// ── BEVANDE MANCANTI ──
+{n:"Acqua di cocco pura (non da concentrato)",c:"Bevande",k:19,p:0.7,gs:0,g:0.2,z:2.6,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:250,na:105,zn:0.1,fo:20,se:1,col:0,src:"BDA"},
+{n:"Vino cotto (sapa/mosto cotto)",c:"Bevande",k:258,p:0.5,gs:0,g:0,z:63.0,ch:64.0,fi:0,ca:22,fe:2.0,mg:12,k2:210,na:10,zn:0.2,fo:30,se:1,col:0,src:"BDA"},
+{n:"Succo di bergamotto puro",c:"Bevande",k:28,p:0.5,gs:0,g:0.1,z:3.2,ch:7.2,fi:0.3,ca:45,fe:0.1,mg:9,k2:110,na:3,zn:0.1,fo:12,se:0.2,col:0,src:"CREA"},
+
+// ── LEGUMI MANCANTI ──
+{n:"Fave fresche (con baccello)",c:"Legumi",k:41,p:5.0,gs:0,g:0.4,z:1.0,ch:6.0,fi:4.2,ca:18,fe:1.5,mg:28,k2:330,na:3,zn:0.6,fo:73,se:1,col:0,src:"CREA"},
+{n:"Fave secche decorticate",c:"Legumi",k:318,p:26.0,gs:0.1,g:1.5,z:0.5,ch:55.0,fi:8.0,ca:103,fe:7.1,mg:115,k2:1062,na:5,zn:3.1,fo:421,se:8,col:0,src:"CREA"},
+{n:"Cicerchie secche",c:"Legumi",k:295,p:25.0,gs:0.1,g:0.8,z:0,ch:56.8,fi:5.8,ca:130,fe:5.0,mg:98,k2:900,na:26,zn:2.5,fo:380,se:6,col:0,src:"CREA"},
+{n:"Lupini ammollati e salati",c:"Legumi",k:119,p:15.6,gs:0.9,g:5.1,z:0,ch:10.9,fi:2.0,ca:57,fe:1.9,mg:50,k2:430,na:408,zn:1.6,fo:170,se:5,col:0,src:"CREA"},
+
+// ── CEREALI MANCANTI ──
+{n:"Riso Venere (riso nero) crudo",c:"Cereali e derivati",k:357,p:8.5,gs:0.5,g:3.0,z:0.5,ch:74.5,fi:4.5,ca:10,fe:2.8,mg:100,k2:230,na:10,zn:2.0,fo:250,se:18,col:0,src:"CREA"},
+{n:"Riso rosso fermentato",c:"Cereali e derivati",k:346,p:8.0,gs:0.4,g:2.0,z:0,ch:74.7,fi:3.0,ca:14,fe:2.5,mg:80,k2:180,na:9,zn:1.8,fo:220,se:10,col:0,src:"BDA"},
+{n:"Teff crudo (cereale etiope)",c:"Cereali e derivati",k:367,p:13.3,gs:0.7,g:2.4,z:1.8,ch:73.1,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:429,se:0,col:0,src:"BDA"},
+{n:"Sorgo in chicchi crudo",c:"Cereali e derivati",k:329,p:10.6,gs:0.4,g:3.5,z:2.0,ch:69.0,fi:6.3,ca:13,fe:3.4,mg:165,k2:350,na:2,zn:1.7,fo:289,se:12,col:0,src:"BDA"},
+{n:"Farro monococco crudo",c:"Cereali e derivati",k:340,p:14.5,gs:0.3,g:2.0,z:0,ch:68.5,fi:7.5,ca:44,fe:3.7,mg:85,k2:380,na:5,zn:2.2,fo:320,se:36,col:0,src:"CREA"},
+{n:"Farro dicocco crudo",c:"Cereali e derivati",k:338,p:13.0,gs:0.3,g:2.0,z:0,ch:68.5,fi:7.0,ca:42,fe:3.5,mg:80,k2:360,na:5,zn:2.1,fo:310,se:34,col:0,src:"CREA"},
+
+// ── NOCI E SEMI MANCANTI ──
+{n:"Semi di canapa decorticati",c:"Semi e frutta secca",k:553,p:31.6,gs:3.8,g:48.7,z:1.1,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:483,k2:1200,na:5,zn:9.9,fo:1650,se:14,col:0,src:"BDA"},
+{n:"Noci di Macadamia crude",c:"Semi e frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:188,se:3.6,col:0,src:"BDA"},
+{n:"Noci pecan crude",c:"Semi e frutta secca",k:691,p:9.2,gs:6.2,g:72.0,z:3.9,ch:13.9,fi:9.6,ca:70,fe:2.5,mg:121,k2:410,na:0,zn:4.5,fo:277,se:3.8,col:0,src:"BDA"},
+{n:"Pistacchi tostati non salati",c:"Semi e frutta secca",k:594,p:21.4,gs:5.9,g:45.4,z:7.7,ch:27.2,fi:10.3,ca:107,fe:4.2,mg:109,k2:1042,na:6,zn:2.2,fo:490,se:7,col:0,src:"CREA"},
+{n:"Arachidi crude non tostate",c:"Semi e frutta secca",k:567,p:25.8,gs:7.0,g:49.2,z:3.9,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7.2,col:0,src:"CREA"},
+{n:"Mandorle crude con pelle",c:"Semi e frutta secca",k:578,p:21.1,gs:3.8,g:49.9,z:3.9,ch:19.7,fi:12.5,ca:248,fe:3.7,mg:270,k2:705,na:1,zn:3.1,fo:481,se:2.5,col:0,src:"CREA"},
+{n:"Noci brasiliane crude",c:"Semi e frutta secca",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:725,se:1917,col:0,src:"BDA"},
+
+// ── ALGHE E PRODOTTI MARINI ──
+{n:"Alga nori essiccata",c:"Alimenti vari",k:35,p:5.8,gs:0.3,g:0.3,z:0.5,ch:5.1,fi:3.5,ca:70,fe:1.9,mg:2,k2:356,na:48,zn:1.5,fo:58,se:1,col:0,src:"BDA"},
+{n:"Alga wakame essiccata",c:"Alimenti vari",k:45,p:3.0,gs:0.2,g:0.6,z:0.5,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:89,na:872,zn:0.4,fo:80,se:0.7,col:0,src:"BDA"},
+{n:"Alga kombu essiccata",c:"Alimenti vari",k:43,p:1.7,gs:0.5,g:0.6,z:0,ch:9.6,fi:1.3,ca:168,fe:2.8,mg:121,k2:89,na:233,zn:1.2,fo:42,se:0.7,col:0,src:"BDA"},
+
+// ── CONDIMENTI E SALSE MANCANTI ──
+{n:"Aceto di mele biologico non filtrato",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.4,ch:5.0,fi:0,ca:7,fe:0.3,mg:5,k2:73,na:5,zn:0.1,fo:4,se:0,col:0,src:"BDA"},
+{n:"Miso (pasta di soia fermentata)",c:"Condimenti",k:200,p:12.0,gs:1.0,g:6.0,z:3.2,ch:26.5,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3728,zn:2.6,fo:153,se:7,col:0,src:"BDA"},
+{n:"Tahini (pasta di sesamo)",c:"Condimenti",k:595,p:17.0,gs:8.1,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:640,se:34,col:0,src:"CREA"},
+{n:"Harissa (salsa piccante nordafricana)",c:"Condimenti",k:90,p:3.8,gs:1.3,g:5.5,z:3.5,ch:9.8,fi:4.5,ca:45,fe:3.0,mg:28,k2:320,na:750,zn:0.8,fo:60,se:3,col:0,src:"BDA"}
 ];
 
 let CUSTOM_DB=[];

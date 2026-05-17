@@ -78,6 +78,33 @@
 .pc-sign-btn{margin-top:12px;background:var(--teal);color:white;border:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
 .pc-sign-btn:hover{background:var(--teal-d)}
 .pc-sign-btn:disabled{opacity:.5;cursor:not-allowed}
+/* ── ProGate ── */
+.pro-gate{text-align:center;padding:36px 20px;background:#F8FAFC;border-radius:10px;border:2px dashed #CBD5E1;margin:8px 0}
+.pro-gate-ico{font-size:34px;margin-bottom:10px}
+.pro-gate-title{font-weight:700;font-size:14px;color:var(--slate);margin-bottom:6px}
+.pro-gate-msg{font-size:12.5px;color:var(--slate-l);line-height:1.5;max-width:320px;margin:0 auto}
+/* ── Sub-tabs ── */
+.sub-tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.sub-tab{padding:9px 14px;cursor:pointer;font-size:12px;font-weight:600;color:var(--slate-l);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.sub-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.sub-tab:hover{color:var(--slate);background:#F8FAFC}
+/* ── Week navigator ── */
+.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:9px 12px;background:#F8FAFC;border-radius:8px;border:1px solid var(--border)}
+.week-nav-btn{background:var(--teal);color:white;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px}
+.week-nav-btn.locked{background:#E2E8F0;color:#94A3B8;cursor:not-allowed}
+/* ── Macro cards ── */
+.macro-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(min-width:480px){.macro-grid{grid-template-columns:repeat(4,1fr)}}
+.macro-card{background:white;border:1.5px solid var(--border);border-radius:10px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.macro-val{font-size:20px;font-weight:700;color:var(--teal)}
+.macro-label{font-size:11px;color:var(--slate-l);font-weight:600;margin-top:3px}
+/* ── Bar chart ── */
+.chart-wrap{padding:2px 0}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-label{font-size:11.5px;color:var(--slate-m);width:28px;text-align:right;flex-shrink:0;font-weight:600}
+.bar-track{flex:1;height:18px;background:#F1F5F9;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.bar-val{font-size:11px;color:var(--slate-l);min-width:42px;flex-shrink:0}
 </style>
 </head>
 <body style="background:var(--bg)">
@@ -97,6 +124,10 @@
     <div class="pp-tab" onclick="switchPPTab('diary')" id="pp-tab-diary"><span data-i18n="pp.tab_diary">📓 Diario</span></div>
     <div class="pp-tab" onclick="switchPPTab('chat')" id="pp-tab-chat"><span data-i18n="pp.tab_chat">💬 Chat</span></div>
     <div class="pp-tab" onclick="switchPPTab('privacy')" id="pp-tab-privacy"><span data-i18n="pp.tab_privacy">📋 Privacy</span></div>
+    <div class="pp-tab" onclick="switchPPTab('statistiche')" id="pp-tab-statistiche">📊 Statistiche</div>
+    <div class="pp-tab" onclick="switchPPTab('macro')" id="pp-tab-macro">🔬 Macro</div>
+    <div class="pp-tab" onclick="switchPPTab('attivita')" id="pp-tab-attivita">🏃 Attività</div>
+    <div class="pp-tab" onclick="switchPPTab('progressi')" id="pp-tab-progressi">📈 Progressi</div>
   </div>
 
   <!-- PROFILE TAB -->
@@ -199,6 +230,111 @@
     <div class="pp-section">
       <div class="pp-section-hdr">📋 Privacy e Consenso al Trattamento dei Dati</div>
       <div class="pp-section-body" id="pp-consents-list">
+        <div class="pp-empty">Caricamento...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATISTICS TAB -->
+  <div id="pp-panel-statistiche" style="display:none">
+    <div class="pp-section">
+      <div class="pp-section-hdr">📊 Statistiche</div>
+      <div class="pp-section-body">
+        <div class="sub-tab-bar">
+          <div class="sub-tab active" onclick="switchStatsTab('grafici')" id="stats-tab-grafici">📈 Grafici</div>
+          <div class="sub-tab" onclick="switchStatsTab('aderenza')" id="stats-tab-aderenza">✅ Aderenza</div>
+          <div class="sub-tab" onclick="switchStatsTab('confronto')" id="stats-tab-confronto">🔄 Confronto</div>
+          <div class="sub-tab" onclick="switchStatsTab('report')" id="stats-tab-report">📄 Report PDF</div>
+        </div>
+        <div id="stats-panel-grafici">
+          <div class="week-nav">
+            <button class="week-nav-btn" id="stats-prev-btn" onclick="statsNavWeek(-1)">◀ Precedente</button>
+            <span id="stats-week-label" style="font-size:13px;font-weight:700;color:var(--slate)">Settimana corrente</span>
+            <button class="week-nav-btn" id="stats-next-btn" onclick="statsNavWeek(1)" disabled>Successiva ▶</button>
+          </div>
+          <div id="stats-grafici-content"></div>
+        </div>
+        <div id="stats-panel-aderenza" style="display:none"></div>
+        <div id="stats-panel-confronto" style="display:none"></div>
+        <div id="stats-panel-report" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MACRO TRACKER TAB -->
+  <div id="pp-panel-macro" style="display:none">
+    <div class="pp-section">
+      <div class="pp-section-hdr">🔬 Macro Tracker — Oggi</div>
+      <div class="pp-section-body">
+        <div id="macro-summary"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div class="pp-field" style="margin-bottom:0"><label>Calorie (kcal)</label><input type="number" id="macro-kcal" placeholder="es. 1800" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label>Acqua (ml)</label><input type="number" id="macro-acqua" placeholder="es. 1500" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label>Proteine (g)</label><input type="number" id="macro-proteine" placeholder="es. 80" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label>Carboidrati (g)</label><input type="number" id="macro-carboidrati" placeholder="es. 200" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0;grid-column:1/-1"><label>Grassi (g)</label><input type="number" id="macro-grassi" placeholder="es. 60" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;max-width:160px"></div>
+        </div>
+        <button onclick="salvaMacro()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Salva</button>
+        <div id="macro-micro-section"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY TAB -->
+  <div id="pp-panel-attivita" style="display:none">
+    <div class="pp-section">
+      <div class="pp-section-hdr">🏃 Attività Fisica</div>
+      <div class="pp-section-body">
+        <div class="sub-tab-bar">
+          <div class="sub-tab active" onclick="switchAttivitaTab('oggi')" id="att-tab-oggi">📅 Oggi</div>
+          <div class="sub-tab" onclick="switchAttivitaTab('settimana')" id="att-tab-settimana">📊 Settimana</div>
+          <div class="sub-tab" onclick="switchAttivitaTab('storico')" id="att-tab-storico">🗂️ Storico</div>
+        </div>
+        <div id="att-panel-oggi">
+          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin-bottom:14px">
+            <div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">✏️ Registra attività</div>
+            <div class="pp-field">
+              <label>Data</label>
+              <input type="date" id="att-date" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
+            </div>
+            <div class="pp-field">
+              <label>Tipo di attività</label>
+              <input type="text" id="att-tipo" placeholder="es. Camminata, Palestra, Nuoto…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div class="pp-field" style="margin-bottom:0">
+                <label>Durata (min)</label>
+                <input type="number" id="att-durata" placeholder="es. 45" min="1" max="600" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
+              </div>
+              <div class="pp-field" style="margin-bottom:0">
+                <label>Intensità</label>
+                <select id="att-intensita" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;background:white">
+                  <option value="">— Seleziona —</option>
+                  <option value="leggera">🟢 Leggera</option>
+                  <option value="moderata">🟡 Moderata</option>
+                  <option value="intensa">🔴 Intensa</option>
+                </select>
+              </div>
+            </div>
+            <div class="pp-field">
+              <label>Note (opzionale)</label>
+              <input type="text" id="att-note" placeholder="es. corsa in parco, circuito in palestra…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none">
+            </div>
+            <button onclick="logAttivita()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">🏃 Registra</button>
+          </div>
+          <div id="att-oggi-list"></div>
+        </div>
+        <div id="att-panel-settimana" style="display:none"></div>
+        <div id="att-panel-storico" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS TAB -->
+  <div id="pp-panel-progressi" style="display:none">
+    <div class="pp-section">
+      <div class="pp-section-hdr">📈 Progressi — Peso</div>
+      <div class="pp-section-body" id="pp-progressi-content">
         <div class="pp-empty">Caricamento...</div>
       </div>
     </div>
@@ -368,6 +504,7 @@ async function init() {
 
   // Load linked cartelle
   await loadLinkedData();
+  await checkDietitianPlan();
   await loadDiete();
   await loadDocuments();
   setupDocsRealtime();
@@ -399,11 +536,17 @@ async function doLogout() {
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════
 function switchPPTab(tab) {
-  ['profile', 'dieta', 'docs', 'diary', 'chat', 'privacy'].forEach(t => {
-    document.getElementById('pp-panel-' + t).style.display = t === tab ? '' : 'none';
-    document.getElementById('pp-tab-' + t).classList.toggle('active', t === tab);
+  ['profile','dieta','docs','diary','chat','privacy','statistiche','macro','attivita','progressi'].forEach(t => {
+    const p = document.getElementById('pp-panel-' + t);
+    const b = document.getElementById('pp-tab-' + t);
+    if (p) p.style.display = t === tab ? '' : 'none';
+    if (b) b.classList.toggle('active', t === tab);
   });
   if (tab === 'privacy') loadConsents();
+  if (tab === 'statistiche') loadStatistiche();
+  if (tab === 'macro') loadMacroTracker();
+  if (tab === 'attivita') { switchAttivitaTab('oggi'); loadAttivitaOggi(); }
+  if (tab === 'progressi') loadProgressi();
 }
 
 // ═══════════════════════════════════════════════════
@@ -1125,6 +1268,406 @@ async function signConsent(consentId) {
 
   toast('✅ Consenso firmato con successo!', 'ok');
   await loadConsents();
+}
+
+// ═══════════════════════════════════════════════════
+// PROGATE — controlla abbonamento del dietista collegato
+// ═══════════════════════════════════════════════════
+let dietitianIsPro = false;
+
+async function checkDietitianPlan() {
+  if (!chatDietitianId) return;
+  try {
+    const { data } = await sb.from('profiles')
+      .select('subscription_plan,subscription_expires')
+      .eq('id', chatDietitianId)
+      .maybeSingle();
+    if (!data) return;
+    const plan = data.subscription_plan || 'free';
+    const exp = data.subscription_expires;
+    dietitianIsPro = plan === 'pro' && (!exp || new Date(exp) > new Date());
+  } catch(e) { dietitianIsPro = false; }
+}
+
+function proGate(msg) {
+  return `<div class="pro-gate">
+    <div class="pro-gate-ico">🔒</div>
+    <div class="pro-gate-title">Funzionalità Pro</div>
+    <div class="pro-gate-msg">${msg || 'Disponibile con il piano Professional del tuo nutrizionista.'}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// STATISTICS PAGE
+// ═══════════════════════════════════════════════════
+let statsWeekOffset = 0;
+
+function statsWeekRange(offset) {
+  const now = new Date();
+  const day = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - day + (offset * 7));
+  monday.setHours(0,0,0,0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23,59,59,999);
+  return { monday, sunday };
+}
+
+function fmtWeekLabel(offset) {
+  if (offset === 0) return 'Settimana corrente';
+  const { monday, sunday } = statsWeekRange(offset);
+  const fmt = d => d.toLocaleDateString('it', { day: '2-digit', month: '2-digit' });
+  return `${fmt(monday)} – ${fmt(sunday)}`;
+}
+
+function statsNavWeek(dir) {
+  if (!dietitianIsPro && dir < 0) return;
+  statsWeekOffset = Math.min(0, statsWeekOffset + dir);
+  if (!dietitianIsPro) statsWeekOffset = 0;
+  renderStatsGrafici();
+}
+
+function switchStatsTab(tab) {
+  ['grafici','aderenza','confronto','report'].forEach(t => {
+    const p = document.getElementById('stats-panel-' + t);
+    const b = document.getElementById('stats-tab-' + t);
+    if (p) p.style.display = t === tab ? '' : 'none';
+    if (b) b.classList.toggle('active', t === tab);
+  });
+  if (tab === 'aderenza') renderStatsAderenza();
+  if (tab === 'confronto') renderStatsConfronto();
+  if (tab === 'report') renderStatsReport();
+}
+
+function renderStatsGrafici() {
+  const prevBtn = document.getElementById('stats-prev-btn');
+  const nextBtn = document.getElementById('stats-next-btn');
+  const label = document.getElementById('stats-week-label');
+
+  if (prevBtn) {
+    if (!dietitianIsPro) {
+      prevBtn.innerHTML = '🔒 Precedente';
+      prevBtn.classList.add('locked');
+    } else {
+      prevBtn.innerHTML = '◀ Precedente';
+      prevBtn.classList.remove('locked');
+    }
+  }
+  if (nextBtn) nextBtn.disabled = statsWeekOffset >= 0;
+  if (label) label.textContent = fmtWeekLabel(statsWeekOffset);
+
+  const content = document.getElementById('stats-grafici-content');
+  if (!content) return;
+
+  if (!dietitianIsPro) {
+    content.innerHTML = proGate('Grafici di calorie e idratazione settimanali disponibili con il piano Professional del tuo nutrizionista.');
+    return;
+  }
+
+  const { monday } = statsWeekRange(statsWeekOffset);
+  const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+  const uid = currentUser?.id;
+  const calData = [], hydData = [];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const key = `pp_macro_${uid}_${d.toISOString().split('T')[0]}`;
+    try {
+      const s = JSON.parse(localStorage.getItem(key) || '{}');
+      calData.push(s.kcal || 0);
+      hydData.push(s.acqua || 0);
+    } catch(e) { calData.push(0); hydData.push(0); }
+  }
+
+  const maxCal = Math.max(...calData, 2000);
+  const maxHyd = Math.max(...hydData, 2000);
+
+  const barHtml = (data, max, colorFn) => days.map((d, i) => {
+    const w = data[i] ? Math.round((data[i] / max) * 100) : 0;
+    return `<div class="bar-row"><span class="bar-label">${d}</span><div class="bar-track"><div class="bar-fill" style="width:${w}%;background:${colorFn(data[i])}"></div></div><span class="bar-val">${data[i] || '—'}</span></div>`;
+  }).join('');
+
+  content.innerHTML =
+    `<div style="margin-bottom:18px"><div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:10px">🔥 Calorie (kcal)</div><div class="chart-wrap">${barHtml(calData, maxCal, v => v > 0 ? 'var(--teal)' : '#E2E8F0')}</div></div>` +
+    `<div><div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:10px">💧 Idratazione (ml)</div><div class="chart-wrap">${barHtml(hydData, maxHyd, v => v >= 1500 ? '#3B82F6' : v > 0 ? '#93C5FD' : '#E2E8F0')}</div></div>`;
+}
+
+function renderStatsAderenza() {
+  const el = document.getElementById('stats-panel-aderenza');
+  if (!el) return;
+  el.innerHTML = proGate('Analisi dell\'aderenza al piano alimentare disponibile con il piano Professional del tuo nutrizionista.');
+}
+
+function renderStatsConfronto() {
+  const el = document.getElementById('stats-panel-confronto');
+  if (!el) return;
+  el.innerHTML = proGate('Confronto settimanale tra periodi disponibile con il piano Professional del tuo nutrizionista.');
+}
+
+function renderStatsReport() {
+  const el = document.getElementById('stats-panel-report');
+  if (!el) return;
+  el.innerHTML = proGate('Generazione Report PDF disponibile con il piano Professional del tuo nutrizionista.');
+}
+
+function loadStatistiche() {
+  statsWeekOffset = 0;
+  switchStatsTab('grafici');
+  renderStatsGrafici();
+}
+
+// ═══════════════════════════════════════════════════
+// MACRO TRACKER
+// ═══════════════════════════════════════════════════
+function macroTodayKey() {
+  return `pp_macro_${currentUser?.id}_${new Date().toISOString().split('T')[0]}`;
+}
+
+function loadMacroTracker() {
+  let stored = {};
+  try { stored = JSON.parse(localStorage.getItem(macroTodayKey()) || '{}'); } catch(e) {}
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+  setVal('macro-kcal', stored.kcal);
+  setVal('macro-proteine', stored.proteine);
+  setVal('macro-carboidrati', stored.carboidrati);
+  setVal('macro-grassi', stored.grassi);
+  setVal('macro-acqua', stored.acqua);
+  renderMacroSummary(stored);
+  renderMicroSection();
+}
+
+function salvaMacro() {
+  const getVal = id => { const el = document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; };
+  const data = { kcal: getVal('macro-kcal'), proteine: getVal('macro-proteine'), carboidrati: getVal('macro-carboidrati'), grassi: getVal('macro-grassi'), acqua: getVal('macro-acqua'), ts: new Date().toISOString() };
+  localStorage.setItem(macroTodayKey(), JSON.stringify(data));
+  renderMacroSummary(data);
+  toast('✅ Dati macro salvati!', 'ok');
+}
+
+function renderMacroSummary(d) {
+  const el = document.getElementById('macro-summary');
+  if (!el) return;
+  el.innerHTML = `<div class="macro-grid" style="margin-bottom:14px">
+    <div class="macro-card"><div class="macro-val">${d.kcal || '—'}</div><div class="macro-label">kcal</div></div>
+    <div class="macro-card"><div class="macro-val" style="color:#EF4444">${d.proteine || '—'}</div><div class="macro-label">Proteine (g)</div></div>
+    <div class="macro-card"><div class="macro-val" style="color:#F59E0B">${d.carboidrati || '—'}</div><div class="macro-label">Carboidrati (g)</div></div>
+    <div class="macro-card"><div class="macro-val" style="color:#8B5CF6">${d.grassi || '—'}</div><div class="macro-label">Grassi (g)</div></div>
+  </div>
+  <div style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">💧 Idratazione: <b>${d.acqua ? d.acqua + ' ml' : '—'}</b></div>`;
+}
+
+function renderMicroSection() {
+  const el = document.getElementById('macro-micro-section');
+  if (!el) return;
+  if (dietitianIsPro) {
+    let stored = {};
+    try { stored = JSON.parse(localStorage.getItem(macroTodayKey()) || '{}'); } catch(e) {}
+    const microFields = [['Fibra','g','fibra'],['Sodio','mg','sodio'],['Calcio','mg','calcio'],['Ferro','mg','ferro'],['Vitamina C','mg','vitc'],['Vitamina D','mcg','vitd']];
+    el.innerHTML = `<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
+      <div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">🔬 Micronutrienti</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        ${microFields.map(([label,unit,k]) =>
+          `<div class="pp-field" style="margin-bottom:0"><label>${label} (${unit})</label><input type="number" id="micro-${k}" value="${stored[k]||''}" placeholder="0" min="0" step="0.1" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none"></div>`
+        ).join('')}
+      </div>
+      <button onclick="salvaMicro()" style="margin-top:12px;background:var(--teal);color:white;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Salva micronutrienti</button>
+    </div>`;
+  } else {
+    el.innerHTML = `<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">${proGate('Tracciamento micronutrienti (fibra, sodio, calcio, ferro, vitamina C e D) disponibile con il piano Professional del tuo nutrizionista.')}</div>`;
+  }
+}
+
+function salvaMicro() {
+  let stored = {};
+  try { stored = JSON.parse(localStorage.getItem(macroTodayKey()) || '{}'); } catch(e) {}
+  const getVal = k => { const el = document.getElementById('micro-' + k); return el ? (parseFloat(el.value) || 0) : 0; };
+  ['fibra','sodio','calcio','ferro','vitc','vitd'].forEach(k => { stored[k] = getVal(k); });
+  localStorage.setItem(macroTodayKey(), JSON.stringify(stored));
+  toast('✅ Micronutrienti salvati!', 'ok');
+}
+
+// ═══════════════════════════════════════════════════
+// ACTIVITY PAGE
+// ═══════════════════════════════════════════════════
+function switchAttivitaTab(tab) {
+  ['oggi','settimana','storico'].forEach(t => {
+    const p = document.getElementById('att-panel-' + t);
+    const b = document.getElementById('att-tab-' + t);
+    if (p) p.style.display = t === tab ? '' : 'none';
+    if (b) b.classList.toggle('active', t === tab);
+  });
+  if (tab === 'settimana') renderAttivitaSettimana();
+  if (tab === 'storico') renderAttivitaStorico();
+}
+
+async function loadAttivitaOggi() {
+  const list = document.getElementById('att-oggi-list');
+  if (!list) return;
+  const dateEl = document.getElementById('att-date');
+  if (dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
+  if (!linkedCartelle.length) { list.innerHTML = '<div class="pp-empty">Non sei collegato a nessun nutrizionista.</div>'; return; }
+
+  const today = new Date().toISOString().split('T')[0];
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  try {
+    const { data } = await sb.from('daily_wellness')
+      .select('logged_at,activity')
+      .in('cartella_id', cartellaIds)
+      .gte('logged_at', today + 'T00:00:00')
+      .lte('logged_at', today + 'T23:59:59')
+      .not('activity', 'is', null)
+      .order('logged_at', { ascending: false });
+    const entries = (data || []).filter(r => r.activity);
+    if (!entries.length) {
+      list.innerHTML = '<div class="pp-empty" style="padding:14px">Nessuna attività registrata oggi.</div>';
+    } else {
+      list.innerHTML = entries.map(r => `<div class="pp-doc-item" style="margin-bottom:8px">
+        <span class="pp-doc-icon">🏃</span>
+        <div class="pp-doc-info">
+          <div class="pp-doc-title">${esc(r.activity)}</div>
+          <div class="pp-doc-meta">${new Date(r.logged_at).toLocaleTimeString('it',{hour:'2-digit',minute:'2-digit'})}</div>
+        </div></div>`).join('');
+    }
+  } catch(e) { list.innerHTML = '<div class="pp-empty">Errore caricamento.</div>'; }
+}
+
+async function logAttivita() {
+  if (!linkedCartelle.length) { toast('Non sei collegato a nessun nutrizionista', 'err'); return; }
+  const tipo = (document.getElementById('att-tipo')?.value || '').trim();
+  const durata = document.getElementById('att-durata')?.value || '';
+  const intensita = document.getElementById('att-intensita')?.value || '';
+  const note = (document.getElementById('att-note')?.value || '').trim();
+  const dateVal = document.getElementById('att-date')?.value || new Date().toISOString().split('T')[0];
+  if (!tipo) { toast('Inserisci il tipo di attività', 'err'); return; }
+
+  const actStr = `${tipo}${durata ? ' — ' + durata + ' min' : ''}${intensita ? ' (' + intensita + ')' : ''}${note ? ' — ' + note : ''}`;
+  const { error } = await sb.from('daily_wellness').insert({
+    cartella_id: linkedCartelle[0].cartella_id,
+    patient_id: currentUser.id,
+    logged_at: new Date(dateVal).toISOString(),
+    activity: actStr
+  });
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  ['att-tipo','att-durata','att-note'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  if (document.getElementById('att-intensita')) document.getElementById('att-intensita').value = '';
+  toast('✅ Attività registrata!', 'ok');
+  await loadAttivitaOggi();
+}
+
+async function renderAttivitaSettimana() {
+  const el = document.getElementById('att-panel-settimana');
+  if (!el) return;
+  if (!dietitianIsPro) { el.innerHTML = proGate('Grafico attività settimanale disponibile con il piano Professional del tuo nutrizionista.'); return; }
+  if (!linkedCartelle.length) { el.innerHTML = '<div class="pp-empty">Non sei collegato a nessun nutrizionista.</div>'; return; }
+
+  const { monday, sunday } = statsWeekRange(0);
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  const { data } = await sb.from('daily_wellness')
+    .select('logged_at,activity')
+    .in('cartella_id', cartellaIds)
+    .gte('logged_at', monday.toISOString())
+    .lte('logged_at', sunday.toISOString())
+    .not('activity', 'is', null);
+
+  const counts = new Array(7).fill(0);
+  (data || []).filter(r => r.activity).forEach(r => {
+    const d = new Date(r.logged_at); const idx = d.getDay() === 0 ? 6 : d.getDay() - 1; counts[idx]++;
+  });
+  const maxC = Math.max(...counts, 1);
+  const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+  el.innerHTML = `<div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">🏃 Attività questa settimana</div><div class="chart-wrap">${
+    days.map((d,i) => `<div class="bar-row"><span class="bar-label">${d}</span><div class="bar-track"><div class="bar-fill" style="width:${counts[i]?Math.round(counts[i]/maxC*100):0}%;background:${counts[i]>0?'#10B981':'#E2E8F0'}"></div></div><span class="bar-val">${counts[i]>0?counts[i]+' att.':'—'}</span></div>`).join('')
+  }</div>`;
+}
+
+async function renderAttivitaStorico() {
+  const el = document.getElementById('att-panel-storico');
+  if (!el) return;
+  if (!dietitianIsPro) { el.innerHTML = proGate('Storico attività 30 giorni disponibile con il piano Professional del tuo nutrizionista.'); return; }
+  if (!linkedCartelle.length) { el.innerHTML = '<div class="pp-empty">Non sei collegato a nessun nutrizionista.</div>'; return; }
+
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  const { data } = await sb.from('daily_wellness')
+    .select('logged_at,activity').in('cartella_id', cartellaIds)
+    .not('activity', 'is', null).order('logged_at', { ascending: false }).limit(30);
+  const entries = (data || []).filter(r => r.activity);
+  if (!entries.length) { el.innerHTML = '<div class="pp-empty">Nessuna attività negli ultimi 30 giorni.</div>'; return; }
+  const fmt = d => new Date(d).toLocaleDateString('it',{day:'2-digit',month:'2-digit',year:'numeric'});
+  el.innerHTML = entries.map(r => `<div class="pp-doc-item" style="margin-bottom:8px"><span class="pp-doc-icon">🏃</span><div class="pp-doc-info"><div class="pp-doc-title">${esc(r.activity)}</div><div class="pp-doc-meta">${fmt(r.logged_at)}</div></div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// PROGRESS PAGE
+// ═══════════════════════════════════════════════════
+async function loadProgressi() {
+  const el = document.getElementById('pp-progressi-content');
+  if (!el) return;
+  if (!linkedCartelle.length) { el.innerHTML = '<div class="pp-empty">Non sei ancora collegato a nessun nutrizionista.</div>'; return; }
+
+  const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
+  const { data: wLogs } = await sb.from('weight_logs')
+    .select('logged_at,weight').in('cartella_id', cartellaIds)
+    .order('logged_at', { ascending: false }).limit(90);
+  const logs = wLogs || [];
+
+  // Chart section (Pro only)
+  let chartHtml;
+  if (!dietitianIsPro) {
+    chartHtml = proGate('Grafico andamento peso disponibile con il piano Professional del tuo nutrizionista.');
+  } else if (logs.length < 2) {
+    chartHtml = '<div class="pp-empty">Registra almeno 2 misurazioni per visualizzare il grafico.</div>';
+  } else {
+    chartHtml = renderWeightChart(logs.slice().reverse());
+  }
+
+  // History list
+  const FREE_LIMIT = 3;
+  const visible = dietitianIsPro ? logs : logs.slice(0, FREE_LIMIT);
+  const hasMore = !dietitianIsPro && logs.length > FREE_LIMIT;
+  const fmt = d => new Date(d).toLocaleDateString('it',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+  let listHtml = '';
+  if (!logs.length) {
+    listHtml = '<div class="pp-empty">Nessuna misurazione. Inserisci il peso nel Diario!</div>';
+  } else {
+    listHtml = visible.map((r, i) => {
+      const prev = visible[i + 1];
+      const delta = prev != null ? (r.weight - prev.weight) : null;
+      const dHtml = delta !== null
+        ? `<span style="font-size:11px;font-weight:700;color:${delta<0?'#16A34A':delta>0?'#DC2626':'#94A3B8'};margin-left:6px">${delta>0?'+':''}${delta.toFixed(1)} kg</span>` : '';
+      return `<div class="pp-doc-item"><span class="pp-doc-icon">⚖️</span><div class="pp-doc-info"><div class="pp-doc-title">${r.weight} kg${dHtml}</div><div class="pp-doc-meta">${fmt(r.logged_at)}</div></div></div>`;
+    }).join('');
+    if (hasMore) listHtml += proGate(`Ci sono altre ${logs.length - FREE_LIMIT} misurazioni precedenti. Disponibili con il piano Professional del tuo nutrizionista.`);
+  }
+
+  el.innerHTML = `
+    <div style="margin-bottom:20px"><div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">📈 Andamento Peso</div>${chartHtml}</div>
+    <div><div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">📋 Storico Misurazioni</div>${listHtml}</div>`;
+}
+
+function renderWeightChart(logs) {
+  const W = 320, H = 120, PX = 30, PY = 20;
+  const weights = logs.map(l => l.weight);
+  const minW = Math.min(...weights) - 0.5;
+  const maxW = Math.max(...weights) + 0.5;
+  const n = logs.length;
+  const xPos = i => PX + (i / Math.max(n - 1, 1)) * (W - PX * 2);
+  const yPos = w => PY + ((maxW - w) / (maxW - minW)) * (H - PY * 2);
+  const pts = logs.map((l,i) => `${xPos(i)},${yPos(l.weight)}`).join(' ');
+  const dots = logs.map((l,i) => `<circle cx="${xPos(i)}" cy="${yPos(l.weight)}" r="3" fill="var(--teal)"/>`).join('');
+  const fmtD = d => new Date(d).toLocaleDateString('it',{day:'2-digit',month:'2-digit'});
+  return `<div style="overflow-x:auto;padding:6px 0">
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:${H}px">
+      <polyline fill="none" stroke="var(--teal)" stroke-width="2" points="${pts}"/>
+      ${dots}
+      <text x="${PX}" y="${H-4}" font-size="9" fill="#94A3B8">${fmtD(logs[0].logged_at)}</text>
+      <text x="${W-PX}" y="${H-4}" font-size="9" fill="#94A3B8" text-anchor="end">${fmtD(logs[logs.length-1].logged_at)}</text>
+      <text x="${PX-4}" y="${yPos(maxW)+4}" font-size="9" fill="#94A3B8" text-anchor="end">${maxW.toFixed(1)}</text>
+      <text x="${PX-4}" y="${yPos(minW)+4}" font-size="9" fill="#94A3B8" text-anchor="end">${minW.toFixed(1)}</text>
+    </svg>
+  </div>`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -1272,7 +1272,43 @@ const DB_BDA=[
 {n:"Albicocche sciroppate",c:"Frutta conservata",k:73,p:0.5,gs:0,g:0.1,z:16.0,ch:18.5,fi:0.8,ca:12,fe:0.5,mg:8,k2:140,na:5,zn:0.1,fo:15,se:0.5,col:0,src:"CREA"},
 {n:"Portulaca",c:"Verdure",k:21,p:1.7,gs:0,g:0.4,z:0.4,ch:3.5,fi:0.9,ca:65,fe:3.5,mg:68,k2:494,na:45,zn:0.3,fo:44,se:0.5,col:0,src:"CREA"},
 {n:"Scarola (indivia scarola)",c:"Verdure",k:17,p:1.7,gs:0,g:0.2,z:0.5,ch:2.5,fi:3.1,ca:52,fe:0.8,mg:15,k2:314,na:22,zn:0.5,fo:44,se:0.5,col:0,src:"CREA"},
-{n:"Germogli di alfa alfa (alfalfa)",c:"Verdure",k:23,p:4.0,gs:0,g:0.7,z:0.2,ch:2.1,fi:1.9,ca:32,fe:1.0,mg:27,k2:79,na:6,zn:0.9,fo:70,se:0.6,col:0,src:"CREA"}
+{n:"Germogli di alfa alfa (alfalfa)",c:"Verdure",k:23,p:4.0,gs:0,g:0.7,z:0.2,ch:2.1,fi:1.9,ca:32,fe:1.0,mg:27,k2:79,na:6,zn:0.9,fo:70,se:0.6,col:0,src:"CREA"},
+// ── Frutta fresca/bacche ──
+{n:"Lampone fresco",c:"Frutta fresca",k:34,p:1.2,gs:0,g:0.7,z:4.4,ch:5.4,fi:6.5,ca:25,fe:0.7,mg:22,k2:151,na:1,zn:0.4,fo:29,se:0.2,col:0,src:"CREA"},
+{n:"Mora di rovo fresca",c:"Frutta fresca",k:43,p:1.4,gs:0,g:0.5,z:4.9,ch:9.6,fi:5.3,ca:29,fe:0.6,mg:20,k2:162,na:1,zn:0.5,fo:22,se:0.4,col:0,src:"CREA"},
+{n:"Fragoline di bosco",c:"Frutta fresca",k:31,p:0.9,gs:0,g:0.4,z:5.4,ch:7.1,fi:2.2,ca:16,fe:0.8,mg:13,k2:153,na:1,zn:0.2,fo:23,se:0.4,col:0,src:"CREA"},
+{n:"Gelso nero fresco",c:"Frutta fresca",k:43,p:1.4,gs:0,g:0.4,z:8.1,ch:9.8,fi:1.7,ca:39,fe:1.8,mg:18,k2:194,na:10,zn:0.1,fo:38,se:0.6,col:0,src:"CREA"},
+{n:"Gelso bianco fresco",c:"Frutta fresca",k:43,p:1.4,gs:0,g:0.4,z:8.1,ch:9.8,fi:1.7,ca:39,fe:1.8,mg:18,k2:194,na:10,zn:0.1,fo:38,se:0.6,col:0,src:"CREA"},
+{n:"Uva spina fresca",c:"Frutta fresca",k:44,p:0.9,gs:0,g:0.6,z:6.0,ch:10.5,fi:4.3,ca:25,fe:0.3,mg:10,k2:198,na:1,zn:0.1,fo:27,se:0.6,col:0,src:"CREA"},
+{n:"Mirtillo rosso (lingonberry) fresco",c:"Frutta fresca",k:46,p:0.4,gs:0,g:0.5,z:5.3,ch:12.2,fi:4.2,ca:14,fe:0.2,mg:6,k2:73,na:2,zn:0.1,fo:11,se:0.1,col:0,src:"CREA"},
+{n:"Mela cotogna fresca",c:"Frutta fresca",k:57,p:0.4,gs:0,g:0.1,z:8.9,ch:15.3,fi:1.9,ca:11,fe:0.7,mg:8,k2:197,na:4,zn:0.0,fo:17,se:0.6,col:0,src:"CREA"},
+{n:"Giuggiola fresca",c:"Frutta fresca",k:79,p:1.2,gs:0,g:0.2,z:18.5,ch:20.2,fi:1.8,ca:21,fe:0.5,mg:10,k2:250,na:3,zn:0.1,fo:23,se:0.3,col:0,src:"CREA"},
+{n:"Nespola comune (medlar) fresca",c:"Frutta fresca",k:47,p:0.4,gs:0,g:0.3,z:9.2,ch:11.1,fi:3.0,ca:30,fe:0.3,mg:9,k2:113,na:0,zn:0.1,fo:16,se:0.6,col:0,src:"CREA"},
+{n:"Azzeruolo fresco",c:"Frutta fresca",k:89,p:0.4,gs:0,g:0.3,z:16.0,ch:23.0,fi:2.0,ca:24,fe:0.7,mg:14,k2:185,na:5,zn:0.1,fo:21,se:0.5,col:0,src:"CREA"},
+// ── Pesce d'acqua dolce ──
+{n:"Lavarello (coregone) fresco",c:"Pesce",k:100,p:18.5,gs:0.5,g:2.8,z:0,ch:0,fi:0,ca:30,fe:0.5,mg:28,k2:340,na:50,zn:0.6,fo:210,se:12,col:52,src:"CREA"},
+{n:"Tinca fresca",c:"Pesce",k:105,p:17.9,gs:0.5,g:4.1,z:0,ch:0,fi:0,ca:50,fe:0.8,mg:24,k2:280,na:55,zn:0.8,fo:220,se:10,col:58,src:"CREA"},
+{n:"Alborella fresca",c:"Pesce",k:96,p:17.0,gs:0.5,g:3.2,z:0,ch:0,fi:0,ca:55,fe:1.0,mg:20,k2:290,na:60,zn:0.7,fo:200,se:8,col:55,src:"CREA"},
+{n:"Agone fresco",c:"Pesce",k:148,p:18.0,gs:2.0,g:8.5,z:0,ch:0,fi:0,ca:58,fe:1.5,mg:30,k2:310,na:65,zn:1.0,fo:215,se:10,col:65,src:"CREA"},
+{n:"Storione fresco",c:"Pesce",k:105,p:16.1,gs:0.5,g:4.2,z:0,ch:0,fi:0,ca:13,fe:0.8,mg:30,k2:240,na:54,zn:0.4,fo:210,se:8,col:55,src:"CREA"},
+{n:"Stoccafisso secco (non ammollato)",c:"Pesce",k:312,p:72.5,gs:0.5,g:2.9,z:0,ch:0,fi:0,ca:154,fe:2.5,mg:66,k2:1194,na:192,zn:1.8,fo:570,se:108,col:178,src:"CREA"},
+{n:"Tellina (vongola comune) fresca",c:"Pesce",k:72,p:12.8,gs:0.2,g:1.7,z:0.3,ch:3.6,fi:0,ca:116,fe:22.0,mg:38,k2:235,na:287,zn:2.0,fo:210,se:45,col:40,src:"CREA"},
+{n:"Chiocciole (lumache di terra) crude",c:"Carne e derivati",k:90,p:16.5,gs:0.2,g:1.4,z:0,ch:2.0,fi:0,ca:170,fe:3.5,mg:250,k2:382,na:70,zn:1.0,fo:272,se:12,col:50,src:"CREA"},
+// ── Selvaggina e volatili ──
+{n:"Fagiano intero eviscerato crudo",c:"Carni",k:144,p:24.3,gs:0.9,g:5.2,z:0,ch:0,fi:0,ca:14,fe:1.9,mg:25,k2:305,na:45,zn:1.5,fo:220,se:22,col:75,src:"CREA"},
+{n:"Pernice (starna) cruda",c:"Carni",k:120,p:24.0,gs:0.5,g:2.0,z:0,ch:0,fi:0,ca:12,fe:5.0,mg:22,k2:340,na:50,zn:2.5,fo:240,se:18,col:75,src:"CREA"},
+{n:"Lepre cruda",c:"Carni",k:107,p:21.2,gs:0.2,g:2.1,z:0,ch:0,fi:0,ca:17,fe:3.9,mg:28,k2:380,na:45,zn:2.5,fo:225,se:8,col:65,src:"CREA"},
+{n:"Daino coscia cruda",c:"Carni",k:103,p:21.8,gs:0.2,g:1.5,z:0,ch:0,fi:0,ca:12,fe:3.5,mg:26,k2:350,na:55,zn:3.0,fo:210,se:10,col:60,src:"CREA"},
+// ── Erbe aromatiche e spezie ──
+{n:"Dragoncello fresco (estragone)",c:"Erbe aromatiche",k:295,p:22.8,gs:0,g:7.2,z:0,ch:50.2,fi:7.4,ca:1139,fe:32.3,mg:347,k2:3020,na:62,zn:3.9,fo:313,se:0,col:0,src:"CREA"},
+{n:"Cerfoglio fresco",c:"Erbe aromatiche",k:40,p:3.5,gs:0,g:0.6,z:0.2,ch:5.9,fi:3.3,ca:170,fe:3.2,mg:50,k2:420,na:83,zn:0.9,fo:95,se:0.9,col:0,src:"CREA"},
+{n:"Aneto fresco",c:"Erbe aromatiche",k:43,p:3.5,gs:0,g:1.1,z:0.4,ch:7.0,fi:2.1,ca:208,fe:6.6,mg:55,k2:738,na:61,zn:0.9,fo:66,se:0.5,col:0,src:"CREA"},
+{n:"Maggiorana fresca",c:"Erbe aromatiche",k:271,p:12.7,gs:0,g:7.0,z:4.1,ch:42.5,fi:40.3,ca:1990,fe:82.7,mg:346,k2:1522,na:77,zn:3.6,fo:306,se:0,col:0,src:"CREA"},
+{n:"Origano fresco",c:"Erbe aromatiche",k:265,p:9.0,gs:0,g:4.3,z:4.1,ch:43.0,fi:10.3,ca:1597,fe:36.8,mg:270,k2:1669,na:15,zn:2.7,fo:200,se:4.5,col:0,src:"CREA"},
+// ── Latticini ──
+{n:"Provola affumicata",c:"Formaggi",k:335,p:25.0,gs:14.0,g:25.5,z:0,ch:0.5,fi:0,ca:560,fe:0.3,mg:30,k2:120,na:650,zn:3.5,fo:480,se:15,col:75,src:"CREA"},
+{n:"Ricotta affumicata",c:"Formaggi",k:220,p:18.5,gs:8.0,g:15.5,z:0,ch:2.0,fi:0,ca:310,fe:0.5,mg:20,k2:110,na:600,zn:2.5,fo:280,se:10,col:60,src:"CREA"},
+{n:"Ricotta romana (di pecora)",c:"Formaggi",k:158,p:11.4,gs:6.0,g:11.5,z:3.2,ch:3.2,fi:0,ca:254,fe:0.4,mg:14,k2:133,na:104,zn:1.3,fo:202,se:10,col:50,src:"CREA"}
 ];
 
 let CUSTOM_DB=[];

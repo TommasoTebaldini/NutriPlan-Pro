@@ -543,10 +543,10 @@ function switchPPTab(tab) {
     if (b) b.classList.toggle('active', t === tab);
   });
   if (tab === 'privacy') loadConsents();
-  if (tab === 'statistiche') loadStatistiche();
-  if (tab === 'macro') loadMacroTracker();
-  if (tab === 'attivita') { switchAttivitaTab('oggi'); loadAttivitaOggi(); }
-  if (tab === 'progressi') loadProgressi();
+  if (tab === 'statistiche') ensurePlanChecked().then(() => loadStatistiche());
+  if (tab === 'macro') ensurePlanChecked().then(() => loadMacroTracker());
+  if (tab === 'attivita') ensurePlanChecked().then(() => { switchAttivitaTab('oggi'); loadAttivitaOggi(); });
+  if (tab === 'progressi') ensurePlanChecked().then(() => loadProgressi());
 }
 
 // ═══════════════════════════════════════════════════
@@ -1276,17 +1276,31 @@ async function signConsent(consentId) {
 let dietitianIsPro = false;
 
 async function checkDietitianPlan() {
-  if (!chatDietitianId) return;
+  // Sync with utils.js _paymentsActive — when false, force ProGate on for all patients
+  const PAYMENTS_ACTIVE = false; // ← set to true when Stripe goes live
+  if (!PAYMENTS_ACTIVE) { dietitianIsPro = false; return; }
+
+  if (!chatDietitianId) { dietitianIsPro = false; return; }
   try {
     const { data } = await sb.from('profiles')
       .select('subscription_plan,subscription_expires')
       .eq('id', chatDietitianId)
       .maybeSingle();
-    if (!data) return;
+    if (!data) { dietitianIsPro = false; return; }
     const plan = data.subscription_plan || 'free';
     const exp = data.subscription_expires;
     dietitianIsPro = plan === 'pro' && (!exp || new Date(exp) > new Date());
   } catch(e) { dietitianIsPro = false; }
+}
+
+let _planChecked = false;
+async function ensurePlanChecked() {
+  if (_planChecked) return;
+  _planChecked = true;
+  if (!chatDietitianId && linkedCartelle.length) {
+    chatDietitianId = linkedCartelle[0].dietitian_id;
+  }
+  await checkDietitianPlan();
 }
 
 function proGate(msg) {

@@ -113,6 +113,9 @@
   .del-row, button:not(.print-btn){display:none!important}
   .pes-inp,.mi,.nf input,.nf select,.nf textarea{border:none!important;background:transparent!important;padding:2px 0!important}
   .ez-dd{display:none!important}
+  /* Full-content textarea proxies */
+  textarea.ncpt-print-hidden{display:none!important}
+  .ncpt-print-proxy{display:block;white-space:pre-wrap;font-family:inherit;font-size:13px;color:#1E293B;line-height:1.6;padding:2px 0;min-height:0}
   /* Pat bar */
   #paz-bar{display:flex!important;margin-bottom:12px}
 }
@@ -1816,11 +1819,25 @@ function scheduleAutoSave_ncpt() {
 // ═══════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════
+function _ncptExpandForPrint() {
+  document.querySelectorAll('textarea').forEach(ta => {
+    const proxy = document.createElement('div');
+    proxy.className = 'ncpt-print-proxy';
+    proxy.textContent = ta.value;
+    ta.parentNode.insertBefore(proxy, ta.nextSibling);
+    ta.classList.add('ncpt-print-hidden');
+  });
+}
+function _ncptRestoreAfterPrint() {
+  document.querySelectorAll('.ncpt-print-proxy').forEach(d => d.remove());
+  document.querySelectorAll('textarea.ncpt-print-hidden').forEach(ta => ta.classList.remove('ncpt-print-hidden'));
+}
+window.addEventListener('beforeprint', _ncptExpandForPrint);
+window.addEventListener('afterprint', _ncptRestoreAfterPrint);
+
 function printAllNCPt() {
-  // Show all panels before printing
   document.querySelectorAll('.ncpt-panel').forEach(p => p.classList.add('active'));
   window.print();
-  // Restore after print
   setTimeout(() => {
     document.querySelectorAll('.ncpt-panel').forEach((p, i) => {
       p.classList.toggle('active', i === currentTab);

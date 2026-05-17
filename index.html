@@ -79,8 +79,20 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     <button onclick="doLogout()" data-i18n="index.logout" style="width:100%;padding:10px;background:#1E293B;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px">Esci</button>
   </div>
 
-  <!-- LOGIN/REGISTER -->
-  <div id="auth-box">
+  <!-- NOTICE: SITO IN SVILUPPO -->
+  <div id="dev-notice" style="margin-bottom:16px;padding:16px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:12px;text-align:center">
+    <p style="font-size:13px;color:#64748B;line-height:1.7;margin-bottom:14px">
+      🚧 <strong style="color:#334155">Piattaforma in fase di sviluppo.</strong><br>
+      NutriPlan Pro non è ancora disponibile al pubblico.<br>
+      <span style="font-size:12px">La registrazione sarà aperta prossimamente.</span>
+    </p>
+    <button onclick="mostraLogin()" style="background:#0F766E;color:white;border:none;padding:10px 22px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='#0C5F58'" onmouseout="this.style.background='#0F766E'">
+      Hai già un account? Accedi →
+    </button>
+  </div>
+
+  <!-- LOGIN/REGISTER (nascosto di default, visibile dopo click) -->
+  <div id="auth-box" style="display:none">
     <div class="tabs">
       <div class="tab active" onclick="switchTab('login')" data-i18n="index.login_tab">Accedi</div>
       <div class="tab" onclick="switchTab('register')" data-i18n="index.register_tab" style="display:none">Registrati</div>
@@ -103,15 +115,6 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <button class="btn" id="reg-btn" onclick="doRegister()" data-i18n="index.register_btn">Crea Account</button>
       <p class="note" data-i18n="index.register_note">Dopo la registrazione attendi l'approvazione dell'amministratore.</p>
     </div>
-  </div>
-
-  <!-- NOTICE: SITO IN SVILUPPO -->
-  <div style="margin-top:20px;padding:12px 16px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;text-align:center">
-    <p style="font-size:12px;color:#64748B;line-height:1.6">
-      🚧 <strong style="color:#334155">Piattaforma in fase di sviluppo.</strong><br>
-      NutriPlan Pro non è ancora disponibile al pubblico.<br>
-      La registrazione sarà aperta prossimamente.
-    </p>
   </div>
 </div>
 
@@ -242,6 +245,12 @@ function switchTab(t) {
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('p-'+t).classList.add('active');
+}
+
+function mostraLogin() {
+  document.getElementById('dev-notice').style.display = 'none';
+  document.getElementById('auth-box').style.display = '';
+  setTimeout(() => { const el = document.getElementById('login-email'); if(el) el.focus(); }, 50);
 }
 
 async function doLogin() {

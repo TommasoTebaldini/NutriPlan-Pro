@@ -51,11 +51,20 @@
   #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
   .page-content{padding:0!important}
   .dg-tabs{display:none!important}
-  .dg-panel{display:none!important}
-  .dg-panel.active{display:block!important}
+  .dg-panel{display:block!important}
+
   /* ── Compact print mode ── */
   body[data-print-mode="compact"] .dg-panel{display:none!important}
   body[data-print-mode="compact"] #dg-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+
+  /* Fix overflow containers that clip content in print */
+  div[style*="overflow-x:auto"],div[style*="overflow-x: auto"]{overflow:visible!important;max-height:none!important}
+  div[style*="overflow:hidden"]{overflow:visible!important}
+  .calc-box,.pyr-group,.ai-day-card,.iddsi-card,.pasto-card,.stage-card,.dialisi-card,.porz-category{overflow:visible!important}
+  /* Ensure tables fit A4 */
+  .larn-table{font-size:10px!important;table-layout:auto}
+  .larn-table th,.larn-table td{padding:4px 6px!important}
+  table{word-wrap:break-word;overflow-wrap:break-word}
 }
 #dg-compact-print-area{display:none}
 </style>

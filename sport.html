@@ -47,11 +47,20 @@
   #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
   .page-content{padding:0!important}
   .sport-tabs{display:none!important}
-  .sport-panel{display:none!important}
-  .sport-panel.active{display:block!important}
+  .sport-panel{display:block!important}
+
   /* ── Compact print mode ── */
   body[data-print-mode="compact"] .sport-panel{display:none!important}
   body[data-print-mode="compact"] #sp-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+
+  /* Fix overflow containers that clip content in print */
+  div[style*="overflow-x:auto"],div[style*="overflow-x: auto"]{overflow:visible!important;max-height:none!important}
+  div[style*="overflow:hidden"]{overflow:visible!important}
+  .calc-box,.pyr-group,.ai-day-card,.iddsi-card,.pasto-card,.stage-card,.dialisi-card,.porz-category{overflow:visible!important}
+  /* Ensure tables fit A4 */
+  .larn-table{font-size:10px!important;table-layout:auto}
+  .larn-table th,.larn-table td{padding:4px 6px!important}
+  table{word-wrap:break-word;overflow-wrap:break-word}
 }
 #sp-compact-print-area{display:none}
 </style>

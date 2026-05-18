@@ -48,13 +48,22 @@
   #main{margin:0!important;padding:1cm 1.2cm 2.5cm!important}
   .page-content{padding:0!important}
   [style*="background:#FAF5FF;border-radius:14px"],[style*="background:#EDE9FE;border-radius:14px"],.ped-tabs-wrap{display:none!important}
-  .ped-panel{display:none!important}
-  .ped-panel.active{display:block!important}
+  .ped-panel{display:block!important}
+
   /* ── Compact print mode ── */
   body[data-print-mode="compact"] .ped-panel{display:none!important}
   body[data-print-mode="compact"] [style*="background:#FAF5FF"]{display:none!important}
   body[data-print-mode="compact"] .ped-tabs-wrap{display:none!important}
   body[data-print-mode="compact"] #ped-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+
+  /* Fix overflow containers that clip content in print */
+  div[style*="overflow-x:auto"],div[style*="overflow-x: auto"]{overflow:visible!important;max-height:none!important}
+  div[style*="overflow:hidden"]{overflow:visible!important}
+  .calc-box,.pyr-group,.ai-day-card,.iddsi-card,.pasto-card,.stage-card,.dialisi-card,.porz-category{overflow:visible!important}
+  /* Ensure tables fit A4 */
+  .larn-table{font-size:10px!important;table-layout:auto}
+  .larn-table th,.larn-table td{padding:4px 6px!important}
+  table{word-wrap:break-word;overflow-wrap:break-word}
 }
 #ped-compact-print-area{display:none}
 </style>

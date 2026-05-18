@@ -485,6 +485,7 @@ async function doResetPassword() {
     if (error) throw error;
     ok.textContent = '✅ Password aggiornata! Ora puoi accedere con la nuova password.';
     ok.className = 'ok show';
+    btn.disabled = false;
     btn.textContent = 'Vai al login';
     btn.onclick = async () => { await sb.auth.signOut(); showLogin(); };
   } catch(e) {

@@ -657,7 +657,18 @@ const DB_CREA=[
 {n:"Aceto balsamico di Modena",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:15.6,ch:17.1,fi:0,ca:27,fe:0.7,mg:7,k2:112,na:23,zn:0.1,fo:19,se:0.5,col:0,src:"CREA"},
 {n:"Pesto alla genovese (artigianale)",c:"Condimenti",k:454,p:7,gs:7,g:44.6,z:1,ch:3.4,fi:1.2,ca:130,fe:1.5,mg:50,k2:210,na:700,zn:1,fo:120,se:3,col:10,src:"CREA"},
 {n:"Salsa di soia",c:"Condimenti",k:60,p:8.1,gs:0,g:0.1,z:4.8,ch:5.6,fi:0.8,ca:18,fe:2.4,mg:42,k2:217,na:5720,zn:0.1,fo:130,se:1,col:0,src:"CREA"},
-{n:"Aceto di vino",c:"Condimenti",k:21,p:0,gs:0,g:0,z:0.3,ch:0.6,fi:0,ca:7,fe:0.4,mg:2,k2:65,na:2,zn:0.03,fo:8,se:0.5,col:0,src:"CREA"}
+{n:"Aceto di vino",c:"Condimenti",k:21,p:0,gs:0,g:0,z:0.3,ch:0.6,fi:0,ca:7,fe:0.4,mg:2,k2:65,na:2,zn:0.03,fo:8,se:0.5,col:0,src:"CREA"},
+{n:"Alga Kelp (Laminaria) essiccata",c:"Verdure",k:43,p:1.7,gs:0.3,g:0.6,z:0.6,ch:9.6,fi:1.3,ca:168,fe:2.9,mg:121,k2:89,na:233,zn:1.2,fo:42,se:0.7,col:0,src:"CREA"},
+{n:"Alga Dulse essiccata",c:"Verdure",k:264,p:21.7,gs:0.4,g:3.2,z:0,ch:46,fi:32,ca:567,fe:150,mg:220,k2:8060,na:2085,zn:1.9,fo:194,se:0.7,col:0,src:"CREA"},
+{n:"Agar-agar (essiccato)",c:"Verdure",k:306,p:0.5,gs:0,g:0.2,z:0,ch:80,fi:7,ca:625,fe:21.4,mg:770,k2:1125,na:102,zn:5.8,fo:52,se:0,col:0,src:"CREA"},
+{n:"Ortica fresca",c:"Verdure",k:37,p:5.5,gs:0,g:0.8,z:0,ch:1.3,fi:6.9,ca:481,fe:8.2,mg:57,k2:334,na:4,zn:0.4,fo:71,se:0.2,col:0,src:"CREA"},
+{n:"Malva fresca",c:"Verdure",k:28,p:3.2,gs:0,g:0.6,z:0,ch:2.5,fi:1.6,ca:257,fe:3.0,mg:45,k2:370,na:10,zn:0.5,fo:52,se:0.5,col:0,src:"CREA"},
+{n:"Silene (erba) fresca",c:"Verdure",k:26,p:2.8,gs:0,g:0.3,z:0,ch:2.0,fi:1.5,ca:120,fe:4.1,mg:30,k2:280,na:8,zn:0.3,fo:40,se:0.3,col:0,src:"CREA"},
+{n:"Mirtilli essiccati",c:"Frutta secca",k:303,p:0.4,gs:0,g:1.3,z:47,ch:75,fi:3.4,ca:11,fe:0.3,mg:6,k2:90,na:2,zn:0.1,fo:12,se:0.1,col:0,src:"CREA"},
+{n:"Latte di riso commerciale",c:"Latte e derivati",k:40,p:0.3,gs:0,g:1.0,z:5.5,ch:8.0,fi:0.1,ca:120,fe:0.1,mg:5,k2:35,na:40,zn:0.1,fo:10,se:0,col:0,src:"CREA"},
+{n:"Olio di germe di grano",c:"Grassi",k:884,p:0,gs:18.8,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Conserva di pomodoro (passata)",c:"Verdure",k:31,p:1.3,gs:0,g:0.3,z:4.0,ch:6.0,fi:1.5,ca:22,fe:1.0,mg:20,k2:430,na:20,zn:0.2,fo:40,se:0.9,col:0,src:"CREA"},
+{n:"Koji di riso",c:"Cereali e pasta",k:189,p:13.0,gs:0,g:0.2,z:0,ch:38.0,fi:1.0,ca:30,fe:1.5,mg:40,k2:150,na:10,zn:1.0,fo:120,se:3,col:0,src:"CREA"}
 ];
 
 const DB_BDA=[

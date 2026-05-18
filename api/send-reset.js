@@ -2,16 +2,13 @@
 // Env vars: SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
-const REDIRECT_URL = 'https://app.dietplan-pro.com/';
 
-function setCors(res) {
-  res.setHeader('Access-Control-Allow-Origin', 'https://app.dietplan-pro.com');
+module.exports = async function handler(req, res) {
+  const origin = req.headers.origin || 'https://app.dietplan-pro.com';
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-}
 
-export default async function handler(req, res) {
-  setCors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -34,6 +31,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Email non valida' });
   }
 
+  const REDIRECT_URL = origin + '/';
+
   // Generate recovery link via Supabase Admin API
   const linkRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
     method: 'POST',
@@ -51,7 +50,6 @@ export default async function handler(req, res) {
 
   if (!linkRes.ok) {
     const err = await linkRes.json().catch(() => ({}));
-    // Return generic message to avoid email enumeration
     if (linkRes.status === 404 || err?.code === 'user_not_found') {
       return res.status(200).json({ ok: true });
     }
@@ -91,4 +89,4 @@ export default async function handler(req, res) {
   }
 
   return res.status(200).json({ ok: true });
-}
+};

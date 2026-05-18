@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from: 'DietPlan Pro <onboarding@resend.dev>',
+      from: 'DietPlan Pro <gestione@app.dietplan-pro.com>',
       to: email,
       subject: 'Reimposta la tua password – DietPlan Pro',
       html: `<!DOCTYPE html>
@@ -78,22 +78,22 @@ export default async function handler(req, res) {
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
 
         <!-- HEADER -->
-        <tr><td style="background:linear-gradient(135deg,#0F766E 0%,#059669 100%);border-radius:16px 16px 0 0;padding:32px 40px;text-align:center">
+        <tr><td bgcolor="#0F766E" style="background-color:#0F766E;border-radius:16px 16px 0 0;padding:32px 40px;text-align:center">
           <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px">🥗 DietPlan Pro</div>
-          <div style="font-size:13px;color:#A7F3D0;margin-top:4px">Piattaforma per dietisti professionisti</div>
+          <div style="font-size:13px;color:#ffffff;opacity:0.85;margin-top:4px">Piattaforma per dietisti professionisti</div>
         </td></tr>
 
         <!-- BODY -->
-        <tr><td style="background:#ffffff;padding:40px;border-left:1px solid #D1FAE5;border-right:1px solid #D1FAE5">
-          <h1 style="margin:0 0 8px;font-size:22px;color:#064E3B;font-weight:700">Recupero password</h1>
-          <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6">
+        <tr><td style="background:#ffffff;padding:40px;border-left:1px solid #D1FAE5;border-right:1px solid #D1FAE5;text-align:center">
+          <h1 style="margin:0 0 8px;font-size:22px;color:#064E3B;font-weight:700;text-align:center">Recupero password</h1>
+          <p style="margin:0 0 28px;font-size:15px;color:#374151;line-height:1.6;text-align:center">
             Abbiamo ricevuto una richiesta di reimpostazione della password per il tuo account DietPlan Pro.<br>
             Clicca sul pulsante qui sotto per scegliere una nuova password.
           </p>
 
           <!-- CTA BUTTON -->
-          <table cellpadding="0" cellspacing="0" style="margin:0 0 28px">
-            <tr><td style="background:#0F766E;border-radius:10px">
+          <table cellpadding="0" cellspacing="0" style="margin:0 auto 28px">
+            <tr><td align="center" bgcolor="#0F766E" style="background-color:#0F766E;border-radius:10px">
               <a href="${action_link}" style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px">
                 🔐 Reimposta password
               </a>

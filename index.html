@@ -119,6 +119,22 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <p class="note" style="margin-top:12px">Riceverai un'email con il link per impostare una nuova password.</p>
     </div>
 
+    <!-- Pannello nuova password (dopo click link email) -->
+    <div class="panel" id="p-reset" style="display:none">
+      <h3 style="margin:0 0 14px;color:#0F766E;font-size:16px">Imposta nuova password</h3>
+      <div class="err" id="reset-err"></div>
+      <div class="ok" id="reset-ok"></div>
+      <div class="fg">
+        <label>Nuova password</label>
+        <input type="password" id="reset-pw1" placeholder="Minimo 6 caratteri" autocomplete="new-password">
+      </div>
+      <div class="fg">
+        <label>Conferma password</label>
+        <input type="password" id="reset-pw2" placeholder="Ripeti la password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doResetPassword()">
+      </div>
+      <button class="btn" id="reset-btn" onclick="doResetPassword()">Salva nuova password</button>
+    </div>
+
     <div class="panel" id="p-register" style="display:none">
       <div class="err" id="reg-err"></div>
       <div class="ok" id="reg-ok"></div>
@@ -444,8 +460,51 @@ async function acceptDPA() {
   window.location.href = 'app.html';
 }
 
+function showResetPanel() {
+  document.getElementById('auth-box').style.display = '';
+  document.querySelectorAll('.panel').forEach(p => { p.style.display='none'; p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('p-reset');
+  panel.style.display = 'block';
+  panel.classList.add('active');
+  setTimeout(() => document.getElementById('reset-pw1').focus(), 50);
+}
+
+async function doResetPassword() {
+  const pw1 = document.getElementById('reset-pw1').value;
+  const pw2 = document.getElementById('reset-pw2').value;
+  const err = document.getElementById('reset-err');
+  const ok  = document.getElementById('reset-ok');
+  const btn = document.getElementById('reset-btn');
+  err.className = 'err'; ok.className = 'ok';
+  if (pw1.length < 6) { err.textContent = 'La password deve essere di almeno 6 caratteri.'; err.className = 'err show'; return; }
+  if (pw1 !== pw2) { err.textContent = 'Le password non coincidono.'; err.className = 'err show'; return; }
+  btn.disabled = true; btn.textContent = 'Salvataggio…';
+  try {
+    const { error } = await sb.auth.updateUser({ password: pw1 });
+    if (error) throw error;
+    ok.textContent = '✅ Password aggiornata! Ora puoi accedere con la nuova password.';
+    ok.className = 'ok show';
+    btn.textContent = 'Vai al login';
+    btn.onclick = async () => { await sb.auth.signOut(); showLogin(); };
+  } catch(e) {
+    err.textContent = 'Errore: ' + e.message;
+    err.className = 'err show';
+    btn.disabled = false; btn.textContent = 'Salva nuova password';
+  }
+}
+
 async function init() {
   document.getElementById('loading').classList.add('show');
+  // Detect password recovery flow (Supabase puts type=recovery in the hash)
+  const hashParams = new URLSearchParams(window.location.hash.slice(1));
+  if (hashParams.get('type') === 'recovery') {
+    await sb.auth.getSession(); // lets Supabase JS process the hash tokens
+    document.getElementById('loading').classList.remove('show');
+    history.replaceState(null, '', window.location.pathname);
+    showResetPanel();
+    return;
+  }
   const {data:{session}} = await sb.auth.getSession();
   document.getElementById('loading').classList.remove('show');
   if (session?.user) await checkAndRedirect(session.user);

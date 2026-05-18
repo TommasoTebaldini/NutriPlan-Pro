@@ -294,17 +294,22 @@ async function doForgotPassword() {
   err.className = 'err'; ok.className = 'ok';
   if (!email) { err.textContent = 'Inserisci il tuo indirizzo email.'; err.className = 'err show'; return; }
   btn.disabled = true; btn.textContent = 'Invio in corso…';
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/index.html'
-  });
-  btn.disabled = false; btn.textContent = '📧 Invia link di recupero';
-  if (error) {
-    err.textContent = 'Errore: ' + error.message;
-    err.className = 'err show';
-  } else {
+  try {
+    const res = await fetch('/api/send-reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Errore server');
     ok.textContent = '✅ Email inviata! Controlla la tua casella (anche spam) e clicca il link per reimpostare la password.';
     ok.className = 'ok show';
     document.getElementById('forgot-email').value = '';
+  } catch (e) {
+    err.textContent = 'Errore: ' + e.message;
+    err.className = 'err show';
+  } finally {
+    btn.disabled = false; btn.textContent = '📧 Invia link di recupero';
   }
 }
 

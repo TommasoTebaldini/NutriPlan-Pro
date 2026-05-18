@@ -3,7 +3,7 @@
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   const origin = req.headers.origin || 'https://app.dietplan-pro.com';
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');

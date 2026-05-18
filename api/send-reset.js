@@ -69,16 +69,68 @@ export default async function handler(req, res) {
       from: 'DietPlan Pro <onboarding@resend.dev>',
       to: email,
       subject: 'Reimposta la tua password – DietPlan Pro',
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px">
-          <h2 style="color:#0F766E;margin-bottom:8px">Recupero password</h2>
-          <p style="color:#374151;margin-bottom:24px">Hai richiesto di reimpostare la password per il tuo account DietPlan Pro.</p>
-          <a href="${action_link}" style="display:inline-block;background:#0F766E;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:15px">
-            Reimposta password
-          </a>
-          <p style="color:#6B7280;font-size:13px;margin-top:24px">Il link scade tra 24 ore.<br>Se non hai fatto questa richiesta, ignora questa email.</p>
-        </div>
-      `
+      html: `<!DOCTYPE html>
+<html lang="it">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F0FDF4;font-family:Arial,Helvetica,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4;padding:40px 16px">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
+
+        <!-- HEADER -->
+        <tr><td style="background:linear-gradient(135deg,#0F766E 0%,#059669 100%);border-radius:16px 16px 0 0;padding:32px 40px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px">🥗 DietPlan Pro</div>
+          <div style="font-size:13px;color:#A7F3D0;margin-top:4px">Piattaforma per dietisti professionisti</div>
+        </td></tr>
+
+        <!-- BODY -->
+        <tr><td style="background:#ffffff;padding:40px;border-left:1px solid #D1FAE5;border-right:1px solid #D1FAE5">
+          <h1 style="margin:0 0 8px;font-size:22px;color:#064E3B;font-weight:700">Recupero password</h1>
+          <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6">
+            Abbiamo ricevuto una richiesta di reimpostazione della password per il tuo account DietPlan Pro.<br>
+            Clicca sul pulsante qui sotto per scegliere una nuova password.
+          </p>
+
+          <!-- CTA BUTTON -->
+          <table cellpadding="0" cellspacing="0" style="margin:0 0 28px">
+            <tr><td style="background:#0F766E;border-radius:10px">
+              <a href="${action_link}" style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px">
+                🔐 Reimposta password
+              </a>
+            </td></tr>
+          </table>
+
+          <!-- DIVIDER -->
+          <hr style="border:none;border-top:1px solid #D1FAE5;margin:0 0 24px">
+
+          <!-- LINK FALLBACK -->
+          <p style="margin:0 0 8px;font-size:13px;color:#6B7280">Se il pulsante non funziona, copia e incolla questo link nel browser:</p>
+          <p style="margin:0 0 24px;font-size:12px;color:#0F766E;word-break:break-all">${action_link}</p>
+
+          <!-- WARNINGS -->
+          <table cellpadding="0" cellspacing="0" width="100%">
+            <tr><td style="background:#FEF3C7;border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:12px 16px">
+              <p style="margin:0;font-size:13px;color:#92400E;line-height:1.5">
+                ⚠️ <strong>Il link scade tra 24 ore.</strong><br>
+                Se non hai richiesto il recupero password, puoi ignorare questa email — il tuo account è al sicuro.
+              </p>
+            </td></tr>
+          </table>
+        </td></tr>
+
+        <!-- FOOTER -->
+        <tr><td style="background:#F0FDF4;border:1px solid #D1FAE5;border-top:none;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center">
+          <p style="margin:0;font-size:12px;color:#9CA3AF;line-height:1.6">
+            © ${new Date().getFullYear()} DietPlan Pro · Tutti i diritti riservati<br>
+            Questa email è stata inviata automaticamente, non rispondere a questo indirizzo.
+          </p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
     })
   });
 

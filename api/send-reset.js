@@ -2,7 +2,7 @@
 // Env vars: SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
-const REDIRECT_URL = 'https://app.dietplan-pro.com/index.html';
+const REDIRECT_URL = 'https://app.dietplan-pro.com/';
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://app.dietplan-pro.com');

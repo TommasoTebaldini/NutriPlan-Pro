@@ -102,7 +102,21 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <div class="fg"><label data-i18n="index.email">Email</label><input type="email" id="login-email" placeholder="la-tua@email.com" autocomplete="email"></div>
       <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn" id="login-btn" onclick="doLogin()" data-i18n="index.login_btn">Accedi</button>
+      <p class="note" style="margin-top:10px"><button onclick="showForgot()" style="background:none;border:none;padding:0;color:#0F766E;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">Password dimenticata?</button></p>
       <p class="note"><span data-i18n="index.privacy_note">I tuoi dati sono salvati in modo sicuro.</span> <a href="privacy.html" style="color:#0F766E;font-weight:600">Privacy Policy</a></p>
+    </div>
+
+    <!-- Pannello reset password -->
+    <div class="panel" id="p-forgot" style="display:none">
+      <button onclick="showLogin()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px;display:flex;align-items:center;gap:4px">← Torna al login</button>
+      <div class="err" id="forgot-err"></div>
+      <div class="ok" id="forgot-ok"></div>
+      <div class="fg">
+        <label>Email del tuo account</label>
+        <input type="email" id="forgot-email" placeholder="la-tua@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doForgotPassword()">
+      </div>
+      <button class="btn" id="forgot-btn" onclick="doForgotPassword()">📧 Invia link di recupero</button>
+      <p class="note" style="margin-top:12px">Riceverai un'email con il link per impostare una nuova password.</p>
     </div>
 
     <div class="panel" id="p-register" style="display:none">
@@ -251,6 +265,47 @@ function mostraLogin() {
   document.getElementById('dev-notice').style.display = 'none';
   document.getElementById('auth-box').style.display = '';
   setTimeout(() => { const el = document.getElementById('login-email'); if(el) el.focus(); }, 50);
+}
+
+function showForgot() {
+  document.querySelectorAll('.panel').forEach(p => { p.style.display='none'; p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('p-forgot');
+  panel.style.display = 'block';
+  panel.classList.add('active');
+  document.getElementById('forgot-err').className = 'err';
+  document.getElementById('forgot-ok').className = 'ok';
+  setTimeout(() => document.getElementById('forgot-email').focus(), 50);
+}
+
+function showLogin() {
+  document.querySelectorAll('.panel').forEach(p => { p.style.display='none'; p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  const panel = document.getElementById('p-login');
+  panel.style.display = 'block';
+  panel.classList.add('active');
+}
+
+async function doForgotPassword() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const err   = document.getElementById('forgot-err');
+  const ok    = document.getElementById('forgot-ok');
+  const btn   = document.getElementById('forgot-btn');
+  err.className = 'err'; ok.className = 'ok';
+  if (!email) { err.textContent = 'Inserisci il tuo indirizzo email.'; err.className = 'err show'; return; }
+  btn.disabled = true; btn.textContent = 'Invio in corso…';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/index.html'
+  });
+  btn.disabled = false; btn.textContent = '📧 Invia link di recupero';
+  if (error) {
+    err.textContent = 'Errore: ' + error.message;
+    err.className = 'err show';
+  } else {
+    ok.textContent = '✅ Email inviata! Controlla la tua casella (anche spam) e clicca il link per reimpostare la password.';
+    ok.className = 'ok show';
+    document.getElementById('forgot-email').value = '';
+  }
 }
 
 async function doLogin() {

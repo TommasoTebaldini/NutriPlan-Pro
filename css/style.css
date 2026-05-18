@@ -344,7 +344,7 @@ select:not(.csel-native):focus{outline:none;box-shadow:0 0 0 3px rgba(20,184,166
   .tbar-actions{gap:4px}
   table{font-size:11px}
   thead th{font-size:10px;padding:5px 4px}
-  .inp-food{min-width:120px}
+  .inp-food{min-width:0!important}
   h2{font-size:14px}
 }
 @media(max-width:360px){
@@ -553,4 +553,32 @@ body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; b
 }
 @media print{
   .global-copyright{display:none!important}
+}
+
+/* ── RESPONSIVE FIXES ── */
+
+/* Tablet intermedio 600-700px: sidebar ridotta */
+@media(min-width:601px) and (max-width:700px){
+  #sidebar{width:200px}
+  #main{margin-left:200px}
+  #topbar{left:200px}
+}
+
+/* Mobile: dropdown non fuoriesce dal viewport */
+@media(max-width:768px){
+  .csel-panel{max-height:50vh!important}
+  .ac-list{min-width:0!important;max-width:90vw!important}
+}
+
+/* Mobile piccolo (≤480px): tabelle e form */
+@media(max-width:480px){
+  .table-wrap{-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .table-wrap::-webkit-scrollbar{height:3px}
+  .table-wrap::-webkit-scrollbar-thumb{background:var(--border-d);border-radius:3px}
+  .table-wrap table{font-size:10px}
+  .table-wrap thead th{padding:3px 2px;font-size:9.5px}
+  .table-wrap tbody td{padding:2px 4px}
+  .paz-hdr-field label{font-size:10px}
+  .paz-hdr-field{margin-bottom:8px}
+  #db-table{min-width:0!important;font-size:11px}
 }

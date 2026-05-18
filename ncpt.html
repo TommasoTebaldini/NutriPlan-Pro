@@ -118,7 +118,7 @@
   textarea.ncpt-print-hidden{display:none!important}
   .ncpt-print-proxy{display:block;white-space:pre-wrap;font-family:inherit;font-size:13px;color:#1E293B;line-height:1.6;padding:2px 0;min-height:0}
   /* Pat bar */
-  #paz-bar{display:flex!important;margin-bottom:12px}
+  #paz-bar.visible{display:flex!important;margin-bottom:12px}
 }
 
 /* ── PROGRESS STEPS ── */
@@ -1772,7 +1772,7 @@ function nuovoNCPt(clearCart=true) {
   document.getElementById('v-data').value=new Date().toISOString().split('T')[0];
   const titoloEl = document.getElementById('ncpt-titolo-sessione');
   if (titoloEl) titoloEl.value = '';
-  if(clearCart){currentCartellaId=null;var _s=document.getElementById('ncpt-cartella-cw-srch');if(_s)_s.value='';document.getElementById('paz-bar').style.display='none';}
+  if(clearCart){currentCartellaId=null;var _s=document.getElementById('ncpt-cartella-cw-srch');if(_s)_s.value='';const _pb=document.getElementById('paz-bar');_pb.style.display='none';_pb.classList.remove('visible');}
   renderPES(); renderObiettivi(); renderStor();
   const meC=document.getElementById('monit-extra');if(meC)meC.innerHTML='';
   try { localStorage.removeItem('nutriplan_autosave_ncpt'); } catch(e){}
@@ -1927,7 +1927,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cart = allCartelle.find(c => c.id === currentCartellaId);
         if(cart) {
           _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
-          document.getElementById('paz-bar').style.display='flex';
+          const _pb1=document.getElementById('paz-bar');_pb1.style.display='flex';_pb1.classList.add('visible');
           document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
           document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
         }
@@ -1940,7 +1940,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const cart = allCartelle.find(c => c.id === newNcptCartella);
       if(cart) {
         _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
-        document.getElementById('paz-bar').style.display='flex';
+        const _pb2=document.getElementById('paz-bar');_pb2.style.display='flex';_pb2.classList.add('visible');
         document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
         document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
         document.getElementById('v-nome').value = cart.nome;

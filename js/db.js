@@ -680,7 +680,17 @@ const DB_CREA=[
 {n:"Olio di colza (canola)",c:"Grassi e oli",k:884,p:0,gs:7.4,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di vinacciolo",c:"Grassi e oli",k:884,p:0,gs:9.6,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Polpa di pomodoro a pezzi (in scatola)",c:"Verdure",k:20,p:1.0,gs:0,g:0.2,z:2.5,ch:3.8,fi:1.4,ca:12,fe:0.8,mg:13,k2:260,na:150,zn:0.1,fo:32,se:0.5,col:0,src:"CREA"},
-{n:"Pomodori datterini freschi",c:"Verdure",k:18,p:0.9,gs:0,g:0.2,z:2.7,ch:3.5,fi:0.9,ca:10,fe:0.4,mg:10,k2:223,na:5,zn:0.1,fo:26,se:0.5,col:0,src:"CREA"}
+{n:"Pomodori datterini freschi",c:"Verdure",k:18,p:0.9,gs:0,g:0.2,z:2.7,ch:3.5,fi:0.9,ca:10,fe:0.4,mg:10,k2:223,na:5,zn:0.1,fo:26,se:0.5,col:0,src:"CREA"},
+{n:"Peperone verde fresco",c:"Verdure",k:20,p:0.9,gs:0,g:0.2,z:2.6,ch:4.6,fi:1.8,ca:10,fe:0.4,mg:10,k2:175,na:3,zn:0.13,fo:20,se:0.3,col:0,src:"CREA"},
+{n:"Fegato di maiale",c:"Carni rosse",k:140,p:21.4,gs:1.4,g:4.8,z:0,ch:3.8,fi:0,ca:8,fe:19.0,mg:22,k2:300,na:73,zn:4.0,fo:380,se:65,col:260,src:"CREA"},
+{n:"Sardine sott'olio sgocciolate",c:"Pesce",k:208,p:24.6,gs:1.5,g:11.5,z:0,ch:0,fi:0,ca:382,fe:2.9,mg:39,k2:397,na:505,zn:1.4,fo:490,se:52,col:142,src:"CREA"},
+{n:"Salmone cotto al forno",c:"Pesce",k:196,p:22.5,gs:3.5,g:11.5,z:0,ch:0,fi:0,ca:13,fe:0.5,mg:28,k2:320,na:105,zn:0.5,fo:240,se:40,col:63,src:"CREA"},
+{n:"Brodo di pesce (fumetto)",c:"Condimenti",k:14,p:1.8,gs:0.1,g:0.5,z:0,ch:0.5,fi:0,ca:12,fe:0.3,mg:8,k2:100,na:350,zn:0.3,fo:35,se:5,col:5,src:"CREA"},
+{n:"Filetto di manzo",c:"Carni rosse",k:120,p:22.5,gs:1.5,g:3.5,z:0,ch:0,fi:0,ca:5,fe:2.5,mg:22,k2:360,na:48,zn:4.2,fo:190,se:18,col:62,src:"CREA"},
+{n:"Pollo lessato (bollito, senza pelle)",c:"Carni bianche",k:175,p:26.0,gs:1.8,g:7.0,z:0,ch:0,fi:0,ca:12,fe:0.8,mg:24,k2:220,na:65,zn:2.0,fo:200,se:17,col:85,src:"CREA"},
+{n:"Sorbetto alla frutta",c:"Dolci",k:109,p:0.4,gs:0,g:0.2,z:23.5,ch:27.5,fi:0.5,ca:8,fe:0.2,mg:5,k2:80,na:10,zn:0.1,fo:8,se:0.5,col:0,src:"CREA"},
+{n:"Polenta bianca cotta",c:"Cereali e derivati",k:65,p:1.5,gs:0.1,g:0.3,z:0,ch:14.0,fi:0.6,ca:2,fe:0.3,mg:16,k2:55,na:1,zn:0.2,fo:35,se:2,col:0,src:"CREA"},
+{n:"Vitello (spalla) crudo",c:"Carni rosse",k:118,p:20.0,gs:1.2,g:3.8,z:0,ch:0,fi:0,ca:12,fe:1.1,mg:22,k2:330,na:68,zn:3.0,fo:195,se:9,col:74,src:"CREA"}
 ];
 
 const DB_BDA=[

@@ -16,7 +16,7 @@
 .p-tab:hover{background:rgba(249,115,22,.12);color:#F97316}
 .p-tab.active{background:linear-gradient(135deg,#C2410C,#F97316);color:white;box-shadow:0 3px 10px rgba(249,115,22,.3);font-weight:700;letter-spacing:.2px}
 .p-panel{display:none}.p-panel.active{display:block}
-.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);overflow-x:auto}
 .calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .result-big{font-size:28px;font-weight:700;color:#F97316}
 .nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
@@ -135,7 +135,7 @@
   <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🫁</div>
   <div style="flex:1;position:relative">
     <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Insufficienza Pancreatica Esocrina (IPE)</div>
-    <div style="font-size:12px;opacity:.88;line-height:1.6">Calcolo PERT, gestione dei grassi alimentari, schema dietetico personalizzato. Basato su <b>ESPEN 2020 · AGA · IAP</b>.</div>
+    <div style="font-size:16px;opacity:.88;line-height:1.6">Calcolo PERT, gestione dei grassi alimentari, schema dietetico personalizzato. Basato su <b>ESPEN 2020 · AGA · IAP</b>.</div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">💊 Calcolo PERT</div>
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧈 Gestione Grassi</div>
@@ -152,7 +152,7 @@
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
-    <input type="text" id="pan-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+    <input type="text" id="pan-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
     <button class="btn btn-primary btn-sm" onclick="salvaPancreas()">💾 Salva in Cartella</button>
@@ -227,7 +227,7 @@
         </select>
       </div>
       <div id="pert-result" style="background:#FFF7ED;border-radius:10px;padding:16px;margin-top:10px;display:none">
-        <div style="font-size:12px;color:var(--slate-l);margin-bottom:6px">Dose PERT stimata per questo pasto</div>
+        <div style="font-size:16px;color:var(--slate-l);margin-bottom:6px">Dose PERT stimata per questo pasto</div>
         <div class="result-big" id="pert-ul">—</div>
         <div style="font-size:12px;color:var(--slate-l);margin-bottom:12px">Unità Lipasi</div>
         <div id="pert-creon" style="margin-bottom:10px"></div>
@@ -403,10 +403,10 @@
   <div class="grid-2">
     <div class="calc-box">
       <h3>📚 Linee Guida PERT</h3>
-      <div style="font-size:13px;line-height:1.9">
+      <div style="font-size:16px;line-height:1.9">
         <div style="padding:12px 14px;background:#FFF7ED;border-radius:10px;border-left:4px solid #F97316;margin-bottom:10px">
           <div style="font-weight:700;color:#7C2D12;margin-bottom:4px">ECFS 2017 — Fibrosi Cistica</div>
-          <div style="font-size:12px;color:#334155;margin-bottom:8px">500-1000 UL lipasi/g grasso per pasto · Max <b>10.000 UL/kg/die</b> · Snack: 500 UL/kg</div>
+          <div style="font-size:16px;color:#334155;margin-bottom:8px">500-1000 UL lipasi/g grasso per pasto · Max <b>10.000 UL/kg/die</b> · Snack: 500 UL/kg</div>
           <a href="https://www.ecfs.eu/publications/ecfs-guidelines" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#F97316;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 Linee Guida ECFS →</a>
         </div>
         <div style="padding:12px 14px;background:#FFF7ED;border-radius:10px;border-left:4px solid #EA580C;margin-bottom:10px">
@@ -562,7 +562,7 @@
         + '<input type="number" id="pan-m' + m.id + '-grassi" value="' + m.grassi + '" placeholder="g" style="width:60px;padding:5px 8px;border:1.5px solid #FED7AA;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none;color:#C2410C">'
         + '<span style="font-size:11px;color:var(--slate-l)">g grassi</span>'
         + '</div>'
-        + '<textarea id="pan-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti (es. Fette biscottate 40g, Ricotta magra 80g, Frutta 150g — grassi totali ~' + m.grassi + 'g)..." style="width:100%;padding:8px 10px;border:1.5px solid #FED7AA;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<textarea id="pan-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti (es. Fette biscottate 40g, Ricotta magra 80g, Frutta 150g — grassi totali ~' + m.grassi + 'g)..." style="width:100%;padding:8px 10px;border:1.5px solid #FED7AA;border-radius:6px;font-size:16px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
         + '<input type="text" id="pan-m' + m.id + '-note" placeholder="Note PERT: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid #FED7AA;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
         + '</div>';
     }).join('');
@@ -747,7 +747,7 @@ function renderGrassiItems() {
     <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
       <input type="text" value="${esc(it.nome)}" placeholder="Alimento"
         oninput="grassiItems[${i}].nome=this.value"
-        style="flex:2;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+        style="flex:2;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:16px;outline:none">
       <input type="number" value="${it.grassi||''}" placeholder="g grassi"
         oninput="grassiItems[${i}].grassi=parseFloat(this.value)||0;calcGrassiTot()"
         style="flex:1;max-width:100px;padding:7px 8px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
@@ -1152,3 +1152,6 @@ function ripristinaVal_ipe(d) { return; }
 </script>
 </body>
 </html>
+
+
+

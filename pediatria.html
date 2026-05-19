@@ -16,7 +16,7 @@
 .ped-tab:hover{background:rgba(139,92,246,.12);color:#8B5CF6}
 .ped-tab.active{background:linear-gradient(135deg,#5B21B6,#7C3AED);color:white;box-shadow:0 3px 10px rgba(139,92,246,.3);font-weight:700;letter-spacing:.2px}
 .ped-panel{display:none}.ped-panel.active{display:block}
-.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.calc-box{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);overflow-x:auto}
 .calc-box h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .result-big{font-size:26px;font-weight:700;color:#8B5CF6}
 .nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
@@ -137,7 +137,7 @@
   <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">👶</div>
   <div style="flex:1;position:relative">
     <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Nutrizione Pediatrica</div>
-    <div style="font-size:12px;opacity:.88;line-height:1.6">Curve di crescita OMS, fabbisogni pediatrici, allattamento, svezzamento e gestione delle patologie nutrizionali in età evolutiva. Basato su <b>ESPGHAN · SIP · LARN 2023</b>.</div>
+    <div style="font-size:16px;opacity:.88;line-height:1.6">Curve di crescita OMS, fabbisogni pediatrici, allattamento, svezzamento e gestione delle patologie nutrizionali in età evolutiva. Basato su <b>ESPGHAN · SIP · LARN 2023</b>.</div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📈 Curve Crescita</div>
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🤱 Svezzamento</div>
@@ -154,7 +154,7 @@
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Titolo sessione</label>
-    <input type="text" id="ped-nota" placeholder="es. Visita pediatrica..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+    <input type="text" id="ped-nota" placeholder="es. Visita pediatrica..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
     <button class="btn btn-primary btn-sm" onclick="salvaPediatria()" style="background:#7C3AED">💾 Salva in Cartella</button>
@@ -672,7 +672,7 @@
         + '<input type="text" id="ped-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Ora" style="width:65px;padding:5px 8px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
         + '<input type="number" id="ped-m' + m.id + '-kcal" placeholder="kcal" style="width:80px;padding:5px 8px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">'
         + '</div>'
-        + '<textarea id="ped-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti e grammi (es. Latte 200mL, Cereali 30g, Frutta 100g)..." style="width:100%;padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<textarea id="ped-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti e grammi (es. Latte 200mL, Cereali 30g, Frutta 100g)..." style="width:100%;padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:16px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
         + '<input type="text" id="ped-m' + m.id + '-note" placeholder="Note: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid #C4B5FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
         + '</div>';
     }).join('');
@@ -1669,3 +1669,5 @@ function ripristinaVal_ped2(d) { return; }
 </script>
 </body>
 </html>
+
+

@@ -557,17 +557,40 @@ body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; b
 
 /* ── RESPONSIVE FIXES ── */
 
-/* Tablet intermedio 600-700px: sidebar ridotta */
-@media(min-width:601px) and (max-width:700px){
-  #sidebar{width:200px}
-  #main{margin-left:200px}
-  #topbar{left:200px}
-}
-
 /* Mobile: dropdown non fuoriesce dal viewport */
 @media(max-width:768px){
   .csel-panel{max-height:50vh!important}
   .ac-list{min-width:0!important;max-width:90vw!important}
+}
+
+/* Mobile ≤768px: input font-size 16px per prevenire zoom iOS (override hover:none) */
+@media(max-width:768px){
+  .inp-food,.inp-qt{font-size:16px!important}
+  .fg input,.fg select,.fg textarea{font-size:16px!important}
+  .nf input,.nf select,.nf textarea{font-size:16px!important}
+  .paz-hdr-field input,.paz-hdr-field select{font-size:16px!important}
+}
+
+/* Mobile ≤768px: tbar-actions scrollabile, non wrap (evita seconda riga su topbar fixed) */
+@media(max-width:768px){
+  .tbar-actions{overflow-x:auto;flex-wrap:nowrap!important;-webkit-overflow-scrolling:touch;padding-bottom:2px;scrollbar-width:none}
+  .tbar-actions::-webkit-scrollbar{display:none}
+}
+
+/* Mobile ≤768px: bottoni touch target minimi 44px */
+@media(max-width:768px){
+  .btn-sm,.btn-xs{min-height:44px;padding:8px 10px}
+  .mtog{min-height:44px;padding:8px 10px;display:inline-flex;align-items:center;justify-content:center}
+  .sb-logout{min-height:44px;padding:10px 12px}
+}
+
+/* Mobile ≤768px: toast, undo-bar, calendario */
+@media(max-width:480px){
+  #toast{white-space:normal;max-width:calc(100vw - 32px);text-align:center}
+  .undo-bar{bottom:36px;left:10px;right:10px;transform:none;justify-content:space-between}
+  .cal-day{min-height:50px!important}
+  .cal-day .cal-day-num{font-size:10px}
+  #main{padding-bottom:44px}
 }
 
 /* Mobile piccolo (≤480px): tabelle e form */
@@ -581,4 +604,9 @@ body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; b
   .paz-hdr-field label{font-size:10px}
   .paz-hdr-field{margin-bottom:8px}
   #db-table{min-width:0!important;font-size:11px}
+}
+
+/* Griglia settimanale (valutazione) su mobile: da 7 a 4 colonne */
+@media(max-width:600px){
+  .week-grid-7{grid-template-columns:repeat(4,1fr)!important}
 }

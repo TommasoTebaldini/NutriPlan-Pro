@@ -668,7 +668,19 @@ const DB_CREA=[
 {n:"Latte di riso commerciale",c:"Latte e derivati",k:40,p:0.3,gs:0,g:1.0,z:5.5,ch:8.0,fi:0.1,ca:120,fe:0.1,mg:5,k2:35,na:40,zn:0.1,fo:10,se:0,col:0,src:"CREA"},
 {n:"Olio di germe di grano",c:"Grassi",k:884,p:0,gs:18.8,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Conserva di pomodoro (passata)",c:"Verdure",k:31,p:1.3,gs:0,g:0.3,z:4.0,ch:6.0,fi:1.5,ca:22,fe:1.0,mg:20,k2:430,na:20,zn:0.2,fo:40,se:0.9,col:0,src:"CREA"},
-{n:"Koji di riso",c:"Cereali e pasta",k:189,p:13.0,gs:0,g:0.2,z:0,ch:38.0,fi:1.0,ca:30,fe:1.5,mg:40,k2:150,na:10,zn:1.0,fo:120,se:3,col:0,src:"CREA"}
+{n:"Koji di riso",c:"Cereali e pasta",k:189,p:13.0,gs:0,g:0.2,z:0,ch:38.0,fi:1.0,ca:30,fe:1.5,mg:40,k2:150,na:10,zn:1.0,fo:120,se:3,col:0,src:"CREA"},
+{n:"Pasta frolla cruda",c:"Cereali e pasta",k:468,p:7.0,gs:12.0,g:25.0,z:20.0,ch:55.0,fi:1.5,ca:30,fe:1.5,mg:12,k2:110,na:180,zn:0.5,fo:70,se:5,col:110,src:"CREA"},
+{n:"Uovo fritto (olio EVO)",c:"Uova",k:184,p:13.6,gs:3.5,g:14.2,z:0.3,ch:0.4,fi:0,ca:55,fe:1.9,mg:11,k2:127,na:190,zn:1.4,fo:47,se:14,col:410,src:"CREA"},
+{n:"Torta margherita (crostata base)",c:"Dolci",k:340,p:6.0,gs:3.0,g:12.5,z:30.0,ch:52.0,fi:0.8,ca:55,fe:1.2,mg:10,k2:100,na:200,zn:0.4,fo:70,se:5,col:85,src:"CREA"},
+{n:"Lasagne al forno (artigianale, ragù e besciamella)",c:"Piatti pronti",k:188,p:10.5,gs:4.0,g:8.5,z:2.5,ch:18.5,fi:1.0,ca:90,fe:1.4,mg:22,k2:210,na:440,zn:1.5,fo:130,se:8,col:50,src:"CREA"},
+{n:"Crespelle / crepes (pasta, latte, uova)",c:"Cereali e pasta",k:207,p:6.5,gs:2.5,g:8.0,z:5.0,ch:27.0,fi:0.8,ca:70,fe:1.0,mg:10,k2:115,na:200,zn:0.6,fo:60,se:8,col:95,src:"CREA"},
+{n:"Manzo macinato (bovino, magro 10% grassi)",c:"Carni rosse",k:175,p:19.8,gs:4.1,g:10.0,z:0,ch:0,fi:0,ca:11,fe:2.3,mg:22,k2:310,na:68,zn:4.8,fo:190,se:13,col:71,src:"CREA"},
+{n:"Maiale macinato",c:"Carni rosse",k:263,p:16.8,gs:8.5,g:21.5,z:0,ch:0,fi:0,ca:10,fe:0.9,mg:20,k2:270,na:65,zn:2.2,fo:175,se:22,col:80,src:"CREA"},
+{n:"Latte intero UHT",c:"Latte e derivati",k:64,p:3.2,gs:2.0,g:3.5,z:4.8,ch:4.8,fi:0,ca:113,fe:0.05,mg:10,k2:132,na:43,zn:0.4,fo:84,se:2,col:11,src:"CREA"},
+{n:"Olio di colza (canola)",c:"Grassi e oli",k:884,p:0,gs:7.4,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di vinacciolo",c:"Grassi e oli",k:884,p:0,gs:9.6,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Polpa di pomodoro a pezzi (in scatola)",c:"Verdure",k:20,p:1.0,gs:0,g:0.2,z:2.5,ch:3.8,fi:1.4,ca:12,fe:0.8,mg:13,k2:260,na:150,zn:0.1,fo:32,se:0.5,col:0,src:"CREA"},
+{n:"Pomodori datterini freschi",c:"Verdure",k:18,p:0.9,gs:0,g:0.2,z:2.7,ch:3.5,fi:0.9,ca:10,fe:0.4,mg:10,k2:223,na:5,zn:0.1,fo:26,se:0.5,col:0,src:"CREA"}
 ];
 
 const DB_BDA=[

@@ -690,7 +690,50 @@ const DB_CREA=[
 {n:"Pollo lessato (bollito, senza pelle)",c:"Carni bianche",k:175,p:26.0,gs:1.8,g:7.0,z:0,ch:0,fi:0,ca:12,fe:0.8,mg:24,k2:220,na:65,zn:2.0,fo:200,se:17,col:85,src:"CREA"},
 {n:"Sorbetto alla frutta",c:"Dolci",k:109,p:0.4,gs:0,g:0.2,z:23.5,ch:27.5,fi:0.5,ca:8,fe:0.2,mg:5,k2:80,na:10,zn:0.1,fo:8,se:0.5,col:0,src:"CREA"},
 {n:"Polenta bianca cotta",c:"Cereali e derivati",k:65,p:1.5,gs:0.1,g:0.3,z:0,ch:14.0,fi:0.6,ca:2,fe:0.3,mg:16,k2:55,na:1,zn:0.2,fo:35,se:2,col:0,src:"CREA"},
-{n:"Vitello (spalla) crudo",c:"Carni rosse",k:118,p:20.0,gs:1.2,g:3.8,z:0,ch:0,fi:0,ca:12,fe:1.1,mg:22,k2:330,na:68,zn:3.0,fo:195,se:9,col:74,src:"CREA"}
+{n:"Vitello (spalla) crudo",c:"Carni rosse",k:118,p:20.0,gs:1.2,g:3.8,z:0,ch:0,fi:0,ca:12,fe:1.1,mg:22,k2:330,na:68,zn:3.0,fo:195,se:9,col:74,src:"CREA"},
+// ── CARNI BOVINE/VITELLO aggiuntive (CREA 2019) ──
+{n:"Vitello fesa",c:"Carni rosse",k:105,p:21.8,gs:0.7,g:2.1,z:0,ch:0,fi:0,ca:9,fe:1.1,mg:24,k2:345,na:72,zn:3.0,fo:200,se:9,col:68,src:"CREA"},
+{n:"Vitello girello",c:"Carni rosse",k:110,p:22.0,gs:0.8,g:2.5,z:0,ch:0,fi:0,ca:10,fe:1.0,mg:23,k2:340,na:70,zn:2.9,fo:198,se:9,col:70,src:"CREA"},
+{n:"Vitello scaloppina",c:"Carni rosse",k:107,p:20.7,gs:0.9,g:2.7,z:0,ch:0,fi:0,ca:14,fe:1.2,mg:24,k2:348,na:84,zn:3.2,fo:214,se:9,col:71,src:"CREA"},
+{n:"Vitello scamone",c:"Carni rosse",k:112,p:21.5,gs:0.9,g:2.9,z:0,ch:0,fi:0,ca:11,fe:1.1,mg:23,k2:342,na:75,zn:3.1,fo:202,se:9,col:69,src:"CREA"},
+{n:"Bovino adulto fesa",c:"Carni rosse",k:108,p:21.6,gs:0.8,g:2.4,z:0,ch:0,fi:0,ca:8,fe:2.1,mg:22,k2:348,na:55,zn:3.4,fo:185,se:20,col:60,src:"CREA"},
+{n:"Bovino adulto girello",c:"Carni rosse",k:121,p:22.0,gs:1.0,g:3.5,z:0,ch:0,fi:0,ca:8,fe:2.2,mg:23,k2:352,na:57,zn:3.5,fo:188,se:21,col:62,src:"CREA"},
+{n:"Bovino adulto scamone",c:"Carni rosse",k:131,p:21.5,gs:1.2,g:5.0,z:0,ch:0,fi:0,ca:9,fe:2.1,mg:22,k2:350,na:58,zn:3.5,fo:184,se:20,col:65,src:"CREA"},
+// ── MAIALE aggiuntivo (CREA 2019) ──
+{n:"Maiale spalla",c:"Carni rosse",k:175,p:17.5,gs:3.8,g:11.5,z:0,ch:0,fi:0,ca:10,fe:0.8,mg:20,k2:310,na:68,zn:2.1,fo:190,se:30,col:70,src:"CREA"},
+// ── AGNELLO aggiuntivo (CREA 2019) ──
+{n:"Agnello costolette crude",c:"Carni rosse",k:288,p:16.0,gs:11.8,g:24.5,z:0,ch:0,fi:0,ca:15,fe:1.8,mg:18,k2:310,na:80,zn:3.5,fo:160,se:4,col:85,src:"CREA"},
+{n:"Agnello macinato crudo",c:"Carni rosse",k:235,p:17.0,gs:6.0,g:18.0,z:0,ch:0,fi:0,ca:14,fe:1.9,mg:20,k2:320,na:72,zn:3.8,fo:165,se:5,col:75,src:"CREA"},
+// ── TACCHINO aggiuntivo (CREA 2019) ──
+{n:"Tacchino fesa",c:"Carni bianche",k:101,p:21.5,gs:0.3,g:1.5,z:0,ch:0,fi:0,ca:7,fe:0.7,mg:26,k2:370,na:50,zn:1.4,fo:195,se:6,col:48,src:"CREA"},
+// ── PESCE aggiuntivo (CREA 2019) ──
+{n:"Gallinella di mare",c:"Pesce",k:78,p:18.0,gs:0.2,g:0.5,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:28,k2:330,na:80,zn:0.5,fo:180,se:25,col:40,src:"CREA"},
+{n:"Sarago",c:"Pesce",k:96,p:20.0,gs:0.4,g:2.0,z:0,ch:0,fi:0,ca:22,fe:0.4,mg:26,k2:320,na:72,zn:0.5,fo:190,se:20,col:45,src:"CREA"},
+{n:"Pagello",c:"Pesce",k:88,p:19.5,gs:0.3,g:1.2,z:0,ch:0,fi:0,ca:20,fe:0.5,mg:24,k2:310,na:75,zn:0.5,fo:185,se:18,col:42,src:"CREA"},
+// ── VEGETALI aggiuntivo (CREA 2019) ──
+{n:"Rabarbaro crudo",c:"Verdure",k:13,p:0.6,gs:0,g:0.2,z:1.1,ch:2.4,fi:1.8,ca:86,fe:0.2,mg:12,k2:288,na:4,zn:0.1,fo:7,se:1.1,col:0,src:"CREA"},
+// ── CEREALI/FARINE aggiuntivi (CREA 2019) ──
+{n:"Farina Manitoba (tipo 0 proteica)",c:"Cereali e pasta",k:349,p:14.0,gs:0.2,g:1.2,z:2.0,ch:72.0,fi:2.2,ca:18,fe:1.6,mg:28,k2:120,na:2,zn:0.9,fo:120,se:30,col:0,src:"CREA"},
+{n:"Farina di grano tenero tipo 2",c:"Cereali e pasta",k:339,p:11.0,gs:0.3,g:1.8,z:2.5,ch:68.5,fi:4.5,ca:24,fe:2.0,mg:60,k2:220,na:4,zn:1.8,fo:200,se:28,col:0,src:"CREA"},
+// ── CONDIMENTI/SUGHI aggiuntivi (CREA 2019) ──
+{n:"Sugo all'amatriciana artigianale",c:"Condimenti",k:156,p:5.0,gs:3.5,g:12.0,z:3.0,ch:6.0,fi:1.2,ca:28,fe:1.0,mg:18,k2:310,na:680,zn:0.8,fo:25,se:4,col:20,src:"CREA"},
+{n:"Sugo alla carbonara (salsa)",c:"Condimenti",k:285,p:9.0,gs:12.0,g:24.0,z:1.0,ch:3.0,fi:0,ca:80,fe:0.8,mg:14,k2:120,na:380,zn:1.0,fo:50,se:8,col:180,src:"CREA"},
+// ── LIEVITI aggiuntivi (CREA 2019) ──
+{n:"Lievito di birra fresco",c:"Condimenti",k:43,p:8.0,gs:0.2,g:0.8,z:1.0,ch:1.0,fi:0,ca:22,fe:1.8,mg:35,k2:420,na:17,zn:2.0,fo:1010,se:8,col:0,src:"CREA"},
+{n:"Lievito alimentare (nutrizionale) in scaglie",c:"Condimenti",k:325,p:52.0,gs:0.8,g:7.0,z:3.0,ch:18.0,fi:26.0,ca:50,fe:12.0,mg:231,k2:2200,na:100,zn:7.0,fo:2340,se:100,col:0,src:"CREA"},
+// ── ALIMENTI AGGIUNTIVI DA BANCA DATI CREA 2019 (integrazioni) ──
+{n:"Alice fresca (acciuga)",c:"Pesce",k:96,p:16.8,gs:0.8,g:2.8,z:0,ch:0.5,fi:0,ca:148,fe:3.6,mg:30,k2:361,na:104,zn:1.0,fo:204,se:36,col:60,src:"CREA"},
+{n:"Sardina fresca",c:"Pesce",k:129,p:20.9,gs:1.5,g:4.5,z:0,ch:0.6,fi:0,ca:69,fe:1.4,mg:34,k2:397,na:70,zn:0.9,fo:239,se:24,col:59,src:"CREA"},
+{n:"Pesce spada alla griglia",c:"Pesce",k:142,p:23.5,gs:0.8,g:4.4,z:0,ch:0,fi:0,ca:21,fe:0.6,mg:32,k2:400,na:85,zn:0.7,fo:281,se:66,col:55,src:"CREA"},
+{n:"Fegatini di pollo",c:"Carni bianche",k:119,p:19.0,gs:1.4,g:4.6,z:0,ch:1.9,fi:0,ca:9,fe:8.7,mg:24,k2:230,na:82,zn:3.4,fo:327,se:54,col:350,src:"CREA"},
+{n:"Cuore bovino",c:"Carni rosse",k:114,p:19.0,gs:1.5,g:3.6,z:0,ch:0.3,fi:0,ca:8,fe:4.0,mg:22,k2:280,na:100,zn:1.7,fo:201,se:20,col:120,src:"CREA"},
+{n:"Piselli freschi lessi",c:"Verdure",k:68,p:5.4,gs:0,g:0.3,z:4.2,ch:10.8,fi:5.7,ca:33,fe:1.4,mg:24,k2:271,na:1,zn:0.9,fo:116,se:1,col:0,src:"CREA"},
+{n:"Crema di riso",c:"Cereali e pasta",k:356,p:7.2,gs:0.4,g:1.1,z:0,ch:79,fi:1.5,ca:8,fe:0.8,mg:23,k2:85,na:8,zn:0.8,fo:86,se:6,col:0,src:"CREA"},
+{n:"Crema di mais",c:"Cereali e pasta",k:356,p:8.7,gs:0.3,g:3.5,z:0,ch:74,fi:5.0,ca:5,fe:2.4,mg:38,k2:287,na:5,zn:1.8,fo:175,se:15,col:0,src:"CREA"},
+{n:"Baguette",c:"Pane",k:270,p:8.3,gs:0.2,g:1.2,z:1.8,ch:56,fi:2.4,ca:24,fe:1.5,mg:25,k2:110,na:590,zn:0.6,fo:90,se:17,col:0,src:"CREA"},
+{n:"Rosetta (panino all'acqua)",c:"Pane",k:268,p:8.5,gs:0.2,g:1.0,z:2.0,ch:57,fi:2.8,ca:18,fe:0.9,mg:22,k2:115,na:450,zn:0.7,fo:80,se:14,col:0,src:"CREA"},
+{n:"Tarallo pugliese",c:"Biscotti e crackers",k:394,p:11.0,gs:2.5,g:12.5,z:1.0,ch:62,fi:4.0,ca:42,fe:2.0,mg:30,k2:130,na:640,zn:0.8,fo:120,se:14,col:0,src:"CREA"},
+{n:"Tè deteinato",c:"Bevande",k:1,p:0,gs:0,g:0,z:0,ch:0.2,fi:0,ca:0,fe:0,mg:1,k2:20,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"}
 ];
 
 const DB_BDA=[

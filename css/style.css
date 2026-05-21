@@ -610,3 +610,82 @@ body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; b
 @media(max-width:600px){
   .week-grid-7{grid-template-columns:repeat(4,1fr)!important}
 }
+
+/* ══════════════════════════════════════════
+   ANIMAZIONI — NutriPlan Pro
+   ══════════════════════════════════════════ */
+
+/* Keyframes */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(.5)}60%{opacity:1;transform:scale(1.14)}80%{transform:scale(.95)}100%{transform:scale(1)}}
+@keyframes toastSlideUp{from{transform:translateX(-50%) translateY(10px)}to{transform:translateX(-50%) translateY(0)}}
+@keyframes mIn{from{opacity:0;transform:translateY(-18px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes cselFade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes navActiveGlow{0%,100%{background:rgba(20,184,166,.12)}50%{background:rgba(20,184,166,.2)}}
+
+/* Entrance pagina */
+.page-content{animation:fadeInUp .32s cubic-bezier(.25,.46,.45,.94) both}
+
+/* Card pazienti: entrance + hover più fluido */
+.paz-card{
+  animation:fadeInUp .3s cubic-bezier(.25,.46,.45,.94) both;
+  transition:all .22s cubic-bezier(.25,.46,.45,.94);
+}
+.paz-grid>.paz-card:nth-child(2){animation-delay:.06s}
+.paz-grid>.paz-card:nth-child(3){animation-delay:.11s}
+.paz-grid>.paz-card:nth-child(4){animation-delay:.15s}
+.paz-grid>.paz-card:nth-child(5){animation-delay:.19s}
+.paz-grid>.paz-card:nth-child(6){animation-delay:.23s}
+
+/* Pasto-card entrance con stagger */
+.pasto-card{animation:fadeInUp .28s cubic-bezier(.25,.46,.45,.94) both}
+.pasto-card:nth-child(2){animation-delay:.06s}
+.pasto-card:nth-child(3){animation-delay:.11s}
+.pasto-card:nth-child(4){animation-delay:.16s}
+.pasto-card:nth-child(5){animation-delay:.21s}
+
+/* Card generiche: hover lift */
+.card{transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease}
+.card:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,0,0,.11)}
+
+/* Nav item: hover con leggero slide */
+.nav-item{transition:all .15s,transform .18s cubic-bezier(.25,.46,.45,.94)}
+.nav-item:hover{transform:translateX(4px)}
+
+/* Nav item active: leggero glow pulsante */
+.nav-item.active{animation:navActiveGlow 3s ease infinite}
+
+/* Modal: animazione più morbida (spring-like) */
+.modal{animation:mIn .3s cubic-bezier(.22,1,.36,1) both}
+
+/* Toast: slide da sotto */
+#toast.show{animation:toastSlideUp .22s cubic-bezier(.25,.46,.45,.94) both}
+
+/* Empty state: emoji con bounce */
+.empty-state .ei{display:inline-block;animation:bounceIn .6s cubic-bezier(.36,.07,.19,.97) both .1s}
+
+/* Alert box: entrance */
+.alert-box{animation:fadeInUp .24s ease both}
+
+/* Pannelli attivi (tab switching): fade-in */
+.panel.active{animation:fadeInUp .22s ease both}
+
+/* Btn-primary: hover lift su desktop */
+@media(hover:hover){
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,118,110,.28)}
+}
+.btn-primary:active{transform:translateY(0) scale(.96)!important;box-shadow:none!important}
+
+/* Rispetta preferenza sistema per animazioni ridotte */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+/* Disabilita animazioni in stampa */
+@media print{
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}

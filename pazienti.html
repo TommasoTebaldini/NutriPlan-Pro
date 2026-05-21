@@ -492,6 +492,103 @@ async function renderCartellaDetail(id) {
     </div>`;
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun questionario salvato.</div>';
 
+  // ── Patient diary – last 7 days ───────────────────────────────────────────
+  const _today = new Date().toISOString().split('T')[0];
+  const _7ago  = new Date(Date.now() - 6 * 864e5).toISOString().split('T')[0];
+  let _foodLogs = [], _waterLogs = [], _actLogs = [];
+  if (patientId) {
+    [_foodLogs, _waterLogs, _actLogs] = await Promise.all([
+      safeQuery(sb.from('food_logs').select('date,meal_type,food_name,kcal,grams').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false}).order('created_at', {ascending:false})),
+      safeQuery(sb.from('water_logs').select('date,amount_ml').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false})),
+      safeQuery(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false})),
+    ]);
+  }
+  const _mealLabel = { colazione:'☀️ Colazione', spuntino_mattina:'🍎 Spuntino mattina', pranzo:'🍽️ Pranzo', spuntino_pomeriggio:'🥤 Spuntino pom.', cena:'🌙 Cena', extra:'➕ Extra' };
+  const _fmtShort = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'short', day:'2-digit', month:'2-digit'});
+
+  // Food diary ── group by date → meal_type
+  const _foodByDate = {};
+  for (const f of _foodLogs) {
+    if (!_foodByDate[f.date]) _foodByDate[f.date] = {};
+    if (!_foodByDate[f.date][f.meal_type]) _foodByDate[f.date][f.meal_type] = [];
+    _foodByDate[f.date][f.meal_type].push(f);
+  }
+  const _foodHtml = Object.keys(_foodByDate).length === 0
+    ? '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:4px 0">Nessun dato registrato negli ultimi 7 giorni</p>'
+    : Object.entries(_foodByDate).map(([date, byMeal]) => {
+        const tot = Object.values(byMeal).flat().reduce((s, f) => s + (f.kcal || 0), 0);
+        return `<div style="margin-bottom:10px;padding:10px 12px;background:#F0FDF4;border-radius:10px;border-left:3px solid #16A34A">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-weight:700;font-size:12.5px;color:var(--slate)">${_fmtShort(date)}</span>
+            <span style="font-size:11px;background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:8px;font-weight:700">${Math.round(tot)} kcal</span>
+          </div>
+          ${Object.entries(byMeal).map(([meal, foods]) => `
+            <div style="margin-bottom:5px">
+              <span style="font-size:11px;font-weight:700;color:#6B7280">${_mealLabel[meal] || meal}</span>
+              <div style="padding-left:12px;margin-top:2px">
+                ${foods.map(f => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(f.food_name||'Alimento')}${f.grams ? ' &mdash; ' + f.grams + 'g' : ''}${f.kcal ? ' <span style="color:#6B7280">(' + Math.round(f.kcal) + ' kcal)</span>' : ''}</div>`).join('')}
+              </div>
+            </div>`).join('')}
+        </div>`;
+      }).join('');
+
+  // Water ── aggregate ml by date
+  const _waterByDate = {};
+  for (const w of _waterLogs) _waterByDate[w.date] = (_waterByDate[w.date] || 0) + w.amount_ml;
+  const _waterHtml = Object.keys(_waterByDate).length === 0
+    ? '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:4px 0">Nessun dato registrato negli ultimi 7 giorni</p>'
+    : Object.entries(_waterByDate).map(([date, ml]) => {
+        const pct = Math.min(100, Math.round(ml / 2000 * 100));
+        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#EFF6FF;border-radius:8px;margin-bottom:6px;border-left:3px solid #3B82F6">
+          <span style="font-size:20px">💧</span>
+          <span style="font-weight:700;font-size:12.5px;color:var(--slate);flex:1">${_fmtShort(date)}</span>
+          <span style="font-size:12.5px;color:var(--slate)">${ml} ml</span>
+          <span style="font-size:11px;background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:8px;font-weight:700">${pct}%</span>
+        </div>`;
+      }).join('');
+
+  // Activity ── group by date
+  const _actByDate = {};
+  for (const a of _actLogs) { if (!_actByDate[a.date]) _actByDate[a.date] = []; _actByDate[a.date].push(a); }
+  const _actHtml = Object.keys(_actByDate).length === 0
+    ? '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:4px 0">Nessun dato registrato negli ultimi 7 giorni</p>'
+    : Object.entries(_actByDate).map(([date, acts]) => {
+        const totCal = acts.reduce((s, a) => s + (a.calories_burned || 0), 0);
+        const totMin = acts.reduce((s, a) => s + (a.duration_minutes || 0), 0);
+        return `<div style="margin-bottom:8px;padding:10px 12px;background:#FFF7ED;border-radius:10px;border-left:3px solid #F97316">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-weight:700;font-size:12.5px;color:var(--slate)">${_fmtShort(date)}</span>
+            <div style="display:flex;gap:6px">
+              ${totCal ? `<span style="font-size:11px;background:#FFEDD5;color:#C2410C;padding:2px 8px;border-radius:8px;font-weight:700">${Math.round(totCal)} kcal</span>` : ''}
+              ${totMin ? `<span style="font-size:11px;background:#FEF9C3;color:#854D0E;padding:2px 8px;border-radius:8px;font-weight:700">${totMin} min</span>` : ''}
+            </div>
+          </div>
+          ${acts.map(a => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(a.activity_type || 'Attività')}${a.duration_minutes ? ' &mdash; ' + a.duration_minutes + ' min' : ''}${a.calories_burned ? ' &middot; ' + Math.round(a.calories_burned) + ' kcal' : ''}</div>`).join('')}
+        </div>`;
+      }).join('');
+
+  const _diarioCard = patientId ? `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;gap:8px;padding-bottom:12px">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1">
+          📔 Diario Paziente
+          <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700">ultimi 7 giorni</span>
+        </h4>
+      </div>
+      <div style="padding:0 14px 10px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px">🍽️ Diario Alimentare</div>
+        ${_foodHtml}
+      </div>
+      <div style="padding:0 14px 10px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px;border-top:1px solid var(--border);padding-top:10px">💧 Acqua</div>
+        ${_waterHtml}
+      </div>
+      <div style="padding:0 14px 14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px;border-top:1px solid var(--border);padding-top:10px">🏃 Attività Fisica</div>
+        ${_actHtml}
+      </div>
+    </div>` : '';
+
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
       <button class="btn btn-ghost btn-sm" onclick="cartellaAperta=null;document.getElementById('page-title').textContent='📁 Cartelle Pazienti';loadCartelle()">← Tutte le cartelle</button>
@@ -505,6 +602,7 @@ async function renderCartellaDetail(id) {
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
     ${!isAltro && cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
 
+    ${_diarioCard}
     <!-- SEZIONE PIANI + CONTENUTO VISIBILE AL PAZIENTE -->
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">

@@ -498,7 +498,7 @@ async function renderCartellaDetail(id) {
   let _foodLogs = [], _waterLogs = [], _actLogs = [];
   if (patientId) {
     [_foodLogs, _waterLogs, _actLogs] = await Promise.all([
-      safeQuery(sb.from('food_logs').select('date,meal_type,food_name,kcal,grams').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false}).order('created_at', {ascending:false})),
+      safeQuery(sb.from('food_logs').select('date,meal_type,food_name,kcal,grams,food_data').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false}).order('created_at', {ascending:false})),
       safeQuery(sb.from('water_logs').select('date,amount_ml').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false})),
       safeQuery(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false})),
     ]);
@@ -506,7 +506,7 @@ async function renderCartellaDetail(id) {
   const _mealLabel = { colazione:'☀️ Colazione', spuntino_mattina:'🍎 Spuntino mattina', pranzo:'🍽️ Pranzo', spuntino_pomeriggio:'🥤 Spuntino pom.', cena:'🌙 Cena', extra:'➕ Extra' };
   const _fmtShort = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'short', day:'2-digit', month:'2-digit'});
 
-  // Food diary ── group by date → meal_type
+  // Food diary ── group by date → meal_type (exclude __note__ from kcal totals)
   const _foodByDate = {};
   for (const f of _foodLogs) {
     if (!_foodByDate[f.date]) _foodByDate[f.date] = {};
@@ -516,19 +516,23 @@ async function renderCartellaDetail(id) {
   const _foodHtml = Object.keys(_foodByDate).length === 0
     ? '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:4px 0">Nessun dato registrato negli ultimi 7 giorni</p>'
     : Object.entries(_foodByDate).map(([date, byMeal]) => {
-        const tot = Object.values(byMeal).flat().reduce((s, f) => s + (f.kcal || 0), 0);
+        const tot = Object.values(byMeal).flat().filter(f => f.food_name !== '__note__').reduce((s, f) => s + (f.kcal || 0), 0);
         return `<div style="margin-bottom:10px;padding:10px 12px;background:#F0FDF4;border-radius:10px;border-left:3px solid #16A34A">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <span style="font-weight:700;font-size:12.5px;color:var(--slate)">${_fmtShort(date)}</span>
             <span style="font-size:11px;background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:8px;font-weight:700">${Math.round(tot)} kcal</span>
           </div>
-          ${Object.entries(byMeal).map(([meal, foods]) => `
-            <div style="margin-bottom:5px">
+          ${Object.entries(byMeal).map(([meal, foods]) => {
+            const realFoods = foods.filter(f => f.food_name !== '__note__');
+            const notes = foods.filter(f => f.food_name === '__note__');
+            return `<div style="margin-bottom:5px">
               <span style="font-size:11px;font-weight:700;color:#6B7280">${_mealLabel[meal] || meal}</span>
               <div style="padding-left:12px;margin-top:2px">
-                ${foods.map(f => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(f.food_name||'Alimento')}${f.grams ? ' &mdash; ' + f.grams + 'g' : ''}${f.kcal ? ' <span style="color:#6B7280">(' + Math.round(f.kcal) + ' kcal)</span>' : ''}</div>`).join('')}
+                ${realFoods.map(f => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(f.food_name||'Alimento')}${f.grams ? ' &mdash; ' + f.grams + 'g' : ''}${f.kcal ? ' <span style="color:#6B7280">(' + Math.round(f.kcal) + ' kcal)</span>' : ''}</div>`).join('')}
+                ${notes.map(n => `<div style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:6px;padding:3px 8px;margin-top:3px;display:flex;gap:5px"><span>📝</span><span>${esc(n.food_data?.note || '')}</span></div>`).join('')}
               </div>
-            </div>`).join('')}
+            </div>`;
+          }).join('')}
         </div>`;
       }).join('');
 

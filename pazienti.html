@@ -507,7 +507,15 @@ async function renderCartellaDetail(id) {
   const _fmtShort = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'short', day:'2-digit', month:'2-digit'});
 
   // Food diary ── group by date → meal_type (exclude __note__ from kcal totals)
-  const _parseNote = fd => { try { const o = fd && typeof fd === 'string' ? JSON.parse(fd) : (fd || {}); return (o && o.note) || ''; } catch(e) { return ''; } };
+  const _parseNote = fd => {
+    try {
+      if (!fd) return '';
+      if (typeof fd === 'string') {
+        try { const o = JSON.parse(fd); return (o && typeof o === 'object' && o.note) ? String(o.note) : fd; } catch { return fd; }
+      }
+      return (fd.note !== undefined && fd.note !== null) ? String(fd.note) : '';
+    } catch { return ''; }
+  };
   const _foodByDate = {};
   for (const f of _foodLogs) {
     if (!_foodByDate[f.date]) _foodByDate[f.date] = {};
@@ -524,8 +532,8 @@ async function renderCartellaDetail(id) {
             <span style="font-size:11px;background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:8px;font-weight:700">${Math.round(tot)} kcal</span>
           </div>
           ${Object.entries(byMeal).map(([meal, foods]) => {
-            const realFoods = foods.filter(f => (f.food_name || '') !== '__note__');
-            const notes = foods.filter(f => (f.food_name || '') === '__note__');
+            const realFoods = foods.filter(f => (f.food_name || '').trim() !== '__note__');
+            const notes = foods.filter(f => (f.food_name || '').trim() === '__note__');
             return `<div style="margin-bottom:5px">
               <span style="font-size:11px;font-weight:700;color:#6B7280">${_mealLabel[meal] || meal}</span>
               <div style="padding-left:12px;margin-top:2px">

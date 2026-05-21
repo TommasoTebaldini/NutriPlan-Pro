@@ -63,10 +63,11 @@
 .save-msg{font-size:12.5px;font-weight:600;color:var(--teal-d);display:none}
 .save-msg.visible{display:flex;align-items:center;gap:5px}
 
-.photo-upload-area{border:2px dashed var(--border-d);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.photo-upload-area{border:2px dashed var(--border-d);border-radius:14px;padding:20px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;display:flex;flex-direction:column;align-items:center;gap:0}
 .photo-upload-area:hover{border-color:var(--teal-l);background:#F0FDF9}
-.photo-upload-area p{font-size:12.5px;color:var(--slate-l);margin-top:6px}
+.photo-upload-area p{font-size:12.5px;color:var(--slate-l);margin-top:8px;line-height:1.5}
 .photo-upload-area input{display:none}
+.photo-preview-circle{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--teal-l);box-shadow:0 4px 16px rgba(15,118,110,.2);display:block;margin:0 auto}
 
 .av-day-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .av-day-row:last-child{border-bottom:none}
@@ -159,15 +160,16 @@
       <!-- Foto profilo -->
       <div class="form-section" style="margin-bottom:16px">
         <h3>📷 Foto profilo</h3>
-        <label class="photo-upload-area" for="avatar-file-input" id="photo-drop-area">
-          <div id="photo-preview-wrap" style="display:none;margin-bottom:10px">
-            <img id="photo-preview-img" src="" alt="Anteprima" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">
+        <label class="photo-upload-area" for="avatar-file-input-2" id="photo-drop-area">
+          <div id="photo-preview-wrap" style="display:none;margin-bottom:12px">
+            <img id="photo-preview-img" src="" alt="Anteprima" class="photo-preview-circle">
           </div>
-          <div style="font-size:28px" id="photo-icon">🖼️</div>
-          <p id="photo-label">Clicca per caricare una foto · max 5 MB</p>
+          <div id="photo-icon" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#CCFBF1,#E0F2F1);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto">📷</div>
+          <p id="photo-label" style="margin-top:10px;font-size:13px;font-weight:500;color:var(--slate-m)">Clicca o trascina per caricare</p>
+          <p style="font-size:11.5px;color:var(--slate-l)">JPG, PNG, WebP · max 5 MB</p>
           <input type="file" id="avatar-file-input-2" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
         </label>
-        <div id="photo-upload-status" style="font-size:12px;color:var(--teal-d);margin-top:8px;display:none"></div>
+        <div id="photo-upload-status" style="font-size:12px;font-weight:500;margin-top:10px;display:none;text-align:center"></div>
       </div>
 
       <!-- Info personali -->
@@ -526,6 +528,7 @@ async function handleAvatarUpload(input) {
   const { data: urlData } = sb.storage.from(BUCKET).getPublicUrl(path);
   const url = urlData?.publicUrl + `?t=${Date.now()}`;
   setAvatarUI(url);
+  statusEl.style.color = 'var(--teal-d)';
   statusEl.textContent = '✅ Foto caricata — ricorda di salvare il profilo';
 }
 

@@ -37,11 +37,11 @@
 .sub-badge-hero.pro { background: rgba(253,230,138,.25); border-color: rgba(253,230,138,.6); color:#FEF3C7; }
 .plans-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
+  max-width: 520px;
   gap: 20px;
-  margin-bottom: 28px;
+  margin: 0 auto 28px;
 }
-@media(max-width:640px){ .plans-grid { grid-template-columns: 1fr; } }
 .plan-card {
   background: #fff;
   border: 2px solid var(--border);
@@ -228,15 +228,10 @@
     <!-- Hero con stato abbonamento -->
     <div class="sub-hero" id="sub-hero">
       <div class="sub-hero-info">
-        <h2 id="hero-title">Piano NutriPlan Pro</h2>
-        <p id="hero-desc">Scegli il piano più adatto alla tua professione.</p>
+        <h2 id="hero-title">NutriPlan Pro</h2>
+        <p id="hero-desc">Accesso completo a tutte le funzionalità della piattaforma.</p>
       </div>
-      <div class="sub-badge-hero" id="hero-badge">🔓 Piano Gratuito</div>
-    </div>
-
-    <!-- Banner 14 giorni di prova gratuita (solo se non abbonato) -->
-    <div class="trial-banner" id="trial-banner">
-      🎁 <div><strong>14 giorni di prova gratuita</strong> inclusi — nessuna carta richiesta per il periodo di prova. Disdici in qualsiasi momento.</div>
+      <div class="sub-badge-hero pro" id="hero-badge">⭐ Professional</div>
     </div>
 
     <!-- Toggle mensile / annuale -->
@@ -246,14 +241,13 @@
       <span class="toggle-label" id="lbl-annual">Annuale <span class="annual-badge">-17%</span></span>
     </div>
 
-    <!-- Piani -->
+    <!-- Piano unico Professional -->
     <div class="plans-grid">
-
-      <!-- Piano Gratuito -->
-      <div class="plan-card">
-        <div class="plan-name">Gratuito</div>
-        <div class="plan-price">€0<span>/mese</span></div>
-        <div class="plan-period">Per sempre gratuito</div>
+      <div class="plan-card plan-pro">
+        <div class="plan-name" style="color:#6366F1">⭐ NutriPlan Pro</div>
+        <div class="plan-price" id="price-display">€35<span>/mese</span></div>
+        <div class="plan-period" id="period-display">Fatturazione mensile · Disdici quando vuoi</div>
+        <div class="plan-annual-note" id="annual-note" style="display:none">💰 Risparmio rispetto al mensile: €71 all'anno</div>
         <ul class="plan-features">
           <li><span class="fi fi-ok">✅</span>Piano alimentare personalizzato</li>
           <li><span class="fi fi-ok">✅</span>Cartelle pazienti</li>
@@ -263,26 +257,6 @@
           <li><span class="fi fi-ok">✅</span>Database alimenti CREA+BDA+UPF</li>
           <li><span class="fi fi-ok">✅</span>Valutazione paziente</li>
           <li><span class="fi fi-ok">✅</span>Agenda appuntamenti</li>
-          <li><span class="fi fi-x">—</span><span class="feat-dim">Sezioni specialistiche (Diabete, Renale…)</span></li>
-          <li><span class="fi fi-x">—</span><span class="feat-dim">Assistente AI</span></li>
-          <li><span class="fi fi-x">—</span><span class="feat-dim">BIA avanzata</span></li>
-          <li><span class="fi fi-x">—</span><span class="feat-dim">Questionari clinici</span></li>
-          <li><span class="fi fi-x">—</span><span class="feat-dim">Corsi ECM</span></li>
-          <li><span class="fi fi-x">—</span><span class="feat-dim">NCPt (Nutritional Care Process)</span></li>
-        </ul>
-        <button class="plan-btn plan-btn-free" disabled>Piano attuale</button>
-      </div>
-
-      <!-- Piano Professional -->
-      <div class="plan-card plan-pro">
-        <div class="plan-popular">Consigliato</div>
-        <div class="plan-name" style="color:#6366F1">⭐ Professional</div>
-        <div class="plan-price" id="price-display">€35<span>/mese</span></div>
-        <div class="plan-period" id="period-display">Fatturazione mensile · Disdici quando vuoi</div>
-        <div class="plan-annual-note" id="annual-note" style="display:none">💰 Risparmio rispetto al mensile: €71 all'anno</div>
-        <ul class="plan-features">
-          <li><span class="fi fi-ok">✅</span><strong>Tutto del piano gratuito</strong></li>
-          <li><span class="fi fi-ok">✅</span><strong>Sezioni specialistiche</strong> (su approvazione: Diabete, Renale, Oncologia, Disfagia, Sport, DCA, Chetogenica, Obesità, Pediatria, Ristorazione…)</li>
           <li><span class="fi fi-ok">✅</span><strong>Assistente AI</strong> — piani, risposte cliniche, SOAP notes</li>
           <li><span class="fi fi-ok">✅</span><strong>BIA</strong> — Analisi Bioimpedenziometrica completa</li>
           <li><span class="fi fi-ok">✅</span><strong>Questionari clinici</strong> (MUST, MNA, SGA, ADL…)</li>
@@ -290,18 +264,17 @@
           <li><span class="fi fi-ok">✅</span><strong>Corsi ECM</strong> accreditati per dietisti</li>
           <li><span class="fi fi-ok">✅</span><strong>Integratori e AFMS</strong> — database completo</li>
           <li><span class="fi fi-ok">✅</span><strong>Ricette</strong> — archivio e personalizzazione</li>
+          <li><span class="fi fi-ok">✅</span><strong>Sezioni specialistiche</strong> su approvazione admin (Diabete, Renale, Oncologia, DCA, Sport, Chetogenica, Obesità, Pediatria, Ristorazione…)</li>
           <li><span class="fi fi-ok">✅</span>Supporto prioritario via email</li>
           <li><span class="fi fi-ok">✅</span>Aggiornamenti continui inclusi</li>
-          <li><span class="fi fi-ok">✅</span>14 giorni di prova gratuita</li>
         </ul>
         <button class="plan-btn plan-btn-pro" id="cta-btn" onclick="handleSubscribe()">
-          ⭐ Inizia la prova gratuita
+          ⭐ Abbonati ora
         </button>
         <p style="text-align:center;font-size:11px;color:var(--slate-l);margin-top:10px" id="cta-note">
-          Nessuna carta richiesta per il periodo di prova
+          Pagamento sicuro tramite Stripe
         </p>
       </div>
-
     </div>
 
     <!-- Sezione gestione abbonamento attivo (mostrata solo se Pro) -->
@@ -338,12 +311,11 @@
 
     <!-- FAQ -->
     <div class="section-title">❓ Domande frequenti</div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">Cosa include la prova gratuita di 14 giorni? <span>▼</span></div><div class="faq-a">Durante la prova hai accesso completo a tutte le funzionalità del piano Professional, senza inserire alcuna carta di credito. Al termine dei 14 giorni potrai decidere se abbonarti. In caso contrario, tornerai automaticamente al piano gratuito.</div></div>
     <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">Posso disdire in qualsiasi momento? <span>▼</span></div><div class="faq-a">Sì, puoi disdire quando vuoi direttamente dal portale Stripe (pulsante "Gestisci abbonamento"). L'accesso rimane attivo fino alla fine del periodo già pagato. Non ci sono penali o vincoli.</div></div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">Le sezioni specialistiche (Diabete, Renale ecc.) sono disponibili automaticamente con l'abbonamento? <span>▼</span></div><div class="faq-a">L'abbonamento Professional sblocca automaticamente: AI, BIA, Questionari, NCPt, ECM, Integratori e Ricette. Le sezioni di patologia specialistica (Diabete, Renale, Oncologia ecc.) richiedono anche un'approvazione da parte dell'amministratore per garantire che siano usate da professionisti qualificati. Verranno abilitate entro 24-48 ore dalla richiesta.</div></div>
+    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">Le sezioni specialistiche (Diabete, Renale ecc.) sono incluse nell'abbonamento? <span>▼</span></div><div class="faq-a">L'abbonamento include tutte le funzionalità della piattaforma. Le sezioni di patologia specialistica (Diabete, Renale, Oncologia ecc.) richiedono un'abilitazione da parte dell'amministratore per garantire che siano usate da professionisti qualificati. Verranno abilitate entro 24-48 ore dalla richiesta.</div></div>
     <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">Posso passare da mensile ad annuale? <span>▼</span></div><div class="faq-a">Sì, puoi cambiare il piano in qualsiasi momento dal portale Stripe. Il credito del periodo rimanente viene scalato automaticamente.</div></div>
     <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">I dati dei miei pazienti sono al sicuro? <span>▼</span></div><div class="faq-a">Sì. I dati sono archiviati su Supabase (PostgreSQL) con crittografia TLS in transito e a riposo. I pagamenti sono gestiti da Stripe, certificato PCI-DSS Level 1. NutriPlan Pro non memorizza mai i dati della tua carta.</div></div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">Esiste anche un'app per i miei pazienti? <span>▼</span></div><div class="faq-a">Sì, è in sviluppo! L'app pazienti permetterà ai tuoi assistiti di vedere i piani alimentari assegnati, tenere un diario alimentare e comunicare con te. La versione base sarà gratuita per i pazienti; la versione Premium (€5,99/mese) include tracking micronutrienti, diario sintomi, referti di laboratorio e report dettagliati. Riceverai una notifica quando sarà disponibile.</div></div>
+    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)">Esiste anche un'app per i miei pazienti? <span>▼</span></div><div class="faq-a">Sì! L'app pazienti permette ai tuoi assistiti di vedere i piani alimentari assegnati, tenere un diario alimentare e comunicare con te.</div></div>
 
     <div style="text-align:center;margin-top:32px;padding:20px;color:var(--slate-l);font-size:12.5px">
       Hai domande? Scrivici a <strong>supporto@nutriplanpro.it</strong><br>
@@ -395,44 +367,31 @@ function renderSubscriptionUI() {
   currentPlan = isPro ? 'pro' : 'free';
   subExpiresAt = expires;
 
-  // Hero
   const hero = document.getElementById('sub-hero');
-  const heroBadge = document.getElementById('hero-badge');
   const heroTitle = document.getElementById('hero-title');
   const heroDesc = document.getElementById('hero-desc');
 
   if (isPro) {
     hero.style.background = 'linear-gradient(135deg,#065F46,#047857,#059669)';
-    heroBadge.textContent = '⭐ Piano Professional';
-    heroBadge.className = 'sub-badge-hero pro';
-    heroTitle.textContent = 'Sei un utente Professional';
+    heroTitle.textContent = 'Abbonamento attivo';
     heroDesc.textContent = expires
-      ? 'Abbonamento attivo · Rinnovo il ' + new Date(expires).toLocaleDateString('it-IT')
+      ? 'Rinnovo il ' + new Date(expires).toLocaleDateString('it-IT')
       : 'Abbonamento attivo';
-    document.getElementById('trial-banner').style.display = 'none';
     document.getElementById('manage-section').style.display = 'block';
-
     if (expires) {
       document.getElementById('sub-renewal').textContent = new Date(expires).toLocaleDateString('it-IT', {day:'2-digit',month:'long',year:'numeric'});
     }
-
     const ctaBtn = document.getElementById('cta-btn');
     ctaBtn.textContent = '✅ Abbonamento attivo';
     ctaBtn.className = 'plan-btn plan-btn-free';
     ctaBtn.disabled = true;
     document.getElementById('cta-note').textContent = 'Usa il pulsante qui sotto per gestire il tuo abbonamento';
-    document.querySelector('.plan-btn-free').textContent = '✅ Incluso nel tuo piano';
-  } else {
-    heroBadge.textContent = '🔓 Piano Gratuito';
   }
 
-  // PAYMENTS NOT YET ACTIVE: hide all payment interaction elements
-  const hideWhenInactive = ['trial-banner','billing-toggle','lbl-monthly','lbl-annual','cta-btn','cta-note','manage-section'];
+  // PAYMENTS NOT YET ACTIVE: hide payment interaction elements
+  const hideWhenInactive = ['billing-toggle','lbl-monthly','lbl-annual','cta-btn','cta-note','manage-section'];
   hideWhenInactive.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  // Hide the plan toggle wrapper (parent of the toggle elements)
   document.querySelectorAll('.plan-toggle').forEach(el => el.style.display = 'none');
-  // Disable plan card buttons
-  document.querySelectorAll('.plan-btn').forEach(btn => { btn.style.display = 'none'; });
 }
 
 // ─── Billing toggle ─────────────────────────────────────

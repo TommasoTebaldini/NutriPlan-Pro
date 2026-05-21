@@ -381,14 +381,35 @@ async function saveFood() {
     colesterolo:    num('af-col')
   };
 
+  // Shared row written to public_foods so the patient app sees it automatically
+  const publicRow = {
+    name: nome,
+    category: row.categoria,
+    kcal_100g: row.kcal,
+    proteins_100g: row.proteine,
+    carbs_100g: row.carboidrati,
+    fats_100g: row.grassi_tot,
+    fiber_100g: row.fibre,
+    sugar_100g: row.zuccheri,
+    fat_sat_100g: row.grassi_saturi,
+    created_by: currentUser.id
+  };
+
   let error;
   if (_editingFoodId) {
     ({ error } = await sb.from('alimenti_custom').update(row).eq('id', _editingFoodId).eq('user_id', currentUser.id));
-    if (!error) toast('Alimento aggiornato ✓', 'ok');
+    if (!error) {
+      toast('Alimento aggiornato ✓', 'ok');
+      await sb.from('public_foods').update(publicRow).eq('source_id', _editingFoodId);
+    }
   } else {
     row.user_id = currentUser.id;
-    ({ error } = await sb.from('alimenti_custom').insert(row));
-    if (!error) toast('Alimento aggiunto ✓', 'ok');
+    const { data: inserted, error: insErr } = await sb.from('alimenti_custom').insert(row).select('id').single();
+    error = insErr;
+    if (!error) {
+      toast('Alimento aggiunto ✓', 'ok');
+      if (inserted?.id) await sb.from('public_foods').insert({ ...publicRow, source_id: inserted.id });
+    }
   }
 
   if (error) { toast('Errore: ' + error.message, 'err'); return; }
@@ -403,6 +424,7 @@ function deleteCustomFood(id) {
   customConfirm('Eliminare questo alimento dal database personale?', async () => {
     const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', currentUser.id);
     if (error) { toast('Errore: ' + error.message, 'err'); return; }
+    await sb.from('public_foods').delete().eq('source_id', id);
     toast('Alimento eliminato', 'ok');
     await loadCustomFoods();
     populateCats();

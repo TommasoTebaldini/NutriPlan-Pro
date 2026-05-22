@@ -221,6 +221,122 @@ let editingCartellaId = null;
 let diaryRealtimeChannel = null;
 let _altroCartellaId = null;
 
+// ── Diary globals ────────────────────────────────────
+let _diaryPatientId = null;
+let _diaryMode = 'day';
+const _mealLabelG = { colazione:'☀️ Colazione', spuntino_mattina:'🍎 Spuntino mattina', pranzo:'🍽️ Pranzo', spuntino_pomeriggio:'🥤 Spuntino pom.', cena:'🌙 Cena', extra:'➕ Extra' };
+const _mealOrderG = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena','extra'];
+const _parseNoteG = fd => { try { if (!fd) return ''; if (typeof fd === 'string') { try { const o = JSON.parse(fd); return (o && typeof o === 'object' && o.note) ? String(o.note) : fd; } catch { return fd; } } return (fd.note !== undefined && fd.note !== null) ? String(fd.note) : ''; } catch { return ''; } };
+const _fmtShortG = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'short', day:'2-digit', month:'2-digit'});
+const _fmtLongG = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+
+async function setDiaryMode(mode) {
+  _diaryMode = mode;
+  const dayBtn = document.getElementById('diary-mode-day');
+  const overBtn = document.getElementById('diary-mode-over');
+  const active = 'background:var(--teal);color:white;border-color:var(--teal)';
+  const inactive = 'background:white;color:var(--slate-m);border-color:var(--border-d)';
+  if (dayBtn) dayBtn.style.cssText = (dayBtn.style.cssText || '') + (mode === 'day' ? ';' + active : ';' + inactive);
+  if (overBtn) overBtn.style.cssText = (overBtn.style.cssText || '') + (mode === 'over' ? ';' + active : ';' + inactive);
+  await reloadDiary();
+}
+
+async function reloadDiary() {
+  if (!_diaryPatientId) return;
+  const rangeEl = document.getElementById('diary-range');
+  const contentEl = document.getElementById('diary-content');
+  if (!contentEl) return;
+  const range = rangeEl?.value || '7';
+  const today = new Date().toISOString().split('T')[0];
+  const fromDate = range === 'all' ? '2020-01-01' : new Date(Date.now() - (parseInt(range) - 1) * 864e5).toISOString().split('T')[0];
+  contentEl.innerHTML = '<div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">⏳ Caricamento...</div>';
+  const safeQ = async q => { try { const r = await q; return r.data || []; } catch { return []; } };
+  const [foodLogs, waterLogs, actLogs] = await Promise.all([
+    safeQ(sb.from('food_logs').select('id,date,meal_type,food_name,kcal,grams,food_data').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false}).order('created_at',{ascending:false})),
+    safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false})),
+    safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false})),
+  ]);
+  const foodByDate = {};
+  for (const f of foodLogs) { if (!foodByDate[f.date]) foodByDate[f.date] = {}; if (!foodByDate[f.date][f.meal_type]) foodByDate[f.date][f.meal_type] = []; foodByDate[f.date][f.meal_type].push(f); }
+  const waterByDate = {};
+  for (const w of waterLogs) waterByDate[w.date] = (waterByDate[w.date] || 0) + w.amount_ml;
+  const actByDate = {};
+  for (const a of actLogs) { if (!actByDate[a.date]) actByDate[a.date] = []; actByDate[a.date].push(a); }
+  const allDates = [...new Set([...Object.keys(foodByDate), ...Object.keys(waterByDate), ...Object.keys(actByDate)])].sort().reverse();
+  if (!allDates.length) {
+    const msg = range === 'all' ? 'Nessun dato registrato' : `Nessun dato negli ultimi ${range} giorni`;
+    contentEl.innerHTML = `<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 14px">${msg}</p>`;
+    return;
+  }
+  contentEl.innerHTML = _diaryMode === 'day' ? _renderDiaryDayByDay(allDates, foodByDate, waterByDate, actByDate) : _renderDiaryOverview(allDates, foodByDate, waterByDate, actByDate);
+}
+
+function _renderDiaryDayByDay(dates, foodByDate, waterByDate, actByDate) {
+  return '<div style="padding:0 14px 14px">' + dates.map(date => {
+    const byMeal = foodByDate[date] || {};
+    const allFoods = Object.values(byMeal).flat();
+    const tot = allFoods.filter(f => (f.food_name||'').trim() !== '__note__').reduce((s,f) => s+(f.kcal||0), 0);
+    const water = waterByDate[date]; const acts = actByDate[date] || [];
+    return `<div style="margin-bottom:10px;padding:10px 12px;background:#F0FDF4;border-radius:10px;border-left:3px solid #16A34A">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px">
+        <span style="font-weight:700;font-size:12.5px;color:var(--slate)">${_fmtLongG(date)}</span>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${tot>0?`<span style="font-size:11px;background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:8px;font-weight:700">${Math.round(tot)} kcal</span>`:''}
+          ${water?`<span style="font-size:11px;background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:8px;font-weight:700">💧 ${water} ml</span>`:''}
+        </div>
+      </div>
+      ${_mealOrderG.filter(m => byMeal[m]?.length).map(meal => {
+        const foods = byMeal[meal];
+        const realFoods = foods.filter(f => (f.food_name||'').trim() !== '__note__');
+        const notes = foods.filter(f => (f.food_name||'').trim() === '__note__');
+        return `<div style="margin-bottom:5px">
+          <span style="font-size:11px;font-weight:700;color:#6B7280">${_mealLabelG[meal]||meal}</span>
+          <div style="padding-left:12px;margin-top:2px">
+            ${realFoods.map(f => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(f.food_name||'Alimento')}${f.grams?' &mdash; '+f.grams+'g':''}${f.kcal?' <span style="color:#6B7280">('+Math.round(f.kcal)+' kcal)</span>':''}</div>`).join('')}
+            ${notes.map(n => { const t=_parseNoteG(n.food_data); return t?`<div style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:6px;padding:3px 8px;margin-top:3px;display:flex;gap:5px;align-items:flex-start"><span>📝</span><span>${esc(t)}</span></div>`:''; }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+      ${acts.length?`<div style="margin-top:4px">${acts.map(a=>`<div style="font-size:11.5px;color:#C2410C;display:flex;align-items:center;gap:4px">🏃 ${esc(a.activity_type||'Attività')}${a.duration_minutes?' &mdash; '+a.duration_minutes+' min':''}${a.calories_burned?' · '+Math.round(a.calories_burned)+' kcal':''}</div>`).join('')}</div>`:''}
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function _renderDiaryOverview(dates, foodByDate, waterByDate, actByDate) {
+  const MEALS = [{key:'colazione',label:'Colazione'},{key:'pranzo',label:'Pranzo'},{key:'cena',label:'Cena'},{key:'spuntino_mattina',label:'Spunt. mat.'},{key:'spuntino_pomeriggio',label:'Spunt. pom.'},{key:'extra',label:'Extra'}];
+  const thStyle = 'text-align:left;padding:6px 8px;font-size:11px;font-weight:700;color:#6B7280;white-space:nowrap;border-bottom:2px solid var(--border)';
+  const tdStyle = 'padding:5px 8px;vertical-align:top;font-size:11.5px;color:var(--slate);max-width:130px';
+  return `<div style="padding:0 14px 14px;overflow-x:auto"><table style="width:100%;border-collapse:collapse">
+    <thead><tr><th style="${thStyle}">Data</th>${MEALS.map(m=>`<th style="${thStyle}">${m.label}</th>`).join('')}<th style="${thStyle};text-align:right">kcal / 💧</th></tr></thead>
+    <tbody>${dates.map((date,i) => {
+      const byMeal = foodByDate[date] || {};
+      const allFoods = Object.values(byMeal).flat();
+      const tot = allFoods.filter(f=>(f.food_name||'').trim()!=='__note__').reduce((s,f)=>s+(f.kcal||0),0);
+      const water = waterByDate[date]; const acts = actByDate[date]||[];
+      return `<tr style="background:${i%2===0?'white':'#F8FAFC'};border-bottom:1px solid var(--border)">
+        <td style="padding:5px 8px;font-weight:600;color:var(--slate);white-space:nowrap;vertical-align:top">${_fmtShortG(date)}</td>
+        ${MEALS.map(m=>{
+          const foods = byMeal[m.key]||[];
+          const realFoods = foods.filter(f=>(f.food_name||'').trim()!=='__note__');
+          const notes = foods.filter(f=>(f.food_name||'').trim()==='__note__');
+          const allNames = realFoods.map(f=>esc(f.food_name||'')).join(', ');
+          const shown = realFoods.slice(0,2).map(f=>esc(f.food_name||'')).join(', ') + (realFoods.length>2?' +altri':'');
+          const noteTexts = notes.map(n=>_parseNoteG(n.food_data)).filter(Boolean);
+          return `<td style="${tdStyle}">
+            ${shown?`<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${allNames}">${shown}</div>`:''}
+            ${noteTexts.map(t=>`<div style="font-size:10.5px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:4px;padding:2px 5px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="📝 ${esc(t)}">📝 ${esc(t)}</div>`).join('')}
+          </td>`;
+        }).join('')}
+        <td style="padding:5px 8px;text-align:right;white-space:nowrap;vertical-align:top">
+          ${tot>0?`<span style="font-weight:700;color:#15803D">${Math.round(tot)}</span>`:''}
+          ${water?`<div style="font-size:10.5px;color:#1D4ED8;font-weight:600">💧 ${water}ml</div>`:''}
+          ${acts.length?`<div style="font-size:10.5px;color:#C2410C">🏃 ${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)}min</div>`:''}
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
 // CUSTOM CONFIRM DIALOG
 let _confirmCallback = null;
 function customConfirm(msg, onConfirm, opts = {}) {
@@ -492,114 +608,24 @@ async function renderCartellaDetail(id) {
     </div>`;
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun questionario salvato.</div>';
 
-  // ── Patient diary – last 7 days ───────────────────────────────────────────
-  const _today = new Date().toISOString().split('T')[0];
-  const _7ago  = new Date(Date.now() - 6 * 864e5).toISOString().split('T')[0];
-  let _foodLogs = [], _waterLogs = [], _actLogs = [];
-  if (patientId) {
-    [_foodLogs, _waterLogs, _actLogs] = await Promise.all([
-      safeQuery(sb.from('food_logs').select('date,meal_type,food_name,kcal,grams,food_data').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false}).order('created_at', {ascending:false})),
-      safeQuery(sb.from('water_logs').select('date,amount_ml').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false})),
-      safeQuery(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned').eq('user_id', patientId).gte('date', _7ago).lte('date', _today).order('date', {ascending:false})),
-    ]);
-  }
-  const _mealLabel = { colazione:'☀️ Colazione', spuntino_mattina:'🍎 Spuntino mattina', pranzo:'🍽️ Pranzo', spuntino_pomeriggio:'🥤 Spuntino pom.', cena:'🌙 Cena', extra:'➕ Extra' };
-  const _fmtShort = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'short', day:'2-digit', month:'2-digit'});
-
-  // Food diary ── group by date → meal_type (exclude __note__ from kcal totals)
-  const _parseNote = fd => {
-    try {
-      if (!fd) return '';
-      if (typeof fd === 'string') {
-        try { const o = JSON.parse(fd); return (o && typeof o === 'object' && o.note) ? String(o.note) : fd; } catch { return fd; }
-      }
-      return (fd.note !== undefined && fd.note !== null) ? String(fd.note) : '';
-    } catch { return ''; }
-  };
-  const _foodByDate = {};
-  for (const f of _foodLogs) {
-    if (!_foodByDate[f.date]) _foodByDate[f.date] = {};
-    if (!_foodByDate[f.date][f.meal_type]) _foodByDate[f.date][f.meal_type] = [];
-    _foodByDate[f.date][f.meal_type].push(f);
-  }
-  const _foodHtml = Object.keys(_foodByDate).length === 0
-    ? '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:4px 0">Nessun dato registrato negli ultimi 7 giorni</p>'
-    : Object.entries(_foodByDate).map(([date, byMeal]) => {
-        const tot = Object.values(byMeal).flat().filter(f => f.food_name !== '__note__').reduce((s, f) => s + (f.kcal || 0), 0);
-        return `<div style="margin-bottom:10px;padding:10px 12px;background:#F0FDF4;border-radius:10px;border-left:3px solid #16A34A">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-weight:700;font-size:12.5px;color:var(--slate)">${_fmtShort(date)}</span>
-            <span style="font-size:11px;background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:8px;font-weight:700">${Math.round(tot)} kcal</span>
-          </div>
-          ${Object.entries(byMeal).map(([meal, foods]) => {
-            const realFoods = foods.filter(f => (f.food_name || '').trim() !== '__note__');
-            const notes = foods.filter(f => (f.food_name || '').trim() === '__note__');
-            return `<div style="margin-bottom:5px">
-              <span style="font-size:11px;font-weight:700;color:#6B7280">${_mealLabel[meal] || meal}</span>
-              <div style="padding-left:12px;margin-top:2px">
-                ${realFoods.map(f => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(f.food_name||'Alimento')}${f.grams ? ' &mdash; ' + f.grams + 'g' : ''}${f.kcal ? ' <span style="color:#6B7280">(' + Math.round(f.kcal) + ' kcal)</span>' : ''}</div>`).join('')}
-                ${notes.map(n => `<div style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:6px;padding:3px 8px;margin-top:3px;display:flex;gap:5px"><span>📝</span><span>${esc(_parseNote(n.food_data))}</span></div>`).join('')}
-              </div>
-            </div>`;
-          }).join('')}
-        </div>`;
-      }).join('');
-
-  // Water ── aggregate ml by date
-  const _waterByDate = {};
-  for (const w of _waterLogs) _waterByDate[w.date] = (_waterByDate[w.date] || 0) + w.amount_ml;
-  const _waterHtml = Object.keys(_waterByDate).length === 0
-    ? '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:4px 0">Nessun dato registrato negli ultimi 7 giorni</p>'
-    : Object.entries(_waterByDate).map(([date, ml]) => {
-        const pct = Math.min(100, Math.round(ml / 2000 * 100));
-        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#EFF6FF;border-radius:8px;margin-bottom:6px;border-left:3px solid #3B82F6">
-          <span style="font-size:20px">💧</span>
-          <span style="font-weight:700;font-size:12.5px;color:var(--slate);flex:1">${_fmtShort(date)}</span>
-          <span style="font-size:12.5px;color:var(--slate)">${ml} ml</span>
-          <span style="font-size:11px;background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:8px;font-weight:700">${pct}%</span>
-        </div>`;
-      }).join('');
-
-  // Activity ── group by date
-  const _actByDate = {};
-  for (const a of _actLogs) { if (!_actByDate[a.date]) _actByDate[a.date] = []; _actByDate[a.date].push(a); }
-  const _actHtml = Object.keys(_actByDate).length === 0
-    ? '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:4px 0">Nessun dato registrato negli ultimi 7 giorni</p>'
-    : Object.entries(_actByDate).map(([date, acts]) => {
-        const totCal = acts.reduce((s, a) => s + (a.calories_burned || 0), 0);
-        const totMin = acts.reduce((s, a) => s + (a.duration_minutes || 0), 0);
-        return `<div style="margin-bottom:8px;padding:10px 12px;background:#FFF7ED;border-radius:10px;border-left:3px solid #F97316">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <span style="font-weight:700;font-size:12.5px;color:var(--slate)">${_fmtShort(date)}</span>
-            <div style="display:flex;gap:6px">
-              ${totCal ? `<span style="font-size:11px;background:#FFEDD5;color:#C2410C;padding:2px 8px;border-radius:8px;font-weight:700">${Math.round(totCal)} kcal</span>` : ''}
-              ${totMin ? `<span style="font-size:11px;background:#FEF9C3;color:#854D0E;padding:2px 8px;border-radius:8px;font-weight:700">${totMin} min</span>` : ''}
-            </div>
-          </div>
-          ${acts.map(a => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(a.activity_type || 'Attività')}${a.duration_minutes ? ' &mdash; ' + a.duration_minutes + ' min' : ''}${a.calories_burned ? ' &middot; ' + Math.round(a.calories_burned) + ' kcal' : ''}</div>`).join('')}
-        </div>`;
-      }).join('');
-
   const _diarioCard = patientId ? `
     <div class="card" style="margin-bottom:12px">
-      <div class="card-hdr" style="display:flex;align-items:center;gap:8px;padding-bottom:12px">
-        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1">
-          📔 Diario Paziente
-          <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700">ultimi 7 giorni</span>
-        </h4>
+      <div class="card-hdr" style="display:flex;align-items:center;gap:8px;padding-bottom:10px;flex-wrap:wrap">
+        <h4 style="font-size:14px;margin:0;flex:1">📔 Diario Paziente</h4>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <select id="diary-range" onchange="reloadDiary()" style="padding:4px 8px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12px;font-family:inherit;background:white;color:var(--slate);cursor:pointer;outline:none">
+            <option value="7">Ultimi 7 giorni</option>
+            <option value="14">Ultimi 14 giorni</option>
+            <option value="30">Ultimi 30 giorni</option>
+            <option value="all">Tutto lo storico</option>
+          </select>
+          <div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden">
+            <button id="diary-mode-day" onclick="setDiaryMode('day')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:var(--teal);color:white;transition:all .15s">Giorno per giorno</button>
+            <button id="diary-mode-over" onclick="setDiaryMode('over')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:white;color:var(--slate-m);transition:all .15s">Prospetto</button>
+          </div>
+        </div>
       </div>
-      <div style="padding:0 14px 10px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px">🍽️ Diario Alimentare</div>
-        ${_foodHtml}
-      </div>
-      <div style="padding:0 14px 10px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px;border-top:1px solid var(--border);padding-top:10px">💧 Acqua</div>
-        ${_waterHtml}
-      </div>
-      <div style="padding:0 14px 14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B7280;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px;border-top:1px solid var(--border);padding-top:10px">🏃 Attività Fisica</div>
-        ${_actHtml}
-      </div>
+      <div id="diary-content"><div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">⏳ Caricamento...</div></div>
     </div>` : '';
 
   wrap.innerHTML = `
@@ -736,6 +762,12 @@ async function renderCartellaDetail(id) {
     </div>` : ''}
 
   `;
+  if (patientId) {
+    _diaryPatientId = patientId;
+    _diaryMode = 'day';
+    await reloadDiary();
+    setupDiaryRealtime(patientId);
+  }
 }
 
 function apriNoteSpec(noteId, tipo) {
@@ -940,18 +972,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 // When the patient logs a diary entry the dietitian's
 // "Progressi" section refreshes automatically.
 // ═══════════════════════════════════════════════════
-function setupDiaryRealtime(cartellaId) {
+function setupDiaryRealtime(patientId) {
   if (diaryRealtimeChannel) {
     diaryRealtimeChannel.unsubscribe();
     diaryRealtimeChannel = null;
   }
-  const filter = `cartella_id=eq.${cartellaId}`;
-  diaryRealtimeChannel = sb.channel(`diary-dietitian-${cartellaId}`)
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'daily_wellness', filter }, () => {
-      if (cartellaAperta === cartellaId) renderCartellaDetail(cartellaId);
+  diaryRealtimeChannel = sb.channel(`diary-dt-${patientId}`)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'food_logs', filter: `user_id=eq.${patientId}` }, () => {
+      reloadDiary();
     })
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'weight_logs', filter }, () => {
-      if (cartellaAperta === cartellaId) renderCartellaDetail(cartellaId);
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'water_logs', filter: `user_id=eq.${patientId}` }, () => {
+      reloadDiary();
+    })
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'activity_logs', filter: `user_id=eq.${patientId}` }, () => {
+      reloadDiary();
     })
     .subscribe();
 }

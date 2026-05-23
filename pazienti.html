@@ -254,10 +254,14 @@ async function setDiaryMode(mode) {
   _diaryMode = mode;
   const dayBtn = document.getElementById('diary-mode-day');
   const overBtn = document.getElementById('diary-mode-over');
-  const active = 'background:var(--teal);color:white;border-color:var(--teal)';
-  const inactive = 'background:white;color:var(--slate-m);border-color:var(--border-d)';
-  if (dayBtn) dayBtn.style.cssText = (dayBtn.style.cssText || '') + (mode === 'day' ? ';' + active : ';' + inactive);
-  if (overBtn) overBtn.style.cssText = (overBtn.style.cssText || '') + (mode === 'over' ? ';' + active : ';' + inactive);
+  if (dayBtn) {
+    dayBtn.style.background = mode === 'day' ? 'var(--teal)' : 'white';
+    dayBtn.style.color = mode === 'day' ? 'white' : 'var(--slate-m)';
+  }
+  if (overBtn) {
+    overBtn.style.background = mode === 'over' ? 'var(--teal)' : 'white';
+    overBtn.style.color = mode === 'over' ? 'white' : 'var(--slate-m)';
+  }
   await reloadDiary();
 }
 
@@ -335,12 +339,13 @@ function _renderDiaryOverview(dates, foodByDate, waterByDate, actByDate) {
   const MEAL_LABELS = {colazione:'☀️ Colazione',spuntino_mattina:'🍎 Spunt. mat.',pranzo:'🍽️ Pranzo',spuntino_pomeriggio:'🥤 Spunt. pom.',cena:'🌙 Cena',extra:'➕ Extra'};
   // Mostra al massimo 7 giorni, dal più vecchio al più recente (sinistra→destra)
   const displayDates = dates.slice(0, 7).reverse();
+  const truncNote = dates.length > 7 ? `<div style="font-size:11px;color:var(--slate-l);font-style:italic;padding:0 14px 6px">📅 Prospetto: mostra i 7 giorni più recenti su ${dates.length} disponibili</div>` : '';
   const activeMeals = MEAL_KEYS.filter(m => displayDates.some(d => (foodByDate[d]?.[m]?.length > 0)));
-  if (!activeMeals.length) return '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 14px">Nessun dato da mostrare</p>';
+  if (!activeMeals.length) return `${truncNote}<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 14px">Nessun dato da mostrare</p>`;
   const thDay = 'padding:6px 8px;font-size:11px;font-weight:700;color:#1E293B;text-align:center;border-bottom:2px solid #16A34A;white-space:nowrap;min-width:82px;background:linear-gradient(180deg,#F0FDF4,#DCFCE7)';
   const thMeal = 'padding:6px 10px;font-size:11.5px;font-weight:700;color:#0D9488;text-align:left;border-bottom:1px solid var(--border-d);white-space:nowrap;background:#F8FAFC;position:sticky;left:0;z-index:2;border-right:1.5px solid var(--border)';
   const tdBase = 'padding:5px 6px;vertical-align:top;font-size:11px;color:var(--slate);border-bottom:1px solid var(--border);min-width:82px;max-width:120px';
-  let html = `<div style="padding:0 14px 14px;overflow-x:auto">
+  let html = `${truncNote}<div style="padding:0 14px 14px;overflow-x:auto">
     <table style="border-collapse:collapse;min-width:${130+displayDates.length*88}px">
       <thead><tr>
         <th style="${thMeal};border-bottom:2px solid #16A34A">Pasto</th>

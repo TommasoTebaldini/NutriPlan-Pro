@@ -227,9 +227,10 @@ let selectedPatientCartellaId = null;
 let chatMessages = [];
 let realtimeChannel = null;
 let currentChatTab = 'chat';
-let andamentoPeriodDays = 14;
+let andamentoPeriodDays = 7;
 let _diaryDates = [];    // sorted desc, all dates with data
 let _diaryDayIdx = 0;   // 0 = most recent
+let _diaryViewMode = 'day'; // 'day' | 'over'
 
 function getInitials(name) {
   return (name || '?').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || '?';
@@ -485,14 +486,19 @@ async function loadAndamento() {
   const totalActMin = activityLogs.reduce((s, a) => s + (a.duration_minutes || 0), 0);
   const moodMap = { 1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊' };
 
-  const filterSel = `<div class="and-filter-bar">
+  const filterSel = `<div class="and-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
     <span style="font-size:12px;color:var(--slate-l);font-weight:600">Periodo:</span>
     <select id="and-period-filter" onchange="filterAndamento(this.value)">
+      <option value="7"  ${andamentoPeriodDays===7 ?'selected':''}>Ultimi 7 giorni</option>
       <option value="14" ${andamentoPeriodDays===14?'selected':''}>Ultimi 14 giorni</option>
       <option value="30" ${andamentoPeriodDays===30?'selected':''}>Ultimi 30 giorni</option>
       <option value="60" ${andamentoPeriodDays===60?'selected':''}>Ultimi 60 giorni</option>
-      <option value="0" ${andamentoPeriodDays===0?'selected':''}>Tutto</option>
+      <option value="0"  ${andamentoPeriodDays===0 ?'selected':''}>Tutto</option>
     </select>
+    <div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden;margin-left:auto">
+      <button id="diary-vmode-day" onclick="setDiaryViewMode('day')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:${_diaryViewMode==='day'?'var(--teal)':'white'};color:${_diaryViewMode==='day'?'white':'var(--slate-m)'};transition:all .15s">Giorno per giorno</button>
+      <button id="diary-vmode-over" onclick="setDiaryViewMode('over')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:${_diaryViewMode==='over'?'var(--teal)':'white'};color:${_diaryViewMode==='over'?'white':'var(--slate-m)'};transition:all .15s">Prospetto</button>
+    </div>
   </div>`;
 
   const statsHtml = `<div class="and-stats-row">
@@ -504,7 +510,8 @@ async function loadAndamento() {
   </div>`;
 
   panel.innerHTML = filterSel + statsHtml + '<div id="diary-nav-wrap"></div><div id="diary-day-wrap"></div>';
-  renderDiaryDay();
+  if (_diaryViewMode === 'over') renderDiaryOverview();
+  else renderDiaryDay();
 }
 
 function renderDiaryDay() {
@@ -671,6 +678,96 @@ function navDiary(delta) {
 function filterAndamento(days) {
   andamentoPeriodDays = parseInt(days);
   loadAndamento();
+}
+
+function setDiaryViewMode(mode) {
+  _diaryViewMode = mode;
+  const dayBtn = document.getElementById('diary-vmode-day');
+  const overBtn = document.getElementById('diary-vmode-over');
+  if (dayBtn) { dayBtn.style.background = mode==='day'?'var(--teal)':'white'; dayBtn.style.color = mode==='day'?'white':'var(--slate-m)'; }
+  if (overBtn) { overBtn.style.background = mode==='over'?'var(--teal)':'white'; overBtn.style.color = mode==='over'?'white':'var(--slate-m)'; }
+  const navWrap = document.getElementById('diary-nav-wrap');
+  const dayWrap = document.getElementById('diary-day-wrap');
+  if (navWrap) navWrap.innerHTML = '';
+  if (dayWrap) dayWrap.innerHTML = '';
+  if (mode === 'over') renderDiaryOverview();
+  else renderDiaryDay();
+}
+
+function renderDiaryOverview() {
+  const navWrap = document.getElementById('diary-nav-wrap');
+  const dayWrap = document.getElementById('diary-day-wrap');
+  if (!navWrap || !dayWrap || !_diaryDates.length) return;
+  navWrap.innerHTML = '';
+
+  const MEAL_KEYS = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena','extra'];
+  const MEAL_LABELS = {colazione:'☀️ Colazione', spuntino_mattina:'🍎 Spunt. mat.', pranzo:'🍽️ Pranzo', spuntino_pomeriggio:'🥤 Spunt. pom.', cena:'🌙 Cena', extra:'➕ Extra'};
+
+  // max 7 giorni più recenti, ordinati da sinistra (più vecchio) a destra (più recente)
+  const displayDates = _diaryDates.slice(0, 7).reverse();
+  const truncNote = _diaryDates.length > 7
+    ? `<div style="font-size:11px;color:var(--slate-l);font-style:italic;padding:4px 2px 8px">📅 Prospetto: mostra i 7 giorni più recenti su ${_diaryDates.length} disponibili</div>`
+    : '';
+
+  const activeMeals = MEAL_KEYS.filter(m =>
+    displayDates.some(d => (_diaryFoodByDate[d]||[]).some(f => (f.meal_type||'') === m))
+  );
+
+  if (!activeMeals.length) {
+    dayWrap.innerHTML = truncNote + '<p style="color:var(--slate-l);font-size:13px;text-align:center;padding:20px">Nessun dato da mostrare nel prospetto.</p>';
+    return;
+  }
+
+  const thDay  = 'padding:6px 8px;font-size:11px;font-weight:700;color:#1E293B;text-align:center;border-bottom:2px solid #16A34A;white-space:nowrap;min-width:90px;background:linear-gradient(180deg,#F0FDF4,#DCFCE7)';
+  const thMeal = 'padding:6px 10px;font-size:11.5px;font-weight:700;color:#0D9488;text-align:left;border-bottom:1px solid var(--border-d);white-space:nowrap;background:#F8FAFC;position:sticky;left:0;z-index:2;border-right:1.5px solid var(--border)';
+  const tdBase = 'padding:5px 6px;vertical-align:top;font-size:11px;color:var(--slate);border-bottom:1px solid var(--border);min-width:90px;max-width:130px';
+  const parseNoteOv = fd => { try { if (!fd) return ''; const o = typeof fd==='string'?JSON.parse(fd):fd; if(o&&o.note!=null)return String(o.note); if(o&&o.text!=null)return String(o.text); return ''; } catch { return ''; } };
+
+  let html = `${truncNote}<div style="overflow-x:auto">
+    <table style="border-collapse:collapse;min-width:${140+displayDates.length*96}px">
+      <thead><tr>
+        <th style="${thMeal};border-bottom:2px solid #16A34A">Pasto</th>
+        ${displayDates.map(date => {
+          const d = new Date(date+'T00:00:00');
+          return `<th style="${thDay}">${d.toLocaleDateString('it',{weekday:'short'})}<br><span style="font-weight:500;color:#6B7280;font-size:10.5px">${d.toLocaleDateString('it',{day:'2-digit',month:'2-digit'})}</span></th>`;
+        }).join('')}
+      </tr></thead>
+      <tbody>`;
+
+  activeMeals.forEach((meal, ri) => {
+    const rowBg = ri%2===0?'white':'#F8FAFC';
+    html += `<tr style="background:${rowBg}">
+      <td style="${thMeal};background:${rowBg}">${MEAL_LABELS[meal]||meal}</td>
+      ${displayDates.map(date => {
+        const foods = (_diaryFoodByDate[date]||[]).filter(f=>(f.meal_type||'')===meal);
+        const real  = foods.filter(f=>(f.food_name||'').trim()!=='__note__');
+        const notes = foods.filter(f=>(f.food_name||'').trim()==='__note__');
+        if (!real.length && !notes.length) return `<td style="${tdBase}"></td>`;
+        const foodHtml = real.map(f=>`<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px" title="${esc(f.food_name||'')}">&bull; ${esc(f.food_name||'')}${f.grams?` <span style="color:#94A3B8;font-size:10px">${f.grams}g</span>`:''}</div>`).join('');
+        const noteHtml = notes.map(n=>{const t=parseNoteOv(n.food_data);return t?`<div style="font-size:10px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:4px;padding:2px 4px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px" title="📝 ${esc(t)}">📝 ${esc(t)}</div>`:''}).join('');
+        return `<td style="${tdBase}">${foodHtml}${noteHtml}</td>`;
+      }).join('')}
+    </tr>`;
+  });
+
+  // Riga totale kcal + acqua + attività
+  html += `<tr style="background:#F0FDF4;border-top:2px solid #16A34A">
+    <td style="${thMeal};background:#F0FDF4;font-weight:700;color:#15803D;border-bottom:none">Totale kcal</td>
+    ${displayDates.map(date => {
+      const tot   = _diaryTotalsByDate[date];
+      const allF  = (_diaryFoodByDate[date]||[]).filter(f=>(f.food_name||'').trim()!=='__note__');
+      const kcal  = tot?.kcal || allF.reduce((s,f)=>s+(f.kcal||0),0);
+      const water = _diaryWaterByDate[date];
+      const acts  = _diaryActByDate[date]||[];
+      return `<td style="padding:5px 6px;text-align:center;vertical-align:top;border-bottom:none">
+        ${kcal>0?`<div style="font-weight:700;font-size:12px;color:#15803D">${Math.round(kcal)}</div>`:'<div style="color:#D1D5DB;font-size:11px">—</div>'}
+        ${water?`<div style="font-size:10px;color:#1D4ED8;font-weight:600">💧${Math.round(water/100)/10}L</div>`:''}
+        ${acts.length?`<div style="font-size:10px;color:#C2410C">🏃${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)}min</div>`:''}
+      </td>`;
+    }).join('')}
+  </tr>`;
+  html += '</tbody></table></div>';
+  dayWrap.innerHTML = html;
 }
 
 function deselectPatient() {

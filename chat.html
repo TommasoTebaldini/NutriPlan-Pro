@@ -439,7 +439,7 @@ async function loadAndamento() {
   cutoff.setDate(cutoff.getDate() - (andamentoPeriodDays > 0 ? andamentoPeriodDays : 365));
   const cutoffStr = cutoff.toISOString().split('T')[0];
 
-  const foodQ  = selectedPatientId ? safeQ(sb.from('food_logs').select('date,meal_type,food_name,kcal,proteins,carbs,fats,grams').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).order('created_at',{ascending:false}).limit(500)) : Promise.resolve([]);
+  const foodQ  = selectedPatientId ? safeQ(sb.from('food_logs').select('date,meal_type,food_name,kcal,proteins,carbs,fats,grams,food_data').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).order('created_at',{ascending:false}).limit(500)) : Promise.resolve([]);
   const totQ   = selectedPatientId ? safeQ(sb.from('daily_logs').select('date,kcal,proteins,carbs,fats').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
   const waterQ = selectedPatientId ? safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
   const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
@@ -573,22 +573,47 @@ function renderDiaryDay() {
   }
 
   // Meals
-  const mealOrder = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena'];
+  const mealOrder = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena','extra'];
+  const mealLabelFull = Object.assign({ extra: '➕ Extra' }, mealLabel);
   const sortedMeals = [...Object.keys(mealGroups)].sort((a,b) => {
     const ai = mealOrder.indexOf(a); const bi = mealOrder.indexOf(b);
     return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
   });
+  const _parseNoteChat = fd => {
+  try {
+    if (!fd) return '';
+    if (typeof fd === 'string') {
+      if (fd === '__note__') return '';
+      try {
+        const o = JSON.parse(fd);
+        if (o && typeof o === 'object') {
+          if (o.note != null) return String(o.note);
+          if (o.text != null) return String(o.text);
+          return '';
+        }
+        if (typeof o === 'string' && o !== '__note__') return o;
+        return '';
+      } catch { return fd !== '__note__' ? fd : ''; }
+    }
+    if (fd.note != null) return String(fd.note);
+    if (fd.text != null) return String(fd.text);
+    return '';
+  } catch { return ''; }
+};
   for (const mealType of sortedMeals) {
-    const items = mealGroups[mealType];
-    const lbl = mealLabel[mealType] || ('🍴 ' + mealType);
-    const mKcal = items.reduce((s,f)=>s+(f.kcal||0),0);
+    const allItems = mealGroups[mealType];
+    const realItems = allItems.filter(f => (f.food_name||'').trim() !== '__note__');
+    const noteItems = allItems.filter(f => (f.food_name||'').trim() === '__note__');
+    const lbl = mealLabelFull[mealType] || ('🍴 ' + mealType);
+    const mKcal = realItems.reduce((s,f)=>s+(f.kcal||0),0);
     html += `<div class="diary-section">
-      <div class="diary-section-title">${lbl} <span style="font-weight:400;color:var(--slate-l);margin-left:4px">${Math.round(mKcal)} kcal</span></div>
-      ${items.map(f=>`<div class="diary-meal-item">
+      <div class="diary-section-title">${lbl}${mKcal>0?` <span style="font-weight:400;color:var(--slate-l);margin-left:4px">${Math.round(mKcal)} kcal</span>`:''}</div>
+      ${realItems.map(f=>`<div class="diary-meal-item">
         <span style="flex:1;color:var(--slate)">${esc(f.food_name||'—')}</span>
         ${f.grams?`<span style="color:var(--slate-l);font-size:11.5px">${f.grams}g</span>`:''}
         ${f.kcal?`<span style="color:#C2410C;font-weight:600;font-size:11.5px;flex-shrink:0">${Math.round(f.kcal)} kcal</span>`:''}
       </div>`).join('')}
+      ${noteItems.map(n => { const t = _parseNoteChat(n.food_data); return t ? `<div class="diary-meal-item" style="background:#FFFBEB;border:1px dashed #FDE68A;border-radius:8px;margin-top:3px"><span style="font-size:13px;flex-shrink:0">📝</span><span style="flex:1;color:#78350F;font-size:12px;line-height:1.4">${esc(t)}</span></div>` : ''; }).join('')}
     </div>`;
   }
 

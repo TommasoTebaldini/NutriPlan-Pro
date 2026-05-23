@@ -672,6 +672,46 @@ body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; b
 /* Pannelli attivi (tab switching): fade-in */
 .panel.active{animation:fadeInUp .22s ease both}
 
+/* ── Diario paziente: skeleton loader ── */
+@keyframes shimmer{from{background-position:-200% 0}to{background-position:200% 0}}
+.diary-skeleton{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px;height:14px;margin:4px 0}
+
+/* Diario: card giornaliera con stagger */
+@keyframes diaryCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.diary-day-card{animation:diaryCardIn .28s cubic-bezier(.25,.46,.45,.94) both}
+.diary-day-card:nth-child(2){animation-delay:.05s}
+.diary-day-card:nth-child(3){animation-delay:.10s}
+.diary-day-card:nth-child(4){animation-delay:.15s}
+.diary-day-card:nth-child(5){animation-delay:.19s}
+.diary-day-card:nth-child(n+6){animation-delay:.22s}
+
+/* Nota paziente: highlight animato */
+@keyframes noteHighlight{0%{box-shadow:0 0 0 0 rgba(253,230,138,.7)}70%{box-shadow:0 0 0 6px rgba(253,230,138,0)}100%{box-shadow:none}}
+.patient-note{animation:noteHighlight .8s ease .1s both}
+
+/* Bottoni: feedback click più marcato */
+.btn:active{transform:scale(.94)!important;transition:transform .08s!important}
+
+/* Input focus: ring teal */
+.fg input:focus,.fg select:focus,.fg textarea:focus,.paz-hdr-field input:focus,.paz-hdr-field select:focus{
+  border-color:var(--teal-l);
+  box-shadow:0 0 0 3px rgba(20,184,166,.15);
+  transition:all .18s ease;
+}
+
+/* Dropdown menu: slide-down */
+@keyframes dropdownSlide{from{opacity:0;transform:translateY(-6px) scaleY(.94);transform-origin:top}to{opacity:1;transform:none}}
+.dropdown-menu,.csel-dropdown{animation:dropdownSlide .18s cubic-bezier(.16,1,.3,1) both}
+
+/* Badge / pill: pop-in */
+@keyframes pillPop{0%{transform:scale(0.7);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.paz-tag{animation:pillPop .35s cubic-bezier(.36,.07,.19,.97) both}
+
+/* Sidebar: link attivo pulse ridotto */
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
 /* Btn-primary: hover lift su desktop */
 @media(hover:hover){
   .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,118,110,.28)}

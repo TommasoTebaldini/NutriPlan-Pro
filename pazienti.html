@@ -226,7 +226,27 @@ let _diaryPatientId = null;
 let _diaryMode = 'day';
 const _mealLabelG = { colazione:'☀️ Colazione', spuntino_mattina:'🍎 Spuntino mattina', pranzo:'🍽️ Pranzo', spuntino_pomeriggio:'🥤 Spuntino pom.', cena:'🌙 Cena', extra:'➕ Extra' };
 const _mealOrderG = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena','extra'];
-const _parseNoteG = fd => { try { if (!fd) return ''; if (typeof fd === 'string') { try { const o = JSON.parse(fd); return (o && typeof o === 'object' && o.note) ? String(o.note) : fd; } catch { return fd; } } return (fd.note !== undefined && fd.note !== null) ? String(fd.note) : ''; } catch { return ''; } };
+const _parseNoteG = fd => {
+  try {
+    if (!fd) return '';
+    if (typeof fd === 'string') {
+      if (fd === '__note__') return '';
+      try {
+        const o = JSON.parse(fd);
+        if (o && typeof o === 'object') {
+          if (o.note != null) return String(o.note);
+          if (o.text != null) return String(o.text);
+          return '';
+        }
+        if (typeof o === 'string' && o !== '__note__') return o;
+        return '';
+      } catch { return fd !== '__note__' ? fd : ''; }
+    }
+    if (fd.note != null) return String(fd.note);
+    if (fd.text != null) return String(fd.text);
+    return '';
+  } catch { return ''; }
+};
 const _fmtShortG = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'short', day:'2-digit', month:'2-digit'});
 const _fmtLongG = d => new Date(d + 'T00:00:00').toLocaleDateString('it', {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
 
@@ -249,12 +269,19 @@ async function reloadDiary() {
   const range = rangeEl?.value || '7';
   const today = new Date().toISOString().split('T')[0];
   const fromDate = range === 'all' ? '2020-01-01' : new Date(Date.now() - (parseInt(range) - 1) * 864e5).toISOString().split('T')[0];
-  contentEl.innerHTML = '<div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">⏳ Caricamento...</div>';
+  contentEl.innerHTML = `<div style="padding:14px">
+    ${[1,2,3].map(()=>`<div style="margin-bottom:10px;padding:10px 12px;background:#F0FDF4;border-radius:10px;border-left:3px solid #86EFAC">
+      <div class="diary-skeleton" style="width:55%;height:12px;margin-bottom:8px"></div>
+      <div class="diary-skeleton" style="width:40%;height:10px;margin-bottom:6px"></div>
+      <div class="diary-skeleton" style="width:70%;height:10px"></div>
+    </div>`).join('')}
+  </div>`;
   const safeQ = async q => { try { const r = await q; return r.data || []; } catch { return []; } };
+  const rangeLimit = range === 'all' ? 500 : (parseInt(range) * 20);
   const [foodLogs, waterLogs, actLogs] = await Promise.all([
-    safeQ(sb.from('food_logs').select('id,date,meal_type,food_name,kcal,grams,food_data').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false}).order('created_at',{ascending:false})),
-    safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false})),
-    safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false})),
+    safeQ(sb.from('food_logs').select('id,date,meal_type,food_name,kcal,grams,food_data').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false}).order('created_at',{ascending:false}).limit(rangeLimit)),
+    safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false}).limit(parseInt(range) || 200)),
+    safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned').eq('user_id', _diaryPatientId).gte('date', fromDate).lte('date', today).order('date',{ascending:false}).limit(parseInt(range) || 100)),
   ]);
   const foodByDate = {};
   for (const f of foodLogs) { if (!foodByDate[f.date]) foodByDate[f.date] = {}; if (!foodByDate[f.date][f.meal_type]) foodByDate[f.date][f.meal_type] = []; foodByDate[f.date][f.meal_type].push(f); }
@@ -277,7 +304,7 @@ function _renderDiaryDayByDay(dates, foodByDate, waterByDate, actByDate) {
     const allFoods = Object.values(byMeal).flat();
     const tot = allFoods.filter(f => (f.food_name||'').trim() !== '__note__').reduce((s,f) => s+(f.kcal||0), 0);
     const water = waterByDate[date]; const acts = actByDate[date] || [];
-    return `<div style="margin-bottom:10px;padding:10px 12px;background:#F0FDF4;border-radius:10px;border-left:3px solid #16A34A">
+    return `<div class="diary-day-card" style="margin-bottom:10px;padding:10px 12px;background:#F0FDF4;border-radius:10px;border-left:3px solid #16A34A;transition:box-shadow .18s">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px">
         <span style="font-weight:700;font-size:12.5px;color:var(--slate)">${_fmtLongG(date)}</span>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
@@ -293,7 +320,7 @@ function _renderDiaryDayByDay(dates, foodByDate, waterByDate, actByDate) {
           <span style="font-size:11px;font-weight:700;color:#6B7280">${_mealLabelG[meal]||meal}</span>
           <div style="padding-left:12px;margin-top:2px">
             ${realFoods.map(f => `<div style="font-size:11.5px;color:var(--slate)">&bull; ${esc(f.food_name||'Alimento')}${f.grams?' &mdash; '+f.grams+'g':''}${f.kcal?' <span style="color:#6B7280">('+Math.round(f.kcal)+' kcal)</span>':''}</div>`).join('')}
-            ${notes.map(n => { const t=_parseNoteG(n.food_data); return t?`<div style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:6px;padding:3px 8px;margin-top:3px;display:flex;gap:5px;align-items:flex-start"><span>📝</span><span>${esc(t)}</span></div>`:''; }).join('')}
+            ${notes.map(n => { const t=_parseNoteG(n.food_data); return t?`<div class="patient-note" style="font-size:11.5px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:6px;padding:3px 8px;margin-top:3px;display:flex;gap:5px;align-items:flex-start"><span>📝</span><span>${esc(t)}</span></div>`:''; }).join('')}
           </div>
         </div>`;
       }).join('')}

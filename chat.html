@@ -700,13 +700,16 @@ function renderDiaryOverview() {
   if (!navWrap || !dayWrap || !_diaryDates.length) return;
   navWrap.innerHTML = '';
 
-  const MEAL_KEYS = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena','extra'];
+  const MEAL_KEYS   = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena','extra'];
   const MEAL_LABELS = {colazione:'☀️ Colazione', spuntino_mattina:'🍎 Spunt. mat.', pranzo:'🍽️ Pranzo', spuntino_pomeriggio:'🥤 Spunt. pom.', cena:'🌙 Cena', extra:'➕ Extra'};
+  const parseNoteOv = fd => { try { if (!fd) return ''; const o = typeof fd==='string'?JSON.parse(fd):fd; if(o&&o.note!=null)return String(o.note); if(o&&o.text!=null)return String(o.text); return ''; } catch { return ''; } };
 
-  // max 7 giorni più recenti, ordinati da sinistra (più vecchio) a destra (più recente)
+  // max 7 giorni più recenti, dal più vecchio (sinistra) al più recente (destra)
   const displayDates = _diaryDates.slice(0, 7).reverse();
+  const COL_W = 130; // px per colonna giorno
+
   const truncNote = _diaryDates.length > 7
-    ? `<div style="font-size:11px;color:var(--slate-l);font-style:italic;padding:4px 2px 8px">📅 Prospetto: mostra i 7 giorni più recenti su ${_diaryDates.length} disponibili</div>`
+    ? `<div style="font-size:11px;color:var(--slate-l);font-style:italic;padding:4px 0 10px">📅 Prospetto: mostra i 7 giorni più recenti su ${_diaryDates.length} disponibili</div>`
     : '';
 
   const activeMeals = MEAL_KEYS.filter(m =>
@@ -718,56 +721,120 @@ function renderDiaryOverview() {
     return;
   }
 
-  const thDay  = 'padding:6px 8px;font-size:11px;font-weight:700;color:#1E293B;text-align:center;border-bottom:2px solid #16A34A;white-space:nowrap;min-width:90px;background:linear-gradient(180deg,#F0FDF4,#DCFCE7)';
-  const thMeal = 'padding:6px 10px;font-size:11.5px;font-weight:700;color:#0D9488;text-align:left;border-bottom:1px solid var(--border-d);white-space:nowrap;background:#F8FAFC;position:sticky;left:0;z-index:2;border-right:1.5px solid var(--border)';
-  const tdBase = 'padding:5px 6px;vertical-align:top;font-size:11px;color:var(--slate);border-bottom:1px solid var(--border);min-width:90px;max-width:130px';
-  const parseNoteOv = fd => { try { if (!fd) return ''; const o = typeof fd==='string'?JSON.parse(fd):fd; if(o&&o.note!=null)return String(o.note); if(o&&o.text!=null)return String(o.text); return ''; } catch { return ''; } };
+  // ── stili fissi ──────────────────────────────────────────────────────────
+  const stickyCol = `width:110px;min-width:110px;max-width:110px;padding:8px 10px;text-align:left;vertical-align:middle;position:sticky;left:0;z-index:3;border-right:2px solid #E2E8F0;white-space:nowrap;`;
+  const dayColW   = `width:${COL_W}px;min-width:${COL_W}px;max-width:${COL_W}px;`;
 
-  let html = `${truncNote}<div style="overflow-x:auto">
-    <table style="border-collapse:collapse;min-width:${140+displayDates.length*96}px">
-      <thead><tr>
-        <th style="${thMeal};border-bottom:2px solid #16A34A">Pasto</th>
-        ${displayDates.map(date => {
-          const d = new Date(date+'T00:00:00');
-          return `<th style="${thDay}">${d.toLocaleDateString('it',{weekday:'short'})}<br><span style="font-weight:500;color:#6B7280;font-size:10.5px">${d.toLocaleDateString('it',{day:'2-digit',month:'2-digit'})}</span></th>`;
-        }).join('')}
-      </tr></thead>
-      <tbody>`;
+  // ── intestazione giorni ──────────────────────────────────────────────────
+  const dayHeaders = displayDates.map(date => {
+    const d   = new Date(date+'T00:00:00');
+    const wd  = d.toLocaleDateString('it',{weekday:'long'});
+    const dm  = d.toLocaleDateString('it',{day:'2-digit',month:'short'});
+    const tot = _diaryTotalsByDate[date];
+    const allF= (_diaryFoodByDate[date]||[]).filter(f=>(f.food_name||'').trim()!=='__note__');
+    const kcal= tot?.kcal || allF.reduce((s,f)=>s+(f.kcal||0),0);
+    const isToday = date === new Date().toISOString().split('T')[0];
+    const accent = isToday ? '#0D9488' : '#16A34A';
+    return `<th style="${dayColW}padding:0;border-bottom:3px solid ${accent};background:white;vertical-align:bottom;">
+      <div style="padding:8px 8px 6px;text-align:center">
+        <div style="font-size:11px;font-weight:700;color:${accent};text-transform:capitalize">${wd}</div>
+        <div style="font-size:13px;font-weight:800;color:#1E293B;margin-top:1px">${dm}</div>
+        ${kcal>0?`<div style="margin-top:4px;display:inline-block;background:#FEF3C7;color:#B45309;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">🔥 ${Math.round(kcal)} kcal</div>`:''}
+      </div>
+    </th>`;
+  }).join('');
 
+  // ── righe pasti ──────────────────────────────────────────────────────────
+  let rowsHtml = '';
   activeMeals.forEach((meal, ri) => {
-    const rowBg = ri%2===0?'white':'#F8FAFC';
-    html += `<tr style="background:${rowBg}">
-      <td style="${thMeal};background:${rowBg}">${MEAL_LABELS[meal]||meal}</td>
-      ${displayDates.map(date => {
-        const foods = (_diaryFoodByDate[date]||[]).filter(f=>(f.meal_type||'')===meal);
-        const real  = foods.filter(f=>(f.food_name||'').trim()!=='__note__');
-        const notes = foods.filter(f=>(f.food_name||'').trim()==='__note__');
-        if (!real.length && !notes.length) return `<td style="${tdBase}"></td>`;
-        const foodHtml = real.map(f=>`<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px" title="${esc(f.food_name||'')}">&bull; ${esc(f.food_name||'')}${f.grams?` <span style="color:#94A3B8;font-size:10px">${f.grams}g</span>`:''}</div>`).join('');
-        const noteHtml = notes.map(n=>{const t=parseNoteOv(n.food_data);return t?`<div style="font-size:10px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:4px;padding:2px 4px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px" title="📝 ${esc(t)}">📝 ${esc(t)}</div>`:''}).join('');
-        return `<td style="${tdBase}">${foodHtml}${noteHtml}</td>`;
-      }).join('')}
+    const rowBg = ri%2===0 ? '#FFFFFF' : '#F8FAFC';
+    const cells = displayDates.map(date => {
+      const foods = (_diaryFoodByDate[date]||[]).filter(f=>(f.meal_type||'')===meal);
+      const real  = foods.filter(f=>(f.food_name||'').trim()!=='__note__');
+      const notes = foods.filter(f=>(f.food_name||'').trim()==='__note__');
+      if (!real.length && !notes.length) {
+        return `<td style="${dayColW}padding:8px;vertical-align:top;border-bottom:1px solid #F1F5F9;background:${rowBg}">
+          <span style="color:#CBD5E1;font-size:11px">—</span>
+        </td>`;
+      }
+      const foodHtml = real.map(f=>`
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:3px">
+          <span style="color:#0D9488;font-size:9px;flex-shrink:0">●</span>
+          <span style="font-size:11.5px;color:#1E293B;line-height:1.3;word-break:break-word">${esc(f.food_name||'')}${f.grams?`<span style="color:#94A3B8;font-size:10px;margin-left:3px">${f.grams}g</span>`:''}</span>
+        </div>`).join('');
+      const noteHtml = notes.map(n=>{
+        const t=parseNoteOv(n.food_data);
+        return t?`<div style="display:flex;align-items:flex-start;gap:3px;margin-top:4px;background:#FFFBEB;border-left:2px solid #FCD34D;border-radius:0 4px 4px 0;padding:3px 6px">
+          <span style="font-size:10px;flex-shrink:0">📝</span>
+          <span style="font-size:10.5px;color:#78350F;line-height:1.35;word-break:break-word">${esc(t)}</span>
+        </div>`:'';
+      }).join('');
+      return `<td style="${dayColW}padding:8px;vertical-align:top;border-bottom:1px solid #F1F5F9;background:${rowBg}">${foodHtml}${noteHtml}</td>`;
+    }).join('');
+
+    rowsHtml += `<tr>
+      <td style="${stickyCol}background:${rowBg};border-bottom:1px solid #F1F5F9;font-size:12px;font-weight:700;color:#0D9488">${MEAL_LABELS[meal]||meal}</td>
+      ${cells}
     </tr>`;
   });
 
-  // Riga totale kcal + acqua + attività
-  html += `<tr style="background:#F0FDF4;border-top:2px solid #16A34A">
-    <td style="${thMeal};background:#F0FDF4;font-weight:700;color:#15803D;border-bottom:none">Totale kcal</td>
-    ${displayDates.map(date => {
-      const tot   = _diaryTotalsByDate[date];
-      const allF  = (_diaryFoodByDate[date]||[]).filter(f=>(f.food_name||'').trim()!=='__note__');
-      const kcal  = tot?.kcal || allF.reduce((s,f)=>s+(f.kcal||0),0);
-      const water = _diaryWaterByDate[date];
-      const acts  = _diaryActByDate[date]||[];
-      return `<td style="padding:5px 6px;text-align:center;vertical-align:top;border-bottom:none">
-        ${kcal>0?`<div style="font-weight:700;font-size:12px;color:#15803D">${Math.round(kcal)}</div>`:'<div style="color:#D1D5DB;font-size:11px">—</div>'}
-        ${water?`<div style="font-size:10px;color:#1D4ED8;font-weight:600">💧${Math.round(water/100)/10}L</div>`:''}
-        ${acts.length?`<div style="font-size:10px;color:#C2410C">🏃${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)}min</div>`:''}
-      </td>`;
-    }).join('')}
-  </tr>`;
-  html += '</tbody></table></div>';
-  dayWrap.innerHTML = html;
+  // ── riga riepilogo giornaliero ────────────────────────────────────────────
+  const summaryRow = displayDates.map(date => {
+    const tot   = _diaryTotalsByDate[date];
+    const allF  = (_diaryFoodByDate[date]||[]).filter(f=>(f.food_name||'').trim()!=='__note__');
+    const kcal  = tot?.kcal || allF.reduce((s,f)=>s+(f.kcal||0),0);
+    const water = _diaryWaterByDate[date];
+    const acts  = _diaryActByDate[date]||[];
+    const totalMin   = acts.reduce((s,a)=>s+(a.duration_minutes||0),0);
+    const totalSteps = acts.reduce((s,a)=>s+(a.steps||0),0);
+    const actTypes   = [...new Set(acts.map(a=>a.activity_type||'').filter(Boolean))].slice(0,2);
+
+    return `<td style="${dayColW}padding:8px;vertical-align:top;background:#F0FDF4;border-top:2px solid #16A34A">
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${kcal>0 ? `<div style="display:flex;align-items:center;gap:5px;background:white;border-radius:7px;padding:4px 7px;border:1px solid #BBF7D0">
+          <span style="font-size:13px">🔥</span>
+          <div><div style="font-size:12px;font-weight:800;color:#15803D">${Math.round(kcal)}</div><div style="font-size:9px;color:#6B7280;font-weight:500">kcal</div></div>
+        </div>` : ''}
+        ${tot ? `<div style="display:flex;gap:4px;flex-wrap:wrap">
+          ${tot.proteins?`<span style="font-size:9.5px;background:#EFF6FF;color:#1D4ED8;padding:2px 5px;border-radius:5px;font-weight:600">P ${Math.round(tot.proteins)}g</span>`:''}
+          ${tot.carbs?`<span style="font-size:9.5px;background:#F0FDF4;color:#15803D;padding:2px 5px;border-radius:5px;font-weight:600">C ${Math.round(tot.carbs)}g</span>`:''}
+          ${tot.fats?`<span style="font-size:9.5px;background:#FFF7ED;color:#B45309;padding:2px 5px;border-radius:5px;font-weight:600">G ${Math.round(tot.fats)}g</span>`:''}
+        </div>` : ''}
+        ${water ? `<div style="display:flex;align-items:center;gap:5px;background:white;border-radius:7px;padding:4px 7px;border:1px solid #BFDBFE">
+          <span style="font-size:13px">💧</span>
+          <div><div style="font-size:12px;font-weight:800;color:#1D4ED8">${Math.round(water/100)/10}L</div><div style="font-size:9px;color:#6B7280;font-weight:500">acqua</div></div>
+        </div>` : ''}
+        ${acts.length ? `<div style="background:white;border-radius:7px;padding:5px 7px;border:1px solid #A7F3D0">
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px">
+            <span style="font-size:13px">🏃</span>
+            <div style="font-size:12px;font-weight:800;color:#065F46">${totalMin} min</div>
+          </div>
+          ${actTypes.length?`<div style="font-size:9.5px;color:#6B7280;font-style:italic;margin-bottom:2px">${actTypes.map(t=>esc(t)).join(', ')}</div>`:''}
+          ${totalSteps?`<div style="display:flex;align-items:center;gap:3px"><span style="font-size:10px">👟</span><span style="font-size:10px;color:#065F46;font-weight:600">${totalSteps.toLocaleString('it')} passi</span></div>`:''}
+        </div>` : ''}
+      </div>
+    </td>`;
+  }).join('');
+
+  const tableW = 112 + displayDates.length * COL_W;
+  dayWrap.innerHTML = `${truncNote}
+    <div style="overflow-x:auto;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+      <table style="border-collapse:collapse;width:${tableW}px;min-width:${tableW}px;table-layout:fixed">
+        <thead>
+          <tr>
+            <th style="${stickyCol}background:#F8FAFC;border-bottom:3px solid #E2E8F0;font-size:11px;font-weight:700;color:#64748B;z-index:4">PASTO</th>
+            ${dayHeaders}
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot>
+          <tr>
+            <td style="${stickyCol}background:#F0FDF4;border-top:2px solid #16A34A;font-size:11px;font-weight:700;color:#15803D">RIEPILOGO</td>
+            ${summaryRow}
+          </tr>
+        </tfoot>
+      </table>
+    </div>`;
 }
 
 function deselectPatient() {

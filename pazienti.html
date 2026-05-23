@@ -330,38 +330,60 @@ function _renderDiaryDayByDay(dates, foodByDate, waterByDate, actByDate) {
 }
 
 function _renderDiaryOverview(dates, foodByDate, waterByDate, actByDate) {
-  const MEALS = [{key:'colazione',label:'Colazione'},{key:'pranzo',label:'Pranzo'},{key:'cena',label:'Cena'},{key:'spuntino_mattina',label:'Spunt. mat.'},{key:'spuntino_pomeriggio',label:'Spunt. pom.'},{key:'extra',label:'Extra'}];
-  const thStyle = 'text-align:left;padding:6px 8px;font-size:11px;font-weight:700;color:#6B7280;white-space:nowrap;border-bottom:2px solid var(--border)';
-  const tdStyle = 'padding:5px 8px;vertical-align:top;font-size:11.5px;color:var(--slate);max-width:130px';
-  return `<div style="padding:0 14px 14px;overflow-x:auto"><table style="width:100%;border-collapse:collapse">
-    <thead><tr><th style="${thStyle}">Data</th>${MEALS.map(m=>`<th style="${thStyle}">${m.label}</th>`).join('')}<th style="${thStyle};text-align:right">kcal / 💧</th></tr></thead>
-    <tbody>${dates.map((date,i) => {
-      const byMeal = foodByDate[date] || {};
-      const allFoods = Object.values(byMeal).flat();
-      const tot = allFoods.filter(f=>(f.food_name||'').trim()!=='__note__').reduce((s,f)=>s+(f.kcal||0),0);
-      const water = waterByDate[date]; const acts = actByDate[date]||[];
-      return `<tr style="background:${i%2===0?'white':'#F8FAFC'};border-bottom:1px solid var(--border)">
-        <td style="padding:5px 8px;font-weight:600;color:var(--slate);white-space:nowrap;vertical-align:top">${_fmtShortG(date)}</td>
-        ${MEALS.map(m=>{
-          const foods = byMeal[m.key]||[];
-          const realFoods = foods.filter(f=>(f.food_name||'').trim()!=='__note__');
-          const notes = foods.filter(f=>(f.food_name||'').trim()==='__note__');
-          const allNames = realFoods.map(f=>esc(f.food_name||'')).join(', ');
-          const shown = realFoods.slice(0,2).map(f=>esc(f.food_name||'')).join(', ') + (realFoods.length>2?' +altri':'');
-          const noteTexts = notes.map(n=>_parseNoteG(n.food_data)).filter(Boolean);
-          return `<td style="${tdStyle}">
-            ${shown?`<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${allNames}">${shown}</div>`:''}
-            ${noteTexts.map(t=>`<div style="font-size:10.5px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:4px;padding:2px 5px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="📝 ${esc(t)}">📝 ${esc(t)}</div>`).join('')}
-          </td>`;
+  // Prospetto settimanale: pasti come righe, giorni come colonne
+  const MEAL_KEYS = ['colazione','spuntino_mattina','pranzo','spuntino_pomeriggio','cena','extra'];
+  const MEAL_LABELS = {colazione:'☀️ Colazione',spuntino_mattina:'🍎 Spunt. mat.',pranzo:'🍽️ Pranzo',spuntino_pomeriggio:'🥤 Spunt. pom.',cena:'🌙 Cena',extra:'➕ Extra'};
+  // Mostra al massimo 7 giorni, dal più vecchio al più recente (sinistra→destra)
+  const displayDates = dates.slice(0, 7).reverse();
+  const activeMeals = MEAL_KEYS.filter(m => displayDates.some(d => (foodByDate[d]?.[m]?.length > 0)));
+  if (!activeMeals.length) return '<p style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 14px">Nessun dato da mostrare</p>';
+  const thDay = 'padding:6px 8px;font-size:11px;font-weight:700;color:#1E293B;text-align:center;border-bottom:2px solid #16A34A;white-space:nowrap;min-width:82px;background:linear-gradient(180deg,#F0FDF4,#DCFCE7)';
+  const thMeal = 'padding:6px 10px;font-size:11.5px;font-weight:700;color:#0D9488;text-align:left;border-bottom:1px solid var(--border-d);white-space:nowrap;background:#F8FAFC;position:sticky;left:0;z-index:2;border-right:1.5px solid var(--border)';
+  const tdBase = 'padding:5px 6px;vertical-align:top;font-size:11px;color:var(--slate);border-bottom:1px solid var(--border);min-width:82px;max-width:120px';
+  let html = `<div style="padding:0 14px 14px;overflow-x:auto">
+    <table style="border-collapse:collapse;min-width:${130+displayDates.length*88}px">
+      <thead><tr>
+        <th style="${thMeal};border-bottom:2px solid #16A34A">Pasto</th>
+        ${displayDates.map(date => {
+          const d = new Date(date+'T00:00:00');
+          const wd = d.toLocaleDateString('it',{weekday:'short'});
+          const dm = d.toLocaleDateString('it',{day:'2-digit',month:'2-digit'});
+          return `<th style="${thDay}">${wd}<br><span style="font-weight:500;color:#6B7280;font-size:10.5px">${dm}</span></th>`;
         }).join('')}
-        <td style="padding:5px 8px;text-align:right;white-space:nowrap;vertical-align:top">
-          ${tot>0?`<span style="font-weight:700;color:#15803D">${Math.round(tot)}</span>`:''}
-          ${water?`<div style="font-size:10.5px;color:#1D4ED8;font-weight:600">💧 ${water}ml</div>`:''}
-          ${acts.length?`<div style="font-size:10.5px;color:#C2410C">🏃 ${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)}min</div>`:''}
-        </td>
-      </tr>`;
-    }).join('')}</tbody>
-  </table></div>`;
+      </tr></thead>
+      <tbody>`;
+  activeMeals.forEach((meal,ri) => {
+    const rowBg = ri%2===0?'white':'#F8FAFC';
+    html += `<tr style="background:${rowBg}">
+      <td style="${thMeal};background:${rowBg}">${MEAL_LABELS[meal]||meal}</td>
+      ${displayDates.map(date => {
+        const foods = (foodByDate[date]?.[meal]||[]);
+        const real = foods.filter(f=>(f.food_name||'').trim()!=='__note__');
+        const notes = foods.filter(f=>(f.food_name||'').trim()==='__note__');
+        if (!real.length && !notes.length) return `<td style="${tdBase}"></td>`;
+        const foodHtml = real.map(f=>`<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:112px" title="${esc(f.food_name||'')}">&bull; ${esc(f.food_name||'')}${f.grams?` <span style="color:#94A3B8;font-size:10px">${f.grams}g</span>`:''}</div>`).join('');
+        const noteHtml = notes.map(n=>{const t=_parseNoteG(n.food_data);return t?`<div style="font-size:10px;color:#92400E;background:#FFFBEB;border:1px dashed #FDE68A;border-radius:4px;padding:2px 4px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:112px" title="📝 ${esc(t)}">📝 ${esc(t)}</div>`:''}).join('');
+        return `<td style="${tdBase}">${foodHtml}${noteHtml}</td>`;
+      }).join('')}
+    </tr>`;
+  });
+  // Riga totali
+  html += `<tr style="background:#F0FDF4;border-top:2px solid #16A34A">
+    <td style="${thMeal};background:#F0FDF4;font-weight:700;color:#15803D;border-bottom:none">Totale kcal</td>
+    ${displayDates.map(date => {
+      const allF = Object.values(foodByDate[date]||{}).flat().filter(f=>(f.food_name||'').trim()!=='__note__');
+      const tot = allF.reduce((s,f)=>s+(f.kcal||0),0);
+      const water = waterByDate[date];
+      const acts = actByDate[date]||[];
+      return `<td style="padding:5px 6px;text-align:center;vertical-align:top;border-bottom:none">
+        ${tot>0?`<div style="font-weight:700;font-size:12px;color:#15803D">${Math.round(tot)}</div>`:'<div style="color:#D1D5DB;font-size:11px">—</div>'}
+        ${water?`<div style="font-size:10px;color:#1D4ED8;font-weight:600">💧${water}ml</div>`:''}
+        ${acts.length?`<div style="font-size:10px;color:#C2410C">🏃${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)}min</div>`:''}
+      </td>`;
+    }).join('')}
+  </tr>`;
+  html += `</tbody></table></div>`;
+  return html;
 }
 
 // CUSTOM CONFIRM DIALOG

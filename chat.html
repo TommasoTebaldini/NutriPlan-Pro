@@ -723,23 +723,19 @@ function renderDiaryOverview() {
 
   // ── stili fissi ──────────────────────────────────────────────────────────
   const stickyCol = `width:110px;min-width:110px;max-width:110px;padding:8px 10px;text-align:left;vertical-align:middle;position:sticky;left:0;z-index:3;border-right:2px solid #E2E8F0;white-space:nowrap;`;
-  const dayColW   = `width:${COL_W}px;min-width:${COL_W}px;max-width:${COL_W}px;`;
+  const dayColW   = `min-width:${COL_W}px;`;
 
   // ── intestazione giorni ──────────────────────────────────────────────────
   const dayHeaders = displayDates.map(date => {
     const d   = new Date(date+'T00:00:00');
     const wd  = d.toLocaleDateString('it',{weekday:'long'});
     const dm  = d.toLocaleDateString('it',{day:'2-digit',month:'short'});
-    const tot = _diaryTotalsByDate[date];
-    const allF= (_diaryFoodByDate[date]||[]).filter(f=>(f.food_name||'').trim()!=='__note__');
-    const kcal= tot?.kcal || allF.reduce((s,f)=>s+(f.kcal||0),0);
     const isToday = date === new Date().toISOString().split('T')[0];
     const accent = isToday ? '#0D9488' : '#16A34A';
     return `<th style="${dayColW}padding:0;border-bottom:3px solid ${accent};background:white;vertical-align:bottom;">
       <div style="padding:8px 8px 6px;text-align:center">
         <div style="font-size:11px;font-weight:700;color:${accent};text-transform:capitalize">${wd}</div>
         <div style="font-size:13px;font-weight:800;color:#1E293B;margin-top:1px">${dm}</div>
-        ${kcal>0?`<div style="margin-top:4px;display:inline-block;background:#FEF3C7;color:#B45309;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">🔥 ${Math.round(kcal)} kcal</div>`:''}
       </div>
     </th>`;
   }).join('');
@@ -819,7 +815,7 @@ function renderDiaryOverview() {
   const tableW = 112 + displayDates.length * COL_W;
   dayWrap.innerHTML = `${truncNote}
     <div style="overflow-x:auto;width:100%;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 2px 8px rgba(0,0,0,.06)">
-      <table style="border-collapse:collapse;width:${tableW}px;min-width:${tableW}px;table-layout:fixed">
+      <table style="border-collapse:collapse;width:100%;min-width:${tableW}px">
         <thead>
           <tr>
             <th style="${stickyCol}background:#F8FAFC;border-bottom:3px solid #E2E8F0;font-size:11px;font-weight:700;color:#64748B;z-index:4">PASTO</th>

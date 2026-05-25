@@ -734,6 +734,39 @@ const DB_CREA=[
 {n:"Rosetta (panino all'acqua)",c:"Pane",k:268,p:8.5,gs:0.2,g:1.0,z:2.0,ch:57,fi:2.8,ca:18,fe:0.9,mg:22,k2:115,na:450,zn:0.7,fo:80,se:14,col:0,src:"CREA"},
 {n:"Tarallo pugliese",c:"Biscotti e crackers",k:394,p:11.0,gs:2.5,g:12.5,z:1.0,ch:62,fi:4.0,ca:42,fe:2.0,mg:30,k2:130,na:640,zn:0.8,fo:120,se:14,col:0,src:"CREA"},
 {n:"Tè deteinato",c:"Bevande",k:1,p:0,gs:0,g:0,z:0,ch:0.2,fi:0,ca:0,fe:0,mg:1,k2:20,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"}
+
+// ─── Nuovi alimenti CREA aggiunti 2025-05 ───
+{n:"Capesante crude",c:"Pesce",k:88,p:16.8,gs:0.2,g:0.8,z:0.5,ch:3.4,fi:0,ca:26,fe:0.5,mg:41,k2:310,na:287,zn:1.1,fo:16,se:20,col:53,src:"CREA"},
+{n:"Ostriche crude",c:"Pesce",k:59,p:9.0,gs:0.4,g:1.8,z:0.4,ch:3.7,fi:0,ca:37,fe:3.5,mg:22,k2:157,na:510,zn:45.0,fo:12,se:63,col:50,src:"CREA"},
+{n:"Scorfano rosso crudo",c:"Pesce",k:83,p:18.8,gs:0.1,g:0.6,z:0,ch:0,fi:0,ca:27,fe:0.4,mg:22,k2:391,na:62,zn:0.5,fo:9,se:36,col:46,src:"CREA"},
+{n:"Palamita fresca",c:"Pesce",k:144,p:23.2,gs:1.6,g:5.8,z:0,ch:0,fi:0,ca:28,fe:1.0,mg:41,k2:434,na:54,zn:0.8,fo:5,se:36,col:76,src:"CREA"},
+{n:"Sgombro sott'olio sgocciolato",c:"Pesce",k:193,p:20.5,gs:2.5,g:12.2,z:0,ch:0,fi:0,ca:17,fe:1.2,mg:27,k2:383,na:430,zn:0.9,fo:5,se:36,col:70,src:"CREA"},
+{n:"Cozze bollite",c:"Pesce",k:84,p:12.0,gs:0.4,g:2.2,z:0,ch:3.7,fi:0,ca:88,fe:4.5,mg:34,k2:320,na:322,zn:1.6,fo:42,se:89,col:50,src:"CREA"},
+{n:"Gambero rosa bollito",c:"Pesce",k:87,p:17.6,gs:0.3,g:1.4,z:0,ch:0.5,fi:0,ca:115,fe:1.7,mg:37,k2:220,na:418,zn:1.8,fo:9,se:38,col:150,src:"CREA"},
+{n:"Pesce spada affumicato",c:"Pesce",k:147,p:20.8,gs:2.0,g:7.2,z:0,ch:0,fi:0,ca:14,fe:1.3,mg:35,k2:476,na:1115,zn:1.1,fo:3,se:58,col:63,src:"CREA"},
+{n:"Baccalà secco salato",c:"Pesce",k:290,p:67.2,gs:0.2,g:0.9,z:0,ch:0,fi:0,ca:127,fe:2.4,mg:66,k2:1218,na:2100,zn:1.3,fo:5,se:36,col:150,src:"CREA"},
+{n:"Sogliola cruda",c:"Pesce",k:83,p:17.1,gs:0.3,g:1.2,z:0,ch:0,fi:0,ca:23,fe:0.7,mg:30,k2:326,na:112,zn:0.5,fo:12,se:32,col:60,src:"CREA"},
+{n:"Merlano (nasello) crudo",c:"Pesce",k:72,p:16.0,gs:0.1,g:0.5,z:0,ch:0,fi:0,ca:16,fe:0.6,mg:28,k2:298,na:81,zn:0.6,fo:10,se:30,col:42,src:"CREA"},
+{n:"Persico crudo",c:"Pesce",k:90,p:19.6,gs:0.2,g:1.0,z:0,ch:0,fi:0,ca:58,fe:0.8,mg:26,k2:370,na:68,zn:0.9,fo:9,se:28,col:80,src:"CREA"},
+{n:"Piccione crudo",c:"Carni",k:142,p:18.5,gs:2.1,g:7.4,z:0,ch:0,fi:0,ca:12,fe:2.5,mg:22,k2:284,na:64,zn:2.1,fo:8,se:16,col:110,src:"CREA"},
+{n:"Farro spelta crudo",c:"Cereali e derivati",k:338,p:14.5,gs:0.4,g:2.7,z:2.0,ch:65.0,fi:7.5,ca:27,fe:4.4,mg:136,k2:388,na:8,zn:3.3,fo:45,se:11,col:0,src:"CREA"},
+{n:"Riso carnaroli crudo",c:"Cereali e derivati",k:358,p:7.1,gs:0.1,g:0.5,z:0,ch:82.0,fi:0.5,ca:9,fe:0.4,mg:20,k2:115,na:2,zn:1.1,fo:6,se:15,col:0,src:"CREA"},
+{n:"Mais dolce in scatola sgocciolato",c:"Verdure",k:86,p:2.7,gs:0.2,g:1.2,z:4.5,ch:16.8,fi:1.8,ca:4,fe:0.6,mg:22,k2:184,na:220,zn:0.5,fo:22,se:1,col:0,src:"CREA"},
+{n:"Cavolo romano crudo",c:"Verdure",k:25,p:2.5,gs:0,g:0.3,z:1.8,ch:3.2,fi:1.7,ca:22,fe:0.7,mg:16,k2:390,na:19,zn:0.4,fo:68,se:1,col:0,src:"CREA"},
+{n:"Cipolla rossa cruda",c:"Verdure",k:40,p:1.1,gs:0,g:0.1,z:4.7,ch:9.0,fi:1.8,ca:23,fe:0.3,mg:10,k2:167,na:4,zn:0.2,fo:18,se:0.5,col:0,src:"CREA"},
+{n:"Fave fresche crude",c:"Legumi",k:76,p:8.0,gs:0.1,g:0.4,z:0.9,ch:10.2,fi:4.0,ca:37,fe:1.9,mg:38,k2:250,na:3,zn:1.0,fo:124,se:1.2,col:0,src:"CREA"},
+{n:"Valerianella cruda",c:"Verdure",k:21,p:2.0,gs:0.1,g:0.4,z:0.5,ch:2.4,fi:2.1,ca:38,fe:2.1,mg:13,k2:459,na:4,zn:0.6,fo:14,se:0.5,col:0,src:"CREA"},
+{n:"Peperone arrosto in vasetto",c:"Verdure",k:32,p:1.1,gs:0.1,g:0.5,z:3.8,ch:5.6,fi:2.1,ca:8,fe:0.5,mg:10,k2:180,na:180,zn:0.2,fo:28,se:0.4,col:0,src:"CREA"},
+{n:"Cardo crudo",c:"Verdure",k:17,p:0.7,gs:0,g:0.1,z:0.5,ch:3.5,fi:1.6,ca:70,fe:0.5,mg:27,k2:400,na:120,zn:0.2,fo:20,se:0.5,col:0,src:"CREA"},
+{n:"Fico d'India fresco",c:"Frutta",k:41,p:0.7,gs:0,g:0.1,z:9.6,ch:9.6,fi:3.6,ca:56,fe:0.3,mg:85,k2:220,na:5,zn:0.1,fo:6,se:0.6,col:0,src:"CREA"},
+{n:"Papaia fresca",c:"Frutta",k:39,p:0.6,gs:0,g:0.1,z:5.9,ch:9.4,fi:1.8,ca:20,fe:0.1,mg:21,k2:182,na:8,zn:0.1,fo:38,se:0.6,col:0,src:"CREA"},
+{n:"Pitahaya (Dragon Fruit) fresca",c:"Frutta",k:50,p:1.1,gs:0,g:0.4,z:7.7,ch:11.0,fi:2.9,ca:18,fe:0.7,mg:18,k2:272,na:39,zn:0.4,fo:7,se:0.6,col:0,src:"CREA"},
+{n:"Prugne secche denocciolate",c:"Frutta secca",k:239,p:2.6,gs:0,g:0.4,z:38.1,ch:63.9,fi:7.1,ca:43,fe:0.9,mg:41,k2:732,na:2,zn:0.4,fo:4,se:0.3,col:0,src:"CREA"},
+{n:"Maracuja (Frutto della Passione) fresco",c:"Frutta",k:97,p:2.2,gs:0.1,g:0.7,z:11.2,ch:23.4,fi:10.4,ca:12,fe:1.6,mg:29,k2:348,na:28,zn:0.1,fo:14,se:0.6,col:0,src:"CREA"},
+{n:"Semi di girasole tostati",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20.0,fi:8.6,ca:78,fe:5.2,mg:325,k2:645,na:3,zn:5.3,fo:227,se:53,col:0,src:"CREA"},
+{n:"Noci del Brasile (Paranoci)",c:"Frutta secca",k:659,p:14.3,gs:16.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0,src:"CREA"},
+{n:"Wasabi in pasta",c:"Condimenti",k:109,p:4.8,gs:0.1,g:0.6,z:4.1,ch:23.0,fi:7.8,ca:128,fe:1.0,mg:69,k2:568,na:818,zn:0.9,fo:61,se:2.5,col:0,src:"CREA"},
+{n:"Lievito di birra in scaglie",c:"Alimenti vari",k:320,p:44.0,gs:0.6,g:3.0,z:6.0,ch:38.0,fi:8.0,ca:30,fe:3.7,mg:50,k2:700,na:40,zn:7.5,fo:2000,se:15,col:0,src:"CREA"},
 ];
 
 const DB_BDA=[
@@ -2210,6 +2243,18 @@ const DB_ONS = [
   // Psyllium polvere per 100g (~5g per dose)
   {n:"Psyllium / Psillio polvere (porz. 5g=15kcal)",c:"Fibra Integratore",src:"INT",
    k:295,p:2.1,ch:79,g:0.7,fi:71,gs:0,z:1.3,ca:58,fe:2.5,mg:88,k2:274,na:45,zn:0.9,fo:120,se:2,col:0,porzione:5},
+
+// ─── Nuovi alimenti UPF aggiunti 2025-05 ───
+{n:"Gallette di riso soffiato (per 100g)",c:"Snack salati",src:"UPF",k:387,p:7.9,gs:0.4,g:2.2,z:0.6,ch:82.5,fi:2.0,na:330},
+{n:"Barretta proteica whey generica (per 100g)",c:"Barrette proteiche",src:"UPF",k:380,p:32.0,gs:4.2,g:11.0,z:24.0,ch:42.0,fi:2.5,na:220},
+{n:"Bevanda di soia zuccherata (per 100g)",c:"Bevande vegetali",src:"UPF",k:54,p:3.3,gs:0.3,g:1.8,z:5.6,ch:6.8,fi:0.5,na:47},
+{n:"Barretta ai cereali con cioccolato (per 100g)",c:"Barrette proteiche",src:"UPF",k:418,p:5.2,gs:6.8,g:13.5,z:32.0,ch:67.0,fi:2.8,na:190},
+{n:"Yogurt greco proteico 0% grassi (per 100g)",c:"Latte e derivati",src:"UPF",k:59,p:10.0,gs:0,g:0.1,z:3.8,ch:3.9,fi:0,na:40},
+{n:"Proteina del siero di latte in polvere (per 100g)",c:"Barrette proteiche",src:"UPF",k:380,p:80.0,gs:1.5,g:5.0,z:5.0,ch:8.0,fi:0,na:130},
+{n:"Polpette vegetali surgelate (per 100g)",c:"Piatti pronti",src:"UPF",k:175,p:12.5,gs:1.8,g:7.5,z:1.5,ch:15.8,fi:3.5,na:480},
+{n:"Burger di soia surgelato (per 100g)",c:"Piatti pronti",src:"UPF",k:195,p:17.0,gs:2.2,g:9.5,z:1.2,ch:12.5,fi:3.0,na:520},
+{n:"Pane senza glutine industriale (per 100g)",c:"Biscotti e crackers",src:"UPF",k:240,p:3.5,gs:0.5,g:3.0,z:3.5,ch:50.0,fi:2.0,na:420},
+{n:"Snack di soia (edamame tostati, per 100g)",c:"Snack salati",src:"UPF",k:416,p:36.5,gs:2.8,g:17.5,z:5.0,ch:30.5,fi:13.0,na:260},
 ];
 
 // ═══════════════════════════════════════════════════
@@ -3787,5 +3832,127 @@ const FC_OPTIONS=[
   {label:'Febbre (+13% per ogni °C >37)',val:1.13},
   {label:'Crescita/gravidanza',val:1.15},
   {label:'Obesità (usare peso aggiustato)',val:1.0}
+
+  // ─── Nuove patologie cardiovascolari e altri ───
+  {id:'coronaropatia',cat:'cardiovascolari',emoji:'❤️‍🩹',nome:'Cardiopatia Ischemica (CAD)',badge:'Cardio',colore:'#e63946',
+   desc:'Riduzione del flusso coronarico per aterosclerosi. Dieta mediterranea riduce eventi cardiovascolari del 30%.',
+   note:'Privilegiare omega-3, fibre solubili, frutta e verdura. Limitare grassi saturi e sodio. Alcol zero o moderato.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Porridge di avena',qt:'50g'},{nome:'Latte parzialmente scremato',qt:'150ml'},{nome:'Mirtilli freschi',qt:'80g'},{nome:'Noci',qt:'20g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Mela',qt:'150g'},{nome:'Mandorle',qt:'15g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'70g'},{nome:'Salmone atlantico',qt:'120g'},{nome:'Pomodorini',qt:'100g'},{nome:'Olio extravergine di oliva',qt:'10g'},{nome:'Insalata mista',qt:'100g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt greco proteico 0% grassi',qt:'125g'},{nome:'Semi di chia',qt:'10g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150g'},{nome:'Spinaci saltati',qt:'200g'},{nome:'Pane integrale',qt:'50g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'post_infarto',cat:'cardiovascolari',emoji:'💗',nome:'Riabilitazione Post-Infarto',badge:'Post-IMA',colore:'#c1121f',
+   desc:'Piano nutrizionale nella fase riabilitativa post-infarto miocardico acuto. Prevenzione della recidiva.',
+   note:'Dieta DASH modificata. Omega-3 EPA+DHA ≥1g/die. Eliminare grassi trans. Sodio <1500mg/die. Controllo stretto del peso.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'50g'},{nome:'Ricotta fresca',qt:'60g'},{nome:'Fragole',qt:'100g'},{nome:'Tè verde',qt:'200ml'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Arancia',qt:'150g'},{nome:'Noci',qt:'20g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale cotto',qt:'160g'},{nome:'Sgombro',qt:'130g'},{nome:'Verdure miste al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt bianco intero',qt:'125g'},{nome:'Mirtilli',qt:'50g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Lenticchie rosse cotte',qt:'150g'},{nome:'Farro perlato cotto',qt:'100g'},{nome:'Verdure grigliate',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'fibrillazione_atriale',cat:'cardiovascolari',emoji:'💓',nome:'Fibrillazione Atriale',badge:'FA',colore:'#d62828',
+   desc:'Aritmia cardiaca con rischio tromboembolico. Se in terapia con warfarin: attenzione alla vitamina K. Se con DOAC: meno restrizioni.',
+   note:'Con warfarin: vitamina K stabile (non eliminare, ma costante). Con DOAC: nessuna restrizione alimentare specifica. Limitare alcol, caffeina.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'45g'},{nome:'Latte parzialmente scremato',qt:'150ml'},{nome:'Banana',qt:'100g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Pera',qt:'150g'},{nome:'Mandorle',qt:'20g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta al pomodoro',qt:'80g'},{nome:'Pollo petto',qt:'120g'},{nome:'Insalata',qt:'100g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt greco proteico 0% grassi',qt:'125g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo al vapore',qt:'150g'},{nome:'Patate bollite',qt:'150g'},{nome:'Fagiolini',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'cardiomiopatia_dilatativa',cat:'cardiovascolari',emoji:'🫀',nome:'Cardiomiopatia Dilatativa',badge:'CMP',colore:'#e76f51',
+   desc:'Dilatazione e disfunzione del ventricolo sinistro. Malnutrizione frequente per cachessia cardiaca.',
+   note:'Monitorare peso quotidiano (ritenzione idrica). Restrizione sodio <2g/die. Restrizione idrica se indicata. Thiamina e selenio vanno reintegrati.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'40g'},{nome:'Burro di arachidi',qt:'20g'},{nome:'Banana',qt:'80g'},{nome:'Latte parzialmente scremato',qt:'150ml'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Fette biscottate integrali',qt:'20g'},{nome:'Yogurt greco proteico 0% grassi',qt:'100g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso carnaroli crudo',qt:'70g (cotto)'},{nome:'Pollo petto',qt:'100g'},{nome:'Carote cotte',qt:'100g'},{nome:'Olio extravergine di oliva',qt:'8g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Mela',qt:'120g'},{nome:'Noci',qt:'15g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'130g'},{nome:'Zucchine cotte',qt:'150g'},{nome:'Pane integrale',qt:'40g'},{nome:'Olio extravergine di oliva',qt:'8g'}]}
+   ]},
+  {id:'aop',cat:'cardiovascolari',emoji:'🦵',nome:'Arteriopatia Obliterante Periferica',badge:'AOP',colore:'#f4a261',
+   desc:'Aterosclerosi delle arterie periferiche degli arti inferiori. Spesso associata a diabete e fumo.',
+   note:'Dieta antiaterosclerotica. Omega-3. Antiossidanti (vitamina C, E). Controllo glicemia se diabete associato. Abolire fumo.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'50g'},{nome:'Latte di soia',qt:'200ml'},{nome:'Kiwi',qt:'100g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Arancia',qt:'150g'},{nome:'Noci',qt:'20g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'80g'},{nome:'Salmone atlantico',qt:'130g'},{nome:'Broccoli al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt greco proteico 0% grassi',qt:'125g'},{nome:'Mirtilli',qt:'50g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Fagioli cannellini',qt:'150g'},{nome:'Pane integrale',qt:'50g'},{nome:'Verdure grigliate',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'cardiomiopatia_ipertrofica',cat:'cardiovascolari',emoji:'🫁',nome:'Cardiomiopatia Ipertrofica',badge:'CMI',colore:'#2a9d8f',
+   desc:'Ispessimento del muscolo cardiaco, spesso genetica. Rischio di aritmie e morte improvvisa. Limitare sforzi intensi.',
+   note:'No caffeina in eccesso. Evitare alcol. Idratazione adeguata. Evitare digiuni prolungati e pasti abbondanti.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60g'},{nome:'Ricotta fresca',qt:'80g'},{nome:'Fragole',qt:'100g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Pera',qt:'130g'},{nome:'Mandorle',qt:'15g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale cotto',qt:'150g'},{nome:'Tacchino petto',qt:'120g'},{nome:'Zucchine grigliate',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt bianco intero',qt:'125g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo al forno',qt:'150g'},{nome:'Spinaci saltati',qt:'200g'},{nome:'Pane integrale',qt:'50g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'miastenia_gravis',cat:'neurologiche',emoji:'💪',nome:'Miastenia Gravis',badge:'MG',colore:'#457b9d',
+   desc:'Malattia autoimmune della giunzione neuromuscolare. Disfagia frequente. Attenzione ai farmaci che interferiscono con la nutrizione.',
+   note:'Adattare consistenza dei cibi se disfagia presente. Pasti piccoli e frequenti. Evitare cibi che richiedono masticazione prolungata. Mangiare nelle ore di maggiore efficacia dei farmaci.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco proteico 0% grassi',qt:'150g'},{nome:'Banana frullata',qt:'100g'},{nome:'Miele',qt:'10g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Frullato di frutta',qt:'200ml'},{nome:'Biscotti frollini integrali',qt:'30g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta cremosa al pesto',qt:'80g'},{nome:'Pollo in umido',qt:'100g'},{nome:'Purè di patate',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Latte parzialmente scremato',qt:'150ml'},{nome:'Fette biscottate',qt:'20g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo al vapore',qt:'130g'},{nome:'Carote cotte',qt:'150g'},{nome:'Riso bianco cotto',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'spondilite_anchilosante',cat:'osteomuscolari',emoji:'🦴',nome:'Spondilite Anchilosante',badge:'SA',colore:'#e9c46a',
+   desc:'Artropatia infiammatoria cronica del rachide. Associata ad IBD nel 5-10% dei casi. Vitamina D e calcio fondamentali.',
+   note:'Dieta antiinfiammatoria. Omega-3 EPA+DHA. Vitamina D (spesso deficitaria). Calcio adeguato. Se in terapia biologica: no ibuprofene con certi farmaci.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parzialmente scremato',qt:'200ml'},{nome:'Fiocchi di avena',qt:'50g'},{nome:'Mirtilli',qt:'80g'},{nome:'Noci',qt:'20g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Kiwi',qt:'100g'},{nome:'Mandorle',qt:'15g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'80g'},{nome:'Salmone atlantico',qt:'130g'},{nome:'Spinaci al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt greco proteico 0% grassi',qt:'125g'},{nome:'Semi di lino interi',qt:'10g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo al forno',qt:'150g'},{nome:'Broccoletti al vapore',qt:'200g'},{nome:'Farro perlato cotto',qt:'120g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'colangite_sclerosante',cat:'epatiche',emoji:'🫙',nome:'Colangite Sclerosante Primitiva (PSC)',badge:'PSC',colore:'#8338ec',
+   desc:'Malattia colestatica cronica che causa fibrosi delle vie biliari. Frequentemente associata a IBD (colite ulcerosa).',
+   note:'Ridurre grassi se steatorrea. Vitamina ADEK liposolubili supplementate. Calcio e vitamina D cruciali. Evitare alcol assoluto.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco',qt:'60g'},{nome:'Marmellata',qt:'20g'},{nome:'Latte parzialmente scremato',qt:'200ml'},{nome:'Banana',qt:'100g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Mela',qt:'150g'},{nome:'Yogurt bianco intero',qt:'100g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco cotto',qt:'180g'},{nome:'Pollo petto',qt:'120g'},{nome:'Carote bollite',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'8g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt greco proteico 0% grassi',qt:'125g'},{nome:'Crackers',qt:'20g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo al vapore',qt:'150g'},{nome:'Zucchine cotte',qt:'150g'},{nome:'Pane bianco',qt:'60g'},{nome:'Olio extravergine di oliva',qt:'8g'}]}
+   ]},
+  {id:'emicrania',cat:'neurologiche',emoji:'🤕',nome:'Emicrania e Nutrizione',badge:'Emicrania',colore:'#6a0572',
+   desc:'Mal di testa ricorrente con possibile componente nutrizionale. Alcune sostanze sono trigger: tiramina, nitrati, caffeina, alcol.',
+   note:'Identificare e evitare trigger alimentari personali. Pasti regolari (no digiuni). Idratazione abbondante. Magnesio e riboflavina (B2) possono ridurre frequenza.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'50g'},{nome:'Latte parzialmente scremato',qt:'200ml'},{nome:'Banana',qt:'100g'},{nome:'Semi di girasole tostati',qt:'15g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Mela',qt:'150g'},{nome:'Mandorle',qt:'20g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta al pomodoro fresco',qt:'80g'},{nome:'Merluzzo al vapore',qt:'130g'},{nome:'Insalata verde',qt:'100g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Pera',qt:'150g'},{nome:'Yogurt bianco intero',qt:'125g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale cotto',qt:'150g'},{nome:'Pollo petto',qt:'120g'},{nome:'Verdure al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'autismo_nutrizione',cat:'varie',emoji:'🧩',nome:'ASD e Nutrizione',badge:'ASD',colore:'#ffd60a',
+   desc:'Disturbo dello spettro autistico con frequenti selettività alimentari, ipersensibilità sensoriale ai cibi e rischio di carenze nutrizionali.',
+   note:'Approccio individualizzato. Espansione graduale della varietà. Attenzione a carenze di zinco, ferro, vitamina D, B12, omega-3. Valutare intolleranze reali vs comportamentali.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco tostato',qt:'60g'},{nome:'Burro',qt:'10g'},{nome:'Latte parzialmente scremato',qt:'200ml'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Banana',qt:'100g'},{nome:'Biscotti frollini',qt:'30g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta al pomodoro',qt:'80g'},{nome:'Pollo petto cotto',qt:'100g'},{nome:'Carote cotte',qt:'100g'},{nome:'Olio extravergine di oliva',qt:'8g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt alla frutta',qt:'125g'},{nome:'Grissini',qt:'20g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco cotto',qt:'160g'},{nome:'Merluzzo al forno',qt:'120g'},{nome:'Patate al forno',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'8g'}]}
+   ]},
+  {id:'glicogenosi_i',cat:'varie',emoji:'🧬',nome:'Glicogenosi Tipo I (Von Gierke)',badge:'GSD-I',colore:'#3a86ff',
+   desc:'Deficit di glucosio-6-fosfatasi. Ipoglicemia grave a digiuno. Richede amido di mais crudo o alimentazione continua notturna.',
+   note:'Amido di mais crudo ogni 3-6h (bambini) o 4-6h (adulti). Neonati: alimentazione nasogastrica continua notturna. Evitare fruttosio e galattosio (possono aggravare). No digiuni.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Amido di mais crudo',qt:'30g in acqua'},{nome:'Pane bianco',qt:'50g'},{nome:'Marmellata senza fruttosio',qt:'20g'},{nome:'Latte',qt:'200ml'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Amido di mais crudo',qt:'25g in acqua'},{nome:'Crackers',qt:'30g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta bianca',qt:'90g'},{nome:'Pollo petto',qt:'120g'},{nome:'Verdure cotte',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Amido di mais crudo',qt:'25g in acqua'},{nome:'Pane bianco',qt:'40g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco cotto',qt:'180g'},{nome:'Merluzzo al vapore',qt:'130g'},{nome:'Zucchine cotte',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
 ];
 

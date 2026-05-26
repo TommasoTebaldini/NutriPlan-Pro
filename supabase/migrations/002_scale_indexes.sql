@@ -28,9 +28,9 @@ CREATE INDEX IF NOT EXISTS idx_weight_logs_cartella_date
 CREATE INDEX IF NOT EXISTS idx_patient_documents_patient_created
   ON patient_documents(patient_id, created_at DESC);
 
--- piani clinici: tutti consultati per cartella
-CREATE INDEX IF NOT EXISTS idx_piani_cartella_created
-  ON piani(cartella_id, created_at DESC);
+-- piani clinici: tutti consultati per cartella (usa saved_at, non created_at)
+CREATE INDEX IF NOT EXISTS idx_piani_cartella_saved
+  ON piani(cartella_id, saved_at DESC);
 CREATE INDEX IF NOT EXISTS idx_ncpt_cartella_created
   ON ncpt(cartella_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_bia_records_cartella_created

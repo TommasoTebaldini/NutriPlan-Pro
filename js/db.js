@@ -810,6 +810,16 @@ const DB_CREA=[
 {n:"Zenzero fresco",c:"Spezie e aromi",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0,src:"CREA"},
 {n:"Cannella in polvere",c:"Spezie e aromi",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0,src:"CREA"},
 {n:"Aglio fresco crudo",c:"Spezie e aromi",k:149,p:6.4,gs:0.1,g:0.5,z:1.0,ch:33.1,fi:2.1,ca:181,fe:1.7,mg:25,k2:401,na:17,zn:1.2,fo:153,se:14,col:0,src:"CREA"},
+// ── CREA: alimenti mancanti dal confronto con tabelle ufficiali ──
+{n:"Sale da cucina",c:"Condimenti",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:24,fe:0.4,mg:1,k2:8,na:38758,zn:0.01,fo:0,se:0.1,col:0,src:"CREA"},
+{n:"Crusca di frumento",c:"Cereali e derivati",k:216,p:15.6,gs:0.6,g:4.6,z:0,ch:26.8,fi:43.0,ca:73,fe:12.9,mg:354,k2:1160,na:28,zn:7.3,fo:1013,se:78,col:0,src:"CREA"},
+{n:"Germe di grano (frumento)",c:"Cereali e derivati",k:360,p:26.6,gs:1.5,g:9.7,z:0,ch:51.8,fi:13.2,ca:39,fe:6.3,mg:239,k2:892,na:12,zn:12.3,fo:842,se:79,col:0,src:"CREA"},
+{n:"Lattuga iceberg",c:"Verdure",k:13,p:0.9,gs:0,g:0.1,z:1.9,ch:2.0,fi:1.2,ca:19,fe:0.5,mg:7,k2:141,na:10,zn:0.2,fo:24,se:0.3,col:0,src:"CREA"},
+{n:"Fiocchi di frumento integrali",c:"Cereali da colazione",k:340,p:12.0,gs:0.3,g:2.2,z:3.0,ch:68.5,fi:7.5,ca:35,fe:3.0,mg:96,k2:340,na:10,zn:2.0,fo:290,se:35,col:0,src:"CREA"},
+{n:"Castagne lesse (bollite)",c:"Frutta secca",k:130,p:2.4,gs:0.1,g:0.8,z:15.4,ch:28.5,fi:6.8,ca:22,fe:1.0,mg:31,k2:484,na:1,zn:0.5,fo:79,se:1,col:0,src:"CREA"},
+{n:"Frumento soffiato",c:"Cereali da colazione",k:356,p:11.0,gs:0.2,g:1.5,z:1.5,ch:76.0,fi:4.0,ca:25,fe:3.0,mg:40,k2:140,na:2,zn:1.0,fo:140,se:5,col:0,src:"CREA"},
+{n:"Olio di oliva vergine",c:"Grassi",k:899,p:0,gs:13.8,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:0,k2:1,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di sansa di oliva",c:"Grassi",k:899,p:0,gs:14.1,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:0,k2:1,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 ];
 
 const DB_BDA=[
@@ -1654,7 +1664,18 @@ const DB_BDA=[
 {n:"Succo di pesca 100% (senza zuccheri aggiunti)",c:"Bevande",k:47,p:0.4,gs:0,g:0.1,z:9.5,ch:11.5,fi:0.4,ca:4,fe:0.2,mg:8,k2:140,na:3,zn:0.1,fo:10,se:0.4,col:0,src:"BDA"},
 {n:"Infuso di melissa (non zuccherato)",c:"Bevande",k:2,p:0.1,gs:0,g:0.1,z:0,ch:0.3,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:2,zn:0,fo:5,se:0,col:0,src:"BDA"},
 {n:"Infuso di menta piperita (non zuccherato)",c:"Bevande",k:2,p:0.1,gs:0,g:0.1,z:0,ch:0.3,fi:0,ca:4,fe:0.1,mg:3,k2:22,na:3,zn:0,fo:4,se:0,col:0,src:"BDA"},
-{n:"Latte di riso non zuccherato",c:"Latte e derivati",k:47,p:0.3,gs:0,g:1.0,z:4.5,ch:9.5,fi:0.1,ca:20,fe:0.1,mg:8,k2:32,na:52,zn:0.1,fo:8,se:0,col:0,src:"BDA"}
+{n:"Latte di riso non zuccherato",c:"Latte e derivati",k:47,p:0.3,gs:0,g:1.0,z:4.5,ch:9.5,fi:0.1,ca:20,fe:0.1,mg:8,k2:32,na:52,zn:0.1,fo:8,se:0,col:0,src:"BDA"},
+// ── BDA: alimenti mancanti dal confronto con tabelle ufficiali ──
+{n:"Glucosio (destrosio)",c:"Zuccheri",k:374,p:0,gs:0,g:0,z:99.0,ch:99.7,fi:0,ca:0,fe:0,mg:0,k2:2,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
+{n:"Fiocchi di farro",c:"Cereali da colazione",k:354,p:14.0,gs:0.3,g:2.7,z:3.5,ch:67.5,fi:8.5,ca:33,fe:3.5,mg:100,k2:350,na:5,zn:2.5,fo:300,se:18,col:0,src:"BDA"},
+{n:"Semola di grano duro cruda",c:"Cereali e derivati",k:360,p:12.5,gs:0.2,g:1.7,z:0.5,ch:72.5,fi:4.5,ca:17,fe:3.0,mg:45,k2:186,na:2,zn:1.1,fo:200,se:30,col:0,src:"BDA"},
+{n:"Farina di grano saraceno integrale",c:"Cereali e derivati",k:335,p:12.6,gs:0.5,g:3.1,z:0,ch:70.6,fi:10.0,ca:41,fe:4.1,mg:231,k2:577,na:11,zn:2.9,fo:463,se:8,col:0,src:"BDA"},
+{n:"Riso soffiato (base, non condito)",c:"Cereali da colazione",k:381,p:6.5,gs:0.1,g:0.5,z:1.0,ch:87.5,fi:1.0,ca:5,fe:1.5,mg:20,k2:95,na:2,zn:0.6,fo:75,se:3,col:0,src:"BDA"},
+{n:"Malto d'orzo in polvere",c:"Cereali e derivati",k:371,p:11.0,gs:0.1,g:2.3,z:62.0,ch:77.4,fi:6.0,ca:40,fe:5.0,mg:85,k2:450,na:25,zn:2.3,fo:300,se:10,col:0,src:"BDA"},
+{n:"Sciroppo di glucosio",c:"Zuccheri",k:305,p:0,gs:0,g:0,z:76.0,ch:76.0,fi:0,ca:5,fe:0.1,mg:2,k2:8,na:30,zn:0,fo:2,se:0,col:0,src:"BDA"},
+{n:"Latte condensato non zuccherato (evaporato)",c:"Latte e derivati",k:137,p:6.8,gs:5.1,g:8.2,z:9.7,ch:10.0,fi:0,ca:261,fe:0.2,mg:22,k2:303,na:105,zn:0.8,fo:195,se:3,col:29,src:"BDA"},
+{n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:340,p:2.0,gs:20.4,g:35.0,z:3.1,ch:3.1,fi:0,ca:65,fe:0.1,mg:7,k2:86,na:35,zn:0.2,fo:55,se:1,col:105,src:"BDA"},
+{n:"Farinata di ceci (piatto tipico genovese cotto)",c:"Cereali e derivati",k:152,p:5.5,gs:0.8,g:8.5,z:0.5,ch:14.5,fi:2.0,ca:28,fe:1.8,mg:30,k2:130,na:300,zn:0.7,fo:90,se:2,col:0,src:"BDA"},
 ];
 
 let CUSTOM_DB=[];

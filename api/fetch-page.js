@@ -52,16 +52,27 @@ function setCorsHeaders(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
+// Token verification cache: evita una chiamata HTTP a Supabase per ogni richiesta
+const _tkCache = new Map(); // token → { user, exp }
+
 async function verifySupabaseToken(token) {
+  const now = Date.now();
+  const cached = _tkCache.get(token);
+  if (cached && now < cached.exp) return cached.user;
+
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
   const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      apikey: SUPABASE_ANON_KEY,
-    },
+    headers: { Authorization: `Bearer ${token}`, apikey: SUPABASE_ANON_KEY },
   });
-  if (!res.ok) return null;
-  return await res.json();
+  if (!res.ok) { _tkCache.delete(token); return null; }
+  const user = await res.json();
+  if (user?.id) {
+    if (_tkCache.size > 200) {
+      for (const [k, v] of _tkCache) if (v.exp < now) _tkCache.delete(k);
+    }
+    _tkCache.set(token, { user, exp: now + 60_000 });
+  }
+  return user;
 }
 
 export default async function handler(req, res) {

@@ -3,6 +3,19 @@
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 
+// Rate limiter: max 3 reset per email ogni 15 minuti (previene spam)
+const _resetRl = new Map(); // email → { n, t }
+const RESET_MAX = 3;
+const RESET_WIN = 15 * 60_000;
+
+function checkResetRateLimit(email) {
+  const now = Date.now();
+  const e = _resetRl.get(email);
+  if (!e || now - e.t > RESET_WIN) { _resetRl.set(email, { n: 1, t: now }); return true; }
+  if (e.n >= RESET_MAX) return false;
+  e.n++; return true;
+}
+
 export default async function handler(req, res) {
   const origin = req.headers.origin || 'https://app.dietplan-pro.com';
   res.setHeader('Access-Control-Allow-Origin', origin);
@@ -29,6 +42,10 @@ export default async function handler(req, res) {
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Email non valida' });
+  }
+
+  if (!checkResetRateLimit(email)) {
+    return res.status(429).json({ error: 'Troppe richieste. Riprova tra 15 minuti.' });
   }
 
   const REDIRECT_URL = origin + '/';

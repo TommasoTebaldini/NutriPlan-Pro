@@ -820,6 +820,19 @@ const DB_CREA=[
 {n:"Frumento soffiato",c:"Cereali da colazione",k:356,p:11.0,gs:0.2,g:1.5,z:1.5,ch:76.0,fi:4.0,ca:25,fe:3.0,mg:40,k2:140,na:2,zn:1.0,fo:140,se:5,col:0,src:"CREA"},
 {n:"Olio di oliva vergine",c:"Grassi",k:899,p:0,gs:13.8,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:0,k2:1,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di sansa di oliva",c:"Grassi",k:899,p:0,gs:14.1,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:0,k2:1,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Cumino (semi macinati)",c:"Spezie e aromi",k:375,p:17.8,gs:1.5,g:22.3,z:2.3,ch:44.2,fi:10.5,ca:931,fe:66.4,mg:931,k2:1788,na:168,zn:4.8,fo:499,se:5,col:0,src:"CREA"},
+{n:"Semi di anice",c:"Spezie e aromi",k:337,p:17.6,gs:0.6,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:440,se:3,col:0,src:"CREA"},
+{n:"Coriandolo in semi (polvere)",c:"Spezie e aromi",k:298,p:12.4,gs:1.4,g:17.8,z:0,ch:54.9,fi:41.9,ca:709,fe:16.3,mg:330,k2:1267,na:35,zn:4.7,fo:409,se:26,col:0,src:"CREA"},
+{n:"Fieno greco (semi)",c:"Spezie e aromi",k:323,p:23.0,gs:0.9,g:6.4,z:0,ch:58.4,fi:24.6,ca:176,fe:33.5,mg:191,k2:770,na:67,zn:2.5,fo:296,se:6,col:0,src:"CREA"},
+{n:"Pepe bianco macinato",c:"Spezie e aromi",k:296,p:10.4,gs:0.4,g:2.1,z:0,ch:68.6,fi:26.2,ca:265,fe:14.3,mg:90,k2:1259,na:5,zn:1.1,fo:176,se:3,col:0,src:"CREA"},
+{n:"Rafano fresco (radice, cren)",c:"Verdure",k:48,p:1.2,gs:0,g:0.5,z:7.2,ch:11.3,fi:3.3,ca:56,fe:0.4,mg:27,k2:246,na:420,zn:0.8,fo:31,se:2.8,col:0,src:"CREA"},
+{n:"Crusca d'avena",c:"Cereali e derivati",k:246,p:17.3,gs:1.3,g:7.0,z:1.2,ch:55.7,fi:15.4,ca:58,fe:3.8,mg:235,k2:566,na:4,zn:3.1,fo:734,se:45,col:0,src:"CREA"},
+{n:"Vaniglia (baccello intero)",c:"Spezie e aromi",k:288,p:12.7,gs:0.1,g:6.2,z:12.7,ch:62.4,fi:34.5,ca:11,fe:0.1,mg:12,k2:148,na:9,zn:0.1,fo:7,se:0,col:0,src:"CREA"},
+{n:"Macis (mace, spezia)",c:"Spezie e aromi",k:475,p:6.7,gs:2.0,g:32.4,z:0,ch:50.5,fi:20.2,ca:252,fe:13.9,mg:163,k2:463,na:80,zn:2.3,fo:110,se:3,col:0,src:"CREA"},
+{n:"Pepe verde in salamoia",c:"Condimenti",k:93,p:3.1,gs:0.2,g:3.3,z:0,ch:14.4,fi:7.4,ca:104,fe:3.4,mg:44,k2:340,na:1800,zn:0.5,fo:72,se:4,col:0,src:"CREA"},
+{n:"Capperi sotto sale (dissalati)",c:"Condimenti",k:23,p:2.4,gs:0.1,g:0.9,z:0,ch:4.9,fi:3.2,ca:40,fe:1.7,mg:33,k2:40,na:2347,zn:0.3,fo:10,se:1,col:0,src:"CREA"},
+{n:"Semi di sesamo tostati",c:"Frutta secca",k:573,p:17.7,gs:5.6,g:49.7,z:0.5,ch:23.5,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:629,se:34,col:0,src:"CREA"},
+{n:"Sesamo nero (semi crudi)",c:"Frutta secca",k:573,p:17.0,gs:5.0,g:49.7,z:0.3,ch:23.5,fi:11.8,ca:1000,fe:16.0,mg:360,k2:468,na:10,zn:8.0,fo:640,se:35,col:0,src:"CREA"},
 ];
 
 const DB_BDA=[
@@ -1676,6 +1689,22 @@ const DB_BDA=[
 {n:"Latte condensato non zuccherato (evaporato)",c:"Latte e derivati",k:137,p:6.8,gs:5.1,g:8.2,z:9.7,ch:10.0,fi:0,ca:261,fe:0.2,mg:22,k2:303,na:105,zn:0.8,fo:195,se:3,col:29,src:"BDA"},
 {n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:340,p:2.0,gs:20.4,g:35.0,z:3.1,ch:3.1,fi:0,ca:65,fe:0.1,mg:7,k2:86,na:35,zn:0.2,fo:55,se:1,col:105,src:"BDA"},
 {n:"Farinata di ceci (piatto tipico genovese cotto)",c:"Cereali e derivati",k:152,p:5.5,gs:0.8,g:8.5,z:0.5,ch:14.5,fi:2.0,ca:28,fe:1.8,mg:30,k2:130,na:300,zn:0.7,fo:90,se:2,col:0,src:"BDA"},
+{n:"Gelatina in fogli (colla di pesce)",c:"Condimenti",k:335,p:84.4,gs:0,g:0.1,z:0,ch:0,fi:0,ca:10,fe:0.1,mg:1,k2:2,na:30,zn:0.1,fo:20,se:0,col:70,src:"BDA"},
+{n:"Crusca di riso",c:"Cereali e derivati",k:316,p:13.4,gs:1.8,g:20.8,z:0,ch:49.7,fi:21.0,ca:57,fe:18.5,mg:781,k2:1485,na:5,zn:6.1,fo:1677,se:16,col:0,src:"BDA"},
+{n:"Farina di lenticchie rosse",c:"Cereali e derivati",k:340,p:25.7,gs:0.2,g:1.2,z:1.5,ch:58.5,fi:11.0,ca:59,fe:7.3,mg:100,k2:897,na:5,zn:3.0,fo:370,se:6,col:0,src:"BDA"},
+{n:"Farina di piselli secchi",c:"Cereali e derivati",k:335,p:21.7,gs:0.2,g:1.5,z:3.0,ch:60.4,fi:8.3,ca:55,fe:4.7,mg:115,k2:900,na:9,zn:2.8,fo:350,se:3,col:0,src:"BDA"},
+{n:"Anice stellato (badiana)",c:"Spezie e aromi",k:337,p:17.6,gs:0.5,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:440,se:3,col:0,src:"BDA"},
+{n:"Pepe di Cayenna (capsicum)",c:"Spezie e aromi",k:318,p:12.0,gs:1.9,g:17.3,z:0.7,ch:56.6,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:293,se:8.8,col:0,src:"BDA"},
+{n:"Pepe lungo (piper longum)",c:"Spezie e aromi",k:310,p:11.0,gs:0.4,g:4.9,z:0,ch:64.8,fi:13.2,ca:437,fe:16.3,mg:154,k2:1259,na:20,zn:1.2,fo:180,se:4,col:0,src:"BDA"},
+{n:"Curry in polvere (miscela spezie)",c:"Spezie e aromi",k:325,p:12.7,gs:2.3,g:13.8,z:0.7,ch:55.8,fi:33.2,ca:478,fe:29.6,mg:254,k2:1543,na:52,zn:4.1,fo:349,se:17,col:0,src:"BDA"},
+{n:"Garam masala (miscela spezie indiana)",c:"Spezie e aromi",k:379,p:14.1,gs:2.0,g:15.0,z:1.5,ch:50.4,fi:22.2,ca:524,fe:23.7,mg:230,k2:1315,na:60,zn:3.4,fo:380,se:6,col:0,src:"BDA"},
+{n:"Pasta di acciughe (tube)",c:"Condimenti",k:185,p:18.0,gs:1.5,g:11.5,z:0,ch:0,fi:0,ca:140,fe:2.5,mg:30,k2:300,na:3000,zn:1.2,fo:200,se:30,col:70,src:"BDA"},
+{n:"Salsa Worcestershire (inglese)",c:"Condimenti",k:78,p:1.1,gs:0,g:0.1,z:10.7,ch:19.5,fi:0.2,ca:59,fe:2.7,mg:22,k2:152,na:980,zn:0.1,fo:29,se:2,col:0,src:"BDA"},
+{n:"Estratto di lievito (tipo Marmite)",c:"Condimenti",k:180,p:35.6,gs:0.1,g:0.7,z:0.5,ch:17.6,fi:0,ca:100,fe:3.2,mg:30,k2:2100,na:3750,zn:1.2,fo:950,se:130,col:0,src:"BDA"},
+{n:"Olio di mandorle dolci",c:"Grassi",k:884,p:0,gs:8.2,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
+{n:"Olio di ricino",c:"Grassi",k:884,p:0,gs:2.9,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
+{n:"Panna acida (sour cream 20%)",c:"Latte e derivati",k:206,p:2.7,gs:12.6,g:20.0,z:3.5,ch:3.5,fi:0,ca:67,fe:0.1,mg:8,k2:95,na:40,zn:0.2,fo:55,se:1,col:50,src:"BDA"},
+{n:"Zucchero grezzo di canna (mascobado)",c:"Zuccheri",k:373,p:0.4,gs:0,g:0.1,z:83.3,ch:96.0,fi:0,ca:85,fe:1.5,mg:29,k2:346,na:39,zn:0.2,fo:22,se:1,col:0,src:"BDA"},
 ];
 
 let CUSTOM_DB=[];

@@ -59,6 +59,18 @@ CREATE INDEX IF NOT EXISTS idx_activity_logs_user_date
 CREATE INDEX IF NOT EXISTS idx_ricette_user_created
   ON ricette(user_id, created_at DESC);
 
+-- patient_diets: piano attivo per paziente (RLS + caricamento dieta)
+CREATE INDEX IF NOT EXISTS idx_patient_diets_user
+  ON patient_diets(user_id);
+
+-- diet_meals: join con patient_diets (searchDietMealFoods + RLS)
+CREATE INDEX IF NOT EXISTS idx_diet_meals_diet
+  ON diet_meals(diet_id);
+
+-- public_foods: ricerca per nome con ILIKE (searchPublicFoods)
+CREATE INDEX IF NOT EXISTS idx_public_foods_name
+  ON public_foods(name text_pattern_ops);
+
 -- ────────────────────────────────────────────────────────────────
 -- PULIZIA REALTIME: tenere solo le 2 tabelle usate da NotificationContext
 -- ────────────────────────────────────────────────────────────────

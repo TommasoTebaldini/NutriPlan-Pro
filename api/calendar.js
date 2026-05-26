@@ -115,9 +115,10 @@ export default async function handler(req, res) {
 
     res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
     res.setHeader('Content-Disposition', 'inline; filename="nutriplan-agenda.ics"');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
+    // Cache edge 5 min: la URL include uid+token HMAC (chiave unica per utente),
+    // quindi non ci sono rischi di cross-user leak. I client calendario
+    // aggiornano comunque ogni 15-60 min, quindi 5 min è trasparente per l'utente.
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(ics);
   } catch (e) {

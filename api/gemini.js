@@ -9,6 +9,25 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIs
 const MAX_TOKENS_LIMIT = 4096;
 const MAX_CONTENT_BYTES = 32768; // 32 KB per request body
 
+// Per-user rate limiter (instance-scoped: throttles burst on warm instances)
+const _rl = new Map();
+const RL_MAX = 10;
+const RL_WIN = 60_000;
+
+function rateLimit(userId) {
+  const now = Date.now();
+  const e = _rl.get(userId);
+  if (!e || now - e.t > RL_WIN) { _rl.set(userId, { n: 1, t: now }); return true; }
+  if (e.n >= RL_MAX) return false;
+  e.n++; return true;
+}
+
+function pruneRl() {
+  if (_rl.size < 500) return;
+  const cutoff = Date.now() - RL_WIN;
+  for (const [k, v] of _rl) if (v.t < cutoff) _rl.delete(k);
+}
+
 async function verifySupabaseToken(token) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
   const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
@@ -52,6 +71,11 @@ export default async function handler(req, res) {
   const user = await verifySupabaseToken(token);
   if (!user?.id) {
     return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
+  }
+
+  pruneRl();
+  if (!rateLimit(user.id)) {
+    return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;

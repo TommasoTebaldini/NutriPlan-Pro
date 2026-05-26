@@ -1,6 +1,25 @@
 // api/fetch-page.js — Vercel Serverless Function
 // Proxy per fetch di pagine web (risolve CORS per importazione ricette da URL)
 
+// Per-user rate limiter (instance-scoped)
+const _rl = new Map();
+const RL_MAX = 30;
+const RL_WIN = 60_000;
+
+function rateLimit(userId) {
+  const now = Date.now();
+  const e = _rl.get(userId);
+  if (!e || now - e.t > RL_WIN) { _rl.set(userId, { n: 1, t: now }); return true; }
+  if (e.n >= RL_MAX) return false;
+  e.n++; return true;
+}
+
+function pruneRl() {
+  if (_rl.size < 500) return;
+  const cutoff = Date.now() - RL_WIN;
+  for (const [k, v] of _rl) if (v.t < cutoff) _rl.delete(k);
+}
+
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
 
@@ -65,6 +84,11 @@ export default async function handler(req, res) {
   const user = await verifySupabaseToken(token);
   if (!user?.id) {
     return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
+  }
+
+  pruneRl();
+  if (!rateLimit(user.id)) {
+    return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
   }
 
   const { url } = req.query;

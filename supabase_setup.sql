@@ -296,6 +296,8 @@ CREATE TABLE IF NOT EXISTS daily_wellness (
   symptoms      TEXT,
   logged_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE INDEX IF NOT EXISTS idx_daily_wellness_patient_date  ON daily_wellness(patient_id, logged_at DESC);
+CREATE INDEX IF NOT EXISTS idx_daily_wellness_cartella_date ON daily_wellness(cartella_id, logged_at DESC);
 
 -- Log peso giornaliero (compilato dal paziente)
 CREATE TABLE IF NOT EXISTS weight_logs (
@@ -305,6 +307,8 @@ CREATE TABLE IF NOT EXISTS weight_logs (
   weight        NUMERIC,
   logged_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE INDEX IF NOT EXISTS idx_weight_logs_patient_date  ON weight_logs(patient_id, logged_at DESC);
+CREATE INDEX IF NOT EXISTS idx_weight_logs_cartella_date ON weight_logs(cartella_id, logged_at DESC);
 
 -- Chat tra nutrizionista e paziente
 CREATE TABLE IF NOT EXISTS chat_messages (
@@ -316,6 +320,7 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   read_at       TIMESTAMPTZ,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE INDEX IF NOT EXISTS idx_chat_messages_patient_created ON chat_messages(patient_id, created_at DESC);
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -992,15 +997,12 @@ BEGIN
   END IF;
 END $$;
 
--- Aggiunge le tabelle alla pubblicazione Realtime (idempotente)
+-- Pubblicazione Realtime: solo le tabelle attivamente subscribed dall'app pazienti
+-- (chat_messages e patient_documents — vedi NotificationContext.jsx)
 DO $$
 DECLARE t TEXT;
 BEGIN
-  FOREACH t IN ARRAY ARRAY[
-    'patient_documents','piani','ncpt','bia_records',
-    'schede_valutazione','note_specialistiche',
-    'daily_wellness','weight_logs','agenda_events'
-  ] LOOP
+  FOREACH t IN ARRAY ARRAY['chat_messages', 'patient_documents'] LOOP
     IF NOT EXISTS (
       SELECT 1 FROM pg_publication_tables
       WHERE pubname = 'supabase_realtime' AND tablename = t

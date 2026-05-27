@@ -1891,7 +1891,98 @@ const DB_BDA=[
 {n:"Olio di ricino",c:"Grassi",k:884,p:0,gs:2.9,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Panna acida (sour cream 20%)",c:"Latte e derivati",k:206,p:2.7,gs:12.6,g:20.0,z:3.5,ch:3.5,fi:0,ca:67,fe:0.1,mg:8,k2:95,na:40,zn:0.2,fo:55,se:1,col:50,src:"BDA"},
 {n:"Zucchero grezzo di canna (mascobado)",c:"Zuccheri",k:373,p:0.4,gs:0,g:0.1,z:83.3,ch:96.0,fi:0,ca:85,fe:1.5,mg:29,k2:346,na:39,zn:0.2,fo:22,se:1,col:0,src:"BDA"},
+
+// ── VERDURE COTTE MANCANTI (CREA) ──
+{n:"Zucchina lessata",c:"Verdure",k:14,p:1.0,gs:0,g:0.1,z:1.5,ch:2.0,fi:1.2,ca:16,fe:0.3,mg:14,k2:204,na:3,zn:0.3,fo:19,se:0.3,col:0,src:"CREA"},
+{n:"Melanzana grigliata",c:"Verdure",k:33,p:1.0,gs:0,g:0.2,z:4.0,ch:6.5,fi:3.2,ca:6,fe:0.4,mg:11,k2:188,na:1,zn:0.2,fo:15,se:0.2,col:0,src:"CREA"},
+{n:"Melanzana al forno",c:"Verdure",k:35,p:1.1,gs:0,g:0.3,z:4.1,ch:6.8,fi:3.0,ca:7,fe:0.4,mg:12,k2:190,na:1,zn:0.2,fo:16,se:0.2,col:0,src:"CREA"},
+{n:"Carota lessata",c:"Verdure",k:28,p:0.8,gs:0,g:0.2,z:4.2,ch:6.0,fi:2.9,ca:40,fe:0.5,mg:11,k2:235,na:58,zn:0.2,fo:14,se:0.5,col:0,src:"CREA"},
+{n:"Finocchio cotto al vapore",c:"Verdure",k:25,p:1.1,gs:0,g:0.2,z:2.4,ch:4.5,fi:3.1,ca:43,fe:0.6,mg:14,k2:300,na:74,zn:0.2,fo:20,se:0.5,col:0,src:"CREA"},
+{n:"Sedano rapa crudo",c:"Verdure",k:42,p:1.5,gs:0,g:0.3,z:5.7,ch:9.2,fi:1.8,ca:43,fe:0.7,mg:20,k2:300,na:100,zn:0.3,fo:29,se:0.7,col:0,src:"CREA"},
+{n:"Sedano rapa cotto",c:"Verdure",k:27,p:1.0,gs:0,g:0.2,z:3.5,ch:6.0,fi:1.5,ca:30,fe:0.5,mg:14,k2:210,na:75,zn:0.2,fo:20,se:0.5,col:0,src:"CREA"},
+{n:"Cavolfiore al vapore",c:"Verdure",k:22,p:2.0,gs:0,g:0.2,z:1.5,ch:3.5,fi:2.1,ca:20,fe:0.4,mg:14,k2:180,na:15,zn:0.2,fo:56,se:0.8,col:0,src:"CREA"},
+{n:"Cavolo verza cotto",c:"Verdure",k:20,p:1.4,gs:0,g:0.2,z:1.8,ch:3.5,fi:2.2,ca:45,fe:0.4,mg:13,k2:195,na:10,zn:0.2,fo:28,se:0.5,col:0,src:"CREA"},
+{n:"Cavolo cappuccio cotto",c:"Verdure",k:22,p:1.0,gs:0,g:0.1,z:3.0,ch:5.0,fi:2.1,ca:36,fe:0.3,mg:10,k2:196,na:10,zn:0.2,fo:24,se:0.3,col:0,src:"CREA"},
+{n:"Peperone rosso cotto",c:"Verdure",k:32,p:1.0,gs:0,g:0.3,z:5.0,ch:7.5,fi:2.0,ca:10,fe:0.4,mg:12,k2:210,na:4,zn:0.2,fo:22,se:0.4,col:0,src:"CREA"},
+{n:"Pomodoro cotto (passato)",c:"Verdure",k:35,p:1.5,gs:0,g:0.5,z:5.0,ch:7.0,fi:1.8,ca:14,fe:0.7,mg:18,k2:280,na:10,zn:0.2,fo:17,se:0.6,col:0,src:"CREA"},
+{n:"Funghi champignon cotti",c:"Verdure",k:16,p:2.2,gs:0,g:0.1,z:0.5,ch:2.5,fi:1.0,ca:4,fe:0.5,mg:10,k2:310,na:9,zn:0.6,fo:17,se:14,col:0,src:"CREA"},
+{n:"Fagiolini lessati",c:"Verdure",k:24,p:1.8,gs:0,g:0.3,z:2.0,ch:4.2,fi:3.0,ca:46,fe:1.0,mg:25,k2:163,na:1,zn:0.4,fo:37,se:0.7,col:0,src:"CREA"},
+{n:"Asparagi lessati",c:"Verdure",k:21,p:2.3,gs:0,g:0.2,z:1.5,ch:2.8,fi:2.1,ca:21,fe:0.9,mg:10,k2:269,na:10,zn:0.5,fo:128,se:4,col:0,src:"CREA"},
+{n:"Piselli lessati",c:"Verdure",k:70,p:5.0,gs:0,g:0.4,z:3.0,ch:11.5,fi:5.0,ca:27,fe:1.6,mg:33,k2:271,na:2,zn:1.1,fo:63,se:1.5,col:0,src:"CREA"},
+
+// ── LEGUMI COTTI MANCANTI (CREA) ──
+{n:"Lenticchie rosse cotte",c:"Legumi",k:111,p:7.6,gs:0,g:0.4,z:0.5,ch:20.0,fi:3.8,ca:19,fe:3.3,mg:36,k2:370,na:2,zn:1.0,fo:90,se:2,col:0,src:"CREA"},
+{n:"Fagioli mung cotti",c:"Legumi",k:105,p:7.0,gs:0,g:0.4,z:0,ch:19.2,fi:7.6,ca:27,fe:1.4,mg:48,k2:266,na:4,zn:0.8,fo:100,se:2,col:0,src:"CREA"},
+{n:"Soia secca cotta",c:"Legumi",k:173,p:16.6,gs:2.0,g:9.0,z:0,ch:9.9,fi:6.0,ca:140,fe:5.1,mg:86,k2:515,na:2,zn:2.0,fo:213,se:7,col:0,src:"CREA"},
+{n:"Fave secche cotte",c:"Legumi",k:110,p:7.6,gs:0.1,g:0.5,z:0.5,ch:21.0,fi:5.4,ca:34,fe:2.0,mg:43,k2:354,na:4,zn:0.9,fo:106,se:3,col:0,src:"CREA"},
+
+// ── CARNI COTTE MANCANTI (CREA) ──
+{n:"Vitello al forno",c:"Carni e derivati",k:175,p:27.5,gs:1.5,g:6.5,z:0,ch:0,fi:0,ca:12,fe:1.2,mg:26,k2:330,na:75,zn:3.5,fo:220,se:20,col:90,src:"CREA"},
+{n:"Manzo bollito",c:"Carni e derivati",k:188,p:28.5,gs:2.5,g:8.0,z:0,ch:0,fi:0,ca:10,fe:2.5,mg:22,k2:290,na:65,zn:4.5,fo:180,se:22,col:80,src:"CREA"},
+{n:"Pollo alla griglia (senza pelle)",c:"Carni e derivati",k:165,p:31.0,gs:1.0,g:3.6,z:0,ch:0,fi:0,ca:11,fe:0.9,mg:28,k2:335,na:85,zn:0.9,fo:230,se:27,col:85,src:"CREA"},
+{n:"Pollo lesso (senza pelle)",c:"Carni e derivati",k:157,p:30.0,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:9,fe:0.9,mg:25,k2:280,na:70,zn:0.9,fo:200,se:20,col:80,src:"CREA"},
+{n:"Tacchino arrosto",c:"Carni e derivati",k:170,p:29.0,gs:1.0,g:5.0,z:0,ch:0,fi:0,ca:18,fe:1.8,mg:26,k2:298,na:70,zn:2.5,fo:210,se:32,col:75,src:"CREA"},
+{n:"Agnello al forno",c:"Carni e derivati",k:232,p:25.5,gs:7.5,g:14.5,z:0,ch:0,fi:0,ca:9,fe:1.8,mg:22,k2:296,na:72,zn:3.8,fo:185,se:22,col:90,src:"CREA"},
+{n:"Maiale arrosto (lonza)",c:"Carni e derivati",k:185,p:28.0,gs:2.0,g:7.5,z:0,ch:0,fi:0,ca:9,fe:1.0,mg:24,k2:360,na:68,zn:2.5,fo:230,se:38,col:82,src:"CREA"},
+{n:"Coscia di pollo al forno (senza pelle)",c:"Carni e derivati",k:177,p:25.5,gs:2.0,g:8.0,z:0,ch:0,fi:0,ca:12,fe:1.3,mg:24,k2:260,na:80,zn:2.0,fo:185,se:16,col:90,src:"CREA"},
+
+// ── PESCE COTTO MANCANTE (CREA) ──
+{n:"Merluzzo al vapore",c:"Pesce",k:79,p:17.5,gs:0.2,g:0.7,z:0,ch:0,fi:0,ca:16,fe:0.3,mg:25,k2:333,na:68,zn:0.4,fo:180,se:28,col:50,src:"CREA"},
+{n:"Salmone al vapore",c:"Pesce",k:196,p:21.5,gs:2.5,g:12.0,z:0,ch:0,fi:0,ca:10,fe:0.5,mg:26,k2:390,na:50,zn:0.6,fo:320,se:35,col:65,src:"CREA"},
+{n:"Orata al forno",c:"Pesce",k:115,p:20.5,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:32,fe:0.8,mg:30,k2:350,na:65,zn:0.6,fo:230,se:42,col:60,src:"CREA"},
+{n:"Tonno fresco alla griglia",c:"Pesce",k:165,p:28.0,gs:0.5,g:6.0,z:0,ch:0,fi:0,ca:8,fe:1.5,mg:30,k2:380,na:45,zn:0.6,fo:280,se:90,col:50,src:"CREA"},
+{n:"Trota al vapore",c:"Pesce",k:119,p:21.5,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:50,fe:1.2,mg:25,k2:480,na:58,zn:1.0,fo:310,se:13,col:65,src:"CREA"},
+{n:"Spigola (branzino) lessata",c:"Pesce",k:99,p:18.5,gs:0.3,g:2.5,z:0,ch:0,fi:0,ca:70,fe:0.5,mg:26,k2:290,na:66,zn:0.5,fo:200,se:40,col:50,src:"CREA"},
+{n:"Sogliola al vapore",c:"Pesce",k:80,p:17.5,gs:0.1,g:0.5,z:0,ch:0,fi:0,ca:22,fe:0.2,mg:26,k2:325,na:120,zn:0.3,fo:150,se:38,col:50,src:"CREA"},
+
+// ── PRODOTTI LATTIERO-CASEARI MANCANTI (CREA) ──
+{n:"Ricotta di pecora",c:"Formaggi",k:157,p:9.4,gs:6.8,g:12.0,z:0.5,ch:0.5,fi:0,ca:220,fe:0.3,mg:15,k2:85,na:100,zn:1.0,fo:280,se:8,col:50,src:"CREA"},
+{n:"Ricotta di capra",c:"Formaggi",k:152,p:9.0,gs:6.5,g:11.5,z:0.5,ch:0.5,fi:0,ca:200,fe:0.3,mg:14,k2:80,na:90,zn:0.9,fo:260,se:7,col:45,src:"CREA"},
+{n:"Quark (formaggio fresco magro)",c:"Formaggi",k:70,p:12.5,gs:0.2,g:0.5,z:2.5,ch:3.5,fi:0,ca:90,fe:0.1,mg:9,k2:130,na:75,zn:0.7,fo:120,se:8,col:5,src:"BDA"},
+{n:"Formaggio fresco tipo Quark intero",c:"Formaggi",k:115,p:11.0,gs:2.0,g:5.5,z:3.0,ch:4.0,fi:0,ca:95,fe:0.1,mg:10,k2:140,na:70,zn:0.8,fo:130,se:9,col:20,src:"BDA"},
+{n:"Kefir di latte intero",c:"Latte e derivati",k:63,p:3.3,gs:2.0,g:3.6,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:150,na:50,zn:0.4,fo:38,se:2,col:14,src:"BDA"},
+{n:"Latte di capra fresco intero",c:"Latte e derivati",k:69,p:3.6,gs:2.7,g:4.5,z:4.5,ch:4.5,fi:0,ca:134,fe:0.1,mg:14,k2:204,na:50,zn:0.5,fo:30,se:1,col:12,src:"CREA"},
+{n:"Stracciatella di bufala",c:"Formaggi",k:268,p:13.5,gs:13.0,g:23.5,z:0.5,ch:1.0,fi:0,ca:210,fe:0.2,mg:18,k2:80,na:95,zn:0.9,fo:250,se:8,col:75,src:"CREA"},
+{n:"Latticello (buttermilk)",c:"Latte e derivati",k:40,p:3.3,gs:0.2,g:0.9,z:4.8,ch:4.8,fi:0,ca:116,fe:0.1,mg:11,k2:151,na:105,zn:0.4,fo:36,se:2,col:5,src:"BDA"},
+{n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:340,p:2.1,gs:20.5,g:35.0,z:3.1,ch:3.1,fi:0,ca:65,fe:0.1,mg:7,k2:88,na:36,zn:0.2,fo:56,se:1,col:106,src:"CREA"},
+{n:"Formaggio Fontina DOP",c:"Formaggi",k:352,p:25.5,gs:14.5,g:26.0,z:0,ch:0,fi:0,ca:870,fe:0.2,mg:28,k2:100,na:700,zn:3.5,fo:620,se:14,col:80,src:"CREA"},
+{n:"Pecorino Sardo DOP stagionato",c:"Formaggi",k:412,p:26.0,gs:24.5,g:33.5,z:0,ch:0,fi:0,ca:1250,fe:0.5,mg:30,k2:88,na:1900,zn:3.8,fo:730,se:14,col:100,src:"CREA"},
+{n:"Caciocavallo silano DOP",c:"Formaggi",k:393,p:28.0,gs:20.0,g:31.0,z:0.5,ch:0.5,fi:0,ca:1100,fe:0.3,mg:35,k2:110,na:850,zn:4.0,fo:720,se:13,col:92,src:"CREA"},
+
+// ── DOLCI E DESSERT ITALIANI MANCANTI (CREA) ──
+{n:"Panna cotta (senza caramello)",c:"Dolci",k:200,p:3.5,gs:11.5,g:16.0,z:18.0,ch:20.5,fi:0,ca:80,fe:0.1,mg:6,k2:70,na:45,zn:0.2,fo:40,se:1,col:55,src:"CREA"},
+{n:"Crostata di marmellata (artigianale)",c:"Dolci",k:340,p:5.5,gs:3.0,g:12.0,z:35.0,ch:55.5,fi:1.5,ca:18,fe:1.2,mg:14,k2:100,na:180,zn:0.5,fo:55,se:4,col:60,src:"CREA"},
+{n:"Torta margherita (pan di spagna base)",c:"Dolci",k:350,p:7.5,gs:4.0,g:12.0,z:40.0,ch:58.0,fi:0.5,ca:35,fe:1.0,mg:12,k2:88,na:150,zn:0.6,fo:70,se:8,col:120,src:"CREA"},
+{n:"Biscotti da tè (tipo shortbread)",c:"Biscotti e crackers",k:490,p:6.5,gs:9.0,g:22.0,z:28.0,ch:67.0,fi:1.5,ca:25,fe:1.5,mg:15,k2:110,na:180,zn:0.5,fo:55,se:5,col:75,src:"CREA"},
+{n:"Budino di riso (con latte e zucchero)",c:"Dolci",k:138,p:3.8,gs:2.0,g:4.5,z:18.0,ch:22.0,fi:0.2,ca:90,fe:0.3,mg:10,k2:115,na:55,zn:0.4,fo:55,se:3,col:18,src:"CREA"},
+
+// ── FARINE E SEMOLE MANCANTI (CREA) ──
+{n:"Farina di grano tenero tipo 0",c:"Cereali e derivati",k:359,p:11.8,gs:0.2,g:1.4,z:1.0,ch:73.8,fi:2.2,ca:17,fe:1.5,mg:28,k2:130,na:2,zn:0.8,fo:120,se:16,col:0,src:"CREA"},
+{n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:355,p:12.5,gs:0.2,g:1.6,z:1.5,ch:72.0,fi:3.2,ca:20,fe:1.8,mg:38,k2:155,na:3,zn:1.0,fo:150,se:17,col:0,src:"CREA"},
+{n:"Semola rimacinata di grano duro",c:"Cereali e derivati",k:358,p:12.2,gs:0.2,g:1.6,z:0.5,ch:73.0,fi:3.5,ca:18,fe:2.5,mg:42,k2:175,na:3,zn:1.0,fo:180,se:28,col:0,src:"CREA"},
+{n:"Farro perlato cotto",c:"Cereali e derivati",k:137,p:5.0,gs:0.1,g:0.7,z:0.3,ch:28.5,fi:4.2,ca:16,fe:1.4,mg:35,k2:128,na:5,zn:0.9,fo:125,se:14,col:0,src:"CREA"},
+{n:"Miglio decorticato crudo",c:"Cereali e derivati",k:378,p:10.5,gs:0.4,g:4.2,z:1.5,ch:72.9,fi:8.5,ca:8,fe:3.0,mg:114,k2:195,na:5,zn:1.7,fo:285,se:2,col:0,src:"CREA"},
+{n:"Miglio decorticato cotto",c:"Cereali e derivati",k:119,p:3.5,gs:0.1,g:1.0,z:0.5,ch:23.7,fi:1.3,ca:3,fe:0.6,mg:44,k2:62,na:2,zn:0.5,fo:74,se:0.6,col:0,src:"CREA"},
+{n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.2,g:1.6,z:0.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:6,zn:0.9,fo:148,se:2,col:0,src:"BDA"},
+
+// ── TISANE E INFUSI (CREA) ──
+{n:"Camomilla in infuso (non zuccherata)",c:"Bevande",k:1,p:0.1,gs:0,g:0,z:0,ch:0.2,fi:0,ca:5,fe:0.1,mg:2,k2:10,na:1,zn:0,fo:5,se:0,col:0,src:"CREA"},
+{n:"Tiglio in infuso (non zuccherato)",c:"Bevande",k:1,p:0.1,gs:0,g:0,z:0.1,ch:0.2,fi:0,ca:5,fe:0.2,mg:3,k2:15,na:1,zn:0,fo:4,se:0,col:0,src:"BDA"},
+{n:"Verbena (tisana, non zuccherata)",c:"Bevande",k:1,p:0.1,gs:0,g:0,z:0,ch:0.2,fi:0,ca:4,fe:0.1,mg:2,k2:12,na:1,zn:0,fo:4,se:0,col:0,src:"BDA"},
+{n:"Rosa canina infuso (non zuccherato)",c:"Bevande",k:2,p:0.1,gs:0,g:0,z:0.3,ch:0.5,fi:0,ca:8,fe:0.2,mg:3,k2:25,na:2,zn:0,fo:5,se:0,col:0,src:"BDA"},
+
+// ── GRASSI E OLI MANCANTI (CREA) ──
+{n:"Margarina vegetale (68% grassi)",c:"Grassi e oli",k:600,p:0.1,gs:14.0,g:68.0,z:0,ch:0.5,fi:0,ca:2,fe:0.1,mg:2,k2:10,na:530,zn:0,fo:2,se:0,col:0,src:"CREA"},
+{n:"Strutto di maiale",c:"Grassi e oli",k:882,p:0,gs:39.2,g:99.7,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0.1,fo:1,se:0,col:93,src:"CREA"},
+{n:"Olio di mais",c:"Grassi e oli",k:900,p:0,gs:13.0,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di arachidi",c:"Grassi e oli",k:899,p:0,gs:19.0,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+
+// ── UOVA PREPARAZIONI COTTE (CREA) ──
+{n:"Uovo sodo (bollito 10 min)",c:"Uova",k:147,p:12.6,gs:3.4,g:11.3,z:0,ch:0.6,fi:0,ca:56,fe:1.9,mg:12,k2:126,na:142,zn:1.4,fo:180,se:31,col:370,src:"CREA"},
+{n:"Uovo in camicia (poached)",c:"Uova",k:140,p:12.5,gs:3.2,g:10.5,z:0,ch:0.5,fi:0,ca:54,fe:1.8,mg:12,k2:125,na:140,zn:1.4,fo:175,se:31,col:362,src:"CREA"},
+{n:"Frittata semplice (olio + uova)",c:"Uova",k:185,p:12.8,gs:4.0,g:15.0,z:0,ch:0.5,fi:0,ca:50,fe:1.8,mg:12,k2:135,na:180,zn:1.3,fo:175,se:28,col:360,src:"CREA"},
 ];
+
 
 let CUSTOM_DB=[];
 let RICETTE_DB=[];

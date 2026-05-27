@@ -1981,6 +1981,17 @@ const DB_BDA=[
 {n:"Uovo sodo (bollito 10 min)",c:"Uova",k:147,p:12.6,gs:3.4,g:11.3,z:0,ch:0.6,fi:0,ca:56,fe:1.9,mg:12,k2:126,na:142,zn:1.4,fo:180,se:31,col:370,src:"CREA"},
 {n:"Uovo in camicia (poached)",c:"Uova",k:140,p:12.5,gs:3.2,g:10.5,z:0,ch:0.5,fi:0,ca:54,fe:1.8,mg:12,k2:125,na:140,zn:1.4,fo:175,se:31,col:362,src:"CREA"},
 {n:"Frittata semplice (olio + uova)",c:"Uova",k:185,p:12.8,gs:4.0,g:15.0,z:0,ch:0.5,fi:0,ca:50,fe:1.8,mg:12,k2:135,na:180,zn:1.3,fo:175,se:28,col:360,src:"CREA"},
+// ── LEGUMI TRADIZIONALI MANCANTI (CREA/BDA) ──
+{n:"Cicerchia secca (Lathyrus sativus)",c:"Legumi",k:295,p:27.8,gs:0.2,g:1.0,z:7.0,ch:55.0,fi:18.0,ca:74,fe:7.0,mg:88,k2:950,na:5,zn:3.0,fo:350,se:6,col:0,src:"CREA"},
+{n:"Cicerchia cotta",c:"Legumi",k:109,p:10.2,gs:0.1,g:0.4,z:2.5,ch:20.3,fi:6.6,ca:27,fe:2.6,mg:32,k2:350,na:2,zn:1.1,fo:129,se:2,col:0,src:"CREA"},
+// ── ERBE AROMATICHE FRESCHE (CREA) ──
+{n:"Salvia fresca",c:"Erbe aromatiche",k:58,p:3.7,gs:0.5,g:1.8,z:0.7,ch:4.2,fi:4.0,ca:315,fe:4.0,mg:47,k2:428,na:11,zn:1.0,fo:58,se:1.4,col:0,src:"CREA"},
+{n:"Timo fresco",c:"Erbe aromatiche",k:101,p:5.6,gs:0.3,g:1.7,z:0.5,ch:15.1,fi:14.0,ca:405,fe:17.5,mg:160,k2:609,na:9,zn:1.8,fo:45,se:1.1,col:0,src:"CREA"},
+// ── PIATTI REGIONALI ITALIANI (BDA) ──
+{n:"Pizzoccheri della Valtellina (cotti)",c:"Piatti pronti",k:195,p:7.0,gs:4.5,g:9.0,z:2.5,ch:22.0,fi:2.5,ca:120,fe:1.2,mg:30,k2:180,na:350,zn:1.2,fo:90,se:8,col:28,src:"BDA"},
+{n:"Vincisgrassi marchigiani (pasta al forno)",c:"Piatti pronti",k:175,p:9.0,gs:3.5,g:7.5,z:2.5,ch:18.5,fi:1.0,ca:85,fe:1.5,mg:20,k2:200,na:420,zn:1.2,fo:120,se:8,col:55,src:"BDA"},
+{n:"Abbacchio al forno (agnello da latte romano)",c:"Carni rosse",k:180,p:24.0,gs:3.5,g:9.0,z:0,ch:0.5,fi:0,ca:12,fe:2.0,mg:22,k2:330,na:75,zn:4.0,fo:200,se:12,col:85,src:"BDA"},
+{n:"Strangolapreti trentini (spinaci e ricotta)",c:"Piatti pronti",k:155,p:7.5,gs:2.5,g:5.5,z:2.5,ch:20.0,fi:1.5,ca:120,fe:1.5,mg:25,k2:220,na:380,zn:0.9,fo:90,se:5,col:35,src:"BDA"},
 ];
 
 

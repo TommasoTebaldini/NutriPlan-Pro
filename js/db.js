@@ -4435,6 +4435,159 @@ const PATOLOGIE_BASE=[
      {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Formula priva di BCAA',qt:'200ml'},{nome:'Frutta',qt:'100g'}]},
      {nome:'Cena',emoji:'🌙',items:[{nome:'Riso a basso contenuto proteico',qt:'80g'},{nome:'Verdure al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'},{nome:'Quota BCAA naturali calcolata',qt:'20g'}]}
    ]},
+// ── PATOLOGIE AGGIUNTIVE ──
+  {id:'glomerulonefrite',cat:'renali',emoji:'🫘',nome:'Glomerulonefrite',badge:'KDIGO 2021',colore:'#0ea5e9',
+   desc:'Dieta adattata alla funzione renale residua. Controllo proteine, sodio, potassio e fosforo in base allo stadio GFR.',
+   note:'KDIGO 2021. Proteine 0.6-0.8 g/kg/die se GFR<60, aumentare se sindrome nefrosica con proteinuria massiva. Sodio <2g/die per controllo edemi e PA. Potassio adattato al GFR. Omega-3 2g/die (effetto antiproteinurico documentato). Vitamina D spesso carente: integrare.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parzialmente scremato',qt:'150ml'},{nome:'Fette biscottate integrali',qt:'30g'},{nome:'Marmellata',qt:'15g'},{nome:'Caffè',qt:'1 tazza'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Mela',qt:'150g'},{nome:'Pane a ridotto contenuto proteico',qt:'30g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola',qt:'80g'},{nome:'Zucchine al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'},{nome:'Petto di pollo',qt:'80g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Pera',qt:'150g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso',qt:'70g'},{nome:'Verdure miste cotte (basse in K)',qt:'200g'},{nome:'Merluzzo al vapore',qt:'100g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'ulcera_peptica',cat:'gastrointestinali',emoji:'🫁',nome:'Ulcera Peptica',badge:'ACG 2022',colore:'#f97316',
+   desc:'Dieta che riduce la stimolazione acida e favorisce la guarigione della mucosa gastroduodenale.',
+   note:'ACG 2022. Non esiste una "dieta antiulcera" rigida: evitare solo i cibi che il paziente riconosce come scatenanti. Eliminare alcol e fumo. FANS controindicati. Se H. pylori: terapia eradicante + probiotici. Pasti regolari 4-5/die, porzioni moderate. Fibra solubile accelera guarigione mucosa.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt naturale',qt:'125g'},{nome:'Pane tostato',qt:'40g'},{nome:'Miele',qt:'10g'},{nome:'Tè verde (non troppo caldo)',qt:'200ml'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Banana matura',qt:'100g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso in bianco',qt:'80g'},{nome:'Petto di pollo al vapore',qt:'120g'},{nome:'Carote bollite',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'8g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Pera matura sbucciata',qt:'120g'},{nome:'Crackers',qt:'20g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta in bianco',qt:'80g'},{nome:'Merluzzo al forno',qt:'120g'},{nome:'Zucchine bollite',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'8g'}]}
+   ]},
+  {id:'osteoartrite',cat:'osteomuscolari',emoji:'🦴',nome:'Osteoartrite',badge:'EULAR 2023',colore:'#84cc16',
+   desc:'Dieta anti-infiammatoria e gestione del peso corporeo per ridurre il carico articolare e l\'infiammazione sinoviale.',
+   note:'EULAR 2023 · OARSI 2020. Perdita del 5-10% del peso riduce dolore e migliora funzione articolare (NNT 4). Dieta mediterranea: effetto anti-infiammatorio. Omega-3 EPA/DHA 2-3g/die riduce dolore articolare. Vitamina D target >40 ng/mL. Glucosamina solfato 1500mg/die: evidenza moderata. Collagene idrolizzato 10g/die: studi promettenti. Vitamina C 200mg/die (sintesi collageno). Curcuma 1g/die (anti-infiammatoria).',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco',qt:'150g'},{nome:'Fiocchi di avena',qt:'40g'},{nome:'Noci',qt:'20g'},{nome:'Mirtilli',qt:'80g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Arancia',qt:'150g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'80g'},{nome:'Salmone al forno',qt:'130g'},{nome:'Insalata mista',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'12g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Mandorle',qt:'20g'},{nome:'Mela',qt:'120g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale',qt:'70g'},{nome:'Legumi misti',qt:'150g'},{nome:'Verdure al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]}
+   ]},
+  {id:'tumore_polmone',cat:'oncologia',emoji:'🫁',nome:'Cancro al Polmone',badge:'ESPEN 2021',colore:'#64748b',
+   desc:'Supporto nutrizionale intensivo per prevenire la cachessia e mantenere la massa magra durante chemioterapia e radioterapia.',
+   note:'ESPEN 2021. Cachessia frequente (40-80%). Omega-3 EPA 2g/die: anti-cachessia (evidenza A). ONS ipercalorici e iperproteici se intake <60% per >7 gg. Radioterapia toracica: disfagia, esofagite – alimenti morbidi e freschi. Anoressia: pasti piccoli e frequenti, arricchire i cibi. Vitamina D target >30 ng/mL. Zinco e selenio: monitorare.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Smoothie proteico (latte + banana + whey)',qt:'300ml'},{nome:'Pane con burro di mandorle',qt:'50g'},{nome:'Succo d\'arancia',qt:'100ml'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'ONS iperproteico',qt:'200ml'},{nome:'Biscotti al farro',qt:'30g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Risotto al parmigiano',qt:'90g riso'},{nome:'Petto di tacchino al forno',qt:'130g'},{nome:'Verdure miste',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'15g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt greco intero',qt:'150g'},{nome:'Noci',qt:'20g'},{nome:'Miele',qt:'10g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta con olio e parmigiano',qt:'90g'},{nome:'Uova strapazzate',qt:'2 uova'},{nome:'Verdure morbide',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'15g'}]}
+   ]},
+  {id:'tumore_prostata',cat:'oncologia',emoji:'♂️',nome:'Cancro alla Prostata',badge:'ESPEN 2021',colore:'#3b82f6',
+   desc:'Dieta anti-infiammatoria e antiossidante per supportare il trattamento e ridurre la progressione della malattia.',
+   note:'ESPEN 2021 · PCF 2023. Licopene (pomodori cotti) 10-15mg/die: associato a riduzione rischio progressione. Soia e fitoestrogeni: effetto protettivo documentato. Grassi saturi <10%: ridurre (promuovono crescita tumorale). Omega-3 3g/die (anti-infiammatorio). Vitamina D target >40 ng/mL. Zinco: non eccedere (≤25mg/die). Alcol: eliminare o ridurre drasticamente.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Tè verde',qt:'200ml'},{nome:'Fiocchi d\'avena con latte di soia',qt:'50g avena'},{nome:'Frutti di bosco',qt:'100g'},{nome:'Semi di lino tritati',qt:'10g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Noci',qt:'25g'},{nome:'Melagrana',qt:'150g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale al pomodoro (cotto)',qt:'80g'},{nome:'Tofu saltato',qt:'100g'},{nome:'Broccoli al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt di soia',qt:'125g'},{nome:'Mela',qt:'150g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale',qt:'80g'},{nome:'Salmone al forno',qt:'130g'},{nome:'Insalata di pomodori cotti',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]}
+   ]},
+  {id:'tumore_stomaco',cat:'oncologia',emoji:'🫃',nome:'Cancro allo Stomaco',badge:'ESPEN 2021',colore:'#ef4444',
+   desc:'Supporto nutrizionale adattato alla funzionalità gastrica residua, spesso ridotta da chirurgia o chemioterapia.',
+   note:'ESPEN 2021. Post-gastrectomia totale/parziale frequente. Pasti piccoli e frequenti (6-8/die). Dumping syndrome: evitare liquidi ai pasti, zuccheri semplici. Carenze obbligatorie: B12 parenterale, ferro, calcio citrato, vitamina D, folati. Texture adattata se disfagia. ONS iperproteici se intake inadeguato.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Uova strapazzate morbide',qt:'2 uova'},{nome:'Pane morbido',qt:'40g'},{nome:'Latte tiepido',qt:'100ml'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'ONS iperproteico',qt:'200ml'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso morbido',qt:'70g'},{nome:'Petto di pollo tritato',qt:'100g'},{nome:'Carote e zucchine frullate',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt naturale',qt:'125g'},{nome:'Banana matura',qt:'80g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta morbida',qt:'70g'},{nome:'Merluzzo al vapore tritato',qt:'100g'},{nome:'Verdure morbide cotte',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'tumore_fegato',cat:'oncologia',emoji:'🫀',nome:'Epatocarcinoma (HCC)',badge:'EASL 2022',colore:'#a21caf',
+   desc:'Supporto nutrizionale nel contesto di malattia epatica cronica sottostante. Prevenire la malnutrizione e la sarcopenia.',
+   note:'EASL 2022 · ESPEN 2021. HCC insorge su cirrosi nel 90% dei casi: seguire linee guida nutrizionali per cirrosi. Malnutrizione nel 60-90%: supporto nutrizionale precoce. Pasti piccoli e frequenti (4-6/die). Snack serale CHO (50g). BCAA 12g/die se encefalopatia o sarcopenia. Vitamina D. ONS se intake <70% fabbisogno.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parzialmente scremato',qt:'200ml'},{nome:'Fette biscottate',qt:'40g'},{nome:'Marmellata senza zucchero',qt:'15g'},{nome:'Frutto di stagione',qt:'100g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'ONS iperproteico',qt:'200ml'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso',qt:'70g'},{nome:'Petto di pollo al vapore',qt:'100g'},{nome:'Verdure al vapore',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt',qt:'125g'},{nome:'Banana',qt:'80g'}]},
+     {nome:'Snack serale CHO',emoji:'🌛',items:[{nome:'Fette biscottate',qt:'30g'},{nome:'Marmellata',qt:'15g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta',qt:'70g'},{nome:'Merluzzo',qt:'100g'},{nome:'Verdure cotte',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'steatoepatite_alcolica',cat:'gastrointestinali',emoji:'🍺',nome:'Steatoepatite Alcolica (ASH)',badge:'EASL 2023',colore:'#b45309',
+   desc:'Dieta ipercalorica e iperproteica per contrastare la malnutrizione grave. Astensione assoluta dall\'alcol.',
+   note:'EASL 2023 · AASLD 2020. Malnutrizione nel 90% dei pazienti. Alcol zero assoluto. 35-40 kcal/kg/die (peso secco). Proteine 1.2-1.5 g/kg/die (NON ridurre: pericolo). 4-6 pasti/die. Snack serale con CHO (50g). Thiamina 100mg/die EV poi os (Wernicke). Zinco, magnesio, vitamina K, vitamina D: supplementare. BCAA se encefalopatia. ONS iperproteici se intake <70%.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'ONS iperproteico',qt:'200ml'},{nome:'Pane tostato',qt:'40g'},{nome:'Uova strapazzate',qt:'2 uova'},{nome:'Frutto di stagione',qt:'100g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Yogurt intero',qt:'150g'},{nome:'Crackers',qt:'25g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta',qt:'80g'},{nome:'Carne magra',qt:'100g'},{nome:'Verdure al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'15g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'ONS iperproteico',qt:'200ml'},{nome:'Banana',qt:'100g'}]},
+     {nome:'Snack serale CHO',emoji:'🌛',items:[{nome:'Fette biscottate integrali',qt:'30g'},{nome:'Marmellata',qt:'15g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso',qt:'80g'},{nome:'Pesce al vapore',qt:'120g'},{nome:'Verdure cotte',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'15g'}]}
+   ]},
+  {id:'polimialgia_reumatica',cat:'osteomuscolari',emoji:'💪',nome:'Polimialgia Reumatica',badge:'EULAR 2023',colore:'#dc2626',
+   desc:'Dieta anti-infiammatoria e protezione dall\'osteoporosi da corticosteroidi a lungo termine.',
+   note:'EULAR 2023 · BSR 2020. Corticosteroidi a lungo termine: rischio osteoporosi (Ca 1000-1200mg/die + vitamina D 2000 UI/die obbligatori). Sodio <2g/die (ritenzione idrica da steroidi). Zuccheri semplici limitati (glicemia da steroidi). Omega-3 3g/die anti-infiammatorio. Dieta mediterranea. BMI <25: obiettivo.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco arricchito di calcio',qt:'150g'},{nome:'Fiocchi d\'avena',qt:'40g'},{nome:'Frutti di bosco',qt:'80g'},{nome:'Noci',qt:'20g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Arancia',qt:'150g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale',qt:'80g'},{nome:'Salmone al forno',qt:'130g'},{nome:'Broccoli al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Latte parzialmente scremato',qt:'150ml'},{nome:'Mandorle',qt:'20g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta integrale',qt:'80g'},{nome:'Legumi',qt:'150g'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]}
+   ]},
+  {id:'iperaldosteronismo',cat:'cardiovascolari',emoji:'🫀',nome:'Iperaldosteronismo Primario',badge:'ES 2021',colore:'#7c3aed',
+   desc:'Dieta a basso contenuto di sodio e ad alto contenuto di potassio per contrastare gli effetti dell\'eccesso di aldosterone.',
+   note:'ES 2021 · AHA 2022. Sodio <1.5g/die (fondamentale: aldosterone trattiene sodio). Potassio ≥4g/die (spesso ipokaliemia). Eliminare alcol e fumo. Dieta DASH. Dopo adrenalectomia: normalizzazione PA e potassio (monitorare). Spironolattone/eplerenone: sì potassio ma monitorare (rischio iperkaliemia in combinazione).',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Tè senza zucchero',qt:'200ml'},{nome:'Fiocchi d\'avena',qt:'40g'},{nome:'Banana (ricca di K)',qt:'100g'},{nome:'Yogurt naturale',qt:'125g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Arancia',qt:'150g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bollito (non salato)',qt:'80g'},{nome:'Petto di pollo al vapore',qt:'130g'},{nome:'Spinaci (ricchi di K)',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Avocado (alto K)',qt:'80g'},{nome:'Crackers non salati',qt:'20g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta non salata',qt:'80g'},{nome:'Pesce al vapore',qt:'130g'},{nome:'Patate al forno (alte K)',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'nefropatia_iga',cat:'renali',emoji:'🫘',nome:'Nefropatia IgA (Berger)',badge:'KDIGO 2021',colore:'#0369a1',
+   desc:'Dieta renale adattata allo stadio GFR con attenzione al controllo della PA e riduzione della proteinuria.',
+   note:'KDIGO 2021. Sodio <2g/die (controllo PA e proteinuria). Proteine 0.6-0.8 g/kg/die (rallenta progressione). Omega-3 EPA+DHA 2-3g/die: evidenza moderata (meta-analisi 2023). Potassio e fosforo adattati al GFR. Vitamina D spesso carente. Gluten-free: non raccomandato routinariamente nonostante depositi IgA (trial negativi).',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parzialmente scremato',qt:'150ml'},{nome:'Fette biscottate',qt:'30g'},{nome:'Marmellata',qt:'15g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Mela',qt:'150g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta',qt:'80g'},{nome:'Petto di pollo al vapore',qt:'90g'},{nome:'Zucchine bollite',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Pera',qt:'150g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso',qt:'70g'},{nome:'Merluzzo al forno',qt:'100g'},{nome:'Carote al vapore',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'10g'}]}
+   ]},
+  {id:'artrite_reattiva',cat:'osteomuscolari',emoji:'🦵',nome:'Artrite Reattiva',badge:'EULAR 2022',colore:'#16a34a',
+   desc:'Dieta anti-infiammatoria per ridurre la risposta infiammatoria sistemica post-infettiva.',
+   note:'EULAR 2022. Dieta anti-infiammatoria: mediterranea. Omega-3 EPA/DHA 2-3g/die. Vitamina D target >40 ng/mL. Zinco 15mg/die (immunità e riparazione). Probiotici (Lactobacillus): possono ridurre durata e intensità dell\'infiammazione post-infettiva. Alcol: evitare nella fase acuta. Idratazione abbondante.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco con probiotici',qt:'150g'},{nome:'Noci',qt:'20g'},{nome:'Frutti di bosco',qt:'80g'},{nome:'Pane integrale',qt:'40g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Arancia',qt:'150g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'80g'},{nome:'Tonno al naturale',qt:'100g'},{nome:'Pomodori freschi',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'12g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Mandorle',qt:'20g'},{nome:'Mela',qt:'120g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale',qt:'80g'},{nome:'Salmone al forno',qt:'130g'},{nome:'Verdure miste al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]}
+   ]},
+  {id:'acromegalia',cat:'endocrine',emoji:'📏',nome:'Acromegalia',badge:'ES 2014',colore:'#0891b2',
+   desc:'Dieta normocalorica con attenzione al controllo glicemico e alla salute cardiovascolare e ossea.',
+   note:'ES 2014 · AACE 2021. Spesso associata a diabete secondario: CHO a basso IG. Ipertensione frequente: sodio <2g/die. Artropatie: omega-3 3g/die anti-infiammatorio. Calcio 1000-1200mg/die + vitamina D (osteoporosi). Acromegalia non trattata: aumenta rischio colon cancer → fibre ≥30g/die. Dopo normalizzazione IGF-1: obiettivo BMI <25.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt naturale',qt:'125g'},{nome:'Fiocchi d\'avena',qt:'40g'},{nome:'Frutti di bosco',qt:'80g'},{nome:'Mandorle',qt:'15g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Mela',qt:'150g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'80g'},{nome:'Petto di pollo al forno',qt:'120g'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Noci',qt:'20g'},{nome:'Pera',qt:'120g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Riso integrale',qt:'70g'},{nome:'Pesce magro al vapore',qt:'130g'},{nome:'Verdure al vapore',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'12g'}]}
+   ]},
+  {id:'nutrizione_anziani',cat:'varie',emoji:'👴',nome:'Nutrizione nell\'Anziano',badge:'ESPEN 2022',colore:'#78716c',
+   desc:'Dieta adattata alle specifiche esigenze nutrizionali dell\'anziano per prevenire malnutrizione, sarcopenia e fragilità.',
+   note:'ESPEN 2022 · PROT-AGE 2013. Proteine 1.0-1.2 g/kg/die (aumentare fino a 1.5 se malnutrizione o sarcopenia). Vitamina D 800-2000 UI/die (quasi universalmente carente). Calcio 1200mg/die. B12 supplementare se carenza (frequente per gastrite atrofica). Leucina ≥3g/pasto (anabolismo muscolare). Omega-3. Zinco. Idratazione: sorvegliare (scarso senso della sete). Texture adattata se disfagia.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero caldo',qt:'200ml'},{nome:'Biscotti integrali',qt:'30g'},{nome:'Frutta morbida (banana o pera)',qt:'100g'},{nome:'Caffè o tè',qt:'1 tazza'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'Yogurt intero',qt:'125g'},{nome:'Fetta biscottata con miele',qt:'20g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta morbida',qt:'80g'},{nome:'Carne macinata magra',qt:'100g'},{nome:'Verdure cotte morbide',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'15g'},{nome:'Pane morbido',qt:'30g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Latte parzialmente scremato',qt:'150ml'},{nome:'Biscotto secco',qt:'20g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Minestra con legumi',qt:'300ml'},{nome:'Formaggio morbido (ricotta)',qt:'80g'},{nome:'Pane morbido',qt:'30g'},{nome:'Frutto di stagione morbido',qt:'100g'}]}
+   ]},
+  {id:'fragilita',cat:'varie',emoji:'🧓',nome:'Sindrome da Fragilità',badge:'ESPEN 2022',colore:'#a16207',
+   desc:'Intervento nutrizionale mirato a contrastare la sarcopenia e il declino funzionale nell\'anziano fragile.',
+   note:'ESPEN 2022 · ICFSR 2020. Proteine 1.2-1.5 g/kg/die (obiettivo primario). Leucina ≥3g/pasto. Vitamina D 800-2000 UI/die. Calcio 1200mg/die. Omega-3 2g/die. ONS se intake insufficiente (NNT 6 per prevenire fragilità). Attività fisica di resistenza + adeguato apporto proteico = sinergia fondamentale. Vitamina B12. Zinco. Monitorare peso settimanalmente.',
+   pasti:[
+     {nome:'Colazione',emoji:'🌅',items:[{nome:'Uova strapazzate morbide',qt:'2 uova'},{nome:'Pane morbido con burro',qt:'40g'},{nome:'Latte intero',qt:'150ml'},{nome:'Banana',qt:'80g'}]},
+     {nome:'Spuntino mattina',emoji:'☀️',items:[{nome:'ONS iperproteico',qt:'200ml'},{nome:'Fetta biscottata',qt:'15g'}]},
+     {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta morbida al ragù',qt:'80g'},{nome:'Formaggio stagionato (parmigiano)',qt:'30g'},{nome:'Verdure morbide',qt:'150g'},{nome:'Olio extravergine di oliva',qt:'15g'}]},
+     {nome:'Spuntino pomeriggio',emoji:'🌤️',items:[{nome:'Yogurt intero con noci',qt:'150g'},{nome:'Miele',qt:'10g'}]},
+     {nome:'Cena',emoji:'🌙',items:[{nome:'Minestra con legumi e pasta piccola',qt:'300ml'},{nome:'Petto di pollo tritato morbido',qt:'100g'},{nome:'Pane morbido',qt:'40g'},{nome:'Olio extravergine di oliva',qt:'15g'}]}
+   ]},
 ];
 const PATOLOGIE_CUSTOM = [];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}
@@ -4592,7 +4745,22 @@ const FABBISOGNO_PATOLOGIE={
   trapianto_midollo:{kcal:'30-35 kcal/kg/die (fase acuta 35-40)',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2021 · EBMT. Fase aplasia (neutropenia <500): dieta a bassa carica microbica (no crudi, no fermentati non pastorizzati, no frutta con buccia non pelabile). Mucositi: frullati, cibi freddi, ONS. GvHD intestinale: NE elementare/semi-elementare. NPT se GI non funzionante >3gg. Evitare: pompelmo, succo di mirtillo (interazioni farmaci). Vitamina D, Mg, K monitorati.'},
   mieloma:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021 · IMF. Ipercalcemia (30% pazienti): idratazione ≥2.5L/die, non ridurre Ca alimentare (paradossalmente utile). Insufficienza renale: P <800mg, K <2g, Na <2g. Anemia: Fe biodisponibile, B12, folati. Immunosoppressione: igiene alimentare rigorosa. Bifosfonati: Ca 1000-1200mg + Vit D 800-1000UI. Omega-3 anti-infiammatorio. Mieloma smoldering: dieta mediterranea preventiva.'},
   tirosinemia:{kcal:'Normocalorica (adattata a età/peso)',prot:'Formula + quota naturale calcolata al mg',note:'SSIEM 2023 · MetAbolic. NTBC (nitisinone): terapia farmacologica di base, riduce necessità dietetica ma non la elimina. Target aminoacidi plasma: Tyr 200-400 µmol/L adulti, Phe 20-80 µmol/L. Formula aminoacidica priva di Tyr+Phe: fonte proteica principale. Fenilalanina naturale: 20-50 mg/kg/die (calcolata). Integrare: Fe (NTBC può causare carenza), Zn, Ca, vitamina D. Monitoraggio AFP e ecografia epatica.'},
-  msud:{kcal:'Normocalorica (adattata a età/peso)',prot:'Formula BCAA-free + quota naturale calcolata',note:'ACMG 2014 · SSIEM 2020 · HCU Network. Target leucina: 75-200 µmol/L (neonati 75-100). Crisi metabolica: eliminare BCAA, glucosio ev ad alto flusso. Formula priva di Leu+Ile+Val: base proteica. Leucina naturale: limitata e calcolata (tossicità neurale). Isoleucina e valina: supplementare separatamente (carenza isolata). Tiamina: 10-100 mg/die (50% risponde). Aminoacidi monitorati ogni settimana (neonato) → ogni 3 mesi (adulto stabile).'}
+  msud:{kcal:'Normocalorica (adattata a età/peso)',prot:'Formula BCAA-free + quota naturale calcolata',note:'ACMG 2014 · SSIEM 2020 · HCU Network. Target leucina: 75-200 µmol/L (neonati 75-100). Crisi metabolica: eliminare BCAA, glucosio ev ad alto flusso. Formula priva di Leu+Ile+Val: base proteica. Leucina naturale: limitata e calcolata (tossicità neurale). Isoleucina e valina: supplementare separatamente (carenza isolata). Tiamina: 10-100 mg/die (50% risponde). Aminoacidi monitorati ogni settimana (neonato) → ogni 3 mesi (adulto stabile).'},
+  glomerulonefrite:{kcal:'30-35 kcal/kg/die',prot:'0.6-0.8 g/kg/die (se GFR<60); aumentare se proteinuria nefrosica',note:'KDIGO 2021. Sodio <2g/die. Potassio adattato al GFR. Omega-3 2g/die (effetto antiproteinurico). Vitamina D integrare. Monitorare PA target <130/80 mmHg.'},
+  ulcera_peptica:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ACG 2022. Non esiste dieta rigida. Evitare scatenanti individuali. FANS controindicati. Alcol zero. Pasti regolari 4-5/die. Fibra solubile favorisce guarigione mucosa. Probiotici se H. pylori in eradicazione.'},
+  osteoartrite:{kcal:'Ipocalorica se sovrappeso (obiettivo -5-10% peso)',prot:'1.0-1.2 g/kg/die',note:'EULAR 2023 · OARSI 2020. Omega-3 2-3g/die. Vitamina D target >40 ng/mL. Glucosamina solfato 1500mg/die. Collagene idrolizzato 10g/die. Vitamina C 200mg/die. Curcuma 1g/die.'},
+  tumore_polmone:{kcal:'30-35 kcal/kg/die',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2021. Cachessia nel 40-80%. Omega-3 EPA 2g/die anti-cachessia. ONS se intake <60% per >7gg. Alimenti morbidi e freschi se esofagite da RT. Vitamina D, zinco, selenio.'},
+  tumore_prostata:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'ESPEN 2021 · PCF 2023. Licopene 10-15mg/die. Soia e fitoestrogeni. Grassi saturi <10%. Omega-3 3g/die. Vitamina D target >40 ng/mL. Alcol: eliminare.'},
+  tumore_stomaco:{kcal:'30-35 kcal/kg/die',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2021. Pasti piccoli 6-8/die. Dumping: no liquidi ai pasti. B12 parenterale obbligatoria. Ferro, calcio citrato, vitamina D, folati.'},
+  tumore_fegato:{kcal:'35-40 kcal/kg/die (peso secco)',prot:'1.2-1.5 g/kg/die',note:'EASL 2022 · ESPEN 2021. Malnutrizione 60-90%. 4-6 pasti/die + snack serale CHO. BCAA 12g/die se encefalopatia/sarcopenia. ONS se intake <70%.'},
+  steatoepatite_alcolica:{kcal:'35-40 kcal/kg/die (peso secco)',prot:'1.2-1.5 g/kg/die (NON ridurre)',note:'EASL 2023 · AASLD 2020. Alcol zero assoluto. Thiamina 100mg/die. Zinco, magnesio, vitamina K, D. BCAA se encefalopatia. 4-6 pasti + snack serale CHO.'},
+  polimialgia_reumatica:{kcal:'Normocalorica (ipocalorica se aumento ponderale da steroidi)',prot:'1.0-1.2 g/kg/die',note:'EULAR 2023. Ca 1000-1200mg/die + Vitamina D 2000 UI/die (obbligatori per corticosteroidi). Na <2g/die. Zuccheri limitati. Omega-3 3g/die.'},
+  iperaldosteronismo:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ES 2021. Sodio <1.5g/die. Potassio ≥4g/die. Dieta DASH. Alcol zero. Dopo adrenalectomia: monitorare PA e potassio.'},
+  nefropatia_iga:{kcal:'30-35 kcal/kg/die',prot:'0.6-0.8 g/kg/die',note:'KDIGO 2021. Sodio <2g/die. Omega-3 EPA+DHA 2-3g/die. Potassio e fosforo adattati al GFR. Vitamina D carente: integrare.'},
+  artrite_reattiva:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EULAR 2022. Omega-3 2-3g/die. Vitamina D target >40 ng/mL. Zinco 15mg/die. Probiotici: Lactobacillus (post-infettivo).'},
+  acromegalia:{kcal:'Normocalorica (ipocalorica se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'ES 2014 · AACE 2021. CHO a basso IG (diabete secondario). Sodio <2g/die. Calcio 1000-1200mg/die + vitamina D. Fibre ≥30g/die. Omega-3 3g/die.'},
+  nutrizione_anziani:{kcal:'30 kcal/kg/die (monitorare apporti reali)',prot:'1.0-1.2 g/kg/die (aumentare a 1.5 se sarcopenia)',note:'ESPEN 2022 · PROT-AGE 2013. Vitamina D 800-2000 UI/die. Calcio 1200mg/die. B12 monitorare. Leucina ≥3g/pasto. Omega-3. Zinco. Texture IDDSI adattata.'},
+  fragilita:{kcal:'30-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2022 · ICFSR 2020. Leucina ≥3g/pasto. Vitamina D 800-2000 UI/die. Calcio 1200mg/die. Omega-3 2g/die. ONS se intake insufficiente. B12. Zinco. Sinergia attività fisica + proteine.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

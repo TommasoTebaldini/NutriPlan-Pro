@@ -10,7 +10,7 @@
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
 .chat-container{display:flex;height:calc(100dvh - 54px - 36px);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:white;box-shadow:var(--shadow)}
@@ -252,10 +252,10 @@
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/lang.js" defer></script>
-<script src="js/utils.js"></script>
-<script src="js/print-capture.js"></script>
+<script src="js/utils.js" defer></script>
+<script src="js/print-capture.js" defer></script>
 <script>
 let chatPatients = [];
 let selectedPatientId = null;
@@ -317,27 +317,29 @@ async function loadChatPatients() {
     }
   }
 
-  // Get last message + unread count for each patient
-  const patients = [];
-  for (const p of (profiles || [])) {
-    const { data: lastMsgs } = await sb.from('chat_messages')
-      .select('content,created_at,sender_role')
-      .eq('patient_id', p.id)
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    const { count } = await sb.from('chat_messages')
-      .select('id', { count: 'exact', head: true })
-      .eq('patient_id', p.id)
-      .eq('sender_role', 'patient')
-      .is('read_at', null);
+  // Get last message + unread count for each patient — parallel, not sequential
+  const patients = await Promise.all((profiles || []).map(async p => {
+    const [lastMsgRes, unreadRes] = await Promise.all([
+      sb.from('chat_messages')
+        .select('content,created_at,sender_role')
+        .eq('patient_id', p.id)
+        .order('created_at', { ascending: false })
+        .limit(1),
+      sb.from('chat_messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('patient_id', p.id)
+        .eq('sender_role', 'patient')
+        .is('read_at', null)
+    ]);
+    const lastMsgs = lastMsgRes.data;
+    const count = unreadRes.count;
 
     // Use nome + cognome from profile, then cartella name as fallback, then email
     const fullName = [p.nome, p.cognome].filter(Boolean).join(' ');
     const cartellaName = patientCartellaNameMap[p.id] || '';
     const displayName = fullName || cartellaName || p.email || 'Paziente';
 
-    patients.push({
+    return {
       id: p.id,
       name: displayName,
       email: p.email || '',
@@ -345,8 +347,8 @@ async function loadChatPatients() {
       lastMessage: lastMsgs?.[0]?.content || '',
       lastTime: lastMsgs?.[0]?.created_at || null,
       unread: count || 0
-    });
-  }
+    };
+  }));
 
   // Sort by last message time
   patients.sort((a, b) => {

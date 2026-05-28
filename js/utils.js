@@ -55,13 +55,42 @@ async function checkAuth(redirectIfNotLogged = true) {
   }
 }
 
+// ─── Profile sessionStorage cache (5-min TTL) ─────────────────────────────
+const _PROF_CACHE_TTL = 5 * 60 * 1000;
+function _readProfileCache(uid) {
+  try {
+    const raw = sessionStorage.getItem('dpp_profile_' + uid);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > _PROF_CACHE_TTL) { sessionStorage.removeItem('dpp_profile_' + uid); return null; }
+    return data;
+  } catch(e) { return null; }
+}
+function _writeProfileCache(uid, data) {
+  try { sessionStorage.setItem('dpp_profile_' + uid, JSON.stringify({ data, ts: Date.now() })); } catch(e) {}
+}
+
 async function loadProfile() {
   if (!currentUser) return;
   loadProfileError = null;
   let data = null;
-  const { data: fetched, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
-  if (error) { console.warn('loadProfile error:', error.message); loadProfileError = error; }
-  data = fetched;
+
+  // ① Serve from cache immediately — eliminates 200-500ms DB wait on repeat visits
+  const _cached = _readProfileCache(currentUser.id);
+  if (_cached) {
+    data = _cached;
+    // Background refresh (don't block render)
+    sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle().then(({ data: fresh, error }) => {
+      if (!error && fresh) _writeProfileCache(currentUser.id, fresh);
+    });
+  } else {
+    // ② No cache — fetch from DB and populate cache
+    const { data: fetched, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    if (error) { console.warn('loadProfile error:', error.message); loadProfileError = error; }
+    data = fetched;
+    if (data) _writeProfileCache(currentUser.id, data);
+  }
+
   currentProfile = data;
   isAdmin = data?.is_admin === true;
   if (data && !data.approved && !data.is_admin) {

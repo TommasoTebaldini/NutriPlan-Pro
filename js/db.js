@@ -1136,6 +1136,116 @@ const DB_CREA=[
 {n:"Zeppole di San Giuseppe (al forno)",c:"Dolci",k:310,p:6,gs:4.5,g:14,z:20,ch:41,fi:1,ca:60,fe:1,mg:10,k2:110,na:140,zn:0.5,fo:30,se:8,col:115,src:"CREA"},
 {n:"Migliaccio napoletano",c:"Dolci",k:280,p:10,gs:4,g:9,z:22,ch:38,fi:0.5,ca:180,fe:1,mg:18,k2:150,na:115,zn:1.2,fo:20,se:12,col:170,src:"CREA"},
 {n:"Gubana (dolce friulano con frutta secca)",c:"Dolci",k:380,p:7,gs:4,g:14,z:30,ch:57,fi:2.5,ca:45,fe:2,mg:35,k2:200,na:150,zn:1,fo:30,se:8,col:70,src:"CREA"},
+// CEREALI ANTICHI E ALTERNATIVI
+{n:"Teff (granella intera)",c:"Cereali",k:367,p:13.3,gs:0.7,g:2.4,z:2,ch:73,fi:8,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:38,se:8,col:0,src:"CREA"},
+{n:"Sorgo (granella)",c:"Cereali",k:329,p:11.3,gs:0.7,g:3.3,z:2.4,ch:65,fi:6.3,ca:28,fe:4.4,mg:165,k2:350,na:6,zn:1.6,fo:20,se:14,col:0,src:"CREA"},
+{n:"Fonio (cereale africano)",c:"Cereali",k:361,p:10.4,gs:0.3,g:1.6,z:0.7,ch:74,fi:2.8,ca:8,fe:8.5,mg:25,k2:180,na:8,zn:1.8,fo:15,se:4,col:0,src:"CREA"},
+{n:"Quinoa rossa",c:"Cereali",k:368,p:14.1,gs:0.6,g:6.1,z:0.8,ch:64,fi:7,ca:47,fe:4.6,mg:197,k2:563,na:5,zn:3.1,fo:184,se:8.5,col:0,src:"CREA"},
+{n:"Polenta integrale (farina di mais integrale)",c:"Cereali",k:362,p:8.5,gs:0.7,g:3.2,z:1.5,ch:73,fi:6.8,ca:12,fe:3.5,mg:110,k2:290,na:7,zn:2.4,fo:35,se:11,col:0,src:"CREA"},
+{n:"Miglio decorticato (semole)",c:"Cereali",k:378,p:11,gs:0.5,g:4.2,z:0.5,ch:72,fi:8.5,ca:8,fe:3,mg:114,k2:195,na:5,zn:1.7,fo:85,se:2.7,col:0,src:"CREA"},
+{n:"Grano saraceno integro (secco)",c:"Cereali",k:343,p:13.3,gs:0.7,g:3.4,z:0.5,ch:71.5,fi:10,ca:18,fe:2.2,mg:231,k2:460,na:1,zn:2.4,fo:30,se:8.3,col:0,src:"CREA"},
+// VERDURE E ORTAGGI REGIONALI
+{n:"Cime di rapa crude",c:"Verdure",k:22,p:2.9,gs:0.1,g:0.3,z:1.5,ch:3.1,fi:2.8,ca:97,fe:1.3,mg:22,k2:196,na:35,zn:0.7,fo:131,se:1.5,col:0,src:"CREA"},
+{n:"Friggitello (peperone dolce piccolo)",c:"Verdure",k:20,p:1.2,gs:0.1,g:0.3,z:2.5,ch:3.7,fi:1.5,ca:12,fe:0.6,mg:14,k2:210,na:3,zn:0.3,fo:23,se:0.5,col:0,src:"CREA"},
+{n:"Daikon (rapanello bianco giapponese)",c:"Verdure",k:18,p:0.6,gs:0,g:0.1,z:2.5,ch:4.1,fi:1.6,ca:27,fe:0.4,mg:16,k2:227,na:21,zn:0.2,fo:28,se:0.7,col:0,src:"CREA"},
+{n:"Zucca marina chioggia (cruda)",c:"Verdure",k:26,p:1.1,gs:0,g:0.1,z:2.3,ch:6.5,fi:1.5,ca:21,fe:0.8,mg:12,k2:340,na:1,zn:0.3,fo:16,se:0.3,col:0,src:"CREA"},
+{n:"Cavolo nero (lacinato, crudo)",c:"Verdure",k:28,p:3.3,gs:0,g:0.5,z:0.8,ch:4.4,fi:3.1,ca:135,fe:1.7,mg:34,k2:228,na:38,zn:0.6,fo:141,se:0.9,col:0,src:"CREA"},
+{n:"Germogli di soia freschi",c:"Verdure",k:30,p:3,gs:0,g:0.2,z:1.8,ch:5.9,fi:1.8,ca:41,fe:0.9,mg:21,k2:140,na:6,zn:0.4,fo:172,se:0.6,col:0,src:"CREA"},
+{n:"Broccolo romanesco (crudo)",c:"Verdure",k:22,p:2.5,gs:0,g:0.2,z:1.7,ch:4.4,fi:2.5,ca:47,fe:0.8,mg:21,k2:250,na:15,zn:0.5,fo:93,se:1.5,col:0,src:"CREA"},
+{n:"Cardo (crudo)",c:"Verdure",k:17,p:0.7,gs:0,g:0.1,z:0.5,ch:3.7,fi:1.8,ca:70,fe:0.7,mg:42,k2:400,na:100,zn:0.2,fo:68,se:0.9,col:0,src:"CREA"},
+{n:"Cicoria di campo (cruda)",c:"Verdure",k:23,p:1.7,gs:0,g:0.3,z:0.9,ch:4.7,fi:4,ca:100,fe:0.9,mg:30,k2:420,na:45,zn:0.4,fo:110,se:0.7,col:0,src:"CREA"},
+{n:"Bieta rossa (coste, cruda)",c:"Verdure",k:19,p:1.8,gs:0,g:0.2,z:0.7,ch:3.7,fi:1.6,ca:51,fe:1.8,mg:81,k2:549,na:213,zn:0.4,fo:14,se:0.9,col:0,src:"CREA"},
+{n:"Topinambur (crudo)",c:"Verdure",k:73,p:2,gs:0,g:0.1,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0,src:"CREA"},
+{n:"Rucola selvatica (cruda)",c:"Verdure",k:25,p:2.6,gs:0,g:0.7,z:2,ch:3.7,fi:1.6,ca:160,fe:1.5,mg:47,k2:369,na:27,zn:0.5,fo:97,se:0.3,col:0,src:"CREA"},
+{n:"Radicchio variegato di Castelfranco",c:"Verdure",k:20,p:1.4,gs:0,g:0.2,z:0.5,ch:3.5,fi:1.9,ca:36,fe:0.5,mg:15,k2:210,na:18,zn:0.3,fo:55,se:0.5,col:0,src:"CREA"},
+// FRUTTA FRESCA E RARA
+{n:"Lamponi freschi",c:"Frutta",k:52,p:1.2,gs:0,g:0.7,z:4.4,ch:11.9,fi:6.5,ca:25,fe:0.7,mg:22,k2:151,na:1,zn:0.4,fo:21,se:0.2,col:0,src:"CREA"},
+{n:"More di gelso fresche",c:"Frutta",k:43,p:1.4,gs:0,g:0.4,z:8.5,ch:9.8,fi:1.7,ca:39,fe:1.9,mg:18,k2:194,na:10,zn:0.1,fo:8,se:0.6,col:0,src:"CREA"},
+{n:"Uva spina fresca",c:"Frutta",k:44,p:0.9,gs:0,g:0.6,z:6.2,ch:10.3,fi:4.3,ca:25,fe:0.3,mg:10,k2:198,na:1,zn:0.1,fo:6,se:0.6,col:0,src:"CREA"},
+{n:"Ribes rosso fresco",c:"Frutta",k:56,p:1.4,gs:0,g:0.2,z:7.4,ch:13.8,fi:4.3,ca:33,fe:1,mg:13,k2:275,na:1,zn:0.2,fo:8,se:0.7,col:0,src:"CREA"},
+{n:"Ribes nero fresco",c:"Frutta",k:63,p:1.4,gs:0,g:0.4,z:6.8,ch:15.4,fi:4,ca:55,fe:1.5,mg:24,k2:322,na:3,zn:0.3,fo:14,se:0.6,col:0,src:"CREA"},
+{n:"Fichi freschi (varietà italiana)",c:"Frutta",k:74,p:0.75,gs:0,g:0.3,z:16.3,ch:19.2,fi:2.9,ca:35,fe:0.4,mg:17,k2:232,na:1,zn:0.2,fo:6,se:0.2,col:0,src:"CREA"},
+{n:"Melagrana (chicchi freschi)",c:"Frutta",k:83,p:1.7,gs:0.1,g:1.2,z:13.7,ch:18.7,fi:4,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:38,se:0.5,col:0,src:"CREA"},
+{n:"Kiwi giallo (Zespri Gold)",c:"Frutta",k:63,p:1.1,gs:0,g:0.4,z:11.4,ch:15.8,fi:1.4,ca:17,fe:0.2,mg:17,k2:316,na:3,zn:0.1,fo:31,se:0.3,col:0,src:"CREA"},
+{n:"Papaia fresca",c:"Frutta",k:43,p:0.5,gs:0,g:0.3,z:7.8,ch:10.8,fi:1.8,ca:20,fe:0.3,mg:21,k2:182,na:8,zn:0.1,fo:37,se:0.6,col:0,src:"CREA"},
+{n:"Longan (litchi cinese) fresco",c:"Frutta",k:60,p:1.3,gs:0,g:0.1,z:15,ch:15.1,fi:1.1,ca:1,fe:0.1,mg:10,k2:266,na:1,zn:0,fo:7,se:0.6,col:0,src:"CREA"},
+{n:"Tamarindo (polpa)",c:"Frutta",k:239,p:2.8,gs:0.1,g:0.6,z:38,ch:62.5,fi:5.1,ca:74,fe:2.8,mg:92,k2:628,na:28,zn:0.1,fo:14,se:1.3,col:0,src:"CREA"},
+{n:"Carambola (stella tropicale)",c:"Frutta",k:31,p:1.0,gs:0,g:0.3,z:3.9,ch:6.7,fi:2.8,ca:3,fe:0.1,mg:10,k2:133,na:2,zn:0.1,fo:12,se:0.6,col:0,src:"CREA"},
+// PESCI E PRODOTTI ITTICI ITALIANI MENO COMUNI
+{n:"Aguglia (Belone belone, cruda)",c:"Pesce",k:96,p:18.5,gs:0.4,g:2.1,z:0,ch:0,fi:0,ca:32,fe:0.4,mg:28,k2:220,na:76,zn:0.5,fo:8,se:28,col:56,src:"CREA"},
+{n:"Boghe (Boops boops, crude)",c:"Pesce",k:88,p:17.2,gs:0.7,g:2.4,z:0,ch:0,fi:0,ca:44,fe:0.7,mg:30,k2:260,na:80,zn:0.6,fo:10,se:30,col:60,src:"CREA"},
+{n:"Costardella (pesce volante, cruda)",c:"Pesce",k:92,p:18,gs:0.5,g:2.2,z:0,ch:0,fi:0,ca:30,fe:0.6,mg:27,k2:240,na:75,zn:0.5,fo:9,se:26,col:55,src:"CREA"},
+{n:"Trota iridea di allevamento (cruda)",c:"Pesce",k:119,p:20.5,gs:0.9,g:4.3,z:0,ch:0,fi:0,ca:73,fe:0.4,mg:27,k2:381,na:50,zn:0.8,fo:14,se:15,col:64,src:"CREA"},
+{n:"Salpa (Sarpa salpa, cruda)",c:"Pesce",k:83,p:17.4,gs:0.4,g:1.8,z:0,ch:0,fi:0,ca:40,fe:0.8,mg:32,k2:280,na:72,zn:0.6,fo:12,se:32,col:55,src:"CREA"},
+{n:"Donzella (Coris julis, cruda)",c:"Pesce",k:78,p:16.5,gs:0.3,g:1.5,z:0,ch:0,fi:0,ca:38,fe:0.7,mg:26,k2:250,na:70,zn:0.5,fo:10,se:28,col:50,src:"CREA"},
+{n:"Bianchetti/neonata (freschi)",c:"Pesce",k:90,p:17,gs:0.5,g:2,z:0,ch:0,fi:0,ca:200,fe:1.5,mg:30,k2:180,na:180,zn:0.8,fo:15,se:22,col:70,src:"CREA"},
+{n:"Ricci di mare (gonadi fresche)",c:"Molluschi",k:110,p:12,gs:1.2,g:4.5,z:2.5,ch:8.2,fi:0,ca:27,fe:0.6,mg:48,k2:230,na:260,zn:1.5,fo:45,se:20,col:120,src:"CREA"},
+{n:"Fasolari (Callista chione, freschi)",c:"Molluschi",k:74,p:12.4,gs:0.3,g:1.4,z:0.5,ch:4.7,fi:0,ca:128,fe:5.6,mg:30,k2:314,na:154,zn:1.2,fo:23,se:25,col:40,src:"CREA"},
+{n:"Cannocchie (Squilla mantis, fresche)",c:"Molluschi",k:76,p:15.5,gs:0.2,g:1,z:0,ch:0.8,fi:0,ca:90,fe:1.2,mg:42,k2:290,na:210,zn:1.5,fo:18,se:35,col:85,src:"CREA"},
+{n:"Ostriche crude (Ostrea edulis)",c:"Molluschi",k:68,p:7.1,gs:0.4,g:2.5,z:0,ch:3.9,fi:0,ca:45,fe:4.6,mg:22,k2:168,na:254,zn:59,fo:10,se:63.7,col:46,src:"CREA"},
+// FORMAGGI DOP REGIONALI
+{n:"Castelmagno DOP (stagionato)",c:"Latticini",k:370,p:34,gs:15,g:23,z:0,ch:0,fi:0,ca:750,fe:0.5,mg:26,k2:100,na:830,zn:4,fo:25,se:14,col:85,src:"CREA"},
+{n:"Bra DOP tenero",c:"Latticini",k:330,p:28,gs:12,g:24,z:0.5,ch:0.5,fi:0,ca:720,fe:0.4,mg:24,k2:90,na:780,zn:3.8,fo:22,se:12,col:78,src:"CREA"},
+{n:"Ragusano DOP",c:"Latticini",k:380,p:32,gs:16,g:27,z:0,ch:0,fi:0,ca:880,fe:0.3,mg:28,k2:92,na:900,zn:4.2,fo:20,se:16,col:95,src:"CREA"},
+{n:"Provolone del Monaco DOP",c:"Latticini",k:376,p:26,gs:14,g:29,z:0.3,ch:0.3,fi:0,ca:800,fe:0.4,mg:22,k2:85,na:650,zn:3.6,fo:18,se:14,col:88,src:"CREA"},
+{n:"Murazzano DOP (caprino piemontese)",c:"Latticini",k:310,p:22,gs:11,g:22,z:0.4,ch:0.4,fi:0,ca:580,fe:0.3,mg:18,k2:75,na:480,zn:3,fo:15,se:10,col:72,src:"CREA"},
+{n:"Mascarpone",c:"Latticini",k:429,p:5,gs:30,g:44,z:3.4,ch:4,fi:0,ca:120,fe:0.2,mg:10,k2:90,na:88,zn:0.5,fo:5,se:4,col:140,src:"CREA"},
+{n:"Ricotta affumicata sarda",c:"Latticini",k:210,p:15,gs:10,g:17,z:0.5,ch:2,fi:0,ca:380,fe:0.4,mg:18,k2:95,na:680,zn:1.8,fo:12,se:10,col:65,src:"CREA"},
+{n:"Caprino fresco",c:"Latticini",k:268,p:15.8,gs:12,g:21,z:0.2,ch:0.3,fi:0,ca:298,fe:1.1,mg:14,k2:112,na:368,zn:0.9,fo:8,se:4,col:57,src:"CREA"},
+{n:"Burrata di bufala",c:"Latticini",k:294,p:14,gs:16,g:26,z:0.5,ch:0.8,fi:0,ca:286,fe:0.2,mg:14,k2:112,na:400,zn:1,fo:10,se:8,col:76,src:"CREA"},
+{n:"Kefir di latte intero (fermentato)",c:"Latticini",k:61,p:3.3,gs:1.2,g:3.5,z:4.5,ch:4.8,fi:0,ca:120,fe:0.1,mg:12,k2:150,na:40,zn:0.4,fo:5,se:3,col:10,src:"CREA"},
+// CARNI ALTERNATIVE E SELVAGGINA
+{n:"Cinghiale (macinato, crudo)",c:"Carne",k:107,p:21.5,gs:0.8,g:2.6,z:0,ch:0,fi:0,ca:12,fe:3.5,mg:26,k2:330,na:68,zn:3.2,fo:6,se:20,col:65,src:"CREA"},
+{n:"Cavallo (macinato, crudo)",c:"Carne",k:133,p:22,gs:1.2,g:4.2,z:0,ch:0,fi:0,ca:10,fe:3.6,mg:25,k2:320,na:62,zn:2.8,fo:8,se:12,col:68,src:"CREA"},
+{n:"Piccione (petto, crudo)",c:"Pollame",k:142,p:25,gs:1.5,g:5,z:0,ch:0,fi:0,ca:12,fe:7.5,mg:30,k2:260,na:70,zn:2.5,fo:10,se:18,col:90,src:"CREA"},
+{n:"Anatra muta (petto senza pelle, crudo)",c:"Pollame",k:133,p:23,gs:1.4,g:4.6,z:0,ch:0,fi:0,ca:11,fe:3.1,mg:25,k2:295,na:65,zn:2.2,fo:9,se:19,col:89,src:"CREA"},
+{n:"Quaglia intera (cruda)",c:"Pollame",k:192,p:22,gs:3.5,g:11.8,z:0,ch:0,fi:0,ca:15,fe:4.5,mg:28,k2:237,na:65,zn:3.0,fo:14,se:22,col:76,src:"CREA"},
+// SEMI E FRUTTA SECCA
+{n:"Semi di canapa decorticati",c:"Semi e frutta secca",k:553,p:31.6,gs:1.5,g:48.7,z:1.5,ch:8.7,fi:4,ca:14,fe:7.9,mg:483,k2:1200,na:5,zn:9.9,fo:110,se:14.6,col:0,src:"CREA"},
+{n:"Semi di lino dorati (interi)",c:"Semi e frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25.4,col:0,src:"CREA"},
+{n:"Semi di papavero",c:"Semi e frutta secca",k:525,p:17.9,gs:4.5,g:41.6,z:2.9,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:82,se:13.7,col:0,src:"CREA"},
+{n:"Castagne essiccate",c:"Semi e frutta secca",k:335,p:5.3,gs:0.3,g:2,z:28,ch:74,fi:14,ca:80,fe:3.2,mg:90,k2:1350,na:7,zn:0.7,fo:53,se:4.3,col:0,src:"CREA"},
+{n:"Pistacchi non salati",c:"Semi e frutta secca",k:562,p:20.2,gs:5.4,g:45.3,z:7.7,ch:27.9,fi:10.6,ca:107,fe:3.9,mg:121,k2:1042,na:1,zn:2.2,fo:51,se:7,col:0,src:"CREA"},
+{n:"Noci pecan",c:"Semi e frutta secca",k:691,p:9.2,gs:6.2,g:72,z:3.97,ch:13.9,fi:9.6,ca:70,fe:2.5,mg:121,k2:410,na:0,zn:4.5,fo:22,se:3.8,col:0,src:"CREA"},
+{n:"Noci macadamia",c:"Semi e frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:11,se:3.6,col:0,src:"CREA"},
+{n:"Semi di zucca tostati (senza sale)",c:"Semi e frutta secca",k:574,p:29.8,gs:5.6,g:49,z:1.4,ch:14.7,fi:6,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.6,fo:57,se:9.4,col:0,src:"CREA"},
+// CONDIMENTI E SPEZIE
+{n:"Curry in polvere (miscela)",c:"Condimenti",k:325,p:14,gs:1.3,g:14,z:2.8,ch:58,fi:33,ca:478,fe:29.6,mg:254,k2:1543,na:52,zn:4.1,fo:1.1,se:17,col:0,src:"CREA"},
+{n:"Paprika affumicata (pimenton)",c:"Condimenti",k:289,p:14.8,gs:2.6,g:13,z:10,ch:53,fi:35,ca:229,fe:21.1,mg:178,k2:2345,na:68,zn:4.3,fo:8,se:28,col:0,src:"CREA"},
+{n:"Zafferano in polvere",c:"Condimenti",k:310,p:11.4,gs:0.6,g:5.9,z:0.5,ch:65,fi:3.9,ca:111,fe:11.1,mg:264,k2:1724,na:148,zn:1.1,fo:93,se:5,col:0,src:"CREA"},
+{n:"Pasta di acciughe (in tubo)",c:"Condimenti",k:182,p:20,gs:2.5,g:10,z:0,ch:1.5,fi:0,ca:230,fe:3.5,mg:40,k2:380,na:3650,zn:1.8,fo:15,se:32,col:56,src:"CREA"},
+{n:"Aceto balsamico di Modena IGP",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:15,ch:17.3,fi:0,ca:27,fe:0.7,mg:12,k2:112,na:23,zn:0.1,fo:1,se:0.5,col:0,src:"CREA"},
+{n:"Senape di Digione",c:"Condimenti",k:93,p:4.4,gs:0.5,g:5.8,z:3.2,ch:8.1,fi:3,ca:100,fe:2.7,mg:49,k2:152,na:1040,zn:0.8,fo:45,se:5,col:0,src:"CREA"},
+{n:"Tahini (crema di sesamo)",c:"Condimenti",k:595,p:17,gs:7.7,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:98,se:34.4,col:0,src:"CREA"},
+// OLI VEGETALI MENO COMUNI
+{n:"Olio di sesamo (crudo)",c:"Grassi e oli",k:884,p:0,gs:13.5,g:100,z:0,ch:0,fi:0,ca:1,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di avocado (spremitura a freddo)",c:"Grassi e oli",k:884,p:0,gs:11.6,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di cocco vergine",c:"Grassi e oli",k:892,p:0,gs:82.5,g:100,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di girasole alto oleico",c:"Grassi e oli",k:884,p:0,gs:9.5,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+{n:"Olio di lino (crudo, non riscaldato)",c:"Grassi e oli",k:884,p:0,gs:9.4,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
+// LEGUMI REGIONALI RARI
+{n:"Lenticchie di Castelluccio IGP (secche)",c:"Legumi",k:325,p:25.8,gs:0.3,g:1.9,z:1.5,ch:55,fi:15.6,ca:74,fe:7.2,mg:120,k2:950,na:11,zn:3.5,fo:479,se:10,col:0,src:"CREA"},
+{n:"Roveja (pisello selvatico, secca)",c:"Legumi",k:320,p:24.5,gs:0.2,g:1.5,z:1,ch:56,fi:16,ca:65,fe:6.5,mg:115,k2:900,na:10,zn:3.2,fo:400,se:9,col:0,src:"CREA"},
+{n:"Cicerchia tostata",c:"Legumi",k:350,p:28,gs:0.3,g:2,z:1.5,ch:57,fi:16,ca:62,fe:7,mg:118,k2:880,na:12,zn:3.4,fo:350,se:8,col:0,src:"CREA"},
+{n:"Fagioli azuki (secchi)",c:"Legumi",k:329,p:19.9,gs:0.2,g:0.5,z:1.5,ch:62.9,fi:12.7,ca:66,fe:5,mg:127,k2:1254,na:5,zn:5,fo:622,se:3,col:0,src:"CREA"},
+// PREPARAZIONI REGIONALI TRADIZIONALI
+{n:"Pizzoccheri della Valtellina (freschi crudi)",c:"Pasta e cereali",k:287,p:10.3,gs:2.8,g:7.5,z:2,ch:46,fi:4.8,ca:180,fe:1.4,mg:55,k2:190,na:45,zn:1.2,fo:22,se:14,col:35,src:"CREA"},
+{n:"Polenta taragna (con formaggi, cotta)",c:"Pasta e cereali",k:187,p:8.5,gs:4.5,g:9.8,z:0.5,ch:20,fi:2,ca:250,fe:1,mg:45,k2:180,na:420,zn:2,fo:12,se:10,col:28,src:"CREA"},
+{n:"Trofie fresche (pasta ligure cruda)",c:"Pasta e cereali",k:295,p:9.5,gs:0.3,g:1.2,z:1.5,ch:61,fi:2.5,ca:18,fe:1.2,mg:20,k2:115,na:3,zn:0.8,fo:12,se:25,col:0,src:"CREA"},
+{n:"Fregola sarda grande (cruda)",c:"Pasta e cereali",k:355,p:11.5,gs:0.3,g:1.5,z:1.5,ch:74,fi:3,ca:18,fe:1.5,mg:24,k2:130,na:5,zn:1,fo:22,se:28,col:0,src:"CREA"},
+{n:"Piadina romagnola tradizionale (cotta)",c:"Pane e prodotti da forno",k:338,p:8.5,gs:6.5,g:16,z:2,ch:44,fi:2,ca:38,fe:1.5,mg:18,k2:110,na:580,zn:0.7,fo:22,se:14,col:8,src:"CREA"},
+// BEVANDE NATURALI
+{n:"Acqua di cocco naturale",c:"Bevande",k:19,p:0.7,gs:0,g:0.2,z:2.6,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:250,na:105,zn:0.1,fo:2.6,se:1,col:0,src:"CREA"},
+{n:"Tè verde infuso (pronto, senza zucchero)",c:"Bevande",k:1,p:0.2,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:2,k2:8,na:1,zn:0,fo:5,se:0,col:0,src:"CREA"},
+{n:"Tè nero infuso (pronto, senza zucchero)",c:"Bevande",k:1,p:0.2,gs:0,g:0,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:2,k2:37,na:1,zn:0,fo:7,se:0,col:0,src:"CREA"},
+{n:"Tisana di camomilla (pronta)",c:"Bevande",k:1,p:0,gs:0,g:0,z:0,ch:0.2,fi:0,ca:2,fe:0.1,mg:1,k2:5,na:1,zn:0,fo:2,se:0,col:0,src:"CREA"},
+// DOLCI TRADIZIONALI AGGIUNTIVI
+{n:"Sfogliatella riccia napoletana",c:"Dolci",k:380,p:9.5,gs:5.5,g:14,z:18,ch:56,fi:1.2,ca:45,fe:1.5,mg:18,k2:130,na:180,zn:0.8,fo:28,se:12,col:95,src:"CREA"},
+{n:"Seadas sarde (con formaggio)",c:"Dolci",k:356,p:9.8,gs:8.5,g:20,z:8,ch:38,fi:1.5,ca:120,fe:0.8,mg:22,k2:95,na:220,zn:1.2,fo:15,se:10,col:45,src:"CREA"},
+{n:"Tozzetti laziali (con noci)",c:"Dolci",k:380,p:9.5,gs:3.5,g:13,z:28,ch:58,fi:3.5,ca:55,fe:1.8,mg:42,k2:220,na:90,zn:1.2,fo:25,se:12,col:60,src:"CREA"},
+{n:"Mostaccioli napoletani (con spezie)",c:"Dolci",k:335,p:7.5,gs:2.5,g:9.5,z:32,ch:55,fi:3.5,ca:42,fe:2,mg:32,k2:185,na:80,zn:0.8,fo:22,se:8,col:28,src:"CREA"},
+{n:"Torta di riso carrarese",c:"Dolci",k:245,p:8.5,gs:4.5,g:12,z:20,ch:30,fi:0.5,ca:120,fe:0.8,mg:18,k2:145,na:80,zn:0.8,fo:15,se:8,col:110,src:"CREA"},
+{n:"Pinza triestina (dolce festivo)",c:"Dolci",k:320,p:7.5,gs:3.5,g:10,z:22,ch:50,fi:4.5,ca:42,fe:2.5,mg:38,k2:240,na:120,zn:1,fo:28,se:10,col:45,src:"CREA"},
 ];
 
 const DB_BDA=[
@@ -2284,6 +2394,47 @@ const DB_BDA=[
 {n:"Pastiera napoletana (con grano e ricotta)",c:"Dolci e dessert",k:295,p:7.0,gs:7.5,g:12.0,z:28.0,ch:40.0,fi:1.5,ca:110,fe:1.0,mg:18,k2:140,na:180,zn:0.7,fo:75,se:6,col:70,src:"BDA"},
 {n:"Bombolone con crema pasticcera",c:"Dolci e dessert",k:330,p:6.0,gs:4.5,g:14.0,z:18.0,ch:45.0,fi:1.0,ca:40,fe:1.2,mg:12,k2:110,na:280,zn:0.5,fo:65,se:6,col:90,src:"BDA"},
 {n:"Castagnaccio (torta toscana di farina di castagne)",c:"Dolci e dessert",k:240,p:4.5,gs:0.8,g:8.5,z:18.0,ch:38.0,fi:4.5,ca:30,fe:1.5,mg:35,k2:290,na:5,zn:0.8,fo:45,se:2,col:0,src:"BDA"},
+// PREPARAZIONI TRADIZIONALI REGIONALI ITALIANE
+{n:"Pappa al pomodoro toscana",c:"Zuppe e minestre",k:85,p:2.8,gs:0.5,g:3.5,z:3.5,ch:12.5,fi:1.8,ca:35,fe:0.8,mg:18,k2:280,na:380,zn:0.4,fo:20,se:2,col:0,src:"BDA"},
+{n:"Acquacotta maremmana (con uovo)",c:"Zuppe e minestre",k:82,p:4.5,gs:0.5,g:3.5,z:1.5,ch:9.5,fi:1.5,ca:55,fe:1.5,mg:22,k2:260,na:450,zn:0.8,fo:40,se:5,col:95,src:"BDA"},
+{n:"Brodetto di pesce alla marchigiana",c:"Pesce e frutti di mare",k:89,p:12,gs:0.8,g:3.5,z:0.5,ch:4.2,fi:0.5,ca:85,fe:1.8,mg:35,k2:310,na:580,zn:1.2,fo:18,se:28,col:62,src:"BDA"},
+{n:"Busiate al pesto trapanese",c:"Pasta e cereali",k:355,p:12,gs:1.2,g:12.5,z:2.5,ch:50,fi:3,ca:75,fe:1.8,mg:42,k2:280,na:380,zn:1.5,fo:35,se:18,col:5,src:"BDA"},
+{n:"Pasta alla Norma (con melanzane e ricotta salata)",c:"Pasta e cereali",k:285,p:9.5,gs:0.8,g:6.5,z:3.5,ch:48,fi:3.5,ca:80,fe:1.2,mg:28,k2:320,na:450,zn:0.8,fo:22,se:10,col:0,src:"BDA"},
+{n:"Pasta con le sarde (siciliana)",c:"Pasta e cereali",k:298,p:14,gs:1.2,g:8.5,z:3,ch:43,fi:3.2,ca:95,fe:2.5,mg:45,k2:380,na:520,zn:1.5,fo:30,se:32,col:38,src:"BDA"},
+{n:"Risotto alla milanese (con zafferano e burro)",c:"Pasta e cereali",k:320,p:8.5,gs:5.5,g:12.5,z:0.5,ch:46,fi:0.5,ca:45,fe:0.5,mg:22,k2:115,na:580,zn:0.8,fo:8,se:6,col:35,src:"BDA"},
+{n:"Risotto al radicchio e taleggio",c:"Pasta e cereali",k:278,p:7.5,gs:3.8,g:9.5,z:0.8,ch:42,fi:1.2,ca:55,fe:1,mg:18,k2:145,na:480,zn:0.7,fo:12,se:5,col:22,src:"BDA"},
+{n:"Riso al latte (dolce tradizionale)",c:"Dolci e dessert",k:120,p:3.5,gs:1.5,g:3.5,z:5,ch:18.5,fi:0.2,ca:115,fe:0.2,mg:12,k2:155,na:55,zn:0.4,fo:4,se:3,col:12,src:"BDA"},
+{n:"Polenta e baccalà alla vicentina",c:"Pesce e frutti di mare",k:185,p:18,gs:1,g:5.5,z:0.2,ch:18,fi:0.8,ca:140,fe:0.8,mg:38,k2:380,na:780,zn:0.9,fo:12,se:30,col:52,src:"BDA"},
+{n:"Fave e cicoria (piatto pugliese)",c:"Legumi e verdure",k:145,p:8.5,gs:0.2,g:1.8,z:1.5,ch:24,fi:7.5,ca:88,fe:2.5,mg:55,k2:420,na:18,zn:1.2,fo:185,se:4,col:0,src:"BDA"},
+{n:"Lampredotto (bovino, cotto)",c:"Carne e derivati",k:168,p:18,gs:3.8,g:8.5,z:0,ch:0,fi:0,ca:35,fe:3.2,mg:18,k2:195,na:380,zn:3.5,fo:8,se:15,col:145,src:"BDA"},
+{n:"Trippa alla romana (con pomodoro)",c:"Carne e derivati",k:148,p:14.5,gs:2.5,g:8,z:0.8,ch:4.5,fi:0.8,ca:120,fe:1.5,mg:22,k2:230,na:520,zn:2,fo:12,se:18,col:82,src:"BDA"},
+{n:"Bollito misto con salsa verde",c:"Carne e derivati",k:198,p:25,gs:3.2,g:10.5,z:0.2,ch:1.5,fi:0.5,ca:35,fe:2.8,mg:28,k2:320,na:380,zn:4.5,fo:10,se:22,col:78,src:"BDA"},
+{n:"Stoccafisso mantecato alla vicentina",c:"Pesce e frutti di mare",k:178,p:22,gs:2,g:9.5,z:0,ch:0.2,fi:0,ca:160,fe:1,mg:32,k2:350,na:820,zn:1.5,fo:8,se:32,col:58,src:"BDA"},
+{n:"Bagna caôda piemontese (salsa calda)",c:"Condimenti e sughi",k:245,p:8.5,gs:8.5,g:22,z:0.5,ch:3.2,fi:0.5,ca:180,fe:2.8,mg:38,k2:285,na:1850,zn:1.5,fo:15,se:30,col:55,src:"BDA"},
+{n:"Coda alla vaccinara (romanesca)",c:"Carne e derivati",k:215,p:22,gs:4.5,g:13,z:5,ch:6,fi:1.5,ca:40,fe:3.5,mg:28,k2:380,na:420,zn:4,fo:12,se:20,col:90,src:"BDA"},
+{n:"Arrosticini abruzzesi (ovino, cotti)",c:"Carne e derivati",k:255,p:28,gs:5.8,g:16,z:0,ch:0,fi:0,ca:18,fe:2,mg:22,k2:280,na:68,zn:3.8,fo:6,se:18,col:95,src:"BDA"},
+{n:"Pasta e fagioli veneta (con rigatoni)",c:"Piatti unici",k:165,p:8.5,gs:0.5,g:3.5,z:1.5,ch:26,fi:5,ca:55,fe:2,mg:42,k2:380,na:480,zn:1,fo:80,se:5,col:0,src:"BDA"},
+{n:"Minestrone alla genovese (con pesto)",c:"Zuppe e minestre",k:95,p:3.5,gs:0.5,g:3.5,z:2.5,ch:14,fi:4,ca:65,fe:1.2,mg:32,k2:390,na:390,zn:0.7,fo:48,se:3,col:2,src:"BDA"},
+{n:"Pesto genovese DOP (con basilico DOP Prà)",c:"Condimenti e sughi",k:450,p:6.5,gs:12,g:46,z:1.2,ch:4.5,fi:2,ca:185,fe:2.5,mg:55,k2:220,na:580,zn:1.5,fo:35,se:3,col:15,src:"BDA"},
+{n:"Focaccia genovese (ligure, cotta)",c:"Pane e prodotti da forno",k:277,p:7.5,gs:1,g:8.5,z:0.5,ch:43,fi:1.8,ca:22,fe:1.5,mg:18,k2:115,na:580,zn:0.8,fo:28,se:18,col:0,src:"BDA"},
+{n:"Pane di Matera IGP",c:"Pane e prodotti da forno",k:268,p:8.5,gs:0.3,g:1.5,z:0.5,ch:56,fi:4.5,ca:28,fe:2.2,mg:42,k2:185,na:440,zn:1.2,fo:38,se:22,col:0,src:"BDA"},
+{n:"Canederli trentini (al formaggio)",c:"Piatti unici",k:185,p:8.5,gs:3.5,g:8,z:2.5,ch:22,fi:1.8,ca:95,fe:1.5,mg:22,k2:180,na:580,zn:1.5,fo:18,se:12,col:45,src:"BDA"},
+{n:"Spätzle verdi agli spinaci (cotti)",c:"Pasta e cereali",k:185,p:7,gs:1.2,g:4,z:1.5,ch:31,fi:2,ca:62,fe:1.4,mg:26,k2:135,na:360,zn:0.7,fo:32,se:14,col:42,src:"BDA"},
+{n:"Gnocchi alla sorrentina (cotti al forno)",c:"Pasta e cereali",k:178,p:7.5,gs:3.5,g:8.5,z:3.5,ch:21,fi:1.5,ca:145,fe:0.8,mg:18,k2:240,na:480,zn:1.2,fo:18,se:10,col:25,src:"BDA"},
+{n:"Trota salmonata in carpione",c:"Pesce e frutti di mare",k:145,p:19,gs:1.5,g:7.5,z:2,ch:3.5,fi:0,ca:50,fe:0.6,mg:28,k2:320,na:320,zn:0.8,fo:12,se:18,col:62,src:"BDA"},
+{n:"Sgombro in guazzetto (con pomodoro)",c:"Pesce e frutti di mare",k:165,p:22,gs:3.2,g:9.5,z:0.8,ch:2.5,fi:0.5,ca:42,fe:1.2,mg:35,k2:380,na:380,zn:0.8,fo:8,se:45,col:72,src:"BDA"},
+{n:"Merluzzo alla livornese",c:"Pesce e frutti di mare",k:118,p:19,gs:0.8,g:4.5,z:1.8,ch:3.5,fi:1,ca:55,fe:0.8,mg:32,k2:390,na:420,zn:0.6,fo:15,se:28,col:50,src:"BDA"},
+{n:"Triglie al pomodoro con capperi",c:"Pesce e frutti di mare",k:138,p:18,gs:1.2,g:6,z:2,ch:3.5,fi:0.8,ca:75,fe:1,mg:30,k2:380,na:380,zn:0.6,fo:12,se:30,col:65,src:"BDA"},
+{n:"Fritto misto alla piemontese",c:"Carne e derivati",k:290,p:18,gs:6.5,g:18,z:3.5,ch:15,fi:0.8,ca:80,fe:2,mg:25,k2:250,na:420,zn:2.5,fo:20,se:18,col:180,src:"BDA"},
+{n:"Crostata con marmellata (artigianale)",c:"Dolci e dessert",k:330,p:5.5,gs:6.5,g:14,z:32,ch:47,fi:1.5,ca:30,fe:1.2,mg:12,k2:120,na:180,zn:0.5,fo:20,se:8,col:58,src:"BDA"},
+{n:"Pardulas sarde (dolce con ricotta e zafferano)",c:"Dolci e dessert",k:290,p:8.5,gs:3,g:10.5,z:22,ch:41,fi:1.5,ca:140,fe:0.7,mg:15,k2:110,na:120,zn:0.8,fo:15,se:8,col:40,src:"BDA"},
+{n:"Ribollita toscana (minestra di pane e verdure)",c:"Zuppe e minestre",k:98,p:4.5,gs:0.5,g:3.5,z:2,ch:13.5,fi:5.2,ca:80,fe:1.8,mg:35,k2:380,na:350,zn:0.8,fo:55,se:3,col:0,src:"BDA"},
+{n:"Panzanella toscana",c:"Insalate",k:145,p:3.5,gs:0.8,g:6.5,z:4,ch:20,fi:2.5,ca:42,fe:1,mg:22,k2:280,na:380,zn:0.5,fo:28,se:4,col:0,src:"BDA"},
+{n:"Tegamino di tartufo nero (con uova)",c:"Piatti unici",k:135,p:9.5,gs:3.5,g:9.5,z:0.2,ch:2.5,fi:0.8,ca:40,fe:2.8,mg:15,k2:120,na:180,zn:1.2,fo:22,se:18,col:250,src:"BDA"},
+{n:"Burrida di gattuccio (piatto sardo)",c:"Pesce e frutti di mare",k:152,p:20,gs:1.5,g:7.5,z:0.5,ch:3.5,fi:0.5,ca:62,fe:1.5,mg:35,k2:340,na:580,zn:1,fo:15,se:32,col:58,src:"BDA"},
+{n:"Culingiones sardi (pasta ripiena di patate e pecorino)",c:"Pasta e cereali",k:220,p:8.5,gs:2.5,g:6.5,z:1.5,ch:35,fi:2,ca:95,fe:1.0,mg:22,k2:180,na:280,zn:1.0,fo:18,se:12,col:18,src:"BDA"},
+{n:"Soppressata calabrese DOP (artigianale)",c:"Salumi",k:350,p:24,gs:12,g:28,z:0,ch:0,fi:0,ca:18,fe:1.5,mg:22,k2:310,na:1250,zn:2.8,fo:8,se:20,col:90,src:"BDA"},
+{n:"Nduja (salume spalmabile piccante)",c:"Salumi",k:450,p:16,gs:20,g:42,z:0,ch:0,fi:0,ca:14,fe:1.2,mg:18,k2:260,na:1800,zn:2.5,fo:6,se:15,col:110,src:"BDA"},
 ];
 
 
@@ -3046,7 +3197,70 @@ const DB_UPF = [
   {n:"Crostini antipasto industriali (per 100g)",c:"Snack salati",src:"UPF",k:402,p:9,gs:2,g:9,z:2,ch:70,fi:3,ca:25,fe:2,mg:20,k2:130,na:750,zn:0.7,fo:50,se:8,col:0},
   // ── SALUMI PROCESSATI ──
   {n:"Wurstel di manzo (per 100g)",c:"Salumi",src:"UPF",k:285,p:12,gs:10,g:25,z:1,ch:2.5,fi:0,ca:20,fe:1,mg:15,k2:160,na:1050,zn:2,fo:8,se:12,col:75},
-  {n:"Porchetta artigianale (per 100g)",c:"Salumi",src:"UPF",k:340,p:18,gs:9,g:29,z:0,ch:0,fi:0,ca:12,fe:0.8,mg:18,k2:200,na:820,zn:1.8,fo:5,se:18,col:88}
+  {n:"Porchetta artigianale (per 100g)",c:"Salumi",src:"UPF",k:340,p:18,gs:9,g:29,z:0,ch:0,fi:0,ca:12,fe:0.8,mg:18,k2:200,na:820,zn:1.8,fo:5,se:18,col:88},
+// CIOCCOLATO E SNACK DOLCI INDUSTRIALI
+{n:"Kinder Bueno (per 100g)",c:"Snack dolci",src:"UPF",k:566,p:8.5,gs:22,g:35,z:52,ch:57,fi:1.5,ca:155,fe:1.5,mg:28,k2:210,na:148,zn:0.8,fo:20,se:8,col:12},
+{n:"Kinder Pinguì (per 100g)",c:"Snack dolci",src:"UPF",k:450,p:7.5,gs:16,g:26,z:42,ch:56,fi:1.2,ca:185,fe:0.8,mg:22,k2:180,na:120,zn:0.5,fo:15,se:6,col:15},
+{n:"Kinder Delice (per 100g)",c:"Snack dolci",src:"UPF",k:465,p:6.5,gs:12,g:21,z:50,ch:63,fi:0.8,ca:175,fe:0.5,mg:18,k2:165,na:140,zn:0.4,fo:12,se:5,col:18},
+{n:"Bounty (per 100g)",c:"Snack dolci",src:"UPF",k:475,p:4,gs:22,g:28.5,z:62,ch:59,fi:3,ca:35,fe:0.8,mg:42,k2:250,na:115,zn:0.5,fo:8,se:4,col:5},
+{n:"Twix (per 100g)",c:"Snack dolci",src:"UPF",k:498,p:5.5,gs:15,g:24.5,z:58,ch:68,fi:1.5,ca:65,fe:1.2,mg:25,k2:225,na:175,zn:0.8,fo:22,se:8,col:10},
+{n:"Snickers (per 100g)",c:"Snack dolci",src:"UPF",k:488,p:8.5,gs:14,g:24.5,z:54,ch:62,fi:1.8,ca:85,fe:1.5,mg:45,k2:310,na:210,zn:1,fo:28,se:6,col:8},
+{n:"Kit Kat Classic (per 100g)",c:"Snack dolci",src:"UPF",k:515,p:7.5,gs:18.5,g:26.5,z:55,ch:63,fi:1.2,ca:135,fe:1.5,mg:32,k2:220,na:92,zn:0.8,fo:18,se:6,col:5},
+{n:"After Eight (per 100g)",c:"Snack dolci",src:"UPF",k:405,p:2.5,gs:14,g:16.5,z:67,ch:81,fi:0.5,ca:12,fe:4.5,mg:22,k2:185,na:28,zn:0.5,fo:8,se:2,col:0},
+{n:"Ferrero Rocher (per 100g)",c:"Snack dolci",src:"UPF",k:596,p:8.5,gs:16,g:41,z:48,ch:52,fi:2.5,ca:100,fe:1.5,mg:45,k2:300,na:75,zn:1,fo:30,se:5,col:8},
+{n:"M&M's Cioccolato al latte (per 100g)",c:"Snack dolci",src:"UPF",k:499,p:5.5,gs:14,g:20.5,z:66,ch:69,fi:1,ca:115,fe:1.2,mg:32,k2:245,na:80,zn:0.8,fo:15,se:5,col:8},
+{n:"Raffaello (per 100g)",c:"Snack dolci",src:"UPF",k:626,p:7.5,gs:23,g:47,z:42,ch:49,fi:3,ca:60,fe:0.8,mg:38,k2:220,na:62,zn:0.7,fo:15,se:5,col:5},
+// CHIP E SNACK SALATI ITALIANI
+{n:"Fonzies formaggio (per 100g)",c:"Snack salati",src:"UPF",k:523,p:8,gs:11,g:28,z:3.5,ch:61,fi:1.5,ca:55,fe:1,mg:28,k2:180,na:1080,zn:0.8,fo:12,se:8,col:2},
+{n:"Cipster (per 100g)",c:"Snack salati",src:"UPF",k:548,p:5.5,gs:9.5,g:35,z:2,ch:57,fi:4.5,ca:20,fe:1.5,mg:32,k2:1150,na:780,zn:0.5,fo:20,se:4,col:0},
+{n:"Patatine San Carlo classiche (per 100g)",c:"Snack salati",src:"UPF",k:542,p:6.5,gs:9.5,g:32.5,z:1.8,ch:57,fi:3.8,ca:20,fe:1.5,mg:35,k2:1100,na:640,zn:0.5,fo:20,se:4,col:0},
+{n:"Ringo biscotti (per 100g)",c:"Biscotti industriali",src:"UPF",k:475,p:5.5,gs:9.5,g:21,z:45,ch:66,fi:1.5,ca:45,fe:1.5,mg:12,k2:120,na:250,zn:0.5,fo:15,se:8,col:0},
+{n:"Oro Saiwa crackers (per 100g)",c:"Biscotti industriali",src:"UPF",k:452,p:9.5,gs:3,g:14,z:8.5,ch:71,fi:3.5,ca:35,fe:2.5,mg:28,k2:180,na:650,zn:0.8,fo:35,se:12,col:0},
+{n:"Mulino Bianco Macine (per 100g)",c:"Biscotti industriali",src:"UPF",k:468,p:7.5,gs:5,g:18,z:27,ch:70,fi:2.5,ca:25,fe:1.5,mg:18,k2:145,na:280,zn:0.6,fo:20,se:8,col:12},
+{n:"Pan di Stelle Mulino Bianco (per 100g)",c:"Biscotti industriali",src:"UPF",k:490,p:7.5,gs:10,g:22,z:35,ch:67,fi:1.8,ca:55,fe:1.5,mg:25,k2:185,na:195,zn:0.8,fo:18,se:8,col:8},
+{n:"Nutella Biscuits (per 100g)",c:"Biscotti industriali",src:"UPF",k:531,p:6.5,gs:10,g:26.5,z:45,ch:67,fi:2,ca:35,fe:1.5,mg:18,k2:165,na:285,zn:0.5,fo:20,se:5,col:5},
+// GELATI INDUSTRIALI
+{n:"Cornetto Algida classico (per 100g)",c:"Gelati",src:"UPF",k:280,p:5,gs:12,g:16,z:30,ch:35,fi:0.5,ca:115,fe:0.5,mg:15,k2:155,na:125,zn:0.5,fo:12,se:4,col:25},
+{n:"Magnum Classic (per 100g)",c:"Gelati",src:"UPF",k:320,p:4.5,gs:18,g:22,z:30,ch:31,fi:0.8,ca:125,fe:0.5,mg:16,k2:175,na:82,zn:0.5,fo:10,se:4,col:28},
+{n:"Calippo Algida limone (per 100g)",c:"Gelati",src:"UPF",k:90,p:0.5,gs:0,g:0,z:18,ch:22,fi:0,ca:5,fe:0.1,mg:2,k2:18,na:20,zn:0,fo:2,se:0,col:0},
+{n:"Stecco gelato ai frutti di bosco (per 100g)",c:"Gelati",src:"UPF",k:125,p:2,gs:1.5,g:5.5,z:16,ch:17.5,fi:0.2,ca:65,fe:0.2,mg:8,k2:80,na:55,zn:0.2,fo:5,se:2,col:8},
+// PRODOTTI DA COLAZIONE INDUSTRIALI
+{n:"Croissant industriale vuoto (per 100g)",c:"Colazione industriale",src:"UPF",k:415,p:8.5,gs:9.5,g:22,z:12,ch:51,fi:2,ca:25,fe:1.5,mg:14,k2:115,na:380,zn:0.5,fo:25,se:10,col:32},
+{n:"Brioche industriale al burro (per 100g)",c:"Colazione industriale",src:"UPF",k:380,p:9,gs:8.5,g:18,z:14,ch:50,fi:1.5,ca:38,fe:1.2,mg:12,k2:125,na:350,zn:0.5,fo:22,se:8,col:65},
+{n:"Kinder Fetta al latte (per 100g)",c:"Colazione industriale",src:"UPF",k:373,p:8.5,gs:9,g:18,z:36,ch:47,fi:0.5,ca:280,fe:1,mg:25,k2:340,na:185,zn:1,fo:35,se:8,col:28},
+{n:"Plumcake Mulino Bianco (per 100g)",c:"Colazione industriale",src:"UPF",k:420,p:6.5,gs:7.5,g:18,z:28,ch:60,fi:1.5,ca:38,fe:1.2,mg:12,k2:125,na:320,zn:0.5,fo:18,se:8,col:55},
+{n:"Frollini al burro industriali (per 100g)",c:"Colazione industriale",src:"UPF",k:495,p:6.5,gs:14,g:24,z:26,ch:67,fi:2,ca:25,fe:1.5,mg:10,k2:110,na:350,zn:0.5,fo:15,se:8,col:60},
+// BEVANDE INDUSTRIALI
+{n:"Nestea Limone (per 100ml)",c:"Bevande zuccherate",src:"UPF",k:33,p:0,gs:0,g:0,z:7.8,ch:8.2,fi:0,ca:0,fe:0,mg:0,k2:0,na:5,zn:0,fo:0,se:0,col:0},
+{n:"San Benedetto Ice Tea pesca (per 100ml)",c:"Bevande zuccherate",src:"UPF",k:27,p:0,gs:0,g:0,z:6.5,ch:6.5,fi:0,ca:4,fe:0,mg:2,k2:12,na:8,zn:0,fo:1,se:0,col:0},
+{n:"Powerade citrus (per 100ml)",c:"Bevande zuccherate",src:"UPF",k:21,p:0,gs:0,g:0,z:4.4,ch:5.5,fi:0,ca:0,fe:0,mg:0,k2:45,na:98,zn:0,fo:0,se:0,col:0},
+{n:"Chinotto San Pellegrino (per 100ml)",c:"Bevande zuccherate",src:"UPF",k:38,p:0,gs:0,g:0,z:9.5,ch:9.5,fi:0,ca:8,fe:0,mg:0,k2:5,na:22,zn:0,fo:0,se:0,col:0},
+{n:"Schweppes Tonic Water (per 100ml)",c:"Bevande zuccherate",src:"UPF",k:34,p:0,gs:0,g:0,z:8,ch:8.8,fi:0,ca:2,fe:0,mg:0,k2:2,na:18,zn:0,fo:0,se:0,col:0},
+{n:"Succo di frutta ACE (per 100ml)",c:"Bevande zuccherate",src:"UPF",k:42,p:0.3,gs:0,g:0.1,z:9.2,ch:10,fi:0,ca:3,fe:0.2,mg:3,k2:65,na:8,zn:0.1,fo:5,se:0,col:0},
+{n:"Birra senza alcol (per 100ml)",c:"Alcolici e simili",src:"UPF",k:17,p:0.4,gs:0,g:0,z:0.6,ch:3.5,fi:0,ca:5,fe:0.1,mg:5,k2:35,na:3,zn:0.1,fo:8,se:0,col:0},
+{n:"Gin Tonic pronto (per 100ml)",c:"Alcolici e simili",src:"UPF",k:95,p:0,gs:0,g:0,z:4.5,ch:5.5,fi:0,ca:3,fe:0,mg:2,k2:12,na:15,zn:0,fo:0,se:0,col:0},
+// FAST FOOD E SURGELATI
+{n:"Domino's Pizza Margherita (per 100g)",c:"Fast food",src:"UPF",k:261,p:11,gs:5.5,g:10.5,z:3,ch:34,fi:2,ca:168,fe:1.5,mg:18,k2:145,na:620,zn:1,fo:25,se:12,col:22},
+{n:"Subway Panino Veggie Delite (per 100g)",c:"Fast food",src:"UPF",k:195,p:8,gs:0.5,g:2.5,z:4.5,ch:37,fi:3,ca:90,fe:2,mg:24,k2:195,na:580,zn:0.8,fo:35,se:10,col:0},
+{n:"Burritos Tex-Mex industriale (per 100g)",c:"Fast food",src:"UPF",k:218,p:9.5,gs:4.5,g:9.5,z:2.5,ch:25,fi:2.5,ca:95,fe:1.5,mg:22,k2:225,na:580,zn:1,fo:38,se:8,col:25},
+{n:"Popcorn microonde al burro (per 100g)",c:"Snack salati",src:"UPF",k:452,p:8.5,gs:10,g:22,z:1.5,ch:59,fi:7.5,ca:5,fe:1.5,mg:80,k2:270,na:820,zn:1.5,fo:20,se:8,col:0},
+{n:"Bastoncini di pesce surgelati (per 100g)",c:"Surgelati",src:"UPF",k:230,p:12,gs:4.5,g:12,z:0.5,ch:22,fi:1,ca:55,fe:0.8,mg:18,k2:180,na:580,zn:0.5,fo:15,se:18,col:28},
+{n:"Crocchette di pollo surgelate (per 100g)",c:"Surgelati",src:"UPF",k:248,p:14,gs:4.5,g:13.5,z:0.8,ch:20,fi:1,ca:30,fe:0.8,mg:18,k2:200,na:650,zn:0.8,fo:18,se:15,col:45},
+{n:"Pizza surgelata Quattro Formaggi (per 100g)",c:"Surgelati",src:"UPF",k:272,p:12.5,gs:8.5,g:12.5,z:2.5,ch:30,fi:1.5,ca:250,fe:1,mg:20,k2:155,na:680,zn:1.5,fo:22,se:10,col:35},
+{n:"Lasagne surgelate al ragù (per 100g)",c:"Surgelati",src:"UPF",k:138,p:8.5,gs:4,g:7,z:2,ch:12,fi:0.8,ca:85,fe:0.8,mg:15,k2:145,na:480,zn:1,fo:15,se:10,col:35},
+{n:"Cotolette di vitello surgelate impanate (per 100g)",c:"Surgelati",src:"UPF",k:238,p:15,gs:4.5,g:11,z:0.5,ch:20,fi:1,ca:38,fe:1.2,mg:20,k2:235,na:520,zn:1.5,fo:22,se:18,col:55},
+// LATTICINI E YOGURT INDUSTRIALI
+{n:"Müller Corner frutti di bosco (per 100g)",c:"Latticini industriali",src:"UPF",k:112,p:4,gs:1.2,g:2.5,z:17.5,ch:19,fi:0.2,ca:130,fe:0.1,mg:12,k2:160,na:55,zn:0.4,fo:8,se:3,col:10},
+{n:"Danone Activia mirtilli (per 100g)",c:"Latticini industriali",src:"UPF",k:75,p:3.5,gs:1,g:2,z:10.5,ch:11.5,fi:0.2,ca:120,fe:0.1,mg:10,k2:150,na:48,zn:0.4,fo:6,se:2,col:8},
+{n:"Actimel 0% (per 100ml)",c:"Latticini industriali",src:"UPF",k:41,p:3.5,gs:0,g:0,z:5.5,ch:6,fi:0,ca:120,fe:0.1,mg:10,k2:160,na:50,zn:0.4,fo:6,se:2,col:0},
+{n:"Panna UHT 35% (per 100ml)",c:"Latticini industriali",src:"UPF",k:334,p:2.2,gs:21.5,g:35,z:3.2,ch:3.2,fi:0,ca:68,fe:0.1,mg:8,k2:95,na:38,zn:0.3,fo:2,se:2,col:115},
+{n:"Yomo yogurt alla frutta (per 100g)",c:"Latticini industriali",src:"UPF",k:86,p:3.8,gs:1,g:2.2,z:13.5,ch:13.8,fi:0.1,ca:125,fe:0.1,mg:10,k2:155,na:52,zn:0.4,fo:7,se:2,col:8},
+// SALSE E CONDIMENTI INDUSTRIALI
+{n:"Sriracha Hot Chili Sauce (per 100g)",c:"Salse e condimenti",src:"UPF",k:93,p:1.8,gs:0.3,g:1.2,z:12.5,ch:20,fi:0.8,ca:15,fe:0.8,mg:12,k2:220,na:2200,zn:0.3,fo:5,se:2,col:0},
+{n:"Barbecue sauce (per 100g)",c:"Salse e condimenti",src:"UPF",k:135,p:1.2,gs:0.1,g:0.5,z:28,ch:33,fi:0.5,ca:12,fe:0.5,mg:10,k2:280,na:850,zn:0.2,fo:2,se:1,col:0},
+{n:"Tzatziki industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:95,p:4.5,gs:3.5,g:6.5,z:3,ch:3.5,fi:0.5,ca:95,fe:0.3,mg:12,k2:125,na:320,zn:0.5,fo:10,se:3,col:18},
+{n:"Ranch Dressing (per 100g)",c:"Salse e condimenti",src:"UPF",k:428,p:1.5,gs:5.8,g:45,z:2.5,ch:4,fi:0.2,ca:48,fe:0.2,mg:5,k2:55,na:750,zn:0.2,fo:5,se:2,col:38},
+{n:"Salsa teriyaki (per 100g)",c:"Salse e condimenti",src:"UPF",k:89,p:5.5,gs:0.1,g:0.5,z:15.5,ch:18,fi:0.1,ca:18,fe:0.5,mg:18,k2:152,na:2160,zn:0.3,fo:8,se:3,col:0}
 ];
 
 
@@ -3214,6 +3428,17 @@ const DB_ONS = [
 {n:"Biscotti ai cereali senza zucchero aggiunto (per 100g)",c:"Dolci confezionati",src:"UPF",k:395,p:8.5,gs:3.0,g:11.5,z:15.5,ch:65.5,fi:6.0,ca:50,fe:3.0,mg:40,k2:240,na:380,zn:1.0,fo:100,se:8,col:0},
 {n:"Barretta proteica vegana (soia/pisello, per 100g)",c:"Barrette proteiche",src:"UPF",k:355,p:30.0,gs:3.5,g:12.0,z:20.5,ch:37.5,fi:5.0,ca:120,fe:5.0,mg:55,k2:350,na:280,zn:2.5,fo:120,se:4,col:0},
 {n:"Integratore multivitaminico effervescente (per compressa)",c:"Vitamine",src:"UPF",k:10,p:0.5,gs:0,g:0,z:2.0,ch:2.5,fi:0,ca:120,fe:7.0,mg:60,k2:40,na:120,zn:5.0,fo:200,se:25,col:0},
+// INTEGRATORI CLINICI ONS AGGIUNTIVI
+{n:"Fresubin 2kcal HP Drink (per 100ml)",c:"ONS - Alta energia",src:"ONS",k:200,p:10,gs:2.2,g:7.8,z:19,ch:22.2,fi:0,ca:100,fe:2,mg:30,k2:175,na:100,zn:1.5,fo:60,se:12,col:0},
+{n:"Ensure Plus HP (per 100ml)",c:"ONS - Alta energia",src:"ONS",k:150,p:8.5,gs:1.2,g:5,z:13.5,ch:16.5,fi:1.2,ca:120,fe:1.8,mg:35,k2:200,na:115,zn:1.8,fo:70,se:10,col:5},
+{n:"Nutridrink Compact Protein (per 100ml)",c:"ONS - Iperproteico",src:"ONS",k:240,p:14.4,gs:3.5,g:9.6,z:22.5,ch:24,fi:0,ca:120,fe:1.8,mg:28,k2:160,na:105,zn:1.5,fo:55,se:10,col:10},
+{n:"Fortimel Energy (per 100ml)",c:"ONS - Standard",src:"ONS",k:150,p:6,gs:1.5,g:5.8,z:18,ch:19.5,fi:0,ca:105,fe:1.5,mg:24,k2:145,na:95,zn:1.2,fo:45,se:8,col:5},
+{n:"Supportan Drink (per 100ml, oncologia)",c:"ONS - Oncologico",src:"ONS",k:150,p:9,gs:2.5,g:7.5,z:10.5,ch:12.5,fi:1,ca:120,fe:1.5,mg:28,k2:195,na:110,zn:1.5,fo:60,se:12,col:10},
+{n:"Cubitan arginina (per 100ml, piaghe)",c:"ONS - Specialistico",src:"ONS",k:125,p:7.5,gs:1,g:3.5,z:16.5,ch:17.5,fi:0,ca:210,fe:2.5,mg:35,k2:215,na:130,zn:2,fo:75,se:12,col:5},
+{n:"Diasip (per 100ml, diabete)",c:"ONS - Diabete",src:"ONS",k:100,p:4,gs:1.2,g:3.5,z:8.5,ch:12.5,fi:2.5,ca:135,fe:1.8,mg:40,k2:240,na:105,zn:1.8,fo:70,se:12,col:5},
+{n:"Renastep (per 100ml, rene pediatrico)",c:"ONS - Renale",src:"ONS",k:200,p:2,gs:3.5,g:8.5,z:28.5,ch:28,fi:0,ca:72,fe:1.5,mg:18,k2:62,na:65,zn:0.8,fo:30,se:6,col:0},
+{n:"Isosource 1.5 (per 100ml, nutrizione enterale)",c:"ONS - Enterale",src:"ONS",k:150,p:5.6,gs:2,g:5,z:14,ch:19,fi:1.5,ca:90,fe:1.4,mg:25,k2:150,na:88,zn:1,fo:45,se:8,col:0},
+{n:"Reconvan (per 100ml, renale ICU)",c:"ONS - Renale ICU",src:"ONS",k:100,p:5.5,gs:1.5,g:4,z:10.5,ch:12.5,fi:0,ca:85,fe:0.8,mg:22,k2:85,na:80,zn:0.8,fo:35,se:8,col:0},
 ];
 
 // ═══════════════════════════════════════════════════
@@ -3255,6 +3480,17 @@ const DB_APROTEICI = [
   {n:"Maionese aproteica (senza uova)",c:"Aproteici - Condimenti",src:"APROT",k:355,p:0.2,gs:4.0,g:37,z:2.0,ch:8,fi:0.1,ca:5,fe:0.2,mg:3,k2:10,na:620,zn:0.05,fo:8,se:0,col:0},
   // FORMULA APROTEICA
   {n:"Loprofin Energy (liquido, per 100ml)",c:"Aproteici - Formula",src:"APROT",k:150,p:0.1,gs:2.2,g:5.6,z:20,ch:22,fi:0,ca:40,fe:0.5,mg:12,k2:70,na:35,zn:0.5,fo:40,se:3,col:0},
+// ALIMENTI APROTEICI AGGIUNTIVI
+{n:"Aproten pasta capellini (per 100g cruda)",c:"Aproteici - Pasta",src:"APROT",k:348,p:0.5,gs:0.5,g:1.2,z:0.5,ch:83,fi:0.8,ca:18,fe:0.5,mg:5,k2:42,na:32,zn:0.1,fo:12,se:0,col:0},
+{n:"Aproten riso aproteico (per 100g crudo)",c:"Aproteici - Riso",src:"APROT",k:352,p:0.4,gs:0.3,g:0.8,z:0.5,ch:86,fi:0.5,ca:12,fe:0.3,mg:4,k2:32,na:22,zn:0.05,fo:8,se:0,col:0},
+{n:"Loprofin fettine (sostituto carne, per 100g)",c:"Aproteici - Sostituti",src:"APROT",k:210,p:0.8,gs:8.5,g:18,z:2.5,ch:14,fi:0.8,ca:35,fe:0.8,mg:8,k2:88,na:480,zn:0.2,fo:18,se:0,col:0},
+{n:"Pane aproteico PKU (per 100g)",c:"Aproteici - Pane",src:"APROT",k:295,p:0.4,gs:0.5,g:2.5,z:2.5,ch:68,fi:1.5,ca:42,fe:0.8,mg:8,k2:52,na:480,zn:0.1,fo:15,se:0,col:0},
+{n:"Crackers aproteici Loprofin (per 100g)",c:"Aproteici - Pane",src:"APROT",k:455,p:0.5,gs:4.5,g:18,z:3.5,ch:72,fi:2,ca:15,fe:0.5,mg:5,k2:38,na:650,zn:0.05,fo:10,se:0,col:0},
+{n:"Farina aproteica per panificazione (per 100g)",c:"Aproteici - Farine",src:"APROT",k:355,p:0.3,gs:0.2,g:0.5,z:0.5,ch:88,fi:1,ca:15,fe:0.3,mg:3,k2:20,na:8,zn:0.05,fo:5,se:0,col:0},
+{n:"Latte aproteico PKU (per 100ml)",c:"Aproteici - Formula",src:"APROT",k:68,p:0.4,gs:1.8,g:3.5,z:7.5,ch:8,fi:0,ca:120,fe:0.5,mg:10,k2:165,na:50,zn:0.5,fo:25,se:3,col:8},
+{n:"Pasta pronta aproteica al pomodoro (per 100g)",c:"Aproteici - Piatti pronti",src:"APROT",k:95,p:0.4,gs:0.3,g:2.2,z:1.5,ch:18,fi:0.8,ca:28,fe:0.5,mg:8,k2:125,na:380,zn:0.05,fo:12,se:0,col:0},
+{n:"Aproten mix per dolci (per 100g)",c:"Aproteici - Farine",src:"APROT",k:375,p:0.3,gs:1,g:3.5,z:5,ch:82,fi:1,ca:12,fe:0.2,mg:3,k2:15,na:120,zn:0.05,fo:5,se:0,col:0},
+{n:"Gelato aproteico alla nocciola Loprofin (per 100g)",c:"Aproteici - Dolci",src:"APROT",k:185,p:0.15,gs:4,g:8.5,z:22,ch:26,fi:0.3,ca:18,fe:0.2,mg:4,k2:55,na:42,zn:0.05,fo:8,se:0,col:0},
 ];
 
 
@@ -3298,6 +3534,17 @@ const DB_FLAVIS = [
   {n:"Flavis Torta/plumcake aproteico",c:"Flavis - Dessert",src:"FLAVIS",k:372,p:0.5,gs:4.8,g:15,z:27,ch:55,fi:1.4,ca:22,fe:0.9,mg:8,k2:72,na:360,zn:0.1,fo:22,se:1,col:0},
   // CONDIMENTI FLAVIS
   {n:"Flavis Besciamella aproteica",c:"Flavis - Condimenti",src:"FLAVIS",k:92,p:0.2,gs:1.8,g:5.0,z:3.5,ch:11,fi:0.1,ca:42,fe:0.1,mg:4,k2:48,na:420,zn:0.05,fo:35,se:0,col:8},
+// FLAVIS PRODOTTI AGGIUNTIVI
+{n:"Flavis Pasta Fusilli (per 100g cruda)",c:"Flavis - Pasta",src:"FLAVIS",k:352,p:0.5,gs:0.4,g:1,z:1,ch:84,fi:1.5,ca:18,fe:0.4,mg:5,k2:40,na:28,zn:0.05,fo:10,se:0,col:0},
+{n:"Flavis Pasta Farfalle (per 100g cruda)",c:"Flavis - Pasta",src:"FLAVIS",k:350,p:0.5,gs:0.4,g:1,z:1,ch:84,fi:1.5,ca:18,fe:0.4,mg:5,k2:40,na:28,zn:0.05,fo:10,se:0,col:0},
+{n:"Flavis Farina per Pane (per 100g)",c:"Flavis - Farine",src:"FLAVIS",k:356,p:0.4,gs:0.2,g:0.6,z:0.5,ch:88,fi:1.2,ca:15,fe:0.3,mg:3,k2:18,na:10,zn:0.05,fo:5,se:0,col:0},
+{n:"Flavis Mix Dolci (per 100g)",c:"Flavis - Farine",src:"FLAVIS",k:375,p:0.3,gs:1,g:3.5,z:5,ch:82,fi:1,ca:12,fe:0.2,mg:3,k2:15,na:120,zn:0.05,fo:5,se:0,col:0},
+{n:"Flavis Biscotti Vaniglia (per 100g)",c:"Flavis - Dolci",src:"FLAVIS",k:465,p:0.4,gs:5.5,g:17,z:28,ch:72,fi:1,ca:25,fe:0.3,mg:5,k2:48,na:280,zn:0.05,fo:8,se:0,col:0},
+{n:"Flavis Snack Salati (per 100g)",c:"Flavis - Snack",src:"FLAVIS",k:442,p:0.5,gs:8.5,g:18,z:2,ch:68,fi:2.5,ca:18,fe:0.4,mg:5,k2:38,na:680,zn:0.05,fo:8,se:0,col:0},
+{n:"Flavis Minestrone pronto (per 100g)",c:"Flavis - Piatti pronti",src:"FLAVIS",k:45,p:0.3,gs:0.2,g:0.8,z:2.5,ch:8.5,fi:1.5,ca:22,fe:0.5,mg:8,k2:185,na:350,zn:0.05,fo:18,se:0,col:0},
+{n:"Flavis Riso (per 100g crudo)",c:"Flavis - Riso",src:"FLAVIS",k:348,p:0.4,gs:0.1,g:0.5,z:0.5,ch:86,fi:0.5,ca:10,fe:0.2,mg:3,k2:28,na:18,zn:0.05,fo:6,se:0,col:0},
+{n:"Flavis Cornetti aproteici (per 100g)",c:"Flavis - Dolci",src:"FLAVIS",k:405,p:0.4,gs:7.5,g:16,z:18,ch:62,fi:1,ca:22,fe:0.3,mg:4,k2:42,na:320,zn:0.05,fo:8,se:0,col:0},
+{n:"Flavis Tapioca perle (per 100g cruda)",c:"Flavis - Farine",src:"FLAVIS",k:358,p:0.1,gs:0,g:0.2,z:0.5,ch:88,fi:0.9,ca:20,fe:1.6,mg:1,k2:11,na:1,zn:0.1,fo:4,se:0.8,col:0},
 ];
 
 function rebuildDB() {
@@ -5428,6 +5675,293 @@ const PATOLOGIE_BASE=[
      {nome:'Cena',emoji:'🌙',items:[{nome:'Riso o patate (base sicura)',qt:'70g'},{nome:'Legumi (alternare con carne)',qt:'80g cotti'},{nome:'Olio EVO',qt:'8g'},{nome:'Formaggio grattugiato senza glutine',qt:'15g'}]}
    ],
    giorni:['Etichette: leggere SEMPRE — "senza glutine" o simbolo spiga barrata (<20 ppm)','Contaminazione crociata: teglie, tostapane, pasta-acqua dedicate a casa','Scuola: comunicare con dirigente, piano dietetico personalizzato','Crescita: curva auxologica ogni 3-6 mesi — recupero crescita entro 1-2 anni di GFD','Carenze: ferro, folati, vitamina D, zinco — supplementare secondo esami','Anti-tTG IgA: rivalutare ogni 6 mesi per 2 anni, poi annualmente (normalizzazione)','Adolescenza: alto rischio di trasgressioni — supporto psicologico e peer support']},
+// NUOVI DEFICIT MICRONUTRIENTI
+{id:'deficit_vitamina_a',cat:'Deficit nutrizionali',emoji:'👁️',nome:'Deficit di Vitamina A',badge:'Deficit Vit. A',colore:'#f97316',
+desc:'Ipovitaminosi A: cecità notturna, xeroftalmia, aumentata suscettibilità alle infezioni. Causa: dieta povera di retinolo/betacarotene, malassorbimento lipidico, alcolismo.',
+note:'OMS 2023. Supplementazione 200.000 UI/2 mesi (paesi a rischio). In Italia: causa principale è malassorbimento o dieta molto restrittiva.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte intero',qt:'200ml'},{nome:'Pane integrale',qt:'50g'},{nome:'Burro',qt:'10g'},{nome:'Marmellata di albicocche',qt:'20g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Fegato bovino (ricco di retinolo)',qt:'100g'},{nome:'Purè di carote',qt:'200g'},{nome:'Olio extravergine di oliva',qt:'10g'},{nome:'Pane integrale',qt:'40g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Uova strapazzate',qt:'2 uova'},{nome:'Spinaci saltati',qt:'200g'},{nome:'Olio EVO',qt:'10g'},{nome:'Patate dolci al forno',qt:'150g'}]}
+],
+giorni:['Vitamina A: abbondante in fegato, tuorlo d\'uovo, latticini interi, pesci grassi','Betacarotene (precursore): carote, patate dolci, zucca, mango, albicocche, spinaci','Assorbimento: la vitamina A è liposolubile — consumare con grassi buoni','Rischio: evitare ipervitaminosi da integratori — tossica ad alte dosi (teratogena in gravidanza)','Bambini e anziani: categorie più a rischio — monitorare con retinolemia sierica','Cottura: il betacarotene è più biodisponibile da verdure cotte con grassi']},
+{id:'deficit_vitamina_c',cat:'Deficit nutrizionali',emoji:'🍊',nome:'Deficit di Vitamina C (Scorbuto)',badge:'Deficit Vit. C',colore:'#f97316',
+desc:'Scorbuto: sanguinamento gengivale, petecchie, guarigione ritardata delle ferite, affaticamento. Raro in Italia ma presente in anziani, alcolisti, diete molto ristrette.',
+note:'EFSA 2013. RDA: 80-90 mg/die adulti, 35 mg/die aggiuntivi per fumatori. Saturazione tissutale a ~250 mg/die.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Succo di arancia fresco',qt:'200ml'},{nome:'Kiwi',qt:'1 medio'},{nome:'Pane integrale',qt:'50g'},{nome:'Yogurt',qt:'125g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'80g'},{nome:'Peperoni crudi (insalata)',qt:'100g'},{nome:'Pollo alla griglia',qt:'120g'},{nome:'Broccoli al vapore',qt:'150g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Zuppa di pomodoro fresco',qt:'300ml'},{nome:'Ceci',qt:'100g cotti'},{nome:'Prezzemolo fresco abbondante',qt:'20g'},{nome:'Pane integrale',qt:'40g'}]}
+],
+giorni:['Fonti eccellenti: peperoni crudi (190mg/100g), kiwi (93mg), fragole (58mg), arance (53mg)','Cottura: la vitamina C è termolabile — preferire verdure crude o cottura breve a vapore','Fumatori: fabbisogno aumentato del 35% (125 mg/die)','Assorbimento ferro: abbinare vitamina C a fonti di ferro vegetale per migliorare l\'assorbimento','Conservazione: la vitamina C si degrada con luce e aria — consumare frutta/verdura fresca','Integratori: 250-500 mg/die sono sicuri e sufficienti per trattare il deficit']},
+{id:'deficit_vitamina_e',cat:'Deficit nutrizionali',emoji:'🌻',nome:'Deficit di Vitamina E',badge:'Deficit Vit. E',colore:'#f97316',
+desc:'Ipovitaminosi E: neuropatia periferica, miopatia, emolisi, riduzione immunità. Quasi sempre causata da malassorbimento lipidico (fibrosi cistica, colestasi, SBS).',
+note:'EFSA 2015. RDA 12 mg α-TE/die. Deficit primario da dieta molto raro in adulti sani italiani.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Olio di germe di grano su pane',qt:'15g'},{nome:'Mandorle',qt:'30g'},{nome:'Yogurt intero',qt:'125g'},{nome:'Kiwi',qt:'1'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Insalata con semi di girasole',qt:'200g + 30g semi'},{nome:'Tonno all\'olio EVO',qt:'80g'},{nome:'Avocado',qt:'80g'},{nome:'Pane integrale',qt:'50g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Salmone al forno',qt:'150g'},{nome:'Spinaci saltati in olio EVO',qt:'200g'},{nome:'Riso integrale',qt:'60g secco'}]}
+],
+giorni:['Fonti: germe di grano (149mg/100g), olio di girasole (41mg), mandorle (26mg), nocciole (15mg), olio EVO (14mg)','Malassorbimento: trattare causa primaria (enzimi pancreatici per FC, acidi biliari per colestasi)','Integratori: α-tocoferolo 200-400 mg/die in caso di malassorbimento documentato','Liposolubile: assumere sempre con pasti contenenti grassi per assorbimento ottimale','Antiossidante: protegge membrane cellulari, LDL e muscoli dall\'ossidazione','Neonati prematuri: a rischio deficit — monitorare e supplementare se necessario']},
+{id:'deficit_vitamina_k',cat:'Deficit nutrizionali',emoji:'🥦',nome:'Deficit di Vitamina K',badge:'Deficit Vit. K',colore:'#f97316',
+desc:'Ipovitaminosi K: alterata coagulazione (aumento INR/PT), sanguinamenti. Cause: antibiotici prolungati, malassorbimento lipidico, neonati non vaccinati, terapia con warfarin.',
+note:'EFSA 2017. RDA 70 µg/die. K1 (fitochiinone) da vegetali verdi; K2 (menachinone) da fermentati e latticini.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Pane integrale',qt:'50g'},{nome:'Yogurt naturale intero',qt:'125g'},{nome:'Frutta di stagione',qt:'150g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'70g'},{nome:'Cavolo nero o broccoli',qt:'200g'},{nome:'Olio EVO',qt:'10g'},{nome:'Uova sode',qt:'1-2'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo al vapore',qt:'150g'},{nome:'Spinaci saltati',qt:'200g'},{nome:'Cavoletti di Bruxelles',qt:'150g'},{nome:'Olio EVO',qt:'10g'}]}
+],
+giorni:['Fonti K1: cavolo nero (817µg/100g), spinaci (483µg), broccoli (102µg), cavoletti di Bruxelles (140µg)','Fonti K2: natto (1103µg), formaggi stagionati, tuorlo d\'uovo, carne di pollo','Warfarin: mantenere introito stabile di vitamina K — non eliminare le verdure verdi, uniformare','Neonati: supplementazione profilattica alla nascita è raccomandata per prevenire emorragia neonatale','Antibiotici: cicli prolunghi distruggono flora intestinale produttrice di K2 — monitorare coagulazione','Malassorbimento: supplementazione per via intramuscolare in caso di deficit grave']},
+{id:'deficit_niacina',cat:'Deficit nutrizionali',emoji:'🌽',nome:'Pellagra / Deficit di Niacina (B3)',badge:'Deficit B3',colore:'#f97316',
+desc:'Pellagra: le "3 D" — Dermatite fotosensibile, Diarrea, Demenza. Storica nelle popolazioni mais-dipendenti senza diversità proteica; oggi in alcolismo, malassorbimento, carico di triptofano.',
+note:'WHO 2000. Niacina RDA 16 mg NE/die (M), 14 mg NE/die (F). Il triptofano è precursore: 60 mg trp → 1 mg niacina.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Pane integrale',qt:'60g'},{nome:'Tonno in scatola al naturale',qt:'50g'},{nome:'Latte',qt:'200ml'},{nome:'Frutta fresca',qt:'150g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo petto alla griglia',qt:'150g'},{nome:'Pasta integrale',qt:'70g'},{nome:'Verdure miste cotte',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Salmone al forno',qt:'150g'},{nome:'Riso integrale',qt:'60g secco'},{nome:'Broccoli',qt:'150g'},{nome:'Lievito di birra (1 cucchiaio)',qt:'10g'}]}
+],
+giorni:['Fonti: pollo (16mg/100g), tonno (22mg), maiale (8mg), arachidi (14mg), lievito di birra (37mg), funghi porcini (5mg)','Mais: povero di niacina biodisponibile — la nixtamalizzazione (calce) libera la niacina legata','Alcolismo: causa frequente di pellagra in Italia, anche con dieta non deficitaria','Malassorbimento: niacina può essere supplementata per os come nicotinamide (meglio tollerata di nicotinic acid)','Carcinoide syndrome: tumor serotonin-producing converte triptofano, sottraendolo alla sintesi di niacina','Reintroduzione: la nicotinamide 100mg/die è sufficiente per trattare deficit moderato']},
+{id:'deficit_riboflavina',cat:'Deficit nutrizionali',emoji:'🥛',nome:'Deficit di Riboflavina (Vitamina B2)',badge:'Deficit B2',colore:'#f97316',
+desc:'Ariboflavinosi: cheilosi, glossite, dermatite seborroica, fotofobia, anemia normocitica. Spesso associato ad altri deficit del gruppo B.',
+note:'EFSA 2017. RDA 1.6 mg/die (M), 1.3 mg/die (F). Riboflavina è sensibile alla luce — conservare latte al riparo dalla luce.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte intero o scremato',qt:'300ml'},{nome:'Pane integrale',qt:'50g'},{nome:'Uova strapazzate',qt:'2 uova'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Fegato di vitello (ricchissimo di B2)',qt:'100g'},{nome:'Verdure miste',qt:'200g'},{nome:'Riso integrale',qt:'60g secco'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Salmone al forno',qt:'150g'},{nome:'Ricotta',qt:'100g'},{nome:'Spinaci',qt:'200g'},{nome:'Pane integrale',qt:'40g'}]}
+],
+giorni:['Fonti eccellenti: fegato di manzo (2.9mg/100g), rene (3.4mg), latte (0.17mg/100ml), yogurt (0.21mg/100g), uova (0.37mg)','Verdure ricche: funghi (0.49mg), spinaci (0.19mg), broccoli (0.12mg)','Fotosensibilità: il latte in brik plastico conserva meglio la riboflavina vs vetro trasparente','Vegetariani: a rischio moderato se non consumano latticini regolarmente','Cofatore enzimatico: FMN e FAD — essenziale per metabolismo energetico e attivazione B6/folati','Supplementazione: 10-30 mg/die di riboflavina per os per trattare il deficit']},
+{id:'deficit_biotina',cat:'Deficit nutrizionali',emoji:'🥚',nome:'Deficit di Biotina (Vitamina B7)',badge:'Deficit B7',colore:'#f97316',
+desc:'Dermatite, alopecia, congiuntivite, acidosi organica, neuropatia. Cause: avidinismo (albume d\'uovo crudo), nutrizione parenterale senza biotin, farmaci (antiepilettici).',
+note:'EFSA 2014. AI 40 µg/die. Biotinidasi deficiency: causa genetica rara (screening neonatale).',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Uova sode (cotte — non crude)',qt:'2 uova'},{nome:'Pane integrale',qt:'50g'},{nome:'Latte',qt:'200ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Fegato di manzo (ottima fonte)',qt:'100g'},{nome:'Lenticchie',qt:'100g cotte'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Salmone o sardine',qt:'150g'},{nome:'Mandorle',qt:'30g'},{nome:'Patate dolci',qt:'200g'},{nome:'Broccoli',qt:'150g'}]}
+],
+giorni:['ATTENZIONE: albume d\'uovo crudo contiene avidina che lega la biotina rendendola non assorbibile','Fonti: fegato (100µg/100g), tuorlo d\'uovo cotto (27µg), salmone (5µg), arachidi (17µg), mandorle (15µg), lenticchie (14µg)','Nutrizione parenterale: integrare sempre biotin (0.1-0.3 mg/die) nelle sacche NP','Antiepilettici: carbamazepina e primidone riducono i livelli di biotina — monitorare','Biotinidasi deficiency: trattare con biotina 5-20 mg/die per os — ottima risposta','Gravidanza: aumento del fabbisogno — molte multivitaminiche prenatali contengono biotina']},
+{id:'deficit_magnesio',cat:'Deficit nutrizionali',emoji:'🌿',nome:'Ipomagnesemia / Deficit di Magnesio',badge:'Ipomagnesemia',colore:'#059669',
+desc:'Tremori, crampi muscolari, aritmie, ipereccitabilità neuromuscolare, ipocalcemia refrattaria. Comune in: diabete, alcolismo, diarrea cronica, uso di PPI/diuretici.',
+note:'EFSA 2015. RDA 300-350 mg/die. Ipomagnesemia <0.7 mmol/L. Spesso coesistente con ipopotassiemia.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Cioccolato fondente 85%',qt:'20g'},{nome:'Latte',qt:'200ml'},{nome:'Pane integrale',qt:'50g'},{nome:'Mandorle',qt:'20g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'70g'},{nome:'Ceci o fagioli',qt:'100g cotti'},{nome:'Broccoli',qt:'200g'},{nome:'Olio EVO',qt:'10g'},{nome:'Zucca (semi)',qt:'20g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Tofu o legumi',qt:'150g'},{nome:'Spinaci saltati',qt:'200g'},{nome:'Riso integrale',qt:'60g secco'},{nome:'Semi di zucca',qt:'20g'}]}
+],
+giorni:['Fonti eccellenti: semi di zucca (535mg/100g), cacao (376mg), mandorle (268mg), anacardi (260mg), spinaci (79mg), ceci (48mg)','Magnesio e calcio: in competizione per assorbimento — equilibrare l\'apporto','PPI e diuretici tiazidici: aumentano le perdite renali di magnesio — supplementare se <0.8 mmol/L','Diabetes: ipomagnesemia peggiora resistenza insulinica e controllo glicemico','Caffè e alcol: aumentano l\'escrezione urinaria di magnesio','Integrazione: ossido di magnesio 300-400 mg/die (per os); magnesio citrato meglio tollerato gastricamente']},
+{id:'deficit_calcio',cat:'Deficit nutrizionali',emoji:'🦷',nome:'Ipocalcemia / Deficit di Calcio',badge:'Ipocalcemia',colore:'#059669',
+desc:'Crampi muscolari (tetania), parestesie periorali, segno di Chvostek e Trousseau, aritmie. Cause: ipoparatiroidismo, deficit di vitamina D, malassorbimento, insufficienza renale.',
+note:'EFSA 2015. RDA 1000-1200 mg/die. Calcemia totale <2.1 mmol/L. Distinguere da osteoporosi (deficit cronico senza ipocalcemia acuta).',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte intero o parzialmente scremato',qt:'300ml'},{nome:'Yogurt greco',qt:'150g'},{nome:'Pane integrale',qt:'40g'},{nome:'Frutta fresca',qt:'100g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Sardine in scatola (con le lische)',qt:'100g'},{nome:'Broccoli al vapore',qt:'200g'},{nome:'Pasta integrale',qt:'70g'},{nome:'Parmigiano reggiano',qt:'20g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Tofu sodo (con calcio solfato)',qt:'150g'},{nome:'Spinaci saltati',qt:'200g'},{nome:'Ricotta',qt:'100g'},{nome:'Mandorle',qt:'30g'}]}
+],
+giorni:['Fonti: parmigiano (1159mg/100g), latte (120mg/100ml), sardine con lische (382mg), tofu sodo (200mg), mandorle (264mg)','Vitamina D: essenziale per assorbimento calcio intestinale — trattare sempre il deficit concomitante','Ossalati e fitati: riducono assorbimento calcio da verdure (spinaci, rabarbaro) — non unica fonte','Ipocalcemia grave: calcio gluconato endovena — emergenza medica','Ipoparatiroidismo: calcio 1-2 g/die + vitamina D attiva (calcitriolo) a lungo termine','Calcio e ferro: non assumere nello stesso pasto — in competizione per assorbimento']},
+{id:'deficit_rame',cat:'Deficit nutrizionali',emoji:'🦪',nome:'Deficit di Rame',badge:'Deficit Rame',colore:'#f97316',
+desc:'Anemia normocitica, neutropenia, mielopatia progressiva (simile a deficit B12), osteoporosi. Cause: eccesso di zinco, chirurgia bariatrica, malassorbimento, NP senza rame.',
+note:'EFSA 2015. RDA 1.3-1.5 mg/die. Cupremia normale: 12-22 µmol/L. Lo zinco in eccesso riduce assorbimento del rame.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Pane integrale',qt:'60g'},{nome:'Frutta secca (noci o nocciole)',qt:'30g'},{nome:'Latte',qt:'200ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Ostriche fresche o in scatola',qt:'80g'},{nome:'Pasta integrale',qt:'70g'},{nome:'Fegato di vitello',qt:'80g'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Ceci o lenticchie',qt:'150g cotti'},{nome:'Riso integrale',qt:'60g secco'},{nome:'Semi di girasole',qt:'20g'},{nome:'Anacardi',qt:'30g'}]}
+],
+giorni:['Fonti eccellenti: ostriche (4.5mg/100g), fegato di manzo (12mg), anacardi (2.2mg), semi di girasole (1.8mg), cacao (3.8mg)','Zinco eccessivo: supplementazione con zinco >50mg/die per periodi prolungati → blocca assorbimento rame','Chirurgia bariatrica: monitorare rame sierico ogni 6-12 mesi post-operazione','Neuropatia da rame: simile al deficit di B12 — escludere sempre prima di diagnosi di SM o mielopatia degenerativa','Supplementazione: cuprismo solfato 2-4 mg/die per os fino a normalizzazione','NP: includere rame nelle formulazioni (0.3-1.3 mg/die)']},
+// AMINOACIDOPATIE E MALATTIE METABOLICHE RARE AGGIUNTIVE
+{id:'omocistinuria',cat:'Malattie metaboliche rare',emoji:'🧬',nome:'Omocistinuria',badge:'Omocistinuria',colore:'#7c3aed',
+desc:'Deficit di cistationina β-sintasi (CBS) → accumulo di omocisteina. Manifestazioni: ectopia lentis, tromboembolismo, scheletro marfanoide, ritardo cognitivo. Forme B6-responsive e non-responsive.',
+note:'ESIEM/MetabERN 2022. Forme B6-responsive: piridossina 100-1000 mg/die. Forme non-responsive: dieta a basso metionina + betaina + folati + B12.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Formula aminoacidica senza metionina',qt:'secondo prescrizione'},{nome:'Frutta fresca',qt:'150g'},{nome:'Pane aproteico',qt:'50g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta normale (metionina limitata)',qt:'40g'},{nome:'Verdure miste abbondanti',qt:'300g'},{nome:'Olio EVO',qt:'10g'},{nome:'Frutta fresca',qt:'150g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Formulazione proteica prescritta',qt:'secondo piano'},{nome:'Verdure a basso contenuto proteico',qt:'200g'},{nome:'Riso bianco',qt:'60g secco'},{nome:'Frutta fresca',qt:'100g'}]}
+],
+giorni:['Omocisteina target: <50 µmol/L per forme non-responsive; <30 µmol/L con B6-responsività','Metionina: proteina vegetale preferita a quella animale — più basso rapporto metionina/proteine','Betaina 3-6 g/die: ridona gruppi metilici per rimetilazione omocisteina','B12 e folati: essenziali — supplementare anche in forme non B6-responsive','Tromboprofilassi: aspirina a basso dosaggio in alcuni pazienti ad alto rischio','Densità ossea: DXA ogni 2-3 anni — frequente osteoporosi','Follow-up: omocisteina plasmatica ogni 3-6 mesi']},
+{id:'glicogenosi_iii',cat:'Malattie metaboliche rare',emoji:'🧬',nome:'Glicogenosi tipo III (Cori/Forbes)',badge:'GSD III',colore:'#7c3aed',
+desc:'Deficit dell\'enzima deramificante (AGL). Coinvolge fegato, muscolo e cuore. Ipoglicemia a digiuno, epatомegalia, miopatia. A differenza della GSD I, il lattato non si accumula.',
+note:'ESIEM 2023. Dieta: amido a lento rilascio (cornstarch cruda), alta proteina per muscolo, evitare digiuni prolungati.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Amido di mais crudo (Maizena)',qt:'20-30g in acqua fredda'},{nome:'Uova',qt:'2 uova'},{nome:'Pane integrale',qt:'40g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pollo o tacchino',qt:'150g'},{nome:'Pasta integrale',qt:'70g'},{nome:'Verdure',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Snack notturno',emoji:'🌛',items:[{nome:'Amido di mais crudo (Maizena)',qt:'20g in acqua'},{nome:'Formaggio o yogurt proteico',qt:'100g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Pesce o carne magra',qt:'120g'},{nome:'Riso o patate',qt:'150g cotti'},{nome:'Verdure miste',qt:'150g'},{nome:'Olio EVO',qt:'10g'}]}
+],
+giorni:['Maizena cruda (cornstarch): fonte di glucosio a lento rilascio — 0.5-1 g/kg ogni 4-6h da svegli','Evitare digiuni >4-6 ore: rischio ipoglicemia e catabolismo muscolare','Proteina alta (1.5-2 g/kg/die): fondamentale per preservare e costruire massa muscolare','Grassi: non necessario limitare come nella GSD I — lipogenesi epatica non è problema principale','Bambini: monitare glicemia a digiuno e prima di attività fisica','Adulti: miopatia progressiva — esercizio aerobico moderato più benefico del riposo']},
+{id:'glicogenosi_v',cat:'Malattie metaboliche rare',emoji:'🏃',nome:'Glicogenosi tipo V (McArdle)',badge:'GSD V',colore:'#7c3aed',
+desc:'Deficit di miofosforilasi muscolare → incapacità di utilizzare glicogeno durante esercizio. Intolleranza all\'esercizio, crampi, mioglobinuria (urine rosse). Fenomeno del "secondo fiato".',
+note:'Quinlivan et al., Brain 2010. Approccio nutrizionale: carboidrati prima e durante l\'esercizio. Creatina e vitamina B6 studiati.',
+pasti:[
+{nome:'Pre-allenamento (30 min prima)',emoji:'🏃',items:[{nome:'Sucrose/saccarosio (fruttosio non adatto)',qt:'30-40g'},{nome:'Acqua',qt:'500ml'}]},
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Pane bianco o pasta',qt:'70g'},{nome:'Miele',qt:'20g'},{nome:'Latte',qt:'200ml'},{nome:'Banana',qt:'1 media'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta bianca',qt:'90g'},{nome:'Pollo o pesce magro',qt:'120g'},{nome:'Verdure',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco',qt:'80g secco'},{nome:'Carne bianca',qt:'100g'},{nome:'Patate al forno',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]}
+],
+giorni:['Saccarosio pre-esercizio: 30-40g di zucchero 5-10 min prima migliora tolleranza all\'esercizio (Vissing 2009)','Fruttosio: NON utile come il saccarosio — il fruttosio non può essere usato dai muscoli direttamente','Fenomeno del "secondo fiato": dopo 8-10 min di sforzo, gli acidi grassi e glucosio ematico supportano l\'esercizio','Attività moderata: preferire esercizio aerobico leggero a lungo termine — benefici cardiorespiratori','Creatina: controversa — in alcuni casi migliora la tolleranza all\'esercizio a basso dosaggio (1-3g/die)','Evitare esercizio anaerobico intenso: rischio rabdomiolisi e insufficienza renale acuta']},
+{id:'acidemia_propionica',cat:'Malattie metaboliche rare',emoji:'🧬',nome:'Acidemia Propionica',badge:'Acidemia Prop.',colore:'#7c3aed',
+desc:'Deficit di propionil-CoA carbossilasi → accumulo di acido propionico. Emergenze metaboliche neonatali, cardiomiopatia, pancreatite, immunodeficienza. Grave prognosi senza trattamento precoce.',
+note:'Baumgartner 2014 (JIMD). Restrizione aminoacidi propiogenici (isoleucina, valina, treonina, metionina). Formula specifica senza AA propiogenici.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Formula senza AA propiogenici',qt:'secondo prescrizione'},{nome:'Frutta fresca (non troppa)',qt:'100g'},{nome:'Pane bianco',qt:'30g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Proteina naturale tollerata (secondo piano)',qt:'quota prescritta'},{nome:'Riso bianco',qt:'50g secco'},{nome:'Verdure basse in AA',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Formula proteica prescritta',qt:'secondo piano'},{nome:'Patate bollite',qt:'200g'},{nome:'Verdure cotte',qt:'150g'},{nome:'Olio EVO',qt:'10g'}]}
+],
+giorni:['Emergenza metabolica: durante malattia intercorrente, aumentare carbo e ridurre o sospendere proteine naturali 24-48h','Formula specifica: fornisce AA senza isoleucina, valina, treonina, metionina — complementare con piccole quote naturali','Carnitina: supplementare L-carnitina 50-100 mg/kg/die — detossificazione propionato','Acido propionico target: <200 µmol/L a digiuno','Cardiomiopatia: monitorare ECG periodicamente — complicanza grave dell\'acidemia propionica','Trapianto epatico: considerare in casi gravi refrattari alla terapia medica','Follow-up: amino acidogramma ogni 3-6 mesi']},
+{id:'malattia_gaucher',cat:'Malattie metaboliche rare',emoji:'🧬',nome:'Malattia di Gaucher',badge:'Gaucher',colore:'#7c3aed',
+desc:'Lisosomopatie con deficit di glucocerebrosidasi → accumulo di glucosilceramide. Splenomegalia, epatомegalia, citopenie, lesioni ossee. Trattamento principale: terapia enzimatica sostitutiva (TES).',
+note:'EMQN/Gaucher Alliance 2022. Supporto nutrizionale: anemia, osteopenia/porosi, deficit di vitamina D e B12.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte arricchito con vitamina D',qt:'250ml'},{nome:'Pane integrale',qt:'50g'},{nome:'Ricotta o formaggio',qt:'80g'},{nome:'Frutta fresca',qt:'150g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Carne rossa magra (ferro eme)',qt:'120g'},{nome:'Pasta integrale',qt:'70g'},{nome:'Verdure ricche di ferro',qt:'200g'},{nome:'Vitamina C (agrumi o peperoni crudi)',qt:'per migliorare assorbimento ferro'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Pesce azzurro (sardine/sgombro)',qt:'150g'},{nome:'Legumi (lenticchie, fagioli)',qt:'100g cotti'},{nome:'Verdure miste',qt:'200g'},{nome:'Formaggi stagionati (calcio)',qt:'30g'}]}
+],
+giorni:['Anemia: apporto adeguato di ferro eme (carne, pesce), vitamina C per ottimizzare assorbimento ferro non-eme','Osteopenia/osteonecrosi: calcio 1000-1200 mg/die, vitamina D 1000-2000 UI/die, pesistica leggera','Splenomegalia: evitare sport di contatto e attività ad alto rischio di trauma addominale','TES/SRT: la terapia farmacologica è il trattamento principale — dieta è supporto','B12: monitorare nei pazienti con gastrectomia o malassorbimento concomitante','Peso corporeo: mantenere BMI normale — sovrappeso peggiora carico epatico-splenico']},
+{id:'esofagite_eosinofila',cat:'Malattie gastrointestinali',emoji:'🦠',nome:'Esofagite Eosinofila (EoE)',badge:'EoE',colore:'#0891b2',
+desc:'Infiammazione eosinofilica cronica dell\'esofago → disfagia, impaction, reflusso refrattario. Strettamente correlata ad allergie alimentari. Gold standard: >15 eosinofili/HPF alla biopsia.',
+note:'AGREE 2022/UEG 2022. Dieta di eliminazione empirica (SFED: 6 alimenti) o step-up. PPI trial 8 settimane prima della dieta.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Riso soffiato (senza glutine, senza latte)',qt:'40g'},{nome:'Latte di riso o di cocco',qt:'200ml'},{nome:'Frutta fresca (non kiwi se allergia)',qt:'150g'},{nome:'Semi di zucca',qt:'20g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco',qt:'80g secco'},{nome:'Pollo o tacchino alla griglia',qt:'150g'},{nome:'Verdure (no pomodoro se reflusso)',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Patate o riso',qt:'150g'},{nome:'Carne bianca o pesce non crostaceo',qt:'120g'},{nome:'Verdure tolerate',qt:'200g'},{nome:'Olio di girasole alto oleico',qt:'10g'}]}
+],
+giorni:['SFED (Six Food Elimination Diet): eliminare latte, grano, uova, soia, frutti di mare, noci/arachidi per 6-8 settimane','Step-up: alternativa — eliminare prima latte (trigger #1), poi grano, poi altri in sequenza','Reintroduzione: un alimento alla volta ogni 6-8 settimane con biopsia di controllo','PPI: iniziare come trial prima di dieta — almeno 40-80 mg/die per 8 settimane','Texture: durante fasi acute preferire cibi morbidi e ben masticati per evitare impaction','Elemental formula: in casi gravi o bambini non compliance — induce remissione nel 95% dei casi']},
+// DIETE TERAPEUTICHE E PREVENTIVE
+{id:'dieta_chetogenica',cat:'Diete terapeutiche',emoji:'🥑',nome:'Dieta Chetogenica Terapeutica',badge:'Dieta Keto',colore:'#10b981',
+desc:'Dieta ad altissimo contenuto lipidico (70-80% kcal), moderata proteina, bassissima quota carboidrati (<50g/die). Usi clinici: epilessia refrattaria, GLUT1 deficiency, tumori cerebrali, neurodegenerazione.',
+note:'ILAE/Charlie Foundation 2022. Rapporto clasico 4:1 (grassi:carboidrati+proteine). MCT-KD e MAD come varianti. Monitoraggio: chetoni urinari/ematici.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Uova scramble con burro',qt:'3 uova + 20g burro'},{nome:'Pancetta o speck',qt:'40g'},{nome:'Avocado',qt:'100g'},{nome:'Caffè con panna',qt:'200ml + 30ml panna'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone con burro alle erbe',qt:'200g + 25g burro'},{nome:'Insalata con olio EVO abbondante',qt:'100g + 30ml olio'},{nome:'Formaggio stagionato',qt:'40g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Coscia di pollo con pelle (grassa)',qt:'200g'},{nome:'Verdure a basso carbo in olio abbondante',qt:'150g + 25ml olio'},{nome:'Crema di formaggio',qt:'50g'}]}
+],
+giorni:['Chetoni target: β-idrossibutirrato ematico 2-5 mmol/L (keto-adattamento 4-6 settimane)','Carboidrati totali: MAX 20-50g/die incluse fibre nette — contare sempre le etichette','Elettroliti: integrare Na, K, Mg per prevenire "keto-flu" (crampi, stanchezza, nausea iniziale)','Fibre: necessarie nonostante basso carbo — verdure a foglia verde, semi, psyllium','Supplementi obbligatori: multimineral, calcio, vitamina D, B-complex (restrizione frutta e cereali)','Lipidi: preferire olio EVO, burro ghee, olio MCT, avocado, noci — limitare Omega-6 da oli semi']},
+{id:'dieta_dash',cat:'Diete preventive',emoji:'🫀',nome:'Dieta DASH',badge:'DASH',colore:'#10b981',
+desc:'Dietary Approaches to Stop Hypertension. Efficace anche per dislipidemia, diabete tipo 2, prevenzione cardiovascolare. Riduzione sistolica fino a 11 mmHg in ipertesi.',
+note:'NHLBI 2021/AHA 2021. Sodium restriction: 1500-2300 mg/die. 8-10 porzioni frutta e verdura/die. Latticini low-fat 2-3 porzioni.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Fiocchi d\'avena',qt:'60g'},{nome:'Latte parzialmente scremato',qt:'200ml'},{nome:'Banana',qt:'1 media'},{nome:'Mandorle non salate',qt:'20g'},{nome:'Tè verde',qt:'200ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Insalata mista abbondante con verdure colorate',qt:'300g'},{nome:'Pollo o legumi',qt:'100g'},{nome:'Pane integrale (no sale)',qt:'50g'},{nome:'Olio EVO',qt:'10g'},{nome:'Yogurt greco low-fat',qt:'125g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Salmone o pesce magro',qt:'150g'},{nome:'Riso integrale',qt:'70g secco'},{nome:'Verdure miste al vapore',qt:'300g'},{nome:'Olio EVO',qt:'10g'},{nome:'Frutta fresca',qt:'150g'}]}
+],
+giorni:['Sale: MAX 2300 mg/die (equivalente a ~5.8g sale da cucina). Obiettivo ottimale: 1500 mg/die','Frutta e verdura: 4-5 porzioni/die ciascuna — varietà e colori diversi ogni giorno','Cereali integrali: 7-8 porzioni/die — riso, avena, farro, quinoa. NO cereali raffinati','Latticini low-fat: 2-3 porzioni/die — yogurt, latte scremato, formaggi a basso contenuto di grassi','Carni: preferire pollo, tacchino, pesce — MAX 2 porzioni di carne rossa/settimana, niente salumi','Grassi: privilegiare insaturi (EVO, noci, avocado) — limitare saturi e trans','Zuccheri aggiunti: MAX 5 porzioni/settimana — eliminare bevande zuccherate']},
+{id:'dieta_antiinfiammatoria',cat:'Diete preventive',emoji:'🌊',nome:'Dieta Antiinfiammatoria',badge:'Anti-infiamm.',colore:'#10b981',
+desc:'Pattern alimentare ricco di polifenoli, Omega-3, fibre e antiossidanti che riduce i marker di infiammazione sistemica (PCR, IL-6, TNF-α). Efficace nella prevenzione di malattie croniche.',
+note:'Calder 2017 (Nature Reviews). Base: dieta mediterranea + alimenti chiave antiinfiammatori + riduzione UPF.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Tè verde o matcha',qt:'200ml'},{nome:'Yogurt greco con curcuma e pepe nero',qt:'150g + 1/2 cucchiaino'},{nome:'Mirtilli o frutti rossi',qt:'100g'},{nome:'Noci',qt:'30g'},{nome:'Semi di chia',qt:'15g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Salmone selvaggio o sardine',qt:'150g'},{nome:'Insalata di spinaci, rucola, radicchio',qt:'200g'},{nome:'Melagrana (chicchi)',qt:'80g'},{nome:'Olio EVO (polif. alto)',qt:'20ml'},{nome:'Avocado',qt:'80g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Zuppa di curcuma e zenzero con legumi',qt:'400ml'},{nome:'Broccoli o cavoletti di Bruxelles',qt:'200g'},{nome:'Riso integrale o quinoa',qt:'60g secco'},{nome:'Olio EVO',qt:'15ml'},{nome:'Aglio (abbondante)',qt:'2 spicchi'}]}
+],
+giorni:['Omega-3: salmone, sardine, sgombro almeno 3x/settimana. Semi di lino e chia per la quota ALA vegetale','Polifenoli: frutti rossi, tè verde, cacao fondente >85%, olio EVO varietà ricche in polifenoli','Curcuma + pepe nero: la piperina aumenta biodisponibilità curcumina di 2000% — abbinare sempre','Aglio e cipolla: ricchi in composti solforati antiinfiammatori e prebiotici','ELIMINARE: zuccheri raffinati, UPF, oli di semi industriali ricchi in Omega-6, alcol in eccesso','Probiotici: kefir, kimchi, miso, yogurt naturale — supportano microbiota con effetto antiinfiammatorio','NON è una dieta miracolo: riduce infiammazione cronica di basso grado, non sostituisce farmaci']},
+{id:'prevenzione_oncologica',cat:'Diete preventive',emoji:'🛡️',nome:'Nutrizione Preventiva Oncologica',badge:'Prev. Cancro',colore:'#10b981',
+desc:'Stile alimentare basato sulle raccomandazioni WCRF/AICR per ridurre il rischio di sviluppare tumori. Obiettivo: non eliminare tutti i rischi ma ridurli significativamente.',
+note:'WCRF/AICR Cancer Prevention Recommendations 2018 (aggiornate 2023). Stima: 30-40% dei tumori prevenibili con dieta, peso e attività fisica.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Porridge di avena integrale',qt:'60g'},{nome:'Frutti di bosco (mirtilli, lamponi)',qt:'100g'},{nome:'Semi di lino macinati',qt:'10g'},{nome:'Noci o mandorle',qt:'20g'},{nome:'Tè verde',qt:'200ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Insalata di legumi vari (lenticchie, ceci, fagioli)',qt:'150g cotti'},{nome:'Verdure crocifere (broccoli, cavolfiore)',qt:'150g'},{nome:'Salmone o tonno al naturale',qt:'100g'},{nome:'Pane integrale',qt:'50g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Verdure colorate abbondanti',qt:'300g'},{nome:'Tofu o legumi o pesce',qt:'120g'},{nome:'Cereali integrali (riso, quinoa, farro)',qt:'60g secco'},{nome:'Aglio, cipolla, erbe aromatiche',qt:'abbondante'}]}
+],
+giorni:['Mantenere peso corporeo sano: BMI 18.5-24.9 — l\'obesità è fattore di rischio per 13 tipi di tumori','Carne rossa: MAX 350-500g/settimana di peso cotto — ZERO carne processata (insaccati, wurstel, prosciutto)','Alcol: eliminare completamente è l\'ideale — ogni dose è cancerogena (Gruppo 1 IARC)','Plant-based: almeno 2/3 del piatto da alimenti vegetali — verdure, legumi, cereali integrali, frutta','Attività fisica: 150 min/settimana aerobica moderata — riduce rischio colon, seno, endometrio','Fibre: obiettivo 30g/die da fonti alimentari — colon, seno, endometrio','Supplementi: NON raccomandati per prevenzione — preferire alimenti interi']},
+// PATOLOGIE ONCOLOGICHE E COMPLICANZE
+{id:'cachessia_oncologica',cat:'Oncologia',emoji:'⚕️',nome:'Cachessia Oncologica',badge:'Cachessia',colore:'#dc2626',
+desc:'Sindrome metabolica multifattoriale: perdita di peso >5% in 6 mesi (o >2% con BMI<20), perdita di massa muscolare, resistenza alla renutrizione. Presente nel 50-80% dei pazienti oncologici in fase avanzata.',
+note:'Fearon 2011 (Lancet Oncology). Criteri diagnostici: perdita >5% in 6 mesi; o BMI<20 con perdita >2%; o ASMI basso con perdita >2%.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte intero o formula ONS',qt:'300ml'},{nome:'Uova strapazzate con olio EVO',qt:'2-3 uova'},{nome:'Pane o biscotti',qt:'40g'},{nome:'Frutta frullata',qt:'100g'}]},
+{nome:'Spuntino mattino',emoji:'🍌',items:[{nome:'Integratore nutrizionale orale (ONS)',qt:'200ml'},{nome:'Frutta fresca',qt:'100g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Carne o pesce (forma morbida se disfagia)',qt:'120-150g'},{nome:'Pasta o riso con condimento grasso',qt:'80g + 20g olio o burro'},{nome:'Formaggio grattugiato',qt:'30g'}]},
+{nome:'Spuntino pomeriggio',emoji:'🧁',items:[{nome:'Yogurt intero o crema di mandorle',qt:'150g'},{nome:'ONS ad alta energia',qt:'200ml'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Pesce o legumi cremosi',qt:'120g'},{nome:'Purè di patate con burro e latte',qt:'200g'},{nome:'Verdure cotte morbide',qt:'100g'}]}
+],
+giorni:['Obiettivo: minimizzare la perdita di peso e massa muscolare — NON aspettarsi aumento di peso nella cachessia refrattaria','EPA (acido eicosapentaenoico): 2-4 g/die da olio di pesce — riduce infiammazione e catabolismo muscolare','Proteine: 1.2-2 g/kg/die di peso attuale — distribuire in tutti i pasti','Energie: 25-30 kcal/kg (non aumentare oltre — rischio refeeding)','Pasti piccoli e frequenti: 5-6 volte al giorno — stomaco piccolo e sazietà precoce da tumore','Consistenza: adattare alla capacità masticatoria e di deglutizione del paziente','ONS: 400-600 kcal/die aggiuntive — se non raggiunge fabbisogno con soli pasti']},
+{id:'sindrome_lisi_tumorale',cat:'Oncologia',emoji:'⚡',nome:'Sindrome da Lisi Tumorale (SLT)',badge:'Lisi Tumorale',colore:'#dc2626',
+desc:'Emergenza oncologica durante chemioterapia: massiccia lisi cellulare → iperpotassiemia, iperfosfatemia, iperuricemia, ipocalcemia. Rischio: leucemie, linfomi, tumori a rapida proliferazione.',
+note:'Cairo-Bishop 2004 (aggiornato Howard 2011). Prevenzione: idratazione EV, allopurinolo/rasburicase, monitoraggio elettroliti ogni 6-8h.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Riso bianco semplice',qt:'60g secco'},{nome:'Albume d\'uovo (basso K e P)',qt:'3 albumi'},{nome:'Pane bianco',qt:'40g'},{nome:'Acqua abbondante',qt:'400ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta bianca in bianco',qt:'70g'},{nome:'Merluzzo (basso K, basso P)',qt:'120g'},{nome:'Zucchine bollite (basso K)',qt:'150g'},{nome:'Olio EVO',qt:'8g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco',qt:'60g secco'},{nome:'Petto di pollo bollito',qt:'100g'},{nome:'Cavolo bianco bollito',qt:'150g'},{nome:'Olio EVO',qt:'8g'}]}
+],
+giorni:['EMERGENZA: la SLT acuta richiede gestione ospedaliera con EV — la dieta è supporto NON trattamento','Idratazione orale: bere almeno 2-3L/die se SLT profilattico — facilita escrezione renale urato e fosfato','Potassio: LIMITARE frutta secca, banane, patate, legumi, latticini — preferire frutta povera di K (mele, pere, uva)','Fosfato: LIMITARE latticini, noci, semi, carne processata, bevande cola — preferire albumi','Acido urico: LIMITARE purine (carne rossa, frattaglie, frutti di mare, alcolici)','Calcio: spesso ipocalcemia concomitante — monitorare e supplementare se sintomatico','Allopurinolo: inibisce produzione urato — rasburicase degradazione enzimatica in casi gravi']},
+// PEDIATRIA E SPORT
+{id:'artrite_idiopatica_giovanile',cat:'Reumatologia pediatrica',emoji:'🦴',nome:'Artrite Idiopatica Giovanile (AIJ)',badge:'AIJ',colore:'#f59e0b',
+desc:'Artrite infiammatoria cronica ad esordio in età <16 anni. Vari sottotipi (oligoarticolare, poliarticolare, sistemica). Impatto su crescita, nutrizione, massa ossea.',
+note:'EULAR/ACR 2019. Supporto nutrizionale: ottimizzare crescita, proteggere osso, ridurre infiammazione con dieta.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte vaccino o bevanda vegetale calcificata',qt:'250ml'},{nome:'Cereali integrali',qt:'40g'},{nome:'Frutta fresca',qt:'150g'},{nome:'Yogurt naturale',qt:'100g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'60g'},{nome:'Pollo o tacchino (proteine crescita)',qt:'100g'},{nome:'Broccoli o cavolfiore',qt:'150g'},{nome:'Parmigiano (calcio)',qt:'20g'},{nome:'Olio EVO',qt:'8g'}]},
+{nome:'Merenda',emoji:'🍌',items:[{nome:'Latte o yogurt',qt:'150ml/g'},{nome:'Frutta fresca',qt:'100g'},{nome:'Mandorle',qt:'15g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Salmone o sardine (Omega-3)',qt:'120g'},{nome:'Riso integrale',qt:'50g secco'},{nome:'Verdure miste',qt:'150g'},{nome:'Olio EVO',qt:'8g'}]}
+],
+giorni:['Crescita: monitorare altezza e peso ogni 3-6 mesi — i corticosteroidi rallentano la crescita','Calcio: 1000-1300 mg/die secondo età — essenziale per prevenire osteoporosi da malattia e corticosteroidi','Vitamina D: 600-1000 UI/die — integrare se <30 ng/ml (comune in AIJ)','Omega-3: EPA+DHA 2-3 g/die — piccolo effetto antiinfiammatorio dimostrato in adulti con AR','Metotressato e folati: supplementare acido folico 5 mg/settimana durante trattamento con MTX','Corticosteroidi: aumentano appetito ma riducono densità ossea — privilegiare calcio e vitamina D','Ferro: anemia da malattia cronica frequente — monitorare ferritina, Hb, transferrina']},
+{id:'sport_endurance',cat:'Nutrizione sportiva',emoji:'🏃',nome:'Nutrizione Sport Endurance',badge:'Endurance',colore:'#2563eb',
+desc:'Nutrizione per sport di resistenza prolungata: maratona, triathlon, ciclismo, sci di fondo. Elevato dispendio energetico, necessità di carbo-loading, gestione idro-elettrolitica.',
+note:'ISSN 2021/ACSM 2022. CHO target: 7-10 g/kg/die in allenamento intenso, 10-12 g/kg 36-48h prima di gara.',
+pasti:[
+{nome:'Colazione (giorno gara)',emoji:'🏁',items:[{nome:'Pane bianco o riso',qt:'100g'},{nome:'Marmellata o miele',qt:'30g'},{nome:'Banana',qt:'1 grande'},{nome:'Latte o yogurt',qt:'200ml'},{nome:'Uova sode o strapazzate',qt:'2 uova'}]},
+{nome:'Pre-allenamento (3h prima)',emoji:'⏰',items:[{nome:'Pasta o riso bianco',qt:'80g secco'},{nome:'Petto di pollo',qt:'100g'},{nome:'Olio EVO',qt:'8g'},{nome:'Frutta fresca',qt:'150g'}]},
+{nome:'Durante gara (ogni 45-60 min)',emoji:'🚴',items:[{nome:'Gel energetico o banana',qt:'1 gel o 1 banana'},{nome:'Bevanda isotonica',qt:'500ml/h'},{nome:'Barretta energetica',qt:'ogni 60-90min'}]},
+{nome:'Post-allenamento (entro 30 min)',emoji:'🔄',items:[{nome:'Carboidrati rapidi (banana, succo)',qt:'1-1.2 g/kg'},{nome:'Proteine (latte, frullato whey)',qt:'0.3-0.4 g/kg'},{nome:'Acqua con sali',qt:'500-750ml'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Pasta o riso (abbondante)',qt:'100g secco'},{nome:'Salmone o carne bianca',qt:'150g'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio EVO',qt:'15g'}]}
+],
+giorni:['Carbo-loading: 36-48h pre-gara aumentare CHO a 10-12 g/kg/die, ridurre volume di allenamento','Glicogeno: ogni grammo trattiene ~3g acqua — leggero aumento peso durante carbo-loading è normale','Idratazione: 5-7 ml/kg nelle 4h pre-gara; 400-800 ml/h durante; sali se >1.5h di gara','Sodio durante: essenziale in gare >2h — evitare iponatremia da eccesso di acqua senza sale','Proteine: 1.2-1.7 g/kg/die — sufficienti, non esagerare (riduce adattamento aerobico)','Ferro: monitorare in donne e atleti intensi — emolisi meccanica da impatto piede','Caffè: 3-6 mg/kg 1h prima di gara — ergogenico documentato in endurance']},
+{id:'sport_forza',cat:'Nutrizione sportiva',emoji:'💪',nome:'Nutrizione Sport di Forza',badge:'Forza',colore:'#2563eb',
+desc:'Nutrizione per sport di forza/potenza: sollevamento pesi, bodybuilding, CrossFit, atletica di potenza. Focus su sintesi proteica, recupero e composizione corporea.',
+note:'ISSN 2022/Phillips 2016. Proteine: 1.6-2.2 g/kg/die. Distribuzione: 4 pasti da 0.4 g/kg. Leucina threshold: 2-3g per stimolo MPS.',
+pasti:[
+{nome:'Colazione (post-risveglio)',emoji:'☀️',items:[{nome:'Uova intere',qt:'3-4 uova'},{nome:'Pane integrale',qt:'60g'},{nome:'Yogurt greco 0%',qt:'200g'},{nome:'Avena',qt:'40g'},{nome:'Frutta fresca',qt:'150g'}]},
+{nome:'Pre-allenamento (1-2h prima)',emoji:'⏰',items:[{nome:'Riso bianco o pasta',qt:'70g secco'},{nome:'Petto di pollo',qt:'100g'},{nome:'Frutta (carboidrati)',qt:'100g'}]},
+{nome:'Post-allenamento (entro 30-60 min)',emoji:'🔄',items:[{nome:'Whey protein o yogurt greco',qt:'30g proteina'},{nome:'Banana o pane bianco',qt:'30-50g carboidrati rapidi'},{nome:'Latte o acqua',qt:'300ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Carne bianca o pesce magro',qt:'150-200g'},{nome:'Pasta o riso',qt:'80g secco'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Salmone o carne rossa magra',qt:'150g'},{nome:'Patate o quinoa',qt:'150g cotti'},{nome:'Broccoli o verdure verdi',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]}
+],
+giorni:['Proteine: 1.6-2.2 g/kg/die di peso corporeo. 2.5-3.1 g/kg in ipocalorica per preservare massa','Distribuzione proteica: 4 pasti da ~0.4 g/kg/pasto — massimizza sintesi proteica muscolare (MPS)','Leucina: almeno 2-3g per pasto per attivare mTOR — whey, uova, carne, latte contengono moltà','Creatina monoidrato: 3-5 g/die (no loading necessario) — ergogenico più studiato e sicuro','Carboidrati: 4-6 g/kg/die — non eliminare, supportano allenamento e recupero','Deficit calorico lento: -300-500 kcal/die per perdita grasso senza perdita muscolare','Sonno: 7-9h/notte — il GH e il recupero muscolare avvengono soprattutto di notte']},
+// ALTRE CONDIZIONI
+{id:'lipodistrofia',cat:'Malattie metaboliche',emoji:'💉',nome:'Lipodistrofia',badge:'Lipodistrofia',colore:'#7c3aed',
+desc:'Perdita selettiva di tessuto adiposo sottocutaneo con accumulo viscerale, insulino-resistenza grave, dislipidemia, steatosi epatica. Forme genetiche (Berardinelli-Seip, Familiari) o acquisite (HIV-terapia HAART).',
+note:'Akinci 2022 (Nature Reviews Endocrinology). Dieta: fondamentale per gestire ipertrigliceridemia spesso grave e insulino-resistenza.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Avena con latte scremato',qt:'60g + 200ml'},{nome:'Frutti di bosco',qt:'100g'},{nome:'Noci (omega-3)',qt:'20g'},{nome:'Tè verde senza zucchero',qt:'200ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pesce azzurro (ricco Omega-3)',qt:'150g'},{nome:'Verdure miste abbondanti',qt:'300g'},{nome:'Legumi (ceci o lenticchie)',qt:'100g cotti'},{nome:'Olio EVO',qt:'10g'},{nome:'Pane integrale',qt:'40g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Tofu o carne bianca magra',qt:'120g'},{nome:'Riso integrale',qt:'60g secco'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio EVO',qt:'8g'}]}
+],
+giorni:['Trigliceridi: target <500 mg/dl (rischio pancreatite) — eliminare alcol e zuccheri semplici','Grassi saturi e trans: ELIMINARE — aggravano dislipidemia e insulino-resistenza','Omega-3 ad alte dosi: 4-6 g/die EPA+DHA — riducono trigliceridi fino al 30-40%','Carboidrati: preferire complessi a basso IG — evitare zuccheri raffinati, fruttosio','Alcol: ELIMINARE completamente — effetto drammatico sui trigliceridi','Insulino-resistenza: distribuire carboidrati in piccoli pasti frequenti — evitare pic glicemici','HIV/HAART: alcune terapie (stavudina, zidovudina) peggiorano lipodistrofia — discutere con infettivologo']},
+{id:'sindrome_gilbert',cat:'Malattie epatiche benigne',emoji:'🟡',nome:'Sindrome di Gilbert',badge:'Gilbert',colore:'#f59e0b',
+desc:'Iperbilirubinemia non coniugata benigna da ridotta attività UGT1A1. Ittero funzionale intermittente, accentuato da digiuno, stress, infezioni, alcol. Nessun danno epatico cronico.',
+note:'Bosma 1995. Prevalenza ~5-10% della popolazione generale. Prognoisi eccellente — nessun trattamento necessario ma evitare trigger.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte o yogurt',qt:'200ml/g'},{nome:'Pane integrale o cereali',qt:'50g'},{nome:'Frutta fresca',qt:'150g'},{nome:'Uova o affettato magro',qt:'1 uovo o 30g'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta o riso',qt:'70g secco'},{nome:'Carne bianca o pesce',qt:'100-120g'},{nome:'Verdure miste',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Proteine variabili',qt:'100-120g'},{nome:'Cereali integrali',qt:'60g secco'},{nome:'Verdure',qt:'200g'},{nome:'Olio EVO',qt:'10g'}]}
+],
+giorni:['Digiuno: EVITARE digiuni prolungati >12-14h — aumenta bilirubina non coniugata e accentua ittero','Pasti regolari: mangiare ogni 4-5h mantiene la bilirubina stabile — mai saltare la colazione','Alcol: limitare fortemente — il metabolismo dell\'alcol compete con la coniugazione della bilirubina','Stress e infezioni: gli episodi febbrili accentuano l\'ittero — non richiede trattamento specifico','Farmaci: alcuni farmaci (paracetamolo in alte dosi, irinotecano) sono metabolizzati meno bene — informare medico','Prognosi: assolutamente benigna — nessun rischio di cirrosi o danno epatico cronico','Tranquillizzare: molti pazienti sono angosciati dall\'ittero — la rassicurazione è la principale terapia']},
+{id:'iperfosfatemia',cat:'Nefologia',emoji:'🔬',nome:'Iperfosfatemia',badge:'Iperfosfat.',colore:'#6d28d9',
+desc:'Fosfato sierico >4.5 mg/dl (1.45 mmol/L). Comune in dialisi e IRC avanzata. Causa: calcificazioni vascolari, iperparatiroidismo secondario, malattia cardiovascolare. Richiede gestione dietologica specifica.',
+note:'KDIGO 2017. Target fosforo sierico: 3.5-5.5 mg/dl in dialisi. Timing chelanti: con i pasti per massimizzare efficacia.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Pane bianco (basso P)',qt:'50g'},{nome:'Marmellata o miele',qt:'20g'},{nome:'Caffè (basso P)',qt:'150ml'},{nome:'Albume d\'uovo (basso P/alto ratio P:prot)',qt:'2-3 albumi'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta bianca',qt:'70g'},{nome:'Carne o pesce (limitare porzione)',qt:'80g'},{nome:'Verdure a basso fosforo',qt:'150g'},{nome:'Olio EVO',qt:'10g'},{nome:'Chelante del fosforo con il pasto',qt:'come prescritto'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco',qt:'60g secco'},{nome:'Carne bianca o pesce bianco',qt:'80g'},{nome:'Cavolo o cetrioli o insalata',qt:'150g'},{nome:'Olio EVO',qt:'10g'},{nome:'Chelante del fosforo con il pasto',qt:'come prescritto'}]}
+],
+giorni:['Fosforo additivi (PHOS-): PEGGIORI — cereali da colazione, cola, alimenti processati contengono fosfato inorganico quasi 100% assorbibile','Fosforo organico: carni e pesce hanno fosforo proteico, assorbito ~60-70%. Preferire uova (basso P) a latticini (alto P)','Fosforo vegetale: legumi/cereali integrali, assorbito ~30-40% per fitati — NON eliminare','Chelanti del fosforo: PRENDERE CON IL PASTO — non pre- o post-pasto — altrimenti inefficaci','Dialisi: la seduta rimuove solo il 25-30% del fosforo — la dieta è fondamentale','Latticini: eliminare o ridurre drasticamente — altissimo contenuto di fosforo inorganico','Cola e bevande: contengono acido fosforico — eliminare completamente']},
+{id:'nutrizione_geriatrica_rsa',cat:'Geriatria clinica',emoji:'🏥',nome:'Nutrizione in RSA / Lungodegenza',badge:'RSA',colore:'#64748b',
+desc:'Pazienti anziani istituzionalizzati con multiple comorbilità, polifarmacia, ridotta autonomia, spesso con disfagia e malnutrizione. Elevato rischio di decadimento nutrizionale iatrogeno.',
+note:'ESPEN 2020/SINPE 2021. Screening: MNA-SF ogni 3 mesi. Target proteico: 1.2-1.5 g/kg/die. Densità energetica elevata con piccoli volumi.',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Latte intero con maltodestrine (densificato)',qt:'200ml + 20g'},{nome:'Biscotti o pane morbido',qt:'40g'},{nome:'Formaggio morbido o marmellata',qt:'20g'}]},
+{nome:'Spuntino mattino',emoji:'🍌',items:[{nome:'Frullato di frutta con latte/yogurt',qt:'150ml'},{nome:'ONS se indicato',qt:'200ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta o riso (morbido, cremoso)',qt:'70g'},{nome:'Carne macinata o pesce sminuzzato (texture adattata)',qt:'80-100g'},{nome:'Verdure frullate o morbide',qt:'100g'},{nome:'Olio EVO abbondante',qt:'15g'}]},
+{nome:'Merenda',emoji:'☕',items:[{nome:'Tè o caffè con latte intero',qt:'200ml'},{nome:'Dolce o budino proteico',qt:'100g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Brodo ricco con pastina o semolino',qt:'250ml'},{nome:'Uova o formaggio o pesce morbido',qt:'80-100g'},{nome:'Purea di verdure con olio EVO',qt:'150g'}]}
+],
+giorni:['Screening nutrizionale: MNA-SF ogni 3 mesi — intervenire prima che la malnutrizione sia grave','Disfagia: valutare con GUSS o VFSS — adattare texture IDDSI (livelli 1-7) e liquidi densificati','Energia: 30-35 kcal/kg/die — molti anziani istituzionalizzati ricevono meno del 70% del fabbisogno','Proteine: 1.2-1.5 g/kg/die (di peso attuale, non ideale) — essenziali per mantenere massa muscolare','Idratazione: rischio disidratazione molto alto — offrire liquidi ogni 2h, densificati se disfagia','ONS: 2 volte al die se malnutriti — 400-600 kcal aggiuntive, effetto clinico dimostrato','Micronutrienti: vitamina D 800-2000 UI/die (quasi universalmente carente), vitamina B12, zinco, folati']},
+{id:'anemia_emolitica',cat:'Ematologia',emoji:'🔴',nome:'Anemia Emolitica',badge:'Anemia Emol.',colore:'#dc2626',
+desc:'Distruzione prematura dei globuli rossi (emivita <120gg). Cause: autoimmune (AIHA), ereditaria (favismo G6PD, sferocitosi, talassemia), meccanica, farmaci. Manifestazioni: anemia, ittero, splenomegalia.',
+note:'ASH 2018. Supporto nutrizionale: folati (consumo aumentato da eritropoiesi), vitamina B12, vitamina E (antiossidante), ferro con cautela (sovraccarico).',
+pasti:[
+{nome:'Colazione',emoji:'☀️',items:[{nome:'Pane integrale',qt:'50g'},{nome:'Succo di arancia (folati + vitamina C)',qt:'150ml'},{nome:'Uova o legumi (proteine per eritropoiesi)',qt:'2 uova'},{nome:'Latte o yogurt',qt:'150ml'}]},
+{nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale',qt:'70g'},{nome:'Fegato (folati + B12 — con cautela per ferro)',qt:'80g'},{nome:'Spinaci e bietole (folati)',qt:'200g'},{nome:'Olio EVO',qt:'10g'},{nome:'Vitamina C (peperoni crudi o kiwi)',qt:'100g'}]},
+{nome:'Cena',emoji:'🌙',items:[{nome:'Legumi (ceci, fagioli — folati)',qt:'150g cotti'},{nome:'Riso o pasta',qt:'60g secco'},{nome:'Verdure miste (antiossidanti)',qt:'200g'},{nome:'Mandorle (vitamina E)',qt:'20g'}]}
+],
+giorni:['Folati: aumentare a 1-5 mg/die (vs 0.4 mg RDA) — eritropoiesi accelerata consuma folati','Vitamina B12: monitorare e supplementare se bassa — specie in anziani e vegetariani','Ferro: CAUTELA — l\'emolisi cronica libera ferro libero → rischio sovraccarico. NON supplementare senza sideremia e ferritina','Vitamina E: antiossidante protegge membrane eritrocitarie — utile in G6PD e anemie ossidative (100-400 UI/die)','G6PD deficiency (favismo): eliminare ASSOLUTAMENTE fave, piselli freschi, alcuni farmaci e antiossidanti ossidanti','Alcol: ELIMINARE — precipita crisi emolitiche in G6PD e AIHA','Infezioni: un banale raffreddore può precipitare crisi emolitica in G6PD — vaccinazioni aggiornate']},
 ];
 const PATOLOGIE_CUSTOM = [];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}
@@ -5644,7 +6178,37 @@ const FABBISOGNO_PATOLOGIE={
   politrauma:{kcal:'TBI grave: 140% del REE nelle prime 2 settimane | Fase riabilitativa: 35-40 kcal/kg/die',prot:'1.5-2.5 g/kg/die (massimo in fase acuta)',note:'ESPEN 2018/BTF 2022. Nutrizione enterale entro 24-48h. TBI: DHA 2-4g/die per neuroprotection. Glicemia target 140-180 mg/dL (iper e ipoglicemia aumentano mortalità). Glutammina enterale 0.3-0.5 g/kg/die. Vitamina D 4000 UI, zinco per guarigione ossea. Progressione verso orale con valutazione logopedica post-extubazione.'},
   rachitismo_osteomalacia:{kcal:'Standard per età',prot:'Standard',note:'ENDO 2011/ISS 2022. Vitamina D3 terapeutica: 50.000 UI/settimana × 8 settimane, poi 1500-2000 UI/die mantenimento. Target 25(OH)D: 30-50 ng/ml. Calcio: 1000-1500 mg/die (adulti), 1200 mg/die (bambini). Magnesio necessario per metabolismo vitamina D. Esposizione solare 15-30 min/die. Monitorare PTH, Ca, fosforo, ALP.'},
   deficit_tiamina:{kcal:'Standard — garantire apporto calorico completo (mai glucosio prima di tiamina in Wernicke!)',prot:'Standard',note:'EFNS 2010/ESPEN 2022. EMERGENZA: tiamina EV 200-500 mg 3×/die × 3-5 gg, poi 100 mg/die po. RDA: 1.1-1.2 mg/die adulti. Fonti: maiale (0.9 mg/100g), cereali integrali, legumi, semi di girasole. Cottura riduce tiamina. Post-bariatrica: 100 mg/die vita. Post-alcol: mesi di supplementazione. Monitorare tiamina plasmatica + lattato.'},
-  celiachia_bambini:{kcal:'Fabbisogno pediatrico per età (incremento per catch-up growth nei primi mesi di GFD)',prot:'1.0-1.5 g/kg/die (crescita)',note:'ESPGHAN 2020/SIGENP 2023. GFD rigorosa <20 ppm glutine. Alimenti sicuri: riso, mais, patate, grano saraceno, quinoa, amaranto, miglio, tapioca. Monitorare: ferro, folati, vitamina D, zinco (carenze all\'esordio). Anti-tTG IgA: ogni 6 mesi per 2 anni post-GFD, poi annuale. Crescita: curva auxologica ogni 3-6 mesi. Densità ossea: DXA a 12 mesi da diagnosi.'}
+  celiachia_bambini:{kcal:'Fabbisogno pediatrico per età (incremento per catch-up growth nei primi mesi di GFD)',prot:'1.0-1.5 g/kg/die (crescita)',note:'ESPGHAN 2020/SIGENP 2023. GFD rigorosa <20 ppm glutine. Alimenti sicuri: riso, mais, patate, grano saraceno, quinoa, amaranto, miglio, tapioca. Monitorare: ferro, folati, vitamina D, zinco (carenze all\'esordio). Anti-tTG IgA: ogni 6 mesi per 2 anni post-GFD, poi annuale. Crescita: curva auxologica ogni 3-6 mesi. Densità ossea: DXA a 12 mesi da diagnosi.'},
+deficit_vitamina_a:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'OMS 2023. RDA Vitamina A: 700 µg RAE/die (F), 900 µg RAE/die (M). Supplementazione terapeutica: 200.000 UI retinolo per os, ripetuto a 24h e 4 settimane. Fonti: fegato, tuorlo, latte intero, arancioni e verdure a foglia verde. Liposolubile: assorbire con grassi. EVITARE ipervitaminosi (>3000 µg RAE/die cronici) — tossicità epatica, teratogenicità.'},
+deficit_vitamina_c:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2013. RDA Vitamina C: 80-90 mg/die. Scorbuto: vitamina C 300-1000 mg/die per 30-60 giorni, poi mantenimento. Fonti: peperoni crudi (190mg/100g), kiwi (93mg), fragole (58mg), agrumi. Termolabile: preferire cruda o cottura breve. Fumo: +35 mg/die. Assorbimento ferro non-eme: abbinare sempre con vitamina C.'},
+deficit_vitamina_e:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2015. RDA Vitamina E: 12 mg α-TE/die. Deficit quasi sempre da malassorbimento lipidico. Integratori: 200-400 mg/die α-tocoferolo. Fonti: germe di grano, oli di semi, mandorle, nocciole. Assunzione con grassi. Evitare supplementi >800 mg/die (effetto anticoagulante).'},
+deficit_vitamina_k:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2017. RDA Vitamina K: 70 µg/die. K1 (verdure verdi), K2 (fermentati, natto). Antibiotici prolungati: rischio deficit — monitorare PT/INR. In warfarin: mantenere introito K1 STABILE non eliminare. Supplementazione K1 per os nei deficit da malassorbimento.'},
+deficit_niacina:{kcal:'25-35 kcal/kg',prot:'1.2-1.5 g/kg',note:'WHO 2000. RDA Niacina: 16 mg NE/die (M), 14 mg NE/die (F). Pellagra: nicotinamide 100-300 mg/die per os fino a remissione. Fonti: carne, pesce, fegato, lievito di birra, arachidi. Mais non nixtamalizzato: niacina legata non biodisponibile. Alcolismo: causa principale in paesi sviluppati.'},
+deficit_riboflavina:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2017. RDA Riboflavina: 1.6 mg/die (M), 1.3 mg/die (F). Supplementazione: 10-30 mg/die. Fonti: fegato (2.9mg/100g), latticini, uova. Fotosensibile: conservare latte in contenitori opachi. Spesso coesistente con deficit B6 e folati.'},
+deficit_biotina:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2014. AI Biotina: 40 µg/die. Avidina (albume crudo) blocca assorbimento — cuocere sempre le uova. NP senza biotina: supplementare 0.1-0.3 mg/die. Biotinidasi deficiency: 5-20 mg/die. Antiepilettici: monitorare e supplementare 10-20 mg/die se necessario.'},
+deficit_magnesio:{kcal:'25-35 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2015. RDA Mg: 300-350 mg/die. Target sierico: 0.8-1.0 mmol/L. Ipomagnesemia sintomatica <0.5 mmol/L: EV urgente. Supplementazione orale: ossido/citrato 300-400 mg/die. PPI e tiazidici: aumentano perdite renali. Diabete e alcolismo: cause frequenti. Ipopotassiemia refrattaria: spesso da ipomagnesemia — correggere Mg prima.'},
+deficit_calcio:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2015. RDA Ca: 1000-1200 mg/die. Ipocalcemia acuta grave: gluconato di calcio EV. Ipoparatiroidismo: calcio 1-2 g/die + calcitriolo 0.25-0.5 µg/die. Vitamina D essenziale per assorbimento intestinale. Ossalati (spinaci) e fitati (cereali integrali) riducono assorbimento — diversificare fonti. Non assumere contemporaneamente a ferro.'},
+deficit_rame:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'EFSA 2015. RDA Rame: 1.3-1.5 mg/die. Cupremia normale: 12-22 µmol/L. Supplementazione: cuprismo solfato 2 mg/die per os. Eccesso zinco >50mg/die → blocca assorbimento rame — ridurre zinco. Chirurgia bariatrica: monitorare ogni 6-12 mesi. Neuropatia da deficit rame simile a deficit B12 — escludere.'},
+omocistinuria:{kcal:'25-35 kcal/kg',prot:'0.8-1.5 g/kg (quota naturale limitata)',note:'ESIEM 2022. B6-responsive: piridossina 100-1000 mg/die, folati, B12. Non-responsive: dieta bassa in metionina + formula senza metionina + betaina 3-6 g/die. Target omocisteina: <50 µmol/L (non-responsive), <30 (B6-resp). Tromboprofilassi. Densità ossea: DXA ogni 2-3 anni.'},
+glicogenosi_iii:{kcal:'25-35 kcal/kg',prot:'1.5-2.0 g/kg (alta per protezione muscolare)',note:'ESIEM 2023. Cornstarch cruda 0.5-1 g/kg ogni 4-6h. Digiuno: mai >4-6h. Proteine elevate per massa muscolare. CHO complessi preferiti. No limite lipidi (diversamente da GSD I). Monitorare glicemia pre e post pasti. Lattato non elevato (diferisce da GSD I). Cardiomiopatia: ECG periodici.'},
+glicogenosi_v:{kcal:'30-40 kcal/kg (aumentato)',prot:'1.2-1.7 g/kg',note:'Quinlivan 2010. Saccarosio 30-40g pre-esercizio (5-10 min prima). Fruttosio: non utile. CHO: 55-65% energia totale. Evitare esercizio anaerobico intenso (rabdomiolisi). Creatina 1-3 g/die in alcuni pazienti. Idratazione: fondamentale per prevenire mioglobinuria. Controllare CK dopo esercizio.'},
+acidemia_propionica:{kcal:'100-120% RDA età',prot:'<1.0 g/kg naturale + formula specifica',note:'Baumgartner 2014 JIMD. Formula senza AA propiogenici. Carnitina 50-100 mg/kg/die. Biotina 10 mg/die. Proteine naturali: 0.3-0.8 g/kg/die (minima tolleranza). Emergenza: sospendere proteine 24-48h, glucosio EV. Propionato target: <200 µmol/L. Trapianto epatico in casi refrattari.'},
+malattia_gaucher:{kcal:'25-30 kcal/kg',prot:'1.2-1.5 g/kg',note:'Gaucher Alliance 2022. Calcio 1000-1200 mg/die, vitamina D 1000-2000 UI/die per osteoporosi. Ferro: apporto adeguato (anemia), monitorare ferritina. TES (imiglucerasi/velaglucerasi): trattamento principale. Peso sano: evitare sovraccarico epatico-splenico. No sport di contatto con splenomegalia.'},
+esofagite_eosinofila:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'AGREE 2022. SFED (6 food elimination): latte, grano, uova, soia, frutti di mare, noci/arachidi per 6-8 settimane. Step-up: eliminare 2 (latte+grano) poi sequenziale. Reintroduzione: un alimento ogni 6-8 settimane con biopsia. PPI 40-80 mg/die trial preventivo. Formula elementare in casi gravi (100% remissione).'},
+dieta_chetogenica:{kcal:'25-35 kcal/kg (calcolare con dietista)',prot:'1.0-1.5 g/kg',note:'ILAE/Charlie Foundation 2022. Rapporto 4:1 (grassi:CHO+prot) o 3:1. CHO: <10-20g/die. Chetoni ematici target: 2-5 mmol/L β-idrossibutirrato. Supplementi obbligatori: multimineral, Ca, vit D, B-complex. Elettroliti: Na, K, Mg. Monitorare: lipidi sierici, valori renali, crescita (bambini). MCT-KD e MAD come varianti meno restrittive.'},
+dieta_dash:{kcal:'1800-2200 kcal (adattare a peso)',prot:'0.8-1.0 g/kg',note:'NHLBI 2021. Sodio: max 2300 mg/die (obiettivo 1500 mg/die). Frutta+verdura: 8-10 porzioni/die. Latticini low-fat: 2-3 porzioni/die. Cereali integrali: 7-8 porzioni/die. Carni magre: ≤2 porzioni/die. Noci/semi: 4-5 porzioni/settimana. Zuccheri aggiunti: max 5 porzioni/settimana. Riduzione sistolica: 8-14 mmHg in ipertesi.'},
+dieta_antiinfiammatoria:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'Calder 2017. Omega-3 (EPA+DHA): 2-4 g/die da pesce grasso o supplementi. Curcumina con piperina: biodisponibilità aumentata 2000%. Polifenoli da frutta colorata, tè verde, cacao >85%. Ridurre Omega-6 (oli di semi industriali). ELIMINARE: UPF, zuccheri raffinati, alcol. PCR come biomarker di monitoraggio.'},
+prevenzione_oncologica:{kcal:'25-30 kcal/kg (normopeso)',prot:'0.8-1.0 g/kg',note:'WCRF/AICR 2018/2023. Pianta vs animale: 2/3 del piatto da vegetali. Carne rossa: max 350-500g/settimana cotta. Carne processata: ZERO. Alcol: ZERO (ogni dose è cancerogena IARC Gruppo 1). BMI 18.5-24.9. Attività fisica: 150 min/settimana. Fibre: 30g/die. Supplementi: NON raccomandati per prevenzione.'},
+cachessia_oncologica:{kcal:'25-30 kcal/kg (peso attuale)',prot:'1.2-2.0 g/kg',note:'Fearon 2011/ESPEN 2021. EPA (acido eicosapentaenoico): 2-4 g/die. Proteine: 1.2-2.0 g/kg/die distribuite in tutti i pasti. ONS: 400-600 kcal aggiuntive/die. Pasti piccoli e frequenti (5-6/die). NON aspettarsi aumento peso in cachessia refrattaria. Consistenza adattata. Trattare nausea e mucositi che limitano l\'introito.'},
+sindrome_lisi_tumorale:{kcal:'25-35 kcal/kg (adeguato)',prot:'0.8-1.2 g/kg',note:'Howard 2011/EMA 2023. EMERGENZA: gestione ospedaliera. Idratazione EV: 3000 ml/m²/die. Dieta: potassio <40 mEq/die; fosforo <800 mg/die; purine basse. Allopurinolo/rasburicase. No diuretici risparmiatori K. Monitoraggio: K, P, Ca, UA ogni 4-8h durante chemio. Dieta restrittiva solo nelle prime 48-72h di chemio ad alto rischio.'},
+artrite_idiopatica_giovanile:{kcal:'100-110% RDA per età (crescita)',prot:'1.0-1.5 g/kg/die',note:'EULAR/ACR 2019. Calcio: 1000-1300 mg/die secondo età. Vitamina D: 600-1000 UI/die, supplementare se <30 ng/ml. Omega-3: EPA+DHA 2-3 g/die (piccolo effetto antiinfiammatorio). Acido folico 5mg/settimana con MTX. Monitorare ferritina, Hb per anemia da malattia cronica. Curva di crescita ogni 3-6 mesi.'},
+sport_endurance:{kcal:'40-70 kcal/kg (volume dipendente)',prot:'1.2-1.7 g/kg',note:'ISSN 2021/ACSM 2022. CHO: 7-10 g/kg/die in allenamento intenso; 10-12 g/kg carbo-loading 36-48h pre-gara. Durante gara: 30-60g CHO/h (fino a 90g/h con glucosio+fruttosio in rapporto 2:1). Sodio: essenziale in gare >2h. Proteine post-allenamento: 0.3-0.4 g/kg entro 30 min. Creatine non utile. Caffè 3-6 mg/kg pre-gara.'},
+sport_forza:{kcal:'30-50 kcal/kg (obiettivo dipendente)',prot:'1.6-2.2 g/kg (2.5-3.1 g/kg in ipocalorica)',note:'ISSN 2022/Phillips 2016. Proteine: distribuire 4 pasti da 0.4 g/kg. Leucina: 2-3g per pasto per attivare MPS. Creatina monoidrato: 3-5 g/die. CHO: 4-6 g/kg/die. Post-workout: CHO 1-1.2 g/kg + Prot 0.3-0.4 g/kg entro 30-60 min. Deficit per dimagrimento: -300-500 kcal/die. Surplus per massa: +300-500 kcal/die.'},
+lipodistrofia:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'Akinci 2022. TG target: <500 mg/dl. Omega-3 EPA+DHA 4-6 g/die riducono TG del 30-40%. Eliminare: alcol, zuccheri semplici, grassi saturi e trans. CHO: preferire complessi a basso IG. Distribuzione pasti: 5-6/die per evitare picchi glicemici. Insulino-resistenza severa: spesso necessaria insulina o metformina oltre alla dieta.'},
+sindrome_gilbert:{kcal:'25-30 kcal/kg',prot:'1.0 g/kg',note:'Bosma 1995. Benigna — nessun trattamento specifico. Evitare digiuni >12-14h: aumentano bilirubina libera. Pasti regolari ogni 4-5h. Alcol: limitare fortemente. Farmaci: informare medico di Gilbert (irinotecano, nilotinib, atazanavir metabolizzati meno bene). Paracetamolo in dosi normali: sicuro. Nessuna restrizione dietetica permanente.'},
+iperfosfatemia:{kcal:'25-30 kcal/kg',prot:'0.8-1.0 g/kg (limitare per ridurre carico P)',note:'KDIGO 2017. Fosforo target (dialisi): 3.5-5.5 mg/dl. Fosforo dieta: <800-1000 mg/die. ELIMINARE: additivi fosfato (PHOS-) in UPF, cola. Ridurre drasticamente: latticini, noci, semi. Preferire: albumi, riso, pasta bianca, verdure. Chelanti del fosforo: SEMPRE con i pasti — non pre o post. Dialisi adeguata: complementare alla dieta.'},
+nutrizione_geriatrica_rsa:{kcal:'30-35 kcal/kg',prot:'1.2-1.5 g/kg',note:'ESPEN 2020/SINPE 2021. Screening: MNA-SF ogni 3 mesi. Disfagia: GUSS e VFSS, texture IDDSI. Vitamina D: 800-2000 UI/die (quasi universalmente carente). B12: monitorare e supplementare. ONS: 400-600 kcal 2x/die se MNA <12. Idratazione: 30 ml/kg/die, offrire ogni 2h. Densificanti proteici: aggiungere a tutti i pasti.'},
+anemia_emolitica:{kcal:'25-35 kcal/kg',prot:'1.2-1.5 g/kg',note:'ASH 2018. Folati: 1-5 mg/die (eritropoiesi accelerata consuma folati). B12: monitorare e supplementare se carente. Vitamina E: 100-400 UI/die (protegge membrane eritrocitarie). Ferro: CAUTELA — l\'emolisi cronica causa sovraccarico di ferro. NON supplementare senza sideremia e ferritina. G6PD: eliminare fave, piselli freschi, farmaci ossidanti. Alcol: eliminare.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

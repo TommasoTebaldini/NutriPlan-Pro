@@ -1074,7 +1074,7 @@ async function loadInformazioni() {
 
   try {
     const { data: prof, error } = await sb.from('profiles')
-      .select('intolerances,food_preferences,first_name,last_name,height_cm,target_weight,activity_level,birth_date,gender,updated_at,avatar_url,full_name')
+      .select('intolerances,food_preferences,first_name,last_name,height_cm,target_weight,activity_level,birth_date,gender,avatar_url,full_name,nome,cognome')
       .eq('id', selectedPatientId).single();
 
     if (error || !prof) {
@@ -1101,11 +1101,11 @@ async function loadInformazioni() {
 
     const actLabels = {sedentario:'Sedentario',leggero:'Leggero',moderato:'Moderato',attivo:'Attivo',molto_attivo:'Molto attivo'};
     const actLabel = actLabels[prof.activity_level] || prof.activity_level || null;
-    const updAt = prof.updated_at ? new Date(prof.updated_at).toLocaleString('it',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
 
     const fullName = chatPatients.find(p => p.id === selectedPatientId)?.name
       || prof.full_name
       || [prof.first_name, prof.last_name].filter(Boolean).join(' ')
+      || [prof.nome, prof.cognome].filter(Boolean).join(' ')
       || 'Paziente';
     const initials = getInitials(fullName);
 
@@ -1130,9 +1130,7 @@ async function loadInformazioni() {
           ${subtitleParts.length ? `<p style="font-size:11.5px;opacity:.85;margin:0">${subtitleParts.join(' · ')}</p>` : ''}
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:9.5px;opacity:.7;margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em">Ultimo agg.</div>
-          <div style="font-size:11.5px;font-weight:700">${updAt}</div>
-          <div style="font-size:10px;display:flex;align-items:center;gap:3px;justify-content:flex-end;margin-top:5px">
+          <div style="font-size:10px;display:flex;align-items:center;gap:3px;justify-content:flex-end">
             <span style="width:6px;height:6px;border-radius:50%;background:#4ADE80;display:inline-block;flex-shrink:0"></span>
             <span style="opacity:.9">Sync in tempo reale</span>
           </div>

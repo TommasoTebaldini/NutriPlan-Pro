@@ -425,11 +425,11 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/db.js"></script>
-<script src="js/lang.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/print-capture.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/db.js" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/print-capture.js" defer></script>
 <script>
 // ═══════════════════════════════════════════════════
 // STATE
@@ -2184,8 +2184,8 @@ async function init() {
   const ok = await checkAuth();
   if (!ok) return;
   rebuildDB();
-  await loadCustomFoods();
-  await loadCartelleAll();
+  // Parallel: custom foods + cartelle don't depend on each other
+  await Promise.all([loadCustomFoods(), loadCartelleAll()]);
 
   const pianoToLoad = sessionStorage.getItem('loadPianoId');
   const newCartellaId = sessionStorage.getItem('newPianoCartella');

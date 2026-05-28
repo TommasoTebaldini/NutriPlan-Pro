@@ -16,7 +16,9 @@
 .lg-link-box{background:#EFF6FF;border-radius:8px;padding:10px 14px;margin-top:12px;border-left:3px solid #3B82F6;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .lg-link-btn{padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
 .lg-link-btn:hover{background:#1D4ED8}
-.lg-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;transition:all .15s;margin-bottom:8px}
+.lg-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;transition:all .18s;margin-bottom:8px;animation:lgCardIn .3s cubic-bezier(.16,1,.3,1) both}
+@keyframes lgCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.lg-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.07);transform:translateY(-1px)}
 .lg-card-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s}
 .lg-card-hdr:hover{filter:brightness(0.96)}
 .lg-card-body{padding:14px 16px;border-top:1px solid var(--border);display:none}
@@ -109,10 +111,10 @@
 
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/lang.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/print-capture.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/print-capture.js" defer></script>
 <script>
 const LG_DATA = [
   {id:'diabete',emoji:'🩸',nome:'Diabete Mellito Tipo 2',badge:'ESPEN 2023',colore:'#3B82F6',
@@ -2594,8 +2596,9 @@ function renderAll(filter='') {
   const filtered = q ? LG_DATA.filter(d => d.dataset_search ? d.dataset_search.includes(q) : (d.nome+' '+d.id+' '+d.badge+' '+d.desc).toLowerCase().includes(q)) : LG_DATA;
   document.getElementById('lg-count').textContent = filtered.length + ' patologie';
   document.getElementById('lg-empty').style.display = filtered.length===0 ? 'block' : 'none';
-  filtered.forEach(d => {
+  filtered.forEach((d, i) => {
     const card = buildCard(d);
+    card.style.animationDelay = Math.min(i * 0.04, 0.5) + 's';
     grid.appendChild(card);
     if (q) {
       document.getElementById('body-'+d.id)?.classList.add('open');

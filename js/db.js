@@ -3260,7 +3260,64 @@ const DB_UPF = [
 {n:"Barbecue sauce (per 100g)",c:"Salse e condimenti",src:"UPF",k:135,p:1.2,gs:0.1,g:0.5,z:28,ch:33,fi:0.5,ca:12,fe:0.5,mg:10,k2:280,na:850,zn:0.2,fo:2,se:1,col:0},
 {n:"Tzatziki industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:95,p:4.5,gs:3.5,g:6.5,z:3,ch:3.5,fi:0.5,ca:95,fe:0.3,mg:12,k2:125,na:320,zn:0.5,fo:10,se:3,col:18},
 {n:"Ranch Dressing (per 100g)",c:"Salse e condimenti",src:"UPF",k:428,p:1.5,gs:5.8,g:45,z:2.5,ch:4,fi:0.2,ca:48,fe:0.2,mg:5,k2:55,na:750,zn:0.2,fo:5,se:2,col:38},
-{n:"Salsa teriyaki (per 100g)",c:"Salse e condimenti",src:"UPF",k:89,p:5.5,gs:0.1,g:0.5,z:15.5,ch:18,fi:0.1,ca:18,fe:0.5,mg:18,k2:152,na:2160,zn:0.3,fo:8,se:3,col:0}
+{n:"Salsa teriyaki (per 100g)",c:"Salse e condimenti",src:"UPF",k:89,p:5.5,gs:0.1,g:0.5,z:15.5,ch:18,fi:0.1,ca:18,fe:0.5,mg:18,k2:152,na:2160,zn:0.3,fo:8,se:3,col:0},
+// ── BEVANDE ALTERNATIVE VEGETALI ──
+{n:"Latte di avena industriale (per 100ml)",c:"Alternative vegetali",src:"UPF",k:46,p:1.0,gs:0.1,g:1.5,z:4.0,ch:6.6,fi:0.5,ca:120,fe:0.2,mg:12,k2:85,na:52,zn:0.1,fo:40,se:1,col:0},
+{n:"Latte di soia arricchito (per 100ml)",c:"Alternative vegetali",src:"UPF",k:39,p:3.3,gs:0.3,g:1.8,z:2.5,ch:2.8,fi:0.5,ca:120,fe:0.5,mg:18,k2:118,na:48,zn:0.3,fo:50,se:2,col:0},
+{n:"Latte di mandorla (per 100ml)",c:"Alternative vegetali",src:"UPF",k:24,p:0.5,gs:0.1,g:1.1,z:3.5,ch:3.5,fi:0.2,ca:120,fe:0.2,mg:8,k2:65,na:60,zn:0.1,fo:15,se:0,col:0},
+{n:"Latte di cocco (tetrapack, per 100ml)",c:"Alternative vegetali",src:"UPF",k:180,p:1.5,gs:15,g:17,z:1.0,ch:2.5,fi:0,ca:18,fe:0.5,mg:22,k2:160,na:15,zn:0.2,fo:40,se:2,col:0},
+{n:"Latte di riso arricchito (per 100ml)",c:"Alternative vegetali",src:"UPF",k:47,p:0.3,gs:0,g:1.0,z:5.5,ch:9.0,fi:0.3,ca:120,fe:0.2,mg:8,k2:60,na:50,zn:0.1,fo:20,se:0,col:0},
+{n:"Yogurt di soia alla frutta (per 100g)",c:"Alternative vegetali",src:"UPF",k:72,p:3.2,gs:0.2,g:1.5,z:9.5,ch:10.5,fi:0.5,ca:80,fe:0.3,mg:12,k2:100,na:40,zn:0.2,fo:45,se:1,col:0},
+{n:"Panna di soia (per 100ml)",c:"Alternative vegetali",src:"UPF",k:168,p:2.5,gs:2.5,g:16,z:1.5,ch:3.5,fi:0,ca:20,fe:0.5,mg:15,k2:120,na:50,zn:0.2,fo:55,se:1,col:0},
+{n:"Formaggio vegano (per 100g)",c:"Alternative vegetali",src:"UPF",k:280,p:3.0,gs:8.5,g:22,z:3.5,ch:16,fi:1.5,ca:150,fe:1.0,mg:10,k2:80,na:650,zn:0.5,fo:80,se:2,col:0},
+{n:"Burger vegetale (Beyond/Impossible tipo, per 100g)",c:"Alternative vegetali",src:"UPF",k:210,p:17,gs:5.0,g:14,z:0.5,ch:5.0,fi:2.5,ca:80,fe:4.0,mg:25,k2:280,na:380,zn:2.0,fo:180,se:8,col:0},
+{n:"Tofu affumicato (per 100g)",c:"Alternative vegetali",src:"UPF",k:148,p:15,gs:1.5,g:8.5,z:1.0,ch:2.0,fi:0.5,ca:200,fe:2.5,mg:58,k2:185,na:400,zn:1.2,fo:200,se:8,col:0},
+{n:"Seitan al naturale (per 100g)",c:"Alternative vegetali",src:"UPF",k:120,p:25,gs:0.2,g:1.8,z:0,ch:1.5,fi:0.5,ca:60,fe:2.0,mg:25,k2:100,na:350,zn:1.5,fo:180,se:10,col:0},
+{n:"Quorn (mycoprotein, per 100g)",c:"Alternative vegetali",src:"UPF",k:92,p:11.5,gs:0.7,g:2.9,z:0.5,ch:4.0,fi:6.0,ca:21,fe:0.5,mg:18,k2:170,na:290,zn:0.8,fo:100,se:4,col:0},
+// ── FAST FOOD CATENE ──
+{n:"McDonald's Hamburger classico (per 100g)",c:"Fast food catene",src:"UPF",k:257,p:12.9,gs:4.5,g:9.8,z:6.5,ch:31,fi:1.5,ca:62,fe:2.5,mg:18,k2:225,na:600,zn:1.8,fo:125,se:10,col:38},
+{n:"McDonald's Big Mac (per 100g)",c:"Fast food catene",src:"UPF",k:257,p:13.7,gs:7.0,g:13,z:5.5,ch:25,fi:2.0,ca:125,fe:2.5,mg:20,k2:230,na:680,zn:2.0,fo:145,se:12,col:48},
+{n:"McDonald's Patatine fritte medie (per 100g)",c:"Fast food catene",src:"UPF",k:312,p:3.8,gs:1.8,g:15.5,z:0.5,ch:41,fi:3.5,ca:18,fe:1.2,mg:28,k2:615,na:370,zn:0.4,fo:100,se:5,col:0},
+{n:"McDonald's McFlurry Oreo (per 100g)",c:"Fast food catene",src:"UPF",k:184,p:3.5,gs:4.5,g:6.5,z:24,ch:28,fi:0.5,ca:130,fe:0.5,mg:15,k2:190,na:110,zn:0.5,fo:110,se:2,col:22},
+{n:"KFC Pollo fritto (per 100g)",c:"Fast food catene",src:"UPF",k:298,p:20,gs:4.5,g:18,z:0.5,ch:14,fi:0.8,ca:28,fe:1.2,mg:20,k2:265,na:550,zn:1.5,fo:180,se:18,col:75},
+{n:"Burger King Whopper (per 100g)",c:"Fast food catene",src:"UPF",k:250,p:12.5,gs:6.5,g:14,z:5.0,ch:21,fi:1.8,ca:62,fe:2.5,mg:20,k2:240,na:580,zn:2.0,fo:135,se:12,col:45},
+{n:"Pizza Hut Margherita (per 100g)",c:"Fast food catene",src:"UPF",k:266,p:11,gs:5.0,g:10,z:4.0,ch:34,fi:2.0,ca:200,fe:1.8,mg:20,k2:200,na:640,zn:1.5,fo:140,se:10,col:20},
+// ── SNACK DOLCI ITALIANI ──
+{n:"Tronky Ferrero (per 100g)",c:"Snack dolci",src:"UPF",k:570,p:7.5,gs:20,g:38,z:46,ch:54,fi:2.0,ca:90,fe:1.0,mg:40,k2:260,na:95,zn:0.8,fo:25,se:5,col:10},
+{n:"Pocket Coffee Ferrero (per 100g)",c:"Snack dolci",src:"UPF",k:480,p:5.5,gs:16,g:25,z:58,ch:64,fi:0.5,ca:50,fe:1.5,mg:35,k2:185,na:15,zn:0.6,fo:18,se:3,col:8},
+{n:"Buondì Motta (per 100g)",c:"Colazione industriale",src:"UPF",k:430,p:8.0,gs:8.0,g:18,z:28,ch:59,fi:1.5,ca:40,fe:1.5,mg:15,k2:135,na:310,zn:0.5,fo:22,se:8,col:55},
+{n:"Merendina Fiesta Ferrero (per 100g)",c:"Dolci confezionati",src:"UPF",k:475,p:7.0,gs:11,g:24,z:45,ch:61,fi:1.5,ca:95,fe:1.5,mg:28,k2:230,na:185,zn:0.8,fo:140,se:4,col:20},
+{n:"Baiocchi Barilla (per 100g)",c:"Biscotti industriali",src:"UPF",k:510,p:7.5,gs:10,g:26,z:32,ch:65,fi:2.0,ca:35,fe:2.0,mg:25,k2:180,na:200,zn:0.8,fo:22,se:10,col:5},
+{n:"Saiwa Petit beurre (per 100g)",c:"Biscotti industriali",src:"UPF",k:445,p:7.0,gs:6.5,g:16.5,z:22,ch:67,fi:2.0,ca:40,fe:1.8,mg:18,k2:140,na:380,zn:0.5,fo:20,se:8,col:35},
+{n:"Pavesini Barilla (per 100g)",c:"Biscotti industriali",src:"UPF",k:390,p:9.5,gs:3.0,g:9.0,z:30,ch:64,fi:1.0,ca:50,fe:1.5,mg:12,k2:130,na:290,zn:0.5,fo:18,se:8,col:120},
+// ── PIATTI PRONTI MARCA ──
+{n:"Sughi pronti Barilla al pomodoro (per 100g)",c:"Piatti pronti",src:"UPF",k:65,p:1.8,gs:0.5,g:2.5,z:7.5,ch:9.0,fi:1.5,ca:25,fe:0.8,mg:14,k2:310,na:480,zn:0.3,fo:30,se:2,col:0},
+{n:"Risotto pronto surgelato ai funghi (per 100g)",c:"Surgelati",src:"UPF",k:138,p:3.5,gs:1.0,g:3.8,z:1.0,ch:22,fi:1.2,ca:18,fe:0.8,mg:15,k2:100,na:460,zn:0.5,fo:55,se:4,col:5},
+{n:"Polenta pronta (tubo) (per 100g)",c:"Piatti pronti",src:"UPF",k:70,p:1.5,gs:0.1,g:0.5,z:1.5,ch:14.5,fi:1.0,ca:10,fe:0.3,mg:15,k2:50,na:300,zn:0.3,fo:40,se:2,col:0},
+{n:"Wurstel di tacchino (per 100g)",c:"Salumi processati",src:"UPF",k:195,p:12,gs:4.5,g:15,z:1.0,ch:2.0,fi:0,ca:12,fe:0.8,mg:12,k2:190,na:880,zn:0.9,fo:95,se:8,col:48},
+{n:"Hamburger di pollo (burger surgelato, per 100g)",c:"Surgelati",src:"UPF",k:195,p:14,gs:2.5,g:10,z:1.5,ch:12,fi:0.8,ca:40,fe:0.8,mg:18,k2:200,na:480,zn:0.8,fo:130,se:12,col:38},
+{n:"Cannelloni surgelati ripieni (per 100g)",c:"Surgelati",src:"UPF",k:165,p:8.5,gs:4.0,g:8.5,z:2.0,ch:15.5,fi:1.0,ca:95,fe:0.8,mg:15,k2:155,na:520,zn:0.9,fo:100,se:6,col:30},
+// ── SNACK SALATI INTERNAZIONALI ──
+{n:"Doritos Nacho Cheese (per 100g)",c:"Snack salati",src:"UPF",k:486,p:6.8,gs:4.0,g:23.5,z:2.5,ch:63,fi:3.5,ca:90,fe:2.0,mg:50,k2:200,na:780,zn:0.8,fo:140,se:4,col:0},
+{n:"Cheetos (per 100g)",c:"Snack salati",src:"UPF",k:544,p:6.5,gs:10,g:33,z:3.0,ch:58,fi:1.5,ca:60,fe:1.0,mg:22,k2:185,na:900,zn:0.5,fo:90,se:3,col:3},
+{n:"Pringles Original (per 100g)",c:"Snack salati",src:"UPF",k:531,p:5.5,gs:12,g:33,z:2.5,ch:56,fi:3.0,ca:25,fe:1.5,mg:30,k2:580,na:620,zn:0.5,fo:100,se:3,col:0},
+{n:"Lay's classiche (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.0,gs:3.0,g:35,z:1.0,ch:52,fi:3.5,ca:20,fe:1.5,mg:40,k2:1150,na:580,zn:0.5,fo:150,se:4,col:0},
+// ── BARRETTE E SNACK PROTEICI ──
+{n:"Barretta proteica whey (per 100g)",c:"Integratori alimentari",src:"UPF",k:382,p:30,gs:5.0,g:12,z:20,ch:42,fi:4.0,ca:180,fe:2.5,mg:60,k2:380,na:280,zn:2.5,fo:280,se:15,col:25},
+{n:"Barretta energetica ai cereali (tipo Kellogg's)",c:"Integratori alimentari",src:"UPF",k:368,p:5.5,gs:1.5,g:7.0,z:25,ch:65,fi:3.5,ca:100,fe:5.0,mg:40,k2:210,na:200,zn:1.5,fo:80,se:8,col:0},
+{n:"Barretta Snickers Protein (per 100g)",c:"Integratori alimentari",src:"UPF",k:400,p:20,gs:6.0,g:14,z:28,ch:48,fi:3.0,ca:120,fe:2.0,mg:55,k2:320,na:320,zn:1.5,fo:180,se:8,col:12},
+{n:"Shake proteico pronto (per 100ml)",c:"Integratori alimentari",src:"UPF",k:65,p:5.5,gs:0.3,g:1.5,z:5.0,ch:6.5,fi:0.5,ca:150,fe:1.0,mg:30,k2:185,na:80,zn:0.8,fo:110,se:5,col:8},
+// ── ALIMENTI BIOLOGICI E FUNZIONALI ──
+{n:"Granola biologica con miele e frutta (per 100g)",c:"Cereali da colazione",src:"UPF",k:425,p:8.5,gs:2.5,g:14,z:22,ch:64,fi:6.0,ca:45,fe:3.5,mg:80,k2:280,na:85,zn:2.0,fo:200,se:10,col:0},
+{n:"Avena istantanea aromatizzata (bustina, per 100g)",c:"Cereali da colazione",src:"UPF",k:360,p:10,gs:1.0,g:5.5,z:15,ch:63,fi:7.0,ca:160,fe:5.0,mg:90,k2:300,na:300,zn:2.0,fo:200,se:8,col:0},
+{n:"Frullato dimagrante sostituto pasto (per 100g polvere)",c:"Integratori alimentari",src:"UPF",k:358,p:30,gs:1.5,g:7.0,z:28,ch:45,fi:8.0,ca:300,fe:6.0,mg:100,k2:400,na:350,zn:3.5,fo:350,se:20,col:15},
+{n:"Crackers di riso biologici (per 100g)",c:"Biscotti e crackers",src:"UPF",k:384,p:7.5,gs:0.2,g:1.2,z:1.5,ch:84,fi:2.5,ca:10,fe:0.8,mg:38,k2:98,na:15,zn:0.5,fo:90,se:4,col:0},
+// ── CONDIMENTI INTERNAZIONALI ──
+{n:"Guacamole industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:150,p:1.5,gs:2.0,g:13.5,z:0.5,ch:6.5,fi:3.5,ca:15,fe:0.5,mg:22,k2:390,na:280,zn:0.4,fo:42,se:0.5,col:0},
+{n:"Hummus industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:170,p:7.9,gs:1.0,g:9.5,z:1.5,ch:14.5,fi:4.0,ca:38,fe:2.0,mg:50,k2:228,na:350,zn:1.2,fo:145,se:3,col:0},
+{n:"Pesto alla genovese (barattolo, per 100g)",c:"Salse e condimenti",src:"UPF",k:454,p:5.5,gs:9.5,g:46,z:2.5,ch:5.0,fi:1.5,ca:150,fe:1.2,mg:42,k2:230,na:760,zn:0.8,fo:100,se:3,col:15},
+{n:"Tahini (crema di sesamo, per 100g)",c:"Creme e spalmate",src:"UPF",k:595,p:17,gs:8.5,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:590,se:34,col:0},
+{n:"Crema di marmite (per 100g)",c:"Condimenti",src:"UPF",k:210,p:27,gs:0,g:0.5,z:0,ch:19,fi:3.0,ca:95,fe:3.5,mg:180,k2:2100,na:3640,zn:1.5,fo:1980,se:8,col:0}
 ];
 
 
@@ -5962,6 +6019,92 @@ pasti:[
 {nome:'Cena',emoji:'🌙',items:[{nome:'Legumi (ceci, fagioli — folati)',qt:'150g cotti'},{nome:'Riso o pasta',qt:'60g secco'},{nome:'Verdure miste (antiossidanti)',qt:'200g'},{nome:'Mandorle (vitamina E)',qt:'20g'}]}
 ],
 giorni:['Folati: aumentare a 1-5 mg/die (vs 0.4 mg RDA) — eritropoiesi accelerata consuma folati','Vitamina B12: monitorare e supplementare se bassa — specie in anziani e vegetariani','Ferro: CAUTELA — l\'emolisi cronica libera ferro libero → rischio sovraccarico. NON supplementare senza sideremia e ferritina','Vitamina E: antiossidante protegge membrane eritrocitarie — utile in G6PD e anemie ossidative (100-400 UI/die)','G6PD deficiency (favismo): eliminare ASSOLUTAMENTE fave, piselli freschi, alcuni farmaci e antiossidanti ossidanti','Alcol: ELIMINARE — precipita crisi emolitiche in G6PD e AIHA','Infezioni: un banale raffreddore può precipitare crisi emolitica in G6PD — vaccinazioni aggiornate']},
+// ── ALLERGENI EU-14 MANCANTI ──
+{id:'allergia_soia',cat:'allergie',emoji:'🫘',nome:'Allergia alla Soia',badge:'EAACI 2019',colore:'#b45309',
+ desc:'Allergia alla soia (Glycine max). Presente nei 14 allergeni principali EU. Reazione IgE-mediata o non-IgE-mediata.',
+ note:'EAACI 2019. Eliminazione completa di soia e derivati. Cross-reattività con arachidi (20-30%). Soia nascosta in: tofu, tempeh, edamame, miso, tamari, latte di soia, margarine, prodotti confezionati.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mele',qt:'150'},{nome:'Miele millefiori',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'90'},{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+ ]},
+{id:'allergia_sedano',cat:'allergie',emoji:'🌿',nome:'Allergia al Sedano',badge:'EAACI 2019',colore:'#15803d',
+ desc:'Allergia al sedano (Apium graveolens). Uno dei 14 allergeni principali EU. Cross-reattività con betulla, carota, prezzemolo (sindrome betulla-frutta).',
+ note:'EAACI 2019. Eliminare sedano, sedano rapa, radici di sedano, semi di sedano. Cross-reattività: carote, prezzemolo, anice, cumino, coriandolo. Presenti in zuppe, dadi da brodo, salse.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Fragola',qt:'150'},{nome:'Mandorle dolci secche',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola al naturale',qt:'100'},{nome:'Pomodoro rosso',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Tacchino petto',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'allergia_senape',cat:'allergie',emoji:'🌼',nome:'Allergia alla Senape',badge:'EAACI 2019',colore:'#ca8a04',
+ desc:'Allergia alla senape (Sinapis alba, Brassica). Uno dei 14 allergeni principali EU. Cross-reattività con pollini.',
+ note:'EAACI 2019. Eliminare senape in semi, farina, olio, salsa, preparati di curry. Presente in: maionese, salse preparate, condimenti, alcune margarine, prodotti da forno. Cross-reattività con colza.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Pane integrale',qt:'60'},{nome:'Marmellata / confettura',qt:'20'},{nome:'Kiwi',qt:'150'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Quinoa cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'160'},{nome:'Patata',qt:'150'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'allergia_lupino',cat:'allergie',emoji:'🌸',nome:'Allergia al Lupino',badge:'EAACI 2019',colore:'#9333ea',
+ desc:'Allergia al lupino (Lupinus albus). Uno dei 14 allergeni principali EU. Alta cross-reattività con arachidi (30-50%).',
+ note:'EAACI 2019. Eliminare farina di lupino presente in: pane, pasta, prodotti da forno biologici. Rischio elevato in allergici alle arachidi. Lupino presente in farine alternative "naturali" — leggere sempre etichette.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Banana',qt:'120'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Noci',qt:'20'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso integrale crudo',qt:'80'},{nome:'Branzino (spigola)',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Uovo di gallina intero crudo',qt:'120'},{nome:'Patata',qt:'150'},{nome:'Lattuga',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'allergia_solfiti',cat:'allergie',emoji:'🍷',nome:'Allergia/Intolleranza ai Solfiti',badge:'EAACI 2019',colore:'#7c3aed',
+ desc:'Reazione avversa a solfiti (E220-E228): anidride solforosa, metabisolfito. Pseudoallergia non IgE-mediata.',
+ note:'EAACI/FDA 2019. Soglia di reazione: 10-50mg SO₂/kg. Solfiti in: vino, birra, frutta secca, gamberi e crostacei, succhi di frutta, cibi in scatola, farmaci. Prevalenza: 0.05% popolazione generale, 3-10% asmatici.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Mela',qt:'150'},{nome:'Mandorle dolci secche',qt:'20'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Pomodoro rosso',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Riso bianco crudo',qt:'80'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── PATOLOGIE METABOLICHE AGGIUNTIVE ──
+{id:'diabete_lada',cat:'metaboliche',emoji:'🧬',nome:'Diabete LADA (Latent Autoimmune Diabetes in Adults)',badge:'ADA 2023',colore:'#3b82f6',
+ desc:'Diabete autoimmune adulto a esordio lento. Caratteristiche ibride T1+T2: anticorpi anti-GAD positivi, progressione verso insulino-dipendenza.',
+ note:'ADA/EASD 2023. Spesso diagnosticato come T2 ma con anti-GAD+ o anti-IA2+. Dieta: basso IG, come diabete T1. Deficit insulina progressivo. Monitorare HbA1c, C-peptide, anticorpi anti-GAD.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'40'},{nome:'Mela',qt:'120'},{nome:'Mandorle dolci secche',qt:'15'}]},
+  {nome:'Spuntino',emoji:'🍎',items:[{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Lenticchie secche',qt:'40'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Spuntino pomeriggio',emoji:'🍊',items:[{nome:'Yogurt greco 0% grassi',qt:'125'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Quinoa cruda',qt:'70'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── PATOLOGIE ONCOLOGICHE AGGIUNTIVE ──
+{id:'tumore_rene',cat:'oncologiche',emoji:'🫘',nome:'Carcinoma a Cellule Renali (CCR)',badge:'ESPEN 2021',colore:'#f97316',
+ desc:'Supporto nutrizionale nel carcinoma renale. Terapia: chirurgia (nefrectomia), immunoterapia (nivolumab, pembrolizumab), sunitinib/sorafenib.',
+ note:'ESPEN 2021. Proteine 1.2-1.5g/kg/die. Adeguata idratazione. Effetti collaterali immunoterapia: nausea, fatigue. Monitorare creatinina e funzione renale residua. In terapia con sunitinib: nausea, mucosite.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:"Fiocchi d'avena",qt:'50'},{nome:'Banana',qt:'100'},{nome:'Mandorle dolci secche',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Carota',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo',qt:'150'},{nome:'Patata',qt:'120'},{nome:'Zucchina',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'tumore_tiroide',cat:'oncologiche',emoji:'🦋',nome:'Carcinoma Tiroideo (differenziato)',badge:'ESPEN 2021',colore:'#0891b2',
+ desc:'Supporto nutrizionale nel carcinoma tiroideo differenziato (papillare, follicolare). Terapia: tiroidectomia, radioiodio (I-131).',
+ note:'ESPEN/ETA 2021. Prima di radioiodio: dieta povera di iodio (LID) per 2-4 settimane (iodio <50µg/die). Dopo tiroidectomia: supplementazione calcio + vitamina D (ipoparatiroidismo). Evitare supplementi di iodio.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte parz. scremato UHT',qt:'200'},{nome:'Fiocchi d\'avena',qt:'50'},{nome:'Mela',qt:'150'},{nome:'Noci',qt:'20'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo petto (senza pelle)',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Manzo magro',qt:'130'},{nome:'Riso bianco crudo',qt:'70'},{nome:'Spinaci crudi',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'tumore_ovaio',cat:'oncologiche',emoji:'🌸',nome:'Carcinoma Ovarico',badge:'ESPEN 2021',colore:'#ec4899',
+ desc:'Supporto nutrizionale nel carcinoma ovarico. Chemioterapia: platino+taxolo. Rischio cachessia, ascite, ostruzione intestinale.',
+ note:'ESPEN 2021. Cachessia frequente (60-80% dei casi avanzati). Effetti chemio: nausea, vomito, neuropatia periferica. Nutrizione enterale se intake <60% per >7 giorni. Omega-3 EPA 2g/die anti-cachessia.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt greco 0% grassi',qt:'150'},{nome:'Banana',qt:'100'},{nome:'Mandorle dolci secche',qt:'20'},{nome:'Miele millefiori',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Zucchina',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'15'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Pollo petto (senza pelle)',qt:'150'},{nome:'Patata',qt:'150'},{nome:'Carota',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'12'}]}
+ ]},
+// ── PATOLOGIE EMATOLOGICHE AGGIUNTIVE ──
+{id:'anemia_megaloblastica',cat:'ematologiche',emoji:'🩺',nome:'Anemia Megaloblastica (deficit B12/Folati)',badge:'BSH 2014',colore:'#b91c1c',
+ desc:'Anemia da deficit di vitamina B12 e/o folati. Megalocitosi, ipersegmentazione neutrofili, pancitopenia nei casi gravi.',
+ note:'BSH/WHO 2014. B12 <200 pg/ml: iniziare supplementazione. Folati <4 µg/L: acido folico. In anemia perniciosa: B12 IM. Attenzione: folati da soli possono mascherare deficit B12 (danni neurologici irreversibili).',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Latte intero fresco',qt:'200'},{nome:'Pane integrale',qt:'50'},{nome:'Uovo di gallina intero crudo',qt:'60'},{nome:'Arancia',qt:'150'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Manzo magro',qt:'130'},{nome:'Spinaci crudi',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Lenticchie secche',qt:'50'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
 ];
 const PATOLOGIE_CUSTOM = [];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}
@@ -6208,7 +6351,17 @@ lipodistrofia:{kcal:'25-30 kcal/kg',prot:'1.0-1.2 g/kg',note:'Akinci 2022. TG ta
 sindrome_gilbert:{kcal:'25-30 kcal/kg',prot:'1.0 g/kg',note:'Bosma 1995. Benigna — nessun trattamento specifico. Evitare digiuni >12-14h: aumentano bilirubina libera. Pasti regolari ogni 4-5h. Alcol: limitare fortemente. Farmaci: informare medico di Gilbert (irinotecano, nilotinib, atazanavir metabolizzati meno bene). Paracetamolo in dosi normali: sicuro. Nessuna restrizione dietetica permanente.'},
 iperfosfatemia:{kcal:'25-30 kcal/kg',prot:'0.8-1.0 g/kg (limitare per ridurre carico P)',note:'KDIGO 2017. Fosforo target (dialisi): 3.5-5.5 mg/dl. Fosforo dieta: <800-1000 mg/die. ELIMINARE: additivi fosfato (PHOS-) in UPF, cola. Ridurre drasticamente: latticini, noci, semi. Preferire: albumi, riso, pasta bianca, verdure. Chelanti del fosforo: SEMPRE con i pasti — non pre o post. Dialisi adeguata: complementare alla dieta.'},
 nutrizione_geriatrica_rsa:{kcal:'30-35 kcal/kg',prot:'1.2-1.5 g/kg',note:'ESPEN 2020/SINPE 2021. Screening: MNA-SF ogni 3 mesi. Disfagia: GUSS e VFSS, texture IDDSI. Vitamina D: 800-2000 UI/die (quasi universalmente carente). B12: monitorare e supplementare. ONS: 400-600 kcal 2x/die se MNA <12. Idratazione: 30 ml/kg/die, offrire ogni 2h. Densificanti proteici: aggiungere a tutti i pasti.'},
-anemia_emolitica:{kcal:'25-35 kcal/kg',prot:'1.2-1.5 g/kg',note:'ASH 2018. Folati: 1-5 mg/die (eritropoiesi accelerata consuma folati). B12: monitorare e supplementare se carente. Vitamina E: 100-400 UI/die (protegge membrane eritrocitarie). Ferro: CAUTELA — l\'emolisi cronica causa sovraccarico di ferro. NON supplementare senza sideremia e ferritina. G6PD: eliminare fave, piselli freschi, farmaci ossidanti. Alcol: eliminare.'}
+anemia_emolitica:{kcal:'25-35 kcal/kg',prot:'1.2-1.5 g/kg',note:'ASH 2018. Folati: 1-5 mg/die (eritropoiesi accelerata consuma folati). B12: monitorare e supplementare se carente. Vitamina E: 100-400 UI/die (protegge membrane eritrocitarie). Ferro: CAUTELA — l\'emolisi cronica causa sovraccarico di ferro. NON supplementare senza sideremia e ferritina. G6PD: eliminare fave, piselli freschi, farmaci ossidanti. Alcol: eliminare.'},
+  allergia_soia:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die (sostituire soia con carni, pesce, uova, legumi)',note:'EAACI 2019. Eliminazione completa soia e derivati (tofu, tempeh, miso, latte di soia). Lecitina di soia (E322) spesso tollerata — valutare individualmente. Cross-reattività arachidi: test allergenico. Adrenalina auto-iniettabile se anafilassi.'},
+  allergia_sedano:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EAACI 2019. Eliminare sedano, sedano rapa, semi di sedano. Dado da brodo industriale quasi sempre con sedano. Sindrome betulla-sedano-carota: cross-reattività apiaceae. Sedano rapa cotto: ancora allergenico (LTP termoresistente).'},
+  allergia_senape:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'EAACI 2019. Eliminare senape in tutte le forme. Maionese industriale contiene quasi sempre senape. Curry in polvere spesso con senape. Cross-reattività colza. Soglia reattiva bassa — lettura etichette obbligatoria.'},
+  allergia_lupino:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'EAACI 2019. Eliminare farina di lupino, semi tostati, pasta di lupino. ALTA cross-reattività arachidi (30-50%): test lupino obbligatorio in allergici arachidi. Crescente presenza in prodotti da forno biologici/vegani.'},
+  allergia_solfiti:{kcal:'Normocalorica',prot:'1.0 g/kg/die',note:'FDA/EAACI 2019. Evitare vino, frutta secca commerciale, gamberi/crostacei, succhi industriali, cibi in scatola. E220-E228 = solfiti: evidenziati per legge UE. Asmatici: rischio broncospasmo — broncodilatatore sempre disponibile.'},
+  diabete_lada:{kcal:'25-35 kcal/kg/die (peso ideale)',prot:'1.0-1.2 g/kg/die',note:'ADA/EASD 2023. Come diabete T1: basso IG, CHO costanti e distribuiti. Anti-GAD+/anti-IA2+: progressione verso insulino-dipendenza 5-10 anni. Monitorare C-peptide. HbA1c target <7%. Metformina possibile ma monitorare C-peptide.'},
+  tumore_rene:{kcal:'25-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. Idratazione ≥2L. Monitorare funzione renale residua (GFR dopo nefrectomia). In TKI (sunitinib): nausea, mucosite, ipertensione, ipotiroidismo. In immunoterapia: colite immuno-mediata possibile. Peso settimanale.'},
+  tumore_tiroide:{kcal:'Normocalorica (aumentare post-chirurgia)',prot:'1.0-1.2 g/kg/die',note:'ETA/ATA 2021. LID pre-I131: iodio <50µg/die per 2-4 settimane. Post-tiroidectomia: Ca 1000-1500mg/die + Vit.D 800-2000 UI/die (ipoparatiroidismo). Soia: assumere distante da levotiroxina (≥2-4 ore). Alghe: vietate.'},
+  tumore_ovaio:{kcal:'25-35 kcal/kg/die (30-40 se cachessia)',prot:'1.2-2.0 g/kg/die',note:'ESPEN 2021. Cachessia nel 60-80% dei casi avanzati. Ascite: pasti piccoli (6/die), ridurre volume liquidi se abbondante. Omega-3 EPA 2g/die anti-cachessia. In neutropenia: dieta a basso contenuto batterico. ONS se intake <60%.'},
+  anemia_megaloblastica:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'BSH 2014. ATTENZIONE: non supplementare folati senza escludere deficit B12 (rischio danni neurologici irreversibili). Anemia perniciosa: B12 IM 1000µg/die. Vegani: B12 orale 1000µg/die. Metformina: monitorare B12 annualmente.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

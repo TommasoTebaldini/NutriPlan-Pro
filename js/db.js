@@ -3317,7 +3317,89 @@ const DB_UPF = [
 {n:"Hummus industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:170,p:7.9,gs:1.0,g:9.5,z:1.5,ch:14.5,fi:4.0,ca:38,fe:2.0,mg:50,k2:228,na:350,zn:1.2,fo:145,se:3,col:0},
 {n:"Pesto alla genovese (barattolo, per 100g)",c:"Salse e condimenti",src:"UPF",k:454,p:5.5,gs:9.5,g:46,z:2.5,ch:5.0,fi:1.5,ca:150,fe:1.2,mg:42,k2:230,na:760,zn:0.8,fo:100,se:3,col:15},
 {n:"Tahini (crema di sesamo, per 100g)",c:"Creme e spalmate",src:"UPF",k:595,p:17,gs:8.5,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:590,se:34,col:0},
-{n:"Crema di marmite (per 100g)",c:"Condimenti",src:"UPF",k:210,p:27,gs:0,g:0.5,z:0,ch:19,fi:3.0,ca:95,fe:3.5,mg:180,k2:2100,na:3640,zn:1.5,fo:1980,se:8,col:0}
+{n:"Crema di marmite (per 100g)",c:"Condimenti",src:"UPF",k:210,p:27,gs:0,g:0.5,z:0,ch:19,fi:3.0,ca:95,fe:3.5,mg:180,k2:2100,na:3640,zn:1.5,fo:1980,se:8,col:0},
+// ── CIBI ITALIANI REGIONALI E TRADIZIONALI ──
+{n:"Focaccia genovese (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:295,p:6.5,gs:1.2,g:8.5,z:1.5,ch:48,fi:2.0,ca:20,fe:1.2,mg:15,k2:90,na:580,zn:0.5,fo:25,se:5,col:0},
+{n:"Arancino siciliano (per 100g)",c:"Piatti tipici regionali",src:"INT",k:210,p:7.5,gs:2.0,g:8.5,z:1.5,ch:28,fi:1.2,ca:60,fe:1.0,mg:18,k2:150,na:480,zn:1.0,fo:85,se:8,col:20},
+{n:"Risotto alla milanese (per 100g cotto)",c:"Piatti tipici regionali",src:"INT",k:160,p:3.5,gs:4.5,g:7.5,z:0.5,ch:21,fi:0.3,ca:35,fe:0.4,mg:10,k2:55,na:380,zn:0.5,fo:50,se:4,col:20},
+{n:"Polenta taragna (per 100g cotta)",c:"Cereali e derivati",src:"INT",k:125,p:3.5,gs:4.5,g:8.5,z:0.3,ch:16,fi:1.0,ca:120,fe:0.5,mg:20,k2:80,na:350,zn:0.8,fo:60,se:3,col:20},
+{n:"Ribollita toscana (per 100g)",c:"Zuppe e minestre",src:"INT",k:75,p:3.5,gs:0.5,g:2.5,z:2.0,ch:10,fi:3.0,ca:55,fe:1.2,mg:20,k2:280,na:320,zn:0.5,fo:55,se:3,col:0},
+{n:"Panzanella toscana (per 100g)",c:"Insalate e contorni",src:"INT",k:98,p:2.5,gs:0.5,g:4.5,z:2.0,ch:13,fi:1.5,ca:25,fe:0.8,mg:12,k2:200,na:380,zn:0.3,fo:35,se:3,col:0},
+{n:"Caponata siciliana (per 100g)",c:"Piatti tipici regionali",src:"INT",k:85,p:1.5,gs:0.5,g:5.5,z:5.0,ch:9.0,fi:2.5,ca:25,fe:0.8,mg:15,k2:250,na:480,zn:0.3,fo:28,se:2,col:0},
+{n:"Panzerotto pugliese fritto (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:295,p:8.5,gs:4.0,g:15,z:2.5,ch:34,fi:1.5,ca:130,fe:1.5,mg:18,k2:135,na:550,zn:1.0,fo:95,se:8,col:25},
+{n:"Tiramisù artigianale (per 100g)",c:"Dolci e pasticceria",src:"INT",k:320,p:6.5,gs:11,g:21,z:23,ch:28,fi:0.3,ca:95,fe:0.8,mg:15,k2:100,na:80,zn:0.8,fo:105,se:5,col:165},
+{n:"Cannolo siciliano (per 100g)",c:"Dolci e pasticceria",src:"INT",k:410,p:9.0,gs:12,g:22,z:35,ch:48,fi:1.0,ca:115,fe:1.0,mg:18,k2:120,na:85,zn:0.8,fo:90,se:5,col:55},
+{n:"Gelato alla crema artigianale (per 100g)",c:"Gelati e sorbetti",src:"INT",k:195,p:4.0,gs:5.5,g:9.5,z:22,ch:25,fi:0,ca:120,fe:0.2,mg:12,k2:160,na:70,zn:0.5,fo:95,se:3,col:42},
+{n:"Gelato al cioccolato artigianale (per 100g)",c:"Gelati e sorbetti",src:"INT",k:218,p:4.5,gs:7.5,g:12,z:24,ch:28,fi:2.5,ca:105,fe:1.5,mg:28,k2:155,na:75,zn:0.8,fo:100,se:5,col:28},
+{n:"Sorbetto al limone (per 100g)",c:"Gelati e sorbetti",src:"INT",k:115,p:0.5,gs:0,g:0,z:26.5,ch:29,fi:0.5,ca:5,fe:0.1,mg:4,k2:55,na:18,zn:0,fo:8,se:0.5,col:0},
+{n:"Granita al caffè (per 100g)",c:"Gelati e sorbetti",src:"INT",k:95,p:0.3,gs:0,g:0,z:23,ch:24,fi:0,ca:5,fe:0.2,mg:8,k2:50,na:8,zn:0,fo:5,se:0.5,col:0},
+// ── PESCE E FRUTTI DI MARE ITALIANI ──
+{n:"Pagello rosso (per 100g crudo)",c:"Pesce",src:"CREA",k:92,p:18.5,gs:0.5,g:2.0,z:0,ch:0,fi:0,ca:25,fe:0.5,mg:28,k2:380,na:68,zn:0.5,fo:195,se:32,col:55},
+{n:"Cernia (per 100g cruda)",c:"Pesce",src:"CREA",k:94,p:19.5,gs:0.4,g:1.5,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:30,k2:360,na:70,zn:0.6,fo:200,se:30,col:48},
+{n:"Anguilla marinata (per 100g)",c:"Pesce",src:"CREA",k:270,p:16.5,gs:6.5,g:21,z:1.5,ch:2.5,fi:0,ca:22,fe:0.5,mg:22,k2:220,na:580,zn:0.8,fo:155,se:18,col:95},
+{n:"Ostrica cruda (per 100g edibile)",c:"Molluschi e crostacei",src:"CREA",k:68,p:8.5,gs:0.5,g:2.5,z:1.5,ch:3.5,fi:0,ca:95,fe:5.5,mg:22,k2:168,na:430,zn:16.5,fo:145,se:23,col:50},
+{n:"Seppie in umido (per 100g)",c:"Molluschi e crostacei",src:"CREA",k:95,p:16.5,gs:0.5,g:2.5,z:0.5,ch:1.5,fi:0,ca:35,fe:1.5,mg:45,k2:225,na:380,zn:1.5,fo:185,se:28,col:125},
+{n:"Cozze al vapore (per 100g edibile)",c:"Molluschi e crostacei",src:"CREA",k:86,p:12.5,gs:0.8,g:2.2,z:0,ch:3.7,fi:0,ca:26,fe:4.6,mg:34,k2:320,na:286,zn:1.6,fo:197,se:44,col:56},
+// ── CARNI SELVATICHE E PREGIATE ──
+{n:"Cinghiale (carne magra, per 100g cruda)",c:"Carne",src:"CREA",k:121,p:21.5,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:12,fe:3.2,mg:22,k2:280,na:55,zn:3.0,fo:195,se:18,col:65},
+{n:"Faraona (petto, per 100g cruda)",c:"Carne",src:"CREA",k:106,p:21.0,gs:0.4,g:2.0,z:0,ch:0,fi:0,ca:12,fe:1.0,mg:25,k2:310,na:65,zn:1.5,fo:185,se:18,col:68},
+{n:"Capriolo (carne, per 100g cruda)",c:"Carne",src:"CREA",k:117,p:22.0,gs:0.4,g:2.5,z:0,ch:0,fi:0,ca:8,fe:3.8,mg:20,k2:290,na:52,zn:2.8,fo:210,se:15,col:60},
+// ── LATTICINI PREMIUM ──
+{n:"Burrata pugliese (per 100g)",c:"Formaggi e latticini",src:"CREA",k:295,p:14.5,gs:18.5,g:25.5,z:1.0,ch:1.5,fi:0,ca:350,fe:0.2,mg:18,k2:95,na:420,zn:1.5,fo:210,se:8,col:80},
+{n:"Stracciatella pugliese (per 100g)",c:"Formaggi e latticini",src:"CREA",k:272,p:13.5,gs:16.5,g:22.5,z:1.0,ch:1.5,fi:0,ca:310,fe:0.2,mg:15,k2:90,na:390,zn:1.2,fo:195,se:7,col:72},
+{n:"Ricotta di pecora (per 100g)",c:"Formaggi e latticini",src:"CREA",k:182,p:9.5,gs:9.5,g:13.5,z:3.5,ch:4.5,fi:0,ca:250,fe:0.5,mg:15,k2:130,na:95,zn:1.0,fo:165,se:10,col:48},
+{n:"Gorgonzola DOP (per 100g)",c:"Formaggi e latticini",src:"CREA",k:358,p:19.5,gs:18.5,g:29.5,z:0,ch:0.5,fi:0,ca:420,fe:0.4,mg:22,k2:165,na:920,zn:2.5,fo:275,se:12,col:95},
+{n:"Taleggio DOP (per 100g)",c:"Formaggi e latticini",src:"CREA",k:322,p:20.5,gs:16.5,g:25.5,z:0,ch:0.5,fi:0,ca:395,fe:0.2,mg:18,k2:145,na:830,zn:2.0,fo:240,se:10,col:80},
+{n:"Caciocavallo (per 100g)",c:"Formaggi e latticini",src:"CREA",k:439,p:37.5,gs:20.5,g:31.5,z:0,ch:1.0,fi:0,ca:1060,fe:0.5,mg:30,k2:110,na:720,zn:4.5,fo:620,se:15,col:110},
+// ── VERDURE ITALIANE E ASIATICHE ──
+{n:"Topinambur (per 100g crudo)",c:"Verdure",src:"CREA",k:73,p:2.0,gs:0,g:0.1,z:9.5,ch:17.5,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:78,se:0.7,col:0},
+{n:"Radicchio rosso di Treviso (per 100g)",c:"Verdure",src:"CREA",k:23,p:1.8,gs:0,g:0.3,z:2.5,ch:3.5,fi:2.2,ca:38,fe:0.6,mg:12,k2:302,na:22,zn:0.5,fo:35,se:0.5,col:0},
+{n:"Pak choi / Bok choy (per 100g crudo)",c:"Verdure",src:"CREA",k:13,p:1.5,gs:0,g:0.2,z:1.0,ch:2.2,fi:1.0,ca:105,fe:0.8,mg:19,k2:252,na:65,zn:0.2,fo:37,se:0.5,col:0},
+{n:"Cicoria di campo (per 100g cruda)",c:"Verdure",src:"CREA",k:29,p:2.2,gs:0,g:0.5,z:0.5,ch:3.5,fi:3.5,ca:100,fe:2.2,mg:35,k2:380,na:52,zn:0.5,fo:55,se:1,col:0},
+{n:"Bietola da coste (per 100g cruda)",c:"Verdure",src:"CREA",k:19,p:1.8,gs:0,g:0.2,z:1.0,ch:3.8,fi:1.6,ca:51,fe:1.8,mg:81,k2:549,na:213,zn:0.4,fo:46,se:0.9,col:0},
+{n:"Carciofi sott'olio sgocciolati (per 100g)",c:"Conserve vegetali",src:"CREA",k:185,p:2.5,gs:2.0,g:16.5,z:1.0,ch:6.0,fi:3.5,ca:42,fe:1.0,mg:18,k2:220,na:580,zn:0.5,fo:60,se:2,col:0},
+{n:"Cavolo nero toscano (per 100g crudo)",c:"Verdure",src:"CREA",k:28,p:3.3,gs:0,g:0.7,z:0.5,ch:3.1,fi:2.0,ca:150,fe:1.7,mg:19,k2:348,na:43,zn:0.4,fo:56,se:0.9,col:0},
+// ── FRUTTA ESOTICA ──
+{n:"Lychee / Litchi (per 100g)",c:"Frutta",src:"CREA",k:66,p:0.8,gs:0,g:0.4,z:15.2,ch:16.5,fi:1.3,ca:5,fe:0.3,mg:10,k2:171,na:1,zn:0.1,fo:31,se:0.6,col:0},
+{n:"Dragon fruit rosso (pitaya, per 100g)",c:"Frutta",src:"CREA",k:60,p:1.2,gs:0,g:0.4,z:8.5,ch:13,fi:3.0,ca:8,fe:1.9,mg:18,k2:180,na:39,zn:0.3,fo:22,se:0.6,col:0},
+{n:"Guava (per 100g)",c:"Frutta",src:"CREA",k:68,p:2.6,gs:0.3,g:1.0,z:9.0,ch:14.3,fi:5.4,ca:18,fe:0.3,mg:22,k2:417,na:2,zn:0.2,fo:40,se:0.6,col:0},
+{n:"Physalis / Alchechengi (per 100g)",c:"Frutta",src:"CREA",k:53,p:1.9,gs:0.3,g:0.7,z:7.0,ch:11.2,fi:1.9,ca:9,fe:1.0,mg:20,k2:268,na:1,zn:0.3,fo:40,se:0.3,col:0},
+{n:"Jackfruit / Jaca (per 100g)",c:"Frutta",src:"CREA",k:95,p:1.7,gs:0,g:0.6,z:19.1,ch:23.2,fi:1.5,ca:24,fe:0.6,mg:29,k2:448,na:2,zn:0.4,fo:21,se:0.5,col:0},
+// ── LEGUMI SPECIFICI ──
+{n:"Lenticchie rosse decorticate secche (per 100g)",c:"Legumi",src:"CREA",k:352,p:24.5,gs:0.4,g:1.1,z:2.0,ch:62,fi:11.5,ca:35,fe:7.5,mg:122,k2:677,na:6,zn:3.3,fo:280,se:8,col:0},
+{n:"Fagioli azuki secchi (per 100g)",c:"Legumi",src:"CREA",k:329,p:19.9,gs:0.2,g:0.5,z:0.5,ch:62.9,fi:7.3,ca:66,fe:4.9,mg:127,k2:1254,na:5,zn:5.0,fo:381,se:3,col:0},
+{n:"Lupini decorticati in salamoia drenati (per 100g)",c:"Legumi",src:"CREA",k:119,p:15.6,gs:0.8,g:2.9,z:0.5,ch:10.1,fi:2.9,ca:84,fe:2.2,mg:67,k2:245,na:480,zn:1.9,fo:210,se:4,col:0},
+{n:"Edamame cotti (per 100g)",c:"Legumi",src:"CREA",k:122,p:11.9,gs:0.9,g:5.2,z:2.0,ch:8.9,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:6,zn:1.4,fo:161,se:1,col:0},
+// ── CEREALI E PASTA SPECIALI ──
+{n:"Pasta al farro integrale (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:342,p:13.5,gs:0.4,g:2.5,z:2.5,ch:68,fi:7.0,ca:28,fe:3.5,mg:85,k2:245,na:5,zn:2.5,fo:280,se:18,col:0},
+{n:"Pasta di lenticchie rosse (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:348,p:24.5,gs:0.2,g:1.5,z:0.5,ch:56.5,fi:8.5,ca:40,fe:6.5,mg:90,k2:350,na:8,zn:3.0,fo:290,se:6,col:0},
+{n:"Pasta di ceci (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:361,p:20.5,gs:0.3,g:6.5,z:2.0,ch:55,fi:11.5,ca:55,fe:4.5,mg:95,k2:440,na:10,zn:3.2,fo:310,se:6,col:0},
+{n:"Pane di segale (per 100g)",c:"Pane e prodotti da forno",src:"CREA",k:259,p:8.5,gs:0.3,g:1.7,z:3.5,ch:53,fi:5.8,ca:22,fe:2.5,mg:40,k2:175,na:550,zn:1.5,fo:130,se:12,col:0},
+{n:"Gnocchi di patate freschi confezionati (per 100g)",c:"Cereali e derivati",src:"CREA",k:158,p:4.5,gs:0.3,g:1.8,z:0.5,ch:32.5,fi:1.5,ca:22,fe:0.8,mg:18,k2:178,na:340,zn:0.5,fo:55,se:5,col:0},
+// ── SEMI E FRUTTA SECCA SPECIALI ──
+{n:"Semi di canapa decorticati (per 100g)",c:"Semi e frutta secca",src:"CREA",k:553,p:31.5,gs:5.5,g:48.7,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:14,col:0},
+{n:"Noci del Brasile (per 100g)",c:"Semi e frutta secca",src:"CREA",k:656,p:14.3,gs:16.2,g:66.4,z:2.3,ch:12.3,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:725,se:1917,col:0},
+{n:"Semi di lino (per 100g)",c:"Semi e frutta secca",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0},
+// ── CUCINA INTERNAZIONALE ──
+{n:"Falafel fritto (per 100g)",c:"Cucina etnica",src:"INT",k:333,p:13.5,gs:2.0,g:17.5,z:1.5,ch:35,fi:5.5,ca:60,fe:3.8,mg:65,k2:380,na:640,zn:1.5,fo:175,se:4,col:0},
+{n:"Shakshuka / uova in salsa pomodoro (per 100g)",c:"Cucina etnica",src:"INT",k:98,p:5.5,gs:1.2,g:6.5,z:4.0,ch:5.5,fi:1.5,ca:42,fe:1.5,mg:18,k2:280,na:420,zn:0.8,fo:85,se:12,col:145},
+{n:"Kimchi (per 100g)",c:"Cucina etnica",src:"INT",k:15,p:1.1,gs:0,g:0.5,z:1.5,ch:2.4,fi:1.6,ca:35,fe:0.5,mg:11,k2:151,na:800,zn:0.4,fo:24,se:0.5,col:0},
+{n:"Zuppa di miso (per 100ml)",c:"Cucina etnica",src:"INT",k:40,p:2.5,gs:0.5,g:1.5,z:1.0,ch:5.5,fi:0.5,ca:18,fe:0.5,mg:12,k2:80,na:760,zn:0.3,fo:45,se:2,col:0},
+{n:"Pad Thai (per 100g)",c:"Cucina etnica",src:"INT",k:195,p:8.5,gs:1.5,g:8.5,z:4.5,ch:25,fi:1.0,ca:38,fe:1.0,mg:22,k2:175,na:620,zn:0.8,fo:95,se:12,col:55},
+{n:"Baba ganoush (per 100g)",c:"Cucina etnica",src:"INT",k:88,p:2.0,gs:0.5,g:6.5,z:3.5,ch:7.5,fi:2.0,ca:15,fe:0.4,mg:12,k2:180,na:320,zn:0.3,fo:40,se:1,col:0},
+{n:"Nigiri salmone - sushi (per 100g)",c:"Cucina etnica",src:"INT",k:167,p:8.5,gs:1.0,g:4.5,z:2.5,ch:24.5,fi:0.3,ca:12,fe:0.5,mg:18,k2:95,na:280,zn:0.5,fo:95,se:18,col:22},
+{n:"Burrito con pollo e verdure (per 100g)",c:"Cucina etnica",src:"INT",k:185,p:10.5,gs:1.5,g:5.5,z:2.5,ch:24.5,fi:2.0,ca:55,fe:1.2,mg:25,k2:220,na:490,zn:0.9,fo:110,se:8,col:22},
+// ── SNACK E BEVANDE PREMIUM ──
+{n:"Kinder Bueno (per 100g)",c:"Dolci confezionati",src:"UPF",k:568,p:9.0,gs:19.5,g:36.5,z:52,ch:56.5,fi:1.5,ca:100,fe:1.0,mg:35,k2:230,na:120,zn:0.8,fo:135,se:5,col:15},
+{n:"Raffaello Ferrero (per 100g)",c:"Dolci confezionati",src:"UPF",k:630,p:7.5,gs:26,g:46,z:48,ch:56,fi:2.5,ca:75,fe:0.5,mg:38,k2:240,na:48,zn:0.5,fo:95,se:4,col:5},
+{n:"Ferrero Rocher (per 100g)",c:"Dolci confezionati",src:"UPF",k:614,p:9.0,gs:15.5,g:42.5,z:52,ch:56,fi:2.0,ca:90,fe:1.0,mg:45,k2:310,na:78,zn:0.8,fo:110,se:5,col:8},
+{n:"Cornetto vuoto al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:395,p:8.5,gs:10.5,g:18,z:12,ch:52,fi:1.5,ca:30,fe:2.0,mg:12,k2:100,na:330,zn:0.6,fo:85,se:12,col:45},
+{n:"Cornetto alla crema al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:350,p:7.0,gs:5.5,g:15,z:18,ch:49,fi:1.0,ca:55,fe:1.5,mg:12,k2:100,na:195,zn:0.5,fo:80,se:8,col:65},
+{n:"Tramezzino al tonno (bar, per 100g)",c:"Pane farcito",src:"UPF",k:220,p:10.5,gs:1.5,g:7.5,z:2.0,ch:30,fi:1.0,ca:38,fe:1.0,mg:15,k2:165,na:680,zn:0.6,fo:85,se:14,col:28},
+{n:"Crodino analcolico (per 100ml)",c:"Alcolici e simili",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11.5,fi:0,ca:3,fe:0,mg:2,k2:8,na:65,zn:0,fo:0,se:0,col:0},
+{n:"Spritz Aperol (per 100ml)",c:"Alcolici e simili",src:"UPF",k:81,p:0,gs:0,g:0,z:7.5,ch:9.5,fi:0,ca:5,fe:0,mg:3,k2:18,na:12,zn:0,fo:0,se:0,col:0},
+{n:"Limoncello (per 100ml)",c:"Alcolici e simili",src:"UPF",k:243,p:0,gs:0,g:0,z:30,ch:35,fi:0,ca:3,fe:0,mg:1,k2:8,na:3,zn:0,fo:0,se:0,col:0},
+{n:"Amaro Averna (per 100ml)",c:"Alcolici e simili",src:"UPF",k:275,p:0,gs:0,g:0,z:35,ch:42,fi:0,ca:8,fe:0.2,mg:3,k2:15,na:8,zn:0,fo:0,se:0,col:0}
 ];
 
 
@@ -6105,6 +6187,138 @@ giorni:['Folati: aumentare a 1-5 mg/die (vs 0.4 mg RDA) — eritropoiesi acceler
   {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Manzo magro',qt:'130'},{nome:'Spinaci crudi',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
   {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Lenticchie secche',qt:'50'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
  ]},
+// ── PATOLOGIE GASTROINTESTINALI DISTINTE ──
+{id:'morbo_crohn',cat:'gastroenterologiche',emoji:'🔴',nome:'Morbo di Crohn',badge:'ECCO 2023',colore:'#dc2626',
+ desc:'Malattia infiammatoria cronica intestinale transmurale che può coinvolgere qualsiasi tratto del GI (dal cavo orale all\'ano). Tipicamente ileocolica. Complicanze: stenosi, fistole, ascessi.',
+ note:'ECCO 2023. In fase attiva: nutrizione enterale esclusiva (efficacia pari ai corticosteroidi in pediatria). CDED (dieta ad esclusione del Crohn) in remissione. Eliminare fibre insolubili in stenosi. Monitorare Fe, B12, folati, vitamina D, zinco.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco',qt:'60'},{nome:'Uovo di gallina intero crudo',qt:'100'},{nome:'Banana',qt:'120'},{nome:'Latte intero fresco',qt:'200'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo',qt:'130'},{nome:'Zucchine',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo surgelato',qt:'150'},{nome:'Patate',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'colite_ulcerosa',cat:'gastroenterologiche',emoji:'🌿',nome:'Colite Ulcerosa',badge:'ECCO 2023',colore:'#16a34a',
+ desc:'Malattia infiammatoria cronica intestinale limitata alla mucosa del colon, a estensione continua dal retto. Caratterizzata da riacutizzazioni e remissioni.',
+ note:'ECCO 2023. In remissione: dieta mediterranea, fibre solubili (probiotici). In riacutizzazione: bassa fibra, basso residuo. Supplementare Fe (anemia da perdita ematica), acido folico (terapia con sulfasalazina). Omega-3 come adiuvante anti-infiammatorio.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'40'},{nome:'Latte intero fresco',qt:'200'},{nome:'Banana',qt:'120'},{nome:'Uovo di gallina intero crudo',qt:'60'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tacchino petto',qt:'130'},{nome:'Carote',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Salmone atlantico',qt:'150'},{nome:'Fagiolini',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── PATOLOGIE ENDOCRINE AGGIUNTIVE ──
+{id:'ipotiroidismo',cat:'endocrine',emoji:'🦋',nome:'Ipotiroidismo',badge:'ETA/ATA 2021',colore:'#7c3aed',
+ desc:'Ridotta produzione di ormoni tiroidei (T3/T4). Ipotiroidismo primario (danno tiroideo), secondario (ipofisi), terziario (ipotalamo). Sintomi: astenia, bradicardia, aumento peso, stipsi.',
+ note:'ETA/ATA 2021. Levotiroxina a digiuno, 30-60 min prima colazione. Soia, calcio, ferro, fibre distanziare di almeno 2-4 ore (riducono assorbimento). Alghe e iodio: cautela — possono alterare funzione. Seleno adeguato (200µg/die) per conversione T4→T3.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Olio extra vergine di oliva',qt:'10'},{nome:'Arancia',qt:'150'},{nome:'Tè verde',qt:'200'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Tonno in scatola sott\'olio',qt:'100'},{nome:'Insalata mista',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo surgelato',qt:'150'},{nome:'Broccoli',qt:'200'},{nome:'Patate',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'feocromocitoma',cat:'endocrine',emoji:'⚡',nome:'Feocromocitoma (post-chirurgia)',badge:'ENSAT 2023',colore:'#f59e0b',
+ desc:'Tumore neuroendocrino della midollare surrenale con ipersecrezione di catecolamine. Post-adrenalectomia: gestione ipoglicemia reattiva, monitoraggio PA, recupero nutritivo.',
+ note:'ENSAT 2023. Pre-chirurgico: dieta iposodica, idratazione abbondante. Post-chirurgico: rischio ipoglicemia reattiva (monitorare glicemia). Evitare tiramina (fermentati, alcol, cioccolato fondente) se residuo tumorale. Calcio e Mg se ipoaldosteronismo post-op.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'50'},{nome:'Latte intero fresco',qt:'200'},{nome:'Mela',qt:'150'},{nome:'Mandorle dolci',qt:'20'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Pollo',qt:'150'},{nome:'Verdure miste cotte',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Pasta di semola cruda',qt:'70'},{nome:'Merluzzo surgelato',qt:'130'},{nome:'Zucchine',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── PATOLOGIE RESPIRATORIE ──
+{id:'apnea_sonno',cat:'respiratorie',emoji:'😴',nome:'Sindrome Apnee Ostruttive del Sonno (OSAS)',badge:'AASM 2023',colore:'#1d4ed8',
+ desc:'Episodi ricorrenti di ostruzione vie aeree superiori durante il sonno. Associata a obesità, sindrome metabolica, ipertensione. AHI ≥5 eventi/ora.',
+ note:'AASM 2023. La perdita di peso del 10% può ridurre l\'AHI del 26%. Dieta ipocalorica (deficit 500 kcal/die). Eliminare alcol (peggiora apnee). Pasti serali leggeri. Dieta antinfiammatoria. Omega-3, vitamina D. Orari regolari.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'50'},{nome:'Latte scremato',qt:'200'},{nome:'Kiwi',qt:'120'},{nome:'Noci',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Insalata mista',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena (leggera)',emoji:'🌙',items:[{nome:'Tacchino petto',qt:'120'},{nome:'Verdure grigliate',qt:'200'},{nome:'Pane integrale',qt:'40'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+ ]},
+// ── PATOLOGIE ONCOLOGICHE AGGIUNTIVE ──
+{id:'tumore_vescica',cat:'oncologiche',emoji:'💙',nome:'Tumore della Vescica',badge:'ESPEN 2021',colore:'#2563eb',
+ desc:'Neoplasia epiteliale della vescica (90% carcinomi uroteliali). Fattori di rischio: fumo, esposizione chimica. Nutrizione in supporto a chemioterapia, radioterapia, cistectomia.',
+ note:'ESPEN 2021. Post-cistectomia radicale: rischio carenza B12 (resezione ileo terminale nelle derivazioni). Supplementare B12 per tutta la vita. In chemioterapia: supporto nutrizionale precoce, controllo nausea/vomito. Aumentare apporto idrico (≥2.5L/die) durante chemio.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Ricotta vaccina',qt:'80'},{nome:'Kiwi',qt:'150'},{nome:'Latte intero fresco',qt:'200'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Tonno in scatola sott\'olio',qt:'100'},{nome:'Pomodori',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Merluzzo surgelato',qt:'150'},{nome:'Verdure miste cotte',qt:'200'},{nome:'Riso bianco crudo',qt:'60'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'tumore_esofago',cat:'oncologiche',emoji:'🟡',nome:'Tumore dell\'Esofago',badge:'ESPEN 2021',colore:'#d97706',
+ desc:'Carcinoma esofageo (squamoso o adenocarcinoma). Alta prevalenza di malnutrizione e disfagia. Cachessia nel 60-80% dei pazienti. Trattamento chirurgico, radio-chemioterapia.',
+ note:'ESPEN 2021. Disfagia quasi universale: modificare consistenza (semiliquida→liquida). Nutrizione enterale (NJ) spesso necessaria prima e dopo chirurgia. Post-esofagectomia: dumping syndrome, reflusso. Frazionare in 6-8 piccoli pasti. Decubito eretto dopo i pasti. Integratori orali (ONS).',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Yogurt intero',qt:'150'},{nome:'Banana',qt:'100'},{nome:'Latte intero fresco',qt:'150'},{nome:'Miele',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'70'},{nome:'Pollo',qt:'100'},{nome:'Brodo vegetale',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Semolino o polenta morbida',qt:'50'},{nome:'Merluzzo surgelato',qt:'100'},{nome:'Verdure passate',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'tumore_endometrio',cat:'oncologiche',emoji:'🌸',nome:'Tumore dell\'Endometrio',badge:'ESPEN 2021',colore:'#db2777',
+ desc:'Neoplasia del corpo uterino (adenocarcinoma endometrioide). Associata a obesità, diabete, sindrome metabolica. Chirurgia ± radioterapia ± chemioterapia.',
+ note:'ESPEN 2021. Obesità presente nel 40-50%: calo ponderale prima di chirurgia migliora outcomes. Post-radioterapia pelvica: tossicità intestinale (diarrea, proctite). Dieta a bassa fibra in fase acuta, poi graduale reintroduzione. Vitamina D e Ca per rischio osteoporosi (aromatasi inibitori).',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'50'},{nome:'Latte scremato',qt:'200'},{nome:'Mela',qt:'150'},{nome:'Mandorle dolci',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'70'},{nome:'Tacchino petto',qt:'120'},{nome:'Verdure miste cotte',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Riso integrale crudo',qt:'60'},{nome:'Insalata mista',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── PATOLOGIE EMATOLOGICHE AGGIUNTIVE ──
+{id:'policitemia_vera',cat:'ematologiche',emoji:'🩸',nome:'Policitemia Vera',badge:'ELN 2021',colore:'#9f1239',
+ desc:'Neoplasia mieloproliferativa con eccesso di eritrociti (e spesso leucociti e piastrine) da mutazione JAK2. Iperviscosità ematica, rischio trombotico elevato.',
+ note:'ELN 2021. Dieta ipocalorica se sovrappeso (riduce eritropoiesi). Idratazione abbondante (≥2L/die) per ridurre viscosità. Limitare alcol (aumenta ematocrito). Ferro: NON supplementare (alimenta eritropoiesi patologica). Acido acetilsalicilico: compatibile. Vitamina K stabile se anticoagulati.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'50'},{nome:'Latte scremato',qt:'250'},{nome:'Mirtilli',qt:'100'},{nome:'Noci',qt:'15'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo',qt:'120'},{nome:'Insalata mista',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Verdure grigliate',qt:'200'},{nome:'Pane integrale',qt:'50'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── DISTURBI DEL COMPORTAMENTO ALIMENTARE ──
+{id:'arfid',cat:'dca',emoji:'🍽️',nome:'ARFID (Disturbo Alimentare Evitante-Restrittivo)',badge:'DSM-5 2013',colore:'#7c3aed',
+ desc:'Disturbo alimentare caratterizzato da restrizione dell\'intake non motivata da immagine corporea. Avversione sensoriale, paura di soffocare, mancanza di interesse per il cibo. Frequente in bambini e ASD.',
+ note:'DSM-5 2013 / NICE 2017. Approccio multidisciplinare: nutrizionista, psicologo, TCC. Espansione graduale della varietà alimentare (food chaining). Monitorare carenze: vitamina D, Fe, Zn, B12 (se evitano proteine animali). Supplementazione mirata. Mai forzare — aumenta avversione.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane bianco',qt:'60'},{nome:'Burro',qt:'10'},{nome:'Latte intero fresco',qt:'200'},{nome:'Mela',qt:'100'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo',qt:'100'},{nome:'Patate',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Uovo di gallina intero crudo',qt:'100'},{nome:'Carote',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+ ]},
+// ── PATOLOGIE CARDIOVASCOLARI ──
+{id:'pots',cat:'cardiovascolari',emoji:'💓',nome:'POTS / Disautonomia Ortostatica',badge:'ESC 2022',colore:'#ec4899',
+ desc:'Sindrome da tachicardia posturale ortostatica: FC aumenta ≥30 bpm (≥40 in <19 anni) nei 10 min di stazione eretta senza ipotensione. Frequente in giovani donne, post-COVID.',
+ note:'ESC 2022. Aumentare sale (5-10g NaCl extra/die) e liquidi (2.5-3.5L/die) per espandere volume ematico. Piccoli pasti frequenti (grandi pasti aumentano pooling splacnico). Caffeina: utile in alcuni. Eliminare alcol. Compressione arti inferiori. Pasti a basso IG.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Uovo di gallina intero crudo',qt:'100'},{nome:'Latte intero fresco',qt:'200'},{nome:'Kiwi',qt:'120'}]},
+  {nome:'Spuntino mattina',emoji:'🍎',items:[{nome:'Yogurt intero',qt:'125'},{nome:'Mandorle dolci',qt:'20'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Riso bianco crudo',qt:'70'},{nome:'Pollo',qt:'120'},{nome:'Verdure miste cotte',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Spuntino pomeriggio',emoji:'🥤',items:[{nome:'Crackers',qt:'30'},{nome:'Prosciutto crudo',qt:'30'}]},
+  {nome:'Cena (piccola)',emoji:'🌙',items:[{nome:'Merluzzo surgelato',qt:'120'},{nome:'Patate',qt:'120'},{nome:'Insalata',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'8'}]}
+ ]},
+// ── PATOLOGIE NEUROLOGICHE ──
+{id:'neuropatia_periferica',cat:'neurologiche',emoji:'⚡',nome:'Neuropatia Periferica',badge:'EFNS 2020',colore:'#7c3aed',
+ desc:'Danno ai nervi periferici (sensitivo, motorio, autonomo). Cause: diabete (più comune), deficit B12, alcol, chemioterapia, ereditaria (CMT). Sintomi: dolore, formicolio, debolezza distale.',
+ note:'EFNS 2020. In neuropatia diabetica: controllo glicemico (target HbA1c <7%). Deficit B12: supplementazione IM o orale ad alto dosaggio. Alcol-correlata: astinenza + tiamina 100mg/die + multivitaminico. Acidi grassi omega-3 neuroprotettivi. Antiossidanti: vitamina E, acido alfa-lipoico.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Uovo di gallina intero crudo',qt:'100'},{nome:'Arancia',qt:'150'},{nome:'Latte intero fresco',qt:'200'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Salmone atlantico',qt:'130'},{nome:'Insalata di spinaci',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Manzo magro',qt:'120'},{nome:'Legumi misti',qt:'100'},{nome:'Broccoli',qt:'200'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── PATOLOGIE EPATICHE AGGIUNTIVE ──
+{id:'epatite_b_cronica',cat:'epatiche',emoji:'🅱️',nome:'Epatite B Cronica (HBV)',badge:'EASL 2023',colore:'#b45309',
+ desc:'Infezione cronica da HBV con replicazione virale persistente (HBsAg+ >6 mesi). Progressione possibile verso cirrosi (15-40%) e HCC. Trattamento: entecavir, tenofovir.',
+ note:'EASL 2023. Astinenza assoluta dall\'alcol (accelera fibrosi). Peso normale (MASLD co-esistente in 30-40%: peggiora prognosi). Caffeina 2-3 tazze/die: riduce HCC. Vitamina D e zinco spesso carenti. Evitare supplementi a base di erbe epatotossiche. Cibo cotto se cirrosi.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Fiocchi di avena',qt:'50'},{nome:'Latte intero fresco',qt:'200'},{nome:'Kiwi',qt:'150'},{nome:'Noci',qt:'20'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta integrale cruda',qt:'80'},{nome:'Pollo',qt:'130'},{nome:'Insalata mista',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'150'},{nome:'Verdure grigliate',qt:'200'},{nome:'Riso bianco crudo',qt:'60'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+{id:'epatite_c_cronica',cat:'epatiche',emoji:'🅾️',nome:'Epatite C Cronica (HCV)',badge:'EASL 2024',colore:'#b45309',
+ desc:'Infezione cronica da HCV. SVR (risposta virologica sostenuta) con DAA (antivirali diretti) >95%. Anche dopo guarigione: rischio fibrosi residua, HCC se già presente cirrosi.',
+ note:'EASL 2024. DAA (glecaprevir/pibrentasvir, sofosbuvir/velpatasvir): non richiedono restrizioni alimentari significative. Astinenza alcol durante terapia. Post-SVR: monitorare MASLD, glicemia (HCV aumenta IR). Caffeina: riduce fibrosi. Vitamina D spesso carente.',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Ricotta vaccina',qt:'80'},{nome:'Arancia',qt:'150'},{nome:'Caffè americano',qt:'200'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Merluzzo surgelato',qt:'150'},{nome:'Pomodori',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Salmone atlantico',qt:'130'},{nome:'Broccoli',qt:'200'},{nome:'Patate',qt:'100'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
+// ── INTOLLERANZE ──
+{id:'intolleranza_sorbitolo',cat:'allergie',emoji:'🍑',nome:'Intolleranza al Sorbitolo e Polioli',badge:'SGAMN 2018',colore:'#7c3aed',
+ desc:'Malassorbimento intestinale di sorbitolo (E420) e altri polioli (xilitolo, maltitolo, mannitolo). Fermentazione batterica → gonfiore, flatulenza, diarrea. Spesso co-esiste con malassorbimento fruttosio.',
+ note:'SGAMN 2018. Alimenti ricchi di sorbitolo: frutta a nocciolo (prugne, pesche, albicocche), mele, pere. Prodotti "sugar-free" con dolcificanti polioli. Lettura etichette: E420, E421, E953, E965, E966, E967. Spesso miglioramento seguendo protocollo FODMAP (sorbitolo è una delle "P" dei FODMAP).',
+ pasti:[
+  {nome:'Colazione',emoji:'🌅',items:[{nome:'Pane integrale',qt:'60'},{nome:'Burro',qt:'10'},{nome:'Latte intero fresco',qt:'200'},{nome:'Kiwi',qt:'100'}]},
+  {nome:'Pranzo',emoji:'🍽️',items:[{nome:'Pasta di semola cruda',qt:'80'},{nome:'Pollo',qt:'130'},{nome:'Carote',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'12'}]},
+  {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo surgelato',qt:'140'},{nome:'Fagiolini',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
+ ]},
 ];
 const PATOLOGIE_CUSTOM = [];
 function getAllPatologie(){return [...PATOLOGIE_BASE,...PATOLOGIE_CUSTOM];}
@@ -6361,7 +6575,22 @@ anemia_emolitica:{kcal:'25-35 kcal/kg',prot:'1.2-1.5 g/kg',note:'ASH 2018. Folat
   tumore_rene:{kcal:'25-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. Idratazione ≥2L. Monitorare funzione renale residua (GFR dopo nefrectomia). In TKI (sunitinib): nausea, mucosite, ipertensione, ipotiroidismo. In immunoterapia: colite immuno-mediata possibile. Peso settimanale.'},
   tumore_tiroide:{kcal:'Normocalorica (aumentare post-chirurgia)',prot:'1.0-1.2 g/kg/die',note:'ETA/ATA 2021. LID pre-I131: iodio <50µg/die per 2-4 settimane. Post-tiroidectomia: Ca 1000-1500mg/die + Vit.D 800-2000 UI/die (ipoparatiroidismo). Soia: assumere distante da levotiroxina (≥2-4 ore). Alghe: vietate.'},
   tumore_ovaio:{kcal:'25-35 kcal/kg/die (30-40 se cachessia)',prot:'1.2-2.0 g/kg/die',note:'ESPEN 2021. Cachessia nel 60-80% dei casi avanzati. Ascite: pasti piccoli (6/die), ridurre volume liquidi se abbondante. Omega-3 EPA 2g/die anti-cachessia. In neutropenia: dieta a basso contenuto batterico. ONS se intake <60%.'},
-  anemia_megaloblastica:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'BSH 2014. ATTENZIONE: non supplementare folati senza escludere deficit B12 (rischio danni neurologici irreversibili). Anemia perniciosa: B12 IM 1000µg/die. Vegani: B12 orale 1000µg/die. Metformina: monitorare B12 annualmente.'}
+  anemia_megaloblastica:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'BSH 2014. ATTENZIONE: non supplementare folati senza escludere deficit B12 (rischio danni neurologici irreversibili). Anemia perniciosa: B12 IM 1000µg/die. Vegani: B12 orale 1000µg/die. Metformina: monitorare B12 annualmente.'},
+  morbo_crohn:{kcal:'25-35 kcal/kg/die (35-40 in cachessia)',prot:'1.2-1.5 g/kg/die',note:'ECCO/ESPEN 2023. Nutrizione enterale esclusiva: efficace come corticosteroidi (1 kcal/ml, 2000-3000 kcal/die per 6-8 settimane). CDED (dieta ad esclusione del Crohn): frumento, carne rossa, latticini grassi limitati. In stenosi: fibre insolubili ridotte. Monitorare Fe, B12, vitamina D, Zn.'},
+  colite_ulcerosa:{kcal:'Normocalorica (25-30 kcal/kg/die)',prot:'1.2-1.5 g/kg/die',note:'ECCO/ESPEN 2023. In riacutizzazione: bassa fibra, basso residuo. In remissione: dieta mediterranea. Fe per anemia da perdita ematica. Acido folico se sulfasalazina (inibisce assorbimento folati). Omega-3 EPA/DHA come adiuvanti anti-infiammatori.'},
+  ipotiroidismo:{kcal:'Normocalorica (ridotta se sovrappeso)',prot:'1.0-1.2 g/kg/die',note:'ETA/ATA 2021. Levotiroxina a digiuno (30-60 min ante-prandiale). Distanziare almeno 2-4 ore da: soia, calcio, ferro, colestiramina, PPI. Seleno 200µg/die (noci del Brasile: 1-2/die). Alghe: evitare (eccesso iodio). Vitamina D spesso carente.'},
+  feocromocitoma:{kcal:'Normocalorica o ipocalorica post-op',prot:'1.0-1.2 g/kg/die',note:'ENSAT 2023. Pre-operatorio: sodio adeguato, idratazione. Evitare tiramina (fermentati, alcol, formaggi stagionati) se residuo tumorale. Post-op: rischio ipoglicemia reattiva — pasti frequenti, monitoraggio glicemico. Calcio e Mg se ipoaldosteronismo post-adrenalectomia.'},
+  apnea_sonno:{kcal:'Deficit 500-750 kcal/die (se BMI >25)',prot:'1.2-1.5 g/kg/die',note:'AASM 2023. Perdita di peso 10% riduce AHI del 26%. Eliminare alcol (peggiora apnee). Pasti serali piccoli e leggeri. Vitamina D (spesso carente e correlata alla severità). Omega-3 anti-infiammatori. Magnesio per qualità del sonno.'},
+  tumore_vescica:{kcal:'25-35 kcal/kg/die',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. Post-cistectomia radicale con ileo-condotto: monitorare B12 ogni anno e supplementare (B12 IM profilattico). In chemioterapia sistemica: gestire nausea (pasti piccoli, cibi freddi, zenzero). Idratazione ≥2.5L/die. Omega-3 EPA/DHA anti-cachessia.'},
+  tumore_esofago:{kcal:'30-40 kcal/kg/die (malnutrizione severa frequente)',prot:'1.5-2.0 g/kg/die',note:'ESPEN 2021. Disfagia: adattare consistenza (IDDSI Framework). Nutrizione enterale nasodigiunale pre-operatoria. Post-esofagectomia: 6-8 piccoli pasti/die, decubito semieretto 2h dopo pasto (dumping, reflusso). ONS iperproteici. Vitamina D, B12, Mg spesso carenti.'},
+  tumore_endometrio:{kcal:'25-30 kcal/kg/die (ipocalorica se obesa)',prot:'1.2-1.5 g/kg/die',note:'ESPEN 2021. Obesità presente nel 40-50%: calo ponderale migliora outcomes e risposta terapeutica. Post-radioterapia pelvica: diarrea e proctite — dieta a bassa fibra, basso lattosio. Vitamina D e Ca se inibitori aromatasi (rischio osteoporosi). Acido folico in chemioterapia.'},
+  policitemia_vera:{kcal:'Ipocalorica se BMI>25 (deficit 500 kcal/die)',prot:'1.0-1.2 g/kg/die',note:'ELN 2021. Idratazione ≥2L/die (riduce viscosità ematica). Ferro: NON integrare (stimola eritropoiesi patologica — attenzione a ridurre alimenti ricchissimi di ferro). Alcol: evitare. Fibre abbondanti. Omega-3 antitrombotico. Vitamina K stabile se in anticoagulazione.'},
+  arfid:{kcal:'Adeguata alla crescita e all\'età (spesso carente)',prot:'1.0-1.2 g/kg/die (aumentare se crescita insufficiente)',note:'DSM-5 2013 / NICE 2017. Food chaining: introduzione graduale di varianti accettate del cibo tollerato. ONS se intake insufficiente per la crescita. Monitorare: vitamina D, Fe, Zn, B12, Ca. Approccio multidisciplinare. Mai forzare o punire riguardo al cibo.'},
+  pots:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'ESC 2022. Sale extra 5-10g NaCl/die (espande volume ematico). Liquidi 2.5-3.5L/die. Pasti piccoli e frequenti (evitare pooling splacnico post-prandiale). Caffeina utile (10mg/kg/die). Alcol: evitare. Compressione arti inferiori. Attività fisica graduale in posizione orizzontale.'},
+  neuropatia_periferica:{kcal:'Normocalorica o adattata alla causa',prot:'1.0-1.2 g/kg/die',note:'EFNS 2020. Neuropatia diabetica: controllo glicemico HbA1c <7%, vitamina D, omega-3. Da deficit B12: supplementazione orale o IM (1000µg/die). Alcolica: tiamina 100mg/die + multivitaminico. Acido alfa-lipoico 600mg/die (evidenza per neuropatia diabetica). Glutammina in neuropatia da chemio.'},
+  epatite_b_cronica:{kcal:'Normocalorica (30-35 se cirrosi)',prot:'1.2-1.5 g/kg/die (1.0 se encefalopatia)',note:'EASL 2023. Alcol: astinenza assoluta. Peso normale (MASLD co-esistente peggiora prognosi). Caffeina 2-3 tazze/die: riduce fibrosi e HCC. Vitamina D (monitorare e supplementare se <30 ng/ml). Zinco spesso carente. Evitare cibi crudi se cirrosi (rischio Listeria, Salmonella).'},
+  epatite_c_cronica:{kcal:'Normocalorica (ipocalorica se BMI>25)',prot:'1.2-1.5 g/kg/die',note:'EASL 2024. DAA: nessuna restrizione alimentare significativa (evitare pompelmo con alcuni DAA). Alcol: evitare durante terapia e dopo (accelera fibrosi residua). Post-SVR: monitorare MASLD e insulino-resistenza. Caffeina: riduce fibrosi. Vitamina D e ferro spesso alterati.'},
+  intolleranza_sorbitolo:{kcal:'Normocalorica',prot:'1.0-1.2 g/kg/die',note:'SGAMN 2018. Eliminare sorbitolo e polioli: frutta a nocciolo (prugne, pesche, albicocche, ciliegie), mele, pere, funghi. Leggere etichette: E420 (sorbitolo), E421 (mannitolo), E953 (isomalto), E965 (maltitolo), E966 (lactitolo), E967 (xilitolo). Spesso parte del protocollo FODMAP.'}
 };
 const LAF_OPTIONS=[
   {label:'Sedentario (allettato/minima attività)',val:1.2},

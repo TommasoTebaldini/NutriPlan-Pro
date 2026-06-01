@@ -6642,7 +6642,7 @@ giorni:['Folati: aumentare a 1-5 mg/die (vs 0.4 mg RDA) — eritropoiesi acceler
   {nome:'Cena',emoji:'🌙',items:[{nome:'Riso bianco crudo',qt:'80'},{nome:'Merluzzo surgelato',qt:'140'},{nome:'Fagiolini',qt:'150'},{nome:'Olio extra vergine di oliva',qt:'10'}]}
  ]},
 // ── 18 NUOVE PATOLOGIE ──
-  ,{id:'huntington',cat:'neurologiche',emoji:'🧬',nome:'Malattia di Huntington',badge:'ESPEN 2023',colore:'#7C3AED',
+  {id:'huntington',cat:'neurologiche',emoji:'🧬',nome:'Malattia di Huntington',badge:'ESPEN 2023',colore:'#7C3AED',
    desc:'Ipercalorica ad alta densità energetica. I movimenti coreici aumentano il fabbisogno del 20-40%. Disfagia progressiva.',
    note:'ESPEN 2023 + EHDN 2022. Fabbisogno 35-45 kcal/kg/die. Proteine 1.5 g/kg/die. Spesso necessaria NE nella fase avanzata. Monitorare peso settimanalmente. Texture modificata IDDSI liv.3-4 al bisogno.',
    pasti:[

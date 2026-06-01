@@ -1087,19 +1087,29 @@ function getTplCategories() {
   return merged;
 }
 
+// Cache dei template per event delegation (evita JSON.stringify in onclick)
+let _tplCatsCache = {};
+let _tplItemsCache = [];
+
 function renderTplPanel() {
   const panel = document.getElementById('tpl-panel');
   if (!panel) return;
   const cats = getTplCategories();
   const catKeys = Object.keys(cats);
   if (!_tplActiveCat || !cats[_tplActiveCat]) _tplActiveCat = catKeys[0];
+  _tplCatsCache = cats;
+  _tplItemsCache = cats[_tplActiveCat] || [];
 
+  // Categorie: usa data-cat per evitare JSON.stringify nel onclick
   const catBtns = catKeys.map(cat =>
-    '<button class="tpl-cat-btn' + (cat === _tplActiveCat ? ' active' : '') + '" onclick="selectTplCat(' + JSON.stringify(cat) + ')">' + cat + '</button>'
+    '<button class="tpl-cat-btn' + (cat === _tplActiveCat ? ' active' : '') +
+    '" data-cat="' + cat.replace(/"/g,'&quot;') + '" onclick="selectTplCat(this.dataset.cat)">' +
+    esc(cat) + '</button>'
   ).join('');
 
-  const items = (cats[_tplActiveCat] || []).map((t, i) =>
-    '<div class="tpl-item" onclick="insertTemplate(' + JSON.stringify(t) + ')">' +
+  // Items: usa data-idx per riferimento sicuro
+  const items = _tplItemsCache.map((t, i) =>
+    '<div class="tpl-item" data-tpl-idx="' + i + '" onclick="insertTemplateByIdx(' + i + ')">' +
     '<span class="tpl-item-icon">💬</span><span>' + esc(t) + '</span></div>'
   ).join('');
 
@@ -1110,7 +1120,7 @@ function renderTplPanel() {
       '<button style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--slate-l);margin-left:4px" onclick="closeTplPanel()">✕</button>' +
     '</div>' +
     '<div class="tpl-cats">' + catBtns + '</div>' +
-    '<div class="tpl-list">' + items + '</div>';
+    '<div class="tpl-list">' + (items || '<div style="padding:14px;text-align:center;color:var(--slate-l);font-size:12.5px">Nessun template in questa categoria.<br>Clicca + Aggiungi per crearne uno.</div>') + '</div>';
 }
 
 function toggleTplPanel(e) {
@@ -1146,26 +1156,79 @@ function selectTplCat(cat) {
   renderTplPanel();
 }
 
-function insertTemplate(text) {
-  const input = document.getElementById('chat-input');
+function insertTemplateByIdx(idx) {
+  const text = _tplItemsCache[idx];
+  if (text === undefined) return;
+  // Find the VISIBLE chat-input (there may be two in DOM when tab switches)
+  const inputs = document.querySelectorAll('#chat-input');
+  const input = inputs[inputs.length - 1]; // use the last (most recently created)
   if (!input) return;
   input.value = text;
   input.focus();
   input.style.height = 'auto';
   input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  // Place cursor at end
+  input.setSelectionRange(input.value.length, input.value.length);
+  closeTplPanel();
+}
+
+function insertTemplate(text) {
+  // Legacy: find by value from cache
+  const idx = _tplItemsCache.indexOf(text);
+  if (idx >= 0) { insertTemplateByIdx(idx); return; }
+  const inputs = document.querySelectorAll('#chat-input');
+  const input = inputs[inputs.length - 1];
+  if (!input) return;
+  input.value = text;
+  input.focus();
   closeTplPanel();
 }
 
 function openAddTplModal() {
-  // Simple prompt-based add (could be upgraded to a modal)
-  const cat = prompt('Categoria (lascia vuoto per "Personalizzati"):', _tplActiveCat || 'Personalizzati');
-  if (cat === null) return;
-  const catName = cat.trim() || 'Personalizzati';
-  const text = prompt('Testo del template (puoi usare [DATA], [ORA] come segnaposto):');
-  if (!text || !text.trim()) return;
+  // Build category options from current categories + predefined
+  const cats = getTplCategories();
+  const catKeys = Object.keys(cats);
+  const catOpts = catKeys.map(c =>
+    '<option value="' + c.replace(/"/g,'&quot;') + '"' + (c === _tplActiveCat ? ' selected' : '') + '>' + esc(c) + '</option>'
+  ).join('') + '<option value="Personalizzati"' + (!catKeys.includes('Personalizzati')?' selected':'') + '>Personalizzati</option>';
+
+  // Show inline modal inside the panel (replace panel content temporarily)
+  const panel = document.getElementById('tpl-panel');
+  if (!panel) return;
+  panel.innerHTML =
+    '<div class="tpl-panel-hdr">' +
+      '<span class="tpl-panel-hdr-title">➕ Nuovo template</span>' +
+      '<button style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--slate-l)" onclick="renderTplPanel()">✕</button>' +
+    '</div>' +
+    '<div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">' +
+      '<div>' +
+        '<label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Categoria</label>' +
+        '<select id="tpl-new-cat" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;outline:none">' +
+        catOpts +
+        '</select>' +
+      '</div>' +
+      '<div>' +
+        '<label style="font-size:11.5px;font-weight:600;color:var(--slate-l);display:block;margin-bottom:4px">Testo del messaggio <span style="font-weight:400;color:var(--slate-l)">(puoi usare [DATA], [ORA])</span></label>' +
+        '<textarea id="tpl-new-text" rows="3" placeholder="Scrivi il testo del template..." ' +
+        'style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box"></textarea>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+        '<button onclick="renderTplPanel()" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border-d);background:white;font-size:12.5px;font-weight:600;color:var(--slate-m);cursor:pointer;font-family:inherit">Annulla</button>' +
+        '<button onclick="saveNewTpl()" style="padding:6px 14px;border-radius:8px;border:none;background:var(--teal);color:white;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit">💾 Salva</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('tpl-new-text')?.focus();
+}
+
+function saveNewTpl() {
+  const catEl = document.getElementById('tpl-new-cat');
+  const textEl = document.getElementById('tpl-new-text');
+  const catName = (catEl?.value || 'Personalizzati').trim();
+  const text = (textEl?.value || '').trim();
+  if (!text) { textEl?.focus(); return; }
   const saved = JSON.parse(localStorage.getItem(TPL_STORAGE_KEY) || '{}');
   if (!saved[catName]) saved[catName] = [];
-  saved[catName].push(text.trim());
+  if (!saved[catName].includes(text)) saved[catName].push(text);
   localStorage.setItem(TPL_STORAGE_KEY, JSON.stringify(saved));
   _tplActiveCat = catName;
   renderTplPanel();

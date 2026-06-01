@@ -115,9 +115,13 @@ async function ensureChartJs() {
     <option value="M">♂ Maschio</option>
     <option value="F">♀ Femmina</option>
   </select>
-  <select id="paz-filter-tag" class="filter-bar-input" style="min-width:160px">
-    <option value="">🏷️ Patologia</option>
-  </select>
+  <div style="position:relative;min-width:190px;flex:1;max-width:240px">
+    <input type="text" id="paz-filter-tag" list="paz-tag-list" class="filter-bar-input"
+      style="width:100%;padding-left:28px" placeholder="🏷️ Cerca patologia..."
+      oninput="applyFiltri()" onchange="applyFiltri()">
+    <span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px">🏷️</span>
+    <datalist id="paz-tag-list"></datalist>
+  </div>
   <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 Mostra archiviati (<span id="paz-archivio-count">0</span>)</button>
   <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" title="Azzera filtri">✕</button>
 </div>
@@ -377,14 +381,34 @@ async function loadCartelle() {
 
   allCartelleData = data;
 
-  // Populate tag filter dropdown
-  const tagSet = new Set();
+  // Populate tag datalist: predefined common pathologies + tags already used by patients
+  const PAZ_COMMON_TAGS = [
+    'Diabete T2','Diabete T1','Diabete Gestazionale','Prediabete','Obesità','Sovrappeso',
+    'Sindrome Metabolica','Dislipidemia','Ipercolesterolemia','Ipertrigliceridemia',
+    'Ipertensione','Scompenso Cardiaco','Coronaropatia','Fibrillazione Atriale',
+    'IRC/CKD','Dialisi','Sindrome Nefrosica','Calcolosi Renale',
+    'Celiachia','IBD/Crohn','Colite Ulcerosa','IBS','SIBO','GERD/Reflusso',
+    'Gastrite','Stipsi Cronica','Diverticolosi','Pancreatite Cronica',
+    'NAFLD/MASLD','Cirrosi Epatica','Steatosi Epatica',
+    'Oncologia','Cachessia Oncologica','Sarcopenia','Osteoporosi',
+    'BPCO','Fibrosi Cistica','Asma','Post-COVID',
+    'Hashimoto/Ipotiroidismo','Ipertiroidismo','PCOS','Menopausa',
+    'Artrite Reumatoide','Gotta','Fibromialgia','Lupus','Sclerosi Multipla',
+    'Anoressia','Bulimia','BED','ARFID','Ortoressia',
+    'Depressione','Ansia',
+    'Allergia Latte','Allergia Uova','Allergia Frutta Secca','Allergia Arachidi',
+    'Intolleranza Lattosio','Intolleranza Glutine','Intolleranza Istamina','Intolleranza Nichel',
+    'Gravidanza','Allattamento',
+    'Chirurgia Bariatrica','Bypass Gastrico','Sleeve Gastrectomy',
+    'Pediatria','Obesità Pediatrica','Nutrizione Sportiva',
+    'Vegetariano','Vegano','Anziano/Fragilità'
+  ];
+  const tagSet = new Set([...PAZ_COMMON_TAGS]);
   data.forEach(c => { if (Array.isArray(c.tags)) c.tags.forEach(t => tagSet.add(t)); });
-  const tagSel = document.getElementById('paz-filter-tag');
-  if (tagSel) {
-    tagSel.innerHTML = '<option value="">🏷️ Patologia</option>' +
-      [...tagSet].sort().map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
-    tagSel.onchange = applyFiltri;
+  const tagDL = document.getElementById('paz-tag-list');
+  if (tagDL) {
+    tagDL.innerHTML = [...tagSet].sort((a,b)=>a.localeCompare(b,'it'))
+      .map(t => `<option value="${esc(t)}">`).join('');
   }
 
   // Update archived counter
@@ -421,7 +445,7 @@ function applyFiltri() {
     }
     if (q && !((c.nome || '').toLowerCase().includes(q) || (c.cognome || '').toLowerCase().includes(q))) return false;
     if (sesso && c.sesso !== sesso) return false;
-    if (tag && !(Array.isArray(c.tags) && c.tags.includes(tag))) return false;
+    if (tag && !(Array.isArray(c.tags) && c.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())))) return false;
     return true;
   });
 

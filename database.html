@@ -247,15 +247,37 @@ function nd(v){ return (v===null||v===undefined||v==='')
   ? '<span class="nd">—</span>'
   : (v===0?'<span style="color:#CBD5E1">0</span>':v); }
 
+const DB_PAGE = 100;
+function _buildRow(f) {
+  const srcKey = f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int';
+  const persActions = f.src==='PERS'
+    ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="Modifica">✏️</button>`
+      + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="Elimina">🗑️</button>`
+    : '';
+  return `<tr><td>${esc(f.n)}${persActions}</td><td>${esc(f.c||'')}</td><td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td><td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td><td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td><td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td><td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td><td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td></tr>`;
+}
+function _getOrCreateMoreBtn() {
+  let btn = document.getElementById('db-load-more');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'db-load-more';
+    btn.className = 'btn btn-ghost btn-sm';
+    btn.style.cssText = 'display:block;margin:12px auto;padding:8px 24px';
+    const wrap = document.getElementById('db-table-wrap');
+    if (wrap && wrap.parentNode) wrap.parentNode.insertBefore(btn, wrap.nextSibling);
+  }
+  return btn;
+}
 function renderDB(list) {
   const tbody = document.getElementById('db-tbody');
   if(!list.length){
     tbody.innerHTML='<tr><td colspan="19" style="text-align:center;padding:24px;color:var(--slate-l)">Nessun alimento trovato</td></tr>';
     document.getElementById('db-count').textContent='0 alimenti';
+    const b = document.getElementById('db-load-more'); if(b) b.style.display='none';
     return;
   }
   document.getElementById('db-count').textContent = list.length + ' alimenti';
-  tbody.innerHTML = list.map(f => {
+  tbody.innerHTML = list.slice(0, DB_PAGE).map(f => {
     const srcKey = f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int';
     const persActions = f.src==='PERS'
       ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="Modifica">✏️</button>`
@@ -272,6 +294,21 @@ function renderDB(list) {
       <td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td>
     </tr>`;
   }).join('');
+  const btn = _getOrCreateMoreBtn();
+  if (list.length > DB_PAGE) {
+    let offset = DB_PAGE;
+    btn.style.display = 'block';
+    btn.textContent = `Carica altri (${list.length - offset} rimanenti)`;
+    btn.onclick = () => {
+      const next = list.slice(offset, offset + DB_PAGE);
+      tbody.insertAdjacentHTML('beforeend', next.map(f => _buildRow(f)).join(''));
+      offset += DB_PAGE;
+      if (offset >= list.length) btn.style.display = 'none';
+      else btn.textContent = `Carica altri (${list.length - offset} rimanenti)`;
+    };
+  } else {
+    btn.style.display = 'none';
+  }
 }
 
 function filterDB() {

@@ -2576,7 +2576,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       let savedDati = null;
       if (id && typeof sb !== 'undefined') {
         try {
-          const {data: noteData} = await sb.from('note_specialistiche').select('*').eq('id', id).single();
+          const {data: noteData} = await sb.from('note_specialistiche').select('id,dati,cartella_id').eq('id', id).single();
           if (noteData && noteData.dati) {
             savedDati = typeof noteData.dati === 'string' ? JSON.parse(noteData.dati) : noteData.dati;
           }

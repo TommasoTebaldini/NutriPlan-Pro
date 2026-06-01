@@ -18,7 +18,7 @@
 .study-search{flex:1;min-width:220px;max-width:380px;padding:8px 14px;border:1.5px solid var(--border-d);border-radius:20px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
 .study-search:focus{border-color:var(--teal)}
 .study-grid{display:grid;grid-template-columns:1fr;gap:14px}
-.study-card{background:white;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s,transform .15s}
+.study-card{background:white;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s,transform .15s;content-visibility:auto;contain-intrinsic-size:0 160px}
 .study-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
 .study-card-hdr{padding:14px 18px;display:flex;align-items:flex-start;gap:14px;cursor:pointer}
 .study-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:10px;font-size:10.5px;font-weight:700;white-space:nowrap;margin-right:4px;margin-bottom:3px}
@@ -4632,6 +4632,7 @@ function renderStudy(s) {
     return `<span class="study-badge" style="background:#F1F5F9;color:#475569">${catMap[c]||c}</span>`;
   }).join('');
 
+  // Body rendered lazily on first open (see toggleStudy)
   return `<div class="study-card" id="sc-${s.id}">
     <div class="study-card-hdr" onclick="toggleStudy(${s.id})">
       <div style="flex:1">
@@ -4650,38 +4651,28 @@ function renderStudy(s) {
       </div>
       <div style="flex-shrink:0;margin-left:8px;font-size:18px;color:var(--slate-l);transition:transform .2s" id="arr-${s.id}">▼</div>
     </div>
-    <div class="study-body" id="sb-${s.id}">
-      <div class="study-section">
-        <h4>🎯 Obiettivo dello Studio</h4>
-        <p>${s.obiettivo}</p>
-      </div>
-      <div class="study-section">
-        <h4>🔬 Metodi</h4>
-        <p>${s.metodi}</p>
-      </div>
-      <div class="study-section">
-        <h4>📊 Risultati Principali</h4>
-        <p>${s.risultati}</p>
-      </div>
-      <div class="study-section">
-        <h4>🧠 Analisi Critica dei Metodi e dei Risultati</h4>
-        <p>${s.analisi}</p>
-      </div>
-      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-        <a class="study-link" href="${s.link}" target="_blank" rel="noopener noreferrer">
-          📑 PubMed — PMID: ${s.pubmed}
-        </a>
-        <a class="study-link" href="${s.abstract_link}" target="_blank" rel="noopener noreferrer" style="background:#1E3A5F">
-          📄 Articolo completo →
-        </a>
-      </div>
-    </div>
+    <div class="study-body" id="sb-${s.id}"></div>
   </div>`;
 }
 
+function _studyBodyHTML(s) {
+  return `<div class="study-section"><h4>🎯 Obiettivo dello Studio</h4><p>${s.obiettivo}</p></div>
+      <div class="study-section"><h4>🔬 Metodi</h4><p>${s.metodi}</p></div>
+      <div class="study-section"><h4>📊 Risultati Principali</h4><p>${s.risultati}</p></div>
+      <div class="study-section"><h4>🧠 Analisi Critica dei Metodi e dei Risultati</h4><p>${s.analisi}</p></div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <a class="study-link" href="${s.link}" target="_blank" rel="noopener noreferrer">📑 PubMed — PMID: ${s.pubmed}</a>
+        <a class="study-link" href="${s.abstract_link}" target="_blank" rel="noopener noreferrer" style="background:#1E3A5F">📄 Articolo completo →</a>
+      </div>`;
+}
 function toggleStudy(id) {
   const body = document.getElementById('sb-' + id);
   const arr = document.getElementById('arr-' + id);
+  // Populate body on first open
+  if (!body._loaded) {
+    const s = STUDI.find(x => x.id === id);
+    if (s) { body.innerHTML = _studyBodyHTML(s); body._loaded = true; }
+  }
   const isOpen = body.classList.contains('open');
   body.classList.toggle('open');
   if (arr) arr.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';

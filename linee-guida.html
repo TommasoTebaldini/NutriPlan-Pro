@@ -16,7 +16,7 @@
 .lg-link-box{background:#EFF6FF;border-radius:8px;padding:10px 14px;margin-top:12px;border-left:3px solid #3B82F6;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .lg-link-btn{padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
 .lg-link-btn:hover{background:#1D4ED8}
-.lg-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;transition:all .18s;margin-bottom:8px;animation:lgCardIn .3s cubic-bezier(.16,1,.3,1) both}
+.lg-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;transition:all .18s;margin-bottom:8px;animation:lgCardIn .3s cubic-bezier(.16,1,.3,1) both;content-visibility:auto;contain-intrinsic-size:0 120px}
 @keyframes lgCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .lg-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.07);transform:translateY(-1px)}
 .lg-card-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s}
@@ -160,7 +160,7 @@ const LG_DATA = [
    ok:['Olio EVO (fonte di grassi monoinsaturi)','Pesce azzurro 2-3 volte/settimana (omega-3)','Avena e orzo (fibre solubili riducono colesterolo)','Legumi (fibre solubili)','Noci, mandorle (omega-3, fibre)','Yogurt con fitosteroli','Soia e derivati','Verdure e frutta abbondanti','Aglio'],
    no:['Burro, strutto, lardo','Carni grasse, salumi, insaccati','Formaggi stagionati in eccesso','Margarine con grassi trans','Dolci con olio di palma/cocco','Fritti','Frattaglie (fegato, reni)'],
    science:'<b>Perché ridurre i grassi saturi?</b> Aumentano il colesterolo LDL inibendo i recettori epatici per le LDL. Ogni 1% di calorie sostituite da MUFA riduce l\'LDL di ~1.2 mg/dL.<br><b>Perché eliminare i trans?</b> Aumentano LDL E abbassano HDL contemporaneamente. Non esiste soglia sicura di consumo.<br><b>Steroli vegetali (1.5-3g/die):</b> Riducono l\'LDL del 7-10% competendo con il colesterolo nell\'assorbimento intestinale.',
-   fonte:'ESC/EAS 2019 — Dislipidemia',url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines'},
+   fonte:'ESC/EAS 2019 — Dislipidemia',url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Dyslipidaemias-Management-of'},
 
   {id:'ipertensione',emoji:'💊',nome:'Ipertensione Arteriosa',badge:'ESH 2023 + DASH',colore:'#6366F1',
    desc:'Dieta DASH-Mediterranea. Riduzione sodio, aumento potassio, calcio e magnesio. Limitare alcol.',
@@ -169,7 +169,7 @@ const LG_DATA = [
    ok:['Verdure a foglia verde (spinaci, rucola, bietole)','Frutta fresca (banane, kiwi, agrumi — ricchi di K)','Cereali integrali','Legumi','Pesce azzurro (omega-3)','Latticini magri (yogurt, latte scremato)','Noci (moderate)','Olio EVO','Aglio, erbe aromatiche'],
    no:['Sale aggiunto (max 5g NaCl al giorno totale)','Salumi, affettati, insaccati','Formaggi stagionati','Cibi in scatola e conserve','Patatine, snack salati','Dadi da brodo, salse pronte','Alcol (soprattutto in eccesso)','Liquirizia (aumenta la pressione)'],
    science:'<b>Perché ridurre il sodio?</b> Il sodio trattiene acqua aumentando la pressione. Ridurre di 1g NaCl/die abbassa la PAS di ~3 mmHg. Il 75% del sodio viene dai cibi processati, non dal sale aggiunto.<br><b>Perché aumentare il potassio?</b> Antagonizza l\'effetto del sodio: favorisce la natriuresi e rilassa le pareti vascolari. Ogni +1000 mg K/die abbassa la PAS di ~1.5 mmHg.<br><b>Dieta DASH:</b> Riduce la PAS di 8-14 mmHg negli ipertesi, paragonabile a un farmaco antipertensivo in monoterapia.',
-   fonte:'ESH 2023 — Ipertensione Arteriosa',url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines'},
+   fonte:'ESH 2023 — Ipertensione Arteriosa',url:'https://www.eshonline.org/guidelines/2023-esh-guidelines/'},
 
   {id:'celiachia',emoji:'🌾',nome:'Celiachia / Dieta Gluten-Free',badge:'AIC/ESPEN',colore:'#EAB308',
    desc:'Dieta rigorosamente priva di glutine per tutta la vita. Attenzione a cross-contaminazione. Supplementazione di micronutrienti carenti.',
@@ -277,7 +277,7 @@ const LG_DATA = [
    ok:['Frutta fresca (potassio se in diuretici)','Verdure (potassio, magnesio)','Cereali integrali','Pesce (omega-3)','Legumi','Latte e yogurt scremati','Alimenti naturali non processati'],
    no:['Sale aggiunto (peggior nemico: max 2g NaCl/die)','Cibi in scatola, conserve, sottaceti','Salumi, formaggi stagionati','Alcol','Bevande energetiche e caffè in eccesso','Liquirizia'],
    science:'<b>Perché restrizione sodio (2-3g/die)?</b> Il sodio trattiene acqua aumentando il precarico cardiaco e l\'edema. Ridurre il sodio riduce la ritenzione idrica e alleggerisce il lavoro del cuore.<br><b>Restrizione liquidi:</b> Solo per pazienti con iponatremia (<130 mEq/L) o scompenso refrattario. Non routinaria per tutti i pazienti stabili (linee guida 2021).<br><b>Cachessia cardiaca:</b> Presente nel 10-15% dei pazienti. Alta proteina (1.1-1.5 g/kg) e ONS se intake <70% del fabbisogno.',
-   fonte:'ESC 2021 — Scompenso Cardiaco',url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines'},
+   fonte:'ESC 2021 — Scompenso Cardiaco',url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Acute-and-Chronic-Heart-Failure'},
 
   {id:'pancreatite',emoji:'🔴',nome:'Pancreatite Cronica',badge:'AGA/ESPEN 2020',colore:'#F97316',
    desc:'Alcol assoluto zero. Grassi limitati se steatorrea. Pasti piccoli e frequenti. Enzimi pancreatici se insufficienza esocrina.',
@@ -505,7 +505,7 @@ Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
    ok:['Fase remissione — Verdure cotte e crude','Frutta (anche con semi piccoli: aggiornamenti 2022)','Cereali integrali','Legumi ben cotti','Noci e semi (in remissione stabile)','Yogurt (probiotici)','Acqua abbondante'],
    no:['Fase acuta: alimenti solidi (dieta liquida poi morbida)','Alcol (irritante per la mucosa)','Cibi ultra-processati (poveri di fibra)','Carne rossa in eccesso (associata a recidive)'],
    science:'<b>Perché fibre in remissione?</b> Una dieta ricca di fibre (25-30g/die) riduce la pressione intraluminale del colon, prevenendo la formazione di nuovi diverticoli e riducendo il rischio di riacutizzazioni. La fibra ha bisogno di acqua per funzionare: almeno 2L/die sono indispensabili.<br><b>Noci e semi: non più controindicati.</b> Le linee guida aggiornate (2022) hanno abbandonato la restrizione di noci, semi e popcorn: non ci sono evidenze che causino riacutizzazioni. Anzi, questi alimenti apportano fibre utili alla prevenzione.<br><b>Fase acuta: riposo intestinale.</b> In caso di riacutizzazione (dolore, febbre), la dieta liquida riduce il residuo intestinale e il rischio di perforazione, permettendo la risoluzione dell\'infiammazione.',
-   fonte:'ACG 2015 — Diverticolite/Diverticolosi',url:'https://www.gi.org/guidelines/'},
+   fonte:'ACG 2015 — Diverticolite/Diverticolosi',url:'https://www.gastro.org/practice-guidance/guidelines'},
 
   {id:'chirurgia_bariatrica',emoji:'⚖️',nome:'Chirurgia Bariatrica (post-operatoria)',badge:'IFSO 2022',colore:'#7C3AED',
    desc:'Progressione dietetica: liquidi → purea → soffice → normale (4-8 settimane). Proteine prioritarie ad ogni pasto. Supplementazione a vita di multivitaminico, ferro, calcio citrato, vitamina D, B12.',
@@ -541,7 +541,7 @@ Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
    ok:['Riso bianco, quinoa, avena GF','Pollo, pesce, carne magra','Uova','Frutta a basso FODMAP: fragole, kiwi, mirtilli, arance, uva, banane mature','Verdure: carote, patate, zucchine, cetrioli, spinaci, pomodori (quantità moderate)','Olio EVO, noci, mandorle (25g)'],
    no:['Frumento, segale, orzo (glutine e fruttani)','Latticini ad alto lattosio (latte, yogurt normale, formaggi freschi)','Mele, pere, mango, anguria, cachi (alto fruttosio)','Aglio e cipolla crudi (fruttani)','Legumi (GOS)','Dolcificanti: sorbitolo, mannitolo, xilitolo'],
    science:'<b>Dieta Low-FODMAP:</b> I FODMAP (Fermentable Oligosaccharides, Disaccharides, Monosaccharides And Polyols) sono carboidrati a catena corta scarsamente assorbiti che vengono fermentati nel colon, causando gonfiore, dolore e alterazioni dell\'alvo. La dieta Low-FODMAP riduce i sintomi nel 70% dei pazienti con IBS (ACG 2021).<br><b>Fase di reintroduzione obbligatoria:</b> Dopo 4-6 settimane di eliminazione, la reintroduzione sistematica dei gruppi FODMAP permette di identificare i trigger personali. La dieta Low-FODMAP a lungo termine non è raccomandata per il potenziale impatto negativo sul microbiota intestinale.<br><b>Psyllium e IBS-C:</b> La fibra solubile psyllium è la fibra raccomandata nell\'IBS con stipsi (IBS-C). La crusca (fibra insolubile) può invece peggiorare i sintomi. Probiotici (LGG, S.boulardii) possono ridurre gonfiore e alterazioni dell\'alvo.',
-   fonte:'ACG 2021 — Sindrome dell\'Intestino Irritabile',url:'https://www.gi.org/guidelines/'},
+   fonte:'ACG 2021 — Sindrome dell\'Intestino Irritabile',url:'https://www.gastro.org/practice-guidance/guidelines'},
 
   {id:'sindrome_metabolica',emoji:'⚡',nome:'Sindrome Metabolica',badge:'IDF/AHA 2009',colore:'#7C3AED',
    desc:'Dieta mediterranea + deficit calorico. Riduzione peso del 5-10%. Esercizio fisico fondamentale.',
@@ -595,7 +595,7 @@ Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
    ok:['Cereali integrali (pasta, riso, avena — neutralizzano l\'acido)','Carni magre cotte al vapore, forno, griglia','Pesce magro (merluzzo, branzino, orata)','Verdure non acide: zucchine, carote, patate, fagiolini, broccoli','Frutta non acida: banana, melone, mela, pera','Latte scremato o vegetale (effetto tampone temporaneo)','Zenzero (proprietà anti-nausea)','Acqua naturale a temperatura ambiente'],
    no:['Agrumi e succhi (limone, arancia, pompelmo — altamente acidi)','Pomodori e salse al pomodoro','Cioccolato (rilassa il LES)','Menta piperita (rilassa il LES)','Alcol (irritante mucosa + rilassa LES)','Caffè e tè in eccesso','Cibi fritti e grassi (rallentano lo svuotamento gastrico)','Spezie piccanti (peperoncino, pepe nero in eccesso)','Cipolla e aglio crudi'],
    science:'<b>Perché i pasti piccoli e frequenti?</b> Lo stomaco pieno aumenta la pressione intragastrica sul LES (sfintere esofageo inferiore). Ridurre il volume dei pasti diminuisce la pressione sul LES e riduce gli episodi di reflusso. Evitare i pasti abbondanti, soprattutto la sera.<br><b>Alimenti che rilassano il LES:</b> Cioccolato, menta piperita, alcol e caffè rilassano il LES facilitando il reflusso. Agrumi e pomodori aggravano i sintomi per la loro acidità diretta. I cibi fritti e grassi rallentano lo svuotamento gastrico aumentando il tempo di esposizione acida.<br><b>Perdita di peso del 10%:</b> Il grasso viscerale addominale aumenta la pressione intra-addominale, favorendo il reflusso. Una perdita del 10% del peso riduce significativamente la frequenza degli episodi di GERD. Elevare la testata del letto di 15-20 cm riduce il reflusso notturno.',
-   fonte:'ACG 2022 — GERD / Reflusso Gastroesofageo',url:'https://www.gi.org/guidelines/'},
+   fonte:'ACG 2022 — GERD / Reflusso Gastroesofageo',url:'https://www.gastro.org/practice-guidance/guidelines'},
 
   {id:'gastrite',emoji:'🫃',nome:'Gastrite Cronica / Ulcera Peptica',badge:'WCOG 2020',colore:'#DC2626',
    desc:'Dieta leggera, pasti regolari, evitare irritanti gastrici. Eradicazione H. pylori se indicata.',
@@ -613,7 +613,7 @@ Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
    ok:['Fibra solubile: psyllium, avena, legumi, mele, pere, carote','Fibra insolubile: crusca di frumento, pane integrale, verdure a foglia','Prugne e fichi (sorbitolo naturale + fibra)','Kiwi (actinidina: accelera il transito, 2 kiwi/die efficaci)','Acqua in abbondanza (≥2 L/die)','Yogurt con probiotici (Lactobacillus, Bifidobacterium)','Olio EVO (lubrifica leggermente il transito)','Caffè (stimola il riflesso gastro-colico)'],
    no:['Dieta povera di fibre (alimenti raffinati in eccesso)','Disidratazione (fibra senza acqua peggiora la stipsi)','Dieta molto calorica e ricca di grassi con poca fibra','Sedentarietà (riduce la motilità)'],
    science:'<b>Perché le fibre solubili (psyllium)?</b> La fibra solubile assorbe acqua formando un gel che ammorbidisce le feci e stimola la peristalsi. Lo psyllium è il supplemento di fibra più efficace nella stipsi cronica funzionale secondo ACG 2021. Aumentare la fibra di soli 2-3g a settimana per evitare gonfiore.<br><b>Fibra + acqua: sinergia obbligatoria.</b> La fibra senza acqua adeguata (≥2L/die) peggiora la stipsi: forma masse compatte difficili da evacuare. Il primo intervento è bere 1-2 bicchieri di acqua tiepida al mattino a digiuno.<br><b>Kiwi e prugne:</b> Il kiwi contiene actinidina, un enzima che accelera il transito intestinale: 2 kiwi/die sono risultati efficaci negli studi clinici. Le prugne contengono sorbitolo naturale con effetto osmotico sul colon. I probiotici (Lactobacillus, Bifidobacterium) hanno evidenza moderata di efficacia.',
-   fonte:'ACG 2021 — Stipsi Cronica Funzionale',url:'https://www.gi.org/guidelines/'},
+   fonte:'ACG 2021 — Stipsi Cronica Funzionale',url:'https://www.gastro.org/practice-guidance/guidelines'},
 
   {id:'intolleranza_lattosio',emoji:'🥛',nome:'Intolleranza al Lattosio',badge:'WGO 2013 / ESPGHAN 2022',colore:'#0284C7',
    desc:'Riduzione/eliminazione del lattosio. Molti tollerano piccole quantità. Attenzione al calcio.',
@@ -1351,7 +1351,7 @@ Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
    ok:['Verdure non acide (broccoli, zucchine, fagiolini, spinaci)','Cereali integrali (avena, pane integrale)','Proteine magre (pollo, pesce, uova)','Frutta non acida (banana, melone, mela)','Latticini magri in moderazione','Zenzero (antinfiammatorio mucosale)','Acqua naturale e tisane non alla menta'],
    no:['Cibi grassi e fritti (rilassano il LES)','Cioccolato e cacao (metilxantine rilassano LES)','Menta e mentolo (rilassano LES)','Caffè e bevande caffeinate','Alcol (rilassa LES e irrita la mucosa)','Pomodoro e salse acide','Agrumi e succhi di frutta acidi','Bevande gassate (aumentano pressione gastrica)'],
    science:'<b>Meccanismo del reflusso gastroesofageo:</b> Il LES (Lower Esophageal Sphincter) è il principale meccanismo anti-reflusso. La sua incompetenza (tono ridotto o rilasciamenti transitori) permette il reflusso del contenuto gastrico acido nell\'esofago, causando pirosi e danno mucosale. Numerosi alimenti riducono il tono del LES o aumentano la produzione di acido.<br><b>Perché elevare la testata del letto?</b> In posizione supina, la gravità non aiuta la clearance esofagea. Elevare la testata del letto di 15-20 cm usando cunei (non solo cuscini extra) mantiene il gradiente di pressione gastroesofageo anche di notte, riducendo i reflussi notturni e il rischio di esofagite.<br><b>Perdita di peso e MRGE:</b> L\'obesità aumenta la pressione intra-addominale, favorendo il reflusso. Una perdita di peso del 5-10% riduce significativamente i sintomi di reflusso. La perdita di peso è una delle misure più efficaci nei pazienti obesi con MRGE.',
-   fonte:'ACG/ESGE 2022 — Ernia Iatale / MRGE',url:'https://www.gi.org/guidelines/'},
+   fonte:'ACG/ESGE 2022 — Ernia Iatale / MRGE',url:'https://www.gastro.org/practice-guidance/guidelines'},
 
   {id:'iperomocisteinemia',emoji:'🧬',nome:'Iperomocisteinemia',badge:'ESC/EFNS 2020',colore:'#7C3AED',
    desc:'Folati, B12, B6 per ridurre l\'omocisteina. Verdure a foglia verde, legumi, cereali integrali. Limitare metionina (carni rosse, formaggi stagionati). Alcol zero.',
@@ -1378,7 +1378,7 @@ Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
    ok:['Frutta tollerata: fragola, banana, uva, kiwi, agrumi, lamponi','Verdure (fruttosio trascurabile)','Cereali e pasta (niente fruttosio)','Proteine: carne, pesce, uova, latticini','Saccarosio in moderazione (fruttosio+glucosio 1:1)','Glucosio puro (aiuta il co-trasporto del fruttosio)'],
    no:['Mela, pera, mango, anguria, fico, cachi (alto fruttosio libero)','Miele, sciroppo d\'agave, HFCS (sciroppo di mais ad alto fruttosio)','Sorbitolo (E420), mannitolo (E421): aggravano sintomi','Succhi di frutta (concentrano il fruttosio)','Frutta secca: datteri, fichi secchi, albicocche secche (alto fruttosio)'],
    science:'<b>Meccanismo del malassorbimento:</b> Il trasportatore GLUT-5 dell\'intestino tenue ha capacità limitata di assorbire fruttosio. Quando l\'apporto supera la capacità di trasporto (>25-50g in un\'unica assunzione), il fruttosio non assorbito raggiunge il colon, dove viene fermentato dai batteri producendo gas (H2, CO2, CH4) e acidi a catena corta, causando gonfiore, flatulenza, dolore addominale e diarrea osmotica.<br><b>Effetto del glucosio:</b> Il glucosio facilita il trasporto del fruttosio attraverso il co-trasportatore GLUT-2, aumentando la capacità di assorbimento intestinale. Gli alimenti che contengono fruttosio e glucosio in rapporto 1:1 (fragole, kiwi, arance, uva) sono generalmente tollerati meglio di quelli con fruttosio libero in eccesso (mele, pere, miele).<br><b>Distinzione da intolleranza al fruttosio ereditaria:</b> Il malassorbimento intestinale del fruttosio è diverso dall\'intolleranza ereditaria al fruttosio (HFI), rara malattia metabolica per deficit di aldolasi B con ipoglicemia grave e danno epatico: in HFI anche piccole quantità di fruttosio sono pericolose.',
-   fonte:'ACG 2021 — Malassorbimento del Fruttosio',url:'https://www.gi.org/guidelines/'},
+   fonte:'ACG 2021 — Malassorbimento del Fruttosio',url:'https://www.gastro.org/practice-guidance/guidelines'},
 
   {id:'ncgs',emoji:'🌾',nome:'NCGS — Sensibilità al Glutine Non-Celiaca',badge:'ESPGHAN/BSG 2021',colore:'#A16207',
    desc:'Dieta priva di glutine come nella celiachia. Cereali GF: riso, mais, grano saraceno, quinoa, miglio. Monitorare: fibre, folati, B12, ferro, vitamina D.',
@@ -1506,7 +1506,7 @@ Gravidanza: +300 mL/die · Allattamento: +700 mL/die<br><br>
    no:['Grassi saturi >7% calorie totali','Grassi trans (0%)','Sodio >2g/die','Carni rosse lavorate','Bevande zuccherate','Alcol >1 unità/die'],
    science:'Meta-analisi (NEJM 2013, PREDIMED): dieta mediterranea con olio EVO o noci riduce eventi CV maggiori del 30%. Fibre solubili (avena, legumi) riducono LDL. Omega-3 EPA+DHA riducono trigliceridi e aritmie.',
    fonte:'ESC Guidelines 2021 + PREDIMED Trial',
-   url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines'},
+   url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Cardiovascular-Prevention'},
   {id:'post_infarto',emoji:'💗',nome:'Riabilitazione Post-Infarto',badge:'Post-IMA',colore:'#c1121f',
    desc:'Nutrizione nella riabilitazione cardiaca post-infarto. Prevenzione della recidiva ischemica.',
    target:'LDL <55 mg/dL (VLDL), PA <130/80, peso ottimale, HbA1c <7% se diabetico.',
@@ -2696,7 +2696,7 @@ ok:['Sale aggiunto alla dieta 5-10g NaCl/die extra (espande volume ematico)','Li
 no:['Alcol (vasodilatatore — peggiora ipotensione ortostatica)','Grandi pasti (pooling splacnico post-prandiale)','Caldo eccessivo, docce calde prolungate (vasodilatazione periferica)','Caffeina irregolare e in eccesso (dipende dal paziente)'],
 science:'ESC Guidelines Syncope/Orthostatic Hypotension 2022. Bolo idrico e POTS: Jordan 2002 (aumenta PA sistolica 30mmHg). Sale e espansione plasmatica: Raj 2009. Caffeina in POTS: Bagai 2012. Post-COVID POTS: Bryarly 2022.',
 fonte:'European Society of Cardiology (ESC) Guidelines 2022; Heart Rhythm Society POTS Expert Consensus 2021',
-url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines'},
+url:'https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Syncope-Diagnosis-and-Management-of'},
 {id:'neuropatia_periferica',emoji:'⚡',nome:'Neuropatia Periferica',badge:'EFNS 2020',colore:'#7c3aed',
 desc:'Danno ai nervi periferici: sensitivo (dolore, formicolio), motorio (debolezza), autonomo (tachicardia, ipotensione). Cause: diabete (35%), deficit B12, alcol, chemioterapia, ereditaria (CMT), idiopatica.',
 target:'Rimozione causa (controllo glicemico, supplementazione B12, astinenza alcolica). Riduzione dolore neuropatico. Prevenzione progressione. Stabilizzazione/miglioramento funzione nervosa.',
@@ -2825,15 +2825,17 @@ function renderAll(filter='') {
   const filtered = q ? LG_DATA.filter(d => d.dataset_search ? d.dataset_search.includes(q) : (d.nome+' '+d.id+' '+d.badge+' '+d.desc).toLowerCase().includes(q)) : LG_DATA;
   document.getElementById('lg-count').textContent = filtered.length + ' patologie';
   document.getElementById('lg-empty').style.display = filtered.length===0 ? 'block' : 'none';
+  const frag = document.createDocumentFragment();
   filtered.forEach((d, i) => {
     const card = buildCard(d);
     card.style.animationDelay = Math.min(i * 0.04, 0.5) + 's';
-    grid.appendChild(card);
-    if (q) {
-      document.getElementById('body-'+d.id)?.classList.add('open');
-      const tog = document.getElementById('tog-'+d.id);
-      if (tog) tog.textContent = '▲';
-    }
+    frag.appendChild(card);
+  });
+  grid.appendChild(frag);
+  if (q) filtered.forEach(d => {
+    document.getElementById('body-'+d.id)?.classList.add('open');
+    const tog = document.getElementById('tog-'+d.id);
+    if (tog) tog.textContent = '▲';
   });
 }
 

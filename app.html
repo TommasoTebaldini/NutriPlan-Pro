@@ -2097,12 +2097,11 @@ async function caricaObiettiviValutazione(cartellaId) {
   if (!box) return;
   if (!cartellaId || !currentUser) { box.style.display = 'none'; return; }
 
-  // Use select('*') to avoid errors from column-name differences across DB versions
-  // (some tables have 'saved_at', others 'created_at' depending on how they were created).
   const { data: rows, error } = await sb.from('schede_valutazione')
-    .select('*')
+    .select('id,saved_at,created_at,tdee_calcolato,macro_dist')
     .eq('cartella_id', cartellaId)
-    .limit(20);
+    .order('saved_at', { ascending: false })
+    .limit(5);
 
   if (error) {
     console.error('[caricaObiettiviValutazione] query error:', error.message);
@@ -2318,7 +2317,7 @@ async function init() {
 
 async function caricaPianoById(id) {
   showLoading(true);
-  const { data, error } = await sb.from('piani').select('*').eq('id', id).single();
+  const { data, error } = await sb.from('piani').select('id,nome,data_piano,meals,cartella_id,saved_at,visible_to_patient').eq('id', id).single();
   showLoading(false);
   if (error || !data) { toast('❌ Errore caricamento', 'err'); nuovoPiano(); return; }
   document.getElementById('inp-nome').value = data.nome;

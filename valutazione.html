@@ -1417,7 +1417,7 @@ async function doSalva(cartellaId){
       result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId);
     } else {
       payload.visible_to_patient=false;
-      result=await sb.from('schede_valutazione').insert(payload).select().single();
+      result=await sb.from('schede_valutazione').insert(payload).select('id').single();
       if(result.data)schedaId=result.data.id;
     }
   } catch(e) {

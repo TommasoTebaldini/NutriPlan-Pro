@@ -962,7 +962,7 @@ async function salvaBIA() {
 async function loadStorico() {
   if (!currentUser) return;
   const cartellaFilt = document.getElementById('storico-cartella')?.value || '';
-  let query = sb.from('bia_records').select('*').eq('user_id', currentUser.id).order('data_misura', {ascending: false});
+  let query = sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,cartella_id,note,visible_to_patient').eq('user_id', currentUser.id).order('data_misura', {ascending: false});
   if (cartellaFilt) query = query.eq('cartella_id', cartellaFilt);
 
   const { data, error } = await query;

@@ -1184,13 +1184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       startRealtimeSync();
     }
   } catch(e) {}
-  // Periodic refresh every 2 minutes as a Realtime fallback.
-  setInterval(async () => {
-    if (currentUser && sb) {
-      await loadEventsFromSupabase();
-      await loadPatientAppointments();
-    }
-  }, 2 * 60 * 1000);
+  // Realtime channel handles live updates (startRealtimeSync above).
   // Load Google Client ID from server config, then init Google Identity Services
   try {
     const cfg = await fetch('/api/config').then(r => r.json());

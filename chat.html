@@ -10,7 +10,17 @@
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
+<script>
+async function ensureChartJs() {
+  if (window.Chart) return;
+  await new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js";
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+</script>
 <link rel="stylesheet" href="css/style.css">
 <style>
 .chat-container{display:flex;height:calc(100dvh - 54px - 36px);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:white;box-shadow:var(--shadow)}
@@ -500,7 +510,7 @@ async function loadAndamento() {
   const totQ   = selectedPatientId ? safeQ(sb.from('daily_logs').select('date,kcal,proteins,carbs,fats').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
   const waterQ = selectedPatientId ? safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
   const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
-  const wellQ  = selectedPatientCartellaId ? safeQ(sb.from('daily_wellness').select('*').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
+  const wellQ  = selectedPatientCartellaId ? safeQ(sb.from('daily_wellness').select('logged_at,mood,sleep_hours,symptoms,notes').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
   const wtQ    = selectedPatientCartellaId ? safeQ(sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
 
   panel.innerHTML = '<div class="and-empty"><div class="spinner"></div><div>Caricamento diario...</div></div>';
@@ -909,7 +919,8 @@ async function loadMessages(patientId) {
   const { data, error } = await sb.from('chat_messages')
     .select('*')
     .eq('patient_id', patientId)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    .limit(100);
 
   chatMessages = data || [];
   renderMessages();
@@ -1534,6 +1545,7 @@ async function loadStorico(limitMonths) {
 
   panel.innerHTML = headerHTML + filterHTML + summaryHTML + chartsHTML;
 
+  await ensureChartJs();
   requestAnimationFrame(() => {
     const font = { family: "'DM Sans', sans-serif" };
     const defaults = { borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 7, tension: .42, fill: false, pointBackgroundColor: 'white', pointBorderWidth: 2, spanGaps: true };

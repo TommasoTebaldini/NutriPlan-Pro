@@ -168,6 +168,52 @@
   <div id="circonf-results" style="margin-top:10px"><p style="font-size:12px;color:var(--slate-l)">Inserisci vita, collo e altezza (+ fianchi per le donne) per calcolare la composizione corporea.</p></div>
 </div>
 
+<div class="val-section" style="border-top:3px solid #7C3AED">
+  <h3>💪 Forza di Presa (Handgrip)</h3>
+  <p style="font-size:11px;color:var(--slate-l);margin-bottom:12px;margin-top:-6px">Gold standard EWGSOP2 per la diagnosi di sarcopenia. Eseguire 3 misurazioni per lato; viene usato il valore massimo.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+    <div class="fg" style="min-width:140px">
+      <label>Unità di misura</label>
+      <select id="v-hg-unita" onchange="calcolaHandgrip()">
+        <option value="kg">kg</option>
+        <option value="kPa">kPa</option>
+      </select>
+    </div>
+    <div class="fg" style="min-width:140px">
+      <label>Mano dominante</label>
+      <select id="v-hg-mano-dom">
+        <option value="Destra">Destra</option>
+        <option value="Sinistra">Sinistra</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+      <div style="font-size:12px;font-weight:700;color:#7C3AED;margin-bottom:10px">✋ Mano Destra</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="fg"><label>Mis. 1</label><input type="number" id="v-hg-dx-1" step="0.1" min="0" placeholder="—" oninput="calcolaHandgrip()"></div>
+        <div class="fg"><label>Mis. 2</label><input type="number" id="v-hg-dx-2" step="0.1" min="0" placeholder="—" oninput="calcolaHandgrip()"></div>
+        <div class="fg"><label>Mis. 3</label><input type="number" id="v-hg-dx-3" step="0.1" min="0" placeholder="—" oninput="calcolaHandgrip()"></div>
+      </div>
+      <div id="hg-dx-max" style="font-size:12.5px;color:var(--slate-m);font-weight:600">Massimo: —</div>
+    </div>
+    <div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px">
+      <div style="font-size:12px;font-weight:700;color:#7C3AED;margin-bottom:10px">🤚 Mano Sinistra</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="fg"><label>Mis. 1</label><input type="number" id="v-hg-sx-1" step="0.1" min="0" placeholder="—" oninput="calcolaHandgrip()"></div>
+        <div class="fg"><label>Mis. 2</label><input type="number" id="v-hg-sx-2" step="0.1" min="0" placeholder="—" oninput="calcolaHandgrip()"></div>
+        <div class="fg"><label>Mis. 3</label><input type="number" id="v-hg-sx-3" step="0.1" min="0" placeholder="—" oninput="calcolaHandgrip()"></div>
+      </div>
+      <div id="hg-sx-max" style="font-size:12.5px;color:var(--slate-m);font-weight:600">Massimo: —</div>
+    </div>
+  </div>
+  <div id="hg-interp" style="margin-top:12px;display:none;padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);background:#F8FAFC">
+    <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Interpretazione EWGSOP2</div>
+    <div id="hg-interp-content"></div>
+    <div style="font-size:10.5px;color:var(--slate-l);margin-top:7px">Soglie kg: Uomini &lt;27 kg = forza ridotta · Donne &lt;16 kg = forza ridotta</div>
+  </div>
+</div>
+
 <div class="val-section" style="border-top:3px solid #6366F1">
   <h3>📌 Pliche Cutanee</h3>
   <div class="fgrid">
@@ -824,6 +870,43 @@ function aggiornaCalcoli(){
   if(!isNaN(mg)&&mg>0&&!document.getElementById('v-mm')._userEdited)document.getElementById('v-mm').value=Math.round(peso*(1-mg/100)*10)/10;
 }
 
+function calcolaHandgrip(){
+  const g=id=>{const e=document.getElementById(id);return e?parseFloat(e.value):NaN;};
+  const dxVals=[g('v-hg-dx-1'),g('v-hg-dx-2'),g('v-hg-dx-3')].filter(x=>!isNaN(x)&&x>0);
+  const sxVals=[g('v-hg-sx-1'),g('v-hg-sx-2'),g('v-hg-sx-3')].filter(x=>!isNaN(x)&&x>0);
+  const dxMax=dxVals.length?Math.max(...dxVals):null;
+  const sxMax=sxVals.length?Math.max(...sxVals):null;
+  const unita=document.getElementById('v-hg-unita')?.value||'kg';
+  const dxEl=document.getElementById('hg-dx-max');
+  const sxEl=document.getElementById('hg-sx-max');
+  if(dxEl)dxEl.textContent=dxMax!==null?('Massimo: '+dxMax.toFixed(1)+' '+unita):'Massimo: —';
+  if(sxEl)sxEl.textContent=sxMax!==null?('Massimo: '+sxMax.toFixed(1)+' '+unita):'Massimo: —';
+  const interpDiv=document.getElementById('hg-interp');
+  const interpContent=document.getElementById('hg-interp-content');
+  if(!interpDiv||!interpContent)return;
+  const bestVal=dxMax!==null&&sxMax!==null?Math.max(dxMax,sxMax):dxMax!==null?dxMax:sxMax;
+  if(bestVal===null){interpDiv.style.display='none';return;}
+  interpDiv.style.display='block';
+  if(unita!=='kg'){
+    interpContent.innerHTML='<span style="color:var(--slate-m);font-size:12px">Interpretazione EWGSOP2 disponibile solo con unità kg.</span>';
+    return;
+  }
+  const sesso=document.getElementById('v-sesso')?.value||'M';
+  const soglia=sesso==='M'?27:16;
+  let badge,msg;
+  if(bestVal>=soglia){
+    badge='<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">🟢 NORMALE</span>';
+    msg='Forza di presa nella norma '+(sesso==='M'?'uomini (≥27 kg)':'donne (≥16 kg)')+'.';
+  } else {
+    badge='<span style="background:#FEE2E2;color:#991B1B;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">🔴 FORZA RIDOTTA</span>';
+    msg='Forza di presa <b>ridotta</b> (criterio EWGSOP2 per sarcopenia). Soglia '+(sesso==='M'?'uomini: &lt;27 kg':'donne: &lt;16 kg')+'.';
+  }
+  const eta=parseInt(document.getElementById('v-eta')?.value)||null;
+  let ageNote='';
+  if(eta&&eta>=65)ageNote=' <span style="font-size:10.5px;color:#B45309;background:#FEF3C7;border-radius:20px;padding:2px 8px">Età ≥65 anni — screening sarcopenia raccomandato</span>';
+  interpContent.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+badge+ageNote+'</div><div style="font-size:12px;color:var(--slate-m);margin-top:5px">'+msg+'</div>';
+}
+
 function schofieldFn(sesso,eta,peso){
   let MJ;
   if(sesso==='M'){if(eta<3)MJ=0.249*peso-0.127;else if(eta<10)MJ=0.095*peso+2.110;else if(eta<18)MJ=0.074*peso+2.754;else if(eta<30)MJ=0.063*peso+2.896;else if(eta<60)MJ=0.048*peso+3.653;else MJ=0.049*peso+2.459;}
@@ -1399,6 +1482,15 @@ async function doSalva(cartellaId){
       es_pcr:document.getElementById('v-es-pcr').value||null,
       es_data:document.getElementById('v-es-data').value||null,
       es_note:document.getElementById('v-es-note').value||null,
+      // Handgrip (Forza di Presa)
+      hg_dx_1:document.getElementById('v-hg-dx-1').value||null,
+      hg_dx_2:document.getElementById('v-hg-dx-2').value||null,
+      hg_dx_3:document.getElementById('v-hg-dx-3').value||null,
+      hg_sx_1:document.getElementById('v-hg-sx-1').value||null,
+      hg_sx_2:document.getElementById('v-hg-sx-2').value||null,
+      hg_sx_3:document.getElementById('v-hg-sx-3').value||null,
+      hg_unita:document.getElementById('v-hg-unita').value||null,
+      hg_mano_dom:document.getElementById('v-hg-mano-dom').value||null,
       // Fabbisogni scelti (calcolati)
       metodo_tdee:metodoTDEE||null,
       laf:document.getElementById('val-laf')?.value||null,
@@ -1928,6 +2020,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
             ['cereali','legumi','verdure','frutta','carne_r','carne_b','pesce','pesce_c','salumi','uova','latte','formaggi','dolci','junk','frutta_s','caramelle','cioccolato','snack_salati','gelato','caffe_freq','salse','fritti'].forEach(k=>{sv2('v-ffq-'+k,ex['ffq_'+k]);});
             sv2('v-diagn',ex.diagn);sv2('v-anno-diag',ex.anno_diag);sv2('v-comorbid',ex.comorbid);sv2('v-chirurgia',ex.chirurgia);
             ['glicemia','insulina','hba1c','col_tot','ldl','hdl','trig','creat','azot','uric','got','gpt','ggt','hb','ferr','vitd','vitb12','tsh','pcr','data','note'].forEach(k=>{sv2('v-es-'+k,ex['es_'+k]);});
+            // Handgrip
+            sv2('v-hg-dx-1',ex.hg_dx_1);sv2('v-hg-dx-2',ex.hg_dx_2);sv2('v-hg-dx-3',ex.hg_dx_3);
+            sv2('v-hg-sx-1',ex.hg_sx_1);sv2('v-hg-sx-2',ex.hg_sx_2);sv2('v-hg-sx-3',ex.hg_sx_3);
+            if(ex.hg_unita){const hu=document.getElementById('v-hg-unita');if(hu)hu.value=ex.hg_unita;}
+            if(ex.hg_mano_dom){const hm=document.getElementById('v-hg-mano-dom');if(hm)hm.value=ex.hg_mano_dom;}
+            if(ex.hg_dx_1||ex.hg_sx_1)calcolaHandgrip();
             if(ex.pl_tri||ex.pl_bi||ex.pl_ss||ex.pl_si)calcolaPliche();
             if(ex.vita||ex.collo)calcolaCirconferenze();
             if(data.eta&&data.peso&&data.altezza)calcolaFabbisogno();

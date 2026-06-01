@@ -27,6 +27,13 @@ async function ensureChartJs() {
 .paz-card{animation:cardFadeUp .3s cubic-bezier(.16,1,.3,1) both}
 .paz-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 8px 24px rgba(0,0,0,.09);transition:transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s}
 .paz-card:active{transform:scale(0.97);transition:transform .08s}
+.paz-tag-chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;margin:2px 2px 0 0;white-space:nowrap}
+.archived-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:700;background:#E2E8F0;color:#64748B;margin-left:4px}
+.filter-bar-input{padding:7px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;background:white;color:var(--slate);transition:border-color .15s}
+.filter-bar-input:focus{border-color:var(--teal)}
+.nc-tag-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all .12s;user-select:none}
+.nc-tag-chip.selected{border-color:var(--teal);box-shadow:0 0 0 1.5px var(--teal)}
+.nc-tag-chip:hover{opacity:.85}
 .doc-visible-cb{width:16px;height:16px;cursor:pointer;accent-color:var(--teal);flex-shrink:0}
 .progress-chart-wrap{background:white;border-radius:var(--r);padding:16px;border:1px solid var(--border);margin-bottom:14px}
 .wellness-card{display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px}
@@ -100,6 +107,20 @@ async function ensureChartJs() {
   </div>
 </div>
 <main id="main">
+<!-- BARRA RICERCA + FILTRI PAZIENTI -->
+<div id="paz-filter-bar" style="display:none;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;background:white;padding:12px 16px;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow)">
+  <input type="text" id="paz-search" class="filter-bar-input" style="flex:1;min-width:180px" placeholder="🔍 Cerca paziente...">
+  <select id="paz-filter-sesso" class="filter-bar-input" style="min-width:110px">
+    <option value="">⚥ Sesso</option>
+    <option value="M">♂ Maschio</option>
+    <option value="F">♀ Femmina</option>
+  </select>
+  <select id="paz-filter-tag" class="filter-bar-input" style="min-width:160px">
+    <option value="">🏷️ Patologia</option>
+  </select>
+  <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 Mostra archiviati (<span id="paz-archivio-count">0</span>)</button>
+  <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" title="Azzera filtri">✕</button>
+</div>
 <div class="page-content" id="main-content">
   <div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>
 </div>
@@ -117,6 +138,18 @@ async function ensureChartJs() {
         <div class="fg"><label>Sesso</label><select id="nc-sesso"><option value="">—</option><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
         <div class="fg full"><label>Codice Fiscale</label><input type="text" id="nc-cf" placeholder="Codice Fiscale" maxlength="16" style="text-transform:uppercase"></div>
         <div class="fg full"><label>Diagnosi / Note cliniche</label><textarea id="nc-note" placeholder="Diagnosi, allergie, farmaci..."></textarea></div>
+      </div>
+      <!-- SEZIONE TAG PATOLOGIE -->
+      <div style="margin-top:14px">
+        <label style="font-size:12.5px;font-weight:600;color:var(--slate);display:block;margin-bottom:8px">🏷️ Patologie / Tag</label>
+        <div id="nc-tags-chips" style="display:flex;flex-wrap:wrap;gap:4px 6px;margin-bottom:8px"></div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="text" id="nc-tags-custom" class="filter-bar-input" style="flex:1;font-size:12.5px" placeholder="Tag personalizzato (premi Invio)">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="aggiungiTagCustom()">+ Aggiungi</button>
+        </div>
+        <div id="nc-tags-warning" style="display:none;margin-top:8px;padding:8px 12px;background:#FEF3C7;border-radius:8px;font-size:11.5px;color:#92400E;border-left:3px solid #F59E0B">
+          ⚠️ Esegui <code>ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS tags JSONB DEFAULT '[]'::jsonb;</code> nel pannello Supabase SQL
+        </div>
       </div>
     </div>
     <div class="mfoot">
@@ -234,6 +267,25 @@ async function ensureChartJs() {
 let cartellaAperta = null;
 let editingCartellaId = null;
 let _altroCartellaId = null;
+let allCartelleData = [];
+let mostraArchiviati = false;
+let ncSelectedTags = [];
+
+const PREDEFINED_TAGS = ['Diabete T2','Diabete T1','Diabete Gestazionale','Obesità','Sovrappeso','IRC/CKD','Dialisi','Ipertensione','Dislipidemia','Celiachia','IBD/Crohn','Colite Ulcerosa','IBS','Oncologia','Sarcopenia','Osteoporosi','DCA/Anoressia','Gravidanza','Sport','Pediatria','Anziano/Fragilità','Chirurgia Bariatrica','Vegetariano/Vegano','Altro'];
+
+function tagColor(tag) {
+  let h = 0;
+  for (let i = 0; i < tag.length; i++) h = (h * 31 + tag.charCodeAt(i)) & 0xFFFFFF;
+  const hue = h % 360;
+  return { bg: `hsl(${hue},55%,88%)`, col: `hsl(${hue},50%,32%)` };
+}
+
+function renderTagChips(tags) {
+  if (!tags || !tags.length) return '';
+  return '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:2px">' +
+    tags.map(t => { const c = tagColor(t); return `<span class="paz-tag-chip" style="background:${c.bg};color:${c.col}">${esc(t)}</span>`; }).join('') +
+  '</div>';
+}
 
 // CUSTOM CONFIRM DIALOG
 let _confirmCallback = null;
@@ -315,7 +367,7 @@ async function ensureAltroCartella(allCartelle) {
 async function loadCartelle() {
   const wrap = document.getElementById('main-content');
   wrap.innerHTML = '<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
-  const { data, error } = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const { data, error } = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   if (error || !data) { wrap.innerHTML = '<div class="empty-state"><div class="ei">❌</div><h3>Errore</h3></div>'; return; }
 
   // Ensure "Altro" default folder exists (creates it if missing)
@@ -323,6 +375,81 @@ async function loadCartelle() {
 
   if (cartellaAperta) { await renderCartellaDetail(cartellaAperta); return; }
 
+  allCartelleData = data;
+
+  // Populate tag filter dropdown
+  const tagSet = new Set();
+  data.forEach(c => { if (Array.isArray(c.tags)) c.tags.forEach(t => tagSet.add(t)); });
+  const tagSel = document.getElementById('paz-filter-tag');
+  if (tagSel) {
+    tagSel.innerHTML = '<option value="">🏷️ Patologia</option>' +
+      [...tagSet].sort().map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+    tagSel.onchange = applyFiltri;
+  }
+
+  // Update archived counter
+  const archivedCount = data.filter(c => c.archived === true && c.id !== _altroCartellaId).length;
+  const archivioCnt = document.getElementById('paz-archivio-count');
+  if (archivioCnt) archivioCnt.textContent = archivedCount;
+
+  // Show + wire filter bar
+  const filterBar = document.getElementById('paz-filter-bar');
+  if (filterBar) {
+    filterBar.style.display = 'flex';
+    const searchEl = document.getElementById('paz-search');
+    const sessoEl = document.getElementById('paz-filter-sesso');
+    if (searchEl) searchEl.oninput = applyFiltri;
+    if (sessoEl) sessoEl.onchange = applyFiltri;
+  }
+
+  renderCartelleGrid(data);
+}
+
+function applyFiltri() {
+  if (!allCartelleData.length) return;
+  const q = (document.getElementById('paz-search')?.value || '').toLowerCase().trim();
+  const sesso = document.getElementById('paz-filter-sesso')?.value || '';
+  const tag = document.getElementById('paz-filter-tag')?.value || '';
+  const altroObj = allCartelleData.find(c => c.id === _altroCartellaId);
+
+  const filtered = allCartelleData.filter(c => {
+    if (c.id === _altroCartellaId) return false; // handle separately
+    if (mostraArchiviati) {
+      if (!c.archived) return false;
+    } else {
+      if (c.archived) return false;
+    }
+    if (q && !((c.nome || '').toLowerCase().includes(q) || (c.cognome || '').toLowerCase().includes(q))) return false;
+    if (sesso && c.sesso !== sesso) return false;
+    if (tag && !(Array.isArray(c.tags) && c.tags.includes(tag))) return false;
+    return true;
+  });
+
+  // Append "Altro" only when showing active (non-archived) with no active filters
+  const showAltro = !mostraArchiviati && !q && !sesso && !tag && altroObj;
+  renderCartelleGrid(showAltro ? [...filtered, altroObj] : filtered);
+}
+
+function toggleMostraArchiviati() {
+  mostraArchiviati = !mostraArchiviati;
+  const btn = document.getElementById('paz-filter-archivio-btn');
+  if (btn) btn.style.background = mostraArchiviati ? '#E0F2F1' : '';
+  applyFiltri();
+}
+
+function resetFiltri() {
+  const s = document.getElementById('paz-search'); if (s) s.value = '';
+  const se = document.getElementById('paz-filter-sesso'); if (se) se.value = '';
+  const t = document.getElementById('paz-filter-tag'); if (t) t.value = '';
+  mostraArchiviati = false;
+  const btn = document.getElementById('paz-filter-archivio-btn');
+  if (btn) btn.style.background = '';
+  if (allCartelleData.length) renderCartelleGrid(allCartelleData);
+}
+
+function renderCartelleGrid(data) {
+  const wrap = document.getElementById('main-content');
+  const altroObj = data.find(c => c.id === _altroCartellaId);
   const normalCartelle = data.filter(c => c.id !== _altroCartellaId);
 
   const renderCard = (c, idx = 0) => {
@@ -339,12 +466,16 @@ async function loadCartelle() {
     }
     const eta = c.ddn ? calcolaEta(c.ddn) : null;
     const noteDisplay = (c.note && c.note !== '__altro__') ? '<div style="font-size:11px;color:var(--slate-l);font-style:italic;margin-top:4px">' + esc(c.note.substring(0, 70)) + (c.note.length > 70 ? '...' : '') + '</div>' : '';
-    return `<div class="paz-card" onclick="apriCartella('${c.id}')" style="animation-delay:${delay}s">
+    const tagsHtml = renderTagChips(c.tags);
+    const archivedStyle = c.archived ? 'opacity:0.6;' : '';
+    const archivedBadge = c.archived ? '<span class="archived-badge">Archiviato</span>' : '';
+    return `<div class="paz-card" onclick="apriCartella('${c.id}')" style="${archivedStyle}animation-delay:${delay}s">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <span style="font-size:24px">📁</span>
-        <div><h4>${esc(c.nome)}</h4><div class="paz-meta">${eta !== null ? eta + ' anni · ' : ''}${c.sesso || ''}</div></div>
+        <div><h4>${esc(c.nome)}${archivedBadge}</h4><div class="paz-meta">${eta !== null ? eta + ' anni · ' : ''}${c.sesso || ''}</div></div>
       </div>
       ${noteDisplay}
+      ${tagsHtml}
       <div class="paz-tag" style="margin-top:6px">📅 ${new Date(c.created_at).toLocaleDateString('it')}</div>
       <div class="paz-actions">
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editCartella('${c.id}')">✏️</button>
@@ -353,13 +484,18 @@ async function loadCartelle() {
     </div>`;
   };
 
-  // Normal folders first, then "Altro" pinned at the end — stagger animation delays
   const cardsHtml = [
     ...normalCartelle.map((c, i) => renderCard(c, i)),
     altroObj ? renderCard(altroObj, normalCartelle.length) : ''
   ].join('');
 
-  if (!normalCartelle.length) {
+  if (!normalCartelle.length && !altroObj) {
+    wrap.innerHTML = mostraArchiviati
+      ? '<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">Nessuna cartella archiviata.</div>'
+      : '<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">Nessun risultato per i filtri applicati.</div>';
+    return;
+  }
+  if (!normalCartelle.length && altroObj) {
     wrap.innerHTML = `<div style="margin-bottom:14px;padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">
       Crea la prima cartella paziente con il pulsante in alto a destra. La cartella <b>Altro</b> è sempre disponibile per file non categorizzati.
     </div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">${cardsHtml}</div>`;
@@ -516,10 +652,13 @@ async function renderCartellaDetail(id) {
       ${!isAltro && cart.sesso ? `<span class="paz-tag">${cart.sesso==='M'?'♂️ M':'♀️ F'}</span>` : ''}
       ${!isAltro && cart.codice_fiscale ? `<span class="paz-tag">🪪 ${esc(cart.codice_fiscale)}</span>` : ''}
       ${!isAltro ? `<button class="btn btn-ghost btn-sm" onclick="editCartella('${cart.id}')">✏️ Modifica</button>` : ''}
+      ${!isAltro ? `<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella('${cart.id}',${!!cart.archived})" style="${cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)'}" title="${cart.archived?'Ripristina cartella':'Archivia cartella'}">${cart.archived?'♻️ Ripristina':'📦 Archivia'}</button>` : ''}
       ${!isAltro ? (patientLink.length ? `<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente('${patientLink[0].patient_id}','${cart.id}')" title="Scollega paziente">🔗✂️ Scollega</button>` : `<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente('${cart.id}')">🔗 Collega paziente</button>`) : ''}
     </div>
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
+    ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>Cartella archiviata</b> — Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.</div>` : ''}
     ${!isAltro && cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
+    ${!isAltro && Array.isArray(cart.tags) && cart.tags.length ? '<div style="background:#F8FAFC;border-radius:8px;padding:8px 14px;margin-bottom:14px"><span style="font-size:11.5px;color:var(--slate-m);font-weight:600;margin-right:4px">🏷️</span>' + cart.tags.map(function(t){var cl=tagColor(t);return '<span class="paz-tag-chip" style="background:'+cl.bg+';color:'+cl.col+'">'+esc(t)+'</span>';}).join('') + '</div>' : ''}
 
     <!-- SEZIONE PIANI + CONTENUTO VISIBILE AL PAZIENTE -->
     <div class="card" style="margin-bottom:12px">
@@ -771,6 +910,8 @@ function openNewCartella() {
   ['nc-nome','nc-cognome','nc-cf','nc-note'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('nc-ddn').value = '';
   document.getElementById('nc-sesso').value = '';
+  ncSelectedTags = [];
+  renderNcTagChips();
   openM('modal-nc');
   setTimeout(() => document.getElementById('nc-nome').focus(), 200);
 }
@@ -790,6 +931,8 @@ async function editCartella(id) {
   document.getElementById('nc-sesso').value = data.sesso || '';
   document.getElementById('nc-cf').value = data.codice_fiscale || '';
   document.getElementById('nc-note').value = data.note || '';
+  ncSelectedTags = Array.isArray(data.tags) ? [...data.tags] : [];
+  renderNcTagChips();
   openM('modal-nc');
 }
 
@@ -804,6 +947,7 @@ async function salvaCartella() {
     sesso: document.getElementById('nc-sesso').value || null,
     codice_fiscale: document.getElementById('nc-cf').value.trim().toUpperCase() || null,
     note: document.getElementById('nc-note').value.trim() || null,
+    tags: ncSelectedTags.length ? ncSelectedTags : [],
   };
   showLoading(true);
   let result;
@@ -814,7 +958,18 @@ async function salvaCartella() {
     result = await sb.from('cartelle').insert(payload);
   }
   showLoading(false);
-  if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
+  if (result.error) {
+    const isMissingCol = result.error.message && (result.error.message.includes('tags') || result.error.message.includes('column'));
+    if (isMissingCol) {
+      document.getElementById('nc-tags-warning').style.display = '';
+      toast('⚠️ Colonna mancante — esegui ALTER TABLE nel pannello Supabase SQL', 'warn');
+      const payloadFallback = { ...payload }; delete payloadFallback.tags;
+      let r2;
+      if (editingCartellaId) r2 = await sb.from('cartelle').update(payloadFallback).eq('id', editingCartellaId);
+      else { payloadFallback.created_at = new Date().toISOString(); r2 = await sb.from('cartelle').insert(payloadFallback); }
+      if (r2.error) { toast('❌ ' + r2.error.message, 'err'); return; }
+    } else { toast('❌ ' + result.error.message, 'err'); return; }
+  }
   closeM('modal-nc');
   toast(editingCartellaId ? '✅ Cartella aggiornata!' : '📁 Cartella creata!', 'ok');
   editingCartellaId = null;
@@ -913,6 +1068,62 @@ async function confermaCollegamento() {
   closeM('modal-collega');
   toast('🔗 Paziente collegato!', 'ok');
   await renderCartellaDetail(collegaCartellaId);
+}
+
+// TAG CHIP HELPERS IN MODAL
+function renderNcTagChips() {
+  const container = document.getElementById('nc-tags-chips');
+  if (!container) return;
+  const allTags = [...new Set([...PREDEFINED_TAGS, ...ncSelectedTags])];
+  container.innerHTML = allTags.map(t => {
+    const c = tagColor(t);
+    const sel = ncSelectedTags.includes(t);
+    return `<span class="nc-tag-chip ${sel?'selected':''}" style="background:${c.bg};color:${c.col}" onclick="toggleNcTag('${t.replace(/'/g,"\\'")}')">${sel?'✓ ':''}${esc(t)}</span>`;
+  }).join('');
+}
+
+function toggleNcTag(tag) {
+  const idx = ncSelectedTags.indexOf(tag);
+  if (idx >= 0) ncSelectedTags.splice(idx, 1);
+  else ncSelectedTags.push(tag);
+  renderNcTagChips();
+}
+
+function aggiungiTagCustom() {
+  const inp = document.getElementById('nc-tags-custom');
+  const val = (inp.value || '').trim();
+  if (!val) return;
+  if (!ncSelectedTags.includes(val)) { ncSelectedTags.push(val); renderNcTagChips(); }
+  inp.value = '';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('nc-tags-custom');
+  if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); aggiungiTagCustom(); } });
+}, { once: true });
+
+// ARCHIVIA / RIPRISTINA
+async function toggleArchiviaCartella(id, currentlyArchived) {
+  const newArchived = !currentlyArchived;
+  const msg = newArchived
+    ? 'Archiviare questa cartella? Non sarà più visibile nella griglia principale.'
+    : 'Ripristinare questa cartella come attiva?';
+  customConfirm(msg, async () => {
+    showLoading(true);
+    const { error } = await sb.from('cartelle').update({ archived: newArchived }).eq('id', id);
+    showLoading(false);
+    if (error) {
+      const isMissingCol = error.message && (error.message.includes('archived') || error.message.includes('column'));
+      toast(isMissingCol
+        ? '⚠️ Colonna mancante — esegui: ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE; nel pannello SQL'
+        : '❌ ' + error.message, isMissingCol ? 'warn' : 'err');
+      return;
+    }
+    toast(newArchived ? '📦 Cartella archiviata' : '♻️ Cartella ripristinata', 'ok');
+    cartellaAperta = null;
+    document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
+    await loadCartelle();
+  }, { title: newArchived ? '📦 Archivia Cartella' : '♻️ Ripristina Cartella', okLabel: newArchived ? 'Archivia' : 'Ripristina' });
 }
 
 function scollegaPaziente(patientId, cartellaId) {

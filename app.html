@@ -130,6 +130,17 @@
 .row-drag-handle:hover{color:var(--teal)}
 .row-drag-handle:active{cursor:grabbing}
 tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset 0 2px 0 var(--teal-l)}
+/* ── Copia giorno tab button ── */
+.gt-copy{font-size:12px;cursor:pointer;padding:1px 3px;border-radius:3px;opacity:.7;transition:opacity .12s;line-height:1;display:inline-block;vertical-align:middle}
+.gt-copy:hover{opacity:1;background:rgba(255,255,255,.15)}
+/* ── Template modal ── */
+.tmpl-card{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;margin-bottom:7px;cursor:pointer;transition:border-color .12s,box-shadow .12s;background:white}
+.tmpl-card:hover{border-color:var(--teal-l);box-shadow:0 2px 8px rgba(15,118,110,.1)}
+.tmpl-cat-badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:rgba(15,118,110,.1);color:var(--teal-d);white-space:nowrap}
+.tmpl-list-wrap{max-height:380px;overflow-y:auto;padding-right:2px}
+.copy-dst-check{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;margin-bottom:5px;cursor:pointer;transition:border-color .12s}
+.copy-dst-check:hover{border-color:var(--teal-l)}
+.copy-dst-check input[type=checkbox]{accent-color:var(--teal);width:15px;height:15px;cursor:pointer}
 /* ── Piano section live theming ── */
 #pasti-container thead th{background:var(--teal)!important;color:white!important;}
 #pasti-container .tr-tot td{background:linear-gradient(90deg,var(--teal),var(--teal-l))!important;}
@@ -199,6 +210,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <button class="btn btn-ghost btn-sm" onclick="openNewPasto()">🍽️<span>Pasto</span></button>
     <button class="btn btn-ghost btn-sm" onclick="esportaExcel()">📥<span>Excel</span></button>
     <button class="btn btn-ghost btn-sm" onclick="salvaPiano()">💾<span>Salva</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openSalvaTemplate()" title="Salva il piano corrente come template riutilizzabile">💾<span>Template</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openCaricaTemplate()" title="Carica un template salvato nel piano corrente">📂<span>Template</span></button>
     <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
@@ -421,6 +434,107 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
   </div>
 </div>
 
+<!-- MODAL: COPIA GIORNO -->
+<div class="modal-bg" id="modal-copia-giorno">
+  <div class="modal" style="max-width:380px">
+    <div class="mhdr"><h2>📋 Copia Giorno</h2><button class="mclose" onclick="closeM('modal-copia-giorno')">✕</button></div>
+    <div class="mbody">
+      <div id="copia-giorno-src-label" style="font-size:13px;font-weight:600;color:var(--slate-m);margin-bottom:10px"></div>
+      <div style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Seleziona i giorni di destinazione:</div>
+      <div id="copia-giorno-dst-list"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-copia-giorno')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="eseguiCopiaGiorno()">Copia</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: COPIA PASTO -->
+<div class="modal-bg" id="modal-copia-pasto">
+  <div class="modal" style="max-width:400px">
+    <div class="mhdr"><h2>📋 Copia Pasto</h2><button class="mclose" onclick="closeM('modal-copia-pasto')">✕</button></div>
+    <div class="mbody">
+      <div id="copia-pasto-src-label" style="font-size:13px;font-weight:600;color:var(--slate-m);margin-bottom:10px"></div>
+      <div style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Copia gli alimenti di questo pasto in:</div>
+      <div id="copia-pasto-dst-list"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-copia-pasto')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="eseguiCopiaPasto()">Copia</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SALVA TEMPLATE -->
+<div class="modal-bg" id="modal-salva-template">
+  <div class="modal" style="max-width:400px">
+    <div class="mhdr"><h2>💾 Salva come Template</h2><button class="mclose" onclick="closeM('modal-salva-template')">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:10px">
+        <label>Nome template *</label>
+        <input type="text" id="tmpl-nome" placeholder="es. Piano settimanale mediterraneo..." maxlength="80">
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Descrizione (opzionale)</label>
+        <textarea id="tmpl-desc" rows="2" placeholder="Note sul template..." maxlength="300" style="width:100%;font-family:inherit;font-size:13px;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);resize:vertical;box-sizing:border-box"></textarea>
+      </div>
+      <div class="fg">
+        <label>Categoria</label>
+        <select id="tmpl-cat" style="width:100%">
+          <option value="Altro">Altro</option>
+          <option value="Dimagrimento">Dimagrimento</option>
+          <option value="Mantenimento">Mantenimento</option>
+          <option value="Massa muscolare">Massa muscolare</option>
+          <option value="Diabete">Diabete</option>
+          <option value="IRC">IRC</option>
+          <option value="Chetogenica">Chetogenica</option>
+          <option value="Vegetariana/Vegana">Vegetariana/Vegana</option>
+          <option value="Oncologia">Oncologia</option>
+          <option value="Sport">Sport</option>
+        </select>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-salva-template')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="eseguiSalvaTemplate()">💾 Salva Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CARICA TEMPLATE -->
+<div class="modal-bg" id="modal-carica-template">
+  <div class="modal" style="max-width:540px">
+    <div class="mhdr"><h2>📂 Carica Template</h2><button class="mclose" onclick="closeM('modal-carica-template')">✕</button></div>
+    <div class="mbody">
+      <div style="margin-bottom:10px">
+        <input type="text" id="tmpl-search" placeholder="🔍 Cerca template..." oninput="renderTemplateList()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:inherit;font-size:13px;box-sizing:border-box">
+      </div>
+      <div id="tmpl-supabase-hint" style="display:none;margin-bottom:10px;padding:9px 12px;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;font-size:11.5px;color:#92400E">
+        <b>Tabella Supabase non trovata.</b> I template vengono salvati localmente. Per abilitare la sincronizzazione cloud, crea la tabella con:<br>
+        <code style="display:block;margin-top:5px;padding:6px 8px;background:#FFF7ED;border-radius:4px;font-size:10.5px;white-space:pre-wrap;word-break:break-all">CREATE TABLE IF NOT EXISTS piani_template (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  nome TEXT NOT NULL,
+  descrizione TEXT,
+  categoria TEXT DEFAULT 'Altro',
+  meals JSONB,
+  giorni JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE piani_template ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_id);</code>
+      </div>
+      <div class="tmpl-list-wrap" id="tmpl-list-container">
+        <div style="color:var(--slate-l);font-size:13px;text-align:center;padding:20px">Nessun template salvato.</div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-carica-template')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
 <div class="ac-list" id="ac-global" onmousedown="event.preventDefault()"></div>
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
@@ -490,6 +604,7 @@ function renderGiornoTabs() {
   giorni.forEach((g, i) => {
     html += `<div class="giorno-tab${i === giornoCorrente ? ' active' : ''}" ondblclick="openRenameGiorno(${i})">
       <span onclick="switchGiorno(${i})">${g.nome}</span>
+      <span class="gt-copy no-print" onclick="event.stopPropagation();openCopiaGiorno(${i})" title="Copia giorno su altri giorni">📋</span>
       ${giorni.length > 1 ? `<span class="gt-del no-print" onclick="delGiorno(${i})" title="Elimina giorno">✕</span>` : ''}
     </div>`;
   });
@@ -636,6 +751,7 @@ function buildCard(mi) {
     <span class="ph-nome">${meal.nome}</span>
 
     <button class="btn btn-ghost btn-xs no-print" onclick="event.stopPropagation();openRename(${mi})" style="color:white;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06);margin-right:3px">✏️</button>
+    <button class="btn btn-ghost btn-xs no-print" onclick="event.stopPropagation();openCopiaPasto(${mi})" title="Copia pasto su altri pasti/giorni" style="color:white;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06);margin-right:3px">📋</button>
     <button class="btn btn-danger btn-xs no-print" onclick="event.stopPropagation();delMeal(${mi})" style="margin-right:4px">✕</button>
     <span class="ph-tog">${meal.collapsed ? '▼' : '▲'}</span>
   </div>
@@ -2389,6 +2505,327 @@ function saveDraftState() {
   } catch(e) { console.error('Errore salvataggio bozza:', e); }
 }
 window.addEventListener('pagehide', saveDraftState);
+
+// ═══════════════════════════════════════════════════
+// COPIA GIORNO
+// ═══════════════════════════════════════════════════
+let copiaGiornoSrcIdx = -1;
+
+function openCopiaGiorno(srcIdx) {
+  if (giorni.length < 2) {
+    toast('Aggiungi almeno un altro giorno per copiare!', 'err');
+    return;
+  }
+  copiaGiornoSrcIdx = srcIdx;
+  const src = giorni[srcIdx];
+  document.getElementById('copia-giorno-src-label').textContent = '📅 Giorno sorgente: ' + src.nome;
+  const list = document.getElementById('copia-giorno-dst-list');
+  list.innerHTML = giorni.map((g, i) => {
+    if (i === srcIdx) return '';
+    return `<label class="copy-dst-check">
+      <input type="checkbox" id="cgd-${i}" value="${i}">
+      <span style="font-weight:600;font-size:13px">📅 ${esc(g.nome)}</span>
+      <span style="font-size:11px;color:var(--slate-l);margin-left:auto">${g.meals.length} pasti</span>
+    </label>`;
+  }).join('');
+  openM('modal-copia-giorno');
+}
+
+function eseguiCopiaGiorno() {
+  const checks = document.querySelectorAll('#copia-giorno-dst-list input[type=checkbox]:checked');
+  if (!checks.length) { toast('Seleziona almeno un giorno di destinazione', 'err'); return; }
+  const src = giorni[copiaGiornoSrcIdx];
+  const dstNames = [];
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  checks.forEach(cb => {
+    const dstIdx = parseInt(cb.value);
+    giorni[dstIdx].meals = JSON.parse(JSON.stringify(src.meals)).map(m => ({
+      ...m,
+      id: m.id + '_cp' + Date.now() + Math.random().toString(36).slice(2),
+      collapsed: false
+    }));
+    dstNames.push(giorni[dstIdx].nome);
+  });
+  markDirty();
+  closeM('modal-copia-giorno');
+  renderGiornoTabs();
+  renderPiano();
+  toast('📋 "' + src.nome + '" copiato su: ' + dstNames.join(', '), 'ok');
+}
+
+// ═══════════════════════════════════════════════════
+// COPIA PASTO
+// ═══════════════════════════════════════════════════
+let copiaPastoSrcMi = -1;
+let copiaPastoDstSelections = [];
+
+function openCopiaPasto(srcMi) {
+  copiaPastoSrcMi = srcMi;
+  const srcMeal = getMeals()[srcMi];
+  document.getElementById('copia-pasto-src-label').textContent = srcMeal.emoji + ' Pasto sorgente: ' + srcMeal.nome;
+  const list = document.getElementById('copia-pasto-dst-list');
+  let html = '';
+
+  // Same day, other meals
+  const meals = getMeals();
+  if (meals.length > 1) {
+    html += `<div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Stesso giorno — ${esc(giorni[giornoCorrente].nome)}</div>`;
+    meals.forEach((m, i) => {
+      if (i === srcMi) return;
+      html += `<label class="copy-dst-check">
+        <input type="checkbox" name="copia-pasto-dst" value="g${giornoCorrente}_m${i}">
+        <span style="font-size:15px">${esc(m.emoji)}</span>
+        <span style="font-weight:600;font-size:13px">${esc(m.nome)}</span>
+      </label>`;
+    });
+  }
+
+  // Other days — all meals
+  if (giorni.length > 1) {
+    giorni.forEach((g, gi) => {
+      if (gi === giornoCorrente) return;
+      html += `<div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.6px;margin-top:10px;margin-bottom:5px">📅 ${esc(g.nome)}</div>`;
+      g.meals.forEach((m, mi) => {
+        html += `<label class="copy-dst-check">
+          <input type="checkbox" name="copia-pasto-dst" value="g${gi}_m${mi}">
+          <span style="font-size:15px">${esc(m.emoji)}</span>
+          <span style="font-weight:600;font-size:13px">${esc(m.nome)}</span>
+        </label>`;
+      });
+    });
+  }
+
+  if (!html) {
+    html = '<div style="color:var(--slate-l);font-size:13px">Nessuna destinazione disponibile. Aggiungi altri pasti o giorni.</div>';
+  }
+  list.innerHTML = html;
+  openM('modal-copia-pasto');
+}
+
+function eseguiCopiaPasto() {
+  const checks = document.querySelectorAll('#copia-pasto-dst-list input[name=copia-pasto-dst]:checked');
+  if (!checks.length) { toast('Seleziona almeno una destinazione', 'err'); return; }
+  const srcItems = JSON.parse(JSON.stringify(getMeals()[copiaPastoSrcMi].items));
+  const dstLabels = [];
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  checks.forEach(cb => {
+    const [gPart, mPart] = cb.value.split('_');
+    const gi = parseInt(gPart.slice(1));
+    const mi = parseInt(mPart.slice(1));
+    const dstMeal = giorni[gi]?.meals[mi];
+    if (!dstMeal) return;
+    // Replace items; keep at least one empty row if srcItems is empty
+    dstMeal.items = srcItems.length ? JSON.parse(JSON.stringify(srcItems)) : [{ nome: '', qt: '', altPrint: [], misura: '' }];
+    dstLabels.push(giorni[gi].nome + ' › ' + dstMeal.nome);
+  });
+  markDirty();
+  closeM('modal-copia-pasto');
+  renderPiano();
+  toast('📋 Pasto copiato su: ' + dstLabels.join(', '), 'ok');
+}
+
+// ═══════════════════════════════════════════════════
+// TEMPLATE PIANI
+// ═══════════════════════════════════════════════════
+const TMPL_LS_KEY = 'piani_templates_v1';
+let _tmplSupabaseOk = null; // null=not checked, true/false
+
+async function _checkTemplateTable() {
+  if (_tmplSupabaseOk !== null) return _tmplSupabaseOk;
+  try {
+    const { error } = await sb.from('piani_template').select('id').limit(1);
+    _tmplSupabaseOk = !error;
+  } catch { _tmplSupabaseOk = false; }
+  return _tmplSupabaseOk;
+}
+
+async function _loadTemplates() {
+  const ok = await _checkTemplateTable();
+  if (ok) {
+    const { data, error } = await sb.from('piani_template')
+      .select('id,nome,descrizione,categoria,meals,giorni,created_at')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+    if (!error && data) return { source: 'supabase', items: data };
+  }
+  // Fallback localStorage
+  try {
+    const raw = localStorage.getItem(TMPL_LS_KEY);
+    const items = raw ? JSON.parse(raw) : [];
+    return { source: 'local', items };
+  } catch { return { source: 'local', items: [] }; }
+}
+
+async function _saveTemplate(tmpl) {
+  const ok = await _checkTemplateTable();
+  if (ok) {
+    const payload = {
+      user_id: currentUser.id,
+      nome: tmpl.nome,
+      descrizione: tmpl.descrizione || null,
+      categoria: tmpl.categoria || 'Altro',
+      meals: null,
+      giorni: tmpl.giorni
+    };
+    if (tmpl.id) {
+      const { error } = await sb.from('piani_template').update(payload).eq('id', tmpl.id);
+      return { ok: !error, error };
+    } else {
+      const { error } = await sb.from('piani_template').insert(payload);
+      return { ok: !error, error };
+    }
+  }
+  // LocalStorage fallback
+  try {
+    const raw = localStorage.getItem(TMPL_LS_KEY);
+    const items = raw ? JSON.parse(raw) : [];
+    const newTmpl = { ...tmpl, id: 'ls_' + Date.now(), created_at: new Date().toISOString() };
+    items.unshift(newTmpl);
+    localStorage.setItem(TMPL_LS_KEY, JSON.stringify(items));
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e }; }
+}
+
+async function _deleteTemplate(id) {
+  const ok = await _checkTemplateTable();
+  if (ok && !String(id).startsWith('ls_')) {
+    const { error } = await sb.from('piani_template').delete().eq('id', id);
+    return !error;
+  }
+  // LocalStorage
+  try {
+    const raw = localStorage.getItem(TMPL_LS_KEY);
+    const items = raw ? JSON.parse(raw) : [];
+    const filtered = items.filter(t => t.id !== id);
+    localStorage.setItem(TMPL_LS_KEY, JSON.stringify(filtered));
+    return true;
+  } catch { return false; }
+}
+
+function openSalvaTemplate() {
+  document.getElementById('tmpl-nome').value = document.getElementById('inp-nome')?.value?.trim() || '';
+  document.getElementById('tmpl-desc').value = '';
+  document.getElementById('tmpl-cat').value = 'Altro';
+  openM('modal-salva-template');
+  setTimeout(() => document.getElementById('tmpl-nome').focus(), 200);
+}
+
+async function eseguiSalvaTemplate() {
+  const nome = document.getElementById('tmpl-nome').value.trim();
+  if (!nome) { toast('Inserisci un nome per il template', 'err'); return; }
+  const tmpl = {
+    nome,
+    descrizione: document.getElementById('tmpl-desc').value.trim(),
+    categoria: document.getElementById('tmpl-cat').value,
+    giorni: JSON.parse(JSON.stringify(giorni))
+  };
+  showLoading(true);
+  const result = await _saveTemplate(tmpl);
+  showLoading(false);
+  if (result.ok) {
+    closeM('modal-salva-template');
+    toast('💾 Template "' + nome + '" salvato!', 'ok');
+  } else {
+    toast('❌ Errore salvataggio template: ' + (result.error?.message || result.error), 'err');
+  }
+}
+
+let _cachedTemplates = null;
+
+async function openCaricaTemplate() {
+  openM('modal-carica-template');
+  document.getElementById('tmpl-search').value = '';
+  document.getElementById('tmpl-list-container').innerHTML = '<div style="text-align:center;padding:20px;color:var(--slate-l);font-size:13px">Caricamento...</div>';
+  showLoading(true);
+  const { source, items } = await _loadTemplates();
+  showLoading(false);
+  _cachedTemplates = items;
+  // Show/hide Supabase hint
+  const hint = document.getElementById('tmpl-supabase-hint');
+  if (hint) hint.style.display = source === 'local' ? 'block' : 'none';
+  renderTemplateList();
+}
+
+function renderTemplateList() {
+  const container = document.getElementById('tmpl-list-container');
+  if (!container) return;
+  const q = (document.getElementById('tmpl-search')?.value || '').toLowerCase().trim();
+  const items = (_cachedTemplates || []).filter(t =>
+    !q || t.nome.toLowerCase().includes(q) || (t.categoria || '').toLowerCase().includes(q) || (t.descrizione || '').toLowerCase().includes(q)
+  );
+  if (!items.length) {
+    container.innerHTML = '<div style="color:var(--slate-l);font-size:13px;text-align:center;padding:20px">Nessun template trovato.</div>';
+    return;
+  }
+  container.innerHTML = items.map(t => {
+    const d = t.created_at ? new Date(t.created_at).toLocaleDateString('it', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    const nGiorni = Array.isArray(t.giorni) ? t.giorni.length : 1;
+    return `<div class="tmpl-card" onclick="applicaTemplate('${esc(t.id)}')">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13.5px;margin-bottom:3px">${esc(t.nome)}</div>
+        ${t.descrizione ? `<div style="font-size:11.5px;color:var(--slate-l);margin-bottom:4px">${esc(t.descrizione)}</div>` : ''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <span class="tmpl-cat-badge">${esc(t.categoria || 'Altro')}</span>
+          <span style="font-size:10.5px;color:var(--slate-l)">${nGiorni} giorno${nGiorni > 1 ? 'i' : ''}</span>
+          ${d ? `<span style="font-size:10.5px;color:var(--slate-l)">${d}</span>` : ''}
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();eliminaTemplate('${esc(t.id)}')" title="Elimina template" style="flex-shrink:0;padding:4px 6px;margin-left:4px">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function applicaTemplate(id) {
+  const tmpl = (_cachedTemplates || []).find(t => String(t.id) === String(id));
+  if (!tmpl) return;
+  customConfirm('Caricare il template "' + tmpl.nome + '"? Il piano corrente verrà sovrascritto.', () => {
+    closeM('modal-carica-template');
+    pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+    const ts = Date.now();
+    if (Array.isArray(tmpl.giorni) && tmpl.giorni.length) {
+      giorni = tmpl.giorni.map((g, gi) => ({
+        ...g,
+        id: 'g_tmpl_' + ts + '_' + gi,
+        meals: (g.meals || []).map((m, mi) => ({
+          ...m,
+          id: 'm_tmpl_' + ts + '_' + gi + '_' + mi,
+          collapsed: false,
+          items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [], misura: i.misura || '' }))
+        }))
+      }));
+    } else if (Array.isArray(tmpl.meals)) {
+      // Legacy flat format
+      giorni = [{ id: 'g_tmpl_' + ts, nome: 'Giorno 1', meals: tmpl.meals.map((m, mi) => ({
+        ...m,
+        id: 'm_tmpl_' + ts + '_' + mi,
+        collapsed: false,
+        items: (m.items || []).map(i => ({ ...i, altPrint: i.altPrint || [], misura: i.misura || '' }))
+      })) }];
+    }
+    giornoCorrente = 0;
+    markDirty();
+    renderGiornoTabs();
+    renderPiano();
+    toast('📂 Template "' + tmpl.nome + '" caricato!', 'ok');
+  }, { okLabel: 'Carica Template' });
+}
+
+async function eliminaTemplate(id) {
+  const tmpl = (_cachedTemplates || []).find(t => String(t.id) === String(id));
+  if (!tmpl) return;
+  customConfirm('Eliminare il template "' + tmpl.nome + '"?', async () => {
+    showLoading(true);
+    const ok = await _deleteTemplate(id);
+    showLoading(false);
+    if (ok) {
+      _cachedTemplates = (_cachedTemplates || []).filter(t => String(t.id) !== String(id));
+      renderTemplateList();
+      toast('🗑️ Template eliminato', 'info');
+    } else {
+      toast('❌ Errore eliminazione template', 'err');
+    }
+  }, { danger: true, okLabel: 'Elimina' });
+}
 
 document.addEventListener('DOMContentLoaded', init);
 </script>

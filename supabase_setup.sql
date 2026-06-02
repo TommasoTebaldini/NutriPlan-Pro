@@ -1049,3 +1049,58 @@ WHERE approved = true
     SELECT DISTINCT patient_id FROM public.patient_dietitian
     WHERE patient_id IS NOT NULL
   );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 15 — PATIENT_FILES (allegati liberi in cartella)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS patient_files (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id       UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  cartella_id   UUID        NOT NULL REFERENCES cartelle(id) ON DELETE CASCADE,
+  filename      TEXT        NOT NULL,
+  storage_path  TEXT        NOT NULL,
+  file_size     BIGINT,
+  mime_type     TEXT,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE patient_files ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_files_dietitian_all' AND tablename='patient_files') THEN
+    CREATE POLICY "patient_files_dietitian_all" ON patient_files
+      FOR ALL USING (auth.uid() = user_id)
+      WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
+-- Storage bucket patient-files
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('patient-files', 'patient-files', false)
+ON CONFLICT (id) DO NOTHING;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_files_storage_insert' AND tablename='objects' AND schemaname='storage') THEN
+    CREATE POLICY "patient_files_storage_insert" ON storage.objects
+      FOR INSERT WITH CHECK (bucket_id = 'patient-files' AND auth.uid() IS NOT NULL);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_files_storage_select' AND tablename='objects' AND schemaname='storage') THEN
+    CREATE POLICY "patient_files_storage_select" ON storage.objects
+      FOR SELECT USING (bucket_id = 'patient-files' AND auth.uid() IS NOT NULL);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_files_storage_delete' AND tablename='objects' AND schemaname='storage') THEN
+    CREATE POLICY "patient_files_storage_delete" ON storage.objects
+      FOR DELETE USING (bucket_id = 'patient-files' AND auth.uid() IS NOT NULL);
+  END IF;
+END $$;
+
+-- GDPR: colonna consenso sulle cartelle
+ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso BOOLEAN DEFAULT FALSE;
+ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso_at TIMESTAMPTZ;

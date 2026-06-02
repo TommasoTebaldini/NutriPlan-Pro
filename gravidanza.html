@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Valutazione Gravidanza — DietPlan Pro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.grav-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.grav-card h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.nf input,.nf select{width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s;box-sizing:border-box}
+.nf input:focus,.nf select:focus{border-color:var(--teal)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.result-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12.5px;font-weight:700;margin:3px}
+.pill-ok{background:#F0FDF4;color:#15803D;border:1.5px solid #86EFAC}
+.pill-warn{background:#FEF3C7;color:#B45309;border:1.5px solid #FDE68A}
+.pill-danger{background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA}
+.pill-info{background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE}
+.pill-purple{background:#F5F3FF;color:#7C3AED;border:1.5px solid #DDD6FE}
+.res-box{background:#F8FAFC;border-radius:10px;padding:14px 16px;margin-top:10px;border:1px solid var(--border)}
+.nutrient-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-d);font-size:13px}
+.nutrient-row:last-child{border-bottom:none}
+.nutrient-label{font-weight:600;color:var(--slate)}
+.nutrient-val{font-weight:700;color:var(--teal-d);background:#F0FDF4;padding:3px 10px;border-radius:12px;font-size:12.5px}
+.risk-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-d);font-size:13px}
+.risk-item:last-child{border-bottom:none}
+.risk-cb{width:18px;height:18px;accent-color:var(--teal);flex-shrink:0}
+.avoid-list li{margin-bottom:6px;font-size:13px;line-height:1.5;padding-left:6px}
+.avoid-list li::marker{content:'⚠️  '}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item " href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item " href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item active" href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item " href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🤰 Valutazione Gravidanza</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-primary btn-sm no-print" id="btn-salva-nota" onclick="salvaNota()" style="display:none">💾 Salva nota specialistica</button>
+  </div>
+</div>
+
+<main id="main">
+<div class="page-content">
+
+<!-- BANNER -->
+<div style="background:linear-gradient(135deg,#BE185D,#F472B6);border-radius:14px;padding:20px 24px;margin-bottom:18px;color:white;box-shadow:0 4px 18px rgba(190,24,93,.2)">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div style="font-size:38px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));flex-shrink:0">🤰</div>
+    <div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:3px">Valutazione Nutrizionale in Gravidanza</div>
+      <div style="font-size:12px;opacity:.85;line-height:1.5">Linee guida IOM 2009 · Calcolo fabbisogni per trimestre · Screening rischio GDM · Alimenti da evitare</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEZIONE A: DATI BASE -->
+<div class="grav-card">
+  <h3>📋 a) Dati Base</h3>
+  <div class="grid-3" style="margin-bottom:12px">
+    <div class="nf">
+      <label>Età (anni)</label>
+      <input type="number" id="g-eta" min="14" max="55" placeholder="es. 28" oninput="calcola()">
+    </div>
+    <div class="nf">
+      <label>Peso pre-gravidanza (kg)</label>
+      <input type="number" id="g-peso-pre" step="0.1" placeholder="es. 62" oninput="calcola()">
+    </div>
+    <div class="nf">
+      <label>Altezza (cm)</label>
+      <input type="number" id="g-altezza" placeholder="es. 165" oninput="calcola()">
+    </div>
+    <div class="nf">
+      <label>Peso attuale (kg)</label>
+      <input type="number" id="g-peso-att" step="0.1" placeholder="es. 68" oninput="calcola()">
+    </div>
+    <div class="nf">
+      <label>Settimana gestazionale (1-42)</label>
+      <input type="number" id="g-settimane" min="1" max="42" placeholder="es. 20" oninput="calcola()">
+    </div>
+    <div class="nf">
+      <label>Tipo di gravidanza</label>
+      <select id="g-tipo" onchange="calcola()">
+        <option value="singola">Singola</option>
+        <option value="gemellare">Gemellare</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- RISULTATI -->
+<div id="grav-results" style="display:none">
+
+  <!-- B: BMI + C: Guadagno ponderale raccomandato -->
+  <div class="grav-card">
+    <h3>⚖️ b-c) BMI Pre-Gravidanza e Guadagno Ponderale Raccomandato</h3>
+    <div class="grid-2">
+      <div class="res-box">
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">BMI Pre-Gravidanza</div>
+        <div style="font-size:28px;font-weight:800;color:var(--teal-d)" id="res-bmi">—</div>
+        <div id="res-bmi-class" style="margin-top:6px"></div>
+      </div>
+      <div class="res-box">
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Guadagno ponderale raccomandato (IOM 2009)</div>
+        <div style="font-size:18px;font-weight:800;color:var(--teal-d)" id="res-guadagno-range">—</div>
+        <div style="font-size:11.5px;color:var(--slate-l);margin-top:4px" id="res-guadagno-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D: Guadagno ponderale attuale -->
+  <div class="grav-card">
+    <h3>📏 d) Guadagno Ponderale Attuale</h3>
+    <div class="res-box">
+      <div class="grid-2">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:4px">Guadagno attuale</div>
+          <div style="font-size:22px;font-weight:800;color:var(--slate)" id="res-guadagno-att">—</div>
+        </div>
+        <div id="res-guadagno-status" style="display:flex;align-items:center;justify-content:center">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E: Fabbisogno energetico aggiuntivo -->
+  <div class="grav-card">
+    <h3>🔥 e) Fabbisogno Energetico Aggiuntivo per Trimestre</h3>
+    <div class="res-box">
+      <div class="nutrient-row"><span class="nutrient-label">1° Trimestre (settimane 1-13)</span><span class="nutrient-val">+ 0 kcal/die</span></div>
+      <div class="nutrient-row"><span class="nutrient-label">2° Trimestre (settimane 14-27)</span><span class="nutrient-val">+ 340 kcal/die</span></div>
+      <div class="nutrient-row"><span class="nutrient-label">3° Trimestre (settimane 28-42)</span><span class="nutrient-val">+ 450 kcal/die</span></div>
+      <div class="nutrient-row" id="res-trimestre-row" style="background:#F0FDF4;border-radius:8px;padding:8px 12px;margin-top:8px;border:1px solid #86EFAC">
+        <span class="nutrient-label" id="res-trimestre-label">Trimestre attuale</span>
+        <span id="res-trimestre-extra" style="font-weight:700;color:#15803D;font-size:13px"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- F: Fabbisogni nutrizionali -->
+  <div class="grav-card">
+    <h3>🥗 f) Fabbisogni Nutrizionali in Gravidanza</h3>
+    <div class="res-box">
+      <div class="nutrient-row"><span class="nutrient-label">💪 Proteine</span><span class="nutrient-val">71 g/die</span></div>
+      <div class="nutrient-row"><span class="nutrient-label">🟢 Folati (vitamina B9)</span><span class="nutrient-val">600 μg/die</span></div>
+      <div class="nutrient-row"><span class="nutrient-label">🔴 Ferro</span><span class="nutrient-val">27 mg/die</span></div>
+      <div class="nutrient-row"><span class="nutrient-label">🦷 Calcio</span><span class="nutrient-val">1000 mg/die</span></div>
+      <div class="nutrient-row"><span class="nutrient-label">☀️ Vitamina D</span><span class="nutrient-val">15 μg/die (600 UI)</span></div>
+      <div class="nutrient-row"><span class="nutrient-label">🐟 Omega-3 DHA</span><span class="nutrient-val">+200 mg/die aggiuntivi</span></div>
+    </div>
+    <div style="margin-top:10px;background:#FEF3C7;border-radius:8px;padding:10px 14px;font-size:12px;color:#78350F;border-left:3px solid #F59E0B;line-height:1.6">
+      <strong>Nota:</strong> I valori si riferiscono a gravidanze singole. Per gravidanze gemellari consultare il medico per fabbisogni aumentati.
+    </div>
+  </div>
+
+  <!-- G: Screening rischio GDM -->
+  <div class="grav-card">
+    <h3>🩸 g) Screening Rischio Diabete Gestazionale (IADPSG)</h3>
+    <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px;line-height:1.5">Seleziona i fattori di rischio presenti. Presenza di ≥1 fattore indica screening OGTT 75g raccomandato alla settimana 24-28.</p>
+    <div id="gdm-risks">
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-eta" onchange="aggiornaGDM()"><label for="gdm-eta" style="cursor:pointer;font-size:13px">Età ≥ 35 anni</label></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-bmi" onchange="aggiornaGDM()"><label for="gdm-bmi" style="cursor:pointer;font-size:13px">BMI pre-gravidanza ≥ 30 kg/m²</label></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-prec" onchange="aggiornaGDM()"><label for="gdm-prec" style="cursor:pointer;font-size:13px">Precedente diabete gestazionale (GDM)</label></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-fam" onchange="aggiornaGDM()"><label for="gdm-fam" style="cursor:pointer;font-size:13px">Familiarità di 1° grado per diabete tipo 2</label></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-macrosomia" onchange="aggiornaGDM()"><label for="gdm-macrosomia" style="cursor:pointer;font-size:13px">Precedente neonato macrosomico (peso ≥ 4 kg)</label></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-pcos" onchange="aggiornaGDM()"><label for="gdm-pcos" style="cursor:pointer;font-size:13px">PCOS (sindrome dell'ovaio policistico)</label></div>
+    </div>
+    <div id="gdm-result" class="res-box" style="margin-top:12px"></div>
+  </div>
+
+  <!-- H: Alimenti da evitare -->
+  <div class="grav-card">
+    <h3>🚫 h) Alimenti da Evitare in Gravidanza</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:#DC2626;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #FECACA">Rischio Listeria / Tossinfections</div>
+        <ul class="avoid-list" style="padding-left:10px;margin:0">
+          <li>Formaggi a pasta molle (brie, camembert, gorgonzola)</li>
+          <li>Latte e latticini non pastorizzati</li>
+          <li>Carni crude o poco cotte (carpaccio, tartare)</li>
+          <li>Salumi e insaccati crudi (prosciutto crudo, bresaola)</li>
+          <li>Sushi e pesce crudo (sashimi)</li>
+          <li>Uova crude o poco cotte (mayonnaise artigianale, uova à la coque)</li>
+          <li>Germogli crudi</li>
+          <li>Patè e mousse di carne</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:#B45309;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #FDE68A">Rischio Mercurio / Altro</div>
+        <ul class="avoid-list" style="padding-left:10px;margin:0">
+          <li>Pesce spada, squalo, tonno rosso (alto contenuto di mercurio)</li>
+          <li>Alcol in qualsiasi quantità</li>
+          <li>Caffeina > 200 mg/die (≈ 2 tazze caffè espresso)</li>
+          <li>Liquirizia in grandi quantità</li>
+          <li>Tisane con erbe non testate in gravidanza</li>
+          <li>Integratori di vitamina A > 3000 UI/die (teratogena)</li>
+          <li>Fegato e prodotti a base di fegato (eccesso vitamina A)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SALVA NOTA -->
+  <div id="grav-salva-wrap" style="display:none">
+    <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;border:1.5px solid #86EFAC;font-size:12.5px;color:#14532D;display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">💾</span>
+      <div>Hai aperto questa pagina da una cartella paziente. Puoi salvare questa valutazione come nota specialistica.
+        <button class="btn btn-primary btn-sm" style="margin-left:12px" onclick="salvaNota()">💾 Salva come nota specialistica</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end grav-results -->
+
+</div>
+</main>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+
+<script>
+let _noteId = null;
+let _cartellaId = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
+  // Leggi parametri URL
+  const params = new URLSearchParams(location.search);
+  _noteId = params.get('noteId') || null;
+  _cartellaId = params.get('cartellaId') || null;
+
+  if (_noteId || _cartellaId) {
+    document.getElementById('btn-salva-nota').style.display = '';
+  }
+
+  // Auto-spunta GDM età se già inserita
+  calcola();
+});
+
+function calcola() {
+  const eta = parseFloat(document.getElementById('g-eta').value) || 0;
+  const pesoPre = parseFloat(document.getElementById('g-peso-pre').value) || 0;
+  const altezza = parseFloat(document.getElementById('g-altezza').value) || 0;
+  const pesoAtt = parseFloat(document.getElementById('g-peso-att').value) || 0;
+  const settimane = parseInt(document.getElementById('g-settimane').value) || 0;
+  const tipo = document.getElementById('g-tipo').value;
+
+  if (!pesoPre || !altezza) { document.getElementById('grav-results').style.display = 'none'; return; }
+  document.getElementById('grav-results').style.display = 'block';
+
+  const h = altezza / 100;
+  const bmi = pesoPre / (h * h);
+  document.getElementById('res-bmi').textContent = bmi.toFixed(1);
+
+  // Classificazione BMI
+  let bmiClass, bmiPill;
+  if (bmi < 18.5) { bmiClass = 'Sottopeso'; bmiPill = 'pill-warn'; }
+  else if (bmi < 25) { bmiClass = 'Normopeso'; bmiPill = 'pill-ok'; }
+  else if (bmi < 30) { bmiClass = 'Sovrappeso'; bmiPill = 'pill-warn'; }
+  else { bmiClass = 'Obesità'; bmiPill = 'pill-danger'; }
+  document.getElementById('res-bmi-class').innerHTML = '<span class="result-pill ' + bmiPill + '">' + bmiClass + '</span>';
+
+  // Guadagno ponderale raccomandato IOM 2009
+  const ranges = {
+    singola: {
+      sottopeso: [12.5, 18],
+      normopeso: [11.5, 16],
+      sovrappeso: [7, 11.5],
+      obesita: [5, 9]
+    },
+    gemellare: {
+      sottopeso: [23, 28],
+      normopeso: [17, 25],
+      sovrappeso: [14, 23],
+      obesita: [11, 19]
+    }
+  };
+  const catKey = bmi < 18.5 ? 'sottopeso' : bmi < 25 ? 'normopeso' : bmi < 30 ? 'sovrappeso' : 'obesita';
+  const r = ranges[tipo][catKey];
+  document.getElementById('res-guadagno-range').textContent = r[0] + ' – ' + r[1] + ' kg';
+  document.getElementById('res-guadagno-note').textContent = bmiClass + ' · Gravidanza ' + tipo + ' · Fonte: IOM 2009';
+
+  // Guadagno attuale
+  if (pesoAtt && pesoPre) {
+    const guadagnoAtt = pesoAtt - pesoPre;
+    document.getElementById('res-guadagno-att').textContent = (guadagnoAtt >= 0 ? '+' : '') + guadagnoAtt.toFixed(1) + ' kg';
+    let statusHtml = '';
+    if (guadagnoAtt < r[0]) statusHtml = '<span class="result-pill pill-warn">⬇️ Sotto il range raccomandato</span>';
+    else if (guadagnoAtt > r[1]) statusHtml = '<span class="result-pill pill-danger">⬆️ Sopra il range raccomandato</span>';
+    else statusHtml = '<span class="result-pill pill-ok">✅ Nel range raccomandato</span>';
+    document.getElementById('res-guadagno-status').innerHTML = statusHtml;
+  } else {
+    document.getElementById('res-guadagno-att').textContent = '—';
+    document.getElementById('res-guadagno-status').innerHTML = '<span style="color:var(--slate-l);font-size:12px">Inserisci il peso attuale</span>';
+  }
+
+  // Trimestre e kcal aggiuntive
+  if (settimane) {
+    let tri, extra;
+    if (settimane <= 13) { tri = '1° Trimestre (sett. 1-13)'; extra = '+0 kcal/die'; }
+    else if (settimane <= 27) { tri = '2° Trimestre (sett. 14-27)'; extra = '+340 kcal/die'; }
+    else { tri = '3° Trimestre (sett. 28-42)'; extra = '+450 kcal/die'; }
+    document.getElementById('res-trimestre-label').textContent = tri;
+    document.getElementById('res-trimestre-extra').textContent = extra;
+  }
+
+  // Auto-spunta GDM eta e bmi
+  if (eta >= 35) document.getElementById('gdm-eta').checked = true;
+  if (bmi >= 30) document.getElementById('gdm-bmi').checked = true;
+
+  aggiornaGDM();
+
+  // Show salva wrap if coming from cartella
+  if (_noteId || _cartellaId) document.getElementById('grav-salva-wrap').style.display = '';
+}
+
+function aggiornaGDM() {
+  const checks = ['gdm-eta','gdm-bmi','gdm-prec','gdm-fam','gdm-macrosomia','gdm-pcos'];
+  const count = checks.filter(id => document.getElementById(id).checked).length;
+  const el = document.getElementById('gdm-result');
+  if (count === 0) {
+    el.innerHTML = '<span class="result-pill pill-ok">✅ Nessun fattore di rischio selezionato — Rischio standard</span>';
+  } else if (count === 1) {
+    el.innerHTML = '<span class="result-pill pill-warn">⚠️ ' + count + ' fattore di rischio — Screening OGTT 75g raccomandato (sett. 24-28)</span>';
+  } else {
+    el.innerHTML = '<span class="result-pill pill-danger">🔴 ' + count + ' fattori di rischio — Screening OGTT urgente, valutare OGTT precoce (1° trimestre)</span>';
+  }
+}
+
+async function salvaNota() {
+  if (!currentUser) { toast('Sessione scaduta', 'err'); return; }
+  const cartellaTarget = _cartellaId || null;
+  if (!cartellaTarget) { toast('Cartella non specificata (aggiungi ?cartellaId=... all\'URL)', 'warn'); return; }
+
+  const eta = document.getElementById('g-eta').value;
+  const pesoPre = document.getElementById('g-peso-pre').value;
+  const altezza = document.getElementById('g-altezza').value;
+  const pesoAtt = document.getElementById('g-peso-att').value;
+  const settimane = document.getElementById('g-settimane').value;
+  const tipo = document.getElementById('g-tipo').value;
+  const bmi = pesoPre && altezza ? (parseFloat(pesoPre) / Math.pow(parseFloat(altezza)/100,2)).toFixed(1) : null;
+
+  const sommario = 'Gravidanza ' + tipo + (settimane ? ' · Settimana ' + settimane : '') + (bmi ? ' · BMI pre-gravidanza: ' + bmi : '') + (pesoAtt && pesoPre ? ' · Guadagno: +' + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : '');
+
+  showLoading(true);
+  const { error } = await sb.from('note_specialistiche').insert({
+    cartella_id: cartellaTarget,
+    user_id: currentUser.id,
+    tipo: 'gravidanza',
+    nota: sommario,
+    dati: { eta, pesoPre, altezza, pesoAtt, settimane, tipo, bmi },
+  });
+  showLoading(false);
+  if (error) { toast('Errore salvataggio: ' + error.message, 'err'); return; }
+  toast('💾 Nota specialistica salvata!', 'ok');
+}
+</script>
+</body>
+</html>

@@ -172,6 +172,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
   <a class="nav-item " href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
   <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
@@ -189,6 +190,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
   <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
   <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
   <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item " href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
   <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
   <div id="sb-subscription"></div>
   <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
@@ -284,6 +286,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <div class="mpill" style="background:rgba(59,130,246,.15);color:#1D4ED8;border:1px solid rgba(59,130,246,.5)">🍞<span class="v" id="tot-cho">0</span><span class="u">g CHO</span><span id="tot-cho-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
     <div class="mpill" style="background:rgba(234,179,8,.15);color:#A16207;border:1px solid rgba(234,179,8,.5)">🧈<span class="v" id="tot-fat">0</span><span class="u">g grassi</span><span id="tot-fat-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
     <div class="mpill" style="background:rgba(168,85,247,.15);color:#7E22CE;border:1px solid rgba(168,85,247,.5)">🌿<span class="v" id="tot-fibra">0</span><span class="u">g fibra</span></div>
+    <div class="mpill" style="background:rgba(249,168,37,.15);color:#92400E;border:1px solid rgba(249,168,37,.5)">🍭<span class="v" id="tot-gl">—</span><span class="u">GL</span></div>
     <div id="macro-micro-extra" style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:5px;-webkit-overflow-scrolling:touch;max-width:100%;scrollbar-width:thin"></div>
   </div>
 
@@ -870,6 +873,71 @@ function sumMeal(mi) {
   return { kcal: Math.round(k), prot: r1(p), fatSat: r1(gs), fat: r1(g), z: r1(z), cho: r1(ch), fibra: r1(fi) };
 }
 
+// ── LOOKUP TABLE IG (Indice Glicemico) ──────────────────────────────────────
+const IG_TABLE = {
+  // Cereali e derivati
+  'pane bianco':75,'pane integrale':71,'pane di segale':58,'pane di farro':54,
+  'pasta di semola cruda':50,'pasta integrale cruda':42,'pasta di semola':50,
+  'riso bianco crudo':72,'riso integrale crudo':50,'riso basmati crudo':58,
+  'riso parboiled crudo':47,'orzo perlato crudo':28,'farro crudo':45,
+  'quinoa cruda':53,'avena':55,"fiocchi d'avena":55,'fiocchi di avena':55,
+  'gallette di riso':82,'mais':52,'polenta':69,'farina di mais':68,
+  'cornflakes':81,'muesli':57,'crackers':67,
+  // Legumi
+  'lenticchie secche':32,'fagioli borlotti secchi':28,'ceci secchi':28,
+  'piselli':51,'soia':16,'fave':80,'lupini':14,
+  // Frutta
+  'mela':36,'pera':38,'pesca':42,'arancia':43,'mandarino':47,
+  'banana':51,'uva':59,'anguria':72,'melone':65,'ananas':59,
+  'kiwi':52,'fragola':40,'fragole':40,'lamponi':25,'mirtilli':25,
+  'ciliegia':22,'prugna':39,'albicocca':57,'fichi':61,
+  'dattero':103,'mango':51,'papaya':59,
+  // Verdure
+  'carota':39,'patata bollita':78,'patata':78,'patate':78,
+  'patata dolce':63,'mais dolce':52,'zucca':75,'zucca gialla':75,
+  'piselli freschi':51,'barbabietola':64,'topinambur':31,
+  // Latticini
+  'latte':39,'latte scremato':32,'latte intero':39,
+  'yogurt':36,'yogurt bianco':36,'yogurt greco':12,'yogurt greco 0% grassi':12,
+  // Dolcificanti
+  'zucchero semolato':68,'saccarosio':68,'miele':61,'fruttosio':23,'glucosio':103,
+  'sciroppo di agave':15,'sciroppo di mais':73,
+  // Bevande
+  'succo di mela':44,'succo di arancia':50,'coca cola':63,
+  // Snack e dolci
+  'cioccolato fondente':40,'cioccolato al latte':49,
+  // Altro
+  'marmellata / confettura':51,'marmellata':51,'confettura':51,
+};
+
+function getIGForFood(nome) {
+  if (!nome) return null;
+  const n = nome.toLowerCase().trim();
+  if (IG_TABLE[n] !== undefined) return IG_TABLE[n];
+  // Try partial match
+  const keys = Object.keys(IG_TABLE);
+  const found = keys.find(k => n.includes(k) || k.includes(n));
+  return found !== undefined ? IG_TABLE[found] : null;
+}
+
+function calcGLGiornaliero() {
+  let totalGL = 0;
+  let hasAnyIG = false;
+  getMeals().forEach((_, mi) => {
+    getMeals()[mi].items.forEach(item => {
+      const ig = getIGForFood(item.nome);
+      if (ig === null) return;
+      const f = lookup(item.nome);
+      if (!f) return;
+      const qt = parseFloat(item.qt) || 0;
+      const carbs = (f.ch || 0) / 100 * qt;
+      totalGL += (carbs * ig) / 100;
+      hasAnyIG = true;
+    });
+  });
+  return hasAnyIG ? Math.round(totalGL) : null;
+}
+
 function updateRiep() {
   let k = 0, p = 0, g = 0, ch = 0, fi = 0;
   getMeals().forEach((_, mi) => { const t = sumMeal(mi); k += t.kcal; p += parseFloat(t.prot); g += parseFloat(t.fat); ch += parseFloat(t.cho); fi += parseFloat(t.fibra); });
@@ -878,6 +946,9 @@ function updateRiep() {
   document.getElementById('tot-cho').textContent = r1(ch);
   document.getElementById('tot-fat').textContent = r1(g);
   document.getElementById('tot-fibra').textContent = r1(fi);
+  // GL
+  const glEl = document.getElementById('tot-gl');
+  if (glEl) { const gl = calcGLGiornaliero(); glEl.textContent = gl !== null ? gl : '—'; }
   // % energia in tempo reale
   if (k > 0) {
     const pp = document.getElementById('tot-prot-pct'); if (pp) pp.textContent = '(' + Math.round(p*4/k*100) + '%)';

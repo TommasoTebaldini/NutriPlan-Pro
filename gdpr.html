@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GDPR — DietPlan Pro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.gdpr-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.gdpr-card h3{font-size:15px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.gdpr-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.gdpr-table th{background:#1E293B;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
+.gdpr-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.gdpr-table tbody tr:hover{background:#F8FAFC}
+.consent-cb{width:17px;height:17px;accent-color:var(--teal);cursor:pointer}
+.oblio-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;flex-wrap:wrap}
+.privacy-text{font-size:12.5px;line-height:1.8;color:var(--slate-m);background:#F8FAFC;padding:16px;border-radius:8px;border:1px solid var(--border);max-height:300px;overflow-y:auto}
+.privacy-text h4{color:var(--slate);font-size:13px;margin-top:12px;margin-bottom:4px}
+.tag-mini{display:inline-block;padding:1px 7px;border-radius:12px;font-size:10.5px;font-weight:600;margin:1px}
+.gdpr-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;padding:6px;background:white;border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.gdpr-tab{padding:8px 16px;border-radius:9px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.gdpr-tab:hover{background:rgba(15,118,110,.1);color:var(--teal-d)}
+.gdpr-tab.active{background:linear-gradient(135deg,#0C5F58,#0F766E);color:white;box-shadow:0 3px 10px rgba(15,118,110,.3);font-weight:700}
+.gdpr-panel{display:none}.gdpr-panel.active{display:block}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item " href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item " href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item " href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item active" href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>🔒 GDPR — Gestione Dati Pazienti</h2>
+  <div class="tbar-actions"></div>
+</div>
+
+<main id="main">
+<div class="page-content">
+
+<!-- BANNER -->
+<div style="background:linear-gradient(135deg,#1E293B,#334155);border-radius:14px;padding:18px 24px;margin-bottom:18px;color:white;box-shadow:0 4px 18px rgba(0,0,0,.18)">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div style="font-size:34px;flex-shrink:0">🔒</div>
+    <div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:3px">Registro Trattamenti e Diritti degli Interessati</div>
+      <div style="font-size:12px;opacity:.82;line-height:1.5">GDPR (UE) 2016/679 · D.Lgs. 196/2003 · Dati sanitari categoria speciale art. 9</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="gdpr-tabs">
+  <button class="gdpr-tab active" onclick="switchTab('registro')">📋 Registro Trattamenti</button>
+  <button class="gdpr-tab" onclick="switchTab('oblio')">🗑️ Diritto all'Oblio</button>
+  <button class="gdpr-tab" onclick="switchTab('privacy')">📄 Informativa Privacy</button>
+</div>
+
+<!-- TAB 1: REGISTRO TRATTAMENTI -->
+<div class="gdpr-panel active" id="panel-registro">
+  <div class="gdpr-card">
+    <h3>📋 Registro Trattamenti Pazienti</h3>
+    <div style="font-size:12px;color:var(--slate-m);margin-bottom:12px;line-height:1.6">
+      Art. 30 GDPR — Registro delle attività di trattamento. Documenta i dati trattati per ogni paziente. La spunta "Consenso" indica il consenso informato al trattamento dei dati sanitari ricevuto dal paziente.
+    </div>
+    <div style="overflow-x:auto">
+      <table class="gdpr-table" id="registro-table">
+        <thead>
+          <tr>
+            <th>Paziente</th>
+            <th>CF</th>
+            <th>Patologie/Tag</th>
+            <th>Data creazione</th>
+            <th>Categorie dati</th>
+            <th>Consenso</th>
+          </tr>
+        </thead>
+        <tbody id="registro-tbody">
+          <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">⏳ Caricamento...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: DIRITTO OBLIO -->
+<div class="gdpr-panel" id="panel-oblio">
+  <div class="gdpr-card">
+    <h3>🗑️ Diritto all'Oblio — Art. 17 GDPR</h3>
+    <div style="background:#FEF2F2;border-radius:8px;padding:12px 14px;margin-bottom:14px;border-left:3px solid #EF4444;font-size:12.5px;color:#7F1D1D;line-height:1.6">
+      <strong>⚠️ Attenzione:</strong> L'eliminazione è <strong>irreversibile</strong>. Vengono eliminati: cartella, piani, NCPt, BIA, schede valutazione, note specialistiche, esami biochimici, allegati e collegamento paziente. Per procedere verrà richiesto di digitare il nome del paziente per conferma.
+    </div>
+    <div id="oblio-list">
+      <div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">⏳ Caricamento...</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: INFORMATIVA PRIVACY -->
+<div class="gdpr-panel" id="panel-privacy">
+  <div class="gdpr-card">
+    <h3>📄 Informativa Privacy — Bozza (Art. 13-14 GDPR)</h3>
+    <div style="margin-bottom:14px;display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
+    </div>
+    <div class="privacy-text">
+      <h4>1. Titolare del Trattamento</h4>
+      Il titolare del trattamento è il professionista nutrizionista (di seguito "il Titolare") che utilizza la piattaforma DietPlan Pro per la gestione delle cartelle cliniche dei pazienti.
+
+      <h4>2. Dati Trattati</h4>
+      Il Titolare tratta le seguenti categorie di dati personali:<br>
+      — <strong>Dati anagrafici</strong>: nome, cognome, data di nascita, sesso, codice fiscale<br>
+      — <strong>Dati sanitari (categoria speciale ai sensi dell'art. 9 GDPR)</strong>: diagnosi, patologie, misurazioni antropometriche (peso, altezza, BIA), esami biochimici, piani alimentari, note cliniche<br>
+      — <strong>Dati di contatto</strong> (se forniti): indirizzo email per accesso all'area paziente
+
+      <h4>3. Finalità del Trattamento</h4>
+      I dati vengono trattati per:<br>
+      a) Erogazione di prestazioni di nutrizione clinica (base giuridica: esecuzione del contratto, art. 6 c.1 lett. b GDPR)<br>
+      b) Adempimento di obblighi di legge (base giuridica: art. 6 c.1 lett. c GDPR)<br>
+      c) Gestione della relazione terapeutica e comunicazione clinica (base giuridica: consenso esplicito, art. 9 c.2 lett. a GDPR)
+
+      <h4>4. Conservazione dei Dati</h4>
+      I dati sanitari vengono conservati per 10 anni dalla data dell'ultima prestazione, salvo obblighi normativi specifici.
+
+      <h4>5. Diritti dell'Interessato</h4>
+      L'interessato può esercitare i seguenti diritti:<br>
+      — Accesso ai dati (art. 15 GDPR)<br>
+      — Rettifica (art. 16 GDPR)<br>
+      — Cancellazione / Oblio (art. 17 GDPR)<br>
+      — Limitazione del trattamento (art. 18 GDPR)<br>
+      — Portabilità dei dati (art. 20 GDPR)<br>
+      — Opposizione al trattamento (art. 21 GDPR)<br>
+      — Revoca del consenso in qualsiasi momento
+
+      <h4>6. Responsabile della Protezione dei Dati (DPO)</h4>
+      Non obbligatorio per liberi professionisti. Il titolare gestisce direttamente la protezione dei dati.
+
+      <h4>7. Trasferimenti</h4>
+      I dati sono archiviati su infrastruttura Supabase (UE). Non vengono trasferiti a paesi terzi senza adeguate garanzie.
+
+      <h4>8. Violazioni dei Dati</h4>
+      In caso di violazione dei dati personali, il Titolare notificherà l'Autorità Garante entro 72 ore (art. 33 GDPR) e, se necessario, gli interessati (art. 34 GDPR).
+
+      <h4>9. Contatto</h4>
+      Per esercitare i propri diritti, l'interessato può contattare il Titolare tramite i recapiti comunicati all'atto della presa in carico.
+    </div>
+    <div style="margin-top:12px;font-size:11.5px;color:var(--slate-l);font-style:italic">
+      Questa è una bozza di informativa. Personalizzare con i dati del titolare del trattamento e far validare da un consulente legale/DPO prima dell'uso.
+    </div>
+  </div>
+</div>
+
+</div>
+</main>
+
+<!-- MODAL: CONFERMA OBLIO -->
+<div class="modal-bg" id="modal-oblio">
+  <div class="modal" style="max-width:400px">
+    <div class="mhdr"><h2>🗑️ Diritto all'Oblio</h2><button class="mclose" onclick="closeM('modal-oblio')">✕</button></div>
+    <div class="mbody" style="padding:20px 22px">
+      <div style="background:#FEF2F2;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12.5px;color:#7F1D1D;border-left:3px solid #EF4444;line-height:1.6">
+        ⚠️ Stai per eliminare <strong>irreversibilmente</strong> tutti i dati del paziente:<br>
+        <strong id="oblio-nome-display" style="font-size:14px;color:#DC2626"></strong>
+      </div>
+      <div class="fg" style="margin-bottom:0">
+        <label style="font-size:12px;font-weight:700;color:var(--slate-m)">Digita il nome del paziente per confermare:</label>
+        <input type="text" id="oblio-confirm-input" placeholder="Nome del paziente..." style="width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;margin-top:6px;box-sizing:border-box" oninput="checkOblioConfirm()">
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-oblio')">Annulla</button>
+      <button class="btn btn-sm" id="oblio-confirm-btn" disabled onclick="eseguiOblio()" style="background:#DC2626;color:white;border-color:#DC2626;opacity:.5">🗑️ Elimina tutto</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+
+<script>
+let _allCartelle = [];
+let _oblioTarget = null; // { id, nome }
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
+  await loadGDPRData();
+});
+
+function switchTab(tab) {
+  document.querySelectorAll('.gdpr-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.gdpr-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  const tabs = document.querySelectorAll('.gdpr-tab');
+  const map = { registro: 0, oblio: 1, privacy: 2 };
+  tabs[map[tab]].classList.add('active');
+}
+
+function tagColor(tag) {
+  let h = 0;
+  for (let i = 0; i < tag.length; i++) h = (h * 31 + tag.charCodeAt(i)) & 0xFFFFFF;
+  const hue = h % 360;
+  return { bg: 'hsl(' + hue + ',55%,88%)', col: 'hsl(' + hue + ',50%,32%)' };
+}
+
+async function loadGDPRData() {
+  if (!currentUser) return;
+  const { data, error } = await sb.from('cartelle').select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  if (error) { console.error(error); return; }
+  _allCartelle = (data || []).filter(c => c.note !== '__altro__');
+  renderRegistro();
+  renderOblio();
+}
+
+function renderRegistro() {
+  const tbody = document.getElementById('registro-tbody');
+  if (!_allCartelle.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">Nessuna cartella paziente.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = _allCartelle.map(c => {
+    const tags = Array.isArray(c.tags) ? c.tags : [];
+    const tagsHtml = tags.map(t => { const cl = tagColor(t); return '<span class="tag-mini" style="background:' + cl.bg + ';color:' + cl.col + '">' + esc(t) + '</span>'; }).join('');
+    const consenso = !!c.gdpr_consenso;
+    return '<tr>' +
+      '<td style="font-weight:600;font-size:13px">' + esc(c.nome || '') + '</td>' +
+      '<td style="font-family:monospace;font-size:12px;color:var(--slate-m)">' + esc(c.codice_fiscale || '—') + '</td>' +
+      '<td>' + (tagsHtml || '<span style="color:var(--slate-l);font-size:11.5px">—</span>') + '</td>' +
+      '<td style="font-size:12px;white-space:nowrap">' + new Date(c.created_at).toLocaleDateString('it') + '</td>' +
+      '<td style="font-size:11px;color:var(--slate-m)">Dati sanitari (cat. speciale art.9 GDPR), Dati anagrafici</td>' +
+      '<td style="text-align:center"><input type="checkbox" class="consent-cb" ' + (consenso ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="Consenso informato ricevuto"></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function renderOblio() {
+  const el = document.getElementById('oblio-list');
+  if (!_allCartelle.length) { el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">Nessuna cartella paziente.</div>'; return; }
+  el.innerHTML = _allCartelle.map(c => {
+    const tags = Array.isArray(c.tags) ? c.tags.slice(0,3).join(', ') : '';
+    return '<div class="oblio-row">' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(c.nome || '') + '</div>' +
+        '<div style="font-size:11.5px;color:var(--slate-l)">' + (c.codice_fiscale ? 'CF: ' + c.codice_fiscale + ' · ' : '') + new Date(c.created_at).toLocaleDateString('it') + (tags ? ' · ' + tags : '') + '</div>' +
+      '</div>' +
+      '<button class="btn btn-sm" style="background:#DC2626;color:white;border-color:#DC2626;flex-shrink:0" onclick="apriOblio(\'' + c.id + '\',\'' + c.nome.replace(/'/g,"\\'") + '\')">🗑️ Elimina tutti i dati</button>' +
+      '</div>';
+  }).join('');
+}
+
+async function toggleConsenso(cartellaId, val) {
+  const { error } = await sb.from('cartelle').update({ gdpr_consenso: val, gdpr_consenso_at: val ? new Date().toISOString() : null }).eq('id', cartellaId);
+  if (error) { toast('Errore aggiornamento consenso: ' + error.message, 'err'); return; }
+  toast(val ? '✅ Consenso registrato' : '❌ Consenso revocato', val ? 'ok' : 'warn');
+  // update local
+  const c = _allCartelle.find(x => x.id === cartellaId);
+  if (c) c.gdpr_consenso = val;
+}
+
+function apriOblio(id, nome) {
+  _oblioTarget = { id, nome };
+  document.getElementById('oblio-nome-display').textContent = nome;
+  document.getElementById('oblio-confirm-input').value = '';
+  document.getElementById('oblio-confirm-btn').disabled = true;
+  document.getElementById('oblio-confirm-btn').style.opacity = '.5';
+  openM('modal-oblio');
+  setTimeout(() => document.getElementById('oblio-confirm-input').focus(), 200);
+}
+
+function checkOblioConfirm() {
+  const val = document.getElementById('oblio-confirm-input').value.trim();
+  const ok = _oblioTarget && val.toLowerCase() === (_oblioTarget.nome || '').toLowerCase();
+  document.getElementById('oblio-confirm-btn').disabled = !ok;
+  document.getElementById('oblio-confirm-btn').style.opacity = ok ? '1' : '.5';
+}
+
+async function eseguiOblio() {
+  if (!_oblioTarget || !currentUser) return;
+  const { id } = _oblioTarget;
+  closeM('modal-oblio');
+  showLoading(true);
+  try {
+    // Elimina allegati storage
+    const { data: files } = await sb.from('patient_files').select('storage_path').eq('cartella_id', id);
+    if (files && files.length) {
+      const paths = files.map(f => f.storage_path);
+      await sb.storage.from('patient-files').remove(paths);
+    }
+    // Elimina dati correlati
+    await sb.from('patient_files').delete().eq('cartella_id', id);
+    await sb.from('esami_biochimici').delete().eq('cartella_id', id);
+    await sb.from('note_specialistiche').delete().eq('cartella_id', id);
+    await sb.from('schede_valutazione').delete().eq('cartella_id', id);
+    await sb.from('bia_records').delete().eq('cartella_id', id);
+    await sb.from('ncpt').delete().eq('cartella_id', id);
+    await sb.from('piani').delete().eq('cartella_id', id);
+    await sb.from('patient_dietitian').delete().eq('cartella_id', id);
+    await sb.from('cartelle').delete().eq('id', id);
+    showLoading(false);
+    toast('🗑️ Tutti i dati del paziente eliminati', 'ok');
+    _allCartelle = _allCartelle.filter(c => c.id !== id);
+    renderRegistro();
+    renderOblio();
+    _oblioTarget = null;
+  } catch(e) {
+    showLoading(false);
+    toast('Errore durante l\'eliminazione: ' + (e.message || e), 'err');
+  }
+}
+</script>
+</body>
+</html>

@@ -87,6 +87,7 @@ async function ensureChartJs() {
   <a class="nav-item " href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
   <a class="nav-item " href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
   <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item " href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
   <div class="nav-sec">Strumenti</div>
   <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
   <a class="nav-item " href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
@@ -104,6 +105,7 @@ async function ensureChartJs() {
   <a class="nav-item " href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
   <a class="nav-item " href="ricette.html"><span class="ni">🍳</span>Ricette</a>
   <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item " href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
   <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
   <div id="sb-subscription"></div>
   <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
@@ -119,6 +121,7 @@ async function ensureChartJs() {
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2 id="page-title">📁 Cartelle Pazienti</h2>
   <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="openImportaCSV()">📥 Importa CSV</button>
     <button class="btn btn-primary btn-sm" onclick="openNewCartella()">📁 Nuova Cartella</button>
   </div>
 </div>
@@ -330,6 +333,61 @@ async function ensureChartJs() {
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-esame')">Annulla</button>
       <button class="btn btn-primary btn-sm" onclick="salvaEsame()">🔬 Salva Esame</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: IMPORTA CSV -->
+<div class="modal-bg" id="modal-importa-csv">
+  <div class="modal" style="max-width:600px">
+    <div class="mhdr"><h2>📥 Importa Pazienti da CSV</h2><button class="mclose" onclick="closeM('modal-importa-csv')">✕</button></div>
+    <div class="mbody">
+      <div style="background:#F0F9FF;border-radius:8px;padding:12px 14px;margin-bottom:14px;border-left:3px solid #0369A1;font-size:12.5px;color:#0C4A6E;line-height:1.6">
+        <strong>Formato richiesto:</strong> <code>nome,cognome,ddn,sesso,codice_fiscale,note,tags</code><br>
+        Header case-insensitive. Campo <code>tags</code>: valori separati da <code>;</code> (es: <code>Diabete T2;Obesità</code>).<br>
+        Campo <code>sesso</code>: M o F. Campo <code>ddn</code>: formato YYYY-MM-DD.
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
+        <button class="btn btn-ghost btn-sm" onclick="scaricaTemplateCSV()">📄 Scarica template CSV</button>
+        <label class="btn btn-primary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+          📂 Scegli file CSV
+          <input type="file" id="csv-file-input" accept=".csv,text/csv" style="display:none" onchange="previewCSV(this)">
+        </label>
+      </div>
+      <div id="csv-preview-wrap" style="display:none">
+        <div style="font-size:12px;font-weight:600;color:var(--slate);margin-bottom:6px">Anteprima (prime 5 righe):</div>
+        <div id="csv-preview-table" style="overflow-x:auto;font-size:12px"></div>
+        <div id="csv-import-info" style="margin-top:8px;font-size:12.5px;color:var(--slate-m)"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-importa-csv')">Annulla</button>
+      <button class="btn btn-primary btn-sm" id="csv-import-btn" style="display:none" onclick="importaCSV()">📥 Importa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: STORICO ESAME -->
+<div class="modal-bg" id="modal-esame-storico">
+  <div class="modal" style="max-width:540px">
+    <div class="mhdr"><h2 id="esame-storico-title">📈 Storico Esame</h2><button class="mclose" onclick="closeM('modal-esame-storico')">✕</button></div>
+    <div class="mbody" style="padding:16px 18px">
+      <div style="position:relative;height:260px"><canvas id="esame-storico-chart"></canvas></div>
+      <div id="esame-storico-nessun" style="display:none;text-align:center;padding:30px;color:var(--slate-l);font-size:13px">Nessun dato storico disponibile.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AI PAZIENTE -->
+<div class="modal-bg" id="modal-ai-paziente">
+  <div class="modal" style="max-width:560px">
+    <div class="mhdr"><h2>🤖 AI Nutrizionale — Assistente Paziente</h2><button class="mclose" onclick="closeM('modal-ai-paziente')">✕</button></div>
+    <div class="mbody" style="padding:0">
+      <div id="ai-paz-msgs" style="height:320px;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;background:#F8FAFC"></div>
+      <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;background:white">
+        <input type="text" id="ai-paz-input" placeholder="Fai una domanda su questo paziente..." style="flex:1;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiPazMsg()}">
+        <button class="btn btn-primary btn-sm" onclick="sendAiPazMsg()">Invia ➤</button>
+      </div>
     </div>
   </div>
 </div>
@@ -626,7 +684,7 @@ async function renderCartellaDetail(id) {
   }
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
-  const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici] = await Promise.all([
+  const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici, patientFiles] = await Promise.all([
     safeQuery(sb.from('piani').select('id,nome,saved_at,data_piano,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('ncpt').select('id,created_at,updated_at,visible_to_patient,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('schede_valutazione').select('id,nome,saved_at,created_at,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
@@ -634,6 +692,7 @@ async function renderCartellaDetail(id) {
     safeQuery(sb.from('note_specialistiche').select('id,tipo,nota,created_at,visible_to_patient,dati').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).eq('dietitian_id', currentUser.id).limit(1)),
     safeQuery(sb.from('esami_biochimici').select('id,data_esame,tipo,valore,unita,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_esame', {ascending:false})),
+    safeQuery(sb.from('patient_files').select('id,filename,storage_path,file_size,mime_type,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
   ]);
 
   const cart = cartResult.data;
@@ -743,8 +802,9 @@ async function renderCartellaDetail(id) {
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun questionario salvato.</div>';
 
 
-  // Store esami for timeline access
+  // Store esami for timeline access and PDF/AI
   window._currentCartellaEsami = esamiBiochimici || [];
+  window._currentCartellaData = { cart, eta, biaList, esamiBiochimici, piani };
 
   // Build esami biochimici list
   const esamiHtml = (esamiBiochimici && esamiBiochimici.length) ? esamiBiochimici.map(e => {
@@ -757,9 +817,32 @@ async function renderCartellaDetail(id) {
       '</div>' +
       '<span style="font-size:14px;font-weight:700;color:var(--slate);flex-shrink:0">' + e.valore + (e.unita ? ' <span style="font-size:11px;font-weight:400;color:var(--slate-l)">' + esc(e.unita) + '</span>' : '') + '</span>' +
       '<span class="esame-badge ' + bdg.badge + '">' + bdg.label + '</span>' +
+      '<button class="btn btn-ghost btn-xs" onclick="apriStoricoEsame(\'' + id + '\',\'' + e.tipo.replace(/'/g,"\\'") + '\')">📈 Storico</button>' +
       '<button class="btn btn-ghost btn-xs" onclick="deleteEsame(\'' + e.id + '\',\'' + id + '\')">🗑️</button>' +
       '</div>';
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun esame biochimico registrato.</div>';
+
+  // Build allegati HTML
+  const allegatiHtml = '<div class="card" style="margin-bottom:12px">' +
+    '<div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
+    '<h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">📎 Allegati <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">' + (patientFiles||[]).length + '</span></h4>' +
+    '<label style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;box-shadow:0 2px 8px rgba(124,58,237,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow=\'0 4px 14px rgba(124,58,237,.45)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(124,58,237,.3)\';this.style.transform=\'\'">📎 + Allega file<input type="file" style="display:none" onchange="uploadAllegato(this,\'' + id + '\')" multiple></label>' +
+    '</div>' +
+    '<div style="padding:10px 14px">' +
+    ((patientFiles && patientFiles.length) ? patientFiles.map(function(f) {
+      var icon = f.mime_type ? (f.mime_type.startsWith('image/') ? '🖼️' : f.mime_type === 'application/pdf' ? '📄' : (f.mime_type.includes('excel') || f.mime_type.includes('spreadsheet') || f.mime_type.includes('csv')) ? '📊' : '📎') : '📎';
+      var sizeStr = f.file_size ? (f.file_size > 1024*1024 ? (f.file_size/1024/1024).toFixed(1)+' MB' : (f.file_size/1024).toFixed(0)+' KB') : '';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px">' +
+        '<span style="font-size:20px">' + icon + '</span>' +
+        '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:600;font-size:13px;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(f.filename) + '</div>' +
+        '<div style="font-size:11px;color:var(--slate-l)">' + new Date(f.created_at).toLocaleDateString('it') + (sizeStr ? ' · ' + sizeStr : '') + '</div>' +
+        '</div>' +
+        '<button class="btn btn-ghost btn-xs" onclick="downloadAllegato(\'' + f.id + '\',\'' + f.storage_path.replace(/'/g,"\\'") + '\',\'' + f.filename.replace(/'/g,"\\'") + '\')">⬇️ Scarica</button>' +
+        '<button class="btn btn-ghost btn-xs" onclick="deleteAllegato(\'' + f.id + '\',\'' + f.storage_path.replace(/'/g,"\\'") + '\',\'' + id + '\')">🗑️</button>' +
+        '</div>';
+    }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun allegato.</div>') +
+    '</div></div>';
 
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
@@ -771,7 +854,9 @@ async function renderCartellaDetail(id) {
       ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="editCartella(\'' + cart.id + '\')">✏️ Modifica</button>' : ''}
       ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella(\'' + cart.id + '\',' + (!!cart.archived) + ')" style="' + (cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)') + '" title="' + (cart.archived?'Ripristina cartella':'Archivia cartella') + '">' + (cart.archived?'♻️ Ripristina':'📦 Archivia') + '</button>' : ''}
       ${!isAltro ? (patientLink.length ? '<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')" title="Scollega paziente">🔗✂️ Scollega</button>' : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 Collega paziente</button>') : ''}
-      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleTimeline(\'' + id + '\',this)" style="margin-left:auto">🕐 Timeline</button>' : ''}
+      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleTimeline(\'' + id + '\',this)">🕐 Timeline</button>' : ''}
+      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="esportaPDFCartella()">📄 PDF</button>' : ''}
+      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="apriAiPaziente()" style="background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none">🤖 AI</button>' : ''}
     </div>
     <div id="timeline-panel"></div>
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
@@ -883,6 +968,7 @@ async function renderCartellaDetail(id) {
           'disfagia':     {icon:'🗣️', label:'Disfagia',          page:'disfagia.html',    bg:'#E0F2FE', col:'#0369A1'},
           'oncologia':    {icon:'🎗️', label:'Oncologia',          page:'oncologia.html',   bg:'#F5F3FF', col:'#7C3AED'},
           'obesita':      {icon:'⚖️', label:'Obesità',             page:'obesita.html',     bg:'#FFF7ED', col:'#EA580C'},
+          'gravidanza':   {icon:'🤰', label:'Gravidanza',          page:'gravidanza.html',  bg:'#FDF2F8', col:'#BE185D'},
           'consiglio':    {icon:'💡', label:'Consiglio Nutrizionale', page:'consigli.html', bg:'#F0FDF4', col:'#16A34A'},
         };
         const s = specMap[n.tipo] || {icon:'📌', label:n.tipo, page:null, bg:'#F8FAFC', col:'#475569'};
@@ -901,6 +987,7 @@ async function renderCartellaDetail(id) {
       }).join('')}</div>
     </div>` : ''}
 
+    ${!isAltro ? allegatiHtml : ''}
   `;
 }
 
@@ -911,7 +998,7 @@ function apriNoteSpec(noteId, tipo) {
     'ristorazione': 'ristorazione.html', 'dca': 'dna.html',
     'chetogenica': 'chetogenica.html', 'renale': 'renale.html',
     'disfagia': 'disfagia.html', 'oncologia': 'oncologia.html', 'obesita': 'obesita.html', 'consiglio': 'consigli.html',
-    'paziente_sano': 'paziente-sano.html'
+    'paziente_sano': 'paziente-sano.html', 'gravidanza': 'gravidanza.html'
   };
   const page = pageMap[tipo];
   if (!page) return;
@@ -1716,6 +1803,434 @@ async function toggleTimeline(cartellaId, btn) {
   panel.classList.add('open');
   btn.textContent = '🕐 Chiudi Timeline';
   btn.disabled = false;
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 1 — ALLEGATI LIBERI
+// ══════════════════════════════════════════════
+async function uploadAllegato(input, cartellaId) {
+  if (!input.files || !input.files.length) return;
+  if (!currentUser) { toast('Sessione scaduta', 'err'); return; }
+  showLoading(true);
+  let errCount = 0;
+  for (const file of input.files) {
+    const path = currentUser.id + '/' + cartellaId + '/' + Date.now() + '_' + file.name;
+    const { error: upErr } = await sb.storage.from('patient-files').upload(path, file, { upsert: false });
+    if (upErr) { errCount++; console.error('Upload error:', upErr); continue; }
+    const { error: dbErr } = await sb.from('patient_files').insert({
+      user_id: currentUser.id,
+      cartella_id: cartellaId,
+      filename: file.name,
+      storage_path: path,
+      file_size: file.size,
+      mime_type: file.type || null,
+    });
+    if (dbErr) { errCount++; console.error('DB insert error:', dbErr); }
+  }
+  showLoading(false);
+  input.value = '';
+  if (errCount > 0) toast('⚠️ ' + errCount + ' file non caricati (verifica bucket patient-files in Supabase)', 'warn');
+  else toast('📎 File allegati!', 'ok');
+  await renderCartellaDetail(cartellaId);
+}
+
+async function downloadAllegato(fileId, storagePath, filename) {
+  showLoading(true);
+  const { data, error } = await sb.storage.from('patient-files').createSignedUrl(storagePath, 3600);
+  showLoading(false);
+  if (error) { toast('Errore generazione URL: ' + error.message, 'err'); return; }
+  const a = document.createElement('a');
+  a.href = data.signedUrl;
+  a.download = filename;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+async function deleteAllegato(fileId, storagePath, cartellaId) {
+  customConfirm('Eliminare questo allegato?', async () => {
+    showLoading(true);
+    await sb.storage.from('patient-files').remove([storagePath]);
+    await sb.from('patient_files').delete().eq('id', fileId);
+    showLoading(false);
+    toast('🗑️ Allegato eliminato', 'ok');
+    await renderCartellaDetail(cartellaId);
+  }, { danger: true, title: '🗑️ Elimina Allegato', okLabel: 'Elimina' });
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 2 — STORICO ESAMI BIOCHIMICI
+// ══════════════════════════════════════════════
+let _storicoChart = null;
+
+async function apriStoricoEsame(cartellaId, tipo) {
+  document.getElementById('esame-storico-title').textContent = '📈 Storico — ' + tipo;
+  document.getElementById('esame-storico-nessun').style.display = 'none';
+  openM('modal-esame-storico');
+
+  await ensureChartJs();
+  if (_storicoChart) { _storicoChart.destroy(); _storicoChart = null; }
+
+  const { data, error } = await sb.from('esami_biochimici')
+    .select('data_esame,valore,created_at')
+    .eq('cartella_id', cartellaId)
+    .eq('tipo', tipo)
+    .order('data_esame', { ascending: true });
+
+  const rows = (data || []).filter(r => r.valore !== null);
+  if (error || !rows.length) {
+    document.getElementById('esame-storico-nessun').style.display = 'block';
+    return;
+  }
+
+  const labels = rows.map(r => r.data_esame ? new Date(r.data_esame).toLocaleDateString('it', {day:'2-digit',month:'short',year:'2-digit'}) : '—');
+  const values = rows.map(r => parseFloat(r.valore));
+  const canvas = document.getElementById('esame-storico-chart');
+  const pointRadius = rows.length === 1 ? 8 : 4;
+
+  _storicoChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: tipo,
+        data: values,
+        borderColor: '#C2410C',
+        backgroundColor: 'rgba(194,65,12,0.1)',
+        fill: true,
+        tension: rows.length === 1 ? 0 : 0.3,
+        pointRadius,
+        pointBackgroundColor: '#C2410C',
+        pointBorderColor: 'white',
+        pointBorderWidth: 2,
+        borderWidth: 2.5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1E293B',
+          callbacks: { label: ctx => ctx.parsed.y + (rows[0]?.unita ? ' ' + '' : '') }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#64748B' } },
+        y: { grid: { color: '#E2E8F0' }, ticks: { font: { size: 11 }, color: '#64748B' } }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 3 — EXPORT PDF BRANDIZZATO
+// ══════════════════════════════════════════════
+async function esportaPDFCartella() {
+  const d = window._currentCartellaData;
+  if (!d) { toast('Apri prima la cartella', 'err'); return; }
+  showLoading(true);
+  await new Promise(res => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload = res; s.onerror = res;
+    document.head.appendChild(s);
+  });
+  showLoading(false);
+  if (!window.jspdf) { toast('jsPDF non disponibile', 'err'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const { cart, eta, biaList, esamiBiochimici, piani } = d;
+  let y = 18;
+  const lm = 18, rm = 192, w = rm - lm;
+
+  // Header
+  doc.setFillColor(15, 118, 110);
+  doc.rect(0, 0, 210, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('DietPlan Pro', lm, 12);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Studio di Nutrizione Clinica', lm, 19);
+  doc.setFontSize(8);
+  doc.text('Cartella Paziente — Generato il ' + new Date().toLocaleDateString('it'), lm, 25);
+  y = 36;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text((cart.nome || ''), lm, y);
+  y += 7;
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(71, 85, 105);
+  const infoLine = [
+    cart.ddn ? 'DDN: ' + new Date(cart.ddn).toLocaleDateString('it') : null,
+    eta !== null ? 'Età: ' + eta + ' anni' : null,
+    cart.sesso ? 'Sesso: ' + (cart.sesso === 'M' ? 'Maschio' : 'Femmina') : null,
+    cart.codice_fiscale ? 'CF: ' + cart.codice_fiscale : null,
+  ].filter(Boolean).join('   |   ');
+  doc.text(infoLine, lm, y);
+  y += 6;
+
+  if (Array.isArray(cart.tags) && cart.tags.length) {
+    doc.setFontSize(8);
+    doc.text('Patologie/Tag: ' + cart.tags.join(', '), lm, y);
+    y += 5;
+  }
+  if (cart.note && cart.note !== '__altro__') {
+    doc.setFontSize(8);
+    const noteLines = doc.splitTextToSize('Note cliniche: ' + cart.note, w);
+    doc.text(noteLines, lm, y);
+    y += noteLines.length * 4 + 2;
+  }
+
+  // BIA
+  const lastBia = biaList && biaList[0];
+  if (lastBia) {
+    y += 2;
+    doc.setDrawColor(15, 118, 110);
+    doc.line(lm, y, rm, y); y += 4;
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
+    doc.text('⚡ Ultima BIA', lm, y); y += 5;
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(71, 85, 105);
+    const biaParts = [
+      lastBia.peso ? 'Peso: ' + lastBia.peso + ' kg' : null,
+      lastBia.bf_pct ? 'BF%: ' + lastBia.bf_pct + '%' : null,
+      lastBia.ffm_kg ? 'FFM: ' + lastBia.ffm_kg + ' kg' : null,
+    ].filter(Boolean).join('   ');
+    doc.text(biaParts, lm, y); y += 6;
+  }
+
+  // Esami biochimici
+  if (esamiBiochimici && esamiBiochimici.length) {
+    y += 2;
+    doc.setDrawColor(15, 118, 110);
+    doc.line(lm, y, rm, y); y += 4;
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
+    doc.text('🔬 Esami Biochimici', lm, y); y += 5;
+    doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
+    esamiBiochimici.slice(0, 15).forEach(e => {
+      if (y > 255) { doc.addPage(); y = 18; }
+      const bdg = getEsameBadge(e.tipo, e.valore);
+      const line = e.tipo + ': ' + e.valore + (e.unita ? ' ' + e.unita : '') + ' [' + bdg.label + ']' + (e.data_esame ? ' (' + new Date(e.data_esame).toLocaleDateString('it') + ')' : '');
+      doc.text('• ' + line, lm + 2, y); y += 4.5;
+    });
+  }
+
+  // Piani
+  if (piani && piani.length) {
+    y += 2;
+    if (y > 255) { doc.addPage(); y = 18; }
+    doc.setDrawColor(15, 118, 110);
+    doc.line(lm, y, rm, y); y += 4;
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
+    doc.text('📋 Piani Alimentari', lm, y); y += 5;
+    doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
+    piani.slice(0, 10).forEach(p => {
+      if (y > 255) { doc.addPage(); y = 18; }
+      const dt = p.saved_at || p.data_piano;
+      doc.text('• ' + (p.nome || 'Piano alimentare') + (dt ? ' — ' + new Date(dt).toLocaleDateString('it') : ''), lm + 2, y);
+      y += 4.5;
+    });
+  }
+
+  // Footer
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(203, 213, 225);
+    doc.line(lm, 284, rm, 284);
+    doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
+    doc.text('DietPlan Pro — Documento riservato. Trattamento dati ai sensi del GDPR (UE) 2016/679.', lm, 289);
+    doc.text('Pagina ' + i + ' di ' + pageCount, rm, 289, { align: 'right' });
+  }
+
+  const safeName = (cart.nome || 'paziente').replace(/[^a-zA-Z0-9À-ÿ\s_-]/g, '').replace(/\s+/g, '_');
+  doc.save('cartella_' + safeName + '.pdf');
+  toast('📄 PDF scaricato!', 'ok');
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 4 — AI CONTESTUALE AL PAZIENTE
+// ══════════════════════════════════════════════
+let _aiPazMessages = [];
+
+function apriAiPaziente() {
+  const d = window._currentCartellaData;
+  if (!d) { toast('Apri prima una cartella paziente', 'err'); return; }
+  _aiPazMessages = [];
+  document.getElementById('ai-paz-msgs').innerHTML = '<div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px 0">Fai una domanda su questo paziente per ricevere raccomandazioni nutrizionali personalizzate.</div>';
+  document.getElementById('ai-paz-input').value = '';
+  openM('modal-ai-paziente');
+  setTimeout(() => document.getElementById('ai-paz-input').focus(), 200);
+}
+
+function _buildAiPazSystemPrompt() {
+  const d = window._currentCartellaData;
+  if (!d) return 'Sei un assistente nutrizionista esperto.';
+  const { cart, eta, biaList, esamiBiochimici } = d;
+  const lastBia = biaList && biaList[0];
+  const ultimiEsami = (esamiBiochimici || []).slice(0, 3);
+  let ctx = 'Sei un assistente nutrizionista clinico esperto. Stai assistendo un dietista nella valutazione del seguente paziente:\n\n';
+  ctx += 'Nome: ' + (cart.nome || 'N/D') + '\n';
+  if (eta !== null) ctx += 'Età: ' + eta + ' anni\n';
+  if (cart.sesso) ctx += 'Sesso: ' + (cart.sesso === 'M' ? 'Maschio' : 'Femmina') + '\n';
+  if (Array.isArray(cart.tags) && cart.tags.length) ctx += 'Patologie/Tag: ' + cart.tags.join(', ') + '\n';
+  if (cart.note && cart.note !== '__altro__') ctx += 'Note cliniche: ' + cart.note + '\n';
+  if (lastBia) {
+    ctx += '\nUltima BIA:\n';
+    if (lastBia.peso) ctx += '  - Peso: ' + lastBia.peso + ' kg\n';
+    if (lastBia.bf_pct) ctx += '  - BF%: ' + lastBia.bf_pct + '%\n';
+    if (lastBia.ffm_kg) ctx += '  - FFM: ' + lastBia.ffm_kg + ' kg\n';
+  }
+  if (ultimiEsami.length) {
+    ctx += '\nUltimi esami biochimici:\n';
+    ultimiEsami.forEach(e => {
+      const bdg = getEsameBadge(e.tipo, e.valore);
+      ctx += '  - ' + e.tipo + ': ' + e.valore + (e.unita ? ' ' + e.unita : '') + ' [' + bdg.label + ']\n';
+    });
+  }
+  ctx += '\nFornisci raccomandazioni nutrizionali specifiche, pratiche e basate su evidenze scientifiche aggiornate. Rispondi in italiano.';
+  return ctx;
+}
+
+async function sendAiPazMsg() {
+  const inp = document.getElementById('ai-paz-input');
+  const text = (inp.value || '').trim();
+  if (!text) return;
+  inp.value = '';
+  _aiPazMessages.push({ role: 'user', content: text });
+  _renderAiPazMessages();
+
+  const msgsEl = document.getElementById('ai-paz-msgs');
+  const thinkEl = document.createElement('div');
+  thinkEl.className = 'ai-thinking';
+  thinkEl.style.cssText = 'align-self:flex-start;background:white;border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:12.5px;color:var(--slate-l)';
+  thinkEl.textContent = '⏳ Elaborazione...';
+  msgsEl.appendChild(thinkEl);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+
+  try {
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: _buildAiPazSystemPrompt(),
+        messages: _aiPazMessages.slice(-10),
+        max_tokens: 1024
+      })
+    });
+    const json = await res.json();
+    const reply = json?.content?.[0]?.text || 'Errore nella risposta AI.';
+    _aiPazMessages.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    _aiPazMessages.push({ role: 'assistant', content: '❌ Errore di connessione: ' + e.message });
+  }
+  _renderAiPazMessages();
+}
+
+function _renderAiPazMessages() {
+  const el = document.getElementById('ai-paz-msgs');
+  el.innerHTML = _aiPazMessages.map(m => {
+    const isUser = m.role === 'user';
+    return '<div style="align-self:' + (isUser ? 'flex-end' : 'flex-start') + ';max-width:85%;background:' + (isUser ? 'linear-gradient(135deg,#0F766E,#14B8A6)' : 'white') + ';color:' + (isUser ? 'white' : 'var(--slate)') + ';border:' + (isUser ? 'none' : '1px solid var(--border)') + ';border-radius:' + (isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px') + ';padding:10px 14px;font-size:13px;line-height:1.5;white-space:pre-wrap">' + esc(m.content) + '</div>';
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 5 — IMPORTAZIONE BATCH PAZIENTI DA CSV
+// ══════════════════════════════════════════════
+let _csvParsed = [];
+
+function openImportaCSV() {
+  _csvParsed = [];
+  document.getElementById('csv-preview-wrap').style.display = 'none';
+  document.getElementById('csv-import-btn').style.display = 'none';
+  const inp = document.getElementById('csv-file-input');
+  if (inp) inp.value = '';
+  openM('modal-importa-csv');
+}
+
+function scaricaTemplateCSV() {
+  const csv = 'nome,cognome,ddn,sesso,codice_fiscale,note,tags\nMario,Rossi,1980-05-15,M,RSSMRA80E15H501Z,Ipertensione lieve,Ipertensione;Sovrappeso\nAnna,Bianchi,1975-11-22,F,,Celiachia diagnosticata,Celiachia\n';
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'template_pazienti.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function previewCSV(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    if (!lines.length) { toast('File CSV vuoto', 'err'); return; }
+
+    // Parse header
+    const header = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+    const colMap = {};
+    ['nome','cognome','ddn','sesso','codice_fiscale','note','tags'].forEach(k => {
+      const idx = header.findIndex(h => h === k || h === k.replace('_',' '));
+      if (idx >= 0) colMap[k] = idx;
+    });
+    if (colMap['nome'] === undefined) { toast('Colonna "nome" mancante', 'err'); return; }
+
+    _csvParsed = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+      const row = {};
+      Object.entries(colMap).forEach(([k, idx]) => { row[k] = cols[idx] || ''; });
+      if (!row.nome) continue;
+      _csvParsed.push(row);
+    }
+
+    // Preview
+    const preview = _csvParsed.slice(0, 5);
+    const thead = '<tr>' + Object.keys(colMap).map(k => '<th style="padding:4px 8px;background:#0F766E;color:white;font-size:11px;text-align:left">' + k + '</th>').join('') + '</tr>';
+    const tbody = preview.map(r => '<tr>' + Object.keys(colMap).map(k => '<td style="padding:4px 8px;font-size:11.5px;border-bottom:1px solid var(--border)">' + esc(r[k] || '') + '</td>').join('') + '</tr>').join('');
+    document.getElementById('csv-preview-table').innerHTML = '<table style="border-collapse:collapse;width:100%"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>';
+    document.getElementById('csv-import-info').textContent = _csvParsed.length + ' righe da importare' + (_csvParsed.length > 5 ? ' (mostrate prime 5)' : '');
+    document.getElementById('csv-preview-wrap').style.display = 'block';
+    document.getElementById('csv-import-btn').style.display = _csvParsed.length ? '' : 'none';
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+async function importaCSV() {
+  if (!_csvParsed.length || !currentUser) return;
+  showLoading(true);
+  let ok = 0, err = 0;
+  for (const row of _csvParsed) {
+    const nome = (row.nome + (row.cognome ? ' ' + row.cognome : '')).trim();
+    const tags = row.tags ? row.tags.split(';').map(t => t.trim()).filter(Boolean) : [];
+    const payload = {
+      user_id: currentUser.id,
+      nome,
+      cognome: row.cognome || null,
+      ddn: row.ddn || null,
+      sesso: ['M','F'].includes((row.sesso||'').toUpperCase()) ? row.sesso.toUpperCase() : null,
+      codice_fiscale: row.codice_fiscale ? row.codice_fiscale.toUpperCase() : null,
+      note: row.note || null,
+      tags: tags.length ? tags : [],
+      created_at: new Date().toISOString(),
+    };
+    const { error } = await sb.from('cartelle').insert(payload);
+    if (error) err++;
+    else ok++;
+  }
+  showLoading(false);
+  closeM('modal-importa-csv');
+  toast(ok + ' cartelle create' + (err ? ', ' + err + ' errori' : ''), ok > 0 ? 'ok' : 'err');
+  _csvParsed = [];
+  loadCartelle();
 }
 </script>
 </body>

@@ -673,7 +673,7 @@ function initCartellaWidget(cid, opts) {
       ' oninput="_cwFilter(\'' + cid + '\')"' +
       ' onfocus="_cwFocus(\'' + cid + '\')"' +
       ' onblur="setTimeout(()=>_cwBlur(\'' + cid + '\'),200)">' +
-      '<div id="' + cid + '-dd" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
+      '<div id="' + cid + '-dd" onmousedown="event.preventDefault()" style="display:none;position:fixed;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
     '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
     '<span id="' + cid + '-lbl" style="display:none"></span>';
@@ -709,6 +709,14 @@ async function _cwShow(cid, q) {
     ' style="padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:' + border + ';background:' + nuovaBg + ';border-top:2px solid var(--border)"' +
     ' onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">➕ Crea nuova cartella</div>';
   dd.innerHTML = html;
+  // Position fixed relative to input (escapes any CSS stacking context from animation/transform)
+  const srch = document.getElementById(cid + '-srch');
+  if (srch) {
+    const r = srch.getBoundingClientRect();
+    dd.style.top = r.bottom + 'px';
+    dd.style.left = r.left + 'px';
+    dd.style.width = r.width + 'px';
+  }
   dd.style.display = 'block';
 }
 

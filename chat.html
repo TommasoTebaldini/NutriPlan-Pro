@@ -1770,76 +1770,83 @@ async function loadStorico(limitMonths) {
     <div class="stor-stat"><div class="stor-stat-val">${schede.length}</div><div class="stor-stat-lbl">valutazioni</div></div>
   </div>`;
 
-  // ── Merge esami_biochimici + schede_valutazione lab values ──
-  const LAB_MAP = {
-    'Glicemia a digiuno': { schKey:'es_glicemia', unit:'mg/dL', color:'#DC2626' },
-    'Colesterolo totale':  { schKey:'es_col_tot',  unit:'mg/dL', color:'#EA580C' },
-    'Colesterolo LDL':     { schKey:'es_ldl',      unit:'mg/dL', color:'#CA8A04' },
-    'Colesterolo HDL':     { schKey:'es_hdl',      unit:'mg/dL', color:'#16A34A' },
-    'Trigliceridi':        { schKey:'es_trig',     unit:'mg/dL', color:'#7C3AED' },
-    'HbA1c':               { schKey:'es_hba1c',    unit:'%',     color:'#0284C7' },
-    'Vitamina D (25-OH)':  { schKey:'es_vitd',     unit:'ng/mL', color:'#0891B2' },
-  };
-  const esamiByTipo = {};
-  const esamiBadge = (tipo, v) => {
-    const n = parseFloat(v); if (isNaN(n)) return {cls:'stor-badge-na', lbl:'—'};
-    const checks = {
-      'HbA1c':()=>n<5.7?['ok','Normale']:n<6.5?['warn','Pre-diabete']:['danger','Diabete'],
-      'Glicemia a digiuno':()=>n<100?['ok','Normale']:n<126?['warn','Alterata']:['danger','Diabete'],
-      'Colesterolo totale':()=>n<200?['ok','Ottimale']:n<240?['warn','Borderline']:['danger','Alto'],
-      'Colesterolo LDL':()=>n<100?['ok','Ottimale']:n<160?['warn','Borderline']:['danger','Alto'],
-      'Colesterolo HDL':()=>n>=60?['ok','Ottimale']:n>=40?['warn','Borderline']:['danger','Basso'],
-      'Trigliceridi':()=>n<150?['ok','Normale']:n<200?['warn','Borderline']:['danger','Alto'],
-      'Vitamina D (25-OH)':()=>n>=30?['ok','Sufficiente']:n>=20?['warn','Insufficiente']:['danger','Carenza'],
-    };
-    const fn = checks[tipo]; if (!fn) return {cls:'stor-badge-na', lbl:'—'};
-    const [s,l] = fn(); return {cls:'stor-badge-'+s, lbl:l};
-  };
-  // From esami_biochimici table
-  (esamiDB||[]).forEach(e => {
-    const t = e.tipo;
-    if (!esamiByTipo[t]) esamiByTipo[t] = {pts:[], unit:e.unita||'', color: LAB_MAP[t]?.color||'#64748B'};
-    esamiByTipo[t].pts.push({date: e.data_esame ? new Date(e.data_esame) : new Date(e.created_at), val: parseFloat(e.valore)});
-  });
-  // From schede_valutazione dati_extra (merge, avoid duplicates)
-  Object.entries(LAB_MAP).forEach(([tipo, {schKey, unit, color}]) => {
-    schede.forEach((s,i) => {
-      const val = parseFloat(extras[i][schKey]);
-      if (isNaN(val)||val<=0) return;
-      if (!esamiByTipo[tipo]) esamiByTipo[tipo] = {pts:[], unit, color};
-      const d = new Date(s.saved_at||s.created_at);
-      if (!esamiByTipo[tipo].pts.find(p => Math.abs(p.date-d)<86400000)) esamiByTipo[tipo].pts.push({date:d, val});
-    });
-  });
-  Object.values(esamiByTipo).forEach(e => e.pts.sort((a,b)=>a.date-b.date));
-  const esamiTipi = Object.keys(esamiByTipo).filter(t => esamiByTipo[t].pts.length>=1);
-
-  // ── Lab parameters: merge schede_valutazione dati_extra + esami_biochimici ──
-  const LAB_PARAMS = [
-    { id:'chart-glicemia', label:'Glicemia a digiuno', schKey:'es_glicemia', tipo:'Glicemia a digiuno', unit:'mg/dL', color:'#DC2626' },
-    { id:'chart-hba1c',    label:'HbA1c',              schKey:'es_hba1c',    tipo:'HbA1c',              unit:'%',     color:'#0284C7' },
-    { id:'chart-col-tot',  label:'Colesterolo Totale', schKey:'es_col_tot',  tipo:'Colesterolo totale', unit:'mg/dL', color:'#EA580C' },
-    { id:'chart-ldl',      label:'Colesterolo LDL',    schKey:'es_ldl',      tipo:'Colesterolo LDL',    unit:'mg/dL', color:'#CA8A04' },
-    { id:'chart-hdl',      label:'Colesterolo HDL',    schKey:'es_hdl',      tipo:'Colesterolo HDL',    unit:'mg/dL', color:'#16A34A' },
-    { id:'chart-trig',     label:'Trigliceridi',       schKey:'es_trig',     tipo:'Trigliceridi',       unit:'mg/dL', color:'#7C3AED' },
-    { id:'chart-creat',    label:'Creatinina',         schKey:'es_creat',    tipo:'Creatinina',         unit:'mg/dL', color:'#0F766E' },
-    { id:'chart-ferr',     label:'Ferritina',          schKey:'es_ferr',     tipo:'Ferritina',          unit:'ng/mL', color:'#B45309' },
-    { id:'chart-vitd',     label:'Vitamina D (25-OH)', schKey:'es_vitd',     tipo:'Vitamina D (25-OH)', unit:'ng/mL', color:'#0891B2' },
-    { id:'chart-pcr',      label:'PCR (Proteina C-reattiva)', schKey:'es_pcr', tipo:'Proteina C-reattiva (PCR)', unit:'mg/L', color:'#9F1239' },
+  // ── Tutti i parametri ematochimici da valutazione + esami_biochimici ──
+  // Definizione completa: schKey = campo in dati_extra, tipo = nome in esami_biochimici
+  // ref: [refMin, refMax] — null = nessun limite; refOk = linea verde, refWarn = arancio
+  const LAB_CATEGORIES = [
+    {
+      cat: 'Metabolismo Glucidico', icon: '🩸', color: '#DC2626',
+      params: [
+        { id:'lc-glicemia', label:'Glicemia a digiuno', schKey:'es_glicemia', tipo:'Glicemia a digiuno', unit:'mg/dL', color:'#DC2626', refOk:[70,99], refWarn:[100,125], badge:(n)=>n<100?['ok','Normale']:n<126?['warn','Alterata']:['danger','Diabete'] },
+        { id:'lc-hba1c',    label:'HbA1c',              schKey:'es_hba1c',    tipo:'HbA1c',              unit:'%',     color:'#0284C7', refOk:[4,5.69], refWarn:[5.7,6.49], badge:(n)=>n<5.7?['ok','Normale']:n<6.5?['warn','Pre-diabete']:['danger','Diabete'] },
+        { id:'lc-insulina', label:'Insulina (digiuno)', schKey:'es_insulina', tipo:'Insulina',            unit:'μU/mL', color:'#9333EA', refOk:[2,15], badge:(n)=>n<=15?['ok','Normale']:['warn','Elevata'] },
+      ]
+    },
+    {
+      cat: 'Profilo Lipidico', icon: '🫀', color: '#EA580C',
+      params: [
+        { id:'lc-col-tot', label:'Colesterolo Totale', schKey:'es_col_tot', tipo:'Colesterolo totale', unit:'mg/dL', color:'#EA580C', refOk:[null,199], refWarn:[200,239], badge:(n)=>n<200?['ok','Ottimale']:n<240?['warn','Borderline']:['danger','Alto'] },
+        { id:'lc-ldl',     label:'LDL',               schKey:'es_ldl',     tipo:'Colesterolo LDL',   unit:'mg/dL', color:'#CA8A04', refOk:[null,99],  refWarn:[100,159], badge:(n)=>n<100?['ok','Ottimale']:n<160?['warn','Borderline']:['danger','Alto'] },
+        { id:'lc-hdl',     label:'HDL',               schKey:'es_hdl',     tipo:'Colesterolo HDL',   unit:'mg/dL', color:'#16A34A', refOk:[60,null],  refWarn:[40,59],   badge:(n)=>n>=60?['ok','Ottimale']:n>=40?['warn','Borderline']:['danger','Basso'] },
+        { id:'lc-trig',    label:'Trigliceridi',      schKey:'es_trig',    tipo:'Trigliceridi',      unit:'mg/dL', color:'#7C3AED', refOk:[null,149], refWarn:[150,199], badge:(n)=>n<150?['ok','Normale']:n<200?['warn','Borderline']:['danger','Alto'] },
+      ]
+    },
+    {
+      cat: 'Funzionalità Renale', icon: '🫘', color: '#0F766E',
+      params: [
+        { id:'lc-creat', label:'Creatinina',         schKey:'es_creat', tipo:'Creatinina',         unit:'mg/dL', color:'#0F766E', refOk:[0.6,1.3], badge:(n)=>n>=0.6&&n<=1.3?['ok','Normale']:n<2?['warn','Elevata']:['danger','Alta'] },
+        { id:'lc-azot',  label:'Azoto Ureico (BUN)', schKey:'es_azot',  tipo:'Azoto ureico (BUN)', unit:'mg/dL', color:'#0891B2', refOk:[7,20],    badge:(n)=>n<=20?['ok','Normale']:n<=40?['warn','Borderline']:['danger','Alto'] },
+        { id:'lc-uric',  label:'Acido Urico',        schKey:'es_uric',  tipo:'Acido urico',        unit:'mg/dL', color:'#0369A1', refOk:[null,7],  badge:(n)=>n<=7?['ok','Normale']:n<=9?['warn','Borderline']:['danger','Iperuricemia'] },
+      ]
+    },
+    {
+      cat: 'Funzionalità Epatica', icon: '🟡', color: '#B45309',
+      params: [
+        { id:'lc-got', label:'GOT / AST', schKey:'es_got', tipo:'GOT/AST', unit:'U/L', color:'#B45309', refOk:[null,40], badge:(n)=>n<=40?['ok','Normale']:n<=80?['warn','Elevata']:['danger','Alta'] },
+        { id:'lc-gpt', label:'GPT / ALT', schKey:'es_gpt', tipo:'GPT/ALT', unit:'U/L', color:'#CA8A04', refOk:[null,40], badge:(n)=>n<=40?['ok','Normale']:n<=80?['warn','Elevata']:['danger','Alta'] },
+        { id:'lc-ggt', label:'GGT',       schKey:'es_ggt', tipo:'GGT',     unit:'U/L', color:'#D97706', refOk:[null,50], badge:(n)=>n<=50?['ok','Normale']:n<=100?['warn','Elevata']:['danger','Alta'] },
+      ]
+    },
+    {
+      cat: 'Emocromo e Ferro', icon: '🩺', color: '#DC2626',
+      params: [
+        { id:'lc-hb',   label:'Emoglobina', schKey:'es_hb',   tipo:'Emoglobina', unit:'g/dL', color:'#DC2626', refOk:[12,17.5], badge:(n)=>n>=12&&n<=17.5?['ok','Normale']:['warn','Fuori range'] },
+        { id:'lc-ferr', label:'Ferritina',  schKey:'es_ferr', tipo:'Ferritina',  unit:'ng/mL', color:'#B45309', refOk:[12,300],  badge:(n)=>n<12?['warn','Bassa']:n<=300?['ok','Normale']:['danger','Alta'] },
+      ]
+    },
+    {
+      cat: 'Vitamine e Ormoni', icon: '🌿', color: '#0891B2',
+      params: [
+        { id:'lc-vitd',  label:'Vitamina D (25-OH)', schKey:'es_vitd',  tipo:'Vitamina D (25-OH)', unit:'ng/mL', color:'#0891B2', refOk:[30,100], refWarn:[20,29], badge:(n)=>n>=30?['ok','Sufficiente']:n>=20?['warn','Insufficiente']:['danger','Carenza'] },
+        { id:'lc-vitb12',label:'Vitamina B12',       schKey:'es_vitb12',tipo:'Vitamina B12',       unit:'pg/mL', color:'#7C3AED', refOk:[200,900],  badge:(n)=>n>=200&&n<=900?['ok','Normale']:n<200?['warn','Bassa']:['warn','Alta'] },
+        { id:'lc-tsh',   label:'TSH',                schKey:'es_tsh',   tipo:'TSH',                unit:'mIU/L', color:'#6D28D9', refOk:[0.4,4],   badge:(n)=>n>=0.4&&n<=4?['ok','Normale']:['warn','Fuori range'] },
+      ]
+    },
+    {
+      cat: 'Infiammazione', icon: '🔴', color: '#9F1239',
+      params: [
+        { id:'lc-pcr', label:'PCR', schKey:'es_pcr', tipo:'Proteina C-reattiva (PCR)', unit:'mg/L', color:'#9F1239', refOk:[null,1], refWarn:[1,3], badge:(n)=>n<1?['ok','Normale']:n<3?['warn','Lieve']:['danger','Alta'] },
+      ]
+    },
   ];
+  const ALL_LAB_PARAMS = LAB_CATEGORIES.flatMap(c => c.params.map(p => ({...p, cat:c.cat})));
 
-  const labDatasets = LAB_PARAMS.map(p => {
+  // Build merged dataset for each param (schede_valutazione + esami_biochimici)
+  const esamiByTipo = {};
+  (esamiDB||[]).forEach(e => {
+    if (!esamiByTipo[e.tipo]) esamiByTipo[e.tipo] = [];
+    esamiByTipo[e.tipo].push({date: e.data_esame ? new Date(e.data_esame) : new Date(e.created_at), val: parseFloat(e.valore)});
+  });
+
+  const labDatasets = ALL_LAB_PARAMS.map(p => {
     const pts = [];
     schede.forEach((s, i) => {
       const v = parseFloat(extras[i][p.schKey]);
       if (!isNaN(v) && v > 0) pts.push({ date: new Date(s.saved_at||s.created_at), val: v });
     });
-    // Merge esami_biochimici (avoid same-day duplicates)
-    if (esamiByTipo[p.tipo]) {
-      esamiByTipo[p.tipo].pts.forEach(ep => {
-        if (!pts.find(x => Math.abs(x.date - ep.date) < 86400000)) pts.push(ep);
-      });
-    }
+    (esamiByTipo[p.tipo]||[]).forEach(ep => {
+      if (!pts.find(x => Math.abs(x.date - ep.date) < 86400000)) pts.push(ep);
+    });
     pts.sort((a, b) => a.date - b.date);
     return { ...p, pts,
       chartLabels: pts.map(q => q.date.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit'})),
@@ -1865,31 +1872,39 @@ async function loadStorico(limitMonths) {
     return `<span style="background:${bg};color:${col};font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-block;margin-top:4px">${lbl}</span>`;
   };
 
-  const labSection = labDatasets.length > 0 ? `
-    <div style="margin-top:6px;margin-bottom:4px">
-      <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:#F0FDF4;border-radius:10px;margin-bottom:10px;border-left:4px solid #16A34A">
-        <span style="font-size:22px">🔬</span>
-        <div><div style="font-size:13px;font-weight:700;color:var(--slate)">Esami Ematochimici</div>
-        <div style="font-size:11.5px;color:var(--slate-l)">${labDatasets.length} parametri monitorati — dati da Valutazione Paziente e tabella Esami</div></div>
+  const labSection = labDatasets.length > 0 ? LAB_CATEGORIES.map(cat => {
+    const catData = labDatasets.filter(d => d.cat === cat.cat);
+    if (!catData.length) return '';
+    return `<div style="margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;background:${cat.color}11;border-radius:9px;margin-bottom:10px;border-left:4px solid ${cat.color}">
+        <span style="font-size:18px">${cat.icon}</span>
+        <span style="font-size:13px;font-weight:700;color:var(--slate)">${esc(cat.cat)}</span>
+        <span style="font-size:10.5px;color:var(--slate-l)">${catData.length} parametro${catData.length>1?'i':''}</span>
       </div>
-    </div>
-    <div class="stor-charts-grid">
-      ${labDatasets.map(d => {
-        const last = d.pts[d.pts.length-1];
-        const prev = d.pts.length >= 2 ? d.pts[d.pts.length-2] : null;
-        const diff = prev ? last.val - prev.val : null;
-        const trendSpan = diff !== null ? `<span style="font-size:11px;color:${diff>0?'#DC2626':'#16A34A'};margin-left:4px;font-weight:700">${diff>0?'▲':'▼'} ${Math.abs(diff).toFixed(1)}</span>` : '';
-        return `<div class="stor-chart-card">
-          <h4 style="font-size:12px;margin-bottom:8px">${esc(d.label)}</h4>
-          <div style="display:flex;align-items:baseline;gap:3px;flex-wrap:wrap">
-            <span style="font-size:24px;font-weight:800;color:${d.color}">${last.val.toFixed(1).replace(/\.0+$/,'')}</span>
-            <span style="font-size:11px;color:var(--slate-l)">${d.unit}</span>${trendSpan}
-          </div>
-          ${getLabBadge(d.label, last.val)}
-          ${d.pts.length >= 2 ? `<div class="stor-chart-wrap" style="margin-top:8px"><canvas id="${d.id}"></canvas></div>` : `<div style="font-size:11px;color:var(--slate-l);margin-top:6px;font-style:italic">1 sola misurazione (${last.date.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})})</div>`}
-        </div>`;
-      }).join('')}
-    </div>` : '';
+      <div class="stor-charts-grid">
+        ${catData.map(d => {
+          const last = d.pts[d.pts.length-1];
+          const prev = d.pts.length >= 2 ? d.pts[d.pts.length-2] : null;
+          const diff = prev ? last.val - prev.val : null;
+          const [badgeS, badgeL] = d.badge(last.val);
+          const badgeColors = {ok:['#DCFCE7','#16A34A'], warn:['#FEF9C3','#CA8A04'], danger:['#FEE2E2','#DC2626']};
+          const [bbg,bcol] = badgeColors[badgeS]||['#F1F5F9','#64748B'];
+          const trendSpan = diff !== null ? `<span style="font-size:10.5px;color:${diff>0?'#DC2626':'#16A34A'};margin-left:4px;font-weight:700">${diff>0?'▲':'▼'} ${Math.abs(diff).toFixed(1)}</span>` : '';
+          const refLine = d.refOk ? `<div style="font-size:10px;color:var(--slate-l);margin-top:3px">Ref: ${d.refOk[0]!==null?d.refOk[0]:'?'}–${d.refOk[1]!==null?d.refOk[1]:'?'} ${d.unit}</div>` : '';
+          return `<div class="stor-chart-card">
+            <h4 style="font-size:12px;margin-bottom:6px;color:${d.color}">${esc(d.label)}</h4>
+            <div style="display:flex;align-items:baseline;gap:3px;flex-wrap:wrap">
+              <span style="font-size:22px;font-weight:800;color:${d.color}">${last.val.toFixed(1).replace(/\.0+$/,'')}</span>
+              <span style="font-size:11px;color:var(--slate-l)">${esc(d.unit)}</span>${trendSpan}
+            </div>
+            <span style="background:${bbg};color:${bcol};font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-block;margin-top:3px">${badgeL}</span>
+            ${refLine}
+            ${d.pts.length >= 2 ? `<div class="stor-chart-wrap" style="margin-top:8px"><canvas id="${d.id}"></canvas></div>` : `<div style="font-size:10.5px;color:var(--slate-l);margin-top:5px;font-style:italic">1 misurazione — ${last.date.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})}</div>`}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('') : '';
 
   const chartsHTML = `<div class="stor-charts-grid">
     ${schede.length>1&&(pesi.some(v=>v)||(wLogs&&wLogs.length)) ? `<div class="stor-chart-card"><h4>⚖️ Andamento Peso</h4><div class="stor-chart-wrap"><canvas id="chart-peso"></canvas></div></div>` : ''}
@@ -1987,7 +2002,7 @@ async function loadStorico(limitMonths) {
       plSI.some(v=>v)  && { label: 'Sovrailiaca (mm)', data: plSI, borderColor: '#10B981', ...defaults }
     ].filter(Boolean), 'mm');
 
-    // Chart individuali per ogni parametro ematochimico (stesso stile degli antropometrici)
+    // Chart individuali per ogni parametro ematochimico con linee di reference range
     labDatasets.forEach(d => {
       if (d.pts.length < 2) return;
       const el = document.getElementById(d.id);
@@ -1995,19 +2010,37 @@ async function loadStorico(limitMonths) {
       const ctx = el.getContext('2d');
       const g = ctx.createLinearGradient(0, 0, 0, 140);
       g.addColorStop(0, d.color + '33'); g.addColorStop(1, d.color + '00');
+
+      const n = d.chartLabels.length;
+      const refDatasets = [];
+      const refDefaults = { pointRadius: 0, borderWidth: 1.5, fill: false, spanGaps: true, tension: 0 };
+      // Reference OK range lines (green dashed)
+      if (d.refOk) {
+        if (d.refOk[1] !== null) refDatasets.push({ label: 'Ref. max (' + d.refOk[1] + ' ' + d.unit + ')', data: Array(n).fill(d.refOk[1]), borderColor: '#16A34A99', borderDash: [5,4], ...refDefaults });
+        if (d.refOk[0] !== null) refDatasets.push({ label: 'Ref. min (' + d.refOk[0] + ' ' + d.unit + ')', data: Array(n).fill(d.refOk[0]), borderColor: '#16A34A99', borderDash: [5,4], ...refDefaults });
+      }
+      // Warn boundary (orange dashed)
+      if (d.refWarn) {
+        if (d.refWarn[1] !== null) refDatasets.push({ label: 'Soglia allerta (' + d.refWarn[1] + ')', data: Array(n).fill(d.refWarn[1]), borderColor: '#F59E0B99', borderDash: [3,3], ...refDefaults });
+      }
+
       const c = new Chart(el, {
         type: 'line',
         data: {
           labels: d.chartLabels,
-          datasets: [{ label: d.label + ' (' + d.unit + ')', data: d.chartData,
-            borderColor: d.color, backgroundColor: g, fill: true,
-            ...defaults
-          }]
+          datasets: [
+            { label: d.label + ' (' + d.unit + ')', data: d.chartData,
+              borderColor: d.color, backgroundColor: g, fill: true, ...defaults },
+            ...refDatasets
+          ]
         },
         options: {
           responsive: true, maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
-          plugins: { legend: legendOpts, tooltip: { ...tooltipOpts, callbacks: { label: ctx => ctx.parsed.y.toFixed(1) + ' ' + d.unit } } },
+          plugins: {
+            legend: { labels: { font: { size: 10, family: "'DM Sans', sans-serif" }, boxWidth: 10, padding: 8, usePointStyle: true, filter: item => !item.text.startsWith('Ref.') && !item.text.startsWith('Soglia') } },
+            tooltip: { ...tooltipOpts, callbacks: { label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y !== null ? ctx.parsed.y.toFixed(1) : '—') + ' ' + d.unit } }
+          },
           scales: {
             x: { grid: gridOpts, ticks: { font: tickFont, maxTicksLimit: 6, color: '#64748B' }, border: { color: '#CBD5E1' } },
             y: { grid: gridOpts, ticks: { font: tickFont, color: '#64748B' }, border: { color: '#CBD5E1' },

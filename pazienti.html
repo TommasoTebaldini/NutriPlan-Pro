@@ -134,10 +134,12 @@ async function ensureChartJs() {
     <option value="M">♂ Maschio</option>
     <option value="F">♀ Femmina</option>
   </select>
-  <input type="text" id="paz-filter-tag" list="paz-tag-list" class="filter-bar-input"
-    style="min-width:190px;flex:1;max-width:240px" placeholder="🏷️ Cerca patologia..."
-    oninput="applyFiltri()" onchange="applyFiltri()">
-  <datalist id="paz-tag-list"></datalist>
+  <div style="position:relative;min-width:190px;flex:1;max-width:240px">
+    <input type="text" id="paz-filter-tag" class="filter-bar-input" autocomplete="off"
+      style="width:100%;box-sizing:border-box" placeholder="🏷️ Cerca patologia..."
+      oninput="filterTagDropdown();applyFiltri()" onfocus="showTagDropdown()" onblur="setTimeout(hideTagDropdown,200)">
+    <div id="tag-dropdown" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #2DD4BF;border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 20px rgba(0,0,0,.12);color:#1E293B;margin-top:2px"></div>
+  </div>
   <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 Mostra archiviati</button>
   <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" title="Azzera filtri">✕</button>
 </div>
@@ -513,7 +515,7 @@ async function loadCartelle() {
 
   allCartelleData = data;
 
-  // Populate tag datalist: predefined common pathologies + tags already used by patients
+  // Build tag list for custom dropdown
   const PAZ_COMMON_TAGS = [
     'Diabete T2','Diabete T1','Diabete Gestazionale','Prediabete','Obesità','Sovrappeso',
     'Sindrome Metabolica','Dislipidemia','Ipercolesterolemia','Ipertrigliceridemia',
@@ -526,8 +528,7 @@ async function loadCartelle() {
     'BPCO','Fibrosi Cistica','Asma','Post-COVID',
     'Hashimoto/Ipotiroidismo','Ipertiroidismo','PCOS','Menopausa',
     'Artrite Reumatoide','Gotta','Fibromialgia','Lupus','Sclerosi Multipla',
-    'Anoressia','Bulimia','BED','ARFID','Ortoressia',
-    'Depressione','Ansia',
+    'Anoressia','Bulimia','BED','ARFID','Ortoressia','Depressione','Ansia',
     'Allergia Latte','Allergia Uova','Allergia Frutta Secca','Allergia Arachidi',
     'Intolleranza Lattosio','Intolleranza Glutine','Intolleranza Istamina','Intolleranza Nichel',
     'Gravidanza','Allattamento',
@@ -537,11 +538,7 @@ async function loadCartelle() {
   ];
   const tagSet = new Set([...PAZ_COMMON_TAGS]);
   data.forEach(c => { if (Array.isArray(c.tags)) c.tags.forEach(t => tagSet.add(t)); });
-  const tagDL = document.getElementById('paz-tag-list');
-  if (tagDL) {
-    tagDL.innerHTML = [...tagSet].sort((a,b)=>a.localeCompare(b,'it'))
-      .map(t => `<option value="${esc(t)}">`).join('');
-  }
+  window._allTagOptions = [...tagSet].sort((a,b)=>a.localeCompare(b,'it'));
 
   // Update archived counter
   const archivedCount = data.filter(c => c.archived === true && c.id !== _altroCartellaId).length;
@@ -601,6 +598,41 @@ function resetFiltri() {
   const btn = document.getElementById('paz-filter-archivio-btn');
   if (btn) btn.style.background = '';
   if (allCartelleData.length) renderCartelleGrid(allCartelleData);
+}
+
+// ── Tag custom dropdown (identico a cartella-search in app.html) ──
+function _renderTagItems(items) {
+  const dd = document.getElementById('tag-dropdown');
+  if (!dd) return;
+  if (!items.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = items.map(t =>
+    '<div onmousedown="event.preventDefault()" onclick="selectTagFilter(\'' + t.replace(/'/g,"\\'") + '\')" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #F1F5F9;transition:background .1s" onmouseover="this.style.background=\'#F0FDFA\'" onmouseout="this.style.background=\'\'">' +
+    '<span style="font-size:14px;margin-right:6px">🏷️</span>' + esc(t) + '</div>'
+  ).join('');
+  dd.style.display = 'block';
+}
+
+function showTagDropdown() {
+  const q = (document.getElementById('paz-filter-tag')?.value || '').toLowerCase().trim();
+  const opts = window._allTagOptions || [];
+  const items = q ? opts.filter(t => t.toLowerCase().includes(q)) : opts;
+  _renderTagItems(items.slice(0, 40));
+}
+
+function filterTagDropdown() {
+  showTagDropdown();
+}
+
+function hideTagDropdown() {
+  const dd = document.getElementById('tag-dropdown');
+  if (dd) dd.style.display = 'none';
+}
+
+function selectTagFilter(tag) {
+  const inp = document.getElementById('paz-filter-tag');
+  if (inp) inp.value = tag;
+  hideTagDropdown();
+  applyFiltri();
 }
 
 function renderCartelleGrid(data) {
@@ -1934,7 +1966,7 @@ async function esportaPDFCartella() {
   showLoading(true);
   await new Promise(res => {
     const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
     s.onload = res; s.onerror = res;
     document.head.appendChild(s);
   });
@@ -2160,10 +2192,12 @@ function openImportaCSV() {
 
 function scaricaTemplateCSV() {
   const csv = 'nome,cognome,ddn,sesso,codice_fiscale,note,tags\nMario,Rossi,1980-05-15,M,RSSMRA80E15H501Z,Ipertensione lieve,Ipertensione;Sovrappeso\nAnna,Bianchi,1975-11-22,F,,Celiachia diagnosticata,Celiachia\n';
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'template_pazienti.csv';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'template_pazienti.csv';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => document.body.removeChild(a), 500);
 }
 
 function previewCSV(input) {

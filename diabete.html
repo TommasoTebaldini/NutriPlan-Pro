@@ -56,6 +56,11 @@
   /* ── Compact print mode ── */
   body[data-print-mode="compact"] .dg-panel{display:none!important}
   body[data-print-mode="compact"] #dg-compact-print-area{display:block!important;font-family:'DM Sans',sans-serif}
+  /* ── Depliant-only print mode ── */
+  body[data-print-mode="depliant"] #sidebar,body[data-print-mode="depliant"] #topbar,body[data-print-mode="depliant"] #sb-overlay,body[data-print-mode="depliant"] .dg-tabs,body[data-print-mode="depliant"] .no-print{display:none!important}
+  body[data-print-mode="depliant"] .dg-panel:not(#tab-depliant){display:none!important}
+  body[data-print-mode="depliant"] #tab-depliant{display:block!important}
+  body[data-print-mode="depliant"] #main{padding:0!important}
 
   /* Fix overflow containers that clip content in print */
   div[style*="overflow-x:auto"],div[style*="overflow-x: auto"]{overflow:visible!important;max-height:none!important}
@@ -310,8 +315,9 @@
 
 <!-- TAB 4: DEPLIANT PAZIENTE -->
 <div class="dg-panel" id="tab-depliant">
-  <div class="alert-info alert-box no-print">
-    📄 Depliant stampabile per il paziente. Personalizza il rapporto I:C nella casella in fondo, poi clicca <b>Stampa</b> in alto a destra.
+  <div class="alert-info alert-box no-print" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <span>📄 Depliant stampabile per il paziente. Personalizza il rapporto I:C nella casella in fondo.</span>
+    <button onclick="stampaSoloDepliant()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;font-size:12.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1E3A5F,#3B82F6);color:white;box-shadow:0 2px 8px rgba(30,58,95,.3);font-family:inherit;flex-shrink:0">🖨️ Stampa solo depliant</button>
   </div>
 
   <div style="max-width:820px;margin:0 auto;background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12)">
@@ -706,6 +712,13 @@ function showTab(id) {
   event.target.classList.add('active');
   if (id === 'porzioni') renderPorzioni(PORZIONI_FLAT);
   if (id === 'depliant') renderDepliant();
+}
+
+function stampaSoloDepliant() {
+  const old = document.body.dataset.printMode || '';
+  document.body.dataset.printMode = 'depliant';
+  window.print();
+  document.body.dataset.printMode = old;
 }
 
 // ── Calcolo I:C ──

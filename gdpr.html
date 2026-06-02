@@ -261,8 +261,18 @@ function tagColor(tag) {
 
 async function loadGDPRData() {
   if (!currentUser) return;
-  const { data, error } = await sb.from('cartelle').select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  if (error) { console.error(error); return; }
+  let data, err;
+  ({ data, error: err } = await sb.from('cartelle').select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note').eq('user_id', currentUser.id).order('created_at', { ascending: false }));
+  if (err) {
+    // Colonna gdpr_consenso non ancora creata — carica senza
+    let err2;
+    ({ data, error: err2 } = await sb.from('cartelle').select('id,nome,codice_fiscale,tags,created_at,note').eq('user_id', currentUser.id).order('created_at', { ascending: false }));
+    if (err2) {
+      document.getElementById('registro-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--slate-l);padding:24px">⚠️ Errore: ' + esc(err2.message) + '</td></tr>';
+      document.getElementById('oblio-list').innerHTML = '<div style="text-align:center;padding:24px;color:#DC2626">Errore caricamento.</div>';
+      return;
+    }
+  }
   _allCartelle = (data || []).filter(c => c.note !== '__altro__');
   renderRegistro();
   renderOblio();

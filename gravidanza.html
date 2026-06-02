@@ -9,13 +9,28 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<script>
+async function ensureChartJs() {
+  if (window.Chart) return;
+  await new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js';
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+</script>
 <link rel="stylesheet" href="css/style.css">
 <style>
+.grav-tab{padding:9px 18px;border-radius:9px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.grav-tab:hover{background:rgba(190,24,93,.08);color:#BE185D}
+.grav-tab.active{background:linear-gradient(135deg,#9D174D,#BE185D);color:white;box-shadow:0 3px 10px rgba(190,24,93,.3);font-weight:700}
+.grav-panel{display:none}.grav-panel.active{display:block}
 .grav-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
-.grav-card h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.grav-card h3{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:2px solid var(--border)}
 .nf label{display:block;font-size:11px;font-weight:700;color:var(--slate-m);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
 .nf input,.nf select{width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s;box-sizing:border-box}
-.nf input:focus,.nf select:focus{border-color:var(--teal)}
+.nf input:focus,.nf select:focus{border-color:#BE185D}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 @media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
@@ -23,18 +38,30 @@
 .pill-ok{background:#F0FDF4;color:#15803D;border:1.5px solid #86EFAC}
 .pill-warn{background:#FEF3C7;color:#B45309;border:1.5px solid #FDE68A}
 .pill-danger{background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA}
-.pill-info{background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE}
-.pill-purple{background:#F5F3FF;color:#7C3AED;border:1.5px solid #DDD6FE}
 .res-box{background:#F8FAFC;border-radius:10px;padding:14px 16px;margin-top:10px;border:1px solid var(--border)}
-.nutrient-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-d);font-size:13px}
+.nutrient-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border-d);font-size:13px}
 .nutrient-row:last-child{border-bottom:none}
-.nutrient-label{font-weight:600;color:var(--slate)}
-.nutrient-val{font-weight:700;color:var(--teal-d);background:#F0FDF4;padding:3px 10px;border-radius:12px;font-size:12.5px}
-.risk-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-d);font-size:13px}
+.nutrient-label{font-weight:600;color:var(--slate);flex:1}
+.nutrient-source{display:block;font-size:10.5px;color:var(--slate-l);font-weight:400;margin-top:1px}
+.nutrient-val{font-weight:700;color:#BE185D;background:#FDF2F8;padding:3px 10px;border-radius:12px;font-size:12px;white-space:nowrap;flex-shrink:0;text-align:right}
+.risk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-d);font-size:13px}
 .risk-item:last-child{border-bottom:none}
-.risk-cb{width:18px;height:18px;accent-color:var(--teal);flex-shrink:0}
-.avoid-list li{margin-bottom:6px;font-size:13px;line-height:1.5;padding-left:6px}
-.avoid-list li::marker{content:'⚠️  '}
+.risk-cb{width:18px;height:18px;accent-color:#BE185D;flex-shrink:0;margin-top:1px}
+.avoid-list{padding-left:0;list-style:none;margin:0}
+.avoid-list li{margin-bottom:8px;font-size:13px;line-height:1.5;padding-left:24px;position:relative}
+.avoid-list li::before{content:'⚠️';position:absolute;left:0}
+.prefer-list{padding-left:0;list-style:none;margin:0}
+.prefer-list li{margin-bottom:8px;font-size:13px;line-height:1.5;padding-left:24px;position:relative}
+.prefer-list li::before{content:'✅';position:absolute;left:0}
+.iom-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.iom-table th{background:#9D174D;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px}
+.iom-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.iom-table tbody tr:hover{background:#FDF2F8}
+.trimestre-box{border-radius:10px;padding:14px;margin-bottom:8px;border-left:4px solid}
+.tri-1{background:#F0FDF4;border-color:#22C55E}
+.tri-2{background:#FEF9C3;border-color:#EAB308}
+.tri-3{background:#FEF2F2;border-color:#EF4444}
+.alert-pink{background:#FDF2F8;border-radius:8px;padding:12px 14px;border-left:3px solid #BE185D;font-size:12.5px;color:#831843;line-height:1.6;margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -88,187 +115,433 @@
   </div>
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
-
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>🤰 Valutazione Gravidanza</h2>
-  <div class="tbar-actions">
-    <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
-    <button class="btn btn-primary btn-sm no-print" id="btn-salva-nota" onclick="salvaNota()" style="display:none">💾 Salva nota specialistica</button>
+  <div class="tbar-actions no-print">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
   </div>
 </div>
-
 <main id="main">
 <div class="page-content">
 
 <!-- BANNER -->
-<div style="background:linear-gradient(135deg,#BE185D,#F472B6);border-radius:14px;padding:20px 24px;margin-bottom:18px;color:white;box-shadow:0 4px 18px rgba(190,24,93,.2)">
+<div style="background:linear-gradient(135deg,#9D174D,#BE185D);border-radius:14px;padding:20px 24px;margin-bottom:18px;color:white;box-shadow:0 4px 18px rgba(157,23,77,.25)">
   <div style="display:flex;align-items:center;gap:16px">
-    <div style="font-size:38px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));flex-shrink:0">🤰</div>
+    <div style="font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2));flex-shrink:0">🤰</div>
     <div>
-      <div style="font-size:17px;font-weight:700;margin-bottom:3px">Valutazione Nutrizionale in Gravidanza</div>
-      <div style="font-size:12px;opacity:.85;line-height:1.5">Linee guida IOM 2009 · Calcolo fabbisogni per trimestre · Screening rischio GDM · Alimenti da evitare</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:3px">Valutazione Nutrizionale in Gravidanza</div>
+      <div style="font-size:12.5px;opacity:.9;line-height:1.5">Linee guida IOM 2009 · LARN IV revisione · ADA 2024 · SIGO · Screening GDM IADPSG</div>
     </div>
   </div>
 </div>
 
-<!-- SEZIONE A: DATI BASE -->
-<div class="grav-card">
-  <h3>📋 a) Dati Base</h3>
-  <div class="grid-3" style="margin-bottom:12px">
-    <div class="nf">
-      <label>Età (anni)</label>
-      <input type="number" id="g-eta" min="14" max="55" placeholder="es. 28" oninput="calcola()">
-    </div>
-    <div class="nf">
-      <label>Peso pre-gravidanza (kg)</label>
-      <input type="number" id="g-peso-pre" step="0.1" placeholder="es. 62" oninput="calcola()">
-    </div>
-    <div class="nf">
-      <label>Altezza (cm)</label>
-      <input type="number" id="g-altezza" placeholder="es. 165" oninput="calcola()">
-    </div>
-    <div class="nf">
-      <label>Peso attuale (kg)</label>
-      <input type="number" id="g-peso-att" step="0.1" placeholder="es. 68" oninput="calcola()">
-    </div>
-    <div class="nf">
-      <label>Settimana gestazionale (1-42)</label>
-      <input type="number" id="g-settimane" min="1" max="42" placeholder="es. 20" oninput="calcola()">
-    </div>
-    <div class="nf">
-      <label>Tipo di gravidanza</label>
-      <select id="g-tipo" onchange="calcola()">
-        <option value="singola">Singola</option>
-        <option value="gemellare">Gemellare</option>
-      </select>
-    </div>
-  </div>
+<!-- TABS -->
+<div style="display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap;padding:6px;background:white;border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)">
+  <button class="grav-tab active" onclick="switchTab('valutazione',this)">📊 Valutazione Paziente</button>
+  <button class="grav-tab" onclick="switchTab('linee-guida',this)">📚 Linee Guida IOM</button>
+  <button class="grav-tab" onclick="switchTab('nutrienti',this)">🥗 Fabbisogni Nutrizionali</button>
+  <button class="grav-tab" onclick="switchTab('gdm',this)">🩸 Screening GDM</button>
+  <button class="grav-tab" onclick="switchTab('consigli',this)">💡 Consigli Pratici</button>
 </div>
 
-<!-- RISULTATI -->
-<div id="grav-results" style="display:none">
-
-  <!-- B: BMI + C: Guadagno ponderale raccomandato -->
+<!-- TAB 1: VALUTAZIONE -->
+<div class="grav-panel active" id="panel-valutazione">
   <div class="grav-card">
-    <h3>⚖️ b-c) BMI Pre-Gravidanza e Guadagno Ponderale Raccomandato</h3>
-    <div class="grid-2">
-      <div class="res-box">
-        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">BMI Pre-Gravidanza</div>
-        <div style="font-size:28px;font-weight:800;color:var(--teal-d)" id="res-bmi">—</div>
-        <div id="res-bmi-class" style="margin-top:6px"></div>
-      </div>
-      <div class="res-box">
-        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Guadagno ponderale raccomandato (IOM 2009)</div>
-        <div style="font-size:18px;font-weight:800;color:var(--teal-d)" id="res-guadagno-range">—</div>
-        <div style="font-size:11.5px;color:var(--slate-l);margin-top:4px" id="res-guadagno-note"></div>
+    <h3>📋 Dati Base Paziente</h3>
+    <div class="grid-3" style="margin-bottom:12px">
+      <div class="nf"><label>Età (anni)</label><input type="number" id="g-eta" min="14" max="55" placeholder="es. 28" oninput="calcola()"></div>
+      <div class="nf"><label>Peso pre-gravidanza (kg)</label><input type="number" id="g-peso-pre" step="0.1" placeholder="es. 62" oninput="calcola()"></div>
+      <div class="nf"><label>Altezza (cm)</label><input type="number" id="g-altezza" placeholder="es. 165" oninput="calcola()"></div>
+      <div class="nf"><label>Peso attuale (kg)</label><input type="number" id="g-peso-att" step="0.1" placeholder="es. 68" oninput="calcola()"></div>
+      <div class="nf"><label>Settimana gestazionale (1–42)</label><input type="number" id="g-settimane" min="1" max="42" placeholder="es. 20" oninput="calcola()"></div>
+      <div class="nf"><label>Tipo di gravidanza</label>
+        <select id="g-tipo" onchange="calcola()">
+          <option value="singola">Singola</option>
+          <option value="gemellare">Gemellare</option>
+        </select>
       </div>
     </div>
+    <div id="grav-placeholder" style="text-align:center;padding:16px 0;color:var(--slate-l);font-size:13px">Inserisci peso pre-gravidanza e altezza per calcolare i risultati</div>
   </div>
 
-  <!-- D: Guadagno ponderale attuale -->
-  <div class="grav-card">
-    <h3>📏 d) Guadagno Ponderale Attuale</h3>
-    <div class="res-box">
-      <div class="grid-2">
-        <div>
-          <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:4px">Guadagno attuale</div>
-          <div style="font-size:22px;font-weight:800;color:var(--slate)" id="res-guadagno-att">—</div>
+  <div id="grav-results" style="display:none">
+    <div class="grid-2" style="margin-bottom:14px">
+      <div class="grav-card" style="margin-bottom:0">
+        <h3>⚖️ BMI Pre-Gravidanza</h3>
+        <div style="font-size:36px;font-weight:800;color:#BE185D" id="res-bmi">—</div>
+        <div id="res-bmi-class" style="margin-top:8px"></div>
+        <div style="margin-top:10px;font-size:11.5px;color:var(--slate-l);line-height:1.6">
+          &lt;18.5 Sottopeso · 18.5–24.9 Normopeso<br>25–29.9 Sovrappeso · ≥30 Obesità
         </div>
-        <div id="res-guadagno-status" style="display:flex;align-items:center;justify-content:center">—</div>
+      </div>
+      <div class="grav-card" style="margin-bottom:0">
+        <h3>📏 Guadagno Ponderale Raccomandato (IOM 2009)</h3>
+        <div style="font-size:24px;font-weight:800;color:#BE185D" id="res-guadagno-range">—</div>
+        <div style="font-size:11.5px;color:var(--slate-l);margin-top:4px" id="res-guadagno-note"></div>
+        <div style="margin-top:12px" id="res-guadagno-status"></div>
+      </div>
+    </div>
+
+    <div class="grav-card">
+      <h3>📈 Andamento Guadagno Ponderale vs Range IOM 2009</h3>
+      <div style="position:relative;height:240px"><canvas id="weight-chart"></canvas></div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center">Verde = limite minimo · Rosso = limite massimo · Rosa = guadagno attuale</div>
+    </div>
+
+    <div class="grav-card">
+      <h3>🔥 Fabbisogno Energetico Aggiuntivo per Trimestre</h3>
+      <div class="trimestre-box tri-1"><b>1° Trimestre (sett. 1–13):</b> <span style="color:#15803D">+0 kcal/die</span> — nessun incremento calorico richiesto; focus su qualità e micronutrienti</div>
+      <div class="trimestre-box tri-2"><b>2° Trimestre (sett. 14–27):</b> <span style="color:#B45309">+340 kcal/die</span> — incremento progressivo per la crescita fetale</div>
+      <div class="trimestre-box tri-3"><b>3° Trimestre (sett. 28–42):</b> <span style="color:#DC2626">+450 kcal/die</span> — massima crescita fetale e accumulo di riserve</div>
+      <div id="res-trimestre-attuale" style="margin-top:10px;padding:12px 14px;background:#FDF2F8;border-radius:8px;border-left:3px solid #BE185D;font-size:13px;font-weight:600;color:#831843;display:none"></div>
+    </div>
+
+    <div id="grav-salva-wrap" style="display:none;margin-bottom:14px">
+      <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;border:1.5px solid #86EFAC;font-size:12.5px;color:#14532D;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:20px">💾</span>
+        <div style="flex:1">Pagina aperta da una cartella paziente — puoi salvare questa valutazione.</div>
+        <button class="btn btn-primary btn-sm" onclick="salvaNota()">💾 Salva come nota specialistica</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- E: Fabbisogno energetico aggiuntivo -->
+<!-- TAB 2: LINEE GUIDA IOM -->
+<div class="grav-panel" id="panel-linee-guida">
   <div class="grav-card">
-    <h3>🔥 e) Fabbisogno Energetico Aggiuntivo per Trimestre</h3>
-    <div class="res-box">
-      <div class="nutrient-row"><span class="nutrient-label">1° Trimestre (settimane 1-13)</span><span class="nutrient-val">+ 0 kcal/die</span></div>
-      <div class="nutrient-row"><span class="nutrient-label">2° Trimestre (settimane 14-27)</span><span class="nutrient-val">+ 340 kcal/die</span></div>
-      <div class="nutrient-row"><span class="nutrient-label">3° Trimestre (settimane 28-42)</span><span class="nutrient-val">+ 450 kcal/die</span></div>
-      <div class="nutrient-row" id="res-trimestre-row" style="background:#F0FDF4;border-radius:8px;padding:8px 12px;margin-top:8px;border:1px solid #86EFAC">
-        <span class="nutrient-label" id="res-trimestre-label">Trimestre attuale</span>
-        <span id="res-trimestre-extra" style="font-weight:700;color:#15803D;font-size:13px"></span>
-      </div>
+    <h3>📚 Guadagno Ponderale Raccomandato — IOM 2009</h3>
+    <div class="alert-pink">Fonte: Institute of Medicine (2009). <em>Weight Gain During Pregnancy: Reexamining the Guidelines.</em> National Academies Press, Washington DC. Adottato da SIGO, OMS, ACOG.</div>
+    <div style="overflow-x:auto">
+      <table class="iom-table">
+        <thead>
+          <tr>
+            <th>BMI Pre-Gravidanza</th>
+            <th>Categoria</th>
+            <th>Singola — Totale</th>
+            <th>Gemellare — Totale</th>
+            <th>Rate settimanale (2°–3° trim.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt; 18.5</td><td><span class="result-pill pill-warn" style="margin:0">Sottopeso</span></td><td><b>12.5 – 18 kg</b></td><td><b>23 – 28 kg</b></td><td>0.44 – 0.58 kg/sett.</td></tr>
+          <tr><td>18.5 – 24.9</td><td><span class="result-pill pill-ok" style="margin:0">Normopeso</span></td><td><b>11.5 – 16 kg</b></td><td><b>17 – 25 kg</b></td><td>0.35 – 0.50 kg/sett.</td></tr>
+          <tr><td>25.0 – 29.9</td><td><span class="result-pill pill-warn" style="margin:0">Sovrappeso</span></td><td><b>7 – 11.5 kg</b></td><td><b>14 – 23 kg</b></td><td>0.23 – 0.33 kg/sett.</td></tr>
+          <tr><td>≥ 30.0</td><td><span class="result-pill pill-danger" style="margin:0">Obesità</span></td><td><b>5 – 9 kg</b></td><td><b>11 – 19 kg</b></td><td>0.17 – 0.27 kg/sett.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;font-size:11.5px;color:var(--slate-l)">Nota: in caso di gravidanza gemellare con obesità materna, considerare il limite inferiore dell'intervallo. Linee guida 2021 ACOG/SMFM: stessa tabella IOM 2009.</div>
+  </div>
+
+  <div class="grav-card">
+    <h3>📋 Guadagno per Trimestre — Gravidanza Singola (normopeso)</h3>
+    <div class="trimestre-box tri-1">
+      <b>1° Trimestre (0–13 settimane)</b><br>
+      Guadagno totale: <b>0.5 – 2 kg</b> · Fabbisogno aggiuntivo: <b>+0 kcal/die</b><br>
+      Focus: folati (prevenzione DTN), iodio, ferro; gestione nausea e vomito
+    </div>
+    <div class="trimestre-box tri-2">
+      <b>2° Trimestre (14–27 settimane)</b><br>
+      Rate: <b>~0.4 kg/settimana</b> · Fabbisogno aggiuntivo: <b>+340 kcal/die</b><br>
+      Focus: proteine (crescita fetale accelerata), DHA, calcio, vitamina D
+    </div>
+    <div class="trimestre-box tri-3">
+      <b>3° Trimestre (28–42 settimane)</b><br>
+      Rate: <b>~0.4 kg/settimana</b> · Fabbisogno aggiuntivo: <b>+450 kcal/die</b><br>
+      Focus: DHA (sviluppo cerebrale), ferro (preparazione parto), vitamina K, colina
     </div>
   </div>
 
-  <!-- F: Fabbisogni nutrizionali -->
   <div class="grav-card">
-    <h3>🥗 f) Fabbisogni Nutrizionali in Gravidanza</h3>
-    <div class="res-box">
-      <div class="nutrient-row"><span class="nutrient-label">💪 Proteine</span><span class="nutrient-val">71 g/die</span></div>
-      <div class="nutrient-row"><span class="nutrient-label">🟢 Folati (vitamina B9)</span><span class="nutrient-val">600 μg/die</span></div>
-      <div class="nutrient-row"><span class="nutrient-label">🔴 Ferro</span><span class="nutrient-val">27 mg/die</span></div>
-      <div class="nutrient-row"><span class="nutrient-label">🦷 Calcio</span><span class="nutrient-val">1000 mg/die</span></div>
-      <div class="nutrient-row"><span class="nutrient-label">☀️ Vitamina D</span><span class="nutrient-val">15 μg/die (600 UI)</span></div>
-      <div class="nutrient-row"><span class="nutrient-label">🐟 Omega-3 DHA</span><span class="nutrient-val">+200 mg/die aggiuntivi</span></div>
-    </div>
-    <div style="margin-top:10px;background:#FEF3C7;border-radius:8px;padding:10px 14px;font-size:12px;color:#78350F;border-left:3px solid #F59E0B;line-height:1.6">
-      <strong>Nota:</strong> I valori si riferiscono a gravidanze singole. Per gravidanze gemellari consultare il medico per fabbisogni aumentati.
+    <h3>🫀 Composizione del Guadagno Ponderale a Termine</h3>
+    <div style="overflow-x:auto">
+      <table class="iom-table">
+        <thead><tr><th>Componente</th><th>Peso indicativo</th></tr></thead>
+        <tbody>
+          <tr><td>Feto</td><td>3.2 – 3.5 kg</td></tr>
+          <tr><td>Placenta</td><td>0.6 – 0.7 kg</td></tr>
+          <tr><td>Liquido amniotico</td><td>0.8 – 1.0 kg</td></tr>
+          <tr><td>Utero (ipertrofia)</td><td>~0.9 kg</td></tr>
+          <tr><td>Mammelle</td><td>0.4 – 0.5 kg</td></tr>
+          <tr><td>Volume ematico espanso</td><td>1.2 – 1.5 kg</td></tr>
+          <tr><td>Fluidi extracellulari</td><td>1.0 – 2.0 kg</td></tr>
+          <tr><td>Riserve adipose materne</td><td>2.5 – 3.5 kg</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- G: Screening rischio GDM -->
   <div class="grav-card">
-    <h3>🩸 g) Screening Rischio Diabete Gestazionale (IADPSG)</h3>
-    <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px;line-height:1.5">Seleziona i fattori di rischio presenti. Presenza di ≥1 fattore indica screening OGTT 75g raccomandato alla settimana 24-28.</p>
-    <div id="gdm-risks">
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-eta" onchange="aggiornaGDM()"><label for="gdm-eta" style="cursor:pointer;font-size:13px">Età ≥ 35 anni</label></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-bmi" onchange="aggiornaGDM()"><label for="gdm-bmi" style="cursor:pointer;font-size:13px">BMI pre-gravidanza ≥ 30 kg/m²</label></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-prec" onchange="aggiornaGDM()"><label for="gdm-prec" style="cursor:pointer;font-size:13px">Precedente diabete gestazionale (GDM)</label></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-fam" onchange="aggiornaGDM()"><label for="gdm-fam" style="cursor:pointer;font-size:13px">Familiarità di 1° grado per diabete tipo 2</label></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-macrosomia" onchange="aggiornaGDM()"><label for="gdm-macrosomia" style="cursor:pointer;font-size:13px">Precedente neonato macrosomico (peso ≥ 4 kg)</label></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-pcos" onchange="aggiornaGDM()"><label for="gdm-pcos" style="cursor:pointer;font-size:13px">PCOS (sindrome dell'ovaio policistico)</label></div>
+    <h3>🏃 Attività Fisica (ACOG Committee Opinion 804, 2020)</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Raccomandazione</span><span class="nutrient-val">150 min/settimana di attività aerobica moderata</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Attività sicure</span><span class="nutrient-val">Camminata, nuoto, cyclette, yoga prenatale, pilates</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Da evitare</span><span class="nutrient-val">Sport da contatto, immersioni, altitudini &gt;2500 m, rischio cadute</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Benefici dimostrati</span><span class="nutrient-val">-28% rischio GDM, -41% eclampsia, miglior benessere psicologico</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Segnali di stop</span><span class="nutrient-val">Sanguinamento, dispnea intensa, dolore toracico, contrazioni regolari</span></div>
+  </div>
+</div>
+
+<!-- TAB 3: FABBISOGNI NUTRIZIONALI -->
+<div class="grav-panel" id="panel-nutrienti">
+  <div class="grav-card">
+    <h3>🥗 Fabbisogni Nutrizionali in Gravidanza — LARN IV rev. · EFSA · OMS</h3>
+    <div class="alert-pink">Valori di riferimento per gravidanza singola. Adattare in base a età, BMI pre-gravidanza, pluriparità e condizioni cliniche.</div>
+
+    <div style="font-size:12px;font-weight:700;color:#BE185D;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">⚡ Energia e Macronutrienti</div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Energia aggiuntiva 1° trim.<span class="nutrient-source">IOM 2009</span></span>
+      <span class="nutrient-val">+0 kcal/die</span>
     </div>
-    <div id="gdm-result" class="res-box" style="margin-top:12px"></div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Energia aggiuntiva 2° trim.<span class="nutrient-source">IOM 2009</span></span>
+      <span class="nutrient-val">+340 kcal/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Energia aggiuntiva 3° trim.<span class="nutrient-source">IOM 2009</span></span>
+      <span class="nutrient-val">+450 kcal/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Proteine<span class="nutrient-source">LARN 2014 — +25 g/die vs pre-gravidanza</span></span>
+      <span class="nutrient-val">71 g/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Carboidrati (minimo)<span class="nutrient-source">EFSA — per glucosio cerebrale fetale</span></span>
+      <span class="nutrient-val">≥ 175 g/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Fibra<span class="nutrient-source">LARN</span></span>
+      <span class="nutrient-val">25 – 30 g/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">DHA (omega-3)<span class="nutrient-source">EFSA 2010</span></span>
+      <span class="nutrient-val">+200 mg/die (tot. 450–550 mg)</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Acqua<span class="nutrient-source">EFSA — inclusa da alimenti</span></span>
+      <span class="nutrient-val">2.3 L/die (500 mL in più vs non gravida)</span>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:#BE185D;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.5px">💊 Micronutrienti Critici</div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Acido Folico<span class="nutrient-source">Min. Salute · SIGO — iniziare 1 mese prima del concepimento</span></span>
+      <span class="nutrient-val">600 μg/die (suppl. 400 μg)</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Ferro<span class="nutrient-source">LARN · OMS — spesso richiesta integrazione</span></span>
+      <span class="nutrient-val">27 mg/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Calcio<span class="nutrient-source">LARN</span></span>
+      <span class="nutrient-val">1000 mg/die (1300 mg adolescenti)</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Vitamina D<span class="nutrient-source">SIGO 2023 — obiettivo 25-OH &gt;30 ng/mL</span></span>
+      <span class="nutrient-val">600 – 2000 UI/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Iodio<span class="nutrient-source">OMS · Min. Salute — fondamentale per sviluppo neurologico</span></span>
+      <span class="nutrient-val">220 μg/die (suppl. 150 μg KI)</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Zinco<span class="nutrient-source">LARN</span></span>
+      <span class="nutrient-val">11 mg/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Magnesio<span class="nutrient-source">LARN</span></span>
+      <span class="nutrient-val">360 – 400 mg/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Vitamina B12<span class="nutrient-source">LARN — fondamentale per vegane</span></span>
+      <span class="nutrient-val">2.6 μg/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Vitamina C<span class="nutrient-source">LARN — migliora assorbimento ferro</span></span>
+      <span class="nutrient-val">85 mg/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Vitamina A ⚠️<span class="nutrient-source">LARN — ATTENZIONE: teratogena se eccesso</span></span>
+      <span class="nutrient-val">770 μg RAE/die (MAX 3000 μg)</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Colina<span class="nutrient-source">EFSA 2016 — sviluppo neurale fetale</span></span>
+      <span class="nutrient-val">480 mg/die</span>
+    </div>
   </div>
 
-  <!-- H: Alimenti da evitare -->
   <div class="grav-card">
-    <h3>🚫 h) Alimenti da Evitare in Gravidanza</h3>
+    <h3>💊 Schema Integrazione Raccomandata</h3>
+    <div class="alert-pink">Personalizzare la supplementazione in base a esami ematochimici (Hb, ferritina, 25-OH vitamina D, TSH). Non autogestire.</div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Acido folico<span class="nutrient-source">Da -1 mese pre-concepimento a fine 1° trimestre (o tutta la gravidanza)</span></span>
+      <span class="nutrient-val">0.4 mg/die (4 mg se prec. DTN)</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Vitamina D<span class="nutrient-source">Tutta la gravidanza</span></span>
+      <span class="nutrient-val">1000 – 2000 UI/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Iodio (KI)<span class="nutrient-source">Tutta la gravidanza + allattamento</span></span>
+      <span class="nutrient-val">150 μg/die + sale iodato</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">Ferro<span class="nutrient-source">Dal 2° trimestre se Hb &lt;11 g/dL o ferritina &lt;30</span></span>
+      <span class="nutrient-val">30 – 60 mg/die (sale ferroso)</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">DHA<span class="nutrient-source">Dal 3° mese — preferire omega-3 algali</span></span>
+      <span class="nutrient-val">200 – 400 mg/die</span>
+    </div>
+    <div class="nutrient-row">
+      <span class="nutrient-label">B12 (per vegane)<span class="nutrient-source">Obbligatorio — tutta la gravidanza</span></span>
+      <span class="nutrient-val">≥ 250 μg/die (suppl.)</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: SCREENING GDM -->
+<div class="grav-panel" id="panel-gdm">
+  <div class="grav-card">
+    <h3>🩸 Fattori di Rischio per Diabete Gestazionale — IADPSG</h3>
+    <div class="alert-pink"><b>Criteri IADPSG / OMS 2013</b>, adottati da SIGO e AMD-SID. Screening con OGTT 75g a 24–28 settimane in tutte le gravide. In caso di alto rischio: OGTT anche nel 1° trimestre.</div>
+    <div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-bmi" onchange="aggiornaGDM()"><div><b>BMI ≥ 30 kg/m²</b> (obesità pre-gravidanza)</div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-eta" onchange="aggiornaGDM()"><div><b>Età ≥ 35 anni</b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-prec" onchange="aggiornaGDM()"><div><b>GDM in gravidanza precedente</b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-fam" onchange="aggiornaGDM()"><div><b>Familiarità per diabete T2</b> (genitori o fratelli)</div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-macrosomia" onchange="aggiornaGDM()"><div><b>Precedente macrosomia fetale</b> (neonato &gt;4 kg)</div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-pcos" onchange="aggiornaGDM()"><div><b>PCOS (Sindrome dell'Ovaio Policistico)</b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-ipertensione" onchange="aggiornaGDM()"><div><b>Ipertensione arteriosa pre-esistente</b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-glicosuria" onchange="aggiornaGDM()"><div><b>Glicosuria alla prima visita</b></div></div>
+    </div>
+    <div id="gdm-result" style="margin-top:14px">
+      <span class="result-pill pill-ok">✅ Nessun fattore selezionato — Rischio standard</span>
+    </div>
+  </div>
+
+  <div class="grav-card">
+    <h3>🧪 OGTT 75g — Criteri Diagnostici (IADPSG / OMS 2013)</h3>
+    <div style="overflow-x:auto">
+      <table class="iom-table">
+        <thead><tr><th>Misura</th><th>Soglia diagnostica (plasma venoso)</th><th>Diagnosi se ≥</th></tr></thead>
+        <tbody>
+          <tr><td>Glicemia a digiuno</td><td style="font-weight:700;color:#DC2626">92 mg/dL</td><td>GDM</td></tr>
+          <tr><td>Glicemia 1h post-carico</td><td style="font-weight:700;color:#DC2626">180 mg/dL</td><td>GDM</td></tr>
+          <tr><td>Glicemia 2h post-carico</td><td style="font-weight:700;color:#DC2626">153 mg/dL</td><td>GDM</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:8px;font-size:11.5px;color:var(--slate-l)">Un solo valore alterato è sufficiente per diagnosi GDM. Glicemia a digiuno ≥126 mg/dL → diabete pre-esistente. Glicemia a digiuno 100–125 mg/dL → alterata glicemia a digiuno (IFG).</div>
+  </div>
+
+  <div class="grav-card">
+    <h3>🎯 Target Glicemici in GDM — ADA 2024 · AMD-SID 2023</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Glicemia a digiuno</span><span class="nutrient-val">≤ 95 mg/dL</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">1h post-prandiale</span><span class="nutrient-val">≤ 140 mg/dL</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">2h post-prandiale</span><span class="nutrient-val">≤ 120 mg/dL</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">HbA1c</span><span class="nutrient-val">&lt; 6.0% (obiettivo, se sicuro)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Prima linea terapeutica</span><span class="nutrient-val">Medical Nutrition Therapy (MNT)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Distribuzione CHO in GDM</span><span class="nutrient-val">40–45% kcal totali, IG basso, 5–6 pasti/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Automonitoraggio glicemico</span><span class="nutrient-val">4 misurazioni/die: a digiuno + 1h dopo ogni pasto</span></div>
+  </div>
+
+  <div class="grav-card">
+    <h3>⚠️ Altre Complicanze da Monitorare</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Preeclampsia<span class="nutrient-source">Rischio ↑ con obesità, GDM, PCOS, età &gt;35</span></span><span class="nutrient-val">PA &gt;140/90 + proteinuria ≥300 mg/24h</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Anemia sideropenica<span class="nutrient-source">Hb &lt;11 g/dL 1°/3° trim., &lt;10.5 g/dL 2° trim.</span></span><span class="nutrient-val">Integrazione ferro; CBC ogni trimestre</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iperemesi gravidica<span class="nutrient-source">Perdita &gt;5% del peso corporeo</span></span><span class="nutrient-val">NP o NE se necessario; vitamina B6 + ginger</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Macrosomia fetale<span class="nutrient-source">Correlata a GDM e ↑ ponderale eccessivo</span></span><span class="nutrient-val">Peso neonato &gt;4 kg; monitorare ecografie</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">RCIU<span class="nutrient-source">Ridotto accrescimento intra-uterino</span></span><span class="nutrient-val">Monitorare intake calorico-proteico; ecografie seriate</span></div>
+  </div>
+</div>
+
+<!-- TAB 5: CONSIGLI PRATICI -->
+<div class="grav-panel" id="panel-consigli">
+  <div class="grav-card">
+    <h3>✅ Alimenti Raccomandati</h3>
     <div class="grid-2">
       <div>
-        <div style="font-size:12.5px;font-weight:700;color:#DC2626;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #FECACA">Rischio Listeria / Tossinfections</div>
-        <ul class="avoid-list" style="padding-left:10px;margin:0">
-          <li>Formaggi a pasta molle (brie, camembert, gorgonzola)</li>
-          <li>Latte e latticini non pastorizzati</li>
-          <li>Carni crude o poco cotte (carpaccio, tartare)</li>
-          <li>Salumi e insaccati crudi (prosciutto crudo, bresaola)</li>
-          <li>Sushi e pesce crudo (sashimi)</li>
-          <li>Uova crude o poco cotte (mayonnaise artigianale, uova à la coque)</li>
-          <li>Germogli crudi</li>
-          <li>Patè e mousse di carne</li>
+        <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Proteine di qualità</div>
+        <ul class="prefer-list">
+          <li>Pesce azzurro cotto 2–3×/sett. (DHA, omega-3)</li>
+          <li>Carni bianche ben cotte (pollo, tacchino, coniglio)</li>
+          <li>Legumi ogni giorno (ferro non-eme, proteine, fibra)</li>
+          <li>Uova cotte (colina per sviluppo cerebrale)</li>
+          <li>Latticini pastorizzati (calcio, vitamina D, B12)</li>
         </ul>
       </div>
       <div>
-        <div style="font-size:12.5px;font-weight:700;color:#B45309;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #FDE68A">Rischio Mercurio / Altro</div>
-        <ul class="avoid-list" style="padding-left:10px;margin:0">
-          <li>Pesce spada, squalo, tonno rosso (alto contenuto di mercurio)</li>
-          <li>Alcol in qualsiasi quantità</li>
-          <li>Caffeina > 200 mg/die (≈ 2 tazze caffè espresso)</li>
-          <li>Liquirizia in grandi quantità</li>
-          <li>Tisane con erbe non testate in gravidanza</li>
-          <li>Integratori di vitamina A > 3000 UI/die (teratogena)</li>
-          <li>Fegato e prodotti a base di fegato (eccesso vitamina A)</li>
+        <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Micronutrienti chiave</div>
+        <ul class="prefer-list">
+          <li>Verdure a foglia verde (folati, calcio, K, fibra)</li>
+          <li>Frutta secca non salata (magnesio, omega-3, E)</li>
+          <li>Cereali integrali (B1, B6, fibra, ferro)</li>
+          <li>Agrumi e kiwi (vitamina C → ↑ assorbimento ferro)</li>
+          <li>Sale iodato in cucina (iodio)</li>
         </ul>
       </div>
     </div>
   </div>
 
-  <!-- SALVA NOTA -->
-  <div id="grav-salva-wrap" style="display:none">
-    <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;border:1.5px solid #86EFAC;font-size:12.5px;color:#14532D;display:flex;align-items:center;gap:10px">
-      <span style="font-size:20px">💾</span>
-      <div>Hai aperto questa pagina da una cartella paziente. Puoi salvare questa valutazione come nota specialistica.
-        <button class="btn btn-primary btn-sm" style="margin-left:12px" onclick="salvaNota()">💾 Salva come nota specialistica</button>
+  <div class="grav-card">
+    <h3>⚠️ Alimenti da Evitare (Sicurezza Alimentare in Gravidanza)</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Vietati — Rischio fetale grave</div>
+        <ul class="avoid-list">
+          <li><b>Alcol</b> — qualsiasi quantità (FASD, malformazioni)</li>
+          <li><b>Formaggi molli non pastorizzati</b> (Brie, Camembert, gorgonzola) — Listeria</li>
+          <li><b>Carni crude o poco cotte</b> (carpaccio, tartare) — Toxoplasma, Listeria</li>
+          <li><b>Salumi crudi</b> (prosciutto crudo, salame) — Listeria, Toxoplasma</li>
+          <li><b>Uova crude</b> (maionese artigianale, tiramisù) — Salmonella</li>
+          <li><b>Latte non pastorizzato</b></li>
+          <li><b>Fegato</b> in grandi quantità — eccesso vitamina A (&gt;3000 μg RAE)</li>
+          <li><b>Pesce spada, squalo, tonno pinna gialla</b> &gt;1×/mese — mercurio</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Limitare</div>
+        <ul class="avoid-list">
+          <li><b>Caffeina</b> ≤ 200 mg/die (≈ 2 espresso) — RCOG</li>
+          <li><b>Tisane non testate</b> in gravidanza (salvia, aloe, grandi dosi camomilla)</li>
+          <li><b>Liquirizia</b> in grandi quantità (glicirrizina → ipertensione)</li>
+          <li><b>Integratori vitamina A</b> &gt;3000 μg RAE — teratogena</li>
+          <li><b>Frutta e verdura non lavata</b> (Toxoplasma da terra)</li>
+          <li><b>Tonno in scatola</b> ≤ 2 volte/settimana (mercurio)</li>
+        </ul>
       </div>
     </div>
   </div>
 
-</div><!-- end grav-results -->
+  <div class="grav-card">
+    <h3>🤢 Gestione della Nausea e Vomito (1° Trimestre)</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Pasti piccoli e frequenti<span class="nutrient-source">Ogni 2–3 ore; evitare stomaco vuoto</span></span><span class="nutrient-val">5–6 pasti/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Crackers al mattino<span class="nutrient-source">Prima di alzarsi dal letto</span></span><span class="nutrient-val">Carboidrati semplici a stomaco vuoto</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Zenzero (Zingiber officinale)<span class="nutrient-source">Evidenza da RCT — EBM</span></span><span class="nutrient-val">250 mg × 4/die o tè allo zenzero</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamina B6 (piridossina)<span class="nutrient-source">Prima linea farmacologica — APA/ACOG</span></span><span class="nutrient-val">10–25 mg × 3–4/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Idratazione<span class="nutrient-source">Piccoli sorsi frequenti; acqua fresca o ghiaccio</span></span><span class="nutrient-val">≥ 8–10 bicchieri/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Evitare<span class="nutrient-source">Fattori scatenanti individuali</span></span><span class="nutrient-val">Cibi grassi/speziati, odori forti, caldo eccessivo</span></div>
+  </div>
+
+  <div class="grav-card">
+    <h3>🍽️ Schema Alimentare Tipo (2°–3° Trimestre)</h3>
+    <div class="trimestre-box tri-1" style="margin-bottom:8px">
+      <b>🌅 Colazione:</b> latte parzialmente scremato + cereali integrali + frutta di stagione + 1 uovo 2–3 volte/settimana
+    </div>
+    <div class="trimestre-box tri-2" style="margin-bottom:8px">
+      <b>☀️ Pranzo:</b> primo integrale (pasta/riso) + secondo proteico (legumi, pesce o carne) + verdura abbondante + olio EVO + frutta
+    </div>
+    <div class="trimestre-box tri-3" style="margin-bottom:8px">
+      <b>🌙 Cena:</b> secondo proteico alternato (pesce 2–3×/sett.) + verdura + porzione moderata di carboidrati + olio EVO
+    </div>
+    <div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-top:4px;font-size:12.5px;color:var(--slate-m)">
+      <b>🍎 Spuntino mattina:</b> yogurt greco intero + frutta secca (4–5 noci)<br>
+      <b>🧀 Spuntino pomeriggio:</b> frutta fresca + 2 crackers integrali + pezzetto di formaggio<br>
+      <b>💧 Acqua:</b> ≥ 2–2.3 L/die; privilegiare acqua calcica (&gt;200 mg/L Ca)
+    </div>
+  </div>
+</div>
 
 </div>
 </main>
@@ -283,21 +556,23 @@
 <script>
 let _noteId = null;
 let _cartellaId = null;
+let _weightChart = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   await checkAuth();
-  // Leggi parametri URL
   const params = new URLSearchParams(location.search);
   _noteId = params.get('noteId') || null;
   _cartellaId = params.get('cartellaId') || null;
-
-  if (_noteId || _cartellaId) {
-    document.getElementById('btn-salva-nota').style.display = '';
-  }
-
-  // Auto-spunta GDM età se già inserita
-  calcola();
+  if (_noteId || _cartellaId) document.getElementById('grav-salva-wrap').style.display = '';
+  aggiornaGDM();
 });
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.grav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.grav-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
 
 function calcola() {
   const eta = parseFloat(document.getElementById('g-eta').value) || 0;
@@ -307,113 +582,142 @@ function calcola() {
   const settimane = parseInt(document.getElementById('g-settimane').value) || 0;
   const tipo = document.getElementById('g-tipo').value;
 
-  if (!pesoPre || !altezza) { document.getElementById('grav-results').style.display = 'none'; return; }
+  if (!pesoPre || !altezza) {
+    document.getElementById('grav-results').style.display = 'none';
+    document.getElementById('grav-placeholder').style.display = 'block';
+    return;
+  }
   document.getElementById('grav-results').style.display = 'block';
+  document.getElementById('grav-placeholder').style.display = 'none';
 
   const h = altezza / 100;
   const bmi = pesoPre / (h * h);
   document.getElementById('res-bmi').textContent = bmi.toFixed(1);
 
-  // Classificazione BMI
-  let bmiClass, bmiPill;
-  if (bmi < 18.5) { bmiClass = 'Sottopeso'; bmiPill = 'pill-warn'; }
-  else if (bmi < 25) { bmiClass = 'Normopeso'; bmiPill = 'pill-ok'; }
-  else if (bmi < 30) { bmiClass = 'Sovrappeso'; bmiPill = 'pill-warn'; }
-  else { bmiClass = 'Obesità'; bmiPill = 'pill-danger'; }
+  let bmiClass, bmiPill, catKey;
+  if (bmi < 18.5)    { bmiClass = 'Sottopeso'; bmiPill = 'pill-warn'; catKey = 'sottopeso'; }
+  else if (bmi < 25) { bmiClass = 'Normopeso'; bmiPill = 'pill-ok';   catKey = 'normopeso'; }
+  else if (bmi < 30) { bmiClass = 'Sovrappeso'; bmiPill = 'pill-warn'; catKey = 'sovrappeso'; }
+  else               { bmiClass = 'Obesità'; bmiPill = 'pill-danger'; catKey = 'obesita'; }
   document.getElementById('res-bmi-class').innerHTML = '<span class="result-pill ' + bmiPill + '">' + bmiClass + '</span>';
 
-  // Guadagno ponderale raccomandato IOM 2009
   const ranges = {
-    singola: {
-      sottopeso: [12.5, 18],
-      normopeso: [11.5, 16],
-      sovrappeso: [7, 11.5],
-      obesita: [5, 9]
-    },
-    gemellare: {
-      sottopeso: [23, 28],
-      normopeso: [17, 25],
-      sovrappeso: [14, 23],
-      obesita: [11, 19]
-    }
+    singola:   { sottopeso:[12.5,18], normopeso:[11.5,16], sovrappeso:[7,11.5], obesita:[5,9] },
+    gemellare: { sottopeso:[23,28],   normopeso:[17,25],   sovrappeso:[14,23],  obesita:[11,19] }
   };
-  const catKey = bmi < 18.5 ? 'sottopeso' : bmi < 25 ? 'normopeso' : bmi < 30 ? 'sovrappeso' : 'obesita';
   const r = ranges[tipo][catKey];
   document.getElementById('res-guadagno-range').textContent = r[0] + ' – ' + r[1] + ' kg';
-  document.getElementById('res-guadagno-note').textContent = bmiClass + ' · Gravidanza ' + tipo + ' · Fonte: IOM 2009';
+  document.getElementById('res-guadagno-note').textContent = bmiClass + ' · Gravidanza ' + tipo + ' · IOM 2009';
 
-  // Guadagno attuale
-  if (pesoAtt && pesoPre) {
+  if (pesoAtt) {
     const guadagnoAtt = pesoAtt - pesoPre;
-    document.getElementById('res-guadagno-att').textContent = (guadagnoAtt >= 0 ? '+' : '') + guadagnoAtt.toFixed(1) + ' kg';
-    let statusHtml = '';
-    if (guadagnoAtt < r[0]) statusHtml = '<span class="result-pill pill-warn">⬇️ Sotto il range raccomandato</span>';
-    else if (guadagnoAtt > r[1]) statusHtml = '<span class="result-pill pill-danger">⬆️ Sopra il range raccomandato</span>';
-    else statusHtml = '<span class="result-pill pill-ok">✅ Nel range raccomandato</span>';
-    document.getElementById('res-guadagno-status').innerHTML = statusHtml;
+    let html;
+    if (guadagnoAtt < r[0]) html = '<span class="result-pill pill-warn">⬇️ Sotto il range: +' + guadagnoAtt.toFixed(1) + ' kg (min. ' + r[0] + ' kg)</span>';
+    else if (guadagnoAtt > r[1]) html = '<span class="result-pill pill-danger">⬆️ Sopra il range: +' + guadagnoAtt.toFixed(1) + ' kg (max ' + r[1] + ' kg)</span>';
+    else html = '<span class="result-pill pill-ok">✅ Nel range raccomandato: +' + guadagnoAtt.toFixed(1) + ' kg</span>';
+    document.getElementById('res-guadagno-status').innerHTML = html;
   } else {
-    document.getElementById('res-guadagno-att').textContent = '—';
-    document.getElementById('res-guadagno-status').innerHTML = '<span style="color:var(--slate-l);font-size:12px">Inserisci il peso attuale</span>';
+    document.getElementById('res-guadagno-status').innerHTML = '<span style="color:var(--slate-l);font-size:12px">Inserisci il peso attuale per vedere lo status</span>';
   }
 
-  // Trimestre e kcal aggiuntive
+  const trimEl = document.getElementById('res-trimestre-attuale');
   if (settimane) {
     let tri, extra;
-    if (settimane <= 13) { tri = '1° Trimestre (sett. 1-13)'; extra = '+0 kcal/die'; }
-    else if (settimane <= 27) { tri = '2° Trimestre (sett. 14-27)'; extra = '+340 kcal/die'; }
-    else { tri = '3° Trimestre (sett. 28-42)'; extra = '+450 kcal/die'; }
-    document.getElementById('res-trimestre-label').textContent = tri;
-    document.getElementById('res-trimestre-extra').textContent = extra;
+    if (settimane <= 13) { tri = '1° Trimestre (sett. ' + settimane + ')'; extra = '+0 kcal/die'; }
+    else if (settimane <= 27) { tri = '2° Trimestre (sett. ' + settimane + ')'; extra = '+340 kcal/die'; }
+    else { tri = '3° Trimestre (sett. ' + settimane + ')'; extra = '+450 kcal/die'; }
+    trimEl.textContent = '📍 ' + tri + ' — Fabbisogno aggiuntivo: ' + extra;
+    trimEl.style.display = 'block';
+  } else {
+    trimEl.style.display = 'none';
   }
 
-  // Auto-spunta GDM eta e bmi
   if (eta >= 35) document.getElementById('gdm-eta').checked = true;
   if (bmi >= 30) document.getElementById('gdm-bmi').checked = true;
-
   aggiornaGDM();
-
-  // Show salva wrap if coming from cartella
+  aggiornaGrafico(bmi, settimane, pesoAtt, pesoPre, tipo, r);
   if (_noteId || _cartellaId) document.getElementById('grav-salva-wrap').style.display = '';
 }
 
-function aggiornaGDM() {
-  const checks = ['gdm-eta','gdm-bmi','gdm-prec','gdm-fam','gdm-macrosomia','gdm-pcos'];
-  const count = checks.filter(id => document.getElementById(id).checked).length;
-  const el = document.getElementById('gdm-result');
-  if (count === 0) {
-    el.innerHTML = '<span class="result-pill pill-ok">✅ Nessun fattore di rischio selezionato — Rischio standard</span>';
-  } else if (count === 1) {
-    el.innerHTML = '<span class="result-pill pill-warn">⚠️ ' + count + ' fattore di rischio — Screening OGTT 75g raccomandato (sett. 24-28)</span>';
-  } else {
-    el.innerHTML = '<span class="result-pill pill-danger">🔴 ' + count + ' fattori di rischio — Screening OGTT urgente, valutare OGTT precoce (1° trimestre)</span>';
+async function aggiornaGrafico(bmi, settimaneAtt, pesoAtt, pesoPre, tipo, r) {
+  await ensureChartJs();
+  if (_weightChart) { _weightChart.destroy(); _weightChart = null; }
+
+  const labels = [], minData = [], maxData = [], actualData = [];
+  for (let w = 0; w <= 40; w += 2) {
+    labels.push('S' + w);
+    let wMin, wMax;
+    if (w <= 13) {
+      wMin = (r[0] / 40) * w * 0.15;
+      wMax = (r[1] / 40) * w * 0.35;
+    } else {
+      const ratio = (w - 13) / 27;
+      wMin = 0.5 + ratio * (r[0] - 0.5);
+      wMax = 1.5 + ratio * (r[1] - 1.5);
+    }
+    minData.push(+Math.max(0, wMin).toFixed(1));
+    maxData.push(+Math.max(0, wMax).toFixed(1));
+    actualData.push((settimaneAtt && pesoAtt && pesoPre && w <= settimaneAtt) ? +(pesoAtt - pesoPre).toFixed(1) : null);
   }
+
+  const canvas = document.getElementById('weight-chart');
+  if (!canvas) return;
+  _weightChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Max IOM', data: maxData, borderColor: '#FCA5A5', borderWidth: 1.5, borderDash: [4,3], backgroundColor: 'rgba(252,165,165,.05)', pointRadius: 0 },
+        { label: 'Min IOM', data: minData, borderColor: '#86EFAC', borderWidth: 1.5, borderDash: [4,3], backgroundColor: 'rgba(134,239,172,.1)', fill: '+1', pointRadius: 0 },
+        { label: 'Guadagno attuale', data: actualData, borderColor: '#BE185D', borderWidth: 2.5, backgroundColor: '#BE185D',
+          pointRadius: (ctx) => {
+            const v = actualData.filter(x => x !== null);
+            return ctx.dataIndex === actualData.lastIndexOf(v[v.length-1]) ? 6 : 0;
+          }, spanGaps: false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 16 } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, maxTicksLimit: 10 } },
+        y: { grid: { color: '#F1F5F9' }, title: { display: true, text: 'kg', font: { size: 11 } }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+function aggiornaGDM() {
+  const ids = ['gdm-bmi','gdm-eta','gdm-prec','gdm-fam','gdm-macrosomia','gdm-pcos','gdm-ipertensione','gdm-glicosuria'];
+  const count = ids.filter(id => { const el = document.getElementById(id); return el && el.checked; }).length;
+  const el = document.getElementById('gdm-result');
+  if (!el) return;
+  if (count === 0) el.innerHTML = '<span class="result-pill pill-ok">✅ Nessun fattore selezionato — Rischio standard. OGTT 75g a 24–28 sett.</span>';
+  else if (count === 1) el.innerHTML = '<span class="result-pill pill-warn">⚠️ ' + count + ' fattore di rischio — Screening OGTT 75g consigliato a 24–28 settimane</span>';
+  else el.innerHTML = '<span class="result-pill pill-danger">🔴 ' + count + ' fattori di rischio — Screening urgente; valutare OGTT precoce nel 1° trimestre</span>';
 }
 
 async function salvaNota() {
   if (!currentUser) { toast('Sessione scaduta', 'err'); return; }
-  const cartellaTarget = _cartellaId || null;
-  if (!cartellaTarget) { toast('Cartella non specificata (aggiungi ?cartellaId=... all\'URL)', 'warn'); return; }
-
-  const eta = document.getElementById('g-eta').value;
+  if (!_cartellaId) { toast('Cartella non specificata — aggiungere ?cartellaId=... all\'URL', 'warn'); return; }
   const pesoPre = document.getElementById('g-peso-pre').value;
   const altezza = document.getElementById('g-altezza').value;
   const pesoAtt = document.getElementById('g-peso-att').value;
   const settimane = document.getElementById('g-settimane').value;
   const tipo = document.getElementById('g-tipo').value;
-  const bmi = pesoPre && altezza ? (parseFloat(pesoPre) / Math.pow(parseFloat(altezza)/100,2)).toFixed(1) : null;
-
-  const sommario = 'Gravidanza ' + tipo + (settimane ? ' · Settimana ' + settimane : '') + (bmi ? ' · BMI pre-gravidanza: ' + bmi : '') + (pesoAtt && pesoPre ? ' · Guadagno: +' + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : '');
-
+  const bmi = pesoPre && altezza ? (parseFloat(pesoPre) / Math.pow(parseFloat(altezza)/100, 2)).toFixed(1) : null;
+  const sommario = 'Gravidanza ' + tipo + (settimane ? ' · Sett. ' + settimane : '') +
+    (bmi ? ' · BMI pre: ' + bmi : '') +
+    (pesoAtt && pesoPre ? ' · Guadagno: +' + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : '');
   showLoading(true);
   const { error } = await sb.from('note_specialistiche').insert({
-    cartella_id: cartellaTarget,
-    user_id: currentUser.id,
-    tipo: 'gravidanza',
-    nota: sommario,
-    dati: { eta, pesoPre, altezza, pesoAtt, settimane, tipo, bmi },
+    cartella_id: _cartellaId, user_id: currentUser.id,
+    tipo: 'gravidanza', nota: sommario,
+    dati: { pesoPre, altezza, pesoAtt, settimane, tipo, bmi },
   });
   showLoading(false);
-  if (error) { toast('Errore salvataggio: ' + error.message, 'err'); return; }
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
   toast('💾 Nota specialistica salvata!', 'ok');
 }
 </script>

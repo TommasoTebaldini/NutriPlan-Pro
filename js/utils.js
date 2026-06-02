@@ -673,10 +673,17 @@ function initCartellaWidget(cid, opts) {
       ' oninput="_cwFilter(\'' + cid + '\')"' +
       ' onfocus="_cwFocus(\'' + cid + '\')"' +
       ' onblur="setTimeout(()=>_cwBlur(\'' + cid + '\'),200)">' +
-      '<div id="' + cid + '-dd" onmousedown="event.preventDefault()" style="display:none;position:fixed;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B"></div>' +
     '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
     '<span id="' + cid + '-lbl" style="display:none"></span>';
+  // Append dd to body so it escapes any CSS animation stacking context on ancestor elements
+  const existingDd = document.getElementById(cid + '-dd');
+  if (existingDd) existingDd.remove();
+  const dd = document.createElement('div');
+  dd.id = cid + '-dd';
+  dd.setAttribute('onmousedown', 'event.preventDefault()');
+  dd.style.cssText = 'display:none;position:fixed;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B';
+  document.body.appendChild(dd);
 }
 
 function _cwFilter(cid) {

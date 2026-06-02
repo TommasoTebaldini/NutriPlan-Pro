@@ -1104,3 +1104,27 @@ END $$;
 -- GDPR: colonna consenso sulle cartelle
 ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso BOOLEAN DEFAULT FALSE;
 ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso_at TIMESTAMPTZ;
+
+-- ── Benessere paziente: colonne aggiunte dall'app per pazienti (feature stress + idratazione) ──
+-- Eseguire dopo aver già creato daily_wellness con le colonne base.
+ALTER TABLE daily_wellness ADD COLUMN IF NOT EXISTS stress_level    INTEGER CHECK (stress_level    BETWEEN 1 AND 5);
+ALTER TABLE daily_wellness ADD COLUMN IF NOT EXISTS hydration_level INTEGER CHECK (hydration_level BETWEEN 1 AND 5);
+
+-- ── Ciclo mestruale (app paziente) ──
+CREATE TABLE IF NOT EXISTS menstrual_cycle (
+  id           UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id      UUID        REFERENCES auth.users(id) ON DELETE CASCADE,
+  start_date   DATE        NOT NULL,
+  end_date     DATE,
+  cycle_length INTEGER,
+  notes        TEXT,
+  symptoms     TEXT[],
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+ALTER TABLE menstrual_cycle ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='menstrual_cycle_own' AND tablename='menstrual_cycle') THEN
+    CREATE POLICY "menstrual_cycle_own" ON menstrual_cycle
+      FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;

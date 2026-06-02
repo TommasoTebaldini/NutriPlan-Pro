@@ -554,16 +554,27 @@ async function loadAndamento() {
   const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
   const wtQ    = selectedPatientCartellaId ? safeQ(sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
 
-  // Wellness: prova prima user_id (app paziente), poi cartella_id (fallback)
+  // Wellness: query con fallback su colonne (stress_level/hydration_level potrebbero non esistere)
+  // e su filtro (user_id → cartella_id)
+  const WELL_FULL = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes';
+  const WELL_BASE = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,symptoms,notes';
   let wellQ;
   if (selectedPatientId) {
-    let wRes = await safeQ(sb.from('daily_wellness')
-      .select('date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes')
-      .eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300));
+    let wRes = [], wErr = null;
+    // Try full columns by user_id
+    const r1 = await sb.from('daily_wellness').select(WELL_FULL).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+    if (r1.error) {
+      wErr = r1.error;
+      // Column missing: retry with base columns
+      const r2 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+      wRes = r2.data || [];
+    } else {
+      wRes = r1.data || [];
+    }
+    // Still nothing: try cartella_id fallback
     if (!wRes.length && selectedPatientCartellaId) {
-      wRes = await safeQ(sb.from('daily_wellness')
-        .select('date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes')
-        .eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300));
+      const r3 = await sb.from('daily_wellness').select(WELL_BASE).eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300);
+      wRes = r3.data || [];
     }
     wellQ = Promise.resolve(wRes);
   } else {

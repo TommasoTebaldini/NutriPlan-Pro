@@ -552,12 +552,29 @@ async function loadAndamento() {
   const totQ   = selectedPatientId ? safeQ(sb.from('daily_logs').select('date,kcal,proteins,carbs,fats').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
   const waterQ = selectedPatientId ? safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
   const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
-  const wellQ  = selectedPatientCartellaId ? safeQ(sb.from('daily_wellness').select('logged_at,mood,sleep_hours,symptoms,notes').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
   const wtQ    = selectedPatientCartellaId ? safeQ(sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
+
+  // Wellness: prova prima user_id (app paziente), poi cartella_id (fallback)
+  let wellQ;
+  if (selectedPatientId) {
+    let wRes = await safeQ(sb.from('daily_wellness')
+      .select('date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes')
+      .eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300));
+    if (!wRes.length && selectedPatientCartellaId) {
+      wRes = await safeQ(sb.from('daily_wellness')
+        .select('date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes')
+        .eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300));
+    }
+    wellQ = Promise.resolve(wRes);
+  } else {
+    wellQ = Promise.resolve([]);
+  }
+  // Ciclo mestruale (se tabella esiste)
+  const cycleQ = selectedPatientId ? safeQ(sb.from('menstrual_cycle').select('start_date,end_date,cycle_length,symptoms,notes').eq('user_id', selectedPatientId).order('start_date',{ascending:false}).limit(12)) : Promise.resolve([]);
 
   panel.innerHTML = '<div class="and-empty"><div class="spinner"></div><div>Caricamento diario...</div></div>';
 
-  const [foodLogs, dailyTotals, waterLogs, activityLogs, wellness, weightLogs] = await Promise.all([foodQ, totQ, waterQ, actQ, wellQ, wtQ]);
+  const [foodLogs, dailyTotals, waterLogs, activityLogs, wellness, weightLogs, cycleLogs] = await Promise.all([foodQ, totQ, waterQ, actQ, wellQ, wtQ, cycleQ]);
 
   _diaryFoodByDate = {}; _diaryTotalsByDate = {}; _diaryWaterByDate = {};
   _diaryWellByDate = {}; _diaryActByDate = {}; _diaryWeightByDate = {};
@@ -565,9 +582,25 @@ async function loadAndamento() {
   foodLogs.forEach(f => { if (!_diaryFoodByDate[f.date]) _diaryFoodByDate[f.date] = []; _diaryFoodByDate[f.date].push(f); });
   dailyTotals.forEach(d => { _diaryTotalsByDate[d.date] = d; });
   waterLogs.forEach(w => { _diaryWaterByDate[w.date] = (_diaryWaterByDate[w.date] || 0) + (w.amount_ml || 0); });
-  wellness.forEach(w => { const d = (w.logged_at || '').split('T')[0]; if (d) _diaryWellByDate[d] = w; });
+  wellness.forEach(w => {
+    const d = (w.date || (w.logged_at||'').split('T')[0]);
+    if (d) _diaryWellByDate[d] = w;
+  });
   activityLogs.forEach(a => { if (!_diaryActByDate[a.date]) _diaryActByDate[a.date] = []; _diaryActByDate[a.date].push(a); });
   weightLogs.forEach(w => { const d = (w.logged_at || '').split('T')[0]; if (d && !_diaryWeightByDate[d]) _diaryWeightByDate[d] = w.weight; });
+
+  // Ciclo mestruale: costruisce set di date durante il ciclo
+  window._diaryCycleDates = new Set();
+  window._diaryCycles = cycleLogs;
+  (cycleLogs || []).forEach(c => {
+    const start = new Date(c.start_date + 'T12:00:00');
+    const end = c.end_date ? new Date(c.end_date + 'T12:00:00') : new Date(start.getTime() + 5*86400000);
+    let cur = new Date(start);
+    while (cur <= end && cur <= new Date()) {
+      window._diaryCycleDates.add(cur.toISOString().split('T')[0]);
+      cur.setDate(cur.getDate() + 1);
+    }
+  });
 
   _diaryDates = [...new Set([
     ...Object.keys(_diaryFoodByDate), ...Object.keys(_diaryTotalsByDate),
@@ -588,10 +621,38 @@ async function loadAndamento() {
   const avgMood = moods.length ? (moods.reduce((a, b) => a + b, 0) / moods.length).toFixed(1) : null;
   const sleeps = allWell.filter(w => w.sleep_hours != null).map(w => parseFloat(w.sleep_hours));
   const avgSleep = sleeps.length ? (sleeps.reduce((a, b) => a + b, 0) / sleeps.length).toFixed(1) : null;
+  const stresses = allWell.filter(w => w.stress_level).map(w => w.stress_level);
+  const avgStress = stresses.length ? (stresses.reduce((a,b)=>a+b,0)/stresses.length).toFixed(1) : null;
+  const energies = allWell.filter(w => w.energy).map(w => w.energy);
+  const avgEnergy = energies.length ? (energies.reduce((a,b)=>a+b,0)/energies.length).toFixed(1) : null;
   const kcals = Object.values(_diaryTotalsByDate).filter(d => d.kcal).map(d => d.kcal);
   const avgKcal = kcals.length ? Math.round(kcals.reduce((a, b) => a + b, 0) / kcals.length) : null;
   const totalActMin = activityLogs.reduce((s, a) => s + (a.duration_minutes || 0), 0);
   const moodMap = { 1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊' };
+  const stressMap = { 1: '😌', 2: '🙂', 3: '😐', 4: '😤', 5: '😰' };
+
+  // Correlazione umore/dieta (Pearson)
+  const corrPairs = _diaryDates.map(d => ({
+    mood: _diaryWellByDate[d]?.mood,
+    kcal: _diaryTotalsByDate[d]?.kcal,
+    sleep: _diaryWellByDate[d]?.sleep_hours,
+    stress: _diaryWellByDate[d]?.stress_level,
+  })).filter(p => p.mood && p.kcal);
+  const pearson = (xs, ys) => {
+    const n = xs.length; if (n < 4) return null;
+    const mx = xs.reduce((a,b)=>a+b,0)/n, my = ys.reduce((a,b)=>a+b,0)/n;
+    const num = xs.reduce((s,x,i)=>s+(x-mx)*(ys[i]-my),0);
+    const den = Math.sqrt(xs.reduce((s,x)=>s+(x-mx)**2,0)*ys.reduce((s,y)=>s+(y-my)**2,0));
+    return den ? +(num/den).toFixed(2) : null;
+  };
+  const corrMoodKcal = corrPairs.length >= 4 ? pearson(corrPairs.map(p=>p.mood), corrPairs.map(p=>p.kcal)) : null;
+  const sleepPairs = _diaryDates.map(d=>({mood:_diaryWellByDate[d]?.mood,sleep:parseFloat(_diaryWellByDate[d]?.sleep_hours)||null})).filter(p=>p.mood&&p.sleep);
+  const corrMoodSleep = sleepPairs.length >= 4 ? pearson(sleepPairs.map(p=>p.mood),sleepPairs.map(p=>p.sleep)) : null;
+  const stressPairs = _diaryDates.map(d=>({mood:_diaryWellByDate[d]?.mood,stress:_diaryWellByDate[d]?.stress_level})).filter(p=>p.mood&&p.stress);
+  const corrMoodStress = stressPairs.length >= 4 ? pearson(stressPairs.map(p=>p.mood),stressPairs.map(p=>p.stress)) : null;
+  const corrLabel = r => r === null ? null : Math.abs(r) < 0.2 ? 'assente' : Math.abs(r) < 0.4 ? 'debole' : Math.abs(r) < 0.6 ? 'moderata' : Math.abs(r) < 0.8 ? 'forte' : 'molto forte';
+  const corrColor = r => r === null ? '#94A3B8' : r > 0.4 ? '#16A34A' : r < -0.4 ? '#DC2626' : '#94A3B8';
+  const nCycles = (window._diaryCycles||[]).length;
 
   const filterSel = `<div class="and-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
     <span style="font-size:12px;color:var(--slate-l);font-weight:600">Periodo:</span>
@@ -610,11 +671,36 @@ async function loadAndamento() {
 
   const statsHtml = `<div class="and-stats-row">
     ${avgKcal ? `<div class="and-stat"><div class="and-stat-val">🔥 ${avgKcal}</div><div class="and-stat-lbl">kcal/giorno</div></div>` : ''}
-    ${avgMood ? `<div class="and-stat"><div class="and-stat-val">${moodMap[Math.round(avgMood)]} ${avgMood}</div><div class="and-stat-lbl">Umore medio</div></div>` : ''}
+    ${avgMood ? `<div class="and-stat"><div class="and-stat-val">${moodMap[Math.round(avgMood)]} ${avgMood}/5</div><div class="and-stat-lbl">Umore medio</div></div>` : ''}
+    ${avgEnergy ? `<div class="and-stat"><div class="and-stat-val">⚡ ${avgEnergy}/5</div><div class="and-stat-lbl">Energia media</div></div>` : ''}
+    ${avgStress ? `<div class="and-stat"><div class="and-stat-val">${stressMap[Math.round(avgStress)]} ${avgStress}/5</div><div class="and-stat-lbl">Stress medio</div></div>` : ''}
     ${avgSleep ? `<div class="and-stat"><div class="and-stat-val">🌙 ${avgSleep}h</div><div class="and-stat-lbl">Sonno medio</div></div>` : ''}
     ${totalActMin ? `<div class="and-stat"><div class="and-stat-val">🏃 ${totalActMin}</div><div class="and-stat-lbl">min attività</div></div>` : ''}
+    ${nCycles > 0 ? `<div class="and-stat"><div class="and-stat-val">🌸 ${nCycles}</div><div class="and-stat-lbl">cicli nel periodo</div></div>` : ''}
     <div class="and-stat"><div class="and-stat-val">📅 ${_diaryDates.length}</div><div class="and-stat-lbl">giorni</div></div>
-  </div>`;
+  </div>
+  ${(corrMoodKcal !== null || corrMoodSleep !== null || corrMoodStress !== null) ? `
+  <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px">
+    <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📊 Correlazione Umore / Stile di Vita (Pearson r)</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${corrMoodKcal !== null ? `<div style="flex:1;min-width:140px;padding:10px;background:#F8FAFC;border-radius:9px;border-left:3px solid ${corrColor(corrMoodKcal)}">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700;text-transform:uppercase;margin-bottom:4px">Umore ↔ Calorie</div>
+        <div style="font-size:20px;font-weight:800;color:${corrColor(corrMoodKcal)}">${corrMoodKcal > 0 ? '+' : ''}${corrMoodKcal}</div>
+        <div style="font-size:11px;color:var(--slate-l)">${corrLabel(corrMoodKcal)}${corrMoodKcal > 0.3 ? ' — umore migliore con più kcal' : corrMoodKcal < -0.3 ? ' — umore peggiore con più kcal' : ''}</div>
+      </div>` : ''}
+      ${corrMoodSleep !== null ? `<div style="flex:1;min-width:140px;padding:10px;background:#F8FAFC;border-radius:9px;border-left:3px solid ${corrColor(corrMoodSleep)}">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700;text-transform:uppercase;margin-bottom:4px">Umore ↔ Sonno</div>
+        <div style="font-size:20px;font-weight:800;color:${corrColor(corrMoodSleep)}">${corrMoodSleep > 0 ? '+' : ''}${corrMoodSleep}</div>
+        <div style="font-size:11px;color:var(--slate-l)">${corrLabel(corrMoodSleep)}${corrMoodSleep > 0.3 ? ' — umore migliore con più sonno' : corrMoodSleep < -0.3 ? ' — umore peggiore con più sonno' : ''}</div>
+      </div>` : ''}
+      ${corrMoodStress !== null ? `<div style="flex:1;min-width:140px;padding:10px;background:#F8FAFC;border-radius:9px;border-left:3px solid ${corrColor(-corrMoodStress)}">
+        <div style="font-size:10.5px;color:var(--slate-l);font-weight:700;text-transform:uppercase;margin-bottom:4px">Umore ↔ Stress</div>
+        <div style="font-size:20px;font-weight:800;color:${corrColor(-corrMoodStress)}">${corrMoodStress > 0 ? '+' : ''}${corrMoodStress}</div>
+        <div style="font-size:11px;color:var(--slate-l)">${corrLabel(corrMoodStress)}${corrMoodStress < -0.3 ? ' — stress alto = umore basso' : ''}</div>
+      </div>` : ''}
+    </div>
+    <div style="font-size:10.5px;color:var(--slate-l);margin-top:8px;font-style:italic">r ≈ 0: nessuna correlazione · |r| > 0.4: correlazione moderata · |r| > 0.6: forte · basato su ${corrPairs.length} giorni con dati completi</div>
+  </div>` : ''}`;
 
   panel.innerHTML = filterSel + statsHtml + '<div id="diary-nav-wrap"></div><div id="diary-day-wrap"></div>';
   // Animate stat cards staggered
@@ -668,13 +754,20 @@ function renderDiaryDay() {
   let html = `<div class="diary-day-card" style="border-top:4px solid ${accentColor}">`;
 
   // Header badges
+  const isCycleDay = window._diaryCycleDates?.has(date);
+  const stressMap2 = { 1: '😌', 2: '🙂', 3: '😐', 4: '😤', 5: '😰' };
+  const energyMap = { 1: '🪫', 2: '😴', 3: '⚡', 4: '🔋', 5: '🚀' };
+
   const badges = [];
   if (totalKcal) badges.push(`<span class="diary-badge" style="background:#FEF3C7;color:#B45309">🔥 ${Math.round(totalKcal)} kcal</span>`);
-  if (well?.mood) badges.push(`<span class="diary-badge" style="background:#F0FDF4;color:#15803D">${moodMap[well.mood]} ${moodTextMap[well.mood]}</span>`);
+  if (well?.mood) badges.push(`<span class="diary-badge" style="background:#F0FDF4;color:#15803D">${moodMap[well.mood]} Umore ${well.mood}/5</span>`);
+  if (well?.energy) badges.push(`<span class="diary-badge" style="background:#FEF9C3;color:#854D0E">${energyMap[well.energy]||'⚡'} Energia ${well.energy}/5</span>`);
+  if (well?.stress_level) badges.push(`<span class="diary-badge" style="background:#FEE2E2;color:#991B1B">${stressMap2[well.stress_level]||'😐'} Stress ${well.stress_level}/5</span>`);
   if (well?.sleep_hours) badges.push(`<span class="diary-badge" style="background:#EDE9FE;color:#5B21B6">😴 ${well.sleep_hours}h sonno</span>`);
   if (water) badges.push(`<span class="diary-badge" style="background:#EFF6FF;color:#1D4ED8">💧 ${(water/1000).toFixed(2)}L</span>`);
   if (acts.length) badges.push(`<span class="diary-badge" style="background:#ECFDF5;color:#065F46">🏃 ${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)} min</span>`);
   if (weight) badges.push(`<span class="diary-badge" style="background:#FFF7ED;color:#9A3412">⚖️ ${weight} kg</span>`);
+  if (isCycleDay) badges.push(`<span class="diary-badge" style="background:#FDF2F8;color:#BE185D">🌸 Ciclo</span>`);
 
   if (badges.length) {
     html += `<div class="diary-section" style="background:${hdrBg}"><div class="diary-badges">${badges.join('')}</div></div>`;
@@ -736,17 +829,53 @@ function renderDiaryDay() {
     </div>`;
   }
 
-  // Wellness
-  if (well) {
+  // Wellness — sezione completa
+  if (well || isCycleDay) {
+    const mkBar = (val, max, col) => {
+      if (!val) return '';
+      const pct = Math.round((val/max)*100);
+      return `<div style="height:5px;background:#E2E8F0;border-radius:3px;margin-top:4px"><div style="height:5px;width:${pct}%;background:${col};border-radius:3px;transition:width .3s"></div></div>`;
+    };
     html += `<div class="diary-section" style="background:${hdrBg}">
-      <div class="diary-section-title">🧠 Benessere</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
-        ${well.mood?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)"><div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Umore</div><div style="font-size:20px">${moodMap[well.mood]}</div><div style="font-size:12px;font-weight:700;color:var(--slate);margin-top:2px">${moodTextMap[well.mood]||''}</div></div>`:''}
-        ${well.energy?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)"><div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Energia</div><div style="font-size:20px">⚡</div><div style="font-size:12px;font-weight:700;color:var(--slate);margin-top:2px">${well.energy}/5</div></div>`:''}
-        ${well.sleep_hours?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)"><div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Sonno</div><div style="font-size:20px">😴</div><div style="font-size:12px;font-weight:700;color:var(--slate);margin-top:2px">${well.sleep_hours}h ${well.sleep_quality?'· qualità '+well.sleep_quality+'/5':''}</div></div>`:''}
-        ${well.symptoms&&(Array.isArray(well.symptoms)?well.symptoms.length:well.symptoms)?`<div style="grid-column:1/-1;font-size:12px;padding:6px 10px;background:white;border-radius:8px;border:1px solid #FED7AA"><span style="font-weight:700;color:#B45309">⚠️ Sintomi: </span>${esc(Array.isArray(well.symptoms)?well.symptoms.join(', '):String(well.symptoms))}</div>`:''}
-        ${well.notes?`<div style="grid-column:1/-1;font-size:12px;padding:6px 10px;background:white;border-radius:8px;border:1px solid var(--border);color:var(--slate-l)">📝 ${esc(well.notes)}</div>`:''}
+      <div class="diary-section-title">🧠 Benessere${isCycleDay?' <span style="background:#FDF2F8;color:#BE185D;font-size:10.5px;padding:2px 7px;border-radius:10px;font-weight:700;margin-left:4px">🌸 Ciclo mestruale</span>':''}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px">
+        ${well?.mood?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Umore</div>
+          <div style="font-size:22px">${moodMap[well.mood]}</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${moodTextMap[well.mood]||''} (${well.mood}/5)</div>
+          ${mkBar(well.mood,5,'#16A34A')}
+        </div>`:''}
+        ${well?.energy?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Energia</div>
+          <div style="font-size:22px">${energyMap[well.energy]||'⚡'}</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${well.energy}/5</div>
+          ${mkBar(well.energy,5,'#EAB308')}
+        </div>`:''}
+        ${well?.stress_level?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Stress</div>
+          <div style="font-size:22px">${stressMap2[well.stress_level]||'😐'}</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${well.stress_level}/5</div>
+          ${mkBar(well.stress_level,5,'#EF4444')}
+        </div>`:''}
+        ${well?.sleep_hours?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Sonno</div>
+          <div style="font-size:22px">😴</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${well.sleep_hours}h</div>
+          ${well.sleep_quality?`<div style="font-size:10.5px;color:var(--slate-l)">Qualità: ${well.sleep_quality}/5${well.sleep_restedness?' · Riposo: '+well.sleep_restedness+'/5':''}</div>`:''}
+        </div>`:''}
+        ${well?.hydration_level?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">Idratazione</div>
+          <div style="font-size:22px">💧</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${well.hydration_level}/5</div>
+          ${mkBar(well.hydration_level,5,'#3B82F6')}
+        </div>`:''}
       </div>
+      ${well?.symptoms&&(Array.isArray(well.symptoms)?well.symptoms.length:well.symptoms)?`
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">
+        <span style="font-size:10.5px;font-weight:700;color:#B45309;align-self:center">⚠️ Sintomi:</span>
+        ${(Array.isArray(well.symptoms)?well.symptoms:[String(well.symptoms)]).map(s=>`<span style="background:#FEF3C7;color:#92400E;font-size:10.5px;padding:2px 8px;border-radius:10px;font-weight:600">${esc(s)}</span>`).join('')}
+      </div>`:''}
+      ${well?.notes?`<div style="margin-top:6px;font-size:12px;padding:7px 10px;background:white;border-radius:8px;border:1px solid var(--border);color:var(--slate-m)">📝 ${esc(well.notes)}</div>`:''}
     </div>`;
   }
 
@@ -925,6 +1054,33 @@ function renderDiaryOverview() {
     </td>`;
   }).join('');
 
+  // ── Prospetto Benessere (righe umore/stress/sonno/energia) ──────────────────
+  const moodRowCells = displayDates.map(date => {
+    const w = _diaryWellByDate[date];
+    const moodMap2 = { 1:'😞', 2:'😕', 3:'😐', 4:'🙂', 5:'😊' };
+    const stressMap3 = { 1:'😌', 2:'🙂', 3:'😐', 4:'😤', 5:'😰' };
+    const energyMap2 = { 1:'🪫', 2:'😴', 3:'⚡', 4:'🔋', 5:'🚀' };
+    const isCycle = window._diaryCycleDates?.has(date);
+    if (!w && !isCycle) return `<td style="${dayColW}padding:8px;text-align:center;border-bottom:1px solid #F1F5F9;background:#FAFAFA;color:#CBD5E1">—</td>`;
+    const bars = [];
+    if (w?.mood) bars.push(`<div title="Umore ${w.mood}/5">${moodMap2[w.mood]} <span style="font-size:10px;color:var(--slate-l)">${w.mood}/5</span></div>`);
+    if (w?.energy) bars.push(`<div title="Energia ${w.energy}/5">${energyMap2[w.energy]||'⚡'} <span style="font-size:10px;color:var(--slate-l)">${w.energy}/5</span></div>`);
+    if (w?.stress_level) bars.push(`<div title="Stress ${w.stress_level}/5">${stressMap3[w.stress_level]||'😐'} <span style="font-size:10px;color:var(--slate-l)">${w.stress_level}/5</span></div>`);
+    if (w?.sleep_hours) bars.push(`<div title="Sonno">😴 <span style="font-size:10px;color:var(--slate-l)">${w.sleep_hours}h</span></div>`);
+    if (isCycle) bars.push(`<div style="color:#BE185D;font-size:12px">🌸</div>`);
+    return `<td style="${dayColW}padding:8px;text-align:center;vertical-align:top;border-bottom:1px solid #F1F5F9;background:#FAFAFA">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:14px">${bars.join('')}</div>
+      ${w?.symptoms&&(Array.isArray(w.symptoms)?w.symptoms.length:w.symptoms)?`<div style="font-size:9.5px;color:#B45309;margin-top:3px">⚠️ ${Array.isArray(w.symptoms)?w.symptoms.slice(0,2).join(', '):String(w.symptoms).slice(0,20)}</div>`:''}
+    </td>`;
+  }).join('');
+
+  const hasWellnessData = displayDates.some(d => _diaryWellByDate[d] || window._diaryCycleDates?.has(d));
+  const wellnessTableRow = hasWellnessData ? `
+    <tr>
+      <td style="${stickyCol}background:#FDF2F8;border-bottom:1px solid #F1F5F9;border-top:2px solid #BE185D;font-size:11px;font-weight:700;color:#BE185D">🧠 BENESSERE</td>
+      ${moodRowCells}
+    </tr>` : '';
+
   const tableW = 112 + displayDates.length * COL_W;
   dayWrap.innerHTML = `${truncNote}
     <div style="overflow-x:auto;width:100%;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 2px 8px rgba(0,0,0,.06)">
@@ -935,7 +1091,7 @@ function renderDiaryOverview() {
             ${dayHeaders}
           </tr>
         </thead>
-        <tbody>${rowsHtml}</tbody>
+        <tbody>${rowsHtml}${wellnessTableRow}</tbody>
         <tfoot>
           <tr>
             <td style="${stickyCol}background:#F0FDF4;border-top:2px solid #16A34A;font-size:11px;font-weight:700;color:#15803D">RIEPILOGO</td>

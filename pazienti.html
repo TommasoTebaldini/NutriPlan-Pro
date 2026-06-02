@@ -887,7 +887,7 @@ async function renderCartellaDetail(id) {
       ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella(\'' + cart.id + '\',' + (!!cart.archived) + ')" style="' + (cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)') + '" title="' + (cart.archived?'Ripristina cartella':'Archivia cartella') + '">' + (cart.archived?'♻️ Ripristina':'📦 Archivia') + '</button>' : ''}
       ${!isAltro ? (patientLink.length ? '<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')" title="Scollega paziente">🔗✂️ Scollega</button>' : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 Collega paziente</button>') : ''}
     </div>
-    ${!isAltro ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;background:white;border-radius:10px;padding:8px 12px;border:1px solid var(--border);box-shadow:var(--shadow)"><span style="font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px">Strumenti</span><button class="btn btn-ghost btn-sm" onclick="toggleTimeline(\'' + id + '\',this)" id="btn-timeline-tool">🕐 Timeline Clinica</button><button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #1D4ED8;background:#EFF6FF;color:#1D4ED8;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Genera PDF con dati paziente, esami, BIA e piani">📄 Esporta scheda PDF</button><button onclick="apriAiPaziente()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Chiedi all\'AI suggerimenti nutrizionali basati sui dati di questo paziente">🤖 AI Nutrizionale</button></div>' : ''}
+    ${!isAltro ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;background:white;border-radius:10px;padding:8px 12px;border:1px solid var(--border);box-shadow:var(--shadow)"><span style="font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px;flex-shrink:0">Strumenti</span><button onclick="toggleTimeline(\'' + id + '\',this)" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#0C7A6E,#2DD4BF);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">🕐 Timeline Clinica</button><button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Genera PDF con dati paziente, esami, BIA e piani">📄 Esporta scheda PDF</button><button onclick="apriAiPaziente()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="AI contestuale ai dati di questo paziente">🤖 AI Nutrizionale</button></div>' : ''}
     <div id="timeline-panel"></div>
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
     ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>Cartella archiviata</b> — Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.</div>` : ''}
@@ -1976,114 +1976,120 @@ async function esportaPDFCartella() {
   let y = 18;
   const lm = 18, rm = 192, w = rm - lm;
 
-  // Header
+  // Helper: sectionHeader senza emoji (jsPDF/helvetica non supporta Unicode > U+00FF)
+  const sectionHeader = (title) => {
+    if (y > 255) { doc.addPage(); y = 18; }
+    y += 3;
+    doc.setDrawColor(15, 118, 110);
+    doc.setFillColor(240, 253, 250);
+    doc.rect(lm, y - 3, w, 7, 'F');
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
+    doc.text(title, lm + 2, y + 2);
+    y += 8;
+  };
+
+  // Helper: arrotonda numero a N decimali
+  const r1 = (v, n = 1) => {
+    const f = parseFloat(v);
+    return isNaN(f) ? String(v) : f.toFixed(n);
+  };
+
+  // Header banda colorata
   doc.setFillColor(15, 118, 110);
-  doc.rect(0, 0, 210, 28, 'F');
+  doc.rect(0, 0, 210, 30, 'F');
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('DietPlan Pro', lm, 12);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Studio di Nutrizione Clinica', lm, 19);
+  doc.setFontSize(20); doc.setFont('helvetica', 'bold');
+  doc.text('DietPlan Pro', lm, 13);
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+  doc.text('Studio di Nutrizione Clinica', lm, 20);
   doc.setFontSize(8);
-  doc.text('Cartella Paziente — Generato il ' + new Date().toLocaleDateString('it'), lm, 25);
-  y = 36;
+  doc.text('Cartella Paziente - Generato il ' + new Date().toLocaleDateString('it'), lm, 27);
+  y = 40;
 
+  // Nome paziente
   doc.setTextColor(30, 41, 59);
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text((cart.nome || ''), lm, y);
-  y += 7;
+  doc.setFontSize(15); doc.setFont('helvetica', 'bold');
+  doc.text(cart.nome || '', lm, y);
+  y += 8;
 
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(71, 85, 105);
+  // Info anagrafiche
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(71, 85, 105);
   const infoLine = [
     cart.ddn ? 'DDN: ' + new Date(cart.ddn).toLocaleDateString('it') : null,
-    eta !== null ? 'Età: ' + eta + ' anni' : null,
+    eta !== null ? 'Eta: ' + eta + ' anni' : null,
     cart.sesso ? 'Sesso: ' + (cart.sesso === 'M' ? 'Maschio' : 'Femmina') : null,
     cart.codice_fiscale ? 'CF: ' + cart.codice_fiscale : null,
   ].filter(Boolean).join('   |   ');
-  doc.text(infoLine, lm, y);
-  y += 6;
+  doc.text(infoLine, lm, y); y += 6;
 
   if (Array.isArray(cart.tags) && cart.tags.length) {
     doc.setFontSize(8);
-    doc.text('Patologie/Tag: ' + cart.tags.join(', '), lm, y);
-    y += 5;
+    const tagLine = doc.splitTextToSize('Patologie/Tag: ' + cart.tags.join(', '), w);
+    doc.text(tagLine, lm, y); y += tagLine.length * 4 + 2;
   }
   if (cart.note && cart.note !== '__altro__') {
     doc.setFontSize(8);
     const noteLines = doc.splitTextToSize('Note cliniche: ' + cart.note, w);
-    doc.text(noteLines, lm, y);
-    y += noteLines.length * 4 + 2;
+    doc.text(noteLines, lm, y); y += noteLines.length * 4 + 2;
   }
 
   // BIA
   const lastBia = biaList && biaList[0];
   if (lastBia) {
-    y += 2;
-    doc.setDrawColor(15, 118, 110);
-    doc.line(lm, y, rm, y); y += 4;
-    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
-    doc.text('⚡ Ultima BIA', lm, y); y += 5;
-    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(71, 85, 105);
+    sectionHeader('Ultima Misurazione BIA');
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
     const biaParts = [
-      lastBia.peso ? 'Peso: ' + lastBia.peso + ' kg' : null,
-      lastBia.bf_pct ? 'BF%: ' + lastBia.bf_pct + '%' : null,
-      lastBia.ffm_kg ? 'FFM: ' + lastBia.ffm_kg + ' kg' : null,
-    ].filter(Boolean).join('   ');
-    doc.text(biaParts, lm, y); y += 6;
+      lastBia.peso   ? 'Peso: ' + r1(lastBia.peso, 1) + ' kg' : null,
+      lastBia.bf_pct ? 'BF%: ' + r1(lastBia.bf_pct, 1) + '%'  : null,
+      lastBia.ffm_kg ? 'FFM: ' + r1(lastBia.ffm_kg, 1) + ' kg' : null,
+      lastBia.angolo_fase ? 'Angolo di fase: ' + r1(lastBia.angolo_fase, 2) + 'deg' : null,
+      lastBia.data_misura ? 'Data: ' + new Date(lastBia.data_misura).toLocaleDateString('it') : null,
+    ].filter(Boolean).join('    ');
+    doc.text(biaParts, lm + 2, y); y += 6;
   }
 
   // Esami biochimici
   if (esamiBiochimici && esamiBiochimici.length) {
-    y += 2;
-    doc.setDrawColor(15, 118, 110);
-    doc.line(lm, y, rm, y); y += 4;
-    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
-    doc.text('🔬 Esami Biochimici', lm, y); y += 5;
+    sectionHeader('Esami Biochimici (' + esamiBiochimici.length + ')');
     doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
-    esamiBiochimici.slice(0, 15).forEach(e => {
-      if (y > 255) { doc.addPage(); y = 18; }
+    esamiBiochimici.slice(0, 18).forEach(e => {
+      if (y > 262) { doc.addPage(); y = 18; }
       const bdg = getEsameBadge(e.tipo, e.valore);
-      const line = e.tipo + ': ' + e.valore + (e.unita ? ' ' + e.unita : '') + ' [' + bdg.label + ']' + (e.data_esame ? ' (' + new Date(e.data_esame).toLocaleDateString('it') + ')' : '');
-      doc.text('• ' + line, lm + 2, y); y += 4.5;
+      const val = r1(e.valore, 2).replace(/\.?0+$/, ''); // rimuove zeri trailing
+      const line = (e.tipo || '') + ': ' + val + (e.unita ? ' ' + e.unita : '') +
+        '  [' + bdg.label + ']' +
+        (e.data_esame ? '  (' + new Date(e.data_esame).toLocaleDateString('it') + ')' : '');
+      doc.text('-  ' + line, lm + 2, y); y += 5;
     });
+    y += 1;
   }
 
-  // Piani
+  // Piani alimentari
   if (piani && piani.length) {
-    y += 2;
-    if (y > 255) { doc.addPage(); y = 18; }
-    doc.setDrawColor(15, 118, 110);
-    doc.line(lm, y, rm, y); y += 4;
-    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
-    doc.text('📋 Piani Alimentari', lm, y); y += 5;
+    sectionHeader('Piani Alimentari (' + piani.length + ')');
     doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
-    piani.slice(0, 10).forEach(p => {
-      if (y > 255) { doc.addPage(); y = 18; }
+    piani.slice(0, 12).forEach(p => {
+      if (y > 262) { doc.addPage(); y = 18; }
       const dt = p.saved_at || p.data_piano;
-      doc.text('• ' + (p.nome || 'Piano alimentare') + (dt ? ' — ' + new Date(dt).toLocaleDateString('it') : ''), lm + 2, y);
-      y += 4.5;
+      const nomePiano = (p.nome || 'Piano alimentare').replace(/[^\x00-\xFF]/g, '');
+      doc.text('-  ' + nomePiano + (dt ? '  (' + new Date(dt).toLocaleDateString('it') + ')' : ''), lm + 2, y);
+      y += 5;
     });
   }
 
-  // Footer
+  // Footer su ogni pagina
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
-    doc.setDrawColor(203, 213, 225);
-    doc.line(lm, 284, rm, 284);
+    doc.setDrawColor(203, 213, 225); doc.line(lm, 284, rm, 284);
     doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
-    doc.text('DietPlan Pro — Documento riservato. Trattamento dati ai sensi del GDPR (UE) 2016/679.', lm, 289);
-    doc.text('Pagina ' + i + ' di ' + pageCount, rm, 289, { align: 'right' });
+    doc.text('DietPlan Pro - Documento riservato. Trattamento dati ai sensi del GDPR (UE) 2016/679.', lm, 289);
+    doc.text('Pag. ' + i + '/' + pageCount, rm, 289, { align: 'right' });
   }
 
-  const safeName = (cart.nome || 'paziente').replace(/[^a-zA-Z0-9À-ÿ\s_-]/g, '').replace(/\s+/g, '_');
+  const safeName = (cart.nome || 'paziente').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_');
   doc.save('cartella_' + safeName + '.pdf');
-  toast('📄 PDF scaricato!', 'ok');
+  toast('PDF scaricato!', 'ok');
 }
 
 // ══════════════════════════════════════════════

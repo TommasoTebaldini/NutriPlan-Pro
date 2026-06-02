@@ -1127,4 +1127,15 @@ DO $$ BEGIN
     CREATE POLICY "menstrual_cycle_own" ON menstrual_cycle
       FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
   END IF;
+  -- Permette al dietista di leggere i cicli dei pazienti collegati
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='menstrual_cycle_dietitian_read' AND tablename='menstrual_cycle') THEN
+    CREATE POLICY "menstrual_cycle_dietitian_read" ON menstrual_cycle
+      FOR SELECT USING (
+        EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = menstrual_cycle.user_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
 END $$;

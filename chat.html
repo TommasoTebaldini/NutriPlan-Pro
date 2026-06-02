@@ -1065,32 +1065,76 @@ function renderDiaryOverview() {
     </td>`;
   }).join('');
 
-  // ── Prospetto Benessere (righe umore/stress/sonno/energia) ──────────────────
-  const moodRowCells = displayDates.map(date => {
-    const w = _diaryWellByDate[date];
-    const moodMap2 = { 1:'😞', 2:'😕', 3:'😐', 4:'🙂', 5:'😊' };
-    const stressMap3 = { 1:'😌', 2:'🙂', 3:'😐', 4:'😤', 5:'😰' };
-    const energyMap2 = { 1:'🪫', 2:'😴', 3:'⚡', 4:'🔋', 5:'🚀' };
-    const isCycle = window._diaryCycleDates?.has(date);
-    if (!w && !isCycle) return `<td style="${dayColW}padding:8px;text-align:center;border-bottom:1px solid #F1F5F9;background:#FAFAFA;color:#CBD5E1">—</td>`;
-    const bars = [];
-    if (w?.mood) bars.push(`<div title="Umore ${w.mood}/5">${moodMap2[w.mood]} <span style="font-size:10px;color:var(--slate-l)">${w.mood}/5</span></div>`);
-    if (w?.energy) bars.push(`<div title="Energia ${w.energy}/5">${energyMap2[w.energy]||'⚡'} <span style="font-size:10px;color:var(--slate-l)">${w.energy}/5</span></div>`);
-    if (w?.stress_level) bars.push(`<div title="Stress ${w.stress_level}/5">${stressMap3[w.stress_level]||'😐'} <span style="font-size:10px;color:var(--slate-l)">${w.stress_level}/5</span></div>`);
-    if (w?.sleep_hours) bars.push(`<div title="Sonno">😴 <span style="font-size:10px;color:var(--slate-l)">${w.sleep_hours}h</span></div>`);
-    if (isCycle) bars.push(`<div style="color:#BE185D;font-size:12px">🌸</div>`);
-    return `<td style="${dayColW}padding:8px;text-align:center;vertical-align:top;border-bottom:1px solid #F1F5F9;background:#FAFAFA">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:14px">${bars.join('')}</div>
-      ${w?.symptoms&&(Array.isArray(w.symptoms)?w.symptoms.length:w.symptoms)?`<div style="font-size:9.5px;color:#B45309;margin-top:3px">⚠️ ${Array.isArray(w.symptoms)?w.symptoms.slice(0,2).join(', '):String(w.symptoms).slice(0,20)}</div>`:''}
-    </td>`;
-  }).join('');
+  // ── Prospetto Benessere separato dalla tabella alimentare ────────────────────
+  const moodMap2 = { 1:'😞', 2:'😕', 3:'😐', 4:'🙂', 5:'😊' };
+  const stressMap3 = { 1:'😌', 2:'🙂', 3:'😐', 4:'😤', 5:'😰' };
+  const energyMap2 = { 1:'🪫', 2:'😴', 3:'⚡', 4:'🔋', 5:'🚀' };
 
   const hasWellnessData = displayDates.some(d => _diaryWellByDate[d] || window._diaryCycleDates?.has(d));
-  const wellnessTableRow = hasWellnessData ? `
-    <tr>
-      <td style="${stickyCol}background:#FDF2F8;border-bottom:1px solid #F1F5F9;border-top:2px solid #BE185D;font-size:11px;font-weight:700;color:#BE185D">🧠 BENESSERE</td>
-      ${moodRowCells}
-    </tr>` : '';
+
+  // Benessere: tabella separata sotto il diario alimentare
+  let wellnessProspettoHtml = '';
+  if (hasWellnessData) {
+    const wCols = displayDates.map(date => {
+      const d2 = new Date(date+'T00:00:00');
+      const accent = date === new Date().toISOString().split('T')[0] ? '#BE185D' : '#64748B';
+      return `<th style="${dayColW}padding:6px 8px;text-align:center;background:#FDF2F8;border-bottom:2px solid #BE185D;font-size:11px;color:${accent};font-weight:700">
+        ${d2.toLocaleDateString('it',{day:'2-digit',month:'short'})}
+      </th>`;
+    }).join('');
+
+    // Riga per ogni metrica benessere
+    const mkWellRow = (icon, label, valFn) => {
+      const cells = displayDates.map(date => {
+        const w = _diaryWellByDate[date];
+        const val = valFn(w, date);
+        return `<td style="${dayColW}padding:6px 8px;text-align:center;font-size:13px;border-bottom:1px solid #F9F0F6">${val || '<span style="color:#E2BDD9">—</span>'}</td>`;
+      }).join('');
+      return `<tr>
+        <td style="${stickyCol}background:#FDF2F8;border-bottom:1px solid #F9F0F6;font-size:11px;font-weight:700;color:#BE185D;white-space:nowrap">${icon} ${label}</td>
+        ${cells}
+      </tr>`;
+    };
+
+    const hasUmore   = displayDates.some(d => _diaryWellByDate[d]?.mood);
+    const hasEnergia = displayDates.some(d => _diaryWellByDate[d]?.energy);
+    const hasStress  = displayDates.some(d => _diaryWellByDate[d]?.stress_level);
+    const hasSonno   = displayDates.some(d => _diaryWellByDate[d]?.sleep_hours);
+    const hasCiclo   = displayDates.some(d => window._diaryCycleDates?.has(d));
+
+    let wRows = '';
+    if (hasUmore)   wRows += mkWellRow('😊','Umore',   (w) => w?.mood   ? `${moodMap2[w.mood]}<span style="font-size:9px;color:#BE185D;margin-left:2px">${w.mood}/5</span>` : null);
+    if (hasEnergia) wRows += mkWellRow('⚡','Energia', (w) => w?.energy  ? `${energyMap2[w.energy]||'⚡'}<span style="font-size:9px;color:#BE185D;margin-left:2px">${w.energy}/5</span>` : null);
+    if (hasStress)  wRows += mkWellRow('😤','Stress',  (w) => w?.stress_level ? `${stressMap3[w.stress_level]}<span style="font-size:9px;color:#BE185D;margin-left:2px">${w.stress_level}/5</span>` : null);
+    if (hasSonno)   wRows += mkWellRow('😴','Sonno',   (w) => w?.sleep_hours  ? `<span style="font-size:12px;font-weight:700;color:#5B21B6">${w.sleep_hours}h</span>${w.sleep_quality?`<span style="font-size:9px;color:#7C3AED;margin-left:2px">q${w.sleep_quality}</span>`:''}` : null);
+    if (hasCiclo)   wRows += mkWellRow('🌸','Ciclo', (w, date) => window._diaryCycleDates?.has(date) ? '<span style="font-size:16px">🌸</span>' : null);
+    // Sintomi
+    const hasSintomi = displayDates.some(d => { const w=_diaryWellByDate[d]; return w?.symptoms && (Array.isArray(w.symptoms)?w.symptoms.length:w.symptoms); });
+    if (hasSintomi) wRows += mkWellRow('⚠️','Sintomi', (w) => {
+      if (!w?.symptoms) return null;
+      const s = Array.isArray(w.symptoms) ? w.symptoms : [String(w.symptoms)];
+      return s.length ? `<span style="font-size:9px;color:#B45309;line-height:1.3;display:block;max-width:${COL_W-10}px;word-break:break-word">${s.slice(0,3).join(', ')}</span>` : null;
+    });
+
+    const tableW2 = 112 + displayDates.length * COL_W;
+    wellnessProspettoHtml = `
+    <div style="margin-top:14px;border-radius:12px;overflow:hidden;border:1.5px solid #FBCFE8;box-shadow:0 2px 8px rgba(190,24,93,.07)">
+      <div style="background:linear-gradient(135deg,#9D174D,#BE185D);padding:10px 14px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:16px">🧠</span>
+        <span style="font-size:13px;font-weight:700;color:white">Diario Benessere</span>
+        <span style="font-size:11px;color:rgba(255,255,255,.75);margin-left:4px">— ${displayDates.length} giorni</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="border-collapse:collapse;width:100%;min-width:${tableW2}px;background:white">
+          <thead><tr>
+            <th style="${stickyCol}background:#FDF2F8;border-bottom:2px solid #BE185D;font-size:10.5px;font-weight:700;color:#9D174D;z-index:4;white-space:nowrap">PARAMETRO</th>
+            ${wCols}
+          </tr></thead>
+          <tbody>${wRows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }
 
   const tableW = 112 + displayDates.length * COL_W;
   dayWrap.innerHTML = `${truncNote}
@@ -1102,7 +1146,7 @@ function renderDiaryOverview() {
             ${dayHeaders}
           </tr>
         </thead>
-        <tbody>${rowsHtml}${wellnessTableRow}</tbody>
+        <tbody>${rowsHtml}</tbody>
         <tfoot>
           <tr>
             <td style="${stickyCol}background:#F0FDF4;border-top:2px solid #16A34A;font-size:11px;font-weight:700;color:#15803D">RIEPILOGO</td>
@@ -1110,7 +1154,7 @@ function renderDiaryOverview() {
           </tr>
         </tfoot>
       </table>
-    </div>`;
+    </div>${wellnessProspettoHtml}`;
 }
 
 function deselectPatient() {

@@ -221,7 +221,7 @@ async function loadRicette() {
     return;
   }
   try {
-    const { data, error } = await sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,valori_per_porzione,ingredienti').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    const { data, error } = await sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,ingredienti').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     showLoading(false);
     if (error) {
       if (error.code === '42P01') {

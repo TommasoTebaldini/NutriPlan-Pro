@@ -971,6 +971,32 @@ ALTER TABLE daily_wellness       REPLICA IDENTITY FULL;
 ALTER TABLE weight_logs          REPLICA IDENTITY FULL;
 ALTER TABLE agenda_events        REPLICA IDENTITY FULL;
 
+-- SEZIONE 15 — ESAMI BIOCHIMICI
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS esami_biochimici (
+  id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  cartella_id UUID        NOT NULL REFERENCES cartelle(id) ON DELETE CASCADE,
+  tipo        TEXT        NOT NULL,
+  valore      NUMERIC     NOT NULL,
+  unita       TEXT,
+  data_esame  DATE,
+  note        TEXT,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE esami_biochimici ENABLE ROW LEVEL SECURITY;
+ALTER TABLE esami_biochimici REPLICA IDENTITY FULL;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='esami_biochimici_dietitian_all' AND tablename='esami_biochimici') THEN
+    CREATE POLICY "esami_biochimici_dietitian_all" ON esami_biochimici
+      FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
 -- SEZIONE 13 — RLS: DIARIO PAZIENTE (water_logs + activity_logs per dietista)
 -- Permette al dietista di leggere i log idrici e attività del paziente collegato.
 DO $$

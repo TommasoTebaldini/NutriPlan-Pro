@@ -47,6 +47,22 @@ async function ensureChartJs() {
   .card-hdr h4{min-width:100%}
   .card-hdr button{width:100%}
 }
+/* ── ESAMI BIOCHIMICI ── */
+.esame-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0}
+.esame-badge.ok{background:#DCFCE7;color:#16A34A}
+.esame-badge.warn{background:#FEF9C3;color:#CA8A04}
+.esame-badge.danger{background:#FEE2E2;color:#DC2626}
+.esame-badge.na{background:#F1F5F9;color:#64748B}
+/* ── TIMELINE ── */
+.timeline-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-d)}
+.timeline-item:last-child{border-bottom:none}
+.timeline-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-top:1px}
+.timeline-body{flex:1;min-width:0}
+.timeline-type{font-size:11px;font-weight:600;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px}
+.timeline-title{font-size:13px;font-weight:700;color:var(--slate);margin-top:1px}
+.timeline-date{font-size:11.5px;color:var(--slate-l);margin-top:2px}
+#timeline-panel{display:none;margin-bottom:14px}
+#timeline-panel.open{display:block}
 </style>
 </head>
 <body>
@@ -115,14 +131,11 @@ async function ensureChartJs() {
     <option value="M">♂ Maschio</option>
     <option value="F">♀ Femmina</option>
   </select>
-  <div style="position:relative;min-width:190px;flex:1;max-width:240px">
-    <input type="text" id="paz-filter-tag" list="paz-tag-list" class="filter-bar-input"
-      style="width:100%;padding-left:28px" placeholder="🏷️ Cerca patologia..."
-      oninput="applyFiltri()" onchange="applyFiltri()">
-    <span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px">🏷️</span>
-    <datalist id="paz-tag-list"></datalist>
-  </div>
-  <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 Mostra archiviati (<span id="paz-archivio-count">0</span>)</button>
+  <input type="text" id="paz-filter-tag" list="paz-tag-list" class="filter-bar-input"
+    style="min-width:190px;flex:1;max-width:240px" placeholder="🏷️ Cerca patologia..."
+    oninput="applyFiltri()" onchange="applyFiltri()">
+  <datalist id="paz-tag-list"></datalist>
+  <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 Mostra archiviati</button>
   <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" title="Azzera filtri">✕</button>
 </div>
 <div class="page-content" id="main-content">
@@ -256,6 +269,67 @@ async function ensureChartJs() {
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-piano-formato')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AGGIUNGI ESAME BIOCHIMICO -->
+<div class="modal-bg" id="modal-esame">
+  <div class="modal" style="max-width:440px">
+    <div class="mhdr"><h2 id="esame-modal-title">🔬 Aggiungi Esame Biochimico</h2><button class="mclose" onclick="closeM('modal-esame')">✕</button></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="fg full">
+          <label>Tipo di esame *</label>
+          <select id="esame-tipo" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;background:white;color:var(--slate)" onchange="onEsameTipoChange()">
+            <option value="">— Seleziona esame —</option>
+            <option value="HbA1c">HbA1c — Emoglobina Glicata</option>
+            <option value="Glicemia a digiuno">Glicemia a digiuno</option>
+            <option value="Colesterolo totale">Colesterolo totale</option>
+            <option value="Colesterolo LDL">Colesterolo LDL</option>
+            <option value="Colesterolo HDL">Colesterolo HDL</option>
+            <option value="Trigliceridi">Trigliceridi</option>
+            <option value="Creatinina">Creatinina</option>
+            <option value="eGFR">eGFR</option>
+            <option value="Albumina">Albumina</option>
+            <option value="Proteina C-reattiva (PCR)">Proteina C-reattiva (PCR)</option>
+            <option value="Ferritina">Ferritina</option>
+            <option value="Vitamina D (25-OH)">Vitamina D (25-OH)</option>
+            <option value="TSH">TSH</option>
+            <option value="Sodio">Sodio</option>
+            <option value="Potassio">Potassio</option>
+            <option value="Azoto ureico (BUN)">Azoto ureico (BUN)</option>
+            <option value="Acido urico">Acido urico</option>
+            <option value="__custom__">Altro (inserisci manualmente)</option>
+          </select>
+        </div>
+        <div class="fg full" id="esame-custom-wrap" style="display:none">
+          <label>Nome esame personalizzato</label>
+          <input type="text" id="esame-tipo-custom" placeholder="Es: Emoglobina, B12...">
+        </div>
+        <div class="fg">
+          <label>Valore *</label>
+          <input type="number" id="esame-valore" step="any" placeholder="0.0" oninput="aggiornaEsameBadgePreview()">
+        </div>
+        <div class="fg">
+          <label>Unità di misura</label>
+          <input type="text" id="esame-unita" placeholder="mg/dL">
+        </div>
+        <div class="fg full">
+          <label>Data esame</label>
+          <input type="date" id="esame-data">
+        </div>
+        <div class="fg full">
+          <label>Note</label>
+          <textarea id="esame-note" placeholder="Note cliniche opzionali..." rows="2" style="resize:vertical"></textarea>
+        </div>
+      </div>
+      <div id="esame-ref-info" style="display:none;margin-top:12px;padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #16A34A;font-size:12px;color:#166534;line-height:1.5"></div>
+      <div id="esame-badge-preview" style="display:none;margin-top:8px;font-size:12.5px;color:var(--slate-m)">Risultato: <span id="esame-badge-preview-chip"></span></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-esame')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaEsame()">🔬 Salva Esame</button>
     </div>
   </div>
 </div>
@@ -552,13 +626,14 @@ async function renderCartellaDetail(id) {
   }
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
-  const [piani, ncpts, schede, biaList, noteSpec, patientLink] = await Promise.all([
+  const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici] = await Promise.all([
     safeQuery(sb.from('piani').select('id,nome,saved_at,data_piano,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('ncpt').select('id,created_at,updated_at,visible_to_patient,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('schede_valutazione').select('id,nome,saved_at,created_at,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
     safeQuery(sb.from('note_specialistiche').select('id,tipo,nota,created_at,visible_to_patient,dati').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).eq('dietitian_id', currentUser.id).limit(1)),
+    safeQuery(sb.from('esami_biochimici').select('id,data_esame,tipo,valore,unita,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_esame', {ascending:false})),
   ]);
 
   const cart = cartResult.data;
@@ -668,17 +743,37 @@ async function renderCartellaDetail(id) {
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun questionario salvato.</div>';
 
 
+  // Store esami for timeline access
+  window._currentCartellaEsami = esamiBiochimici || [];
+
+  // Build esami biochimici list
+  const esamiHtml = (esamiBiochimici && esamiBiochimici.length) ? esamiBiochimici.map(e => {
+    const bdg = getEsameBadge(e.tipo, e.valore);
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px">' +
+      '<span style="font-size:22px">🔬</span>' +
+      '<div style="flex:1;min-width:0">' +
+      '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(e.tipo) + '</div>' +
+      '<div style="font-size:11.5px;color:var(--slate-l)">' + (e.data_esame ? fmtDate(e.data_esame) : '—') + (e.note ? ' · ' + esc(e.note) : '') + '</div>' +
+      '</div>' +
+      '<span style="font-size:14px;font-weight:700;color:var(--slate);flex-shrink:0">' + e.valore + (e.unita ? ' <span style="font-size:11px;font-weight:400;color:var(--slate-l)">' + esc(e.unita) + '</span>' : '') + '</span>' +
+      '<span class="esame-badge ' + bdg.badge + '">' + bdg.label + '</span>' +
+      '<button class="btn btn-ghost btn-xs" onclick="deleteEsame(\'' + e.id + '\',\'' + id + '\')">🗑️</button>' +
+      '</div>';
+  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun esame biochimico registrato.</div>';
+
   wrap.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
       <button class="btn btn-ghost btn-sm" onclick="cartellaAperta=null;document.getElementById('page-title').textContent='📁 Cartelle Pazienti';loadCartelle()">← Tutte le cartelle</button>
       <h3 style="font-size:16px;font-weight:700">${isAltro ? '📂' : '📁'} ${esc(cart.nome)}</h3>
-      ${!isAltro && eta !== null ? `<span class="paz-tag">${eta} anni</span>` : ''}
-      ${!isAltro && cart.sesso ? `<span class="paz-tag">${cart.sesso==='M'?'♂️ M':'♀️ F'}</span>` : ''}
-      ${!isAltro && cart.codice_fiscale ? `<span class="paz-tag">🪪 ${esc(cart.codice_fiscale)}</span>` : ''}
-      ${!isAltro ? `<button class="btn btn-ghost btn-sm" onclick="editCartella('${cart.id}')">✏️ Modifica</button>` : ''}
-      ${!isAltro ? `<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella('${cart.id}',${!!cart.archived})" style="${cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)'}" title="${cart.archived?'Ripristina cartella':'Archivia cartella'}">${cart.archived?'♻️ Ripristina':'📦 Archivia'}</button>` : ''}
-      ${!isAltro ? (patientLink.length ? `<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente('${patientLink[0].patient_id}','${cart.id}')" title="Scollega paziente">🔗✂️ Scollega</button>` : `<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente('${cart.id}')">🔗 Collega paziente</button>`) : ''}
+      ${!isAltro && eta !== null ? '<span class="paz-tag">' + eta + ' anni</span>' : ''}
+      ${!isAltro && cart.sesso ? '<span class="paz-tag">' + (cart.sesso==='M'?'♂️ M':'♀️ F') + '</span>' : ''}
+      ${!isAltro && cart.codice_fiscale ? '<span class="paz-tag">🪪 ' + esc(cart.codice_fiscale) + '</span>' : ''}
+      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="editCartella(\'' + cart.id + '\')">✏️ Modifica</button>' : ''}
+      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella(\'' + cart.id + '\',' + (!!cart.archived) + ')" style="' + (cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)') + '" title="' + (cart.archived?'Ripristina cartella':'Archivia cartella') + '">' + (cart.archived?'♻️ Ripristina':'📦 Archivia') + '</button>' : ''}
+      ${!isAltro ? (patientLink.length ? '<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')" title="Scollega paziente">🔗✂️ Scollega</button>' : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 Collega paziente</button>') : ''}
+      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleTimeline(\'' + id + '\',this)" style="margin-left:auto">🕐 Timeline</button>' : ''}
     </div>
+    <div id="timeline-panel"></div>
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
     ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>Cartella archiviata</b> — Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.</div>` : ''}
     ${!isAltro && cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
@@ -743,6 +838,9 @@ async function renderCartellaDetail(id) {
       </div>
       <div style="padding:10px 14px">${questionariHtml}</div>
     </div>
+
+    <!-- ESAMI BIOCHIMICI -->
+    ${!isAltro ? '<div class="card" style="margin-bottom:12px"><div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">🔬 Esami Biochimici <span style="background:#FFF7ED;color:#C2410C;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">' + (esamiBiochimici||[]).length + '</span></h4><button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#C2410C,#FB923C);color:white;box-shadow:0 2px 8px rgba(194,65,12,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow=\'0 4px 14px rgba(194,65,12,.45)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(194,65,12,.3)\';this.style.transform=\'\'" onclick="openEsameModal(\'' + cart.id + '\')">🔬 + Esame</button></div><div style="padding:10px 14px">' + esamiHtml + '</div></div>' : ''}
 
     <!-- Consigli Nutrizionali -->
     ${(consigliNutrizionali && consigliNutrizionali.length) ? `
@@ -1425,6 +1523,199 @@ async function renderWeightChart(canvasId, data) {
       }
     }
   });
+}
+
+// ══════════════════════════════════════════════
+// ESAMI BIOCHIMICI
+// ══════════════════════════════════════════════
+let _esameCartellaId = null;
+
+const ESAME_HINTS = {
+  'HbA1c':                     {unit:'%',      hint:'Normale < 5.7% · Pre-diabete 5.7–6.4% · Diabete ≥ 6.5%'},
+  'Glicemia a digiuno':        {unit:'mg/dL',  hint:'Normale < 100 · Alterata 100–125 · Diabete ≥ 126 mg/dL'},
+  'Colesterolo totale':        {unit:'mg/dL',  hint:'Ottimale < 200 · Borderline 200–239 · Alto ≥ 240 mg/dL'},
+  'Colesterolo LDL':           {unit:'mg/dL',  hint:'Ottimale < 100 · Borderline 100–159 · Alto ≥ 160 mg/dL'},
+  'Colesterolo HDL':           {unit:'mg/dL',  hint:'Ottimale ≥ 60 · Borderline 40–59 · Basso < 40 mg/dL'},
+  'Trigliceridi':              {unit:'mg/dL',  hint:'Normale < 150 · Borderline 150–199 · Alto ≥ 200 mg/dL'},
+  'Creatinina':                {unit:'mg/dL',  hint:'Normale 0.6–1.3 · Elevata 1.3–2.0 · Molto elevata > 2.0 mg/dL'},
+  'eGFR':                      {unit:'mL/min', hint:'Normale ≥ 60 · Moderato 30–59 · Severo < 30 mL/min'},
+  'Albumina':                  {unit:'g/dL',   hint:'Normale 3.5–5.0 · Borderline 3.0–3.5 · Bassa < 3.0 g/dL'},
+  'Proteina C-reattiva (PCR)': {unit:'mg/L',   hint:'Normale < 1 · Lieve infiammazione 1–3 · Alta > 3 mg/L'},
+  'Ferritina':                 {unit:'ng/mL',  hint:'Normale 12–300 · Bassa < 12 · Alta > 300 ng/mL'},
+  'Vitamina D (25-OH)':        {unit:'ng/mL',  hint:'Sufficiente ≥ 30 · Insufficiente 20–29 · Carenza < 20 ng/mL'},
+  'TSH':                       {unit:'mIU/L',  hint:'Normale 0.4–4.0 · Borderline 4.0–10.0 · Elevato > 10 mIU/L'},
+  'Sodio':                     {unit:'mEq/L',  hint:'Normale 136–145 mEq/L'},
+  'Potassio':                  {unit:'mEq/L',  hint:'Normale 3.5–5.0 mEq/L'},
+  'Azoto ureico (BUN)':        {unit:'mg/dL',  hint:'Normale ≤ 20 · Borderline 20–40 · Alto > 40 mg/dL'},
+  'Acido urico':               {unit:'mg/dL',  hint:'Normale ≤ 7.0 · Borderline 7.0–9.0 · Iperuricemia > 9.0 mg/dL'},
+};
+
+function getEsameBadge(tipo, valore) {
+  const v = parseFloat(valore);
+  if (isNaN(v)) return {badge:'na', label:'—'};
+  const checks = {
+    'HbA1c':                     () => v<5.7?['ok','Normale']:v<6.5?['warn','Pre-diabete']:['danger','Diabete'],
+    'Glicemia a digiuno':        () => v<100?['ok','Normale']:v<126?['warn','Alterata']:['danger','Diabete'],
+    'Colesterolo totale':        () => v<200?['ok','Ottimale']:v<240?['warn','Borderline']:['danger','Alto'],
+    'Colesterolo LDL':           () => v<100?['ok','Ottimale']:v<160?['warn','Borderline']:['danger','Alto'],
+    'Colesterolo HDL':           () => v>=60?['ok','Ottimale']:v>=40?['warn','Borderline']:['danger','Basso'],
+    'Trigliceridi':              () => v<150?['ok','Normale']:v<200?['warn','Borderline']:['danger','Alto'],
+    'Creatinina':                () => v>=0.6&&v<=1.3?['ok','Normale']:v<2?['warn','Elevata']:['danger','Molto elevata'],
+    'eGFR':                      () => v>=60?['ok','Normale']:v>=30?['warn','Moderato']:['danger','Severo'],
+    'Albumina':                  () => v>=3.5?['ok','Normale']:v>=3.0?['warn','Borderline']:['danger','Bassa'],
+    'Proteina C-reattiva (PCR)': () => v<1?['ok','Normale']:v<3?['warn','Lieve']:['danger','Alta'],
+    'Ferritina':                 () => v<12?['warn','Bassa']:v<=300?['ok','Normale']:['danger','Alta'],
+    'Vitamina D (25-OH)':        () => v>=30?['ok','Sufficiente']:v>=20?['warn','Insufficiente']:['danger','Carenza'],
+    'TSH':                       () => v>=0.4&&v<=4.0?['ok','Normale']:v<10?['warn','Borderline']:['danger','Elevato'],
+    'Sodio':                     () => v>=136&&v<=145?['ok','Normale']:['warn','Fuori range'],
+    'Potassio':                  () => v>=3.5&&v<=5.0?['ok','Normale']:['warn','Fuori range'],
+    'Azoto ureico (BUN)':        () => v<=20?['ok','Normale']:v<=40?['warn','Borderline']:['danger','Alto'],
+    'Acido urico':               () => v<=7.0?['ok','Normale']:v<=9.0?['warn','Borderline']:['danger','Iperuricemia'],
+  };
+  const check = checks[tipo];
+  if (!check) return {badge:'na', label:'—'};
+  const [badge, label] = check();
+  return {badge, label};
+}
+
+function openEsameModal(cartellaId) {
+  _esameCartellaId = cartellaId;
+  document.getElementById('esame-tipo').value = '';
+  document.getElementById('esame-valore').value = '';
+  document.getElementById('esame-unita').value = '';
+  document.getElementById('esame-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('esame-note').value = '';
+  document.getElementById('esame-custom-wrap').style.display = 'none';
+  document.getElementById('esame-ref-info').style.display = 'none';
+  document.getElementById('esame-badge-preview').style.display = 'none';
+  document.getElementById('esame-modal-title').textContent = '🔬 Aggiungi Esame Biochimico';
+  openM('modal-esame');
+}
+
+function onEsameTipoChange() {
+  const tipo = document.getElementById('esame-tipo').value;
+  document.getElementById('esame-custom-wrap').style.display = tipo === '__custom__' ? 'block' : 'none';
+  const ref = ESAME_HINTS[tipo];
+  const refInfo = document.getElementById('esame-ref-info');
+  if (ref) {
+    document.getElementById('esame-unita').value = ref.unit;
+    refInfo.innerHTML = '<strong>Valori di riferimento:</strong> ' + ref.hint;
+    refInfo.style.display = 'block';
+  } else {
+    refInfo.style.display = 'none';
+  }
+  aggiornaEsameBadgePreview();
+}
+
+function aggiornaEsameBadgePreview() {
+  const tipo = document.getElementById('esame-tipo').value;
+  const valore = document.getElementById('esame-valore').value;
+  const preview = document.getElementById('esame-badge-preview');
+  const chip = document.getElementById('esame-badge-preview-chip');
+  if (!tipo || tipo === '__custom__' || !valore) { preview.style.display = 'none'; return; }
+  const bdg = getEsameBadge(tipo, valore);
+  if (bdg.badge === 'na') { preview.style.display = 'none'; return; }
+  chip.className = 'esame-badge ' + bdg.badge;
+  chip.textContent = bdg.label;
+  preview.style.display = 'block';
+}
+
+async function salvaEsame() {
+  const tipoSel = document.getElementById('esame-tipo').value;
+  const tipoCustom = (document.getElementById('esame-tipo-custom').value || '').trim();
+  const tipo = tipoSel === '__custom__' ? tipoCustom : tipoSel;
+  const valore = document.getElementById('esame-valore').value;
+  const unita = (document.getElementById('esame-unita').value || '').trim();
+  const data_esame = document.getElementById('esame-data').value;
+  const note = (document.getElementById('esame-note').value || '').trim();
+
+  if (!tipo) { toast('Seleziona il tipo di esame', 'err'); return; }
+  if (!valore) { toast('Inserisci il valore', 'err'); return; }
+  if (!_esameCartellaId || !currentUser) return;
+
+  const { error } = await sb.from('esami_biochimici').insert({
+    cartella_id: _esameCartellaId,
+    user_id: currentUser.id,
+    tipo,
+    valore: parseFloat(valore),
+    unita: unita || null,
+    data_esame: data_esame || null,
+    note: note || null,
+  });
+
+  if (error) {
+    if (error.code === '42P01') toast('Tabella esami_biochimici mancante — esegui SQL di setup', 'err');
+    else toast('Errore salvataggio: ' + error.message, 'err');
+    return;
+  }
+  closeM('modal-esame');
+  toast('Esame salvato', 'ok');
+  await renderCartellaDetail(_esameCartellaId);
+}
+
+async function deleteEsame(esameId, cartellaId) {
+  customConfirm('Eliminare questo esame biochimico?', async () => {
+    const { error } = await sb.from('esami_biochimici').delete().eq('id', esameId);
+    if (error) { toast('Errore eliminazione: ' + error.message, 'err'); return; }
+    toast('Esame eliminato', 'ok');
+    await renderCartellaDetail(cartellaId);
+  }, { title: '🗑️ Elimina Esame', danger: true, okLabel: 'Elimina' });
+}
+
+// ══════════════════════════════════════════════
+// TIMELINE CLINICA
+// ══════════════════════════════════════════════
+async function toggleTimeline(cartellaId, btn) {
+  const panel = document.getElementById('timeline-panel');
+  if (!panel) return;
+  if (panel.classList.contains('open')) {
+    panel.classList.remove('open');
+    panel.innerHTML = '';
+    btn.textContent = '🕐 Timeline';
+    return;
+  }
+  btn.textContent = '⏳...';
+  btn.disabled = true;
+
+  const safeQ = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
+  const [piani, schede, bia, note] = await Promise.all([
+    safeQ(sb.from('piani').select('id,nome,saved_at,data_piano').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
+    safeQ(sb.from('schede_valutazione').select('id,nome,saved_at,created_at').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
+    safeQ(sb.from('bia_records').select('id,data_misura,peso').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
+    safeQ(sb.from('note_specialistiche').select('id,tipo,nota,created_at').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
+  ]);
+  const esami = window._currentCartellaEsami || [];
+
+  const events = [];
+  piani.forEach(p => events.push({date:p.saved_at||p.data_piano, icon:'📋', type:'Piano', title:p.nome||'Piano Alimentare'}));
+  schede.forEach(s => events.push({date:s.saved_at||s.created_at, icon:'📊', type:'Valutazione', title:s.nome||'Scheda Valutazione'}));
+  bia.forEach(b => events.push({date:b.data_misura, icon:'⚡', type:'BIA', title:'BIA' + (b.peso?' — '+b.peso+' kg':'')}));
+  const tipoIcons = {diabete:'🩸',sport:'🏃',pediatria:'👶',consiglio:'💡',oncologia:'🎗️',renale:'🫘',questionario:'📋',dca:'🫀',chetogenica:'🥑',pancreas:'🫁',disfagia:'🗣️',obesita:'⚖️'};
+  note.forEach(n => events.push({date:n.created_at, icon:tipoIcons[n.tipo]||'📌', type:'Nota', title:n.nota||n.tipo||'Nota'}));
+  esami.forEach(e => events.push({date:e.data_esame||e.created_at, icon:'🔬', type:'Esame', title:e.tipo + ' — ' + e.valore + (e.unita?' '+e.unita:'')}));
+
+  events.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const fmt = d => d ? new Date(d).toLocaleDateString('it',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+  const dotCol = {Piano:'#1D4ED8',Valutazione:'#16A34A',BIA:'#0F766E',Nota:'#F59E0B',Esame:'#C2410C'};
+
+  panel.innerHTML = '<div style="background:white;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:0">' +
+    '<h4 style="font-size:13px;font-weight:700;color:var(--slate);margin:0 0 12px">🕐 Timeline Clinica (' + events.length + ' eventi)</h4>' +
+    (events.length ? events.map(ev => {
+      const col = dotCol[ev.type] || '#64748B';
+      return '<div class="timeline-item">' +
+        '<div class="timeline-dot" style="background:' + col + '22;color:' + col + '">' + ev.icon + '</div>' +
+        '<div class="timeline-body">' +
+        '<div class="timeline-type">' + ev.type + '</div>' +
+        '<div class="timeline-title">' + esc(ev.title) + '</div>' +
+        '<div class="timeline-date">' + fmt(ev.date) + '</div>' +
+        '</div></div>';
+    }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;text-align:center;padding:20px">Nessun evento registrato.</div>') +
+    '</div>';
+
+  panel.classList.add('open');
+  btn.textContent = '🕐 Chiudi Timeline';
+  btn.disabled = false;
 }
 </script>
 </body>

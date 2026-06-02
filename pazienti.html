@@ -350,7 +350,7 @@ async function ensureChartJs() {
         Campo <code>sesso</code>: M o F. Campo <code>ddn</code>: formato YYYY-MM-DD.
       </div>
       <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
-        <button class="btn btn-ghost btn-sm" onclick="scaricaTemplateCSV()">📄 Scarica template CSV</button>
+        <a href="/template_pazienti.csv" download="template_pazienti.csv" class="btn btn-ghost btn-sm" style="text-decoration:none">📄 Scarica template CSV</a>
         <label class="btn btn-primary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
           📂 Scegli file CSV
           <input type="file" id="csv-file-input" accept=".csv,text/csv" style="display:none" onchange="previewCSV(this)">
@@ -886,10 +886,8 @@ async function renderCartellaDetail(id) {
       ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="editCartella(\'' + cart.id + '\')">✏️ Modifica</button>' : ''}
       ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella(\'' + cart.id + '\',' + (!!cart.archived) + ')" style="' + (cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)') + '" title="' + (cart.archived?'Ripristina cartella':'Archivia cartella') + '">' + (cart.archived?'♻️ Ripristina':'📦 Archivia') + '</button>' : ''}
       ${!isAltro ? (patientLink.length ? '<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')" title="Scollega paziente">🔗✂️ Scollega</button>' : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 Collega paziente</button>') : ''}
-      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleTimeline(\'' + id + '\',this)">🕐 Timeline</button>' : ''}
-      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="esportaPDFCartella()">📄 PDF</button>' : ''}
-      ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="apriAiPaziente()" style="background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;border:none">🤖 AI</button>' : ''}
     </div>
+    ${!isAltro ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;background:white;border-radius:10px;padding:8px 12px;border:1px solid var(--border);box-shadow:var(--shadow)"><span style="font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px">Strumenti</span><button class="btn btn-ghost btn-sm" onclick="toggleTimeline(\'' + id + '\',this)" id="btn-timeline-tool">🕐 Timeline Clinica</button><button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #1D4ED8;background:#EFF6FF;color:#1D4ED8;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Genera PDF con dati paziente, esami, BIA e piani">📄 Esporta scheda PDF</button><button onclick="apriAiPaziente()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Chiedi all\'AI suggerimenti nutrizionali basati sui dati di questo paziente">🤖 AI Nutrizionale</button></div>' : ''}
     <div id="timeline-panel"></div>
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
     ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>Cartella archiviata</b> — Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.</div>` : ''}

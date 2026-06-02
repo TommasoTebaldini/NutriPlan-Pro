@@ -260,22 +260,43 @@ function tagColor(tag) {
 }
 
 async function loadGDPRData() {
-  if (!currentUser) return;
-  let data, err;
-  ({ data, error: err } = await sb.from('cartelle').select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note').eq('user_id', currentUser.id).order('created_at', { ascending: false }));
-  if (err) {
-    // Colonna gdpr_consenso non ancora creata — carica senza
-    let err2;
-    ({ data, error: err2 } = await sb.from('cartelle').select('id,nome,codice_fiscale,tags,created_at,note').eq('user_id', currentUser.id).order('created_at', { ascending: false }));
-    if (err2) {
-      document.getElementById('registro-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--slate-l);padding:24px">⚠️ Errore: ' + esc(err2.message) + '</td></tr>';
-      document.getElementById('oblio-list').innerHTML = '<div style="text-align:center;padding:24px;color:#DC2626">Errore caricamento.</div>';
+  try {
+    // Recupera la sessione direttamente (non dipende da currentUser globale)
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      window.location.href = 'index.html';
       return;
     }
+    const userId = session.user.id;
+
+    let data, error;
+
+    // Prima prova con colonna gdpr_consenso
+    ({ data, error } = await sb.from('cartelle')
+      .select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false }));
+
+    // Fallback senza gdpr_consenso se la colonna non esiste ancora
+    if (error) {
+      ({ data, error } = await sb.from('cartelle')
+        .select('id,nome,codice_fiscale,tags,created_at,note')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false }));
+    }
+
+    if (error) throw error;
+
+    _allCartelle = (data || []).filter(c => c.note !== '__altro__');
+    renderRegistro();
+    renderOblio();
+  } catch(e) {
+    console.error('loadGDPRData error:', e);
+    document.getElementById('registro-tbody').innerHTML =
+      '<tr><td colspan="6" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore caricamento: ' + (e.message || String(e)) + '</td></tr>';
+    document.getElementById('oblio-list').innerHTML =
+      '<div style="text-align:center;padding:24px;color:#DC2626">⚠️ Errore caricamento dati.</div>';
   }
-  _allCartelle = (data || []).filter(c => c.note !== '__altro__');
-  renderRegistro();
-  renderOblio();
 }
 
 function renderRegistro() {

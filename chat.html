@@ -456,7 +456,7 @@ async function selectPatient(patientId) {
       <div class="chat-tab" id="tab-privacy" onclick="switchChatTab('privacy')"><span data-i18n="chat.tab_privacy">📋 Privacy</span></div>
       <div class="chat-tab" id="tab-storico" onclick="switchChatTab('storico')"><span data-i18n="chat.tab_storico">📊 Storico Clinico</span></div>
       <div class="chat-tab" id="tab-timeline" onclick="switchChatTab('timeline')">🕐 Timeline</div>
-      <div class="chat-tab" id="tab-ai" onclick="switchChatTab('ai')" style="background:linear-gradient(135deg,#7C3AED22,#A78BFA22);color:#7C3AED;font-weight:700">🤖 AI</div>
+      <div class="chat-tab" id="tab-ai" onclick="switchChatTab('ai')">🤖 AI</div>
     </div>
     <div id="chat-tab-body" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
       <div class="chat-messages" id="chat-messages-area">
@@ -1814,29 +1814,82 @@ async function loadStorico(limitMonths) {
   Object.values(esamiByTipo).forEach(e => e.pts.sort((a,b)=>a.date-b.date));
   const esamiTipi = Object.keys(esamiByTipo).filter(t => esamiByTipo[t].pts.length>=1);
 
-  const esamiCardsHTML = esamiTipi.length ? `
-  <div class="stor-chart-card stor-chart-full" style="margin-top:0">
-    <h4 style="margin:0 0 14px;font-size:14px;display:flex;align-items:center;gap:8px">🔬 Esami Ematochimici <span style="background:#FFF7ED;color:#C2410C;font-size:11px;padding:2px 9px;border-radius:12px;font-weight:700">${esamiTipi.length} parametri</span></h4>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
-      ${esamiTipi.map(tipo => {
-        const e = esamiByTipo[tipo];
-        const last = e.pts[e.pts.length-1];
-        const bdg = esamiBadge(tipo, last.val);
-        const chartId = 'ec-' + tipo.replace(/[^a-zA-Z0-9]/g,'').substring(0,16);
-        const hasChart = e.pts.length >= 2;
-        const trend = e.pts.length>=2 ? (last.val - e.pts[e.pts.length-2].val) : 0;
-        const trendHtml = e.pts.length>=2 ? '<span style="font-size:10px;color:'+( trend>0?'#DC2626':'#16A34A')+';margin-left:4px">'+(trend>0?'▲':'▼')+' '+Math.abs(trend).toFixed(1)+'</span>' : '';
-        return '<div style="background:#F8FAFC;border-radius:10px;padding:12px;border:1px solid var(--border)">' +
-          '<div style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(tipo) + '</div>' +
-          '<div style="display:flex;align-items:baseline;gap:4px;flex-wrap:wrap">' +
-          '<span style="font-size:22px;font-weight:800;color:'+e.color+'">' + last.val.toFixed(1).replace(/\.0$/,'') + '</span>' +
-          '<span style="font-size:11px;color:var(--slate-l)">' + esc(e.unit||'') + '</span>' + trendHtml + '</div>' +
-          '<span class="'+bdg.cls+'" style="font-size:10.5px;padding:2px 8px;border-radius:12px;font-weight:700;display:inline-block;margin-top:4px">' + bdg.lbl + '</span>' +
-          (hasChart ? '<div style="height:56px;margin-top:8px"><canvas id="'+chartId+'"></canvas></div>' : '') +
-          '</div>';
-      }).join('')}
+  // ── Lab parameters: merge schede_valutazione dati_extra + esami_biochimici ──
+  const LAB_PARAMS = [
+    { id:'chart-glicemia', label:'Glicemia a digiuno', schKey:'es_glicemia', tipo:'Glicemia a digiuno', unit:'mg/dL', color:'#DC2626' },
+    { id:'chart-hba1c',    label:'HbA1c',              schKey:'es_hba1c',    tipo:'HbA1c',              unit:'%',     color:'#0284C7' },
+    { id:'chart-col-tot',  label:'Colesterolo Totale', schKey:'es_col_tot',  tipo:'Colesterolo totale', unit:'mg/dL', color:'#EA580C' },
+    { id:'chart-ldl',      label:'Colesterolo LDL',    schKey:'es_ldl',      tipo:'Colesterolo LDL',    unit:'mg/dL', color:'#CA8A04' },
+    { id:'chart-hdl',      label:'Colesterolo HDL',    schKey:'es_hdl',      tipo:'Colesterolo HDL',    unit:'mg/dL', color:'#16A34A' },
+    { id:'chart-trig',     label:'Trigliceridi',       schKey:'es_trig',     tipo:'Trigliceridi',       unit:'mg/dL', color:'#7C3AED' },
+    { id:'chart-creat',    label:'Creatinina',         schKey:'es_creat',    tipo:'Creatinina',         unit:'mg/dL', color:'#0F766E' },
+    { id:'chart-ferr',     label:'Ferritina',          schKey:'es_ferr',     tipo:'Ferritina',          unit:'ng/mL', color:'#B45309' },
+    { id:'chart-vitd',     label:'Vitamina D (25-OH)', schKey:'es_vitd',     tipo:'Vitamina D (25-OH)', unit:'ng/mL', color:'#0891B2' },
+    { id:'chart-pcr',      label:'PCR (Proteina C-reattiva)', schKey:'es_pcr', tipo:'Proteina C-reattiva (PCR)', unit:'mg/L', color:'#9F1239' },
+  ];
+
+  const labDatasets = LAB_PARAMS.map(p => {
+    const pts = [];
+    schede.forEach((s, i) => {
+      const v = parseFloat(extras[i][p.schKey]);
+      if (!isNaN(v) && v > 0) pts.push({ date: new Date(s.saved_at||s.created_at), val: v });
+    });
+    // Merge esami_biochimici (avoid same-day duplicates)
+    if (esamiByTipo[p.tipo]) {
+      esamiByTipo[p.tipo].pts.forEach(ep => {
+        if (!pts.find(x => Math.abs(x.date - ep.date) < 86400000)) pts.push(ep);
+      });
+    }
+    pts.sort((a, b) => a.date - b.date);
+    return { ...p, pts,
+      chartLabels: pts.map(q => q.date.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit'})),
+      chartData: pts.map(q => q.val),
+    };
+  }).filter(d => d.pts.length >= 1);
+
+  // Badge per valore ematochimico
+  const getLabBadge = (tipo, v) => {
+    const n = parseFloat(v); if (isNaN(n)) return '';
+    const checks = {
+      'Glicemia a digiuno': () => n<100?['#DCFCE7','#16A34A','Normale']:n<126?['#FEF9C3','#CA8A04','Alterata']:['#FEE2E2','#DC2626','Diabete'],
+      'HbA1c': () => n<5.7?['#DCFCE7','#16A34A','Normale']:n<6.5?['#FEF9C3','#CA8A04','Pre-diabete']:['#FEE2E2','#DC2626','Diabete'],
+      'Colesterolo Totale': () => n<200?['#DCFCE7','#16A34A','Ottimale']:n<240?['#FEF9C3','#CA8A04','Borderline']:['#FEE2E2','#DC2626','Alto'],
+      'Colesterolo LDL': () => n<100?['#DCFCE7','#16A34A','Ottimale']:n<160?['#FEF9C3','#CA8A04','Borderline']:['#FEE2E2','#DC2626','Alto'],
+      'Colesterolo HDL': () => n>=60?['#DCFCE7','#16A34A','Ottimale']:n>=40?['#FEF9C3','#CA8A04','Borderline']:['#FEE2E2','#DC2626','Basso'],
+      'Trigliceridi': () => n<150?['#DCFCE7','#16A34A','Normale']:n<200?['#FEF9C3','#CA8A04','Borderline']:['#FEE2E2','#DC2626','Alto'],
+      'Vitamina D (25-OH)': () => n>=30?['#DCFCE7','#16A34A','Sufficiente']:n>=20?['#FEF9C3','#CA8A04','Insufficiente']:['#FEE2E2','#DC2626','Carenza'],
+      'PCR (Proteina C-reattiva)': () => n<1?['#DCFCE7','#16A34A','Normale']:n<3?['#FEF9C3','#CA8A04','Lieve']:['#FEE2E2','#DC2626','Alta'],
+    };
+    const fn = checks[tipo]; if (!fn) return '';
+    const [bg, col, lbl] = fn();
+    return `<span style="background:${bg};color:${col};font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-block;margin-top:4px">${lbl}</span>`;
+  };
+
+  const labSection = labDatasets.length > 0 ? `
+    <div style="margin-top:6px;margin-bottom:4px">
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:#F0FDF4;border-radius:10px;margin-bottom:10px;border-left:4px solid #16A34A">
+        <span style="font-size:22px">🔬</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--slate)">Esami Ematochimici</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${labDatasets.length} parametri monitorati — dati da Valutazione Paziente e tabella Esami</div></div>
+      </div>
     </div>
-  </div>` : '';
+    <div class="stor-charts-grid">
+      ${labDatasets.map(d => {
+        const last = d.pts[d.pts.length-1];
+        const prev = d.pts.length >= 2 ? d.pts[d.pts.length-2] : null;
+        const diff = prev ? last.val - prev.val : null;
+        const trendSpan = diff !== null ? `<span style="font-size:11px;color:${diff>0?'#DC2626':'#16A34A'};margin-left:4px;font-weight:700">${diff>0?'▲':'▼'} ${Math.abs(diff).toFixed(1)}</span>` : '';
+        return `<div class="stor-chart-card">
+          <h4 style="font-size:12px;margin-bottom:8px">${esc(d.label)}</h4>
+          <div style="display:flex;align-items:baseline;gap:3px;flex-wrap:wrap">
+            <span style="font-size:24px;font-weight:800;color:${d.color}">${last.val.toFixed(1).replace(/\.0+$/,'')}</span>
+            <span style="font-size:11px;color:var(--slate-l)">${d.unit}</span>${trendSpan}
+          </div>
+          ${getLabBadge(d.label, last.val)}
+          ${d.pts.length >= 2 ? `<div class="stor-chart-wrap" style="margin-top:8px"><canvas id="${d.id}"></canvas></div>` : `<div style="font-size:11px;color:var(--slate-l);margin-top:6px;font-style:italic">1 sola misurazione (${last.date.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})})</div>`}
+        </div>`;
+      }).join('')}
+    </div>` : '';
 
   const chartsHTML = `<div class="stor-charts-grid">
     ${schede.length>1&&(pesi.some(v=>v)||(wLogs&&wLogs.length)) ? `<div class="stor-chart-card"><h4>⚖️ Andamento Peso</h4><div class="stor-chart-wrap"><canvas id="chart-peso"></canvas></div></div>` : ''}
@@ -1844,10 +1897,9 @@ async function loadStorico(limitMonths) {
     ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 Composizione Corporea</h4><div class="stor-chart-wrap"><canvas id="chart-comp"></canvas></div></div>` : ''}
     ${schede.length>1&&(vite.some(v=>v)||fianchi.some(v=>v)||coscia.some(v=>v)) ? `<div class="stor-chart-card"><h4>📏 Circonferenze</h4><div class="stor-chart-wrap"><canvas id="chart-circ"></canvas></div></div>` : ''}
     ${schede.length>1&&(plTri.some(v=>v)||plSS.some(v=>v)||plSI.some(v=>v)) ? `<div class="stor-chart-card"><h4>📌 Pliche Cutanee</h4><div class="stor-chart-wrap"><canvas id="chart-pliche"></canvas></div></div>` : ''}
-    ${schede.length>1&&(glicemia.some(v=>v)||colTot.some(v=>v)||vitD.some(v=>v)||hba1c.some(v=>v)) ? `<div class="stor-chart-card stor-chart-full"><h4>🔬 Esami di Laboratorio</h4><div class="stor-chart-wrap" style="height:160px"><canvas id="chart-labs"></canvas></div></div>` : ''}
   </div>`;
 
-  panel.innerHTML = headerHTML + filterHTML + summaryHTML + chartsHTML + esamiCardsHTML;
+  panel.innerHTML = headerHTML + filterHTML + summaryHTML + chartsHTML + labSection;
 
   await ensureChartJs();
   requestAnimationFrame(() => {
@@ -1935,41 +1987,33 @@ async function loadStorico(limitMonths) {
       plSI.some(v=>v)  && { label: 'Sovrailiaca (mm)', data: plSI, borderColor: '#10B981', ...defaults }
     ].filter(Boolean), 'mm');
 
-    mkChart('chart-labs', [
-      glicemia.some(v=>v) && { label: 'Glicemia (mg/dL)', data: glicemia, borderColor: '#DC2626', ...defaults },
-      colTot.some(v=>v)   && { label: 'Col. tot. (mg/dL)', data: colTot, borderColor: '#EA580C', ...defaults },
-      ldl.some(v=>v)      && { label: 'LDL (mg/dL)', data: ldl, borderColor: '#CA8A04', ...defaults },
-      hdl.some(v=>v)      && { label: 'HDL (mg/dL)', data: hdl, borderColor: '#16A34A', ...defaults },
-      trig.some(v=>v)     && { label: 'Trigliceridi (mg/dL)', data: trig, borderColor: '#7C3AED', ...defaults },
-      hba1c.some(v=>v)    && { label: 'HbA1c (%×10)', data: hba1c.map(v=>v?v*10:null), borderColor: '#0284C7', borderDash: [6,3], ...defaults },
-      vitD.some(v=>v)     && { label: 'Vit.D (ng/mL)', data: vitD, borderColor: '#0891B2', borderDash: [3,3], ...defaults }
-    ].filter(Boolean), '');
-
-    // Mini-chart per ogni esame ematochimico individuale
-    const miniDefaults = { borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, tension: .4, fill: true, spanGaps: true };
-    esamiTipi.forEach(tipo => {
-      const e = esamiByTipo[tipo];
-      if (e.pts.length < 2) return;
-      const chartId = 'ec-' + tipo.replace(/[^a-zA-Z0-9]/g,'').substring(0,16);
-      const el = document.getElementById(chartId);
+    // Chart individuali per ogni parametro ematochimico (stesso stile degli antropometrici)
+    labDatasets.forEach(d => {
+      if (d.pts.length < 2) return;
+      const el = document.getElementById(d.id);
       if (!el) return;
       const ctx = el.getContext('2d');
-      const g = ctx.createLinearGradient(0,0,0,56);
-      g.addColorStop(0, e.color + '44'); g.addColorStop(1, e.color + '00');
+      const g = ctx.createLinearGradient(0, 0, 0, 140);
+      g.addColorStop(0, d.color + '33'); g.addColorStop(1, d.color + '00');
       const c = new Chart(el, {
         type: 'line',
         data: {
-          labels: e.pts.map(p => p.date.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit'})),
-          datasets: [{ data: e.pts.map(p=>p.val), borderColor: e.color, backgroundColor: g, ...miniDefaults }]
+          labels: d.chartLabels,
+          datasets: [{ label: d.label + ' (' + d.unit + ')', data: d.chartData,
+            borderColor: d.color, backgroundColor: g, fill: true,
+            ...defaults
+          }]
         },
         options: {
           responsive: true, maintainAspectRatio: false,
-          plugins: { legend:{display:false}, tooltip:{ callbacks:{ label: ctx => ctx.parsed.y + ' ' + (e.unit||'') } } },
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: legendOpts, tooltip: { ...tooltipOpts, callbacks: { label: ctx => ctx.parsed.y.toFixed(1) + ' ' + d.unit } } },
           scales: {
-            x: { display: false },
-            y: { display: false, suggestedMin: Math.min(...e.pts.map(p=>p.val))*0.9, suggestedMax: Math.max(...e.pts.map(p=>p.val))*1.1 }
+            x: { grid: gridOpts, ticks: { font: tickFont, maxTicksLimit: 6, color: '#64748B' }, border: { color: '#CBD5E1' } },
+            y: { grid: gridOpts, ticks: { font: tickFont, color: '#64748B' }, border: { color: '#CBD5E1' },
+              title: { display: true, text: d.unit, font: { size: 10, family: "'DM Sans', sans-serif" }, color: '#94A3B8' } }
           },
-          animation: { duration: 400 }
+          animation: { duration: 600, easing: 'easeOutQuart' }
         }
       });
       _storicoCharts.push(c);

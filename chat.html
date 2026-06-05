@@ -301,6 +301,7 @@ let realtimeChannel = null;
 let infoRealtimeChannel = null;
 let currentChatTab = 'chat';
 let andamentoPeriodDays = 7;
+let _andamentoCacheKey = null; // "patientId|period" — null means no cache
 let _diaryDates = [];    // sorted desc, all dates with data
 let _diaryDayIdx = 0;   // 0 = most recent
 let _diaryViewMode = 'day'; // 'day' | 'over'
@@ -435,6 +436,7 @@ function filterChatPatients() {
 async function selectPatient(patientId) {
   selectedPatientId = patientId;
   currentChatTab = 'chat';
+  _andamentoCacheKey = null; // reset diary cache for new patient
   renderPatientList();
   const p = chatPatients.find(x => x.id === patientId);
   if (!p) return;
@@ -494,16 +496,16 @@ function switchChatTab(tab) {
   const body = document.getElementById('chat-tab-body');
 
   function setBodyContent(html, afterFn) {
+    body.innerHTML = html;
+    body.style.transition = 'none';
     body.style.opacity = '0';
-    body.style.transform = 'translateY(6px)';
-    body.style.transition = 'opacity .12s,transform .12s';
-    setTimeout(() => {
-      body.innerHTML = html;
-      body.style.transition = 'opacity .2s cubic-bezier(.16,1,.3,1),transform .2s cubic-bezier(.16,1,.3,1)';
+    body.style.transform = 'translateY(5px)';
+    requestAnimationFrame(() => {
+      body.style.transition = 'opacity .18s cubic-bezier(.16,1,.3,1),transform .18s cubic-bezier(.16,1,.3,1)';
       body.style.opacity = '1';
       body.style.transform = 'translateY(0)';
       if (afterFn) afterFn();
-    }, 100);
+    });
   }
 
   if (tab === 'chat') {
@@ -538,95 +540,15 @@ function switchChatTab(tab) {
 let _diaryFoodByDate = {}, _diaryTotalsByDate = {}, _diaryWaterByDate = {};
 let _diaryWellByDate = {}, _diaryActByDate = {}, _diaryWeightByDate = {};
 
-async function loadAndamento() {
-  const panel = document.getElementById('andamento-panel');
-  if (!panel) return;
-
-  const safeQ = async (q) => { try { const r = await q; return r.data || []; } catch(_) { return []; } };
-
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - (andamentoPeriodDays > 0 ? andamentoPeriodDays : 365));
-  const cutoffStr = cutoff.toISOString().split('T')[0];
-
-  const foodQ  = selectedPatientId ? safeQ(sb.from('food_logs').select('date,meal_type,food_name,kcal,proteins,carbs,fats,grams,food_data').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).order('created_at',{ascending:false}).limit(500)) : Promise.resolve([]);
-  const totQ   = selectedPatientId ? safeQ(sb.from('daily_logs').select('date,kcal,proteins,carbs,fats').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
-  const waterQ = selectedPatientId ? safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
-  const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
-  const wtQ    = selectedPatientCartellaId ? safeQ(sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
-
-  // Wellness: query con fallback su colonne (stress_level/hydration_level potrebbero non esistere)
-  // e su filtro (user_id → cartella_id)
-  const WELL_FULL = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes';
-  const WELL_BASE = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,symptoms,notes';
-  let wellQ;
-  if (selectedPatientId) {
-    let wRes = [], wErr = null;
-    // Try full columns by user_id
-    const r1 = await sb.from('daily_wellness').select(WELL_FULL).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
-    if (r1.error) {
-      wErr = r1.error;
-      // Column missing: retry with base columns
-      const r2 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
-      wRes = r2.data || [];
-    } else {
-      wRes = r1.data || [];
-    }
-    // Still nothing: try cartella_id fallback
-    if (!wRes.length && selectedPatientCartellaId) {
-      const r3 = await sb.from('daily_wellness').select(WELL_BASE).eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300);
-      wRes = r3.data || [];
-    }
-    wellQ = Promise.resolve(wRes);
-  } else {
-    wellQ = Promise.resolve([]);
-  }
-  // Ciclo mestruale (se tabella esiste)
-  const cycleQ = selectedPatientId ? safeQ(sb.from('menstrual_cycle').select('start_date,end_date,cycle_length,symptoms,notes').eq('user_id', selectedPatientId).order('start_date',{ascending:false}).limit(12)) : Promise.resolve([]);
-
-  panel.innerHTML = '<div class="and-empty"><div class="spinner"></div><div>Caricamento diario...</div></div>';
-
-  const [foodLogs, dailyTotals, waterLogs, activityLogs, wellness, weightLogs, cycleLogs] = await Promise.all([foodQ, totQ, waterQ, actQ, wellQ, wtQ, cycleQ]);
-
-  _diaryFoodByDate = {}; _diaryTotalsByDate = {}; _diaryWaterByDate = {};
-  _diaryWellByDate = {}; _diaryActByDate = {}; _diaryWeightByDate = {};
-
-  foodLogs.forEach(f => { if (!_diaryFoodByDate[f.date]) _diaryFoodByDate[f.date] = []; _diaryFoodByDate[f.date].push(f); });
-  dailyTotals.forEach(d => { _diaryTotalsByDate[d.date] = d; });
-  waterLogs.forEach(w => { _diaryWaterByDate[w.date] = (_diaryWaterByDate[w.date] || 0) + (w.amount_ml || 0); });
-  wellness.forEach(w => {
-    const d = (w.date || (w.logged_at||'').split('T')[0]);
-    if (d) _diaryWellByDate[d] = w;
-  });
-  activityLogs.forEach(a => { if (!_diaryActByDate[a.date]) _diaryActByDate[a.date] = []; _diaryActByDate[a.date].push(a); });
-  weightLogs.forEach(w => { const d = (w.logged_at || '').split('T')[0]; if (d && !_diaryWeightByDate[d]) _diaryWeightByDate[d] = w.weight; });
-
-  // Ciclo mestruale: costruisce set di date durante il ciclo
-  window._diaryCycleDates = new Set();
-  window._diaryCycles = cycleLogs;
-  (cycleLogs || []).forEach(c => {
-    const start = new Date(c.start_date + 'T12:00:00');
-    const end = c.end_date ? new Date(c.end_date + 'T12:00:00') : new Date(start.getTime() + 5*86400000);
-    let cur = new Date(start);
-    while (cur <= end && cur <= new Date()) {
-      window._diaryCycleDates.add(cur.toISOString().split('T')[0]);
-      cur.setDate(cur.getDate() + 1);
-    }
-  });
-
-  _diaryDates = [...new Set([
-    ...Object.keys(_diaryFoodByDate), ...Object.keys(_diaryTotalsByDate),
-    ...Object.keys(_diaryWaterByDate), ...Object.keys(_diaryWellByDate),
-    ...Object.keys(_diaryActByDate), ...Object.keys(_diaryWeightByDate),
-  ])].sort((a, b) => b.localeCompare(a));
+function renderAndamentoContent(panel) {
+  const activityLogs = Object.values(_diaryActByDate).flat();
+  const totalActMin = activityLogs.reduce((s, a) => s + (a.duration_minutes || 0), 0);
 
   if (!_diaryDates.length) {
     panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📓</div><div>Nessun dato registrato in questo periodo.<br><span style="font-size:12px;color:var(--slate-l)">I dati appariranno quando il paziente utilizzerà l\'app NutriPlan.</span></div></div>';
     return;
   }
 
-  _diaryDayIdx = 0;
-
-  // Summary stats
   const allWell = Object.values(_diaryWellByDate);
   const moods = allWell.filter(w => w.mood).map(w => w.mood);
   const avgMood = moods.length ? (moods.reduce((a, b) => a + b, 0) / moods.length).toFixed(1) : null;
@@ -638,16 +560,13 @@ async function loadAndamento() {
   const avgEnergy = energies.length ? (energies.reduce((a,b)=>a+b,0)/energies.length).toFixed(1) : null;
   const kcals = Object.values(_diaryTotalsByDate).filter(d => d.kcal).map(d => d.kcal);
   const avgKcal = kcals.length ? Math.round(kcals.reduce((a, b) => a + b, 0) / kcals.length) : null;
-  const totalActMin = activityLogs.reduce((s, a) => s + (a.duration_minutes || 0), 0);
   const moodMap = { 1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊' };
   const stressMap = { 1: '😌', 2: '🙂', 3: '😐', 4: '😤', 5: '😰' };
+  const nCycles = (window._diaryCycles||[]).length;
 
-  // Correlazione umore/dieta (Pearson)
   const corrPairs = _diaryDates.map(d => ({
     mood: _diaryWellByDate[d]?.mood,
     kcal: _diaryTotalsByDate[d]?.kcal,
-    sleep: _diaryWellByDate[d]?.sleep_hours,
-    stress: _diaryWellByDate[d]?.stress_level,
   })).filter(p => p.mood && p.kcal);
   const pearson = (xs, ys) => {
     const n = xs.length; if (n < 4) return null;
@@ -663,7 +582,6 @@ async function loadAndamento() {
   const corrMoodStress = stressPairs.length >= 4 ? pearson(stressPairs.map(p=>p.mood),stressPairs.map(p=>p.stress)) : null;
   const corrLabel = r => r === null ? null : Math.abs(r) < 0.2 ? 'assente' : Math.abs(r) < 0.4 ? 'debole' : Math.abs(r) < 0.6 ? 'moderata' : Math.abs(r) < 0.8 ? 'forte' : 'molto forte';
   const corrColor = r => r === null ? '#94A3B8' : r > 0.4 ? '#16A34A' : r < -0.4 ? '#DC2626' : '#94A3B8';
-  const nCycles = (window._diaryCycles||[]).length;
 
   const filterSel = `<div class="and-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
     <span style="font-size:12px;color:var(--slate-l);font-weight:600">Periodo:</span>
@@ -714,12 +632,110 @@ async function loadAndamento() {
   </div>` : ''}`;
 
   panel.innerHTML = filterSel + statsHtml + '<div id="diary-nav-wrap"></div><div id="diary-day-wrap"></div>';
-  // Animate stat cards staggered
   panel.querySelectorAll('.and-stat').forEach((el, i) => {
     el.style.animation = `andStatPop .3s cubic-bezier(.16,1,.3,1) ${i * 0.06}s both`;
   });
   if (_diaryViewMode === 'over') renderDiaryOverview();
   else renderDiaryDay();
+}
+
+async function loadAndamento() {
+  const panel = document.getElementById('andamento-panel');
+  if (!panel) return;
+
+  // Use cached data if same patient + same period
+  const cacheKey = `${selectedPatientId}|${andamentoPeriodDays}`;
+  if (_andamentoCacheKey === cacheKey) {
+    _diaryDayIdx = 0;
+    renderAndamentoContent(panel);
+    return;
+  }
+
+  const safeQ = async (q) => { try { const r = await q; return r.data || []; } catch(_) { return []; } };
+
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - (andamentoPeriodDays > 0 ? andamentoPeriodDays : 365));
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+
+  const foodQ  = selectedPatientId ? safeQ(sb.from('food_logs').select('date,meal_type,food_name,kcal,proteins,carbs,fats,grams,food_data').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).order('created_at',{ascending:false}).limit(500)) : Promise.resolve([]);
+  const totQ   = selectedPatientId ? safeQ(sb.from('daily_logs').select('date,kcal,proteins,carbs,fats').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
+  const waterQ = selectedPatientId ? safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
+  const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
+  const wtQ    = selectedPatientCartellaId ? safeQ(sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
+  // Ciclo mestruale: avviato subito in parallelo con le altre query
+  const cycleQ = selectedPatientId ? safeQ(sb.from('menstrual_cycle').select('start_date,end_date,cycle_length,symptoms,notes').eq('user_id', selectedPatientId).order('start_date',{ascending:false}).limit(12)) : Promise.resolve([]);
+
+  // Wellness: query con fallback su colonne (stress_level/hydration_level potrebbero non esistere)
+  // e su filtro (user_id → cartella_id)
+  const WELL_FULL = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes';
+  const WELL_BASE = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,symptoms,notes';
+  let wellQ;
+  if (selectedPatientId) {
+    let wRes = [], wErr = null;
+    // Try full columns by user_id
+    const r1 = await sb.from('daily_wellness').select(WELL_FULL).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+    if (r1.error) {
+      wErr = r1.error;
+      // Column missing: retry with base columns
+      const r2 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+      wRes = r2.data || [];
+    } else {
+      wRes = r1.data || [];
+    }
+    // Still nothing: try cartella_id fallback
+    if (!wRes.length && selectedPatientCartellaId) {
+      const r3 = await sb.from('daily_wellness').select(WELL_BASE).eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300);
+      wRes = r3.data || [];
+    }
+    wellQ = Promise.resolve(wRes);
+  } else {
+    wellQ = Promise.resolve([]);
+  }
+
+  panel.innerHTML = '<div class="and-empty"><div class="spinner"></div><div>Caricamento diario...</div></div>';
+
+  const [foodLogs, dailyTotals, waterLogs, activityLogs, wellness, weightLogs, cycleLogs] = await Promise.all([foodQ, totQ, waterQ, actQ, wellQ, wtQ, cycleQ]);
+
+  _diaryFoodByDate = {}; _diaryTotalsByDate = {}; _diaryWaterByDate = {};
+  _diaryWellByDate = {}; _diaryActByDate = {}; _diaryWeightByDate = {};
+
+  foodLogs.forEach(f => { if (!_diaryFoodByDate[f.date]) _diaryFoodByDate[f.date] = []; _diaryFoodByDate[f.date].push(f); });
+  dailyTotals.forEach(d => { _diaryTotalsByDate[d.date] = d; });
+  waterLogs.forEach(w => { _diaryWaterByDate[w.date] = (_diaryWaterByDate[w.date] || 0) + (w.amount_ml || 0); });
+  wellness.forEach(w => {
+    const d = (w.date || (w.logged_at||'').split('T')[0]);
+    if (d) _diaryWellByDate[d] = w;
+  });
+  activityLogs.forEach(a => { if (!_diaryActByDate[a.date]) _diaryActByDate[a.date] = []; _diaryActByDate[a.date].push(a); });
+  weightLogs.forEach(w => { const d = (w.logged_at || '').split('T')[0]; if (d && !_diaryWeightByDate[d]) _diaryWeightByDate[d] = w.weight; });
+
+  // Ciclo mestruale: costruisce set di date durante il ciclo
+  window._diaryCycleDates = new Set();
+  window._diaryCycles = cycleLogs;
+  (cycleLogs || []).forEach(c => {
+    const start = new Date(c.start_date + 'T12:00:00');
+    const end = c.end_date ? new Date(c.end_date + 'T12:00:00') : new Date(start.getTime() + 5*86400000);
+    let cur = new Date(start);
+    while (cur <= end && cur <= new Date()) {
+      window._diaryCycleDates.add(cur.toISOString().split('T')[0]);
+      cur.setDate(cur.getDate() + 1);
+    }
+  });
+
+  _diaryDates = [...new Set([
+    ...Object.keys(_diaryFoodByDate), ...Object.keys(_diaryTotalsByDate),
+    ...Object.keys(_diaryWaterByDate), ...Object.keys(_diaryWellByDate),
+    ...Object.keys(_diaryActByDate), ...Object.keys(_diaryWeightByDate),
+  ])].sort((a, b) => b.localeCompare(a));
+
+  if (!_diaryDates.length) {
+    panel.innerHTML = '<div class="and-empty"><div style="font-size:36px">📓</div><div>Nessun dato registrato in questo periodo.<br><span style="font-size:12px;color:var(--slate-l)">I dati appariranno quando il paziente utilizzerà l\'app NutriPlan.</span></div></div>';
+    return;
+  }
+
+  _diaryDayIdx = 0;
+  _andamentoCacheKey = `${selectedPatientId}|${andamentoPeriodDays}`;
+  renderAndamentoContent(panel);
 }
 
 function renderDiaryDay() {
@@ -1876,22 +1892,24 @@ async function loadStorico(limitMonths) {
     return;
   }
 
-  let q = sb.from('schede_valutazione')
+  let schedeQ = sb.from('schede_valutazione')
     .select('*').eq('cartella_id', p.cartellaId).order('saved_at', {ascending:true});
-  if (limitMonths) q = q.gte('saved_at', new Date(Date.now()-limitMonths*30*86400000).toISOString());
-  const {data: schede, error} = await q;
+  if (limitMonths) schedeQ = schedeQ.gte('saved_at', new Date(Date.now()-limitMonths*30*86400000).toISOString());
+
+  // All 3 queries in parallel
+  const [schedeRes, {data: wLogs}, {data: esamiDB}] = await Promise.all([
+    schedeQ,
+    sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', p.cartellaId).order('logged_at',{ascending:true}).limit(200),
+    sb.from('esami_biochimici').select('tipo,valore,unita,data_esame,created_at').eq('cartella_id', p.cartellaId).order('data_esame',{ascending:true}),
+  ]);
+  const schede = schedeRes.data || [];
+  const error = schedeRes.error;
 
   if (error) { panel.innerHTML = `<div class="stor-no-data">❌ ${esc(error.message)}</div>`; return; }
   if (!schede || schede.length < 1) {
     panel.innerHTML = `<div class="stor-no-data"><div style="font-size:36px">📊</div><div>Nessuna scheda di valutazione trovata per questo paziente.<br><span style="font-size:12px;color:var(--slate-l)">Le schede compaiono qui dopo la compilazione della Valutazione Paziente.</span></div></div>`;
     return;
   }
-
-  // Also load weight_logs and esami_biochimici in parallel
-  const [{data: wLogs}, {data: esamiDB}] = await Promise.all([
-    sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', p.cartellaId).order('logged_at',{ascending:true}).limit(200),
-    sb.from('esami_biochimici').select('tipo,valore,unita,data_esame,created_at').eq('cartella_id', p.cartellaId).order('data_esame',{ascending:true}),
-  ]);
 
   const labels    = schede.map(s => new Date(s.saved_at).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit'}));
   const pesi      = schede.map(s => s.peso || null);

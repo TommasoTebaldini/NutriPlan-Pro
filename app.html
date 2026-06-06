@@ -711,6 +711,7 @@ function doRenameGiorno() {
 // RENDER PIANO
 // ═══════════════════════════════════════════════════
 function renderPiano() {
+  _renderLookupCache = Object.create(null); // reset cache per ogni render
   const c = document.getElementById('pasti-container');
   if (!c) return;
   c.innerHTML = '';
@@ -730,6 +731,14 @@ function getMealColor(nome) {
   return 'var(--phd)';
 }
 
+// Module-level lookup cache: reset on ogni renderPiano per dati freschi
+let _renderLookupCache = Object.create(null);
+function lookupC(n) {
+  if (!n) return null;
+  if (_renderLookupCache[n] !== undefined) return _renderLookupCache[n];
+  return (_renderLookupCache[n] = lookup(n));
+}
+
 function buildCard(mi) {
   const meals = getMeals();
   const meal = meals[mi];
@@ -745,7 +754,7 @@ function buildCard(mi) {
   const microExtra = [...visM].map(k => {
     const lbl = MICROS.find(m => m.k === k)?.l || k;
     let tot = 0;
-    meal.items.forEach(item => { const f = lookup(item.nome); const v = cv(f, k, item.qt); if (v !== null) tot += v; });
+    meal.items.forEach(item => { const f = lookupC(item.nome); const v = cv(f, k, item.qt); if (v !== null) tot += v; });
     return tot > 0 ? `<span style="font-size:10px;color:#94A3B8;margin-left:4px">${lbl.split(' ')[0]}:${r1(tot)}</span>` : '';
   }).join('');
 
@@ -795,7 +804,7 @@ function buildCard(mi) {
 function buildRow(mi, ii) {
   const meals = getMeals();
   const item = meals[mi].items[ii];
-  const f = lookup(item.nome);
+  const f = lookupC(item.nome);
   const qt = item.qt;
   const misura = item.misura || '';
   const srcBadge = f ? `<span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span>` : '';
@@ -857,7 +866,7 @@ function buildTot(mi) {
   const t = sumMeal(mi);
   const microTds = MICROS.map(mk => {
     let tot = 0;
-    getMeals()[mi].items.forEach(item => { const f = lookup(item.nome); const v = cv(f, mk.k, item.qt); if (v !== null) tot += v; });
+    getMeals()[mi].items.forEach(item => { const f = lookupC(item.nome); const v = cv(f, mk.k, item.qt); if (v !== null) tot += v; });
     return `<td style="display:${visM.has(mk.k) ? '' : 'none'}">${tot > 0 ? r1(tot) : '—'}</td>`;
   }).join('');
   return `<tr class="tr-tot" id="tr-tot-${mi}">
@@ -870,7 +879,7 @@ function buildTot(mi) {
 function sumMeal(mi) {
   let k = 0, p = 0, gs = 0, g = 0, z = 0, ch = 0, fi = 0;
   getMeals()[mi].items.forEach(item => {
-    const f = lookup(item.nome); const qt = parseFloat(item.qt) || 0;
+    const f = lookupC(item.nome); const qt = parseFloat(item.qt) || 0;
     if (f) { k += (f.k || 0) / 100 * qt; p += (f.p || 0) / 100 * qt; gs += (f.gs || 0) / 100 * qt; g += (f.g || 0) / 100 * qt; z += (f.z || 0) / 100 * qt; ch += (f.ch || 0) / 100 * qt; fi += (f.fi || 0) / 100 * qt; }
   });
   return { kcal: Math.round(k), prot: r1(p), fatSat: r1(gs), fat: r1(g), z: r1(z), cho: r1(ch), fibra: r1(fi) };
@@ -966,7 +975,7 @@ function updateRiep() {
     const microColors = { ca: '#0369A1', fe: '#B91C1C', mg: '#065F46', k2: '#7E22CE', na: '#B45309', fo: '#DC2626', se: '#0F766E', col: '#6B21A8', gs: '#92400E', z: '#1D4ED8' };
     extra.innerHTML = [...visM].map(mk => {
       let tot = 0;
-      getMeals().forEach((_, mi) => { getMeals()[mi].items.forEach(item => { const f = lookup(item.nome); const v = cv(f, mk, item.qt); if (v !== null) tot += v; }); });
+      getMeals().forEach((_, mi) => { getMeals()[mi].items.forEach(item => { const f = lookupC(item.nome); const v = cv(f, mk, item.qt); if (v !== null) tot += v; }); });
       const lbl = MICROS.find(m => m.k === mk)?.l || mk;
       const col = microColors[mk] || '#334155';
       return `<div class="mpill m-micro" style="background:${col}18;color:${col}"><span class="v">${r1(tot)}</span><span class="u">${lbl}</span></div>`;
@@ -1178,6 +1187,9 @@ function openNewPasto() {
 function creaPasto() {
   const nome = document.getElementById('np-nome').value.trim();
   if (!nome) { toast('Inserisci nome', 'err'); return; }
+  if (!giorni.length || giornoCorrente >= giorni.length || !giorni[giornoCorrente]) {
+    toast('⚠️ Nessun giorno attivo. Crea prima un nuovo piano.', 'err'); return;
+  }
   const emoji = document.getElementById('np-emoji').value || '🍽️';
   const pos = parseInt(document.getElementById('np-pos').value);
   const m = { id: 'c' + Date.now(), nome, emoji, note: '', items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false };
@@ -1442,48 +1454,37 @@ async function salvaPiano() {
     return;
   }
   // Enrich food items with macro values (kcal/proteins/carbs/fats per 100g) before saving
+  // Use a local cache to avoid redundant DB lookups for the same food name
+  const _sc = Object.create(null);
+  const lks = n => { if (!n) return null; if (_sc[n] !== undefined) return _sc[n]; return (_sc[n] = lookup(n)); };
   // so the patient app can use correct nutritional values when copying to diary
   const giorniEnriched = giorni.map(g => ({
     ...g,
     meals: (g.meals || []).map(m => {
-      const mKcal = m.items ? m.items.reduce((s, it) => {
-        if (!it.nome) return s;
-        const f = lookup(it.nome); const qt = parseFloat(it.qt) || 0;
-        return s + (f ? Math.round((f.k || 0) / 100 * qt) : 0);
-      }, 0) : (m.kcal || 0);
-      const mProt = m.items ? m.items.reduce((s, it) => {
-        if (!it.nome) return s;
-        const f = lookup(it.nome); const qt = parseFloat(it.qt) || 0;
-        return s + (f ? Math.round((f.p || 0) / 100 * qt * 10) / 10 : 0);
-      }, 0) : (m.proteins || 0);
-      const mCarbs = m.items ? m.items.reduce((s, it) => {
-        if (!it.nome) return s;
-        const f = lookup(it.nome); const qt = parseFloat(it.qt) || 0;
-        return s + (f ? Math.round((f.ch || 0) / 100 * qt * 10) / 10 : 0);
-      }, 0) : (m.carbs || 0);
-      const mFats = m.items ? m.items.reduce((s, it) => {
-        if (!it.nome) return s;
-        const f = lookup(it.nome); const qt = parseFloat(it.qt) || 0;
-        return s + (f ? Math.round((f.g || 0) / 100 * qt * 10) / 10 : 0);
-      }, 0) : (m.fats || 0);
+      // Per ogni item: una sola lookup per item (con cache), usata per tutti i macros
+      const enrichedItems = (m.items || []).map(item => {
+        if (!item.nome) return item;
+        const f = lks(item.nome);
+        if (!f) return item;
+        return {
+          ...item,
+          kcal_100g: Math.round(f.k || 0),
+          proteins_100g: Math.round((f.p || 0) * 10) / 10,
+          carbs_100g: Math.round((f.ch || 0) * 10) / 10,
+          fats_100g: Math.round((f.g || 0) * 10) / 10,
+        };
+      });
+      const mKcal  = enrichedItems.reduce((s, it) => s + (it.kcal_100g  ? Math.round(it.kcal_100g  * (parseFloat(it.qt) || 0) / 100)          : 0), 0);
+      const mProt  = enrichedItems.reduce((s, it) => s + (it.proteins_100g ? Math.round(it.proteins_100g * (parseFloat(it.qt) || 0) / 100 * 10) / 10 : 0), 0);
+      const mCarbs = enrichedItems.reduce((s, it) => s + (it.carbs_100g ? Math.round(it.carbs_100g * (parseFloat(it.qt) || 0) / 100 * 10) / 10 : 0), 0);
+      const mFats  = enrichedItems.reduce((s, it) => s + (it.fats_100g  ? Math.round(it.fats_100g  * (parseFloat(it.qt) || 0) / 100 * 10) / 10 : 0), 0);
       return {
         ...m,
         kcal: mKcal || m.kcal || null,
         proteins: mProt || m.proteins || null,
         carbs: mCarbs || m.carbs || null,
         fats: mFats || m.fats || null,
-        items: (m.items || []).map(item => {
-          if (!item.nome) return item;
-          const f = lookup(item.nome);
-          if (!f) return item;
-          return {
-            ...item,
-            kcal_100g: Math.round(f.k || 0),
-            proteins_100g: Math.round((f.p || 0) * 10) / 10,
-            carbs_100g: Math.round((f.ch || 0) * 10) / 10,
-            fats_100g: Math.round((f.g || 0) * 10) / 10,
-          };
-        })
+        items: enrichedItems,
       };
     })
   }));
@@ -2418,6 +2419,13 @@ async function init() {
   const ok = await checkAuth();
   if (!ok) return;
   rebuildDB();
+  // Inizializza giorni subito (sincrono) così la pagina non è mai in stato non valido
+  // anche durante le chiamate async che seguono
+  if (!giorni.length) {
+    giorni = [{ id: 'g_init', nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false })) }];
+    giornoCorrente = 0;
+    renderGiornoTabs(); renderPiano();
+  }
   // Parallel: custom foods + cartelle don't depend on each other
   await Promise.all([loadCustomFoods(), loadCartelleAll()]);
 

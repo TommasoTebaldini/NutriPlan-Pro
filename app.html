@@ -1052,7 +1052,7 @@ function onQTKey(e, mi, ii) {
     const inp = document.querySelector(`#r-${mi}-${nextIi} .inp-food`);
     if (inp) { inp.focus(); inp.select(); }
   } else {
-    addRow(mi);
+    addRowFast(mi);
   }
 }
 function onQI(mi, ii, inp) {
@@ -1116,6 +1116,22 @@ function addRow(mi) {
   getMeals()[mi].items.push({ nome: '', qt: '', altPrint: [], misura: '' });
   getMeals()[mi].collapsed = false; markDirty(); renderPiano();
   setTimeout(() => { const ii = getMeals()[mi].items.length - 1; const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.focus(); }, 80);
+}
+// Versione senza re-render completo: inserisce la riga direttamente nel tbody
+function addRowFast(mi) {
+  pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
+  getMeals()[mi].items.push({ nome: '', qt: '', altPrint: [], misura: '' });
+  getMeals()[mi].collapsed = false;
+  markDirty();
+  const ii = getMeals()[mi].items.length - 1;
+  const totEl = document.getElementById(`tr-tot-${mi}`);
+  if (!totEl) { renderPiano(); return; }
+  const tmp = document.createElement('tbody');
+  tmp.innerHTML = buildRow(mi, ii);
+  totEl.insertAdjacentElement('beforebegin', tmp.firstChild);
+  refreshTot(mi);
+  updateRiep();
+  setTimeout(() => { const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.focus(); }, 20);
 }
 function delRow(mi, ii) {
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });

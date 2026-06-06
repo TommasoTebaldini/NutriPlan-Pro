@@ -211,7 +211,6 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <button class="btn btn-ghost btn-sm" id="btn-undo" onclick="doUndo()" title="Annulla ultima azione" disabled style="opacity:.5">↩<span>Annulla</span></button>
     <button class="btn btn-ghost btn-sm" onclick="openNewPasto()">🍽️<span>Pasto</span></button>
     <button class="btn btn-ghost btn-sm" onclick="esportaExcel()">📥<span>Excel</span></button>
-    <button class="btn btn-ghost btn-sm" onclick="salvaPiano()">💾<span>Salva</span></button>
     <button class="btn btn-ghost btn-sm" onclick="openSalvaTemplate()" title="Salva il piano corrente come template riutilizzabile">💾<span>Template</span></button>
     <button class="btn btn-ghost btn-sm" onclick="openCaricaTemplate()" title="Carica un template salvato nel piano corrente">📂<span>Template</span></button>
     <span class="tbar-sep"></span>
@@ -265,10 +264,10 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
         <label style="font-size:11px;font-weight:600;color:white;letter-spacing:.3px">📋 Nome piano</label>
         <input type="text" id="inp-nome" placeholder="es. Piano gennaio..." oninput="markDirty()" style="border:1.5px solid rgba(255,255,255,.35);border-radius:var(--r-sm);padding:6px 10px;font-family:inherit;font-size:16px;outline:none;width:100%;background:rgba(255,255,255,.12);color:white;box-sizing:border-box">
       </div>
-      <!-- Nuovo button (wrapped in column div with invisible label to align with inputs) -->
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:11px;font-weight:600;color:white;letter-spacing:.3px;visibility:hidden">Nuovo</label>
-        <button onclick="nuovoPiano()" title="Nuovo piano vuoto" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:white;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">🔄 Nuovo</button>
+      <!-- Salva + Nuovo buttons, centered vertically with the other fields -->
+      <div style="display:flex;flex-direction:column;gap:5px;align-self:center">
+        <button onclick="salvaPiano()" title="Salva il piano nel database" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.25);color:white;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.38)'" onmouseout="this.style.background='rgba(255,255,255,.25)'">💾 Salva</button>
+        <button onclick="nuovoPiano()" title="Nuovo piano vuoto" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🔄 Nuovo</button>
       </div>
     </div>
     <span id="cartella-selected" style="font-size:11px;color:white;font-weight:600;margin-top:4px;display:block"></span>
@@ -840,7 +839,7 @@ function buildRow(mi, ii) {
         onfocus="onFF(${mi},${ii},this)" onblur="onFB(${mi},${ii})">
     </div></td>
     <td>
-      <input class="inp-qt" type="number" min="0" step="any" value="${qt || ''}" placeholder="g" oninput="onQI(${mi},${ii},this)">
+      <input class="inp-qt" type="number" min="0" step="any" value="${qt || ''}" placeholder="g" oninput="onQI(${mi},${ii},this)" onkeydown="onQTKey(event,${mi},${ii})">
       <input class="inp-misura no-print" type="text" value="${esc(misura)}" placeholder="es. 1 cucchiaio" oninput="onMI(${mi},${ii},this)" title="Misura alternativa (es: 1 manciata, 1 cucchiaio...)">
       ${misura ? `<div class="misura-print">(${esc(misura)})</div>` : ''}
     </td>
@@ -1022,14 +1021,39 @@ function pickAC(mi, ii, ri) {
 function onFF(mi, ii, inp) { if (inp.value.length >= 1) showAC(mi, ii, inp.value); }
 function onFB(mi, ii) { setTimeout(() => { const el = document.getElementById('ac-global'); if (el) el.style.display = 'none'; refreshRow(mi, ii); refreshTot(mi); updateRiep(); }, 200); }
 function onFK(e, mi, ii) {
-  const el = document.getElementById('ac-global'); if (!el || el.style.display === 'none') return;
-  const items = el.querySelectorAll('.ac-item'); const k = `${mi}-${ii}`;
-  if (e.key === 'ArrowDown') { acIdx[k] = Math.min((acIdx[k] || 0) + 1, items.length - 1); e.preventDefault(); }
-  else if (e.key === 'ArrowUp') { acIdx[k] = Math.max((acIdx[k] || -1) - 1, 0); e.preventDefault(); }
-  else if (e.key === 'Enter' || e.key === 'Tab') { const idx = acIdx[k] >= 0 ? acIdx[k] : 0; if (items[idx]) { items[idx].dispatchEvent(new MouseEvent('mousedown')); e.preventDefault(); } return; }
-  else if (e.key === 'Escape') { el.style.display = 'none'; return; }
-  items.forEach((el2, i) => el2.classList.toggle('sel', i === acIdx[k]));
-  if (items[acIdx[k]]) items[acIdx[k]].scrollIntoView({ block: 'nearest' });
+  const el = document.getElementById('ac-global');
+  const acOpen = el && el.style.display !== 'none';
+  if (acOpen) {
+    const items = el.querySelectorAll('.ac-item'); const k = `${mi}-${ii}`;
+    if (e.key === 'ArrowDown') { acIdx[k] = Math.min((acIdx[k] || 0) + 1, items.length - 1); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { acIdx[k] = Math.max((acIdx[k] || -1) - 1, 0); e.preventDefault(); }
+    else if (e.key === 'Enter' || e.key === 'Tab') {
+      const idx = acIdx[k] >= 0 ? acIdx[k] : 0;
+      if (items[idx]) { items[idx].dispatchEvent(new MouseEvent('mousedown')); e.preventDefault(); }
+      setTimeout(() => { const q = document.querySelector(`#r-${mi}-${ii} .inp-qt`); if (q) { q.focus(); q.select(); } }, 60);
+      return;
+    }
+    else if (e.key === 'Escape') { el.style.display = 'none'; return; }
+    items.forEach((el2, i) => el2.classList.toggle('sel', i === acIdx[k]));
+    if (items[acIdx[k]]) items[acIdx[k]].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const q = document.querySelector(`#r-${mi}-${ii} .inp-qt`);
+    if (q) { q.focus(); q.select(); }
+  }
+}
+function onQTKey(e, mi, ii) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const meals = getMeals();
+  if (!meals[mi]) return;
+  const nextIi = ii + 1;
+  if (nextIi < meals[mi].items.length) {
+    const inp = document.querySelector(`#r-${mi}-${nextIi} .inp-food`);
+    if (inp) { inp.focus(); inp.select(); }
+  } else {
+    addRow(mi);
+  }
 }
 function onQI(mi, ii, inp) {
   const item = getMeals()[mi].items[ii];
@@ -1160,7 +1184,13 @@ function openAddRow() {
   l.innerHTML = getMeals().map((m, i) => `<div style="display:flex;align-items:center;gap:9px;padding:10px 13px;cursor:pointer;border-radius:var(--r-sm);border:1.5px solid var(--border);margin-bottom:5px;transition:all .12s" onmouseover="this.style.borderColor='var(--teal-l)'" onmouseout="this.style.borderColor='var(--border)'" onclick="addRow(${i});closeM('modal-addrow')"><span style="font-size:20px">${m.emoji}</span><span style="font-weight:600">${m.nome}</span></div>`).join('');
   openM('modal-addrow');
 }
-function markDirty() { dirty = true; }
+let _draftTimer = null;
+function markDirty() {
+  dirty = true;
+  // Salvataggio automatico bozza 1.5s dopo l'ultima modifica
+  clearTimeout(_draftTimer);
+  _draftTimer = setTimeout(saveDraftState, 1500);
+}
 function updateNote(mi, val) {
   const meals = getMeals();
   if (meals[mi]) { meals[mi].note = val; markDirty(); }
@@ -1418,7 +1448,7 @@ function nuovoPiano() {
   _eseguiNuovoPiano();
 }
 function _eseguiNuovoPiano() {
-  sessionStorage.removeItem('draftPiano');
+  localStorage.removeItem('draftPiano');
   giorni = [{ id: 'g_' + Date.now(), nome: 'Giorno 1', meals: DEFAULT_MEALS.map(m => ({ ...m, items: [{ nome: '', qt: '', altPrint: [], misura: '' }], collapsed: false })) }];
   giornoCorrente = 0;
   document.getElementById('inp-nome').value = '';
@@ -1500,7 +1530,7 @@ async function salvaPiano() {
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   dirty = false;
-  sessionStorage.removeItem('draftPiano');
+  localStorage.removeItem('draftPiano');
   toast(`💾 "${nome}" salvato!`, 'ok');
   if (window.capturePrintAndSave && currentPianoId) {
     capturePrintAndSave({
@@ -2439,7 +2469,7 @@ async function init() {
   if (pianoToLoad) {
     sessionStorage.removeItem('loadPianoId');
     sessionStorage.removeItem('newPianoCartella');
-    sessionStorage.removeItem('draftPiano');
+    localStorage.removeItem('draftPiano');
     sessionStorage.removeItem('impostaVisibile_formato');
     sessionStorage.removeItem('impostaVisibile_cartellaId');
     await caricaPianoById(pianoToLoad);
@@ -2448,14 +2478,14 @@ async function init() {
     }
   } else if (newCartellaId) {
     sessionStorage.removeItem('newPianoCartella');
-    sessionStorage.removeItem('draftPiano');
+    localStorage.removeItem('draftPiano');
     nuovoPiano();
     selectCartella(newCartellaId, allCartelle.find(c=>c.id===newCartellaId)?.nome || '');
   } else {
-    const savedDraft = sessionStorage.getItem('draftPiano');
+    const savedDraft = localStorage.getItem('draftPiano');
     if (savedDraft) {
       try {
-        sessionStorage.removeItem('draftPiano');
+        localStorage.removeItem('draftPiano');
         const draft = JSON.parse(savedDraft);
         giorni = draft.giorni.map(g => ({
           ...g,
@@ -2621,7 +2651,8 @@ function saveDraftState() {
     giorni.some(g => g.meals.some(m => m.items.some(i => i.nome && i.nome.trim())));
   if (!hasContent) return;
   try {
-    sessionStorage.setItem('draftPiano', JSON.stringify({
+    // localStorage invece di sessionStorage: persiste anche dopo chiusura browser
+    localStorage.setItem('draftPiano', JSON.stringify({
       giorni, giornoCorrente, currentPianoId, dirty,
       cartellaId,
       cartellaNome: document.getElementById('cartella-search')?.value || '',
@@ -2631,7 +2662,10 @@ function saveDraftState() {
     }));
   } catch(e) { console.error('Errore salvataggio bozza:', e); }
 }
+// Salva su pagehide, beforeunload e quando la scheda va in background
 window.addEventListener('pagehide', saveDraftState);
+window.addEventListener('beforeunload', saveDraftState);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveDraftState(); });
 
 // ═══════════════════════════════════════════════════
 // COPIA GIORNO

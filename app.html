@@ -214,6 +214,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <button class="btn btn-ghost btn-sm" onclick="openSalvaTemplate()" title="Salva il piano corrente come template riutilizzabile">💾<span>Template</span></button>
     <button class="btn btn-ghost btn-sm" onclick="openCaricaTemplate()" title="Carica un template salvato nel piano corrente">📂<span>Template</span></button>
     <span class="tbar-sep"></span>
+    <button class="btn btn-ghost btn-sm" onclick="generaListaSpesa()" title="Genera lista della spesa dal piano settimanale">🛒<span>Lista spesa</span></button>
+    <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
 <button class="btn btn-ghost btn-sm" onclick="stampaSettimanale()" title="Prospetto settimanale — tabella alimenti per giorno">📅</button>
@@ -535,6 +537,18 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-carica-template')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LISTA SPESA -->
+<div class="modal-bg" id="modal-lista-spesa">
+  <div class="modal" style="max-width:560px">
+    <div class="mhdr"><h2>🛒 Lista della Spesa</h2><button class="mclose" onclick="closeM('modal-lista-spesa')">✕</button></div>
+    <div class="mbody" id="lista-spesa-body" style="max-height:65vh;overflow-y:auto"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-lista-spesa')">Chiudi</button>
+      <button class="btn btn-primary btn-sm" onclick="stampaListaSpesa()">🖨️ Stampa</button>
     </div>
   </div>
 </div>
@@ -2172,6 +2186,84 @@ function stampaSettimanale() {
   _activatePrintMode('weekly');
   _applyLandscapePrint();
   setTimeout(() => window.print(), 400);
+}
+
+// ── LISTA DELLA SPESA ───────────────────────────────────────────────────────
+const _SPESA_CAT_ORDER = ['Cereali e derivati','Verdure e ortaggi','Frutta','Carni','Pesci','Uova','Latte e derivati','Legumi','Grassi e oli','Bevande','Spezie e condimenti','Zuccheri e dolci','Altro'];
+const _SPESA_CAT_EMOJI = {'Cereali e derivati':'🌾','Verdure e ortaggi':'🥦','Frutta':'🍎','Carni':'🥩','Pesci':'🐟','Uova':'🥚','Latte e derivati':'🧀','Legumi':'🫘','Grassi e oli':'🫒','Bevande':'💧','Spezie e condimenti':'🧂','Zuccheri e dolci':'🍯','Altro':'📦'};
+const _SPESA_CAT_COLOR = {'Cereali e derivati':'#FEF3C7','Verdure e ortaggi':'#DCFCE7','Frutta':'#FEE2E2','Carni':'#FECDD3','Pesci':'#DBEAFE','Uova':'#FEF9C3','Latte e derivati':'#E0F2FE','Legumi':'#D1FAE5','Grassi e oli':'#FEF3C7','Bevande':'#EFF6FF','Spezie e condimenti':'#F5F3FF','Zuccheri e dolci':'#FCE7F3','Altro':'#F1F5F9'};
+const _SPESA_CAT_ACCENT = {'Cereali e derivati':'#92400E','Verdure e ortaggi':'#065F46','Frutta':'#991B1B','Carni':'#9D174D','Pesci':'#1E40AF','Uova':'#78350F','Latte e derivati':'#0369A1','Legumi':'#064E3B','Grassi e oli':'#78350F','Bevande':'#1D4ED8','Spezie e condimenti':'#4C1D95','Zuccheri e dolci':'#831843','Altro':'#334155'};
+
+function generaListaSpesa() {
+  const aggregated = {};
+  giorni.forEach(giorno => {
+    (giorno.meals || []).forEach(meal => {
+      (meal.items || []).forEach(item => {
+        const nome = (item.nome || '').trim();
+        const qt = parseFloat(item.qt) || 0;
+        if (!nome || qt <= 0) return;
+        const key = nome.toLowerCase();
+        if (!aggregated[key]) {
+          const f = lookupC(nome);
+          let cat = f?.c || '';
+          if (!_SPESA_CAT_ORDER.includes(cat)) cat = 'Altro';
+          aggregated[key] = { nome, qt: 0, cat };
+        }
+        aggregated[key].qt += qt;
+      });
+    });
+  });
+
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+
+  // Group by category preserving order
+  const grouped = {};
+  _SPESA_CAT_ORDER.forEach(c => { grouped[c] = []; });
+  Object.values(aggregated).forEach(item => { (grouped[item.cat] || grouped['Altro']).push(item); });
+
+  let html = `<div style="margin-bottom:14px;padding:10px 14px;background:#F0FDF4;border-radius:10px;border-left:3px solid #10B981">
+    <div style="font-weight:700;color:#065F46;font-size:13px">🛒 Lista della spesa — ${nomeP ? 'Paziente: ' + esc(nomeP) + ' — ' : ''}${giorni.length} giorn${giorni.length===1?'o':'i'} di piano</div>
+    <div style="font-size:11px;color:#6B7280;margin-top:3px">Quantità aggregate su tutto il piano. Adatta le porzioni alla durata effettiva della dieta.</div>
+  </div>`;
+
+  _SPESA_CAT_ORDER.forEach(cat => {
+    const items = grouped[cat];
+    if (!items || !items.length) return;
+    const bg = _SPESA_CAT_COLOR[cat] || '#F1F5F9';
+    const ac = _SPESA_CAT_ACCENT[cat] || '#334155';
+    const em = _SPESA_CAT_EMOJI[cat] || '📦';
+    html += `<div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:flex;align-items:center;gap:5px">${em} ${cat}</div>
+      <div style="display:flex;flex-direction:column;gap:4px">`;
+    items.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(item => {
+      const qtLabel = item.qt >= 1000 ? (item.qt/1000).toFixed(1) + ' kg' : Math.round(item.qt) + ' g';
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:${bg};border-radius:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" style="width:16px;height:16px;cursor:pointer;accent-color:${ac}" onclick="this.parentElement.parentElement.style.opacity=this.checked?'.45':'1'">
+          <span style="font-size:13px;color:#1E293B">${esc(item.nome)}</span>
+        </div>
+        <span style="font-size:12px;font-weight:700;color:${ac};white-space:nowrap">${qtLabel}</span>
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+
+  if (!Object.values(aggregated).length) {
+    html = '<div class="and-empty" style="text-align:center;padding:30px"><div style="font-size:36px">🛒</div><div>Nessun alimento nel piano. Aggiungi alimenti prima di generare la lista.</div></div>';
+  }
+
+  document.getElementById('lista-spesa-body').innerHTML = html;
+  openM('modal-lista-spesa');
+}
+
+function stampaListaSpesa() {
+  const body = document.getElementById('lista-spesa-body');
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lista Spesa</title>
+    <style>body{font-family:'DM Sans',system-ui,sans-serif;margin:20mm 15mm;color:#1E293B}h1{font-size:16px;margin-bottom:8px}input[type=checkbox]{width:14px;height:14px}@media print{input[type=checkbox]{-webkit-print-color-adjust:exact}}</style>
+    </head><body><h1>🛒 Lista della Spesa</h1>${body.innerHTML}</body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 400);
 }
 
 function _buildWeeklyHTML(lyt) {

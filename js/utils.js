@@ -188,6 +188,11 @@ async function loadProfile() {
           <div class="fg" style="margin-bottom:10px"><label>Nome</label><input type="text" id="profop-nome" placeholder="es. Maria" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
           <div class="fg" style="margin-bottom:10px"><label>Cognome</label><input type="text" id="profop-cognome" placeholder="es. Rossi" maxlength="60" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
           <div class="fg" style="margin-bottom:10px"><label>N° Iscrizione Albo</label><input type="text" id="profop-albo" placeholder="es. 12345 (Regione)" maxlength="80" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+            <div class="fg"><label>Partita IVA</label><input type="text" id="profop-piva" placeholder="es. 01234567890" maxlength="20" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+            <div class="fg"><label>Codice Fiscale</label><input type="text" id="profop-cf" placeholder="es. RSSMRA80A01H501Z" maxlength="16" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;text-transform:uppercase"></div>
+          </div>
+          <div class="fg" style="margin-bottom:10px"><label>Specializzazione / Titolo (opzionale)</label><input type="text" id="profop-spec" placeholder="es. Dietista Specialista in Nutrizione Clinica" maxlength="120" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"></div>
           <div class="fg" style="margin-bottom:14px">
             <label for="profop-logo-file">Logo / Timbro (opzionale)</label>
             <div id="profop-logo-preview" style="display:none;margin-bottom:8px;text-align:center">
@@ -216,9 +221,15 @@ function openProfiloModal() {
   const nome = (currentProfile?.nome || p.nome || '');
   const cognome = (currentProfile?.cognome || p.cognome || '');
   const albo = (currentProfile?.albo || p.albo || '');
+  const piva = (currentProfile?.piva || p.piva || '');
+  const cf   = (currentProfile?.cf   || p.cf   || '');
+  const spec = (currentProfile?.spec || p.spec || '');
   const n = document.getElementById('profop-nome'); if (n) n.value = nome;
   const c = document.getElementById('profop-cognome'); if (c) c.value = cognome;
   const a = document.getElementById('profop-albo'); if (a) a.value = albo;
+  const pi = document.getElementById('profop-piva'); if (pi) pi.value = piva;
+  const cf_ = document.getElementById('profop-cf'); if (cf_) cf_.value = cf;
+  const sp = document.getElementById('profop-spec'); if (sp) sp.value = spec;
   // Reset file input so re-selecting the same file triggers change event
   const f = document.getElementById('profop-logo-file'); if (f) f.value = '';
   _aggiornaAnteprimaLogo(p.logo || null);
@@ -269,6 +280,9 @@ async function salvaProfiloOp() {
     nome: (document.getElementById('profop-nome')?.value || '').trim(),
     cognome: (document.getElementById('profop-cognome')?.value || '').trim(),
     albo: (document.getElementById('profop-albo')?.value || '').trim(),
+    piva: (document.getElementById('profop-piva')?.value || '').trim(),
+    cf: (document.getElementById('profop-cf')?.value || '').trim().toUpperCase(),
+    spec: (document.getElementById('profop-spec')?.value || '').trim(),
     logo: logo || null
   };
   saveProfiloOperatore(d);
@@ -304,8 +318,12 @@ function _isValidImageDataUrl(s) {
 function profiloFirmaHtml() {
   const p = getProfiloOperatore();
   const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
-  const albo = p.albo ? ' — N° Albo: ' + esc(p.albo) : '';
-  const hasText = nome || albo;
+  const spec = p.spec ? esc(p.spec) : '';
+  const albo = p.albo ? 'N° Albo: ' + esc(p.albo) : '';
+  const piva = p.piva ? 'P.IVA: ' + esc(p.piva) : '';
+  const cf   = p.cf   ? 'C.F.: ' + esc(p.cf) : '';
+  const parts = [esc(nome), spec, albo, piva, cf].filter(Boolean);
+  const hasText = parts.length > 0;
   const hasLogo = _isValidImageDataUrl(p.logo);
   if (!hasText && !hasLogo) return '';
   let html = '';
@@ -320,7 +338,7 @@ function profiloFirmaHtml() {
     html += wrapper.outerHTML;
   }
   if (hasText) {
-    html += '<div style="position:fixed;bottom:8mm;right:15mm;font-size:11px;color:#64748B;font-style:italic">' + esc(nome) + albo + '</div>';
+    html += '<div style="position:fixed;bottom:8mm;right:15mm;font-size:10px;color:#64748B;font-style:italic;text-align:right;line-height:1.5">' + parts.join(' — ') + '</div>';
   }
   return html;
 }

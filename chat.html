@@ -598,6 +598,57 @@ function renderAndamentoContent(panel) {
     </div>
   </div>`;
 
+  // ── Indice di Aderenza ────────────────────────────────────────────────────
+  const periodDays = andamentoPeriodDays > 0 ? andamentoPeriodDays : Math.max(1, _diaryDates.length);
+  const daysLogged = Object.keys(_diaryFoodByDate).length;
+  const freqPct = Math.round(daysLogged / periodDays * 100);
+  const diet = window._diaryDietTarget;
+  let adherenceHtml = '';
+  if (diet?.kcal_target && daysLogged > 0) {
+    const kcalTarget = diet.kcal_target;
+    const daysInTarget = Object.entries(_diaryTotalsByDate).filter(([d, t]) => {
+      const k = t.kcal || 0;
+      return k >= kcalTarget * 0.85 && k <= kcalTarget * 1.15;
+    }).length;
+    const adherePct = Math.round(daysInTarget / daysLogged * 100);
+    const adhColor = adherePct >= 70 ? '#16A34A' : adherePct >= 50 ? '#D97706' : '#DC2626';
+    const freqColor = freqPct >= 70 ? '#16A34A' : freqPct >= 50 ? '#D97706' : '#DC2626';
+    adherenceHtml = `
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📊 Indice di Aderenza al Piano</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="text-align:center;padding:12px;background:#F8FAFC;border-radius:10px">
+          <div style="font-size:26px;font-weight:800;color:${freqColor}">${freqPct}%</div>
+          <div style="font-size:11px;color:var(--slate-l);margin-top:4px">Frequenza<br>tracciamento</div>
+          <div style="font-size:10px;color:var(--slate-l);margin-top:2px">${daysLogged} giorni su ${periodDays}</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:#F8FAFC;border-radius:10px">
+          <div style="font-size:26px;font-weight:800;color:${adhColor}">${adherePct}%</div>
+          <div style="font-size:11px;color:var(--slate-l);margin-top:4px">Aderenza<br>calorica (±15%)</div>
+          <div style="font-size:10px;color:var(--slate-l);margin-top:2px">${daysInTarget} giorni su ${daysLogged}</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:#F8FAFC;border-radius:10px">
+          <div style="font-size:26px;font-weight:800;color:var(--teal-d)">${kcalTarget}</div>
+          <div style="font-size:11px;color:var(--slate-l);margin-top:4px">Target<br>prescritto (kcal)</div>
+          <div style="font-size:10px;color:var(--slate-l);margin-top:2px">Media effettiva: ${avgKcal||'–'} kcal</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:8px 12px;background:${adherePct>=70?'#F0FDF4':adherePct>=50?'#FFFBEB':'#FFF0F0'};border-radius:8px;font-size:12px;color:${adhColor}">
+        ${adherePct >= 70 ? '✅ Ottima aderenza al piano!' : adherePct >= 50 ? '⚠️ Aderenza parziale — valuta aggiustamenti o motivazione' : '❌ Aderenza bassa — discuti le difficoltà nella prossima visita'}
+      </div>
+    </div>`;
+  } else if (daysLogged > 0) {
+    const freqColor = freqPct >= 70 ? '#16A34A' : freqPct >= 50 ? '#D97706' : '#DC2626';
+    adherenceHtml = `
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="text-align:center;padding:10px 16px;background:#F8FAFC;border-radius:10px;flex-shrink:0">
+        <div style="font-size:24px;font-weight:800;color:${freqColor}">${freqPct}%</div>
+        <div style="font-size:10px;color:var(--slate-l);margin-top:2px">Frequenza tracciamento</div>
+      </div>
+      <div style="font-size:12px;color:var(--slate-m)">Il paziente ha registrato pasti in <b>${daysLogged} giorni</b> su ${periodDays} del periodo selezionato. <span style="color:var(--slate-l)">Assegna un piano attivo per vedere l'aderenza calorica.</span></div>
+    </div>`;
+  }
+
   const statsHtml = `<div class="and-stats-row">
     ${avgKcal ? `<div class="and-stat"><div class="and-stat-val">🔥 ${avgKcal}</div><div class="and-stat-lbl">kcal/giorno</div></div>` : ''}
     ${avgMood ? `<div class="and-stat"><div class="and-stat-val">${moodMap[Math.round(avgMood)]} ${avgMood}/5</div><div class="and-stat-lbl">Umore medio</div></div>` : ''}
@@ -608,6 +659,7 @@ function renderAndamentoContent(panel) {
     ${nCycles > 0 ? `<div class="and-stat"><div class="and-stat-val">🌸 ${nCycles}</div><div class="and-stat-lbl">cicli nel periodo</div></div>` : ''}
     <div class="and-stat"><div class="and-stat-val">📅 ${_diaryDates.length}</div><div class="and-stat-lbl">giorni</div></div>
   </div>
+  ${adherenceHtml}
   ${(corrMoodKcal !== null || corrMoodSleep !== null || corrMoodStress !== null) ? `
   <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px">
     <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📊 Correlazione Umore / Stile di Vita (Pearson r)</div>
@@ -659,6 +711,8 @@ async function loadAndamento() {
 
   const foodQ  = selectedPatientId ? safeQ(sb.from('food_logs').select('date,meal_type,food_name,kcal,proteins,carbs,fats,grams,food_data').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).order('created_at',{ascending:false}).limit(500)) : Promise.resolve([]);
   const totQ   = selectedPatientId ? safeQ(sb.from('daily_logs').select('date,kcal,proteins,carbs,fats').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
+  // Fetch active diet for adherence calculation
+  const dietQ  = selectedPatientId ? safeQ(sb.from('patient_diets').select('kcal_target,protein_target,carbs_target,fats_target').eq('user_id', selectedPatientId).eq('is_active', true).limit(1)) : Promise.resolve([]);
   const waterQ = selectedPatientId ? safeQ(sb.from('water_logs').select('date,amount_ml').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false})) : Promise.resolve([]);
   const actQ   = selectedPatientId ? safeQ(sb.from('activity_logs').select('date,activity_type,duration_minutes,calories_burned,steps').eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(100)) : Promise.resolve([]);
   const wtQ    = selectedPatientCartellaId ? safeQ(sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(200)) : Promise.resolve([]);
@@ -694,7 +748,8 @@ async function loadAndamento() {
 
   panel.innerHTML = '<div class="and-empty"><div class="spinner"></div><div>Caricamento diario...</div></div>';
 
-  const [foodLogs, dailyTotals, waterLogs, activityLogs, wellness, weightLogs, cycleLogs] = await Promise.all([foodQ, totQ, waterQ, actQ, wellQ, wtQ, cycleQ]);
+  const [foodLogs, dailyTotals, waterLogs, activityLogs, wellness, weightLogs, cycleLogs, dietRows] = await Promise.all([foodQ, totQ, waterQ, actQ, wellQ, wtQ, cycleQ, dietQ]);
+  window._diaryDietTarget = dietRows?.[0] || null;
 
   _diaryFoodByDate = {}; _diaryTotalsByDate = {}; _diaryWaterByDate = {};
   _diaryWellByDate = {}; _diaryActByDate = {}; _diaryWeightByDate = {};

@@ -420,6 +420,7 @@
 <script>
 let events = JSON.parse(localStorage.getItem('dietplan_events') || '[]');
 let patientAppts = []; // appointments booked by patients from the app (read-only from appointments table)
+const _asAgenda = autoSaveFields('nutriplan_draft_agenda', ['ev-tipo','ev-paziente','ev-data','ev-ora','ev-durata','ev-note']);
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 let selectedDate = localDateStr(new Date());
@@ -884,9 +885,10 @@ async function saveEvent() {
   await saveEvents();
   
   // Clear form
+  _asAgenda.clear();
   document.getElementById('ev-paziente').value = '';
   document.getElementById('ev-note').value = '';
-  
+
   selectDate(data);
   updateStats();
   toast('✅ Appuntamento salvato!','ok');
@@ -1171,7 +1173,9 @@ function checkNotifications() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  _asAgenda.register();
   document.getElementById('ev-data').value = localDateStr(new Date());
+  _asAgenda.restore();
   const d = formatStoredDate(localDateStr(new Date()), {weekday:'long',day:'numeric',month:'long'});
   document.getElementById('selected-date-label').textContent = d;
   renderCalendar();

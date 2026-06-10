@@ -1532,6 +1532,9 @@ async function salvaPiano() {
           proteins_100g: Math.round((f.p || 0) * 10) / 10,
           carbs_100g: Math.round((f.ch || 0) * 10) / 10,
           fats_100g: Math.round((f.g || 0) * 10) / 10,
+          fatSat_100g: Math.round((f.gs || 0) * 10) / 10,
+          sugar_100g:  Math.round((f.z  || 0) * 10) / 10,
+          salt_100g:   Math.round(((f.na || 0) * 2.5) / 100) / 10,
         };
       });
       const mKcal  = enrichedItems.reduce((s, it) => s + (it.kcal_100g  ? Math.round(it.kcal_100g  * (parseFloat(it.qt) || 0) / 100)          : 0), 0);
@@ -1682,7 +1685,7 @@ async function autoCapturePianoForVisibility(pianoId, cartellaId, formato) {
       return;
     }
 
-    const { error } = await sb.from('piani').update({ visible_to_patient: true }).eq('id', pianoId);
+    const { error } = await sb.from('piani').update({ visible_to_patient: true, display_mode: formato }).eq('id', pianoId);
     if (error) {
       toast('⚠️ Immagine creata ma errore visibilità: ' + error.message, 'err');
     } else {

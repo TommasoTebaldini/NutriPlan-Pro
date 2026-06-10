@@ -665,6 +665,7 @@ ALTER TABLE bia_records          ADD COLUMN IF NOT EXISTS visible_to_patient BOO
 ALTER TABLE note_specialistiche  ADD COLUMN IF NOT EXISTS visible_to_patient BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE note_specialistiche  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
+ALTER TABLE piani                ADD COLUMN IF NOT EXISTS display_mode VARCHAR(20) DEFAULT 'normale';
 ALTER TABLE piani                ALTER COLUMN visible_to_patient SET DEFAULT FALSE;
 ALTER TABLE ncpt                 ALTER COLUMN visible_to_patient SET DEFAULT FALSE;
 ALTER TABLE schede_valutazione   ALTER COLUMN visible_to_patient SET DEFAULT FALSE;

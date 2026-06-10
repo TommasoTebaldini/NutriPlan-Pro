@@ -244,6 +244,7 @@
 <script src="js/print-capture.js" defer></script>
 <script>
 let _editingFoodId = null; // null = nuovo alimento, stringa UUID = modifica
+const _asDatabase = autoSaveFields('nutriplan_draft_database', ['af-nome','af-cat','af-kcal','af-prot','af-gtot','af-gs','af-cho','af-zucc','af-fi','af-col','af-ca','af-fe','af-mgval','af-k','af-na','af-zn','af-fo','af-se']);
 
 function nd(v){ return (v===null||v===undefined||v==='')
   ? '<span class="nd">—</span>'
@@ -374,6 +375,7 @@ function _openFoodModal() {
 function openAddFood() {
   _editingFoodId = null;
   document.getElementById('af-form').reset();
+  _asDatabase.restore();
   document.getElementById('modal-food-title').textContent = '➕ Aggiungi alimento al database personale';
   _openFoodModal();
 }
@@ -453,6 +455,7 @@ async function saveFood() {
 
   if (error) { toast('Errore: ' + error.message, 'err'); return; }
 
+  _asDatabase.clear();
   closeAddFood();
   await loadCustomFoods();
   populateCats();
@@ -472,6 +475,7 @@ function deleteCustomFood(id) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  _asDatabase.register();
   const ok = await checkAuth();
   if (!ok) return;
   rebuildDB();

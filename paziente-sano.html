@@ -756,6 +756,15 @@
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+const _asPazSano = autoSaveFields('nutriplan_draft_pazsano', [
+  'ps-sesso','ps-eta','ps-peso','ps-altezza','ps-pal','ps-obiettivo',
+  'ai-sesso','ai-eta','ai-peso','ai-altezza','ai-pal','ai-obiettivo',
+  'ai-npasti','ai-schema','ai-stagione','ai-kcal',
+  'ai-f-carne-r','ai-f-carne-b','ai-f-pesce','ai-f-uova','ai-f-legumi',
+  'ai-f-latticini','ai-f-formaggi','ai-f-fsecca',
+  'ai-preferiti','ai-evitare','ai-note-extra'
+]);
+
 // ── Tab switching ──
 function showPSTab(id) {
   document.querySelectorAll('.ps-tab').forEach((t,i) => t.classList.toggle('active', t.getAttribute('onclick').includes("'"+id+"'")));
@@ -1184,6 +1193,7 @@ async function salvaPazienteSano() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
+  _asPazSano.clear();
   toast(editingPsNoteId ? '✅ Scheda aggiornata!' : '✅ Dati salvati nella cartella!', 'ok');
   if (!editingPsNoteId && result.data?.[0]?.id) editingPsNoteId = result.data[0].id;
   if (window.capturePrintAndSave && editingPsNoteId) {
@@ -1216,6 +1226,7 @@ function resetPS() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  _asPazSano.register();
   try { await checkAuth(); } catch(e) {}
   initCartellaWidget('ps-cartella-cw', {
     hiddenInputId: 'ps-cartella',
@@ -1227,6 +1238,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (currentUser) {
     const noteId = new URLSearchParams(window.location.search).get('noteId');
     if (noteId) await caricaPsDaNota(noteId);
+    else { _asPazSano.restore(); calcolaPS(); }
+  } else {
+    _asPazSano.restore();
+    calcolaPS();
   }
 });
 </script>

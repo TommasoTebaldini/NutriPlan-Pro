@@ -1636,6 +1636,9 @@ function svuotaSezione_pediatria() {
 }
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_pediatria();
+  window.addEventListener('beforeunload', autoSavePage_pediatria);
+  window.addEventListener('pagehide', autoSavePage_pediatria);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') autoSavePage_pediatria(); });
 }, {once: false});
 
 function calcVal_ped2() {

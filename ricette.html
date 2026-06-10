@@ -199,6 +199,7 @@ let ingredientiCount = 0;
 let ricetteTableMissing = false;
 let useLocalStorage = false;
 const LS_KEY = 'np_ricette_local';
+const _asRicetta = autoSaveFields('nutriplan_draft_ricetta', ['r-nome','r-cat','r-porzioni','r-note']);
 
 // ── STORAGE HELPERS ──
 function lsLoadRicette() {
@@ -334,6 +335,7 @@ function openNuovaRicetta() {
   document.getElementById('ingredienti-list').innerHTML = '';
   ingredientiCount = 0;
   document.getElementById('r-totali').style.display = 'none';
+  _asRicetta.restore();
   addIngrediente(); addIngrediente(); addIngrediente();
   openM('modal-ricetta');
   setTimeout(() => document.getElementById('r-nome').focus(), 200);
@@ -443,6 +445,7 @@ async function salvaRicetta() {
       arr.unshift(payload);
     }
     lsSaveRicette(arr);
+    _asRicetta.clear();
     closeM('modal-ricetta');
     toast(editingRicettaId ? '✅ Ricetta aggiornata!' : '✅ Ricetta salvata (locale)!', 'ok');
     loadRicette();
@@ -474,6 +477,7 @@ async function salvaRicetta() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
+  _asRicetta.clear();
   closeM('modal-ricetta');
   toast(editingRicettaId ? '✅ Ricetta aggiornata!' : '✅ Ricetta salvata!', 'ok');
   loadRicette();
@@ -702,6 +706,7 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  _asRicetta.register();
   rebuildDB();
   try {
     const ok = await checkAuth();

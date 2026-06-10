@@ -1963,6 +1963,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('main').addEventListener('change', scheduleAutoSave_ncpt);
   // Save before navigating away
   window.addEventListener('beforeunload', autoSavePage_ncpt);
+  window.addEventListener('pagehide', autoSavePage_ncpt);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') autoSavePage_ncpt(); });
 });
 </script>
 </body>

@@ -1202,6 +1202,9 @@ function svuotaSezione_bia() {
 }
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('biaId')) autoRestorePage_bia();
+  window.addEventListener('beforeunload', autoSavePage_bia);
+  window.addEventListener('pagehide', autoSavePage_bia);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') autoSavePage_bia(); });
 }, {once: false});
 </script>
 </body>

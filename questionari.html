@@ -2877,6 +2877,9 @@ function svuotaSezione_questionari() {
 }
 document.addEventListener('DOMContentLoaded', function() {
   if (!sessionStorage.getItem('openQuestionario')) autoRestorePage_questionari();
+  window.addEventListener('beforeunload', autoSavePage_questionari);
+  window.addEventListener('pagehide', autoSavePage_questionari);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') autoSavePage_questionari(); });
 }, {once: false});
 </script>
 </body>

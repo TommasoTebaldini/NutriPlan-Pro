@@ -1957,6 +1957,8 @@ function autoRestorePage_valutazione() {
   } catch(e) {}
 }
 window.addEventListener('beforeunload', autoSavePage_valutazione);
+window.addEventListener('pagehide', autoSavePage_valutazione);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') autoSavePage_valutazione(); });
 
 document.addEventListener('DOMContentLoaded',async()=>{
   renderPatChips();

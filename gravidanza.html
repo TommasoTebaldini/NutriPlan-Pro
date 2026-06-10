@@ -735,13 +735,16 @@ async function ensureChartJs() {
 let _noteId = null;
 let _cartellaId = null;
 let _weightChart = null;
+const _asGrav = autoSaveFields('nutriplan_draft_gravidanza', ['g-tipo','g-eta','g-peso-pre','g-altezza','g-peso-att','g-settimane']);
 
 document.addEventListener('DOMContentLoaded', async () => {
+  _asGrav.register();
   await checkAuth();
   const params = new URLSearchParams(location.search);
   _noteId = params.get('noteId') || null;
   _cartellaId = params.get('cartellaId') || null;
   if (_noteId || _cartellaId) document.getElementById('grav-salva-wrap').style.display = '';
+  _asGrav.restore();
   aggiornaGDM();
 });
 
@@ -896,6 +899,7 @@ async function salvaNota() {
   });
   showLoading(false);
   if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  _asGrav.clear();
   toast('💾 Nota specialistica salvata!', 'ok');
 }
 </script>

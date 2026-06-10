@@ -492,6 +492,44 @@ function calcolaEta(ddn) {
 }
 
 // ═══════════════════════════════════════════════════
+// AUTO-SAVE UTILITY
+// ═══════════════════════════════════════════════════
+// Usage:
+//   const _as = autoSaveFields('nutriplan_draft_mypage', ['id1','id2',...]);
+//   _as.register();   // call once in DOMContentLoaded — wires input + close events
+//   _as.restore();    // call on init or modal open
+//   _as.clear();      // call after successful DB save
+function autoSaveFields(key, fieldIds) {
+  function save() {
+    try {
+      const d = {};
+      fieldIds.forEach(id => { const el = document.getElementById(id); if (el) d[id] = el.value; });
+      localStorage.setItem(key, JSON.stringify(d));
+    } catch(e) {}
+  }
+  function restore() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) || 'null');
+      if (!saved) return;
+      fieldIds.forEach(id => { const el = document.getElementById(id); if (el && saved[id] !== undefined) el.value = saved[id]; });
+    } catch(e) {}
+  }
+  function clear() { try { localStorage.removeItem(key); } catch(e) {} }
+  function register() {
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', save);
+      if (el.tagName === 'SELECT') el.addEventListener('change', save);
+    });
+    window.addEventListener('beforeunload', save);
+    window.addEventListener('pagehide', save);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') save(); });
+  }
+  return { save, restore, clear, register };
+}
+
+// ═══════════════════════════════════════════════════
 // TOAST
 // ═══════════════════════════════════════════════════
 let _tT = null;

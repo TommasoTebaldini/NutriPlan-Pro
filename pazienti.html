@@ -403,6 +403,55 @@ async function ensureChartJs() {
 <script src="js/print-capture.js" defer></script>
 <script>
 let cartellaAperta = null;
+
+// ── Auto-save: persiste la cartella aperta tra sessioni del browser ──────────
+function _saveCartellaAperta(id) {
+  try { if (id) localStorage.setItem('nutriplan_cartella_aperta', id); else localStorage.removeItem('nutriplan_cartella_aperta'); } catch(e) {}
+}
+function _restoreCartellaAperta() {
+  try { return localStorage.getItem('nutriplan_cartella_aperta') || null; } catch(e) { return null; }
+}
+// Auto-save campi form modal-nc
+const _NC_FIELDS = ['nc-nome','nc-cognome','nc-ddn','nc-sesso','nc-cf','nc-note'];
+function _saveNcDraft() {
+  try {
+    const d = {};
+    _NC_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) d[id] = el.value; });
+    localStorage.setItem('nutriplan_nc_draft', JSON.stringify(d));
+  } catch(e) {}
+}
+function _restoreNcDraft() {
+  try {
+    const raw = localStorage.getItem('nutriplan_nc_draft');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    _NC_FIELDS.forEach(id => { const el = document.getElementById(id); if (el && d[id] != null) el.value = d[id]; });
+  } catch(e) {}
+}
+function _clearNcDraft() { try { localStorage.removeItem('nutriplan_nc_draft'); } catch(e) {} }
+// Auto-save campi form modal-esame
+const _ESAME_FIELDS = ['esame-tipo','esame-tipo-custom','esame-valore','esame-unita','esame-data','esame-note'];
+function _saveEsameDraft() {
+  try {
+    const d = {};
+    _ESAME_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) d[id] = el.value; });
+    localStorage.setItem('nutriplan_esame_draft', JSON.stringify(d));
+  } catch(e) {}
+}
+function _restoreEsameDraft() {
+  try {
+    const raw = localStorage.getItem('nutriplan_esame_draft');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    _ESAME_FIELDS.forEach(id => { const el = document.getElementById(id); if (el && d[id] != null) el.value = d[id]; });
+    // Mostra/nascondi campo custom
+    const tipoEl = document.getElementById('esame-tipo');
+    const customWrap = document.getElementById('esame-custom-wrap');
+    if (tipoEl && customWrap) customWrap.style.display = tipoEl.value === '__custom__' ? '' : 'none';
+    aggiornaEsameBadgePreview();
+  } catch(e) {}
+}
+function _clearEsameDraft() { try { localStorage.removeItem('nutriplan_esame_draft'); } catch(e) {} }
 let editingCartellaId = null;
 let _altroCartellaId = null;
 let allCartelleData = [];
@@ -452,11 +501,34 @@ function _confirmCancel() { closeM('modal-confirm'); _confirmCallback = null; }
 
 async function init() {
   await checkAuth();
-  const savedCartella = sessionStorage.getItem('openCartellaId');
-  if (savedCartella) {
+
+  // Priorità: sessionStorage (navigazione da app.html) → localStorage (chiusura browser)
+  const fromSession = sessionStorage.getItem('openCartellaId');
+  if (fromSession) {
     sessionStorage.removeItem('openCartellaId');
-    cartellaAperta = savedCartella;
+    cartellaAperta = fromSession;
+  } else {
+    const fromLocal = _restoreCartellaAperta();
+    if (fromLocal) cartellaAperta = fromLocal;
   }
+
+  // Collega auto-save ai form modali
+  _NC_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', _saveNcDraft);
+  });
+  _ESAME_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', _saveEsameDraft);
+  });
+
+  // Salva cartellaAperta su chiusura scheda/browser
+  window.addEventListener('pagehide', () => _saveCartellaAperta(cartellaAperta));
+  window.addEventListener('beforeunload', () => _saveCartellaAperta(cartellaAperta));
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') _saveCartellaAperta(cartellaAperta);
+  });
+
   loadCartelle();
 }
 
@@ -694,7 +766,15 @@ function renderCartelleGrid(data) {
 
 async function apriCartella(id) {
   cartellaAperta = id;
+  _saveCartellaAperta(id);
   try { await renderCartellaDetail(id); } catch(e) { console.error("renderCartellaDetail error:", e); }
+}
+
+function tornaAllElenco() {
+  cartellaAperta = null;
+  _saveCartellaAperta(null);
+  document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
+  loadCartelle();
 }
 
 async function renderCartellaDetail(id) {
@@ -878,7 +958,7 @@ async function renderCartellaDetail(id) {
 
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" onclick="cartellaAperta=null;document.getElementById('page-title').textContent='📁 Cartelle Pazienti';loadCartelle()">← Tutte le cartelle</button>
+      <button class="btn btn-ghost btn-sm" onclick="tornaAllElenco()">← Tutte le cartelle</button>
       <h3 style="font-size:16px;font-weight:700">${isAltro ? '📂' : '📁'} ${esc(cart.nome)}</h3>
       ${!isAltro && eta !== null ? '<span class="paz-tag">' + eta + ' anni</span>' : ''}
       ${!isAltro && cart.sesso ? '<span class="paz-tag">' + (cart.sesso==='M'?'♂️ M':'♀️ F') + '</span>' : ''}
@@ -1151,6 +1231,7 @@ function openNewCartella() {
   document.getElementById('nc-sesso').value = '';
   ncSelectedTags = [];
   renderNcTagChips();
+  _restoreNcDraft();
   openM('modal-nc');
   setTimeout(() => document.getElementById('nc-nome').focus(), 200);
 }
@@ -1210,6 +1291,7 @@ async function salvaCartella() {
     } else { toast('❌ ' + result.error.message, 'err'); return; }
   }
   closeM('modal-nc');
+  _clearNcDraft();
   toast(editingCartellaId ? '✅ Cartella aggiornata!' : '📁 Cartella creata!', 'ok');
   editingCartellaId = null;
   if (cartellaAperta) await renderCartellaDetail(cartellaAperta);
@@ -1360,6 +1442,7 @@ async function toggleArchiviaCartella(id, currentlyArchived) {
     }
     toast(newArchived ? '📦 Cartella archiviata' : '♻️ Cartella ripristinata', 'ok');
     cartellaAperta = null;
+    _saveCartellaAperta(null);
     document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
     await loadCartelle();
   }, { title: newArchived ? '📦 Archivia Cartella' : '♻️ Ripristina Cartella', okLabel: newArchived ? 'Archivia' : 'Ripristina' });
@@ -1706,6 +1789,7 @@ function openEsameModal(cartellaId) {
   document.getElementById('esame-ref-info').style.display = 'none';
   document.getElementById('esame-badge-preview').style.display = 'none';
   document.getElementById('esame-modal-title').textContent = '🔬 Aggiungi Esame Biochimico';
+  _restoreEsameDraft();
   openM('modal-esame');
 }
 
@@ -1765,6 +1849,7 @@ async function salvaEsame() {
     else toast('Errore salvataggio: ' + error.message, 'err');
     return;
   }
+  _clearEsameDraft();
   closeM('modal-esame');
   toast('Esame salvato', 'ok');
   await renderCartellaDetail(_esameCartellaId);

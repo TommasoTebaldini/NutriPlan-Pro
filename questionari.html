@@ -282,7 +282,10 @@
         </div>
       </div>
       <div class="q-result-box" id="mna-result"></div>
-      <button class="btn btn-primary btn-sm" onclick="calcMNA(true)">📊 Calcola MNA-SF</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-primary btn-sm" onclick="calcMNA(true)">📊 Calcola MNA-SF</button>
+        <button class="btn btn-ghost btn-sm" onclick="precompilaMNA()" title="Carica i dati dall'ultima scheda di valutazione del paziente selezionato">📋 Pre-compila da ultima valutazione</button>
+      </div>
     </div>
   </div>
 
@@ -1679,6 +1682,80 @@ function calcMNA(show) {
     </div>
     <div class="q-result-desc"><b>Interpretazione:</b> ${desc}<br><br><b>Raccomandazione ESPEN:</b> ${rec}</div>
   `, color, 'MNA-SF', { score, label, desc, rec });
+}
+
+// ── FEATURE 6: Pre-compilazione MNA da scheda valutazione ──
+function _setMnaRadio(name, value) {
+  const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+  if (!el) return false;
+  el.checked = true;
+  const opt = el.closest('.q-opt');
+  if (opt) { opt.style.background = '#fffde7'; opt.style.border = '1px solid #FBC02D'; }
+  return true;
+}
+
+async function precompilaMNA() {
+  if (!currentUser) { toast('Accedi per usare la pre-compilazione', 'err'); return; }
+  const cartellaId = document.getElementById('qbar-cartella')?.value;
+  if (!cartellaId) { toast('Seleziona prima una cartella paziente in alto', 'err'); return; }
+
+  // Reset evidenziazioni precedenti
+  document.querySelectorAll('#qbody-mna .q-opt').forEach(o => { o.style.background = ''; o.style.border = ''; });
+
+  const { data, error } = await sb.from('schede_valutazione')
+    .select('peso,altezza,dati_extra,saved_at,created_at')
+    .eq('cartella_id', cartellaId).eq('user_id', currentUser.id)
+    .order('saved_at', { ascending: false }).limit(1);
+
+  if (error) { toast('Errore nel caricamento della valutazione', 'err'); return; }
+  if (!data || !data.length) { toast('Nessuna scheda di valutazione trovata per questo paziente', 'err'); return; }
+
+  const s = data[0];
+  let extra = {};
+  try { extra = typeof s.dati_extra === 'string' ? JSON.parse(s.dati_extra || '{}') : (s.dati_extra || {}); } catch (e) {}
+
+  let count = 0;
+
+  // F — BMI → punteggio MNA (BMI<19=0, 19-21=1, 21-23=2, >=23=3)
+  const peso = parseFloat(s.peso), alt = parseFloat(s.altezza);
+  if (peso && alt) {
+    const altM = alt > 3 ? alt / 100 : alt; // gestisce cm o m
+    const bmi = peso / (altM * altM);
+    let fVal;
+    if (bmi < 19) fVal = 0; else if (bmi < 21) fVal = 1; else if (bmi < 23) fVal = 2; else fVal = 3;
+    if (_setMnaRadio('mna_f', fVal)) count++;
+  }
+
+  // B — Perdita di peso (>3kg=0, 1-3kg=2, nessuna=3). Da variaz_peso o peso_min/peso_max
+  let variaz = parseFloat(extra.variaz_peso);
+  if (isNaN(variaz) && extra.peso_max != null && peso) {
+    const pmax = parseFloat(extra.peso_max);
+    if (!isNaN(pmax)) variaz = peso - pmax; // negativo = perdita rispetto al massimo
+  }
+  if (!isNaN(variaz)) {
+    const perdita = -variaz; // kg persi (positivo se ha perso)
+    let bVal;
+    if (perdita > 3) bVal = 0; else if (perdita >= 1) bVal = 2; else bVal = 3;
+    if (_setMnaRadio('mna_b', bVal)) count++;
+  }
+
+  // C — Mobilità da attività fisica/lavoro
+  const att = ((extra.attfis || '') + ' ' + (extra.lavoro || '')).toLowerCase();
+  if (att.trim()) {
+    let cVal = 2; // default: esce di casa
+    if (/allett|sedia a rotelle|immobil|carrozzina/.test(att)) cVal = 0;
+    else if (/sedentar|casa|poco attiv|ridott|limitat/.test(att)) cVal = 1;
+    else if (/attiv|sport|moderat|intens|cammin|esce|moviment/.test(att)) cVal = 2;
+    if (_setMnaRadio('mna_c', cVal)) count++;
+  }
+
+  const dataScheda = s.saved_at || s.created_at;
+  const dStr = dataScheda ? new Date(dataScheda).toLocaleDateString('it') : '';
+  if (count > 0) {
+    toast(`${count} campi pre-compilati dalla valutazione del ${dStr}`, 'ok');
+  } else {
+    toast('Nessun campo pre-compilabile trovato nella valutazione', 'info');
+  }
 }
 
 // ─────────────────────────────────

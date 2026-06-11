@@ -380,6 +380,37 @@ async function ensureChartJs() {
   </div>
 </div>
 
+<!-- MODAL: NOTA SOAP -->
+<div class="modal-bg" id="modal-soap">
+  <div class="modal" style="max-width:600px">
+    <div class="mhdr"><h2>🩺 Nuova Nota di Sessione (SOAP)</h2><button class="mclose" onclick="closeM('modal-soap')">✕</button></div>
+    <div class="mbody" style="padding:16px 18px;max-height:75vh;overflow-y:auto">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:12px">
+        <div class="fg"><label>Data visita</label><input type="date" id="soap-data"></div>
+        <div class="fg"><label>Tipo visita</label>
+          <select id="soap-tipo">
+            <option>Prima visita</option>
+            <option selected>Follow-up</option>
+            <option>Controllo</option>
+            <option>Urgente</option>
+          </select></div>
+      </div>
+      <div class="fg" style="margin-bottom:10px"><label>S — Soggettivo <span style="font-weight:400;color:var(--slate-l)">(cosa riporta il paziente)</span></label>
+        <textarea id="soap-s" rows="3" placeholder="Es. Riferisce maggiore sazietà, riduzione gonfiore..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+      <div class="fg" style="margin-bottom:10px"><label>O — Oggettivo <span style="font-weight:400;color:var(--slate-l)">(dati misurati)</span></label>
+        <textarea id="soap-o" rows="3" placeholder="Es. Peso 82,4 kg (−1,2), PA 130/80, glicemia 98..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+      <div class="fg" style="margin-bottom:10px"><label>A — Assessment <span style="font-weight:400;color:var(--slate-l)">(valutazione clinica)</span></label>
+        <textarea id="soap-a" rows="3" placeholder="Es. Buona aderenza, trend ponderale in linea con obiettivo..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+      <div class="fg"><label>P — Piano <span style="font-weight:400;color:var(--slate-l)">(prossima sessione)</span></label>
+        <textarea id="soap-p" rows="3" placeholder="Es. Mantenere schema, aumentare verdura, ricontrollo tra 4 settimane..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-soap')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaSoap()">💾 Salva Nota</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: AI PAZIENTE -->
 <div class="modal-bg" id="modal-ai-paziente">
   <div class="modal" style="max-width:560px">
@@ -820,7 +851,8 @@ async function renderCartellaDetail(id) {
   // Split questionnaires, consigli nutrizionali, and other specialist notes
   const questionariSalvati = (noteSpec || []).filter(n => n.tipo === 'questionario');
   const consigliNutrizionali = (noteSpec || []).filter(n => n.tipo === 'consiglio');
-  const noteSpecAltre = (noteSpec || []).filter(n => n.tipo !== 'questionario' && n.tipo !== 'consiglio');
+  const soapNotes = (noteSpec || []).filter(n => n.tipo === 'soap_note');
+  const noteSpecAltre = (noteSpec || []).filter(n => n.tipo !== 'questionario' && n.tipo !== 'consiglio' && n.tipo !== 'soap_note');
   document.getElementById('page-title').textContent = '📁 ' + cart.nome;
   const eta = cart.ddn ? calcolaEta(cart.ddn) : null;
 
@@ -933,6 +965,45 @@ async function renderCartellaDetail(id) {
       '<button class="btn btn-ghost btn-xs" onclick="deleteEsame(\'' + e.id + '\',\'' + id + '\')">🗑️</button>' +
       '</div>';
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun esame biochimico registrato.</div>';
+
+  // Build SOAP notes list (newest first)
+  const VISITA_MAP = { 'Prima visita':{bg:'#EDE9FE',col:'#5B21B6'}, 'Follow-up':{bg:'#EFF6FF',col:'#1D4ED8'}, 'Controllo':{bg:'#F0FDF4',col:'#15803D'}, 'Urgente':{bg:'#FEE2E2',col:'#991B1B'} };
+  const soapOrd = [...soapNotes].sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+  const soapHtml = soapOrd.length ? soapOrd.map(n => {
+    let d = {}; try { d = JSON.parse(n.dati||'{}'); } catch(e){}
+    const tipoV = d.tipo_visita || 'Visita';
+    const vm = VISITA_MAP[tipoV] || {bg:'#F1F5F9',col:'#475569'};
+    const dataV = d.data_visita ? fmtDate(d.data_visita) : fmtDate(n.created_at);
+    const sPrev = (d.s||'').trim();
+    const sShort = sPrev.length > 120 ? sPrev.slice(0,120)+'…' : sPrev;
+    const field = (lbl,val)=> (val&&val.trim()) ? `<div style="margin-top:6px"><span style="font-weight:700;color:var(--slate-m);font-size:11px">${lbl}</span><div style="font-size:12.5px;color:var(--slate);white-space:pre-wrap;line-height:1.5">${esc(val)}</div></div>` : '';
+    return `<div style="background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;overflow:hidden">
+      <div onclick="toggleSoap('${n.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer">
+        <span style="font-size:22px;background:${vm.bg};padding:6px;border-radius:8px">🩺</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:13px;color:var(--slate)">Nota SOAP · ${dataV}</div>
+          <div style="font-size:11.5px;color:var(--slate-l)">${sShort ? esc(sShort) : 'Nessun soggettivo'}</div>
+        </div>
+        <span style="font-size:11px;background:${vm.bg};color:${vm.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${esc(tipoV)}</span>
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();stampaSoap('${n.id}')" title="Stampa / PDF">🖨️</button>
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
+      </div>
+      <div id="soap-body-${n.id}" data-soap='${esc(JSON.stringify(d))}' style="display:none;padding:0 14px 12px 14px;border-top:1px dashed var(--border)">
+        ${field('S — Soggettivo', d.s)}
+        ${field('O — Oggettivo', d.o)}
+        ${field('A — Assessment', d.a)}
+        ${field('P — Piano', d.p)}
+      </div>
+    </div>`;
+  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna nota di sessione registrata.</div>';
+
+  const soapSection = !isAltro ? `<div class="card" style="margin-bottom:12px">
+    <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">🩺 Note Cliniche di Sessione (SOAP) <span style="background:#ECFEFF;color:#0E7490;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${soapNotes.length}</span></h4>
+      <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0E7490,#22D3EE);color:white;box-shadow:0 2px 8px rgba(14,116,144,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''" onclick="openSoapModal('${cart.id}')">🩺 Nuova Nota Sessione</button>
+    </div>
+    <div style="padding:10px 14px">${soapHtml}</div>
+  </div>` : '';
 
   // Build allegati HTML
   const allegatiHtml = '<div class="card" style="margin-bottom:12px">' +
@@ -1097,8 +1168,15 @@ async function renderCartellaDetail(id) {
       }).join('')}</div>
     </div>` : ''}
 
+    ${soapSection}
+
     ${!isAltro ? allegatiHtml : ''}
   `;
+}
+
+function toggleSoap(id) {
+  const el = document.getElementById('soap-body-' + id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function apriNoteSpec(noteId, tipo) {
@@ -1215,6 +1293,71 @@ async function delNoteSpec(id) {
     await renderCartellaDetail(cartellaAperta);
     toast('🗑️ Scheda eliminata', 'info');
   }, { danger: true, title: '⚠️ Elimina Scheda', okLabel: 'Elimina' });
+}
+
+/* ===== FEATURE 4: Note cliniche rapide SOAP ===== */
+let _soapCartellaId = null;
+function openSoapModal(cartellaId) {
+  _soapCartellaId = cartellaId;
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('soap-data').value = today;
+  document.getElementById('soap-tipo').value = 'Follow-up';
+  ['soap-s', 'soap-o', 'soap-a', 'soap-p'].forEach(id => { document.getElementById(id).value = ''; });
+  openM('modal-soap');
+}
+
+async function salvaSoap() {
+  if (!_soapCartellaId || !currentUser) { toast('Errore: cartella non valida', 'err'); return; }
+  const dataV = document.getElementById('soap-data').value || new Date().toISOString().slice(0, 10);
+  const tipoV = document.getElementById('soap-tipo').value;
+  const s = document.getElementById('soap-s').value.trim();
+  const o = document.getElementById('soap-o').value.trim();
+  const a = document.getElementById('soap-a').value.trim();
+  const p = document.getElementById('soap-p').value.trim();
+  if (!s && !o && !a && !p) { toast('Compila almeno un campo della nota', 'err'); return; }
+
+  const dati = { s, o, a, p, tipo_visita: tipoV, data_visita: dataV };
+  const fmtIt = new Date(dataV).toLocaleDateString('it');
+  showLoading(true);
+  const { error } = await sb.from('note_specialistiche').insert({
+    cartella_id: _soapCartellaId,
+    user_id: currentUser.id,
+    tipo: 'soap_note',
+    nota: 'Nota SOAP — ' + fmtIt + ' (' + tipoV + ')',
+    dati: JSON.stringify(dati),
+    visible_to_patient: false
+  });
+  showLoading(false);
+  if (error) { toast('Errore salvataggio: ' + error.message, 'err'); return; }
+  closeM('modal-soap');
+  toast('🩺 Nota SOAP salvata', 'ok');
+  await renderCartellaDetail(cartellaAperta);
+}
+
+function stampaSoap(id) {
+  const body = document.getElementById('soap-body-' + id);
+  if (!body) return;
+  let d = {};
+  try { d = JSON.parse(body.getAttribute('data-soap') || '{}'); } catch (e) {}
+  const esc2 = s => String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])).replace(/\n/g, '<br>');
+  const dataV = d.data_visita ? new Date(d.data_visita).toLocaleDateString('it') : '';
+  const cartNome = (window._currentCartellaData && window._currentCartellaData.cart) ? window._currentCartellaData.cart.nome : '';
+  const win = window.open('', '_blank');
+  const blocco = (lbl, val) => `<h3 style="margin:14px 0 4px;color:#0E7490;font-size:14px">${lbl}</h3><div style="white-space:pre-wrap;line-height:1.6;font-size:13px">${esc2(val) || '<i style="color:#999">—</i>'}</div>`;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Nota SOAP ${dataV}</title>
+    <style>@page{margin:18mm}body{font-family:Arial,Helvetica,sans-serif;color:#1e293b;max-width:720px;margin:0 auto;padding:10px}
+    h1{font-size:18px;border-bottom:2px solid #0E7490;padding-bottom:8px}
+    .meta{font-size:12px;color:#475569;margin-bottom:8px}</style></head>
+    <body>
+      <h1>🩺 Nota Clinica di Sessione (SOAP)</h1>
+      <div class="meta"><b>Paziente:</b> ${esc2(cartNome)} &nbsp; | &nbsp; <b>Data visita:</b> ${dataV} &nbsp; | &nbsp; <b>Tipo:</b> ${esc2(d.tipo_visita || '')}</div>
+      ${blocco('S — Soggettivo', d.s)}
+      ${blocco('O — Oggettivo', d.o)}
+      ${blocco('A — Assessment', d.a)}
+      ${blocco('P — Piano', d.p)}
+      <script>window.onload=function(){window.print();}<\/script>
+    </body></html>`);
+  win.document.close();
 }
 
 function apriQuestionario(id, nome, cartellaId) {

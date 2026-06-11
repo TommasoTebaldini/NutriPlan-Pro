@@ -426,7 +426,8 @@
 <div class="val-section" style="border-top:3px solid #EF4444">
   <h3>💊 Farmaci e Integratori</h3>
   <div class="fg"><label>Farmaci in uso (nome · dose · frequenza)</label>
-    <textarea id="v-farmaci" rows="4" placeholder="Es. Metformina 1000 mg × 2/die, Lisinopril 10 mg × 1/die..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+    <textarea id="v-farmaci" rows="4" oninput="scheduleDrugCheck()" placeholder="Es. Metformina 1000 mg × 2/die, Lisinopril 10 mg × 1/die..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+  <div id="drug-alerts" style="margin-top:10px"></div>
   <div class="fgrid" style="margin-top:8px">
     <div class="fg"><label>Integratori in uso</label>
       <textarea id="v-integr" rows="3" placeholder="Es. Vitamina D 1000 UI/die, Omega-3..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
@@ -706,6 +707,39 @@
   </div>
 </div>
 
+<div class="val-section" style="border-top:3px solid #0EA5E9">
+  <h3>💧 Fabbisogno Idrico</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+    <div class="fg"><label>Peso (kg)</label><input type="number" id="w-peso" step="0.1" placeholder="75" oninput="this._userEdited=true;calcolaAcqua()"></div>
+    <div class="fg"><label>Attività fisica</label>
+      <select id="w-attivita" onchange="calcolaAcqua()">
+        <option value="0">Sedentario</option>
+        <option value="350">Moderata</option>
+        <option value="700">Intensa</option>
+        <option value="1000">Molto intensa</option>
+      </select></div>
+    <div class="fg"><label>Stagione / Temperatura</label>
+      <select id="w-stagione" onchange="calcolaAcqua()">
+        <option value="0">Normale</option>
+        <option value="400">Caldo</option>
+        <option value="800">Molto caldo</option>
+      </select></div>
+  </div>
+  <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--slate-m);margin-bottom:6px">Patologie / condizioni che modificano il fabbisogno</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;font-size:12.5px">
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-irc" onchange="calcolaAcqua()"> IRC (insuff. renale) – restrizione</label>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-scompenso" onchange="calcolaAcqua()"> Scompenso cardiaco – restrizione</label>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-dialisi" onchange="calcolaAcqua()"> Dialisi</label>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-febbre" onchange="toggleFebbre();calcolaAcqua()"> Febbre</label>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-ostomia" onchange="calcolaAcqua()"> Ostomia / diarrea (+500 ml)</label>
+  </div>
+  <div id="w-febbre-wrap" style="display:none;margin-top:8px;max-width:220px">
+    <div class="fg"><label>Temperatura corporea (°C)</label><input type="number" id="w-temp" step="0.1" value="38" min="37" oninput="calcolaAcqua()"></div>
+  </div>
+  <div id="w-result" style="margin-top:12px"></div>
+  <button type="button" id="w-add-btn" onclick="aggiungiAcquaNote()" style="display:none;margin-top:10px;padding:8px 16px;background:#0EA5E9;color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer">➕ Aggiungi alla scheda</button>
+</div>
+
 <button class="btn btn-primary" style="width:100%;padding:13px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#0F766E,#0EA5E9);border:none;font-weight:700;letter-spacing:.3px" onclick="calcolaFabbisogno()">📊 Calcola Fabbisogno</button>
 
 <!-- RISULTATI -->
@@ -737,11 +771,156 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/db.js" defer></script>
+<script src="js/drug-interactions.js" defer></script>
 <script src="js/lang.js" defer></script>
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
 // FC_OPTIONS, LAF_OPTIONS, FABBISOGNO_PATOLOGIE already defined in db.js — do NOT redeclare
+
+/* ===== FEATURE 5: Alert interazioni farmaco-nutriente ===== */
+let _drugCheckTimer = null;
+function scheduleDrugCheck() {
+  clearTimeout(_drugCheckTimer);
+  _drugCheckTimer = setTimeout(checkDrugInteractions, 500);
+}
+function checkDrugInteractions() {
+  const box = document.getElementById('drug-alerts');
+  if (!box || typeof DRUG_INTERACTIONS === 'undefined') return;
+  const txt = (document.getElementById('v-farmaci')?.value || '').toLowerCase();
+  if (!txt.trim()) { box.innerHTML = ''; return; }
+
+  const found = [];
+  for (const it of DRUG_INTERACTIONS) {
+    const hit = it.farmaci.find(k => txt.includes(k.toLowerCase()));
+    if (hit) found.push({ ...it, matched: hit });
+  }
+  if (!found.length) {
+    box.innerHTML = '<div style="font-size:12px;color:var(--slate-l);padding:8px 12px;background:#F0FDF4;border-left:3px solid #10B981;border-radius:8px">✓ Nessuna interazione farmaco-nutriente nota rilevata nel testo inserito.</div>';
+    return;
+  }
+
+  // danger prima, poi warning
+  found.sort((a, b) => (a.tipo === 'danger' ? 0 : 1) - (b.tipo === 'danger' ? 0 : 1));
+  const COLLAPSE_AT = 3;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const renderAlert = (it) => {
+    const danger = it.tipo === 'danger';
+    const color = danger ? '#DC2626' : '#F59E0B';
+    const bg = danger ? '#FEF2F2' : '#FFFBEB';
+    const icon = danger ? '🚨' : '⚠️';
+    const cibi = (it.cibi && it.cibi.length) ? `<div style="font-size:11px;color:var(--slate-l);margin-top:4px">🍽️ ${esc(it.cibi.join(', '))}</div>` : '';
+    return `<div style="background:${bg};border-left:4px solid ${color};border-radius:8px;padding:10px 14px;margin-bottom:8px">
+      <div style="font-size:12.5px;font-weight:700;color:${color}">${icon} ${esc(it.matched)} → ${esc(it.nutriente)}</div>
+      <div style="font-size:12px;color:var(--slate);line-height:1.5;margin-top:3px">${esc(it.messaggio)}</div>
+      ${cibi}
+      <div style="font-size:10px;color:var(--slate-l);margin-top:4px;text-transform:uppercase;letter-spacing:.3px">Fonte: ${esc(it.fonte || '—')}</div>
+    </div>`;
+  };
+
+  const dangerCount = found.filter(f => f.tipo === 'danger').length;
+  const header = `<div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">⚕️ ${found.length} interazione/i rilevata/e${dangerCount ? ` · ${dangerCount} critica/he` : ''}</div>`;
+
+  const first = found.slice(0, COLLAPSE_AT).map(renderAlert).join('');
+  let rest = '';
+  if (found.length > COLLAPSE_AT) {
+    rest = `<div id="drug-alerts-more" style="display:none">${found.slice(COLLAPSE_AT).map(renderAlert).join('')}</div>
+      <button type="button" id="drug-alerts-toggle" onclick="toggleDrugAlerts()" style="background:none;border:1px solid var(--border-d);border-radius:8px;padding:6px 14px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--slate);font-weight:600">Mostra tutti (${found.length - COLLAPSE_AT} altri)</button>`;
+  }
+  box.innerHTML = header + first + rest;
+}
+function toggleDrugAlerts() {
+  const more = document.getElementById('drug-alerts-more');
+  const btn = document.getElementById('drug-alerts-toggle');
+  if (!more || !btn) return;
+  const show = more.style.display === 'none';
+  more.style.display = show ? 'block' : 'none';
+  if (show) { btn.dataset.label = btn.textContent; btn.textContent = 'Mostra meno'; }
+  else { btn.textContent = btn.dataset.label || 'Mostra tutti'; }
+}
+
+/* ===== FEATURE 3: Calcolatore fabbisogno idrico ===== */
+let _lastWaterResult = null;
+function toggleFebbre() {
+  const w = document.getElementById('w-febbre-wrap');
+  if (w) w.style.display = document.getElementById('w-febbre').checked ? 'block' : 'none';
+}
+function calcolaAcqua() {
+  const out = document.getElementById('w-result');
+  const addBtn = document.getElementById('w-add-btn');
+  if (!out) return;
+  const peso = parseFloat(document.getElementById('w-peso').value);
+  if (!peso || peso <= 0) {
+    out.innerHTML = '<div style="font-size:12px;color:var(--slate-l)">Inserisci il peso per calcolare il fabbisogno.</div>';
+    if (addBtn) addBtn.style.display = 'none';
+    _lastWaterResult = null;
+    return;
+  }
+
+  // Base: 30-35 ml/kg/die (adulto). Range minimo/massimo.
+  let min = peso * 30;
+  let max = peso * 35;
+
+  const att = parseFloat(document.getElementById('w-attivita').value) || 0;
+  const stag = parseFloat(document.getElementById('w-stagione').value) || 0;
+  min += att + stag; max += att + stag;
+
+  const note = [];
+
+  // Aggiunte
+  if (document.getElementById('w-febbre').checked) {
+    const temp = parseFloat(document.getElementById('w-temp').value) || 37;
+    const gradi = Math.max(0, temp - 37);
+    const add = Math.round(gradi * 200);
+    if (add > 0) { min += add; max += add; note.push(`Febbre: +${add} ml (+200 ml per °C sopra 37°)`); }
+  }
+  if (document.getElementById('w-ostomia').checked) { min += 500; max += 500; note.push('Ostomia/diarrea: +500 ml/die'); }
+
+  // Restrizioni (sovrascrivono il calcolo)
+  let restrizione = null;
+  if (document.getElementById('w-dialisi').checked) restrizione = 'Dialisi: <b>diuresi residua + 500 ml/die</b>. Personalizzare in base alla diuresi del paziente.';
+  else if (document.getElementById('w-irc').checked) restrizione = 'IRC: <b>restrizione 500–1000 ml/die</b> oppure "secondo diuresi". Adeguare allo stadio e alla diuresi.';
+  else if (document.getElementById('w-scompenso').checked) restrizione = 'Scompenso cardiaco: <b>≤ 1,5 L/die</b>. Limitare i liquidi totali.';
+
+  const fmtL = ml => (ml / 1000).toFixed(2).replace('.', ',');
+  let html = '';
+
+  if (restrizione) {
+    html += `<div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:8px;padding:10px 14px">
+      <div style="font-size:12.5px;font-weight:700;color:#DC2626">⚠️ Apporto idrico da RESTRINGERE</div>
+      <div style="font-size:12px;color:var(--slate);margin-top:4px;line-height:1.5">${restrizione}</div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:6px">Il calcolo standard (${fmtL(min)}–${fmtL(max)} L) non si applica: prevale la restrizione clinica.</div>
+    </div>`;
+    _lastWaterResult = restrizione.replace(/<[^>]+>/g, '');
+  } else {
+    const minL = fmtL(min), maxL = fmtL(max);
+    const daBev = `${fmtL(min * 0.8)}–${fmtL(max * 0.8)}`;
+    const daAlim = `${fmtL(min * 0.2)}–${fmtL(max * 0.2)}`;
+    html += `<div style="background:#EFF6FF;border-left:4px solid #0EA5E9;border-radius:8px;padding:10px 14px">
+      <div style="font-size:12.5px;font-weight:700;color:#0369A1">💧 Fabbisogno consigliato: ${minL}–${maxL} L/die</div>
+      <div style="font-size:12px;color:var(--slate);margin-top:6px;line-height:1.6">
+        • Da bevande (~80%): <b>${daBev} L</b><br>
+        • Da alimenti (~20%): <b>${daAlim} L</b>
+      </div>
+      ${note.length ? `<div style="font-size:11px;color:var(--slate-l);margin-top:6px">${note.join(' · ')}</div>` : ''}
+    </div>`;
+    _lastWaterResult = `Fabbisogno idrico: ${minL}–${maxL} L/die (da bevande ${daBev} L, da alimenti ${daAlim} L)${note.length ? '. ' + note.join('; ') : ''}.`;
+  }
+
+  out.innerHTML = html;
+  if (addBtn) addBtn.style.display = 'inline-block';
+}
+
+function aggiungiAcquaNote() {
+  if (!_lastWaterResult) { toast('Calcola prima il fabbisogno idrico', 'err'); return; }
+  const ta = document.getElementById('v-note');
+  if (!ta) return;
+  const prefix = ta.value.trim() ? ta.value.trim() + '\n' : '';
+  ta.value = prefix + '💧 ' + _lastWaterResult;
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  toast('Fabbisogno idrico aggiunto alle note ✓', 'ok');
+}
 
 // Build TUTTE_PATOLOGIE from PATOLOGIE_BASE (db.js) with category mapping
 function getTuttePatologie() {
@@ -861,6 +1040,9 @@ function aggiornaEta(){
 }
 function aggiornaCalcoli(){
   const peso=parseFloat(document.getElementById('v-peso').value);
+  // Pre-compila il peso del calcolatore idrico se non ancora editato
+  const wp=document.getElementById('w-peso');
+  if(wp && !wp._userEdited && !isNaN(peso)){ wp.value=peso; if(typeof calcolaAcqua==='function') calcolaAcqua(); }
   const alt=parseFloat(document.getElementById('v-altezza').value);
   const sesso=document.getElementById('v-sesso').value;
   const mg=parseFloat(document.getElementById('v-mg').value);
@@ -2011,7 +2193,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
             sv2('v-sport-tipo',ex.sport_tipo);sv2('v-sport-freq',ex.sport_freq);sv2('v-sport-durata',ex.sport_durata);sv2('v-sport-intensita',ex.sport_intensita);sv2('v-sport-orario',ex.sport_orario);
             sv2('v-sport-lun',ex.sport_lun);sv2('v-sport-mar',ex.sport_mar);sv2('v-sport-mer',ex.sport_mer);sv2('v-sport-gio',ex.sport_gio);sv2('v-sport-ven',ex.sport_ven);sv2('v-sport-sab',ex.sport_sab);sv2('v-sport-dom',ex.sport_dom);sv2('v-sport-note',ex.sport_note);
             sv2('v-alt-sedentario',ex.alt_sedentario);sv2('v-alt-movimento',ex.alt_movimento);sv2('v-alt-attivita',ex.alt_attivita);sv2('v-alt-note',ex.alt_note);
-            sv2('v-farmaci',ex.farmaci);sv2('v-integr',ex.integr);sv2('v-interaz',ex.interaz);
+            sv2('v-farmaci',ex.farmaci);sv2('v-integr',ex.integr);sv2('v-interaz',ex.interaz);checkDrugInteractions();
             sv2('v-npasti',ex.npasti);sv2('v-luogo',ex.luogo);sv2('v-appetito',ex.appetito);sv2('v-allergie',ex.allergie);sv2('v-acqua',ex.acqua);sv2('v-alcol',ex.alcol);
             sv2('v-alim-graditi',ex.alim_graditi);sv2('v-alim-non-graditi',ex.alim_non_graditi);
             sv2('v-pasto-colazione',ex.pasto_colazione);sv2('v-note-colazione',ex.note_colazione);

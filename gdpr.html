@@ -107,10 +107,21 @@
   <button class="gdpr-tab active" onclick="switchTab('registro')">📋 Registro Trattamenti</button>
   <button class="gdpr-tab" onclick="switchTab('oblio')">🗑️ Diritto all'Oblio</button>
   <button class="gdpr-tab" onclick="switchTab('privacy')">📄 Informativa Privacy</button>
+  <button class="gdpr-tab" onclick="switchTab('stats')">📊 Statistiche</button>
+  <button class="gdpr-tab" onclick="switchTab('portabilita')">📤 Portabilità</button>
 </div>
 
 <!-- TAB 1: REGISTRO TRATTAMENTI -->
 <div class="gdpr-panel active" id="panel-registro">
+  <div id="gdpr-summary-bar" style="display:none;background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px 18px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap;align-items:center">
+    <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0">Riepilogo consensi</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px"><span id="stat-con" style="font-size:18px;font-weight:800;color:#0F766E">—</span><span style="font-size:11px;color:var(--slate-m)">con consenso</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><span id="stat-nocon" style="font-size:18px;font-weight:800;color:#DC2626">—</span><span style="font-size:11px;color:var(--slate-m)">senza consenso</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><span id="stat-tot" style="font-size:18px;font-weight:800;color:var(--slate)">—</span><span style="font-size:11px;color:var(--slate-m)">totale</span></div>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="esportaConsensiCSV()">⬇️ Esporta CSV</button>
+  </div>
   <div class="gdpr-card">
     <h3>📋 Registro Trattamenti Pazienti</h3>
     <div style="font-size:12px;color:var(--slate-m);margin-bottom:12px;line-height:1.6">
@@ -126,10 +137,11 @@
             <th>Data creazione</th>
             <th>Categorie dati</th>
             <th>Consenso</th>
+            <th>Data consenso</th>
           </tr>
         </thead>
         <tbody id="registro-tbody">
-          <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">⏳ Caricamento...</td></tr>
+          <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate-l)">⏳ Caricamento...</td></tr>
         </tbody>
       </table>
     </div>
@@ -146,6 +158,53 @@
     <div id="oblio-list">
       <div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">⏳ Caricamento...</div>
     </div>
+  </div>
+</div>
+
+<!-- TAB 4: STATISTICHE -->
+<div class="gdpr-panel" id="panel-stats">
+  <div class="gdpr-card">
+    <h3>📊 Statistiche GDPR</h3>
+    <div id="stats-content" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px">
+      <div style="text-align:center;padding:20px;color:var(--slate-l)">⏳ Caricamento...</div>
+    </div>
+  </div>
+  <div class="gdpr-card">
+    <h3>⏳ Conservazione Dati — Art. 5 GDPR</h3>
+    <div style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.6">
+      I dati sanitari devono essere conservati per 10 anni dall'ultima prestazione. Di seguito i pazienti con cartella aperta da più di 8 anni (prossimi alla scadenza) o da più di 10 anni (in scadenza/scaduti).
+    </div>
+    <div id="retention-list">
+      <div style="text-align:center;padding:16px;color:var(--slate-l)">⏳ Caricamento...</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: PORTABILITÀ -->
+<div class="gdpr-panel" id="panel-portabilita">
+  <div class="gdpr-card">
+    <h3>📤 Portabilità dei Dati — Art. 20 GDPR</h3>
+    <div style="font-size:12px;color:var(--slate-m);margin-bottom:16px;line-height:1.6">
+      Il paziente ha diritto di ricevere i propri dati in formato strutturato e leggibile da macchina. Seleziona un paziente per esportarne i dati anagrafici e la cartella clinica in formato JSON.
+    </div>
+    <div class="fg" style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:700;color:var(--slate-m)">Seleziona paziente:</label>
+      <select id="portabilita-select" style="width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;margin-top:6px;background:white">
+        <option value="">— Seleziona un paziente —</option>
+      </select>
+    </div>
+    <button class="btn btn-sm" onclick="esportaDatiPaziente()" style="background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;border:none;gap:6px">📤 Esporta dati in JSON</button>
+    <div id="portabilita-status" style="margin-top:12px"></div>
+  </div>
+  <div class="gdpr-card">
+    <h3>📋 Log Richieste Accesso (DSAR)</h3>
+    <div style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.6">
+      Tieni traccia delle richieste di accesso ai dati ricevute dai pazienti (Data Subject Access Requests). Conserva questo registro per almeno 3 anni.
+    </div>
+    <div id="dsar-list" style="margin-bottom:12px">
+      <div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna richiesta registrata.</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="aggiungiDSAR()">+ Registra nuova richiesta</button>
   </div>
 </div>
 
@@ -248,8 +307,10 @@ function switchTab(tab) {
   document.querySelectorAll('.gdpr-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
   const tabs = document.querySelectorAll('.gdpr-tab');
-  const map = { registro: 0, oblio: 1, privacy: 2 };
-  tabs[map[tab]].classList.add('active');
+  const map = { registro: 0, oblio: 1, privacy: 2, stats: 3, portabilita: 4 };
+  if (map[tab] !== undefined) tabs[map[tab]].classList.add('active');
+  if (tab === 'stats') renderStats();
+  if (tab === 'portabilita') renderPortabilita();
 }
 
 function tagColor(tag) {
@@ -271,11 +332,19 @@ async function loadGDPRData() {
 
     let data, error;
 
-    // Prima prova con colonna gdpr_consenso
+    // Prima prova con colonne gdpr complete
     ({ data, error } = await sb.from('cartelle')
-      .select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note')
+      .select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,gdpr_consenso_at,note')
       .eq('user_id', userId)
       .order('created_at', { ascending: false }));
+
+    // Fallback senza gdpr_consenso_at
+    if (error) {
+      ({ data, error } = await sb.from('cartelle')
+        .select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false }));
+    }
 
     // Fallback senza gdpr_consenso se la colonna non esiste ancora
     if (error) {
@@ -298,6 +367,7 @@ async function loadGDPRData() {
     _allCartelle = (data || []).filter(c => c.note !== '__altro__');
     renderRegistro();
     renderOblio();
+    renderSummaryBar();
   } catch(e) {
     console.error('loadGDPRData error:', e);
     document.getElementById('registro-tbody').innerHTML =
@@ -310,22 +380,38 @@ async function loadGDPRData() {
 function renderRegistro() {
   const tbody = document.getElementById('registro-tbody');
   if (!_allCartelle.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">Nessuna cartella paziente.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate-l)">Nessuna cartella paziente.</td></tr>';
     return;
   }
+  const now = new Date();
   tbody.innerHTML = _allCartelle.map(c => {
     const tags = Array.isArray(c.tags) ? c.tags : [];
     const tagsHtml = tags.map(t => { const cl = tagColor(t); return '<span class="tag-mini" style="background:' + cl.bg + ';color:' + cl.col + '">' + esc(t) + '</span>'; }).join('');
     const consenso = !!c.gdpr_consenso;
-    return '<tr>' +
-      '<td style="font-weight:600;font-size:13px">' + esc(c.nome || '') + '</td>' +
+    const consentDate = c.gdpr_consenso_at ? new Date(c.gdpr_consenso_at).toLocaleDateString('it') : '—';
+    const yearsOld = (now - new Date(c.created_at)) / (1000 * 60 * 60 * 24 * 365);
+    const retentionBadge = yearsOld >= 10
+      ? '<span class="tag-mini" style="background:#FEE2E2;color:#991B1B">⚠️ >10 anni</span>'
+      : yearsOld >= 8 ? '<span class="tag-mini" style="background:#FEF3C7;color:#92400E">⏰ >8 anni</span>' : '';
+    return '<tr' + (yearsOld >= 10 ? ' style="background:#FFF5F5"' : yearsOld >= 8 ? ' style="background:#FFFBEB"' : '') + '>' +
+      '<td style="font-weight:600;font-size:13px">' + esc(c.nome || '') + ' ' + retentionBadge + '</td>' +
       '<td style="font-family:monospace;font-size:12px;color:var(--slate-m)">' + esc(c.codice_fiscale || '—') + '</td>' +
       '<td>' + (tagsHtml || '<span style="color:var(--slate-l);font-size:11.5px">—</span>') + '</td>' +
       '<td style="font-size:12px;white-space:nowrap">' + new Date(c.created_at).toLocaleDateString('it') + '</td>' +
-      '<td style="font-size:11px;color:var(--slate-m)">Dati sanitari (cat. speciale art.9 GDPR), Dati anagrafici</td>' +
+      '<td style="font-size:11px;color:var(--slate-m)">Dati sanitari art.9, Dati anagrafici</td>' +
       '<td style="text-align:center"><input type="checkbox" class="consent-cb" ' + (consenso ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="Consenso informato ricevuto"></td>' +
+      '<td style="font-size:12px;color:' + (consenso ? '#0F766E' : 'var(--slate-l)') + ';white-space:nowrap">' + (consenso ? consentDate : '—') + '</td>' +
       '</tr>';
   }).join('');
+}
+
+function renderSummaryBar() {
+  const con = _allCartelle.filter(c => c.gdpr_consenso).length;
+  const nocon = _allCartelle.length - con;
+  document.getElementById('stat-con').textContent = con;
+  document.getElementById('stat-nocon').textContent = nocon;
+  document.getElementById('stat-tot').textContent = _allCartelle.length;
+  document.getElementById('gdpr-summary-bar').style.display = 'flex';
 }
 
 function renderOblio() {
@@ -355,6 +441,133 @@ async function toggleConsenso(cartellaId, val) {
   // update local
   const c = _allCartelle.find(x => x.id === cartellaId);
   if (c) c.gdpr_consenso = val;
+}
+
+function renderStats() {
+  const now = new Date();
+  const total = _allCartelle.length;
+  const conCount = _allCartelle.filter(c => c.gdpr_consenso).length;
+  const pct = total ? Math.round(conCount / total * 100) : 0;
+  const over8 = _allCartelle.filter(c => (now - new Date(c.created_at)) / (1000*60*60*24*365) >= 8).length;
+  const over10 = _allCartelle.filter(c => (now - new Date(c.created_at)) / (1000*60*60*24*365) >= 10).length;
+
+  document.getElementById('stats-content').innerHTML = [
+    { label: 'Pazienti totali', val: total, icon: '👥', col: '#1D4ED8', bg: '#EFF6FF' },
+    { label: 'Con consenso', val: conCount, icon: '✅', col: '#0F766E', bg: '#CCFBF1' },
+    { label: 'Senza consenso', val: total - conCount, icon: '⚠️', col: '#DC2626', bg: '#FEE2E2' },
+    { label: '% consensi', val: pct + '%', icon: '📊', col: '#7C3AED', bg: '#F5F3FF' },
+    { label: '>8 anni (attenzione)', val: over8, icon: '⏰', col: '#92400E', bg: '#FEF3C7' },
+    { label: '>10 anni (verifica)', val: over10, icon: '❗', col: '#B91C1C', bg: '#FEE2E2' },
+  ].map(s => '<div style="background:' + s.bg + ';border-radius:12px;padding:18px 14px;text-align:center">' +
+    '<div style="font-size:28px;margin-bottom:6px">' + s.icon + '</div>' +
+    '<div style="font-size:22px;font-weight:800;color:' + s.col + '">' + s.val + '</div>' +
+    '<div style="font-size:11.5px;color:var(--slate-m);margin-top:4px">' + s.label + '</div></div>').join('');
+
+  const el = document.getElementById('retention-list');
+  const atRisk = _allCartelle.filter(c => (now - new Date(c.created_at)) / (1000*60*60*24*365) >= 8);
+  if (!atRisk.length) {
+    el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">✅ Nessun paziente prossimo alla scadenza di conservazione.</div>';
+    return;
+  }
+  el.innerHTML = atRisk.map(c => {
+    const yrs = ((now - new Date(c.created_at)) / (1000*60*60*24*365)).toFixed(1);
+    const over10 = parseFloat(yrs) >= 10;
+    return '<div class="oblio-row" style="border-color:' + (over10 ? '#FCA5A5' : '#FDE68A') + ';background:' + (over10 ? '#FFF5F5' : '#FFFBEB') + '">' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(c.nome || '') + (over10 ? ' <span style="color:#DC2626">⚠️ SCADUTO</span>' : '') + '</div>' +
+        '<div style="font-size:11.5px;color:var(--slate-l)">Cartella aperta il ' + new Date(c.created_at).toLocaleDateString('it') + ' · ' + yrs + ' anni · ' + (c.gdpr_consenso ? '✅ Con consenso' : '❌ Senza consenso') + '</div>' +
+      '</div>' +
+      '<button class="btn btn-ghost btn-sm" onclick="apriOblio(\'' + c.id + '\',\'' + c.nome.replace(/'/g,"\\'") + '\')">🗑️ Gestisci oblio</button>' +
+      '</div>';
+  }).join('');
+}
+
+function renderPortabilita() {
+  const sel = document.getElementById('portabilita-select');
+  sel.innerHTML = '<option value="">— Seleziona un paziente —</option>' +
+    _allCartelle.map(c => '<option value="' + c.id + '">' + esc(c.nome || '') + (c.codice_fiscale ? ' (' + c.codice_fiscale + ')' : '') + '</option>').join('');
+  renderDSAR();
+}
+
+async function esportaDatiPaziente() {
+  const cartellaId = document.getElementById('portabilita-select').value;
+  if (!cartellaId) { toast('Seleziona un paziente', 'warn'); return; }
+  const cart = _allCartelle.find(c => c.id === cartellaId);
+  showLoading(true);
+  try {
+    const [pianiRes, ncptRes, schedeRes, biaRes, esamiRes, noteRes] = await Promise.all([
+      sb.from('piani').select('*').eq('cartella_id', cartellaId),
+      sb.from('ncpt').select('*').eq('cartella_id', cartellaId),
+      sb.from('schede_valutazione').select('*').eq('cartella_id', cartellaId),
+      sb.from('bia_records').select('*').eq('cartella_id', cartellaId),
+      sb.from('esami_biochimici').select('*').eq('cartella_id', cartellaId).catch(() => ({ data: [] })),
+      sb.from('note_specialistiche').select('*').eq('cartella_id', cartellaId),
+    ]);
+    const exportData = {
+      _meta: { esportato_il: new Date().toISOString(), formato: 'NutriPlan-Pro GDPR Export v1', gdpr_art: '20' },
+      paziente: { nome: cart.nome, codice_fiscale: cart.codice_fiscale || null, cartella_creata: cart.created_at, gdpr_consenso: !!cart.gdpr_consenso, gdpr_consenso_at: cart.gdpr_consenso_at || null },
+      piani_alimentari: pianiRes.data || [],
+      schede_ncpt: ncptRes.data || [],
+      schede_valutazione: schedeRes.data || [],
+      bia_records: biaRes.data || [],
+      esami_biochimici: esamiRes.data || [],
+      note_specialistiche: noteRes.data || [],
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'dati_paziente_' + (cart.nome || 'export').replace(/\s+/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    document.getElementById('portabilita-status').innerHTML = '<div style="background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#0F766E;border:1px solid #86EFAC">✅ Esportazione completata. Il file JSON contiene tutti i dati clinici del paziente.</div>';
+  } catch(e) {
+    document.getElementById('portabilita-status').innerHTML = '<div style="background:#FEF2F2;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#DC2626;border:1px solid #FCA5A5">⚠️ Errore esportazione: ' + (e.message || e) + '</div>';
+  } finally {
+    showLoading(false);
+  }
+}
+
+function esportaConsensiCSV() {
+  const rows = [['Nome','CF','Data creazione','Consenso','Data consenso','Tag']];
+  _allCartelle.forEach(c => {
+    rows.push([
+      c.nome || '',
+      c.codice_fiscale || '',
+      new Date(c.created_at).toLocaleDateString('it'),
+      c.gdpr_consenso ? 'Sì' : 'No',
+      c.gdpr_consenso_at ? new Date(c.gdpr_consenso_at).toLocaleDateString('it') : '',
+      (Array.isArray(c.tags) ? c.tags : []).join('; '),
+    ]);
+  });
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'registro_consensi_gdpr_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✅ CSV esportato', 'ok');
+}
+
+let _dsarLog = JSON.parse(localStorage.getItem('gdpr_dsar_log') || '[]');
+function renderDSAR() {
+  const el = document.getElementById('dsar-list');
+  if (!_dsarLog.length) { el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna richiesta registrata.</div>'; return; }
+  el.innerHTML = _dsarLog.map((d, i) => '<div class="oblio-row">' +
+    '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px">' + esc(d.paziente) + ' · ' + esc(d.tipo) + '</div>' +
+    '<div style="font-size:11.5px;color:var(--slate-l)">' + esc(d.data) + ' · ' + esc(d.note || '') + '</div></div>' +
+    '<button class="btn btn-ghost btn-xs" onclick="_dsarLog.splice(' + i + ',1);localStorage.setItem(\'gdpr_dsar_log\',JSON.stringify(_dsarLog));renderDSAR()">🗑️</button></div>').join('');
+}
+function aggiungiDSAR() {
+  const paziente = prompt('Nome paziente:'); if (!paziente) return;
+  const tipo = prompt('Tipo richiesta (es. Accesso, Rettifica, Cancellazione, Portabilità):') || 'Accesso';
+  const note = prompt('Note (opzionale):') || '';
+  _dsarLog.unshift({ paziente, tipo, data: new Date().toLocaleDateString('it'), note });
+  localStorage.setItem('gdpr_dsar_log', JSON.stringify(_dsarLog));
+  renderDSAR();
+  toast('Richiesta DSAR registrata', 'ok');
 }
 
 function apriOblio(id, nome) {

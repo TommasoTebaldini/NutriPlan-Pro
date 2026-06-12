@@ -1010,6 +1010,59 @@ async function renderCartellaDetail(id) {
     <div style="padding:10px 14px">${soapHtml}</div>
   </div>` : '';
 
+  // Build timeline
+  const _tlSpecMap = {
+    'diabete':{icon:'🩸',label:'Diabete',col:'#1D4ED8',bg:'#DBEAFE'},
+    'pancreas':{icon:'🫁',label:'IPE — Pancreas',col:'#C2410C',bg:'#FFF7ED'},
+    'sport':{icon:'🏃',label:'Nutrizione Sportiva',col:'#065F46',bg:'#ECFDF5'},
+    'pediatria':{icon:'👶',label:'Pediatria',col:'#5B21B6',bg:'#EDE9FE'},
+    'ristorazione':{icon:'🍽️',label:'Ristorazione',col:'#0369A1',bg:'#F0F9FF'},
+    'dca':{icon:'🫀',label:'DCA',col:'#991B1B',bg:'#FEE2E2'},
+    'chetogenica':{icon:'🥑',label:'Dieta Chetogenica',col:'#7C3AED',bg:'#F5F3FF'},
+    'renale':{icon:'🫘',label:'Nefropatia / IRC',col:'#0F766E',bg:'#CCFBF1'},
+    'disfagia':{icon:'🗣️',label:'Disfagia',col:'#0369A1',bg:'#E0F2FE'},
+    'oncologia':{icon:'🎗️',label:'Oncologia',col:'#7C3AED',bg:'#F5F3FF'},
+    'obesita':{icon:'⚖️',label:'Obesità',col:'#EA580C',bg:'#FFF7ED'},
+    'gravidanza':{icon:'🤰',label:'Gravidanza',col:'#BE185D',bg:'#FDF2F8'},
+    'consiglio':{icon:'💡',label:'Consiglio',col:'#16A34A',bg:'#F0FDF4'},
+    'paziente_sano':{icon:'✅',label:'Paziente Sano',col:'#15803D',bg:'#F0FDF4'},
+  };
+  const _tlVMap = {'Prima visita':{bg:'#EDE9FE',col:'#5B21B6'},'Follow-up':{bg:'#EFF6FF',col:'#1D4ED8'},'Controllo':{bg:'#F0FDF4',col:'#15803D'},'Urgente':{bg:'#FEE2E2',col:'#991B1B'}};
+  const tlItems = [];
+  (piani||[]).forEach(p => tlItems.push({date:p.saved_at||p.data_piano||p.created_at,icon:'📋',type:'Piano',col:'#1D4ED8',bg:'#EFF6FF',title:p.nome||'Piano Alimentare',action:`caricaPiano('${p.id}')`}));
+  (ncpts||[]).forEach(n => {
+    let pN=''; try{const vv=JSON.parse(n.valutazione||'{}');pN=vv.nome||'';}catch(e){}
+    tlItems.push({date:n.updated_at||n.created_at,icon:'📝',type:'NCPt',col:'#5B21B6',bg:'#EDE9FE',title:pN?`NCPt — ${pN}`:'Scheda NCPt',action:`apriNCPt('${n.id}')`});
+  });
+  (schede||[]).forEach(s => tlItems.push({date:s.saved_at||s.created_at,icon:'📊',type:'Valutazione',col:'#15803D',bg:'#F0FDF4',title:s.nome?`Valutazione — ${esc(s.nome)}`:'Scheda Valutazione',action:`apriScheda('${s.id}')`}));
+  (biaList||[]).forEach(b => tlItems.push({date:b.data_misura||b.created_at,icon:'⚡',type:'BIA',col:'#1D4ED8',bg:'#DBEAFE',title:`BIA — ${fmtDate(b.data_misura||b.created_at)}`,action:`apriModificaBIA('${b.id}','${id}')`}));
+  (esamiBiochimici||[]).forEach(e => tlItems.push({date:e.data_esame||e.created_at,icon:'🔬',type:'Esame',col:'#C2410C',bg:'#FFF7ED',title:esc(e.tipo)+(e.valore?` — ${e.valore}${e.unita?' '+e.unita:''}`:''),action:`apriStoricoEsame('${id}','${e.tipo.replace(/'/g,"\\'")}')` }));
+  (soapNotes||[]).forEach(n => {
+    let sd={}; try{sd=JSON.parse(n.dati||'{}');}catch(e){}
+    const vm2=_tlVMap[sd.tipo_visita]||{bg:'#F1F5F9',col:'#475569'};
+    tlItems.push({date:sd.data_visita||n.created_at,icon:'🩺',type:sd.tipo_visita||'Visita',col:vm2.col,bg:vm2.bg,title:`Nota SOAP · ${fmtDate(sd.data_visita||n.created_at)}${sd.doc_ref?` ↳ ${esc(sd.doc_ref.nome)}`:''}`,action:`toggleSoap('${n.id}')`});
+  });
+  (questionariSalvati||[]).forEach(q => {
+    let qd={}; try{qd=JSON.parse(q.dati||'{}');}catch(e){}
+    const qN2=qd.nome||q.nota||'Questionario';
+    tlItems.push({date:q.created_at,icon:'📋',type:'Questionario',col:'#0369A1',bg:'#F0F9FF',title:esc(qN2),action:`apriQuestionario('${q.id}','${qN2.replace(/'/g,"\\'")}','${id}')`});
+  });
+  (consigliNutrizionali||[]).forEach(n => tlItems.push({date:n.created_at,icon:'💡',type:'Consiglio',col:'#16A34A',bg:'#F0FDF4',title:esc(n.nota||'Consiglio Nutrizionale'),action:`apriNoteSpec('${n.id}','consiglio')`}));
+  (noteSpecAltre||[]).forEach(n => {
+    const sm2=_tlSpecMap[n.tipo]||{icon:'📌',label:n.tipo,col:'#475569',bg:'#F8FAFC'};
+    tlItems.push({date:n.created_at,icon:sm2.icon,type:sm2.label,col:sm2.col,bg:sm2.bg,title:esc(n.nota||sm2.label),action:`apriNoteSpec('${n.id}','${n.tipo}')`});
+  });
+  tlItems.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const timelineSection = tlItems.length ? `<div class="card" style="margin-bottom:12px">
+    <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="var b=document.getElementById('tl-body-${id}');var open=b.style.display!=='none';b.style.display=open?'none':'block';this.querySelector('.tl-arr').textContent=open?'▾ Mostra':'▴ Nascondi'">
+      <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0">🗓️ Timeline paziente <span style="background:#F1F5F9;color:#475569;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${tlItems.length} eventi</span></h4>
+      <span class="tl-arr" style="font-size:12px;color:var(--slate-l);flex-shrink:0">▾ Mostra</span>
+    </div>
+    <div id="tl-body-${id}" style="display:none;padding:6px 14px 14px;max-height:500px;overflow-y:auto">
+      ${tlItems.map(item=>`<div onclick="${item.action}" style="display:flex;align-items:center;gap:8px;padding:7px 10px;margin-bottom:3px;cursor:pointer;border-radius:8px;border-left:3px solid ${item.col};transition:all .15s" onmouseover="this.style.background='${item.bg}'" onmouseout="this.style.background=''"><div style="width:68px;flex-shrink:0;text-align:right;font-size:10.5px;color:var(--slate-l)">${fmtDate(item.date)}</div><span style="font-size:16px;flex-shrink:0">${item.icon}</span><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div></div><span style="font-size:10px;background:${item.bg};color:${item.col};padding:2px 7px;border-radius:8px;font-weight:600;white-space:nowrap;flex-shrink:0">${item.type}</span></div>`).join('')}
+    </div>
+  </div>` : '';
+
   // Build allegati HTML
   const allegatiHtml = '<div class="card" style="margin-bottom:12px">' +
     '<div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
@@ -1044,7 +1097,7 @@ async function renderCartellaDetail(id) {
       ${!isAltro ? (patientLink.length ? '<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')" title="Scollega paziente">🔗✂️ Scollega</button>' : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 Collega paziente</button>') : ''}
     </div>
     ${!isAltro ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;background:white;border-radius:10px;padding:8px 12px;border:1px solid var(--border);box-shadow:var(--shadow)"><span style="font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px;flex-shrink:0">Strumenti cartella</span><button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Genera PDF con dati paziente, esami, BIA e piani">📄 Esporta scheda PDF</button></div>' : ''}
-    <div id="timeline-panel"></div>
+    ${!isAltro ? timelineSection : ''}
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
     ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>Cartella archiviata</b> — Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.</div>` : ''}
     ${!isAltro && cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
@@ -1167,6 +1220,7 @@ async function renderCartellaDetail(id) {
           </div>
           <span style="font-size:11px;background:${s.bg};color:${s.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${s.label}</span>
           <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
+          <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'${s.label}',docId:'${n.id}',nome:'${(n.nota||s.label).replace(/'/g,"\\'")}',data:'${(n.created_at||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
           ${openBtn}
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
         </div>`;

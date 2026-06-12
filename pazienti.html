@@ -385,6 +385,7 @@ async function ensureChartJs() {
   <div class="modal" style="max-width:600px">
     <div class="mhdr"><h2>🩺 Nuova Nota di Sessione (SOAP)</h2><button class="mclose" onclick="closeM('modal-soap')">✕</button></div>
     <div class="mbody" style="padding:16px 18px;max-height:75vh;overflow-y:auto">
+      <div id="soap-doc-ref" style="display:none;background:#EFF6FF;border-left:3px solid #3B82F6;border-radius:6px;padding:7px 12px;margin-bottom:12px;font-size:12px;color:#1D4ED8;font-weight:600"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:12px">
         <div class="fg"><label>Data visita</label><input type="date" id="soap-data"></div>
         <div class="fg"><label>Tipo visita</label>
@@ -868,6 +869,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">Salvato: ${fmtDate(p.saved_at||p.data_piano)}</div>
       </div>
       <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">Piano</span>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Piano',docId:'${p.id}',nome:'${(p.nome||'Piano alimentare').replace(/'/g,"\\'")}',data:'${(p.saved_at||p.data_piano||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
       <button id="vis-btn-piani-${p.id}" class="btn btn-ghost btn-xs" data-visible="${p.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('piani','${p.id}')" style="color:${p.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${p.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${p.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPiano('${p.id}')">🗑️</button>
     </div>`).join('') :
@@ -885,6 +887,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">Aggiornato: ${fmtDate(n.updated_at||n.created_at)}</div>
       </div>
       <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:3px 9px;border-radius:8px;font-weight:600">NCPt</span>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'NCPt',docId:'${n.id}',nome:'NCPt${pNome?' — '+pNome:''}',data:'${(n.updated_at||n.created_at||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
       <button id="vis-btn-ncpt-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('ncpt','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNCPt('${n.id}')">🗑️</button>
     </div>`;
@@ -899,6 +902,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">${b.peso ? 'Peso: ' + b.peso + ' kg' : ''}${b.bf_pct ? ' · BF: ' + b.bf_pct + '%' : ''}${b.ffm_kg ? ' · FFM: ' + b.ffm_kg + ' kg' : ''}${b.angolo_fase ? ' · φ: ' + b.angolo_fase + '°' : ''}</div>
       </div>
       <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">BIA</span>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'BIA',docId:'${b.id}',nome:'BIA ${fmtDate(b.data_misura)}',data:'${(b.data_misura||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
       <button id="vis-btn-bia_records-${b.id}" class="btn btn-ghost btn-xs" data-visible="${b.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('bia_records','${b.id}')" style="color:${b.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${b.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${b.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delBIA('${b.id}','${id}')">🗑️</button>
     </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna misurazione BIA salvata.</div>';
@@ -912,6 +916,7 @@ async function renderCartellaDetail(id) {
         <div style="font-size:11.5px;color:var(--slate-l)">Salvata: ${fmtDate(s.saved_at||s.created_at)}</div>
       </div>
       <span style="font-size:11px;background:#F0FDF4;color:#15803D;padding:3px 9px;border-radius:8px;font-weight:600">Valutazione</span>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Valutazione',docId:'${s.id}',nome:'Scheda${s.nome?' — '+s.nome:''}',data:'${(s.saved_at||s.created_at||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
       <button id="vis-btn-schede_valutazione-${s.id}" class="btn btn-ghost btn-xs" data-visible="${s.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('schede_valutazione','${s.id}')" style="color:${s.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${s.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${s.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delScheda('${s.id}')">🗑️</button>
     </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna scheda salvata.</div>';
@@ -981,8 +986,8 @@ async function renderCartellaDetail(id) {
       <div onclick="toggleSoap('${n.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer">
         <span style="font-size:22px;background:${vm.bg};padding:6px;border-radius:8px">🩺</span>
         <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:13px;color:var(--slate)">Nota SOAP · ${dataV}</div>
-          <div style="font-size:11.5px;color:var(--slate-l)">${sShort ? esc(sShort) : 'Nessun soggettivo'}</div>
+          <div style="font-weight:700;font-size:13px;color:var(--slate)">Nota SOAP · ${dataV}${d.doc_ref?` <span style="font-size:10.5px;background:#EFF6FF;color:#1D4ED8;padding:1px 7px;border-radius:8px;font-weight:600;vertical-align:middle;margin-left:4px">📎 ${esc(d.doc_ref.tipo)}</span>`:''}</div>
+          <div style="font-size:11.5px;color:var(--slate-l)">${d.doc_ref?`<span style="color:#1D4ED8;font-weight:600">↳ ${esc(d.doc_ref.nome)}</span> · `:''} ${sShort ? esc(sShort) : 'Nessun soggettivo'}</div>
         </div>
         <span style="font-size:11px;background:${vm.bg};color:${vm.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${esc(tipoV)}</span>
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();stampaSoap('${n.id}')" title="Stampa / PDF">🖨️</button>
@@ -1297,12 +1302,23 @@ async function delNoteSpec(id) {
 
 /* ===== FEATURE 4: Note cliniche rapide SOAP ===== */
 let _soapCartellaId = null;
-function openSoapModal(cartellaId) {
+let _soapDocRef = null;
+function openSoapModal(cartellaId, docRef) {
   _soapCartellaId = cartellaId;
+  _soapDocRef = docRef || null;
   const today = new Date().toISOString().slice(0, 10);
-  document.getElementById('soap-data').value = today;
+  document.getElementById('soap-data').value = (docRef && docRef.data) ? docRef.data : today;
   document.getElementById('soap-tipo').value = 'Follow-up';
   ['soap-s', 'soap-o', 'soap-a', 'soap-p'].forEach(id => { document.getElementById(id).value = ''; });
+  const refEl = document.getElementById('soap-doc-ref');
+  if (refEl) {
+    if (docRef) {
+      refEl.textContent = '📎 Collegata a: ' + docRef.tipo + ' — ' + docRef.nome;
+      refEl.style.display = 'block';
+    } else {
+      refEl.style.display = 'none';
+    }
+  }
   openM('modal-soap');
 }
 
@@ -1317,6 +1333,7 @@ async function salvaSoap() {
   if (!s && !o && !a && !p) { toast('Compila almeno un campo della nota', 'err'); return; }
 
   const dati = { s, o, a, p, tipo_visita: tipoV, data_visita: dataV };
+  if (_soapDocRef) dati.doc_ref = _soapDocRef;
   const fmtIt = new Date(dataV).toLocaleDateString('it');
   showLoading(true);
   const { error } = await sb.from('note_specialistiche').insert({

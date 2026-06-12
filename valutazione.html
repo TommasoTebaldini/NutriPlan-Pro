@@ -31,6 +31,10 @@
 .pat-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;background:white;color:var(--slate-m);border:1.5px solid var(--border-d);margin:2px;cursor:pointer;transition:all .12s;white-space:nowrap;font-family:'DM Sans',sans-serif}
 .pat-chip:hover{border-color:var(--teal-l);color:var(--teal)}
 .pat-chip.selected{background:var(--teal);color:white;border-color:var(--teal-d)}
+.w-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border-d);background:white;color:var(--slate);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.w-pill:hover{border-color:#94A3B8;background:#F8FAFC}
+.w-pill.active-restrict{background:#FEF2F2;border-color:#EF4444;color:#DC2626;box-shadow:0 2px 6px rgba(239,68,68,.2)}
+.w-pill.active-add{background:#EFF6FF;border-color:#3B82F6;color:#1D4ED8;box-shadow:0 2px 6px rgba(59,130,246,.2)}
 .lg-note-box{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:13px;font-size:12px;color:#1E3A5F;line-height:1.75;margin-bottom:9px}
 .val-section-hdr{background:linear-gradient(135deg,#0F766E,#0EA5E9);padding:14px 18px;margin:-18px -18px 18px;border-radius:calc(var(--r) - 1px) calc(var(--r) - 1px) 0 0;display:flex;align-items:center;gap:10px}
 .val-section-hdr-text{font-size:13.5px;font-weight:700;color:white;letter-spacing:.2px}
@@ -725,13 +729,24 @@
         <option value="800">Molto caldo</option>
       </select></div>
   </div>
-  <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--slate-m);margin-bottom:6px">Patologie / condizioni che modificano il fabbisogno</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;font-size:12.5px">
-    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-irc" onchange="calcolaAcqua()"> IRC (insuff. renale) – restrizione</label>
-    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-scompenso" onchange="calcolaAcqua()"> Scompenso cardiaco – restrizione</label>
-    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-dialisi" onchange="calcolaAcqua()"> Dialisi</label>
-    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-febbre" onchange="toggleFebbre();calcolaAcqua()"> Febbre</label>
-    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="w-ostomia" onchange="calcolaAcqua()"> Ostomia / diarrea (+500 ml)</label>
+  <!-- Hidden checkboxes: letti da calcolaAcqua() -->
+  <input type="checkbox" id="w-irc" style="display:none" onchange="calcolaAcqua()">
+  <input type="checkbox" id="w-scompenso" style="display:none" onchange="calcolaAcqua()">
+  <input type="checkbox" id="w-dialisi" style="display:none" onchange="calcolaAcqua()">
+  <input type="checkbox" id="w-febbre" style="display:none" onchange="toggleFebbre();calcolaAcqua()">
+  <input type="checkbox" id="w-ostomia" style="display:none" onchange="calcolaAcqua()">
+  <div style="margin-top:12px">
+    <div style="font-size:10.5px;font-weight:700;color:#B91C1C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">⚠️ Restrizione idrica</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      <button type="button" class="w-pill" id="wpill-dialisi" onclick="toggleWPill('dialisi')">🩸 Dialisi</button>
+      <button type="button" class="w-pill" id="wpill-irc" onclick="toggleWPill('irc')">🫘 IRC – insuff. renale</button>
+      <button type="button" class="w-pill" id="wpill-scompenso" onclick="toggleWPill('scompenso')">💔 Scompenso cardiaco</button>
+    </div>
+    <div style="font-size:10.5px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">➕ Aumentano il fabbisogno</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button type="button" class="w-pill" id="wpill-febbre" onclick="toggleWPill('febbre')">🌡️ Febbre</button>
+      <button type="button" class="w-pill" id="wpill-ostomia" onclick="toggleWPill('ostomia')">💧 Ostomia / diarrea +500 ml</button>
+    </div>
   </div>
   <div id="w-febbre-wrap" style="display:none;margin-top:8px;max-width:220px">
     <div class="fg"><label>Temperatura corporea (°C)</label><input type="number" id="w-temp" step="0.1" value="38" min="37" oninput="calcolaAcqua()"></div>
@@ -842,6 +857,15 @@ function toggleDrugAlerts() {
 
 /* ===== FEATURE 3: Calcolatore fabbisogno idrico ===== */
 let _lastWaterResult = null;
+function toggleWPill(id) {
+  const cb = document.getElementById('w-' + id);
+  cb.checked = !cb.checked;
+  cb.dispatchEvent(new Event('change'));
+  const pill = document.getElementById('wpill-' + id);
+  const isRestrict = ['dialisi','irc','scompenso'].includes(id);
+  pill.classList.toggle('active-restrict', cb.checked && isRestrict);
+  pill.classList.toggle('active-add', cb.checked && !isRestrict);
+}
 function toggleFebbre() {
   const w = document.getElementById('w-febbre-wrap');
   if (w) w.style.display = document.getElementById('w-febbre').checked ? 'block' : 'none';

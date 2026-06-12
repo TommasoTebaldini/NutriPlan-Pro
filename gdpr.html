@@ -285,6 +285,14 @@ async function loadGDPRData() {
         .order('created_at', { ascending: false }));
     }
 
+    // Fallback minimo: solo colonne base garantite
+    if (error) {
+      ({ data, error } = await sb.from('cartelle')
+        .select('id,nome,codice_fiscale,created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false }));
+    }
+
     if (error) throw error;
 
     _allCartelle = (data || []).filter(c => c.note !== '__altro__');
@@ -336,7 +344,12 @@ function renderOblio() {
 }
 
 async function toggleConsenso(cartellaId, val) {
-  const { error } = await sb.from('cartelle').update({ gdpr_consenso: val, gdpr_consenso_at: val ? new Date().toISOString() : null }).eq('id', cartellaId);
+  let { error } = await sb.from('cartelle').update({ gdpr_consenso: val, gdpr_consenso_at: val ? new Date().toISOString() : null }).eq('id', cartellaId);
+  if (error && (error.message || '').includes('gdpr_consenso')) {
+    // Colonna non ancora migrata — eseguire: ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso BOOLEAN DEFAULT FALSE; ADD COLUMN IF NOT EXISTS gdpr_consenso_at TIMESTAMPTZ;
+    toast('⚠️ Colonna GDPR mancante — esegui la migrazione SQL in Supabase', 'warn');
+    return;
+  }
   if (error) { toast('Errore aggiornamento consenso: ' + error.message, 'err'); return; }
   toast(val ? '✅ Consenso registrato' : '❌ Consenso revocato', val ? 'ok' : 'warn');
   // update local

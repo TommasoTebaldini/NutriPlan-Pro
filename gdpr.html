@@ -113,7 +113,7 @@
 
 <!-- TAB 1: REGISTRO TRATTAMENTI -->
 <div class="gdpr-panel active" id="panel-registro">
-  <div id="gdpr-summary-bar" style="display:none;background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px 18px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap;align-items:center">
+  <div id="gdpr-summary-bar" style="display:none;background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px 18px;margin-bottom:14px;gap:20px;flex-wrap:wrap;align-items:center">
     <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0">Riepilogo consensi</div>
     <div style="display:flex;gap:14px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:6px"><span id="stat-con" style="font-size:18px;font-weight:800;color:#0F766E">—</span><span style="font-size:11px;color:var(--slate-m)">con consenso</span></div>
@@ -371,7 +371,7 @@ async function loadGDPRData() {
   } catch(e) {
     console.error('loadGDPRData error:', e);
     document.getElementById('registro-tbody').innerHTML =
-      '<tr><td colspan="6" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore caricamento: ' + (e.message || String(e)) + '</td></tr>';
+      '<tr><td colspan="7" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore caricamento: ' + (e.message || String(e)) + '</td></tr>';
     document.getElementById('oblio-list').innerHTML =
       '<div style="text-align:center;padding:24px;color:#DC2626">⚠️ Errore caricamento dati.</div>';
   }
@@ -424,7 +424,7 @@ function renderOblio() {
         '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(c.nome || '') + '</div>' +
         '<div style="font-size:11.5px;color:var(--slate-l)">' + (c.codice_fiscale ? 'CF: ' + c.codice_fiscale + ' · ' : '') + new Date(c.created_at).toLocaleDateString('it') + (tags ? ' · ' + tags : '') + '</div>' +
       '</div>' +
-      '<button class="btn btn-sm" style="background:#DC2626;color:white;border-color:#DC2626;flex-shrink:0" onclick="apriOblio(\'' + c.id + '\',\'' + c.nome.replace(/'/g,"\\'") + '\')">🗑️ Elimina tutti i dati</button>' +
+      '<button class="btn btn-sm" style="background:#DC2626;color:white;border-color:#DC2626;flex-shrink:0" onclick="apriOblio(\'' + c.id + '\',\'' + (c.nome||'').replace(/'/g,"\\'") + '\')">🗑️ Elimina tutti i dati</button>' +
       '</div>';
   }).join('');
 }
@@ -477,7 +477,7 @@ function renderStats() {
         '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(c.nome || '') + (over10 ? ' <span style="color:#DC2626">⚠️ SCADUTO</span>' : '') + '</div>' +
         '<div style="font-size:11.5px;color:var(--slate-l)">Cartella aperta il ' + new Date(c.created_at).toLocaleDateString('it') + ' · ' + yrs + ' anni · ' + (c.gdpr_consenso ? '✅ Con consenso' : '❌ Senza consenso') + '</div>' +
       '</div>' +
-      '<button class="btn btn-ghost btn-sm" onclick="apriOblio(\'' + c.id + '\',\'' + c.nome.replace(/'/g,"\\'") + '\')">🗑️ Gestisci oblio</button>' +
+      '<button class="btn btn-ghost btn-sm" onclick="apriOblio(\'' + c.id + '\',\'' + (c.nome||'').replace(/'/g,"\\'") + '\')">🗑️ Gestisci oblio</button>' +
       '</div>';
   }).join('');
 }

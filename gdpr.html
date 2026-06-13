@@ -309,23 +309,35 @@
 let _allCartelle = [];
 let _oblioTarget = null;
 
-// Forza visibilità — setProperty('important') vince su qualsiasi regola CSS
+// Forza visibilità — ogni target ha il proprio try/catch isolato
 function forceVisible() {
+  // 1) Rimuovi animazioni su #main (opacity:0 da fadeInUp)
   try {
-    document.querySelectorAll('#main, #main *').forEach(function(el) {
-      el.style.setProperty('animation', 'none', 'important');
-      el.style.setProperty('transition', 'none', 'important');
-      if (el.style.display !== 'none') {
-        el.style.setProperty('opacity', '1', 'important');
-        el.style.setProperty('transform', 'none', 'important');
-        el.style.setProperty('visibility', 'visible', 'important');
-      }
-    });
-    // Forza esplicitamente panel-registro a display:block !important
-    // (qualcosa lo sovrascrive a none — debug confermato)
+    var main = document.getElementById('main');
+    if (main) {
+      main.style.setProperty('animation', 'none', 'important');
+      main.style.setProperty('opacity', '1', 'important');
+    }
+  } catch(e) {}
+
+  // 2) Forza display:block su panel-registro — operazione separata e isolata
+  try {
     var pr = document.getElementById('panel-registro');
-    if (pr) pr.style.setProperty('display', 'block', 'important');
-  } catch(e) { console.warn('forceVisible error:', e); }
+    if (pr) {
+      pr.style.setProperty('display', 'block', 'important');
+      pr.style.setProperty('opacity', '1', 'important');
+      pr.style.setProperty('visibility', 'visible', 'important');
+    }
+  } catch(e) {}
+
+  // 3) Forza il wrapper div (#main > div) ad essere visibile
+  try {
+    var wrapper = document.querySelector('#main>div');
+    if (wrapper) {
+      wrapper.style.setProperty('animation', 'none', 'important');
+      wrapper.style.setProperty('opacity', '1', 'important');
+    }
+  } catch(e) {}
 }
 
 function showDebugOverlay() {
@@ -344,10 +356,13 @@ function showDebugOverlay() {
       const name = pair[0], el = pair[1];
       if (!el) { lines.push(name + ' → NON TROVATO'); return; }
       const cs = window.getComputedStyle(el);
-      lines.push(name + ' → op:' + parseFloat(cs.opacity).toFixed(2)
-        + ' d:' + cs.display.substring(0,5)
-        + ' vis:' + cs.visibility.substring(0,3)
-        + ' h:' + el.offsetHeight + 'px');
+      var line = name + ' → comp:' + cs.display.substring(0,5)
+        + ' h:' + el.offsetHeight + 'px';
+      // Per panel-registro mostra anche lo style inline
+      if (name === '#panel-registro') {
+        line += '\n  inline-style: [' + (el.getAttribute('style') || '(vuoto)') + ']';
+      }
+      lines.push(line);
     });
     const dbg = document.createElement('div');
     dbg.style.cssText = 'position:fixed;bottom:10px;right:10px;background:#0F172A;color:#F1F5F9;padding:14px 16px;border-radius:12px;font-size:10px;font-family:monospace;z-index:2147483647;white-space:pre;max-width:340px;box-shadow:0 6px 24px rgba(0,0,0,.6);line-height:1.7';
@@ -358,10 +373,17 @@ function showDebugOverlay() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   forceVisible();
-  // Dopo 800ms mostra i computed styles reali (dopo che il browser ha applicato tutti gli stili)
-  setTimeout(showDebugOverlay, 800);
+  // Ripeti forceVisible a 100ms e 500ms per catturare qualsiasi override tardivo
+  setTimeout(forceVisible, 100);
+  setTimeout(forceVisible, 500);
+  // Debug a 1200ms per catturare lo stato DOPO il caricamento dati
+  setTimeout(showDebugOverlay, 1200);
   await checkAuth();
   await loadGDPRData();
+  // Ultima chiamata dopo il caricamento dati
+  forceVisible();
+  // Debug finale 500ms dopo il caricamento dati
+  setTimeout(showDebugOverlay, 500);
 });
 
 function switchTab(tab) {

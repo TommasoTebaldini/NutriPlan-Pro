@@ -29,8 +29,6 @@
 .gdpr-tab{padding:8px 16px;border-radius:9px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
 .gdpr-tab:hover{background:rgba(15,118,110,.1);color:var(--teal-d)}
 .gdpr-tab.active{background:linear-gradient(135deg,#0C5F58,#0F766E);color:white;box-shadow:0 3px 10px rgba(15,118,110,.3);font-weight:700}
-/* I panel sono mostrati/nascosti via inline style */
-.gdpr-panel{display:none}
 .gdpr-table td{color:#1E293B}
 .gdpr-table td,.gdpr-table th{font-family:'DM Sans',sans-serif}
 </style>
@@ -124,7 +122,7 @@
 <div id="gdpr-load-error" style="display:none;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#DC2626"></div>
 
 <!-- TAB 1: REGISTRO TRATTAMENTI -->
-<div class="gdpr-panel" id="panel-registro" style="display:block">
+<div id="panel-registro" style="display:block">
   <div id="gdpr-summary-bar" style="display:none;background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px 18px;margin-bottom:14px;gap:20px;flex-wrap:wrap;align-items:center">
     <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0">Riepilogo consensi</div>
     <div style="display:flex;gap:14px;flex-wrap:wrap">
@@ -161,7 +159,7 @@
 </div>
 
 <!-- TAB 2: DIRITTO OBLIO -->
-<div class="gdpr-panel" id="panel-oblio">
+<div id="panel-oblio" style="display:none">
   <div class="gdpr-card">
     <h3>🗑️ Diritto all'Oblio — Art. 17 GDPR</h3>
     <div style="background:#FEF2F2;border-radius:8px;padding:12px 14px;margin-bottom:14px;border-left:3px solid #EF4444;font-size:12.5px;color:#7F1D1D;line-height:1.6">
@@ -174,7 +172,7 @@
 </div>
 
 <!-- TAB 4: STATISTICHE -->
-<div class="gdpr-panel" id="panel-stats">
+<div id="panel-stats" style="display:none">
   <div class="gdpr-card">
     <h3>📊 Statistiche GDPR</h3>
     <div id="stats-content" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px">
@@ -193,7 +191,7 @@
 </div>
 
 <!-- TAB 5: PORTABILITÀ -->
-<div class="gdpr-panel" id="panel-portabilita">
+<div id="panel-portabilita" style="display:none">
   <div class="gdpr-card">
     <h3>📤 Portabilità dei Dati — Art. 20 GDPR</h3>
     <div style="font-size:12px;color:var(--slate-m);margin-bottom:16px;line-height:1.6">
@@ -221,7 +219,7 @@
 </div>
 
 <!-- TAB 3: INFORMATIVA PRIVACY -->
-<div class="gdpr-panel" id="panel-privacy">
+<div id="panel-privacy" style="display:none">
   <div class="gdpr-card">
     <h3>📄 Informativa Privacy — Bozza (Art. 13-14 GDPR)</h3>
     <div style="margin-bottom:14px;display:flex;gap:8px">
@@ -309,92 +307,23 @@
 let _allCartelle = [];
 let _oblioTarget = null;
 
-// Forza visibilità — ogni target ha il proprio try/catch isolato
-function forceVisible() {
-  // 1) Rimuovi animazioni su #main (opacity:0 da fadeInUp)
-  try {
-    var main = document.getElementById('main');
-    if (main) {
-      main.style.setProperty('animation', 'none', 'important');
-      main.style.setProperty('opacity', '1', 'important');
-    }
-  } catch(e) {}
-
-  // 2) Forza display:block su panel-registro — operazione separata e isolata
-  try {
-    var pr = document.getElementById('panel-registro');
-    if (pr) {
-      pr.style.setProperty('display', 'block', 'important');
-      pr.style.setProperty('opacity', '1', 'important');
-      pr.style.setProperty('visibility', 'visible', 'important');
-    }
-  } catch(e) {}
-
-  // 3) Forza il wrapper div (#main > div) ad essere visibile
-  try {
-    var wrapper = document.querySelector('#main>div');
-    if (wrapper) {
-      wrapper.style.setProperty('animation', 'none', 'important');
-      wrapper.style.setProperty('opacity', '1', 'important');
-    }
-  } catch(e) {}
-}
-
-function showDebugOverlay() {
-  try {
-    const lines = ['=== GDPR DEBUG (rimuovere dopo fix) ==='];
-    const checks = [
-      ['#main', document.getElementById('main')],
-      ['main>div', document.querySelector('#main>div')],
-      ['banner', document.querySelector('#main>div>div:nth-child(2)')],
-      ['.gdpr-tabs', document.querySelector('.gdpr-tabs')],
-      ['#panel-registro', document.getElementById('panel-registro')],
-      ['.gdpr-card', document.querySelector('.gdpr-card')],
-      ['#registro-tbody', document.getElementById('registro-tbody')],
-    ];
-    checks.forEach(function(pair) {
-      const name = pair[0], el = pair[1];
-      if (!el) { lines.push(name + ' → NON TROVATO'); return; }
-      const cs = window.getComputedStyle(el);
-      var line = name + ' → comp:' + cs.display.substring(0,5)
-        + ' h:' + el.offsetHeight + 'px';
-      // Per panel-registro mostra anche lo style inline
-      if (name === '#panel-registro') {
-        line += '\n  inline-style: [' + (el.getAttribute('style') || '(vuoto)') + ']';
-      }
-      lines.push(line);
-    });
-    const dbg = document.createElement('div');
-    dbg.style.cssText = 'position:fixed;bottom:10px;right:10px;background:#0F172A;color:#F1F5F9;padding:14px 16px;border-radius:12px;font-size:10px;font-family:monospace;z-index:2147483647;white-space:pre;max-width:340px;box-shadow:0 6px 24px rgba(0,0,0,.6);line-height:1.7';
-    dbg.textContent = lines.join('\n');
-    document.body.appendChild(dbg);
-  } catch(e) {}
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
-  forceVisible();
-  // Ripeti forceVisible a 100ms e 500ms per catturare qualsiasi override tardivo
-  setTimeout(forceVisible, 100);
-  setTimeout(forceVisible, 500);
-  // Debug a 1200ms per catturare lo stato DOPO il caricamento dati
-  setTimeout(showDebugOverlay, 1200);
   await checkAuth();
   await loadGDPRData();
-  // Ultima chiamata dopo il caricamento dati
-  forceVisible();
-  // Debug finale 500ms dopo il caricamento dati
-  setTimeout(showDebugOverlay, 500);
 });
 
+var _GDPR_PANELS = ['registro', 'oblio', 'privacy', 'stats', 'portabilita'];
+
 function switchTab(tab) {
-  document.querySelectorAll('.gdpr-panel').forEach(function(p) {
-    p.style.setProperty('display', 'none', 'important');
+  _GDPR_PANELS.forEach(function(p) {
+    var el = document.getElementById('panel-' + p);
+    if (el) el.style.display = 'none';
   });
-  var panel = document.getElementById('panel-' + tab);
-  if (panel) panel.style.setProperty('display', 'block', 'important');
+  var active = document.getElementById('panel-' + tab);
+  if (active) active.style.display = 'block';
   document.querySelectorAll('.gdpr-tab').forEach(function(t) { t.classList.remove('active'); });
-  var tabs = document.querySelectorAll('.gdpr-tab');
   var map = { registro: 0, oblio: 1, privacy: 2, stats: 3, portabilita: 4 };
+  var tabs = document.querySelectorAll('.gdpr-tab');
   if (map[tab] !== undefined) tabs[map[tab]].classList.add('active');
   if (tab === 'stats') renderStats();
   if (tab === 'portabilita') renderPortabilita();

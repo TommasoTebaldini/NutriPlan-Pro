@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>GDPR — DietPlan Pro</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -304,9 +307,28 @@
 
 <script>
 let _allCartelle = [];
-let _oblioTarget = null; // { id, nome }
+let _oblioTarget = null;
+
+// Forza visibilità immediata su tutti gli elementi di #main.
+// setProperty con 'important' sovrascrive qualsiasi regola CSS
+// (animazioni, opacity:0, visibility:hidden, transform).
+function forceVisible() {
+  try {
+    document.querySelectorAll('#main, #main *').forEach(function(el) {
+      el.style.setProperty('animation', 'none', 'important');
+      el.style.setProperty('transition', 'none', 'important');
+      // Non forzare visibility su elementi con display:none inline (panel nascosti)
+      if (el.style.display !== 'none') {
+        el.style.setProperty('opacity', '1', 'important');
+        el.style.setProperty('transform', 'none', 'important');
+        el.style.setProperty('visibility', 'visible', 'important');
+      }
+    });
+  } catch(e) { console.warn('forceVisible error:', e); }
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
+  forceVisible(); // prima di qualsiasi operazione async
   await checkAuth();
   await loadGDPRData();
 });

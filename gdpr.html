@@ -111,6 +111,9 @@
   <button class="gdpr-tab" onclick="switchTab('portabilita')">📤 Portabilità</button>
 </div>
 
+<!-- Error banner (hidden by default, shown on load failure) -->
+<div id="gdpr-load-error" style="display:none;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#DC2626"></div>
+
 <!-- TAB 1: REGISTRO TRATTAMENTI -->
 <div class="gdpr-panel active" id="panel-registro">
   <div id="gdpr-summary-bar" style="display:none;background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px 18px;margin-bottom:14px;gap:20px;flex-wrap:wrap;align-items:center">
@@ -321,57 +324,30 @@ function tagColor(tag) {
 }
 
 async function loadGDPRData() {
+  const errEl = document.getElementById('gdpr-load-error');
   try {
-    // Recupera la sessione direttamente (non dipende da currentUser globale)
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) {
-      window.location.href = 'index.html';
-      return;
-    }
+    if (!session) { window.location.href = 'index.html'; return; }
     const userId = session.user.id;
 
-    let data, error;
-
-    // Prima prova con colonne gdpr complete
-    ({ data, error } = await sb.from('cartelle')
-      .select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,gdpr_consenso_at,note')
+    // select('*') funziona sempre indipendentemente dalle colonne opzionali (gdpr_consenso, ecc.)
+    const { data, error } = await sb.from('cartelle')
+      .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false }));
-
-    // Fallback senza gdpr_consenso_at
-    if (error) {
-      ({ data, error } = await sb.from('cartelle')
-        .select('id,nome,codice_fiscale,tags,created_at,gdpr_consenso,note')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false }));
-    }
-
-    // Fallback senza gdpr_consenso se la colonna non esiste ancora
-    if (error) {
-      ({ data, error } = await sb.from('cartelle')
-        .select('id,nome,codice_fiscale,tags,created_at,note')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false }));
-    }
-
-    // Fallback minimo: solo colonne base garantite
-    if (error) {
-      ({ data, error } = await sb.from('cartelle')
-        .select('id,nome,codice_fiscale,created_at')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false }));
-    }
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
 
     _allCartelle = (data || []).filter(c => c.note !== '__altro__');
+    if (errEl) errEl.style.display = 'none';
     renderRegistro();
     renderOblio();
     renderSummaryBar();
   } catch(e) {
     console.error('loadGDPRData error:', e);
+    if (errEl) { errEl.textContent = '⚠️ Errore caricamento: ' + (e.message || String(e)); errEl.style.display = 'block'; }
     document.getElementById('registro-tbody').innerHTML =
-      '<tr><td colspan="7" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore caricamento: ' + (e.message || String(e)) + '</td></tr>';
+      '<tr><td colspan="7" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore: ' + (e.message || String(e)) + '</td></tr>';
     document.getElementById('oblio-list').innerHTML =
       '<div style="text-align:center;padding:24px;color:#DC2626">⚠️ Errore caricamento dati.</div>';
   }

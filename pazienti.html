@@ -1096,7 +1096,9 @@ async function renderCartellaDetail(id) {
       ${!isAltro ? '<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella(\'' + cart.id + '\',' + (!!cart.archived) + ')" style="' + (cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)') + '" title="' + (cart.archived?'Ripristina cartella':'Archivia cartella') + '">' + (cart.archived?'♻️ Ripristina':'📦 Archivia') + '</button>' : ''}
       ${!isAltro ? (patientLink.length ? '<span class="paz-tag" style="background:#E0F2F1;color:var(--teal-d)">🔗 Paziente collegato</span><button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')" title="Scollega paziente">🔗✂️ Scollega</button>' : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 Collega paziente</button>') : ''}
     </div>
-    ${!isAltro ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;background:white;border-radius:10px;padding:8px 12px;border:1px solid var(--border);box-shadow:var(--shadow)"><span style="font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px;flex-shrink:0">Strumenti cartella</span><button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Genera PDF con dati paziente, esami, BIA e piani">📄 Esporta scheda PDF</button></div>' : ''}
+    ${!isAltro ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;background:white;border-radius:10px;padding:8px 12px;border:1px solid var(--border);box-shadow:var(--shadow)"><span style="font-size:10.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px;flex-shrink:0">Strumenti cartella</span><button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Genera PDF con dati paziente, esami, BIA e piani">📄 Esporta scheda PDF</button>'
+      + (patientId ? '<button onclick="inviaPrivacy(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Invia informativa privacy da firmare nell\'app paziente">📄 Invia Privacy</button><button onclick="inviaGDPR(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;background:linear-gradient(135deg,#1E293B,#475569);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Invia modulo consenso GDPR da firmare nell\'app paziente">🔒 Invia GDPR</button>' : '')
+      + '</div>' : ''}
     ${!isAltro ? timelineSection : ''}
     ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
     ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>Cartella archiviata</b> — Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.</div>` : ''}
@@ -1266,6 +1268,54 @@ async function inviaPrivacy(patientId, cartellaId) {
     });
     if (error) throw error;
     toast('✅ Documento privacy inviato al paziente', 'ok');
+    await renderCartellaDetail(cartellaId);
+  } catch (e) {
+    toast('❌ Errore: ' + (e.message || e), 'err');
+  }
+}
+
+async function inviaGDPR(patientId, cartellaId) {
+  if (!patientId || !currentUser) { toast('Paziente non collegato', 'err'); return; }
+  try {
+    // Evita duplicati: controlla se esiste già un documento GDPR non firmato
+    const { data: existing } = await sb.from('patient_documents')
+      .select('id, signed_at')
+      .eq('patient_id', patientId)
+      .eq('dietitian_id', currentUser.id)
+      .eq('type', 'gdpr')
+      .is('signed_at', null)
+      .maybeSingle();
+    if (existing) { toast('⚠️ Il paziente ha già un consenso GDPR da firmare in attesa', 'warn'); return; }
+
+    const gdprContent = `Consenso al Trattamento dei Dati Personali — GDPR (UE) 2016/679
+
+Il/La sottoscritto/a dichiara di aver ricevuto e letto l'Informativa sul trattamento dei dati personali ai sensi dell'art. 13 del Regolamento (UE) 2016/679 (GDPR) e del D.Lgs. 196/2003.
+
+DATI TRATTATI
+I dati personali e sanitari (categoria speciale ai sensi dell'art. 9 GDPR) raccolti includono: dati anagrafici, misure antropometriche, composizione corporea (BIA), esami biochimici, piani alimentari e note cliniche.
+
+FINALITÀ DEL TRATTAMENTO
+I dati vengono trattati esclusivamente per l'erogazione di prestazioni di nutrizione clinica e non vengono comunicati a terzi senza consenso esplicito.
+
+CONSERVAZIONE
+I dati sanitari vengono conservati per 10 anni dall'ultima prestazione, ai sensi degli obblighi di legge applicabili.
+
+DIRITTI DELL'INTERESSATO
+L'interessato ha diritto di accesso (art. 15), rettifica (art. 16), cancellazione (art. 17), limitazione (art. 18), portabilità (art. 20), opposizione (art. 21) e revoca del consenso in qualsiasi momento senza pregiudizio per il trattamento precedente.
+
+Firmando il presente documento, il paziente presta il proprio consenso libero, specifico, informato e inequivocabile al trattamento dei dati personali e sanitari per le finalità indicate.`;
+
+    const { error } = await sb.from('patient_documents').insert({
+      patient_id: patientId,
+      dietitian_id: currentUser.id,
+      title: 'Consenso GDPR — Trattamento Dati Sanitari',
+      type: 'gdpr',
+      content: gdprContent,
+      visible: true,
+      requires_signature: true,
+    });
+    if (error) throw error;
+    toast('✅ Modulo GDPR inviato al paziente per la firma digitale', 'ok');
     await renderCartellaDetail(cartellaId);
   } catch (e) {
     toast('❌ Errore: ' + (e.message || e), 'err');

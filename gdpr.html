@@ -16,9 +16,9 @@
 <style>
 .gdpr-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
 .gdpr-card h3{font-size:15px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:2px solid var(--border)}
-.gdpr-table{width:100%;border-collapse:collapse;font-size:12.5px}
-.gdpr-table th{background:#1E293B;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
-.gdpr-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.gdpr-table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+.gdpr-table th{background:#1E293B;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gdpr-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;overflow:hidden;text-overflow:ellipsis}
 .gdpr-table tbody tr:hover{background:#F8FAFC}
 .consent-cb{width:17px;height:17px;accent-color:var(--teal);cursor:pointer}
 .oblio-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;flex-wrap:wrap}
@@ -138,15 +138,22 @@
       Art. 30 GDPR — Registro delle attività di trattamento. Documenta i dati trattati per ogni paziente. La spunta "Consenso" indica il consenso informato al trattamento dei dati sanitari ricevuto dal paziente.
     </div>
     <div style="overflow-x:auto">
-      <table class="gdpr-table" id="registro-table">
+      <table class="gdpr-table" id="registro-table" style="min-width:600px">
+        <colgroup>
+          <col style="width:24%">
+          <col style="width:15%">
+          <col style="width:22%">
+          <col style="width:13%">
+          <col style="width:10%">
+          <col style="width:16%">
+        </colgroup>
         <thead>
           <tr>
             <th>Paziente</th>
-            <th>CF</th>
-            <th>Patologie/Tag</th>
-            <th>Data creazione</th>
-            <th>Categorie dati</th>
-            <th>Consenso</th>
+            <th>Cod. Fiscale</th>
+            <th>Patologie / Tag</th>
+            <th>Data apertura</th>
+            <th style="text-align:center">Consenso</th>
             <th>Data consenso</th>
           </tr>
         </thead>
@@ -413,12 +420,11 @@ function renderRegistro() {
       ? '<span class="tag-mini" style="background:#FEE2E2;color:#991B1B">⚠️ >10 anni</span>'
       : yearsOld >= 8 ? '<span class="tag-mini" style="background:#FEF3C7;color:#92400E">⏰ >8 anni</span>' : '';
     return '<tr' + (yearsOld >= 10 ? ' style="background:#FFF5F5"' : yearsOld >= 8 ? ' style="background:#FFFBEB"' : '') + '>' +
-      '<td style="font-weight:600;font-size:13px">' + esc(c.nome || '') + ' ' + retentionBadge + '</td>' +
+      '<td style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(c.nome || '') + (retentionBadge ? ' ' + retentionBadge : '') + '</td>' +
       '<td style="font-family:monospace;font-size:12px;color:var(--slate-m)">' + esc(c.codice_fiscale || '—') + '</td>' +
-      '<td>' + (tagsHtml || '<span style="color:var(--slate-l);font-size:11.5px">—</span>') + '</td>' +
+      '<td style="line-height:1.6">' + (tagsHtml || '<span style="color:var(--slate-l);font-size:11.5px">—</span>') + '</td>' +
       '<td style="font-size:12px;white-space:nowrap">' + new Date(c.created_at).toLocaleDateString('it') + '</td>' +
-      '<td style="font-size:11px;color:var(--slate-m)">Dati sanitari art.9, Dati anagrafici</td>' +
-      '<td style="text-align:center"><input type="checkbox" class="consent-cb" ' + (consenso ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="Consenso informato ricevuto"></td>' +
+      '<td style="text-align:center"><input type="checkbox" class="consent-cb" ' + (consenso ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="Spunta dopo aver ricevuto il consenso firmato dal paziente"></td>' +
       '<td style="font-size:12px;color:' + (consenso ? '#0F766E' : 'var(--slate-l)') + ';white-space:nowrap">' + (consenso ? consentDate : '—') + '</td>' +
       '</tr>';
   }).join('');

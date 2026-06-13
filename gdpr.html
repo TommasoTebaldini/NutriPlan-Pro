@@ -91,6 +91,9 @@
 <main id="main">
 <div class="page-content">
 
+<!-- Status diagnostico (mostra lo stato del caricamento, scompare dopo 5s al successo) -->
+<div id="gdpr-diag" style="background:#DBEAFE;border:1px solid #93C5FD;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#1D4ED8;display:flex;align-items:center;gap:8px">🔄 Inizializzazione...</div>
+
 <!-- BANNER -->
 <div style="background:linear-gradient(135deg,#1E293B,#334155);border-radius:14px;padding:18px 24px;margin-bottom:18px;color:white;box-shadow:0 4px 18px rgba(0,0,0,.18)">
   <div style="display:flex;align-items:center;gap:16px">
@@ -324,32 +327,62 @@ function tagColor(tag) {
 }
 
 async function loadGDPRData() {
+  const diagEl = document.getElementById('gdpr-diag');
   const errEl = document.getElementById('gdpr-load-error');
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { window.location.href = 'index.html'; return; }
-    const userId = session.user.id;
 
-    // select('*') funziona sempre indipendentemente dalle colonne opzionali (gdpr_consenso, ecc.)
+  function setDiag(msg, type) {
+    if (!diagEl) return;
+    if (type === 'ok') {
+      diagEl.style.cssText = 'background:#F0FDF4;border:1px solid #86EFAC;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#15803D;display:flex;align-items:center;gap:8px';
+      setTimeout(() => { if (diagEl) diagEl.style.display = 'none'; }, 5000);
+    } else if (type === 'err') {
+      diagEl.style.cssText = 'background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#DC2626;display:flex;align-items:center;gap:8px';
+    } else {
+      diagEl.style.cssText = 'background:#DBEAFE;border:1px solid #93C5FD;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#1D4ED8;display:flex;align-items:center;gap:8px';
+    }
+    diagEl.textContent = msg;
+  }
+
+  try {
+    setDiag('🔄 Verifica sessione...', 'info');
+    const authResp = await sb.auth.getSession();
+    const session = authResp?.data?.session;
+    if (authResp?.error) throw new Error('Auth: ' + authResp.error.message);
+    if (!session?.user) {
+      setDiag('⚠️ Sessione non trovata — reindirizzamento...', 'err');
+      setTimeout(() => { window.location.href = 'index.html'; }, 1800);
+      return;
+    }
+
+    const userId = session.user.id;
+    const email = session.user.email || userId.slice(0, 8);
+    setDiag('🔄 Caricamento cartelle (' + email + ')...', 'info');
+
+    // Filtro server-side: escludi cartelle interne (__altro__); includi NULL e altri valori
     const { data, error } = await sb.from('cartelle')
       .select('*')
       .eq('user_id', userId)
+      .or('note.is.null,note.neq.__altro__')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
 
-    _allCartelle = (data || []).filter(c => c.note !== '__altro__');
+    _allCartelle = data || [];
+    const nPaz = _allCartelle.length;
+    setDiag('✅ ' + nPaz + (nPaz === 1 ? ' cartella caricata' : ' cartelle caricate'), 'ok');
+
     if (errEl) errEl.style.display = 'none';
-    renderRegistro();
-    renderOblio();
-    renderSummaryBar();
+    try { renderRegistro(); } catch(re) { console.error('renderRegistro:', re); }
+    try { renderOblio(); } catch(re) { console.error('renderOblio:', re); }
+    try { renderSummaryBar(); } catch(re) { console.error('renderSummaryBar:', re); }
   } catch(e) {
     console.error('loadGDPRData error:', e);
+    setDiag('❌ Errore: ' + (e.message || String(e)), 'err');
     if (errEl) { errEl.textContent = '⚠️ Errore caricamento: ' + (e.message || String(e)); errEl.style.display = 'block'; }
-    document.getElementById('registro-tbody').innerHTML =
-      '<tr><td colspan="7" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore: ' + (e.message || String(e)) + '</td></tr>';
-    document.getElementById('oblio-list').innerHTML =
-      '<div style="text-align:center;padding:24px;color:#DC2626">⚠️ Errore caricamento dati.</div>';
+    const tbody = document.getElementById('registro-tbody');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore: ' + (e.message || String(e)) + '</td></tr>';
+    const oblioEl = document.getElementById('oblio-list');
+    if (oblioEl) oblioEl.innerHTML = '<div style="text-align:center;padding:24px;color:#DC2626">⚠️ Errore caricamento dati.</div>';
   }
 }
 

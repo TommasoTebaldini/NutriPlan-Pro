@@ -18,9 +18,17 @@
 .gdpr-card h3{font-size:15px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:2px solid var(--border)}
 .gdpr-table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
 .gdpr-table th{background:#1E293B;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gdpr-table th:nth-child(1){width:24%}
+.gdpr-table th:nth-child(2){width:14%}
+.gdpr-table th:nth-child(3){width:22%}
+.gdpr-table th:nth-child(4){width:12%}
+.gdpr-table th:nth-child(5){width:10%;text-align:center}
+.gdpr-table th:nth-child(6){width:18%}
 .gdpr-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;overflow:hidden;text-overflow:ellipsis}
 .gdpr-table tbody tr:hover{background:#F8FAFC}
 .consent-cb{width:17px;height:17px;accent-color:var(--teal);cursor:pointer}
+.gdpr-filter-btn{padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--slate-m);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.gdpr-filter-btn.active{background:white;color:var(--slate);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .oblio-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;flex-wrap:wrap}
 .privacy-text{font-size:12.5px;line-height:1.8;color:var(--slate-m);background:#F8FAFC;padding:16px;border-radius:8px;border:1px solid var(--border);max-height:300px;overflow-y:auto}
 .privacy-text h4{color:var(--slate);font-size:13px;margin-top:12px;margin-bottom:4px}
@@ -134,31 +142,29 @@
   </div>
   <div class="gdpr-card">
     <h3>📋 Registro Trattamenti Pazienti</h3>
-    <div style="font-size:12px;color:var(--slate-m);margin-bottom:12px;line-height:1.6">
-      Art. 30 GDPR — Registro delle attività di trattamento. Documenta i dati trattati per ogni paziente. La spunta "Consenso" indica il consenso informato al trattamento dei dati sanitari ricevuto dal paziente.
+    <!-- Barra ricerca e filtri -->
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+      <input type="search" id="gdpr-search-input" placeholder="🔍 Cerca paziente..." oninput="gdprSearch(this.value)" style="flex:1;min-width:180px;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;outline:none;color:var(--slate)">
+      <div style="display:flex;gap:3px;background:#F1F5F9;border-radius:8px;padding:3px;flex-shrink:0">
+        <button id="gdpr-filter-all" class="gdpr-filter-btn active" onclick="gdprSetFilter('all')">Tutti</button>
+        <button id="gdpr-filter-yes" class="gdpr-filter-btn" onclick="gdprSetFilter('yes')">✅ Con consenso</button>
+        <button id="gdpr-filter-no" class="gdpr-filter-btn" onclick="gdprSetFilter('no')">⚠️ Senza consenso</button>
+      </div>
     </div>
     <div style="overflow-x:auto">
-      <table class="gdpr-table" id="registro-table" style="min-width:600px">
-        <colgroup>
-          <col style="width:24%">
-          <col style="width:15%">
-          <col style="width:22%">
-          <col style="width:13%">
-          <col style="width:10%">
-          <col style="width:16%">
-        </colgroup>
+      <table class="gdpr-table" id="registro-table" style="min-width:580px">
         <thead>
           <tr>
             <th>Paziente</th>
             <th>Cod. Fiscale</th>
             <th>Patologie / Tag</th>
             <th>Data apertura</th>
-            <th style="text-align:center">Consenso</th>
+            <th>Consenso</th>
             <th>Data consenso</th>
           </tr>
         </thead>
         <tbody id="registro-tbody">
-          <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate-l)">⏳ Caricamento...</td></tr>
+          <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">⏳ Caricamento...</td></tr>
         </tbody>
       </table>
     </div>
@@ -320,6 +326,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 var _GDPR_PANELS = ['registro', 'oblio', 'privacy', 'stats', 'portabilita'];
+var _gdprSearchTerm = '';
+var _gdprStatusFilter = 'all';
+
+function gdprSearch(val) {
+  _gdprSearchTerm = (val || '').toLowerCase().trim();
+  renderRegistro();
+}
+
+function gdprSetFilter(status) {
+  _gdprStatusFilter = status;
+  document.querySelectorAll('.gdpr-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  var btn = document.getElementById('gdpr-filter-' + status);
+  if (btn) btn.classList.add('active');
+  renderRegistro();
+}
+
+function getFilteredCartelle() {
+  return _allCartelle.filter(function(c) {
+    if (_gdprSearchTerm && !(c.nome || '').toLowerCase().includes(_gdprSearchTerm)) return false;
+    var consented = !!(c.gdpr_consenso || c._gdprDigitale);
+    if (_gdprStatusFilter === 'yes') return consented;
+    if (_gdprStatusFilter === 'no') return !consented;
+    return true;
+  });
+}
 
 function switchTab(tab) {
   _GDPR_PANELS.forEach(function(p) {
@@ -424,12 +455,14 @@ async function loadGDPRData() {
 
 function renderRegistro() {
   const tbody = document.getElementById('registro-tbody');
-  if (!_allCartelle.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">Nessuna cartella paziente.</td></tr>';
+  const filtered = getFilteredCartelle();
+  if (!filtered.length) {
+    var emptyMsg = _allCartelle.length ? 'Nessun paziente corrisponde alla ricerca.' : 'Nessuna cartella paziente.';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">' + emptyMsg + '</td></tr>';
     return;
   }
   const now = new Date();
-  tbody.innerHTML = _allCartelle.map(c => {
+  tbody.innerHTML = filtered.map(c => {
     const tags = Array.isArray(c.tags) ? c.tags : [];
     const tagsHtml = tags.map(t => { const cl = tagColor(t); return '<span class="tag-mini" style="background:' + cl.bg + ';color:' + cl.col + '">' + esc(t) + '</span>'; }).join('');
     const hasManual = !!c.gdpr_consenso;
@@ -455,8 +488,8 @@ function renderRegistro() {
       '<td style="line-height:1.6">' + (tagsHtml || '<span style="color:var(--slate-l);font-size:11.5px">—</span>') + '</td>' +
       '<td style="font-size:12px;white-space:nowrap">' + new Date(c.created_at).toLocaleDateString('it') + '</td>' +
       '<td style="text-align:center">' +
-        '<input type="checkbox" class="consent-cb" ' + (hasManual ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="Spunta per consenso su carta. La firma digitale dall\'app è tracciata automaticamente.">' +
-        (hasDigital ? '<span style="display:block;font-size:9.5px;color:#1D4ED8;margin-top:2px;font-weight:600">📱 Firmato</span>' : '') +
+        '<input type="checkbox" class="consent-cb" ' + (isConsented ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="' + (hasDigital ? 'Firmato digitalmente dall\'app il ' + new Date(c._gdprDigitale).toLocaleDateString('it') : 'Spunta per registrare consenso su carta') + '">' +
+        (hasDigital ? '<span style="display:block;font-size:9px;color:#1D4ED8;margin-top:1px;font-weight:700;white-space:nowrap">📱 App</span>' : '') +
       '</td>' +
       '<td style="font-size:12px;color:' + (isConsented ? '#0F766E' : 'var(--slate-l)') + ';white-space:nowrap">' + consentDateStr + consentSource + '</td>' +
       '</tr>';
@@ -464,7 +497,7 @@ function renderRegistro() {
 }
 
 function renderSummaryBar() {
-  const con = _allCartelle.filter(c => c.gdpr_consenso).length;
+  const con = _allCartelle.filter(c => c.gdpr_consenso || c._gdprDigitale).length;
   const nocon = _allCartelle.length - con;
   document.getElementById('stat-con').textContent = con;
   document.getElementById('stat-nocon').textContent = nocon;

@@ -327,8 +327,38 @@ function forceVisible() {
   } catch(e) { console.warn('forceVisible error:', e); }
 }
 
+function showDebugOverlay() {
+  try {
+    const lines = ['=== GDPR DEBUG (rimuovere dopo fix) ==='];
+    const checks = [
+      ['#main', document.getElementById('main')],
+      ['main>div', document.querySelector('#main>div')],
+      ['banner', document.querySelector('#main>div>div:nth-child(2)')],
+      ['.gdpr-tabs', document.querySelector('.gdpr-tabs')],
+      ['#panel-registro', document.getElementById('panel-registro')],
+      ['.gdpr-card', document.querySelector('.gdpr-card')],
+      ['#registro-tbody', document.getElementById('registro-tbody')],
+    ];
+    checks.forEach(function(pair) {
+      const name = pair[0], el = pair[1];
+      if (!el) { lines.push(name + ' → NON TROVATO'); return; }
+      const cs = window.getComputedStyle(el);
+      lines.push(name + ' → op:' + parseFloat(cs.opacity).toFixed(2)
+        + ' d:' + cs.display.substring(0,5)
+        + ' vis:' + cs.visibility.substring(0,3)
+        + ' h:' + el.offsetHeight + 'px');
+    });
+    const dbg = document.createElement('div');
+    dbg.style.cssText = 'position:fixed;bottom:10px;right:10px;background:#0F172A;color:#F1F5F9;padding:14px 16px;border-radius:12px;font-size:10px;font-family:monospace;z-index:2147483647;white-space:pre;max-width:340px;box-shadow:0 6px 24px rgba(0,0,0,.6);line-height:1.7';
+    dbg.textContent = lines.join('\n');
+    document.body.appendChild(dbg);
+  } catch(e) {}
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-  forceVisible(); // prima di qualsiasi operazione async
+  forceVisible();
+  // Dopo 800ms mostra i computed styles reali (dopo che il browser ha applicato tutti gli stili)
+  setTimeout(showDebugOverlay, 800);
   await checkAuth();
   await loadGDPRData();
 });

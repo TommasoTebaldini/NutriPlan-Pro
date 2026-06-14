@@ -466,12 +466,26 @@ async function selectPatient(patientId) {
         <div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px">Caricamento messaggi...</div>
       </div>
       <div class="chat-input-area" style="flex-direction:column;gap:6px;padding:10px 14px;align-items:stretch">
+        <div id="schedule-bar" style="display:none;background:#FEF9C3;border-radius:8px;padding:6px 10px;font-size:12px;color:#854D0E;display:none;align-items:center;gap:8px">
+          <span>📅 Programmato per:</span>
+          <input type="datetime-local" id="schedule-dt" style="border:1px solid #FDE68A;border-radius:6px;padding:3px 7px;font-size:12px;font-family:inherit;outline:none">
+          <button onclick="cancelSchedule()" style="background:none;border:none;cursor:pointer;color:#854D0E;font-size:13px">✕</button>
+        </div>
         <div class="tpl-wrap">
           <div class="tpl-panel" id="tpl-panel"></div>
           <textarea id="chat-input" placeholder="Scrivi un messaggio..." rows="1" onkeydown="handleChatKey(event)" style="width:100%;box-sizing:border-box"></textarea>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <button class="tpl-btn" onclick="toggleTplPanel(event)" title="Template messaggi predefiniti">&#x1F4DD; Template</button>
+          <button id="mic-btn" class="tpl-btn" onclick="toggleVoiceRecord()" title="Messaggio vocale" style="font-size:15px">🎤</button>
+          <div style="position:relative">
+            <button class="tpl-btn" onclick="toggleScheduleDropdown(event)" title="Programma messaggio">📅 Programma</button>
+            <div id="schedule-dropdown" style="display:none;position:absolute;bottom:110%;left:0;background:white;border:1.5px solid var(--border-d);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;min-width:200px;padding:6px">
+              <div onclick="setSchedule('tomorrow')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px;transition:background .1s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">☀️ Domani mattina (9:00)</div>
+              <div onclick="setSchedule('1h')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px;transition:background .1s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">⏰ Tra 1 ora</div>
+              <div onclick="setSchedule('custom')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px;transition:background .1s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">🗓️ Scegli orario...</div>
+            </div>
+          </div>
           <button class="chat-send-btn" style="margin-left:auto" onclick="sendMessage()">Invia &#x27A4;</button>
         </div>
       </div>
@@ -513,12 +527,26 @@ function switchChatTab(tab) {
     setBodyContent(`
       <div class="chat-messages" id="chat-messages-area"></div>
       <div class="chat-input-area" style="flex-direction:column;gap:6px;padding:10px 14px;align-items:stretch">
+        <div id="schedule-bar" style="display:none;background:#FEF9C3;border-radius:8px;padding:6px 10px;font-size:12px;color:#854D0E;align-items:center;gap:8px">
+          <span>📅 Programmato per:</span>
+          <input type="datetime-local" id="schedule-dt" style="border:1px solid #FDE68A;border-radius:6px;padding:3px 7px;font-size:12px;font-family:inherit;outline:none">
+          <button onclick="cancelSchedule()" style="background:none;border:none;cursor:pointer;color:#854D0E;font-size:13px">✕</button>
+        </div>
         <div class="tpl-wrap">
           <div class="tpl-panel" id="tpl-panel"></div>
           <textarea id="chat-input" placeholder="Scrivi un messaggio..." rows="1" onkeydown="handleChatKey(event)" style="width:100%;box-sizing:border-box"></textarea>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <button class="tpl-btn" onclick="toggleTplPanel(event)" title="Template messaggi predefiniti">&#x1F4DD; Template</button>
+          <button id="mic-btn" class="tpl-btn" onclick="toggleVoiceRecord()" title="Messaggio vocale" style="font-size:15px">🎤</button>
+          <div style="position:relative">
+            <button class="tpl-btn" onclick="toggleScheduleDropdown(event)" title="Programma messaggio">📅 Programma</button>
+            <div id="schedule-dropdown" style="display:none;position:absolute;bottom:110%;left:0;background:white;border:1.5px solid var(--border-d);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;min-width:200px;padding:6px">
+              <div onclick="setSchedule('tomorrow')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px;transition:background .1s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">☀️ Domani mattina (9:00)</div>
+              <div onclick="setSchedule('1h')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px;transition:background .1s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">⏰ Tra 1 ora</div>
+              <div onclick="setSchedule('custom')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px;transition:background .1s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">🗓️ Scegli orario...</div>
+            </div>
+          </div>
           <button class="chat-send-btn" style="margin-left:auto" onclick="sendMessage()">Invia &#x27A4;</button>
         </div>
       </div>`, renderMessages);
@@ -1277,9 +1305,21 @@ function renderMessages() {
     const shouldAnimate = idx >= animFrom;
     const delay = shouldAnimate ? Math.min((idx - animFrom) * 0.03, 0.3) : 0;
     const animStyle = shouldAnimate ? `animation:chatMsgIn .24s cubic-bezier(.16,1,.3,1) ${delay}s both` : '';
-    html += `<div class="chat-msg ${isSent ? 'sent' : 'received'}" style="${animStyle}">
-      <div>${esc(m.content)}</div>
-      <div class="chat-msg-time">${time}</div>
+    // Read receipt for sent messages
+    const readReceipt = isSent ? (m.read_at ? '<span style="color:#22D3EE;font-size:11px;margin-left:4px" title="Letto">✓✓</span>' : '<span style="color:rgba(255,255,255,.5);font-size:11px;margin-left:4px" title="Non letto">✓✓</span>') : '';
+    // Scheduled message badge
+    const scheduledBadge = (m.status === 'scheduled') ? `<div style="background:#FEF9C3;border-radius:4px;padding:2px 6px;font-size:10px;color:#854D0E;margin-bottom:4px">📅 Programmato per: ${new Date(m.scheduled_at).toLocaleString('it',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>` : '';
+    // Voice message content
+    let msgContent = '';
+    if (m.type === 'voice' && m.content) {
+      msgContent = `<audio controls src="${m.content}" style="max-width:200px;height:32px"></audio>`;
+    } else {
+      msgContent = esc(m.content || '');
+    }
+    const msgBgStyle = m.status === 'scheduled' ? 'background:#FEF9C3!important;color:#92400E!important;border:1.5px solid #FDE68A' : '';
+    html += `<div class="chat-msg ${isSent ? 'sent' : 'received'}" style="${animStyle};${msgBgStyle}">
+      ${scheduledBadge}<div>${msgContent}</div>
+      <div class="chat-msg-time">${time}${readReceipt}</div>
     </div>`;
   }
 
@@ -1556,6 +1596,131 @@ function saveNewTpl() {
 
 // ─── Fine Template messaggi ────────────────────────────────────────────────
 
+// ── VOICE MESSAGES ──
+let _mediaRecorder = null;
+let _audioChunks = [];
+let _voiceRecording = false;
+
+async function toggleVoiceRecord() {
+  const btn = document.getElementById('mic-btn');
+  if (_voiceRecording) {
+    // Stop recording
+    if (_mediaRecorder) _mediaRecorder.stop();
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    _audioChunks = [];
+    _mediaRecorder = new MediaRecorder(stream);
+    _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _audioChunks.push(e.data); };
+    _mediaRecorder.onstop = async () => {
+      _voiceRecording = false;
+      if (btn) { btn.textContent = '🎤'; btn.style.background = ''; }
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(_audioChunks, { type: 'audio/webm' });
+      if (blob.size < 100) return;
+      await sendVoiceMessage(blob);
+    };
+    _mediaRecorder.start();
+    _voiceRecording = true;
+    if (btn) { btn.textContent = '⏹️'; btn.style.background = '#FEE2E2'; }
+    toast('🎤 Registrazione in corso... Clicca ⏹️ per fermare', 'info');
+    // Auto-stop after 60 seconds
+    setTimeout(() => { if (_voiceRecording && _mediaRecorder) _mediaRecorder.stop(); }, 60000);
+  } catch(e) {
+    toast('❌ Accesso microfono negato: ' + e.message, 'err');
+  }
+}
+
+async function sendVoiceMessage(blob) {
+  if (!selectedPatientId || !sb) return;
+  showLoading(true);
+  try {
+    const path = `voice-messages/${selectedPatientId}/${Date.now()}.webm`;
+    const { error: upErr } = await sb.storage.from('voice-messages').upload(path, blob, { contentType: 'audio/webm' });
+    if (upErr) throw upErr;
+    const { data: urlData } = sb.storage.from('voice-messages').getPublicUrl(path);
+    const { error } = await sb.from('chat_messages').insert({
+      patient_id: selectedPatientId,
+      sender_id: currentUser.id,
+      sender_role: 'dietitian',
+      content: urlData.publicUrl,
+      type: 'voice',
+      status: 'sent'
+    });
+    if (error) throw error;
+    toast('🎤 Messaggio vocale inviato!', 'ok');
+  } catch(e) {
+    toast('❌ Errore invio vocale: ' + e.message, 'err');
+  }
+  showLoading(false);
+}
+
+// ── MESSAGE SCHEDULING ──
+let _scheduledAt = null;
+
+function toggleScheduleDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('schedule-dropdown');
+  if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  document.addEventListener('click', () => { if (dd) dd.style.display = 'none'; }, { once: true });
+}
+
+function setSchedule(type) {
+  const dd = document.getElementById('schedule-dropdown');
+  if (dd) dd.style.display = 'none';
+  if (type === 'custom') {
+    const bar = document.getElementById('schedule-bar');
+    if (bar) { bar.style.display = 'flex'; }
+    const dtInput = document.getElementById('schedule-dt');
+    if (dtInput) { dtInput.focus(); dtInput.onchange = () => { _scheduledAt = dtInput.value ? new Date(dtInput.value).toISOString() : null; }; }
+    return;
+  }
+  const now = new Date();
+  if (type === 'tomorrow') {
+    const tm = new Date(now); tm.setDate(tm.getDate() + 1); tm.setHours(9, 0, 0, 0);
+    _scheduledAt = tm.toISOString();
+  } else if (type === '1h') {
+    const h = new Date(now); h.setHours(h.getHours() + 1, 0, 0, 0);
+    _scheduledAt = h.toISOString();
+  }
+  const bar = document.getElementById('schedule-bar');
+  if (bar) { bar.style.display = 'flex'; }
+  const dtInput = document.getElementById('schedule-dt');
+  if (dtInput && _scheduledAt) dtInput.value = _scheduledAt.slice(0, 16);
+  toast('📅 Messaggio programmato per: ' + new Date(_scheduledAt).toLocaleString('it'), 'info');
+}
+
+function cancelSchedule() {
+  _scheduledAt = null;
+  const bar = document.getElementById('schedule-bar');
+  if (bar) bar.style.display = 'none';
+  const dtInput = document.getElementById('schedule-dt');
+  if (dtInput) dtInput.value = '';
+}
+
+// Check scheduled messages every 60 seconds
+async function checkScheduledMessages() {
+  if (!currentUser || !sb || !selectedPatientId) return;
+  try {
+    const now = new Date().toISOString();
+    const { data: scheduled } = await sb.from('chat_messages')
+      .select('id')
+      .eq('status', 'scheduled')
+      .eq('sender_id', currentUser.id)
+      .lte('scheduled_at', now);
+    if (scheduled && scheduled.length > 0) {
+      const ids = scheduled.map(m => m.id);
+      await sb.from('chat_messages').update({ status: 'sent' }).in('id', ids);
+      // Reload messages if we're viewing a chat
+      if (selectedPatientId) await loadMessages(selectedPatientId);
+    }
+  } catch(e) { console.warn('checkScheduledMessages error:', e); }
+}
+
+// Start scheduler
+setInterval(checkScheduledMessages, 60000);
+
 async function sendMessage() {
   if (!selectedPatientId) return;
   const input = document.getElementById('chat-input');
@@ -1565,16 +1730,26 @@ async function sendMessage() {
   input.value = '';
   input.style.height = 'auto';
 
-  const { error } = await sb.from('chat_messages').insert({
+  const msgPayload = {
     patient_id: selectedPatientId,
     sender_id: currentUser.id,
     sender_role: 'dietitian',
-    content: content
-  });
+    content: content,
+    type: 'text',
+    status: _scheduledAt ? 'scheduled' : 'sent'
+  };
+  if (_scheduledAt) {
+    msgPayload.scheduled_at = _scheduledAt;
+    cancelSchedule();
+  }
+
+  const { error } = await sb.from('chat_messages').insert(msgPayload);
 
   if (error) {
     toast('❌ Errore invio messaggio: ' + error.message, 'err');
     input.value = content;
+  } else if (msgPayload.status === 'scheduled') {
+    toast('📅 Messaggio programmato!', 'ok');
   }
 }
 

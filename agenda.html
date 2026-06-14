@@ -235,6 +235,15 @@
           <option value="90">1 ora 30 min</option>
           <option value="120">2 ore</option>
         </select></div>
+      <div class="nf" style="margin-bottom:8px">
+        <label style="font-size:12px;font-weight:600;color:var(--slate-m)">Ricorrenza</label>
+        <select id="ev-ricorrenza" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;color:var(--slate);background:white;margin-bottom:10px">
+          <option value="">Nessuna ricorrenza</option>
+          <option value="weekly">Settimanale</option>
+          <option value="biweekly">Bisettimanale</option>
+          <option value="monthly">Mensile</option>
+        </select>
+      </div>
       <div class="nf" style="margin-bottom:10px"><label>Note</label>
         <textarea id="ev-note" rows="2" placeholder="Note appuntamento..."></textarea></div>
       <button class="btn btn-primary btn-sm" style="width:100%" onclick="saveEvent()">💾 Salva Appuntamento</button>
@@ -421,7 +430,7 @@
 <script>
 let events = JSON.parse(localStorage.getItem('dietplan_events') || '[]');
 let patientAppts = []; // appointments booked by patients from the app (read-only from appointments table)
-const _asAgenda = autoSaveFields('nutriplan_draft_agenda', ['ev-tipo','ev-paziente','ev-data','ev-ora','ev-durata','ev-note']);
+let _asAgenda = null; // init dopo caricamento utils.js
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 let selectedDate = localDateStr(new Date());
@@ -876,13 +885,67 @@ async function saveEvent() {
   const note = document.getElementById('ev-note').value;
   
   if(!paziente || !data) { toast('Inserisci paziente/titolo e data','err'); return; }
-  
+
+  // Collision detection: check for overlapping events on the same date
+  if (ora) {
+    const newStart = ora.split(':').reduce((h, m, i) => i === 0 ? parseInt(h)*60 : parseInt(h) + parseInt(m), 0);
+    const newDurMin = parseInt(durata, 10) || 60;
+    const newEnd = newStart + newDurMin;
+    const collision = events.find(e => {
+      if (e.data !== data || !e.ora) return false;
+      const eStart = e.ora.split(':').reduce((h, m, i) => i === 0 ? parseInt(h)*60 : parseInt(h) + parseInt(m), 0);
+      const eEnd = eStart + (parseInt(e.durata, 10) || 60);
+      return newStart < eEnd && newEnd > eStart;
+    });
+    if (collision) {
+      const ok = confirm('⚠️ Attenzione: esiste già un appuntamento nelle vicinanze di questo orario. Vuoi continuare?');
+      if (!ok) return;
+    }
+  }
+
+  const ricorrenza = document.getElementById('ev-ricorrenza') ? document.getElementById('ev-ricorrenza').value : '';
+
   const ev = {
     id: 'ev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
     paziente, data, ora, tipo, durata: parseInt(durata, 10) || 60, note,
     created: new Date().toISOString()
   };
   events.push(ev);
+
+  // Recurring events: generate future occurrences
+  if (ricorrenza) {
+    const baseDate = new Date(data + 'T00:00:00');
+    let occurrences = [];
+    if (ricorrenza === 'weekly') {
+      for (let i = 1; i <= 4; i++) {
+        const d = new Date(baseDate);
+        d.setDate(d.getDate() + i * 7);
+        occurrences.push(localDateStr(d));
+      }
+    } else if (ricorrenza === 'biweekly') {
+      for (let i = 1; i <= 4; i++) {
+        const d = new Date(baseDate);
+        d.setDate(d.getDate() + i * 14);
+        occurrences.push(localDateStr(d));
+      }
+    } else if (ricorrenza === 'monthly') {
+      for (let i = 1; i <= 3; i++) {
+        const d = new Date(baseDate);
+        d.setMonth(d.getMonth() + i);
+        occurrences.push(localDateStr(d));
+      }
+    }
+    for (const occDate of occurrences) {
+      const occEv = {
+        id: 'ev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        paziente, data: occDate, ora, tipo, durata: parseInt(durata, 10) || 60, note,
+        created: new Date().toISOString(),
+        recurrence_parent: ev.id,
+        recurrence_type: ricorrenza
+      };
+      events.push(occEv);
+    }
+  }
   await saveEvents();
   
   // Clear form
@@ -1174,6 +1237,7 @@ function checkNotifications() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  _asAgenda = autoSaveFields('nutriplan_draft_agenda', ['ev-tipo','ev-paziente','ev-data','ev-ora','ev-durata','ev-note']);
   _asAgenda.register();
   document.getElementById('ev-data').value = localDateStr(new Date());
   _asAgenda.restore();

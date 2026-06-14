@@ -756,6 +756,36 @@
   <button type="button" id="w-add-btn" onclick="aggiungiAcquaNote()" style="display:none;margin-top:10px;padding:8px 16px;background:#0EA5E9;color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer">➕ Aggiungi alla scheda</button>
 </div>
 
+<!-- FOTO PROGRESSI -->
+<div class="val-section no-print" style="margin-bottom:14px">
+  <h3>📸 Foto Progressi</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
+    <div>
+      <div style="font-size:12.5px;font-weight:700;color:var(--slate-m);margin-bottom:8px">📷 Prima</div>
+      <label style="display:block;border:2px dashed var(--border-d);border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#F8FAFC;transition:all .15s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-d)'">
+        <input type="file" id="foto-prima-input" accept="image/*" style="display:none" onchange="previewFoto('prima', this)">
+        <div id="foto-prima-preview"><span style="font-size:32px">📷</span><div style="font-size:12px;color:var(--slate-l);margin-top:6px">Clicca per caricare</div></div>
+      </label>
+    </div>
+    <div>
+      <div style="font-size:12.5px;font-weight:700;color:var(--slate-m);margin-bottom:8px">📷 Dopo</div>
+      <label style="display:block;border:2px dashed var(--border-d);border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#F8FAFC;transition:all .15s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-d)'">
+        <input type="file" id="foto-dopo-input" accept="image/*" style="display:none" onchange="previewFoto('dopo', this)">
+        <div id="foto-dopo-preview"><span style="font-size:32px">📷</span><div style="font-size:12px;color:var(--slate-l);margin-top:6px">Clicca per caricare</div></div>
+      </label>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px">
+    <div><label style="font-size:12px;font-weight:600;color:var(--slate-m)">Data foto</label><input type="date" id="foto-data" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+    <div><label style="font-size:12px;font-weight:600;color:var(--slate-m)">Peso al momento (kg)</label><input type="number" id="foto-peso" step="0.1" placeholder="es. 75.5" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;outline:none;box-sizing:border-box"></div>
+  </div>
+  <div style="margin-bottom:8px"><label style="font-size:12px;font-weight:600;color:var(--slate-m)">Note foto</label><textarea id="foto-note" rows="2" placeholder="Note sulle foto..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+  <div id="foto-salvate-container" style="display:none;margin-top:12px">
+    <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">📂 Foto Salvate</div>
+    <div id="foto-salvate-list" style="display:flex;gap:12px;flex-wrap:wrap"></div>
+  </div>
+</div>
+
 <button class="btn btn-primary" style="width:100%;padding:13px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#0F766E,#0EA5E9);border:none;font-weight:700;letter-spacing:.3px" onclick="calcolaFabbisogno()">📊 Calcola Fabbisogno</button>
 
 <!-- RISULTATI -->
@@ -1750,6 +1780,10 @@ async function doSalva(cartellaId){
   // Success
   const nomePaz = document.getElementById('v-nome').value.trim();
   toast('✅ Scheda di '+nomePaz+' salvata nella cartella!','ok');
+  // Upload foto if selected
+  if (schedaId) {
+    await uploadFotoProgressi(cartellaId, schedaId);
+  }
   if (window.capturePrintAndSave && schedaId) {
     (async () => {
       try {
@@ -1779,6 +1813,67 @@ async function doSalva(cartellaId){
       } catch(err) { console.warn('valutazione capture failed:', err); }
     })();
   }
+}
+
+// ── FOTO PROGRESSI ──
+function previewFoto(tipo, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const previewEl = document.getElementById('foto-' + tipo + '-preview');
+  const reader = new FileReader();
+  reader.onload = e => {
+    previewEl.innerHTML = `<img src="${e.target.result}" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px">
+      <div style="font-size:11px;color:var(--slate-l);margin-top:4px">${file.name}</div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadFotoProgressi(cartellaId, schedaId) {
+  if (!sb || !currentUser) return;
+  const dateFoto = document.getElementById('foto-data')?.value || new Date().toISOString().slice(0,10);
+  const noteFoto = document.getElementById('foto-note')?.value || '';
+  const pesoFoto = document.getElementById('foto-peso')?.value || '';
+  const uploads = [];
+  for (const tipo of ['prima', 'dopo']) {
+    const input = document.getElementById('foto-' + tipo + '-input');
+    if (!input || !input.files[0]) continue;
+    const file = input.files[0];
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `${cartellaId}/${schedaId}/${tipo}.${ext}`;
+    try {
+      const { error: upErr } = await sb.storage.from('patient-photos').upload(path, file, { upsert: true });
+      if (upErr) { console.warn('Foto upload error:', upErr.message); continue; }
+      const { data: urlData } = sb.storage.from('patient-photos').getPublicUrl(path);
+      uploads.push({ tipo, url: urlData?.publicUrl, path, data_foto: dateFoto, note_foto: noteFoto, peso_al_momento: pesoFoto });
+    } catch(e) { console.warn('Upload foto error:', e); }
+  }
+  if (uploads.length > 0) {
+    toast('📸 ' + uploads.length + ' foto salvata/e con successo!', 'ok');
+    await caricaFotoSalvate(cartellaId, schedaId);
+  }
+}
+
+async function caricaFotoSalvate(cartellaId, schedaId) {
+  if (!sb || !cartellaId || !schedaId) return;
+  const container = document.getElementById('foto-salvate-container');
+  const listEl = document.getElementById('foto-salvate-list');
+  if (!container || !listEl) return;
+  try {
+    const { data: files } = await sb.storage.from('patient-photos').list(`${cartellaId}/${schedaId}`);
+    if (!files || !files.length) { container.style.display = 'none'; return; }
+    container.style.display = 'block';
+    listEl.innerHTML = files.map(f => {
+      const { data: urlData } = sb.storage.from('patient-photos').getPublicUrl(`${cartellaId}/${schedaId}/${f.name}`);
+      const label = f.name.startsWith('prima') ? '📷 Prima' : f.name.startsWith('dopo') ? '📷 Dopo' : f.name;
+      return `<div style="text-align:center">
+        <a href="${urlData?.publicUrl}" target="_blank">
+          <img src="${urlData?.publicUrl}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:2px solid var(--border);cursor:pointer">
+        </a>
+        <div style="font-size:11px;font-weight:600;color:var(--slate-m);margin-top:4px">${label}</div>
+        <div style="font-size:10px;color:var(--slate-l)">${new Date(f.created_at||'').toLocaleDateString('it') || ''}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.warn('caricaFotoSalvate error:', e); }
 }
 
 async function loadCartelleDropdown2(){

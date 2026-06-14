@@ -305,6 +305,31 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
   <div id="pasti-container"></div>
   <div class="add-pasto-area no-print" onclick="openNewPasto()" style="margin-top:4px;border:2px dashed #14B8A6;background:linear-gradient(135deg,#F0FDFA,#ECFDF5);color:var(--teal-d);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;padding:16px"><span style="font-size:20px">＋</span><span>Aggiungi pasto</span></div>
 
+  <!-- LEGENDA ALLERGENI EU-14 -->
+  <div class="no-print" style="margin-top:12px">
+    <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.textContent.includes('▼')?'⚠️ Allergeni EU-14 ▲':'⚠️ Allergeni EU-14 ▼'" style="background:white;border:1.5px solid #FCA5A5;color:#DC2626;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;width:100%;text-align:left">⚠️ Allergeni EU-14 ▼</button>
+    <div id="allergeni-legend" style="display:none;background:white;border:1.5px solid #FCA5A5;border-top:none;border-radius:0 0 8px 8px;padding:14px">
+      <div style="font-size:12px;color:#6B7280;margin-bottom:10px">I 14 allergeni principali secondo il Reg. UE 1169/2011 che devono essere obbligatoriamente evidenziati in etichetta:</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#FEF3C7;border-radius:6px;border-left:3px solid #F59E0B"><span style="font-size:16px">🌾</span><span style="font-size:12px;font-weight:600">Glutine (grano, orzo, segale, avena)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#DBEAFE;border-radius:6px;border-left:3px solid #3B82F6"><span style="font-size:16px">🦐</span><span style="font-size:12px;font-weight:600">Crostacei</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#FEF9C3;border-radius:6px;border-left:3px solid #EAB308"><span style="font-size:16px">🥚</span><span style="font-size:12px;font-weight:600">Uova</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#ECFDF5;border-radius:6px;border-left:3px solid #10B981"><span style="font-size:16px">🐟</span><span style="font-size:12px;font-weight:600">Pesce</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#FEE2E2;border-radius:6px;border-left:3px solid #EF4444"><span style="font-size:16px">🥜</span><span style="font-size:12px;font-weight:600">Arachidi</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F3E8FF;border-radius:6px;border-left:3px solid #8B5CF6"><span style="font-size:16px">🫘</span><span style="font-size:12px;font-weight:600">Soia</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#FDF2F8;border-radius:6px;border-left:3px solid #EC4899"><span style="font-size:16px">🥛</span><span style="font-size:12px;font-weight:600">Latte e latticini</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#FFFBEB;border-radius:6px;border-left:3px solid #D97706"><span style="font-size:16px">🌰</span><span style="font-size:12px;font-weight:600">Frutta a guscio</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#ECFDF5;border-radius:6px;border-left:3px solid #059669"><span style="font-size:16px">🌿</span><span style="font-size:12px;font-weight:600">Sedano</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#FEF9C3;border-radius:6px;border-left:3px solid #CA8A04"><span style="font-size:16px">🌼</span><span style="font-size:12px;font-weight:600">Senape</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#FFF7ED;border-radius:6px;border-left:3px solid #C2410C"><span style="font-size:16px">🌾</span><span style="font-size:12px;font-weight:600">Sesamo</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F1F5F9;border-radius:6px;border-left:3px solid #64748B"><span style="font-size:16px">🍷</span><span style="font-size:12px;font-weight:600">Anidride solforosa e solfiti</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#EEF2FF;border-radius:6px;border-left:3px solid #6366F1"><span style="font-size:16px">🌸</span><span style="font-size:12px;font-weight:600">Lupini</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F0FDF4;border-radius:6px;border-left:3px solid #22C55E"><span style="font-size:16px">🐚</span><span style="font-size:12px;font-weight:600">Molluschi</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:#9CA3AF">I badge ⚠️ ALL sui singoli alimenti sono indicativi e basati sul nome. Verificare sempre le etichette originali degli alimenti.</div>
+    </div>
+  </div>
+
   <!-- SIMPLE PRINT AREA (hidden on screen, shown in simple print mode) -->
   <div id="simple-print-area"></div>
   <!-- COMPACT PRINT AREA (hidden on screen, shown in compact print mode) -->
@@ -745,6 +770,33 @@ function getMealColor(nome) {
   return 'var(--phd)';
 }
 
+// ── ALLERGENI EU-14: keyword-based detection ──
+const ALLERGENI_KEYWORDS = {
+  'Glutine': ['pasta','pane','farina','avena','orzo','segale','farro','grano','semola','biscotti','crackers','fette biscottate','grissini','pizza','fettuccine','spaghetti','rigatoni','penne','cuscus','bulgur','seitan','malto','corn flakes'],
+  'Crostacei': ['gamberi','gamberetto','granchio','aragosta','astice','scampo','mazzancolla','crostacei'],
+  'Uova': ['uovo','uova','frittata','maionese','meringa','pasta all\'uovo'],
+  'Pesce': ['pesce','merluzzo','salmone','tonno','sgombro','branzino','orata','sardina','acciuga','trota','spigola','nasello','platessa','baccalà','alici','pesce spada','tilapia','pangasio'],
+  'Arachidi': ['arachidi','arachide','burro di arachidi'],
+  'Soia': ['soia','tofu','tempeh','edamame','miso','latte di soia','yogurt di soia'],
+  'Latte': ['latte','formaggi','formaggio','parmigiano','grana','mozzarella','ricotta','yogurt','burro','panna','besciamella','kefir','gorgonzola','pecorino','brie','mascarpone'],
+  'Frutta a guscio': ['mandorle','noci','nocciole','anacardi','pistacchi','pinoli','noce di cocco','macadamia','pecan','castagne'],
+  'Sedano': ['sedano','dado','brodo'],
+  'Senape': ['senape','curry'],
+  'Sesamo': ['sesamo','tahini','hummus'],
+  'Solfiti': ['vino','aceto di vino','frutta secca','frutta essiccata','uva sultanina','mosti'],
+  'Lupini': ['lupini','lupino'],
+  'Molluschi': ['polpo','calamari','seppie','cozze','vongole','ostriche','lumache','molluschi']
+};
+function getAllergeni(foodName) {
+  if (!foodName) return [];
+  const n = foodName.toLowerCase();
+  const found = [];
+  for (const [allergene, keywords] of Object.entries(ALLERGENI_KEYWORDS)) {
+    if (keywords.some(k => n.includes(k))) found.push(allergene);
+  }
+  return found;
+}
+
 // Module-level lookup cache: reset on ogni renderPiano per dati freschi
 let _renderLookupCache = Object.create(null);
 function lookupC(n) {
@@ -852,6 +904,7 @@ function buildRow(mi, ii) {
       <input class="inp-food" type="text" value="${esc(item.nome)}" placeholder="Cerca alimento..." autocomplete="off"
         oninput="onFI(${mi},${ii},this)" onkeydown="onFK(event,${mi},${ii})"
         onfocus="onFF(${mi},${ii},this)" onblur="onFB(${mi},${ii})">
+      ${(() => { const alg = getAllergeni(item.nome); return alg.length ? `<span class="no-print" style="display:inline-block;background:#FEE2E2;color:#DC2626;border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;margin-left:4px;cursor:help;vertical-align:middle" title="Possibili allergeni: ${alg.join(', ')}">⚠️ ALL</span>` : ''; })()}
     </div></td>
     <td>
       <input class="inp-qt" type="number" min="0" step="any" value="${qt || ''}" placeholder="g" oninput="onQI(${mi},${ii},this)" onkeydown="onQTKey(event,${mi},${ii})">

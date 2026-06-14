@@ -119,11 +119,21 @@
   <div class="tbar-actions">
     <select class="context-select" id="ai-context" title="Seleziona contesto">
       <option value="">Contesto generale</option>
-      <option value="diabete">Diabete</option>
+      <option value="diabete">Diabete T1/T2</option>
       <option value="irc">Insufficienza renale</option>
       <option value="oncologia">Oncologia</option>
       <option value="pediatria">Pediatria</option>
       <option value="sport">Sport e performance</option>
+      <option value="dca">Disturbi alimentari (DCA)</option>
+      <option value="gravidanza">Gravidanza e allattamento</option>
+      <option value="disfagia">Disfagia</option>
+      <option value="chetogenica">Dieta chetogenica</option>
+      <option value="obesita">Obesità</option>
+      <option value="pancreas">Insufficienza pancreatica</option>
+      <option value="renale">Nefropatia cronica</option>
+      <option value="cardiovascolare">Malattie cardiovascolari</option>
+      <option value="celiachia">Celiachia e intolleranze</option>
+      <option value="sarcopenia">Sarcopenia e anziani</option>
     </select>
     <button class="btn btn-ghost btn-sm" onclick="clearChat()">🗑️ Pulisci</button>
   </div>
@@ -267,7 +277,24 @@ async function sendMessage(text) {
   document.getElementById('ai-send-btn').disabled = true;
 
   const ctx = document.getElementById('ai-context').value;
-  const ctxNote = ctx ? `\n[Contesto patologico: ${ctx}]` : '';
+  const ctxNotes = {
+    diabete: '\n[Contesto Diabete T1/T2: Linee guida ADA 2024 e EASD. Attenzione a carico glicemico, indice glicemico, distribuzione CHO. Per T1: conteggio carboidrati e rapporto insulina/CHO. Per T2: deficit energetico moderato, preferire CHO complessi. Monitorare HbA1c, glicemia post-prandiale.]',
+    irc: '\n[Contesto IRC: Linee guida KDOQI/KDIGO. Restrizione proteica 0.6-0.8 g/kg/die (non dialisi), 1.2 g/kg/die in dialisi. Limitare potassio, fosforo, sodio. Attenzione a accumulo di micronutrienti. Stato nutrizionale a rischio: monitorare albumina, PCR.]',
+    oncologia: '\n[Contesto Oncologia: Linee guida ESPEN 2021 per cancro. Screening malnutrizione obbligatorio. Target calorico 25-30 kcal/kg/die, proteico 1.2-1.5 g/kg/die. Supporto nutrizionale precoce. Cachessia neoplastica: EPA, beta-idrossi-beta-metilbutirrato. Interazioni chemio-nutrienti.]',
+    pediatria: '\n[Contesto Pediatria: Linee guida ESPGHAN e LARN per fasce di età. Fabbisogni dipendono da età, peso, altezza e velocità di crescita. Allattamento al seno raccomandato fino a 6 mesi. Svezzamento diversificato 6 mesi. Attenzione carenza ferro, vitamina D, zinco in prima infanzia.]',
+    sport: '\n[Contesto Sport e Performance: Linee guida ISSN e ACSM. CHO 5-10 g/kg/die in base a intensità. Proteine 1.4-2.0 g/kg/die. Timing nutrizionale pre/intra/post allenamento. Idratazione e reintegro elettroliti. Integratori evidence-based: creatina, caffeina, beta-alanina, nitrati.]',
+    dca: '\n[Contesto DCA: Approccio non direttivo, evita linguaggio su peso/calorie. Segui linee guida NICE/APA per disturbi alimentari. Focus su relazione col cibo e normalizzazione. Anoressia nervosa: refeeding graduale, sindrome da refeeding. Bulimia: stabilizzazione pasti. Lavoro multidisciplinare essenziale.]',
+    gravidanza: '\n[Contesto gravidanza/allattamento: fabbisogni aumentati di folati (400-600 mcg/die), ferro (27 mg/die), calcio (1000 mg/die), DHA (200 mg/die). Linee guida LARN 2014 per gravidanza. Evitare vitamina A eccessiva (>3000 mcg RAE). Evitare pesce ad alto contenuto di mercurio. Nausea gravidica: pasti piccoli e frequenti.]',
+    disfagia: '\n[Contesto disfagia: classificazione IDDSI (0-7). Adatta consistenze e viscosità. Attenzione aspirazione polmonare. Nutrizione enterale se sicurezza deglutizione compromessa. Test deglutizione (GUSS, Logopedista). Addensanti: amido o gomma xantana. Idratazione spesso difficile: gelificati.]',
+    chetogenica: '\n[Contesto dieta chetogenica: rapporto lipidi/(CHO+proteine) classico 4:1. CHO < 20-50 g/die. Proteine moderate 1.2-1.5 g/kg/die. Monitorare chetonemia, elettroliti, lipidemia. Integrazione: sodio, potassio, magnesio, vitamina D, calcio. Controindicazioni: deficit ossidazione acidi grassi, porfiria.]',
+    obesita: '\n[Contesto Obesità: Linee guida ESPEN e EASO. Deficit energetico 500-750 kcal/die per perdita ~0.5-1 kg/settimana. Proteine elevate 1.2-1.5 g/kg peso ideale. Chirurgia bariatrica: integrazione micronutrienti obbligatoria. Monitorare comorbidità: diabete, apnee, ipertensione. Approccio comportamentale multidisciplinare.]',
+    pancreas: '\n[Contesto insufficienza pancreatica esocrina: PERT (terapia enzimatica sostitutiva) ai pasti, dosare in base a grassi ingeriti. Dieta povera di grassi se steatosi severa. Rischio malnutrizione e carenza vitamine liposolubili (A, D, E, K). Monitorare peso, feci, elastasi fecale. In pancreatite cronica: astensione alcolica assoluta.]',
+    renale: '\n[Contesto nefropatia cronica: linee guida KDIGO 2020. Proteine 0.6-0.8 g/kg/die in CKD 3-5 non in dialisi. Restrizione sodio <2 g/die. Potassio e fosforo in base a valori sierici. Supplementi di bicarbonato se acidosi. In dialisi: proteine 1.2 g/kg/die, attenzione a liquidi.]',
+    cardiovascolare: '\n[Contesto malattie cardiovascolari: linee guida ESC 2021. Ridurre grassi saturi <10% E, eliminare trans-grassi. Aumentare omega-3 (pesce 2x/settimana), fibra solubile, steroli vegetali. Restrizione sodio <5 g/die in ipertensione. Dieta mediterranea raccomandata. Alcol: max 1-2 unità/die, preferire eliminazione.]',
+    celiachia: '\n[Contesto celiachia e intolleranze: dieta senza glutine rigorosa (< 20 ppm). Attenzione a contaminazione crociata. Integrazione: ferro, folati, calcio, vitamina D, B12 se carenze. Intolleranza al lattosio associata: spesso transitoria. FODMAP per IBS concomitante. Etichettatura alimenti senza glutine.]',
+    sarcopenia: '\n[Contesto sarcopenia e anziani: criteri EWGSOP2. Proteine elevate 1.2-1.6 g/kg/die, distribuire in 3-4 pasti (>25-30 g/pasto). Leucina 2.5-3 g/pasto. Vitamina D: target 25(OH)D > 50 nmol/L. Esercizio di resistenza essenziale. Ridurre rischio cadute. HMB 3 g/die come integratore.]'
+  };
+  const ctxNote = ctxNotes[ctx] || (ctx ? `\n[Contesto patologico: ${ctx}]` : '');
 
   // Build conversation history (last 10 messages)
   const apiMessages = messages.slice(-10).map(m => ({
@@ -319,6 +346,34 @@ async function sendMessage(text) {
   } catch(e) {
     console.warn('Gemini API error:', e.message);
     errorMsg = e.message;
+    // Fallback: retry with alternative endpoint if not a config/quota error
+    const isKeyMissingErr = errorMsg.includes('GEMINI_API_KEY') || errorMsg.includes('non configurata');
+    const isQuotaErr = errorMsg.toLowerCase().includes('quota') || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('esaurita');
+    if (!isKeyMissingErr && !isQuotaErr) {
+      try {
+        console.log('[AI] Fallback tentato');
+        const { data: { session: _fbSession } } = await sb.auth.getSession();
+        const fbResponse = await fetch('/api/gemini-fallback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': _fbSession?.access_token ? `Bearer ${_fbSession.access_token}` : ''
+          },
+          body: JSON.stringify({
+            system: SYSTEM_PROMPT + ctxNote,
+            messages: apiMessages,
+            max_tokens: 1024
+          })
+        });
+        if (fbResponse.ok) {
+          const fbData = await fbResponse.json();
+          replyText = fbData.content?.[0]?.text || '';
+          if (replyText) errorMsg = '';
+        }
+      } catch(fbE) {
+        console.warn('[AI] Fallback failed:', fbE.message);
+      }
+    }
   }
 
   const bubble = loadingDiv.querySelector('.ai-bubble');

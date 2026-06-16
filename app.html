@@ -1067,7 +1067,7 @@ function showAC(mi, ii, val) {
   const res = ALL_DB.filter(f => f.n.toLowerCase().includes(q)).slice(0, 16);
   acRes[`${mi}-${ii}`] = res;
   if (!res.length) { el.style.display = 'none'; return; }
-  el.innerHTML = res.map((f, i) => `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(f.n)}</span><span class="ac-right"><span class="ac-cat">${esc(f.c || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
+  el.innerHTML = res.map((f, i) => `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(foodNameEN(f.n))}</span><span class="ac-right"><span class="ac-cat">${esc(foodCatEN(f.c) || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
   const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`);
   if (!inp) { el.style.display = 'none'; return; }
   const rect = inp.getBoundingClientRect();
@@ -1431,7 +1431,7 @@ function openAlt(mi, ii) {
   const item = getMeals()[mi].items[ii];
   const f = lookup(item.nome);
   if (!item.nome || !f) { toast('Seleziona prima un alimento valido', 'err'); return; }
-  document.getElementById('alt-title').textContent = `⇄ Alternative a: ${item.nome} (${item.qt || 0}g)`;
+  document.getElementById('alt-title').textContent = `⇄ Alternative a: ${foodNameEN(item.nome)} (${item.qt || 0}g)`;
   document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
     `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${b.l}</button>`
   ).join('');
@@ -1464,7 +1464,7 @@ function showAlternatives() {
     // Sort by similarity if no search, else keep search order
     alts = searchQ ? mapped : mapped.sort((a, b) => a.diff - b.diff);
     alts = alts.slice(0, 40);
-    introText = `<b>${qt}g di ${f.n}</b> apportano <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalenti (stessa quantità di ${nutriLabel}):`;
+    introText = `<b>${qt}g di ${foodNameEN(f.n)}</b> apportano <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalenti (stessa quantità di ${nutriLabel}):`;
   } else {
     // No nutrient value: just show matching foods
     alts = pool.slice(0, 40).map(alt => ({
@@ -1484,7 +1484,7 @@ function showAlternatives() {
     const inPrint = currentPrint.includes(a.food.n);
     const srcCls = a.food.src === 'CREA' ? 'src-crea' : a.food.src === 'BDA' ? 'src-bda' : 'src-custom';
     return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:white;border-radius:6px;margin-bottom:5px;border:1px solid var(--border);flex-wrap:wrap">
-      <div style="font-weight:600;font-size:12.5px;flex:1;min-width:140px">${esc(a.food.n)} <span class="ac-src ${srcCls}">${a.food.src}</span></div>
+      <div style="font-weight:600;font-size:12.5px;flex:1;min-width:140px">${esc(foodNameEN(a.food.n))} <span class="ac-src ${srcCls}">${a.food.src}</span></div>
       <span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700">${a.newQt}g</span>
       <span style="font-size:10.5px;color:var(--slate-l)">${a.kcal}kcal · P${a.prot}g</span>
       <div style="display:flex;gap:6px;flex-shrink:0">

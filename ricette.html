@@ -371,7 +371,7 @@ function onIngInput(id, inp) {
   if (!q) { el.style.display = 'none'; return; }
   const res = ALL_DB.filter(f => f.n.toLowerCase().includes(q)).slice(0, 12);
   if (!res.length) { el.style.display = 'none'; return; }
-  el.innerHTML = res.map((f, i) => `<div class="ac-item" onmousedown="event.preventDefault();pickIng(${id},'${escJS(f.n)}')">${esc(f.n)} <span class="ac-src src-${f.src==='CREA'?'crea':f.src==='BDA'?'bda':'custom'}">${f.src}</span></div>`).join('');
+  el.innerHTML = res.map((f, i) => `<div class="ac-item" onmousedown="event.preventDefault();pickIng(${id},'${escJS(f.n)}')">${esc(foodNameEN(f.n))} <span class="ac-src src-${f.src==='CREA'?'crea':f.src==='BDA'?'bda':'custom'}">${f.src}</span></div>`).join('');
   el.style.display = 'block';
 }
 

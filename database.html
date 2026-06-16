@@ -281,7 +281,7 @@ function _buildRow(f) {
     ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="${_L('Modifica','Edit')}">✏️</button>`
       + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="${_L('Elimina','Delete')}">🗑️</button>`
     : '';
-  return `<tr><td>${esc(f.n)}${persActions}</td><td>${esc(f.c||'')}</td><td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td><td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td><td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td><td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td><td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td><td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td></tr>`;
+  return `<tr><td>${esc(foodNameEN(f.n))}${persActions}</td><td>${esc(foodCatEN(f.c)||'')}</td><td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td><td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td><td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td><td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td><td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td><td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td></tr>`;
 }
 function _getOrCreateMoreBtn() {
   let btn = document.getElementById('db-load-more');
@@ -311,8 +311,8 @@ function renderDB(list) {
         + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="${_L('Elimina','Delete')}">🗑️</button>`
       : '';
     return `<tr>
-      <td>${esc(f.n)}${persActions}</td>
-      <td>${esc(f.c||'')}</td>
+      <td>${esc(foodNameEN(f.n))}${persActions}</td>
+      <td>${esc(foodCatEN(f.c)||'')}</td>
       <td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td>
       <td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td>
       <td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td>
@@ -393,7 +393,7 @@ function populateCats() {
   sel.innerHTML = '<option value="">'+_L('Tutte le categorie','All categories')+'</option>';
   cats.forEach(c => {
     const o = document.createElement('option');
-    o.value=c; o.textContent=c; sel.appendChild(o);
+    o.value=c; o.textContent=foodCatEN(c); sel.appendChild(o);
   });
   sel.value = prev;
 }

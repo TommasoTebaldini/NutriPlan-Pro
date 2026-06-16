@@ -85,10 +85,10 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>👨‍🍳 Ricette</h2>
+  <h2>👨‍🍳 <span data-only-lang="it">Ricette</span><span data-only-lang="en">Recipes</span></h2>
   <div class="tbar-actions">
-    <button class="btn btn-primary btn-sm" onclick="openNuovaRicetta()">➕ Nuova Ricetta</button>
-    <button class="btn btn-ghost btn-sm" onclick="openImportaUrl()">🌐 Importa da URL</button>
+    <button class="btn btn-primary btn-sm" onclick="openNuovaRicetta()">➕ <span data-only-lang="it">Nuova Ricetta</span><span data-only-lang="en">New Recipe</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openImportaUrl()">🌐 <span data-only-lang="it">Importa da URL</span><span data-only-lang="en">Import from URL</span></button>
   </div>
 </div>
 <main id="main"><div class="page-content">
@@ -98,21 +98,21 @@
     <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
     <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🍳</div>
     <div style="flex:1;position:relative">
-      <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Archivio Ricette</div>
-      <div style="font-size:12px;opacity:.88;line-height:1.6">Crea e gestisci le tue ricette personalizzate con calcolo automatico dei valori nutrizionali per porzione. Importa ricette dal web o aggiungi le tue.</div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px"><span data-only-lang="it">Archivio Ricette</span><span data-only-lang="en">Recipe Archive</span></div>
+      <div style="font-size:12px;opacity:.88;line-height:1.6"><span data-only-lang="it">Crea e gestisci le tue ricette personalizzate con calcolo automatico dei valori nutrizionali per porzione. Importa ricette dal web o aggiungi le tue.</span><span data-only-lang="en">Create and manage your personalised recipes with automatic nutritional value calculation per portion. Import recipes from the web or add your own.</span></div>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥕 Calcolo Nutrizionale</div>
-        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🌐 Importa da URL</div>
-        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📋 Gestisci Porzioni</div>
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🥕 <span data-only-lang="it">Calcolo Nutrizionale</span><span data-only-lang="en">Nutritional Calculation</span></div>
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🌐 <span data-only-lang="it">Importa da URL</span><span data-only-lang="en">Import from URL</span></div>
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📋 <span data-only-lang="it">Gestisci Porzioni</span><span data-only-lang="en">Manage Portions</span></div>
       </div>
     </div>
     <div class="no-print" style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
-      <button class="btn btn-sm" onclick="openNuovaRicetta()" style="background:rgba(255,255,255,.2);color:white;border:none;font-weight:700">➕ Nuova Ricetta</button>
-      <button class="btn btn-sm" onclick="openImportaUrl()" style="background:rgba(255,255,255,.14);color:white;border:none">🌐 Importa</button>
+      <button class="btn btn-sm" onclick="openNuovaRicetta()" style="background:rgba(255,255,255,.2);color:white;border:none;font-weight:700">➕ <span data-only-lang="it">Nuova Ricetta</span><span data-only-lang="en">New Recipe</span></button>
+      <button class="btn btn-sm" onclick="openImportaUrl()" style="background:rgba(255,255,255,.14);color:white;border:none">🌐 <span data-only-lang="it">Importa</span><span data-only-lang="en">Import</span></button>
     </div>
   </div>
   <div class="db-filters">
-    <input type="text" id="r-search" class="db-search" placeholder="🔍 Cerca ricetta..." oninput="filterRicette()">
+    <input type="text" id="r-search" class="db-search" data-i18n-placeholder="ric.search" placeholder="🔍 Cerca ricetta..." oninput="filterRicette()">
     <span id="r-count" style="font-size:12px;color:var(--slate-l)"></span>
   </div>
   <div id="ricette-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
@@ -121,29 +121,29 @@
 <!-- MODAL: NUOVA/MODIFICA RICETTA -->
 <div class="modal-bg" id="modal-ricetta">
   <div class="modal" style="max-width:620px">
-    <div class="mhdr"><h2 id="modal-r-title">➕ Nuova Ricetta</h2><button class="mclose" onclick="closeM('modal-ricetta')">✕</button></div>
+    <div class="mhdr"><h2 id="modal-r-title">➕ <span data-only-lang="it">Nuova Ricetta</span><span data-only-lang="en">New Recipe</span></h2><button class="mclose" onclick="closeM('modal-ricetta')">✕</button></div>
     <div class="mbody">
       <div class="fgrid" style="margin-bottom:12px">
-        <div class="fg full"><label>Nome Ricetta *</label><input type="text" id="r-nome" placeholder="es. Pasta al pomodoro, Risotto..."></div>
-        <div class="fg"><label>Categoria</label>
+        <div class="fg full"><label><span data-only-lang="it">Nome Ricetta</span><span data-only-lang="en">Recipe Name</span> *</label><input type="text" id="r-nome" data-i18n-placeholder="ric.name_ph" placeholder="es. Pasta al pomodoro, Risotto..."></div>
+        <div class="fg"><label><span data-only-lang="it">Categoria</span><span data-only-lang="en">Category</span></label>
           <select id="r-cat">
             <option>Primo piatto</option><option>Secondo piatto</option><option>Contorno</option>
             <option>Colazione</option><option>Spuntino</option><option>Dessert</option><option>Altro</option>
           </select>
         </div>
-        <div class="fg"><label>Porzioni totali</label>
+        <div class="fg"><label><span data-only-lang="it">Porzioni totali</span><span data-only-lang="en">Total portions</span></label>
           <input type="number" id="r-porzioni" min="1" max="20" value="4" style="width:100px">
         </div>
-        <div class="fg full"><label>Note / Preparazione</label><textarea id="r-note" rows="2" placeholder="Procedimento, note..."></textarea></div>
+        <div class="fg full"><label><span data-only-lang="it">Note / Preparazione</span><span data-only-lang="en">Notes / Preparation</span></label><textarea id="r-note" rows="2" data-i18n-placeholder="ric.notes_ph" placeholder="Procedimento, note..."></textarea></div>
       </div>
-      <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">🥕 Ingredienti (per tutte le porzioni)</div>
+      <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">🥕 <span data-only-lang="it">Ingredienti (per tutte le porzioni)</span><span data-only-lang="en">Ingredients (for all portions)</span></div>
       <div id="ingredienti-list"></div>
-      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addIngrediente()">➕ Aggiungi Ingrediente</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addIngrediente()">➕ <span data-only-lang="it">Aggiungi Ingrediente</span><span data-only-lang="en">Add Ingredient</span></button>
       <div id="r-totali" style="margin-top:14px;background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12px;display:none"></div>
     </div>
     <div class="mfoot">
-      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-ricetta')">Annulla</button>
-      <button class="btn btn-primary btn-sm" onclick="salvaRicetta()">💾 Salva Ricetta</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-ricetta')"><span data-only-lang="it">Annulla</span><span data-only-lang="en">Cancel</span></button>
+      <button class="btn btn-primary btn-sm" onclick="salvaRicetta()">💾 <span data-only-lang="it">Salva Ricetta</span><span data-only-lang="en">Save Recipe</span></button>
     </div>
   </div>
 </div>
@@ -154,15 +154,15 @@
     <div class="mhdr"><h2 id="det-title"></h2><button class="mclose" onclick="closeM('modal-det')">✕</button></div>
     <div class="mbody">
       <div class="porzione-sel">
-        <label>Porzioni da inserire:</label>
+        <label><span data-only-lang="it">Porzioni da inserire:</span><span data-only-lang="en">Servings to add:</span></label>
         <input type="number" id="det-porzioni" min="0.5" max="20" step="0.5" value="1" oninput="aggiornaDettaglio()">
         <span style="font-size:12px;color:var(--slate-l)" id="det-tot-info"></span>
       </div>
       <div id="det-body"></div>
     </div>
     <div class="mfoot">
-      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-det')">Chiudi</button>
-      <button class="btn btn-primary btn-sm" onclick="inserisciNelPiano()">📋 Inserisci nel Piano</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-det')"><span data-only-lang="it">Chiudi</span><span data-only-lang="en">Close</span></button>
+      <button class="btn btn-primary btn-sm" onclick="inserisciNelPiano()">📋 <span data-only-lang="it">Inserisci nel Piano</span><span data-only-lang="en">Add to Plan</span></button>
     </div>
   </div>
 </div>
@@ -170,16 +170,16 @@
 <!-- MODAL: IMPORTA URL -->
 <div class="modal-bg" id="modal-url">
   <div class="modal" style="max-width:480px">
-    <div class="mhdr"><h2>🌐 Importa Ricetta da Internet</h2><button class="mclose" onclick="closeM('modal-url')">✕</button></div>
+    <div class="mhdr"><h2>🌐 <span data-only-lang="it">Importa Ricetta da Internet</span><span data-only-lang="en">Import Recipe from the Web</span></h2><button class="mclose" onclick="closeM('modal-url')">✕</button></div>
     <div class="mbody">
-      <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px">Inserisci l'URL di una ricetta online. DietPlan Pro cercherà di estrarre automaticamente gli ingredienti tramite AI.</p>
-      <div class="fg" style="margin-bottom:10px"><label>URL Ricetta</label><input type="url" id="import-url" placeholder="https://www.giallozafferano.it/..."></div>
+      <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px"><span data-only-lang="it">Inserisci l'URL di una ricetta online. DietPlan Pro cercherà di estrarre automaticamente gli ingredienti tramite AI.</span><span data-only-lang="en">Enter the URL of an online recipe. DietPlan Pro will try to automatically extract the ingredients via AI.</span></p>
+      <div class="fg" style="margin-bottom:10px"><label><span data-only-lang="it">URL Ricetta</span><span data-only-lang="en">Recipe URL</span></label><input type="url" id="import-url" placeholder="https://www.giallozafferano.it/..."></div>
       <div id="import-status" style="display:none"></div>
       <div id="import-preview" style="display:none;margin-top:12px"></div>
     </div>
     <div class="mfoot">
-      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-url')">Annulla</button>
-      <button class="btn btn-primary btn-sm" id="import-btn" onclick="importaRicetta()">🔍 Analizza</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-url')"><span data-only-lang="it">Annulla</span><span data-only-lang="en">Cancel</span></button>
+      <button class="btn btn-primary btn-sm" id="import-btn" onclick="importaRicetta()">🔍 <span data-only-lang="it">Analizza</span><span data-only-lang="en">Analyse</span></button>
     </div>
   </div>
 </div>
@@ -193,6 +193,10 @@
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+function _L(it, en) {
+  try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang')||'it'); return l === 'en' ? en : it; } catch(e) { return it; }
+}
+
 let ricette = [];
 let editingRicettaId = null;
 let detRicetta = null;
@@ -284,9 +288,9 @@ function renderRicette(filter = '') {
   const grid = document.getElementById('ricette-grid');
   const q = filter.toLowerCase();
   const filtered = ricette.filter(r => !q || r.nome.toLowerCase().includes(q) || (r.categoria||'').toLowerCase().includes(q));
-  document.getElementById('r-count').textContent = filtered.length + ' ricette';
+  document.getElementById('r-count').textContent = filtered.length + ' ' + _L('ricette','recipes');
   if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="ei">👨‍🍳</div><h3>${ricette.length ? 'Nessuna ricetta trovata' : 'Nessuna ricetta ancora'}</h3><p>${ricette.length ? 'Prova con un termine diverso.' : 'Clicca "+ Nuova Ricetta" per iniziare.'}</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="ei">👨‍🍳</div><h3>${ricette.length ? _L('Nessuna ricetta trovata','No recipe found') : _L('Nessuna ricetta ancora','No recipes yet')}</h3><p>${ricette.length ? _L('Prova con un termine diverso.','Try a different term.') : _L('Clicca "+ Nuova Ricetta" per iniziare.','Click "+ New Recipe" to start.')}</p></div>`;
     return;
   }
   grid.innerHTML = filtered.map(r => {
@@ -302,9 +306,9 @@ function renderRicette(filter = '') {
         <span class="rc-tag" style="flex-shrink:0;${catStyle(r.categoria)}">${esc(r.categoria||'Ricetta')}</span>
       </div>
       <div class="rc-meta">
-        <span>👥 ${porzioni} porzioni</span>
-        <span>🔥 ~${kcalPorz} kcal/porz</span>
-        <span>🥕 ${ing.length} ingredienti</span>
+        <span>👥 ${porzioni} ${_L('porzioni','servings')}</span>
+        <span>🔥 ~${kcalPorz} kcal/${_L('porz','srv')}</span>
+        <span>🥕 ${ing.length} ${_L('ingredienti','ingredients')}</span>
       </div>
       ${r.note ? `<div style="font-size:11px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(r.note.substring(0,60))}${r.note.length>60?'...':''}</div>` : ''}
       <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
@@ -328,7 +332,7 @@ function catStyle(cat) {
 // ── NUOVA RICETTA ──
 function openNuovaRicetta() {
   editingRicettaId = null;
-  document.getElementById('modal-r-title').textContent = '➕ Nuova Ricetta';
+  document.getElementById('modal-r-title').textContent = '➕ ' + _L('Nuova Ricetta','New Recipe');
   document.getElementById('r-nome').value = '';
   document.getElementById('r-cat').value = 'Primo piatto';
   document.getElementById('r-porzioni').value = '4';
@@ -403,8 +407,8 @@ function aggTotali() {
   const tot = document.getElementById('r-totali');
   if (tot && totK > 0) {
     tot.style.display = 'block';
-    tot.innerHTML = `<b>Per tutta la ricetta (${porz} porzioni):</b> 🔥 ${Math.round(totK)} kcal · 💪 P:${r1(totP)}g · 🍞 C:${r1(totCh)}g · 🧈 G:${r1(totG)}g · 🌿 F:${r1(totFi)}g
-    <br><b style="color:var(--teal)">Per porzione:</b> 🔥 ${Math.round(totK/porz)} kcal · 💪 P:${r1(totP/porz)}g · 🍞 C:${r1(totCh/porz)}g · 🧈 G:${r1(totG/porz)}g`;
+    tot.innerHTML = `<b>${_L('Per tutta la ricetta','Whole recipe')} (${porz} ${_L('porzioni','servings')}):</b> 🔥 ${Math.round(totK)} kcal · 💪 P:${r1(totP)}g · 🍞 C:${r1(totCh)}g · 🧈 G:${r1(totG)}g · 🌿 F:${r1(totFi)}g
+    <br><b style="color:var(--teal)">${_L('Per porzione:','Per serving:')}</b> 🔥 ${Math.round(totK/porz)} kcal · 💪 P:${r1(totP/porz)}g · 🍞 C:${r1(totCh/porz)}g · 🧈 G:${r1(totG/porz)}g`;
   }
 }
 
@@ -488,7 +492,7 @@ async function editRicetta(id) {
   const r = ricette.find(x => x.id === id);
   if (!r) return;
   editingRicettaId = id;
-  document.getElementById('modal-r-title').textContent = '✏️ Modifica Ricetta';
+  document.getElementById('modal-r-title').textContent = '✏️ ' + _L('Modifica Ricetta','Edit Recipe');
   document.getElementById('r-nome').value = r.nome;
   document.getElementById('r-cat').value = r.categoria || 'Primo piatto';
   document.getElementById('r-porzioni').value = r.porzioni || 4;
@@ -503,18 +507,18 @@ async function editRicetta(id) {
 }
 
 async function delRicetta(id) {
-  if (!confirm('Eliminare questa ricetta?')) return;
+  if (!confirm(_L('Eliminare questa ricetta?','Delete this recipe?'))) return;
   if (useLocalStorage || !currentUser) {
     const arr = lsLoadRicette().filter(r => r.id !== id);
     lsSaveRicette(arr);
-    toast('🗑️ Ricetta eliminata', 'info');
+    toast('🗑️ ' + _L('Ricetta eliminata','Recipe deleted'), 'info');
     loadRicette();
     return;
   }
   showLoading(true);
   await sb.from('ricette').delete().eq('id', id);
   showLoading(false);
-  toast('🗑️ Ricetta eliminata', 'info');
+  toast('🗑️ ' + _L('Ricetta eliminata','Recipe deleted'), 'info');
   loadRicette();
 }
 
@@ -536,7 +540,7 @@ function aggiornaDettaglio() {
   const raw = detRicetta.ingredienti;
   const ing = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
   let totK = 0, totP = 0, totCh = 0, totG = 0, totFi = 0;
-  let html = `<div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">Ingredienti per ${porzioniSel} porzione${porzioniSel!==1?'i':''}:</div>`;
+  let html = `<div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">${_L('Ingredienti per','Ingredients for')} ${porzioniSel} ${_L('porzione'+( porzioniSel!==1?'i':''),'serving'+(porzioniSel!==1?'s':''))}:</div>`;
   html += '<div>';
   ing.forEach(i => {
     const f = lookup(i.nome);
@@ -553,7 +557,7 @@ function aggiornaDettaglio() {
   html += `<div style="margin-top:10px;background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12px">
     🔥 <b>${Math.round(totK)} kcal</b> · 💪 P:${r1(totP)}g · 🍞 C:${r1(totCh)}g · 🧈 G:${r1(totG)}g · 🌿 F:${r1(totFi)}g</div>`;
   document.getElementById('det-body').innerHTML = html;
-  document.getElementById('det-tot-info').textContent = `= ${Math.round(totK)} kcal totali`;
+  document.getElementById('det-tot-info').textContent = `= ${Math.round(totK)} kcal ${_L('totali','total')}`;
 }
 
 function inserisciNelPiano() {
@@ -573,7 +577,7 @@ function inserisciNelPiano() {
   };
   sessionStorage.setItem('insertRicetta', JSON.stringify(data));
   closeM('modal-det');
-  toast('📋 Ricetta pronta! Vai al Piano Alimentare per inserirla.', 'ok');
+  toast('📋 ' + _L('Ricetta pronta! Vai al Piano Alimentare per inserirla.','Recipe ready! Go to the Meal Plan to add it.'), 'ok');
   setTimeout(() => { window.location.href = 'app.html'; }, 1500);
 }
 

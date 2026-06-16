@@ -107,45 +107,45 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>🔬 Database Alimenti CREA 2019 + BDA INRAN</h2>
+  <h2>🔬 <span data-only-lang="it">Database Alimenti CREA 2019 + BDA INRAN</span><span data-only-lang="en">Food Database CREA 2019 + BDA INRAN</span></h2>
 </div>
 <main id="main"><div class="page-content">
   <div class="db-filters" style="margin-bottom:12px">
-    <input type="text" id="db-search" class="db-search" placeholder="🔍 Cerca alimento..." oninput="filterDB()" style="max-width:320px">
-    <select id="db-cat" class="db-cat" onchange="filterDB()"><option value="">Tutte le categorie</option></select>
+    <input type="text" id="db-search" class="db-search" data-i18n-placeholder="db.search" oninput="filterDB()" style="max-width:320px">
+    <select id="db-cat" class="db-cat" onchange="filterDB()"><option value="" data-i18n="db.all_cats">Tutte le categorie</option></select>
     <select id="db-src" class="db-cat" onchange="filterDB()">
-      <option value="">Tutte le fonti</option>
+      <option value="" data-i18n="db.all_sources">Tutte le fonti</option>
       <option value="CREA">CREA 2019</option>
       <option value="BDA">BDA INRAN</option>
-      <option value="APROT">🟣 Aproteici</option>
-      <option value="INT">🟡 Integratori/ONS</option>
-      <option value="UPF">🔴 Ultra-processati (UPF)</option>
-      <option value="PERS">🟢 Personalizzati</option>
+      <option value="APROT" data-i18n="db.src_aprot">🟣 Aproteici</option>
+      <option value="INT" data-i18n="db.src_int">🟡 Integratori/ONS</option>
+      <option value="UPF" data-i18n="db.src_upf">🔴 Ultra-processati (UPF)</option>
+      <option value="PERS" data-i18n="db.src_pers">🟢 Personalizzati</option>
     </select>
-    <button onclick="openAddFood()" style="padding:7px 14px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">➕ Aggiungi alimento</button>
-    <button type="button" id="micro-toggle" onclick="toggleMicroFilters()" style="padding:7px 14px;background:#fff;color:var(--slate);border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">🧪 Filtro Micronutrienti</button>
+    <button onclick="openAddFood()" style="padding:7px 14px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">➕ <span data-only-lang="it">Aggiungi alimento</span><span data-only-lang="en">Add food</span></button>
+    <button type="button" id="micro-toggle" onclick="toggleMicroFilters()" style="padding:7px 14px;background:#fff;color:var(--slate);border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">🧪 <span data-only-lang="it">Filtro Micronutrienti</span><span data-only-lang="en">Micronutrient Filter</span></button>
     <span id="db-count" style="font-size:12px;color:var(--slate-l)"></span>
   </div>
   <div id="micro-filters" style="display:none;background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div style="font-size:12px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.05em">🧪 Filtro Micronutrienti (per 100 g)</div>
-      <button type="button" onclick="resetMicroFilters()" style="padding:5px 12px;background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:7px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer">↺ Reset filtri micronutrienti</button>
+      <div style="font-size:12px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.05em">🧪 <span data-only-lang="it">Filtro Micronutrienti (per 100 g)</span><span data-only-lang="en">Micronutrient Filter (per 100 g)</span></div>
+      <button type="button" onclick="resetMicroFilters()" style="padding:5px 12px;background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:7px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer">↺ <span data-only-lang="it">Reset filtri micronutrienti</span><span data-only-lang="en">Reset micronutrient filters</span></button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px 16px">
-      <div class="micro-fg" data-key="k2"><label>Potassio K (mg)</label><div><input type="number" min="0" step="any" id="mf-k2-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-k2-max" placeholder="max" oninput="filterDB()"></div></div>
-      <div class="micro-fg" data-key="na"><label>Sodio Na (mg)</label><div><input type="number" min="0" step="any" id="mf-na-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-na-max" placeholder="max" oninput="filterDB()"></div></div>
-      <div class="micro-fg" data-key="fo"><label>Fosforo P (mg)</label><div><input type="number" min="0" step="any" id="mf-fo-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-fo-max" placeholder="max" oninput="filterDB()"></div></div>
-      <div class="micro-fg" data-key="ca"><label>Calcio Ca (mg)</label><div><input type="number" min="0" step="any" id="mf-ca-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-ca-max" placeholder="max" oninput="filterDB()"></div></div>
-      <div class="micro-fg" data-key="fe"><label>Ferro Fe (mg)</label><div><input type="number" min="0" step="any" id="mf-fe-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-fe-max" placeholder="max" oninput="filterDB()"></div></div>
-      <div class="micro-fg" data-key="fi"><label>Fibra (g)</label><div><input type="number" min="0" step="any" id="mf-fi-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-fi-max" placeholder="max" oninput="filterDB()"></div></div>
+      <div class="micro-fg" data-key="k2"><label><span data-only-lang="it">Potassio</span><span data-only-lang="en">Potassium</span> K (mg)</label><div><input type="number" min="0" step="any" id="mf-k2-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-k2-max" placeholder="max" oninput="filterDB()"></div></div>
+      <div class="micro-fg" data-key="na"><label><span data-only-lang="it">Sodio</span><span data-only-lang="en">Sodium</span> Na (mg)</label><div><input type="number" min="0" step="any" id="mf-na-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-na-max" placeholder="max" oninput="filterDB()"></div></div>
+      <div class="micro-fg" data-key="fo"><label><span data-only-lang="it">Fosforo</span><span data-only-lang="en">Phosphorus</span> P (mg)</label><div><input type="number" min="0" step="any" id="mf-fo-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-fo-max" placeholder="max" oninput="filterDB()"></div></div>
+      <div class="micro-fg" data-key="ca"><label><span data-only-lang="it">Calcio</span><span data-only-lang="en">Calcium</span> Ca (mg)</label><div><input type="number" min="0" step="any" id="mf-ca-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-ca-max" placeholder="max" oninput="filterDB()"></div></div>
+      <div class="micro-fg" data-key="fe"><label><span data-only-lang="it">Ferro</span><span data-only-lang="en">Iron</span> Fe (mg)</label><div><input type="number" min="0" step="any" id="mf-fe-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-fe-max" placeholder="max" oninput="filterDB()"></div></div>
+      <div class="micro-fg" data-key="fi"><label><span data-only-lang="it">Fibra</span><span data-only-lang="en">Fibre</span> (g)</label><div><input type="number" min="0" step="any" id="mf-fi-min" placeholder="min" oninput="filterDB()"><span>–</span><input type="number" min="0" step="any" id="mf-fi-max" placeholder="max" oninput="filterDB()"></div></div>
     </div>
   </div>
   <div id="db-table-wrap">
     <table id="db-table">
       <thead><tr>
-        <th style="text-align:left">Alimento</th>
-        <th style="text-align:left">Categoria</th>
-        <th>Fonte</th>
+        <th style="text-align:left"><span data-only-lang="it">Alimento</span><span data-only-lang="en">Food</span></th>
+        <th style="text-align:left"><span data-only-lang="it">Categoria</span><span data-only-lang="en">Category</span></th>
+        <th><span data-only-lang="it">Fonte</span><span data-only-lang="en">Source</span></th>
         <th>Kcal</th><th>Prot(g)</th><th>Gr.Sat(g)</th><th>Gr.Tot(g)</th>
         <th>Zucc(g)</th><th>CHO(g)</th><th>Fibra(g)</th>
         <th>Ca(mg)</th><th>Fe(mg)</th><th>Mg(mg)</th>
@@ -172,91 +172,91 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px">
 
           <div class="fg" style="grid-column:1/-1">
-            <label>Nome alimento *</label>
-            <input id="af-nome" type="text" placeholder="es. Tortino di quinoa e verdure" required>
+            <label><span data-only-lang="it">Nome alimento</span><span data-only-lang="en">Food name</span> *</label>
+            <input id="af-nome" type="text" data-i18n-placeholder="db.food_name_ph" required>
           </div>
           <div class="fg" style="grid-column:1/-1">
-            <label>Categoria</label>
-            <input id="af-cat" type="text" list="af-cat-list" placeholder="es. Piatti pronti, Cereali, Pesce…">
+            <label><span data-only-lang="it">Categoria</span><span data-only-lang="en">Category</span></label>
+            <input id="af-cat" type="text" list="af-cat-list" data-i18n-placeholder="db.food_cat_ph">
             <datalist id="af-cat-list"></datalist>
           </div>
 
-          <div class="sec-title">Macronutrienti (per 100 g)</div>
+          <div class="sec-title"><span data-only-lang="it">Macronutrienti (per 100 g)</span><span data-only-lang="en">Macronutrients (per 100 g)</span></div>
 
           <div class="fg">
-            <label>Energia (kcal)</label>
-            <input id="af-kcal" type="number" min="0" step="0.1" placeholder="es. 250">
+            <label><span data-only-lang="it">Energia</span><span data-only-lang="en">Energy</span> (kcal)</label>
+            <input id="af-kcal" type="number" min="0" step="0.1" placeholder="250">
           </div>
           <div class="fg">
-            <label>Proteine (g)</label>
-            <input id="af-prot" type="number" min="0" step="0.1" placeholder="es. 12">
+            <label><span data-only-lang="it">Proteine</span><span data-only-lang="en">Proteins</span> (g)</label>
+            <input id="af-prot" type="number" min="0" step="0.1" placeholder="12">
           </div>
           <div class="fg">
-            <label>Grassi totali (g)</label>
-            <input id="af-gtot" type="number" min="0" step="0.1" placeholder="es. 8">
+            <label><span data-only-lang="it">Grassi totali</span><span data-only-lang="en">Total fat</span> (g)</label>
+            <input id="af-gtot" type="number" min="0" step="0.1" placeholder="8">
           </div>
           <div class="fg">
-            <label>Grassi saturi (g)</label>
-            <input id="af-gs" type="number" min="0" step="0.1" placeholder="es. 2">
+            <label><span data-only-lang="it">Grassi saturi</span><span data-only-lang="en">Saturated fat</span> (g)</label>
+            <input id="af-gs" type="number" min="0" step="0.1" placeholder="2">
           </div>
           <div class="fg">
-            <label>Carboidrati (g)</label>
-            <input id="af-cho" type="number" min="0" step="0.1" placeholder="es. 30">
+            <label><span data-only-lang="it">Carboidrati</span><span data-only-lang="en">Carbohydrates</span> (g)</label>
+            <input id="af-cho" type="number" min="0" step="0.1" placeholder="30">
           </div>
           <div class="fg">
-            <label>Zuccheri (g)</label>
-            <input id="af-zucc" type="number" min="0" step="0.1" placeholder="es. 5">
+            <label><span data-only-lang="it">Zuccheri</span><span data-only-lang="en">Sugars</span> (g)</label>
+            <input id="af-zucc" type="number" min="0" step="0.1" placeholder="5">
           </div>
           <div class="fg">
-            <label>Fibre (g)</label>
-            <input id="af-fi" type="number" min="0" step="0.1" placeholder="es. 3">
+            <label><span data-only-lang="it">Fibre</span><span data-only-lang="en">Fibre</span> (g)</label>
+            <input id="af-fi" type="number" min="0" step="0.1" placeholder="3">
           </div>
           <div class="fg">
-            <label>Colesterolo (mg)</label>
-            <input id="af-col" type="number" min="0" step="0.1" placeholder="es. 40">
+            <label><span data-only-lang="it">Colesterolo</span><span data-only-lang="en">Cholesterol</span> (mg)</label>
+            <input id="af-col" type="number" min="0" step="0.1" placeholder="40">
           </div>
 
-          <div class="sec-title">Minerali (per 100 g)</div>
+          <div class="sec-title"><span data-only-lang="it">Minerali (per 100 g)</span><span data-only-lang="en">Minerals (per 100 g)</span></div>
 
           <div class="fg">
-            <label>Calcio — Ca (mg)</label>
-            <input id="af-ca" type="number" min="0" step="0.1" placeholder="es. 120">
+            <label><span data-only-lang="it">Calcio</span><span data-only-lang="en">Calcium</span> — Ca (mg)</label>
+            <input id="af-ca" type="number" min="0" step="0.1" placeholder="120">
           </div>
           <div class="fg">
-            <label>Ferro — Fe (mg)</label>
-            <input id="af-fe" type="number" min="0" step="0.01" placeholder="es. 1.5">
+            <label><span data-only-lang="it">Ferro</span><span data-only-lang="en">Iron</span> — Fe (mg)</label>
+            <input id="af-fe" type="number" min="0" step="0.01" placeholder="1.5">
           </div>
           <div class="fg">
-            <label>Magnesio — Mg (mg)</label>
-            <input id="af-mgval" type="number" min="0" step="0.1" placeholder="es. 40">
+            <label><span data-only-lang="it">Magnesio</span><span data-only-lang="en">Magnesium</span> — Mg (mg)</label>
+            <input id="af-mgval" type="number" min="0" step="0.1" placeholder="40">
           </div>
           <div class="fg">
-            <label>Potassio — K (mg)</label>
-            <input id="af-k" type="number" min="0" step="0.1" placeholder="es. 350">
+            <label><span data-only-lang="it">Potassio</span><span data-only-lang="en">Potassium</span> — K (mg)</label>
+            <input id="af-k" type="number" min="0" step="0.1" placeholder="350">
           </div>
           <div class="fg">
-            <label>Sodio — Na (mg)</label>
-            <input id="af-na" type="number" min="0" step="0.1" placeholder="es. 200">
+            <label><span data-only-lang="it">Sodio</span><span data-only-lang="en">Sodium</span> — Na (mg)</label>
+            <input id="af-na" type="number" min="0" step="0.1" placeholder="200">
           </div>
           <div class="fg">
-            <label>Zinco — Zn (mg)</label>
-            <input id="af-zn" type="number" min="0" step="0.01" placeholder="es. 1.2">
+            <label><span data-only-lang="it">Zinco</span><span data-only-lang="en">Zinc</span> — Zn (mg)</label>
+            <input id="af-zn" type="number" min="0" step="0.01" placeholder="1.2">
           </div>
           <div class="fg">
-            <label>Fosforo — P (mg)</label>
-            <input id="af-fo" type="number" min="0" step="0.1" placeholder="es. 180">
+            <label><span data-only-lang="it">Fosforo</span><span data-only-lang="en">Phosphorus</span> — P (mg)</label>
+            <input id="af-fo" type="number" min="0" step="0.1" placeholder="180">
           </div>
           <div class="fg">
-            <label>Selenio — Se (µg)</label>
-            <input id="af-se" type="number" min="0" step="0.1" placeholder="es. 10">
+            <label><span data-only-lang="it">Selenio</span><span data-only-lang="en">Selenium</span> — Se (µg)</label>
+            <input id="af-se" type="number" min="0" step="0.1" placeholder="10">
           </div>
 
         </div>
       </form>
     </div>
     <div class="mfoot">
-      <button onclick="closeAddFood()" style="padding:8px 18px;border:1.5px solid var(--border-d);background:#fff;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--slate)">Annulla</button>
-      <button onclick="saveFood()" style="padding:8px 20px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">💾 Salva alimento</button>
+      <button onclick="closeAddFood()" style="padding:8px 18px;border:1.5px solid var(--border-d);background:#fff;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--slate)"><span data-only-lang="it">Annulla</span><span data-only-lang="en">Cancel</span></button>
+      <button onclick="saveFood()" style="padding:8px 20px;background:#06B6D4;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">💾 <span data-only-lang="it">Salva alimento</span><span data-only-lang="en">Save food</span></button>
     </div>
   </div>
 </div>
@@ -266,6 +266,7 @@
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let _editingFoodId = null; // null = nuovo alimento, stringa UUID = modifica
 let _asDatabase;
 
@@ -277,8 +278,8 @@ const DB_PAGE = 100;
 function _buildRow(f) {
   const srcKey = f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int';
   const persActions = f.src==='PERS'
-    ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="Modifica">✏️</button>`
-      + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="Elimina">🗑️</button>`
+    ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="${_L('Modifica','Edit')}">✏️</button>`
+      + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="${_L('Elimina','Delete')}">🗑️</button>`
     : '';
   return `<tr><td>${esc(f.n)}${persActions}</td><td>${esc(f.c||'')}</td><td><span class="src-badge src-${srcKey}">${f.src==='PERS'?'PERS':f.src}</span></td><td>${nd(f.k)}</td><td>${nd(f.p)}</td><td>${nd(f.gs)}</td><td>${nd(f.g)}</td><td>${nd(f.z)}</td><td>${nd(f.ch)}</td><td>${nd(f.fi)}</td><td>${nd(f.ca)}</td><td>${nd(f.fe)}</td><td>${nd(f.mg)}</td><td>${nd(f.k2)}</td><td>${nd(f.na)}</td><td>${nd(f.zn)}</td><td>${nd(f.fo)}</td><td>${nd(f.se)}</td><td>${nd(f.col)}</td></tr>`;
 }
@@ -297,17 +298,17 @@ function _getOrCreateMoreBtn() {
 function renderDB(list) {
   const tbody = document.getElementById('db-tbody');
   if(!list.length){
-    tbody.innerHTML='<tr><td colspan="19" style="text-align:center;padding:24px;color:var(--slate-l)">Nessun alimento trovato</td></tr>';
-    document.getElementById('db-count').textContent='0 alimenti';
+    tbody.innerHTML='<tr><td colspan="19" style="text-align:center;padding:24px;color:var(--slate-l)">'+_L('Nessun alimento trovato','No food found')+'</td></tr>';
+    document.getElementById('db-count').textContent='0 '+_L('alimenti','foods');
     const b = document.getElementById('db-load-more'); if(b) b.style.display='none';
     return;
   }
-  document.getElementById('db-count').textContent = list.length + ' alimenti';
+  document.getElementById('db-count').textContent = list.length + ' ' + _L('alimenti','foods');
   tbody.innerHTML = list.slice(0, DB_PAGE).map(f => {
     const srcKey = f.src==='CREA'?'crea':f.src==='BDA'?'bda':f.src==='APROT'?'aprot':f.src==='UPF'?'upf':f.src==='PERS'?'pers':'int';
     const persActions = f.src==='PERS'
-      ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="Modifica">✏️</button>`
-        + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="Elimina">🗑️</button>`
+      ? ` <button class="btn-food-action" onclick="openEditFood('${f._id}')" title="${_L('Modifica','Edit')}">✏️</button>`
+        + `<button class="btn-food-action" onclick="deleteCustomFood('${f._id}')" title="${_L('Elimina','Delete')}">🗑️</button>`
       : '';
     return `<tr>
       <td>${esc(f.n)}${persActions}</td>
@@ -324,13 +325,13 @@ function renderDB(list) {
   if (list.length > DB_PAGE) {
     let offset = DB_PAGE;
     btn.style.display = 'block';
-    btn.textContent = `Carica altri (${list.length - offset} rimanenti)`;
+    btn.textContent = _L('Carica altri','Load more') + ` (${list.length - offset} ` + _L('rimanenti','remaining') + ')';
     btn.onclick = () => {
       const next = list.slice(offset, offset + DB_PAGE);
       tbody.insertAdjacentHTML('beforeend', next.map(f => _buildRow(f)).join(''));
       offset += DB_PAGE;
       if (offset >= list.length) btn.style.display = 'none';
-      else btn.textContent = `Carica altri (${list.length - offset} rimanenti)`;
+      else btn.textContent = _L('Carica altri','Load more') + ` (${list.length - offset} ` + _L('rimanenti','remaining') + ')';
     };
   } else {
     btn.style.display = 'none';
@@ -389,7 +390,7 @@ function populateCats() {
   const cats = [...new Set(ALL_DB.map(f=>f.c).filter(Boolean))].sort();
   const sel = document.getElementById('db-cat');
   const prev = sel.value;
-  sel.innerHTML = '<option value="">Tutte le categorie</option>';
+  sel.innerHTML = '<option value="">'+_L('Tutte le categorie','All categories')+'</option>';
   cats.forEach(c => {
     const o = document.createElement('option');
     o.value=c; o.textContent=c; sel.appendChild(o);
@@ -434,16 +435,16 @@ function openAddFood() {
   _editingFoodId = null;
   document.getElementById('af-form').reset();
   _asDatabase.restore();
-  document.getElementById('modal-food-title').textContent = '➕ Aggiungi alimento al database personale';
+  document.getElementById('modal-food-title').textContent = '➕ ' + _L('Aggiungi alimento al database personale','Add food to personal database');
   _openFoodModal();
 }
 
 function openEditFood(id) {
   const food = CUSTOM_DB.find(f => f._id === id);
-  if (!food) { toast('Alimento non trovato', 'err'); return; }
+  if (!food) { toast(_L('Alimento non trovato','Food not found'), 'err'); return; }
   _editingFoodId = id;
   document.getElementById('af-form').reset();
-  document.getElementById('modal-food-title').textContent = '✏️ Modifica alimento personalizzato';
+  document.getElementById('modal-food-title').textContent = '✏️ ' + _L('Modifica alimento personalizzato','Edit custom food');
   _populateFoodModal(food);
   _openFoodModal();
 }
@@ -455,8 +456,8 @@ function closeAddFood() {
 
 async function saveFood() {
   const nome = document.getElementById('af-nome').value.trim();
-  if (!nome) { toast('Inserisci il nome dell\'alimento', 'err'); return; }
-  if (!currentUser) { toast('Devi effettuare il login', 'err'); return; }
+  if (!nome) { toast(_L('Inserisci il nome dell\'alimento','Enter the food name'), 'err'); return; }
+  if (!currentUser) { toast(_L('Devi effettuare il login','You must be logged in'), 'err'); return; }
 
   const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
   const row = {
@@ -498,7 +499,7 @@ async function saveFood() {
   if (_editingFoodId) {
     ({ error } = await sb.from('alimenti_custom').update(row).eq('id', _editingFoodId).eq('user_id', currentUser.id));
     if (!error) {
-      toast('Alimento aggiornato ✓', 'ok');
+      toast(_L('Alimento aggiornato ✓','Food updated ✓'), 'ok');
       await sb.from('public_foods').update(publicRow).eq('source_id', _editingFoodId);
     }
   } else {
@@ -506,7 +507,7 @@ async function saveFood() {
     const { data: inserted, error: insErr } = await sb.from('alimenti_custom').insert(row).select('id').single();
     error = insErr;
     if (!error) {
-      toast('Alimento aggiunto ✓', 'ok');
+      toast(_L('Alimento aggiunto ✓','Food added ✓'), 'ok');
       if (inserted?.id) await sb.from('public_foods').insert({ ...publicRow, source_id: inserted.id });
     }
   }
@@ -521,15 +522,15 @@ async function saveFood() {
 }
 
 function deleteCustomFood(id) {
-  customConfirm('Eliminare questo alimento dal database personale?', async () => {
+  customConfirm(_L('Eliminare questo alimento dal database personale?','Delete this food from personal database?'), async () => {
     const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', currentUser.id);
     if (error) { toast('Errore: ' + error.message, 'err'); return; }
     await sb.from('public_foods').delete().eq('source_id', id);
-    toast('Alimento eliminato', 'ok');
+    toast(_L('Alimento eliminato','Food deleted'), 'ok');
     await loadCustomFoods();
     populateCats();
     filterDB();
-  }, { okLabel: 'Elimina', danger: true });
+  }, { okLabel: _L('Elimina','Delete'), danger: true });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

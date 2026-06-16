@@ -87,6 +87,9 @@
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>📚 Linee Guida Nutrizionali</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="printAllLG()">🖨️ Stampa tutte le linee guida</button>
+  </div>
 </div>
 <main id="main">
 <div class="page-content">
@@ -115,7 +118,7 @@
     </div>
   </div>
 
-  <div style="background:white;border-radius:12px;border:1.5px solid var(--border);padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+  <div class="no-print" style="background:white;border-radius:12px;border:1.5px solid var(--border);padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
     <input type="text" id="lg-search" class="db-search" style="width:100%;padding:10px 14px;font-size:14px;border-radius:8px" placeholder="🔍 Cerca patologia (es. diabete, cirrosi, osteoporosi...)..." oninput="filterLG()">
     <div id="lg-count" style="font-size:12px;color:var(--slate-l);margin-top:8px"></div>
   </div>
@@ -2957,6 +2960,29 @@ function renderAll(filter='') {
 }
 
 function filterLG() { renderAll(document.getElementById('lg-search').value); }
+
+let _lgPrintRestore = null;
+function printAllLG() {
+  const searchInput = document.getElementById('lg-search');
+  const prevSearch = searchInput ? searchInput.value : '';
+  if (prevSearch) { searchInput.value = ''; renderAll(''); }
+  LG_DATA.forEach(d => {
+    document.getElementById('body-'+d.id)?.classList.add('open');
+    const tog = document.getElementById('tog-'+d.id);
+    if (tog) tog.textContent = '▲';
+    showVer(d.id, 'e');
+  });
+  _lgPrintRestore = prevSearch;
+  setTimeout(() => window.print(), 80);
+}
+
+window.addEventListener('afterprint', () => {
+  if (_lgPrintRestore === null) return;
+  const searchInput = document.getElementById('lg-search');
+  if (searchInput) searchInput.value = _lgPrintRestore;
+  renderAll(_lgPrintRestore || '');
+  _lgPrintRestore = null;
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
   renderAll();

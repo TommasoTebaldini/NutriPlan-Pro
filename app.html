@@ -589,6 +589,7 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 // ═══════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════
@@ -610,7 +611,7 @@ function customConfirm(msg, onConfirm, opts = {}) {
   document.getElementById('modal-confirm-msg').textContent = msg;
   const title = document.getElementById('modal-confirm-title');
   const okBtn = document.getElementById('modal-confirm-ok');
-  title.textContent = opts.title || '⚠️ Conferma';
+  title.textContent = opts.title || _L('⚠️ Conferma','⚠️ Confirm');
   if (opts.danger) {
     okBtn.className = 'btn btn-sm';
     okBtn.style.background = '#DC2626';
@@ -622,7 +623,7 @@ function customConfirm(msg, onConfirm, opts = {}) {
     okBtn.style.color = '';
     okBtn.style.borderColor = '';
   }
-  okBtn.textContent = opts.okLabel || 'Continua';
+  okBtn.textContent = opts.okLabel || _L('Continua','Continue');
   openM('modal-confirm');
 }
 function _confirmOk() { closeM('modal-confirm'); if (_confirmCallback) { _confirmCallback(); _confirmCallback = null; } }
@@ -692,7 +693,7 @@ function openNewGiorno() {
 
 function creaGiorno() {
   const nome = document.getElementById('ng-nome').value.trim();
-  if (!nome) { toast('Inserisci nome del giorno', 'err'); return; }
+  if (!nome) { toast(_L('Inserisci nome del giorno','Enter day name'), 'err'); return; }
   const copiaFrom = document.getElementById('ng-copia').value;
   let meals;
   if (copiaFrom === '' || copiaFrom === undefined) {
@@ -714,19 +715,19 @@ function creaGiorno() {
   markDirty();
   renderGiornoTabs();
   renderPiano();
-  toast('📅 "' + nome + '" aggiunto!', 'ok');
+  toast('📅 "' + nome + '" ' + _L('aggiunto!','added!'), 'ok');
 }
 
 function delGiorno(idx) {
-  if (giorni.length <= 1) { toast('Almeno un giorno richiesto', 'err'); return; }
-  customConfirm('Eliminare il giorno "' + giorni[idx].nome + '" e tutti i suoi pasti?', () => {
+  if (giorni.length <= 1) { toast(_L('Almeno un giorno richiesto','At least one day required'), 'err'); return; }
+  customConfirm(_L('Eliminare il giorno "','Delete day "') + giorni[idx].nome + _L('" e tutti i suoi pasti?','" and all its meals?'), () => {
     pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
     giorni.splice(idx, 1);
     if (giornoCorrente >= giorni.length) giornoCorrente = giorni.length - 1;
     markDirty();
     renderGiornoTabs();
     renderPiano();
-    toast('🗑️ Giorno eliminato', 'info');
+    toast(_L('🗑️ Giorno eliminato','🗑️ Day deleted'), 'info');
   }, { danger: true, okLabel: 'Elimina' });
 }
 
@@ -1246,8 +1247,8 @@ function swapM(a, b) {
   [meals[a], meals[b]] = [meals[b], meals[a]]; markDirty(); renderPiano();
 }
 function delMeal(mi) {
-  if (getMeals().length <= 1) { toast('Almeno un pasto richiesto!', 'err'); return; }
-  customConfirm(`Eliminare "${getMeals()[mi].nome}"?`, () => {
+  if (getMeals().length <= 1) { toast(_L('Almeno un pasto richiesto!','At least one meal required!'), 'err'); return; }
+  customConfirm(_L('Eliminare "','Delete "') + getMeals()[mi].nome + '"?', () => {
     pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
     giorni[giornoCorrente].meals.splice(mi, 1); markDirty(); renderPiano();
   }, { danger: true, okLabel: 'Elimina' });
@@ -1261,7 +1262,7 @@ function eliminaVuote() {
     if (!m.items.length) m.items = [{ nome: '', qt: '', altPrint: [], misura: '' }];
     tot += b - m.items.length;
   });
-  renderPiano(); toast(tot > 0 ? `✅ ${tot} righe vuote eliminate!` : 'Nessuna riga vuota.', 'ok');
+  renderPiano(); toast(tot > 0 ? `✅ ${tot} ` + _L('righe vuote eliminate!','empty rows removed!') : _L('Nessuna riga vuota.','No empty rows.'), 'ok');
 }
 function openAddRow() {
   const l = document.getElementById('modal-addrow-list');
@@ -1300,9 +1301,9 @@ function openNewPasto() {
 }
 function creaPasto() {
   const nome = document.getElementById('np-nome').value.trim();
-  if (!nome) { toast('Inserisci nome', 'err'); return; }
+  if (!nome) { toast(_L('Inserisci nome','Enter name'), 'err'); return; }
   if (!giorni.length || giornoCorrente >= giorni.length || !giorni[giornoCorrente]) {
-    toast('⚠️ Nessun giorno attivo. Crea prima un nuovo piano.', 'err'); return;
+    toast(_L('⚠️ Nessun giorno attivo. Crea prima un nuovo piano.','⚠️ No active day. Create a new plan first.'), 'err'); return;
   }
   const emoji = document.getElementById('np-emoji').value || '🍽️';
   const pos = parseInt(document.getElementById('np-pos').value);
@@ -1311,7 +1312,7 @@ function creaPasto() {
   if (pos === -1) giorni[giornoCorrente].meals.unshift(m);
   else giorni[giornoCorrente].meals.splice(pos + 1, 0, m);
   closeM('modal-newpasto'); markDirty(); renderPiano();
-  toast(`✅ "${nome}" aggiunto!`, 'ok');
+  toast(`✅ "${nome}" ` + _L('aggiunto!','added!'), 'ok');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1343,7 +1344,7 @@ function doUndo() {
   markDirty();
   renderGiornoTabs();
   renderPiano();
-  toast('↩ Azione annullata', 'info');
+  toast(_L('↩ Azione annullata','↩ Action undone'), 'info');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1430,7 +1431,7 @@ function openAlt(mi, ii) {
   altMi = mi; altIi = ii;
   const item = getMeals()[mi].items[ii];
   const f = lookup(item.nome);
-  if (!item.nome || !f) { toast('Seleziona prima un alimento valido', 'err'); return; }
+  if (!item.nome || !f) { toast(_L('Seleziona prima un alimento valido','Select a valid food item first'), 'err'); return; }
   document.getElementById('alt-title').textContent = `⇄ Alternative a: ${foodNameEN(item.nome)} (${item.qt || 0}g)`;
   document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
     `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${b.l}</button>`
@@ -1464,7 +1465,7 @@ function showAlternatives() {
     // Sort by similarity if no search, else keep search order
     alts = searchQ ? mapped : mapped.sort((a, b) => a.diff - b.diff);
     alts = alts.slice(0, 40);
-    introText = `<b>${qt}g di ${foodNameEN(f.n)}</b> apportano <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalenti (stessa quantità di ${nutriLabel}):`;
+    introText = _L(`<b>${qt}g di ${foodNameEN(f.n)}</b> apportano <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalenti (stessa quantità di ${nutriLabel}):`,`<b>${qt}g of ${foodNameEN(f.n)}</b> provide <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalents (same amount of ${nutriLabel}):`);
   } else {
     // No nutrient value: just show matching foods
     alts = pool.slice(0, 40).map(alt => ({
@@ -1472,11 +1473,11 @@ function showAlternatives() {
       kcal: Math.round((alt.k || 0) / 100 * qt),
       prot: r1((alt.p || 0) / 100 * qt)
     }));
-    introText = `Alimenti trovati (stessa quantità: ${qt}g):`;
+    introText = _L(`Alimenti trovati (stessa quantità: ${qt}g):`,`Foods found (same quantity: ${qt}g):`);
   }
 
   if (!alts.length) {
-    document.getElementById('alt-results').innerHTML = '<p style="color:var(--slate-l)">Nessuna alternativa trovata. Prova a cercare per nome.</p>';
+    document.getElementById('alt-results').innerHTML = `<p style="color:var(--slate-l)">${_L('Nessuna alternativa trovata. Prova a cercare per nome.','No alternatives found. Try searching by name.')}</p>`;
     return;
   }
   const currentPrint = (getMeals()[altMi].items[altIi].altPrint || []).map(a => a.nome);
@@ -1488,18 +1489,18 @@ function showAlternatives() {
       <span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700">${a.newQt}g</span>
       <span style="font-size:10.5px;color:var(--slate-l)">${a.kcal}kcal · P${a.prot}g</span>
       <div style="display:flex;gap:6px;flex-shrink:0">
-        <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">Sostituisci</button>
-        <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?'✅ In stampa':'📄 +Stampa'}</button>
+        <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${_L('Sostituisci','Substitute')}</button>
+        <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?_L('✅ In stampa','✅ In print'):_L('📄 +Stampa','📄 +Print')}</button>
       </div>
     </div>`;
   }).join('');
-  document.getElementById('alt-results').innerHTML = `<p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">${introText}</p>${rows}<p style="font-size:11px;color:var(--slate-l);margin-top:6px">Mostrando ${alts.length} risultati. Usa la ricerca per filtrare.</p>`;
+  document.getElementById('alt-results').innerHTML = `<p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">${introText}</p>${rows}<p style="font-size:11px;color:var(--slate-l);margin-top:6px">${_L(`Mostrando ${alts.length} risultati. Usa la ricerca per filtrare.`,`Showing ${alts.length} results. Use the search to filter.`)}</p>`;
 }
 
 function toggleAltPrint(mi, ii, nome, qt) {
   if (!getMeals()[mi].items[ii].altPrint) getMeals()[mi].items[ii].altPrint = [];
   const idx = getMeals()[mi].items[ii].altPrint.findIndex(a => a.nome === nome);
-  if (idx >= 0) { getMeals()[mi].items[ii].altPrint.splice(idx, 1); toast('🗑️ Rimosso dalla stampa', 'info'); }
+  if (idx >= 0) { getMeals()[mi].items[ii].altPrint.splice(idx, 1); toast(_L('🗑️ Rimosso dalla stampa','🗑️ Removed from print'), 'info'); }
   else {
     getMeals()[mi].items[ii].altPrint.push(normalizeAltEntry({
       nome,
@@ -1507,7 +1508,7 @@ function toggleAltPrint(mi, ii, nome, qt) {
       originalQt: qt,
       originalValues: buildAltOriginalValues(nome, qt)
     }));
-    toast('📄 Aggiunto alla stampa!', 'ok');
+    toast(_L('📄 Aggiunto alla stampa!','📄 Added to print!'), 'ok');
   }
   markDirty(); showAlternatives(); renderPiano();
 }
@@ -1518,7 +1519,7 @@ function applyAlt(mi, ii, nome, qt) {
   getMeals()[mi].items[ii].nome = nome; getMeals()[mi].items[ii].qt = qt;
   getMeals()[mi].items[ii].altPrint = []; // clear alternatives when food is substituted
   markDirty(); closeM('modal-alt'); renderPiano();
-  toast(`✅ Sostituito con ${nome} (${qt}g)!`, 'ok');
+  toast(`✅ ` + _L(`Sostituito con ${nome} (${qt}g)!`,`Substituted with ${nome} (${qt}g)!`), 'ok');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1526,7 +1527,7 @@ function applyAlt(mi, ii, nome, qt) {
 // ═══════════════════════════════════════════════════
 function nuovoPiano() {
   if (dirty) {
-    customConfirm('Modifiche non salvate. Continuare?', _eseguiNuovoPiano);
+    customConfirm(_L('Modifiche non salvate. Continuare?','Unsaved changes. Continue?'), _eseguiNuovoPiano);
     return;
   }
   _eseguiNuovoPiano();
@@ -1543,7 +1544,7 @@ function _eseguiNuovoPiano() {
   dirty = false; currentPianoId = null; undoStack = []; hideUndoBar();
   const objBox = document.getElementById('obj-val-box'); if (objBox) objBox.style.display = 'none';
   renderGiornoTabs(); renderPiano();
-  toast('🔄 Nuovo piano', 'info');
+  toast(_L('🔄 Nuovo piano','🔄 New plan'), 'info');
 }
 
 async function salvaPiano() {
@@ -1563,7 +1564,7 @@ async function salvaPiano() {
   }
   const finalCartellaId = (cartellaEl && cartellaEl.value) ? cartellaEl.value : null;
   if (!finalCartellaId) {
-    toast('⚠️ Seleziona una cartella paziente prima di salvare', 'err');
+    toast(_L('⚠️ Seleziona una cartella paziente prima di salvare','⚠️ Select a patient folder before saving'), 'err');
     document.getElementById('cartella-search')?.focus();
     return;
   }
@@ -1618,7 +1619,7 @@ async function salvaPiano() {
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   dirty = false;
   localStorage.removeItem('draftPiano');
-  toast(`💾 "${nome}" salvato!`, 'ok');
+  toast(`💾 "${nome}" ` + _L('salvato!','saved!'), 'ok');
   if (window.capturePrintAndSave && currentPianoId) {
     capturePrintAndSave({
       table: 'piani', recordId: currentPianoId, cartellaId: finalCartellaId,
@@ -1634,7 +1635,7 @@ async function salvaPiano() {
 // ═════════════════════════��═════════════════════════
 async function autoCapturePianoForVisibility(pianoId, cartellaId, formato) {
   showLoading(true);
-  toast('📸 Generazione immagine piano in corso...', 'info');
+  toast(_L('📸 Generazione immagine piano in corso...','📸 Generating meal plan image...'), 'info');
 
   const finalCartellaId = cartellaId || document.getElementById('inp-cartella')?.value || '';
 
@@ -1741,12 +1742,12 @@ async function autoCapturePianoForVisibility(pianoId, cartellaId, formato) {
 
     const { error } = await sb.from('piani').update({ visible_to_patient: true, display_mode: formato }).eq('id', pianoId);
     if (error) {
-      toast('⚠️ Immagine creata ma errore visibilità: ' + error.message, 'err');
+      toast(_L('⚠️ Immagine creata ma errore visibilità: ','⚠️ Image created but visibility error: ') + error.message, 'err');
     } else {
-      toast('👁️ Piano condiviso con il paziente!', 'ok');
+      toast(_L('👁️ Piano condiviso con il paziente!','👁️ Plan shared with patient!'), 'ok');
     }
   } catch (e) {
-    toast('❌ Errore generazione immagine: ' + (e.message || e), 'err');
+    toast(_L('❌ Errore generazione immagine: ','❌ Image generation error: ') + (e.message || e), 'err');
   } finally {
     if (container) {
       container.innerHTML = '';
@@ -1925,11 +1926,11 @@ function esportaExcel() {
   a.download=`${nomePaz.replace(/[^a-zA-Z0-9_\- ]/g,'_').trim()}_${dataStr}.xlsx`;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  toast('📥 Excel esportato!','ok');
+  toast(_L('📥 Excel esportato!','📥 Excel exported!'),'ok');
 
   } catch(err){
     console.error('esportaExcel:',err);
-    toast('❌ Errore Excel: '+(err.message||err),'error');
+    toast(_L('❌ Errore Excel: ','❌ Excel error: ')+(err.message||err),'error');
   }
 }
 
@@ -2279,8 +2280,8 @@ function generaListaSpesa() {
   Object.values(aggregated).forEach(item => { (grouped[item.cat] || grouped['Altro']).push(item); });
 
   let html = `<div style="margin-bottom:14px;padding:10px 14px;background:#F0FDF4;border-radius:10px;border-left:3px solid #10B981">
-    <div style="font-weight:700;color:#065F46;font-size:13px">🛒 Lista della spesa — ${nomeP ? 'Paziente: ' + esc(nomeP) + ' — ' : ''}${giorni.length} giorn${giorni.length===1?'o':'i'} di piano</div>
-    <div style="font-size:11px;color:#6B7280;margin-top:3px">Quantità aggregate su tutto il piano. Adatta le porzioni alla durata effettiva della dieta.</div>
+    <div style="font-weight:700;color:#065F46;font-size:13px">🛒 ${_L('Lista della spesa','Shopping list')} — ${nomeP ? _L('Paziente: ','Patient: ') + esc(nomeP) + ' — ' : ''}${giorni.length} ${_L(giorni.length===1?'giorno':'giorni', giorni.length===1?'day':'days')} ${_L('di piano','plan')}</div>
+    <div style="font-size:11px;color:#6B7280;margin-top:3px">${_L('Quantità aggregate su tutto il piano. Adatta le porzioni alla durata effettiva della dieta.','Quantities aggregated across the entire plan. Adjust portions to the actual diet duration.')}</div>
   </div>`;
 
   _SPESA_CAT_ORDER.forEach(cat => {
@@ -2492,7 +2493,7 @@ function showCartelleList(q = '') {
         style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border);color:#1E293B"
         onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background=''">📁 ${esc(c.nome)}</div>`).join('');
   }
-  html += '<div onclick="appNuovaCartella()" style="padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:#6EE7B7;background:#F0FDF4;border-top:2px solid var(--border)" onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">➕ Crea nuova cartella</div>';
+  html += '<div onclick="appNuovaCartella()" style="padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:#6EE7B7;background:#F0FDF4;border-top:2px solid var(--border)" onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">➕ ' + _L('Crea nuova cartella','Create new folder') + '</div>';
   dd.innerHTML = html;
   dd.style.display = 'block';
 }
@@ -2757,7 +2758,7 @@ async function caricaPianoById(id) {
   showLoading(true);
   const { data, error } = await sb.from('piani').select('id,nome,data_piano,meals,cartella_id,saved_at,visible_to_patient').eq('id', id).single();
   showLoading(false);
-  if (error || !data) { toast('❌ Errore caricamento', 'err'); nuovoPiano(); return; }
+  if (error || !data) { toast(_L('❌ Errore caricamento','❌ Load error'), 'err'); nuovoPiano(); return; }
   document.getElementById('inp-nome').value = data.nome;
   document.getElementById('inp-data').value = data.data_piano || '';
   // Support both old format (meals=[]) and new format (giorni=[{nome,meals}])
@@ -2839,7 +2840,7 @@ let copiaGiornoSrcIdx = -1;
 
 function openCopiaGiorno(srcIdx) {
   if (giorni.length < 2) {
-    toast('Aggiungi almeno un altro giorno per copiare!', 'err');
+    toast(_L('Aggiungi almeno un altro giorno per copiare!','Add at least one more day to copy!'), 'err');
     return;
   }
   copiaGiornoSrcIdx = srcIdx;
@@ -2859,7 +2860,7 @@ function openCopiaGiorno(srcIdx) {
 
 function eseguiCopiaGiorno() {
   const checks = document.querySelectorAll('#copia-giorno-dst-list input[type=checkbox]:checked');
-  if (!checks.length) { toast('Seleziona almeno un giorno di destinazione', 'err'); return; }
+  if (!checks.length) { toast(_L('Seleziona almeno un giorno di destinazione','Select at least one destination day'), 'err'); return; }
   const src = giorni[copiaGiornoSrcIdx];
   const dstNames = [];
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
@@ -2876,7 +2877,7 @@ function eseguiCopiaGiorno() {
   closeM('modal-copia-giorno');
   renderGiornoTabs();
   renderPiano();
-  toast('📋 "' + src.nome + '" copiato su: ' + dstNames.join(', '), 'ok');
+  toast('📋 "' + src.nome + '" ' + _L('copiato su: ','copied to: ') + dstNames.join(', '), 'ok');
 }
 
 // ═══════════════════════════════════════════════════
@@ -2930,7 +2931,7 @@ function openCopiaPasto(srcMi) {
 
 function eseguiCopiaPasto() {
   const checks = document.querySelectorAll('#copia-pasto-dst-list input[name=copia-pasto-dst]:checked');
-  if (!checks.length) { toast('Seleziona almeno una destinazione', 'err'); return; }
+  if (!checks.length) { toast(_L('Seleziona almeno una destinazione','Select at least one destination'), 'err'); return; }
   const srcItems = JSON.parse(JSON.stringify(getMeals()[copiaPastoSrcMi].items));
   const dstLabels = [];
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
@@ -2947,7 +2948,7 @@ function eseguiCopiaPasto() {
   markDirty();
   closeM('modal-copia-pasto');
   renderPiano();
-  toast('📋 Pasto copiato su: ' + dstLabels.join(', '), 'ok');
+  toast('📋 ' + _L('Pasto copiato su: ','Meal copied to: ') + dstLabels.join(', '), 'ok');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3038,7 +3039,7 @@ function openSalvaTemplate() {
 
 async function eseguiSalvaTemplate() {
   const nome = document.getElementById('tmpl-nome').value.trim();
-  if (!nome) { toast('Inserisci un nome per il template', 'err'); return; }
+  if (!nome) { toast(_L('Inserisci un nome per il template','Enter a template name'), 'err'); return; }
   const tmpl = {
     nome,
     descrizione: document.getElementById('tmpl-desc').value.trim(),
@@ -3104,7 +3105,7 @@ function renderTemplateList() {
 function applicaTemplate(id) {
   const tmpl = (_cachedTemplates || []).find(t => String(t.id) === String(id));
   if (!tmpl) return;
-  customConfirm('Caricare il template "' + tmpl.nome + '"? Il piano corrente verrà sovrascritto.', () => {
+  customConfirm(_L('Caricare il template "','Load template "') + tmpl.nome + _L('"? Il piano corrente verrà sovrascritto.','"? The current plan will be overwritten.'), () => {
     closeM('modal-carica-template');
     pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
     const ts = Date.now();
@@ -3139,14 +3140,14 @@ function applicaTemplate(id) {
 async function eliminaTemplate(id) {
   const tmpl = (_cachedTemplates || []).find(t => String(t.id) === String(id));
   if (!tmpl) return;
-  customConfirm('Eliminare il template "' + tmpl.nome + '"?', async () => {
+  customConfirm(_L('Eliminare il template "','Delete template "') + tmpl.nome + '"?', async () => {
     showLoading(true);
     const ok = await _deleteTemplate(id);
     showLoading(false);
     if (ok) {
       _cachedTemplates = (_cachedTemplates || []).filter(t => String(t.id) !== String(id));
       renderTemplateList();
-      toast('🗑️ Template eliminato', 'info');
+      toast(_L('🗑️ Template eliminato','🗑️ Template deleted'), 'info');
     } else {
       toast('❌ Errore eliminazione template', 'err');
     }

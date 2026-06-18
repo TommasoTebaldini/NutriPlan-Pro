@@ -442,6 +442,7 @@ async function ensureChartJs() {
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let cartellaAperta = null;
 
 // ── Auto-save: persiste la cartella aperta tra sessioni del browser ──────────
@@ -731,8 +732,8 @@ async function bulkArchivia() {
   showLoading(true);
   const { error } = await sb.from('cartelle').update({ archived: true }).in('id', ids);
   showLoading(false);
-  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
-  toast('📦 ' + ids.length + ' cartell' + (ids.length === 1 ? 'a archiviata' : 'e archiviate') + '!', 'ok');
+  if (error) { toast('❌ ' + _L('Errore: ','Error: ') + error.message, 'err'); return; }
+  toast('📦 ' + ids.length + ' ' + _L(ids.length === 1 ? 'cartella archiviata' : 'cartelle archiviate', ids.length === 1 ? 'folder archived' : 'folders archived') + '!', 'ok');
   deselezionaTutto();
   loadCartelle();
 }
@@ -755,7 +756,7 @@ function bulkEsportaCSV() {
   const a = document.createElement('a');
   a.href = url; a.download = 'pazienti_selezionati_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click(); URL.revokeObjectURL(url);
-  toast('📊 CSV esportato!', 'ok');
+  toast(_L('📊 CSV esportato!','📊 CSV exported!'), 'ok');
 }
 
 function resetFiltri() {
@@ -1387,7 +1388,7 @@ function apriNoteSpec(noteId, tipo) {
 }
 
 async function inviaPrivacy(patientId, cartellaId) {
-  if (!patientId || !currentUser) { toast('Paziente non collegato', 'err'); return; }
+  if (!patientId || !currentUser) { toast(_L('Paziente non collegato','Patient not linked'), 'err'); return; }
   try {
     const { error } = await sb.from('patient_documents').insert({
       patient_id: patientId,
@@ -1399,15 +1400,15 @@ async function inviaPrivacy(patientId, cartellaId) {
       requires_signature: true,
     });
     if (error) throw error;
-    toast('✅ Documento privacy inviato al paziente', 'ok');
+    toast(_L('✅ Documento privacy inviato al paziente','✅ Privacy document sent to patient'), 'ok');
     await renderCartellaDetail(cartellaId);
   } catch (e) {
-    toast('❌ Errore: ' + (e.message || e), 'err');
+    toast('❌ ' + _L('Errore: ','Error: ') + (e.message || e), 'err');
   }
 }
 
 async function inviaGDPR(patientId, cartellaId) {
-  if (!patientId || !currentUser) { toast('Paziente non collegato', 'err'); return; }
+  if (!patientId || !currentUser) { toast(_L('Paziente non collegato','Patient not linked'), 'err'); return; }
   try {
     // Evita duplicati: controlla se esiste già un documento GDPR non firmato
     const { data: existing } = await sb.from('patient_documents')
@@ -1417,7 +1418,7 @@ async function inviaGDPR(patientId, cartellaId) {
       .eq('type', 'gdpr')
       .is('signed_at', null)
       .maybeSingle();
-    if (existing) { toast('⚠️ Il paziente ha già un consenso GDPR da firmare in attesa', 'warn'); return; }
+    if (existing) { toast(_L('⚠️ Il paziente ha già un consenso GDPR da firmare in attesa','⚠️ Patient already has a pending GDPR consent to sign'), 'warn'); return; }
 
     const gdprContent = `Consenso al Trattamento dei Dati Personali — GDPR (UE) 2016/679
 
@@ -1447,10 +1448,10 @@ Firmando il presente documento, il paziente presta il proprio consenso libero, s
       requires_signature: true,
     });
     if (error) throw error;
-    toast('✅ Modulo GDPR inviato al paziente per la firma digitale', 'ok');
+    toast(_L('✅ Modulo GDPR inviato al paziente per la firma digitale','✅ GDPR form sent to patient for digital signature'), 'ok');
     await renderCartellaDetail(cartellaId);
   } catch (e) {
-    toast('❌ Errore: ' + (e.message || e), 'err');
+    toast('❌ ' + _L('Errore: ','Error: ') + (e.message || e), 'err');
   }
 }
 
@@ -1464,13 +1465,13 @@ function apriModificaBIA(biaId, cartellaId) {
 }
 
 async function delBIA(id, cartellaId) {
-  customConfirm('Eliminare questa misurazione BIA?', async () => {
+  customConfirm(_L('Eliminare questa misurazione BIA?','Delete this BIA measurement?'), async () => {
     showLoading(true);
     await sb.from('bia_records').delete().eq('id', id);
     showLoading(false);
     await renderCartellaDetail(cartellaId);
-    toast('🗑️ BIA eliminata', 'info');
-  }, { danger: true, title: '⚠️ Elimina BIA', okLabel: 'Elimina' });
+    toast(_L('🗑️ BIA eliminata','🗑️ BIA deleted'), 'info');
+  }, { danger: true, title: _L('⚠️ Elimina BIA','⚠️ Delete BIA'), okLabel: _L('Elimina','Delete') });
 }
 
 function apriNCPt(ncptId) {
@@ -1497,43 +1498,43 @@ function caricaPiano(id) {
 }
 
 async function delPiano(id) {
-  customConfirm('Eliminare questo piano?', async () => {
+  customConfirm(_L('Eliminare questo piano?','Delete this plan?'), async () => {
     showLoading(true);
     await sb.from('piani').delete().eq('id', id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
-    toast('🗑️ Piano eliminato', 'info');
-  }, { danger: true, title: '⚠️ Elimina Piano', okLabel: 'Elimina' });
+    toast(_L('🗑️ Piano eliminato','🗑️ Plan deleted'), 'info');
+  }, { danger: true, title: _L('⚠️ Elimina Piano','⚠️ Delete Plan'), okLabel: _L('Elimina','Delete') });
 }
 
 async function delNCPt(id) {
-  customConfirm('Eliminare questa scheda NCPt?', async () => {
+  customConfirm(_L('Eliminare questa scheda NCPt?','Delete this NCPt form?'), async () => {
     showLoading(true);
     await sb.from('ncpt').delete().eq('id', id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
-    toast('🗑️ NCPt eliminato', 'info');
-  }, { danger: true, title: '⚠️ Elimina NCPt', okLabel: 'Elimina' });
+    toast(_L('🗑️ NCPt eliminato','🗑️ NCPt deleted'), 'info');
+  }, { danger: true, title: _L('⚠️ Elimina NCPt','⚠️ Delete NCPt'), okLabel: _L('Elimina','Delete') });
 }
 
 async function delScheda(id) {
-  customConfirm('Eliminare questa scheda valutazione?', async () => {
+  customConfirm(_L('Eliminare questa scheda valutazione?','Delete this assessment form?'), async () => {
     showLoading(true);
     await sb.from('schede_valutazione').delete().eq('id', id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
-    toast('🗑️ Scheda eliminata', 'info');
-  }, { danger: true, title: '⚠️ Elimina Scheda', okLabel: 'Elimina' });
+    toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
+  }, { danger: true, title: _L('⚠️ Elimina Scheda','⚠️ Delete Form'), okLabel: _L('Elimina','Delete') });
 }
 
 async function delNoteSpec(id) {
-  customConfirm('Eliminare questa scheda specialistica?', async () => {
+  customConfirm(_L('Eliminare questa scheda specialistica?','Delete this specialist note?'), async () => {
     showLoading(true);
     await sb.from('note_specialistiche').delete().eq('id', id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
-    toast('🗑️ Scheda eliminata', 'info');
-  }, { danger: true, title: '⚠️ Elimina Scheda', okLabel: 'Elimina' });
+    toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
+  }, { danger: true, title: _L('⚠️ Elimina Scheda','⚠️ Delete Form'), okLabel: _L('Elimina','Delete') });
 }
 
 /* ===== FEATURE 4: Note cliniche rapide SOAP ===== */
@@ -1559,14 +1560,14 @@ function openSoapModal(cartellaId, docRef) {
 }
 
 async function salvaSoap() {
-  if (!_soapCartellaId || !currentUser) { toast('Errore: cartella non valida', 'err'); return; }
+  if (!_soapCartellaId || !currentUser) { toast(_L('Errore: cartella non valida','Error: invalid folder'), 'err'); return; }
   const dataV = document.getElementById('soap-data').value || new Date().toISOString().slice(0, 10);
   const tipoV = document.getElementById('soap-tipo').value;
   const s = document.getElementById('soap-s').value.trim();
   const o = document.getElementById('soap-o').value.trim();
   const a = document.getElementById('soap-a').value.trim();
   const p = document.getElementById('soap-p').value.trim();
-  if (!s && !o && !a && !p) { toast('Compila almeno un campo della nota', 'err'); return; }
+  if (!s && !o && !a && !p) { toast(_L('Compila almeno un campo della nota','Fill in at least one note field'), 'err'); return; }
 
   const dati = { s, o, a, p, tipo_visita: tipoV, data_visita: dataV };
   if (_soapDocRef) dati.doc_ref = _soapDocRef;
@@ -1581,9 +1582,9 @@ async function salvaSoap() {
     visible_to_patient: false
   });
   showLoading(false);
-  if (error) { toast('Errore salvataggio: ' + error.message, 'err'); return; }
+  if (error) { toast(_L('Errore salvataggio: ','Save error: ') + error.message, 'err'); return; }
   closeM('modal-soap');
-  toast('🩺 Nota SOAP salvata', 'ok');
+  toast(_L('🩺 Nota SOAP salvata','🩺 SOAP note saved'), 'ok');
   await renderCartellaDetail(cartellaAperta);
 }
 
@@ -1633,7 +1634,7 @@ function openNewCartella() {
 }
 
 async function editCartella(id) {
-  if (id === _altroCartellaId) { toast('⚠️ La cartella "Altro" non può essere modificata.', 'warn'); return; }
+  if (id === _altroCartellaId) { toast(_L('⚠️ La cartella "Altro" non può essere modificata.','⚠️ The "Other" folder cannot be edited.'), 'warn'); return; }
   showLoading(true);
   const { data } = await sb.from('cartelle').select('*').eq('id', id).single();
   showLoading(false);
@@ -1654,7 +1655,7 @@ async function editCartella(id) {
 
 async function salvaCartella() {
   const nome = document.getElementById('nc-nome').value.trim();
-  if (!nome) { toast('Inserisci il nome', 'err'); return; }
+  if (!nome) { toast(_L('Inserisci il nome','Enter the name'), 'err'); return; }
   const payload = {
     user_id: currentUser.id,
     nome: nome + (document.getElementById('nc-cognome').value.trim() ? ' ' + document.getElementById('nc-cognome').value.trim() : ''),
@@ -1678,7 +1679,7 @@ async function salvaCartella() {
     const isMissingCol = result.error.message && (result.error.message.includes('tags') || result.error.message.includes('column'));
     if (isMissingCol) {
       document.getElementById('nc-tags-warning').style.display = '';
-      toast('⚠️ Colonna mancante — esegui ALTER TABLE nel pannello Supabase SQL', 'warn');
+      toast(_L('⚠️ Colonna mancante — esegui ALTER TABLE nel pannello Supabase SQL','⚠️ Missing column — run ALTER TABLE in the Supabase SQL panel'), 'warn');
       const payloadFallback = { ...payload }; delete payloadFallback.tags;
       let r2;
       if (editingCartellaId) r2 = await sb.from('cartelle').update(payloadFallback).eq('id', editingCartellaId);
@@ -1688,7 +1689,7 @@ async function salvaCartella() {
   }
   closeM('modal-nc');
   _clearNcDraft();
-  toast(editingCartellaId ? '✅ Cartella aggiornata!' : '📁 Cartella creata!', 'ok');
+  toast(editingCartellaId ? _L('✅ Cartella aggiornata!','✅ Folder updated!') : _L('📁 Cartella creata!','📁 Folder created!'), 'ok');
   if (editingCartellaId) {
     await logAuditEvent(editingCartellaId, 'updated_profile', { nome: payload.nome, cognome: payload.cognome || '' });
   }
@@ -1698,8 +1699,8 @@ async function salvaCartella() {
 }
 
 async function delCartella(id) {
-  if (id === _altroCartellaId) { toast('⚠️ La cartella "Altro" non può essere eliminata.', 'warn'); return; }
-  customConfirm('Eliminare questa cartella e tutti i piani al suo interno?', async () => {
+  if (id === _altroCartellaId) { toast(_L('⚠️ La cartella "Altro" non può essere eliminata.','⚠️ The "Other" folder cannot be deleted.'), 'warn'); return; }
+  customConfirm(_L('Eliminare questa cartella e tutti i piani al suo interno?','Delete this folder and all plans inside it?'), async () => {
     showLoading(true);
     await sb.from('piani').delete().eq('cartella_id', id);
     await sb.from('cartelle').delete().eq('id', id);
@@ -1707,8 +1708,8 @@ async function delCartella(id) {
     cartellaAperta = null;
     document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
     loadCartelle();
-    toast('🗑️ Cartella eliminata', 'info');
-  }, { danger: true, title: '⚠️ Elimina Cartella', okLabel: 'Elimina' });
+    toast(_L('🗑️ Cartella eliminata','🗑️ Folder deleted'), 'info');
+  }, { danger: true, title: _L('⚠️ Elimina Cartella','⚠️ Delete Folder'), okLabel: _L('Elimina','Delete') });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1782,11 +1783,11 @@ async function confermaCollegamento() {
     cartella_id: collegaCartellaId
   });
   showLoading(false);
-  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  if (error) { toast('❌ ' + _L('Errore: ','Error: ') + error.message, 'err'); return; }
   // Imposta role='patient' sul profilo del paziente collegato
   await sb.from('profiles').update({ role: 'patient' }).eq('id', collegaFoundUserId);
   closeM('modal-collega');
-  toast('🔗 Paziente collegato!', 'ok');
+  toast(_L('🔗 Paziente collegato!','🔗 Patient linked!'), 'ok');
   await renderCartellaDetail(collegaCartellaId);
 }
 
@@ -1826,8 +1827,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function toggleArchiviaCartella(id, currentlyArchived) {
   const newArchived = !currentlyArchived;
   const msg = newArchived
-    ? 'Archiviare questa cartella? Non sarà più visibile nella griglia principale.'
-    : 'Ripristinare questa cartella come attiva?';
+    ? _L('Archiviare questa cartella? Non sarà più visibile nella griglia principale.','Archive this folder? It will no longer appear in the main grid.')
+    : _L('Ripristinare questa cartella come attiva?','Restore this folder as active?');
   customConfirm(msg, async () => {
     showLoading(true);
     const { error } = await sb.from('cartelle').update({ archived: newArchived }).eq('id', id);
@@ -1835,28 +1836,28 @@ async function toggleArchiviaCartella(id, currentlyArchived) {
     if (error) {
       const isMissingCol = error.message && (error.message.includes('archived') || error.message.includes('column'));
       toast(isMissingCol
-        ? '⚠️ Colonna mancante — esegui: ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE; nel pannello SQL'
+        ? _L('⚠️ Colonna mancante — esegui: ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE; nel pannello SQL','⚠️ Missing column — run: ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE; in the SQL panel')
         : '❌ ' + error.message, isMissingCol ? 'warn' : 'err');
       return;
     }
-    toast(newArchived ? '📦 Cartella archiviata' : '♻️ Cartella ripristinata', 'ok');
+    toast(newArchived ? _L('📦 Cartella archiviata','📦 Folder archived') : _L('♻️ Cartella ripristinata','♻️ Folder restored'), 'ok');
     cartellaAperta = null;
     _saveCartellaAperta(null);
     document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
     await loadCartelle();
-  }, { title: newArchived ? '📦 Archivia Cartella' : '♻️ Ripristina Cartella', okLabel: newArchived ? 'Archivia' : 'Ripristina' });
+  }, { title: newArchived ? _L('📦 Archivia Cartella','📦 Archive Folder') : _L('♻️ Ripristina Cartella','♻️ Restore Folder'), okLabel: newArchived ? _L('Archivia','Archive') : _L('Ripristina','Restore') });
 }
 
 function scollegaPaziente(patientId, cartellaId) {
-  customConfirm('Sei sicuro di voler scollegare questo paziente? Non perderà i suoi dati, ma non sarà più associato a questa cartella.', async () => {
+  customConfirm(_L('Sei sicuro di voler scollegare questo paziente? Non perderà i suoi dati, ma non sarà più associato a questa cartella.','Are you sure you want to unlink this patient? They will not lose their data, but will no longer be associated with this folder.'), async () => {
     showLoading(true);
     const { data, error } = await sb.from('patient_dietitian').delete().eq('patient_id', patientId).eq('dietitian_id', currentUser.id).eq('cartella_id', cartellaId).select();
     showLoading(false);
-    if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
-    if (!data || data.length === 0) { toast('❌ Impossibile scollegare: il collegamento non è stato trovato o non hai i permessi necessari. Contatta l\'amministratore.', 'err'); return; }
-    toast('🔓 Paziente scollegato dalla cartella', 'ok');
+    if (error) { toast('❌ ' + _L('Errore: ','Error: ') + error.message, 'err'); return; }
+    if (!data || data.length === 0) { toast(_L('❌ Impossibile scollegare: il collegamento non è stato trovato o non hai i permessi necessari. Contatta l\'amministratore.','❌ Cannot unlink: the connection was not found or you do not have the required permissions. Contact the administrator.'), 'err'); return; }
+    toast(_L('🔓 Paziente scollegato dalla cartella','🔓 Patient unlinked from folder'), 'ok');
     await renderCartellaDetail(cartellaId);
-  }, { danger: true, title: '⚠️ Scollega Paziente', okLabel: 'Scollega' });
+  }, { danger: true, title: _L('⚠️ Scollega Paziente','⚠️ Unlink Patient'), okLabel: _L('Scollega','Unlink') });
 }
 
 // ═══════════════════════════════════════════════════
@@ -1973,7 +1974,7 @@ async function _specSectionsOk() {
     .map(cb => cb.value);
 
   if (!checked.length) {
-    toast('⚠️ Seleziona almeno una sezione', 'warn');
+    toast(_L('⚠️ Seleziona almeno una sezione','⚠️ Select at least one section'), 'warn');
     return;
   }
 
@@ -1999,7 +2000,7 @@ async function _specSectionsOk() {
     toast('❌ ' + error.message, 'err');
     return;
   }
-  toast('👁️ Visibile al paziente — ' + checked.length + ' sezione/i', 'ok');
+  toast('👁️ ' + _L('Visibile al paziente — ','Visible to patient — ') + checked.length + ' ' + _L('sezione/i','section(s)'), 'ok');
 }
 
 async function _doToggleVisibility(table, itemId, btn) {
@@ -2022,12 +2023,12 @@ async function _doToggleVisibility(table, itemId, btn) {
       btn.textContent = !newVisible ? '👁️' : '🙈';
     }
     const msg = error.message && error.message.includes('visible_to_patient')
-      ? '⚠️ Migrazione DB richiesta: esegui add_visible_to_patient.sql in Supabase'
-      : '❌ Errore: ' + error.message;
+      ? _L('⚠️ Migrazione DB richiesta: esegui add_visible_to_patient.sql in Supabase','⚠️ DB migration required: run add_visible_to_patient.sql in Supabase')
+      : '❌ ' + _L('Errore: ','Error: ') + error.message;
     toast(msg, 'err');
     return;
   }
-  toast(newVisible ? '👁️ Visibile al paziente' : '🙈 Nascosto al paziente', 'ok');
+  toast(newVisible ? _L('👁️ Visibile al paziente','👁️ Visible to patient') : _L('🙈 Nascosto al paziente','🙈 Hidden from patient'), 'ok');
 }
 
 async function toggleItemVisibility(table, itemId) {
@@ -2229,8 +2230,8 @@ async function salvaEsame() {
   const data_esame = document.getElementById('esame-data').value;
   const note = (document.getElementById('esame-note').value || '').trim();
 
-  if (!tipo) { toast('Seleziona il tipo di esame', 'err'); return; }
-  if (!valore) { toast('Inserisci il valore', 'err'); return; }
+  if (!tipo) { toast(_L('Seleziona il tipo di esame','Select the exam type'), 'err'); return; }
+  if (!valore) { toast(_L('Inserisci il valore','Enter the value'), 'err'); return; }
   if (!_esameCartellaId || !currentUser) return;
 
   const { error } = await sb.from('esami_biochimici').insert({
@@ -2244,23 +2245,23 @@ async function salvaEsame() {
   });
 
   if (error) {
-    if (error.code === '42P01') toast('Tabella esami_biochimici mancante — esegui SQL di setup', 'err');
-    else toast('Errore salvataggio: ' + error.message, 'err');
+    if (error.code === '42P01') toast(_L('Tabella esami_biochimici mancante — esegui SQL di setup','Missing esami_biochimici table — run SQL setup'), 'err');
+    else toast(_L('Errore salvataggio: ','Save error: ') + error.message, 'err');
     return;
   }
   _clearEsameDraft();
   closeM('modal-esame');
-  toast('Esame salvato', 'ok');
+  toast(_L('Esame salvato','Exam saved'), 'ok');
   await renderCartellaDetail(_esameCartellaId);
 }
 
 async function deleteEsame(esameId, cartellaId) {
-  customConfirm('Eliminare questo esame biochimico?', async () => {
+  customConfirm(_L('Eliminare questo esame biochimico?','Delete this biochemical exam?'), async () => {
     const { error } = await sb.from('esami_biochimici').delete().eq('id', esameId);
-    if (error) { toast('Errore eliminazione: ' + error.message, 'err'); return; }
-    toast('Esame eliminato', 'ok');
+    if (error) { toast(_L('Errore eliminazione: ','Delete error: ') + error.message, 'err'); return; }
+    toast(_L('Esame eliminato','Exam deleted'), 'ok');
     await renderCartellaDetail(cartellaId);
-  }, { title: '🗑️ Elimina Esame', danger: true, okLabel: 'Elimina' });
+  }, { title: _L('🗑️ Elimina Esame','🗑️ Delete Exam'), danger: true, okLabel: _L('Elimina','Delete') });
 }
 
 // ══════════════════════════════════════════════
@@ -2324,7 +2325,7 @@ async function toggleTimeline(cartellaId, btn) {
 // ══════════════════════════════════════════════
 async function uploadAllegato(input, cartellaId) {
   if (!input.files || !input.files.length) return;
-  if (!currentUser) { toast('Sessione scaduta', 'err'); return; }
+  if (!currentUser) { toast(_L('Sessione scaduta','Session expired'), 'err'); return; }
   showLoading(true);
   let errCount = 0;
   for (const file of input.files) {
@@ -2343,8 +2344,8 @@ async function uploadAllegato(input, cartellaId) {
   }
   showLoading(false);
   input.value = '';
-  if (errCount > 0) toast('⚠️ ' + errCount + ' file non caricati (verifica bucket patient-files in Supabase)', 'warn');
-  else toast('📎 File allegati!', 'ok');
+  if (errCount > 0) toast('⚠️ ' + errCount + ' ' + _L('file non caricati (verifica bucket patient-files in Supabase)','files not uploaded (check patient-files bucket in Supabase)'), 'warn');
+  else toast(_L('📎 File allegati!','📎 Files attached!'), 'ok');
   await renderCartellaDetail(cartellaId);
 }
 
@@ -2352,7 +2353,7 @@ async function downloadAllegato(fileId, storagePath, filename) {
   showLoading(true);
   const { data, error } = await sb.storage.from('patient-files').createSignedUrl(storagePath, 3600);
   showLoading(false);
-  if (error) { toast('Errore generazione URL: ' + error.message, 'err'); return; }
+  if (error) { toast(_L('Errore generazione URL: ','URL generation error: ') + error.message, 'err'); return; }
   const a = document.createElement('a');
   a.href = data.signedUrl;
   a.download = filename;
@@ -2363,14 +2364,14 @@ async function downloadAllegato(fileId, storagePath, filename) {
 }
 
 async function deleteAllegato(fileId, storagePath, cartellaId) {
-  customConfirm('Eliminare questo allegato?', async () => {
+  customConfirm(_L('Eliminare questo allegato?','Delete this attachment?'), async () => {
     showLoading(true);
     await sb.storage.from('patient-files').remove([storagePath]);
     await sb.from('patient_files').delete().eq('id', fileId);
     showLoading(false);
-    toast('🗑️ Allegato eliminato', 'ok');
+    toast(_L('🗑️ Allegato eliminato','🗑️ Attachment deleted'), 'ok');
     await renderCartellaDetail(cartellaId);
-  }, { danger: true, title: '🗑️ Elimina Allegato', okLabel: 'Elimina' });
+  }, { danger: true, title: _L('🗑️ Elimina Allegato','🗑️ Delete Attachment'), okLabel: _L('Elimina','Delete') });
 }
 
 // ══════════════════════════════════════════════
@@ -2444,7 +2445,7 @@ async function apriStoricoEsame(cartellaId, tipo) {
 // ══════════════════════════════════════════════
 async function esportaPDFCartella() {
   const d = window._currentCartellaData;
-  if (!d) { toast('Apri prima la cartella', 'err'); return; }
+  if (!d) { toast(_L('Apri prima la cartella','Open a folder first'), 'err'); return; }
   showLoading(true);
   await new Promise(res => {
     const s = document.createElement('script');
@@ -2453,7 +2454,7 @@ async function esportaPDFCartella() {
     document.head.appendChild(s);
   });
   showLoading(false);
-  if (!window.jspdf) { toast('jsPDF non disponibile', 'err'); return; }
+  if (!window.jspdf) { toast(_L('jsPDF non disponibile','jsPDF not available'), 'err'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const { cart, eta, biaList, esamiBiochimici, piani } = d;
@@ -2573,7 +2574,7 @@ async function esportaPDFCartella() {
 
   const safeName = (cart.nome || 'paziente').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_');
   doc.save('cartella_' + safeName + '.pdf');
-  toast('PDF scaricato!', 'ok');
+  toast(_L('PDF scaricato!','PDF downloaded!'), 'ok');
 }
 
 // ══════════════════════════════════════════════
@@ -2583,9 +2584,9 @@ let _aiPazMessages = [];
 
 function apriAiPaziente() {
   const d = window._currentCartellaData;
-  if (!d) { toast('Apri prima una cartella paziente', 'err'); return; }
+  if (!d) { toast(_L('Apri prima una cartella paziente','Open a patient folder first'), 'err'); return; }
   _aiPazMessages = [];
-  document.getElementById('ai-paz-msgs').innerHTML = '<div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px 0">Fai una domanda su questo paziente per ricevere raccomandazioni nutrizionali personalizzate.</div>';
+  document.getElementById('ai-paz-msgs').innerHTML = `<div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px 0">${_L('Fai una domanda su questo paziente per ricevere raccomandazioni nutrizionali personalizzate.','Ask a question about this patient to receive personalised nutritional recommendations.')}</div>`;
   document.getElementById('ai-paz-input').value = '';
   openM('modal-ai-paziente');
   setTimeout(() => document.getElementById('ai-paz-input').focus(), 200);
@@ -2694,7 +2695,7 @@ function previewCSV(input) {
   reader.onload = function(e) {
     const text = e.target.result;
     const lines = text.split(/\r?\n/).filter(l => l.trim());
-    if (!lines.length) { toast('File CSV vuoto', 'err'); return; }
+    if (!lines.length) { toast(_L('File CSV vuoto','Empty CSV file'), 'err'); return; }
 
     // Parse header
     const header = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
@@ -2703,7 +2704,7 @@ function previewCSV(input) {
       const idx = header.findIndex(h => h === k || h === k.replace('_',' '));
       if (idx >= 0) colMap[k] = idx;
     });
-    if (colMap['nome'] === undefined) { toast('Colonna "nome" mancante', 'err'); return; }
+    if (colMap['nome'] === undefined) { toast(_L('Colonna "nome" mancante','Missing "nome" column'), 'err'); return; }
 
     _csvParsed = [];
     for (let i = 1; i < lines.length; i++) {
@@ -2719,7 +2720,7 @@ function previewCSV(input) {
     const thead = '<tr>' + Object.keys(colMap).map(k => '<th style="padding:4px 8px;background:#0F766E;color:white;font-size:11px;text-align:left">' + k + '</th>').join('') + '</tr>';
     const tbody = preview.map(r => '<tr>' + Object.keys(colMap).map(k => '<td style="padding:4px 8px;font-size:11.5px;border-bottom:1px solid var(--border)">' + esc(r[k] || '') + '</td>').join('') + '</tr>').join('');
     document.getElementById('csv-preview-table').innerHTML = '<table style="border-collapse:collapse;width:100%"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>';
-    document.getElementById('csv-import-info').textContent = _csvParsed.length + ' righe da importare' + (_csvParsed.length > 5 ? ' (mostrate prime 5)' : '');
+    document.getElementById('csv-import-info').textContent = _csvParsed.length + ' ' + _L('righe da importare','rows to import') + (_csvParsed.length > 5 ? ' ' + _L('(mostrate prime 5)','(showing first 5)') : '');
     document.getElementById('csv-preview-wrap').style.display = 'block';
     document.getElementById('csv-import-btn').style.display = _csvParsed.length ? '' : 'none';
   };
@@ -2750,7 +2751,7 @@ async function importaCSV() {
   }
   showLoading(false);
   closeM('modal-importa-csv');
-  toast(ok + ' cartelle create' + (err ? ', ' + err + ' errori' : ''), ok > 0 ? 'ok' : 'err');
+  toast(ok + ' ' + _L('cartelle create','folders created') + (err ? ', ' + err + ' ' + _L('errori','errors') : ''), ok > 0 ? 'ok' : 'err');
   _csvParsed = [];
   loadCartelle();
 }

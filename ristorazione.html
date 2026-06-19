@@ -109,7 +109,7 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>🍽️ Ristorazione Collettiva</h2>
+  <h2>🍽️ <span data-only-lang="it">Ristorazione Collettiva</span><span data-only-lang="en" style="display:none">Collective Catering</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
 
@@ -124,8 +124,14 @@
   <div style="position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
   <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">🍽️</div>
   <div style="flex:1;position:relative">
-    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">Ristorazione Collettiva</div>
-    <div style="font-size:16px;opacity:.88;line-height:1.6">Progettazione menu, gestione diete speciali, allergeni, normativa HACCP e fabbisogni nutrizionali per mense scolastiche, aziendali e sanitarie.</div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:.2px">
+      <span data-only-lang="it">Ristorazione Collettiva</span>
+      <span data-only-lang="en" style="display:none">Collective Catering</span>
+    </div>
+    <div style="font-size:16px;opacity:.88;line-height:1.6">
+      <span data-only-lang="it">Progettazione menu, gestione diete speciali, allergeni, normativa HACCP e fabbisogni nutrizionali per mense scolastiche, aziendali e sanitarie.</span>
+      <span data-only-lang="en" style="display:none">Menu design, special diet management, allergens, HACCP regulations and nutritional requirements for school, workplace and healthcare canteens.</span>
+    </div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🗓️ Menu Settimanale</div>
       <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">⚕️ Diete Speciali</div>
@@ -706,11 +712,16 @@
       <h3>📊 Standard Nutrizionali Pasto</h3>
       <div id="rist-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#EFF6FF;border-radius:8px;font-size:13px"><i>Inserisci le kcal per calcolare i macronutrienti del pasto.</i></div>
       <div class="alert-info alert-box" style="font-size:12px;background:#EFF6FF;border-color:#3B82F6;color:#1E3A5F">
-        <b>💡 Standard nutrizionali per il pranzo:</b><br>
+        <span data-only-lang="it"><b>💡 Standard nutrizionali per il pranzo:</b><br>
         Il pranzo deve coprire il 35–40% del fabbisogno giornaliero.<br>
         Proteine: 15–18% delle kcal totali del pasto.<br>
         CHO: 50–55%, grassi: 28–33%, fibra ≥5g per pasto.<br>
-        Rispettare i LARN 2023 per la specifica fascia d'età dell'utenza.
+        Rispettare i LARN 2023 per la specifica fascia d'età dell'utenza.</span>
+        <span data-only-lang="en" style="display:none"><b>💡 Nutritional standards for lunch:</b><br>
+        Lunch should cover 35–40% of the daily requirement.<br>
+        Protein: 15–18% of total meal kcal.<br>
+        CHO: 50–55%, fat: 28–33%, fibre ≥5g per meal.<br>
+        Follow LARN 2023 for the specific age group of the users.</span>
       </div>
     </div>
   </div>
@@ -816,6 +827,8 @@
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
+
 function showRist(id) {
   autoSavePage_ristorazione();
   document.querySelectorAll('.rist-tab').forEach(t => t.classList.remove('active'));
@@ -951,9 +964,9 @@ function ripristinaDatiRist(dati) {
 }
 
 async function salvaRistorazione() {
-  if (!currentUser) { toast('Effettua il login per salvare','err'); return; }
+  if (!currentUser) { toast(_L('Effettua il login per salvare','Log in to save'),'err'); return; }
   const cartella_id = document.getElementById('rist-cartella').value;
-  if (!cartella_id) { toast('Seleziona una cartella / progetto','err'); return; }
+  if (!cartella_id) { toast(_L('Seleziona una cartella / progetto','Select a folder / project'),'err'); return; }
   const nota = document.getElementById('rist-nota').value.trim() || 'Menu ristorazione ' + new Date().toLocaleDateString('it');
   const dati = raccogliDatiRist();
   { const _p=dati.piano||{},_nc=(document.getElementById('rist-cartella-cw-srch')?.value||'').trim(),_tipo=_p.tipo||'',_utenza=_p.utenza||'',_coperti=_p.coperti||'';
@@ -971,7 +984,7 @@ async function salvaRistorazione() {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast(editingRistNoteId ? '✅ Piano Ristorazione aggiornato!' : '✅ Piano Ristorazione salvato!','ok');
+  toast(editingRistNoteId ? _L('✅ Piano Ristorazione aggiornato!','✅ Catering plan updated!') : _L('✅ Piano Ristorazione salvato!','✅ Catering plan saved!'),'ok');
   if (!editingRistNoteId && result.data?.[0]?.id) editingRistNoteId = result.data[0].id;
   if (window.capturePrintAndSave && editingRistNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRistNoteId, cartellaId: cartella_id, panelSelector: '.rist-panel', silent: true }).catch(err => console.warn('ristorazione.html capture failed:', err));
@@ -982,12 +995,12 @@ async function caricaRistDaNote(noteId) {
   showLoading(true);
   const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
   showLoading(false);
-  if (error || !data) { toast('❌ Impossibile caricare il piano','err'); return; }
+  if (error || !data) { toast(_L('❌ Impossibile caricare il piano','❌ Unable to load the plan'),'err'); return; }
   editingRistNoteId = noteId;
   await _cwSetById('rist-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('rist-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiRist(JSON.parse(data.dati || '{}')); } catch(e) {}
-  toast('✅ Piano Ristorazione caricato','ok');
+  toast(_L('✅ Piano Ristorazione caricato','✅ Catering plan loaded'),'ok');
 }
 
 // ── DIETE SPECIALI INTERATTIVE ──
@@ -1084,7 +1097,7 @@ function generaProto() {
   const attive = DS_DIETE.filter(d => document.getElementById('ds-chk-'+d.id)?.checked);
   const allergs = DS_ALLERGENI.filter(a => document.getElementById('ds-all-'+a.id)?.checked);
   if (!attive.length && !allergs.length) {
-    toast('Seleziona almeno una dieta o allergene', 'err'); return;
+    toast(_L('Seleziona almeno una dieta o allergene','Select at least one diet or allergen'), 'err'); return;
   }
   const today = new Date().toLocaleDateString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric'});
   let html = `<div style="font-size:12px;color:var(--slate-l);margin-bottom:12px">Generato il ${today} · ${attive.length} diete speciali · ${allergs.length} allergeni gestiti</div>`;
@@ -1131,7 +1144,7 @@ function generaProto() {
   document.getElementById('ds-proto-content').innerHTML = html;
   box.style.display = 'block';
   box.scrollIntoView({behavior:'smooth', block:'start'});
-  toast('✅ Protocollo generato!', 'ok');
+  toast(_L('✅ Protocollo generato!','✅ Protocol generated!'), 'ok');
 }
 
 function stampaCompattaRistorazione() {
@@ -1185,7 +1198,7 @@ function apriInPianoAlimentareRistorazione() {
   window.location.href = 'app.html';
 }
 function eliminaPianoRistorazione() {
-  if (!confirm('Eliminare il piano? I dati inseriti verranno persi.')) return;
+  if (!confirm(_L('Eliminare il piano? I dati inseriti verranno persi.','Delete the plan? Entered data will be lost.'))) return;
   [1,2,3,4,5].forEach(i => {
     ['nome','porzione','menu','note'].forEach(f => {
       const el = document.getElementById('rist-m'+i+'-'+f);
@@ -1211,7 +1224,7 @@ const RIST_PE_CONFIG = {
     asilo: {
       kcal_base: 1350,
       macros: {p:14, cho:55, g:31},
-      nota: 'Mensa asilo 3-6 anni: il pasto scolastico copre ~35% del fabbisogno giornaliero (~450 kcal). Porzioni ridotte. Varietà di colori e sapori. No sale aggiunto in eccesso. Latte o yogurt come alternativa. Rispettare le linee guida MIUR.',
+      nota: _L('Mensa asilo 3-6 anni: il pasto scolastico copre ~35% del fabbisogno giornaliero (~450 kcal). Porzioni ridotte. Varietà di colori e sapori. No sale aggiunto in eccesso. Latte o yogurt come alternativa. Rispettare le linee guida MIUR.','Nursery school canteen 3–6 years: the school meal covers ~35% of daily needs (~450 kcal). Reduced portions. Variety of colours and flavours. No added excess salt. Milk or yogurt as alternative. Follow MIUR guidelines.'),
       pasti: [
         {nome:'Spuntino Mattino', emoji:'🍎', items:[
           {nome:'Frutta fresca di stagione', qt:100, unit:'g', kcal:50},
@@ -1237,7 +1250,7 @@ const RIST_PE_CONFIG = {
     elementari: {
       kcal_base: 1640,
       macros: {p:15, cho:55, g:30},
-      nota: 'Mensa elementari 6-10 anni: pasto scolastico copre ~35-40% del fabbisogno (550-650 kcal). Linee guida MIUR. Frequenza pesce 2/sett, legumi 2/sett, carne rossa max 1/sett. Evitare fritti. Pane sempre presente.',
+      nota: _L('Mensa elementari 6-10 anni: pasto scolastico copre ~35-40% del fabbisogno (550-650 kcal). Linee guida MIUR. Frequenza pesce 2/sett, legumi 2/sett, carne rossa max 1/sett. Evitare fritti. Pane sempre presente.','Primary school canteen 6–10 years: school meal covers ~35–40% of daily needs (550–650 kcal). MIUR guidelines. Fish 2×/week, legumes 2×/week, red meat max 1×/week. Avoid fried foods. Bread always included.'),
       pasti: [
         {nome:'Spuntino Mattino', emoji:'🍎', items:[
           {nome:'Frutta fresca di stagione', qt:150, unit:'g', kcal:75},
@@ -1267,7 +1280,7 @@ const RIST_PE_CONFIG = {
     medie: {
       kcal_base: 1961,
       macros: {p:15, cho:55, g:30},
-      nota: 'Mensa scuola media 11-13 anni: pasto copre ~35% del fabbisogno (700-800 kcal). Aumenta il fabbisogno per la crescita puberale. Attenzione a Ca (1300mg/die), Fe (11-18mg/die). Porzioni più abbondanti rispetto alle elementari.',
+      nota: _L('Mensa scuola media 11-13 anni: pasto copre ~35% del fabbisogno (700-800 kcal). Aumenta il fabbisogno per la crescita puberale. Attenzione a Ca (1300mg/die), Fe (11-18mg/die). Porzioni più abbondanti rispetto alle elementari.','Middle school canteen 11–13 years: meal covers ~35% of daily needs (700–800 kcal). Increased requirements for pubertal growth. Note Ca (1300 mg/day), Fe (11–18 mg/day). Larger portions than primary school.'),
       pasti: [
         {nome:'Spuntino Mattino', emoji:'🍎', items:[
           {nome:'Frutta fresca o succo 100%', qt:150, unit:'g', kcal:75},
@@ -1297,7 +1310,7 @@ const RIST_PE_CONFIG = {
     ospedale: {
       kcal_base: 1770,
       macros: {p:18, cho:52, g:30},
-      nota: 'Vitto ospedaliero standard: 1800-2000 kcal/die. Dieta equilibrata, facilmente digeribile. Pasti distribuiti in 3 principali + 2 spuntini. Sale ridotto (< 5g/die). Evitare cibi a rischio microbiologico (carni crude, uova crude). Adattabile a diete speciali (diabetica, iposodica, ecc.).',
+      nota: _L('Vitto ospedaliero standard: 1800-2000 kcal/die. Dieta equilibrata, facilmente digeribile. Pasti distribuiti in 3 principali + 2 spuntini. Sale ridotto (< 5g/die). Evitare cibi a rischio microbiologico (carni crude, uova crude). Adattabile a diete speciali (diabetica, iposodica, ecc.).','Standard hospital diet: 1800–2000 kcal/day. Balanced, easily digestible diet. Meals distributed as 3 main + 2 snacks. Reduced salt (< 5 g/day). Avoid microbiologically risky foods (raw meat, raw eggs). Adaptable to special diets (diabetic, low-sodium, etc.).'),
       pasti: [
         {nome:'Colazione', emoji:'🌅', items:[
           {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
@@ -1331,7 +1344,7 @@ const RIST_PE_CONFIG = {
     casa_riposo: {
       kcal_base: 1640,
       macros: {p:18, cho:52, g:30},
-      nota: 'RSA/Casa di Riposo: 1600-1800 kcal/die in base all\'attività residua. Attenzione a disfagia (IDDSI), osteoporosi (Ca+D), sarcopenia (proteine 1.0-1.2g/kg/die). Consistenza adattata. Abbondante idratazione. Pasti in ambiente confortevole e socializzante.',
+      nota: _L('RSA/Casa di Riposo: 1600-1800 kcal/die in base all\'attività residua. Attenzione a disfagia (IDDSI), osteoporosi (Ca+D), sarcopenia (proteine 1.0-1.2g/kg/die). Consistenza adattata. Abbondante idratazione. Pasti in ambiente confortevole e socializzante.','Nursing home / care facility: 1600–1800 kcal/day based on residual activity. Watch for dysphagia (IDDSI), osteoporosis (Ca+D), sarcopenia (protein 1.0–1.2 g/kg/day). Adapted texture. Ample hydration. Meals in a comfortable, social environment.'),
       pasti: [
         {nome:'Colazione', emoji:'🌅', items:[
           {nome:'Latte intero caldo', qt:200, unit:'mL', kcal:126},
@@ -1364,7 +1377,7 @@ const RIST_PE_CONFIG = {
     mensa_az: {
       kcal_base: 2012,
       macros: {p:18, cho:50, g:32},
-      nota: 'Mensa aziendale / caserma: adulto attivo 25-55 anni. Il pasto copre ~35-40% del fabbisogno (700-900 kcal). Menù a rotazione 4 settimane. Almeno 2 linee: standard e vegetariana. Etichettatura allergeni obbligatoria. Self-service con porzioni indicate.',
+      nota: _L('Mensa aziendale / caserma: adulto attivo 25-55 anni. Il pasto copre ~35-40% del fabbisogno (700-900 kcal). Menù a rotazione 4 settimane. Almeno 2 linee: standard e vegetariana. Etichettatura allergeni obbligatoria. Self-service con porzioni indicate.','Company / military canteen: active adult 25–55 years. Meal covers ~35–40% of daily needs (700–900 kcal). 4-week rotating menu. At least 2 lines: standard and vegetarian. Mandatory allergen labelling. Self-service with indicated portions.'),
       pasti: [
         {nome:'Primo Piatto (a scelta)', emoji:'🍝', items:[
           {nome:'Pasta al ragù o pasta al sugo', qt:80, unit:'g', kcal:284},
@@ -1420,7 +1433,7 @@ function autoRestorePage_ristorazione() {
   } catch(e) {}
 }
 function svuotaSezione_ristorazione() {
-  customConfirm('Sei sicuro di voler svuotare tutti i dati di questa sezione? L\'operazione non può essere annullata.', function() {
+  customConfirm(_L('Sei sicuro di voler svuotare tutti i dati di questa sezione? L\'operazione non può essere annullata.','Are you sure you want to clear all data in this section? This action cannot be undone.'), function() {
     const ap = document.querySelector('.rist-panel.active') || document.querySelector('main');
     if (ap) {
       ap.querySelectorAll('input:not([type=button]):not([type=submit]):not([type=reset]):not([type=file]), textarea').forEach(el => {
@@ -1430,8 +1443,8 @@ function svuotaSezione_ristorazione() {
       ap.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
     }
     localStorage.removeItem('nutriplan_autosave_ristorazione');
-    if (typeof toast === 'function') toast('🗑️ Sezione svuotata', 'ok');
-  }, { title: '⚠️ Conferma Reset', danger: true, okLabel: 'Sì, Reset' });
+    if (typeof toast === 'function') toast(_L('🗑️ Sezione svuotata','🗑️ Section cleared'), 'ok');
+  }, { title: _L('⚠️ Conferma Reset','⚠️ Confirm Reset'), danger: true, okLabel: _L('Sì, Reset','Yes, Reset') });
 }
 document.addEventListener('DOMContentLoaded', function() {
   if (!new URLSearchParams(window.location.search).get('noteId')) autoRestorePage_ristorazione();
@@ -1447,12 +1460,12 @@ function calcVal_rist() {
     const bmi = peso / ((alt/100) ** 2);
     bmiEl.value = bmi.toFixed(1);
     let cat = '', color = '';
-    if      (bmi < 18.5) { cat = 'Sottopeso';          color = '#3B82F6'; }
-    else if (bmi < 25)   { cat = 'Normopeso';           color = '#22C55E'; }
-    else if (bmi < 30)   { cat = 'Sovrappeso';          color = '#F59E0B'; }
-    else if (bmi < 35)   { cat = 'Obesità classe I';    color = '#F97316'; }
-    else if (bmi < 40)   { cat = 'Obesità classe II';   color = '#EF4444'; }
-    else                  { cat = 'Obesità classe III';  color = '#DC2626'; }
+    if      (bmi < 18.5) { cat = _L('Sottopeso','Underweight');         color = '#3B82F6'; }
+    else if (bmi < 25)   { cat = _L('Normopeso','Normal weight');        color = '#22C55E'; }
+    else if (bmi < 30)   { cat = _L('Sovrappeso','Overweight');          color = '#F59E0B'; }
+    else if (bmi < 35)   { cat = _L('Obesità classe I','Obesity class I');   color = '#F97316'; }
+    else if (bmi < 40)   { cat = _L('Obesità classe II','Obesity class II');  color = '#EF4444'; }
+    else                  { cat = _L('Obesità classe III','Obesity class III'); color = '#DC2626'; }
     if (resEl) {
       resEl.style.display = 'block';
       resEl.innerHTML = `BMI <b style="color:${color}">${bmi.toFixed(1)} kg/m²</b> — <b style="color:${color}">${cat}</b>`;

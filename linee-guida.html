@@ -86,9 +86,9 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>📚 Linee Guida Nutrizionali</h2>
+  <h2>📚 <span data-only-lang="it">Linee Guida Nutrizionali</span><span data-only-lang="en" style="display:none">Nutritional Guidelines</span></h2>
   <div class="tbar-actions">
-    <button class="btn btn-ghost btn-sm no-print" onclick="printAllLG()">🖨️ Stampa tutte le linee guida</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="printAllLG()">🖨️ <span data-only-lang="it">Stampa tutte le linee guida</span><span data-only-lang="en" style="display:none">Print all guidelines</span></button>
   </div>
 </div>
 <main id="main">
@@ -96,17 +96,17 @@
   <div style="background:linear-gradient(135deg,#0F766E,#0C5F58);border-radius:14px;padding:20px 24px;margin-bottom:18px;color:white;display:flex;align-items:center;gap:16px;box-shadow:0 4px 18px rgba(15,118,110,.25)">
     <div style="font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">📚</div>
     <div style="flex:1">
-      <div style="font-size:18px;font-weight:700;letter-spacing:.2px;margin-bottom:4px">Linee Guida Nutrizionali</div>
-      <div style="font-size:12.5px;opacity:.85;line-height:1.55">Sintesi delle più recenti linee guida internazionali <b>ESPEN · ESC · EASL · WHO · LARN</b> per la gestione nutrizionale delle principali patologie e per la popolazione sana.</div>
+      <div style="font-size:18px;font-weight:700;letter-spacing:.2px;margin-bottom:4px"><span data-only-lang="it">Linee Guida Nutrizionali</span><span data-only-lang="en" style="display:none">Nutritional Guidelines</span></div>
+      <div style="font-size:12.5px;opacity:.85;line-height:1.55"><span data-only-lang="it">Sintesi delle più recenti linee guida internazionali <b>ESPEN · ESC · EASL · WHO · LARN</b> per la gestione nutrizionale delle principali patologie e per la popolazione sana.</span><span data-only-lang="en" style="display:none">Summary of the most recent international guidelines <b>ESPEN · ESC · EASL · WHO · LARN</b> for nutritional management of key conditions and the healthy population.</span></div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;flex-shrink:0">
       <div id="lg-stat-n" style="font-size:24px;font-weight:700">—</div>
-      <div style="font-size:10.5px;opacity:.8;text-align:center">Linee guida</div>
+      <div style="font-size:10.5px;opacity:.8;text-align:center"><span data-only-lang="it">Linee guida</span><span data-only-lang="en" style="display:none">Guidelines</span></div>
     </div>
   </div>
   <!-- ACCESSO RAPIDO ORGANISMI UFFICIALI -->
   <div class="calc-box no-print" style="margin-bottom:16px;background:linear-gradient(135deg,#0F172A,#0F766E);border:none;color:white">
-    <h3 style="color:white;margin-bottom:12px">🔗 Organismi e Banche Dati Ufficiali — Accesso Diretto</h3>
+    <h3 style="color:white;margin-bottom:12px">🔗 <span data-only-lang="it">Organismi e Banche Dati Ufficiali — Accesso Diretto</span><span data-only-lang="en" style="display:none">Official Bodies & Databases — Direct Access</span></h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
       <a href="https://sinu.it/larn/" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:4px;padding:10px 14px;background:rgba(255,255,255,.12);border-radius:10px;color:white;text-decoration:none;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.18)" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.12)'"><span style="font-size:13px;font-weight:700">📗 LARN — SINU</span><span style="opacity:.75;font-size:11px">V Revisione — Fabbisogni popolazione italiana</span></a>
 <a href="https://www.iss.it/nutrizione" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:4px;padding:10px 14px;background:rgba(255,255,255,.12);border-radius:10px;color:white;text-decoration:none;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.18)" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.12)'"><span style="font-size:13px;font-weight:700">🏛️ ISS — Nutrizione</span><span style="opacity:.75;font-size:11px">Istituto Superiore di Sanità</span></a>
@@ -124,7 +124,7 @@
   </div>
   <div id="lg-grid"></div>
   <div id="lg-empty" style="display:none" class="empty-state">
-    <div class="ei">🔍</div><h3>Nessuna patologia trovata</h3><p>Prova con un termine diverso.</p>
+    <div class="ei">🔍</div><h3><span data-only-lang="it">Nessuna patologia trovata</span><span data-only-lang="en" style="display:none">No condition found</span></h3><p><span data-only-lang="it">Prova con un termine diverso.</span><span data-only-lang="en" style="display:none">Try a different term.</span></p>
   </div>
 </div>
 </main>
@@ -136,6 +136,7 @@
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 const LG_DATA = [
   {id:'diabete',emoji:'🩸',nome:'Diabete Mellito Tipo 2',badge:'ESPEN 2023',colore:'#3B82F6',
    desc:'Approccio nutrizionale basato su basso indice glicemico, alto contenuto di fibre, grassi insaturi, proteine moderate. Obiettivo: controllo glicemico e peso corporeo.',
@@ -2873,43 +2874,43 @@ function buildCard(d) {
     </div>
     <div class="lg-card-body" id="body-${d.id}">
       <div style="display:flex;gap:6px;margin-bottom:12px">
-        <button class="lg-ver-btn active" id="btn-s-${d.id}" onclick="showVer('${d.id}','s')">📋 Versione breve</button>
-        <button class="lg-ver-btn" id="btn-e-${d.id}" onclick="showVer('${d.id}','e')">📖 Versione estesa</button>
+        <button class="lg-ver-btn active" id="btn-s-${d.id}" onclick="showVer('${d.id}','s')">📋 ${_L('Versione breve','Short version')}</button>
+        <button class="lg-ver-btn" id="btn-e-${d.id}" onclick="showVer('${d.id}','e')">📖 ${_L('Versione estesa','Extended version')}</button>
       </div>
       <div id="vs-${d.id}">
         <div class="lg-target-box">
-          <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+          <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 ${_L('Target nutrizionali','Nutritional targets')}</div>
           <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">${d.target}</div>
         </div>
         <p class="lg-note-text">${d.note}</p>
         <div class="lg-link-box">
-          <div><div style="font-size:11px;font-weight:700;color:#1D4ED8">📄 Fonte</div><div style="font-size:11.5px;color:#334155">${d.fonte}</div></div>
-          <a href="${d.url}" target="_blank" rel="noopener" class="lg-link-btn">🔗 Linee Guida Ufficiali →</a>
+          <div><div style="font-size:11px;font-weight:700;color:#1D4ED8">📄 ${_L('Fonte','Source')}</div><div style="font-size:11.5px;color:#334155">${d.fonte}</div></div>
+          <a href="${d.url}" target="_blank" rel="noopener" class="lg-link-btn">🔗 ${_L('Linee Guida Ufficiali →','Official Guidelines →')}</a>
         </div>
       </div>
       <div id="ve-${d.id}" style="display:none">
         <div class="lg-target-box">
-          <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 Target nutrizionali</div>
+          <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:4px">📊 ${_L('Target nutrizionali','Nutritional targets')}</div>
           <div style="font-size:11.5px;color:#1E3A5F;line-height:1.7">${d.target}</div>
         </div>
         <p class="lg-note-text">${d.note}</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
           <div style="background:#F0FDF4;border-radius:8px;padding:10px">
-            <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ALIMENTI CONSIGLIATI</div>
+            <div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ ${_L('ALIMENTI CONSIGLIATI','RECOMMENDED FOODS')}</div>
             <div>${pills(d.ok,'food-ok')}</div>
           </div>
           <div style="background:#FEF2F2;border-radius:8px;padding:10px">
-            <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ DA EVITARE / LIMITARE</div>
+            <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:6px">❌ ${_L('DA EVITARE / LIMITARE','TO AVOID / LIMIT')}</div>
             <div>${pills(d.no,'food-no')}</div>
           </div>
         </div>
         <div class="science-box">
-          <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:6px">📖 Razionale scientifico — ${d.badge}</div>
+          <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:6px">📖 ${_L('Razionale scientifico','Scientific rationale')} — ${d.badge}</div>
           ${d.science}
         </div>
         <div class="lg-link-box">
-          <div><div style="font-size:11px;font-weight:700;color:#1D4ED8">📄 Fonte</div><div style="font-size:11.5px;color:#334155">${d.fonte}</div></div>
-          <a href="${d.url}" target="_blank" rel="noopener" class="lg-link-btn">🔗 Linee Guida Ufficiali →</a>
+          <div><div style="font-size:11px;font-weight:700;color:#1D4ED8">📄 ${_L('Fonte','Source')}</div><div style="font-size:11.5px;color:#334155">${d.fonte}</div></div>
+          <a href="${d.url}" target="_blank" rel="noopener" class="lg-link-btn">🔗 ${_L('Linee Guida Ufficiali →','Official Guidelines →')}</a>
         </div>
       </div>
     </div>`;
@@ -2943,7 +2944,7 @@ function renderAll(filter='') {
   grid.innerHTML = '';
   const q = filter.toLowerCase().trim();
   const filtered = q ? LG_DATA.filter(d => d.dataset_search ? d.dataset_search.includes(q) : (d.nome+' '+d.id+' '+d.badge+' '+d.desc).toLowerCase().includes(q)) : LG_DATA;
-  document.getElementById('lg-count').textContent = filtered.length + ' patologie';
+  document.getElementById('lg-count').textContent = filtered.length + ' ' + _L('patologie','conditions');
   document.getElementById('lg-empty').style.display = filtered.length===0 ? 'block' : 'none';
   const frag = document.createDocumentFragment();
   filtered.forEach((d, i) => {
@@ -2985,6 +2986,8 @@ window.addEventListener('afterprint', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const srch = document.getElementById('lg-search');
+  if (srch) srch.placeholder = _L('🔍 Cerca patologia (es. diabete, cirrosi, osteoporosi...)...','🔍 Search condition (e.g. diabetes, cirrhosis, osteoporosis...)...');
   renderAll();
   const s = document.getElementById('lg-stat-n');
   if(s) s.textContent = LG_DATA.length;

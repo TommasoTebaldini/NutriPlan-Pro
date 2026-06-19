@@ -144,12 +144,14 @@
   <div class="ai-header-box">
     <div style="font-size:44px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2));position:relative;z-index:1">🤖</div>
     <div style="position:relative;z-index:1;flex:1">
-      <div style="font-size:16px;font-weight:700;margin-bottom:3px;letter-spacing:.2px">Assistente Nutrizionale AI</div>
-      <div style="font-size:12px;opacity:.9;line-height:1.6">Supporto professionale basato su <b>ESPEN · ESC · WHO · LARN</b>. Calcoli, approfondimenti su linee guida, supporto alla documentazione clinica.</div>
+      <div data-i18n="ai.header_title" style="font-size:16px;font-weight:700;margin-bottom:3px;letter-spacing:.2px">Assistente Nutrizionale AI</div>
+      <div data-only-lang="it" style="font-size:12px;opacity:.9;line-height:1.6">Supporto professionale basato su <b>ESPEN · ESC · WHO · LARN</b>. Calcoli, approfondimenti su linee guida, supporto alla documentazione clinica.</div>
+      <div data-only-lang="en" style="font-size:12px;opacity:.9;line-height:1.6">Professional support based on <b>ESPEN · ESC · WHO · LARN</b>. Calculations, guideline insights, clinical documentation support.</div>
       <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
         <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:600">🧠 Llama 3.1</span>
         <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:600">⚡ Groq API</span>
-        <span style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:500;opacity:.85">Solo uso professionale</span>
+        <span data-only-lang="it" style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:500;opacity:.85">Solo uso professionale</span>
+        <span data-only-lang="en" style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:500;opacity:.85">For professional use only</span>
       </div>
     </div>
   </div>
@@ -157,13 +159,14 @@
   <div class="ai-stats-bar no-print">
     <span class="ai-stat-pill"><span class="dot"></span>Modello attivo</span>
     <span class="ai-stat-pill">📚 ESPEN 2024</span>
-    <span class="ai-stat-pill">🇮🇹 Italiano</span>
+    <span class="ai-stat-pill" data-only-lang="it">🇮🇹 Italiano</span>
+    <span class="ai-stat-pill" data-only-lang="en">🇬🇧 English</span>
     <span class="ai-stat-pill">🔒 Nessun dato inviato</span>
   </div>
 
   <div class="ai-chips no-print" id="ai-chips">
     <div class="ai-chips-label">Suggerimenti rapidi</div>
-    <div class="ai-chips-group" style="display:flex;flex-wrap:wrap;gap:6px">
+    <div class="ai-chips-group" data-only-lang="it" style="display:flex;flex-wrap:wrap;gap:6px">
       <span class="ai-chip" onclick="sendChip(this)">📊 Calcola fabbisogno proteico per IRC 70kg</span>
       <span class="ai-chip" onclick="sendChip(this)">🥗 Piano per diabete T2 1800 kcal</span>
       <span class="ai-chip" onclick="sendChip(this)">💊 Interazioni warfarin e vitamina K</span>
@@ -173,6 +176,16 @@
       <span class="ai-chip" onclick="sendChip(this)">📋 Genera PES per paziente con cachessia</span>
       <span class="ai-chip" onclick="sendChip(this)">🧪 Albumina e malnutrizione: correlazione</span>
     </div>
+    <div class="ai-chips-group" data-only-lang="en" style="display:flex;flex-wrap:wrap;gap:6px">
+      <span class="ai-chip" onclick="sendChip(this)">📊 Calculate protein needs for CKD patient 70kg</span>
+      <span class="ai-chip" onclick="sendChip(this)">🥗 Meal plan for T2 diabetes 1800 kcal</span>
+      <span class="ai-chip" onclick="sendChip(this)">💊 Warfarin and vitamin K interactions</span>
+      <span class="ai-chip" onclick="sendChip(this)">🏥 GLIM malnutrition criteria</span>
+      <span class="ai-chip" onclick="sendChip(this)">⚡ Energy needs in heart failure</span>
+      <span class="ai-chip" onclick="sendChip(this)">🦴 Calcium and vitamin D in osteoporosis</span>
+      <span class="ai-chip" onclick="sendChip(this)">📋 Generate PES statement for patient with cachexia</span>
+      <span class="ai-chip" onclick="sendChip(this)">🧪 Albumin and malnutrition: correlation</span>
+    </div>
   </div>
 
   <div class="ai-messages" id="ai-messages">
@@ -181,12 +194,15 @@
 
   <div class="ai-input-area">
     <div class="ai-input-row">
-      <textarea class="ai-textarea" id="ai-input" placeholder="Chiedi qualcosa di clinico, nutrizionale o sulle linee guida..." rows="1"
+      <textarea class="ai-textarea" id="ai-input" data-i18n-placeholder="ai.placeholder" placeholder="Chiedi qualcosa di clinico, nutrizionale o sulle linee guida..." rows="1"
         onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
       <button class="ai-send" id="ai-send-btn" onclick="sendMessage()" title="Invia">➤</button>
     </div>
-    <div style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center">
+    <div data-only-lang="it" style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center">
       Strumento di supporto alla documentazione professionale. Non sostituisce il giudizio clinico del professionista sanitario. Powered by Groq AI.
+    </div>
+    <div data-only-lang="en" style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center">
+      Documentation support tool for professional use. Does not replace the clinical judgement of a healthcare professional. Powered by Groq AI.
     </div>
   </div>
 

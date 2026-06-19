@@ -232,7 +232,7 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>📝 NCPt — Nutrition Care Process</h2>
+  <h2>📝 NCPt — <span data-only-lang="it">Nutrition Care Process</span><span data-only-lang="en" style="display:none">Nutrition Care Process</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="printAllNCPt()" title="Stampa tutto">🖨️ Stampa</button>
   </div>
@@ -245,7 +245,7 @@
   <div style="font-size:38px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">📝</div>
   <div>
     <div style="font-size:17px;font-weight:700;letter-spacing:.2px;margin-bottom:3px">Nutrition Care Process (NCPt)</div>
-    <div style="font-size:12px;opacity:.85;line-height:1.55">Processo strutturato in 4 fasi: <b>Valutazione → Diagnosi PES → Intervento → Monitoraggio</b>.<br>Compila ogni sezione e stampa la documentazione clinica completa.</div>
+    <div style="font-size:12px;opacity:.85;line-height:1.55"><span data-only-lang="it">Processo strutturato in 4 fasi: <b>Valutazione → Diagnosi PES → Intervento → Monitoraggio</b>.<br>Compila ogni sezione e stampa la documentazione clinica completa.</span><span data-only-lang="en" style="display:none">Structured 4-step process: <b>Assessment → PES Diagnosis → Intervention → Monitoring</b>.<br>Fill in each section and print the complete clinical documentation.</span></div>
   </div>
 </div>
 
@@ -276,22 +276,22 @@
 <div class="ncpt-progress no-print">
   <div class="ncpt-step-item" id="sp-0" onclick="goTab(0)">
     <div class="ncpt-step-circle">1</div>
-    <div class="ncpt-step-label">Valutazione</div>
+    <div class="ncpt-step-label"><span data-only-lang="it">Valutazione</span><span data-only-lang="en" style="display:none">Assessment</span></div>
   </div>
   <div class="ncpt-step-line" id="sl-0"></div>
   <div class="ncpt-step-item" id="sp-1" onclick="goTab(1)">
     <div class="ncpt-step-circle">2</div>
-    <div class="ncpt-step-label">Diagnosi PES</div>
+    <div class="ncpt-step-label"><span data-only-lang="it">Diagnosi PES</span><span data-only-lang="en" style="display:none">PES Diagnosis</span></div>
   </div>
   <div class="ncpt-step-line" id="sl-1"></div>
   <div class="ncpt-step-item" id="sp-2" onclick="goTab(2)">
     <div class="ncpt-step-circle">3</div>
-    <div class="ncpt-step-label">Intervento</div>
+    <div class="ncpt-step-label"><span data-only-lang="it">Intervento</span><span data-only-lang="en" style="display:none">Intervention</span></div>
   </div>
   <div class="ncpt-step-line" id="sl-2"></div>
   <div class="ncpt-step-item" id="sp-3" onclick="goTab(3)">
     <div class="ncpt-step-circle">4</div>
-    <div class="ncpt-step-label">Monitoraggio</div>
+    <div class="ncpt-step-label"><span data-only-lang="it">Monitoraggio</span><span data-only-lang="en" style="display:none">Monitoring</span></div>
   </div>
 </div>
 
@@ -858,6 +858,7 @@
 // ═══════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 const PROBLEMI_PES = [
   'Apporto energetico insufficiente','Apporto energetico eccessivo',
   'Apporto proteico insufficiente','Malnutrizione proteico-energetica',
@@ -946,7 +947,7 @@ function showCartDD(q='') {
   }
   const filtered = q ? allCartelle.filter(c => c.nome.toLowerCase().includes(q)) : allCartelle;
   if (!filtered.length) {
-    dd.innerHTML='<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella</div>';
+    dd.innerHTML=`<div style="padding:10px;color:var(--slate-l);font-size:12.5px">${_L('Nessuna cartella','No folder')}</div>`;
     dd.style.display='block';
     return;
   }
@@ -979,7 +980,7 @@ function showCartDDMain(q='') {
   }
   const filtered = q ? allCartelle.filter(c => c.nome.toLowerCase().includes(q)) : allCartelle;
   if (!filtered.length) {
-    dd.innerHTML='<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella</div>';
+    dd.innerHTML=`<div style="padding:10px;color:var(--slate-l);font-size:12.5px">${_L('Nessuna cartella','No folder')}</div>`;
     dd.style.display='block';
     return;
   }
@@ -996,11 +997,11 @@ function hideCartDDMain() { const dd=document.getElementById('cart-dd-main'); if
 function populateCartSelect() {
   const sel = document.getElementById('cart-select-main');
   if (!sel) return;
-  sel.innerHTML = '<option value="">-- Nessuna cartella selezionata --</option>';
+  sel.innerHTML = `<option value="">-- ${_L('Nessuna cartella selezionata','No folder selected')} --</option>`;
   allCartelle.forEach(c => {
     const o = document.createElement('option');
     o.value = c.id;
-    o.textContent = '📁 ' + c.nome + (c.ddn ? ' (' + calcolaEta(c.ddn) + ' anni)' : '');
+    o.textContent = '📁 ' + c.nome + (c.ddn ? ' (' + calcolaEta(c.ddn) + ' ' + _L('anni','yrs') + ')' : '');
     if (c.id === currentCartellaId) o.selected = true;
     sel.appendChild(o);
   });
@@ -1021,11 +1022,11 @@ function selCartella(id, nome) {
   if (cart) {
     document.getElementById('paz-bar').classList.add('visible'); document.getElementById('paz-bar').style.display='flex';
     document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
-    document.getElementById('pb-meta').textContent = cart.ddn ? calcolaEta(cart.ddn)+' anni' : '';
+    document.getElementById('pb-meta').textContent = cart.ddn ? calcolaEta(cart.ddn)+' '+_L('anni','yrs') : '';
     document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
     if (!document.getElementById('v-nome').value) document.getElementById('v-nome').value = cart.nome;
   }
-  toast('📁 Cartella: '+nome,'info');
+  toast('📁 ' + _L('Cartella','Folder') + ': '+nome,'info');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1329,7 +1330,7 @@ function renderProblemiChips() {
 function addPESwith(problema) {
   pesList.push({p:problema, e:'', s:''});
   renderPES();
-  toast('PES aggiunto!','ok');
+  toast(_L('PES aggiunto!','PES added!'),'ok');
 }
 
 function addPES() {
@@ -1502,18 +1503,18 @@ function salvaStorEntry() {
     mg:g('sf-mg'),kcal:g('sf-kcal'),hba1c:g('sf-hba1c'),
     pa:g('sf-pa'),note:g('sf-note')
   };
-  if(!entry.peso&&!entry.bmi&&!entry.kcal){toast('Inserisci almeno un valore','err');return;}
+  if(!entry.peso&&!entry.bmi&&!entry.kcal){toast(_L('Inserisci almeno un valore','Enter at least one value'),'err');return;}
   storici.unshift(entry);
   renderStor();
   document.getElementById('stor-form').style.display='none';
   ['sf-peso','sf-bmi','sf-vita','sf-mg','sf-kcal','sf-hba1c','sf-pa','sf-note'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
-  toast('📊 Misurazione salvata!','ok');
+  toast(_L('📊 Misurazione salvata!','📊 Measurement saved!'),'ok');
 }
 
 function printStorico() {
-  if (!storici.length) { toast('Nessuna misurazione da stampare', 'warn'); return; }
+  if (!storici.length) { toast(_L('Nessuna misurazione da stampare','No measurements to print'), 'warn'); return; }
   document.body.dataset.printStorico = '1';
   window.print();
   window.addEventListener('afterprint', function cb() {
@@ -1658,7 +1659,7 @@ function raccogliDati() {
 }
 
 async function salvaNCPt() {
-  if(!currentUser){ toast('Effettua il login per salvare','err'); return; }
+  if(!currentUser){ toast(_L('Effettua il login per salvare','Log in to save'),'err'); return; }
   // If no cartella selected but only one result in search, auto-select it
   if(!currentCartellaId){
     const srch = document.getElementById('ncpt-cartella-cw-srch');
@@ -1667,11 +1668,11 @@ async function salvaNCPt() {
       const match = allCartelle.filter(c => c.nome.toLowerCase().includes(q));
       if(match.length === 1) {
         currentCartellaId = match[0].id;
-        toast('📁 Cartella selezionata: ' + match[0].nome, 'info');
+        toast('📁 ' + _L('Cartella selezionata','Folder selected') + ': ' + match[0].nome, 'info');
       }
     }
     if(!currentCartellaId){
-      toast('⚠️ Seleziona una cartella paziente dalla lista','err');
+      toast(_L('⚠️ Seleziona una cartella paziente dalla lista','⚠️ Select a patient folder from the list'),'err');
       _cwShow('ncpt-cartella-cw', q);
       return;
     }
@@ -1690,12 +1691,12 @@ async function salvaNCPt() {
   showLoading(false);
   if(result.error){
     if(result.error.code==='42P01'){
-      toast('Tabella "ncpt" mancante — esegui SQL','err');
+      toast(_L('Tabella "ncpt" mancante — esegui SQL','Table "ncpt" missing — run SQL'),'err');
       console.error('SQL:\ncreate table ncpt(id uuid default gen_random_uuid() primary key,cartella_id uuid references cartelle(id) on delete cascade,user_id uuid references auth.users not null,valutazione text,diagnosi text,intervento text,monitoraggio text,created_at timestamptz default now(),updated_at timestamptz default now(),visible_to_patient boolean not null default false);\nalter table ncpt enable row level security;\ncreate policy "Proprio ncpt" on ncpt for all using(auth.uid()=user_id);');
     } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast('💾 NCPt salvato nella cartella!','ok');
+  toast(_L('💾 NCPt salvato nella cartella!','💾 NCPt saved to folder!'),'ok');
   if (window.capturePrintAndSave && currentNcptId) {
     capturePrintAndSave({
       table: 'ncpt',
@@ -1940,7 +1941,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
         }
         caricaDati(ncptData);
-        toast('📂 NCPt caricato!','ok');
+        toast(_L('📂 NCPt caricato!','📂 NCPt loaded!'),'ok');
       }
     } else if(newNcptCartella) {
       sessionStorage.removeItem('newNcptCartella');
@@ -1952,7 +1953,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
         document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
         document.getElementById('v-nome').value = cart.nome;
-        toast('📋 Nuovo NCPt per: '+cart.nome,'info');
+        toast('📋 ' + _L('Nuovo NCPt per','New NCPt for') + ': '+cart.nome,'info');
       }
     } else {
       autoRestorePage_ncpt();

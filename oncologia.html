@@ -191,30 +191,30 @@
     <!-- NRS-2002 -->
     <div class="calc-box">
       <h3>🔍 NRS-2002 (Nutritional Risk Screening)</h3>
-      <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px">Pre-screening: se anche solo 1 risposta è SÌ → procedere con lo screening completo.</p>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px"><span data-only-lang="it">Pre-screening: se anche solo 1 risposta è SÌ → procedere con lo screening completo.</span><span data-only-lang="en" style="display:none">Pre-screening: if even just 1 answer is YES → proceed with the full screening.</span></p>
       <div style="margin-bottom:10px">
         <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:6px">PRE-SCREENING</div>
         <div style="display:flex;flex-direction:column;gap:6px">
           <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps1" onchange="calcNRS()"> BMI &lt; 20,5 kg/m²</label>
-          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps2" onchange="calcNRS()"> Perdita di peso nelle ultime settimane</label>
-          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps3" onchange="calcNRS()"> Riduzione apporto alimentare nella settimana corrente</label>
-          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps4" onchange="calcNRS()"> Paziente con patologia grave / terapia intensiva</label>
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps2" onchange="calcNRS()"> <span data-only-lang="it">Perdita di peso nelle ultime settimane</span><span data-only-lang="en" style="display:none">Weight loss in the last few weeks</span></label>
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps3" onchange="calcNRS()"> <span data-only-lang="it">Riduzione apporto alimentare nella settimana corrente</span><span data-only-lang="en" style="display:none">Reduced dietary intake in the current week</span></label>
+          <label style="font-size:12.5px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="nrs-ps4" onchange="calcNRS()"> <span data-only-lang="it">Paziente con patologia grave / terapia intensiva</span><span data-only-lang="en" style="display:none">Patient with serious illness / intensive care</span></label>
         </div>
       </div>
       <div id="nrs-full" style="display:none">
-        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px;margin-top:12px">STATO NUTRIZIONALE (0–3)</div>
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px;margin-top:12px"><span data-only-lang="it">STATO NUTRIZIONALE (0–3)</span><span data-only-lang="en" style="display:none">NUTRITIONAL STATUS (0–3)</span></div>
         <div id="nrs-stato-btns" style="margin-bottom:8px">
-          <button class="score-btn" data-nrs-stato="0" onclick="selNRS('stato',0)">0 — Normale</button>
-          <button class="score-btn" data-nrs-stato="1" onclick="selNRS('stato',1)">1 — Lieve (perdita 5–10% in 3 mesi, ridotto 50–75%)</button>
-          <button class="score-btn" data-nrs-stato="2" onclick="selNRS('stato',2)">2 — Moderato (perdita &gt;10% in 2 mesi, ridotto 25–50%)</button>
-          <button class="score-btn" data-nrs-stato="3" onclick="selNRS('stato',3)">3 — Grave (perdita &gt;10–15%, ridotto &lt;25% o BMI &lt;18,5)</button>
+          <button class="score-btn" data-nrs-stato="0" onclick="selNRS('stato',0)"><span data-only-lang="it">0 — Normale</span><span data-only-lang="en" style="display:none">0 — Normal</span></button>
+          <button class="score-btn" data-nrs-stato="1" onclick="selNRS('stato',1)"><span data-only-lang="it">1 — Lieve (perdita 5–10% in 3 mesi, ridotto 50–75%)</span><span data-only-lang="en" style="display:none">1 — Mild (5–10% loss in 3 months, intake reduced 50–75%)</span></button>
+          <button class="score-btn" data-nrs-stato="2" onclick="selNRS('stato',2)"><span data-only-lang="it">2 — Moderato (perdita &gt;10% in 2 mesi, ridotto 25–50%)</span><span data-only-lang="en" style="display:none">2 — Moderate (loss &gt;10% in 2 months, intake reduced 25–50%)</span></button>
+          <button class="score-btn" data-nrs-stato="3" onclick="selNRS('stato',3)"><span data-only-lang="it">3 — Grave (perdita &gt;10–15%, ridotto &lt;25% o BMI &lt;18,5)</span><span data-only-lang="en" style="display:none">3 — Severe (loss &gt;10–15%, intake &lt;25% or BMI &lt;18.5)</span></button>
         </div>
-        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">GRAVITÀ MALATTIA (0–3)</div>
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px"><span data-only-lang="it">GRAVITÀ MALATTIA (0–3)</span><span data-only-lang="en" style="display:none">DISEASE SEVERITY (0–3)</span></div>
         <div id="nrs-mal-btns" style="margin-bottom:12px">
-          <button class="score-btn" data-nrs-mal="0" onclick="selNRS('mal',0)">0 — Normale</button>
-          <button class="score-btn" data-nrs-mal="1" onclick="selNRS('mal',1)">1 — Lieve (frattura anca, pazienti cronici, BPCO, dialisi)</button>
-          <button class="score-btn" data-nrs-mal="2" onclick="selNRS('mal',2)">2 — Moderato (chirurgia addominale, stroke, polmonite, ematologia)</button>
-          <button class="score-btn" data-nrs-mal="3" onclick="selNRS('mal',3)">3 — Grave (TI, trapianto, chirurgia addominale maggiore)</button>
+          <button class="score-btn" data-nrs-mal="0" onclick="selNRS('mal',0)"><span data-only-lang="it">0 — Normale</span><span data-only-lang="en" style="display:none">0 — Normal</span></button>
+          <button class="score-btn" data-nrs-mal="1" onclick="selNRS('mal',1)"><span data-only-lang="it">1 — Lieve (frattura anca, pazienti cronici, BPCO, dialisi)</span><span data-only-lang="en" style="display:none">1 — Mild (hip fracture, chronic patients, COPD, dialysis)</span></button>
+          <button class="score-btn" data-nrs-mal="2" onclick="selNRS('mal',2)"><span data-only-lang="it">2 — Moderato (chirurgia addominale, stroke, polmonite, ematologia)</span><span data-only-lang="en" style="display:none">2 — Moderate (abdominal surgery, stroke, pneumonia, haematology)</span></button>
+          <button class="score-btn" data-nrs-mal="3" onclick="selNRS('mal',3)"><span data-only-lang="it">3 — Grave (TI, trapianto, chirurgia addominale maggiore)</span><span data-only-lang="en" style="display:none">3 — Severe (ICU, transplant, major abdominal surgery)</span></button>
         </div>
         <div class="nf" style="max-width:150px;margin-bottom:12px">
           <label>Età (anni)</label>
@@ -227,7 +227,7 @@
     <!-- PG-SGA Semplificato -->
     <div class="calc-box">
       <h3>🩺 PG-SGA Semplificato (oncologico)</h3>
-      <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px">Patient-Generated Subjective Global Assessment — strumento specifico per oncologia (Ottery, 1994).</p>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px">Patient-Generated Subjective Global Assessment — <span data-only-lang="it">strumento specifico per oncologia (Ottery, 1994).</span><span data-only-lang="en" style="display:none">validated oncology-specific tool (Ottery, 1994).</span></p>
       <div class="nf" style="margin-bottom:10px">
         <label>Variazione di peso (1 mese)</label>
         <select id="pgsga-peso" onchange="calcPGSGA()">
@@ -380,18 +380,18 @@
 
     <div class="calc-box">
       <h3>🥩 Fabbisogno Proteico</h3>
-      <p style="font-size:12px;color:var(--slate-l);margin-bottom:12px">ESPEN 2021: obiettivo ≥ 1,0 g/kg/die; ottimale 1,2–1,5 g/kg/die; cachessia grave fino a 2,0 g/kg/die.</p>
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:12px"><span data-only-lang="it">ESPEN 2021: obiettivo ≥ 1,0 g/kg/die; ottimale 1,2–1,5 g/kg/die; cachessia grave fino a 2,0 g/kg/die.</span><span data-only-lang="en" style="display:none">ESPEN 2021: target ≥ 1.0 g/kg/day; optimal 1.2–1.5 g/kg/day; severe cachexia up to 2.0 g/kg/day.</span></p>
       <div id="prot-result"></div>
       <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
-        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">OBIETTIVO PERSONALIZZATO</div>
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px"><span data-only-lang="it">OBIETTIVO PERSONALIZZATO</span><span data-only-lang="en" style="display:none">PERSONALISED TARGET</span></div>
         <div class="nf"><label>g/kg/die scelto</label>
           <input type="number" id="f-prot-scelto" step="0.1" min="0.8" max="2.5" value="1.2" oninput="calcFabbONC()" placeholder="es. 1.2">
         </div>
         <div id="prot-custom-result" style="margin-top:8px"></div>
       </div>
       <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
-        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">💧 IDRATAZIONE</div>
-        <div style="font-size:12.5px;color:var(--slate-m)" id="idrat-result">Calcola prima il peso corporeo.</div>
+        <div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px"><span data-only-lang="it">💧 IDRATAZIONE</span><span data-only-lang="en" style="display:none">💧 HYDRATION</span></div>
+        <div style="font-size:12.5px;color:var(--slate-m)" id="idrat-result"><span data-only-lang="it">Calcola prima il peso corporeo.</span><span data-only-lang="en" style="display:none">Enter body weight first.</span></div>
       </div>
     </div>
   </div>
@@ -399,14 +399,22 @@
   <div class="calc-box">
     <h3>📊 Range kcal/kg/die per fase clinica (ESPEN 2021)</h3>
     <table class="food-table">
-      <thead><tr><th>Situazione clinica</th><th>kcal/kg/die</th><th>Proteine g/kg/die</th><th>Note</th></tr></thead>
-      <tbody>
+      <thead><tr><th><span data-only-lang="it">Situazione clinica</span><span data-only-lang="en" style="display:none">Clinical situation</span></th><th>kcal/kg/<span data-only-lang="it">die</span><span data-only-lang="en" style="display:none">day</span></th><th><span data-only-lang="it">Proteine g/kg/die</span><span data-only-lang="en" style="display:none">Protein g/kg/day</span></th><th>Note</th></tr></thead>
+      <tbody data-only-lang="it">
         <tr><td>Stabile / remissione</td><td><b>25–30</b></td><td>1,0–1,2</td><td>Mantenimento peso corporeo</td></tr>
         <tr><td>Chemioterapia / radioterapia</td><td><b>25–30</b></td><td>1,2–1,5</td><td>Adeguare ai sintomi e tolleranza</td></tr>
         <tr><td>Post-chirurgia addominale</td><td><b>25–30</b></td><td>1,2–1,5</td><td>Progressione dieta orale rapida</td></tr>
         <tr><td>Cachessia (perdita &gt;5%)</td><td><b>28–35</b></td><td>1,5–2,0</td><td>Supporto nutrizionale intensivo</td></tr>
         <tr><td>Cure palliative / terminale</td><td><b>20–25</b></td><td>1,0–1,2</td><td>Confort, qualità di vita</td></tr>
         <tr><td>Allettato / catabolismo grave</td><td><b>20–25</b></td><td>1,2–1,5</td><td>Evitare sovralimentazione</td></tr>
+      </tbody>
+      <tbody data-only-lang="en" style="display:none">
+        <tr><td>Stable / remission</td><td><b>25–30</b></td><td>1.0–1.2</td><td>Maintain body weight</td></tr>
+        <tr><td>Chemotherapy / radiotherapy</td><td><b>25–30</b></td><td>1.2–1.5</td><td>Adapt to symptoms and tolerance</td></tr>
+        <tr><td>Post-abdominal surgery</td><td><b>25–30</b></td><td>1.2–1.5</td><td>Rapid oral diet progression</td></tr>
+        <tr><td>Cachexia (loss &gt;5%)</td><td><b>28–35</b></td><td>1.5–2.0</td><td>Intensive nutritional support</td></tr>
+        <tr><td>Palliative / terminal care</td><td><b>20–25</b></td><td>1.0–1.2</td><td>Comfort, quality of life</td></tr>
+        <tr><td>Bedridden / severe catabolism</td><td><b>20–25</b></td><td>1.2–1.5</td><td>Avoid overfeeding</td></tr>
       </tbody>
     </table>
   </div>
@@ -441,33 +449,59 @@
         ESPEN 2021: prefer the oral/enteral route. ONS indicated when oral intake is &lt; 60% of requirements for &gt; 1–2 weeks despite nutritional counselling.
       </div>
       <table class="food-table">
-        <thead><tr><th>Formulazione</th><th>Indicazione</th><th>Apporto tipico</th></tr></thead>
-        <tbody>
+        <thead><tr><th><span data-only-lang="it">Formulazione</span><span data-only-lang="en" style="display:none">Formulation</span></th><th><span data-only-lang="it">Indicazione</span><span data-only-lang="en" style="display:none">Indication</span></th><th><span data-only-lang="it">Apporto tipico</span><span data-only-lang="en" style="display:none">Typical intake</span></th></tr></thead>
+        <tbody data-only-lang="it">
           <tr><td><b>Ipercalorica ipoproteica</b> (es. 1,5–2,4 kcal/mL)</td><td>Cachessia, ridotta tolleranza volumi</td><td>200–300 mL × 2/die</td></tr>
           <tr><td><b>Immunonutrizionale</b> (arginina, ω-3, glutammina)</td><td>Pre/post-chirurgia, chemio attiva</td><td>200 mL × 2/die × 5–7 gg preop</td></tr>
           <tr><td><b>Specifica per oncologia</b> (EPA 2g/die)</td><td>Cachessia, stabilizzare peso</td><td>250 mL × 2/die</td></tr>
           <tr><td><b>Modulare proteica</b></td><td>Insufficienza proteica isolata</td><td>20–30 g proteine/giorno</td></tr>
           <tr><td><b>Semi-elementare</b></td><td>Mucosite grave, malassorbimento</td><td>Secondo prescrizione</td></tr>
         </tbody>
+        <tbody data-only-lang="en" style="display:none">
+          <tr><td><b>Hypercaloric, low-protein</b> (e.g. 1.5–2.4 kcal/mL)</td><td>Cachexia, reduced volume tolerance</td><td>200–300 mL × 2/day</td></tr>
+          <tr><td><b>Immunonutritional</b> (arginine, ω-3, glutamine)</td><td>Pre/post-surgery, active chemotherapy</td><td>200 mL × 2/day × 5–7 days pre-op</td></tr>
+          <tr><td><b>Oncology-specific</b> (EPA 2g/day)</td><td>Cachexia, stabilise weight</td><td>250 mL × 2/day</td></tr>
+          <tr><td><b>Modular protein</b></td><td>Isolated protein deficiency</td><td>20–30 g protein/day</td></tr>
+          <tr><td><b>Semi-elemental</b></td><td>Severe mucositis, malabsorption</td><td>As prescribed</td></tr>
+        </tbody>
       </table>
     </div>
 
     <div class="calc-box">
       <h3>🔬 Immunonutrizione e Supplementi</h3>
-      <div class="guide-item" style="margin-bottom:8px">
-        <b>🐟 Omega-3 (EPA/DHA)</b> — 2–4 g EPA/die: rallenta la progressione della cachessia, riduce l'infiammazione (PCR ↓, citochine ↓). Indicato in pazienti con perdita di peso &gt; 5% o cachessia attiva.
+      <div data-only-lang="it">
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>🐟 Omega-3 (EPA/DHA)</b> — 2–4 g EPA/die: rallenta la progressione della cachessia, riduce l'infiammazione (PCR ↓, citochine ↓). Indicato in pazienti con perdita di peso &gt; 5% o cachessia attiva.
+        </div>
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>💪 Glutammina</b> — 0,5 g/kg/die: riduce mucosite da radioterapia oro-faringea e neuropatia periferica da oxaliplatino. Non indicata in LLA e nei tumori solidi in fase di crescita attiva.
+        </div>
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>🥩 Arginina</b> — 12–15 g/die (immunonutrizione pre-chirurgica): migliora risposta immunitaria e cicatrizzazione. Usare con cautela in cachessia avanzata.
+        </div>
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>☀️ Vitamina D</b> — Carenza comune (&lt; 20 ng/mL): 1000–2000 UI/die come mantenimento. Dosi terapeutiche se grave carenza (50.000 UI/settimana × 8 settimane).
+        </div>
+        <div class="guide-item">
+          <b>⚠️ Antiossidanti (C, E, beta-carotene)</b> — Evitare alte dosi durante chemioterapia/radioterapia: possono ridurre l'efficacia del trattamento interferendo con i meccanismi ossidativi citotossici.
+        </div>
       </div>
-      <div class="guide-item" style="margin-bottom:8px">
-        <b>💪 Glutammina</b> — 0,5 g/kg/die: riduce mucosite da radioterapia oro-faringea e neuropatia periferica da oxaliplatino. Non indicata in LLA e nei tumori solidi in fase di crescita attiva.
-      </div>
-      <div class="guide-item" style="margin-bottom:8px">
-        <b>🥩 Arginina</b> — 12–15 g/die (immunonutrizione pre-chirurgica): migliora risposta immunitaria e cicatrizzazione. Usare con cautela in cachessia avanzata.
-      </div>
-      <div class="guide-item" style="margin-bottom:8px">
-        <b>☀️ Vitamina D</b> — Carenza comune (&lt; 20 ng/mL): 1000–2000 UI/die come mantenimento. Dosi terapeutiche se grave carenza (50.000 UI/settimana × 8 settimane).
-      </div>
-      <div class="guide-item">
-        <b>⚠️ Antiossidanti (C, E, beta-carotene)</b> — Evitare alte dosi durante chemioterapia/radioterapia: possono ridurre l'efficacia del trattamento interferendo con i meccanismi ossidativi citotossici.
+      <div data-only-lang="en" style="display:none">
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>🐟 Omega-3 (EPA/DHA)</b> — 2–4 g EPA/day: slows cachexia progression, reduces inflammation (CRP ↓, cytokines ↓). Indicated in patients with weight loss &gt; 5% or active cachexia.
+        </div>
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>💪 Glutamine</b> — 0.5 g/kg/day: reduces mucositis from oropharyngeal radiotherapy and peripheral neuropathy from oxaliplatin. Not indicated in ALL or solid tumours in active growth phase.
+        </div>
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>🥩 Arginine</b> — 12–15 g/day (pre-surgical immunonutrition): improves immune response and wound healing. Use with caution in advanced cachexia.
+        </div>
+        <div class="guide-item" style="margin-bottom:8px">
+          <b>☀️ Vitamin D</b> — Common deficiency (&lt; 20 ng/mL): 1000–2000 IU/day for maintenance. Therapeutic doses if severe deficiency (50,000 IU/week × 8 weeks).
+        </div>
+        <div class="guide-item">
+          <b>⚠️ Antioxidants (C, E, beta-carotene)</b> — Avoid high doses during chemotherapy/radiotherapy: may reduce treatment efficacy by interfering with cytotoxic oxidative mechanisms.
+        </div>
       </div>
     </div>
   </div>
@@ -475,12 +509,18 @@
   <div class="calc-box">
     <h3>🏥 Nutrizione Artificiale in Oncologia</h3>
     <table class="food-table">
-      <thead><tr><th>Via</th><th>Indicazione</th><th>Durata prevista</th><th>Note</th></tr></thead>
-      <tbody>
+      <thead><tr><th><span data-only-lang="it">Via</span><span data-only-lang="en" style="display:none">Route</span></th><th><span data-only-lang="it">Indicazione</span><span data-only-lang="en" style="display:none">Indication</span></th><th><span data-only-lang="it">Durata prevista</span><span data-only-lang="en" style="display:none">Expected duration</span></th><th>Note</th></tr></thead>
+      <tbody data-only-lang="it">
         <tr><td><b>NED (sondino)</b></td><td>Tumori testa-collo, esofago; mucosite grave</td><td>&gt; 2 settimane</td><td>Preferire PEG se &gt; 4 settimane</td></tr>
         <tr><td><b>PEG/PEG-J</b></td><td>Neoplasie testa-collo in radioterapia; gastroparesi</td><td>Lungo termine</td><td>Posizionare prima di radioterapia</td></tr>
         <tr><td><b>Parenterale supplementare</b></td><td>NED non sufficiente; malassorbimento grave</td><td>Fino a recupero via enterale</td><td>Ridurre quando possibile</td></tr>
         <tr><td><b>NPT domiciliare</b></td><td>Ostruzione intestinale cronica; cure palliative selezionate</td><td>Settimane-mesi</td><td>Valutare QoL e aspettativa di vita</td></tr>
+      </tbody>
+      <tbody data-only-lang="en" style="display:none">
+        <tr><td><b>NGT (nasogastric tube)</b></td><td>Head-neck, oesophageal tumours; severe mucositis</td><td>&gt; 2 weeks</td><td>Prefer PEG if &gt; 4 weeks</td></tr>
+        <tr><td><b>PEG/PEG-J</b></td><td>Head-neck cancers undergoing radiotherapy; gastroparesis</td><td>Long-term</td><td>Position before radiotherapy</td></tr>
+        <tr><td><b>Supplemental parenteral</b></td><td>NGT insufficient; severe malabsorption</td><td>Until enteral route recovered</td><td>Reduce when possible</td></tr>
+        <tr><td><b>Home TPN</b></td><td>Chronic intestinal obstruction; selected palliative care</td><td>Weeks–months</td><td>Assess QoL and life expectancy</td></tr>
       </tbody>
     </table>
     <div class="nf" style="margin-top:14px"><label>Piano di supporto nutrizionale prescelto</label>
@@ -512,75 +552,140 @@
     <b>🤢 Nutritional Symptom Management</b> — Oncological treatments often cause side effects that impact dietary intake. Personalised nutritional management reduces malnutrition and improves treatment tolerance.
   </div>
 
-  <div class="grid-2">
-    <div class="symp-card">
-      <h4>🤢 Nausea e Vomito</h4>
-      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
-        <li>Pasti piccoli e frequenti (5–6/die), a temperatura ambiente o freddi</li>
-        <li>Evitare odori forti, cibi grassi, fritti, speziati</li>
-        <li>Preferire: crackers, riso, toast, banana, brodo</li>
-        <li>Bere liquidi freddi lentamente tra i pasti (non durante)</li>
-        <li>Gengivale allo zenzero può ridurre la nausea</li>
-        <li>Coordinare i pasti con l'antiemetico (assumere 30 min prima)</li>
-      </ul>
+  <div data-only-lang="it">
+    <div class="grid-2">
+      <div class="symp-card">
+        <h4>🤢 Nausea e Vomito</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Pasti piccoli e frequenti (5–6/die), a temperatura ambiente o freddi</li>
+          <li>Evitare odori forti, cibi grassi, fritti, speziati</li>
+          <li>Preferire: crackers, riso, toast, banana, brodo</li>
+          <li>Bere liquidi freddi lentamente tra i pasti (non durante)</li>
+          <li>Gengivale allo zenzero può ridurre la nausea</li>
+          <li>Coordinare i pasti con l'antiemetico (assumere 30 min prima)</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>😮 Mucosite / Stomatite</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Cibi morbidi, frullati, puree, budini, gelato (freddo analgesico)</li>
+          <li>Evitare cibi acidi (agrumi, pomodoro), piccanti, duri, croccanti</li>
+          <li>Sciacqui con soluzione salina 0,9% prima e dopo i pasti</li>
+          <li>Temperatura tiepida/fredda — evitare il caldo</li>
+          <li>Se grado 3–4 → valutare ONS semi-elementare o NED</li>
+          <li>Glutammina 15 g × 2/die in mucosite da radioterapia orale</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>💧 Diarrea (da chemio/radioterapia)</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Dieta a basso residuo (BRAT: banana, riso, mela cotta, toast)</li>
+          <li>Evitare fibre insolubili, latticini (tranne yogurt), grassi, spezie</li>
+          <li>Idratazione intensiva: ≥ 2 L/die (ORS in caso di grave disidratazione)</li>
+          <li>Probiotici: L. rhamnosus GG utile in diarrea da radioterapia pelvica</li>
+          <li>Diarrea da irinotecano: loperamide ad alte dosi (protocollo medico)</li>
+          <li>Latticini ridotti se sospetta intolleranza transitoria al lattosio</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>🚫 Anoressia / Cachessia</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Cibi preferiti del paziente, elevata densità calorica</li>
+          <li>Arricchire i pasti con olio, burro, panna, parmigiano, proteine in polvere</li>
+          <li>Corticosteroidi a breve termine (prednisone 20 mg/die) possono stimolare appetito</li>
+          <li>Megestrolo acetato: ultima opzione in cachessia refrattaria (rischio trombosi)</li>
+          <li>Omega-3 EPA 2g/die: rallenta progressione della cachessia</li>
+          <li>ONS ipercalorica ipoproteica: 200 mL × 2–3 volte/die</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>🌡️ Xerostomia (secchezza delle fauci)</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Idratare frequentemente a piccoli sorsi (acqua, ghiaccio tritato)</li>
+          <li>Cibi morbidi, bagnati, con salse e sughi</li>
+          <li>Evitare alcolici, caffeina, tabacco, cibi secchi/duri</li>
+          <li>Sostituti salivari spray (mucina artificiale)</li>
+          <li>Stimolanti salivari: gomme xilitolo, caramelle senza zucchero</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>🤕 Alterazioni del Gusto (Disgeusia)</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Marinature con agrumi, erbe aromatiche per potenziare i sapori</li>
+          <li>Sostituire la carne rossa con pesce o proteine vegetali se sapore metallico</li>
+          <li>Posate in plastica invece di metallo per il sapore metallico</li>
+          <li>Cibi freddi o a temperatura ambiente hanno meno odore</li>
+          <li>Zinco solfato 220 mg × 2/die: può migliorare la disgeusia da platino</li>
+        </ul>
+      </div>
     </div>
-
-    <div class="symp-card">
-      <h4>😮 Mucosite / Stomatite</h4>
-      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
-        <li>Cibi morbidi, frullati, puree, budini, gelato (freddo analgesico)</li>
-        <li>Evitare cibi acidi (agrumi, pomodoro), piccanti, duri, croccanti</li>
-        <li>Sciacqui con soluzione salina 0,9% prima e dopo i pasti</li>
-        <li>Temperatura tiepida/fredda — evitare il caldo</li>
-        <li>Se grado 3–4 → valutare ONS semi-elementare o NED</li>
-        <li>Glutammina 15 g × 2/die in mucosite da radioterapia orale</li>
-      </ul>
-    </div>
-
-    <div class="symp-card">
-      <h4>💧 Diarrea (da chemio/radioterapia)</h4>
-      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
-        <li>Dieta a basso residuo (BRAT: banana, riso, mela cotta, toast)</li>
-        <li>Evitare fibre insolubili, latticini (tranne yogurt), grassi, spezie</li>
-        <li>Idratazione intensiva: ≥ 2 L/die (ORS in caso di grave disidratazione)</li>
-        <li>Probiotici: L. rhamnosus GG utile in diarrea da radioterapia pelvica</li>
-        <li>Diarrea da irinotecano: loperamide ad alte dosi (protocollo medico)</li>
-        <li>Latticini ridotti se sospetta intolleranza transitoria al lattosio</li>
-      </ul>
-    </div>
-
-    <div class="symp-card">
-      <h4>🚫 Anoressia / Cachessia</h4>
-      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
-        <li>Cibi preferiti del paziente, elevata densità calorica</li>
-        <li>Arricchire i pasti con olio, burro, panna, parmigiano, proteine in polvere</li>
-        <li>Corticosteroidi a breve termine (prednisone 20 mg/die) possono stimolare appetito</li>
-        <li>Megestrolo acetato: ultima opzione in cachessia refrattaria (rischio trombosi)</li>
-        <li>Omega-3 EPA 2g/die: rallenta progressione della cachessia</li>
-        <li>ONS ipercalorica ipoproteica: 200 mL × 2–3 volte/die</li>
-      </ul>
-    </div>
-
-    <div class="symp-card">
-      <h4>🌡️ Xerostomia (secchezza delle fauci)</h4>
-      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
-        <li>Idratare frequentemente a piccoli sorsi (acqua, ghiaccio tritato)</li>
-        <li>Cibi morbidi, bagnati, con salse e sughi</li>
-        <li>Evitare alcolici, caffeina, tabacco, cibi secchi/duri</li>
-        <li>Sostituti salivari spray (mucina artificiale)</li>
-        <li>Stimolanti salivari: gomme xilitolo, caramelle senza zucchero</li>
-      </ul>
-    </div>
-
-    <div class="symp-card">
-      <h4>🤕 Alterazioni del Gusto (Disgeusia)</h4>
-      <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
-        <li>Marinature con agrumi, erbe aromatiche per potenziare i sapori</li>
-        <li>Sostituire la carne rossa con pesce o proteine vegetali se sapore metallico</li>
-        <li>Posate in plastica invece di metallo per il sapore metallico</li>
-        <li>Cibi freddi o a temperatura ambiente hanno meno odore</li>
-        <li>Zinco solfato 220 mg × 2/die: può migliorare la disgeusia da platino</li>
-      </ul>
+  </div>
+  <div data-only-lang="en" style="display:none">
+    <div class="grid-2">
+      <div class="symp-card">
+        <h4>🤢 Nausea and Vomiting</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Small, frequent meals (5–6/day) at room temperature or cold</li>
+          <li>Avoid strong odours, fatty, fried, or spicy foods</li>
+          <li>Prefer: crackers, rice, toast, banana, broth</li>
+          <li>Drink cold liquids slowly between meals (not during)</li>
+          <li>Ginger chewing gum may reduce nausea</li>
+          <li>Time meals with antiemetic (taken 30 min before)</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>😮 Mucositis / Stomatitis</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Soft foods, smoothies, purées, puddings, ice cream (cold analgesia)</li>
+          <li>Avoid acidic (citrus, tomato), spicy, hard, crunchy foods</li>
+          <li>Rinse with 0.9% saline solution before and after meals</li>
+          <li>Warm/cold temperature — avoid hot foods</li>
+          <li>Grade 3–4 → consider semi-elemental ONS or NGT</li>
+          <li>Glutamine 15 g × 2/day for oral radiotherapy mucositis</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>💧 Diarrhoea (from chemo/radiotherapy)</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Low-residue diet (BRAT: banana, rice, cooked apple, toast)</li>
+          <li>Avoid insoluble fibre, dairy (except yogurt), fat, spices</li>
+          <li>Intensive hydration: ≥ 2 L/day (ORS if severely dehydrated)</li>
+          <li>Probiotics: L. rhamnosus GG useful for pelvic radiotherapy diarrhoea</li>
+          <li>Irinotecan diarrhoea: high-dose loperamide (medical protocol)</li>
+          <li>Reduced dairy if transient lactose intolerance suspected</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>🚫 Anorexia / Cachexia</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Patient's preferred foods, high caloric density</li>
+          <li>Enrich meals with oil, butter, cream, parmesan, protein powder</li>
+          <li>Short-term corticosteroids (prednisone 20 mg/day) may stimulate appetite</li>
+          <li>Megestrol acetate: last option in refractory cachexia (thrombosis risk)</li>
+          <li>Omega-3 EPA 2g/day: slows cachexia progression</li>
+          <li>Hypercaloric, low-protein ONS: 200 mL × 2–3 times/day</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>🌡️ Xerostomia (dry mouth)</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Frequent small sips (water, crushed ice)</li>
+          <li>Soft, moist foods with sauces and gravies</li>
+          <li>Avoid alcohol, caffeine, tobacco, dry/hard foods</li>
+          <li>Saliva substitute spray (artificial mucin)</li>
+          <li>Salivary stimulants: xylitol gum, sugar-free sweets</li>
+        </ul>
+      </div>
+      <div class="symp-card">
+        <h4>🤕 Taste Alterations (Dysgeusia)</h4>
+        <ul style="font-size:12.5px;color:var(--slate-m);padding-left:16px;line-height:2">
+          <li>Citrus and aromatic herb marinades to enhance flavours</li>
+          <li>Replace red meat with fish or plant proteins if metallic taste</li>
+          <li>Use plastic cutlery instead of metal for metallic taste</li>
+          <li>Cold or room-temperature foods have less odour</li>
+          <li>Zinc sulphate 220 mg × 2/day: may improve platinum-induced dysgeusia</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -606,44 +711,87 @@
     <b>📚 Reference Guidelines</b>: ESPEN Guidelines on Clinical Nutrition in Cancer (2021) · AIOM Nutritional Support Guidelines · SINPE 2022 · WCRF/AICR Cancer Prevention Recommendations (2018).
   </div>
 
-  <div class="grid-2">
-    <div class="calc-box">
-      <h3>🎯 Raccomandazioni ESPEN 2021 — Chiave</h3>
-      <div class="guide-section">
-        <h4>Screening e Valutazione</h4>
-        <div class="guide-item"><b>GPP:</b> Screening nutrizionale sistematico in tutti i pazienti oncologici a ogni contatto con il sistema sanitario (NRS-2002 per ospedalizzati, MUST per territorio).</div>
-        <div class="guide-item"><b>Grado A:</b> Valutazione nutrizionale completa per i pazienti a rischio identificati con lo screening, includendo composizione corporea (DEXA, BIA, TC).</div>
-        <div class="guide-item"><b>GPP:</b> Usare PG-SGA per valutazione nutrizionale specifica in oncologia.</div>
+  <div data-only-lang="it">
+    <div class="grid-2">
+      <div class="calc-box">
+        <h3>🎯 Raccomandazioni ESPEN 2021 — Chiave</h3>
+        <div class="guide-section">
+          <h4>Screening e Valutazione</h4>
+          <div class="guide-item"><b>GPP:</b> Screening nutrizionale sistematico in tutti i pazienti oncologici a ogni contatto con il sistema sanitario (NRS-2002 per ospedalizzati, MUST per territorio).</div>
+          <div class="guide-item"><b>Grado A:</b> Valutazione nutrizionale completa per i pazienti a rischio identificati con lo screening, includendo composizione corporea (DEXA, BIA, TC).</div>
+          <div class="guide-item"><b>GPP:</b> Usare PG-SGA per valutazione nutrizionale specifica in oncologia.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Intervento Nutrizionale</h4>
+          <div class="guide-item"><b>Grado A:</b> Counseling nutrizionale individuale come primo intervento in tutti i pazienti con ridotto apporto alimentare.</div>
+          <div class="guide-item"><b>Grado A:</b> ONS se apporto orale &lt; 60% del fabbisogno &gt; 1–2 settimane nonostante counseling.</div>
+          <div class="guide-item"><b>Grado B:</b> Nutrizione enterale (NED/PEG) se ONS non sufficiente e tratto GI funzionante.</div>
+          <div class="guide-item"><b>Grado C:</b> Nutrizione parenterale solo se via enterale non praticabile o insufficiente.</div>
+        </div>
       </div>
-      <div class="guide-section">
-        <h4>Intervento Nutrizionale</h4>
-        <div class="guide-item"><b>Grado A:</b> Counseling nutrizionale individuale come primo intervento in tutti i pazienti con ridotto apporto alimentare.</div>
-        <div class="guide-item"><b>Grado A:</b> ONS se apporto orale &lt; 60% del fabbisogno &gt; 1–2 settimane nonostante counseling.</div>
-        <div class="guide-item"><b>Grado B:</b> Nutrizione enterale (NED/PEG) se ONS non sufficiente e tratto GI funzionante.</div>
-        <div class="guide-item"><b>Grado C:</b> Nutrizione parenterale solo se via enterale non praticabile o insufficiente.</div>
+      <div class="calc-box">
+        <h3>🏗️ Fabbisogni ESPEN 2021</h3>
+        <div class="guide-section">
+          <h4>Energia</h4>
+          <div class="guide-item"><b>25–30 kcal/kg/die</b> in pazienti ambulatoriali oncologici (REE × 1,3 se misurata con calorimetria indiretta). Evitare ipo- e ipercalosia.</div>
+          <div class="guide-item">In cachessia avanzata / catabolismo grave: aumentare a <b>30–35 kcal/kg/die</b>. In cure palliative terminali: ridurre le aspettative.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Proteine</h4>
+          <div class="guide-item"><b>≥ 1,0 g/kg/die</b> come minimo; <b>ottimale 1,2–1,5 g/kg/die</b>; in cachessia grave con funzione renale conservata: fino a <b>2,0 g/kg/die</b>.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Chirurgia Oncologica</h4>
+          <div class="guide-item"><b>Grado A:</b> Supporto nutrizionale pre-operatorio (7–14 gg) se paziente malnutrito grave. Immunonutrizione orale (arginina, omega-3, nucleotidi) per 5–7 gg pre-op nella chirurgia addominale maggiore.</div>
+          <div class="guide-item"><b>Grado A:</b> Rialimentazione precoce (entro 24h) dopo chirurgia GI oncologica; via enterale preferita.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Immunonutrizione</h4>
+          <div class="guide-item"><b>Omega-3 (EPA 2g/die):</b> raccomandato per stabilizzare/aumentare il peso in cachessia (Grado B). In pazienti in chemioterapia con perdita di peso.</div>
+          <div class="guide-item"><b>Vitamina D:</b> correggere la carenza (&lt;20 ng/mL) in tutti i pazienti oncologici (GPP).</div>
+        </div>
       </div>
     </div>
-
-    <div class="calc-box">
-      <h3>🏗️ Fabbisogni ESPEN 2021</h3>
-      <div class="guide-section">
-        <h4>Energia</h4>
-        <div class="guide-item"><b>25–30 kcal/kg/die</b> in pazienti ambulatoriali oncologici (REE × 1,3 se misurata con calorimetria indiretta). Evitare ipo- e ipercalosia.</div>
-        <div class="guide-item">In cachessia avanzata / catabolismo grave: aumentare a <b>30–35 kcal/kg/die</b>. In cure palliative terminali: ridurre le aspettative.</div>
+  </div>
+  <div data-only-lang="en" style="display:none">
+    <div class="grid-2">
+      <div class="calc-box">
+        <h3>🎯 Key ESPEN 2021 Recommendations</h3>
+        <div class="guide-section">
+          <h4>Screening and Assessment</h4>
+          <div class="guide-item"><b>GPP:</b> Systematic nutritional screening for all cancer patients at every contact with the healthcare system (NRS-2002 for inpatients, MUST in the community).</div>
+          <div class="guide-item"><b>Grade A:</b> Full nutritional assessment for at-risk patients identified by screening, including body composition (DEXA, BIA, CT).</div>
+          <div class="guide-item"><b>GPP:</b> Use PG-SGA for oncology-specific nutritional assessment.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Nutritional Intervention</h4>
+          <div class="guide-item"><b>Grade A:</b> Individual nutritional counselling as the first intervention for all patients with reduced dietary intake.</div>
+          <div class="guide-item"><b>Grade A:</b> ONS if oral intake &lt; 60% of requirements for &gt; 1–2 weeks despite counselling.</div>
+          <div class="guide-item"><b>Grade B:</b> Enteral nutrition (NGT/PEG) if ONS insufficient and GI tract functional.</div>
+          <div class="guide-item"><b>Grade C:</b> Parenteral nutrition only if the enteral route is not feasible or insufficient.</div>
+        </div>
       </div>
-      <div class="guide-section">
-        <h4>Proteine</h4>
-        <div class="guide-item"><b>≥ 1,0 g/kg/die</b> come minimo; <b>ottimale 1,2–1,5 g/kg/die</b>; in cachessia grave con funzione renale conservata: fino a <b>2,0 g/kg/die</b>.</div>
-      </div>
-      <div class="guide-section">
-        <h4>Chirurgia Oncologica</h4>
-        <div class="guide-item"><b>Grado A:</b> Supporto nutrizionale pre-operatorio (7–14 gg) se paziente malnutrito grave. Immunonutrizione orale (arginina, omega-3, nucleotidi) per 5–7 gg pre-op nella chirurgia addominale maggiore.</div>
-        <div class="guide-item"><b>Grado A:</b> Rialimentazione precoce (entro 24h) dopo chirurgia GI oncologica; via enterale preferita.</div>
-      </div>
-      <div class="guide-section">
-        <h4>Immunonutrizione</h4>
-        <div class="guide-item"><b>Omega-3 (EPA 2g/die):</b> raccomandato per stabilizzare/aumentare il peso in cachessia (Grado B). In pazienti in chemioterapia con perdita di peso.</div>
-        <div class="guide-item"><b>Vitamina D:</b> correggere la carenza (&lt;20 ng/mL) in tutti i pazienti oncologici (GPP).</div>
+      <div class="calc-box">
+        <h3>🏗️ ESPEN 2021 Requirements</h3>
+        <div class="guide-section">
+          <h4>Energy</h4>
+          <div class="guide-item"><b>25–30 kcal/kg/day</b> in ambulatory cancer patients (REE × 1.3 if measured by indirect calorimetry). Avoid hypo- and hypercaloric intakes.</div>
+          <div class="guide-item">In advanced cachexia / severe catabolism: increase to <b>30–35 kcal/kg/day</b>. In terminal palliative care: reduce expectations.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Protein</h4>
+          <div class="guide-item"><b>≥ 1.0 g/kg/day</b> as minimum; <b>optimal 1.2–1.5 g/kg/day</b>; in severe cachexia with preserved renal function: up to <b>2.0 g/kg/day</b>.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Oncological Surgery</h4>
+          <div class="guide-item"><b>Grade A:</b> Pre-operative nutritional support (7–14 days) in severely malnourished patients. Oral immunonutrition (arginine, omega-3, nucleotides) for 5–7 days pre-op in major abdominal surgery.</div>
+          <div class="guide-item"><b>Grade A:</b> Early refeeding (within 24h) after oncological GI surgery; enteral route preferred.</div>
+        </div>
+        <div class="guide-section">
+          <h4>Immunonutrition</h4>
+          <div class="guide-item"><b>Omega-3 (EPA 2g/day):</b> recommended to stabilise/increase weight in cachexia (Grade B). In chemotherapy patients with weight loss.</div>
+          <div class="guide-item"><b>Vitamin D:</b> correct deficiency (&lt;20 ng/mL) in all cancer patients (GPP).</div>
+        </div>
       </div>
     </div>
   </div>
@@ -697,8 +845,8 @@
   <div class="calc-box">
     <h3>📖 Prevenzione Oncologica (WCRF/AICR 2018)</h3>
     <table class="food-table">
-      <thead><tr><th>Raccomandazione</th><th>Evidenza</th></tr></thead>
-      <tbody>
+      <thead><tr><th><span data-only-lang="it">Raccomandazione</span><span data-only-lang="en" style="display:none">Recommendation</span></th><th><span data-only-lang="it">Evidenza</span><span data-only-lang="en" style="display:none">Evidence</span></th></tr></thead>
+      <tbody data-only-lang="it">
         <tr><td>Mantenere un peso corporeo sano (BMI 18,5–25 kg/m²)</td><td>Forte</td></tr>
         <tr><td>Essere fisicamente attivi ogni giorno; ridurre il tempo sedentario</td><td>Forte</td></tr>
         <tr><td>Privilegiare alimenti ricchi di fibre, cereali integrali, verdure, frutta, legumi</td><td>Forte</td></tr>
@@ -707,6 +855,16 @@
         <tr><td>Limitare alcol (meglio non bere per la prevenzione del cancro)</td><td>Forte</td></tr>
         <tr><td>Non usare integratori per la prevenzione del cancro</td><td>Forte</td></tr>
         <tr><td>Allattamento al seno almeno 6 mesi (protezione mamma e bambino)</td><td>Forte</td></tr>
+      </tbody>
+      <tbody data-only-lang="en" style="display:none">
+        <tr><td>Maintain a healthy body weight (BMI 18.5–25 kg/m²)</td><td>Strong</td></tr>
+        <tr><td>Be physically active every day; reduce sedentary time</td><td>Strong</td></tr>
+        <tr><td>Favour foods rich in fibre, wholegrains, vegetables, fruit, pulses</td><td>Strong</td></tr>
+        <tr><td>Limit red meat (&lt; 500 g/week) and processed meat (as little as possible)</td><td>Strong</td></tr>
+        <tr><td>Limit sugary drinks and high-energy-density foods</td><td>Strong</td></tr>
+        <tr><td>Limit alcohol (best not to drink for cancer prevention)</td><td>Strong</td></tr>
+        <tr><td>Do not use supplements for cancer prevention</td><td>Strong</td></tr>
+        <tr><td>Breastfeed for at least 6 months (protection for mother and child)</td><td>Strong</td></tr>
       </tbody>
     </table>
   </div>
@@ -749,12 +907,12 @@
   <div style="background:linear-gradient(135deg,#2E1065 0%,#5B21B6 55%,#7C3AED 100%);border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;color:white;box-shadow:0 4px 16px rgba(92,33,182,.35)" class="no-print">
     <div style="font-size:34px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">🍽️</div>
     <div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:3px">Piano Alimentare in Oncologia</div>
-      <div style="font-size:11.5px;opacity:.9;line-height:1.6">Personalizzare in base a neoplasia, trattamento e sintomi. Privilegiare densità calorico-proteica e adattabilità. Monitorare peso e stato nutrizionale settimanalmente.</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:3px"><span data-only-lang="it">Piano Alimentare in Oncologia</span><span data-only-lang="en" style="display:none">Oncology Meal Plan</span></div>
+      <div style="font-size:11.5px;opacity:.9;line-height:1.6"><span data-only-lang="it">Personalizzare in base a neoplasia, trattamento e sintomi. Privilegiare densità calorico-proteica e adattabilità. Monitorare peso e stato nutrizionale settimanalmente.</span><span data-only-lang="en" style="display:none">Personalise based on cancer type, treatment and symptoms. Favour caloric-protein density and adaptability. Monitor weight and nutritional status weekly.</span></div>
       <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-        <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700">🧬 Oncologia</span>
+        <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700"><span data-only-lang="it">🧬 Oncologia</span><span data-only-lang="en" style="display:none">🧬 Oncology</span></span>
         <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700">💊 Chemio/Radio</span>
-        <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700">⚖️ Cachessia</span>
+        <span style="background:rgba(255,255,255,.18);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700"><span data-only-lang="it">⚖️ Cachessia</span><span data-only-lang="en" style="display:none">⚖️ Cachexia</span></span>
       </div>
     </div>
   </div>
@@ -762,7 +920,7 @@
   <div class="grid-2">
     <div class="calc-box">
       <h3>📋 Consigli Generali per Chemioterapia</h3>
-      <ul style="font-size:12.5px;color:var(--slate-m);line-height:2;padding-left:16px">
+      <ul style="font-size:12.5px;color:var(--slate-m);line-height:2;padding-left:16px" data-only-lang="it">
         <li>Pasti piccoli e frequenti: 5–6 al giorno (ogni 2–3 ore)</li>
         <li>Non saltare la colazione — primo pasto entro 1 ora dal risveglio</li>
         <li>Spuntini proteici tra i pasti: yogurt, ricotta, uova sode, frutta secca</li>
@@ -772,6 +930,16 @@
         <li>Non mangiare pasti abbondanti nelle 2 ore prima della chemio</li>
         <li>Preferire cibi familiari e graditi; non obbligarsi a mangiare cibi indigesti</li>
       </ul>
+      <ul style="font-size:12.5px;color:var(--slate-m);line-height:2;padding-left:16px" data-only-lang="en" style="display:none">
+        <li>Small, frequent meals: 5–6 per day (every 2–3 hours)</li>
+        <li>Do not skip breakfast — first meal within 1 hour of waking</li>
+        <li>Protein snacks between meals: yogurt, ricotta, hard-boiled eggs, nuts</li>
+        <li>Enrich dishes: raw EVO oil, parmesan, finely chopped nuts</li>
+        <li>Favour high-quality proteins: eggs, fish, dairy, pulses + wholegrains</li>
+        <li>Avoid raw animal-origin foods (immunosuppression)</li>
+        <li>Do not eat large meals in the 2 hours before chemotherapy</li>
+        <li>Prefer familiar, palatable foods; do not force indigestible foods</li>
+      </ul>
     </div>
 
     <div class="calc-box">
@@ -779,13 +947,20 @@
       <div class="alert-warn alert-box" style="margin-bottom:10px" data-only-lang="it">In caso di neutropenia (PMN &lt; 500/μL): dieta a basso contenuto microbico.</div>
       <div class="alert-warn alert-box" style="margin-bottom:10px;display:none" data-only-lang="en">In case of neutropenia (ANC &lt; 500/μL): low-microbial diet.</div>
       <table class="food-table">
-        <thead><tr><th>Categoria</th><th>Consentiti</th><th>Da evitare</th></tr></thead>
-        <tbody>
+        <thead><tr><th><span data-only-lang="it">Categoria</span><span data-only-lang="en" style="display:none">Category</span></th><th><span data-only-lang="it">Consentiti</span><span data-only-lang="en" style="display:none">Allowed</span></th><th><span data-only-lang="it">Da evitare</span><span data-only-lang="en" style="display:none">To avoid</span></th></tr></thead>
+        <tbody data-only-lang="it">
           <tr><td>Carne/pesce</td><td>Ben cotti (T &gt; 70°C)</td><td>Crudi, sushi, carpaccio, tartare</td></tr>
           <tr><td>Uova</td><td>Ben cotte (T &gt; 70°C)</td><td>Crude, alla coque, bavose</td></tr>
           <tr><td>Latticini</td><td>Pastorizzati, formaggi cotti</td><td>Formaggi erborinati, latte crudo</td></tr>
           <tr><td>Frutta/verdura</td><td>Cotte o lavate accuratamente</td><td>Germogli, insalate pronte</td></tr>
           <tr><td>Acqua</td><td>Minerale confezionata</td><td>Dal rubinetto (se qualità dubbia)</td></tr>
+        </tbody>
+        <tbody data-only-lang="en" style="display:none">
+          <tr><td>Meat/fish</td><td>Well cooked (T &gt; 70°C)</td><td>Raw, sushi, carpaccio, tartare</td></tr>
+          <tr><td>Eggs</td><td>Well cooked (T &gt; 70°C)</td><td>Raw, soft-boiled, runny</td></tr>
+          <tr><td>Dairy</td><td>Pasteurised, cooked cheeses</td><td>Blue-veined cheeses, raw milk</td></tr>
+          <tr><td>Fruit/vegetables</td><td>Cooked or thoroughly washed</td><td>Sprouts, ready-made salads</td></tr>
+          <tr><td>Water</td><td>Bottled mineral water</td><td>Tap water (if quality doubtful)</td></tr>
         </tbody>
       </table>
     </div>
@@ -794,8 +969,8 @@
   <div class="calc-box">
     <h3>🍽️ Schema Alimentare — Esempio per Chemioterapia</h3>
     <table class="food-table">
-      <thead><tr><th>Pasto</th><th>Proposta</th><th>Apporto stimato</th></tr></thead>
-      <tbody>
+      <thead><tr><th><span data-only-lang="it">Pasto</span><span data-only-lang="en" style="display:none">Meal</span></th><th><span data-only-lang="it">Proposta</span><span data-only-lang="en" style="display:none">Suggested foods</span></th><th><span data-only-lang="it">Apporto stimato</span><span data-only-lang="en" style="display:none">Estimated intake</span></th></tr></thead>
+      <tbody data-only-lang="it">
         <tr><td><b>🌅 Colazione</b></td><td>Latte intero 200 mL + cereali integrali 40 g + frutta fresca</td><td>~350 kcal · 12 g prot</td></tr>
         <tr><td><b>🍎 Spuntino mat.</b></td><td>Yogurt greco 150 g + 1 cucchiaio mandorle tritate</td><td>~200 kcal · 15 g prot</td></tr>
         <tr><td><b>🍽️ Pranzo</b></td><td>Pasta integrale 80 g con legumi + olio EVO; oppure riso + salmone 120 g cotto</td><td>~500–550 kcal · 25 g prot</td></tr>
@@ -804,14 +979,24 @@
         <tr><td><b>🌜 Spuntino sera</b></td><td>Latte caldo 200 mL + 2–3 biscotti secchi</td><td>~180 kcal · 7 g prot</td></tr>
         <tr><td colspan="2"><b>TOTALE STIMATO</b></td><td><b>~1980 kcal · ~101 g prot</b></td></tr>
       </tbody>
+      <tbody data-only-lang="en" style="display:none">
+        <tr><td><b>🌅 Breakfast</b></td><td>Whole milk 200 mL + wholegrains 40 g + fresh fruit</td><td>~350 kcal · 12 g prot</td></tr>
+        <tr><td><b>🍎 Morning snack</b></td><td>Greek yogurt 150 g + 1 tbsp finely chopped almonds</td><td>~200 kcal · 15 g prot</td></tr>
+        <tr><td><b>🍽️ Lunch</b></td><td>Wholegrain pasta 80 g with pulses + EVO oil; or rice + cooked salmon 120 g</td><td>~500–550 kcal · 25 g prot</td></tr>
+        <tr><td><b>🍊 Afternoon snack</b></td><td>Ricotta 80 g + 4–5 crackers + fruit</td><td>~250 kcal · 12 g prot</td></tr>
+        <tr><td><b>🌙 Dinner</b></td><td>Cooked chicken breast/cod 150 g + potatoes or rice 80 g + cooked vegetables</td><td>~500 kcal · 30 g prot</td></tr>
+        <tr><td><b>🌜 Evening snack</b></td><td>Warm milk 200 mL + 2–3 plain biscuits</td><td>~180 kcal · 7 g prot</td></tr>
+        <tr><td colspan="2"><b>ESTIMATED TOTAL</b></td><td><b>~1980 kcal · ~101 g prot</b></td></tr>
+      </tbody>
     </table>
-    <p style="font-size:11.5px;color:var(--slate-l);margin-top:8px">Schema indicativo da adattare alle preferenze, ai sintomi presenti e al fabbisogno calcolato. Integrare con ONS se necessario.</p>
+    <p style="font-size:11.5px;color:var(--slate-l);margin-top:8px"><span data-only-lang="it">Schema indicativo da adattare alle preferenze, ai sintomi presenti e al fabbisogno calcolato. Integrare con ONS se necessario.</span><span data-only-lang="en" style="display:none">Indicative scheme to be adapted to preferences, current symptoms and calculated requirements. Supplement with ONS if necessary.</span></p>
   </div>
 
   <div class="calc-box">
     <h3>📝 Piano Personalizzato</h3>
     <div style="background:#F5F3FF;border-radius:8px;padding:10px 14px;margin-bottom:12px;border-left:3px solid #7C3AED;font-size:12px;color:#3B0764;line-height:1.7">
-      💡 Indicare pasti, quantità e frequenza in base al piano di tipo selezionato nella sezione <b>Esempi</b>. Specificare le modifiche per i sintomi presenti (nausea, mucosite, disfagia, diarrea).
+      <span data-only-lang="it">💡 Indicare pasti, quantità e frequenza in base al piano di tipo selezionato nella sezione <b>Esempi</b>. Specificare le modifiche per i sintomi presenti (nausea, mucosite, disfagia, diarrea).</span>
+      <span data-only-lang="en" style="display:none">💡 Indicate meals, quantities and frequency based on the dietary scheme selected in the <b>Examples</b> section. Specify adjustments for current symptoms (nausea, mucositis, dysphagia, diarrhoea).</span>
     </div>
     <div class="nf"><label>Piano alimentare personalizzato</label>
       <textarea id="piano-text" rows="8" placeholder="Colazione: ...&#10;Spuntino mattino: ...&#10;Pranzo: ...&#10;Spuntino pomeriggio: ...&#10;Cena: ...&#10;Spuntino sera (se necessario): ..."></textarea>
@@ -1061,11 +1246,11 @@ const ONC_PE_CONFIG = {
   id: 'onc',
   accentColor: '#7C3AED',
   tipi: [
-    {id:'chemo',       nome:'Chemioterapia',       nomeEsteso:'Chemioterapia — Schema Standard',                  colore:'#7C3AED', coloreT:'#fff'},
-    {id:'cachessia',   nome:'Anti-Cachessia',       nomeEsteso:'Cachessia Oncologica — Alta Densità Calorica',     colore:'#DC2626', coloreT:'#fff'},
-    {id:'testa_collo', nome:'Testa/Collo',          nomeEsteso:'Ca. Testa e Collo — Disfagia (cibi morbidi)',      colore:'#0891B2', coloreT:'#fff'},
-    {id:'pelvi',       nome:'Radioterapia Pelvica', nomeEsteso:'Radioterapia Pelvica — Basso Residuo',             colore:'#059669', coloreT:'#fff'},
-    {id:'leucemia',    nome:'Leucemia/Neutropenia', nomeEsteso:'Leucemia / Neutropenia — Dieta a Basso Rischio',   colore:'#D97706', coloreT:'#fff'},
+    {id:'chemo',       nome:_L('Chemioterapia','Chemotherapy'),       nomeEsteso:_L('Chemioterapia — Schema Standard','Chemotherapy — Standard Plan'),                  colore:'#7C3AED', coloreT:'#fff'},
+    {id:'cachessia',   nome:_L('Anti-Cachessia','Anti-Cachexia'),       nomeEsteso:_L('Cachessia Oncologica — Alta Densità Calorica','Oncological Cachexia — High Caloric Density'),     colore:'#DC2626', coloreT:'#fff'},
+    {id:'testa_collo', nome:_L('Testa/Collo','Head/Neck'),          nomeEsteso:_L('Ca. Testa e Collo — Disfagia (cibi morbidi)','Head and Neck Ca. — Dysphagia (soft foods)'),      colore:'#0891B2', coloreT:'#fff'},
+    {id:'pelvi',       nome:_L('Radioterapia Pelvica','Pelvic Radiotherapy'), nomeEsteso:_L('Radioterapia Pelvica — Basso Residuo','Pelvic Radiotherapy — Low Residue'),             colore:'#059669', coloreT:'#fff'},
+    {id:'leucemia',    nome:_L('Leucemia/Neutropenia','Leukaemia/Neutropenia'), nomeEsteso:_L('Leucemia / Neutropenia — Dieta a Basso Rischio','Leukaemia / Neutropenia — Low-Risk Diet'),   colore:'#D97706', coloreT:'#fff'},
   ],
   kcals: [1400, 1600, 1800, 2000, 2200, 2400, 2600],
   piani: {
@@ -1074,35 +1259,35 @@ const ONC_PE_CONFIG = {
       macros: {p:20, cho:50, g:30},
       nota: _L('Pasti piccoli e frequenti (5–6/die). Privilegiare proteine nobili (uova, pesce, latticini). Evitare cibi crudi di origine animale. Non mangiare abbondantemente nelle 2h prima dell\'infusione. Idratazione ≥2L/die.','Small frequent meals (5–6/day). Prioritise high-quality proteins (eggs, fish, dairy). Avoid raw animal foods. Do not eat large amounts within 2h before infusion. Hydration ≥2L/day.'),
       pasti: [
-        {nome:'Colazione', emoji:'🌅', items:[
-          {nome:'Latte intero', qt:200, unit:'mL', kcal:130},
-          {nome:'Pane integrale tostato', qt:50, unit:'g', kcal:133},
-          {nome:'Ricotta fresca', qt:80, unit:'g', kcal:127},
-          {nome:'Miele', qt:10, unit:'g', kcal:32}
+        {nome:_L('Colazione','Breakfast'), emoji:'🌅', items:[
+          {nome:_L('Latte intero','Whole milk'), qt:200, unit:'mL', kcal:130},
+          {nome:_L('Pane integrale tostato','Toasted wholegrain bread'), qt:50, unit:'g', kcal:133},
+          {nome:_L('Ricotta fresca','Fresh ricotta'), qt:80, unit:'g', kcal:127},
+          {nome:_L('Miele','Honey'), qt:10, unit:'g', kcal:32}
         ]},
-        {nome:'Spuntino mattino', emoji:'🍎', items:[
-          {nome:'Yogurt greco intero', qt:150, unit:'g', kcal:130},
-          {nome:'Noci sgusciate', qt:25, unit:'g', kcal:163}
+        {nome:_L('Spuntino mattino','Morning snack'), emoji:'🍎', items:[
+          {nome:_L('Yogurt greco intero','Full-fat Greek yogurt'), qt:150, unit:'g', kcal:130},
+          {nome:_L('Noci sgusciate','Shelled walnuts'), qt:25, unit:'g', kcal:163}
         ]},
-        {nome:'Pranzo', emoji:'🍽️', items:[
-          {nome:'Pasta integrale', qt:80, unit:'g', kcal:280},
-          {nome:'Merluzzo al forno', qt:120, unit:'g', kcal:100},
-          {nome:'Verdure miste al vapore', qt:150, unit:'g', kcal:45},
-          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        {nome:_L('Pranzo','Lunch'), emoji:'🍽️', items:[
+          {nome:_L('Pasta integrale','Wholegrain pasta'), qt:80, unit:'g', kcal:280},
+          {nome:_L('Merluzzo al forno','Baked cod'), qt:120, unit:'g', kcal:100},
+          {nome:_L('Verdure miste al vapore','Steamed mixed vegetables'), qt:150, unit:'g', kcal:45},
+          {nome:_L('Olio EVO','EVO oil'), qt:12, unit:'mL', kcal:107}
         ]},
-        {nome:'Spuntino pomeriggio', emoji:'🍊', items:[
-          {nome:'Banana matura', qt:100, unit:'g', kcal:89},
-          {nome:'Mandorle', qt:20, unit:'g', kcal:117}
+        {nome:_L('Spuntino pomeriggio','Afternoon snack'), emoji:'🍊', items:[
+          {nome:_L('Banana matura','Ripe banana'), qt:100, unit:'g', kcal:89},
+          {nome:_L('Mandorle','Almonds'), qt:20, unit:'g', kcal:117}
         ]},
-        {nome:'Cena', emoji:'🌙', items:[
-          {nome:'Petto di pollo al vapore', qt:150, unit:'g', kcal:165},
-          {nome:'Patate lesse', qt:150, unit:'g', kcal:117},
-          {nome:'Fagiolini bolliti', qt:150, unit:'g', kcal:42},
-          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        {nome:_L('Cena','Dinner'), emoji:'🌙', items:[
+          {nome:_L('Petto di pollo al vapore','Steamed chicken breast'), qt:150, unit:'g', kcal:165},
+          {nome:_L('Patate lesse','Boiled potatoes'), qt:150, unit:'g', kcal:117},
+          {nome:_L('Fagiolini bolliti','Boiled green beans'), qt:150, unit:'g', kcal:42},
+          {nome:_L('Olio EVO','EVO oil'), qt:10, unit:'mL', kcal:89}
         ]},
-        {nome:'Spuntino sera', emoji:'🌜', items:[
-          {nome:'Latte intero tiepido', qt:200, unit:'mL', kcal:130},
-          {nome:'Biscotti secchi', qt:20, unit:'g', kcal:87}
+        {nome:_L('Spuntino sera','Evening snack'), emoji:'🌜', items:[
+          {nome:_L('Latte intero tiepido','Warm whole milk'), qt:200, unit:'mL', kcal:130},
+          {nome:_L('Biscotti secchi','Plain biscuits'), qt:20, unit:'g', kcal:87}
         ]}
       ]
     },
@@ -1111,34 +1296,34 @@ const ONC_PE_CONFIG = {
       macros: {p:25, cho:45, g:30},
       nota: _L('Massima densità calorico-proteica. Arricchire ogni piatto con olio EVO, parmigiano, frutta secca. Frazionare in 6–7 mini-pasti. Valutare ONS (1–2 flaconi/die) se apporto orale insufficiente. Monitorare peso 2×/settimana.','Maximum caloric-protein density. Enrich every dish with EVO oil, parmesan, nuts. Split into 6–7 mini-meals. Consider ONS (1–2 bottles/day) if oral intake insufficient. Monitor weight 2×/week.'),
       pasti: [
-        {nome:'Colazione', emoji:'🌅', items:[
-          {nome:'Latte intero arricchito (+ polvere latte)', qt:200, unit:'mL', kcal:200},
-          {nome:'Pane bianco', qt:60, unit:'g', kcal:160},
-          {nome:'Burro', qt:10, unit:'g', kcal:74},
-          {nome:'Marmellata', qt:20, unit:'g', kcal:55}
+        {nome:_L('Colazione','Breakfast'), emoji:'🌅', items:[
+          {nome:_L('Latte intero arricchito (+ polvere latte)','Enriched whole milk (+ milk powder)'), qt:200, unit:'mL', kcal:200},
+          {nome:_L('Pane bianco','White bread'), qt:60, unit:'g', kcal:160},
+          {nome:_L('Burro','Butter'), qt:10, unit:'g', kcal:74},
+          {nome:_L('Marmellata','Jam'), qt:20, unit:'g', kcal:55}
         ]},
-        {nome:'Spuntino mattino', emoji:'🧀', items:[
-          {nome:'Yogurt intero', qt:150, unit:'g', kcal:92},
-          {nome:'Frutta secca mista', qt:30, unit:'g', kcal:196}
+        {nome:_L('Spuntino mattino','Morning snack'), emoji:'🧀', items:[
+          {nome:_L('Yogurt intero','Full-fat yogurt'), qt:150, unit:'g', kcal:92},
+          {nome:_L('Frutta secca mista','Mixed nuts and dried fruit'), qt:30, unit:'g', kcal:196}
         ]},
-        {nome:'Pranzo', emoji:'🍽️', items:[
-          {nome:'Pasta all\'uovo', qt:80, unit:'g', kcal:280},
-          {nome:'Ragù di carne bianca', qt:80, unit:'g', kcal:130},
+        {nome:_L('Pranzo','Lunch'), emoji:'🍽️', items:[
+          {nome:_L('Pasta all\'uovo','Egg pasta'), qt:80, unit:'g', kcal:280},
+          {nome:_L('Ragù di carne bianca','White meat ragù'), qt:80, unit:'g', kcal:130},
           {nome:'Parmigiano Reggiano', qt:15, unit:'g', kcal:58},
-          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+          {nome:_L('Olio EVO','EVO oil'), qt:10, unit:'mL', kcal:89}
         ]},
-        {nome:'Spuntino pomeriggio', emoji:'🍮', items:[
-          {nome:'Budino al latte', qt:150, unit:'g', kcal:165},
+        {nome:_L('Spuntino pomeriggio','Afternoon snack'), emoji:'🍮', items:[
+          {nome:_L('Budino al latte','Milk pudding'), qt:150, unit:'g', kcal:165},
           {nome:'Banana', qt:100, unit:'g', kcal:89}
         ]},
-        {nome:'Cena', emoji:'🌙', items:[
-          {nome:'Salmone al forno', qt:150, unit:'g', kcal:275},
-          {nome:'Riso bianco', qt:80, unit:'g', kcal:280},
-          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+        {nome:_L('Cena','Dinner'), emoji:'🌙', items:[
+          {nome:_L('Salmone al forno','Baked salmon'), qt:150, unit:'g', kcal:275},
+          {nome:_L('Riso bianco','White rice'), qt:80, unit:'g', kcal:280},
+          {nome:_L('Olio EVO','EVO oil'), qt:12, unit:'mL', kcal:107}
         ]},
-        {nome:'Spuntino sera', emoji:'🌜', items:[
-          {nome:'Latte intero caldo', qt:200, unit:'mL', kcal:130},
-          {nome:'Pane tostato con miele', qt:30, unit:'g', kcal:97}
+        {nome:_L('Spuntino sera','Evening snack'), emoji:'🌜', items:[
+          {nome:_L('Latte intero caldo','Hot whole milk'), qt:200, unit:'mL', kcal:130},
+          {nome:_L('Pane tostato con miele','Toast with honey'), qt:30, unit:'g', kcal:97}
         ]}
       ]
     },
@@ -1147,32 +1332,32 @@ const ONC_PE_CONFIG = {
       macros: {p:18, cho:52, g:30},
       nota: _L('Tutti i cibi devono essere morbidi, tritati o in purea (IDDSI 4–6). Evitare cibi duri, croccanti, filamentosi, acidi, speziati. Adeguare la consistenza alla fase deglutitoria. Valutare SNG/PEG se apporto orale insufficiente (<60% del fabbisogno per >5 giorni).','All foods must be soft, minced or pureed (IDDSI 4–6). Avoid hard, crunchy, fibrous, acidic, spicy foods. Adjust texture to swallowing phase. Consider NGT/PEG if oral intake insufficient (<60% of requirements for >5 days).'),
       pasti: [
-        {nome:'Colazione', emoji:'🌅', items:[
-          {nome:'Crema di cereali (polentina di mais)', qt:200, unit:'g', kcal:140},
-          {nome:'Latte intero', qt:150, unit:'mL', kcal:98},
-          {nome:'Ricotta cremosa', qt:80, unit:'g', kcal:127},
-          {nome:'Miele', qt:15, unit:'g', kcal:48}
+        {nome:_L('Colazione','Breakfast'), emoji:'🌅', items:[
+          {nome:_L('Crema di cereali (polentina di mais)','Creamy cereal (corn porridge)'), qt:200, unit:'g', kcal:140},
+          {nome:_L('Latte intero','Whole milk'), qt:150, unit:'mL', kcal:98},
+          {nome:_L('Ricotta cremosa','Creamy ricotta'), qt:80, unit:'g', kcal:127},
+          {nome:_L('Miele','Honey'), qt:15, unit:'g', kcal:48}
         ]},
-        {nome:'Frullato mattino', emoji:'🥤', items:[
+        {nome:_L('Frullato mattino','Morning smoothie'), emoji:'🥤', items:[
           {nome:'Banana', qt:120, unit:'g', kcal:107},
-          {nome:'Yogurt intero', qt:150, unit:'g', kcal:92},
-          {nome:'Latte intero', qt:100, unit:'mL', kcal:65}
+          {nome:_L('Yogurt intero','Full-fat yogurt'), qt:150, unit:'g', kcal:92},
+          {nome:_L('Latte intero','Whole milk'), qt:100, unit:'mL', kcal:65}
         ]},
-        {nome:'Pranzo', emoji:'🍽️', items:[
-          {nome:'Crema di verdure passata', qt:250, unit:'mL', kcal:80},
-          {nome:'Purea di patate', qt:180, unit:'g', kcal:150},
-          {nome:'Merluzzo bollito frullato', qt:100, unit:'g', kcal:83},
-          {nome:'Olio EVO', qt:15, unit:'mL', kcal:133}
+        {nome:_L('Pranzo','Lunch'), emoji:'🍽️', items:[
+          {nome:_L('Crema di verdure passata','Blended vegetable soup'), qt:250, unit:'mL', kcal:80},
+          {nome:_L('Purea di patate','Mashed potatoes'), qt:180, unit:'g', kcal:150},
+          {nome:_L('Merluzzo bollito frullato','Blended boiled cod'), qt:100, unit:'g', kcal:83},
+          {nome:_L('Olio EVO','EVO oil'), qt:15, unit:'mL', kcal:133}
         ]},
-        {nome:'Spuntino pomeriggio', emoji:'🍮', items:[
-          {nome:'Gelato alla crema', qt:100, unit:'g', kcal:200},
-          {nome:'Mousse di frutta', qt:120, unit:'g', kcal:100}
+        {nome:_L('Spuntino pomeriggio','Afternoon snack'), emoji:'🍮', items:[
+          {nome:_L('Gelato alla crema','Cream ice cream'), qt:100, unit:'g', kcal:200},
+          {nome:_L('Mousse di frutta','Fruit mousse'), qt:120, unit:'g', kcal:100}
         ]},
-        {nome:'Cena', emoji:'🌙', items:[
-          {nome:'Risotto mantecato', qt:80, unit:'g', kcal:310},
-          {nome:'Petto di pollo tritato fine', qt:120, unit:'g', kcal:132},
+        {nome:_L('Cena','Dinner'), emoji:'🌙', items:[
+          {nome:_L('Risotto mantecato','Creamed risotto'), qt:80, unit:'g', kcal:310},
+          {nome:_L('Petto di pollo tritato fine','Finely minced chicken breast'), qt:120, unit:'g', kcal:132},
           {nome:'Parmigiano Reggiano', qt:15, unit:'g', kcal:58},
-          {nome:'Olio EVO', qt:12, unit:'mL', kcal:107}
+          {nome:_L('Olio EVO','EVO oil'), qt:12, unit:'mL', kcal:107}
         ]}
       ]
     },
@@ -1181,30 +1366,30 @@ const ONC_PE_CONFIG = {
       macros: {p:18, cho:57, g:25},
       nota: _L('Dieta a basso residuo per ridurre la stimolazione intestinale durante la radioterapia pelvica. Senza lattosio. Evitare fibre, legumi, frutta e verdura cruda, cibi flatulenti. Reidratare adeguatamente (≥2L/die). Riprendere la dieta normale gradualmente post-trattamento.','Low-residue diet to reduce intestinal stimulation during pelvic radiotherapy. Lactose-free. Avoid fibre, legumes, raw fruit and vegetables, gas-producing foods. Rehydrate adequately (≥2L/day). Gradually resume normal diet after treatment.'),
       pasti: [
-        {nome:'Colazione', emoji:'🌅', items:[
-          {nome:'Latte senza lattosio', qt:200, unit:'mL', kcal:130},
-          {nome:'Riso soffiato', qt:40, unit:'g', kcal:148},
-          {nome:'Miele', qt:15, unit:'g', kcal:48}
+        {nome:_L('Colazione','Breakfast'), emoji:'🌅', items:[
+          {nome:_L('Latte senza lattosio','Lactose-free milk'), qt:200, unit:'mL', kcal:130},
+          {nome:_L('Riso soffiato','Puffed rice'), qt:40, unit:'g', kcal:148},
+          {nome:_L('Miele','Honey'), qt:15, unit:'g', kcal:48}
         ]},
-        {nome:'Spuntino mattino', emoji:'☕', items:[
-          {nome:'Cracker di riso', qt:30, unit:'g', kcal:120},
-          {nome:'Prosciutto cotto', qt:50, unit:'g', kcal:66}
+        {nome:_L('Spuntino mattino','Morning snack'), emoji:'☕', items:[
+          {nome:_L('Cracker di riso','Rice crackers'), qt:30, unit:'g', kcal:120},
+          {nome:_L('Prosciutto cotto','Cooked ham'), qt:50, unit:'g', kcal:66}
         ]},
-        {nome:'Pranzo', emoji:'🍽️', items:[
-          {nome:'Riso bianco', qt:80, unit:'g', kcal:280},
-          {nome:'Pollo arrosto ben cotto', qt:150, unit:'g', kcal:225},
-          {nome:'Carote bollite', qt:100, unit:'g', kcal:30},
-          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        {nome:_L('Pranzo','Lunch'), emoji:'🍽️', items:[
+          {nome:_L('Riso bianco','White rice'), qt:80, unit:'g', kcal:280},
+          {nome:_L('Pollo arrosto ben cotto','Well-cooked roast chicken'), qt:150, unit:'g', kcal:225},
+          {nome:_L('Carote bollite','Boiled carrots'), qt:100, unit:'g', kcal:30},
+          {nome:_L('Olio EVO','EVO oil'), qt:10, unit:'mL', kcal:89}
         ]},
-        {nome:'Spuntino pomeriggio', emoji:'🍪', items:[
-          {nome:'Biscotti secchi senza lattosio', qt:30, unit:'g', kcal:130},
-          {nome:'Succo di mela non acido', qt:150, unit:'mL', kcal:70}
+        {nome:_L('Spuntino pomeriggio','Afternoon snack'), emoji:'🍪', items:[
+          {nome:_L('Biscotti secchi senza lattosio','Lactose-free plain biscuits'), qt:30, unit:'g', kcal:130},
+          {nome:_L('Succo di mela non acido','Non-acidic apple juice'), qt:150, unit:'mL', kcal:70}
         ]},
-        {nome:'Cena', emoji:'🌙', items:[
-          {nome:'Pasta bianca', qt:80, unit:'g', kcal:280},
-          {nome:'Merluzzo al forno', qt:130, unit:'g', kcal:108},
-          {nome:'Zucchine ben cotte', qt:100, unit:'g', kcal:21},
-          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        {nome:_L('Cena','Dinner'), emoji:'🌙', items:[
+          {nome:_L('Pasta bianca','White pasta'), qt:80, unit:'g', kcal:280},
+          {nome:_L('Merluzzo al forno','Baked cod'), qt:130, unit:'g', kcal:108},
+          {nome:_L('Zucchine ben cotte','Well-cooked courgettes'), qt:100, unit:'g', kcal:21},
+          {nome:_L('Olio EVO','EVO oil'), qt:10, unit:'mL', kcal:89}
         ]}
       ]
     },
@@ -1213,35 +1398,35 @@ const ONC_PE_CONFIG = {
       macros: {p:20, cho:50, g:30},
       nota: _L('Dieta a basso contenuto microbico per neutropenia (PMN <500/μL). TUTTI i cibi cotti (T>70°C). Vietati: crudi animali, formaggi erborinati, latte crudo, germogli, insalate pronte, acqua del rubinetto. Preferire confezioni sigillate monoporzione. Massima igiene delle mani.','Low-microbial diet for neutropenia (ANC <500/μL). ALL foods cooked (T>70°C). Forbidden: raw animal products, blue-veined cheeses, raw milk, sprouts, pre-washed salads, tap water. Prefer sealed single-portion packaging. Strict hand hygiene.'),
       pasti: [
-        {nome:'Colazione', emoji:'🌅', items:[
-          {nome:'Latte UHT pastorizzato', qt:200, unit:'mL', kcal:130},
-          {nome:'Pane in cassetta (confezione sigillata)', qt:60, unit:'g', kcal:155},
-          {nome:'Marmellata (vasetto sigillato)', qt:20, unit:'g', kcal:55},
-          {nome:'Formaggio morbido pastorizzato', qt:40, unit:'g', kcal:100}
+        {nome:_L('Colazione','Breakfast'), emoji:'🌅', items:[
+          {nome:_L('Latte UHT pastorizzato','Pasteurised UHT milk'), qt:200, unit:'mL', kcal:130},
+          {nome:_L('Pane in cassetta (confezione sigillata)','Sliced bread (sealed packaging)'), qt:60, unit:'g', kcal:155},
+          {nome:_L('Marmellata (vasetto sigillato)','Jam (sealed jar)'), qt:20, unit:'g', kcal:55},
+          {nome:_L('Formaggio morbido pastorizzato','Pasteurised soft cheese'), qt:40, unit:'g', kcal:100}
         ]},
-        {nome:'Spuntino mattino', emoji:'🍌', items:[
-          {nome:'Banana sbucciata al momento', qt:120, unit:'g', kcal:107},
-          {nome:'Crackers sigillati', qt:25, unit:'g', kcal:102}
+        {nome:_L('Spuntino mattino','Morning snack'), emoji:'🍌', items:[
+          {nome:_L('Banana sbucciata al momento','Freshly peeled banana'), qt:120, unit:'g', kcal:107},
+          {nome:_L('Crackers sigillati','Sealed crackers'), qt:25, unit:'g', kcal:102}
         ]},
-        {nome:'Pranzo', emoji:'🍽️', items:[
-          {nome:'Pasta di semola', qt:80, unit:'g', kcal:280},
-          {nome:'Ragù di carne ben cotta', qt:80, unit:'g', kcal:140},
-          {nome:'Parmigiano pastorizzato', qt:15, unit:'g', kcal:58},
-          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        {nome:_L('Pranzo','Lunch'), emoji:'🍽️', items:[
+          {nome:_L('Pasta di semola','Semolina pasta'), qt:80, unit:'g', kcal:280},
+          {nome:_L('Ragù di carne ben cotta','Well-cooked meat ragù'), qt:80, unit:'g', kcal:140},
+          {nome:_L('Parmigiano pastorizzato','Pasteurised parmesan'), qt:15, unit:'g', kcal:58},
+          {nome:_L('Olio EVO','EVO oil'), qt:10, unit:'mL', kcal:89}
         ]},
-        {nome:'Spuntino pomeriggio', emoji:'🍮', items:[
-          {nome:'Yogurt UHT pastorizzato', qt:150, unit:'g', kcal:92},
-          {nome:'Frutta in scatola pastorizzata', qt:100, unit:'g', kcal:80}
+        {nome:_L('Spuntino pomeriggio','Afternoon snack'), emoji:'🍮', items:[
+          {nome:_L('Yogurt UHT pastorizzato','Pasteurised UHT yogurt'), qt:150, unit:'g', kcal:92},
+          {nome:_L('Frutta in scatola pastorizzata','Pasteurised canned fruit'), qt:100, unit:'g', kcal:80}
         ]},
-        {nome:'Cena', emoji:'🌙', items:[
-          {nome:'Riso bianco ben cotto', qt:80, unit:'g', kcal:280},
-          {nome:'Uova strapazzate ben cotte', qt:2, unit:'uova', kcal:160},
-          {nome:'Verdure surgelate cotte a vapore', qt:150, unit:'g', kcal:50},
-          {nome:'Olio EVO', qt:10, unit:'mL', kcal:89}
+        {nome:_L('Cena','Dinner'), emoji:'🌙', items:[
+          {nome:_L('Riso bianco ben cotto','Well-cooked white rice'), qt:80, unit:'g', kcal:280},
+          {nome:_L('Uova strapazzate ben cotte','Well-cooked scrambled eggs'), qt:2, unit:_L('uova','eggs'), kcal:160},
+          {nome:_L('Verdure surgelate cotte a vapore','Steamed frozen vegetables'), qt:150, unit:'g', kcal:50},
+          {nome:_L('Olio EVO','EVO oil'), qt:10, unit:'mL', kcal:89}
         ]},
-        {nome:'Spuntino sera', emoji:'🌜', items:[
-          {nome:'Latte UHT caldo', qt:200, unit:'mL', kcal:130},
-          {nome:'Fette biscottate sigillate', qt:25, unit:'g', kcal:100}
+        {nome:_L('Spuntino sera','Evening snack'), emoji:'🌜', items:[
+          {nome:_L('Latte UHT caldo','Hot UHT milk'), qt:200, unit:'mL', kcal:130},
+          {nome:_L('Fette biscottate sigillate','Sealed rusks'), qt:25, unit:'g', kcal:100}
         ]}
       ]
     }

@@ -4618,7 +4618,9 @@ function filterStudies() {
       s.autori.toLowerCase().includes(q) ||
       s.rivista.toLowerCase().includes(q) ||
       s.obiettivo.toLowerCase().includes(q) ||
+      (s.obiettivo_en||'').toLowerCase().includes(q) ||
       s.risultati.toLowerCase().includes(q) ||
+      (s.risultati_en||'').toLowerCase().includes(q) ||
       s.categorie.some(c => c.includes(q))
     );
   }
@@ -4672,7 +4674,7 @@ function renderStudy(s) {
         <div class="study-authors">${s.autori}</div>
         <div class="study-journal">${s.rivista} · DOI: ${s.doi}</div>
         <div style="margin-top:6px;font-size:11.5px;color:var(--slate-l)">
-          👥 <b>${_L('Partecipanti','Participants')}:</b> ${s.partecipanti} &nbsp;·&nbsp; ⏱️ <b>${_L('Durata','Duration')}:</b> ${s.durata} &nbsp;·&nbsp; 📊 <b>${_L('Evidenza','Evidence')}:</b> ${efLabel(s.ef)}
+          👥 <b>${_L('Partecipanti','Participants')}:</b> ${s.partecipanti} &nbsp;·&nbsp; ⏱️ <b>${_L('Durata','Duration')}:</b> ${_L(s.durata,s.durata_en||s.durata)} &nbsp;·&nbsp; 📊 <b>${_L('Evidenza','Evidence')}:</b> ${efLabel(s.ef)}
         </div>
       </div>
       <div style="flex-shrink:0;margin-left:8px;font-size:18px;color:var(--slate-l);transition:transform .2s" id="arr-${s.id}">▼</div>
@@ -4682,10 +4684,10 @@ function renderStudy(s) {
 }
 
 function _studyBodyHTML(s) {
-  return `<div class="study-section"><h4>🎯 ${_L('Obiettivo dello Studio','Study Objective')}</h4><p>${s.obiettivo}</p></div>
-      <div class="study-section"><h4>🔬 ${_L('Metodi','Methods')}</h4><p>${s.metodi}</p></div>
-      <div class="study-section"><h4>📊 ${_L('Risultati Principali','Main Results')}</h4><p>${s.risultati}</p></div>
-      <div class="study-section"><h4>🧠 ${_L('Analisi Critica dei Metodi e dei Risultati','Critical Analysis of Methods and Results')}</h4><p>${s.analisi}</p></div>
+  return `<div class="study-section"><h4>🎯 ${_L('Obiettivo dello Studio','Study Objective')}</h4><p>${_L(s.obiettivo,s.obiettivo_en||s.obiettivo)}</p></div>
+      <div class="study-section"><h4>🔬 ${_L('Metodi','Methods')}</h4><p>${_L(s.metodi,s.metodi_en||s.metodi)}</p></div>
+      <div class="study-section"><h4>📊 ${_L('Risultati Principali','Main Results')}</h4><p>${_L(s.risultati,s.risultati_en||s.risultati)}</p></div>
+      <div class="study-section"><h4>🧠 ${_L('Analisi Critica dei Metodi e dei Risultati','Critical Analysis of Methods and Results')}</h4><p>${_L(s.analisi,s.analisi_en||s.analisi)}</p></div>
       <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <a class="study-link" href="${s.link}" target="_blank" rel="noopener noreferrer">📑 PubMed — PMID: ${s.pubmed}</a>
         <a class="study-link" href="${s.abstract_link}" target="_blank" rel="noopener noreferrer" style="background:#1E3A5F">📄 ${_L('Articolo completo','Full article')} →</a>

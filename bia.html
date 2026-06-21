@@ -654,70 +654,93 @@ function generateClinicalComment(d, ref, inp) {
 
   // 1. Body fat analysis
   if (d.bf_pct < ref.bf_low) {
-    comments.push({icon:'⚠️', title:'Massa Grassa: SOTTOPESO LIPIDICO', col:'#DC2626', bg:'#FEF2F2',
-      text:`La percentuale di grasso corporeo (${r1(d.bf_pct)}%) è inferiore al range normale (${ref.bf_low}–${ref.bf_high}% per ${m?'uomini':'donne'} di ${eta} anni). Una percentuale troppo bassa può indicare malnutrizione, rischio di disfunzioni ormonali${m?'':' e amenorrea'} e ridotta protezione degli organi vitali.`,
-      rec:`Aumentare l'apporto calorico con particolare attenzione ai grassi insaturi (EVO, avocado, frutta secca) e alle proteine di qualità.`});
+    comments.push({icon:'⚠️', title:_L('Massa Grassa: SOTTOPESO LIPIDICO','Body Fat: LIPID UNDERWEIGHT'), col:'#DC2626', bg:'#FEF2F2',
+      text:_L(`La percentuale di grasso corporeo (${r1(d.bf_pct)}%) è inferiore al range normale (${ref.bf_low}–${ref.bf_high}% per ${m?'uomini':'donne'} di ${eta} anni). Una percentuale troppo bassa può indicare malnutrizione, rischio di disfunzioni ormonali${m?'':' e amenorrea'} e ridotta protezione degli organi vitali.`,
+              `Body fat percentage (${r1(d.bf_pct)}%) is below the normal range (${ref.bf_low}–${ref.bf_high}% for ${m?'men':'women'} aged ${eta}). A very low percentage may indicate malnutrition, risk of hormonal dysfunction${m?'':' and amenorrhoea'} and reduced protection of vital organs.`),
+      rec:_L(`Aumentare l'apporto calorico con particolare attenzione ai grassi insaturi (EVO, avocado, frutta secca) e alle proteine di qualità.`,
+             `Increase caloric intake with particular attention to unsaturated fats (EVOO, avocado, nuts) and quality proteins.`)});
   } else if (d.bf_pct <= ref.bf_high) {
-    comments.push({icon:'✅', title:`Massa Grassa: NELLA NORMA (${r1(d.bf_pct)}%)`, col:'#10B981', bg:'#F0FDF4',
-      text:`La percentuale di grasso corporeo rientra nell'intervallo ottimale per ${m?'uomo':'donna'} di ${eta} anni (${ref.bf_low}–${ref.bf_high}%). Il grasso viscerale (stimato dal rapporto ECW/TBW e dall'angolo di fase) è probabilmente nella norma. Questa composizione corporea è associata a ridotto rischio cardiovascolare e metabolico.`,
+    comments.push({icon:'✅', title:_L(`Massa Grassa: NELLA NORMA (${r1(d.bf_pct)}%)`,`Body Fat: NORMAL (${r1(d.bf_pct)}%)`), col:'#10B981', bg:'#F0FDF4',
+      text:_L(`La percentuale di grasso corporeo rientra nell'intervallo ottimale per ${m?'uomo':'donna'} di ${eta} anni (${ref.bf_low}–${ref.bf_high}%). Il grasso viscerale (stimato dal rapporto ECW/TBW e dall'angolo di fase) è probabilmente nella norma. Questa composizione corporea è associata a ridotto rischio cardiovascolare e metabolico.`,
+              `Body fat percentage is within the optimal range for a ${m?'male':'female'} aged ${eta} (${ref.bf_low}–${ref.bf_high}%). Visceral fat (estimated from ECW/TBW ratio and phase angle) is likely normal. This body composition is associated with reduced cardiovascular and metabolic risk.`),
       rec:null});
   } else if (d.bf_pct < ref.bf_high + 8) {
-    comments.push({icon:'⚠️', title:`Massa Grassa: SOVRAPPESO (${r1(d.bf_pct)}%)`, col:'#F59E0B', bg:'#FEF3C7',
-      text:`La percentuale di grasso è superiore alla norma per ${m?'uomini':'donne'} di ${eta} anni (normale: ${ref.bf_low}–${ref.bf_high}%). Il grasso in eccesso, specie se viscerale, aumenta il rischio di insulino-resistenza, dislipidemia e patologie cardiovascolari. La massa magra è ${r1(d.ffm_kg)} kg — importante preservarla durante il dimagrimento.`,
-      rec:`Deficit calorico moderato (300-500 kcal/die), proteine 1.6-2.0 g/kg/die, resistenza muscolare 2-3x/settimana per preservare la FFM.`});
+    comments.push({icon:'⚠️', title:_L(`Massa Grassa: SOVRAPPESO (${r1(d.bf_pct)}%)`,`Body Fat: OVERWEIGHT (${r1(d.bf_pct)}%)`), col:'#F59E0B', bg:'#FEF3C7',
+      text:_L(`La percentuale di grasso è superiore alla norma per ${m?'uomini':'donne'} di ${eta} anni (normale: ${ref.bf_low}–${ref.bf_high}%). Il grasso in eccesso, specie se viscerale, aumenta il rischio di insulino-resistenza, dislipidemia e patologie cardiovascolari. La massa magra è ${r1(d.ffm_kg)} kg — importante preservarla durante il dimagrimento.`,
+              `Fat percentage is above normal for ${m?'men':'women'} aged ${eta} (normal: ${ref.bf_low}–${ref.bf_high}%). Excess fat, especially visceral, increases the risk of insulin resistance, dyslipidaemia and cardiovascular disease. Lean mass is ${r1(d.ffm_kg)} kg — important to preserve it during weight loss.`),
+      rec:_L(`Deficit calorico moderato (300-500 kcal/die), proteine 1.6-2.0 g/kg/die, resistenza muscolare 2-3x/settimana per preservare la FFM.`,
+             `Moderate caloric deficit (300-500 kcal/day), protein 1.6-2.0 g/kg/day, resistance training 2-3x/week to preserve FFM.`)});
   } else {
-    comments.push({icon:'🔴', title:`Massa Grassa: OBESITÀ (${r1(d.bf_pct)}%)`, col:'#DC2626', bg:'#FEF2F2',
-      text:`La percentuale di grasso corporeo (${r1(d.bf_pct)}%) supera significativamente i valori normali. Il rischio associato di comorbilità metaboliche (T2DM, ipertensione, NAFLD) è elevato. La massa magra attuale di ${r1(d.ffm_kg)} kg è il patrimonio da tutelare.`,
-      rec:`Intervento nutrizionale strutturato con deficit di 500-750 kcal/die, approccio proteico elevato (1.8-2.4 g/kg), esercizio aerobico e di resistenza combinati.`});
+    comments.push({icon:'🔴', title:_L(`Massa Grassa: OBESITÀ (${r1(d.bf_pct)}%)`,`Body Fat: OBESITY (${r1(d.bf_pct)}%)`), col:'#DC2626', bg:'#FEF2F2',
+      text:_L(`La percentuale di grasso corporeo (${r1(d.bf_pct)}%) supera significativamente i valori normali. Il rischio associato di comorbilità metaboliche (T2DM, ipertensione, NAFLD) è elevato. La massa magra attuale di ${r1(d.ffm_kg)} kg è il patrimonio da tutelare.`,
+              `Body fat percentage (${r1(d.bf_pct)}%) significantly exceeds normal values. The associated risk of metabolic comorbidities (T2DM, hypertension, NAFLD) is high. Current lean mass of ${r1(d.ffm_kg)} kg is the asset to protect.`),
+      rec:_L(`Intervento nutrizionale strutturato con deficit di 500-750 kcal/die, approccio proteico elevato (1.8-2.4 g/kg), esercizio aerobico e di resistenza combinati.`,
+             `Structured nutritional intervention with a deficit of 500-750 kcal/day, high protein approach (1.8-2.4 g/kg), combined aerobic and resistance exercise.`)});
   }
 
   // 2. FFM / muscle mass
   if (d.ffmi < ref.ffmi_low) {
-    comments.push({icon:'⚠️', title:`Massa Magra (FFM): RIDOTTA — FFMI ${r1(d.ffmi)}`, col:'#DC2626', bg:'#FEF2F2',
-      text:`L'FFMI (Fat Free Mass Index = ${r1(d.ffmi)} kg/m²) è inferiore al limite normale (${ref.ffmi_low} per ${m?'uomini':'donne'}). Questo indica sarcopenia o sottopeso muscolare. La massa muscolare stimata è ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% del peso). La sarcopenia è associata a ridotta capacità funzionale, maggior rischio di cadute e peggior prognosi nelle malattie croniche.`,
-      rec:`Aumentare l'introito proteico a 1.6–2.0 g/kg/die con distribuzione in 4-5 pasti. Esercizio di resistenza progressivo 3x/settimana. Valutare supplementazione con creatina 3-5g/die.`});
+    comments.push({icon:'⚠️', title:_L(`Massa Magra (FFM): RIDOTTA — FFMI ${r1(d.ffmi)}`,`Lean Mass (FFM): REDUCED — FFMI ${r1(d.ffmi)}`), col:'#DC2626', bg:'#FEF2F2',
+      text:_L(`L'FFMI (Fat Free Mass Index = ${r1(d.ffmi)} kg/m²) è inferiore al limite normale (${ref.ffmi_low} per ${m?'uomini':'donne'}). Questo indica sarcopenia o sottopeso muscolare. La massa muscolare stimata è ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% del peso). La sarcopenia è associata a ridotta capacità funzionale, maggior rischio di cadute e peggior prognosi nelle malattie croniche.`,
+              `FFMI (Fat Free Mass Index = ${r1(d.ffmi)} kg/m²) is below the normal threshold (${ref.ffmi_low} for ${m?'men':'women'}). This indicates sarcopenia or muscle underweight. Estimated muscle mass is ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% of body weight). Sarcopenia is associated with reduced functional capacity, higher fall risk and worse prognosis in chronic diseases.`),
+      rec:_L(`Aumentare l'introito proteico a 1.6–2.0 g/kg/die con distribuzione in 4-5 pasti. Esercizio di resistenza progressivo 3x/settimana. Valutare supplementazione con creatina 3-5g/die.`,
+             `Increase protein intake to 1.6–2.0 g/kg/day distributed across 4-5 meals. Progressive resistance exercise 3x/week. Consider creatine supplementation 3-5g/day.`)});
   } else if (d.ffmi >= ref.ffmi_good) {
-    comments.push({icon:'💪', title:`Massa Magra: OTTIMA — FFMI ${r1(d.ffmi)}`, col:'#10B981', bg:'#F0FDF4',
-      text:`L'FFMI di ${r1(d.ffmi)} kg/m² indica una massa muscolare sopra la media per ${m?'uomini':'donne'} di ${eta} anni. La massa muscolare stimata è ${r1(d.muscle)} kg. Una buona massa muscolare è protettiva contro la sarcopenia, migliora la sensibilità insulinica e il metabolismo basale.`,
+    comments.push({icon:'💪', title:_L(`Massa Magra: OTTIMA — FFMI ${r1(d.ffmi)}`,`Lean Mass: EXCELLENT — FFMI ${r1(d.ffmi)}`), col:'#10B981', bg:'#F0FDF4',
+      text:_L(`L'FFMI di ${r1(d.ffmi)} kg/m² indica una massa muscolare sopra la media per ${m?'uomini':'donne'} di ${eta} anni. La massa muscolare stimata è ${r1(d.muscle)} kg. Una buona massa muscolare è protettiva contro la sarcopenia, migliora la sensibilità insulinica e il metabolismo basale.`,
+              `FFMI of ${r1(d.ffmi)} kg/m² indicates above-average muscle mass for ${m?'men':'women'} aged ${eta}. Estimated muscle mass is ${r1(d.muscle)} kg. Good muscle mass protects against sarcopenia, improves insulin sensitivity and basal metabolism.`),
       rec:null});
   } else {
-    comments.push({icon:'✅', title:`Massa Magra: NELLA NORMA — FFMI ${r1(d.ffmi)}`, col:'#3B82F6', bg:'#EFF6FF',
-      text:`L'FFMI di ${r1(d.ffmi)} kg/m² è nella norma. La massa muscolare stimata è ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% del peso corporeo).`,
-      rec:`Mantenere con adeguato apporto proteico (1.2-1.6 g/kg/die) e attività fisica regolare.`});
+    comments.push({icon:'✅', title:_L(`Massa Magra: NELLA NORMA — FFMI ${r1(d.ffmi)}`,`Lean Mass: NORMAL — FFMI ${r1(d.ffmi)}`), col:'#3B82F6', bg:'#EFF6FF',
+      text:_L(`L'FFMI di ${r1(d.ffmi)} kg/m² è nella norma. La massa muscolare stimata è ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% del peso corporeo).`,
+              `FFMI of ${r1(d.ffmi)} kg/m² is within normal range. Estimated muscle mass is ${r1(d.muscle)} kg (${r1(d.muscle/d.peso*100)}% of body weight).`),
+      rec:_L(`Mantenere con adeguato apporto proteico (1.2-1.6 g/kg/die) e attività fisica regolare.`,
+             `Maintain with adequate protein intake (1.2-1.6 g/kg/day) and regular physical activity.`)});
   }
 
   // 3. Hydration / ECW
   if (d.ecwTbw < ref.ecw_low) {
-    comments.push({icon:'💧', title:'Idratazione: DISIDRATAZIONE', col:'#1D4ED8', bg:'#EFF6FF',
-      text:`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è inferiore a 0.360, indicando una condizione di disidratazione. L'acqua totale è ${r1(d.tbw)} L (${r1(d.tbw/inp.peso*100)}% del peso). La disidratazione altera i parametri BIA, riduce la performance fisica e cognitiva, e può influenzare negativamente la funzione renale.`,
-      rec:`Incrementare l'idratazione a 30-35 mL/kg/die. Monitorare il colore delle urine (obiettivo: giallo paglierino).`});
+    comments.push({icon:'💧', title:_L('Idratazione: DISIDRATAZIONE','Hydration: DEHYDRATION'), col:'#1D4ED8', bg:'#EFF6FF',
+      text:_L(`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è inferiore a 0.360, indicando una condizione di disidratazione. L'acqua totale è ${r1(d.tbw)} L (${r1(d.tbw/inp.peso*100)}% del peso). La disidratazione altera i parametri BIA, riduce la performance fisica e cognitiva, e può influenzare negativamente la funzione renale.`,
+              `ECW/TBW ratio (${r2(d.ecwTbw)}) is below 0.360, indicating a dehydration state. Total body water is ${r1(d.tbw)} L (${r1(d.tbw/inp.peso*100)}% of body weight). Dehydration alters BIA parameters, reduces physical and cognitive performance, and may negatively affect kidney function.`),
+      rec:_L(`Incrementare l'idratazione a 30-35 mL/kg/die. Monitorare il colore delle urine (obiettivo: giallo paglierino).`,
+             `Increase hydration to 30-35 mL/kg/day. Monitor urine colour (goal: pale yellow).`)});
   } else if (d.ecwTbw >= ref.ecw_high) {
-    comments.push({icon:'💦', title:`Idratazione: RITENZIONE IDRICA${d.ecwTbw > 0.41 ? '/EDEMA' : ' LIEVE'}`, col:'#F59E0B', bg:'#FEF3C7',
-      text:`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è superiore a ${ref.ecw_ok}, indicando un'eccessiva quota di acqua extracellulare. Questo può essere associato a ${d.ecwTbw > 0.41 ? 'edema, scompenso cardiaco, ipoalbuminemia o patologia renale/epatica' : 'infiammazione, inattività fisica prolungata o eccesso di sale'}. ECW = ${r1(d.ecw)} L (${r1(d.ecw/d.tbw*100)}% del TBW vs normale 36-39%).`,
-      rec:`Ridurre l'apporto di sodio. Se ECW/TBW > 0.41 con segni clinici, approfondimento medico indicato (albumina, funzione renale/cardiaca).`});
+    comments.push({icon:'💦', title:_L(`Idratazione: RITENZIONE IDRICA${d.ecwTbw > 0.41 ? '/EDEMA' : ' LIEVE'}`,`Hydration: FLUID RETENTION${d.ecwTbw > 0.41 ? '/OEDEMA' : ' MILD'}`), col:'#F59E0B', bg:'#FEF3C7',
+      text:_L(`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è superiore a ${ref.ecw_ok}, indicando un'eccessiva quota di acqua extracellulare. Questo può essere associato a ${d.ecwTbw > 0.41 ? 'edema, scompenso cardiaco, ipoalbuminemia o patologia renale/epatica' : 'infiammazione, inattività fisica prolungata o eccesso di sale'}. ECW = ${r1(d.ecw)} L (${r1(d.ecw/d.tbw*100)}% del TBW vs normale 36-39%).`,
+              `ECW/TBW ratio (${r2(d.ecwTbw)}) is above ${ref.ecw_ok}, indicating excess extracellular water. This may be associated with ${d.ecwTbw > 0.41 ? 'oedema, heart failure, hypoalbuminaemia or renal/hepatic disease' : 'inflammation, prolonged physical inactivity or excess salt'}. ECW = ${r1(d.ecw)} L (${r1(d.ecw/d.tbw*100)}% of TBW vs normal 36-39%).`),
+      rec:_L(`Ridurre l'apporto di sodio. Se ECW/TBW > 0.41 con segni clinici, approfondimento medico indicato (albumina, funzione renale/cardiaca).`,
+             `Reduce sodium intake. If ECW/TBW > 0.41 with clinical signs, further medical investigation indicated (albumin, renal/cardiac function).`)});
   } else {
-    comments.push({icon:'💧', title:'Idratazione: NELLA NORMA', col:'#10B981', bg:'#F0FDF4',
-      text:`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è nella norma (0.360–0.390). L'acqua intracellulare (ICW = ${r1(d.icw)} L) è adeguata, indicando buona integrità cellulare. L'acqua totale rappresenta il ${r1(d.tbw/inp.peso*100)}% del peso corporeo.`,
+    comments.push({icon:'💧', title:_L('Idratazione: NELLA NORMA','Hydration: NORMAL'), col:'#10B981', bg:'#F0FDF4',
+      text:_L(`Il rapporto ECW/TBW (${r2(d.ecwTbw)}) è nella norma (0.360–0.390). L'acqua intracellulare (ICW = ${r1(d.icw)} L) è adeguata, indicando buona integrità cellulare. L'acqua totale rappresenta il ${r1(d.tbw/inp.peso*100)}% del peso corporeo.`,
+              `ECW/TBW ratio (${r2(d.ecwTbw)}) is within normal range (0.360–0.390). Intracellular water (ICW = ${r1(d.icw)} L) is adequate, indicating good cellular integrity. Total body water represents ${r1(d.tbw/inp.peso*100)}% of body weight.`),
       rec:null});
   }
 
   // 4. Angle of phase
   if (d.af_val) {
     if (d.af_val < 4) {
-      comments.push({icon:'🔴', title:`Angolo di Fase: CRITICO (${r1(d.af_val)}°)`, col:'#DC2626', bg:'#FEF2F2',
-        text:`L'angolo di fase di ${r1(d.af_val)}° è al di sotto del valore critico di 4°. È un indicatore prognostico negativo: indica compromissione della membrana cellulare, ridotta vitalità cellulare e stato nutrizionale compromesso. Valori < 4° sono associati ad aumentata mortalità nei pazienti critici e oncologici (Gupta 2008, Norman 2012).`,
-        rec:`Rivalutazione nutrizionale urgente. Considerare supporto nutrizionale intensivo (ONS o NE). Escludere patologie sottostanti: malnutrizione severa, sepsi, insufficienza epatica.`});
+      comments.push({icon:'🔴', title:_L(`Angolo di Fase: CRITICO (${r1(d.af_val)}°)`,`Phase Angle: CRITICAL (${r1(d.af_val)}°)`), col:'#DC2626', bg:'#FEF2F2',
+        text:_L(`L'angolo di fase di ${r1(d.af_val)}° è al di sotto del valore critico di 4°. È un indicatore prognostico negativo: indica compromissione della membrana cellulare, ridotta vitalità cellulare e stato nutrizionale compromesso. Valori < 4° sono associati ad aumentata mortalità nei pazienti critici e oncologici (Gupta 2008, Norman 2012).`,
+                `Phase angle of ${r1(d.af_val)}° is below the critical threshold of 4°. This is a negative prognostic indicator: it signals cell membrane compromise, reduced cellular vitality and impaired nutritional status. Values < 4° are associated with increased mortality in critically ill and oncological patients (Gupta 2008, Norman 2012).`),
+        rec:_L(`Rivalutazione nutrizionale urgente. Considerare supporto nutrizionale intensivo (ONS o NE). Escludere patologie sottostanti: malnutrizione severa, sepsi, insufficienza epatica.`,
+               `Urgent nutritional re-assessment. Consider intensive nutritional support (ONS or EN). Exclude underlying conditions: severe malnutrition, sepsis, hepatic failure.`)});
     } else if (d.af_val < ref.af_low) {
-      comments.push({icon:'⚠️', title:`Angolo di Fase: RIDOTTO (${r1(d.af_val)}°)`, col:'#F59E0B', bg:'#FEF3C7',
-        text:`L'angolo di fase (${r1(d.af_val)}°) è inferiore al normale (>5° per adulti). Indica una riduzione della qualità cellulare, possibile infiammazione cronica o malnutrizione moderata. L'angolo di fase è correlato con la massa cellulare attiva (BCM = ${r1(d.bcm)} kg) e riflette l'integrità delle membrane cellulari.`,
-        rec:`Ottimizzare lo stato nutrizionale. Proteine 1.5-1.8 g/kg/die, omega-3 2-4 g/die (effetto antinfiammatorio). Rivalutare in 4-6 settimane.`});
+      comments.push({icon:'⚠️', title:_L(`Angolo di Fase: RIDOTTO (${r1(d.af_val)}°)`,`Phase Angle: REDUCED (${r1(d.af_val)}°)`), col:'#F59E0B', bg:'#FEF3C7',
+        text:_L(`L'angolo di fase (${r1(d.af_val)}°) è inferiore al normale (>5° per adulti). Indica una riduzione della qualità cellulare, possibile infiammazione cronica o malnutrizione moderata. L'angolo di fase è correlato con la massa cellulare attiva (BCM = ${r1(d.bcm)} kg) e riflette l'integrità delle membrane cellulari.`,
+                `Phase angle (${r1(d.af_val)}°) is below normal (>5° for adults). It indicates reduced cellular quality, possible chronic inflammation or moderate malnutrition. Phase angle correlates with active cell mass (BCM = ${r1(d.bcm)} kg) and reflects cell membrane integrity.`),
+        rec:_L(`Ottimizzare lo stato nutrizionale. Proteine 1.5-1.8 g/kg/die, omega-3 2-4 g/die (effetto antinfiammatorio). Rivalutare in 4-6 settimane.`,
+               `Optimise nutritional status. Protein 1.5-1.8 g/kg/day, omega-3 2-4 g/day (anti-inflammatory effect). Re-assess in 4-6 weeks.`)});
     } else if (d.af_val < ref.af_good) {
-      comments.push({icon:'✅', title:`Angolo di Fase: NORMALE (${r1(d.af_val)}°)`, col:'#10B981', bg:'#F0FDF4',
-        text:`L'angolo di fase (${r1(d.af_val)}°) è nella norma per adulti (5–7°). Indica buona integrità delle membrane cellulari e adeguato stato nutrizionale cellulare. Il BCM (Massa Cellulare Attiva) stimato è ${r1(d.bcm)} kg.`,
+      comments.push({icon:'✅', title:_L(`Angolo di Fase: NORMALE (${r1(d.af_val)}°)`,`Phase Angle: NORMAL (${r1(d.af_val)}°)`), col:'#10B981', bg:'#F0FDF4',
+        text:_L(`L'angolo di fase (${r1(d.af_val)}°) è nella norma per adulti (5–7°). Indica buona integrità delle membrane cellulari e adeguato stato nutrizionale cellulare. Il BCM (Massa Cellulare Attiva) stimato è ${r1(d.bcm)} kg.`,
+                `Phase angle (${r1(d.af_val)}°) is within normal range for adults (5–7°). It indicates good cell membrane integrity and adequate cellular nutritional status. Estimated BCM (Active Cell Mass) is ${r1(d.bcm)} kg.`),
         rec:null});
     } else {
-      comments.push({icon:'⭐', title:`Angolo di Fase: OTTIMO (${r1(d.af_val)}°)`, col:'#3B82F6', bg:'#EFF6FF',
-        text:`L'angolo di fase (${r1(d.af_val)}°) è superiore alla media, tipico di atleti e soggetti con ottimo stato nutrizionale e muscolare. Indica eccellente integrità delle membrane cellulari e alta vitalità cellulare.`,
+      comments.push({icon:'⭐', title:_L(`Angolo di Fase: OTTIMO (${r1(d.af_val)}°)`,`Phase Angle: EXCELLENT (${r1(d.af_val)}°)`), col:'#3B82F6', bg:'#EFF6FF',
+        text:_L(`L'angolo di fase (${r1(d.af_val)}°) è superiore alla media, tipico di atleti e soggetti con ottimo stato nutrizionale e muscolare. Indica eccellente integrità delle membrane cellulari e alta vitalità cellulare.`,
+                `Phase angle (${r1(d.af_val)}°) is above average, typical of athletes and subjects with excellent nutritional and muscular status. It indicates excellent cell membrane integrity and high cellular vitality.`),
         rec:null});
     }
   }

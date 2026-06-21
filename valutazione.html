@@ -908,7 +908,7 @@ function calcolaAcqua() {
   if (!out) return;
   const peso = parseFloat(document.getElementById('w-peso').value);
   if (!peso || peso <= 0) {
-    out.innerHTML = '<div style="font-size:12px;color:var(--slate-l)">Inserisci il peso per calcolare il fabbisogno.</div>';
+    out.innerHTML = `<div style="font-size:12px;color:var(--slate-l)">${_L('Inserisci il peso per calcolare il fabbisogno.','Enter weight to calculate water needs.')}</div>`;
     if (addBtn) addBtn.style.display = 'none';
     _lastWaterResult = null;
     return;
@@ -929,24 +929,24 @@ function calcolaAcqua() {
     const temp = parseFloat(document.getElementById('w-temp').value) || 37;
     const gradi = Math.max(0, temp - 37);
     const add = Math.round(gradi * 200);
-    if (add > 0) { min += add; max += add; note.push(`Febbre: +${add} ml (+200 ml per °C sopra 37°)`); }
+    if (add > 0) { min += add; max += add; note.push(_L(`Febbre: +${add} ml (+200 ml per °C sopra 37°)`,`Fever: +${add} ml (+200 ml per °C above 37°)`)); }
   }
-  if (document.getElementById('w-ostomia').checked) { min += 500; max += 500; note.push('Ostomia/diarrea: +500 ml/die'); }
+  if (document.getElementById('w-ostomia').checked) { min += 500; max += 500; note.push(_L('Ostomia/diarrea: +500 ml/die','Ostomy/diarrhoea: +500 ml/day')); }
 
   // Restrizioni (sovrascrivono il calcolo)
   let restrizione = null;
-  if (document.getElementById('w-dialisi').checked) restrizione = 'Dialisi: <b>diuresi residua + 500 ml/die</b>. Personalizzare in base alla diuresi del paziente.';
-  else if (document.getElementById('w-irc').checked) restrizione = 'IRC: <b>restrizione 500–1000 ml/die</b> oppure "secondo diuresi". Adeguare allo stadio e alla diuresi.';
-  else if (document.getElementById('w-scompenso').checked) restrizione = 'Scompenso cardiaco: <b>≤ 1,5 L/die</b>. Limitare i liquidi totali.';
+  if (document.getElementById('w-dialisi').checked) restrizione = _L('Dialisi: <b>diuresi residua + 500 ml/die</b>. Personalizzare in base alla diuresi del paziente.','Dialysis: <b>residual diuresis + 500 ml/day</b>. Individualise based on patient diuresis.');
+  else if (document.getElementById('w-irc').checked) restrizione = _L('IRC: <b>restrizione 500–1000 ml/die</b> oppure "secondo diuresi". Adeguare allo stadio e alla diuresi.','CKD: <b>restriction 500–1000 ml/day</b> or "according to diuresis". Adjust to stage and diuresis.');
+  else if (document.getElementById('w-scompenso').checked) restrizione = _L('Scompenso cardiaco: <b>≤ 1,5 L/die</b>. Limitare i liquidi totali.','Heart failure: <b>≤ 1.5 L/day</b>. Restrict total fluid intake.');
 
   const fmtL = ml => (ml / 1000).toFixed(2).replace('.', ',');
   let html = '';
 
   if (restrizione) {
     html += `<div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:8px;padding:10px 14px">
-      <div style="font-size:12.5px;font-weight:700;color:#DC2626">⚠️ Apporto idrico da RESTRINGERE</div>
+      <div style="font-size:12.5px;font-weight:700;color:#DC2626">⚠️ ${_L('Apporto idrico da RESTRINGERE','Fluid intake to be RESTRICTED')}</div>
       <div style="font-size:12px;color:var(--slate);margin-top:4px;line-height:1.5">${restrizione}</div>
-      <div style="font-size:11px;color:var(--slate-l);margin-top:6px">Il calcolo standard (${fmtL(min)}–${fmtL(max)} L) non si applica: prevale la restrizione clinica.</div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:6px">${_L(`Il calcolo standard (${fmtL(min)}–${fmtL(max)} L) non si applica: prevale la restrizione clinica.`,`The standard calculation (${fmtL(min)}–${fmtL(max)} L) does not apply: clinical restriction prevails.`)}</div>
     </div>`;
     _lastWaterResult = restrizione.replace(/<[^>]+>/g, '');
   } else {
@@ -954,14 +954,14 @@ function calcolaAcqua() {
     const daBev = `${fmtL(min * 0.8)}–${fmtL(max * 0.8)}`;
     const daAlim = `${fmtL(min * 0.2)}–${fmtL(max * 0.2)}`;
     html += `<div style="background:#EFF6FF;border-left:4px solid #0EA5E9;border-radius:8px;padding:10px 14px">
-      <div style="font-size:12.5px;font-weight:700;color:#0369A1">💧 Fabbisogno consigliato: ${minL}–${maxL} L/die</div>
+      <div style="font-size:12.5px;font-weight:700;color:#0369A1">💧 ${_L(`Fabbisogno consigliato: ${minL}–${maxL} L/die`,`Recommended intake: ${minL}–${maxL} L/day`)}</div>
       <div style="font-size:12px;color:var(--slate);margin-top:6px;line-height:1.6">
-        • Da bevande (~80%): <b>${daBev} L</b><br>
-        • Da alimenti (~20%): <b>${daAlim} L</b>
+        • ${_L('Da bevande (~80%):','From drinks (~80%):')} <b>${daBev} L</b><br>
+        • ${_L('Da alimenti (~20%):','From food (~20%):')} <b>${daAlim} L</b>
       </div>
       ${note.length ? `<div style="font-size:11px;color:var(--slate-l);margin-top:6px">${note.join(' · ')}</div>` : ''}
     </div>`;
-    _lastWaterResult = `Fabbisogno idrico: ${minL}–${maxL} L/die (da bevande ${daBev} L, da alimenti ${daAlim} L)${note.length ? '. ' + note.join('; ') : ''}.`;
+    _lastWaterResult = _L(`Fabbisogno idrico: ${minL}–${maxL} L/die (da bevande ${daBev} L, da alimenti ${daAlim} L)${note.length ? '. ' + note.join('; ') : ''}.`,`Water requirement: ${minL}–${maxL} L/day (from drinks ${daBev} L, from food ${daAlim} L)${note.length ? '. ' + note.join('; ') : ''}.`);
   }
 
   out.innerHTML = html;
@@ -1080,12 +1080,12 @@ function updatePatSel(){
 }
 function renderLGNotes(container){
   const arr=[...selectedPat];
-  if(!arr.length){container.innerHTML='<p style="color:var(--slate-l);font-size:12.5px">Nessuna patologia selezionata.</p>';return;}
+  if(!arr.length){container.innerHTML=`<p style="color:var(--slate-l);font-size:12.5px">${_L('Nessuna patologia selezionata.','No condition selected.')}</p>`;return;}
   container.innerHTML=arr.map(id=>{
     const fp=FABBISOGNO_PATOLOGIE[id];
     const pat=getTuttePatologie().find(p=>p.id===id);
     if(!fp||!pat)return '';
-    return `<div class="lg-note-box"><div style="font-weight:700;color:var(--teal-d);margin-bottom:4px">${pat.emoji} ${pat.label}</div><div>Energia: <b>${fp.kcal}</b></div><div>Proteine: <b>${fp.prot}</b></div><div style="font-size:11px;color:#334155;margin-top:4px">${fp.note}</div></div>`;
+    return `<div class="lg-note-box"><div style="font-weight:700;color:var(--teal-d);margin-bottom:4px">${pat.emoji} ${pat.label}</div><div>${_L('Energia: ','Energy: ')}<b>${fp.kcal}</b></div><div>${_L('Proteine: ','Protein: ')}<b>${fp.prot}</b></div><div style="font-size:11px;color:#334155;margin-top:4px">${fp.note}</div></div>`;
   }).join('');
 }
 
@@ -1128,22 +1128,22 @@ function calcolaHandgrip(){
   if(bestVal===null){interpDiv.style.display='none';return;}
   interpDiv.style.display='block';
   if(unita!=='kg'){
-    interpContent.innerHTML='<span style="color:var(--slate-m);font-size:12px">Interpretazione EWGSOP2 disponibile solo con unità kg.</span>';
+    interpContent.innerHTML=`<span style="color:var(--slate-m);font-size:12px">${_L('Interpretazione EWGSOP2 disponibile solo con unità kg.','EWGSOP2 interpretation only available with kg units.')}</span>`;
     return;
   }
   const sesso=document.getElementById('v-sesso')?.value||'M';
   const soglia=sesso==='M'?27:16;
   let badge,msg;
   if(bestVal>=soglia){
-    badge='<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">🟢 NORMALE</span>';
-    msg='Forza di presa nella norma '+(sesso==='M'?'uomini (≥27 kg)':'donne (≥16 kg)')+'.';
+    badge=`<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">🟢 ${_L('NORMALE','NORMAL')}</span>`;
+    msg=_L('Forza di presa nella norma ','Grip strength within normal range ')+(sesso==='M'?_L('uomini (≥27 kg)','men (≥27 kg)'):_L('donne (≥16 kg)','women (≥16 kg)'))+'.';
   } else {
-    badge='<span style="background:#FEE2E2;color:#991B1B;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">🔴 FORZA RIDOTTA</span>';
-    msg='Forza di presa <b>ridotta</b> (criterio EWGSOP2 per sarcopenia). Soglia '+(sesso==='M'?'uomini: &lt;27 kg':'donne: &lt;16 kg')+'.';
+    badge=`<span style="background:#FEE2E2;color:#991B1B;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">🔴 ${_L('FORZA RIDOTTA','REDUCED STRENGTH')}</span>`;
+    msg=_L('Forza di presa <b>ridotta</b> (criterio EWGSOP2 per sarcopenia). Soglia ','Grip strength <b>reduced</b> (EWGSOP2 criterion for sarcopenia). Threshold ')+(sesso==='M'?_L('uomini: &lt;27 kg','men: &lt;27 kg'):_L('donne: &lt;16 kg','women: &lt;16 kg'))+'.';
   }
   const eta=parseInt(document.getElementById('v-eta')?.value)||null;
   let ageNote='';
-  if(eta&&eta>=65)ageNote=' <span style="font-size:10.5px;color:#B45309;background:#FEF3C7;border-radius:20px;padding:2px 8px">Età ≥65 anni — screening sarcopenia raccomandato</span>';
+  if(eta&&eta>=65)ageNote=` <span style="font-size:10.5px;color:#B45309;background:#FEF3C7;border-radius:20px;padding:2px 8px">${_L('Età ≥65 anni — screening sarcopenia raccomandato','Age ≥65 — sarcopenia screening recommended')}</span>`;
   interpContent.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+badge+ageNote+'</div><div style="font-size:12px;color:var(--slate-m);margin-top:5px">'+msg+'</div>';
 }
 
@@ -1160,7 +1160,7 @@ function faoWhoFn(sesso,eta,peso){
   return Math.round(k);
 }
 
-const MACRO_ITEMS=[{key:'prot',label:'Proteine',icon:'🥩',col:'#15803D',bg:'#F0FDF4',kcalpg:4,minGkg:0.5,maxGkg:4},{key:'cho',label:'CHO',icon:'🌾',col:'#1D4ED8',bg:'#EFF6FF',kcalpg:4,minGkg:1,maxGkg:10},{key:'fat',label:'Grassi',icon:'🫒',col:'#B45309',bg:'#FEF3C7',kcalpg:9,minGkg:0.3,maxGkg:3}];
+const MACRO_ITEMS=[{key:'prot',label:_L('Proteine','Protein'),icon:'🥩',col:'#15803D',bg:'#F0FDF4',kcalpg:4,minGkg:0.5,maxGkg:4},{key:'cho',label:'CHO',icon:'🌾',col:'#1D4ED8',bg:'#EFF6FF',kcalpg:4,minGkg:1,maxGkg:10},{key:'fat',label:_L('Grassi','Fat'),icon:'🫒',col:'#B45309',bg:'#FEF3C7',kcalpg:9,minGkg:0.3,maxGkg:3}];
 
 function onMacroInput(key, input){
   const v=parseInt(input.value);
@@ -1233,18 +1233,18 @@ function renderMacroDist(){
   </div>
   <div id="mtot-indicator" style="padding:10px 14px;border-radius:8px;background:${totOk?'#F0FDF4':'#FEF2F2'};border:2px solid ${totOk?'#10B981':'#EF4444'};display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <span class="mtot-text" style="font-size:13px;font-weight:700;color:${totOk?'#065F46':'#991B1B'}">
-      ${totOk?'✅ Totale: 100%':'⚠️ Totale: '+tot+'% — deve essere esattamente 100%'}
+      ${totOk?_L('✅ Totale: 100%','✅ Total: 100%'):_L('⚠️ Totale: ','⚠️ Total: ')+tot+_L('% — deve essere esattamente 100%','% — must be exactly 100%')}
     </span>
-    <button class="auto-balance-btn" onclick="autoBalance()" style="padding:5px 12px;background:#EF4444;color:white;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:${totOk?'none':'inline-block'}">Auto-bilancia</button>
+    <button class="auto-balance-btn" onclick="autoBalance()" style="padding:5px 12px;background:#EF4444;color:white;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:${totOk?'none':'inline-block'}">${_L('Auto-bilancia','Auto-balance')}</button>
   </div>
   <div style="background:#FAF5FF;border-radius:8px;padding:10px;margin-top:4px">
-    <div style="font-size:12px;font-weight:700;color:#7E22CE;margin-bottom:8px">🌿 Fibra (separata dai CHO)</div>
+    <div style="font-size:12px;font-weight:700;color:#7E22CE;margin-bottom:8px">${_L('🌿 Fibra (separata dai CHO)','🌿 Fibre (separate from CHO)')}</div>
     <div style="display:flex;align-items:center;gap:10px">
       <input type="number" min="15" max="50" value="${macroDist.fibra||25}"
-        oninput="macroDist.fibra=parseInt(this.value)||25;document.getElementById('fibra-display').textContent=this.value+'g/die'"
+        oninput="macroDist.fibra=parseInt(this.value)||25;document.getElementById('fibra-display').textContent=this.value+'g/${_L('die','day')}'"
         style="width:70px;padding:6px 8px;border:2px solid #7E22CE;border-radius:8px;font-size:16px;font-weight:700;color:#7E22CE;text-align:center;outline:none">
-      <span id="fibra-display" style="font-size:13px;font-weight:700;color:#7E22CE">${macroDist.fibra||25}g/die</span>
-      <span style="font-size:11px;color:var(--slate-l)">Target: ≥25g/die</span>
+      <span id="fibra-display" style="font-size:13px;font-weight:700;color:#7E22CE">${macroDist.fibra||25}g/${_L('die','day')}</span>
+      <span style="font-size:11px;color:var(--slate-l)">${_L('Target: ≥25g/die','Target: ≥25g/day')}</span>
     </div>
   </div>`;
 }
@@ -1272,13 +1272,13 @@ function renderFormuleRows(){
   const mbM=Math.round(formuleGlobali.reduce((s,f)=>s+f.val,0)/formuleGlobali.length);
   container.innerHTML=formuleGlobali.map(f=>{
     const sel=selectedFormula===f.nome;
-    return `<div class="formula-row${sel?' selected':''}" onclick="selectFormula('${f.nome.replace(/'/g,"\\'")}')"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div style="text-align:right"><div class="fv">${f.val} kcal</div>${sel?'<div style="font-size:10px;color:#15803D;font-weight:700;margin-top:2px">✓ In uso</div>':''}</div></div>`;
+    return `<div class="formula-row${sel?' selected':''}" onclick="selectFormula('${f.nome.replace(/'/g,"\\'")}')"><div><div class="fn">${f.nome}</div><div class="fb">${f.note}</div></div><div style="text-align:right"><div class="fv">${f.val} kcal</div>${sel?`<div style="font-size:10px;color:#15803D;font-weight:700;margin-top:2px">${_L('✓ In uso','✓ In use')}</div>`:''}</div></div>`;
   }).join('');
   if(mediaRow){
     const active=!selectedFormula;
     mediaRow.style.background=active?'var(--teal)':'#CBD5E1';
     mediaRow.style.color=active?'white':'#475569';
-    mediaRow.innerHTML=`<b>${active?'✓ ':''}Media formule</b><span style="font-size:22px;font-weight:700">${mbM} kcal</span>`;
+    mediaRow.innerHTML=`<b>${active?'✓ ':''} ${_L('Media formule','Formula average')}</b><span style="font-size:22px;font-weight:700">${mbM} kcal</span>`;
   }
 }
 
@@ -1318,7 +1318,7 @@ function aggiornaTDEE(mb){
   tdee=tfc>0?tfc:t;
   const el=document.getElementById('tdee-result');
   if(!el)return;
-  el.innerHTML=`<div class="result-pill" style="background:#FFF7ED"><div><div class="rp-label">TDEE (MB x LAF)</div></div><div class="rp-val" style="color:#C2410C">${t} kcal</div></div>${fc!==1?`<div class="result-pill" style="background:#FFFBEB"><div><div class="rp-label">TDEE x FC (stress)</div></div><div class="rp-val" style="color:#B45309">${tfc} kcal</div></div>`:''}`;
+  el.innerHTML=`<div class="result-pill" style="background:#FFF7ED"><div><div class="rp-label">${_L('TDEE (MB × LAF)','TDEE (BMR × PAL)')}</div></div><div class="rp-val" style="color:#C2410C">${t} kcal</div></div>${fc!==1?`<div class="result-pill" style="background:#FFFBEB"><div><div class="rp-label">${_L('TDEE × FC (stress)','TDEE × CF (stress)')}</div></div><div class="rp-val" style="color:#B45309">${tfc} kcal</div></div>`:''}`;
   renderMacroDist();
 }
 
@@ -1367,12 +1367,12 @@ function renderKcalKgSuggBox(){
   }
   if(sugg.length>0){
     box.style.background='#F0FDF4';box.style.borderColor='#A7F3D0';
-    box.innerHTML=`<div style="font-weight:700;color:#065F46;margin-bottom:8px">📋 Suggerimenti per le patologie selezionate</div>`
-      +sugg.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #D1FAE5"><div><div style="color:#0F5E38;font-weight:600">${s.label}</div><div style="font-size:11px;color:#047857">${s.kcal}</div></div><button onclick="document.getElementById('kcalkg-input').value=${s.mid};calcolaKcalKgDie()" style="padding:4px 10px;background:#0F766E;color:white;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0">Usa ${s.mid}</button></div>`).join('');
+    box.innerHTML=`<div style="font-weight:700;color:#065F46;margin-bottom:8px">📋 ${_L('Suggerimenti per le patologie selezionate','Suggestions for selected conditions')}</div>`
+      +sugg.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #D1FAE5"><div><div style="color:#0F5E38;font-weight:600">${s.label}</div><div style="font-size:11px;color:#047857">${s.kcal}</div></div><button onclick="document.getElementById('kcalkg-input').value=${s.mid};calcolaKcalKgDie()" style="padding:4px 10px;background:#0F766E;color:white;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0">${_L('Usa ','Use ')}${s.mid}</button></div>`).join('');
   } else {
     box.style.background='#F0F9FF';box.style.borderColor='#BAE6FD';
-    box.innerHTML=`<div style="font-weight:700;color:#0C4A6E;margin-bottom:7px">📖 Riferimenti LARN — Popolazione sana</div><div style="color:#0369A1;line-height:2">`
-      +[['Adulti sedentari (18-59a)','25-30',27.5],['Adulti attivi (18-59a)','30-35',32.5],['Anziani (>60a)','28-34',31]].map(([lbl,range,mid])=>`<div>${lbl}: <b>${range} kcal/kg/die</b> <button onclick="document.getElementById('kcalkg-input').value=${mid};calcolaKcalKgDie()" style="padding:2px 8px;background:#0369A1;color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;margin-left:5px">Usa ${mid}</button></div>`).join('')+'</div>';
+    box.innerHTML=`<div style="font-weight:700;color:#0C4A6E;margin-bottom:7px">📖 ${_L('Riferimenti LARN — Popolazione sana','LARN References — Healthy Population')}</div><div style="color:#0369A1;line-height:2">`
+      +[[_L('Adulti sedentari (18-59a)','Sedentary adults (18-59y)'),'25-30',27.5],[_L('Adulti attivi (18-59a)','Active adults (18-59y)'),'30-35',32.5],[_L('Anziani (>60a)','Elderly (>60y)'),'28-34',31]].map(([lbl,range,mid])=>`<div>${lbl}: <b>${range} kcal/kg/${_L('die','day')}</b> <button onclick="document.getElementById('kcalkg-input').value=${mid};calcolaKcalKgDie()" style="padding:2px 8px;background:#0369A1;color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;margin-left:5px">${_L('Usa ','Use ')}${mid}</button></div>`).join('')+'</div>';
   }
 }
 
@@ -1398,82 +1398,82 @@ function calcolaFabbisogno(){
   const schof=schofieldFn(sesso,eta,pesoF);
   const fao=faoWhoFn(sesso,eta,pesoF);
   const kma=mm?Math.round(370+21.6*mm):null;
-  const formule=[{nome:'Harris-Benedict (1919)',val:hb,note:'Piu usata clinicamente'},{nome:'Mifflin-St Jeor (1990)',val:miff,note:'Piu accurata in generale'},{nome:'Schofield (1985) LARN',val:schof,note:'Standard OMS/LARN - corretta'},{nome:'FAO/WHO (1985)',val:fao,note:'Standard internazionale'},...(kma?[{nome:'Katch-McArdle (MM)',val:kma,note:'Se massa magra nota'}]:[])];
+  const formule=[{nome:'Harris-Benedict (1919)',val:hb,note:_L('Più usata clinicamente','Most used clinically')},{nome:'Mifflin-St Jeor (1990)',val:miff,note:_L('Più accurata in generale','Most accurate in general')},{nome:'Schofield (1985) LARN',val:schof,note:_L('Standard OMS/LARN — raccomandata','WHO/LARN standard — recommended')},{nome:'FAO/WHO (1985)',val:fao,note:_L('Standard internazionale','International standard')},...(kma?[{nome:'Katch-McArdle (MM)',val:kma,note:_L('Se massa magra nota','If lean mass known')}]:[])];
   formuleGlobali=formule;
   const mbM=Math.round(formule.reduce((s,f)=>s+f.val,0)/formule.length);
   const sfObj=selectedFormula?formule.find(f=>f.nome===selectedFormula):null;
   mbGlobale=sfObj?sfObj.val:mbM;
   tdee=Math.round(mbGlobale*1.375);
   let bmiCat='',bmiCol='var(--teal)';
-  if(bmi<18.5){bmiCat='Sottopeso';bmiCol='#0EA5E9';}else if(bmi<25){bmiCat='Normopeso';bmiCol='#15803D';}else if(bmi<30){bmiCat='Sovrappeso';bmiCol='#D97706';}else if(bmi<35){bmiCat='Obesita I';bmiCol='#DC2626';}else if(bmi<40){bmiCat='Obesita II';bmiCol='#DC2626';}else{bmiCat='Obesita III';bmiCol='#991B1B';}
+  if(bmi<18.5){bmiCat=_L('Sottopeso','Underweight');bmiCol='#0EA5E9';}else if(bmi<25){bmiCat=_L('Normopeso','Normal weight');bmiCol='#15803D';}else if(bmi<30){bmiCat=_L('Sovrappeso','Overweight');bmiCol='#D97706';}else if(bmi<35){bmiCat=_L('Obesità I','Obesity I');bmiCol='#DC2626';}else if(bmi<40){bmiCat=_L('Obesità II','Obesity II');bmiCol='#DC2626';}else{bmiCat=_L('Obesità III','Obesity III');bmiCol='#991B1B';}
   const whr=vita&&fianchi?vita/fianchi:null;
   const whtr=vita?vita/alt:null;
   const col=document.getElementById('risultati-col');
   col.innerHTML=`
-  <div style="border-bottom:2px solid var(--border);margin-bottom:16px;padding-bottom:4px"><div style="font-size:13px;font-weight:700;color:var(--teal-d);letter-spacing:.2px">📊 Risultati Valutazione</div></div>
+  <div style="border-bottom:2px solid var(--border);margin-bottom:16px;padding-bottom:4px"><div style="font-size:13px;font-weight:700;color:var(--teal-d);letter-spacing:.2px">📊 ${_L('Risultati Valutazione','Assessment Results')}</div></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start" class="result-grid-2col">
   <div>
-  <div class="val-section"><h3>📐 Indici Antropometrici</h3>
+  <div class="val-section"><h3>📐 ${_L('Indici Antropometrici','Anthropometric Indices')}</h3>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
     <div class="result-pill"><div><div class="rp-label">BMI</div><div class="rp-badge" style="color:${bmiCol}">${bmiCat}</div></div><div class="rp-val" style="color:${bmiCol}">${Math.round(bmi*10)/10}</div></div>
-    <div class="result-pill"><div><div class="rp-label">Peso Ideale (Lorenz)</div></div><div class="rp-val">${Math.round(pi*10)/10} kg</div></div>
-    <div class="result-pill"><div><div class="rp-label">Peso Aggiustato</div><div class="rp-badge">se BMI>=30</div></div><div class="rp-val" style="color:#C2410C">${Math.round(pa*10)/10} kg</div></div>
-    ${mm?`<div class="result-pill"><div><div class="rp-label">Massa Magra</div></div><div class="rp-val" style="color:#7E22CE">${Math.round(mm*10)/10} kg</div></div>`:''}
-    ${whr?`<div class="result-pill"><div><div class="rp-label">WHR</div><div class="rp-badge">${(sesso==='M'?whr>0.90:whr>0.85)?'Rischio':'OK'}</div></div><div class="rp-val">${Math.round(whr*100)/100}</div></div>`:''}
-    ${whtr?`<div class="result-pill"><div><div class="rp-label">WHtR</div><div class="rp-badge">${whtr>0.5?'Rischio metabolico':'OK'}</div></div><div class="rp-val">${Math.round(whtr*100)/100}</div></div>`:''}
+    <div class="result-pill"><div><div class="rp-label">${_L('Peso Ideale (Lorenz)','Ideal Weight (Lorenz)')}</div></div><div class="rp-val">${Math.round(pi*10)/10} kg</div></div>
+    <div class="result-pill"><div><div class="rp-label">${_L('Peso Aggiustato','Adjusted Weight')}</div><div class="rp-badge">${_L('se BMI≥30','if BMI≥30')}</div></div><div class="rp-val" style="color:#C2410C">${Math.round(pa*10)/10} kg</div></div>
+    ${mm?`<div class="result-pill"><div><div class="rp-label">${_L('Massa Magra','Lean Mass')}</div></div><div class="rp-val" style="color:#7E22CE">${Math.round(mm*10)/10} kg</div></div>`:''}
+    ${whr?`<div class="result-pill"><div><div class="rp-label">WHR</div><div class="rp-badge">${(sesso==='M'?whr>0.90:whr>0.85)?_L('Rischio','At risk'):'OK'}</div></div><div class="rp-val">${Math.round(whr*100)/100}</div></div>`:''}
+    ${whtr?`<div class="result-pill"><div><div class="rp-label">WHtR</div><div class="rp-badge">${whtr>0.5?_L('Rischio metabolico','Metabolic risk'):'OK'}</div></div><div class="rp-val">${Math.round(whtr*100)/100}</div></div>`:''}
   </div></div>
 
-  <div class="val-section"><h3>🔥 Metabolismo Basale</h3>
-  <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:10px">Peso usato: <b>${Math.round(pesoF*10)/10} kg</b>${bmi>=30?' (aggiustato)':''}  <span style="color:var(--slate-l);font-style:italic">Clicca una formula per usarla</span></div>
+  <div class="val-section"><h3>🔥 ${_L('Metabolismo Basale','Basal Metabolic Rate')}</h3>
+  <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:10px">${_L('Peso usato:','Weight used:')} <b>${Math.round(pesoF*10)/10} kg</b>${bmi>=30?_L(' (aggiustato)','  (adjusted)'):''}&nbsp;&nbsp;<span style="color:var(--slate-l);font-style:italic">${_L('Clicca una formula per usarla','Click a formula to use it')}</span></div>
   <div id="formula-list"></div>
   <div id="mb-media-row" onclick="selectFormula('__media__')" style="padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;cursor:pointer"></div>
   </div>
   </div>
 
   <div>
-  <div class="val-section"><h3>⚡ Fabbisogno Totale (TDEE)</h3>
+  <div class="val-section"><h3>⚡ ${_L('Fabbisogno Totale (TDEE)','Total Energy Expenditure (TDEE)')}</h3>
   <div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden;margin-bottom:14px">
-    <button id="met-btn-formula" onclick="setMetodoTDEE('formula')" style="flex:1;padding:8px 6px;border:none;background:var(--teal);color:white;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700">⚗️ Formule MB×LAF</button>
-    <button id="met-btn-kcalkg" onclick="setMetodoTDEE('kcalkg')" style="flex:1;padding:8px 6px;border:none;background:white;color:var(--slate-m);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;border-left:1.5px solid var(--border-d)">📏 kcal/kg/die</button>
+    <button id="met-btn-formula" onclick="setMetodoTDEE('formula')" style="flex:1;padding:8px 6px;border:none;background:var(--teal);color:white;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700">⚗️ ${_L('Formule MB×LAF','BMR×PAL Formulae')}</button>
+    <button id="met-btn-kcalkg" onclick="setMetodoTDEE('kcalkg')" style="flex:1;padding:8px 6px;border:none;background:white;color:var(--slate-m);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;border-left:1.5px solid var(--border-d)">📏 kcal/kg/${_L('die','day')}</button>
   </div>
   <div id="met-formula-section">
-  <div class="fg" style="margin-bottom:10px"><label>Livello Attivita Fisica (LAF)</label>
+  <div class="fg" style="margin-bottom:10px"><label>${_L('Livello Attività Fisica (LAF)','Physical Activity Level (PAL)')}</label>
   <select id="val-laf" onchange="aggiornaTDEE(mbGlobale)" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
     ${LAF_OPTIONS.map((l,i)=>`<option value="${l.val}" ${i===1?'selected':''}>${l.label} (x${l.val})</option>`).join('')}
   </select></div>
-  <div class="fg" style="margin-bottom:12px"><label>Fattore di Correzione (FC)</label>
+  <div class="fg" style="margin-bottom:12px"><label>${_L('Fattore di Correzione (FC)','Correction Factor (FC)')}</label>
   <select id="val-fc" onchange="aggiornaTDEE(mbGlobale)" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none">
     ${FC_OPTIONS.map((f,i)=>`<option value="${f.val}" ${i===0?'selected':''}>${f.label}</option>`).join('')}
   </select></div>
   </div>
   <div id="met-kcalkg-section" style="display:none">
   <div id="kcalkg-sugg-box" style="border:1.5px solid #BAE6FD;border-radius:10px;padding:11px;margin-bottom:12px;font-size:12px"></div>
-  <div class="fg" style="margin-bottom:10px"><label>Valore kcal/kg/die</label>
+  <div class="fg" style="margin-bottom:10px"><label>${_L('Valore kcal/kg/die','kcal/kg/day value')}</label>
   <input type="number" id="kcalkg-input" min="5" max="80" step="0.5" value="30" oninput="calcolaKcalKgDie()" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none;width:100%;box-sizing:border-box"></div>
-  <div class="fg" style="margin-bottom:12px"><label>Peso di riferimento</label>
+  <div class="fg" style="margin-bottom:12px"><label>${_L('Peso di riferimento','Reference weight')}</label>
   <select id="kcalkg-peso-tipo" onchange="calcolaKcalKgDie()" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none;width:100%;box-sizing:border-box">
-    <option value="pesoF">Peso ${bmi>=30?'aggiustato':'attuale'} — ${Math.round(pesoF*10)/10} kg${bmi>=30?' (BMI≥30)':''}</option>
-    <option value="attuale">Peso attuale — ${Math.round(peso*10)/10} kg</option>
-    <option value="ideale">Peso ideale (Lorenz) — ${Math.round(pi*10)/10} kg</option>
-    <option value="aggiustato">Peso aggiustato — ${Math.round(pa*10)/10} kg</option>
+    <option value="pesoF">${_L('Peso','Weight')} ${bmi>=30?_L('aggiustato','adjusted'):_L('attuale','actual')} — ${Math.round(pesoF*10)/10} kg${bmi>=30?' (BMI≥30)':''}</option>
+    <option value="attuale">${_L('Peso attuale','Actual weight')} — ${Math.round(peso*10)/10} kg</option>
+    <option value="ideale">${_L('Peso ideale (Lorenz)','Ideal weight (Lorenz)')} — ${Math.round(pi*10)/10} kg</option>
+    <option value="aggiustato">${_L('Peso aggiustato','Adjusted weight')} — ${Math.round(pa*10)/10} kg</option>
   </select></div>
   </div>
   <div id="tdee-result"></div></div>
 
-  <div class="val-section"><h3>🍽️ Ripartizione Macronutrienti</h3>
-  <p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">Trascina i cursori per impostare le percentuali. I grammi si aggiornano sul TDEE calcolato.</p>
+  <div class="val-section"><h3>🍽️ ${_L('Ripartizione Macronutrienti','Macronutrient Distribution')}</h3>
+  <p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">${_L('Imposta le percentuali. I grammi si aggiornano sul TDEE calcolato.','Set the percentages. Grams update based on calculated TDEE.')}</p>
   <div id="macro-dist-body"></div></div>
 
-  <div class="val-section"><h3>🥩 Fabbisogno Proteico</h3>
+  <div class="val-section"><h3>🥩 ${_L('Fabbisogno Proteico','Protein Requirements')}</h3>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-  ${[1.0,1.2,1.5,2.0].map(v=>`<div class="result-pill"><div><div class="rp-label">${v} g/kg/die</div></div><div class="rp-val">${Math.round(pesoF*v*10)/10} g</div></div>`).join('')}
+  ${[1.0,1.2,1.5,2.0].map(v=>`<div class="result-pill"><div><div class="rp-label">${v} g/kg/${_L('die','day')}</div></div><div class="rp-val">${Math.round(pesoF*v*10)/10} g</div></div>`).join('')}
   </div>
-  <div style="font-size:11px;color:var(--slate-l);margin-top:6px">Peso: ${Math.round(pesoF*10)/10} kg${bmi>=30?' (aggiustato)':''}</div>
+  <div style="font-size:11px;color:var(--slate-l);margin-top:6px">${_L('Peso:','Weight:')} ${Math.round(pesoF*10)/10} kg${bmi>=30?_L(' (aggiustato)',' (adjusted)'):''}</div>
   </div>
   </div>
   </div>
 
-  <div class="val-section"><h3>🏥 Raccomandazioni per le Patologie</h3><div id="pat-lg-notes"></div></div>`;
+  <div class="val-section"><h3>🏥 ${_L('Raccomandazioni per le Patologie','Condition-Specific Recommendations')}</h3><div id="pat-lg-notes"></div></div>`;
 
   setMetodoTDEE(metodoTDEE);renderKcalKgSuggBox();renderLGNotes(document.getElementById('pat-lg-notes'));renderFormuleRows();
 }

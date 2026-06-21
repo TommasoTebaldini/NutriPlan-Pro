@@ -1453,6 +1453,9 @@ function _snapPortion(std, scaled) {
    PIANO ESEMPIO SPECIALISTICO — Utility condivisa
    initPianoEsempio(containerId, config)
 ═══════════════════════════════════════════════════ */
+function _L(it, en) {
+  try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang') || 'it'); return l === 'en' ? en : it; } catch(e) { return it; }
+}
 function initPianoEsempio(containerId, config) {
   const container = document.getElementById(containerId);
   if (!container) { console.warn('initPianoEsempio: container not found:', containerId); return; }
@@ -1468,9 +1471,9 @@ function initPianoEsempio(containerId, config) {
 
   function _renderSelector() {
     let html = `<div class="pe-selector no-print" style="background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;margin-bottom:18px;box-shadow:var(--shadow)">`;
-    html += `<h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px">⚙️ Seleziona Tipo di Dieta${_kcals.length ? ' e Calorie Target' : ''}</h3>`;
+    html += `<h3 style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:14px">⚙️ ${_L('Seleziona Tipo di Dieta','Select Diet Type')}${_kcals.length ? _L(' e Calorie Target',' and Calorie Target') : ''}</h3>`;
     html += `<div style="display:grid;grid-template-columns:${_kcals.length ? '1fr 1fr' : '1fr'};gap:16px;flex-wrap:wrap">`;
-    html += `<div><div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Tipo di Dieta</div>`;
+    html += `<div><div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">${_L('Tipo di Dieta','Diet Type')}</div>`;
     html += `<div id="pe-tipo-btns-${_id}" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">`;
     _tipi.forEach(t => {
       const active = t.id === _selTipo;
@@ -1483,7 +1486,7 @@ function initPianoEsempio(containerId, config) {
     });
     html += `</div></div>`;
     if (_kcals.length) {
-      html += `<div><div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Target Calorico</div>`;
+      html += `<div><div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">${_L('Target Calorico','Calorie Target')}</div>`;
       html += `<div id="pe-kcal-btns-${_id}" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">`;
       _kcals.forEach(k => {
         const active = k === _selKcal;
@@ -1499,7 +1502,7 @@ function initPianoEsempio(containerId, config) {
 
   function _renderPiano() {
     const piano = _piani[_selTipo];
-    if (!piano) return '<div style="color:var(--slate-l);font-size:13px;padding:20px">Seleziona un tipo di dieta.</div>';
+    if (!piano) return `<div style="color:var(--slate-l);font-size:13px;padding:20px">${_L('Seleziona un tipo di dieta.','Select a diet type.')}</div>`;
     const tipo = _tipi.find(t => t.id === _selTipo);
     const factor = (_selKcal && piano.kcal_base) ? _selKcal / piano.kcal_base : 1;
     let totKcal = 0;
@@ -1511,16 +1514,16 @@ function initPianoEsempio(containerId, config) {
     html += `<div style="background:${tipo?tipo.colore+'18':'#f0fdf4'};border:1.5px solid ${tipo?tipo.colore+'40':'#a7f3d0'};border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px">`;
     html += `<div>`;
     html += `<div style="font-size:15px;font-weight:700;color:${tipo?tipo.colore:'var(--teal)'};margin-bottom:4px">${escH(tipo?tipo.nomeEsteso||tipo.nome:'')}</div>`;
-    if (_selKcal) html += `<div style="font-size:12px;color:var(--slate-m)">Target: <b>${_selKcal} kcal/die</b>&nbsp;·&nbsp;Piano base: ${piano.kcal_base} kcal&nbsp;·&nbsp;Scala: <b>${factor.toFixed(2)}×</b></div>`;
+    if (_selKcal) html += `<div style="font-size:12px;color:var(--slate-m)">${_L('Target:','Target:')} <b>${_selKcal} kcal/${_L('die','day')}</b>&nbsp;·&nbsp;${_L('Piano base:','Base plan:')} ${piano.kcal_base} kcal&nbsp;·&nbsp;${_L('Scala:','Scale:')} <b>${factor.toFixed(2)}×</b></div>`;
     html += `</div>`;
-    html += `<button class="no-print" onclick="_peApri_${_id}()" style="flex-shrink:0;padding:8px 16px;border-radius:8px;border:1.5px solid ${tipo?tipo.colore:'var(--teal)'};background:${tipo?tipo.colore:'var(--teal)'};color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">📂 Apri in Piano Alimentare</button>`;
+    html += `<button class="no-print" onclick="_peApri_${_id}()" style="flex-shrink:0;padding:8px 16px;border-radius:8px;border:1.5px solid ${tipo?tipo.colore:'var(--teal)'};background:${tipo?tipo.colore:'var(--teal)'};color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">📂 ${_L('Apri in Piano Alimentare','Open in Meal Plan')}</button>`;
     html += `</div>`;
 
     html += `<div style="display:flex;flex-wrap:wrap;gap:10px;background:#F8FAFC;border-radius:10px;padding:12px 16px;margin-bottom:14px;border:1px solid var(--border)" class="no-print">`;
     const prot = Math.round(scaledKcal * (macros.p||15) / 100 / 4);
     const cho = Math.round(scaledKcal * (macros.cho||50) / 100 / 4);
     const fat = Math.round(scaledKcal * (macros.g||35) / 100 / 9);
-    [{v:scaledKcal,l:'Kcal Totali',c:'#0EA5E9'},{v:prot+'g',l:'Proteine',c:'#22C55E'},{v:cho+'g',l:'CHO',c:'#F59E0B'},{v:fat+'g',l:'Grassi',c:'#EF4444'},{v:Math.round(scaledKcal/piano.pasti.length),l:'Kcal/Pasto',c:'#8B5CF6'}].forEach(m => {
+    [{v:scaledKcal,l:_L('Kcal Totali','Total Kcal'),c:'#0EA5E9'},{v:prot+'g',l:_L('Proteine','Protein'),c:'#22C55E'},{v:cho+'g',l:'CHO',c:'#F59E0B'},{v:fat+'g',l:_L('Grassi','Fat'),c:'#EF4444'},{v:Math.round(scaledKcal/piano.pasti.length),l:_L('Kcal/Pasto','Kcal/Meal'),c:'#8B5CF6'}].forEach(m => {
       html += `<div style="text-align:center;min-width:70px;flex:1"><div style="font-size:18px;font-weight:700;color:${m.c}">${m.v}</div><div style="font-size:9.5px;font-weight:600;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">${m.l}</div></div>`;
     });
     html += `</div>`;
@@ -1549,7 +1552,7 @@ function initPianoEsempio(containerId, config) {
       html += `</div>`;
     });
 
-    if (piano.nota) html += `<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:10px 14px;font-size:12px;color:#7C2D12;margin-top:6px;line-height:1.7">⚠️ <b>Nota clinica:</b> ${escH(piano.nota)}</div>`;
+    if (piano.nota) html += `<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:10px 14px;font-size:12px;color:#7C2D12;margin-top:6px;line-height:1.7">⚠️ <b>${_L('Nota clinica:','Clinical note:')}</b> ${escH(piano.nota)}</div>`;
 
     return html;
   }

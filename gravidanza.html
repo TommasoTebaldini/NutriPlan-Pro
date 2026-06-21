@@ -120,7 +120,7 @@ async function ensureChartJs() {
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>🤰 <span data-only-lang="it">Valutazione Gravidanza</span><span data-only-lang="en" style="display:none">Pregnancy Assessment</span></h2>
   <div class="tbar-actions no-print">
-    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Stampa</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ <span data-only-lang="it">Stampa</span><span data-only-lang="en" style="display:none">Print</span></button>
   </div>
 </div>
 <main id="main">
@@ -151,7 +151,7 @@ async function ensureChartJs() {
 <!-- TAB 1: VALUTAZIONE -->
 <div class="grav-panel active" id="panel-valutazione">
   <div class="grav-card">
-    <h3>📋 Dati Base Paziente</h3>
+    <h3>📋 <span data-only-lang="it">Dati Base Paziente</span><span data-only-lang="en" style="display:none">Patient Basic Data</span></h3>
     <div class="grid-3" style="margin-bottom:12px">
       <div class="nf"><label><span data-only-lang="it">Età (anni)</span><span data-only-lang="en" style="display:none">Age (years)</span></label><input type="number" id="g-eta" min="14" max="55" placeholder="es. 28" oninput="calcola()"></div>
       <div class="nf"><label><span data-only-lang="it">Peso pre-gravidanza (kg)</span><span data-only-lang="en" style="display:none">Pre-pregnancy weight (kg)</span></label><input type="number" id="g-peso-pre" step="0.1" placeholder="es. 62" oninput="calcola()"></div>
@@ -160,8 +160,8 @@ async function ensureChartJs() {
       <div class="nf"><label><span data-only-lang="it">Settimana gestazionale (1–42)</span><span data-only-lang="en" style="display:none">Gestational week (1–42)</span></label><input type="number" id="g-settimane" min="1" max="42" placeholder="es. 20" oninput="calcola()"></div>
       <div class="nf"><label><span data-only-lang="it">Tipo di gravidanza</span><span data-only-lang="en" style="display:none">Pregnancy type</span></label>
         <select id="g-tipo" onchange="calcola()">
-          <option value="singola">Singola</option>
-          <option value="gemellare">Gemellare</option>
+          <option value="singola">Singola / Singleton</option>
+          <option value="gemellare">Gemellare / Twin</option>
         </select>
       </div>
     </div>
@@ -171,15 +171,15 @@ async function ensureChartJs() {
   <div id="grav-results" style="display:none">
     <div class="grid-2" style="margin-bottom:14px">
       <div class="grav-card" style="margin-bottom:0">
-        <h3>⚖️ BMI Pre-Gravidanza</h3>
+        <h3>⚖️ <span data-only-lang="it">BMI Pre-Gravidanza</span><span data-only-lang="en" style="display:none">Pre-Pregnancy BMI</span></h3>
         <div style="font-size:36px;font-weight:800;color:#BE185D" id="res-bmi">—</div>
         <div id="res-bmi-class" style="margin-top:8px"></div>
         <div style="margin-top:10px;font-size:11.5px;color:var(--slate-l);line-height:1.6">
-          &lt;18.5 Sottopeso · 18.5–24.9 Normopeso<br>25–29.9 Sovrappeso · ≥30 Obesità
+          <span data-only-lang="it">&lt;18.5 Sottopeso · 18.5–24.9 Normopeso<br>25–29.9 Sovrappeso · ≥30 Obesità</span><span data-only-lang="en" style="display:none">&lt;18.5 Underweight · 18.5–24.9 Normal<br>25–29.9 Overweight · ≥30 Obesity</span>
         </div>
       </div>
       <div class="grav-card" style="margin-bottom:0">
-        <h3>📏 Guadagno Ponderale Raccomandato (IOM 2009)</h3>
+        <h3>📏 <span data-only-lang="it">Guadagno Ponderale Raccomandato (IOM 2009)</span><span data-only-lang="en" style="display:none">Recommended Weight Gain (IOM 2009)</span></h3>
         <div style="font-size:24px;font-weight:800;color:#BE185D" id="res-guadagno-range">—</div>
         <div style="font-size:11.5px;color:var(--slate-l);margin-top:4px" id="res-guadagno-note"></div>
         <div style="margin-top:12px" id="res-guadagno-status"></div>
@@ -187,24 +187,27 @@ async function ensureChartJs() {
     </div>
 
     <div class="grav-card">
-      <h3>📈 Andamento Guadagno Ponderale vs Range IOM 2009</h3>
+      <h3>📈 <span data-only-lang="it">Andamento Guadagno Ponderale vs Range IOM 2009</span><span data-only-lang="en" style="display:none">Weight Gain Trend vs IOM 2009 Range</span></h3>
       <div style="position:relative;height:240px"><canvas id="weight-chart"></canvas></div>
-      <div style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center">Verde = limite minimo · Rosso = limite massimo · Rosa = guadagno attuale</div>
+      <div style="font-size:11px;color:var(--slate-l);margin-top:6px;text-align:center"><span data-only-lang="it">Verde = limite minimo · Rosso = limite massimo · Rosa = guadagno attuale</span><span data-only-lang="en" style="display:none">Green = lower limit · Red = upper limit · Pink = current gain</span></div>
     </div>
 
     <div class="grav-card">
-      <h3>🔥 Fabbisogno Energetico Aggiuntivo per Trimestre</h3>
-      <div class="trimestre-box tri-1"><b>1° Trimestre (sett. 1–13):</b> <span style="color:#15803D">+0 kcal/die</span> — nessun incremento calorico richiesto; focus su qualità e micronutrienti</div>
-      <div class="trimestre-box tri-2"><b>2° Trimestre (sett. 14–27):</b> <span style="color:#B45309">+340 kcal/die</span> — incremento progressivo per la crescita fetale</div>
-      <div class="trimestre-box tri-3"><b>3° Trimestre (sett. 28–42):</b> <span style="color:#DC2626">+450 kcal/die</span> — massima crescita fetale e accumulo di riserve</div>
+      <h3>🔥 <span data-only-lang="it">Fabbisogno Energetico Aggiuntivo per Trimestre</span><span data-only-lang="en" style="display:none">Additional Energy Requirements per Trimester</span></h3>
+      <div class="trimestre-box tri-1" data-only-lang="it"><b>1° Trimestre (sett. 1–13):</b> <span style="color:#15803D">+0 kcal/die</span> — nessun incremento calorico richiesto; focus su qualità e micronutrienti</div>
+      <div class="trimestre-box tri-1" data-only-lang="en" style="display:none"><b>1st Trimester (wk 1–13):</b> <span style="color:#15803D">+0 kcal/day</span> — no extra calories needed; focus on quality and micronutrients</div>
+      <div class="trimestre-box tri-2" data-only-lang="it"><b>2° Trimestre (sett. 14–27):</b> <span style="color:#B45309">+340 kcal/die</span> — incremento progressivo per la crescita fetale</div>
+      <div class="trimestre-box tri-2" data-only-lang="en" style="display:none"><b>2nd Trimester (wk 14–27):</b> <span style="color:#B45309">+340 kcal/day</span> — progressive increase for foetal growth</div>
+      <div class="trimestre-box tri-3" data-only-lang="it"><b>3° Trimestre (sett. 28–42):</b> <span style="color:#DC2626">+450 kcal/die</span> — massima crescita fetale e accumulo di riserve</div>
+      <div class="trimestre-box tri-3" data-only-lang="en" style="display:none"><b>3rd Trimester (wk 28–42):</b> <span style="color:#DC2626">+450 kcal/day</span> — maximum foetal growth and reserve accumulation</div>
       <div id="res-trimestre-attuale" style="margin-top:10px;padding:12px 14px;background:#FDF2F8;border-radius:8px;border-left:3px solid #BE185D;font-size:13px;font-weight:600;color:#831843;display:none"></div>
     </div>
 
     <div id="grav-salva-wrap" style="display:none;margin-bottom:14px">
       <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;border:1.5px solid #86EFAC;font-size:12.5px;color:#14532D;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span style="font-size:20px">💾</span>
-        <div style="flex:1">Pagina aperta da una cartella paziente — puoi salvare questa valutazione.</div>
-        <button class="btn btn-primary btn-sm" onclick="salvaNota()">💾 Salva come nota specialistica</button>
+        <div style="flex:1"><span data-only-lang="it">Pagina aperta da una cartella paziente — puoi salvare questa valutazione.</span><span data-only-lang="en" style="display:none">Page opened from a patient file — you can save this assessment.</span></div>
+        <button class="btn btn-primary btn-sm" onclick="salvaNota()">💾 <span data-only-lang="it">Salva come nota specialistica</span><span data-only-lang="en" style="display:none">Save as specialist note</span></button>
       </div>
     </div>
   </div>
@@ -212,7 +215,7 @@ async function ensureChartJs() {
 
 <!-- TAB 2: LINEE GUIDA IOM -->
 <div class="grav-panel" id="panel-linee-guida">
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>📚 Guadagno Ponderale Raccomandato — IOM 2009</h3>
     <div class="alert-pink">Fonte: Institute of Medicine (2009). <em>Weight Gain During Pregnancy: Reexamining the Guidelines.</em> National Academies Press, Washington DC. Adottato da SIGO, OMS, ACOG.</div>
     <div style="overflow-x:auto">
@@ -236,8 +239,32 @@ async function ensureChartJs() {
     </div>
     <div style="margin-top:10px;font-size:11.5px;color:var(--slate-l)">Nota: in caso di gravidanza gemellare con obesità materna, considerare il limite inferiore dell'intervallo. Linee guida 2021 ACOG/SMFM: stessa tabella IOM 2009.</div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>📚 Recommended Weight Gain — IOM 2009</h3>
+    <div class="alert-pink">Source: Institute of Medicine (2009). <em>Weight Gain During Pregnancy: Reexamining the Guidelines.</em> National Academies Press, Washington DC. Adopted by SIGO, WHO, ACOG.</div>
+    <div style="overflow-x:auto">
+      <table class="iom-table">
+        <thead>
+          <tr>
+            <th>Pre-Pregnancy BMI</th>
+            <th>Category</th>
+            <th>Singleton — Total</th>
+            <th>Twin — Total</th>
+            <th>Weekly rate (2nd–3rd trim.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt; 18.5</td><td><span class="result-pill pill-warn" style="margin:0">Underweight</span></td><td><b>12.5 – 18 kg</b></td><td><b>23 – 28 kg</b></td><td>0.44 – 0.58 kg/wk</td></tr>
+          <tr><td>18.5 – 24.9</td><td><span class="result-pill pill-ok" style="margin:0">Normal weight</span></td><td><b>11.5 – 16 kg</b></td><td><b>17 – 25 kg</b></td><td>0.35 – 0.50 kg/wk</td></tr>
+          <tr><td>25.0 – 29.9</td><td><span class="result-pill pill-warn" style="margin:0">Overweight</span></td><td><b>7 – 11.5 kg</b></td><td><b>14 – 23 kg</b></td><td>0.23 – 0.33 kg/wk</td></tr>
+          <tr><td>≥ 30.0</td><td><span class="result-pill pill-danger" style="margin:0">Obesity</span></td><td><b>5 – 9 kg</b></td><td><b>11 – 19 kg</b></td><td>0.17 – 0.27 kg/wk</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;font-size:11.5px;color:var(--slate-l)">Note: for twin pregnancy with maternal obesity, consider the lower end of the range. 2021 ACOG/SMFM guidelines use the same IOM 2009 table.</div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>📋 Guadagno per Trimestre — Gravidanza Singola (normopeso)</h3>
     <div class="trimestre-box tri-1">
       <b>1° Trimestre (0–13 settimane)</b><br>
@@ -255,8 +282,26 @@ async function ensureChartJs() {
       Focus: DHA (sviluppo cerebrale), ferro (preparazione parto), vitamina K, colina
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>📋 Weight Gain by Trimester — Singleton Pregnancy (normal weight)</h3>
+    <div class="trimestre-box tri-1">
+      <b>1st Trimester (0–13 weeks)</b><br>
+      Total gain: <b>0.5 – 2 kg</b> · Additional requirement: <b>+0 kcal/day</b><br>
+      Focus: folate (NTD prevention), iodine, iron; nausea and vomiting management
+    </div>
+    <div class="trimestre-box tri-2">
+      <b>2nd Trimester (14–27 weeks)</b><br>
+      Rate: <b>~0.4 kg/week</b> · Additional requirement: <b>+340 kcal/day</b><br>
+      Focus: protein (accelerated foetal growth), DHA, calcium, vitamin D
+    </div>
+    <div class="trimestre-box tri-3">
+      <b>3rd Trimester (28–42 weeks)</b><br>
+      Rate: <b>~0.4 kg/week</b> · Additional requirement: <b>+450 kcal/day</b><br>
+      Focus: DHA (brain development), iron (birth preparation), vitamin K, choline
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🫀 Composizione del Guadagno Ponderale a Termine</h3>
     <div style="overflow-x:auto">
       <table class="iom-table">
@@ -274,8 +319,26 @@ async function ensureChartJs() {
       </table>
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🫀 Weight Gain Composition at Term</h3>
+    <div style="overflow-x:auto">
+      <table class="iom-table">
+        <thead><tr><th>Component</th><th>Approximate weight</th></tr></thead>
+        <tbody>
+          <tr><td>Foetus</td><td>3.2 – 3.5 kg</td></tr>
+          <tr><td>Placenta</td><td>0.6 – 0.7 kg</td></tr>
+          <tr><td>Amniotic fluid</td><td>0.8 – 1.0 kg</td></tr>
+          <tr><td>Uterus (hypertrophy)</td><td>~0.9 kg</td></tr>
+          <tr><td>Breasts</td><td>0.4 – 0.5 kg</td></tr>
+          <tr><td>Expanded blood volume</td><td>1.2 – 1.5 kg</td></tr>
+          <tr><td>Extracellular fluids</td><td>1.0 – 2.0 kg</td></tr>
+          <tr><td>Maternal fat stores</td><td>2.5 – 3.5 kg</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🏃 Attività Fisica (ACOG Committee Opinion 804, 2020)</h3>
     <div class="nutrient-row"><span class="nutrient-label">Raccomandazione</span><span class="nutrient-val">150 min/settimana di attività aerobica moderata</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Attività sicure</span><span class="nutrient-val">Camminata, nuoto, cyclette, yoga prenatale, pilates</span></div>
@@ -283,8 +346,16 @@ async function ensureChartJs() {
     <div class="nutrient-row"><span class="nutrient-label">Benefici dimostrati</span><span class="nutrient-val">-28% rischio GDM, -41% eclampsia, miglior benessere psicologico</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Segnali di stop</span><span class="nutrient-val">Sanguinamento, dispnea intensa, dolore toracico, contrazioni regolari</span></div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🏃 Physical Activity (ACOG Committee Opinion 804, 2020)</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Recommendation</span><span class="nutrient-val">150 min/week of moderate aerobic activity</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Safe activities</span><span class="nutrient-val">Walking, swimming, stationary cycling, prenatal yoga, pilates</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">To avoid</span><span class="nutrient-val">Contact sports, diving, altitudes &gt;2500 m, fall-risk activities</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Proven benefits</span><span class="nutrient-val">-28% GDM risk, -41% eclampsia, better psychological wellbeing</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Stop signs</span><span class="nutrient-val">Bleeding, severe dyspnoea, chest pain, regular contractions</span></div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🔗 Risorse e Linee Guida Ufficiali</h3>
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="padding:12px 14px;background:#FDF2F8;border-radius:10px;border-left:4px solid #EC4899">
@@ -314,146 +385,139 @@ async function ensureChartJs() {
       </div>
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🔗 Official Resources and Guidelines</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="padding:12px 14px;background:#FDF2F8;border-radius:10px;border-left:4px solid #EC4899">
+        <div style="font-weight:700;color:#831843;margin-bottom:4px">SIGO — Physiological Pregnancy Guidelines</div>
+        <div style="font-size:12px;color:#334155;margin-bottom:8px">Guidelines from the Italian Society of Gynaecology and Obstetrics on nutrition during pregnancy and breastfeeding.</div>
+        <a href="https://www.sigo.it/linee-guida/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#EC4899;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 SIGO Guidelines →</a>
+      </div>
+      <div style="padding:12px 14px;background:#F0FDF4;border-radius:10px;border-left:4px solid #10B981">
+        <div style="font-weight:700;color:#064E3B;margin-bottom:4px">ISS — Physiological Pregnancy</div>
+        <div style="font-size:12px;color:#334155;margin-bottom:8px">ISS SNLG guideline on physiological pregnancy. Covers nutrition, lifestyle and recommended supplementation.</div>
+        <a href="https://www.iss.it/gravidanza" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#10B981;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 ISS Pregnancy →</a>
+      </div>
+      <div style="padding:12px 14px;background:#EFF6FF;border-radius:10px;border-left:4px solid #3B82F6">
+        <div style="font-weight:700;color:#1E3A5F;margin-bottom:4px">WHO — Recommendations on Nutrition in Pregnancy 2016</div>
+        <div style="font-size:12px;color:#334155;margin-bottom:8px">International recommendations on diet and nutritional supplementation during pregnancy.</div>
+        <a href="https://www.who.int/publications/i/item/9789241549912" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#3B82F6;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 WHO Prenatal Nutrition →</a>
+      </div>
+      <div style="padding:12px 14px;background:#FEF3C7;border-radius:10px;border-left:4px solid #F59E0B">
+        <div style="font-weight:700;color:#78350F;margin-bottom:4px">SINU — LARN: Requirements in Pregnancy and Breastfeeding</div>
+        <div style="font-size:12px;color:#334155;margin-bottom:8px">LARN reference levels for energy, protein, iron, calcium, folate, DHA, vitamin D, iodine in pregnancy.</div>
+        <a href="https://sinu.it/larn/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#F59E0B;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 LARN SINU →</a>
+      </div>
+      <div style="padding:12px 14px;background:#F5F3FF;border-radius:10px;border-left:4px solid #7C3AED">
+        <div style="font-weight:700;color:#3B0764;margin-bottom:4px">ESPGHAN — Weaning and Infant Nutrition 2023</div>
+        <div style="font-size:12px;color:#334155;margin-bottom:8px">ESPGHAN positions on complementary feeding, weaning, allergen introduction, vitamin D, iron.</div>
+        <a href="https://www.espghan.org/knowledge-center/publications" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#7C3AED;color:white;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none">🔗 ESPGHAN Publications →</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- TAB 3: FABBISOGNI NUTRIZIONALI -->
 <div class="grav-panel" id="panel-nutrienti">
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🥗 Fabbisogni Nutrizionali in Gravidanza — LARN IV rev. · EFSA · OMS</h3>
     <div class="alert-pink">Valori di riferimento per gravidanza singola. Adattare in base a età, BMI pre-gravidanza, pluriparità e condizioni cliniche.</div>
 
     <div style="font-size:12px;font-weight:700;color:#BE185D;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">⚡ Energia e Macronutrienti</div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Energia aggiuntiva 1° trim.<span class="nutrient-source">IOM 2009</span></span>
-      <span class="nutrient-val">+0 kcal/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Energia aggiuntiva 2° trim.<span class="nutrient-source">IOM 2009</span></span>
-      <span class="nutrient-val">+340 kcal/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Energia aggiuntiva 3° trim.<span class="nutrient-source">IOM 2009</span></span>
-      <span class="nutrient-val">+450 kcal/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Proteine<span class="nutrient-source">LARN 2014 — +25 g/die vs pre-gravidanza</span></span>
-      <span class="nutrient-val">71 g/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Carboidrati (minimo)<span class="nutrient-source">EFSA — per glucosio cerebrale fetale</span></span>
-      <span class="nutrient-val">≥ 175 g/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Fibra<span class="nutrient-source">LARN</span></span>
-      <span class="nutrient-val">25 – 30 g/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">DHA (omega-3)<span class="nutrient-source">EFSA 2010</span></span>
-      <span class="nutrient-val">+200 mg/die (tot. 450–550 mg)</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Acqua<span class="nutrient-source">EFSA — inclusa da alimenti</span></span>
-      <span class="nutrient-val">2.3 L/die (500 mL in più vs non gravida)</span>
-    </div>
+    <div class="nutrient-row"><span class="nutrient-label">Energia aggiuntiva 1° trim.<span class="nutrient-source">IOM 2009</span></span><span class="nutrient-val">+0 kcal/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Energia aggiuntiva 2° trim.<span class="nutrient-source">IOM 2009</span></span><span class="nutrient-val">+340 kcal/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Energia aggiuntiva 3° trim.<span class="nutrient-source">IOM 2009</span></span><span class="nutrient-val">+450 kcal/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Proteine<span class="nutrient-source">LARN 2014 — +25 g/die vs pre-gravidanza</span></span><span class="nutrient-val">71 g/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Carboidrati (minimo)<span class="nutrient-source">EFSA — per glucosio cerebrale fetale</span></span><span class="nutrient-val">≥ 175 g/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Fibra<span class="nutrient-source">LARN</span></span><span class="nutrient-val">25 – 30 g/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">DHA (omega-3)<span class="nutrient-source">EFSA 2010</span></span><span class="nutrient-val">+200 mg/die (tot. 450–550 mg)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Acqua<span class="nutrient-source">EFSA — inclusa da alimenti</span></span><span class="nutrient-val">2.3 L/die (500 mL in più vs non gravida)</span></div>
 
     <div style="font-size:12px;font-weight:700;color:#BE185D;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.5px">💊 Micronutrienti Critici</div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Acido Folico<span class="nutrient-source">Min. Salute · SIGO — iniziare 1 mese prima del concepimento</span></span>
-      <span class="nutrient-val">600 μg/die (suppl. 400 μg)</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Ferro<span class="nutrient-source">LARN · OMS — spesso richiesta integrazione</span></span>
-      <span class="nutrient-val">27 mg/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Calcio<span class="nutrient-source">LARN</span></span>
-      <span class="nutrient-val">1000 mg/die (1300 mg adolescenti)</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Vitamina D<span class="nutrient-source">SIGO 2023 — obiettivo 25-OH &gt;30 ng/mL</span></span>
-      <span class="nutrient-val">600 – 2000 UI/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Iodio<span class="nutrient-source">OMS · Min. Salute — fondamentale per sviluppo neurologico</span></span>
-      <span class="nutrient-val">220 μg/die (suppl. 150 μg KI)</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Zinco<span class="nutrient-source">LARN</span></span>
-      <span class="nutrient-val">11 mg/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Magnesio<span class="nutrient-source">LARN</span></span>
-      <span class="nutrient-val">360 – 400 mg/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Vitamina B12<span class="nutrient-source">LARN — fondamentale per vegane</span></span>
-      <span class="nutrient-val">2.6 μg/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Vitamina C<span class="nutrient-source">LARN — migliora assorbimento ferro</span></span>
-      <span class="nutrient-val">85 mg/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Vitamina A ⚠️<span class="nutrient-source">LARN — ATTENZIONE: teratogena se eccesso</span></span>
-      <span class="nutrient-val">770 μg RAE/die (MAX 3000 μg)</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Colina<span class="nutrient-source">EFSA 2016 — sviluppo neurale fetale</span></span>
-      <span class="nutrient-val">480 mg/die</span>
-    </div>
+    <div class="nutrient-row"><span class="nutrient-label">Acido Folico<span class="nutrient-source">Min. Salute · SIGO — iniziare 1 mese prima del concepimento</span></span><span class="nutrient-val">600 μg/die (suppl. 400 μg)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Ferro<span class="nutrient-source">LARN · OMS — spesso richiesta integrazione</span></span><span class="nutrient-val">27 mg/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Calcio<span class="nutrient-source">LARN</span></span><span class="nutrient-val">1000 mg/die (1300 mg adolescenti)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamina D<span class="nutrient-source">SIGO 2023 — obiettivo 25-OH &gt;30 ng/mL</span></span><span class="nutrient-val">600 – 2000 UI/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iodio<span class="nutrient-source">OMS · Min. Salute — fondamentale per sviluppo neurologico</span></span><span class="nutrient-val">220 μg/die (suppl. 150 μg KI)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Zinco<span class="nutrient-source">LARN</span></span><span class="nutrient-val">11 mg/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Magnesio<span class="nutrient-source">LARN</span></span><span class="nutrient-val">360 – 400 mg/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamina B12<span class="nutrient-source">LARN — fondamentale per vegane</span></span><span class="nutrient-val">2.6 μg/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamina C<span class="nutrient-source">LARN — migliora assorbimento ferro</span></span><span class="nutrient-val">85 mg/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamina A ⚠️<span class="nutrient-source">LARN — ATTENZIONE: teratogena se eccesso</span></span><span class="nutrient-val">770 μg RAE/die (MAX 3000 μg)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Colina<span class="nutrient-source">EFSA 2016 — sviluppo neurale fetale</span></span><span class="nutrient-val">480 mg/die</span></div>
+  </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🥗 Nutritional Requirements in Pregnancy — LARN IV rev. · EFSA · WHO</h3>
+    <div class="alert-pink">Reference values for singleton pregnancy. Adjust according to age, pre-pregnancy BMI, parity and clinical conditions.</div>
+
+    <div style="font-size:12px;font-weight:700;color:#BE185D;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">⚡ Energy and Macronutrients</div>
+    <div class="nutrient-row"><span class="nutrient-label">Additional energy 1st trim.<span class="nutrient-source">IOM 2009</span></span><span class="nutrient-val">+0 kcal/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Additional energy 2nd trim.<span class="nutrient-source">IOM 2009</span></span><span class="nutrient-val">+340 kcal/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Additional energy 3rd trim.<span class="nutrient-source">IOM 2009</span></span><span class="nutrient-val">+450 kcal/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Protein<span class="nutrient-source">LARN 2014 — +25 g/day vs pre-pregnancy</span></span><span class="nutrient-val">71 g/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Carbohydrates (minimum)<span class="nutrient-source">EFSA — for foetal brain glucose</span></span><span class="nutrient-val">≥ 175 g/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Fibre<span class="nutrient-source">LARN</span></span><span class="nutrient-val">25 – 30 g/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">DHA (omega-3)<span class="nutrient-source">EFSA 2010</span></span><span class="nutrient-val">+200 mg/day (total 450–550 mg)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Water<span class="nutrient-source">EFSA — including from food</span></span><span class="nutrient-val">2.3 L/day (500 mL more vs non-pregnant)</span></div>
+
+    <div style="font-size:12px;font-weight:700;color:#BE185D;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.5px">💊 Critical Micronutrients</div>
+    <div class="nutrient-row"><span class="nutrient-label">Folic Acid<span class="nutrient-source">Min. of Health · SIGO — start 1 month before conception</span></span><span class="nutrient-val">600 μg/day (suppl. 400 μg)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iron<span class="nutrient-source">LARN · WHO — supplementation often needed</span></span><span class="nutrient-val">27 mg/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Calcium<span class="nutrient-source">LARN</span></span><span class="nutrient-val">1000 mg/day (1300 mg adolescents)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin D<span class="nutrient-source">SIGO 2023 — target 25-OH &gt;30 ng/mL</span></span><span class="nutrient-val">600 – 2000 IU/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iodine<span class="nutrient-source">WHO · Min. of Health — essential for neurological development</span></span><span class="nutrient-val">220 μg/day (suppl. 150 μg KI)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Zinc<span class="nutrient-source">LARN</span></span><span class="nutrient-val">11 mg/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Magnesium<span class="nutrient-source">LARN</span></span><span class="nutrient-val">360 – 400 mg/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin B12<span class="nutrient-source">LARN — essential for vegans</span></span><span class="nutrient-val">2.6 μg/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin C<span class="nutrient-source">LARN — improves iron absorption</span></span><span class="nutrient-val">85 mg/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin A ⚠️<span class="nutrient-source">LARN — WARNING: teratogenic in excess</span></span><span class="nutrient-val">770 μg RAE/day (MAX 3000 μg)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Choline<span class="nutrient-source">EFSA 2016 — foetal neural development</span></span><span class="nutrient-val">480 mg/day</span></div>
   </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>💊 Schema Integrazione Raccomandata</h3>
     <div class="alert-pink">Personalizzare la supplementazione in base a esami ematochimici (Hb, ferritina, 25-OH vitamina D, TSH). Non autogestire.</div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Acido folico<span class="nutrient-source">Da -1 mese pre-concepimento a fine 1° trimestre (o tutta la gravidanza)</span></span>
-      <span class="nutrient-val">0.4 mg/die (4 mg se prec. DTN)</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Vitamina D<span class="nutrient-source">Tutta la gravidanza</span></span>
-      <span class="nutrient-val">1000 – 2000 UI/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Iodio (KI)<span class="nutrient-source">Tutta la gravidanza + allattamento</span></span>
-      <span class="nutrient-val">150 μg/die + sale iodato</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">Ferro<span class="nutrient-source">Dal 2° trimestre se Hb &lt;11 g/dL o ferritina &lt;30</span></span>
-      <span class="nutrient-val">30 – 60 mg/die (sale ferroso)</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">DHA<span class="nutrient-source">Dal 3° mese — preferire omega-3 algali</span></span>
-      <span class="nutrient-val">200 – 400 mg/die</span>
-    </div>
-    <div class="nutrient-row">
-      <span class="nutrient-label">B12 (per vegane)<span class="nutrient-source">Obbligatorio — tutta la gravidanza</span></span>
-      <span class="nutrient-val">≥ 250 μg/die (suppl.)</span>
-    </div>
+    <div class="nutrient-row"><span class="nutrient-label">Acido folico<span class="nutrient-source">Da -1 mese pre-concepimento a fine 1° trimestre (o tutta la gravidanza)</span></span><span class="nutrient-val">0.4 mg/die (4 mg se prec. DTN)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamina D<span class="nutrient-source">Tutta la gravidanza</span></span><span class="nutrient-val">1000 – 2000 UI/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iodio (KI)<span class="nutrient-source">Tutta la gravidanza + allattamento</span></span><span class="nutrient-val">150 μg/die + sale iodato</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Ferro<span class="nutrient-source">Dal 2° trimestre se Hb &lt;11 g/dL o ferritina &lt;30</span></span><span class="nutrient-val">30 – 60 mg/die (sale ferroso)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">DHA<span class="nutrient-source">Dal 3° mese — preferire omega-3 algali</span></span><span class="nutrient-val">200 – 400 mg/die</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">B12 (per vegane)<span class="nutrient-source">Obbligatorio — tutta la gravidanza</span></span><span class="nutrient-val">≥ 250 μg/die (suppl.)</span></div>
+  </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>💊 Recommended Supplementation Schedule</h3>
+    <div class="alert-pink">Personalise supplementation based on blood tests (Hb, ferritin, 25-OH vitamin D, TSH). Do not self-manage.</div>
+    <div class="nutrient-row"><span class="nutrient-label">Folic acid<span class="nutrient-source">From -1 month pre-conception to end of 1st trimester (or whole pregnancy)</span></span><span class="nutrient-val">0.4 mg/day (4 mg if prev. NTD)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin D<span class="nutrient-source">Whole pregnancy</span></span><span class="nutrient-val">1000 – 2000 IU/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iodine (KI)<span class="nutrient-source">Whole pregnancy + breastfeeding</span></span><span class="nutrient-val">150 μg/day + iodised salt</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iron<span class="nutrient-source">From 2nd trimester if Hb &lt;11 g/dL or ferritin &lt;30</span></span><span class="nutrient-val">30 – 60 mg/day (ferrous salt)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">DHA<span class="nutrient-source">From 3rd month — prefer algae-based omega-3</span></span><span class="nutrient-val">200 – 400 mg/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">B12 (for vegans)<span class="nutrient-source">Mandatory — whole pregnancy</span></span><span class="nutrient-val">≥ 250 μg/day (suppl.)</span></div>
   </div>
 </div>
 
 <!-- TAB 4: SCREENING GDM -->
 <div class="grav-panel" id="panel-gdm">
   <div class="grav-card">
-    <h3>🩸 Fattori di Rischio per Diabete Gestazionale — IADPSG</h3>
-    <div class="alert-pink"><b>Criteri IADPSG / OMS 2013</b>, adottati da SIGO e AMD-SID. Screening con OGTT 75g a 24–28 settimane in tutte le gravide. In caso di alto rischio: OGTT anche nel 1° trimestre.</div>
+    <h3>🩸 <span data-only-lang="it">Fattori di Rischio per Diabete Gestazionale — IADPSG</span><span data-only-lang="en" style="display:none">Gestational Diabetes Risk Factors — IADPSG</span></h3>
+    <div class="alert-pink" data-only-lang="it"><b>Criteri IADPSG / OMS 2013</b>, adottati da SIGO e AMD-SID. Screening con OGTT 75g a 24–28 settimane in tutte le gravide. In caso di alto rischio: OGTT anche nel 1° trimestre.</div>
+    <div class="alert-pink" data-only-lang="en" style="display:none"><b>IADPSG / WHO 2013 Criteria</b>, adopted by SIGO and AMD-SID. Universal OGTT 75g screening at 24–28 weeks for all pregnancies. High risk: also perform OGTT in 1st trimester.</div>
     <div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-bmi" onchange="aggiornaGDM()"><div><b>BMI ≥ 30 kg/m²</b> (obesità pre-gravidanza)</div></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-eta" onchange="aggiornaGDM()"><div><b>Età ≥ 35 anni</b></div></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-prec" onchange="aggiornaGDM()"><div><b>GDM in gravidanza precedente</b></div></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-fam" onchange="aggiornaGDM()"><div><b>Familiarità per diabete T2</b> (genitori o fratelli)</div></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-macrosomia" onchange="aggiornaGDM()"><div><b>Precedente macrosomia fetale</b> (neonato &gt;4 kg)</div></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-pcos" onchange="aggiornaGDM()"><div><b>PCOS (Sindrome dell'Ovaio Policistico)</b></div></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-ipertensione" onchange="aggiornaGDM()"><div><b>Ipertensione arteriosa pre-esistente</b></div></div>
-      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-glicosuria" onchange="aggiornaGDM()"><div><b>Glicosuria alla prima visita</b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-bmi" onchange="aggiornaGDM()"><div><b>BMI ≥ 30 kg/m²</b> <span data-only-lang="it">(obesità pre-gravidanza)</span><span data-only-lang="en" style="display:none">(pre-pregnancy obesity)</span></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-eta" onchange="aggiornaGDM()"><div><b><span data-only-lang="it">Età ≥ 35 anni</span><span data-only-lang="en" style="display:none">Age ≥ 35 years</span></b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-prec" onchange="aggiornaGDM()"><div><b><span data-only-lang="it">GDM in gravidanza precedente</span><span data-only-lang="en" style="display:none">GDM in previous pregnancy</span></b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-fam" onchange="aggiornaGDM()"><div><b><span data-only-lang="it">Familiarità per diabete T2</span><span data-only-lang="en" style="display:none">Family history of T2 diabetes</span></b> <span data-only-lang="it">(genitori o fratelli)</span><span data-only-lang="en" style="display:none">(parents or siblings)</span></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-macrosomia" onchange="aggiornaGDM()"><div><b><span data-only-lang="it">Precedente macrosomia fetale</span><span data-only-lang="en" style="display:none">Previous foetal macrosomia</span></b> <span data-only-lang="it">(neonato &gt;4 kg)</span><span data-only-lang="en" style="display:none">(newborn &gt;4 kg)</span></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-pcos" onchange="aggiornaGDM()"><div><b>PCOS <span data-only-lang="it">(Sindrome dell'Ovaio Policistico)</span><span data-only-lang="en" style="display:none">(Polycystic Ovary Syndrome)</span></b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-ipertensione" onchange="aggiornaGDM()"><div><b><span data-only-lang="it">Ipertensione arteriosa pre-esistente</span><span data-only-lang="en" style="display:none">Pre-existing arterial hypertension</span></b></div></div>
+      <div class="risk-item"><input type="checkbox" class="risk-cb" id="gdm-glicosuria" onchange="aggiornaGDM()"><div><b><span data-only-lang="it">Glicosuria alla prima visita</span><span data-only-lang="en" style="display:none">Glycosuria at first visit</span></b></div></div>
     </div>
     <div id="gdm-result" style="margin-top:14px">
       <span class="result-pill pill-ok">✅ Nessun fattore selezionato — Rischio standard</span>
     </div>
   </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🧪 OGTT 75g — Criteri Diagnostici (IADPSG / OMS 2013)</h3>
     <div style="overflow-x:auto">
       <table class="iom-table">
@@ -467,8 +531,22 @@ async function ensureChartJs() {
     </div>
     <div style="margin-top:8px;font-size:11.5px;color:var(--slate-l)">Un solo valore alterato è sufficiente per diagnosi GDM. Glicemia a digiuno ≥126 mg/dL → diabete pre-esistente. Glicemia a digiuno 100–125 mg/dL → alterata glicemia a digiuno (IFG).</div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🧪 OGTT 75g — Diagnostic Criteria (IADPSG / WHO 2013)</h3>
+    <div style="overflow-x:auto">
+      <table class="iom-table">
+        <thead><tr><th>Measurement</th><th>Diagnostic threshold (venous plasma)</th><th>GDM if ≥</th></tr></thead>
+        <tbody>
+          <tr><td>Fasting glucose</td><td style="font-weight:700;color:#DC2626">92 mg/dL</td><td>GDM</td></tr>
+          <tr><td>1h post-load glucose</td><td style="font-weight:700;color:#DC2626">180 mg/dL</td><td>GDM</td></tr>
+          <tr><td>2h post-load glucose</td><td style="font-weight:700;color:#DC2626">153 mg/dL</td><td>GDM</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:8px;font-size:11.5px;color:var(--slate-l)">A single abnormal value is sufficient for GDM diagnosis. Fasting glucose ≥126 mg/dL → pre-existing diabetes. Fasting glucose 100–125 mg/dL → impaired fasting glucose (IFG).</div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🎯 Target Glicemici in GDM — ADA 2024 · AMD-SID 2023</h3>
     <div class="nutrient-row"><span class="nutrient-label">Glicemia a digiuno</span><span class="nutrient-val">≤ 95 mg/dL</span></div>
     <div class="nutrient-row"><span class="nutrient-label">1h post-prandiale</span><span class="nutrient-val">≤ 140 mg/dL</span></div>
@@ -478,8 +556,18 @@ async function ensureChartJs() {
     <div class="nutrient-row"><span class="nutrient-label">Distribuzione CHO in GDM</span><span class="nutrient-val">40–45% kcal totali, IG basso, 5–6 pasti/die</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Automonitoraggio glicemico</span><span class="nutrient-val">4 misurazioni/die: a digiuno + 1h dopo ogni pasto</span></div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🎯 Glycemic Targets in GDM — ADA 2024 · AMD-SID 2023</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Fasting glucose</span><span class="nutrient-val">≤ 95 mg/dL</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">1h post-meal</span><span class="nutrient-val">≤ 140 mg/dL</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">2h post-meal</span><span class="nutrient-val">≤ 120 mg/dL</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">HbA1c</span><span class="nutrient-val">&lt; 6.0% (target, if safe)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">First-line therapy</span><span class="nutrient-val">Medical Nutrition Therapy (MNT)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">CHO distribution in GDM</span><span class="nutrient-val">40–45% total kcal, low GI, 5–6 meals/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Self-monitoring of blood glucose</span><span class="nutrient-val">4 measurements/day: fasting + 1h after each meal</span></div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>⚠️ Altre Complicanze da Monitorare</h3>
     <div class="nutrient-row"><span class="nutrient-label">Preeclampsia<span class="nutrient-source">Rischio ↑ con obesità, GDM, PCOS, età &gt;35</span></span><span class="nutrient-val">PA &gt;140/90 + proteinuria ≥300 mg/24h</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Anemia sideropenica<span class="nutrient-source">Hb &lt;11 g/dL 1°/3° trim., &lt;10.5 g/dL 2° trim.</span></span><span class="nutrient-val">Integrazione ferro; CBC ogni trimestre</span></div>
@@ -487,11 +575,19 @@ async function ensureChartJs() {
     <div class="nutrient-row"><span class="nutrient-label">Macrosomia fetale<span class="nutrient-source">Correlata a GDM e ↑ ponderale eccessivo</span></span><span class="nutrient-val">Peso neonato &gt;4 kg; monitorare ecografie</span></div>
     <div class="nutrient-row"><span class="nutrient-label">RCIU<span class="nutrient-source">Ridotto accrescimento intra-uterino</span></span><span class="nutrient-val">Monitorare intake calorico-proteico; ecografie seriate</span></div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>⚠️ Other Complications to Monitor</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Pre-eclampsia<span class="nutrient-source">Risk ↑ with obesity, GDM, PCOS, age &gt;35</span></span><span class="nutrient-val">BP &gt;140/90 + proteinuria ≥300 mg/24h</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iron-deficiency anaemia<span class="nutrient-source">Hb &lt;11 g/dL 1st/3rd trim., &lt;10.5 g/dL 2nd trim.</span></span><span class="nutrient-val">Iron supplementation; CBC every trimester</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Hyperemesis gravidarum<span class="nutrient-source">Weight loss &gt;5% of body weight</span></span><span class="nutrient-val">PN or EN if necessary; vitamin B6 + ginger</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Foetal macrosomia<span class="nutrient-source">Associated with GDM and excessive weight gain</span></span><span class="nutrient-val">Neonatal weight &gt;4 kg; monitor with ultrasound</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">IUGR<span class="nutrient-source">Intrauterine growth restriction</span></span><span class="nutrient-val">Monitor caloric-protein intake; serial ultrasounds</span></div>
+  </div>
 </div>
 
 <!-- TAB 5: CONSIGLI PRATICI -->
 <div class="grav-panel" id="panel-consigli">
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>✅ Alimenti Raccomandati</h3>
     <div class="grid-2">
       <div>
@@ -516,8 +612,33 @@ async function ensureChartJs() {
       </div>
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>✅ Recommended Foods</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Quality proteins</div>
+        <ul class="prefer-list">
+          <li>Cooked oily fish 2–3×/week (DHA, omega-3)</li>
+          <li>Well-cooked white meats (chicken, turkey, rabbit)</li>
+          <li>Pulses every day (non-haem iron, protein, fibre)</li>
+          <li>Cooked eggs (choline for brain development)</li>
+          <li>Pasteurised dairy (calcium, vitamin D, B12)</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Key micronutrients</div>
+        <ul class="prefer-list">
+          <li>Dark leafy vegetables (folate, calcium, K, fibre)</li>
+          <li>Unsalted nuts and seeds (magnesium, omega-3, E)</li>
+          <li>Wholegrains (B1, B6, fibre, iron)</li>
+          <li>Citrus fruits and kiwi (vitamin C → ↑ iron absorption)</li>
+          <li>Iodised salt in cooking (iodine)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>⚠️ Alimenti da Evitare (Sicurezza Alimentare in Gravidanza)</h3>
     <div class="grid-2">
       <div>
@@ -546,8 +667,37 @@ async function ensureChartJs() {
       </div>
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>⚠️ Foods to Avoid (Food Safety in Pregnancy)</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Forbidden — serious foetal risk</div>
+        <ul class="avoid-list">
+          <li><b>Alcohol</b> — any amount (FASD, malformations)</li>
+          <li><b>Unpasteurised soft cheeses</b> (Brie, Camembert, gorgonzola) — Listeria</li>
+          <li><b>Raw or undercooked meat</b> (carpaccio, tartare) — Toxoplasma, Listeria</li>
+          <li><b>Raw cured meats</b> (Parma ham, salami) — Listeria, Toxoplasma</li>
+          <li><b>Raw eggs</b> (homemade mayonnaise, tiramisu) — Salmonella</li>
+          <li><b>Unpasteurised milk</b></li>
+          <li><b>Liver</b> in large quantities — excess vitamin A (&gt;3000 μg RAE)</li>
+          <li><b>Swordfish, shark, yellowfin tuna</b> &gt;1×/month — mercury</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#B45309;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Limit</div>
+        <ul class="avoid-list">
+          <li><b>Caffeine</b> ≤ 200 mg/day (≈ 2 espressos) — RCOG</li>
+          <li><b>Herbal teas not tested</b> in pregnancy (sage, aloe, large doses of chamomile)</li>
+          <li><b>Liquorice</b> in large quantities (glycyrrhizin → hypertension)</li>
+          <li><b>Vitamin A supplements</b> &gt;3000 μg RAE — teratogenic</li>
+          <li><b>Unwashed fruit and vegetables</b> (Toxoplasma from soil)</li>
+          <li><b>Tinned tuna</b> ≤ 2 times/week (mercury)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🤢 Gestione della Nausea e Vomito (1° Trimestre)</h3>
     <div class="nutrient-row"><span class="nutrient-label">Pasti piccoli e frequenti<span class="nutrient-source">Ogni 2–3 ore; evitare stomaco vuoto</span></span><span class="nutrient-val">5–6 pasti/die</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Crackers al mattino<span class="nutrient-source">Prima di alzarsi dal letto</span></span><span class="nutrient-val">Carboidrati semplici a stomaco vuoto</span></div>
@@ -556,8 +706,17 @@ async function ensureChartJs() {
     <div class="nutrient-row"><span class="nutrient-label">Idratazione<span class="nutrient-source">Piccoli sorsi frequenti; acqua fresca o ghiaccio</span></span><span class="nutrient-val">≥ 8–10 bicchieri/die</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Evitare<span class="nutrient-source">Fattori scatenanti individuali</span></span><span class="nutrient-val">Cibi grassi/speziati, odori forti, caldo eccessivo</span></div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🤢 Management of Nausea and Vomiting (1st Trimester)</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Small, frequent meals<span class="nutrient-source">Every 2–3 hours; avoid empty stomach</span></span><span class="nutrient-val">5–6 meals/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Crackers in the morning<span class="nutrient-source">Before getting out of bed</span></span><span class="nutrient-val">Simple carbs on an empty stomach</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Ginger (Zingiber officinale)<span class="nutrient-source">RCT evidence — EBM</span></span><span class="nutrient-val">250 mg × 4/day or ginger tea</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin B6 (pyridoxine)<span class="nutrient-source">First-line pharmacological therapy — APA/ACOG</span></span><span class="nutrient-val">10–25 mg × 3–4/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Hydration<span class="nutrient-source">Frequent small sips; cold water or ice</span></span><span class="nutrient-val">≥ 8–10 glasses/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Avoid<span class="nutrient-source">Individual triggers</span></span><span class="nutrient-val">Fatty/spicy foods, strong odours, excessive heat</span></div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🍽️ Schema Alimentare Tipo (2°–3° Trimestre)</h3>
     <div class="trimestre-box tri-1" style="margin-bottom:8px">
       <b>🌅 Colazione:</b> latte parzialmente scremato + cereali integrali + frutta di stagione + 1 uovo 2–3 volte/settimana
@@ -574,11 +733,28 @@ async function ensureChartJs() {
       <b>💧 Acqua:</b> ≥ 2–2.3 L/die; privilegiare acqua calcica (&gt;200 mg/L Ca)
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🍽️ Sample Meal Plan (2nd–3rd Trimester)</h3>
+    <div class="trimestre-box tri-1" style="margin-bottom:8px">
+      <b>🌅 Breakfast:</b> semi-skimmed milk + wholegrains + seasonal fruit + 1 egg 2–3 times/week
+    </div>
+    <div class="trimestre-box tri-2" style="margin-bottom:8px">
+      <b>☀️ Lunch:</b> wholegrain first course (pasta/rice) + protein second course (pulses, fish or meat) + plenty of vegetables + EVO oil + fruit
+    </div>
+    <div class="trimestre-box tri-3" style="margin-bottom:8px">
+      <b>🌙 Dinner:</b> alternating protein (fish 2–3×/week) + vegetables + moderate carbohydrate portion + EVO oil
+    </div>
+    <div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-top:4px;font-size:12.5px;color:var(--slate-m)">
+      <b>🍎 Morning snack:</b> full-fat Greek yoghurt + nuts (4–5 walnuts)<br>
+      <b>🧀 Afternoon snack:</b> fresh fruit + 2 wholegrain crackers + small piece of cheese<br>
+      <b>💧 Water:</b> ≥ 2–2.3 L/day; prefer calcium-rich water (&gt;200 mg/L Ca)
+    </div>
+  </div>
 </div>
 
 <!-- ── TAB: ALLATTAMENTO ── -->
 <div class="grav-panel" id="panel-allattamento">
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🤱 Allattamento al Seno — Fabbisogni e Raccomandazioni</h3>
     <div class="alert-pink">Fonte: OMS/UNICEF 2003, ESPGHAN 2022, LARN 2024. L'allattamento esclusivo è raccomandato per i primi 6 mesi di vita, con proseguimento fino a 2 anni insieme all'alimentazione complementare.</div>
     <h4 style="font-size:12px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;margin-top:14px">⚡ Fabbisogno Energetico Aggiuntivo</h4>
@@ -586,8 +762,16 @@ async function ensureChartJs() {
     <div class="nutrient-row"><span class="nutrient-label">Secondo semestre<span class="nutrient-source">LARN 2024</span></span><span class="nutrient-val">+400 kcal/die</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Produzione media latte<span class="nutrient-source">700–900 mL/die</span></span><span class="nutrient-val">~600–700 kcal escreti</span></div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🤱 Breastfeeding — Requirements and Recommendations</h3>
+    <div class="alert-pink">Source: WHO/UNICEF 2003, ESPGHAN 2022, LARN 2024. Exclusive breastfeeding is recommended for the first 6 months of life, continuing to 2 years alongside complementary feeding.</div>
+    <h4 style="font-size:12px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;margin-top:14px">⚡ Additional Energy Requirement</h4>
+    <div class="nutrient-row"><span class="nutrient-label">First semester<span class="nutrient-source">LARN 2024</span></span><span class="nutrient-val">+500 kcal/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Second semester<span class="nutrient-source">LARN 2024</span></span><span class="nutrient-val">+400 kcal/day</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Average milk production<span class="nutrient-source">700–900 mL/day</span></span><span class="nutrient-val">~600–700 kcal secreted</span></div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🥗 Micronutrienti Chiave nell'Allattamento</h3>
     <table class="iom-table">
       <thead><tr><th>Nutriente</th><th>Fabbisogno (LARN)</th><th>Note cliniche</th></tr></thead>
@@ -602,8 +786,23 @@ async function ensureChartJs() {
       </tbody>
     </table>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🥗 Key Micronutrients in Breastfeeding</h3>
+    <table class="iom-table">
+      <thead><tr><th>Nutrient</th><th>Requirement (LARN)</th><th>Clinical notes</th></tr></thead>
+      <tbody>
+        <tr><td><b>Vitamin D</b></td><td>600–800 IU/day (mother)</td><td>Breast milk is low in vit. D → infant supplementation 400 IU/day (ESPGHAN)</td></tr>
+        <tr><td><b>Vitamin B12</b></td><td>2.8 µg/day</td><td>Critical for vegans/vegetarians — maternal deficiency = severe deficiency in infant</td></tr>
+        <tr><td><b>DHA/Omega-3</b></td><td>≥ 200 mg DHA/day</td><td>Oily fish 2–3×/week or supplement; essential for CNS development</td></tr>
+        <tr><td><b>Calcium</b></td><td>1000 mg/day</td><td>Same dose as pregnancy; 400 mg mobilised from bone (reversible)</td></tr>
+        <tr><td><b>Iodine</b></td><td>250–290 µg/day</td><td>Iodised salt + seaweed (kelp) — deficiency impairs neonatal thyroid development</td></tr>
+        <tr><td><b>Iron</b></td><td>18 mg/day (with amenorrhoea 11 mg)</td><td>Breast milk low in iron → consider supplementation at 4–6 months</td></tr>
+        <tr><td><b>Choline</b></td><td>550 mg/day</td><td>2 eggs/day + pulses; essential for hippocampal development in infant</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>⚠️ Alimenti e Sostanze da Gestire durante l'Allattamento</h3>
     <div class="grid-2">
       <div>
@@ -627,8 +826,32 @@ async function ensureChartJs() {
       </div>
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>⚠️ Foods and Substances to Manage during Breastfeeding</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:8px">To avoid</div>
+        <div style="font-size:12.5px;line-height:1.8;color:var(--slate-m)">
+          🚫 <b>Alcohol</b> — passes into milk (peak 30–60 min after). If consumed, wait 2h before feeding<br>
+          🚫 <b>Caffeine</b> — max 200 mg/day; excess causes infant irritability<br>
+          🚫 <b>High-mercury fish</b> (swordfish, shark) — as in pregnancy<br>
+          🚫 <b>Sage in large doses</b> — reduces milk production (galactofuge)
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:8px">Galactagogues (production support)</div>
+        <div style="font-size:12.5px;line-height:1.8;color:var(--slate-m)">
+          ✅ <b>Fenugreek</b> — moderate evidence (3g/day in capsules)<br>
+          ✅ <b>Fennel</b> — traditional, limited evidence<br>
+          ✅ <b>Adequate hydration</b> — at least 2–2.5 L/day<br>
+          ✅ <b>Oats</b> — beta-glucan source, considered useful<br>
+          ⚠️ Metoclopramide (domperidone) must be prescribed by a doctor
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>❌ Controindicazioni all'Allattamento al Seno</h3>
     <div style="font-size:12.5px;line-height:1.9;color:var(--slate-m)">
       🔴 <b>HIV in Paesi ad alto reddito</b> (salvo valutazione infettivologica specifica)<br>
@@ -641,11 +864,24 @@ async function ensureChartJs() {
       🟡 <b>Mastite</b> — allattamento raccomandato (favorisce la risoluzione)
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>❌ Contraindications to Breastfeeding</h3>
+    <div style="font-size:12.5px;line-height:1.9;color:var(--slate-m)">
+      🔴 <b>HIV in high-income countries</b> (unless specific infectious disease assessment)<br>
+      🔴 <b>Human T-lymphotropic virus type I or II (HTLV)</b><br>
+      🔴 <b>Active untreated TB</b> (can resume after 2 weeks of therapy)<br>
+      🔴 <b>Neonatal galactosaemia</b> (enzyme deficiency — galactose-free formula)<br>
+      🔴 <b>Active antineoplastic chemotherapy</b><br>
+      🔴 <b>Certain pharmacological therapies</b> (check LactMed/e-lactancia.org)<br>
+      🟡 <b>Treated maternal hypothyroidism</b> — compatible with most levothyroxine doses<br>
+      🟡 <b>Mastitis</b> — breastfeeding recommended (promotes resolution)
+    </div>
+  </div>
 </div>
 
 <!-- ── TAB: SVEZZAMENTO ── -->
 <div class="grav-panel" id="panel-svezzamento">
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🍼 Svezzamento / Alimentazione Complementare — Linee Guida 2024</h3>
     <div class="alert-pink">Fonte: ESPGHAN 2017 (aggiornamento 2023), OMS 2023, SIAIP 2023. L'introduzione degli alimenti complementari va avviata intorno ai <b>6 mesi</b> (non prima dei 4, non dopo i 7) mantenendo allattamento al seno o formula.</div>
     <h4 style="font-size:12px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin:12px 0 8px">🚦 Segnali di Prontezza (tutti e tre presenti)</h4>
@@ -655,8 +891,18 @@ async function ensureChartJs() {
       ✅ Mostra interesse per il cibo degli adulti
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🍼 Weaning / Complementary Feeding — Guidelines 2024</h3>
+    <div class="alert-pink">Source: ESPGHAN 2017 (2023 update), WHO 2023, SIAIP 2023. Introduction of complementary foods should begin around <b>6 months</b> (not before 4, not after 7) while maintaining breastfeeding or formula.</div>
+    <h4 style="font-size:12px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin:12px 0 8px">🚦 Readiness Signs (all three present)</h4>
+    <div style="font-size:12.5px;line-height:1.8;color:var(--slate-m)">
+      ✅ The infant sits with support and holds their head upright<br>
+      ✅ Has lost the extrusion reflex (does not push food out with the tongue)<br>
+      ✅ Shows interest in adult food
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>📅 Sequenza di Introduzione degli Alimenti (schema orientativo)</h3>
     <table class="iom-table">
       <thead><tr><th>Età</th><th>Alimenti introdotti</th><th>Note</th></tr></thead>
@@ -669,8 +915,21 @@ async function ensureChartJs() {
       </tbody>
     </table>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>📅 Food Introduction Sequence (indicative schedule)</h3>
+    <table class="iom-table">
+      <thead><tr><th>Age</th><th>Foods introduced</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><b>4–6 months</b></td><td>Vegetables (carrot, squash, potato), gluten-free cereals</td><td>Only if ready; not before 17 weeks</td></tr>
+        <tr><td><b>6 months</b></td><td>Meat (chicken, turkey, lean beef), puréed pulses, egg yolk</td><td>Bioavailable iron source — essential</td></tr>
+        <tr><td><b>6–7 months</b></td><td>Fish (cod, sole), fruit, pasta/rice</td><td>Fish 2–3×/week; allergens to be introduced early</td></tr>
+        <tr><td><b>8–10 months</b></td><td>Fresh cheeses, yoghurt, whole egg, bread</td><td>Cheese in small amounts (sodium)</td></tr>
+        <tr><td><b>12 months</b></td><td>Whole cow's milk as a drink, iodised salt in minimal amounts</td><td>Do not use cow's milk as a drink under 12 months</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>⚠️ Allergeni: Introduzione Precoce Raccomandata (ESPGHAN 2023)</h3>
     <div style="background:#FFF7ED;border-radius:10px;padding:12px 14px;border-left:4px solid #F59E0B;margin-bottom:10px;font-size:12.5px;line-height:1.8;color:#7C2D12">
       <b>Non ritardare l'introduzione degli allergeni!</b> L'esposizione precoce (4–12 mesi) riduce il rischio di allergia alimentare. Eccezione: bambini con eczema grave o allergia al latte → consulenza allergologica prima.
@@ -684,8 +943,22 @@ async function ensureChartJs() {
       <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;color:#78350F">🥛 Latte (dal 6° mese in alimenti)</div>
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>⚠️ Allergens: Early Introduction Recommended (ESPGHAN 2023)</h3>
+    <div style="background:#FFF7ED;border-radius:10px;padding:12px 14px;border-left:4px solid #F59E0B;margin-bottom:10px;font-size:12.5px;line-height:1.8;color:#7C2D12">
+      <b>Do not delay allergen introduction!</b> Early exposure (4–12 months) reduces the risk of food allergy. Exception: infants with severe eczema or milk allergy → allergology consultation first.
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px">
+      <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;color:#78350F">🥜 Peanuts (from 6 months)</div>
+      <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;color:#78350F">🌾 Gluten (from 6 months)</div>
+      <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;color:#78350F">🥚 Egg (from 6 months)</div>
+      <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;color:#78350F">🐟 Fish (from 6 months)</div>
+      <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;color:#78350F">🫘 Soya (from 6 months)</div>
+      <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;color:#78350F">🥛 Milk (from 6 months in foods)</div>
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>🌿 Approcci allo Svezzamento: Tradizionale vs Baby-Led Weaning (BLW)</h3>
     <div class="grid-2">
       <div>
@@ -712,8 +985,35 @@ async function ensureChartJs() {
       <b>ESPGHAN 2023:</b> entrambi gli approcci sono validi se garantiscono adeguato apporto di ferro, zinco, vitamina D e assenza di sale/zucchero aggiunto.
     </div>
   </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>🌿 Weaning Approaches: Traditional vs Baby-Led Weaning (BLW)</h3>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#1D4ED8;margin-bottom:8px">📋 Traditional Weaning (purées)</div>
+        <div style="font-size:12.5px;line-height:1.8;color:var(--slate-m)">
+          ✅ Precise quantity control<br>
+          ✅ Easier for first-time families<br>
+          ✅ Reduces choking risk<br>
+          📌 Texture progression: purée → minced → pieces
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#059669;margin-bottom:8px">🤲 Baby-Led Weaning (BLW)</div>
+        <div style="font-size:12.5px;line-height:1.8;color:var(--slate-m)">
+          ✅ Autonomy and satiety self-regulation<br>
+          ✅ Sensory exploration of foods<br>
+          ⚠️ Requires constant supervision<br>
+          ⚠️ Only after 6 months with full sitting ability<br>
+          📌 Soft foods, in sticks, without salt
+        </div>
+      </div>
+    </div>
+    <div style="background:#F0FDF4;border-radius:8px;padding:10px 12px;margin-top:10px;font-size:12px;color:#065F46">
+      <b>ESPGHAN 2023:</b> both approaches are valid if they ensure adequate intake of iron, zinc, vitamin D and no added salt/sugar.
+    </div>
+  </div>
 
-  <div class="grav-card">
+  <div class="grav-card" data-only-lang="it">
     <h3>⚡ Micronutrienti Critici nel Primo Anno di Vita</h3>
     <div class="nutrient-row"><span class="nutrient-label">Vitamina D<span class="nutrient-source">OMS/ESPGHAN — tutti i lattanti</span></span><span class="nutrient-val">400 UI/die dal 1° giorno fino ai 12 mesi</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Ferro<span class="nutrient-source">AAP 2023</span></span><span class="nutrient-val">Carne rossa + legumi da 6 mesi; valutare 1 mg/kg/die se pretermine o solo latte materno</span></div>
@@ -721,6 +1021,15 @@ async function ensureChartJs() {
     <div class="nutrient-row"><span class="nutrient-label">Vitamina B12<span class="nutrient-source">ESPGHAN 2023</span></span><span class="nutrient-val">Supplementazione obbligatoria se madre vegana/vegetariana che allatta</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Sale e zucchero<span class="nutrient-source">OMS — nessuna aggiunta</span></span><span class="nutrient-val">NON aggiungere al primo anno di vita (sviluppo gusto, reni immaturi)</span></div>
     <div class="nutrient-row"><span class="nutrient-label">Miele<span class="nutrient-source">Botulismo infantile</span></span><span class="nutrient-val">VIETATO fino ai 12 mesi — rischio Clostridium botulinum</span></div>
+  </div>
+  <div class="grav-card" data-only-lang="en" style="display:none">
+    <h3>⚡ Critical Micronutrients in the First Year of Life</h3>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin D<span class="nutrient-source">WHO/ESPGHAN — all infants</span></span><span class="nutrient-val">400 IU/day from day 1 to 12 months</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iron<span class="nutrient-source">AAP 2023</span></span><span class="nutrient-val">Red meat + pulses from 6 months; consider 1 mg/kg/day if premature or exclusively breastfed</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Iodine<span class="nutrient-source">ESPGHAN 2023</span></span><span class="nutrient-val">50 µg/day 0–6m, 70 µg/day 7–12m; breast milk sufficient if mother supplements</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Vitamin B12<span class="nutrient-source">ESPGHAN 2023</span></span><span class="nutrient-val">Mandatory supplementation if vegan/vegetarian breastfeeding mother</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Salt and sugar<span class="nutrient-source">WHO — no addition</span></span><span class="nutrient-val">DO NOT add in the first year of life (taste development, immature kidneys)</span></div>
+    <div class="nutrient-row"><span class="nutrient-label">Honey<span class="nutrient-source">Infant botulism</span></span><span class="nutrient-val">FORBIDDEN until 12 months — risk of Clostridium botulinum</span></div>
   </div>
 </div>
 
@@ -890,9 +1199,9 @@ async function salvaNota() {
   const settimane = document.getElementById('g-settimane').value;
   const tipo = document.getElementById('g-tipo').value;
   const bmi = pesoPre && altezza ? (parseFloat(pesoPre) / Math.pow(parseFloat(altezza)/100, 2)).toFixed(1) : null;
-  const sommario = 'Gravidanza ' + tipo + (settimane ? ' · Sett. ' + settimane : '') +
-    (bmi ? ' · BMI pre: ' + bmi : '') +
-    (pesoAtt && pesoPre ? ' · Guadagno: +' + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : '');
+  const sommario = _L('Gravidanza','Pregnancy') + ' ' + tipo + (settimane ? _L(' · Sett. ',' · Wk. ') + settimane : '') +
+    (bmi ? _L(' · BMI pre: ',' · Pre-BMI: ') + bmi : '') +
+    (pesoAtt && pesoPre ? _L(' · Guadagno: +',' · Gain: +') + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : '');
   showLoading(true);
   const { error } = await sb.from('note_specialistiche').insert({
     cartella_id: _cartellaId, user_id: currentUser.id,

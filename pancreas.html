@@ -226,19 +226,21 @@
           <option value="altro">Altra causa IPE</option>
         </select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label>Metodo calcolo preferito</label>
+      <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Metodo calcolo preferito</span><span data-only-lang="en">Preferred calculation method</span></label>
         <select id="pert-metodo" onchange="calcPERT()">
-          <option value="grassi">Per grammo di grasso (500-1000 UL/g)</option>
-          <option value="peso">Per kg di peso corporeo (500-1500 UL/kg/pasto)</option>
+          <option data-only-lang="it" value="grassi">Per grammo di grasso (500-1000 UL/g)</option>
+          <option data-only-lang="en" value="grassi">Per gram of fat (500–1,000 LU/g)</option>
+          <option data-only-lang="it" value="peso">Per kg di peso corporeo (500-1500 UL/kg/pasto)</option>
+          <option data-only-lang="en" value="peso">Per kg body weight (500–1,500 LU/kg/meal)</option>
         </select>
       </div>
       <div id="pert-result" style="background:#FFF7ED;border-radius:10px;padding:16px;margin-top:10px;display:none">
-        <div style="font-size:16px;color:var(--slate-l);margin-bottom:6px">Dose PERT stimata per questo pasto</div>
+        <div style="font-size:16px;color:var(--slate-l);margin-bottom:6px"><span data-only-lang="it">Dose PERT stimata per questo pasto</span><span data-only-lang="en">Estimated PERT dose for this meal</span></div>
         <div class="result-big" id="pert-ul">—</div>
-        <div style="font-size:12px;color:var(--slate-l);margin-bottom:12px">Unità Lipasi</div>
+        <div style="font-size:12px;color:var(--slate-l);margin-bottom:12px"><span data-only-lang="it">Unità Lipasi</span><span data-only-lang="en">Lipase Units</span></div>
         <div id="pert-creon" style="margin-bottom:10px"></div>
         <div id="pert-max-warn" style="display:none" class="alert-warn alert-box" style="margin-top:8px"></div>
-        <div style="font-size:11px;color:var(--slate-l)">⚠️ Dose iniziale — titolare sulla risposta clinica con il team medico</div>
+        <div style="font-size:11px;color:var(--slate-l)"><span data-only-lang="it">⚠️ Dose iniziale — titolare sulla risposta clinica con il team medico</span><span data-only-lang="en">⚠️ Starting dose — titrate to clinical response with the medical team</span></div>
       </div>
     </div>
 
@@ -247,23 +249,31 @@
       <div class="nf" style="margin-bottom:10px"><label>Peso corporeo (kg)</label><input type="number" id="max-peso" placeholder="es. 70" oninput="calcMax()"></div>
       <div class="nf" style="margin-bottom:10px"><label>Patologia</label>
         <select id="max-pat" onchange="calcMax()">
-          <option value="fc">Fibrosi Cistica (ECFS 2017 — max 10.000 UL/kg/die)</option>
-          <option value="fc_bambino">Fibrosi Cistica bambino &lt;4 anni (max 10.000 UL/kg/die)</option>
-          <option value="pancreasectomia">Pancreasectomia Totale / Whipple</option>
-          <option value="pancreatite">Pancreatite Cronica</option>
-          <option value="cancro">Cancro del Pancreas</option>
-          <option value="chirurgia_gi">Chirurgia GI (gastrectomia, bypass, sleeve)</option>
-          <option value="altro">Altra causa IPE</option>
+          <option data-only-lang="it" value="fc">Fibrosi Cistica (ECFS 2017 — max 10.000 UL/kg/die)</option>
+          <option data-only-lang="en" value="fc">Cystic Fibrosis (ECFS 2017 — max 10,000 LU/kg/day)</option>
+          <option data-only-lang="it" value="fc_bambino">Fibrosi Cistica bambino &lt;4 anni (max 10.000 UL/kg/die)</option>
+          <option data-only-lang="en" value="fc_bambino">Cystic Fibrosis child &lt;4 yrs (max 10,000 LU/kg/day)</option>
+          <option data-only-lang="it" value="pancreasectomia">Pancreasectomia Totale / Whipple</option>
+          <option data-only-lang="en" value="pancreasectomia">Total Pancreatectomy / Whipple</option>
+          <option data-only-lang="it" value="pancreatite">Pancreatite Cronica</option>
+          <option data-only-lang="en" value="pancreatite">Chronic Pancreatitis</option>
+          <option data-only-lang="it" value="cancro">Cancro del Pancreas</option>
+          <option data-only-lang="en" value="cancro">Pancreatic Cancer</option>
+          <option data-only-lang="it" value="chirurgia_gi">Chirurgia GI (gastrectomia, bypass, sleeve)</option>
+          <option data-only-lang="en" value="chirurgia_gi">GI Surgery (gastrectomy, bypass, sleeve)</option>
+          <option data-only-lang="it" value="altro">Altra causa IPE</option>
+          <option data-only-lang="en" value="altro">Other cause of EPI</option>
         </select>
       </div>
       <div id="max-result" style="background:#F0FDF4;border-radius:10px;padding:16px;margin-top:10px;display:none">
-        <div style="font-size:12px;color:var(--slate-l);margin-bottom:4px">Limite massimo giornaliero</div>
+        <div style="font-size:12px;color:var(--slate-l);margin-bottom:4px"><span data-only-lang="it">Limite massimo giornaliero</span><span data-only-lang="en">Maximum daily limit</span></div>
         <div class="result-big" id="max-ul" style="color:#15803D">—</div>
         <div style="font-size:12px;color:var(--slate-l)" id="max-note"></div>
         <div style="margin-top:10px;font-size:12px;line-height:1.7;color:#334155" id="max-details"></div>
       </div>
       <div style="margin-top:14px;background:#FEF2F2;border-radius:8px;padding:12px;font-size:12px;color:#991B1B;border-left:3px solid #DC2626">
-        <b>⚠️ Colopathy fibrosante:</b> Dosi &gt;10.000 UL/kg/die sono associate a colopathy fibrosante nei pazienti con FC. Non superare MAI questo limite.
+        <span data-only-lang="it"><b>⚠️ Colopathy fibrosante:</b> Dosi &gt;10.000 UL/kg/die sono associate a colopathy fibrosante nei pazienti con FC. Non superare MAI questo limite.</span>
+        <span data-only-lang="en"><b>⚠️ Fibrosing colopathy:</b> Doses &gt;10,000 LU/kg/day are associated with fibrosing colopathy in CF patients. NEVER exceed this limit.</span>
       </div>
     </div>
   </div>
@@ -580,7 +590,7 @@
     </div>
     <div class="calc-box">
       <h3>📊 Distribuzione Grassi e PERT</h3>
-      <div id="pan-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#FFF7ED;border-radius:8px;font-size:13px"><i>Inserisci grassi totali per calcolare la distribuzione.</i></div>
+      <div id="pan-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#FFF7ED;border-radius:8px;font-size:13px"><i><span data-only-lang="it">Inserisci grassi totali per calcolare la distribuzione.</span><span data-only-lang="en">Enter total fat to calculate distribution.</span></i></div>
       <div class="alert-info alert-box" style="font-size:12px;border-color:#F97316;background:#FFF7ED;color:#7C2D12" data-only-lang="it">
         <b>💡 Linee guida PERT:</b> 500–2500 UL lipasi/g di grasso assunto. Dose iniziale: 40.000–50.000 UL per pasto principale, 20.000–25.000 per spuntino. Non superare 10.000 UL/kg/pasto. Assumere con ogni pasto/spuntino contenente grassi.
       </div>
@@ -695,12 +705,13 @@
   <div class="modal" style="max-width:600px">
     <div class="modal-hdr"><span>⚙️ Setup Database — Tabella Mancante</span><button onclick="closeM('modal-sql-setup')">✕</button></div>
     <div style="padding:18px">
-      <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
+      <p data-only-lang="it" style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
+      <p data-only-lang="en" style="font-size:13px;color:var(--slate-m);margin-bottom:12px">The <b>note_specialistiche</b> table does not yet exist in your Supabase database. Copy the SQL below and run it in the <b>SQL Editor</b> of your Supabase dashboard, then try saving again.</p>
       <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast(_L('✅ SQL copiato!','✅ SQL copied!'),'ok'))">📋 Copia SQL</button>
         <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
-        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')"><span data-only-lang="it">Chiudi</span><span data-only-lang="en">Close</span></button>
       </div>
     </div>
   </div>
@@ -754,7 +765,7 @@ function calcPERT() {
     note = `${ulPerKg} UL/kg × ${peso}kg`;
   }
 
-  document.getElementById('pert-ul').textContent = ul.toLocaleString('it') + ' UL';
+  document.getElementById('pert-ul').textContent = ul.toLocaleString(_L('it','en')) + ' IU';
 
   // Suggest Creon formulations
   const creon40 = Math.ceil(ul / 40000);
@@ -786,32 +797,32 @@ function calcMax() {
   const res = document.getElementById('max-result');
   let maxUL, note, details;
   const MAX_INFO = {
-    'fc':            {max:10000, src:'ECFS 2017', warn:'⚠️ Rischio colopathy fibrosante oltre 10.000 UL/kg/die'},
-    'fc_bambino':    {max:10000, src:'ECFS 2017 — bambini', warn:'⚠️ Massima attenzione: rischio colopathy fibrosante'},
-    'pancreasectomia':{max:null, src:'ESPEN 2020', warn:'Non esiste un limite assoluto: titolare fino a 80.000 UL/pasto'},
-    'pancreatite':   {max:null, src:'UEG/EPC 2017', warn:'Titolare: iniziare con 25.000-40.000 UL/pasto principale'},
-    'cancro':        {max:null, src:'ESPEN 2021', warn:'PERT migliora qualità vita e risposta chemioterapia'},
-    'chirurgia_gi':  {max:null, src:'ESPEN 2020', warn:'Timing critico: assumere all\'inizio pasto'},
-    'altro':         {max:null, src:'Linee guida generali', warn:'Titolare sulla risposta: steatosi, peso, albumina'},
+    'fc':            {max:10000, src:'ECFS 2017', warn:_L('⚠️ Rischio colopathy fibrosante oltre 10.000 UL/kg/die','⚠️ Risk of fibrosing colopathy above 10,000 IU/kg/day')},
+    'fc_bambino':    {max:10000, src:_L('ECFS 2017 — bambini','ECFS 2017 — children'), warn:_L('⚠️ Massima attenzione: rischio colopathy fibrosante','⚠️ Maximum caution: risk of fibrosing colopathy')},
+    'pancreasectomia':{max:null, src:'ESPEN 2020', warn:_L('Non esiste un limite assoluto: titolare fino a 80.000 UL/pasto','No absolute limit: titrate up to 80,000 IU/meal')},
+    'pancreatite':   {max:null, src:'UEG/EPC 2017', warn:_L('Titolare: iniziare con 25.000-40.000 UL/pasto principale','Titrate: start with 25,000–40,000 IU/main meal')},
+    'cancro':        {max:null, src:'ESPEN 2021', warn:_L('PERT migliora qualità vita e risposta chemioterapia','PERT improves quality of life and chemotherapy response')},
+    'chirurgia_gi':  {max:null, src:'ESPEN 2020', warn:_L('Timing critico: assumere all\'inizio pasto','Critical timing: take at the start of the meal')},
+    'altro':         {max:null, src:_L('Linee guida generali','General guidelines'), warn:_L('Titolare sulla risposta: steatosi, peso, albumina','Titrate to response: steatorrhoea, weight, albumin')},
   };
   const info = MAX_INFO[pat] || MAX_INFO['altro'];
   if (info.max) {
     maxUL = info.max * peso;
-    note = `${info.max.toLocaleString()} UL/kg/die × ${peso} kg — ${info.src}`;
-    details = `<b>Distribuzione suggerita (3 pasti + 2 snack):</b><br>
-      Colazione: ${Math.round(maxUL*0.18).toLocaleString()} UL = ${Math.ceil(maxUL*0.18/25000)} Creon 25.000<br>
-      Pranzo: ${Math.round(maxUL*0.30).toLocaleString()} UL = ${Math.ceil(maxUL*0.30/25000)} Creon 25.000<br>
-      Cena: ${Math.round(maxUL*0.30).toLocaleString()} UL = ${Math.ceil(maxUL*0.30/25000)} Creon 25.000<br>
-      Spuntini (×2): ${Math.round(maxUL*0.11).toLocaleString()} UL cadauno<br><br>
+    note = `${info.max.toLocaleString()} IU/kg/${_L('die','day')} × ${peso} kg — ${info.src}`;
+    details = `<b>${_L('Distribuzione suggerita (3 pasti + 2 snack):','Suggested distribution (3 meals + 2 snacks):')}</b><br>
+      ${_L('Colazione','Breakfast')}: ${Math.round(maxUL*0.18).toLocaleString()} IU = ${Math.ceil(maxUL*0.18/25000)} Creon 25.000<br>
+      ${_L('Pranzo','Lunch')}: ${Math.round(maxUL*0.30).toLocaleString()} IU = ${Math.ceil(maxUL*0.30/25000)} Creon 25.000<br>
+      ${_L('Cena','Dinner')}: ${Math.round(maxUL*0.30).toLocaleString()} IU = ${Math.ceil(maxUL*0.30/25000)} Creon 25.000<br>
+      ${_L('Spuntini (×2):','Snacks (×2):')} ${Math.round(maxUL*0.11).toLocaleString()} IU ${_L('cadauno','each')}<br><br>
       <span style="color:#DC2626;font-weight:700">${info.warn}</span>`;
   } else {
     maxUL = 80000; // per pasto, non per kg
-    note = `Limite pratico: ~75.000-80.000 UL per pasto — ${info.src}`;
+    note = `${_L('Limite pratico: ~75.000-80.000 UL per pasto','Practical limit: ~75,000–80,000 IU/meal')} — ${info.src}`;
     details = `${info.warn}<br><br>
-      <b>Schema indicativo:</b> Pasto principale 40.000-80.000 UL · Spuntino 10.000-25.000 UL<br>
-      Monitorare: peso, steatosi, elastasi fecale, albumina ogni 3-6 mesi.`;
+      <b>${_L('Schema indicativo:','Indicative scheme:')}</b> ${_L('Pasto principale 40.000-80.000 UL · Spuntino 10.000-25.000 UL','Main meal 40,000–80,000 IU · Snack 10,000–25,000 IU')}<br>
+      ${_L('Monitorare: peso, steatosi, elastasi fecale, albumina ogni 3-6 mesi.','Monitor: weight, steatorrhoea, faecal elastase, albumin every 3–6 months.')}`;
   }
-  document.getElementById('max-ul').textContent = maxUL.toLocaleString('it') + ' UL/die';
+  document.getElementById('max-ul').textContent = maxUL.toLocaleString(_L('it','en')) + ' IU/' + _L('die','day');
   document.getElementById('max-note').textContent = note;
   document.getElementById('max-details').innerHTML = details;
   res.style.display = 'block';
@@ -821,11 +832,11 @@ function calcPlan() {
   const peso = parseFloat(document.getElementById('plan-peso').value);
   if (!peso) return;
   const MEALS = [
-    {nome:'Colazione', g_grassi: 8},
-    {nome:'Spuntino mattina', g_grassi: 3},
-    {nome:'Pranzo', g_grassi: 20},
-    {nome:'Spuntino pomeriggio', g_grassi: 5},
-    {nome:'Cena', g_grassi: 18},
+    {nome:_L('Colazione','Breakfast'), g_grassi: 8},
+    {nome:_L('Spuntino mattina','Morning snack'), g_grassi: 3},
+    {nome:_L('Pranzo','Lunch'), g_grassi: 20},
+    {nome:_L('Spuntino pomeriggio','Afternoon snack'), g_grassi: 5},
+    {nome:_L('Cena','Dinner'), g_grassi: 18},
   ];
   const tbody = document.getElementById('plan-tbody');
   const tfoot = document.getElementById('plan-tfoot');
@@ -844,13 +855,13 @@ function calcPlan() {
   const maxUL = 10000 * peso;
   const overMax = totalUL > maxUL;
   tfoot.innerHTML = `<tr style="background:${overMax?'#FEF2F2':'#F0FDF4'}">
-    <td><b>TOTALE</b></td><td></td>
+    <td><b>${_L('TOTALE','TOTAL')}</b></td><td></td>
     <td style="text-align:center;font-weight:700;color:${overMax?'#DC2626':'#15803D'}">${totalUL.toLocaleString()}</td>
     <td style="text-align:center;font-weight:700">${Math.ceil(totalUL/25000)} cps</td>
     <td style="text-align:center;font-weight:700">${Math.ceil(totalUL/10000)} cps</td>
   </tr>
   <tr><td colspan="5" style="font-size:11.5px;color:${overMax?'#DC2626':'#64748B'};padding:6px 10px">
-    ${overMax ? '⚠️ Supera il limite FC ('+maxUL.toLocaleString()+' UL/die). Ridurre i grassi o suddividere i pasti.' : '✅ Entro i limiti di sicurezza (max FC: '+maxUL.toLocaleString()+' UL/die)'}
+    ${overMax ? _L('⚠️ Supera il limite FC (','⚠️ Exceeds EPI limit (')+maxUL.toLocaleString()+_L(' UL/die). Ridurre i grassi o suddividere i pasti.',' IU/day). Reduce fat intake or split meals.') : _L('✅ Entro i limiti di sicurezza (max FC: ','✅ Within safety limits (max EPI: ')+maxUL.toLocaleString()+_L(' UL/die)',' IU/day)')}
   </td></tr>`;
   document.getElementById('plan-result').style.display = 'block';
 }
@@ -892,7 +903,7 @@ async function loadPanCartelle() {
   const sel = document.getElementById('pan-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  sel.innerHTML = '<option value="">' + _L('-- Nessuna cartella --','-- No folder --') + '</option>';
   panCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
@@ -901,8 +912,8 @@ function calcolaPanPiano() {
   const grassiTot = parseFloat(document.getElementById('pan-piano-grassi-tot')?.value);
   const el = document.getElementById('pan-piano-macro-result');
   if (!el) return;
-  if (!grassiTot) { el.innerHTML = '<i>Inserisci i grassi totali per calcolare la distribuzione e il PERT.</i>'; return; }
-  const dist = [{n:'Colazione',p:0.25},{n:'Sp.M',p:0.13},{n:'Pranzo',p:0.33},{n:'Sp.P',p:0.13},{n:'Cena',p:0.33}];
+  if (!grassiTot) { el.innerHTML = `<i>${_L('Inserisci i grassi totali per calcolare la distribuzione e il PERT.','Enter total fat to calculate distribution and PERT dosage.')}</i>`; return; }
+  const dist = [{n:_L('Colazione','Brkfst'),p:0.25},{n:_L('Sp.M','Snk.M'),p:0.13},{n:_L('Pranzo','Lunch'),p:0.33},{n:_L('Sp.P','Snk.A'),p:0.13},{n:_L('Cena','Dinner'),p:0.33}];
   const ulPerG = 1500;
   el.innerHTML = dist.map(d => {
     const g = Math.round(grassiTot*d.p);
@@ -945,7 +956,7 @@ async function salvaPancreas() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'),'err'); return; }
   const cartella_id = document.getElementById('pan-cartella').value;
   if (!cartella_id) { toast(_L('Seleziona una cartella paziente','Select a patient record'),'err'); return; }
-  const nota = document.getElementById('pan-nota').value.trim() || 'Sessione pancreas ' + new Date().toLocaleDateString('it');
+  const nota = document.getElementById('pan-nota').value.trim() || _L('Sessione pancreas ','Pancreas Session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiPan();
   { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_grassi=parseFloat(_p.grassi_tot)||0,_prot=_kcal?Math.round(_kcal*.20/4):0,_cho=_kcal?Math.round(_kcal*.45/4):0,_fat=_grassi||(_kcal?Math.round(_kcal*.35/9):0),_nc=(document.getElementById('pan-cartella-cw-srch')?.value||'').trim();
     dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:'',alimenti:p.alimenti,note:p.note||(parseFloat(p.grassi)?'Grassi: '+p.grassi+' g':'')})),{titolo:_nc||nota,sottotitolo:[_p.causa,_p.enzima].filter(Boolean).join(' · '),totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat,footerNote:_p.note_cliniche||undefined}); }

@@ -822,7 +822,7 @@ function calcSport() {
 }
 
 function generaSchema() {
-  if (!_lastCalc) { toast('Inserisci prima i dati nel calcolatore', 'err'); return; }
+  if (!_lastCalc) { toast(_L('Inserisci prima i dati nel calcolatore','Enter data in the calculator first'), 'err'); return; }
   const { peso, sport, tdee, cho_g, prot_g, grassi_g, p } = _lastCalc;
 
   // Sport label mapping
@@ -897,7 +897,7 @@ function generaSchema() {
 
   html += `</div>
     <div style="margin-top:14px;background:#FEF3C7;border-radius:10px;padding:12px 16px;font-size:12.5px;color:#78350F">
-      <b>⚠️ Note importanti:</b> Questo schema è indicativo. Le quantità vanno adattate al peso corporeo reale, alla tolleranza digestiva individuale e al periodo di allenamento (pre-gara, recupero, off-season). Per uno schema personalizzato, consultare il piano paziente.
+      <b>⚠️ ${_L('Note importanti:','Important notes:')}</b> ${_L('Questo schema è indicativo. Le quantità vanno adattate al peso corporeo reale, alla tolleranza digestiva individuale e al periodo di allenamento (pre-gara, recupero, off-season). Per uno schema personalizzato, consultare il piano paziente.','This plan is indicative. Quantities must be adapted to actual body weight, individual digestive tolerance and training period (pre-competition, recovery, off-season). For a personalised plan, consult the patient plan.')}
     </div>`;
 
   document.getElementById('schema-content').innerHTML = html;
@@ -921,7 +921,7 @@ function calcEA() {
   else if (ea < 45) { bg='#FEF3C7'; color='#92400E'; msg=_L('🟡 ZONA A RISCHIO — RED-S possibile. Monitorare ciclo mestruale, densità ossea e umore.','🟡 AT-RISK ZONE — RED-S possible. Monitor menstrual cycle, bone density and mood.'); }
   else { bg='#DCFCE7'; color='#14532D'; msg=_L('🟢 DISPONIBILITÀ ENERGETICA ADEGUATA — Continuare il monitoraggio periodico.','🟢 ADEQUATE ENERGY AVAILABILITY — Continue periodic monitoring.'); }
   el.style.cssText = `display:block;background:${bg};color:${color};border-radius:8px;padding:12px;font-size:13px`;
-  el.innerHTML = `<b>EA = ${r1(ea)} kcal/kg FFM/die</b><br>${msg}`;
+  el.innerHTML = `<b>EA = ${r1(ea)} kcal/kg FFM/${_L('die','day')}</b><br>${msg}`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1119,7 +1119,7 @@ async function loadSportCartelle() {
   const sel = document.getElementById('sport-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  sel.innerHTML = '<option value="">-- ' + _L('Nessuna cartella','No folder') + ' --</option>';
   sportCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
@@ -1130,15 +1130,15 @@ function calcolaSpPiano() {
   const peso = parseFloat(document.getElementById('sp-piano-peso')?.value);
   const el = document.getElementById('sp-piano-macro-result');
   if (!el) return;
-  if (!kcal) { el.innerHTML = '<i>Inserisci le kcal per calcolare i macronutrienti.</i>'; return; }
+  if (!kcal) { el.innerHTML = '<i>' + _L('Inserisci le kcal per calcolare i macronutrienti.','Enter kcal to calculate macronutrients.') + '</i>'; return; }
   const prot = (protPerKg && peso) ? Math.round(protPerKg * peso) : Math.round(kcal * 0.25 / 4);
   const protKcal = prot * 4;
   const fat = Math.round(kcal * 0.25 / 9);
   const cho = Math.round((kcal - protKcal - fat*9) / 4);
   el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px">
-    <div style="background:#DCFCE7;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#14532D">Proteine</div><div style="font-size:20px;font-weight:700;color:#16A34A">${prot}g</div><div style="font-size:10px">${(prot/kcal*400).toFixed(0)}% — ${protKcal}kcal</div></div>
+    <div style="background:#DCFCE7;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#14532D">${_L('Proteine','Protein')}</div><div style="font-size:20px;font-weight:700;color:#16A34A">${prot}g</div><div style="font-size:10px">${(prot/kcal*400).toFixed(0)}% — ${protKcal}kcal</div></div>
     <div style="background:#FEF3C7;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#78350F">CHO</div><div style="font-size:20px;font-weight:700;color:#D97706">${cho}g</div><div style="font-size:10px">${(cho*4/kcal*100).toFixed(0)}% — ${cho*4}kcal</div></div>
-    <div style="background:#ECFDF5;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#065F46">Grassi</div><div style="font-size:20px;font-weight:700;color:#10B981">${fat}g</div><div style="font-size:10px">${(fat*9/kcal*100).toFixed(0)}% — ${fat*9}kcal</div></div>
+    <div style="background:#ECFDF5;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#065F46">${_L('Grassi','Fat')}</div><div style="font-size:20px;font-weight:700;color:#10B981">${fat}g</div><div style="font-size:10px">${(fat*9/kcal*100).toFixed(0)}% — ${fat*9}kcal</div></div>
   </div>`;
 }
 
@@ -1337,12 +1337,12 @@ function calcVal_spt() {
     const bmi = peso / ((alt/100) ** 2);
     bmiEl.value = bmi.toFixed(1);
     let cat = '', color = '';
-    if      (bmi < 18.5) { cat = 'Sottopeso';          color = '#3B82F6'; }
-    else if (bmi < 25)   { cat = 'Normopeso';           color = '#22C55E'; }
-    else if (bmi < 30)   { cat = 'Sovrappeso';          color = '#F59E0B'; }
-    else if (bmi < 35)   { cat = 'Obesità classe I';    color = '#F97316'; }
-    else if (bmi < 40)   { cat = 'Obesità classe II';   color = '#EF4444'; }
-    else                  { cat = 'Obesità classe III';  color = '#DC2626'; }
+    if      (bmi < 18.5) { cat = _L('Sottopeso','Underweight');          color = '#3B82F6'; }
+    else if (bmi < 25)   { cat = _L('Normopeso','Normal weight');           color = '#22C55E'; }
+    else if (bmi < 30)   { cat = _L('Sovrappeso','Overweight');          color = '#F59E0B'; }
+    else if (bmi < 35)   { cat = _L('Obesità classe I','Obesity class I');    color = '#F97316'; }
+    else if (bmi < 40)   { cat = _L('Obesità classe II','Obesity class II');   color = '#EF4444'; }
+    else                  { cat = _L('Obesità classe III','Obesity class III');  color = '#DC2626'; }
     if (resEl) {
       resEl.style.display = 'block';
       resEl.innerHTML = `BMI <b style="color:${color}">${bmi.toFixed(1)} kg/m²</b> — <b style="color:${color}">${cat}</b>`;

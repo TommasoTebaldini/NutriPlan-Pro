@@ -843,7 +843,7 @@ function checkDrugInteractions() {
     if (hit) found.push({ ...it, matched: hit });
   }
   if (!found.length) {
-    box.innerHTML = '<div style="font-size:12px;color:var(--slate-l);padding:8px 12px;background:#F0FDF4;border-left:3px solid #10B981;border-radius:8px">✓ Nessuna interazione farmaco-nutriente nota rilevata nel testo inserito.</div>';
+    box.innerHTML = '<div style="font-size:12px;color:var(--slate-l);padding:8px 12px;background:#F0FDF4;border-left:3px solid #10B981;border-radius:8px">✓ ' + _L('Nessuna interazione farmaco-nutriente nota rilevata nel testo inserito.','No known drug-nutrient interaction detected in the entered text.') + '</div>';
     return;
   }
 
@@ -862,18 +862,18 @@ function checkDrugInteractions() {
       <div style="font-size:12.5px;font-weight:700;color:${color}">${icon} ${esc(it.matched)} → ${esc(it.nutriente)}</div>
       <div style="font-size:12px;color:var(--slate);line-height:1.5;margin-top:3px">${esc(it.messaggio)}</div>
       ${cibi}
-      <div style="font-size:10px;color:var(--slate-l);margin-top:4px;text-transform:uppercase;letter-spacing:.3px">Fonte: ${esc(it.fonte || '—')}</div>
+      <div style="font-size:10px;color:var(--slate-l);margin-top:4px;text-transform:uppercase;letter-spacing:.3px">${_L('Fonte','Source')}: ${esc(it.fonte || '—')}</div>
     </div>`;
   };
 
   const dangerCount = found.filter(f => f.tipo === 'danger').length;
-  const header = `<div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">⚕️ ${found.length} interazione/i rilevata/e${dangerCount ? ` · ${dangerCount} critica/he` : ''}</div>`;
+  const header = `<div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">⚕️ ${found.length} ${_L('interazione/i rilevata/e','interaction(s) detected')}${dangerCount ? ` · ${dangerCount} ${_L('critica/he','critical')}` : ''}</div>`;
 
   const first = found.slice(0, COLLAPSE_AT).map(renderAlert).join('');
   let rest = '';
   if (found.length > COLLAPSE_AT) {
     rest = `<div id="drug-alerts-more" style="display:none">${found.slice(COLLAPSE_AT).map(renderAlert).join('')}</div>
-      <button type="button" id="drug-alerts-toggle" onclick="toggleDrugAlerts()" style="background:none;border:1px solid var(--border-d);border-radius:8px;padding:6px 14px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--slate);font-weight:600">Mostra tutti (${found.length - COLLAPSE_AT} altri)</button>`;
+      <button type="button" id="drug-alerts-toggle" onclick="toggleDrugAlerts()" style="background:none;border:1px solid var(--border-d);border-radius:8px;padding:6px 14px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--slate);font-weight:600">${_L('Mostra tutti','Show all')} (${found.length - COLLAPSE_AT} ${_L('altri','more')})</button>`;
   }
   box.innerHTML = header + first + rest;
 }
@@ -1076,7 +1076,7 @@ function updatePatSel(){
   const arr=[...selectedPat];
   if(!arr.length){el.style.display='none';return;}
   el.style.display='block';
-  el.innerHTML='Selezionate: '+arr.map(id=>getTuttePatologie().find(p=>p.id===id)?.label||id).join(' · ');
+  el.innerHTML=_L('Selezionate: ','Selected: ')+arr.map(id=>getTuttePatologie().find(p=>p.id===id)?.label||id).join(' · ');
 }
 function renderLGNotes(container){
   const arr=[...selectedPat];
@@ -1190,7 +1190,7 @@ function updateMacroCalcs(){
     totEl.style.background=totOk?'#F0FDF4':'#FEF2F2';
     totEl.style.borderColor=totOk?'#10B981':'#EF4444';
     const txt=totEl.querySelector('.mtot-text');
-    if(txt){txt.textContent=totOk?'✅ Totale: 100%':'⚠️ Totale: '+tot+'% — deve essere esattamente 100%';txt.style.color=totOk?'#065F46':'#991B1B';}
+    if(txt){txt.textContent=totOk?_L('✅ Totale: 100%','✅ Total: 100%'):_L('⚠️ Totale: ','⚠️ Total: ')+tot+'% — '+_L('deve essere esattamente 100%','must be exactly 100%');txt.style.color=totOk?'#065F46':'#991B1B';}
     const btn=totEl.querySelector('.auto-balance-btn');
     if(btn)btn.style.display=totOk?'none':'inline-block';
   }
@@ -1549,13 +1549,13 @@ function mostraModalSQL(){
   div.id='modal-sql';
   div.className='modal-bg open';
   div.innerHTML=`<div class="modal" style="max-width:560px">
-    <div class="mhdr"><h2>🗄️ Tabella mancante su Supabase</h2><button class="mclose" onclick="this.closest('.modal-bg').classList.remove('open')">✕</button></div>
+    <div class="mhdr"><h2>🗄️ ${_L('Tabella mancante su Supabase','Missing table on Supabase')}</h2><button class="mclose" onclick="this.closest('.modal-bg').classList.remove('open')">✕</button></div>
     <div class="mbody">
-      <p style="font-size:13px;color:var(--slate-m);margin-bottom:10px">La tabella <b>schede_valutazione</b> non esiste ancora nel tuo database Supabase. Copialo ed eseguilo nell'<b>SQL Editor</b> del tuo progetto:</p>
+      <p style="font-size:13px;color:var(--slate-m);margin-bottom:10px">${_L('La tabella','The table')} <b>schede_valutazione</b> ${_L('non esiste ancora nel tuo database Supabase. Copialo ed eseguilo nell\'','does not yet exist in your Supabase database. Copy and run it in the')}<b>SQL Editor</b> ${_L('del tuo progetto:','of your project:')}</p>
       <textarea readonly style="width:100%;height:220px;font-family:monospace;font-size:11px;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;background:#F8FAFC;resize:none">${SQL_SCHEDE}</textarea>
     </div>
     <div class="mfoot">
-      <button class="btn btn-ghost btn-sm" onclick="this.closest('.modal-bg').classList.remove('open')">Chiudi</button>
+      <button class="btn btn-ghost btn-sm" onclick="this.closest('.modal-bg').classList.remove('open')">${_L('Chiudi','Close')}</button>
       <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.querySelector('#modal-sql textarea').value);toast(_L('SQL copiato!','SQL copied!'),'ok')">📋 Copia SQL</button>
     </div>
   </div>`;
@@ -1806,7 +1806,7 @@ async function doSalva(cartellaId){
         pd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
         const hdr = document.createElement('div');
         hdr.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0EA5E9);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px';
-        hdr.innerHTML = '<div style="font-size:17px;font-weight:700">📋 Valutazione Paziente</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + (nomePaz || '') + '</div>';
+        hdr.innerHTML = '<div style="font-size:17px;font-weight:700">📋 ' + _L('Valutazione Paziente','Patient Assessment') + '</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + (nomePaz || '') + '</div>';
         pd.appendChild(hdr);
         pd.appendChild(clone);
         await capturePrintAndSave({ table: 'schede_valutazione', recordId: schedaId, cartellaId: cartellaId, container: pd, windowWidth: 850, silent: true });

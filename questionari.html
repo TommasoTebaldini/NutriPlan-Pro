@@ -2726,7 +2726,7 @@ async function loadCartellePazienti() {
     _cartellePazienti = data || [];
     const sel = document.getElementById('sq-cartella');
     if (!sel) return;
-    sel.innerHTML = '<option value="">-- Seleziona paziente --</option>' +
+    sel.innerHTML = '<option value="">-- ' + _L('Seleziona paziente','Select patient') + ' --</option>' +
       _cartellePazienti.map(c => `<option value="${c.id}">${esc(c.nome)}</option>`).join('');
   } catch(e) {}
 }
@@ -2751,7 +2751,7 @@ async function _captureQForStorage(savedId, cartellaId) {
   printDiv.innerHTML = '';
   const hdiv = document.createElement('div');
   hdiv.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:14px';
-  hdiv.innerHTML = '<div style="font-size:17px;font-weight:700">📋 ' + _qSaveNome + '</div><div style="font-size:10px;opacity:.8;margin-top:3px">Questionario Clinico · DietPlan Pro</div>';
+  hdiv.innerHTML = '<div style="font-size:17px;font-weight:700">📋 ' + _qSaveNome + '</div><div style="font-size:10px;opacity:.8;margin-top:3px">' + _L('Questionario Clinico','Clinical Questionnaire') + ' · DietPlan Pro</div>';
   printDiv.appendChild(hdiv);
   printDiv.appendChild(cardClone);
   printDiv.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:-1;padding:20px 24px;box-sizing:border-box';
@@ -2974,14 +2974,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                               (savedDati.categoria || ''));
             resultBox.innerHTML = `
               <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
-                ${scoreText !== '' ? `<div><div style="font-size:10px;color:var(--slate-l)">Punteggio salvato</div><div class="q-result-score">${scoreText}</div></div>` : ''}
+                ${scoreText !== '' ? `<div><div style="font-size:10px;color:var(--slate-l)">${_L('Punteggio salvato','Saved score')}</div><div class="q-result-score">${scoreText}</div></div>` : ''}
                 <div class="q-result-label">${savedDati.label || ''}</div>
               </div>
               ${savedDati.desc ? `<div class="q-result-desc">${savedDati.desc}</div>` : ''}
               <div style="margin-top:10px;padding:8px 12px;background:#FEF3C7;border-radius:8px;font-size:12px;color:#92400E">
-                ℹ️ Le risposte individuali non sono state salvate per questo questionario. Compila le domande e ricalcola per aggiornare.
+                ℹ️ ${_L('Le risposte individuali non sono state salvate per questo questionario. Compila le domande e ricalcola per aggiornare.','Individual answers were not saved for this questionnaire. Fill in the questions and recalculate to update.')}
               </div>
-              <div style="margin-top:12px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="apriSalvaQuestionario()" style="font-size:12px">💾 Salva in cartella paziente</button></div>`;
+              <div style="margin-top:12px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="apriSalvaQuestionario()" style="font-size:12px">💾 ${_L('Salva in cartella paziente','Save to patient folder')}</button></div>`;
             resultBox.style.background = '#F0F9FF';
             resultBox.classList.add('show');
           }
@@ -3000,7 +3000,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       // Show banner informing user they are editing
       const hasAnswers = savedDati && savedDati.answers;
-      toast(hasAnswers ? '📂 Questionario caricato con i dati salvati!' : '📋 Modifica questionario: ' + (qNome || nome), 'ok');
+      toast(hasAnswers ? _L('📂 Questionario caricato con i dati salvati!','📂 Questionnaire loaded with saved data!') : '📋 ' + _L('Modifica questionario: ','Edit questionnaire: ') + (qNome || nome), 'ok');
     } catch(e) { console.warn('openQuestionario parse error', e); }
   }
 });

@@ -1400,7 +1400,7 @@ async function loadRenCartelle() {
   const sel = document.getElementById('ren-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  sel.innerHTML = '<option value="">' + _L('-- Nessuna cartella --','-- No folder --') + '</option>';
   renCartelle.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = '📁 ' + c.nome; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
@@ -1445,13 +1445,13 @@ function ripristinaDatiRen(dati) {
 }
 
 async function salvaRenale() {
-  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('ren-cartella').value;
-  if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
-  const nota = document.getElementById('ren-nota').value.trim() || 'Sessione Nefropatia ' + new Date().toLocaleDateString('it');
+  if (!cartella_id) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'err'); return; }
+  const nota = document.getElementById('ren-nota').value.trim() || _L('Sessione Nefropatia ','Nephropathy Session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiRen();
   { const _p=dati.piano||{},_nc=(document.getElementById('ren-cartella-cw-srch')?.value||'').trim();
-    dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,alimenti:p.alimenti,kcal:p.kcal})),{titolo:_nc||nota,sottotitolo:'Emodialisi — Giornata Senza Dialisi',totKcal:_p.kcal||0,totProt:_p.prot_tot||0,totCho:0,totFat:0,footerNote:'⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.'}); }
+    dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,alimenti:p.alimenti,kcal:p.kcal})),{titolo:_nc||nota,sottotitolo:_L('Emodialisi — Giornata Senza Dialisi','Haemodialysis — Non-Dialysis Day'),totKcal:_p.kcal||0,totProt:_p.prot_tot||0,totCho:0,totFat:0,footerNote:_L('⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.','⚠️ Indicative plan for ~65 kg patient. Adjust quantities to patient weight.')}); }
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'renale', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -1744,14 +1744,14 @@ function stampaCompattaRenale() {
   const nomeCartella = document.getElementById('ren-cartella-cw-srch')?.value?.trim() || '';
 
   stampaCompattaSpecialistica(pasti, {
-    titolo: nomeCartella || 'Piano Alimentare Tipo HD',
-    sottotitolo: 'Emodialisi — Giornata Senza Dialisi',
+    titolo: nomeCartella || _L('Piano Alimentare Tipo HD','HD-Type Meal Plan'),
+    sottotitolo: _L('Emodialisi — Giornata Senza Dialisi','Haemodialysis — Non-Dialysis Day'),
     totKcal: Math.round(totKcal),
     totProt: Math.round(totProt * 10) / 10,
     totCho: 0,
     totFat: 0,
     containerId: 'ren-compact-print-area',
-    footerNote: '⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.'
+    footerNote: _L('⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.','⚠️ Indicative plan for ~65 kg patient. Adjust quantities to patient weight.')
   });
 }
 

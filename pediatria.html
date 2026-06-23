@@ -1630,7 +1630,7 @@ async function salvaPediatria() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'),'err'); return; }
   const cartella_id = document.getElementById('ped-cartella').value;
   if (!cartella_id) { toast(_L('Seleziona una cartella paziente','Select a patient record'),'err'); return; }
-  const nota = document.getElementById('ped-nota').value.trim() || 'Sessione pediatria ' + new Date().toLocaleDateString('it');
+  const nota = document.getElementById('ped-nota').value.trim() || _L('Sessione pediatria ','Paediatric session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiPed();
   { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_prot=_kcal?Math.round(_kcal*.15/4):0,_cho=_kcal?Math.round(_kcal*.55/4):0,_fat=_kcal?Math.round(_kcal*.30/9):0,_nc=(document.getElementById('ped-cartella-cw-srch')?.value||'').trim();
     dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:p.kcal,alimenti:p.alimenti,note:p.note})),{titolo:_nc||nota,sottotitolo:[_p.eta,_p.motivo].filter(Boolean).join(' · '),totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat}); }
@@ -1711,7 +1711,7 @@ function stampaCompattaPediatria() {
   })).filter(p => p.nome || p.alimenti);
 
   stampaCompattaSpecialistica(pasti, {
-    titolo: nomeCartella || 'Piano Alimentare Pediatrico',
+    titolo: nomeCartella || _L('Piano Alimentare Pediatrico','Paediatric Meal Plan'),
     sottotitolo: [eta, motivo].filter(Boolean).join(' · '),
     totKcal: kcalTot,
     totProt: prot,
@@ -1730,7 +1730,7 @@ function apriInPianoAlimentarePediatria() {
       : [{ nome: '', qt: '', altPrint: [], misura: '' }];
     return {
       id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-      nome: nome || ('Pasto ' + i),
+      nome: nome || (_L('Pasto','Meal') + ' ' + i),
       emoji: '🍽️',
       items,
       note: gv('ped-m'+i+'-note'),
@@ -1739,7 +1739,7 @@ function apriInPianoAlimentarePediatria() {
   }).filter(p => p.nome || (p.items[0] && p.items[0].nome));
   if (!pasti.length) { alert(_L('Nessun dato nel piano da esportare','No data in the plan to export')); return; }
   const eta = (document.getElementById('ped-piano-eta')?.value || '').trim();
-  const d = { nome: 'Piano Alimentare Pediatrico' + (eta ? ' — ' + eta : ''), pasti };
+  const d = { nome: _L('Piano Alimentare Pediatrico','Paediatric Meal Plan') + (eta ? ' — ' + eta : ''), pasti };
   sessionStorage.setItem('loadPatologia', JSON.stringify(d));
   window.location.href = 'app.html';
 }

@@ -1535,7 +1535,7 @@ async function loadKetoCartelle() {
   const sel = document.getElementById('keto-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  sel.innerHTML = '<option value="">' + _L('-- Nessuna cartella --','-- No folder --') + '</option>';
   ketoCartelle.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = '📁 ' + c.nome; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
@@ -1562,10 +1562,10 @@ function ripristinaDatiKeto(dati) {
 }
 
 async function salvaKeto() {
-  if (!currentUser) { toast('Effettua il login per salvare', 'err'); return; }
+  if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('keto-cartella').value;
-  if (!cartella_id) { toast('Seleziona una cartella paziente', 'err'); return; }
-  const nota = document.getElementById('keto-nota').value.trim() || 'Sessione Chetogenica ' + new Date().toLocaleDateString('it');
+  if (!cartella_id) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'err'); return; }
+  const nota = document.getElementById('keto-nota').value.trim() || _L('Sessione Chetogenica ','Ketogenic Session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiKeto();
   dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'chetogenica', nota);
   const payload = { cartella_id, user_id: currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };

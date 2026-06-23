@@ -687,7 +687,7 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
       <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
       <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast(_L('✅ SQL copiato!','✅ SQL copied!'),'ok'))">📋 Copia SQL</button>
         <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
         <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
       </div>
@@ -969,7 +969,7 @@ async function loadDgCartelle() {
   const sel = document.getElementById('dg-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  sel.innerHTML = '<option value="">' + _L('-- Nessuna cartella --','-- No folder --') + '</option>';
   dgCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
@@ -1078,13 +1078,13 @@ async function caricaDgDaNote(noteId) {
   showLoading(true);
   const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
   showLoading(false);
-  if (error || !data) { toast('❌ Impossibile caricare la scheda','err'); return; }
+  if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'),'err'); return; }
   editingDgNoteId = noteId;
   await _cwSetById('dg-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('dg-nota');
   if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiDg(JSON.parse(data.dati || '{}')); } catch(e) {}
-  toast('✅ Scheda Diabete caricata','ok');
+  toast(_L('✅ Scheda Diabete caricata','✅ Diabetes record loaded'),'ok');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1286,14 +1286,14 @@ function apriInPianoAlimentareDiabete() {
       collapsed: false
     };
   }).filter(p => p.nome || (p.items[0] && p.items[0].nome));
-  if (!pasti.length) { alert('Nessun dato nel piano da esportare'); return; }
+  if (!pasti.length) { alert(_L('Nessun dato nel piano da esportare','No data in the plan to export')); return; }
   const tipo = (document.getElementById('dg-piano-tipo')?.value || '').trim();
-  const d = { nome: 'Piano Alimentare — Diabete' + (tipo ? ' (' + tipo + ')' : ''), pasti };
+  const d = { nome: _L('Piano Alimentare — Diabete','Meal Plan — Diabetes') + (tipo ? ' (' + tipo + ')' : ''), pasti };
   sessionStorage.setItem('loadPatologia', JSON.stringify(d));
   window.location.href = 'app.html';
 }
 function eliminaPianoDiabete() {
-  if (!confirm('Eliminare il piano? I dati inseriti verranno persi.')) return;
+  if (!confirm(_L('Eliminare il piano? I dati inseriti verranno persi.','Delete the plan? All entered data will be lost.'))) return;
   [1,2,3,4,5].forEach(i => {
     ['nome','ora','cho','alimenti','note'].forEach(f => {
       const el = document.getElementById('dg-m'+i+'-'+f);

@@ -1158,7 +1158,7 @@ async function loadDisCartelle() {
   const sel = document.getElementById('dis-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>' +
+  sel.innerHTML = '<option value="">' + _L('-- Nessuna cartella --','-- No folder --') + '</option>' +
     data.map(c => `<option value="${c.id}"${c.id===cur?' selected':''}>${c.nome}</option>`).join('');
 }
 
@@ -1341,7 +1341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function stampaCompattaDisfagia() {
   const meta = IDDSI_META[selIddsi];
   const dieta = IDDSI_DIETE[selIddsi];
-  if (!meta || !dieta) { alert('Seleziona prima un piano IDDSI'); return; }
+  if (!meta || !dieta) { alert(_L('Seleziona prima un piano IDDSI','Please select an IDDSI plan first')); return; }
 
   const factor = selKcal / dieta.kcal_base;
   let totKcal = 0;
@@ -1423,7 +1423,7 @@ function stampaCompattaDisfagia() {
 function apriInPianoAlimentareDisfagia() {
   const meta = IDDSI_META[selIddsi];
   const dieta = IDDSI_DIETE[selIddsi];
-  if (!meta || !dieta) { alert('Seleziona prima un piano IDDSI'); return; }
+  if (!meta || !dieta) { alert(_L('Seleziona prima un piano IDDSI','Please select an IDDSI plan first')); return; }
   const factor = selKcal / dieta.kcal_base;
   const d = {
     nome: 'IDDSI L' + selIddsi + ' — ' + meta.nome + ' ' + selKcal + ' kcal',

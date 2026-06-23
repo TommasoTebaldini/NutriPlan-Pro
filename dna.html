@@ -1194,12 +1194,12 @@
     d.className = 'dna-panel';
     d.id = 'tab-piano_dca';
     const meals = [
-      {id:'1',icon:'☀️',nome:'Colazione',ora:'07:30',noteP:'Mangiare seduto, tempo minimo 20 min'},
-      {id:'2',icon:'🍎',nome:'Spuntino mattina',ora:'10:30',noteP:'Spuntino strutturato, evitare di saltarlo'},
-      {id:'3',icon:'🍽️',nome:'Pranzo',ora:'12:30',noteP:'Pasto completo: primo + secondo + contorno'},
-      {id:'4',icon:'🥜',nome:'Spuntino pomeriggio',ora:'16:00',noteP:'Importante per la BN per evitare abbuffate serali'},
-      {id:'5',icon:'🌙',nome:'Cena',ora:'19:30',noteP:'Pasto completo: secondo + contorno + pane/cereali'},
-      {id:'6',icon:'🥛',nome:'Spuntino serale',ora:'21:30',noteP:'Indicato nell\'AN per incremento calorico graduale'}
+      {id:'1',icon:'☀️',nome:_L('Colazione','Breakfast'),ora:'07:30',noteP:_L('Mangiare seduto, tempo minimo 20 min','Eat seated, minimum 20 minutes')},
+      {id:'2',icon:'🍎',nome:_L('Spuntino mattina','Morning snack'),ora:'10:30',noteP:_L('Spuntino strutturato, evitare di saltarlo','Structured snack, avoid skipping it')},
+      {id:'3',icon:'🍽️',nome:_L('Pranzo','Lunch'),ora:'12:30',noteP:_L('Pasto completo: primo + secondo + contorno','Complete meal: starter + main + side')},
+      {id:'4',icon:'🥜',nome:_L('Spuntino pomeriggio','Afternoon snack'),ora:'16:00',noteP:_L('Importante per la BN per evitare abbuffate serali','Important for BN to avoid evening binges')},
+      {id:'5',icon:'🌙',nome:_L('Cena','Dinner'),ora:'19:30',noteP:_L('Pasto completo: secondo + contorno + pane/cereali','Complete meal: main + side + bread/grains')},
+      {id:'6',icon:'🥛',nome:_L('Spuntino serale','Evening snack'),ora:'21:30',noteP:_L('Indicato nell\'AN per incremento calorico graduale','Recommended in AN for gradual caloric increase')}
     ];
     const pastiHtml = meals.map(function(m) {
       return '<div style="background:#F8FAFC;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:10px">'
@@ -1207,42 +1207,42 @@
         + '<span style="font-size:20px">' + m.icon + '</span>'
         + '<div style="flex:1;display:flex;gap:8px;flex-wrap:wrap">'
         + '<input type="text" id="dca-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:120px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">'
-        + '<input type="text" id="dca-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Orario" style="width:70px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
-        + '<input type="number" id="dca-m' + m.id + '-kcal" placeholder="kcal pasto" style="width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">'
+        + '<input type="text" id="dca-m' + m.id + '-ora" value="' + m.ora + '" placeholder="' + _L('Orario','Time') + '" style="width:70px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
+        + '<input type="number" id="dca-m' + m.id + '-kcal" placeholder="' + _L('kcal pasto','meal kcal') + '" style="width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none;text-align:right">'
         + '</div></div>'
-        + '<textarea id="dca-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti e grammature (es. Latte parz. scremato 200mL, Pane integrale 60g, Marmellata 20g, Frutta 150g)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:16px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
-        + '<input type="text" id="dca-m' + m.id + '-note" placeholder="Note specifiche pasto: ' + m.noteP + '" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
+        + '<textarea id="dca-m' + m.id + '-alimenti" rows="2" placeholder="' + _L('Alimenti e grammature (es. Latte parz. scremato 200mL, Pane integrale 60g, Marmellata 20g, Frutta 150g)...','Foods and weights (e.g. Semi-skimmed milk 200mL, Wholemeal bread 60g, Jam 20g, Fruit 150g)...') + '" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:16px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<input type="text" id="dca-m' + m.id + '-note" placeholder="' + _L('Note specifiche pasto: ','Meal-specific notes: ') + m.noteP + '" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
         + '</div>';
     }).join('');
     d.innerHTML = '<div class="info-box ib-red" style="background:#FEF2F2;border-color:#EF4444"><b>🍽️ ' + _L('Piano Alimentare DCA','ED Meal Plan') + '</b> — ' + _L('Il piano alimentare nel trattamento dei DCA deve essere costruito in accordo con il team multidisciplinare. L\'obiettivo primario non è la gestione del peso ma la normalizzazione del comportamento alimentare e del rapporto con il cibo.','The meal plan in ED treatment must be developed in agreement with the multidisciplinary team. The primary goal is not weight management but normalisation of eating behaviour and the relationship with food.') + '</div>'
-      + '<div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button class="btn btn-primary btn-sm" onclick="apriInPianoAlimentareDca()" style="background:#0F766E">📂 Apri in Piano Alimentare</button><button class="btn btn-primary btn-sm" onclick="eliminaPianoDca()" style="background:#DC2626">🗑️ Elimina Piano</button></div>'
+      + '<div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button class="btn btn-primary btn-sm" onclick="apriInPianoAlimentareDca()" style="background:#0F766E">📂 ' + _L('Apri in Piano Alimentare','Open in Meal Plan') + '</button><button class="btn btn-primary btn-sm" onclick="eliminaPianoDca()" style="background:#DC2626">🗑️ ' + _L('Elimina Piano','Delete Plan') + '</button></div>'
       + '<div class="grid-2">'
-      + '<div class="calc-box"><h3>⚙️ Configurazione Piano</h3>'
-      + '<div class="nf" style="margin-bottom:10px"><label>Tipo DCA</label><select id="dca-piano-tipo"><option value="AN">Anoressia Nervosa (AN)</option><option value="BN">Bulimia Nervosa (BN)</option><option value="BED">Binge Eating Disorder (BED)</option><option value="ARFID">ARFID</option><option value="altro">Altro / NAS</option></select></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>Fase trattamento</label><select id="dca-piano-fase"><option value="acuta">Acuta / Refeeding</option><option value="stabilizzazione">Stabilizzazione</option><option value="mantenimento">Mantenimento</option><option value="prevenzione_ricadute">Prevenzione ricadute</option></select></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="dca-piano-kcal" placeholder="es. 1800" oninput="calcolaDcaMacro()"></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>Approccio alimentare</label><select id="dca-piano-approccio"><option value="meccanico">Pasto meccanico (orari fissi, grammi stabiliti)</option><option value="strutturato">Strutturato con flessibilità guidata</option><option value="mindful">Mindful eating (fase avanzata)</option></select></div>'
+      + '<div class="calc-box"><h3>⚙️ ' + _L('Configurazione Piano','Plan Configuration') + '</h3>'
+      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Tipo DCA','ED Type') + '</label><select id="dca-piano-tipo"><option value="AN">' + _L('Anoressia Nervosa (AN)','Anorexia Nervosa (AN)') + '</option><option value="BN">' + _L('Bulimia Nervosa (BN)','Bulimia Nervosa (BN)') + '</option><option value="BED">Binge Eating Disorder (BED)</option><option value="ARFID">ARFID</option><option value="altro">' + _L('Altro / NAS','Other / NOS') + '</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Fase trattamento','Treatment Phase') + '</label><select id="dca-piano-fase"><option value="acuta">' + _L('Acuta / Refeeding','Acute / Refeeding') + '</option><option value="stabilizzazione">' + _L('Stabilizzazione','Stabilisation') + '</option><option value="mantenimento">' + _L('Mantenimento','Maintenance') + '</option><option value="prevenzione_ricadute">' + _L('Prevenzione ricadute','Relapse prevention') + '</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Kcal target/giorno','Target kcal/day') + '</label><input type="number" id="dca-piano-kcal" placeholder="' + _L('es. 1800','e.g. 1800') + '" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Approccio alimentare','Dietary approach') + '</label><select id="dca-piano-approccio"><option value="meccanico">' + _L('Pasto meccanico (orari fissi, grammi stabiliti)','Mechanical eating (fixed times, set grams)') + '</option><option value="strutturato">' + _L('Strutturato con flessibilità guidata','Structured with guided flexibility') + '</option><option value="mindful">' + _L('Mindful eating (fase avanzata)','Mindful eating (advanced phase)') + '</option></select></div>'
       + '<div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:10px;padding:12px;margin-bottom:0">'
-      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:#FEE2E2;color:#991B1B;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📋</span><span style="font-size:11px;font-weight:800;color:#991B1B;text-transform:uppercase;letter-spacing:.6px;font-family:\'DM Sans\',sans-serif">Note Cliniche sul Paziente</span></div>'
-      + '<textarea id="dca-piano-note-cliniche" rows="3" placeholder="Diagnosi specifica, comorbilità, farmaci, storia DCA, obiettivi concordati col team..." style="width:100%;padding:10px 12px;border:1.5px solid #FECACA;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#EF4444\'" onblur="this.style.borderColor=\'#FECACA\'"></textarea>'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:#FEE2E2;color:#991B1B;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📋</span><span style="font-size:11px;font-weight:800;color:#991B1B;text-transform:uppercase;letter-spacing:.6px;font-family:\'DM Sans\',sans-serif">' + _L('Note Cliniche sul Paziente','Clinical Notes on Patient') + '</span></div>'
+      + '<textarea id="dca-piano-note-cliniche" rows="3" placeholder="' + _L('Diagnosi specifica, comorbilità, farmaci, storia DCA, obiettivi concordati col team...','Specific diagnosis, comorbidities, medications, ED history, team-agreed objectives...') + '" style="width:100%;padding:10px 12px;border:1.5px solid #FECACA;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#EF4444\'" onblur="this.style.borderColor=\'#FECACA\'"></textarea>'
       + '</div>'
       + '</div>'
-      + '<div class="calc-box"><h3>📊 Obiettivi Nutrizionali</h3>'
-      + '<div id="dca-macro-result" style="margin-bottom:12px;padding:12px;background:#FEF9F9;border-radius:8px;font-size:13px;line-height:1.9"><i>Inserisci le kcal target per calcolare la distribuzione dei macronutrienti.</i></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>% Proteine</label><input type="number" id="dca-prot-perc" value="20" min="15" max="30" oninput="calcolaDcaMacro()"></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>% Carboidrati</label><input type="number" id="dca-cho-perc" value="55" min="45" max="65" oninput="calcolaDcaMacro()"></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>% Grassi</label><input type="number" id="dca-fat-perc" value="25" min="20" max="35" oninput="calcolaDcaMacro()"></div>'
-      + '<div class="info-box ib-amber" style="margin-top:10px;font-size:12px"><b>⚠️ Linee guida DCA:</b> Nell\'AN refeeding: partire da 30–40 kcal/kg/die, aumentare di 200–300 kcal ogni 3–5 giorni. Nella BN: garantire adeguatezza calorica per ridurre la restrizione-abbuffata. Nel BED: approccio non restrittivo, struttura regolare dei pasti.</div>'
+      + '<div class="calc-box"><h3>📊 ' + _L('Obiettivi Nutrizionali','Nutritional Goals') + '</h3>'
+      + '<div id="dca-macro-result" style="margin-bottom:12px;padding:12px;background:#FEF9F9;border-radius:8px;font-size:13px;line-height:1.9"><i>' + _L('Inserisci le kcal target per calcolare la distribuzione dei macronutrienti.','Enter target kcal to calculate macronutrient distribution.') + '</i></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>% ' + _L('Proteine','Protein') + '</label><input type="number" id="dca-prot-perc" value="20" min="15" max="30" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>% ' + _L('Carboidrati','Carbohydrates') + '</label><input type="number" id="dca-cho-perc" value="55" min="45" max="65" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label>% ' + _L('Grassi','Fat') + '</label><input type="number" id="dca-fat-perc" value="25" min="20" max="35" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="info-box ib-amber" style="margin-top:10px;font-size:12px"><b>⚠️ ' + _L('Linee guida DCA:','ED guidelines:') + '</b> ' + _L('Nell\'AN refeeding: partire da 30–40 kcal/kg/die, aumentare di 200–300 kcal ogni 3–5 giorni. Nella BN: garantire adeguatezza calorica per ridurre la restrizione-abbuffata. Nel BED: approccio non restrittivo, struttura regolare dei pasti.','AN refeeding: start at 30–40 kcal/kg/day, increase by 200–300 kcal every 3–5 days. BN: ensure caloric adequacy to reduce restriction-binge cycle. BED: non-restrictive approach, regular meal structure.') + '</div>'
       + '</div>'
       + '</div>'
-      + '<div class="calc-box"><h3>🗓️ Schema Pasti DCA</h3><p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">Compilare ogni pasto con gli alimenti e le grammature. Nel pasto meccanico indicare le quantità precise; in fase avanzata si può usare il sistema degli equivalenti.</p><div id="dca-pasti-container">' + pastiHtml + '</div></div>'
-      + '<div class="calc-box" style="padding:0;overflow:hidden;border:1.5px solid #5EEAD4"><div style="background:linear-gradient(135deg,#0F766E 0%,#14B8A6 100%);padding:14px 20px;display:flex;align-items:center;gap:10px"><span style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))">📝</span><div><div style="font-size:14px;font-weight:700;color:white;letter-spacing:.2px">Strategie e Note Cliniche per il Piano</div><div style="font-size:11.5px;color:rgba(255,255,255,.82);margin-top:2px">Alimenti da reintrodurre, indicazioni comportamentali e piano di rivalutazione</div></div></div>'
+      + '<div class="calc-box"><h3>🗓️ ' + _L('Schema Pasti DCA','ED Meal Schedule') + '</h3><p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px">' + _L('Compilare ogni pasto con gli alimenti e le grammature. Nel pasto meccanico indicare le quantità precise; in fase avanzata si può usare il sistema degli equivalenti.','Fill in each meal with foods and weights. For mechanical eating, specify precise quantities; in the advanced phase, an exchange system may be used.') + '</p><div id="dca-pasti-container">' + pastiHtml + '</div></div>'
+      + '<div class="calc-box" style="padding:0;overflow:hidden;border:1.5px solid #5EEAD4"><div style="background:linear-gradient(135deg,#0F766E 0%,#14B8A6 100%);padding:14px 20px;display:flex;align-items:center;gap:10px"><span style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))">📝</span><div><div style="font-size:14px;font-weight:700;color:white;letter-spacing:.2px">' + _L('Strategie e Note Cliniche per il Piano','Plan Strategies and Clinical Notes') + '</div><div style="font-size:11.5px;color:rgba(255,255,255,.82);margin-top:2px">' + _L('Alimenti da reintrodurre, indicazioni comportamentali e piano di rivalutazione','Foods to reintroduce, behavioural indications and reassessment plan') + '</div></div></div>'
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;background:#F0FDFA">'
-      + '<div style="padding:16px 18px;border-right:1.5px solid #5EEAD4"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#CCFBF1;color:#0F766E;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🥗</span><span style="font-size:11px;font-weight:800;color:#0F766E;text-transform:uppercase;letter-spacing:.6px">Alimenti da Introdurre Gradualmente</span></div><textarea id="dca-piano-intro-foods" rows="4" placeholder="Alimenti evitati o temuti da reintrodurre progressivamente nel piano..." style="width:100%;padding:10px 12px;border:1.5px solid #5EEAD4;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#14B8A6\'" onblur="this.style.borderColor=\'#5EEAD4\'"></textarea></div>'
-      + '<div style="padding:16px 18px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#CCFBF1;color:#0F766E;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🧠</span><span style="font-size:11px;font-weight:800;color:#0F766E;text-transform:uppercase;letter-spacing:.6px">Indicazioni Comportamentali</span></div><textarea id="dca-piano-comportamento" rows="4" placeholder="Mangiare in compagnia, orari fissi, evitare distrazione con schermi, nessuna pesatura degli alimenti dopo il pasto..." style="width:100%;padding:10px 12px;border:1.5px solid #5EEAD4;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#14B8A6\'" onblur="this.style.borderColor=\'#5EEAD4\'"></textarea></div>'
+      + '<div style="padding:16px 18px;border-right:1.5px solid #5EEAD4"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#CCFBF1;color:#0F766E;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🥗</span><span style="font-size:11px;font-weight:800;color:#0F766E;text-transform:uppercase;letter-spacing:.6px">' + _L('Alimenti da Introdurre Gradualmente','Foods to Gradually Reintroduce') + '</span></div><textarea id="dca-piano-intro-foods" rows="4" placeholder="' + _L('Alimenti evitati o temuti da reintrodurre progressivamente nel piano...','Avoided or feared foods to progressively reintroduce in the plan...') + '" style="width:100%;padding:10px 12px;border:1.5px solid #5EEAD4;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#14B8A6\'" onblur="this.style.borderColor=\'#5EEAD4\'"></textarea></div>'
+      + '<div style="padding:16px 18px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#CCFBF1;color:#0F766E;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🧠</span><span style="font-size:11px;font-weight:800;color:#0F766E;text-transform:uppercase;letter-spacing:.6px">' + _L('Indicazioni Comportamentali','Behavioural Indications') + '</span></div><textarea id="dca-piano-comportamento" rows="4" placeholder="' + _L('Mangiare in compagnia, orari fissi, evitare distrazione con schermi, nessuna pesatura degli alimenti dopo il pasto...','Eat with company, fixed times, avoid screen distractions, no food weighing after meals...') + '" style="width:100%;padding:10px 12px;border:1.5px solid #5EEAD4;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#14B8A6\'" onblur="this.style.borderColor=\'#5EEAD4\'"></textarea></div>'
       + '</div>'
-      + '<div style="padding:14px 18px;background:white;border-top:1.5px solid #5EEAD4"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#ECFDF5;color:#065F46;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📅</span><span style="font-size:11px;font-weight:800;color:#065F46;text-transform:uppercase;letter-spacing:.6px">Note Generali e Piano di Rivalutazione</span></div>'
-      + '<textarea id="dca-piano-note-generali" rows="2" placeholder="Prossima rivalutazione tra: ... Indicatori di progresso: ..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#10B981\'" onblur="this.style.borderColor=\'#A7F3D0\'"></textarea>'
+      + '<div style="padding:14px 18px;background:white;border-top:1.5px solid #5EEAD4"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#ECFDF5;color:#065F46;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📅</span><span style="font-size:11px;font-weight:800;color:#065F46;text-transform:uppercase;letter-spacing:.6px">' + _L('Note Generali e Piano di Rivalutazione','General Notes and Reassessment Plan') + '</span></div>'
+      + '<textarea id="dca-piano-note-generali" rows="2" placeholder="' + _L('Prossima rivalutazione tra: ... Indicatori di progresso: ...','Next reassessment in: ... Progress indicators: ...') + '" style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#10B981\'" onblur="this.style.borderColor=\'#A7F3D0\'"></textarea>'
       + '</div></div>';
     return d;
   }
@@ -1311,9 +1311,9 @@ function calcolaDcaMacro() {
   const cho = Math.round(kcal * pC / 100 / 4);
   const fat = Math.round(kcal * pF / 100 / 9);
   el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px">
-    <div style="background:#DBEAFE;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#1E3A5F">Proteine</div><div style="font-size:22px;font-weight:700;color:#1D4ED8">${prot}g</div><div style="font-size:10px;color:#1E3A5F">${pP}% — ${Math.round(kcal*pP/100)} kcal</div></div>
+    <div style="background:#DBEAFE;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#1E3A5F">${_L('Proteine','Protein')}</div><div style="font-size:22px;font-weight:700;color:#1D4ED8">${prot}g</div><div style="font-size:10px;color:#1E3A5F">${pP}% — ${Math.round(kcal*pP/100)} kcal</div></div>
     <div style="background:#FEF3C7;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#78350F">CHO</div><div style="font-size:22px;font-weight:700;color:#D97706">${cho}g</div><div style="font-size:10px;color:#78350F">${pC}% — ${Math.round(kcal*pC/100)} kcal</div></div>
-    <div style="background:#FFF7ED;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#7C2D12">Grassi</div><div style="font-size:22px;font-weight:700;color:#F97316">${fat}g</div><div style="font-size:10px;color:#7C2D12">${pF}% — ${Math.round(kcal*pF/100)} kcal</div></div>
+    <div style="background:#FFF7ED;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#7C2D12">${_L('Grassi','Fat')}</div><div style="font-size:22px;font-weight:700;color:#F97316">${fat}g</div><div style="font-size:10px;color:#7C2D12">${pF}% — ${Math.round(kcal*pF/100)} kcal</div></div>
   </div>`;
 }
 
@@ -1329,7 +1329,7 @@ async function loadDcaCartelle() {
   const sel = document.getElementById('dca-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  sel.innerHTML = '<option value="">-- ' + _L('Nessuna cartella','No folder') + ' --</option>';
   dcaCartelle.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = '📁 ' + c.nome; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
@@ -1343,7 +1343,7 @@ function aggiungiFobico(valore) {
   const div = document.createElement('div');
   div.className = 'nf dca-fobico-item';
   div.style.position = 'relative';
-  div.innerHTML = `<label>Alimento fobico ${n} <button type="button" onclick="this.closest('.dca-fobico-item').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:0 2px;margin-left:4px;line-height:1" title="Rimuovi">✕</button></label><input type="text" id="dca-fobico-${n}" placeholder="Inserisci alimento..." style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'">`;
+  div.innerHTML = `<label>${_L('Alimento fobico','Fear food')} ${n} <button type="button" onclick="this.closest('.dca-fobico-item').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:0 2px;margin-left:4px;line-height:1" title="${_L('Rimuovi','Remove')}">✕</button></label><input type="text" id="dca-fobico-${n}" placeholder="${_L('Inserisci alimento...','Enter food...')}" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'">`;
   grid.appendChild(div);
   const inp = div.querySelector('input');
   if (inp) { if (valore) inp.value = valore; inp.focus(); }
@@ -1466,7 +1466,7 @@ async function salvaDca() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('dca-cartella').value;
   if (!cartella_id) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'err'); return; }
-  const nota = document.getElementById('dca-nota').value.trim() || 'Sessione DCA ' + new Date().toLocaleDateString('it');
+  const nota = document.getElementById('dca-nota').value.trim() || _L('Sessione DCA ','ED Session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiDca();
   { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_pp=parseFloat(_p.prot_perc)||20,_cp=parseFloat(_p.cho_perc)||55,_fp=parseFloat(_p.fat_perc)||25,_prot=_kcal?Math.round(_kcal*(_pp/100)/4):0,_cho=_kcal?Math.round(_kcal*(_cp/100)/4):0,_fat=_kcal?Math.round(_kcal*(_fp/100)/9):0,_nc=(document.getElementById('dca-cartella-cw-srch')?.value||'').trim();
     dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:p.kcal,alimenti:p.alimenti,note:p.note})),{titolo:_nc||nota,sottotitolo:[_p.tipo,_p.fase].filter(Boolean).join(' · '),totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat}); }
@@ -1557,7 +1557,7 @@ function calcEDEQ_dca() {
     const w = document.getElementById(id + '_wrap');
     return (w && w.dataset.val !== '') ? parseFloat(w.dataset.val) : null;
   });
-  if (vals.some(v => v === null)) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  if (vals.some(v => v === null)) { alert(_L('Rispondere a tutte le domande prima di calcolare.','Please answer all questions before calculating.')); return; }
   const r  = (vals[0] + vals[1]) / 2;
   const ec = (vals[2] + vals[3]) / 2;
   const sc = (vals[4] + vals[5]) / 2;
@@ -1567,33 +1567,33 @@ function calcEDEQ_dca() {
   res.style.display = 'block';
   const pos = global > 2.3;
   res.style.background = pos ? '#FEE2E2' : '#ECFDF5';
-  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} EDE-Q Global Score: ${global.toFixed(2)} — ${pos ? 'Screening POSITIVO' : 'Screening negativo'}</b><br>
+  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} EDE-Q Global Score: ${global.toFixed(2)} — ${pos ? _L('Screening POSITIVO','POSITIVE Screening') : _L('Screening negativo','Negative screening')}</b><br>
     <div style="margin-top:6px;font-size:12px;display:grid;grid-template-columns:1fr 1fr;gap:4px">
-      <span>Restrizione: <b>${r.toFixed(2)}</b> ${r>=2.77?'⚠️':''}</span>
-      <span>Preoc. cibo: <b>${ec.toFixed(2)}</b> ${ec>=1.39?'⚠️':''}</span>
-      <span>Preoc. forma: <b>${sc.toFixed(2)}</b> ${sc>=2.79?'⚠️':''}</span>
-      <span>Preoc. peso: <b>${wc.toFixed(2)}</b> ${wc>=1.24?'⚠️':''}</span>
+      <span>${_L('Restrizione','Restraint')}: <b>${r.toFixed(2)}</b> ${r>=2.77?'⚠️':''}</span>
+      <span>${_L('Preoc. cibo','Food concern')}: <b>${ec.toFixed(2)}</b> ${ec>=1.39?'⚠️':''}</span>
+      <span>${_L('Preoc. forma','Shape concern')}: <b>${sc.toFixed(2)}</b> ${sc>=2.79?'⚠️':''}</span>
+      <span>${_L('Preoc. peso','Weight concern')}: <b>${wc.toFixed(2)}</b> ${wc>=1.24?'⚠️':''}</span>
     </div>
-    <div style="margin-top:6px;font-size:12px">${pos ? 'Global Score >2.3: probabile DCA clinicamente significativo. Riferire a psicologo/psichiatra.' : 'Global Score ≤2.3: nessun segnale di rischio clinicamente significativo con questo screening.'}</div>`;
+    <div style="margin-top:6px;font-size:12px">${pos ? _L('Global Score >2.3: probabile DCA clinicamente significativo. Riferire a psicologo/psichiatra.','Global Score >2.3: probable clinically significant ED. Refer to psychologist/psychiatrist.') : _L('Global Score ≤2.3: nessun segnale di rischio clinicamente significativo con questo screening.','Global Score ≤2.3: no clinically significant risk signals from this screening.')}</div>`;
 }
 
 // ── BITE ──
 const BITE_ITEMS = [
-  'Segui una dieta rigida?',
-  'Mangi senza smettere fino a sentirti male?',
-  'Hai il pensiero fisso sul cibo?',
-  'Hai avuto periodi in cui non riuscivi a smettere di mangiare?',
-  'Dividi i cibi in quelli "permessi" e quelli "proibiti"?',
-  'Mangi in segreto?',
-  'Sei schiava/o delle tue abitudini alimentari?',
-  'Senti spesso il bisogno di vomitare dopo i pasti?',
-  'Ti senti colpevole dopo aver mangiato?',
-  'Mangi a volte fino a stare molto male fisicamente?',
-  'Ti fanno schifo le tue abitudini alimentari?',
-  'Usi lassativi o diuretici per controllare il peso?',
-  'Il tuo peso cambia di più di 2,5 kg a settimana?',
-  'Hai pensieri o comportamenti riguardo al cibo che interferiscono con la tua vita?',
-  'Hai mai digiunato per un giorno intero per controllare il peso?'
+  _L('Segui una dieta rigida?','Do you follow a strict diet?'),
+  _L('Mangi senza smettere fino a sentirti male?','Do you eat without stopping until you feel ill?'),
+  _L('Hai il pensiero fisso sul cibo?','Do you have a constant preoccupation with food?'),
+  _L('Hai avuto periodi in cui non riuscivi a smettere di mangiare?','Have you had periods when you could not stop eating?'),
+  _L('Dividi i cibi in quelli "permessi" e quelli "proibiti"?','Do you divide foods into those "allowed" and those "forbidden"?'),
+  _L('Mangi in segreto?','Do you eat in secret?'),
+  _L('Sei schiava/o delle tue abitudini alimentari?','Are you a slave to your eating habits?'),
+  _L('Senti spesso il bisogno di vomitare dopo i pasti?','Do you often feel the urge to vomit after meals?'),
+  _L('Ti senti colpevole dopo aver mangiato?','Do you feel guilty after eating?'),
+  _L('Mangi a volte fino a stare molto male fisicamente?','Do you sometimes eat until you feel very physically ill?'),
+  _L('Ti fanno schifo le tue abitudini alimentari?','Are you disgusted by your eating habits?'),
+  _L('Usi lassativi o diuretici per controllare il peso?','Do you use laxatives or diuretics to control your weight?'),
+  _L('Il tuo peso cambia di più di 2,5 kg a settimana?','Does your weight change by more than 2.5 kg in a week?'),
+  _L('Hai pensieri o comportamenti riguardo al cibo che interferiscono con la tua vita?','Do you have thoughts or behaviours about food that interfere with your life?'),
+  _L('Hai mai digiunato per un giorno intero per controllare il peso?','Have you ever fasted for an entire day to control your weight?')
 ];
 function initBITE() {
   const c = document.getElementById('bite-items-container');
@@ -1602,8 +1602,8 @@ function initBITE() {
     `<div class="scoff-q" style="margin-bottom:6px">
       <div style="font-size:16px;margin-bottom:3px">${i+1}. ${q}</div>
       <div style="display:flex;gap:8px">
-        <label style="font-size:12px;cursor:pointer"><input type="radio" name="bite${i}" value="1"> Sì</label>
-        <label style="font-size:12px;cursor:pointer"><input type="radio" name="bite${i}" value="0"> No</label>
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="bite${i}" value="1"> ${_L('Sì','Yes')}</label>
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="bite${i}" value="0"> ${_L('No','No')}</label>
       </div>
     </div>`
   ).join('');
@@ -1615,19 +1615,19 @@ function calcBITE() {
     if (!sel) { missing = true; return; }
     sym += parseInt(sel.value);
   });
-  if (missing) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  if (missing) { alert(_L('Rispondere a tutte le domande prima di calcolare.','Please answer all questions before calculating.')); return; }
   const sev = parseInt(document.getElementById('bite-freq').value);
   const res = document.getElementById('bite-result');
   res.style.display = 'block';
-  const symLabel = sym < 10 ? '🟢 Nessun problema significativo' : sym < 20 ? '🟡 Alcune caratteristiche bulimiche' : '🔴 Disturbo bulimico probabile';
-  const sevLabel = sev === 0 ? 'Non clinicamente significativa' : sev < 10 ? '🟡 Lieve' : sev < 20 ? '🟠 Moderata' : '🔴 Grave';
+  const symLabel = sym < 10 ? _L('🟢 Nessun problema significativo','🟢 No significant problem') : sym < 20 ? _L('🟡 Alcune caratteristiche bulimiche','🟡 Some bulimic features') : _L('🔴 Disturbo bulimico probabile','🔴 Probable bulimic disorder');
+  const sevLabel = sev === 0 ? _L('Non clinicamente significativa','Not clinically significant') : sev < 10 ? _L('🟡 Lieve','🟡 Mild') : sev < 20 ? _L('🟠 Moderata','🟠 Moderate') : _L('🔴 Grave','🔴 Severe');
   const pos = sym >= 20 || sev >= 5;
   res.style.background = pos ? '#FEE2E2' : (sym >= 10 ? '#FEF3C7' : '#ECFDF5');
-  res.innerHTML = `<b>📊 BITE — Risultati</b><br>
+  res.innerHTML = `<b>📊 BITE — ${_L('Risultati','Results')}</b><br>
     <div style="margin-top:6px;font-size:12px">
-      <div>Scala Sintomi: <b>${sym}/30</b> — ${symLabel}</div>
-      <div style="margin-top:4px">Scala Gravità: <b>${sev}/39</b> — ${sevLabel}</div>
-      <div style="margin-top:6px">${pos ? 'Punteggio clinicamente significativo. Approfondimento psicologico/psichiatrico consigliato.' : 'Non emergono segnali di disturbo bulimico clinicamente significativo con questo screening.'}</div>
+      <div>${_L('Scala Sintomi','Symptom Scale')}: <b>${sym}/30</b> — ${symLabel}</div>
+      <div style="margin-top:4px">${_L('Scala Gravità','Severity Scale')}: <b>${sev}/39</b> — ${sevLabel}</div>
+      <div style="margin-top:6px">${pos ? _L('Punteggio clinicamente significativo. Approfondimento psicologico/psichiatrico consigliato.','Clinically significant score. Psychological/psychiatric follow-up recommended.') : _L('Non emergono segnali di disturbo bulimico clinicamente significativo con questo screening.','No clinically significant bulimic disorder signals from this screening.')}</div>
     </div>`;
 }
 
@@ -1648,20 +1648,25 @@ function showChildTab(tab) {
   autoSavePage_dna();
 }
 const CHEAT_ITEMS = [
-  'Ho paura di essere sovrappeso/a',
-  'Evito di mangiare quando ho fame',
-  'Mi preoccupo per il cibo',
-  'A volte mi abbuffo e sento di non poter smettere',
-  'Taglio il cibo in pezzetti piccoli',
-  'Sono consapevole del contenuto calorico del cibo',
-  'Evito in particolare i cibi ad alto contenuto di carboidrati',
-  'Sento che gli altri vorrebbero che mangiassi di più',
-  'Vomito dopo aver mangiato',
-  'Mi sento molto colpevole dopo aver mangiato',
-  'Mi preoccupo del desiderio di essere più magra/o',
-  'Quando mi alleno penso alle calorie che brucio'
+  _L('Ho paura di essere sovrappeso/a','I am afraid of being overweight'),
+  _L('Evito di mangiare quando ho fame','I avoid eating when I am hungry'),
+  _L('Mi preoccupo per il cibo','I find myself preoccupied with food'),
+  _L('A volte mi abbuffo e sento di non poter smettere','I sometimes binge and feel I cannot stop'),
+  _L('Taglio il cibo in pezzetti piccoli','I cut my food into small pieces'),
+  _L('Sono consapevole del contenuto calorico del cibo','I am aware of the calorie content of the foods I eat'),
+  _L('Evito in particolare i cibi ad alto contenuto di carboidrati','I particularly avoid foods with high carbohydrate content'),
+  _L('Sento che gli altri vorrebbero che mangiassi di più','I feel that others would like me to eat more'),
+  _L('Vomito dopo aver mangiato','I vomit after eating'),
+  _L('Mi sento molto colpevole dopo aver mangiato','I feel very guilty after eating'),
+  _L('Mi preoccupo del desiderio di essere più magra/o','I am preoccupied with the desire to be thinner'),
+  _L('Quando mi alleno penso alle calorie che brucio','When I exercise, I think about the calories I am burning')
 ];
-const CHEAT_OPTS = [{label:'Sempre',val:3},{label:'Molto spesso',val:2},{label:'Spesso',val:1},{label:'Qualche volta/Raramente/Mai',val:0}];
+const CHEAT_OPTS = [
+  {label:_L('Sempre','Always'),val:3},
+  {label:_L('Molto spesso','Very often'),val:2},
+  {label:_L('Spesso','Often'),val:1},
+  {label:_L('Qualche volta/Raramente/Mai','Sometimes/Rarely/Never'),val:0}
+];
 function initChEAT() {
   const c = document.getElementById('cheat-items-container');
   if (!c) return;
@@ -1681,29 +1686,29 @@ function calcChEAT() {
     if (!sel) { missing = true; return; }
     tot += parseInt(sel.value);
   });
-  if (missing) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  if (missing) { alert(_L('Rispondere a tutte le domande prima di calcolare.','Please answer all questions before calculating.')); return; }
   const res = document.getElementById('cheat-result');
   res.style.display = 'block';
   const pos = tot >= 20;
   res.style.background = pos ? '#FEE2E2' : '#ECFDF5';
-  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} ChEAT-26: ${tot}/36 — ${pos ? 'Screening POSITIVO (≥20)' : 'Screening negativo (<20)'}</b><br>
-    <div style="margin-top:4px;font-size:12px">${pos ? 'Punteggio ≥20: possibile disturbo alimentare. Coinvolgere i genitori e richiedere valutazione specialistica pediatrica/psicologica.' : 'Punteggio <20: non emergono segnali di rischio significativo.'}</div>`;
+  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} ChEAT-26: ${tot}/36 — ${pos ? _L('Screening POSITIVO (≥20)','POSITIVE Screening (≥20)') : _L('Screening negativo (<20)','Negative screening (<20)')}</b><br>
+    <div style="margin-top:4px;font-size:12px">${pos ? _L('Punteggio ≥20: possibile disturbo alimentare. Coinvolgere i genitori e richiedere valutazione specialistica pediatrica/psicologica.','Score ≥20: possible eating disorder. Involve parents and request specialist paediatric/psychological assessment.') : _L('Punteggio <20: non emergono segnali di rischio significativo.','Score <20: no significant risk signals detected.')}</div>`;
 }
 const KEDS_ITEMS = [
-  'Hai mai cercato di perdere peso mangiando di meno?',
-  'Hai mai saltato i pasti per perdere peso?',
-  'Hai mai usato lassativi o pillole dimagranti?',
-  'Hai mai fatto molto esercizio solo per bruciare calorie?',
-  'Hai mai vomitato apposta dopo aver mangiato?',
-  'Ti preoccupi spesso del tuo peso?',
-  'Ti preoccupi di essere troppo grassa/o?',
-  'Senti che il cibo controlla la tua vita?',
-  'Hai mai mangiato moltissimo in poco tempo senza riuscire a fermarti?',
-  'Senti di dover nascondere quanto mangi?',
-  'Ti senti a disagio quando mangi con altre persone?',
-  'Pensi spesso alle calorie?',
-  'Salti i pasti abitualmente?',
-  'Ti pesa guardare il tuo corpo allo specchio?'
+  _L('Hai mai cercato di perdere peso mangiando di meno?','Have you ever tried to lose weight by eating less?'),
+  _L('Hai mai saltato i pasti per perdere peso?','Have you ever skipped meals to lose weight?'),
+  _L('Hai mai usato lassativi o pillole dimagranti?','Have you ever used laxatives or diet pills?'),
+  _L('Hai mai fatto molto esercizio solo per bruciare calorie?','Have you ever exercised excessively just to burn calories?'),
+  _L('Hai mai vomitato apposta dopo aver mangiato?','Have you ever deliberately vomited after eating?'),
+  _L('Ti preoccupi spesso del tuo peso?','Do you often worry about your weight?'),
+  _L('Ti preoccupi di essere troppo grassa/o?','Do you worry about being too fat?'),
+  _L('Senti che il cibo controlla la tua vita?','Do you feel that food controls your life?'),
+  _L('Hai mai mangiato moltissimo in poco tempo senza riuscire a fermarti?','Have you ever eaten a very large amount of food in a short time without being able to stop?'),
+  _L('Senti di dover nascondere quanto mangi?','Do you feel you need to hide how much you eat?'),
+  _L('Ti senti a disagio quando mangi con altre persone?','Do you feel uncomfortable eating with other people?'),
+  _L('Pensi spesso alle calorie?','Do you often think about calories?'),
+  _L('Salti i pasti abitualmente?','Do you regularly skip meals?'),
+  _L('Ti pesa guardare il tuo corpo allo specchio?','Do you find it hard to look at your body in the mirror?')
 ];
 function initKEDS() {
   const c = document.getElementById('keds-items-container');
@@ -1712,8 +1717,8 @@ function initKEDS() {
     `<div class="scoff-q" style="margin-bottom:6px">
       <div style="font-size:16px;margin-bottom:3px">${i+1}. ${q}</div>
       <div style="display:flex;gap:8px">
-        <label style="font-size:12px;cursor:pointer"><input type="radio" name="keds${i}" value="1"> Sì</label>
-        <label style="font-size:12px;cursor:pointer"><input type="radio" name="keds${i}" value="0"> No</label>
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="keds${i}" value="1"> ${_L('Sì','Yes')}</label>
+        <label style="font-size:12px;cursor:pointer"><input type="radio" name="keds${i}" value="0"> ${_L('No','No')}</label>
       </div>
     </div>`
   ).join('');
@@ -1725,13 +1730,13 @@ function calcKEDS() {
     if (!sel) { missing = true; return; }
     tot += parseInt(sel.value);
   });
-  if (missing) { alert('Rispondere a tutte le domande prima di calcolare.'); return; }
+  if (missing) { alert(_L('Rispondere a tutte le domande prima di calcolare.','Please answer all questions before calculating.')); return; }
   const res = document.getElementById('keds-result');
   res.style.display = 'block';
   const pos = tot >= 4;
   res.style.background = pos ? '#FEE2E2' : '#ECFDF5';
-  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} KEDS: ${tot}/14 — ${pos ? 'Screening POSITIVO (≥4)' : 'Screening negativo (<4)'}</b><br>
-    <div style="margin-top:4px;font-size:12px">${pos ? 'Punteggio ≥4: possibile disturbo del comportamento alimentare in età evolutiva. Si consiglia valutazione multidisciplinare.' : 'Punteggio <4: non emergono segnali di rischio significativo.'}</div>`;
+  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} KEDS: ${tot}/14 — ${pos ? _L('Screening POSITIVO (≥4)','POSITIVE Screening (≥4)') : _L('Screening negativo (<4)','Negative screening (<4)')}</b><br>
+    <div style="margin-top:4px;font-size:12px">${pos ? _L('Punteggio ≥4: possibile disturbo del comportamento alimentare in età evolutiva. Si consiglia valutazione multidisciplinare.','Score ≥4: possible eating disorder in developmental age. A multidisciplinary assessment is recommended.') : _L('Punteggio <4: non emergono segnali di rischio significativo.','Score <4: no significant risk signals detected.')}</div>`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1751,10 +1756,10 @@ const DCA_PE_CONFIG = {
   id: 'dca',
   accentColor: '#0F766E',
   tipi: [
-    {id:'an_renut', nome:'AN Renutrizione', nomeEsteso:'Anoressia Nervosa — Fase di Renutrizione Graduale', colore:'#DC2626', coloreT:'#fff'},
-    {id:'an_mant', nome:'AN Mantenimento', nomeEsteso:'Anoressia Nervosa — Fase di Mantenimento', colore:'#D97706', coloreT:'#fff'},
+    {id:'an_renut', nome:_L('AN Renutrizione','AN Refeeding'), nomeEsteso:_L('Anoressia Nervosa — Fase di Renutrizione Graduale','Anorexia Nervosa — Gradual Refeeding Phase'), colore:'#DC2626', coloreT:'#fff'},
+    {id:'an_mant', nome:_L('AN Mantenimento','AN Maintenance'), nomeEsteso:_L('Anoressia Nervosa — Fase di Mantenimento','Anorexia Nervosa — Maintenance Phase'), colore:'#D97706', coloreT:'#fff'},
     {id:'bn_bed', nome:'BN / BED', nomeEsteso:'Bulimia Nervosa / Binge Eating Disorder', colore:'#0369A1', coloreT:'#fff'},
-    {id:'ortoressia', nome:'Ortoressia', nomeEsteso:'Ortoressia Nervosa — Normalizzazione pattern', colore:'#059669', coloreT:'#fff'}
+    {id:'ortoressia', nome:_L('Ortoressia','Orthorexia'), nomeEsteso:_L('Ortoressia Nervosa — Normalizzazione pattern','Orthorexia Nervosa — Pattern normalisation'), colore:'#059669', coloreT:'#fff'}
   ],
   kcals: [1200, 1400, 1600, 1800, 2000, 2200, 2400],
   piani: {
@@ -1763,28 +1768,28 @@ const DCA_PE_CONFIG = {
       macros: {p:18, cho:55, g:27},
       nota: _L('AN Renutrizione: Iniziare con 1000-1200 kcal/die, incremento settimanale di 200-300 kcal. Rischio di refeeding syndrome: monitorare P, K, Mg, tiamina. Pasti strutturati 3+3. Evitare alimenti "fear food" nelle prime fasi. Obiettivo: 0.5 kg/settimana.','AN Refeeding: Start with 1000-1200 kcal/day, weekly increase of 200-300 kcal. Refeeding syndrome risk: monitor P, K, Mg, thiamine. Structured meals 3+3. Avoid "fear foods" in the early phases. Goal: 0.5 kg/week.'),
       pasti: [
-        {nome:'Colazione (strutturata)', emoji:'🌅', items:[
+        {nome:_L('Colazione (strutturata)','Breakfast (structured)'), emoji:'🌅', items:[
           {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
           {nome:'Fette biscottate (3)', qt:25, unit:'g', kcal:102},
           {nome:'Marmellata (1 cucchiaino)', qt:10, unit:'g', kcal:24},
           {nome:'Frutta fresca (banana)', qt:80, unit:'g', kcal:71}
         ]},
-        {nome:'Spuntino Mattino', emoji:'🍎', nota:'Spuntino obbligatorio — non saltare', items:[
+        {nome:_L('Spuntino Mattino','Morning Snack'), emoji:'🍎', nota:_L('Spuntino obbligatorio — non saltare','Mandatory snack — do not skip'), items:[
           {nome:'Yogurt bianco magro', qt:125, unit:'g', kcal:59},
           {nome:'Crackers (4)', qt:30, unit:'g', kcal:117}
         ]},
-        {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:_L('Pranzo','Lunch'), emoji:'🍽️', items:[
           {nome:'Pasta in bianco con olio', qt:70, unit:'g', kcal:248},
           {nome:'Petto di pollo al vapore', qt:100, unit:'g', kcal:110},
           {nome:'Carote lessate', qt:100, unit:'g', kcal:35},
           {nome:'Olio extra vergine di oliva', qt:10, unit:'mL', kcal:89},
           {nome:'Pane bianco', qt:30, unit:'g', kcal:80}
         ]},
-        {nome:'Spuntino Pomeriggio', emoji:'🥛', nota:'Spuntino strutturato — no sostituti', items:[
+        {nome:_L('Spuntino Pomeriggio','Afternoon Snack'), emoji:'🥛', nota:_L('Spuntino strutturato — no sostituti','Structured snack — no substitutes'), items:[
           {nome:'Latte', qt:200, unit:'mL', kcal:92},
           {nome:'Biscotti secchi (3)', qt:20, unit:'g', kcal:87}
         ]},
-        {nome:'Cena', emoji:'🌙', items:[
+        {nome:_L('Cena','Dinner'), emoji:'🌙', items:[
           {nome:'Riso in bianco', qt:70, unit:'g', kcal:245},
           {nome:'Merluzzo al vapore', qt:100, unit:'g', kcal:80},
           {nome:'Zucchine lessate', qt:100, unit:'g', kcal:18},
@@ -1798,28 +1803,28 @@ const DCA_PE_CONFIG = {
       macros: {p:18, cho:52, g:30},
       nota: _L('AN Mantenimento: Obiettivo BMI ≥ 18.5 kg/m². Progressiva introduzione di alimenti "fear food". Struttura pasti regolare 3 pasti + 2 spuntini. Supervisione all\'autonomia progressiva. Continuare monitoraggio psicologico.','AN Maintenance: Target BMI ≥ 18.5 kg/m². Progressive introduction of "fear foods". Regular meal structure 3 meals + 2 snacks. Supervised progressive autonomy. Continue psychological monitoring.'),
       pasti: [
-        {nome:'Colazione', emoji:'🌅', items:[
+        {nome:_L('Colazione','Breakfast'), emoji:'🌅', items:[
           {nome:'Yogurt greco intero', qt:125, unit:'g', kcal:131},
           {nome:'Pane integrale (1 fetta)', qt:30, unit:'g', kcal:71},
           {nome:'Miele (1 cucchiaino)', qt:10, unit:'g', kcal:31},
           {nome:'Frutta fresca mista', qt:100, unit:'g', kcal:52},
           {nome:'Caffè o tè', qt:200, unit:'mL', kcal:5}
         ]},
-        {nome:'Spuntino Mattino', emoji:'🍎', items:[
+        {nome:_L('Spuntino Mattino','Morning Snack'), emoji:'🍎', items:[
           {nome:'Frutta fresca', qt:150, unit:'g', kcal:78},
           {nome:'Mandorle (piccola manciata)', qt:15, unit:'g', kcal:87}
         ]},
-        {nome:'Pranzo', emoji:'🍽️', items:[
+        {nome:_L('Pranzo','Lunch'), emoji:'🍽️', items:[
           {nome:'Pasta al pomodoro e basilico', qt:80, unit:'g', kcal:284},
           {nome:'Parmigiano grattugiato', qt:10, unit:'g', kcal:39},
           {nome:'Pollo ai ferri', qt:120, unit:'g', kcal:132},
           {nome:'Insalata mista', qt:100, unit:'g', kcal:17},
           {nome:'Olio extra vergine di oliva', qt:10, unit:'mL', kcal:89}
         ]},
-        {nome:'Merenda', emoji:'🧁', items:[
+        {nome:_L('Merenda','Afternoon Snack'), emoji:'🧁', items:[
           {nome:'Dolce casalingo (es. crostata) piccola porzione', qt:60, unit:'g', kcal:210}
         ]},
-        {nome:'Cena', emoji:'🌙', items:[
+        {nome:_L('Cena','Dinner'), emoji:'🌙', items:[
           {nome:'Zuppa di legumi e cereali', qt:300, unit:'mL', kcal:180},
           {nome:'Formaggio (es. scamorza)', qt:50, unit:'g', kcal:140},
           {nome:'Verdure miste grigliate', qt:150, unit:'g', kcal:45},
@@ -1832,27 +1837,27 @@ const DCA_PE_CONFIG = {
       macros: {p:20, cho:52, g:28},
       nota: _L('BN/BED: Strutturazione rigida dei pasti per ridurre i cicli abbuffata-compensazione. Pasti ogni 3-4 ore. Eliminare il digiuno. Piano pasti scritto e supervisione. Nessun alimento vietato (demistificazione). CBT + intervento nutrizionale integrato.','BN/BED: Rigid meal structure to reduce binge-compensation cycles. Meals every 3-4 hours. Eliminate fasting. Written meal plan and supervision. No forbidden foods (demystification). CBT + integrated nutritional intervention.'),
       pasti: [
-        {nome:'Colazione (obbligatoria)', emoji:'🌅', nota:'Non saltare — riduce rischio abbuffata mattutina', items:[
+        {nome:_L('Colazione (obbligatoria)','Breakfast (mandatory)'), emoji:'🌅', nota:_L('Non saltare — riduce rischio abbuffata mattutina','Do not skip — reduces risk of morning binge'), items:[
           {nome:'Latte parzialmente scremato', qt:200, unit:'mL', kcal:92},
           {nome:'Cereali o pane integrale', qt:50, unit:'g', kcal:185},
           {nome:'Frutta fresca', qt:100, unit:'g', kcal:52}
         ]},
-        {nome:'Spuntino Mattino (obbligatorio)', emoji:'🍎', nota:'Spuntino programmato riduce fame eccessiva a pranzo', items:[
+        {nome:_L('Spuntino Mattino (obbligatorio)','Morning Snack (mandatory)'), emoji:'🍎', nota:_L('Spuntino programmato riduce fame eccessiva a pranzo','Planned snack reduces excessive hunger at lunch'), items:[
           {nome:'Yogurt magro bianco', qt:125, unit:'g', kcal:59},
           {nome:'Frutta fresca (piccola)', qt:80, unit:'g', kcal:42}
         ]},
-        {nome:'Pranzo (orario fisso)', emoji:'🍽️', nota:'Pasto bilanciato — seduto, senza distrazioni', items:[
+        {nome:_L('Pranzo (orario fisso)','Lunch (fixed time)'), emoji:'🍽️', nota:_L('Pasto bilanciato — seduto, senza distrazioni','Balanced meal — seated, without distractions'), items:[
           {nome:'Pasta integrale o riso', qt:80, unit:'g', kcal:284},
           {nome:'Secondo (pesce/legumi/carne magra)', qt:130, unit:'g', kcal:150},
           {nome:'Verdura abbondante', qt:200, unit:'g', kcal:54},
           {nome:'Olio extra vergine di oliva', qt:10, unit:'mL', kcal:89},
           {nome:'Pane (1 fetta)', qt:30, unit:'g', kcal:80}
         ]},
-        {nome:'Spuntino Pomeriggio (obbligatorio)', emoji:'🥛', nota:'Critico per prevenire abbuffata serale', items:[
+        {nome:_L('Spuntino Pomeriggio (obbligatorio)','Afternoon Snack (mandatory)'), emoji:'🥛', nota:_L('Critico per prevenire abbuffata serale','Critical to prevent evening binge'), items:[
           {nome:'Yogurt greco o latte', qt:150, unit:'g', kcal:89},
           {nome:'Crackers o frutta secca (piccola dose)', qt:20, unit:'g', kcal:84}
         ]},
-        {nome:'Cena (orario fisso, pasto completo)', emoji:'🌙', nota:'Pasto completo — no "cena dietetica" per compensare', items:[
+        {nome:_L('Cena (orario fisso, pasto completo)','Dinner (fixed time, complete meal)'), emoji:'🌙', nota:_L('Pasto completo — no "cena dietetica" per compensare','Complete meal — no "diet dinner" to compensate'), items:[
           {nome:'Primo piatto leggero o zuppa', qt:250, unit:'mL', kcal:180},
           {nome:'Secondo piatto proteico', qt:120, unit:'g', kcal:140},
           {nome:'Verdura', qt:150, unit:'g', kcal:40},
@@ -1866,27 +1871,27 @@ const DCA_PE_CONFIG = {
       macros: {p:17, cho:53, g:30},
       nota: _L('Ortoressia: Normalizzazione progressiva del pattern alimentare. Reintroduzione degli alimenti "evitati" (carne rossa, grassi, carboidrati raffinati). Riduzione del tempo dedicato alla pianificazione del cibo. Flessibilità come obiettivo. CBT focalizzata su cognizioni alimentari.','Orthorexia: Progressive normalisation of eating patterns. Reintroduction of "avoided" foods (red meat, fats, refined carbohydrates). Reduction of time spent on food planning. Flexibility as the goal. CBT focused on food cognitions.'),
       pasti: [
-        {nome:'Colazione (con varietà)', emoji:'🌅', nota:'Alternare tra diverse opzioni — evitare monotonia', items:[
+        {nome:_L('Colazione (con varietà)','Breakfast (with variety)'), emoji:'🌅', nota:_L('Alternare tra diverse opzioni — evitare monotonia','Alternate between different options — avoid monotony'), items:[
           {nome:'Pane bianco OPPURE integrale (alternare)', qt:60, unit:'g', kcal:160},
           {nome:'Burro (quantità normale) o ricotta', qt:15, unit:'g', kcal:107},
           {nome:'Marmellata o miele', qt:10, unit:'g', kcal:29},
           {nome:'Latte intero (non scremato)', qt:200, unit:'mL', kcal:130},
           {nome:'Caffè con zucchero (1 cucchiaino)', qt:5, unit:'g', kcal:19}
         ]},
-        {nome:'Spuntino Mattino', emoji:'🍪', nota:'Includere occasionalmente dolci o snack "proibiti"', items:[
+        {nome:_L('Spuntino Mattino','Morning Snack'), emoji:'🍪', nota:_L('Includere occasionalmente dolci o snack "proibiti"','Occasionally include sweets or "forbidden" snacks'), items:[
           {nome:'Biscotto o merendina commerciale (1)', qt:30, unit:'g', kcal:128},
           {nome:'Latte o yogurt', qt:125, unit:'g', kcal:76}
         ]},
-        {nome:'Pranzo (con piatto "normale")', emoji:'🍽️', nota:'Obiettivo: mangiare come un pasto normale, senza calcoli', items:[
+        {nome:_L('Pranzo (con piatto "normale")','Lunch (with a "normal" dish)'), emoji:'🍽️', nota:_L('Obiettivo: mangiare come un pasto normale, senza calcoli','Goal: eat like a normal meal, without calculations'), items:[
           {nome:'Pasta al ragù (ricetta familiare normale)', qt:80, unit:'g', kcal:350},
           {nome:'Parmigiano', qt:10, unit:'g', kcal:39},
           {nome:'Insalata con condimento', qt:100, unit:'g', kcal:60},
           {nome:'Pane bianco', qt:40, unit:'g', kcal:107}
         ]},
-        {nome:'Merenda (prodotto commerciale)', emoji:'🧁', nota:'Includere prodotto commerciale — superare paura additivi', items:[
+        {nome:_L('Merenda (prodotto commerciale)','Afternoon Snack (commercial product)'), emoji:'🧁', nota:_L('Includere prodotto commerciale — superare paura additivi','Include a commercial product — overcome fear of additives'), items:[
           {nome:'Merendina confezionata (es. croissant) o gelato (1 pallina)', qt:50, unit:'g', kcal:200}
         ]},
-        {nome:'Cena (flessibile)', emoji:'🌙', nota:'No restrizioni — cena normale con la famiglia', items:[
+        {nome:_L('Cena (flessibile)','Dinner (flexible)'), emoji:'🌙', nota:_L('No restrizioni — cena normale con la famiglia','No restrictions — normal dinner with the family'), items:[
           {nome:'Secondo piatto a scelta (anche carne rossa)', qt:150, unit:'g', kcal:260},
           {nome:'Contorno e patate', qt:200, unit:'g', kcal:150},
           {nome:'Pane', qt:40, unit:'g', kcal:107},
@@ -1952,7 +1957,7 @@ function apriInPianoAlimentareDca() {
   window.location.href = 'app.html';
 }
 function eliminaPianoDca() {
-  if (!confirm('Eliminare il piano? I dati inseriti verranno persi.')) return;
+  if (!confirm(_L('Eliminare il piano? I dati inseriti verranno persi.','Delete the plan? All entered data will be lost.'))) return;
   [1,2,3,4,5,6].forEach(i => {
     ['nome','ora','kcal','alimenti','note'].forEach(f => {
       const el = document.getElementById('dca-m'+i+'-'+f);

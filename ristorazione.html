@@ -933,7 +933,7 @@
       <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
       <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast(_L('✅ SQL copiato!','✅ SQL copied!'),'ok'))">📋 Copia SQL</button>
         <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
         <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
       </div>
@@ -1031,7 +1031,7 @@ async function loadRistCartelle() {
   const sel = document.getElementById('rist-cartella');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
+  sel.innerHTML = '<option value="">' + _L('-- Nessuna cartella --','-- No folder --') + '</option>';
   ristCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent='📁 '+c.nome; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
@@ -1085,7 +1085,7 @@ async function salvaRistorazione() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Log in to save'),'err'); return; }
   const cartella_id = document.getElementById('rist-cartella').value;
   if (!cartella_id) { toast(_L('Seleziona una cartella / progetto','Select a folder / project'),'err'); return; }
-  const nota = document.getElementById('rist-nota').value.trim() || 'Menu ristorazione ' + new Date().toLocaleDateString('it');
+  const nota = document.getElementById('rist-nota').value.trim() || _L('Menu ristorazione ','Catering menu ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiRist();
   { const _p=dati.piano||{},_nc=(document.getElementById('rist-cartella-cw-srch')?.value||'').trim(),_tipo=_p.tipo||'',_utenza=_p.utenza||'',_coperti=_p.coperti||'';
     dati.stampa_html=buildStampaCompattaHtml((_p.portate||[]).filter(p=>p.nome||p.menu).map(p=>({nome:p.nome,kcal:'',alimenti:[p.porzione,p.menu].filter(Boolean).join('\n'),note:p.note})),{titolo:_nc||nota,sottotitolo:[_tipo,_utenza,_coperti?_coperti+' coperti':''].filter(Boolean).join(' · '),totKcal:0,totProt:0,totCho:0,totFat:0}); }
@@ -1218,8 +1218,8 @@ function generaProto() {
   if (!attive.length && !allergs.length) {
     toast(_L('Seleziona almeno una dieta o allergene','Select at least one diet or allergen'), 'err'); return;
   }
-  const today = new Date().toLocaleDateString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric'});
-  let html = `<div style="font-size:12px;color:var(--slate-l);margin-bottom:12px">Generato il ${today} · ${attive.length} diete speciali · ${allergs.length} allergeni gestiti</div>`;
+  const today = new Date().toLocaleDateString(_L('it-IT','en-GB'), {day:'2-digit',month:'2-digit',year:'numeric'});
+  let html = `<div style="font-size:12px;color:var(--slate-l);margin-bottom:12px">${_L('Generato il','Generated on')} ${today} · ${attive.length} ${_L('diete speciali','special diets')} · ${allergs.length} ${_L('allergeni gestiti','allergens managed')}</div>`;
 
   if (attive.length) {
     html += `<h4 style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--slate)">🍽️ Diete Speciali Attive</h4>`;
@@ -1282,8 +1282,8 @@ function stampaCompattaRistorazione() {
   })).filter(p => p.nome || p.alimenti);
 
   stampaCompattaSpecialistica(pasti, {
-    titolo: nomeCartella || 'Menu — Ristorazione Collettiva',
-    sottotitolo: [tipo, utenza, coperti ? coperti + ' coperti' : ''].filter(Boolean).join(' · '),
+    titolo: nomeCartella || _L('Menu — Ristorazione Collettiva','Menu — Collective Catering'),
+    sottotitolo: [tipo, utenza, coperti ? coperti + ' ' + _L('coperti','covers') : ''].filter(Boolean).join(' · '),
     totKcal: 0,
     totProt: 0,
     totCho: 0,
@@ -1310,9 +1310,9 @@ function apriInPianoAlimentareRistorazione() {
       collapsed: false
     };
   }).filter(p => p.nome || (p.items[0] && p.items[0].nome));
-  if (!pasti.length) { alert('Nessun dato nel piano da esportare'); return; }
+  if (!pasti.length) { alert(_L('Nessun dato nel piano da esportare','No data in the plan to export')); return; }
   const tipo = (document.getElementById('rist-piano-tipo')?.value || '').trim();
-  const d = { nome: 'Menu — Ristorazione Collettiva' + (tipo ? ' (' + tipo + ')' : ''), pasti };
+  const d = { nome: _L('Menu — Ristorazione Collettiva','Menu — Collective Catering') + (tipo ? ' (' + tipo + ')' : ''), pasti };
   sessionStorage.setItem('loadPatologia', JSON.stringify(d));
   window.location.href = 'app.html';
 }

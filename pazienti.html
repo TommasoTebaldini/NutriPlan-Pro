@@ -747,7 +747,7 @@ function bulkEsportaCSV() {
     rows.push([
       c.nome || '', c.cognome || '', c.ddn || '', c.sesso || '', c.codice_fiscale || '',
       Array.isArray(c.tags) ? c.tags.join('; ') : '',
-      c.created_at ? new Date(c.created_at).toLocaleDateString('it') : ''
+      c.created_at ? new Date(c.created_at).toLocaleDateString(_L('it','en')) : ''
     ]);
   });
   const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
@@ -834,7 +834,7 @@ function renderCartelleGrid(data) {
       </div>
       ${noteDisplay}
       ${tagsHtml}
-      <div class="paz-tag" style="margin-top:6px">📅 ${new Date(c.created_at).toLocaleDateString('it')}</div>
+      <div class="paz-tag" style="margin-top:6px">📅 ${new Date(c.created_at).toLocaleDateString(_L('it','en'))}</div>
       <div class="paz-actions">
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editCartella('${c.id}')">✏️</button>
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delCartella('${c.id}')">🗑️</button>
@@ -1143,7 +1143,7 @@ async function renderCartellaDetail(id) {
         '<span style="font-size:20px">' + icon + '</span>' +
         '<div style="flex:1;min-width:0">' +
         '<div style="font-weight:600;font-size:13px;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(f.filename) + '</div>' +
-        '<div style="font-size:11px;color:var(--slate-l)">' + new Date(f.created_at).toLocaleDateString('it') + (sizeStr ? ' · ' + sizeStr : '') + '</div>' +
+        '<div style="font-size:11px;color:var(--slate-l)">' + new Date(f.created_at).toLocaleDateString(_L('it','en')) + (sizeStr ? ' · ' + sizeStr : '') + '</div>' +
         '</div>' +
         '<button class="btn btn-ghost btn-xs" onclick="downloadAllegato(\'' + f.id + '\',\'' + f.storage_path.replace(/'/g,"\\'") + '\',\'' + f.filename.replace(/'/g,"\\'") + '\')">⬇️ Scarica</button>' +
         '<button class="btn btn-ghost btn-xs" onclick="deleteAllegato(\'' + f.id + '\',\'' + f.storage_path.replace(/'/g,"\\'") + '\',\'' + id + '\')">🗑️</button>' +
@@ -1571,7 +1571,7 @@ async function salvaSoap() {
 
   const dati = { s, o, a, p, tipo_visita: tipoV, data_visita: dataV };
   if (_soapDocRef) dati.doc_ref = _soapDocRef;
-  const fmtIt = new Date(dataV).toLocaleDateString('it');
+  const fmtIt = new Date(dataV).toLocaleDateString(_L('it','en'));
   showLoading(true);
   const { error } = await sb.from('note_specialistiche').insert({
     cartella_id: _soapCartellaId,
@@ -1594,7 +1594,7 @@ function stampaSoap(id) {
   let d = {};
   try { d = JSON.parse(body.getAttribute('data-soap') || '{}'); } catch (e) {}
   const esc2 = s => String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])).replace(/\n/g, '<br>');
-  const dataV = d.data_visita ? new Date(d.data_visita).toLocaleDateString('it') : '';
+  const dataV = d.data_visita ? new Date(d.data_visita).toLocaleDateString(_L('it','en')) : '';
   const cartNome = (window._currentCartellaData && window._currentCartellaData.cart) ? window._currentCartellaData.cart.nome : '';
   const win = window.open('', '_blank');
   const blocco = (lbl, val) => `<h3 style="margin:14px 0 4px;color:#0E7490;font-size:14px">${lbl}</h3><div style="white-space:pre-wrap;line-height:1.6;font-size:13px">${esc2(val) || '<i style="color:#999">—</i>'}</div>`;
@@ -2488,7 +2488,7 @@ async function esportaPDFCartella() {
   doc.setFontSize(10); doc.setFont('helvetica', 'normal');
   doc.text('Studio di Nutrizione Clinica', lm, 20);
   doc.setFontSize(8);
-  doc.text('Cartella Paziente - Generato il ' + new Date().toLocaleDateString('it'), lm, 27);
+  doc.text('Cartella Paziente - Generato il ' + new Date().toLocaleDateString(_L('it','en')), lm, 27);
   y = 40;
 
   // Nome paziente
@@ -2500,7 +2500,7 @@ async function esportaPDFCartella() {
   // Info anagrafiche
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(71, 85, 105);
   const infoLine = [
-    cart.ddn ? 'DDN: ' + new Date(cart.ddn).toLocaleDateString('it') : null,
+    cart.ddn ? 'DDN: ' + new Date(cart.ddn).toLocaleDateString(_L('it','en')) : null,
     eta !== null ? 'Eta: ' + eta + ' anni' : null,
     cart.sesso ? 'Sesso: ' + (cart.sesso === 'M' ? 'Maschio' : 'Femmina') : null,
     cart.codice_fiscale ? 'CF: ' + cart.codice_fiscale : null,
@@ -2528,7 +2528,7 @@ async function esportaPDFCartella() {
       lastBia.bf_pct ? 'BF%: ' + r1(lastBia.bf_pct, 1) + '%'  : null,
       lastBia.ffm_kg ? 'FFM: ' + r1(lastBia.ffm_kg, 1) + ' kg' : null,
       lastBia.angolo_fase ? 'Angolo di fase: ' + r1(lastBia.angolo_fase, 2) + 'deg' : null,
-      lastBia.data_misura ? 'Data: ' + new Date(lastBia.data_misura).toLocaleDateString('it') : null,
+      lastBia.data_misura ? 'Data: ' + new Date(lastBia.data_misura).toLocaleDateString(_L('it','en')) : null,
     ].filter(Boolean).join('    ');
     doc.text(biaParts, lm + 2, y); y += 6;
   }
@@ -2543,7 +2543,7 @@ async function esportaPDFCartella() {
       const val = r1(e.valore, 2).replace(/\.?0+$/, ''); // rimuove zeri trailing
       const line = (e.tipo || '') + ': ' + val + (e.unita ? ' ' + e.unita : '') +
         '  [' + bdg.label + ']' +
-        (e.data_esame ? '  (' + new Date(e.data_esame).toLocaleDateString('it') + ')' : '');
+        (e.data_esame ? '  (' + new Date(e.data_esame).toLocaleDateString(_L('it','en')) + ')' : '');
       doc.text('-  ' + line, lm + 2, y); y += 5;
     });
     y += 1;
@@ -2557,7 +2557,7 @@ async function esportaPDFCartella() {
       if (y > 262) { doc.addPage(); y = 18; }
       const dt = p.saved_at || p.data_piano;
       const nomePiano = (p.nome || 'Piano alimentare').replace(/[^\x00-\xFF]/g, '');
-      doc.text('-  ' + nomePiano + (dt ? '  (' + new Date(dt).toLocaleDateString('it') + ')' : ''), lm + 2, y);
+      doc.text('-  ' + nomePiano + (dt ? '  (' + new Date(dt).toLocaleDateString(_L('it','en')) + ')' : ''), lm + 2, y);
       y += 5;
     });
   }
@@ -2758,3 +2758,4 @@ async function importaCSV() {
 </script>
 </body>
 </html>
+

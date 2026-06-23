@@ -1402,7 +1402,7 @@ async function salvaPazienteSano() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('ps-cartella').value;
   if (!cartella_id) { toast(_L('Seleziona una cartella paziente','Select a patient record'), 'err'); return; }
-  const nota = document.getElementById('ps-nota').value.trim() || 'Sessione paziente sano ' + new Date().toLocaleDateString('it');
+  const nota = document.getElementById('ps-nota').value.trim() || _L('Sessione paziente sano ','Healthy patient session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiPS();
   if (typeof buildStampaSpecialisticaHTML === 'function') {
     try { dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'paziente_sano', nota); } catch(e) {}
@@ -1484,3 +1484,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+

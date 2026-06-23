@@ -1549,7 +1549,7 @@ function _eseguiNuovoPiano() {
 
 async function salvaPiano() {
   const nomeEl = document.getElementById('inp-nome');
-  const nome = (nomeEl ? nomeEl.value.trim() : '') || 'Piano ' + new Date().toLocaleDateString('it');
+  const nome = (nomeEl ? nomeEl.value.trim() : '') || 'Piano ' + new Date().toLocaleDateString(_L('it','en'));
   const data = document.getElementById('inp-data').value || todayISO();
   // Get cartella_id from hidden input (set by selectCartella dropdown)
   const cartellaEl = document.getElementById('inp-cartella');
@@ -2582,7 +2582,7 @@ async function caricaObiettiviValutazione(cartellaId) {
   ).join('');
   const nomePaz = [data.cognome, data.nome].filter(Boolean).join(' ');
   const ts = data.saved_at || data.created_at;
-  const data_str = ts ? new Date(ts).toLocaleDateString('it') : '';
+  const data_str = ts ? new Date(ts).toLocaleDateString(_L('it','en')) : '';
   document.getElementById('obj-val-fonte').textContent =
     (data_str ? '📅 Valutazione del ' + data_str : '📅 Valutazione recente') +
     (nomePaz ? ' — ' + nomePaz : '');
@@ -3158,4 +3158,5 @@ document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
+
 

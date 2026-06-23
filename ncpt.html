@@ -1025,7 +1025,7 @@ function selCartella(id, nome) {
     document.getElementById('paz-bar').classList.add('visible'); document.getElementById('paz-bar').style.display='flex';
     document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
     document.getElementById('pb-meta').textContent = cart.ddn ? calcolaEta(cart.ddn)+' '+_L('anni','yrs') : '';
-    document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
+    document.getElementById('pb-data').textContent = new Date().toLocaleDateString(_L('it','en'));
     if (!document.getElementById('v-nome').value) document.getElementById('v-nome').value = cart.nome;
   }
   toast('📁 ' + _L('Cartella','Folder') + ': '+nome,'info');
@@ -1500,7 +1500,7 @@ function salvaStorEntry() {
   const g=id=>document.getElementById(id)?.value||'';
   const entry={
     id:Date.now(),
-    data:g('sf-data')||new Date().toLocaleDateString('it'),
+    data:g('sf-data')||new Date().toLocaleDateString(_L('it','en')),
     peso:g('sf-peso'),bmi:g('sf-bmi'),vita:g('sf-vita'),
     mg:g('sf-mg'),kcal:g('sf-kcal'),hba1c:g('sf-hba1c'),
     pa:g('sf-pa'),note:g('sf-note')
@@ -1706,7 +1706,7 @@ async function salvaNCPt() {
       cartellaId: currentCartellaId,
       panelSelector: '.ncpt-panel',
       removeSelectors: ['.ncpt-nav'],
-      titleHtml: '<div style="background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px"><div style="font-size:17px;font-weight:700">📋 NCPt — Nutrition Care Process</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString('it') + '</div></div>',
+      titleHtml: '<div style="background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px"><div style="font-size:17px;font-weight:700">📋 NCPt — Nutrition Care Process</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString(_L('it','en')) + '</div></div>',
       windowWidth: 850,
       silent: true,
     }).catch(function (err) { console.warn('NCPT capture failed:', err); });
@@ -1940,7 +1940,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
           const _pb1=document.getElementById('paz-bar');_pb1.style.display='flex';_pb1.classList.add('visible');
           document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
-          document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
+          document.getElementById('pb-data').textContent = new Date().toLocaleDateString(_L('it','en'));
         }
         caricaDati(ncptData);
         toast(_L('📂 NCPt caricato!','📂 NCPt loaded!'),'ok');
@@ -1953,7 +1953,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         _cwUpdateDisplay('ncpt-cartella-cw', cart.id, cart.nome);
         const _pb2=document.getElementById('paz-bar');_pb2.style.display='flex';_pb2.classList.add('visible');
         document.getElementById('pb-nome').textContent = '👤 '+cart.nome;
-        document.getElementById('pb-data').textContent = new Date().toLocaleDateString('it');
+        document.getElementById('pb-data').textContent = new Date().toLocaleDateString(_L('it','en'));
         document.getElementById('v-nome').value = cart.nome;
         toast('📋 ' + _L('Nuovo NCPt per','New NCPt for') + ': '+cart.nome,'info');
       }
@@ -1973,4 +1973,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
 

@@ -976,7 +976,7 @@ async function salvaBIA() {
       biaPd.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;z-index:-1';
       const biaHdr = document.createElement('div');
       biaHdr.style.cssText = 'background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px';
-      biaHdr.innerHTML = '<div style="font-size:17px;font-weight:700">📊 Analisi BIA — Bioimpedenziometria</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString('it') + '</div>';
+      biaHdr.innerHTML = '<div style="font-size:17px;font-weight:700">📊 ' + _L('Analisi BIA — Bioimpedenziometria','BIA Analysis — Bioelectrical Impedance') + '</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString(_L('it','en')) + '</div>';
       biaPd.appendChild(biaHdr);
       if (resultsWrap) {
         const clone = resultsWrap.cloneNode(true);
@@ -1032,7 +1032,7 @@ ALTER TABLE bia_records DISABLE ROW LEVEL SECURITY;</code></div>`;
     return;
   }
 
-  const fmtDate = d => d ? new Date(d).toLocaleDateString('it') : '—';
+  const fmtDate = d => d ? new Date(d).toLocaleDateString(_L('it','en')) : '—';
 
   // Raggruppa per cartella per mostrare confronto vs precedente
   const byCartella = {};
@@ -1332,3 +1332,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+

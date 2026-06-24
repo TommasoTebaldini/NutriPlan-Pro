@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moduli Stampabili — DietPlan Pro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://hvdwqowkhutfsdpiubxe.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ── Tabs ── */
+.mod-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.mod-tab{padding:10px 18px;font-size:13px;font-weight:600;color:var(--slate-m);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.mod-tab:hover{color:var(--teal);background:#F0FDF4}
+.mod-tab.active{color:var(--teal-d);border-bottom-color:var(--teal);background:#F0FDF4}
+/* ── Form fields ── */
+.mod-form{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.mod-form h3{font-size:14px;font-weight:700;color:var(--teal-d);margin:0 0 16px;padding-bottom:10px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:8px}
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.mod-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.mod-full{grid-column:1/-1}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi label{font-size:11.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.3px}
+.fi input,.fi select,.fi textarea{padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;background:white;color:var(--slate);transition:border-color .15s}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--teal)}
+.fi textarea{resize:vertical;min-height:80px}
+/* ── Print ── */
+@media print{
+  #sidebar,#topbar,.no-print,.mod-tabs,#loading-overlay,#toast,.action-bar{display:none!important}
+  #main{margin-left:0!important}
+  .page-content{padding:0!important;max-width:none!important}
+  body{background:white!important;font-size:12px}
+  .mod-panel{display:none!important}
+  .mod-panel.printing{display:block!important}
+  .mod-form{border:none!important;box-shadow:none!important;padding:0!important}
+  .print-doc-wrap{display:block!important}
+}
+.print-doc-wrap{display:none}
+/* Print document layout */
+.pdoc{font-family:'DM Sans',Arial,sans-serif;font-size:12px;color:#1E293B;line-height:1.6}
+.pdoc .pdoc-hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:2px solid #0F766E;margin-bottom:16px}
+.pdoc .pdoc-logo{max-height:55px;max-width:140px;object-fit:contain}
+.pdoc .pdoc-prof-info{text-align:right;font-size:11px;color:#475569;line-height:1.5}
+.pdoc h2{font-size:16px;font-weight:700;color:#0F766E;margin:0 0 12px;text-transform:uppercase;letter-spacing:.5px}
+.pdoc .pdoc-subtitle{font-size:11px;color:#64748B;margin:-8px 0 14px;font-style:italic}
+.pdoc .pdoc-section{margin-bottom:14px}
+.pdoc .pdoc-section-title{font-size:11.5px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #E2E8F0;padding-bottom:3px;margin-bottom:8px}
+.pdoc .pdoc-row{display:flex;gap:20px;margin-bottom:6px}
+.pdoc .pdoc-field{flex:1}
+.pdoc .pdoc-label{font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.3px}
+.pdoc .pdoc-value{border-bottom:1px solid #94A3B8;min-height:20px;padding:2px 0;font-size:12px;color:#1E293B;display:block;min-width:120px}
+.pdoc .pdoc-textarea-field{border:1px solid #CBD5E1;border-radius:4px;padding:6px 8px;min-height:60px;font-size:11.5px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.pdoc .pdoc-footer{margin-top:30px;border-top:1px solid #CBD5E1;padding-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.pdoc .sign-box{text-align:center}
+.pdoc .sign-line{border-top:1px solid #94A3B8;margin-top:28px;padding-top:6px;font-size:10.5px;color:#64748B}
+.pdoc .pdoc-note{font-size:10px;color:#64748B;background:#F8FAFC;border-left:3px solid #CBD5E1;padding:6px 8px;border-radius:0 4px 4px 0;margin-top:10px;line-height:1.5}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item" href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item" href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item" href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item" href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item" href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="visita.html"><span class="ni">🩺</span>Resoconto Visita</a>
+  <a class="nav-item active" href="moduli.html"><span class="ni">📄</span>Moduli Stampabili</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item" href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">📄 Moduli Stampabili</h2>
+  <div class="tbar-actions">
+    <select id="inp-cartella" class="no-print" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;background:white;color:var(--slate)">
+      <option value="">— Cartella paziente —</option>
+    </select>
+  </div>
+</div>
+
+<main id="main">
+<div class="page-content">
+
+<!-- Intro -->
+<div style="background:linear-gradient(135deg,#ECFDF5,#EFF6FF);border-radius:var(--r);padding:16px 20px;margin-bottom:18px;border:1px solid #A7F3D0;display:flex;align-items:center;gap:14px" class="no-print">
+  <span style="font-size:32px">📄</span>
+  <div>
+    <div style="font-weight:700;font-size:14px;color:var(--teal-d)">Moduli Stampabili</div>
+    <div style="font-size:12.5px;color:var(--slate-m);margin-top:2px">Seleziona il modulo, compila i campi e clicca <b>Stampa</b>. Puoi salvare il modulo nella cartella del paziente.</div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="mod-tabs no-print">
+  <button class="mod-tab active" onclick="showMod('esenzione')">🏥 Esenzione per Patologia</button>
+  <button class="mod-tab" onclick="showMod('afms')">🥤 Prescrizione AFMS</button>
+  <button class="mod-tab" onclick="showMod('aproteici')">🫘 Prodotti Aproteici</button>
+  <button class="mod-tab" onclick="showMod('diario')">📓 Diario Alimentare</button>
+  <button class="mod-tab" onclick="showMod('consenso')">✍️ Consenso Informato</button>
+</div>
+
+<!-- ══ MODULO: ESENZIONE ══════════════════════════════════ -->
+<div id="mod-esenzione" class="mod-panel">
+  <div class="action-bar no-print" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm" onclick="stampaModulo('esenzione')">🖨️ Stampa modulo</button>
+    <button class="btn btn-ghost btn-sm" onclick="salvaModulo('esenzione','Esenzione per patologia')">💾 Salva in cartella</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetMod('esenzione')">↺ Azzera campi</button>
+  </div>
+
+  <!-- Form compilazione -->
+  <div class="mod-form no-print">
+    <h3>🏥 Dati paziente</h3>
+    <div class="mod-grid">
+      <div class="fi"><label>Cognome e Nome</label><input type="text" id="esen-paz-nome" placeholder="Rossi Mario"></div>
+      <div class="fi"><label>Codice Fiscale</label><input type="text" id="esen-paz-cf" placeholder="RSSMRA80A01H501Z" style="text-transform:uppercase"></div>
+      <div class="fi"><label>Data di nascita</label><input type="date" id="esen-paz-ddn"></div>
+      <div class="fi"><label>Comune di residenza</label><input type="text" id="esen-paz-comune" placeholder="es. Milano (MI)"></div>
+    </div>
+    <div class="mod-grid">
+      <div class="fi"><label>Codice esenzione</label>
+        <select id="esen-codice">
+          <option value="">— Seleziona —</option>
+          <optgroup label="Malattie rare">
+            <option value="RNG030">RNG030 — Fenilchetonuria e iperfenilalaninemie</option>
+            <option value="RCG040">RCG040 — Galattosemia</option>
+            <option value="RCG051">RCG051 — Glicogenosi</option>
+            <option value="RN0370">RN0370 — Malattia di Wilson</option>
+            <option value="RNG071">RNG071 — Leucinosi</option>
+          </optgroup>
+          <optgroup label="Malattie croniche">
+            <option value="013">013 — Insufficienza renale cronica</option>
+            <option value="001">001 — Acromegalia e gigantismo</option>
+            <option value="006">006 — Celiachia</option>
+            <option value="007">007 — Cirrosi epatica</option>
+            <option value="017">017 — Diabete mellito</option>
+            <option value="019">019 — Disturbi psichici (gravi)</option>
+            <option value="055">055 — Sclerosi multipla</option>
+          </optgroup>
+          <option value="altro">Altro (specificare)</option>
+        </select>
+      </div>
+      <div class="fi"><label>Codice manuale (se non in lista)</label><input type="text" id="esen-codice-alt" placeholder="es. RCG010"></div>
+    </div>
+    <div class="mod-grid">
+      <div class="fi"><label>Patologia (diagnosi)</label><input type="text" id="esen-patologia" placeholder="es. Insufficienza renale cronica stadio III"></div>
+      <div class="fi"><label>ICD-10 (se noto)</label><input type="text" id="esen-icd" placeholder="es. N18.3"></div>
+    </div>
+    <div class="mod-grid">
+      <div class="fi"><label>Dietista / Specialista</label><input type="text" id="esen-prof-nome" placeholder=""></div>
+      <div class="fi"><label>N° Iscrizione Albo</label><input type="text" id="esen-prof-albo" placeholder=""></div>
+    </div>
+    <div class="fi" style="margin-bottom:0"><label>Note cliniche aggiuntive</label><textarea id="esen-note" placeholder="Eventuali note o specifiche cliniche..."></textarea></div>
+  </div>
+
+  <!-- Print document -->
+  <div class="print-doc-wrap" id="print-esenzione">
+    <div class="pdoc">
+      <div class="pdoc-hdr">
+        <img class="pdoc-logo" id="p-esen-logo" src="" alt="" style="display:none">
+        <div class="pdoc-prof-info" id="p-esen-prof"></div>
+      </div>
+      <h2>Attestazione per Esenzione Ticket</h2>
+      <div class="pdoc-subtitle">Ai sensi del D.M. 28/05/1999, n. 329 — L. 833/1978 art. 59 comma 1 lettera e</div>
+
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Dati del paziente</div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Cognome e Nome</span><span class="pdoc-value" id="p-esen-nome"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Codice Fiscale</span><span class="pdoc-value" id="p-esen-cf"></span></div>
+        </div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Data di nascita</span><span class="pdoc-value" id="p-esen-ddn"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Comune di residenza</span><span class="pdoc-value" id="p-esen-comune"></span></div>
+        </div>
+      </div>
+
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Diagnosi e codice esenzione</div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Patologia</span><span class="pdoc-value" id="p-esen-patologia"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Codice esenzione</span><span class="pdoc-value" id="p-esen-codice"></span></div>
+        </div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Classificazione ICD-10</span><span class="pdoc-value" id="p-esen-icd"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Data</span><span class="pdoc-value" id="p-esen-data"></span></div>
+        </div>
+        <div class="pdoc-field" style="margin-top:8px"><span class="pdoc-label">Note cliniche</span><div class="pdoc-textarea-field" id="p-esen-note"></div></div>
+      </div>
+
+      <div class="pdoc-note">Il presente documento attesta che il paziente è affetto dalla patologia indicata e ha diritto all'esenzione dalla partecipazione al costo delle prestazioni sanitarie correlate alla patologia stessa, ai sensi della normativa vigente.</div>
+
+      <div class="pdoc-footer">
+        <div class="sign-box"><div class="sign-line">Firma del professionista</div></div>
+        <div class="sign-box"><div class="sign-line">Timbro professionale</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODULO: AFMS ══════════════════════════════════ -->
+<div id="mod-afms" class="mod-panel" style="display:none">
+  <div class="action-bar no-print" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm" onclick="stampaModulo('afms')">🖨️ Stampa modulo</button>
+    <button class="btn btn-ghost btn-sm" onclick="salvaModulo('afms','Prescrizione AFMS')">💾 Salva in cartella</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetMod('afms')">↺ Azzera campi</button>
+  </div>
+  <div class="mod-form no-print">
+    <h3>🥤 Dati paziente</h3>
+    <div class="mod-grid">
+      <div class="fi"><label>Cognome e Nome</label><input type="text" id="afms-paz-nome" placeholder="Rossi Mario"></div>
+      <div class="fi"><label>Codice Fiscale</label><input type="text" id="afms-paz-cf" placeholder="RSSMRA80A01H501Z" style="text-transform:uppercase"></div>
+      <div class="fi"><label>Data di nascita</label><input type="date" id="afms-paz-ddn"></div>
+      <div class="fi"><label>Peso (kg)</label><input type="number" id="afms-paz-peso" placeholder="70"></div>
+    </div>
+    <h3 style="margin-top:4px">🏥 Diagnosi e indicazione</h3>
+    <div class="mod-grid">
+      <div class="fi"><label>Diagnosi principale</label><input type="text" id="afms-diagnosi" placeholder="es. Insufficienza renale cronica, Sarcopenia"></div>
+      <div class="fi"><label>Indicazione clinica</label><input type="text" id="afms-indicazione" placeholder="es. Supporto nutrizionale orale"></div>
+    </div>
+    <div class="fi" style="margin-bottom:12px"><label>Note cliniche / motivazione</label><textarea id="afms-note-clin" placeholder="es. Inadeguato apporto proteico, BMI &lt; 22, rischio malnutrizione..."></textarea></div>
+    <h3 style="margin-top:4px">📦 Prodotti prescritti</h3>
+    <div id="afms-prodotti-list">
+      <div class="mod-grid mod-grid-3 afms-prodotto-row">
+        <div class="fi"><label>Prodotto / denominazione</label><input type="text" placeholder="es. Fortimel Compact Protein"></div>
+        <div class="fi"><label>Quantità / mese</label><input type="text" placeholder="es. 30 flaconcini da 125 ml"></div>
+        <div class="fi"><label>Durata prescrizione</label><input type="text" placeholder="es. 3 mesi"></div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="aggiungiProdottoAFMS()">+ Aggiungi prodotto</button>
+    <div class="mod-grid" style="margin-top:14px">
+      <div class="fi"><label>Dietista / Specialista</label><input type="text" id="afms-prof-nome" placeholder=""></div>
+      <div class="fi"><label>N° Albo</label><input type="text" id="afms-prof-albo" placeholder=""></div>
+    </div>
+  </div>
+
+  <!-- Print document -->
+  <div class="print-doc-wrap" id="print-afms">
+    <div class="pdoc">
+      <div class="pdoc-hdr">
+        <img class="pdoc-logo" id="p-afms-logo" src="" alt="" style="display:none">
+        <div class="pdoc-prof-info" id="p-afms-prof"></div>
+      </div>
+      <h2>Prescrizione Alimenti a Fini Medici Speciali (AFMS)</h2>
+      <div class="pdoc-subtitle">Ai sensi del D.Lgs. 111/1992 — Reg. UE 609/2013</div>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Dati del paziente</div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Cognome e Nome</span><span class="pdoc-value" id="p-afms-nome"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Codice Fiscale</span><span class="pdoc-value" id="p-afms-cf"></span></div>
+        </div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Data di nascita</span><span class="pdoc-value" id="p-afms-ddn"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Peso attuale</span><span class="pdoc-value" id="p-afms-peso"></span></div>
+        </div>
+      </div>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Diagnosi e indicazione clinica</div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Diagnosi</span><span class="pdoc-value" id="p-afms-diagnosi"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Indicazione</span><span class="pdoc-value" id="p-afms-indicazione"></span></div>
+        </div>
+        <div style="margin-top:8px"><span class="pdoc-label">Note cliniche</span><div class="pdoc-textarea-field" id="p-afms-note-clin"></div></div>
+      </div>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Prodotti prescritti</div>
+        <div id="p-afms-prodotti"></div>
+      </div>
+      <div class="pdoc-row" style="margin-top:8px">
+        <div class="pdoc-field"><span class="pdoc-label">Data prescrizione</span><span class="pdoc-value" id="p-afms-data"></span></div>
+      </div>
+      <div class="pdoc-footer">
+        <div class="sign-box"><div class="sign-line">Firma del professionista</div></div>
+        <div class="sign-box"><div class="sign-line">Timbro professionale</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODULO: PRODOTTI APROTEICI ══════════════════════════════════ -->
+<div id="mod-aproteici" class="mod-panel" style="display:none">
+  <div class="action-bar no-print" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm" onclick="stampaModulo('aproteici')">🖨️ Stampa modulo</button>
+    <button class="btn btn-ghost btn-sm" onclick="salvaModulo('aproteici','Prescrizione prodotti aproteici')">💾 Salva in cartella</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetMod('aproteici')">↺ Azzera campi</button>
+  </div>
+  <div class="mod-form no-print">
+    <h3>🫘 Dati paziente</h3>
+    <div class="mod-grid">
+      <div class="fi"><label>Cognome e Nome</label><input type="text" id="aprot-paz-nome" placeholder="Rossi Mario"></div>
+      <div class="fi"><label>Codice Fiscale</label><input type="text" id="aprot-paz-cf" placeholder="" style="text-transform:uppercase"></div>
+      <div class="fi"><label>Data di nascita</label><input type="date" id="aprot-paz-ddn"></div>
+      <div class="fi"><label>Peso (kg)</label><input type="number" id="aprot-paz-peso" placeholder="70"></div>
+    </div>
+    <h3 style="margin-top:4px">🏥 Diagnosi</h3>
+    <div class="mod-grid">
+      <div class="fi"><label>Patologia</label>
+        <select id="aprot-patologia">
+          <option value="">— Seleziona —</option>
+          <option value="Insufficienza renale cronica (IRC)">Insufficienza renale cronica (IRC)</option>
+          <option value="Fenilchetonuria (PKU)">Fenilchetonuria (PKU)</option>
+          <option value="Malattia di Wilson">Malattia di Wilson</option>
+          <option value="Encefalopatia epatica">Encefalopatia epatica</option>
+          <option value="Altra malattia metabolica">Altra malattia metabolica</option>
+        </select>
+      </div>
+      <div class="fi"><label>Stadio / dettaglio</label><input type="text" id="aprot-stadio" placeholder="es. CKD stadio 4, eGFR 20 mL/min"></div>
+    </div>
+    <div class="mod-grid">
+      <div class="fi"><label>Apporto proteico prescritto</label><input type="text" id="aprot-proteine" placeholder="es. 0.6 g/kg/die"></div>
+      <div class="fi"><label>Codice esenzione (se noto)</label><input type="text" id="aprot-esenzione" placeholder="es. 013"></div>
+    </div>
+    <h3 style="margin-top:4px">📦 Prodotti aproteici prescritti</h3>
+    <div id="aprot-prodotti-list">
+      <div class="mod-grid mod-grid-3 aprot-prodotto-row">
+        <div class="fi"><label>Prodotto</label><input type="text" placeholder="es. Aproten pasta rigatini"></div>
+        <div class="fi"><label>Quantità / mese</label><input type="text" placeholder="es. 4 kg"></div>
+        <div class="fi"><label>Note</label><input type="text" placeholder=""></div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="aggiungiProdottoAprot()">+ Aggiungi prodotto</button>
+    <div class="mod-grid" style="margin-top:14px">
+      <div class="fi"><label>Dietista / Specialista</label><input type="text" id="aprot-prof-nome" placeholder=""></div>
+      <div class="fi"><label>N° Albo</label><input type="text" id="aprot-prof-albo" placeholder=""></div>
+    </div>
+    <div class="fi" style="margin-top:12px;margin-bottom:0"><label>Note cliniche aggiuntive</label><textarea id="aprot-note" placeholder="es. Dieta ipoproteica controllata, fabbisogno energetico 30 kcal/kg/die..."></textarea></div>
+  </div>
+
+  <!-- Print document -->
+  <div class="print-doc-wrap" id="print-aproteici">
+    <div class="pdoc">
+      <div class="pdoc-hdr">
+        <img class="pdoc-logo" id="p-aprot-logo" src="" alt="" style="display:none">
+        <div class="pdoc-prof-info" id="p-aprot-prof"></div>
+      </div>
+      <h2>Prescrizione Prodotti Aproteici</h2>
+      <div class="pdoc-subtitle">Dieta controllata in proteine — Nota AIFA 81 — D.M. 8/06/2001 n. 279</div>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Dati del paziente</div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Cognome e Nome</span><span class="pdoc-value" id="p-aprot-nome"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Codice Fiscale</span><span class="pdoc-value" id="p-aprot-cf"></span></div>
+        </div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Data di nascita</span><span class="pdoc-value" id="p-aprot-ddn"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Peso attuale</span><span class="pdoc-value" id="p-aprot-peso"></span></div>
+        </div>
+      </div>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Diagnosi e piano nutrizionale</div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Patologia</span><span class="pdoc-value" id="p-aprot-patologia"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Stadio / dettaglio</span><span class="pdoc-value" id="p-aprot-stadio"></span></div>
+        </div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Apporto proteico prescritto</span><span class="pdoc-value" id="p-aprot-proteine"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Codice esenzione</span><span class="pdoc-value" id="p-aprot-esenzione"></span></div>
+        </div>
+        <div style="margin-top:8px"><span class="pdoc-label">Note cliniche</span><div class="pdoc-textarea-field" id="p-aprot-note"></div></div>
+      </div>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Prodotti aproteici prescritti</div>
+        <div id="p-aprot-prodotti"></div>
+      </div>
+      <div class="pdoc-row" style="margin-top:8px">
+        <div class="pdoc-field"><span class="pdoc-label">Data prescrizione</span><span class="pdoc-value" id="p-aprot-data"></span></div>
+      </div>
+      <div class="pdoc-footer">
+        <div class="sign-box"><div class="sign-line">Firma del professionista</div></div>
+        <div class="sign-box"><div class="sign-line">Timbro professionale</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODULO: DIARIO ALIMENTARE ══════════════════════════════════ -->
+<div id="mod-diario" class="mod-panel" style="display:none">
+  <div class="action-bar no-print" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm" onclick="stampaModulo('diario')">🖨️ Stampa modulo</button>
+    <button class="btn btn-ghost btn-sm" onclick="salvaModulo('diario','Diario alimentare')">💾 Salva in cartella</button>
+  </div>
+  <div class="mod-form no-print">
+    <h3>📓 Configurazione diario</h3>
+    <div class="mod-grid">
+      <div class="fi"><label>Nome paziente</label><input type="text" id="diario-nome" placeholder="Rossi Mario"></div>
+      <div class="fi"><label>Numero di giorni</label>
+        <select id="diario-giorni">
+          <option value="3">3 giorni</option>
+          <option value="7" selected>7 giorni</option>
+        </select>
+      </div>
+    </div>
+    <div class="fi"><label>Istruzioni per il paziente</label><textarea id="diario-istruzioni" rows="3">Annotare tutto ciò che viene consumato durante la giornata: alimenti, bevande, condimenti e snack. Indicare quantità approssimative (cucchiai, grammi, porzioni). Segnalare l'orario di ogni pasto.</textarea></div>
+  </div>
+  <div class="print-doc-wrap" id="print-diario">
+    <div class="pdoc">
+      <div class="pdoc-hdr">
+        <img class="pdoc-logo" id="p-diario-logo" src="" alt="" style="display:none">
+        <div class="pdoc-prof-info" id="p-diario-prof"></div>
+      </div>
+      <h2>Diario Alimentare</h2>
+      <div class="pdoc-subtitle">Paziente: <span id="p-diario-nome" style="font-weight:700"></span></div>
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:10px 12px;margin-bottom:14px;font-size:11px;line-height:1.5" id="p-diario-istruzioni"></div>
+      <div id="p-diario-days"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODULO: CONSENSO INFORMATO ══════════════════════════════════ -->
+<div id="mod-consenso" class="mod-panel" style="display:none">
+  <div class="action-bar no-print" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm" onclick="stampaModulo('consenso')">🖨️ Stampa modulo</button>
+    <button class="btn btn-ghost btn-sm" onclick="salvaModulo('consenso','Consenso informato')">💾 Salva in cartella</button>
+  </div>
+  <div class="mod-form no-print">
+    <h3>✍️ Dati paziente</h3>
+    <div class="mod-grid">
+      <div class="fi"><label>Cognome e Nome</label><input type="text" id="cons-paz-nome" placeholder="Rossi Mario"></div>
+      <div class="fi"><label>Codice Fiscale</label><input type="text" id="cons-paz-cf" style="text-transform:uppercase" placeholder=""></div>
+      <div class="fi"><label>Data di nascita</label><input type="date" id="cons-paz-ddn"></div>
+      <div class="fi"><label>Comune di residenza</label><input type="text" id="cons-paz-comune" placeholder=""></div>
+    </div>
+    <div class="mod-grid">
+      <div class="fi"><label>Professionista</label><input type="text" id="cons-prof-nome" placeholder=""></div>
+      <div class="fi"><label>Studio / Struttura</label><input type="text" id="cons-studio" placeholder=""></div>
+    </div>
+    <div class="fi"><label>Oggetto della consulenza</label><textarea id="cons-oggetto" rows="2" placeholder="es. Consulenza dietetica nutrizionale, impostazione piano alimentare personalizzato"></textarea></div>
+  </div>
+  <div class="print-doc-wrap" id="print-consenso">
+    <div class="pdoc">
+      <div class="pdoc-hdr">
+        <img class="pdoc-logo" id="p-cons-logo" src="" alt="" style="display:none">
+        <div class="pdoc-prof-info" id="p-cons-prof"></div>
+      </div>
+      <h2>Modulo di Consenso Informato</h2>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Dati del paziente</div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Cognome e Nome</span><span class="pdoc-value" id="p-cons-nome"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Codice Fiscale</span><span class="pdoc-value" id="p-cons-cf"></span></div>
+        </div>
+        <div class="pdoc-row">
+          <div class="pdoc-field"><span class="pdoc-label">Data di nascita</span><span class="pdoc-value" id="p-cons-ddn"></span></div>
+          <div class="pdoc-field"><span class="pdoc-label">Comune di residenza</span><span class="pdoc-value" id="p-cons-comune"></span></div>
+        </div>
+      </div>
+      <div class="pdoc-section">
+        <div class="pdoc-section-title">Oggetto della consulenza</div>
+        <div class="pdoc-textarea-field" id="p-cons-oggetto"></div>
+      </div>
+      <div class="pdoc-section">
+        <div style="font-size:11.5px;line-height:1.7;color:#1E293B">
+          <p>Il/La sottoscritto/a dichiara di essere stato/a adeguatamente informato/a dal professionista <strong id="p-cons-prof-nome-inline"></strong>, in merito alla natura e alle finalità della consulenza dietetico-nutrizionale, ai benefici attesi, alle possibili limitazioni e alle alternative disponibili.</p>
+          <p>Il/La sottoscritto/a dichiara di aver compreso le informazioni ricevute e di avere avuto la possibilità di porre domande e ricevere risposte esaurienti. Pertanto <strong>presta liberamente il proprio consenso</strong> all'esecuzione della consulenza e all'elaborazione del piano alimentare personalizzato.</p>
+          <p>Il/La sottoscritto/a è informato/a del proprio diritto di revocare il presente consenso in qualsiasi momento, senza che ciò comporti alcun pregiudizio.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:30px;border-top:1px solid #CBD5E1;padding-top:14px">
+        <div class="sign-box" style="text-align:center">
+          <div style="height:36px"></div>
+          <div class="sign-line" style="font-size:10.5px;color:#64748B;border-top:1px solid #94A3B8;padding-top:6px">Luogo e data</div>
+        </div>
+        <div class="sign-box" style="text-align:center">
+          <div style="height:36px"></div>
+          <div class="sign-line" style="font-size:10.5px;color:#64748B;border-top:1px solid #94A3B8;padding-top:6px">Firma del paziente</div>
+        </div>
+        <div class="sign-box" style="text-align:center">
+          <div style="height:36px"></div>
+          <div class="sign-line" style="font-size:10.5px;color:#64748B;border-top:1px solid #94A3B8;padding-top:6px">Firma del professionista</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</main>
+
+<div id="toast"></div>
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:9999;align-items:center;justify-content:center">
+  <div style="text-align:center"><div style="font-size:32px">⏳</div><p style="font-size:13px;color:var(--slate-m);margin-top:8px" id="loading-text">Caricamento...</p></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
+<script src="js/db.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/lang.js" defer></script>
+<script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function toast(msg,type='ok'){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast show '+(type==='err'?'toast-err':type==='warn'?'toast-warn':'toast-ok');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3200);}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  const ok = await checkAuth();
+  if (!ok) return;
+  if (overlay) overlay.style.display = 'none';
+  autoFillProfOp();
+  const params = new URLSearchParams(location.search);
+  const cartId = params.get('cartella');
+  if (cartId) setTimeout(() => { const s = document.getElementById('inp-cartella'); if (s) s.value = cartId; }, 400);
+});
+
+function autoFillProfOp() {
+  const p = getProfiloOperatore();
+  const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
+  ['esen-prof-nome','afms-prof-nome','aprot-prof-nome','cons-prof-nome'].forEach(id => {
+    const el = document.getElementById(id); if (el && !el.value) el.value = nome;
+  });
+  ['esen-prof-albo','afms-prof-albo','aprot-prof-albo'].forEach(id => {
+    const el = document.getElementById(id); if (el && !el.value) el.value = p.albo || '';
+  });
+}
+
+function showMod(id) {
+  document.querySelectorAll('.mod-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.mod-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('mod-' + id).style.display = '';
+  event.target.classList.add('active');
+}
+
+function resetMod(mod) {
+  document.querySelectorAll('#mod-' + mod + ' input, #mod-' + mod + ' textarea, #mod-' + mod + ' select').forEach(el => {
+    if (el.type === 'select-one') el.selectedIndex = 0;
+    else if (el.type !== 'button') el.value = '';
+  });
+  autoFillProfOp();
+}
+
+function fmtDate(val) {
+  if (!val) return '___________';
+  try { return new Date(val + 'T12:00').toLocaleDateString('it', { day:'2-digit', month:'long', year:'numeric' }); } catch(e) { return val; }
+}
+
+function setProfHeader(logoId, profId) {
+  const p = getProfiloOperatore();
+  const logoEl = document.getElementById(logoId);
+  if (p.logo && logoEl) { logoEl.src = p.logo; logoEl.style.display = 'block'; } else if (logoEl) logoEl.style.display = 'none';
+  const profEl = document.getElementById(profId);
+  if (!profEl) return;
+  const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
+  let html = '';
+  if (nome) html += `<strong style="font-size:13px;color:#1E293B">${esc(nome)}</strong><br>`;
+  if (p.spec) html += `<span>${esc(p.spec)}</span><br>`;
+  if (p.albo) html += `<span>N° Albo: ${esc(p.albo)}</span><br>`;
+  if (p.piva) html += `<span>P.IVA: ${esc(p.piva)}</span>`;
+  profEl.innerHTML = html;
+}
+
+// ── ESENZIONE ──
+function stampaModulo(tipo) {
+  const preps = {
+    esenzione() {
+      setProfHeader('p-esen-logo','p-esen-prof');
+      const codSel = document.getElementById('esen-codice'); const codVal = codSel.value === 'altro' ? document.getElementById('esen-codice-alt').value : (codSel.options[codSel.selectedIndex]?.text || '');
+      document.getElementById('p-esen-nome').textContent = document.getElementById('esen-paz-nome').value || '___________';
+      document.getElementById('p-esen-cf').textContent = document.getElementById('esen-paz-cf').value || '___________';
+      document.getElementById('p-esen-ddn').textContent = fmtDate(document.getElementById('esen-paz-ddn').value);
+      document.getElementById('p-esen-comune').textContent = document.getElementById('esen-paz-comune').value || '___________';
+      document.getElementById('p-esen-patologia').textContent = document.getElementById('esen-patologia').value || '___________';
+      document.getElementById('p-esen-codice').textContent = codVal || '___________';
+      document.getElementById('p-esen-icd').textContent = document.getElementById('esen-icd').value || '___________';
+      document.getElementById('p-esen-data').textContent = new Date().toLocaleDateString('it');
+      document.getElementById('p-esen-note').textContent = document.getElementById('esen-note').value || '';
+    },
+    afms() {
+      setProfHeader('p-afms-logo','p-afms-prof');
+      document.getElementById('p-afms-nome').textContent = document.getElementById('afms-paz-nome').value || '___________';
+      document.getElementById('p-afms-cf').textContent = document.getElementById('afms-paz-cf').value || '___________';
+      document.getElementById('p-afms-ddn').textContent = fmtDate(document.getElementById('afms-paz-ddn').value);
+      document.getElementById('p-afms-peso').textContent = document.getElementById('afms-paz-peso').value ? document.getElementById('afms-paz-peso').value + ' kg' : '___';
+      document.getElementById('p-afms-diagnosi').textContent = document.getElementById('afms-diagnosi').value || '___________';
+      document.getElementById('p-afms-indicazione').textContent = document.getElementById('afms-indicazione').value || '___________';
+      document.getElementById('p-afms-note-clin').textContent = document.getElementById('afms-note-clin').value || '';
+      document.getElementById('p-afms-data').textContent = new Date().toLocaleDateString('it');
+      // Products
+      const rows = document.querySelectorAll('.afms-prodotto-row');
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#F8FAFC"><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Prodotto</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Quantità/mese</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Durata</th></tr></thead><tbody>';
+      rows.forEach(r => {
+        const inps = r.querySelectorAll('input');
+        if (inps[0]?.value) html += `<tr><td style="padding:5px 8px;border:1px solid #E2E8F0">${esc(inps[0].value)}</td><td style="padding:5px 8px;border:1px solid #E2E8F0">${esc(inps[1]?.value||'')}</td><td style="padding:5px 8px;border:1px solid #E2E8F0">${esc(inps[2]?.value||'')}</td></tr>`;
+      });
+      html += '</tbody></table>';
+      document.getElementById('p-afms-prodotti').innerHTML = html;
+    },
+    aproteici() {
+      setProfHeader('p-aprot-logo','p-aprot-prof');
+      document.getElementById('p-aprot-nome').textContent = document.getElementById('aprot-paz-nome').value || '___________';
+      document.getElementById('p-aprot-cf').textContent = document.getElementById('aprot-paz-cf').value || '___________';
+      document.getElementById('p-aprot-ddn').textContent = fmtDate(document.getElementById('aprot-paz-ddn').value);
+      document.getElementById('p-aprot-peso').textContent = document.getElementById('aprot-paz-peso').value ? document.getElementById('aprot-paz-peso').value + ' kg' : '___';
+      document.getElementById('p-aprot-patologia').textContent = document.getElementById('aprot-patologia').value || '___________';
+      document.getElementById('p-aprot-stadio').textContent = document.getElementById('aprot-stadio').value || '___________';
+      document.getElementById('p-aprot-proteine').textContent = document.getElementById('aprot-proteine').value || '___________';
+      document.getElementById('p-aprot-esenzione').textContent = document.getElementById('aprot-esenzione').value || '___________';
+      document.getElementById('p-aprot-note').textContent = document.getElementById('aprot-note').value || '';
+      document.getElementById('p-aprot-data').textContent = new Date().toLocaleDateString('it');
+      const rows = document.querySelectorAll('.aprot-prodotto-row');
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#F8FAFC"><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Prodotto</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Quantità/mese</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Note</th></tr></thead><tbody>';
+      rows.forEach(r => {
+        const inps = r.querySelectorAll('input');
+        if (inps[0]?.value) html += `<tr><td style="padding:5px 8px;border:1px solid #E2E8F0">${esc(inps[0].value)}</td><td style="padding:5px 8px;border:1px solid #E2E8F0">${esc(inps[1]?.value||'')}</td><td style="padding:5px 8px;border:1px solid #E2E8F0">${esc(inps[2]?.value||'')}</td></tr>`;
+      });
+      html += '</tbody></table>';
+      document.getElementById('p-aprot-prodotti').innerHTML = html;
+    },
+    diario() {
+      setProfHeader('p-diario-logo','p-diario-prof');
+      document.getElementById('p-diario-nome').textContent = document.getElementById('diario-nome').value || '___________';
+      document.getElementById('p-diario-istruzioni').textContent = document.getElementById('diario-istruzioni').value || '';
+      const giorni = parseInt(document.getElementById('diario-giorni').value) || 7;
+      let daysHtml = '';
+      for (let i = 1; i <= giorni; i++) {
+        daysHtml += `<div style="margin-bottom:16px;page-break-inside:avoid">
+          <div style="font-weight:700;font-size:12px;color:#0F766E;border-bottom:1.5px solid #0F766E;padding-bottom:3px;margin-bottom:8px">Giorno ${i} — Data: _______________</div>
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr style="background:#F0FDF4"><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:18%">Pasto</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:12%">Orario</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Alimento / Bevanda</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:20%">Quantità</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:20%">Note / Luogo</th></tr></thead>
+            <tbody>
+              ${['Colazione','Spuntino mattina','Pranzo','Merenda','Cena','Spuntino sera'].map(m => `<tr><td style="padding:6px 8px;border:1px solid #E2E8F0;font-weight:600;color:#475569;white-space:nowrap">${m}</td><td style="padding:6px 8px;border:1px solid #E2E8F0"></td><td style="padding:6px 8px;border:1px solid #E2E8F0;min-height:20px"></td><td style="padding:6px 8px;border:1px solid #E2E8F0"></td><td style="padding:6px 8px;border:1px solid #E2E8F0"></td></tr>`).join('')}
+            </tbody>
+          </table>
+          <div style="font-size:10px;color:#64748B;margin-top:5px">Acqua totale: _______ mL &nbsp;&nbsp; Integratori assunti: ___________________________</div>
+        </div>`;
+      }
+      document.getElementById('p-diario-days').innerHTML = daysHtml;
+    },
+    consenso() {
+      setProfHeader('p-cons-logo','p-cons-prof');
+      document.getElementById('p-cons-nome').textContent = document.getElementById('cons-paz-nome').value || '___________';
+      document.getElementById('p-cons-cf').textContent = document.getElementById('cons-paz-cf').value || '___________';
+      document.getElementById('p-cons-ddn').textContent = fmtDate(document.getElementById('cons-paz-ddn').value);
+      document.getElementById('p-cons-comune').textContent = document.getElementById('cons-paz-comune').value || '___________';
+      document.getElementById('p-cons-oggetto').textContent = document.getElementById('cons-oggetto').value || '';
+      const profNome = document.getElementById('cons-prof-nome').value || ((() => { const p = getProfiloOperatore(); return [p.nome,p.cognome].filter(Boolean).join(' '); })());
+      document.getElementById('p-cons-prof-nome-inline').textContent = profNome;
+      const p = getProfiloOperatore();
+      const pn = profNome || [p.nome,p.cognome].filter(Boolean).join(' ');
+      let ph = '';
+      if (pn) ph += `<strong>${esc(pn)}</strong><br>`;
+      if (p.spec) ph += `${esc(p.spec)}<br>`;
+      const studio = document.getElementById('cons-studio').value;
+      if (studio) ph += `${esc(studio)}<br>`;
+      if (p.albo) ph += `N° Albo: ${esc(p.albo)}`;
+      document.getElementById('p-cons-prof').innerHTML = ph;
+    }
+  };
+  if (preps[tipo]) preps[tipo]();
+  // Temporarily show print doc
+  const printEl = document.getElementById('print-' + tipo);
+  printEl.style.display = 'block';
+  window.print();
+  printEl.style.display = 'none';
+}
+
+async function salvaModulo(tipo, titoloDefault) {
+  const cartellaId = document.getElementById('inp-cartella')?.value;
+  if (!cartellaId) { toast('Seleziona una cartella paziente', 'warn'); return; }
+  if (!currentUser) return;
+  const titolo = titoloDefault + ' — ' + new Date().toLocaleDateString('it');
+  const { error } = await sb.from('note_specialistiche').insert({
+    user_id: currentUser.id, cartella_id: cartellaId,
+    tipo: 'modulo_' + tipo, nota: titolo,
+    dati: JSON.stringify({ tipo_modulo: tipo, data: new Date().toISOString() }),
+    visible_to_patient: false,
+  });
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  toast('Modulo salvato nella cartella ✓', 'ok');
+}
+
+function aggiungiProdottoAFMS() {
+  const list = document.getElementById('afms-prodotti-list');
+  const div = document.createElement('div');
+  div.className = 'mod-grid mod-grid-3 afms-prodotto-row';
+  div.style.marginTop = '8px';
+  div.innerHTML = `<div class="fi"><input type="text" placeholder="Prodotto"></div><div class="fi"><input type="text" placeholder="Quantità / mese"></div><div class="fi" style="display:flex;gap:6px"><input type="text" placeholder="Durata" style="flex:1"><button onclick="this.closest('.afms-prodotto-row').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0" title="Rimuovi">✕</button></div>`;
+  list.appendChild(div);
+}
+
+function aggiungiProdottoAprot() {
+  const list = document.getElementById('aprot-prodotti-list');
+  const div = document.createElement('div');
+  div.className = 'mod-grid mod-grid-3 aprot-prodotto-row';
+  div.style.marginTop = '8px';
+  div.innerHTML = `<div class="fi"><input type="text" placeholder="Prodotto"></div><div class="fi"><input type="text" placeholder="Quantità / mese"></div><div class="fi" style="display:flex;gap:6px"><input type="text" placeholder="Note" style="flex:1"><button onclick="this.closest('.aprot-prodotto-row').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0">✕</button></div>`;
+  list.appendChild(div);
+}
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+function showLoading(msg){const o=document.getElementById('loading-overlay');if(o){o.style.display='flex';}}
+function hideLoading(){const o=document.getElementById('loading-overlay');if(o)o.style.display='none';}
+</script>
+</body>
+</html>

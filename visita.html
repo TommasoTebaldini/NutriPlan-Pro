@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resoconto Visita — DietPlan Pro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://hvdwqowkhutfsdpiubxe.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ── Editor ── */
+.editor-toolbar{display:flex;gap:3px;flex-wrap:wrap;padding:8px 10px;background:#F8FAFC;border:1.5px solid var(--border-d);border-radius:var(--r-sm) var(--r-sm) 0 0;border-bottom:none}
+.editor-toolbar button{background:white;border:1.5px solid var(--border-d);border-radius:5px;padding:4px 8px;cursor:pointer;font-size:12.5px;font-family:inherit;color:var(--slate);transition:all .12s;line-height:1.2}
+.editor-toolbar button:hover{background:#EFF6FF;border-color:var(--teal-l);color:var(--teal-d)}
+.editor-toolbar button.active{background:var(--teal);border-color:var(--teal-d);color:white}
+.editor-toolbar .sep{width:1px;background:var(--border-d);margin:2px 4px;align-self:stretch}
+.editor-toolbar select{padding:4px 7px;border:1.5px solid var(--border-d);border-radius:5px;font-size:12.5px;font-family:inherit;color:var(--slate);background:white;cursor:pointer}
+#editor-body{min-height:340px;padding:18px 20px;border:1.5px solid var(--border-d);border-radius:0 0 var(--r-sm) var(--r-sm);background:white;font-size:14px;line-height:1.7;color:var(--slate);outline:none;white-space:pre-wrap;word-wrap:break-word}
+#editor-body:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(15,118,110,.1)}
+#editor-body h1,#editor-body h2,#editor-body h3{margin:12px 0 6px;font-family:'DM Serif Display',serif}
+#editor-body ul,#editor-body ol{padding-left:22px;margin:6px 0}
+#editor-body ul li,#editor-body ol li{margin-bottom:3px}
+/* ── Saved visits list ── */
+.visita-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:white;border:1.5px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:all .15s}
+.visita-item:hover{border-color:var(--teal-l);box-shadow:0 2px 10px rgba(15,118,110,.08)}
+/* ── Print ── */
+@media print{
+  #sidebar,#topbar,#topbar-spacer,.editor-toolbar,.no-print,#loading-overlay,#toast{display:none!important}
+  #main{margin-left:0!important;padding:0!important}
+  .page-content{padding:0!important;max-width:none!important}
+  #print-area{display:block!important}
+  #editor-panel{display:none!important}
+  #saved-panel{display:none!important}
+  body{background:white!important}
+}
+#print-area{display:none}
+/* Print document styles */
+.print-doc{font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#1E293B;line-height:1.6}
+.print-doc .doc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:2px solid #0F766E;margin-bottom:20px}
+.print-doc .doc-logo{max-height:64px;max-width:160px;object-fit:contain}
+.print-doc .doc-prof{text-align:right;font-size:11.5px;color:#475569;line-height:1.5}
+.print-doc .doc-prof strong{font-size:13px;color:#1E293B;display:block;margin-bottom:2px}
+.print-doc h1{font-size:17px;font-weight:700;color:#0F766E;margin:0 0 14px;font-family:'DM Sans',Arial,sans-serif}
+.print-doc .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;background:#F8FAFC;border-radius:8px;padding:12px 14px;margin-bottom:18px;border:1px solid #E2E8F0;font-size:12.5px}
+.print-doc .info-row{display:flex;gap:6px}<br>
+.print-doc .info-lbl{font-weight:700;color:#475569;white-space:nowrap}
+.print-doc .info-val{color:#1E293B}
+.print-doc .doc-body{min-height:200px;white-space:pre-wrap;word-wrap:break-word;font-size:13px;line-height:1.7}
+.print-doc .doc-footer{margin-top:40px;padding-top:14px;border-top:1px solid #CBD5E1;display:flex;justify-content:flex-end}
+.print-doc .sign-line{font-size:12px;color:#64748B;text-align:center}
+.print-doc .sign-line::before{content:'';display:block;width:200px;border-bottom:1px solid #94A3B8;margin-bottom:6px}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item" href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item" href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item" href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item" href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item" href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item active" href="visita.html"><span class="ni">🩺</span>Resoconto Visita</a>
+  <a class="nav-item" href="moduli.html"><span class="ni">📄</span>Moduli Stampabili</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item" href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">🩺 Resoconto Visita</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm no-print" onclick="showSaved()">📂 Salvate</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="nuovaVisita()">+ Nuova</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="stampaVisita()">🖨️ Stampa</button>
+    <button class="btn btn-primary btn-sm no-print" onclick="salvaVisita()">💾 Salva</button>
+  </div>
+</div>
+
+<main id="main">
+<div class="page-content">
+
+<!-- EDITOR PANEL -->
+<div id="editor-panel">
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start">
+
+    <!-- LEFT: editor -->
+    <div>
+      <!-- Meta -->
+      <div class="card" style="margin-bottom:14px;padding:16px 18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+          <div class="fg">
+            <label>Tipo visita</label>
+            <select id="v-tipo" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;background:white;color:var(--slate)">
+              <option value="Prima visita">Prima visita</option>
+              <option value="Visita di controllo">Visita di controllo</option>
+              <option value="Follow-up">Follow-up</option>
+              <option value="Visita urgente">Visita urgente</option>
+              <option value="Consulenza telefonica">Consulenza telefonica</option>
+              <option value="Altro">Altro</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Data visita</label>
+            <input type="date" id="v-data" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit">
+          </div>
+          <div class="fg">
+            <label>Paziente (cartella)</label>
+            <select id="inp-cartella" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;background:white;color:var(--slate)">
+              <option value="">— Nessuna cartella —</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Titolo / Oggetto visita</label>
+          <input type="text" id="v-titolo" placeholder="es. Prima visita nutrizionale — impostazione piano personalizzato" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        </div>
+      </div>
+
+      <!-- Rich text editor -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="editor-toolbar" id="editor-toolbar">
+          <select onchange="execFmt('formatBlock',this.value);this.value=''" title="Stile testo">
+            <option value="">Stile</option>
+            <option value="h2">Titolo grande</option>
+            <option value="h3">Titolo piccolo</option>
+            <option value="p">Paragrafo</option>
+          </select>
+          <div class="sep"></div>
+          <button onclick="execFmt('bold')" title="Grassetto"><b>G</b></button>
+          <button onclick="execFmt('italic')" title="Corsivo"><i>C</i></button>
+          <button onclick="execFmt('underline')" title="Sottolineato"><u>S</u></button>
+          <div class="sep"></div>
+          <button onclick="execFmt('insertUnorderedList')" title="Elenco puntato">• Lista</button>
+          <button onclick="execFmt('insertOrderedList')" title="Elenco numerato">1. Lista</button>
+          <div class="sep"></div>
+          <button onclick="insertSeparator()" title="Inserisci riga separatrice">— sep —</button>
+          <button onclick="insertTemplate('anamnesi')" title="Inserisci sezioni standard" style="background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8">📋 Template</button>
+        </div>
+        <div id="editor-body" contenteditable="true" spellcheck="true" style="padding:20px 22px;min-height:420px">
+          <p>Scrivi qui il resoconto della visita...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: profile preview + quick insert -->
+    <div>
+      <!-- Profilo anteprima -->
+      <div class="card" style="margin-bottom:14px;padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--slate);margin:0 0 12px;display:flex;align-items:center;gap:6px">👤 Intestazione documento</h4>
+        <div id="prof-preview" style="border:1.5px dashed var(--border-d);border-radius:8px;padding:12px;background:#F8FAFC;font-size:12px;color:var(--slate-m);line-height:1.5;text-align:center">
+          Configura il profilo operatore dalla barra laterale (bottone "Profilo Operatore") per aggiungere logo e dati professionali al documento.
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%" onclick="openProfiloModal()">⚙️ Configura profilo</button>
+      </div>
+
+      <!-- Inserimento rapido sezioni -->
+      <div class="card" style="padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--slate);margin:0 0 10px">⚡ Inserimento rapido</h4>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Anamnesi alimentare')" style="text-align:left;justify-content:flex-start">+ Anamnesi alimentare</button>
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Obiettivi condivisi')" style="text-align:left;justify-content:flex-start">+ Obiettivi condivisi</button>
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Valutazione antropometrica')" style="text-align:left;justify-content:flex-start">+ Valutazione antropometrica</button>
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Esame fisico')" style="text-align:left;justify-content:flex-start">+ Esame fisico</button>
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Indicazioni dietetiche')" style="text-align:left;justify-content:flex-start">+ Indicazioni dietetiche</button>
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Prescrizione')" style="text-align:left;justify-content:flex-start">+ Prescrizione</button>
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Prossima visita')" style="text-align:left;justify-content:flex-start">+ Prossima visita</button>
+          <button class="btn btn-ghost btn-sm" onclick="insertSection('Note cliniche')" style="text-align:left;justify-content:flex-start">+ Note cliniche</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SAVED PANEL -->
+<div id="saved-panel" style="display:none">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <h3 style="font-size:15px;font-weight:700;margin:0;flex:1">📂 Visite Salvate</h3>
+    <button class="btn btn-primary btn-sm" onclick="nuovaVisita()">+ Nuova Visita</button>
+    <button class="btn btn-ghost btn-sm" onclick="showEditor()">← Editor</button>
+  </div>
+  <div id="saved-list"></div>
+</div>
+
+<!-- PRINT AREA (hidden, shown only on print) -->
+<div id="print-area" class="print-doc">
+  <div class="doc-header">
+    <div>
+      <img id="print-logo" src="" alt="Logo" class="doc-logo" style="display:none">
+    </div>
+    <div class="doc-prof">
+      <strong id="print-prof-nome"></strong>
+      <span id="print-prof-spec"></span>
+      <span id="print-prof-albo"></span>
+    </div>
+  </div>
+  <h1>🩺 Resoconto Visita Dietologica</h1>
+  <div class="info-grid">
+    <div class="info-row"><span class="info-lbl">Paziente:</span><span class="info-val" id="print-paziente">—</span></div>
+    <div class="info-row"><span class="info-lbl">Data visita:</span><span class="info-val" id="print-data">—</span></div>
+    <div class="info-row"><span class="info-lbl">Tipo visita:</span><span class="info-val" id="print-tipo">—</span></div>
+    <div class="info-row"><span class="info-lbl">Oggetto:</span><span class="info-val" id="print-titolo">—</span></div>
+  </div>
+  <div id="print-body" class="doc-body"></div>
+  <div class="doc-footer">
+    <div class="sign-line">Firma del Professionista</div>
+  </div>
+</div>
+
+</div>
+</main>
+
+<div id="toast"></div>
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:9999;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center"><div style="font-size:32px;animation:spin 1s linear infinite">⏳</div><p style="font-size:13px;color:var(--slate-m);margin-top:8px" id="loading-text">Caricamento...</p></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
+<script src="js/db.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/lang.js" defer></script>
+<script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function toast(msg, type='ok'){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast show '+(type==='err'?'toast-err':type==='warn'?'toast-warn':'toast-ok');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3200);}
+
+let _currentVisitaId = null;
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', async () => {
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  const ok = await checkAuth();
+  if (!ok) return;
+  if (overlay) overlay.style.display = 'none';
+
+  // Set today's date
+  document.getElementById('v-data').value = new Date().toISOString().slice(0,10);
+
+  // Load profile preview
+  updateProfPreview();
+
+  // Check URL params for cartella pre-selection
+  const params = new URLSearchParams(location.search);
+  const cartId = params.get('cartella');
+  if (cartId) setTimeout(() => { const sel = document.getElementById('inp-cartella'); if (sel) sel.value = cartId; }, 300);
+});
+
+function updateProfPreview() {
+  const p = getProfiloOperatore();
+  const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
+  const preview = document.getElementById('prof-preview');
+  if (!preview) return;
+  if (!nome && !p.logo) {
+    preview.innerHTML = 'Configura il profilo operatore dalla barra laterale (bottone "Profilo Operatore") per aggiungere logo e dati professionali al documento.';
+    preview.style.textAlign = 'center';
+    return;
+  }
+  let html = '';
+  if (p.logo) html += `<img src="${p.logo}" alt="Logo" style="max-height:50px;max-width:120px;object-fit:contain;display:block;margin-bottom:6px">`;
+  if (nome) html += `<div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(nome)}</div>`;
+  if (p.spec) html += `<div style="font-size:11.5px;color:var(--slate-m)">${esc(p.spec)}</div>`;
+  if (p.albo) html += `<div style="font-size:11px;color:var(--slate-l)">N° Albo: ${esc(p.albo)}</div>`;
+  preview.innerHTML = html;
+  preview.style.textAlign = 'left';
+}
+
+// ── Editor ──
+function execFmt(cmd, val) {
+  document.getElementById('editor-body').focus();
+  document.execCommand(cmd, false, val || null);
+}
+
+function insertSeparator() {
+  document.getElementById('editor-body').focus();
+  document.execCommand('insertHTML', false, '<hr style="border:none;border-top:1.5px solid #CBD5E1;margin:14px 0">');
+}
+
+function insertSection(title) {
+  const editor = document.getElementById('editor-body');
+  editor.focus();
+  document.execCommand('insertHTML', false,
+    `<h3 style="font-weight:700;color:#0F766E;margin:18px 0 6px;border-bottom:1px solid #CCFBF1;padding-bottom:4px">${title}</h3><p><br></p>`
+  );
+}
+
+function insertTemplate(type) {
+  const editor = document.getElementById('editor-body');
+  editor.focus();
+  editor.innerHTML = `
+    <h3 style="font-weight:700;color:#0F766E;margin:18px 0 6px;border-bottom:1px solid #CCFBF1;padding-bottom:4px">Motivo della visita</h3>
+    <p><br></p>
+    <h3 style="font-weight:700;color:#0F766E;margin:18px 0 6px;border-bottom:1px solid #CCFBF1;padding-bottom:4px">Anamnesi alimentare</h3>
+    <p><br></p>
+    <h3 style="font-weight:700;color:#0F766E;margin:18px 0 6px;border-bottom:1px solid #CCFBF1;padding-bottom:4px">Valutazione antropometrica</h3>
+    <p>Peso: ___ kg &nbsp;&nbsp; Altezza: ___ cm &nbsp;&nbsp; BMI: ___ kg/m²</p>
+    <p><br></p>
+    <h3 style="font-weight:700;color:#0F766E;margin:18px 0 6px;border-bottom:1px solid #CCFBF1;padding-bottom:4px">Obiettivi condivisi</h3>
+    <p><br></p>
+    <h3 style="font-weight:700;color:#0F766E;margin:18px 0 6px;border-bottom:1px solid #CCFBF1;padding-bottom:4px">Indicazioni dietetiche</h3>
+    <p><br></p>
+    <h3 style="font-weight:700;color:#0F766E;margin:18px 0 6px;border-bottom:1px solid #CCFBF1;padding-bottom:4px">Prossima visita</h3>
+    <p><br></p>`;
+}
+
+// ── Save / Load ──
+async function salvaVisita() {
+  const titolo = document.getElementById('v-titolo').value.trim() || 'Resoconto visita';
+  const tipo = document.getElementById('v-tipo').value;
+  const data = document.getElementById('v-data').value;
+  const cartellaId = document.getElementById('inp-cartella').value;
+  const contenuto = document.getElementById('editor-body').innerHTML;
+
+  if (!currentUser) { toast('Sessione scaduta', 'err'); return; }
+
+  const dati = JSON.stringify({ tipo_visita: tipo, data_visita: data, contenuto_html: contenuto });
+  const record = {
+    user_id: currentUser.id,
+    cartella_id: cartellaId || null,
+    tipo: 'visita_clinica',
+    nota: titolo,
+    dati,
+    visible_to_patient: false,
+    created_at: new Date().toISOString(),
+  };
+
+  let error;
+  if (_currentVisitaId) {
+    ({ error } = await sb.from('note_specialistiche').update({ nota: titolo, dati, updated_at: new Date().toISOString() }).eq('id', _currentVisitaId));
+  } else {
+    const { data: inserted, error: insertErr } = await sb.from('note_specialistiche').insert(record).select('id').single();
+    error = insertErr;
+    if (inserted) _currentVisitaId = inserted.id;
+  }
+
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  toast('Visita salvata ✓', 'ok');
+  updateProfPreview();
+}
+
+async function loadSavedVisite() {
+  if (!currentUser) return;
+  const { data, error } = await sb.from('note_specialistiche')
+    .select('id,nota,dati,created_at,cartella_id')
+    .eq('user_id', currentUser.id)
+    .eq('tipo', 'visita_clinica')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+
+  const list = document.getElementById('saved-list');
+  if (!data || !data.length) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:13px;font-style:italic">Nessuna visita salvata.</div>';
+    return;
+  }
+
+  list.innerHTML = data.map(v => {
+    let d = {}; try { d = JSON.parse(v.dati || '{}'); } catch(e) {}
+    const dateStr = d.data_visita ? new Date(d.data_visita).toLocaleDateString('it') : new Date(v.created_at).toLocaleDateString('it');
+    const tipoStr = d.tipo_visita || '';
+    return `<div class="visita-item" onclick="openSavedVisita('${v.id}')">
+      <span style="font-size:24px;flex-shrink:0">🩺</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(v.nota||'Resoconto visita')}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${dateStr}${tipoStr?' · '+tipoStr:''}</div>
+      </div>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();eliminaVisita('${v.id}')" title="Elimina">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+async function openSavedVisita(id) {
+  const { data, error } = await sb.from('note_specialistiche').select('*').eq('id', id).maybeSingle();
+  if (error || !data) { toast('Errore caricamento', 'err'); return; }
+  let d = {}; try { d = JSON.parse(data.dati || '{}'); } catch(e) {}
+  _currentVisitaId = id;
+  document.getElementById('v-titolo').value = data.nota || '';
+  document.getElementById('v-tipo').value = d.tipo_visita || 'Prima visita';
+  document.getElementById('v-data').value = d.data_visita || '';
+  document.getElementById('inp-cartella').value = data.cartella_id || '';
+  document.getElementById('editor-body').innerHTML = d.contenuto_html || '';
+  showEditor();
+  toast('Visita caricata', 'ok');
+}
+
+async function eliminaVisita(id) {
+  if (!confirm('Eliminare questa visita?')) return;
+  const { error } = await sb.from('note_specialistiche').delete().eq('id', id);
+  if (error) { toast('Errore eliminazione', 'err'); return; }
+  toast('Eliminata', 'ok');
+  await loadSavedVisite();
+}
+
+function nuovaVisita() {
+  _currentVisitaId = null;
+  document.getElementById('v-titolo').value = '';
+  document.getElementById('v-tipo').value = 'Prima visita';
+  document.getElementById('v-data').value = new Date().toISOString().slice(0,10);
+  document.getElementById('inp-cartella').value = '';
+  document.getElementById('editor-body').innerHTML = '<p>Scrivi qui il resoconto della visita...</p>';
+  showEditor();
+}
+
+function showEditor() {
+  document.getElementById('editor-panel').style.display = '';
+  document.getElementById('saved-panel').style.display = 'none';
+}
+
+async function showSaved() {
+  document.getElementById('editor-panel').style.display = 'none';
+  document.getElementById('saved-panel').style.display = '';
+  await loadSavedVisite();
+}
+
+// ── Print ──
+function stampaVisita() {
+  const p = getProfiloOperatore();
+  const nome = [p.nome, p.cognome].filter(Boolean).join(' ');
+
+  // Logo
+  const logoEl = document.getElementById('print-logo');
+  if (p.logo && typeof p.logo === 'string' && p.logo.startsWith('data:')) {
+    logoEl.src = p.logo;
+    logoEl.style.display = 'block';
+  } else {
+    logoEl.style.display = 'none';
+  }
+
+  // Prof info
+  document.getElementById('print-prof-nome').textContent = nome || '';
+  document.getElementById('print-prof-spec').textContent = p.spec || '';
+  document.getElementById('print-prof-albo').textContent = p.albo ? 'N° Albo: ' + p.albo : '';
+
+  // Metadata
+  const cartellaEl = document.getElementById('inp-cartella');
+  const pazienteNome = cartellaEl.options[cartellaEl.selectedIndex]?.text?.replace(/^📁\s*/, '') || '—';
+  document.getElementById('print-paziente').textContent = pazienteNome;
+  document.getElementById('print-data').textContent = document.getElementById('v-data').value
+    ? new Date(document.getElementById('v-data').value + 'T12:00:00').toLocaleDateString('it', { day:'2-digit', month:'long', year:'numeric' }) : '—';
+  document.getElementById('print-tipo').textContent = document.getElementById('v-tipo').value;
+  document.getElementById('print-titolo').textContent = document.getElementById('v-titolo').value || '—';
+
+  // Body content
+  document.getElementById('print-body').innerHTML = document.getElementById('editor-body').innerHTML;
+
+  window.print();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.getElementById('main').style.marginLeft = document.getElementById('sidebar').classList.contains('collapsed') ? '0' : '';
+}
+
+function showLoading(msg){const o=document.getElementById('loading-overlay');const t=document.getElementById('loading-text');if(o){o.style.display='flex';}if(t&&msg)t.textContent=msg;}
+function hideLoading(){const o=document.getElementById('loading-overlay');if(o)o.style.display='none';}
+</script>
+</body>
+</html>

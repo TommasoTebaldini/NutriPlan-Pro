@@ -1667,6 +1667,144 @@ function initPianoEsempio(containerId, config) {
 }
 
 // ═══════════════════════════════════════════════════
+// BUG REPORT — floating button injected on every page
+// ═══════════════════════════════════════════════════
+(function _injectBugReport() {
+  const BUG_MAIL = 'dietplanpro.gestione@gmail.com';
+
+  function _inject() {
+    if (document.getElementById('_bug-fab')) return;
+
+    // Floating button
+    const fab = document.createElement('button');
+    fab.id = '_bug-fab';
+    fab.title = 'Segnala un problema';
+    fab.innerHTML = '🐛';
+    fab.style.cssText = [
+      'position:fixed','bottom:20px','right:20px','z-index:9000',
+      'width:42px','height:42px','border-radius:50%','border:none',
+      'background:#0F766E','color:white','font-size:20px','cursor:pointer',
+      'box-shadow:0 4px 14px rgba(0,0,0,.25)','display:flex',
+      'align-items:center','justify-content:center','transition:transform .15s',
+      'opacity:.85','line-height:1'
+    ].join(';');
+    fab.onmouseenter = () => { fab.style.transform = 'scale(1.12)'; fab.style.opacity = '1'; };
+    fab.onmouseleave = () => { fab.style.transform = ''; fab.style.opacity = '.85'; };
+    fab.onclick = _openBugModal;
+    document.body.appendChild(fab);
+
+    // Modal
+    const modal = document.createElement('div');
+    modal.id = '_bug-modal';
+    modal.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:9001;align-items:center;justify-content:center;padding:16px';
+    modal.innerHTML = `
+      <div style="background:white;border-radius:14px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden">
+        <div style="background:linear-gradient(135deg,#0F766E,#0E7490);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-weight:700;font-size:15px;color:white">🐛 Segnala un problema</div>
+          <button onclick="document.getElementById('_bug-modal').style.display='none'" style="background:rgba(255,255,255,.2);border:none;color:white;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
+        </div>
+        <div style="padding:18px 20px">
+          <p style="font-size:12.5px;color:#64748B;margin:0 0 14px;line-height:1.5">Descrivi il problema riscontrato. Verrà inviato direttamente al team di sviluppo.</p>
+          <div style="margin-bottom:12px">
+            <label style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:5px">Tipo di problema</label>
+            <select id="_bug-tipo" style="width:100%;padding:8px 10px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:inherit;outline:none">
+              <option value="bug">🐛 Bug / Errore</option>
+              <option value="ui">🎨 Problema visivo / UI</option>
+              <option value="performance">⚡ Lentezza / Performance</option>
+              <option value="dato">📊 Dato errato</option>
+              <option value="altro">💬 Altro / Suggerimento</option>
+            </select>
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:5px">Descrizione *</label>
+            <textarea id="_bug-desc" placeholder="Descrivi il problema in dettaglio. Cosa hai fatto? Cosa ti aspettavi? Cosa è successo invece?" style="width:100%;padding:8px 10px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:90px;box-sizing:border-box"></textarea>
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:5px">Pagina / Sezione</label>
+            <input id="_bug-pag" type="text" placeholder="es. Cartelle pazienti, Agenda, Piano alimentare..." style="width:100%;padding:8px 10px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button onclick="document.getElementById('_bug-modal').style.display='none'" style="padding:8px 16px;border:1.5px solid #E2E8F0;border-radius:8px;background:white;font-size:13px;font-family:inherit;cursor:pointer;color:#475569">Annulla</button>
+            <button id="_bug-send-btn" onclick="_sendBugReport()" style="padding:8px 18px;border:none;border-radius:8px;background:#0F766E;color:white;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">📤 Invia segnalazione</button>
+          </div>
+        </div>
+      </div>`;
+    modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+    document.body.appendChild(modal);
+  }
+
+  function _openBugModal() {
+    const modal = document.getElementById('_bug-modal');
+    if (!modal) return;
+    // Pre-fill page
+    const pagEl = document.getElementById('_bug-pag');
+    if (pagEl && !pagEl.value) {
+      const title = document.getElementById('page-title');
+      pagEl.value = title ? title.textContent.trim() : (document.title || window.location.pathname);
+    }
+    const descEl = document.getElementById('_bug-desc');
+    if (descEl) descEl.value = '';
+    modal.style.display = 'flex';
+    setTimeout(() => { const d = document.getElementById('_bug-desc'); if (d) d.focus(); }, 80);
+  }
+
+  window._sendBugReport = async function() {
+    const desc = (document.getElementById('_bug-desc') || {}).value || '';
+    if (!desc.trim()) {
+      const el = document.getElementById('_bug-desc');
+      if (el) { el.style.borderColor = '#EF4444'; setTimeout(() => el.style.borderColor = '', 1500); }
+      return;
+    }
+    const tipo = (document.getElementById('_bug-tipo') || {}).value || 'altro';
+    const pag  = (document.getElementById('_bug-pag')  || {}).value || window.location.pathname;
+    const btn  = document.getElementById('_bug-send-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Invio...'; }
+
+    // Save to Supabase
+    try {
+      const payload = {
+        tipo,
+        descrizione: desc.trim(),
+        pagina: pag.trim(),
+        url: window.location.href,
+        user_email: currentUser?.email || null,
+        user_id: currentUser?.id || null,
+        user_agent: navigator.userAgent,
+        created_at: new Date().toISOString(),
+      };
+      // Try to save; if table doesn't exist yet, fall through silently
+      if (typeof sb !== 'undefined') {
+        await sb.from('segnalazioni_bug').insert(payload);
+      }
+    } catch(e) { /* silent — mailto fallback always fires */ }
+
+    // mailto fallback (always fires — ensures mail even without table)
+    const tipoLabel = {bug:'Bug/Errore',ui:'Problema UI',performance:'Lentezza',dato:'Dato errato',altro:'Altro/Suggerimento'}[tipo] || tipo;
+    const subject = encodeURIComponent('[DietPlan Pro] Segnalazione: ' + tipoLabel);
+    const body = encodeURIComponent(
+      'Tipo: ' + tipoLabel + '\n' +
+      'Pagina: ' + pag + '\n' +
+      'URL: ' + window.location.href + '\n' +
+      'Utente: ' + (currentUser?.email || 'non noto') + '\n\n' +
+      'Descrizione:\n' + desc.trim()
+    );
+    window.open('mailto:' + BUG_MAIL + '?subject=' + subject + '&body=' + body, '_blank');
+
+    // Close + reset
+    const modal = document.getElementById('_bug-modal');
+    if (modal) modal.style.display = 'none';
+    if (btn) { btn.disabled = false; btn.textContent = '📤 Invia segnalazione'; }
+    if (typeof toast === 'function') toast('Segnalazione inviata ✓', 'ok');
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _inject);
+  } else {
+    _inject();
+  }
+})();
+
+// ═══════════════════════════════════════════════════
 // CUSTOM SELECT DROPDOWN
 // ═══════════════════════════════════════════════════
 (function() {

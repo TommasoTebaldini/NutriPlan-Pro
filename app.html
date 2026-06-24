@@ -2247,10 +2247,21 @@ function stampaSettimanale() {
 }
 
 // ── LISTA DELLA SPESA ───────────────────────────────────────────────────────
-const _SPESA_CAT_ORDER = ['Cereali e derivati','Verdure e ortaggi','Frutta','Carni','Pesci','Uova','Latte e derivati','Legumi','Grassi e oli','Bevande','Spezie e condimenti','Zuccheri e dolci','Altro'];
-const _SPESA_CAT_EMOJI = {'Cereali e derivati':'🌾','Verdure e ortaggi':'🥦','Frutta':'🍎','Carni':'🥩','Pesci':'🐟','Uova':'🥚','Latte e derivati':'🧀','Legumi':'🫘','Grassi e oli':'🫒','Bevande':'💧','Spezie e condimenti':'🧂','Zuccheri e dolci':'🍯','Altro':'📦'};
-const _SPESA_CAT_COLOR = {'Cereali e derivati':'#FEF3C7','Verdure e ortaggi':'#DCFCE7','Frutta':'#FEE2E2','Carni':'#FECDD3','Pesci':'#DBEAFE','Uova':'#FEF9C3','Latte e derivati':'#E0F2FE','Legumi':'#D1FAE5','Grassi e oli':'#FEF3C7','Bevande':'#EFF6FF','Spezie e condimenti':'#F5F3FF','Zuccheri e dolci':'#FCE7F3','Altro':'#F1F5F9'};
-const _SPESA_CAT_ACCENT = {'Cereali e derivati':'#92400E','Verdure e ortaggi':'#065F46','Frutta':'#991B1B','Carni':'#9D174D','Pesci':'#1E40AF','Uova':'#78350F','Latte e derivati':'#0369A1','Legumi':'#064E3B','Grassi e oli':'#78350F','Bevande':'#1D4ED8','Spezie e condimenti':'#4C1D95','Zuccheri e dolci':'#831843','Altro':'#334155'};
+const _SPESA_CAT_ORDER = ['Verdure','Frutta fresca','Frutta secca e semi','Carni bianche','Carni rosse','Salumi','Pesce e frutti di mare','Uova','Latte e derivati','Formaggi','Legumi','Cereali e pasta','Pane e prodotti da forno','Grassi e oli','Bevande','Dolci e zuccheri','Spezie e condimenti','Altro'];
+const _SPESA_CAT_EMOJI = {'Verdure':'🥦','Frutta fresca':'🍎','Frutta secca e semi':'🥜','Carni bianche':'🍗','Carni rosse':'🥩','Salumi':'🥓','Pesce e frutti di mare':'🐟','Uova':'🥚','Latte e derivati':'🥛','Formaggi':'🧀','Legumi':'🫘','Cereali e pasta':'🍝','Pane e prodotti da forno':'🍞','Grassi e oli':'🫒','Bevande':'💧','Dolci e zuccheri':'🍯','Spezie e condimenti':'🧂','Altro':'📦'};
+const _SPESA_CAT_COLOR = {'Verdure':'#DCFCE7','Frutta fresca':'#FEE2E2','Frutta secca e semi':'#FEF3C7','Carni bianche':'#FEF9C3','Carni rosse':'#FECDD3','Salumi':'#FCE7F3','Pesce e frutti di mare':'#DBEAFE','Uova':'#FFFBEB','Latte e derivati':'#E0F2FE','Formaggi':'#F5F3FF','Legumi':'#D1FAE5','Cereali e pasta':'#FEF9C3','Pane e prodotti da forno':'#FEF3C7','Grassi e oli':'#ECFDF5','Bevande':'#EFF6FF','Dolci e zuccheri':'#FDF2F8','Spezie e condimenti':'#F8FAFC','Altro':'#F1F5F9'};
+const _SPESA_CAT_ACCENT = {'Verdure':'#065F46','Frutta fresca':'#991B1B','Frutta secca e semi':'#92400E','Carni bianche':'#78350F','Carni rosse':'#9D174D','Salumi':'#831843','Pesce e frutti di mare':'#1E40AF','Uova':'#78350F','Latte e derivati':'#0369A1','Formaggi':'#4C1D95','Legumi':'#064E3B','Cereali e pasta':'#78350F','Pane e prodotti da forno':'#92400E','Grassi e oli':'#064E3B','Bevande':'#1D4ED8','Dolci e zuccheri':'#831843','Spezie e condimenti':'#334155','Altro':'#334155'};
+// Maps CREA database categories → shopping list display categories
+const _CREA_CAT_MAP = {
+  'Verdure':'Verdure','Frutta fresca':'Frutta fresca','Frutta secca':'Frutta secca e semi','Frutta lipidica':'Frutta secca e semi',
+  'Carni bianche':'Carni bianche','Carni rosse':'Carni rosse','Salumi':'Salumi',
+  'Pesce':'Pesce e frutti di mare','Crostacei':'Pesce e frutti di mare','Molluschi':'Pesce e frutti di mare',
+  'Uova':'Uova','Latte e derivati':'Latte e derivati','Formaggi':'Formaggi','Legumi':'Legumi',
+  'Cereali e pasta':'Cereali e pasta','Cereali da colazione':'Cereali e pasta',
+  'Pane':'Pane e prodotti da forno','Biscotti e crackers':'Pane e prodotti da forno',
+  'Grassi':'Grassi e oli','Bevande':'Bevande','Dolci':'Dolci e zuccheri',
+  'Spezie e condimenti':'Spezie e condimenti',
+};
 
 function generaListaSpesa() {
   const aggregated = {};
@@ -2263,8 +2274,8 @@ function generaListaSpesa() {
         const key = nome.toLowerCase();
         if (!aggregated[key]) {
           const f = lookupC(nome);
-          let cat = f?.c || '';
-          if (!_SPESA_CAT_ORDER.includes(cat)) cat = 'Altro';
+          let cat = _CREA_CAT_MAP[f?.c] || '';
+          if (!cat || !_SPESA_CAT_ORDER.includes(cat)) cat = 'Altro';
           aggregated[key] = { nome, qt: 0, cat };
         }
         aggregated[key].qt += qt;

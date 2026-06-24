@@ -211,7 +211,10 @@ let ingredientiCount = 0;
 let ricetteTableMissing = false;
 let useLocalStorage = false;
 const LS_KEY = 'np_ricette_local';
-const _asRicetta = autoSaveFields('nutriplan_draft_ricetta', ['r-nome','r-cat','r-porzioni','r-note']);
+let _asRicetta;
+document.addEventListener('DOMContentLoaded', () => {
+  _asRicetta = autoSaveFields('nutriplan_draft_ricetta', ['r-nome','r-cat','r-porzioni','r-note']);
+});
 
 // ── STORAGE HELPERS ──
 function lsLoadRicette() {

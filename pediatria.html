@@ -810,6 +810,9 @@
 <div id="ped-compact-print-area"></div>
 </main>
 <script>
+function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
+</script>
+<script>
 (function() {
   var PED_MEALS = [
     {id:1,icon:'☀️',nome:_L('Colazione','Breakfast'),ora:'07:30',note:_L('Latte/yogurt + cereali/pane + frutta','Milk/yoghurt + cereals/bread + fruit')},
@@ -1826,6 +1829,73 @@ function calcVal_ped2() {
 function raccogliVal_ped2() { return {}; }
 
 function ripristinaVal_ped2(d) { return; }
+
+function calcFabb() {
+  const anni   = parseFloat(document.getElementById('f-anni')?.value)   || 0;
+  const mesi   = parseFloat(document.getElementById('f-mesi')?.value)   || 0;
+  const peso   = parseFloat(document.getElementById('f-peso')?.value)   || 0;
+  const altezza= parseFloat(document.getElementById('f-altezza')?.value)|| 0;
+  const sesso  = document.getElementById('f-sesso')?.value || 'M';
+  const laf    = parseFloat(document.getElementById('f-laf')?.value)    || 1.4;
+  const cond   = parseFloat(document.getElementById('f-cond')?.value)   || 1.0;
+  const res    = document.getElementById('fabb-result');
+  if (!peso || (anni === 0 && mesi === 0)) { if (res) res.style.display = 'none'; return; }
+  const ageTot = anni * 12 + mesi; // total months
+
+  // Schofield (1985) equations — weight only (W in kg, result in kcal/day)
+  let mb;
+  if (sesso === 'M') {
+    if      (ageTot <  36) mb = 59.512 * peso - 30.4;
+    else if (ageTot < 120) mb = 22.706 * peso + 504.3;
+    else                   mb = 17.686 * peso + 658.2;
+  } else {
+    if      (ageTot <  36) mb = 58.317 * peso - 31.1;
+    else if (ageTot < 120) mb = 20.315 * peso + 485.9;
+    else                   mb = 13.384 * peso + 692.6;
+  }
+  mb = Math.max(Math.round(mb), 0);
+  const kcal = Math.round(mb * laf * cond);
+
+  // Macros
+  const ageY = ageTot / 12;
+  let protGkg;
+  if      (ageY < 1)  protGkg = 1.5;
+  else if (ageY < 4)  protGkg = 1.1;
+  else if (ageY < 11) protGkg = 0.9;
+  else if (ageY < 15) protGkg = 1.0;
+  else                protGkg = 0.9;
+  const prot = Math.round(protGkg * peso * 10) / 10;
+  const fatPct = ageY < 3 ? 0.40 : 0.32;
+  const grassi = Math.round(kcal * fatPct / 9 * 10) / 10;
+  const cho    = Math.round((kcal - prot * 4 - grassi * 9) / 4 * 10) / 10;
+
+  // Water: Holliday-Segar
+  let acqua;
+  if      (peso <= 10) acqua = peso * 100;
+  else if (peso <= 20) acqua = 1000 + (peso - 10) * 50;
+  else                 acqua = 1500 + (peso - 20) * 20;
+  acqua = Math.round(acqua);
+
+  document.getElementById('fr-mb').textContent    = mb + ' kcal';
+  document.getElementById('fr-kcal').textContent  = kcal + ' kcal';
+  document.getElementById('fr-prot').textContent  = prot + ' g';
+  document.getElementById('fr-cho').textContent   = (cho > 0 ? cho : '—') + (cho > 0 ? ' g' : '');
+  document.getElementById('fr-grassi').textContent= grassi + ' g';
+  document.getElementById('fr-acqua').textContent = acqua + ' mL';
+
+  // LARN note
+  let iron = '—', calc = '—', vitD = '15 µg';
+  if      (ageTot < 6)   { iron = '0.3 mg'; calc = '200 mg'; }
+  else if (ageTot < 12)  { iron = '11 mg';  calc = '260 mg'; }
+  else if (ageTot < 36)  { iron = '8 mg';   calc = '700 mg'; }
+  else if (ageTot < 72)  { iron = '11 mg';  calc = '900 mg'; }
+  else if (ageTot < 120) { iron = '11 mg';  calc = '1100 mg';}
+  else if (ageTot < 168) { iron = sesso==='M' ? '13 mg':'18 mg'; calc = '1300 mg'; }
+  else                   { iron = sesso==='M' ? '13 mg':'18 mg'; calc = '1300 mg'; }
+  const larnEl = document.getElementById('fabb-larn');
+  if (larnEl) larnEl.innerHTML = `<b>LARN 2014 di riferimento</b><br>Proteine: <b>${protGkg} g/kg/die</b> (${prot} g/die) &nbsp;|&nbsp; Calcio: <b>${calc}</b> &nbsp;|&nbsp; Ferro: <b>${iron}</b> &nbsp;|&nbsp; Vit D: <b>${vitD}</b><br><span style="font-size:11px;color:var(--slate-l)">Formula Schofield (1985) — MB × LAF (${laf}) × Condizione (${cond})</span>`;
+  if (res) res.style.display = 'block';
+}
 
 </script>
 </body>

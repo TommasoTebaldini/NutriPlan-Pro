@@ -2064,6 +2064,16 @@ const LABEL_TR = {
     'Emodialisi (HD) — Gestione Nutrizionale':'Haemodialysis (HD) — Nutritional Management',
     'Sessioni tipiche: 3 volte/settimana, 3.5–4.5 ore/sessione. Dializzato elimina K, P, urea, creatinina e alcune vitamine idrosolubili.':'Typical sessions: 3×/week, 3.5–4.5 h/session. Dialysate removes K, P, urea, creatinine and water-soluble vitamins.',
     'Dialisi Peritoneale (DP) — Gestione Nutrizionale':'Peritoneal Dialysis (PD) — Nutritional Management',
+    'CAPD (continua ambulatoriale) o APD (automatizzata notturna). Il dializzato peritoneale è a base di glucosio — contribuisce all\'apporto calorico.':'CAPD (continuous ambulatory) or APD (automated nocturnal). Peritoneal dialysate is glucose-based — it contributes to caloric intake.',
+    // ── DP macro-target value spans ──
+    '1.2–1.3 g/kg/die (≥50% HBV)':'1.2–1.3 g/kg/day (≥50% HBV)',
+    '30–35 kcal/kg/die':'30–35 kcal/kg/day',
+    '300–800 kcal/die (da sottrarre)':'300–800 kcal/day (to subtract)',
+    '30–35 kcal/kg - kcal dializzato':'30–35 kcal/kg - dialysate kcal',
+    '2500–3500 mg/die (meno restrittivo!)':'2500–3500 mg/day (less restrictive!)',
+    '800–1000 mg/die':'800–1000 mg/day',
+    '< 2 g NaCl/die':'< 2 g NaCl/day',
+    'Diuresi residua + 500–750 mL':'Residual diuresis + 500–750 mL',
     // ── Macro target / nutrient labels ──
     'Proteine':'Protein','Energia':'Energy','Sodio':'Sodium',
     'Potassio':'Potassium','Fosforo':'Phosphorus','Liquidi':'Fluids','Calcio':'Calcium',
@@ -3195,6 +3205,13 @@ function translateLabels() {
     } else if (dict[full]) {
       el.textContent = dict[full];
     }
+  });
+
+  // Translate macro target last span values (numeric/unit values in DP section)
+  document.querySelectorAll('.macro-target > span:last-child').forEach(el => {
+    if (el.children.length > 0) return;
+    const key = el.textContent.trim();
+    if (dict[key]) el.textContent = dict[key];
   });
 
   // Translate checkbox/radio wrapper labels (text node after input element)

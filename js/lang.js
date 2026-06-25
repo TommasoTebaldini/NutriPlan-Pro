@@ -1803,6 +1803,42 @@ const LABEL_TR = {
     'A — Assessment (valutazione clinica)':'A — Assessment (clinical evaluation)',
     'P — Piano (prossima sessione)':'P — Plan (next session)',
     'Data somministrazione (opzionale)':'Administration date (optional)',
+    // ── pazienti.html bulk / storico ──
+    'Inserisci Pannello Esami':'Insert Exams Panel',
+    'Importa CSV':'Import CSV','Nuova Cartella':'New Folder',
+    'Archivia selezionati':'Archive selected','Esporta CSV':'Export CSV',
+    'Deseleziona':'Deselect all','+ Aggiungi':'+ Add','Cerca':'Search',
+    'Collega':'Link','Conferma':'Confirm',
+    'Crea Cartella':'Create Folder','Modifica Cartella':'Edit Folder',
+    'Salva Modifiche':'Save Changes',
+    'Rendi visibile':'Make visible',
+    'Salva tutti':'Save all',
+    '+ Aggiungi riga':'+ Add row',
+    '— Seleziona esame —':'— Select exam —',
+    '— Seleziona —':'— Select —',
+    'Altro (inserisci manualmente)':'Other (enter manually)',
+    'Altro...':'Other...',
+    'Controllo':'Check-up',
+    'Urgente':'Urgent',
+    'Risultato:':'Result:',
+    'Pannello':'Panel',
+    'Tipo esame':'Exam type',
+    'Salva Nota':'Save Note',
+    'Salva Esame':'Save Exam',
+    'Nessun dato storico disponibile.':'No historical data available.',
+    // ── profilo-pubblico.html labels / buttons / options ──
+    'Profilo Pubblico':'Public Profile',
+    'Titoli di studio / Qualifiche':'Academic titles / Qualifications',
+    'Descrizione (visibile ai pazienti)':'Description (visible to patients)',
+    'Come lavori con i pazienti':'How you work with patients',
+    'Città dove operi':'City where you work',
+    'Indirizzo dello studio (opzionale)':'Practice address (optional)',
+    'Email di contatto':'Contact email',
+    'Sito web (opzionale)':'Website (optional)',
+    'Durata di ogni slot':'Duration per slot',
+    '1 ora e 30 min':'1 hour 30 min',
+    'Ripristina':'Restore',
+    'Salva profilo':'Save profile',
     'Questionario':'Questionnaire',
     // ── questionari.html section titles ──
     'Screening dello Stato Nutrizionale':'Nutritional Status Screening',
@@ -3111,6 +3147,18 @@ function translateLabels() {
   document.querySelectorAll('.tbar-title, .page-title, .section-title').forEach(el => {
     const txt = el.textContent.trim();
     if (dict[txt]) el.textContent = dict[txt];
+  });
+
+  // Translate modal h2 headers (strip leading emoji for lookup)
+  document.querySelectorAll('.mhdr h2').forEach(el => {
+    const full = el.textContent.trim();
+    const bare = full.replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}\s🔗📋🔬📈🩺🤖📥⚠️]+/u, '').trim();
+    if (dict[bare]) {
+      const prefix = full.slice(0, full.length - bare.length);
+      el.textContent = prefix + dict[bare];
+    } else if (dict[full]) {
+      el.textContent = dict[full];
+    }
   });
 
   // Translate questionnaire option texts (.q-opt > span)

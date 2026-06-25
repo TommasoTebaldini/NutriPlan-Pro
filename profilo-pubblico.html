@@ -134,7 +134,7 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2 id="page-title">👤 Profilo Pubblico</h2>
+  <h2 id="page-title" class="page-title">👤 Profilo Pubblico</h2>
   <div class="tbar-actions">
     <button class="btn btn-primary" onclick="saveProfile()" id="btn-save">💾 Salva</button>
   </div>
@@ -152,9 +152,9 @@
       <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
     </div>
     <div class="profile-hero-info">
-      <div class="profile-hero-name" id="hero-name">Il tuo nome</div>
-      <div class="profile-hero-sub" id="hero-sub">Imposta le tue informazioni qui sotto per essere trovato dai pazienti</div>
-      <div class="visibility-badge visible" id="hero-badge">👁 Profilo pubblico</div>
+      <div class="profile-hero-name" id="hero-name"><span data-only-lang="it">Il tuo nome</span><span data-only-lang="en">Your name</span></div>
+      <div class="profile-hero-sub" id="hero-sub"><span data-only-lang="it">Imposta le tue informazioni qui sotto per essere trovato dai pazienti</span><span data-only-lang="en">Set your information below to be found by patients</span></div>
+      <div class="visibility-badge visible" id="hero-badge">👁 <span data-only-lang="it">Profilo pubblico</span><span data-only-lang="en">Public profile</span></div>
     </div>
   </div>
 
@@ -164,7 +164,7 @@
 
       <!-- Foto profilo -->
       <div class="form-section" style="margin-bottom:16px">
-        <h3>📷 Foto profilo</h3>
+        <h3>📷 <span data-only-lang="it">Foto profilo</span><span data-only-lang="en">Profile photo</span></h3>
         <label class="photo-upload-area" for="avatar-file-input-2" id="photo-drop-area">
           <div id="photo-preview-wrap" style="display:none;margin-bottom:12px">
             <img id="photo-preview-img" src="" alt="Anteprima" class="photo-preview-circle">
@@ -179,7 +179,7 @@
 
       <!-- Info personali -->
       <div class="form-section" style="margin-bottom:16px">
-        <h3>👤 Informazioni personali</h3>
+        <h3>👤 <span data-only-lang="it">Informazioni personali</span><span data-only-lang="en">Personal information</span></h3>
         <div class="form-row">
           <div class="form-group">
             <label>Nome *</label>
@@ -198,17 +198,17 @@
 
       <!-- Presentazione -->
       <div class="form-section" style="margin-bottom:16px">
-        <h3>📝 Presentazione</h3>
+        <h3>📝 <span data-only-lang="it">Presentazione</span><span data-only-lang="en">Introduction</span></h3>
         <div class="form-group">
           <label>Descrizione (visibile ai pazienti)</label>
           <textarea id="f-descrizione" rows="5" placeholder="Presentati ai tuoi futuri pazienti: la tua esperienza, le tue specializzazioni, il tuo approccio..." oninput="updateCharCount();updatePreview()"></textarea>
-          <div class="char-count"><span id="desc-count">0</span> / consigliato max 400 caratteri</div>
+          <div class="char-count"><span id="desc-count">0</span> / <span data-only-lang="it">consigliato max 400 caratteri</span><span data-only-lang="en">recommended max 400 characters</span></div>
         </div>
       </div>
 
       <!-- Metodi di lavoro -->
       <div class="form-section" style="margin-bottom:16px">
-        <h3>💼 Metodi di lavoro</h3>
+        <h3>💼 <span data-only-lang="it">Metodi di lavoro</span><span data-only-lang="en">Working methods</span></h3>
         <div class="form-group">
           <label>Come lavori con i pazienti</label>
           <textarea id="f-metodi" rows="4" placeholder="es. Approccio personalizzato basato sulla bioimpedenziometria, colloqui mensili in studio o online, supporto continuo via app..."></textarea>
@@ -217,7 +217,7 @@
 
       <!-- Sede e contatti -->
       <div class="form-section" style="margin-bottom:16px">
-        <h3>📍 Sede e contatti</h3>
+        <h3>📍 <span data-only-lang="it">Sede e contatti</span><span data-only-lang="en">Location & contacts</span></h3>
         <div class="form-row">
           <div class="form-group">
             <label>Città dove operi</label>
@@ -246,11 +246,11 @@
 
       <!-- Visibilità -->
       <div class="form-section" style="margin-bottom:16px">
-        <h3>🔍 Visibilità</h3>
+        <h3>🔍 <span data-only-lang="it">Visibilità</span><span data-only-lang="en">Visibility</span></h3>
         <div class="toggle-row">
           <div>
-            <div class="toggle-label">Profilo pubblico</div>
-            <div class="toggle-sub">Se attivo, i pazienti possono trovarti nella sezione "Dietisti" dell'app NutriPlan e prenotare un colloquio.</div>
+            <div class="toggle-label"><span data-only-lang="it">Profilo pubblico</span><span data-only-lang="en">Public profile</span></div>
+            <div class="toggle-sub"><span data-only-lang="it">Se attivo, i pazienti possono trovarti nella sezione "Dietisti" dell'app NutriPlan e prenotare un colloquio.</span><span data-only-lang="en">If active, patients can find you in the "Dietitians" section of the NutriPlan app and book a consultation.</span></div>
           </div>
           <label class="toggle-switch">
             <input type="checkbox" id="f-visible" checked onchange="updatePreview()">
@@ -261,8 +261,8 @@
 
       <!-- Disponibilità -->
       <div class="form-section" style="margin-bottom:16px">
-        <h3>📅 Disponibilità per prenotazioni</h3>
-        <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px">Imposta i giorni e orari in cui i pazienti possono prenotare un colloquio di conoscimento dall'app. Gli slot già occupati vengono bloccati automaticamente.</p>
+        <h3>📅 <span data-only-lang="it">Disponibilità per prenotazioni</span><span data-only-lang="en">Availability for bookings</span></h3>
+        <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px"><span data-only-lang="it">Imposta i giorni e orari in cui i pazienti possono prenotare un colloquio di conoscimento dall'app. Gli slot già occupati vengono bloccati automaticamente.</span><span data-only-lang="en">Set the days and times when patients can book an introductory call from the app. Already occupied slots are blocked automatically.</span></p>
         <div class="form-group" style="margin-bottom:14px">
           <label>Durata di ogni slot</label>
           <select id="f-slot-duration">
@@ -281,7 +281,7 @@
       <div id="form-error" style="display:none;background:#FEE2E2;border:1px solid #FECACA;border-radius:10px;padding:10px 14px;color:#DC2626;font-size:13px;margin-bottom:12px"></div>
 
       <div class="save-bar">
-        <div class="save-msg" id="save-msg">✅ Profilo salvato!</div>
+        <div class="save-msg" id="save-msg"><span data-only-lang="it">✅ Profilo salvato!</span><span data-only-lang="en">✅ Profile saved!</span></div>
         <button class="btn btn-ghost" onclick="resetForm()">↩ Ripristina</button>
         <button class="btn btn-primary" onclick="saveProfile()" id="btn-save-bottom">💾 Salva profilo</button>
       </div>
@@ -290,14 +290,14 @@
     <!-- Right: Preview -->
     <div style="position:sticky;top:72px">
       <div class="preview-card">
-        <h3>Anteprima · App pazienti</h3>
+        <h3><span data-only-lang="it">Anteprima · App pazienti</span><span data-only-lang="en">Preview · Patient app</span></h3>
         <div style="display:flex;align-items:flex-start;gap:12px">
           <div class="preview-avatar" id="preview-avatar">
             <span id="preview-initials">?</span>
             <img id="preview-avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%">
           </div>
           <div style="flex:1;min-width:0">
-            <div class="preview-name" id="preview-name">Il tuo nome</div>
+            <div class="preview-name" id="preview-name"><span data-only-lang="it">Il tuo nome</span><span data-only-lang="en">Your name</span></div>
             <div class="preview-title" id="preview-title" style="display:none"></div>
             <div class="preview-city" id="preview-city" style="display:none">📍 <span id="preview-city-txt"></span></div>
           </div>
@@ -309,12 +309,12 @@
       </div>
 
       <div style="margin-top:14px;background:#F0FDF9;border:1px solid #CCFBF1;border-radius:12px;padding:14px 16px">
-        <p style="font-size:12px;color:var(--teal-d);font-weight:600;margin-bottom:6px">💡 Come funziona</p>
+        <p style="font-size:12px;color:var(--teal-d);font-weight:600;margin-bottom:6px">💡 <span data-only-lang="it">Come funziona</span><span data-only-lang="en">How it works</span></p>
         <ul style="font-size:11.5px;color:var(--slate-m);line-height:1.8;padding-left:16px">
-          <li>Il tuo profilo appare nella sezione <b>Dietisti</b> dell'app NutriPlan</li>
-          <li>I pazienti possono cercarti per nome o <b>città</b></li>
-          <li>Dalla tua pagina possono <b>prenotare un colloquio</b></li>
-          <li>Disattiva la visibilità per nasconderti dalla lista</li>
+          <li><span data-only-lang="it">Il tuo profilo appare nella sezione <b>Dietisti</b> dell'app NutriPlan</span><span data-only-lang="en">Your profile appears in the <b>Dietitians</b> section of the NutriPlan app</span></li>
+          <li><span data-only-lang="it">I pazienti possono cercarti per nome o <b>città</b></span><span data-only-lang="en">Patients can search for you by name or <b>city</b></span></li>
+          <li><span data-only-lang="it">Dalla tua pagina possono <b>prenotare un colloquio</b></span><span data-only-lang="en">From your page they can <b>book a consultation</b></span></li>
+          <li><span data-only-lang="it">Disattiva la visibilità per nasconderti dalla lista</span><span data-only-lang="en">Disable visibility to hide yourself from the list</span></li>
         </ul>
       </div>
     </div>
@@ -334,19 +334,24 @@
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/utils.js" defer></script>
+<script src="js/lang.js" defer></script>
 <script>
+function _L(it, en) { return (typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang') || 'it')) === 'en' ? en : it; }
 const BUCKET = 'dietitian-avatars';
 let avatarUrl = '';
 let originalData = null;
 
 // ─── Disponibilità settimanale ──────────────────────────────────────────────
 const DAYS_IT = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+const DAYS_EN = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+function getDayName(i) { return _L(DAYS_IT[i], DAYS_EN[i]); }
 let availabilityData = []; // rows loaded from dietitian_availability
 
 function buildAvailabilityUI() {
   const wrap = document.getElementById('av-days-wrap');
   wrap.innerHTML = '';
-  DAYS_IT.forEach((dayName, dow) => {
+  DAYS_IT.forEach((_, dow) => {
+    const dayName = getDayName(dow);
     const row = document.createElement('div');
     row.className = 'av-day-row';
     row.innerHTML = `
@@ -356,17 +361,17 @@ function buildAvailabilityUI() {
       </label>
       <div class="av-day-name">${dayName}</div>
       <div class="av-times" id="av-times-${dow}" style="display:none">
-        <span class="av-session-label">Mat.</span>
+        <span class="av-session-label">${_L('Mat.','AM')}</span>
         <input type="time" id="av-s1-${dow}" value="09:00">
         <span class="av-sep">–</span>
         <input type="time" id="av-e1-${dow}" value="13:00">
         <span class="av-sep" style="margin-left:6px">|</span>
-        <span class="av-session-label">Pom.</span>
+        <span class="av-session-label">${_L('Pom.','PM')}</span>
         <input type="time" id="av-s2-${dow}" value="15:00">
         <span class="av-sep">–</span>
         <input type="time" id="av-e2-${dow}" value="18:00">
       </div>
-      <div id="av-off-${dow}" style="font-size:12px;color:var(--slate-l);padding-top:3px">Non disponibile</div>
+      <div id="av-off-${dow}" style="font-size:12px;color:var(--slate-l);padding-top:3px">${_L('Non disponibile','Not available')}</div>
     `;
     wrap.appendChild(row);
   });
@@ -455,16 +460,16 @@ function updatePreview() {
   const citta = document.getElementById('f-citta').value.trim();
   const desc = document.getElementById('f-descrizione').value.trim();
   const visible = document.getElementById('f-visible').checked;
-  const fullName = [nome, cognome].filter(Boolean).join(' ') || 'Il tuo nome';
+  const fullName = [nome, cognome].filter(Boolean).join(' ') || _L('Il tuo nome','Your name');
   const initials = getInitials(nome, cognome);
 
   // Hero
   document.getElementById('hero-name').textContent = fullName;
   document.getElementById('hero-initials').textContent = initials;
-  document.getElementById('hero-sub').textContent = titoli || (citta ? `📍 ${citta}` : 'Imposta le tue informazioni qui sotto');
+  document.getElementById('hero-sub').textContent = titoli || (citta ? `📍 ${citta}` : _L('Imposta le tue informazioni qui sotto','Set your information below'));
   const badge = document.getElementById('hero-badge');
   badge.className = 'visibility-badge ' + (visible ? 'visible' : 'hidden');
-  badge.textContent = visible ? '👁 Profilo pubblico' : '🔒 Profilo nascosto';
+  badge.textContent = visible ? '👁 ' + _L('Profilo pubblico','Public profile') : '🔒 ' + _L('Profilo nascosto','Hidden profile');
 
   // Preview card
   document.getElementById('preview-name').textContent = fullName;
@@ -484,8 +489,8 @@ function updatePreview() {
 
   const visEl = document.getElementById('preview-visibility');
   visEl.innerHTML = visible
-    ? '<span style="color:var(--teal)">●</span> <span style="color:var(--teal-d)">Visibile ai pazienti</span>'
-    : '<span style="color:var(--slate-l)">●</span> <span style="color:var(--slate-l)">Profilo nascosto</span>';
+    ? '<span style="color:var(--teal)">●</span> <span style="color:var(--teal-d)">' + _L('Visibile ai pazienti','Visible to patients') + '</span>'
+    : '<span style="color:var(--slate-l)">●</span> <span style="color:var(--slate-l)">' + _L('Profilo nascosto','Hidden profile') + '</span>';
 }
 
 function updateCharCount() {
@@ -507,18 +512,18 @@ function setAvatarUI(url) {
   const prevWrap = document.getElementById('photo-preview-wrap');
   prevImg.src = url || '';
   prevWrap.style.display = hasImg ? 'block' : 'none';
-  document.getElementById('photo-label').textContent = hasImg ? 'Clicca per cambiare la foto · max 5 MB' : 'Clicca per caricare una foto · max 5 MB';
+  document.getElementById('photo-label').textContent = hasImg ? _L('Clicca per cambiare la foto · max 5 MB','Click to change the photo · max 5 MB') : _L('Clicca per caricare una foto · max 5 MB','Click to upload a photo · max 5 MB');
   document.getElementById('photo-icon').style.display = hasImg ? 'none' : 'block';
 }
 
 async function handleAvatarUpload(input) {
   const file = input.files?.[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showToast('❌ La foto non deve superare 5 MB'); return; }
+  if (file.size > 5 * 1024 * 1024) { showToast(_L('❌ La foto non deve superare 5 MB','❌ The photo must not exceed 5 MB')); return; }
 
   const statusEl = document.getElementById('photo-upload-status');
   statusEl.style.display = 'block';
-  statusEl.textContent = '⏳ Caricamento foto...';
+  statusEl.textContent = _L('⏳ Caricamento foto...','⏳ Uploading photo...');
 
   const ext = file.name.split('.').pop().toLowerCase() || 'jpg';
   const path = `${currentUser.id}/avatar.${ext}`;
@@ -534,7 +539,7 @@ async function handleAvatarUpload(input) {
   const url = urlData?.publicUrl + `?t=${Date.now()}`;
   setAvatarUI(url);
   statusEl.style.color = 'var(--teal-d)';
-  statusEl.textContent = '✅ Foto caricata — ricorda di salvare il profilo';
+  statusEl.textContent = _L('✅ Foto caricata — ricorda di salvare il profilo','✅ Photo uploaded — remember to save the profile');
 }
 
 function fillForm(data) {
@@ -561,7 +566,7 @@ function resetForm() {
 async function saveProfile() {
   const nome = document.getElementById('f-nome').value.trim();
   if (!nome) {
-    document.getElementById('form-error').textContent = 'Il nome è obbligatorio.';
+    document.getElementById('form-error').textContent = _L('Il nome è obbligatorio.','Name is required.');
     document.getElementById('form-error').style.display = 'block';
     return;
   }
@@ -602,10 +607,10 @@ async function saveProfile() {
     await sb.from('dietitian_availability').upsert(avPayload, { onConflict: 'dietitian_id,day_of_week' });
   }
 
-  ['btn-save','btn-save-bottom'].forEach(id => { document.getElementById(id).disabled = false; document.getElementById(id).innerHTML = '💾 Salva' + (id === 'btn-save-bottom' ? ' profilo' : ''); });
+  ['btn-save','btn-save-bottom'].forEach(id => { document.getElementById(id).disabled = false; document.getElementById(id).innerHTML = '💾 ' + _L('Salva','Save') + (id === 'btn-save-bottom' ? ' ' + _L('profilo','profile') : ''); });
 
   if (error) {
-    showToast('❌ Errore nel salvataggio: ' + error.message);
+    showToast(_L('❌ Errore nel salvataggio: ','❌ Save error: ') + error.message);
     return;
   }
 
@@ -613,15 +618,18 @@ async function saveProfile() {
   const msg = document.getElementById('save-msg');
   msg.classList.add('visible');
   setTimeout(() => msg.classList.remove('visible'), 3500);
-  showToast('✅ Profilo e disponibilità salvati!');
+  showToast(_L('✅ Profilo e disponibilità salvati!','✅ Profile and availability saved!'));
   updatePreview();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  showLoading('Caricamento profilo...');
+  showLoading(_L('Caricamento profilo...','Loading profile...'));
 
   // Build availability UI before auth (it doesn't need user data)
   buildAvailabilityUI();
+
+  if (typeof translateLabels === 'function') translateLabels();
+  if (typeof applyLang === 'function') applyLang();
 
   const ok = await checkAuth();
   if (!ok) return;

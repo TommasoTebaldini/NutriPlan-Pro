@@ -122,7 +122,7 @@ async function ensureChartJs() {
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2 id="page-title">📁 Cartelle Pazienti</h2>
+  <h2 id="page-title">📁 <span data-only-lang="it">Cartelle Pazienti</span><span data-only-lang="en">Patient Folders</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm" onclick="openImportaCSV()">📥 Importa CSV</button>
     <button class="btn btn-primary btn-sm" onclick="openNewCartella()">📁 Nuova Cartella</button>
@@ -131,7 +131,7 @@ async function ensureChartJs() {
 <main id="main">
 <!-- BARRA BULK OPERATIONS (appare quando ci sono checkbox selezionate) -->
 <div id="bulk-action-bar" style="display:none;position:fixed;top:60px;left:0;right:0;z-index:900;background:linear-gradient(135deg,#0F766E,#0891B2);color:white;padding:10px 20px;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 20px rgba(0,0,0,.2)">
-  <span id="bulk-count-label" style="font-weight:700;font-size:13px;flex:1">0 pazienti selezionati</span>
+  <span id="bulk-count-label" style="font-weight:700;font-size:13px;flex:1"><span data-only-lang="it">0 pazienti selezionati</span><span data-only-lang="en">0 patients selected</span></span>
   <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkArchivia()">📦 Archivia selezionati</button>
   <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkEsportaCSV()">📊 Esporta CSV</button>
   <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;border:1.5px solid rgba(255,255,255,.4)" onclick="deselezionaTutto()">✕ Deseleziona</button>
@@ -154,7 +154,7 @@ async function ensureChartJs() {
   <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" title="Azzera filtri">✕</button>
 </div>
 <div class="page-content" id="main-content">
-  <div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>
+  <div class="empty-state"><div class="ei">⏳</div><h3><span data-only-lang="it">Caricamento...</span><span data-only-lang="en">Loading...</span></h3></div>
 </div>
 </main>
 
@@ -215,7 +215,7 @@ async function ensureChartJs() {
     </div>
     <div class="mbody" style="padding:20px 22px">
       <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:18px;line-height:1.5">
-        Seleziona le sezioni che il paziente potrà visualizzare nella sua app. Le sezioni non selezionate resteranno private.
+        <span data-only-lang="it">Seleziona le sezioni che il paziente potrà visualizzare nella sua app. Le sezioni non selezionate resteranno private.</span><span data-only-lang="en">Select the sections the patient can view in their app. Unselected sections will remain private.</span>
       </p>
       <div id="spec-sections-checkboxes" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
@@ -230,7 +230,7 @@ async function ensureChartJs() {
   <div class="modal" style="max-width:420px">
     <div class="mhdr"><h2>🔗 Collega Paziente</h2><button class="mclose" onclick="closeM('modal-collega')">✕</button></div>
     <div class="mbody" style="padding:18px 22px">
-      <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">Cerca il paziente per email. Il paziente deve essere registrato sull'app.</p>
+      <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px"><span data-only-lang="it">Cerca il paziente per email. Il paziente deve essere registrato sull'app.</span><span data-only-lang="en">Search for the patient by email. The patient must be registered on the app.</span></p>
       <div class="fg" style="margin-bottom:12px">
         <label>Email paziente</label>
         <input type="email" id="collega-email" placeholder="email@esempio.com" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
@@ -340,7 +340,7 @@ async function ensureChartJs() {
         </div>
       </div>
       <div id="esame-ref-info" style="display:none;margin-top:12px;padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #16A34A;font-size:12px;color:#166534;line-height:1.5"></div>
-      <div id="esame-badge-preview" style="display:none;margin-top:8px;font-size:12.5px;color:var(--slate-m)">Risultato: <span id="esame-badge-preview-chip"></span></div>
+      <div id="esame-badge-preview" style="display:none;margin-top:8px;font-size:12.5px;color:var(--slate-m)"><span data-only-lang="it">Risultato:</span><span data-only-lang="en">Result:</span> <span id="esame-badge-preview-chip"></span></div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-esame')">Annulla</button>
@@ -357,15 +357,15 @@ async function ensureChartJs() {
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
         <label style="font-size:12.5px;font-weight:600;color:var(--slate-m);flex-shrink:0">📅 Data esami:</label>
         <input type="date" id="bulk-esami-data" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;outline:none">
-        <span style="font-size:12px;color:var(--slate-l)">Inserisci tutti i valori del pannello, poi clicca Salva.</span>
+        <span style="font-size:12px;color:var(--slate-l)"><span data-only-lang="it">Inserisci tutti i valori del pannello, poi clicca Salva.</span><span data-only-lang="en">Enter all panel values, then click Save.</span></span>
       </div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:12.5px">
           <thead>
             <tr style="background:#F8FAFC;border-bottom:2px solid var(--border)">
-              <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--slate-m)">Tipo esame</th>
-              <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--slate-m)">Valore</th>
-              <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--slate-m)">Unità</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--slate-m)"><span data-only-lang="it">Tipo esame</span><span data-only-lang="en">Exam type</span></th>
+              <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--slate-m)"><span data-only-lang="it">Valore</span><span data-only-lang="en">Value</span></th>
+              <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--slate-m)"><span data-only-lang="it">Unità</span><span data-only-lang="en">Unit</span></th>
               <th style="padding:7px 4px;width:32px"></th>
             </tr>
           </thead>
@@ -417,7 +417,7 @@ async function ensureChartJs() {
     <div class="mhdr"><h2 id="esame-storico-title">📈 Storico Esame</h2><button class="mclose" onclick="closeM('modal-esame-storico')">✕</button></div>
     <div class="mbody" style="padding:16px 18px">
       <div style="position:relative;height:260px"><canvas id="esame-storico-chart"></canvas></div>
-      <div id="esame-storico-nessun" style="display:none;text-align:center;padding:30px;color:var(--slate-l);font-size:13px">Nessun dato storico disponibile.</div>
+      <div id="esame-storico-nessun" style="display:none;text-align:center;padding:30px;color:var(--slate-l);font-size:13px"><span data-only-lang="it">Nessun dato storico disponibile.</span><span data-only-lang="en">No historical data available.</span></div>
     </div>
   </div>
 </div>
@@ -744,7 +744,7 @@ function aggiornaBulkBar() {
   const label = document.getElementById('bulk-count-label');
   if (checks.length > 0) {
     bar.style.display = 'flex';
-    label.textContent = checks.length + ' pazient' + (checks.length === 1 ? 'e' : 'i') + ' selezionat' + (checks.length === 1 ? 'o' : 'i');
+    label.textContent = checks.length + ' ' + _L(checks.length === 1 ? 'paziente selezionato' : 'pazienti selezionati', checks.length === 1 ? 'patient selected' : 'patients selected');
   } else {
     bar.style.display = 'none';
   }
@@ -762,7 +762,8 @@ function deselezionaTutto() {
 async function bulkArchivia() {
   const ids = getSelectedIds();
   if (!ids.length) return;
-  if (!confirm('Archiviare ' + ids.length + ' cartell' + (ids.length === 1 ? 'a' : 'e') + '?')) return;
+  const _archMsg = ids.length === 1 ? _L('Archiviare 1 cartella?','Archive 1 folder?') : _L('Archiviare ' + ids.length + ' cartelle?','Archive ' + ids.length + ' folders?');
+  if (!confirm(_archMsg)) return;
   showLoading(true);
   const { error } = await sb.from('cartelle').update({ archived: true }).in('id', ids);
   showLoading(false);
@@ -850,21 +851,21 @@ function renderCartelleGrid(data) {
       return `<div class="paz-card" onclick="apriCartella('${c.id}')" style="border:2px dashed var(--border-d);background:#F8FAFC;cursor:pointer;animation-delay:${delay}s">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
           <span style="font-size:24px">📂</span>
-          <div><h4 style="color:var(--slate-m)">Altro</h4><div class="paz-meta" style="font-size:11px">File e documenti non categorizzati</div></div>
+          <div><h4 style="color:var(--slate-m)">${_L('Altro','Other')}</h4><div class="paz-meta" style="font-size:11px">${_L('File e documenti non categorizzati','Uncategorised files and documents')}</div></div>
         </div>
-        <div class="paz-tag" style="margin-top:6px;background:#F1F5F9;color:var(--slate-l)">📂 Cartella predefinita</div>
+        <div class="paz-tag" style="margin-top:6px;background:#F1F5F9;color:var(--slate-l)">📂 ${_L('Cartella predefinita','Default folder')}</div>
       </div>`;
     }
     const eta = c.ddn ? calcolaEta(c.ddn) : null;
     const noteDisplay = (c.note && c.note !== '__altro__') ? '<div style="font-size:11px;color:var(--slate-l);font-style:italic;margin-top:4px">' + esc(c.note.substring(0, 70)) + (c.note.length > 70 ? '...' : '') + '</div>' : '';
     const tagsHtml = renderTagChips(c.tags);
     const archivedStyle = c.archived ? 'opacity:0.6;' : '';
-    const archivedBadge = c.archived ? '<span class="archived-badge">Archiviato</span>' : '';
+    const archivedBadge = c.archived ? `<span class="archived-badge">${_L('Archiviato','Archived')}</span>` : '';
     return `<div class="paz-card" onclick="apriCartella('${c.id}')" style="${archivedStyle}animation-delay:${delay}s;position:relative">
       <input type="checkbox" class="bulk-check" data-id="${c.id}" onclick="event.stopPropagation();aggiornaBulkBar()" style="position:absolute;top:10px;right:10px;width:16px;height:16px;cursor:pointer;accent-color:var(--teal)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <span style="font-size:24px">📁</span>
-        <div><h4>${esc(c.nome)}${archivedBadge}</h4><div class="paz-meta">${eta !== null ? eta + ' anni · ' : ''}${c.sesso || ''}</div></div>
+        <div><h4>${esc(c.nome)}${archivedBadge}</h4><div class="paz-meta">${eta !== null ? eta + ' ' + _L('anni','y.o.') + ' · ' : ''}${c.sesso || ''}</div></div>
       </div>
       ${noteDisplay}
       ${tagsHtml}
@@ -883,13 +884,13 @@ function renderCartelleGrid(data) {
 
   if (!normalCartelle.length && !altroObj) {
     wrap.innerHTML = mostraArchiviati
-      ? '<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">Nessuna cartella archiviata.</div>'
-      : '<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">Nessun risultato per i filtri applicati.</div>';
+      ? `<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">${_L('Nessuna cartella archiviata.','No archived folders.')}</div>`
+      : `<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">${_L('Nessun risultato per i filtri applicati.','No results for the applied filters.')}</div>`;
     return;
   }
   if (!normalCartelle.length && altroObj) {
     wrap.innerHTML = `<div style="margin-bottom:14px;padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">
-      Crea la prima cartella paziente con il pulsante in alto a destra. La cartella <b>Altro</b> è sempre disponibile per file non categorizzati.
+      ${_L('Crea la prima cartella paziente con il pulsante in alto a destra. La cartella <b>Altro</b> è sempre disponibile per file non categorizzati.','Create the first patient folder using the button at the top right. The <b>Other</b> folder is always available for uncategorised files.')}
     </div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">${cardsHtml}</div>`;
     return;
   }
@@ -905,7 +906,7 @@ async function apriCartella(id) {
 function tornaAllElenco() {
   cartellaAperta = null;
   _saveCartellaAperta(null);
-  document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
+  document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
   loadCartelle();
 }
 
@@ -969,11 +970,11 @@ async function renderCartellaDetail(id) {
       <span style="font-size:22px">📋</span>
       <div style="flex:1">
         <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(p.nome||'Piano alimentare')}</div>
-        <div style="font-size:11.5px;color:var(--slate-l)">Salvato: ${fmtDate(p.saved_at||p.data_piano)}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${_L('Salvato','Saved')}: ${fmtDate(p.saved_at||p.data_piano)}</div>
       </div>
       <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">Piano</span>
-      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Piano',docId:'${p.id}',nome:'${(p.nome||'Piano alimentare').replace(/'/g,"\\'")}',data:'${(p.saved_at||p.data_piano||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
-      <button id="vis-btn-piani-${p.id}" class="btn btn-ghost btn-xs" data-visible="${p.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('piani','${p.id}')" style="color:${p.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${p.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${p.visible_to_patient===true?'👁️':'🙈'}</button>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Piano',docId:'${p.id}',nome:'${(p.nome||'Piano alimentare').replace(/'/g,"\\'")}',data:'${(p.saved_at||p.data_piano||'').slice(0,10)}'})" title="${_L('Aggiungi nota SOAP','Add SOAP note')}">🩺</button>
+      <button id="vis-btn-piani-${p.id}" class="btn btn-ghost btn-xs" data-visible="${p.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('piani','${p.id}')" style="color:${p.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${p.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${p.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPiano('${p.id}')">🗑️</button>
     </div>`).join('') :
     '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"></div>';
@@ -987,11 +988,11 @@ async function renderCartellaDetail(id) {
       <span style="font-size:22px">📝</span>
       <div style="flex:1">
         <div style="font-weight:700;font-size:13px;color:var(--slate)">NCPt ${pNome ? '— ' + esc(pNome) : ''}</div>
-        <div style="font-size:11.5px;color:var(--slate-l)">Aggiornato: ${fmtDate(n.updated_at||n.created_at)}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${_L('Aggiornato','Updated')}: ${fmtDate(n.updated_at||n.created_at)}</div>
       </div>
       <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:3px 9px;border-radius:8px;font-weight:600">NCPt</span>
-      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'NCPt',docId:'${n.id}',nome:'NCPt${pNome?' — '+pNome:''}',data:'${(n.updated_at||n.created_at||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
-      <button id="vis-btn-ncpt-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('ncpt','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'NCPt',docId:'${n.id}',nome:'NCPt${pNome?' — '+pNome:''}',data:'${(n.updated_at||n.created_at||'').slice(0,10)}'})" title="${_L('Aggiungi nota SOAP','Add SOAP note')}">🩺</button>
+      <button id="vis-btn-ncpt-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('ncpt','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNCPt('${n.id}')">🗑️</button>
     </div>`;
   }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun NCPt salvato.','No NCPt saved.')}</div>`;
@@ -1002,11 +1003,11 @@ async function renderCartellaDetail(id) {
       <span style="font-size:22px">⚡</span>
       <div style="flex:1">
         <div style="font-weight:700;font-size:13px;color:var(--slate)">${fmtDate(b.data_misura)}</div>
-        <div style="font-size:11.5px;color:var(--slate-l)">${b.peso ? 'Peso: ' + b.peso + ' kg' : ''}${b.bf_pct ? ' · BF: ' + b.bf_pct + '%' : ''}${b.ffm_kg ? ' · FFM: ' + b.ffm_kg + ' kg' : ''}${b.angolo_fase ? ' · φ: ' + b.angolo_fase + '°' : ''}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${b.peso ? _L('Peso','Weight') + ': ' + b.peso + ' kg' : ''}${b.bf_pct ? ' · BF: ' + b.bf_pct + '%' : ''}${b.ffm_kg ? ' · FFM: ' + b.ffm_kg + ' kg' : ''}${b.angolo_fase ? ' · φ: ' + b.angolo_fase + '°' : ''}</div>
       </div>
       <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">BIA</span>
-      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'BIA',docId:'${b.id}',nome:'BIA ${fmtDate(b.data_misura)}',data:'${(b.data_misura||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
-      <button id="vis-btn-bia_records-${b.id}" class="btn btn-ghost btn-xs" data-visible="${b.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('bia_records','${b.id}')" style="color:${b.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${b.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${b.visible_to_patient===true?'👁️':'🙈'}</button>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'BIA',docId:'${b.id}',nome:'BIA ${fmtDate(b.data_misura)}',data:'${(b.data_misura||'').slice(0,10)}'})" title="${_L('Aggiungi nota SOAP','Add SOAP note')}">🩺</button>
+      <button id="vis-btn-bia_records-${b.id}" class="btn btn-ghost btn-xs" data-visible="${b.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('bia_records','${b.id}')" style="color:${b.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${b.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${b.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delBIA('${b.id}','${id}')">🗑️</button>
     </div>`).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessuna misurazione BIA salvata.','No BIA measurements saved.')}</div>`;
 
@@ -1015,12 +1016,12 @@ async function renderCartellaDetail(id) {
     <div onclick="apriScheda('${s.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--teal-l)'" onmouseout="this.style.borderColor='var(--border)'">
       <span style="font-size:22px">📊</span>
       <div style="flex:1">
-        <div style="font-weight:700;font-size:13px;color:var(--slate)">Scheda valutazione${s.nome?' — '+esc(s.nome):''}</div>
-        <div style="font-size:11.5px;color:var(--slate-l)">Salvata: ${fmtDate(s.saved_at||s.created_at)}</div>
+        <div style="font-weight:700;font-size:13px;color:var(--slate)">${_L('Scheda valutazione','Assessment form')}${s.nome?' — '+esc(s.nome):''}</div>
+        <div style="font-size:11.5px;color:var(--slate-l)">${_L('Salvata','Saved')}: ${fmtDate(s.saved_at||s.created_at)}</div>
       </div>
-      <span style="font-size:11px;background:#F0FDF4;color:#15803D;padding:3px 9px;border-radius:8px;font-weight:600">Valutazione</span>
-      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Valutazione',docId:'${s.id}',nome:'Scheda${s.nome?' — '+s.nome:''}',data:'${(s.saved_at||s.created_at||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
-      <button id="vis-btn-schede_valutazione-${s.id}" class="btn btn-ghost btn-xs" data-visible="${s.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('schede_valutazione','${s.id}')" style="color:${s.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${s.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${s.visible_to_patient===true?'👁️':'🙈'}</button>
+      <span style="font-size:11px;background:#F0FDF4;color:#15803D;padding:3px 9px;border-radius:8px;font-weight:600">${_L('Valutazione','Assessment')}</span>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Valutazione',docId:'${s.id}',nome:'Scheda${s.nome?' — '+s.nome:''}',data:'${(s.saved_at||s.created_at||'').slice(0,10)}'})" title="${_L('Aggiungi nota SOAP','Add SOAP note')}">🩺</button>
+      <button id="vis-btn-schede_valutazione-${s.id}" class="btn btn-ghost btn-xs" data-visible="${s.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('schede_valutazione','${s.id}')" style="color:${s.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${s.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${s.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delScheda('${s.id}')">🗑️</button>
     </div>`).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessuna scheda salvata.','No assessments saved.')}</div>`;
 
@@ -1048,7 +1049,7 @@ async function renderCartellaDetail(id) {
         ${qDesc ? `<div style="font-size:11.5px;color:var(--slate-m);margin-top:3px;line-height:1.5">${esc(qDesc)}</div>` : ''}
       </div>
       ${scoreChip}
-      <button id="vis-btn-note_specialistiche-${q.id}" class="btn btn-ghost btn-xs" data-visible="${q.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${q.id}')" style="color:${q.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${q.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${q.visible_to_patient===true?'👁️':'🙈'}</button>
+      <button id="vis-btn-note_specialistiche-${q.id}" class="btn btn-ghost btn-xs" data-visible="${q.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${q.id}')" style="color:${q.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${q.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${q.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${q.id}')">🗑️</button>
     </div>`;
   }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun questionario salvato.','No questionnaires saved.')}</div>`;
@@ -1069,10 +1070,10 @@ async function renderCartellaDetail(id) {
       '</div>' +
       '<span style="font-size:14px;font-weight:700;color:var(--slate);flex-shrink:0">' + e.valore + (e.unita ? ' <span style="font-size:11px;font-weight:400;color:var(--slate-l)">' + esc(e.unita) + '</span>' : '') + '</span>' +
       '<span class="esame-badge ' + bdg.badge + '">' + bdg.label + '</span>' +
-      '<button class="btn btn-ghost btn-xs" onclick="apriStoricoEsame(\'' + id + '\',\'' + e.tipo.replace(/'/g,"\\'") + '\')">📈 Storico</button>' +
+      '<button class="btn btn-ghost btn-xs" onclick="apriStoricoEsame(\'' + id + '\',\'' + e.tipo.replace(/'/g,"\\'") + '\')">📈 ' + _L('Storico','History') + '</button>' +
       '<button class="btn btn-ghost btn-xs" onclick="deleteEsame(\'' + e.id + '\',\'' + id + '\')">🗑️</button>' +
       '</div>';
-  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"> registrato.</div>';
+  }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun esame registrato.','No exams recorded.')}</div>`;
 
   // Build SOAP notes list (newest first)
   const VISITA_MAP = { 'Prima visita':{bg:'#EDE9FE',col:'#5B21B6'}, 'Follow-up':{bg:'#EFF6FF',col:'#1D4ED8'}, 'Controllo':{bg:'#F0FDF4',col:'#15803D'}, 'Urgente':{bg:'#FEE2E2',col:'#991B1B'} };
@@ -1089,26 +1090,26 @@ async function renderCartellaDetail(id) {
       <div onclick="toggleSoap('${n.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer">
         <span style="font-size:22px;background:${vm.bg};padding:6px;border-radius:8px">🩺</span>
         <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:13px;color:var(--slate)">Nota SOAP · ${dataV}${d.doc_ref?` <span style="font-size:10.5px;background:#EFF6FF;color:#1D4ED8;padding:1px 7px;border-radius:8px;font-weight:600;vertical-align:middle;margin-left:4px">📎 ${esc(d.doc_ref.tipo)}</span>`:''}</div>
-          <div style="font-size:11.5px;color:var(--slate-l)">${d.doc_ref?`<span style="color:#1D4ED8;font-weight:600">↳ ${esc(d.doc_ref.nome)}</span> · `:''} ${sShort ? esc(sShort) : 'Nessun soggettivo'}</div>
+          <div style="font-weight:700;font-size:13px;color:var(--slate)">${_L('Nota SOAP','SOAP Note')} · ${dataV}${d.doc_ref?` <span style="font-size:10.5px;background:#EFF6FF;color:#1D4ED8;padding:1px 7px;border-radius:8px;font-weight:600;vertical-align:middle;margin-left:4px">📎 ${esc(d.doc_ref.tipo)}</span>`:''}</div>
+          <div style="font-size:11.5px;color:var(--slate-l)">${d.doc_ref?`<span style="color:#1D4ED8;font-weight:600">↳ ${esc(d.doc_ref.nome)}</span> · `:''} ${sShort ? esc(sShort) : _L('Nessun soggettivo','No subjective')}</div>
         </div>
         <span style="font-size:11px;background:${vm.bg};color:${vm.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${esc(tipoV)}</span>
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();stampaSoap('${n.id}')" title="Stampa / PDF">🖨️</button>
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
       </div>
       <div id="soap-body-${n.id}" data-soap='${esc(JSON.stringify(d))}' style="display:none;padding:0 14px 12px 14px;border-top:1px dashed var(--border)">
-        ${field('S — Soggettivo', d.s)}
-        ${field('O — Oggettivo', d.o)}
-        ${field('A — Assessment', d.a)}
-        ${field('P — Piano', d.p)}
+        ${field(_L('S — Soggettivo','S — Subjective'), d.s)}
+        ${field(_L('O — Oggettivo','O — Objective'), d.o)}
+        ${field(_L('A — Assessment','A — Assessment'), d.a)}
+        ${field(_L('P — Piano','P — Plan'), d.p)}
       </div>
     </div>`;
   }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"></div>';
 
   const soapSection = !isAltro ? `<div class="card" style="margin-bottom:12px">
     <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">🩺 Note Cliniche di Sessione (SOAP) <span style="background:#ECFEFF;color:#0E7490;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${soapNotes.length}</span></h4>
-      <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0E7490,#22D3EE);color:white;box-shadow:0 2px 8px rgba(14,116,144,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''" onclick="openSoapModal('${cart.id}')">🩺 Nuova Nota Sessione</button>
+      <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">🩺 ${_L('Note Cliniche di Sessione (SOAP)','Clinical Session Notes (SOAP)')} <span style="background:#ECFEFF;color:#0E7490;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${soapNotes.length}</span></h4>
+      <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0E7490,#22D3EE);color:white;box-shadow:0 2px 8px rgba(14,116,144,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''" onclick="openSoapModal('${cart.id}')">🩺 ${_L('Nuova Nota Sessione','New Session Note')}</button>
     </div>
     <div style="padding:10px 14px">${soapHtml}</div>
   </div>` : '';
@@ -1143,7 +1144,7 @@ async function renderCartellaDetail(id) {
   (soapNotes||[]).forEach(n => {
     let sd={}; try{sd=JSON.parse(n.dati||'{}');}catch(e){}
     const vm2=_tlVMap[sd.tipo_visita]||{bg:'#F1F5F9',col:'#475569'};
-    tlItems.push({date:sd.data_visita||n.created_at,icon:'🩺',type:sd.tipo_visita||'Visita',col:vm2.col,bg:vm2.bg,title:`Nota SOAP · ${fmtDate(sd.data_visita||n.created_at)}${sd.doc_ref?` ↳ ${esc(sd.doc_ref.nome)}`:''}`,action:`toggleSoap('${n.id}')`});
+    tlItems.push({date:sd.data_visita||n.created_at,icon:'🩺',type:sd.tipo_visita||_L('Visita','Visit'),col:vm2.col,bg:vm2.bg,title:`${_L('Nota SOAP','SOAP Note')} · ${fmtDate(sd.data_visita||n.created_at)}${sd.doc_ref?` ↳ ${esc(sd.doc_ref.nome)}`:''}`,action:`toggleSoap('${n.id}')`});
   });
   (questionariSalvati||[]).forEach(q => {
     let qd={}; try{qd=JSON.parse(q.dati||'{}');}catch(e){}
@@ -1157,9 +1158,9 @@ async function renderCartellaDetail(id) {
   });
   tlItems.sort((a,b)=>new Date(b.date)-new Date(a.date));
   const timelineSection = tlItems.length ? `<div class="card" style="margin-bottom:12px">
-    <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="var b=document.getElementById('tl-body-${id}');var open=b.style.display!=='none';b.style.display=open?'none':'block';this.querySelector('.tl-arr').textContent=open?'▾ Mostra':'▴ Nascondi'">
-      <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0">🗓️ Timeline paziente <span style="background:#F1F5F9;color:#475569;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${tlItems.length} eventi</span></h4>
-      <span class="tl-arr" style="font-size:12px;color:var(--slate-l);flex-shrink:0">▾ Mostra</span>
+    <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="var b=document.getElementById('tl-body-${id}');var open=b.style.display!=='none';b.style.display=open?'none':'block';this.querySelector('.tl-arr').textContent=open?'▾ '+_L('Mostra','Show'):'▴ '+_L('Nascondi','Hide')">
+      <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0">🗓️ ${_L('Timeline paziente','Patient timeline')} <span style="background:#F1F5F9;color:#475569;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${tlItems.length} ${_L('eventi','events')}</span></h4>
+      <span class="tl-arr" style="font-size:12px;color:var(--slate-l);flex-shrink:0">▾ ${_L('Mostra','Show')}</span>
     </div>
     <div id="tl-body-${id}" style="display:none;padding:6px 14px 14px;max-height:500px;overflow-y:auto">
       ${tlItems.map(item=>`<div onclick="${item.action}" style="display:flex;align-items:center;gap:8px;padding:7px 10px;margin-bottom:3px;cursor:pointer;border-radius:8px;border-left:3px solid ${item.col};transition:all .15s" onmouseover="this.style.background='${item.bg}'" onmouseout="this.style.background=''"><div style="width:68px;flex-shrink:0;text-align:right;font-size:10.5px;color:var(--slate-l)">${fmtDate(item.date)}</div><span style="font-size:16px;flex-shrink:0">${item.icon}</span><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div></div><span style="font-size:10px;background:${item.bg};color:${item.col};padding:2px 7px;border-radius:8px;font-weight:600;white-space:nowrap;flex-shrink:0">${item.type}</span></div>`).join('')}
@@ -1191,37 +1192,37 @@ async function renderCartellaDetail(id) {
   wrap.innerHTML = `
     <div style="background:white;border-radius:12px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow)">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-        <button class="btn btn-ghost btn-sm" onclick="tornaAllElenco()" style="flex-shrink:0">← Indietro</button>
+        <button class="btn btn-ghost btn-sm" onclick="tornaAllElenco()" style="flex-shrink:0">← ${_L('Indietro','Back')}</button>
         <h3 style="font-size:16px;font-weight:700;margin:0;flex:1;min-width:0">${isAltro ? '📂' : '📁'} ${esc(cart.nome)}</h3>
-        ${!isAltro && eta !== null ? '<span class="paz-tag" style="flex-shrink:0">' + eta + ' anni</span>' : ''}
+        ${!isAltro && eta !== null ? '<span class="paz-tag" style="flex-shrink:0">' + eta + ' ' + _L('anni','y.o.') + '</span>' : ''}
         ${!isAltro && cart.sesso ? '<span class="paz-tag" style="flex-shrink:0">' + (cart.sesso==='M'?'♂️ M':'♀️ F') + '</span>' : ''}
         ${!isAltro && cart.codice_fiscale ? '<span class="paz-tag" style="flex-shrink:0">🪪 ' + esc(cart.codice_fiscale) + '</span>' : ''}
       </div>
       ${!isAltro && Array.isArray(cart.tags) && cart.tags.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:10px"><span style="font-size:11px;color:var(--slate-l);font-weight:600;flex-shrink:0">🏷️</span>' + cart.tags.map(function(t){var cl=tagColor(t);return '<span class="paz-tag-chip" style="background:'+cl.bg+';color:'+cl.col+'">'+esc(t)+'</span>';}).join('') + '</div>' : ''}
       ${!isAltro ? '<div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:6px;border-top:1px solid var(--border-d)">'
         + '<button class="btn btn-ghost btn-sm" onclick="editCartella(\'' + cart.id + '\')">✏️ Modifica</button>'
-        + '<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella(\'' + cart.id + '\',' + (!!cart.archived) + ')" style="' + (cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)') + '">' + (cart.archived?'♻️ Ripristina':'📦 Archivia') + '</button>'
+        + '<button class="btn btn-ghost btn-sm" onclick="toggleArchiviaCartella(\'' + cart.id + '\',' + (!!cart.archived) + ')" style="' + (cart.archived?'background:#E2E8F0;color:#475569':'color:var(--slate-m)') + '">' + (cart.archived?'♻️ ' + _L('Ripristina','Restore'):'📦 ' + _L('Archivia','Archive')) + '</button>'
         + (patientLink.length
-            ? '<button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')">🔗✂️ Scollega</button>'
-            : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 Collega paziente</button>')
+            ? '<button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="scollegaPaziente(\'' + patientLink[0].patient_id + '\',\'' + cart.id + '\')">🔗✂️ ' + _L('Scollega','Unlink') + '</button>'
+            : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 ' + _L('Collega paziente','Link patient') + '</button>')
         + '<div style="flex:1"></div>'
         + '<button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">📄 PDF</button>'
         + (patientId ? '<button onclick="inviaPrivacy(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">📄 Privacy</button><button onclick="inviaGDPR(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#1E293B,#475569);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">🔒 GDPR</button>' : '')
         + '</div>' : ''}
     </div>
-    ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>Cartella predefinita</b> — Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.</div>` : ''}
-    ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>Cartella archiviata</b> — Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.</div>` : ''}
-    ${!isAltro && cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>Note:</b> ${esc(cart.note)}</div>` : ''}
+    ${isAltro ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--slate-l)">📂 <b>${_L('Cartella predefinita','Default folder')}</b> — ${_L('Usa questa cartella per salvare file e documenti non associati a una cartella paziente specifica.','Use this folder to save files and documents not linked to a specific patient folder.')}</div>` : ''}
+    ${!isAltro && cart.archived ? `<div style="background:#F1F5F9;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#64748B;border-left:3px solid #94A3B8">📦 <b>${_L('Cartella archiviata','Archived folder')}</b> — ${_L('Usa il bottone "♻️ Ripristina" per renderla nuovamente attiva.','Use the "♻️ Restore" button to make it active again.')}</div>` : ''}
+    ${!isAltro && cart.note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--slate-m);border-left:3px solid var(--teal)"><b>${_L('Note:','Notes:')}</b> ${esc(cart.note)}</div>` : ''}
     ${!isAltro ? timelineSection : ''}
 
     <!-- SEZIONE PIANI + CONTENUTO VISIBILE AL PAZIENTE -->
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
-          📋 Piani Alimentari
+          📋 ${_L('Piani Alimentari','Meal Plans')}
           <span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(piani||[]).length}</span>
         </h4>
-        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;box-shadow:0 2px 8px rgba(15,118,110,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(15,118,110,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(15,118,110,.3)';this.style.transform=''" onclick="nuovoPianoInCartella('${cart.id}')">📋 Nuovo Piano</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;box-shadow:0 2px 8px rgba(15,118,110,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(15,118,110,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(15,118,110,.3)';this.style.transform=''" onclick="nuovoPianoInCartella('${cart.id}')">📋 ${_L('Nuovo Piano','New Plan')}</button>
       </div>
       <div style="padding:10px 14px">${pianiHtml}</div>
     </div>
@@ -1230,10 +1231,10 @@ async function renderCartellaDetail(id) {
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
-          📝 Schede NCPt
+          📝 ${_L('Schede NCPt','NCPt Sheets')}
           <span style="background:#EDE9FE;color:#5B21B6;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(ncpts||[]).length}</span>
         </h4>
-        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;box-shadow:0 2px 8px rgba(124,58,237,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(124,58,237,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(124,58,237,.3)';this.style.transform=''" onclick="apriNuovoNCPt('${cart.id}')">📝 Nuovo NCPt</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;box-shadow:0 2px 8px rgba(124,58,237,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(124,58,237,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(124,58,237,.3)';this.style.transform=''" onclick="apriNuovoNCPt('${cart.id}')">📝 ${_L('Nuovo NCPt','New NCPt')}</button>
       </div>
       <div style="padding:10px 14px">${ncptsHtml}</div>
     </div>
@@ -1242,10 +1243,10 @@ async function renderCartellaDetail(id) {
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
-          📊 Schede Valutazione
+          📊 ${_L('Schede Valutazione','Assessment Forms')}
           <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(schede||[]).length}</span>
         </h4>
-        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#16A34A,#4ADE80);color:white;box-shadow:0 2px 8px rgba(22,163,74,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(22,163,74,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,74,.3)';this.style.transform=''" onclick="apriValutazione('${cart.id}')">📊 Nuova Valutazione</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#16A34A,#4ADE80);color:white;box-shadow:0 2px 8px rgba(22,163,74,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(22,163,74,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,74,.3)';this.style.transform=''" onclick="apriValutazione('${cart.id}')">📊 ${_L('Nuova Valutazione','New Assessment')}</button>
       </div>
       <div style="padding:10px 14px">${schedeHtml}</div>
     </div>
@@ -1254,10 +1255,10 @@ async function renderCartellaDetail(id) {
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
-          ⚡ BIA — Bioimpedenziometria
+          ⚡ ${_L('BIA — Bioimpedenziometria','BIA — Bioimpedance')}
           <span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(biaList||[]).length}</span>
         </h4>
-        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;box-shadow:0 2px 8px rgba(29,78,216,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(29,78,216,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(29,78,216,.3)';this.style.transform=''" onclick="window.location.href='bia.html?cartella=${id}'">⚡ Nuova BIA</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;box-shadow:0 2px 8px rgba(29,78,216,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(29,78,216,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(29,78,216,.3)';this.style.transform=''" onclick="window.location.href='bia.html?cartella=${id}'">⚡ ${_L('Nuova BIA','New BIA')}</button>
       </div>
       <div style="padding:10px 14px">${biaHtml}</div>
     </div>
@@ -1266,32 +1267,32 @@ async function renderCartellaDetail(id) {
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
-          📋 Questionari Salvati
+          📋 ${_L('Questionari Salvati','Saved Questionnaires')}
           <span style="background:#F0F9FF;color:#0369A1;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${questionariSalvati.length}</span>
         </h4>
-        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0369A1,#38BDF8);color:white;box-shadow:0 2px 8px rgba(3,105,161,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(3,105,161,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(3,105,161,.3)';this.style.transform=''" onclick="window.location.href='questionari.html'">📋 Vai ai Questionari</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0369A1,#38BDF8);color:white;box-shadow:0 2px 8px rgba(3,105,161,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(3,105,161,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(3,105,161,.3)';this.style.transform=''" onclick="window.location.href='questionari.html'">📋 ${_L('Vai ai Questionari','Go to Questionnaires')}</button>
       </div>
       <div style="padding:10px 14px">${questionariHtml}</div>
     </div>
 
     <!-- ESAMI BIOCHIMICI -->
-    ${!isAltro ? '<div class="card" style="margin-bottom:12px"><div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">🔬 Esami Biochimici <span style="background:#FFF7ED;color:#C2410C;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">' + (esamiBiochimici||[]).length + '</span></h4><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-ghost btn-sm" onclick="openBulkEsameModal(\'' + cart.id + '\')" title="Inserisci più esami in una volta">📋 Pannello</button><button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#C2410C,#FB923C);color:white;box-shadow:0 2px 8px rgba(194,65,12,.3);transition:all .15s;font-family:inherit" onmouseover="this.style.boxShadow=\'0 4px 14px rgba(194,65,12,.45)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(194,65,12,.3)\';this.style.transform=\'\'" onclick="openEsameModal(\'' + cart.id + '\')">🔬 + Esame</button></div></div><div style="padding:10px 14px">' + esamiHtml + '</div></div>' : ''}
+    ${!isAltro ? '<div class="card" style="margin-bottom:12px"><div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">🔬 ' + _L('Esami Biochimici','Biochemical Tests') + ' <span style="background:#FFF7ED;color:#C2410C;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">' + (esamiBiochimici||[]).length + '</span></h4><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-ghost btn-sm" onclick="openBulkEsameModal(\'' + cart.id + '\')" title="' + _L('Inserisci più esami in una volta','Insert multiple exams at once') + '">📋 ' + _L('Pannello','Panel') + '</button><button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#C2410C,#FB923C);color:white;box-shadow:0 2px 8px rgba(194,65,12,.3);transition:all .15s;font-family:inherit" onmouseover="this.style.boxShadow=\'0 4px 14px rgba(194,65,12,.45)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(194,65,12,.3)\';this.style.transform=\'\'" onclick="openEsameModal(\'' + cart.id + '\')">🔬 + ' + _L('Esame','Exam') + '</button></div></div><div style="padding:10px 14px">' + esamiHtml + '</div></div>' : ''}
 
     <!-- Consigli Nutrizionali -->
     ${(consigliNutrizionali && consigliNutrizionali.length) ? `
     <div class="card" style="margin-bottom:16px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <h4 style="font-size:14px;margin:0">💡 Consigli Nutrizionali <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${consigliNutrizionali.length}</span></h4>
-        <button style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:10px;border:none;font-size:11.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#16A34A,#4ADE80);color:white;box-shadow:0 2px 8px rgba(22,163,74,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(22,163,74,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,74,.3)';this.style.transform=''" onclick="window.location.href='consigli.html?cartella=${id}'">💡 Vai ai Consigli</button>
+        <h4 style="font-size:14px;margin:0">💡 ${_L('Consigli Nutrizionali','Nutritional Tips')} <span style="background:#F0FDF4;color:#15803D;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${consigliNutrizionali.length}</span></h4>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:10px;border:none;font-size:11.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#16A34A,#4ADE80);color:white;box-shadow:0 2px 8px rgba(22,163,74,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(22,163,74,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,74,.3)';this.style.transform=''" onclick="window.location.href='consigli.html?cartella=${id}'">💡 ${_L('Vai ai Consigli','Go to Tips')}</button>
       </div>
       <div style="padding:10px 14px">${consigliNutrizionali.map(n => {
         return `<div onclick="apriNoteSpec('${n.id}','consiglio')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#16A34A'" onmouseout="this.style.borderColor='var(--border)'">
           <span style="font-size:22px;background:#F0FDF4;padding:6px;border-radius:8px">💡</span>
           <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(n.nota||'Consiglio Nutrizionale')}</div>
-            <div style="font-size:11.5px;color:var(--slate-l)">Consiglio Nutrizionale · ${fmtDate(n.created_at)}</div>
+            <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(n.nota||_L('Consiglio Nutrizionale','Nutritional Tip'))}</div>
+            <div style="font-size:11.5px;color:var(--slate-l)">${_L('Consiglio Nutrizionale','Nutritional Tip')} · ${fmtDate(n.created_at)}</div>
           </div>
-          <span style="font-size:11px;background:#F0FDF4;color:#16A34A;padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">Consiglio Nutrizionale</span>
+          <span style="font-size:11px;background:#F0FDF4;color:#16A34A;padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${_L('Consiglio Nutrizionale','Nutritional Tip')}</span>
           <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','consiglio')">✏️ Apri</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
@@ -1303,7 +1304,7 @@ async function renderCartellaDetail(id) {
     ${(noteSpecAltre && noteSpecAltre.length) ? `
     <div class="card" style="margin-bottom:16px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <h4 style="font-size:14px;margin:0">📌 Schede Specialistiche <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${noteSpecAltre.length}</span></h4>
+        <h4 style="font-size:14px;margin:0">📌 ${_L('Schede Specialistiche','Specialist Sheets')} <span style="background:#FEF3C7;color:#92400E;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${noteSpecAltre.length}</span></h4>
       </div>
       <div style="padding:10px 14px">${noteSpecAltre.map(n => {
         const specMap = {
@@ -1331,7 +1332,7 @@ async function renderCartellaDetail(id) {
           </div>
           <span style="font-size:11px;background:${s.bg};color:${s.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${s.label}</span>
           <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
-          <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'${s.label}',docId:'${n.id}',nome:'${(n.nota||s.label).replace(/'/g,"\\'")}',data:'${(n.created_at||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
+          <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'${s.label}',docId:'${n.id}',nome:'${(n.nota||s.label).replace(/'/g,"\\'")}',data:'${(n.created_at||'').slice(0,10)}'})" title="${_L('Aggiungi nota SOAP','Add SOAP note')}">🩺</button>
           ${openBtn}
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
         </div>`;
@@ -1348,7 +1349,7 @@ async function renderCartellaDetail(id) {
 async function loadAuditLog(cartellaId) {
   const el = document.getElementById('audit-log-body');
   if (!el) return;
-  el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">Caricamento...</div>';
+  el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">' + _L('Caricamento...','Loading...') + '</div>';
   try {
     const { data, error } = await sb.from('patient_audit_log')
       .select('*')
@@ -1579,7 +1580,7 @@ function openSoapModal(cartellaId, docRef) {
   const refEl = document.getElementById('soap-doc-ref');
   if (refEl) {
     if (docRef) {
-      refEl.textContent = '📎 Collegata a: ' + docRef.tipo + ' — ' + docRef.nome;
+      refEl.textContent = '📎 ' + _L('Collegata a: ','Linked to: ') + docRef.tipo + ' — ' + docRef.nome;
       refEl.style.display = 'block';
     } else {
       refEl.style.display = 'none';
@@ -1632,12 +1633,12 @@ function stampaSoap(id) {
     h1{font-size:18px;border-bottom:2px solid #0E7490;padding-bottom:8px}
     .meta{font-size:12px;color:#475569;margin-bottom:8px}</style></head>
     <body>
-      <h1>🩺 Nota Clinica di Sessione (SOAP)</h1>
-      <div class="meta"><b>Paziente:</b> ${esc2(cartNome)} &nbsp; | &nbsp; <b>Data visita:</b> ${dataV} &nbsp; | &nbsp; <b>Tipo:</b> ${esc2(d.tipo_visita || '')}</div>
-      ${blocco('S — Soggettivo', d.s)}
-      ${blocco('O — Oggettivo', d.o)}
-      ${blocco('A — Assessment', d.a)}
-      ${blocco('P — Piano', d.p)}
+      <h1>🩺 ${_L('Nota Clinica di Sessione (SOAP)','Clinical Session Note (SOAP)')}</h1>
+      <div class="meta"><b>${_L('Paziente:','Patient:')}</b> ${esc2(cartNome)} &nbsp; | &nbsp; <b>${_L('Data visita:','Visit date:')}</b> ${dataV} &nbsp; | &nbsp; <b>${_L('Tipo:','Type:')}</b> ${esc2(d.tipo_visita || '')}</div>
+      ${blocco(_L('S — Soggettivo','S — Subjective'), d.s)}
+      ${blocco(_L('O — Oggettivo','O — Objective'), d.o)}
+      ${blocco(_L('A — Assessment','A — Assessment'), d.a)}
+      ${blocco(_L('P — Piano','P — Plan'), d.p)}
       <script>window.onload=function(){window.print();}<\/script>
     </body></html>`);
   win.document.close();
@@ -1650,8 +1651,8 @@ function apriQuestionario(id, nome, cartellaId) {
 
 function openNewCartella() {
   editingCartellaId = null;
-  document.getElementById('nc-title').textContent = '📁 Nuova Cartella Paziente';
-  document.getElementById('nc-save-btn').textContent = '📁 Crea Cartella';
+  document.getElementById('nc-title').textContent = '📁 ' + _L('Nuova Cartella Paziente','New Patient Folder');
+  document.getElementById('nc-save-btn').textContent = '📁 ' + _L('Crea Cartella','Create Folder');
   ['nc-nome','nc-cognome','nc-cf','nc-note'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('nc-ddn').value = '';
   document.getElementById('nc-sesso').value = '';
@@ -1669,8 +1670,8 @@ async function editCartella(id) {
   showLoading(false);
   if (!data) return;
   editingCartellaId = id;
-  document.getElementById('nc-title').textContent = '✏️ Modifica Cartella';
-  document.getElementById('nc-save-btn').textContent = '💾 Salva Modifiche';
+  document.getElementById('nc-title').textContent = '✏️ ' + _L('Modifica Cartella','Edit Folder');
+  document.getElementById('nc-save-btn').textContent = '💾 ' + _L('Salva Modifiche','Save Changes');
   document.getElementById('nc-nome').value = data.nome || '';
   document.getElementById('nc-cognome').value = data.cognome || '';
   document.getElementById('nc-ddn').value = data.ddn || '';
@@ -1735,7 +1736,7 @@ async function delCartella(id) {
     await sb.from('cartelle').delete().eq('id', id);
     showLoading(false);
     cartellaAperta = null;
-    document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
+    document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
     loadCartelle();
     toast(_L('🗑️ Cartella eliminata','🗑️ Folder deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Cartella','⚠️ Delete Folder'), okLabel: _L('Elimina','Delete') });
@@ -1768,11 +1769,11 @@ async function cercaPazienteEmail() {
   collegaFoundUserId = null;
   confirmBtn.style.display = 'none';
 
-  if (!email) { resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">Inserisci un\'email.</div>'; return; }
+  if (!email) { resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">' + _L('Inserisci un\'email.','Enter an email.') + '</div>'; return; }
   // Basic email format validation
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">Formato email non valido.</div>'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">' + _L('Formato email non valido.','Invalid email format.') + '</div>'; return; }
 
-  resultEl.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">Ricerca in corso...</div>';
+  resultEl.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">' + _L('Ricerca in corso...','Searching...') + '</div>';
 
   // Search in profiles table (since we can't use admin API from client side)
   const { data, error } = await sb.from('profiles').select('id,username,email').eq('email', email).maybeSingle();
@@ -1791,13 +1792,13 @@ async function cercaPazienteEmail() {
   const { data: existing } = await sb.from('patient_dietitian').select('id').eq('patient_id', data.id).eq('dietitian_id', currentUser.id).eq('cartella_id', collegaCartellaId).maybeSingle();
 
   if (existing) {
-    resultEl.innerHTML = '<div style="color:var(--teal);font-size:12.5px">✅ Questo paziente è già collegato a questa cartella.</div>';
+    resultEl.innerHTML = '<div style="color:var(--teal);font-size:12.5px">✅ ' + _L('Questo paziente è già collegato a questa cartella.','This patient is already linked to this folder.') + '</div>';
     return;
   }
 
   collegaFoundUserId = data.id;
   resultEl.innerHTML = `<div style="padding:10px;background:#F0FDF4;border-radius:8px;border:1px solid #BBF7D0">
-    <div style="font-weight:700;font-size:13px;color:var(--slate)">✅ Utente trovato</div>
+    <div style="font-weight:700;font-size:13px;color:var(--slate)">✅ ${_L('Utente trovato','User found')}</div>
     <div style="font-size:12px;color:var(--slate-m);margin-top:2px">${esc(data.username || data.email)}</div>
   </div>`;
   confirmBtn.style.display = '';
@@ -1872,7 +1873,7 @@ async function toggleArchiviaCartella(id, currentlyArchived) {
     toast(newArchived ? _L('📦 Cartella archiviata','📦 Folder archived') : _L('♻️ Cartella ripristinata','♻️ Folder restored'), 'ok');
     cartellaAperta = null;
     _saveCartellaAperta(null);
-    document.getElementById('page-title').textContent = '📁 Cartelle Pazienti';
+    document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
     await loadCartelle();
   }, { title: newArchived ? _L('📦 Archivia Cartella','📦 Archive Folder') : _L('♻️ Ripristina Cartella','♻️ Restore Folder'), okLabel: newArchived ? _L('Archivia','Archive') : _L('Ripristina','Restore') });
 }
@@ -1975,7 +1976,7 @@ function openSpecSectionsModal(itemId, tipo, btn) {
   _specSectionsPending = { itemId, tipo, btn };
 
   const label = (tipo.charAt(0).toUpperCase() + tipo.slice(1));
-  document.getElementById('spec-sections-title').textContent = '👁️ Sezioni visibili — ' + label;
+  document.getElementById('spec-sections-title').textContent = '👁️ ' + _L('Sezioni visibili — ','Visible sections — ') + label;
 
   const container = document.getElementById('spec-sections-checkboxes');
   container.innerHTML = subs.map(s => `
@@ -2011,7 +2012,7 @@ async function _specSectionsOk() {
   if (btn) {
     btn.dataset.visible = 'true';
     btn.style.color = '#0F766E';
-    btn.title = 'Nascondi al paziente';
+    btn.title = _L('Nascondi al paziente','Hide from patient');
     btn.textContent = '👁️';
   }
 
@@ -2025,7 +2026,7 @@ async function _specSectionsOk() {
 
   const { error } = await sb.from('note_specialistiche').update({ visible_to_patient: true, dati }).eq('id', itemId);
   if (error) {
-    if (btn) { btn.dataset.visible = 'false'; btn.style.color = '#94A3B8'; btn.title = 'Mostra al paziente'; btn.textContent = '🙈'; }
+    if (btn) { btn.dataset.visible = 'false'; btn.style.color = '#94A3B8'; btn.title = _L('Mostra al paziente','Show to patient'); btn.textContent = '🙈'; }
     toast('❌ ' + error.message, 'err');
     return;
   }
@@ -2039,7 +2040,7 @@ async function _doToggleVisibility(table, itemId, btn) {
   if (btn) {
     btn.dataset.visible = newVisible;
     btn.style.color = newVisible ? '#0F766E' : '#94A3B8';
-    btn.title = newVisible ? 'Nascondi al paziente' : 'Mostra al paziente';
+    btn.title = newVisible ? _L('Nascondi al paziente','Hide from patient') : _L('Mostra al paziente','Show to patient');
     btn.textContent = newVisible ? '👁️' : '🙈';
   }
 
@@ -2048,7 +2049,7 @@ async function _doToggleVisibility(table, itemId, btn) {
     if (btn) {
       btn.dataset.visible = !newVisible;
       btn.style.color = !newVisible ? '#0F766E' : '#94A3B8';
-      btn.title = !newVisible ? 'Nascondi al paziente' : 'Mostra al paziente';
+      btn.title = !newVisible ? _L('Nascondi al paziente','Hide from patient') : _L('Mostra al paziente','Show to patient');
       btn.textContent = !newVisible ? '👁️' : '🙈';
     }
     const msg = error.message && error.message.includes('visible_to_patient')
@@ -2107,7 +2108,7 @@ async function renderWeightChart(canvasId, data) {
     data: {
       labels: labels,
       datasets: [{
-        label: 'Peso (kg)',
+        label: _L('Peso (kg)','Weight (kg)'),
         data: values,
         borderColor: '#0F766E',
         backgroundColor: 'rgba(15, 118, 110, 0.1)',
@@ -2182,24 +2183,25 @@ const ESAME_HINTS = {
 function getEsameBadge(tipo, valore) {
   const v = parseFloat(valore);
   if (isNaN(v)) return {badge:'na', label:'—'};
+  const _N=_L('Normale','Normal'),_O=_L('Ottimale','Optimal'),_B=_L('Borderline','Borderline'),_A=_L('Alto','High'),_Bas=_L('Basso','Low'),_Bas2=_L('Bassa','Low');
   const checks = {
-    'HbA1c':                     () => v<5.7?['ok','Normale']:v<6.5?['warn','Pre-diabete']:['danger','Diabete'],
-    'Glicemia a digiuno':        () => v<100?['ok','Normale']:v<126?['warn','Alterata']:['danger','Diabete'],
-    'Colesterolo totale':        () => v<200?['ok','Ottimale']:v<240?['warn','Borderline']:['danger','Alto'],
-    'Colesterolo LDL':           () => v<100?['ok','Ottimale']:v<160?['warn','Borderline']:['danger','Alto'],
-    'Colesterolo HDL':           () => v>=60?['ok','Ottimale']:v>=40?['warn','Borderline']:['danger','Basso'],
-    'Trigliceridi':              () => v<150?['ok','Normale']:v<200?['warn','Borderline']:['danger','Alto'],
-    'Creatinina':                () => v>=0.6&&v<=1.3?['ok','Normale']:v<2?['warn','Elevata']:['danger','Molto elevata'],
-    'eGFR':                      () => v>=60?['ok','Normale']:v>=30?['warn','Moderato']:['danger','Severo'],
-    'Albumina':                  () => v>=3.5?['ok','Normale']:v>=3.0?['warn','Borderline']:['danger','Bassa'],
-    'Proteina C-reattiva (PCR)': () => v<1?['ok','Normale']:v<3?['warn','Lieve']:['danger','Alta'],
-    'Ferritina':                 () => v<12?['warn','Bassa']:v<=300?['ok','Normale']:['danger','Alta'],
-    'Vitamina D (25-OH)':        () => v>=30?['ok','Sufficiente']:v>=20?['warn','Insufficiente']:['danger','Carenza'],
-    'TSH':                       () => v>=0.4&&v<=4.0?['ok','Normale']:v<10?['warn','Borderline']:['danger','Elevato'],
-    'Sodio':                     () => v>=136&&v<=145?['ok','Normale']:['warn','Fuori range'],
-    'Potassio':                  () => v>=3.5&&v<=5.0?['ok','Normale']:['warn','Fuori range'],
-    'Azoto ureico (BUN)':        () => v<=20?['ok','Normale']:v<=40?['warn','Borderline']:['danger','Alto'],
-    'Acido urico':               () => v<=7.0?['ok','Normale']:v<=9.0?['warn','Borderline']:['danger','Iperuricemia'],
+    'HbA1c':                     () => v<5.7?['ok',_N]:v<6.5?['warn',_L('Pre-diabete','Pre-diabetes')]:['danger',_L('Diabete','Diabetes')],
+    'Glicemia a digiuno':        () => v<100?['ok',_N]:v<126?['warn',_L('Alterata','Impaired')]:['danger',_L('Diabete','Diabetes')],
+    'Colesterolo totale':        () => v<200?['ok',_O]:v<240?['warn',_B]:['danger',_A],
+    'Colesterolo LDL':           () => v<100?['ok',_O]:v<160?['warn',_B]:['danger',_A],
+    'Colesterolo HDL':           () => v>=60?['ok',_O]:v>=40?['warn',_B]:['danger',_Bas],
+    'Trigliceridi':              () => v<150?['ok',_N]:v<200?['warn',_B]:['danger',_A],
+    'Creatinina':                () => v>=0.6&&v<=1.3?['ok',_N]:v<2?['warn',_L('Elevata','Elevated')]:['danger',_L('Molto elevata','Very elevated')],
+    'eGFR':                      () => v>=60?['ok',_N]:v>=30?['warn',_L('Moderato','Moderate')]:['danger',_L('Severo','Severe')],
+    'Albumina':                  () => v>=3.5?['ok',_N]:v>=3.0?['warn',_B]:['danger',_Bas2],
+    'Proteina C-reattiva (PCR)': () => v<1?['ok',_N]:v<3?['warn',_L('Lieve','Mild')]:['danger',_L('Alta','High')],
+    'Ferritina':                 () => v<12?['warn',_Bas2]:v<=300?['ok',_N]:['danger',_L('Alta','High')],
+    'Vitamina D (25-OH)':        () => v>=30?['ok',_L('Sufficiente','Sufficient')]:v>=20?['warn',_L('Insufficiente','Insufficient')]:['danger',_L('Carenza','Deficiency')],
+    'TSH':                       () => v>=0.4&&v<=4.0?['ok',_N]:v<10?['warn',_B]:['danger',_L('Elevato','Elevated')],
+    'Sodio':                     () => v>=136&&v<=145?['ok',_N]:['warn',_L('Fuori range','Out of range')],
+    'Potassio':                  () => v>=3.5&&v<=5.0?['ok',_N]:['warn',_L('Fuori range','Out of range')],
+    'Azoto ureico (BUN)':        () => v<=20?['ok',_N]:v<=40?['warn',_B]:['danger',_A],
+    'Acido urico':               () => v<=7.0?['ok',_N]:v<=9.0?['warn',_B]:['danger',_L('Iperuricemia','Hyperuricemia')],
   };
   const check = checks[tipo];
   if (!check) return {badge:'na', label:'—'};
@@ -2217,7 +2219,7 @@ function openEsameModal(cartellaId) {
   document.getElementById('esame-custom-wrap').style.display = 'none';
   document.getElementById('esame-ref-info').style.display = 'none';
   document.getElementById('esame-badge-preview').style.display = 'none';
-  document.getElementById('esame-modal-title').textContent = '🔬 Aggiungi Esame Biochimico';
+  document.getElementById('esame-modal-title').textContent = '🔬 ' + _L('Aggiungi Esame Biochimico','Add Biochemical Exam');
   _restoreEsameDraft();
   openM('modal-esame');
 }
@@ -2229,7 +2231,7 @@ function onEsameTipoChange() {
   const refInfo = document.getElementById('esame-ref-info');
   if (ref) {
     document.getElementById('esame-unita').value = ref.unit;
-    refInfo.innerHTML = '<strong>Valori di riferimento:</strong> ' + ref.hint;
+    refInfo.innerHTML = '<strong>' + _L('Valori di riferimento:','Reference values:') + '</strong> ' + ref.hint;
     refInfo.style.display = 'block';
   } else {
     refInfo.style.display = 'none';
@@ -2354,11 +2356,11 @@ async function salvaBulkEsami() {
     const unita = (tr.querySelector('.bulk-unita')?.value || '').trim();
     records.push({ cartella_id: _bulkEsameCartellaId, user_id: currentUser.id, tipo, valore, unita: unita||null, data_esame });
   });
-  if (!records.length) { toast('_L('Nessun valore inserito','No values entered')', 'err'); return; }
+  if (!records.length) { toast(_L('Nessun valore inserito','No values entered'), 'err'); return; }
   const { error } = await sb.from('esami_biochimici').insert(records);
-  if (error) { toast('_L('Errore: ','Error: ') + error.message, 'err'); return; }
+  if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }
   closeM('modal-esame-bulk');
-  toast(records.length + ' esami salvati', 'ok');
+  toast(records.length + ' ' + _L('esami salvati','exams saved'), 'ok');
   await renderCartellaDetail(_bulkEsameCartellaId);
 }
 
@@ -2478,7 +2480,7 @@ async function deleteAllegato(fileId, storagePath, cartellaId) {
 let _storicoChart = null;
 
 async function apriStoricoEsame(cartellaId, tipo) {
-  document.getElementById('esame-storico-title').textContent = '📈 Storico — ' + tipo;
+  document.getElementById('esame-storico-title').textContent = '📈 ' + _L('Storico','History') + ' — ' + tipo;
   document.getElementById('esame-storico-nessun').style.display = 'none';
   openM('modal-esame-storico');
 
@@ -2584,9 +2586,9 @@ async function esportaPDFCartella() {
   doc.setFontSize(20); doc.setFont('helvetica', 'bold');
   doc.text('DietPlan Pro', lm, 13);
   doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-  doc.text('Studio di Nutrizione Clinica', lm, 20);
+  doc.text(_L('Studio di Nutrizione Clinica','Clinical Nutrition Practice'), lm, 20);
   doc.setFontSize(8);
-  doc.text('Cartella Paziente - Generato il ' + new Date().toLocaleDateString(_L('it','en')), lm, 27);
+  doc.text(_L('Cartella Paziente - Generato il ','Patient Folder - Generated on ') + new Date().toLocaleDateString(_L('it','en')), lm, 27);
   y = 40;
 
   // Nome paziente
@@ -2599,41 +2601,41 @@ async function esportaPDFCartella() {
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(71, 85, 105);
   const infoLine = [
     cart.ddn ? 'DDN: ' + new Date(cart.ddn).toLocaleDateString(_L('it','en')) : null,
-    eta !== null ? 'Eta: ' + eta + ' anni' : null,
-    cart.sesso ? 'Sesso: ' + (cart.sesso === 'M' ? 'Maschio' : 'Femmina') : null,
+    eta !== null ? _L('Età: ','Age: ') + eta + ' ' + _L('anni','y.o.') : null,
+    cart.sesso ? _L('Sesso: ','Sex: ') + (cart.sesso === 'M' ? _L('Maschio','Male') : _L('Femmina','Female')) : null,
     cart.codice_fiscale ? 'CF: ' + cart.codice_fiscale : null,
   ].filter(Boolean).join('   |   ');
   doc.text(infoLine, lm, y); y += 6;
 
   if (Array.isArray(cart.tags) && cart.tags.length) {
     doc.setFontSize(8);
-    const tagLine = doc.splitTextToSize('Patologie/Tag: ' + cart.tags.join(', '), w);
+    const tagLine = doc.splitTextToSize(_L('Patologie/Tag: ','Conditions/Tags: ') + cart.tags.join(', '), w);
     doc.text(tagLine, lm, y); y += tagLine.length * 4 + 2;
   }
   if (cart.note && cart.note !== '__altro__') {
     doc.setFontSize(8);
-    const noteLines = doc.splitTextToSize('Note cliniche: ' + cart.note, w);
+    const noteLines = doc.splitTextToSize(_L('Note cliniche: ','Clinical notes: ') + cart.note, w);
     doc.text(noteLines, lm, y); y += noteLines.length * 4 + 2;
   }
 
   // BIA
   const lastBia = biaList && biaList[0];
   if (lastBia) {
-    sectionHeader('Ultima Misurazione BIA');
+    sectionHeader(_L('Ultima Misurazione BIA','Last BIA Measurement'));
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
     const biaParts = [
       lastBia.peso   ? 'Peso: ' + r1(lastBia.peso, 1) + ' kg' : null,
       lastBia.bf_pct ? 'BF%: ' + r1(lastBia.bf_pct, 1) + '%'  : null,
       lastBia.ffm_kg ? 'FFM: ' + r1(lastBia.ffm_kg, 1) + ' kg' : null,
-      lastBia.angolo_fase ? 'Angolo di fase: ' + r1(lastBia.angolo_fase, 2) + 'deg' : null,
-      lastBia.data_misura ? 'Data: ' + new Date(lastBia.data_misura).toLocaleDateString(_L('it','en')) : null,
+      lastBia.angolo_fase ? _L('Angolo di fase: ','Phase angle: ') + r1(lastBia.angolo_fase, 2) + 'deg' : null,
+      lastBia.data_misura ? _L('Data: ','Date: ') + new Date(lastBia.data_misura).toLocaleDateString(_L('it','en')) : null,
     ].filter(Boolean).join('    ');
     doc.text(biaParts, lm + 2, y); y += 6;
   }
 
   // Esami biochimici
   if (esamiBiochimici && esamiBiochimici.length) {
-    sectionHeader('Esami Biochimici (' + esamiBiochimici.length + ')');
+    sectionHeader(_L('Esami Biochimici','Biochemical Tests') + ' (' + esamiBiochimici.length + ')');
     doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
     esamiBiochimici.slice(0, 18).forEach(e => {
       if (y > 262) { doc.addPage(); y = 18; }
@@ -2649,12 +2651,12 @@ async function esportaPDFCartella() {
 
   // Piani alimentari
   if (piani && piani.length) {
-    sectionHeader('Piani Alimentari (' + piani.length + ')');
+    sectionHeader(_L('Piani Alimentari','Meal Plans') + ' (' + piani.length + ')');
     doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
     piani.slice(0, 12).forEach(p => {
       if (y > 262) { doc.addPage(); y = 18; }
       const dt = p.saved_at || p.data_piano;
-      const nomePiano = (p.nome || 'Piano alimentare').replace(/[^\x00-\xFF]/g, '');
+      const nomePiano = (p.nome || _L('Piano alimentare','Meal plan')).replace(/[^\x00-\xFF]/g, '');
       doc.text('-  ' + nomePiano + (dt ? '  (' + new Date(dt).toLocaleDateString(_L('it','en')) + ')' : ''), lm + 2, y);
       y += 5;
     });
@@ -2667,7 +2669,7 @@ async function esportaPDFCartella() {
     doc.setDrawColor(203, 213, 225); doc.line(lm, 284, rm, 284);
     doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
     doc.text('DietPlan Pro - Documento riservato. Trattamento dati ai sensi del GDPR (UE) 2016/679.', lm, 289);
-    doc.text('Pag. ' + i + '/' + pageCount, rm, 289, { align: 'right' });
+    doc.text(_L('Pag. ','Page ') + i + '/' + pageCount, rm, 289, { align: 'right' });
   }
 
   const safeName = (cart.nome || 'paziente').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_');

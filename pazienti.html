@@ -925,7 +925,7 @@ async function renderCartellaDetail(id) {
   const cartResult = await sb.from('cartelle').select('*').eq('id', id).eq('user_id', currentUser.id).maybeSingle();
   if (cartResult?.error) {
     console.error('Errore caricamento cartella:', cartResult.error);
-    wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>Errore caricamento cartella</h3><p style="color:var(--slate-l);font-size:13px">${esc(cartResult.error.message)}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">← Torna all'elenco</button></div>`;
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>_L('Errore caricamento cartella','Folder loading error')</h3><p style="color:var(--slate-l);font-size:13px">${esc(cartResult.error.message)}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px"></button></div>`;
     cartellaAperta = null;
     return;
   }
@@ -947,7 +947,7 @@ async function renderCartellaDetail(id) {
   const isAltro = (id === _altroCartellaId);
 
   if (!cart) {
-    wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>Cartella non trovata</h3><p style="color:var(--slate-l);font-size:13px">Cartella non accessibile o inesistente.</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">← Torna all'elenco</button></div>`;
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>${_L('Cartella non trovata','Folder not found')}</h3><p style="color:var(--slate-l);font-size:13px">${_L('Cartella non accessibile o inesistente.','Folder not accessible or does not exist.')}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px"></button></div>`;
     cartellaAperta = null;
     return;
   }
@@ -976,7 +976,7 @@ async function renderCartellaDetail(id) {
       <button id="vis-btn-piani-${p.id}" class="btn btn-ghost btn-xs" data-visible="${p.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('piani','${p.id}')" style="color:${p.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${p.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${p.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPiano('${p.id}')">🗑️</button>
     </div>`).join('') :
-    '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun piano salvato.</div>';
+    '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"></div>';
 
   // Build NCPt list
   const ncptsHtml = (ncpts && ncpts.length) ? ncpts.map(n => {
@@ -994,7 +994,7 @@ async function renderCartellaDetail(id) {
       <button id="vis-btn-ncpt-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('ncpt','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNCPt('${n.id}')">🗑️</button>
     </div>`;
-  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun NCPt salvato.</div>';
+  }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun NCPt salvato.','No NCPt saved.')}</div>`;
 
   // Build BIA records list
   const biaHtml = (biaList && biaList.length) ? biaList.map(b => `
@@ -1008,7 +1008,7 @@ async function renderCartellaDetail(id) {
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'BIA',docId:'${b.id}',nome:'BIA ${fmtDate(b.data_misura)}',data:'${(b.data_misura||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
       <button id="vis-btn-bia_records-${b.id}" class="btn btn-ghost btn-xs" data-visible="${b.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('bia_records','${b.id}')" style="color:${b.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${b.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${b.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delBIA('${b.id}','${id}')">🗑️</button>
-    </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna misurazione BIA salvata.</div>';
+    </div>`).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessuna misurazione BIA salvata.','No BIA measurements saved.')}</div>`;
 
   // Build schede valutazione list
   const schedeHtml = (schede && schede.length) ? schede.map(s => `
@@ -1022,7 +1022,7 @@ async function renderCartellaDetail(id) {
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Valutazione',docId:'${s.id}',nome:'Scheda${s.nome?' — '+s.nome:''}',data:'${(s.saved_at||s.created_at||'').slice(0,10)}'})" title="Aggiungi nota SOAP">🩺</button>
       <button id="vis-btn-schede_valutazione-${s.id}" class="btn btn-ghost btn-xs" data-visible="${s.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('schede_valutazione','${s.id}')" style="color:${s.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${s.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${s.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delScheda('${s.id}')">🗑️</button>
-    </div>`).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna scheda salvata.</div>';
+    </div>`).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessuna scheda salvata.','No assessments saved.')}</div>`;
 
   // Build questionari salvati list (newest first)
   const questionariSalvatiOrd = [...questionariSalvati].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -1051,7 +1051,7 @@ async function renderCartellaDetail(id) {
       <button id="vis-btn-note_specialistiche-${q.id}" class="btn btn-ghost btn-xs" data-visible="${q.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${q.id}')" style="color:${q.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${q.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${q.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${q.id}')">🗑️</button>
     </div>`;
-  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun questionario salvato.</div>';
+  }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun questionario salvato.','No questionnaires saved.')}</div>`;
 
 
   // Store esami for timeline access and PDF/AI
@@ -1072,7 +1072,7 @@ async function renderCartellaDetail(id) {
       '<button class="btn btn-ghost btn-xs" onclick="apriStoricoEsame(\'' + id + '\',\'' + e.tipo.replace(/'/g,"\\'") + '\')">📈 Storico</button>' +
       '<button class="btn btn-ghost btn-xs" onclick="deleteEsame(\'' + e.id + '\',\'' + id + '\')">🗑️</button>' +
       '</div>';
-  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun esame biochimico registrato.</div>';
+  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"> registrato.</div>';
 
   // Build SOAP notes list (newest first)
   const VISITA_MAP = { 'Prima visita':{bg:'#EDE9FE',col:'#5B21B6'}, 'Follow-up':{bg:'#EFF6FF',col:'#1D4ED8'}, 'Controllo':{bg:'#F0FDF4',col:'#15803D'}, 'Urgente':{bg:'#FEE2E2',col:'#991B1B'} };
@@ -1103,7 +1103,7 @@ async function renderCartellaDetail(id) {
         ${field('P — Piano', d.p)}
       </div>
     </div>`;
-  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna nota di sessione registrata.</div>';
+  }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"></div>';
 
   const soapSection = !isAltro ? `<div class="card" style="margin-bottom:12px">
     <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -1185,7 +1185,7 @@ async function renderCartellaDetail(id) {
         '<button class="btn btn-ghost btn-xs" onclick="downloadAllegato(\'' + f.id + '\',\'' + f.storage_path.replace(/'/g,"\\'") + '\',\'' + f.filename.replace(/'/g,"\\'") + '\')">⬇️ Scarica</button>' +
         '<button class="btn btn-ghost btn-xs" onclick="deleteAllegato(\'' + f.id + '\',\'' + f.storage_path.replace(/'/g,"\\'") + '\',\'' + id + '\')">🗑️</button>' +
         '</div>';
-    }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessun allegato.</div>') +
+    }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun allegato.','No attachments.')}</div>`) +
     '</div></div>';
 
   wrap.innerHTML = `
@@ -1357,7 +1357,7 @@ async function loadAuditLog(cartellaId) {
       .limit(20);
     if (error) throw error;
     if (!data || !data.length) {
-      el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna attività registrata.</div>';
+      el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"></div>';
       return;
     }
     el.innerHTML = data.map(log => {
@@ -1778,12 +1778,12 @@ async function cercaPazienteEmail() {
   const { data, error } = await sb.from('profiles').select('id,username,email').eq('email', email).maybeSingle();
 
   if (error) {
-    resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">Errore nella ricerca: ' + esc(error.message) + '</div>';
+    resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">' + esc(error.message) + '</div>';
     return;
   }
 
   if (!data) {
-    resultEl.innerHTML = '<div style="color:var(--amber);font-size:12.5px">⚠️ Nessun utente trovato con questa email. Il paziente deve essere registrato sull\'app.</div>';
+    resultEl.innerHTML = `<div style="color:var(--amber);font-size:12.5px">⚠️ ${_L('Nessun utente trovato con questa email. Il paziente deve essere registrato sull\'app.','No user found with this email. The patient must be registered on the app.')}</div>`;
     return;
   }
 
@@ -2354,9 +2354,9 @@ async function salvaBulkEsami() {
     const unita = (tr.querySelector('.bulk-unita')?.value || '').trim();
     records.push({ cartella_id: _bulkEsameCartellaId, user_id: currentUser.id, tipo, valore, unita: unita||null, data_esame });
   });
-  if (!records.length) { toast('Nessun valore inserito', 'err'); return; }
+  if (!records.length) { toast('_L('Nessun valore inserito','No values entered')', 'err'); return; }
   const { error } = await sb.from('esami_biochimici').insert(records);
-  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  if (error) { toast('_L('Errore: ','Error: ') + error.message, 'err'); return; }
   closeM('modal-esame-bulk');
   toast(records.length + ' esami salvati', 'ok');
   await renderCartellaDetail(_bulkEsameCartellaId);
@@ -2410,7 +2410,7 @@ async function toggleTimeline(cartellaId, btn) {
         '<div class="timeline-title">' + esc(ev.title) + '</div>' +
         '<div class="timeline-date">' + fmt(ev.date) + '</div>' +
         '</div></div>';
-    }).join('') : '<div style="color:var(--slate-l);font-size:12.5px;text-align:center;padding:20px">Nessun evento registrato.</div>') +
+    }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;text-align:center;padding:20px">${_L('Nessun evento registrato.','No events recorded.')}</div>`) +
     '</div>';
 
   panel.classList.add('open');
@@ -2746,10 +2746,10 @@ async function sendAiPazMsg() {
       })
     });
     const json = await res.json();
-    const reply = json?.content?.[0]?.text || 'Errore nella risposta AI.';
+    const reply = json?.content?.[0]?.text || _L('Errore nella risposta AI.','AI response error.');
     _aiPazMessages.push({ role: 'assistant', content: reply });
   } catch(e) {
-    _aiPazMessages.push({ role: 'assistant', content: '❌ Errore di connessione: ' + e.message });
+    _aiPazMessages.push({ role: 'assistant', content: '❌ ' + _L('Errore di connessione: ','Connection error: ') + e.message });
   }
   _renderAiPazMessages();
 }

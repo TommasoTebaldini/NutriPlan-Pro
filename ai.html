@@ -405,11 +405,11 @@ async function sendMessage(text) {
     const isKeyMissing = errorMsg.includes('GEMINI_API_KEY') || errorMsg.includes('non configurata');
     const isQuota = errorMsg.toLowerCase().includes('quota') || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('esaurita');
     bubble.innerHTML = `<div style="background:#FEE2E2;border-radius:8px;padding:12px 16px;font-size:12.5px;color:#991B1B;border-left:3px solid #DC2626">
-      ⚠️ <b>Errore AI:</b> ${
+      ⚠️ <b>${_L('Errore AI','AI Error')}:</b> ${
         isKeyMissing
-          ? 'Chiave API non configurata. Registrati gratis su <a href="https://console.groq.com/keys" target="_blank" style="color:#1D4ED8">console.groq.com/keys</a>, crea una chiave e aggiungila in Vercel → Settings → Environment Variables come <code>GEMINI_API_KEY</code>.'
+          ? _L('Chiave API non configurata. Registrati gratis su <a href="https://console.groq.com/keys" target="_blank" style="color:#1D4ED8">console.groq.com/keys</a>, crea una chiave e aggiungila in Vercel → Settings → Environment Variables come <code>GEMINI_API_KEY</code>.','API key not configured. Register for free at <a href="https://console.groq.com/keys" target="_blank" style="color:#1D4ED8">console.groq.com/keys</a>, create a key and add it in Vercel → Settings → Environment Variables as <code>GEMINI_API_KEY</code>.')
           : isQuota
-          ? '⏱️ Limite richieste superato. <b>Soluzione:</b> Riprova tra qualche secondo. Se l\'errore persiste, aggiorna la chiave in Vercel → Environment Variables → GEMINI_API_KEY con una nuova chiave da <a href="https://console.groq.com/keys" target="_blank" style="color:#1D4ED8">console.groq.com/keys</a>.'
+          ? _L('⏱️ Limite richieste superato. <b>Soluzione:</b> Riprova tra qualche secondo. Se l\'errore persiste, aggiorna la chiave in Vercel → Environment Variables → GEMINI_API_KEY.','⏱️ Request limit exceeded. <b>Solution:</b> Retry in a few seconds. If the error persists, update the key in Vercel → Environment Variables → GEMINI_API_KEY.')
           : esc(errorMsg)
       }
     </div>`

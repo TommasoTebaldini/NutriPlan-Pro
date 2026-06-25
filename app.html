@@ -2479,7 +2479,7 @@ async function loadCartelleAll() {
   // Also populate standard select for compatibility
   const sel = document.getElementById('inp-cartella');
   if (sel && sel.tagName === 'SELECT') {
-    sel.innerHTML = '<option value="">-- Nessuna --</option>';
+    sel.innerHTML = `<option value="">${_L('-- Nessuna --','-- None --')}</option>`;
     allCartelle.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent=c.nome; sel.appendChild(o); });
   }
 }
@@ -2498,9 +2498,9 @@ function showCartelleList(q = '') {
   }
   const filtered = q ? allCartelle.filter(c => c.nome.toLowerCase().includes(q)) : allCartelle;
   dd._filteredCartelle = filtered;
-  let html = '<div style="padding:5px 10px;font-size:10.5px;color:var(--slate-l);border-bottom:1px solid var(--border)">Seleziona cartella</div>';
+  let html = `<div style="padding:5px 10px;font-size:10.5px;color:var(--slate-l);border-bottom:1px solid var(--border)">${_L('Seleziona cartella','Select folder')}</div>`;
   if (!filtered.length) {
-    html += '<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella trovata</div>';
+    html += `<div style="padding:10px;color:var(--slate-l);font-size:12.5px">${_L('Nessuna cartella trovata','No folder found')}</div>`;
   } else {
     html += filtered.map((c, i) => `<div data-app-cart-idx="${i}" 
         style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border);color:#1E293B"
@@ -2936,7 +2936,7 @@ function openCopiaPasto(srcMi) {
   }
 
   if (!html) {
-    html = '<div style="color:var(--slate-l);font-size:13px">Nessuna destinazione disponibile. Aggiungi altri pasti o giorni.</div>';
+    html = `<div style="color:var(--slate-l);font-size:13px">${_L('Nessuna destinazione disponibile. Aggiungi altri pasti o giorni.','No destination available. Add more meals or days.')}</div>`;
   }
   list.innerHTML = html;
   openM('modal-copia-pasto');

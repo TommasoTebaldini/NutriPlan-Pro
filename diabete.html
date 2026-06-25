@@ -702,6 +702,35 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
 <script src="js/print-capture.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
+// ── Porzioni Isoglucidiche — translation map ──
+const PORZ_EN = {
+  'Cereali e derivati':'Grains & cereals','Legumi':'Legumes','Frutta fresca':'Fresh fruit',
+  'Frutta secca':'Dried fruit','Latte e yogurt':'Milk & yogurt',
+  'Verdure amidacee':'Starchy vegetables','Verdure (basso contenuto CHO)':'Vegetables (low CHO)',
+  'Pasta cruda':'Raw pasta','Riso crudo':'Raw rice','Pane comune':'White bread',
+  'Pane integrale':'Wholemeal bread','Grissini':'Breadsticks','Fette biscottate':'Rusks',
+  'Crackers':'Crackers','Farina bianca':'White flour',"Fiocchi d'avena":'Oat flakes',
+  'Polenta secca (farina)':'Dry polenta (flour)','Farro crudo':'Raw spelt',
+  'Orzo perlato crudo':'Raw pearl barley','Riso basmati crudo':'Raw basmati rice',
+  'Gnocchi di patate':'Potato gnocchi','Cornflakes':'Cornflakes',
+  'Lenticchie secche':'Dried lentils','Ceci secchi':'Dried chickpeas',
+  'Fagioli secchi':'Dried beans','Piselli freschi':'Fresh peas',
+  'Fagioli in scatola':'Canned beans','Ceci in scatola':'Canned chickpeas',
+  'Lenticchie in scatola':'Canned lentils',
+  'Mela':'Apple','Pera':'Pear','Banana':'Banana','Arancia':'Orange','Kiwi':'Kiwi',
+  'Pesca':'Peach','Uva':'Grapes','Fragole':'Strawberries','Mandarino':'Mandarin',
+  'Anguria':'Watermelon','Melone':'Melon','Ciliegie':'Cherries',
+  'Datteri':'Dates','Albicocche secche':'Dried apricots','Fichi secchi':'Dried figs',
+  'Uvetta':'Raisins','Prugne secche':'Prunes',
+  'Latte intero':'Whole milk','Latte parzialmente scremato':'Semi-skimmed milk',
+  'Yogurt bianco intero':'Plain whole yogurt','Yogurt greco 0%':'Greek yogurt 0%',
+  'Latte di soia non zuccherato':'Unsweetened soy milk',
+  'Patate':'Potatoes','Patate dolci':'Sweet potatoes','Mais in scatola':'Canned sweetcorn',
+  'Zucca':'Pumpkin','Pomodoro':'Tomato','Carota':'Carrot','Barbabietola':'Beetroot',
+  'Cipolla':'Onion','Zucchina':'Courgette','Peperone':'Bell pepper',
+  'Oltre 300g influenza glicemia':'Over 300g affects glycaemia',
+};
+const _PN = s => (getLang()==='it' ? s : (PORZ_EN[s] || s));
 // ── Porzioni Isoglucidiche (10g CHO) ──
 const PORZIONI_DATA = [
   {cat:'Cereali e derivati',items:[
@@ -809,15 +838,15 @@ function calcIC() {
   let ic, metodoDef;
   if (metodo === 'peso' && peso) {
     ic = Math.round(500 / (peso * 0.5));
-    metodoDef = 'Formula peso: 500 / (peso × 0.5)';
+    metodoDef = _L('Formula peso','Weight formula') + ': 500 / (peso × 0.5)';
   } else {
     const divisore = parseInt(metodo);
     if (!tdd) return;
     ic = Math.round(divisore / tdd);
-    metodoDef = `Regola del ${divisore}: ${divisore} ÷ ${tdd}TDD`;
+    metodoDef = _L(`Regola del ${divisore}`,`Rule of ${divisore}`) + `: ${divisore} ÷ ${tdd}TDD`;
   }
   val.textContent = `1U : ${ic}g CHO`;
-  note.textContent = `${metodoDef} — Verificare con glicemia post-prandiale`;
+  note.textContent = `${metodoDef} — ` + _L('Verificare con glicemia post-prandiale','Verify with post-prandial blood glucose');
   res.style.display = 'block';
 }
 
@@ -901,7 +930,7 @@ function renderPorzioni(list) {
     const icon = CAT_ICONS[cat] || '🍽️';
     const col = CAT_COLORS[cat] || '#1E3A5F';
     return `<div class="porz-category">
-      <div class="porz-cat-hdr" style="background:linear-gradient(90deg,${col}dd,${col}99)">${icon} ${cat} <span style="margin-left:auto;font-size:11px;opacity:.8">${items.length} ${_L('alimenti','foods')}</span></div>
+      <div class="porz-cat-hdr" style="background:linear-gradient(90deg,${col}dd,${col}99)">${icon} ${_PN(cat)} <span style="margin-left:auto;font-size:11px;opacity:.8">${items.length} ${_L('alimenti','foods')}</span></div>
       <table class="food-table" style="border-radius:0;table-layout:fixed">
         <thead><tr>
           <th style="text-align:left;width:30%">${_L('Alimento','Food')}</th>
@@ -911,11 +940,11 @@ function renderPorzioni(list) {
           <th style="width:17%">${_L('Note','Notes')}</th>
         </tr></thead>
         <tbody>${items.map((it,idx) => `<tr>
-          <td><b>${esc(it.nome)}</b></td>
+          <td><b>${esc(_PN(it.nome))}</b></td>
           <td><span style="font-weight:700;color:#1D4ED8">${it.g100cho}g</span></td>
           <td><span class="porzione-pill">⚖️ ${it.g_per_10}g</span></td>
           <td style="font-size:11px;color:#64748B">${getPorzEquiv(it)}</td>
-          <td style="font-size:11px;color:var(--slate-l)">${it.note||''}</td>
+          <td style="font-size:11px;color:var(--slate-l)">${it.note ? _L(it.note, PORZ_EN[it.note]||it.note) : ''}</td>
         </tr>`).join('')}</tbody>
       </table>
     </div>`;
@@ -924,19 +953,29 @@ function renderPorzioni(list) {
 
 function getPorzEquiv(it) {
   const g = it.g_per_10;
-  if (it.nome.includes('pasta') || it.nome.includes('riso')) return `~${Math.round(g)} g crudi`;
-  if (it.nome.includes('Pane')) return `~${Math.round(g/25)} fetta da 25g`;
-  if (it.nome.includes('Mela') || it.nome.includes('Pera')) return `~½ frutto medio`;
-  if (it.nome.includes('Banana')) return `~½ banana media`;
-  if (it.nome.includes('Latte')) return `~${g} mL (1 tazza)`;
-  if (it.nome.includes('Yogurt')) return `~${g}g (¼ vasetto 500g)`;
-  if (it.nome.includes('Patate')) return `~1 patata piccola`;
-  if (g < 20) return `pesare accuratamente`;
+  if (it.nome.includes('pasta') || it.nome.includes('riso') || it.nome.includes('Riso'))
+    return `~${Math.round(g)}g ` + _L('crudi','raw');
+  if (it.nome.includes('Pane'))
+    return `~${Math.round(g/25)} ` + _L('fetta da 25g','slice of 25g');
+  if (it.nome.includes('Mela') || it.nome.includes('Pera'))
+    return `~½ ` + _L('frutto medio','medium fruit');
+  if (it.nome.includes('Banana'))
+    return `~½ ` + _L('banana media','medium banana');
+  if (it.nome.includes('Latte'))
+    return `~${g} mL (` + _L('1 tazza','1 cup') + ')';
+  if (it.nome.includes('Yogurt'))
+    return `~${g}g (¼ ` + _L('vasetto 500g','500g tub') + ')';
+  if (it.nome.includes('Patate'))
+    return `~1 ` + _L('patata piccola','small potato');
+  if (g < 20) return _L('pesare accuratamente','weigh accurately');
   return `${g}g`;
 }
 function filterPorzioni() {
   const q = document.getElementById('porz-search').value.toLowerCase();
-  renderPorzioni(q ? PORZIONI_FLAT.filter(it => it.nome.toLowerCase().includes(q) || it.cat.toLowerCase().includes(q)) : PORZIONI_FLAT);
+  renderPorzioni(q ? PORZIONI_FLAT.filter(it =>
+    it.nome.toLowerCase().includes(q) || it.cat.toLowerCase().includes(q) ||
+    (_PN(it.nome)||'').toLowerCase().includes(q) || (_PN(it.cat)||'').toLowerCase().includes(q)
+  ) : PORZIONI_FLAT);
 }
 
 // ── Depliant ──

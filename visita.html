@@ -355,7 +355,7 @@ async function salvaVisita() {
   const cartellaId = document.getElementById('inp-cartella').value;
   const contenuto = document.getElementById('editor-body').innerHTML;
 
-  if (!currentUser) { toast('Sessione scaduta', 'err'); return; }
+  if (!currentUser) { toast(_L('Sessione scaduta','Session expired'), 'err'); return; }
 
   const dati = JSON.stringify({ tipo_visita: tipo, data_visita: data, contenuto_html: contenuto });
   const record = {
@@ -377,8 +377,8 @@ async function salvaVisita() {
     if (inserted) _currentVisitaId = inserted.id;
   }
 
-  if (error) { toast('Errore: ' + error.message, 'err'); return; }
-  toast('Visita salvata ✓', 'ok');
+  if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }
+  toast(_L('Visita salvata ✓','Visit saved ✓'), 'ok');
   updateProfPreview();
 }
 
@@ -390,11 +390,11 @@ async function loadSavedVisite() {
     .eq('tipo', 'visita_clinica')
     .order('created_at', { ascending: false })
     .limit(50);
-  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }
 
   const list = document.getElementById('saved-list');
   if (!data || !data.length) {
-    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:13px;font-style:italic">Nessuna visita salvata.</div>';
+    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:13px;font-style:italic">${_L('Nessuna visita salvata.','No saved visits.')}</div>`;
     return;
   }
 
@@ -415,7 +415,7 @@ async function loadSavedVisite() {
 
 async function openSavedVisita(id) {
   const { data, error } = await sb.from('note_specialistiche').select('*').eq('id', id).maybeSingle();
-  if (error || !data) { toast('Errore caricamento', 'err'); return; }
+  if (error || !data) { toast(_L('Errore caricamento','Load error'), 'err'); return; }
   let d = {}; try { d = JSON.parse(data.dati || '{}'); } catch(e) {}
   _currentVisitaId = id;
   document.getElementById('v-titolo').value = data.nota || '';
@@ -424,14 +424,14 @@ async function openSavedVisita(id) {
   document.getElementById('inp-cartella').value = data.cartella_id || '';
   document.getElementById('editor-body').innerHTML = d.contenuto_html || '';
   showEditor();
-  toast('Visita caricata', 'ok');
+  toast(_L('Visita caricata','Visit loaded'), 'ok');
 }
 
 async function eliminaVisita(id) {
-  if (!confirm('Eliminare questa visita?')) return;
+  if (!confirm(_L('Eliminare questa visita?','Delete this visit?'))) return;
   const { error } = await sb.from('note_specialistiche').delete().eq('id', id);
-  if (error) { toast('Errore eliminazione', 'err'); return; }
-  toast('Eliminata', 'ok');
+  if (error) { toast(_L('Errore eliminazione','Delete error'), 'err'); return; }
+  toast(_L('Eliminata','Deleted'), 'ok');
   await loadSavedVisite();
 }
 

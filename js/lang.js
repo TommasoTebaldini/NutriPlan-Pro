@@ -2593,6 +2593,14 @@ const LABEL_TR = {
     'Anoressia Nervosa':'Anorexia Nervosa',
     'Complicanze Mediche':'Medical Complications',
     'Approccio Terapeutico':'Therapeutic Approach',
+    // ── valutazione.html missing headings ──
+    'Foto Progressi':'Progress Photos',
+    'Crea Cartella Paziente':'Create Patient Folder',
+    // ── database.html heading ──
+    'Aggiungi alimento al database personale':'Add food to personal database',
+    // ── misc ──
+    'Sovrappeso e Obesità':'Overweight and Obesity',
+    'Fabbisogno Idrico Pediatrico':'Paediatric Fluid Requirements',
   },
   de: {
     // ── Common buttons ──

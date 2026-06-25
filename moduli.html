@@ -30,15 +30,11 @@
 .fi textarea{resize:vertical;min-height:80px}
 /* ── Print ── */
 @media print{
-  #sidebar,#topbar,.no-print,.mod-tabs,#loading-overlay,#toast,.action-bar{display:none!important}
-  #main{margin-left:0!important}
-  .page-content{padding:0!important;max-width:none!important}
-  body{background:white!important;font-size:12px}
-  .mod-panel{display:none!important}
-  .mod-panel.printing{display:block!important}
-  .mod-form{border:none!important;box-shadow:none!important;padding:0!important}
-  .print-doc-wrap{display:block!important}
+  body > *:not(#moduli-print-area){display:none!important}
+  #moduli-print-area{display:block!important;padding:10mm 12mm}
+  #moduli-print-area .pdoc{font-family:'DM Sans',Arial,sans-serif;font-size:12px;color:#1E293B;line-height:1.6}
 }
+#moduli-print-area{display:none}
 .print-doc-wrap{display:none}
 /* Print document layout */
 .pdoc{font-family:'DM Sans',Arial,sans-serif;font-size:12px;color:#1E293B;line-height:1.6}
@@ -117,11 +113,6 @@
   <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2 id="page-title">📄 Moduli Stampabili</h2>
-  <div class="tbar-actions">
-    <select id="inp-cartella" class="no-print" style="padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;background:white;color:var(--slate)">
-      <option value="">— Cartella paziente —</option>
-    </select>
-  </div>
 </div>
 
 <main id="main">
@@ -134,6 +125,17 @@
     <div style="font-weight:700;font-size:14px;color:var(--teal-d)">Moduli Stampabili</div>
     <div style="font-size:12.5px;color:var(--slate-m);margin-top:2px">Seleziona il modulo, compila i campi e clicca <b>Stampa</b>. Puoi salvare il modulo nella cartella del paziente.</div>
   </div>
+</div>
+
+<!-- Cartella paziente -->
+<div class="no-print" style="background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <div style="font-size:13px;font-weight:600;color:var(--slate);white-space:nowrap">📁 Cartella paziente:</div>
+  <div style="flex:1;min-width:200px">
+    <select id="inp-cartella" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;background:white;color:var(--slate)">
+      <option value="">— Nessuna cartella selezionata —</option>
+    </select>
+  </div>
+  <div style="font-size:12px;color:var(--slate-l)">Seleziona per salvare il modulo nella cartella</div>
 </div>
 
 <!-- Tabs -->
@@ -421,21 +423,20 @@
 <!-- ══ MODULO: DIARIO ALIMENTARE ══════════════════════════════════ -->
 <div id="mod-diario" class="mod-panel" style="display:none">
   <div class="action-bar no-print" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-    <button class="btn btn-primary btn-sm" onclick="stampaModulo('diario')">🖨️ Stampa modulo</button>
+    <button class="btn btn-primary btn-sm" onclick="stampaModulo('diario')">🖨️ Stampa diario</button>
     <button class="btn btn-ghost btn-sm" onclick="salvaModulo('diario','Diario alimentare')">💾 Salva in cartella</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetMod('diario')">↺ Azzera campi</button>
   </div>
   <div class="mod-form no-print">
-    <h3>📓 Configurazione diario</h3>
+    <h3>📓 Configurazione diario settimanale</h3>
     <div class="mod-grid">
       <div class="fi"><label>Nome paziente</label><input type="text" id="diario-nome" placeholder="Rossi Mario"></div>
-      <div class="fi"><label>Numero di giorni</label>
-        <select id="diario-giorni">
-          <option value="3">3 giorni</option>
-          <option value="7" selected>7 giorni</option>
-        </select>
-      </div>
+      <div class="fi"><label>Settimana dal (data inizio)</label><input type="date" id="diario-dal"></div>
     </div>
-    <div class="fi"><label>Istruzioni per il paziente</label><textarea id="diario-istruzioni" rows="3">Annotare tutto ciò che viene consumato durante la giornata: alimenti, bevande, condimenti e snack. Indicare quantità approssimative (cucchiai, grammi, porzioni). Segnalare l'orario di ogni pasto.</textarea></div>
+    <div class="fi" style="margin-bottom:12px"><label>Istruzioni per il paziente</label><textarea id="diario-istruzioni" rows="3">Annota tutto ciò che consumi durante la giornata: alimenti, bevande, condimenti e snack. Indica le quantità approssimative (grammi, cucchiai, porzioni) e l'orario. Segna anche l'umore della giornata.</textarea></div>
+    <div style="background:#EFF6FF;border-radius:var(--r-sm);padding:10px 12px;font-size:12px;color:#1E40AF;border-left:3px solid #3B82F6">
+      📋 Il diario include 7 giorni (Lunedì → Domenica) con tabella pasti, orari, colonna umore e riga per pasti extra.
+    </div>
   </div>
   <div class="print-doc-wrap" id="print-diario">
     <div class="pdoc">
@@ -443,9 +444,9 @@
         <img class="pdoc-logo" id="p-diario-logo" src="" alt="" style="display:none">
         <div class="pdoc-prof-info" id="p-diario-prof"></div>
       </div>
-      <h2>Diario Alimentare</h2>
+      <h2>Diario Alimentare Settimanale</h2>
       <div class="pdoc-subtitle">Paziente: <span id="p-diario-nome" style="font-weight:700"></span></div>
-      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:10px 12px;margin-bottom:14px;font-size:11px;line-height:1.5" id="p-diario-istruzioni"></div>
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:10.5px;line-height:1.5" id="p-diario-istruzioni"></div>
       <div id="p-diario-days"></div>
     </div>
   </div>
@@ -541,6 +542,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ok = await checkAuth();
   if (!ok) return;
   if (overlay) overlay.style.display = 'none';
+  await loadCartelleDropdown();
   autoFillProfOp();
   const params = new URLSearchParams(location.search);
   const cartId = params.get('cartella');
@@ -654,18 +656,60 @@ function stampaModulo(tipo) {
       setProfHeader('p-diario-logo','p-diario-prof');
       document.getElementById('p-diario-nome').textContent = document.getElementById('diario-nome').value || '___________';
       document.getElementById('p-diario-istruzioni').textContent = document.getElementById('diario-istruzioni').value || '';
-      const giorni = parseInt(document.getElementById('diario-giorni').value) || 7;
+      const dalVal = document.getElementById('diario-dal').value;
+      const nomiGiorni = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+      const pasti = [
+        {emoji:'☀️', nome:'Colazione'},
+        {emoji:'🍎', nome:'Spuntino mattina'},
+        {emoji:'🍽️', nome:'Pranzo'},
+        {emoji:'🥛', nome:'Merenda'},
+        {emoji:'🌙', nome:'Cena'},
+        {emoji:'➕', nome:'Pasto extra / Fuori pasto'},
+      ];
+      const mood = ['🌟 Ottimo','😊 Buono','😐 Normale','😴 Stanco','😰 Stressato'];
       let daysHtml = '';
-      for (let i = 1; i <= giorni; i++) {
-        daysHtml += `<div style="margin-bottom:16px;page-break-inside:avoid">
-          <div style="font-weight:700;font-size:12px;color:#0F766E;border-bottom:1.5px solid #0F766E;padding-bottom:3px;margin-bottom:8px">Giorno ${i} — Data: _______________</div>
-          <table style="width:100%;border-collapse:collapse;font-size:11px">
-            <thead><tr style="background:#F0FDF4"><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:18%">Pasto</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:12%">Orario</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0">Alimento / Bevanda</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:20%">Quantità</th><th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;width:20%">Note / Luogo</th></tr></thead>
-            <tbody>
-              ${['Colazione','Spuntino mattina','Pranzo','Merenda','Cena','Spuntino sera'].map(m => `<tr><td style="padding:6px 8px;border:1px solid #E2E8F0;font-weight:600;color:#475569;white-space:nowrap">${m}</td><td style="padding:6px 8px;border:1px solid #E2E8F0"></td><td style="padding:6px 8px;border:1px solid #E2E8F0;min-height:20px"></td><td style="padding:6px 8px;border:1px solid #E2E8F0"></td><td style="padding:6px 8px;border:1px solid #E2E8F0"></td></tr>`).join('')}
-            </tbody>
-          </table>
-          <div style="font-size:10px;color:#64748B;margin-top:5px">Acqua totale: _______ mL &nbsp;&nbsp; Integratori assunti: ___________________________</div>
+      for (let i = 0; i < 7; i++) {
+        let dateStr = '__ / __ / ______';
+        if (dalVal) {
+          const d = new Date(dalVal + 'T12:00');
+          d.setDate(d.getDate() + i);
+          dateStr = d.toLocaleDateString('it', {weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});
+        }
+        const moodRow = mood.map(m => `<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;font-size:10px"><span style="display:inline-block;width:13px;height:13px;border:1.5px solid #94A3B8;border-radius:50%;flex-shrink:0"></span>${m}</span>`).join('');
+        const bodyRows = pasti.map(p => `
+          <tr>
+            <td style="padding:6px 8px;border:1px solid #E2E8F0;font-weight:600;color:#374151;white-space:nowrap;vertical-align:middle">${p.emoji} ${p.nome}</td>
+            <td style="padding:6px 8px;border:1px solid #E2E8F0;width:9%"></td>
+            <td style="padding:6px 8px;border:1px solid #E2E8F0"></td>
+            <td style="padding:6px 8px;border:1px solid #E2E8F0;width:17%"></td>
+            <td style="padding:6px 8px;border:1px solid #E2E8F0;width:17%"></td>
+          </tr>`).join('');
+        daysHtml += `
+        <div style="margin-bottom:18px;page-break-inside:avoid">
+          <div style="display:flex;align-items:center;justify-content:space-between;background:#0F766E;color:white;border-radius:6px 6px 0 0;padding:7px 12px">
+            <strong style="font-size:13px">${nomiGiorni[i]}</strong>
+            <span style="font-size:10.5px;opacity:.9">${dateStr}</span>
+          </div>
+          <div style="border:1px solid #0F766E;border-top:none;border-radius:0 0 6px 6px;overflow:hidden">
+            <div style="background:#F0FDF4;padding:6px 12px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;flex-wrap:wrap;gap:2px">
+              <span style="font-size:10px;font-weight:700;color:#0F766E;margin-right:8px;white-space:nowrap">UMORE:</span>${moodRow}
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:11px">
+              <thead>
+                <tr style="background:#F8FAFC">
+                  <th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;color:#475569;width:20%">Pasto</th>
+                  <th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;color:#475569;width:9%">Orario</th>
+                  <th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;color:#475569">Alimenti e bevande</th>
+                  <th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;color:#475569;width:17%">Quantità</th>
+                  <th style="padding:5px 8px;text-align:left;border:1px solid #E2E8F0;color:#475569;width:17%">Luogo / Note</th>
+                </tr>
+              </thead>
+              <tbody>${bodyRows}</tbody>
+            </table>
+            <div style="background:#F8FAFC;padding:5px 12px;font-size:10px;color:#64748B;border-top:1px solid #E2E8F0">
+              💧 Acqua totale: _________________ mL &nbsp;&nbsp;|&nbsp;&nbsp; 💊 Integratori / farmaci: _______________________________
+            </div>
+          </div>
         </div>`;
       }
       document.getElementById('p-diario-days').innerHTML = daysHtml;
@@ -691,11 +735,12 @@ function stampaModulo(tipo) {
     }
   };
   if (preps[tipo]) preps[tipo]();
-  // Temporarily show print doc
+  // Copy prepared content to body-level print container and print
   const printEl = document.getElementById('print-' + tipo);
-  printEl.style.display = 'block';
+  const area = document.getElementById('moduli-print-area');
+  area.innerHTML = printEl.innerHTML;
   window.print();
-  printEl.style.display = 'none';
+  area.innerHTML = '';
 }
 
 async function salvaModulo(tipo, titoloDefault) {
@@ -735,5 +780,9 @@ function toggleSidebar() { document.getElementById('sidebar').classList.toggle('
 function showLoading(msg){const o=document.getElementById('loading-overlay');if(o){o.style.display='flex';}}
 function hideLoading(){const o=document.getElementById('loading-overlay');if(o)o.style.display='none';}
 </script>
+
+<!-- Body-level print container: populated by stampaModulo() before window.print() -->
+<div id="moduli-print-area"></div>
+
 </body>
 </html>

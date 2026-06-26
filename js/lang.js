@@ -1883,7 +1883,7 @@ const LABEL_TR = {
     'Data somministrazione (opzionale)':'Administration date (optional)',
     // ── pazienti.html bulk / storico ──
     'Inserisci Pannello Esami':'Insert Exams Panel',
-    'Importa CSV':'Import CSV','Nuova Cartella':'New Folder',
+    'Importa CSV':'Import CSV','Importa':'Import','Nuova Cartella':'New Folder',
     'Archivia selezionati':'Archive selected','Esporta CSV':'Export CSV',
     'Deseleziona':'Deselect all','+ Aggiungi':'+ Add','Cerca':'Search',
     'Collega':'Link','Conferma':'Confirm',

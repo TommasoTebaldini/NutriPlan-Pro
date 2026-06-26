@@ -102,6 +102,25 @@ const LANGS = {
     'paz.search_ph':'🔍 Cerca paziente...',
     'paz.tag_ph':'🏷️ Cerca patologia...',
     'paz.ai_placeholder':'Fai una domanda su questo paziente...',
+    'paz.toggle_sidebar':'Mostra/Nascondi barra laterale',
+    'paz.reset_filters':'Azzera filtri',
+    'app.undo_action':'Annulla ultima azione',
+    'app.save_template':'Salva il piano corrente come template riutilizzabile',
+    'app.load_template':'Carica un template salvato nel piano corrente',
+    'app.save_db':'Salva il piano nel database',
+    'app.shopping_list':'Genera lista della spesa dal piano settimanale',
+    'app.new_plan':'Nuovo piano vuoto',
+    'paz.nc_nome':'Nome',
+    'paz.nc_cognome':'Cognome',
+    'paz.nc_cf':'Codice Fiscale',
+    'paz.nc_note':'Diagnosi, allergie, farmaci...',
+    'paz.nc_tag_custom':'Tag personalizzato (premi Invio)',
+    'paz.esame_tipo_custom':'Es: Emoglobina, B12...',
+    'paz.esame_note':'Note cliniche opzionali...',
+    'paz.soap_s':'Es. Riferisce maggiore sazietà, riduzione gonfiore...',
+    'paz.soap_o':'Es. Peso 82,4 kg (−1,2), PA 130/80, glicemia 98...',
+    'paz.soap_a':'Es. Buona aderenza, trend ponderale in linea con obiettivo...',
+    'paz.soap_p':'Es. Mantenere schema, aumentare verdura, ricontrollo tra 4 settimane...',
   },
   en: {
     'nav.sec.piano':'Plans','nav.sec.comunicazione':'Communication',
@@ -197,6 +216,25 @@ const LANGS = {
     'paz.search_ph':'🔍 Search patient...',
     'paz.tag_ph':'🏷️ Search condition...',
     'paz.ai_placeholder':'Ask a question about this patient...',
+    'paz.toggle_sidebar':'Show/Hide sidebar',
+    'paz.reset_filters':'Reset filters',
+    'app.undo_action':'Undo last action',
+    'app.save_template':'Save current plan as reusable template',
+    'app.load_template':'Load a saved template into the plan',
+    'app.save_db':'Save plan to database',
+    'app.shopping_list':'Generate shopping list from weekly plan',
+    'app.new_plan':'New empty plan',
+    'paz.nc_nome':'First name',
+    'paz.nc_cognome':'Last name',
+    'paz.nc_cf':'Tax/ID Code',
+    'paz.nc_note':'Diagnosis, allergies, medications...',
+    'paz.nc_tag_custom':'Custom tag (press Enter)',
+    'paz.esame_tipo_custom':'E.g. Hemoglobin, B12...',
+    'paz.esame_note':'Optional clinical notes...',
+    'paz.soap_s':'E.g. Reports improved satiety, reduced bloating...',
+    'paz.soap_o':'E.g. Weight 82.4 kg (−1.2), BP 130/80, glucose 98...',
+    'paz.soap_a':'E.g. Good adherence, weight trend on track...',
+    'paz.soap_p':'E.g. Maintain plan, increase vegetables, follow-up in 4 weeks...',
   },
   fr: {
     'nav.sec.piano':'Plans','nav.sec.comunicazione':'Communication',
@@ -483,6 +521,8 @@ const LABEL_TR = {
     'Conferma':'Confirm','Carica':'Load','Esporta':'Export',
     'Nuova Sessione':'New Session','Nuovo':'New','Aggiungi':'Add',
     'Salva in Database':'Save to Database',
+    'Crea e Salva':'Create & Save','Aggiungi alla scheda':'Add to Record',
+    'Salva Template':'Save Template','Lista della spesa':'Shopping List',
     // ── Common labels ──
     'Nome e Cognome':'Full Name','Nome':'First Name','Cognome':'Last Name',
     'Data di nascita':'Date of birth','Data valutazione':'Assessment date',
@@ -1733,6 +1773,10 @@ const LABEL_TR = {
     'Agenda Appuntamenti':'Appointment Calendar',
     'Impostazioni':'Settings',
     'Cartelle Pazienti':'Patient Files',
+    'Pazienti':'Patients',
+    'Abbonamento':'Subscription',
+    'GDPR — Gestione Dati Pazienti':'GDPR — Patient Data Management',
+    'Piano Alimentare':'Meal Plan',
     // ── impostazioni.html ──
     'Layout Piano Alimentare':'Meal Plan Layout',
     'Classico Verde':'Classic Green',
@@ -3102,6 +3146,9 @@ function applyLang() {
   });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll('[data-i18n-tooltip]').forEach(el => {
+    el.title = t(el.dataset.i18nTooltip);
   });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     document.title = t(el.dataset.i18nTitle);

@@ -207,17 +207,17 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
   <button id="menu-toggle" class="no-print" onclick="toggleSB()">☰</button>
-  <h2 id="page-title">📋 Piano Alimentare</h2>
+  <h2 id="page-title">📋 <span data-only-lang="it">Piano Alimentare</span><span data-only-lang="en">Meal Plan</span></h2>
   <div class="tbar-actions no-print">
-    <button class="btn btn-ghost btn-sm" id="btn-undo" onclick="doUndo()" title="Annulla ultima azione" disabled style="opacity:.5">↩<span>Annulla</span></button>
+    <button class="btn btn-ghost btn-sm" id="btn-undo" onclick="doUndo()" data-i18n-tooltip="app.undo_action" disabled style="opacity:.5">↩<span>Annulla</span></button>
     <button class="btn btn-ghost btn-sm" onclick="openNewPasto()">🍽️<span>Pasto</span></button>
     <button class="btn btn-ghost btn-sm" onclick="esportaExcel()">📥<span>Excel</span></button>
-    <button class="btn btn-ghost btn-sm" onclick="openSalvaTemplate()" title="Salva il piano corrente come template riutilizzabile">💾<span>Template</span></button>
-    <button class="btn btn-ghost btn-sm" onclick="openCaricaTemplate()" title="Carica un template salvato nel piano corrente">📂<span>Template</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openSalvaTemplate()" data-i18n-tooltip="app.save_template">💾<span>Template</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openCaricaTemplate()" data-i18n-tooltip="app.load_template">📂<span>Template</span></button>
     <span class="tbar-sep"></span>
-    <button class="btn btn-ghost btn-sm" onclick="generaListaSpesa()" title="Genera lista della spesa dal piano settimanale">🛒<span>Lista spesa</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="generaListaSpesa()" data-i18n-tooltip="app.shopping_list">🛒<span>Lista spesa</span></button>
     <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
@@ -271,8 +271,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
       </div>
       <!-- Salva + Nuovo buttons, centered vertically with the other fields -->
       <div style="display:flex;flex-direction:column;gap:5px;align-self:center">
-        <button onclick="salvaPiano()" title="Salva il piano nel database" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.25);color:white;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.38)'" onmouseout="this.style.background='rgba(255,255,255,.25)'">💾 Salva</button>
-        <button onclick="nuovoPiano()" title="Nuovo piano vuoto" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🔄 Nuovo</button>
+        <button onclick="salvaPiano()" data-i18n-tooltip="app.save_db" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.25);color:white;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.38)'" onmouseout="this.style.background='rgba(255,255,255,.25)'">💾 Salva</button>
+        <button onclick="nuovoPiano()" data-i18n-tooltip="app.new_plan" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🔄 Nuovo</button>
       </div>
     </div>
     <span id="cartella-selected" style="font-size:11px;color:white;font-weight:600;margin-top:4px;display:block"></span>
@@ -305,7 +305,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 
   <!-- PASTI CONTAINER -->
   <div id="pasti-container"></div>
-  <div class="add-pasto-area no-print" onclick="openNewPasto()" style="margin-top:4px;border:2px dashed #14B8A6;background:linear-gradient(135deg,#F0FDFA,#ECFDF5);color:var(--teal-d);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;padding:16px"><span style="font-size:20px">＋</span><span>Aggiungi pasto</span></div>
+  <div class="add-pasto-area no-print" onclick="openNewPasto()" style="margin-top:4px;border:2px dashed #14B8A6;background:linear-gradient(135deg,#F0FDFA,#ECFDF5);color:var(--teal-d);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;padding:16px"><span style="font-size:20px">＋</span><span data-only-lang="it">Aggiungi pasto</span><span data-only-lang="en">Add meal</span></div>
 
   <!-- LEGENDA ALLERGENI EU-14 -->
   <div class="no-print" style="margin-top:12px">

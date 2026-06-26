@@ -120,7 +120,7 @@ async function ensureChartJs() {
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
-  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2 id="page-title">📁 <span data-only-lang="it">Cartelle Pazienti</span><span data-only-lang="en">Patient Folders</span></h2>
   <div class="tbar-actions">
@@ -151,7 +151,7 @@ async function ensureChartJs() {
     <div id="tag-dropdown" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #2DD4BF;border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 20px rgba(0,0,0,.12);color:#1E293B;margin-top:2px"></div>
   </div>
   <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 Mostra archiviati</button>
-  <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" title="Azzera filtri">✕</button>
+  <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" data-i18n-tooltip="paz.reset_filters">✕</button>
 </div>
 <div class="page-content" id="main-content">
   <div class="empty-state"><div class="ei">⏳</div><h3><span data-only-lang="it">Caricamento...</span><span data-only-lang="en">Loading...</span></h3></div>
@@ -164,19 +164,19 @@ async function ensureChartJs() {
     <div class="mhdr"><h2 id="nc-title">📁 Nuova Cartella Paziente</h2><button class="mclose" onclick="closeM('modal-nc')">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
-        <div class="fg"><label>Nome *</label><input type="text" id="nc-nome" placeholder="Nome"></div>
-        <div class="fg"><label>Cognome</label><input type="text" id="nc-cognome" placeholder="Cognome"></div>
+        <div class="fg"><label>Nome *</label><input type="text" id="nc-nome" data-i18n-placeholder="paz.nc_nome"></div>
+        <div class="fg"><label>Cognome</label><input type="text" id="nc-cognome" data-i18n-placeholder="paz.nc_cognome"></div>
         <div class="fg"><label>Data di nascita</label><input type="date" id="nc-ddn"></div>
         <div class="fg"><label>Sesso</label><select id="nc-sesso"><option value="">—</option><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
-        <div class="fg full"><label>Codice Fiscale</label><input type="text" id="nc-cf" placeholder="Codice Fiscale" maxlength="16" style="text-transform:uppercase"></div>
-        <div class="fg full"><label>Diagnosi / Note cliniche</label><textarea id="nc-note" placeholder="Diagnosi, allergie, farmaci..."></textarea></div>
+        <div class="fg full"><label>Codice Fiscale</label><input type="text" id="nc-cf" data-i18n-placeholder="paz.nc_cf" maxlength="16" style="text-transform:uppercase"></div>
+        <div class="fg full"><label>Diagnosi / Note cliniche</label><textarea id="nc-note" data-i18n-placeholder="paz.nc_note"></textarea></div>
       </div>
       <!-- SEZIONE TAG PATOLOGIE -->
       <div style="margin-top:14px">
         <label style="font-size:12.5px;font-weight:600;color:var(--slate);display:block;margin-bottom:8px">🏷️ Patologie / Tag</label>
         <div id="nc-tags-chips" style="display:flex;flex-wrap:wrap;gap:4px 6px;margin-bottom:8px"></div>
         <div style="display:flex;gap:6px;align-items:center">
-          <input type="text" id="nc-tags-custom" class="filter-bar-input" style="flex:1;font-size:12.5px" placeholder="Tag personalizzato (premi Invio)">
+          <input type="text" id="nc-tags-custom" class="filter-bar-input" style="flex:1;font-size:12.5px" data-i18n-placeholder="paz.nc_tag_custom">
           <button type="button" class="btn btn-ghost btn-sm" onclick="aggiungiTagCustom()">+ Aggiungi</button>
         </div>
         <div id="nc-tags-warning" style="display:none;margin-top:8px;padding:8px 12px;background:#FEF3C7;border-radius:8px;font-size:11.5px;color:#92400E;border-left:3px solid #F59E0B">
@@ -320,7 +320,7 @@ async function ensureChartJs() {
         </div>
         <div class="fg full" id="esame-custom-wrap" style="display:none">
           <label>Nome esame personalizzato</label>
-          <input type="text" id="esame-tipo-custom" placeholder="Es: Emoglobina, B12...">
+          <input type="text" id="esame-tipo-custom" data-i18n-placeholder="paz.esame_tipo_custom">
         </div>
         <div class="fg">
           <label>Valore *</label>
@@ -336,7 +336,7 @@ async function ensureChartJs() {
         </div>
         <div class="fg full">
           <label>Note</label>
-          <textarea id="esame-note" placeholder="Note cliniche opzionali..." rows="2" style="resize:vertical"></textarea>
+          <textarea id="esame-note" data-i18n-placeholder="paz.esame_note" rows="2" style="resize:vertical"></textarea>
         </div>
       </div>
       <div id="esame-ref-info" style="display:none;margin-top:12px;padding:10px 12px;background:#F0FDF4;border-radius:8px;border-left:3px solid #16A34A;font-size:12px;color:#166534;line-height:1.5"></div>
@@ -441,14 +441,14 @@ async function ensureChartJs() {
             <option>Urgente</option>
           </select></div>
       </div>
-      <div class="fg" style="margin-bottom:10px"><label>S — Soggettivo <span style="font-weight:400;color:var(--slate-l)">(cosa riporta il paziente)</span></label>
-        <textarea id="soap-s" rows="3" placeholder="Es. Riferisce maggiore sazietà, riduzione gonfiore..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
-      <div class="fg" style="margin-bottom:10px"><label>O — Oggettivo <span style="font-weight:400;color:var(--slate-l)">(dati misurati)</span></label>
-        <textarea id="soap-o" rows="3" placeholder="Es. Peso 82,4 kg (−1,2), PA 130/80, glicemia 98..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
-      <div class="fg" style="margin-bottom:10px"><label>A — Assessment <span style="font-weight:400;color:var(--slate-l)">(valutazione clinica)</span></label>
-        <textarea id="soap-a" rows="3" placeholder="Es. Buona aderenza, trend ponderale in linea con obiettivo..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
-      <div class="fg"><label>P — Piano <span style="font-weight:400;color:var(--slate-l)">(prossima sessione)</span></label>
-        <textarea id="soap-p" rows="3" placeholder="Es. Mantenere schema, aumentare verdura, ricontrollo tra 4 settimane..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+      <div class="fg" style="margin-bottom:10px"><label>S — Soggettivo <span style="font-weight:400;color:var(--slate-l)"><span data-only-lang="it">(cosa riporta il paziente)</span><span data-only-lang="en">(patient's subjective report)</span></span></label>
+        <textarea id="soap-s" rows="3" data-i18n-placeholder="paz.soap_s" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+      <div class="fg" style="margin-bottom:10px"><label>O — Oggettivo <span style="font-weight:400;color:var(--slate-l)"><span data-only-lang="it">(dati misurati)</span><span data-only-lang="en">(measured data)</span></span></label>
+        <textarea id="soap-o" rows="3" data-i18n-placeholder="paz.soap_o" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+      <div class="fg" style="margin-bottom:10px"><label>A — Assessment <span style="font-weight:400;color:var(--slate-l)"><span data-only-lang="it">(valutazione clinica)</span><span data-only-lang="en">(clinical assessment)</span></span></label>
+        <textarea id="soap-a" rows="3" data-i18n-placeholder="paz.soap_a" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
+      <div class="fg"><label>P — Piano <span style="font-weight:400;color:var(--slate-l)"><span data-only-lang="it">(prossima sessione)</span><span data-only-lang="en">(next session plan)</span></span></label>
+        <textarea id="soap-p" rows="3" data-i18n-placeholder="paz.soap_p" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box"></textarea></div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-soap')">Annulla</button>

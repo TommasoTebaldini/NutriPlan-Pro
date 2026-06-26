@@ -138,7 +138,7 @@ async function ensureChartJs() {
 </div>
 <!-- BARRA RICERCA + FILTRI PAZIENTI -->
 <div id="paz-filter-bar" style="display:none;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;background:white;padding:12px 16px;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow)">
-  <input type="text" id="paz-search" class="filter-bar-input" style="flex:1;min-width:180px" placeholder="🔍 Cerca paziente...">
+  <input type="text" id="paz-search" class="filter-bar-input" style="flex:1;min-width:180px" data-i18n-placeholder="paz.search_ph">
   <select id="paz-filter-sesso" class="filter-bar-input" style="min-width:110px">
     <option value="">⚥ Sesso</option>
     <option value="M">♂ Maschio</option>
@@ -146,7 +146,7 @@ async function ensureChartJs() {
   </select>
   <div style="position:relative;min-width:190px;flex:1;max-width:240px">
     <input type="text" id="paz-filter-tag" class="filter-bar-input" autocomplete="off"
-      style="width:100%;box-sizing:border-box" placeholder="🏷️ Cerca patologia..."
+      style="width:100%;box-sizing:border-box" data-i18n-placeholder="paz.tag_ph"
       oninput="filterTagDropdown();applyFiltri()" onfocus="showTagDropdown()" onblur="setTimeout(hideTagDropdown,200)">
     <div id="tag-dropdown" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #2DD4BF;border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 20px rgba(0,0,0,.12);color:#1E293B;margin-top:2px"></div>
   </div>
@@ -256,28 +256,28 @@ async function ensureChartJs() {
     </div>
     <div class="mbody" style="padding:20px 22px">
       <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:18px;line-height:1.5">
-        Il piano verrà convertito in immagine nel formato scelto e reso visibile al paziente nell'app. Sarai reindirizzato all'editor per generare l'immagine.
+        <span data-only-lang="it">Il piano verrà convertito in immagine nel formato scelto e reso visibile al paziente nell'app. Sarai reindirizzato all'editor per generare l'immagine.</span><span data-only-lang="en">The plan will be converted to an image in the chosen format and made visible to the patient in the app. You will be redirected to the editor to generate the image.</span>
       </p>
       <div style="display:flex;flex-direction:column;gap:10px">
         <button onclick="_pianoFormatoOk('compatta')" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:all .15s" onmouseover="this.style.borderColor='#16A34A'" onmouseout="this.style.borderColor='#86EFAC'">
           <span style="font-size:22px">📋</span>
           <div>
-            <div style="font-size:13px;font-weight:700;color:#15803D">Compatta</div>
-            <div style="font-size:11.5px;color:#166534;margin-top:2px">Layout moderno con kcal per pasto, intestazione colorata e box macronutrienti. Consigliato per la maggior parte dei pazienti.</div>
+            <div style="font-size:13px;font-weight:700;color:#15803D"><span data-only-lang="it">Compatta</span><span data-only-lang="en">Compact</span></div>
+            <div style="font-size:11.5px;color:#166534;margin-top:2px"><span data-only-lang="it">Layout moderno con kcal per pasto, intestazione colorata e box macronutrienti. Consigliato per la maggior parte dei pazienti.</span><span data-only-lang="en">Modern layout with kcal per meal, coloured header and macronutrient boxes. Recommended for most patients.</span></div>
           </div>
         </button>
         <button onclick="_pianoFormatoOk('semplice')" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#F0F9FF;border:1.5px solid #7DD3FC;border-radius:10px;cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:all .15s" onmouseover="this.style.borderColor='#0369A1'" onmouseout="this.style.borderColor='#7DD3FC'">
           <span style="font-size:22px">📄</span>
           <div>
-            <div style="font-size:13px;font-weight:700;color:#0369A1">Semplice</div>
-            <div style="font-size:11.5px;color:#1e40af;margin-top:2px">Solo alimenti e grammaggi senza valori nutrizionali dettagliati. Ideale per pazienti che preferiscono un formato pulito e leggibile.</div>
+            <div style="font-size:13px;font-weight:700;color:#0369A1"><span data-only-lang="it">Semplice</span><span data-only-lang="en">Simple</span></div>
+            <div style="font-size:11.5px;color:#1e40af;margin-top:2px"><span data-only-lang="it">Solo alimenti e grammaggi senza valori nutrizionali dettagliati. Ideale per pazienti che preferiscono un formato pulito e leggibile.</span><span data-only-lang="en">Only foods and weights without detailed nutritional values. Ideal for patients who prefer a clean, readable format.</span></div>
           </div>
         </button>
         <button onclick="_pianoFormatoOk('normale')" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#FAFBFC;border:1.5px solid var(--border-d);border-radius:10px;cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:all .15s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-d)'">
           <span style="font-size:22px">📊</span>
           <div>
-            <div style="font-size:13px;font-weight:700;color:var(--slate)">Normale (tabella completa)</div>
-            <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">Tabella dettagliata con tutti i valori nutrizionali per ogni alimento. Per pazienti avanzati o con esigenze specifiche.</div>
+            <div style="font-size:13px;font-weight:700;color:var(--slate)"><span data-only-lang="it">Normale (tabella completa)</span><span data-only-lang="en">Normal (full table)</span></div>
+            <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px"><span data-only-lang="it">Tabella dettagliata con tutti i valori nutrizionali per ogni alimento. Per pazienti avanzati o con esigenze specifiche.</span><span data-only-lang="en">Detailed table with all nutritional values for each food. For advanced patients or those with specific needs.</span></div>
           </div>
         </button>
       </div>
@@ -387,19 +387,22 @@ async function ensureChartJs() {
     <div class="mhdr"><h2>📥 Importa Pazienti da CSV</h2><button class="mclose" onclick="closeM('modal-importa-csv')">✕</button></div>
     <div class="mbody">
       <div style="background:#F0F9FF;border-radius:8px;padding:12px 14px;margin-bottom:14px;border-left:3px solid #0369A1;font-size:12.5px;color:#0C4A6E;line-height:1.6">
-        <strong>Formato richiesto:</strong> <code>nome,cognome,ddn,sesso,codice_fiscale,note,tags</code><br>
+        <span data-only-lang="it"><strong>Formato richiesto:</strong> <code>nome,cognome,ddn,sesso,codice_fiscale,note,tags</code><br>
         Header case-insensitive. Campo <code>tags</code>: valori separati da <code>;</code> (es: <code>Diabete T2;Obesità</code>).<br>
-        Campo <code>sesso</code>: M o F. Campo <code>ddn</code>: formato YYYY-MM-DD.
+        Campo <code>sesso</code>: M o F. Campo <code>ddn</code>: formato YYYY-MM-DD.</span>
+        <span data-only-lang="en"><strong>Required format:</strong> <code>nome,cognome,ddn,sesso,codice_fiscale,note,tags</code><br>
+        Header case-insensitive. Field <code>tags</code>: values separated by <code>;</code> (e.g. <code>Diabete T2;Obesità</code>).<br>
+        Field <code>sesso</code>: M or F. Field <code>ddn</code>: YYYY-MM-DD format.</span>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
-        <a href="/template_pazienti.csv" download="template_pazienti.csv" class="btn btn-ghost btn-sm" style="text-decoration:none">📄 Scarica template CSV</a>
+        <a href="/template_pazienti.csv" download="template_pazienti.csv" class="btn btn-ghost btn-sm" style="text-decoration:none">📄 <span data-only-lang="it">Scarica template CSV</span><span data-only-lang="en">Download CSV template</span></a>
         <label class="btn btn-primary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-          📂 Scegli file CSV
+          📂 <span data-only-lang="it">Scegli file CSV</span><span data-only-lang="en">Choose CSV file</span>
           <input type="file" id="csv-file-input" accept=".csv,text/csv" style="display:none" onchange="previewCSV(this)">
         </label>
       </div>
       <div id="csv-preview-wrap" style="display:none">
-        <div style="font-size:12px;font-weight:600;color:var(--slate);margin-bottom:6px">Anteprima (prime 5 righe):</div>
+        <div style="font-size:12px;font-weight:600;color:var(--slate);margin-bottom:6px"><span data-only-lang="it">Anteprima (prime 5 righe):</span><span data-only-lang="en">Preview (first 5 rows):</span></div>
         <div id="csv-preview-table" style="overflow-x:auto;font-size:12px"></div>
         <div id="csv-import-info" style="margin-top:8px;font-size:12.5px;color:var(--slate-m)"></div>
       </div>
@@ -425,7 +428,7 @@ async function ensureChartJs() {
 <!-- MODAL: NOTA SOAP -->
 <div class="modal-bg" id="modal-soap">
   <div class="modal" style="max-width:600px">
-    <div class="mhdr"><h2>🩺 Nuova Nota di Sessione (SOAP)</h2><button class="mclose" onclick="closeM('modal-soap')">✕</button></div>
+    <div class="mhdr"><h2>🩺 <span data-only-lang="it">Nuova Nota di Sessione (SOAP)</span><span data-only-lang="en">New Session Note (SOAP)</span></h2><button class="mclose" onclick="closeM('modal-soap')">✕</button></div>
     <div class="mbody" style="padding:16px 18px;max-height:75vh;overflow-y:auto">
       <div id="soap-doc-ref" style="display:none;background:#EFF6FF;border-left:3px solid #3B82F6;border-radius:6px;padding:7px 12px;margin-bottom:12px;font-size:12px;color:#1D4ED8;font-weight:600"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:12px">
@@ -461,7 +464,7 @@ async function ensureChartJs() {
     <div class="mbody" style="padding:0">
       <div id="ai-paz-msgs" style="height:320px;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;background:#F8FAFC"></div>
       <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;background:white">
-        <input type="text" id="ai-paz-input" placeholder="Fai una domanda su questo paziente..." style="flex:1;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiPazMsg()}">
+        <input type="text" id="ai-paz-input" data-i18n-placeholder="paz.ai_placeholder" style="flex:1;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiPazMsg()}">
         <button class="btn btn-primary btn-sm" onclick="sendAiPazMsg()">Invia ➤</button>
       </div>
     </div>
@@ -471,7 +474,7 @@ async function ensureChartJs() {
 <div id="toast"></div>
 <div id="loading-overlay"><div class="spinner"></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/lang.js" defer></script>
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
@@ -556,7 +559,7 @@ function customConfirm(msg, onConfirm, opts = {}) {
   document.getElementById('modal-confirm-msg').textContent = msg;
   const title = document.getElementById('modal-confirm-title');
   const okBtn = document.getElementById('modal-confirm-ok');
-  title.textContent = opts.title || '⚠️ Conferma';
+  title.textContent = opts.title || '⚠️ ' + _L('Conferma','Confirm');
   if (opts.danger) {
     okBtn.className = 'btn btn-sm';
     okBtn.style.background = '#DC2626';
@@ -651,9 +654,9 @@ async function ensureAltroCartella(allCartelle) {
 
 async function loadCartelle() {
   const wrap = document.getElementById('main-content');
-  wrap.innerHTML = '<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
+  wrap.innerHTML = `<div class="empty-state"><div class="ei">⏳</div><h3>${_L('Caricamento...','Loading...')}</h3></div>`;
   const { data, error } = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  if (error || !data) { wrap.innerHTML = '<div class="empty-state"><div class="ei">❌</div><h3>Errore</h3></div>'; return; }
+  if (error || !data) { wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>${_L('Errore','Error')}</h3></div>`; return; }
 
   // Ensure "Altro" default folder exists (creates it if missing)
   const altroObj = await ensureAltroCartella(data);
@@ -912,7 +915,7 @@ function tornaAllElenco() {
 
 async function renderCartellaDetail(id) {
   const wrap = document.getElementById('main-content');
-  wrap.innerHTML = '<div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>';
+  wrap.innerHTML = `<div class="empty-state"><div class="ei">⏳</div><h3>${_L('Caricamento...','Loading...')}</h3></div>`;
   // Hide search/filter bar — not needed when a folder is open
   const _filterBar = document.getElementById('paz-filter-bar');
   if (_filterBar) _filterBar.style.display = 'none';
@@ -920,7 +923,7 @@ async function renderCartellaDetail(id) {
   // Guard: ensure auth is ready
   if (!currentUser) {
     try { await checkAuth(); } catch(e) {}
-    if (!currentUser) { wrap.innerHTML = '<div class="empty-state"><div class="ei">🔒</div><h3>Sessione scaduta — effettua nuovamente il login</h3></div>'; return; }
+    if (!currentUser) { wrap.innerHTML = `<div class="empty-state"><div class="ei">🔒</div><h3>${_L('Sessione scaduta — effettua nuovamente il login','Session expired — please log in again')}</h3></div>`; return; }
   }
 
   const cartResult = await sb.from('cartelle').select('*').eq('id', id).eq('user_id', currentUser.id).maybeSingle();
@@ -962,7 +965,7 @@ async function renderCartellaDetail(id) {
   const eta = cart.ddn ? calcolaEta(cart.ddn) : null;
 
   // Helper: format date
-  const fmtDate = d => d ? new Date(d).toLocaleDateString('it', {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+  const fmtDate = d => d ? new Date(d).toLocaleDateString(_L('it','en-GB'), {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
 
   // Build piani list
   const pianiHtml = (piani && piani.length) ? piani.map(p => `
@@ -1116,31 +1119,31 @@ async function renderCartellaDetail(id) {
 
   // Build timeline
   const _tlSpecMap = {
-    'diabete':{icon:'🩸',label:'Diabete',col:'#1D4ED8',bg:'#DBEAFE'},
-    'pancreas':{icon:'🫁',label:'IPE — Pancreas',col:'#C2410C',bg:'#FFF7ED'},
-    'sport':{icon:'🏃',label:'Nutrizione Sportiva',col:'#065F46',bg:'#ECFDF5'},
-    'pediatria':{icon:'👶',label:'Pediatria',col:'#5B21B6',bg:'#EDE9FE'},
-    'ristorazione':{icon:'🍽️',label:'Ristorazione',col:'#0369A1',bg:'#F0F9FF'},
+    'diabete':{icon:'🩸',label:_L('Diabete','Diabetes'),col:'#1D4ED8',bg:'#DBEAFE'},
+    'pancreas':{icon:'🫁',label:_L('IPE — Pancreas','EPI — Pancreas'),col:'#C2410C',bg:'#FFF7ED'},
+    'sport':{icon:'🏃',label:_L('Nutrizione Sportiva','Sports Nutrition'),col:'#065F46',bg:'#ECFDF5'},
+    'pediatria':{icon:'👶',label:_L('Pediatria','Pediatrics'),col:'#5B21B6',bg:'#EDE9FE'},
+    'ristorazione':{icon:'🍽️',label:_L('Ristorazione','Catering'),col:'#0369A1',bg:'#F0F9FF'},
     'dca':{icon:'🫀',label:'DCA',col:'#991B1B',bg:'#FEE2E2'},
-    'chetogenica':{icon:'🥑',label:'Dieta Chetogenica',col:'#7C3AED',bg:'#F5F3FF'},
-    'renale':{icon:'🫘',label:'Nefropatia / IRC',col:'#0F766E',bg:'#CCFBF1'},
-    'disfagia':{icon:'🗣️',label:'Disfagia',col:'#0369A1',bg:'#E0F2FE'},
-    'oncologia':{icon:'🎗️',label:'Oncologia',col:'#7C3AED',bg:'#F5F3FF'},
-    'obesita':{icon:'⚖️',label:'Obesità',col:'#EA580C',bg:'#FFF7ED'},
-    'gravidanza':{icon:'🤰',label:'Gravidanza',col:'#BE185D',bg:'#FDF2F8'},
-    'consiglio':{icon:'💡',label:'Consiglio',col:'#16A34A',bg:'#F0FDF4'},
-    'paziente_sano':{icon:'✅',label:'Paziente Sano',col:'#15803D',bg:'#F0FDF4'},
+    'chetogenica':{icon:'🥑',label:_L('Dieta Chetogenica','Ketogenic Diet'),col:'#7C3AED',bg:'#F5F3FF'},
+    'renale':{icon:'🫘',label:_L('Nefropatia / IRC','Nephropathy / CKD'),col:'#0F766E',bg:'#CCFBF1'},
+    'disfagia':{icon:'🗣️',label:_L('Disfagia','Dysphagia'),col:'#0369A1',bg:'#E0F2FE'},
+    'oncologia':{icon:'🎗️',label:_L('Oncologia','Oncology'),col:'#7C3AED',bg:'#F5F3FF'},
+    'obesita':{icon:'⚖️',label:_L('Obesità','Obesity'),col:'#EA580C',bg:'#FFF7ED'},
+    'gravidanza':{icon:'🤰',label:_L('Gravidanza','Pregnancy'),col:'#BE185D',bg:'#FDF2F8'},
+    'consiglio':{icon:'💡',label:_L('Consiglio','Tip'),col:'#16A34A',bg:'#F0FDF4'},
+    'paziente_sano':{icon:'✅',label:_L('Paziente Sano','Healthy Patient'),col:'#15803D',bg:'#F0FDF4'},
   };
   const _tlVMap = {'Prima visita':{bg:'#EDE9FE',col:'#5B21B6'},'Follow-up':{bg:'#EFF6FF',col:'#1D4ED8'},'Controllo':{bg:'#F0FDF4',col:'#15803D'},'Urgente':{bg:'#FEE2E2',col:'#991B1B'}};
   const tlItems = [];
-  (piani||[]).forEach(p => tlItems.push({date:p.saved_at||p.data_piano||p.created_at,icon:'📋',type:'Piano',col:'#1D4ED8',bg:'#EFF6FF',title:p.nome||'Piano Alimentare',action:`caricaPiano('${p.id}')`}));
+  (piani||[]).forEach(p => tlItems.push({date:p.saved_at||p.data_piano||p.created_at,icon:'📋',type:_L('Piano','Meal Plan'),col:'#1D4ED8',bg:'#EFF6FF',title:p.nome||_L('Piano Alimentare','Meal Plan'),action:`caricaPiano('${p.id}')`}));
   (ncpts||[]).forEach(n => {
     let pN=''; try{const vv=JSON.parse(n.valutazione||'{}');pN=vv.nome||'';}catch(e){}
-    tlItems.push({date:n.updated_at||n.created_at,icon:'📝',type:'NCPt',col:'#5B21B6',bg:'#EDE9FE',title:pN?`NCPt — ${pN}`:'Scheda NCPt',action:`apriNCPt('${n.id}')`});
+    tlItems.push({date:n.updated_at||n.created_at,icon:'📝',type:'NCPt',col:'#5B21B6',bg:'#EDE9FE',title:pN?`NCPt — ${pN}`:_L('Scheda NCPt','NCPt Sheet'),action:`apriNCPt('${n.id}')`});
   });
-  (schede||[]).forEach(s => tlItems.push({date:s.saved_at||s.created_at,icon:'📊',type:'Valutazione',col:'#15803D',bg:'#F0FDF4',title:s.nome?`Valutazione — ${esc(s.nome)}`:'Scheda Valutazione',action:`apriScheda('${s.id}')`}));
+  (schede||[]).forEach(s => tlItems.push({date:s.saved_at||s.created_at,icon:'📊',type:_L('Valutazione','Assessment'),col:'#15803D',bg:'#F0FDF4',title:s.nome?`${_L('Valutazione','Assessment')} — ${esc(s.nome)}`:_L('Scheda Valutazione','Assessment Form'),action:`apriScheda('${s.id}')`}));
   (biaList||[]).forEach(b => tlItems.push({date:b.data_misura||b.created_at,icon:'⚡',type:'BIA',col:'#1D4ED8',bg:'#DBEAFE',title:`BIA — ${fmtDate(b.data_misura||b.created_at)}`,action:`apriModificaBIA('${b.id}','${id}')`}));
-  (esamiBiochimici||[]).forEach(e => tlItems.push({date:e.data_esame||e.created_at,icon:'🔬',type:'Esame',col:'#C2410C',bg:'#FFF7ED',title:esc(e.tipo)+(e.valore?` — ${e.valore}${e.unita?' '+e.unita:''}`:''),action:`apriStoricoEsame('${id}','${e.tipo.replace(/'/g,"\\'")}')` }));
+  (esamiBiochimici||[]).forEach(e => tlItems.push({date:e.data_esame||e.created_at,icon:'🔬',type:_L('Esame','Exam'),col:'#C2410C',bg:'#FFF7ED',title:esc(e.tipo)+(e.valore?` — ${e.valore}${e.unita?' '+e.unita:''}`:''),action:`apriStoricoEsame('${id}','${e.tipo.replace(/'/g,"\\'")}')` }));
   (soapNotes||[]).forEach(n => {
     let sd={}; try{sd=JSON.parse(n.dati||'{}');}catch(e){}
     const vm2=_tlVMap[sd.tipo_visita]||{bg:'#F1F5F9',col:'#475569'};
@@ -1148,10 +1151,10 @@ async function renderCartellaDetail(id) {
   });
   (questionariSalvati||[]).forEach(q => {
     let qd={}; try{qd=JSON.parse(q.dati||'{}');}catch(e){}
-    const qN2=qd.nome||q.nota||'Questionario';
-    tlItems.push({date:q.created_at,icon:'📋',type:'Questionario',col:'#0369A1',bg:'#F0F9FF',title:esc(qN2),action:`apriQuestionario('${q.id}','${qN2.replace(/'/g,"\\'")}','${id}')`});
+    const qN2=qd.nome||q.nota||_L('Questionario','Questionnaire');
+    tlItems.push({date:q.created_at,icon:'📋',type:_L('Questionario','Questionnaire'),col:'#0369A1',bg:'#F0F9FF',title:esc(qN2),action:`apriQuestionario('${q.id}','${qN2.replace(/'/g,"\\'")}','${id}')`});
   });
-  (consigliNutrizionali||[]).forEach(n => tlItems.push({date:n.created_at,icon:'💡',type:'Consiglio',col:'#16A34A',bg:'#F0FDF4',title:esc(n.nota||'Consiglio Nutrizionale'),action:`apriNoteSpec('${n.id}','consiglio')`}));
+  (consigliNutrizionali||[]).forEach(n => tlItems.push({date:n.created_at,icon:'💡',type:_L('Consiglio','Tip'),col:'#16A34A',bg:'#F0FDF4',title:esc(n.nota||_L('Consiglio Nutrizionale','Nutritional Tip')),action:`apriNoteSpec('${n.id}','consiglio')`}));
   (noteSpecAltre||[]).forEach(n => {
     const sm2=_tlSpecMap[n.tipo]||{icon:'📌',label:n.tipo,col:'#475569',bg:'#F8FAFC'};
     tlItems.push({date:n.created_at,icon:sm2.icon,type:sm2.label,col:sm2.col,bg:sm2.bg,title:esc(n.nota||sm2.label),action:`apriNoteSpec('${n.id}','${n.tipo}')`});
@@ -1293,7 +1296,7 @@ async function renderCartellaDetail(id) {
             <div style="font-size:11.5px;color:var(--slate-l)">${_L('Consiglio Nutrizionale','Nutritional Tip')} · ${fmtDate(n.created_at)}</div>
           </div>
           <span style="font-size:11px;background:#F0FDF4;color:#16A34A;padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${_L('Consiglio Nutrizionale','Nutritional Tip')}</span>
-          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
+          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','consiglio')">✏️ Apri</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
         </div>`;
@@ -1308,22 +1311,22 @@ async function renderCartellaDetail(id) {
       </div>
       <div style="padding:10px 14px">${noteSpecAltre.map(n => {
         const specMap = {
-          'diabete':      {icon:'🩸', label:'Diabete',            page:'diabete.html',     bg:'#DBEAFE', col:'#1D4ED8'},
-          'pancreas':     {icon:'🫁', label:'IPE — Pancreas',     page:'pancreas.html',    bg:'#FFF7ED', col:'#C2410C'},
-          'sport':        {icon:'🏃', label:'Nutrizione Sportiva',page:'sport.html',       bg:'#ECFDF5', col:'#065F46'},
-          'pediatria':    {icon:'👶', label:'Pediatria',          page:'pediatria.html',   bg:'#EDE9FE', col:'#5B21B6'},
-          'ristorazione': {icon:'🍽️',label:'Ristorazione',       page:'ristorazione.html',bg:'#F0F9FF', col:'#0369A1'},
-          'dca':          {icon:'🫀', label:'DCA',                page:'dna.html',         bg:'#FEE2E2', col:'#991B1B'},
-          'chetogenica':  {icon:'🥑', label:'Dieta Chetogenica', page:'chetogenica.html', bg:'#F5F3FF', col:'#7C3AED'},
-          'renale':       {icon:'🫘', label:'Nefropatia / IRC',  page:'renale.html',      bg:'#CCFBF1', col:'#0F766E'},
-          'disfagia':     {icon:'🗣️', label:'Disfagia',          page:'disfagia.html',    bg:'#E0F2FE', col:'#0369A1'},
-          'oncologia':    {icon:'🎗️', label:'Oncologia',          page:'oncologia.html',   bg:'#F5F3FF', col:'#7C3AED'},
-          'obesita':      {icon:'⚖️', label:'Obesità',             page:'obesita.html',     bg:'#FFF7ED', col:'#EA580C'},
-          'gravidanza':   {icon:'🤰', label:'Gravidanza',          page:'gravidanza.html',  bg:'#FDF2F8', col:'#BE185D'},
-          'consiglio':    {icon:'💡', label:'Consiglio Nutrizionale', page:'consigli.html', bg:'#F0FDF4', col:'#16A34A'},
+          'diabete':      {icon:'🩸', label:_L('Diabete','Diabetes'),              page:'diabete.html',     bg:'#DBEAFE', col:'#1D4ED8'},
+          'pancreas':     {icon:'🫁', label:_L('IPE — Pancreas','EPI — Pancreas'), page:'pancreas.html',    bg:'#FFF7ED', col:'#C2410C'},
+          'sport':        {icon:'🏃', label:_L('Nutrizione Sportiva','Sports Nutrition'),page:'sport.html', bg:'#ECFDF5', col:'#065F46'},
+          'pediatria':    {icon:'👶', label:_L('Pediatria','Pediatrics'),           page:'pediatria.html',   bg:'#EDE9FE', col:'#5B21B6'},
+          'ristorazione': {icon:'🍽️',label:_L('Ristorazione','Catering'),          page:'ristorazione.html',bg:'#F0F9FF', col:'#0369A1'},
+          'dca':          {icon:'🫀', label:'DCA',                                  page:'dna.html',         bg:'#FEE2E2', col:'#991B1B'},
+          'chetogenica':  {icon:'🥑', label:_L('Dieta Chetogenica','Ketogenic Diet'),page:'chetogenica.html',bg:'#F5F3FF', col:'#7C3AED'},
+          'renale':       {icon:'🫘', label:_L('Nefropatia / IRC','Nephropathy / CKD'),page:'renale.html',  bg:'#CCFBF1', col:'#0F766E'},
+          'disfagia':     {icon:'🗣️', label:_L('Disfagia','Dysphagia'),             page:'disfagia.html',    bg:'#E0F2FE', col:'#0369A1'},
+          'oncologia':    {icon:'🎗️', label:_L('Oncologia','Oncology'),              page:'oncologia.html',   bg:'#F5F3FF', col:'#7C3AED'},
+          'obesita':      {icon:'⚖️', label:_L('Obesità','Obesity'),                 page:'obesita.html',     bg:'#FFF7ED', col:'#EA580C'},
+          'gravidanza':   {icon:'🤰', label:_L('Gravidanza','Pregnancy'),             page:'gravidanza.html',  bg:'#FDF2F8', col:'#BE185D'},
+          'consiglio':    {icon:'💡', label:_L('Consiglio Nutrizionale','Nutritional Tip'), page:'consigli.html', bg:'#F0FDF4', col:'#16A34A'},
         };
         const s = specMap[n.tipo] || {icon:'📌', label:n.tipo, page:null, bg:'#F8FAFC', col:'#475569'};
-        const openBtn = s.page ? `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','${n.tipo}')">✏️ Apri</button>` : '';
+        const openBtn = s.page ? `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','${n.tipo}')">✏️ ${_L('Apri','Open')}</button>` : '';
         return `<div onclick="apriNoteSpec('${n.id}','${n.tipo}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:${s.page?'pointer':'default'};transition:all .15s" onmouseover="if('${s.page}')this.style.borderColor='${s.col}'" onmouseout="this.style.borderColor='var(--border)'">
           <span style="font-size:22px;background:${s.bg};padding:6px;border-radius:8px">${s.icon}</span>
           <div style="flex:1;min-width:0">
@@ -1331,7 +1334,7 @@ async function renderCartellaDetail(id) {
             <div style="font-size:11.5px;color:var(--slate-l)">${s.label} · ${fmtDate(n.created_at)}</div>
           </div>
           <span style="font-size:11px;background:${s.bg};color:${s.col};padding:3px 9px;border-radius:8px;font-weight:600;flex-shrink:0">${s.label}</span>
-          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?'Nascondi al paziente':'Mostra al paziente'}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
+          <button id="vis-btn-note_specialistiche-${n.id}" class="btn btn-ghost btn-xs" data-visible="${n.visible_to_patient===true?'true':'false'}" data-tipo="${n.tipo||''}" onclick="event.stopPropagation();toggleItemVisibility('note_specialistiche','${n.id}')" style="color:${n.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${n.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${n.visible_to_patient===true?'👁️':'🙈'}</button>
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'${s.label}',docId:'${n.id}',nome:'${(n.nota||s.label).replace(/'/g,"\\'")}',data:'${(n.created_at||'').slice(0,10)}'})" title="${_L('Aggiungi nota SOAP','Add SOAP note')}">🩺</button>
           ${openBtn}
           <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delNoteSpec('${n.id}')">🗑️</button>
@@ -1364,7 +1367,7 @@ async function loadAuditLog(cartellaId) {
     el.innerHTML = data.map(log => {
       const actionIcons = { updated_profile: '✏️', archived: '📦', restored: '♻️', created: '📁', deleted: '🗑️' };
       const icon = actionIcons[log.action] || '📋';
-      const ts = new Date(log.created_at).toLocaleString('it', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      const ts = new Date(log.created_at).toLocaleString(_L('it','en-GB'), {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
       let details = '';
       if (log.details) {
         try { const d = typeof log.details === 'string' ? JSON.parse(log.details) : log.details; details = Object.entries(d).map(([k,v])=>`${k}: ${v}`).join(', '); } catch(e){}
@@ -1372,7 +1375,7 @@ async function loadAuditLog(cartellaId) {
       return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:8px;background:#F8FAFC;border:1px solid var(--border);margin-bottom:6px">
         <span style="font-size:16px;flex-shrink:0">${icon}</span>
         <div style="flex:1;min-width:0">
-          <div style="font-size:12.5px;font-weight:600;color:var(--slate)">${esc(log.action || 'attività')}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--slate)">${esc(log.action || _L('attività','activity'))}</div>
           ${details ? `<div style="font-size:11.5px;color:var(--slate-l)">${esc(details)}</div>` : ''}
         </div>
         <span style="font-size:11px;color:var(--slate-l);flex-shrink:0">${ts}</span>
@@ -1601,13 +1604,13 @@ async function salvaSoap() {
 
   const dati = { s, o, a, p, tipo_visita: tipoV, data_visita: dataV };
   if (_soapDocRef) dati.doc_ref = _soapDocRef;
-  const fmtIt = new Date(dataV).toLocaleDateString(_L('it','en'));
+  const fmtIt = new Date(dataV).toLocaleDateString(_L('it','en-GB'));
   showLoading(true);
   const { error } = await sb.from('note_specialistiche').insert({
     cartella_id: _soapCartellaId,
     user_id: currentUser.id,
     tipo: 'soap_note',
-    nota: 'Nota SOAP — ' + fmtIt + ' (' + tipoV + ')',
+    nota: _L('Nota SOAP','SOAP Note') + ' — ' + fmtIt + ' (' + tipoV + ')',
     dati: JSON.stringify(dati),
     visible_to_patient: false
   });
@@ -1897,52 +1900,52 @@ function scollegaPaziente(patientId, cartellaId) {
 // Sottosezioni disponibili per ogni tipo di specialistica
 const SPEC_SUBSECTIONS = {
   diabete: [
-    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Pasti, orari e alimenti' },
-    { key: 'terapia_insulinica', label: '💉 Terapia insulinica',       desc: 'Rapporto I/C, dosi pasto, FSI' },
-    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni cliniche personalizzate' },
-    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Avvertenze e consigli generali' },
-    { key: 'depliant',          label: '📖 Depliant informativo',      desc: 'Materiale educativo sul diabete' },
+    { key: 'piano_alimentare',  label: '🍽️ ' + _L('Piano alimentare','Meal plan'),          desc: _L('Pasti, orari e alimenti','Meals, schedules and foods') },
+    { key: 'terapia_insulinica', label: '💉 ' + _L('Terapia insulinica','Insulin therapy'),   desc: _L('Rapporto I/C, dosi pasto, FSI','I/C ratio, meal doses, ISF') },
+    { key: 'note_cliniche',     label: '📋 ' + _L('Note cliniche','Clinical notes'),          desc: _L('Indicazioni cliniche personalizzate','Personalised clinical guidelines') },
+    { key: 'note_generali',     label: '📌 ' + _L('Note generali','General notes'),           desc: _L('Avvertenze e consigli generali','General warnings and advice') },
+    { key: 'depliant',          label: '📖 ' + _L('Depliant informativo','Info leaflet'),     desc: _L('Materiale educativo sul diabete','Diabetes educational material') },
   ],
   pediatria: [
-    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Pasti e alimenti per il bambino' },
-    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni cliniche' },
-    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Consigli e avvertenze' },
+    { key: 'piano_alimentare',  label: '🍽️ ' + _L('Piano alimentare','Meal plan'),          desc: _L('Pasti e alimenti per il bambino','Meals and foods for the child') },
+    { key: 'note_cliniche',     label: '📋 ' + _L('Note cliniche','Clinical notes'),          desc: _L('Indicazioni cliniche','Clinical guidelines') },
+    { key: 'note_generali',     label: '📌 ' + _L('Note generali','General notes'),           desc: _L('Consigli e avvertenze','Advice and warnings') },
   ],
   sport: [
-    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Piano nutrizionale sportivo' },
-    { key: 'supplementazione',  label: '💊 Supplementazione',          desc: 'Integratori e protocollo' },
-    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Consigli per la performance' },
+    { key: 'piano_alimentare',  label: '🍽️ ' + _L('Piano alimentare','Meal plan'),          desc: _L('Piano nutrizionale sportivo','Sports nutrition plan') },
+    { key: 'supplementazione',  label: '💊 ' + _L('Supplementazione','Supplementation'),      desc: _L('Integratori e protocollo','Supplements and protocol') },
+    { key: 'note_generali',     label: '📌 ' + _L('Note generali','General notes'),           desc: _L('Consigli per la performance','Performance tips') },
   ],
   pancreas: [
-    { key: 'piano_alimentare',  label: '🍽️ Piano alimentare',        desc: 'Pasti e dosi enzimatiche' },
-    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni cliniche' },
-    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Avvertenze e consigli' },
+    { key: 'piano_alimentare',  label: '🍽️ ' + _L('Piano alimentare','Meal plan'),          desc: _L('Pasti e dosi enzimatiche','Meals and enzyme doses') },
+    { key: 'note_cliniche',     label: '📋 ' + _L('Note cliniche','Clinical notes'),          desc: _L('Indicazioni cliniche','Clinical guidelines') },
+    { key: 'note_generali',     label: '📌 ' + _L('Note generali','General notes'),           desc: _L('Avvertenze e consigli','Warnings and advice') },
   ],
   chetogenica: [
-    { key: 'valutazione',       label: '📊 Valutazione',               desc: 'Dati antropometrici e clinici' },
-    { key: 'calcolo',           label: '🧮 Parametri calcolo',         desc: 'Peso, altezza, attività, obiettivo' },
-    { key: 'gki',               label: '🔬 GKI — Indice Chetogenico', desc: 'Glicemia e chetoni' },
+    { key: 'valutazione',       label: '📊 ' + _L('Valutazione','Assessment'),                desc: _L('Dati antropometrici e clinici','Anthropometric and clinical data') },
+    { key: 'calcolo',           label: '🧮 ' + _L('Parametri calcolo','Calculation parameters'), desc: _L('Peso, altezza, attività, obiettivo','Weight, height, activity, goal') },
+    { key: 'gki',               label: '🔬 ' + _L('GKI — Indice Chetogenico','GKI — Ketogenic Index'), desc: _L('Glicemia e chetoni','Blood glucose and ketones') },
   ],
   renale: [
-    { key: 'valutazione',       label: '📊 Valutazione',               desc: 'Dati clinici del paziente' },
-    { key: 'calcolo',           label: '🧮 Parametri calcolo',         desc: 'Stadio IRC, peso ideale, attività' },
+    { key: 'valutazione',       label: '📊 ' + _L('Valutazione','Assessment'),                desc: _L('Dati clinici del paziente','Patient clinical data') },
+    { key: 'calcolo',           label: '🧮 ' + _L('Parametri calcolo','Calculation parameters'), desc: _L('Stadio IRC, peso ideale, attività','CKD stage, ideal weight, activity') },
   ],
   disfagia: [
-    { key: 'iddsi',             label: '🗣️ Livello IDDSI',            desc: 'Classificazione della disfagia' },
-    { key: 'kcal',              label: '🔥 Fabbisogno calorico',       desc: 'Obiettivo energetico giornaliero' },
+    { key: 'iddsi',             label: '🗣️ ' + _L('Livello IDDSI','IDDSI Level'),            desc: _L('Classificazione della disfagia','Dysphagia classification') },
+    { key: 'kcal',              label: '🔥 ' + _L('Fabbisogno calorico','Caloric requirement'), desc: _L('Obiettivo energetico giornaliero','Daily energy target') },
   ],
   ristorazione: [
-    { key: 'piano_alimentare',  label: '🍽️ Menù / Portate',           desc: 'Piatti e composizione dei menù' },
-    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Avvertenze e note operative' },
+    { key: 'piano_alimentare',  label: '🍽️ ' + _L('Menù / Portate','Menu / Courses'),       desc: _L('Piatti e composizione dei menù','Dishes and menu composition') },
+    { key: 'note_generali',     label: '📌 ' + _L('Note generali','General notes'),           desc: _L('Avvertenze e note operative','Warnings and operational notes') },
   ],
   dca: [
-    { key: 'valutazione',       label: '📊 Valutazione',               desc: 'Profilo e anamnesi' },
-    { key: 'note_cliniche',     label: '📋 Note cliniche',             desc: 'Indicazioni terapeutiche' },
-    { key: 'note_generali',     label: '📌 Note generali',             desc: 'Consigli e obiettivi' },
+    { key: 'valutazione',       label: '📊 ' + _L('Valutazione','Assessment'),                desc: _L('Profilo e anamnesi','Profile and medical history') },
+    { key: 'note_cliniche',     label: '📋 ' + _L('Note cliniche','Clinical notes'),          desc: _L('Indicazioni terapeutiche','Therapeutic guidelines') },
+    { key: 'note_generali',     label: '📌 ' + _L('Note generali','General notes'),           desc: _L('Consigli e obiettivi','Tips and goals') },
   ],
   consiglio: [
-    { key: 'consigli_base',     label: '✅ Consigli nutrizionali',     desc: 'Alimenti ok, da evitare, moderazione' },
-    { key: 'note_paziente',     label: '✏️ Note specifiche',           desc: 'Note personalizzate per il paziente' },
+    { key: 'consigli_base',     label: '✅ ' + _L('Consigli nutrizionali','Nutritional tips'), desc: _L('Alimenti ok, da evitare, moderazione','Foods ok, to avoid, in moderation') },
+    { key: 'note_paziente',     label: '✏️ ' + _L('Note specifiche','Specific notes'),        desc: _L('Note personalizzate per il paziente','Personalised notes for the patient') },
   ],
 };
 

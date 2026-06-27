@@ -124,17 +124,17 @@ async function ensureChartJs() {
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2 id="page-title">📁 <span data-only-lang="it">Cartelle Pazienti</span><span data-only-lang="en">Patient Folders</span></h2>
   <div class="tbar-actions">
-    <button class="btn btn-ghost btn-sm" onclick="openImportaCSV()">📥 Importa CSV</button>
-    <button class="btn btn-primary btn-sm" onclick="openNewCartella()">📁 Nuova Cartella</button>
+    <button class="btn btn-ghost btn-sm" onclick="openImportaCSV()">📥 <span data-only-lang="it">Importa CSV</span><span data-only-lang="en" style="display:none">Import CSV</span></button>
+    <button class="btn btn-primary btn-sm" onclick="openNewCartella()">📁 <span data-only-lang="it">Nuova Cartella</span><span data-only-lang="en" style="display:none">New Folder</span></button>
   </div>
 </div>
 <main id="main">
 <!-- BARRA BULK OPERATIONS (appare quando ci sono checkbox selezionate) -->
 <div id="bulk-action-bar" style="display:none;position:fixed;top:60px;left:0;right:0;z-index:900;background:linear-gradient(135deg,#0F766E,#0891B2);color:white;padding:10px 20px;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 20px rgba(0,0,0,.2)">
   <span id="bulk-count-label" style="font-weight:700;font-size:13px;flex:1"><span data-only-lang="it">0 pazienti selezionati</span><span data-only-lang="en">0 patients selected</span></span>
-  <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkArchivia()">📦 Archivia selezionati</button>
-  <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkEsportaCSV()">📊 Esporta CSV</button>
-  <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;border:1.5px solid rgba(255,255,255,.4)" onclick="deselezionaTutto()">✕ Deseleziona</button>
+  <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkArchivia()">📦 <span data-only-lang="it">Archivia selezionati</span><span data-only-lang="en" style="display:none">Archive selected</span></button>
+  <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkEsportaCSV()">📊 <span data-only-lang="it">Esporta CSV</span><span data-only-lang="en" style="display:none">Export CSV</span></button>
+  <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;border:1.5px solid rgba(255,255,255,.4)" onclick="deselezionaTutto()">✕ <span data-only-lang="it">Deseleziona</span><span data-only-lang="en" style="display:none">Deselect all</span></button>
 </div>
 <!-- BARRA RICERCA + FILTRI PAZIENTI -->
 <div id="paz-filter-bar" style="display:none;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;background:white;padding:12px 16px;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow)">
@@ -150,7 +150,7 @@ async function ensureChartJs() {
       oninput="filterTagDropdown();applyFiltri()" onfocus="showTagDropdown()" onblur="setTimeout(hideTagDropdown,200)">
     <div id="tag-dropdown" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #2DD4BF;border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:0 8px 20px rgba(0,0,0,.12);color:#1E293B;margin-top:2px"></div>
   </div>
-  <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 Mostra archiviati</button>
+  <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 <span data-only-lang="it">Mostra archiviati</span><span data-only-lang="en" style="display:none">Show archived</span></button>
   <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" data-i18n-tooltip="paz.reset_filters">✕</button>
 </div>
 <div class="page-content" id="main-content">
@@ -975,7 +975,7 @@ async function renderCartellaDetail(id) {
         <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(p.nome||'Piano alimentare')}</div>
         <div style="font-size:11.5px;color:var(--slate-l)">${_L('Salvato','Saved')}: ${fmtDate(p.saved_at||p.data_piano)}</div>
       </div>
-      <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">Piano</span>
+      <span style="font-size:11px;background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:8px;font-weight:600">${_L('Piano','Plan')}</span>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openSoapModal('${id}',{tipo:'Piano',docId:'${p.id}',nome:'${(p.nome||'Piano alimentare').replace(/'/g,"\\'")}',data:'${(p.saved_at||p.data_piano||'').slice(0,10)}'})" title="${_L('Aggiungi nota SOAP','Add SOAP note')}">🩺</button>
       <button id="vis-btn-piani-${p.id}" class="btn btn-ghost btn-xs" data-visible="${p.visible_to_patient===true?'true':'false'}" onclick="event.stopPropagation();toggleItemVisibility('piani','${p.id}')" style="color:${p.visible_to_patient===true?'#0F766E':'#94A3B8'}" title="${p.visible_to_patient===true?_L('Nascondi al paziente','Hide from patient'):_L('Mostra al paziente','Show to patient')}">${p.visible_to_patient===true?'👁️':'🙈'}</button>
       <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPiano('${p.id}')">🗑️</button>

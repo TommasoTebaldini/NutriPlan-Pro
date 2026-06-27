@@ -1734,6 +1734,21 @@ const LABEL_TR = {
     'Nuova Cartella':'New Folder',
     'Importa CSV':'Import CSV',
     'Mostra archiviati':'Show archived',
+    // ── gdpr.html tabs (bare text after emoji strip) ──
+    'Registro Trattamenti':'Treatment Registry',
+    'Diritto all\'Oblio':'Right to Erasure',
+    'Informativa Privacy':'Privacy Policy',
+    'Statistiche':'Statistics',
+    'Portabilità':'Data Portability',
+    // ── moduli.html tabs (bare text after emoji strip) ──
+    'Esenzione per Patologia':'Medical Exemption',
+    'Prescrizione AFMS':'AFMS Prescription',
+    'Prodotti Aproteici':'Low-Protein Products',
+    'Diario Alimentare':'Food Diary',
+    'Consenso Informato':'Informed Consent',
+    // ── generic buttons ──
+    'Stampa':'Print',
+    'Salva':'Save',
     // ── visita.html ──
     '📂 Salvate':'📂 Saved','+ Nuova':'+ New',
     'Tipo visita':'Visit type','Data visita':'Visit date',

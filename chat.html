@@ -333,20 +333,16 @@ async function loadChatPatients() {
 
   const patientIds = [...new Set(links.map(l => l.patient_id))];
 
-  // Get patient profiles (include nome and cognome for display)
-  const { data: profiles } = await sb.from('profiles')
-    .select('id,username,email,nome,cognome')
-    .in('id', patientIds);
-
-  // Get cartelle names as fallback for display name
   const cartellaIds = [...new Set(links.map(l => l.cartella_id).filter(Boolean))];
-  let cartelle = [];
-  if (cartellaIds.length) {
-    const { data: cartelleData } = await sb.from('cartelle')
-      .select('id,nome')
-      .in('id', cartellaIds);
-    cartelle = cartelleData || [];
-  }
+
+  // Parallel: profiles and cartelle don't depend on each other
+  const [{ data: profiles }, cartelleRes] = await Promise.all([
+    sb.from('profiles').select('id,username,email,nome,cognome').in('id', patientIds),
+    cartellaIds.length
+      ? sb.from('cartelle').select('id,nome').in('id', cartellaIds)
+      : Promise.resolve({ data: [] }),
+  ]);
+  const cartelle = cartelleRes.data || [];
 
   // Build patient_id -> cartella name map
   const patientCartellaNameMap = {};
@@ -1272,7 +1268,7 @@ function deselectPatient() {
 
 async function loadMessages(patientId) {
   const { data, error } = await sb.from('chat_messages')
-    .select('*')
+    .select('id,sender_id,created_at,content,type,status,scheduled_at,read_at,patient_id')
     .eq('patient_id', patientId)
     .order('created_at', { ascending: true })
     .limit(100);
@@ -1969,7 +1965,7 @@ async function loadPrivacy() {
   }
 
   const [{ data: consent }, { data: me }, { data: privDoc }] = await Promise.all([
-    sb.from('patient_consents').select('*').eq('cartella_id', p.cartellaId).order('created_at', {ascending:false}).limit(1).maybeSingle(),
+    sb.from('patient_consents').select('id,consent_text,signed_at,created_at').eq('cartella_id', p.cartellaId).order('created_at', {ascending:false}).limit(1).maybeSingle(),
     sb.from('profiles').select('email,consent_template').eq('id', currentUser.id).maybeSingle(),
     // patient_documents is what the React patient app signs — check it for real signed status
     selectedPatientId

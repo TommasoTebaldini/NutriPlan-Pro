@@ -926,7 +926,7 @@ async function renderCartellaDetail(id) {
     if (!currentUser) { wrap.innerHTML = `<div class="empty-state"><div class="ei">🔒</div><h3>${_L('Sessione scaduta — effettua nuovamente il login','Session expired — please log in again')}</h3></div>`; return; }
   }
 
-  const cartResult = await sb.from('cartelle').select('*').eq('id', id).eq('user_id', currentUser.id).maybeSingle();
+  const cartResult = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived,user_id').eq('id', id).eq('user_id', currentUser.id).maybeSingle();
   if (cartResult?.error) {
     console.error('Errore caricamento cartella:', cartResult.error);
     wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>${_L('Errore caricamento cartella','Folder loading error')}</h3><p style="color:var(--slate-l);font-size:13px">${esc(cartResult.error.message)}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">${_L('← Torna all\'elenco','← Back to list')}</button></div>`;
@@ -1357,7 +1357,7 @@ async function loadAuditLog(cartellaId) {
   el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">' + _L('Caricamento...','Loading...') + '</div>';
   try {
     const { data, error } = await sb.from('patient_audit_log')
-      .select('*')
+      .select('id,action,created_at,details,dietitian_id')
       .eq('patient_id', cartellaId)
       .order('created_at', { ascending: false })
       .limit(20);
@@ -1671,7 +1671,7 @@ function openNewCartella() {
 async function editCartella(id) {
   if (id === _altroCartellaId) { toast(_L('⚠️ La cartella "Altro" non può essere modificata.','⚠️ The "Other" folder cannot be edited.'), 'warn'); return; }
   showLoading(true);
-  const { data } = await sb.from('cartelle').select('*').eq('id', id).single();
+  const { data } = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,codice_fiscale,note,tags,archived,user_id').eq('id', id).single();
   showLoading(false);
   if (!data) return;
   editingCartellaId = id;

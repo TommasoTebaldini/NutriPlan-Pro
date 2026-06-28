@@ -413,12 +413,12 @@ async function doRegister() {
 
 async function checkAndRedirect(user) {
   document.getElementById('loading').classList.add('show');
-  let {data:profile,error} = await sb.from('profiles').select('*').eq('id',user.id).single();
+  let {data:profile,error} = await sb.from('profiles').select('id,email,approved,is_admin,dpa_accepted_at').eq('id',user.id).single();
   if (error||!profile) {
     // Profile missing (email-confirm flow without trigger) — create it now
     const {error: insErr} = await sb.from('profiles').insert({id:user.id, email:user.email, approved:false, is_admin:false});
     if (!insErr) {
-      const res = await sb.from('profiles').select('*').eq('id',user.id).single();
+      const res = await sb.from('profiles').select('id,email,approved,is_admin,dpa_accepted_at').eq('id',user.id).single();
       profile = res.data;
     }
   }

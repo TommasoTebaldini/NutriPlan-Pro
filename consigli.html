@@ -20,7 +20,7 @@
 .cs-panel{display:none}.cs-panel.active{display:block}
 
 /* ── CONSIGLIO CARDS (improved) ── */
-.consiglio-card{background:white;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px;transition:box-shadow .2s,transform .15s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.consiglio-card{background:white;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px;transition:box-shadow .2s,transform .15s;box-shadow:0 1px 4px rgba(0,0,0,.06);content-visibility:auto;contain-intrinsic-size:0 120px}
 .consiglio-card:hover{box-shadow:0 6px 18px rgba(0,0,0,.1);transform:translateY(-1px)}
 .cc-hdr{padding:13px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;overflow:hidden;background:#F8FAFC;border-bottom:1px solid var(--border)}
 .cc-hdr::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.03);opacity:0;transition:opacity .15s}
@@ -249,6 +249,7 @@
   </div>
 
   <div id="consigli-list"></div>
+  <div id="consigli-pagination"></div>
 </div>
 
 <!-- ══════════════════════════════════════════ -->
@@ -4472,7 +4473,11 @@ function buildStampaHTML(c, notePaziente = '') {
 </html>`;
 }
 
-function renderConsigli(filter = '') {
+const CONSIGLI_PAGE_SIZE = 30;
+let currentConsigliPage = 1;
+
+function renderConsigli(filter = '', resetPage = true) {
+  if (resetPage) currentConsigliPage = 1;
   const list = document.getElementById('consigli-list');
   list.innerHTML = '';
   const q = filter.toLowerCase();
@@ -4480,13 +4485,42 @@ function renderConsigli(filter = '') {
   const customIds = new Set(consigliPersonalizzati.map(c => c.id));
   const all = [...CONSIGLI_BASE.filter(c => !customIds.has(c.id)), ...consigliPersonalizzati];
   const filtered = q ? all.filter(c => c.nome.toLowerCase().includes(q) || (c.id||'').includes(q)) : all;
-  document.getElementById('cs-count').textContent = filtered.length + ' ' + _L('patologie','conditions');
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / CONSIGLI_PAGE_SIZE);
+  if (currentConsigliPage > totalPages) currentConsigliPage = Math.max(1, totalPages);
+  const pageItems = filtered.slice((currentConsigliPage - 1) * CONSIGLI_PAGE_SIZE, currentConsigliPage * CONSIGLI_PAGE_SIZE);
+  document.getElementById('cs-count').textContent = total + ' ' + _L('patologie','conditions');
   const frag = document.createDocumentFragment();
-  filtered.forEach(c => {
+  pageItems.forEach(c => {
     const isCustom = consigliPersonalizzati.some(p => p.id === c.id);
     frag.appendChild(buildConsiglio(c, isCustom));
   });
   list.appendChild(frag);
+  renderConsigliPagination(total, totalPages, filter);
+}
+
+function renderConsigliPagination(total, totalPages, filter) {
+  const pag = document.getElementById('consigli-pagination');
+  if (!pag) return;
+  if (totalPages <= 1) { pag.innerHTML = ''; return; }
+  const p = currentConsigliPage;
+  let btns = '';
+  if (p > 1) btns += `<button class="filter-btn" onclick="goConsigliPage(${p-1})">&#8592;</button>`;
+  const start = Math.max(1, p - 2);
+  const end = Math.min(totalPages, p + 2);
+  if (start > 1) btns += `<button class="filter-btn" onclick="goConsigliPage(1)">1</button>${start > 2 ? '<span style="padding:4px 6px;color:var(--slate-l)">…</span>' : ''}`;
+  for (let i = start; i <= end; i++) {
+    btns += `<button class="filter-btn${i===p?' active':''}" onclick="goConsigliPage(${i})">${i}</button>`;
+  }
+  if (end < totalPages) btns += `${end < totalPages-1 ? '<span style="padding:4px 6px;color:var(--slate-l)">…</span>' : ''}<button class="filter-btn" onclick="goConsigliPage(${totalPages})">${totalPages}</button>`;
+  if (p < totalPages) btns += `<button class="filter-btn" onclick="goConsigliPage(${p+1})">&#8594;</button>`;
+  pag.innerHTML = `<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:20px;flex-wrap:wrap">${btns}<span style="font-size:12px;color:var(--slate-l)">${_L('Pagina','Page')} ${p}/${totalPages}</span></div>`;
+}
+
+function goConsigliPage(n) {
+  currentConsigliPage = n;
+  renderConsigli(document.getElementById('cs-search').value || '', false);
+  document.getElementById('consigli-list').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function filterConsigli() { renderConsigli(document.getElementById('cs-search').value); }

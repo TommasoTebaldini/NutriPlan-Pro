@@ -1099,9 +1099,9 @@ function showAC(mi, ii, val) {
   const lang = getLang();
 
   // Search recipes (templates + user recipes)
-  const allRicette = _tpls ? _tpls() : [];
+  const allRicette = typeof RICETTE_DB !== 'undefined' ? RICETTE_DB : [];
   const userRicette = (typeof ricette !== 'undefined' ? ricette : []);
-  const ricetteCombined = [...allRicette, ...userRicette.filter(r => !allRicette.find(t => t.id === r.id))];
+  const ricetteCombined = [...allRicette.map(r=>({...r,isTemplate:true})), ...userRicette.filter(r => !allRicette.find(t => t.id === r.id))];
   const resR = ricetteCombined.filter(r => {
     const nome = lang === 'en' && r.nome_en ? r.nome_en : r.nome;
     return nome.toLowerCase().includes(q);
@@ -1149,7 +1149,7 @@ function pickAC(mi, ii, ri) {
 }
 function pickRecipeFromAC(mi, ii, ricettaId) {
   const el = document.getElementById('ac-global'); if (el) el.style.display = 'none';
-  const allRicette = _tpls ? _tpls() : [];
+  const allRicette = typeof RICETTE_DB !== 'undefined' ? RICETTE_DB : [];
   const userRicette = (typeof ricette !== 'undefined' ? ricette : []);
   const r = allRicette.find(x => x.id === ricettaId) || userRicette.find(x => x.id === ricettaId);
   if (!r) return;

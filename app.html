@@ -118,6 +118,7 @@
   .misura-print{display:block!important}
   .ricetta-porz-print{display:inline!important}
   tr.tr-ricetta-hdr td{background:#ECFDF5!important;color:#0F766E!important;font-weight:700!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  tr.tr-ricetta-hdr td *{font-size:7.5px!important}
   tr.tr-ricetta-ing td{background:#F7FFF9!important;border-left:2px solid #86EFAC!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   /* ── Formati stampa: class-based (compatibile Safari/iPadOS) ── */
   body.pm-simple #pasti-container,body.pm-simple .macro-bar,body.pm-simple #print-giorno-hdr,body.pm-simple #pdf-day-medie,body.pm-simple #pdf-alldays-print-area,body.pm-simple #compact-print-area,body.pm-simple #weekly-print-area{display:none!important}
@@ -876,17 +877,30 @@ function buildCard(mi) {
   return div;
 }
 
+function getRicettaNome(item) {
+  if (!item.ricettaId) return item.nome;
+  try {
+    const lang = (typeof getLang === 'function') ? getLang() : (localStorage.getItem('nlang') || 'it');
+    const allR = typeof RICETTE_DB !== 'undefined' ? RICETTE_DB : [];
+    const uR = typeof ricette !== 'undefined' ? ricette : [];
+    const rec = allR.find(x => x.id === item.ricettaId) || uR.find(x => x.id === item.ricettaId);
+    if (!rec) return item.nome;
+    return lang === 'en' && rec.nome_en ? rec.nome_en : rec.nome;
+  } catch(e) { return item.nome; }
+}
+
 function buildRow(mi, ii) {
   const meals = getMeals();
   const item = meals[mi].items[ii];
 
   if (item.isRicetta) {
     const porz = item.ricettaPorzioni || 1;
+    const nomeDisp = getRicettaNome(item);
     const ingSubHdr = `<div style="font-size:10.5px;font-weight:600;color:var(--teal-d);margin-top:4px;opacity:.85">🥕 ${_L('Ingredienti:','Ingredients:')}</div>`;
     return `<tr id="r-${mi}-${ii}" class="tr-ricetta-hdr" style="background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-top:2.5px solid var(--teal-l)">
       <td colspan="${10+MICROS.length}" style="padding:6px 12px;color:var(--teal-d);letter-spacing:.2px">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:12px;font-weight:700">📋 ${esc(item.nome)}</span>
+          <span style="font-size:12px;font-weight:700">📋 ${esc(nomeDisp)}</span>
           <label class="no-print" style="display:inline-flex;align-items:center;gap:4px;margin:0;cursor:default">
             <input type="number" class="ricetta-porz-input" min="0.5" max="20" step="0.5" value="${porz}"
               oninput="onRicettaPorzioniChange(${mi},${ii},this.value)"
@@ -1137,6 +1151,11 @@ function showAC(mi, ii, val) {
   el.style.top = (rect.bottom + 2) + 'px';
   el.style.bottom = 'auto';
   el.style.display = 'block';
+  document.addEventListener('scroll', function _acScrollClose() {
+    const acEl = document.getElementById('ac-global');
+    if (acEl) acEl.style.display = 'none';
+    document.removeEventListener('scroll', _acScrollClose, true);
+  }, { passive: true, capture: true, once: true });
 }
 function pickAC(mi, ii, ri) {
   const res = acRes[`${mi}-${ii}`]; if (!res || !res[ri]) return;
@@ -2141,7 +2160,8 @@ function _buildPDFAllDaysHTML(lyt) {
       fi2.forEach(it => {
         if (it.isRicetta) {
           const porz = it.ricettaPorzioni || 1;
-          html += '<tr style="background:#ECFDF5;border-bottom:1px solid #A7F3D0"><td colspan="10" style="padding:3px 8px;font-weight:700;color:#0F766E;font-size:8px">📋 '+esc(it.nome)+' · '+porz+' '+_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')+'</td></tr>';
+          const nomeDispP = getRicettaNome(it);
+          html += '<tr style="background:#ECFDF5;border-bottom:1px solid #A7F3D0"><td colspan="10" style="padding:3px 8px;font-weight:700;color:#0F766E;font-size:7.5px">📋 '+esc(nomeDispP)+' · '+porz+' '+_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')+'</td></tr>';
           return;
         }
         if (it.ricettaIng) {
@@ -2225,8 +2245,9 @@ function _buildSimpleDayHTML(giorno, showDayHeader, lyt) {
     foodItems.forEach(item => {
       if (item.isRicetta) {
         const porz = item.ricettaPorzioni || 1;
+        const nomeDispS = getRicettaNome(item);
         html += '<div style="margin:8px 0 2px;padding:6px 12px;background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-left:4px solid #10B981;border-radius:4px">';
-        html += '<div style="font-size:13px;font-weight:700;color:#0F766E">📋 ' + esc(item.nome) + ' <span style="font-size:11px;font-weight:500;color:#065F46">· ' + porz + ' ' + _L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings') + '</span></div>';
+        html += '<div style="font-size:13px;font-weight:700;color:#0F766E">📋 ' + esc(nomeDispS) + ' <span style="font-size:11px;font-weight:500;color:#065F46">· ' + porz + ' ' + _L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings') + '</span></div>';
         html += '<div style="font-size:10.5px;font-weight:600;color:#0F766E;margin-top:3px;opacity:.8">🥕 ' + _L('Ingredienti:','Ingredients:') + '</div>';
         html += '</div>';
         return;

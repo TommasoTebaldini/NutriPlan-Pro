@@ -617,17 +617,17 @@ function customConfirm(msg, onConfirm, opts) {
 // MICRO CONFIG (shared)
 // ═══════════════════════════════════════════════════
 const MICROS = [
-  { k: 'ca', l: 'Calcio (mg)' }, { k: 'fe', l: 'Ferro (mg)' }, { k: 'mg', l: 'Magnesio (mg)' },
-  { k: 'k2', l: 'Potassio (mg)' }, { k: 'na', l: 'Sodio (mg)' }, { k: 'zn', l: 'Zinco (mg)' },
-  { k: 'fo', l: 'Fosforo (mg)' }, { k: 'se', l: 'Selenio (µg)' }, { k: 'col', l: 'Col. (mg)' }
+  { k: 'ca', l: 'Calcio (mg)', l_en: 'Calcium (mg)' }, { k: 'fe', l: 'Ferro (mg)', l_en: 'Iron (mg)' }, { k: 'mg', l: 'Magnesio (mg)', l_en: 'Magnesium (mg)' },
+  { k: 'k2', l: 'Potassio (mg)', l_en: 'Potassium (mg)' }, { k: 'na', l: 'Sodio (mg)', l_en: 'Sodium (mg)' }, { k: 'zn', l: 'Zinco (mg)', l_en: 'Zinc (mg)' },
+  { k: 'fo', l: 'Fosforo (mg)', l_en: 'Phosphorus (mg)' }, { k: 'se', l: 'Selenio (µg)', l_en: 'Selenium (µg)' }, { k: 'col', l: 'Col. (mg)', l_en: 'Chol. (mg)' }
 ];
 const ALL_NUTRIENTS = [
-  { k: 'k', l: 'Calorie' }, { k: 'p', l: 'Proteine' }, { k: 'g', l: 'Grassi Tot.' },
-  { k: 'gs', l: 'Grassi Sat.' }, { k: 'ch', l: 'CHO' }, { k: 'z', l: 'Zuccheri' },
-  { k: 'fi', l: 'Fibra' }, { k: 'ca', l: 'Calcio' }, { k: 'fe', l: 'Ferro' },
-  { k: 'mg', l: 'Magnesio' }, { k: 'k2', l: 'Potassio' }, { k: 'na', l: 'Sodio' },
-  { k: 'zn', l: 'Zinco' }, { k: 'fo', l: 'Fosforo' }, { k: 'se', l: 'Selenio' },
-  { k: 'col', l: 'Colesterolo' }
+  { k: 'k', l: 'Calorie', l_en: 'Calories' }, { k: 'p', l: 'Proteine', l_en: 'Protein' }, { k: 'g', l: 'Grassi Tot.', l_en: 'Total Fat' },
+  { k: 'gs', l: 'Grassi Sat.', l_en: 'Sat. Fat' }, { k: 'ch', l: 'CHO', l_en: 'CHO' }, { k: 'z', l: 'Zuccheri', l_en: 'Sugars' },
+  { k: 'fi', l: 'Fibra', l_en: 'Fibre' }, { k: 'ca', l: 'Calcio', l_en: 'Calcium' }, { k: 'fe', l: 'Ferro', l_en: 'Iron' },
+  { k: 'mg', l: 'Magnesio', l_en: 'Magnesium' }, { k: 'k2', l: 'Potassio', l_en: 'Potassium' }, { k: 'na', l: 'Sodio', l_en: 'Sodium' },
+  { k: 'zn', l: 'Zinco', l_en: 'Zinc' }, { k: 'fo', l: 'Fosforo', l_en: 'Phosphorus' }, { k: 'se', l: 'Selenio', l_en: 'Selenium' },
+  { k: 'col', l: 'Colesterolo', l_en: 'Cholesterol' }
 ];
 let visM = new Set();
 

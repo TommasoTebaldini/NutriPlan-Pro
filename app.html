@@ -219,13 +219,13 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
   <button id="menu-toggle" class="no-print" onclick="toggleSB()">☰</button>
   <h2 id="page-title">📋 <span data-only-lang="it">Piano Alimentare</span><span data-only-lang="en">Meal Plan</span></h2>
   <div class="tbar-actions no-print">
-    <button class="btn btn-ghost btn-sm" id="btn-undo" onclick="doUndo()" data-i18n-tooltip="app.undo_action" disabled style="opacity:.5">↩<span>Annulla</span></button>
-    <button class="btn btn-ghost btn-sm" onclick="openNewPasto()">🍽️<span>Pasto</span></button>
+    <button class="btn btn-ghost btn-sm" id="btn-undo" onclick="doUndo()" data-i18n-tooltip="app.undo_action" disabled style="opacity:.5">↩<span><span data-only-lang="it">Annulla</span><span data-only-lang="en">Undo</span></span></button>
+    <button class="btn btn-ghost btn-sm" onclick="openNewPasto()">🍽️<span><span data-only-lang="it">Pasto</span><span data-only-lang="en">Meal</span></span></button>
     <button class="btn btn-ghost btn-sm" onclick="esportaExcel()">📥<span>Excel</span></button>
     <button class="btn btn-ghost btn-sm" onclick="openSalvaTemplate()" data-i18n-tooltip="app.save_template">💾<span>Template</span></button>
     <button class="btn btn-ghost btn-sm" onclick="openCaricaTemplate()" data-i18n-tooltip="app.load_template">📂<span>Template</span></button>
     <span class="tbar-sep"></span>
-    <button class="btn btn-ghost btn-sm" onclick="generaListaSpesa()" data-i18n-tooltip="app.shopping_list">🛒<span>Lista spesa</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="generaListaSpesa()" data-i18n-tooltip="app.shopping_list">🛒<span><span data-only-lang="it">Lista spesa</span><span data-only-lang="en">Shopping list</span></span></button>
     <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
@@ -235,8 +235,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 
 <!-- UNDO BAR -->
 <div class="undo-bar" id="undo-bar">
-  <span>Azione registrata</span>
-  <button class="undo-btn" onclick="doUndo()">↩ Annulla</button>
+  <span><span data-only-lang="it">Azione registrata</span><span data-only-lang="en">Action recorded</span></span>
+  <button class="undo-btn" onclick="doUndo()">↩ <span data-only-lang="it">Annulla</span><span data-only-lang="en">Undo</span></button>
 </div>
 
 <!-- MAIN -->
@@ -249,8 +249,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
       <div style="font-size:38px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));flex-shrink:0">📋</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:17px;font-weight:700;letter-spacing:.2px;margin-bottom:3px">Piano Alimentare</div>
-        <div style="font-size:12px;opacity:.82;line-height:1.5">Gestisci e salva i piani nutrizionali personalizzati per ogni paziente.</div>
+        <div style="font-size:17px;font-weight:700;letter-spacing:.2px;margin-bottom:3px"><span data-only-lang="it">Piano Alimentare</span><span data-only-lang="en">Meal Plan</span></div>
+        <div style="font-size:12px;opacity:.82;line-height:1.5"><span data-only-lang="it">Gestisci e salva i piani nutrizionali personalizzati per ogni paziente.</span><span data-only-lang="en">Manage and save personalised nutritional plans for each patient.</span></div>
       </div>
 
     </div>
@@ -260,7 +260,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
       <div style="flex:2;min-width:200px;display:flex;flex-direction:column;gap:3px">
         <label style="font-size:11px;font-weight:600;color:white;letter-spacing:.3px">📁 Cartella Paziente</label>
         <div style="position:relative">
-          <input type="text" id="cartella-search" placeholder="🔍 Cerca paziente..." autocomplete="off"
+          <input type="text" id="cartella-search" placeholder="🔍 Cerca paziente..." data-i18n-placeholder="app.search_patient" autocomplete="off"
             oninput="filterCartelleDropdown()" onfocus="showCartelleList()" onblur="setTimeout(hideCartelleList,200)"
             style="width:100%;padding:6px 10px;border:1.5px solid rgba(255,255,255,.35);border-radius:var(--r-sm);font-family:inherit;font-size:16px;outline:none;background:rgba(255,255,255,.12);color:white;transition:border-color .15s;box-sizing:border-box">
           <div id="cartelle-dropdown" onmousedown="event.preventDefault()" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:2px solid #2DD4BF;border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:600;box-shadow:var(--shadow-lg);color:#1E293B"></div>
@@ -275,7 +275,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
       <!-- Nome piano -->
       <div style="max-width:220px;display:flex;flex-direction:column;gap:3px">
         <label style="font-size:11px;font-weight:600;color:white;letter-spacing:.3px">📋 Nome piano</label>
-        <input type="text" id="inp-nome" placeholder="es. Piano gennaio..." oninput="markDirty()" style="border:1.5px solid rgba(255,255,255,.35);border-radius:var(--r-sm);padding:6px 10px;font-family:inherit;font-size:16px;outline:none;width:100%;background:rgba(255,255,255,.12);color:white;box-sizing:border-box">
+        <input type="text" id="inp-nome" placeholder="es. Piano gennaio..." data-i18n-placeholder="app.plan_name_ph" oninput="markDirty()" style="border:1.5px solid rgba(255,255,255,.35);border-radius:var(--r-sm);padding:6px 10px;font-family:inherit;font-size:16px;outline:none;width:100%;background:rgba(255,255,255,.12);color:white;box-sizing:border-box">
       </div>
       <!-- Salva + Nuovo buttons, centered vertically with the other fields -->
       <div style="display:flex;flex-direction:column;gap:5px;align-self:center">
@@ -299,8 +299,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <div class="mpill" style="background:rgba(249,115,22,.15);color:#C2410C;border:1px solid rgba(249,115,22,.5)">🔥<span class="v" id="tot-kcal" style="font-size:17px;font-weight:800;margin:0 2px">0</span><span class="u">kcal</span></div>
     <div class="mpill" style="background:rgba(34,197,94,.15);color:#15803D;border:1px solid rgba(34,197,94,.5)">💪<span class="v" id="tot-prot">0</span><span class="u">g prot</span><span id="tot-prot-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
     <div class="mpill" style="background:rgba(59,130,246,.15);color:#1D4ED8;border:1px solid rgba(59,130,246,.5)">🍞<span class="v" id="tot-cho">0</span><span class="u">g CHO</span><span id="tot-cho-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
-    <div class="mpill" style="background:rgba(234,179,8,.15);color:#A16207;border:1px solid rgba(234,179,8,.5)">🧈<span class="v" id="tot-fat">0</span><span class="u">g grassi</span><span id="tot-fat-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
-    <div class="mpill" style="background:rgba(168,85,247,.15);color:#7E22CE;border:1px solid rgba(168,85,247,.5)">🌿<span class="v" id="tot-fibra">0</span><span class="u">g fibra</span></div>
+    <div class="mpill" style="background:rgba(234,179,8,.15);color:#A16207;border:1px solid rgba(234,179,8,.5)">🧈<span class="v" id="tot-fat">0</span><span class="u"><span data-only-lang="it">g grassi</span><span data-only-lang="en">g fat</span></span><span id="tot-fat-pct" style="font-size:10px;opacity:.75;margin-left:3px"></span></div>
+    <div class="mpill" style="background:rgba(168,85,247,.15);color:#7E22CE;border:1px solid rgba(168,85,247,.5)">🌿<span class="v" id="tot-fibra">0</span><span class="u"><span data-only-lang="it">g fibra</span><span data-only-lang="en">g fibre</span></span></div>
     <div class="mpill" style="background:rgba(249,168,37,.15);color:#92400E;border:1px solid rgba(249,168,37,.5)">🍭<span class="v" id="tot-gl">—</span><span class="u">GL</span></div>
     <div id="macro-micro-extra" style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:5px;-webkit-overflow-scrolling:touch;max-width:100%;scrollbar-width:thin"></div>
   </div>
@@ -419,7 +419,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
           <option value="_default">📋 Schema vuoto standard</option>
         </select>
       </div>
-      <div style="font-size:12px;color:var(--slate-l)">💡 Puoi anche caricare uno schema da "Diete Speciali" dopo aver creato il giorno.</div>
+      <div style="font-size:12px;color:var(--slate-l)"><span data-only-lang="it">💡 Puoi anche caricare uno schema da "Diete Speciali" dopo aver creato il giorno.</span><span data-only-lang="en">💡 You can also load a template from "Special Diets" after creating the day.</span></div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-newgiorno')">Annulla</button>
@@ -482,7 +482,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <div class="mhdr"><h2>📋 Copia Giorno</h2><button class="mclose" onclick="closeM('modal-copia-giorno')">✕</button></div>
     <div class="mbody">
       <div id="copia-giorno-src-label" style="font-size:13px;font-weight:600;color:var(--slate-m);margin-bottom:10px"></div>
-      <div style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Seleziona i giorni di destinazione:</div>
+      <div style="font-size:12px;color:var(--slate-l);margin-bottom:8px"><span data-only-lang="it">Seleziona i giorni di destinazione:</span><span data-only-lang="en">Select destination days:</span></div>
       <div id="copia-giorno-dst-list"></div>
     </div>
     <div class="mfoot">
@@ -498,7 +498,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <div class="mhdr"><h2>📋 Copia Pasto</h2><button class="mclose" onclick="closeM('modal-copia-pasto')">✕</button></div>
     <div class="mbody">
       <div id="copia-pasto-src-label" style="font-size:13px;font-weight:600;color:var(--slate-m);margin-bottom:10px"></div>
-      <div style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Copia gli alimenti di questo pasto in:</div>
+      <div style="font-size:12px;color:var(--slate-l);margin-bottom:8px"><span data-only-lang="it">Copia gli alimenti di questo pasto in:</span><span data-only-lang="en">Copy the foods of this meal to:</span></div>
       <div id="copia-pasto-dst-list"></div>
     </div>
     <div class="mfoot">
@@ -550,7 +550,7 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
     <div class="mhdr"><h2>📂 Carica Template</h2><button class="mclose" onclick="closeM('modal-carica-template')">✕</button></div>
     <div class="mbody">
       <div style="margin-bottom:10px">
-        <input type="text" id="tmpl-search" placeholder="🔍 Cerca template..." oninput="renderTemplateList()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:inherit;font-size:13px;box-sizing:border-box">
+        <input type="text" id="tmpl-search" placeholder="🔍 Cerca template..." data-i18n-placeholder="app.tmpl_search" oninput="renderTemplateList()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:inherit;font-size:13px;box-sizing:border-box">
       </div>
       <div id="tmpl-supabase-hint" style="display:none;margin-bottom:10px;padding:9px 12px;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;font-size:11.5px;color:#92400E">
         <b>Tabella Supabase non trovata.</b> I template vengono salvati localmente. Per abilitare la sincronizzazione cloud, crea la tabella con:<br>
@@ -591,7 +591,7 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
 
 <div class="ac-list" id="ac-global" onmousedown="event.preventDefault()"></div>
 <div id="toast"></div>
-<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px">Caricamento...</span></div>
+<div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px"><span data-only-lang="it">Caricamento...</span><span data-only-lang="en">Loading...</span></span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/db.js" defer></script>
@@ -738,7 +738,7 @@ function delGiorno(idx) {
     renderGiornoTabs();
     renderPiano();
     toast(_L('🗑️ Giorno eliminato','🗑️ Day deleted'), 'info');
-  }, { danger: true, okLabel: 'Elimina' });
+  }, { danger: true, okLabel: _L('Elimina','Delete') });
 }
 
 function openRenameGiorno(idx) {
@@ -849,16 +849,16 @@ function buildCard(mi) {
   <div class="pasto-body${meal.collapsed ? ' collapsed' : ''}" id="pb-${mi}">
     <div class="micro-bar no-print" style="flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:4px">
       <label>Micronutrienti:</label>
-      ${MICROS.map(m => `<button class="mtog${visM.has(m.k) ? ' on' : ''}" onclick="toggleMicro('${m.k}')">${m.l}</button>`).join('')}
+      ${MICROS.map(m => `<button class="mtog${visM.has(m.k) ? ' on' : ''}" onclick="toggleMicro('${m.k}')">${_L(m.l, m.l_en)}</button>`).join('')}
     </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th style="text-align:left;min-width:160px">Alimento</th>
+          <th style="text-align:left;min-width:160px">${_L('Alimento','Food')}</th>
           <th style="min-width:62px">Qt (g)</th>
-          <th>Kcal</th><th>Prot</th><th>Gr.Sat</th><th>Gr.Tot</th><th>Zucc</th><th>CHO</th><th>Fibra</th>
-          ${MICROS.map(m => `<th style="display:${visM.has(m.k) ? '' : 'none'}">${m.l}</th>`).join('')}
-          <th>Fonte</th><th class="no-print"></th><th class="no-print" style="width:22px"></th>
+          <th>Kcal</th><th>Prot</th><th>${_L('Gr.Sat','Sat.Fat')}</th><th>${_L('Gr.Tot','Fat')}</th><th>${_L('Zucc','Sugar')}</th><th>CHO</th><th>${_L('Fibra','Fibre')}</th>
+          ${MICROS.map(m => `<th style="display:${visM.has(m.k) ? '' : 'none'}">${_L(m.l, m.l_en)}</th>`).join('')}
+          <th>${_L('Fonte','Source')}</th><th class="no-print"></th><th class="no-print" style="width:22px"></th>
         </tr></thead>
         <tbody id="tb-${mi}">
           ${meal.items.map((_, ii) => buildRow(mi, ii)).join('')}
@@ -871,7 +871,7 @@ function buildCard(mi) {
       <button class="btn btn-primary btn-sm" onclick="addRow(${mi})">➕ Riga</button>
     </div>
     <div class="note-area-wrap">
-      <textarea class="pasto-note-input no-print" rows="2" placeholder="📝 Note per questo pasto (orario, preparazione, varianti, avvertenze...)" oninput="updateNote(${mi}, this.value)">${esc(meal.note || '')}</textarea>
+      <textarea class="pasto-note-input no-print" rows="2" placeholder="${_L('📝 Note per questo pasto (orario, preparazione, varianti, avvertenze...)','📝 Notes for this meal (time, preparation, variants, warnings...)')}" oninput="updateNote(${mi}, this.value)">${esc(meal.note || '')}</textarea>
       ${(meal.note || '').trim() ? `<div class="pasto-note-print">📝 <em>${esc(meal.note)}</em></div>` : '<div class="pasto-note-print" style="display:none"></div>'}
     </div>
   </div>`;
@@ -888,6 +888,12 @@ function getRicettaNome(item) {
     if (!rec) return item.nome;
     return lang === 'en' && rec.nome_en ? rec.nome_en : rec.nome;
   } catch(e) { return item.nome; }
+}
+
+function srcLabel(src) {
+  if (src === 'Ricetta' || src === 'RICETTE') return _L('Ricetta', 'Recipe');
+  if (src === 'PERS') return _L('Personalizzato', 'Custom');
+  return src;
 }
 
 function buildRow(mi, ii) {
@@ -924,7 +930,7 @@ function buildRow(mi, ii) {
   const f = lookupC(item.nome);
   const qt = item.qt;
   const misura = item.misura || '';
-  const srcBadge = f ? `<span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span>` : '';
+  const srcBadge = f ? `<span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${srcLabel(f.src)}</span>` : '';
   const microTds = MICROS.map(m => `<td class="vc" style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(f, m.k, qt), 2)}</td>`).join('');
   item.altPrint = (item.altPrint || []).map(a => normalizeAltEntry(a));
   const altRows = (item.altPrint || []).map((a, ai) => {
@@ -1135,14 +1141,14 @@ function showAC(mi, ii, val) {
 
   let html = '';
   if (res.length) {
-    html += res.map((f, i) => `<div class="ac-item" data-section="f" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(foodNameEN(f.n))}</span><span class="ac-right"><span class="ac-cat">${esc(foodCatEN(f.c) || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
+    html += res.map((f, i) => `<div class="ac-item" data-section="f" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(foodNameEN(f.n))}</span><span class="ac-right"><span class="ac-cat">${esc(foodCatEN(f.c) || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${srcLabel(f.src)}</span></span></div>`).join('');
   }
   if (resR.length) {
     html += `<div class="ac-section-hdr">📋 ${_L('Ricette','Recipes')}</div>`;
     html += resR.map((r, i) => {
       const nome = lang === 'en' && r.nome_en ? r.nome_en : r.nome;
       const safeId = r.id.replace(/'/g, "\\'");
-      return `<div class="ac-item ac-item-ricetta" data-section="r" data-i="${i}" onmousedown="event.preventDefault();pickRecipeFromAC(${mi},${ii},'${safeId}')"><span class="ac-name">📋 ${esc(nome)}</span><span class="ac-right"><span class="ac-cat">${esc(r.categoria||'')}</span><span class="ac-src src-ricetta">Ricetta</span></span></div>`;
+      return `<div class="ac-item ac-item-ricetta" data-section="r" data-i="${i}" onmousedown="event.preventDefault();pickRecipeFromAC(${mi},${ii},'${safeId}')"><span class="ac-name">📋 ${esc(nome)}</span><span class="ac-right"><span class="ac-cat">${esc(r.categoria||'')}</span><span class="ac-src src-ricetta">${_L('Ricetta','Recipe')}</span></span></div>`;
     }).join('');
   }
   el.innerHTML = html;
@@ -1402,7 +1408,7 @@ function delMeal(mi) {
   customConfirm(_L('Eliminare "','Delete "') + getMeals()[mi].nome + '"?', () => {
     pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
     giorni[giornoCorrente].meals.splice(mi, 1); markDirty(); renderPiano();
-  }, { danger: true, okLabel: 'Elimina' });
+  }, { danger: true, okLabel: _L('Elimina','Delete') });
 }
 function eliminaVuote() {
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
@@ -1585,7 +1591,7 @@ function openAlt(mi, ii) {
   if (!item.nome || !f) { toast(_L('Seleziona prima un alimento valido','Select a valid food item first'), 'err'); return; }
   document.getElementById('alt-title').textContent = `⇄ Alternative a: ${foodNameEN(item.nome)} (${item.qt || 0}g)`;
   document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
-    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${b.l}</button>`
+    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${_L(b.l, b.l_en)}</button>`
   ).join('');
   document.getElementById('alt-search').value = '';
   showAlternatives();
@@ -1598,7 +1604,8 @@ function showAlternatives() {
   const f = lookup(item.nome); if (!f) return;
   const qt = parseFloat(item.qt) || 100;
   const targetVal = (f[altNutrient] || 0) / 100 * qt;
-  const nutriLabel = (ALL_NUTRIENTS.find(n => n.k === altNutrient) || { l: altNutrient }).l;
+  const _an = ALL_NUTRIENTS.find(n => n.k === altNutrient) || { l: altNutrient, l_en: altNutrient };
+  const nutriLabel = _L(_an.l, _an.l_en);
   const searchQ = (document.getElementById('alt-search')?.value || '').toLowerCase().trim();
 
   // If searching by name: show all matching foods regardless of targetVal
@@ -3367,7 +3374,7 @@ async function eliminaTemplate(id) {
     } else {
       toast('❌ Errore eliminazione template', 'err');
     }
-  }, { danger: true, okLabel: 'Elimina' });
+  }, { danger: true, okLabel: _L('Elimina','Delete') });
 }
 
 document.addEventListener('DOMContentLoaded', init);

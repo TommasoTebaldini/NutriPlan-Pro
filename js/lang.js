@@ -110,6 +110,9 @@ const LANGS = {
     'app.save_db':'Salva il piano nel database',
     'app.shopping_list':'Genera lista della spesa dal piano settimanale',
     'app.new_plan':'Nuovo piano vuoto',
+    'app.search_patient':'🔍 Cerca paziente...',
+    'app.plan_name_ph':'es. Piano gennaio...',
+    'app.tmpl_search':'🔍 Cerca template...',
     'paz.nc_nome':'Nome',
     'paz.nc_cognome':'Cognome',
     'paz.nc_cf':'Codice Fiscale',
@@ -248,6 +251,9 @@ const LANGS = {
     'app.save_db':'Save plan to database',
     'app.shopping_list':'Generate shopping list from weekly plan',
     'app.new_plan':'New empty plan',
+    'app.search_patient':'🔍 Search patient...',
+    'app.plan_name_ph':'e.g. January plan...',
+    'app.tmpl_search':'🔍 Search templates...',
     'paz.nc_nome':'First name',
     'paz.nc_cognome':'Last name',
     'paz.nc_cf':'Tax/ID Code',
@@ -3166,6 +3172,26 @@ const LABEL_TR = {
     'Apri in Piano Alimentare':'Abrir en plan alimentario','Stampa piano':'Imprimir plan',
   }
 };
+
+// ─── App (Piano Alimentare) extra translations ───────────────────────────────
+// Extend LABEL_TR.en with entries not covered elsewhere
+Object.assign(LABEL_TR.en, {
+  // ── Table column headers (Piano section) ──
+  'Alimento':'Food','Fibra':'Fibre','Fonte':'Source',
+  'Gr.Sat':'Sat.Fat','Gr.Tot':'Fat','Zucc':'Sugar',
+  // ── Micronutrients label ──
+  'Micronutrienti:':'Micronutrients:',
+  // ── Buttons not yet covered ──
+  'Copia':'Copy','💾 Salva Template':'💾 Save Template',
+  // ── Template category options ──
+  'Dimagrimento':'Weight loss','Diabete':'Diabetes',
+  // ── Position select (with emoji prefix — requires exact match) ──
+  '📋 Schema vuoto standard':'📋 Standard empty template',
+  // ── Misc UI text ──
+  'Nessun template salvato.':'No saved templates.',
+  'Obiettivi dalla Valutazione Paziente':'Goals from Patient Assessment',
+  'Azione registrata':'Action recorded',
+});
 
 // ═══════════════════════════════════════════════════
 // HELPERS

@@ -898,8 +898,9 @@ function buildRow(mi, ii) {
     const porz = item.ricettaPorzioni || 1;
     const nomeDisp = getRicettaNome(item);
     const ingSubHdr = `<div style="font-size:10.5px;font-weight:600;color:var(--teal-d);margin-top:4px;opacity:.85">🥕 ${_L('Ingredienti:','Ingredients:')}</div>`;
+    const ricMicroHidden = MICROS.map(() => `<td style="display:none;padding:0;border:0"></td>`).join('');
     return `<tr id="r-${mi}-${ii}" class="tr-ricetta-hdr" style="background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-top:2.5px solid var(--teal-l)">
-      <td colspan="${10+MICROS.length}" style="padding:6px 12px;color:var(--teal-d);letter-spacing:.2px">
+      <td colspan="9" style="padding:6px 12px;color:var(--teal-d);letter-spacing:.2px">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span style="font-size:12px;font-weight:700">📋 ${esc(nomeDisp)}</span>
           <label class="no-print" style="display:inline-flex;align-items:center;gap:4px;margin:0;cursor:default">
@@ -912,6 +913,8 @@ function buildRow(mi, ii) {
         </div>
         ${ingSubHdr}
       </td>
+      ${ricMicroHidden}
+      <td style="background:#ECFDF5;border-top:2.5px solid var(--teal-l)"></td>
       <td class="no-print" style="background:#ECFDF5;border-top:2.5px solid var(--teal-l)"></td>
       <td class="no-print" style="background:#ECFDF5;border-top:2.5px solid var(--teal-l)"><button class="del-row" onclick="delRow(${mi},${ii})" title="${_L('Rimuovi ricetta','Remove recipe')}">✕</button></td>
     </tr>`;

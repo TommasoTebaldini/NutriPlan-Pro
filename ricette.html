@@ -170,7 +170,6 @@
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-det')"><span data-only-lang="it">Chiudi</span><span data-only-lang="en">Close</span></button>
-      <button class="btn btn-primary btn-sm" onclick="inserisciNelPiano()">📋 <span data-only-lang="it">Inserisci nel Piano</span><span data-only-lang="en">Add to Plan</span></button>
     </div>
   </div>
 </div>
@@ -332,10 +331,10 @@ function renderRicette(filter = '') {
       <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
         ${ingPreview}${ingMore}
       </div>
-      ${r.isTemplate ? '' : `<div class="paz-actions">
-        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editRicetta('${r.id}')">✏️</button>
-        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delRicetta('${r.id}')">🗑️</button>
-      </div>`}
+      <div class="paz-actions">
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editRicetta('${r.id}')" title="${r.isTemplate ? _L('Modifica copia','Edit copy') : _L('Modifica','Edit')}">✏️</button>
+        ${r.isTemplate ? '' : `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delRicetta('${r.id}')">🗑️</button>`}
+      </div>
     </div>`;
   }).join('');
 }
@@ -521,10 +520,17 @@ async function salvaRicetta() {
 }
 
 async function editRicetta(id) {
-  const r = ricette.find(x => x.id === id);
+  let r = ricette.find(x => x.id === id);
+  let isFromTemplate = false;
+  if (!r) {
+    const tpl = _tpls().find(x => x.id === id);
+    if (tpl) { r = { ...tpl }; isFromTemplate = true; }
+  }
   if (!r) return;
-  editingRicettaId = id;
-  document.getElementById('modal-r-title').innerHTML = '✏️ <span data-only-lang="it">Modifica Ricetta</span><span data-only-lang="en">Edit Recipe</span>';
+  editingRicettaId = isFromTemplate ? null : id;
+  document.getElementById('modal-r-title').innerHTML = isFromTemplate
+    ? '➕ <span data-only-lang="it">Modifica copia template</span><span data-only-lang="en">Edit template copy</span>'
+    : '✏️ <span data-only-lang="it">Modifica Ricetta</span><span data-only-lang="en">Edit Recipe</span>';
   document.getElementById('r-nome').value = r.nome;
   document.getElementById('r-cat').value = r.categoria || 'Primo piatto';
   document.getElementById('r-porzioni').value = r.porzioni || 4;
@@ -535,6 +541,7 @@ async function editRicetta(id) {
   ing.forEach(i => addIngrediente(i.nome, i.qt));
   if (!ing.length) addIngrediente();
   requestAnimationFrame(aggTotali);
+  updateCatOptions();
   openM('modal-ricetta');
 }
 

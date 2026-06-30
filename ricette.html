@@ -294,40 +294,47 @@ create policy "Proprie ricette" on ricette for all using(auth.uid()=user_id);`;
   </div>`);
 }
 
+function _tpls() { return (typeof RICETTE_DB !== 'undefined' ? RICETTE_DB : []).map(r => ({...r, isTemplate: true})); }
+function findRicetta(id) { return ricette.find(r => r.id === id) || _tpls().find(r => r.id === id) || null; }
+
 function renderRicette(filter = '') {
   const grid = document.getElementById('ricette-grid');
   const q = filter.toLowerCase();
-  const filtered = ricette.filter(r => !q || r.nome.toLowerCase().includes(q) || (r.categoria||'').toLowerCase().includes(q));
+  const all = [...ricette, ..._tpls()];
+  const filtered = all.filter(r => !q || r.nome.toLowerCase().includes(q) || (r.nome_en||'').toLowerCase().includes(q) || (r.categoria||'').toLowerCase().includes(q));
   document.getElementById('r-count').textContent = filtered.length + ' ' + _L('ricette','recipes');
   if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="ei">👨‍🍳</div><h3>${ricette.length ? _L('Nessuna ricetta trovata','No recipe found') : _L('Nessuna ricetta ancora','No recipes yet')}</h3><p>${ricette.length ? _L('Prova con un termine diverso.','Try a different term.') : _L('Clicca "+ Nuova Ricetta" per iniziare.','Click "+ New Recipe" to start.')}</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="ei">👨‍🍳</div><h3>${_L('Nessuna ricetta trovata','No recipe found')}</h3><p>${_L('Prova con un termine diverso.','Try a different term.')}</p></div>`;
     return;
   }
   grid.innerHTML = filtered.map(r => {
     const ing = r.ingredienti ? (typeof r.ingredienti === 'string' ? JSON.parse(r.ingredienti) : r.ingredienti) : [];
     const porzioni = r.porzioni || 1;
     const totKcal = ing.reduce((s, i) => { const f = lookup(i.nome); return s + (f ? (f.k||0)/100*(parseFloat(i.qt)||0) : 0); }, 0);
-    const kcalPorz = Math.round(totKcal / porzioni);
-    const ingPreview = ing.slice(0, 5).map(i => `<span style="display:inline-flex;align-items:center;gap:3px;font-size:11px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:5px;padding:2px 6px;color:#15803D"><b>${esc(i.nome)}</b>${i.qt && i.qt !== '0' ? `<span style="color:#64748B;font-weight:400">${i.qt}g</span>` : ''}</span>`).join('');
-    const ingMore = ing.length > 5 ? `<span style="font-size:11px;color:var(--slate-l)">+${ing.length - 5} altri</span>` : '';
+    const totalIngQt = ing.reduce((s, i) => s + (parseFloat(i.qt)||0), 0);
+    const kcalPorz = Math.round(totKcal / porzioni) || (r._dbEntry ? Math.round((r._dbEntry.k||0) * totalIngQt / 100 / porzioni) : 0);
+    const nomeDisp = r.isTemplate ? _L(r.nome, r.nome_en||r.nome) : r.nome;
+    const noteDisp = r.isTemplate ? _L(r.note||'', r.note_en||r.note||'') : (r.note||'');
+    const ingPreview = ing.slice(0, 5).map(i => `<span style="display:inline-flex;align-items:center;gap:3px;font-size:11px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:5px;padding:2px 6px;color:#15803D"><b>${esc(typeof foodNameEN==='function'?foodNameEN(i.nome):i.nome)}</b>${i.qt && i.qt !== '0' ? `<span style="color:#64748B;font-weight:400">${i.qt}g</span>` : ''}</span>`).join('');
+    const ingMore = ing.length > 5 ? `<span style="font-size:11px;color:var(--slate-l)">+${ing.length - 5} ${_L('altri','more')}</span>` : '';
     return `<div class="ricetta-card" onclick="apriDettaglio('${r.id}')">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
-        <h4 style="margin:0">🍽️ ${esc(r.nome)}</h4>
-        <span class="rc-tag" style="flex-shrink:0;${catStyle(r.categoria)}">${esc(catLabel(r.categoria||_L('Ricetta','Recipe')))}</span>
+        <h4 style="margin:0">🍽️ ${esc(nomeDisp)}</h4>
+        <span class="rc-tag" style="flex-shrink:0;${r.isTemplate ? 'background:#E0F2FE;color:#0369A1' : catStyle(r.categoria)}">${r.isTemplate ? '📋 ' + _L('Template','Template') : esc(catLabel(r.categoria||_L('Ricetta','Recipe')))}</span>
       </div>
       <div class="rc-meta">
         <span>👥 ${porzioni} ${_L('porzioni','servings')}</span>
         <span>🔥 ~${kcalPorz} kcal/${_L('porz','srv')}</span>
         <span>🥕 ${ing.length} ${_L('ingredienti','ingredients')}</span>
       </div>
-      ${r.note ? `<div style="font-size:11px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(r.note.substring(0,60))}${r.note.length>60?'...':''}</div>` : ''}
+      ${noteDisp ? `<div style="font-size:11px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(noteDisp.substring(0,65))}${noteDisp.length>65?'...':''}</div>` : ''}
       <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
         ${ingPreview}${ingMore}
       </div>
-      <div class="paz-actions">
+      ${r.isTemplate ? '' : `<div class="paz-actions">
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();editRicetta('${r.id}')">✏️</button>
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delRicetta('${r.id}')">🗑️</button>
-      </div>
+      </div>`}
     </div>`;
   }).join('');
 }
@@ -548,9 +555,10 @@ async function delRicetta(id) {
 
 // ── DETTAGLIO E INSERIMENTO NEL PIANO ──
 function apriDettaglio(id) {
-  detRicetta = ricette.find(r => r.id === id);
+  detRicetta = findRicetta(id);
   if (!detRicetta) return;
-  document.getElementById('det-title').textContent = '🍽️ ' + detRicetta.nome;
+  const nomeDisp = detRicetta.isTemplate ? _L(detRicetta.nome, detRicetta.nome_en||detRicetta.nome) : detRicetta.nome;
+  document.getElementById('det-title').textContent = '🍽️ ' + nomeDisp;
   document.getElementById('det-porzioni').value = '1';
   aggiornaDettaglio();
   openM('modal-det');
@@ -564,7 +572,9 @@ function aggiornaDettaglio() {
   const raw = detRicetta.ingredienti;
   const ing = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
   let totK = 0, totP = 0, totCh = 0, totG = 0, totFi = 0;
-  let html = `<div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">${_L('Ingredienti per','Ingredients for')} ${porzioniSel} ${_L('porzione'+( porzioniSel!==1?'i':''),'serving'+(porzioniSel!==1?'s':''))}:</div>`;
+  const noteDisp = detRicetta.isTemplate ? _L(detRicetta.note||'', detRicetta.note_en||detRicetta.note||'') : (detRicetta.note||'');
+  let html = noteDisp ? `<div style="font-size:12px;color:var(--slate-m);background:#F8FAFC;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px;line-height:1.5">${esc(noteDisp)}</div>` : '';
+  html += `<div style="font-size:12px;font-weight:700;color:var(--slate-m);margin-bottom:8px">${_L('Ingredienti per','Ingredients for')} ${porzioniSel} ${_L('porzione'+( porzioniSel!==1?'i':''),'serving'+(porzioniSel!==1?'s':''))}:</div>`;
   html += '<div>';
   ing.forEach(i => {
     const f = lookup(i.nome);

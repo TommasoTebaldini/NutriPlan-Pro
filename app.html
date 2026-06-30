@@ -876,16 +876,19 @@ function buildRow(mi, ii) {
 
   if (item.isRicetta) {
     const porz = item.ricettaPorzioni;
-    const porzLabel = porz ? ` <span style="font-weight:400;color:var(--slate-m);font-size:11px">${porz} ${_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')}</span>` : '';
+    const porzLabel = porz ? ` · ${porz} ${_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')}` : '';
+    const ingSubHdr = `<div style="font-size:10.5px;font-weight:600;color:var(--teal-d);margin-top:4px;opacity:.85">🥕 ${_L('Ingredienti:','Ingredients:')}</div>`;
     return `<tr id="r-${mi}-${ii}" style="background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-top:2.5px solid var(--teal-l)">
-      <td colspan="${9+MICROS.length}" style="padding:6px 12px;font-size:12px;font-weight:700;color:var(--teal-d);letter-spacing:.2px">
-        📋 ${esc(item.nome)}${porzLabel}
+      <td colspan="${10+MICROS.length}" style="padding:6px 12px;color:var(--teal-d);letter-spacing:.2px">
+        <span style="font-size:12px;font-weight:700">📋 ${esc(item.nome)}${porzLabel}</span>
+        ${ingSubHdr}
       </td>
       <td class="no-print"></td>
       <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})" title="${_L('Rimuovi intestazione ricetta','Remove recipe header')}">✕</button></td>
     </tr>`;
   }
 
+  const ricIng = item.ricettaIng;
   const f = lookupC(item.nome);
   const qt = item.qt;
   const misura = item.misura || '';
@@ -911,7 +914,7 @@ function buildRow(mi, ii) {
       <td></td>
     </tr>`;
   }).join('');
-  return `<tr id="r-${mi}-${ii}"
+  return `<tr id="r-${mi}-${ii}"${ricIng ? ' style="background:#F7FFF9;border-left:3px solid #86EFAC;"' : ''}
     ondragover="rowDragOver(${mi},${ii},event)"
     ondrop="rowDrop(${mi},${ii},event)"
     ondragend="rowDragEnd(event)"
@@ -2778,7 +2781,7 @@ async function init() {
           ricettaPorzioni: r.porzioni || null
         });
         r.ingredienti.forEach(ing => {
-          items.push({nome: ing.nome, qt: String(ing.qt), altPrint: [], misura: ''});
+          items.push({nome: ing.nome, qt: String(ing.qt), altPrint: [], misura: '', ricettaIng: true});
         });
         markDirty(); renderPiano();
         toast('✅ ' + _L('Ricetta inserita in ','Recipe added to ') + getMeals()[mi].nome + '!', 'ok');

@@ -1151,11 +1151,13 @@ function showAC(mi, ii, val) {
   el.style.top = (rect.bottom + 2) + 'px';
   el.style.bottom = 'auto';
   el.style.display = 'block';
-  document.addEventListener('scroll', function _acScrollClose() {
+  document.addEventListener('scroll', function _acScrollClose(e) {
     const acEl = document.getElementById('ac-global');
-    if (acEl) acEl.style.display = 'none';
+    if (!acEl || acEl.style.display === 'none') { document.removeEventListener('scroll', _acScrollClose, true); return; }
+    if (acEl === e.target || acEl.contains(e.target)) return;
+    acEl.style.display = 'none';
     document.removeEventListener('scroll', _acScrollClose, true);
-  }, { passive: true, capture: true, once: true });
+  }, { passive: true, capture: true });
 }
 function pickAC(mi, ii, ri) {
   const res = acRes[`${mi}-${ii}`]; if (!res || !res[ri]) return;

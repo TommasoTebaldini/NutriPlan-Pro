@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ricette — DietPlan Pro</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -127,6 +128,7 @@
     <div class="mbody">
       <div class="fgrid" style="margin-bottom:12px">
         <div class="fg full"><label><span data-only-lang="it">Nome Ricetta</span><span data-only-lang="en">Recipe Name</span> *</label><input type="text" id="r-nome" data-i18n-placeholder="ric.name_ph" placeholder="es. Pasta al pomodoro, Risotto..."></div>
+        <div class="fg full"><label><span data-only-lang="it">Nome in Inglese</span><span data-only-lang="en">English Name</span> <span style="font-size:11px;opacity:.55;font-weight:400">(<span data-only-lang="it">opzionale — visibile nella versione EN</span><span data-only-lang="en">optional — shown in EN mode</span>)</span></label><input type="text" id="r-nome-en" placeholder="e.g. Tomato pasta, Mushroom risotto..."></div>
         <div class="fg"><label><span data-only-lang="it">Categoria</span><span data-only-lang="en">Category</span></label>
           <select id="r-cat">
             <option value="Primo piatto" data-en="First course">Primo piatto</option>
@@ -364,6 +366,7 @@ function openNuovaRicetta() {
   editingRicettaId = null;
   document.getElementById('modal-r-title').textContent = '➕ ' + _L('Nuova Ricetta','New Recipe');
   document.getElementById('r-nome').value = '';
+  if (document.getElementById('r-nome-en')) document.getElementById('r-nome-en').value = '';
   document.getElementById('r-cat').value = 'Primo piatto';
   document.getElementById('r-porzioni').value = '4';
   document.getElementById('r-note').value = '';
@@ -460,6 +463,7 @@ async function salvaRicetta() {
   const ing = raccogliIngredienti();
   if (!ing.length) { toast(_L('Aggiungi almeno un ingrediente','Add at least one ingredient'), 'err'); return; }
   const now = new Date().toISOString();
+  const nome_en = (document.getElementById('r-nome-en')?.value || '').trim() || null;
   const payload = {
     user_id: currentUser?.id || 'local',
     nome,
@@ -469,6 +473,7 @@ async function salvaRicetta() {
     note: document.getElementById('r-note').value.trim() || null,
     updated_at: now
   };
+  if (nome_en) payload.nome_en = nome_en;
 
   if (useLocalStorage || !currentUser) {
     const arr = lsLoadRicette();
@@ -510,6 +515,15 @@ async function salvaRicetta() {
       showSetupBanner();
       toast('⚠️ ' + _L('Ricetta salvata localmente (tabella DB mancante)','Recipe saved locally (DB table missing)'), 'info');
       loadRicette();
+    } else if (result.error.code === '42703' && payload.nome_en) {
+      // nome_en column doesn't exist yet — retry without it
+      delete payload.nome_en;
+      const r2 = editingRicettaId
+        ? await sb.from('ricette').update(payload).eq('id', editingRicettaId)
+        : await sb.from('ricette').insert(payload);
+      if (r2.error) { toast('❌ ' + r2.error.message, 'err'); return; }
+      toast('⚠️ ' + _L('Ricetta salvata (nome inglese non supportato — aggiungi colonna nome_en alla tabella ricette)','Recipe saved (English name not supported — add column nome_en to the ricette table)'), 'info');
+      _asRicetta.clear(); closeM('modal-ricetta'); loadRicette();
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
@@ -532,6 +546,7 @@ async function editRicetta(id) {
     ? '➕ <span data-only-lang="it">Modifica copia template</span><span data-only-lang="en">Edit template copy</span>'
     : '✏️ <span data-only-lang="it">Modifica Ricetta</span><span data-only-lang="en">Edit Recipe</span>';
   document.getElementById('r-nome').value = r.nome;
+  if (document.getElementById('r-nome-en')) document.getElementById('r-nome-en').value = r.nome_en || '';
   document.getElementById('r-cat').value = r.categoria || 'Primo piatto';
   document.getElementById('r-porzioni').value = r.porzioni || 4;
   document.getElementById('r-note').value = r.note || '';

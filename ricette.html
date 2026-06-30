@@ -601,12 +601,15 @@ function inserisciNelPiano() {
   const ratio = porzioniSel / porzioniTot;
   const rawIns = detRicetta.ingredienti;
   const ing = rawIns ? (typeof rawIns === 'string' ? JSON.parse(rawIns) : rawIns) : [];
-  // Store in sessionStorage for app.html to pick up
+  const nomeDisp = detRicetta.isTemplate ? _L(detRicetta.nome, detRicetta.nome_en||detRicetta.nome) : detRicetta.nome;
   const data = {
-    nome: detRicetta.nome + (porzioniSel !== 1 ? ` (${porzioniSel} porz.)` : ''),
+    nome: detRicetta.nome,
+    nomeDisp: nomeDisp,
+    porzioni: porzioniSel,
+    porzioniTot: porzioniTot,
     ingredienti: ing.map(i => ({
       nome: i.nome,
-      qt: String(Math.round((parseFloat(i.qt)||0) * ratio * 10) / 10)
+      qt: Math.round((parseFloat(i.qt)||0) * ratio * 10) / 10
     }))
   };
   sessionStorage.setItem('insertRicetta', JSON.stringify(data));

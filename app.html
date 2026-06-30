@@ -873,6 +873,19 @@ function buildCard(mi) {
 function buildRow(mi, ii) {
   const meals = getMeals();
   const item = meals[mi].items[ii];
+
+  if (item.isRicetta) {
+    const porz = item.ricettaPorzioni;
+    const porzLabel = porz ? ` <span style="font-weight:400;color:var(--slate-m);font-size:11px">${porz} ${_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')}</span>` : '';
+    return `<tr id="r-${mi}-${ii}" style="background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-top:2.5px solid var(--teal-l)">
+      <td colspan="${9+MICROS.length}" style="padding:6px 12px;font-size:12px;font-weight:700;color:var(--teal-d);letter-spacing:.2px">
+        📋 ${esc(item.nome)}${porzLabel}
+      </td>
+      <td class="no-print"></td>
+      <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})" title="${_L('Rimuovi intestazione ricetta','Remove recipe header')}">✕</button></td>
+    </tr>`;
+  }
+
   const f = lookupC(item.nome);
   const qt = item.qt;
   const misura = item.misura || '';
@@ -2751,16 +2764,24 @@ async function init() {
     try {
       const r = JSON.parse(insertRicetta);
       const mealNames = getMeals().map((m,i) => i+': '+m.emoji+' '+m.nome).join('\n');
-      const choice = prompt('Inserisci "'+r.nome+'" in quale pasto?\n\n'+mealNames+'\n\nInserisci il numero:');
+      const choice = prompt(_L('Inserisci "','Add "')+(r.nomeDisp||r.nome)+_L('" in quale pasto?\n\n','" to which meal?\n\n')+mealNames+_L('\n\nInserisci il numero:','\n\nEnter the number:'));
       const mi = parseInt(choice);
       if (!isNaN(mi) && mi >= 0 && mi < getMeals().length) {
-        r.ingredienti.forEach(ing => {
-          getMeals()[mi].items.push({nome:ing.nome, qt:ing.qt, altPrint:[]});
-        });
+        pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
         const items = getMeals()[mi].items;
-        if (items.length > 1 && !items[0].nome) items.shift();
+        if (items.length === 1 && !items[0].nome) items.splice(0, 1);
+        items.push({
+          nome: r.nomeDisp || r.nome,
+          qt: '',
+          altPrint: [],
+          isRicetta: true,
+          ricettaPorzioni: r.porzioni || null
+        });
+        r.ingredienti.forEach(ing => {
+          items.push({nome: ing.nome, qt: String(ing.qt), altPrint: [], misura: ''});
+        });
         markDirty(); renderPiano();
-        toast('✅ Ricetta inserita in '+getMeals()[mi].nome+'!','ok');
+        toast('✅ ' + _L('Ricetta inserita in ','Recipe added to ') + getMeals()[mi].nome + '!', 'ok');
       }
     } catch(e) { console.error(e); }
   }

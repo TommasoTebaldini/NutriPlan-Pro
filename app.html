@@ -82,6 +82,8 @@
 .alt-grammatura-input{width:64px;padding:2px 6px;border:1px solid #6EE7B7;border-radius:6px;background:#ECFDF5;color:#065F46;font-size:11px;font-weight:700;font-family:inherit;line-height:1.2}
 .alt-grammatura-input:focus{outline:none;border-color:#0F766E;box-shadow:0 0 0 2px rgba(15,118,110,.12)}
 .alt-grammatura-unit{font-size:10px;font-weight:700;color:#065F46}
+.ricetta-porz-print{display:none}
+.ac-section-hdr{padding:3px 10px;font-size:10px;font-weight:700;color:#64748B;background:#F8FAFC;border-bottom:1px solid #E2E8F0;text-transform:uppercase;letter-spacing:.5px}
 /* Simple print area (screen: hidden) */
 #simple-print-area{display:none}
 /* Compact print area (screen: hidden) */
@@ -113,6 +115,9 @@
   .vnd{color:#999!important}
   .ac-src{display:none!important}
   .misura-print{display:block!important}
+  .ricetta-porz-print{display:inline!important}
+  tr.tr-ricetta-hdr td{background:#ECFDF5!important;color:#0F766E!important;font-weight:700!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  tr.tr-ricetta-ing td{background:#F7FFF9!important;border-left:2px solid #86EFAC!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   /* ── Formati stampa: class-based (compatibile Safari/iPadOS) ── */
   body.pm-simple #pasti-container,body.pm-simple .macro-bar,body.pm-simple #print-giorno-hdr,body.pm-simple #pdf-day-medie,body.pm-simple #pdf-alldays-print-area,body.pm-simple #compact-print-area,body.pm-simple #weekly-print-area{display:none!important}
   body.pm-simple #simple-print-area{display:block!important;font-family:'DM Sans',sans-serif}
@@ -875,16 +880,24 @@ function buildRow(mi, ii) {
   const item = meals[mi].items[ii];
 
   if (item.isRicetta) {
-    const porz = item.ricettaPorzioni;
-    const porzLabel = porz ? ` · ${porz} ${_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')}` : '';
+    const porz = item.ricettaPorzioni || 1;
     const ingSubHdr = `<div style="font-size:10.5px;font-weight:600;color:var(--teal-d);margin-top:4px;opacity:.85">🥕 ${_L('Ingredienti:','Ingredients:')}</div>`;
-    return `<tr id="r-${mi}-${ii}" style="background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-top:2.5px solid var(--teal-l)">
+    return `<tr id="r-${mi}-${ii}" class="tr-ricetta-hdr" style="background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-top:2.5px solid var(--teal-l)">
       <td colspan="${10+MICROS.length}" style="padding:6px 12px;color:var(--teal-d);letter-spacing:.2px">
-        <span style="font-size:12px;font-weight:700">📋 ${esc(item.nome)}${porzLabel}</span>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:12px;font-weight:700">📋 ${esc(item.nome)}</span>
+          <label class="no-print" style="display:inline-flex;align-items:center;gap:4px;margin:0;cursor:default">
+            <input type="number" class="ricetta-porz-input" min="0.5" max="20" step="0.5" value="${porz}"
+              oninput="onRicettaPorzioniChange(${mi},${ii},this.value)"
+              style="width:52px;padding:3px 6px;border:1.5px solid var(--teal-l);border-radius:5px;font-size:12px;font-weight:700;text-align:center;font-family:inherit;background:white;color:var(--teal-d)">
+            <span style="font-size:11px;color:var(--teal-d);font-weight:600">${_L('porz.','serv.')}</span>
+          </label>
+          <span class="ricetta-porz-print" style="font-size:11px;color:var(--teal-d);font-weight:500">· ${porz} ${_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')}</span>
+        </div>
         ${ingSubHdr}
       </td>
       <td class="no-print"></td>
-      <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})" title="${_L('Rimuovi intestazione ricetta','Remove recipe header')}">✕</button></td>
+      <td class="no-print"><button class="del-row" onclick="delRow(${mi},${ii})" title="${_L('Rimuovi ricetta','Remove recipe')}">✕</button></td>
     </tr>`;
   }
 
@@ -914,7 +927,7 @@ function buildRow(mi, ii) {
       <td></td>
     </tr>`;
   }).join('');
-  return `<tr id="r-${mi}-${ii}"${ricIng ? ' style="background:#F7FFF9;border-left:3px solid #86EFAC;"' : ''}
+  return `<tr id="r-${mi}-${ii}"${ricIng ? ' class="tr-ricetta-ing" style="background:#F7FFF9;border-left:3px solid #86EFAC;"' : ''}
     ondragover="rowDragOver(${mi},${ii},event)"
     ondrop="rowDrop(${mi},${ii},event)"
     ondragend="rowDragEnd(event)"
@@ -1072,7 +1085,7 @@ function updateRiep() {
 // ═══════════════════════════════════════════════════
 // AUTOCOMPLETE
 // ═══════════════════════════════════════════════════
-let acIdx = {}, acRes = {}, acT = null;
+let acIdx = {}, acRes = {}, acResR = {}, acT = null;
 
 function onFI(mi, ii, inp) {
   getMeals()[mi].items[ii].nome = inp.value; markDirty();
@@ -1083,15 +1096,44 @@ function showAC(mi, ii, val) {
   if (!el) return; acIdx[`${mi}-${ii}`] = -1;
   if (!val || val.length < 1) { el.style.display = 'none'; return; }
   const q = val.toLowerCase();
-  const res = ALL_DB.filter(f => f.n.toLowerCase().includes(q)).slice(0, 16);
+  const lang = getLang();
+
+  // Search recipes (templates + user recipes)
+  const allRicette = _tpls ? _tpls() : [];
+  const userRicette = (typeof ricette !== 'undefined' ? ricette : []);
+  const ricetteCombined = [...allRicette, ...userRicette.filter(r => !allRicette.find(t => t.id === r.id))];
+  const resR = ricetteCombined.filter(r => {
+    const nome = lang === 'en' && r.nome_en ? r.nome_en : r.nome;
+    return nome.toLowerCase().includes(q);
+  }).slice(0, 6);
+  acResR[`${mi}-${ii}`] = resR;
+
+  // Search foods
+  const res = ALL_DB.filter(f => f.n.toLowerCase().includes(q)).slice(0, 12);
   acRes[`${mi}-${ii}`] = res;
-  if (!res.length) { el.style.display = 'none'; return; }
-  el.innerHTML = res.map((f, i) => `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(foodNameEN(f.n))}</span><span class="ac-right"><span class="ac-cat">${esc(foodCatEN(f.c) || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
+
+  if (!resR.length && !res.length) { el.style.display = 'none'; return; }
+
+  let html = '';
+  if (resR.length) {
+    html += `<div class="ac-section-hdr">📋 ${_L('Ricette','Recipes')}</div>`;
+    html += resR.map((r, i) => {
+      const nome = lang === 'en' && r.nome_en ? r.nome_en : r.nome;
+      const safeId = r.id.replace(/'/g, "\\'");
+      return `<div class="ac-item ac-item-ricetta" data-section="r" data-i="${i}" onmousedown="event.preventDefault();pickRecipeFromAC(${mi},${ii},'${safeId}')"><span class="ac-name">📋 ${esc(nome)}</span><span class="ac-right"><span class="ac-cat">${esc(r.categoria||'')}</span><span class="ac-src src-ricetta">Ricetta</span></span></div>`;
+    }).join('');
+  }
+  if (res.length) {
+    if (resR.length) html += `<div class="ac-section-hdr">${_L('Alimenti','Foods')}</div>`;
+    html += res.map((f, i) => `<div class="ac-item" data-section="f" data-i="${i}" onmousedown="event.preventDefault();pickAC(${mi},${ii},${i})"><span class="ac-name">${esc(foodNameEN(f.n))}</span><span class="ac-right"><span class="ac-cat">${esc(foodCatEN(f.c) || '')}</span><span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${f.src}</span></span></div>`).join('');
+  }
+  el.innerHTML = html;
+
   const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`);
   if (!inp) { el.style.display = 'none'; return; }
   const rect = inp.getBoundingClientRect();
   el.style.left = rect.left + 'px';
-  el.style.width = Math.max(rect.width, 290) + 'px';
+  el.style.width = Math.max(rect.width, 320) + 'px';
   el.style.top = (rect.bottom + 2) + 'px';
   el.style.bottom = 'auto';
   el.style.display = 'block';
@@ -1104,6 +1146,34 @@ function pickAC(mi, ii, ri) {
   const inp = document.querySelector(`#r-${mi}-${ii} .inp-food`); if (inp) inp.value = res[ri].n;
   refreshRow(mi, ii); refreshTot(mi); updateRiep();
   const qt = document.querySelector(`#r-${mi}-${ii} .inp-qt`); if (qt) { qt.focus(); qt.select(); }
+}
+function pickRecipeFromAC(mi, ii, ricettaId) {
+  const el = document.getElementById('ac-global'); if (el) el.style.display = 'none';
+  const allRicette = _tpls ? _tpls() : [];
+  const userRicette = (typeof ricette !== 'undefined' ? ricette : []);
+  const r = allRicette.find(x => x.id === ricettaId) || userRicette.find(x => x.id === ricettaId);
+  if (!r) return;
+  const lang = getLang();
+  const nome = lang === 'en' && r.nome_en ? r.nome_en : r.nome;
+  const porzioniTot = r.porzioni || 1;
+  const porzioni = 1;
+  const items = getMeals()[mi].items;
+  const hdr = { nome, qt: '', altPrint: [], misura: '', isRicetta: true, ricettaPorzioni: porzioni, ricettaId };
+  const ingItems = (r.ingredienti || []).map(ing => {
+    const qtBase = parseFloat(ing.qt) || 0;
+    const qtBasePerPorz = Math.round((qtBase / porzioniTot) * 10) / 10;
+    return { nome: ing.nome, qt: String(Math.round(qtBasePerPorz * porzioni * 10) / 10), altPrint: [], misura: '', ricettaIng: true, ricettaIngQtBase: qtBasePerPorz };
+  });
+  if (items[ii] && items[ii].nome === '' && items[ii].qt === '') {
+    items.splice(ii, 1, hdr, ...ingItems);
+  } else {
+    items.splice(ii, 0, hdr, ...ingItems);
+  }
+  markDirty(); renderPiano();
+  setTimeout(() => {
+    const inp = document.querySelector(`#r-${mi}-${ii} .ricetta-porz-input`);
+    if (inp) { inp.focus(); inp.select(); }
+  }, 80);
 }
 function onFF(mi, ii, inp) { if (inp.value.length >= 1) showAC(mi, ii, inp.value); }
 function onFB(mi, ii) { setTimeout(() => { const el = document.getElementById('ac-global'); if (el) el.style.display = 'none'; refreshRow(mi, ii); refreshTot(mi); updateRiep(); }, 200); }
@@ -1223,9 +1293,42 @@ function addRowFast(mi) {
 function delRow(mi, ii) {
   pushUndo({ giorni: JSON.parse(JSON.stringify(giorni)), giornoCorrente });
   const meals = getMeals();
-  if (meals[mi].items.length <= 1) meals[mi].items[0] = { nome: '', qt: '', altPrint: [], misura: '' };
-  else meals[mi].items.splice(ii, 1);
+  const items = meals[mi].items;
+  const item = items[ii];
+  if (item && item.isRicetta) {
+    let end = ii + 1;
+    while (end < items.length && items[end].ricettaIng) end++;
+    const count = end - ii;
+    if (items.length <= count) {
+      meals[mi].items = [{ nome: '', qt: '', altPrint: [], misura: '' }];
+    } else {
+      items.splice(ii, count);
+    }
+  } else if (items.length <= 1) {
+    items[0] = { nome: '', qt: '', altPrint: [], misura: '' };
+  } else {
+    items.splice(ii, 1);
+  }
   markDirty(); renderPiano();
+}
+function onRicettaPorzioniChange(mi, ii, val) {
+  const newPorz = Math.max(0.5, parseFloat(val) || 1);
+  const items = getMeals()[mi].items;
+  if (!items[ii]) return;
+  items[ii].ricettaPorzioni = newPorz;
+  let j = ii + 1;
+  while (j < items.length && items[j].ricettaIng) {
+    const base = items[j].ricettaIngQtBase || 0;
+    const newQt = Math.round(base * newPorz * 10) / 10;
+    items[j].qt = String(newQt);
+    const qtInp = document.querySelector(`#r-${mi}-${j} .inp-qt`);
+    if (qtInp) qtInp.value = String(newQt);
+    refreshRow(mi, j);
+    j++;
+  }
+  refreshTot(mi);
+  updateRiep();
+  markDirty();
 }
 let rowDragMi = -1, rowDragIi = -1;
 function enableRowDrag(mi, ii) {
@@ -2023,16 +2126,36 @@ function _buildPDFAllDaysHTML(lyt) {
       fi2.forEach(it=>{const f=lookup(it.nome);const qt=parseFloat(it.qt)||0;if(f&&qt){mk+=(f.k||0)/100*qt;mp+=(f.p||0)/100*qt;mgs+=(f.gs||0)/100*qt;mg+=(f.g||0)/100*qt;mz+=(f.z||0)/100*qt;mch+=(f.ch||0)/100*qt;mfi+=(f.fi||0)/100*qt;}});
       html += '<div style="margin-bottom:4px;border:1px solid #E2E8F0;border-radius:0 0 4px 4px;overflow:hidden;break-inside:avoid">';
       html += '<div style="background:#334155;color:white;padding:3px 8px;font-size:8px;font-weight:700">' + esc(meal.emoji||'') + ' ' + esc(meal.nome) + '</div>';
-      html += '<table style="width:100%;border-collapse:collapse;font-size:7.5px">';
-      html += '<thead><tr style="background:#475569;color:#E2E8F0"><th style="text-align:left;padding:2px 4px;min-width:120px">Alimento</th>';
-      html += '<th style="padding:2px 3px;min-width:38px">Qt(g)</th><th style="padding:2px 3px">Kcal</th><th style="padding:2px 3px">Prot</th>';
-      html += '<th style="padding:2px 3px">Gr.Sat</th><th style="padding:2px 3px">Gr.Tot</th><th style="padding:2px 3px">Zucc</th>';
-      html += '<th style="padding:2px 3px">CHO</th><th style="padding:2px 3px">Fibra</th><th style="padding:2px 3px;text-align:left">Fonte</th></tr></thead>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:7.5px;table-layout:fixed">';
+      html += '<colgroup><col style="width:28%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:16%"></colgroup>';
+      html += '<thead><tr style="background:#475569;color:#E2E8F0"><th style="text-align:left;padding:2px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Alimento</th>';
+      html += '<th style="padding:2px 3px;text-align:center">Qt(g)</th><th style="padding:2px 3px;text-align:center">Kcal</th><th style="padding:2px 3px;text-align:center">Prot</th>';
+      html += '<th style="padding:2px 3px;text-align:center">Gr.Sat</th><th style="padding:2px 3px;text-align:center">Gr.Tot</th><th style="padding:2px 3px;text-align:center">Zucc</th>';
+      html += '<th style="padding:2px 3px;text-align:center">CHO</th><th style="padding:2px 3px;text-align:center">Fibra</th><th style="padding:2px 3px;text-align:left">Fonte</th></tr></thead>';
       html += '<tbody>';
       fi2.forEach(it => {
+        if (it.isRicetta) {
+          const porz = it.ricettaPorzioni || 1;
+          html += '<tr style="background:#ECFDF5;border-bottom:1px solid #A7F3D0"><td colspan="10" style="padding:3px 8px;font-weight:700;color:#0F766E;font-size:8px">📋 '+esc(it.nome)+' · '+porz+' '+_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')+'</td></tr>';
+          return;
+        }
+        if (it.ricettaIng) {
+          const f=lookup(it.nome); const qt=it.qt;
+          html += '<tr style="background:#F0FDF4;border-bottom:1px solid #DCFCE7;border-left:2px solid #86EFAC"><td style="padding:2px 4px 2px 16px;text-align:left;color:#065F46;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">└ '+esc(it.nome)+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center;color:#065F46">'+(qt||'')+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center">'+fmtV(cv(f,'k',qt))+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center">'+fmtV(cv(f,'p',qt))+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center">'+fmtV(cv(f,'gs',qt))+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center">'+fmtV(cv(f,'g',qt))+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center">'+fmtV(cv(f,'z',qt))+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center">'+fmtV(cv(f,'ch',qt))+'</td>';
+          html += '<td style="padding:2px 3px;text-align:center">'+fmtV(cv(f,'fi',qt))+'</td>';
+          html += '<td style="padding:2px 3px;font-size:6.5px;text-align:left">'+(f?esc(f.c||''):'')+'</td></tr>';
+          return;
+        }
         const f=lookup(it.nome); const qt=it.qt;
         const mis=it.misura?' <span style="color:#94A3B8;font-size:6px">('+esc(it.misura)+')</span>':'';
-        html += '<tr style="border-bottom:1px solid #F1F5F9"><td style="padding:2px 4px;text-align:left">' + esc(it.nome) + mis + '</td>';
+        html += '<tr style="border-bottom:1px solid #F1F5F9"><td style="padding:2px 4px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(it.nome) + mis + '</td>';
         html += '<td style="padding:2px 3px;text-align:center">' + (qt||'') + '</td>';
         html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'k',qt)) + '</td>';
         html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'p',qt)) + '</td>';
@@ -2045,7 +2168,7 @@ function _buildPDFAllDaysHTML(lyt) {
         if (it.altPrint && it.altPrint.length) {
           it.altPrint.forEach(a => {
             const fa=lookup(a.nome);
-            html += '<tr style="background:#F0FDF4;border-bottom:1px solid #DCFCE7"><td style="padding:2px 4px 2px 16px;text-align:left;color:#065F46;font-size:7px">↳ ALT: ' + esc(a.nome) + '</td>';
+            html += '<tr style="background:#F0FDF4;border-bottom:1px solid #DCFCE7"><td style="padding:2px 4px 2px 16px;text-align:left;color:#065F46;font-size:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">↳ ALT: ' + esc(a.nome) + '</td>';
             html += '<td style="padding:2px 3px;text-align:center;color:#065F46">' + a.qt + '</td>';
             html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'k',a.qt)) + '</td>';
             html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'p',a.qt)) + '</td>';
@@ -2056,7 +2179,7 @@ function _buildPDFAllDaysHTML(lyt) {
           });
         }
       });
-      html += '<tr style="background:'+lyt.primary+';color:white"><td style="padding:2px 4px;text-align:left;font-size:7px;font-weight:700">∑ ' + esc(meal.nome.toUpperCase()) + '</td>';
+      html += '<tr style="background:'+lyt.primary+';color:white"><td style="padding:2px 4px;text-align:left;font-size:7px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">∑ ' + esc(meal.nome.toUpperCase()) + '</td>';
       html += '<td style="padding:2px 3px;text-align:center">—</td>';
       html += '<td style="padding:2px 3px;text-align:center;font-weight:700">' + Math.round(mk) + '</td>';
       html += '<td style="padding:2px 3px;text-align:center">' + r1(mp) + '</td>';
@@ -2095,6 +2218,19 @@ function _buildSimpleDayHTML(giorno, showDayHeader, lyt) {
     html += '<div style="margin-bottom:18px;break-inside:avoid">';
     html += '<div style="font-size:14px;font-weight:700;color:'+lyt.headerText+';padding:7px 12px;background:'+lyt.pale+';border-left:4px solid '+lyt.primary+';border-radius:4px;margin-bottom:6px">' + esc(meal.emoji||'') + ' ' + esc(meal.nome) + '</div>';
     foodItems.forEach(item => {
+      if (item.isRicetta) {
+        const porz = item.ricettaPorzioni || 1;
+        html += '<div style="margin:8px 0 2px;padding:6px 12px;background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-left:4px solid #10B981;border-radius:4px">';
+        html += '<div style="font-size:13px;font-weight:700;color:#0F766E">📋 ' + esc(item.nome) + ' <span style="font-size:11px;font-weight:500;color:#065F46">· ' + porz + ' ' + _L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings') + '</span></div>';
+        html += '<div style="font-size:10.5px;font-weight:600;color:#0F766E;margin-top:3px;opacity:.8">🥕 ' + _L('Ingredienti:','Ingredients:') + '</div>';
+        html += '</div>';
+        return;
+      }
+      if (item.ricettaIng) {
+        const qtTxt = item.qt ? '<span style="font-weight:700;color:#065F46">'+item.qt+'g</span>' : '';
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 12px 4px 24px;background:#F0FDF4;border-left:3px solid #86EFAC;border-bottom:1px solid #DCFCE7"><span style="font-size:12px;color:#15803D">└ '+esc(item.nome)+'</span><span style="font-size:12px;white-space:nowrap;padding-left:10px">'+qtTxt+'</span></div>';
+        return;
+      }
       const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
       if(f&&qt){totKcal+=(f.k||0)/100*qt;totProt+=(f.p||0)/100*qt;totCho+=(f.ch||0)/100*qt;totFat+=(f.g||0)/100*qt;totFib+=(f.fi||0)/100*qt;}
       const misuraTxt=item.misura?' <span style="color:#94A3B8;font-size:10.5px">('+esc(item.misura)+')</span>':'';
@@ -2192,6 +2328,19 @@ function _buildCompattaDayHTML(giorno, showDayHeader, lyt) {
     if (mealKcal>0) html += '<span style="font-size:12px;color:rgba(255,255,255,.9);font-weight:600">≈ ' + Math.round(mealKcal) + ' kcal</span>';
     html += '</div>';
     foodItems.forEach(item => {
+      if (item.isRicetta) {
+        const porz = item.ricettaPorzioni || 1;
+        html += '<div style="padding:6px 16px;background:linear-gradient(90deg,#ECFDF5,#F0FDF4);border-left:4px solid #10B981;border-bottom:1px solid #DCFCE7">';
+        html += '<div style="font-size:13px;font-weight:700;color:#0F766E">📋 '+esc(item.nome)+' <span style="font-size:11px;font-weight:500;color:#065F46">· '+porz+' '+_L(porz===1?'porzione':'porzioni',porz===1?'serving':'servings')+'</span></div>';
+        html += '<div style="font-size:10px;font-weight:600;color:#0F766E;margin-top:2px;opacity:.8">🥕 '+_L('Ingredienti:','Ingredients:')+'</div>';
+        html += '</div>';
+        return;
+      }
+      if (item.ricettaIng) {
+        const qtStr = item.qt ? item.qt+' g' : '';
+        html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 16px 5px 28px;background:#F0FDF4;border-left:3px solid #86EFAC;border-bottom:1px solid #DCFCE7"><span style="font-size:12px;color:#15803D">└ '+esc(item.nome)+'</span><span style="font-size:12px;font-weight:700;color:#065F46;white-space:nowrap;padding-left:8px">'+qtStr+'</span></div>';
+        return;
+      }
       const f=lookup(item.nome); const qt=parseFloat(item.qt)||0;
       const kcalItem=f&&qt?Math.round((f.k||0)/100*qt):0;
       const misuraTxt=item.misura?' <span style="color:#94A3B8;font-size:10px">('+esc(item.misura)+')</span>':'';

@@ -606,7 +606,7 @@ function aggiornaDettaglio() {
     const k = f ? Math.round((f.k||0)/100*qtAdj) : 0;
     if (f) { totK+=(f.k||0)/100*qtAdj;totP+=(f.p||0)/100*qtAdj;totCh+=(f.ch||0)/100*qtAdj;totG+=(f.g||0)/100*qtAdj;totFi+=(f.fi||0)/100*qtAdj; }
     html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px">
-      <span style="font-weight:500">${esc(i.nome)}</span>
+      <span style="font-weight:500">${esc(typeof foodNameEN==='function'?foodNameEN(i.nome):i.nome)}</span>
       <span style="color:var(--teal-d);font-weight:700">${qtAdj}g</span>
       <span style="font-size:11px;color:var(--slate-l)">${k} kcal</span>
     </div>`;

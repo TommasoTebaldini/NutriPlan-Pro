@@ -30,37 +30,30 @@
 /* ── Print ── */
 @media print{
   #sidebar,#topbar,#topbar-spacer,.editor-toolbar,.no-print,#loading-overlay,#toast{display:none!important}
-  #main{margin-left:0!important;padding:0!important}
-  .page-content{padding:0!important;max-width:none!important}
-  #print-area{display:block!important}
+  body{background:white!important}
+  #main{margin:0!important;padding:0!important;width:100%!important}
+  .page-content{padding:0!important;max-width:none!important;contain:none!important;width:100%!important}
+  #print-area{display:block!important;padding:14mm 18mm!important;box-sizing:border-box!important;width:100%!important}
   #editor-panel{display:none!important}
   #saved-panel{display:none!important}
-  body{background:white!important}
 }
 #print-area{display:none}
 /* Print document styles */
 .print-doc{font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#1E293B;line-height:1.6}
-.print-doc .doc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:2px solid #0F766E;margin-bottom:20px}
-.print-doc .doc-logo{max-height:64px;max-width:160px;object-fit:contain}
-.print-doc .doc-prof{text-align:right;font-size:11.5px;color:#475569;line-height:1.5}
+.print-doc .doc-header{overflow:hidden;padding-bottom:14px;border-bottom:2px solid #0F766E;margin-bottom:20px}
+.print-doc .doc-logo{float:left;max-height:58px;max-width:150px;object-fit:contain;margin-right:14px}
+.print-doc .doc-prof{float:right;text-align:right;font-size:11.5px;color:#475569;line-height:1.5}
 .print-doc .doc-prof strong{font-size:13px;color:#1E293B;display:block;margin-bottom:2px}
-.print-doc h1{font-size:17px;font-weight:700;color:#0F766E;margin:0 0 14px;font-family:'DM Sans',Arial,sans-serif}
-.print-doc .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;background:#F8FAFC;border-radius:8px;padding:12px 14px;margin-bottom:18px;border:1px solid #E2E8F0;font-size:12.5px}
+.print-doc .doc-prof span{display:block}
+.print-doc h1{font-size:17px;font-weight:700;color:#0F766E;margin:0 0 14px;font-family:'DM Sans',Arial,sans-serif;clear:both}
+.print-doc .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;background:#F8FAFC;border-radius:8px;padding:12px 14px;margin-bottom:18px;border:1px solid #E2E8F0;font-size:12.5px;page-break-inside:avoid}
 .print-doc .info-row{display:flex;gap:6px}
 .print-doc .info-lbl{font-weight:700;color:#475569;white-space:nowrap}
 .print-doc .info-val{color:#1E293B}
-.print-doc .doc-body{min-height:200px;white-space:pre-wrap;word-wrap:break-word;font-size:13px;line-height:1.7}
+.print-doc .doc-body{font-size:13px;line-height:1.7;word-break:break-word;overflow-wrap:break-word}
 .print-doc .doc-footer{margin-top:40px;padding-top:14px;border-top:1px solid #CBD5E1;display:flex;justify-content:flex-end}
 .print-doc .sign-line{font-size:12px;color:#64748B;text-align:center}
 .print-doc .sign-line::before{content:'';display:block;width:200px;border-bottom:1px solid #94A3B8;margin-bottom:6px}
-/* ── Print improvements ── */
-@page{margin:18mm 22mm}
-.print-doc .doc-prof span{display:block;line-height:1.5}
-.print-doc .doc-header{page-break-inside:avoid;min-height:50px}
-.print-doc .doc-header > div:first-child{flex-shrink:0;min-width:0;max-width:170px}
-.print-doc .doc-body{word-break:break-word;overflow-wrap:break-word;white-space:normal}
-.print-doc .info-grid{page-break-inside:avoid;page-break-after:avoid}
-.print-doc h1{page-break-after:avoid}
 </style>
 </head>
 <body>
@@ -235,26 +228,24 @@
 
 
 <!-- PRINT AREA (hidden, shown only on print) -->
-<div id="print-area" class="print-doc" style="padding:0">
-  <div class="doc-header" style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:2px solid #0F766E;margin-bottom:20px;gap:16px">
-    <div style="flex-shrink:0">
-      <img id="print-logo" src="" alt="Logo" class="doc-logo" style="display:none;max-height:60px;max-width:150px;object-fit:contain">
-    </div>
-    <div class="doc-prof" style="text-align:right;font-size:11.5px;color:#475569;line-height:1.5;flex:1">
-      <strong id="print-prof-nome" style="font-size:13px;color:#1E293B;display:block;margin-bottom:2px"></strong>
-      <span id="print-prof-spec" style="display:block"></span>
-      <span id="print-prof-albo" style="display:block"></span>
+<div id="print-area" class="print-doc">
+  <div class="doc-header">
+    <img id="print-logo" src="" alt="Logo" class="doc-logo" style="display:none">
+    <div class="doc-prof">
+      <strong id="print-prof-nome"></strong>
+      <span id="print-prof-spec"></span>
+      <span id="print-prof-albo"></span>
     </div>
   </div>
-  <h1 style="font-size:17px;font-weight:700;color:#0F766E;margin:0 0 14px;font-family:'DM Sans',Arial,sans-serif">🩺 <span data-only-lang="it">Resoconto Visita Dietologica</span><span data-only-lang="en" style="display:none">Dietitian Visit Report</span></h1>
-  <div class="info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;background:#F8FAFC;border-radius:8px;padding:12px 14px;margin-bottom:18px;border:1px solid #E2E8F0;font-size:12.5px">
+  <h1>🩺 <span data-only-lang="it">Resoconto Visita Dietologica</span><span data-only-lang="en" style="display:none">Dietitian Visit Report</span></h1>
+  <div class="info-grid">
     <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Paziente:</span><span data-only-lang="en" style="display:none">Patient:</span></span> <span class="info-val" id="print-paziente">—</span></div>
     <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Data visita:</span><span data-only-lang="en" style="display:none">Visit date:</span></span> <span class="info-val" id="print-data">—</span></div>
     <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Tipo visita:</span><span data-only-lang="en" style="display:none">Visit type:</span></span> <span class="info-val" id="print-tipo">—</span></div>
     <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Oggetto:</span><span data-only-lang="en" style="display:none">Subject:</span></span> <span class="info-val" id="print-titolo">—</span></div>
   </div>
-  <div id="print-body" class="doc-body" style="min-height:200px;font-size:13px;line-height:1.7;word-break:break-word;overflow-wrap:break-word"></div>
-  <div class="doc-footer" style="margin-top:40px;padding-top:14px;border-top:1px solid #CBD5E1;display:flex;justify-content:flex-end">
+  <div id="print-body" class="doc-body"></div>
+  <div class="doc-footer">
     <div class="sign-line"><span data-only-lang="it">Firma del Professionista</span><span data-only-lang="en" style="display:none">Professional Signature</span></div>
   </div>
 </div>

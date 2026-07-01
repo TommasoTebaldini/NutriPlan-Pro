@@ -279,8 +279,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
       </div>
       <!-- Salva + Nuovo buttons, centered vertically with the other fields -->
       <div style="display:flex;flex-direction:column;gap:5px;align-self:center">
-        <button onclick="salvaPiano()" data-i18n-tooltip="app.save_db" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.25);color:white;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.38)'" onmouseout="this.style.background='rgba(255,255,255,.25)'">💾 Salva</button>
-        <button onclick="nuovoPiano()" data-i18n-tooltip="app.new_plan" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🔄 Nuovo</button>
+        <button onclick="salvaPiano()" data-i18n-tooltip="app.save_db" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.25);color:white;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.38)'" onmouseout="this.style.background='rgba(255,255,255,.25)'">💾 <span data-only-lang="it">Salva</span><span data-only-lang="en">Save</span></button>
+        <button onclick="nuovoPiano()" data-i18n-tooltip="app.new_plan" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🔄 <span data-only-lang="it">Nuovo</span><span data-only-lang="en">New</span></button>
       </div>
     </div>
     <span id="cartella-selected" style="font-size:11px;color:white;font-weight:600;margin-top:4px;display:block"></span>
@@ -849,7 +849,7 @@ function buildCard(mi) {
   <div class="pasto-body${meal.collapsed ? ' collapsed' : ''}" id="pb-${mi}">
     <div class="micro-bar no-print" style="flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:4px">
       <label>Micronutrienti:</label>
-      ${MICROS.map(m => `<button class="mtog${visM.has(m.k) ? ' on' : ''}" onclick="toggleMicro('${m.k}')">${_L(m.l, m.l_en)}</button>`).join('')}
+      ${MICROS.map(m => `<button class="mtog${visM.has(m.k) ? ' on' : ''}" onclick="toggleMicro('${m.k}')">${_L(m.l, m.l_en || m.l)}</button>`).join('')}
     </div>
     <div class="table-wrap">
       <table>
@@ -857,7 +857,7 @@ function buildCard(mi) {
           <th style="text-align:left;min-width:160px">${_L('Alimento','Food')}</th>
           <th style="min-width:62px">Qt (g)</th>
           <th>Kcal</th><th>Prot</th><th>${_L('Gr.Sat','Sat.Fat')}</th><th>${_L('Gr.Tot','Fat')}</th><th>${_L('Zucc','Sugar')}</th><th>CHO</th><th>${_L('Fibra','Fibre')}</th>
-          ${MICROS.map(m => `<th style="display:${visM.has(m.k) ? '' : 'none'}">${_L(m.l, m.l_en)}</th>`).join('')}
+          ${MICROS.map(m => `<th style="display:${visM.has(m.k) ? '' : 'none'}">${_L(m.l, m.l_en || m.l)}</th>`).join('')}
           <th>${_L('Fonte','Source')}</th><th class="no-print"></th><th class="no-print" style="width:22px"></th>
         </tr></thead>
         <tbody id="tb-${mi}">
@@ -976,7 +976,7 @@ function buildRow(mi, ii) {
     <td class="vc" data-k="ch">${fmtV(cv(f, 'ch', qt))}</td>
     <td class="vc" data-k="fi">${fmtV(cv(f, 'fi', qt))}</td>
     ${microTds}
-    <td style="font-size:10px;white-space:nowrap;text-align:left">${f ? esc(f.c || '') + ' ' : ''}${srcBadge}</td>
+    <td style="font-size:10px;white-space:nowrap;text-align:left">${f ? esc(foodCatEN(f.c) || '') + ' ' : ''}${srcBadge}</td>
     <td class="no-print" style="white-space:nowrap">
       <span class="row-drag-handle no-print" title="Trascina per riordinare"
         onmousedown="enableRowDrag(${mi},${ii})">⠿</span>
@@ -1591,7 +1591,7 @@ function openAlt(mi, ii) {
   if (!item.nome || !f) { toast(_L('Seleziona prima un alimento valido','Select a valid food item first'), 'err'); return; }
   document.getElementById('alt-title').textContent = `⇄ Alternative a: ${foodNameEN(item.nome)} (${item.qt || 0}g)`;
   document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
-    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${_L(b.l, b.l_en)}</button>`
+    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${_L(b.l, b.l_en || b.l)}</button>`
   ).join('');
   document.getElementById('alt-search').value = '';
   showAlternatives();

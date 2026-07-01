@@ -46,13 +46,21 @@
 .print-doc .doc-prof strong{font-size:13px;color:#1E293B;display:block;margin-bottom:2px}
 .print-doc h1{font-size:17px;font-weight:700;color:#0F766E;margin:0 0 14px;font-family:'DM Sans',Arial,sans-serif}
 .print-doc .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;background:#F8FAFC;border-radius:8px;padding:12px 14px;margin-bottom:18px;border:1px solid #E2E8F0;font-size:12.5px}
-.print-doc .info-row{display:flex;gap:6px}<br>
+.print-doc .info-row{display:flex;gap:6px}
 .print-doc .info-lbl{font-weight:700;color:#475569;white-space:nowrap}
 .print-doc .info-val{color:#1E293B}
 .print-doc .doc-body{min-height:200px;white-space:pre-wrap;word-wrap:break-word;font-size:13px;line-height:1.7}
 .print-doc .doc-footer{margin-top:40px;padding-top:14px;border-top:1px solid #CBD5E1;display:flex;justify-content:flex-end}
 .print-doc .sign-line{font-size:12px;color:#64748B;text-align:center}
 .print-doc .sign-line::before{content:'';display:block;width:200px;border-bottom:1px solid #94A3B8;margin-bottom:6px}
+/* ── Print improvements ── */
+@page{margin:18mm 22mm}
+.print-doc .doc-prof span{display:block;line-height:1.5}
+.print-doc .doc-header{page-break-inside:avoid;min-height:50px}
+.print-doc .doc-header > div:first-child{flex-shrink:0;min-width:0;max-width:170px}
+.print-doc .doc-body{word-break:break-word;overflow-wrap:break-word;white-space:normal}
+.print-doc .info-grid{page-break-inside:avoid;page-break-after:avoid}
+.print-doc h1{page-break-after:avoid}
 </style>
 </head>
 <body>
@@ -114,7 +122,7 @@
   <h2 id="page-title">🩺 <span data-only-lang="it">Resoconto Visita</span><span data-only-lang="en" style="display:none">Visit Notes</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="showSaved()">📂 Salvate</button>
-    <button class="btn btn-ghost btn-sm no-print" onclick="nuovaVisita()">+ Nuova</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="nuovaVisita()">📝 Nuova</button>
     <button class="btn btn-ghost btn-sm no-print" onclick="stampaVisita()">🖨️ Stampa</button>
     <button class="btn btn-primary btn-sm no-print" onclick="salvaVisita()">💾 Salva</button>
   </div>
@@ -148,7 +156,7 @@
             <input type="date" id="v-data" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit">
           </div>
           <div class="fg">
-            <label>Paziente (cartella)</label>
+            <label>📁 Cartella Paziente</label>
             <select id="inp-cartella" style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;background:white;color:var(--slate)">
               <option value="">— Nessuna cartella —</option>
             </select>
@@ -219,34 +227,34 @@
 <div id="saved-panel" style="display:none">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
     <h3 style="font-size:15px;font-weight:700;margin:0;flex:1">📂 <span data-only-lang="it">Visite Salvate</span><span data-only-lang="en" style="display:none">Saved Visits</span></h3>
-    <button class="btn btn-primary btn-sm" onclick="nuovaVisita()">+ Nuova Visita</button>
-    <button class="btn btn-ghost btn-sm" onclick="showEditor()">← Editor</button>
+    <button class="btn btn-primary btn-sm" onclick="nuovaVisita()">📝 <span data-only-lang="it">Nuova Visita</span><span data-only-lang="en" style="display:none">New Visit</span></button>
+    <button class="btn btn-ghost btn-sm" onclick="showEditor()">← <span data-only-lang="it">Editor</span><span data-only-lang="en" style="display:none">Editor</span></button>
   </div>
   <div id="saved-list"></div>
 </div>
 
 
 <!-- PRINT AREA (hidden, shown only on print) -->
-<div id="print-area" class="print-doc">
-  <div class="doc-header">
-    <div>
-      <img id="print-logo" src="" alt="Logo" class="doc-logo" style="display:none">
+<div id="print-area" class="print-doc" style="padding:0">
+  <div class="doc-header" style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:2px solid #0F766E;margin-bottom:20px;gap:16px">
+    <div style="flex-shrink:0">
+      <img id="print-logo" src="" alt="Logo" class="doc-logo" style="display:none;max-height:60px;max-width:150px;object-fit:contain">
     </div>
-    <div class="doc-prof">
-      <strong id="print-prof-nome"></strong>
-      <span id="print-prof-spec"></span>
-      <span id="print-prof-albo"></span>
+    <div class="doc-prof" style="text-align:right;font-size:11.5px;color:#475569;line-height:1.5;flex:1">
+      <strong id="print-prof-nome" style="font-size:13px;color:#1E293B;display:block;margin-bottom:2px"></strong>
+      <span id="print-prof-spec" style="display:block"></span>
+      <span id="print-prof-albo" style="display:block"></span>
     </div>
   </div>
-  <h1>🩺 <span data-only-lang="it">Resoconto Visita Dietologica</span><span data-only-lang="en" style="display:none">Dietitian Visit Report</span></h1>
-  <div class="info-grid">
-    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Paziente:</span><span data-only-lang="en" style="display:none">Patient:</span></span><span class="info-val" id="print-paziente">—</span></div>
-    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Data visita:</span><span data-only-lang="en" style="display:none">Visit date:</span></span><span class="info-val" id="print-data">—</span></div>
-    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Tipo visita:</span><span data-only-lang="en" style="display:none">Visit type:</span></span><span class="info-val" id="print-tipo">—</span></div>
-    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Oggetto:</span><span data-only-lang="en" style="display:none">Subject:</span></span><span class="info-val" id="print-titolo">—</span></div>
+  <h1 style="font-size:17px;font-weight:700;color:#0F766E;margin:0 0 14px;font-family:'DM Sans',Arial,sans-serif">🩺 <span data-only-lang="it">Resoconto Visita Dietologica</span><span data-only-lang="en" style="display:none">Dietitian Visit Report</span></h1>
+  <div class="info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;background:#F8FAFC;border-radius:8px;padding:12px 14px;margin-bottom:18px;border:1px solid #E2E8F0;font-size:12.5px">
+    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Paziente:</span><span data-only-lang="en" style="display:none">Patient:</span></span> <span class="info-val" id="print-paziente">—</span></div>
+    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Data visita:</span><span data-only-lang="en" style="display:none">Visit date:</span></span> <span class="info-val" id="print-data">—</span></div>
+    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Tipo visita:</span><span data-only-lang="en" style="display:none">Visit type:</span></span> <span class="info-val" id="print-tipo">—</span></div>
+    <div class="info-row"><span class="info-lbl"><span data-only-lang="it">Oggetto:</span><span data-only-lang="en" style="display:none">Subject:</span></span> <span class="info-val" id="print-titolo">—</span></div>
   </div>
-  <div id="print-body" class="doc-body"></div>
-  <div class="doc-footer">
+  <div id="print-body" class="doc-body" style="min-height:200px;font-size:13px;line-height:1.7;word-break:break-word;overflow-wrap:break-word"></div>
+  <div class="doc-footer" style="margin-top:40px;padding-top:14px;border-top:1px solid #CBD5E1;display:flex;justify-content:flex-end">
     <div class="sign-line"><span data-only-lang="it">Firma del Professionista</span><span data-only-lang="en" style="display:none">Professional Signature</span></div>
   </div>
 </div>
@@ -356,6 +364,7 @@ async function salvaVisita() {
   const contenuto = document.getElementById('editor-body').innerHTML;
 
   if (!currentUser) { toast(_L('Sessione scaduta','Session expired'), 'err'); return; }
+  if (!cartellaId) { toast(_L('Seleziona la cartella per il salvataggio','Select a patient folder to save'), 'warn'); return; }
 
   const dati = JSON.stringify({ tipo_visita: tipo, data_visita: data, contenuto_html: contenuto });
   const record = {
@@ -384,17 +393,23 @@ async function salvaVisita() {
 
 async function loadSavedVisite() {
   if (!currentUser) return;
+  const list = document.getElementById('saved-list');
+  const cartellaId = document.getElementById('inp-cartella').value;
+  if (!cartellaId) {
+    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:13px;font-style:italic">${_L('Seleziona una cartella paziente per vedere le visite salvate.','Select a patient folder to view saved visits.')}</div>`;
+    return;
+  }
   const { data, error } = await sb.from('note_specialistiche')
     .select('id,nota,dati,created_at,cartella_id')
     .eq('user_id', currentUser.id)
     .eq('tipo', 'visita_clinica')
+    .eq('cartella_id', cartellaId)
     .order('created_at', { ascending: false })
     .limit(50);
   if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }
 
-  const list = document.getElementById('saved-list');
   if (!data || !data.length) {
-    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:13px;font-style:italic">${_L('Nessuna visita salvata.','No saved visits.')}</div>`;
+    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:13px;font-style:italic">${_L('Nessuna visita salvata per questo paziente.','No saved visits for this patient.')}</div>`;
     return;
   }
 
@@ -467,6 +482,7 @@ function stampaVisita() {
     logoEl.src = p.logo;
     logoEl.style.display = 'block';
   } else {
+    logoEl.src = '';
     logoEl.style.display = 'none';
   }
 

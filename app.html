@@ -600,6 +600,11 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
 <script src="js/print-capture.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
+// Micro labels EN — defined here (not in utils.js) to be cache-independent
+const _MICRO_EN={ca:'Calcium (mg)',fe:'Iron (mg)',mg:'Magnesium (mg)',k2:'Potassium (mg)',na:'Sodium (mg)',zn:'Zinc (mg)',fo:'Phosphorus (mg)',se:'Selenium (µg)',col:'Chol. (mg)'};
+const _ALL_NUT_EN={k:'Calories',p:'Protein',g:'Total Fat',gs:'Sat. Fat',ch:'CHO',z:'Sugars',fi:'Fibre',ca:'Calcium',fe:'Iron',mg:'Magnesium',k2:'Potassium',na:'Sodium',zn:'Zinc',fo:'Phosphorus',se:'Selenium',col:'Cholesterol'};
+function _ML(m){return _L(m.l,_MICRO_EN[m.k]||m.l);}
+function _NL(b){return _L(b.l,_ALL_NUT_EN[b.k]||b.l);}
 // ═══════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════
@@ -849,7 +854,7 @@ function buildCard(mi) {
   <div class="pasto-body${meal.collapsed ? ' collapsed' : ''}" id="pb-${mi}">
     <div class="micro-bar no-print" style="flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:4px">
       <label>Micronutrienti:</label>
-      ${MICROS.map(m => `<button class="mtog${visM.has(m.k) ? ' on' : ''}" onclick="toggleMicro('${m.k}')">${_L(m.l, m.l_en || m.l)}</button>`).join('')}
+      ${MICROS.map(m => `<button class="mtog${visM.has(m.k) ? ' on' : ''}" onclick="toggleMicro('${m.k}')">${_ML(m)}</button>`).join('')}
     </div>
     <div class="table-wrap">
       <table>
@@ -857,7 +862,7 @@ function buildCard(mi) {
           <th style="text-align:left;min-width:160px">${_L('Alimento','Food')}</th>
           <th style="min-width:62px">Qt (g)</th>
           <th>Kcal</th><th>Prot</th><th>${_L('Gr.Sat','Sat.Fat')}</th><th>${_L('Gr.Tot','Fat')}</th><th>${_L('Zucc','Sugar')}</th><th>CHO</th><th>${_L('Fibra','Fibre')}</th>
-          ${MICROS.map(m => `<th style="display:${visM.has(m.k) ? '' : 'none'}">${_L(m.l, m.l_en || m.l)}</th>`).join('')}
+          ${MICROS.map(m => `<th style="display:${visM.has(m.k) ? '' : 'none'}">${_ML(m)}</th>`).join('')}
           <th>${_L('Fonte','Source')}</th><th class="no-print"></th><th class="no-print" style="width:22px"></th>
         </tr></thead>
         <tbody id="tb-${mi}">
@@ -1591,7 +1596,7 @@ function openAlt(mi, ii) {
   if (!item.nome || !f) { toast(_L('Seleziona prima un alimento valido','Select a valid food item first'), 'err'); return; }
   document.getElementById('alt-title').textContent = `⇄ Alternative a: ${foodNameEN(item.nome)} (${item.qt || 0}g)`;
   document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
-    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${_L(b.l, b.l_en || b.l)}</button>`
+    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${_NL(b)}</button>`
   ).join('');
   document.getElementById('alt-search').value = '';
   showAlternatives();
@@ -1604,8 +1609,8 @@ function showAlternatives() {
   const f = lookup(item.nome); if (!f) return;
   const qt = parseFloat(item.qt) || 100;
   const targetVal = (f[altNutrient] || 0) / 100 * qt;
-  const _an = ALL_NUTRIENTS.find(n => n.k === altNutrient) || { l: altNutrient, l_en: altNutrient };
-  const nutriLabel = _L(_an.l, _an.l_en);
+  const _an = ALL_NUTRIENTS.find(n => n.k === altNutrient) || { l: altNutrient, k: altNutrient };
+  const nutriLabel = _NL(_an);
   const searchQ = (document.getElementById('alt-search')?.value || '').toLowerCase().trim();
 
   // If searching by name: show all matching foods regardless of targetVal

@@ -204,6 +204,7 @@ async function init() {
 
 async function loadAnamnesi() {
   const wrap = document.getElementById('an-list-wrap');
+  if (!currentUser) return;
   const { data, error } = await sb.from('patient_intake_forms')
     .select('*')
     .eq('dietitian_id', currentUser.id)
@@ -361,7 +362,9 @@ function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await init(); } catch(e) { console.warn('Init error:', e); }
+});
 </script>
 </body>
 </html>

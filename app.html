@@ -3127,8 +3127,7 @@ async function _loadDashboardData() {
     const { data: freshProf } = await sb.from('profiles').select('nome,cognome').eq('id', currentUser.id).maybeSingle();
     profNome = freshProf?.nome; profCognome = freshProf?.cognome;
   }
-  const rawNome = [profNome, profCognome].filter(Boolean).join(' ').trim();
-  const name = rawNome || currentUser?.email?.split('@')[0] || 'Dietista';
+  const name = profNome || currentUser?.email?.split('@')[0] || 'Dietista';
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
   const el = document.getElementById('dash-greeting');

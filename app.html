@@ -155,6 +155,24 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 #pasti-container .tr-tot td{background:linear-gradient(90deg,var(--teal),var(--teal-l))!important;}
 #pasti-container .inp-food,#pasti-container .inp-qt{background:var(--pinp,#FFFBEB)!important;}
 #macro-bar-totale{border-color:var(--teal-l)!important;box-shadow:0 4px 20px color-mix(in srgb,var(--teal) 18%,transparent)!important;}
+@keyframes dashFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes dashSlideUp{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.dash-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;animation:dashFadeIn .25s ease;padding:16px}
+.dash-panel{background:#fff;border-radius:20px;width:100%;max-width:700px;max-height:88vh;overflow-y:auto;animation:dashSlideUp .35s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
+.dash-header{background:linear-gradient(135deg,#0F766E,#0891B2);border-radius:20px 20px 0 0;padding:22px 24px 18px;color:white;position:relative}
+.dash-header h2{font-size:20px;font-weight:800;margin:0 0 4px}
+.dash-header p{font-size:13px;opacity:.88;margin:0}
+.dash-close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dash-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.dash-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:540px){.dash-cards{grid-template-columns:1fr}}
+.dash-card{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px 16px}
+.dash-card-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.dash-card-hdr .dc-icon{font-size:22px;line-height:1}
+.dash-card-hdr .dc-title{font-size:13px;font-weight:700;color:#334155}
+.skel-line{height:14px;border-radius:6px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;margin-bottom:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-line.w70{width:70%}.skel-line.w50{width:50%}
 </style>
 </head>
 <body>
@@ -2980,8 +2998,124 @@ async function init() {
       }
     } catch(e) { console.error(e); }
   }
+
+  showDashboardIfNeeded();
 }
 
+function showDashboardIfNeeded() {
+  if (localStorage.getItem('dp_show_dashboard') === 'false') return;
+  const overlay = document.createElement('div');
+  overlay.id = 'dash-overlay-el';
+  overlay.className = 'dash-overlay';
+  overlay.innerHTML = `
+    <div class="dash-panel" role="dialog" aria-modal="true">
+      <div class="dash-header">
+        <button class="dash-close" onclick="closeDashboard()" title="Chiudi">✕</button>
+        <h2 id="dash-greeting">👋 Bentornato!</h2>
+        <p>Ecco il tuo riepilogo di oggi</p>
+      </div>
+      <div class="dash-body">
+        <div class="dash-cards">
+          <div class="dash-card" id="dash-card-appts">
+            <div class="dash-card-hdr"><span class="dc-icon">📅</span><span class="dc-title">Appuntamenti oggi</span></div>
+            <div id="dash-appts-body"><div class="skel-line"></div><div class="skel-line w70"></div></div>
+          </div>
+          <div class="dash-card" id="dash-card-msgs">
+            <div class="dash-card-hdr"><span class="dc-icon">🔔</span><span class="dc-title">Messaggi non letti</span></div>
+            <div id="dash-msgs-body"><div class="skel-line"></div><div class="skel-line w50"></div></div>
+          </div>
+          <div class="dash-card" id="dash-card-inactive">
+            <div class="dash-card-hdr"><span class="dc-icon">⚠️</span><span class="dc-title">Pazienti inattivi</span></div>
+            <div id="dash-inactive-body"><div class="skel-line"></div><div class="skel-line w70"></div></div>
+          </div>
+          <div class="dash-card" id="dash-card-stats">
+            <div class="dash-card-hdr"><span class="dc-icon">📊</span><span class="dc-title">Statistiche rapide</span></div>
+            <div id="dash-stats-body"><div class="skel-line"></div><div class="skel-line w50"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+          <button class="btn btn-ghost btn-sm" onclick="closeDashboard()">✕ Chiudi</button>
+          <button class="btn btn-primary btn-sm" onclick="closeDashboard();window.location.href='pazienti.html'">📁 Vai alle cartelle</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeDashboard(); });
+  _loadDashboardData();
+}
+
+function closeDashboard() {
+  const el = document.getElementById('dash-overlay-el');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .2s'; setTimeout(() => el.remove(), 200); }
+}
+
+async function _loadDashboardData() {
+  if (!currentUser) return;
+  const today = new Date().toISOString().split('T')[0];
+  const name = currentProfile?.full_name || currentProfile?.nome || currentUser.email?.split('@')[0] || 'Dottore';
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  const greetEl = document.getElementById('dash-greeting');
+  if (greetEl) greetEl.textContent = `👋 ${greet}, ${name}!`;
+
+  try {
+    const { data: appts } = await sb.from('appointments')
+      .select('id,appointment_date,patient_name,notes')
+      .eq('dietitian_id', currentUser.id)
+      .gte('appointment_date', today + 'T00:00:00')
+      .lte('appointment_date', today + 'T23:59:59')
+      .order('appointment_date');
+    const apptEl = document.getElementById('dash-appts-body');
+    if (apptEl) {
+      if (!appts?.length) { apptEl.innerHTML = '<p style="font-size:13px;color:#64748B;margin:0">Nessun appuntamento oggi</p>'; }
+      else { apptEl.innerHTML = appts.map(a => `<p style="font-size:13px;font-weight:600;color:#0F172A;margin:0 0 4px">${a.appointment_date?.slice(11,16) || ''} — ${a.patient_name||'Paziente'}</p>`).join(''); }
+    }
+  } catch(e) { const el = document.getElementById('dash-appts-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">—</p>'; }
+
+  try {
+    const { data: msgs } = await sb.from('chat_messages')
+      .select('id')
+      .eq('dietitian_id', currentUser.id)
+      .eq('read_by_dietitian', false)
+      .eq('sender', 'patient');
+    const msgEl = document.getElementById('dash-msgs-body');
+    if (msgEl) {
+      const n = msgs?.length || 0;
+      msgEl.innerHTML = n === 0
+        ? '<p style="font-size:13px;color:#64748B;margin:0">Nessun messaggio non letto</p>'
+        : `<p style="font-size:20px;font-weight:800;color:#0F766E;margin:0">${n}</p><p style="font-size:12px;color:#64748B;margin:2px 0 0">messag${n===1?'io':'gi'} in attesa</p>`;
+    }
+  } catch(e) { const el = document.getElementById('dash-msgs-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">—</p>'; }
+
+  try {
+    const days = parseInt(localStorage.getItem('dp_inactivity_days') || '5', 10);
+    const since = new Date(); since.setDate(since.getDate() - days);
+    const { data: logs } = await sb.from('food_logs')
+      .select('user_id')
+      .gte('date', since.toISOString().split('T')[0]);
+    const { data: allPatients } = await sb.from('profiles')
+      .select('id,full_name')
+      .eq('role', 'patient')
+      .eq('dietitian_id', currentUser.id);
+    const activeIds = new Set((logs||[]).map(l => l.user_id));
+    const inactive = (allPatients||[]).filter(p => !activeIds.has(p.id));
+    const inactEl = document.getElementById('dash-inactive-body');
+    if (inactEl) {
+      if (!inactive.length) { inactEl.innerHTML = '<p style="font-size:13px;color:#16A34A;margin:0">✅ Tutti i pazienti attivi</p>'; }
+      else { inactEl.innerHTML = `<p style="font-size:20px;font-weight:800;color:#D97706;margin:0">${inactive.length}</p><p style="font-size:12px;color:#64748B;margin:2px 0 0">pazient${inactive.length===1?'e':'i'} inattiv${inactive.length===1?'o':'i'} (>${days}gg)</p>`; }
+    }
+  } catch(e) { const el = document.getElementById('dash-inactive-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">—</p>'; }
+
+  try {
+    const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - 7);
+    const { count: newLogs } = await sb.from('food_logs')
+      .select('id', { count: 'exact', head: true })
+      .gte('date', weekStart.toISOString().split('T')[0]);
+    const statsEl = document.getElementById('dash-stats-body');
+      if (statsEl) statsEl.innerHTML = `<p style="font-size:13px;color:#0F172A;margin:0"><strong>${newLogs||0}</strong> log alimenti questa settimana</p>`;
+  } catch(e) { const el = document.getElementById('dash-stats-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">—</p>'; }
+}
 
 async function caricaPianoById(id) {
   showLoading(true);

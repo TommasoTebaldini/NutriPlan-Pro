@@ -1,4 +1,4 @@
-let RICETTE_DB=[
+RICETTE_DB=[
   {id:'tpl_001',nome:'Pasta al pomodoro',nome_en:'Tomato pasta',categoria:'Primo piatto',porzioni:4,
    note:'Cuocere la pasta al dente in acqua salata. Soffriggere l\'aglio nell\'olio EVO, aggiungere i pomodori pelati schiacciati e cuocere 15 minuti. Scolare la pasta, condire con il sugo e guarnire con basilico fresco.',
    note_en:'Cook pasta al dente in salted water. Sauté garlic in EVO oil, add crushed tomatoes and cook 15 min. Drain pasta, toss with sauce and garnish with fresh basil.',

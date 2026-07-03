@@ -27,25 +27,29 @@ async function ensureChartJs() {
 @keyframes cardFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .paz-card{animation:cardFadeUp .3s cubic-bezier(.16,1,.3,1) both}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-@keyframes dashFadeIn{from{opacity:0}to{opacity:1}}
-@keyframes dashSlideUp{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.dash-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;animation:dashFadeIn .25s ease;padding:16px}
-.dash-panel{background:#fff;border-radius:20px;width:100%;max-width:700px;max-height:88vh;overflow-y:auto;animation:dashSlideUp .35s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
-.dash-header{background:linear-gradient(135deg,#0F766E,#0891B2);border-radius:20px 20px 0 0;padding:22px 24px 18px;color:white;position:relative}
-.dash-header h2{font-size:20px;font-weight:800;margin:0 0 4px}
-.dash-header p{font-size:13px;opacity:.88;margin:0}
-.dash-close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
-.dash-close:hover{background:rgba(255,255,255,.35)}
-.dash-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
-.dash-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:540px){.dash-cards{grid-template-columns:1fr}}
-.dash-card{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px 16px}
-.dash-card-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.dash-card-hdr .dc-icon{font-size:22px;line-height:1}
-.dash-card-hdr .dc-title{font-size:13px;font-weight:700;color:var(--slate)}
-.skel-line{height:14px;border-radius:6px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;margin-bottom:8px}
-.skel-line.w70{width:70%}
-.skel-line.w50{width:50%}
+@keyframes dashBdIn{from{opacity:0}to{opacity:1}}
+@keyframes dashPanelIn{from{opacity:0;transform:translateY(40px) scale(.95)}to{opacity:1;transform:none}}
+.dash-bd{position:fixed;inset:0;z-index:2000;background:rgba(6,22,33,.72);display:flex;align-items:center;justify-content:center;padding:16px;animation:dashBdIn .22s ease}
+.dash-panel{background:#fff;border-radius:24px;width:min(860px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:dashPanelIn .38s cubic-bezier(.16,1,.3,1);box-shadow:0 32px 80px rgba(0,0,0,.38)}
+.dash-hdr{background:linear-gradient(135deg,#064E3B 0%,#0F766E 55%,#0891B2 100%);padding:32px 36px 28px;position:relative;flex-shrink:0}
+.dash-hdr-txt h2{font-size:28px;font-weight:800;color:#fff;margin:0 0 6px;letter-spacing:-.5px}
+.dash-hdr-txt p{font-size:14px;color:rgba(255,255,255,.75);margin:0}
+.dash-hdr-date{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px}
+.dash-x{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);color:#fff;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s}
+.dash-x:hover{background:rgba(255,255,255,.28);transform:scale(1.08)}
+.dash-body{padding:28px 32px 28px;overflow-y:auto;display:flex;flex-direction:column;gap:20px;flex:1}
+.dash-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.dash-cards-grid{grid-template-columns:1fr}}
+.dash-dc{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:18px;padding:20px 22px;transition:box-shadow .15s}
+.dash-dc:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.dash-dc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.dash-dc-icon{font-size:28px;line-height:1}
+.dash-dc-title{font-size:14px;font-weight:700;color:#1E293B}
+.dash-dc-body{min-height:40px}
+.dash-skel{height:16px;border-radius:8px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:skelShim 1.4s infinite;margin-bottom:10px}
+.dash-skel.w70{width:70%}.dash-skel.w50{width:50%}
+@keyframes skelShim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.dash-footer{display:flex;justify-content:flex-end;gap:12px;padding:0 0 4px}
 .inactive-banner{background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:12px;padding:12px 16px;margin-bottom:12px;cursor:pointer;transition:background .15s}
 .inactive-banner:hover{background:#FEF9C3}
 .inactive-banner-hdr{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;color:#92400E}
@@ -2896,39 +2900,39 @@ async function importaCSV() {
 // ═══════════════════════════════════════════════════
 function showDashboardIfNeeded() {
   if (localStorage.getItem('dp_show_dashboard') === 'false') return;
-  // Create overlay dynamically
   const overlay = document.createElement('div');
   overlay.id = 'dash-overlay-el';
-  overlay.className = 'dash-overlay';
+  overlay.className = 'dash-bd';
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   overlay.innerHTML = `
     <div class="dash-panel" role="dialog" aria-modal="true">
-      <div class="dash-header">
-        <button class="dash-close" onclick="closeDashboard()" title="Chiudi">✕</button>
-        <h2 id="dash-greeting">👋 Bentornato!</h2>
-        <p>Ecco il tuo riepilogo di oggi</p>
+      <div class="dash-hdr">
+        <button class="dash-x" onclick="closeDashboard()" title="Chiudi">✕</button>
+        <div class="dash-hdr-txt">
+          <h2 id="dash-greeting">👋 Bentornato!</h2>
+          <p>Ecco il tuo riepilogo di oggi</p>
+          <p class="dash-hdr-date">${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}</p>
+        </div>
       </div>
       <div class="dash-body">
-        <div class="dash-cards">
-          <div class="dash-card" id="dash-card-appts">
-            <div class="dash-card-hdr"><span class="dc-icon">📅</span><span class="dc-title">Appuntamenti oggi</span></div>
-            <div id="dash-appts-body"><div class="skel-line"></div><div class="skel-line w70"></div></div>
+        <div class="dash-cards-grid">
+          <div class="dash-dc">
+            <div class="dash-dc-hdr"><span class="dash-dc-icon">📅</span><span class="dash-dc-title">Appuntamenti oggi</span></div>
+            <div class="dash-dc-body" id="dash-appts-body"><div class="dash-skel"></div><div class="dash-skel w70"></div></div>
           </div>
-          <div class="dash-card" id="dash-card-msgs">
-            <div class="dash-card-hdr"><span class="dc-icon">🔔</span><span class="dc-title">Messaggi non letti</span></div>
-            <div id="dash-msgs-body"><div class="skel-line"></div><div class="skel-line w50"></div></div>
+          <div class="dash-dc">
+            <div class="dash-dc-hdr"><span class="dash-dc-icon">💬</span><span class="dash-dc-title">Messaggi non letti</span></div>
+            <div class="dash-dc-body" id="dash-msgs-body"><div class="dash-skel"></div><div class="dash-skel w50"></div></div>
           </div>
-          <div class="dash-card" id="dash-card-inactive">
-            <div class="dash-card-hdr"><span class="dc-icon">⚠️</span><span class="dc-title">Pazienti inattivi</span></div>
-            <div id="dash-inactive-body"><div class="skel-line"></div><div class="skel-line w70"></div></div>
-          </div>
-          <div class="dash-card" id="dash-card-stats">
-            <div class="dash-card-hdr"><span class="dc-icon">📊</span><span class="dc-title">Statistiche rapide</span></div>
-            <div id="dash-stats-body"><div class="skel-line"></div><div class="skel-line w50"></div></div>
+          <div class="dash-dc">
+            <div class="dash-dc-hdr"><span class="dash-dc-icon">⚠️</span><span class="dash-dc-title">Pazienti inattivi</span></div>
+            <div class="dash-dc-body" id="dash-inactive-body"><div class="dash-skel"></div><div class="dash-skel w70"></div></div>
           </div>
         </div>
-        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
-          <button class="btn btn-ghost btn-sm" onclick="closeDashboard()">✕ Chiudi</button>
-          <button class="btn btn-primary btn-sm" onclick="closeDashboard()">📁 Vai alle cartelle</button>
+        <div class="dash-footer">
+          <button onclick="closeDashboard()" style="padding:10px 20px;border-radius:12px;border:1.5px solid #E2E8F0;background:#fff;color:#64748B;font:600 14px/1 inherit;cursor:pointer">✕ Chiudi</button>
+          <button onclick="closeDashboard()" style="padding:10px 22px;border-radius:12px;border:none;background:linear-gradient(135deg,#0F766E,#0891B2);color:#fff;font:700 14px/1 inherit;cursor:pointer">✨ Inizia la giornata →</button>
         </div>
       </div>
     </div>
@@ -2946,131 +2950,85 @@ function closeDashboard() {
 async function _loadDashboardData() {
   if (!currentUser) return;
   const today = new Date().toISOString().split('T')[0];
-
-  // Greet with name
-  const name = currentProfile?.full_name || currentProfile?.nome || currentUser.email?.split('@')[0] || 'Dottore';
+  const name = currentProfile?.full_name || currentProfile?.nome || currentProfile?.first_name
+    || (currentProfile?.cognome ? currentProfile.cognome : null)
+    || 'Dottore';
   const hour = new Date().getHours();
-  const greet = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  const greet = hour < 6 ? 'Buonanotte' : hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
   const greetEl = document.getElementById('dash-greeting');
   if (greetEl) greetEl.textContent = `👋 ${greet}, ${name}!`;
 
-  // --- Card 1: Appuntamenti oggi ---
   try {
     const { data: appts } = await sb.from('appointments')
-      .select('id,appointment_date,patient_name,notes')
+      .select('id,appointment_date,patient_id,status')
       .eq('dietitian_id', currentUser.id)
       .gte('appointment_date', today + 'T00:00:00')
-      .lt('appointment_date', today + 'T23:59:59')
+      .lte('appointment_date', today + 'T23:59:59')
+      .neq('status', 'cancelled')
       .order('appointment_date');
-    const el = document.getElementById('dash-appts-body');
-    if (el) {
-      if (!appts || !appts.length) {
-        el.innerHTML = '<p style="font-size:13px;color:var(--slate-l);margin:0">Nessun appuntamento oggi</p>';
+    const apptEl = document.getElementById('dash-appts-body');
+    if (apptEl) {
+      if (!appts?.length) {
+        apptEl.innerHTML = '<p style="font-size:14px;color:#64748B;margin:0">Nessun appuntamento oggi 🎉</p>';
       } else {
-        el.innerHTML = `<p style="font-size:20px;font-weight:800;color:#0F766E;margin:0 0 6px">${appts.length}</p>` +
-          appts.slice(0,3).map(a => {
-            const t = a.appointment_date ? new Date(a.appointment_date).toLocaleTimeString('it', {hour:'2-digit',minute:'2-digit'}) : '';
-            return `<div style="font-size:12px;color:var(--slate);padding:3px 0;border-top:1px solid #E2E8F0">⏰ ${t} — ${esc(a.patient_name||'Paziente')}</div>`;
-          }).join('');
+        const pids = [...new Set(appts.map(a => a.patient_id).filter(Boolean))];
+        let nameMap = {};
+        if (pids.length) {
+          const { data: profs } = await sb.from('profiles').select('id,full_name,first_name,last_name,nome,cognome').in('id', pids);
+          (profs||[]).forEach(p => { nameMap[p.id] = p.full_name || [p.first_name||p.nome,p.last_name||p.cognome].filter(Boolean).join(' ') || 'Paziente'; });
+        }
+        apptEl.innerHTML = appts.map(a => {
+          const d = new Date(a.appointment_date);
+          const hh = String(d.getHours()).padStart(2,'0');
+          const mm = String(d.getMinutes()).padStart(2,'0');
+          const pname = nameMap[a.patient_id] || 'Paziente';
+          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F5F9"><span style="font-size:13px;font-weight:700;color:#0F766E;background:#F0FDF4;padding:2px 8px;border-radius:8px">${hh}:${mm}</span><span style="font-size:13px;color:#1E293B;font-weight:500">${pname}</span></div>`;
+        }).join('');
       }
     }
-  } catch(e) {
-    const el = document.getElementById('dash-appts-body');
-    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
-  }
+  } catch(e) { const el=document.getElementById('dash-appts-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">Non disponibile</p>'; }
 
-  // --- Card 2: Messaggi non letti ---
   try {
-    const { data: myPazienti } = await sb.from('cartelle').select('patient_id').eq('user_id', currentUser.id).not('patient_id', 'is', null);
-    const patientIds = (myPazienti||[]).map(p=>p.patient_id).filter(Boolean);
-    let unreadCount = 0, unreadPatients = [];
+    const { data: links } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+    const patientIds = (links||[]).map(l => l.patient_id).filter(Boolean);
+    let unreadCount = 0;
     if (patientIds.length) {
-      const { data: msgs } = await sb.from('chat_messages')
-        .select('patient_id,sender_role,read_at')
+      const { count } = await sb.from('chat_messages')
+        .select('id', { count: 'exact', head: true })
+        .in('patient_id', patientIds)
         .eq('sender_role', 'patient')
-        .is('read_at', null)
-        .in('patient_id', patientIds);
-      if (msgs && msgs.length) {
-        unreadCount = msgs.length;
-        const byPat = {};
-        msgs.forEach(m => { byPat[m.patient_id] = (byPat[m.patient_id]||0)+1; });
-        const topPats = Object.entries(byPat).sort((a,b)=>b[1]-a[1]).slice(0,3);
-        const { data: cartPats } = await sb.from('cartelle').select('patient_id,nome,cognome').in('patient_id', topPats.map(x=>x[0]));
-        unreadPatients = topPats.map(([pid,cnt]) => {
-          const c = (cartPats||[]).find(x=>x.patient_id===pid);
-          const nome = c ? `${c.nome||''} ${c.cognome||''}`.trim() : 'Paziente';
-          return { nome, cnt };
-        });
-      }
+        .is('read_at', null);
+      unreadCount = count || 0;
     }
-    const el = document.getElementById('dash-msgs-body');
-    if (el) {
-      if (!unreadCount) {
-        el.innerHTML = '<p style="font-size:13px;color:var(--slate-l);margin:0">Nessun messaggio non letto</p>';
-      } else {
-        el.innerHTML = `<p style="font-size:20px;font-weight:800;color:#2563EB;margin:0 0 6px">${unreadCount}</p>` +
-          unreadPatients.map(p=>`<div style="font-size:12px;color:var(--slate);padding:3px 0;border-top:1px solid #E2E8F0">💬 ${esc(p.nome)} <span style="font-size:11px;color:#2563EB;font-weight:700">(${p.cnt})</span></div>`).join('');
-      }
+    const msgEl = document.getElementById('dash-msgs-body');
+    if (msgEl) {
+      msgEl.innerHTML = unreadCount === 0
+        ? '<p style="font-size:14px;color:#16A34A;margin:0">✅ Nessun messaggio in attesa</p>'
+        : `<div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:36px;font-weight:800;color:#0F766E;line-height:1">${unreadCount}</span><span style="font-size:13px;color:#64748B">messag${unreadCount===1?'io':'gi'} non ${unreadCount===1?'letto':'letti'}</span></div>`;
     }
-  } catch(e) {
-    const el = document.getElementById('dash-msgs-body');
-    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
-  }
+  } catch(e) { const el=document.getElementById('dash-msgs-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">Non disponibile</p>'; }
 
-  // --- Card 3: Pazienti inattivi ---
   try {
-    const days = parseInt(localStorage.getItem('dp_inactivity_days')||'5', 10);
-    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
-    const cutoffStr = cutoff.toISOString().split('T')[0];
-    const { data: allPaz } = await sb.from('cartelle').select('id,patient_id,nome,cognome').eq('user_id', currentUser.id).eq('archived', false).not('patient_id', 'is', null);
-    const patIds = (allPaz||[]).map(p=>p.patient_id).filter(Boolean);
-    let inactive = [];
-    if (patIds.length) {
-      const { data: recentLogs } = await sb.from('food_logs').select('user_id,date').in('user_id', patIds).gte('date', cutoffStr);
-      const activeSet = new Set((recentLogs||[]).map(l=>l.user_id));
-      inactive = (allPaz||[]).filter(p=>p.patient_id && !activeSet.has(p.patient_id)).slice(0,5);
-    }
-    const el = document.getElementById('dash-inactive-body');
-    if (el) {
-      if (!inactive.length) {
-        el.innerHTML = '<p style="font-size:13px;color:var(--slate-l);margin:0">Tutti i pazienti sono attivi ✅</p>';
-      } else {
-        el.innerHTML = `<p style="font-size:20px;font-weight:800;color:#D97706;margin:0 0 6px">${inactive.length}</p>` +
-          inactive.map(p=>{
-            const nome = `${p.nome||''} ${p.cognome||''}`.trim()||'Paziente';
-            return `<div style="font-size:12px;color:var(--slate);padding:3px 0;border-top:1px solid #E2E8F0">⚠️ ${esc(nome)}</div>`;
-          }).join('') +
-          (inactive.length>=5?`<div style="font-size:11px;color:var(--slate-l);margin-top:4px">e altri…</div>`:'');
+    const days = parseInt(localStorage.getItem('dp_inactivity_days')||'5',10);
+    const since = new Date(); since.setDate(since.getDate()-days);
+    const sinceStr = since.toISOString().split('T')[0];
+    const { data: links2 } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+    const patIds = (links2||[]).map(l => l.patient_id).filter(Boolean);
+    if (!patIds.length) {
+      const el = document.getElementById('dash-inactive-body');
+      if (el) el.innerHTML = '<p style="font-size:14px;color:#16A34A;margin:0">✅ Nessun paziente collegato</p>';
+    } else {
+      const { data: recentLogs } = await sb.from('food_logs').select('user_id').in('user_id', patIds).gte('date', sinceStr);
+      const activeIds = new Set((recentLogs||[]).map(l => l.user_id));
+      const inactiveCount = patIds.filter(id => !activeIds.has(id)).length;
+      const inactEl = document.getElementById('dash-inactive-body');
+      if (inactEl) {
+        inactEl.innerHTML = inactiveCount === 0
+          ? '<p style="font-size:14px;color:#16A34A;margin:0">✅ Tutti i pazienti attivi</p>'
+          : `<div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:36px;font-weight:800;color:#D97706;line-height:1">${inactiveCount}</span><span style="font-size:13px;color:#64748B">pazient${inactiveCount===1?'e':'i'} inattiv${inactiveCount===1?'o':'i'} (>${days}gg)</span></div>`;
       }
     }
-  } catch(e) {
-    const el = document.getElementById('dash-inactive-body');
-    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
-  }
-
-  // --- Card 4: Statistiche rapide ---
-  try {
-    const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
-    const weekStartStr = weekStart.toISOString().split('T')[0];
-    const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate()+6);
-    const weekEndStr = weekEnd.toISOString().split('T')[0];
-    const [{ count: totPaz }, { count: apptWeek }] = await Promise.all([
-      sb.from('cartelle').select('id', {count:'exact',head:true}).eq('user_id', currentUser.id).eq('archived', false),
-      sb.from('appointments').select('id', {count:'exact',head:true}).eq('dietitian_id', currentUser.id).gte('appointment_date', weekStartStr).lte('appointment_date', weekEndStr+'T23:59:59'),
-    ]);
-    const el = document.getElementById('dash-stats-body');
-    if (el) {
-      el.innerHTML = `
-        <div style="display:flex;gap:16px">
-          <div><div style="font-size:22px;font-weight:800;color:#0F766E">${totPaz||0}</div><div style="font-size:11px;color:var(--slate-l)">Pazienti attivi</div></div>
-          <div><div style="font-size:22px;font-weight:800;color:#7C3AED">${apptWeek||0}</div><div style="font-size:11px;color:var(--slate-l)">App. settimana</div></div>
-        </div>
-      `;
-    }
-  } catch(e) {
-    const el = document.getElementById('dash-stats-body');
-    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
-  }
+  } catch(e) { const el=document.getElementById('dash-inactive-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">Non disponibile</p>'; }
 }
 
 // ═══════════════════════════════════════════════════

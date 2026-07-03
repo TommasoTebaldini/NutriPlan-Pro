@@ -80,12 +80,12 @@ async function loadProfile() {
   if (_cached) {
     data = _cached;
     // Background refresh (don't block render)
-    sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled').eq('id', currentUser.id).maybeSingle().then(({ data: fresh, error }) => {
+    sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled,nome,cognome').eq('id', currentUser.id).maybeSingle().then(({ data: fresh, error }) => {
       if (!error && fresh) _writeProfileCache(currentUser.id, fresh);
     });
   } else {
     // ② No cache — fetch from DB and populate cache
-    const { data: fetched, error } = await sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled').eq('id', currentUser.id).maybeSingle();
+    const { data: fetched, error } = await sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled,nome,cognome').eq('id', currentUser.id).maybeSingle();
     if (error) { console.warn('loadProfile error:', error.message); loadProfileError = error; }
     data = fetched;
     if (data) _writeProfileCache(currentUser.id, data);

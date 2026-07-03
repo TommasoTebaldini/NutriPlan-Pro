@@ -3120,8 +3120,14 @@ function closeDashboard() {
 async function _loadDashboardData() {
   if (!currentUser) return;
   const today = new Date().toISOString().split('T')[0];
-  // Nome: usa nome+cognome dal profilo operatore (stesso schema di utils.js openProfiloModal)
-  const rawNome = [currentProfile?.nome, currentProfile?.cognome].filter(Boolean).join(' ').trim();
+  // Nome: usa nome+cognome da currentProfile (ora inclusi nella select di checkAuth)
+  // Se la cache era vecchia e non li ha, fa un fetch diretto
+  let profNome = currentProfile?.nome, profCognome = currentProfile?.cognome;
+  if (!profNome && !profCognome) {
+    const { data: freshProf } = await sb.from('profiles').select('nome,cognome').eq('id', currentUser.id).maybeSingle();
+    profNome = freshProf?.nome; profCognome = freshProf?.cognome;
+  }
+  const rawNome = [profNome, profCognome].filter(Boolean).join(' ').trim();
   const name = rawNome || currentUser?.email?.split('@')[0] || 'Dietista';
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';

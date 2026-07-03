@@ -155,31 +155,89 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 #pasti-container .tr-tot td{background:linear-gradient(90deg,var(--teal),var(--teal-l))!important;}
 #pasti-container .inp-food,#pasti-container .inp-qt{background:var(--pinp,#FFFBEB)!important;}
 #macro-bar-totale{border-color:var(--teal-l)!important;box-shadow:0 4px 20px color-mix(in srgb,var(--teal) 18%,transparent)!important;}
-@keyframes dashBdIn{from{opacity:0}to{opacity:1}}
-@keyframes dashPanelIn{from{opacity:0;transform:translateY(40px) scale(.95)}to{opacity:1;transform:none}}
-.dash-bd{position:fixed;inset:0;z-index:9000;background:rgba(6,22,33,.72);display:flex;align-items:center;justify-content:center;padding:16px;animation:dashBdIn .22s ease}
-.dash-panel{background:#fff;border-radius:24px;width:min(860px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:dashPanelIn .38s cubic-bezier(.16,1,.3,1);box-shadow:0 32px 80px rgba(0,0,0,.38)}
-.dash-hdr{background:linear-gradient(135deg,#064E3B 0%,#0F766E 55%,#0891B2 100%);padding:32px 36px 28px;position:relative;flex-shrink:0}
-.dash-hdr-txt h2{font-size:28px;font-weight:800;color:#fff;margin:0 0 6px;letter-spacing:-.5px}
-.dash-hdr-txt p{font-size:14px;color:rgba(255,255,255,.75);margin:0}
-.dash-hdr-date{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px}
-.dash-x{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);color:#fff;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s}
-.dash-x:hover{background:rgba(255,255,255,.28);transform:scale(1.08)}
-.dash-body{padding:28px 32px 28px;overflow-y:auto;display:flex;flex-direction:column;gap:20px;flex:1}
-.dash-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-@media(max-width:700px){.dash-cards-grid{grid-template-columns:1fr}}
-.dash-dc{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:18px;padding:20px 22px;transition:box-shadow .15s}
-.dash-dc:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
-.dash-dc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.dash-dc-icon{font-size:28px;line-height:1}
-.dash-dc-title{font-size:14px;font-weight:700;color:#1E293B}
-.dash-dc-body{min-height:40px}
-.dash-skel{height:16px;border-radius:8px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:skelShim 1.4s infinite;margin-bottom:10px}
-.dash-skel.w70{width:70%}.dash-skel.w50{width:50%}
-@keyframes skelShim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.dash-footer{display:flex;justify-content:flex-end;gap:12px;padding:0 0 4px}
-/* Forza il font del sito su tutti gli elementi del dashboard */
-.dash-bd,.dash-bd *{font-family:'DM Sans',system-ui,sans-serif}
+/* ── Dashboard fullscreen ── */
+@keyframes dashFsIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes dashGrad{0%,100%{background-position:0% 60%}50%{background-position:100% 40%}}
+@keyframes dashSlideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes dashSkelDark{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes dashFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.04)}}
+
+.dash-fs{
+  position:fixed;inset:0;z-index:9000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(-45deg,#012318,#053D2D,#0F766E,#0369A1,#1D4ED8,#0891B2,#064E3B);
+  background-size:400% 400%;
+  animation:dashFsIn .45s cubic-bezier(.16,1,.3,1),dashGrad 12s ease infinite;
+  overflow:hidden;
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+/* Cerchi decorativi */
+.dash-fs::before,.dash-fs::after{
+  content:'';position:absolute;border-radius:50%;
+  background:rgba(255,255,255,.04);pointer-events:none;
+}
+.dash-fs::before{width:600px;height:600px;top:-180px;left:-160px;animation:dashFloat 9s ease-in-out infinite}
+.dash-fs::after{width:400px;height:400px;bottom:-120px;right:-100px;animation:dashFloat 7s ease-in-out infinite reverse}
+
+.dash-fs-x{
+  position:absolute;top:20px;right:20px;z-index:1;
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.22);
+  color:#fff;width:44px;height:44px;border-radius:50%;
+  font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,transform .2s;font-family:inherit;
+}
+.dash-fs-x:hover{background:rgba(255,255,255,.24);transform:scale(1.12) rotate(90deg)}
+
+.dash-fs-hero{
+  text-align:center;padding:0 24px 32px;
+  animation:dashSlideUp .5s cubic-bezier(.16,1,.3,1) .12s both;
+}
+.dash-fs-hero h1{
+  font-size:clamp(30px,5vw,58px);font-weight:800;color:#fff;
+  margin:0 0 10px;letter-spacing:-1.5px;line-height:1.1;
+  text-shadow:0 4px 24px rgba(0,0,0,.25);
+}
+.dash-fs-hero p{font-size:16px;color:rgba(255,255,255,.65);margin:0;font-weight:500}
+
+.dash-fs-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;padding:0 32px;width:100%;max-width:900px;
+}
+@media(max-width:680px){.dash-fs-grid{grid-template-columns:1fr;padding:0 20px;max-height:50vh;overflow-y:auto}}
+
+.dash-fc{
+  background:rgba(255,255,255,.10);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.18);border-radius:22px;
+  padding:24px 22px;
+  opacity:0;
+  animation:dashSlideUp .48s cubic-bezier(.16,1,.3,1) both;
+  transition:transform .2s,background .2s;
+}
+.dash-fc:hover{transform:translateY(-4px);background:rgba(255,255,255,.16)}
+.dash-fc:nth-child(1){animation-delay:.28s}
+.dash-fc:nth-child(2){animation-delay:.40s}
+.dash-fc:nth-child(3){animation-delay:.52s}
+.dash-fc-icon{font-size:30px;line-height:1;margin-bottom:10px}
+.dash-fc-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.dash-fc-body{min-height:44px}
+.dash-skel-d{height:14px;border-radius:8px;margin-bottom:8px;background:linear-gradient(90deg,rgba(255,255,255,.12) 25%,rgba(255,255,255,.22) 50%,rgba(255,255,255,.12) 75%);background-size:200% 100%;animation:dashSkelDark 1.4s infinite}
+.dash-skel-d.w70{width:70%}
+
+.dash-fs-footer{
+  padding:28px 32px 0;
+  animation:dashSlideUp .48s cubic-bezier(.16,1,.3,1) .64s both;
+  opacity:0;
+}
+.dash-fs-btn{
+  padding:15px 44px;border-radius:100px;border:none;
+  background:#fff;color:#0A6E60;
+  font-size:15px;font-weight:800;letter-spacing:-.2px;font-family:inherit;
+  cursor:pointer;
+  box-shadow:0 8px 32px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.1);
+  transition:transform .18s,box-shadow .18s;
+}
+.dash-fs-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 14px 44px rgba(0,0,0,.3)}
+.dash-fs-btn:active{transform:scale(.97)}
 </style>
 </head>
 <body>
@@ -3016,48 +3074,47 @@ function showDashboardIfNeeded() {
   sessionStorage.setItem('dp_dashboard_shown', '1');
   const overlay = document.createElement('div');
   overlay.id = 'dash-overlay-el';
-  overlay.className = 'dash-bd';
+  overlay.className = 'dash-fs';
   const now = new Date();
   const dateStr = now.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   overlay.innerHTML = `
-    <div class="dash-panel" role="dialog" aria-modal="true">
-      <div class="dash-hdr">
-        <button class="dash-x" onclick="closeDashboard()" title="Chiudi">✕</button>
-        <div class="dash-hdr-txt">
-          <h2 id="dash-greeting">👋 Bentornato!</h2>
-          <p>Ecco il tuo riepilogo di oggi</p>
-          <p class="dash-hdr-date">${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}</p>
-        </div>
+    <button class="dash-fs-x" onclick="closeDashboard()" title="Chiudi">✕</button>
+    <div class="dash-fs-hero">
+      <h1 id="dash-greeting">Bentornato!</h1>
+      <p>${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}</p>
+    </div>
+    <div class="dash-fs-grid">
+      <div class="dash-fc">
+        <div class="dash-fc-icon">📅</div>
+        <div class="dash-fc-label">Appuntamenti oggi</div>
+        <div class="dash-fc-body" id="dash-appts-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div>
       </div>
-      <div class="dash-body">
-        <div class="dash-cards-grid">
-          <div class="dash-dc">
-            <div class="dash-dc-hdr"><span class="dash-dc-icon">📅</span><span class="dash-dc-title">Appuntamenti oggi</span></div>
-            <div class="dash-dc-body" id="dash-appts-body"><div class="dash-skel"></div><div class="dash-skel w70"></div></div>
-          </div>
-          <div class="dash-dc">
-            <div class="dash-dc-hdr"><span class="dash-dc-icon">💬</span><span class="dash-dc-title">Messaggi non letti</span></div>
-            <div class="dash-dc-body" id="dash-msgs-body"><div class="dash-skel"></div><div class="dash-skel w50"></div></div>
-          </div>
-          <div class="dash-dc">
-            <div class="dash-dc-hdr"><span class="dash-dc-icon">⚠️</span><span class="dash-dc-title">Pazienti inattivi</span></div>
-            <div class="dash-dc-body" id="dash-inactive-body"><div class="dash-skel"></div><div class="dash-skel w70"></div></div>
-          </div>
-        </div>
-        <div class="dash-footer">
-          <button onclick="closeDashboard()" style="padding:10px 22px;border-radius:12px;border:none;background:linear-gradient(135deg,#0F766E,#0891B2);color:#fff;font-size:14px;font-weight:700;cursor:pointer">✨ Inizia ora la tua giornata</button>
-        </div>
+      <div class="dash-fc">
+        <div class="dash-fc-icon">💬</div>
+        <div class="dash-fc-label">Messaggi non letti</div>
+        <div class="dash-fc-body" id="dash-msgs-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div>
       </div>
+      <div class="dash-fc">
+        <div class="dash-fc-icon">⚠️</div>
+        <div class="dash-fc-label">Pazienti inattivi</div>
+        <div class="dash-fc-body" id="dash-inactive-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div>
+      </div>
+    </div>
+    <div class="dash-fs-footer">
+      <button class="dash-fs-btn" onclick="closeDashboard()">✨ Inizia ora la tua giornata</button>
     </div>
   `;
   document.body.appendChild(overlay);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeDashboard(); });
   _loadDashboardData();
 }
 
 function closeDashboard() {
   const el = document.getElementById('dash-overlay-el');
-  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .2s'; setTimeout(() => el.remove(), 200); }
+  if (!el) return;
+  el.style.transition = 'opacity .3s,transform .3s';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(12px)';
+  setTimeout(() => el.remove(), 310);
 }
 
 async function _loadDashboardData() {
@@ -3082,7 +3139,7 @@ async function _loadDashboardData() {
     const apptEl = document.getElementById('dash-appts-body');
     if (apptEl) {
       if (!appts?.length) {
-        apptEl.innerHTML = '<p style="font-size:14px;color:#64748B;margin:0">Nessun appuntamento oggi 🎉</p>';
+        apptEl.innerHTML = '<p style="font-size:14px;color:rgba(255,255,255,.7);margin:0">Giornata libera 🎉</p>';
       } else {
         const pids = [...new Set(appts.map(a => a.patient_id).filter(Boolean))];
         let nameMap = {};
@@ -3090,13 +3147,14 @@ async function _loadDashboardData() {
           const { data: profs } = await sb.from('profiles').select('id,full_name,first_name,last_name,nome,cognome').in('id', pids);
           (profs||[]).forEach(p => { nameMap[p.id] = p.full_name || [p.first_name||p.nome,p.last_name||p.cognome].filter(Boolean).join(' ') || 'Paziente'; });
         }
-        apptEl.innerHTML = appts.map(a => {
-          const d = new Date(a.appointment_date);
-          const hh = String(d.getHours()).padStart(2,'0');
-          const mm = String(d.getMinutes()).padStart(2,'0');
-          const pname = nameMap[a.patient_id] || 'Paziente';
-          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F5F9"><span style="font-size:13px;font-weight:700;color:#0F766E;background:#F0FDF4;padding:2px 8px;border-radius:8px">${hh}:${mm}</span><span style="font-size:13px;color:#1E293B;font-weight:500">${pname}</span></div>`;
-        }).join('');
+        apptEl.innerHTML = `<div style="font-size:40px;font-weight:800;color:#fff;line-height:1;margin-bottom:6px">${appts.length}</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px">${appts.length===1?'appuntamento':'appuntamenti'}</div>`
+          + appts.map(a => {
+            const d = new Date(a.appointment_date);
+            const hh = String(d.getHours()).padStart(2,'0');
+            const mm = String(d.getMinutes()).padStart(2,'0');
+            const pname = nameMap[a.patient_id] || 'Paziente';
+            return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.1)"><span style="font-size:12px;font-weight:700;color:#6EE7B7;background:rgba(255,255,255,.1);padding:2px 8px;border-radius:8px;flex-shrink:0">${hh}:${mm}</span><span style="font-size:12px;color:rgba(255,255,255,.85);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pname}</span></div>`;
+          }).join('');
       }
     }
   } catch(e) { const el=document.getElementById('dash-appts-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">Non disponibile</p>'; }
@@ -3116,8 +3174,8 @@ async function _loadDashboardData() {
     const msgEl = document.getElementById('dash-msgs-body');
     if (msgEl) {
       msgEl.innerHTML = unreadCount === 0
-        ? '<p style="font-size:14px;color:#16A34A;margin:0">✅ Nessun messaggio in attesa</p>'
-        : `<div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:36px;font-weight:800;color:#0F766E;line-height:1">${unreadCount}</span><span style="font-size:13px;color:#64748B">messag${unreadCount===1?'io':'gi'} non ${unreadCount===1?'letto':'letti'}</span></div>`;
+        ? '<p style="font-size:14px;color:rgba(255,255,255,.7);margin:0">✅ Tutto letto</p>'
+        : `<div style="font-size:40px;font-weight:800;color:#fff;line-height:1;margin-bottom:6px">${unreadCount}</div><div style="font-size:12px;color:rgba(255,255,255,.6)">messag${unreadCount===1?'io':'gi'} non ${unreadCount===1?'letto':'letti'}</div>`;
     }
   } catch(e) { const el=document.getElementById('dash-msgs-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">Non disponibile</p>'; }
 
@@ -3129,7 +3187,7 @@ async function _loadDashboardData() {
     const patIds = (links2||[]).map(l => l.patient_id).filter(Boolean);
     if (!patIds.length) {
       const el = document.getElementById('dash-inactive-body');
-      if (el) el.innerHTML = '<p style="font-size:14px;color:#16A34A;margin:0">✅ Nessun paziente collegato</p>';
+      if (el) el.innerHTML = '<p style="font-size:14px;color:rgba(255,255,255,.7);margin:0">Nessun paziente collegato</p>';
     } else {
       const { data: recentLogs } = await sb.from('food_logs').select('user_id').in('user_id', patIds).gte('date', sinceStr);
       const activeIds = new Set((recentLogs||[]).map(l => l.user_id));
@@ -3137,11 +3195,11 @@ async function _loadDashboardData() {
       const inactEl = document.getElementById('dash-inactive-body');
       if (inactEl) {
         inactEl.innerHTML = inactiveCount === 0
-          ? '<p style="font-size:14px;color:#16A34A;margin:0">✅ Tutti i pazienti attivi</p>'
-          : `<div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:36px;font-weight:800;color:#D97706;line-height:1">${inactiveCount}</span><span style="font-size:13px;color:#64748B">pazient${inactiveCount===1?'e':'i'} inattiv${inactiveCount===1?'o':'i'} (>${days}gg)</span></div>`;
+          ? '<p style="font-size:14px;color:rgba(255,255,255,.7);margin:0">✅ Tutti attivi</p>'
+          : `<div style="font-size:40px;font-weight:800;color:#FCD34D;line-height:1;margin-bottom:6px">${inactiveCount}</div><div style="font-size:12px;color:rgba(255,255,255,.6)">pazient${inactiveCount===1?'e':'i'} inattiv${inactiveCount===1?'o':'i'} (>${days}gg)</div>`;
       }
     }
-  } catch(e) { const el=document.getElementById('dash-inactive-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">Non disponibile</p>'; }
+  } catch(e) { const el=document.getElementById('dash-inactive-body'); if(el) el.innerHTML='<p style="font-size:12px;color:rgba(255,255,255,.5)">Non disponibile</p>'; }
 }
 
 async function caricaPianoById(id) {

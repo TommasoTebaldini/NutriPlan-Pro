@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📋 Anamnesi Digitale — DietPlan Pro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://hvdwqowkhutfsdpiubxe.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.an-hero{background:linear-gradient(135deg,#0F766E,#0891B2);border-radius:18px;padding:22px 26px 18px;margin-bottom:22px;color:white;position:relative;overflow:hidden}
+.an-hero::before{content:'';position:absolute;right:-20px;top:-20px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.06)}
+.an-hero h1{font-size:20px;font-weight:800;margin:0 0 4px}
+.an-hero p{font-size:13px;opacity:.88;margin:0;line-height:1.5}
+.an-table{width:100%;border-collapse:collapse;font-size:13px}
+.an-table th{padding:9px 12px;text-align:left;font-size:11.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;background:#F8FAFC;border-bottom:2px solid var(--border)}
+.an-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--slate);vertical-align:middle}
+.an-table tr:hover td{background:#FAFBFC}
+.an-table tr:last-child td{border-bottom:none}
+.status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.status-badge.pending{background:#FEF3C7;color:#92400E}
+.status-badge.completed{background:#DCFCE7;color:#16A34A}
+.section-check{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1.5px solid var(--border);margin-bottom:8px;cursor:pointer;transition:border-color .15s;user-select:none}
+.section-check:hover{border-color:var(--teal)}
+.section-check.checked{border-color:var(--teal);background:#F0FDFA}
+.section-check input{accent-color:var(--teal);width:16px;height:16px;cursor:pointer;flex-shrink:0}
+.resp-block{background:#F8FAFC;border-radius:10px;padding:14px 16px;margin-bottom:12px;border-left:3px solid var(--teal)}
+.resp-block h4{font-size:13px;font-weight:700;color:#0F766E;margin:0 0 8px}
+.resp-block p{font-size:13px;color:var(--slate);margin:0;white-space:pre-wrap;line-height:1.6}
+.link-box{background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-top:14px}
+.link-box input{flex:1;background:transparent;border:none;outline:none;font-size:12.5px;color:#166534;font-family:inherit;min-width:0}
+.link-box button{background:#16A34A;color:white;border:none;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;transition:background .15s}
+.link-box button:hover{background:#15803D}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.an-row{animation:fadeInUp .25s both}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item" href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item" href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <a class="nav-item active" href="anamnesi.html"><span class="ni">📋</span>Anamnesi</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item" href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item" href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item" href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="visita.html"><span class="ni">🩺</span>Resoconto Visita</a>
+  <a class="nav-item" href="moduli.html"><span class="ni">📄</span>Moduli Stampabili</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item" href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2 id="page-title">📋 Anamnesi Digitale</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary btn-sm" onclick="openNewAnamnesi()">+ Nuova Anamnesi</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main id="main">
+<div class="page-content">
+
+  <div class="an-hero">
+    <h1>📋 Anamnesi Digitale</h1>
+    <p>Invia questionari di anamnesi ai pazienti prima della prima visita. Il paziente compila online, le risposte arrivano qui.</p>
+  </div>
+
+  <div id="an-list-wrap">
+    <div class="empty-state"><div class="ei">⏳</div><h3>Caricamento...</h3></div>
+  </div>
+
+</div>
+</main>
+
+<!-- MODAL: NUOVA ANAMNESI -->
+<div class="modal-bg" id="modal-new-an">
+  <div class="modal" style="max-width:480px">
+    <div class="mhdr"><h2>📋 Nuova Anamnesi</h2><button class="mclose" onclick="closeM('modal-new-an')">✕</button></div>
+    <div class="mbody" style="padding:18px 22px">
+      <div class="fgrid">
+        <div class="fg full">
+          <label>Nome paziente *</label>
+          <input type="text" id="an-nome" placeholder="Es. Mario Rossi" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        </div>
+        <div class="fg full">
+          <label>Email paziente</label>
+          <input type="email" id="an-email" placeholder="email@esempio.com" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <label style="font-size:12.5px;font-weight:700;color:var(--slate);display:block;margin-bottom:10px">Sezioni da includere</label>
+
+        <div class="section-check checked" data-key="storia_alimentare" onclick="toggleSection(this)">
+          <input type="checkbox" checked> <span>🍽️ Storia alimentare — abitudini, orari pasti, dieta attuale</span>
+        </div>
+        <div class="section-check checked" data-key="allergie" onclick="toggleSection(this)">
+          <input type="checkbox" checked> <span>⚠️ Allergie e intolleranze</span>
+        </div>
+        <div class="section-check checked" data-key="obiettivi" onclick="toggleSection(this)">
+          <input type="checkbox" checked> <span>🎯 Obiettivi — perdita peso, massa muscolare, salute</span>
+        </div>
+        <div class="section-check checked" data-key="anamnesi_medica" onclick="toggleSection(this)">
+          <input type="checkbox" checked> <span>🏥 Anamnesi medica — patologie, farmaci, chirurgie</span>
+        </div>
+        <div class="section-check checked" data-key="stile_vita" onclick="toggleSection(this)">
+          <input type="checkbox" checked> <span>🏃 Stile di vita — attività fisica, lavoro, stress, sonno</span>
+        </div>
+        <div class="section-check checked" data-key="motivazioni" onclick="toggleSection(this)">
+          <input type="checkbox" checked> <span>💬 Motivazioni e aspettative</span>
+        </div>
+      </div>
+
+      <div id="an-link-result" style="display:none"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-new-an')">Annulla</button>
+      <button class="btn btn-primary btn-sm" id="an-genera-btn" onclick="generaLink()">🔗 Genera Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RISPOSTE ANAMNESI -->
+<div class="modal-bg" id="modal-an-risposte">
+  <div class="modal" style="max-width:600px;max-height:90vh">
+    <div class="mhdr"><h2 id="modal-an-risposte-title">📋 Risposte Anamnesi</h2><button class="mclose" onclick="closeM('modal-an-risposte')">✕</button></div>
+    <div class="mbody" style="padding:18px 22px;max-height:70vh;overflow-y:auto" id="modal-an-risposte-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script>
+const PATIENT_APP_URL = 'https://diet-plan-pro-app-claude.vercel.app';
+
+const SECTION_LABELS = {
+  storia_alimentare: '🍽️ Storia Alimentare',
+  allergie: '⚠️ Allergie e Intolleranze',
+  obiettivi: '🎯 Obiettivi',
+  anamnesi_medica: '🏥 Anamnesi Medica',
+  stile_vita: '🏃 Stile di Vita',
+  motivazioni: '💬 Motivazioni e Aspettative',
+};
+
+async function init() {
+  await checkAuth();
+  loadAnamnesi();
+}
+
+async function loadAnamnesi() {
+  const wrap = document.getElementById('an-list-wrap');
+  const { data, error } = await sb.from('patient_intake_forms')
+    .select('*')
+    .eq('dietitian_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>Errore: ${esc(error.message)}</h3><p>Assicurati di aver eseguito il SQL in <code>supabase/anamnesi.sql</code></p></div>`;
+    return;
+  }
+
+  if (!data || !data.length) {
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">📋</div><h3>Nessuna anamnesi inviata</h3><p>Clicca su "Nuova Anamnesi" per generare un link da inviare al paziente.</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div style="background:white;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)">
+      <table class="an-table">
+        <thead><tr>
+          <th>Paziente</th>
+          <th>Email</th>
+          <th>Inviata il</th>
+          <th>Stato</th>
+          <th>Azioni</th>
+        </tr></thead>
+        <tbody id="an-tbody">
+          ${data.map((r, i) => `
+          <tr class="an-row" style="animation-delay:${Math.min(i*0.04,0.3).toFixed(2)}s">
+            <td><strong>${esc(r.patient_name||'—')}</strong></td>
+            <td style="color:var(--slate-l);font-size:12px">${esc(r.patient_email||'—')}</td>
+            <td style="font-size:12px;color:var(--slate-l)">${r.created_at ? new Date(r.created_at).toLocaleDateString('it') : '—'}</td>
+            <td><span class="status-badge ${r.status==='completed'?'completed':'pending'}">${r.status==='completed'?'✅ Completata':'⏳ In attesa'}</span></td>
+            <td>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button class="btn btn-ghost btn-xs" onclick="copyLink('${r.token}')" title="Copia link">🔗</button>
+                ${r.status==='completed'?`<button class="btn btn-ghost btn-xs" onclick="vediRisposte('${r.id}')" title="Vedi risposte">👁️</button>`:''}
+                <button class="btn btn-ghost btn-xs" onclick="eliminaAnamnesi('${r.id}')" title="Elimina" style="color:#DC2626">🗑️</button>
+              </div>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function openNewAnamnesi() {
+  document.getElementById('an-nome').value = '';
+  document.getElementById('an-email').value = '';
+  document.getElementById('an-link-result').style.display = 'none';
+  document.getElementById('an-genera-btn').style.display = '';
+  // Reset all checkboxes
+  document.querySelectorAll('.section-check').forEach(el => {
+    el.classList.add('checked');
+    const cb = el.querySelector('input');
+    if (cb) cb.checked = true;
+  });
+  openM('modal-new-an');
+}
+
+function toggleSection(el) {
+  const cb = el.querySelector('input');
+  if (!cb) return;
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+}
+
+async function generaLink() {
+  const nome = document.getElementById('an-nome').value.trim();
+  if (!nome) { toast('⚠️ Inserisci il nome del paziente', 'err'); return; }
+  const email = document.getElementById('an-email').value.trim();
+  const sections = [...document.querySelectorAll('.section-check.checked')].map(el => el.dataset.key);
+  if (!sections.length) { toast('⚠️ Seleziona almeno una sezione', 'err'); return; }
+
+  document.getElementById('an-genera-btn').disabled = true;
+  const { data, error } = await sb.from('patient_intake_forms').insert({
+    dietitian_id: currentUser.id,
+    patient_name: nome,
+    patient_email: email || null,
+    sections: sections,
+    status: 'pending',
+  }).select().single();
+
+  document.getElementById('an-genera-btn').disabled = false;
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+
+  const link = `${PATIENT_APP_URL}/anamnesi?token=${data.token}`;
+  const resultEl = document.getElementById('an-link-result');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `
+    <div style="margin-top:10px;padding:12px 14px;background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px">
+      <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:8px">✅ Link generato per ${esc(nome)}</div>
+      <div class="link-box">
+        <input type="text" id="an-link-input" value="${link}" readonly>
+        <button onclick="copyLinkFromInput()">📋 Copia</button>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:#166534;background:#DCFCE7;border-radius:8px;padding:8px 10px">
+        💡 Invia questo link al paziente via email o messaggio. Il paziente compila il questionario online, le risposte arriveranno qui automaticamente.
+      </div>
+    </div>
+  `;
+  document.getElementById('an-genera-btn').style.display = 'none';
+  loadAnamnesi();
+}
+
+function copyLinkFromInput() {
+  const input = document.getElementById('an-link-input');
+  if (!input) return;
+  navigator.clipboard.writeText(input.value).then(() => toast('📋 Link copiato!', 'ok')).catch(() => {
+    input.select(); document.execCommand('copy'); toast('📋 Link copiato!', 'ok');
+  });
+}
+
+function copyLink(token) {
+  const link = `${PATIENT_APP_URL}/anamnesi?token=${token}`;
+  navigator.clipboard.writeText(link).then(() => toast('📋 Link copiato!', 'ok')).catch(() => toast('❌ Copia manuale: ' + link, 'err'));
+}
+
+async function vediRisposte(id) {
+  const { data, error } = await sb.from('patient_intake_forms').select('*').eq('id', id).single();
+  if (error || !data) { toast('❌ Errore caricamento', 'err'); return; }
+
+  const titleEl = document.getElementById('modal-an-risposte-title');
+  const bodyEl = document.getElementById('modal-an-risposte-body');
+  if (titleEl) titleEl.textContent = `📋 Anamnesi — ${data.patient_name||'Paziente'}`;
+
+  if (!data.responses || !Object.keys(data.responses).length) {
+    bodyEl.innerHTML = '<p style="color:var(--slate-l);font-size:13px">Nessuna risposta compilata.</p>';
+  } else {
+    const sections = data.sections || Object.keys(data.responses);
+    bodyEl.innerHTML = sections.map(key => {
+      const label = SECTION_LABELS[key] || key;
+      const resp = data.responses[key];
+      if (!resp) return '';
+      return `<div class="resp-block"><h4>${label}</h4><p>${esc(typeof resp === 'string' ? resp : JSON.stringify(resp, null, 2))}</p></div>`;
+    }).join('') || '<p style="color:var(--slate-l)">Nessuna risposta.</p>';
+  }
+
+  if (data.completed_at) {
+    bodyEl.innerHTML += `<div style="margin-top:8px;font-size:12px;color:var(--slate-l)">Completata il: ${new Date(data.completed_at).toLocaleString('it')}</div>`;
+  }
+
+  openM('modal-an-risposte');
+}
+
+async function eliminaAnamnesi(id) {
+  if (!confirm('Eliminare questa anamnesi?')) return;
+  const { error } = await sb.from('patient_intake_forms').delete().eq('id', id);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  toast('🗑️ Anamnesi eliminata', 'ok');
+  loadAnamnesi();
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

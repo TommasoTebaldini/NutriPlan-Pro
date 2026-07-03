@@ -145,6 +145,7 @@
   <div class="nav-sec"><span data-only-lang="it">Comunicazione</span><span data-only-lang="en" style="display:none">Communication</span></div>
   <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span><span data-only-lang="it">Profilo</span><span data-only-lang="en" style="display:none">Profile</span></a>
   <a class="nav-item " href="chat.html"><span class="ni">👥</span><span data-only-lang="it">Pazienti</span><span data-only-lang="en" style="display:none">Patients</span></a>
+  <a class="nav-item " href="anamnesi.html"><span class="ni">📋</span><span data-only-lang="it">Anamnesi</span><span data-only-lang="en" style="display:none">Intake Forms</span></a>
   <div class="nav-sec"><span data-only-lang="it">Specialistica</span><span data-only-lang="en" style="display:none">Specialties</span></div>
   <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span><span data-only-lang="it">Paziente Sano</span><span data-only-lang="en" style="display:none">Healthy Patient</span></a>
   <a class="nav-item " href="diabete.html"><span class="ni">🩸</span><span data-only-lang="it">Gestione Diabete</span><span data-only-lang="en" style="display:none">Diabetes Management</span></a>
@@ -395,6 +396,51 @@
     </div>
   </div>
 
+  <!-- NOTIFICHE E STRUMENTI -->
+  <div class="lang-section" id="section-notifiche">
+    <h3>🔔 Notifiche e Strumenti</h3>
+    <p style="font-size:13px;color:var(--slate-l);margin-bottom:20px;margin-top:-8px">Configura le funzionalità avanzate del pannello.</p>
+
+    <!-- Toggle: Dashboard di Benvenuto -->
+    <div style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:3px">📊 Dashboard di Benvenuto</div>
+        <div style="font-size:12px;color:var(--slate-l);line-height:1.5">Visualizza un pannello riepilogativo (appuntamenti, messaggi, pazienti inattivi) all'apertura di Cartelle Pazienti.</div>
+      </div>
+      <label style="display:flex;align-items:center;cursor:pointer;flex-shrink:0">
+        <input type="checkbox" id="toggle-dashboard" style="display:none" onchange="_saveDashboardToggle(this.checked)">
+        <span id="toggle-dashboard-ui" onclick="_clickToggle('toggle-dashboard')" style="display:inline-block;width:46px;height:26px;border-radius:13px;background:#CBD5E1;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
+          <span style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)" id="toggle-dashboard-knob"></span>
+        </span>
+      </label>
+    </div>
+
+    <!-- Toggle: Alert Pazienti Inattivi -->
+    <div style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:3px">⚠️ Alert Pazienti Inattivi</div>
+        <div style="font-size:12px;color:var(--slate-l);line-height:1.5">Mostra un avviso nella lista pazienti per chi non registra pasti da più di N giorni.</div>
+      </div>
+      <label style="display:flex;align-items:center;cursor:pointer;flex-shrink:0">
+        <input type="checkbox" id="toggle-alerts" style="display:none" onchange="_saveAlertsToggle(this.checked)">
+        <span id="toggle-alerts-ui" onclick="_clickToggle('toggle-alerts')" style="display:inline-block;width:46px;height:26px;border-radius:13px;background:#CBD5E1;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
+          <span style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)" id="toggle-alerts-knob"></span>
+        </span>
+      </label>
+    </div>
+
+    <!-- Input: Soglia inattività -->
+    <div style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:3px">📅 Soglia inattività</div>
+        <div style="font-size:12px;color:var(--slate-l);line-height:1.5">Giorni senza pasti registrati prima che un paziente venga considerato inattivo.</div>
+      </div>
+      <input type="number" id="input-inactivity-days" min="1" max="30" value="5"
+        style="width:64px;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;font-weight:700;text-align:center;color:var(--slate);outline:none"
+        onchange="_saveInactivityDays(this.value)" oninput="_saveInactivityDays(this.value)">
+    </div>
+  </div>
+
 </div>
 </main>
 
@@ -440,7 +486,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     const card = document.getElementById('layout-card-' + k);
     if (card) card.classList.toggle('active', k === currentLayout);
   });
+
+  // Init notification toggles
+  _initToggle('toggle-dashboard', localStorage.getItem('dp_show_dashboard') !== 'false');
+  _initToggle('toggle-alerts', localStorage.getItem('dp_alerts_enabled') !== 'false');
+  const daysEl = document.getElementById('input-inactivity-days');
+  if (daysEl) daysEl.value = localStorage.getItem('dp_inactivity_days') || '5';
 });
+
+function _clickToggle(id) {
+  const cb = document.getElementById(id);
+  if (cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); }
+}
+
+function _initToggle(id, on) {
+  const cb = document.getElementById(id);
+  if (!cb) return;
+  cb.checked = on;
+  _renderToggleUi(id, on);
+}
+
+function _renderToggleUi(id, on) {
+  const ui = document.getElementById(id+'-ui');
+  const knob = document.getElementById(id+'-knob');
+  if (ui) ui.style.background = on ? '#0F766E' : '#CBD5E1';
+  if (knob) knob.style.left = on ? '23px' : '3px';
+}
+
+function _saveDashboardToggle(on) {
+  localStorage.setItem('dp_show_dashboard', on ? 'true' : 'false');
+  _renderToggleUi('toggle-dashboard', on);
+  if (typeof toast === 'function') toast(on ? '✅ Dashboard abilitata' : '🔕 Dashboard disabilitata', 'ok');
+}
+
+function _saveAlertsToggle(on) {
+  localStorage.setItem('dp_alerts_enabled', on ? 'true' : 'false');
+  _renderToggleUi('toggle-alerts', on);
+  if (typeof toast === 'function') toast(on ? '✅ Alert abilitati' : '🔕 Alert silenziati', 'ok');
+}
+
+function _saveInactivityDays(val) {
+  const n = Math.max(1, Math.min(30, parseInt(val)||5));
+  localStorage.setItem('dp_inactivity_days', String(n));
+}
 </script>
 </body>
 </html>

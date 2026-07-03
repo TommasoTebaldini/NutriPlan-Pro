@@ -26,6 +26,31 @@ async function ensureChartJs() {
 <style>
 @keyframes cardFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .paz-card{animation:cardFadeUp .3s cubic-bezier(.16,1,.3,1) both}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes dashFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes dashSlideUp{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.dash-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;animation:dashFadeIn .25s ease;padding:16px}
+.dash-panel{background:#fff;border-radius:20px;width:100%;max-width:700px;max-height:88vh;overflow-y:auto;animation:dashSlideUp .35s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
+.dash-header{background:linear-gradient(135deg,#0F766E,#0891B2);border-radius:20px 20px 0 0;padding:22px 24px 18px;color:white;position:relative}
+.dash-header h2{font-size:20px;font-weight:800;margin:0 0 4px}
+.dash-header p{font-size:13px;opacity:.88;margin:0}
+.dash-close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.dash-close:hover{background:rgba(255,255,255,.35)}
+.dash-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.dash-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:540px){.dash-cards{grid-template-columns:1fr}}
+.dash-card{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px 16px}
+.dash-card-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.dash-card-hdr .dc-icon{font-size:22px;line-height:1}
+.dash-card-hdr .dc-title{font-size:13px;font-weight:700;color:var(--slate)}
+.skel-line{height:14px;border-radius:6px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;margin-bottom:8px}
+.skel-line.w70{width:70%}
+.skel-line.w50{width:50%}
+.inactive-banner{background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:12px;padding:12px 16px;margin-bottom:12px;cursor:pointer;transition:background .15s}
+.inactive-banner:hover{background:#FEF9C3}
+.inactive-banner-hdr{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;color:#92400E}
+.inactive-banner-list{display:none;margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.inactive-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:700;background:#FDE68A;color:#92400E;margin-left:4px}
 .paz-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 8px 24px rgba(0,0,0,.09);transition:transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s}
 .paz-card:active{transform:scale(0.97);transition:transform .08s}
 .paz-tag-chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;margin:2px 2px 0 0;white-space:nowrap}
@@ -75,6 +100,7 @@ async function ensureChartJs() {
   <div class="nav-sec"><span data-only-lang="it">Comunicazione</span><span data-only-lang="en" style="display:none">Communication</span></div>
   <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span><span data-only-lang="it">Profilo</span><span data-only-lang="en" style="display:none">Profile</span></a>
   <a class="nav-item " href="chat.html"><span class="ni">👥</span><span data-only-lang="it">Pazienti</span><span data-only-lang="en" style="display:none">Patients</span></a>
+  <a class="nav-item " href="anamnesi.html"><span class="ni">📋</span><span data-only-lang="it">Anamnesi</span><span data-only-lang="en" style="display:none">Intake Forms</span></a>
   <div class="nav-sec"><span data-only-lang="it">Specialistica</span><span data-only-lang="en" style="display:none">Clinical</span></div>
     <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span><span data-only-lang="it">Paziente Sano</span><span data-only-lang="en" style="display:none">Healthy Patient</span></a>
 <a class="nav-item " href="diabete.html"><span class="ni">🩸</span><span data-only-lang="it">Gestione Diabete</span><span data-only-lang="en" style="display:none">Diabetes Management</span></a>
@@ -153,6 +179,7 @@ async function ensureChartJs() {
   <button id="paz-filter-archivio-btn" class="btn btn-ghost btn-sm" onclick="toggleMostraArchiviati()" style="white-space:nowrap">📦 <span data-only-lang="it">Mostra archiviati</span><span data-only-lang="en" style="display:none">Show archived</span></button>
   <button class="btn btn-ghost btn-sm" onclick="resetFiltri()" data-i18n-tooltip="paz.reset_filters">✕</button>
 </div>
+<div id="inactive-alert-wrap" style="display:none;padding:0 0 0 0"></div>
 <div class="page-content" id="main-content">
   <div class="empty-state"><div class="ei">⏳</div><h3><span data-only-lang="it">Caricamento...</span><span data-only-lang="en">Loading...</span></h3></div>
 </div>
@@ -608,6 +635,7 @@ async function init() {
   });
 
   loadCartelle();
+  showDashboardIfNeeded();
 }
 
 // ═══════════════════════════════════════════════════
@@ -706,6 +734,7 @@ async function loadCartelle() {
   }
 
   renderCartelleGrid(data);
+  checkInactivePatients(data);
 }
 
 function applyFiltri() {
@@ -864,11 +893,12 @@ function renderCartelleGrid(data) {
     const tagsHtml = renderTagChips(c.tags);
     const archivedStyle = c.archived ? 'opacity:0.6;' : '';
     const archivedBadge = c.archived ? `<span class="archived-badge">${_L('Archiviato','Archived')}</span>` : '';
+    const inactiveBadge = (localStorage.getItem('dp_alerts_enabled')!=='false' && window._inactivePatientIds && window._inactivePatientIds.has(c.id)) ? `<span class="inactive-badge">⚠️ Inattivo</span>` : '';
     return `<div class="paz-card" onclick="apriCartella('${c.id}')" style="${archivedStyle}animation-delay:${delay}s;position:relative">
       <input type="checkbox" class="bulk-check" data-id="${c.id}" onclick="event.stopPropagation();aggiornaBulkBar()" style="position:absolute;top:10px;right:10px;width:16px;height:16px;cursor:pointer;accent-color:var(--teal)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <span style="font-size:24px">📁</span>
-        <div><h4>${esc(c.nome)}${archivedBadge}</h4><div class="paz-meta">${eta !== null ? eta + ' ' + _L('anni','y.o.') + ' · ' : ''}${c.sesso || ''}</div></div>
+        <div><h4>${esc(c.nome)}${archivedBadge}${inactiveBadge}</h4><div class="paz-meta">${eta !== null ? eta + ' ' + _L('anni','y.o.') + ' · ' : ''}${c.sesso || ''}</div></div>
       </div>
       ${noteDisplay}
       ${tagsHtml}
@@ -2859,6 +2889,236 @@ async function importaCSV() {
   toast(ok + ' ' + _L('cartelle create','folders created') + (err ? ', ' + err + ' ' + _L('errori','errors') : ''), ok > 0 ? 'ok' : 'err');
   _csvParsed = [];
   loadCartelle();
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD DI ATTERRAGGIO
+// ═══════════════════════════════════════════════════
+function showDashboardIfNeeded() {
+  if (localStorage.getItem('dp_show_dashboard') === 'false') return;
+  // Create overlay dynamically
+  const overlay = document.createElement('div');
+  overlay.id = 'dash-overlay-el';
+  overlay.className = 'dash-overlay';
+  overlay.innerHTML = `
+    <div class="dash-panel" role="dialog" aria-modal="true">
+      <div class="dash-header">
+        <button class="dash-close" onclick="closeDashboard()" title="Chiudi">✕</button>
+        <h2 id="dash-greeting">👋 Bentornato!</h2>
+        <p>Ecco il tuo riepilogo di oggi</p>
+      </div>
+      <div class="dash-body">
+        <div class="dash-cards">
+          <div class="dash-card" id="dash-card-appts">
+            <div class="dash-card-hdr"><span class="dc-icon">📅</span><span class="dc-title">Appuntamenti oggi</span></div>
+            <div id="dash-appts-body"><div class="skel-line"></div><div class="skel-line w70"></div></div>
+          </div>
+          <div class="dash-card" id="dash-card-msgs">
+            <div class="dash-card-hdr"><span class="dc-icon">🔔</span><span class="dc-title">Messaggi non letti</span></div>
+            <div id="dash-msgs-body"><div class="skel-line"></div><div class="skel-line w50"></div></div>
+          </div>
+          <div class="dash-card" id="dash-card-inactive">
+            <div class="dash-card-hdr"><span class="dc-icon">⚠️</span><span class="dc-title">Pazienti inattivi</span></div>
+            <div id="dash-inactive-body"><div class="skel-line"></div><div class="skel-line w70"></div></div>
+          </div>
+          <div class="dash-card" id="dash-card-stats">
+            <div class="dash-card-hdr"><span class="dc-icon">📊</span><span class="dc-title">Statistiche rapide</span></div>
+            <div id="dash-stats-body"><div class="skel-line"></div><div class="skel-line w50"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+          <button class="btn btn-ghost btn-sm" onclick="closeDashboard()">✕ Chiudi</button>
+          <button class="btn btn-primary btn-sm" onclick="closeDashboard()">📁 Vai alle cartelle</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeDashboard(); });
+  _loadDashboardData();
+}
+
+function closeDashboard() {
+  const el = document.getElementById('dash-overlay-el');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .2s'; setTimeout(() => el.remove(), 200); }
+}
+
+async function _loadDashboardData() {
+  if (!currentUser) return;
+  const today = new Date().toISOString().split('T')[0];
+
+  // Greet with name
+  const name = currentProfile?.full_name || currentProfile?.nome || currentUser.email?.split('@')[0] || 'Dottore';
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  const greetEl = document.getElementById('dash-greeting');
+  if (greetEl) greetEl.textContent = `👋 ${greet}, ${name}!`;
+
+  // --- Card 1: Appuntamenti oggi ---
+  try {
+    const { data: appts } = await sb.from('appointments')
+      .select('id,appointment_date,patient_name,notes')
+      .eq('dietitian_id', currentUser.id)
+      .gte('appointment_date', today + 'T00:00:00')
+      .lt('appointment_date', today + 'T23:59:59')
+      .order('appointment_date');
+    const el = document.getElementById('dash-appts-body');
+    if (el) {
+      if (!appts || !appts.length) {
+        el.innerHTML = '<p style="font-size:13px;color:var(--slate-l);margin:0">Nessun appuntamento oggi</p>';
+      } else {
+        el.innerHTML = `<p style="font-size:20px;font-weight:800;color:#0F766E;margin:0 0 6px">${appts.length}</p>` +
+          appts.slice(0,3).map(a => {
+            const t = a.appointment_date ? new Date(a.appointment_date).toLocaleTimeString('it', {hour:'2-digit',minute:'2-digit'}) : '';
+            return `<div style="font-size:12px;color:var(--slate);padding:3px 0;border-top:1px solid #E2E8F0">⏰ ${t} — ${esc(a.patient_name||'Paziente')}</div>`;
+          }).join('');
+      }
+    }
+  } catch(e) {
+    const el = document.getElementById('dash-appts-body');
+    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
+  }
+
+  // --- Card 2: Messaggi non letti ---
+  try {
+    const { data: myPazienti } = await sb.from('cartelle').select('patient_id').eq('user_id', currentUser.id).not('patient_id', 'is', null);
+    const patientIds = (myPazienti||[]).map(p=>p.patient_id).filter(Boolean);
+    let unreadCount = 0, unreadPatients = [];
+    if (patientIds.length) {
+      const { data: msgs } = await sb.from('chat_messages')
+        .select('patient_id,sender_role,read_at')
+        .eq('sender_role', 'patient')
+        .is('read_at', null)
+        .in('patient_id', patientIds);
+      if (msgs && msgs.length) {
+        unreadCount = msgs.length;
+        const byPat = {};
+        msgs.forEach(m => { byPat[m.patient_id] = (byPat[m.patient_id]||0)+1; });
+        const topPats = Object.entries(byPat).sort((a,b)=>b[1]-a[1]).slice(0,3);
+        const { data: cartPats } = await sb.from('cartelle').select('patient_id,nome,cognome').in('patient_id', topPats.map(x=>x[0]));
+        unreadPatients = topPats.map(([pid,cnt]) => {
+          const c = (cartPats||[]).find(x=>x.patient_id===pid);
+          const nome = c ? `${c.nome||''} ${c.cognome||''}`.trim() : 'Paziente';
+          return { nome, cnt };
+        });
+      }
+    }
+    const el = document.getElementById('dash-msgs-body');
+    if (el) {
+      if (!unreadCount) {
+        el.innerHTML = '<p style="font-size:13px;color:var(--slate-l);margin:0">Nessun messaggio non letto</p>';
+      } else {
+        el.innerHTML = `<p style="font-size:20px;font-weight:800;color:#2563EB;margin:0 0 6px">${unreadCount}</p>` +
+          unreadPatients.map(p=>`<div style="font-size:12px;color:var(--slate);padding:3px 0;border-top:1px solid #E2E8F0">💬 ${esc(p.nome)} <span style="font-size:11px;color:#2563EB;font-weight:700">(${p.cnt})</span></div>`).join('');
+      }
+    }
+  } catch(e) {
+    const el = document.getElementById('dash-msgs-body');
+    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
+  }
+
+  // --- Card 3: Pazienti inattivi ---
+  try {
+    const days = parseInt(localStorage.getItem('dp_inactivity_days')||'5', 10);
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+    const cutoffStr = cutoff.toISOString().split('T')[0];
+    const { data: allPaz } = await sb.from('cartelle').select('id,patient_id,nome,cognome').eq('user_id', currentUser.id).eq('archived', false).not('patient_id', 'is', null);
+    const patIds = (allPaz||[]).map(p=>p.patient_id).filter(Boolean);
+    let inactive = [];
+    if (patIds.length) {
+      const { data: recentLogs } = await sb.from('food_logs').select('user_id,date').in('user_id', patIds).gte('date', cutoffStr);
+      const activeSet = new Set((recentLogs||[]).map(l=>l.user_id));
+      inactive = (allPaz||[]).filter(p=>p.patient_id && !activeSet.has(p.patient_id)).slice(0,5);
+    }
+    const el = document.getElementById('dash-inactive-body');
+    if (el) {
+      if (!inactive.length) {
+        el.innerHTML = '<p style="font-size:13px;color:var(--slate-l);margin:0">Tutti i pazienti sono attivi ✅</p>';
+      } else {
+        el.innerHTML = `<p style="font-size:20px;font-weight:800;color:#D97706;margin:0 0 6px">${inactive.length}</p>` +
+          inactive.map(p=>{
+            const nome = `${p.nome||''} ${p.cognome||''}`.trim()||'Paziente';
+            return `<div style="font-size:12px;color:var(--slate);padding:3px 0;border-top:1px solid #E2E8F0">⚠️ ${esc(nome)}</div>`;
+          }).join('') +
+          (inactive.length>=5?`<div style="font-size:11px;color:var(--slate-l);margin-top:4px">e altri…</div>`:'');
+      }
+    }
+  } catch(e) {
+    const el = document.getElementById('dash-inactive-body');
+    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
+  }
+
+  // --- Card 4: Statistiche rapide ---
+  try {
+    const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+    const weekStartStr = weekStart.toISOString().split('T')[0];
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate()+6);
+    const weekEndStr = weekEnd.toISOString().split('T')[0];
+    const [{ count: totPaz }, { count: apptWeek }] = await Promise.all([
+      sb.from('cartelle').select('id', {count:'exact',head:true}).eq('user_id', currentUser.id).eq('archived', false),
+      sb.from('appointments').select('id', {count:'exact',head:true}).eq('dietitian_id', currentUser.id).gte('appointment_date', weekStartStr).lte('appointment_date', weekEndStr+'T23:59:59'),
+    ]);
+    const el = document.getElementById('dash-stats-body');
+    if (el) {
+      el.innerHTML = `
+        <div style="display:flex;gap:16px">
+          <div><div style="font-size:22px;font-weight:800;color:#0F766E">${totPaz||0}</div><div style="font-size:11px;color:var(--slate-l)">Pazienti attivi</div></div>
+          <div><div style="font-size:22px;font-weight:800;color:#7C3AED">${apptWeek||0}</div><div style="font-size:11px;color:var(--slate-l)">App. settimana</div></div>
+        </div>
+      `;
+    }
+  } catch(e) {
+    const el = document.getElementById('dash-stats-body');
+    if (el) el.innerHTML = '<p style="font-size:12px;color:var(--slate-l);margin:0">Non disponibile</p>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ALERT PAZIENTI INATTIVI (banner nella lista)
+// ═══════════════════════════════════════════════════
+async function checkInactivePatients(data) {
+  const wrap = document.getElementById('inactive-alert-wrap');
+  if (!wrap) return;
+  if (localStorage.getItem('dp_alerts_enabled') === 'false') { wrap.style.display='none'; return; }
+  const days = parseInt(localStorage.getItem('dp_inactivity_days')||'5', 10);
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+
+  const withPatient = (data||[]).filter(c=>c.patient_id && !c.archived && c.id !== _altroCartellaId);
+  if (!withPatient.length) { wrap.style.display='none'; return; }
+  const patIds = withPatient.map(c=>c.patient_id);
+  try {
+    const { data: recentLogs } = await sb.from('food_logs').select('user_id').in('user_id', patIds).gte('date', cutoffStr);
+    const activeSet = new Set((recentLogs||[]).map(l=>l.user_id));
+    const inactive = withPatient.filter(c=>!activeSet.has(c.patient_id));
+    if (!inactive.length) { wrap.style.display='none'; return; }
+
+    // Store inactive IDs globally for badge rendering
+    window._inactivePatientIds = new Set(inactive.map(c=>c.id));
+
+    let listHtml = inactive.map(c=>{
+      const nome = `${c.nome||''} ${c.cognome||''}`.trim()||'Paziente';
+      return `<div style="font-size:12.5px;color:#92400E;cursor:pointer;padding:3px 0" onclick="apriCartella('${c.id}')">${esc(nome)}</div>`;
+    }).join('');
+
+    wrap.style.display='block';
+    wrap.innerHTML = `<div class="inactive-banner" id="inactive-banner-inner">
+      <div class="inactive-banner-hdr" onclick="toggleInactiveBanner()">
+        <span>⚠️ ${inactive.length} pazient${inactive.length===1?'e':'i'} non registra${inactive.length===1?'':'no'} pasti da più di ${days} giorni</span>
+        <span id="inactive-toggle-arrow" style="margin-left:auto;font-size:11px;color:#B45309">▼</span>
+      </div>
+      <div id="inactive-list-inner" style="display:none;margin-top:8px">${listHtml}</div>
+    </div>`;
+
+    // Re-render grid to add badges
+    renderCartelleGrid(allCartelleData);
+  } catch(e) { wrap.style.display='none'; }
+}
+
+function toggleInactiveBanner() {
+  const inner = document.getElementById('inactive-list-inner');
+  const arrow = document.getElementById('inactive-toggle-arrow');
+  if (inner) { const open = inner.style.display!=='none'; inner.style.display=open?'none':'block'; if(arrow) arrow.textContent=open?'▼':'▲'; }
 }
 </script>
 </body>

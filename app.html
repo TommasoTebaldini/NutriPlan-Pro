@@ -241,12 +241,20 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 </style>
 </head>
 <body>
+<!--
+  page-load-block: elemento statico che copre subito il viewport con lo stesso
+  colore di sfondo del dashboard. Il browser lo rende nel primo paint, prima
+  di qualsiasi altro contenuto. L'inline script lo rimuove se il dashboard non
+  serve; closeDashboard() lo rimuove quando l'utente chiude il dashboard.
+-->
+<div id="page-load-block" style="position:fixed;inset:0;z-index:8998;background:#012318;pointer-events:none"></div>
 <script>
-/* Dashboard early-inject: gira in modo sincrono appena il body esiste,
-   prima che il browser renda visibile qualsiasi altro contenuto. */
 (function(){
-  if (localStorage.getItem('dp_show_dashboard') === 'false') return;
-  if (sessionStorage.getItem('dp_dashboard_shown')) return;
+  var blocker = document.getElementById('page-load-block');
+  if (localStorage.getItem('dp_show_dashboard') === 'false' || sessionStorage.getItem('dp_dashboard_shown')) {
+    if (blocker) blocker.remove(); // nessun dashboard → scopri subito la pagina
+    return;
+  }
   sessionStorage.setItem('dp_dashboard_shown', '1');
   var now = new Date();
   var dateStr = now.toLocaleDateString('it-IT', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -3145,6 +3153,8 @@ function showDashboardIfNeeded() {
 
 function closeDashboard() {
   const el = document.getElementById('dash-overlay-el');
+  const blocker = document.getElementById('page-load-block');
+  if (blocker) blocker.remove();
   if (!el) return;
   el.style.transition = 'opacity .3s,transform .3s';
   el.style.opacity = '0';

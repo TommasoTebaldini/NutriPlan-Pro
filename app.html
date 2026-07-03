@@ -3124,7 +3124,7 @@ async function _loadDashboardData() {
   const rawNome = [currentProfile?.nome, currentProfile?.cognome].filter(Boolean).join(' ').trim();
   const name = rawNome || currentUser?.email?.split('@')[0] || 'Dietista';
   const hour = new Date().getHours();
-  const greet = hour < 6 ? 'Buonanotte' : hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  const greet = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
   const el = document.getElementById('dash-greeting');
   if (el) el.textContent = `${greet}, ${name}!`;
 

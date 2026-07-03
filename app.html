@@ -178,6 +178,8 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 .dash-skel.w70{width:70%}.dash-skel.w50{width:50%}
 @keyframes skelShim{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .dash-footer{display:flex;justify-content:flex-end;gap:12px;padding:0 0 4px}
+/* Forza il font del sito su tutti gli elementi del dashboard */
+.dash-bd,.dash-bd *{font-family:'DM Sans',system-ui,sans-serif}
 </style>
 </head>
 <body>
@@ -3009,6 +3011,9 @@ async function init() {
 
 function showDashboardIfNeeded() {
   if (localStorage.getItem('dp_show_dashboard') === 'false') return;
+  // Mostra solo una volta per sessione browser (si resetta alla chiusura del tab/browser)
+  if (sessionStorage.getItem('dp_dashboard_shown')) return;
+  sessionStorage.setItem('dp_dashboard_shown', '1');
   const overlay = document.createElement('div');
   overlay.id = 'dash-overlay-el';
   overlay.className = 'dash-bd';
@@ -3040,8 +3045,7 @@ function showDashboardIfNeeded() {
           </div>
         </div>
         <div class="dash-footer">
-          <button onclick="closeDashboard()" style="padding:10px 20px;border-radius:12px;border:1.5px solid #E2E8F0;background:#fff;color:#64748B;font:600 14px/1 inherit;cursor:pointer">✕ Chiudi</button>
-          <button onclick="closeDashboard();window.location.href='pazienti.html'" style="padding:10px 22px;border-radius:12px;border:none;background:linear-gradient(135deg,#0F766E,#0891B2);color:#fff;font:700 14px/1 inherit;cursor:pointer">📁 Vai alle cartelle →</button>
+          <button onclick="closeDashboard()" style="padding:10px 22px;border-radius:12px;border:none;background:linear-gradient(135deg,#0F766E,#0891B2);color:#fff;font-size:14px;font-weight:700;cursor:pointer">✨ Inizia ora la tua giornata</button>
         </div>
       </div>
     </div>
@@ -3059,13 +3063,13 @@ function closeDashboard() {
 async function _loadDashboardData() {
   if (!currentUser) return;
   const today = new Date().toISOString().split('T')[0];
-  const name = currentProfile?.full_name || currentProfile?.nome || currentProfile?.first_name
-    || (currentProfile?.cognome ? currentProfile.cognome : null)
-    || 'Dottore';
+  // Nome: usa nome+cognome dal profilo operatore (stesso schema di utils.js openProfiloModal)
+  const rawNome = [currentProfile?.nome, currentProfile?.cognome].filter(Boolean).join(' ').trim();
+  const name = rawNome || currentUser?.email?.split('@')[0] || 'Dietista';
   const hour = new Date().getHours();
   const greet = hour < 6 ? 'Buonanotte' : hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
   const el = document.getElementById('dash-greeting');
-  if (el) el.textContent = `👋 ${greet}, ${name}!`;
+  if (el) el.textContent = `${greet}, ${name}!`;
 
   try {
     const { data: appts } = await sb.from('appointments')

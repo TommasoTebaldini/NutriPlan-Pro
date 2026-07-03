@@ -241,6 +241,35 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 </style>
 </head>
 <body>
+<script>
+/* Dashboard early-inject: gira in modo sincrono appena il body esiste,
+   prima che il browser renda visibile qualsiasi altro contenuto. */
+(function(){
+  if (localStorage.getItem('dp_show_dashboard') === 'false') return;
+  if (sessionStorage.getItem('dp_dashboard_shown')) return;
+  sessionStorage.setItem('dp_dashboard_shown', '1');
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('it-IT', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+  var el = document.createElement('div');
+  el.id = 'dash-overlay-el';
+  el.className = 'dash-fs';
+  el.innerHTML =
+    '<button class="dash-fs-x" onclick="closeDashboard()" title="Chiudi">✕</button>' +
+    '<div class="dash-fs-hero">' +
+      '<h1 id="dash-greeting">…</h1>' +
+      '<p>' + dateStr + '</p>' +
+    '</div>' +
+    '<div class="dash-fs-grid">' +
+      '<div class="dash-fc"><div class="dash-fc-icon">📅</div><div class="dash-fc-label">Appuntamenti oggi</div><div class="dash-fc-body" id="dash-appts-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div></div>' +
+      '<div class="dash-fc"><div class="dash-fc-icon">💬</div><div class="dash-fc-label">Messaggi non letti</div><div class="dash-fc-body" id="dash-msgs-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div></div>' +
+      '<div class="dash-fc"><div class="dash-fc-icon">⚠️</div><div class="dash-fc-label">Pazienti inattivi</div><div class="dash-fc-body" id="dash-inactive-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div></div>' +
+    '</div>' +
+    '<div class="dash-fs-footer"><button class="dash-fs-btn" onclick="closeDashboard()">✨ Inizia ora la tua giornata</button></div>';
+  document.body.appendChild(el);
+  window._dashShowedEarly = true;
+})();
+</script>
 
 <!-- SIDEBAR -->
 <nav id="sidebar">
@@ -3069,7 +3098,13 @@ async function init() {
 
 function showDashboardIfNeeded() {
   if (localStorage.getItem('dp_show_dashboard') === 'false') return;
-  // Mostra solo una volta per sessione browser (si resetta alla chiusura del tab/browser)
+  // Caso 1: overlay già iniettato dall'inline script — carica solo i dati
+  if (window._dashShowedEarly) {
+    window._dashShowedEarly = false;
+    _loadDashboardData();
+    return;
+  }
+  // Caso 2: già mostrato questa sessione (navigazione interna)
   if (sessionStorage.getItem('dp_dashboard_shown')) return;
   sessionStorage.setItem('dp_dashboard_shown', '1');
   const overlay = document.createElement('div');

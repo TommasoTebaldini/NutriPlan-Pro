@@ -746,27 +746,16 @@ async function loadAndamento() {
   // Ciclo mestruale: avviato subito in parallelo con le altre query
   const cycleQ = selectedPatientId ? safeQ(sb.from('menstrual_cycle').select('start_date,end_date,cycle_length,symptoms,notes').eq('user_id', selectedPatientId).order('start_date',{ascending:false}).limit(12)) : Promise.resolve([]);
 
-  // Wellness: query con fallback su colonne (stress_level/hydration_level potrebbero non esistere)
-  // e su filtro (user_id → cartella_id)
-  const WELL_FULL = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,stress_level,hydration_level,symptoms,notes';
+  // Wellness: query per user_id con fallback su cartella_id
   const WELL_BASE = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,symptoms,notes';
   let wellQ;
   if (selectedPatientId) {
-    let wRes = [], wErr = null;
-    // Try full columns by user_id
-    const r1 = await sb.from('daily_wellness').select(WELL_FULL).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
-    if (r1.error) {
-      wErr = r1.error;
-      // Column missing: retry with base columns
-      const r2 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
-      wRes = r2.data || [];
-    } else {
-      wRes = r1.data || [];
-    }
-    // Still nothing: try cartella_id fallback
+    let wRes = [];
+    const r1 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+    wRes = r1.data || [];
     if (!wRes.length && selectedPatientCartellaId) {
-      const r3 = await sb.from('daily_wellness').select(WELL_BASE).eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300);
-      wRes = r3.data || [];
+      const r2 = await sb.from('daily_wellness').select(WELL_BASE).eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300);
+      wRes = r2.data || [];
     }
     wellQ = Promise.resolve(wRes);
   } else {

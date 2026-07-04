@@ -277,6 +277,28 @@
         </div>
       </div>
 
+      <!-- Invite link -->
+      <div class="form-section" style="margin-bottom:16px">
+        <h3>🔗 <span data-only-lang="it">Link invito pazienti</span><span data-only-lang="en">Patient invite link</span></h3>
+        <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px"><span data-only-lang="it">Condividi questo link con i tuoi pazienti. Quando si registrano tramite il tuo link, l'account viene collegato automaticamente alla tua lista pazienti.</span><span data-only-lang="en">Share this link with your patients. When they register via your link their account is automatically linked to your patient list.</span></p>
+        <div id="invite-link-wrap" style="display:none">
+          <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+            <input type="text" id="invite-link-input" readonly style="flex:1;padding:9px 12px;border:1.5px solid var(--teal-l);border-radius:8px;font-size:12px;background:#F0FDFA;color:var(--teal-d);font-family:monospace;outline:none">
+            <button onclick="copyInviteLink()" style="padding:9px 14px;border:none;background:var(--teal);color:white;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap" title="Copia link">📋 Copia</button>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+            <div style="background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:8px">
+              <img id="invite-qr" src="" alt="QR Code" style="width:130px;height:130px;display:block;border-radius:6px">
+            </div>
+            <div style="flex:1;min-width:150px">
+              <p style="font-size:12px;color:var(--slate-m);margin-bottom:8px;line-height:1.5"><span data-only-lang="it">📱 I pazienti possono scansionare il QR con il telefono per accedere direttamente alla registrazione.</span><span data-only-lang="en">📱 Patients can scan the QR code with their phone to go directly to registration.</span></p>
+              <button onclick="downloadInviteQR()" style="padding:7px 12px;border:1.5px solid var(--border-d);background:white;color:var(--slate);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">⬇️ Scarica QR</button>
+            </div>
+          </div>
+        </div>
+        <div id="invite-link-loading" style="color:var(--slate-l);font-size:12px;font-style:italic">Caricamento...</div>
+      </div>
+
       <!-- Error -->
       <div id="form-error" style="display:none;background:#FEE2E2;border:1px solid #FECACA;border-radius:10px;padding:10px 14px;color:#DC2626;font-size:13px;margin-bottom:12px"></div>
 
@@ -665,7 +687,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   hideLoading();
+  setupInviteLink();
 });
+
+const PATIENT_APP_URL_PP = 'https://diet-plan-pro-app-claude.vercel.app';
+
+function setupInviteLink() {
+  if (!currentUser) return;
+  const link = `${PATIENT_APP_URL_PP}/register?ref=${currentUser.id}`;
+  const linkInput = document.getElementById('invite-link-input');
+  const qrImg = document.getElementById('invite-qr');
+  const wrap = document.getElementById('invite-link-wrap');
+  const loading = document.getElementById('invite-link-loading');
+  if (linkInput) linkInput.value = link;
+  if (qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(link)}&bgcolor=ffffff&color=0F766E`;
+  if (wrap) wrap.style.display = 'block';
+  if (loading) loading.style.display = 'none';
+}
+
+function copyInviteLink() {
+  const input = document.getElementById('invite-link-input');
+  if (!input) return;
+  navigator.clipboard.writeText(input.value).then(() => {
+    toast('✅ Link copiato negli appunti!', 'ok');
+  }).catch(() => {
+    input.select(); document.execCommand('copy');
+    toast('✅ Link copiato!', 'ok');
+  });
+}
+
+function downloadInviteQR() {
+  const img = document.getElementById('invite-qr');
+  if (!img || !img.src) return;
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = 'invito-pazienti-qr.png';
+  a.target = '_blank';
+  a.click();
+}
 </script>
 </body>
 </html>

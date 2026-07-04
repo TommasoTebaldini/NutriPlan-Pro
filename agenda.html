@@ -249,6 +249,20 @@
       </div>
       <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Note</span><span data-only-lang="en">Notes</span></label>
         <textarea id="ev-note" rows="2" placeholder="Note appuntamento..."></textarea></div>
+      <div class="nf" style="margin-bottom:12px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="ev-video-toggle" onchange="toggleVideoSection('ev')" style="width:15px;height:15px;cursor:pointer">
+          <span style="font-size:12.5px;font-weight:600;color:var(--slate-m)">📹 <span data-only-lang="it">Videoconsulto</span><span data-only-lang="en">Video consultation</span></span>
+        </label>
+        <div id="ev-video-section" style="display:none;margin-top:8px;padding:10px;background:#F0F9FF;border-radius:8px;border:1px solid #BAE6FD">
+          <div style="display:flex;gap:6px;margin-bottom:8px">
+            <button type="button" onclick="genJitsiLink('ev')" style="flex:1;padding:7px 10px;border:none;background:#0EA5E9;color:white;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">⚡ Jitsi (auto)</button>
+            <button type="button" onclick="genMeetLink('ev')" style="flex:1;padding:7px 10px;border:none;background:#10B981;color:white;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">🟢 Google Meet</button>
+          </div>
+          <input type="url" id="ev-video-url" placeholder="https://meet.jit.si/..." style="width:100%;padding:7px 10px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none">
+          <p style="font-size:11px;color:#0369A1;margin-top:5px">Il link sarà visibile nei dettagli dell'appuntamento.</p>
+        </div>
+      </div>
       <button class="btn btn-primary btn-sm" style="width:100%" onclick="saveEvent()">💾 <span data-only-lang="it">Salva Appuntamento</span><span data-only-lang="en">Save Appointment</span></button>
     </div>
 
@@ -303,6 +317,19 @@
         </select></div>
       <div class="nf"><label><span data-only-lang="it">Note</span><span data-only-lang="en">Notes</span></label>
         <textarea id="edit-ev-note" rows="2" placeholder="Note appuntamento..."></textarea></div>
+      <div class="nf" style="margin-top:8px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="edit-ev-video-toggle" onchange="toggleVideoSection('edit-ev')" style="width:15px;height:15px;cursor:pointer">
+          <span style="font-size:12.5px;font-weight:600;color:var(--slate-m)">📹 Videoconsulto</span>
+        </label>
+        <div id="edit-ev-video-section" style="display:none;margin-top:8px;padding:10px;background:#F0F9FF;border-radius:8px;border:1px solid #BAE6FD">
+          <div style="display:flex;gap:6px;margin-bottom:8px">
+            <button type="button" onclick="genJitsiLink('edit-ev')" style="flex:1;padding:7px 10px;border:none;background:#0EA5E9;color:white;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">⚡ Jitsi (auto)</button>
+            <button type="button" onclick="genMeetLink('edit-ev')" style="flex:1;padding:7px 10px;border:none;background:#10B981;color:white;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">🟢 Google Meet</button>
+          </div>
+          <input type="url" id="edit-ev-video-url" placeholder="https://meet.jit.si/..." style="width:100%;padding:7px 10px;border:1.5px solid #BAE6FD;border-radius:6px;font-size:12px;font-family:inherit;outline:none">
+        </div>
+      </div>
     </div>
     <div class="mfoot">
       <button class="btn btn-primary btn-sm" onclick="saveEditedEvent()">💾 <span data-only-lang="it">Salva Modifiche</span><span data-only-lang="en">Save Changes</span></button>
@@ -524,6 +551,46 @@ const TIPO_LABELS = {visita:'🩺 Prima Visita',controllo:'🔄 Controllo',remin
 const TIPO_LABELS_EN = {visita:'🩺 First Visit',controllo:'🔄 Follow-up',reminder:'⏰ Reminder',urgente:'🚨 Urgent'};
 function tipoLabel(tipo){return _L(TIPO_LABELS[tipo]||tipo, TIPO_LABELS_EN[tipo]||tipo);}
 
+// ─── Video consultation helpers ───────────────────────────────────────────────
+function parseVideoNote(rawNote) {
+  if (!rawNote) return { videoUrl: null, note: '' };
+  const m = rawNote.match(/^🎥VIDEO:(https?:\/\/\S+)\n?([\s\S]*)$/);
+  if (m) return { videoUrl: m[1], note: m[2].replace(/^\n/, '') };
+  return { videoUrl: null, note: rawNote };
+}
+function buildVideoNote(videoUrl, noteText) {
+  if (!videoUrl) return noteText || '';
+  return `🎥VIDEO:${videoUrl}\n${noteText || ''}`.trimEnd();
+}
+function toggleVideoSection(prefix) {
+  const chk = document.getElementById(prefix + '-video-toggle');
+  const sec = document.getElementById(prefix + '-video-section');
+  if (sec) sec.style.display = chk?.checked ? 'block' : 'none';
+}
+function genJitsiLink(prefix) {
+  const room = 'NutriPlan-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+  const input = document.getElementById(prefix + '-video-url');
+  if (input) { input.value = `https://meet.jit.si/${room}`; }
+}
+function genMeetLink(prefix) {
+  const input = document.getElementById(prefix + '-video-url');
+  if (input) { input.value = 'https://meet.google.com/'; input.select(); }
+}
+function setVideoFormState(prefix, videoUrl) {
+  const toggle = document.getElementById(prefix + '-video-toggle');
+  const section = document.getElementById(prefix + '-video-section');
+  const urlInput = document.getElementById(prefix + '-video-url');
+  if (!toggle) return;
+  if (videoUrl) {
+    toggle.checked = true;
+    if (section) section.style.display = 'block';
+    if (urlInput) urlInput.value = videoUrl;
+  } else {
+    toggle.checked = false;
+    if (section) section.style.display = 'none';
+    if (urlInput) urlInput.value = '';
+  }
+}
 // ─── Italian public holidays ──────────────────────────────────────────────────
 // Returns the Easter Sunday date for a given year using the
 // Meeus/Jones/Butcher algorithm (valid for all Gregorian years).
@@ -844,11 +911,12 @@ function renderDayEvents(dateStr) {
         ${ev.note?`<div style="font-size:11px;color:var(--slate-l);margin-top:3px;font-style:italic">${esc(ev.note)}</div>`:''}
       </div>`;
     }
+    const {videoUrl: evV, note: evN} = parseVideoNote(ev.note);
     return `<div class="event-item ${ev.tipo||'visita'}" onclick="openEventDetail('${ev.id}')">
       <div class="event-title">${esc(ev.paziente||ev.titolo||'Appuntamento')}</div>
-      <div class="event-time">⏰ ${ev.ora||'--:--'} ${ev.durata?'('+ev.durata+' min)':''}</div>
+      <div class="event-time">⏰ ${ev.ora||'--:--'} ${ev.durata?'('+ev.durata+' min)':''}${evV?' 📹':''}</div>
       <div style="font-size:11px;color:var(--slate-l);margin-top:2px">${tipoLabel(ev.tipo)}</div>
-      ${ev.note?`<div style="font-size:11px;color:var(--slate-l);margin-top:3px;font-style:italic">${esc(ev.note)}</div>`:''}
+      ${evN?`<div style="font-size:11px;color:var(--slate-l);margin-top:3px;font-style:italic">${esc(evN)}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -889,8 +957,10 @@ async function saveEvent() {
   const ora = document.getElementById('ev-ora').value;
   const tipo = document.getElementById('ev-tipo').value;
   const durata = document.getElementById('ev-durata').value;
-  const note = document.getElementById('ev-note').value;
-  
+  const noteRaw = document.getElementById('ev-note').value;
+  const videoUrl = (document.getElementById('ev-video-toggle')?.checked && document.getElementById('ev-video-url')?.value.trim()) || '';
+  const note = buildVideoNote(videoUrl, noteRaw);
+
   if(!paziente || !data) { toast(_L('Inserisci paziente/titolo e data','Enter patient/title and date'),'err'); return; }
 
   // Collision detection: check for overlapping events on the same date
@@ -1005,7 +1075,7 @@ function openEventDetail(id) {
         <span style="background:#EFF6FF;color:#1D4ED8;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">📅 ${d}</span>
         <span style="background:#F0FDF4;color:#15803D;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:600">⏰ ${ev.ora||'--:--'} (${ev.durata||60} min)</span>
       </div>
-      ${ev.note?`<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;font-size:13px;color:var(--slate-m);line-height:1.6">${esc(ev.note)}</div>`:''}
+      ${(() => { const {videoUrl, note} = parseVideoNote(ev.note); return (videoUrl ? `<div style="background:#F0F9FF;border:1.5px solid #0EA5E9;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px"><span style="font-size:13px">📹</span><span style="font-size:13px;font-weight:600;color:#0369A1;flex:1">Videoconsulto</span><a href="${esc(videoUrl)}" target="_blank" rel="noopener" style="padding:6px 16px;background:#0EA5E9;color:white;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">Entra →</a></div>` : '') + (note ? `<div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;font-size:13px;color:var(--slate-m);line-height:1.6">${esc(note)}</div>` : ''); })()}
     </div>`;
   openM('modal-event');
 }
@@ -1143,7 +1213,9 @@ function openEditEvent(id) {
   document.getElementById('edit-ev-data').value = ev.data || '';
   document.getElementById('edit-ev-ora').value = ev.ora || '09:00';
   document.getElementById('edit-ev-durata').value = String(ev.durata || 60);
-  document.getElementById('edit-ev-note').value = ev.note || '';
+  const { videoUrl: evVideo, note: evNote } = parseVideoNote(ev.note);
+  document.getElementById('edit-ev-note').value = evNote || '';
+  setVideoFormState('edit-ev', evVideo);
   closeM('modal-event');
   openM('modal-event-edit');
   setTimeout(() => document.getElementById('edit-ev-paziente').focus(), 100);
@@ -1155,7 +1227,9 @@ async function saveEditedEvent() {
   const ora = document.getElementById('edit-ev-ora').value;
   const tipo = document.getElementById('edit-ev-tipo').value;
   const durata = document.getElementById('edit-ev-durata').value;
-  const note = document.getElementById('edit-ev-note').value;
+  const noteRaw = document.getElementById('edit-ev-note').value;
+  const videoUrl = (document.getElementById('edit-ev-video-toggle')?.checked && document.getElementById('edit-ev-video-url')?.value.trim()) || '';
+  const note = buildVideoNote(videoUrl, noteRaw);
   if (!paziente || !data) { toast(_L('Inserisci paziente/titolo e data','Enter patient/title and date'), 'err'); return; }
 
   if (_editingGCalId) {

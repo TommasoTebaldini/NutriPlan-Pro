@@ -2031,3 +2031,109 @@ function initPianoEsempio(containerId, config) {
     _initAll();
   }
 })();
+
+// ─── Inbox badge: unread messages across all patients ──────────────────────
+// Injects a red badge next to every nav link pointing to chat.html,
+// queries unread count on page load, and refreshes via Supabase Realtime.
+(function() {
+  var BADGE_STYLE = 'display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;background:#EF4444;color:white;border-radius:9px;font-size:10px;font-weight:800;padding:0 4px;margin-left:5px;line-height:1;pointer-events:none;vertical-align:middle';
+  var _inboxBadgeChannel = null;
+
+  function _getBadgeEl() {
+    return document.getElementById('_dp_inbox_badge');
+  }
+
+  function _injectBadges() {
+    // Inject into every nav link whose href is chat.html
+    document.querySelectorAll('a[href="chat.html"]').forEach(function(a) {
+      if (!a.querySelector('._dp_inbox_b')) {
+        var span = document.createElement('span');
+        span.className = '_dp_inbox_b';
+        span.id = '_dp_inbox_badge';
+        span.style.cssText = BADGE_STYLE + ';display:none';
+        a.appendChild(span);
+      }
+    });
+  }
+
+  function _updateBadge(count) {
+    _injectBadges();
+    document.querySelectorAll('._dp_inbox_b').forEach(function(el) {
+      if (count > 0) {
+        el.textContent = count > 99 ? '99+' : String(count);
+        el.style.display = 'inline-flex';
+      } else {
+        el.style.display = 'none';
+      }
+    });
+  }
+
+  async function _loadInboxCount(userId) {
+    if (!sb || !userId) return;
+    try {
+      var pRes = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', userId);
+      var patientIds = (pRes.data || []).map(function(r) { return r.patient_id; });
+      if (!patientIds.length) { _updateBadge(0); return; }
+      var count = 0;
+      var cRes = await sb.from('chat_messages').select('id', { count: 'exact', head: true }).in('patient_id', patientIds).eq('sender_role', 'patient').is('read_at', null);
+      count = cRes.count || 0;
+      _updateBadge(count);
+    } catch(e) {}
+  }
+
+  function _subscribeRealtime(userId) {
+    if (_inboxBadgeChannel) return;
+    if (!sb || !userId) return;
+    try {
+      _inboxBadgeChannel = sb.channel('inbox_badge_' + userId)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: 'sender_role=eq.patient' }, function() {
+          _loadInboxCount(userId);
+        })
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_messages' }, function() {
+          _loadInboxCount(userId);
+        })
+        .subscribe();
+    } catch(e) {}
+  }
+
+  function _init() {
+    _injectBadges();
+    sb.auth.getSession().then(function(res) {
+      var user = res && res.data && res.data.session && res.data.session.user;
+      if (!user) return;
+      _loadInboxCount(user.id);
+      _subscribeRealtime(user.id);
+    }).catch(function() {});
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _init);
+  } else {
+    setTimeout(_init, 800); // wait for sb to be ready
+  }
+})();
+
+// ─── Auto-inject "Pagamenti" nav link after chat.html link ─────────────────
+// Adds a 💳 Pagamenti link in the sidebar Comunicazione section on every page
+// that has a chat.html nav item, unless pagamenti.html is already present.
+(function() {
+  function _injectPagamentiLink() {
+    if (document.querySelector('a[href="pagamenti.html"]')) return;
+    document.querySelectorAll('a[href="chat.html"]').forEach(function(chatLink) {
+      var newLink = document.createElement('a');
+      newLink.className = 'nav-item';
+      newLink.href = 'pagamenti.html';
+      // Mark active if we are on pagamenti.html
+      if (window.location.pathname.endsWith('pagamenti.html')) {
+        newLink.classList.add('active');
+      }
+      newLink.innerHTML = '<span class="ni">💳</span><span data-only-lang="it">Pagamenti</span><span data-only-lang="en">Payments</span>';
+      chatLink.insertAdjacentElement('afterend', newLink);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectPagamentiLink);
+  } else {
+    _injectPagamentiLink();
+  }
+})();

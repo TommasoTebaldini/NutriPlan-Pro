@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pagamenti — DietPlan Pro</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💳</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://hvdwqowkhutfsdpiubxe.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.fatt-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:14px 16px;transition:box-shadow .15s,border-color .15s;position:relative}
+.fatt-card:hover{border-color:var(--teal-l);box-shadow:0 4px 16px rgba(15,118,110,.1)}
+.fatt-status{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700}
+.fatt-status.pagato{background:#D1FAE5;color:#065F46}
+.fatt-status.da_pagare{background:#FEF3C7;color:#92400E}
+.fatt-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fatt-num{font-size:13px;font-weight:700;color:var(--teal-d);min-width:80px}
+.fatt-patient{font-size:13px;font-weight:600;flex:1;min-width:120px}
+.fatt-tipo{font-size:12px;color:var(--slate-m);flex:1;min-width:100px}
+.fatt-amount{font-size:15px;font-weight:700;color:var(--slate);min-width:70px;text-align:right}
+.fatt-date{font-size:11px;color:var(--slate-l);min-width:70px;text-align:right}
+.tariff-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.tariff-row:last-child{border-bottom:none}
+.pag-tab{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .15s,color .15s}
+.pag-tab.active{background:var(--teal);color:white}
+.pag-tab:not(.active){background:var(--sage);color:var(--teal-d)}
+.summary-card{background:linear-gradient(135deg,#065F46,#059669);border-radius:14px;padding:16px 20px;color:white;display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.summary-item{flex:1;min-width:100px;text-align:center}
+.summary-item .val{font-size:22px;font-weight:700;display:block}
+.summary-item .lbl{font-size:11px;opacity:.85;margin-top:2px}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec"><span data-only-lang="it">Piano</span><span data-only-lang="en">Plan</span></div>
+  <a class="nav-item " href="app.html"><span class="ni">📋</span><span data-only-lang="it">Piano Alimentare</span><span data-only-lang="en">Meal Plan</span></a>
+  <a class="nav-item " href="pazienti.html"><span class="ni">📁</span><span data-only-lang="it">Cartelle Pazienti</span><span data-only-lang="en">Patient Files</span></a>
+  <div class="nav-sec"><span data-only-lang="it">Comunicazione</span><span data-only-lang="en">Communication</span></div>
+  <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span><span data-only-lang="it">Profilo</span><span data-only-lang="en">Profile</span></a>
+  <a class="nav-item " href="chat.html"><span class="ni">👥</span><span data-only-lang="it">Pazienti</span><span data-only-lang="en">Patients</span></a>
+  <a class="nav-item active" href="pagamenti.html"><span class="ni">💳</span><span data-only-lang="it">Pagamenti</span><span data-only-lang="en">Payments</span></a>
+  <div class="nav-sec"><span data-only-lang="it">Specialistica</span><span data-only-lang="en">Specialist</span></div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span><span data-only-lang="it">Paziente Sano</span><span data-only-lang="en">Healthy Patient</span></a>
+  <a class="nav-item " href="diabete.html"><span class="ni">🩸</span><span data-only-lang="it">Gestione Diabete</span><span data-only-lang="en">Diabetes Management</span></a>
+  <a class="nav-item " href="pancreas.html"><span class="ni">🫁</span><span data-only-lang="it">Insuff. Pancreatica</span><span data-only-lang="en">Pancreatic Insuff.</span></a>
+  <a class="nav-item " href="sport.html"><span class="ni">🏃</span><span data-only-lang="it">Nutrizione Sportiva</span><span data-only-lang="en">Sports Nutrition</span></a>
+  <a class="nav-item " href="dna.html"><span class="ni">🫀</span><span data-only-lang="it">DCA</span><span data-only-lang="en">EDs</span></a>
+  <a class="nav-item " href="chetogenica.html"><span class="ni">🥑</span><span data-only-lang="it">Dieta Chetogenica</span><span data-only-lang="en">Ketogenic Diet</span></a>
+  <a class="nav-item " href="renale.html"><span class="ni">🫘</span><span data-only-lang="it">Nefropatia / IRC</span><span data-only-lang="en">Nephropathy / CKD</span></a>
+  <a class="nav-item " href="disfagia.html"><span class="ni">🗣️</span><span data-only-lang="it">Disfagia</span><span data-only-lang="en">Dysphagia</span></a>
+  <a class="nav-item " href="oncologia.html"><span class="ni">🎗️</span><span data-only-lang="it">Oncologia</span><span data-only-lang="en">Oncology</span></a>
+  <a class="nav-item " href="obesita.html"><span class="ni">⚖️</span><span data-only-lang="it">Obesità</span><span data-only-lang="en">Obesity</span></a>
+  <a class="nav-item " href="pediatria.html"><span class="ni">👶</span><span data-only-lang="it">Pediatria</span><span data-only-lang="en" style="display:none">Paediatrics</span></a>
+  <a class="nav-item " href="ristorazione.html"><span class="ni">🍽️</span><span data-only-lang="it">Ristorazione Collettiva</span><span data-only-lang="en">Collective Catering</span></a>
+  <a class="nav-item " href="gravidanza.html"><span class="ni">🤰</span><span data-only-lang="it">Valutazione Gravidanza</span><span data-only-lang="en">Pregnancy Assessment</span></a>
+  <div class="nav-sec"><span data-only-lang="it">Strumenti</span><span data-only-lang="en">Tools</span></div>
+  <a class="nav-item " href="linee-guida.html"><span class="ni">📚</span><span data-only-lang="it">Linee Guida</span><span data-only-lang="en">Clinical Guidelines</span></a>
+  <a class="nav-item " href="valutazione.html"><span class="ni">📊</span><span data-only-lang="it">Valutazione Paziente</span><span data-only-lang="en">Patient Assessment</span></a>
+  <a class="nav-item " href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item " href="patologie.html"><span class="ni">🏥</span><span data-only-lang="it">Diete Speciali</span><span data-only-lang="en">Special Diets</span></a>
+  <a class="nav-item " href="consigli.html"><span class="ni">💡</span><span data-only-lang="it">Consigli Nutrizionali</span><span data-only-lang="en">Nutritional Advice</span></a>
+  <a class="nav-item " href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item " href="questionari.html"><span class="ni">📋</span><span data-only-lang="it">Questionari</span><span data-only-lang="en">Questionnaires</span></a>
+  <a class="nav-item" href="visita.html"><span class="ni">🩺</span><span data-only-lang="it">Resoconto Visita</span><span data-only-lang="en" style="display:none">Visit Notes</span></a>
+  <a class="nav-item" href="moduli.html"><span class="ni">📄</span><span data-only-lang="it">Moduli Stampabili</span><span data-only-lang="en" style="display:none">Printable Forms</span></a>
+  <a class="nav-item " href="studi.html"><span class="ni">🔬</span><span data-only-lang="it">Studi Scientifici</span><span data-only-lang="en">Scientific Studies</span></a>
+  <a class="nav-item " href="ai.html"><span class="ni">🤖</span><span data-only-lang="it">Assistente AI</span><span data-only-lang="en">AI Assistant</span></a>
+  <a class="nav-item " href="agenda.html"><span class="ni">📅</span><span data-only-lang="it">Agenda</span><span data-only-lang="en" style="display:none">Schedule</span></a>
+  <a class="nav-item " href="ecm.html"><span class="ni">🎓</span><span data-only-lang="it">Corsi ECM</span><span data-only-lang="en">CME Courses</span></a>
+  <div class="nav-sec"><span data-only-lang="it">Database</span><span data-only-lang="en" style="display:none">Database</span></div>
+  <a class="nav-item " href="database.html"><span class="ni">🔬</span><span data-only-lang="it">Alimenti CREA+BDA</span><span data-only-lang="en">CREA+BDA Foods</span></a>
+  <a class="nav-item " href="integratori.html"><span class="ni">💊</span><span data-only-lang="it">Integratori e AFMS</span><span data-only-lang="en">Supplements &amp; AFMS</span></a>
+  <a class="nav-item " href="ricette.html"><span class="ni">🍳</span><span data-only-lang="it">Ricette</span><span data-only-lang="en">Recipes</span></a>
+  <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span><span data-only-lang="it">Impostazioni</span><span data-only-lang="en">Settings</span></a>
+  <a class="nav-item " href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span><span data-only-lang="it">Admin Utenti</span><span data-only-lang="en">User Admin</span></a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span><span data-only-lang="it">Abbonamento</span><span data-only-lang="en">Subscription</span></a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 <span data-only-lang="it">Esci</span><span data-only-lang="en">Log out</span></button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>💳 <span data-only-lang="it">Pagamenti</span><span data-only-lang="en">Payments</span></h2>
+  <div class="tbar-actions">
+    <button class="btn btn-primary btn-sm" onclick="openNuovaFattura()">➕ <span data-only-lang="it">Nuova Fattura</span><span data-only-lang="en">New Invoice</span></button>
+  </div>
+</div>
+<main id="main"><div class="page-content">
+
+  <!-- HERO -->
+  <div style="background:linear-gradient(135deg,#065F46 0%,#0D9488 60%,#14B8A6 100%);border-radius:18px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;gap:18px;color:white;box-shadow:0 6px 24px rgba(6,95,70,.28);position:relative;overflow:hidden">
+    <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+    <div style="font-size:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));flex-shrink:0">💳</div>
+    <div style="flex:1;position:relative">
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px">Gestione Pagamenti</div>
+      <div style="font-size:12px;opacity:.88;line-height:1.6">Emetti fatture per le visite, gestisci il tariffario e tieni traccia dei pagamenti ricevuti.</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">🧾 Fatture</div>
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">💶 Tariffario</div>
+        <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(4px)">📊 Storico</div>
+      </div>
+    </div>
+    <div class="no-print" style="flex-shrink:0">
+      <button class="btn btn-sm" onclick="openNuovaFattura()" style="background:rgba(255,255,255,.2);color:white;border:none;font-weight:700">➕ Nuova Fattura</button>
+    </div>
+  </div>
+
+  <!-- RIEPILOGO -->
+  <div class="summary-card" id="summary-cards">
+    <div class="summary-item"><span class="val" id="sum-tot">—</span><span class="lbl">Totale fatturato (anno)</span></div>
+    <div class="summary-item"><span class="val" id="sum-pagato">—</span><span class="lbl">Incassato</span></div>
+    <div class="summary-item"><span class="val" id="sum-attesa">—</span><span class="lbl">In attesa</span></div>
+    <div class="summary-item"><span class="val" id="sum-count">—</span><span class="lbl">Fatture emesse</span></div>
+  </div>
+
+  <!-- TABS -->
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="pag-tab active" id="tab-fatture-btn" onclick="setTab('fatture')">🧾 Fatture</button>
+    <button class="pag-tab" id="tab-tariffario-btn" onclick="setTab('tariffario')">💶 Tariffario</button>
+  </div>
+
+  <!-- TAB: FATTURE -->
+  <div id="tab-fatture">
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <input type="text" id="fatt-search" placeholder="🔍 Cerca paziente..." class="db-search" style="flex:1;min-width:160px" oninput="renderFatture()">
+      <select id="fatt-filter-stato" class="db-search" style="min-width:130px" onchange="renderFatture()">
+        <option value="">Tutti gli stati</option>
+        <option value="da_pagare">In attesa</option>
+        <option value="pagato">Pagati</option>
+      </select>
+      <select id="fatt-filter-anno" class="db-search" style="min-width:100px" onchange="renderFatture()">
+      </select>
+    </div>
+    <div id="fatture-list" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+
+  <!-- TAB: TARIFFARIO -->
+  <div id="tab-tariffario" style="display:none">
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--slate)">💶 Il tuo Tariffario</div>
+      <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.5">Imposta il prezzo per ogni tipo di visita. Questi valori vengono proposti automaticamente quando crei una nuova fattura.</p>
+      <div id="tariffario-list"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="addTariffRow()">➕ Aggiungi tipo visita</button>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end">
+        <button class="btn btn-primary btn-sm" onclick="saveTariffario()">💾 Salva Tariffario</button>
+      </div>
+    </div>
+  </div>
+
+</div></main>
+
+<!-- MODAL: NUOVA / MODIFICA FATTURA -->
+<div class="modal-bg" id="modal-fattura">
+  <div class="modal" style="max-width:500px">
+    <div class="mhdr"><h2 id="fatt-modal-title">🧾 Nuova Fattura</h2><button class="mclose" onclick="closeM('modal-fattura')">✕</button></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="fg full">
+          <label>Paziente *</label>
+          <select id="fatt-patient" onchange="onPatientChange()">
+            <option value="">— Seleziona paziente —</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Data fattura *</label>
+          <input type="date" id="fatt-data">
+        </div>
+        <div class="fg">
+          <label>N° Fattura</label>
+          <input type="text" id="fatt-numero" placeholder="es. 2026/001" readonly style="background:#F8FAFC;color:var(--slate-m)">
+        </div>
+        <div class="fg full">
+          <label>Tipo visita *</label>
+          <select id="fatt-tipo" onchange="onTipoChange()">
+            <option value="">— Seleziona —</option>
+            <option value="Prima visita">Prima visita</option>
+            <option value="Visita di controllo">Visita di controllo</option>
+            <option value="Consulenza">Consulenza</option>
+            <option value="Visita domiciliare">Visita domiciliare</option>
+            <option value="Videoconferenza">Videoconferenza</option>
+            <option value="Altro">Altro</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Importo (€) *</label>
+          <input type="number" id="fatt-importo" min="0" step="0.01" placeholder="0.00">
+        </div>
+        <div class="fg">
+          <label>Stato</label>
+          <select id="fatt-stato">
+            <option value="da_pagare">In attesa di pagamento</option>
+            <option value="pagato">Pagato</option>
+          </select>
+        </div>
+        <div class="fg full">
+          <label>Note</label>
+          <textarea id="fatt-note" rows="2" placeholder="Note aggiuntive (opzionale)..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-fattura')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaFattura()">💾 Salva Fattura</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
+<script src="js/db.js?v=1021" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script>
+let fatture = [];
+let patients = [];
+let editingFatturaId = null;
+let fattureTableMissing = false;
+const LS_KEY_FATT = 'np_fatture_local';
+const LS_KEY_TARIFF = 'np_tariffario';
+let useLocalFatt = false;
+
+const DEFAULT_TARIFFARIO = [
+  { tipo: 'Prima visita', prezzo: 100 },
+  { tipo: 'Visita di controllo', prezzo: 70 },
+  { tipo: 'Consulenza', prezzo: 60 },
+  { tipo: 'Visita domiciliare', prezzo: 120 },
+  { tipo: 'Videoconferenza', prezzo: 60 },
+];
+
+function lsLoadFatture() { try { return JSON.parse(localStorage.getItem(LS_KEY_FATT) || '[]'); } catch(e) { return []; } }
+function lsSaveFatture(arr) { try { localStorage.setItem(LS_KEY_FATT, JSON.stringify(arr)); } catch(e) {} }
+function loadTariffario() { try { return JSON.parse(localStorage.getItem(LS_KEY_TARIFF) || 'null') || DEFAULT_TARIFFARIO; } catch(e) { return DEFAULT_TARIFFARIO; } }
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function euro(v) { return '€' + (parseFloat(v)||0).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+
+function fmtDate(d) {
+  if (!d) return '';
+  try { const dt = new Date(d); return dt.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}); } catch(e) { return d; }
+}
+
+async function loadPage() {
+  showLoading(true);
+  await Promise.all([loadPatients(), loadFatture()]);
+  showLoading(false);
+  updateSummary();
+  renderFatture();
+  renderTariffario();
+  populateAnnoFilter();
+}
+
+async function loadPatients() {
+  if (!currentUser) return;
+  try {
+    const { data: relations } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+    if (!relations?.length) return;
+    const ids = relations.map(r => r.patient_id);
+    const { data: profiles } = await sb.from('profiles').select('id,full_name,first_name,last_name,email').in('id', ids);
+    patients = (profiles || []).map(p => ({
+      id: p.id,
+      name: p.full_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || p.email || p.id.slice(0,8)
+    }));
+  } catch(e) {}
+}
+
+async function loadFatture() {
+  if (!currentUser) {
+    useLocalFatt = true;
+    fatture = lsLoadFatture();
+    return;
+  }
+  try {
+    const { data, error } = await sb.from('fatture').select('*').eq('dietitian_id', currentUser.id).order('data_fattura', { ascending: false });
+    if (error) {
+      if (error.code === '42P01') {
+        fattureTableMissing = true;
+        useLocalFatt = true;
+        fatture = lsLoadFatture();
+        showTableMissingBanner();
+      } else {
+        useLocalFatt = true;
+        fatture = lsLoadFatture();
+      }
+    } else {
+      useLocalFatt = false;
+      fatture = data || [];
+    }
+  } catch(e) {
+    useLocalFatt = true;
+    fatture = lsLoadFatture();
+  }
+}
+
+function showTableMissingBanner() {
+  const sql = `create table fatture(
+  id uuid default gen_random_uuid() primary key,
+  dietitian_id uuid references auth.users not null,
+  patient_id uuid,
+  patient_name text,
+  numero_fattura text,
+  data_fattura date,
+  tipo_visita text,
+  importo numeric(10,2) default 0,
+  stato text default 'da_pagare',
+  note text,
+  created_at timestamptz default now()
+);
+alter table fatture enable row level security;
+create policy "Proprie fatture" on fatture for all using(auth.uid()=dietitian_id);`;
+  const list = document.getElementById('fatture-list');
+  list.insertAdjacentHTML('afterbegin', `<div class="empty-state" style="background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:12px;padding:16px;text-align:center;margin-bottom:12px">
+    <div class="ei">⚙️</div>
+    <h3 style="color:#92400E">Tabella "fatture" mancante nel DB</h3>
+    <p style="font-size:12px;color:#78350F;max-width:480px;margin:0 auto 10px">Esegui questo SQL nel <a href="https://app.supabase.com" target="_blank" style="color:#B45309;font-weight:700">Supabase SQL Editor</a> per abilitare il cloud sync:</p>
+    <pre style="background:#1E293B;color:#E2E8F0;border-radius:10px;padding:12px;font-size:10px;text-align:left;white-space:pre-wrap;word-break:break-all;max-width:520px;margin:0 auto 10px;font-family:monospace" id="fatt-sql">${sql}</pre>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard?.writeText(document.getElementById('fatt-sql').textContent).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+      <button class="btn btn-primary btn-sm" onclick="this.closest('.empty-state').remove()">✅ Continua in locale</button>
+    </div>
+    <p style="font-size:11px;color:#92400E;margin-top:8px">Le fatture sono salvate localmente finché non configuri il DB.</p>
+  </div>`);
+}
+
+function updateSummary() {
+  const anno = new Date().getFullYear();
+  const thisYear = fatture.filter(f => (f.data_fattura||'').startsWith(anno));
+  const tot = thisYear.reduce((s,f) => s + (parseFloat(f.importo)||0), 0);
+  const pagato = thisYear.filter(f => f.stato === 'pagato').reduce((s,f) => s + (parseFloat(f.importo)||0), 0);
+  const attesa = tot - pagato;
+  document.getElementById('sum-tot').textContent = euro(tot);
+  document.getElementById('sum-pagato').textContent = euro(pagato);
+  document.getElementById('sum-attesa').textContent = euro(attesa);
+  document.getElementById('sum-count').textContent = thisYear.length;
+}
+
+function populateAnnoFilter() {
+  const sel = document.getElementById('fatt-filter-anno');
+  const anni = [...new Set(fatture.map(f => (f.data_fattura||'').slice(0,4)).filter(Boolean))].sort().reverse();
+  const cur = new Date().getFullYear();
+  if (!anni.includes(String(cur))) anni.unshift(String(cur));
+  sel.innerHTML = '<option value="">Tutti gli anni</option>' + anni.map(a => `<option value="${a}" ${a===String(cur)?'selected':''}>${a}</option>`).join('');
+}
+
+function renderFatture() {
+  const q = (document.getElementById('fatt-search')?.value||'').toLowerCase();
+  const stato = document.getElementById('fatt-filter-stato')?.value || '';
+  const anno = document.getElementById('fatt-filter-anno')?.value || '';
+  let list = [...fatture];
+  if (q) list = list.filter(f => (f.patient_name||'').toLowerCase().includes(q) || (f.tipo_visita||'').toLowerCase().includes(q) || (f.numero_fattura||'').toLowerCase().includes(q));
+  if (stato) list = list.filter(f => f.stato === stato);
+  if (anno) list = list.filter(f => (f.data_fattura||'').startsWith(anno));
+  const container = document.getElementById('fatture-list');
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state"><div class="ei">🧾</div><h3>${fatture.length === 0 ? 'Nessuna fattura emessa' : 'Nessuna fattura trovata'}</h3><p>${fatture.length === 0 ? 'Clicca "Nuova Fattura" per iniziare.' : 'Prova a cambiare i filtri.'}</p></div>`;
+    return;
+  }
+  container.innerHTML = list.map(f => `
+    <div class="fatt-card">
+      <div class="fatt-row">
+        <span class="fatt-num">${esc(f.numero_fattura||'—')}</span>
+        <span class="fatt-patient">${esc(f.patient_name||'—')}</span>
+        <span class="fatt-tipo">${esc(f.tipo_visita||'—')}</span>
+        <span class="fatt-amount">${euro(f.importo)}</span>
+        <span class="fatt-status ${f.stato||'da_pagare'}">${f.stato==='pagato'?'✓ Pagato':'⏳ In attesa'}</span>
+        <span class="fatt-date">${fmtDate(f.data_fattura)}</span>
+        <div style="display:flex;gap:4px;margin-left:auto">
+          ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="Segna come pagato">✓</button>` : ''}
+          <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="Modifica">✏️</button>
+          <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="Elimina">🗑️</button>
+        </div>
+      </div>
+      ${f.note ? `<div style="font-size:11.5px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(f.note)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function setTab(name) {
+  document.getElementById('tab-fatture').style.display = name === 'fatture' ? '' : 'none';
+  document.getElementById('tab-tariffario').style.display = name === 'tariffario' ? '' : 'none';
+  document.getElementById('tab-fatture-btn').classList.toggle('active', name === 'fatture');
+  document.getElementById('tab-tariffario-btn').classList.toggle('active', name === 'tariffario');
+}
+
+// ── TARIFFARIO ──
+function renderTariffario() {
+  const tariff = loadTariffario();
+  const list = document.getElementById('tariffario-list');
+  list.innerHTML = tariff.map((row, i) => `
+    <div class="tariff-row" id="tariff-row-${i}">
+      <input type="text" value="${esc(row.tipo)}" placeholder="Tipo visita" class="inp" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="font-size:13px;color:var(--slate-m)">€</span>
+        <input type="number" value="${row.prezzo}" min="0" step="1" class="inp" style="width:80px;padding:7px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;text-align:right;font-family:inherit">
+      </div>
+      <button onclick="removeRow(${i})" style="background:none;border:none;cursor:pointer;color:var(--slate-l);font-size:16px;padding:4px">✕</button>
+    </div>
+  `).join('');
+}
+
+function addTariffRow() {
+  const tariff = loadTariffario();
+  tariff.push({ tipo: '', prezzo: 0 });
+  localStorage.setItem(LS_KEY_TARIFF, JSON.stringify(tariff));
+  renderTariffario();
+}
+
+function removeRow(i) {
+  const tariff = loadTariffario();
+  tariff.splice(i, 1);
+  localStorage.setItem(LS_KEY_TARIFF, JSON.stringify(tariff));
+  renderTariffario();
+}
+
+function saveTariffario() {
+  const rows = document.querySelectorAll('#tariffario-list .tariff-row');
+  const tariff = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const tipo = inputs[0]?.value?.trim();
+    const prezzo = parseFloat(inputs[1]?.value) || 0;
+    if (tipo) tariff.push({ tipo, prezzo });
+  });
+  localStorage.setItem(LS_KEY_TARIFF, JSON.stringify(tariff));
+  renderTariffario();
+  toast('✅ Tariffario salvato!', 'ok');
+}
+
+// ── NUOVA / MODIFICA FATTURA ──
+function openNuovaFattura() {
+  editingFatturaId = null;
+  document.getElementById('fatt-modal-title').textContent = '🧾 Nuova Fattura';
+  document.getElementById('fatt-data').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fatt-tipo').value = '';
+  document.getElementById('fatt-importo').value = '';
+  document.getElementById('fatt-stato').value = 'da_pagare';
+  document.getElementById('fatt-note').value = '';
+  document.getElementById('fatt-numero').value = generateNumeroFattura();
+  populatePatientSelect();
+  openM('modal-fattura');
+}
+
+function populatePatientSelect(selectedId = '') {
+  const sel = document.getElementById('fatt-patient');
+  sel.innerHTML = '<option value="">— Seleziona paziente —</option>' + patients.map(p => `<option value="${esc(p.id)}" ${p.id===selectedId?'selected':''}>${esc(p.name)}</option>`).join('');
+}
+
+function generateNumeroFattura() {
+  const anno = new Date().getFullYear();
+  const thisYear = fatture.filter(f => (f.data_fattura||'').startsWith(anno));
+  const n = (thisYear.length + 1).toString().padStart(3, '0');
+  return `${anno}/${n}`;
+}
+
+function onPatientChange() {}
+
+function onTipoChange() {
+  const tipo = document.getElementById('fatt-tipo').value;
+  if (!tipo) return;
+  const tariff = loadTariffario();
+  const row = tariff.find(t => t.tipo === tipo);
+  if (row) document.getElementById('fatt-importo').value = row.prezzo.toFixed(2);
+}
+
+async function salvaFattura() {
+  const patientId = document.getElementById('fatt-patient').value;
+  const patientName = patients.find(p => p.id === patientId)?.name || document.getElementById('fatt-patient').options[document.getElementById('fatt-patient').selectedIndex]?.text || '';
+  const data = document.getElementById('fatt-data').value;
+  const tipo = document.getElementById('fatt-tipo').value;
+  const importo = parseFloat(document.getElementById('fatt-importo').value) || 0;
+  if (!data) { toast('Inserisci la data', 'err'); return; }
+  if (!tipo) { toast('Seleziona il tipo di visita', 'err'); return; }
+  if (importo <= 0) { toast('Inserisci un importo valido', 'err'); return; }
+  const now = new Date().toISOString();
+  const payload = {
+    dietitian_id: currentUser?.id || 'local',
+    patient_id: patientId || null,
+    patient_name: patientName,
+    numero_fattura: document.getElementById('fatt-numero').value,
+    data_fattura: data,
+    tipo_visita: tipo,
+    importo,
+    stato: document.getElementById('fatt-stato').value,
+    note: document.getElementById('fatt-note').value.trim() || null,
+  };
+  if (useLocalFatt || !currentUser) {
+    const arr = lsLoadFatture();
+    if (editingFatturaId) {
+      const idx = arr.findIndex(f => f.id === editingFatturaId);
+      if (idx >= 0) arr[idx] = { ...arr[idx], ...payload };
+    } else {
+      payload.id = 'ls_' + Date.now();
+      payload.created_at = now;
+      arr.unshift(payload);
+    }
+    lsSaveFatture(arr);
+    fatture = arr;
+    closeM('modal-fattura');
+    toast(editingFatturaId ? '✅ Fattura aggiornata!' : '✅ Fattura salvata (locale)!', 'ok');
+    updateSummary(); populateAnnoFilter(); renderFatture();
+    return;
+  }
+  showLoading(true);
+  let result;
+  if (editingFatturaId) {
+    result = await sb.from('fatture').update(payload).eq('id', editingFatturaId);
+  } else {
+    payload.created_at = now;
+    result = await sb.from('fatture').insert(payload).select().single();
+  }
+  showLoading(false);
+  if (result.error) {
+    if (result.error.code === '42P01') {
+      fattureTableMissing = true; useLocalFatt = true;
+      const arr = lsLoadFatture();
+      payload.id = 'ls_' + Date.now(); payload.created_at = now;
+      arr.unshift(payload); lsSaveFatture(arr); fatture = arr;
+      showTableMissingBanner();
+    } else { toast('❌ ' + result.error.message, 'err'); return; }
+  } else {
+    if (!editingFatturaId && result.data) {
+      fatture.unshift(result.data);
+    } else {
+      await loadFatture();
+    }
+  }
+  closeM('modal-fattura');
+  toast(editingFatturaId ? '✅ Fattura aggiornata!' : '✅ Fattura emessa!', 'ok');
+  updateSummary(); populateAnnoFilter(); renderFatture();
+}
+
+function editFattura(id) {
+  const f = fatture.find(x => x.id === id);
+  if (!f) return;
+  editingFatturaId = id;
+  document.getElementById('fatt-modal-title').textContent = '✏️ Modifica Fattura';
+  document.getElementById('fatt-data').value = f.data_fattura || '';
+  document.getElementById('fatt-tipo').value = f.tipo_visita || '';
+  document.getElementById('fatt-importo').value = f.importo || '';
+  document.getElementById('fatt-stato').value = f.stato || 'da_pagare';
+  document.getElementById('fatt-note').value = f.note || '';
+  document.getElementById('fatt-numero').value = f.numero_fattura || '';
+  populatePatientSelect(f.patient_id || '');
+  openM('modal-fattura');
+}
+
+async function togglePagato(id) {
+  const f = fatture.find(x => x.id === id);
+  if (!f) return;
+  const newStato = f.stato === 'pagato' ? 'da_pagare' : 'pagato';
+  if (useLocalFatt) {
+    const arr = lsLoadFatture();
+    const idx = arr.findIndex(x => x.id === id);
+    if (idx >= 0) { arr[idx].stato = newStato; lsSaveFatture(arr); }
+  } else {
+    await sb.from('fatture').update({ stato: newStato }).eq('id', id);
+  }
+  fatture = fatture.map(x => x.id === id ? { ...x, stato: newStato } : x);
+  updateSummary(); renderFatture();
+  toast(newStato === 'pagato' ? '✅ Segnata come pagata!' : 'ℹ️ Segnata come in attesa', 'ok');
+}
+
+async function deleteFattura(id) {
+  if (!confirm('Eliminare questa fattura?')) return;
+  if (useLocalFatt) {
+    const arr = lsLoadFatture().filter(x => x.id !== id);
+    lsSaveFatture(arr);
+  } else {
+    await sb.from('fatture').delete().eq('id', id);
+  }
+  fatture = fatture.filter(x => x.id !== id);
+  updateSummary(); renderFatture();
+  toast('🗑️ Fattura eliminata', 'info');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await checkAuth();
+  if (!ok) return;
+  await loadPage();
+});
+</script>
+</body>
+</html>

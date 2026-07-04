@@ -24,8 +24,6 @@
 .fatt-tipo{font-size:12px;color:var(--slate-m);flex:1;min-width:100px}
 .fatt-amount{font-size:15px;font-weight:700;color:var(--slate);min-width:70px;text-align:right}
 .fatt-date{font-size:11px;color:var(--slate-l);min-width:70px;text-align:right}
-.tariff-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
-.tariff-row:last-child{border-bottom:none}
 .pag-tab{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .15s,color .15s}
 .pag-tab.active{background:var(--teal);color:white}
 .pag-tab:not(.active){background:var(--sage);color:var(--teal-d)}
@@ -148,7 +146,7 @@
 
   <!-- TAB: TARIFFARIO -->
   <div id="tab-tariffario" style="display:none">
-    <div class="card" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:14px;padding:16px">
       <div style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--slate)">💶 Il tuo Tariffario</div>
       <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.5">Imposta il prezzo per ogni tipo di visita. Questi valori vengono proposti automaticamente quando crei una nuova fattura.</p>
       <div id="tariffario-list"></div>
@@ -416,7 +414,7 @@ function renderTariffario() {
       </thead>
       <tbody>
         ${tariff.map((row, i) => `
-        <tr class="tariff-row">
+        <tr>
           <td style="padding:9px 12px 9px 0;border-bottom:1px solid #F1F5F9">
             <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita, Controllo..."
               style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:13px;font-family:inherit;background:white;outline:none;transition:border-color .15s"
@@ -456,7 +454,7 @@ function removeRow(i) {
 }
 
 function saveTariffario() {
-  const rows = document.querySelectorAll('#tariffario-list .tariff-row');
+  const rows = document.querySelectorAll('#tariffario-list tbody tr');
   const tariff = [];
   rows.forEach(row => {
     const inputs = row.querySelectorAll('input');

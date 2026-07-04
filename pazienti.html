@@ -683,10 +683,28 @@ async function ensureAltroCartella(allCartelle) {
   return data;
 }
 
-async function loadCartelle() {
+async function loadCartelle(skipCache = false) {
   const wrap = document.getElementById('main-content');
-  wrap.innerHTML = `<div class="empty-state"><div class="ei">⏳</div><h3>${_L('Caricamento...','Loading...')}</h3></div>`;
-  const { data, error } = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const _ck = 'np_cart_' + currentUser.id;
+  if (skipCache) { try { sessionStorage.removeItem(_ck); } catch(_e) {} }
+  let data, error;
+  try {
+    const _cached = sessionStorage.getItem(_ck);
+    if (_cached) {
+      const { data: _cd, ts } = JSON.parse(_cached);
+      if (Date.now() - ts < 120000) {
+        data = _cd;
+        sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', currentUser.id).order('created_at', { ascending: false })
+          .then(function(r) { if (r.data) { try { sessionStorage.setItem(_ck, JSON.stringify({ data: r.data, ts: Date.now() })); } catch(e) {} } });
+      }
+    }
+  } catch(_e) {}
+  if (!data) {
+    wrap.innerHTML = `<div class="empty-state"><div class="ei">⏳</div><h3>${_L('Caricamento...','Loading...')}</h3></div>`;
+    const res = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    data = res.data; error = res.error;
+    if (data) { try { sessionStorage.setItem(_ck, JSON.stringify({ data, ts: Date.now() })); } catch(_e) {} }
+  }
   if (error || !data) { wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>${_L('Errore','Error')}</h3></div>`; return; }
 
   // Ensure "Altro" default folder exists (creates it if missing)
@@ -805,7 +823,7 @@ async function bulkArchivia() {
   if (error) { toast('❌ ' + _L('Errore: ','Error: ') + error.message, 'err'); return; }
   toast('📦 ' + ids.length + ' ' + _L(ids.length === 1 ? 'cartella archiviata' : 'cartelle archiviate', ids.length === 1 ? 'folder archived' : 'folders archived') + '!', 'ok');
   deselezionaTutto();
-  loadCartelle();
+  loadCartelle(true);
 }
 
 function bulkEsportaCSV() {
@@ -1763,7 +1781,7 @@ async function salvaCartella() {
   }
   editingCartellaId = null;
   if (cartellaAperta) await renderCartellaDetail(cartellaAperta);
-  else loadCartelle();
+  else loadCartelle(true);
 }
 
 async function delCartella(id) {
@@ -1775,7 +1793,7 @@ async function delCartella(id) {
     showLoading(false);
     cartellaAperta = null;
     document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
-    loadCartelle();
+    loadCartelle(true);
     toast(_L('🗑️ Cartella eliminata','🗑️ Folder deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Cartella','⚠️ Delete Folder'), okLabel: _L('Elimina','Delete') });
 }
@@ -1912,7 +1930,7 @@ async function toggleArchiviaCartella(id, currentlyArchived) {
     cartellaAperta = null;
     _saveCartellaAperta(null);
     document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
-    await loadCartelle();
+    await loadCartelle(true);
   }, { title: newArchived ? _L('📦 Archivia Cartella','📦 Archive Folder') : _L('♻️ Ripristina Cartella','♻️ Restore Folder'), okLabel: newArchived ? _L('Archivia','Archive') : _L('Ripristina','Restore') });
 }
 
@@ -2891,7 +2909,7 @@ async function importaCSV() {
   closeM('modal-importa-csv');
   toast(ok + ' ' + _L('cartelle create','folders created') + (err ? ', ' + err + ' ' + _L('errori','errors') : ''), ok > 0 ? 'ok' : 'err');
   _csvParsed = [];
-  loadCartelle();
+  loadCartelle(true);
 }
 
 // ═══════════════════════════════════════════════════

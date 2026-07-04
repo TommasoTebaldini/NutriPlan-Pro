@@ -172,6 +172,23 @@
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-det')"><span data-only-lang="it">Chiudi</span><span data-only-lang="en">Close</span></button>
+      <button class="btn btn-primary btn-sm" onclick="openCondividiRicetta()" style="background:var(--teal);border-color:var(--teal)">📤 <span data-only-lang="it">Condividi con paziente</span><span data-only-lang="en">Share with patient</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONDIVIDI RICETTA CON PAZIENTE -->
+<div class="modal-bg" id="modal-condividi-ricetta">
+  <div class="modal" style="max-width:420px">
+    <div class="mhdr"><h2>📤 <span data-only-lang="it">Condividi Ricetta</span><span data-only-lang="en">Share Recipe</span></h2><button class="mclose" onclick="closeM('modal-condividi-ricetta')">✕</button></div>
+    <div class="mbody">
+      <div id="condividi-recipe-name" style="font-size:14px;font-weight:700;color:var(--teal-d);background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:14px"></div>
+      <p style="font-size:12px;color:var(--slate-m);margin-bottom:10px"><span data-only-lang="it">Seleziona i pazienti a cui inviare questa ricetta:</span><span data-only-lang="en">Select patients to share this recipe with:</span></p>
+      <div id="condividi-pazienti-list" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-condividi-ricetta')"><span data-only-lang="it">Annulla</span><span data-only-lang="en">Cancel</span></button>
+      <button class="btn btn-primary btn-sm" id="condividi-confirm-btn" onclick="eseguiCondividi()">📤 <span data-only-lang="it">Invia Ricetta</span><span data-only-lang="en">Send Recipe</span></button>
     </div>
   </div>
 </div>
@@ -641,6 +658,72 @@ function inserisciNelPiano() {
   closeM('modal-det');
   toast('📋 ' + _L('Ricetta pronta! Vai al Piano Alimentare per inserirla.','Recipe ready! Go to the Meal Plan to add it.'), 'ok');
   setTimeout(() => { window.location.href = 'app.html'; }, 1500);
+}
+
+// ── CONDIVIDI RICETTA CON PAZIENTE ──
+async function openCondividiRicetta() {
+  if (!detRicetta) return;
+  if (!currentUser) { toast('❌ ' + _L('Accedi per condividere','Login to share'), 'err'); return; }
+  const nomeDisp = detRicetta.isTemplate ? _L(detRicetta.nome, detRicetta.nome_en||detRicetta.nome) : detRicetta.nome;
+  document.getElementById('condividi-recipe-name').textContent = '🍽️ ' + nomeDisp;
+  const listEl = document.getElementById('condividi-pazienti-list');
+  listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--slate-l)"><div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0 auto 8px"></div><span style="font-size:12px">' + _L('Caricamento pazienti...','Loading patients...') + '</span></div>';
+  openM('modal-condividi-ricetta');
+  const { data: relations, error } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+  if (error || !relations?.length) {
+    listEl.innerHTML = '<p style="text-align:center;font-size:13px;color:var(--slate-l);padding:20px">' + _L('Nessun paziente associato al tuo account.','No patients linked to your account.') + '</p>';
+    return;
+  }
+  const patientIds = relations.map(r => r.patient_id);
+  const { data: profiles } = await sb.from('profiles').select('id,full_name,first_name,last_name,email').in('id', patientIds);
+  if (!profiles?.length) {
+    listEl.innerHTML = '<p style="text-align:center;font-size:13px;color:var(--slate-l);padding:20px">' + _L('Nessun paziente trovato.','No patients found.') + '</p>';
+    return;
+  }
+  listEl.innerHTML = profiles.map(p => {
+    const name = p.full_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || p.email || p.id.slice(0,8);
+    return `<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:white;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;transition:border-color .15s" onmouseover="this.style.borderColor='var(--teal-l)'" onmouseout="this.style.borderColor='var(--border)'">
+      <input type="checkbox" class="condividi-chk" value="${esc(p.id)}" style="width:16px;height:16px;cursor:pointer;accent-color:var(--teal)">
+      <span>${esc(name)}</span>
+    </label>`;
+  }).join('');
+}
+
+async function eseguiCondividi() {
+  if (!detRicetta || !currentUser) return;
+  const checked = Array.from(document.querySelectorAll('.condividi-chk:checked')).map(el => el.value);
+  if (!checked.length) { toast(_L('Seleziona almeno un paziente','Select at least one patient'), 'err'); return; }
+  const btn = document.getElementById('condividi-confirm-btn');
+  btn.disabled = true;
+  const raw = detRicetta.ingredienti;
+  const ing = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+  const nomeDisp = detRicetta.isTemplate ? _L(detRicetta.nome, detRicetta.nome_en||detRicetta.nome) : detRicetta.nome;
+  const recipeSnapshot = {
+    id: detRicetta.id,
+    nome: nomeDisp,
+    categoria: detRicetta.categoria || '',
+    porzioni: detRicetta.porzioni || 1,
+    ingredienti: ing,
+    note: detRicetta.isTemplate ? _L(detRicetta.note||'', detRicetta.note_en||detRicetta.note||'') : (detRicetta.note||''),
+  };
+  const rows = checked.map(patient_id => ({
+    dietitian_id: currentUser.id,
+    patient_id,
+    recipe_id: (detRicetta.isTemplate || !detRicetta.id || String(detRicetta.id).startsWith('ls_')) ? null : String(detRicetta.id),
+    recipe_data: recipeSnapshot,
+  }));
+  const { error } = await sb.from('shared_recipes').insert(rows);
+  btn.disabled = false;
+  if (error) {
+    if (error.code === '42P01') {
+      toast('⚠️ ' + _L('Tabella shared_recipes mancante — esegui lo SQL dello schema','Table shared_recipes missing — run schema SQL'), 'err');
+    } else {
+      toast('❌ ' + error.message, 'err');
+    }
+    return;
+  }
+  closeM('modal-condividi-ricetta');
+  toast(`✅ ` + _L(`Ricetta condivisa con ${checked.length} paziente${checked.length>1?'i':''}!`,`Recipe shared with ${checked.length} patient${checked.length>1?'s':''}!`), 'ok');
 }
 
 // ── IMPORTA DA URL (via Claude AI) ──

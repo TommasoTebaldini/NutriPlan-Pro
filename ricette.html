@@ -115,7 +115,7 @@
     </div>
   </div>
   <div class="db-filters">
-    <input type="text" id="r-search" class="db-search" data-i18n-placeholder="ric.search" placeholder="🔍 Cerca ricetta..." oninput="filterRicette()">
+    <input type="text" id="r-search" class="db-search" data-i18n-placeholder="ric.search" placeholder="🔍 Cerca ricetta..." oninput="debouncedFilter()">
     <span id="r-count" style="font-size:12px;color:var(--slate-l)"></span>
   </div>
   <div id="ricette-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
@@ -215,7 +215,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/db.js?v=1021" defer></script>
-<script src="js/ricette-db.js?v=1021" defer></script>
 <script src="js/lang.js" defer></script>
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
@@ -249,20 +248,43 @@ async function loadRicette() {
   showLoading(true);
   ricetteTableMissing = false;
   if (!currentUser) {
-    // Offline / not logged in — use localStorage
     useLocalStorage = true;
     ricette = lsLoadRicette();
     showLoading(false);
     renderRicette();
+    lazyLoadTemplates();
     return;
   }
+  // Serve from sessionStorage cache immediately, refresh in background
+  const _cacheKey = 'np_rc_' + currentUser.id;
+  try {
+    const _cached = sessionStorage.getItem(_cacheKey);
+    if (_cached) {
+      const { data: _cd, ts: _ts } = JSON.parse(_cached);
+      if (Date.now() - _ts < 180000) {
+        useLocalStorage = false;
+        ricette = _cd;
+        showLoading(false);
+        renderRicette();
+        lazyLoadTemplates();
+        sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,ingredienti').eq('user_id', currentUser.id).order('created_at', { ascending: false })
+          .then(function(res) {
+            if (res.data) {
+              ricette = res.data;
+              try { sessionStorage.setItem(_cacheKey, JSON.stringify({ data: ricette, ts: Date.now() })); } catch(_e) {}
+              var q = document.getElementById('r-search'); renderRicette(q ? q.value : '');
+            }
+          });
+        return;
+      }
+    }
+  } catch(_e) {}
   try {
     const { data, error } = await sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,ingredienti').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     showLoading(false);
     if (error) {
       if (error.code === '42P01') {
         ricetteTableMissing = true;
-        // Fall back to localStorage so the user can still work
         useLocalStorage = true;
         ricette = lsLoadRicette();
         showSetupBanner();
@@ -273,6 +295,7 @@ async function loadRicette() {
     } else {
       useLocalStorage = false;
       ricette = data || [];
+      try { sessionStorage.setItem(_cacheKey, JSON.stringify({ data: ricette, ts: Date.now() })); } catch(_e) {}
     }
   } catch(e) {
     showLoading(false);
@@ -281,6 +304,7 @@ async function loadRicette() {
     toast('⚠️ ' + _L('DB non raggiungibile — ricette salvate in locale','DB unreachable — recipes saved locally'), 'info');
   }
   renderRicette();
+  lazyLoadTemplates();
 }
 
 function showSetupBanner() {
@@ -360,6 +384,18 @@ function renderRicette(filter = '') {
 }
 
 function filterRicette() { renderRicette(document.getElementById('r-search').value); }
+var _filterTimer;
+function debouncedFilter() { clearTimeout(_filterTimer); _filterTimer = setTimeout(filterRicette, 150); }
+
+var _tplsLoading = false;
+function lazyLoadTemplates() {
+  if (typeof RICETTE_DB !== 'undefined' || _tplsLoading) return;
+  _tplsLoading = true;
+  var s = document.createElement('script');
+  s.src = 'js/ricette-db.js?v=1021';
+  s.onload = function() { renderRicette(document.getElementById('r-search') ? document.getElementById('r-search').value : ''); };
+  document.head.appendChild(s);
+}
 
 function catStyle(cat) {
   const m = {'Primo piatto':'background:#EDE9FE;color:#5B21B6','Secondo piatto':'background:#DBEAFE;color:#1E40AF','Contorno':'background:#D1FAE5;color:#065F46','Colazione':'background:#FEF3C7;color:#92400E','Spuntino':'background:#FCE7F3;color:#9D174D','Dessert':'background:#FEE2E2;color:#991B1B'};

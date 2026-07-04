@@ -401,32 +401,44 @@ function renderTariffario() {
   const tariff = loadTariffario();
   const list = document.getElementById('tariffario-list');
   if (!tariff.length) {
-    list.innerHTML = `<p style="font-size:13px;color:var(--slate-l);text-align:center;padding:20px 0">Nessuna voce — clicca "Aggiungi tipo visita" per iniziare.</p>`;
+    list.innerHTML = '<div style="text-align:center;padding:24px 0;color:#94A3B8;font-size:13px">Nessuna voce — clicca "+ Aggiungi tipo visita" per iniziare.</div>';
     return;
   }
-  const header = `
-    <div style="display:flex;align-items:center;gap:12px;padding:6px 14px 10px;border-bottom:1.5px solid var(--border);margin-bottom:10px">
-      <span style="flex:1;font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.6px">Tipo Visita</span>
-      <span style="width:116px;flex-shrink:0;font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.6px;text-align:right">Prezzo (€)</span>
-      <span style="width:34px;flex-shrink:0"></span>
-    </div>`;
-  const rows = tariff.map((row, i) => `
-    <div class="tariff-row" style="display:flex;align-items:center;gap:12px;background:#F8FAFC;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px">
-      <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita, Controllo..."
-        style="flex:1;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:13px;font-family:inherit;outline:none;background:white;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:border-color .15s,box-shadow .15s"
-        onfocus="this.style.borderColor='var(--teal-l)';this.style.boxShadow='0 0 0 3px rgba(13,148,136,.08)'" onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='0 1px 2px rgba(0,0,0,.04)'">
-      <div style="position:relative;width:116px;flex-shrink:0">
-        <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--slate-m);pointer-events:none;font-weight:600;line-height:1">€</span>
-        <input type="number" value="${row.prezzo}" min="0" step="1"
-          style="width:100%;box-sizing:border-box;padding:9px 12px 9px 26px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:15px;font-weight:700;text-align:right;font-family:inherit;outline:none;background:white;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:border-color .15s,box-shadow .15s;color:var(--teal-d)"
-          onfocus="this.style.borderColor='var(--teal-l)';this.style.boxShadow='0 0 0 3px rgba(13,148,136,.08)'" onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='0 1px 2px rgba(0,0,0,.04)'">
-      </div>
-      <button onclick="removeRow(${i})" title="Rimuovi"
-        style="flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:white;border:1.5px solid #E2E8F0;border-radius:9px;cursor:pointer;color:#94A3B8;font-size:15px;transition:background .15s,color .15s,border-color .15s"
-        onmouseover="this.style.background='#FEE2E2';this.style.color='#DC2626';this.style.borderColor='#FCA5A5'" onmouseout="this.style.background='white';this.style.color='#94A3B8';this.style.borderColor='#E2E8F0'">✕</button>
-    </div>
-  `).join('');
-  list.innerHTML = header + rows;
+  list.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;table-layout:fixed">
+      <colgroup><col><col style="width:140px"><col style="width:50px"></colgroup>
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:0 0 10px 0;font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #E2E8F0">Tipo Visita</th>
+          <th style="text-align:right;padding:0 8px 10px 0;font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #E2E8F0">Prezzo</th>
+          <th style="border-bottom:2px solid #E2E8F0"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tariff.map((row, i) => `
+        <tr class="tariff-row">
+          <td style="padding:9px 12px 9px 0;border-bottom:1px solid #F1F5F9">
+            <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita, Controllo..."
+              style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:13px;font-family:inherit;background:white;outline:none;transition:border-color .15s"
+              onfocus="this.style.borderColor='#2DD4BF'" onblur="this.style.borderColor='#E2E8F0'">
+          </td>
+          <td style="padding:9px 8px 9px 0;border-bottom:1px solid #F1F5F9;white-space:nowrap">
+            <div style="display:flex;align-items:center;gap:5px;justify-content:flex-end">
+              <span style="font-size:14px;color:#94A3B8;font-weight:600">€</span>
+              <input type="number" value="${row.prezzo}" min="0" step="1"
+                style="width:88px;padding:9px 10px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:15px;font-weight:700;text-align:right;font-family:inherit;background:white;outline:none;transition:border-color .15s;color:#0D9488"
+                onfocus="this.style.borderColor='#2DD4BF'" onblur="this.style.borderColor='#E2E8F0'">
+            </div>
+          </td>
+          <td style="padding:9px 0;border-bottom:1px solid #F1F5F9;text-align:center">
+            <button onclick="removeRow(${i})"
+              style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:8px;cursor:pointer;color:#94A3B8;font-size:14px;font-family:inherit;transition:all .15s"
+              onmouseover="this.style.background='#FEE2E2';this.style.color='#DC2626';this.style.borderColor='#FCA5A5'"
+              onmouseout="this.style.background='#F8FAFC';this.style.color='#94A3B8';this.style.borderColor='#E2E8F0'">✕</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
 }
 
 function addTariffRow() {

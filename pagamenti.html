@@ -400,16 +400,30 @@ function setTab(name) {
 function renderTariffario() {
   const tariff = loadTariffario();
   const list = document.getElementById('tariffario-list');
-  list.innerHTML = tariff.map((row, i) => `
-    <div class="tariff-row" id="tariff-row-${i}">
-      <input type="text" value="${esc(row.tipo)}" placeholder="Tipo visita" class="inp" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
-      <div style="display:flex;align-items:center;gap:4px">
-        <span style="font-size:13px;color:var(--slate-m)">€</span>
-        <input type="number" value="${row.prezzo}" min="0" step="1" class="inp" style="width:80px;padding:7px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;text-align:right;font-family:inherit">
+  const header = `<div style="display:grid;grid-template-columns:1fr 130px 40px;gap:10px;padding:0 4px 10px;border-bottom:2px solid var(--border);margin-bottom:4px">
+    <span style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px">Tipo Visita</span>
+    <span style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px;text-align:right;padding-right:8px">Prezzo</span>
+    <span></span>
+  </div>`;
+  const rows = tariff.length === 0
+    ? `<p style="font-size:13px;color:var(--slate-l);text-align:center;padding:16px 0">Nessuna voce — clicca "Aggiungi" per iniziare.</p>`
+    : tariff.map((row, i) => `
+    <div style="display:grid;grid-template-columns:1fr 130px 40px;gap:10px;align-items:center;padding:8px 4px;${i < tariff.length - 1 ? 'border-bottom:1px solid var(--border)' : ''}">
+      <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita..."
+        style="padding:9px 11px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--teal-l)'" onblur="this.style.borderColor='var(--border)'">
+      <div style="position:relative">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--slate-m);pointer-events:none;font-weight:600">€</span>
+        <input type="number" value="${row.prezzo}" min="0" step="1"
+          style="width:100%;padding:9px 10px 9px 24px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none;box-sizing:border-box;transition:border-color .15s;color:var(--teal-d)"
+          onfocus="this.style.borderColor='var(--teal-l)'" onblur="this.style.borderColor='var(--border)'">
       </div>
-      <button onclick="removeRow(${i})" style="background:none;border:none;cursor:pointer;color:var(--slate-l);font-size:16px;padding:4px">✕</button>
+      <button onclick="removeRow(${i})"
+        style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#F1F5F9;border:none;border-radius:9px;cursor:pointer;color:var(--slate-m);font-size:16px;transition:background .15s,color .15s"
+        onmouseover="this.style.background='#FEE2E2';this.style.color='#DC2626'" onmouseout="this.style.background='#F1F5F9';this.style.color='var(--slate-m)'">✕</button>
     </div>
   `).join('');
+  list.innerHTML = header + rows;
 }
 
 function addTariffRow() {

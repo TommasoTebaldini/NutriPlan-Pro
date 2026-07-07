@@ -217,6 +217,8 @@ async function ensureChartJs() {
   <div class="nav-sec"><span data-only-lang="it">Comunicazione</span><span data-only-lang="en" style="display:none">Communication</span></div>
   <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span><span data-only-lang="it">Profilo</span><span data-only-lang="en" style="display:none">Profile</span></a>
   <a class="nav-item active" href="chat.html"><span class="ni">👥</span><span data-only-lang="it">Pazienti</span><span data-only-lang="en" style="display:none">Patients</span></a>
+  <a class="nav-item" href="broadcast.html"><span class="ni">📢</span><span data-only-lang="it">Broadcast</span><span data-only-lang="en" style="display:none">Broadcast</span></a>
+  <a class="nav-item" href="analytics.html"><span class="ni">📊</span><span data-only-lang="it">Analytics</span><span data-only-lang="en" style="display:none">Analytics</span></a>
   <div class="nav-sec"><span data-only-lang="it">Specialistica</span><span data-only-lang="en" style="display:none">Specialties</span></div>
   <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span><span data-only-lang="it">Paziente Sano</span><span data-only-lang="en" style="display:none">Healthy Patient</span></a>
   <a class="nav-item " href="diabete.html"><span class="ni">🩸</span><span data-only-lang="it">Gestione Diabete</span><span data-only-lang="en" style="display:none">Diabetes Management</span></a>
@@ -295,6 +297,7 @@ async function ensureChartJs() {
 <script src="js/lang.js" defer></script>
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/firma.js" defer></script>
 <script>
 let chatPatients = [];
 let selectedPatientId = null;
@@ -2004,10 +2007,27 @@ async function loadPrivacy() {
             <button class="btn btn-ghost btn-sm" onclick="toggleConsentEdit()">${t('priv.cancel_edit')}</button>
           </div>
         </div>
-        ${isSigned ? `<div style="margin-top:12px;padding:10px 14px;background:#D1FAE5;border-radius:8px;font-size:12px;color:#065F46;font-weight:700">✅ ${t('priv.signed')} ${signedDate}</div>` : ''}
+        ${isSigned ? `<div style="margin-top:12px;padding:10px 14px;background:#D1FAE5;border-radius:8px;font-size:12px;color:#065F46;font-weight:700">✅ ${t('priv.signed')} ${signedDate}</div>` : `<div style="margin-top:10px"><button class="btn btn-ghost btn-sm no-print" onclick="openFirmaConsenso('${consentId||''}')" style="gap:6px">✍️ Firma in studio</button></div>`}
       </div>
     </div>
   </div>`;
+}
+
+function openFirmaConsenso(consentId) {
+  const patName = chatPatients.find(p => p.id === selectedPatientId)?.full_name || 'Paziente';
+  firmaOpen({
+    title: '✍️ Firma Consenso Informato',
+    subtitle: `Il paziente ${patName} firma il consenso informato in studio. La firma sarà registrata con data e ora.`,
+    patientId: selectedPatientId,
+    context: 'consenso',
+    onSave: async (dataUrl, signedAt) => {
+      if (consentId) {
+        await sb.from('patient_consents').update({ signed_at: signedAt, signature_data_url: dataUrl }).eq('id', consentId);
+      }
+      toast('✅ Consenso firmato in studio!', 'ok');
+      if (selectedPatientId) loadPatientPanel(selectedPatientId);
+    }
+  });
 }
 
 async function createConsent(cartellaId, patientName, dietEmail) {

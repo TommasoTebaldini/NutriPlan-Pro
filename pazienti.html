@@ -104,6 +104,8 @@ async function ensureChartJs() {
   <div class="nav-sec"><span data-only-lang="it">Comunicazione</span><span data-only-lang="en" style="display:none">Communication</span></div>
   <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span><span data-only-lang="it">Profilo</span><span data-only-lang="en" style="display:none">Profile</span></a>
   <a class="nav-item " href="chat.html"><span class="ni">👥</span><span data-only-lang="it">Pazienti</span><span data-only-lang="en" style="display:none">Patients</span></a>
+  <a class="nav-item" href="broadcast.html"><span class="ni">📢</span><span data-only-lang="it">Broadcast</span><span data-only-lang="en" style="display:none">Broadcast</span></a>
+  <a class="nav-item" href="analytics.html"><span class="ni">📊</span><span data-only-lang="it">Analytics</span><span data-only-lang="en" style="display:none">Analytics</span></a>
   <!-- <a class="nav-item " href="anamnesi.html"><span class="ni">📋</span><span data-only-lang="it">Anamnesi</span><span data-only-lang="en" style="display:none">Intake Forms</span></a> -->
   <div class="nav-sec"><span data-only-lang="it">Specialistica</span><span data-only-lang="en" style="display:none">Clinical</span></div>
     <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span><span data-only-lang="it">Paziente Sano</span><span data-only-lang="en" style="display:none">Healthy Patient</span></a>
@@ -509,6 +511,8 @@ async function ensureChartJs() {
 <script src="js/lang.js" defer></script>
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/firma.js" defer></script>
+<script src="js/fse.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let cartellaAperta = null;
@@ -1263,6 +1267,7 @@ async function renderCartellaDetail(id) {
             : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 ' + _L('Collega paziente','Link patient') + '</button>')
         + '<div style="flex:1"></div>'
         + '<button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">📄 PDF</button>'
+        + (patientId ? '<button onclick="openFSEExport(window._currentCartellaData&&window._currentCartellaData.cart||{})" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#0F766E,#064E3B);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Esporta documento FSE 2.0 (CDA R2)">🏥 FSE 2.0</button>' : '')
         + (patientId ? '<button onclick="inviaPrivacy(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">📄 Privacy</button><button onclick="inviaGDPR(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#1E293B,#475569);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">🔒 GDPR</button>' : '')
         + '</div>' : ''}
     </div>

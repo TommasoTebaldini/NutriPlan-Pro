@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Broadcast & Gruppi — DietPlan Pro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://hvdwqowkhutfsdpiubxe.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.bc-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;height:calc(100dvh - 54px - 36px - 36px)}
+@media(max-width:900px){.bc-layout{grid-template-columns:1fr;height:auto}}
+.bc-sidebar{display:flex;flex-direction:column;gap:10px}
+.bc-panel{background:white;border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.bc-panel-hdr{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--slate);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;background:#FAFBFC}
+.bc-panel-body{padding:14px 16px;overflow-y:auto;flex:1}
+.group-chip{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:background .15s;border:1.5px solid transparent;margin-bottom:6px}
+.group-chip:hover{background:#F1F5F9}
+.group-chip.active{background:#E0F2F1;border-color:var(--teal-l)}
+.group-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.group-chip-name{font-size:13px;font-weight:600;color:var(--slate);flex:1}
+.group-chip-count{font-size:11px;color:var(--slate-l);background:var(--bg);padding:2px 7px;border-radius:20px}
+.pat-check-list{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto;padding:2px 0}
+.pat-check-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;transition:background .15s;user-select:none}
+.pat-check-item:hover{background:#F8FAFC}
+.pat-check-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.pat-check-name{font-size:13px;color:var(--slate);flex:1}
+.pat-check-email{font-size:11px;color:var(--slate-l)}
+.msg-area{display:flex;flex-direction:column;height:100%}
+.msg-preview{flex:1;overflow-y:auto;padding:14px;background:#F8FAFC;border-bottom:1px solid var(--border)}
+.msg-compose{padding:14px}
+.bc-msg-item{background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.bc-msg-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.bc-msg-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.bc-msg-time{font-size:11px;color:var(--slate-l);margin-left:auto}
+.bc-msg-text{font-size:13px;color:var(--slate);line-height:1.5}
+.bc-msg-stats{font-size:11px;color:var(--slate-l);margin-top:6px;display:flex;gap:10px}
+.compose-box{border:1.5px solid var(--border-d);border-radius:10px;padding:12px 14px;font-size:13px;font-family:inherit;width:100%;min-height:90px;resize:vertical;outline:none;transition:border-color .15s;background:white;color:var(--slate)}
+.compose-box:focus{border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.15)}
+.recip-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:28px;padding:4px;border:1.5px solid var(--border);border-radius:8px;background:#F8FAFC}
+.recip-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.recip-tag .rtx{cursor:pointer;opacity:.6;font-size:10px;padding:1px 2px}
+.recip-tag .rtx:hover{opacity:1}
+.recip-placeholder{font-size:12px;color:var(--slate-l);padding:3px 6px}
+.char-count{font-size:11px;color:var(--slate-l);text-align:right;margin-top:4px}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item" href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item" href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <a class="nav-item active" href="broadcast.html"><span class="ni">📢</span>Broadcast</a>
+  <a class="nav-item" href="analytics.html"><span class="ni">📊</span>Analytics</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item" href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item" href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item" href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="visita.html"><span class="ni">🩺</span>Resoconto Visita</a>
+  <a class="nav-item" href="moduli.html"><span class="ni">📄</span>Moduli Stampabili</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item" href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📢 Broadcast & Gruppi</h2>
+  <div class="tbar-actions"></div>
+</div>
+<main id="main">
+<div class="page-content" style="padding:14px">
+<div class="bc-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="bc-sidebar">
+    <!-- Groups panel -->
+    <div class="bc-panel" style="flex-shrink:0">
+      <div class="bc-panel-hdr">
+        <span>👥 Gruppi</span>
+        <button class="btn btn-primary btn-xs" onclick="openNewGroupModal()">+ Nuovo</button>
+      </div>
+      <div class="bc-panel-body" style="padding:10px;max-height:280px;overflow-y:auto">
+        <!-- All patients pseudo-group -->
+        <div class="group-chip active" data-gid="all" onclick="selectGroup('all')">
+          <div class="group-dot" style="background:#0F766E"></div>
+          <span class="group-chip-name">Tutti i pazienti</span>
+          <span class="group-chip-count" id="count-all">—</span>
+        </div>
+        <div id="groups-list"></div>
+      </div>
+    </div>
+
+    <!-- Selected patients -->
+    <div class="bc-panel" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div class="bc-panel-hdr">
+        <span>✅ Destinatari selezionati</span>
+        <button class="btn btn-ghost btn-xs" onclick="clearRecipients()">Svuota</button>
+      </div>
+      <div style="padding:10px;flex:1;overflow-y:auto">
+        <input type="text" id="pat-search" placeholder="Cerca paziente..." oninput="filterPats()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin-bottom:8px">
+        <div class="pat-check-list" id="pat-check-list">
+          <div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Caricamento...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Compose + History -->
+  <div class="bc-panel" style="display:flex;flex-direction:column;overflow:hidden">
+    <!-- Tabs -->
+    <div style="display:flex;border-bottom:2px solid var(--border)">
+      <div class="tab active" id="tab-compose" onclick="switchTab('compose')" style="padding:10px 16px;font-size:13px;font-weight:600;color:var(--teal);border-bottom:2px solid var(--teal);margin-bottom:-2px;cursor:pointer">✍️ Componi</div>
+      <div class="tab" id="tab-history" onclick="switchTab('history')" style="padding:10px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer">📋 Storico</div>
+    </div>
+
+    <!-- Compose tab -->
+    <div id="panel-compose" class="msg-area">
+      <div class="msg-compose" style="height:100%;display:flex;flex-direction:column;gap:10px">
+        <!-- Recipients preview -->
+        <div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">A:</div>
+          <div class="recip-tags" id="recip-tags-preview">
+            <span class="recip-placeholder">Seleziona pazienti o un gruppo →</span>
+          </div>
+        </div>
+
+        <!-- Message type -->
+        <div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Tipo:</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+              <input type="radio" name="msg-type" value="chat" checked style="accent-color:var(--teal)"> 💬 Chat in-app
+            </label>
+            <label style="display:flex;align-items:center;gap=6px;cursor:pointer;font-size:13px">
+              <input type="radio" name="msg-type" value="notification" style="accent-color:var(--teal)"> 🔔 Notifica push
+            </label>
+          </div>
+        </div>
+
+        <!-- Template quick-insert -->
+        <div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Template rapidi:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-xs" onclick="insertTpl('reminder')">⏰ Promemoria visita</button>
+            <button class="btn btn-ghost btn-xs" onclick="insertTpl('tips')">💡 Consiglio nutrizionale</button>
+            <button class="btn btn-ghost btn-xs" onclick="insertTpl('holiday')">🎄 Auguri festività</button>
+            <button class="btn btn-ghost btn-xs" onclick="insertTpl('results')">📊 Analisi disponibili</button>
+          </div>
+        </div>
+
+        <!-- Message text -->
+        <div style="flex:1;display:flex;flex-direction:column">
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Messaggio:</div>
+          <textarea class="compose-box" id="broadcast-text" placeholder="Scrivi il tuo messaggio per tutti i pazienti selezionati..." oninput="updateCharCount()" style="flex:1;min-height:120px"></textarea>
+          <div class="char-count" id="char-count">0 / 500 caratteri</div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="sendBroadcast()" id="btn-send">
+            📤 Invia a <span id="recip-count">0</span> pazienti
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="previewBroadcast()">👁 Anteprima</button>
+          <div style="font-size:12px;color:var(--slate-l);margin-left:auto" id="send-status"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History tab -->
+    <div id="panel-history" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#F8FAFC">
+      <div id="broadcast-history">
+        <div style="text-align:center;padding:32px;color:var(--slate-l);font-size:13px">
+          <div style="font-size:36px;margin-bottom:8px">📋</div>
+          Nessun broadcast inviato ancora
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</main>
+
+<!-- New Group Modal -->
+<div id="modal-group" class="modal-bg" style="display:none">
+  <div class="modal" style="max-width:440px">
+    <div class="mhdr"><h2>👥 Nuovo Gruppo</h2><button class="mclose" onclick="closeGroupModal()">✕</button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:12px">
+        <label>Nome gruppo *</label>
+        <input type="text" id="gm-name" placeholder="es. Pazienti diabetici, Follow-up marzo...">
+      </div>
+      <div class="fg" style="margin-bottom:12px">
+        <label>Colore</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="color-picker">
+          <div class="color-dot" data-color="#0F766E" style="background:#0F766E;width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#0F766E',this)"></div>
+          <div class="color-dot" data-color="#2563EB" style="background:#2563EB;width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#2563EB',this)"></div>
+          <div class="color-dot" data-color="#7C3AED" style="background:#7C3AED;width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#7C3AED',this)"></div>
+          <div class="color-dot" data-color="#DC2626" style="background:#DC2626;width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#DC2626',this)"></div>
+          <div class="color-dot" data-color="#D97706" style="background:#D97706;width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#D97706',this)"></div>
+          <div class="color-dot" data-color="#DB2777" style="background:#DB2777;width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#DB2777',this)"></div>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Pazienti nel gruppo</label>
+        <input type="text" id="gm-search" placeholder="Cerca..." oninput="filterGroupPatients()" style="margin-bottom:6px">
+        <div class="pat-check-list" id="gm-pat-list" style="max-height:200px;border:1.5px solid var(--border);border-radius:8px;padding:4px"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeGroupModal()">Annulla</button>
+      <button class="btn btn-primary" onclick="saveGroup()">💾 Salva Gruppo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div id="modal-preview" class="modal-bg" style="display:none">
+  <div class="modal" style="max-width:420px">
+    <div class="mhdr"><h2>👁 Anteprima messaggio</h2><button class="mclose" onclick="document.getElementById('modal-preview').style.display='none'">✕</button></div>
+    <div class="mbody">
+      <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:12px;padding:14px;font-size:13px;color:#1E293B;line-height:1.6;white-space:pre-wrap" id="preview-content"></div>
+      <div style="margin-top:12px;font-size:12px;color:var(--slate-l)" id="preview-info"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-preview').style.display='none'">Chiudi</button>
+      <button class="btn btn-primary" onclick="sendBroadcast()">📤 Invia</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<div class="global-copyright">© 2025 DietPlan Pro — Tutti i diritti riservati</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/print-capture.js" defer></script>
+<script>
+let allPatients = [];
+let allGroups = [];
+let selectedPatients = new Set(); // patient IDs
+let activeGroupId = 'all';
+let selectedGroupColor = '#0F766E';
+let broadcastHistory = [];
+
+const TEMPLATES = {
+  reminder: 'Gentile paziente,\n\nti ricordiamo che hai una visita in programma presso il nostro studio. Ti preghiamo di confermare la tua presenza o contattarci per eventuali modifiche.\n\nA presto,\nIl tuo dietista',
+  tips: 'Ciao! 🥗\n\nEcco un consiglio nutrizionale per questa settimana: ricorda di includere almeno 5 porzioni di frutta e verdura al giorno. Colori diversi nel piatto significano nutrienti diversi!\n\nBuona salute!',
+  holiday: '🎄 Auguri di Buone Feste!\n\nIn questo periodo speciale, ricorda di mantenere un equilibrio alimentare sano anche durante le celebrazioni. Se hai domande o hai bisogno di supporto, sono qui per te!\n\nTanti auguri!',
+  results: '📊 Le tue analisi sono disponibili!\n\nHo caricato i tuoi referti aggiornati nella tua cartella digitale. Puoi visualizzarli dall\'app. Se hai domande, scrivimi pure!\n\nA presto!'
+};
+
+async function init() {
+  showLoading(true);
+  await Promise.all([loadPatients(), loadGroups(), loadHistory()]);
+  showLoading(false);
+}
+
+async function loadPatients() {
+  const { data } = await sb.from('profiles').select('id,email,full_name,created_at').eq('role','patient').eq('approved',true).order('full_name',{ascending:true});
+  allPatients = data || [];
+  document.getElementById('count-all').textContent = allPatients.length;
+  renderPatList();
+}
+
+async function loadGroups() {
+  const { data } = await sb.from('patient_groups').select('*,patient_group_members(patient_id)').eq('dietitian_id', currentUser.id).order('created_at',{ascending:false});
+  allGroups = (data || []).map(g => ({ ...g, members: (g.patient_group_members||[]).map(m => m.patient_id) }));
+  renderGroupsList();
+}
+
+async function loadHistory() {
+  const { data } = await sb.from('broadcast_messages').select('*').eq('dietitian_id', currentUser.id).order('created_at',{ascending:false}).limit(50);
+  broadcastHistory = data || [];
+  renderHistory();
+}
+
+function renderPatList() {
+  const search = (document.getElementById('pat-search')?.value || '').toLowerCase();
+  let list = allPatients;
+  if (activeGroupId !== 'all') {
+    const g = allGroups.find(g => g.id === activeGroupId);
+    if (g) list = allPatients.filter(p => g.members.includes(p.id));
+  }
+  if (search) list = list.filter(p => (p.full_name||'').toLowerCase().includes(search) || (p.email||'').toLowerCase().includes(search));
+  document.getElementById('pat-check-list').innerHTML = list.length
+    ? list.map(p => `<div class="pat-check-item" onclick="togglePat('${p.id}')">
+        <input type="checkbox" ${selectedPatients.has(p.id) ? 'checked' : ''} id="chk-${p.id}" onclick="togglePat('${p.id}',event)">
+        <div style="flex:1;min-width:0">
+          <div class="pat-check-name">${esc(p.full_name || p.email || p.id)}</div>
+          <div class="pat-check-email">${esc(p.email || '')}</div>
+        </div>
+      </div>`).join('')
+    : '<div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Nessun paziente</div>';
+}
+
+function togglePat(id, e) {
+  if (e) e.stopPropagation();
+  selectedPatients.has(id) ? selectedPatients.delete(id) : selectedPatients.add(id);
+  renderPatList();
+  updateRecipientsPreview();
+}
+
+function updateRecipientsPreview() {
+  const count = selectedPatients.size;
+  document.getElementById('recip-count').textContent = count;
+  const preview = document.getElementById('recip-tags-preview');
+  if (!count) {
+    preview.innerHTML = '<span class="recip-placeholder">Seleziona pazienti o un gruppo →</span>';
+    return;
+  }
+  const selected = allPatients.filter(p => selectedPatients.has(p.id)).slice(0,5);
+  const more = count - selected.length;
+  preview.innerHTML = selected.map(p => `<span class="recip-tag" style="background:#E0F2F1;color:#0F766E">${esc(p.full_name||p.email||p.id).split(' ')[0]}</span>`).join('')
+    + (more > 0 ? `<span class="recip-tag" style="background:#F1F5F9;color:#64748B">+${more} altri</span>` : '');
+}
+
+function selectGroup(gid) {
+  activeGroupId = gid;
+  document.querySelectorAll('.group-chip').forEach(c => c.classList.toggle('active', c.dataset.gid === gid));
+  selectedPatients.clear();
+  if (gid === 'all') {
+    allPatients.forEach(p => selectedPatients.add(p.id));
+  } else {
+    const g = allGroups.find(g => g.id === gid);
+    if (g) g.members.forEach(mid => selectedPatients.add(mid));
+  }
+  renderPatList();
+  updateRecipientsPreview();
+}
+
+function filterPats() { renderPatList(); }
+
+function clearRecipients() {
+  selectedPatients.clear();
+  document.querySelectorAll('.group-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-gid="all"]')?.classList.add('active');
+  activeGroupId = 'all';
+  renderPatList();
+  updateRecipientsPreview();
+}
+
+function renderGroupsList() {
+  const list = document.getElementById('groups-list');
+  list.innerHTML = allGroups.map(g => `
+    <div class="group-chip" data-gid="${g.id}" onclick="selectGroup('${g.id}')">
+      <div class="group-dot" style="background:${g.color||'#64748B'}"></div>
+      <span class="group-chip-name">${esc(g.name)}</span>
+      <span class="group-chip-count">${g.members.length}</span>
+      <button onclick="deleteGroup('${g.id}',event)" style="background:none;border:none;cursor:pointer;color:#94A3B8;font-size:12px;padding:2px;line-height:1" title="Elimina">🗑</button>
+    </div>`).join('');
+}
+
+function renderHistory() {
+  const el = document.getElementById('broadcast-history');
+  if (!broadcastHistory.length) {
+    el.innerHTML = '<div style="text-align:center;padding:32px;color:var(--slate-l);font-size:13px"><div style="font-size:36px;margin-bottom:8px">📋</div>Nessun broadcast inviato ancora</div>';
+    return;
+  }
+  el.innerHTML = broadcastHistory.map(m => {
+    const type = m.message_type === 'notification' ? '🔔' : '💬';
+    const color = m.message_type === 'notification' ? '#7C3AED' : '#0F766E';
+    return `<div class="bc-msg-item">
+      <div class="bc-msg-hdr">
+        <span class="bc-msg-tag" style="background:${color}22;color:${color}">${type} ${m.message_type === 'notification' ? 'Notifica push' : 'Chat'}</span>
+        <span class="bc-msg-tag" style="background:#F1F5F9;color:#64748B">👥 ${m.recipients_count || 0} destinatari</span>
+        <span class="bc-msg-time">${new Date(m.created_at).toLocaleString('it',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
+      </div>
+      <div class="bc-msg-text">${esc(m.message_text).slice(0,200)}${m.message_text.length > 200 ? '...' : ''}</div>
+      <div class="bc-msg-stats">
+        <span>✅ Inviato con successo</span>
+        ${m.group_name ? `<span>• Gruppo: ${esc(m.group_name)}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function switchTab(tab) {
+  document.getElementById('panel-compose').style.display = tab === 'compose' ? 'flex' : 'none';
+  document.getElementById('panel-history').style.display = tab === 'history' ? 'block' : 'none';
+  document.getElementById('tab-compose').style.cssText = tab === 'compose' ? 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--teal);border-bottom:2px solid var(--teal);margin-bottom:-2px;cursor:pointer' : 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer';
+  document.getElementById('tab-history').style.cssText = tab === 'history' ? 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--teal);border-bottom:2px solid var(--teal);margin-bottom:-2px;cursor:pointer' : 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer';
+  if (tab === 'history') loadHistory();
+}
+
+function insertTpl(key) {
+  document.getElementById('broadcast-text').value = TEMPLATES[key] || '';
+  updateCharCount();
+}
+
+function updateCharCount() {
+  const t = document.getElementById('broadcast-text').value;
+  const el = document.getElementById('char-count');
+  el.textContent = `${t.length} / 500 caratteri`;
+  el.style.color = t.length > 450 ? '#DC2626' : 'var(--slate-l)';
+}
+
+function previewBroadcast() {
+  const text = document.getElementById('broadcast-text').value.trim();
+  if (!text) { toast('Scrivi un messaggio prima', 'err'); return; }
+  document.getElementById('preview-content').textContent = text;
+  document.getElementById('preview-info').textContent = `Verrà inviato a ${selectedPatients.size} pazienti.`;
+  document.getElementById('modal-preview').style.display = 'flex';
+}
+
+async function sendBroadcast() {
+  const text = document.getElementById('broadcast-text').value.trim();
+  if (!text) { toast('Scrivi un messaggio prima', 'err'); return; }
+  if (!selectedPatients.size) { toast('Seleziona almeno un paziente', 'err'); return; }
+  const msgType = document.querySelector('input[name="msg-type"]:checked')?.value || 'chat';
+  document.getElementById('modal-preview').style.display = 'none';
+  showLoading(true);
+  try {
+    const patientIds = [...selectedPatients];
+    // Insert chat messages for all selected patients
+    if (msgType === 'chat') {
+      const inserts = patientIds.map(pid => ({
+        patient_id: pid,
+        sender_id: currentUser.id,
+        sender_role: 'dietitian',
+        content: text,
+        type: 'text',
+        status: 'sent'
+      }));
+      const { error } = await sb.from('chat_messages').insert(inserts);
+      if (error) throw error;
+    }
+    // Log broadcast
+    const activeGroup = allGroups.find(g => g.id === activeGroupId);
+    await sb.from('broadcast_messages').insert({
+      dietitian_id: currentUser.id,
+      message_text: text,
+      message_type: msgType,
+      recipients_count: patientIds.length,
+      patient_ids: patientIds,
+      group_name: activeGroup?.name || null
+    });
+    toast(`✅ Messaggio inviato a ${patientIds.length} pazienti!`, 'ok');
+    document.getElementById('broadcast-text').value = '';
+    updateCharCount();
+    await loadHistory();
+    switchTab('history');
+  } catch(e) {
+    toast('Errore invio: ' + e.message, 'err');
+  }
+  showLoading(false);
+}
+
+// Group management
+function openNewGroupModal() {
+  document.getElementById('gm-name').value = '';
+  selectedGroupColor = '#0F766E';
+  document.querySelectorAll('.color-dot').forEach(d => d.style.border = '2.5px solid transparent');
+  document.querySelector('.color-dot[data-color="#0F766E"]').style.border = '2.5px solid white';
+  renderGroupPatList('');
+  document.getElementById('modal-group').style.display = 'flex';
+}
+
+function closeGroupModal() { document.getElementById('modal-group').style.display = 'none'; }
+
+function selectColor(color, el) {
+  selectedGroupColor = color;
+  document.querySelectorAll('.color-dot').forEach(d => d.style.border = '2.5px solid transparent');
+  el.style.border = '2.5px solid white';
+}
+
+function filterGroupPatients() {
+  renderGroupPatList(document.getElementById('gm-search').value);
+}
+
+function renderGroupPatList(search) {
+  const s = (search||'').toLowerCase();
+  const list = s ? allPatients.filter(p => (p.full_name||'').toLowerCase().includes(s) || (p.email||'').toLowerCase().includes(s)) : allPatients;
+  const el = document.getElementById('gm-pat-list');
+  el.innerHTML = list.slice(0,40).map(p => `<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--slate)">
+    <input type="checkbox" id="gchk-${p.id}" style="accent-color:var(--teal);width:14px;height:14px">
+    ${esc(p.full_name || p.email || p.id)}
+  </label>`).join('');
+}
+
+async function saveGroup() {
+  const name = document.getElementById('gm-name').value.trim();
+  if (!name) { toast('Inserisci il nome del gruppo', 'err'); return; }
+  const memberIds = [...document.querySelectorAll('#gm-pat-list input[type=checkbox]:checked')].map(i => i.id.replace('gchk-',''));
+  showLoading(true);
+  try {
+    const { data: grp, error } = await sb.from('patient_groups').insert({ dietitian_id: currentUser.id, name, color: selectedGroupColor }).select().single();
+    if (error) throw error;
+    if (memberIds.length) {
+      await sb.from('patient_group_members').insert(memberIds.map(pid => ({ group_id: grp.id, patient_id: pid })));
+    }
+    toast(`✅ Gruppo "${name}" creato con ${memberIds.length} pazienti!`, 'ok');
+    closeGroupModal();
+    await loadGroups();
+  } catch(e) {
+    toast('Errore: ' + e.message, 'err');
+  }
+  showLoading(false);
+}
+
+async function deleteGroup(id, e) {
+  e.stopPropagation();
+  if (!confirm('Eliminare questo gruppo?')) return;
+  await sb.from('patient_groups').delete().eq('id', id);
+  await loadGroups();
+  if (activeGroupId === id) selectGroup('all');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await checkAuth();
+  if (!ok) return;
+  await init();
+  // Start with all patients selected
+  selectGroup('all');
+});
+</script>
+</body>
+</html>

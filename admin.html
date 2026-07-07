@@ -21,6 +21,8 @@
   <div class="nav-sec"><span data-only-lang="it">Comunicazione</span><span data-only-lang="en" style="display:none">Communication</span></div>
   <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span><span data-only-lang="it">Profilo</span><span data-only-lang="en" style="display:none">Profile</span></a>
   <a class="nav-item " href="chat.html"><span class="ni">👥</span><span data-only-lang="it">Pazienti</span><span data-only-lang="en" style="display:none">Patients</span></a>
+  <a class="nav-item" href="broadcast.html"><span class="ni">📢</span><span data-only-lang="it">Broadcast</span><span data-only-lang="en" style="display:none">Broadcast</span></a>
+  <a class="nav-item" href="analytics.html"><span class="ni">📊</span><span data-only-lang="it">Analytics</span><span data-only-lang="en" style="display:none">Analytics</span></a>
   <div class="nav-sec"><span data-only-lang="it">Specialistica</span><span data-only-lang="en" style="display:none">Specialties</span></div>
     <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span><span data-only-lang="it">Paziente Sano</span><span data-only-lang="en" style="display:none">Healthy Patient</span></a>
 <a class="nav-item " href="diabete.html"><span class="ni">🩸</span><span data-only-lang="it">Gestione Diabete</span><span data-only-lang="en" style="display:none">Diabetes Management</span></a>
@@ -198,6 +200,46 @@
       </div>
     </div>
   </div>
+
+  <!-- STUDIO ASSOCIATO -->
+  <div class="card" style="margin-bottom:16px" id="studio-card">
+    <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <h3>🏥 Studio Associato — Multi-Dietista</h3>
+      <button class="btn btn-primary btn-sm" onclick="mostraAddDietista()">➕ Aggiungi Collega</button>
+    </div>
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:12px 16px;margin:0 16px 12px;font-size:12.5px;color:#1E3A5F">
+      ℹ️ I dietisti aggiunti allo studio potranno vedere <b>tutti i pazienti condivisi</b> (cartelle, diete, documenti, chat) come se fossero i propri. Tu resti l'unico admin.
+    </div>
+    <!-- Add dietitian form -->
+    <div id="add-dietista-form" style="display:none;background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:18px;margin:0 16px 12px">
+      <h4 style="margin-bottom:12px;font-size:14px;color:var(--slate)">➕ Aggiungi Collega allo Studio</h4>
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <div class="fg" style="flex:1;min-width:220px">
+          <label>Email del collega</label>
+          <input type="email" id="dietista-email" placeholder="collega@studio.it">
+        </div>
+        <div class="fg" style="min-width:160px">
+          <label>Accesso</label>
+          <select id="dietista-access">
+            <option value="full">Tutti i pazienti</option>
+            <option value="selected">Pazienti selezionati</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <button class="btn btn-primary btn-sm" onclick="aggiungiDietista()">💾 Salva</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-dietista-form').style.display='none'">Annulla</button>
+        </div>
+      </div>
+    </div>
+    <!-- Dietitians list -->
+    <div style="padding:0 16px 16px">
+      <div id="dietisti-list">
+        <div style="text-align:center;padding:20px;color:var(--slate-l);font-size:12.5px">Caricamento...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 </div></main>
 <!-- SECTIONS MODAL -->
 <div id="modal-sections" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center">
@@ -344,6 +386,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('admin-content').style.display = 'block';
   loadUtenti();
   loadECMCorsi();
+  loadDietisti();
 });
 
 // ─── ECM Course Management ──────────────────────────────────────────
@@ -473,6 +516,105 @@ async function eliminaCorsoECM(id) {
   showLoading(false);
   toast('🗑️ Corso eliminato', 'info');
   loadECMCorsi();
+}
+
+// ─── Studio Associato (Multi-Dietitian) ──────────────────────────────────────
+function mostraAddDietista() {
+  const f = document.getElementById('add-dietista-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('dietista-email').value = '';
+}
+
+async function loadDietisti() {
+  const el = document.getElementById('dietisti-list');
+  const { data, error } = await sb.from('studio_members')
+    .select('*,member:profiles(email,full_name,approved)')
+    .eq('admin_id', currentUser.id)
+    .order('created_at', { ascending: false });
+  if (error) {
+    el.innerHTML = `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:12.5px;color:#991B1B">
+      ⚠️ Tabella <code>studio_members</code> non trovata. Esegui il SQL nel file <code>supabase/studio.sql</code> per creare le tabelle necessarie.
+      <pre style="margin-top:8px;font-size:11px;background:#1E293B;color:#94F3B8;border-radius:6px;padding:10px;overflow-x:auto">-- Esegui in Supabase SQL Editor:
+CREATE TABLE IF NOT EXISTS studio_members (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  admin_id UUID REFERENCES auth.users NOT NULL,
+  member_id UUID REFERENCES auth.users NOT NULL,
+  access_level TEXT DEFAULT 'full',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(admin_id, member_id)
+);
+ALTER TABLE studio_members ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "admin_own" ON studio_members FOR ALL USING (auth.uid() = admin_id OR auth.uid() = member_id);</pre>
+    </div>`;
+    return;
+  }
+  if (!data || !data.length) {
+    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">Nessun collega nello studio ancora.<br><span style="font-size:12px">Aggiungi un collega con il pulsante sopra.</span></div>';
+    return;
+  }
+  el.innerHTML = `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr style="background:var(--slate);color:#CBD5E1">
+      <th style="padding:8px 12px;text-align:left">Collega</th>
+      <th style="padding:8px 12px;text-align:center">Accesso</th>
+      <th style="padding:8px 12px;text-align:center">Stato profilo</th>
+      <th style="padding:8px 12px;text-align:center">Aggiunto il</th>
+      <th style="padding:8px 12px;text-align:center">Azioni</th>
+    </tr></thead>
+    <tbody>${data.map(m => {
+      const mem = m.member || {};
+      return `<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 12px;font-weight:500">${esc(mem.full_name || mem.email || m.member_id)}<br><span style="font-size:11px;color:var(--slate-l)">${esc(mem.email || '')}</span></td>
+        <td style="padding:8px 12px;text-align:center"><span style="background:#E0F2F1;color:#0F766E;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700">${m.access_level === 'full' ? '🔓 Tutti i pazienti' : '🔒 Selezionati'}</span></td>
+        <td style="padding:8px 12px;text-align:center">${mem.approved ? '<span style="color:#15803D;font-weight:700">✅ Attivo</span>' : '<span style="color:#64748B">⏸ Non approvato</span>'}</td>
+        <td style="padding:8px 12px;text-align:center;font-size:12px;color:var(--slate-l)">${m.created_at ? new Date(m.created_at).toLocaleDateString('it') : '—'}</td>
+        <td style="padding:8px 12px;text-align:center">
+          <button class="btn btn-ghost btn-xs" style="color:#DC2626;border-color:#FECACA" onclick="rimuoviDietista('${m.id}','${esc(mem.email||'')}')">🗑 Rimuovi</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+async function aggiungiDietista() {
+  const email = document.getElementById('dietista-email').value.trim().toLowerCase();
+  const access = document.getElementById('dietista-access').value;
+  if (!email) { toast('Inserisci l\'email del collega', 'err'); return; }
+  showLoading(true);
+  // Find the user by email
+  const { data: profile, error: pe } = await sb.from('profiles').select('id,email,approved').eq('email', email).maybeSingle();
+  if (pe || !profile) {
+    showLoading(false);
+    toast('Utente non trovato. Il collega deve essere già registrato su DietPlan Pro.', 'err');
+    return;
+  }
+  if (profile.id === currentUser.id) {
+    showLoading(false);
+    toast('Non puoi aggiungere te stesso', 'err');
+    return;
+  }
+  const { error } = await sb.from('studio_members').insert({
+    admin_id: currentUser.id,
+    member_id: profile.id,
+    access_level: access
+  });
+  showLoading(false);
+  if (error) {
+    if (error.code === '23505') toast('Questo collega è già nello studio', 'err');
+    else toast('Errore: ' + error.message, 'err');
+    return;
+  }
+  toast(`✅ ${email} aggiunto allo studio!`, 'ok');
+  document.getElementById('add-dietista-form').style.display = 'none';
+  loadDietisti();
+}
+
+async function rimuoviDietista(id, email) {
+  if (!confirm(`Rimuovere ${email} dallo studio? Il collega non potrà più accedere ai pazienti condivisi.`)) return;
+  showLoading(true);
+  await sb.from('studio_members').delete().eq('id', id);
+  showLoading(false);
+  toast('Collega rimosso dallo studio', 'info');
+  loadDietisti();
 }
 
 // ─── Sections Management ──────────────────────────────────────────────────────

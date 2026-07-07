@@ -690,3 +690,109 @@ body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; b
 @media print{
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+/* ── RESPONSIVE IMPROVEMENTS (broadcast, analytics, firma) ── */
+
+/* Broadcast layout: stack on mobile */
+@media(max-width:900px){
+  .bc-layout{grid-template-columns:1fr!important;height:auto!important}
+  .bc-sidebar{flex-direction:row;flex-wrap:wrap;gap:10px}
+  .bc-sidebar>*{flex:1;min-width:260px}
+}
+@media(max-width:600px){
+  .bc-sidebar{flex-direction:column}
+  .bc-sidebar>*{min-width:unset}
+}
+
+/* Analytics KPI: 2 columns on small screens */
+@media(max-width:480px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)!important}
+  .kpi-val{font-size:22px!important}
+}
+
+/* Chart grid: stack on mobile */
+@media(max-width:600px){
+  .chart-grid{grid-template-columns:1fr!important}
+  .chart-card.full{grid-column:1!important}
+}
+
+/* Dash panel mobile */
+@media(max-width:600px){
+  .dash-hdr{padding:20px 18px 16px!important}
+  .dash-hdr-txt h2{font-size:20px!important}
+  .dash-body{padding:16px 14px!important}
+  .dash-cards-grid{grid-template-columns:1fr!important}
+}
+
+/* Improve table overflow on small devices */
+@media(max-width:600px){
+  .cohort-table th:nth-child(3),.cohort-table td:nth-child(3){display:none}
+  .stor-charts-grid{grid-template-columns:1fr!important}
+}
+
+/* Card header wrapping on mobile */
+@media(max-width:480px){
+  .card-hdr{gap:6px!important;padding:10px 12px!important}
+  .card-hdr h3,.card-hdr h4{font-size:13px!important}
+  .tbar-actions .btn span{display:none}
+}
+
+/* Chat sidebar mobile: full-width list then chat panel */
+@media(max-width:768px){
+  .chat-container{flex-direction:column;height:auto!important}
+  .chat-sidebar{width:100%!important;min-width:0!important;max-height:240px;position:static!important;transform:none!important;border-right:none!important;border-bottom:1px solid var(--border)}
+  .chat-sidebar.hidden{display:none!important}
+  .chat-main{min-height:400px}
+}
+
+/* Patient card actions always visible on touch */
+@media(hover:none),(max-width:768px){
+  .paz-actions{opacity:1!important}
+}
+
+/* Page content narrower padding on mobile */
+@media(max-width:360px){
+  .page-content{padding:6px!important}
+  .mbody{padding:10px 12px!important}
+  .mhdr{padding:10px 12px!important}
+}
+
+/* ── FIRMA ELETTRONICA MODAL ── */
+@media(max-width:540px){
+  .firma-box{border-radius:12px}
+  #firma-canvas{height:140px!important}
+  .firma-footer{flex-wrap:wrap;gap:6px}
+  .firma-footer .firma-status{min-width:100%;order:-1}
+}
+
+/* ── FSE MODAL MOBILE ── */
+@media(max-width:600px){
+  .fse-box{max-width:100%!important;border-radius:12px}
+  #fse-modal > .fse-box > div:nth-child(2) > .fgrid{grid-template-columns:1fr!important}
+}
+
+/* ── TOPBAR: prevent text clipping on small screens ── */
+@media(max-width:400px){
+  #topbar h2{font-size:13px}
+  .tbar-actions{gap:3px}
+  .btn-sm{padding:4px 7px;font-size:11px}
+}
+
+/* ── Nav section spacing on mobile ── */
+@media(max-width:768px){
+  .nav-sec{padding:10px 0 2px 16px;font-size:9.5px}
+  .nav-item{padding:9px 16px;font-size:12.5px}
+}
+
+/* ── Improve select on touch ── */
+@media(max-width:768px){
+  select{min-height:40px}
+  input[type=text],input[type=email],input[type=number],input[type=date],textarea{min-height:40px}
+}
+
+/* ── Print: hide broadcast/analytics specific UI ── */
+@media print{
+  .bc-layout{display:block!important}
+  .bc-sidebar{display:none!important}
+  .export-bar,.range-btn{display:none!important}
+}

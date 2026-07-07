@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Analytics Studio — DietPlan Pro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://hvdwqowkhutfsdpiubxe.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:22px}
+.kpi-card{background:white;border-radius:14px;border:1.5px solid var(--border);padding:18px 20px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.kpi-icon{font-size:26px;line-height:1;margin-bottom:4px}
+.kpi-val{font-size:28px;font-weight:800;color:var(--teal-d);font-family:'DM Serif Display',serif;line-height:1.1}
+.kpi-lbl{font-size:11.5px;color:var(--slate-l);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.kpi-delta{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block;margin-top:2px;width:fit-content}
+.delta-up{background:#DCFCE7;color:#16A34A}
+.delta-down{background:#FEE2E2;color:#DC2626}
+.delta-neutral{background:#F1F5F9;color:#64748B}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:768px){.chart-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.kpi-grid{grid-template-columns:1fr}}
+.chart-card{background:white;border-radius:14px;border:1.5px solid var(--border);padding:18px;box-shadow:var(--shadow)}
+.chart-card h3{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.chart-card.full{grid-column:1/-1}
+.chart-wrap{position:relative;height:200px}
+.cohort-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+.cohort-table th{background:var(--slate);color:#CBD5E1;padding:8px 12px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap}
+.cohort-table th:first-child{text-align:left}
+.cohort-table td{padding:7px 12px;border-bottom:1px solid var(--border);text-align:center}
+.cohort-table td:first-child{text-align:left;font-weight:600;color:var(--slate)}
+.cohort-table tr:hover td{background:#F8FAFC}
+.retention-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700}
+.export-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.range-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border-d);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:white;color:var(--slate-l);transition:all .15s}
+.range-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+.insight-box{background:linear-gradient(135deg,#F0FDF4,#E0F2F1);border:1.5px solid #86EFAC;border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:13px;color:#064E3B;line-height:1.7}
+.insight-box b{color:#0F766E}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo"><h1>DietPlan<br>Pro</h1><span>v1.0</span></div>
+  <div class="nav-sec">Piano</div>
+  <a class="nav-item" href="app.html"><span class="ni">📋</span>Piano Alimentare</a>
+  <a class="nav-item" href="pazienti.html"><span class="ni">📁</span>Cartelle Pazienti</a>
+  <div class="nav-sec">Comunicazione</div>
+  <a class="nav-item" href="profilo-pubblico.html"><span class="ni">👤</span>Profilo</a>
+  <a class="nav-item" href="chat.html"><span class="ni">👥</span>Pazienti</a>
+  <a class="nav-item" href="broadcast.html"><span class="ni">📢</span>Broadcast</a>
+  <a class="nav-item active" href="analytics.html"><span class="ni">📊</span>Analytics</a>
+  <div class="nav-sec">Specialistica</div>
+  <a class="nav-item" href="paziente-sano.html"><span class="ni">🌿</span>Paziente Sano</a>
+  <a class="nav-item" href="diabete.html"><span class="ni">🩸</span>Gestione Diabete</a>
+  <a class="nav-item" href="pancreas.html"><span class="ni">🫁</span>Insuff. Pancreatica</a>
+  <a class="nav-item" href="sport.html"><span class="ni">🏃</span>Nutrizione Sportiva</a>
+  <a class="nav-item" href="dna.html"><span class="ni">🫀</span>DCA</a>
+  <a class="nav-item" href="chetogenica.html"><span class="ni">🥑</span>Dieta Chetogenica</a>
+  <a class="nav-item" href="renale.html"><span class="ni">🫘</span>Nefropatia / IRC</a>
+  <a class="nav-item" href="disfagia.html"><span class="ni">🗣️</span>Disfagia</a>
+  <a class="nav-item" href="oncologia.html"><span class="ni">🎗️</span>Oncologia</a>
+  <a class="nav-item" href="obesita.html"><span class="ni">⚖️</span>Obesità</a>
+  <a class="nav-item" href="pediatria.html"><span class="ni">👶</span>Pediatria</a>
+  <a class="nav-item" href="ristorazione.html"><span class="ni">🍽️</span>Ristorazione Collettiva</a>
+  <a class="nav-item" href="gravidanza.html"><span class="ni">🤰</span>Valutazione Gravidanza</a>
+  <div class="nav-sec">Strumenti</div>
+  <a class="nav-item" href="linee-guida.html"><span class="ni">📚</span>Linee Guida</a>
+  <a class="nav-item" href="valutazione.html"><span class="ni">📊</span>Valutazione Paziente</a>
+  <a class="nav-item" href="ncpt.html"><span class="ni">📝</span>NCPt</a>
+  <a class="nav-item" href="patologie.html"><span class="ni">🏥</span>Diete Speciali</a>
+  <a class="nav-item" href="consigli.html"><span class="ni">💡</span>Consigli Nutrizionali</a>
+  <a class="nav-item" href="bia.html"><span class="ni">⚡</span>BIA</a>
+  <a class="nav-item" href="questionari.html"><span class="ni">📋</span>Questionari</a>
+  <a class="nav-item" href="visita.html"><span class="ni">🩺</span>Resoconto Visita</a>
+  <a class="nav-item" href="moduli.html"><span class="ni">📄</span>Moduli Stampabili</a>
+  <a class="nav-item" href="studi.html"><span class="ni">🔬</span>Studi Scientifici</a>
+  <a class="nav-item" href="ai.html"><span class="ni">🤖</span>Assistente AI</a>
+  <a class="nav-item" href="agenda.html"><span class="ni">📅</span>Agenda</a>
+  <a class="nav-item" href="ecm.html"><span class="ni">🎓</span>Corsi ECM</a>
+  <div class="nav-sec">Database</div>
+  <a class="nav-item" href="database.html"><span class="ni">🔬</span>Alimenti CREA+BDA</a>
+  <a class="nav-item" href="integratori.html"><span class="ni">💊</span>Integratori e AFMS</a>
+  <a class="nav-item" href="ricette.html"><span class="ni">🍳</span>Ricette</a>
+  <a class="nav-item" href="impostazioni.html"><span class="ni">⚙️</span>Impostazioni</a>
+  <a class="nav-item" href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span>Admin Utenti</a>
+  <div id="sb-subscription"></div>
+  <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span>Abbonamento</a>
+  <div class="sb-bottom">
+    <div class="sb-user" id="sb-user-email"></div>
+    <button class="sb-logout" onclick="doLogout()">🚪 Esci</button>
+    <div style="margin-top:8px;font-size:10px;color:#475569">DietPlan Pro v1.0</div>
+  </div>
+</nav>
+<div id="sb-overlay" onclick="closeSB()"></div>
+<div id="topbar">
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <h2>📊 Analytics Studio</h2>
+  <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ Esporta CSV</button>
+    <button class="btn btn-primary btn-sm" onclick="loadAnalytics()">🔄 Aggiorna</button>
+  </div>
+</div>
+<main id="main">
+<div class="page-content">
+
+  <!-- Range selector -->
+  <div class="export-bar">
+    <span style="font-size:12.5px;font-weight:600;color:var(--slate-l)">Periodo:</span>
+    <button class="range-btn" data-months="3" onclick="setRange(3)">3 mesi</button>
+    <button class="range-btn active" data-months="6" onclick="setRange(6)">6 mesi</button>
+    <button class="range-btn" data-months="12" onclick="setRange(12)">12 mesi</button>
+    <button class="range-btn" data-months="24" onclick="setRange(24)">24 mesi</button>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Pazienti totali</div><div class="kpi-delta delta-neutral" id="kpi-total-delta">...</div></div>
+    <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-val" id="kpi-active">—</div><div class="kpi-lbl">Attivi (ultimi 90gg)</div><div class="kpi-delta delta-neutral" id="kpi-active-delta">...</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📈</div><div class="kpi-val" id="kpi-new">—</div><div class="kpi-lbl">Nuovi questo mese</div><div class="kpi-delta delta-neutral" id="kpi-new-delta">...</div></div>
+    <div class="kpi-card"><div class="kpi-icon">🔄</div><div class="kpi-val" id="kpi-retention">—%</div><div class="kpi-lbl">Retention rate</div><div class="kpi-delta delta-neutral" id="kpi-ret-delta">...</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📅</div><div class="kpi-val" id="kpi-appt">—</div><div class="kpi-lbl">Visite questo mese</div><div class="kpi-delta delta-neutral" id="kpi-appt-delta">...</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📝</div><div class="kpi-val" id="kpi-docs">—</div><div class="kpi-lbl">Documenti condivisi</div><div class="kpi-delta delta-neutral" id="kpi-docs-delta">...</div></div>
+  </div>
+
+  <!-- Insight box -->
+  <div class="insight-box" id="insight-box" style="display:none"></div>
+
+  <!-- Charts row 1 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>📈 Pazienti acquisiti / mese</h3>
+      <div class="chart-wrap"><canvas id="chart-acquired"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>📅 Visite / mese</h3>
+      <div class="chart-wrap"><canvas id="chart-appts"></canvas></div>
+    </div>
+    <div class="chart-card full">
+      <h3>🔄 Retention rate mensile</h3>
+      <div class="chart-wrap" style="height:180px"><canvas id="chart-retention"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Cohort analysis table -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hdr"><h3>🧮 Analisi per mese di registrazione</h3></div>
+    <div style="overflow-x:auto;padding:14px 16px">
+      <table class="cohort-table" id="cohort-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Mese</th>
+            <th>Registrati</th>
+            <th>Attivi 30gg</th>
+            <th>Attivi 90gg</th>
+            <th>Retention 90gg</th>
+            <th>Visite</th>
+          </tr>
+        </thead>
+        <tbody id="cohort-tbody">
+          <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--slate-l)">Caricamento...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</main>
+<div id="toast"></div>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<div class="global-copyright">© 2025 DietPlan Pro — Tutti i diritti riservati</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/print-capture.js" defer></script>
+<script>
+let activeMonths = 6;
+let chartAcquired, chartAppts, chartRetention;
+let allPatients = [], allAppts = [], allDocs = [];
+
+async function loadChartJs() {
+  if (window.Chart) return;
+  await new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js';
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+function setRange(months) {
+  activeMonths = months;
+  document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', +b.dataset.months === months));
+  renderAll();
+}
+
+function getMonthLabels(n) {
+  const labels = [];
+  const now = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    labels.push(d.toLocaleDateString('it', { month: 'short', year: '2-digit' }));
+  }
+  return labels;
+}
+
+function getMonthKey(dateStr) {
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+function isWithin90Days(dateStr) {
+  if (!dateStr) return false;
+  return (Date.now() - new Date(dateStr).getTime()) < 90 * 86400000;
+}
+
+function isWithin30Days(dateStr) {
+  if (!dateStr) return false;
+  return (Date.now() - new Date(dateStr).getTime()) < 30 * 86400000;
+}
+
+function renderAll() {
+  if (!allPatients.length && !allAppts.length) return;
+  const labels = getMonthLabels(activeMonths);
+  const now = new Date();
+
+  // Month keys for the selected range
+  const monthKeys = [];
+  for (let i = activeMonths - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    monthKeys.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
+  }
+
+  // Acquired per month
+  const acquired = monthKeys.map(mk => allPatients.filter(p => getMonthKey(p.created_at) === mk).length);
+
+  // Appointments per month
+  const apptMap = {};
+  allAppts.forEach(a => { const k = getMonthKey(a.start_time || a.date || a.created_at); apptMap[k] = (apptMap[k]||0) + 1; });
+  const apptData = monthKeys.map(mk => apptMap[mk] || 0);
+
+  // Retention: active patients / total patients registered up to that month
+  const retentionData = monthKeys.map((mk, idx) => {
+    const totalUpTo = allPatients.filter(p => getMonthKey(p.created_at) <= mk).length;
+    if (!totalUpTo) return null;
+    const activeInMonth = allPatients.filter(p => {
+      const regKey = getMonthKey(p.created_at);
+      if (regKey > mk) return false;
+      // Consider active if they had an appointment in the last 90 days of that month
+      return true; // simplified: use total active as proxy
+    }).length;
+    return Math.round((totalUpTo > 0 ? Math.min(100, Math.round(allPatients.filter(p => p.last_sign_in_at && getMonthKey(p.last_sign_in_at) >= mk).length / totalUpTo * 100)) : 0));
+  });
+
+  renderChart('chart-acquired', chartAcquired, {
+    type: 'bar',
+    labels,
+    datasets: [{ label: 'Nuovi pazienti', data: acquired, backgroundColor: 'rgba(20,184,166,.7)', borderRadius: 6 }]
+  });
+
+  renderChart('chart-appts', chartAppts, {
+    type: 'bar',
+    labels,
+    datasets: [{ label: 'Visite', data: apptData, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 6 }]
+  });
+
+  renderChart('chart-retention', chartRetention, {
+    type: 'line',
+    labels,
+    datasets: [{ label: 'Retention %', data: retentionData, borderColor: '#0F766E', backgroundColor: 'rgba(20,184,166,.1)', tension: 0.4, fill: true, pointBackgroundColor: '#0F766E' }]
+  });
+
+  // Cohort table
+  renderCohortTable();
+
+  // KPIs
+  const totalNow = allPatients.length;
+  const prevMonthKey = monthKeys[monthKeys.length - 2];
+  const curMonthKey = monthKeys[monthKeys.length - 1];
+  const newThisMonth = allPatients.filter(p => getMonthKey(p.created_at) === curMonthKey).length;
+  const newLastMonth = allPatients.filter(p => getMonthKey(p.created_at) === prevMonthKey).length;
+  const activeCount = allPatients.filter(p => p.last_sign_in_at && isWithin90Days(p.last_sign_in_at)).length;
+  const retention = totalNow > 0 ? Math.round(activeCount / totalNow * 100) : 0;
+  const apptThisMonth = apptMap[curMonthKey] || 0;
+  const apptLastMonth = apptMap[prevMonthKey] || 0;
+  const docsThisMonth = allDocs.filter(d => getMonthKey(d.created_at) === curMonthKey).length;
+
+  setText('kpi-total', totalNow);
+  setText('kpi-active', activeCount);
+  setText('kpi-new', newThisMonth);
+  setText('kpi-retention', retention + '%');
+  setText('kpi-appt', apptThisMonth);
+  setText('kpi-docs', docsThisMonth);
+
+  setDelta('kpi-total-delta', newThisMonth, `+${newThisMonth} questo mese`);
+  setDelta('kpi-active-delta', activeCount - (totalNow - activeCount), `${retention}% del totale`);
+  setDelta('kpi-new-delta', newThisMonth - newLastMonth, newThisMonth >= newLastMonth ? `▲ vs mese scorso` : `▼ vs mese scorso`, newThisMonth >= newLastMonth);
+  setDelta('kpi-ret-delta', retention - 50, retention >= 60 ? 'Ottima fidelizzazione' : retention >= 40 ? 'Nella media' : 'Da migliorare', retention >= 50);
+  setDelta('kpi-appt-delta', apptThisMonth - apptLastMonth, apptThisMonth >= apptLastMonth ? `▲ vs mese scorso` : `▼ vs mese scorso`, apptThisMonth >= apptLastMonth);
+  setDelta('kpi-docs-delta', docsThisMonth, `questo mese`);
+
+  // Insight
+  buildInsight(newThisMonth, newLastMonth, retention, apptThisMonth, apptLastMonth);
+}
+
+function renderChart(canvasId, chartRef, { type, labels, datasets }) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  if (chartRef) chartRef.destroy();
+  const chart = new Chart(canvas, {
+    type,
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+        y: { beginAtZero: true, ticks: { font: { size: 10 }, precision: 0 }, grid: { color: 'rgba(0,0,0,.05)' } }
+      }
+    }
+  });
+  if (canvasId === 'chart-acquired') chartAcquired = chart;
+  else if (canvasId === 'chart-appts') chartAppts = chart;
+  else chartRetention = chart;
+}
+
+function renderCohortTable() {
+  const now = new Date();
+  const rows = [];
+  for (let i = Math.min(activeMonths, 12) - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const registered = allPatients.filter(p => getMonthKey(p.created_at) === mk);
+    const active30 = registered.filter(p => p.last_sign_in_at && isWithin30Days(p.last_sign_in_at)).length;
+    const active90 = registered.filter(p => p.last_sign_in_at && isWithin90Days(p.last_sign_in_at)).length;
+    const ret90 = registered.length ? Math.round(active90 / registered.length * 100) : null;
+    const visits = allAppts.filter(a => getMonthKey(a.start_time || a.date || a.created_at) === mk).length;
+    const retColor = ret90 === null ? 'delta-neutral' : ret90 >= 70 ? 'delta-up' : ret90 >= 40 ? 'delta-neutral' : 'delta-down';
+    rows.push(`<tr>
+      <td>${d.toLocaleDateString('it', { month: 'long', year: 'numeric' })}</td>
+      <td>${registered.length}</td>
+      <td>${active30}</td>
+      <td>${active90}</td>
+      <td>${ret90 !== null ? `<span class="retention-pill kpi-delta ${retColor}">${ret90}%</span>` : '—'}</td>
+      <td>${visits}</td>
+    </tr>`);
+  }
+  document.getElementById('cohort-tbody').innerHTML = rows.join('') || '<tr><td colspan="6" style="text-align:center;padding:16px;color:var(--slate-l)">Nessun dato</td></tr>';
+}
+
+function buildInsight(newThis, newLast, retention, apptThis, apptLast) {
+  const box = document.getElementById('insight-box');
+  const parts = [];
+  if (newThis > newLast) parts.push(`Questo mese hai acquisito <b>${newThis} nuovi pazienti</b>, +${newThis - newLast} rispetto al mese scorso.`);
+  else if (newThis < newLast) parts.push(`Questo mese hai acquisito <b>${newThis} nuovi pazienti</b>, ${newThis - newLast} rispetto al mese scorso.`);
+  if (retention >= 70) parts.push(`Ottima retention: <b>${retention}%</b> dei pazienti è rimasto attivo.`);
+  else if (retention < 40) parts.push(`La retention è al <b>${retention}%</b>: considera strategie di follow-up per i pazienti inattivi.`);
+  if (apptThis > apptLast) parts.push(`Le visite sono aumentate: <b>${apptThis}</b> questo mese vs ${apptLast} il mese scorso.`);
+  if (!parts.length) parts.push('I dati del tuo studio sono aggiornati. Seleziona un periodo diverso per analisi storiche.');
+  box.innerHTML = '💡 ' + parts.join(' ');
+  box.style.display = 'block';
+}
+
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function setDelta(id, diff, label, positive) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = label;
+  el.className = 'kpi-delta ' + (positive === undefined ? 'delta-neutral' : positive ? 'delta-up' : 'delta-down');
+}
+
+async function loadAnalytics() {
+  showLoading(true);
+  try {
+    await loadChartJs();
+    const [pRes, aRes, dRes] = await Promise.all([
+      sb.from('profiles').select('id,created_at,last_sign_in_at,approved').eq('role','patient').order('created_at',{ascending:false}),
+      sb.from('appointments').select('id,start_time,date,created_at').order('created_at',{ascending:false}),
+      sb.from('patient_documents').select('id,created_at').order('created_at',{ascending:false})
+    ]);
+    allPatients = pRes.data || [];
+    allAppts = aRes.data || [];
+    allDocs = dRes.data || [];
+    renderAll();
+  } catch(e) {
+    toast('Errore caricamento dati: ' + e.message, 'err');
+  }
+  showLoading(false);
+}
+
+function exportCSV() {
+  if (!allPatients.length) { toast('Nessun dato da esportare', 'err'); return; }
+  const header = 'Mese,Nuovi pazienti,Visite\n';
+  const now = new Date();
+  const rows = [];
+  for (let i = activeMonths - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const acquired = allPatients.filter(p => getMonthKey(p.created_at) === mk).length;
+    const visits = allAppts.filter(a => getMonthKey(a.start_time || a.date || a.created_at) === mk).length;
+    rows.push(`${d.toLocaleDateString('it',{month:'long',year:'numeric'})},${acquired},${visits}`);
+  }
+  const csv = header + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `analytics_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await checkAuth();
+  if (!ok) return;
+  loadAnalytics();
+});
+</script>
+</body>
+</html>

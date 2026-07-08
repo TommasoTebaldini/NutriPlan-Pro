@@ -23,12 +23,9 @@ jobs:
       - name: Syntax-check all tracked JS files
         run: |
           fail=0
-          # utils.js (repo root) is excluded: it's dead, mislabeled CSS content
-          # (not JS, not referenced anywhere) — see chat history / ask before
-          # deleting it outright.
           while IFS= read -r f; do
             node --check "$f" || fail=1
-          done < <(git ls-files '*.js' | grep -v '^node_modules/' | grep -v '^utils\.js$')
+          done < <(git ls-files '*.js' | grep -v '^node_modules/')
           exit $fail
 
       - name: Check SQL migration for merged/orphaned statements

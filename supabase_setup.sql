@@ -1140,3 +1140,61 @@ DO $$ BEGIN
       );
   END IF;
 END $$;
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SECURITY FIX — chat_messages era priva di RLS: qualunque utente loggato
+-- poteva leggere/scrivere la chat di qualsiasi paziente con una select('*').
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='chat_messages_own_or_linked' AND tablename='chat_messages') THEN
+    CREATE POLICY "chat_messages_own_or_linked" ON chat_messages
+      FOR ALL USING (
+        auth.uid() = patient_id
+        OR EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = chat_messages.patient_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      )
+      WITH CHECK (
+        auth.uid() = patient_id
+        OR EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = chat_messages.patient_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SECURITY FIX — profiles_update_own non aveva WITH CHECK: un utente poteva
+-- fare UPDATE profiles SET is_admin=true, approved=true, role='dietitian'
+-- sulla propria riga e auto-promuoversi, perché la USING clause (auth.uid()=id)
+-- resta vera prima e dopo l'update. Un trigger blocca il cambio di questi tre
+-- campi a meno che chi esegue l'update non sia già admin (check_is_admin()),
+-- e non interferisce con operazioni dirette da SQL editor / service role
+-- (dove auth.uid() è NULL).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION prevent_self_privilege_escalation()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF auth.uid() IS NOT NULL AND NOT check_is_admin() THEN
+    NEW.is_admin := OLD.is_admin;
+    NEW.approved := OLD.approved;
+    NEW.role     := OLD.role;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS prevent_self_privilege_escalation ON profiles;
+CREATE TRIGGER prevent_self_privilege_escalation
+  BEFORE UPDATE ON profiles
+  FOR EACH ROW EXECUTE FUNCTION prevent_self_privilege_escalation();

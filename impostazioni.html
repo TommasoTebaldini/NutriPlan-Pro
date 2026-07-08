@@ -398,6 +398,62 @@
     </div>
   </div>
 
+  <!-- COLLABORATORI DELLO STUDIO -->
+  <div class="lang-section" id="section-collaboratori">
+    <h3>👥 Collaboratori dello studio</h3>
+    <p style="font-size:13px;color:var(--slate-l);margin-bottom:20px;margin-top:-8px">
+      Collega un account già registrato come dietista al tuo studio. Un collaboratore "Segreteria" può leggere pazienti/cartelle e gestire l'agenda ma non modificare i dati clinici; un collaboratore "Dietista" ha accesso pieno come te.
+    </p>
+
+    <div id="collab-as-collaborator" style="display:none;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:14px;padding:16px 18px;margin-bottom:16px;font-size:13px;color:#1E3A8A"></div>
+
+    <div id="collab-manage-box">
+      <div style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:12px">➕ Aggiungi collaboratore</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input type="email" id="collab-email" placeholder="email@collega.it"
+            style="flex:1;min-width:220px;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+          <select id="collab-level" style="padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+            <option value="secretary">Segreteria (sola lettura + agenda)</option>
+            <option value="dietitian">Dietista (accesso pieno)</option>
+          </select>
+          <button class="btn" style="background:#0F766E;color:white;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer" onclick="addCollaborator()">Aggiungi</button>
+        </div>
+        <div id="collab-add-err" style="display:none;color:var(--red);font-size:12.5px;margin-top:8px"></div>
+      </div>
+
+      <div id="collab-list"></div>
+    </div>
+  </div>
+
+  <!-- SICUREZZA / 2FA -->
+  <div class="lang-section" id="section-sicurezza">
+    <h3>🔐 Sicurezza</h3>
+    <p style="font-size:13px;color:var(--slate-l);margin-bottom:16px;margin-top:-8px">
+      Attiva la verifica in due passaggi (2FA) con un'app authenticator (Google Authenticator, Authy, ecc.) per proteggere meglio l'accesso ai dati clinici dei tuoi pazienti. Facoltativa.
+    </p>
+
+    <div id="security-status" style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:12px;font-size:14px;font-weight:600;color:var(--slate);display:flex;align-items:center;gap:12px;justify-content:space-between">
+      Caricamento…
+    </div>
+
+    <div id="totp-setup-box" style="display:none;background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px">
+      <button class="btn" style="background:#0F766E;color:white;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer" onclick="startTotpEnroll()">📱 Attiva 2FA</button>
+
+      <div id="totp-enroll-box" style="display:none;margin-top:18px">
+        <p style="font-size:13px;color:var(--slate-l);margin-bottom:12px">Inquadra questo codice QR con la tua app authenticator, poi inserisci il codice a 6 cifre che genera per confermare.</p>
+        <img id="totp-qr" style="width:180px;height:180px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px" alt="QR code 2FA">
+        <div style="font-size:11px;color:var(--slate-l);margin-bottom:14px">Chiave manuale: <code id="totp-secret" style="user-select:all"></code></div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="text" id="totp-verify-code" placeholder="Codice a 6 cifre" maxlength="6" inputmode="numeric"
+            style="width:140px;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:16px;font-family:inherit;letter-spacing:2px;text-align:center;outline:none">
+          <button class="btn" style="background:#0F766E;color:white;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer" onclick="confirmTotpEnroll()">Conferma</button>
+        </div>
+        <div id="totp-enroll-err" style="display:none;color:var(--red);font-size:12.5px;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- NOTIFICHE E STRUMENTI -->
   <div class="lang-section" id="section-notifiche">
     <h3>🔔 Notifiche e Strumenti</h3>
@@ -494,7 +550,187 @@ document.addEventListener('DOMContentLoaded', async () => {
   _initToggle('toggle-alerts', localStorage.getItem('dp_alerts_enabled') !== 'false');
   const daysEl = document.getElementById('input-inactivity-days');
   if (daysEl) daysEl.value = localStorage.getItem('dp_inactivity_days') || '5';
+
+  loadCollaborators();
+  loadSecuritySection();
 });
+
+// ══════════════════════════════════════════════
+// SICUREZZA / 2FA (TOTP)
+// ══════════════════════════════════════════════
+let _pendingEnrollFactorId = null;
+
+async function loadSecuritySection() {
+  const box = document.getElementById('security-status');
+  const { data, error } = await sb.auth.mfa.listFactors();
+  if (error) { box.textContent = 'Errore nel controllo stato 2FA: ' + error.message; return; }
+
+  const verified = (data?.totp || []).find(f => f.status === 'verified');
+  if (verified) {
+    box.innerHTML = '<span>✅ 2FA attiva dal ' + new Date(verified.created_at).toLocaleDateString('it-IT') + '</span>' +
+      '<button class="btn btn-ghost btn-xs" onclick="disableTotp(\'' + verified.id + '\')">Disattiva</button>';
+    document.getElementById('totp-setup-box').style.display = 'none';
+  } else {
+    box.innerHTML = '<span>⚪ 2FA non attiva</span>';
+    document.getElementById('totp-setup-box').style.display = 'block';
+    document.getElementById('totp-enroll-box').style.display = 'none';
+  }
+}
+
+async function startTotpEnroll() {
+  showLoading(true);
+  const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp' });
+  showLoading(false);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  _pendingEnrollFactorId = data.id;
+  document.getElementById('totp-qr').src = data.totp.qr_code;
+  document.getElementById('totp-secret').textContent = data.totp.secret;
+  document.getElementById('totp-enroll-box').style.display = 'block';
+  document.getElementById('totp-verify-code').value = '';
+}
+
+async function confirmTotpEnroll() {
+  const errEl = document.getElementById('totp-enroll-err');
+  errEl.style.display = 'none';
+  const code = document.getElementById('totp-verify-code').value.trim();
+  if (!/^\d{6}$/.test(code)) {
+    errEl.textContent = 'Inserisci il codice a 6 cifre mostrato dalla tua app authenticator.';
+    errEl.style.display = 'block';
+    return;
+  }
+  showLoading(true);
+  try {
+    const { data: challenge, error: chErr } = await sb.auth.mfa.challenge({ factorId: _pendingEnrollFactorId });
+    if (chErr) throw chErr;
+    const { error: vErr } = await sb.auth.mfa.verify({ factorId: _pendingEnrollFactorId, challengeId: challenge.id, code });
+    if (vErr) throw vErr;
+    toast('✅ 2FA attivata!', 'ok');
+    await loadSecuritySection();
+  } catch (e) {
+    errEl.textContent = 'Codice non valido, riprova.';
+    errEl.style.display = 'block';
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function disableTotp(factorId) {
+  customConfirm('Disattivare la verifica in due passaggi? Il tuo account sarà protetto solo da password.', async () => {
+    showLoading(true);
+    const { error } = await sb.auth.mfa.unenroll({ factorId });
+    showLoading(false);
+    if (error) { toast('Errore: ' + error.message, 'err'); return; }
+    toast('2FA disattivata', 'ok');
+    await loadSecuritySection();
+  }, { danger: true, title: '🔓 Disattiva 2FA', okLabel: 'Disattiva' });
+}
+
+// ══════════════════════════════════════════════
+// COLLABORATORI DELLO STUDIO
+// ══════════════════════════════════════════════
+async function loadCollaborators() {
+  if (!currentUser) return;
+
+  // Se l'utente è a sua volta collaboratore di un altro studio, mostra un avviso
+  // e nascondi la gestione (non ha senso gestire collaboratori propri in quel caso).
+  const { data: asCollab } = await sb.from('studio_collaborators')
+    .select('titolare_id, permission_level')
+    .eq('collaborator_id', currentUser.id)
+    .maybeSingle();
+
+  if (asCollab) {
+    const { data: titolareProfile } = await sb.from('profiles').select('nome,cognome').eq('id', asCollab.titolare_id).maybeSingle();
+    const nomeTitolare = titolareProfile ? esc(((titolareProfile.nome||'') + ' ' + (titolareProfile.cognome||'')).trim()) : 'un altro studio';
+    const livello = asCollab.permission_level === 'dietitian' ? 'Dietista (accesso pieno)' : 'Segreteria (sola lettura + agenda)';
+    document.getElementById('collab-as-collaborator').style.display = 'block';
+    document.getElementById('collab-as-collaborator').textContent =
+      'ℹ️ Sei collaboratore dello studio di ' + nomeTitolare + ' — livello: ' + livello + '.';
+    document.getElementById('collab-manage-box').style.display = 'none';
+    return;
+  }
+
+  const { data: rows, error } = await sb.from('studio_collaborators')
+    .select('id, collaborator_id, permission_level, created_at')
+    .eq('titolare_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  const list = document.getElementById('collab-list');
+  if (error) { list.innerHTML = '<div style="color:var(--red);font-size:13px">Errore nel caricamento: ' + esc(error.message) + '</div>'; return; }
+  if (!rows || !rows.length) { list.innerHTML = '<div style="color:var(--slate-l);font-size:13px;font-style:italic;padding:8px 0">Nessun collaboratore collegato.</div>'; return; }
+
+  const ids = rows.map(r => r.collaborator_id);
+  const { data: profiles } = await sb.from('profiles').select('id,nome,cognome,email').in('id', ids);
+  const byId = Object.fromEntries((profiles||[]).map(p => [p.id, p]));
+
+  list.innerHTML = rows.map(r => {
+    const p = byId[r.collaborator_id] || {};
+    const nome = ((p.nome||'') + ' ' + (p.cognome||'')).trim() || p.email || r.collaborator_id;
+    const badge = r.permission_level === 'dietitian'
+      ? '<span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px">Dietista</span>'
+      : '<span style="background:#F1F5F9;color:#475569;font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px">Segreteria</span>';
+    return '<div style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px">' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:14px;font-weight:700;color:var(--slate)">' + esc(nome) + '</div>' +
+        '<div style="font-size:12px;color:var(--slate-l)">' + esc(p.email||'') + '</div>' +
+      '</div>' +
+      badge +
+      '<button class="btn btn-ghost btn-xs" onclick="removeCollaborator(\'' + r.id + '\')" style="margin-left:8px">🗑️ Rimuovi</button>' +
+    '</div>';
+  }).join('');
+}
+
+async function addCollaborator() {
+  const errEl = document.getElementById('collab-add-err');
+  errEl.style.display = 'none';
+  const email = document.getElementById('collab-email').value.trim().toLowerCase();
+  const level = document.getElementById('collab-level').value;
+  if (!email) return;
+
+  showLoading(true);
+  try {
+    const { data: found, error: findErr } = await sb.rpc('find_dietitian_by_email', { p_email: email });
+    if (findErr) throw findErr;
+    const match = Array.isArray(found) ? found[0] : found;
+    if (!match) {
+      errEl.textContent = 'Nessun account dietista approvato trovato con questa email.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (match.id === currentUser.id) {
+      errEl.textContent = 'Non puoi collegare te stesso come collaboratore.';
+      errEl.style.display = 'block';
+      return;
+    }
+    const { error: insErr } = await sb.from('studio_collaborators').insert({
+      titolare_id: currentUser.id,
+      collaborator_id: match.id,
+      permission_level: level,
+    });
+    if (insErr) {
+      errEl.textContent = insErr.code === '23505' ? 'Questo collaboratore è già collegato al tuo studio.' : insErr.message;
+      errEl.style.display = 'block';
+      return;
+    }
+    document.getElementById('collab-email').value = '';
+    toast('✅ Collaboratore aggiunto', 'ok');
+    await loadCollaborators();
+  } catch (e) {
+    errEl.textContent = e.message || 'Errore imprevisto.';
+    errEl.style.display = 'block';
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function removeCollaborator(id) {
+  customConfirm('Rimuovere questo collaboratore dallo studio?', async () => {
+    showLoading(true);
+    await sb.from('studio_collaborators').delete().eq('id', id);
+    showLoading(false);
+    toast('🗑️ Collaboratore rimosso', 'ok');
+    await loadCollaborators();
+  }, { danger: true, title: '🗑️ Rimuovi collaboratore', okLabel: 'Rimuovi' });
+}
 
 function _clickToggle(id) {
   const cb = document.getElementById(id);

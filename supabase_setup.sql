@@ -1077,30 +1077,53 @@ DO $$ BEGIN
 END $$;
 
 -- Storage bucket patient-files
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('patient-files', 'patient-files', false)
-ON CONFLICT (id) DO NOTHING;
+-- SECURITY FIX: aggiunti file_size_limit e allowed_mime_types — l'upload
+-- lato client (pazienti.html) valida già tipo/dimensione, ma senza un limite
+-- sul bucket stesso quel controllo è aggirabile con una chiamata diretta alla
+-- Storage API. ON CONFLICT DO UPDATE per applicare il limite anche se il
+-- bucket esiste già da un'installazione precedente.
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'patient-files', 'patient-files', false, 15728640,
+  ARRAY['application/pdf','image/jpeg','image/png','image/webp','image/heic',
+        'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/csv','text/plain']
+)
+ON CONFLICT (id) DO UPDATE SET
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_files_storage_insert' AND tablename='objects' AND schemaname='storage') THEN
-    CREATE POLICY "patient_files_storage_insert" ON storage.objects
-      FOR INSERT WITH CHECK (bucket_id = 'patient-files' AND auth.uid() IS NOT NULL);
-  END IF;
-END $$;
+-- SECURITY FIX: le policy sotto controllavano solo "auth.uid() IS NOT NULL",
+-- quindi QUALSIASI dietista autenticato poteva leggere/sovrascrivere/cancellare
+-- gli allegati di QUALSIASI altro dietista/paziente conoscendo/indovinando lo
+-- storage path (che è pubblico solo entro l'app, ma la policy non lo verificava
+-- affatto). Il path è sempre "<uid di chi carica>/<cartella_id>/<file>" — la
+-- policy ora impone che il primo segmento coincida con l'utente autenticato,
+-- coerente con la RLS già corretta su patient_files (auth.uid() = user_id).
+DROP POLICY IF EXISTS "patient_files_storage_insert" ON storage.objects;
+CREATE POLICY "patient_files_storage_insert" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'patient-files'
+    AND auth.uid() IS NOT NULL
+    AND (storage.foldername(name))[1] = auth.uid()::text
+  );
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_files_storage_select' AND tablename='objects' AND schemaname='storage') THEN
-    CREATE POLICY "patient_files_storage_select" ON storage.objects
-      FOR SELECT USING (bucket_id = 'patient-files' AND auth.uid() IS NOT NULL);
-  END IF;
-END $$;
+DROP POLICY IF EXISTS "patient_files_storage_select" ON storage.objects;
+CREATE POLICY "patient_files_storage_select" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'patient-files'
+    AND auth.uid() IS NOT NULL
+    AND (storage.foldername(name))[1] = auth.uid()::text
+  );
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_files_storage_delete' AND tablename='objects' AND schemaname='storage') THEN
-    CREATE POLICY "patient_files_storage_delete" ON storage.objects
-      FOR DELETE USING (bucket_id = 'patient-files' AND auth.uid() IS NOT NULL);
-  END IF;
-END $$;
+DROP POLICY IF EXISTS "patient_files_storage_delete" ON storage.objects;
+CREATE POLICY "patient_files_storage_delete" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'patient-files'
+    AND auth.uid() IS NOT NULL
+    AND (storage.foldername(name))[1] = auth.uid()::text
+  );
 
 -- GDPR: colonna consenso sulle cartelle
 ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso BOOLEAN DEFAULT FALSE;
@@ -1198,3 +1221,260 @@ DROP TRIGGER IF EXISTS prevent_self_privilege_escalation ON profiles;
 CREATE TRIGGER prevent_self_privilege_escalation
   BEFORE UPDATE ON profiles
   FOR EACH ROW EXECUTE FUNCTION prevent_self_privilege_escalation();
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- AUDIT LOG — dati clinici
+-- Traccia scritture (insert/update/delete) sulle tabelle cliniche sensibili:
+-- chi (changed_by), cosa (table_name/record_id/operation, colonne cambiate
+-- per gli update), quando (created_at), per quale paziente/cartella.
+-- NOTA: questo copre solo le SCRITTURE — un vero audit degli ACCESSI IN LETTURA
+-- richiederebbe strumentare ogni query lato applicazione (Postgres non genera
+-- trigger sui SELECT), che è fuori scope qui.
+-- Questa stessa tabella/funzione è definita in modo identico e idempotente
+-- anche in supabase-schema.sql (Diet-Plan-Pro-app-claude), perché i due
+-- progetti condividono lo stesso DB Supabase: qualunque dei due script giri
+-- per primo la crea, il secondo è un no-op.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS clinical_audit_log (
+  id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  table_name       TEXT        NOT NULL,
+  record_id        UUID,
+  operation        TEXT        NOT NULL CHECK (operation IN ('INSERT','UPDATE','DELETE')),
+  changed_by       UUID        REFERENCES auth.users(id),
+  changed_columns  TEXT[],
+  patient_id       UUID,
+  cartella_id      UUID,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_clinical_audit_log_patient ON clinical_audit_log(patient_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_clinical_audit_log_cartella ON clinical_audit_log(cartella_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_clinical_audit_log_table_record ON clinical_audit_log(table_name, record_id);
+
+ALTER TABLE clinical_audit_log ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "clinical_audit_log_dietitian_read" ON clinical_audit_log;
+CREATE POLICY "clinical_audit_log_dietitian_read" ON clinical_audit_log
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM patient_dietitian pd
+      WHERE pd.dietitian_id = auth.uid()
+        AND (
+          (clinical_audit_log.patient_id IS NOT NULL AND pd.patient_id = clinical_audit_log.patient_id)
+          OR (clinical_audit_log.cartella_id IS NOT NULL AND pd.cartella_id = clinical_audit_log.cartella_id)
+        )
+    )
+  );
+
+-- Trasparenza verso il paziente: può vedere chi ha toccato i propri dati clinici.
+DROP POLICY IF EXISTS "clinical_audit_log_own_read" ON clinical_audit_log;
+CREATE POLICY "clinical_audit_log_own_read" ON clinical_audit_log
+  FOR SELECT USING (patient_id = auth.uid());
+
+-- Nessuna policy INSERT/UPDATE/DELETE per authenticated/anon: le uniche
+-- scritture ammesse sono quelle della funzione trigger sotto (SECURITY DEFINER).
+
+CREATE OR REPLACE FUNCTION log_clinical_change()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_row JSONB;
+  v_changed_cols TEXT[];
+BEGIN
+  -- COALESCE su tipi record/composite è ambiguo in plpgsql: branching esplicito.
+  IF TG_OP = 'DELETE' THEN
+    v_row := to_jsonb(OLD);
+  ELSE
+    v_row := to_jsonb(NEW);
+  END IF;
+
+  IF TG_OP = 'UPDATE' THEN
+    SELECT array_agg(n.key) INTO v_changed_cols
+    FROM jsonb_each(to_jsonb(NEW)) n
+    JOIN jsonb_each(to_jsonb(OLD)) o ON n.key = o.key
+    WHERE n.value IS DISTINCT FROM o.value;
+  END IF;
+
+  INSERT INTO clinical_audit_log (table_name, record_id, operation, changed_by, changed_columns, patient_id, cartella_id)
+  VALUES (
+    TG_TABLE_NAME,
+    (v_row->>'id')::uuid,
+    TG_OP,
+    auth.uid(),
+    v_changed_cols,
+    COALESCE(NULLIF(v_row->>'patient_id',''), NULLIF(v_row->>'user_id',''))::uuid,
+    -- La tabella cartelle non ha una colonna cartella_id: è identificata dal
+    -- proprio id, che qui coincide col cartella_id da usare per il collegamento RLS.
+    CASE WHEN TG_TABLE_NAME = 'cartelle' THEN (v_row->>'id')::uuid
+         ELSE NULLIF(v_row->>'cartella_id','')::uuid END
+  );
+
+  -- Il valore di ritorno di un trigger AFTER viene ignorato da Postgres.
+  RETURN NULL;
+END;
+$$;
+
+-- Tabelle cliniche definite in QUESTO file.
+DROP TRIGGER IF EXISTS trg_audit_cartelle ON cartelle;
+CREATE TRIGGER trg_audit_cartelle AFTER INSERT OR UPDATE OR DELETE ON cartelle
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+DROP TRIGGER IF EXISTS trg_audit_ncpt ON ncpt;
+CREATE TRIGGER trg_audit_ncpt AFTER INSERT OR UPDATE OR DELETE ON ncpt
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+DROP TRIGGER IF EXISTS trg_audit_bia_records ON bia_records;
+CREATE TRIGGER trg_audit_bia_records AFTER INSERT OR UPDATE OR DELETE ON bia_records
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+DROP TRIGGER IF EXISTS trg_audit_schede_valutazione ON schede_valutazione;
+CREATE TRIGGER trg_audit_schede_valutazione AFTER INSERT OR UPDATE OR DELETE ON schede_valutazione
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+DROP TRIGGER IF EXISTS trg_audit_note_specialistiche ON note_specialistiche;
+CREATE TRIGGER trg_audit_note_specialistiche AFTER INSERT OR UPDATE OR DELETE ON note_specialistiche
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'esami_biochimici') THEN
+    DROP TRIGGER IF EXISTS trg_audit_esami_biochimici ON esami_biochimici;
+    CREATE TRIGGER trg_audit_esami_biochimici AFTER INSERT OR UPDATE OR DELETE ON esami_biochimici
+      FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'menstrual_cycle') THEN
+    DROP TRIGGER IF EXISTS trg_audit_menstrual_cycle ON menstrual_cycle;
+    CREATE TRIGGER trg_audit_menstrual_cycle AFTER INSERT OR UPDATE OR DELETE ON menstrual_cycle
+      FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+  END IF;
+END $$;
+
+-- Tabelle definite in ENTRAMBI i file (stessa tabella fisica, DB condiviso):
+-- riattaccare qui è sicuro grazie al DROP TRIGGER IF EXISTS, a prescindere da
+-- quale dei due script giri per primo.
+DROP TRIGGER IF EXISTS trg_audit_chat_messages ON chat_messages;
+CREATE TRIGGER trg_audit_chat_messages AFTER INSERT OR UPDATE OR DELETE ON chat_messages
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+DROP TRIGGER IF EXISTS trg_audit_patient_documents ON patient_documents;
+CREATE TRIGGER trg_audit_patient_documents AFTER INSERT OR UPDATE OR DELETE ON patient_documents
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- RUOLI GRANULARI NELLO STUDIO — segretaria vs titolare (backend)
+--
+-- Un "collaboratore" è un account già registrato come dietista sulla
+-- piattaforma (approvato dall'admin come tutti gli altri) che il titolare
+-- collega al proprio studio con un livello di permesso:
+--   - 'secretary'  → può LEGGERE cartelle/piani/NCPt/BIA/schede/note del
+--                    titolare e gestire agenda/appuntamenti, ma non può
+--                    scrivere sui dati clinici.
+--   - 'dietitian'  → accesso pieno (lettura + scrittura) come il titolare.
+--
+-- get_studio_owner(uid): per un collaboratore restituisce l'id del titolare
+-- a cui è collegato; per chiunque altro (titolare o dietista indipendente)
+-- restituisce se stesso. Usarla al posto di un confronto diretto con
+-- auth.uid() ovunque un collaboratore debba "vedere ciò che vede il titolare".
+--
+-- Questa stessa tabella/funzioni sono definite in modo identico e idempotente
+-- anche in supabase-schema.sql (Diet-Plan-Pro-app-claude), stesso DB condiviso.
+--
+-- Copertura attuale (deliberatamente non esaustiva — vedi nota finale):
+--   patient_dietitian (lettura), cartelle/piani/ncpt/bia_records/
+--   schede_valutazione/note_specialistiche (lettura per entrambi i livelli,
+--   scrittura solo per livello 'dietitian'), agenda/appuntamenti (vedi
+--   supabase-schema.sql, entrambi i livelli in scrittura).
+-- Le altre tabelle cliniche (es. esami_biochimici, patient_documents) NON
+-- sono ancora state estese: seguono lo stesso pattern se servirà in futuro.
+--
+-- Nessuna UI di conferma/invito via email: il titolare aggiunge un
+-- collaboratore per email dalla pagina collaboratori.html, che risolve
+-- l'email in un id tramite la tabella profiles (il collaboratore deve
+-- già avere un account sulla piattaforma).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS studio_collaborators (
+  id                UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  titolare_id       UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  collaborator_id   UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  permission_level  TEXT        NOT NULL DEFAULT 'secretary' CHECK (permission_level IN ('secretary','dietitian')),
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (titolare_id, collaborator_id),
+  CHECK (titolare_id <> collaborator_id)
+);
+CREATE INDEX IF NOT EXISTS idx_studio_collaborators_collaborator ON studio_collaborators(collaborator_id);
+CREATE INDEX IF NOT EXISTS idx_studio_collaborators_titolare ON studio_collaborators(titolare_id);
+
+ALTER TABLE studio_collaborators ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "studio_collaborators_titolare_manage" ON studio_collaborators;
+CREATE POLICY "studio_collaborators_titolare_manage" ON studio_collaborators
+  FOR ALL USING (auth.uid() = titolare_id) WITH CHECK (auth.uid() = titolare_id);
+
+DROP POLICY IF EXISTS "studio_collaborators_collaborator_read" ON studio_collaborators;
+CREATE POLICY "studio_collaborators_collaborator_read" ON studio_collaborators
+  FOR SELECT USING (auth.uid() = collaborator_id);
+
+CREATE OR REPLACE FUNCTION get_studio_owner(uid UUID)
+RETURNS UUID LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT COALESCE(
+    (SELECT titolare_id FROM studio_collaborators WHERE collaborator_id = uid LIMIT 1),
+    uid
+  );
+$$;
+GRANT EXECUTE ON FUNCTION get_studio_owner(UUID) TO authenticated;
+
+CREATE OR REPLACE FUNCTION is_dietitian_level_collaborator(uid UUID)
+RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  -- true per chiunque NON sia registrato come collaboratore 'secretary'
+  -- (quindi vero anche per titolari e dietisti indipendenti)
+  SELECT NOT EXISTS (
+    SELECT 1 FROM studio_collaborators
+    WHERE collaborator_id = uid AND permission_level = 'secretary'
+  );
+$$;
+GRANT EXECUTE ON FUNCTION is_dietitian_level_collaborator(UUID) TO authenticated;
+
+-- Risolve un'email in un id account per collegare un collaboratore: senza
+-- questa RPC un titolare non potrebbe trovare l'id del collega da collegare,
+-- perché le policy di profiles bloccano la lettura di profili non ancora
+-- collegati. Espone solo id/nome/cognome, e solo per account dietista
+-- approvati (mai pazienti), su match esatto dell'email.
+CREATE OR REPLACE FUNCTION find_dietitian_by_email(p_email TEXT)
+RETURNS TABLE(id UUID, nome TEXT, cognome TEXT)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT p.id, p.nome, p.cognome
+  FROM profiles p
+  WHERE p.email = p_email AND p.role = 'dietitian' AND p.approved = true
+  LIMIT 1;
+$$;
+GRANT EXECUTE ON FUNCTION find_dietitian_by_email(TEXT) TO authenticated;
+
+-- ── patient_dietitian: il collaboratore vede il roster pazienti del titolare ──
+DROP POLICY IF EXISTS "patient_dietitian_collaborator_read" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_collaborator_read" ON patient_dietitian
+  FOR SELECT USING (dietitian_id = get_studio_owner(auth.uid()));
+
+-- ── Tabelle cliniche "user_id = dietista proprietario": stesso pattern per tutte ──
+DO $$
+DECLARE
+  tbl TEXT;
+BEGIN
+  FOREACH tbl IN ARRAY ARRAY['cartelle','piani','ncpt','bia_records','schede_valutazione','note_specialistiche']
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_read', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR SELECT USING (user_id = get_studio_owner(auth.uid()))',
+      tbl || '_collaborator_read', tbl
+    );
+
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_write', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR ALL USING (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid())) WITH CHECK (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))',
+      tbl || '_collaborator_write', tbl
+    );
+  END LOOP;
+END $$;

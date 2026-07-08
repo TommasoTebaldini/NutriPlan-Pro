@@ -2484,19 +2484,54 @@ async function toggleTimeline(cartellaId, btn) {
 // ══════════════════════════════════════════════
 // FEATURE 1 — ALLEGATI LIBERI
 // ══════════════════════════════════════════════
+const ALLEGATO_MAX_SIZE = 15 * 1024 * 1024; // 15MB, deve combaciare col file_size_limit del bucket patient-files
+const ALLEGATO_ALLOWED_MIME = new Set([
+  'application/pdf',
+  'image/jpeg', 'image/png', 'image/webp', 'image/heic',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'text/csv', 'text/plain',
+]);
+const ALLEGATO_ALLOWED_EXT = /\.(pdf|jpe?g|png|webp|heic|docx?|xlsx?|csv|txt)$/i;
+
+// Rimuove path separator e caratteri non sicuri dal nome file, evitando che
+// finisca nel path dello storage così com'è (traversal / caratteri strani).
+function sanitizeAllegatoFilename(name) {
+  const base = String(name || 'file').split(/[\\/]/).pop();
+  const cleaned = base.replace(/[^\w.\-]+/g, '_').replace(/^\.+/, '');
+  return (cleaned || 'file').slice(-120);
+}
+
 async function uploadAllegato(input, cartellaId) {
   if (!input.files || !input.files.length) return;
   if (!currentUser) { toast(_L('Sessione scaduta','Session expired'), 'err'); return; }
+
+  const files = Array.from(input.files);
+  const rejected = [];
+  const validFiles = files.filter(file => {
+    const extOk = ALLEGATO_ALLOWED_EXT.test(file.name);
+    const mimeOk = !file.type || ALLEGATO_ALLOWED_MIME.has(file.type);
+    if (!extOk || !mimeOk) { rejected.push(file.name + ' (' + _L('tipo non permesso','type not allowed') + ')'); return false; }
+    if (file.size > ALLEGATO_MAX_SIZE) { rejected.push(file.name + ' (' + _L('troppo grande, max 15MB','too large, max 15MB') + ')'); return false; }
+    return true;
+  });
+
+  if (rejected.length) toast('⚠️ ' + _L('File rifiutati: ','Rejected files: ') + rejected.join(', '), 'warn');
+  if (!validFiles.length) { input.value = ''; return; }
+
   showLoading(true);
   let errCount = 0;
-  for (const file of input.files) {
-    const path = currentUser.id + '/' + cartellaId + '/' + Date.now() + '_' + file.name;
-    const { error: upErr } = await sb.storage.from('patient-files').upload(path, file, { upsert: false });
+  for (const file of validFiles) {
+    const safeName = sanitizeAllegatoFilename(file.name);
+    const path = currentUser.id + '/' + cartellaId + '/' + Date.now() + '_' + safeName;
+    const { error: upErr } = await sb.storage.from('patient-files').upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
     if (upErr) { errCount++; console.error('Upload error:', upErr); continue; }
     const { error: dbErr } = await sb.from('patient_files').insert({
       user_id: currentUser.id,
       cartella_id: cartellaId,
-      filename: file.name,
+      filename: safeName,
       storage_path: path,
       file_size: file.size,
       mime_type: file.type || null,

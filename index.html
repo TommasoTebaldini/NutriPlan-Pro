@@ -267,6 +267,20 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
   </div>
 </div>
 
+<!-- MODAL 2FA — appare al login se l'account ha la verifica in due passaggi attiva -->
+<div id="mfa-modal" style="position:fixed;inset:0;background:rgba(15,30,50,.88);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px">
+  <div style="background:white;border-radius:16px;max-width:380px;width:100%;padding:28px 26px;box-shadow:0 32px 80px rgba(0,0,0,.55)">
+    <h3 style="font-size:18px;font-weight:700;color:#1E293B;margin-bottom:8px">🔐 Verifica in due passaggi</h3>
+    <p style="font-size:13px;color:#64748B;margin-bottom:18px;line-height:1.5">Inserisci il codice a 6 cifre generato dalla tua app authenticator.</p>
+    <input type="text" id="mfa-code" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+      style="width:100%;padding:12px 14px;border:1.5px solid #CBD5E1;border-radius:10px;font-size:20px;font-family:inherit;letter-spacing:6px;text-align:center;outline:none;margin-bottom:12px"
+      onkeydown="if(event.key==='Enter')verifyMfaCode()">
+    <div class="err" id="mfa-err" style="margin-bottom:10px"></div>
+    <button class="btn" style="width:100%" onclick="verifyMfaCode()">Verifica</button>
+    <p style="text-align:center;margin-top:12px"><button onclick="cancelMfa()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">Annulla e torna al login</button></p>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script>
 let _dpaUserId = null;
@@ -356,7 +370,54 @@ async function doLogin() {
   const {data,error} = await sb.auth.signInWithPassword({email,password:pw});
   btn.disabled=false;btn.textContent='Accedi';
   if (error){err.textContent=error.message==='Invalid login credentials'?'Email o password errata.':error.message;err.classList.add('show');return;}
+
+  // Se l'account ha la 2FA attiva, il login con sola password resta al livello
+  // aal1: serve un secondo passaggio (codice TOTP) prima di procedere.
+  const { data: aal } = await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal && aal.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
+    const { data: factors } = await sb.auth.mfa.listFactors();
+    const totpFactor = (factors?.totp || []).find(f => f.status === 'verified');
+    if (totpFactor) {
+      _pendingMfaFactorId = totpFactor.id;
+      _pendingMfaUser = data.user;
+      document.getElementById('mfa-code').value = '';
+      document.getElementById('mfa-err').classList.remove('show');
+      document.getElementById('mfa-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('mfa-code').focus(), 50);
+      return;
+    }
+  }
+
   await checkAndRedirect(data.user);
+}
+
+let _pendingMfaFactorId = null;
+let _pendingMfaUser = null;
+
+async function verifyMfaCode() {
+  const code = document.getElementById('mfa-code').value.trim();
+  const err = document.getElementById('mfa-err');
+  err.classList.remove('show');
+  if (!/^\d{6}$/.test(code)) { err.textContent = 'Inserisci il codice a 6 cifre.'; err.classList.add('show'); return; }
+
+  try {
+    const { data: challenge, error: chErr } = await sb.auth.mfa.challenge({ factorId: _pendingMfaFactorId });
+    if (chErr) throw chErr;
+    const { error: vErr } = await sb.auth.mfa.verify({ factorId: _pendingMfaFactorId, challengeId: challenge.id, code });
+    if (vErr) throw vErr;
+    document.getElementById('mfa-modal').style.display = 'none';
+    await checkAndRedirect(_pendingMfaUser);
+  } catch (e) {
+    err.textContent = 'Codice non valido, riprova.';
+    err.classList.add('show');
+  }
+}
+
+async function cancelMfa() {
+  document.getElementById('mfa-modal').style.display = 'none';
+  await sb.auth.signOut();
+  _pendingMfaFactorId = null;
+  _pendingMfaUser = null;
 }
 
 async function doRegister() {

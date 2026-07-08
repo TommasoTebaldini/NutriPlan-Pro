@@ -12,11 +12,10 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.s
 // get_user_agenda_events() SECURITY DEFINER RPC function instead, which
 // enforces the user_id filter server-side and is safe to invoke with the
 // public anon key.
-// The anon key is public (also hardcoded in js/utils.js) so it is safe to
-// embed here as a fallback when the Vercel environment variable is not set.
+// The anon key itself is public, but no hardcoded fallback lives here anymore:
+// rotating it should only require updating the Vercel env var, not the code.
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 // When set, calendar URLs must include ?token=HMAC-SHA256(uid, CALENDAR_SECRET).
 // Without this env var the feed accepts the bare uid (legacy / backward compat).

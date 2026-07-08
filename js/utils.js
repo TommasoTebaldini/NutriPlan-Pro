@@ -1,5 +1,13 @@
 // ═══════════════════════════════════════════════════
 // SUPABASE CONFIG
+// Questa è la anon/publishable key: è DESTINATA a essere pubblica e viaggiare
+// nel browser (la sicurezza dei dati è garantita dalle policy RLS lato DB, non
+// dal nascondere questa chiave). È hardcoded qui e nelle poche pagine che si
+// caricano prima di questo file (index.html, patient-portal.html) perché non
+// esiste una build step che possa iniettarla da una env var lato client.
+// Il codice SERVER-SIDE (api/*.js) NON deve più avere questa chiave hardcoded
+// come fallback: usa solo process.env.SUPABASE_ANON_KEY, per poterla ruotare
+// da Vercel senza toccare il codice.
 // ═══════════════════════════════════════════════════
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2ZHdxb3draHV0ZnNkcGl1YnhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTU0ODMsImV4cCI6MjA5MDM3MTQ4M30.HenM_wKdcrSVmQ2NyHsg0r9HfQDgcLgb2q1EAIMVcfs';

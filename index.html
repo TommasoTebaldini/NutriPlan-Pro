@@ -378,6 +378,7 @@ async function doLogin() {
     const { data: factors } = await sb.auth.mfa.listFactors();
     const totpFactor = (factors?.totp || []).find(f => f.status === 'verified');
     if (totpFactor) {
+      _mfaMode = 'login';
       _pendingMfaFactorId = totpFactor.id;
       _pendingMfaUser = data.user;
       document.getElementById('mfa-code').value = '';
@@ -391,6 +392,7 @@ async function doLogin() {
   await checkAndRedirect(data.user);
 }
 
+let _mfaMode = 'login'; // 'login' | 'recovery' — decide cosa fare dopo verifyMfaCode()
 let _pendingMfaFactorId = null;
 let _pendingMfaUser = null;
 
@@ -406,7 +408,13 @@ async function verifyMfaCode() {
     const { error: vErr } = await sb.auth.mfa.verify({ factorId: _pendingMfaFactorId, challengeId: challenge.id, code });
     if (vErr) throw vErr;
     document.getElementById('mfa-modal').style.display = 'none';
-    await checkAndRedirect(_pendingMfaUser);
+    if (_mfaMode === 'recovery') {
+      // Il codice TOTP conferma l'identità del titolare dell'account: solo ora
+      // è sicuro mostrare il form di reimpostazione password (vedi init()).
+      showResetPanel();
+    } else {
+      await checkAndRedirect(_pendingMfaUser);
+    }
   } catch (e) {
     err.textContent = 'Codice non valido, riprova.';
     err.classList.add('show');
@@ -418,6 +426,13 @@ async function cancelMfa() {
   await sb.auth.signOut();
   _pendingMfaFactorId = null;
   _pendingMfaUser = null;
+  if (_mfaMode === 'recovery') {
+    // Annullare la verifica durante un recovery non deve lasciare una sessione
+    // valida in giro: si torna puliti alla schermata di login.
+    history.replaceState(null, '', window.location.pathname);
+    showLogin();
+  }
+  _mfaMode = 'login';
 }
 
 async function doRegister() {
@@ -580,6 +595,23 @@ async function init() {
     await sb.auth.getSession(); // lets Supabase JS process the hash tokens
     document.getElementById('loading').classList.remove('show');
     history.replaceState(null, '', window.location.pathname);
+
+    // Il link via email prova il possesso della casella di posta, ma da solo
+    // resta un fattore singolo: se l'account ha la 2FA attiva, il possesso
+    // della sola email non deve bastare a reimpostare la password. Si chiede
+    // il codice TOTP prima di mostrare il form di reset (vedi verifyMfaCode()).
+    const { data: factors } = await sb.auth.mfa.listFactors();
+    const totpFactor = (factors?.totp || []).find(f => f.status === 'verified');
+    if (totpFactor) {
+      _mfaMode = 'recovery';
+      _pendingMfaFactorId = totpFactor.id;
+      document.getElementById('mfa-code').value = '';
+      document.getElementById('mfa-err').classList.remove('show');
+      document.getElementById('mfa-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('mfa-code').focus(), 50);
+      return;
+    }
+
     showResetPanel();
     return;
   }

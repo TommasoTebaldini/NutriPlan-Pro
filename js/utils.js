@@ -81,7 +81,7 @@ function _writeProfileCache(uid, data) {
 async function loadProfile() {
   if (!currentUser) return;
   loadProfileError = null;
-  let data = null;
+  let data;
 
   // ① Serve from cache immediately — eliminates 200-500ms DB wait on repeat visits
   const _cached = _readProfileCache(currentUser.id);

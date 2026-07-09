@@ -1833,25 +1833,38 @@ function previewFoto(tipo, input) {
   reader.readAsDataURL(file);
 }
 
+const FOTO_MAX_SIZE = 15 * 1024 * 1024; // 15MB, in linea col limite già usato per gli allegati
+const FOTO_ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic']);
+const FOTO_EXT_BY_MIME = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic' };
+const FOTO_ALLOWED_EXT = /\.(jpe?g|png|webp|heic)$/i;
+
 async function uploadFotoProgressi(cartellaId, schedaId) {
   if (!sb || !currentUser) return;
   const dateFoto = document.getElementById('foto-data')?.value || new Date().toISOString().slice(0,10);
   const noteFoto = document.getElementById('foto-note')?.value || '';
   const pesoFoto = document.getElementById('foto-peso')?.value || '';
   const uploads = [];
+  const rejected = [];
   for (const tipo of ['prima', 'dopo']) {
     const input = document.getElementById('foto-' + tipo + '-input');
     if (!input || !input.files[0]) continue;
     const file = input.files[0];
-    const ext = file.name.split('.').pop() || 'jpg';
+    const extOk = FOTO_ALLOWED_EXT.test(file.name);
+    const mimeOk = FOTO_ALLOWED_MIME.has(file.type);
+    if (!extOk || !mimeOk) { rejected.push(file.name + ' (' + _L('tipo non permesso','type not allowed') + ')'); continue; }
+    if (file.size > FOTO_MAX_SIZE) { rejected.push(file.name + ' (' + _L('troppo grande, max 15MB','too large, max 15MB') + ')'); continue; }
+    // Derive the extension from the verified MIME type rather than trusting the
+    // client-supplied filename, since the path is built from it directly.
+    const ext = FOTO_EXT_BY_MIME[file.type] || 'jpg';
     const path = `${cartellaId}/${schedaId}/${tipo}.${ext}`;
     try {
-      const { error: upErr } = await sb.storage.from('patient-photos').upload(path, file, { upsert: true });
+      const { error: upErr } = await sb.storage.from('patient-photos').upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) { console.warn('Foto upload error:', upErr.message); continue; }
       const { data: urlData } = sb.storage.from('patient-photos').getPublicUrl(path);
       uploads.push({ tipo, url: urlData?.publicUrl, path, data_foto: dateFoto, note_foto: noteFoto, peso_al_momento: pesoFoto });
     } catch(e) { console.warn('Upload foto error:', e); }
   }
+  if (rejected.length) toast('⚠️ ' + _L('File rifiutati: ','Rejected files: ') + rejected.join(', '), 'warn');
   if (uploads.length > 0) {
     toast('📸 ' + uploads.length + ' ' + _L('foto salvata/e con successo!','photo(s) saved successfully!'), 'ok');
     await caricaFotoSalvate(cartellaId, schedaId);

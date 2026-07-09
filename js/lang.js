@@ -38,7 +38,7 @@ const LANGS = {
     'chat.select_patient':'Seleziona un paziente per iniziare una conversazione',
     'chat.tab_chat':'💬 Messaggi','chat.tab_andamento':'📈 Diario','chat.tab_informazioni':'ℹ️ Informazioni',
     'chat.tab_privacy':'📋 Privacy','chat.tab_storico':'📊 Storico Clinico',
-    'chat.message_placeholder':'Messaggio...','chat.send':'Invia',
+    'chat.message_placeholder':'Messaggio...',
     'chat.no_cartella':'Nessuna cartella collegata a questo paziente.',
     // Storico Clinico
     'stor.title':'Storico Clinico','stor.period':'Periodo:','stor.all':'Tutto',
@@ -169,7 +169,7 @@ const LANGS = {
     'chat.select_patient':'Select a patient to start a conversation',
     'chat.tab_chat':'💬 Messages','chat.tab_andamento':'📈 Diary','chat.tab_informazioni':'ℹ️ Information',
     'chat.tab_privacy':'📋 Privacy','chat.tab_storico':'📊 Clinical History',
-    'chat.message_placeholder':'Message...','chat.send':'Send',
+    'chat.message_placeholder':'Message...',
     'chat.no_cartella':'No patient file linked to this patient.',
     'stor.title':'Clinical History','stor.period':'Period:','stor.all':'All',
     'stor.last6':'Last 6 months','stor.last12':'Last year','stor.print':'Print report',
@@ -545,30 +545,30 @@ const LANGS = {
 const LABEL_TR = {
   en: {
     // ── Common buttons ──
-    'Salva in Cartella':'Save to File','Salva Scheda':'Save Record','Salva':'Save',
-    'Stampa':'Print','Reset':'Reset','Calcola':'Calculate','Annulla':'Cancel',
+    'Salva in Cartella':'Save to File','Salva Scheda':'Save Record',
+    'Reset':'Reset','Calcola':'Calculate','Annulla':'Cancel',
     'Modifica':'Edit','Elimina':'Delete','Chiudi':'Close','Invia':'Send',
-    'Conferma':'Confirm','Carica':'Load','Esporta':'Export',
-    'Nuova Sessione':'New Session','Nuovo':'New','Aggiungi':'Add',
+    'Carica':'Load','Esporta':'Export',
+    'Nuova Sessione':'New Session','Nuovo':'New',
     'Salva in Database':'Save to Database',
     'Crea e Salva':'Create & Save','Aggiungi alla scheda':'Add to Record',
-    'Salva Template':'Save Template','Lista della spesa':'Shopping List',
+    'Lista della spesa':'Shopping List',
     // ── Common labels ──
     'Nome e Cognome':'Full Name','Nome':'First Name','Cognome':'Last Name',
-    'Data di nascita':'Date of birth','Data valutazione':'Assessment date',
-    'Data':'Date','Sesso':'Sex','Maschio':'Male','Femmina':'Female','Maschio ♂':'Male ♂','Femmina ♀':'Female ♀',
-    'Nota / Titolo sessione':'Session note / title',
+    
+    'Data':'Date','Maschio ♂':'Male ♂','Femmina ♀':'Female ♀',
+    
     'Nota':'Note','Note':'Notes','Note cliniche':'Clinical notes',
     'Note al piano':'Plan notes','Note aggiuntive':'Additional notes',
     // ── Anthropometric ──
-    'Dati Antropometrici':'Anthropometric Data',
-    'Peso attuale (kg)':'Current weight (kg)','Peso (kg)':'Weight (kg)',
-    'Altezza (cm)':'Height (cm)','BMI (auto)':'BMI (auto)',
+    
+    
+    'BMI (auto)':'BMI (auto)',
     'Circ. vita (cm)':'Waist circumference (cm)','Circ. fianchi (cm)':'Hip circumference (cm)',
     'WHR (auto)':'WHR (auto)','Peso ideale (kg)':'Ideal weight (kg)',
     'Peso aggiustato (kg)':'Adjusted weight (kg)','Massa grassa (%)':'Body fat (%)',
     'Massa magra (kg)':'Lean mass (kg)','Peso target (kg)':'Target weight (kg)',
-    'Peso massimo storico (kg)':'Maximum historical weight (kg)',
+    
     'Peso minimo storico (kg)':'Minimum historical weight (kg)',
     'Peso a 18 anni (kg)':'Weight at 18 years (kg)',
     'Vita (cm)':'Waist (cm)','Fianchi (cm)':'Hips (cm)','Collo (cm)':'Neck (cm)',
@@ -583,36 +583,36 @@ const LABEL_TR = {
     // ── Clinical section headers ──
     'Dati Anagrafici':'Personal Data','Storia del Peso':'Weight History',
     'Anamnesi Clinica':'Clinical Anamnesis','Stile di Vita':'Lifestyle',
-    'Comorbidità':'Comorbidities','Fabbisogno Energetico':'Energy Requirements',
+    'Comorbidità':'Comorbidities',
     'Obiettivo Ponderale':'Weight Goal','Prescrizione Dietetica':'Dietary Prescription',
     'Piano Alimentare Tipo':'Sample Meal Plan','Follow-up e Monitoraggio':'Follow-up & Monitoring',
     'Profilo Comportamentale':'Behavioural Profile','Motivazione e Supporto':'Motivation & Support',
-    'Valutazione Nutrizionale':'Nutritional Assessment',
+    
     'Composizione Corporea':'Body Composition','Circonferenze':'Circumferences',
     'Pliche Cutanee':'Skinfold Measurements','Metabolismo Basale':'Basal Metabolic Rate',
     'TDEE e Fabbisogno':'TDEE & Requirements','Macronutrienti':'Macronutrients',
     'Micronutrienti':'Micronutrients','Esami di Laboratorio':'Laboratory Tests',
-    'Diario Alimentare':'Food Diary','Questionario Alimentare':'Food Questionnaire',
-    'Diagnosi Nutrizionale':'Nutritional Diagnosis','Piano di Intervento':'Intervention Plan',
-    'Monitoraggio':'Monitoring','Integrazione raccomandata':'Recommended supplementation',
+    'Questionario Alimentare':'Food Questionnaire',
+    'Piano di Intervento':'Intervention Plan',
+    'Integrazione raccomandata':'Recommended supplementation',
     // ── Tabs ──
     'Valutazione':'Assessment','Fabbisogno':'Requirements','Comportamento':'Behaviour',
-    'Piano Alimentare':'Meal Plan','Linee Guida':'Guidelines','Esempi':'Examples',
+    'Linee Guida':'Guidelines','Esempi':'Examples',
     'Anamnesi':'Anamnesis','Obiettivi':'Goals','Follow-up':'Follow-up',
     'Diagnosi':'Diagnosis','Intervento':'Intervention','Monitoraggio':'Monitoring',
-    'Pliche':'Skinfolds','Laboratorio':'Laboratory','Schema Dietetico':'Dietary Scheme',
+    'Pliche':'Skinfolds','Laboratorio':'Laboratory',
     'Dieta':'Diet','Calcolo':'Calculation','Protocollo':'Protocol',
     'Terapia':'Therapy','Supplementazione':'Supplementation','Idratazione':'Hydration',
     'Attività Fisica':'Physical Activity','BIA':'BIA',
     // ── Form fields ──
-    'Età (anni)':'Age (years)','Eta (anni)':'Age (years)',
-    'Livello attività fisica':'Physical activity level',
+    'Eta (anni)':'Age (years)',
+    
     'Formula':'Formula','Deficit calorico (kcal/die)':'Caloric deficit (kcal/day)',
     'TDEE calcolato (kcal/die)':'Calculated TDEE (kcal/day)',
-    'Kcal/die prescritte':'Prescribed kcal/day',
-    'Proteine (g o %)':'Proteins (g or %)','CHO (g o %)':'Carbs (g or %)',
-    'Grassi (g o %)':'Fats (g or %)','Fibra (g/die)':'Fibre (g/day)',
-    'Liquidi (mL/die)':'Fluids (mL/day)','Distribuzione pasti':'Meal distribution',
+    
+    'CHO (g o %)':'Carbs (g or %)',
+    
+    
     'Alimenti da privilegiare':'Foods to favour','Alimenti da limitare / evitare':'Foods to limit / avoid',
     'Frequenza follow-up':'Follow-up frequency','Parametri da monitorare':'Parameters to monitor',
     'Prossima visita':'Next appointment','Obiettivi terapeutici':'Therapeutic goals',
@@ -621,7 +621,7 @@ const LABEL_TR = {
     'Livello di attività':'Activity level','Limitazioni fisiche':'Physical limitations',
     'Orari pasti abituali':'Usual meal times','Note su stile di vita':'Lifestyle notes',
     // ── Obesity specific ──
-    'Storia del peso':'Weight history','Variazione peso recente':'Recent weight change',
+    
     'Durata attuale del sovrappeso (anni)':'Current overweight duration (years)',
     'Tentativi dimagrimento precedenti':'Previous weight loss attempts',
     'Approccio dietetico':'Dietary approach',
@@ -634,21 +634,21 @@ const LABEL_TR = {
     'Strategie coping':'Coping strategies',
     // ── Diabetes specific ──
     'Tipo di diabete':'Type of diabetes','Terapia farmacologica':'Drug therapy',
-    'Glicemia a digiuno':'Fasting blood glucose','HbA1c (%)':'HbA1c (%)',
+    'HbA1c (%)':'HbA1c (%)',
     'Glicemia postprandiale':'Postprandial blood glucose','Complicanze':'Complications',
     'Frequenza automonitoraggio':'Self-monitoring frequency',
-    'Pressione arteriosa':'Blood pressure','Colesterolo totale':'Total cholesterol',
-    'LDL':'LDL','HDL':'HDL','Trigliceridi':'Triglycerides',
+    'Pressione arteriosa':'Blood pressure',
+    'LDL':'LDL','HDL':'HDL',
     // ── Cancer / Oncology ──
     'Tipo di tumore':'Cancer type','Stadio':'Stage','Terapia oncologica':'Oncology therapy',
     'Effetti collaterali':'Side effects','Stato nutrizionale':'Nutritional status',
     'Rischio nutrizionale':'Nutritional risk','Screening nutrizionale':'Nutritional screening',
     'Nausea':'Nausea','Vomito':'Vomiting','Mucositi':'Mucositis','Xerostomia':'Xerostomia',
-    'Disfagia':'Dysphagia','Diarrea':'Diarrhea','Costipazione':'Constipation',
+    'Disfagia':'Dysphagia','Costipazione':'Constipation',
     'Perdita di appetito':'Loss of appetite','Perdita di peso':'Weight loss',
     'Cachessia':'Cachexia','Sarcopenia':'Sarcopenia',
     // ── Sports nutrition ──
-    'Sport praticato':'Sport practised','Livello agonistico':'Competitive level',
+    'Livello agonistico':'Competitive level',
     'Frequenza allenamenti':'Training frequency','Durata sessione':'Session duration',
     'Obiettivo sportivo':'Sports goal','Peso gara (kg)':'Race weight (kg)',
     'Fase di preparazione':'Preparation phase',
@@ -685,13 +685,13 @@ const LABEL_TR = {
     'Prealbumina (mg/dL)':'Prealbumin (mg/dL)','Proteina C reattiva (mg/L)':'C-reactive protein (mg/L)',
     'TSH (mUI/L)':'TSH (mUI/L)','Insulina (μU/mL)':'Insulin (μU/mL)',
     // ── Follow-up options ──
-    'Settimanale (fase intensiva)':'Weekly (intensive phase)',
-    'Quindicinale':'Fortnightly','Mensile':'Monthly',
-    'Bimestrale (fase mantenimento)':'Bimonthly (maintenance phase)',
+    
+    
+    
     // ── Topbar / misc ──
     'Cartella Paziente':'Patient File','Nessuna cartella':'No file',
     'Seleziona cartella':'Select file','Nuova cartella':'New file',
-    'Piano Alimentare Personalizzato':'Personalised Meal Plan',
+    
     'Scegli un modello di partenza:':'Choose a starting template:',
     'Mostra textarea modificabile':'Show editable text area',
     'Calcola Fabbisogno':'Calculate Requirements',
@@ -701,7 +701,7 @@ const LABEL_TR = {
     // ── Diabetes page tabs & labels ──
     'Rapporto I:C':'I:C Ratio','Counting CHO':'CHO Counting',
     'Porzioni Isoglucidiche':'Isoglucidic Portions','Depliant Paziente':'Patient Leaflet',
-    'Peso corporeo (kg)':'Body weight (kg)',
+    
     'Tipo diabete':'Diabetes type',
     'Dose totale giornaliera insulina (TDD, unità)':'Total daily insulin dose (TDD, units)',
     'Metodo calcolo':'Calculation method',
@@ -712,7 +712,7 @@ const LABEL_TR = {
     'Fattore di sensibilità insulinica FSI (mg/dL per 1U)':'Insulin sensitivity factor ISF (mg/dL per 1U)',
     'TDD (unità/die)':'TDD (units/day)',
     'Cerca alimento':'Search food',
-    'Kcal target/giorno':'Target kcal/day',
+    
     'CHO target totale (g/die)':'Total CHO target (g/day)',
     'Terapia insulinica':'Insulin therapy',
     'Tipo Diabete':'Diabetes type',
@@ -722,9 +722,9 @@ const LABEL_TR = {
     'Calcolatore CHO del Pasto':'Meal CHO Calculator',
     'Livelli di CHO Counting':'CHO Counting Levels',
     "Come Leggere l'Etichetta":'How to Read the Label',
-    'Linee Guida Principali':'Main Guidelines',
+    
     'Target Glicemici Raccomandati':'Recommended Glycaemic Targets',
-    'Configurazione Piano':'Plan Configuration',
+    
     'Distribuzione CHO per Pasto':'CHO Distribution per Meal',
     'Schema Pasti con Counting CHO':'Meal Scheme with CHO Counting',
     'Diabete Tipo 1':'Type 1 Diabetes',
@@ -750,12 +750,12 @@ const LABEL_TR = {
     'Obesità classe II':'Obesity class II','Obesità classe III':'Obesity class III',
     // ── Common specialist page elements ──
     'Seleziona una cartella paziente':'Select a patient file',
-    'Nota / Titolo sessione':'Session note / title',
+    
     'Aggiungi':'Add','Rimuovi':'Remove',
     'Calcola Dose':'Calculate dose','Calcola FSI':'Calculate ISF',
     'Inserisci CHO totale per calcolare la distribuzione.':'Enter total CHO to calculate the distribution.',
     // ── Obesity page ──
-    'Calcolo Fabbisogno Energetico':'Energy Requirements Calculator',
+    
     'Calcolo BMI e Peso Ideale':'BMI and Ideal Weight Calculator',
     'Distribuzione Macronutrienti':'Macronutrient Distribution',
     'Schema Dietetico Personalizzato':'Personalised Dietary Scheme',
@@ -765,15 +765,15 @@ const LABEL_TR = {
     'Fabbisogno Totale (TDEE)':'Total Energy Requirement (TDEE)',
     'Deficit Consigliato':'Recommended Deficit',
     'Obiettivo Calorico':'Caloric Goal',
-    'Peso attuale (kg)':'Current weight (kg)',
-    'Altezza (cm)':'Height (cm)',
-    'Età (anni)':'Age (years)',
+    
+    
+    
     'Formula BMR':'BMR formula',
     'Livello di attività fisica':'Physical activity level',
-    'Obiettivo':'Goal','Dimagrimento':'Weight loss',
-    'Mantenimento':'Maintenance','Incremento':'Weight gain',
+    'Dimagrimento':'Weight loss',
+    'Incremento':'Weight gain',
     'Sedentario (lavoro d\'ufficio, nessun esercizio)':'Sedentary (desk job, no exercise)',
-    'Leggermente attivo (1-2 gg/sett)':'Lightly active (1-2 days/week)',
+    
     'Moderatamente attivo (3-4 gg/sett)':'Moderately active (3-4 days/week)',
     'Molto attivo (5-6 gg/sett)':'Very active (5-6 days/week)',
     'Estremamente attivo (atleta)':'Extremely active (athlete)',
@@ -788,7 +788,7 @@ const LABEL_TR = {
     'Moderata (60-75% VO2max)':'Moderate (60-75% VO2max)',
     'Alta (75-90% VO2max)':'High (75-90% VO2max)',
     'Molto alta (>90% VO2max)':'Very high (>90% VO2max)',
-    'Fabbisogno Proteico':'Protein Requirements',
+    
     'Fabbisogno CHO':'CHO Requirements',
     'Fabbisogno Energetico':'Energy Requirements',
     'Pre-allenamento':'Pre-workout','Post-allenamento':'Post-workout',
@@ -848,7 +848,7 @@ const LABEL_TR = {
     // ── Ristorazione page ──
     'Numero pasti/giorno':'Number of meals/day',
     'Numero commensali':'Number of diners',
-    'Tipo di menu':'Menu type','Colazione':'Breakfast','Pranzo':'Lunch','Cena':'Dinner',
+    'Tipo di menu':'Menu type','Pranzo':'Lunch','Cena':'Dinner',
     'Menu settimanale':'Weekly menu','Menu del giorno':'Daily menu',
     // ── Common result labels ──
     'Rapporto I:C stimato':'Estimated I:C ratio',
@@ -873,9 +873,9 @@ const LABEL_TR = {
     'Motivazione e Obiettivi Personali':'Motivation and Personal Goals',
     'Schema Dietetico di Documentazione':'Dietary Documentation Scheme',
     'Piano Alimentare Personalizzato':'Personalised Meal Plan',
-    'Linee Guida e Risorse Ufficiali':'Official Guidelines and Resources',
+    
     // ── Obesità labels ──
-    'Data di nascita':'Date of birth',
+    
     'Data valutazione':'Assessment date',
     'Variazione recente':'Recent change',
     'Durata sovrappeso/obesità':'Duration of overweight/obesity',
@@ -895,7 +895,7 @@ const LABEL_TR = {
     'Trigger alimentari identificati':'Identified food triggers',
     'Alimenti a rischio (preferiti in eccesso)':'High-risk foods (eaten in excess)',
     'N° pasti al giorno (media)':'No. of meals per day (avg)',
-    'Consumo di alcol':'Alcohol consumption',
+    
     'Consumo fuori casa / delivery':'Eating out / delivery',
     'Cucina autonoma':'Cooks independently',
     'Motivazione al cambiamento':'Motivation to change',
@@ -942,7 +942,7 @@ const LABEL_TR = {
     'Mediterranea ipocalorica':'Hypocaloric Mediterranean',
     'Settimanale (fase intensiva)':'Weekly (intensive phase)',
     'Quindicinale':'Fortnightly',
-    'Mensile':'Monthly',
+    
     'Bimestrale (fase mantenimento)':'Bi-monthly (maintenance phase)',
     // ── Common form fields shared across pages ──
     'Note fabbisogno':'Requirements notes',
@@ -957,23 +957,23 @@ const LABEL_TR = {
     'Elevato (>7 UA/settimana)':'High (>7 units/week)',
     'Raro (<1 volta/settimana)':'Rare (<1 time/week)',
     'Frequente':'Frequent',
-    'Quotidiano':'Daily',
-    '— frequenza —':'— frequency —',
-    'Mai':'Never',
-    '< 1 volta/sett':'< 1×/week',
-    '1–2 volte/sett':'1–2×/week',
-    '3–4 volte/sett':'3–4×/week',
-    '≥ 5 volte/sett':'≥ 5×/week',
-    'Quotidianamente':'Daily',
+    
+    
+    
+    
+    
+    
+    
+    
     'Sì, cucina regolarmente':'Yes, cooks regularly',
     'Spesso, ma non sempre':'Often, but not always',
     'Raramente':'Rarely',
     'No, non cucina':'No, does not cook',
-    'Bypass gastrico (RYGB)':'Gastric bypass (RYGB)',
+    
     'Sleeve gastrectomy':'Sleeve gastrectomy',
-    'Bendaggio gastrico':'Gastric banding',
-    'Pallone intragastrico':'Intragastric balloon',
-    'Altra':'Other',
+    
+    
+    
     // ── Obesity missing entries ──
     'Calo ponderale atteso (kg)':'Expected weight loss (kg)',
     'Livello attività (LAF)':'Activity level (PAL)',
@@ -996,16 +996,16 @@ const LABEL_TR = {
     'Mifflin-St Jeor (raccomandata ob.)':'Mifflin-St Jeor (recommended obesity)',
     'Salva Piano':'Save Plan',
     // ── Sport h3 headings ──
-    'Fabbisogno Energetico e Macronutrienti Sportivo':'Energy Requirements and Sports Macronutrients',
-    'Fabbisogni per la Corsa':'Running Requirements',
+    
+    
     'Timing Nutrizionale — Corsa':'Nutritional Timing — Running',
-    'Schema Alimentare Tipo (Corsa, 65kg, 50 km/sett)':'Typical Meal Plan (Running, 65kg, 50 km/wk)',
-    'Fabbisogni per il Nuoto':'Swimming Requirements',
+    
+    
     'Timing Nutrizionale — Nuoto':'Nutritional Timing — Swimming',
     'Fabbisogni per Obiettivo':'Requirements by Goal',
     'Timing — Palestra':'Timing — Gym',
     'Evidenze sulle Proteine — Dose Ottimale per Pasto':'Protein Evidence — Optimal Dose per Meal',
-    'Fabbisogni per il Ciclismo':'Cycling Requirements',
+    
     'Timing Nutrizionale — Ciclismo':'Nutritional Timing — Cycling',
     'Fabbisogni — Sport di Squadra':'Requirements — Team Sports',
     'Pre-gara — Protocollo Nutrizionale':'Pre-Match — Nutritional Protocol',
@@ -1017,37 +1017,37 @@ const LABEL_TR = {
     'Schema Pasti Training Day':'Training Day Meal Plan',
     // ── Sport labels ──
     'Sport praticato':'Sport practised',
-    'Sessioni/settimana':'Sessions/week',
+    
     'Sport / Disciplina':'Sport / Discipline',
     'Kcal training day (die)':'Kcal training day',
     'Kcal rest day (die)':'Kcal rest day',
     'Orario allenamento':'Training time',
     'Proteine target (g/kg peso)':'Target protein (g/kg body weight)',
-    'Peso corporeo (kg)':'Body weight (kg)',
+    
     // ── Sport select options ──
-    'Corsa (ricreativa, <40 km/sett)':'Running (recreational, <40 km/wk)',
-    'Corsa (competitiva, >60 km/sett)':'Running (competitive, >60 km/wk)',
-    'Nuoto (ricreativo, 2-3 h/sett)':'Swimming (recreational, 2-3 h/wk)',
-    'Nuoto (competitivo, >5 h/sett)':'Swimming (competitive, >5 h/wk)',
-    'Palestra — Ipertrofia muscolare':'Gym — Muscle hypertrophy',
-    'Palestra — Forza massima':'Gym — Maximum strength',
-    'Palestra — Definizione':'Gym — Body recomposition',
-    'Ciclismo (ricreativo)':'Cycling (recreational)',
-    'Ciclismo (competitivo/granfondo)':'Cycling (competitive/granfondo)',
-    'Calcio / Sport di squadra':'Football / Team sports',
-    'Basket / Pallavolo':'Basketball / Volleyball',
-    'Tennis / Padel':'Tennis / Padel',
-    'CrossFit / HIIT':'CrossFit / HIIT',
-    'Triathlon':'Triathlon',
-    'Arti marziali / MMA':'Martial arts / MMA',
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     'Endurance (corsa, ciclismo, nuoto)':'Endurance (running, cycling, swimming)',
     'Forza / Ipertrofia (palestra)':'Strength / Hypertrophy (gym)',
     'Sport di squadra (calcio, basket)':'Team sports (football, basketball)',
     'Sport racchetta (tennis, padel)':'Racquet sports (tennis, padel)',
-    'Arti marziali / MMA':'Martial arts / MMA',
-    'Altro':'Other',
+    
+    
     'Performance / Miglioramento prestazione':'Performance / Performance improvement',
-    'Aumento massa muscolare':'Muscle mass gain',
+    
     'Definizione / Dimagrimento':'Definition / Weight loss',
     'Mantenimento composizione corporea':'Body composition maintenance',
     'Recupero / Riabilitazione':'Recovery / Rehabilitation',
@@ -1062,7 +1062,7 @@ const LABEL_TR = {
     'BITE — Bulimic Investigatory Test Edinburgh':'BITE — Bulimic Investigatory Test Edinburgh',
     'ChEAT-26 / KEDS (età evolutiva)':'ChEAT-26 / KEDS (paediatric)',
     'Criteri Diagnostici DSM-5':'DSM-5 Diagnostic Criteria',
-    'Binge Eating Disorder (BED)':'Binge Eating Disorder (BED)',
+    
     'BED e Gestione del Peso':'BED and Weight Management',
     'Confronto Rapido BN vs BED':'Quick Comparison BN vs BED',
     'Complicanze Cardiovascolari':'Cardiovascular Complications',
@@ -1083,7 +1083,7 @@ const LABEL_TR = {
     'Altre informazioni relative all\'alimentazione':'Other information related to eating',
     'Tipo DCA':'ED Type',
     'Fase trattamento':'Treatment phase',
-    'Kcal target/giorno':'Target kcal/day',
+    
     'Approccio alimentare':'Dietary approach',
     '% Proteine':'% Protein',
     '% Carboidrati':'% Carbohydrate',
@@ -1095,20 +1095,20 @@ const LABEL_TR = {
     'Altro / NAS':'Other / NOS',
     'Acuta / Refeeding':'Acute / Refeeding',
     'Stabilizzazione':'Stabilisation',
-    'Mantenimento':'Maintenance',
+    
     'Prevenzione ricadute':'Relapse prevention',
     'Pasto meccanico (orari fissi, grammi stabiliti)':'Mechanical eating (fixed times, set grams)',
     'Strutturato con flessibilità guidata':'Structured with guided flexibility',
     'Mindful eating (fase avanzata)':'Mindful eating (advanced phase)',
     'Linee Guida e Risorse Ufficiali':'Official Guidelines and Resources',
     // ── Chetogenica h3 headings ──
-    'Indicazioni Cliniche Principali':'Main Clinical Indications',
-    'Controindicazioni Assolute & Relative':'Absolute & Relative Contraindications',
-    'Tipi di Dieta Chetogenica — Confronto':'Types of Ketogenic Diet — Comparison',
-    'Risultati Calcolo':'Calculation Results',
-    'Indice Glucosio-Chetoni (GKI)':'Glucose-Ketone Index (GKI)',
-    'Scala Chetoni Urinari (Stix)':'Urinary Ketone Scale (Stix)',
-    'Alimenti Permessi (CHO <5g/100g)':'Allowed Foods (CHO <5g/100g)',
+    
+    
+    
+    
+    
+    
+    
     'Moderati & ❌ Vietati':'Moderate & ❌ Forbidden',
     'Valori Nutrizionali Alimenti Chetogenici Chiave (per 100g)':'Nutritional Values of Key Ketogenic Foods (per 100g)',
     'Gestione dei Carboidrati':'Carbohydrate Management',
@@ -1159,22 +1159,22 @@ const LABEL_TR = {
     // ── Renale h3 headings ──
     'Classificazione KDIGO 2024 per eGFR':'KDIGO 2024 Classification by eGFR',
     'Classificazione Albuminuria (KDIGO)':'Albuminuria Classification (KDIGO)',
-    'Obiettivi Nutrizionali Trasversali IRC':'Cross-sectional CKD Nutritional Goals',
-    'Dati Paziente':'Patient Data',
-    'Raccomandazioni Nutrizionali':'Nutritional Recommendations',
-    'Piano Alimentare Tipo HD — Giornata Senza Dialisi':'Typical HD Meal Plan — Non-Dialysis Day',
-    'Piano Alimentare Tipo DP — CAPD 4 sacche 1.36%':'Typical PD Meal Plan — CAPD 4 bags 1.36%',
+    
+    
+    
+    
+    
     'Alimenti Consigliati in IRC':'Recommended Foods in CKD',
     'Alimenti da Evitare / Limitare in IRC':'Foods to Avoid / Limit in CKD',
     'Tecnica di Lisciviazione delle Verdure':'Vegetable Leaching Technique',
     'Linee Guida Internazionali':'International Guidelines',
     'Riferimenti Italiani':'Italian References',
     // ── Renale labels ──
-    'Peso attuale (kg)':'Current weight (kg)',
+    
     'Peso ideale (kg) — se obeso/edematoso':'Ideal weight (kg) — if obese/oedematous',
-    'Età (anni)':'Age (years)',
+    
     'Stadio / Tipo di trattamento':'Stage / Treatment type',
-    'Livello attività fisica':'Physical activity level',
+    
     'Diabete mellito concomitante?':'Concomitant diabetes mellitus?',
     // ── Renale select options ──
     'IRC Stadio G1–G2 (eGFR ≥ 60)':'CKD Stage G1–G2 (eGFR ≥ 60)',
@@ -1196,7 +1196,7 @@ const LABEL_TR = {
     'Range kcal/kg/die per fase clinica (ESPEN 2021)':'kcal/kg/day Range by Clinical Phase (ESPEN 2021)',
     'Note Cliniche Fabbisogno':'Clinical Notes on Requirements',
     'Integrazione Nutrizionale Orale (ONS)':'Oral Nutritional Supplementation (ONS)',
-    'Nutrizione Enterale (NE)':'Enteral Nutrition (EN)',
+    
     'Supporto Nutrizionale Parenterale (NP)':'Parenteral Nutritional Support (PN)',
     'Note Supporto Nutrizionale':'Nutritional Support Notes',
     'Sintomi presenti e gestione attuale':'Current Symptoms and Management',
@@ -1213,7 +1213,7 @@ const LABEL_TR = {
     'Stadio / Performance Status (ECOG)':'Stage / Performance Status (ECOG)',
     'Trattamento in corso':'Current Treatment',
     'Peso attuale (kg)':'Current weight (kg)',
-    'Altezza (cm)':'Height (cm)',
+    
     'Perdita di peso ultimi 3–6 mesi (kg)':'Weight loss in last 3–6 months (kg)',
     'Performance Status ECOG':'ECOG Performance Status',
     'Albumina sierica (g/dL)':'Serum albumin (g/dL)',
@@ -1283,7 +1283,7 @@ const LABEL_TR = {
     'Ridotta notevolmente':'Markedly reduced',
     'Allettato / dipendente':'Bedridden / dependent',
     // ── Pancreas / IPE h3 headings ──
-    'Calcolo Dosi PERT per Pasto':'PERT Dose Calculation per Meal',
+    
     'Dose Massima Giornaliera (Linee Guida)':'Maximum Daily Dose (Guidelines)',
     'Piano PERT Giornaliero Completo':'Full Daily PERT Plan',
     'Stima Grassi nel Pasto':'Fat Estimation per Meal',
@@ -1297,42 +1297,42 @@ const LABEL_TR = {
     'Piano Alimentare IPE':'EPI Meal Plan',
     // ── Pancreas labels ──
     'Peso corporeo (kg)':'Body weight (kg)',
-    'Grassi nel pasto (g)':'Fat in meal (g)',
+    
     'Patologia':'Condition',
     'Metodo calcolo preferito':'Preferred calculation method',
     'Peso (kg)':'Weight (kg)',
     // ── Pancreas select options ──
-    'Fibrosi Cistica — Adulto':'Cystic Fibrosis — Adult',
-    'Fibrosi Cistica — Bambino <4 anni':'Cystic Fibrosis — Child <4 years',
-    'Fibrosi Cistica — Adolescente':'Cystic Fibrosis — Adolescent',
-    'Pancreatite Cronica':'Chronic Pancreatitis',
-    'Pancreatite Acuta Necrotizzante (post-acuta)':'Necrotising Acute Pancreatitis (post-acute)',
-    'Cancro del Pancreas':'Pancreatic Cancer',
-    'Diabete Tipo 3c (pancreatogenico)':'Type 3c Diabetes (pancreatogenic)',
-    'Pancreas Divisum con IPE':'Pancreas Divisum with EPI',
-    'Pancreasectomia Totale':'Total Pancreatectomy',
-    'Duodenocefalopancreasectomia (Whipple)':'Pancreaticoduodenectomy (Whipple)',
-    'Pancreasectomia Distale':'Distal Pancreatectomy',
-    'Gastrectomia Totale':'Total Gastrectomy',
-    'Gastrectomia Parziale (Billroth II)':'Partial Gastrectomy (Billroth II)',
-    'Bypass Gastrico (Roux-en-Y)':'Gastric Bypass (Roux-en-Y)',
-    'Sleeve Gastrectomy con IPE':'Sleeve Gastrectomy with EPI',
-    'Morbo di Crohn (localizzazione duodenale)':'Crohn\'s Disease (duodenal location)',
-    'Celiachia con IPE (non responsiva)':'Coeliac Disease with EPI (non-responsive)',
-    'SIBO con IPE funzionale':'SIBO with functional EPI',
-    'Sindrome di Zollinger-Ellison':'Zollinger-Ellison Syndrome',
-    'Per grammo di grasso (500-1000 UL/g)':'Per gram of fat (500–1000 LU/g)',
-    'Per kg di peso corporeo (500-1500 UL/kg/pasto)':'Per kg of body weight (500–1500 LU/kg/meal)',
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     'Fibrosi Cistica (ECFS 2017 — max 10.000 UL/kg/die)':'Cystic Fibrosis (ECFS 2017 — max 10,000 LU/kg/day)',
     'Fibrosi Cistica bambino <4 anni (max 10.000 UL/kg/die)':'Cystic Fibrosis child <4 years (max 10,000 LU/kg/day)',
     'Pancreasectomia Totale / Whipple':'Total Pancreatectomy / Whipple',
-    'Cancro del Pancreas':'Pancreatic Cancer',
+    
     'Chirurgia GI (gastrectomia, bypass, sleeve)':'GI Surgery (gastrectomy, bypass, sleeve)',
-    'Altra causa IPE':'Other EPI cause',
+    
     // ── Paziente Sano h3 headings ──
     'Dati Antropometrici':'Anthropometric Data',
     'Risultati':'Results',
-    'Fabbisogno Idrico':'Fluid Requirements',
+    
     'Ripartizione Macronutrienti Raccomandata (LARN V)':'Recommended Macronutrient Distribution (LARN V)',
     'Parametri del Paziente':'Patient Parameters',
     'Frequenze di Consumo Settimanale':'Weekly Consumption Frequencies',
@@ -1351,15 +1351,15 @@ const LABEL_TR = {
     'Note aggiuntive per l\'AI':'Additional notes for AI',
     // ── Paziente Sano select options ──
     'Sedentario (no esercizio)':'Sedentary (no exercise)',
-    'Leggermente attivo (1-2 gg/sett)':'Lightly active (1–2 days/week)',
+    
     'Moderatamente attivo (3-5 gg/sett)':'Moderately active (3–5 days/week)',
-    'Molto attivo (6-7 gg/sett)':'Very active (6–7 days/week)',
+    
     'Estremamente attivo (atleta/lavoro fisico)':'Extremely active (athlete/physical work)',
     'Mantenimento del peso':'Weight maintenance',
     'Lieve calo ponderale (−300 kcal)':'Mild weight loss (−300 kcal)',
     'Calo ponderale (−500 kcal)':'Weight loss (−500 kcal)',
     'Aumento massa (+300 kcal)':'Mass gain (+300 kcal)',
-    'Sedentario':'Sedentary',
+    
     'Leggermente attivo (1-2 gg/sett)':'Lightly active (1–2 days/week)',
     'Molto attivo (6-7 gg/sett)':'Very active (6–7 days/week)',
     'Molto intenso / atleta':'Very intense / athlete',
@@ -1408,7 +1408,7 @@ const LABEL_TR = {
     'Altezza/Lunghezza (cm)':'Height/Length (cm)',
     'Peso corporeo attuale (kg)':'Current body weight (kg)',
     'Circonferenza cranica (cm, solo <3a)':'Head circumference (cm, only <3y)',
-    'Fascia d\'età':'Age range',
+    
     // ── Pediatria select options ──
     '1–3 anni':'1–3 years',
     '4–6 anni':'4–6 years',
@@ -1450,22 +1450,22 @@ const LABEL_TR = {
     'Educazione Continua in Medicina':'Continuing Medical Education',
     'Risorse e Link Utili':'Useful Resources & Links',
     // ── Questionari section labels ──
-    'Screening dello Stato Nutrizionale':'Nutritional Status Screening',
-    'Assessment Approfondito del Comportamento Alimentare':'In-depth Eating Behavior Assessment',
-    'Valutazione Psicologica e Aderenza Terapeutica':'Psychological Assessment & Therapeutic Adherence',
-    'Qualità della Dieta e Stili di Vita':'Diet Quality and Lifestyle',
-    'FASE 1 — Pre-screening iniziale':'PHASE 1 — Initial pre-screening',
-    'FASE 2 — Valutazione principale':'PHASE 2 — Main assessment',
-    'Sottoscala CR — Restrizione Cognitiva (6 item)':'Subscale CR — Cognitive Restraint (6 items)',
-    'Sottoscala UE — Mangiare Incontrollato (9 item)':'Subscale UE — Uncontrolled Eating (9 items)',
-    'Sottoscala EE — Emotional Eating (3 item)':'Subscale EE — Emotional Eating (3 items)',
-    'Sottoscala 1: Restrizione (item R)':'Subscale 1: Restraint (item R)',
-    'Sottoscala 2: Preoccupazione per il cibo (item EC)':'Subscale 2: Eating Concern (item EC)',
-    'Sottoscala 3: Preoccupazione per la forma corporea (item SC)':'Subscale 3: Shape Concern (item SC)',
-    'Sottoscala 4: Preoccupazione per il peso (item WC)':'Subscale 4: Weight Concern (item WC)',
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // ── Questionari GNRI labels ──
-    'Albumina sierica (g/L)':'Serum albumin (g/L)',
-    'Peso ideale (kg) — Formula di Lorentz o inserire manualmente':'Ideal weight (kg) — Lorentz formula or enter manually',
+    
+    
     // ── Ristorazione h3 headings ──
     'Valutazione Nutrizionale':'Nutritional Assessment',
     'Standard Nutrizionali per il Pasto Principale':'Nutritional Standards for the Main Meal',
@@ -1493,7 +1493,7 @@ const LABEL_TR = {
     'Scuola secondaria':'Secondary school',
     // ── Gravidanza h3 headings ──
     'Dati Base Paziente':'Patient Basic Data',
-    'BMI Pre-Gravidanza':'Pre-Pregnancy BMI',
+    
     'Guadagno Ponderale Raccomandato (IOM 2009)':'Recommended Weight Gain (IOM 2009)',
     'Andamento Guadagno Ponderale vs Range IOM 2009':'Weight Gain Trend vs IOM 2009 Range',
     'Fabbisogno Energetico Aggiuntivo per Trimestre':'Additional Energy Requirement per Trimester',
@@ -1522,7 +1522,7 @@ const LABEL_TR = {
     'Approcci allo Svezzamento: Tradizionale vs Baby-Led Weaning (BLW)':'Weaning Approaches: Traditional vs Baby-Led Weaning (BLW)',
     'Micronutrienti Critici nel Primo Anno di Vita':'Critical Micronutrients in the First Year of Life',
     // ── Gravidanza labels / select options ──
-    'Singola':'Single','Gemellare':'Twin',
+    
     // ── BIA h3 headings ──
     'Importazione Automatica da Report':'Automatic Import from Report',
     'Inserimento Manuale Parametri BIA':'Manual BIA Parameter Entry',
@@ -1557,7 +1557,7 @@ const LABEL_TR = {
     'Fabbisogno Idrico':'Water Requirements',
     'Patologie (multi-selezione)':'Conditions (multi-select)',
     // ── valutazione.html - handgrip ──
-    'Unità di misura':'Unit of measure',
+    
     'Mano dominante':'Dominant hand',
     'Interpretazione EWGSOP2':'EWGSOP2 Interpretation',
     'Mis. 1':'Meas. 1','Mis. 2':'Meas. 2','Mis. 3':'Meas. 3',
@@ -1651,7 +1651,7 @@ const LABEL_TR = {
     '1–3 volte/settimana':'1–3 times/week','Quotidiano':'Daily',
     'Alimenti più graditi':'Preferred foods','Alimenti meno graditi':'Less preferred foods',
     'Alimenti':'Foods','Note (orario, luogo...)':'Notes (time, place...)',
-    'Altro':'Other',
+    
     // ── valutazione.html - FFQ ──
     'Gruppo alimentare':'Food group','Frequenza':'Frequency',
     '— frequenza —':'— frequency —',
@@ -1717,7 +1717,7 @@ const LABEL_TR = {
     'Controllo / Follow-up':'Check-up / Follow-up',
     'Promemoria':'Reminder',
     'Tipo':'Type','Paziente / Titolo':'Patient / Title',
-    'Ora':'Time','Durata':'Duration',
+    'Durata':'Duration',
     '30 minuti':'30 minutes','45 minuti':'45 minutes',
     '1 ora':'1 hour','1 ora 30 min':'1 hour 30 min','2 ore':'2 hours',
     '🩺 Prima Visita':'🩺 Initial Visit',
@@ -1732,14 +1732,14 @@ const LABEL_TR = {
     'Nessun appuntamento per questa data.':'No appointments for this date.',
     'Appuntamento':'Appointment',
     'Sincronizza Calendario':'Sync Calendar',
-    'Salva Modifiche':'Save Changes',
+    
     'Modifica Appuntamento':'Edit Appointment',
     'Oggi':'Today',
     'Riconnetti':'Reconnect',
     'Nuovo Appuntamento':'New Appointment',
-    'Nuova Cartella':'New Folder',
-    'Importa CSV':'Import CSV',
-    'Mostra archiviati':'Show archived',
+    
+    
+    
     // ── gdpr.html tabs (bare text after emoji strip) ──
     'Registro Trattamenti':'Treatment Registry',
     'Diritto all\'Oblio':'Right to Erasure',
@@ -1757,9 +1757,9 @@ const LABEL_TR = {
     'Salva':'Save',
     // ── visita.html ──
     '📂 Salvate':'📂 Saved','+ Nuova':'+ New',
-    'Tipo visita':'Visit type','Data visita':'Visit date',
+    
     'Paziente (cartella)':'Patient (folder)','Titolo / Oggetto visita':'Title / Subject',
-    'Prima visita':'Initial visit','Visita di controllo':'Follow-up visit',
+    'Visita di controllo':'Follow-up visit',
     'Visita urgente':'Urgent visit','Consulenza telefonica':'Phone consultation',
     'Stile':'Style','Titolo grande':'Large heading','Titolo piccolo':'Small heading','Paragrafo':'Paragraph',
     '📋 Template':'📋 Template','⚙️ Configura profilo':'⚙️ Configure profile',
@@ -1785,7 +1785,7 @@ const LABEL_TR = {
     '📦 Prodotti prescritti':'📦 Prescribed products',
     '📓 Configurazione diario settimanale':'📓 Weekly diary setup',
     '+ Aggiungi prodotto':'+ Add product',
-    'Cognome e Nome':'Last name and First name','Codice Fiscale':'Tax ID',
+    'Cognome e Nome':'Last name and First name',
     'Data di nascita':'Date of birth','Comune di residenza':'City of residence',
     'Codice esenzione':'Exemption code','Codice manuale (se non in lista)':'Manual code (if not listed)',
     'Patologia (diagnosi)':'Condition (diagnosis)','ICD-10 (se noto)':'ICD-10 (if known)',
@@ -1807,10 +1807,10 @@ const LABEL_TR = {
     'Oncologia':'Oncology',
     'Pediatria':'Paediatrics',
     'Obesità':'Obesity',
-    'Insufficienza renale':'Kidney disease',
+    
     'Sport e performance':'Sport and performance',
     'Disturbi alimentari (DCA)':'Eating disorders (ED)',
-    'Gravidanza e allattamento':'Pregnancy and breastfeeding',
+    
     'Dieta chetogenica':'Ketogenic diet',
     'Insufficienza pancreatica':'Pancreatic insufficiency',
     'Nefropatia cronica':'Chronic kidney disease',
@@ -1824,7 +1824,7 @@ const LABEL_TR = {
     'Solo uso professionale':'For professional use only',
     'Pulisci':'Clear',
     // ── Page titles (topbar h2) ──
-    'Valutazione Paziente':'Patient Assessment',
+    
     'Assistente AI Nutrizionale':'AI Nutritional Assistant',
     'Agenda Appuntamenti':'Appointment Calendar',
     'Impostazioni':'Settings',
@@ -1857,7 +1857,7 @@ const LABEL_TR = {
     'Carica Template':'Load Template',
     'Lista della Spesa':'Shopping List',
     // ── app.html labels & buttons ──
-    '📁 Cartella Paziente':'📁 Patient Folder',
+    
     '📅 Data piano':'📅 Plan date',
     '📋 Nome piano':'📋 Plan name',
     'Nome pasto':'Meal name',
@@ -1883,11 +1883,11 @@ const LABEL_TR = {
     'IRC':'CKD',
     // ── pazienti.html modal titles (bare text) ──
     'Nuova Cartella Paziente':'New Patient Folder',
-    'Scegli sezioni da mostrare':'Choose sections to show',
+    
     'Collega Paziente':'Link Patient',
-    'Scegli il formato per il paziente':'Choose format for patient',
+    
     'Aggiungi Esame Biochimico':'Add Biochemical Exam',
-    'Importa Pazienti da CSV':'Import Patients from CSV',
+    
     'Storico Esame':'Exam History',
     'Nuova Nota di Sessione (SOAP)':'New Session Note (SOAP)',
     'AI Nutrizionale — Assistente Paziente':'AI Nutritional — Patient Assistant',
@@ -1949,8 +1949,8 @@ const LABEL_TR = {
     'Proteina C-reattiva (PCR)':'C-reactive protein (CRP)',
     'Ferritina':'Ferritin',
     'Vitamina D (25-OH)':'Vitamin D (25-OH)',
-    'Sodio':'Sodium',
-    'Potassio':'Potassium',
+    
+    
     'Azoto ureico (BUN)':'Blood urea nitrogen (BUN)',
     'Acido urico':'Uric acid',
     'Apri':'Open',
@@ -2032,7 +2032,7 @@ const LABEL_TR = {
     '5–10% del peso corporeo → 1 punto':'5–10% of body weight → 1 point',
     '> 10% del peso corporeo → 2 punti':'> 10% of body weight → 2 points',
     'No → 0 punti':'No → 0 points',
-    'Sì → 2 punti':'Yes → 2 points',
+    
     // ── MNA-SF labels ──
     'A. Riduzione dell\'apporto alimentare negli ultimi 3 mesi per perdita di appetito, problemi digestivi, difficoltà di masticazione o deglutizione':'A. Reduced food intake in the last 3 months due to loss of appetite, digestive problems, chewing or swallowing difficulties',
     'B. Perdita di peso negli ultimi 3 mesi':'B. Weight loss in the last 3 months',
@@ -2141,7 +2141,7 @@ const LABEL_TR = {
     // ── FRAIL option spans ──
     'No (poco o nessun tempo) → 0 punti':'No (little or no time) → 0 points',
     'Sì (per la maggior parte o sempre) → 1 punto':'Yes (most or all of the time) → 1 point',
-    'Sì → 1 punto':'Yes → 1 point',
+    
     'No (meno di 5 malattie) → 0 punti':'No (fewer than 5 illnesses) → 0 points',
     'Sì (5 o più malattie) → 1 punto':'Yes (5 or more illnesses) → 1 point',
     // ── STRONGkids labels ──
@@ -2150,7 +2150,7 @@ const LABEL_TR = {
     '3. Intake ridotto e/o perdita di peso. Il bambino ha avuto riduzione dell\'intake alimentare e/o perdita di peso nelle ultime settimane?':'3. Reduced intake and/or weight loss. Has the child had reduced food intake and/or weight loss in recent weeks?',
     '4. Perdita di peso / scarso accrescimento. C\'è perdita di peso (bambini piccoli) o scarso accrescimento (lattanti) nelle ultime settimane/mesi?':'4. Weight loss / poor growth. Is there weight loss (young children) or poor growth (infants) in recent weeks/months?',
     // ── STRONGkids option spans ──
-    'Sì → 1 punto':'Yes → 1 point',
+    
     'Sì → 2 punti':'Yes → 2 points',
     // ── GNRI labels ──
     'Albumina sierica (g/L)':'Serum albumin (g/L)',
@@ -2476,7 +2476,7 @@ const LABEL_TR = {
     'Formula Lattea':'Infant Formula',
     'Svezzamento — Schema Progressivo (ESPGHAN 2017 + SIP 2022)':'Weaning — Progressive Scheme (ESPGHAN 2017 + SIP 2022)',
     'Formule per il Metabolismo Basale (MB)':'Basal Metabolic Rate Formulae (BMR)',
-    'Fabbisogno Idrico Pediatrico':'Paediatric Fluid Requirements',
+    
     'Fattori di Stress (Pediatrico)':'Stress Factors (Paediatric)',
     'Malnutrizione Pediatrica (ESPGHAN/ASPEN)':'Paediatric Malnutrition (ESPGHAN/ASPEN)',
     'Sovrappeso e Obesità Pediatrica':'Overweight and Paediatric Obesity',
@@ -2824,7 +2824,7 @@ const LABEL_TR = {
     'Micronutrienti':'Mikronährstoffe','Esami di Laboratorio':'Laboruntersuchungen',
     'Diario Alimentare':'Ernährungstagebuch','Questionario Alimentare':'Ernährungsfragebogen',
     'Diagnosi Nutrizionale':'Ernährungsdiagnose','Piano di Intervento':'Interventionsplan',
-    'Monitoraggio':'Überwachung','Integrazione raccomandata':'Empfohlene Ergänzung',
+    'Integrazione raccomandata':'Empfohlene Ergänzung',
     // ── Tabs ──
     'Valutazione':'Bewertung','Fabbisogno':'Bedarf','Comportamento':'Verhalten',
     'Piano Alimentare':'Ernährungsplan','Linee Guida':'Leitlinien','Esempi':'Beispiele',
@@ -3240,6 +3240,9 @@ function applyLang() {
 }
 
 // ─── Smart label translation (no per-element markup) ──
+/* eslint-disable no-misleading-character-class -- these character classes list emoji
+   prefixes to strip one code point at a time (not to match a combined glyph as a
+   unit), so decomposed multi-codepoint emoji/flags inside them are intentional. */
 function translateLabels() {
   const l = getLang();
   if (l === 'it') return;
@@ -3516,6 +3519,7 @@ function translateLabels() {
     if (key && key.length < 60 && dict[key]) el.textContent = dict[key];
   });
 }
+/* eslint-enable no-misleading-character-class */
 
 // ─── Translate sidebar nav items (works on all app pages) ──
 function translateSidebarNav() {

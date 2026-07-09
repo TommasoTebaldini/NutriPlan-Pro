@@ -1733,13 +1733,26 @@ async function sendMessage() {
     cancelSchedule();
   }
 
-  const { error } = await sb.from('chat_messages').insert(msgPayload);
+  const { data, error } = await sb.from('chat_messages').insert(msgPayload).select().single();
 
   if (error) {
     toast('❌ Errore invio messaggio: ' + error.message, 'err');
     input.value = content;
   } else if (msgPayload.status === 'scheduled') {
     toast('📅 Messaggio programmato!', 'ok');
+  } else if (data) {
+    // Show it immediately instead of waiting for the realtime echo, which may be
+    // delayed or missed entirely if the websocket is disconnected/reconnecting.
+    if (!chatMessages.find(m => m.id === data.id)) {
+      chatMessages.push(data);
+      renderMessages();
+    }
+    const p = chatPatients.find(x => x.id === selectedPatientId);
+    if (p) {
+      p.lastMessage = data.content;
+      p.lastTime = data.created_at;
+      renderPatientList();
+    }
   }
 }
 

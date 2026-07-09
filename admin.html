@@ -330,32 +330,36 @@ async function loadUtenti() {
 
 async function approvaUtente(id) {
   showLoading(true);
-  await sb.from('profiles').update({ approved: true }).eq('id', id);
+  const { error } = await sb.from('profiles').update({ approved: true }).eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('✅ Utente approvato!', 'ok');
   loadUtenti();
 }
 async function revokaUtente(id) {
   if(!confirm('Revocare accesso a questo utente?')) return;
   showLoading(true);
-  await sb.from('profiles').update({ approved: false }).eq('id', id);
+  const { error } = await sb.from('profiles').update({ approved: false }).eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('❌ Accesso revocato', 'info');
   loadUtenti();
 }
 async function makeAdmin(id) {
   if(!confirm('Rendere admin questo utente?')) return;
   showLoading(true);
-  await sb.from('profiles').update({ is_admin: true }).eq('id', id);
+  const { error } = await sb.from('profiles').update({ is_admin: true }).eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('👑 Admin impostato!', 'ok');
   loadUtenti();
 }
 async function removeAdmin(id) {
   if(!confirm('Rimuovere privilegi admin?')) return;
   showLoading(true);
-  await sb.from('profiles').update({ is_admin: false }).eq('id', id);
+  const { error } = await sb.from('profiles').update({ is_admin: false }).eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('Admin rimosso', 'info');
   loadUtenti();
 }
@@ -366,8 +370,9 @@ async function setPlan(id, plan) {
   const updates = plan === 'pro'
     ? { subscription_plan: 'pro', subscription_expires_at: new Date(Date.now() + 365*24*60*60*1000).toISOString() }
     : { subscription_plan: 'free', subscription_expires_at: null };
-  await sb.from('profiles').update(updates).eq('id', id);
+  const { error } = await sb.from('profiles').update(updates).eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast(plan === 'pro' ? '⭐ Piano Pro impostato (1 anno)!' : '🔓 Piano Free impostato', 'ok');
   loadUtenti();
 }
@@ -503,8 +508,9 @@ async function salvaCorsoECM() {
 
 async function toggleCorsoECM(id, nuovoStato) {
   showLoading(true);
-  await sb.from('ecm_corsi').update({ attivo: nuovoStato }).eq('id', id);
+  const { error } = await sb.from('ecm_corsi').update({ attivo: nuovoStato }).eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast(nuovoStato ? '▶️ Corso attivato' : '⏸ Corso disattivato', 'info');
   loadECMCorsi();
 }
@@ -512,8 +518,9 @@ async function toggleCorsoECM(id, nuovoStato) {
 async function eliminaCorsoECM(id) {
   if (!confirm('Eliminare definitivamente questo corso ECM?')) return;
   showLoading(true);
-  await sb.from('ecm_corsi').delete().eq('id', id);
+  const { error } = await sb.from('ecm_corsi').delete().eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('🗑️ Corso eliminato', 'info');
   loadECMCorsi();
 }
@@ -611,8 +618,9 @@ async function aggiungiDietista() {
 async function rimuoviDietista(id, email) {
   if (!confirm(`Rimuovere ${email} dallo studio? Il collega non potrà più accedere ai pazienti condivisi.`)) return;
   showLoading(true);
-  await sb.from('studio_members').delete().eq('id', id);
+  const { error } = await sb.from('studio_members').delete().eq('id', id);
   showLoading(false);
+  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('Collega rimosso dallo studio', 'info');
   loadDietisti();
 }

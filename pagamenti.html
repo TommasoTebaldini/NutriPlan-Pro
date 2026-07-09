@@ -490,8 +490,14 @@ function populatePatientSelect(selectedId = '') {
 
 function generateNumeroFattura() {
   const anno = new Date().getFullYear();
-  const thisYear = fatture.filter(f => (f.data_fattura||'').startsWith(anno));
-  const n = (thisYear.length + 1).toString().padStart(3, '0');
+  const prefix = `${anno}/`;
+  const maxN = fatture
+    .filter(f => (f.numero_fattura || '').startsWith(prefix))
+    .reduce((max, f) => {
+      const n = parseInt(f.numero_fattura.slice(prefix.length), 10);
+      return Number.isFinite(n) && n > max ? n : max;
+    }, 0);
+  const n = (maxN + 1).toString().padStart(3, '0');
   return `${anno}/${n}`;
 }
 

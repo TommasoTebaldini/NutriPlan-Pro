@@ -462,6 +462,22 @@
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let events = JSON.parse(localStorage.getItem('dietplan_events') || '[]');
+const DELETED_TTL_MS = 30 * 24 * 60 * 60 * 1000; // keep tombstones 30 days, plenty to outlive any stale cache
+function getDeletedIds() {
+  try {
+    const raw = JSON.parse(localStorage.getItem('dietplan_deleted_events') || '[]');
+    const fresh = raw.filter(d => Date.now() - d.at < DELETED_TTL_MS);
+    if (fresh.length !== raw.length) localStorage.setItem('dietplan_deleted_events', JSON.stringify(fresh));
+    return new Set(fresh.map(d => d.id));
+  } catch(e) { return new Set(); }
+}
+function markEventDeleted(id) {
+  try {
+    const raw = JSON.parse(localStorage.getItem('dietplan_deleted_events') || '[]');
+    raw.push({ id, at: Date.now() });
+    localStorage.setItem('dietplan_deleted_events', JSON.stringify(raw));
+  } catch(e) {}
+}
 let patientAppts = []; // appointments booked by patients from the app (read-only from appointments table)
 let _asAgenda = null; // init dopo caricamento utils.js
 let currentYear = new Date().getFullYear();
@@ -697,6 +713,10 @@ async function loadEventsFromSupabase() {
     if (!data) return;
     if (!data.length) {
       // Supabase has no records — push any locally-cached events up so they are persisted
+      // (skip any that were deleted elsewhere, or a stale local cache would resurrect them)
+      const deletedIds = getDeletedIds();
+      events = events.filter(e => !deletedIds.has(e.id));
+      localStorage.setItem('dietplan_events', JSON.stringify(events));
       if (events.length) {
         try {
           // Only upsert events that have a valid date field; a null/empty `data` value
@@ -729,8 +749,10 @@ async function loadEventsFromSupabase() {
       return;
     }
     // Merge: Supabase is authoritative; keep any local-only events not yet synced
+    // (excluding ones deleted elsewhere — a stale local cache must not resurrect them)
     const sbIds = new Set(data.map(e => e.id));
-    const localOnly = events.filter(e => !sbIds.has(e.id));
+    const deletedIds = getDeletedIds();
+    const localOnly = events.filter(e => !sbIds.has(e.id) && !deletedIds.has(e.id));
     // Strip user_id from in-memory objects to match the original event shape
     events = [...data, ...localOnly].map(({ user_id: _u, ...rest }) => rest);
     localStorage.setItem('dietplan_events', JSON.stringify(events));
@@ -1088,6 +1110,7 @@ async function deleteCurrentEvent() {
   const idToDelete = currentEventId;
   events = events.filter(e => e.id !== idToDelete);
   localStorage.setItem('dietplan_events', JSON.stringify(events));
+  markEventDeleted(idToDelete);
   if(currentUser && sb) {
     try {
       const { error } = await sb.from('agenda_events').delete().eq('id', idToDelete).eq('user_id', currentUser.id);

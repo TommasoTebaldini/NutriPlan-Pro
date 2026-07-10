@@ -1705,3 +1705,22 @@ CREATE POLICY "group_chat_media_select" ON storage.objects
     AND auth.uid() IS NOT NULL
     AND is_chat_group_member(((storage.foldername(name))[1])::uuid, auth.uid())
   );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 18 — FIX: creazione gruppo falliva con 403
+--
+-- broadcast.html crea un gruppo con `INSERT ... RETURNING *` (per riavere
+-- l'id) e SOLO DOPO inserisce la riga del creatore in chat_group_members
+-- (chiamata separata). Nel momento del RETURNING la policy SELECT su
+-- chat_groups richiedeva già l'appartenenza (is_chat_group_member), che a
+-- quel punto non esiste ancora per nessuno — Postgres rifiuta di restituire
+-- la riga appena creata → 403 su ogni creazione di gruppo. Il creatore deve
+-- poter vedere il proprio gruppo appena creato indipendentemente dal fatto
+-- che si sia già aggiunto come membro.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "chat_groups_member_select" ON chat_groups;
+CREATE POLICY "chat_groups_member_select" ON chat_groups
+  FOR SELECT USING (
+    is_chat_group_member(id, auth.uid()) OR created_by = auth.uid()
+  );

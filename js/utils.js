@@ -2121,27 +2121,3 @@ function initPianoEsempio(containerId, config) {
   }
 })();
 
-// ─── Auto-inject "Pagamenti" nav link after chat.html link ─────────────────
-// Adds a 💳 Pagamenti link in the sidebar Comunicazione section on every page
-// that has a chat.html nav item, unless pagamenti.html is already present.
-(function() {
-  function _injectPagamentiLink() {
-    if (document.querySelector('a[href="pagamenti.html"]')) return;
-    document.querySelectorAll('a[href="chat.html"]').forEach(function(chatLink) {
-      var newLink = document.createElement('a');
-      newLink.className = 'nav-item';
-      newLink.href = 'pagamenti.html';
-      // Mark active if we are on pagamenti.html
-      if (window.location.pathname.endsWith('pagamenti.html')) {
-        newLink.classList.add('active');
-      }
-      newLink.innerHTML = '<span class="ni">💳</span><span data-only-lang="it">Pagamenti</span><span data-only-lang="en">Payments</span>';
-      chatLink.insertAdjacentElement('afterend', newLink);
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectPagamentiLink);
-  } else {
-    _injectPagamentiLink();
-  }
-})();

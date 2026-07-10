@@ -1645,3 +1645,63 @@ BEGIN
     ALTER PUBLICATION supabase_realtime ADD TABLE chat_group_messages;
   END IF;
 END $$;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 17 — GRUPPI: MESSAGGI VOCALI + PROGRAMMATI + PARITÀ CON LA CHAT 1:1
+--
+-- type/status/scheduled_at ricalcano la convenzione di chat.html sulla
+-- chat_messages 1:1 (colonne type/status, non message_type — vedi nota
+-- architetturale: le due app usano convenzioni diverse sulla stessa tabella
+-- condivisa; qui, essendo una tabella nuova usata da ENTRAMBE le app, si fissa
+-- UNA sola convenzione fin da subito).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE chat_group_messages ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'text' CHECK (type IN ('text','voice'));
+ALTER TABLE chat_group_messages ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'sent' CHECK (status IN ('sent','scheduled'));
+ALTER TABLE chat_group_messages ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ;
+
+-- Un messaggio programmato resta visibile SOLO al mittente finché non viene
+-- promosso a 'sent' (dal poller client-side, stesso pattern imperfetto ma
+-- già in uso in chat.html/checkScheduledMessages — nessuna funzione cron
+-- server-side in questo progetto).
+DROP POLICY IF EXISTS "chat_group_messages_member_select" ON chat_group_messages;
+CREATE POLICY "chat_group_messages_member_select" ON chat_group_messages
+  FOR SELECT USING (
+    is_chat_group_member(group_id, auth.uid())
+    AND (status = 'sent' OR sender_id = auth.uid())
+  );
+
+-- Serve al mittente per promuovere i propri messaggi da 'scheduled' a 'sent'
+-- quando arriva l'orario programmato.
+DROP POLICY IF EXISTS "chat_group_messages_sender_update" ON chat_group_messages;
+CREATE POLICY "chat_group_messages_sender_update" ON chat_group_messages
+  FOR UPDATE USING (auth.uid() = sender_id) WITH CHECK (auth.uid() = sender_id);
+
+-- Storage bucket per i messaggi vocali di gruppo — privato con URL firmati
+-- (~10 anni), stesso pattern già usato da Diet-Plan-Pro-app-claude per
+-- chat-media, più sicuro del bucket pubblico usato da chat.html per la
+-- chat 1:1 (voice-messages).
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('group-chat-media', 'group-chat-media', false, 10485760,
+        ARRAY['audio/webm','audio/ogg','audio/mp4','audio/mpeg'])
+ON CONFLICT (id) DO UPDATE SET
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
+
+-- Path: <group_id>/<file>.webm — primo segmento = id gruppo, verificato via
+-- is_chat_group_member() (stesso helper delle policy sulle tabelle).
+DROP POLICY IF EXISTS "group_chat_media_insert" ON storage.objects;
+CREATE POLICY "group_chat_media_insert" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'group-chat-media'
+    AND auth.uid() IS NOT NULL
+    AND is_chat_group_member(((storage.foldername(name))[1])::uuid, auth.uid())
+  );
+
+DROP POLICY IF EXISTS "group_chat_media_select" ON storage.objects;
+CREATE POLICY "group_chat_media_select" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'group-chat-media'
+    AND auth.uid() IS NOT NULL
+    AND is_chat_group_member(((storage.foldername(name))[1])::uuid, auth.uid())
+  );

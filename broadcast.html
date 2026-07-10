@@ -186,9 +186,29 @@
           <button class="btn btn-ghost btn-xs" onclick="deleteActiveGroup()" title="Elimina gruppo">🗑</button>
         </div>
         <div class="wa-messages-area" id="wa-messages-area"></div>
-        <div class="wa-input-row">
-          <textarea id="wa-input" placeholder="Scrivi un messaggio al gruppo..." rows="1" onkeydown="handleWaKey(event)"></textarea>
-          <button class="btn btn-primary btn-sm" onclick="sendWaMessage()">Invia ➤</button>
+        <div class="wa-input-row" style="flex-direction:column;align-items:stretch">
+          <div id="wa-schedule-bar" style="display:none;background:#FEF9C3;border-radius:8px;padding:6px 10px;font-size:12px;color:#854D0E;align-items:center;gap:8px;margin-bottom:6px">
+            <span>📅 Programmato per:</span>
+            <input type="datetime-local" id="wa-schedule-dt" style="border:1px solid #FDE68A;border-radius:6px;padding:3px 7px;font-size:12px;font-family:inherit;outline:none">
+            <button onclick="waCancelSchedule()" style="background:none;border:none;cursor:pointer;color:#854D0E;font-size:13px">✕</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <textarea id="wa-input" placeholder="Scrivi un messaggio al gruppo..." rows="1" onkeydown="handleWaKey(event)" style="flex:1;border:1.5px solid var(--border-d);border-radius:18px;padding:9px 14px;font-size:13px;font-family:inherit;resize:none;outline:none;max-height:100px"></textarea>
+            <button class="btn btn-primary btn-sm" onclick="sendWaMessage()">Invia ➤</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px">
+            <button class="btn btn-ghost btn-xs" onclick="waToggleTplPanel(event)">📝 Template</button>
+            <button id="wa-mic-btn" class="btn btn-ghost btn-xs" onclick="waToggleVoiceRecord()" title="Messaggio vocale">🎤</button>
+            <div style="position:relative">
+              <button class="btn btn-ghost btn-xs" onclick="waToggleScheduleDropdown(event)">📅 Programma</button>
+              <div id="wa-schedule-dropdown" style="display:none;position:absolute;bottom:110%;left:0;background:white;border:1.5px solid var(--border-d);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;min-width:190px;padding:6px">
+                <div onclick="waSetSchedule('tomorrow')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">☀️ Domani mattina (9:00)</div>
+                <div onclick="waSetSchedule('1h')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">⏰ Tra 1 ora</div>
+                <div onclick="waSetSchedule('custom')" style="padding:8px 12px;cursor:pointer;font-size:12.5px;border-radius:6px" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background=''">🗓️ Scegli orario...</div>
+              </div>
+            </div>
+          </div>
+          <div id="wa-tpl-panel" style="display:none;gap:6px;flex-wrap:wrap;margin-top:6px"></div>
         </div>
       </div>
     </div>
@@ -368,6 +388,7 @@ const TEMPLATES = {
   holiday: '🎄 Auguri di Buone Feste!\n\nIn questo periodo speciale, ricorda di mantenere un equilibrio alimentare sano anche durante le celebrazioni. Se hai domande o hai bisogno di supporto, sono qui per te!\n\nTanti auguri!',
   results: '📊 Le tue analisi sono disponibili!\n\nHo caricato i tuoi referti aggiornati nella tua cartella digitale. Puoi visualizzarli dall\'app. Se hai domande, scrivimi pure!\n\nA presto!'
 };
+const TPL_LABELS = { reminder:'⏰ Promemoria visita', tips:'💡 Consiglio nutrizionale', holiday:'🎄 Auguri festività', results:'📊 Analisi disponibili' };
 
 function contactLabel(c) {
   if (c.full_name) return c.full_name;
@@ -558,7 +579,7 @@ async function loadWaGroups() {
   const [{ data: groups }, { data: members }, { data: lastMsgs }] = await Promise.all([
     sb.from('chat_groups').select('*').in('id', groupIds).order('created_at',{ascending:false}),
     sb.from('chat_group_members').select('group_id,user_id,member_role').in('group_id', groupIds),
-    sb.from('chat_group_messages').select('group_id,sender_id,content,created_at').in('group_id', groupIds).order('created_at',{ascending:false})
+    sb.from('chat_group_messages').select('group_id,sender_id,content,type,created_at').in('group_id', groupIds).order('created_at',{ascending:false})
   ]);
 
   const myReadMap = Object.fromEntries((mine||[]).map(m => [m.group_id, m.last_read_at]));
@@ -585,7 +606,7 @@ function renderWaGroupsList() {
       <div class="group-dot" style="background:${g.color||'#64748B'}"></div>
       <div class="grp-info">
         <div class="grp-name">${esc(g.name)}</div>
-        <div class="grp-preview">${g.lastMsg ? esc(g.lastMsg.content).slice(0,40) : g.members.length + ' membri'}</div>
+        <div class="grp-preview">${g.lastMsg ? (g.lastMsg.type==='voice' ? '🎤 Messaggio vocale' : esc(g.lastMsg.content).slice(0,40)) : g.members.length + ' membri'}</div>
       </div>
       ${g.unread ? '<div class="grp-unread"></div>' : ''}
     </div>`).join('');
@@ -645,7 +666,14 @@ function renderWaMessages() {
     const senderLabel = !isSent
       ? `<div class="wa-msg-sender" style="color:${info?.role==='dietitian'?'#6D28D9':'#0F766E'}">${esc(info?.name||'Utente')} ${badge}</div>`
       : '';
-    html += `<div class="wa-msg ${isSent?'sent':'received'}">${senderLabel}<div>${esc(m.content)}</div><div class="wa-msg-time">${time}</div></div>`;
+    const scheduledBadge = m.status === 'scheduled'
+      ? `<div style="background:#FEF9C3;border-radius:4px;padding:2px 6px;font-size:10px;color:#854D0E;margin-bottom:4px">📅 Programmato per: ${new Date(m.scheduled_at).toLocaleString('it',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>`
+      : '';
+    const msgContent = (m.type === 'voice' && m.content)
+      ? `<audio controls src="${m.content}" style="max-width:200px;height:32px"></audio>`
+      : esc(m.content || '');
+    const msgBgStyle = m.status === 'scheduled' ? 'background:#FEF9C3!important;color:#92400E!important;border:1.5px solid #FDE68A' : '';
+    html += `<div class="wa-msg ${isSent?'sent':'received'}" style="${msgBgStyle}">${senderLabel}${scheduledBadge}<div>${msgContent}</div><div class="wa-msg-time">${time}</div></div>`;
   });
   area.innerHTML = html;
   area.scrollTop = area.scrollHeight;
@@ -662,10 +690,32 @@ function setupWaRealtime(gid) {
         if (g) await loadGroupMemberProfiles(g);
       }
       waMessages.push(msg);
+      waMessages.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
       renderWaMessages();
-      if (msg.sender_id !== currentUser.id) markGroupRead(gid);
+      if (msg.sender_id !== currentUser.id && msg.status === 'sent') markGroupRead(gid);
       const g = allGroups.find(x => x.id === gid);
-      if (g) { g.lastMsg = msg; renderWaGroupsList(); }
+      if (g && msg.status === 'sent') { g.lastMsg = msg; renderWaGroupsList(); }
+    })
+    // Un messaggio programmato passa da 'scheduled' a 'sent' via UPDATE: per gli
+    // altri membri (a cui l'RLS lo nascondeva finché non era 'sent') questo è il
+    // momento in cui diventa visibile per la prima volta, non un INSERT.
+    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'chat_group_messages', filter:'group_id=eq.'+gid }, async (payload) => {
+      const msg = payload.new;
+      if (!groupMemberProfiles[msg.sender_id]) {
+        const g = allGroups.find(x => x.id === gid);
+        if (g) await loadGroupMemberProfiles(g);
+      }
+      const idx = waMessages.findIndex(m => m.id === msg.id);
+      if (idx === -1) {
+        waMessages.push(msg);
+        waMessages.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+      } else {
+        waMessages[idx] = msg;
+      }
+      renderWaMessages();
+      if (msg.sender_id !== currentUser.id && msg.status === 'sent') markGroupRead(gid);
+      const g = allGroups.find(x => x.id === gid);
+      if (g && msg.status === 'sent') { g.lastMsg = msg; renderWaGroupsList(); }
     })
     .subscribe();
 }
@@ -687,9 +737,135 @@ async function sendWaMessage() {
   const text = ta.value.trim();
   if (!text) return;
   ta.value = '';
-  const { error } = await sb.from('chat_group_messages').insert({ group_id: activeWaGroupId, sender_id: currentUser.id, content: text });
-  if (error) toast('Errore invio: ' + error.message, 'err');
+  const payload = { group_id: activeWaGroupId, sender_id: currentUser.id, content: text, type: 'text', status: _waScheduledAt ? 'scheduled' : 'sent' };
+  if (_waScheduledAt) { payload.scheduled_at = _waScheduledAt; waCancelSchedule(); }
+  const { error } = await sb.from('chat_group_messages').insert(payload);
+  if (error) { toast('Errore invio: ' + error.message, 'err'); return; }
+  if (payload.status === 'scheduled') { toast('📅 Messaggio programmato!', 'ok'); await loadWaMessages(activeWaGroupId); }
 }
+
+// ── Template rapidi (nel thread di gruppo) ──────────────────────────────────
+function waToggleTplPanel(e) {
+  e.stopPropagation();
+  const p = document.getElementById('wa-tpl-panel');
+  const show = p.style.display === 'none';
+  p.style.display = show ? 'flex' : 'none';
+  if (show) {
+    p.innerHTML = Object.keys(TEMPLATES).map(k => `<button class="btn btn-ghost btn-xs" onclick="waInsertTemplate('${k}')">${TPL_LABELS[k]}</button>`).join('');
+  }
+}
+
+function waInsertTemplate(key) {
+  document.getElementById('wa-input').value = TEMPLATES[key] || '';
+  document.getElementById('wa-tpl-panel').style.display = 'none';
+  document.getElementById('wa-input').focus();
+}
+
+// ── Messaggi vocali (nel thread di gruppo) ──────────────────────────────────
+let _waMediaRecorder = null;
+let _waAudioChunks = [];
+let _waVoiceRecording = false;
+
+async function waToggleVoiceRecord() {
+  const btn = document.getElementById('wa-mic-btn');
+  if (_waVoiceRecording) { if (_waMediaRecorder) _waMediaRecorder.stop(); return; }
+  if (!activeWaGroupId) { toast('Seleziona un gruppo prima', 'err'); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    _waAudioChunks = [];
+    _waMediaRecorder = new MediaRecorder(stream);
+    _waMediaRecorder.ondataavailable = e => { if (e.data.size > 0) _waAudioChunks.push(e.data); };
+    _waMediaRecorder.onstop = async () => {
+      _waVoiceRecording = false;
+      if (btn) { btn.textContent = '🎤'; btn.style.background = ''; }
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(_waAudioChunks, { type: 'audio/webm' });
+      if (blob.size < 100) return;
+      await waSendVoiceMessage(blob);
+    };
+    _waMediaRecorder.start();
+    _waVoiceRecording = true;
+    if (btn) { btn.textContent = '⏹️'; btn.style.background = '#FEE2E2'; }
+    toast('🎤 Registrazione in corso... Clicca ⏹️ per fermare', 'info');
+    setTimeout(() => { if (_waVoiceRecording && _waMediaRecorder) _waMediaRecorder.stop(); }, 60000);
+  } catch(e) {
+    toast('❌ Accesso microfono negato: ' + e.message, 'err');
+  }
+}
+
+async function waSendVoiceMessage(blob) {
+  if (!activeWaGroupId) return;
+  showLoading(true);
+  try {
+    const path = `${activeWaGroupId}/${Date.now()}.webm`;
+    const { error: upErr } = await sb.storage.from('group-chat-media').upload(path, blob, { contentType: 'audio/webm' });
+    if (upErr) throw upErr;
+    const { data: signed, error: signErr } = await sb.storage.from('group-chat-media').createSignedUrl(path, 315360000);
+    if (signErr) throw signErr;
+    const { error } = await sb.from('chat_group_messages').insert({
+      group_id: activeWaGroupId, sender_id: currentUser.id, content: signed.signedUrl, type: 'voice', status: 'sent'
+    });
+    if (error) throw error;
+    toast('🎤 Messaggio vocale inviato!', 'ok');
+  } catch(e) {
+    toast('❌ Errore invio vocale: ' + e.message, 'err');
+  }
+  showLoading(false);
+}
+
+// ── Messaggi programmati (nel thread di gruppo) ─────────────────────────────
+let _waScheduledAt = null;
+
+function waToggleScheduleDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('wa-schedule-dropdown');
+  if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  document.addEventListener('click', () => { if (dd) dd.style.display = 'none'; }, { once: true });
+}
+
+function waSetSchedule(type) {
+  const dd = document.getElementById('wa-schedule-dropdown');
+  if (dd) dd.style.display = 'none';
+  if (type === 'custom') {
+    const bar = document.getElementById('wa-schedule-bar');
+    if (bar) bar.style.display = 'flex';
+    const dtInput = document.getElementById('wa-schedule-dt');
+    if (dtInput) { dtInput.focus(); dtInput.onchange = () => { _waScheduledAt = dtInput.value ? new Date(dtInput.value).toISOString() : null; }; }
+    return;
+  }
+  const now = new Date();
+  if (type === 'tomorrow') { const tm = new Date(now); tm.setDate(tm.getDate()+1); tm.setHours(9,0,0,0); _waScheduledAt = tm.toISOString(); }
+  else if (type === '1h') { const h = new Date(now); h.setHours(h.getHours()+1,0,0,0); _waScheduledAt = h.toISOString(); }
+  const bar = document.getElementById('wa-schedule-bar');
+  if (bar) bar.style.display = 'flex';
+  const dtInput = document.getElementById('wa-schedule-dt');
+  if (dtInput && _waScheduledAt) dtInput.value = _waScheduledAt.slice(0,16);
+  toast('📅 Messaggio programmato per: ' + new Date(_waScheduledAt).toLocaleString('it'), 'info');
+}
+
+function waCancelSchedule() {
+  _waScheduledAt = null;
+  const bar = document.getElementById('wa-schedule-bar');
+  if (bar) bar.style.display = 'none';
+  const dtInput = document.getElementById('wa-schedule-dt');
+  if (dtInput) dtInput.value = '';
+}
+
+async function checkScheduledGroupMessages() {
+  if (!currentUser || !sb) return;
+  try {
+    const now = new Date().toISOString();
+    const { data: scheduled } = await sb.from('chat_group_messages').select('id,group_id')
+      .eq('status', 'scheduled').eq('sender_id', currentUser.id).lte('scheduled_at', now);
+    if (scheduled && scheduled.length) {
+      const ids = scheduled.map(m => m.id);
+      await sb.from('chat_group_messages').update({ status: 'sent' }).in('id', ids);
+      if (activeWaGroupId && scheduled.some(m => m.group_id === activeWaGroupId)) await loadWaMessages(activeWaGroupId);
+      await loadWaGroups();
+    }
+  } catch(e) { console.warn('checkScheduledGroupMessages error:', e); }
+}
+setInterval(checkScheduledGroupMessages, 60000);
 
 // ── Nuovo gruppo ────────────────────────────────────────────────────────────
 function openNewGroupModal() {

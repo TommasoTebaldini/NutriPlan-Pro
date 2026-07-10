@@ -1838,7 +1838,7 @@ async function cercaPazienteEmail() {
   resultEl.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px">' + _L('Ricerca in corso...','Searching...') + '</div>';
 
   // Search in profiles table (since we can't use admin API from client side)
-  const { data, error } = await sb.from('profiles').select('id,username,email').eq('email', email).maybeSingle();
+  const { data, error } = await sb.from('profiles').select('id,username,email,role').eq('email', email).maybeSingle();
 
   if (error) {
     resultEl.innerHTML = '<div style="color:var(--red);font-size:12.5px">' + esc(error.message) + '</div>';
@@ -1847,6 +1847,14 @@ async function cercaPazienteEmail() {
 
   if (!data) {
     resultEl.innerHTML = `<div style="color:var(--amber);font-size:12.5px">⚠️ ${_L('Nessun utente trovato con questa email. Il paziente deve essere registrato sull\'app.','No user found with this email. The patient must be registered on the app.')}</div>`;
+    return;
+  }
+
+  // Chi ha un account su NutriPlan-Pro è un dietista, non un paziente: non va
+  // mai collegato come paziente (in passato questo flusso sovrascriveva il suo
+  // role a 'patient' senza controllo, corrompendo account dietista veri).
+  if (data.role === 'dietitian') {
+    resultEl.innerHTML = `<div style="color:var(--red);font-size:12.5px">⚠️ ${_L('Questo indirizzo appartiene a un account dietista registrato su NutriPlan-Pro: non può essere collegato come paziente.','This address belongs to a dietitian account registered on NutriPlan-Pro: it cannot be linked as a patient.')}</div>`;
     return;
   }
 
@@ -1876,8 +1884,6 @@ async function confermaCollegamento() {
   });
   showLoading(false);
   if (error) { toast('❌ ' + _L('Errore: ','Error: ') + error.message, 'err'); return; }
-  // Imposta role='patient' sul profilo del paziente collegato
-  await sb.from('profiles').update({ role: 'patient' }).eq('id', collegaFoundUserId);
   closeM('modal-collega');
   toast(_L('🔗 Paziente collegato!','🔗 Patient linked!'), 'ok');
   await renderCartellaDetail(collegaCartellaId);

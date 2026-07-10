@@ -13,18 +13,15 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.bc-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;height:calc(100dvh - 54px - 36px - 36px)}
+.top-tabs{display:flex;gap:4px;margin-bottom:12px;border-bottom:2px solid var(--border);flex-shrink:0}
+.top-tab{padding:9px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s}
+.top-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.bc-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;height:calc(100dvh - 54px - 36px - 36px - 44px)}
 @media(max-width:900px){.bc-layout{grid-template-columns:1fr;height:auto}}
-.bc-sidebar{display:flex;flex-direction:column;gap:10px}
+.bc-sidebar{display:flex;flex-direction:column;gap:10px;min-height:0}
 .bc-panel{background:white;border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
 .bc-panel-hdr{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--slate);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;background:#FAFBFC}
 .bc-panel-body{padding:14px 16px;overflow-y:auto;flex:1}
-.group-chip{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:background .15s;border:1.5px solid transparent;margin-bottom:6px}
-.group-chip:hover{background:#F1F5F9}
-.group-chip.active{background:#E0F2F1;border-color:var(--teal-l)}
-.group-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.group-chip-name{font-size:13px;font-weight:600;color:var(--slate);flex:1}
-.group-chip-count{font-size:11px;color:var(--slate-l);background:var(--bg);padding:2px 7px;border-radius:20px}
 .pat-check-list{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto;padding:2px 0}
 .pat-check-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;transition:background .15s;user-select:none}
 .pat-check-item:hover{background:#F8FAFC}
@@ -32,7 +29,6 @@
 .pat-check-name{font-size:13px;color:var(--slate);flex:1}
 .pat-check-email{font-size:11px;color:var(--slate-l)}
 .msg-area{display:flex;flex-direction:column;height:100%}
-.msg-preview{flex:1;overflow-y:auto;padding:14px;background:#F8FAFC;border-bottom:1px solid var(--border)}
 .msg-compose{padding:14px}
 .bc-msg-item{background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .bc-msg-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
@@ -48,6 +44,46 @@
 .recip-tag .rtx:hover{opacity:1}
 .recip-placeholder{font-size:12px;color:var(--slate-l);padding:3px 6px}
 .char-count{font-size:11px;color:var(--slate-l);text-align:right;margin-top:4px}
+
+/* Badges */
+.role-badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.role-badge.dietitian{background:#EDE9FE;color:#6D28D9}
+.role-badge.patient{background:#E0F2F1;color:#0F766E}
+
+/* Unified contact picker */
+.contact-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s;user-select:none}
+.contact-item:hover{background:#F8FAFC}
+.contact-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.contact-name{font-size:12.5px;color:var(--slate);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Group list */
+.wa-group-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .15s;border:1.5px solid transparent;margin-bottom:4px}
+.wa-group-chip:hover{background:#F1F5F9}
+.wa-group-chip.active{background:#E0F2F1;border-color:var(--teal-l)}
+.wa-group-chip .group-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.wa-group-chip .grp-info{flex:1;min-width:0}
+.wa-group-chip .grp-name{font-size:13px;font-weight:600;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-group-chip .grp-preview{font-size:11px;color:var(--slate-l);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.wa-group-chip .grp-unread{width:9px;height:9px;border-radius:50%;background:#DC2626;flex-shrink:0}
+
+/* Thread */
+.wa-thread-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:#FAFBFC}
+.wa-thread-name{font-size:14px;font-weight:700;color:var(--slate)}
+.wa-thread-members{font-size:11px;color:var(--slate-l);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-messages-area{flex:1;overflow-y:auto;padding:14px;background:#F8FAFC;display:flex;flex-direction:column}
+.wa-msg{max-width:70%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.45;word-break:break-word;margin-bottom:4px;position:relative}
+.wa-msg.sent{align-self:flex-end;background:var(--teal);color:white;border-bottom-right-radius:4px}
+.wa-msg.received{align-self:flex-start;background:white;color:var(--slate);border:1px solid var(--border);border-bottom-left-radius:4px}
+.wa-msg-sender{font-size:10.5px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.wa-msg-time{font-size:10px;opacity:.65;margin-top:3px;text-align:right}
+.wa-date-sep{text-align:center;font-size:11px;color:var(--slate-l);margin:10px 0;font-weight:600}
+.wa-input-row{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;flex-shrink:0;background:white}
+.wa-input-row textarea{flex:1;border:1.5px solid var(--border-d);border-radius:18px;padding:9px 14px;font-size:13px;font-family:inherit;resize:none;outline:none;max-height:100px}
+.wa-input-row textarea:focus{border-color:var(--teal-l);box-shadow:0 0 0 3px rgba(20,184,166,.15)}
+.wa-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--slate-l);gap:8px}
+.wa-empty .ei{font-size:44px}
+.member-row{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid #F1F5F9}
+.member-row:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -113,115 +149,130 @@
   <div class="tbar-actions"></div>
 </div>
 <main id="main">
-<div class="page-content" style="padding:14px">
-<div class="bc-layout">
+<div class="page-content" style="padding:14px;display:flex;flex-direction:column">
 
-  <!-- LEFT SIDEBAR -->
-  <div class="bc-sidebar">
-    <!-- Groups panel -->
-    <div class="bc-panel" style="flex-shrink:0">
-      <div class="bc-panel-hdr">
-        <span>👥 Gruppi</span>
-        <button class="btn btn-primary btn-xs" onclick="openNewGroupModal()">+ Nuovo</button>
-      </div>
-      <div class="bc-panel-body" style="padding:10px;max-height:280px;overflow-y:auto">
-        <!-- All patients pseudo-group -->
-        <div class="group-chip active" data-gid="all" onclick="selectGroup('all')">
-          <div class="group-dot" style="background:#0F766E"></div>
-          <span class="group-chip-name">Tutti i pazienti</span>
-          <span class="group-chip-count" id="count-all">—</span>
+  <div class="top-tabs">
+    <div class="top-tab active" id="tt-groups" onclick="switchTopTab('groups')">💬 Gruppi</div>
+    <div class="top-tab" id="tt-quick" onclick="switchTopTab('quick')">📤 Invio rapido</div>
+    <div class="top-tab" id="tt-history" onclick="switchTopTab('history')">📋 Storico</div>
+  </div>
+
+  <!-- ═══════════ GRUPPI (chat persistenti stile WhatsApp) ═══════════ -->
+  <div id="view-groups" class="bc-layout">
+    <div class="bc-sidebar">
+      <div class="bc-panel" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="bc-panel-hdr">
+          <span>👥 I miei gruppi</span>
+          <button class="btn btn-primary btn-xs" onclick="openNewGroupModal()">+ Nuovo</button>
         </div>
-        <div id="groups-list"></div>
-      </div>
-    </div>
-
-    <!-- Selected patients -->
-    <div class="bc-panel" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
-      <div class="bc-panel-hdr">
-        <span>✅ Destinatari selezionati</span>
-        <button class="btn btn-ghost btn-xs" onclick="clearRecipients()">Svuota</button>
-      </div>
-      <div style="padding:10px;flex:1;overflow-y:auto">
-        <input type="text" id="pat-search" placeholder="Cerca paziente..." oninput="filterPats()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin-bottom:8px">
-        <div class="pat-check-list" id="pat-check-list">
+        <div class="bc-panel-body" style="padding:8px" id="wa-groups-list">
           <div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Caricamento...</div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- RIGHT: Compose + History -->
-  <div class="bc-panel" style="display:flex;flex-direction:column;overflow:hidden">
-    <!-- Tabs -->
-    <div style="display:flex;border-bottom:2px solid var(--border)">
-      <div class="tab active" id="tab-compose" onclick="switchTab('compose')" style="padding:10px 16px;font-size:13px;font-weight:600;color:var(--teal);border-bottom:2px solid var(--teal);margin-bottom:-2px;cursor:pointer">✍️ Componi</div>
-      <div class="tab" id="tab-history" onclick="switchTab('history')" style="padding:10px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer">📋 Storico</div>
-    </div>
-
-    <!-- Compose tab -->
-    <div id="panel-compose" class="msg-area">
-      <div class="msg-compose" style="height:100%;display:flex;flex-direction:column;gap:10px">
-        <!-- Recipients preview -->
-        <div>
-          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">A:</div>
-          <div class="recip-tags" id="recip-tags-preview">
-            <span class="recip-placeholder">Seleziona pazienti o un gruppo →</span>
-          </div>
-        </div>
-
-        <!-- Message type -->
-        <div>
-          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Tipo:</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
-              <input type="radio" name="msg-type" value="chat" checked style="accent-color:var(--teal)"> 💬 Chat in-app
-            </label>
-            <label style="display:flex;align-items:center;gap=6px;cursor:pointer;font-size:13px">
-              <input type="radio" name="msg-type" value="notification" style="accent-color:var(--teal)"> 🔔 Notifica push
-            </label>
-          </div>
-        </div>
-
-        <!-- Template quick-insert -->
-        <div>
-          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Template rapidi:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-xs" onclick="insertTpl('reminder')">⏰ Promemoria visita</button>
-            <button class="btn btn-ghost btn-xs" onclick="insertTpl('tips')">💡 Consiglio nutrizionale</button>
-            <button class="btn btn-ghost btn-xs" onclick="insertTpl('holiday')">🎄 Auguri festività</button>
-            <button class="btn btn-ghost btn-xs" onclick="insertTpl('results')">📊 Analisi disponibili</button>
-          </div>
-        </div>
-
-        <!-- Message text -->
-        <div style="flex:1;display:flex;flex-direction:column">
-          <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Messaggio:</div>
-          <textarea class="compose-box" id="broadcast-text" placeholder="Scrivi il tuo messaggio per tutti i pazienti selezionati..." oninput="updateCharCount()" style="flex:1;min-height:120px"></textarea>
-          <div class="char-count" id="char-count">0 / 500 caratteri</div>
-        </div>
-
-        <!-- Actions -->
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="sendBroadcast()" id="btn-send">
-            📤 Invia a <span id="recip-count">0</span> pazienti
-          </button>
-          <button class="btn btn-ghost btn-sm" onclick="previewBroadcast()">👁 Anteprima</button>
-          <div style="font-size:12px;color:var(--slate-l);margin-left:auto" id="send-status"></div>
-        </div>
+    <div class="bc-panel" style="display:flex;flex-direction:column;overflow:hidden">
+      <div class="wa-empty" id="wa-thread-empty">
+        <div class="ei">💬</div>
+        <div>Seleziona un gruppo per iniziare, oppure creane uno nuovo</div>
       </div>
-    </div>
-
-    <!-- History tab -->
-    <div id="panel-history" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#F8FAFC">
-      <div id="broadcast-history">
-        <div style="text-align:center;padding:32px;color:var(--slate-l);font-size:13px">
-          <div style="font-size:36px;margin-bottom:8px">📋</div>
-          Nessun broadcast inviato ancora
+      <div id="wa-thread" style="display:none;flex-direction:column;height:100%;min-height:0">
+        <div class="wa-thread-hdr">
+          <div class="group-dot" id="wa-thread-dot" style="width:14px;height:14px;border-radius:50%;flex-shrink:0"></div>
+          <div style="flex:1;min-width:0">
+            <div class="wa-thread-name" id="wa-thread-name"></div>
+            <div class="wa-thread-members" id="wa-thread-members"></div>
+          </div>
+          <button class="btn btn-ghost btn-xs" onclick="openGroupMembersModal()">👥 Membri</button>
+          <button class="btn btn-ghost btn-xs" onclick="deleteActiveGroup()" title="Elimina gruppo">🗑</button>
+        </div>
+        <div class="wa-messages-area" id="wa-messages-area"></div>
+        <div class="wa-input-row">
+          <textarea id="wa-input" placeholder="Scrivi un messaggio al gruppo..." rows="1" onkeydown="handleWaKey(event)"></textarea>
+          <button class="btn btn-primary btn-sm" onclick="sendWaMessage()">Invia ➤</button>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- ═══════════ INVIO RAPIDO (broadcast una-tantum ai pazienti) ═══════════ -->
+  <div id="view-quick" class="bc-layout" style="display:none">
+    <div class="bc-sidebar">
+      <div class="bc-panel" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="bc-panel-hdr">
+          <span>✅ Destinatari</span>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-xs" onclick="selectAllPatientsQuick()">Tutti</button>
+            <button class="btn btn-ghost btn-xs" onclick="clearRecipients()">Svuota</button>
+          </div>
+        </div>
+        <div style="padding:10px;flex:1;overflow-y:auto">
+          <input type="text" id="pat-search" placeholder="Cerca paziente..." oninput="filterPats()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin-bottom:8px">
+          <div class="pat-check-list" id="pat-check-list">
+            <div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Caricamento...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bc-panel" style="display:flex;flex-direction:column;overflow:hidden">
+      <div class="msg-area">
+        <div class="msg-compose" style="height:100%;display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">A:</div>
+            <div class="recip-tags" id="recip-tags-preview">
+              <span class="recip-placeholder">Seleziona pazienti →</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Tipo:</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                <input type="radio" name="msg-type" value="chat" checked style="accent-color:var(--teal)"> 💬 Chat in-app
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                <input type="radio" name="msg-type" value="notification" style="accent-color:var(--teal)"> 🔔 Notifica push
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Template rapidi:</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-ghost btn-xs" onclick="insertTpl('reminder')">⏰ Promemoria visita</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTpl('tips')">💡 Consiglio nutrizionale</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTpl('holiday')">🎄 Auguri festività</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTpl('results')">📊 Analisi disponibili</button>
+            </div>
+          </div>
+
+          <div style="flex:1;display:flex;flex-direction:column">
+            <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Messaggio:</div>
+            <textarea class="compose-box" id="broadcast-text" placeholder="Scrivi il tuo messaggio per tutti i pazienti selezionati..." oninput="updateCharCount()" style="flex:1;min-height:120px"></textarea>
+            <div class="char-count" id="char-count">0 / 500 caratteri</div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="sendBroadcast()" id="btn-send">
+              📤 Invia a <span id="recip-count">0</span> pazienti
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="previewBroadcast()">👁 Anteprima</button>
+            <div style="font-size:12px;color:var(--slate-l);margin-left:auto" id="send-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STORICO ═══════════ -->
+  <div id="view-history" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#F8FAFC;border-radius:var(--r);border:1.5px solid var(--border)">
+    <div id="broadcast-history">
+      <div style="text-align:center;padding:32px;color:var(--slate-l);font-size:13px">
+        <div style="font-size:36px;margin-bottom:8px">📋</div>
+        Nessun broadcast inviato ancora
+      </div>
+    </div>
+  </div>
+
 </div>
 </main>
 
@@ -246,14 +297,33 @@
         </div>
       </div>
       <div class="fg">
-        <label>Pazienti nel gruppo</label>
-        <input type="text" id="gm-search" placeholder="Cerca..." oninput="filterGroupPatients()" style="margin-bottom:6px">
-        <div class="pat-check-list" id="gm-pat-list" style="max-height:200px;border:1.5px solid var(--border);border-radius:8px;padding:4px"></div>
+        <label>Membri del gruppo</label>
+        <input type="text" id="gm-search" placeholder="Cerca dietisti o pazienti..." oninput="filterGroupContacts()" style="margin-bottom:6px">
+        <div class="pat-check-list" id="gm-pat-list" style="max-height:220px;border:1.5px solid var(--border);border-radius:8px;padding:4px"></div>
       </div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost" onclick="closeGroupModal()">Annulla</button>
       <button class="btn btn-primary" onclick="saveGroup()">💾 Salva Gruppo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Group Members Modal -->
+<div id="modal-group-members" class="modal-bg" style="display:none">
+  <div class="modal" style="max-width:440px">
+    <div class="mhdr"><h2>👥 Membri del gruppo</h2><button class="mclose" onclick="closeMembersModal()">✕</button></div>
+    <div class="mbody">
+      <div id="gmem-current-list" style="margin-bottom:14px"></div>
+      <div id="gmem-add-section">
+        <label style="font-size:11.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.4px">Aggiungi contatti</label>
+        <input type="text" id="gmem-search" placeholder="Cerca dietisti o pazienti..." oninput="renderAddMemberList()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin:6px 0">
+        <div class="pat-check-list" id="gmem-add-list" style="max-height:180px;border:1.5px solid var(--border);border-radius:8px;padding:4px"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeMembersModal()">Chiudi</button>
+      <button class="btn btn-primary" onclick="addSelectedMembers()">+ Aggiungi selezionati</button>
     </div>
   </div>
 </div>
@@ -282,11 +352,15 @@
 <script src="js/print-capture.js" defer></script>
 <script>
 let allPatients = [];
-let allGroups = [];
-let selectedPatients = new Set(); // patient IDs
-let activeGroupId = 'all';
+let allDietitians = [];
+let allGroups = [];               // chat_groups I'm a member of (with .members, .lastMsg, .unread)
+let groupMemberProfiles = {};     // user_id -> {name, role}
+let selectedPatients = new Set(); // patient IDs (Invio rapido)
 let selectedGroupColor = '#0F766E';
 let broadcastHistory = [];
+let activeWaGroupId = null;
+let waMessages = [];
+let waRealtimeChannel = null;
 
 const TEMPLATES = {
   reminder: 'Gentile paziente,\n\nti ricordiamo che hai una visita in programma presso il nostro studio. Ti preghiamo di confermare la tua presenza o contattarci per eventuali modifiche.\n\nA presto,\nIl tuo dietista',
@@ -295,44 +369,56 @@ const TEMPLATES = {
   results: '📊 Le tue analisi sono disponibili!\n\nHo caricato i tuoi referti aggiornati nella tua cartella digitale. Puoi visualizzarli dall\'app. Se hai domande, scrivimi pure!\n\nA presto!'
 };
 
+function contactLabel(c) {
+  if (c.full_name) return c.full_name;
+  if (c.nome || c.cognome) return `${c.nome||''} ${c.cognome||''}`.trim();
+  return c.email || c.id;
+}
+
 async function init() {
   showLoading(true);
-  await Promise.all([loadPatients(), loadGroups(), loadHistory()]);
+  await Promise.all([loadPatients(), loadDietitians(), loadWaGroups(), loadHistory()]);
   showLoading(false);
 }
 
+// ─── Top-level tabs ─────────────────────────────────────────────────────────
+function switchTopTab(tab) {
+  document.getElementById('view-groups').style.display = tab === 'groups' ? 'grid' : 'none';
+  document.getElementById('view-quick').style.display = tab === 'quick' ? 'grid' : 'none';
+  document.getElementById('view-history').style.display = tab === 'history' ? 'block' : 'none';
+  ['groups','quick','history'].forEach(t => document.getElementById('tt-'+t).classList.toggle('active', t === tab));
+  if (tab === 'history') loadHistory();
+}
+
+// ─── Contacts (patients + studio dietitians) ───────────────────────────────
 async function loadPatients() {
   const { data } = await sb.from('profiles').select('id,email,full_name,created_at').eq('role','patient').eq('approved',true).order('full_name',{ascending:true});
   allPatients = data || [];
-  document.getElementById('count-all').textContent = allPatients.length;
   renderPatList();
 }
 
-async function loadGroups() {
-  const { data } = await sb.from('patient_groups').select('*,patient_group_members(patient_id)').eq('dietitian_id', currentUser.id).order('created_at',{ascending:false});
-  allGroups = (data || []).map(g => ({ ...g, members: (g.patient_group_members||[]).map(m => m.patient_id) }));
-  renderGroupsList();
+async function loadDietitians() {
+  const { data } = await sb.from('profiles').select('id,email,nome,cognome,full_name').eq('role','dietitian').neq('id', currentUser.id).order('nome',{ascending:true});
+  allDietitians = data || [];
 }
 
-async function loadHistory() {
-  const { data } = await sb.from('broadcast_messages').select('*').eq('dietitian_id', currentUser.id).order('created_at',{ascending:false}).limit(50);
-  broadcastHistory = data || [];
-  renderHistory();
+function unifiedContacts() {
+  return [
+    ...allDietitians.map(d => ({ ...d, _role: 'dietitian' })),
+    ...allPatients.map(p => ({ ...p, _role: 'patient' }))
+  ];
 }
 
+// ─── Invio rapido (broadcast una-tantum, solo pazienti) ────────────────────
 function renderPatList() {
   const search = (document.getElementById('pat-search')?.value || '').toLowerCase();
   let list = allPatients;
-  if (activeGroupId !== 'all') {
-    const g = allGroups.find(g => g.id === activeGroupId);
-    if (g) list = allPatients.filter(p => g.members.includes(p.id));
-  }
-  if (search) list = list.filter(p => (p.full_name||'').toLowerCase().includes(search) || (p.email||'').toLowerCase().includes(search));
+  if (search) list = list.filter(p => contactLabel(p).toLowerCase().includes(search) || (p.email||'').toLowerCase().includes(search));
   document.getElementById('pat-check-list').innerHTML = list.length
     ? list.map(p => `<div class="pat-check-item" onclick="togglePat('${p.id}')">
         <input type="checkbox" ${selectedPatients.has(p.id) ? 'checked' : ''} id="chk-${p.id}" onclick="togglePat('${p.id}',event)">
         <div style="flex:1;min-width:0">
-          <div class="pat-check-name">${esc(p.full_name || p.email || p.id)}</div>
+          <div class="pat-check-name">${esc(contactLabel(p))}</div>
           <div class="pat-check-email">${esc(p.email || '')}</div>
         </div>
       </div>`).join('')
@@ -351,25 +437,18 @@ function updateRecipientsPreview() {
   document.getElementById('recip-count').textContent = count;
   const preview = document.getElementById('recip-tags-preview');
   if (!count) {
-    preview.innerHTML = '<span class="recip-placeholder">Seleziona pazienti o un gruppo →</span>';
+    preview.innerHTML = '<span class="recip-placeholder">Seleziona pazienti →</span>';
     return;
   }
   const selected = allPatients.filter(p => selectedPatients.has(p.id)).slice(0,5);
   const more = count - selected.length;
-  preview.innerHTML = selected.map(p => `<span class="recip-tag" style="background:#E0F2F1;color:#0F766E">${esc(p.full_name||p.email||p.id).split(' ')[0]}</span>`).join('')
+  preview.innerHTML = selected.map(p => `<span class="recip-tag" style="background:#E0F2F1;color:#0F766E">${esc(contactLabel(p)).split(' ')[0]}</span>`).join('')
     + (more > 0 ? `<span class="recip-tag" style="background:#F1F5F9;color:#64748B">+${more} altri</span>` : '');
 }
 
-function selectGroup(gid) {
-  activeGroupId = gid;
-  document.querySelectorAll('.group-chip').forEach(c => c.classList.toggle('active', c.dataset.gid === gid));
+function selectAllPatientsQuick() {
   selectedPatients.clear();
-  if (gid === 'all') {
-    allPatients.forEach(p => selectedPatients.add(p.id));
-  } else {
-    const g = allGroups.find(g => g.id === gid);
-    if (g) g.members.forEach(mid => selectedPatients.add(mid));
-  }
+  allPatients.forEach(p => selectedPatients.add(p.id));
   renderPatList();
   updateRecipientsPreview();
 }
@@ -378,22 +457,14 @@ function filterPats() { renderPatList(); }
 
 function clearRecipients() {
   selectedPatients.clear();
-  document.querySelectorAll('.group-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('[data-gid="all"]')?.classList.add('active');
-  activeGroupId = 'all';
   renderPatList();
   updateRecipientsPreview();
 }
 
-function renderGroupsList() {
-  const list = document.getElementById('groups-list');
-  list.innerHTML = allGroups.map(g => `
-    <div class="group-chip" data-gid="${g.id}" onclick="selectGroup('${g.id}')">
-      <div class="group-dot" style="background:${g.color||'#64748B'}"></div>
-      <span class="group-chip-name">${esc(g.name)}</span>
-      <span class="group-chip-count">${g.members.length}</span>
-      <button onclick="deleteGroup('${g.id}',event)" style="background:none;border:none;cursor:pointer;color:#94A3B8;font-size:12px;padding:2px;line-height:1" title="Elimina">🗑</button>
-    </div>`).join('');
+async function loadHistory() {
+  const { data } = await sb.from('broadcast_messages').select('*').eq('dietitian_id', currentUser.id).order('created_at',{ascending:false}).limit(50);
+  broadcastHistory = data || [];
+  renderHistory();
 }
 
 function renderHistory() {
@@ -414,18 +485,9 @@ function renderHistory() {
       <div class="bc-msg-text">${esc(m.message_text).slice(0,200)}${m.message_text.length > 200 ? '...' : ''}</div>
       <div class="bc-msg-stats">
         <span>✅ Inviato con successo</span>
-        ${m.group_name ? `<span>• Gruppo: ${esc(m.group_name)}</span>` : ''}
       </div>
     </div>`;
   }).join('');
-}
-
-function switchTab(tab) {
-  document.getElementById('panel-compose').style.display = tab === 'compose' ? 'flex' : 'none';
-  document.getElementById('panel-history').style.display = tab === 'history' ? 'block' : 'none';
-  document.getElementById('tab-compose').style.cssText = tab === 'compose' ? 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--teal);border-bottom:2px solid var(--teal);margin-bottom:-2px;cursor:pointer' : 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer';
-  document.getElementById('tab-history').style.cssText = tab === 'history' ? 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--teal);border-bottom:2px solid var(--teal);margin-bottom:-2px;cursor:pointer' : 'padding:10px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer';
-  if (tab === 'history') loadHistory();
 }
 
 function insertTpl(key) {
@@ -457,7 +519,6 @@ async function sendBroadcast() {
   showLoading(true);
   try {
     const patientIds = [...selectedPatients];
-    // Insert chat messages for all selected patients
     if (msgType === 'chat') {
       const inserts = patientIds.map(pid => ({
         patient_id: pid,
@@ -470,34 +531,173 @@ async function sendBroadcast() {
       const { error } = await sb.from('chat_messages').insert(inserts);
       if (error) throw error;
     }
-    // Log broadcast
-    const activeGroup = allGroups.find(g => g.id === activeGroupId);
     await sb.from('broadcast_messages').insert({
       dietitian_id: currentUser.id,
       message_text: text,
       message_type: msgType,
       recipients_count: patientIds.length,
-      patient_ids: patientIds,
-      group_name: activeGroup?.name || null
+      patient_ids: patientIds
     });
     toast(`✅ Messaggio inviato a ${patientIds.length} pazienti!`, 'ok');
     document.getElementById('broadcast-text').value = '';
     updateCharCount();
     await loadHistory();
-    switchTab('history');
+    switchTopTab('history');
   } catch(e) {
     toast('Errore invio: ' + e.message, 'err');
   }
   showLoading(false);
 }
 
-// Group management
+// ─── Gruppi (chat persistenti, dietisti + pazienti) ────────────────────────
+async function loadWaGroups() {
+  const { data: mine } = await sb.from('chat_group_members').select('group_id,last_read_at').eq('user_id', currentUser.id);
+  const groupIds = (mine || []).map(m => m.group_id);
+  if (!groupIds.length) { allGroups = []; renderWaGroupsList(); return; }
+
+  const [{ data: groups }, { data: members }, { data: lastMsgs }] = await Promise.all([
+    sb.from('chat_groups').select('*').in('id', groupIds).order('created_at',{ascending:false}),
+    sb.from('chat_group_members').select('group_id,user_id,member_role').in('group_id', groupIds),
+    sb.from('chat_group_messages').select('group_id,sender_id,content,created_at').in('group_id', groupIds).order('created_at',{ascending:false})
+  ]);
+
+  const myReadMap = Object.fromEntries((mine||[]).map(m => [m.group_id, m.last_read_at]));
+  const lastMsgByGroup = {};
+  (lastMsgs||[]).forEach(m => { if (!lastMsgByGroup[m.group_id]) lastMsgByGroup[m.group_id] = m; });
+
+  allGroups = (groups||[]).map(g => {
+    const gMembers = (members||[]).filter(m => m.group_id === g.id);
+    const last = lastMsgByGroup[g.id];
+    const unread = !!(last && last.sender_id !== currentUser.id && (!myReadMap[g.id] || new Date(last.created_at) > new Date(myReadMap[g.id])));
+    return { ...g, members: gMembers, lastMsg: last || null, unread };
+  });
+  renderWaGroupsList();
+}
+
+function renderWaGroupsList() {
+  const el = document.getElementById('wa-groups-list');
+  if (!allGroups.length) {
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Nessun gruppo ancora.<br>Creane uno con "+ Nuovo"</div>';
+    return;
+  }
+  el.innerHTML = allGroups.map(g => `
+    <div class="wa-group-chip ${g.id===activeWaGroupId?'active':''}" data-gid="${g.id}" onclick="selectWaGroup('${g.id}')">
+      <div class="group-dot" style="background:${g.color||'#64748B'}"></div>
+      <div class="grp-info">
+        <div class="grp-name">${esc(g.name)}</div>
+        <div class="grp-preview">${g.lastMsg ? esc(g.lastMsg.content).slice(0,40) : g.members.length + ' membri'}</div>
+      </div>
+      ${g.unread ? '<div class="grp-unread"></div>' : ''}
+    </div>`).join('');
+}
+
+async function loadGroupMemberProfiles(g) {
+  const ids = g.members.map(m => m.user_id);
+  const missing = ids.filter(id => !groupMemberProfiles[id]);
+  if (!missing.length) return;
+  const { data } = await sb.from('profiles').select('id,nome,cognome,email,full_name,role').in('id', missing);
+  (data||[]).forEach(p => {
+    groupMemberProfiles[p.id] = { name: contactLabel(p), role: p.role };
+  });
+}
+
+async function selectWaGroup(gid) {
+  activeWaGroupId = gid;
+  document.querySelectorAll('.wa-group-chip').forEach(c => c.classList.toggle('active', c.dataset.gid === gid));
+  const g = allGroups.find(x => x.id === gid);
+  if (!g) return;
+  document.getElementById('wa-thread-empty').style.display = 'none';
+  document.getElementById('wa-thread').style.display = 'flex';
+  document.getElementById('wa-thread-dot').style.background = g.color || '#64748B';
+  document.getElementById('wa-thread-name').textContent = g.name;
+  showLoading(true);
+  await loadGroupMemberProfiles(g);
+  document.getElementById('wa-thread-members').textContent = g.members.map(m => groupMemberProfiles[m.user_id]?.name || '').filter(Boolean).join(', ');
+  await loadWaMessages(gid);
+  setupWaRealtime(gid);
+  await markGroupRead(gid);
+  showLoading(false);
+}
+
+async function loadWaMessages(gid) {
+  const { data } = await sb.from('chat_group_messages').select('*').eq('group_id', gid).order('created_at',{ascending:true}).limit(200);
+  waMessages = data || [];
+  renderWaMessages();
+}
+
+function renderWaMessages() {
+  const area = document.getElementById('wa-messages-area');
+  if (!waMessages.length) {
+    area.innerHTML = '<div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:40px 20px">Nessun messaggio. Inizia la conversazione di gruppo!</div>';
+    return;
+  }
+  let html = '';
+  let lastDate = '';
+  waMessages.forEach(m => {
+    const d = new Date(m.created_at).toLocaleDateString('it', { day:'2-digit', month:'long', year:'numeric' });
+    if (d !== lastDate) { html += `<div class="wa-date-sep">${d}</div>`; lastDate = d; }
+    const isSent = m.sender_id === currentUser.id;
+    const time = new Date(m.created_at).toLocaleTimeString('it', { hour:'2-digit', minute:'2-digit' });
+    const info = groupMemberProfiles[m.sender_id];
+    const badge = info?.role === 'dietitian'
+      ? '<span class="role-badge dietitian">Dietista/Nutrizionista</span>'
+      : info?.role === 'patient' ? '<span class="role-badge patient">Paziente</span>' : '';
+    const senderLabel = !isSent
+      ? `<div class="wa-msg-sender" style="color:${info?.role==='dietitian'?'#6D28D9':'#0F766E'}">${esc(info?.name||'Utente')} ${badge}</div>`
+      : '';
+    html += `<div class="wa-msg ${isSent?'sent':'received'}">${senderLabel}<div>${esc(m.content)}</div><div class="wa-msg-time">${time}</div></div>`;
+  });
+  area.innerHTML = html;
+  area.scrollTop = area.scrollHeight;
+}
+
+function setupWaRealtime(gid) {
+  if (waRealtimeChannel) { waRealtimeChannel.unsubscribe(); waRealtimeChannel = null; }
+  waRealtimeChannel = sb.channel('wa-group-' + gid)
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_group_messages', filter:'group_id=eq.'+gid }, async (payload) => {
+      const msg = payload.new;
+      if (waMessages.find(m => m.id === msg.id)) return;
+      if (!groupMemberProfiles[msg.sender_id]) {
+        const g = allGroups.find(x => x.id === gid);
+        if (g) await loadGroupMemberProfiles(g);
+      }
+      waMessages.push(msg);
+      renderWaMessages();
+      if (msg.sender_id !== currentUser.id) markGroupRead(gid);
+      const g = allGroups.find(x => x.id === gid);
+      if (g) { g.lastMsg = msg; renderWaGroupsList(); }
+    })
+    .subscribe();
+}
+
+async function markGroupRead(gid) {
+  await sb.from('chat_group_members').update({ last_read_at: new Date().toISOString() }).eq('group_id', gid).eq('user_id', currentUser.id);
+  const g = allGroups.find(x => x.id === gid);
+  if (g) g.unread = false;
+  renderWaGroupsList();
+}
+
+function handleWaKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendWaMessage(); }
+}
+
+async function sendWaMessage() {
+  if (!activeWaGroupId) return;
+  const ta = document.getElementById('wa-input');
+  const text = ta.value.trim();
+  if (!text) return;
+  ta.value = '';
+  const { error } = await sb.from('chat_group_messages').insert({ group_id: activeWaGroupId, sender_id: currentUser.id, content: text });
+  if (error) toast('Errore invio: ' + error.message, 'err');
+}
+
+// ── Nuovo gruppo ────────────────────────────────────────────────────────────
 function openNewGroupModal() {
   document.getElementById('gm-name').value = '';
   selectedGroupColor = '#0F766E';
-  document.querySelectorAll('.color-dot').forEach(d => d.style.border = '2.5px solid transparent');
-  document.querySelector('.color-dot[data-color="#0F766E"]').style.border = '2.5px solid white';
-  renderGroupPatList('');
+  document.querySelectorAll('#modal-group .color-dot').forEach(d => d.style.border = '2.5px solid transparent');
+  document.querySelector('#modal-group .color-dot[data-color="#0F766E"]').style.border = '2.5px solid white';
+  renderGroupContactList('');
   document.getElementById('modal-group').style.display = 'flex';
 }
 
@@ -505,58 +705,140 @@ function closeGroupModal() { document.getElementById('modal-group').style.displa
 
 function selectColor(color, el) {
   selectedGroupColor = color;
-  document.querySelectorAll('.color-dot').forEach(d => d.style.border = '2.5px solid transparent');
+  document.querySelectorAll('#modal-group .color-dot').forEach(d => d.style.border = '2.5px solid transparent');
   el.style.border = '2.5px solid white';
 }
 
-function filterGroupPatients() {
-  renderGroupPatList(document.getElementById('gm-search').value);
-}
+function filterGroupContacts() { renderGroupContactList(document.getElementById('gm-search').value); }
 
-function renderGroupPatList(search) {
+function renderGroupContactList(search) {
   const s = (search||'').toLowerCase();
-  const list = s ? allPatients.filter(p => (p.full_name||'').toLowerCase().includes(s) || (p.email||'').toLowerCase().includes(s)) : allPatients;
+  let list = unifiedContacts();
+  if (s) list = list.filter(c => contactLabel(c).toLowerCase().includes(s) || (c.email||'').toLowerCase().includes(s));
   const el = document.getElementById('gm-pat-list');
-  el.innerHTML = list.slice(0,40).map(p => `<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--slate)">
-    <input type="checkbox" id="gchk-${p.id}" style="accent-color:var(--teal);width:14px;height:14px">
-    ${esc(p.full_name || p.email || p.id)}
-  </label>`).join('');
+  el.innerHTML = list.length ? list.map(c => `<label class="contact-item">
+      <input type="checkbox" id="gchk-${c.id}" data-role="${c._role}">
+      <span class="contact-name">${esc(contactLabel(c))}</span>
+      <span class="role-badge ${c._role}">${c._role==='dietitian'?'Dietista/Nutrizionista':'Paziente'}</span>
+    </label>`).join('') : '<div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Nessun contatto</div>';
 }
 
 async function saveGroup() {
   const name = document.getElementById('gm-name').value.trim();
   if (!name) { toast('Inserisci il nome del gruppo', 'err'); return; }
-  const memberIds = [...document.querySelectorAll('#gm-pat-list input[type=checkbox]:checked')].map(i => i.id.replace('gchk-',''));
+  const checked = [...document.querySelectorAll('#gm-pat-list input[type=checkbox]:checked')];
+  const members = checked.map(i => ({ id: i.id.replace('gchk-',''), role: i.dataset.role }));
   showLoading(true);
   try {
-    const { data: grp, error } = await sb.from('patient_groups').insert({ dietitian_id: currentUser.id, name, color: selectedGroupColor }).select().single();
+    const { data: grp, error } = await sb.from('chat_groups').insert({ name, color: selectedGroupColor, created_by: currentUser.id }).select().single();
     if (error) throw error;
-    if (memberIds.length) {
-      await sb.from('patient_group_members').insert(memberIds.map(pid => ({ group_id: grp.id, patient_id: pid })));
-    }
-    toast(`✅ Gruppo "${name}" creato con ${memberIds.length} pazienti!`, 'ok');
+    const rows = [
+      { group_id: grp.id, user_id: currentUser.id, member_role: 'dietitian' },
+      ...members.filter(m => m.id !== currentUser.id).map(m => ({ group_id: grp.id, user_id: m.id, member_role: m.role }))
+    ];
+    const { error: mErr } = await sb.from('chat_group_members').insert(rows);
+    if (mErr) throw mErr;
+    toast(`✅ Gruppo "${name}" creato con ${rows.length} membri!`, 'ok');
     closeGroupModal();
-    await loadGroups();
+    await loadWaGroups();
+    await selectWaGroup(grp.id);
   } catch(e) {
     toast('Errore: ' + e.message, 'err');
   }
   showLoading(false);
 }
 
-async function deleteGroup(id, e) {
-  e.stopPropagation();
-  if (!confirm('Eliminare questo gruppo?')) return;
-  await sb.from('patient_groups').delete().eq('id', id);
-  await loadGroups();
-  if (activeGroupId === id) selectGroup('all');
+async function deleteActiveGroup() {
+  if (!activeWaGroupId) return;
+  const g = allGroups.find(x => x.id === activeWaGroupId);
+  if (g && g.created_by !== currentUser.id) { toast('Solo chi ha creato il gruppo può eliminarlo', 'err'); return; }
+  if (!confirm('Eliminare questo gruppo per tutti i membri?')) return;
+  showLoading(true);
+  await sb.from('chat_groups').delete().eq('id', activeWaGroupId);
+  if (waRealtimeChannel) { waRealtimeChannel.unsubscribe(); waRealtimeChannel = null; }
+  activeWaGroupId = null;
+  document.getElementById('wa-thread').style.display = 'none';
+  document.getElementById('wa-thread-empty').style.display = 'flex';
+  await loadWaGroups();
+  showLoading(false);
+}
+
+// ── Gestione membri ─────────────────────────────────────────────────────────
+function openGroupMembersModal() {
+  if (!activeWaGroupId) return;
+  renderCurrentMembersList();
+  document.getElementById('gmem-search').value = '';
+  renderAddMemberList();
+  const g = allGroups.find(x => x.id === activeWaGroupId);
+  document.getElementById('gmem-add-section').style.display = (g && g.created_by === currentUser.id) ? 'block' : 'none';
+  document.getElementById('modal-group-members').style.display = 'flex';
+}
+
+function closeMembersModal() { document.getElementById('modal-group-members').style.display = 'none'; }
+
+function renderCurrentMembersList() {
+  const g = allGroups.find(x => x.id === activeWaGroupId);
+  if (!g) return;
+  const isCreator = g.created_by === currentUser.id;
+  document.getElementById('gmem-current-list').innerHTML = g.members.map(m => {
+    const info = groupMemberProfiles[m.user_id] || { name:'Utente', role:m.member_role };
+    const canRemove = isCreator && m.user_id !== currentUser.id;
+    return `<div class="member-row">
+      <span class="contact-name" style="flex:1">${esc(info.name)}</span>
+      <span class="role-badge ${m.member_role}">${m.member_role==='dietitian'?'Dietista/Nutrizionista':'Paziente'}</span>
+      ${canRemove ? `<button onclick="removeMember('${m.user_id}')" style="background:none;border:none;cursor:pointer;color:#94A3B8;font-size:12px" title="Rimuovi">🗑</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderAddMemberList() {
+  const g = allGroups.find(x => x.id === activeWaGroupId);
+  if (!g) return;
+  const existingIds = new Set(g.members.map(m => m.user_id));
+  const s = (document.getElementById('gmem-search').value||'').toLowerCase();
+  let list = unifiedContacts().filter(c => !existingIds.has(c.id));
+  if (s) list = list.filter(c => contactLabel(c).toLowerCase().includes(s));
+  document.getElementById('gmem-add-list').innerHTML = list.length ? list.slice(0,40).map(c => `<label class="contact-item">
+      <input type="checkbox" id="gaddchk-${c.id}" data-role="${c._role}">
+      <span class="contact-name">${esc(contactLabel(c))}</span>
+      <span class="role-badge ${c._role}">${c._role==='dietitian'?'Dietista/Nutrizionista':'Paziente'}</span>
+    </label>`).join('') : '<div style="text-align:center;padding:12px;color:var(--slate-l);font-size:12px">Nessun contatto</div>';
+}
+
+async function addSelectedMembers() {
+  const checked = [...document.querySelectorAll('#gmem-add-list input[type=checkbox]:checked')];
+  if (!checked.length) { toast('Seleziona almeno un contatto', 'err'); return; }
+  const rows = checked.map(i => ({ group_id: activeWaGroupId, user_id: i.id.replace('gaddchk-',''), member_role: i.dataset.role }));
+  showLoading(true);
+  const { error } = await sb.from('chat_group_members').insert(rows);
+  if (error) { toast('Errore: ' + error.message, 'err'); showLoading(false); return; }
+  toast(`✅ ${rows.length} membri aggiunti`, 'ok');
+  await loadWaGroups();
+  const g = allGroups.find(x => x.id === activeWaGroupId);
+  if (g) {
+    await loadGroupMemberProfiles(g);
+    document.getElementById('wa-thread-members').textContent = g.members.map(m => groupMemberProfiles[m.user_id]?.name || '').filter(Boolean).join(', ');
+  }
+  renderCurrentMembersList();
+  renderAddMemberList();
+  showLoading(false);
+}
+
+async function removeMember(userId) {
+  if (!confirm('Rimuovere questo membro dal gruppo?')) return;
+  showLoading(true);
+  await sb.from('chat_group_members').delete().eq('group_id', activeWaGroupId).eq('user_id', userId);
+  await loadWaGroups();
+  renderCurrentMembersList();
+  renderAddMemberList();
+  showLoading(false);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const ok = await checkAuth();
   if (!ok) return;
   await init();
-  // Start with all patients selected
-  selectGroup('all');
+  switchTopTab('groups');
 });
 </script>
 </body>

@@ -244,7 +244,7 @@ function renderAll() {
 
   // Appointments per month
   const apptMap = {};
-  allAppts.forEach(a => { const k = getMonthKey(a.start_time || a.date || a.created_at); apptMap[k] = (apptMap[k]||0) + 1; });
+  allAppts.forEach(a => { const k = getMonthKey(a.data || a.created); apptMap[k] = (apptMap[k]||0) + 1; });
   const apptData = monthKeys.map(mk => apptMap[mk] || 0);
 
   // Retention: active patients / total patients registered up to that month
@@ -257,7 +257,7 @@ function renderAll() {
       // Consider active if they had an appointment in the last 90 days of that month
       return true; // simplified: use total active as proxy
     }).length;
-    return Math.round((totalUpTo > 0 ? Math.min(100, Math.round(allPatients.filter(p => p.last_sign_in_at && getMonthKey(p.last_sign_in_at) >= mk).length / totalUpTo * 100)) : 0));
+    return Math.round((totalUpTo > 0 ? Math.min(100, Math.round(allPatients.filter(p => p.last_seen_at && getMonthKey(p.last_seen_at) >= mk).length / totalUpTo * 100)) : 0));
   });
 
   renderChart('chart-acquired', chartAcquired, {
@@ -287,7 +287,7 @@ function renderAll() {
   const curMonthKey = monthKeys[monthKeys.length - 1];
   const newThisMonth = allPatients.filter(p => getMonthKey(p.created_at) === curMonthKey).length;
   const newLastMonth = allPatients.filter(p => getMonthKey(p.created_at) === prevMonthKey).length;
-  const activeCount = allPatients.filter(p => p.last_sign_in_at && isWithin90Days(p.last_sign_in_at)).length;
+  const activeCount = allPatients.filter(p => p.last_seen_at && isWithin90Days(p.last_seen_at)).length;
   const retention = totalNow > 0 ? Math.round(activeCount / totalNow * 100) : 0;
   const apptThisMonth = apptMap[curMonthKey] || 0;
   const apptLastMonth = apptMap[prevMonthKey] || 0;
@@ -339,10 +339,10 @@ function renderCohortTable() {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     const registered = allPatients.filter(p => getMonthKey(p.created_at) === mk);
-    const active30 = registered.filter(p => p.last_sign_in_at && isWithin30Days(p.last_sign_in_at)).length;
-    const active90 = registered.filter(p => p.last_sign_in_at && isWithin90Days(p.last_sign_in_at)).length;
+    const active30 = registered.filter(p => p.last_seen_at && isWithin30Days(p.last_seen_at)).length;
+    const active90 = registered.filter(p => p.last_seen_at && isWithin90Days(p.last_seen_at)).length;
     const ret90 = registered.length ? Math.round(active90 / registered.length * 100) : null;
-    const visits = allAppts.filter(a => getMonthKey(a.start_time || a.date || a.created_at) === mk).length;
+    const visits = allAppts.filter(a => getMonthKey(a.data || a.created) === mk).length;
     const retColor = ret90 === null ? 'delta-neutral' : ret90 >= 70 ? 'delta-up' : ret90 >= 40 ? 'delta-neutral' : 'delta-down';
     rows.push(`<tr>
       <td>${d.toLocaleDateString('it', { month: 'long', year: 'numeric' })}</td>
@@ -382,8 +382,8 @@ async function loadAnalytics() {
   try {
     await loadChartJs();
     const [pRes, aRes, dRes] = await Promise.all([
-      sb.from('profiles').select('id,created_at,last_sign_in_at,approved').eq('role','patient').order('created_at',{ascending:false}),
-      sb.from('appointments').select('id,start_time,date,created_at').order('created_at',{ascending:false}),
+      sb.from('profiles').select('id,created_at,last_seen_at,approved').eq('role','patient').order('created_at',{ascending:false}),
+      sb.from('agenda_events').select('id,data,created').order('created',{ascending:false}),
       sb.from('patient_documents').select('id,created_at').order('created_at',{ascending:false})
     ]);
     allPatients = pRes.data || [];
@@ -405,7 +405,7 @@ function exportCSV() {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     const acquired = allPatients.filter(p => getMonthKey(p.created_at) === mk).length;
-    const visits = allAppts.filter(a => getMonthKey(a.start_time || a.date || a.created_at) === mk).length;
+    const visits = allAppts.filter(a => getMonthKey(a.data || a.created) === mk).length;
     rows.push(`${d.toLocaleDateString('it',{month:'long',year:'numeric'})},${acquired},${visits}`);
   }
   const csv = header + rows.join('\n');

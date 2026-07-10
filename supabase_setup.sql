@@ -1478,3 +1478,170 @@ BEGIN
     );
   END LOOP;
 END $$;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 16 — GRUPPI DI CHAT (dietisti + pazienti insieme, stile WhatsApp)
+--
+-- Sostituisce la proposta mai eseguita in supabase/new_features.sql
+-- (patient_groups/patient_group_members: solo pazienti, nessuna chat
+-- persistente, solo liste destinatari per un invio broadcast una-tantum).
+-- broadcast_messages viene invece creata qui: resta lo storico dell'invio
+-- rapido "una tantum" a più pazienti, funzionalità distinta dai gruppi.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Colonna condivisa con Diet-Plan-Pro-app-claude (supabase-schema.sql riga
+-- ~351): l'app paziente la aggiorna ogni 60s per lo stato online in chat.
+-- Ridichiarata qui in modo difensivo nel caso questo file giri per primo.
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
+
+CREATE TABLE IF NOT EXISTS chat_groups (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name          TEXT        NOT NULL,
+  color         TEXT        NOT NULL DEFAULT '#0F766E',
+  created_by    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS chat_group_members (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  group_id      UUID        NOT NULL REFERENCES chat_groups(id) ON DELETE CASCADE,
+  user_id       UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  member_role   TEXT        NOT NULL CHECK (member_role IN ('dietitian','patient')),
+  last_read_at  TIMESTAMPTZ,
+  added_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (group_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_chat_group_members_group ON chat_group_members(group_id);
+CREATE INDEX IF NOT EXISTS idx_chat_group_members_user  ON chat_group_members(user_id);
+
+CREATE TABLE IF NOT EXISTS chat_group_messages (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  group_id      UUID        NOT NULL REFERENCES chat_groups(id) ON DELETE CASCADE,
+  sender_id     UUID        NOT NULL REFERENCES auth.users(id),
+  content       TEXT        NOT NULL,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_chat_group_messages_group_created ON chat_group_messages(group_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS broadcast_messages (
+  id                UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  dietitian_id      UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  message_text      TEXT        NOT NULL,
+  message_type      TEXT        NOT NULL DEFAULT 'chat' CHECK (message_type IN ('chat','notification')),
+  recipients_count  INTEGER     NOT NULL DEFAULT 0,
+  patient_ids       UUID[]      NOT NULL DEFAULT '{}',
+  group_name        TEXT,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_broadcast_messages_dietitian_created ON broadcast_messages(dietitian_id, created_at DESC);
+
+ALTER TABLE chat_groups          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_group_members   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_group_messages  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE broadcast_messages   ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE FUNCTION is_chat_group_member(gid UUID, uid UUID)
+RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (SELECT 1 FROM chat_group_members WHERE group_id = gid AND user_id = uid);
+$$;
+GRANT EXECUTE ON FUNCTION is_chat_group_member(UUID, UUID) TO authenticated;
+
+DROP POLICY IF EXISTS "chat_groups_member_select" ON chat_groups;
+CREATE POLICY "chat_groups_member_select" ON chat_groups
+  FOR SELECT USING (is_chat_group_member(id, auth.uid()));
+
+DROP POLICY IF EXISTS "chat_groups_dietitian_insert" ON chat_groups;
+CREATE POLICY "chat_groups_dietitian_insert" ON chat_groups
+  FOR INSERT WITH CHECK (
+    auth.uid() = created_by
+    AND EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'dietitian')
+  );
+
+DROP POLICY IF EXISTS "chat_groups_creator_update" ON chat_groups;
+CREATE POLICY "chat_groups_creator_update" ON chat_groups
+  FOR UPDATE USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
+
+DROP POLICY IF EXISTS "chat_groups_creator_delete" ON chat_groups;
+CREATE POLICY "chat_groups_creator_delete" ON chat_groups
+  FOR DELETE USING (auth.uid() = created_by);
+
+DROP POLICY IF EXISTS "chat_group_members_select" ON chat_group_members;
+CREATE POLICY "chat_group_members_select" ON chat_group_members
+  FOR SELECT USING (is_chat_group_member(group_id, auth.uid()));
+
+DROP POLICY IF EXISTS "chat_group_members_creator_insert" ON chat_group_members;
+CREATE POLICY "chat_group_members_creator_insert" ON chat_group_members
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM chat_groups WHERE id = group_id AND created_by = auth.uid())
+  );
+
+DROP POLICY IF EXISTS "chat_group_members_creator_delete" ON chat_group_members;
+CREATE POLICY "chat_group_members_creator_delete" ON chat_group_members
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM chat_groups WHERE id = group_id AND created_by = auth.uid())
+  );
+
+-- Un membro può aggiornare solo il proprio last_read_at (badge "non letti")
+DROP POLICY IF EXISTS "chat_group_members_self_update" ON chat_group_members;
+CREATE POLICY "chat_group_members_self_update" ON chat_group_members
+  FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "chat_group_messages_member_select" ON chat_group_messages;
+CREATE POLICY "chat_group_messages_member_select" ON chat_group_messages
+  FOR SELECT USING (is_chat_group_member(group_id, auth.uid()));
+
+DROP POLICY IF EXISTS "chat_group_messages_member_insert" ON chat_group_messages;
+CREATE POLICY "chat_group_messages_member_insert" ON chat_group_messages
+  FOR INSERT WITH CHECK (
+    auth.uid() = sender_id AND is_chat_group_member(group_id, auth.uid())
+  );
+
+DROP POLICY IF EXISTS "broadcast_messages_dietitian_own" ON broadcast_messages;
+CREATE POLICY "broadcast_messages_dietitian_own" ON broadcast_messages
+  FOR ALL USING (auth.uid() = dietitian_id) WITH CHECK (auth.uid() = dietitian_id);
+
+-- ── Visibilità profili per il selettore contatti e le chat di gruppo ────────
+
+-- Un dietista vede i profili dei colleghi del proprio studio (titolare +
+-- collaboratori), necessario per popolare il selettore contatti "Dietisti"
+-- in broadcast.html indipendentemente dal legame patient_dietitian.
+DROP POLICY IF EXISTS "profiles_select_studio_mates" ON profiles;
+CREATE POLICY "profiles_select_studio_mates" ON profiles
+  FOR SELECT USING (get_studio_owner(profiles.id) = get_studio_owner(auth.uid()));
+
+-- Chi condivide un gruppo di chat vede il profilo (nome/badge) degli altri
+-- membri, anche se non altrimenti collegati (es. paziente di un collega,
+-- o paziente co-membro dello stesso gruppo).
+DROP POLICY IF EXISTS "profiles_select_group_co_members" ON profiles;
+CREATE POLICY "profiles_select_group_co_members" ON profiles
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM chat_group_members m1
+      JOIN chat_group_members m2 ON m1.group_id = m2.group_id
+      WHERE m1.user_id = auth.uid() AND m2.user_id = profiles.id
+    )
+  );
+
+-- Il selettore contatti di broadcast.html deve funzionare anche per un
+-- collaboratore (non solo per il titolare): estende la policy esistente
+-- perché patient_dietitian.dietitian_id è sempre il titolare, mai il
+-- collaboratore, quindi "dietitian_id = auth.uid()" da solo escludeva i
+-- collaboratori dalla lettura dei profili paziente.
+DROP POLICY IF EXISTS "profiles_select_linked_patients" ON profiles;
+CREATE POLICY "profiles_select_linked_patients" ON profiles
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM patient_dietitian
+            WHERE patient_dietitian.patient_id = profiles.id
+              AND patient_dietitian.dietitian_id = get_studio_owner(auth.uid()))
+  );
+
+-- Realtime per il nuovo canale di gruppo (vedi SEZIONE 14)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'chat_group_messages'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE chat_group_messages;
+  END IF;
+END $$;

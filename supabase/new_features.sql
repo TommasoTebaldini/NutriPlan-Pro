@@ -3,49 +3,12 @@
 -- Esegui questo file nel SQL Editor di Supabase
 -- ════════════════════════════════════════════════════════════════════════════
 
--- ─── 1. Gruppi broadcast ────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS patient_groups (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  dietitian_id UUID REFERENCES auth.users NOT NULL,
-  name TEXT NOT NULL,
-  color TEXT DEFAULT '#0F766E',
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-ALTER TABLE patient_groups ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "dietitian_own_groups" ON patient_groups
-  FOR ALL USING (auth.uid() = dietitian_id);
-
--- ─── 2. Membri dei gruppi ────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS patient_group_members (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  group_id UUID REFERENCES patient_groups(id) ON DELETE CASCADE NOT NULL,
-  patient_id UUID REFERENCES auth.users NOT NULL,
-  UNIQUE(group_id, patient_id)
-);
-ALTER TABLE patient_group_members ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "dietitian_group_members" ON patient_group_members
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM patient_groups
-      WHERE id = patient_group_members.group_id
-      AND dietitian_id = auth.uid()
-    )
-  );
-
--- ─── 3. Messaggi broadcast ───────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS broadcast_messages (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  dietitian_id UUID REFERENCES auth.users NOT NULL,
-  message_text TEXT NOT NULL,
-  message_type TEXT DEFAULT 'chat' CHECK (message_type IN ('chat', 'notification')),
-  recipients_count INT DEFAULT 0,
-  patient_ids UUID[] DEFAULT '{}',
-  group_name TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-ALTER TABLE broadcast_messages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "dietitian_own_broadcasts" ON broadcast_messages
-  FOR ALL USING (auth.uid() = dietitian_id);
+-- ─── 1-3. Gruppi broadcast / membri / messaggi broadcast ────────────────────
+-- SUPERATE: mai eseguite in produzione (solo pazienti, nessuna chat
+-- persistente). Sostituite da chat_groups/chat_group_members/
+-- chat_group_messages + broadcast_messages in supabase_setup.sql (SEZIONE 16),
+-- che supportano gruppi misti dietisti+pazienti con chat persistente stile
+-- WhatsApp. Non eseguire questo blocco.
 
 -- ─── 4. Studio Associato (Multi-dietitian) ──────────────────────────────────
 CREATE TABLE IF NOT EXISTS studio_members (

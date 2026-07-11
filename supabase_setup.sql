@@ -911,11 +911,45 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- Paziente aggiorna le proprie voci (upsert onConflict user_id,date da patient-portal.html/Diet-Plan-Pro)
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='daily_wellness_update_patient' AND tablename='daily_wellness') THEN
+    CREATE POLICY "daily_wellness_update_patient" ON daily_wellness
+      FOR UPDATE USING (
+        auth.uid() = patient_id
+        AND EXISTS (SELECT 1 FROM patient_dietitian
+                    WHERE patient_dietitian.patient_id = auth.uid()
+                      AND patient_dietitian.cartella_id = daily_wellness.cartella_id)
+      ) WITH CHECK (
+        auth.uid() = patient_id
+        AND EXISTS (SELECT 1 FROM patient_dietitian
+                    WHERE patient_dietitian.patient_id = auth.uid()
+                      AND patient_dietitian.cartella_id = daily_wellness.cartella_id)
+      );
+  END IF;
+END $$;
+
 -- Stessa logica per weight_logs
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='weight_logs_insert_patient' AND tablename='weight_logs') THEN
     CREATE POLICY "weight_logs_insert_patient" ON weight_logs
       FOR INSERT WITH CHECK (
+        auth.uid() = patient_id
+        AND EXISTS (SELECT 1 FROM patient_dietitian
+                    WHERE patient_dietitian.patient_id = auth.uid()
+                      AND patient_dietitian.cartella_id = weight_logs.cartella_id)
+      );
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='weight_logs_update_patient' AND tablename='weight_logs') THEN
+    CREATE POLICY "weight_logs_update_patient" ON weight_logs
+      FOR UPDATE USING (
+        auth.uid() = patient_id
+        AND EXISTS (SELECT 1 FROM patient_dietitian
+                    WHERE patient_dietitian.patient_id = auth.uid()
+                      AND patient_dietitian.cartella_id = weight_logs.cartella_id)
+      ) WITH CHECK (
         auth.uid() = patient_id
         AND EXISTS (SELECT 1 FROM patient_dietitian
                     WHERE patient_dietitian.patient_id = auth.uid()

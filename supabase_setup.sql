@@ -877,6 +877,45 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- patient_documents è una tabella condivisa con Diet-Plan-Pro-app-claude, il
+-- cui supabase-schema.sql aggiunge una policy UPDATE "paziente firma documento"
+-- (using/with check solo su patient_id = auth.uid()) per permettere la firma
+-- privacy/consenso. RLS è per-riga, non per-colonna: senza questo trigger un
+-- paziente potrebbe riscrivere QUALSIASI colonna della propria riga (incluso
+-- dietitian_id, per farla comparire tra i documenti di un dietista estraneo),
+-- non solo i campi firma. Ricreato qui (DROP+CREATE) invece che solo nell'altro
+-- file perché non è garantito quale script giri per ultimo sul DB condiviso.
+-- Accesso ai campi via jsonb (non OLD.patient_id diretto): la variante
+-- NutriPlan-Pro pura di questa tabella non ha una colonna patient_id (usa
+-- cartella_id), quindi un accesso tipizzato diretto romperebbe ogni UPDATE
+-- su quella variante con "record has no field patient_id".
+CREATE OR REPLACE FUNCTION prevent_patient_document_tampering()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  allowed TEXT[] := ARRAY['signed_at','signature_data','signature_accepted'];
+  old_j JSONB := to_jsonb(OLD);
+  patient_uid UUID;
+  dietitian_uid UUID;
+BEGIN
+  IF NOT (old_j ? 'patient_id') THEN
+    RETURN NEW;
+  END IF;
+  patient_uid   := (old_j->>'patient_id')::UUID;
+  dietitian_uid := (old_j->>'dietitian_id')::UUID;
+  IF auth.uid() = patient_uid AND auth.uid() IS DISTINCT FROM dietitian_uid THEN
+    IF (to_jsonb(NEW) - allowed) IS DISTINCT FROM (old_j - allowed) THEN
+      RAISE EXCEPTION 'Un paziente può modificare solo i campi di firma del documento';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_prevent_patient_document_tampering ON patient_documents;
+CREATE TRIGGER trg_prevent_patient_document_tampering
+  BEFORE UPDATE ON patient_documents
+  FOR EACH ROW EXECUTE FUNCTION prevent_patient_document_tampering();
+
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- SEZIONE 12 — RLS: DIARIO PAZIENTE (daily_wellness + weight_logs)

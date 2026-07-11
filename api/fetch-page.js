@@ -1,6 +1,9 @@
 // api/fetch-page.js — Vercel Serverless Function
 // Proxy per fetch di pagine web (risolve CORS per importazione ricette da URL)
 
+import dns from 'node:dns';
+const dnsLookup = dns.promises.lookup;
+
 // Per-user rate limiter (instance-scoped)
 const _rl = new Map();
 const RL_MAX = 30;
@@ -27,19 +30,39 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 // Blocklist of private/internal IP ranges to prevent SSRF
 const PRIVATE_IP_PATTERNS = [
+  /^0\./,                             // "this" network
   /^127\./,                          // loopback
   /^10\./,                           // RFC1918
   /^172\.(1[6-9]|2\d|3[01])\./,     // RFC1918
   /^192\.168\./,                     // RFC1918
-  /^169\.254\./,                     // link-local / AWS metadata
+  /^169\.254\./,                     // link-local / cloud metadata (AWS/GCP/Azure)
   /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./,  // CGNAT RFC6598
   /^::1$/,                           // IPv6 loopback
   /^fc00:/i,                         // IPv6 ULA
   /^fe80:/i,                         // IPv6 link-local
 ];
 
+// Normalizza IPv4-mapped IPv6 (::ffff:127.0.0.1 → 127.0.0.1) prima del match.
+function isPrivateIp(ip) {
+  const normalized = ip.replace(/^::ffff:/i, '');
+  return PRIVATE_IP_PATTERNS.some(re => re.test(normalized));
+}
+
 function isPrivateHost(hostname) {
-  return PRIVATE_IP_PATTERNS.some(re => re.test(hostname)) || hostname === 'localhost';
+  return isPrivateIp(hostname) || hostname === 'localhost';
+}
+
+// Protezione SSRF contro DNS rebinding: un hostname pubblico può comunque
+// risolvere (in fase di fetch) a un IP privato. Risolviamo qui e validiamo
+// TUTTI gli indirizzi restituiti, invece di fidarci solo della stringa hostname.
+async function resolvesToPrivateIp(hostname) {
+  if (isPrivateHost(hostname)) return true;
+  try {
+    const records = await dnsLookup(hostname, { all: true, verbatim: true });
+    return records.some(r => isPrivateIp(r.address));
+  } catch {
+    return true; // dominio non risolvibile → non consentito
+  }
 }
 
 function setCorsHeaders(req, res) {
@@ -121,8 +144,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'URL non valido' });
   }
 
-  // SSRF protection: block requests to private/internal network addresses
-  if (isPrivateHost(parsedUrl.hostname)) {
+  // SSRF protection: block requests to private/internal network addresses,
+  // including hostnames that only resolve to a private IP at fetch time.
+  if (await resolvesToPrivateIp(parsedUrl.hostname)) {
     return res.status(400).json({ error: 'URL non consentito' });
   }
 

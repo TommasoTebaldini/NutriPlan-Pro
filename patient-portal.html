@@ -987,10 +987,17 @@ async function salvaDiario() {
 
   const cartellaId = linkedCartelle[0].cartella_id;
   const loggedAt = dateVal ? new Date(dateVal).toISOString() : new Date().toISOString();
+  const dateOnly = dateVal || new Date().toISOString().split('T')[0];
 
+  // user_id/date sono NOT NULL sulla tabella reale (condivisa con l'app pazienti Diet-Plan-Pro,
+  // che usa questa convenzione) — cartella_id/patient_id/logged_at restano per compatibilità con
+  // le letture lato dietista (chat.html). Upsert (non insert) perché user_id+date è a riga unica
+  // per giorno: un paziente potrebbe aver già loggato oggi dall'altra app.
   const wellnessPayload = {
     cartella_id: cartellaId,
     patient_id: currentUser.id,
+    user_id: currentUser.id,
+    date: dateOnly,
     logged_at: loggedAt,
     mood: mood ? parseInt(mood) : null,
     notes: notes || null,
@@ -999,7 +1006,7 @@ async function salvaDiario() {
     symptoms: symptomsRaw ? symptomsRaw : null
   };
 
-  const { error: wellErr } = await sb.from('daily_wellness').insert(wellnessPayload);
+  const { error: wellErr } = await sb.from('daily_wellness').upsert(wellnessPayload, { onConflict: 'user_id,date' });
   if (wellErr) {
     toast('❌ Errore salvataggio: ' + wellErr.message, 'err');
     return;
@@ -1009,12 +1016,16 @@ async function salvaDiario() {
   if (weightVal) {
     const weight = parseFloat(weightVal);
     if (!isNaN(weight) && weight > 0) {
-      await sb.from('weight_logs').insert({
+      const { error: wErr } = await sb.from('weight_logs').upsert({
         cartella_id: cartellaId,
         patient_id: currentUser.id,
+        user_id: currentUser.id,
+        date: dateOnly,
         logged_at: loggedAt,
-        weight: weight
-      });
+        weight: weight,
+        weight_kg: weight
+      }, { onConflict: 'user_id,date' });
+      if (wErr) toast('❌ Errore salvataggio peso: ' + wErr.message, 'err');
     }
   }
 
@@ -1558,12 +1569,14 @@ async function logAttivita() {
   if (!tipo) { toast('Inserisci il tipo di attività', 'err'); return; }
 
   const actStr = `${tipo}${durata ? ' — ' + durata + ' min' : ''}${intensita ? ' (' + intensita + ')' : ''}${note ? ' — ' + note : ''}`;
-  const { error } = await sb.from('daily_wellness').insert({
+  const { error } = await sb.from('daily_wellness').upsert({
     cartella_id: linkedCartelle[0].cartella_id,
     patient_id: currentUser.id,
+    user_id: currentUser.id,
+    date: dateVal,
     logged_at: new Date(dateVal).toISOString(),
     activity: actStr
-  });
+  }, { onConflict: 'user_id,date' });
   if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   ['att-tipo','att-durata','att-note'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   if (document.getElementById('att-intensita')) document.getElementById('att-intensita').value = '';

@@ -542,12 +542,18 @@ DO $$ BEGIN
       FOR SELECT USING (auth.uid() = dietitian_id OR auth.uid() = patient_id);
   END IF;
 END $$;
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_dietitian_insert_own' AND tablename='patient_dietitian') THEN
-    CREATE POLICY "patient_dietitian_insert_own" ON patient_dietitian
-      FOR INSERT WITH CHECK (auth.uid() = dietitian_id);
-  END IF;
-END $$;
+-- Fix sicurezza (2026-07-11): la vecchia policy verificava solo "sto inserendo me stesso
+-- come dietitian_id", senza controllare che l'utente sia davvero un dietista né che la
+-- cartella_id gli appartenga. Un paziente autenticato poteva auto-concedersi accesso ai
+-- dati clinici di qualunque altro paziente. DROP+CREATE incondizionato (non guardato da
+-- IF NOT EXISTS) per sostituire anche la versione già eseguita su installazioni esistenti.
+DROP POLICY IF EXISTS "patient_dietitian_insert_own" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_insert_own" ON patient_dietitian
+  FOR INSERT WITH CHECK (
+    auth.uid() = dietitian_id
+    AND EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'dietitian')
+    AND (cartella_id IS NULL OR cartella_id IN (SELECT id FROM cartelle WHERE user_id = auth.uid()))
+  );
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_dietitian_delete_own' AND tablename='patient_dietitian') THEN
     CREATE POLICY "patient_dietitian_delete_own" ON patient_dietitian

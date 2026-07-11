@@ -669,8 +669,8 @@ function renderWaMessages() {
     const scheduledBadge = m.status === 'scheduled'
       ? `<div style="background:#FEF9C3;border-radius:4px;padding:2px 6px;font-size:10px;color:#854D0E;margin-bottom:4px">📅 Programmato per: ${new Date(m.scheduled_at).toLocaleString('it',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>`
       : '';
-    const msgContent = (m.type === 'voice' && m.content)
-      ? `<audio controls src="${m.content}" style="max-width:200px;height:32px"></audio>`
+    const msgContent = (m.type === 'voice' && m.content && /^https:\/\//.test(m.content))
+      ? `<audio controls src="${esc(m.content)}" style="max-width:200px;height:32px"></audio>`
       : esc(m.content || '');
     const msgBgStyle = m.status === 'scheduled' ? 'background:#FEF9C3!important;color:#92400E!important;border:1.5px solid #FDE68A' : '';
     html += `<div class="wa-msg ${isSent?'sent':'received'}" style="${msgBgStyle}">${senderLabel}${scheduledBadge}<div>${msgContent}</div><div class="wa-msg-time">${time}</div></div>`;

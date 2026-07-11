@@ -23,7 +23,6 @@ export default [
       'js/linee-guida-data.js',
       'js/consigli-data.js',
       'js/ricette-db.js',
-      'js/html2canvas.min.js',
       // Dead root-level duplicates from a past "Add files via upload" mishap
       // (content swapped vs. filename, never referenced by vercel.json/HTML) —
       // left in place per explicit instruction, not worth linting.

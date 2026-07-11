@@ -415,6 +415,12 @@
       <div style="margin-bottom:10px">
         <input type="text" id="alt-search" class="db-search" placeholder="🔍 Cerca alimento alternativo..." oninput="showAlternatives()" style="width:100%">
       </div>
+      <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 12px;margin-bottom:14px">
+        <label style="font-size:12px;font-weight:700;color:#5B21B6;display:flex;align-items:center;gap:5px;margin-bottom:6px">✨ Suggerimento AI</label>
+        <input type="text" id="alt-ai-context" placeholder="Vincoli opzionali (es. senza glutine, diabete, allergia a...)" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #C4B5FD;border-radius:8px;font-size:12.5px;margin-bottom:8px">
+        <button class="btn btn-primary btn-sm" style="background:#7C3AED;border-color:#7C3AED" onclick="suggestAIAlternatives()" id="alt-ai-btn">✨ Chiedi all'AI</button>
+        <div id="alt-ai-results" style="margin-top:10px"></div>
+      </div>
       <div id="alt-results"></div>
     </div>
   </div>
@@ -1561,8 +1567,77 @@ function openAlt(mi, ii) {
     `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${_NL(b)}</button>`
   ).join('');
   document.getElementById('alt-search').value = '';
+  document.getElementById('alt-ai-context').value = '';
+  document.getElementById('alt-ai-results').innerHTML = '';
   showAlternatives();
   openM('modal-alt');
+}
+
+async function suggestAIAlternatives() {
+  const item = getMeals()[altMi]?.items[altIi];
+  if (!item) return;
+  const f = lookup(item.nome);
+  if (!f) return;
+  const qt = parseFloat(item.qt) || 100;
+  const context = (document.getElementById('alt-ai-context')?.value || '').trim().slice(0, 300);
+  const btn = document.getElementById('alt-ai-btn');
+  const box = document.getElementById('alt-ai-results');
+  btn.disabled = true; btn.textContent = '⏳ Sto pensando...';
+  box.innerHTML = '';
+
+  try {
+    // Shortlist della stessa categoria (o del DB intero se la categoria è
+    // troppo piccola) — l'AI sceglie SOLO da questi nomi, così le macro
+    // mostrate restano quelle vere del nostro DB, mai stimate dall'AI.
+    let pool = ALL_DB.filter(a => a.n !== f.n && a.c === f.c);
+    if (pool.length < 8) pool = ALL_DB.filter(a => a.n !== f.n);
+    const shortlist = pool.slice(0, 80).map(a => a.n);
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.access_token) { toast('Sessione scaduta, ricarica la pagina', 'err'); return; }
+
+    const system = 'Sei un nutrizionista clinico italiano. Scegli alimenti sostitutivi SOLO dalla lista fornita (nomi ESATTI, copia-incolla), mai alimenti fuori lista. Rispondi solo con JSON valido: {"alternatives":[{"nome":"...","motivo":"breve motivazione clinica/culinaria in italiano"}]}. Massimo 4 alternative.';
+    const userMsg = `Alimento da sostituire: "${f.n}" (${qt}g).${context ? ` Vincoli: ${context}.` : ''}\nLista alimenti disponibili:\n${shortlist.join(', ')}`;
+
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ system, messages: [{ role: 'user', content: userMsg }], max_tokens: 600, json_mode: true }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+
+    const text = data.content?.[0]?.text || '';
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Risposta AI non valida');
+    const parsed = JSON.parse(match[0]);
+    const suggestions = Array.isArray(parsed.alternatives) ? parsed.alternatives : [];
+
+    const poolByLower = new Map(pool.map(a => [a.n.toLowerCase(), a]));
+    const rows = suggestions.map(s => {
+      const alt = poolByLower.get(String(s.nome || '').toLowerCase());
+      if (!alt) return '';
+      const newQt = qt; // stessa quantità: l'AI ragiona sull'alimento, non sul dosaggio nutriente-per-nutriente (già coperto dal calcolo matematico sopra)
+      const kcal = Math.round((alt.k || 0) / 100 * newQt);
+      const prot = r1((alt.p || 0) / 100 * newQt);
+      const srcCls = alt.src === 'CREA' ? 'src-crea' : alt.src === 'BDA' ? 'src-bda' : 'src-custom';
+      return `<div style="display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:white;border-radius:6px;margin-bottom:6px;border:1px solid #DDD6FE">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div style="font-weight:600;font-size:12.5px;flex:1;min-width:120px">${esc(foodNameEN(alt.n))} <span class="ac-src ${srcCls}">${alt.src}</span></div>
+          <span style="background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700">${newQt}g</span>
+          <span style="font-size:10.5px;color:var(--slate-l)">${kcal}kcal · P${prot}g</span>
+          <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(alt.n)}',${newQt})">${_L('Sostituisci','Substitute')}</button>
+        </div>
+        ${s.motivo ? `<p style="font-size:11px;color:#5B21B6;margin:0">💡 ${esc(s.motivo)}</p>` : ''}
+      </div>`;
+    }).filter(Boolean).join('');
+
+    box.innerHTML = rows || `<p style="font-size:12px;color:var(--slate-l)">${_L("L'AI non ha trovato alternative adatte in questa categoria.","AI found no suitable alternatives in this category.")}</p>`;
+  } catch (e) {
+    box.innerHTML = `<p style="font-size:12px;color:#DC2626">Errore: ${esc(e.message)}</p>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "✨ Chiedi all'AI";
+  }
 }
 
 function showAlternatives() {

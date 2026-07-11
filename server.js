@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   }
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://api.qrserver.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googleapis.com https://api.groq.com https://cdn.jsdelivr.net https://world.openfoodfacts.org https://world.openfoodfacts.net; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com https://storage.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://api.qrserver.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googleapis.com https://api.groq.com https://cdn.jsdelivr.net https://world.openfoodfacts.org https://world.openfoodfacts.net; manifest-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
   );
   next();
 });

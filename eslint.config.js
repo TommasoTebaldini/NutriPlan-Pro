@@ -57,7 +57,7 @@ export default [
     },
   },
   {
-    files: ['api/**/*.js', 'server.js', 'scripts/**/*.js'],
+    files: ['api/**/*.js', 'server.js', 'scripts/**/*.js', 'generate-icons.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -68,6 +68,20 @@ export default [
     rules: {
       'no-unused-vars': ['warn', { args: 'none', varsIgnorePattern: '^_' }],
       'no-empty': ['error', { allowEmptyCatch: true }],
+    },
+  },
+  {
+    // Service worker: caricato via importScripts da CDN (nessun bundler in
+    // questo repo), quindi `workbox` è un global iniettato a runtime, non un
+    // import statico che ESLint possa risolvere.
+    files: ['sw.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
+      globals: {
+        ...globals.serviceworker,
+        workbox: 'readonly',
+      },
     },
   },
   prettier,

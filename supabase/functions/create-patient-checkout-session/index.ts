@@ -70,7 +70,7 @@ serve(async (req) => {
       await supabaseAdmin.from("profiles").update({ stripe_customer_id: customerId }).eq("id", user.id);
     }
 
-    const origin = req.headers.get("origin") || "https://YOUR_APP_DOMAIN.com";
+    const origin = req.headers.get("origin") || "https://nutri-patient-app.vercel.app";
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",

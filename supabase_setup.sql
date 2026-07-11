@@ -1809,3 +1809,43 @@ CREATE POLICY "chat_groups_member_select" ON chat_groups
   FOR SELECT USING (
     is_chat_group_member(id, auth.uid()) OR created_by = auth.uid()
   );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 19 — ABBONAMENTO STRIPE (dietista)
+--
+-- Colonne lette/scritte da abbonamento.html e dalle edge function già presenti
+-- in supabase/functions/{create-checkout-session,stripe-portal,stripe-webhook}
+-- (create-patient-checkout-session è per Diet-Plan-Pro-app-claude, stesso
+-- progetto Supabase condiviso, non tocca queste colonne di profiles se non
+-- per stripe_customer_id che è generico per qualunque ruolo).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS subscription_plan TEXT NOT NULL DEFAULT 'free';
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS subscription_expires_at TIMESTAMPTZ;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
+CREATE INDEX IF NOT EXISTS idx_profiles_stripe_customer ON profiles(stripe_customer_id) WHERE stripe_customer_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_profiles_stripe_subscription ON profiles(stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL;
+
+-- prevent_self_privilege_escalation() (SEZIONE precedente) blocca già
+-- is_admin/approved/role da self-update, ma non conosceva ancora queste 4
+-- colonne — senza estenderlo, QUALUNQUE dietista potrebbe fare
+-- `UPDATE profiles SET subscription_plan='pro', subscription_expires_at=...`
+-- dalla console del browser e ottenere Pro gratis per sempre. Solo
+-- l'edge function stripe-webhook (service role, auth.uid() IS NULL) o un
+-- admin devono poter cambiare queste colonne.
+CREATE OR REPLACE FUNCTION prevent_self_privilege_escalation()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF auth.uid() IS NOT NULL AND NOT check_is_admin() THEN
+    NEW.is_admin := OLD.is_admin;
+    NEW.approved := OLD.approved;
+    NEW.role     := OLD.role;
+    NEW.subscription_plan         := OLD.subscription_plan;
+    NEW.subscription_expires_at   := OLD.subscription_expires_at;
+    NEW.stripe_customer_id        := OLD.stripe_customer_id;
+    NEW.stripe_subscription_id    := OLD.stripe_subscription_id;
+  END IF;
+  RETURN NEW;
+END;
+$$;

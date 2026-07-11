@@ -50,7 +50,7 @@ serve(async (req) => {
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
-    const origin = req.headers.get("origin") || "https://YOUR_DOMAIN_HERE.com";
+    const origin = req.headers.get("origin") || "https://nutriplan-pro.vercel.app";
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,

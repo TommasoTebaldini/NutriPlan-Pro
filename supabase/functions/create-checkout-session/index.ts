@@ -71,7 +71,7 @@ serve(async (req) => {
     }
 
     // 4. Determine success URL (use request origin or fallback)
-    const origin = req.headers.get("origin") || "https://YOUR_DOMAIN_HERE.com";
+    const origin = req.headers.get("origin") || "https://nutriplan-pro.vercel.app";
 
     // 5. Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({

@@ -1295,12 +1295,12 @@ async function checkDietitianPlan() {
   if (!chatDietitianId) { dietitianIsPro = false; return; }
   try {
     const { data } = await sb.from('profiles')
-      .select('subscription_plan,subscription_expires')
+      .select('subscription_plan,subscription_expires_at')
       .eq('id', chatDietitianId)
       .maybeSingle();
     if (!data) { dietitianIsPro = false; return; }
     const plan = data.subscription_plan || 'free';
-    const exp = data.subscription_expires;
+    const exp = data.subscription_expires_at;
     dietitianIsPro = plan === 'pro' && (!exp || new Date(exp) > new Date());
   } catch(e) { dietitianIsPro = false; }
 }

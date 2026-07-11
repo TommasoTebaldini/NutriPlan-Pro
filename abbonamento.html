@@ -339,6 +339,14 @@
 <script src="js/utils.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
+// Flip a true SOLO dopo aver configurato Stripe per davvero: le 3 edge
+// function in supabase/functions/{create-checkout-session,stripe-portal,
+// stripe-webhook} deployate, i secret STRIPE_SECRET_KEY/STRIPE_PRICE_MONTHLY/
+// STRIPE_PRICE_ANNUAL/STRIPE_WEBHOOK_SECRET impostati, e il webhook registrato
+// su Stripe Dashboard → Developers → Webhooks. Stesso pattern di
+// PAYMENTS_ACTIVE già usato in Diet-Plan-Pro-app-claude.
+const PAYMENTS_ACTIVE = false;
+
 let billingAnnual = false;
 let currentPlan = 'free';
 let subExpiresAt = null;
@@ -397,10 +405,19 @@ function renderSubscriptionUI() {
     document.getElementById('cta-note').textContent = _L('Usa il pulsante qui sotto per gestire il tuo abbonamento','Use the button below to manage your subscription');
   }
 
-  // PAYMENTS NOT YET ACTIVE: hide payment interaction elements
-  const hideWhenInactive = ['billing-toggle','lbl-monthly','lbl-annual','cta-btn','cta-note','manage-section'];
-  hideWhenInactive.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  document.querySelectorAll('.plan-toggle').forEach(el => el.style.display = 'none');
+  const comingSoon = document.getElementById('payments-coming-soon');
+  if (!PAYMENTS_ACTIVE) {
+    if (comingSoon) comingSoon.style.display = 'flex';
+    // Nasconde l'interazione di pagamento finché Stripe non è configurato —
+    // ma NON su manage-section se l'utente è già Pro (es. comp manuale da
+    // admin via SQL editor): deve poter comunque vedere lo stato abbonamento.
+    const hideWhenInactive = ['billing-toggle','lbl-monthly','lbl-annual','cta-btn','cta-note'];
+    hideWhenInactive.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    if (!isPro) document.getElementById('manage-section').style.display = 'none';
+    document.querySelectorAll('.plan-toggle').forEach(el => el.style.display = 'none');
+  } else if (comingSoon) {
+    comingSoon.style.display = 'none';
+  }
 }
 
 // ─── Billing toggle ─────────────────────────────────────

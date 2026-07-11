@@ -613,6 +613,12 @@ CREATE TABLE IF NOT EXISTS patient_consents (
   updated_at         TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- "Firma in studio" (chat.html openFirmaConsenso) salva qui il disegno della
+-- firma raccolto su un canvas (data URL); mancava del tutto, quindi ogni
+-- firma-in-studio falliva con "column does not exist" e (senza controllo
+-- errore lato client) veniva mostrata come riuscita.
+ALTER TABLE patient_consents ADD COLUMN IF NOT EXISTS signature_data_url TEXT;
+
 ALTER TABLE patient_consents ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN

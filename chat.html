@@ -2036,7 +2036,8 @@ function openFirmaConsenso(consentId) {
     context: 'consenso',
     onSave: async (dataUrl, signedAt) => {
       if (consentId) {
-        await sb.from('patient_consents').update({ signed_at: signedAt, signature_data_url: dataUrl }).eq('id', consentId);
+        const { error } = await sb.from('patient_consents').update({ signed_at: signedAt, signature_data_url: dataUrl }).eq('id', consentId);
+        if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
       }
       toast('✅ Consenso firmato in studio!', 'ok');
       if (selectedPatientId) loadPatientPanel(selectedPatientId);

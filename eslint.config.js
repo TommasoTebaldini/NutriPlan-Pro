@@ -23,6 +23,10 @@ export default [
       'js/linee-guida-data.js',
       'js/consigli-data.js',
       'js/ricette-db.js',
+      // Minified build output (npm run build:minify) — generated from
+      // js/db.js and js/lang.js, never hand-edited.
+      'js/db.min.js',
+      'js/lang.min.js',
       // Dead root-level duplicates from a past "Add files via upload" mishap
       // (content swapped vs. filename, never referenced by vercel.json/HTML) —
       // left in place per explicit instruction, not worth linting.

@@ -34,6 +34,11 @@ jobs:
       - name: Check SQL migration for merged/orphaned statements
         run: node scripts/check-sql-syntax.js supabase_setup.sql
 
+      - name: Check minified js/db.js and js/lang.js are up to date
+        run: |
+          npm run build:minify
+          git diff --exit-code js/db.min.js js/lang.min.js
+
       - name: Smoke-test the Express server
         run: |
           node server.js &

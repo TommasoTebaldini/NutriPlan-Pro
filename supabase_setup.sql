@@ -2113,3 +2113,17 @@ DO $$ BEGIN
       FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
   END IF;
 END $$;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 25 — PROMEMORIA PUSH ANCHE AL PAZIENTE (riduzione no-show)
+--
+-- Colonna gemella di reminder_sent_at (SEZIONE 20, che ora tiene traccia
+-- solo dell'invio al DIETISTA dopo SEZIONE 24) — tracciata separatamente
+-- perché i due canali sono indipendenti: un paziente può avere le notifiche
+-- push attive sull'app Diet-Plan-Pro-app-claude anche se il suo dietista non
+-- le ha mai attivate su NutriPlan-Pro, e viceversa. api/cron-appointment-
+-- reminders.js riprova ciascun canale finché non risulta "sent", senza far
+-- dipendere l'uno dall'altro.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE appointments ADD COLUMN IF NOT EXISTS patient_reminder_sent_at TIMESTAMPTZ;

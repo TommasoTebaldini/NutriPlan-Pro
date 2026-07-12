@@ -3,11 +3,42 @@
 // usato per Supabase-js in tutte le pagine), non serve un bundler/injectManifest.
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 
-self.addEventListener('install', () => self.skipWaiting());
+// File pesanti condivisi da (quasi) tutte le pagine cliniche (app/database/
+// patologie/ricette/valutazione per db.min.js, praticamente tutto il sito per
+// lang.min.js) — precachati subito all'installazione della PWA invece di
+// aspettare che ogni singola pagina li richieda per la prima volta, così un
+// dietista che apre "Database Alimenti" per la prima volta li trova già in
+// cache invece di scaricarli lì su una connessione lenta. Vanno nello stesso
+// bucket 'assets-VERSION' usato dalla CacheFirst qui sotto, cosí il cache
+// hit funziona a runtime senza duplicare la logica di caching.
+const PRECACHE_URLS = ['/js/db.min.js', '/js/lang.min.js'];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open('assets-' + VERSION).then(cache => cache.addAll(PRECACHE_URLS)),
+  );
+  self.skipWaiting();
+});
 self.addEventListener('activate', event => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    Promise.all([
+      self.clients.claim(),
+      // Rimuove i bucket delle versioni precedenti (pages-v2, assets-v2, ...)
+      // per non far crescere indefinitamente lo storage occupato dalla SW —
+      // rilevante sui device con poco spazio disco che questo lavoro vuole
+      // supportare meglio. Le cache dei font Google non hanno suffisso
+      // versione (durano già un anno di loro) e restano escluse apposta.
+      caches.keys().then(keys =>
+        Promise.all(
+          keys
+            .filter(key => /-v\d+$/.test(key) && !key.endsWith('-' + VERSION))
+            .map(key => caches.delete(key)),
+        ),
+      ),
+    ]),
+  );
 });
 
 if (!workbox) {

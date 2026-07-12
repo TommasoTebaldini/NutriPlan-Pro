@@ -208,6 +208,29 @@
           <label>Note</label>
           <textarea id="fatt-note" rows="2" placeholder="Note aggiuntive (opzionale)..."></textarea>
         </div>
+        <div class="fg full" style="border-top:1px solid var(--border);margin-top:6px;padding-top:12px">
+          <label style="display:flex;align-items:center;gap:6px">📄 Dati per fattura elettronica <span style="font-weight:400;color:var(--slate-l);font-size:11.5px">(facoltativi, servono solo per generare l'XML FatturaPA)</span></label>
+        </div>
+        <div class="fg">
+          <label>Codice Fiscale paziente</label>
+          <input type="text" id="fatt-cf-paziente" placeholder="RSSMRA80A01H501U" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="fg">
+          <label>Indirizzo</label>
+          <input type="text" id="fatt-indirizzo-paziente" placeholder="Via Roma 1">
+        </div>
+        <div class="fg">
+          <label>CAP</label>
+          <input type="text" id="fatt-cap-paziente" placeholder="00100" maxlength="5">
+        </div>
+        <div class="fg">
+          <label>Comune</label>
+          <input type="text" id="fatt-comune-paziente" placeholder="Roma">
+        </div>
+        <div class="fg">
+          <label>Provincia</label>
+          <input type="text" id="fatt-provincia-paziente" placeholder="RM" maxlength="2" oninput="this.value=this.value.toUpperCase()">
+        </div>
       </div>
     </div>
     <div class="mfoot">
@@ -223,6 +246,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.js" defer></script>
+<script src="js/fatturapa.js" defer></script>
 <script>
 let fatture = [];
 let patients = [];
@@ -379,6 +403,7 @@ function renderFatture() {
         <span class="fatt-date">${fmtDate(f.data_fattura)}</span>
         <div style="display:flex;gap:4px;margin-left:auto">
           ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="Segna come pagato">✓</button>` : ''}
+          <button class="btn btn-ghost btn-xs" onclick="generaFatturaElettronica('${esc(f.id)}')" title="${f.xml_generato_at ? 'XML già generato — rigenera' : 'Genera XML fattura elettronica'}">${f.xml_generato_at ? '📄✓' : '📄'}</button>
           <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="Modifica">✏️</button>
           <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="Elimina">🗑️</button>
         </div>
@@ -386,6 +411,38 @@ function renderFatture() {
       ${f.note ? `<div style="font-size:11.5px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(f.note)}</div>` : ''}
     </div>
   `).join('');
+}
+
+// ── FATTURA ELETTRONICA (XML FatturaPA) ──
+async function generaFatturaElettronica(id) {
+  const f = fatture.find(x => x.id === id);
+  if (!f) return;
+  showLoading(true);
+  try {
+    const { data: fiscal, error: fiscalErr } = await sb.from('profiles')
+      .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fiscal_progressivo_invio')
+      .eq('id', currentUser.id).maybeSingle();
+    if (fiscalErr || !fiscal) throw new Error('Impossibile leggere i dati fiscali del profilo.');
+
+    const progressivo = (fiscal.fiscal_progressivo_invio || 0) + 1;
+    const xml = generaXmlFatturaPA({ fiscal, fattura: f, progressivo });
+    const filename = nomeFileFatturaPA(fiscal, progressivo);
+    scaricaXmlFatturaPA(xml, filename);
+
+    // Persisti il progressivo E marca la fattura come generata SOLO dopo un
+    // download riuscito, così un errore di generazione non "brucia" un
+    // numero di progressivo mai usato davvero.
+    await sb.from('profiles').update({ fiscal_progressivo_invio: progressivo }).eq('id', currentUser.id);
+    const nowIso = new Date().toISOString();
+    if (!useLocalFatt) await sb.from('fatture').update({ xml_generato_at: nowIso }).eq('id', id);
+    fatture = fatture.map(x => x.id === id ? { ...x, xml_generato_at: nowIso } : x);
+    renderFatture();
+    toast('✅ XML generato: ' + filename + ' — ricordati di inviarlo tu allo SDI (PEC o intermediario)', 'ok');
+  } catch (e) {
+    toast('❌ ' + e.message, 'err');
+  } finally {
+    showLoading(false);
+  }
 }
 
 function setTab(name) {
@@ -478,6 +535,11 @@ function openNuovaFattura() {
   document.getElementById('fatt-stato').value = 'da_pagare';
   document.getElementById('fatt-note').value = '';
   document.getElementById('fatt-numero').value = generateNumeroFattura();
+  document.getElementById('fatt-cf-paziente').value = '';
+  document.getElementById('fatt-indirizzo-paziente').value = '';
+  document.getElementById('fatt-cap-paziente').value = '';
+  document.getElementById('fatt-comune-paziente').value = '';
+  document.getElementById('fatt-provincia-paziente').value = '';
   populatePatientSelect();
   openM('modal-fattura');
 }
@@ -530,6 +592,11 @@ async function salvaFattura() {
     importo,
     stato: document.getElementById('fatt-stato').value,
     note: document.getElementById('fatt-note').value.trim() || null,
+    codice_fiscale_paziente: document.getElementById('fatt-cf-paziente').value.trim() || null,
+    indirizzo_paziente: document.getElementById('fatt-indirizzo-paziente').value.trim() || null,
+    cap_paziente: document.getElementById('fatt-cap-paziente').value.trim() || null,
+    comune_paziente: document.getElementById('fatt-comune-paziente').value.trim() || null,
+    provincia_paziente: document.getElementById('fatt-provincia-paziente').value.trim() || null,
   };
   if (useLocalFatt || !currentUser) {
     const arr = lsLoadFatture();
@@ -588,6 +655,11 @@ function editFattura(id) {
   document.getElementById('fatt-stato').value = f.stato || 'da_pagare';
   document.getElementById('fatt-note').value = f.note || '';
   document.getElementById('fatt-numero').value = f.numero_fattura || '';
+  document.getElementById('fatt-cf-paziente').value = f.codice_fiscale_paziente || '';
+  document.getElementById('fatt-indirizzo-paziente').value = f.indirizzo_paziente || '';
+  document.getElementById('fatt-cap-paziente').value = f.cap_paziente || '';
+  document.getElementById('fatt-comune-paziente').value = f.comune_paziente || '';
+  document.getElementById('fatt-provincia-paziente').value = f.provincia_paziente || '';
   populatePatientSelect(f.patient_id || '');
   openM('modal-fattura');
 }

@@ -87,6 +87,11 @@ export default [
         workbox: 'readonly',
       },
     },
+    rules: {
+      // Stesso pattern "best-effort, ignora" già consentito altrove nel
+      // repo (vedi sopra) — qui usato per un payload push malformato/assente.
+      'no-empty': ['error', { allowEmptyCatch: true }],
+    },
   },
   prettier,
 ];

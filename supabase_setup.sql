@@ -1849,3 +1849,267 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 20 — PROMEMORIA AUTOMATICO PRE-APPUNTAMENTO
+--
+-- Colonna letta/scritta da api/cron-appointment-reminders.js (nuovo Vercel
+-- Cron). `appointments` è definita in Diet-Plan-Pro-app-claude/supabase-
+-- schema.sql (progetto Supabase condiviso) — questa colonna vive lì per
+-- schema ownership, ma va eseguita qui perché il cron gira nel progetto
+-- Vercel di NutriPlan-Pro. ADD COLUMN IF NOT EXISTS: nessun rischio a
+-- eseguirla due volte o nell'ordine sbagliato rispetto all'altro repo.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE appointments ADD COLUMN IF NOT EXISTS reminder_sent_at TIMESTAMPTZ;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 21 — TEMPLATE PIANI ALIMENTARI + MARKETPLACE CONDIVISO TRA DIETISTI
+--
+-- `piani_template` era una feature già scritta in app.html (_saveTemplate/
+-- _loadTemplates/_checkTemplateTable) ma la tabella non era mai stata creata:
+-- l'app faceva fallback silenzioso a localStorage (template privati, non
+-- sincronizzati tra dispositivi). Schema base ripreso identico dall'hint
+-- già mostrato nel modal "Carica Template" quando la tabella manca, così
+-- resta compatibile anche se un dietista l'avesse già creata a mano da lì.
+-- Aggiunta `shared`/`usage_count` per il marketplace: un template condiviso
+-- è leggibile da QUALUNQUE dietista della piattaforma (non solo colleghi di
+-- studio, a differenza di studio_collaborators — qui è un marketplace
+-- volutamente aperto, l'utente l'ha descritto come tale).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS piani_template (
+  id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID        REFERENCES auth.users(id) ON DELETE CASCADE,
+  nome         TEXT        NOT NULL,
+  descrizione  TEXT,
+  categoria    TEXT        DEFAULT 'Altro',
+  meals        JSONB,
+  giorni       JSONB,
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  shared       BOOLEAN     NOT NULL DEFAULT FALSE,
+  usage_count  INTEGER     NOT NULL DEFAULT 0
+);
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_name='piani_template' AND column_name='shared') THEN
+    ALTER TABLE piani_template ADD COLUMN shared BOOLEAN NOT NULL DEFAULT FALSE;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_name='piani_template' AND column_name='usage_count') THEN
+    ALTER TABLE piani_template ADD COLUMN usage_count INTEGER NOT NULL DEFAULT 0;
+  END IF;
+END $$;
+
+ALTER TABLE piani_template ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "template_own" ON piani_template;
+CREATE POLICY "template_own" ON piani_template FOR ALL
+  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Lettura dei template condivisi da ALTRI dietisti (marketplace). Il ruolo
+-- viene controllato per non esporre il marketplace anche ai pazienti, che
+-- condividono lo stesso progetto Supabase/auth.users tramite Diet-Plan-Pro.
+DROP POLICY IF EXISTS "template_shared_read" ON piani_template;
+CREATE POLICY "template_shared_read" ON piani_template FOR SELECT
+  USING (
+    shared = true
+    AND EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'dietitian')
+  );
+
+-- Un dietista che applica il template di un collega deve poter incrementare
+-- usage_count senza possedere la riga: la policy "template_own" (FOR ALL)
+-- blocca l'UPDATE diretto per chiunque non sia il proprietario, quindi serve
+-- una funzione SECURITY DEFINER dedicata, che tocca solo quella colonna e
+-- solo su righe realmente condivise.
+CREATE OR REPLACE FUNCTION increment_template_usage(tmpl_id UUID)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  UPDATE piani_template SET usage_count = usage_count + 1
+  WHERE id = tmpl_id AND shared = true;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION increment_template_usage(UUID) TO authenticated;
+
+CREATE INDEX IF NOT EXISTS idx_piani_template_shared ON piani_template (shared) WHERE shared = true;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 22 — FATTURAZIONE ELETTRONICA (generazione XML FatturaPA)
+--
+-- `fatture` era già usata da pagamenti.html ma non esisteva in NESSUN file
+-- .sql del repo (probabilmente mai creata su alcune installazioni — il
+-- codice ha sempre avuto un fallback a localStorage per il caso "tabella
+-- assente", codice errore 42P01). CREATE TABLE IF NOT EXISTS con lo schema
+-- completo: non fa nulla se la tabella esiste già live, altrimenti la crea
+-- da zero — sicura in entrambi i casi.
+--
+-- Importante: questa sezione genera XML conforme allo schema FatturaPA
+-- 1.2.2 (formato FPR12, invio verso privati) ma NON lo trasmette allo SDI
+-- — serve un canale accreditato (PEC, intermediario, o accreditamento
+-- diretto con certificato digitale) che questa app non può fornire. Il
+-- dietista scarica l'XML e lo invia tramite il proprio canale abituale.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS fatture (
+  id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  dietitian_id    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  patient_id      UUID        REFERENCES auth.users(id) ON DELETE SET NULL,
+  patient_name    TEXT,
+  numero_fattura  TEXT,
+  data_fattura    DATE        NOT NULL,
+  tipo_visita     TEXT,
+  importo         NUMERIC     NOT NULL DEFAULT 0,
+  stato           TEXT        NOT NULL DEFAULT 'da_pagare',
+  note            TEXT,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE fatture ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='fatture_all_own' AND tablename='fatture') THEN
+    CREATE POLICY "fatture_all_own" ON fatture FOR ALL
+      USING (auth.uid() = dietitian_id) WITH CHECK (auth.uid() = dietitian_id);
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_fatture_dietitian ON fatture (dietitian_id, data_fattura DESC);
+
+-- Colonne per la generazione XML FatturaPA (CessionarioCommittente = paziente
+-- privato — la XSD richiede indirizzo completo e codice fiscale).
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS aliquota_iva NUMERIC;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS natura_iva TEXT;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS codice_fiscale_paziente TEXT;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS indirizzo_paziente TEXT;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS cap_paziente TEXT;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS comune_paziente TEXT;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS provincia_paziente TEXT;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS xml_generato_at TIMESTAMPTZ;
+
+-- Dati fiscali del dietista (CedentePrestatore in FatturaPA) — impostati una
+-- tantum in impostazioni.html. fiscal_progressivo_invio è il contatore che
+-- alimenta il ProgressivoInvio richiesto dalla XSD (deve essere univoco e
+-- crescente per ogni fattura trasmessa dallo stesso soggetto).
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_ragione_sociale TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_codice_fiscale TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_partita_iva TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_regime TEXT DEFAULT 'RF19';
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_indirizzo TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_cap TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_comune TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_provincia TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fiscal_progressivo_invio INTEGER NOT NULL DEFAULT 0;
+
+-- prevent_self_privilege_escalation() (SEZIONE 19) non deve toccare queste
+-- colonne: sono dati anagrafici/fiscali del dietista stesso, non privilegi —
+-- restano modificabili via la normale policy profiles_update_own, nessuna
+-- estensione del trigger necessaria qui.
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 23 — FIRMA ELETTRONICA AVANZATA (audit trail) + MODULI GENERICI
+--
+-- `patient_signatures` era già referenziata da js/firma.js (firmaSave(), righe
+-- ~155-169) ma non esisteva in NESSUN file .sql — ogni tentativo di salvarci
+-- falliva silenziosamente (catch che fa comunque proseguire il flusso con la
+-- sola immagine in dataURL, mai un audit trail persistente). Creata qui con
+-- lo schema che il codice già si aspettava, esteso con i campi di audit.
+--
+-- Importante — terminologia onesta: questa NON è una firma digitale
+-- qualificata ai sensi del CAD/eIDAS (richiederebbe un prestatore di servizi
+-- fiduciari certificato, es. Namirial/InfoCert/Yousign, che questa app non
+-- integra). È una firma elettronica "avanzata" nel senso comune: disegno su
+-- canvas + audit trail verificabile (IP, user-agent, timestamp server-side
+-- via created_at, hash SHA-256 del testo firmato) — più solida di un
+-- semplice checkbox, ma senza le garanzie legali di una firma qualificata.
+-- La UI deve sempre dirlo esplicitamente, mai promettere "legalmente
+-- vincolante" senza qualificazione.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS patient_signatures (
+  id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id      UUID        REFERENCES auth.users(id) ON DELETE SET NULL,
+  dietitian_id    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  doc_id          UUID,       -- id del consenso/documento firmato (patient_consents.id o patient_documents.id, tabelle diverse quindi nessuna FK tipizzata)
+  context         TEXT        NOT NULL DEFAULT 'documento', -- 'consenso' | 'documento' | altro libero
+  signature_url   TEXT,       -- se l'upload su storage riesce
+  ip_address      TEXT,
+  user_agent      TEXT,
+  content_sha256  TEXT,       -- hash del testo firmato, per rilevare modifiche successive al documento
+  signed_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE patient_signatures ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_signatures_dietitian_all' AND tablename='patient_signatures') THEN
+    CREATE POLICY "patient_signatures_dietitian_all" ON patient_signatures
+      FOR ALL USING (auth.uid() = dietitian_id) WITH CHECK (auth.uid() = dietitian_id);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='patient_signatures_patient_read' AND tablename='patient_signatures') THEN
+    CREATE POLICY "patient_signatures_patient_read" ON patient_signatures
+      FOR SELECT USING (auth.uid() = patient_id);
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_patient_signatures_doc ON patient_signatures (doc_id);
+
+-- Bucket storage per il PNG della firma — stesso pattern già usato per
+-- patient-files/group-chat-media, ON CONFLICT DO UPDATE per applicare i
+-- limiti anche se il bucket esiste già da un tentativo precedente di
+-- firma.js che l'avesse creato al volo con altre impostazioni.
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('patient-signatures', 'patient-signatures', false, 2097152, ARRAY['image/png'])
+ON CONFLICT (id) DO UPDATE SET
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
+
+DROP POLICY IF EXISTS "patient_signatures_storage_write" ON storage.objects;
+CREATE POLICY "patient_signatures_storage_write" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'patient-signatures' AND auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "patient_signatures_storage_read" ON storage.objects;
+CREATE POLICY "patient_signatures_storage_read" ON storage.objects
+  FOR SELECT USING (bucket_id = 'patient-signatures' AND auth.uid() IS NOT NULL);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 24 — NOTIFICHE PUSH PER IL DIETISTA (promemoria appuntamenti)
+--
+-- Sostituisce l'invio email al paziente (SEZIONE 20) con una notifica push
+-- sul dispositivo del DIETISTA — evita di dover mandare potenzialmente
+-- migliaia di email/giorno via Resend al crescere della piattaforma, e
+-- sfrutta la PWA installabile già esistente (app.html, unica pagina col
+-- manifest). Un dietista con multipli dispositivi (desktop studio + telefono)
+-- può avere più subscription attive: UNIQUE(user_id, endpoint), non solo
+-- user_id, a differenza di push_subscriptions di Diet-Plan-Pro-app-claude.
+--
+-- Tabella dedicata invece di riusare push_subscriptions (Diet-Plan-Pro-app-
+-- claude, stesso progetto Supabase): le subscription sono comunque legate a
+-- un VAPID keypair e un service worker/origine specifici, quindi non sono
+-- realmente intercambiabili tra le due app anche condividendo la tabella —
+-- separarle evita ambiguità su quale VAPID key/endpoint appartiene a quale
+-- app.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS dietitian_push_subscriptions (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  endpoint    TEXT        NOT NULL,
+  p256dh      TEXT        NOT NULL,
+  auth        TEXT        NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id, endpoint)
+);
+
+ALTER TABLE dietitian_push_subscriptions ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='dietitian_push_subs_own' AND tablename='dietitian_push_subscriptions') THEN
+    CREATE POLICY "dietitian_push_subs_own" ON dietitian_push_subscriptions
+      FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;

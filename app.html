@@ -503,6 +503,10 @@
           <option value="Sport">Sport</option>
         </select>
       </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer;font-size:12.5px;color:var(--slate)">
+        <input type="checkbox" id="tmpl-shared" style="width:auto;margin:0">
+        <span>🌍 Condividi con la community dei dietisti (visibile e riutilizzabile da altri professionisti sulla piattaforma)</span>
+      </label>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-salva-template')">Annulla</button>
@@ -518,6 +522,11 @@
     <div class="mbody">
       <div style="margin-bottom:10px">
         <input type="text" id="tmpl-search" placeholder="🔍 Cerca template..." data-i18n-placeholder="app.tmpl_search" oninput="renderTemplateList()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:inherit;font-size:13px;box-sizing:border-box">
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px" id="tmpl-scope-tabs">
+        <button class="btn btn-ghost btn-xs tmpl-scope-btn active" data-scope="tutti" onclick="setTemplateScope('tutti')">Tutti</button>
+        <button class="btn btn-ghost btn-xs tmpl-scope-btn" data-scope="miei" onclick="setTemplateScope('miei')">📁 I miei</button>
+        <button class="btn btn-ghost btn-xs tmpl-scope-btn" data-scope="community" onclick="setTemplateScope('community')">🌍 Community</button>
       </div>
       <div id="tmpl-supabase-hint" style="display:none;margin-bottom:10px;padding:9px 12px;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;font-size:11.5px;color:#92400E">
         <b>Tabella Supabase non trovata.</b> I template vengono salvati localmente. Per abilitare la sincronizzazione cloud, crea la tabella con:<br>
@@ -3370,6 +3379,8 @@ function eseguiCopiaPasto() {
 // ═══════════════════════════════════════════════════
 const TMPL_LS_KEY = 'piani_templates_v1';
 let _tmplSupabaseOk = null; // null=not checked, true/false
+let _tmplScope = 'tutti'; // 'tutti' | 'miei' | 'community'
+let _tmplAuthorNames = {}; // user_id -> nome dietista, per i template community
 
 async function _checkTemplateTable() {
   if (_tmplSupabaseOk !== null) return _tmplSupabaseOk;
@@ -3383,11 +3394,21 @@ async function _checkTemplateTable() {
 async function _loadTemplates() {
   const ok = await _checkTemplateTable();
   if (ok) {
+    // Niente filtro esplicito su user_id: la RLS restituisce già l'unione
+    // "i miei" (qualunque stato di shared) + "condivisi da altri dietisti"
+    // (policy template_shared_read) — un'unica query invece di due.
     const { data, error } = await sb.from('piani_template')
-      .select('id,nome,descrizione,categoria,meals,giorni,created_at')
-      .eq('user_id', currentUser.id)
+      .select('id,user_id,nome,descrizione,categoria,meals,giorni,created_at,shared,usage_count')
       .order('created_at', { ascending: false });
-    if (!error && data) return { source: 'supabase', items: data };
+    if (!error && data) {
+      const otherIds = [...new Set(data.filter(t => t.user_id !== currentUser.id).map(t => t.user_id))];
+      if (otherIds.length) {
+        const { data: authors } = await sb.from('profiles').select('id,nome,cognome').in('id', otherIds);
+        _tmplAuthorNames = {};
+        (authors || []).forEach(a => { _tmplAuthorNames[a.id] = [a.nome, a.cognome].filter(Boolean).join(' ') || 'Collega'; });
+      }
+      return { source: 'supabase', items: data };
+    }
   }
   // Fallback localStorage
   try {
@@ -3406,7 +3427,8 @@ async function _saveTemplate(tmpl) {
       descrizione: tmpl.descrizione || null,
       categoria: tmpl.categoria || 'Altro',
       meals: null,
-      giorni: tmpl.giorni
+      giorni: tmpl.giorni,
+      shared: !!tmpl.shared
     };
     if (tmpl.id) {
       const { error } = await sb.from('piani_template').update(payload).eq('id', tmpl.id);
@@ -3458,7 +3480,8 @@ async function eseguiSalvaTemplate() {
     nome,
     descrizione: document.getElementById('tmpl-desc').value.trim(),
     categoria: document.getElementById('tmpl-cat').value,
-    giorni: JSON.parse(JSON.stringify(giorni))
+    giorni: JSON.parse(JSON.stringify(giorni)),
+    shared: document.getElementById('tmpl-shared')?.checked || false
   };
   showLoading(true);
   const result = await _saveTemplate(tmpl);
@@ -3487,13 +3510,26 @@ async function openCaricaTemplate() {
   renderTemplateList();
 }
 
+function setTemplateScope(scope) {
+  _tmplScope = scope;
+  document.querySelectorAll('.tmpl-scope-btn').forEach(b => {
+    const active = b.dataset.scope === scope;
+    b.style.background = active ? 'var(--primary, #0F766E)' : '';
+    b.style.color = active ? '#fff' : '';
+  });
+  renderTemplateList();
+}
+
 function renderTemplateList() {
   const container = document.getElementById('tmpl-list-container');
   if (!container) return;
   const q = (document.getElementById('tmpl-search')?.value || '').toLowerCase().trim();
-  const items = (_cachedTemplates || []).filter(t =>
-    !q || t.nome.toLowerCase().includes(q) || (t.categoria || '').toLowerCase().includes(q) || (t.descrizione || '').toLowerCase().includes(q)
-  );
+  const isMine = t => !currentUser || t.user_id === currentUser.id || t.id?.startsWith?.('ls_');
+  const items = (_cachedTemplates || []).filter(t => {
+    if (_tmplScope === 'miei' && !isMine(t)) return false;
+    if (_tmplScope === 'community' && (isMine(t) || !t.shared)) return false;
+    return !q || t.nome.toLowerCase().includes(q) || (t.categoria || '').toLowerCase().includes(q) || (t.descrizione || '').toLowerCase().includes(q);
+  });
   if (!items.length) {
     container.innerHTML = '<div style="color:var(--slate-l);font-size:13px;text-align:center;padding:20px">Nessun template trovato.</div>';
     return;
@@ -3501,17 +3537,21 @@ function renderTemplateList() {
   container.innerHTML = items.map(t => {
     const d = t.created_at ? new Date(t.created_at).toLocaleDateString('it', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
     const nGiorni = Array.isArray(t.giorni) ? t.giorni.length : 1;
+    const mine = isMine(t);
+    const author = !mine && t.user_id ? (_tmplAuthorNames[t.user_id] || 'Collega') : '';
     return `<div class="tmpl-card" onclick="applicaTemplate('${esc(t.id)}')">
       <div style="flex:1;min-width:0">
         <div style="font-weight:700;font-size:13.5px;margin-bottom:3px">${esc(t.nome)}</div>
         ${t.descrizione ? `<div style="font-size:11.5px;color:var(--slate-l);margin-bottom:4px">${esc(t.descrizione)}</div>` : ''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
           <span class="tmpl-cat-badge">${esc(t.categoria || 'Altro')}</span>
+          ${!mine ? `<span class="tmpl-cat-badge" style="background:#EFF6FF;color:#1D4ED8">🌍 ${esc(author)}</span>` : (t.shared ? `<span class="tmpl-cat-badge" style="background:#EFF6FF;color:#1D4ED8">🌍 Condiviso</span>` : '')}
           <span style="font-size:10.5px;color:var(--slate-l)">${nGiorni} giorno${nGiorni > 1 ? 'i' : ''}</span>
           ${d ? `<span style="font-size:10.5px;color:var(--slate-l)">${d}</span>` : ''}
+          ${t.usage_count ? `<span style="font-size:10.5px;color:var(--slate-l)">· usato ${t.usage_count}×</span>` : ''}
         </div>
       </div>
-      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();eliminaTemplate('${esc(t.id)}')" title="Elimina template" style="flex-shrink:0;padding:4px 6px;margin-left:4px">🗑️</button>
+      ${mine ? `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();eliminaTemplate('${esc(t.id)}')" title="Elimina template" style="flex-shrink:0;padding:4px 6px;margin-left:4px">🗑️</button>` : ''}
     </div>`;
   }).join('');
 }
@@ -3548,6 +3588,11 @@ function applicaTemplate(id) {
     renderGiornoTabs();
     renderPiano();
     toast('📂 Template "' + tmpl.nome + '" caricato!', 'ok');
+    // Best-effort, non blocca l'UI: conta l'utilizzo solo per template altrui
+    // realmente condivisi (la RPC stessa lo ricontrolla server-side).
+    if (tmpl.user_id && tmpl.user_id !== currentUser?.id && tmpl.shared) {
+      sb.rpc('increment_template_usage', { tmpl_id: tmpl.id }).catch(() => {});
+    }
   }, { okLabel: 'Carica Template' });
 }
 

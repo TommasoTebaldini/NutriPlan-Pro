@@ -102,3 +102,31 @@ if (!workbox) {
     }),
   );
 }
+
+// Promemoria appuntamenti (api/cron-appointment-reminders.js) e altre
+// notifiche future al dietista — vedi SEZIONE 24 di supabase_setup.sql.
+self.addEventListener('push', event => {
+  let data = {};
+  try { if (event.data) data = event.data.json(); } catch {}
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'DietPlan Pro', {
+      body: data.body || '',
+      icon: '/icons/icon-192x192.png',
+      badge: '/icons/icon-96x96.png',
+      data: { url: data.url || '/agenda.html' },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/agenda.html';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url.includes(url) && 'focus' in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(url);
+    }),
+  );
+});

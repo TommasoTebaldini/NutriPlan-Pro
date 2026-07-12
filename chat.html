@@ -1791,13 +1791,18 @@ async function loadPrivacy() {
     return;
   }
 
-  const [{ data: consent }, { data: me }, { data: privDoc }] = await Promise.all([
+  const [{ data: consent }, { data: me }, { data: privDoc }, { data: altriModuli }] = await Promise.all([
     sb.from('patient_consents').select('id,consent_text,signed_at,created_at').eq('cartella_id', p.cartellaId).order('created_at', {ascending:false}).limit(1).maybeSingle(),
     sb.from('profiles').select('email,consent_template').eq('id', currentUser.id).maybeSingle(),
     // patient_documents is what the React patient app signs — check it for real signed status
     selectedPatientId
       ? sb.from('patient_documents').select('signed_at,signature_accepted,created_at').eq('patient_id', selectedPatientId).eq('type', 'privacy').eq('dietitian_id', currentUser.id).order('created_at', {ascending:false}).limit(1).maybeSingle()
       : Promise.resolve({ data: null }),
+    // Altri documenti da firmare (GDPR, moduli/contratti generici) — la
+    // dedicated card sopra copre solo 'privacy', qui mostriamo tutto il resto.
+    selectedPatientId
+      ? sb.from('patient_documents').select('id,title,type,content,signed_at,created_at').eq('patient_id', selectedPatientId).eq('dietitian_id', currentUser.id).neq('type', 'privacy').eq('requires_signature', true).order('created_at', {ascending:false})
+      : Promise.resolve({ data: [] }),
   ]);
 
   const dietEmail = me?.email || currentUser.email || '';
@@ -1845,15 +1850,60 @@ async function loadPrivacy() {
         ${isSigned ? `<div style="margin-top:12px;padding:10px 14px;background:#D1FAE5;border-radius:8px;font-size:12px;color:#065F46;font-weight:700">✅ ${t('priv.signed')} ${signedDate}</div>` : `<div style="margin-top:10px"><button class="btn btn-ghost btn-sm no-print" onclick="openFirmaConsenso('${consentId||''}')" style="gap:6px">✍️ Firma in studio</button></div>`}
       </div>
     </div>
+
+    ${(altriModuli && altriModuli.length) ? `
+    <div class="priv-card">
+      <div class="priv-card-hdr">
+        <span style="font-size:12px;font-weight:700;color:var(--slate);flex:1">📋 Altri moduli (GDPR, contratti, consensi specifici)</span>
+      </div>
+      <div class="priv-card-body" style="display:flex;flex-direction:column;gap:10px">
+        ${altriModuli.map(d => `
+          <div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:12.5px;font-weight:700;color:var(--slate)">${esc(d.title||'Documento')}</span>
+              <span style="font-size:10px;text-transform:uppercase;color:var(--slate-l);background:#F1F5F9;padding:2px 8px;border-radius:10px">${esc(d.type||'')}</span>
+              <span style="margin-left:auto;font-size:11px;font-weight:700;${d.signed_at ? 'color:#16A34A' : 'color:#D97706'}">${d.signed_at ? '✅ Firmato ' + new Date(d.signed_at).toLocaleString('it-IT') : '⏳ In attesa di firma'}</span>
+            </div>
+            ${!d.signed_at ? `<div style="margin-top:8px"><button class="btn btn-ghost btn-sm no-print" onclick="openFirmaDocumento('${esc(d.id)}')" style="gap:6px">✍️ Firma in studio</button></div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>` : ''}
   </div>`;
 }
 
-function openFirmaConsenso(consentId) {
+async function openFirmaDocumento(documentId) {
   const patName = chatPatients.find(p => p.id === selectedPatientId)?.full_name || 'Paziente';
+  const { data: doc } = await sb.from('patient_documents').select('title,content').eq('id', documentId).maybeSingle();
+  firmaOpen({
+    title: '✍️ ' + (doc?.title || 'Firma documento'),
+    subtitle: `Il paziente ${patName} firma "${esc(doc?.title||'questo documento')}" in studio. Firma elettronica avanzata: verranno registrati data/ora, IP e un'impronta digitale del testo firmato — non è una firma digitale qualificata.`,
+    patientId: selectedPatientId,
+    docId: documentId,
+    contentToHash: doc?.content || '',
+    context: 'documento',
+    onSave: async (dataUrl, signedAt) => {
+      const { error } = await sb.from('patient_documents').update({ signed_at: signedAt, signature_data: dataUrl, signature_accepted: true }).eq('id', documentId);
+      if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+      toast('✅ Documento firmato in studio!', 'ok');
+      if (selectedPatientId) loadPatientPanel(selectedPatientId);
+    }
+  });
+}
+
+async function openFirmaConsenso(consentId) {
+  const patName = chatPatients.find(p => p.id === selectedPatientId)?.full_name || 'Paziente';
+  let consentText = '';
+  if (consentId) {
+    const { data } = await sb.from('patient_consents').select('consent_text').eq('id', consentId).maybeSingle();
+    consentText = data?.consent_text || '';
+  }
   firmaOpen({
     title: '✍️ Firma Consenso Informato',
-    subtitle: `Il paziente ${patName} firma il consenso informato in studio. La firma sarà registrata con data e ora.`,
+    subtitle: `Il paziente ${patName} firma il consenso informato in studio. Firma elettronica avanzata: verranno registrati data/ora, IP e un\'impronta digitale del testo firmato — non è una firma digitale qualificata.`,
     patientId: selectedPatientId,
+    docId: consentId,
+    contentToHash: consentText,
     context: 'consenso',
     onSave: async (dataUrl, signedAt) => {
       if (consentId) {
@@ -2471,6 +2521,9 @@ async function loadAIChatPaziente() {
 
   wrap.innerHTML =
     '<div id="ai-chat-msgs" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px">' +
+    '<div style="display:flex;justify-content:flex-end">' +
+    '<button class="btn btn-ghost btn-sm no-print" onclick="openAiScribe()" style="gap:6px">🎙️ AI Scribe — registra seduta</button>' +
+    '</div>' +
     '<div style="background:#F0FDF4;border-radius:10px;padding:12px 14px;border-left:3px solid var(--teal);font-size:12px;color:#14532D;line-height:1.6">' +
     '<strong>' + _L('AI Nutrizionale — Contesto paziente caricato','AI Nutritional — Patient context loaded') + '</strong><br>' +
     esc(cartCtx.replace(/\n/g,' · '))+
@@ -2529,6 +2582,205 @@ async function sendAIChat() {
     loadEl.querySelector('.ai-bubble').innerHTML = '<span style="color:#DC2626">⚠️ Errore risposta AI. Verifica la chiave GEMINI_API_KEY in Vercel.</span>';
   }
   msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ══════════════════════════════════════════════
+// AI SCRIBE — registrazione seduta + nota SOAP automatica
+// Privacy by design: l'audio non viene MAI salvato da questa app — viene
+// inviato ad api/ai-scribe SOLO dopo consenso esplicito spuntato dal
+// dietista, trascritto server-side e scartato subito dopo. Resta in
+// memoria del browser (non su disco) fino all'invio.
+// ══════════════════════════════════════════════
+let _scribeRecorder = null, _scribeChunks = [], _scribeStream = null, _scribeTimerInt = null, _scribeSeconds = 0;
+let _scribeLastSoap = null, _scribeLastTranscript = '';
+
+function aiScribeInit() {
+  if (document.getElementById('ai-scribe-modal')) return;
+  const html = `
+<div class="modal-bg" id="ai-scribe-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="mhdr"><h2>🎙️ AI Scribe — Registra seduta</h2><button class="mclose" onclick="closeAiScribe()">✕</button></div>
+    <div class="mbody" style="padding:18px 22px">
+      <div id="scribe-step-consent">
+        <div style="background:#FEF3C7;border-left:3px solid #D97706;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#78350F;line-height:1.6;margin-bottom:14px">
+          ⚠️ Registra audio SOLO con il consenso esplicito del paziente presente in seduta. L'audio viene inviato in modo sicuro per la trascrizione automatica e <b>non viene mai conservato</b> da NutriPlan Pro dopo aver generato la nota — resta solo il testo che deciderai tu di salvare in cartella clinica.
+        </div>
+        <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--slate);cursor:pointer;margin-bottom:16px">
+          <input type="checkbox" id="scribe-consent-check" style="margin-top:2px">
+          <span>Confermo che il paziente ha acconsentito alla registrazione audio di questa seduta ai soli fini della trascrizione automatica.</span>
+        </label>
+        <button class="btn btn-primary btn-sm" id="scribe-start-btn" onclick="scribeStartRecording()" disabled>🎙️ Inizia registrazione</button>
+      </div>
+
+      <div id="scribe-step-recording" style="display:none;text-align:center;padding:20px 0">
+        <div style="width:70px;height:70px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:scribePulse 1.4s infinite">
+          <span style="font-size:30px">🔴</span>
+        </div>
+        <div style="font-size:22px;font-weight:800;color:var(--slate);margin-bottom:6px" id="scribe-timer">00:00</div>
+        <div style="font-size:12.5px;color:var(--slate-l);margin-bottom:16px">Registrazione in corso...</div>
+        <button class="btn btn-sm" style="background:#DC2626;color:white" onclick="scribeStopRecording()">⏹ Interrompi e trascrivi</button>
+      </div>
+
+      <div id="scribe-step-processing" style="display:none;text-align:center;padding:30px 0">
+        <div style="font-size:32px;margin-bottom:12px">⏳</div>
+        <div style="font-size:13px;color:var(--slate-l)" id="scribe-processing-msg">Trascrizione in corso, può richiedere fino a un minuto...</div>
+      </div>
+
+      <div id="scribe-step-result" style="display:none">
+        <p style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Nota SOAP generata — rivedi e correggi prima di salvare</p>
+        <div class="fg" style="margin-bottom:10px"><label>Soggettivo</label><textarea id="scribe-soggettivo" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-bottom:10px"><label>Obiettivo</label><textarea id="scribe-obiettivo" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-bottom:10px"><label>Valutazione</label><textarea id="scribe-valutazione" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;box-sizing:border-box"></textarea></div>
+        <div class="fg" style="margin-bottom:6px"><label>Piano</label><textarea id="scribe-piano" rows="3" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;box-sizing:border-box"></textarea></div>
+        <details style="margin-top:8px">
+          <summary style="font-size:11.5px;color:var(--slate-l);cursor:pointer">Mostra trascrizione completa</summary>
+          <div id="scribe-transcript" style="margin-top:8px;font-size:11.5px;color:var(--slate-m);background:#F8FAFC;border-radius:8px;padding:10px 12px;max-height:160px;overflow-y:auto;white-space:pre-wrap"></div>
+        </details>
+      </div>
+    </div>
+    <div class="mfoot" id="scribe-footer-result" style="display:none">
+      <button class="btn btn-ghost btn-sm" onclick="closeAiScribe()">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="scribeSaveNote()">💾 Salva in cartella clinica</button>
+    </div>
+  </div>
+</div>
+<style>@keyframes scribePulse{0%,100%{opacity:1}50%{opacity:.5}}</style>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.getElementById('scribe-consent-check').addEventListener('change', e => {
+    document.getElementById('scribe-start-btn').disabled = !e.target.checked;
+  });
+}
+
+function _scribeShowStep(step) {
+  ['consent','recording','processing','result'].forEach(s => {
+    const el = document.getElementById('scribe-step-' + s);
+    if (el) el.style.display = s === step ? '' : 'none';
+  });
+  document.getElementById('scribe-footer-result').style.display = step === 'result' ? '' : 'none';
+}
+
+function openAiScribe() {
+  if (!selectedPatientId) { toast('Seleziona un paziente', 'err'); return; }
+  aiScribeInit();
+  document.getElementById('scribe-consent-check').checked = false;
+  document.getElementById('scribe-start-btn').disabled = true;
+  _scribeShowStep('consent');
+  openM('ai-scribe-modal');
+}
+
+function closeAiScribe() {
+  if (_scribeRecorder && _scribeRecorder.state !== 'inactive') _scribeRecorder.stop();
+  if (_scribeStream) _scribeStream.getTracks().forEach(t => t.stop());
+  clearInterval(_scribeTimerInt);
+  closeM('ai-scribe-modal');
+}
+
+async function scribeStartRecording() {
+  if (!document.getElementById('scribe-consent-check').checked) return;
+  try {
+    _scribeStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (e) {
+    toast('❌ Impossibile accedere al microfono: ' + e.message, 'err');
+    return;
+  }
+  _scribeChunks = [];
+  _scribeRecorder = new MediaRecorder(_scribeStream, { mimeType: 'audio/webm' });
+  _scribeRecorder.ondataavailable = e => { if (e.data.size > 0) _scribeChunks.push(e.data); };
+  _scribeRecorder.onstop = scribeProcessRecording;
+  _scribeRecorder.start();
+
+  _scribeSeconds = 0;
+  document.getElementById('scribe-timer').textContent = '00:00';
+  clearInterval(_scribeTimerInt);
+  _scribeTimerInt = setInterval(() => {
+    _scribeSeconds++;
+    const m = String(Math.floor(_scribeSeconds / 60)).padStart(2, '0');
+    const s = String(_scribeSeconds % 60).padStart(2, '0');
+    document.getElementById('scribe-timer').textContent = m + ':' + s;
+  }, 1000);
+
+  _scribeShowStep('recording');
+}
+
+function scribeStopRecording() {
+  clearInterval(_scribeTimerInt);
+  if (_scribeRecorder && _scribeRecorder.state !== 'inactive') _scribeRecorder.stop();
+  if (_scribeStream) _scribeStream.getTracks().forEach(t => t.stop());
+  _scribeShowStep('processing');
+}
+
+function _blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function scribeProcessRecording() {
+  const blob = new Blob(_scribeChunks, { type: 'audio/webm' });
+  _scribeChunks = []; // rilasciata subito dopo aver costruito il blob da inviare
+  if (blob.size === 0) {
+    toast('❌ Nessun audio registrato', 'err');
+    _scribeShowStep('consent');
+    return;
+  }
+  try {
+    const base64 = await _blobToBase64(blob);
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch('/api/ai-scribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: session?.access_token ? 'Bearer ' + session.access_token : '' },
+      body: JSON.stringify({ audioBase64: base64, mimeType: 'audio/webm', consentAcquired: true }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'Errore trascrizione');
+    if (!json.transcript) {
+      toast('⚠️ ' + (json.warning || 'Nessun parlato riconosciuto'), 'warn');
+      _scribeShowStep('consent');
+      return;
+    }
+    _scribeLastTranscript = json.transcript;
+    _scribeLastSoap = json.soap || {};
+    document.getElementById('scribe-soggettivo').value = _scribeLastSoap.soggettivo || '';
+    document.getElementById('scribe-obiettivo').value = _scribeLastSoap.obiettivo || '';
+    document.getElementById('scribe-valutazione').value = _scribeLastSoap.valutazione || '';
+    document.getElementById('scribe-piano').value = _scribeLastSoap.piano || '';
+    document.getElementById('scribe-transcript').textContent = _scribeLastTranscript;
+    _scribeShowStep('result');
+  } catch (e) {
+    toast('❌ ' + e.message, 'err');
+    _scribeShowStep('consent');
+  }
+}
+
+async function scribeSaveNote() {
+  const p = chatPatients.find(x => x.id === selectedPatientId);
+  if (!p?.cartellaId || !currentUser) { toast('Cartella paziente non trovata', 'err'); return; }
+  const soap = {
+    soggettivo: document.getElementById('scribe-soggettivo').value.trim(),
+    obiettivo: document.getElementById('scribe-obiettivo').value.trim(),
+    valutazione: document.getElementById('scribe-valutazione').value.trim(),
+    piano: document.getElementById('scribe-piano').value.trim(),
+  };
+  const notaTesto = `Nota SOAP — seduta del ${new Date().toLocaleDateString('it-IT')} (AI Scribe)\n\n` +
+    `SOGGETTIVO\n${soap.soggettivo}\n\nOBIETTIVO\n${soap.obiettivo}\n\nVALUTAZIONE\n${soap.valutazione}\n\nPIANO\n${soap.piano}`;
+  try {
+    const { error } = await sb.from('note_specialistiche').insert({
+      user_id: currentUser.id,
+      cartella_id: p.cartellaId,
+      tipo: 'ai_scribe_soap',
+      nota: notaTesto,
+      dati: { ...soap, transcript: _scribeLastTranscript, generated_at: new Date().toISOString() },
+      visible_to_patient: false,
+    });
+    if (error) throw error;
+    toast('✅ Nota SOAP salvata in cartella clinica', 'ok');
+    closeAiScribe();
+  } catch (e) {
+    toast('❌ ' + e.message, 'err');
+  }
 }
 
 function printStorico() {

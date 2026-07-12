@@ -106,6 +106,27 @@
     document.getElementById('firma-hint').classList.add('hidden');
   }
 
+  // ─── Audit trail (SEZIONE 23 di supabase_setup.sql) ─────────────────────
+  // NON è una firma digitale qualificata eIDAS/CAD — è un disegno su canvas
+  // con IP/user-agent/hash del testo registrati, per rendere verificabile
+  // "chi ha firmato cosa e quando" oltre alla sola immagine. Va sempre
+  // descritta così in UI, mai come "legalmente vincolante" senza qualifica.
+  async function sha256Hex(text) {
+    if (!text || !window.crypto?.subtle) return null;
+    try {
+      const buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch { return null; }
+  }
+
+  async function getClientIp() {
+    try {
+      const res = await fetch('/api/my-ip');
+      const data = await res.json();
+      return data?.ip || null;
+    } catch { return null; }
+  }
+
   function isEmpty() {
     const data = firmaCtx.getImageData(0, 0, firmaCanvas.width, firmaCanvas.height).data;
     for (let i = 3; i < data.length; i += 4) { if (data[i] > 0) return false; }
@@ -151,28 +172,50 @@
     const signedAt = new Date().toISOString();
     firmaSetStatus('💾 Salvataggio...', '#64748B');
     try {
-      // Try to upload to Supabase Storage if sb is available
-      if (typeof sb !== 'undefined' && pendingOptions.patientId) {
-        const fileName = `firma_${pendingOptions.patientId}_${Date.now()}.png`;
-        const blob = await (await fetch(dataUrl)).blob();
-        const { data: up } = await sb.storage.from('patient-signatures').upload(fileName, blob, { contentType: 'image/png', upsert: false });
-        if (up) {
-          const { data: urlData } = sb.storage.from('patient-signatures').getPublicUrl(fileName);
-          // Save to patient_signatures table if exists
-          await sb.from('patient_signatures').insert({
-            patient_id: pendingOptions.patientId,
-            doc_id: pendingOptions.docId || null,
-            signature_url: urlData?.publicUrl || null,
-            signed_at: signedAt,
-            context: pendingOptions.context || 'documento'
-          }).then(() => {});
+      // Try to upload to Supabase Storage + registrare l'audit trail, se sb
+      // e un dietista autenticato sono disponibili (sempre vero in pratica
+      // su questo sito, mai chiamato dal lato paziente).
+      if (typeof sb !== 'undefined' && typeof currentUser !== 'undefined' && currentUser?.id) {
+        const [ip, contentHash] = await Promise.all([
+          getClientIp(),
+          sha256Hex(pendingOptions.contentToHash),
+        ]);
+
+        let signatureUrl = null;
+        if (pendingOptions.patientId) {
+          const fileName = `firma_${pendingOptions.patientId}_${Date.now()}.png`;
+          const blob = await (await fetch(dataUrl)).blob();
+          const { data: up } = await sb.storage.from('patient-signatures').upload(fileName, blob, { contentType: 'image/png', upsert: false });
+          if (up) {
+            // Bucket privato: getPublicUrl darebbe un link che risponde 401.
+            // Serve un signed URL, come già fatto per gli altri bucket privati.
+            const { data: signedUrlData } = await sb.storage.from('patient-signatures')
+              .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10); // ~10 anni
+            signatureUrl = signedUrlData?.signedUrl || null;
+          }
         }
+
+        await sb.from('patient_signatures').insert({
+          patient_id: pendingOptions.patientId || null,
+          dietitian_id: currentUser.id,
+          doc_id: pendingOptions.docId || null,
+          signature_url: signatureUrl,
+          ip_address: ip,
+          user_agent: navigator.userAgent,
+          content_sha256: contentHash,
+          signed_at: signedAt,
+          context: pendingOptions.context || 'documento'
+        });
       }
       firmaSetStatus('✅ Firma salvata!', '#16A34A');
       if (typeof pendingCallback === 'function') pendingCallback(dataUrl, signedAt);
       setTimeout(global.firmaClose, 900);
     } catch(e) {
-      // Fallback: return data URL even if storage fails
+      // Fallback: return data URL even if storage/audit fails — il
+      // salvataggio del testo/immagine principale (patient_consents o
+      // patient_documents, fatto dal chiamante in onSave) non deve dipendere
+      // dalla riuscita dell'audit trail supplementare.
+      console.warn('firma.js: audit trail non salvato:', e.message);
       firmaSetStatus('✅ Firma acquisita', '#16A34A');
       if (typeof pendingCallback === 'function') pendingCallback(dataUrl, signedAt);
       setTimeout(global.firmaClose, 900);

@@ -150,6 +150,20 @@
     </div>
   </div>
 
+  <!-- Aderenza pazienti -->
+  <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin:6px 0 12px;display:flex;align-items:center;gap:7px">🎯 Aderenza al diario alimentare</h3>
+  <div class="kpi-grid" id="kpi-grid-adherence">
+    <div class="kpi-card"><div class="kpi-icon">🔥</div><div class="kpi-val" id="kpi-adh-7">—%</div><div class="kpi-lbl">Attivi ultimi 7gg</div><div class="kpi-delta delta-neutral" id="kpi-adh-7-delta">...</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📆</div><div class="kpi-val" id="kpi-adh-30">—%</div><div class="kpi-lbl">Attivi ultimi 30gg</div><div class="kpi-delta delta-neutral" id="kpi-adh-30-delta">...</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📝</div><div class="kpi-val" id="kpi-adh-days">—</div><div class="kpi-lbl">Media gg con log / 30gg</div><div class="kpi-delta delta-neutral" id="kpi-adh-days-delta">...</div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-card full">
+      <h3>📊 Pazienti attivi per settimana (diario alimentare)</h3>
+      <div class="chart-wrap" style="height:180px"><canvas id="chart-adherence"></canvas></div>
+    </div>
+  </div>
+
   <!-- Cohort analysis table -->
   <div class="card" style="margin-bottom:14px">
     <div class="card-hdr"><h3>🧮 Analisi per mese di registrazione</h3></div>
@@ -183,8 +197,8 @@
 <script src="js/print-capture.js" defer></script>
 <script>
 let activeMonths = 6;
-let chartAcquired, chartAppts, chartRetention;
-let allPatients = [], allAppts = [], allDocs = [];
+let chartAcquired, chartAppts, chartRetention, chartAdherence;
+let allPatients = [], allAppts = [], allDocs = [], allFoodLogs = [];
 
 async function loadChartJs() {
   if (window.Chart) return;
@@ -281,6 +295,9 @@ function renderAll() {
   // Cohort table
   renderCohortTable();
 
+  // Aderenza al diario alimentare
+  renderAdherence();
+
   // KPIs
   const totalNow = allPatients.length;
   const prevMonthKey = monthKeys[monthKeys.length - 2];
@@ -329,7 +346,74 @@ function renderChart(canvasId, chartRef, { type, labels, datasets }) {
   });
   if (canvasId === 'chart-acquired') chartAcquired = chart;
   else if (canvasId === 'chart-appts') chartAppts = chart;
-  else chartRetention = chart;
+  else if (canvasId === 'chart-retention') chartRetention = chart;
+  else chartAdherence = chart;
+}
+
+function renderAdherence() {
+  const totalPatients = allPatients.length;
+  const now = Date.now();
+  const DAY = 86400000;
+
+  // user_id -> Set di date (YYYY-MM-DD) con almeno un log, entro la finestra caricata (90gg)
+  const logDatesByUser = {};
+  allFoodLogs.forEach(l => {
+    const dateKey = (l.created_at || '').slice(0, 10);
+    if (!dateKey) return;
+    (logDatesByUser[l.user_id] ||= new Set()).add(dateKey);
+  });
+
+  function hasLogWithin(uid, days) {
+    const dates = logDatesByUser[uid];
+    if (!dates) return false;
+    const cutoff = now - days * DAY;
+    for (const d of dates) if (new Date(d).getTime() >= cutoff) return true;
+    return false;
+  }
+
+  const active7 = allPatients.filter(p => hasLogWithin(p.id, 7)).length;
+  const active30 = allPatients.filter(p => hasLogWithin(p.id, 30)).length;
+  const pct7 = totalPatients ? Math.round(active7 / totalPatients * 100) : 0;
+  const pct30 = totalPatients ? Math.round(active30 / totalPatients * 100) : 0;
+
+  // Media giorni-con-log negli ultimi 30gg, su TUTTI i pazienti collegati (anche chi ha 0 log:
+  // è un indicatore di intensità d'uso della coorte, non solo di chi è "attivo sì/no")
+  const cutoff30 = now - 30 * DAY;
+  let totalDays30 = 0;
+  allPatients.forEach(p => {
+    const dates = logDatesByUser[p.id];
+    if (!dates) return;
+    dates.forEach(d => { if (new Date(d).getTime() >= cutoff30) totalDays30++; });
+  });
+  const avgDays30 = totalPatients ? totalDays30 / totalPatients : 0;
+
+  setText('kpi-adh-7', pct7 + '%');
+  setText('kpi-adh-30', pct30 + '%');
+  setText('kpi-adh-days', avgDays30.toFixed(1));
+  setDelta('kpi-adh-7-delta', active7, `${active7}/${totalPatients} pazienti`, pct7 >= 50);
+  setDelta('kpi-adh-30-delta', active30, `${active30}/${totalPatients} pazienti`, pct30 >= 50);
+  setDelta('kpi-adh-days-delta', totalDays30, 'gg totali su 30', avgDays30 >= 10);
+
+  // Trend: pazienti distinti con almeno un log per ciascuna delle ultime 8 settimane
+  const WEEKS = 8;
+  const weekLabels = [], weekData = [];
+  for (let i = WEEKS - 1; i >= 0; i--) {
+    const weekEnd = now - i * 7 * DAY;
+    const weekStart = weekEnd - 7 * DAY;
+    const activeInWeek = new Set();
+    allFoodLogs.forEach(l => {
+      const t = new Date(l.created_at).getTime();
+      if (t >= weekStart && t < weekEnd) activeInWeek.add(l.user_id);
+    });
+    weekLabels.push(new Date(weekEnd).toLocaleDateString('it', { day: 'numeric', month: 'short' }));
+    weekData.push(activeInWeek.size);
+  }
+
+  renderChart('chart-adherence', chartAdherence, {
+    type: 'line',
+    labels: weekLabels,
+    datasets: [{ label: 'Pazienti attivi', data: weekData, borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,.1)', tension: 0.4, fill: true, pointBackgroundColor: '#7C3AED' }]
+  });
 }
 
 function renderCohortTable() {
@@ -381,14 +465,23 @@ async function loadAnalytics() {
   showLoading(true);
   try {
     await loadChartJs();
-    const [pRes, aRes, dRes] = await Promise.all([
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 86400000).toISOString();
+    const [pRes, aRes, dRes, fRes] = await Promise.all([
       sb.from('profiles').select('id,created_at,last_seen_at,approved').eq('role','patient').order('created_at',{ascending:false}),
       sb.from('agenda_events').select('id,data,created').order('created',{ascending:false}),
-      sb.from('patient_documents').select('id,created_at').order('created_at',{ascending:false})
+      sb.from('patient_documents').select('id,created_at').order('created_at',{ascending:false}),
+      // food_logs è una tabella di Diet-Plan-Pro-app-claude (stesso progetto Supabase
+      // condiviso) — la RLS "food_logs_dietitian_read" la scopa già ai soli pazienti
+      // collegati a questo dietista via patient_dietitian, nessun filtro client aggiuntivo
+      // necessario. Finestra 90gg: copre sia i KPI a 30gg sia il trend a 8 settimane senza
+      // scaricare l'intero storico.
+      sb.from('food_logs').select('user_id,created_at').gte('created_at', ninetyDaysAgo)
     ]);
     allPatients = pRes.data || [];
     allAppts = aRes.data || [];
     allDocs = dRes.data || [];
+    allFoodLogs = fRes.data || [];
+    if (fRes.error) console.warn('food_logs (aderenza) non disponibile:', fRes.error.message);
     renderAll();
   } catch(e) {
     toast('Errore caricamento dati: ' + e.message, 'err');

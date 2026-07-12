@@ -3,7 +3,7 @@
 // usato per Supabase-js in tutte le pagine), non serve un bundler/injectManifest.
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', event => {

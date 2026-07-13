@@ -2404,7 +2404,7 @@
     analisi: "La combinazione di normopeso + dieta plant-based + attività fisica + limitazione dell'alcol potrebbe prevenire il 30–40% di tutti i tumori. In Italia, il cancro del colon-retto è il secondo tumore per incidenza: la fibra e la limitazione delle carni rosse processate sono le raccomandazioni prioritarie. Il dietista oncologo deve integrare le raccomandazioni WCRF nel piano nutrizionale preventivo.",
     analisi_en: "The combination of normal weight + plant-based diet + physical activity + alcohol limitation could prevent 30–40% of all cancers. In Italy, colorectal cancer is the second most incident cancer: fibre and limitation of processed red meats are priority recommendations. The oncology dietitian should integrate WCRF recommendations into preventive nutritional planning.",
     link: "https://pubmed.ncbi.nlm.nih.gov/36947542/",
-    abstract_link: "https://www.annualreviews.org/doi/10.1146/annurev-nutr-062022-010918"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/36947542/"
   },
   {
     id: 84,
@@ -2607,7 +2607,7 @@
     analisi: "Gli anziani necessitano di 1.2–1.6g/kg/die di proteine (contro 0.8g/kg/die attuale RDA) per preservare la massa muscolare. L'anabolic resistance richiede dosi più elevate per pasto (≥0.4g/kg). L'esercizio di resistenza sinergizza con le proteine. Fonti ottimali: proteine di alta qualità biologica (latticini, uova, pesce, legumi con cereali integrali). La leucina è l'aminoacido chiave per l'attivazione della sintesi proteica (via mTOR).",
     analisi_en: "Older adults need 1.2–1.6g/kg/day protein (vs the current 0.8g/kg/day RDA) to preserve muscle mass. Anabolic resistance requires higher per-meal doses (≥0.4g/kg). Resistance exercise synergises with protein. Optimal sources: high biological quality proteins (dairy, eggs, fish, legumes with wholegrains). Leucine is the key amino acid for activating protein synthesis (via mTOR).",
     link: "https://pubmed.ncbi.nlm.nih.gov/36600101/",
-    abstract_link: "https://bjsm.bmj.com/content/57/6/357"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/36600101/"
   },
   {
     id: 91,
@@ -3129,7 +3129,7 @@
     analisi: "Il time-restricted eating (finestra alimentare 8h, es. 12:00-20:00) è efficace per la perdita di peso moderata e il miglioramento metabolico. Il meccanismo principale è la riduzione dell'intake calorico totale (spontaneamente del 15-20% senza contare le calorie), ma vi sono anche effetti indipendenti dalle calorie: sincronizzazione con il ritmo circadiano, aumento dell'autofagia, miglioramento della sensibilità insulinica. Importante: il TRE non è superiore alla restrizione calorica tradizionale se l'intake calorico è controllato; il vantaggio principale è la facilità di aderenza.",
     analisi_en: "Time-restricted eating (8 h eating window, e.g. 12:00–20:00) is effective for moderate weight loss and metabolic improvement. The main mechanism is spontaneous reduction of total caloric intake (15–20% without counting calories), but there are also calorie-independent effects: circadian rhythm synchronisation, increased autophagy, improved insulin sensitivity. Important: TRE is not superior to traditional caloric restriction when caloric intake is controlled; the main advantage is ease of adherence.",
     link: "https://pubmed.ncbi.nlm.nih.gov/37243645/",
-    abstract_link: "https://www.annualreviews.org/doi/10.1146/annurev-nutr-062022-014547"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/37243645/"
   },
   {
     id: 109,
@@ -3303,7 +3303,7 @@
     analisi: "La dieta Low-FODMAP è oggi la dieta evidence-based di prima scelta per IBS con componente fermentativa predominante (IBS-D e IBS-M). Il limite principale è la difficoltà di aderenza a lungo termine e l'impatto sul microbiota (riduzione dei bifidobatteri). La fase di reintroduzione strutturata è fondamentale per identificare i FODMAP trigger individuali ed evitare restrizioni inutili a lungo termine. Il dietista è figura centrale nella gestione di questa dieta.",
     analisi_en: "The Low-FODMAP diet is now the first-choice evidence-based diet for IBS with a predominantly fermentative component (IBS-D and IBS-M). The main limitation is the difficulty of long-term adherence and its impact on the microbiota (reduction of bifidobacteria). The structured reintroduction phase is essential to identify individual FODMAP triggers and avoid unnecessary long-term restrictions. The dietitian is central to managing this diet.",
     link: "https://pubmed.ncbi.nlm.nih.gov/37083002/",
-    abstract_link: "https://journals.lww.com/ajg/Abstract/2023/05000/Low_FODMAP_Diet_for_IBS.html"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/37083002/"
   },
   {
     id: 115,
@@ -4202,7 +4202,7 @@
     analisi: "La dieta mediterranea è l'unica dieta con evidenza di classe II per la prevenzione/rallentamento della demenza di Alzheimer (Raccomandazione ESO/EAN 2023). I componenti più neuroprotettivi: olio d'oliva (oleocantale anti-amiloide), pesce grasso (DHA per la mielinizzazione), polifenoli della frutta e verdura (attivazione SIRT1, neurogenesi), vino rosso moderato (resveratrolo), noci (vitamina E, melatonina). La MIND diet aggiunge bacche, vino rosso e verde foglioso come alimenti prioritari. L'effetto è maggiore nei soggetti con predisposizione genetica (ApoE4).",
     analisi_en: "The Mediterranean diet is the only diet with Class II evidence for preventing/slowing Alzheimer's dementia (ESO/EAN 2023 Recommendation). The most neuroprotective components: olive oil (anti-amyloid oleocanthal), oily fish (DHA for myelination), fruit and vegetable polyphenols (SIRT1 activation, neurogenesis), moderate red wine (resveratrol), walnuts (vitamin E, melatonin). The MIND diet adds berries, red wine and leafy greens as priority foods. The effect is greater in genetically predisposed individuals (ApoE4).",
     link: "https://pubmed.ncbi.nlm.nih.gov/35764403/",
-    abstract_link: "https://n.neurology.org/content/99/6/e2391"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/35764403/"
   },
   {
     id: 146,
@@ -5449,7 +5449,7 @@
     analisi: "La 'green Mediterranean diet' aggiunge alla MED tradizionale fonti di polifenoli specifici (catechine del tè verde, polifenoli della Mankai) che amplificano gli effetti metabolici attraverso il microbiota intestinale. Il Mankai (lenticchia d'acqua, alta in proteine vegetali e B12) è un alimento funzionale emergente. Meccanismo chiave: riduzione della permeabilità intestinale → minor translocazione batterica → riduzione dell'infiammazione viscerale → minore deposizione di VAT. Implicazione pratica: arricchire la dieta mediterranea con polifenoli specifici (tè verde, mirtilli, cacao amaro, noci) può amplificare i benefici metabolici oltre quelli della DM standard.",
     analisi_en: "The 'green Mediterranean diet' adds specific polyphenol sources (green tea catechins, Mankai polyphenols) to the traditional MED, amplifying metabolic effects via the gut microbiota. Mankai (water lentil, high in plant protein and B12) is an emerging functional food. Key mechanism: reduced intestinal permeability → less bacterial translocation → reduced visceral inflammation → lower VAT deposition. Practical implication: enriching the Mediterranean diet with specific polyphenols (green tea, blueberries, dark cocoa, walnuts) can amplify metabolic benefits beyond standard MD.",
     link: "https://pubmed.ncbi.nlm.nih.gov/33510044/",
-    abstract_link: "https://heart.bmj.com/content/107/15/1223"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/33510044/"
   },
   {
     id: 189,
@@ -7458,7 +7458,7 @@
     analisi: "Gli UPF mostrano associazioni consistenti con mortalità in tutte le meta-analisi disponibili. Il dibattito sulla causalità rimane aperto: i consumatori di UPF spesso hanno profili socioeconomici peggiori (confounding residuo). Il RCT NIH (Hall 2019) ha mostrato che gli UPF aumentano spontaneamente l'introito calorico (+508 kcal/die) e il peso. Meccanismi proposti: additivi (emulsionanti, dolcificanti), ultra-palatabilità, matrice alimentare alterata, ridotto segnale di sazietà.",
     analisi_en: "UPFs show consistent associations with mortality across all available meta-analyses. The causality debate remains open: UPF consumers often have worse socioeconomic profiles (residual confounding). The NIH RCT (Hall 2019) showed that UPFs spontaneously increase caloric intake (+508 kcal/day) and weight. Proposed mechanisms: additives (emulsifiers, sweeteners), ultra-palatability, altered food matrix, reduced satiety signalling.",
     link: "https://pubmed.ncbi.nlm.nih.gov/32792031/",
-    abstract_link: "https://www.cambridge.org/core/journals/british-journal-of-nutrition/article/consumption-of-ultraprocessed-foods-and-health-status/69D5AFB5E7AEF9F4E1EA621E4CB8F1E3"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/32792031/"
   },
   {
     id: 262,
@@ -7596,7 +7596,7 @@
     analisi: "La meta-analisi di Baranski è stata controversa: la differenza in antiossidanti è reale ma l'impatto clinico è incerto. Argomenti a favore del biologico: riduzione dell'esposizione ai pesticidi (effetti cumulativi a lungo termine poco noti), maggior contenuto di polifenoli (attività antiossidante, antinfiammatoria). Argomenti critici: le differenze nutrizionali assolute sono modeste; i livelli di pesticidi convenzionali sono quasi sempre entro i limiti legali; non esistono RCT su consumo biologico a lungo termine con outcome clinici. Il biologico è una scelta razionale per ridurre l'esposizione chimica, non necessariamente per migliorare l'apporto di macro/micronutrienti.",
     analisi_en: "Baranski's meta-analysis was controversial: the difference in antioxidants is real but the clinical impact is uncertain. Arguments for organic: reduced pesticide exposure (long-term cumulative effects poorly known), higher polyphenol content (antioxidant, anti-inflammatory activity). Critical arguments: absolute nutritional differences are modest; conventional pesticide levels are almost always within legal limits; no RCTs on long-term organic consumption with clinical outcomes exist. Organic is a rational choice to reduce chemical exposure, not necessarily to improve macro/micronutrient intake.",
     link: "https://pubmed.ncbi.nlm.nih.gov/24968103/",
-    abstract_link: "https://www.cambridge.org/core/journals/british-journal-of-nutrition/article/higher-antioxidant-and-lower-cadmium-concentrations-and-lower-incidence-of-pesticide-residues-in-organically-grown-crops/AA3B43B1807B24CF000E12A6DC5F5F89"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/24968103/"
   },
   {
     id: 268,
@@ -8033,7 +8033,7 @@
     analisi: "La cucina casalinga è un intervento di salute pubblica trascurato. Cucinare aumenta il controllo sugli ingredienti, le porzioni, i metodi di cottura e riduce l'esposizione agli additivi degli UPF. Studi successivi (Mills 2017, Int J Behav Nutr) hanno replicato in UK e Australia. I paradossi: chi cucina più a casa spende mediamente lo stesso o meno di chi mangia fuori; le 'competenze culinarie' (cooking skills) sono declinate significativamente dal 1965 ad oggi (specialmente nei giovani adulti). Implicazione: il counseling nutrizionale dovrebbe includere competenze pratiche di cucina (meal prep, tecniche di cottura rapida, pianificazione della settimana) non solo raccomandazioni alimentari astratte.",
     analisi_en: "Home cooking is a neglected public health intervention. Cooking increases control over ingredients, portions, cooking methods and reduces exposure to UPF additives. Subsequent studies (Mills 2017, Int J Behav Nutr) replicated in UK and Australia. The paradoxes: those who cook at home more spend on average the same or less than those who eat out; 'cooking skills' have declined significantly from 1965 to today (especially in young adults). Implication: nutritional counselling should include practical cooking skills (meal prep, quick cooking techniques, weekly planning) not just abstract dietary recommendations.",
     link: "https://pubmed.ncbi.nlm.nih.gov/25399031/",
-    abstract_link: "https://www.cambridge.org/core/journals/public-health-nutrition/article/is-cooking-at-home-associated-with-better-diet-quality-or-weight-loss-intention/E4B3D5FBA4F6A9E7E78EFE24D5498C9D"
+    abstract_link: "https://pubmed.ncbi.nlm.nih.gov/25399031/"
   },
   {
     id: 287,

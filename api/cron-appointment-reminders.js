@@ -27,7 +27,10 @@
 //      supabase_setup.sql
 //   2. Vercel (progetto NutriPlan-Pro) → Environment Variables:
 //      - VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY (canale dietista, vedi
-//        SEZIONE 24 — NON rigenerare dopo il primo setup)
+//        SEZIONE 24 — se non già presenti, generarne una coppia con
+//        `node -e "console.log(require('web-push').generateVAPIDKeys())"`;
+//        se già presenti (es. da un setup precedente) NON rigenerarle:
+//        invaliderebbe le subscription dei dietisti già iscritti)
 //      - PATIENT_APP_URL (opzionale, default https://app.dietplan-pro.com)
 //   3. Ogni dietista attiva le notifiche da Impostazioni → Notifiche e
 //      Strumenti; ogni paziente le attiva dalla propria app (già presente,

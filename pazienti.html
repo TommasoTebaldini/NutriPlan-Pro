@@ -1032,6 +1032,12 @@ async function renderCartellaDetail(id) {
   const patientId = patientLink[0]?.patient_id || null;
   const isAltro = (id === _altroCartellaId);
 
+  // Stato attuale della sezione "Speciale" (indipendente dalle note condivise)
+  const specialtyAccessRows = patientId
+    ? await safeQuery(sb.from('patient_specialty_access').select('specialty,enabled').eq('patient_id', patientId))
+    : [];
+  const specialtyEnabledSet = new Set((specialtyAccessRows || []).filter(r => r.enabled).map(r => r.specialty));
+
   if (!cart) {
     wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>${_L('Cartella non trovata','Folder not found')}</h3><p style="color:var(--slate-l);font-size:13px">${_L('Cartella non accessibile o inesistente.','Folder not accessible or does not exist.')}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px"></button></div>`;
     cartellaAperta = null;
@@ -1387,6 +1393,30 @@ async function renderCartellaDetail(id) {
         </div>`;
       }).join('')}</div>
     </div>` : ''}
+
+    <!-- Sezioni "Speciale" visibili al paziente nella sua app (indipendente dalle note condivise) -->
+    ${patientId ? `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr">
+        <div>
+          <h4 style="font-size:14px;margin:0">✨ ${_L('Sezioni Speciale visibili al paziente','Special sections visible to patient')}</h4>
+          <p style="font-size:11.5px;color:var(--slate-l);margin:4px 0 0">${_L('Attiva le patologie da mostrare nella sezione "Speciale" della sua app. I dati mostrati sono quelli dell\\'ultima scheda specialistica salvata qui sotto, a prescindere dal suo stato di visibilità.','Enable the conditions to show in the "Special" section of their app. The data shown is from the latest specialist sheet saved below, regardless of its own visibility state.')}</p>
+        </div>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-wrap:wrap;gap:8px">
+        ${SPECIALTY_TOGGLE_LIST.map(s => {
+          const enabled = specialtyEnabledSet.has(s.key);
+          return `<button data-bg="${s.bg}" data-col="${s.col}" data-enabled="${enabled}"
+            onclick="toggleSpecialtyAccess('${patientId}','${s.key}',this)"
+            style="display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:100px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:600;border:1.5px solid ${enabled?s.col:'var(--border)'};background:${enabled?s.bg:'#F1F5F9'};color:${enabled?s.col:'#94A3B8'}">
+            <span>${s.icon}</span><span>${s.label}</span><span class="spec-toggle-state" style="font-size:10.5px;font-weight:700;opacity:.8">${enabled?_L('Visibile','Visible'):_L('Nascosta','Hidden')}</span>
+          </button>`;
+        }).join('')}
+      </div>
+    </div>` : `
+    <div class="card" style="margin-bottom:16px;padding:14px 16px">
+      <p style="font-size:12.5px;color:var(--slate-l)">✨ ${_L('Collega questo paziente a un account per poter attivare le sezioni "Speciale" nella sua app.','Link this patient to an account to enable "Special" sections in their app.')}</p>
+    </div>`}
 
     <!-- Note Specialistiche (Diabete, Pancreas, ecc.) -->
     ${(noteSpecAltre && noteSpecAltre.length) ? `
@@ -2074,6 +2104,51 @@ const SPEC_SUBSECTIONS = {
     { key: 'note_paziente',     label: '✏️ ' + _L('Note specifiche','Specific notes'),        desc: _L('Note personalizzate per il paziente','Personalised notes for the patient') },
   ],
 };
+
+// Le 12 patologie della sezione "Speciale" nell'app paziente — stesso ordine,
+// stessi colori di specMap (renderCartellaDetail) e di specialtyMeta.js
+// (Diet-Plan-Pro-app-claude), per coerenza visiva tra i due repo.
+const SPECIALTY_TOGGLE_LIST = [
+  { key: 'diabete',       icon: '🩸', label: _L('Diabete','Diabetes'),                    bg:'#DBEAFE', col:'#1D4ED8' },
+  { key: 'obesita',       icon: '⚖️', label: _L('Obesità','Obesity'),                      bg:'#FFF7ED', col:'#EA580C' },
+  { key: 'sport',         icon: '🏃', label: _L('Nutrizione Sportiva','Sports Nutrition'), bg:'#ECFDF5', col:'#065F46' },
+  { key: 'dca',           icon: '🫀', label: 'DCA',                                        bg:'#FEE2E2', col:'#991B1B' },
+  { key: 'renale',        icon: '🫘', label: _L('Nefropatia / IRC','Nephropathy / CKD'),   bg:'#CCFBF1', col:'#0F766E' },
+  { key: 'chetogenica',   icon: '🥑', label: _L('Dieta Chetogenica','Ketogenic Diet'),     bg:'#F5F3FF', col:'#7C3AED' },
+  { key: 'oncologia',     icon: '🎗️', label: _L('Oncologia','Oncology'),                    bg:'#F5F3FF', col:'#7C3AED' },
+  { key: 'pancreas',      icon: '🫁', label: _L('IPE — Pancreas','EPI — Pancreas'),        bg:'#FFF7ED', col:'#C2410C' },
+  { key: 'pediatria',     icon: '👶', label: _L('Pediatria','Pediatrics'),                  bg:'#EDE9FE', col:'#5B21B6' },
+  { key: 'disfagia',      icon: '🗣️', label: _L('Disfagia','Dysphagia'),                    bg:'#E0F2FE', col:'#0369A1' },
+  { key: 'paziente_sano', icon: '🌿', label: _L('Percorso Nutrizionale','Nutrition Path'), bg:'#F0FDF4', col:'#16A34A' },
+  { key: 'gravidanza',    icon: '🤰', label: _L('Gravidanza','Pregnancy'),                  bg:'#FDF2F8', col:'#BE185D' },
+];
+
+async function toggleSpecialtyAccess(patientId, specialty, btn) {
+  const wasEnabled = btn.dataset.enabled === 'true';
+  const nowEnabled = !wasEnabled;
+  btn.dataset.enabled = String(nowEnabled);
+  btn.style.background = nowEnabled ? btn.dataset.bg : '#F1F5F9';
+  btn.style.color = nowEnabled ? btn.dataset.col : '#94A3B8';
+  btn.style.borderColor = nowEnabled ? btn.dataset.col : 'var(--border)';
+  btn.querySelector('.spec-toggle-state').textContent = nowEnabled ? _L('Visibile','Visible') : _L('Nascosta','Hidden');
+
+  const { error } = await sb.from('patient_specialty_access')
+    .upsert({ patient_id: patientId, specialty, enabled: nowEnabled, updated_by: currentUser.id, updated_at: new Date().toISOString() }, { onConflict: 'patient_id,specialty' });
+
+  if (error) {
+    btn.dataset.enabled = String(wasEnabled);
+    btn.style.background = wasEnabled ? btn.dataset.bg : '#F1F5F9';
+    btn.style.color = wasEnabled ? btn.dataset.col : '#94A3B8';
+    btn.style.borderColor = wasEnabled ? btn.dataset.col : 'var(--border)';
+    btn.querySelector('.spec-toggle-state').textContent = wasEnabled ? _L('Visibile','Visible') : _L('Nascosta','Hidden');
+    const msg = error.message && error.message.includes('patient_specialty_access')
+      ? _L('⚠️ Migrazione DB richiesta: esegui la SEZIONE 26 di supabase_setup.sql in Supabase','⚠️ DB migration required: run SECTION 26 of supabase_setup.sql in Supabase')
+      : '❌ ' + _L('Errore: ','Error: ') + error.message;
+    toast(msg, 'err');
+    return;
+  }
+  toast(nowEnabled ? _L('👁️ Sezione attivata per il paziente','👁️ Section enabled for the patient') : _L('🙈 Sezione disattivata','🙈 Section disabled'), 'ok');
+}
 
 let _specSectionsPending = null; // { itemId, tipo, btn }
 let _pianoFormatoPending = null; // { pianoId, btn }

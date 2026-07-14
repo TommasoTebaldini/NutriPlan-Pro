@@ -2127,3 +2127,55 @@ END $$;
 -- ═══════════════════════════════════════════════════════════════════════════
 
 ALTER TABLE appointments ADD COLUMN IF NOT EXISTS patient_reminder_sent_at TIMESTAMPTZ;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 26 — SEZIONE "SPECIALE" APP PAZIENTE: VISIBILITÀ PER PATOLOGIA
+--
+-- Prima versione (non in questa sezione): la visibilità di una sottosezione
+-- specialistica lato paziente dipendeva dal flag visible_to_patient sulla
+-- SINGOLA nota in note_specialistiche — cioè dal "documento" più recente
+-- condiviso. Il dietista ha chiesto di scollegare le due cose: deve poter
+-- attivare/disattivare una patologia per un paziente indipendentemente da
+-- quali note abbia condiviso — le note restano solo la FONTE DATI (l'app
+-- paziente legge sempre l'ultima nota di quel tipo, a prescindere dal suo
+-- visible_to_patient), mentre patient_specialty_access è l'unico interruttore
+-- che decide se la sottosezione compare o no nell'app.
+--
+-- Chiave (patient_id, specialty) senza dietitian_id: è un interruttore unico
+-- per paziente+patologia, non uno per-dietista — se un paziente ha più
+-- dietisti collegati (patient_dietitian), ciascuno di essi può attivarla/
+-- disattivarla, l'ultimo che tocca il toggle vince (stesso spirito di
+-- visible_to_patient sulle altre tabelle cliniche condivise).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS patient_specialty_access (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id  UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  specialty   TEXT        NOT NULL,
+  enabled     BOOLEAN     NOT NULL DEFAULT FALSE,
+  updated_by  UUID        REFERENCES auth.users(id),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(patient_id, specialty)
+);
+
+ALTER TABLE patient_specialty_access ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='specialty_access_dietitian_manage' AND tablename='patient_specialty_access') THEN
+    CREATE POLICY "specialty_access_dietitian_manage" ON patient_specialty_access
+      FOR ALL USING (
+        EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = patient_specialty_access.patient_id AND pd.dietitian_id = auth.uid())
+      ) WITH CHECK (
+        EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = patient_specialty_access.patient_id AND pd.dietitian_id = auth.uid())
+      );
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='specialty_access_patient_read' AND tablename='patient_specialty_access') THEN
+    CREATE POLICY "specialty_access_patient_read" ON patient_specialty_access
+      FOR SELECT USING (auth.uid() = patient_id);
+  END IF;
+END $$;
+
+ALTER TABLE patient_specialty_access REPLICA IDENTITY FULL;

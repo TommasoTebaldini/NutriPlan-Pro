@@ -274,6 +274,18 @@
       </div>
     </div>
   </div>
+
+  <div class="calc-box">
+    <h3><span data-only-lang="it">⏰ Rapporti I:C e FSI per fascia oraria</span><span data-only-lang="en" style="display:none">⏰ I:C and ISF ratios by time block</span></h3>
+    <div class="alert-info alert-box" style="margin-bottom:12px" data-only-lang="it">
+      Per pazienti con microinfusore, il rapporto I:C e il FSI spesso cambiano nell'arco della giornata (es. maggiore insulino-resistenza al mattino). Imposta qui una fascia per ogni segmento del profilo basale — il paziente le vedrà tutte nella sua app e userà quella corretta in base all'orario.
+    </div>
+    <div class="alert-info alert-box" style="margin-bottom:12px;display:none" data-only-lang="en">
+      For pump users, the I:C ratio and ISF often change across the day (e.g. higher insulin resistance in the morning). Set one block per basal profile segment here — the patient will see all of them in their app and use the correct one based on time of day.
+    </div>
+    <div id="dg-fasce-list"></div>
+    <button type="button" class="btn btn-ghost btn-sm" onclick="dgAggiungiFascia()" style="margin-top:8px">➕ <span data-only-lang="it">Aggiungi fascia oraria</span><span data-only-lang="en" style="display:none">Add time block</span></button>
+  </div>
 </div>
 
 <!-- TAB 2: COUNTING CHO -->
@@ -881,6 +893,46 @@ function calcFSI() {
   document.getElementById('fsi-val').textContent = Math.round(div / tdd) + ' mg/dL';
 }
 
+// ── Rapporti I:C/FSI per fascia oraria (profili multipli, es. microinfusore) ──
+let dgFasceOrarie = [];
+function dgAggiungiFascia() {
+  dgFasceOrarie.push({ nome: '', oraDa: '', oraA: '', ic: '', fsi: '', target: '' });
+  dgRenderFasce();
+}
+function dgRimuoviFascia(i) {
+  dgFasceOrarie.splice(i, 1);
+  dgRenderFasce();
+}
+function dgRenderFasce() {
+  const c = document.getElementById('dg-fasce-list');
+  if (!c) return;
+  if (!dgFasceOrarie.length) {
+    c.innerHTML = `<p style="font-size:12.5px;color:var(--slate-l);font-style:italic;padding:6px 0">${_L('Nessuna fascia oraria impostata.','No time block set yet.')}</p>`;
+    return;
+  }
+  c.innerHTML = dgFasceOrarie.map((f, i) => `
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px;background:#F8FAFC;border-radius:8px;border:1.5px solid var(--border);margin-bottom:8px">
+      <input type="text" value="${esc(f.nome)}" placeholder="${_L('Nome (es. Colazione)','Name (e.g. Breakfast)')}"
+        oninput="dgFasceOrarie[${i}].nome=this.value"
+        style="flex:1.5;min-width:110px;padding:7px 9px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <input type="time" value="${esc(f.oraDa||'')}" oninput="dgFasceOrarie[${i}].oraDa=this.value"
+        style="width:100px;padding:7px 9px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <span style="color:var(--slate-l);font-size:12px">–</span>
+      <input type="time" value="${esc(f.oraA||'')}" oninput="dgFasceOrarie[${i}].oraA=this.value"
+        style="width:100px;padding:7px 9px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <input type="number" value="${esc(f.ic||'')}" placeholder="I:C" title="${_L('Rapporto I:C','I:C ratio')}"
+        oninput="dgFasceOrarie[${i}].ic=this.value"
+        style="width:70px;padding:7px 9px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <input type="number" value="${esc(f.fsi||'')}" placeholder="FSI" title="${_L('Fattore di sensibilità insulinica','Insulin sensitivity factor')}"
+        oninput="dgFasceOrarie[${i}].fsi=this.value"
+        style="width:70px;padding:7px 9px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <input type="number" value="${esc(f.target||'')}" placeholder="${_L('Target','Target')}" title="${_L('Target glicemico','Glycaemic target')}"
+        oninput="dgFasceOrarie[${i}].target=this.value"
+        style="width:80px;padding:7px 9px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:13px;outline:none">
+      <button type="button" onclick="dgRimuoviFascia(${i})" style="background:none;border:none;color:#DC2626;font-size:16px;cursor:pointer;padding:0 4px">✕</button>
+    </div>`).join('');
+}
+
 // ── CHO Counting Calcolatore ──
 let choItems = [];
 function addCHOItem() {
@@ -1035,6 +1087,7 @@ function raccogliDatiDg() {
     dose_pasto: { cho: document.getElementById('pasto-cho')?.value, ic: document.getElementById('pasto-ic')?.value, glicemia: document.getElementById('pasto-glic')?.value, target: document.getElementById('pasto-target')?.value, fsi: document.getElementById('pasto-fsi')?.value },
     fsi: { tdd: document.getElementById('fsi-tdd')?.value, metodo: document.getElementById('fsi-metodo')?.value, risultato: document.getElementById('fsi-val')?.textContent },
     depliant: { ic: gv('dep-ic'), target: gv('dep-target'), fsi: gv('dep-fsi') },
+    fasce_orarie: dgFasceOrarie.filter(f => f.nome || f.ic || f.fsi),
     piano: {
       tipo: gv('dg-piano-tipo'), insulina: gv('dg-piano-insulina'), kcal: gv('dg-piano-kcal'), cho_tot: gv('dg-piano-cho-tot'),
       note_cliniche: gv('dg-piano-note-cliniche'), limita: gv('dg-piano-limita'), sport: gv('dg-piano-sport'), note_generali: gv('dg-piano-note-generali'),
@@ -1050,6 +1103,7 @@ function ripristinaDatiDg(dati) {
   if (dati.dose_pasto) { sv('pasto-cho',dati.dose_pasto.cho); sv('pasto-ic',dati.dose_pasto.ic); sv('pasto-glic',dati.dose_pasto.glicemia); sv('pasto-target',dati.dose_pasto.target); sv('pasto-fsi',dati.dose_pasto.fsi); }
   if (dati.fsi) { sv('fsi-tdd',dati.fsi.tdd); sv('fsi-metodo',dati.fsi.metodo); }
   if (dati.depliant) { sv('dep-ic',dati.depliant.ic); sv('dep-target',dati.depliant.target); sv('dep-fsi',dati.depliant.fsi); }
+  if (Array.isArray(dati.fasce_orarie)) { dgFasceOrarie = dati.fasce_orarie; dgRenderFasce(); }
   if (dati.piano) {
     const p = dati.piano;
     sv('dg-piano-tipo',p.tipo); sv('dg-piano-insulina',p.insulina); sv('dg-piano-kcal',p.kcal); sv('dg-piano-cho-tot',p.cho_tot);
@@ -1132,6 +1186,7 @@ async function caricaDgDaNote(noteId) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  dgRenderFasce();
   try {
     await checkAuth(false);
     initCartellaWidget('dg-cartella-cw', { hiddenInputId:'dg-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF' });

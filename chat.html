@@ -283,6 +283,7 @@ async function selectPatient(patientId) {
       <div class="chat-tab" id="tab-storico" onclick="switchChatTab('storico')">${t('chat.tab_storico')}</div>
       <div class="chat-tab" id="tab-timeline" onclick="switchChatTab('timeline')">🕐 Timeline</div>
       <div class="chat-tab" id="tab-ai" onclick="switchChatTab('ai')">🤖 AI</div>
+      <div class="chat-tab" id="tab-speciale" onclick="switchChatTab('speciale')">✨ Speciale</div>
     </div>
     <div id="chat-tab-body" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
       <div class="chat-messages" id="chat-messages-area">
@@ -327,7 +328,7 @@ async function selectPatient(patientId) {
 
 function switchChatTab(tab) {
   currentChatTab = tab;
-  ['chat','andamento','informazioni','privacy','storico','timeline','ai'].forEach(t =>
+  ['chat','andamento','informazioni','privacy','storico','timeline','ai','speciale'].forEach(t =>
     document.getElementById('tab-'+t)?.classList.toggle('active', tab === t)
   );
 
@@ -385,6 +386,8 @@ function switchChatTab(tab) {
     setBodyContent(`<div class="and-panel" id="timeline-chat-panel" style="overflow-y:auto"><div class="and-empty"><div style="font-size:36px">⏳</div><div>${_L('Caricamento...','Loading...')}</div></div></div>`, loadTimelineChat);
   } else if (tab === 'ai') {
     setBodyContent(`<div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden" id="ai-chat-wrap"><div class="and-empty"><div style="font-size:36px">⏳</div><div>${_L('Caricamento...','Loading...')}</div></div></div>`, loadAIChatPaziente);
+  } else if (tab === 'speciale') {
+    setBodyContent(`<div class="and-panel" id="speciale-panel" style="overflow-y:auto"><div class="and-empty"><div style="font-size:36px">⏳</div><div>${_L('Caricamento...','Loading...')}</div></div></div>`, loadSpeciale);
   }
 }
 
@@ -2020,6 +2023,86 @@ function printPrivacy() {
 // ══════════════════════════════════════════════════
 // STORICO CLINICO & GRAFICI
 // ══════════════════════════════════════════════════
+// SEZIONE "SPECIALE" — attiva/disattiva le patologie visibili al paziente
+// nella sua app (Diet-Plan-Pro-app-claude), indipendente dalle note
+// condivise: patient_specialty_access è l'unico interruttore, le note
+// specialistiche restano solo la fonte dei dati (vedi SEZIONE 26 di
+// supabase_setup.sql).
+// ══════════════════════════════════════════════════
+
+// Stesso ordine/colori di specMap (pazienti.html) e specialtyMeta.js
+// (Diet-Plan-Pro-app-claude), per coerenza visiva tra i due repo.
+const SPECIALTY_TOGGLE_LIST = [
+  { key: 'diabete',       icon: '🩸', label: _L('Diabete','Diabetes'),                    bg:'#DBEAFE', col:'#1D4ED8' },
+  { key: 'obesita',       icon: '⚖️', label: _L('Obesità','Obesity'),                      bg:'#FFF7ED', col:'#EA580C' },
+  { key: 'sport',         icon: '🏃', label: _L('Nutrizione Sportiva','Sports Nutrition'), bg:'#ECFDF5', col:'#065F46' },
+  { key: 'dca',           icon: '🫀', label: 'DCA',                                        bg:'#FEE2E2', col:'#991B1B' },
+  { key: 'renale',        icon: '🫘', label: _L('Nefropatia / IRC','Nephropathy / CKD'),   bg:'#CCFBF1', col:'#0F766E' },
+  { key: 'chetogenica',   icon: '🥑', label: _L('Dieta Chetogenica','Ketogenic Diet'),     bg:'#F5F3FF', col:'#7C3AED' },
+  { key: 'oncologia',     icon: '🎗️', label: _L('Oncologia','Oncology'),                    bg:'#F5F3FF', col:'#7C3AED' },
+  { key: 'pancreas',      icon: '🫁', label: _L('IPE — Pancreas','EPI — Pancreas'),        bg:'#FFF7ED', col:'#C2410C' },
+  { key: 'pediatria',     icon: '👶', label: _L('Pediatria','Pediatrics'),                  bg:'#EDE9FE', col:'#5B21B6' },
+  { key: 'disfagia',      icon: '🗣️', label: _L('Disfagia','Dysphagia'),                    bg:'#E0F2FE', col:'#0369A1' },
+  { key: 'paziente_sano', icon: '🌿', label: _L('Percorso Nutrizionale','Nutrition Path'), bg:'#F0FDF4', col:'#16A34A' },
+  { key: 'gravidanza',    icon: '🤰', label: _L('Gravidanza','Pregnancy'),                  bg:'#FDF2F8', col:'#BE185D' },
+];
+
+async function loadSpeciale() {
+  const panel = document.getElementById('speciale-panel');
+  if (!panel) return;
+  const patientId = selectedPatientId;
+  if (!patientId) { panel.innerHTML = `<div class="and-empty"><div style="font-size:36px">✨</div><div>${_L('Paziente non selezionato.','No patient selected.')}</div></div>`; return; }
+
+  const { data, error } = await sb.from('patient_specialty_access').select('specialty,enabled').eq('patient_id', patientId);
+  if (error && (error.code === '42P01' || error.message?.includes('schema cache'))) {
+    panel.innerHTML = `<div class="and-empty"><div style="font-size:36px">⚠️</div><div>${_L('Migrazione DB richiesta: esegui la SEZIONE 26 di supabase_setup.sql in Supabase.','DB migration required: run SECTION 26 of supabase_setup.sql in Supabase.')}</div></div>`;
+    return;
+  }
+  const enabledSet = new Set((data || []).filter(r => r.enabled).map(r => r.specialty));
+
+  panel.innerHTML = `
+    <div style="padding:14px 16px 4px">
+      <p style="font-size:12.5px;color:var(--slate-l)">${_L('Attiva le patologie da mostrare nella sezione "Speciale" della sua app. I dati mostrati sono quelli dell’ultima scheda specialistica salvata nella sua cartella, a prescindere dallo stato di visibilità della singola scheda.','Enable the conditions to show in the "Special" section of their app. The data shown is from the latest specialist sheet saved in their file, regardless of that sheet’s own visibility state.')}</p>
+    </div>
+    <div style="padding:10px 16px 16px;display:flex;flex-wrap:wrap;gap:8px">
+      ${SPECIALTY_TOGGLE_LIST.map(s => {
+        const enabled = enabledSet.has(s.key);
+        return `<button data-bg="${s.bg}" data-col="${s.col}" data-enabled="${enabled}"
+          onclick="toggleSpecialtyAccess('${patientId}','${s.key}',this)"
+          style="display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:100px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:600;border:1.5px solid ${enabled?s.col:'var(--border)'};background:${enabled?s.bg:'#F1F5F9'};color:${enabled?s.col:'#94A3B8'}">
+          <span>${s.icon}</span><span>${s.label}</span><span class="spec-toggle-state" style="font-size:10.5px;font-weight:700;opacity:.8">${enabled?_L('Visibile','Visible'):_L('Nascosta','Hidden')}</span>
+        </button>`;
+      }).join('')}
+    </div>`;
+}
+
+async function toggleSpecialtyAccess(patientId, specialty, btn) {
+  const wasEnabled = btn.dataset.enabled === 'true';
+  const nowEnabled = !wasEnabled;
+  btn.dataset.enabled = String(nowEnabled);
+  btn.style.background = nowEnabled ? btn.dataset.bg : '#F1F5F9';
+  btn.style.color = nowEnabled ? btn.dataset.col : '#94A3B8';
+  btn.style.borderColor = nowEnabled ? btn.dataset.col : 'var(--border)';
+  btn.querySelector('.spec-toggle-state').textContent = nowEnabled ? _L('Visibile','Visible') : _L('Nascosta','Hidden');
+
+  const { error } = await sb.from('patient_specialty_access')
+    .upsert({ patient_id: patientId, specialty, enabled: nowEnabled, updated_by: currentUser.id, updated_at: new Date().toISOString() }, { onConflict: 'patient_id,specialty' });
+
+  if (error) {
+    btn.dataset.enabled = String(wasEnabled);
+    btn.style.background = wasEnabled ? btn.dataset.bg : '#F1F5F9';
+    btn.style.color = wasEnabled ? btn.dataset.col : '#94A3B8';
+    btn.style.borderColor = wasEnabled ? btn.dataset.col : 'var(--border)';
+    btn.querySelector('.spec-toggle-state').textContent = wasEnabled ? _L('Visibile','Visible') : _L('Nascosta','Hidden');
+    const msg = error.message && error.message.includes('patient_specialty_access')
+      ? _L('⚠️ Migrazione DB richiesta: esegui la SEZIONE 26 di supabase_setup.sql in Supabase','⚠️ DB migration required: run SECTION 26 of supabase_setup.sql in Supabase')
+      : '❌ ' + _L('Errore: ','Error: ') + error.message;
+    toast(msg, 'err');
+    return;
+  }
+  toast(nowEnabled ? _L('👁️ Sezione attivata per il paziente','👁️ Section enabled for the patient') : _L('🙈 Sezione disattivata','🙈 Section disabled'), 'ok');
+}
+
 let _storicoCharts = [];
 
 function destroyStoricoCharts() {

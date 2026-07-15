@@ -2032,20 +2032,27 @@ function printPrivacy() {
 
 // Stesso ordine/colori di specMap (pazienti.html) e specialtyMeta.js
 // (Diet-Plan-Pro-app-claude), per coerenza visiva tra i due repo.
-const SPECIALTY_TOGGLE_LIST = [
-  { key: 'diabete',       icon: '🩸', label: _L('Diabete','Diabetes'),                    bg:'#DBEAFE', col:'#1D4ED8' },
-  { key: 'obesita',       icon: '⚖️', label: _L('Obesità','Obesity'),                      bg:'#FFF7ED', col:'#EA580C' },
-  { key: 'sport',         icon: '🏃', label: _L('Nutrizione Sportiva','Sports Nutrition'), bg:'#ECFDF5', col:'#065F46' },
-  { key: 'dca',           icon: '🫀', label: 'DCA',                                        bg:'#FEE2E2', col:'#991B1B' },
-  { key: 'renale',        icon: '🫘', label: _L('Nefropatia / IRC','Nephropathy / CKD'),   bg:'#CCFBF1', col:'#0F766E' },
-  { key: 'chetogenica',   icon: '🥑', label: _L('Dieta Chetogenica','Ketogenic Diet'),     bg:'#F5F3FF', col:'#7C3AED' },
-  { key: 'oncologia',     icon: '🎗️', label: _L('Oncologia','Oncology'),                    bg:'#F5F3FF', col:'#7C3AED' },
-  { key: 'pancreas',      icon: '🫁', label: _L('IPE — Pancreas','EPI — Pancreas'),        bg:'#FFF7ED', col:'#C2410C' },
-  { key: 'pediatria',     icon: '👶', label: _L('Pediatria','Pediatrics'),                  bg:'#EDE9FE', col:'#5B21B6' },
-  { key: 'disfagia',      icon: '🗣️', label: _L('Disfagia','Dysphagia'),                    bg:'#E0F2FE', col:'#0369A1' },
-  { key: 'paziente_sano', icon: '🌿', label: _L('Percorso Nutrizionale','Nutrition Path'), bg:'#F0FDF4', col:'#16A34A' },
-  { key: 'gravidanza',    icon: '🤰', label: _L('Gravidanza','Pregnancy'),                  bg:'#FDF2F8', col:'#BE185D' },
-];
+// Funzione (non un const top-level) apposta: _L() è definita in
+// js/lang.min.js, caricato con `defer` — a livello di modulo, mentre lo
+// script viene parsato, _L() non esiste ancora. Chiamarla qui dentro,
+// solo quando loadSpeciale() gira (dopo il caricamento pagina), evita
+// il "ReferenceError: _L is not defined".
+function specialtyToggleList() {
+  return [
+    { key: 'diabete',       icon: '🩸', label: _L('Diabete','Diabetes'),                    bg:'#DBEAFE', col:'#1D4ED8' },
+    { key: 'obesita',       icon: '⚖️', label: _L('Obesità','Obesity'),                      bg:'#FFF7ED', col:'#EA580C' },
+    { key: 'sport',         icon: '🏃', label: _L('Nutrizione Sportiva','Sports Nutrition'), bg:'#ECFDF5', col:'#065F46' },
+    { key: 'dca',           icon: '🫀', label: 'DCA',                                        bg:'#FEE2E2', col:'#991B1B' },
+    { key: 'renale',        icon: '🫘', label: _L('Nefropatia / IRC','Nephropathy / CKD'),   bg:'#CCFBF1', col:'#0F766E' },
+    { key: 'chetogenica',   icon: '🥑', label: _L('Dieta Chetogenica','Ketogenic Diet'),     bg:'#F5F3FF', col:'#7C3AED' },
+    { key: 'oncologia',     icon: '🎗️', label: _L('Oncologia','Oncology'),                    bg:'#F5F3FF', col:'#7C3AED' },
+    { key: 'pancreas',      icon: '🫁', label: _L('IPE — Pancreas','EPI — Pancreas'),        bg:'#FFF7ED', col:'#C2410C' },
+    { key: 'pediatria',     icon: '👶', label: _L('Pediatria','Pediatrics'),                  bg:'#EDE9FE', col:'#5B21B6' },
+    { key: 'disfagia',      icon: '🗣️', label: _L('Disfagia','Dysphagia'),                    bg:'#E0F2FE', col:'#0369A1' },
+    { key: 'paziente_sano', icon: '🌿', label: _L('Percorso Nutrizionale','Nutrition Path'), bg:'#F0FDF4', col:'#16A34A' },
+    { key: 'gravidanza',    icon: '🤰', label: _L('Gravidanza','Pregnancy'),                  bg:'#FDF2F8', col:'#BE185D' },
+  ];
+}
 
 async function loadSpeciale() {
   const panel = document.getElementById('speciale-panel');
@@ -2065,7 +2072,7 @@ async function loadSpeciale() {
       <p style="font-size:12.5px;color:var(--slate-l)">${_L('Attiva le patologie da mostrare nella sezione "Speciale" della sua app. I dati mostrati sono quelli dell’ultima scheda specialistica salvata nella sua cartella, a prescindere dallo stato di visibilità della singola scheda.','Enable the conditions to show in the "Special" section of their app. The data shown is from the latest specialist sheet saved in their file, regardless of that sheet’s own visibility state.')}</p>
     </div>
     <div style="padding:10px 16px 16px;display:flex;flex-wrap:wrap;gap:8px">
-      ${SPECIALTY_TOGGLE_LIST.map(s => {
+      ${specialtyToggleList().map(s => {
         const enabled = enabledSet.has(s.key);
         return `<button data-bg="${s.bg}" data-col="${s.col}" data-enabled="${enabled}"
           onclick="toggleSpecialtyAccess('${patientId}','${s.key}',this)"

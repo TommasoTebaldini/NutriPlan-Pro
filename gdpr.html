@@ -648,7 +648,7 @@ function esportaConsensiCSV() {
   toast('✅ CSV esportato', 'ok');
 }
 
-let _dsarLog = JSON.parse(localStorage.getItem('gdpr_dsar_log') || '[]');
+let _dsarLog = (() => { try { return JSON.parse(localStorage.getItem('gdpr_dsar_log') || '[]'); } catch(e) { return []; } })();
 function renderDSAR() {
   const el = document.getElementById('dsar-list');
   if (!_dsarLog.length) { el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna richiesta registrata.</div>'; return; }

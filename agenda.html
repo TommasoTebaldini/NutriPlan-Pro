@@ -466,7 +466,7 @@
 <script src="js/print-capture.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
-let events = JSON.parse(localStorage.getItem('dietplan_events') || '[]');
+let events = (() => { try { return JSON.parse(localStorage.getItem('dietplan_events') || '[]'); } catch(e) { return []; } })();
 const DELETED_TTL_MS = 30 * 24 * 60 * 60 * 1000; // keep tombstones 30 days, plenty to outlive any stale cache
 function getDeletedIds() {
   try {
@@ -1438,7 +1438,7 @@ let gcalToken = null;
 let gcalTokenExpiry = 0;
 let gcalTokenClient = null;
 let gcalEvents = []; // events fetched from personal Google Calendar
-let showGcalEvents = JSON.parse(localStorage.getItem('gcal_show_personal') ?? 'true');
+let showGcalEvents = (() => { try { return JSON.parse(localStorage.getItem('gcal_show_personal') ?? 'true'); } catch(e) { return true; } })();
 
 function gcalTokenValid() {
   return gcalToken && Date.now() < gcalTokenExpiry;
@@ -1455,7 +1455,7 @@ function gcalSyncKey() {
 function getGCalSyncedIds() {
   const key = gcalSyncKey();
   if (!key) return {};
-  return JSON.parse(localStorage.getItem(key) || '{}');
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) { return {}; }
 }
 function setGCalSyncedIds(ids) {
   const key = gcalSyncKey();

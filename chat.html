@@ -1249,7 +1249,7 @@ const TPL_STORAGE_KEY = 'chat_templates_v1';
 let _tplActiveCat = null;
 
 function getTplCategories() {
-  const saved = JSON.parse(localStorage.getItem(TPL_STORAGE_KEY) || '{}');
+  let saved; try { saved = JSON.parse(localStorage.getItem(TPL_STORAGE_KEY) || '{}'); } catch(e) { saved = {}; }
   const merged = {};
   Object.keys(TPL_DEFAULTS).forEach(cat => {
     merged[cat] = [...TPL_DEFAULTS[cat]];
@@ -1400,7 +1400,7 @@ function saveNewTpl() {
   const catName = (catEl?.value || 'Personalizzati').trim();
   const text = (textEl?.value || '').trim();
   if (!text) { textEl?.focus(); return; }
-  const saved = JSON.parse(localStorage.getItem(TPL_STORAGE_KEY) || '{}');
+  let saved; try { saved = JSON.parse(localStorage.getItem(TPL_STORAGE_KEY) || '{}'); } catch(e) { saved = {}; }
   if (!saved[catName]) saved[catName] = [];
   if (!saved[catName].includes(text)) saved[catName].push(text);
   localStorage.setItem(TPL_STORAGE_KEY, JSON.stringify(saved));

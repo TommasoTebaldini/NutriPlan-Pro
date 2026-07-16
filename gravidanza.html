@@ -208,11 +208,17 @@ async function ensureChartJs() {
       <div id="res-trimestre-attuale" style="margin-top:10px;padding:12px 14px;background:#FDF2F8;border-radius:8px;border-left:3px solid #BE185D;font-size:13px;font-weight:600;color:#831843;display:none"></div>
     </div>
 
-    <div id="grav-salva-wrap" style="display:none;margin-bottom:14px">
-      <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;border:1.5px solid #86EFAC;font-size:12.5px;color:#14532D;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span style="font-size:20px">💾</span>
-        <div style="flex:1"><span data-only-lang="it">Pagina aperta da una cartella paziente — puoi salvare questa valutazione.</span><span data-only-lang="en" style="display:none">Page opened from a patient file — you can save this assessment.</span></div>
-        <button class="btn btn-primary btn-sm" onclick="salvaNota()">💾 <span data-only-lang="it">Salva come nota specialistica</span><span data-only-lang="en" style="display:none">Save as specialist note</span></button>
+    <div class="paz-hdr no-print" id="grav-paz-hdr">
+      <div class="paz-hdr-field" style="flex:2;min-width:200px">
+        <label>📁 <span data-only-lang="it">Cartella Paziente</span><span data-only-lang="en" style="display:none">Patient Folder</span></label>
+        <div id="grav-cartella-cw"></div>
+      </div>
+      <div class="paz-hdr-field" style="max-width:220px">
+        <label>📝 <span data-only-lang="it">Nota / Titolo sessione</span><span data-only-lang="en" style="display:none">Note / Session title</span></label>
+        <input type="text" id="grav-nota" placeholder="es. Prima visita, follow-up...">
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <button class="btn btn-primary btn-sm" onclick="salvaNota()">💾 <span data-only-lang="it">Salva in Cartella</span><span data-only-lang="en" style="display:none">Save to Folder</span></button>
       </div>
     </div>
   </div>
@@ -1047,8 +1053,7 @@ async function ensureChartJs() {
 
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
-let _noteId = null;
-let _cartellaId = null;
+let editingGravNoteId = null;
 let _weightChart = null;
 let _asGrav = null;
 
@@ -1056,10 +1061,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   _asGrav = autoSaveFields('nutriplan_draft_gravidanza', ['g-tipo','g-eta','g-peso-pre','g-altezza','g-peso-att','g-settimane']);
   _asGrav.register();
   await checkAuth();
-  const params = new URLSearchParams(location.search);
-  _noteId = params.get('noteId') || null;
-  _cartellaId = params.get('cartellaId') || null;
-  if (_noteId || _cartellaId) document.getElementById('grav-salva-wrap').style.display = '';
+  try {
+    initCartellaWidget('grav-cartella-cw', { hiddenInputId:'grav-cartella', accentColor:'#BE185D', labelColor:'#BE185D', hoverBg:'#FDF2F8', nuovaBg:'#FDF2F8' });
+    const noteId = new URLSearchParams(window.location.search).get('noteId');
+    if (noteId) await caricaGravDaNote(noteId);
+  } catch(e) {}
   _asGrav.restore();
   aggiornaGDM();
 });
@@ -1133,7 +1139,6 @@ function calcola() {
   if (bmi >= 30) document.getElementById('gdm-bmi').checked = true;
   aggiornaGDM();
   aggiornaGrafico(bmi, settimane, pesoAtt, pesoPre, tipo, r);
-  if (_noteId || _cartellaId) document.getElementById('grav-salva-wrap').style.display = '';
 }
 
 async function aggiornaGrafico(bmi, settimaneAtt, pesoAtt, pesoPre, tipo, r) {
@@ -1197,26 +1202,52 @@ function aggiornaGDM() {
 
 async function salvaNota() {
   if (!currentUser) { toast(_L('Sessione scaduta','Session expired'), 'err'); return; }
-  if (!_cartellaId) { toast(_L('Cartella non specificata — aggiungere ?cartellaId=... all\'URL','Folder not specified — add ?cartellaId=... to URL'), 'warn'); return; }
+  const cartella_id = document.getElementById('grav-cartella').value;
+  if (!cartella_id) { toast(_L('Seleziona una cartella paziente','Select a patient file'), 'warn'); return; }
+  const eta = document.getElementById('g-eta').value;
   const pesoPre = document.getElementById('g-peso-pre').value;
   const altezza = document.getElementById('g-altezza').value;
   const pesoAtt = document.getElementById('g-peso-att').value;
   const settimane = document.getElementById('g-settimane').value;
   const tipo = document.getElementById('g-tipo').value;
   const bmi = pesoPre && altezza ? (parseFloat(pesoPre) / Math.pow(parseFloat(altezza)/100, 2)).toFixed(1) : null;
-  const sommario = _L('Gravidanza','Pregnancy') + ' ' + tipo + (settimane ? _L(' · Sett. ',' · Wk. ') + settimane : '') +
+  const notaEl = document.getElementById('grav-nota');
+  const sommario = (notaEl && notaEl.value.trim()) || (_L('Gravidanza','Pregnancy') + ' ' + tipo + (settimane ? _L(' · Sett. ',' · Wk. ') + settimane : '') +
     (bmi ? _L(' · BMI pre: ',' · Pre-BMI: ') + bmi : '') +
-    (pesoAtt && pesoPre ? _L(' · Guadagno: +',' · Gain: +') + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : '');
-  showLoading(true);
-  const { error } = await sb.from('note_specialistiche').insert({
-    cartella_id: _cartellaId, user_id: currentUser.id,
+    (pesoAtt && pesoPre ? _L(' · Guadagno: +',' · Gain: +') + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : ''));
+  const payload = {
+    cartella_id, user_id: currentUser.id,
     tipo: 'gravidanza', nota: sommario,
-    dati: { pesoPre, altezza, pesoAtt, settimane, tipo, bmi },
-  });
+    dati: { eta, pesoPre, altezza, pesoAtt, settimane, tipo, bmi },
+  };
+  showLoading(true);
+  let result;
+  if (editingGravNoteId) {
+    result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingGravNoteId);
+  } else {
+    result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
+  }
   showLoading(false);
-  if (error) { toast(_L('Errore','Error') + ': ' + error.message, 'err'); return; }
+  if (result.error) { toast(_L('Errore','Error') + ': ' + result.error.message, 'err'); return; }
+  if (!editingGravNoteId && result.data?.[0]?.id) editingGravNoteId = result.data[0].id;
   _asGrav.clear();
-  toast(_L('💾 Nota specialistica salvata!','💾 Specialist note saved!'), 'ok');
+  toast(editingGravNoteId ? _L('✅ Scheda Gravidanza aggiornata!','✅ Pregnancy record updated!') : _L('💾 Nota specialistica salvata!','💾 Specialist note saved!'), 'ok');
+}
+
+async function caricaGravDaNote(noteId) {
+  showLoading(true);
+  const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
+  showLoading(false);
+  if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'),'err'); return; }
+  editingGravNoteId = noteId;
+  await _cwSetById('grav-cartella-cw', data.cartella_id);
+  const notaEl = document.getElementById('grav-nota');
+  if (notaEl) notaEl.value = data.nota || '';
+  const d = data.dati || {};
+  const sv = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined && v !== null) el.value = v; };
+  sv('g-tipo', d.tipo); sv('g-eta', d.eta); sv('g-peso-pre', d.pesoPre); sv('g-altezza', d.altezza); sv('g-peso-att', d.pesoAtt); sv('g-settimane', d.settimane);
+  calcola();
+  toast(_L('✅ Scheda Gravidanza caricata','✅ Pregnancy record loaded'),'ok');
 }
 </script>
 </body>

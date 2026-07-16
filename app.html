@@ -1822,7 +1822,7 @@ async function salvaPiano() {
   };
   showLoading(true);
   let result;
-  if (currentPianoId) { result = await sb.from('piani').update(payload).eq('id', currentPianoId); }
+  if (currentPianoId) { result = await sb.from('piani').update(payload).eq('id', currentPianoId).eq('user_id', currentUser.id); }
   else { payload.visible_to_patient = false; result = await sb.from('piani').insert(payload).select().single(); if (result.data) currentPianoId = result.data.id; }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
@@ -1949,7 +1949,7 @@ async function autoCapturePianoForVisibility(pianoId, cartellaId, formato) {
       return;
     }
 
-    const { error } = await sb.from('piani').update({ visible_to_patient: true, display_mode: formato }).eq('id', pianoId);
+    const { error } = await sb.from('piani').update({ visible_to_patient: true, display_mode: formato }).eq('id', pianoId).eq('user_id', currentUser.id);
     if (error) {
       toast(_L('⚠️ Immagine creata ma errore visibilità: ','⚠️ Image created but visibility error: ') + error.message, 'err');
     } else {
@@ -3431,7 +3431,7 @@ async function _saveTemplate(tmpl) {
       shared: !!tmpl.shared
     };
     if (tmpl.id) {
-      const { error } = await sb.from('piani_template').update(payload).eq('id', tmpl.id);
+      const { error } = await sb.from('piani_template').update(payload).eq('id', tmpl.id).eq('user_id', currentUser.id);
       return { ok: !error, error };
     } else {
       const { error } = await sb.from('piani_template').insert(payload);
@@ -3452,7 +3452,7 @@ async function _saveTemplate(tmpl) {
 async function _deleteTemplate(id) {
   const ok = await _checkTemplateTable();
   if (ok && !String(id).startsWith('ls_')) {
-    const { error } = await sb.from('piani_template').delete().eq('id', id);
+    const { error } = await sb.from('piani_template').delete().eq('id', id).eq('user_id', currentUser.id);
     return !error;
   }
   // LocalStorage

@@ -355,7 +355,7 @@ async function vediRisposte(id) {
 
 async function eliminaAnamnesi(id) {
   if (!confirm('Eliminare questa anamnesi?')) return;
-  const { error } = await sb.from('patient_intake_forms').delete().eq('id', id);
+  const { error } = await sb.from('patient_intake_forms').delete().eq('id', id).eq('dietitian_id', currentUser.id);
   if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('🗑️ Anamnesi eliminata', 'ok');
   loadAnamnesi();

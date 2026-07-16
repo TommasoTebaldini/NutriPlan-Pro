@@ -1525,7 +1525,7 @@ async function salvaNCPt() {
   showLoading(true);
   let result;
   if(currentNcptId){
-    result = await sb.from('ncpt').update(payload).eq('id',currentNcptId);
+    result = await sb.from('ncpt').update(payload).eq('id',currentNcptId).eq('user_id',currentUser.id);
   } else {
     payload.created_at = new Date().toISOString();
     payload.visible_to_patient = false;

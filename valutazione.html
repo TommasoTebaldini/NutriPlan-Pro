@@ -1751,7 +1751,7 @@ async function doSalva(cartellaId){
   let result;
   try {
     if(schedaId){
-      result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId);
+      result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId).eq('user_id',currentUser.id);
     } else {
       payload.visible_to_patient=false;
       result=await sb.from('schede_valutazione').insert(payload).select('id').single();

@@ -1620,7 +1620,7 @@ function apriModificaBIA(biaId, cartellaId) {
 async function delBIA(id, cartellaId) {
   customConfirm(_L('Eliminare questa misurazione BIA?','Delete this BIA measurement?'), async () => {
     showLoading(true);
-    await sb.from('bia_records').delete().eq('id', id);
+    await sb.from('bia_records').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
     await renderCartellaDetail(cartellaId);
     toast(_L('🗑️ BIA eliminata','🗑️ BIA deleted'), 'info');
@@ -1653,7 +1653,7 @@ function caricaPiano(id) {
 async function delPiano(id) {
   customConfirm(_L('Eliminare questo piano?','Delete this plan?'), async () => {
     showLoading(true);
-    await sb.from('piani').delete().eq('id', id);
+    await sb.from('piani').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Piano eliminato','🗑️ Plan deleted'), 'info');
@@ -1663,7 +1663,7 @@ async function delPiano(id) {
 async function delNCPt(id) {
   customConfirm(_L('Eliminare questa scheda NCPt?','Delete this NCPt form?'), async () => {
     showLoading(true);
-    await sb.from('ncpt').delete().eq('id', id);
+    await sb.from('ncpt').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ NCPt eliminato','🗑️ NCPt deleted'), 'info');
@@ -1673,7 +1673,7 @@ async function delNCPt(id) {
 async function delScheda(id) {
   customConfirm(_L('Eliminare questa scheda valutazione?','Delete this assessment form?'), async () => {
     showLoading(true);
-    await sb.from('schede_valutazione').delete().eq('id', id);
+    await sb.from('schede_valutazione').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
@@ -1683,7 +1683,7 @@ async function delScheda(id) {
 async function delNoteSpec(id) {
   customConfirm(_L('Eliminare questa scheda specialistica?','Delete this specialist note?'), async () => {
     showLoading(true);
-    await sb.from('note_specialistiche').delete().eq('id', id);
+    await sb.from('note_specialistiche').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');

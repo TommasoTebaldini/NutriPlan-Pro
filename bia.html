@@ -936,7 +936,7 @@ async function salvaBIA() {
   let error;
   const isUpdate = !!currentBiaId;
   if (currentBiaId) {
-    ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId));
+    ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId).eq('user_id', currentUser.id));
   } else {
     record.visible_to_patient = false;
     const result = await sb.from('bia_records').insert(record).select().single();
@@ -1257,7 +1257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (biaIdParam && currentUser) {
       showLoading(true);
-      const { data } = await sb.from('bia_records').select('*').eq('id', biaIdParam).single();
+      const { data } = await sb.from('bia_records').select('*').eq('id', biaIdParam).eq('user_id', currentUser.id).single();
       showLoading(false);
       if (data) {
         currentBiaId = data.id;

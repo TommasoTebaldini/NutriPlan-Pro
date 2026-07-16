@@ -2179,3 +2179,38 @@ DO $$ BEGIN
 END $$;
 
 ALTER TABLE patient_specialty_access REPLICA IDENTITY FULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 27 — SECURITY FIX: chat_group_members_creator_insert non verificava
+-- il membro aggiunto
+--
+-- La policy originale (SEZIONE 17) controllava solo che chi esegue l'INSERT
+-- abbia creato il gruppo (chat_groups.created_by = auth.uid()), ma non
+-- verificava CHI viene aggiunto come membro. Un dietista poteva quindi
+-- creare un gruppo e aggiungere come membro un paziente qualsiasi — non
+-- necessariamente collegato a lui via patient_dietitian — ottenendo una
+-- chat persistente con un paziente di un altro dietista. broadcast.html è
+-- già stato corretto lato client per non offrire più pazienti non collegati
+-- nella lista di selezione, ma senza questo fix la policy DB restava
+-- comunque permissiva per chiunque interrogasse l'API direttamente.
+--
+-- La nuova WITH CHECK ammette solo: il creatore che aggiunge se stesso, un
+-- proprio paziente (via patient_dietitian), o un altro dietista (invarianza
+-- rispetto al comportamento attuale di broadcast.html, che permette gruppi
+-- tra dietisti senza scoping per studio).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "chat_group_members_creator_insert" ON chat_group_members;
+CREATE POLICY "chat_group_members_creator_insert" ON chat_group_members
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM chat_groups WHERE id = group_id AND created_by = auth.uid())
+    AND (
+      user_id = auth.uid()
+      OR EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = chat_group_members.user_id
+          AND pd.dietitian_id = auth.uid()
+      )
+      OR EXISTS (SELECT 1 FROM profiles WHERE id = chat_group_members.user_id AND role = 'dietitian')
+    )
+  );

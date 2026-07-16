@@ -567,6 +567,28 @@ body.sidebar-collapsed #sb-toggle-btn { background: var(--teal); color: white; b
   .week-grid-7{grid-template-columns:repeat(4,1fr)!important}
 }
 
+/* Long free-text (patient names, clinical notes, consent text) should wrap
+   instead of overflowing the container on narrow screens */
+.card,.paz-card,.modal,.mbody,.and-panel,.priv-panel,.stor-panel,.info-panel,
+.consent-doc,.priv-consent-view,.pc-consent-text,.paz-card h4,.paz-meta,
+.event-title,.event-patient{overflow-wrap:break-word}
+
+/* Inline multi-column grids without a page-local collapse: generic mobile fallback.
+   Many specialty/clinical pages and printable depliants define ad-hoc 2–5 column
+   grids via inline style="grid-template-columns:1fr 1fr..." (stat cards, form-field
+   pairs) with no responsive rule of their own. Collapse to a single column on
+   narrow viewports so cards/labels don't get cramped. Calendar grids
+   (repeat(7,1fr)) are intentionally excluded. */
+@media(max-width:700px){
+  [style*="grid-template-columns:1fr 1fr"],
+  [style*="grid-template-columns:repeat(2,1fr)"],
+  [style*="grid-template-columns:repeat(3,1fr)"],
+  [style*="grid-template-columns:repeat(4,1fr)"],
+  [style*="grid-template-columns:repeat(5,1fr)"]{
+    grid-template-columns:1fr!important;
+  }
+}
+
 /* ══════════════════════════════════════════
    ANIMAZIONI — NutriPlan Pro
    ══════════════════════════════════════════ */

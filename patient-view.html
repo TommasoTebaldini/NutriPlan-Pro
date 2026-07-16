@@ -117,7 +117,7 @@ function secTable(title, rows, icon='') {
   ))
   return el('div',{class:'section'},
     el('div',{class:'section-head'},`${icon} ${title}`),
-    el('table',{},thead,tbody)
+    el('div',{style:'overflow-x:auto'},el('table',{},thead,tbody))
   )
 }
 
@@ -176,7 +176,7 @@ function renderPiano(dati, meta) {
           }
           return rows
         }).flat())
-        mealEl.appendChild(el('table',{class:'food-table'},tbody))
+        mealEl.appendChild(el('div',{style:'overflow-x:auto'},el('table',{class:'food-table'},tbody)))
       }
       if (note) mealEl.appendChild(el('div',{class:'note-box'},'💡 '+note))
       dayEl.appendChild(mealEl)
@@ -212,10 +212,10 @@ function renderRistorazione(dati) {
     ))
     frag.appendChild(el('div',{class:'section'},
       el('div',{class:'section-head'},'🍽️ Portate'),
-      el('table',{},
+      el('div',{style:'overflow-x:auto'},el('table',{},
         el('thead',{},el('tr',{},...['Portata','Porzione','Note'].map(h=>el('th',{},h)))),
         tbody
-      )
+      ))
     ))
   }
   const noteGen = piano.note_generali||val.note_generali
@@ -248,10 +248,10 @@ function renderPediatria(dati) {
     ))
     frag.appendChild(el('div',{class:'section'},
       el('div',{class:'section-head'},'🍼 Schema pasti'),
-      el('table',{},
+      el('div',{style:'overflow-x:auto'},el('table',{},
         el('thead',{},el('tr',{},...['Pasto','Orario','Descrizione'].map(h=>el('th',{},h)))),
         tbody
-      )
+      ))
     ))
   }
   return frag

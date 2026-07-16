@@ -14,7 +14,7 @@
 <style>
 /* ── Editor ── */
 .editor-toolbar{display:flex;gap:3px;flex-wrap:wrap;padding:8px 10px;background:#F8FAFC;border:1.5px solid var(--border-d);border-radius:var(--r-sm) var(--r-sm) 0 0;border-bottom:none}
-.editor-toolbar button{background:white;border:1.5px solid var(--border-d);border-radius:5px;padding:4px 8px;cursor:pointer;font-size:12.5px;font-family:inherit;color:var(--slate);transition:all .12s;line-height:1.2}
+.editor-toolbar button{background:white;border:1.5px solid var(--border-d);border-radius:5px;padding:4px 8px;cursor:pointer;font-size:12.5px;font-family:inherit;color:var(--slate);transition:all .12s;line-height:1.2;min-height:36px}
 .editor-toolbar button:hover{background:#EFF6FF;border-color:var(--teal-l);color:var(--teal-d)}
 .editor-toolbar button.active{background:var(--teal);border-color:var(--teal-d);color:white}
 .editor-toolbar .sep{width:1px;background:var(--border-d);margin:2px 4px;align-self:stretch}
@@ -27,6 +27,7 @@
 /* ── Saved visits list ── */
 .visita-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:white;border:1.5px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:all .15s}
 .visita-item:hover{border-color:var(--teal-l);box-shadow:0 2px 10px rgba(15,118,110,.08)}
+@media(max-width:900px){#visita-layout{grid-template-columns:1fr}}
 /* ── Print ── */
 @media print{
   #sidebar,#topbar,#topbar-spacer,.editor-toolbar,.no-print,#loading-overlay,#toast{display:none!important}
@@ -131,7 +132,7 @@
 
 <!-- EDITOR PANEL -->
 <div id="editor-panel">
-  <div style="display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start">
+  <div id="visita-layout" style="display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start">
 
     <!-- LEFT: editor -->
     <div>

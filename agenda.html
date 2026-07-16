@@ -885,6 +885,16 @@ function selectDate(dateStr) {
   const label = formatStoredDate(dateStr, {weekday:'long',day:'numeric',month:'long'});
   document.getElementById('selected-date-label').textContent = label;
   renderCalendar();
+  // Mobile: .sidebar-agenda is display:none by default (@media max-width:768px) —
+  // reveal it on day tap so the day's appointment list is actually visible,
+  // matching openNewEvent()'s behavior.
+  if (window.innerWidth <= 768) {
+    const sidebar = document.querySelector('.sidebar-agenda');
+    if (sidebar) {
+      sidebar.style.display = 'flex';
+      sidebar.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }
 }
 
 function openPatientApptDetail(apptId) {

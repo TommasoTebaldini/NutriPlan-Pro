@@ -2,6 +2,14 @@
 // Auto-generated from main file
 
 const DB_CREA=[
+{n:"Spaghetti (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"CREA"},
+{n:"Penne (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"CREA"},
+{n:"Fusilli (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"CREA"},
+{n:"Rigatoni (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"CREA"},
+{n:"Farfalle (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"CREA"},
+{n:"Maccheroni (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"CREA"},
+{n:"Riso Basmati crudo",c:"Cereali e pasta",k:349,p:7.1,gs:0.1,g:0.6,z:0.5,ch:79,fi:1,ca:10,fe:0.7,mg:22,k2:95,na:5,zn:0.9,fo:57,se:8,col:0,src:"CREA"},
+{n:"Farina di grano tenero tipo 00",c:"Cereali e derivati",k:364,p:9.9,gs:0.2,g:1,z:1.3,ch:80,fi:2.2,ca:15,fe:1,mg:20,k2:120,na:2,zn:0.7,fo:100,se:10,col:0,src:"CREA"},
 {n:"Acqua minerale naturale",c:"Bevande",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0,mg:2,k2:1,na:10,zn:0,fo:0,se:1,col:0,src:"CREA"},
 {n:"Birra analcolica",c:"Bevande",k:18,p:0.5,gs:0,g:0,z:0,ch:3.5,fi:0,ca:5,fe:0,mg:5,k2:22,na:4,zn:0.01,fo:28,se:1,col:0,src:"CREA"},
 {n:"Birra normale (4-5%)",c:"Bevande",k:43,p:0.3,gs:0,g:0,z:0,ch:3.5,fi:0,ca:6,fe:0,mg:6,k2:35,na:4,zn:0.01,fo:28,se:1,col:0,src:"CREA"},
@@ -1329,6 +1337,24 @@ const DB_CREA=[
 ];
 
 const DB_BDA=[
+{n:"Spaghetti (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"BDA"},
+{n:"Penne (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"BDA"},
+{n:"Fusilli (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"BDA"},
+{n:"Rigatoni (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"BDA"},
+{n:"Farfalle (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"BDA"},
+{n:"Maccheroni (pasta di semola cruda)",c:"Cereali e pasta",k:353,p:10.9,gs:0.2,g:1.4,z:3,ch:72.7,fi:2.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.2,fo:189,se:26,col:0,src:"BDA"},
+{n:"Burro",c:"Grassi e oli",k:758,p:0.8,gs:52,g:83,z:0.6,ch:0.6,fi:0,ca:20,fe:0.2,mg:2,k2:15,na:650,zn:0.09,fo:23,se:1,col:250,src:"BDA"},
+{n:"Olio extravergine di oliva",c:"Grassi e oli",k:899,p:0,gs:14.5,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:0,k2:2,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
+{n:"Olio di girasole",c:"Grassi e oli",k:899,p:0,gs:12.5,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
+{n:"Carota",c:"Verdure",k:35,p:1.1,gs:0,g:0.2,z:7.6,ch:7.6,fi:3.1,ca:44,fe:0.7,mg:11,k2:220,na:95,zn:0.3,fo:37,se:1,col:0,src:"BDA"},
+{n:"Lattuga",c:"Verdure",k:22,p:1.8,gs:0,g:0.2,z:1.5,ch:2.2,fi:1.5,ca:45,fe:0.8,mg:14,k2:240,na:9,zn:0.2,fo:31,se:0.6,col:0,src:"BDA"},
+{n:"Fragole",c:"Frutta fresca",k:27,p:0.9,gs:0,g:0.4,z:5.3,ch:5.3,fi:1.6,ca:16,fe:0.4,mg:13,k2:153,na:1,zn:0.14,fo:26,se:0.4,col:0,src:"BDA"},
+{n:"Kiwi",c:"Frutta fresca",k:44,p:1.2,gs:0,g:0.6,z:9,ch:9,fi:2.2,ca:25,fe:0.5,mg:17,k2:400,na:5,zn:0.1,fo:70,se:0.2,col:0,src:"BDA"},
+{n:"Ananas fresco",c:"Frutta fresca",k:50,p:0.5,gs:0,g:0.1,z:9.9,ch:13.1,fi:1.4,ca:13,fe:0.3,mg:12,k2:109,na:1,zn:0.12,fo:18,se:0.1,col:0,src:"BDA"},
+{n:"Anguria / cocomero",c:"Frutta fresca",k:30,p:0.6,gs:0,g:0.2,z:6.2,ch:7.6,fi:0.4,ca:7,fe:0.2,mg:11,k2:112,na:3,zn:0.1,fo:3,se:0.4,col:0,src:"BDA"},
+{n:"Melone giallo",c:"Frutta fresca",k:35,p:0.9,gs:0,g:0.1,z:7,ch:8,fi:0.9,ca:9,fe:0.4,mg:11,k2:267,na:16,zn:0.18,fo:21,se:1,col:0,src:"BDA"},
+{n:"Ciliegie",c:"Frutta fresca",k:57,p:1.1,gs:0,g:0.2,z:12.8,ch:12.8,fi:2.1,ca:13,fe:0.4,mg:11,k2:173,na:3,zn:0.07,fo:7,se:0,col:0,src:"BDA"},
+{n:"Prugne fresche",c:"Frutta fresca",k:46,p:0.7,gs:0,g:0.3,z:9.9,ch:11.4,fi:1.4,ca:6,fe:0.2,mg:7,k2:157,na:1,zn:0.1,fo:16,se:0,col:0,src:"BDA"},
 {n:"Pane tipo 0",c:"Cereali e derivati",k:279,p:8.9,gs:0.3,g:1.0,z:3.5,ch:56.8,fi:2.2,ca:24,fe:1.3,mg:25,k2:112,na:530,zn:0.6,fo:85,se:15,col:0,src:"BDA"},
 {n:"Pane tipo 00",c:"Cereali e derivati",k:270,p:8.4,gs:0.3,g:0.9,z:3.2,ch:54.9,fi:1.9,ca:20,fe:1.1,mg:22,k2:105,na:510,zn:0.5,fo:80,se:14,col:0,src:"BDA"},
 {n:"Pasta all'uovo cruda",c:"Cereali e derivati",k:368,p:12.8,gs:1.4,g:4.2,z:2,ch:66.5,fi:2.2,ca:30,fe:2.1,mg:40,k2:160,na:20,zn:1.1,fo:160,se:28,col:65,src:"BDA"},

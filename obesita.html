@@ -1580,15 +1580,13 @@ const OB_PE_CONFIG = {
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const ok = await checkAuth();
-    if (ok) {
-      initCartellaWidget('ob-cartella-cw', { hiddenInputId: 'ob-cartella', accentColor: '#EA580C', labelColor: '#C2410C', hoverBg: '#FFF7ED', nuovaBg: '#FFF7ED' });
-      const noteId = new URLSearchParams(window.location.search).get('noteId');
-      if (noteId) {
-        await loadNoteIfPresent();
-      } else {
-        autoRestorePage_ob();
-      }
+    const ok = await checkAuth(false);
+    initCartellaWidget('ob-cartella-cw', { hiddenInputId: 'ob-cartella', accentColor: '#EA580C', labelColor: '#C2410C', hoverBg: '#FFF7ED', nuovaBg: '#FFF7ED' });
+    const noteId = new URLSearchParams(window.location.search).get('noteId');
+    if (noteId) {
+      if (ok) await loadNoteIfPresent();
+    } else {
+      autoRestorePage_ob();
     }
   } catch(e) { console.error('Init obesita error:', e); }
   document.getElementById('main')?.addEventListener('input', scheduleAutoSave_ob);

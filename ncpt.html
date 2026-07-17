@@ -147,7 +147,7 @@
   <div class="fgrid">
     <div class="nf"><label><span data-only-lang="it">Nome e Cognome</span><span data-only-lang="en" style="display:none">Full Name</span></label><input type="text" id="v-nome" placeholder="Cognome Nome"></div>
     <div class="nf"><label><span data-only-lang="it">Data di nascita</span><span data-only-lang="en" style="display:none">Date of birth</span></label><input type="date" id="v-ddn" onchange="calcAntropo()"></div>
-    <div class="nf"><label><span data-only-lang="it">Sesso</span><span data-only-lang="en" style="display:none">Sex</span></label><select id="v-sesso" onchange="calcAntropo()"><option value="M"><span data-only-lang="it">Maschio</span><span data-only-lang="en" style="display:none">Male</span></option><option value="F"><span data-only-lang="it">Femmina</span><span data-only-lang="en" style="display:none">Female</span></option></select></div>
+    <div class="nf"><label><span data-only-lang="it">Sesso</span><span data-only-lang="en" style="display:none">Sex</span></label><select id="v-sesso" onchange="calcAntropo()"><option value="M" data-en="Male">Maschio</option><option value="F" data-en="Female">Femmina</option></select></div>
     <div class="nf"><label><span data-only-lang="it">Data valutazione</span><span data-only-lang="en" style="display:none">Assessment date</span></label><input type="date" id="v-data"></div>
     <div class="nf full"><label><span data-only-lang="it">Diagnosi medica / Motivo della consulenza</span><span data-only-lang="en" style="display:none">Medical diagnosis / Reason for referral</span></label>
       <textarea id="v-diag" placeholder="Es. Diabete mellito tipo 2, ipertensione, calo ponderale..."></textarea></div>
@@ -876,6 +876,14 @@ function selCartella(id, nome) {
 // ═══════════════════════════════════════════════════
 // ANTROPOMETRIA
 // ═══════════════════════════════════════════════════
+function updateSessoOptionsLang() {
+  const lang = (typeof getLang === 'function') ? getLang() : (localStorage.getItem('nlang') || 'it');
+  if (lang !== 'en') return;
+  document.querySelectorAll('#v-sesso option').forEach(opt => {
+    if (opt.dataset.en) opt.textContent = opt.dataset.en;
+  });
+}
+
 function calcAntropo() {
   const peso=parseFloat(document.getElementById('v-peso').value);
   const alt=parseFloat(document.getElementById('v-altezza').value);
@@ -1701,6 +1709,7 @@ function printAllNCPt() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  updateSessoOptionsLang();
   // Global event delegation for ALL dropdowns (eziologia + cartelle)
   document.addEventListener('mousedown', function(e) {
     // Eziologia dropdown items

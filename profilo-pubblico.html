@@ -270,10 +270,10 @@
         <div class="form-group" style="margin-bottom:14px">
           <label><span data-only-lang="it">Durata di ogni slot</span><span data-only-lang="en" style="display:none">Slot duration</span></label>
           <select id="f-slot-duration">
-            <option value="30"><span data-only-lang="it">30 minuti</span><span data-only-lang="en" style="display:none">30 minutes</span></option>
-            <option value="45"><span data-only-lang="it">45 minuti</span><span data-only-lang="en" style="display:none">45 minutes</span></option>
-            <option value="60" selected><span data-only-lang="it">1 ora</span><span data-only-lang="en" style="display:none">1 hour</span></option>
-            <option value="90"><span data-only-lang="it">1 ora e 30 min</span><span data-only-lang="en" style="display:none">1 hour 30 min</span></option>
+            <option value="30" data-en="30 minutes">30 minuti</option>
+            <option value="45" data-en="45 minutes">45 minuti</option>
+            <option value="60" selected data-en="1 hour">1 ora</option>
+            <option value="90" data-en="1 hour 30 min">1 ora e 30 min</option>
           </select>
         </div>
         <div id="av-days-wrap">
@@ -656,6 +656,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (typeof translateLabels === 'function') translateLabels();
   if (typeof applyLang === 'function') applyLang();
+  if ((typeof getLang === 'function' ? getLang() : localStorage.getItem('nlang')) === 'en') {
+    document.querySelectorAll('#f-slot-duration option').forEach(opt => {
+      if (opt.dataset.en) opt.textContent = opt.dataset.en;
+    });
+  }
 
   const ok = await checkAuth();
   if (!ok) return;

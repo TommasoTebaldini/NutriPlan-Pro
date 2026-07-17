@@ -1237,12 +1237,10 @@ async function loadNoteIfPresent() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const ok = await checkAuth();
-    if (ok) {
-      initCartellaWidget('onc-cartella-cw', { hiddenInputId: 'onc-cartella', accentColor: '#7C3AED', labelColor: '#5B21B6', hoverBg: '#F5F3FF', nuovaBg: '#F5F3FF' });
-      const noteId = new URLSearchParams(window.location.search).get('noteId');
-      if (noteId) await loadNoteIfPresent();
-    }
+    const ok = await checkAuth(false);
+    initCartellaWidget('onc-cartella-cw', { hiddenInputId: 'onc-cartella', accentColor: '#7C3AED', labelColor: '#5B21B6', hoverBg: '#F5F3FF', nuovaBg: '#F5F3FF' });
+    const noteId = new URLSearchParams(window.location.search).get('noteId');
+    if (ok && noteId) await loadNoteIfPresent();
   } catch(e) { console.error('Init oncologia error:', e); }
   if (typeof initPianoEsempio === 'function') initPianoEsempio('pe-container-onc', ONC_PE_CONFIG);
 });

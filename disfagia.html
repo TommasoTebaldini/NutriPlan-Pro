@@ -1383,8 +1383,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof checkAuth === 'function') {
     try {
       await checkAuth(false);
+      initCartellaWidget('dis-cartella-cw', { hiddenInputId:'dis-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
       if (currentUser) {
-        initCartellaWidget('dis-cartella-cw', { hiddenInputId:'dis-cartella', accentColor:'#0EA5E9', labelColor:'#0369A1', hoverBg:'#F0F9FF', nuovaBg:'#F0F9FF' });
         const noteId = new URLSearchParams(window.location.search).get('noteId');
         if (noteId) {
           const {data} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();

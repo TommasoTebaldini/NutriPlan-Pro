@@ -195,17 +195,17 @@
       <div class="nf"><label><span data-only-lang="it">Età (anni)</span><span data-only-lang="en" style="display:none">Age (years)</span></label><input type="number" id="bia-eta" placeholder="es. 45" oninput="calcBIA()"></div>
       <div class="nf"><label><span data-only-lang="it">Sesso</span><span data-only-lang="en" style="display:none">Sex</span></label>
         <select id="bia-sesso" onchange="calcBIA()">
-          <option value="M"><span data-only-lang="it">Maschio</span><span data-only-lang="en" style="display:none">Male</span></option>
-          <option value="F"><span data-only-lang="it">Femmina</span><span data-only-lang="en" style="display:none">Female</span></option>
+          <option value="M" data-en="Male">Maschio</option>
+          <option value="F" data-en="Female">Femmina</option>
         </select>
       </div>
       <div class="nf"><label><span data-only-lang="it">Attività fisica</span><span data-only-lang="en" style="display:none">Physical activity</span></label>
         <select id="bia-attiv" onchange="calcBIA()">
-          <option value="sedentario"><span data-only-lang="it">Sedentario</span><span data-only-lang="en" style="display:none">Sedentary</span></option>
-          <option value="leggero"><span data-only-lang="it">Leggera (1-2 volte/sett)</span><span data-only-lang="en" style="display:none">Light (1–2×/week)</span></option>
-          <option value="moderato" selected><span data-only-lang="it">Moderata (3-4 volte/sett)</span><span data-only-lang="en" style="display:none">Moderate (3–4×/week)</span></option>
-          <option value="intenso"><span data-only-lang="it">Intensa (5+ volte/sett)</span><span data-only-lang="en" style="display:none">Intense (5+×/week)</span></option>
-          <option value="atleta"><span data-only-lang="it">Atleta professionista</span><span data-only-lang="en" style="display:none">Professional athlete</span></option>
+          <option value="sedentario" data-en="Sedentary">Sedentario</option>
+          <option value="leggero" data-en="Light (1–2×/week)">Leggera (1-2 volte/sett)</option>
+          <option value="moderato" selected data-en="Moderate (3–4×/week)">Moderata (3-4 volte/sett)</option>
+          <option value="intenso" data-en="Intense (5+×/week)">Intensa (5+ volte/sett)</option>
+          <option value="atleta" data-en="Professional athlete">Atleta professionista</option>
         </select>
       </div>
     </div>
@@ -393,6 +393,14 @@ function getBIAInputs() {
     icw:  parseFloat(document.getElementById('bia-icw').value),
     ecw:  parseFloat(document.getElementById('bia-ecw').value),
   };
+}
+
+function updateBiaOptionsLang() {
+  const lang = (typeof getLang === 'function') ? getLang() : (localStorage.getItem('nlang') || 'it');
+  if (lang !== 'en') return;
+  document.querySelectorAll('#bia-sesso option, #bia-attiv option').forEach(opt => {
+    if (opt.dataset.en) opt.textContent = opt.dataset.en;
+  });
 }
 
 function calcBIA() {
@@ -1243,6 +1251,7 @@ async function loadCartellePaz() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('bia-data').value = new Date().toISOString().split('T')[0];
+  updateBiaOptionsLang();
   try {
     await checkAuth(false);
     initCartellaWidget('bia-cartella-cw', { hiddenInputId:'bia-cartella', accentColor:'#3B82F6', labelColor:'#1D4ED8', hoverBg:'#EFF6FF', nuovaBg:'#EFF6FF', onSelect:(id,nome)=>{ _cwSelect('storico-cartella-cw',id,nome); loadStorico(); } });

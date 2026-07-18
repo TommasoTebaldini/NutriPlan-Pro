@@ -88,6 +88,40 @@
 -->
 <div id="page-load-block" style="position:fixed;inset:0;z-index:8998;background:#012318;pointer-events:none"></div>
 <script>
+// Catalogo widget dashboard + helper condivisi tra questo script iniziale
+// (che deve poter disegnare le card subito, prima che il resto del JS della
+// pagina sia caricato) e le funzioni definite più avanti nel file
+// (showDashboardIfNeeded, _loadDashboardData, openDashWidgetPicker...).
+// Un'unica fonte di verità evita che le due copie delle card finiscano per
+// divergere (già successo in passato in questo repo con logiche duplicate).
+window._DASH_WIDGET_META = {
+  appuntamenti: { icon:'📅', label:'Appuntamenti oggi', bodyId:'dash-appts-body' },
+  messaggi:     { icon:'💬', label:'Messaggi non letti', bodyId:'dash-msgs-body' },
+  inattivi:     { icon:'⚠️', label:'Pazienti inattivi', bodyId:'dash-inactive-body' },
+  todo:         { icon:'✅', label:'Cose da fare', bodyId:'dash-todo-body' }
+};
+window._DASH_DEFAULT_WIDGETS = ['appuntamenti','messaggi','inattivi'];
+window._dashGetWidgets = function () {
+  try {
+    var saved = JSON.parse(localStorage.getItem('dp_dashboard_widgets') || 'null');
+    if (Array.isArray(saved) && saved.length) {
+      var filtered = saved.filter(function (w) { return window._DASH_WIDGET_META[w]; });
+      if (filtered.length) return filtered;
+    }
+  } catch (e) { /* localStorage value non valido, usa il default */ }
+  return window._DASH_DEFAULT_WIDGETS.slice();
+};
+window._dashSetWidgets = function (list) {
+  localStorage.setItem('dp_dashboard_widgets', JSON.stringify(list));
+};
+window._buildDashCardsHtml = function () {
+  return window._dashGetWidgets().map(function (key) {
+    var m = window._DASH_WIDGET_META[key];
+    if (!m) return '';
+    return '<div class="dash-fc"><div class="dash-fc-icon">' + m.icon + '</div><div class="dash-fc-label">' + m.label + '</div><div class="dash-fc-body" id="' + m.bodyId + '"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div></div>';
+  }).join('');
+};
+
 (function(){
   var blocker = document.getElementById('page-load-block');
   if (localStorage.getItem('dp_show_dashboard') === 'false' || sessionStorage.getItem('dp_dashboard_shown')) {
@@ -102,16 +136,13 @@
   el.id = 'dash-overlay-el';
   el.className = 'dash-fs';
   el.innerHTML =
+    '<button class="dash-fs-gear" onclick="openDashWidgetPicker()" title="Personalizza widget">⚙️</button>' +
     '<button class="dash-fs-x" onclick="closeDashboard()" title="Chiudi">✕</button>' +
     '<div class="dash-fs-hero">' +
       '<h1 id="dash-greeting">…</h1>' +
       '<p>' + dateStr + '</p>' +
     '</div>' +
-    '<div class="dash-fs-grid">' +
-      '<div class="dash-fc"><div class="dash-fc-icon">📅</div><div class="dash-fc-label">Appuntamenti oggi</div><div class="dash-fc-body" id="dash-appts-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div></div>' +
-      '<div class="dash-fc"><div class="dash-fc-icon">💬</div><div class="dash-fc-label">Messaggi non letti</div><div class="dash-fc-body" id="dash-msgs-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div></div>' +
-      '<div class="dash-fc"><div class="dash-fc-icon">⚠️</div><div class="dash-fc-label">Pazienti inattivi</div><div class="dash-fc-body" id="dash-inactive-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div></div>' +
-    '</div>' +
+    '<div class="dash-fs-grid" id="dash-fs-grid">' + window._buildDashCardsHtml() + '</div>' +
     '<div class="dash-fs-footer"><button class="dash-fs-btn" onclick="closeDashboard()">✨ Inizia ora la tua giornata</button></div>';
   document.body.appendChild(el);
   window._dashShowedEarly = true;
@@ -188,6 +219,7 @@
     <button class="btn btn-ghost btn-sm" onclick="openCaricaTemplate()" data-i18n-tooltip="app.load_template">📂<span>Template</span></button>
     <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="generaListaSpesa()" data-i18n-tooltip="app.shopping_list">🛒<span><span data-only-lang="it">Lista spesa</span><span data-only-lang="en">Shopping list</span></span></button>
+    <button class="btn btn-ghost btn-sm" onclick="nuovaListaSpesaManuale()" title="Crea una lista della spesa scritta a mano, non legata al piano">📝<span><span data-only-lang="it">Lista manuale</span><span data-only-lang="en">Manual list</span></span></button>
     <span class="tbar-sep"></span>
     <button class="btn btn-ghost btn-sm" onclick="stampaPDF()" title="Stampa PDF con calcoli nutrizionali">🖨️</button>
     <button class="btn btn-ghost btn-sm" onclick="stampaSemplice()" title="Stampa piano senza calcoli (facile da leggere)">📄</button>
@@ -556,12 +588,17 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
 
 <!-- MODAL LISTA SPESA -->
 <div class="modal-bg" id="modal-lista-spesa">
-  <div class="modal" style="max-width:560px">
-    <div class="mhdr"><h2>🛒 Lista della Spesa</h2><button class="mclose" onclick="closeM('modal-lista-spesa')">✕</button></div>
-    <div class="mbody" id="lista-spesa-body" style="max-height:65vh;overflow-y:auto"></div>
-    <div class="mfoot">
+  <div class="modal" style="max-width:680px">
+    <div class="mhdr"><h2 id="lista-spesa-title">🛒 Lista della Spesa</h2><button class="mclose" onclick="closeM('modal-lista-spesa')">✕</button></div>
+    <div class="mbody" id="lista-spesa-body" style="max-height:60vh;overflow-y:auto"></div>
+    <div class="mfoot" style="flex-wrap:wrap;gap:10px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--slate-l);margin-right:auto;cursor:pointer">
+        <input type="checkbox" id="ls-visible-toggle" style="width:15px;height:15px;cursor:pointer">
+        <span data-only-lang="it">Condividi con il paziente</span><span data-only-lang="en" style="display:none">Share with patient</span>
+      </label>
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-lista-spesa')">Chiudi</button>
-      <button class="btn btn-primary btn-sm" onclick="stampaListaSpesa()">🖨️ Stampa</button>
+      <button class="btn btn-ghost btn-sm" onclick="stampaListaSpesa()">🖨️ Stampa</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaListaSpesa()">💾 Salva</button>
     </div>
   </div>
 </div>
@@ -2520,6 +2557,15 @@ const _CREA_CAT_MAP = {
   'Spezie e condimenti':'Spezie e condimenti',
 };
 
+// _lsItems: [{nome, qt, cat, pezzatura, prezzo}] — stato in memoria della
+// lista aperta nel modal. _lsId è null finché non viene salvata la prima
+// volta (poi i salvataggi successivi aggiornano la stessa riga). _lsTipo
+// distingue 'auto' (generata dal piano) da 'manuale' (scritta da zero),
+// vedi SEZIONE 29 di supabase_setup.sql.
+let _lsItems = [];
+let _lsId = null;
+let _lsTipo = 'auto';
+
 function generaListaSpesa() {
   const aggregated = {};
   giorni.forEach(giorno => {
@@ -2533,61 +2579,178 @@ function generaListaSpesa() {
           const f = lookupC(nome);
           let cat = _CREA_CAT_MAP[f?.c] || '';
           if (!cat || !_SPESA_CAT_ORDER.includes(cat)) cat = 'Altro';
-          aggregated[key] = { nome, qt: 0, cat };
+          aggregated[key] = { nome, qt: 0, cat, pezzatura:'', prezzo:'' };
         }
         aggregated[key].qt += qt;
       });
     });
   });
 
-  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
-
-  // Group by category preserving order
-  const grouped = {};
-  _SPESA_CAT_ORDER.forEach(c => { grouped[c] = []; });
-  Object.values(aggregated).forEach(item => { (grouped[item.cat] || grouped['Altro']).push(item); });
-
-  let html = `<div style="margin-bottom:14px;padding:10px 14px;background:#F0FDF4;border-radius:10px;border-left:3px solid #10B981">
-    <div style="font-weight:700;color:#065F46;font-size:13px">🛒 ${_L('Lista della spesa','Shopping list')} — ${nomeP ? _L('Paziente: ','Patient: ') + esc(nomeP) + ' — ' : ''}${giorni.length} ${_L(giorni.length===1?'giorno':'giorni', giorni.length===1?'day':'days')} ${_L('di piano','plan')}</div>
-    <div style="font-size:11px;color:#6B7280;margin-top:3px">${_L('Quantità aggregate su tutto il piano. Adatta le porzioni alla durata effettiva della dieta.','Quantities aggregated across the entire plan. Adjust portions to the actual diet duration.')}</div>
-  </div>`;
-
-  _SPESA_CAT_ORDER.forEach(cat => {
-    const items = grouped[cat];
-    if (!items || !items.length) return;
-    const bg = _SPESA_CAT_COLOR[cat] || '#F1F5F9';
-    const ac = _SPESA_CAT_ACCENT[cat] || '#334155';
-    const em = _SPESA_CAT_EMOJI[cat] || '📦';
-    html += `<div style="margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:flex;align-items:center;gap:5px">${em} ${cat}</div>
-      <div style="display:flex;flex-direction:column;gap:4px">`;
-    items.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(item => {
-      const qtLabel = item.qt >= 1000 ? (item.qt/1000).toFixed(1) + ' kg' : Math.round(item.qt) + ' g';
-      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:${bg};border-radius:8px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <input type="checkbox" style="width:16px;height:16px;cursor:pointer;accent-color:${ac}" onclick="this.parentElement.parentElement.style.opacity=this.checked?'.45':'1'">
-          <span style="font-size:13px;color:#1E293B">${esc(item.nome)}</span>
-        </div>
-        <span style="font-size:12px;font-weight:700;color:${ac};white-space:nowrap">${qtLabel}</span>
-      </div>`;
-    });
-    html += '</div></div>';
-  });
-
-  if (!Object.values(aggregated).length) {
-    html = '<div class="and-empty" style="text-align:center;padding:30px"><div style="font-size:36px">🛒</div><div>Nessun alimento nel piano. Aggiungi alimenti prima di generare la lista.</div></div>';
-  }
-
-  document.getElementById('lista-spesa-body').innerHTML = html;
+  _lsItems = Object.values(aggregated).sort((a,b) => a.nome.localeCompare(b.nome));
+  _lsId = null;
+  _lsTipo = 'auto';
+  document.getElementById('lista-spesa-title').innerHTML = '🛒 ' + _L('Lista della Spesa','Shopping List');
+  const vt = document.getElementById('ls-visible-toggle'); if (vt) vt.checked = false;
+  _renderListaSpesaBody();
   openM('modal-lista-spesa');
 }
 
+function nuovaListaSpesaManuale() {
+  _lsItems = [];
+  _lsId = null;
+  _lsTipo = 'manuale';
+  document.getElementById('lista-spesa-title').innerHTML = '📝 ' + _L('Nuova Lista Manuale','New Manual List');
+  const vt = document.getElementById('ls-visible-toggle'); if (vt) vt.checked = false;
+  _renderListaSpesaBody();
+  openM('modal-lista-spesa');
+  _addRigaListaSpesa();
+}
+
+function _lsTotale() {
+  return _lsItems.reduce((sum, it) => sum + (parseFloat(it.prezzo) || 0), 0);
+}
+
+function _lsAggiornaTotale() {
+  const el = document.getElementById('ls-totale-val');
+  if (el) el.textContent = '€ ' + _lsTotale().toFixed(2);
+}
+
+function _lsRigaHtml(i) {
+  const item = _lsItems[i];
+  const qtLabel = item.qt ? (item.qt >= 1000 ? (item.qt/1000).toFixed(1) + ' kg' : Math.round(item.qt) + ' g') : '';
+  const prezzoVal = (item.prezzo !== '' && item.prezzo != null) ? item.prezzo : '';
+  return `<div style="display:grid;grid-template-columns:1fr 110px 90px 28px;gap:6px;align-items:center;padding:4px;border-bottom:1px solid #F1F5F9">
+    <div style="min-width:0">
+      <input type="text" id="ls-nome-${i}" value="${esc(item.nome||'')}" placeholder="${_L('Alimento','Food')}" oninput="_lsItems[${i}].nome=this.value" style="width:100%;box-sizing:border-box;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit">
+      ${qtLabel ? `<div style="font-size:10px;color:#94A3B8;padding:2px 2px 0">${qtLabel} ${_L('nel piano','in plan')}</div>` : ''}
+    </div>
+    <input type="text" value="${esc(item.pezzatura||'')}" placeholder="es. 500g" oninput="_lsItems[${i}].pezzatura=this.value" style="width:100%;box-sizing:border-box;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit">
+    <input type="number" step="0.01" min="0" value="${prezzoVal}" placeholder="0.00" oninput="_lsItems[${i}].prezzo=this.value;_lsAggiornaTotale()" style="width:100%;box-sizing:border-box;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit">
+    <button type="button" onclick="_rimuoviRigaListaSpesa(${i})" title="${_L('Rimuovi','Remove')}" style="background:none;border:none;color:#CBD5E1;font-size:15px;cursor:pointer;padding:2px">✕</button>
+  </div>`;
+}
+
+function _renderListaSpesaBody() {
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+
+  if (!_lsItems.length) {
+    document.getElementById('lista-spesa-body').innerHTML =
+      `<div class="and-empty" style="text-align:center;padding:30px"><div style="font-size:36px">🛒</div><div>${_L('Nessun alimento nel piano. Aggiungi alimenti prima di generare la lista.','No foods in the plan. Add foods before generating the list.')}</div></div>
+       <div style="margin-top:10px;text-align:center"><button type="button" class="btn btn-ghost btn-sm" onclick="_addRigaListaSpesa()">➕ ${_L('Aggiungi alimento','Add food')}</button></div>`;
+    return;
+  }
+
+  const introText = _lsTipo === 'auto'
+    ? `${giorni.length} ${_L(giorni.length===1?'giorno':'giorni', giorni.length===1?'day':'days')} ${_L('di piano','plan')} — ${_L('personalizza pezzatura e prezzo di ogni alimento','customise the package size and price of each food')}`
+    : _L('Scrivi liberamente gli alimenti da acquistare','Freely write the foods to buy');
+
+  let html = `<div style="margin-bottom:12px;padding:10px 14px;background:#F0FDF4;border-radius:10px;border-left:3px solid #10B981">
+    <div style="font-weight:700;color:#065F46;font-size:13px">${_lsTipo==='auto'?'🛒':'📝'} ${_L('Lista della spesa','Shopping list')}${nomeP ? ' — ' + esc(nomeP) : ''}</div>
+    <div style="font-size:11px;color:#6B7280;margin-top:3px">${introText}</div>
+  </div>`;
+
+  html += `<div style="display:grid;grid-template-columns:1fr 110px 90px 28px;gap:6px;padding:0 4px 4px;font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">
+    <div>${_L('Alimento','Food')}</div><div>${_L('Pezzatura','Pack size')}</div><div>${_L('Prezzo €','Price €')}</div><div></div>
+  </div>`;
+
+  if (_lsTipo === 'auto') {
+    const grouped = {};
+    _SPESA_CAT_ORDER.forEach(c => { grouped[c] = []; });
+    _lsItems.forEach((item, i) => { (grouped[item.cat] || grouped['Altro']).push(i); });
+    _SPESA_CAT_ORDER.forEach(cat => {
+      const idxs = grouped[cat];
+      if (!idxs.length) return;
+      const em = _SPESA_CAT_EMOJI[cat] || '📦';
+      const ac = _SPESA_CAT_ACCENT[cat] || '#334155';
+      html += `<div style="font-size:10.5px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:.05em;margin:8px 4px 3px">${em} ${cat}</div>`;
+      idxs.forEach(i => { html += _lsRigaHtml(i); });
+    });
+  } else {
+    _lsItems.forEach((item, i) => { html += _lsRigaHtml(i); });
+  }
+
+  html += `<div style="margin-top:10px;padding:0 4px"><button type="button" class="btn btn-ghost btn-xs" onclick="_addRigaListaSpesa()">➕ ${_L('Aggiungi alimento','Add food')}</button></div>`;
+  html += `<div style="margin-top:12px;padding:10px 14px;background:#F8FAFC;border-radius:10px;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:12.5px;font-weight:600;color:#475569">${_L('Totale stimato','Estimated total')}</span>
+    <span style="font-size:18px;font-weight:800;color:#0F766E" id="ls-totale-val">€ ${_lsTotale().toFixed(2)}</span>
+  </div>`;
+
+  document.getElementById('lista-spesa-body').innerHTML = html;
+}
+
+function _addRigaListaSpesa() {
+  _lsItems.push({ nome:'', qt:0, cat:'Altro', pezzatura:'', prezzo:'' });
+  const newIdx = _lsItems.length - 1;
+  _renderListaSpesaBody();
+  const el = document.getElementById('ls-nome-' + newIdx);
+  if (el) el.focus();
+}
+
+function _rimuoviRigaListaSpesa(i) {
+  _lsItems.splice(i, 1);
+  _renderListaSpesaBody();
+}
+
+async function salvaListaSpesa() {
+  if (!currentUser) return;
+  const items = _lsItems
+    .map(it => ({ alimento: (it.nome||'').trim(), pezzatura: (it.pezzatura||'').trim(), prezzo: (it.prezzo !== '' && it.prezzo != null) ? Number(it.prezzo) : null }))
+    .filter(it => it.alimento);
+  if (!items.length) { toast(_L('⚠️ Aggiungi almeno un alimento prima di salvare','⚠️ Add at least one food before saving'), 'err'); return; }
+
+  const cartellaEl = document.getElementById('inp-cartella');
+  const cartella_id = (cartellaEl && cartellaEl.value) ? cartellaEl.value : null;
+  if (!cartella_id) { toast(_L('⚠️ Seleziona una cartella paziente prima di salvare','⚠️ Select a patient folder before saving'), 'err'); return; }
+
+  const visible = document.getElementById('ls-visible-toggle')?.checked || false;
+  const payload = {
+    user_id: currentUser.id,
+    cartella_id,
+    piano_id: _lsTipo === 'auto' ? (currentPianoId || null) : null,
+    nome: _lsTipo === 'auto' ? _L('Lista spesa dal piano','Shopping list from plan') : _L('Lista spesa','Shopping list'),
+    tipo: _lsTipo,
+    items,
+    visible_to_patient: visible,
+    updated_at: new Date().toISOString()
+  };
+
+  showLoading(true);
+  const result = _lsId
+    ? await sb.from('liste_spesa').update(payload).eq('id', _lsId).eq('user_id', currentUser.id)
+    : await sb.from('liste_spesa').insert(payload).select().single();
+  showLoading(false);
+
+  if (result.error) { toast(_L('❌ Errore nel salvataggio della lista','❌ Error saving the list'), 'err'); return; }
+  if (!_lsId && result.data) _lsId = result.data.id;
+  toast(_L('✅ Lista della spesa salvata!','✅ Shopping list saved!'), 'ok');
+}
+
 function stampaListaSpesa() {
-  const body = document.getElementById('lista-spesa-body');
+  if (!_lsItems.length) { toast(_L('⚠️ Lista vuota','⚠️ Empty list'), 'err'); return; }
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const rows = _lsItems.filter(it => (it.nome||'').trim()).map(it =>
+    `<tr><td>${esc(it.nome)}</td><td>${esc(it.pezzatura||'')}</td><td>${(it.prezzo!==''&&it.prezzo!=null)?'€ '+Number(it.prezzo).toFixed(2):''}</td></tr>`
+  ).join('');
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lista Spesa</title>
-    <style>body{font-family:'DM Sans',system-ui,sans-serif;margin:20mm 15mm;color:#1E293B}h1{font-size:16px;margin-bottom:8px}input[type=checkbox]{width:14px;height:14px}@media print{input[type=checkbox]{-webkit-print-color-adjust:exact}}</style>
-    </head><body><h1>🛒 Lista della Spesa</h1>${body.innerHTML}</body></html>`);
+    <style>
+      body{font-family:'DM Sans',system-ui,sans-serif;margin:20mm 15mm;color:#1E293B}
+      h1{font-size:16px;margin-bottom:4px}
+      p{font-size:12px;color:#64748B;margin:0 0 14px}
+      table{width:100%;border-collapse:collapse;font-size:13px}
+      th{text-align:left;border-bottom:2px solid #1E293B;padding:6px 8px;font-size:11px;text-transform:uppercase}
+      td{padding:6px 8px;border-bottom:1px solid #E2E8F0}
+      tfoot td{font-weight:700;border-top:2px solid #1E293B;border-bottom:none}
+    </style>
+    </head><body>
+    <h1>🛒 Lista della Spesa</h1>
+    <p>${nomeP ? _L('Paziente: ','Patient: ') + esc(nomeP) : ''}</p>
+    <table>
+      <thead><tr><th>${_L('Alimento','Food')}</th><th>${_L('Pezzatura','Pack size')}</th><th>${_L('Prezzo','Price')}</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td colspan="2">${_L('Totale stimato','Estimated total')}</td><td>€ ${_lsTotale().toFixed(2)}</td></tr></tfoot>
+    </table>
+    </body></html>`);
   win.document.close();
   setTimeout(() => win.print(), 400);
 }
@@ -3048,6 +3211,7 @@ function showDashboardIfNeeded() {
   if (window._dashShowedEarly) {
     window._dashShowedEarly = false;
     _loadDashboardData();
+    _dashMaybeAutoOpenPicker();
     return;
   }
   // Caso 2: già mostrato questa sessione (navigazione interna)
@@ -3059,37 +3223,24 @@ function showDashboardIfNeeded() {
   const now = new Date();
   const dateStr = now.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   overlay.innerHTML = `
+    <button class="dash-fs-gear" onclick="openDashWidgetPicker()" title="Personalizza widget">⚙️</button>
     <button class="dash-fs-x" onclick="closeDashboard()" title="Chiudi">✕</button>
     <div class="dash-fs-hero">
       <h1 id="dash-greeting">Bentornato!</h1>
       <p>${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}</p>
     </div>
-    <div class="dash-fs-grid">
-      <div class="dash-fc">
-        <div class="dash-fc-icon">📅</div>
-        <div class="dash-fc-label">Appuntamenti oggi</div>
-        <div class="dash-fc-body" id="dash-appts-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div>
-      </div>
-      <div class="dash-fc">
-        <div class="dash-fc-icon">💬</div>
-        <div class="dash-fc-label">Messaggi non letti</div>
-        <div class="dash-fc-body" id="dash-msgs-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div>
-      </div>
-      <div class="dash-fc">
-        <div class="dash-fc-icon">⚠️</div>
-        <div class="dash-fc-label">Pazienti inattivi</div>
-        <div class="dash-fc-body" id="dash-inactive-body"><div class="dash-skel-d"></div><div class="dash-skel-d w70"></div></div>
-      </div>
-    </div>
+    <div class="dash-fs-grid" id="dash-fs-grid">${window._buildDashCardsHtml()}</div>
     <div class="dash-fs-footer">
       <button class="dash-fs-btn" onclick="closeDashboard()">✨ Inizia ora la tua giornata</button>
     </div>
   `;
   document.body.appendChild(overlay);
   _loadDashboardData();
+  _dashMaybeAutoOpenPicker();
 }
 
 function closeDashboard() {
+  closeDashWidgetPicker();
   const el = document.getElementById('dash-overlay-el');
   const blocker = document.getElementById('page-load-block');
   if (blocker) blocker.remove();
@@ -3098,6 +3249,89 @@ function closeDashboard() {
   el.style.opacity = '0';
   el.style.transform = 'translateY(12px)';
   setTimeout(() => el.remove(), 310);
+}
+
+// Ponte da impostazioni.html: "Personalizza widget" ci riporta qui con questo
+// flag impostato, per riaprire subito il pannello di scelta widget.
+function _dashMaybeAutoOpenPicker() {
+  if (sessionStorage.getItem('dp_dashboard_open_picker')) {
+    sessionStorage.removeItem('dp_dashboard_open_picker');
+    openDashWidgetPicker();
+  }
+}
+
+// ── PERSONALIZZAZIONE WIDGET ────────────────────────────────────────────────
+function openDashWidgetPicker() {
+  closeDashWidgetPicker();
+  const active = _dashGetWidgets();
+  const allKeys = Object.keys(window._DASH_WIDGET_META);
+  const orderedKeys = active.concat(allKeys.filter(k => !active.includes(k)));
+  const panel = document.createElement('div');
+  panel.id = 'dash-widget-picker';
+  panel.className = 'dash-wp';
+  panel.innerHTML = `
+    <div class="dash-wp-title">${_L('Widget dashboard','Dashboard widgets')}</div>
+    <div id="dash-wp-list">${orderedKeys.map(k => _dashWidgetRowHtml(k, active)).join('')}</div>
+    <button class="dash-wp-close" type="button" onclick="closeDashWidgetPicker()">${_L('Fatto','Done')}</button>
+  `;
+  const overlayEl = document.getElementById('dash-overlay-el');
+  if (overlayEl) overlayEl.appendChild(panel);
+  setTimeout(() => document.addEventListener('click', _dashWpOutsideClick, true), 0);
+}
+
+function _dashWidgetRowHtml(key, active) {
+  const m = window._DASH_WIDGET_META[key];
+  const isOn = active.includes(key);
+  const idx = active.indexOf(key);
+  return `<div class="dash-wp-row" data-key="${key}">
+    <label class="dash-wp-check">
+      <input type="checkbox" ${isOn ? 'checked' : ''} onchange="_dashToggleWidget('${key}', this.checked)">
+      <span>${m.icon} ${m.label}</span>
+    </label>
+    ${isOn ? `<div class="dash-wp-arrows">
+      <button type="button" ${idx <= 0 ? 'disabled' : ''} onclick="_dashMoveWidget('${key}',-1)" title="${_L('Su','Up')}">▲</button>
+      <button type="button" ${idx < 0 || idx >= active.length - 1 ? 'disabled' : ''} onclick="_dashMoveWidget('${key}',1)" title="${_L('Giù','Down')}">▼</button>
+    </div>` : ''}
+  </div>`;
+}
+
+function closeDashWidgetPicker() {
+  const p = document.getElementById('dash-widget-picker');
+  if (p) p.remove();
+  document.removeEventListener('click', _dashWpOutsideClick, true);
+}
+
+function _dashWpOutsideClick(e) {
+  const p = document.getElementById('dash-widget-picker');
+  if (p && !p.contains(e.target) && !e.target.closest('.dash-fs-gear')) closeDashWidgetPicker();
+}
+
+function _dashToggleWidget(key, on) {
+  let active = _dashGetWidgets();
+  if (on) {
+    if (!active.includes(key)) active.push(key);
+  } else {
+    if (active.length <= 1) { openDashWidgetPicker(); return; } // deve restarne attivo almeno uno
+    active = active.filter(k => k !== key);
+  }
+  _dashApplyWidgets(active);
+}
+
+function _dashMoveWidget(key, dir) {
+  const active = _dashGetWidgets();
+  const i = active.indexOf(key);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= active.length) return;
+  [active[i], active[j]] = [active[j], active[i]];
+  _dashApplyWidgets(active);
+}
+
+function _dashApplyWidgets(active) {
+  _dashSetWidgets(active);
+  const grid = document.getElementById('dash-fs-grid');
+  if (grid) grid.innerHTML = window._buildDashCardsHtml();
+  _loadDashboardData();
+  openDashWidgetPicker();
 }
 
 async function _loadDashboardData() {
@@ -3188,6 +3422,53 @@ async function _loadDashboardData() {
       }
     }
   } catch(e) { const el=document.getElementById('dash-inactive-body'); if(el) el.innerHTML='<p style="font-size:12px;color:rgba(255,255,255,.5)">Non disponibile</p>'; }
+
+  _dashLoadTodo();
+}
+
+// ── WIDGET "COSE DA FARE" ────────────────────────────────────────────────
+async function _dashLoadTodo() {
+  const el = document.getElementById('dash-todo-body');
+  if (!el || !currentUser) return;
+  try {
+    const { data: todos } = await sb.from('dietitian_todos')
+      .select('id,testo,fatto')
+      .eq('user_id', currentUser.id)
+      .eq('fatto', false)
+      .order('ordine', { ascending: true })
+      .order('created_at', { ascending: true })
+      .limit(6);
+    const list = todos || [];
+    el.innerHTML =
+      (list.length
+        ? list.map(t => `<div style="display:flex;align-items:center;gap:8px;padding:4px 0" id="dash-todo-row-${t.id}">
+            <input type="checkbox" onclick="_dashToggleTodo('${t.id}')" style="width:15px;height:15px;cursor:pointer;flex-shrink:0;accent-color:#6EE7B7">
+            <span style="font-size:12px;color:rgba(255,255,255,.85);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.testo)}</span>
+          </div>`).join('')
+        : `<p style="font-size:13px;color:rgba(255,255,255,.7);margin:0 0 4px">${_L('Nessuna cosa da fare 🎉','Nothing to do 🎉')}</p>`)
+      + `<div style="display:flex;gap:6px;margin-top:8px">
+          <input id="dash-todo-input" type="text" maxlength="120" placeholder="${_L('Aggiungi...','Add...')}" style="flex:1;min-width:0;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:6px 9px;font-size:12px;color:#fff;font-family:inherit" onkeydown="if(event.key==='Enter'){event.preventDefault();_dashAddTodo();}">
+          <button type="button" onclick="_dashAddTodo()" style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.24);border-radius:8px;color:#fff;font-size:14px;width:28px;height:28px;cursor:pointer;flex-shrink:0;font-family:inherit">+</button>
+        </div>`;
+  } catch(e) { el.innerHTML = `<p style="font-size:12px;color:rgba(255,255,255,.5)">${_L('Non disponibile','Unavailable')}</p>`; }
+}
+
+async function _dashAddTodo() {
+  const input = document.getElementById('dash-todo-input');
+  if (!input || !currentUser) return;
+  const testo = input.value.trim();
+  if (!testo) return;
+  input.value = '';
+  input.disabled = true;
+  try { await sb.from('dietitian_todos').insert({ user_id: currentUser.id, testo, ordine: Date.now() }); } catch(e) { /* best-effort */ }
+  await _dashLoadTodo();
+}
+
+async function _dashToggleTodo(id) {
+  const row = document.getElementById('dash-todo-row-' + id);
+  if (row) row.style.opacity = '.35';
+  try { await sb.from('dietitian_todos').update({ fatto: true }).eq('id', id); } catch(e) { /* best-effort */ }
+  _dashLoadTodo();
 }
 
 async function caricaPianoById(id) {

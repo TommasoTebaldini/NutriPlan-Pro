@@ -2214,3 +2214,76 @@ CREATE POLICY "chat_group_members_creator_insert" ON chat_group_members
       OR EXISTS (SELECT 1 FROM profiles WHERE id = chat_group_members.user_id AND role = 'dietitian')
     )
   );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 28 — WIDGET "COSE DA FARE" NELLA DASHBOARD DEL DIETISTA
+--
+-- Elenco privato di promemoria testuali del singolo dietista, mostrato nel
+-- nuovo widget "Cose da fare" della dashboard di benvenuto (app.html). Non è
+-- un dato clinico/del paziente: nessun collegamento a cartella_id, nessuna
+-- visibilità paziente, nessun audit trail.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS dietitian_todos (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  testo       TEXT        NOT NULL,
+  fatto       BOOLEAN     NOT NULL DEFAULT FALSE,
+  ordine      BIGINT      NOT NULL DEFAULT 0,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE dietitian_todos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dietitian_todos REPLICA IDENTITY FULL;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='dietitian_todos_owner_all' AND tablename='dietitian_todos') THEN
+    CREATE POLICY "dietitian_todos_owner_all" ON dietitian_todos
+      FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 29 — LISTE DELLA SPESA (autogenerate dal piano o create a mano)
+--
+-- Lista persistita con 3 colonne per riga (alimento, pezzatura, prezzo), così
+-- da poter stimare il costo totale della spesa. `tipo` distingue le liste
+-- generate automaticamente dal piano alimentare da quelle scritte a mano dal
+-- dietista; entrambe condividono la stessa struttura `items` ed entrambe
+-- possono essere condivise con il paziente tramite `visible_to_patient`,
+-- seguendo lo stesso pattern già usato per piani/ncpt/bia_records/ecc.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS liste_spesa (
+  id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id             UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  cartella_id         UUID        REFERENCES cartelle(id) ON DELETE CASCADE,
+  piano_id            UUID        REFERENCES piani(id) ON DELETE SET NULL,
+  nome                TEXT,
+  tipo                TEXT        NOT NULL DEFAULT 'manuale', -- 'auto' | 'manuale'
+  items               JSONB       NOT NULL DEFAULT '[]',      -- [{alimento, pezzatura, prezzo}, ...]
+  visible_to_patient  BOOLEAN     NOT NULL DEFAULT FALSE,
+  created_at          TIMESTAMPTZ DEFAULT NOW(),
+  updated_at          TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE liste_spesa ENABLE ROW LEVEL SECURITY;
+ALTER TABLE liste_spesa REPLICA IDENTITY FULL;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='liste_spesa_dietitian_all' AND tablename='liste_spesa') THEN
+    CREATE POLICY "liste_spesa_dietitian_all" ON liste_spesa
+      FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='liste_spesa_select_patient_visible' AND tablename='liste_spesa') THEN
+    CREATE POLICY "liste_spesa_select_patient_visible" ON liste_spesa
+      FOR SELECT USING (visible_to_patient = TRUE AND is_linked_patient(cartella_id));
+  END IF;
+END $$;
+
+DROP TRIGGER IF EXISTS trg_audit_liste_spesa ON liste_spesa;
+CREATE TRIGGER trg_audit_liste_spesa AFTER INSERT OR UPDATE OR DELETE ON liste_spesa
+  FOR EACH ROW EXECUTE FUNCTION log_clinical_change();

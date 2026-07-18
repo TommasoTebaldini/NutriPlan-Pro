@@ -660,12 +660,13 @@ async function loadDocuments() {
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
 
   // Query all visible documents from linked cartelle (excluding piani, which are in Dieta tab)
-  const [ncpts, biaRecords, schede, noteSpec, documents] = await Promise.all([
+  const [ncpts, biaRecords, schede, noteSpec, documents, listeSpesa] = await Promise.all([
     safeQuery(sb.from('ncpt').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('created_at', { ascending: false })),
     safeQuery(sb.from('bia_records').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('data_misura', { ascending: false })),
     safeQuery(sb.from('schede_valutazione').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('created_at', { ascending: false })),
     safeQuery(sb.from('note_specialistiche').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('created_at', { ascending: false })),
-    safeQuery(sb.from('patient_documents').select('*').in('cartella_id', cartellaIds).eq('visible', true).order('created_at', { ascending: false }))
+    safeQuery(sb.from('patient_documents').select('*').in('cartella_id', cartellaIds).eq('visible', true).order('created_at', { ascending: false })),
+    safeQuery(sb.from('liste_spesa').select('*').in('cartella_id', cartellaIds).eq('visible_to_patient', true).order('updated_at', { ascending: false }))
   ]);
 
   const fmtDate = d => d ? new Date(d).toLocaleDateString('it', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
@@ -775,6 +776,24 @@ async function loadDocuments() {
     </div>`;
   }
 
+  // Render Liste della Spesa (autogenerate dal piano o scritte a mano dal
+  // dietista — vedi SEZIONE 29 di supabase_setup.sql)
+  for (const l of listeSpesa) {
+    const isAuto = l.tipo === 'auto';
+    const title = l.nome || 'Lista della spesa';
+    const ivKey = 'ls-' + l.id;
+    html += `<div class="pp-doc-item">
+      <span class="pp-doc-icon">${isAuto ? '🛒' : '📝'}</span>
+      <div class="pp-doc-info">
+        <div class="pp-doc-title">${esc(title)}</div>
+        <div class="pp-doc-meta">${isAuto ? 'Dal piano' : 'Scritta a mano'} · ${fmtDate(l.updated_at || l.created_at)}</div>
+      </div>
+      <span class="pp-doc-badge" style="background:#FFFBEB;color:#B45309">Spesa</span>
+      <button onclick="toggleDocContent('${ivKey}')" style="background:none;border:1px solid var(--border-d);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--slate-m)">👁 Visualizza</button>
+    </div>
+    <div class="pp-doc-content" id="doc-${ivKey}">${renderListaSpesaContent(l)}</div>`;
+  }
+
   // Render Patient Documents
   const typeIcons = { diet: '🥗', advice: '💡', recipe: '🍳', document: '📄', education: '📚' };
   const typeLabels = { diet: 'Dieta', advice: 'Consigli', recipe: 'Ricetta', document: 'Documento', education: 'Materiale educativo' };
@@ -851,7 +870,7 @@ function setupDocsRealtime() {
     }
 
     // remaining document tables (use `visible_to_patient` column)
-    for (const table of ['ncpt', 'bia_records', 'schede_valutazione', 'note_specialistiche']) {
+    for (const table of ['ncpt', 'bia_records', 'schede_valutazione', 'note_specialistiche', 'liste_spesa']) {
       for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
         channel = channel.on('postgres_changes', {
           event,
@@ -889,6 +908,27 @@ function renderPianoContent(piano) {
     }
   } catch(e) { /* piano data may not be parseable JSON */ }
   return html || '<em>Contenuto del piano disponibile.</em>';
+}
+
+function renderListaSpesaContent(lista) {
+  let items = lista.items;
+  if (typeof items === 'string') { try { items = JSON.parse(items); } catch(e) { items = []; } }
+  if (!Array.isArray(items) || !items.length) return '<em>Lista vuota.</em>';
+  let totale = 0;
+  let html = '<table style="width:100%;border-collapse:collapse;font-size:12.5px">';
+  html += '<tr style="color:var(--slate-l);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em"><td style="padding:3px 6px 3px 0">Alimento</td><td style="padding:3px 6px">Pezzatura</td><td style="padding:3px 0 3px 6px;text-align:right">Prezzo</td></tr>';
+  for (const it of items) {
+    const prezzo = (it.prezzo !== '' && it.prezzo != null) ? Number(it.prezzo) : null;
+    if (prezzo != null && !isNaN(prezzo)) totale += prezzo;
+    html += `<tr style="border-top:1px solid var(--border)">
+      <td style="padding:5px 6px 5px 0">${esc(it.alimento || '')}</td>
+      <td style="padding:5px 6px;color:var(--slate-l)">${esc(it.pezzatura || '')}</td>
+      <td style="padding:5px 0 5px 6px;text-align:right;white-space:nowrap">${prezzo != null && !isNaN(prezzo) ? '€ ' + prezzo.toFixed(2) : ''}</td>
+    </tr>`;
+  }
+  html += `<tr style="border-top:2px solid var(--slate);font-weight:700"><td colspan="2" style="padding:6px 6px 0 0">Totale stimato</td><td style="padding:6px 0 0 6px;text-align:right">€ ${totale.toFixed(2)}</td></tr>`;
+  html += '</table>';
+  return html;
 }
 
 function toggleDocContent(id) {

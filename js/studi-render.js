@@ -169,4 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (srch) srch.placeholder = _L('🔍 Cerca per titolo, autori, argomento...','🔍 Search by title, authors, topic...');
   filterStudies();
   if (typeof initAuth === 'function') initAuth();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('studi', [
+      { icon:'🔬', title:_L('Benvenuto in Studi Scientifici','Welcome to Scientific Studies'), text:_L('Una selezione di studi e meta-analisi rilevanti in nutrizione clinica, con sintesi di metodi e risultati, pronti da consultare senza dover cercare altrove.','A curated selection of relevant clinical nutrition studies and meta-analyses, with summarised methods and results, ready to consult without searching elsewhere.') },
+      { selector:'.calc-box', title:_L('Accesso diretto alle banche dati','Direct access to databases'), text:_L('PubMed, Cochrane, NEJM, The Lancet e altre fonti scientifiche di riferimento, a un click di distanza.','PubMed, Cochrane, NEJM, The Lancet and other reference scientific sources, one click away.') },
+      { selector:'.study-filters', title:_L('Cerca e filtra','Search and filter'), text:_L('Cerca per titolo o argomento, oppure filtra rapidamente per patologia con questi tasti.','Search by title or topic, or quickly filter by condition with these buttons.') }
+    ], { badge:_L('Studi Scientifici','Scientific Studies') });
+  }
 });

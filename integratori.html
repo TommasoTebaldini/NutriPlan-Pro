@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;align-items:start}
 .int-cat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:box-shadow .25s,transform .25s,border-color .25s;display:flex;flex-direction:column;content-visibility:auto;contain-intrinsic-size:0 80px}
@@ -197,6 +198,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it, en) {
   try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang')||'it'); return l === 'en' ? en : it; } catch(e) { return it; }
@@ -831,6 +833,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const srch = document.getElementById('int-search');
   if (srch) srch.placeholder = _L('🔍 Cerca integratore o AFMS...', '🔍 Search supplement or FSMP...');
   buildIntGrid();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('integratori', [
+      { icon:'💊', title:_L('Benvenuto in Integratori e AFMS','Welcome to Supplements & FSMPs'), text:_L('Una libreria di integratori e alimenti a fini medici speciali, organizzata per categoria con dosaggi e indicazioni.','A library of supplements and foods for special medical purposes, organised by category with dosages and indications.') },
+      { selector:'.db-filters', title:_L('Cerca un prodotto','Search a product'), text:_L('Cerca per nome o categoria per trovare rapidamente l\'integratore o AFMS che ti serve.','Search by name or category to quickly find the supplement or FSMP you need.') },
+      { selector:'#int-grid', title:_L('Esplora per categoria','Browse by category'), text:_L('Apri una categoria per vedere tutti i prodotti con dosaggio consigliato e indicazioni cliniche.','Open a category to see all products with recommended dosage and clinical indications.') }
+    ], { badge:_L('Integratori','Supplements') });
+  }
 });
 </script>
 </body>

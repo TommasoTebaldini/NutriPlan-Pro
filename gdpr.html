@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .gdpr-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
 .gdpr-card h3{font-size:15px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:2px solid var(--border)}
@@ -321,6 +322,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
+<script src="js/tour.js" defer></script>
 
 <script>
 let _allCartelle = [];
@@ -329,6 +331,14 @@ let _oblioTarget = null;
 document.addEventListener('DOMContentLoaded', async () => {
   await checkAuth();
   await loadGDPRData();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('gdpr', [
+      { icon:'🔒', title:_L('Benvenuto in GDPR','Welcome to GDPR'), text:_L('Gestisci gli adempimenti privacy verso i tuoi pazienti: consensi, diritto all\'oblio, portabilità dei dati e panoramica generale.','Manage privacy compliance towards your patients: consent, right to erasure, data portability and an overview.') },
+      { selector:'.gdpr-tabs', title:_L('Cinque aree di gestione','Five management areas'), text:_L('Registro consensi, Diritto all\'oblio, Privacy, Statistiche e Portabilità dei dati: tutto quello che serve per essere in regola.','Consent register, Right to erasure, Privacy, Statistics and Data portability: everything you need to stay compliant.') },
+      { selector:'#gdpr-search-input', title:_L('Registro consensi','Consent register'), text:_L('Cerca un paziente e filtra per chi ha dato o non ha ancora dato il consenso al trattamento dei dati.','Search for a patient and filter by who has or hasn\'t yet given consent to data processing.') }
+    ], { badge:_L('GDPR','GDPR') });
+  }
 });
 
 var _GDPR_PANELS = ['registro', 'oblio', 'privacy', 'stats', 'portabilita'];

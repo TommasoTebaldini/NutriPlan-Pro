@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 /* ── Editor ── */
 .editor-toolbar{display:flex;gap:3px;flex-wrap:wrap;padding:8px 10px;background:#F8FAFC;border:1.5px solid var(--border-d);border-radius:var(--r-sm) var(--r-sm) 0 0;border-bottom:none}
@@ -137,7 +138,7 @@
     <!-- LEFT: editor -->
     <div>
       <!-- Meta -->
-      <div class="card" style="margin-bottom:14px;padding:16px 18px">
+      <div class="card" id="visita-meta-card" style="margin-bottom:14px;padding:16px 18px">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
           <div class="fg">
             <label>Tipo visita</label>
@@ -205,7 +206,7 @@
       </div>
 
       <!-- Inserimento rapido sezioni -->
-      <div class="card" style="padding:16px">
+      <div class="card" id="visita-quick-insert" style="padding:16px">
         <h4 style="font-size:13px;font-weight:700;color:var(--slate);margin:0 0 10px">⚡ <span data-only-lang="it">Inserimento rapido</span><span data-only-lang="en" style="display:none">Quick insert</span></h4>
         <div style="display:flex;flex-direction:column;gap:6px">
           <button class="btn btn-ghost btn-sm" onclick="insertSection('Anamnesi alimentare')" style="text-align:left;justify-content:flex-start">+ Anamnesi alimentare</button>
@@ -269,6 +270,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/lang.min.js?v=1" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
@@ -294,6 +296,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(location.search);
   const cartId = params.get('cartella');
   if (cartId) setTimeout(() => { const sel = document.getElementById('inp-cartella'); if (sel) sel.value = cartId; }, 300);
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('visita', [
+      { icon:'🩺', title:_L('Benvenuto in Resoconto Visita','Welcome to Visit Notes'), text:_L('Qui componi il resoconto clinico della visita: tipo e data, paziente collegato, editor di testo con sezioni rapide e stampa in PDF. Facciamo un giro veloce.','Here you compose the clinical visit report: type and date, linked patient, a text editor with quick sections, and PDF printing. Let\'s take a quick tour.') },
+      { selector:'.tbar-actions', title:_L('Salvate, nuova visita e stampa','Saved visits, new visit and print'), text:_L('Da qui apri l\'archivio delle visite salvate, ne inizi una nuova, la stampi in PDF o la salvi con il pulsante "Salva".','From here you can open the archive of saved visits, start a new one, print it as PDF, or save it with the "Save" button.') },
+      { selector:'#visita-meta-card', title:_L('Tipo, data e paziente collegato','Type, date and linked patient'), text:_L('Imposta il tipo di visita e la data, collega la cartella del paziente e dai un titolo/oggetto al resoconto: questi dati compaiono anche nel documento stampato.','Set the visit type and date, link the patient\'s file and give the report a title/subject: this data also appears on the printed document.') },
+      { selector:'#editor-toolbar', title:_L('Editor di testo e template','Text editor and template')  , text:_L('Formatta il testo (grassetto, elenchi, titoli) e usa "Template" per inserire automaticamente tutte le sezioni standard di una visita già pronte da compilare.','Format the text (bold, lists, headings) and use "Template" to automatically insert all the standard visit sections ready to fill in.') },
+      { selector:'#visita-quick-insert', title:_L('Inserimento rapido sezioni','Quick section insert'), text:_L('Aggiungi con un click le sezioni cliniche più usate — Anamnesi, Obiettivi, Valutazione antropometrica, Prescrizione e altre — direttamente nel punto in cui ti trovi nell\'editor.','Add the most-used clinical sections with one click — History, Goals, Anthropometric assessment, Prescription and more — right where you are in the editor.') }
+    ], { badge:_L('Resoconto Visita','Visit Notes') });
+  }
 });
 
 function updateProfPreview() {

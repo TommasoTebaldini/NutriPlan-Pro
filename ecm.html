@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .ecm-hero{background:linear-gradient(135deg,#1D4ED8 0%,#4F46E5 100%);border-radius:16px;padding:22px 28px;margin-bottom:20px;display:flex;align-items:center;gap:20px;color:white;box-shadow:0 4px 24px rgba(29,78,216,.3)}
 .ecm-hero-icon{font-size:52px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25))}
@@ -333,6 +334,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 // ═══════════════════════════════════════════════════════════════════
 // ECM_DATA — dati di fallback (usati se Supabase non disponibile)
@@ -1281,6 +1283,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   showLoading(false);
   updateContatore();
   renderECM();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('ecm', [
+      { icon:'🎓', title:_L('Benvenuto in Corsi ECM','Welcome to CME Courses'), text:_L('Tieni traccia dei tuoi crediti ECM e trova corsi accreditati in nutrizione clinica, tutto in un posto solo.','Track your CME credits and find accredited clinical nutrition courses, all in one place.') },
+      { selector:'#ecm-counter-section', title:_L('I tuoi crediti','Your credits'), text:_L('Il progresso verso i 150 crediti del triennio si aggiorna da solo man mano che segni i corsi come svolti.','Progress towards the 150-credit triennium updates automatically as you mark courses as completed.') },
+      { selector:'.ecm-filters', title:_L('Cerca e filtra i corsi','Search and filter courses'), text:_L('Filtra per tipo (FAD, Residenziale, Blended) o argomento, oppure aggiungi un corso che hai trovato altrove con il pulsante "Aggiungi corso tramite AI".','Filter by type (online, in-person, blended) or topic, or add a course you found elsewhere with the "Add course via AI" button.') }
+    ], { badge:_L('Corsi ECM','CME Courses') });
+  }
 });
 </script>
 </body>

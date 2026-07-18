@@ -12,6 +12,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .bia-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:white;border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .bia-tab{padding:9px 20px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
@@ -343,6 +344,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let biaData = {};
@@ -1300,6 +1302,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
   } catch(e) {}
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('bia', [
+      { icon:'⚡', title:_L('Benvenuto in BIA','Welcome to BIA'), text:_L('Analizza la composizione corporea del paziente da un report di bioimpedenziometria: massa grassa, massa magra, acqua corporea e metabolismo basale.','Analyse a patient\'s body composition from a bioimpedance report: fat mass, lean mass, body water and basal metabolism.') },
+      { selector:'#bia-cartella-cw', title:_L('Collega il paziente','Link the patient'), text:_L('Cerca la cartella del paziente per salvare la misurazione nella sua scheda clinica e vederne lo storico nel tempo.','Search the patient\'s file to save the measurement to their clinical record and see their history over time.') },
+      { title:_L('Importa o inserisci a mano','Import or enter manually'), text:_L('Carica il file del report BIA (o incolla il testo) per estrarre i dati automaticamente, oppure inserisci i parametri a mano qui sotto.','Upload the BIA report file (or paste its text) to extract the data automatically, or enter the parameters manually below.') },
+      { selector:'.bia-tabs', title:_L('Dati, analisi, storico','Data, analysis, history'), text:_L('Dopo l\'inserimento, passa alle schede Analisi Composizione per i risultati, Storico & Trend per l\'andamento nel tempo, Valori di Riferimento per interpretarli.','After entering the data, switch to the Composition Analysis tab for results, History & Trend to track changes over time, Reference Values to interpret them.') }
+    ], { badge:_L('BIA','BIA') });
+  }
 });
 
 /* ── Auto-save & Clear section ── */

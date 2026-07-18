@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .lang-section { margin-bottom: 32px; }
 .lang-section h3 { font-size: 16px; font-weight: 700; color: var(--slate); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
@@ -584,6 +585,7 @@
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'));}</script>
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 const LAYOUT_NAMES = {classico:'Classico Verde',elegante:'Elegante Blu',caldo:'Caldo Ambra',fresco:'Fresco Viola',neutro:'Neutro Pietra',vivace:'Vivace Arcobaleno',tramonto:'Tramonto',oceano:'Oceano',rosa:'Rosa'};
 const ALL_LAYOUTS = ['classico','elegante','caldo','fresco','neutro','vivace','tramonto','oceano','rosa'];
@@ -631,6 +633,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadSecuritySection();
   loadFiscalData();
   checkPushStatus();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('impostazioni', [
+      { icon:'⚙️', title:_L('Benvenuto in Impostazioni','Welcome to Settings'), text:_L('Qui personalizzi lingua, sicurezza, collaboratori dello studio, dati fiscali e notifiche del tuo account.','This is where you customise language, security, studio collaborators, billing details and notifications for your account.') },
+      { selector:'.lang-cards', title:_L('Lingua dell\'app','App language'), text:_L('Cambia la lingua dell\'interfaccia in qualsiasi momento: il contenuto clinico resta sempre coerente.','Change the interface language anytime: clinical content stays consistent regardless.') },
+      { selector:'#section-collaboratori', title:_L('Collaboratori dello studio','Studio collaborators'), text:_L('Collega un collega già registrato: come "Segreteria" (agenda e pazienti, sola lettura) o come "Dietista" (accesso pieno come te).','Connect a colleague who\'s already registered: as "Secretary" (schedule and patients, read-only) or as "Dietitian" (full access like you).') },
+      { selector:'#section-sicurezza', title:_L('Sicurezza in due passaggi','Two-factor security'), text:_L('Attiva la verifica in due passaggi (2FA) con un\'app authenticator per proteggere meglio i dati clinici dei tuoi pazienti.','Enable two-factor verification (2FA) with an authenticator app to better protect your patients\' clinical data.') },
+      { selector:'#section-notifiche', title:_L('Notifiche','Notifications'), text:_L('Decidi quali avvisi ricevere: pazienti inattivi, saluto giornaliero e altro.','Decide which alerts you want to receive: inactive patients, daily greeting and more.') }
+    ], { badge:_L('Impostazioni','Settings') });
+  }
 });
 
 // ══════════════════════════════════════════════

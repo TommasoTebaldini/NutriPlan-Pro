@@ -461,4 +461,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch(e) {}
   })();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('consigli', [
+      { icon:'💡', title:_L('Benvenuto in Consigli Nutrizionali','Welcome to Nutritional Tips'), text:_L('Una libreria di consigli pratici per patologia, pronti da condividere con i pazienti o personalizzare con note tue.','A library of practical advice by condition, ready to share with patients or personalise with your own notes.') },
+      { selector:'.cs-tabs', title:_L('Tre modalità','Three modes'), text:_L('"Consigli per Patologia" per schede pronte all\'uso, "Educazione Alimentare" per materiale divulgativo, "Atlante Porzioni" per stime visive delle porzioni.','"Advice by Condition" for ready-to-use sheets, "Nutrition Education" for educational material, "Portion Atlas" for visual portion estimates.') },
+      { selector:'#cs-cartella-cw', title:_L('Personalizza per un paziente','Personalise for a patient'), text:_L('Seleziona la cartella di un paziente per aggiungere note tue ai consigli, salvate direttamente nella sua scheda clinica.','Select a patient\'s file to add your own notes to the advice, saved directly to their clinical record.') },
+      { selector:'#cs-search', title:_L('Cerca per patologia','Search by condition'), text:_L('Filtra rapidamente i consigli digitando il nome della patologia o della parola chiave che ti interessa.','Quickly filter advice by typing the condition name or a keyword you\'re after.') }
+    ], { badge:_L('Consigli Nutrizionali','Nutritional Tips') });
+  }
 });

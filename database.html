@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 #db-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--border)}
 #db-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:900px}
@@ -270,6 +271,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 function populateSrc(){
@@ -565,6 +567,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   populateCats();
   populateSrc();
   renderDB(ALL_DB);
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('database', [
+      { icon:'🔬', title:_L('Benvenuto nel Database Alimenti','Welcome to the Food Database'), text:_L('Migliaia di alimenti CREA 2019 e BDA INRAN con la composizione nutrizionale completa, più i tuoi alimenti personalizzati.','Thousands of CREA 2019 and BDA INRAN foods with complete nutritional composition, plus your own custom foods.') },
+      { selector:'.db-filters', title:_L('Cerca e filtra','Search and filter'), text:_L('Cerca per nome, filtra per categoria o fonte (CREA, BDA, aproteici, integratori...) e affina con il filtro micronutrienti se ti serve un valore preciso.','Search by name, filter by category or source (CREA, BDA, aproteic, supplements...) and refine with the micronutrient filter if you need a precise value.') },
+      { selector:'#db-table-wrap', title:_L('Composizione completa','Full composition'), text:_L('Ogni alimento mostra calorie, macro e micronutrienti per 100g, pronti da consultare o usare nei piani.','Every food shows calories, macros and micronutrients per 100g, ready to check or use in meal plans.') }
+    ], { badge:_L('Database Alimenti','Food Database') });
+  }
 });
 </script>
 </body>

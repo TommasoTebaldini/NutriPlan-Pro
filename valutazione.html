@@ -12,6 +12,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 @keyframes valSecIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .val-section{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:18px;box-shadow:var(--shadow);margin-bottom:14px;transition:box-shadow .15s;animation:valSecIn .3s cubic-bezier(.16,1,.3,1) both}
@@ -134,7 +135,7 @@
   </div>
 </div>
 
-<div class="val-section" style="border-top:3px solid #3B82F6">
+<div class="val-section" id="val-antropometrici" style="border-top:3px solid #3B82F6">
   <h3>📏 <span data-only-lang="it">Dati Antropometrici</span><span data-only-lang="en" style="display:none">Anthropometric Data</span></h3>
   <div class="fgrid">
     <div class="fg"><label>Peso attuale (kg)</label><input type="number" id="v-peso" step="0.1" placeholder="75" oninput="aggiornaCalcoli()"></div>
@@ -180,7 +181,7 @@
   <div id="circonf-results" style="margin-top:10px"><p style="font-size:12px;color:var(--slate-l)"><span data-only-lang="it">Inserisci vita, collo e altezza (+ fianchi per le donne) per calcolare la composizione corporea.</span><span data-only-lang="en">Enter waist, neck and height (+ hips for women) to calculate body composition.</span></p></div>
 </div>
 
-<div class="val-section" style="border-top:3px solid #7C3AED">
+<div class="val-section" id="val-handgrip" style="border-top:3px solid #7C3AED">
   <h3>💪 <span data-only-lang="it">Forza di Presa (Handgrip)</span><span data-only-lang="en" style="display:none">Grip Strength (Handgrip)</span></h3>
   <p style="font-size:11px;color:var(--slate-l);margin-bottom:12px;margin-top:-6px"><span data-only-lang="it">Gold standard EWGSOP2 per la diagnosi di sarcopenia. Eseguire 3 misurazioni per lato; viene usato il valore massimo.</span><span data-only-lang="en">EWGSOP2 gold standard for sarcopenia diagnosis. Perform 3 measurements per side; the maximum value is used.</span></p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
@@ -791,7 +792,7 @@
   </div>
 </div>
 
-<button class="btn btn-primary" style="width:100%;padding:13px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#0F766E,#0EA5E9);border:none;font-weight:700;letter-spacing:.3px" onclick="calcolaFabbisogno()">📊 <span data-only-lang="it">Calcola Fabbisogno</span><span data-only-lang="en" style="display:none">Calculate Requirements</span></button>
+<button class="btn btn-primary" id="btn-calcola-fabbisogno" style="width:100%;padding:13px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#0F766E,#0EA5E9);border:none;font-weight:700;letter-spacing:.3px" onclick="calcolaFabbisogno()">📊 <span data-only-lang="it">Calcola Fabbisogno</span><span data-only-lang="en" style="display:none">Calculate Requirements</span></button>
 
 <!-- RISULTATI -->
 <div id="risultati-col">
@@ -826,6 +827,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 // FC_OPTIONS, LAF_OPTIONS, FABBISOGNO_PATOLOGIE already defined in db.js — do NOT redeclare
@@ -2377,6 +2379,17 @@ document.addEventListener('DOMContentLoaded',async()=>{
       verificaTabella();
     }
   } catch(e) { console.log('Auth not available:', e.message); }
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('valutazione', [
+      { icon:'📊', title:_L('Benvenuto in Valutazione Paziente','Welcome to Patient Assessment'), text:_L('Qui compili la scheda completa di valutazione: antropometria, handgrip, composizione corporea e calcolo del fabbisogno. Facciamo un giro veloce.','This is where you fill in the complete assessment record: anthropometry, handgrip, body composition and requirement calculations. Let\'s take a quick tour.') },
+      { selector:'#v-cartella-cw', title:_L('Collega il paziente','Link the patient'), text:_L('Cerca o crea la cartella del paziente per collegare questa scheda di valutazione al suo profilo clinico.','Search for or create the patient\'s file to link this assessment record to their clinical profile.') },
+      { selector:'#val-antropometrici', title:_L('Dati antropometrici','Anthropometric data'), text:_L('Peso, altezza, peso ideale/aggiustato e composizione corporea: la base di ogni valutazione nutrizionale.','Weight, height, ideal/adjusted weight and body composition: the foundation of every nutritional assessment.') },
+      { selector:'#val-handgrip', title:_L('Forza di presa (Handgrip)','Grip strength (Handgrip)'), text:_L('Il gold standard EWGSOP2 per la sarcopenia: inserisci 3 misurazioni per mano, viene interpretato automaticamente il valore massimo.','The EWGSOP2 gold standard for sarcopenia: enter 3 measurements per hand, the maximum value is interpreted automatically.') },
+      { selector:'#btn-calcola-fabbisogno', title:_L('Calcola il fabbisogno','Calculate requirements'), text:_L('Con un click calcoli metabolismo basale, fabbisogno energetico e distribuzione dei macronutrienti in base ai dati inseriti.','With one click you calculate basal metabolism, energy requirements and macronutrient distribution based on the data entered.') },
+      { selector:'#risultati-col', title:_L('Risultati e riepilogo','Results and summary'), text:_L('Qui compaiono i risultati dei calcoli: formule a confronto, fabbisogno finale e distribuzione dei macronutrienti, pronti da salvare o stampare.','This is where calculation results appear: compared formulas, final requirements and macronutrient distribution, ready to save or print.') }
+    ], { badge:_L('Valutazione Paziente','Patient Assessment') });
+  }
 });
 
 async function verificaTabella(){

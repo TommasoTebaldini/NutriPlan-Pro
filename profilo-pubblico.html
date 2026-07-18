@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .profile-hero{background:linear-gradient(135deg,#0F766E,#0D9488 55%,#14B8A6 100%);border-radius:18px;padding:22px 26px;margin-bottom:24px;display:flex;align-items:center;gap:20px;color:white;box-shadow:0 6px 24px rgba(15,118,110,.28);position:relative;overflow:hidden}
 .profile-hero::before{content:'';position:absolute;right:-24px;top:-24px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.07)}
@@ -201,7 +202,7 @@
       </div>
 
       <!-- Presentazione -->
-      <div class="form-section" style="margin-bottom:16px">
+      <div class="form-section" style="margin-bottom:16px" id="fs-presentazione">
         <h3>📝 <span data-only-lang="it">Presentazione</span><span data-only-lang="en">Introduction</span></h3>
         <div class="form-group">
           <label><span data-only-lang="it">Descrizione (visibile ai pazienti)</span><span data-only-lang="en" style="display:none">Description (visible to patients)</span></label>
@@ -264,7 +265,7 @@
       </div>
 
       <!-- Disponibilità -->
-      <div class="form-section" style="margin-bottom:16px">
+      <div class="form-section" style="margin-bottom:16px" id="fs-disponibilita">
         <h3>📅 <span data-only-lang="it">Disponibilità per prenotazioni</span><span data-only-lang="en">Availability for bookings</span></h3>
         <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px"><span data-only-lang="it">Imposta i giorni e orari in cui i pazienti possono prenotare un colloquio di conoscimento dall'app. Gli slot già occupati vengono bloccati automaticamente.</span><span data-only-lang="en">Set the days and times when patients can book an introductory call from the app. Already occupied slots are blocked automatically.</span></p>
         <div class="form-group" style="margin-bottom:14px">
@@ -361,6 +362,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/lang.min.js?v=1" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it, en) { return (typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang') || 'it')) === 'en' ? en : it; }
 const BUCKET = 'dietitian-avatars';
@@ -697,6 +699,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   hideLoading();
   setupInviteLink();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('profilo-pubblico', [
+      { icon:'👤', title:_L('Benvenuto nel Profilo','Welcome to Profile'), text:_L('Qui costruisci il tuo profilo pubblico: i pazienti lo vedono quando ti cercano nell\'app NutriPlan o quando prenotano un colloquio con te.','This is where you build your public profile: patients see it when they search for you in the NutriPlan app or when booking a consultation with you.') },
+      { selector:'#photo-drop-area', title:_L('Foto profilo','Profile photo'), text:_L('Carica una foto professionale: è il primo elemento che un paziente vede del tuo profilo.','Upload a professional photo: it\'s the first thing a patient sees on your profile.') },
+      { selector:'#fs-presentazione', title:_L('Bio e specializzazioni','Bio and specializations'), text:_L('Racconta la tua formazione, esperienza e le aree in cui sei specializzato: aiuta i pazienti a capire se sei la persona giusta per loro.','Describe your training, experience and areas of specialization: it helps patients understand if you\'re the right fit for them.') },
+      { selector:'.toggle-row', title:_L('Visibilità pubblica','Public visibility'), text:_L('Attiva questo interruttore per farti trovare dai pazienti nella sezione "Dietisti" dell\'app — disattivalo in qualsiasi momento per restare privato.','Turn this on to be found by patients in the "Dietitians" section of the app — turn it off anytime to stay private.') },
+      { selector:'#fs-disponibilita', title:_L('Disponibilità per prenotazioni','Booking availability'), text:_L('Imposta i giorni e gli orari in cui i pazienti possono prenotare un colloquio conoscitivo direttamente dall\'app: gli slot già occupati si bloccano da soli.','Set the days and times when patients can book an introductory call directly from the app: already-booked slots block themselves automatically.') }
+    ], { badge:_L('Profilo','Profile') });
+  }
 });
 
 const PATIENT_APP_URL_PP = 'https://diet-plan-pro-app-claude.vercel.app';

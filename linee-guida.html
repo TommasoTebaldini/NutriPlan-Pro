@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .lg-ver-btn{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border-d);background:white;color:var(--slate-m);transition:all .15s;font-family:inherit}
 .lg-ver-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
@@ -141,6 +142,7 @@
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script src="js/linee-guida-data.min.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function buildCard(d) {
   const pills = (arr, cls) => (arr||[]).map(f=>`<span class="food-pill ${cls}">${f}</span>`).join('');
@@ -278,6 +280,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const s = document.getElementById('lg-stat-n');
   if(s) s.textContent = LG_DATA.length;
   try { await checkAuth(false); } catch(e) {}
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('linee-guida', [
+      { icon:'📚', title:_L('Benvenuto nelle Linee Guida','Welcome to the Guidelines'), text:_L('Una libreria di sintesi delle principali linee guida cliniche internazionali (ESPEN, WHO, ESC, LARN...) organizzate per patologia. Facciamo un giro veloce.','A library of summaries of the main international clinical guidelines (ESPEN, WHO, ESC, LARN...) organised by condition. Let\'s take a quick tour.') },
+      { selector:'.calc-box', title:_L('Organismi e banche dati ufficiali','Official bodies and databases'), text:_L('Accesso diretto ai siti ufficiali di SINU, ISS, EFSA, WHO, ESPEN e ADI per consultare le fonti originali in un click.','Direct access to the official SINU, ISS, EFSA, WHO, ESPEN and ADI websites to consult the original sources in one click.') },
+      { selector:'#lg-search', title:_L('Cerca una patologia','Search a condition'), text:_L('Digita il nome di una patologia (es. diabete, cirrosi, osteoporosi...) per filtrare subito le schede corrispondenti.','Type the name of a condition (e.g. diabetes, cirrhosis, osteoporosis...) to instantly filter the matching cards.') },
+      { selector:'#lg-grid', title:_L('Schede per patologia','Condition cards'), text:_L('Ogni scheda si apre con target nutrizionali, alimenti consigliati/da evitare e razionale scientifico, in versione breve o estesa.','Each card expands to show nutritional targets, recommended/avoided foods and the scientific rationale, in a short or extended version.') },
+      { selector:'.tbar-actions', title:_L('Stampa tutto','Print everything'), text:_L('Genera un PDF con tutte le linee guida in versione estesa, pronto da archiviare o condividere.','Generate a PDF with all guidelines in extended version, ready to archive or share.') }
+    ], { badge:_L('Linee Guida','Guidelines') });
+  }
 });
 </script>
 </body>

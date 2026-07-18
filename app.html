@@ -17,6 +17,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/app-inline.css">
+<link rel="stylesheet" href="css/tour.css">
 <script>
 (function(){
   var L={
@@ -205,7 +206,7 @@
 <div class="page-content">
 
   <!-- PAZIENTE HDR -->
-  <div class="no-print" style="background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:14px;padding:20px 24px;margin-bottom:14px;color:white;box-shadow:0 4px 18px rgba(0,0,0,.18)">
+  <div id="app-paz-hdr" class="no-print" style="background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:14px;padding:20px 24px;margin-bottom:14px;color:white;box-shadow:0 4px 18px rgba(0,0,0,.18)">
     <!-- Banner top row: icon + title/subtitle + badge -->
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
       <div style="font-size:38px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));flex-shrink:0">📋</div>
@@ -575,6 +576,7 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 // Micro labels EN — defined here (not in utils.js) to be cache-independent
@@ -3027,6 +3029,17 @@ async function init() {
   }
 
   showDashboardIfNeeded();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('app', [
+      { icon:'📋', title:_L('Benvenuto nel Piano Alimentare','Welcome to Meal Plan'), text:_L('Qui crei e modifichi i piani nutrizionali dei tuoi pazienti, pasto per pasto, con il calcolo automatico di calorie e macronutrienti. Facciamo un giro veloce.','This is where you build and edit your patients\' meal plans, meal by meal, with automatic calorie and macro calculation. Let\'s take a quick tour.') },
+      { selector:'#app-paz-hdr', title:_L('Collega il paziente','Link the patient'), text:_L('Cerca la cartella del paziente per collegare il piano al suo profilo, imposta la data e dai un nome al piano. Il pulsante "Salva" lo registra nella cartella clinica.','Search the patient\'s file to link the plan to their profile, set the date and name the plan. The "Save" button stores it in their clinical file.') },
+      { selector:'.tbar-actions', title:_L('Esporta, salva come template, stampa','Export, save as template, print'), text:_L('Da qui esporti il piano in Excel, lo salvi (o carichi) come template riutilizzabile, generi automaticamente la lista della spesa e stampi in PDF (con o senza calcoli) o in formato settimanale.','From here you can export the plan to Excel, save (or load) it as a reusable template, auto-generate a shopping list, and print as PDF (with or without calculations) or as a weekly layout.') },
+      { selector:'#macro-bar-totale', title:_L('Totale nutrizionale in tempo reale','Real-time nutrition total'), text:_L('Calorie, proteine, carboidrati, grassi, fibra e carico glicemico si aggiornano automaticamente man mano che aggiungi alimenti ai pasti.','Calories, protein, carbs, fat, fibre and glycaemic load update automatically as you add foods to meals.') },
+      { selector:'#giorno-tabs', title:_L('Più giorni nello stesso piano','Multiple days in the same plan'), text:_L('Utile per diete cicliche o settimanali: aggiungi altri giorni e passa dall\'uno all\'altro con questi tab, ognuno con i propri pasti.','Useful for cyclical or weekly diets: add more days and switch between them with these tabs, each with its own meals.') },
+      { selector:'.add-pasto-area', title:_L('Aggiungi un pasto','Add a meal'), text:_L('Colazione, spuntino, pranzo... aggiungi tutti i pasti che servono, riordinali trascinandoli e cerca gli alimenti direttamente in ogni riga.','Breakfast, snack, lunch... add as many meals as you need, reorder them by dragging, and search for foods directly in each row.') }
+    ], { badge:_L('Piano Alimentare','Meal Plan'), waitForGone:'#dash-overlay-el' });
+  }
 }
 
 function showDashboardIfNeeded() {

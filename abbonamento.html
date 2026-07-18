@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .sub-hero {
   background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 60%, #A855F7 100%);
@@ -338,6 +339,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 // Flip a true SOLO dopo aver configurato Stripe per davvero: le 3 edge
 // function in supabase/functions/{create-checkout-session,stripe-portal,
@@ -371,6 +373,14 @@ async function init() {
   renderSubscriptionUI();
   document.getElementById('sub-loading').style.display = 'none';
   document.getElementById('sub-content').style.display = 'block';
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('abbonamento', [
+      { icon:'💳', title:_L('Benvenuto in Abbonamento','Welcome to Subscription'), text:_L('Qui trovi il tuo piano attuale, cosa include e come gestire la fatturazione.','This is where you find your current plan, what it includes and how to manage billing.') },
+      { selector:'#sub-hero', title:_L('Il tuo piano','Your plan'), text:_L('Stato dell\'abbonamento a colpo d\'occhio: piano attivo e data di rinnovo, se prevista.','Your subscription status at a glance: active plan and renewal date, if applicable.') },
+      { selector:'.plans-grid', title:_L('Cosa include','What\'s included'), text:_L('L\'elenco completo delle funzionalità disponibili con il piano, con la possibilità di passare dalla fatturazione mensile a quella annuale per risparmiare.','The full list of features included in the plan, with the option to switch from monthly to annual billing to save.') }
+    ], { badge:_L('Abbonamento','Subscription') });
+  }
 }
 
 function renderSubscriptionUI() {
@@ -497,7 +507,7 @@ function toggleFAQ(el) {
   arrow.textContent = ans.classList.contains('open') ? '▲' : '▼';
 }
 
-init();
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>

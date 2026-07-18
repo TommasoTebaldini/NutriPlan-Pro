@@ -16,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .agenda-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;height:calc(100vh - 90px)}
 .cal-wrap{background:white;border-radius:var(--r);border:1px solid var(--border);padding:16px;box-shadow:var(--shadow);overflow:hidden}
@@ -464,6 +465,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let events = (() => { try { return JSON.parse(localStorage.getItem('dietplan_events') || '[]'); } catch(e) { return []; } })();
@@ -1388,6 +1390,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     script.src = 'https://accounts.google.com/gsi/client';
     script.onload = () => initGoogleCalendar(localStorage.getItem('gcal_email') || '');
     document.head.appendChild(script);
+  }
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('agenda', [
+      { icon:'📅', title:_L('Benvenuto in Agenda','Welcome to Schedule'), text:_L('Qui gestisci tutti i tuoi appuntamenti: visite, controlli, promemoria e urgenze, con sincronizzazione in tempo reale.','This is where you manage all your appointments: visits, follow-ups, reminders and urgent cases, synced in real time.') },
+      { selector:'.agenda-stat-bar', title:_L('Colpo d\'occhio sulla giornata','A glance at your day'), text:_L('Appuntamenti di oggi, della settimana, urgenti e il totale: tutto sotto controllo in un attimo.','Today\'s appointments, this week\'s, urgent ones and the total: everything under control at a glance.') },
+      { selector:'.cal-wrap', title:_L('Il calendario','The calendar'), text:_L('Naviga tra i mesi e clicca su un giorno per vedere o aggiungere appuntamenti in quella data.','Navigate between months and click a day to see or add appointments on that date.') },
+      { selector:'#ev-tipo', title:_L('Nuovo appuntamento','New appointment'), text:_L('Scegli il tipo (prima visita, controllo, promemoria, urgente), collega un paziente e salva: riceverai un promemoria al momento giusto.','Choose the type (first visit, follow-up, reminder, urgent), link a patient and save: you\'ll get a reminder at the right time.') }
+    ], { badge:_L('Agenda','Schedule') });
   }
 });
 

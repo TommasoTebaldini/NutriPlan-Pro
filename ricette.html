@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 @keyframes rcCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .ricetta-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:16px;cursor:pointer;transition:box-shadow .15s,border-color .15s,transform .18s cubic-bezier(.16,1,.3,1);position:relative;animation:rcCardIn .32s cubic-bezier(.16,1,.3,1) both}
@@ -221,6 +222,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it, en) {
   try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang')||'it'); return l === 'en' ? en : it; } catch(e) { return it; }
@@ -906,6 +908,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       loadRicette();
     }
   } catch(e) { console.warn(e); }
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('ricette', [
+      { icon:'🍳', title:_L('Benvenuto in Ricette','Welcome to Recipes'), text:_L('Il tuo archivio di ricette personali: valori nutrizionali calcolati automaticamente per porzione, pronte da inserire nei piani alimentari.','Your personal recipe archive: nutritional values calculated automatically per serving, ready to add to meal plans.') },
+      { selector:'#r-search', title:_L('Cerca una ricetta','Search a recipe'), text:_L('Trova rapidamente una ricetta salvata digitando il nome o un ingrediente.','Quickly find a saved recipe by typing its name or an ingredient.') },
+      { title:_L('Crea o importa','Create or import'), text:_L('Crea una ricetta da zero con "Nuova Ricetta", oppure importa automaticamente ingredienti e procedimento da un URL con "Importa da URL".','Create a recipe from scratch with "New Recipe", or automatically import ingredients and steps from a URL with "Import from URL".') },
+      { selector:'#ricette-grid', title:_L('Le tue ricette','Your recipes'), text:_L('Ogni card mostra porzioni, calorie stimate e ingredienti principali: clicca per aprire, modificare o inserire in un piano.','Each card shows servings, estimated calories and main ingredients: click to open, edit or add to a plan.') }
+    ], { badge:_L('Ricette','Recipes') });
+  }
 });
 </script>
 </body>

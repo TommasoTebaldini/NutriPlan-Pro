@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 </head>
 <body>
 <nav id="sidebar">
@@ -81,7 +82,7 @@
     <div class="ei">🔒</div><h3>Verifica accesso...</h3>
   </div>
   <div id="admin-content" style="display:none">
-    <div class="card" style="margin-bottom:16px">
+    <div class="card" id="admin-users-card" style="margin-bottom:16px">
       <div class="card-hdr"><h3>👥 Utenti Registrati</h3></div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
@@ -102,7 +103,7 @@
     </div>
 
     <!-- ECM CORSI MANAGEMENT -->
-    <div class="card" style="margin-bottom:16px">
+    <div class="card" id="admin-ecm-card" style="margin-bottom:16px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <h3>🎓 Gestione Corsi ECM</h3>
         <div style="display:flex;gap:8px">
@@ -248,6 +249,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 async function loadUtenti() {
   showLoading(true);
@@ -364,6 +366,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('admin-content').style.display = 'block';
   loadUtenti();
   loadECMCorsi();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('admin', [
+      { icon:'⚙️', title:_L('Benvenuto in Admin Utenti','Welcome to Admin Users'), text:_L('Un pannello riservato agli amministratori per gestire gli account registrati e i corsi ECM mostrati a tutti i dietisti.','A panel reserved for administrators to manage registered accounts and the ECM courses shown to all dietitians.') },
+      { selector:'#admin-users-card', title:_L('Utenti registrati','Registered users'), text:_L('Vedi tutti gli account, approva le nuove registrazioni e gestisci ruoli admin e piano di abbonamento.','See all accounts, approve new registrations and manage admin roles and subscription plan.') },
+      { selector:'#admin-ecm-card', title:_L('Gestione corsi ECM','ECM course management'), text:_L('Aggiungi, modifica o rimuovi i corsi ECM mostrati nella libreria condivisa vista da tutti i dietisti.','Add, edit or remove the ECM courses shown in the shared library seen by all dietitians.') }
+    ], { badge:_L('Admin','Admin') });
+  }
 });
 
 // ─── ECM Course Management ──────────────────────────────────────────

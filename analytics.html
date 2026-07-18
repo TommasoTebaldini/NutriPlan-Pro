@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:22px}
 .kpi-card{background:white;border-radius:14px;border:1.5px solid var(--border);padding:18px 20px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
@@ -113,7 +114,7 @@
 <div class="page-content">
 
   <!-- Range selector -->
-  <div class="export-bar">
+  <div class="export-bar" id="analytics-range-bar">
     <span style="font-size:12.5px;font-weight:600;color:var(--slate-l)">Periodo:</span>
     <button class="range-btn" data-months="3" onclick="setRange(3)">3 mesi</button>
     <button class="range-btn active" data-months="6" onclick="setRange(6)">6 mesi</button>
@@ -135,7 +136,7 @@
   <div class="insight-box" id="insight-box" style="display:none"></div>
 
   <!-- Charts row 1 -->
-  <div class="chart-grid">
+  <div class="chart-grid" id="analytics-charts-row1">
     <div class="chart-card">
       <h3>📈 Pazienti acquisiti / mese</h3>
       <div class="chart-wrap"><canvas id="chart-acquired"></canvas></div>
@@ -195,6 +196,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 let activeMonths = 6;
 let chartAcquired, chartAppts, chartRetention, chartAdherence;
@@ -512,7 +514,18 @@ function exportCSV() {
 document.addEventListener('DOMContentLoaded', async () => {
   const ok = await checkAuth();
   if (!ok) return;
-  loadAnalytics();
+  await loadAnalytics();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('analytics', [
+      { icon:'📊', title:_L('Benvenuto in Analytics','Welcome to Analytics'), text:_L('Qui trovi le statistiche aggregate del tuo studio: pazienti, retention, visite e aderenza al diario alimentare. Facciamo un giro veloce.','This is where you find your practice\'s aggregate statistics: patients, retention, visits and food diary adherence. Let\'s take a quick tour.') },
+      { selector:'#analytics-range-bar', title:_L('Scegli il periodo','Choose the period'), text:_L('Seleziona l\'intervallo temporale (3, 6, 12 o 24 mesi) per ricalcolare tutti i grafici e le statistiche sotto.','Select the time range (3, 6, 12 or 24 months) to recalculate all the charts and stats below.') },
+      { selector:'#kpi-grid', title:_L('Indicatori chiave','Key indicators'), text:_L('Pazienti totali, attivi, nuovi del mese, retention, visite e documenti condivisi, con la variazione rispetto al periodo precedente.','Total patients, active patients, new this month, retention, visits and shared documents, with the change vs. the previous period.') },
+      { selector:'#analytics-charts-row1', title:_L('Andamento nel tempo','Trends over time'), text:_L('Pazienti acquisiti, visite mensili e retention rate rappresentati graficamente per individuare subito i trend dello studio.','Acquired patients, monthly visits and retention rate charted so you can spot practice trends at a glance.') },
+      { selector:'#cohort-table', title:_L('Analisi per coorte','Cohort analysis'), text:_L('Ogni riga è un mese di registrazione: quanti pazienti sono arrivati, quanti sono rimasti attivi e quante visite hanno generato.','Each row is a registration month: how many patients joined, how many stayed active and how many visits they generated.') },
+      { selector:'.tbar-actions', title:_L('Esporta i dati','Export the data'), text:_L('Scarica i dati in CSV per un\'analisi esterna, oppure aggiorna manualmente le statistiche con l\'ultimo dato disponibile.','Download the data as CSV for external analysis, or manually refresh the statistics with the latest data.') }
+    ], { badge:_L('Analytics','Analytics') });
+  }
 });
 </script>
 </body>

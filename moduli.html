@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 /* ── Tabs ── */
 .mod-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto}
@@ -542,6 +543,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/lang.min.js?v=1" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
@@ -558,6 +560,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(location.search);
   const cartId = params.get('cartella');
   if (cartId) setTimeout(() => { const s = document.getElementById('inp-cartella'); if (s) s.value = cartId; }, 400);
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('moduli', [
+      { icon:'📄', title:_L('Benvenuto in Moduli Stampabili','Welcome to Printable Forms'), text:_L('Moduli pronti da compilare e stampare per il paziente: esenzioni, prescrizioni, consensi e altro.','Ready-to-fill printable forms for your patient: exemptions, prescriptions, consent forms and more.') },
+      { selector:'#inp-cartella', title:_L('Collega il paziente','Link the patient'), text:_L('Seleziona la cartella del paziente per salvare il modulo compilato direttamente nella sua scheda clinica.','Select the patient\'s file to save the completed form directly to their clinical record.') },
+      { selector:'.mod-tabs', title:_L('Scegli il modulo','Choose the form'), text:_L('Esenzione per Patologia, Prescrizione AFMS, Prodotti Aproteici, Diario Alimentare, Consenso Informato: passa da un modulo all\'altro con questi tab.','Pathology Exemption, AFMS Prescription, Aproteic Products, Food Diary, Informed Consent: switch between forms with these tabs.') }
+    ], { badge:_L('Moduli','Forms') });
+  }
 });
 
 function autoFillProfOp() {

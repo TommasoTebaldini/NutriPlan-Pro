@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .fatt-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);padding:14px 16px;transition:box-shadow .15s,border-color .15s;position:relative}
 .fatt-card:hover{border-color:var(--teal-l);box-shadow:0 4px 16px rgba(15,118,110,.1)}
@@ -126,14 +127,14 @@
   </div>
 
   <!-- TABS -->
-  <div style="display:flex;gap:8px;margin-bottom:16px">
+  <div id="pag-tabs" style="display:flex;gap:8px;margin-bottom:16px">
     <button class="pag-tab active" id="tab-fatture-btn" onclick="setTab('fatture')">🧾 Fatture</button>
     <button class="pag-tab" id="tab-tariffario-btn" onclick="setTab('tariffario')">💶 Tariffario</button>
   </div>
 
   <!-- TAB: FATTURE -->
   <div id="tab-fatture">
-    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <div id="fatt-filters" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
       <input type="text" id="fatt-search" placeholder="🔍 Cerca paziente..." class="db-search" style="flex:1;min-width:160px" oninput="renderFatture()">
       <select id="fatt-filter-stato" class="db-search" style="min-width:130px" onchange="renderFatture()">
         <option value="">Tutti gli stati</option>
@@ -247,6 +248,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/fatturapa.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 let fatture = [];
 let patients = [];
@@ -697,6 +699,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ok = await checkAuth();
   if (!ok) return;
   await loadPage();
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('pagamenti', [
+      { icon:'💳', title:_L('Benvenuto in Pagamenti','Welcome to Payments'), text:_L('Qui gestisci le fatture per le visite, il tuo tariffario e i pagamenti ricevuti dai pazienti. Facciamo un giro veloce.','This is where you manage invoices for visits, your price list and payments received from patients. Let\'s take a quick tour.') },
+      { selector:'.tbar-actions', title:_L('Crea una nuova fattura','Create a new invoice'), text:_L('Clicca qui per emettere una fattura: seleziona il paziente, il tipo di visita e l\'importo (proposto automaticamente dal tariffario).','Click here to issue an invoice: select the patient, the visit type and the amount (automatically suggested from your price list).') },
+      { selector:'#summary-cards', title:_L('Riepilogo finanziario','Financial summary'), text:_L('Totale fatturato, incassato, importi in attesa e numero di fatture emesse nell\'anno in corso, a colpo d\'occhio.','Total billed, collected, pending amounts and number of invoices issued this year, at a glance.') },
+      { selector:'#fatt-filters', title:_L('Cerca e filtra','Search and filter'), text:_L('Cerca una fattura per paziente e filtra per stato (pagato / in attesa) o per anno.','Search an invoice by patient and filter by status (paid / pending) or by year.') },
+      { selector:'#fatture-list', title:_L('Elenco fatture','Invoice list'), text:_L('Ogni fattura mostra stato e importo: puoi segnarla come pagata, modificarla o generare l\'XML della fattura elettronica (FatturaPA) con un click sull\'icona 📄.','Each invoice shows status and amount: you can mark it as paid, edit it, or generate the electronic invoice XML (FatturaPA) with one click on the 📄 icon.') },
+      { selector:'#pag-tabs', title:_L('Gestisci il tariffario','Manage your price list'), text:_L('Passa alla scheda Tariffario per impostare il prezzo di ogni tipo di visita: verrà proposto automaticamente in ogni nuova fattura.','Switch to the Price List tab to set the price for each visit type: it will be automatically suggested in every new invoice.') }
+    ], { badge:_L('Pagamenti','Payments') });
+  }
 });
 </script>
 </body>

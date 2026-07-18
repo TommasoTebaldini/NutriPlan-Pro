@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .top-tabs{display:flex;gap:4px;margin-bottom:12px;border-bottom:2px solid var(--border);flex-shrink:0}
 .top-tab{padding:9px 16px;font-size:13px;font-weight:600;color:var(--slate-l);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s}
@@ -370,6 +371,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 let allPatients = [];
 let allDietitians = [];
@@ -1018,6 +1020,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!ok) return;
   await init();
   switchTopTab('groups');
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('broadcast', [
+      { icon:'📢', title:_L('Benvenuto in Broadcast','Welcome to Broadcast'), text:_L('Qui gestisci le comunicazioni verso più pazienti insieme: chat di gruppo, invii rapidi e lo storico di tutto quello che hai mandato.','This is where you manage communications to multiple patients at once: group chats, quick broadcasts and a history of everything you\'ve sent.') },
+      { selector:'.top-tabs', title:_L('Tre modalità di invio','Three sending modes'), text:_L('"Gruppi" per chat persistenti stile WhatsApp con più pazienti e colleghi, "Invio rapido" per un messaggio una tantum a una lista di destinatari, "Storico" per rivedere cosa hai inviato.','"Groups" for persistent WhatsApp-style chats with multiple patients and colleagues, "Quick send" for a one-off message to a recipient list, "History" to review what you\'ve sent.') },
+      { selector:'.bc-sidebar', title:_L('I tuoi gruppi','Your groups'), text:_L('Crea un nuovo gruppo con "+ Nuovo" e aggiungi pazienti o colleghi dello studio: potranno scriversi tra loro come in una vera chat di gruppo.','Create a new group with "+ New" and add patients or studio colleagues: they\'ll be able to message each other like a real group chat.') }
+    ], { badge:_L('Broadcast','Broadcast') });
+  }
 });
 </script>
 </body>

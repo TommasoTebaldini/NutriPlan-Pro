@@ -28,6 +28,7 @@ async function ensureChartJs() {
 </script>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/chat-inline.css">
+<link rel="stylesheet" href="css/tour.css">
 </head>
 <body>
 <nav id="sidebar">
@@ -120,6 +121,7 @@ async function ensureChartJs() {
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script src="js/firma.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 let chatPatients = [];
 let selectedPatientId = null;
@@ -2915,6 +2917,14 @@ function printStorico() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   try { await init(); } catch(e) { console.log('Auth error:', e); }
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('chat', [
+      { icon:'👥', title:_L('Benvenuto in Pazienti','Welcome to Patients'), text:_L('Qui comunichi con i tuoi pazienti e consulti tutto il loro percorso clinico in un unico posto: messaggi, diario, privacy, storico ed esami.','This is where you message your patients and check their whole clinical journey in one place: messages, diary, privacy, history and exams.') },
+      { selector:'#chat-sidebar-panel', title:_L('Le tue conversazioni','Your conversations'), text:_L('Cerca un paziente e apri la sua conversazione. L\'elenco mostra sempre l\'ultimo messaggio e i non letti.','Search for a patient and open their conversation. The list always shows the latest message and unread count.') },
+      { selector:'#chat-main-panel', title:_L('Un pannello per tutto','One panel for everything'), text:_L('Una volta selezionato un paziente, qui trovi le schede Messaggi, Diario, Informazioni, Privacy, Storico Clinico, Timeline, AI e Speciale: tutto il paziente, senza cambiare pagina.','Once you select a patient, you\'ll find the Messages, Diary, Information, Privacy, Clinical History, Timeline, AI and Special tabs here: the whole patient, without leaving the page.') }
+    ], { badge:_L('Pazienti','Patients') });
+  }
 });
 </script>
 </body>

@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .ai-wrap{display:flex;flex-direction:column;height:calc(100dvh - 60px - 28px - env(safe-area-inset-bottom,0px));max-width:900px;margin:0 auto}
 .ai-messages{flex:1;overflow-y:auto;padding:16px 0;display:flex;flex-direction:column;gap:14px}
@@ -218,6 +219,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 const SYSTEM_PROMPT_SHORT = 'Sei un assistente nutrizionale clinico per dietisti italiani. Rispondi in italiano in modo professionale e conciso. Fornisci calcoli nutrizionali precisi, cita le linee guida ESPEN/WHO quando rilevante, usa la terminologia clinica corretta.';
 const SYSTEM_PROMPT = `Sei un assistente nutrizionale clinico avanzato integrato in DietPlan Pro, software professionale per dietisti e nutrizionisti. 
@@ -470,6 +472,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (input) input.placeholder = 'Effettua il login per usare l\'AI...';
     }
   } catch(e) {}
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('ai', [
+      { icon:'🤖', title:_L('Benvenuto nell\'Assistente AI','Welcome to the AI Assistant'), text:_L('Fai domande cliniche, nutrizionali o sulle linee guida: risponde in tempo reale con un linguaggio da collega, non da motore di ricerca.','Ask clinical, nutritional or guideline questions: it answers in real time, like a colleague, not a search engine.') },
+      { selector:'#ai-chips', title:_L('Suggerimenti rapidi','Quick prompts'), text:_L('Non sai da dove iniziare? Prova uno di questi spunti pronti per fare una domanda tipica in un click.','Not sure where to start? Try one of these ready-made prompts to ask a typical question in one click.') },
+      { selector:'.ai-input-area', title:_L('Scrivi la tua domanda','Type your question'), text:_L('Scrivi qui in linguaggio naturale, come faresti con un collega: più il contesto è specifico, più la risposta sarà utile.','Type here in natural language, as you would with a colleague: the more specific the context, the more useful the answer.') }
+    ], { badge:_L('Assistente AI','AI Assistant') });
+  }
 });
 </script>
 </body>

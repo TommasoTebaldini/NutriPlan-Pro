@@ -12,6 +12,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .pat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .pat-card{background:white;border-radius:var(--r);border:2px solid var(--border);overflow:hidden;transition:all .15s;cursor:pointer}
@@ -131,7 +132,7 @@
     </div>
   </div>
   <!-- ── SEZIONI SPECIALISTICHE ── -->
-  <div class="calc-box no-print" style="margin-bottom:16px">
+  <div class="calc-box no-print" id="pat-quick-access" style="margin-bottom:16px">
     <h3>🏥 <span data-only-lang="it">Sezioni Specialistiche — Accesso Diretto</span><span data-only-lang="en">Clinical Sections — Direct Access</span></h3>
     <p style="font-size:12px;color:var(--slate-l);margin-bottom:12px;margin-top:-4px"><span data-only-lang="it">Accedi alle sezioni cliniche avanzate con calcolatori, protocolli, piani esempio e linee guida specifiche per patologia.</span><span data-only-lang="en">Access advanced clinical sections with calculators, protocols, sample plans and disease-specific guidelines.</span></p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">
@@ -219,6 +220,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 function _L(it, en) {
   try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang')||'it'); return l === 'en' ? en : it; } catch(e) { return it; }
@@ -567,6 +569,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   if(s) s.textContent = pats.length;
   // Auth in background
   try { await checkAuth(false); } catch(e) {}
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('patologie', [
+      { icon:'🏥', title:_L('Benvenuto in Diete Speciali','Welcome to Special Diets'), text:_L('Qui trovi oltre 280 schemi dietetici pronti, organizzati per patologia e personalizzabili per kcal target. Facciamo un giro veloce.','Here you\'ll find over 280 ready-made dietary plans, organised by pathology and customisable by target kcal. Let\'s take a quick tour.') },
+      { selector:'#pat-search', title:_L('Cerca uno schema','Search for a plan'), text:_L('Digita il nome della patologia o della condizione per trovare subito lo schema dietetico che ti serve.','Type the name of the pathology or condition to instantly find the dietary plan you need.') },
+      { selector:'#pat-cat-bar', title:_L('Filtra per categoria','Filter by category'), text:_L('Usa questi filtri rapidi per esplorare gli schemi per area clinica: metaboliche, gastroenterologiche, renali e molte altre.','Use these quick filters to browse plans by clinical area: metabolic, gastroenterological, renal and many more.') },
+      { selector:'#pat-quick-access', title:_L('Sezioni specialistiche','Clinical sections'), text:_L('Per le patologie principali sono disponibili sezioni dedicate con calcolatori, protocolli e piani di esempio avanzati.','For the main pathologies, dedicated sections are available with calculators, protocols and advanced sample plans.') },
+      { selector:'.pat-card', title:_L('Uno schema dietetico','A dietary plan'), text:_L('Clicca su una card per aprire il dettaglio dello schema: puoi adattarlo al kcal target del paziente e usarlo direttamente nel Piano Alimentare.','Click a card to open the plan\'s detail: you can adapt it to the patient\'s target kcal and use it directly in the Meal Plan.') }
+    ], { badge:_L('Diete Speciali','Special Diets') });
+  }
 });
 </script>
 </body>

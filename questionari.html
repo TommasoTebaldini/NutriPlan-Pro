@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tour.css">
 <style>
 .q-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:6px;background:#F0F9FF;border-radius:14px;border:1.5px solid #BAE6FD;box-shadow:0 2px 8px rgba(14,165,233,.08)}
 .q-tab{padding:9px 18px;border-radius:10px;border:none;background:transparent;color:var(--slate-m);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
@@ -162,7 +163,7 @@
 </div>
 
 <!-- COMPACT SAVE STRIP -->
-<div class="no-print" style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+<div class="no-print" id="qbar-strip" style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 4px rgba(0,0,0,.06)">
   <div style="flex:1;min-width:180px;display:flex;align-items:center;gap:6px">
     <span style="font-size:10.5px;font-weight:700;color:#1E293B;white-space:nowrap">📁 <span data-only-lang="it">Cartella Paziente</span><span data-only-lang="en" style="display:none">Patient File</span></span>
     <div id="qbar-cartella-cw" style="flex:1"></div>
@@ -1485,6 +1486,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 // ── SCORES STATE ──
 const scaleState = {};
@@ -3010,6 +3012,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       const hasAnswers = savedDati && savedDati.answers;
       toast(hasAnswers ? _L('📂 Questionario caricato con i dati salvati!','📂 Questionnaire loaded with saved data!') : '📋 ' + _L('Modifica questionario: ','Edit questionnaire: ') + (qNome || nome), 'ok');
     } catch(e) { console.warn('openQuestionario parse error', e); }
+  }
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('questionari', [
+      { icon:'📋', title:_L('Benvenuto nei Questionari','Welcome to Questionnaires'), text:_L('Qui trovi una libreria di questionari nutrizionali validati (screening, DCA, stile di vita, benessere psicologico) pronti da compilare e salvare in cartella. Facciamo un giro veloce.','Here you\'ll find a library of validated nutritional questionnaires (screening, eating disorders, lifestyle, psychological wellbeing) ready to fill in and save to a patient file. Let\'s take a quick tour.') },
+      { selector:'.q-tabs', title:_L('Categorie di questionari','Questionnaire categories'), text:_L('I questionari sono organizzati per categoria: Screening, Assessment DCA, Nutrizione & Stile di Vita, Psicologici & Benessere. Passa da un gruppo all\'altro con questi tab.','Questionnaires are grouped by category: Screening, Eating Disorder Assessment, Nutrition & Lifestyle, Psychological & Wellbeing. Switch between groups with these tabs.') },
+      { selector:'#q-search-wrap', title:_L('Cerca un questionario','Search a questionnaire'), text:_L('Digita una sigla o un nome (es. MUST, PHQ-9, PREDIMED) per trovare subito il questionario che ti serve, senza scorrere tutte le categorie.','Type an acronym or name (e.g. MUST, PHQ-9, PREDIMED) to instantly find the questionnaire you need, without scrolling through every category.') },
+      { selector:'#qbar-strip', title:_L('Collega il paziente e salva','Link the patient and save'), text:_L('Seleziona la cartella del paziente, aggiungi una nota facoltativa e usa "Salva in Cartella" per registrare le risposte compilate nella sua scheda clinica.','Select the patient\'s file, add an optional note, and use "Save to File" to record the completed answers in their clinical record.') },
+      { selector:'#qcard-must', title:_L('Compila e visualizza il risultato','Fill in and view the result'), text:_L('Ogni scheda si espande per mostrare le domande: rispondi e premi "Calcola" per ottenere punteggio, fascia di rischio e interpretazione clinica in tempo reale.','Each card expands to show its questions: answer them and press "Calculate" to get the score, risk band and clinical interpretation in real time.') },
+      { selector:'.tbar-actions', title:_L('Stampa il questionario','Print the questionnaire'), text:_L('Da qui puoi stampare il questionario compilato in un formato pulito, pronto per essere allegato alla cartella clinica cartacea.','From here you can print the completed questionnaire in a clean layout, ready to be attached to the paper clinical file.') }
+    ], { badge:_L('Questionari','Questionnaires') });
   }
 });
 

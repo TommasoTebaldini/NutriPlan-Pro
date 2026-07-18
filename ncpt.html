@@ -13,6 +13,7 @@
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/ncpt-inline.css">
+<link rel="stylesheet" href="css/tour.css">
 </head>
 <body>
 <nav id="sidebar">
@@ -156,7 +157,7 @@
   </div>
 </div>
 
-<div class="ns">
+<div class="ns" id="ncpt-antropo-section">
   <h3>📏 <span data-only-lang="it">Valutazione Antropometrica</span><span data-only-lang="en" style="display:none">Anthropometric Assessment</span></h3>
   <div class="fgrid c3">
     <div class="nf"><label><span data-only-lang="it">Peso attuale (kg)</span><span data-only-lang="en" style="display:none">Current weight (kg)</span></label><input type="number" id="v-peso" step="0.1" placeholder="es. 78.5" oninput="calcAntropo()"></div>
@@ -698,6 +699,7 @@
 <script src="js/lang.min.js?v=1" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
+<script src="js/tour.js" defer></script>
 <script>
 // ═══════════════════════════════════════════════════
 // CONSTANTS
@@ -1820,6 +1822,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('beforeunload', autoSavePage_ncpt);
   window.addEventListener('pagehide', autoSavePage_ncpt);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') autoSavePage_ncpt(); });
+
+  if (typeof initPageTour === 'function') {
+    initPageTour('ncpt', [
+      { icon:'📝', title:_L('Benvenuto nel NCPt','Welcome to NCPt'), text:_L('Qui documenti il processo di cura nutrizionale in modo strutturato: valutazione, diagnosi PES, intervento e monitoraggio. Facciamo un giro veloce.','Here you document the nutrition care process in a structured way: assessment, PES diagnosis, intervention and monitoring. Let\'s take a quick tour.') },
+      { selector:'#cartella-select-card', title:_L('Collega il paziente','Link the patient'), text:_L('Cerca la cartella del paziente per collegare questa documentazione al suo profilo e dai un titolo alla sessione (es. prima visita, follow-up).','Search the patient\'s file to link this documentation to their profile and give the session a title (e.g. first visit, follow-up).') },
+      { selector:'.ncpt-progress', title:_L('Le 4 fasi del NCPt','The 4 NCPt phases'), text:_L('La documentazione clinica è organizzata nelle 4 fasi standard: Valutazione, Diagnosi PES, Intervento e Monitoraggio. Clicca su ogni fase per compilarla.','Clinical documentation is organised into the 4 standard phases: Assessment, PES Diagnosis, Intervention and Monitoring. Click each phase to fill it in.') },
+      { selector:'#ncpt-antropo-section', title:_L('Calcolatore antropometrico','Anthropometric calculator'), text:_L('Inserisci peso, altezza e sesso: BMI, peso ideale e peso aggiustato si calcolano automaticamente, insieme alle circonferenze corporee.','Enter weight, height and sex: BMI, ideal weight and adjusted weight are calculated automatically, along with body circumferences.') }
+    ], { badge:_L('NCPt','NCPt') });
+  }
 });
 </script>
 </body>

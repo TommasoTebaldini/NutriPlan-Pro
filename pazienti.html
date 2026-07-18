@@ -536,7 +536,7 @@ async function ensureChartJs() {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/lang.min.js?v=1" defer></script>
-<script src="js/utils.js" defer></script>
+<script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script src="js/firma.js" defer></script>
 <script src="js/fse.js" defer></script>
@@ -1413,7 +1413,7 @@ async function renderCartellaDetail(id) {
         };
         const s = specMap[n.tipo] || {icon:'📌', label:n.tipo, page:null, bg:'#F8FAFC', col:'#475569'};
         const openBtn = s.page ? `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();apriNoteSpec('${n.id}','${n.tipo}')">✏️ ${_L('Apri','Open')}</button>` : '';
-        return `<div onclick="apriNoteSpec('${n.id}','${n.tipo}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:${s.page?'pointer':'default'};transition:all .15s" onmouseover="if('${s.page}')this.style.borderColor='${s.col}'" onmouseout="this.style.borderColor='var(--border)'">
+        return `<div onclick="apriNoteSpec('${n.id}','${n.tipo}')" style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:10px 14px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:${s.page?'pointer':'default'};transition:all .15s" onmouseover="if('${s.page}')this.style.borderColor='${s.col}'" onmouseout="this.style.borderColor='var(--border)'">
           <span style="font-size:22px;background:${s.bg};padding:6px;border-radius:8px">${s.icon}</span>
           <div style="flex:1;min-width:0">
             <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(n.nota||s.label)}</div>

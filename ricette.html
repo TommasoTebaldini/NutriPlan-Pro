@@ -219,7 +219,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
 <script src="js/db.min.js?v=1" defer></script>
 <script src="js/lang.min.js?v=1" defer></script>
-<script src="js/utils.js" defer></script>
+<script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
 <script>
 function _L(it, en) {
@@ -365,7 +365,7 @@ function renderRicette(filter = '') {
     const ingPreview = ing.slice(0, 5).map(i => `<span style="display:inline-flex;align-items:center;gap:3px;font-size:11px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:5px;padding:2px 6px;color:#15803D"><b>${esc(typeof foodNameEN==='function'?foodNameEN(i.nome):i.nome)}</b>${i.qt && i.qt !== '0' ? `<span style="color:#64748B;font-weight:400">${i.qt}g</span>` : ''}</span>`).join('');
     const ingMore = ing.length > 5 ? `<span style="font-size:11px;color:var(--slate-l)">+${ing.length - 5} ${_L('altri','more')}</span>` : '';
     return `<div class="ricetta-card" onclick="apriDettaglio('${r.id}')">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;padding-right:84px">
         <h4 style="margin:0">🍽️ ${esc(nomeDisp)}</h4>
         <span class="rc-tag" style="flex-shrink:0;${r.isTemplate ? 'background:#E0F2FE;color:#0369A1' : catStyle(r.categoria)}">${r.isTemplate ? '📋 ' + _L('Template','Template') : esc(catLabel(r.categoria||_L('Ricetta','Recipe')))}</span>
       </div>
@@ -395,7 +395,7 @@ function lazyLoadTemplates() {
   if (typeof RICETTE_DB !== 'undefined' || _tplsLoading) return;
   _tplsLoading = true;
   var s = document.createElement('script');
-  s.src = 'js/ricette-db.js?v=1021';
+  s.src = 'js/ricette-db.min.js?v=1021';
   s.onload = function() { renderRicette(document.getElementById('r-search') ? document.getElementById('r-search').value : ''); };
   document.head.appendChild(s);
 }

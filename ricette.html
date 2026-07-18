@@ -394,7 +394,12 @@ function debouncedFilter() { clearTimeout(_filterTimer); _filterTimer = setTimeo
 
 var _tplsLoading = false;
 function lazyLoadTemplates() {
-  if (typeof RICETTE_DB !== 'undefined' || _tplsLoading) return;
+  // js/db.js pre-declares `let RICETTE_DB=[]` as a safe placeholder on every
+  // page (so its ALL_DB search index never breaks before templates load) —
+  // so RICETTE_DB is ALWAYS "defined" here, even before this page's own
+  // template file has loaded. Checking .length (not just typeof) is what
+  // actually distinguishes "not loaded yet" from "loaded, 430 templates".
+  if ((typeof RICETTE_DB !== 'undefined' && RICETTE_DB.length > 0) || _tplsLoading) return;
   _tplsLoading = true;
   var s = document.createElement('script');
   s.src = 'js/ricette-db.min.js?v=1021';

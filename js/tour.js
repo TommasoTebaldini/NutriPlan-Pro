@@ -7,11 +7,20 @@
 //   { selector:'#foo', title:'...', text:'...' },            // step successivi: spotlight su un elemento
 // ]);
 // Il tour si mostra una sola volta per pagina (localStorage 'tour_<pageKey>').
+//
+// ⚠️ TEST TEMPORANEO — RIMUOVERE PRIMA DEL PROSSIMO RILASCIO ⚠️
+// _TOUR_ALWAYS_SHOW forza il tour a comparire ad OGNI apertura di sezione,
+// ignorando il flag "già visto", per poter rivedere e verificare tutti i
+// giri guidati senza dover resettare il localStorage a mano ogni volta.
+// Per tornare al comportamento normale (una sola volta a vita per pagina):
+// impostare _TOUR_ALWAYS_SHOW a false (o eliminare questa costante e il suo
+// utilizzo qui sotto).
+var _TOUR_ALWAYS_SHOW = true;
 function initPageTour(pageKey, steps, opts) {
   opts = opts || {};
   if (!steps || !steps.length) return;
   var seenKey = 'tour_' + pageKey;
-  if (localStorage.getItem(seenKey)) { if (opts.onSkip) opts.onSkip(); return; }
+  if (!_TOUR_ALWAYS_SHOW && localStorage.getItem(seenKey)) { if (opts.onSkip) opts.onSkip(); return; }
   if (window.matchMedia && window.matchMedia('(max-width:640px)').matches && opts.skipOnMobile) return;
 
   var idx = 0;
@@ -43,7 +52,15 @@ function initPageTour(pageKey, steps, opts) {
     svg.addEventListener('click', skip);
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', reposition);
-    requestAnimationFrame(function () { overlay.classList.add('tour-in'); });
+    // Niente requestAnimationFrame qui: i browser mettono in pausa rAF per i
+    // tab non visibili (document.hidden), quindi se la pagina finisce in
+    // background nell'istante esatto in cui il tour parte, questa callback
+    // non scatta MAI — l'overlay resta bloccato a opacity:0 (invisibile ma
+    // comunque presente sopra la pagina) finché il tour non viene completato
+    // per intero. Il reflow forzato sotto innesca la transizione in modo
+    // sincrono, indipendente da rAF (stesso trucco già usato per la card).
+    void overlay.offsetWidth;
+    overlay.classList.add('tour-in');
   }
 
   function onKey(e) { if (e.key === 'Escape') skip(); }

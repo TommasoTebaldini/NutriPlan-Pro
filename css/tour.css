@@ -5,8 +5,11 @@
    all'elemento evidenziato + card con titolo/testo/passi + anello
    colorato. Vedi js/tour.js per la logica.
    ══════════════════════════════════════════ */
-.tour-overlay{position:fixed;inset:0;z-index:9850;opacity:0;transition:opacity .25s ease}
-.tour-overlay.tour-in{opacity:1}
+/* pointer-events:none finché invisibile: opacity:0 da solo NON blocca i
+   click, quindi senza questo, un overlay rimasto bloccato a opacity:0 (per
+   qualunque motivo) impedirebbe comunque l'uso della pagina sottostante. */
+.tour-overlay{position:fixed;inset:0;z-index:9850;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.tour-overlay.tour-in{opacity:1;pointer-events:auto}
 .tour-svg{position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
 .tour-hole{transition:x .38s cubic-bezier(.65,0,.35,1),y .38s cubic-bezier(.65,0,.35,1),width .38s cubic-bezier(.65,0,.35,1),height .38s cubic-bezier(.65,0,.35,1)}
 

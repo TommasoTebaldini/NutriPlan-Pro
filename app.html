@@ -2798,7 +2798,7 @@ async function caricaObiettiviValutazione(cartellaId) {
   if (!cartellaId || !currentUser) { box.style.display = 'none'; return; }
 
   const { data: rows, error } = await sb.from('schede_valutazione')
-    .select('id,saved_at,created_at,tdee_calcolato,macro_dist')
+    .select('id,nome,saved_at,created_at,tdee_calcolato,macro_dist')
     .eq('cartella_id', cartellaId)
     .order('saved_at', { ascending: false })
     .limit(5);
@@ -2848,7 +2848,7 @@ async function caricaObiettiviValutazione(cartellaId) {
        ${p.sub ? `<div style="font-size:10px;color:${p.col};opacity:.75">${p.sub}</div>` : ''}
      </div>`
   ).join('');
-  const nomePaz = [data.cognome, data.nome].filter(Boolean).join(' ');
+  const nomePaz = data.nome || '';
   const ts = data.saved_at || data.created_at;
   const data_str = ts ? new Date(ts).toLocaleDateString(_L('it','en')) : '';
   document.getElementById('obj-val-fonte').textContent =

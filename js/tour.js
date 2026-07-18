@@ -139,21 +139,28 @@ function initPageTour(pageKey, steps, opts) {
       return;
     }
 
-    var cardW = Math.min(296, window.innerWidth - 24);
     var margin = 14;
     var top, left;
+    // Measure the card's REAL rendered size (opacity:0 doesn't affect layout,
+    // so this is accurate) instead of guessing a fixed height — content length
+    // varies per step (badge/icon/skip-link presence, title/text length), so a
+    // hardcoded estimate can be wrong and let the card spill past the viewport.
+    var cardW = card.offsetWidth;
+    var cardH = card.offsetHeight;
     var spaceBelow = window.innerHeight - rect.bottom;
-    var estCardH = 190;
 
-    if (spaceBelow > estCardH + margin) {
+    if (spaceBelow > cardH + margin) {
       top = rect.bottom + margin;
-    } else if (rect.top > estCardH + margin) {
-      top = rect.top - estCardH - margin;
+    } else if (rect.top > cardH + margin) {
+      top = rect.top - cardH - margin;
     } else {
-      top = Math.max(12, Math.min(window.innerHeight - estCardH - 12, rect.bottom + margin));
+      top = rect.bottom + margin;
     }
+    // Unconditional final clamp so the card can never extend past any edge,
+    // regardless of which branch above was taken.
+    top = Math.max(margin, Math.min(top, window.innerHeight - cardH - margin));
     left = rect.left + rect.width / 2 - cardW / 2;
-    left = Math.max(12, Math.min(left, window.innerWidth - cardW - 12));
+    left = Math.max(margin, Math.min(left, window.innerWidth - cardW - margin));
 
     card.style.top = top + 'px';
     card.style.left = left + 'px';

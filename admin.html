@@ -91,8 +91,6 @@
               <th style="padding:8px 12px;text-align:left">Email</th>
               <th style="padding:8px 12px;text-align:center">Approvato</th>
               <th style="padding:8px 12px;text-align:center">Admin</th>
-              <th style="padding:8px 12px;text-align:center">Piano</th>
-              <th style="padding:8px 12px;text-align:center">Scadenza</th>
               <th style="padding:8px 12px;text-align:center">Registrato</th>
               <th style="padding:8px 12px;text-align:center">Azioni</th>
             </tr>
@@ -262,12 +260,6 @@ async function loadUtenti() {
     return;
   }
   tbody.innerHTML = data.map(u => {
-    const isPro = u.subscription_plan === 'pro';
-    const expDate = u.subscription_expires_at ? new Date(u.subscription_expires_at) : null;
-    const isExpired = expDate && expDate < new Date();
-    const planBadge = isPro && !isExpired
-      ? '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">⭐ Pro</span>'
-      : '<span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">Free</span>';
     return `<tr style="border-bottom:1px solid var(--border)">
     <td style="padding:8px 12px;font-weight:500">${esc(u.email||u.username||u.id)}</td>
     <td style="padding:8px 12px;text-align:center">
@@ -277,10 +269,6 @@ async function loadUtenti() {
     </td>
     <td style="padding:8px 12px;text-align:center">
       ${u.is_admin ? '<span style="color:#7C3AED;font-weight:700">👑 Admin</span>' : '—'}
-    </td>
-    <td style="padding:8px 12px;text-align:center">${planBadge}</td>
-    <td style="padding:8px 12px;text-align:center;font-size:12px;color:${isExpired?'#dc2626':'var(--slate-l)'}">
-      ${expDate ? expDate.toLocaleDateString('it') + (isExpired?' ⚠️':'') : '—'}
     </td>
     <td style="padding:8px 12px;text-align:center;font-size:12px;color:var(--slate-l)">
       ${u.created_at ? new Date(u.created_at).toLocaleDateString('it') : '—'}
@@ -294,9 +282,6 @@ async function loadUtenti() {
           ? `<button class="btn btn-ghost btn-xs" style="color:#7C3AED;border-color:#DDD6FE" onclick="makeAdmin('${u.id}')">👑 Admin</button>`
           : `<button class="btn btn-ghost btn-xs" onclick="removeAdmin('${u.id}')">Remove Admin</button>`}
         <button class="btn btn-ghost btn-xs" style="color:#0369A1;border-color:#BAE6FD" data-uid="${u.id}" data-email="${esc(u.email||u.id)}" data-sections="${esc(JSON.stringify(u.sections_enabled||null))}" onclick="openSectionsBtn(this)">🔧 Sezioni</button>
-        ${isPro && !isExpired
-          ? `<button class="btn btn-ghost btn-xs" style="color:#dc2626;border-color:#fecaca" onclick="setPlan('${u.id}','free')">🔓 → Free</button>`
-          : `<button class="btn btn-ghost btn-xs" style="color:#d97706;border-color:#fde68a" onclick="setPlan('${u.id}','pro')">⭐ → Pro</button>`}
       </div>
     </td>
   </tr>`;
@@ -338,20 +323,6 @@ async function removeAdmin(id) {
   toast('Admin rimosso', 'info');
   loadUtenti();
 }
-async function setPlan(id, plan) {
-  const label = plan === 'pro' ? 'Professional (manuale)' : 'Gratuito';
-  if (!confirm(`Impostare piano "${label}" per questo utente?`)) return;
-  showLoading(true);
-  const updates = plan === 'pro'
-    ? { subscription_plan: 'pro', subscription_expires_at: new Date(Date.now() + 365*24*60*60*1000).toISOString() }
-    : { subscription_plan: 'free', subscription_expires_at: null };
-  const { error } = await sb.from('profiles').update(updates).eq('id', id);
-  showLoading(false);
-  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
-  toast(plan === 'pro' ? '⭐ Piano Pro impostato (1 anno)!' : '🔓 Piano Free impostato', 'ok');
-  loadUtenti();
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
   const ok = await checkAuth();
   if(!ok) return;
@@ -522,6 +493,7 @@ const MANAGED_SECTIONS = [
   { key: 'obesita',        href: 'obesita.html',         label: '⚖️ Obesità' },
   { key: 'pediatria',      href: 'pediatria.html',       label: '👶 Pediatria' },
   { key: 'ristorazione',   href: 'ristorazione.html',    label: '🍽️ Ristorazione' },
+  { key: 'gravidanza',     href: 'gravidanza.html',      label: '🤰 Valutazione Gravidanza' },
   { key: 'linee_guida',    href: 'linee-guida.html',     label: '📚 Linee Guida' },
   { key: 'valutazione',    href: 'valutazione.html',     label: '📊 Valutazione Paziente' },
   { key: 'ncpt',           href: 'ncpt.html',            label: '📝 NCPt' },

@@ -120,7 +120,8 @@ async function loadProfile() {
       'paziente-sano.html':'paziente_sano','diabete.html':'diabete','pancreas.html':'pancreas',
       'sport.html':'sport','dna.html':'dca','chetogenica.html':'chetogenica','renale.html':'renale',
       'disfagia.html':'disfagia','oncologia.html':'oncologia','obesita.html':'obesita',
-      'pediatria.html':'pediatria','ristorazione.html':'ristorazione','linee-guida.html':'linee_guida',
+      'pediatria.html':'pediatria','ristorazione.html':'ristorazione','gravidanza.html':'gravidanza',
+      'linee-guida.html':'linee_guida',
       'valutazione.html':'valutazione','ncpt.html':'ncpt','patologie.html':'patologie',
       'consigli.html':'consigli','bia.html':'bia','questionari.html':'questionari',
       'studi.html':'studi','ai.html':'ai','agenda.html':'agenda','ecm.html':'ecm',
@@ -128,11 +129,15 @@ async function loadProfile() {
       'abbonamento.html':'abbonamento',
     };
     const _ALL_SECTIONS  = ['linee_guida','consigli','studi','database','valutazione','patologie','agenda','ai','bia','ricette','questionari','integratori','ncpt','abbonamento'];
-    const _SPECIALIZED   = ['paziente_sano','diabete','pancreas','sport','dca','chetogenica','renale','disfagia','oncologia','obesita','pediatria','ristorazione','ecm'];
+    const _SPECIALIZED   = ['paziente_sano','diabete','pancreas','sport','dca','chetogenica','renale','disfagia','oncologia','obesita','pediatria','ristorazione','ecm','gravidanza'];
 
-    const adminGranted = (data?.sections_enabled && Array.isArray(data.sections_enabled))
+    // sections_enabled === null/undefined means "no restriction set" (this is
+    // also what admin.html's own save logic writes when every checkbox is
+    // checked, to mean "unrestricted") — NOT "nothing granted". Only an
+    // explicit array actually restricts access to specialized sections.
+    const adminGranted = Array.isArray(data?.sections_enabled)
       ? data.sections_enabled.filter(s => _SPECIALIZED.includes(s))
-      : [];
+      : _SPECIALIZED;
 
     const allowed = [..._ALL_SECTIONS, ...adminGranted];
 

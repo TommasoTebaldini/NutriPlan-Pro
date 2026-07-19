@@ -2287,3 +2287,171 @@ END $$;
 DROP TRIGGER IF EXISTS trg_audit_liste_spesa ON liste_spesa;
 CREATE TRIGGER trg_audit_liste_spesa AFTER INSERT OR UPDATE OR DELETE ON liste_spesa
   FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 30 — RICONCILIAZIONE chat_messages (chat 1:1 dietista↔paziente)
+--
+-- Verificato sul DB live (2026-07-19, probe read-only con anon key): la
+-- tabella reale ha SOLO la convenzione dell'app paziente (message_type,
+-- file_url, file_name, duration_seconds) — le colonne type/status/
+-- scheduled_at usate da chat.html NON sono mai esistite. Risultato: l'invio
+-- messaggi lato dietista falliva con 42703 e il caricamento chat restituiva
+-- sempre una chat vuota. Questa sezione aggiunge le colonne mancanti (i
+-- messaggi esistenti diventano status='sent') e allinea le RLS al pattern
+-- già usato dalla chat di gruppo: i messaggi programmati sono visibili SOLO
+-- al mittente finché non passano a 'sent'.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'text';
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'sent';
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ;
+
+-- La vecchia policy FOR ALL concedeva anche la SELECT senza filtro sui
+-- programmati: sostituita da policy separate per comando (stessa condizione
+-- own-or-linked per le scritture, SELECT ristretta su status).
+DROP POLICY IF EXISTS "chat_messages_own_or_linked" ON chat_messages;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='chat_messages_select_visible' AND tablename='chat_messages') THEN
+    CREATE POLICY "chat_messages_select_visible" ON chat_messages
+      FOR SELECT USING (
+        (
+          auth.uid() = patient_id
+          OR EXISTS (
+            SELECT 1 FROM patient_dietitian pd
+            WHERE pd.patient_id = chat_messages.patient_id
+              AND pd.dietitian_id = auth.uid()
+          )
+        )
+        AND (status = 'sent' OR sender_id = auth.uid())
+      );
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='chat_messages_insert_own_or_linked' AND tablename='chat_messages') THEN
+    CREATE POLICY "chat_messages_insert_own_or_linked" ON chat_messages
+      FOR INSERT WITH CHECK (
+        auth.uid() = patient_id
+        OR EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = chat_messages.patient_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='chat_messages_update_own_or_linked' AND tablename='chat_messages') THEN
+    CREATE POLICY "chat_messages_update_own_or_linked" ON chat_messages
+      FOR UPDATE USING (
+        auth.uid() = patient_id
+        OR EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = chat_messages.patient_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      )
+      WITH CHECK (
+        auth.uid() = patient_id
+        OR EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = chat_messages.patient_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='chat_messages_delete_own_or_linked' AND tablename='chat_messages') THEN
+    CREATE POLICY "chat_messages_delete_own_or_linked" ON chat_messages
+      FOR DELETE USING (
+        auth.uid() = patient_id
+        OR EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = chat_messages.patient_id
+            AND pd.dietitian_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 31 — PACCHETTI / PERCORSI VENDIBILI (tab Pacchetti in pagamenti.html)
+--
+-- `pacchetti` = catalogo del dietista; `pacchetti_acquistati` = snapshot della
+-- vendita a un paziente (nome/prezzo/visite copiati, così modifiche successive
+-- al catalogo non alterano i percorsi già venduti). Il paziente può leggere i
+-- propri pacchetti (per una futura visualizzazione "visite residue" nell'app).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS pacchetti (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  dietitian_id  UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  nome          TEXT        NOT NULL,
+  n_visite      INT         NOT NULL CHECK (n_visite >= 1),
+  prezzo        NUMERIC(10,2) NOT NULL CHECK (prezzo >= 0),
+  durata_giorni INT,
+  descrizione   TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS pacchetti_acquistati (
+  id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  dietitian_id   UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  patient_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  patient_name   TEXT,
+  pacchetto_id   UUID        REFERENCES pacchetti(id) ON DELETE SET NULL,
+  nome_pacchetto TEXT        NOT NULL,
+  visite_totali  INT         NOT NULL,
+  visite_usate   INT         NOT NULL DEFAULT 0,
+  prezzo         NUMERIC(10,2) NOT NULL,
+  data_inizio    DATE,
+  scadenza       DATE,
+  stato          TEXT        NOT NULL DEFAULT 'da_pagare', -- 'da_pagare' | 'pagato'
+  created_at     TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE pacchetti ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pacchetti_acquistati ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='pacchetti_owner_all' AND tablename='pacchetti') THEN
+    CREATE POLICY "pacchetti_owner_all" ON pacchetti
+      FOR ALL USING (auth.uid() = dietitian_id) WITH CHECK (auth.uid() = dietitian_id);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='pacchetti_acquistati_owner_all' AND tablename='pacchetti_acquistati') THEN
+    CREATE POLICY "pacchetti_acquistati_owner_all" ON pacchetti_acquistati
+      FOR ALL USING (auth.uid() = dietitian_id) WITH CHECK (auth.uid() = dietitian_id);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='pacchetti_acquistati_patient_read' AND tablename='pacchetti_acquistati') THEN
+    CREATE POLICY "pacchetti_acquistati_patient_read" ON pacchetti_acquistati
+      FOR SELECT USING (auth.uid() = patient_id);
+  END IF;
+END $$;
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 32 — INTEGRAZIONE FATTURE IN CLOUD (invio fatture allo SDI)
+--
+-- Credenziali per-dietista dell'API Fatture in Cloud (Impostazioni → Dati
+-- fiscali) + tracking dell'invio SDI sulla singola fattura. Il token è
+-- leggibile solo dal proprietario (RLS su profiles) e usato server-side da
+-- api/fattura-sdi.js via service role.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fic_api_token TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fic_company_id TEXT;
+
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sdi_inviato_at TIMESTAMPTZ;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS fic_document_id TEXT;

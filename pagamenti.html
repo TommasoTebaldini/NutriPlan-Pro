@@ -130,6 +130,7 @@
   <div id="pag-tabs" style="display:flex;gap:8px;margin-bottom:16px">
     <button class="pag-tab active" id="tab-fatture-btn" onclick="setTab('fatture')">🧾 Fatture</button>
     <button class="pag-tab" id="tab-tariffario-btn" onclick="setTab('tariffario')">💶 Tariffario</button>
+    <button class="pag-tab" id="tab-pacchetti-btn" onclick="setTab('pacchetti')">📦 Pacchetti</button>
   </div>
 
   <!-- TAB: FATTURE -->
@@ -147,6 +148,22 @@
     <div id="fatture-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
 
+  <!-- TAB: PACCHETTI -->
+  <div id="tab-pacchetti" style="display:none">
+    <div class="card" style="margin-bottom:14px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <div style="font-size:14px;font-weight:700;color:var(--slate)">📦 <span data-only-lang="it">I tuoi pacchetti</span><span data-only-lang="en">Your packages</span></div>
+        <button class="btn btn-primary btn-sm" onclick="openPacchettoModal()">➕ <span data-only-lang="it">Nuovo pacchetto</span><span data-only-lang="en">New package</span></button>
+      </div>
+      <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.5"><span data-only-lang="it">Definisci percorsi vendibili (es. "Percorso 3 mesi — 6 visite") e assegnali ai pazienti: ogni visita registrata scala dal pacchetto. Il pagamento si registra come le altre fatture; il checkout online Stripe si potrà attivare in seguito insieme agli abbonamenti.</span><span data-only-lang="en">Define sellable programs (e.g. "3-month program — 6 visits") and assign them to patients: each recorded visit is deducted from the package.</span></p>
+      <div id="pacchetti-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px;padding:16px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--slate)">🎟️ <span data-only-lang="it">Pacchetti venduti ai pazienti</span><span data-only-lang="en">Packages sold to patients</span></div>
+      <div id="pacchetti-venduti-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+
   <!-- TAB: TARIFFARIO -->
   <div id="tab-tariffario" style="display:none">
     <div class="card" style="margin-bottom:14px;padding:16px">
@@ -161,6 +178,51 @@
   </div>
 
 </div></main>
+
+<!-- MODAL: NUOVO / MODIFICA PACCHETTO -->
+<div class="modal-bg" id="modal-pacchetto">
+  <div class="modal" style="max-width:460px">
+    <div class="mhdr"><h2 id="pacc-modal-title">📦 Nuovo Pacchetto</h2><button class="mclose" onclick="closeM('modal-pacchetto')">✕</button></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="fg full"><label>Nome pacchetto *</label><input type="text" id="pacc-nome" maxlength="80" placeholder="es. Percorso 3 mesi"></div>
+        <div class="fg"><label>N° visite incluse *</label><input type="number" id="pacc-visite" min="1" max="99" step="1" placeholder="6"></div>
+        <div class="fg"><label>Prezzo (€) *</label><input type="number" id="pacc-prezzo" min="0" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Validità (giorni)</label><input type="number" id="pacc-durata" min="0" step="1" placeholder="90"></div>
+        <div class="fg full"><label>Descrizione</label><textarea id="pacc-desc" rows="2" maxlength="300" placeholder="Cosa include il percorso..."></textarea></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-pacchetto')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaPacchetto()">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VENDI PACCHETTO -->
+<div class="modal-bg" id="modal-vendi-pacchetto">
+  <div class="modal" style="max-width:440px">
+    <div class="mhdr"><h2>🎟️ Assegna Pacchetto</h2><button class="mclose" onclick="closeM('modal-vendi-pacchetto')">✕</button></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="fg full"><label>Pacchetto</label><div id="vendi-pacc-info" style="font-size:13px;font-weight:600;color:var(--slate)"></div></div>
+        <div class="fg full">
+          <label>Paziente *</label>
+          <select id="vendi-patient"><option value="">— Seleziona paziente —</option></select>
+        </div>
+        <div class="fg"><label>Data inizio *</label><input type="date" id="vendi-data"></div>
+        <div class="fg">
+          <label>Stato pagamento</label>
+          <select id="vendi-stato"><option value="da_pagare">In attesa</option><option value="pagato">Pagato</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-vendi-pacchetto')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="confermaVendiPacchetto()">✅ Assegna</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: NUOVA / MODIFICA FATTURA -->
 <div class="modal-bg" id="modal-fattura">
@@ -406,6 +468,7 @@ function renderFatture() {
         <div style="display:flex;gap:4px;margin-left:auto">
           ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="Segna come pagato">✓</button>` : ''}
           <button class="btn btn-ghost btn-xs" onclick="generaFatturaElettronica('${esc(f.id)}')" title="${f.xml_generato_at ? 'XML già generato — rigenera' : 'Genera XML fattura elettronica'}">${f.xml_generato_at ? '📄✓' : '📄'}</button>
+          ${f.sdi_inviato_at ? '<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="Inviata allo SDI via Fatture in Cloud">📤✓</span>' : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSDI('${esc(f.id)}')" title="Invia allo SDI via Fatture in Cloud (richiede il collegamento in Impostazioni → Dati fiscali)">📤</button>`}
           <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="Modifica">✏️</button>
           <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="Elimina">🗑️</button>
         </div>
@@ -447,11 +510,232 @@ async function generaFatturaElettronica(id) {
   }
 }
 
+// ── INVIO SDI VIA FATTURE IN CLOUD ──
+// L'endpoint api/fattura-sdi.js legge il token FIC dal profilo del dietista e
+// crea+invia il documento tramite Fatture in Cloud (intermediario accreditato).
+async function inviaFatturaSDI(id) {
+  const f = fatture.find(x => x.id === id);
+  if (!f) return;
+  if (useLocalFatt || String(id).startsWith('ls_')) {
+    toast('⚠️ Le fatture salvate solo localmente non possono essere inviate: configura prima la tabella fatture nel DB', 'err');
+    return;
+  }
+  if (!confirm(`Inviare la fattura ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) allo SDI tramite Fatture in Cloud?\n\nL'invio è definitivo: verifica prima i dati del paziente (codice fiscale e indirizzo sono necessari per la fattura elettronica).`)) return;
+  showLoading(true);
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) throw new Error('Sessione scaduta, ricarica la pagina');
+    const res = await fetch('/api/fattura-sdi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ fattura: f }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    const nowIso = new Date().toISOString();
+    // Colonne sdi_inviato_at/fic_document_id: SEZIONE 32 — se mancano, l'invio
+    // è comunque andato a buon fine, si perde solo il "già inviata" in UI.
+    await sb.from('fatture').update({ sdi_inviato_at: nowIso, fic_document_id: String(data.fic_document_id || '') }).eq('id', id);
+    fatture = fatture.map(x => x.id === id ? { ...x, sdi_inviato_at: nowIso } : x);
+    renderFatture();
+    toast('📤 Fattura inviata allo SDI via Fatture in Cloud (doc. ' + data.fic_document_id + ')', 'ok');
+  } catch (e) {
+    toast('❌ ' + e.message, 'err');
+  } finally {
+    showLoading(false);
+  }
+}
+
 function setTab(name) {
   document.getElementById('tab-fatture').style.display = name === 'fatture' ? '' : 'none';
   document.getElementById('tab-tariffario').style.display = name === 'tariffario' ? '' : 'none';
+  document.getElementById('tab-pacchetti').style.display = name === 'pacchetti' ? '' : 'none';
   document.getElementById('tab-fatture-btn').classList.toggle('active', name === 'fatture');
   document.getElementById('tab-tariffario-btn').classList.toggle('active', name === 'tariffario');
+  document.getElementById('tab-pacchetti-btn').classList.toggle('active', name === 'pacchetti');
+  if (name === 'pacchetti' && !_pacchettiLoaded) loadPacchetti();
+}
+
+// ── PACCHETTI / PERCORSI ──
+// Tabelle pacchetti + pacchetti_acquistati (SEZIONE 31 di supabase_setup.sql).
+// I dati di prezzo/visite vengono copiati nello snapshot della vendita, così
+// modificare un pacchetto in seguito non altera i percorsi già venduti.
+let _pacchetti = [];
+let _pacchettiVenduti = [];
+let _pacchettiLoaded = false;
+let _editingPacchettoId = null;
+let _vendiPacchettoId = null;
+
+async function loadPacchetti() {
+  if (!currentUser) return;
+  _pacchettiLoaded = true;
+  const [pRes, vRes] = await Promise.all([
+    sb.from('pacchetti').select('*').eq('dietitian_id', currentUser.id).order('created_at', { ascending: true }),
+    sb.from('pacchetti_acquistati').select('*').eq('dietitian_id', currentUser.id).order('created_at', { ascending: false }),
+  ]);
+  if (pRes.error && pRes.error.code === '42P01') {
+    document.getElementById('pacchetti-list').innerHTML = '<div style="background:#FEF3C7;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#92400E">⚠️ Tabelle pacchetti mancanti — esegui la SEZIONE 31 di <code>supabase_setup.sql</code> su Supabase.</div>';
+    return;
+  }
+  _pacchetti = pRes.data || [];
+  _pacchettiVenduti = vRes.data || [];
+  renderPacchetti();
+}
+
+function renderPacchetti() {
+  const list = document.getElementById('pacchetti-list');
+  if (!_pacchetti.length) {
+    list.innerHTML = '<div class="empty-state" style="padding:20px"><div class="ei">📦</div><p style="font-size:12.5px">Nessun pacchetto definito. Crea il primo con "Nuovo pacchetto".</p></div>';
+  } else {
+    list.innerHTML = _pacchetti.map(p => `
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:13.5px;font-weight:700;color:var(--slate)">${esc(p.nome)}</div>
+          <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">${p.n_visite} visite · € ${Number(p.prezzo).toFixed(2)}${p.durata_giorni ? ' · validità ' + p.durata_giorni + 'gg' : ''}</div>
+          ${p.descrizione ? `<div style="font-size:11px;color:var(--slate-l);margin-top:2px">${esc(p.descrizione)}</div>` : ''}
+        </div>
+        <button class="btn btn-primary btn-xs" onclick="openVendiPacchetto('${p.id}')">🎟️ Assegna</button>
+        <button class="btn btn-ghost btn-xs" onclick="openPacchettoModal('${p.id}')">✏️</button>
+        <button class="btn btn-ghost btn-xs" style="color:#DC2626" onclick="deletePacchetto('${p.id}')">🗑️</button>
+      </div>`).join('');
+  }
+
+  const vlist = document.getElementById('pacchetti-venduti-list');
+  const attivi = _pacchettiVenduti;
+  if (!attivi.length) {
+    vlist.innerHTML = '<p style="font-size:12.5px;color:var(--slate-l);font-style:italic">Nessun pacchetto assegnato a pazienti.</p>';
+    return;
+  }
+  vlist.innerHTML = attivi.map(v => {
+    const scaduto = v.scadenza && new Date(v.scadenza) < new Date();
+    const finito = v.visite_usate >= v.visite_totali;
+    const pName = patients.find(p => p.id === v.patient_id)?.name || v.patient_name || '—';
+    const pct = Math.min(100, Math.round((v.visite_usate / Math.max(1, v.visite_totali)) * 100));
+    return `
+      <div style="padding:12px 14px;background:${finito || scaduto ? '#F8FAFC' : '#F0FDF4'};border-radius:10px;border:1px solid ${finito || scaduto ? 'var(--border)' : '#BBF7D0'}">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:180px">
+            <div style="font-size:13px;font-weight:700;color:var(--slate)">${esc(pName)} — ${esc(v.nome_pacchetto)}</div>
+            <div style="font-size:11.5px;color:var(--slate-m);margin-top:2px">
+              ${v.visite_usate}/${v.visite_totali} visite usate
+              ${v.scadenza ? ' · ' + (scaduto ? '<span style="color:#DC2626;font-weight:700">scaduto ' : 'scade ') + new Date(v.scadenza).toLocaleDateString('it') + (scaduto ? '</span>' : '') : ''}
+              · ${v.stato === 'pagato' ? '<span style="color:#16A34A;font-weight:600">✓ pagato</span>' : '<span style="color:#D97706;font-weight:600">in attesa</span>'}
+            </div>
+            <div style="height:5px;background:#E2E8F0;border-radius:3px;margin-top:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${finito ? '#94A3B8' : '#10B981'};border-radius:3px"></div></div>
+          </div>
+          ${!finito && !scaduto ? `<button class="btn btn-primary btn-xs" onclick="registraVisitaPacchetto('${v.id}')">+1 visita</button>` : ''}
+          ${v.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="fatturaDaPacchetto('${v.id}')">🧾 Fattura</button>` : ''}
+          <button class="btn btn-ghost btn-xs" style="color:#DC2626" onclick="deletePacchettoVenduto('${v.id}')">🗑️</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openPacchettoModal(id) {
+  _editingPacchettoId = id || null;
+  const p = id ? _pacchetti.find(x => x.id === id) : null;
+  document.getElementById('pacc-modal-title').textContent = p ? '✏️ Modifica Pacchetto' : '📦 Nuovo Pacchetto';
+  document.getElementById('pacc-nome').value = p?.nome || '';
+  document.getElementById('pacc-visite').value = p?.n_visite || '';
+  document.getElementById('pacc-prezzo').value = p ? Number(p.prezzo).toFixed(2) : '';
+  document.getElementById('pacc-durata').value = p?.durata_giorni || '';
+  document.getElementById('pacc-desc').value = p?.descrizione || '';
+  openM('modal-pacchetto');
+}
+
+async function salvaPacchetto() {
+  const nome = document.getElementById('pacc-nome').value.trim();
+  const n_visite = parseInt(document.getElementById('pacc-visite').value, 10);
+  const prezzo = parseFloat(document.getElementById('pacc-prezzo').value);
+  const durata = parseInt(document.getElementById('pacc-durata').value, 10) || null;
+  const descrizione = document.getElementById('pacc-desc').value.trim() || null;
+  if (!nome || !n_visite || n_visite < 1 || !isFinite(prezzo) || prezzo < 0) { toast('Compila nome, visite e prezzo', 'err'); return; }
+  const payload = { dietitian_id: currentUser.id, nome, n_visite, prezzo, durata_giorni: durata, descrizione };
+  const res = _editingPacchettoId
+    ? await sb.from('pacchetti').update(payload).eq('id', _editingPacchettoId).eq('dietitian_id', currentUser.id)
+    : await sb.from('pacchetti').insert(payload);
+  if (res.error) {
+    toast(res.error.code === '42P01' ? '⚠️ Esegui la SEZIONE 31 di supabase_setup.sql' : '❌ ' + res.error.message, 'err');
+    return;
+  }
+  closeM('modal-pacchetto');
+  toast('✅ Pacchetto salvato', 'ok');
+  await loadPacchetti();
+}
+
+async function deletePacchetto(id) {
+  if (!confirm('Eliminare questo pacchetto? I percorsi già venduti ai pazienti restano invariati.')) return;
+  const { error } = await sb.from('pacchetti').delete().eq('id', id).eq('dietitian_id', currentUser.id);
+  if (error) { toast('❌ ' + error.message, 'err'); return; }
+  await loadPacchetti();
+}
+
+function openVendiPacchetto(id) {
+  const p = _pacchetti.find(x => x.id === id);
+  if (!p) return;
+  _vendiPacchettoId = id;
+  document.getElementById('vendi-pacc-info').textContent = `${p.nome} — ${p.n_visite} visite, € ${Number(p.prezzo).toFixed(2)}`;
+  const sel = document.getElementById('vendi-patient');
+  sel.innerHTML = '<option value="">— Seleziona paziente —</option>' + patients.map(pt => `<option value="${esc(pt.id)}">${esc(pt.name)}</option>`).join('');
+  document.getElementById('vendi-data').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('vendi-stato').value = 'da_pagare';
+  openM('modal-vendi-pacchetto');
+}
+
+async function confermaVendiPacchetto() {
+  const p = _pacchetti.find(x => x.id === _vendiPacchettoId);
+  const patientId = document.getElementById('vendi-patient').value;
+  const dataInizio = document.getElementById('vendi-data').value;
+  if (!p || !patientId || !dataInizio) { toast('Seleziona paziente e data', 'err'); return; }
+  const scadenza = p.durata_giorni
+    ? new Date(new Date(dataInizio).getTime() + p.durata_giorni * 86400000).toISOString().slice(0, 10)
+    : null;
+  const { error } = await sb.from('pacchetti_acquistati').insert({
+    dietitian_id: currentUser.id,
+    patient_id: patientId,
+    patient_name: patients.find(x => x.id === patientId)?.name || null,
+    pacchetto_id: p.id,
+    nome_pacchetto: p.nome,
+    visite_totali: p.n_visite,
+    visite_usate: 0,
+    prezzo: p.prezzo,
+    data_inizio: dataInizio,
+    scadenza,
+    stato: document.getElementById('vendi-stato').value,
+  });
+  if (error) { toast('❌ ' + error.message, 'err'); return; }
+  closeM('modal-vendi-pacchetto');
+  toast('🎟️ Pacchetto assegnato', 'ok');
+  await loadPacchetti();
+}
+
+async function registraVisitaPacchetto(id) {
+  const v = _pacchettiVenduti.find(x => x.id === id);
+  if (!v || v.visite_usate >= v.visite_totali) return;
+  const { error } = await sb.from('pacchetti_acquistati')
+    .update({ visite_usate: v.visite_usate + 1 })
+    .eq('id', id).eq('dietitian_id', currentUser.id);
+  if (error) { toast('❌ ' + error.message, 'err'); return; }
+  await loadPacchetti();
+}
+
+function fatturaDaPacchetto(id) {
+  const v = _pacchettiVenduti.find(x => x.id === id);
+  if (!v) return;
+  // Riusa il modal fattura esistente precompilato con i dati del pacchetto
+  setTab('fatture');
+  openNuovaFattura();
+  populatePatientSelect(v.patient_id);
+  document.getElementById('fatt-tipo').value = 'Altro';
+  document.getElementById('fatt-importo').value = Number(v.prezzo).toFixed(2);
+  document.getElementById('fatt-note').value = 'Pacchetto: ' + v.nome_pacchetto;
+}
+
+async function deletePacchettoVenduto(id) {
+  if (!confirm('Rimuovere questo pacchetto assegnato al paziente?')) return;
+  const { error } = await sb.from('pacchetti_acquistati').delete().eq('id', id).eq('dietitian_id', currentUser.id);
+  if (error) { toast('❌ ' + error.message, 'err'); return; }
+  await loadPacchetti();
 }
 
 // ── TARIFFARIO ──

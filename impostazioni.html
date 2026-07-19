@@ -432,7 +432,7 @@
   <div class="lang-section" id="section-fiscale">
     <h3>💼 Dati fiscali (fatturazione elettronica)</h3>
     <p style="font-size:13px;color:var(--slate-l);margin-bottom:16px;margin-top:-8px">
-      Servono per generare l'XML delle fatture in formato FatturaPA da <a href="pagamenti.html" style="color:#0F766E;font-weight:600">Pagamenti</a>. L'app genera il file XML ma <b>non lo trasmette allo SDI</b> — dovrai inviarlo tu tramite il tuo canale abituale (PEC, intermediario, o accreditamento diretto). Verifica sempre i dati con il tuo commercialista prima dell'invio: non è un software di contabilità.
+      Servono per generare l'XML delle fatture in formato FatturaPA da <a href="pagamenti.html" style="color:#0F766E;font-weight:600">Pagamenti</a>. Collegando un account <b>Fatture in Cloud</b> (campi in fondo) puoi anche trasmettere le fatture allo SDI con un clic direttamente da Pagamenti; senza collegamento, l'XML va inviato tramite il tuo canale abituale (PEC, intermediario, accreditamento diretto). Verifica sempre i dati con il tuo commercialista: non è un software di contabilità.
     </p>
     <div style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px">
       <div>
@@ -481,6 +481,22 @@
           <input type="text" id="fiscal-provincia" placeholder="RM" maxlength="2"
             oninput="this.value=this.value.toUpperCase()"
             style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;text-transform:uppercase">
+        </div>
+      </div>
+      <div style="border-top:1.5px dashed var(--border);padding-top:12px;margin-top:4px">
+        <div style="font-size:12.5px;font-weight:700;color:var(--slate);margin-bottom:4px">🔗 Fatture in Cloud (invio SDI, opzionale)</div>
+        <p style="font-size:11.5px;color:var(--slate-l);margin:0 0 10px;line-height:1.5">Crea un token in <b>Fatture in Cloud → Impostazioni → API</b> (permessi: Documenti emessi lettura+scrittura) e recupera il Company ID dall'URL del portale. Con questi due campi compilati appare il pulsante "Invia a SDI" in Pagamenti: la trasmissione allo SDI la fa Fatture in Cloud, che è un intermediario accreditato.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="flex:2;min-width:220px">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--slate-l);margin-bottom:5px">API Token</label>
+            <input type="password" id="fic-api-token" placeholder="a/eyJ0eXAi..." autocomplete="off"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
+          <div style="flex:1;min-width:120px">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--slate-l);margin-bottom:5px">Company ID</label>
+            <input type="text" id="fic-company-id" placeholder="12345" inputmode="numeric"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
         </div>
       </div>
       <div>
@@ -744,11 +760,19 @@ async function togglePushSubscription() {
 // ══════════════════════════════════════════════
 async function loadFiscalData() {
   if (!currentUser) return;
-  const { data, error } = await sb.from('profiles')
-    .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia')
+  // Fallback senza le colonne Fatture in Cloud (SEZIONE 32) se non ancora migrate
+  let { data, error } = await sb.from('profiles')
+    .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fic_api_token,fic_company_id')
     .eq('id', currentUser.id).maybeSingle();
+  if (error && (error.code === '42703' || error.code === 'PGRST204')) {
+    ({ data, error } = await sb.from('profiles')
+      .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia')
+      .eq('id', currentUser.id).maybeSingle());
+  }
   if (error || !data) { if (error) console.warn('loadFiscalData error:', error.message); return; }
   const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  setVal('fic-api-token', data.fic_api_token);
+  setVal('fic-company-id', data.fic_company_id);
   setVal('fiscal-ragione-sociale', data.fiscal_ragione_sociale);
   setVal('fiscal-codice-fiscale', data.fiscal_codice_fiscale);
   setVal('fiscal-partita-iva', data.fiscal_partita_iva);
@@ -771,9 +795,21 @@ async function saveFiscalData() {
     fiscal_cap: val('fiscal-cap'),
     fiscal_comune: val('fiscal-comune'),
     fiscal_provincia: val('fiscal-provincia'),
+    fic_api_token: val('fic-api-token'),
+    fic_company_id: val('fic-company-id'),
   };
   const msgEl = document.getElementById('fiscal-save-msg');
-  const { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
+  let { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
+  if (error && (error.code === '42703' || error.code === 'PGRST204')) {
+    // Colonne FIC non ancora migrate (SEZIONE 32): salva almeno il resto
+    const base = { ...payload };
+    delete base.fic_api_token; delete base.fic_company_id;
+    ({ error } = await sb.from('profiles').update(base).eq('id', currentUser.id));
+    if (!error && (payload.fic_api_token || payload.fic_company_id)) {
+      if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = '⚠️ Campi Fatture in Cloud NON salvati: esegui la SEZIONE 32 di supabase_setup.sql'; }
+      return;
+    }
+  }
   if (error) {
     if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = '❌ ' + error.message; }
     return;

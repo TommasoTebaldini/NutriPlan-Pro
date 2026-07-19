@@ -276,6 +276,7 @@ async function selectPatient(patientId) {
       <button class="btn btn-ghost btn-xs chat-back-btn" style="display:none" onclick="deselectPatient()">←</button>
       <div class="chat-patient-avatar" style="width:32px;height:32px;font-size:12px">${initials || '?'}</div>
       <h3>${esc(p.name)}</h3>
+      <button class="btn btn-ghost btn-xs" onclick="startVideoCall()" title="${_L('Avvia videoconsulto','Start video consultation')}" style="margin-left:auto;font-size:15px;flex-shrink:0">📹</button>
     </div>
     <div class="chat-tabs">
       <div class="chat-tab active" id="tab-chat" onclick="switchChatTab('chat')">${t('chat.tab_chat')}</div>
@@ -506,6 +507,56 @@ function renderAndamentoContent(panel) {
     </div>`;
   }
 
+  // ── Suggerimento adattivo target kcal (stile MacroFactor, ma per il dietista) ─
+  // TDEE stimato dal bilancio energetico osservato: intake medio dei giorni
+  // tracciati + variazione peso nel periodo (regola 7700 kcal ≈ 1 kg). Valida
+  // solo con diario abbastanza completo e almeno due pesate distanziate: sotto
+  // le soglie la card non compare (meglio niente che una stima fuorviante).
+  let tdeeHtml = '';
+  (function () {
+    const wDates = Object.keys(_diaryWeightByDate).sort();
+    if (wDates.length < 2) return;
+    const wStart = wDates[0], wEnd = wDates[wDates.length - 1];
+    const spanDays = Math.round((new Date(wEnd) - new Date(wStart)) / 86400000);
+    if (spanDays < 10) return;
+    const deltaW = parseFloat(_diaryWeightByDate[wEnd]) - parseFloat(_diaryWeightByDate[wStart]);
+    if (!isFinite(deltaW)) return;
+    const kcalDays = Object.entries(_diaryTotalsByDate).filter(([d, t]) => d >= wStart && d <= wEnd && t.kcal > 0);
+    const coverage = kcalDays.length / spanDays;
+    if (kcalDays.length < 7 || coverage < 0.6) return; // diario troppo incompleto: stima inaffidabile
+    const avgIntake = Math.round(kcalDays.reduce((s, [, t]) => s + t.kcal, 0) / kcalDays.length);
+    const tdee = Math.round(avgIntake - (deltaW * 7700) / spanDays);
+    if (tdee < 800 || tdee > 6000) return; // fuori da ogni plausibilità: dati sporchi
+    const trendSett = Math.round(deltaW / spanDays * 7 * 100) / 100;
+    const diet = window._diaryDietTarget;
+    let targetLine = '';
+    if (diet?.kcal_target) {
+      const expectedSett = Math.round((diet.kcal_target - tdee) * 7 / 7700 * 100) / 100;
+      const gap = diet.kcal_target - tdee;
+      targetLine = `<div style="font-size:12px;color:var(--slate-m);margin-top:8px">${_L('Al target prescritto di','At the prescribed target of')} <b>${diet.kcal_target} kcal</b> ${_L('il trend atteso è','the expected trend is')} <b>${expectedSett > 0 ? '+' : ''}${expectedSett} kg/${_L('sett','wk')}</b>${Math.abs(gap) > 250 ? ' — ' + _L('valuta se ritoccare il target in base all\'obiettivo clinico','consider adjusting the target based on the clinical goal') : ''}.</div>`;
+    }
+    tdeeHtml = `
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">⚙️ ${_L('Metabolismo osservato (stima adattiva)','Observed metabolism (adaptive estimate)')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="text-align:center;padding:12px;background:#F8FAFC;border-radius:10px">
+          <div style="font-size:24px;font-weight:800;color:var(--teal-d)">${tdee}</div>
+          <div style="font-size:11px;color:var(--slate-l);margin-top:4px">${_L('TDEE stimato<br>(kcal/giorno)','Estimated TDEE<br>(kcal/day)')}</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:#F8FAFC;border-radius:10px">
+          <div style="font-size:24px;font-weight:800;color:var(--slate)">${avgIntake}</div>
+          <div style="font-size:11px;color:var(--slate-l);margin-top:4px">${_L('Intake medio<br>tracciato','Avg tracked<br>intake')}</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:#F8FAFC;border-radius:10px">
+          <div style="font-size:24px;font-weight:800;color:${trendSett < -0.05 ? '#16A34A' : trendSett > 0.05 ? '#D97706' : 'var(--slate)'}">${trendSett > 0 ? '+' : ''}${trendSett}</div>
+          <div style="font-size:11px;color:var(--slate-l);margin-top:4px">${_L('kg/settimana<br>osservati','kg/week<br>observed')}</div>
+        </div>
+      </div>
+      ${targetLine}
+      <div style="font-size:10.5px;color:var(--slate-l);margin-top:8px">${_L('Stima su','Estimate over')} ${spanDays} ${_L('giorni','days')} (${kcalDays.length} ${_L('con diario','with diary')}, Δ ${deltaW > 0 ? '+' : ''}${Math.round(deltaW*10)/10} kg). ${_L('Attendibile solo se il diario è compilato con costanza e onestà — usala come indicazione, non come misura.','Reliable only if the diary is filled consistently and honestly — treat as an indication, not a measurement.')}</div>
+    </div>`;
+  })();
+
   const statsHtml = `<div class="and-stats-row">
     ${avgKcal ? `<div class="and-stat"><div class="and-stat-val">🔥 ${avgKcal}</div><div class="and-stat-lbl">${_L('kcal/giorno','kcal/day')}</div></div>` : ''}
     ${avgMood ? `<div class="and-stat"><div class="and-stat-val">${moodMap[Math.round(avgMood)]} ${avgMood}/5</div><div class="and-stat-lbl">${_L('Umore medio','Avg mood')}</div></div>` : ''}
@@ -517,6 +568,7 @@ function renderAndamentoContent(panel) {
     <div class="and-stat"><div class="and-stat-val">📅 ${_diaryDates.length}</div><div class="and-stat-lbl">${_L('giorni','days')}</div></div>
   </div>
   ${adherenceHtml}
+  ${tdeeHtml}
   ${(corrMoodKcal !== null || corrMoodSleep !== null || corrMoodStress !== null) ? `
   <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px">
     <div style="font-size:11px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📊 ${_L('Correlazione Umore / Stile di Vita (Pearson r)','Mood / Lifestyle Correlation (Pearson r)')}</div>
@@ -1086,13 +1138,24 @@ function deselectPatient() {
 }
 
 async function loadMessages(patientId) {
-  const { data, error } = await sb.from('chat_messages')
-    .select('id,sender_id,created_at,content,type,status,scheduled_at,read_at,patient_id')
+  // Select completa (con le colonne dietista di SEZIONE 30 + quelle
+  // dell'app paziente message_type/file_url/file_name); se le colonne
+  // dietista non esistono ancora sul DB, fallback allo schema live base —
+  // senza fallback un 42703 lascerebbe la chat PERENNEMENTE VUOTA.
+  let res = await sb.from('chat_messages')
+    .select('id,sender_id,created_at,content,type,status,scheduled_at,read_at,patient_id,message_type,file_url,file_name')
     .eq('patient_id', patientId)
     .order('created_at', { ascending: true })
     .limit(100);
+  if (res.error && (res.error.code === '42703' || res.error.code === 'PGRST204')) {
+    res = await sb.from('chat_messages')
+      .select('id,sender_id,created_at,content,read_at,patient_id,message_type,file_url,file_name')
+      .eq('patient_id', patientId)
+      .order('created_at', { ascending: true })
+      .limit(100);
+  }
 
-  chatMessages = data || [];
+  chatMessages = res.data || [];
   renderMessages();
 }
 
@@ -1128,7 +1191,23 @@ function renderMessages() {
     const scheduledBadge = (m.status === 'scheduled') ? `<div style="background:#FEF9C3;border-radius:4px;padding:2px 6px;font-size:10px;color:#854D0E;margin-bottom:4px">📅 Programmato per: ${new Date(m.scheduled_at).toLocaleString('it',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>` : '';
     // Voice message content
     let msgContent = '';
-    if (m.type === 'voice' && m.content && /^https:\/\//.test(m.content)) {
+    if (m.message_type === 'video_call' && m.content) {
+      // Invito a videochiamata (convenzione message_type dell'app paziente,
+      // scritta anche dal nostro startVideoCall) — il contenuto è il nome
+      // stanza Jitsi, non un URL: renderizzato come card con pulsante Entra.
+      const room = String(m.content).replace(/[^a-zA-Z0-9-]/g, '');
+      msgContent = `<div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:15px">📹</span>
+        <span style="font-size:13px;font-weight:600">${isSent ? _L('Hai avviato un videoconsulto','You started a video consultation') : _L('Videoconsulto avviato dal paziente','Patient started a video call')}</span>
+        <a href="${esc(_jitsiUrl(room))}" target="_blank" rel="noopener" style="padding:4px 12px;background:${isSent ? 'rgba(255,255,255,.25)' : '#0EA5E9'};color:#fff;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0">${_L('Entra','Join')}</a>
+      </div>`;
+    } else if (m.message_type === 'image' && m.file_url && /^https:\/\//.test(m.file_url)) {
+      // Foto inviata dal paziente (bucket chat-media, signed URL ~10 anni):
+      // prima di questo ramo appariva come bolla vuota lato dietista.
+      msgContent = `<a href="${esc(m.file_url)}" target="_blank" rel="noopener"><img src="${esc(m.file_url)}" alt="${esc(m.file_name || 'Foto')}" loading="lazy" style="max-width:200px;max-height:220px;border-radius:10px;display:block"></a>`;
+    } else if ((m.message_type === 'audio' && m.file_url && /^https:\/\//.test(m.file_url))) {
+      msgContent = `<audio controls src="${esc(m.file_url)}" style="max-width:200px;height:32px"></audio>`;
+    } else if (m.type === 'voice' && m.content && /^https:\/\//.test(m.content)) {
       msgContent = `<audio controls src="${esc(m.content)}" style="max-width:200px;height:32px"></audio>`;
     } else {
       msgContent = esc(m.content || '');
@@ -1457,12 +1536,17 @@ async function sendVoiceMessage(blob) {
     const { error: upErr } = await sb.storage.from('voice-messages').upload(path, blob, { contentType: 'audio/webm' });
     if (upErr) throw upErr;
     const { data: urlData } = sb.storage.from('voice-messages').getPublicUrl(path);
-    const { error } = await sb.from('chat_messages').insert({
+    // Doppia convenzione: type:'voice' (questo file), message_type:'audio' +
+    // file_url (ChatPage.jsx dell'app paziente) — senza la seconda il paziente
+    // vedeva il vocale come URL di testo grezzo, non come player audio.
+    const { error } = await _insertChatMessage({
       patient_id: selectedPatientId,
       sender_id: currentUser.id,
       sender_role: 'dietitian',
       content: urlData.publicUrl,
       type: 'voice',
+      message_type: 'audio',
+      file_url: urlData.publicUrl,
       status: 'sent'
     });
     if (error) throw error;
@@ -1538,6 +1622,59 @@ async function checkScheduledMessages() {
 // Start scheduler
 setInterval(checkScheduledMessages, 60000);
 
+// ─── Videoconsulto (Jitsi) ──────────────────────────────────────────────────
+// Stesso algoritmo di src/lib/videoCall.js dell'app paziente (ids ordinati,
+// prefisso nutriplan-call-): le due app arrivano SEMPRE alla stessa stanza
+// per la stessa coppia dietista↔paziente, senza alcun signaling server-side.
+function _callRoomName(patientId, dietitianId) {
+  const ids = [patientId, dietitianId].filter(Boolean).sort();
+  return ('nutriplan-call-' + ids.join('-')).replace(/[^a-zA-Z0-9-]/g, '');
+}
+function _jitsiUrl(roomName) {
+  const name = (currentProfile?.full_name || currentProfile?.first_name || 'Dietista');
+  const hash = [
+    'config.prejoinPageEnabled=false',
+    'config.disableDeepLinking=true',
+    'userInfo.displayName=%22' + encodeURIComponent(name) + '%22',
+  ].join('&');
+  return 'https://meet.jit.si/' + encodeURIComponent(roomName) + '#' + hash;
+}
+// Insert fault-tolerant su chat_messages: il DB live è nato con la sola
+// convenzione dell'app paziente (message_type/file_url/...) — le colonne
+// type/status/scheduled_at della convenzione dietista arrivano con la
+// SEZIONE 30 di supabase_setup.sql. Finché quella migrazione non è stata
+// eseguita, il retry senza quelle colonne mantiene funzionante l'invio dei
+// messaggi normali (42703 = colonna inesistente, PGRST204 = colonna non in
+// cache schema).
+async function _insertChatMessage(payload) {
+  let res = await sb.from('chat_messages').insert(payload).select().single();
+  if (res.error && (res.error.code === '42703' || res.error.code === 'PGRST204')) {
+    const base = { ...payload };
+    delete base.type; delete base.status; delete base.scheduled_at;
+    res = await sb.from('chat_messages').insert(base).select().single();
+  }
+  return res;
+}
+
+async function startVideoCall() {
+  if (!selectedPatientId || !currentUser) return;
+  const room = _callRoomName(selectedPatientId, currentUser.id);
+  // Notifica il paziente in chat con la convenzione message_type:'video_call'
+  // che ChatPage.jsx già renderizza con il pulsante "Partecipa".
+  const { data, error } = await _insertChatMessage({
+    patient_id: selectedPatientId,
+    sender_id: currentUser.id,
+    sender_role: 'dietitian',
+    content: room,
+    type: 'text',
+    message_type: 'video_call',
+    status: 'sent'
+  });
+  if (error) { toast('❌ ' + _L('Errore avvio videoconsulto','Error starting video call') + ': ' + error.message, 'err'); return; }
+  if (data && !chatMessages.find(m => m.id === data.id)) { chatMessages.push(data); renderMessages(); }
+  window.open(_jitsiUrl(room), '_blank', 'noopener');
+}
+
 async function sendMessage() {
   if (!selectedPatientId) return;
   const input = document.getElementById('chat-input');
@@ -1560,10 +1697,19 @@ async function sendMessage() {
     cancelSchedule();
   }
 
-  const { data, error } = await sb.from('chat_messages').insert(msgPayload).select().single();
+  // I messaggi programmati richiedono le colonne status/scheduled_at (SEZIONE
+  // 30): se il fallback senza quelle colonne scattasse, il messaggio partirebbe
+  // SUBITO invece che all'ora scelta — meglio bloccare con un errore chiaro.
+  const { data, error } = msgPayload.status === 'scheduled'
+    ? await sb.from('chat_messages').insert(msgPayload).select().single()
+    : await _insertChatMessage(msgPayload);
 
   if (error) {
-    toast('❌ Errore invio messaggio: ' + error.message, 'err');
+    if (msgPayload.status === 'scheduled' && (error.code === '42703' || error.code === 'PGRST204')) {
+      toast('❌ ' + _L('Programmazione non disponibile: esegui la SEZIONE 30 di supabase_setup.sql','Scheduling unavailable: run SECTION 30 of supabase_setup.sql'), 'err');
+    } else {
+      toast('❌ Errore invio messaggio: ' + error.message, 'err');
+    }
     input.value = content;
   } else if (msgPayload.status === 'scheduled') {
     toast('📅 Messaggio programmato!', 'ok');

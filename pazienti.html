@@ -397,6 +397,14 @@ async function ensureChartJs() {
         <input type="date" id="bulk-esami-data" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;outline:none">
         <span style="font-size:12px;color:var(--slate-l)"><span data-only-lang="it">Inserisci tutti i valori del pannello, poi clicca Salva.</span><span data-only-lang="en">Enter all panel values, then click Save.</span></span>
       </div>
+      <div style="margin-bottom:14px;padding:10px 14px;background:#EDE9FE;border-radius:10px;border-left:3px solid #7C3AED">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <input type="file" id="referto-pdf-input" accept="application/pdf" style="display:none" onchange="if(this.files[0])importaRefertoAI(this.files[0]);this.value=''">
+          <button type="button" class="btn btn-ghost btn-sm" style="background:white" onclick="document.getElementById('referto-pdf-input').click()">🤖 <span data-only-lang="it">Importa da referto PDF</span><span data-only-lang="en">Import from PDF report</span></button>
+          <span id="referto-ai-status" style="font-size:12px;color:#5B21B6"></span>
+        </div>
+        <p style="font-size:10.5px;color:#6D28D9;margin:6px 0 0;line-height:1.4"><span data-only-lang="it">L'AI estrae automaticamente i valori dal referto e compila le righe qui sotto — verifica sempre ogni valore prima di salvare. Il testo del referto viene inviato al servizio AI per l'estrazione.</span><span data-only-lang="en">The AI extracts values from the report and fills the rows below — always verify every value before saving. The report text is sent to the AI service for extraction.</span></p>
+      </div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:12.5px">
           <thead>
@@ -2465,6 +2473,105 @@ function aggiungiRigaBulkEsame(tipoDefault) {
     customInp.style.display = sel.value === '__custom__' ? 'block' : 'none';
   });
   tbody.appendChild(tr);
+}
+
+// ── IMPORT REFERTO PDF CON AI ──
+// pdf.js caricato lazy da cdn.jsdelivr.net (già in CSP script-src; il worker
+// ricade su script-src perché worker-src non è definita). Il testo estratto
+// va a /api/claude (json_mode) che mappa i valori sui tipi esame noti; le
+// righe della tabella bulk vengono precompilate e restano SEMPRE editabili —
+// nessun salvataggio automatico senza revisione del dietista.
+let _pdfjsLoading = null;
+function _loadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve();
+  if (_pdfjsLoading) return _pdfjsLoading;
+  _pdfjsLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+    s.onload = () => {
+      try {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+        resolve();
+      } catch (e) { reject(e); }
+    };
+    s.onerror = () => reject(new Error('Impossibile caricare pdf.js'));
+    document.head.appendChild(s);
+  });
+  return _pdfjsLoading;
+}
+
+async function _extractPdfText(file) {
+  await _loadPdfJs();
+  const buf = await file.arrayBuffer();
+  const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+  let text = '';
+  const maxPages = Math.min(pdf.numPages, 8);
+  for (let i = 1; i <= maxPages; i++) {
+    const page = await pdf.getPage(i);
+    const tc = await page.getTextContent();
+    text += tc.items.map(it => it.str).join(' ') + '\n';
+  }
+  return text.replace(/\s{3,}/g, '  ').trim();
+}
+
+async function importaRefertoAI(file) {
+  const st = document.getElementById('referto-ai-status');
+  if (!file) return;
+  if (file.size > 15 * 1024 * 1024) { toast(_L('PDF troppo grande (max 15MB)','PDF too large (max 15MB)'), 'err'); return; }
+  try {
+    if (st) st.textContent = '⏳ ' + _L('Lettura PDF...','Reading PDF...');
+    const text = (await _extractPdfText(file)).slice(0, 14000);
+    if (text.length < 40) throw new Error(_L('Il PDF non contiene testo estraibile (referto scansionato come immagine?)','The PDF contains no extractable text (scanned image report?)'));
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) throw new Error(_L('Sessione scaduta','Session expired'));
+    if (st) st.textContent = '⏳ ' + _L('Estrazione valori con AI...','Extracting values with AI...');
+
+    const system = 'Sei un assistente clinico. Dal testo di un referto di laboratorio estrai SOLO i valori numerici realmente presenti. Quando un esame corrisponde a uno di questi nomi standard usa ESATTAMENTE quel nome: ' + _ESAMI_COMUNI.join(', ') + '. Per esami non in elenco usa il nome del referto. Rispondi SOLO con JSON: {"data_esame":"YYYY-MM-DD o null","esami":[{"tipo":"...","valore":123.4,"unita":"..."}]}. Non inventare mai valori assenti.';
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ system, messages: [{ role: 'user', content: text }], max_tokens: 2000, json_mode: true }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    const raw = data.content?.[0]?.text || '';
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error(_L('Risposta AI non valida','Invalid AI response'));
+    const parsed = JSON.parse(m[0]);
+    const esami = (Array.isArray(parsed.esami) ? parsed.esami : []).filter(e => e && e.tipo && isFinite(parseFloat(e.valore)));
+    if (!esami.length) throw new Error(_L('Nessun valore riconosciuto nel referto','No values recognized in the report'));
+
+    if (parsed.data_esame && /^\d{4}-\d{2}-\d{2}$/.test(parsed.data_esame)) {
+      const dEl = document.getElementById('bulk-esami-data');
+      if (dEl) dEl.value = parsed.data_esame;
+    }
+    const tbody = document.getElementById('bulk-esami-rows');
+    tbody.innerHTML = '';
+    esami.forEach(e => {
+      const isKnown = _ESAMI_COMUNI.includes(e.tipo);
+      aggiungiRigaBulkEsame(isKnown ? e.tipo : undefined);
+      const tr = tbody.lastElementChild;
+      if (!tr) return;
+      const valEl = tr.querySelector('input[type=number]');
+      if (valEl) valEl.value = parseFloat(e.valore);
+      const unEl = tr.querySelector('.bulk-unita');
+      if (unEl && e.unita) unEl.value = String(e.unita).slice(0, 20);
+      if (!isKnown) {
+        const sel = tr.querySelector('select');
+        const customInp = tr.querySelector('input[type=text]:not(.bulk-unita)');
+        if (sel && customInp) {
+          sel.value = '__custom__';
+          customInp.style.display = 'block';
+          customInp.value = String(e.tipo).slice(0, 60);
+        }
+      }
+    });
+    if (st) st.textContent = '✅ ' + esami.length + ' ' + _L('valori estratti — verifica prima di salvare','values extracted — verify before saving');
+  } catch (e) {
+    if (st) st.textContent = '';
+    toast('❌ ' + (e.message || 'Errore'), 'err');
+  }
 }
 
 async function salvaBulkEsami() {

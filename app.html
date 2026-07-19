@@ -596,6 +596,7 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
         <input type="checkbox" id="ls-visible-toggle" style="width:15px;height:15px;cursor:pointer">
         <span data-only-lang="it">Condividi con il paziente</span><span data-only-lang="en" style="display:none">Share with patient</span>
       </label>
+      <button class="btn btn-ghost btn-sm" id="ls-delete-btn" style="display:none;color:#DC2626" onclick="eliminaListaSpesa()">🗑️ <span data-only-lang="it">Elimina</span><span data-only-lang="en" style="display:none">Delete</span></button>
       <button class="btn btn-ghost btn-sm" onclick="closeM('modal-lista-spesa')">Chiudi</button>
       <button class="btn btn-ghost btn-sm" onclick="stampaListaSpesa()">🖨️ Stampa</button>
       <button class="btn btn-primary btn-sm" onclick="salvaListaSpesa()">💾 Salva</button>
@@ -2566,7 +2567,27 @@ let _lsItems = [];
 let _lsId = null;
 let _lsTipo = 'auto';
 
-function generaListaSpesa() {
+// Cerca l'ultima lista salvata di questo tipo per la cartella selezionata.
+// Fault-tolerant: se la tabella non esiste ancora (SEZIONE 29 non eseguita)
+// ritorna null e la lista parte da zero come prima.
+async function _lsCaricaSalvata(tipo) {
+  const cartellaEl = document.getElementById('inp-cartella');
+  const cartella_id = (cartellaEl && cartellaEl.value) ? cartellaEl.value : null;
+  if (!cartella_id || !currentUser) return null;
+  try {
+    const { data, error } = await sb.from('liste_spesa')
+      .select('id,items,visible_to_patient,piano_id')
+      .eq('user_id', currentUser.id)
+      .eq('cartella_id', cartella_id)
+      .eq('tipo', tipo)
+      .order('updated_at', { ascending: false })
+      .limit(1);
+    if (error || !data || !data.length) return null;
+    return data[0];
+  } catch (e) { return null; }
+}
+
+async function generaListaSpesa() {
   const aggregated = {};
   giorni.forEach(giorno => {
     (giorno.meals || []).forEach(meal => {
@@ -2589,21 +2610,65 @@ function generaListaSpesa() {
   _lsItems = Object.values(aggregated).sort((a,b) => a.nome.localeCompare(b.nome));
   _lsId = null;
   _lsTipo = 'auto';
+
+  // Se esiste già una lista salvata per questa cartella, riusala: si aggiorna
+  // quella riga invece di crearne una nuova a ogni "Salva", e pezzatura/prezzo
+  // già compilati non vanno persi quando si rigenera la lista dal piano.
+  const salvata = await _lsCaricaSalvata('auto');
+  if (salvata) {
+    _lsId = salvata.id;
+    const perNome = {};
+    (salvata.items || []).forEach(it => { if (it.alimento) perNome[it.alimento.toLowerCase()] = it; });
+    _lsItems.forEach(it => {
+      const s = perNome[it.nome.toLowerCase()];
+      if (s) { it.pezzatura = s.pezzatura || ''; it.prezzo = (s.prezzo != null) ? s.prezzo : ''; delete perNome[it.nome.toLowerCase()]; }
+    });
+    // Righe aggiunte a mano nella lista salvata ma assenti dal piano attuale:
+    // vanno mantenute, non buttate via silenziosamente.
+    Object.values(perNome).forEach(s => {
+      _lsItems.push({ nome: s.alimento, qt: 0, cat: 'Altro', pezzatura: s.pezzatura || '', prezzo: (s.prezzo != null) ? s.prezzo : '' });
+    });
+  }
+
   document.getElementById('lista-spesa-title').innerHTML = '🛒 ' + _L('Lista della Spesa','Shopping List');
-  const vt = document.getElementById('ls-visible-toggle'); if (vt) vt.checked = false;
+  const vt = document.getElementById('ls-visible-toggle'); if (vt) vt.checked = !!(salvata && salvata.visible_to_patient);
   _renderListaSpesaBody();
   openM('modal-lista-spesa');
 }
 
-function nuovaListaSpesaManuale() {
+async function nuovaListaSpesaManuale() {
   _lsItems = [];
   _lsId = null;
   _lsTipo = 'manuale';
-  document.getElementById('lista-spesa-title').innerHTML = '📝 ' + _L('Nuova Lista Manuale','New Manual List');
-  const vt = document.getElementById('ls-visible-toggle'); if (vt) vt.checked = false;
+
+  // Stessa logica della lista auto: se per questa cartella esiste già una
+  // lista manuale salvata, si riapre quella (modificabile) invece di
+  // ripartire da zero e accumulare duplicati nel DB.
+  const salvata = await _lsCaricaSalvata('manuale');
+  if (salvata) {
+    _lsId = salvata.id;
+    _lsItems = (salvata.items || []).filter(it => it.alimento).map(it => ({
+      nome: it.alimento, qt: 0, cat: 'Altro', pezzatura: it.pezzatura || '', prezzo: (it.prezzo != null) ? it.prezzo : ''
+    }));
+  }
+
+  document.getElementById('lista-spesa-title').innerHTML = '📝 ' + _L('Lista Manuale','Manual List');
+  const vt = document.getElementById('ls-visible-toggle'); if (vt) vt.checked = !!(salvata && salvata.visible_to_patient);
   _renderListaSpesaBody();
   openM('modal-lista-spesa');
-  _addRigaListaSpesa();
+  if (!_lsItems.length) _addRigaListaSpesa();
+}
+
+async function eliminaListaSpesa() {
+  if (!_lsId || !currentUser) return;
+  if (!confirm(_L('Eliminare definitivamente questa lista della spesa?','Permanently delete this shopping list?'))) return;
+  showLoading(true);
+  const { error } = await sb.from('liste_spesa').delete().eq('id', _lsId).eq('user_id', currentUser.id);
+  showLoading(false);
+  if (error) { toast(_L('❌ Errore nell\'eliminazione','❌ Error deleting the list'), 'err'); return; }
+  _lsId = null;
+  toast(_L('🗑️ Lista eliminata','🗑️ List deleted'), 'ok');
+  closeM('modal-lista-spesa');
 }
 
 function _lsTotale() {
@@ -2619,7 +2684,7 @@ function _lsRigaHtml(i) {
   const item = _lsItems[i];
   const qtLabel = item.qt ? (item.qt >= 1000 ? (item.qt/1000).toFixed(1) + ' kg' : Math.round(item.qt) + ' g') : '';
   const prezzoVal = (item.prezzo !== '' && item.prezzo != null) ? item.prezzo : '';
-  return `<div style="display:grid;grid-template-columns:1fr 110px 90px 28px;gap:6px;align-items:center;padding:4px;border-bottom:1px solid #F1F5F9">
+  return `<div class="ls-riga" style="display:grid;grid-template-columns:1fr 110px 90px 28px;gap:6px;align-items:center;padding:4px;border-bottom:1px solid #F1F5F9">
     <div style="min-width:0">
       <input type="text" id="ls-nome-${i}" value="${esc(item.nome||'')}" placeholder="${_L('Alimento','Food')}" oninput="_lsItems[${i}].nome=this.value" style="width:100%;box-sizing:border-box;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit">
       ${qtLabel ? `<div style="font-size:10px;color:#94A3B8;padding:2px 2px 0">${qtLabel} ${_L('nel piano','in plan')}</div>` : ''}
@@ -2630,7 +2695,13 @@ function _lsRigaHtml(i) {
   </div>`;
 }
 
+function _lsSyncDeleteBtn() {
+  const btn = document.getElementById('ls-delete-btn');
+  if (btn) btn.style.display = _lsId ? '' : 'none';
+}
+
 function _renderListaSpesaBody() {
+  _lsSyncDeleteBtn();
   const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
 
   if (!_lsItems.length) {
@@ -2649,7 +2720,7 @@ function _renderListaSpesaBody() {
     <div style="font-size:11px;color:#6B7280;margin-top:3px">${introText}</div>
   </div>`;
 
-  html += `<div style="display:grid;grid-template-columns:1fr 110px 90px 28px;gap:6px;padding:0 4px 4px;font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">
+  html += `<div class="ls-riga" style="display:grid;grid-template-columns:1fr 110px 90px 28px;gap:6px;padding:0 4px 4px;font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">
     <div>${_L('Alimento','Food')}</div><div>${_L('Pezzatura','Pack size')}</div><div>${_L('Prezzo €','Price €')}</div><div></div>
   </div>`;
 
@@ -2722,6 +2793,7 @@ async function salvaListaSpesa() {
 
   if (result.error) { toast(_L('❌ Errore nel salvataggio della lista','❌ Error saving the list'), 'err'); return; }
   if (!_lsId && result.data) _lsId = result.data.id;
+  _lsSyncDeleteBtn();
   toast(_L('✅ Lista della spesa salvata!','✅ Shopping list saved!'), 'ok');
 }
 

@@ -158,6 +158,12 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
   gap:16px;padding:0 32px;width:100%;max-width:900px;
 }
 @media(max-width:680px){.dash-fs-grid{grid-template-columns:1fr;padding:0 20px;max-height:50vh;overflow-y:auto}}
+/* Con 4 widget attivi (2 righe di card) su schermi bassi il centraggio flex +
+   overflow:hidden clipperebbe hero e pulsante finale senza possibilità di
+   scroll: su viewport corti si passa a flex-start + scroll verticale. */
+@media(max-height:760px){
+  .dash-fs{justify-content:flex-start;overflow-y:auto;padding:28px 0 20px}
+}
 
 .dash-fc{
   background:rgba(255,255,255,.10);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
@@ -193,3 +199,10 @@ tr.row-drop-target td{background:rgba(20,184,166,.12)!important;box-shadow:inset
 }
 .dash-fs-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 14px 44px rgba(0,0,0,.3)}
 .dash-fs-btn:active{transform:scale(.97)}
+
+/* Lista spesa: su schermi stretti le colonne fisse (110+90+28px) lascerebbero
+   troppo poco spazio al nome alimento — compattate. La media query vince
+   sull'inline style grazie a !important (unico modo: lo stile è inline). */
+@media(max-width:480px){
+  .ls-riga{grid-template-columns:1fr 74px 64px 24px!important;gap:4px!important}
+}

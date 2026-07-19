@@ -121,7 +121,7 @@
 
   async function getClientIp() {
     try {
-      const res = await fetch('/api/my-ip');
+      const res = await fetch('/api/meta?what=ip');
       const data = await res.json();
       return data?.ip || null;
     } catch { return null; }

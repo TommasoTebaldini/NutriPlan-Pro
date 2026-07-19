@@ -731,7 +731,7 @@ async function togglePushSubscription() {
       return;
     }
 
-    const { publicKey } = await (await fetch('/api/vapid-public-key')).json();
+    const { publicKey } = await (await fetch('/api/meta?what=vapid')).json();
     if (!publicKey) throw new Error('Chiave VAPID non configurata sul server.');
 
     const sub = await reg.pushManager.subscribe({

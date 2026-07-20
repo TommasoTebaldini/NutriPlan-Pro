@@ -1535,7 +1535,12 @@ async function sendVoiceMessage(blob) {
     const path = `voice-messages/${selectedPatientId}/${Date.now()}.webm`;
     const { error: upErr } = await sb.storage.from('voice-messages').upload(path, blob, { contentType: 'audio/webm' });
     if (upErr) throw upErr;
-    const { data: urlData } = sb.storage.from('voice-messages').getPublicUrl(path);
+    // Bucket privato (SEZIONE 33): URL firmato ~10 anni invece di getPublicUrl,
+    // stesso pattern di chat-media/group-chat-media. Il destinatario (paziente
+    // collegato) può aprirlo perché la policy di storage lo autorizza.
+    const { data: signed, error: signErr } = await sb.storage.from('voice-messages').createSignedUrl(path, 315360000);
+    if (signErr) throw signErr;
+    const voiceUrl = signed.signedUrl;
     // Doppia convenzione: type:'voice' (questo file), message_type:'audio' +
     // file_url (ChatPage.jsx dell'app paziente) — senza la seconda il paziente
     // vedeva il vocale come URL di testo grezzo, non come player audio.
@@ -1543,10 +1548,10 @@ async function sendVoiceMessage(blob) {
       patient_id: selectedPatientId,
       sender_id: currentUser.id,
       sender_role: 'dietitian',
-      content: urlData.publicUrl,
+      content: voiceUrl,
       type: 'voice',
       message_type: 'audio',
-      file_url: urlData.publicUrl,
+      file_url: voiceUrl,
       status: 'sent'
     });
     if (error) throw error;

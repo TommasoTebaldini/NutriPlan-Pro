@@ -387,10 +387,14 @@
       cacheControl: '31536000',
     });
     if (error) throw error;
-    // Public bucket → use permanent public URL (no token, no expiry)
-    const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
-    if (!data?.publicUrl) throw new Error('URL pubblico non disponibile');
-    return data.publicUrl;
+    // Bucket privato (SEZIONE 33): URL firmato ~10 anni invece di getPublicUrl.
+    // Il token nell'URL è necessario per leggere l'immagine — non più
+    // enumerabile come un URL pubblico. Letto dall'app paziente via
+    // print_image_url, funziona come <img src> finché il token è valido.
+    const { data, error: signErr } = await sb.storage.from(BUCKET).createSignedUrl(path, 315360000);
+    if (signErr) throw signErr;
+    if (!data?.signedUrl) throw new Error('URL firmato non disponibile');
+    return data.signedUrl;
   }
 
   // Best-effort cleanup of stale pages from a previous save with more

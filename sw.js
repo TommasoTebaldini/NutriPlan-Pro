@@ -3,7 +3,7 @@
 // usato per Supabase-js in tutte le pagine), non serve un bundler/injectManifest.
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 
-const VERSION = 'v6';
+const VERSION = 'v7';
 
 // File pesanti condivisi da (quasi) tutte le pagine cliniche (app/database/
 // patologie/ricette/valutazione per db.min.js, praticamente tutto il sito per

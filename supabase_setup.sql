@@ -732,9 +732,15 @@ ALTER TABLE IF EXISTS ncpt         ADD COLUMN IF NOT EXISTS print_image_url TEXT
 -- SEZIONE 9 — STORAGE BUCKET document-prints
 -- ═══════════════════════════════════════════════════════════════════════════
 
+-- ⚠️ PRIVATO (era pubblico fino a SEZIONE 33): contiene immagini PNG di
+-- documenti clinici (piani, ecc.) — PHI. Le policy sotto (dietista collegato
+-- in scrittura, paziente proprietario in lettura) erano già corrette ma
+-- venivano VANIFICATE dal flag public=TRUE, perché su un bucket pubblico
+-- l'accesso in lettura via URL bypassa del tutto le policy SELECT. Il codice
+-- (js/print-capture.js) ora usa createSignedUrl() invece di getPublicUrl().
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
-  'document-prints', 'document-prints', TRUE,
+  'document-prints', 'document-prints', FALSE,
   10485760,
   ARRAY['image/png','image/jpeg','image/webp']
 )
@@ -2455,3 +2461,113 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS fic_company_id TEXT;
 
 ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sdi_inviato_at TIMESTAMPTZ;
 ALTER TABLE fatture ADD COLUMN IF NOT EXISTS fic_document_id TEXT;
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 33 — FIX SICUREZZA: bucket con dati sanitari resi PRIVATI
+--
+-- Tre bucket contenevano PHI (dati sanitari) ma erano PUBBLICI, quindi
+-- chiunque con l'URL (path in parte prevedibile) poteva accedervi SENZA login:
+--   • patient-photos  — foto cliniche/composizione corporea (valutazione.html)
+--   • voice-messages  — messaggi vocali chat dietista↔paziente (chat.html)
+--   • document-prints — immagini PNG di documenti/piani clinici (print-capture)
+-- Portati a private + policy di storage per-riga, allineati al pattern già
+-- usato per patient-files e group-chat-media. Il codice passa da
+-- getPublicUrl() a createSignedUrl() (URL firmati). Le policy di
+-- document-prints esistevano già (SEZIONE 9) ma erano vanificate dal flag
+-- public=TRUE: qui lo forziamo a FALSE (idempotente, così basta eseguire
+-- questa sezione senza ri-eseguire la 9).
+--
+-- NOTA: gli URL pubblici già salvati nei vecchi messaggi vocali smetteranno di
+-- funzionare (403) — è il comportamento voluto: erano un leak. I nuovi vocali
+-- usano URL firmati. Le foto non salvavano URL nel DB (ricavati a runtime dal
+-- listing), quindi nessun dato storico da migrare lì.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- ── document-prints: forza privato (policy già presenti in SEZIONE 9) ──
+UPDATE storage.buckets SET public = FALSE WHERE id = 'document-prints';
+
+-- ── patient-photos: privato + limiti ──
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('patient-photos', 'patient-photos', false, 15728640,
+        ARRAY['image/jpeg','image/png','image/webp','image/heic','image/heif'])
+ON CONFLICT (id) DO UPDATE SET
+  public = false,
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
+
+-- Path: <cartella_id>/<scheda_id>/<tipo>.<ext> — foldername[1] = cartella_id.
+-- Accesso al solo dietista proprietario della cartella (feature dietista-only,
+-- le foto non sono mai mostrate ai pazienti).
+DROP POLICY IF EXISTS "patient_photos_owner_all" ON storage.objects;
+CREATE POLICY "patient_photos_owner_all" ON storage.objects
+  FOR ALL USING (
+    bucket_id = 'patient-photos'
+    AND EXISTS (
+      SELECT 1 FROM cartelle c
+      WHERE c.id = ((storage.foldername(name))[1])::uuid
+        AND c.user_id = auth.uid()
+    )
+  )
+  WITH CHECK (
+    bucket_id = 'patient-photos'
+    AND EXISTS (
+      SELECT 1 FROM cartelle c
+      WHERE c.id = ((storage.foldername(name))[1])::uuid
+        AND c.user_id = auth.uid()
+    )
+  );
+
+-- ── voice-messages: privato + limiti ──
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('voice-messages', 'voice-messages', false, 10485760,
+        ARRAY['audio/webm','audio/ogg','audio/mp4','audio/mpeg'])
+ON CONFLICT (id) DO UPDATE SET
+  public = false,
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
+
+-- Path: voice-messages/<patient_id>/<ts>.webm — foldername[2] = patient_id
+-- (foldername[1] è il prefisso letterale 'voice-messages' presente nel path).
+-- Accesso: il paziente stesso o un dietista a lui collegato via patient_dietitian.
+DROP POLICY IF EXISTS "voice_messages_read" ON storage.objects;
+CREATE POLICY "voice_messages_read" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'voice-messages'
+    AND (
+      auth.uid() = ((storage.foldername(name))[2])::uuid
+      OR EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = ((storage.foldername(name))[2])::uuid
+          AND pd.dietitian_id = auth.uid()
+      )
+    )
+  );
+
+DROP POLICY IF EXISTS "voice_messages_write" ON storage.objects;
+CREATE POLICY "voice_messages_write" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'voice-messages'
+    AND (
+      auth.uid() = ((storage.foldername(name))[2])::uuid
+      OR EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = ((storage.foldername(name))[2])::uuid
+          AND pd.dietitian_id = auth.uid()
+      )
+    )
+  );
+
+DROP POLICY IF EXISTS "voice_messages_delete" ON storage.objects;
+CREATE POLICY "voice_messages_delete" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'voice-messages'
+    AND (
+      auth.uid() = ((storage.foldername(name))[2])::uuid
+      OR EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = ((storage.foldername(name))[2])::uuid
+          AND pd.dietitian_id = auth.uid()
+      )
+    )
+  );

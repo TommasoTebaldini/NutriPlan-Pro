@@ -1863,8 +1863,9 @@ async function uploadFotoProgressi(cartellaId, schedaId) {
     try {
       const { error: upErr } = await sb.storage.from('patient-photos').upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) { console.warn('Foto upload error:', upErr.message); continue; }
-      const { data: urlData } = sb.storage.from('patient-photos').getPublicUrl(path);
-      uploads.push({ tipo, url: urlData?.publicUrl, path, data_foto: dateFoto, note_foto: noteFoto, peso_al_momento: pesoFoto });
+      // Bucket privato (SEZIONE 33): nessun URL da salvare, le foto vengono
+      // ricaricate con URL firmati a display-time in caricaFotoSalvate().
+      uploads.push({ tipo, path, data_foto: dateFoto, note_foto: noteFoto, peso_al_momento: pesoFoto });
     } catch(e) { console.warn('Upload foto error:', e); }
   }
   if (rejected.length) toast('⚠️ ' + _L('File rifiutati: ','Rejected files: ') + rejected.join(', '), 'warn');
@@ -1883,17 +1884,21 @@ async function caricaFotoSalvate(cartellaId, schedaId) {
     const { data: files } = await sb.storage.from('patient-photos').list(`${cartellaId}/${schedaId}`);
     if (!files || !files.length) { container.style.display = 'none'; return; }
     container.style.display = 'block';
-    listEl.innerHTML = files.map(f => {
-      const { data: urlData } = sb.storage.from('patient-photos').getPublicUrl(`${cartellaId}/${schedaId}/${f.name}`);
+    // Bucket privato (SEZIONE 33): URL firmati (1h, sola visualizzazione) invece
+    // di getPublicUrl — un URL firmato scade e non è indovinabile.
+    const cards = await Promise.all(files.map(async f => {
+      const { data: signed } = await sb.storage.from('patient-photos').createSignedUrl(`${cartellaId}/${schedaId}/${f.name}`, 3600);
+      const url = signed?.signedUrl || '';
       const label = f.name.startsWith('prima') ? '📷 Prima' : f.name.startsWith('dopo') ? '📷 Dopo' : f.name;
       return `<div style="text-align:center">
-        <a href="${urlData?.publicUrl}" target="_blank">
-          <img src="${urlData?.publicUrl}" alt="${esc(label)}" width="120" height="120" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:2px solid var(--border);cursor:pointer">
+        <a href="${esc(url)}" target="_blank" rel="noopener">
+          <img src="${esc(url)}" alt="${esc(label)}" width="120" height="120" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:2px solid var(--border);cursor:pointer">
         </a>
         <div style="font-size:11px;font-weight:600;color:var(--slate-m);margin-top:4px">${label}</div>
         <div style="font-size:10px;color:var(--slate-l)">${new Date(f.created_at||'').toLocaleDateString('it') || ''}</div>
       </div>`;
-    }).join('');
+    }));
+    listEl.innerHTML = cards.join('');
   } catch(e) { console.warn('caricaFotoSalvate error:', e); }
 }
 

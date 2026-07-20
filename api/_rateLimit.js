@@ -21,8 +21,13 @@
 //   L'integrazione inietta automaticamente UPSTASH_REDIS_REST_URL e
 //   UPSTASH_REDIS_REST_TOKEN come env var del progetto. Nessun codice da toccare.
 
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+// L'integrazione Upstash su Vercel può creare le env var con DUE convenzioni di
+// nome a seconda di come è stata aggiunta: UPSTASH_REDIS_REST_URL/TOKEN oppure
+// i nomi in stile Vercel KV (KV_REST_API_URL / KV_REST_API_TOKEN). Le
+// accettiamo entrambe. NB: usare il token a scrittura piena (KV_REST_API_TOKEN),
+// NON KV_REST_API_READ_ONLY_TOKEN — servono INCR/EXPIRE.
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 const upstashEnabled = Boolean(UPSTASH_URL && UPSTASH_TOKEN);
 
 // ── Fallback in memoria (per-istanza) ──────────────────────────────────────

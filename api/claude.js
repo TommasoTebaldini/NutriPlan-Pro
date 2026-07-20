@@ -2,6 +2,8 @@
 // Usa Groq API (stessa chiave di gemini.js)
 // Variabile: GEMINI_API_KEY
 
+import { checkRateLimit } from './_rateLimit.js';
+
 // Public Supabase values — l'URL non è sensibile, ma l'anon key non deve avere
 // un fallback hardcoded nel codice server-side (vedi verifySupabaseToken sotto).
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
@@ -10,24 +12,9 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const MAX_TOKENS_LIMIT = 4096;
 const MAX_CONTENT_BYTES = 32768; // 32 KB per request body
 
-// Per-user rate limiter (instance-scoped: throttles burst on warm instances)
-const _rl = new Map(); // userId → { n, t }
+// Rate limiter: distribuito su Upstash se configurato, altrimenti in memoria
+// (vedi api/_rateLimit.js). 10 richieste/min per utente.
 const RL_MAX = 10;
-const RL_WIN = 60_000;
-
-function rateLimit(userId) {
-  const now = Date.now();
-  const e = _rl.get(userId);
-  if (!e || now - e.t > RL_WIN) { _rl.set(userId, { n: 1, t: now }); return true; }
-  if (e.n >= RL_MAX) return false;
-  e.n++; return true;
-}
-
-function pruneRl() {
-  if (_rl.size < 500) return;
-  const cutoff = Date.now() - RL_WIN;
-  for (const [k, v] of _rl) if (v.t < cutoff) _rl.delete(k);
-}
 
 // Token verification cache: evita una chiamata HTTP a Supabase per ogni richiesta
 const _tkCache = new Map(); // token → { user, exp }
@@ -85,8 +72,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
   }
 
-  pruneRl();
-  if (!rateLimit(user.id)) {
+  if (!(await checkRateLimit(user.id, { scope: 'claude', max: RL_MAX }))) {
     return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
   }
 

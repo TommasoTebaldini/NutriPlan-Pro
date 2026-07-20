@@ -3,6 +3,8 @@
 // Chiave gratuita su: https://console.groq.com/keys (registrazione con Google/GitHub)
 // Vercel: Settings → Environment Variables → GEMINI_API_KEY (stessa variabile, non cambiare nome)
 
+import { checkRateLimit } from './_rateLimit.js';
+
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 // No hardcoded fallback for the anon key: verifySupabaseToken() below already
 // returns null (→ 401) if this is unset, instead of silently using a fixed key.
@@ -11,24 +13,8 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const MAX_TOKENS_LIMIT = 4096;
 const MAX_CONTENT_BYTES = 32768; // 32 KB per request body
 
-// Per-user rate limiter (instance-scoped: throttles burst on warm instances)
-const _rl = new Map();
+// Rate limiter distribuito/in-memoria — vedi api/_rateLimit.js. 10 req/min.
 const RL_MAX = 10;
-const RL_WIN = 60_000;
-
-function rateLimit(userId) {
-  const now = Date.now();
-  const e = _rl.get(userId);
-  if (!e || now - e.t > RL_WIN) { _rl.set(userId, { n: 1, t: now }); return true; }
-  if (e.n >= RL_MAX) return false;
-  e.n++; return true;
-}
-
-function pruneRl() {
-  if (_rl.size < 500) return;
-  const cutoff = Date.now() - RL_WIN;
-  for (const [k, v] of _rl) if (v.t < cutoff) _rl.delete(k);
-}
 
 // Token verification cache: evita una chiamata HTTP a Supabase per ogni richiesta
 const _tkCache = new Map(); // token → { user, exp }
@@ -86,8 +72,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
   }
 
-  pruneRl();
-  if (!rateLimit(user.id)) {
+  if (!(await checkRateLimit(user.id, { scope: 'gemini', max: RL_MAX }))) {
     return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
   }
 

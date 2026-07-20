@@ -11,6 +11,8 @@
 // generata vengono restituiti al client, che decide se salvarli in cartella
 // clinica (note_specialistiche).
 
+import { checkRateLimit } from './_rateLimit.js';
+
 export const config = {
   api: { bodyParser: { sizeLimit: '12mb' } }, // audio compresso (webm/opus) di una seduta breve
 };
@@ -20,17 +22,8 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const MAX_AUDIO_BYTES = 10 * 1024 * 1024; // ~10MB decodificati, abbondante per una seduta di 20-30 min in opus
 
 // Rate limit più severo del solito: la trascrizione costa molto di più di un
-// singolo prompt di chat.
-const _rl = new Map();
+// singolo prompt di chat. Distribuito/in-memoria — vedi api/_rateLimit.js.
 const RL_MAX = 6;
-const RL_WIN = 60_000;
-function rateLimit(userId) {
-  const now = Date.now();
-  const e = _rl.get(userId);
-  if (!e || now - e.t > RL_WIN) { _rl.set(userId, { n: 1, t: now }); return true; }
-  if (e.n >= RL_MAX) return false;
-  e.n++; return true;
-}
 
 const _tkCache = new Map();
 async function verifySupabaseToken(token) {
@@ -124,7 +117,7 @@ export default async function handler(req, res) {
   const user = await verifySupabaseToken(authHeader.slice(7));
   if (!user?.id) return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
 
-  if (!rateLimit(user.id)) {
+  if (!(await checkRateLimit(user.id, { scope: 'ai-scribe', max: RL_MAX }))) {
     return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
   }
 

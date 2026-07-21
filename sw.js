@@ -3,7 +3,7 @@
 // usato per Supabase-js in tutte le pagine), non serve un bundler/injectManifest.
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 
-const VERSION = 'v9';
+const VERSION = 'v10';
 
 // File pesanti condivisi da (quasi) tutte le pagine cliniche (app/database/
 // patologie/ricette/valutazione per db.min.js, praticamente tutto il sito per
@@ -61,11 +61,16 @@ if (!workbox) {
     }),
   );
 
-  // JS/CSS: già cacheati 7gg lato HTTP (vercel.json) — cache-first qui li rende
-  // disponibili anche offline, non solo "veloci".
+  // JS/CSS: StaleWhileRevalidate invece di CacheFirst. Serve subito la copia in
+  // cache (veloce, offline-friendly) MA rilancia in background un fetch di rete
+  // che aggiorna la cache — così una modifica a un file JS/CSS si propaga al
+  // SECONDO caricamento, invece di restare bloccata fino a 30 giorni come con
+  // CacheFirst. È il fix del problema del 21/7 (utils.min.js cachato con la
+  // chiave legacy dopo un deploy): niente più aggiornamenti "invisibili" agli
+  // utenti. Il bump di VERSION resta comunque utile per un refresh immediato.
   registerRoute(
     ({ request }) => request.destination === 'script' || request.destination === 'style',
-    new CacheFirst({
+    new StaleWhileRevalidate({
       cacheName: 'assets-' + VERSION,
       plugins: [new ExpirationPlugin({ maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 30 })],
     }),

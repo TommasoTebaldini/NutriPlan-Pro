@@ -31,6 +31,7 @@ const PRINT_TABLES = {
   bia_records: 'print_image_url',
   note_specialistiche: 'print_image_url',
   schede_valutazione: 'print_image_url',
+  ncpt: 'print_image_url',
 };
 
 if (!SUPABASE_URL || !SERVICE_KEY) {

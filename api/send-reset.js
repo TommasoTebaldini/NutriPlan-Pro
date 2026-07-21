@@ -1,20 +1,15 @@
 // api/send-reset.js — Password recovery via Resend (bypasses Supabase email)
 // Env vars: SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
 
+import { checkRateLimit } from './_rateLimit.js';
+
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 
-// Rate limiter: max 3 reset per email ogni 15 minuti (previene spam)
-const _resetRl = new Map(); // email → { n, t }
+// Max 3 reset per email ogni 15 minuti. Ora tramite il limiter condiviso
+// (Upstash se configurato → conteggio corretto tra tutte le istanze
+// serverless; altrimenti fallback in memoria) — vedi api/_rateLimit.js.
 const RESET_MAX = 3;
-const RESET_WIN = 15 * 60_000;
-
-function checkResetRateLimit(email) {
-  const now = Date.now();
-  const e = _resetRl.get(email);
-  if (!e || now - e.t > RESET_WIN) { _resetRl.set(email, { n: 1, t: now }); return true; }
-  if (e.n >= RESET_MAX) return false;
-  e.n++; return true;
-}
+const RESET_WIN_SEC = 15 * 60;
 
 export default async function handler(req, res) {
   const origin = req.headers.origin || 'https://app.dietplan-pro.com';
@@ -44,7 +39,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Email non valida' });
   }
 
-  if (!checkResetRateLimit(email)) {
+  if (!(await checkRateLimit(email, { scope: 'reset', max: RESET_MAX, windowSec: RESET_WIN_SEC }))) {
     return res.status(429).json({ error: 'Troppe richieste. Riprova tra 15 minuti.' });
   }
 

@@ -48,7 +48,7 @@ import webpush from 'web-push';
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const PATIENT_APP_URL = process.env.PATIENT_APP_URL || 'https://app.dietplan-pro.com';
-const MAX_APPOINTMENTS = 1000; // backstop: evita run troppo lunghi su installazioni enormi
+const MAX_APPOINTMENTS = 5000; // backstop di sicurezza (finestra 48h): non un cap funzionale realistico
 
 async function sbFetch(path, serviceKey, init) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {

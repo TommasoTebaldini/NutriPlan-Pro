@@ -30,8 +30,10 @@ import webpush from 'web-push';
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const INACTIVE_DAYS = 5;
-const MAX_PATIENTS = 500; // backstop: evita run troppo lunghi su installazioni enormi
-const CONCURRENCY = 10;
+// Backstop di sicurezza contro loop anomali, NON un cap funzionale: grazie alle
+// query aggregate a blocchi il cron processa comodamente decine di migliaia di
+// pazienti per run. Alzabile ancora se la base cresce.
+const MAX_PATIENTS = 50000;
 
 function chunk(arr, size) {
   const out = [];
@@ -48,7 +50,7 @@ async function sbFetch(path, serviceKey) {
 }
 
 function emailHtml({ dietitianName, rows }) {
-  const items = rows.map(r => `<li style="margin-bottom:6px"><b>${r.name}</b> — ${r.daysAgo === null ? 'nessun log alimentare registrato' : `ultimo log ${r.daysAgo} giorni fa`}</li>`).join('');
+  const items = rows.map(r => `<li style="margin-bottom:6px"><b>${r.name}</b> — ${r.everLogged ? `nessun diario negli ultimi ${INACTIVE_DAYS} giorni` : 'nessun diario ancora registrato'}</li>`).join('');
   return `<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -79,7 +81,7 @@ function emailHtml({ dietitianName, rows }) {
 }
 
 // ── Report settimanale di aderenza (solo lunedì) ────────────────────────────
-const MAX_PATIENTS_PER_DIETITIAN = 500;
+const MAX_PATIENTS_PER_DIETITIAN = 2000; // headroom: un singolo dietista non arriva a tanti pazienti
 
 async function runWeeklyReport(serviceKey) {
   const vapidPublic = process.env.VAPID_PUBLIC_KEY;
@@ -165,45 +167,52 @@ export default async function handler(req, res) {
   }
 
   try {
-    const links = await sbFetch('patient_dietitian?select=patient_id,dietitian_id,cartella_id', serviceKey);
-    const limited = links.slice(0, MAX_PATIENTS);
-    if (!limited.length) return res.status(200).json({ ok: true, checked: 0, inactive: 0, emailsSent: 0 });
+    // Nessun cap a 500: si processano TUTTI i collegamenti (backstop alto solo
+    // per sicurezza contro loop anomali). La scalabilità viene dal NON fare più
+    // una query per paziente (N+1), ma poche query aggregate a blocchi sotto.
+    const links = (await sbFetch('patient_dietitian?select=patient_id,dietitian_id,cartella_id', serviceKey)).slice(0, MAX_PATIENTS);
+    if (!links.length) return res.status(200).json({ ok: true, checked: 0, inactive: 0, emailsSent: 0 });
 
-    const cartellaIds = [...new Set(limited.map(l => l.cartella_id).filter(Boolean))];
-    const dietitianIds = [...new Set(limited.map(l => l.dietitian_id))];
+    const cartellaIds = [...new Set(links.map(l => l.cartella_id).filter(Boolean))];
+    const dietitianIds = [...new Set(links.map(l => l.dietitian_id))];
+    const patientIds = [...new Set(links.map(l => l.patient_id).filter(Boolean))];
 
-    const [cartelle, dietitians] = await Promise.all([
-      cartellaIds.length ? sbFetch(`cartelle?select=id,nome&id=in.(${cartellaIds.join(',')})`, serviceKey) : [],
-      sbFetch(`profiles?select=id,email,nome,cognome&id=in.(${dietitianIds.join(',')})`, serviceKey),
-    ]);
-    const cartellaById = new Map(cartelle.map(c => [c.id, c]));
-    const dietitianById = new Map(dietitians.map(d => [d.id, d]));
+    // Metadati (cartelle+dietisti) richiesti a blocchi: un IN list gigante può
+    // superare il limite di lunghezza URL su installazioni grandi.
+    const cartellaById = new Map();
+    const dietitianById = new Map();
+    for (const b of chunk(cartellaIds, 150)) {
+      (await sbFetch(`cartelle?select=id,nome&id=in.(${b.join(',')})`, serviceKey)).forEach(c => cartellaById.set(c.id, c));
+    }
+    for (const b of chunk(dietitianIds, 150)) {
+      (await sbFetch(`profiles?select=id,email,nome,cognome&id=in.(${b.join(',')})`, serviceKey)).forEach(d => dietitianById.set(d.id, d));
+    }
 
-    const cutoff = Date.now() - INACTIVE_DAYS * 24 * 60 * 60 * 1000;
+    const cutoffDate = new Date(Date.now() - INACTIVE_DAYS * 86400000).toISOString().slice(0, 10);
+
+    // Chi ha loggato NELLA finestra (attivo) e chi ha loggato ALMENO UNA VOLTA:
+    // due query per blocco di ~150 pazienti invece di una per paziente.
+    const activeSet = new Set();
+    const everSet = new Set();
+    for (const b of chunk(patientIds, 150)) {
+      const inList = b.join(',');
+      const [recent, ever] = await Promise.all([
+        sbFetch(`food_logs?select=user_id&user_id=in.(${inList})&date=gte.${cutoffDate}&limit=100000`, serviceKey),
+        sbFetch(`food_logs?select=user_id&user_id=in.(${inList})&limit=100000`, serviceKey),
+      ]);
+      recent.forEach(r => activeSet.add(r.user_id));
+      ever.forEach(r => everSet.add(r.user_id));
+    }
+
+    // Un paziente è inattivo se non ha loggato nella finestra. Raggruppa per
+    // dietista (una sola email per dietista, anche con molti pazienti inattivi).
     const inactiveByDietitian = new Map(); // dietitian_id → rows[]
-
-    for (const batch of chunk(limited, CONCURRENCY)) {
-      await Promise.all(batch.map(async link => {
-        let lastLog;
-        try {
-          const logs = await sbFetch(
-            `food_logs?select=created_at&user_id=eq.${link.patient_id}&order=created_at.desc&limit=1`,
-            serviceKey,
-          );
-          lastLog = logs[0]?.created_at || null;
-        } catch {
-          return; // food_logs irraggiungibile per questo utente: salta, non bloccare l'intero run
-        }
-        const lastTs = lastLog ? new Date(lastLog).getTime() : null;
-        const isInactive = lastTs === null || lastTs < cutoff;
-        if (!isInactive) return;
-
-        const daysAgo = lastTs === null ? null : Math.floor((Date.now() - lastTs) / (24 * 60 * 60 * 1000));
-        const name = cartellaById.get(link.cartella_id)?.nome || 'Paziente';
-        const rows = inactiveByDietitian.get(link.dietitian_id) || [];
-        rows.push({ name, daysAgo });
-        inactiveByDietitian.set(link.dietitian_id, rows);
-      }));
+    for (const link of links) {
+      if (activeSet.has(link.patient_id)) continue;
+      const name = cartellaById.get(link.cartella_id)?.nome || 'Paziente';
+      const rows = inactiveByDietitian.get(link.dietitian_id) || [];
+      rows.push({ name, everLogged: everSet.has(link.patient_id) });
+      inactiveByDietitian.set(link.dietitian_id, rows);
     }
 
     let emailsSent = 0;
@@ -241,7 +250,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       ok: true,
-      checked: limited.length,
+      checked: links.length,
       inactive: [...inactiveByDietitian.values()].reduce((s, r) => s + r.length, 0),
       emailsSent,
       weeklyReport,

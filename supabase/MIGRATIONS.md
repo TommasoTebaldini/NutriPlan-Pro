@@ -86,7 +86,7 @@ file di migrazione separati.
 | File migrazione | Descrizione | Applicata il | Da |
 |---|---|---|---|
 | _(baseline)_ | Schema completo fino a SEZIONE 33 (supabase_setup.sql) | 2026-07 (manuale) | — |
-| | | | |
+| `20260721150000__enforce_2fa_rls.sql` | Blinda la 2FA a livello RLS (policy restrittive + funzione `mfa_ok()`) | _(da applicare)_ | |
 
 > Ogni volta che applichi una nuova migrazione, aggiungi una riga qui con la
 > data e chi l'ha eseguita, poi committa.

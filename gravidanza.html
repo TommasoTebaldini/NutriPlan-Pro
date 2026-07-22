@@ -142,6 +142,24 @@ async function ensureChartJs() {
   </div>
 </div>
 
+<!-- PAZIENTE BAR: persistente su tutte le tab, non solo su "Valutazione Paziente"
+     (prima era dentro #grav-results, quindi sparivo finché non si calcolava un
+     risultato e comunque solo visibile sulla prima tab — stesso pattern usato
+     in diabete.html/renale.html/ecc. con #dg-paz-hdr ecc.) -->
+<div class="paz-hdr no-print" id="grav-paz-hdr" style="margin-bottom:16px">
+  <div class="paz-hdr-field" style="flex:2;min-width:200px">
+    <label>📁 <span data-only-lang="it">Cartella Paziente</span><span data-only-lang="en" style="display:none">Patient Folder</span></label>
+    <div id="grav-cartella-cw"></div>
+  </div>
+  <div class="paz-hdr-field" style="max-width:220px">
+    <label>📝 <span data-only-lang="it">Nota / Titolo sessione</span><span data-only-lang="en" style="display:none">Note / Session title</span></label>
+    <input type="text" id="grav-nota" placeholder="es. Prima visita, follow-up...">
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <button class="btn btn-primary btn-sm" onclick="salvaNota()">💾 <span data-only-lang="it">Salva in Cartella</span><span data-only-lang="en" style="display:none">Save to Folder</span></button>
+  </div>
+</div>
+
 <!-- TABS -->
 <div style="display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap;padding:6px;background:white;border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)">
   <button class="grav-tab active" onclick="switchTab('valutazione',this)">📊 <span data-only-lang="it">Valutazione Paziente</span><span data-only-lang="en" style="display:none">Patient Assessment</span></button>
@@ -206,20 +224,6 @@ async function ensureChartJs() {
       <div class="trimestre-box tri-3" data-only-lang="it"><b>3° Trimestre (sett. 28–42):</b> <span style="color:#DC2626">+450 kcal/die</span> — massima crescita fetale e accumulo di riserve</div>
       <div class="trimestre-box tri-3" data-only-lang="en" style="display:none"><b>3rd Trimester (wk 28–42):</b> <span style="color:#DC2626">+450 kcal/day</span> — maximum foetal growth and reserve accumulation</div>
       <div id="res-trimestre-attuale" style="margin-top:10px;padding:12px 14px;background:#FDF2F8;border-radius:8px;border-left:3px solid #BE185D;font-size:13px;font-weight:600;color:#831843;display:none"></div>
-    </div>
-
-    <div class="paz-hdr no-print" id="grav-paz-hdr">
-      <div class="paz-hdr-field" style="flex:2;min-width:200px">
-        <label>📁 <span data-only-lang="it">Cartella Paziente</span><span data-only-lang="en" style="display:none">Patient Folder</span></label>
-        <div id="grav-cartella-cw"></div>
-      </div>
-      <div class="paz-hdr-field" style="max-width:220px">
-        <label>📝 <span data-only-lang="it">Nota / Titolo sessione</span><span data-only-lang="en" style="display:none">Note / Session title</span></label>
-        <input type="text" id="grav-nota" placeholder="es. Prima visita, follow-up...">
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <button class="btn btn-primary btn-sm" onclick="salvaNota()">💾 <span data-only-lang="it">Salva in Cartella</span><span data-only-lang="en" style="display:none">Save to Folder</span></button>
-      </div>
     </div>
   </div>
 </div>

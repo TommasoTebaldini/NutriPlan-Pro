@@ -3,7 +3,17 @@
 // usato per Supabase-js in tutte le pagine), non serve un bundler/injectManifest.
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 
-const VERSION = 'v10';
+// Bumped v10→v11: forces every browser to detect these bytes as a new SW
+// version and install it (byte-identical files never trigger an update).
+// This isn't just a cache-bucket refresh — a service worker's own CSP is
+// fixed at the moment IT was installed and does NOT change when the page
+// serves new headers on reload, only when the SW itself gets reinstalled.
+// Needed after the connect-src fix in vercel.json (accounts.google.com):
+// without this bump, already-installed workers keep enforcing the old CSP
+// for their own fetch()es (e.g. the StaleWhileRevalidate route intercepting
+// accounts.google.com/gsi/client) forever, regardless of any browser cache
+// clearing on the page side.
+const VERSION = 'v11';
 
 // File pesanti condivisi da (quasi) tutte le pagine cliniche (app/database/
 // patologie/ricette/valutazione per db.min.js, praticamente tutto il sito per

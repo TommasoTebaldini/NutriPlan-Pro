@@ -145,9 +145,8 @@
   <h2>📅 <span data-only-lang="it">Agenda Appuntamenti</span><span data-only-lang="en">Appointment Schedule</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-primary btn-sm" onclick="openNewEvent()">➕ <span data-only-lang="it">Nuovo Appuntamento</span><span data-only-lang="en">New Appointment</span></button>
-    <button id="btn-gcal" class="btn btn-ghost btn-sm" onclick="connectGoogleCalendar()" style="display:none" title="Solo Google Calendar: push automatico dei nuovi appuntamenti + i tuoi eventi personali visibili qui in agenda">📅 <span data-only-lang="it">Connetti Google Calendar</span><span data-only-lang="en">Connect Google Calendar</span></button>
     <button id="btn-gcal-toggle" class="btn btn-ghost btn-sm" onclick="toggleGcalEvents()" style="display:none" title="Mostra/nascondi gli eventi del tuo Google Calendar personale sull'agenda">🗓️ <span data-only-lang="it">Cal. personale</span><span data-only-lang="en">Personal cal.</span>: ✓</button>
-    <button class="btn btn-ghost btn-sm no-print" onclick="openSyncModal()" title="Abbonati al tuo calendario (Google, Apple, Outlook, qualsiasi app) tramite link — sola lettura, si aggiorna da solo">🔗 <span data-only-lang="it">Sincronizza Calendario</span><span data-only-lang="en">Sync Calendar</span></button>
+    <button id="btn-gcal-sync" class="btn btn-ghost btn-sm no-print" onclick="openSyncModal()" title="Connetti Google Calendar (sync bidirezionale in tempo reale) oppure abbonati con Apple Calendar, Outlook o qualsiasi altra app">🔗 <span data-only-lang="it">Sincronizza Calendario</span><span data-only-lang="en">Sync Calendar</span></button>
     <button class="today-btn" onclick="goToday()"><span data-only-lang="it">Oggi</span><span data-only-lang="en">Today</span></button>
   </div>
 </div>
@@ -355,7 +354,7 @@
       <!-- PRIMARY: Auto-sync by email -->
       <div style="background:linear-gradient(135deg,#ECFDF5,#EFF6FF);border:2px solid #34D399;border-radius:12px;padding:18px;margin-bottom:16px">
         <div style="font-size:15px;font-weight:700;color:var(--teal-d);margin-bottom:6px">⚡ <span data-only-lang="it">Sincronizzazione Automatica</span><span data-only-lang="en">Automatic Sync</span></div>
-        <p style="font-size:13px;color:var(--slate-m);margin-bottom:14px"><span data-only-lang="it">Inserisci la tua email e clicca <strong>Sincronizza</strong>: si apre il link di abbonamento per il tuo calendario (Google, Apple, Outlook...); una volta aggiunto resta aggiornato da solo. Per Google Calendar con push istantaneo dei nuovi appuntamenti e i tuoi eventi personali visibili qui in agenda, usa invece il pulsante <strong>"Connetti Google Calendar"</strong> in alto nella pagina.</span><span data-only-lang="en">Enter your email and click <strong>Sync</strong>: your calendar's subscription link opens (Google, Apple, Outlook...); once added, it keeps itself updated. For Google Calendar with instant push of new appointments and your personal events shown here in the schedule, use the <strong>"Connect Google Calendar"</strong> button at the top of the page instead.</span></p>
+        <p style="font-size:13px;color:var(--slate-m);margin-bottom:14px"><span data-only-lang="it">Inserisci la tua email e clicca <strong>Sincronizza</strong>. Con un indirizzo Gmail si apre l'autorizzazione Google diretta: push automatico dei nuovi appuntamenti e i tuoi eventi personali visibili qui in agenda. Con qualsiasi altro indirizzo (Apple Calendar, Outlook...) si apre invece un link di abbonamento in sola lettura, che resta aggiornato da solo.</span><span data-only-lang="en">Enter your email and click <strong>Sync</strong>. A Gmail address opens direct Google authorisation: new appointments are pushed automatically and your personal events show up here in the schedule. Any other address (Apple Calendar, Outlook...) opens a read-only subscription link instead, which keeps itself updated.</span></p>
         <label style="font-size:12px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:5px">📧 <span data-only-lang="it">La tua email:</span><span data-only-lang="en">Your email:</span></label>
         <div style="display:flex;gap:8px;align-items:stretch;margin-bottom:10px">
           <input type="email" id="auto-sync-email" placeholder="tuamail@gmail.com"
@@ -370,6 +369,9 @@
         </div>
         <div id="auto-sync-status" style="font-size:12px;color:#065F46;background:#D1FAE5;border-radius:7px;padding:8px 10px;margin-bottom:8px;display:none"></div>
         <div style="font-size:11px;color:var(--slate-l)">✓ <span data-only-lang="it">Funziona con Google Calendar · Apple Calendar · Outlook · qualsiasi app calendario</span><span data-only-lang="en">Works with Google Calendar · Apple Calendar · Outlook · any calendar app</span></div>
+        <div id="gcal-disconnect-row" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid #A7F3D0">
+          <button class="btn btn-ghost btn-sm" onclick="connectGoogleCalendar()" style="color:#B91C1C">🔌 <span data-only-lang="it">Disconnetti Google Calendar</span><span data-only-lang="en">Disconnect Google Calendar</span></button>
+        </div>
       </div>
 
       <!-- Advanced options (collapsed) -->
@@ -379,15 +381,6 @@
           <span style="font-size:10px;color:var(--slate-l)"><span data-only-lang="it">URL abbonamento</span><span data-only-lang="en">Subscription URL</span> · <span data-only-lang="it">Esporta ICS</span><span data-only-lang="en">Export ICS</span></span>
         </summary>
         <div style="padding:14px">
-
-          <!-- Google Calendar is handled by the single "Connetti Google Calendar" button in the
-               page header (btn-gcal) plus the "Sincronizzazione Automatica" box above for Gmail
-               addresses — this used to duplicate that same OAuth flow with a third button, which
-               was confusing (see agenda sync review). Kept as a pointer instead so there's exactly
-               one OAuth entry point to reason about. -->
-          <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px;margin-bottom:12px;font-size:12px;color:#1e40af">
-            📅 <span data-only-lang="it">Per Google Calendar usa il pulsante <strong>"Connetti Google Calendar"</strong> in alto nella pagina (o inserisci una email Gmail qui sopra in "Sincronizzazione Automatica"): entrambi attivano la stessa connessione diretta.</span><span data-only-lang="en">For Google Calendar use the <strong>"Connect Google Calendar"</strong> button at the top of the page (or enter a Gmail address above in "Automatic Sync"): both trigger the same direct connection.</span>
-          </div>
 
           <!-- WebCal subscription URL -->
           <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:14px;margin-bottom:12px">
@@ -1379,7 +1372,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (cfg && cfg.googleClientId) GOOGLE_CLIENT_ID = cfg.googleClientId;
   } catch(e) {}
   if (GOOGLE_CLIENT_ID) {
-    document.getElementById('btn-gcal').style.display = '';
+    // The header only has the single merged "Sincronizza Calendario" button now
+    // (always visible) — no separate Google-only button left to unhide here.
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
     script.onload = () => initGoogleCalendar(localStorage.getItem('gcal_email') || '');
@@ -1560,14 +1554,17 @@ function hideGcalReconnectBanner() {
 
 function updateGCalButton(connected) {
   if (connected) hideGcalReconnectBanner();
-  const btn = document.getElementById('btn-gcal');
+  // Single remaining header button (the old separate "Connetti Google
+  // Calendar" button was removed — see agenda sync review) doubles as a
+  // connected-status indicator, same as it did before the merge.
+  const btn = document.getElementById('btn-gcal-sync');
   if (btn) {
     if (connected) {
-      btn.textContent = '📅 Google Connesso';
+      btn.textContent = '✅ Google Calendar connesso';
       btn.classList.add('btn-primary');
       btn.classList.remove('btn-ghost');
     } else {
-      btn.textContent = '📅 Connetti Google Calendar';
+      btn.textContent = '🔗 Sincronizza Calendario';
       btn.classList.remove('btn-primary');
       btn.classList.add('btn-ghost');
     }
@@ -1578,6 +1575,9 @@ function updateGCalButton(connected) {
     toggleBtn.style.display = connected ? '' : 'none';
     if (connected) updateGCalToggleBtn();
   }
+  // Keep the modal's disconnect option in sync too, in case it's open right now
+  const disconnectRow = document.getElementById('gcal-disconnect-row');
+  if (disconnectRow) disconnectRow.style.display = connected ? '' : 'none';
   if (!connected) gcalEvents = [];
 }
 
@@ -1619,7 +1619,7 @@ async function createGoogleCalendarEvent(ev, silent = false) {
         localStorage.removeItem('gcal_token_expiry');
         updateGCalButton(false);
         showGcalReconnectBanner();
-        if (!silent) toast(_L('⚠️ Sessione Google Calendar scaduta. Clicca "Connetti Google Calendar" per riautorizzare.','⚠️ Google Calendar session expired. Click "Connect Google Calendar" to re-authorise.'), 'err');
+        if (!silent) toast(_L('⚠️ Sessione Google Calendar scaduta. Clicca "Riconnetti" qui sopra per riautorizzare.','⚠️ Google Calendar session expired. Click "Reconnect" above to re-authorise.'), 'err');
         return null;
       }
       throw new Error('HTTP ' + res.status);
@@ -1771,15 +1771,50 @@ async function autoSyncCalendar() {
 
   localStorage.setItem('gcal_email', email);
   const isGoogle = /^[^@]+@(gmail|googlemail)\.com$/.test(email);
+  const clientIdLoaded = !!GOOGLE_CLIENT_ID;
+  const gisLoaded = typeof google !== 'undefined' && !!google.accounts;
+  const gisReady = isGoogle && clientIdLoaded && gisLoaded;
 
-  // This box is the universal "subscribe by link" path for EVERY provider,
-  // including Google — it used to also run the full Google OAuth flow for
-  // Gmail addresses, which was a second, hidden way to trigger the exact same
-  // connection as the "Connetti Google Calendar" button above (that's the
-  // duplication dietitians were noticing and asking about). OAuth (live push +
-  // personal calendar overlay) now lives ONLY behind that one header button;
-  // this box always does the lighter-weight, read-only subscription link,
-  // which is also the only thing Apple Calendar/Outlook/other apps can use.
+  // This one button + dialog is now the ONLY entry point for Google Calendar
+  // (the separate always-visible "Connetti Google Calendar" header button was
+  // removed — that pairing was the actual duplication dietitians were seeing).
+  // A Gmail address here triggers the same OAuth flow as before, just from a
+  // single place; any other address (or Google without OAuth configured
+  // server-side) falls through to the universal read-only subscription link
+  // further below, which is also what Apple Calendar/Outlook/other apps use.
+  if (gisReady) {
+    if (gcalTokenValid()) {
+      syncAllEventsToGCal();
+      if (statusEl) {
+        statusEl.textContent = '✅ Google Calendar già connesso. Sincronizzazione in corso...';
+        statusEl.style.display = '';
+      }
+    } else {
+      // requestAccessToken() (inside connectGoogleCalendar()) must run
+      // synchronously from this click, before any await, or the browser
+      // blocks the popup — so no async work happens between here and there.
+      initGoogleCalendar(email);
+      connectGoogleCalendar();
+      if (statusEl) {
+        statusEl.textContent = '⏳ Finestra di autorizzazione Google aperta — autorizza l\'accesso e gli appuntamenti si sincronizzeranno automaticamente.';
+        statusEl.style.color = '#1D4ED8';
+        statusEl.style.background = '#EFF6FF';
+        statusEl.style.display = '';
+      }
+    }
+    return;
+  }
+  if (isGoogle && clientIdLoaded && !gisLoaded) {
+    if (statusEl) {
+      statusEl.textContent = '⚠️ Google Identity Services non ancora caricato. Attendi 2-3 secondi dalla apertura della pagina e riprova.';
+      statusEl.style.color = '#92400E';
+      statusEl.style.background = '#FEF3C7';
+      statusEl.style.display = '';
+    }
+    return;
+  }
+
+  // WebCal path: non-Google addresses, or Google without OAuth configured server-side.
   const tempWin = window.open('', '_blank');
 
   const calUrls = await getCalendarUrl();
@@ -1794,7 +1829,7 @@ async function autoSyncCalendar() {
     const gcalAddUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
     if (tempWin) { tempWin.location.href = gcalAddUrl; } else { window.open(gcalAddUrl, '_blank'); }
     if (statusEl) {
-      statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" per abbonarti in sola lettura. Per la sincronizzazione bidirezionale (push automatico dei nuovi appuntamenti + eventi personali visibili qui in agenda) usa invece il pulsante "Connetti Google Calendar" in alto nella pagina.';
+      statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" per abbonarti in sola lettura.';
       statusEl.style.display = '';
     }
     toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
@@ -1824,15 +1859,18 @@ async function openSyncModal() {
     document.getElementById('sync-login-msg').style.display = '';
   }
   // Pre-fill the auto-sync email input with saved email or current user's email
-  // (gcal-email-input was removed together with the duplicate "Connetti Google
-  // Calendar" advanced button — Google is now only reachable via the header
-  // button and this auto-sync box, see comment further down in this modal).
+  // (this box is the sole Google entry point now — see autoSyncCalendar()).
   const savedEmail = localStorage.getItem('gcal_email') || (currentUser ? currentUser.email : '');
   const autoSyncEmailInput = document.getElementById('auto-sync-email');
   if (autoSyncEmailInput) autoSyncEmailInput.value = savedEmail;
   // Reset status message
   const statusEl = document.getElementById('auto-sync-status');
   if (statusEl) statusEl.style.display = 'none';
+  // Show a disconnect option when already connected — the header button no
+  // longer doubles as a one-click disconnect toggle now that its click opens
+  // this modal instead of calling connectGoogleCalendar() directly.
+  const disconnectRow = document.getElementById('gcal-disconnect-row');
+  if (disconnectRow) disconnectRow.style.display = gcalTokenValid() ? '' : 'none';
   openM('modal-sync');
 }
 

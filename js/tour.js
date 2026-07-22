@@ -8,14 +8,12 @@
 // ]);
 // Il tour si mostra una sola volta per pagina (localStorage 'tour_<pageKey>').
 //
-// ⚠️ TEST TEMPORANEO — RIMUOVERE PRIMA DEL PROSSIMO RILASCIO ⚠️
 // _TOUR_ALWAYS_SHOW forza il tour a comparire ad OGNI apertura di sezione,
-// ignorando il flag "già visto", per poter rivedere e verificare tutti i
-// giri guidati senza dover resettare il localStorage a mano ogni volta.
-// Per tornare al comportamento normale (una sola volta a vita per pagina):
-// impostare _TOUR_ALWAYS_SHOW a false (o eliminare questa costante e il suo
-// utilizzo qui sotto).
-var _TOUR_ALWAYS_SHOW = true;
+// ignorando il flag "già visto" — utile SOLO durante la revisione manuale di
+// tutti i giri guidati, mai in produzione (altrimenti il tour ricompare a ogni
+// apertura pagina per ogni dietista). Impostare a true solo temporaneamente
+// per un giro di verifica, poi rimetterlo a false prima di deployare.
+var _TOUR_ALWAYS_SHOW = false;
 function initPageTour(pageKey, steps, opts) {
   opts = opts || {};
   if (!steps || !steps.length) return;
@@ -30,6 +28,22 @@ function initPageTour(pageKey, steps, opts) {
   function qEl(sel) {
     if (!sel) return null;
     try { return document.querySelector(sel); } catch (e) { return null; }
+  }
+
+  // A step's selector can match an element that exists in the DOM but isn't
+  // actually on screen right now (display:none, inside a collapsed <details>,
+  // a tab that isn't the active one, content still waiting on data...).
+  // getBoundingClientRect() on such an element returns an all-zero rect, which
+  // — if not caught here — makes the spotlight collapse to a tiny phantom hole
+  // near the top-left corner of the viewport: visually "a highlighted button
+  // that isn't there". Treat that exactly like "selector not found" so the
+  // step falls back to the centered modal card instead of pointing at nothing.
+  function findVisibleTarget(sel) {
+    var target = qEl(sel);
+    if (!target) return null;
+    var r = target.getBoundingClientRect();
+    if (r.width === 0 && r.height === 0) return null;
+    return target;
   }
 
   function build() {
@@ -88,7 +102,7 @@ function initPageTour(pageKey, steps, opts) {
 
   function render() {
     var step = steps[idx];
-    var target = qEl(step.selector);
+    var target = findVisibleTarget(step.selector);
     if (!target) { position(step, null); return; }
     var r = target.getBoundingClientRect();
     var curScrollY = window.pageYOffset || document.documentElement.scrollTop;
@@ -106,8 +120,11 @@ function initPageTour(pageKey, steps, opts) {
       hole.setAttribute('y', Math.max(0, rect.top - pad));
       hole.setAttribute('width', rect.width + pad * 2);
       hole.setAttribute('height', rect.height + pad * 2);
-      ring.style.top = (rect.top - pad) + 'px';
-      ring.style.left = (rect.left - pad) + 'px';
+      // Same clamp as the mask hole above (Math.max(0, ...)): without it, an
+      // element hugging the viewport edge gives the ring a negative top/left,
+      // rendering its border partly outside the visible page.
+      ring.style.top = Math.max(0, rect.top - pad) + 'px';
+      ring.style.left = Math.max(0, rect.left - pad) + 'px';
       ring.style.width = (rect.width + pad * 2) + 'px';
       ring.style.height = (rect.height + pad * 2) + 'px';
       ring.classList.add('tour-visible');
@@ -189,7 +206,7 @@ function initPageTour(pageKey, steps, opts) {
   function reposition() {
     if (!overlay) return;
     var step = steps[idx];
-    var target = qEl(step.selector);
+    var target = findVisibleTarget(step.selector);
     position(step, target);
   }
 

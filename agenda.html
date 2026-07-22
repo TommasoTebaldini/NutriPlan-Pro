@@ -376,23 +376,17 @@
       <details id="sync-advanced" style="border:1.5px solid var(--border-d);border-radius:10px;overflow:hidden">
         <summary style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--slate-m);cursor:pointer;background:#F8FAFC;list-style:none;display:flex;align-items:center;justify-content:space-between">
           <span>⚙️ <span data-only-lang="it">Opzioni avanzate</span><span data-only-lang="en">Advanced options</span></span>
-          <span style="font-size:10px;color:var(--slate-l)">Google OAuth · <span data-only-lang="it">URL abbonamento</span><span data-only-lang="en">Subscription URL</span> · <span data-only-lang="it">Esporta ICS</span><span data-only-lang="en">Export ICS</span></span>
+          <span style="font-size:10px;color:var(--slate-l)"><span data-only-lang="it">URL abbonamento</span><span data-only-lang="en">Subscription URL</span> · <span data-only-lang="it">Esporta ICS</span><span data-only-lang="en">Export ICS</span></span>
         </summary>
         <div style="padding:14px">
 
-          <!-- Google Calendar OAuth section -->
-          <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px;margin-bottom:12px">
-            <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:6px">📅 Google Calendar OAuth — <span data-only-lang="it">Sync immediato</span><span data-only-lang="en">Instant Sync</span></div>
-            <p style="font-size:12px;color:#1e40af;margin-bottom:10px"><span data-only-lang="it">Autorizza l'accesso diretto a Google Calendar per aggiungere ogni appuntamento in tempo reale al momento del salvataggio.</span><span data-only-lang="en">Authorise direct access to Google Calendar to add every appointment in real time when saving.</span></p>
-            <div id="gcal-sync-area">
-              <div style="margin-bottom:10px">
-                <label for="gcal-email-input" style="font-size:12px;color:#1e40af;font-weight:600;display:block;margin-bottom:4px">📧 <span data-only-lang="it">Email Google:</span><span data-only-lang="en">Google Email:</span></label>
-                <input type="email" id="gcal-email-input" placeholder="tuamail@gmail.com" style="width:100%;padding:8px 10px;border:1.5px solid #BFDBFE;border-radius:8px;font-size:13px;color:var(--slate);background:white;box-sizing:border-box">
-              </div>
-              <button class="btn btn-primary btn-sm" id="btn-gcal-modal" onclick="connectGoogleCalendarFromModal()"><span data-only-lang="it">Connetti Google Calendar</span><span data-only-lang="en">Connect Google Calendar</span></button>
-              <div id="gcal-sync-status" style="font-size:12px;margin-top:6px;color:var(--slate-m)"></div>
-            </div>
-            <p id="gcal-config-warning" style="font-size:11px;color:#6B7280;margin-top:8px;display:none">⚠️ <span data-only-lang="it">Google Client ID non configurato. Clicca il pulsante per le istruzioni su come abilitare questa funzionalità.</span><span data-only-lang="en">Google Client ID not configured. Click the button for instructions on how to enable this feature.</span></p>
+          <!-- Google Calendar is handled by the single "Connetti Google Calendar" button in the
+               page header (btn-gcal) plus the "Sincronizzazione Automatica" box above for Gmail
+               addresses — this used to duplicate that same OAuth flow with a third button, which
+               was confusing (see agenda sync review). Kept as a pointer instead so there's exactly
+               one OAuth entry point to reason about. -->
+          <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px;margin-bottom:12px;font-size:12px;color:#1e40af">
+            📅 <span data-only-lang="it">Per Google Calendar usa il pulsante <strong>"Connetti Google Calendar"</strong> in alto nella pagina (o inserisci una email Gmail qui sopra in "Sincronizzazione Automatica"): entrambi attivano la stessa connessione diretta.</span><span data-only-lang="en">For Google Calendar use the <strong>"Connect Google Calendar"</strong> button at the top of the page (or enter a Gmail address above in "Automatic Sync"): both trigger the same direct connection.</span>
           </div>
 
           <!-- WebCal subscription URL -->
@@ -1585,25 +1579,6 @@ function updateGCalButton(connected) {
     if (connected) updateGCalToggleBtn();
   }
   if (!connected) gcalEvents = [];
-  // Keep modal button in sync if the modal is currently open
-  const modalBtn = document.getElementById('btn-gcal-modal');
-  const gcalStatus = document.getElementById('gcal-sync-status');
-  if (modalBtn) {
-    if (connected) {
-      modalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
-      modalBtn.classList.add('btn-primary');
-      if (gcalStatus) {
-        const connEmail = localStorage.getItem('gcal_email');
-        gcalStatus.textContent = connEmail
-          ? `Connesso come ${connEmail}. I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.`
-          : 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
-      }
-    } else {
-      modalBtn.textContent = '📅 Connetti Google Calendar';
-      modalBtn.classList.remove('btn-primary');
-      if (gcalStatus) gcalStatus.textContent = '';
-    }
-  }
 }
 
 async function createGoogleCalendarEvent(ev, silent = false) {
@@ -1906,57 +1881,17 @@ async function openSyncModal() {
     document.getElementById('sync-url-area').style.display = 'none';
     document.getElementById('sync-login-msg').style.display = '';
   }
-  // Pre-fill both email inputs with saved email or current user's email
+  // Pre-fill the auto-sync email input with saved email or current user's email
+  // (gcal-email-input was removed together with the duplicate "Connetti Google
+  // Calendar" advanced button — Google is now only reachable via the header
+  // button and this auto-sync box, see comment further down in this modal).
   const savedEmail = localStorage.getItem('gcal_email') || (currentUser ? currentUser.email : '');
   const autoSyncEmailInput = document.getElementById('auto-sync-email');
   if (autoSyncEmailInput) autoSyncEmailInput.value = savedEmail;
-  const emailInput = document.getElementById('gcal-email-input');
-  if (emailInput) emailInput.value = savedEmail;
   // Reset status message
   const statusEl = document.getElementById('auto-sync-status');
   if (statusEl) statusEl.style.display = 'none';
-  // Update Google Calendar status
-  const gcalBtn = document.getElementById('btn-gcal-modal');
-  const gcalStatus = document.getElementById('gcal-sync-status');
-  const gcalWarning = document.getElementById('gcal-config-warning');
-  if (GOOGLE_CLIENT_ID) {
-    gcalBtn.disabled = false;
-    gcalBtn.title = '';
-    gcalWarning.style.display = 'none';
-    if (gcalTokenValid()) {
-      gcalBtn.textContent = '✅ Google Calendar connesso — Clicca per disconnettere';
-      gcalBtn.classList.add('btn-primary');
-      const connEmail = localStorage.getItem('gcal_email');
-      gcalStatus.textContent = connEmail
-        ? `Connesso come ${connEmail}. I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.`
-        : 'I nuovi appuntamenti vengono aggiunti automaticamente a Google Calendar al momento del salvataggio.';
-    } else {
-      gcalBtn.textContent = '📅 Connetti Google Calendar';
-      gcalBtn.classList.remove('btn-primary');
-    }
-  } else {
-    gcalBtn.textContent = '⚙️ Configura Google Client ID';
-    gcalBtn.disabled = false;
-    gcalBtn.title = 'Clicca per vedere le istruzioni di configurazione.';
-    gcalBtn.classList.remove('btn-primary');
-    gcalWarning.style.display = '';
-  }
   openM('modal-sync');
-}
-
-function connectGoogleCalendarFromModal() {
-  if (!gcalTokenValid()) {
-    const emailInput = document.getElementById('gcal-email-input');
-    const email = emailInput ? emailInput.value.trim() : '';
-    if (typeof google !== 'undefined' && google.accounts) {
-      if (email) localStorage.setItem('gcal_email', email);
-      // Always (re-)initialize with the latest email hint so the token client is
-      // ready even if the modal is opened before the GIS script's onload fires.
-      initGoogleCalendar(email || localStorage.getItem('gcal_email') || '');
-    }
-  }
-  connectGoogleCalendar();
-  // Modal button state is updated via updateGCalButton() called from the OAuth callback.
 }
 
 function copySyncUrl() {

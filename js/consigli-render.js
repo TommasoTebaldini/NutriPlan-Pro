@@ -141,8 +141,9 @@ function editConsiglio(id) {
 async function delConsiglio(id) {
   if (!confirm(_L('Eliminare questo consiglio personalizzato?','Delete this custom advice?'))) return;
   showLoading(true);
-  await sb.from('consigli_custom').delete().eq('data_id', id).eq('user_id', currentUser.id);
+  const { error } = await sb.from('consigli_custom').delete().eq('data_id', id).eq('user_id', currentUser.id);
   showLoading(false);
+  if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
   consigliPersonalizzati = consigliPersonalizzati.filter(c => c.id !== id);
   toast('🗑️ ' + _L('Eliminato','Deleted'), 'info');
   renderConsigli();

@@ -87,6 +87,8 @@ file di migrazione separati.
 |---|---|---|---|
 | _(baseline)_ | Schema completo fino a SEZIONE 33 (supabase_setup.sql) | 2026-07 (manuale) | — |
 | `20260721150000__enforce_2fa_rls.sql` | Blinda la 2FA a livello RLS (policy restrittive + funzione `mfa_ok()`) | _(da applicare)_ | |
+| `20260722160000__patient_audit_log.sql` | Crea `patient_audit_log` (mai creata, scrittura silenziosamente ingoiata da sempre) | _(da applicare)_ | |
+| `20260722160500__consigli_custom.sql` | Crea `consigli_custom` (mai creata, consigli.html dava sempre errore 42P01) | _(da applicare)_ | |
 
 > Ogni volta che applichi una nuova migrazione, aggiungi una riga qui con la
 > data e chi l'ha eseguita, poi committa.

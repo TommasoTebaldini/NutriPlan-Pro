@@ -630,15 +630,20 @@ async function saveProfile() {
   const { error } = await sb.from('dietitian_profiles').upsert(payload, { onConflict: 'dietitian_id' });
 
   // Save availability separately
+  let availabilityError = null;
   if (!error) {
     const avPayload = collectAvailabilityPayload();
-    await sb.from('dietitian_availability').upsert(avPayload, { onConflict: 'dietitian_id,day_of_week' });
+    ({ error: availabilityError } = await sb.from('dietitian_availability').upsert(avPayload, { onConflict: 'dietitian_id,day_of_week' }));
   }
 
   ['btn-save','btn-save-bottom'].forEach(id => { document.getElementById(id).disabled = false; document.getElementById(id).innerHTML = '💾 ' + _L('Salva','Save') + (id === 'btn-save-bottom' ? ' ' + _L('profilo','profile') : ''); });
 
   if (error) {
     showToast(_L('❌ Errore nel salvataggio: ','❌ Save error: ') + error.message);
+    return;
+  }
+  if (availabilityError) {
+    showToast(_L('⚠️ Profilo salvato, ma la disponibilità non è stata salvata: ','⚠️ Profile saved, but availability was not saved: ') + availabilityError.message);
     return;
   }
 

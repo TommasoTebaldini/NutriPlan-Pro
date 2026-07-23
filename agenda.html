@@ -1360,8 +1360,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     const ok = await checkAuth();
     if (ok) {
-      await loadEventsFromSupabase();
-      await loadPatientAppointments();
+      // Independent tables (agenda_events vs appointments), each populates its
+      // own module-level array and re-renders on its own — no reason to wait
+      // for one before starting the other.
+      await Promise.all([loadEventsFromSupabase(), loadPatientAppointments()]);
       startRealtimeSync();
     }
   } catch(e) {}

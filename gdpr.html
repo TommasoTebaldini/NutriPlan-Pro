@@ -706,16 +706,33 @@ async function eseguiOblio() {
       const paths = files.map(f => f.storage_path);
       await sb.storage.from('patient-files').remove(paths);
     }
-    // Elimina dati correlati
-    await sb.from('patient_files').delete().eq('cartella_id', id);
-    await sb.from('esami_biochimici').delete().eq('cartella_id', id);
-    await sb.from('note_specialistiche').delete().eq('cartella_id', id);
-    await sb.from('schede_valutazione').delete().eq('cartella_id', id);
-    await sb.from('bia_records').delete().eq('cartella_id', id);
-    await sb.from('ncpt').delete().eq('cartella_id', id);
-    await sb.from('piani').delete().eq('cartella_id', id);
-    await sb.from('patient_dietitian').delete().eq('cartella_id', id);
-    await sb.from('cartelle').delete().eq('id', id);
+    // Elimina dati correlati — ogni delete è verificato: se una qualsiasi
+    // fallisce (RLS/vincolo/rete), ci si ferma SUBITO invece di continuare e
+    // dichiarare "tutti i dati eliminati" con dati clinici ancora presenti
+    // (right-to-erasure GDPR: una falsa dichiarazione di cancellazione
+    // completa è un problema di compliance, non solo un bug cosmetico).
+    // Rilanciare la funzione dopo aver risolto il problema è sicuro: ogni
+    // delete è scoped su cartella_id/id, quindi righe già cancellate
+    // producono semplicemente un no-op al secondo tentativo.
+    const steps = [
+      ['patient_files',        () => sb.from('patient_files').delete().eq('cartella_id', id)],
+      ['esami_biochimici',     () => sb.from('esami_biochimici').delete().eq('cartella_id', id)],
+      ['note_specialistiche',  () => sb.from('note_specialistiche').delete().eq('cartella_id', id)],
+      ['schede_valutazione',   () => sb.from('schede_valutazione').delete().eq('cartella_id', id)],
+      ['bia_records',          () => sb.from('bia_records').delete().eq('cartella_id', id)],
+      ['ncpt',                 () => sb.from('ncpt').delete().eq('cartella_id', id)],
+      ['piani',                () => sb.from('piani').delete().eq('cartella_id', id)],
+      ['patient_dietitian',    () => sb.from('patient_dietitian').delete().eq('cartella_id', id)],
+      ['cartelle',             () => sb.from('cartelle').delete().eq('id', id)],
+    ];
+    for (const [label, run] of steps) {
+      const { error } = await run();
+      if (error) {
+        showLoading(false);
+        toast(`⚠️ Cancellazione interrotta a "${label}": ${error.message}. Nessun dato successivo è stato toccato — riprova.`, 'err');
+        return;
+      }
+    }
     showLoading(false);
     toast('🗑️ Tutti i dati del paziente eliminati', 'ok');
     _allCartelle = _allCartelle.filter(c => c.id !== id);

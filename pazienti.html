@@ -1439,8 +1439,14 @@ async function renderCartellaDetail(id) {
     ${soapSection}
 
     ${!isAltro ? allegatiHtml : ''}
+
+    <details style="margin-top:16px;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+      <summary style="padding:10px 14px;font-size:12.5px;font-weight:700;color:var(--slate-m);cursor:pointer;background:#F8FAFC;list-style:none">📋 <span data-only-lang="it">Storico modifiche</span><span data-only-lang="en">Change history</span></summary>
+      <div id="audit-log-body" style="padding:10px 14px"></div>
+    </details>
   `;
 
+  loadAuditLog(id);
 }
 
 async function loadAuditLog(cartellaId) {
@@ -1455,7 +1461,7 @@ async function loadAuditLog(cartellaId) {
       .limit(20);
     if (error) throw error;
     if (!data || !data.length) {
-      el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px"></div>';
+      el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">' + _L('Nessuna modifica registrata finora.','No changes recorded yet.') + '</div>';
       return;
     }
     el.innerHTML = data.map(log => {
@@ -1628,8 +1634,9 @@ function apriModificaBIA(biaId, cartellaId) {
 async function delBIA(id, cartellaId) {
   customConfirm(_L('Eliminare questa misurazione BIA?','Delete this BIA measurement?'), async () => {
     showLoading(true);
-    await sb.from('bia_records').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('bia_records').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
+    if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaId);
     toast(_L('🗑️ BIA eliminata','🗑️ BIA deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina BIA','⚠️ Delete BIA'), okLabel: _L('Elimina','Delete') });
@@ -1661,8 +1668,9 @@ function caricaPiano(id) {
 async function delPiano(id) {
   customConfirm(_L('Eliminare questo piano?','Delete this plan?'), async () => {
     showLoading(true);
-    await sb.from('piani').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('piani').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
+    if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Piano eliminato','🗑️ Plan deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Piano','⚠️ Delete Plan'), okLabel: _L('Elimina','Delete') });
@@ -1671,8 +1679,9 @@ async function delPiano(id) {
 async function delNCPt(id) {
   customConfirm(_L('Eliminare questa scheda NCPt?','Delete this NCPt form?'), async () => {
     showLoading(true);
-    await sb.from('ncpt').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('ncpt').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
+    if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ NCPt eliminato','🗑️ NCPt deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina NCPt','⚠️ Delete NCPt'), okLabel: _L('Elimina','Delete') });
@@ -1681,8 +1690,9 @@ async function delNCPt(id) {
 async function delScheda(id) {
   customConfirm(_L('Eliminare questa scheda valutazione?','Delete this assessment form?'), async () => {
     showLoading(true);
-    await sb.from('schede_valutazione').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('schede_valutazione').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
+    if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Scheda','⚠️ Delete Form'), okLabel: _L('Elimina','Delete') });
@@ -1691,8 +1701,9 @@ async function delScheda(id) {
 async function delNoteSpec(id) {
   customConfirm(_L('Eliminare questa scheda specialistica?','Delete this specialist note?'), async () => {
     showLoading(true);
-    await sb.from('note_specialistiche').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('note_specialistiche').delete().eq('id', id).eq('user_id', currentUser.id);
     showLoading(false);
+    if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Scheda','⚠️ Delete Form'), okLabel: _L('Elimina','Delete') });
@@ -1863,9 +1874,15 @@ async function delCartella(id) {
   if (id === _altroCartellaId) { toast(_L('⚠️ La cartella "Altro" non può essere eliminata.','⚠️ The "Other" folder cannot be deleted.'), 'warn'); return; }
   customConfirm(_L('Eliminare questa cartella e tutti i piani al suo interno?','Delete this folder and all plans inside it?'), async () => {
     showLoading(true);
-    await sb.from('piani').delete().eq('cartella_id', id);
-    await sb.from('cartelle').delete().eq('id', id);
+    const { error: errPiani } = await sb.from('piani').delete().eq('cartella_id', id);
+    if (errPiani) {
+      showLoading(false);
+      toast(_L('❌ Errore durante l\'eliminazione dei piani — cartella non toccata.','❌ Error deleting plans — folder untouched.'), 'err');
+      return;
+    }
+    const { error: errCartella } = await sb.from('cartelle').delete().eq('id', id);
     showLoading(false);
+    if (errCartella) { toast(_L('❌ Errore durante l\'eliminazione della cartella','❌ Error deleting folder'), 'err'); return; }
     cartellaAperta = null;
     document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
     loadCartelle(true);

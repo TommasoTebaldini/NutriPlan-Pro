@@ -471,6 +471,15 @@ async function ensureChartJs() {
   </div>
 </div>
 
+<!-- MODAL: DIARIO ALIMENTARE FOTOGRAFICO -->
+<div class="modal-bg" id="modal-diario-foto">
+  <div class="modal" style="max-width:640px">
+    <div class="mhdr"><h2>📸 <span data-only-lang="it">Diario Alimentare Fotografico</span><span data-only-lang="en">Photo Food Diary</span></h2><button class="mclose" onclick="closeM('modal-diario-foto')">✕</button></div>
+    <div class="mbody" id="diario-foto-body" style="padding:16px 18px;max-height:70vh;overflow-y:auto"></div>
+    <div class="mfoot" id="diario-foto-foot"></div>
+  </div>
+</div>
+
 <!-- MODAL: NOTA SOAP -->
 <div class="modal-bg" id="modal-soap">
   <div class="modal" style="max-width:600px">
@@ -1025,7 +1034,7 @@ async function renderCartellaDetail(id) {
   }
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
-  const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici, patientFiles] = await Promise.all([
+  const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici, patientFiles, diarioFoto] = await Promise.all([
     safeQuery(sb.from('piani').select('id,nome,saved_at,data_piano,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('ncpt').select('id,created_at,updated_at,visible_to_patient,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('schede_valutazione').select('id,nome,saved_at,created_at,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
@@ -1034,6 +1043,7 @@ async function renderCartellaDetail(id) {
     safeQuery(sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).eq('dietitian_id', currentUser.id).limit(1)),
     safeQuery(sb.from('esami_biochimici').select('id,data_esame,tipo,valore,unita,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_esame', {ascending:false})),
     safeQuery(sb.from('patient_files').select('id,filename,storage_path,file_size,mime_type,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('diario_alimentare_foto').select('id,storage_path,data_diario,ai_description,ai_confidence,foods,totali,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_diario', {ascending:false})),
   ]);
 
   const cart = cartResult.data;
@@ -1150,7 +1160,7 @@ async function renderCartellaDetail(id) {
 
   // Store esami for timeline access and PDF/AI
   window._currentCartellaEsami = esamiBiochimici || [];
-  window._currentCartellaData = { cart, eta, biaList, esamiBiochimici, piani };
+  window._currentCartellaData = { cart, eta, biaList, esamiBiochimici, piani, diarioFoto };
 
   // Build esami biochimici list
   const esamiHtml = (esamiBiochimici && esamiBiochimici.length) ? esamiBiochimici.map(e => {
@@ -1284,6 +1294,27 @@ async function renderCartellaDetail(id) {
     }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun allegato.','No attachments.')}</div>`) +
     '</div></div>';
 
+  // Build diario alimentare fotografico HTML
+  const diarioFotoHtml = '<div class="card" style="margin-bottom:12px">' +
+    '<div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
+    '<h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">📸 ' + _L('Diario Alimentare Fotografico','Photo Food Diary') + ' <span style="background:#FDF4FF;color:#A21CAF;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">' + (diarioFoto||[]).length + '</span></h4>' +
+    '<button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#A21CAF,#E879F9);color:white;box-shadow:0 2px 8px rgba(162,28,175,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow=\'0 4px 14px rgba(162,28,175,.45)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(162,28,175,.3)\';this.style.transform=\'\'" onclick="openDiarioFotoModal(\'' + id + '\')">📸 + ' + _L('Foto Diario','Diary Photo') + '</button>' +
+    '</div>' +
+    '<div style="padding:10px 14px">' +
+    ((diarioFoto && diarioFoto.length) ? diarioFoto.map(function(d) {
+      var tot = d.totali || {};
+      var dataStr = d.data_diario ? new Date(d.data_diario).toLocaleDateString(_L('it','en')) : '—';
+      return '<div onclick="viewDiarioFoto(\'' + d.id + '\',\'' + id + '\')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:white;border-radius:8px;border:1.5px solid var(--border);margin-bottom:6px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor=\'#A21CAF\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
+        '<span style="font-size:22px;background:#FDF4FF;padding:6px;border-radius:8px;flex-shrink:0">📸</span>' +
+        '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:700;font-size:13px;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(d.ai_description || _L('Diario alimentare','Food diary')) + '</div>' +
+        '<div style="font-size:11px;color:var(--slate-l)">' + dataStr + (tot.kcal ? ' · ' + Math.round(tot.kcal) + ' kcal' : '') + '</div>' +
+        '</div>' +
+        '<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();deleteDiarioFoto(\'' + d.id + '\',\'' + d.storage_path.replace(/'/g,"\\'") + '\',\'' + id + '\')">🗑️</button>' +
+        '</div>';
+    }).join('') : `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessuna foto del diario alimentare caricata.','No food diary photos uploaded yet.')}</div>`) +
+    '</div></div>';
+
   wrap.innerHTML = `
     <div style="background:white;border-radius:12px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow)">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
@@ -1373,6 +1404,9 @@ async function renderCartellaDetail(id) {
 
     <!-- ESAMI BIOCHIMICI -->
     ${!isAltro ? '<div class="card" style="margin-bottom:12px"><div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">🔬 ' + _L('Esami Biochimici','Biochemical Tests') + ' <span style="background:#FFF7ED;color:#C2410C;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">' + (esamiBiochimici||[]).length + '</span></h4><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-ghost btn-sm" onclick="openBulkEsameModal(\'' + cart.id + '\')" title="' + _L('Inserisci più esami in una volta','Insert multiple exams at once') + '">📋 ' + _L('Pannello','Panel') + '</button><button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#C2410C,#FB923C);color:white;box-shadow:0 2px 8px rgba(194,65,12,.3);transition:all .15s;font-family:inherit" onmouseover="this.style.boxShadow=\'0 4px 14px rgba(194,65,12,.45)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(194,65,12,.3)\';this.style.transform=\'\'" onclick="openEsameModal(\'' + cart.id + '\')">🔬 + ' + _L('Esame','Exam') + '</button></div></div><div style="padding:10px 14px">' + esamiHtml + '</div></div>' : ''}
+
+    <!-- DIARIO ALIMENTARE FOTOGRAFICO -->
+    ${!isAltro ? diarioFotoHtml : ''}
 
     <!-- Consigli Nutrizionali -->
     ${(consigliNutrizionali && consigliNutrizionali.length) ? `
@@ -3194,6 +3228,295 @@ function toggleInactiveBanner() {
   const inner = document.getElementById('inactive-list-inner');
   const arrow = document.getElementById('inactive-toggle-arrow');
   if (inner) { const open = inner.style.display!=='none'; inner.style.display=open?'none':'block'; if(arrow) arrow.textContent=open?'▼':'▲'; }
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 5 — DIARIO ALIMENTARE FOTOGRAFICO
+// ══════════════════════════════════════════════
+const DIARIO_MACRO_FIELDS = [
+  { key: 'kcal', it: 'Kcal', en: 'Kcal', unit: '', dec: 0 },
+  { key: 'proteins', it: 'Proteine', en: 'Protein', unit: 'g', dec: 1 },
+  { key: 'carbs', it: 'Carboidrati', en: 'Carbs', unit: 'g', dec: 1 },
+  { key: 'sugars', it: 'di cui zuccheri', en: 'of which sugars', unit: 'g', dec: 1 },
+  { key: 'fats', it: 'Grassi', en: 'Fat', unit: 'g', dec: 1 },
+  { key: 'saturatedFat', it: 'di cui saturi', en: 'of which saturated', unit: 'g', dec: 1 },
+  { key: 'fiber', it: 'Fibre', en: 'Fiber', unit: 'g', dec: 1 },
+];
+const DIARIO_MICRO_FIELDS = [
+  { key: 'calcium', it: 'Calcio', en: 'Calcium', unit: 'mg', dec: 0 },
+  { key: 'iron', it: 'Ferro', en: 'Iron', unit: 'mg', dec: 1 },
+  { key: 'magnesium', it: 'Magnesio', en: 'Magnesium', unit: 'mg', dec: 0 },
+  { key: 'potassium', it: 'Potassio', en: 'Potassium', unit: 'mg', dec: 0 },
+  { key: 'sodium', it: 'Sodio', en: 'Sodium', unit: 'mg', dec: 0 },
+  { key: 'zinc', it: 'Zinco', en: 'Zinc', unit: 'mg', dec: 1 },
+  { key: 'folate', it: 'Folati', en: 'Folate', unit: 'mcg', dec: 0 },
+  { key: 'selenium', it: 'Selenio', en: 'Selenium', unit: 'mcg', dec: 0 },
+  { key: 'cholesterol', it: 'Colesterolo', en: 'Cholesterol', unit: 'mg', dec: 0 },
+];
+
+let _diarioFoto = null; // stato del modal (upload/analisi in corso), null quando chiuso
+
+function _diarioFotoFileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function _diarioFotoFoodValue(food, key, grams) {
+  const per100 = parseFloat(food[key + '_100g']) || 0;
+  return per100 * ((parseFloat(grams) || 0) / 100);
+}
+
+function openDiarioFotoModal(cartellaId) {
+  _diarioFoto = { phase: 'idle', cartellaId, file: null, previewUrl: null, result: null, selected: new Set(), grams: {}, note: '', dataDiario: new Date().toISOString().slice(0, 10), error: '' };
+  renderDiarioFotoModal();
+  openM('modal-diario-foto');
+}
+
+function _diarioFotoPick(capture) {
+  const input = document.getElementById('diario-foto-input');
+  if (!input) return;
+  if (capture) input.capture = 'environment'; else input.removeAttribute('capture');
+  input.click();
+}
+
+async function diarioFotoHandleFile(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file || !_diarioFoto) return;
+  _diarioFoto.file = file;
+  _diarioFoto.previewUrl = URL.createObjectURL(file);
+  _diarioFoto.phase = 'analyzing';
+  _diarioFoto.error = '';
+  renderDiarioFotoModal();
+  try {
+    const image = await _diarioFotoFileToBase64(file);
+    const mediaType = file.type || 'image/jpeg';
+    const { data, error } = await sb.functions.invoke('analyze-food-diary', { body: { image, mediaType } });
+    if (error) throw new Error(error.message || 'Errore Edge Function');
+    if (data && data.error) throw new Error(data.error);
+    if (!data || !Array.isArray(data.foods)) throw new Error(_L('Risposta AI non valida','Invalid AI response'));
+    _diarioFoto.result = data;
+    _diarioFoto.selected = new Set(data.foods.map((_, i) => i));
+    _diarioFoto.grams = Object.fromEntries(data.foods.map((f, i) => [i, f.grams]));
+    _diarioFoto.phase = 'results';
+  } catch (e) {
+    _diarioFoto.error = e.message || String(e);
+    _diarioFoto.phase = 'error';
+  }
+  renderDiarioFotoModal();
+}
+
+function diarioFotoToggleFood(i) {
+  if (!_diarioFoto) return;
+  if (_diarioFoto.selected.has(i)) _diarioFoto.selected.delete(i); else _diarioFoto.selected.add(i);
+  renderDiarioFotoModal();
+}
+
+function diarioFotoSetGrams(i, val) {
+  if (!_diarioFoto) return;
+  _diarioFoto.grams[i] = val;
+  renderDiarioFotoModal();
+}
+
+function diarioFotoSetNote(val) { if (_diarioFoto) _diarioFoto.note = val; }
+function diarioFotoSetData(val) { if (_diarioFoto) _diarioFoto.dataDiario = val; }
+
+function _diarioFotoComputeTotals() {
+  const totals = {};
+  [...DIARIO_MACRO_FIELDS, ...DIARIO_MICRO_FIELDS].forEach(f => totals[f.key] = 0);
+  if (!_diarioFoto || !_diarioFoto.result) return totals;
+  _diarioFoto.result.foods.forEach((food, i) => {
+    if (!_diarioFoto.selected.has(i)) return;
+    const grams = parseFloat(_diarioFoto.grams[i]) || food.grams || 0;
+    [...DIARIO_MACRO_FIELDS, ...DIARIO_MICRO_FIELDS].forEach(f => { totals[f.key] += _diarioFotoFoodValue(food, f.key, grams); });
+  });
+  return totals;
+}
+
+function _diarioFotoRoundedTotals() {
+  const raw = _diarioFotoComputeTotals();
+  const out = {};
+  [...DIARIO_MACRO_FIELDS, ...DIARIO_MICRO_FIELDS].forEach(f => { const p = 10 ** f.dec; out[f.key] = Math.round(raw[f.key] * p) / p; });
+  return out;
+}
+
+function _diarioFotoPillsHtml(totals, fields) {
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px">' +
+    fields.map(f => `<div style="background:#FDF4FF;border-radius:10px;padding:8px 10px;text-align:center">
+      <div style="font-size:15px;font-weight:700;color:#A21CAF">${totals[f.key]}${f.unit ? ' ' + f.unit : ''}</div>
+      <div style="font-size:10.5px;color:var(--slate-l)">${_L(f.it, f.en)}</div>
+    </div>`).join('') +
+    '</div>';
+}
+
+function renderDiarioFotoModal() {
+  const body = document.getElementById('diario-foto-body');
+  const foot = document.getElementById('diario-foto-foot');
+  if (!body || !foot || !_diarioFoto) return;
+  const s = _diarioFoto;
+
+  if (s.phase === 'idle') {
+    body.innerHTML = `
+      <div style="text-align:center;padding:24px 0">
+        <div style="width:80px;height:80px;border-radius:20px;background:#FDF4FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px dashed #E879F9;font-size:34px">📸</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px">${_L('Carica una foto del diario alimentare','Upload a food diary photo')}</p>
+        <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:20px">${_L('Foto del diario cartaceo o di un pasto: riconoscimento automatico degli alimenti e calcolo di macro e micronutrienti tramite intelligenza artificiale.','Photo of the paper diary or a meal: automatic food recognition and macro/micronutrient calculation via AI.')}</p>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button class="btn btn-sm" style="background:linear-gradient(135deg,#A21CAF,#E879F9);color:white" onclick="_diarioFotoPick(true)">📷 ${_L('Fotocamera','Camera')}</button>
+          <button class="btn btn-ghost btn-sm" onclick="_diarioFotoPick(false)">🖼️ ${_L('Galleria','Gallery')}</button>
+        </div>
+        <input id="diario-foto-input" type="file" accept="image/*" style="display:none" onchange="diarioFotoHandleFile(this)">
+      </div>`;
+    foot.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="closeM('modal-diario-foto')">${_L('Annulla','Cancel')}</button>`;
+    return;
+  }
+
+  if (s.phase === 'analyzing') {
+    body.innerHTML = `
+      ${s.previewUrl ? `<img src="${s.previewUrl}" style="width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-bottom:16px">` : ''}
+      <div style="text-align:center;padding:10px 0">
+        <div style="font-size:15px;font-weight:600;color:#A21CAF">⏳ ${_L('Analisi in corso...','Analyzing...')}</div>
+        <p style="font-size:12.5px;color:var(--slate-l);margin-top:6px">${_L('Riconoscimento alimenti e calcolo dei nutrienti in corso.','Recognizing foods and calculating nutrients.')}</p>
+      </div>`;
+    foot.innerHTML = '';
+    return;
+  }
+
+  if (s.phase === 'error') {
+    body.innerHTML = `<div class="alert-error" style="margin-bottom:12px">${esc(s.error)}</div>`;
+    foot.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="closeM('modal-diario-foto')">${_L('Chiudi','Close')}</button><button class="btn btn-sm" style="background:linear-gradient(135deg,#A21CAF,#E879F9);color:white" onclick="_diarioFoto.phase='idle';renderDiarioFotoModal()">${_L('Riprova','Retry')}</button>`;
+    return;
+  }
+
+  if (s.phase === 'results') {
+    const totals = _diarioFotoRoundedTotals();
+    body.innerHTML = `
+      ${s.previewUrl ? `<img src="${s.previewUrl}" style="width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-bottom:14px">` : ''}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:150px">
+          <div style="font-weight:700;font-size:13px">${esc(s.result.description || _L('Alimenti riconosciuti','Recognized foods'))}</div>
+          <div style="font-size:11px;color:var(--slate-l)">${_L('Confidenza','Confidence')}: ${esc(s.result.confidence || '—')}</div>
+        </div>
+        <div class="fg" style="margin:0"><label style="font-size:10.5px">${_L('Data diario','Diary date')}</label><input type="date" value="${s.dataDiario}" onchange="diarioFotoSetData(this.value)" style="padding:5px 8px;font-size:12px"></div>
+      </div>
+      <div style="margin-bottom:6px;font-size:12px;font-weight:700;color:var(--slate-m)">${_L('Macronutrienti (totale selezionato)','Macronutrients (selected total)')}</div>
+      ${_diarioFotoPillsHtml(totals, DIARIO_MACRO_FIELDS)}
+      <div style="margin:14px 0 6px;font-size:12px;font-weight:700;color:var(--slate-m)">${_L('Micronutrienti (totale selezionato)','Micronutrients (selected total)')}</div>
+      ${_diarioFotoPillsHtml(totals, DIARIO_MICRO_FIELDS)}
+      <div style="margin:16px 0 6px;font-size:12px;font-weight:700;color:var(--slate-m)">${_L('Alimenti riconosciuti','Recognized foods')}</div>
+      ${s.result.foods.map((food, i) => {
+        const checked = s.selected.has(i);
+        const grams = s.grams[i] ?? food.grams;
+        return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-light)">
+          <input type="checkbox" ${checked ? 'checked' : ''} onchange="diarioFotoToggleFood(${i})" style="width:18px;height:18px;flex-shrink:0">
+          <div style="flex:1;min-width:0;opacity:${checked ? 1 : 0.5}">
+            <div style="font-size:13px;font-weight:600">${esc(food.name)}</div>
+            <div style="font-size:11px;color:var(--slate-l)">${Math.round(_diarioFotoFoodValue(food, 'kcal', grams))} kcal</div>
+          </div>
+          <input type="number" min="1" value="${grams}" onchange="diarioFotoSetGrams(${i}, this.value)" style="width:60px;padding:5px 6px;font-size:12px;text-align:right;border:1.5px solid var(--border);border-radius:6px">
+          <span style="font-size:11px;color:var(--slate-l)">g</span>
+        </div>`;
+      }).join('')}
+      <div class="fg" style="margin-top:14px"><label>${_L('Nota clinica del dietista','Dietitian clinical note')}</label>
+        <textarea rows="3" onchange="diarioFotoSetNote(this.value)" placeholder="${_L('Osservazioni su aderenza, squilibri, suggerimenti...','Observations on adherence, imbalances, suggestions...')}" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box">${esc(s.note)}</textarea>
+      </div>`;
+    foot.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-diario-foto')">${_L('Annulla','Cancel')}</button>
+      <button class="btn btn-sm" style="background:linear-gradient(135deg,#A21CAF,#E879F9);color:white" onclick="diarioFotoSave()">💾 ${_L('Salva','Save')}</button>`;
+    return;
+  }
+}
+
+async function diarioFotoSave() {
+  const s = _diarioFoto;
+  if (!s || !s.result || !currentUser) return;
+  if (s.selected.size === 0) { toast(_L('Seleziona almeno un alimento','Select at least one food'), 'err'); return; }
+  showLoading(true);
+  try {
+    const safeName = 'diario_' + Date.now() + '.jpg';
+    const path = currentUser.id + '/' + s.cartellaId + '/diario/' + safeName;
+    const { error: upErr } = await sb.storage.from('patient-files').upload(path, s.file, { upsert: false, contentType: s.file.type || 'image/jpeg' });
+    if (upErr) throw upErr;
+
+    const foods = s.result.foods
+      .map((food, i) => ({ food, i }))
+      .filter(({ i }) => s.selected.has(i))
+      .map(({ food, i }) => ({ ...food, grams: parseFloat(s.grams[i]) || food.grams }));
+    const totali = _diarioFotoRoundedTotals();
+
+    const { error: dbErr } = await sb.from('diario_alimentare_foto').insert({
+      cartella_id: s.cartellaId,
+      user_id: currentUser.id,
+      storage_path: path,
+      data_diario: s.dataDiario,
+      ai_description: s.result.description || null,
+      ai_confidence: s.result.confidence || null,
+      foods,
+      totali,
+      note: s.note || null,
+    });
+    if (dbErr) throw dbErr;
+
+    showLoading(false);
+    closeM('modal-diario-foto');
+    toast(_L('📸 Diario alimentare salvato!','📸 Food diary saved!'), 'ok');
+    _diarioFoto = null;
+    await renderCartellaDetail(s.cartellaId);
+  } catch (e) {
+    showLoading(false);
+    toast(_L('Errore: ','Error: ') + (e.message || e), 'err');
+  }
+}
+
+async function viewDiarioFoto(id, cartellaId) {
+  const list = (window._currentCartellaData && window._currentCartellaData.diarioFoto) || [];
+  const entry = list.find(d => d.id === id);
+  if (!entry) return;
+  openM('modal-diario-foto');
+  const body = document.getElementById('diario-foto-body');
+  const foot = document.getElementById('diario-foto-foot');
+  body.innerHTML = `<div style="text-align:center;padding:30px 0">⏳ ${_L('Caricamento...','Loading...')}</div>`;
+  foot.innerHTML = '';
+
+  const { data: signed } = await sb.storage.from('patient-files').createSignedUrl(entry.storage_path, 3600);
+  const totals = entry.totali || {};
+  const foods = Array.isArray(entry.foods) ? entry.foods : [];
+  const dataStr = entry.data_diario ? new Date(entry.data_diario).toLocaleDateString(_L('it','en')) : '—';
+
+  body.innerHTML = `
+    ${signed && signed.signedUrl ? `<img src="${signed.signedUrl}" style="width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-bottom:14px">` : ''}
+    <div style="margin-bottom:10px">
+      <div style="font-weight:700;font-size:13px">${esc(entry.ai_description || _L('Diario alimentare','Food diary'))}</div>
+      <div style="font-size:11px;color:var(--slate-l)">${dataStr}${entry.ai_confidence ? ' · ' + _L('Confidenza','Confidence') + ': ' + esc(entry.ai_confidence) : ''}</div>
+    </div>
+    <div style="margin-bottom:6px;font-size:12px;font-weight:700;color:var(--slate-m)">${_L('Macronutrienti','Macronutrients')}</div>
+    ${_diarioFotoPillsHtml(totals, DIARIO_MACRO_FIELDS)}
+    <div style="margin:14px 0 6px;font-size:12px;font-weight:700;color:var(--slate-m)">${_L('Micronutrienti','Micronutrients')}</div>
+    ${_diarioFotoPillsHtml(totals, DIARIO_MICRO_FIELDS)}
+    <div style="margin:16px 0 6px;font-size:12px;font-weight:700;color:var(--slate-m)">${_L('Alimenti','Foods')}</div>
+    ${foods.map(f => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-light);font-size:12.5px">
+      <span>${esc(f.name)} <span style="color:var(--slate-l)">(${f.grams}g)</span></span>
+      <span style="color:var(--slate-l)">${Math.round(_diarioFotoFoodValue(f, 'kcal', f.grams))} kcal</span>
+    </div>`).join('')}
+    ${entry.note ? `<div class="fg" style="margin-top:14px"><label>${_L('Nota clinica','Clinical note')}</label><div style="background:#F8FAFC;border-radius:8px;padding:10px 12px;font-size:12.5px;color:var(--slate-m)">${esc(entry.note)}</div></div>` : ''}
+  `;
+  foot.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="closeM('modal-diario-foto')">${_L('Chiudi','Close')}</button>`;
+}
+
+async function deleteDiarioFoto(id, storagePath, cartellaId) {
+  customConfirm(_L('Eliminare questa foto del diario alimentare?','Delete this food diary photo?'), async () => {
+    showLoading(true);
+    await sb.storage.from('patient-files').remove([storagePath]);
+    const { error } = await sb.from('diario_alimentare_foto').delete().eq('id', id);
+    showLoading(false);
+    if (error) { toast(_L('Errore durante l eliminazione','Error while deleting'), 'err'); return; }
+    toast(_L('🗑️ Foto diario eliminata','🗑️ Diary photo deleted'), 'ok');
+    await renderCartellaDetail(cartellaId);
+  }, { danger: true, title: _L('🗑️ Elimina Foto Diario','🗑️ Delete Diary Photo'), okLabel: _L('Elimina','Delete') });
 }
 </script>
 </body>

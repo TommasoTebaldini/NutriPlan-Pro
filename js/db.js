@@ -4197,7 +4197,7 @@ const DB_EXTRA=[
 // === CUCINA NORDICA ===
 {n:"Skyr islandese naturale",c:"Latticini",src:"EXTRA",k:63,p:11,gs:0,g:0.2,z:4,ch:4,fi:0,ca:130,fe:0.1,mg:14,k2:170,na:50,zn:0.6,fo:3,se:5,col:2},
 {n:"Knekkebrød di segale (gallette scandinave)",c:"Pane e derivati",src:"EXTRA",k:348,p:11,gs:0.5,g:3.5,z:1.5,ch:65,fi:17,ca:30,fe:3.5,mg:80,k2:350,na:480,zn:2,fo:80,se:15,col:0},
-{n:"Aringa marinata nordica (herring)",c:"Pesce",src:"EXTRA",k:203,p:16,gs:2.5,g:14,z:1.5,ch:0,fi:0,ca:60,fe:1.2,mg:28,k2:350,na:1200,zn:1,fo:150,se:35,col:70},
+{n:"Aringa marinata nordica (herring)",c:"Pesce",src:"EXTRA",k:262,p:14.2,gs:2.38,g:18,z:7.7,ch:9.6,fi:0,ca:77,fe:1.22,mg:8,k2:69,na:870,zn:0.53,fo:2,se:58.5,col:13},
 {n:"Salmone gravlax (salmone marinato nordico)",c:"Pesce",src:"EXTRA",k:175,p:23,gs:1.5,g:9,z:0.5,ch:0,fi:0,ca:20,fe:0.8,mg:30,k2:420,na:1500,zn:0.6,fo:220,se:40,col:55},
 {n:"Marmellata di lingonberry (mirtilli nordici)",c:"Frutta conservata",src:"EXTRA",k:240,p:0.3,gs:0,g:0.3,z:55,ch:60,fi:1.5,ca:10,fe:0.5,mg:5,k2:40,na:10,zn:0.1,fo:10,se:0.5,col:0},
 // === CUCINA MEDIORIENTALE AGGIUNTIVA ===
@@ -4210,10 +4210,10 @@ const DB_EXTRA=[
 {n:"Chimichurri (salsa argentina al prezzemolo)",c:"Condimenti",src:"EXTRA",k:290,p:3,gs:3,g:28,z:3,ch:8,fi:3,ca:90,fe:3,mg:30,k2:400,na:500,zn:0.6,fo:100,se:5,col:0},
 {n:"Mate (infuso di yerba mate, per 200ml)",c:"Bevande",src:"EXTRA",k:4,p:0.2,gs:0,g:0,z:0.5,ch:0.5,fi:0,ca:5,fe:0.1,mg:8,k2:60,na:2,zn:0.1,fo:5,se:0.5,col:0},
 // === FUNGHI ESOTICI ===
-{n:"Shiitake freschi",c:"Funghi",src:"EXTRA",k:34,p:2.2,gs:0,g:0.5,z:5,ch:7,fi:2.5,ca:2,fe:0.4,mg:20,k2:305,na:9,zn:1,fo:112,se:5,col:0},
-{n:"Funghi oyster freschi (ostrica)",c:"Funghi",src:"EXTRA",k:33,p:3.3,gs:0,g:0.4,z:4,ch:6,fi:2.3,ca:3,fe:1.3,mg:18,k2:420,na:18,zn:0.8,fo:38,se:2.6,col:0},
-{n:"Enoki freschi (funghi ago giapponesi)",c:"Funghi",src:"EXTRA",k:37,p:2.7,gs:0,g:0.3,z:6,ch:8,fi:2.7,ca:3,fe:1.1,mg:16,k2:359,na:3,zn:0.7,fo:88,se:2,col:0},
-{n:"Funghi maitake freschi (hen of the woods)",c:"Funghi",src:"EXTRA",k:31,p:1.9,gs:0,g:0.7,z:4,ch:7,fi:2.7,ca:1,fe:0.3,mg:8,k2:211,na:1,zn:0.7,fo:32,se:2.2,col:0},
+{n:"Shiitake freschi",c:"Funghi",src:"EXTRA",k:34,p:2.2,gs:0,g:0.5,z:2.4,ch:6.8,fi:2.5,ca:2,fe:0.41,mg:20,k2:304,na:9,zn:1.03,fo:13,se:5.7,col:0},
+{n:"Funghi oyster freschi (ostrica)",c:"Funghi",src:"EXTRA",k:33,p:3.3,gs:0.06,g:0.4,z:1.1,ch:6.1,fi:2.3,ca:3,fe:1.33,mg:18,k2:420,na:18,zn:0.77,fo:38,se:2.6,col:0},
+{n:"Enoki freschi (funghi ago giapponesi)",c:"Funghi",src:"EXTRA",k:37,p:2.7,gs:0.03,g:0.3,z:0.2,ch:7.8,fi:2.7,ca:0,fe:1.15,mg:16,k2:359,na:3,zn:0.65,fo:48,se:2.2,col:0},
+{n:"Funghi maitake freschi (hen of the woods)",c:"Funghi",src:"EXTRA",k:31,p:1.9,gs:0.03,g:0.2,z:2.1,ch:7,fi:2.7,ca:1,fe:0.3,mg:10,k2:204,na:1,zn:0.75,fo:21,se:2.2,col:0},
 // === PESCE AGGIUNTIVO ===
 {n:"Orata (sparus aurata) al forno",c:"Pesce",src:"EXTRA",k:130,p:22,gs:1,g:4.5,z:0.5,ch:0,fi:0,ca:30,fe:0.5,mg:30,k2:380,na:80,zn:0.5,fo:180,se:35,col:65},
 {n:"Sardine fresche crude",c:"Pesce",src:"EXTRA",k:208,p:24.6,gs:1.3,g:11.5,z:0,ch:0,fi:0,ca:382,fe:2.9,mg:39,k2:397,na:307,zn:1.4,fo:120,se:52,col:142},
@@ -4221,21 +4221,21 @@ const DB_EXTRA=[
 {n:"Cernia (grouper) al vapore",c:"Pesce",src:"EXTRA",k:118,p:24,gs:0.5,g:2,z:0.5,ch:0,fi:0,ca:25,fe:0.6,mg:35,k2:400,na:90,zn:0.4,fo:150,se:40,col:55},
 // === FORMAGGI E PIATTI TIPICI ITALIANI ===
 {n:"Castelmagno DOP (formaggio piemontese, stagionato 12 mesi)",c:"Formaggi",src:"EXTRA",k:362,p:30,gs:18,g:27,z:0.5,ch:0,fi:0,ca:700,fe:0.3,mg:30,k2:150,na:950,zn:3,fo:400,se:8,col:95},
-{n:"Fiordilatte (mozzarella vaccina fresca campana)",c:"Formaggi",src:"EXTRA",k:242,p:17,gs:13,g:18,z:0.5,ch:2,fi:0,ca:400,fe:0.1,mg:15,k2:110,na:420,zn:2,fo:130,se:5,col:55},
+{n:"Fiordilatte (mozzarella vaccina fresca campana)",c:"Formaggi",src:"EXTRA",k:299,p:22.2,gs:13.9,g:22.1,z:0,ch:2.4,fi:0,ca:505,fe:0.44,mg:20,k2:76,na:486,zn:2.92,fo:7,se:17,col:79},
 {n:"Suppli' al telefono (riso fritto con mozzarella, 80g)",c:"Piatti tipici regionali",src:"EXTRA",k:220,p:7.5,gs:4,g:9,z:2,ch:28,fi:1,ca:75,fe:0.8,mg:20,k2:120,na:380,zn:0.8,fo:80,se:6,col:22},
 // === PROTEINE VEGETALI E INTEGRATORI ===
 {n:"Seitan (glutine di frumento, cotto)",c:"Sostituti carne vegetali",src:"EXTRA",k:147,p:25,gs:0,g:2.5,z:1,ch:10,fi:1,ca:100,fe:4,mg:35,k2:150,na:450,zn:1.5,fo:95,se:15,col:0},
-{n:"Proteina di piselli in polvere (isolate)",c:"Proteine in Polvere",src:"EXTRA",k:380,p:78,gs:0.3,g:6,z:0.5,ch:7,fi:3,ca:40,fe:8,mg:80,k2:350,na:600,zn:3,fo:200,se:5,col:0},
+{n:"Proteina di piselli in polvere (isolate)",c:"Proteine in Polvere",src:"EXTRA",k:335,p:88.3,gs:0.42,g:3.4,z:0,ch:0,fi:0,ca:178,fe:14.5,mg:39,k2:81,na:1005,zn:4.03,fo:176,se:0.8,col:0},
 {n:"Proteina di canapa in polvere",c:"Proteine in Polvere",src:"EXTRA",k:352,p:50,gs:2,g:11,z:4,ch:22,fi:9,ca:80,fe:8,mg:350,k2:900,na:100,zn:7,fo:450,se:15,col:0},
 {n:"Collagene idrolizzato in polvere",c:"Integratori alimentari",src:"EXTRA",k:360,p:90,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:120,zn:0,fo:0,se:0,col:0},
 {n:"Olio MCT (trigliceridi a catena media)",c:"Grassi e oli",src:"EXTRA",k:900,p:0,gs:87,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
-{n:"Spirulina in polvere (cianobatterio essiccato)",c:"Integratori alimentari",src:"EXTRA",k:290,p:57,gs:2,g:8,z:6,ch:24,fi:3.6,ca:120,fe:28,mg:195,k2:1363,na:1048,zn:2,fo:94,se:7,col:0},
+{n:"Spirulina in polvere (cianobatterio essiccato)",c:"Integratori alimentari",src:"EXTRA",k:290,p:57.5,gs:2.65,g:7.7,z:3.1,ch:23.9,fi:3.6,ca:120,fe:28.5,mg:195,k2:1363,na:1048,zn:2,fo:94,se:7.2,col:0},
 // === CEREALI ANTICHI E PSEUDOCEREALI ===
-{n:"Teff in grani (cotto)",c:"Cereali",src:"EXTRA",k:101,p:3.9,gs:0,g:0.6,z:0.5,ch:20,fi:2.8,ca:80,fe:1.5,mg:33,k2:77,na:7,zn:0.9,fo:35,se:1.5,col:0},
+{n:"Teff in grani (cotto)",c:"Cereali",src:"EXTRA",k:101,p:3.9,gs:0,g:0.7,z:0.5,ch:19.9,fi:2.8,ca:49,fe:2.05,mg:50,k2:107,na:8,zn:1.11,fo:18,se:1.5,col:0},
 {n:"Freekeh (grano verde arrostito, cotto)",c:"Cereali",src:"EXTRA",k:137,p:6,gs:0.1,g:0.7,z:1.5,ch:28,fi:7,ca:25,fe:1.5,mg:50,k2:200,na:20,zn:1.5,fo:80,se:10,col:0},
-{n:"Kamut (grano Khorasan, cotto)",c:"Cereali",src:"EXTRA",k:141,p:5.5,gs:0.1,g:0.9,z:0.5,ch:29,fi:3.6,ca:17,fe:1.1,mg:45,k2:186,na:3,zn:1.2,fo:72,se:15,col:0},
+{n:"Kamut (grano Khorasan, cotto)",c:"Cereali",src:"EXTRA",k:132,p:5.7,gs:0.08,g:0.8,z:3.1,ch:27.6,fi:4.3,ca:9,fe:1.76,mg:48,k2:164,na:8,zn:1.84,fo:11,se:31.9,col:0},
 // === LEGUMI ESOTICI ===
-{n:"Fagioli adzuki (azuki) cotti",c:"Legumi",src:"EXTRA",k:128,p:7.5,gs:0,g:0.1,z:0.3,ch:25,fi:7.3,ca:28,fe:2,mg:52,k2:532,na:8,zn:1.8,fo:120,se:1.2,col:0},
+{n:"Fagioli adzuki (azuki) cotti",c:"Legumi",src:"EXTRA",k:128,p:7.5,gs:0.04,g:0.1,z:0.3,ch:24.8,fi:7.3,ca:28,fe:2,mg:52,k2:532,na:244,zn:1.77,fo:121,se:1.2,col:0},
 {n:"Farina di lupini (deamarizzati)",c:"Legumi",src:"EXTRA",k:392,p:41,gs:1.2,g:10,z:4,ch:37,fi:23,ca:176,fe:4.5,mg:160,k2:990,na:28,zn:4,fo:500,se:5,col:0},
 ];
 

@@ -68,16 +68,23 @@ function nameSimilarity(a, b) {
   const containmentLocal = inter / ta.size;
   return 0.5 * jaccard + 0.5 * containmentLocal;
 }
+// BUG storico corretto 2026-07-28 (stesso fix di audit-crea-batch.cjs): vedi
+// commento gemello in quel file per la spiegazione completa — in breve, la
+// versione precedente provava per prima il solo contenuto tra parentesi
+// (spesso solo una parola di stato tipo "cotte"/"secca") invece del nome
+// vero, facendo fallire silenziosamente centinaia di ricerche.
 function buildQueryVariants(name) {
   const variants = [];
   const parenMatch = name.match(/\(([^)]+)\)/);
   const withoutParens = name.replace(/\([^)]*\)/g, '').trim();
-  if (parenMatch) variants.push(parenMatch[1].trim());
+  const parenContent = parenMatch ? parenMatch[1].trim() : '';
+  const parenIsJustState = parenContent && parenContent.split(/\s+/).every(w => STATE_WORDS.has(w.toLowerCase()));
+  if (withoutParens) variants.push(withoutParens);
   variants.push(name.replace(/[()]/g, '').trim());
-  if (withoutParens && withoutParens !== name) variants.push(withoutParens);
-  const words = (parenMatch ? parenMatch[1] : withoutParens || name).trim().split(/\s+/);
+  const words = (withoutParens || name).trim().split(/\s+/);
   for (let n = Math.min(4, words.length - 1); n >= 2; n--) variants.push(words.slice(0, n).join(' '));
   if (words.length >= 1) variants.push(words[0]);
+  if (parenContent && !parenIsJustState) variants.push(parenContent);
   return [...new Set(variants.filter(Boolean))];
 }
 async function searchBestEffort(name) {

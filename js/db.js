@@ -2578,7 +2578,8 @@ const DB_UPF = [
   {n:"Limoncello 30%",c:"Alcolici",src:"UPF",k:272,p:0,gs:0,g:0,z:31,ch:31,fi:0,ca:0,fe:0,mg:0,k2:3,na:0,zn:0,fo:0,se:0,col:0},
   {n:"Porto vino liquoroso dolce 20%",c:"Alcolici",src:"UPF",k:163,p:0.1,gs:0,g:0,z:12,ch:12,fi:0,ca:8,fe:0.4,mg:9,k2:100,na:8,zn:0.1,fo:5,se:1,col:0},
   {n:"Birra senza glutine",c:"Alcolici",src:"UPF",k:40,p:0.3,gs:0,g:0,z:2,ch:3.5,fi:0,ca:5,fe:0,mg:5,k2:20,na:4,zn:0.01,fo:20,se:0,col:0},
-  {n:"Sidro di mele secco 5%",c:"Alcolici",src:"UPF",k:42,p:0,gs:0,g:0,z:2.6,ch:4.0,fi:0,ca:8,fe:0.1,mg:4,k2:60,na:7,zn:0.02,fo:3,se:0,col:0},
+// Allineato a voce CREA gia verificata "Sidro di mele secco" — 2026-07-28
+  {n:"Sidro di mele secco 5%",c:"Alcolici",src:"UPF",k:38,p:0,gs:0,g:0,z:1.5,ch:2.6,fi:0,ca:5,fe:0.1,mg:3,k2:80,na:2,zn:0.1,fo:5,se:0,col:0},
 
   // ── BEVANDE ZUCCHERATE aggiuntive ──
   {n:"Nettare di pesca brick",c:"Bibite zuccherate",src:"UPF",k:55,p:0.4,gs:0,g:0.1,z:12.6,ch:12.6,fi:0.9,ca:8,fe:0.3,mg:7,k2:110,na:0,zn:0.05,fo:8,se:0,col:0},
@@ -2620,7 +2621,8 @@ const DB_UPF = [
   // ── SALSE E CONDIMENTI INDUSTRIALI aggiuntivi ──
   {n:"Salsa guacamole industriale in vaschetta",c:"Condimenti",src:"UPF",k:148,p:1.5,gs:3.5,g:14,z:1,ch:5,fi:4,ca:15,fe:0.5,mg:22,k2:320,na:480,zn:0.4,fo:38,se:0.3,col:0},
   {n:"Salsa tzatziki industriale in vaschetta",c:"Condimenti",src:"UPF",k:107,p:3,gs:3.5,g:8.3,z:4.7,ch:4.9,fi:0.3,ca:80,fe:0.2,mg:13,k2:110,na:865,zn:0.3,fo:52,se:3,col:16},
-  {n:"Salsa Sriracha piccante",c:"Condimenti",src:"UPF",k:93,p:2,gs:0.1,g:0.5,z:14,ch:17,fi:1.5,ca:18,fe:0.5,mg:12,k2:180,na:2200,zn:0.2,fo:25,se:1,col:0},
+// Allineato a voce BDA gia verificata "Sriracha (salsa di peperoncino piccante)" — 2026-07-28
+  {n:"Salsa Sriracha piccante",c:"Condimenti",src:"UPF",k:93,p:2,gs:0.1,g:1.0,z:12.5,ch:19.5,fi:0.5,ca:35,fe:1.0,mg:20,k2:220,na:1120,zn:0.3,fo:20,se:1,col:0},
   {n:"Salsa Teriyaki industriale",c:"Condimenti",src:"UPF",k:89,p:4,gs:0,g:0.2,z:17,ch:17.5,fi:0.3,ca:10,fe:0.9,mg:20,k2:90,na:2500,zn:0.2,fo:25,se:1,col:0},
   {n:"Burro di cocco industriale",c:"Grassi e oli",src:"UPF",k:700,p:2,gs:55,g:63,z:5.5,ch:23,fi:9,ca:20,fe:3,mg:90,k2:540,na:15,zn:1,fo:240,se:12,col:0},
 
@@ -3047,7 +3049,8 @@ const DB_UPF = [
   {n:"Kefir di latte vaccino intero (per 100g)",c:"Latte e derivati",src:"UPF",k:43,p:3.3,gs:1.2,g:1.5,z:3.8,ch:4,fi:0,ca:120,fe:0.1,mg:12,k2:151,na:40,zn:0.4,fo:100,se:3,col:12},
   {n:"Tofu al naturale (industriale, per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:149,p:15,gs:1.5,g:8.5,z:0,ch:2,fi:2.3,ca:350,fe:5.4,mg:30,k2:121,na:0,zn:0.8,fo:97,se:8,col:0},
   {n:"Seitan al naturale (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:135,p:18,gs:0.2,g:1.2,z:0.9,ch:12,fi:2.1,ca:14,fe:2.4,mg:18,k2:45,na:580,zn:0.8,fo:90,se:3,col:0},
-  {n:"Tempeh di soia pastorizzato (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:195,p:19.0,gs:1.5,g:11.0,z:0,ch:9.4,fi:4.1,ca:111,fe:2.7,mg:81,k2:412,na:14,zn:1.1,fo:221,se:2,col:0},
+// Allineato a voce CREA gia verificata "Tempeh di soia" (la pastorizzazione non altera la composizione) — 2026-07-28
+  {n:"Tempeh di soia pastorizzato (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:173,p:20.7,gs:0.92,g:6.4,z:0.9,ch:6.4,fi:4.1,ca:120,fe:3.6,mg:81,k2:370,na:6,zn:1.8,fo:76,se:0.1,col:0},
 
   // ── CONDIMENTI E SALSE INDUSTRIALI ──
   {n:"Salsa BBQ (ketchup affumicato, per 100g)",c:"Condimenti",src:"UPF",k:116.7,p:0,gs:0,g:0,z:26.7,ch:30,fi:0.5,ca:18,fe:0.8,mg:12,k2:285,na:1200,zn:0.1,fo:22,se:1,col:0},
@@ -3062,11 +3065,13 @@ const DB_UPF = [
 
   // ── ALIMENTI PRIMA INFANZIA ──
   {n:"Plasmon Omogeneizzato frutta mela-pera (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:64,p:0.5,gs:0,g:0.2,z:10.3,ch:14.3,fi:1.5,ca:6,fe:0.2,mg:4,k2:88,na:20,zn:0.1,fo:10,se:0,col:0},
-  {n:"Plasmon Omogeneizzato carne manzo (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:70,p:10.0,gs:0.4,g:1.5,z:0,ch:3.5,fi:0,ca:10,fe:1.8,mg:15,k2:210,na:30,zn:1.5,fo:110,se:6,col:28},
+// Allineato a voce BDA gia verificata "Omogeneizzato di manzo (tipo Plasmon)" — 2026-07-28
+  {n:"Plasmon Omogeneizzato carne manzo (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:70,p:9.5,gs:0.8,g:3.2,z:0,ch:0.5,fi:0,ca:8,fe:2.0,mg:12,k2:200,na:55,zn:1.5,fo:60,se:12,col:40},
   {n:"Plasmon Omogeneizzato tacchino (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:82,p:5.7,gs:1.2,g:3.6,z:0,ch:6.8,fi:0,ca:8,fe:0.8,mg:14,k2:195,na:28,zn:0.8,fo:100,se:5,col:22},
   {n:"Plasmon Crema di verdure liofilizzata (per 100g polvere)",c:"Alimenti prima infanzia",src:"UPF",k:352,p:15.0,gs:0.5,g:3.0,z:8.0,ch:65.0,fi:8.0,ca:200,fe:4.0,mg:60,k2:1200,na:120,zn:2.0,fo:300,se:5,col:0},
   {n:"Latte formula 2 seguito (6-12 mesi, polvere per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:503,p:13.5,gs:10.0,g:26.5,z:49.0,ch:55.5,fi:1.5,ca:560,fe:7.5,mg:50,k2:670,na:175,zn:4.5,fo:380,se:10,col:30},
-  {n:"Latte formula 3 crescita (1-3 anni, polvere per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:485,p:15.0,gs:8.5,g:23.0,z:47.5,ch:58.5,fi:3.0,ca:700,fe:8.0,mg:60,k2:750,na:200,zn:5.0,fo:450,se:12,col:25},
+// Allineato a voce BDA gia verificata "Latte di crescita 3 (follow-on formula)" — 2026-07-28
+  {n:"Latte formula 3 crescita (1-3 anni, polvere per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:480,p:17.0,gs:5.0,g:21.0,z:42.0,ch:57.0,fi:1.0,ca:950,fe:12.0,mg:80,k2:700,na:200,zn:6.5,fo:200,se:20,col:50},
   {n:"Liofilizzato frutta banana (Heinz/Hipp, per 100g polvere)",c:"Alimenti prima infanzia",src:"UPF",k:360,p:4.5,gs:0,g:0.8,z:62.0,ch:85.0,fi:8.5,ca:22,fe:1.2,mg:120,k2:1491,na:3,zn:0.5,fo:88,se:1,col:0},
   {n:"Pastina stelline per bambini (Barilla, per 100g cruda)",c:"Alimenti prima infanzia",src:"UPF",k:357,p:12.5,gs:0,g:1.8,z:3.6,ch:75,fi:3.6,ca:0,fe:3.21,mg:40,k2:190,na:0,zn:0.8,fo:120,se:10,col:0},
 
@@ -3144,7 +3149,8 @@ const DB_UPF = [
   {n:"Mulino Bianco Cereali Croccanti (per 100g)",c:"Cereali da colazione",src:"UPF",k:439,p:6,gs:2.5,g:13,z:26,ch:73,fi:3,ca:120,fe:5,mg:75,k2:330,na:120,zn:2.5,fo:120,se:10,col:0},
   // ── SALSE E CONDIMENTI INDUSTRIALI ──
   {n:"Ketchup Heinz (per 100g)",c:"Condimenti",src:"UPF",k:102,p:1.2,gs:0.1,g:0.1,z:22.8,ch:23.2,fi:0.5,ca:20,fe:1,mg:18,k2:434,na:708,zn:0.2,fo:10,se:2,col:0},
-  {n:"Salsa Worcester (Worcestershire sauce)",c:"Condimenti",src:"UPF",k:78,p:0.3,gs:0,g:0,z:15,ch:19.5,fi:0,ca:34,fe:4.5,mg:30,k2:665,na:980,zn:0.3,fo:16,se:2,col:0},
+// Allineato a voce CREA gia verificata "Worcestershire sauce (salsa inglese)" — 2026-07-28
+  {n:"Salsa Worcester (Worcestershire sauce)",c:"Condimenti",src:"UPF",k:78,p:1.0,gs:0,g:0.1,z:17,ch:19,fi:0.5,ca:65,fe:3.6,mg:30,k2:390,na:980,zn:0.2,fo:36,se:2,col:0},
   {n:"Salsa di soia Kikkoman (per 100g)",c:"Condimenti",src:"UPF",k:77,p:10,gs:0,g:0,z:0.6,ch:3.2,fi:0.2,ca:18,fe:1.7,mg:36,k2:208,na:6760,zn:0.5,fo:18,se:2,col:0},
   {n:"Dolmio sugo pronto al pomodoro (per 100g)",c:"Condimenti",src:"UPF",k:63,p:1.7,gs:1,g:4.3,z:3.6,ch:3.6,fi:1.3,ca:25,fe:0.7,mg:14,k2:380,na:240,zn:0.2,fo:15,se:2,col:0},
   // ── CREME SPALMABILI E DIP ──
@@ -3361,7 +3367,8 @@ const DB_UPF = [
 {n:"Nigiri salmone - sushi (per 100g)",c:"Cucina etnica",src:"INT",k:165,p:9,gs:1,g:4,z:1.5,ch:26,fi:0.6,ca:12,fe:0.5,mg:18,k2:95,na:260,zn:0.5,fo:95,se:18,col:22},
 {n:"Burrito con pollo e verdure (per 100g)",c:"Cucina etnica",src:"INT",k:185,p:10.5,gs:1.5,g:5.5,z:2.5,ch:24.5,fi:2.0,ca:55,fe:1.2,mg:25,k2:220,na:490,zn:0.9,fo:110,se:8,col:22},
 // ── SNACK E BEVANDE PREMIUM ──
-{n:"Cornetto vuoto al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:395,p:8.5,gs:10.5,g:18,z:12,ch:52,fi:1.5,ca:30,fe:2.0,mg:12,k2:100,na:330,zn:0.6,fo:85,se:12,col:45},
+// Allineato a voce gia verificata "Cornetto vuoto (bar italiano)" — 2026-07-28
+{n:"Cornetto vuoto al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:390,p:7.5,gs:8.0,g:19.5,z:15,ch:50.5,fi:1.5,ca:35,fe:1.5,mg:15,k2:110,na:380,zn:0.5,fo:75,se:4,col:55},
 {n:"Cornetto alla crema al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:350,p:7.0,gs:5.5,g:15,z:18,ch:49,fi:1.0,ca:55,fe:1.5,mg:12,k2:100,na:195,zn:0.5,fo:80,se:8,col:65},
 {n:"Tramezzino al tonno (bar, per 100g)",c:"Pane farcito",src:"UPF",k:266,p:9.1,gs:1.5,g:17.5,z:6.3,ch:24.5,fi:1.0,ca:38,fe:1.0,mg:15,k2:165,na:559,zn:0.6,fo:85,se:14,col:28},
 {n:"Crodino analcolico (per 100ml)",c:"Alcolici e simili",src:"UPF",k:61,p:0,gs:0,g:0,z:15,ch:15,fi:0,ca:3,fe:0,mg:2,k2:8,na:4,zn:0,fo:0,se:0,col:0},
@@ -3692,7 +3699,8 @@ const DB_ONS = [
    k:295,p:2.1,ch:79,g:0.7,fi:71,gs:0,z:1.3,ca:58,fe:2.5,mg:88,k2:274,na:45,zn:0.9,fo:120,se:2,col:0,porzione:5},
 
 // ─── Nuovi alimenti UPF aggiunti 2025-05 ───
-{n:"Gallette di riso soffiato (per 100g)",c:"Snack salati",src:"UPF",k:387,p:7.9,gs:0.4,g:2.2,z:0.6,ch:82.5,fi:2.0,na:330},
+// Completato con micronutrienti mancanti e macro allineati a voce CREA/BDA gia verificata "Gallette di riso" (sodio lasciato piu alto, plausibile per una versione salata da snack) — 2026-07-28
+{n:"Gallette di riso soffiato (per 100g)",c:"Snack salati",src:"UPF",k:368,p:7.4,gs:0.69,g:3.4,z:0.9,ch:79.3,fi:5.0,ca:14,fe:1.1,mg:112,k2:276,na:330,zn:1.6,fo:17,se:4,col:0},
 {n:"Barretta proteica whey generica (per 100g)",c:"Barrette proteiche",src:"UPF",k:380,p:32.0,gs:4.2,g:11.0,z:24.0,ch:42.0,fi:2.5,na:220},
 {n:"Bevanda di soia zuccherata (per 100g)",c:"Bevande vegetali",src:"UPF",k:54,p:3.3,gs:0.3,g:1.8,z:5.6,ch:6.8,fi:0.5,na:47},
 {n:"Barretta ai cereali con cioccolato (per 100g)",c:"Barrette proteiche",src:"UPF",k:363,p:11.5,gs:0.27,g:1.5,z:1.1,ch:73.8,fi:2.4,na:2},
@@ -3746,7 +3754,8 @@ const DB_ONS = [
 {n:"Actimel (drink probiotico, per 100mL)",c:"Latte e derivati",src:"UPF",k:75,p:2.8,gs:0.6,g:1.2,z:11.0,ch:13.5,fi:0,ca:90,fe:0.1,mg:8,k2:120,na:45,zn:0.4,fo:10,se:2,col:5},
 {n:"Yakult (bebanda probiotica, per 65mL)",c:"Latte e derivati",src:"UPF",k:83,p:1.5,gs:0,g:0,z:16.5,ch:19.5,fi:0,ca:24,fe:0,mg:5,k2:30,na:28,zn:0.1,fo:3,se:1,col:2},
 {n:"Mozzarella light industriale (per 100g)",c:"Latte e derivati",src:"UPF",k:157,p:18,gs:5.8,g:9,z:1,ch:1,fi:0,ca:430,fe:0.3,mg:20,k2:95,na:380,zn:2.0,fo:18,se:6,col:25},
-{n:"Panna da cucina UHT (18% grassi, per 100g)",c:"Latte e derivati",src:"UPF",k:185,p:2.5,gs:11.5,g:18.5,z:3.0,ch:4.0,fi:0,ca:65,fe:0.1,mg:8,k2:100,na:35,zn:0.3,fo:4,se:1,col:60},
+// Allineato a voce CREA gia verificata "Panna da cucina (UHT 18%)" — 2026-07-28
+{n:"Panna da cucina UHT (18% grassi, per 100g)",c:"Latte e derivati",src:"UPF",k:177,p:2.8,gs:11.5,g:17.5,z:3.5,ch:3.9,fi:0,ca:67,fe:0.1,mg:8,k2:85,na:40,zn:0.2,fo:55,se:1.5,col:55},
 {n:"Besciamella pronta (in tetrapak, per 100g)",c:"Piatti pronti",src:"UPF",k:100,p:2.5,gs:3.5,g:6.5,z:4.5,ch:8.5,fi:0.3,ca:85,fe:0.2,mg:8,k2:100,na:380,zn:0.3,fo:5,se:2,col:18},
 
 // ── PRODOTTI SALUTE E BENESSERE ──
@@ -4243,7 +4252,8 @@ const DB_EXTRA=[
 // === PESCE AGGIUNTIVO ===
 // Allineato alla voce BDA gia verificata "Orata al forno" (stesso nome quasi esatto) — 2026-07-28
 {n:"Orata (sparus aurata) al forno",c:"Pesce",src:"EXTRA",k:115,p:20.5,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:32,fe:0.8,mg:30,k2:350,na:65,zn:0.6,fo:230,se:42,col:60},
-{n:"Sardine fresche crude",c:"Pesce",src:"EXTRA",k:208,p:24.6,gs:1.3,g:11.5,z:0,ch:0,fi:0,ca:382,fe:2.9,mg:39,k2:397,na:307,zn:1.4,fo:120,se:52,col:142},
+// Allineato a voce CREA gia verificata "Sardine fresche": il calcio locale (382mg) era sproporzionato per pesce fresco senza lische commestibili (valore piu tipico delle sardine in scatola con lische ammorbidite) — 2026-07-28
+{n:"Sardine fresche crude",c:"Pesce",src:"EXTRA",k:225,p:20.3,gs:5.23,g:15.4,z:1.5,ch:1.5,fi:0,ca:85,fe:2.4,mg:70,k2:630,na:115,zn:3.9,fo:260,se:58,col:65},
 {n:"Trota salmonata affumicata",c:"Pesce",src:"EXTRA",k:168,p:25,gs:1.5,g:7,z:0.5,ch:0,fi:0,ca:30,fe:0.5,mg:28,k2:500,na:800,zn:0.5,fo:190,se:35,col:70},
 {n:"Cernia (grouper) al vapore",c:"Pesce",src:"EXTRA",k:118,p:24,gs:0.5,g:2,z:0.5,ch:0,fi:0,ca:25,fe:0.6,mg:35,k2:400,na:90,zn:0.4,fo:150,se:40,col:55},
 // === FORMAGGI E PIATTI TIPICI ITALIANI ===

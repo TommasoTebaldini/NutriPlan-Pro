@@ -4073,7 +4073,8 @@ const DB_EXTRA=[
 {n:"Philadelphia (cream cheese)",c:"Formaggi",src:"EXTRA",k:350,p:6.2,gs:20.21,g:34.4,z:3.8,ch:5.5,fi:0,ca:97,fe:0.11,mg:9,k2:132,na:314,zn:0.5,fo:9,se:8.6,col:101},
 {n:"Stracciatella di bufala",c:"Formaggi",src:"EXTRA",k:251,p:8.5,gs:16.3,g:23,z:2.4,ch:2.4,fi:0,ca:220,fe:0.3,mg:20,k2:180,na:248,zn:0.8,fo:180,se:3,col:65},
 {n:"Panna da cucina UHT",c:"Formaggi",src:"EXTRA",k:203,p:2.5,gs:10,g:20,z:3.5,ch:3.5,fi:0,ca:62,fe:0.1,mg:6,k2:90,na:40,zn:0.2,fo:55,se:2,col:68},
-{n:"Panna fresca da montare",c:"Formaggi",src:"EXTRA",k:337,p:2,gs:20,g:35,z:3.5,ch:3.5,fi:0,ca:72,fe:0.1,mg:7,k2:100,na:36,zn:0.2,fo:60,se:2,col:115},
+// Grassi saturi aggiornati (24g su 35g totali, in linea con la scheda tecnica di un prodotto reale 35% m.g.) — 2026-07-28
+{n:"Panna fresca da montare",c:"Formaggi",src:"EXTRA",k:337,p:2,gs:24,g:35,z:3.5,ch:3.5,fi:0,ca:72,fe:0.1,mg:7,k2:100,na:36,zn:0.2,fo:60,se:2,col:115},
 // === DOLCI E PASTICCERIA ===
 {n:"Tiramisù",c:"Dolci e dessert",src:"EXTRA",k:283,p:4.2,gs:9,g:19.4,z:18.1,ch:29.2,fi:0.3,ca:85,fe:0.8,mg:12,k2:140,na:264,zn:0.5,fo:120,se:5,col:155},
 {n:"Cannolo siciliano",c:"Dolci e dessert",src:"EXTRA",k:325,p:7.2,gs:8,g:14.6,z:26.1,ch:42.7,fi:2.1,ca:120,fe:1,mg:20,k2:200,na:118,zn:0.8,fo:130,se:8,col:60},

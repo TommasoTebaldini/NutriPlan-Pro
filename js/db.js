@@ -3372,10 +3372,13 @@ const DB_UPF = [
 {n:"Omogeneizzato di mela (vasetto)",c:"Baby food",src:"INT",k:68,p:0.2,gs:0,g:0.3,z:11.5,ch:16,fi:0.8,ca:5,fe:0.1,mg:3,k2:85,na:5,zn:0.02,fo:5,se:0,col:0},
 {n:"Omogeneizzato di pera (vasetto)",c:"Baby food",src:"INT",k:81,p:0.6,gs:0,g:0.4,z:10.5,ch:17,fi:0.7,ca:4,fe:0.1,mg:4,k2:80,na:4,zn:0.02,fo:4,se:0,col:0},
 {n:"Passato di verdure (patata-carota-zucchina, vasetto)",c:"Baby food",src:"INT",k:44,p:0.6,gs:0,g:0.2,z:2.5,ch:10,fi:1.0,ca:12,fe:0.3,mg:8,k2:180,na:110,zn:0.2,fo:20,se:0.5,col:0},
-{n:"Crema di riso per bambini (cotta)",c:"Baby food",src:"INT",k:65,p:1.2,gs:0.1,g:0.3,z:0.5,ch:14.0,fi:0.5,ca:15,fe:0.5,mg:8,k2:35,na:10,zn:0.3,fo:30,se:1,col:0},
-{n:"Pastina stelline per bambini (cotta)",c:"Baby food",src:"INT",k:140,p:4.5,gs:0.1,g:0.5,z:0.5,ch:28.5,fi:1.0,ca:8,fe:0.6,mg:15,k2:50,na:3,zn:0.4,fo:55,se:5,col:0},
+// Verificato contro Plasmon Crema di Riso in polvere (374kcal/7.5g prot/81g cho/3.2g fibre/550mg ca per 100g secco): kcal/proteine/carbo/fibre gia coerenti con una diluizione ~1:6, solo il calcio era rimasto non scalato — corretto 2026-07-28
+{n:"Crema di riso per bambini (cotta)",c:"Baby food",src:"INT",k:65,p:1.2,gs:0.1,g:0.3,z:0.5,ch:14.0,fi:0.5,ca:92,fe:0.5,mg:8,k2:35,na:10,zn:0.3,fo:30,se:1,col:0},
+// Verificato contro Plasmon Pastina Stelline cruda (349kcal/11g prot/72g cho/2.6g fibre/200mg ca/10mg fe per 100g secco): macro gia coerenti con una resa di cottura ~x0.4, ma calcio e ferro erano rimasti non scalati (stesso pattern gia visto in Crema di riso bambini) — corretto 2026-07-28
+{n:"Pastina stelline per bambini (cotta)",c:"Baby food",src:"INT",k:140,p:4.5,gs:0.1,g:0.5,z:0.5,ch:28.5,fi:1.0,ca:80,fe:4.0,mg:15,k2:50,na:3,zn:0.4,fo:55,se:5,col:0},
 {n:"Biscottini Plasmon (per 100g)",c:"Baby food",src:"INT",k:412,p:9.5,gs:3.4,g:8,z:26.6,ch:74,fi:3,ca:330,fe:6.5,mg:20,k2:150,na:260,zn:0.8,fo:110,se:3,col:25},
-{n:"Farina lattea (polvere, come consumata)",c:"Baby food",src:"INT",k:390,p:10.5,gs:3.5,g:9.5,z:42.0,ch:65.0,fi:2.0,ca:380,fe:8.0,mg:35,k2:380,na:160,zn:2.5,fo:240,se:8,col:18},
+// Proteine/carboidrati/calcio erano sottostimati rispetto alla media Plasmon "pappa lattea" (varie varianti, 384-396kcal/12.5-14.5g prot/70-75g cho/400-450mg ca) — 2026-07-28
+{n:"Farina lattea (polvere, come consumata)",c:"Baby food",src:"INT",k:389,p:13.4,gs:3.5,g:9.5,z:36.5,ch:72.4,fi:2.0,ca:437,fe:8.0,mg:35,k2:380,na:160,zn:2.5,fo:240,se:8,col:18},
 {n:"Yogurt per bambini (intero, alla frutta)",c:"Baby food",src:"INT",k:86,p:1,gs:1.5,g:1.1,z:14,ch:17.6,fi:0.6,ca:65,fe:0.1,mg:10,k2:130,na:45,zn:0.4,fo:80,se:2,col:8},
 {n:"Omogeneizzato multivitaminico frutta (vasetto)",c:"Baby food",src:"INT",k:60,p:0.4,gs:0.1,g:0.3,z:9,ch:14,fi:0.8,ca:6,fe:0.5,mg:4,k2:90,na:4,zn:0.05,fo:6,se:0,col:0},
 // ═══ SENZA GLUTINE ═══
@@ -3629,9 +3632,9 @@ const DB_ONS = [
   {n:"Pulmocare BPCO (porz. 250mL=375kcal, alto grassi)",c:"ONS Polmonare",src:"ONS",
    k:150,p:6.2,ch:10.6,g:9.3,fi:1.4,gs:1.1,z:4.5,ca:140,fe:2.5,mg:42,k2:235,na:130,zn:1.8,fo:105,se:9,col:8,porzione:250},
   // ── ONS IBD / CDED specifico ──
-  // Modulen IBD: formula caseinica ad alta tolleranza per CDED. 150 kcal/100mL, 5.6g prot/100mL
+  // Modulen IBD: verificato scheda ufficiale Nestlé HealthScience al 20% (1kcal/mL: 100kcal,3.6g prot,4.6g grassi,10.8g cho,89mg ca,120mg k,24mcg folati...), scalato x1.5 per la diluizione al 30% (1.5kcal/mL=150kcal/100mL) qui usata — 2026-07-28
   {n:"Modulen IBD (porz. 100mL=150kcal)",c:"ONS IBD/CDED",src:"ONS",
-   k:150,p:5.6,ch:19.4,g:4.8,fi:0,gs:0.9,z:9.2,ca:95,fe:1.7,mg:28,k2:165,na:90,zn:1.2,fo:80,se:7,col:5,porzione:100},
+   k:150,p:5.4,ch:16.2,g:6.9,fi:0,gs:3.9,z:6.3,ca:134,fe:1.65,mg:30,k2:180,na:51,zn:1.38,fo:36,se:5.1,col:5,porzione:100},
   // Pentasa / Fresubin IBD: formula alternativa per CDED
   {n:"Peptamen Junior CDED (porz. 100mL=100kcal)",c:"ONS IBD/CDED",src:"ONS",
    k:100,p:3.0,ch:13.7,g:3.8,fi:0,gs:0.5,z:6.0,ca:65,fe:1.2,mg:20,k2:120,na:65,zn:0.9,fo:58,se:5,col:3,porzione:100},
@@ -3801,7 +3804,8 @@ const DB_APROTEICI = [
 {n:"Farina aproteica per panificazione (per 100g)",c:"Aproteici - Farine",src:"APROT",k:345,p:0.3,gs:0.1,g:0.3,z:4.3,ch:83,fi:4.5,ca:15,fe:0.3,mg:3,k2:20,na:30,zn:0.05,fo:5,se:0,col:0},
 {n:"Latte aproteico PKU (per 100ml)",c:"Aproteici - Formula",src:"APROT",k:70,p:0.3,gs:2,g:3.5,z:4.6,ch:9.2,fi:0,ca:120,fe:0.5,mg:10,k2:165,na:50,zn:0.5,fo:25,se:3,col:8},
 {n:"Pasta pronta aproteica al pomodoro (per 100g)",c:"Aproteici - Piatti pronti",src:"APROT",k:95,p:0.4,gs:0.3,g:2.2,z:1.5,ch:18,fi:0.8,ca:28,fe:0.5,mg:8,k2:125,na:380,zn:0.05,fo:12,se:0,col:0},
-{n:"Aproten mix per dolci (per 100g)",c:"Aproteici - Farine",src:"APROT",k:375,p:0.3,gs:1,g:3.5,z:5,ch:82,fi:1,ca:12,fe:0.2,mg:3,k2:15,na:120,zn:0.05,fo:5,se:0,col:0},
+// Verificato su scheda ufficiale Aproten Farina (prodotto base della linea): grassi e fibre erano molto sballati (0.3g grassi reali vs 3.5g locale; 5.4g fibre reali vs 1g locale) — 2026-07-28
+{n:"Aproten mix per dolci (per 100g)",c:"Aproteici - Farine",src:"APROT",k:346,p:0.3,gs:0.1,g:0.3,z:4.4,ch:82.2,fi:5.4,ca:12,fe:0.2,mg:3,k2:15,na:30,zn:0.05,fo:5,se:0,col:0},
 {n:"Gelato aproteico alla nocciola Loprofin (per 100g)",c:"Aproteici - Dolci",src:"APROT",k:185,p:0.15,gs:4,g:8.5,z:22,ch:26,fi:0.3,ca:18,fe:0.2,mg:4,k2:55,na:42,zn:0.05,fo:8,se:0,col:0},
 ];
 

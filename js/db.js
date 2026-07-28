@@ -2467,8 +2467,9 @@ const DB_UPF = [
   {n:"Gelato alla crema industriale",c:"Gelati",src:"UPF",k:255,p:3.1,gs:11,g:16,z:25,ch:25,fi:0.6,ca:110,fe:0.2,mg:10,k2:165,na:32,zn:0.4,fo:95,se:2,col:45},
 
   // ── BEVANDE ALCOLICHE ──
-  {n:"Vino rosso (12% vol.)",c:"Alcolici",src:"UPF",k:85,p:0.2,gs:0,g:0,z:0.3,ch:2.6,fi:0,ca:8,fe:0.5,mg:11,k2:127,na:5,zn:0.1,fo:23,se:1,col:0},
-  {n:"Vino bianco secco (12% vol.)",c:"Alcolici",src:"UPF",k:82,p:0.1,gs:0,g:0,z:0.6,ch:2.0,fi:0,ca:9,fe:0.3,mg:10,k2:71,na:10,zn:0.1,fo:18,se:1,col:0},
+  // Allineati alle voci BDA gia verificate (stesso nome quasi esatto) — 2026-07-28
+  {n:"Vino rosso (12% vol.)",c:"Alcolici",src:"UPF",k:68,p:0.1,gs:0,g:0,z:0.2,ch:0.2,fi:0,ca:7,fe:0.9,mg:11,k2:110,na:7,zn:0.1,fo:1,se:0,col:0},
+  {n:"Vino bianco secco (12% vol.)",c:"Alcolici",src:"UPF",k:71,p:0.1,gs:0,g:0,z:0.1,ch:0.1,fi:0,ca:9,fe:1.0,mg:8,k2:61,na:4,zn:0,fo:0,se:0,col:0},
   {n:"Birra chiara (5% vol.)",c:"Alcolici",src:"UPF",k:42,p:0.5,gs:0,g:0,z:0,ch:3.5,fi:0,ca:6,fe:0.02,mg:6,k2:35,na:8,zn:0.01,fo:28,se:1,col:0},
   {n:"Birra scura/doppio malto (7% vol.)",c:"Alcolici",src:"UPF",k:62,p:0.7,gs:0,g:0,z:2.5,ch:5,fi:0,ca:10,fe:0.1,mg:9,k2:60,na:6,zn:0.02,fo:40,se:1,col:0},
   {n:"Prosecco / spumante (11% vol.)",c:"Alcolici",src:"UPF",k:77,p:0.1,gs:0,g:0,z:1.2,ch:3,fi:0,ca:10,fe:0.2,mg:8,k2:59,na:10,zn:0.1,fo:14,se:1,col:0},
@@ -2649,7 +2650,8 @@ const DB_UPF = [
   {n:"Bevanda al caffè latte zuccherato (lattina)",c:"Bibite zuccherate",src:"UPF",k:55,p:7.7,gs:0.5,g:0.9,z:3.4,ch:3.9,fi:0,ca:75,fe:0,mg:8,k2:140,na:28,zn:0.3,fo:75,se:2,col:8},
   {n:"Kombucha commerciale zuccherato",c:"Bibite zuccherate",src:"UPF",k:60,p:0,gs:0,g:0,z:13,ch:15,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:0,zn:0,fo:5,se:0,col:0},
   {n:"Acqua aromatizzata zuccherata",c:"Bibite zuccherate",src:"UPF",k:25,p:0,gs:0,g:0,z:6,ch:6,fi:0,ca:3,fe:0,mg:1,k2:8,na:8,zn:0,fo:1,se:0,col:0},
-  {n:"Acqua di cocco naturale (lattina)",c:"Bevande",src:"UPF",k:19,p:0.7,gs:0,g:0.2,z:2.6,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:600,na:105,zn:0.1,fo:10,se:1,col:0},
+// Allineato a voce CREA gia verificata "Acqua di cocco naturale (senza zuccheri aggiunti)" — 2026-07-28
+  {n:"Acqua di cocco naturale (lattina)",c:"Bevande",src:"UPF",k:19,p:0.7,gs:0,g:0.2,z:3.7,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:250,na:105,zn:0.1,fo:9,se:1,col:0},
   {n:"Latte di riso naturale",c:"Latte e derivati",src:"UPF",k:47,p:0.3,gs:0,g:1,z:5,ch:9.2,fi:0.3,ca:120,fe:0.2,mg:8,k2:25,na:50,zn:0.1,fo:10,se:0,col:0},
   {n:"Latte di piselli (Ripple tipo)",c:"Latte e derivati",src:"UPF",k:52,p:8,gs:0.5,g:2.5,z:0,ch:1,fi:0,ca:450,fe:1,mg:15,k2:270,na:130,zn:0.8,fo:100,se:3,col:0},
 
@@ -2892,9 +2894,11 @@ const DB_UPF = [
   {n:"Salsa di pomodoro pronta (Mutti, per 100g)",c:"Condimenti",src:"UPF",k:44,p:1.2,gs:0.1,g:0.5,z:7.4,ch:8,fi:0,ca:28,fe:1.0,mg:18,k2:360,na:0.2,zn:0.2,fo:30,se:2,col:0},
   {n:"Passata di pomodoro industriale (Mutti)",c:"Condimenti",src:"UPF",k:32,p:1.3,gs:0,g:0,z:5.2,ch:5.2,fi:1.5,ca:18,fe:1.2,mg:14,k2:260,na:157,zn:0.2,fo:22,se:2,col:0},
   {n:"Concentrato di pomodoro industriale (triplo)",c:"Condimenti",src:"UPF",k:127,p:5.7,gs:0.1,g:0.2,z:16,ch:23,fi:0,ca:0,fe:0,mg:0,k2:0,na:200,zn:0,fo:65,se:4,col:0},
-  {n:"Salsa Caesar industriale (bottiglia)",c:"Condimenti",src:"UPF",k:340,p:2.0,gs:4.0,g:33,z:5.5,ch:8.0,fi:0.3,ca:60,fe:0.5,mg:8,k2:80,na:820,zn:0.2,fo:50,se:3,col:30},
+  // Allineato a voce BDA gia verificata "Salsa Caesar industriale" — 2026-07-28
+  {n:"Salsa Caesar industriale (bottiglia)",c:"Condimenti",src:"UPF",k:388,p:2.5,gs:4.5,g:40,z:3.5,ch:5.0,fi:0.3,ca:60,fe:0.3,mg:5,k2:32,na:890,zn:0.2,fo:35,se:4,col:30},
   {n:"Maionese Hellmann's (per 100g)",c:"Condimenti",src:"UPF",k:554.4,p:0.8,gs:9.67,g:61,z:1.4,ch:2.2,fi:0,ca:15,fe:0.3,mg:4,k2:25,na:620,zn:0.1,fo:25,se:2,col:50},
-  {n:"Senape di Digione (Maille, per 100g)",c:"Condimenti",src:"UPF",k:92,p:5.5,gs:0.5,g:4.5,z:3.5,ch:8.5,fi:2.5,ca:80,fe:2.5,mg:42,k2:220,na:1150,zn:0.9,fo:80,se:8,col:0},
+  // Allineato a voce CREA gia verificata "Senape di Digione" — 2026-07-28
+  {n:"Senape di Digione (Maille, per 100g)",c:"Condimenti",src:"UPF",k:93,p:4.4,gs:0.5,g:5.8,z:3.2,ch:8.1,fi:3.0,ca:100,fe:2.7,mg:49,k2:152,na:1040,zn:0.8,fo:45,se:5,col:0},
   {n:"Aceto di mele Ponti in bottiglia (per 100mL)",c:"Condimenti",src:"UPF",k:42,p:0.1,gs:0,g:0,z:6,ch:7,fi:0,ca:7,fe:0.3,mg:5,k2:73,na:5,zn:0.1,fo:4,se:0,col:0},
 
   // ── FAST FOOD E PRODOTTI INDUSTRIA ALIMENTARE ──
@@ -2985,7 +2989,8 @@ const DB_UPF = [
   {n:"Bevanda energy drink tipo Red Bull (per 100ml)",c:"Bevande",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:5,fe:0.1,mg:2,k2:30,na:40,zn:0.1,fo:6,se:0.2,col:0},
   {n:"Bibita gassata tipo Cola (per 100ml)",c:"Bevande",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:2,fe:0.1,mg:3,k2:7,na:10,zn:0,fo:9,se:0,col:0},
   {n:"Succo di frutta industriale ACE (per 100ml)",c:"Bevande",src:"UPF",k:31,p:0,gs:0,g:0,z:6.9,ch:6.9,fi:0,ca:60,fe:0.5,mg:5,k2:90,na:0,zn:0.1,fo:10,se:1,col:0},
-  {n:"Latte condensato zuccherato (per 100g)",c:"Latte e derivati",src:"UPF",k:321,p:7.9,gs:6.0,g:9.0,z:54.5,ch:55.5,fi:0,ca:284,fe:0.2,mg:26,k2:371,na:127,zn:1.0,fo:253,se:8,col:34},
+// Allineato a voce CREA gia verificata "Latte condensato zuccherato" — 2026-07-28
+  {n:"Latte condensato zuccherato (per 100g)",c:"Latte e derivati",src:"UPF",k:328,p:8.7,gs:5.7,g:9.0,z:56.5,ch:56.5,fi:0,ca:293,fe:0.2,mg:26,k2:390,na:130,zn:0.9,fo:180,se:3,col:34},
   {n:"Crema spalmabile nocciole e cioccolato Nutella (per 100g)",c:"Dolci",src:"UPF",k:525,p:4.1,gs:4.8,g:28.6,z:53.9,ch:60.9,fi:4.9,ca:77,fe:2.5,mg:79,k2:390,na:2.4,zn:0.8,fo:160,se:5,col:4},
   {n:"Biscotto Oreo (per 100g)",c:"Biscotti e crackers",src:"UPF",k:473,p:5.0,gs:6.5,g:21.0,z:45.0,ch:68.5,fi:2.5,ca:60,fe:5.0,mg:40,k2:215,na:535,zn:0.5,fo:120,se:4,col:0},
   {n:"Crostata industriale alla marmellata (per 100g)",c:"Dolci",src:"UPF",k:298,p:4.1,gs:8.4,g:14,z:30.5,ch:39,fi:2.0,ca:40,fe:1.5,mg:12,k2:120,na:220,zn:0.4,fo:75,se:5,col:35},
@@ -3048,7 +3053,8 @@ const DB_UPF = [
   {n:"Salsa BBQ (ketchup affumicato, per 100g)",c:"Condimenti",src:"UPF",k:116.7,p:0,gs:0,g:0,z:26.7,ch:30,fi:0.5,ca:18,fe:0.8,mg:12,k2:285,na:1200,zn:0.1,fo:22,se:1,col:0},
   {n:"Salsa ranch (per 100g)",c:"Condimenti",src:"UPF",k:150,p:3.3,gs:1.67,g:11.7,z:10,ch:10,fi:0,ca:40,fe:0.2,mg:5,k2:60,na:566.7,zn:0.2,fo:35,se:2,col:25},
   {n:"Salsa teriyaki industriale (per 100g)",c:"Condimenti",src:"UPF",k:87,p:5.0,gs:0,g:0.1,z:15.5,ch:18.5,fi:0.1,ca:8,fe:0.8,mg:15,k2:180,na:2800,zn:0.3,fo:55,se:2,col:0},
-  {n:"Salsa Worcestershire (per 100mL)",c:"Condimenti",src:"UPF",k:78,p:1.2,gs:0,g:0.1,z:16.0,ch:18.4,fi:0.4,ca:78,fe:1.6,mg:30,k2:390,na:1070,zn:0.4,fo:42,se:2,col:0},
+// Allineato a voce BDA gia verificata "Salsa Worcestershire (inglese)" — 2026-07-28
+  {n:"Salsa Worcestershire (per 100mL)",c:"Condimenti",src:"UPF",k:78,p:1.1,gs:0,g:0.1,z:10.7,ch:19.5,fi:0.2,ca:59,fe:2.7,mg:22,k2:152,na:980,zn:0.1,fo:29,se:2,col:0},
   {n:"Tabasco (salsa piccante, per 100mL)",c:"Condimenti",src:"UPF",k:20,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:12,fe:0.5,mg:5,k2:75,na:700,zn:0.1,fo:10,se:1,col:0},
   {n:"Miele millefiori industriale (per 100g)",c:"Condimenti",src:"UPF",k:314,p:0.4,gs:0,g:0,z:78,ch:78,fi:0,ca:6,fe:0.4,mg:2,k2:52,na:4,zn:0.2,fo:4,se:1,col:0},
   {n:"Confettura fragole industriale (per 100g)",c:"Condimenti",src:"UPF",k:228,p:1.2,gs:0,g:1.2,z:56,ch:56,fi:1.2,ca:15,fe:0.5,mg:8,k2:90,na:20,zn:0.1,fo:10,se:0,col:0},
@@ -3096,7 +3102,8 @@ const DB_UPF = [
   {n:"Prosecco DOC (11% vol, per 100mL)",c:"Bevande alcoliche",src:"UPF",k:68,p:0.1,gs:0,g:0,z:1.0,ch:3.0,fi:0,ca:12,fe:0.3,mg:8,k2:50,na:7,zn:0.1,fo:15,se:0,col:0},
   {n:"Aperol Spritz (tipica mistura, per 100mL)",c:"Bevande alcoliche",src:"UPF",k:80,p:0,gs:0,g:0,z:12.0,ch:12.5,fi:0,ca:8,fe:0.1,mg:2,k2:15,na:5,zn:0,fo:5,se:0,col:0},
   {n:"Limoncello (28-30% vol, per 100mL)",c:"Bevande alcoliche",src:"UPF",k:230,p:0,gs:0,g:0,z:28.0,ch:28.0,fi:0,ca:5,fe:0.1,mg:2,k2:10,na:3,zn:0,fo:4,se:0,col:0},
-  {n:"Grappa (40% vol, per 100mL)",c:"Bevande alcoliche",src:"UPF",k:225,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:2,na:0,zn:0,fo:0,se:0,col:0},
+// Allineato a voce CREA gia verificata "Grappa (per 100ml)" — 2026-07-28
+  {n:"Grappa (40% vol, per 100mL)",c:"Bevande alcoliche",src:"UPF",k:242,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:2,fe:0,mg:1,k2:0,na:0,zn:0,fo:0,se:0,col:0},
 
   // ── PRODOTTI SENZA GLUTINE SPECIFICI ──
   {n:"Pasta senza glutine mais-riso (per 100g cruda)",c:"Senza glutine",src:"UPF",k:360,p:6.5,gs:0.3,g:1.5,z:0.6,ch:79,fi:2.5,ca:10,fe:1.0,mg:20,k2:90,na:5,zn:0.5,fo:60,se:3,col:0},
@@ -3277,7 +3284,8 @@ const DB_UPF = [
 // ── CONDIMENTI INTERNAZIONALI ──
 {n:"Guacamole industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:149,p:1.9,gs:3.8,g:14,z:1.4,ch:2,fi:3.5,ca:15,fe:0.5,mg:22,k2:390,na:590,zn:0.4,fo:42,se:0.5,col:0},
 {n:"Hummus industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:236,p:5.3,gs:1.7,g:18,z:1.9,ch:8.7,fi:4.0,ca:38,fe:2.0,mg:50,k2:228,na:316,zn:1.2,fo:145,se:3,col:0},
-{n:"Pesto alla genovese (barattolo, per 100g)",c:"Salse e condimenti",src:"UPF",k:454,p:5.5,gs:9.5,g:46,z:2.5,ch:5.0,fi:1.5,ca:150,fe:1.2,mg:42,k2:230,na:760,zn:0.8,fo:100,se:3,col:15},
+// Allineato a voce CREA gia verificata "Pesto alla genovese (artigianale)" (kcal gia identico, altri campi ravvicinati) — 2026-07-28
+{n:"Pesto alla genovese (barattolo, per 100g)",c:"Salse e condimenti",src:"UPF",k:454,p:7.0,gs:7.0,g:44.6,z:1.0,ch:3.4,fi:1.2,ca:130,fe:1.5,mg:50,k2:210,na:700,zn:1.0,fo:120,se:3,col:10},
 {n:"Tahini (crema di sesamo, per 100g)",c:"Creme e spalmate",src:"UPF",k:667,p:27.9,gs:10,g:57.9,z:0.1,ch:6.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:20,zn:4.6,fo:590,se:34,col:0},
 {n:"Crema di marmite (per 100g)",c:"Condimenti",src:"UPF",k:260,p:34,gs:0.1,g:0.5,z:1.2,ch:30,fi:3.0,ca:95,fe:3.5,mg:180,k2:2100,na:4320,zn:1.5,fo:1980,se:8,col:0},
 // ── CIBI ITALIANI REGIONALI E TRADIZIONALI ──
@@ -3286,7 +3294,8 @@ const DB_UPF = [
 {n:"Risotto alla milanese (per 100g cotto)",c:"Piatti tipici regionali",src:"INT",k:160,p:3.5,gs:4.5,g:7.5,z:0.5,ch:21,fi:0.3,ca:35,fe:0.4,mg:10,k2:55,na:380,zn:0.5,fo:50,se:4,col:20},
 {n:"Polenta taragna (per 100g cotta)",c:"Cereali e derivati",src:"INT",k:125,p:3.5,gs:4.5,g:8.5,z:0.3,ch:16,fi:1.0,ca:120,fe:0.5,mg:20,k2:80,na:350,zn:0.8,fo:60,se:3,col:20},
 {n:"Ribollita toscana (per 100g)",c:"Zuppe e minestre",src:"INT",k:111,p:2.5,gs:0.9,g:5.9,z:2.1,ch:11,fi:2.5,ca:55,fe:1.2,mg:20,k2:280,na:320,zn:0.5,fo:55,se:3,col:0},
-{n:"Panzanella toscana (per 100g)",c:"Insalate e contorni",src:"INT",k:98,p:2.5,gs:0.5,g:4.5,z:2.0,ch:13,fi:1.5,ca:25,fe:0.8,mg:12,k2:200,na:380,zn:0.3,fo:35,se:3,col:0},
+// Allineato a voce BDA gia verificata "Panzanella toscana" (nome esatto identico) — 2026-07-28
+{n:"Panzanella toscana (per 100g)",c:"Insalate e contorni",src:"INT",k:145,p:3.5,gs:0.8,g:6.5,z:4.0,ch:20,fi:2.5,ca:42,fe:1.0,mg:22,k2:280,na:380,zn:0.5,fo:28,se:4,col:0},
 {n:"Caponata siciliana (per 100g)",c:"Piatti tipici regionali",src:"INT",k:104,p:1,gs:0.7,g:6.4,z:5.3,ch:6.9,fi:2.5,ca:25,fe:0.8,mg:15,k2:250,na:240,zn:0.3,fo:28,se:2,col:0},
 {n:"Panzerotto pugliese fritto (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:272,p:12.2,gs:4.8,g:8.2,z:1.2,ch:38.9,fi:0.5,ca:130,fe:1.5,mg:18,k2:135,na:550,zn:1.0,fo:95,se:8,col:25},
 {n:"Tiramisù artigianale (per 100g)",c:"Dolci e pasticceria",src:"INT",k:305,p:4.2,gs:11,g:19.4,z:23,ch:29.2,fi:0.3,ca:95,fe:0.8,mg:15,k2:100,na:80,zn:0.8,fo:105,se:5,col:165},
@@ -3477,7 +3486,8 @@ const DB_UPF = [
 {n:"Pizza diavola/salame piccante (pizzeria)",c:"Piatti pronti",src:"UPF",k:231,p:10.7,gs:4.2,g:7.8,z:6.1,ch:28,fi:1.5,ca:140,fe:1.5,mg:20,k2:200,na:551,zn:1.3,fo:130,se:8,col:28},
 {n:"Pizza al taglio rossa (forno)",c:"Piatti pronti",src:"UPF",k:240,p:7.5,gs:1.8,g:6.0,z:3.0,ch:37.5,fi:2.0,ca:40,fe:1.2,mg:15,k2:140,na:500,zn:0.6,fo:70,se:5,col:5},
 {n:"Pizza al taglio bianca (forno, con olio)",c:"Piatti pronti",src:"UPF",k:268.1,p:12,gs:6.6,g:14,z:1,ch:23,fi:1.1,ca:30,fe:1.2,mg:12,k2:100,na:580,zn:0.5,fo:60,se:4,col:0},
-{n:"Calzone fritto napoletano",c:"Piatti pronti",src:"UPF",k:295,p:11.0,gs:3.5,g:12.0,z:2.0,ch:36.0,fi:1.5,ca:145,fe:1.3,mg:18,k2:175,na:580,zn:1.0,fo:110,se:6,col:20},
+// Allineato a voce BDA gia verificata "Calzone fritto napoletano (ripieno ricotta e salumi)" — 2026-07-28
+{n:"Calzone fritto napoletano",c:"Piatti pronti",src:"UPF",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33.0,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:120,se:10,col:42},
 {n:"Piadina con prosciutto crudo e squacquerone",c:"Piatti pronti",src:"UPF",k:324,p:14,gs:7,g:16,z:1,ch:31,fi:1.5,ca:120,fe:0.8,mg:18,k2:180,na:1300,zn:1.0,fo:120,se:6,col:38},
 {n:"Tramezzino tonno e maionese industriale",c:"Piatti pronti",src:"UPF",k:330,p:11,gs:2.8,g:19,z:2.6,ch:23,fi:1.2,ca:60,fe:1.2,mg:22,k2:180,na:1200,zn:0.8,fo:110,se:12,col:22},
 {n:"Toast al prosciutto cotto (bar/industriale)",c:"Piatti pronti",src:"UPF",k:248,p:12.5,gs:3.0,g:9.5,z:2.5,ch:28.0,fi:1.5,ca:120,fe:1.0,mg:15,k2:160,na:720,zn:1.0,fo:130,se:8,col:25},
@@ -3560,7 +3570,8 @@ const DB_UPF = [
 {n:"Pepperoni americano (pizza topping)",c:"Salumi",src:"UPF",k:475,p:19.5,gs:18.0,g:42.5,z:0,ch:2.0,fi:0,ca:8,fe:1.0,mg:15,k2:250,na:1590,zn:1.8,fo:145,se:12,col:110},
 // ═══ ALIMENTI FUNZIONALI E SUPERFOODS ═══
 {n:"Açaí in polvere (freeze-dried)",c:"Superfoods",src:"INT",k:245,p:3.5,gs:3.5,g:14.5,z:2.5,ch:20.5,fi:14.5,ca:260,fe:4.4,mg:105,k2:735,na:5,zn:0.8,fo:55,se:0,col:0},
-{n:"Matcha in polvere (grado cerimonia)",c:"Superfoods",src:"INT",k:324,p:23.0,gs:0.6,g:5.3,z:0,ch:38.6,fi:37.0,ca:270,fe:17.0,mg:230,k2:2690,na:6,zn:6.4,fo:290,se:3,col:0},
+// Allineato a voce CREA gia verificata "Matcha in polvere (cerimonia)" — 2026-07-28
+{n:"Matcha in polvere (grado cerimonia)",c:"Superfoods",src:"INT",k:305,p:24.0,gs:0.7,g:5.3,z:32,ch:39,fi:37.0,ca:272,fe:17.0,mg:220,k2:2690,na:13,zn:6.5,fo:274,se:3,col:0},
 {n:"Cacao grezzo in polvere (non zuccherato)",c:"Superfoods",src:"INT",k:228,p:19.6,gs:8.07,g:13.7,z:1.8,ch:57.9,fi:37,ca:128,fe:13.86,mg:499,k2:1524,na:21,zn:6.81,fo:32,se:14.3,col:0},
 {n:"Lucuma in polvere (frutto andino)",c:"Superfoods",src:"INT",k:369,p:3.5,gs:0.3,g:1.1,z:14.6,ch:85.3,fi:2,ca:32,fe:0.4,mg:35,k2:430,na:5,zn:0.5,fo:65,se:0,col:0},
 {n:"Moringa in polvere (foglie essiccate)",c:"Superfoods",src:"INT",k:282,p:27,gs:0.5,g:2,z:3.0,ch:38,fi:19.2,ca:1500,fe:28,mg:368,k2:1350,na:9,zn:3.3,fo:204,se:5,col:0},
@@ -3725,8 +3736,9 @@ const DB_ONS = [
 
 // ── SALUMI E AFFETTATI LAVORATI ──
 {n:"Mortadella Bologna IGP (industriale, per 100g)",c:"Salumi",src:"UPF",k:309,p:16,gs:11,g:27,z:0.5,ch:0.5,fi:0,ca:9,fe:1.2,mg:12,k2:200,na:1000,zn:1.5,fo:100,se:15,col:70},
-{n:"Salame Milano (fettine, per 100g)",c:"Salumi",src:"UPF",k:430,p:22.5,gs:15.5,g:37.0,z:0.5,ch:1.0,fi:0,ca:10,fe:1.5,mg:18,k2:270,na:1800,zn:2.5,fo:140,se:20,col:95},
-{n:"Coppa di testa (testa in cassetta, per 100g)",c:"Salumi",src:"UPF",k:255,p:15.5,gs:8.0,g:21.0,z:0.5,ch:0.5,fi:0,ca:10,fe:1.0,mg:12,k2:190,na:850,zn:1.2,fo:80,se:12,col:75},
+// Allineati alle voci CREA gia verificate (stesso nome quasi esatto) — 2026-07-28
+{n:"Salame Milano (fettine, per 100g)",c:"Salumi",src:"UPF",k:385,p:25.4,gs:10.48,g:31.0,z:0.3,ch:1.1,fi:0,ca:19,fe:1.2,mg:21,k2:657,na:1560,zn:3.0,fo:175,se:16,col:104},
+{n:"Coppa di testa (testa in cassetta, per 100g)",c:"Salumi",src:"UPF",k:268,p:16.5,gs:10.5,g:21.5,z:1.0,ch:2.5,fi:0,ca:18,fe:1.8,mg:12,k2:180,na:950,zn:2.0,fo:120,se:10,col:75},
 {n:"Würstel di tacchino (per 100g)",c:"Salumi",src:"UPF",k:226,p:12,gs:6.3,g:18,z:1,ch:4,fi:0,ca:8,fe:0.8,mg:10,k2:160,na:2300,zn:1.2,fo:80,se:10,col:45},
 
 // ── LATTICINI INDUSTRIALI ──
@@ -3881,7 +3893,8 @@ const DB_EXTRA=[
 {n:"Burrito di manzo",c:"Cucina etnica",src:"EXTRA",k:298,p:8.7,gs:4.07,g:11.9,z:1.4,ch:39,fi:6.9,ca:39,fe:3.12,mg:36,k2:271,na:659,zn:1.24,fo:76,se:13.6,col:9},
 {n:"Guacamole",c:"Cucina etnica",src:"EXTRA",k:157,p:2,gs:2,g:14,z:1.5,ch:9,fi:6.6,ca:12,fe:0.6,mg:29,k2:485,na:410,zn:0.6,fo:52,se:0.4,col:0},
 {n:"Salsa di pomodoro messicana",c:"Cucina etnica",src:"EXTRA",k:36,p:1,gs:0.1,g:0.5,z:3,ch:7,fi:1.5,ca:15,fe:0.5,mg:12,k2:200,na:450,zn:0.2,fo:25,se:1,col:0},
-{n:"Gyoza al vapore",c:"Cucina etnica",src:"EXTRA",k:180,p:8,gs:1.5,g:6,z:1,ch:23,fi:1,ca:25,fe:1,mg:20,k2:150,na:400,zn:0.8,fo:80,se:8,col:25},
+// Allineato alla voce BDA gia verificata "Gyoza al vapore (ravioli giapponesi)" — 2026-07-28
+{n:"Gyoza al vapore",c:"Cucina etnica",src:"EXTRA",k:165,p:8.5,gs:1,g:5,z:1.5,ch:22,fi:1,ca:30,fe:1.2,mg:18,k2:200,na:520,zn:0.9,fo:80,se:8,col:30},
 {n:"Moussaka",c:"Cucina etnica",src:"EXTRA",k:150,p:7,gs:3,g:8.5,z:3,ch:9,fi:1.5,ca:60,fe:1.5,mg:20,k2:280,na:400,zn:1,fo:120,se:6,col:35},
 {n:"Tzatziki",c:"Cucina etnica",src:"EXTRA",k:95,p:4,gs:1.5,g:7,z:3,ch:4.5,fi:0,ca:80,fe:0.3,mg:12,k2:160,na:300,zn:0.4,fo:80,se:2,col:12},
 {n:"Pita (pane greco)",c:"Cucina etnica",src:"EXTRA",k:275,p:9.1,gs:0.17,g:1.2,z:1.3,ch:55.7,fi:2.2,ca:86,fe:2.62,mg:26,k2:120,na:536,zn:0.84,fo:107,se:27.1,col:0},
@@ -3928,7 +3941,8 @@ const DB_EXTRA=[
 {n:"Wafer al cioccolato",c:"Biscotti e crackers",src:"EXTRA",k:433,p:6.6,gs:4.24,g:14.2,z:37.4,ch:72.7,fi:3.4,ca:31,fe:4.01,mg:53,k2:210,na:580,zn:1.09,fo:47,se:5.7,col:2},
 {n:"Oreo",c:"Biscotti e crackers",src:"EXTRA",k:476,p:4.8,gs:4.14,g:21.5,z:36,ch:70.2,fi:3.2,ca:24,fe:4.9,mg:48,k2:194,na:528,zn:1.23,fo:30,se:5,col:0},
 {n:"Lotus Biscoff",c:"Biscotti e crackers",src:"EXTRA",k:484,p:4.9,gs:8.8,g:19,z:38.1,ch:72.9,fi:1.3,ca:45,fe:2,mg:15,k2:100,na:362,zn:0.3,fo:60,se:5,col:0},
-{n:"Amaretti morbidi",c:"Biscotti e crackers",src:"EXTRA",k:410,p:6,gs:0.5,g:7.5,z:45,ch:72,fi:1.5,ca:60,fe:1.5,mg:25,k2:200,na:20,zn:0.5,fo:100,se:2,col:35},
+// Allineato alla voce CREA gia verificata "Amaretti morbidi" (stesso nome esatto, sfuggito al dedup) — 2026-07-28
+{n:"Amaretti morbidi",c:"Biscotti e crackers",src:"EXTRA",k:389,p:8,gs:1,g:9,z:45,ch:70,fi:2.5,ca:80,fe:2,mg:45,k2:250,na:40,zn:0.9,fo:15,se:5,col:0},
 {n:"Cantucci alle mandorle",c:"Biscotti e crackers",src:"EXTRA",k:430,p:8.4,gs:3,g:12.6,z:28,ch:70.5,fi:3,ca:65,fe:2,mg:40,k2:220,na:180,zn:0.8,fo:130,se:8,col:60},
 {n:"Baci di dama",c:"Biscotti e crackers",src:"EXTRA",k:515,p:6,gs:14,g:29,z:35,ch:60,fi:2,ca:40,fe:1.5,mg:30,k2:175,na:90,zn:0.5,fo:110,se:5,col:20},
 {n:"Pavesini",c:"Biscotti e crackers",src:"EXTRA",k:389,p:7,gs:2,g:2.5,z:50,ch:83,fi:2.5,ca:30,fe:1.2,mg:10,k2:105,na:120,zn:0.3,fo:80,se:12,col:120},
@@ -4058,9 +4072,11 @@ const DB_EXTRA=[
 {n:"Whisky (per 100ml)",c:"Bevande alcoliche",src:"EXTRA",k:250,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:1,zn:0,fo:0,se:0,col:0},
 {n:"Amaretto di Saronno (per 100ml)",c:"Bevande alcoliche",src:"EXTRA",k:290,p:0,gs:0,g:0,z:32,ch:32,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
 // === SALUMI ITALIANI ===
-{n:"N'duja calabrese",c:"Salumi",src:"EXTRA",k:450,p:18,gs:18,g:40,z:0.5,ch:0.5,fi:0,ca:15,fe:1.5,mg:20,k2:350,na:1600,zn:2,fo:180,se:12,col:100},
+// kcal/grassi erano sottostimati: fonte convergente (532kcal/20g prot/50g grassi/23g saturi/0.3g cho), bilancio Atwater verificato (20*4+50*9+0.3*4=531.2≈532) — 2026-07-28
+{n:"N'duja calabrese",c:"Salumi",src:"EXTRA",k:532,p:20,gs:23,g:50,z:0.3,ch:0.3,fi:0,ca:15,fe:1.5,mg:20,k2:350,na:1600,zn:2,fo:180,se:12,col:100},
 {n:"Cotechino",c:"Salumi",src:"EXTRA",k:342,p:13.3,gs:11.09,g:30.9,z:0,ch:1.7,fi:0,ca:9,fe:1.5,mg:12,k2:250,na:1063,zn:2.5,fo:180,se:15,col:80},
-{n:"Coppa di testa",c:"Salumi",src:"EXTRA",k:285,p:17,gs:7,g:24,z:0,ch:0.5,fi:0,ca:15,fe:1,mg:12,k2:240,na:750,zn:2,fo:155,se:12,col:75},
+// Allineato alla voce CREA gia verificata "Coppa di testa (gelatina di testa suino)" — 2026-07-28
+{n:"Coppa di testa",c:"Salumi",src:"EXTRA",k:268,p:16.5,gs:10.5,g:21.5,z:1,ch:2.5,fi:0,ca:18,fe:1.8,mg:12,k2:180,na:950,zn:2,fo:120,se:10,col:75},
 {n:"Sopressa veneta",c:"Salumi",src:"EXTRA",k:399,p:22,gs:12,g:35,z:0,ch:0,fi:0,ca:12,fe:1.5,mg:18,k2:360,na:1600,zn:2.5,fo:200,se:12,col:85},
 {n:"Salame felino",c:"Salumi",src:"EXTRA",k:375,p:30.5,gs:10.3,g:27.9,z:0.5,ch:0.5,fi:0,ca:14,fe:1.5,mg:18,k2:350,na:1697,zn:2.5,fo:200,se:14,col:88},
 {n:"Pancetta affumicata a cubetti",c:"Salumi",src:"EXTRA",k:274,p:18,gs:8.5,g:22,z:0,ch:1,fi:0,ca:8,fe:0.8,mg:15,k2:300,na:1520,zn:2,fo:170,se:15,col:80},
@@ -4078,7 +4094,8 @@ const DB_EXTRA=[
 // === DOLCI E PASTICCERIA ===
 {n:"Tiramisù",c:"Dolci e dessert",src:"EXTRA",k:283,p:4.2,gs:9,g:19.4,z:18.1,ch:29.2,fi:0.3,ca:85,fe:0.8,mg:12,k2:140,na:264,zn:0.5,fo:120,se:5,col:155},
 {n:"Cannolo siciliano",c:"Dolci e dessert",src:"EXTRA",k:325,p:7.2,gs:8,g:14.6,z:26.1,ch:42.7,fi:2.1,ca:120,fe:1,mg:20,k2:200,na:118,zn:0.8,fo:130,se:8,col:60},
-{n:"Sfogliatella riccia napoletana",c:"Dolci e dessert",src:"EXTRA",k:380,p:7,gs:10,g:18,z:20,ch:50,fi:1,ca:40,fe:1.5,mg:15,k2:130,na:180,zn:0.5,fo:90,se:10,col:60},
+// Allineato alla voce CREA gia verificata "Sfogliatella riccia napoletana" (stesso nome esatto) — 2026-07-28
+{n:"Sfogliatella riccia napoletana",c:"Dolci e dessert",src:"EXTRA",k:380,p:9.5,gs:5.5,g:14,z:18,ch:56,fi:1.2,ca:45,fe:1.5,mg:18,k2:130,na:180,zn:0.8,fo:28,se:12,col:95},
 {n:"Babà al rum",c:"Dolci e dessert",src:"EXTRA",k:288,p:5.9,gs:1.5,g:5.7,z:18.5,ch:41.2,fi:1.1,ca:40,fe:1,mg:10,k2:100,na:120,zn:0.3,fo:70,se:8,col:75},
 {n:"Panettone tradizionale",c:"Dolci e dessert",src:"EXTRA",k:390,p:6.4,gs:5,g:16.7,z:22.9,ch:56.2,fi:1.5,ca:50,fe:1.5,mg:15,k2:150,na:290,zn:0.6,fo:95,se:12,col:110},
 {n:"Pandoro",c:"Dolci e dessert",src:"EXTRA",k:390,p:8.4,gs:6,g:19.7,z:22.9,ch:45.2,fi:1,ca:40,fe:1,mg:12,k2:120,na:250,zn:0.5,fo:90,se:12,col:120},
@@ -4183,8 +4200,10 @@ const DB_EXTRA=[
 {n:"Gochujang (pasta di peperoncino fermentata, per 100g)",c:"Condimenti",src:"EXTRA",k:208,p:3.4,gs:0.5,g:1.2,z:30,ch:46.3,fi:3.5,ca:35,fe:4,mg:28,k2:250,na:1840,zn:1.2,fo:70,se:5,col:0},
 {n:"Baozi (panino cotto al vapore ripieno, per 100g)",c:"Cucina etnica",src:"EXTRA",k:267,p:6.9,gs:1.5,g:3,z:1.4,ch:54,fi:2,ca:25,fe:1.5,mg:18,k2:180,na:480,zn:1,fo:85,se:8,col:35},
 // === PRODOTTI ITALIANI DI QUALITA' ===
-{n:"Bottarga di muggine (uova di cefalo essiccate, per 100g)",c:"Pesce",src:"EXTRA",k:273,p:32,gs:3,g:11,z:0,ch:4,fi:0,ca:82,fe:5.5,mg:42,k2:350,na:3070,zn:3,fo:520,se:85,col:380},
-{n:"Colatura di alici di Cetara (per 100ml)",c:"Condimenti",src:"EXTRA",k:58,p:13,gs:0.2,g:0.5,z:0,ch:0,fi:0,ca:40,fe:1.8,mg:20,k2:180,na:7900,zn:1.2,fo:120,se:60,col:55},
+// Allineato alla voce CREA gia verificata "Bottarga di muggine (uova di cefalo essiccate)" (stesso alimento, nome quasi identico non intercettato dal dedup): kcal/grassi/carboidrati erano molto sottostimati — 2026-07-28
+{n:"Bottarga di muggine (uova di cefalo essiccate, per 100g)",c:"Pesce",src:"EXTRA",k:405,p:43.5,gs:7.8,g:25.7,z:0,ch:0,fi:0,ca:200,fe:2.5,mg:80,k2:300,na:3200,zn:3.8,fo:600,se:110,col:440},
+// Allineato alla voce CREA gia verificata "Colatura di alici di Cetara" — 2026-07-28
+{n:"Colatura di alici di Cetara (per 100ml)",c:"Condimenti",src:"EXTRA",k:68,p:14,gs:0.5,g:2,z:0,ch:0,fi:0,ca:50,fe:2,mg:25,k2:200,na:7200,zn:0.8,fo:10,se:40,col:60},
 {n:"Lardo di Colonnata IGP (per 100g)",c:"Salumi",src:"EXTRA",k:800,p:2,gs:35,g:88,z:0,ch:0.1,fi:0,ca:5,fe:0.4,mg:2,k2:20,na:900,zn:0.5,fo:20,se:5,col:95},
 {n:"Culatello di Zibello DOP (per 100g)",c:"Salumi",src:"EXTRA",k:292,p:28,gs:7.8,g:20,z:0,ch:0,fi:0,ca:12,fe:1.5,mg:22,k2:340,na:2000,zn:2.8,fo:200,se:24,col:70},
 {n:"Grana Padano DOP giovane (9 mesi, per 100g)",c:"Latte e derivati",src:"EXTRA",k:398,p:33,gs:18.4,g:29,z:0,ch:0,fi:0,ca:1165,fe:0.4,mg:44,k2:117,na:600,zn:4.2,fo:750,se:12,col:90},
@@ -4204,10 +4223,12 @@ const DB_EXTRA=[
 {n:"Knekkebrød di segale (gallette scandinave)",c:"Pane e derivati",src:"EXTRA",k:348,p:11,gs:0.5,g:3.5,z:1.5,ch:65,fi:17,ca:30,fe:3.5,mg:80,k2:350,na:480,zn:2,fo:80,se:15,col:0},
 {n:"Aringa marinata nordica (herring)",c:"Pesce",src:"EXTRA",k:262,p:14.2,gs:2.38,g:18,z:7.7,ch:9.6,fi:0,ca:77,fe:1.22,mg:8,k2:69,na:870,zn:0.53,fo:2,se:58.5,col:13},
 {n:"Salmone gravlax (salmone marinato nordico)",c:"Pesce",src:"EXTRA",k:175,p:23,gs:1.5,g:9,z:0.5,ch:0,fi:0,ca:20,fe:0.8,mg:30,k2:420,na:1500,zn:0.6,fo:220,se:40,col:55},
-{n:"Marmellata di lingonberry (mirtilli nordici)",c:"Frutta conservata",src:"EXTRA",k:240,p:0.3,gs:0,g:0.3,z:55,ch:60,fi:1.5,ca:10,fe:0.5,mg:5,k2:40,na:10,zn:0.1,fo:10,se:0.5,col:0},
+// kcal/carboidrati/zuccheri erano sovrastimati rispetto a fonte ufficiale norvegese (matvaretabellen.no, 190kcal/45g cho/44g zuccheri/1.5g fibre) — 2026-07-28
+{n:"Marmellata di lingonberry (mirtilli nordici)",c:"Frutta conservata",src:"EXTRA",k:190,p:0.3,gs:0,g:0.3,z:44,ch:45,fi:1.5,ca:10,fe:0.5,mg:5,k2:40,na:10,zn:0.1,fo:10,se:0.5,col:0},
 // === CUCINA MEDIORIENTALE AGGIUNTIVA ===
 {n:"Labneh (yogurt colato mediorientale)",c:"Latticini",src:"EXTRA",k:140,p:8,gs:5,g:10,z:4,ch:4,fi:0,ca:150,fe:0.2,mg:15,k2:200,na:300,zn:0.8,fo:40,se:3,col:30},
-{n:"Za'atar (miscela spezie mediorientale, per 100g)",c:"Spezie",src:"EXTRA",k:295,p:11,gs:1.5,g:12,z:3,ch:36,fi:16,ca:1100,fe:40,mg:280,k2:550,na:600,zn:4,fo:250,se:20,col:0},
+// Allineato alla voce CREA gia verificata "Za'atar (mix spezie mediorientali)": calcio/ferro/magnesio erano molto sballati (1100mg ca, 40mg fe vs 350mg/8mg reali) — 2026-07-28
+{n:"Za'atar (miscela spezie mediorientale, per 100g)",c:"Spezie",src:"EXTRA",k:300,p:10,gs:0.8,g:7.5,z:25,ch:41,fi:16,ca:350,fe:8,mg:130,k2:970,na:90,zn:2,fo:200,se:5,col:0},
 {n:"Sumac (spezia mediorientale acidula, per 100g)",c:"Spezie",src:"EXTRA",k:239,p:4,gs:0.5,g:5,z:3,ch:45,fi:22,ca:200,fe:4.5,mg:80,k2:520,na:10,zn:1,fo:110,se:2,col:0},
 {n:"Tabbouleh (insalata di bulgur e prezzemolo)",c:"Cucina etnica",src:"EXTRA",k:125,p:2,gs:0.5,g:9,z:1.5,ch:10,fi:2,ca:50,fe:1.5,mg:28,k2:300,na:350,zn:0.6,fo:80,se:3,col:0},
 // === CUCINA SUD AMERICANA ===
@@ -4220,7 +4241,8 @@ const DB_EXTRA=[
 {n:"Enoki freschi (funghi ago giapponesi)",c:"Funghi",src:"EXTRA",k:37,p:2.7,gs:0.03,g:0.3,z:0.2,ch:7.8,fi:2.7,ca:0,fe:1.15,mg:16,k2:359,na:3,zn:0.65,fo:48,se:2.2,col:0},
 {n:"Funghi maitake freschi (hen of the woods)",c:"Funghi",src:"EXTRA",k:31,p:1.9,gs:0.03,g:0.2,z:2.1,ch:7,fi:2.7,ca:1,fe:0.3,mg:10,k2:204,na:1,zn:0.75,fo:21,se:2.2,col:0},
 // === PESCE AGGIUNTIVO ===
-{n:"Orata (sparus aurata) al forno",c:"Pesce",src:"EXTRA",k:130,p:22,gs:1,g:4.5,z:0.5,ch:0,fi:0,ca:30,fe:0.5,mg:30,k2:380,na:80,zn:0.5,fo:180,se:35,col:65},
+// Allineato alla voce BDA gia verificata "Orata al forno" (stesso nome quasi esatto) — 2026-07-28
+{n:"Orata (sparus aurata) al forno",c:"Pesce",src:"EXTRA",k:115,p:20.5,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:32,fe:0.8,mg:30,k2:350,na:65,zn:0.6,fo:230,se:42,col:60},
 {n:"Sardine fresche crude",c:"Pesce",src:"EXTRA",k:208,p:24.6,gs:1.3,g:11.5,z:0,ch:0,fi:0,ca:382,fe:2.9,mg:39,k2:397,na:307,zn:1.4,fo:120,se:52,col:142},
 {n:"Trota salmonata affumicata",c:"Pesce",src:"EXTRA",k:168,p:25,gs:1.5,g:7,z:0.5,ch:0,fi:0,ca:30,fe:0.5,mg:28,k2:500,na:800,zn:0.5,fo:190,se:35,col:70},
 {n:"Cernia (grouper) al vapore",c:"Pesce",src:"EXTRA",k:118,p:24,gs:0.5,g:2,z:0.5,ch:0,fi:0,ca:25,fe:0.6,mg:35,k2:400,na:90,zn:0.4,fo:150,se:40,col:55},

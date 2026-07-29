@@ -1,6 +1,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Supabase Edge Function: create-patient-checkout-session
 // Creates a Stripe Checkout Session for a patient (€5,99/mese).
+// Accetta carta di credito E PayPal (payment_method_types sotto) — PayPal va
+// anche abilitato per i pagamenti ricorrenti nel Dashboard Stripe, vedi
+// SETUP-STRIPE.md sezione PayPal.
 //
 // Deploy: supabase functions deploy create-patient-checkout-session
 // Required env vars (Supabase Dashboard → Edge Functions → Secrets):
@@ -76,6 +79,7 @@ serve(async (req) => {
       mode: "subscription",
       customer: customerId,
       client_reference_id: user.id,
+      payment_method_types: ["card", "paypal"],
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/abbonamento?success=1`,
       cancel_url:  `${origin}/abbonamento?cancelled=1`,

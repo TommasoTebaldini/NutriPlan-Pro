@@ -282,6 +282,7 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
+<script src="js/payments-config.js" defer></script>
 <script>
 // ═══════════════════════════════════════════════════
 // SUPABASE CONFIG
@@ -1235,8 +1236,7 @@ async function signConsent(consentId) {
 let dietitianIsPro = false;
 
 async function checkDietitianPlan() {
-  // Sync with utils.js _paymentsActive — when false, force ProGate on for all patients
-  const PAYMENTS_ACTIVE = false; // ← set to true when Stripe goes live
+  // PAYMENTS_ACTIVE viene da js/payments-config.js (unica fonte di verità per il sito)
   if (!PAYMENTS_ACTIVE) { dietitianIsPro = false; return; }
 
   if (!chatDietitianId) { dietitianIsPro = false; return; }

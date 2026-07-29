@@ -1,6 +1,8 @@
-# Setup Stripe — Guida Completa
+# Setup Stripe + PayPal — Guida Completa
 
-Questa guida ti permette di attivare i pagamenti automatici su NutriPlan Pro in circa 30 minuti.
+Questa guida ti permette di attivare i pagamenti automatici (carta di credito **e PayPal**) su NutriPlan Pro e sull'app pazienti in circa 30-40 minuti. Il codice è già pronto — tutti i passi sotto sono azioni che devi fare TU (serve il tuo login/documenti, io non posso farle al posto tuo). Seguili in ordine.
+
+**Nota:** PayPal non richiede un account/integrazione separata — Stripe lo gestisce come un metodo di pagamento in più dentro lo stesso Checkout (stesso flusso, stesso webhook, stesso codice). Basta abilitarlo nel Dashboard Stripe (punto 8).
 
 ---
 
@@ -108,7 +110,18 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
 
 ---
 
-## 8. Configura il Billing Portal Stripe
+## 8. Abilita PayPal
+
+Il codice (`create-checkout-session` e `create-patient-checkout-session`) chiede già a Stripe sia `card` che `paypal` come metodi di pagamento — ma PayPal va attivato lato Stripe prima che compaia davvero nel Checkout:
+
+1. Stripe Dashboard → **Impostazioni** → **Metodi di pagamento** (o **Payment methods**)
+2. Trova **PayPal** nella lista → **Attiva**
+3. Stripe di solito abilita da sola i pagamenti **ricorrenti** con PayPal quando lo attivi, ma per policy/restrizioni regionali potrebbe non farlo in automatico: se dopo il test finale (punto 11) il pulsante PayPal non appare nel Checkout in modalità abbonamento, vai su Stripe Dashboard → cerca "PayPal recurring payments" nelle impostazioni del metodo di pagamento e abilitalo manualmente
+4. Nessuna chiave/secret aggiuntiva da configurare — PayPal passa dallo stesso `STRIPE_SECRET_KEY` e dallo stesso webhook già impostato ai punti precedenti
+
+---
+
+## 9. Configura il Billing Portal Stripe
 
 1. Stripe Dashboard → **Impostazioni** → **Portale clienti**
 2. Attiva: cancellazione abbonamento, aggiornamento metodi di pagamento, download fatture
@@ -116,7 +129,7 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
 
 ---
 
-## 9. Pubblica il sito
+## 10. Pubblica il sito
 
 Carica tutti i file HTML/CSS/JS su hosting (Netlify, Vercel, GitHub Pages, ecc.).
 
@@ -124,14 +137,15 @@ Il dominio finale sarà nel formato `https://tuosito.com` — le Edge Functions 
 
 ---
 
-## 10. Test finale
+## 11. Test finale
 
 1. Apri `abbonamento.html` sul sito pubblicato
 2. Accedi con un account dietista
-3. Clicca **Inizia Prova Gratuita** → verifica che ti porti su Stripe Checkout
-4. Usa la carta di test Stripe: `4242 4242 4242 4242`, qualsiasi scadenza futura, qualsiasi CVV
+3. Clicca **Inizia Prova Gratuita** → verifica che ti porti su Stripe Checkout e che sia selezionabile sia **Carta** che **PayPal**
+4. Per la carta usa quella di test Stripe: `4242 4242 4242 4242`, qualsiasi scadenza futura, qualsiasi CVV. Per PayPal usa un account sandbox PayPal se Stripe è ancora in test mode, oppure un pagamento reale minimo se sei già in live mode
 5. Dopo il pagamento, verifica che il profilo in Supabase abbia `subscription_plan = 'pro'`
 6. Verifica che le sezioni Pro (AI, BIA, Ricette, ecc.) diventino visibili in sidebar
+7. Ripeti lo stesso test dal lato app pazienti (`create-patient-checkout-session`) dopo aver attivato il flag app (vedi sezione "Attivazione pagamenti" sotto)
 
 ---
 
@@ -176,9 +190,13 @@ supabase secrets set STRIPE_PATIENT_PRICE_MONTHLY=price_...
 supabase functions deploy create-patient-checkout-session
 ```
 
+⚠️ Stesso discorso del sito: flippa questo flag solo a setup Stripe completo (punti 1-9 sopra), altrimenti il pulsante "Abbonati" nell'app fallisce.
+
 ## Attivazione pagamenti — Sito Dietisti
 
-1. Apri `js/utils.js` nel sito NutriPlan-Pro
-2. Cambia `const _paymentsActive = false` → `const _paymentsActive = true`
-3. Il badge e il link abbonamento tornano visibili in sidebar
-4. Il gate Free/Pro si attiva automaticamente
+1. Apri `js/payments-config.js` nel sito NutriPlan-Pro (unico file, usato sia da `abbonamento.html` che da `patient-portal.html` — non serve toccare altri file)
+2. Cambia `const PAYMENTS_ACTIVE = false;` → `const PAYMENTS_ACTIVE = true;`
+3. Il banner "in arrivo" sparisce, il pulsante di abbonamento e il toggle mensile/annuale tornano visibili
+4. Il gate Free/Pro si attiva automaticamente sia per il dietista (sidebar) sia per il paziente collegato (portale)
+
+⚠️ Non flippare questo flag finché non hai completato TUTTI i punti 1-9 sopra (account Stripe live, prodotti, secrets, migrazione SQL, edge functions deployate, webhook, PayPal) — altrimenti il pulsante "Abbonati" porterà a un errore invece che al checkout.

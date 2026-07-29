@@ -1,6 +1,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Supabase Edge Function: create-checkout-session
 // Creates a Stripe Checkout Session for the authenticated user.
+// Accetta carta di credito E PayPal (payment_method_types sotto) — PayPal va
+// anche abilitato per i pagamenti ricorrenti nel Dashboard Stripe, vedi
+// SETUP-STRIPE.md sezione PayPal.
 //
 // Deploy: supabase functions deploy create-checkout-session
 // Required env vars (set in Supabase Dashboard → Edge Functions → Secrets):
@@ -78,6 +81,7 @@ serve(async (req) => {
       mode: "subscription",
       customer: customerId,
       client_reference_id: user.id,
+      payment_method_types: ["card", "paypal"],
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/abbonamento.html?success=1`,
       cancel_url:  `${origin}/abbonamento.html?cancelled=1`,

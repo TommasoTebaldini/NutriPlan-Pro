@@ -1891,7 +1891,8 @@ const DB_BDA=[
 {n:"Risotto ai funghi",c:"Piatti pronti",k:133,p:4,gs:1.5,g:4,z:1,ch:21,fi:1.5,ca:30,fe:0.9,mg:22,k2:180,na:380,zn:0.8,fo:90,se:5,col:8,src:"BDA"},
 {n:"Pappa al pomodoro",c:"Piatti pronti",k:76,p:2.5,gs:0.4,g:2.2,z:2.5,ch:11.5,fi:1.8,ca:30,fe:0.9,mg:14,k2:280,na:420,zn:0.4,fo:45,se:3,col:0,src:"BDA"},
 {n:"Ragù alla bolognese",c:"Condimenti",k:177,p:12,gs:3.5,g:11.5,z:2,ch:7,fi:0.8,ca:30,fe:2.5,mg:22,k2:350,na:400,zn:2.5,fo:160,se:12,col:45,src:"BDA"},
-{n:"Besciamella",c:"Condimenti",k:101,p:3.5,gs:3.5,g:6,z:3.5,ch:9.5,fi:0.2,ca:110,fe:0.2,mg:12,k2:160,na:370,zn:0.4,fo:110,se:2,col:17,src:"BDA"},
+// Stesso bug fosforo-in-folati del duplicato già corretto (DB_CREA_239) - 2026-07-30
+{n:"Besciamella",c:"Condimenti",k:101,p:3.5,gs:3.5,g:6,z:3.5,ch:9.5,fi:0.2,ca:110,fe:0.2,mg:12,k2:160,na:370,zn:0.4,fo:10,se:2,col:17,src:"BDA"},
 {n:"Sugo al pomodoro artigianale",c:"Condimenti",k:52,p:2,gs:0.3,g:2,z:4.8,ch:6.5,fi:1.5,ca:22,fe:0.7,mg:16,k2:330,na:380,zn:0.2,fo:40,se:1,col:0,src:"BDA"},
 {n:"Cornetto (brioche vuoto)",c:"Dolci",k:403,p:7.2,gs:9.64,g:18.3,z:10.6,ch:54.7,fi:2.1,ca:9,fe:1.3,mg:73,k2:52,na:350,zn:0.41,fo:45,se:2.6,col:88,src:"BDA"},
 {n:"Tiramisù",c:"Dolci",k:285,p:7.5,gs:10,g:16.7,z:24.5,ch:29,fi:0.5,ca:92,fe:0.8,mg:16,k2:140,na:140,zn:0.7,fo:150,se:7,col:160,src:"BDA"},
@@ -1899,7 +1900,8 @@ const DB_BDA=[
 {n:"Crostata di frutta fresca",c:"Dolci",k:238,p:4.5,gs:4,g:9,z:22.5,ch:34.5,fi:1.5,ca:45,fe:1.2,mg:14,k2:120,na:160,zn:0.6,fo:100,se:5,col:60,src:"BDA"},
 {n:"Cotechino cotto",c:"Salumi cotti",k:307,p:21.1,gs:8.18,g:24.7,z:0,ch:0,fi:0,ca:15,fe:1.5,mg:11,k2:137,na:875,zn:2.1,fo:4,se:1,col:98,src:"BDA"},
 {n:"Trippa alla romana",c:"Carni cotte",k:115,p:11,gs:2.5,g:6.5,z:1,ch:4.5,fi:0.5,ca:45,fe:1.2,mg:18,k2:180,na:520,zn:2.5,fo:120,se:8,col:110,src:"BDA"},
-{n:"Polenta cotta (gialla)",c:"Cereali cotti",k:70,p:1.8,gs:0.1,g:0.5,z:0,ch:14.8,fi:1.4,ca:2,fe:0.3,mg:18,k2:56,na:2,zn:0.4,fo:48,se:2,col:0,src:"BDA"},
+// Folati implausibili per polenta cotta/diluita (calcio 2mg conferma forte diluizione da acqua) - 2026-07-30
+{n:"Polenta cotta (gialla)",c:"Cereali cotti",k:70,p:1.8,gs:0.1,g:0.5,z:0,ch:14.8,fi:1.4,ca:2,fe:0.3,mg:18,k2:56,na:2,zn:0.4,fo:8,se:2,col:0,src:"BDA"},
 {n:"Risotto bianco (base)",c:"Cereali cotti",k:142,p:3.5,gs:1.5,g:4,z:0.5,ch:24,fi:0.5,ca:25,fe:0.5,mg:18,k2:100,na:350,zn:0.7,fo:65,se:5,col:8,src:"BDA"},
 {n:"Farina di grano tenero tipo 0",c:"Cereali e derivati",k:321,p:11.5,gs:0.18,g:1,z:1.8,ch:69.5,fi:2.9,ca:18,fe:0.9,mg:25,k2:140,na:2,zn:0.8,fo:115,se:10,col:0,src:"CREA"},
 {n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:352,p:12.0,gs:0.3,g:1.8,z:1.8,ch:70.5,fi:4.5,ca:22,fe:1.8,mg:45,k2:180,na:3,zn:1.2,fo:30,se:18,col:0,src:"CREA"},
@@ -2010,7 +2012,8 @@ const DB_BDA=[
 
 // ── FUNGHI E VERDURE MANCANTI ──
 {n:"Gallinacci / Finferli freschi",c:"Verdure",k:38,p:1.5,gs:0.1,g:0.5,z:1.1,ch:6.9,fi:3.8,ca:15,fe:3.5,mg:12,k2:506,na:17,zn:0.7,fo:57,se:2,col:0,src:"CREA"},
-{n:"Funghi Pleurotus / Orecchione freschi",c:"Verdure",k:33,p:3.3,gs:0,g:0.4,z:2.2,ch:6.1,fi:2.3,ca:3,fe:1.3,mg:18,k2:420,na:18,zn:0.8,fo:120,se:3,col:0,src:"BDA"},
+// Fosforo (120mg, match esatto USDA funghi ostrica) era nel campo folati; stesso bug del duplicato DB_CREA_401, corretto a 38mcg - 2026-07-30
+{n:"Funghi Pleurotus / Orecchione freschi",c:"Verdure",k:33,p:3.3,gs:0,g:0.4,z:2.2,ch:6.1,fi:2.3,ca:3,fe:1.3,mg:18,k2:420,na:18,zn:0.8,fo:38,se:3,col:0,src:"BDA"},
 {n:"Funghi shiitake secchi",c:"Verdure",k:337,p:16.3,gs:0.25,g:1,z:56.5,ch:63.9,fi:11.5,ca:11,fe:1.7,mg:132,k2:1530,na:13,zn:7.7,fo:88,se:46,col:0,src:"BDA"},
 {n:"Tartufo nero estivo fresco",c:"Verdure",k:48,p:6,gs:0.1,g:0.5,z:0.7,ch:0.7,fi:8.4,ca:24,fe:3.5,mg:18,k2:320,na:15,zn:1.0,fo:100,se:21,col:0,src:"CREA"},
 {n:"Cardi freschi",c:"Verdure",k:13,p:0.6,gs:0,g:0.1,z:1.5,ch:1.7,fi:1.5,ca:96,fe:0.2,mg:42,k2:293,na:23,zn:0.2,fo:23,se:1,col:0,src:"CREA"},

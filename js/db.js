@@ -14,9 +14,9 @@ const DB_CREA=[
 {n:"Birra analcolica",c:"Bevande",k:9,p:0.2,gs:0,g:0,z:1,ch:1.5,fi:0,ca:8,fe:0,mg:12,k2:56,na:12,zn:0,fo:6,se:0,col:0,src:"BDA"},
 {n:"Birra normale (4-5%)",c:"Bevande",k:43,p:0.3,gs:0,g:0,z:0,ch:3.5,fi:0,ca:6,fe:0,mg:6,k2:35,na:4,zn:0.01,fo:28,se:1,col:0,src:"CREA"},
 {n:"Caffè espresso",c:"Bevande",k:2,p:0.1,gs:0,g:0,z:0,ch:0.3,fi:0,ca:4,fe:0,mg:8,k2:36,na:4,zn:0.05,fo:4,se:0,col:0,src:"CREA"},
-{n:"Latte parz. scremato UHT",c:"Bevande",k:46,p:3.2,gs:0.9,g:1.6,z:5.1,ch:5.1,fi:0,ca:120,fe:0.1,mg:11,k2:150,na:44,zn:0.37,fo:92,se:1.6,col:7,src:"CREA"},
-{n:"Latte intero fresco",c:"Bevande",k:64,p:3.3,gs:2.27,g:3.6,z:4.9,ch:4.9,fi:0,ca:119,fe:0.1,mg:12,k2:150,na:50,zn:0.38,fo:84,se:1.6,col:11,src:"CREA"},
-{n:"Latte scremato",c:"Bevande",k:36,p:3.6,gs:0.14,g:0.2,z:5.3,ch:5.3,fi:0,ca:125,fe:0.1,mg:11,k2:150,na:52,zn:0.59,fo:101,se:2,col:2,src:"CREA"},
+{n:"Latte parz. scremato UHT",c:"Bevande",k:46,p:3.2,gs:0.9,g:1.6,z:5.1,ch:5.1,fi:0,ca:120,fe:0.1,mg:11,k2:150,na:44,zn:0.37,fo:5,se:1.6,col:7,src:"CREA"},
+{n:"Latte intero fresco",c:"Bevande",k:64,p:3.3,gs:2.27,g:3.6,z:4.9,ch:4.9,fi:0,ca:119,fe:0.1,mg:12,k2:150,na:50,zn:0.38,fo:5,se:1.6,col:11,src:"CREA"},
+{n:"Latte scremato",c:"Bevande",k:36,p:3.6,gs:0.14,g:0.2,z:5.3,ch:5.3,fi:0,ca:125,fe:0.1,mg:11,k2:150,na:52,zn:0.59,fo:5,se:2,col:2,src:"CREA"},
 {n:"Succo di arancia",c:"Bevande",k:33,p:0.5,gs:0,g:0,z:8.2,ch:8.2,fi:0,ca:15,fe:0.2,mg:8,k2:150,na:10,zn:0,fo:20,se:1,col:0,src:"BDA"},
 {n:"Crackers salati",c:"Biscotti e crackers",k:386,p:9.4,gs:3.1,g:10,z:0,ch:67.5,fi:2.8,ca:30,fe:1.5,mg:18,k2:100,na:700,zn:0.5,fo:80,se:3,col:0,src:"CREA"},
 {n:"Fette biscottate",c:"Biscotti e crackers",k:387,p:11.3,gs:0.9,g:6,z:2.2,ch:75,fi:3.5,ca:55,fe:3.8,mg:20,k2:150,na:500,zn:0.5,fo:100,se:2,col:0,src:"CREA"},
@@ -58,8 +58,8 @@ const DB_CREA=[
 {n:"Burro",c:"Grassi",k:758,p:0.8,gs:54.2,g:83.4,z:1.1,ch:1.1,fi:0,ca:25,fe:0,mg:2,k2:15,na:7,zn:0.09,fo:23,se:1,col:250,src:"CREA"},
 {n:"Burro di arachidi",c:"Grassi",k:625,p:24.9,gs:11.18,g:53.7,z:4.4,ch:8,fi:6,ca:47,fe:2.5,mg:18,k2:680,na:370,zn:3.5,fo:363,se:4,col:0,src:"CREA"},
 {n:"Olio extra vergine di oliva",c:"Grassi",k:899,p:0,gs:15.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.2,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
-{n:"Yogurt greco 0% grassi",c:"Latte e derivati",k:51,p:9,gs:0,g:0,z:4,ch:4,fi:0,ca:110,fe:0.1,mg:11,k2:141,na:47,zn:0.5,fo:107,se:3,col:1,src:"CREA"},
-{n:"Yogurt intero bianco",c:"Latte e derivati",k:66,p:3.8,gs:2.65,g:3.9,z:4.3,ch:4.3,fi:0,ca:125,fe:0.1,mg:12,k2:170,na:48,zn:0.41,fo:105,se:2,col:11,src:"CREA"},
+{n:"Yogurt greco 0% grassi",c:"Latte e derivati",k:51,p:9,gs:0,g:0,z:4,ch:4,fi:0,ca:110,fe:0.1,mg:11,k2:141,na:47,zn:0.5,fo:10,se:3,col:1,src:"CREA"},
+{n:"Yogurt intero bianco",c:"Latte e derivati",k:66,p:3.8,gs:2.65,g:3.9,z:4.3,ch:4.3,fi:0,ca:125,fe:0.1,mg:12,k2:170,na:48,zn:0.41,fo:10,se:2,col:11,src:"CREA"},
 {n:"Ceci secchi",c:"Legumi",k:343,p:20.9,gs:0.85,g:6.3,z:3.7,ch:46.9,fi:13.6,ca:142,fe:6.4,mg:130,k2:881,na:6,zn:3.2,fo:415,se:2,col:0,src:"CREA"},
 {n:"Lenticchie secche",c:"Legumi",k:319,p:22.7,gs:0.18,g:1,z:1.8,ch:51.1,fi:13.8,ca:57,fe:8,mg:83,k2:980,na:8,zn:2.9,fo:400,se:10.5,col:0,src:"CREA"},
 {n:"Fagioli borlotti secchi",c:"Legumi",k:312,p:20.2,gs:0.2,g:2,z:3.5,ch:47.7,fi:17.3,ca:102,fe:9,mg:163,k2:1478,na:3,zn:2.9,fo:464,se:16,col:0,src:"CREA"},
@@ -106,7 +106,7 @@ const DB_CREA=[
 {n:"Asiago fresco",c:"Formaggi",k:359,p:31.4,gs:15.004,g:25.6,z:0.8,ch:0.8,fi:0,ca:870,fe:0.3,mg:27,k2:89,na:760,zn:4.3,fo:6,se:15,col:90,src:"BDA"},
 {n:"Caciotta",c:"Formaggi",k:384,p:24.5,gs:20.44,g:31,z:1.8,ch:1.8,fi:0,ca:670,fe:0.3,mg:30,k2:95,na:550,zn:3.7,fo:20,se:7.7,col:80,src:"CREA"},
 // ── LATTICINI aggiuntivi ──
-{n:"Kefir intero",c:"Latte e derivati",k:61,p:3.4,gs:1.5,g:3.2,z:4.7,ch:4.7,fi:0,ca:115,fe:0.1,mg:11,k2:155,na:40,zn:0.4,fo:90,se:2,col:10,src:"CREA"},
+{n:"Kefir intero",c:"Latte e derivati",k:61,p:3.4,gs:1.5,g:3.2,z:4.7,ch:4.7,fi:0,ca:115,fe:0.1,mg:11,k2:155,na:40,zn:0.4,fo:5,se:2,col:10,src:"CREA"},
 // 8.6g di carboidrati era contraddittorio con "NON zuccherato" (bevanda di soia unsweetened ha carboidrati minimi) — allineato a duplicato coerente col profilo di un prodotto davvero non zuccherato — 2026-07-29
 {n:"Latte di soia non zuccherato",c:"Latte e derivati",k:35,p:3.3,gs:0.3,g:2,z:0,ch:0.7,fi:0.3,ca:120,fe:0.5,mg:19,k2:118,na:48,zn:0.5,fo:52,se:3,col:0,src:"CREA"},
 {n:"Latte di avena",c:"Latte e derivati",k:47,p:1.0,gs:0.1,g:1.5,z:4,ch:6.5,fi:0.5,ca:120,fe:0.3,mg:10,k2:65,na:50,zn:0.1,fo:25,se:0.5,col:0,src:"CREA"},
@@ -280,8 +280,8 @@ const DB_CREA=[
 {n:"Origano essiccato",c:"Condimenti",k:265,p:9,gs:4.3,g:10.3,z:21,ch:68.9,fi:42.5,ca:1576,fe:44,mg:270,k2:1260,na:25,zn:2.7,fo:148,se:4.5,col:0,src:"BDA"},
 // ── LATTICINI E DERIVATI aggiuntivi ──
 {n:"Panna da cucina 18%",c:"Latte e derivati",k:206,p:2.8,gs:11.64,g:20,z:3.9,ch:3.9,fi:0,ca:87,fe:0.1,mg:9,k2:91,na:34,zn:0.5,fo:7,se:0,col:66,src:"BDA"},
-{n:"Panna montata",c:"Latte e derivati",k:337,p:2.3,gs:19,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:65,se:2,col:120,src:"CREA"},
-{n:"Latte condensato zuccherato",c:"Latte e derivati",k:328,p:8.7,gs:5.7,g:9,z:56.5,ch:56.5,fi:0,ca:293,fe:0.2,mg:26,k2:390,na:130,zn:0.9,fo:180,se:3,col:34,src:"CREA"},
+{n:"Panna montata",c:"Latte e derivati",k:337,p:2.3,gs:19,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:5,se:2,col:120,src:"CREA"},
+{n:"Latte condensato zuccherato",c:"Latte e derivati",k:328,p:8.7,gs:5.7,g:9,z:56.5,ch:56.5,fi:0,ca:293,fe:0.2,mg:26,k2:390,na:130,zn:0.9,fo:12,se:3,col:34,src:"CREA"},
 {n:"Yogurt soia naturale",c:"Latte e derivati",k:72,p:5,gs:0.4,g:4.2,z:3.9,ch:3.9,fi:0.3,ca:120,fe:0.5,mg:18,k2:115,na:45,zn:0.3,fo:40,se:1,col:0,src:"CREA"},
 // ── UOVA aggiuntive ──
 {n:"Uova di quaglia",c:"Uova",k:158,p:13.1,gs:3.5,g:11.1,z:0.4,ch:0.4,fi:0,ca:64,fe:3.7,mg:13,k2:132,na:141,zn:1.5,fo:60,se:30,col:844,src:"CREA"},
@@ -297,7 +297,8 @@ const DB_CREA=[
 // ── FRUTTA ESOTICA aggiuntiva ──
 {n:"Pitaya / Dragon fruit (polpa)",c:"Frutta fresca",k:50,p:1.1,gs:0,g:0.4,z:9.2,ch:13.0,fi:3.0,ca:18,fe:1.9,mg:40,k2:436,na:39,zn:0.4,fo:34,se:0.6,col:0,src:"CREA"},
 {n:"Pomelo fresco",c:"Frutta fresca",k:38,p:0.8,gs:0,g:0.1,z:6.7,ch:9.6,fi:1.0,ca:4,fe:0.1,mg:6,k2:216,na:1,zn:0.08,fo:16,se:0.5,col:0,src:"CREA"},
-{n:"Noce di cocco fresca (polpa)",c:"Frutta lipidica",k:354,p:3.3,gs:29.7,g:33.5,z:6.2,ch:15.2,fi:9.0,ca:14,fe:2.4,mg:32,k2:356,na:20,zn:1.1,fo:113,se:10,col:0,src:"CREA"},
+// Fosforo (113mg, tipico della noce di cocco) era nel campo folati; folati reali cocco fresco ~26mcg - 2026-07-29
+{n:"Noce di cocco fresca (polpa)",c:"Frutta lipidica",k:354,p:3.3,gs:29.7,g:33.5,z:6.2,ch:15.2,fi:9.0,ca:14,fe:2.4,mg:32,k2:356,na:20,zn:1.1,fo:26,se:10,col:0,src:"CREA"},
 {n:"Durian fresco",c:"Frutta fresca",k:147,p:1.5,gs:0.5,g:5.3,z:16.1,ch:27.1,fi:3.8,ca:6,fe:0.4,mg:30,k2:436,na:2,zn:0.3,fo:44,se:0.6,col:0,src:"CREA"},
 {n:"Guava fresca",c:"Frutta fresca",k:31,p:0.7,gs:0,g:0.5,z:3.5,ch:3.5,fi:5.4,ca:10,fe:0.2,mg:22,k2:150,na:4,zn:0.2,fo:49,se:0.6,col:0,src:"CREA"},
 {n:"Litchi fresco",c:"Frutta fresca",k:72,p:1.1,gs:0,g:0.1,z:17.2,ch:17.2,fi:1.3,ca:2,fe:0.5,mg:10,k2:150,na:1,zn:0.1,fo:14,se:0.6,col:0,src:"CREA"},
@@ -333,8 +334,8 @@ const DB_CREA=[
 {n:"Vigna dall'occhio (Black-eyed peas) secchi",c:"Legumi",k:336,p:23.5,gs:0.3,g:1.3,z:1.7,ch:60.0,fi:10.5,ca:110,fe:8.3,mg:184,k2:1112,na:58,zn:3.4,fo:441,se:9,col:0,src:"CREA"},
 {n:"Mungo secco (fagiolo verde mungo)",c:"Legumi",k:307,p:23.9,gs:0.22,g:1.1,z:1.5,ch:46.3,fi:13.9,ca:89,fe:6,mg:189,k2:1250,na:12,zn:2.7,fo:140,se:8.2,col:0,src:"BDA"},
 // ── LATTICINI aggiuntivi ──
-{n:"Kefir (latte fermentato)",c:"Latte e derivati",k:61,p:3.3,gs:2.5,g:3.5,z:4.2,ch:4.5,fi:0,ca:120,fe:0.1,mg:12,k2:150,na:50,zn:0.4,fo:92,se:3,col:12,src:"CREA"},
-{n:"Lassi naturale (bevanda yogurt)",c:"Latte e derivati",k:60,p:3.5,gs:1.8,g:3.0,z:6.8,ch:7.0,fi:0,ca:120,fe:0.1,mg:11,k2:145,na:42,zn:0.4,fo:90,se:3,col:12,src:"CREA"},
+{n:"Kefir (latte fermentato)",c:"Latte e derivati",k:61,p:3.3,gs:2.5,g:3.5,z:4.2,ch:4.5,fi:0,ca:120,fe:0.1,mg:12,k2:150,na:50,zn:0.4,fo:5,se:3,col:12,src:"CREA"},
+{n:"Lassi naturale (bevanda yogurt)",c:"Latte e derivati",k:60,p:3.5,gs:1.8,g:3.0,z:6.8,ch:7.0,fi:0,ca:120,fe:0.1,mg:11,k2:145,na:42,zn:0.4,fo:10,se:3,col:12,src:"CREA"},
 {n:"Burrata fresca",c:"Latte e derivati",k:287,p:12.14,gs:15.0054,g:25.7,z:1.78,ch:1.78,fi:0,ca:127.2,fe:0.24,mg:8.8,k2:127,na:133.6,zn:1.68,fo:12.4,se:1.8,col:69.6,src:"BDA"},
 {n:"Quark (fiocchi magri tedeschi)",c:"Latte e derivati",k:115,p:9.7,gs:4.242,g:7.1,z:3.2,ch:3.2,fi:0,ca:73,fe:0.1,mg:9,k2:89,na:290,zn:0.6,fo:27,se:4,col:24,src:"BDA"},
 {n:"Labneh (yogurt scolato medio-oriente)",c:"Latte e derivati",k:195,p:12.5,gs:9.0,g:15.8,z:3.3,ch:3.3,fi:0,ca:135,fe:0.1,mg:14,k2:120,na:300,zn:1.1,fo:40,se:8,col:44,src:"CREA"},
@@ -401,7 +402,7 @@ const DB_CREA=[
   {n:"Stracciatella di bufala",c:"Formaggi",k:310,p:13.5,gs:18.5,g:26.5,z:3.0,ch:3.0,fi:0,ca:275,fe:0.1,mg:12,k2:48,na:380,zn:1.4,fo:20,se:4,col:90,src:"CREA"},
   {n:"Ricotta di bufala",c:"Formaggi",k:212,p:10.5,gs:6.5,g:17.3,z:3.7,ch:3.7,fi:0,ca:340,fe:0.2,mg:18,k2:65,na:115,zn:1.2,fo:12,se:5,col:55,src:"CREA"},
   {n:"Mascarpone",c:"Formaggi",k:455,p:7.6,gs:28.0,g:47,z:0.3,ch:0.3,fi:0,ca:68,fe:0.2,mg:9,k2:53,na:86,zn:0.3,fo:90,se:2,col:145,src:"CREA"},
-  {n:"Yogurt intero alla frutta",c:"Latte e derivati",k:80,p:3.4,gs:1.82,g:2.8,z:10.5,ch:10.5,fi:1,ca:110,fe:0.1,mg:12,k2:155,na:50,zn:0.5,fo:90,se:2,col:7,src:"CREA"},
+  {n:"Yogurt intero alla frutta",c:"Latte e derivati",k:80,p:3.4,gs:1.82,g:2.8,z:10.5,ch:10.5,fi:1,ca:110,fe:0.1,mg:12,k2:155,na:50,zn:0.5,fo:10,se:2,col:7,src:"CREA"},
   // ── PROTEINE ANIMALI MANCANTI ──
   {n:"Bresaola della Valtellina IGP",c:"Salumi",k:152,p:33.1,gs:0.66,g:2,z:0,ch:0.4,fi:0,ca:6,fe:2.6,mg:26,k2:630,na:1600,zn:4.5,fo:5,se:7,col:63,src:"CREA"},
   {n:"Coppa / Capocollo",c:"Salumi",k:400,p:28.9,gs:11.28,g:31.6,z:0.5,ch:0,fi:0,ca:7,fe:1.3,mg:27,k2:685,na:1960,zn:3.7,fo:5,se:12,col:127,src:"CREA"},
@@ -456,7 +457,7 @@ const DB_CREA=[
   {n:"Tofu solido (firm tofu)",c:"Legumi",k:76,p:8.0,gs:0.5,g:4.5,z:0.9,ch:2.0,fi:0.3,ca:350,fe:2.7,mg:37,k2:150,na:7,zn:0.8,fo:120,se:11,col:0,src:"CREA"},
   {n:"Crema di grano (semolino cotto)",c:"Cereali e derivati",k:65,p:2.1,gs:0.1,g:0.3,z:0.1,ch:13.6,fi:0.5,ca:7,fe:0.7,mg:12,k2:75,na:200,zn:0.4,fo:60,se:2,col:0,src:"CREA"},
   {n:"Crema di verdure (passato)",c:"Verdure",k:35,p:1.0,gs:0.0,g:1.0,z:3.5,ch:5.0,fi:1.5,ca:20,fe:0.3,mg:10,k2:200,na:300,zn:0.1,fo:25,se:0.5,col:0,src:"CREA"},
-  {n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:337,p:2.3,gs:19.8,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:62,se:1,col:120,src:"CREA"},
+  {n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:337,p:2.3,gs:19.8,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:5,se:1,col:120,src:"CREA"},
   {n:"Biscotti secchi (tipo petit beurre)",c:"Biscotti e crackers",k:404,p:6.6,gs:5.0,g:7.9,z:18.5,ch:80.4,fi:2.6,ca:22,fe:0.9,mg:15,k2:140,na:410,zn:0.5,fo:80,se:5,col:20,src:"CREA"},
   {n:"Pane di semola (rimacinata)",c:"Cereali e derivati",k:268,p:8.5,gs:0.3,g:1.5,z:3.0,ch:54.0,fi:2.5,ca:30,fe:1.8,mg:25,k2:105,na:490,zn:0.8,fo:90,se:15,col:0,src:"CREA"},
   {n:"Purea di patate (pronta)",c:"Verdure",k:85,p:2.0,gs:0.5,g:2.0,z:0.2,ch:15.0,fi:1.5,ca:30,fe:0.3,mg:12,k2:280,na:180,zn:0.2,fo:35,se:1,col:5,src:"CREA"},
@@ -565,9 +566,10 @@ const DB_CREA=[
   {n:"Pane azzimo (matza)",c:"Pane",k:365,p:10.7,gs:0.3,g:1,z:1.9,ch:81.7,fi:3.5,ca:15,fe:2.5,mg:25,k2:110,na:5,zn:0.8,fo:110,se:10,col:0,src:"CREA"},
   {n:"Pane di Altamura (DOP)",c:"Pane",k:263,p:8.3,gs:0.2,g:0.9,z:2.5,ch:55.2,fi:2.8,ca:22,fe:1.3,mg:28,k2:125,na:460,zn:0.9,fo:85,se:16,col:0,src:"CREA"},
   // ── YOGURT — denominazioni mancanti ──
-  {n:"Yogurt magro bianco",c:"Latte e derivati",k:74,p:6,gs:0.1,g:0.9,z:11,ch:11,fi:0.5,ca:122,fe:0.1,mg:12,k2:155,na:46,zn:0.5,fo:95,se:3,col:2,src:"CREA"},
-  {n:"Yogurt greco intero (10% grassi)",c:"Latte e derivati",k:115,p:6.4,gs:5.0,g:9.1,z:2,ch:2,fi:0,ca:150,fe:0.3,mg:11,k2:150,na:71,zn:0.5,fo:85,se:9,col:32,src:"CREA"},
-  {n:"Yogurt greco magro (0% grassi)",c:"Latte e derivati",k:59,p:10.2,gs:0.1,g:0.3,z:3.6,ch:4.0,fi:0,ca:115,fe:0.1,mg:12,k2:160,na:40,zn:0.6,fo:100,se:9,col:5,src:"CREA"},
+  {n:"Yogurt magro bianco",c:"Latte e derivati",k:74,p:6,gs:0.1,g:0.9,z:11,ch:11,fi:0.5,ca:122,fe:0.1,mg:12,k2:155,na:46,zn:0.5,fo:10,se:3,col:2,src:"CREA"},
+  {n:"Yogurt greco intero (10% grassi)",c:"Latte e derivati",k:115,p:6.4,gs:5.0,g:9.1,z:2,ch:2,fi:0,ca:150,fe:0.3,mg:11,k2:150,na:71,zn:0.5,fo:10,se:9,col:32,src:"CREA"},
+  // Stesso bug fosforo-in-folati dei latticini gia corretti - 2026-07-29
+  {n:"Yogurt greco magro (0% grassi)",c:"Latte e derivati",k:59,p:10.2,gs:0.1,g:0.3,z:3.6,ch:4.0,fi:0,ca:115,fe:0.1,mg:12,k2:160,na:40,zn:0.6,fo:11,se:9,col:5,src:"CREA"},
   // ── FORMAGGI — denominazioni mancanti ──
   {n:"Formaggio spalmabile tipo Philadelphia",c:"Formaggi",k:313,p:8.6,gs:18.519,g:31,z:0,ch:0,fi:0,ca:110,fe:0.1,mg:9,k2:150,na:330,zn:0.7,fo:13,se:3,col:90,src:"BDA"},
   {n:"Ricotta di capra",c:"Formaggi",k:182,p:11.9,gs:6.0,g:14.3,z:1.5,ch:1.5,fi:0,ca:396,fe:0.5,mg:17,k2:115,na:85,zn:0.8,fo:12,se:4,col:40,src:"CREA"},
@@ -577,8 +579,8 @@ const DB_CREA=[
   {n:"Risotto al pomodoro (cotto)",c:"Piatti pronti",k:140,p:3.5,gs:0.5,g:2.5,z:1.0,ch:27.0,fi:0.8,ca:12,fe:0.5,mg:12,k2:90,na:280,zn:0.5,fo:55,se:5,col:0,src:"CREA"},
   {n:"Polpette di carne al sugo",c:"Piatti pronti",k:175,p:12.0,gs:3.5,g:10.5,z:2.5,ch:8.5,fi:0.5,ca:25,fe:1.5,mg:18,k2:270,na:480,zn:2.0,fo:8,se:8,col:55,src:"CREA"},
   // ── ALIMENTI FERMENTATI ──
-  {n:"Kefir di latte intero",c:"Latte e derivati",k:61,p:3.3,gs:2.0,g:3.5,z:3.8,ch:4.5,fi:0,ca:114,fe:0.1,mg:13,k2:164,na:50,zn:0.4,fo:78,se:3,col:13,src:"CREA"},
-  {n:"Kefir di latte magro",c:"Latte e derivati",k:36,p:3.4,gs:0.1,g:0.2,z:3.8,ch:4.6,fi:0,ca:120,fe:0.1,mg:12,k2:160,na:49,zn:0.4,fo:84,se:3,col:2,src:"CREA"},
+  {n:"Kefir di latte intero",c:"Latte e derivati",k:61,p:3.3,gs:2.0,g:3.5,z:3.8,ch:4.5,fi:0,ca:114,fe:0.1,mg:13,k2:164,na:50,zn:0.4,fo:5,se:3,col:13,src:"CREA"},
+  {n:"Kefir di latte magro",c:"Latte e derivati",k:36,p:3.4,gs:0.1,g:0.2,z:3.8,ch:4.6,fi:0,ca:120,fe:0.1,mg:12,k2:160,na:49,zn:0.4,fo:5,se:3,col:2,src:"CREA"},
   {n:"Kombucha (bevanda fermentata da tè)",c:"Bevande",k:17,p:0.1,gs:0,g:0,z:2.5,ch:4.0,fi:0,ca:8,fe:0.1,mg:5,k2:28,na:7,zn:0.1,fo:5,se:0,col:0,src:"CREA"},
   {n:"Tempeh di soia al naturale",c:"Legumi",k:193,p:20.3,gs:2.2,g:10.8,z:0,ch:7.6,fi:4.1,ca:111,fe:2.7,mg:81,k2:412,na:9,zn:1.6,fo:221,se:7,col:0,src:"CREA"},
   {n:"Miso (pasta di soia fermentata)",c:"Condimenti",k:208,p:13.3,gs:0.89,g:6.2,z:0,ch:23.5,fi:5.4,ca:73,fe:4.2,mg:48,k2:160,na:3650,zn:3.3,fo:33,se:7,col:0,src:"BDA"},
@@ -702,7 +704,7 @@ const DB_CREA=[
 {n:"Crespelle / crepes (pasta, latte, uova)",c:"Cereali e pasta",k:207,p:6.5,gs:2.5,g:8.0,z:5.0,ch:27.0,fi:0.8,ca:70,fe:1.0,mg:10,k2:115,na:200,zn:0.6,fo:60,se:8,col:95,src:"CREA"},
 {n:"Manzo macinato (bovino, magro 10% grassi)",c:"Carni rosse",k:175,p:19.8,gs:4.1,g:10.0,z:0,ch:0,fi:0,ca:11,fe:2.3,mg:22,k2:310,na:68,zn:4.8,fo:8,se:13,col:71,src:"CREA"},
 {n:"Maiale macinato",c:"Carni rosse",k:263,p:16.8,gs:8.5,g:21.5,z:0,ch:0,fi:0,ca:10,fe:0.9,mg:20,k2:270,na:65,zn:2.2,fo:8,se:22,col:80,src:"CREA"},
-{n:"Latte intero UHT",c:"Latte e derivati",k:63,p:3.3,gs:2.27,g:3.6,z:4.7,ch:4.7,fi:0,ca:120,fe:0.2,mg:11,k2:150,na:43,zn:0.3,fo:84,se:2,col:11,src:"CREA"},
+{n:"Latte intero UHT",c:"Latte e derivati",k:63,p:3.3,gs:2.27,g:3.6,z:4.7,ch:4.7,fi:0,ca:120,fe:0.2,mg:11,k2:150,na:43,zn:0.3,fo:5,se:2,col:11,src:"CREA"},
 {n:"Olio di colza (canola)",c:"Grassi e oli",k:899,p:0,gs:6.5,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di vinacciolo",c:"Grassi e oli",k:899,p:0,gs:9.77,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Polpa di pomodoro a pezzi (in scatola)",c:"Verdure",k:20,p:1.0,gs:0,g:0.2,z:2.5,ch:3.8,fi:1.4,ca:12,fe:0.8,mg:13,k2:260,na:150,zn:0.1,fo:32,se:0.5,col:0,src:"CREA"},
@@ -949,12 +951,12 @@ const DB_CREA=[
 {n:"Scamorza bianca",c:"Formaggi",k:334,p:25,gs:16.1,g:25.6,z:1,ch:1,fi:0,ca:512,fe:0.3,mg:28,k2:112,na:450,zn:3.8,fo:15,se:16,col:100,src:"CREA"},
 {n:"Fiore Sardo DOP",c:"Formaggi",k:450,p:28,gs:23.8,g:37,z:0,ch:0,fi:0,ca:1136,fe:0.5,mg:45,k2:95,na:1450,zn:4.5,fo:18,se:20,col:115,src:"CREA"},
 // ── LATTICINI AGGIUNTIVI ──
-{n:"Skyr naturale (islandese)",c:"Latte e derivati",k:63,p:11,gs:0.1,g:0.2,z:4,ch:4,fi:0,ca:135,fe:0.1,mg:14,k2:160,na:40,zn:0.6,fo:110,se:4,col:3,src:"CREA"},
-{n:"Yogurt greco proteico 2%",c:"Latte e derivati",k:73,p:9,gs:1.2,g:2,z:3.5,ch:3.5,fi:0,ca:100,fe:0.1,mg:11,k2:141,na:44,zn:0.5,fo:100,se:3,col:8,src:"CREA"},
+{n:"Skyr naturale (islandese)",c:"Latte e derivati",k:63,p:11,gs:0.1,g:0.2,z:4,ch:4,fi:0,ca:135,fe:0.1,mg:14,k2:160,na:40,zn:0.6,fo:12,se:4,col:3,src:"CREA"},
+{n:"Yogurt greco proteico 2%",c:"Latte e derivati",k:73,p:9,gs:1.2,g:2,z:3.5,ch:3.5,fi:0,ca:100,fe:0.1,mg:11,k2:141,na:44,zn:0.5,fo:10,se:3,col:8,src:"CREA"},
 {n:"Fiocchi di latte (cottage cheese)",c:"Latte e derivati",k:115,p:9.7,gs:4.242,g:7.1,z:3.2,ch:3.2,fi:0,ca:73,fe:0.1,mg:9,k2:89,na:290,zn:0.6,fo:27,se:4,col:24,src:"BDA"},
-{n:"Latte di capra intero",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:111,se:1.9,col:10,src:"CREA"},
+{n:"Latte di capra intero",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:5,se:1.9,col:10,src:"CREA"},
 {n:"Panna da cucina (UHT 18%)",c:"Latte e derivati",k:177,p:2.8,gs:11.5,g:17.5,z:3.5,ch:3.9,fi:0,ca:67,fe:0.1,mg:8,k2:85,na:40,zn:0.2,fo:55,se:1.5,col:55,src:"CREA"},
-{n:"Panna montata (light 25%)",c:"Latte e derivati",k:257,p:2.3,gs:16,g:25,z:3.2,ch:3.2,fi:0,ca:79,fe:0.1,mg:9,k2:90,na:25,zn:0.2,fo:65,se:1.5,col:78,src:"CREA"},
+{n:"Panna montata (light 25%)",c:"Latte e derivati",k:257,p:2.3,gs:16,g:25,z:3.2,ch:3.2,fi:0,ca:79,fe:0.1,mg:9,k2:90,na:25,zn:0.2,fo:5,se:1.5,col:78,src:"CREA"},
 // ── CEREALI E PRODOTTI DA FORNO AGGIUNTIVI ──
 {n:"Miglio decorticato",c:"Cereali e pasta",k:342,p:11,gs:0.7,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:40,se:2.7,col:0,src:"CREA"},
 {n:"Grano saraceno integrale",c:"Cereali e pasta",k:329,p:12.4,gs:0.71,g:3.3,z:0,ch:61.2,fi:10,ca:110,fe:4,mg:231,k2:450,na:1,zn:2.4,fo:24,se:8.3,col:0,src:"CREA"},
@@ -964,7 +966,7 @@ const DB_CREA=[
 {n:"Piadina romagnola",c:"Pane",k:315,p:7.2,gs:3.2,g:10.5,z:1.6,ch:49.9,fi:2.2,ca:12,fe:0.6,mg:82,k2:95,na:600,zn:0.05,fo:7,se:1.5,col:7,src:"BDA"},
 {n:"Focaccia (classica genovese)",c:"Pane",k:306,p:7.9,gs:0.91,g:5.9,z:2.1,ch:57.9,fi:2.3,ca:20,fe:1.1,mg:15,k2:99,na:789,zn:0.31,fo:32,se:2,col:0,src:"BDA"},
 {n:"Ciabatta",c:"Pane",k:263,p:9,gs:0.2,g:1,z:1.5,ch:53,fi:2.5,ca:30,fe:1.6,mg:25,k2:130,na:500,zn:0.7,fo:80,se:18,col:0,src:"CREA"},
-{n:"Grissini (classici)",c:"Biscotti e crackers",k:421,p:11.3,gs:1.5,g:13.9,z:2.2,ch:65.1,fi:3.5,ca:13,fe:2.3,mg:22,k2:125,na:700,zn:0.8,fo:110,se:18,col:0,src:"CREA"},
+{n:"Grissini (classici)",c:"Biscotti e crackers",k:421,p:11.3,gs:1.5,g:13.9,z:2.2,ch:65.1,fi:3.5,ca:13,fe:2.3,mg:22,k2:125,na:700,zn:0.8,fo:10,se:18,col:0,src:"CREA"},
 // ── LEGUMI AGGIUNTIVI ──
 {n:"Lupini cotti",c:"Legumi",k:119,p:16.4,gs:0.4,g:2.4,z:0.5,ch:7.1,fi:2.8,ca:45,fe:5.5,mg:81,k2:674,na:16,zn:1.5,fo:200,se:3,col:0,src:"CREA"},
 {n:"Piselli freschi",c:"Legumi",k:64,p:5.5,gs:0.1,g:0.6,z:4,ch:6.5,fi:6.3,ca:45,fe:1.7,mg:33,k2:193,na:1,zn:1,fo:108,se:1.8,col:0,src:"CREA"},
@@ -1267,7 +1269,7 @@ const DB_CREA=[
 {n:"Puzzone di Moena / Spretz Tzaorì DOP",c:"Formaggi",k:330,p:24.5,gs:17,g:26,z:0,ch:0.8,fi:0,ca:820,fe:0.4,mg:28,k2:135,na:990,zn:3.0,fo:20,se:10,col:88,src:"CREA"},
 // ── PANE E CEREALI REGIONALI MANCANTI (CREA 2019) ──
 {n:"Pasta all'uovo secca (tagliatelle, pappardelle)",c:"Cereali e pasta",k:346,p:13,gs:1.5,g:2.4,z:2,ch:71,fi:3.2,ca:22,fe:2.1,mg:45,k2:164,na:17,zn:1.2,fo:40,se:30,col:94,src:"CREA"},
-{n:"Piadina romagnola (classica)",c:"Pane",k:330,p:9.5,gs:6.0,g:14,z:1.5,ch:44,fi:2.0,ca:40,fe:2.2,mg:22,k2:120,na:580,zn:0.7,fo:85,se:15,col:18,src:"CREA"},
+{n:"Piadina romagnola (classica)",c:"Pane",k:330,p:9.5,gs:6.0,g:14,z:1.5,ch:44,fi:2.0,ca:40,fe:2.2,mg:22,k2:120,na:580,zn:0.7,fo:10,se:15,col:18,src:"CREA"},
 {n:"Tigelle modenesi (crescentine)",c:"Pane",k:315,p:8.5,gs:4.5,g:11,z:1.5,ch:48,fi:1.8,ca:38,fe:2.0,mg:20,k2:110,na:540,zn:0.6,fo:80,se:12,col:15,src:"CREA"},
 {n:"Torta al testo umbra (pane su pietra)",c:"Pane",k:298,p:8.0,gs:1.8,g:7.5,z:1.0,ch:50,fi:2.5,ca:22,fe:1.8,mg:18,k2:100,na:560,zn:0.6,fo:75,se:12,col:0,src:"CREA"},
 {n:"Pane di Altamura DOP (grano duro)",c:"Pane",k:253,p:10.1,gs:0.36,g:1.9,z:2.3,ch:49.2,fi:5.6,ca:85,fe:1.5,mg:95,k2:147,na:640,zn:0.18,fo:56,se:2.1,col:0,src:"BDA"},
@@ -1333,9 +1335,9 @@ const DB_BDA=[
 {n:"Fegato di manzo",c:"Carni e derivati",k:142,p:20,gs:1.81,g:4.4,z:5.9,ch:5.9,fi:0,ca:7,fe:8.8,mg:18,k2:320,na:81,zn:6,fo:374,se:42,col:191,src:"CREA"},
 {n:"Merluzzo surgelato",c:"Pesce",k:75,p:17.3,gs:0.11,g:0.6,z:0,ch:0,fi:0,ca:30,fe:0.6,mg:20,k2:320,na:77,zn:2,fo:6,se:16.5,col:50,src:"BDA"},
 {n:"Trota",c:"Pesce",k:86,p:14.7,gs:0.7,g:3,z:0,ch:0,fi:0,ca:14,fe:1,mg:22,k2:465,na:40,zn:0.9,fo:13,se:19,col:55,src:"BDA"},
-{n:"Latte di mucca intero",c:"Latte e derivati",k:64,p:3.3,gs:2.27,g:3.6,z:4.9,ch:4.9,fi:0,ca:119,fe:0.1,mg:12,k2:150,na:50,zn:0.38,fo:90,se:1.6,col:11,src:"CREA"},
+{n:"Latte di mucca intero",c:"Latte e derivati",k:64,p:3.3,gs:2.27,g:3.6,z:4.9,ch:4.9,fi:0,ca:119,fe:0.1,mg:12,k2:150,na:50,zn:0.38,fo:5,se:1.6,col:11,src:"CREA"},
 {n:"Formaggio emmenthal",c:"Latte e derivati",k:382,p:28.8,gs:18.0,g:30.0,z:0.5,ch:0.5,fi:0,ca:1020,fe:0.3,mg:44,k2:100,na:450,zn:3.8,fo:5,se:14,col:97,src:"BDA"},
-{n:"Yogurt alla frutta",c:"Latte e derivati",k:91,p:3.5,gs:0.8,g:1.4,z:15.5,ch:16.0,fi:0.3,ca:115,fe:0.1,mg:11,k2:160,na:50,zn:0.4,fo:88,se:2,col:5,src:"BDA"},
+{n:"Yogurt alla frutta",c:"Latte e derivati",k:91,p:3.5,gs:0.8,g:1.4,z:15.5,ch:16.0,fi:0.3,ca:115,fe:0.1,mg:11,k2:160,na:50,zn:0.4,fo:10,se:2,col:5,src:"BDA"},
 {n:"Mele golden",c:"Frutta",k:46,p:0.4,gs:0.016,g:0.1,z:10.7,ch:10.7,fi:1.7,ca:5,fe:0.2,mg:5,k2:132,na:0,zn:0.1,fo:1,se:0,col:0,src:"BDA"},
 {n:"Albicocche",c:"Frutta",k:31,p:0.4,gs:0.007,g:0.1,z:6.8,ch:6.8,fi:1.5,ca:16,fe:0.5,mg:11,k2:320,na:1,zn:0.1,fo:5,se:1,col:0,src:"BDA"},
 {n:"Spinaci cotti",c:"Ortaggi",k:35,p:3.4,gs:0.07,g:0.7,z:0.4,ch:3,fi:1.9,ca:78,fe:2.9,mg:57,k2:530,na:100,zn:1.43,fo:150,se:1.5,col:0,src:"BDA"},
@@ -1375,7 +1377,7 @@ const DB_BDA=[
   // Kcal/proteine sottostimati: fonti USDA multiple concordano su 85-99kcal/20-24g proteine, valore locale (71kcal/13.6g) era troppo basso - 2026-07-29
   {n:"Gamberetti",c:"Pesce",src:"CREA",k:85,p:20.1,ch:0.2,g:1,fi:0,ca:110,fe:1.5,mg:45,k2:185,na:150,zn:1.1,fo:20,se:38,col:152},
   // ── LATTICINI ──
-  {n:"Skyr naturale",c:"Latticini",src:"BDA",k:63,p:11.0,ch:4.0,g:0.2,fi:0,ca:135,fe:0.1,mg:14,k2:170,na:50,zn:0.6,fo:105,se:4,col:2},
+  {n:"Skyr naturale",c:"Latticini",src:"BDA",k:63,p:11.0,ch:4.0,g:0.2,fi:0,ca:135,fe:0.1,mg:14,k2:170,na:50,zn:0.6,fo:12,se:4,col:2},
   {n:"Formaggio Cottage",c:"Latticini",src:"BDA",k:98,p:11.1,ch:3.4,g:4.3,fi:0,ca:83,fe:0.1,mg:8,k2:84,na:365,zn:0.4,fo:12,se:9,col:15},
   {n:"Tofu",c:"Legumi",z:0,gs:0.07,src:"BDA",k:81,p:8.1,ch:0.7,g:4.8,fi:1.2,ca:105,fe:5.4,mg:30,k2:121,na:7,zn:0.8,fo:15,se:10,col:0},
   {n:"Tempeh",c:"Legumi",src:"BDA",k:173,p:20.7,ch:6.4,g:6.4,fi:4.1,ca:120,fe:3.6,mg:81,k2:370,na:6,zn:1.8,fo:76,se:10,col:0},
@@ -1419,8 +1421,8 @@ const DB_BDA=[
   // ── LATTICINI BDA aggiuntivi ──
   {n:"Formaggino",c:"Latte e derivati",src:"BDA",k:309,p:11.2,gs:16.075,g:26.9,z:6,ch:6,fi:0,ca:430,fe:0.3,mg:22,k2:108,na:1000,zn:3.2,fo:18,se:10,col:93},
   {n:"Panna UHT 35%",c:"Latte e derivati",src:"BDA",k:337,p:2.3,gs:20.37,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:7,k2:100,na:34,zn:0.3,fo:7,se:0,col:105},
-  {n:"Yogurt proteico magro",c:"Latte e derivati",src:"BDA",k:75,p:15,gs:0,g:0.3,z:4,ch:5.5,fi:0,ca:180,fe:0.2,mg:17,k2:200,na:75,zn:0.8,fo:120,se:5,col:5},
-  {n:"Panna acida",c:"Latte e derivati",src:"BDA",k:193,p:2.9,gs:12,g:19.4,z:3.7,ch:4.6,fi:0,ca:109,fe:0.1,mg:11,k2:145,na:40,zn:0.4,fo:80,se:2,col:62},
+  {n:"Yogurt proteico magro",c:"Latte e derivati",src:"BDA",k:75,p:15,gs:0,g:0.3,z:4,ch:5.5,fi:0,ca:180,fe:0.2,mg:17,k2:200,na:75,zn:0.8,fo:10,se:5,col:5},
+  {n:"Panna acida",c:"Latte e derivati",src:"BDA",k:193,p:2.9,gs:12,g:19.4,z:3.7,ch:4.6,fi:0,ca:109,fe:0.1,mg:11,k2:145,na:40,zn:0.4,fo:5,se:2,col:62},
   // ── PESCE BDA aggiuntivo ──
   {n:"Spigola da acquacoltura",c:"Pesce",src:"CREA",k:149,p:21.3,gs:1.6,g:6.8,z:0.8,ch:0.8,fi:0,ca:30,fe:0.5,mg:25,k2:270,na:80,zn:0.4,fo:10,se:12,col:75},
   {n:"Orata da acquacoltura",c:"Pesce",src:"CREA",k:159,p:19.7,gs:2.37,g:8.4,z:1.2,ch:1.2,fi:0,ca:30,fe:0.6,mg:23,k2:415,na:85,zn:0.5,fo:10,se:30,col:68},
@@ -1617,7 +1619,7 @@ const DB_BDA=[
   {n:"Merendina tipo Fiesta (Ferrero)",c:"Dolci confezionati",src:"UPF",k:461,p:5.4,gs:7.5,g:22,z:41,ch:62,fi:1.5,ca:80,fe:2,mg:25,k2:200,na:170,zn:0.6,fo:85,se:4,col:15},
   {n:"Cornetto confezionato (Algida tipo)",c:"Gelati",src:"UPF",k:285,p:4.5,gs:6.0,g:16.0,z:27.0,ch:34.0,fi:0.5,ca:85,fe:0.6,mg:12,k2:130,na:90,zn:0.4,fo:70,se:3,col:15},
   {n:"Tiramisù artigianale",c:"Dolci",src:"BDA",k:298,p:5.5,gs:8.5,g:18.5,z:27.5,ch:32.0,fi:0.3,ca:70,fe:0.8,mg:15,k2:115,na:90,zn:0.5,fo:95,se:4,col:175},
-  {n:"Panna cotta industriale",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:75,fe:0.1,mg:8,k2:100,na:48,zn:0.3,fo:65,se:2,col:42},
+  {n:"Panna cotta industriale",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:75,fe:0.1,mg:8,k2:100,na:48,zn:0.3,fo:5,se:2,col:42},
   // ── PIATTI PRONTI E PREPARATI INDUSTRIALI ──
   {n:"Minestrone in busta surgelato",c:"Piatti pronti",src:"UPF",k:38,p:2.0,gs:0,g:0.5,z:3.5,ch:6.5,fi:2.5,ca:25,fe:0.8,mg:18,k2:230,na:320,zn:0.3,fo:35,se:1,col:0},
   {n:"Pasta al pomodoro pronta in busta",c:"Piatti pronti",src:"UPF",k:135,p:4.5,gs:0.5,g:2.0,z:4.5,ch:25.0,fi:2.0,ca:25,fe:1.0,mg:18,k2:180,na:480,zn:0.5,fo:60,se:10,col:0},
@@ -1774,7 +1776,7 @@ const DB_BDA=[
   // ── CONDIMENTI AGGIUNTIVI ──
   {n:"Aceto di vino bianco",c:"Condimenti",src:"CREA",k:18,p:0.1,gs:0,g:0,z:0.2,ch:1.7,fi:0,ca:6,fe:0.1,mg:3,k2:28,na:7,zn:0.03,fo:5,se:1,col:0},
   {n:"Burro chiarificato (ghee)",c:"Grassi",src:"BDA",k:876,p:0.3,gs:60.0,g:99.5,z:0,ch:0,fi:0,ca:4,fe:0,mg:0,k2:3,na:2,zn:0,fo:3,se:0,col:256},
-  {n:"Senape classica (tipo Dijon)",c:"Condimenti",src:"BDA",k:67,p:4.4,gs:0.3,g:3.3,z:2.5,ch:6.4,fi:3.4,ca:58,fe:1.8,mg:48,k2:152,na:1020,zn:0.7,fo:115,se:8,col:0},
+  {n:"Senape classica (tipo Dijon)",c:"Condimenti",src:"BDA",k:67,p:4.4,gs:0.3,g:3.3,z:2.5,ch:6.4,fi:3.4,ca:58,fe:1.8,mg:48,k2:152,na:1020,zn:0.7,fo:10,se:8,col:0},
 
   // ── DOLCIFICANTI AGGIUNTIVI ──
   {n:"Stevia (estratto in polvere)",c:"Dolcificanti",src:"BDA",k:0,p:0,gs:0,g:0,z:0,ch:3.8,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
@@ -1853,7 +1855,7 @@ const DB_BDA=[
 {n:"Sugo al pomodoro artigianale",c:"Condimenti",k:52,p:2,gs:0.3,g:2,z:4.8,ch:6.5,fi:1.5,ca:22,fe:0.7,mg:16,k2:330,na:380,zn:0.2,fo:40,se:1,col:0,src:"BDA"},
 {n:"Cornetto (brioche vuoto)",c:"Dolci",k:403,p:7.2,gs:9.64,g:18.3,z:10.6,ch:54.7,fi:2.1,ca:9,fe:1.3,mg:73,k2:52,na:350,zn:0.41,fo:45,se:2.6,col:88,src:"BDA"},
 {n:"Tiramisù",c:"Dolci",k:285,p:7.5,gs:10,g:16.7,z:24.5,ch:29,fi:0.5,ca:92,fe:0.8,mg:16,k2:140,na:140,zn:0.7,fo:150,se:7,col:160,src:"BDA"},
-{n:"Panna cotta",c:"Dolci",k:234,p:3.5,gs:14.5,g:16,z:22,ch:22.5,fi:0,ca:115,fe:0.1,mg:12,k2:160,na:70,zn:0.4,fo:105,se:2,col:55,src:"BDA"},
+{n:"Panna cotta",c:"Dolci",k:234,p:3.5,gs:14.5,g:16,z:22,ch:22.5,fi:0,ca:115,fe:0.1,mg:12,k2:160,na:70,zn:0.4,fo:5,se:2,col:55,src:"BDA"},
 {n:"Crostata di frutta fresca",c:"Dolci",k:238,p:4.5,gs:4,g:9,z:22.5,ch:34.5,fi:1.5,ca:45,fe:1.2,mg:14,k2:120,na:160,zn:0.6,fo:100,se:5,col:60,src:"BDA"},
 {n:"Cotechino cotto",c:"Salumi cotti",k:307,p:21.1,gs:8.18,g:24.7,z:0,ch:0,fi:0,ca:15,fe:1.5,mg:11,k2:137,na:875,zn:2.1,fo:4,se:1,col:98,src:"BDA"},
 {n:"Trippa alla romana",c:"Carni cotte",k:115,p:11,gs:2.5,g:6.5,z:1,ch:4.5,fi:0.5,ca:45,fe:1.2,mg:18,k2:180,na:520,zn:2.5,fo:120,se:8,col:110,src:"BDA"},
@@ -1899,7 +1901,7 @@ const DB_BDA=[
 {n:"Suro (sugarello)",c:"Pesce",k:104,p:18.3,gs:1.24,g:3,z:1,ch:1,fi:0,ca:125,fe:0.9,mg:31,k2:212,na:111,zn:1.45,fo:10,se:30,col:65,src:"CREA"},
 // Verificato CREA 110906 (Wurstel di puro suino, COTTO — scelto cotto perche il wurstel si vende tipicamente gia pronto al consumo in Italia; differenza crudo/cotto comunque minima) — 2026-07-29
 {n:"Wurstel di suino",c:"Salumi e insaccati",k:259,p:14.6,gs:7.08,g:22.2,z:0,ch:0.3,fi:0,ca:17,fe:0.9,mg:9,k2:223,na:920,zn:0.9,fo:5,se:10,col:84,src:"CREA"},
-{n:"Latte di pecora intero fresco",c:"Latte e derivati",k:103,p:5.3,gs:5.1,g:6.9,z:5.2,ch:5.2,fi:0,ca:180,fe:0.1,mg:18,k2:182,na:30,zn:0.5,fo:158,se:2,col:11,src:"CREA"},
+{n:"Latte di pecora intero fresco",c:"Latte e derivati",k:103,p:5.3,gs:5.1,g:6.9,z:5.2,ch:5.2,fi:0,ca:180,fe:0.1,mg:18,k2:182,na:30,zn:0.5,fo:5,se:2,col:11,src:"CREA"},
 // Stesso bug fosforo-in-folati dei latticini gia corretti (fosforo latte di capra ~106mg, folati reali yogurt ~12mcg) - 2026-07-29
 {n:"Yogurt di capra",c:"Latte e derivati",k:63,p:3.6,gs:2.5,g:3.8,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:155,na:40,zn:0.4,fo:12,se:2,col:13,src:"CREA"},
 {n:"Pan di Spagna",c:"Dolci",k:275,p:10.1,gs:1.45,g:5.1,z:31.2,ch:49.7,fi:1.4,ca:31,fe:1.1,mg:10,k2:97,na:79,zn:0.64,fo:20,se:3.8,col:144,src:"BDA"},
@@ -1948,7 +1950,7 @@ const DB_BDA=[
 
 // ── FORMAGGI E LATTICINI MANCANTI ──
 {n:"Fiordilatte (mozzarella vaccina fresca)",c:"Formaggi",k:253,p:18.7,gs:12.0,g:19.5,z:0.7,ch:0.7,fi:0,ca:350,fe:0.4,mg:10,k2:145,na:200,zn:2.6,fo:10,se:2.5,col:46,src:"CREA"},
-{n:"Latte di bufala intero",c:"Latte e derivati",k:114,p:4.5,gs:4.8,g:8.5,z:5.1,ch:5.1,fi:0,ca:198,fe:0.1,mg:18,k2:175,na:52,zn:0.4,fo:135,se:3,col:24,src:"CREA"},
+{n:"Latte di bufala intero",c:"Latte e derivati",k:114,p:4.5,gs:4.8,g:8.5,z:5.1,ch:5.1,fi:0,ca:198,fe:0.1,mg:18,k2:175,na:52,zn:0.4,fo:5,se:3,col:24,src:"CREA"},
 
 // ── PESCE MANCANTE (specie mediterranee CREA) ──
 {n:"Grongo fresco",c:"Pesce",k:109,p:16.3,gs:0.9,g:4.7,z:0,ch:0,fi:0,ca:28,fe:0.6,mg:26,k2:350,na:58,zn:0.5,fo:10,se:28,col:50,src:"CREA"},
@@ -2138,7 +2140,7 @@ const DB_BDA=[
 {n:"Riso soffiato (base, non condito)",c:"Cereali da colazione",k:354,p:6,gs:0.25,g:1,z:9,ch:85.1,fi:1,ca:8.7,fe:1.1,mg:32,k2:115,na:48,zn:1.1,fo:6,se:13.2,col:0,src:"BDA"},
 {n:"Malto d'orzo in polvere",c:"Cereali e derivati",k:371,p:11.0,gs:0.1,g:2.3,z:62.0,ch:77.4,fi:6.0,ca:40,fe:5.0,mg:85,k2:450,na:25,zn:2.3,fo:30,se:10,col:0,src:"BDA"},
 {n:"Sciroppo di glucosio",c:"Zuccheri",k:287,p:0,gs:0,g:0,z:28.1,ch:76.6,fi:0,ca:18,fe:0.4,mg:8,k2:44,na:160,zn:0,fo:0,se:0,col:0,src:"BDA"},
-{n:"Latte condensato non zuccherato (evaporato)",c:"Latte e derivati",k:134,p:7,gs:5.1,g:8.2,z:8.6,ch:8.6,fi:0,ca:240,fe:0.1,mg:22,k2:323,na:150,zn:0.8,fo:195,se:3,col:31,src:"CREA"},
+{n:"Latte condensato non zuccherato (evaporato)",c:"Latte e derivati",k:134,p:7,gs:5.1,g:8.2,z:8.6,ch:8.6,fi:0,ca:240,fe:0.1,mg:22,k2:323,na:150,zn:0.8,fo:12,se:3,col:31,src:"CREA"},
 {n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:337,p:2.3,gs:20.4,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:55,se:1,col:120,src:"CREA"},
 {n:"Farinata di ceci (piatto tipico genovese cotto)",c:"Cereali e derivati",k:152,p:5.5,gs:0.8,g:8.5,z:0.5,ch:14.5,fi:2.0,ca:28,fe:1.8,mg:30,k2:130,na:300,zn:0.7,fo:90,se:2,col:0,src:"BDA"},
 {n:"Gelatina in fogli (colla di pesce)",c:"Condimenti",k:335,p:84.4,gs:0,g:0.1,z:0,ch:0,fi:0,ca:10,fe:0.1,mg:1,k2:2,na:30,zn:0.1,fo:20,se:0,col:70,src:"BDA"},
@@ -2504,7 +2506,7 @@ let RICETTE_DB=[];
 // ═══════════════════════════════════════════════════
 const DB_UPF = [
   // ── SNACK SALATI ──
-  {n:"Patatine fritte in busta (chips classiche)",c:"Snack salati",src:"UPF",k:536,p:7,gs:3.1,g:34,z:0.5,ch:53,fi:2.5,ca:20,fe:1.5,mg:40,k2:1100,na:560,zn:0.8,fo:150,se:3,col:0},
+  {n:"Patatine fritte in busta (chips classiche)",c:"Snack salati",src:"UPF",k:536,p:7,gs:3.1,g:34,z:0.5,ch:53,fi:2.5,ca:20,fe:1.5,mg:40,k2:1100,na:560,zn:0.8,fo:10,se:3,col:0},
   {n:"Patatine al formaggio (Fonzies/simili)",c:"Snack salati",src:"UPF",k:510,p:5,gs:2.5,g:29,z:2,ch:58,fi:1.5,ca:25,fe:0.8,mg:15,k2:200,na:700,zn:0.5,fo:80,se:2,col:5},
   {n:"Crackers snack con sesamo (tipo MixBowl)",c:"Snack salati",src:"UPF",k:427,p:10.3,gs:1.88,g:12.3,z:0.7,ch:66.4,fi:4.7,ca:60,fe:2,mg:40,k2:150,na:948,zn:1,fo:130,se:5,col:0},
   {n:"Pop corn da microonde al burro",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:2,fe:1.5,mg:90,k2:250,na:500,zn:1.5,fo:280,se:5,col:10},
@@ -2517,7 +2519,7 @@ const DB_UPF = [
   {n:"Pan di stelle / biscotti al cioccolato",c:"Dolci confezionati",src:"UPF",k:369,p:7,gs:7.5,g:13.6,z:35.5,ch:52.4,fi:4.6,ca:55,fe:2.5,mg:30,k2:200,na:200,zn:0.8,fo:110,se:4,col:5},
   {n:"Kinder Bueno (per 100g)",c:"Dolci confezionati",src:"UPF",k:592,p:9,gs:22.9,g:41.6,z:35.2,ch:44.3,fi:1,ca:115,fe:1.5,mg:30,k2:240,na:137.2,zn:0.9,fo:140,se:3,col:20},
   {n:"Nutella (crema alla nocciola)",c:"Creme e spalmate",src:"UPF",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:3,ca:80,fe:2.9,mg:51,k2:350,na:42.8,zn:1,fo:20,se:2,col:0},
-  {n:"Panna cotta industriale confezionata",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:100,fe:0.1,mg:8,k2:120,na:48,zn:0.3,fo:80,se:2,col:38},
+  {n:"Panna cotta industriale confezionata",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:100,fe:0.1,mg:8,k2:120,na:48,zn:0.3,fo:5,se:2,col:38},
   {n:"Tiramisù industriale (porzione 100g)",c:"Dolci confezionati",src:"UPF",k:266,p:3,gs:7.4,g:8.1,z:16.9,ch:41.6,fi:0.3,ca:60,fe:0,mg:0,k2:110,na:112,zn:0,fo:75,se:4,col:85},
   {n:"Torta confezionata al cioccolato (tipo Sacher)",c:"Dolci confezionati",src:"UPF",k:367,p:6.6,gs:8.9,g:16,z:25,ch:48,fi:2,ca:30,fe:1.5,mg:25,k2:150,na:440,zn:0.5,fo:80,se:3,col:30},
   {n:"Brioche industriale (brioches confezionate)",c:"Dolci confezionati",src:"UPF",k:337,p:7,gs:7.9,g:9.9,z:13,ch:54,fi:2,ca:50,fe:1.5,mg:15,k2:100,na:380,zn:0.5,fo:70,se:6,col:85},
@@ -2605,7 +2607,7 @@ const DB_UPF = [
 
   // ── PRODOTTI DA FORNO E PASTICCERIA CONFEZIONATA ──
   {n:"Pandoro porzione 100g",c:"Dolci confezionati",src:"UPF",k:400,p:6.7,gs:14,g:21,z:24,ch:44,fi:0.6,ca:50,fe:1.5,mg:15,k2:120,na:240,zn:0.5,fo:80,se:6,col:115},
-  {n:"Panettone classico porzione 100g",c:"Dolci confezionati",src:"UPF",k:358.8,p:6.8,gs:7.5,g:12.1,z:30.6,ch:55,fi:2.6,ca:55,fe:1.8,mg:15,k2:130,na:180,zn:0.5,fo:85,se:5,col:95},
+  {n:"Panettone classico porzione 100g",c:"Dolci confezionati",src:"UPF",k:358.8,p:6.8,gs:7.5,g:12.1,z:30.6,ch:55,fi:2.6,ca:55,fe:1.8,mg:15,k2:130,na:180,zn:0.5,fo:10,se:5,col:95},
   {n:"Colomba pasquale porzione 100g",c:"Dolci confezionati",src:"UPF",k:413,p:6.6,gs:10,g:18,z:32,ch:56,fi:2,ca:50,fe:1.5,mg:12,k2:110,na:140,zn:0.4,fo:75,se:5,col:100},
   {n:"Torrone al cioccolato duro",c:"Dolci confezionati",src:"UPF",k:488,p:9.5,gs:11,g:24,z:52,ch:60,fi:2.5,ca:130,fe:1.5,mg:55,k2:300,na:60,zn:1.2,fo:150,se:4,col:0},
   {n:"Torrone morbido",c:"Dolci confezionati",src:"UPF",k:496,p:4.7,gs:5.8,g:23,z:64,ch:66,fi:4.7,ca:100,fe:0.8,mg:25,k2:200,na:8,zn:0.8,fo:100,se:2,col:0},
@@ -2656,8 +2658,8 @@ const DB_UPF = [
   {n:"Latte di cocco in lattina",c:"Bibite zuccherate",src:"UPF",k:165,p:0,gs:15,g:17,z:2.5,ch:2.9,fi:0,ca:18,fe:3.3,mg:37,k2:263,na:60,zn:0.7,fo:22,se:6,col:0},
 
   // ── LATTICINI PROCESSATI ──
-  {n:"Yogurt proteico industriale 15g",c:"Latte e derivati",src:"UPF",k:84.7,p:8.2,gs:0,g:0,z:12,ch:13,fi:0,ca:180,fe:0.2,mg:17,k2:200,na:47,zn:0.8,fo:120,se:5,col:5},
-  {n:"Panna cotta da pasticceria 100g",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:90,fe:0.1,mg:8,k2:100,na:48,zn:0.3,fo:75,se:2,col:45},
+  {n:"Yogurt proteico industriale 15g",c:"Latte e derivati",src:"UPF",k:84.7,p:8.2,gs:0,g:0,z:12,ch:13,fi:0,ca:180,fe:0.2,mg:17,k2:200,na:47,zn:0.8,fo:10,se:5,col:5},
+  {n:"Panna cotta da pasticceria 100g",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:90,fe:0.1,mg:8,k2:100,na:48,zn:0.3,fo:5,se:2,col:45},
   // Stesso bug fosforo-in-folati degli altri formaggi - 2026-07-29
   {n:"Sottilette fette di formaggio",c:"Latte e derivati",src:"UPF",k:261,p:16,gs:13,g:19,z:5.2,ch:5.6,fi:2,ca:660,fe:0.3,mg:25,k2:105,na:2300,zn:2.5,fo:15,se:6,col:65},
 
@@ -2723,7 +2725,7 @@ const DB_UPF = [
 // Allineato a voce CREA gia verificata "Acqua di cocco naturale (senza zuccheri aggiunti)" — 2026-07-28
   {n:"Acqua di cocco naturale (lattina)",c:"Bevande",src:"UPF",k:19,p:0.7,gs:0,g:0.2,z:3.7,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:250,na:105,zn:0.1,fo:9,se:1,col:0},
   {n:"Latte di riso naturale",c:"Latte e derivati",src:"UPF",k:47,p:0.3,gs:0,g:1,z:5,ch:9.2,fi:0.3,ca:120,fe:0.2,mg:8,k2:25,na:50,zn:0.1,fo:10,se:0,col:0},
-  {n:"Latte di piselli (Ripple tipo)",c:"Latte e derivati",src:"UPF",k:52,p:8,gs:0.5,g:2.5,z:0,ch:1,fi:0,ca:450,fe:1,mg:15,k2:270,na:130,zn:0.8,fo:100,se:3,col:0},
+  {n:"Latte di piselli (Ripple tipo)",c:"Latte e derivati",src:"UPF",k:52,p:8,gs:0.5,g:2.5,z:0,ch:1,fi:0,ca:450,fe:1,mg:15,k2:270,na:130,zn:0.8,fo:5,se:3,col:0},
 
   // ── MERENDINE E DOLCI CONFEZIONATI aggiuntivi ──
   {n:"Crostatina Mulino Bianco tipo",c:"Dolci confezionati",src:"UPF",k:477,p:6.5,gs:6.7,g:22,z:28,ch:61.7,fi:1.5,ca:40,fe:1.2,mg:12,k2:110,na:140,zn:0.4,fo:65,se:3,col:35},
@@ -2746,7 +2748,7 @@ const DB_UPF = [
   {n:"Pancetta affumicata (bacon italiano)",c:"Salumi processati",src:"UPF",k:353,p:18,gs:13,g:31,z:0,ch:0.5,fi:0,ca:8,fe:0.9,mg:18,k2:280,na:1320,zn:1.5,fo:5,se:22,col:90},
 
   // ── DOLCI / DESSERT PARTICOLARI ──
-  {n:"Panna cotta industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:95,fe:0.1,mg:8,k2:110,na:48,zn:0.2,fo:70,se:2,col:50},
+  {n:"Panna cotta industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:95,fe:0.1,mg:8,k2:110,na:48,zn:0.2,fo:5,se:2,col:50},
   {n:"Tiramisù industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:266,p:3,gs:7.4,g:8.1,z:16.9,ch:41.6,fi:0.3,ca:65,fe:0,mg:0,k2:130,na:112,zn:0,fo:90,se:4,col:145},
   {n:"Crostata industriale marmellata",c:"Dolci confezionati",src:"UPF",k:389,p:4.5,gs:5.4,g:11,z:38.8,ch:67.2,fi:2,ca:40,fe:1.5,mg:15,k2:120,na:156,zn:0.5,fo:70,se:4,col:20},
 
@@ -2845,9 +2847,9 @@ const DB_UPF = [
   {n:"Farina di cocco disidratata",c:"Cereali e derivati",src:"UPF",k:615,p:10,gs:47,g:55,z:9,ch:9,fi:39,ca:22,fe:4.8,mg:110,k2:543,na:37.6,zn:2.2,fo:276,se:19,col:0},
 
   // ── PRODOTTI AD ALTO CONTENUTO PROTEICO ──
-  {n:"Quark proteico 0% grassi",c:"Latte e derivati",src:"UPF",k:58,p:10,gs:0,g:0,z:3.5,ch:4.5,fi:0,ca:120,fe:0,mg:0,k2:140,na:39,zn:0,fo:110,se:5,col:2},
-  {n:"Fiocchi di latte proteici high-protein",c:"Latte e derivati",src:"UPF",k:90,p:9.4,gs:2.7,g:4.5,z:3,ch:3,fi:0,ca:130,fe:0.1,mg:14,k2:130,na:320,zn:0.6,fo:115,se:6,col:3},
-  {n:"Yogurt greco 17% proteine",c:"Latte e derivati",src:"UPF",k:96,p:17,gs:0.1,g:0.4,z:5.5,ch:6,fi:0,ca:180,fe:0.1,mg:18,k2:200,na:55,zn:0.9,fo:145,se:7,col:4},
+  {n:"Quark proteico 0% grassi",c:"Latte e derivati",src:"UPF",k:58,p:10,gs:0,g:0,z:3.5,ch:4.5,fi:0,ca:120,fe:0,mg:0,k2:140,na:39,zn:0,fo:12,se:5,col:2},
+  {n:"Fiocchi di latte proteici high-protein",c:"Latte e derivati",src:"UPF",k:90,p:9.4,gs:2.7,g:4.5,z:3,ch:3,fi:0,ca:130,fe:0.1,mg:14,k2:130,na:320,zn:0.6,fo:12,se:6,col:3},
+  {n:"Yogurt greco 17% proteine",c:"Latte e derivati",src:"UPF",k:96,p:17,gs:0.1,g:0.4,z:5.5,ch:6,fi:0,ca:180,fe:0.1,mg:18,k2:200,na:55,zn:0.9,fo:10,se:7,col:4},
   {n:"Budino proteico (tipo FitBar/Max)",c:"Dolci confezionati",src:"UPF",k:75,p:10,gs:0.7,g:1,z:4,ch:8,fi:0,ca:200,fe:0.5,mg:30,k2:200,na:40,zn:0.8,fo:120,se:5,col:15},
   {n:"Pasta di lenticchie rosse (alto prot.)",c:"Cereali e pasta",src:"UPF",k:334,p:26,gs:0.4,g:1.7,z:1.2,ch:50,fi:7.6,ca:35,fe:7.5,mg:100,k2:670,na:10,zn:3.2,fo:480,se:7,col:0},
   {n:"Pasta di ceci (alto prot.)",c:"Cereali e pasta",src:"UPF",k:361,p:20,gs:1,g:5.7,z:3,ch:53,fi:9.7,ca:50,fe:5,mg:115,k2:800,na:0,zn:2.8,fo:320,se:6,col:0},
@@ -2862,9 +2864,9 @@ const DB_UPF = [
   {n:"Grana Padano DOP",c:"Latte e derivati",src:"CREA",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:7,se:12,col:98},
 
   // ── PRODOTTI SENZA LATTOSIO ──
-  {n:"Latte senza lattosio intero",c:"Latte e derivati",src:"UPF",k:66,p:3.3,gs:1.5,g:3.7,z:4.8,ch:4.8,fi:0,ca:120,fe:0,mg:11,k2:145,na:43,zn:0.4,fo:92,se:3,col:14},
-  {n:"Latte senza lattosio parz. scremato",c:"Latte e derivati",src:"UPF",k:46,p:3.4,gs:0.5,g:1.5,z:4.8,ch:4.8,fi:0,ca:122,fe:0,mg:11,k2:146,na:43,zn:0.4,fo:93,se:3,col:5},
-  {n:"Yogurt senza lattosio naturale",c:"Latte e derivati",src:"UPF",k:61,p:3.4,gs:0.07,g:0.1,z:10.8,ch:11.5,fi:0.1,ca:120,fe:0.1,mg:12,k2:155,na:32,zn:0.6,fo:95,se:3,col:12},
+  {n:"Latte senza lattosio intero",c:"Latte e derivati",src:"UPF",k:66,p:3.3,gs:1.5,g:3.7,z:4.8,ch:4.8,fi:0,ca:120,fe:0,mg:11,k2:145,na:43,zn:0.4,fo:5,se:3,col:14},
+  {n:"Latte senza lattosio parz. scremato",c:"Latte e derivati",src:"UPF",k:46,p:3.4,gs:0.5,g:1.5,z:4.8,ch:4.8,fi:0,ca:122,fe:0,mg:11,k2:146,na:43,zn:0.4,fo:5,se:3,col:5},
+  {n:"Yogurt senza lattosio naturale",c:"Latte e derivati",src:"UPF",k:61,p:3.4,gs:0.07,g:0.1,z:10.8,ch:11.5,fi:0.1,ca:120,fe:0.1,mg:12,k2:155,na:32,zn:0.6,fo:10,se:3,col:12},
   {n:"Ricotta vaccina senza lattosio",c:"Latte e derivati",src:"UPF",k:115,p:9,gs:4.1,g:6,z:6.3,ch:6.3,fi:0,ca:250,fe:0.3,mg:15,k2:120,na:80,zn:1,fo:12,se:8,col:38},
 
   // ── PRODOTTI SENZA GLUTINE INTEGRALI ──
@@ -2873,7 +2875,7 @@ const DB_UPF = [
   {n:"Fette biscottate integrali senza glutine",c:"Cereali e derivati",src:"UPF",k:378,p:4.7,gs:0.7,g:5.4,z:4.9,ch:71,fi:14,ca:40,fe:1,mg:30,k2:150,na:470,zn:0.6,fo:90,se:4,col:0},
 
   // ── BEVERAGES FUNZIONALI ──
-  {n:"Kefir di capra intero",c:"Latte e derivati",src:"UPF",k:41,p:2,gs:1.6,g:2.5,z:2.6,ch:2.6,fi:0,ca:134,fe:0.1,mg:14,k2:180,na:44,zn:0.5,fo:110,se:3,col:14},
+  {n:"Kefir di capra intero",c:"Latte e derivati",src:"UPF",k:41,p:2,gs:1.6,g:2.5,z:2.6,ch:2.6,fi:0,ca:134,fe:0.1,mg:14,k2:180,na:44,zn:0.5,fo:5,se:3,col:14},
   {n:"Latte di avena naturale non zuccherato",c:"Latte e derivati",src:"UPF",k:51,p:1,gs:0.2,g:1,z:5,ch:9,fi:1,ca:120,fe:0.4,mg:10,k2:60,na:40,zn:0.2,fo:20,se:1,col:0},
   {n:"Latte di soia non zuccherato (UHT)",c:"Latte e derivati",src:"UPF",k:35,p:3.3,gs:0.3,g:2,z:0,ch:0.7,fi:0.3,ca:120,fe:0.5,mg:19,k2:118,na:48,zn:0.5,fo:52,se:3,col:0},
   {n:"Bevanda di farina di avena fermentata",c:"Bevande",src:"UPF",k:58,p:0,gs:0.3,g:2,z:3.6,ch:10,fi:1.2,ca:120,fe:0.5,mg:12,k2:70,na:52,zn:0.3,fo:22,se:1,col:0},
@@ -2958,7 +2960,7 @@ const DB_UPF = [
   {n:"All Bran Kellogg's (per 100g)",c:"Cereali da colazione",src:"UPF",k:392,p:10,gs:4.5,g:8,z:19,ch:65,fi:10,ca:46,fe:12,mg:165,k2:640,na:20,zn:6.3,fo:590,se:5,col:0},
   {n:"Special K Kellogg's (per 100g)",c:"Cereali da colazione",src:"UPF",k:392,p:8,gs:0.3,g:1.3,z:15,ch:84,fi:6,ca:48,fe:0,mg:55,k2:240,na:336,zn:0,fo:180,se:6,col:0},
   {n:"Granola industriale miele e noci (per 100g)",c:"Cereali da colazione",src:"UPF",k:455,p:9.0,gs:2.0,g:16,z:27,ch:65,fi:6.5,ca:50,fe:3.5,mg:80,k2:380,na:150,zn:1.5,fo:180,se:8,col:0},
-  {n:"Muesli industriale classico (per 100g)",c:"Cereali da colazione",src:"UPF",k:372,p:9.5,gs:1.5,g:6.5,z:13,ch:65,fi:9.0,ca:55,fe:3.0,mg:95,k2:430,na:30,zn:2.5,fo:210,se:10,col:0},
+  {n:"Muesli industriale classico (per 100g)",c:"Cereali da colazione",src:"UPF",k:372,p:9.5,gs:1.5,g:6.5,z:13,ch:65,fi:9.0,ca:55,fe:3.0,mg:95,k2:430,na:30,zn:2.5,fo:10,se:10,col:0},
 
   // ── CREME E CONDIMENTI INDUSTRIALI AGGIUNTIVI ──
   {n:"Pesto rosso industriale (Barilla o sim., per 100g)",c:"Condimenti",src:"UPF",k:329,p:3.8,gs:3.4,g:29,z:7.8,ch:12,fi:2.3,ca:90,fe:1.2,mg:25,k2:440,na:780,zn:0.8,fo:90,se:5,col:5},
@@ -3022,8 +3024,8 @@ const DB_UPF = [
   {n:"Merendina Mulino Bianco tipo Plumcake",c:"Dolci",src:"UPF",k:393,p:7.5,gs:5.5,g:16.5,z:22.5,ch:55.5,fi:1.5,ca:48,fe:1.2,mg:14,k2:125,na:295,zn:0.4,fo:85,se:6,col:60},
   {n:"Biscotti Pan di Stelle (per 100g)",c:"Biscotti e crackers",src:"UPF",k:485,p:7.8,gs:7.4,g:21,z:24,ch:64,fi:4.2,ca:80,fe:2.0,mg:30,k2:210,na:176,zn:0.8,fo:120,se:5,col:15},
   {n:"Biscotti Digestive McVitie's (per 100g)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:110,fe:2.5,mg:50,k2:280,na:500,zn:1.0,fo:165,se:8,col:0},
-  {n:"Yogurt alla frutta Müller (per 100g)",c:"Latte e derivati",src:"UPF",k:88,p:3.8,gs:1.8,g:3.5,z:12.5,ch:13.0,fi:0.2,ca:120,fe:0.1,mg:13,k2:155,na:55,zn:0.5,fo:95,se:4,col:12},
-  {n:"Yogurt al caffè Müller Corner (per 100g)",c:"Latte e derivati",src:"UPF",k:123,p:3.8,gs:2,g:3.6,z:15.5,ch:18.1,fi:0,ca:135,fe:0.1,mg:14,k2:170,na:60,zn:0.6,fo:108,se:5,col:13},
+  {n:"Yogurt alla frutta Müller (per 100g)",c:"Latte e derivati",src:"UPF",k:88,p:3.8,gs:1.8,g:3.5,z:12.5,ch:13.0,fi:0.2,ca:120,fe:0.1,mg:13,k2:155,na:55,zn:0.5,fo:10,se:4,col:12},
+  {n:"Yogurt al caffè Müller Corner (per 100g)",c:"Latte e derivati",src:"UPF",k:123,p:3.8,gs:2,g:3.6,z:15.5,ch:18.1,fi:0,ca:135,fe:0.1,mg:14,k2:170,na:60,zn:0.6,fo:10,se:5,col:13},
   {n:"Pandoro (per 100g)",c:"Dolci",src:"UPF",k:400,p:6.7,gs:14,g:21,z:24,ch:44,fi:0.6,ca:35,fe:1.5,mg:15,k2:100,na:240,zn:0.5,fo:90,se:8,col:95},
   {n:"Panettone (per 100g)",c:"Dolci",src:"UPF",k:364,p:7,gs:7.5,g:12,z:24,ch:56,fi:2.0,ca:40,fe:1.8,mg:20,k2:130,na:200,zn:0.6,fo:100,se:8,col:110},
   {n:"Colomba pasquale (per 100g)",c:"Dolci",src:"UPF",k:436,p:3.6,gs:16,g:26,z:39,ch:46,fi:1.5,ca:35,fe:1.5,mg:16,k2:110,na:80,zn:0.5,fo:95,se:7,col:100},
@@ -3043,7 +3045,7 @@ const DB_UPF = [
   {n:"Barretta Snickers (per 100g)",c:"Dolci",src:"UPF",k:488,p:8.5,gs:13.0,g:21.5,z:47.0,ch:62.5,fi:1.5,ca:80,fe:0.8,mg:38,k2:300,na:195,zn:0.7,fo:130,se:4,col:5},
   {n:"Barretta Mars (per 100g)",c:"Dolci",src:"UPF",k:449,p:4.5,gs:13.5,g:17.0,z:58.0,ch:69.5,fi:0.5,ca:100,fe:0.5,mg:22,k2:190,na:140,zn:0.4,fo:90,se:3,col:5},
   {n:"Barretta Kit Kat (per 100g)",c:"Dolci",src:"UPF",k:512,p:6.7,gs:14.9,g:26.4,z:43.5,ch:60.5,fi:2.5,ca:90,fe:1.5,mg:40,k2:250,na:90,zn:0.7,fo:120,se:5,col:5},
-  {n:"Patatine Lay's Classic (per 100g)",c:"Snack",src:"UPF",k:571.4,p:7.1,gs:5.36,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:20,fe:0.5,mg:45,k2:1080,na:607.1,zn:0.5,fo:145,se:3,col:0},
+  {n:"Patatine Lay's Classic (per 100g)",c:"Snack",src:"UPF",k:571.4,p:7.1,gs:5.36,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:20,fe:0.5,mg:45,k2:1080,na:607.1,zn:0.5,fo:10,se:3,col:0},
   {n:"Patatine Pringles Original (per 100g)",c:"Snack",src:"UPF",k:535.7,p:3.6,gs:8.93,g:32.1,z:0,ch:62.5,fi:3.6,ca:0,fe:0.36,mg:38,k2:392.9,na:535.7,zn:0.4,fo:110,se:3,col:0},
   {n:"Popcorn microonde burro (per 100g)",c:"Snack",src:"UPF",k:456,p:8.0,gs:10.0,g:22.5,z:1.0,ch:58.0,fi:9.5,ca:5,fe:1.5,mg:100,k2:240,na:710,zn:1.5,fo:230,se:10,col:0},
   {n:"Nachos con formaggio Doritos (per 100g)",c:"Snack",src:"UPF",k:501,p:6.5,gs:3.4,g:26,z:2.7,ch:58,fi:5.6,ca:100,fe:1.5,mg:40,k2:250,na:480,zn:0.8,fo:130,se:4,col:0},
@@ -3064,7 +3066,7 @@ const DB_UPF = [
   {n:"Bibita gassata tipo Cola (per 100ml)",c:"Bevande",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:2,fe:0.1,mg:3,k2:7,na:10,zn:0,fo:9,se:0,col:0},
   {n:"Succo di frutta industriale ACE (per 100ml)",c:"Bevande",src:"UPF",k:31,p:0,gs:0,g:0,z:6.9,ch:6.9,fi:0,ca:60,fe:0.5,mg:5,k2:90,na:0,zn:0.1,fo:10,se:1,col:0},
 // Allineato a voce CREA gia verificata "Latte condensato zuccherato" — 2026-07-28
-  {n:"Latte condensato zuccherato (per 100g)",c:"Latte e derivati",src:"UPF",k:328,p:8.7,gs:5.7,g:9.0,z:56.5,ch:56.5,fi:0,ca:293,fe:0.2,mg:26,k2:390,na:130,zn:0.9,fo:180,se:3,col:34},
+  {n:"Latte condensato zuccherato (per 100g)",c:"Latte e derivati",src:"UPF",k:328,p:8.7,gs:5.7,g:9.0,z:56.5,ch:56.5,fi:0,ca:293,fe:0.2,mg:26,k2:390,na:130,zn:0.9,fo:12,se:3,col:34},
   {n:"Crema spalmabile nocciole e cioccolato Nutella (per 100g)",c:"Dolci",src:"UPF",k:525,p:4.1,gs:4.8,g:28.6,z:53.9,ch:60.9,fi:4.9,ca:77,fe:2.5,mg:79,k2:390,na:2.4,zn:0.8,fo:20,se:5,col:4},
   {n:"Biscotto Oreo (per 100g)",c:"Biscotti e crackers",src:"UPF",k:473,p:5.0,gs:6.5,g:21.0,z:45.0,ch:68.5,fi:2.5,ca:60,fe:5.0,mg:40,k2:215,na:535,zn:0.5,fo:120,se:4,col:0},
   {n:"Crostata industriale alla marmellata (per 100g)",c:"Dolci",src:"UPF",k:298,p:4.1,gs:8.4,g:14,z:30.5,ch:39,fi:2.0,ca:40,fe:1.5,mg:12,k2:120,na:220,zn:0.4,fo:75,se:5,col:35},
@@ -3084,11 +3086,11 @@ const DB_UPF = [
   // Proteine e grassi erano azzerati per errore (impossibile per un biscotto); ripristinati ai valori ufficiali del prodotto reale (~8.5g proteine, ~8g grassi, ~73.5g carb, 400kcal) - 2026-07-29
   {n:"Plasmon biscotti per bambini (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:400,p:8.5,gs:4,g:8,z:27,ch:73.5,fi:1.5,ca:180,fe:5.0,mg:20,k2:150,na:600,zn:1.2,fo:125,se:6,col:20},
   {n:"Ciocorì (Kinder/Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:540,p:7.5,gs:11.5,g:30.5,z:54.5,ch:61.5,fi:1.5,ca:120,fe:2.0,mg:32,k2:250,na:95,zn:0.8,fo:140,se:5,col:18},
-  {n:"Fruttolo (Danone, yogurt da bere frutta, per 100g)",c:"Latte e derivati",src:"UPF",k:60,p:3,gs:0,g:0,z:12,ch:12,fi:0.3,ca:100,fe:0.1,mg:10,k2:130,na:40,zn:0.4,fo:80,se:2,col:6},
+  {n:"Fruttolo (Danone, yogurt da bere frutta, per 100g)",c:"Latte e derivati",src:"UPF",k:60,p:3,gs:0,g:0,z:12,ch:12,fi:0.3,ca:100,fe:0.1,mg:10,k2:130,na:40,zn:0.4,fo:10,se:2,col:6},
 
   // ── GELATI ITALIANI DI MARCA ──
-  {n:"Magnum Classic Algida (per 100g)",c:"Gelati",src:"UPF",k:307,p:3.3,gs:13,g:19,z:27,ch:30,fi:0.5,ca:80,fe:1.5,mg:15,k2:175,na:48,zn:0.5,fo:90,se:2,col:20},
-  {n:"Cornetto Algida classico (per 100g)",c:"Gelati",src:"UPF",k:288,p:3.5,gs:12,g:15,z:24,ch:33,fi:1.0,ca:75,fe:0.8,mg:12,k2:155,na:92,zn:0.4,fo:80,se:2,col:18},
+  {n:"Magnum Classic Algida (per 100g)",c:"Gelati",src:"UPF",k:307,p:3.3,gs:13,g:19,z:27,ch:30,fi:0.5,ca:80,fe:1.5,mg:15,k2:175,na:48,zn:0.5,fo:10,se:2,col:20},
+  {n:"Cornetto Algida classico (per 100g)",c:"Gelati",src:"UPF",k:288,p:3.5,gs:12,g:15,z:24,ch:33,fi:1.0,ca:75,fe:0.8,mg:12,k2:155,na:92,zn:0.4,fo:10,se:2,col:18},
   {n:"Calippo Algida limone (per 100g)",c:"Gelati",src:"UPF",k:87.1,p:0,gs:0,g:0,z:19.8,ch:20.2,fi:0,ca:5,fe:0.1,mg:2,k2:18,na:5,zn:0,fo:3,se:0,col:0},
   {n:"Twister Algida fragola (per 100g)",c:"Gelati",src:"UPF",k:82,p:1.0,gs:1.0,g:2.0,z:14.5,ch:15.0,fi:0.2,ca:30,fe:0.1,mg:4,k2:50,na:25,zn:0.1,fo:25,se:1,col:5},
   {n:"Häagen-Dazs Vanilla (per 100g)",c:"Gelati",src:"UPF",k:271,p:4.0,gs:11.5,g:17.5,z:23.5,ch:26.5,fi:0,ca:115,fe:0.1,mg:10,k2:155,na:75,zn:0.5,fo:90,se:2,col:75},
@@ -3121,7 +3123,7 @@ const DB_UPF = [
   // ── PRODOTTI FERMENTATI / FUNZIONALI ──
   // Carboidrati erano 48g (errore di virgola, impossibile per una bevanda fermentata a bassa kcal): corretto a 4.8g, coerente con le altre 2 voci Kombucha del db (ch 2.5 e 4.0) - 2026-07-29
   {n:"Kombucha (bevanda fermentata tè, per 100mL)",c:"Bevande",src:"UPF",k:16,p:0.2,gs:0,g:0,z:4,ch:4.8,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:0,zn:0,fo:4,se:0,col:0},
-  {n:"Kefir di latte vaccino intero (per 100g)",c:"Latte e derivati",src:"UPF",k:43,p:3.3,gs:1.2,g:1.5,z:3.8,ch:4,fi:0,ca:120,fe:0.1,mg:12,k2:151,na:40,zn:0.4,fo:100,se:3,col:12},
+  {n:"Kefir di latte vaccino intero (per 100g)",c:"Latte e derivati",src:"UPF",k:43,p:3.3,gs:1.2,g:1.5,z:3.8,ch:4,fi:0,ca:120,fe:0.1,mg:12,k2:151,na:40,zn:0.4,fo:5,se:3,col:12},
   {n:"Tofu al naturale (industriale, per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:149,p:15,gs:1.5,g:8.5,z:0,ch:2,fi:2.3,ca:350,fe:5.4,mg:30,k2:121,na:0,zn:0.8,fo:97,se:8,col:0},
   {n:"Seitan al naturale (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:135,p:18,gs:0.2,g:1.2,z:0.9,ch:12,fi:2.1,ca:14,fe:2.4,mg:18,k2:45,na:580,zn:0.8,fo:90,se:3,col:0},
 // Allineato a voce CREA gia verificata "Tempeh di soia" (la pastorizzazione non altera la composizione) — 2026-07-28
@@ -3159,7 +3161,7 @@ const DB_UPF = [
 
   // ── PANE E PRODOTTI DA FORNO INDUSTRIALI ──
   {n:"Pancarré industriale tipo Bauletto (per 100g)",c:"Pane e derivati",src:"UPF",k:265,p:8.5,gs:0.8,g:4.5,z:5.0,ch:47.5,fi:2.5,ca:30,fe:1.5,mg:15,k2:110,na:520,zn:0.4,fo:65,se:5,col:0},
-  {n:"Fette biscottate Mulino Bianco classiche (per 100g)",c:"Pane e derivati",src:"UPF",k:401,p:1.6,gs:1,g:6.8,z:8,ch:72,fi:4.1,ca:45,fe:3.0,mg:25,k2:170,na:480,zn:0.7,fo:110,se:8,col:0},
+  {n:"Fette biscottate Mulino Bianco classiche (per 100g)",c:"Pane e derivati",src:"UPF",k:401,p:1.6,gs:1,g:6.8,z:8,ch:72,fi:4.1,ca:45,fe:3.0,mg:25,k2:170,na:480,zn:0.7,fo:10,se:8,col:0},
   // Errore di unita' grave: i valori erano quelli di UNA fetta (~8-9g), non per 100g (34kcal per 100g e assurdo per fette biscottate secche) — allineato al duplicato CREA corretto — 2026-07-29
   {n:"Fette biscottate integrali (per 100g)",c:"Pane e derivati",src:"UPF",k:394,p:14.2,gs:0.5,g:10,z:1.1,ch:63,fi:5.4,ca:50,fe:2.5,mg:60,k2:200,na:420,zn:1,fo:200,se:10,col:0},
   {n:"Crackers integrali tipo Wasa (per 100g)",c:"Pane e derivati",src:"UPF",k:409.4,p:11,gs:1.1,g:9.6,z:6.1,ch:61,fi:14,ca:45,fe:3.5,mg:80,k2:320,na:680,zn:1.5,fo:230,se:12,col:0},
@@ -3354,7 +3356,7 @@ const DB_UPF = [
 {n:"Doritos Nacho Cheese (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.1,gs:3.57,g:28.6,z:3.6,ch:60.7,fi:3.6,ca:142.9,fe:1.5,mg:50,k2:178.6,na:440,zn:0.8,fo:140,se:4,col:0},
 {n:"Cheetos (per 100g)",c:"Snack salati",src:"UPF",k:540,p:6,gs:15,g:30,z:7,ch:53,fi:2,ca:60,fe:1.0,mg:22,k2:185,na:1030,zn:0.5,fo:90,se:3,col:3},
 {n:"Pringles Original (per 100g)",c:"Snack salati",src:"UPF",k:528,p:6.2,gs:3,g:31,z:0.9,ch:54,fi:4.1,ca:25,fe:1.5,mg:30,k2:580,na:1,zn:0.5,fo:100,se:3,col:0},
-{n:"Lay's classiche (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.0,gs:3.0,g:35,z:1.0,ch:52,fi:3.5,ca:20,fe:1.5,mg:40,k2:1150,na:580,zn:0.5,fo:150,se:4,col:0},
+{n:"Lay's classiche (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.0,gs:3.0,g:35,z:1.0,ch:52,fi:3.5,ca:20,fe:1.5,mg:40,k2:1150,na:580,zn:0.5,fo:10,se:4,col:0},
 // ── BARRETTE E SNACK PROTEICI ──
 {n:"Barretta proteica whey (per 100g)",c:"Integratori alimentari",src:"UPF",k:382,p:30,gs:5.0,g:12,z:20,ch:42,fi:4.0,ca:180,fe:2.5,mg:60,k2:380,na:280,zn:2.5,fo:280,se:15,col:25},
 {n:"Barretta energetica ai cereali (tipo Kellogg's)",c:"Integratori alimentari",src:"UPF",k:368,p:5.5,gs:1.5,g:7.0,z:25,ch:65,fi:3.5,ca:100,fe:5.0,mg:40,k2:210,na:200,zn:1.5,fo:80,se:8,col:0},
@@ -3475,7 +3477,7 @@ const DB_UPF = [
 {n:"Biscottini Plasmon (per 100g)",c:"Baby food",src:"INT",k:412,p:9.5,gs:3.4,g:8,z:26.6,ch:74,fi:3,ca:330,fe:6.5,mg:20,k2:150,na:260,zn:0.8,fo:110,se:3,col:25},
 // Proteine/carboidrati/calcio erano sottostimati rispetto alla media Plasmon "pappa lattea" (varie varianti, 384-396kcal/12.5-14.5g prot/70-75g cho/400-450mg ca) — 2026-07-28
 {n:"Farina lattea (polvere, come consumata)",c:"Baby food",src:"INT",k:389,p:13.4,gs:3.5,g:9.5,z:36.5,ch:72.4,fi:2.0,ca:437,fe:8.0,mg:35,k2:380,na:160,zn:2.5,fo:240,se:8,col:18},
-{n:"Yogurt per bambini (intero, alla frutta)",c:"Baby food",src:"INT",k:86,p:1,gs:1.5,g:1.1,z:14,ch:17.6,fi:0.6,ca:65,fe:0.1,mg:10,k2:130,na:45,zn:0.4,fo:80,se:2,col:8},
+{n:"Yogurt per bambini (intero, alla frutta)",c:"Baby food",src:"INT",k:86,p:1,gs:1.5,g:1.1,z:14,ch:17.6,fi:0.6,ca:65,fe:0.1,mg:10,k2:130,na:45,zn:0.4,fo:10,se:2,col:8},
 {n:"Omogeneizzato multivitaminico frutta (vasetto)",c:"Baby food",src:"INT",k:60,p:0.4,gs:0.1,g:0.3,z:9,ch:14,fi:0.8,ca:6,fe:0.5,mg:4,k2:90,na:4,zn:0.05,fo:6,se:0,col:0},
 // ═══ SENZA GLUTINE ═══
 {n:"Pane senza glutine (Schar tipo, affettato)",c:"Senza glutine",src:"INT",k:233,p:3.5,gs:0.4,g:3.4,z:3.3,ch:43,fi:8.1,ca:20,fe:1.5,mg:12,k2:60,na:396,zn:0.3,fo:40,se:1,col:0},
@@ -3512,7 +3514,7 @@ const DB_UPF = [
 {n:"Mozzarella vegana di cocco (filante)",c:"Prodotti vegani",src:"UPF",k:185,p:1.5,gs:9.5,g:12.5,z:1.5,ch:16.0,fi:0.5,ca:25,fe:0.3,mg:5,k2:45,na:380,zn:0.2,fo:15,se:0,col:0},
 {n:"Proteine di soia texturizzate (TSP, secche)",c:"Prodotti vegani",src:"UPF",k:340,p:50.0,gs:0.5,g:1.5,z:5.0,ch:28.5,fi:7.5,ca:90,fe:8.5,mg:210,k2:1780,na:35,zn:2.5,fo:440,se:5,col:0},
 // ═══ CEREALI DA COLAZIONE ═══
-{n:"Müesli classico con frutta secca",c:"Cereali da colazione",src:"UPF",k:451,p:7.3,gs:10.6,g:17.7,z:21,ch:62,fi:6.4,ca:55,fe:3.5,mg:85,k2:400,na:160,zn:2.0,fo:250,se:6,col:0},
+{n:"Müesli classico con frutta secca",c:"Cereali da colazione",src:"UPF",k:451,p:7.3,gs:10.6,g:17.7,z:21,ch:62,fi:6.4,ca:55,fe:3.5,mg:85,k2:400,na:160,zn:2.0,fo:10,se:6,col:0},
 {n:"Granola al miele e avena",c:"Cereali da colazione",src:"UPF",k:419,p:13,gs:1.7,g:13,z:10,ch:58,fi:8.8,ca:45,fe:3.0,mg:75,k2:320,na:80,zn:1.8,fo:210,se:5,col:0},
 {n:"Granola al cioccolato e nocciole",c:"Cereali da colazione",src:"UPF",k:434,p:15,gs:2.6,g:16,z:16,ch:54,fi:9.9,ca:50,fe:2.85,mg:115,k2:550,na:180,zn:1.5,fo:200,se:4,col:0},
 {n:"Special K cereali dietetici (Kellogg's tipo)",c:"Cereali da colazione",src:"UPF",k:392,p:8,gs:0.3,g:1.3,z:15,ch:84,fi:6,ca:200,fe:8.0,mg:60,k2:380,na:336,zn:1.5,fo:180,se:8,col:0},
@@ -3557,8 +3559,8 @@ const DB_UPF = [
 {n:"Oro Saiwa (per 100g)",c:"Biscotti e crackers",src:"UPF",k:456,p:2,gs:4.6,g:13,z:22,ch:83,fi:0.6,ca:45,fe:2.0,mg:15,k2:95,na:228,zn:0.4,fo:65,se:2,col:25},
 {n:"Cioccolato bianco (tavoletta)",c:"Dolci confezionati",src:"UPF",k:574,p:8.6,gs:16,g:39,z:44,ch:46,fi:2.3,ca:200,fe:0.2,mg:15,k2:230,na:120,zn:0.8,fo:0,se:4,col:21},
 {n:"Torrone morbido alle mandorle (per 100g)",c:"Dolci",src:"UPF",k:544,p:10.7,gs:2.02,g:26.4,z:45,ch:63,fi:5.5,ca:90,fe:1.5,mg:55,k2:280,na:2.4,zn:1.0,fo:110,se:3,col:0},
-{n:"Gelato Magnum Classic (per 100g)",c:"Gelati",src:"UPF",k:307,p:3.3,gs:13,g:19,z:27,ch:30,fi:0.5,ca:80,fe:0.4,mg:12,k2:140,na:48,zn:0.4,fo:80,se:2,col:15},
-{n:"Gelato Cornetto Classico (per 100g)",c:"Gelati",src:"UPF",k:213,p:7.7,gs:0.2,g:1.4,z:3.5,ch:41,fi:3,ca:75,fe:0.5,mg:10,k2:120,na:472,zn:0.4,fo:70,se:2,col:12},
+{n:"Gelato Magnum Classic (per 100g)",c:"Gelati",src:"UPF",k:307,p:3.3,gs:13,g:19,z:27,ch:30,fi:0.5,ca:80,fe:0.4,mg:12,k2:140,na:48,zn:0.4,fo:10,se:2,col:15},
+{n:"Gelato Cornetto Classico (per 100g)",c:"Gelati",src:"UPF",k:213,p:7.7,gs:0.2,g:1.4,z:3.5,ch:41,fi:3,ca:75,fe:0.5,mg:10,k2:120,na:472,zn:0.4,fo:10,se:2,col:12},
 {n:"Krapfen/Bombolone con crema",c:"Dolci",src:"UPF",k:347,p:8,gs:4.5,g:12,z:18,ch:51,fi:1.3,ca:35,fe:1.2,mg:12,k2:100,na:740,zn:0.4,fo:70,se:3,col:55},
 {n:"Donut al cioccolato (americano)",c:"Dolci",src:"UPF",k:398,p:5.0,gs:7.5,g:20.0,z:35.5,ch:48.0,fi:1.5,ca:40,fe:1.5,mg:15,k2:110,na:315,zn:0.5,fo:75,se:3,col:25},
 {n:"Croissant vuoto industriale (tipo Bauli)",c:"Dolci confezionati",src:"UPF",k:375,p:6.3,gs:8.33,g:20.8,z:8.3,ch:37.5,fi:2.1,ca:104,fe:2.08,mg:12,k2:73,na:395.8,zn:0.4,fo:65,se:3,col:0},
@@ -4015,12 +4017,12 @@ const DB_EXTRA=[
 {n:"Gelato vegano al cioccolato (base cocco)",c:"Gelati",src:"EXTRA",k:195,p:1.5,gs:8,g:10,z:20,ch:27,fi:2,ca:20,fe:1.5,mg:25,k2:200,na:30,zn:0.3,fo:55,se:1,col:0},
 {n:"Ghiacciolo alla fragola",c:"Gelati",src:"EXTRA",k:72,p:0,gs:0,g:0,z:18,ch:18,fi:0.2,ca:3,fe:0.1,mg:2,k2:20,na:5,zn:0,fo:3,se:0,col:0},
 {n:"Ghiacciolo all'arancia",c:"Gelati",src:"EXTRA",k:137,p:0,gs:0,g:0,z:36.5,ch:36.5,fi:0,ca:3,fe:0.1,mg:2,k2:15,na:5,zn:0,fo:3,se:0,col:0},
-{n:"Magnum Classic",c:"Gelati",src:"EXTRA",k:302,p:3.3,gs:14,g:18,z:27,ch:30,fi:0,ca:80,fe:0.5,mg:15,k2:150,na:65,zn:0.3,fo:75,se:2,col:25},
+{n:"Magnum Classic",c:"Gelati",src:"EXTRA",k:302,p:3.3,gs:14,g:18,z:27,ch:30,fi:0,ca:80,fe:0.5,mg:15,k2:150,na:65,zn:0.3,fo:10,se:2,col:25},
 {n:"Magnum Almond",c:"Gelati",src:"EXTRA",k:330,p:5,gs:13,g:21,z:29,ch:30,fi:1,ca:75,fe:0.8,mg:20,k2:180,na:60,zn:0.5,fo:90,se:2,col:20},
 {n:"Cornetto Algida",c:"Gelati",src:"EXTRA",k:316,p:3.5,gs:10,g:18,z:22,ch:33,fi:1,ca:80,fe:0.8,mg:12,k2:150,na:80,zn:0.4,fo:85,se:2,col:20},
 {n:"Maxibon",c:"Gelati",src:"EXTRA",k:313,p:4,gs:10,g:16,z:26,ch:38,fi:1.2,ca:90,fe:0.5,mg:12,k2:160,na:110,zn:0.5,fo:100,se:2,col:30},
 {n:"Häagen-Dazs Vanilla",c:"Gelati",src:"EXTRA",k:249,p:4.3,gs:13,g:17,z:19.7,ch:19.8,fi:0,ca:120,fe:0.2,mg:12,k2:180,na:70,zn:0.5,fo:100,se:2,col:75},
-{n:"Yogurt gelato alla fragola",c:"Gelati",src:"EXTRA",k:133,p:2.2,gs:0.8,g:1.4,z:27,ch:27,fi:1.5,ca:120,fe:0.2,mg:12,k2:175,na:55,zn:0.5,fo:90,se:2,col:5},
+{n:"Yogurt gelato alla fragola",c:"Gelati",src:"EXTRA",k:133,p:2.2,gs:0.8,g:1.4,z:27,ch:27,fi:1.5,ca:120,fe:0.2,mg:12,k2:175,na:55,zn:0.5,fo:10,se:2,col:5},
 {n:"Mochi ice cream al cioccolato",c:"Gelati",src:"EXTRA",k:372,p:1.5,gs:2.1,g:8,z:22.5,ch:73.4,fi:0.5,ca:30,fe:0.5,mg:12,k2:75,na:25,zn:0.2,fo:40,se:2,col:10},
 {n:"Coppa del Nonno (caffè)",c:"Gelati",src:"EXTRA",k:232,p:5.2,gs:6.5,g:13,z:20,ch:24,fi:0.3,ca:95,fe:0.3,mg:10,k2:145,na:60,zn:0.3,fo:5,se:2,col:28},
 {n:"Stecco Joya alla fragola",c:"Gelati",src:"EXTRA",k:115,p:0.5,gs:2,g:3.5,z:16,ch:20,fi:0,ca:15,fe:0.1,mg:3,k2:35,na:25,zn:0.1,fo:15,se:0.5,col:5},
@@ -4194,7 +4196,7 @@ const DB_EXTRA=[
 {n:"Strudel di mele",c:"Dolci e dessert",src:"EXTRA",k:274,p:3.3,gs:2.04,g:11.2,z:25.8,ch:41.1,fi:2.2,ca:15,fe:0.42,mg:9,k2:149,na:135,zn:0.19,fo:28,se:6.1,col:6},
 {n:"Crostata di marmellata",c:"Dolci e dessert",src:"EXTRA",k:339,p:4.9,gs:6,g:8.2,z:28,ch:65.5,fi:1.5,ca:35,fe:1.5,mg:12,k2:120,na:200,zn:0.5,fo:80,se:8,col:60},
 {n:"Cheesecake",c:"Dolci e dessert",src:"EXTRA",k:321,p:5.5,gs:9.92,g:22.5,z:21.8,ch:25.5,fi:0.4,ca:51,fe:0.63,mg:11,k2:90,na:438,zn:0.51,fo:18,se:5.2,col:55},
-{n:"Panna cotta",c:"Dolci e dessert",src:"EXTRA",k:229.7,p:1.1,gs:7.9,g:12.7,z:22.9,ch:24.1,fi:0,ca:80,fe:0.1,mg:8,k2:100,na:55,zn:0.3,fo:65,se:2,col:40},
+{n:"Panna cotta",c:"Dolci e dessert",src:"EXTRA",k:229.7,p:1.1,gs:7.9,g:12.7,z:22.9,ch:24.1,fi:0,ca:80,fe:0.1,mg:8,k2:100,na:55,zn:0.3,fo:5,se:2,col:40},
 {n:"Mousse al cioccolato",c:"Dolci e dessert",src:"EXTRA",k:225,p:4.1,gs:9.15,g:16,z:14.8,ch:16.1,fi:0.6,ca:96,fe:0.55,mg:20,k2:143,na:38,zn:0.64,fo:15,se:7.4,col:140},
 {n:"Crème caramel",c:"Dolci e dessert",src:"EXTRA",k:145,p:4.5,gs:1.8,g:4,z:23.2,ch:22.8,fi:0,ca:110,fe:0.3,mg:10,k2:130,na:53,zn:0.5,fo:95,se:3,col:85},
 {n:"Profiteroles al cioccolato",c:"Dolci e dessert",src:"EXTRA",k:330,p:6,gs:10,g:19,z:24,ch:35,fi:0.5,ca:75,fe:1,mg:15,k2:180,na:110,zn:0.5,fo:110,se:5,col:110},
@@ -4221,7 +4223,7 @@ const DB_EXTRA=[
 // === SNACK SALATI ===
 {n:"Pringles Original",c:"Snack salati",src:"EXTRA",k:534,p:5.9,gs:6.6,g:31,z:1.4,ch:56,fi:3.5,ca:15,fe:1.5,mg:25,k2:350,na:440,zn:0.3,fo:90,se:5,col:0},
 {n:"Doritos Nacho Cheese",c:"Snack salati",src:"EXTRA",k:499,p:6.4,gs:2.5,g:26,z:2.7,ch:57,fi:3,ca:55,fe:1.5,mg:40,k2:300,na:440,zn:0.8,fo:130,se:5,col:0},
-{n:"Lay's Classic",c:"Snack salati",src:"EXTRA",k:571,p:7.1,gs:5.4,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:15,fe:1.5,mg:35,k2:620,na:607,zn:0.5,fo:105,se:8,col:0},
+{n:"Lay's Classic",c:"Snack salati",src:"EXTRA",k:571,p:7.1,gs:5.4,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:15,fe:1.5,mg:35,k2:620,na:607,zn:0.5,fo:10,se:8,col:0},
 {n:"Popcorn al burro",c:"Snack salati",src:"EXTRA",k:475,p:8,gs:10,g:24,z:2,ch:57,fi:7.5,ca:5,fe:1.5,mg:95,k2:180,na:600,zn:1.5,fo:200,se:12,col:15},
 {n:"Popcorn salato da microonde",c:"Snack salati",src:"EXTRA",k:430,p:7,gs:5,g:20,z:1.5,ch:58,fi:7,ca:5,fe:1.5,mg:80,k2:160,na:650,zn:1.5,fo:180,se:12,col:0},
 // === CONDIMENTI E SALSE ===

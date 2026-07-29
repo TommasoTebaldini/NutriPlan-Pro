@@ -2984,7 +2984,8 @@ const DB_UPF = [
   {n:"Arancino/Arancina surgelato (per 100g)",c:"Prodotti pronti",src:"UPF",k:201,p:4.4,gs:1.7,g:9.6,z:1.5,ch:21.5,fi:5.5,ca:40,fe:1.2,mg:20,k2:150,na:1100,zn:0.7,fo:75,se:8,col:25},
   {n:"Risotto surgelato pronto (per 100g)",c:"Prodotti pronti",src:"UPF",k:212,p:3.4,gs:1.7,g:9.3,z:1.2,ch:28,fi:0.6,ca:15,fe:0.5,mg:12,k2:85,na:380,zn:0.3,fo:40,se:3,col:5},
   {n:"Paella surgelata pronta (per 100g)",c:"Prodotti pronti",src:"UPF",k:221,p:13,gs:11,g:17,z:2.6,ch:3.2,fi:1.2,ca:30,fe:1.5,mg:25,k2:200,na:420,zn:0.8,fo:90,se:12,col:35},
-  {n:"Lasagne surgelate al ragù (per 100g)",c:"Prodotti pronti",src:"UPF",k:150,p:1.1,gs:1.4,g:6.2,z:4.2,ch:16,fi:2,ca:80,fe:1.2,mg:18,k2:180,na:2880,zn:0.8,fo:100,se:8,col:30},
+  // Sodio (2880mg) e proteine (1.1g, troppo basse per un piatto con ragu di carne) erano fuori scala — allineato a 2 duplicati concordi nel DB (~135-190kcal, 550mg sodio) — 2026-07-29
+  {n:"Lasagne surgelate al ragù (per 100g)",c:"Prodotti pronti",src:"UPF",k:135,p:6.5,gs:3,g:5.5,z:3,ch:15.5,fi:1,ca:60,fe:1,mg:12,k2:170,na:550,zn:0.7,fo:70,se:6,col:30},
   {n:"Hot dog (würstel in pane, per 100g)",c:"Prodotti pronti",src:"UPF",k:202,p:13.5,gs:7.5,g:16,z:1,ch:1,fi:1.5,ca:75,fe:2.0,mg:25,k2:245,na:800,zn:1.5,fo:130,se:15,col:40},
   {n:"Caramelle gommose (per 100g)",c:"Dolci",src:"UPF",k:330,p:5.0,gs:0,g:0,z:55.0,ch:77.0,fi:0,ca:5,fe:0.1,mg:2,k2:10,na:30,zn:0.1,fo:5,se:0,col:0},
   {n:"Chewing gum senza zucchero (per 100g)",c:"Dolci",src:"UPF",k:165,p:1.1,gs:0,g:0,z:0,ch:67,fi:0,ca:5,fe:0,mg:1,k2:5,na:0,zn:0,fo:4,se:0,col:0},

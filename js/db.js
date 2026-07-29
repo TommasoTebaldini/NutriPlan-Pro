@@ -428,7 +428,7 @@ const DB_CREA=[
   {n:"Fagioli mung secchi",c:"Legumi",k:307,p:23.9,gs:0.22,g:1.1,z:1.5,ch:46.3,fi:13.9,ca:89,fe:6,mg:189,k2:1250,na:12,zn:2.7,fo:140,se:8,col:0,src:"BDA"},
   // ── FRUTTA SECCA E SEMI MANCANTI ──
   {n:"Arachidi crude con pellicola",c:"Frutta secca",k:585,p:26,gs:8.886,g:47.2,z:4.5,ch:11.2,fi:7.3,ca:60,fe:3.2,mg:210,k2:670,na:2,zn:3.5,fo:110,se:3,col:0,src:"BDA"},
-  {n:"Burro di mandorle",c:"Frutta secca",k:614,p:21.1,gs:4.5,g:55.5,z:5.0,ch:18.8,fi:10.3,ca:347,fe:3.7,mg:303,k2:740,na:7,zn:3.1,fo:481,se:2.6,col:0,src:"CREA"},
+  {n:"Burro di mandorle",c:"Frutta secca",k:614,p:21.1,gs:4.5,g:55.5,z:5.0,ch:18.8,fi:10.3,ca:347,fe:3.7,mg:303,k2:740,na:7,zn:3.1,fo:29,se:2.6,col:0,src:"CREA"},
   {n:"Burro di sesamo (tahini)",c:"Frutta secca",k:595,p:17.0,gs:7.8,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.5,fo:592,se:34,col:0,src:"CREA"},
   {n:"Semi di canapa sgusciati",c:"Semi oleosi",k:553,p:31.6,gs:4.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:110,se:14,col:0,src:"CREA"},
   {n:"Pistacchi tostati salati",c:"Frutta secca",k:613,p:17.9,gs:6.744,g:55.4,z:5.7,ch:8.2,fi:6.1,ca:110,fe:3,mg:130,k2:1040,na:530,zn:2.2,fo:58,se:6,col:0,src:"BDA"},
@@ -911,7 +911,7 @@ const DB_CREA=[
 {n:"Rombo liscio",c:"Pesce",k:81,p:16.3,gs:0.5,g:1.3,z:1.2,ch:1.2,fi:0,ca:38,fe:1.2,mg:25,k2:288,na:127,zn:0.4,fo:10,se:30,col:51,src:"CREA"},
 {n:"Anguilla fresca",c:"Pesce",k:236,p:18,gs:3.7,g:18.5,z:0,ch:0,fi:0,ca:20,fe:0.6,mg:20,k2:228,na:51,zn:1.6,fo:10,se:6.5,col:126,src:"CREA"},
 {n:"Palombo fresco",c:"Pesce",k:80,p:16,gs:0.4,g:1.2,z:1.3,ch:1.3,fi:0,ca:31,fe:1,mg:30,k2:123,na:61,zn:0.5,fo:10,se:28,col:45,src:"CREA"},
-{n:"Capesante fresche",c:"Pesce",k:88,p:16.8,gs:0.2,g:0.8,z:0,ch:3.2,fi:0,ca:24,fe:0.4,mg:22,k2:476,na:161,zn:1.4,fo:281,se:22.2,col:33,src:"CREA"},
+{n:"Capesante fresche",c:"Pesce",k:88,p:16.8,gs:0.2,g:0.8,z:0,ch:3.2,fi:0,ca:24,fe:0.4,mg:22,k2:476,na:161,zn:1.4,fo:20,se:22.2,col:33,src:"CREA"},
 {n:"Salmone affumicato",c:"Pesce",k:147,p:25.4,gs:1.26,g:4.5,z:1.2,ch:1.2,fi:0,ca:19,fe:0.6,mg:18,k2:420,na:1880,zn:0.3,fo:10,se:32,col:50,src:"CREA"},
 {n:"Tonno fresco (pinna gialla)",c:"Pesce",k:184,p:29.9,gs:1.6,g:6.3,z:0,ch:0,fi:0,ca:16,fe:1,mg:50,k2:444,na:45,zn:0.6,fo:10,se:90.6,col:45,src:"CREA"},
 {n:"Astice (aragosta americana)",c:"Crostacei",k:85,p:18.8,gs:0.113,g:0.9,z:0.5,ch:0.5,fi:0,ca:48,fe:0.3,mg:27,k2:275,na:296,zn:3,fo:9,se:41,col:95,src:"BDA"},
@@ -1260,7 +1260,7 @@ const DB_CREA=[
 {n:"Provolone piccante (stagionato)",c:"Formaggi",k:376,p:28,gs:18,g:29,z:0,ch:1.0,fi:0,ca:980,fe:0.4,mg:30,k2:130,na:1150,zn:4.0,fo:10,se:14,col:95,src:"CREA"},
 // Stesso bug fosforo-in-folati gia trovato su altri formaggi (fonte confermata: fosforo reale 572mg, folati reali per formaggio molle ~25mcg) - 2026-07-29
 {n:"Quartirolo Lombardo DOP",c:"Formaggi",k:255,p:20,gs:12,g:20,z:0,ch:1.5,fi:0,ca:680,fe:0.2,mg:18,k2:95,na:550,zn:2.5,fo:25,se:8,col:68,src:"CREA"},
-{n:"Squaquerone di Romagna DOP",c:"Formaggi",k:230,p:16.5,gs:11,g:17.5,z:0,ch:2.5,fi:0,ca:520,fe:0.2,mg:15,k2:85,na:380,zn:1.8,fo:330,se:6,col:58,src:"CREA"},
+{n:"Squaquerone di Romagna DOP",c:"Formaggi",k:230,p:16.5,gs:11,g:17.5,z:0,ch:2.5,fi:0,ca:520,fe:0.2,mg:15,k2:85,na:380,zn:1.8,fo:25,se:6,col:58,src:"CREA"},
 // Stesso bug fosforo-in-folati degli altri formaggi - 2026-07-29
 {n:"Murazzano DOP (fresco di pecora)",c:"Formaggi",k:298,p:21,gs:15,g:23.5,z:0,ch:1.0,fi:0,ca:580,fe:0.3,mg:22,k2:90,na:420,zn:2.5,fo:20,se:8,col:75,src:"CREA"},
 {n:"Valtellina Casera DOP",c:"Formaggi",k:342,p:25.5,gs:17.5,g:26.5,z:0,ch:1.5,fi:0,ca:900,fe:0.3,mg:30,k2:140,na:720,zn:3.2,fo:15,se:12,col:92,src:"CREA"},
@@ -1280,7 +1280,7 @@ const DB_CREA=[
 {n:"Arselle / Telline fresche (Donax trunculus)",c:"Molluschi e crostacei",k:58,p:10.8,gs:0.2,g:0.8,z:0,ch:1.8,fi:0,ca:38,fe:18,mg:38,k2:270,na:480,zn:1.8,fo:35,se:20,col:35,src:"CREA"},
 {n:"Granseola (grancevola) fresca",c:"Molluschi e crostacei",k:86,p:16.5,gs:0.2,g:1.8,z:0,ch:1.0,fi:0,ca:68,fe:2.2,mg:42,k2:280,na:320,zn:5.5,fo:20,se:40,col:65,src:"CREA"},
 {n:"Palamita (Sarda sarda) fresca",c:"Pesce",k:129,p:20.8,gs:1.16,g:4.5,z:1.5,ch:1.5,fi:0,ca:33,fe:1.8,mg:10,k2:630,na:66,zn:0.8,fo:10,se:38,col:63,src:"CREA"},
-{n:"Occhiata (Oblada melanura) fresca",c:"Pesce",k:82,p:18.0,gs:0.3,g:1.5,z:0,ch:0,fi:0,ca:20,fe:0.5,mg:25,k2:370,na:70,zn:0.5,fo:185,se:28,col:45,src:"CREA"},
+{n:"Occhiata (Oblada melanura) fresca",c:"Pesce",k:82,p:18.0,gs:0.3,g:1.5,z:0,ch:0,fi:0,ca:20,fe:0.5,mg:25,k2:370,na:70,zn:0.5,fo:10,se:28,col:45,src:"CREA"},
 {n:"Nasello surgelato (merluzzo europeo)",c:"Pesce",k:75,p:17.3,gs:0.15,g:0.6,z:0,ch:0,fi:0,ca:30,fe:0.6,mg:20,k2:320,na:77,zn:2,fo:10,se:16.5,col:50,src:"CREA"},
 {n:"Cicala di mare (Scyllarus arctus) fresca",c:"Molluschi e crostacei",k:90,p:17.5,gs:0.2,g:1.5,z:0,ch:0.5,fi:0,ca:88,fe:1.0,mg:48,k2:295,na:380,zn:2.5,fo:20,se:42,col:120,src:"CREA"},
 // ── BEVANDE ALCOLICHE ITALIANE (CREA 2019) ──
@@ -1949,7 +1949,7 @@ const DB_BDA=[
 {n:"Leccia amia fresca",c:"Pesce",k:121,p:19.8,gs:1.0,g:4.8,z:0,ch:0,fi:0,ca:22,fe:0.7,mg:29,k2:400,na:65,zn:0.5,fo:10,se:40,col:58,src:"CREA"},
 {n:"Passera di mare fresca",c:"Pesce",k:78,p:15.5,gs:0.3,g:1.3,z:0,ch:0,fi:0,ca:30,fe:0.4,mg:26,k2:320,na:80,zn:0.4,fo:10,se:28,col:48,src:"CREA"},
 {n:"Mormora fresca",c:"Pesce",k:97,p:18,gs:0.53,g:1.9,z:2,ch:2,fi:0,ca:69,fe:5.6,mg:20,k2:287,na:72,zn:4.6,fo:10,se:102,col:45,src:"CREA"},
-{n:"Saragò (sargo) fresco",c:"Pesce",k:95,p:19.0,gs:0.4,g:2.1,z:0,ch:0,fi:0,ca:25,fe:0.5,mg:27,k2:350,na:70,zn:0.5,fo:195,se:28,col:52,src:"CREA"},
+{n:"Saragò (sargo) fresco",c:"Pesce",k:95,p:19.0,gs:0.4,g:2.1,z:0,ch:0,fi:0,ca:25,fe:0.5,mg:27,k2:350,na:70,zn:0.5,fo:10,se:28,col:52,src:"CREA"},
 {n:"Occhiata fresca",c:"Pesce",k:117,p:19,gs:1.26,g:3.7,z:2,ch:2,fi:0,ca:32,fe:4.2,mg:17,k2:427,na:68,zn:1.4,fo:188,se:25,col:48,src:"CREA"},
 {n:"Zerro fresco",c:"Pesce",k:93,p:19.0,gs:0.4,g:2.0,z:0,ch:0,fi:0,ca:35,fe:1.0,mg:28,k2:360,na:65,zn:0.5,fo:10,se:30,col:55,src:"CREA"},
 {n:"Aguglia fresca",c:"Pesce",k:98,p:19.5,gs:0.5,g:2.0,z:0,ch:0,fi:0,ca:30,fe:1.0,mg:35,k2:380,na:70,zn:0.6,fo:10,se:35,col:60,src:"CREA"},
@@ -1983,7 +1983,7 @@ const DB_BDA=[
 {n:"Popcorn soffiato non condito",c:"Cereali e pasta",k:387,p:12.1,gs:0.6,g:4.5,z:0.7,ch:77.9,fi:14.5,ca:7,fe:3.0,mg:144,k2:329,na:8,zn:2.9,fo:358,se:9,col:0,src:"BDA"},
 
 // ── CARNI MANCANTI (CREA) ──
-{n:"Quaglie intere eviscerate crude",c:"Carni e derivati",k:111,p:21.8,gs:0.6,g:2.8,z:0,ch:0,fi:0,ca:12,fe:1.9,mg:24,k2:238,na:55,zn:2.5,fo:200,se:14,col:72,src:"CREA"},
+{n:"Quaglie intere eviscerate crude",c:"Carni e derivati",k:111,p:21.8,gs:0.6,g:2.8,z:0,ch:0,fi:0,ca:12,fe:1.9,mg:24,k2:238,na:55,zn:2.5,fo:9,se:14,col:72,src:"CREA"},
 {n:"Gallina (carne, senza pelle)",c:"Carni e derivati",k:185,p:18.5,gs:2.0,g:12.5,z:0,ch:0,fi:0,ca:11,fe:1.2,mg:20,k2:260,na:75,zn:2.0,fo:9,se:10,col:90,src:"CREA"},
 {n:"Lingua di manzo",c:"Carni e derivati",k:192,p:16.0,gs:5.0,g:14.0,z:0,ch:0,fi:0,ca:6,fe:2.7,mg:15,k2:200,na:65,zn:2.8,fo:155,se:10,col:93,src:"CREA"},
 {n:"Animelle di vitello",c:"Carni e derivati",k:121,p:16.5,gs:1.0,g:6.5,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:22,k2:280,na:70,zn:1.8,fo:300,se:12,col:220,src:"CREA"},
@@ -2054,7 +2054,7 @@ const DB_BDA=[
 {n:"Semi di canapa decorticati",c:"Semi e frutta secca",k:553,p:31.6,gs:3.8,g:48.7,z:1.1,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:483,k2:1200,na:5,zn:9.9,fo:110,se:14,col:0,src:"BDA"},
 {n:"Noci pecan crude",c:"Semi e frutta secca",k:723,p:7.2,gs:6.165,g:71.8,z:4.3,ch:7.9,fi:9.4,ca:83,fe:2.1,mg:131,k2:368,na:2,zn:2.7,fo:39,se:3.1,col:0,src:"BDA"},
 {n:"Arachidi crude non tostate",c:"Semi e frutta secca",k:567,p:25.8,gs:7.0,g:49.2,z:3.9,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7.2,col:0,src:"CREA"},
-{n:"Mandorle crude con pelle",c:"Semi e frutta secca",k:578,p:21.1,gs:3.8,g:49.9,z:3.9,ch:19.7,fi:12.5,ca:248,fe:3.7,mg:270,k2:705,na:1,zn:3.1,fo:481,se:2.5,col:0,src:"CREA"},
+{n:"Mandorle crude con pelle",c:"Semi e frutta secca",k:578,p:21.1,gs:3.8,g:49.9,z:3.9,ch:19.7,fi:12.5,ca:248,fe:3.7,mg:270,k2:705,na:1,zn:3.1,fo:29,se:2.5,col:0,src:"CREA"},
 {n:"Noci brasiliane crude",c:"Semi e frutta secca",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0,src:"BDA"},
 
 // ── ALGHE E PRODOTTI MARINI ──

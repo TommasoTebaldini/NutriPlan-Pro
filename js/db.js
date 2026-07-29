@@ -105,7 +105,8 @@ const DB_CREA=[
 {n:"Caciotta",c:"Formaggi",k:384,p:24.5,gs:20.44,g:31,z:1.8,ch:1.8,fi:0,ca:670,fe:0.3,mg:30,k2:95,na:550,zn:3.7,fo:440,se:7.7,col:80,src:"CREA"},
 // ── LATTICINI aggiuntivi ──
 {n:"Kefir intero",c:"Latte e derivati",k:61,p:3.4,gs:1.5,g:3.2,z:4.7,ch:4.7,fi:0,ca:115,fe:0.1,mg:11,k2:155,na:40,zn:0.4,fo:90,se:2,col:10,src:"CREA"},
-{n:"Latte di soia non zuccherato",c:"Latte e derivati",k:134,p:7,gs:0.2,g:8.2,z:8.6,ch:8.6,fi:0,ca:240,fe:0.1,mg:19,k2:323,na:150,zn:0.3,fo:41,se:1,col:31,src:"CREA"},
+// 8.6g di carboidrati era contraddittorio con "NON zuccherato" (bevanda di soia unsweetened ha carboidrati minimi) — allineato a duplicato coerente col profilo di un prodotto davvero non zuccherato — 2026-07-29
+{n:"Latte di soia non zuccherato",c:"Latte e derivati",k:35,p:3.3,gs:0.3,g:2,z:0,ch:0.7,fi:0.3,ca:120,fe:0.5,mg:19,k2:118,na:48,zn:0.5,fo:52,se:3,col:0,src:"CREA"},
 {n:"Latte di avena",c:"Latte e derivati",k:47,p:1.0,gs:0.1,g:1.5,z:4,ch:6.5,fi:0.5,ca:120,fe:0.3,mg:10,k2:65,na:50,zn:0.1,fo:25,se:0.5,col:0,src:"CREA"},
 {n:"Latte di mandorla non zuccherato",c:"Latte e derivati",k:134,p:7,gs:0.1,g:8.2,z:8.6,ch:8.6,fi:0,ca:240,fe:0.1,mg:9,k2:323,na:150,zn:0.1,fo:15,se:0,col:31,src:"CREA"},
 // ── CARNI aggiuntive ──
@@ -1221,7 +1222,8 @@ const DB_CREA=[
 {n:"Salame Napoli",c:"Salumi",k:378,p:27.4,gs:10.16,g:29.7,z:0.5,ch:0.2,fi:0,ca:12,fe:0.9,mg:22,k2:667,na:1640,zn:2.5,fo:165,se:17,col:91,src:"CREA"},
 {n:"Salame Felino IGP (stagionato)",c:"Salumi",k:375,p:30.5,gs:10.34,g:27.9,z:0.5,ch:0.5,fi:0,ca:14,fe:1.9,mg:31,k2:486,na:1697,zn:4.3,fo:185,se:3.1,col:95,src:"CREA"},
 {n:"Finocchiona IGP toscana (stagionata)",c:"Salumi",k:370,p:21,gs:13,g:30,z:1.5,ch:2.0,fi:0,ca:18,fe:1.5,mg:18,k2:275,na:1580,zn:2.8,fo:170,se:18,col:88,src:"CREA"},
-{n:"Culatello di Zibello DOP",c:"Salumi",k:170,p:31.5,gs:2.0,g:5.5,z:0,ch:0.5,fi:0,ca:12,fe:1.0,mg:25,k2:380,na:1450,zn:3.0,fo:200,se:22,col:75,src:"CREA"},
+// Grassi troppo bassi (5.5g) per un salume pregiato ben marezzato — allineato a duplicato con profilo piu plausibile (20g grassi) — 2026-07-29
+{n:"Culatello di Zibello DOP",c:"Salumi",k:292,p:28,gs:7.8,g:20,z:0,ch:0,fi:0,ca:12,fe:1.5,mg:22,k2:340,na:2000,zn:2.8,fo:200,se:24,col:70,src:"CREA"},
 {n:"Cotechino di Modena IGP (cotto)",c:"Salumi",k:253,p:23.6,gs:4.86,g:16.3,z:0.5,ch:3.2,fi:0,ca:14,fe:1.4,mg:9,k2:220,na:880,zn:1.6,fo:120,se:12,col:86,src:"CREA"},
 {n:"Salsiccia fresca di suino (cruda)",c:"Salumi",k:304,p:15.4,gs:14.5,g:26.7,z:0.6,ch:0.6,fi:0,ca:20,fe:2.8,mg:18,k2:200,na:1100,zn:2.2,fo:145,se:15,col:80,src:"CREA"},
 {n:"Soppressata calabrese DOP",c:"Salumi",k:377,p:34.2,gs:15.5,g:26.3,z:0.9,ch:0.9,fi:0,ca:20,fe:1.8,mg:20,k2:300,na:1600,zn:3.0,fo:175,se:18,col:95,src:"CREA"},
@@ -2916,7 +2918,8 @@ const DB_UPF = [
   {n:"Concentrato di pomodoro industriale (triplo)",c:"Condimenti",src:"UPF",k:127,p:5.7,gs:0.1,g:0.2,z:16,ch:23,fi:0,ca:0,fe:0,mg:0,k2:0,na:200,zn:0,fo:65,se:4,col:0},
   // Allineato a voce BDA gia verificata "Salsa Caesar industriale" — 2026-07-28
   {n:"Salsa Caesar industriale (bottiglia)",c:"Condimenti",src:"UPF",k:388,p:2.5,gs:4.5,g:40,z:3.5,ch:5.0,fi:0.3,ca:60,fe:0.3,mg:5,k2:32,na:890,zn:0.2,fo:35,se:4,col:30},
-  {n:"Maionese Hellmann's (per 100g)",c:"Condimenti",src:"UPF",k:554.4,p:0.8,gs:9.67,g:61,z:1.4,ch:2.2,fi:0,ca:15,fe:0.3,mg:4,k2:25,na:620,zn:0.1,fo:25,se:2,col:50},
+  // Allineato a duplicato con valori piu coerenti con l'etichetta reale Hellmann's (688kcal/77.8g grassi, tipico per maionese piena) — 2026-07-29
+  {n:"Maionese Hellmann's (per 100g)",c:"Condimenti",src:"UPF",k:688,p:0,gs:10.8,g:77.8,z:0.3,ch:0.3,fi:0,ca:10,fe:0.5,mg:3,k2:20,na:486,zn:0.2,fo:20,se:2,col:55},
   // Allineato a voce CREA gia verificata "Senape di Digione" — 2026-07-28
   {n:"Senape di Digione (Maille, per 100g)",c:"Condimenti",src:"UPF",k:93,p:4.4,gs:0.5,g:5.8,z:3.2,ch:8.1,fi:3.0,ca:100,fe:2.7,mg:49,k2:152,na:1040,zn:0.8,fo:45,se:5,col:0},
   {n:"Aceto di mele Ponti in bottiglia (per 100mL)",c:"Condimenti",src:"UPF",k:42,p:0.1,gs:0,g:0,z:6,ch:7,fi:0,ca:7,fe:0.3,mg:5,k2:73,na:5,zn:0.1,fo:4,se:0,col:0},
@@ -3024,7 +3027,8 @@ const DB_UPF = [
   {n:"Ringo al cioccolato (Pavesi, per 100g)",c:"Biscotti e crackers",src:"UPF",k:506,p:6.5,gs:11,g:25,z:42,ch:62.2,fi:3,ca:55,fe:1.5,mg:20,k2:160,na:172,zn:0.6,fo:80,se:4,col:5},
   {n:"Abbracci Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:484.8,p:6.1,gs:10.61,g:24.2,z:24.2,ch:60.6,fi:3,ca:30.3,fe:2.0,mg:20,k2:218.2,na:257.6,zn:0.5,fo:85,se:5,col:60.6},
   {n:"Baiocchi Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:510,p:8,gs:5,g:26,z:23,ch:59,fi:4,ca:60,fe:1.8,mg:22,k2:190,na:240,zn:0.7,fo:100,se:5,col:15},
-  {n:"Macine Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:263,p:0.8,gs:0.4,g:2.6,z:2.5,ch:8.9,fi:0.5,ca:55,fe:2.5,mg:30,k2:180,na:340,zn:0.8,fo:100,se:6,col:0},
+  // Valori erano assurdamente bassi per un biscotto (263kcal/0.8g proteine/2.6g grassi) — allineato a duplicato con valori plausibili per Macine reali (~480kcal) — 2026-07-29
+  {n:"Macine Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:482,p:6,gs:3.9,g:20,z:19,ch:68.2,fi:2.5,ca:25,fe:1.5,mg:18,k2:145,na:330,zn:0.6,fo:20,se:8,col:12},
   {n:"TUC crackers salati (Lu, per 100g)",c:"Biscotti e crackers",src:"UPF",k:492,p:9.8,gs:0,g:11,z:2.3,ch:72,fi:2.8,ca:30,fe:1.5,mg:15,k2:120,na:800,zn:0.5,fo:70,se:5,col:0},
   {n:"Plasmon biscotti per bambini (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:420,p:0,gs:0,g:0,z:20,ch:80,fi:1.5,ca:180,fe:5.0,mg:20,k2:150,na:600,zn:1.2,fo:125,se:6,col:20},
   {n:"Ciocorì (Kinder/Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:540,p:7.5,gs:11.5,g:30.5,z:54.5,ch:61.5,fi:1.5,ca:120,fe:2.0,mg:32,k2:250,na:95,zn:0.8,fo:140,se:5,col:18},
@@ -3103,7 +3107,8 @@ const DB_UPF = [
   // ── PANE E PRODOTTI DA FORNO INDUSTRIALI ──
   {n:"Pancarré industriale tipo Bauletto (per 100g)",c:"Pane e derivati",src:"UPF",k:265,p:8.5,gs:0.8,g:4.5,z:5.0,ch:47.5,fi:2.5,ca:30,fe:1.5,mg:15,k2:110,na:520,zn:0.4,fo:65,se:5,col:0},
   {n:"Fette biscottate Mulino Bianco classiche (per 100g)",c:"Pane e derivati",src:"UPF",k:401,p:1.6,gs:1,g:6.8,z:8,ch:72,fi:4.1,ca:45,fe:3.0,mg:25,k2:170,na:480,zn:0.7,fo:110,se:8,col:0},
-  {n:"Fette biscottate integrali (per 100g)",c:"Pane e derivati",src:"UPF",k:34,p:1.2,gs:0.1,g:0.5,z:0.5,ch:5.5,fi:1.1,ca:50,fe:3.5,mg:60,k2:280,na:490,zn:1.2,fo:200,se:12,col:0},
+  // Errore di unita' grave: i valori erano quelli di UNA fetta (~8-9g), non per 100g (34kcal per 100g e assurdo per fette biscottate secche) — allineato al duplicato CREA corretto — 2026-07-29
+  {n:"Fette biscottate integrali (per 100g)",c:"Pane e derivati",src:"UPF",k:394,p:14.2,gs:0.5,g:10,z:1.1,ch:63,fi:5.4,ca:50,fe:2.5,mg:60,k2:200,na:420,zn:1,fo:200,se:10,col:0},
   {n:"Crackers integrali tipo Wasa (per 100g)",c:"Pane e derivati",src:"UPF",k:409.4,p:11,gs:1.1,g:9.6,z:6.1,ch:61,fi:14,ca:45,fe:3.5,mg:80,k2:320,na:680,zn:1.5,fo:230,se:12,col:0},
   {n:"Grissini con olio e rosmarino industriali (per 100g)",c:"Pane e derivati",src:"UPF",k:424,p:11.5,gs:4.5,g:10.8,z:1.4,ch:68,fi:3.6,ca:22,fe:1.8,mg:18,k2:120,na:700,zn:0.6,fo:80,se:6,col:0},
   {n:"Piadina romagnola IGP (artigianale, per 100g)",c:"Pane e derivati",src:"UPF",k:320,p:7.6,gs:1.3,g:8.7,z:1.2,ch:52,fi:1.7,ca:28,fe:1.5,mg:16,k2:125,na:680,zn:0.7,fo:85,se:7,col:15},

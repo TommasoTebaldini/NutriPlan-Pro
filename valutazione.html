@@ -1019,6 +1019,7 @@ function getTuttePatologie() {
 
 let selectedPat=new Set();
 let tdee=0,mbGlobale=0;
+let customKcalGlobale=null;
 let pesoAttualeGlobale=0,piGlobale=0,paGlobale=0,pesoFGlobale=0;
 let metodoTDEE='formula';
 let schedaId=null;
@@ -1334,13 +1335,31 @@ function setMetodoTDEE(metodo){
   metodoTDEE=metodo;
   const fSec=document.getElementById('met-formula-section');
   const kSec=document.getElementById('met-kcalkg-section');
+  const cSec=document.getElementById('met-custom-section');
   const btnF=document.getElementById('met-btn-formula');
   const btnK=document.getElementById('met-btn-kcalkg');
+  const btnC=document.getElementById('met-btn-custom');
   if(fSec)fSec.style.display=metodo==='formula'?'':'none';
   if(kSec)kSec.style.display=metodo==='kcalkg'?'':'none';
+  if(cSec)cSec.style.display=metodo==='custom'?'':'none';
   if(btnF){btnF.style.background=metodo==='formula'?'var(--teal)':'white';btnF.style.color=metodo==='formula'?'white':'var(--slate-m)';}
   if(btnK){btnK.style.background=metodo==='kcalkg'?'var(--teal)':'white';btnK.style.color=metodo==='kcalkg'?'white':'var(--slate-m)';}
-  if(metodo==='formula')aggiornaTDEE(mbGlobale);else calcolaKcalKgDie();
+  if(btnC){btnC.style.background=metodo==='custom'?'var(--teal)':'white';btnC.style.color=metodo==='custom'?'white':'var(--slate-m)';}
+  if(metodo==='formula')aggiornaTDEE(mbGlobale);else if(metodo==='kcalkg')calcolaKcalKgDie();else calcolaKcalPersonalizzato();
+}
+
+function calcolaKcalPersonalizzato(){
+  const v=parseFloat(document.getElementById('custom-kcal-input')?.value);
+  const el=document.getElementById('tdee-result');
+  if(!v||v<=0){
+    customKcalGlobale=null;
+    if(el)el.innerHTML=`<p style="font-size:12px;color:var(--slate-l)">${_L('Inserisci un apporto calorico per calcolare i macronutrienti.','Enter a caloric intake to calculate macros.')}</p>`;
+    return;
+  }
+  customKcalGlobale=v;
+  tdee=Math.round(v);
+  if(el)el.innerHTML=`<div class="result-pill" style="background:#FFF7ED"><div><div class="rp-label">${_L('Apporto personalizzato','Custom intake')}</div></div><div class="rp-val" style="color:#C2410C">${tdee} kcal</div></div>`;
+  renderMacroDist();
 }
 
 function getMidpointKcalKg(kcalStr){
@@ -1441,8 +1460,9 @@ function calcolaFabbisogno(){
   <div>
   <div class="val-section"><h3>⚡ ${_L('Fabbisogno Totale (TDEE)','Total Energy Expenditure (TDEE)')}</h3>
   <div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden;margin-bottom:14px">
-    <button id="met-btn-formula" onclick="setMetodoTDEE('formula')" style="flex:1;padding:8px 6px;border:none;background:var(--teal);color:white;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700">⚗️ ${_L('Formule MB×LAF','BMR×PAL Formulae')}</button>
-    <button id="met-btn-kcalkg" onclick="setMetodoTDEE('kcalkg')" style="flex:1;padding:8px 6px;border:none;background:white;color:var(--slate-m);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;border-left:1.5px solid var(--border-d)">📏 kcal/kg/${_L('die','day')}</button>
+    <button id="met-btn-formula" onclick="setMetodoTDEE('formula')" style="flex:1;padding:8px 4px;border:none;background:var(--teal);color:white;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:700">⚗️ ${_L('Formule MB×LAF','BMR×PAL Formulae')}</button>
+    <button id="met-btn-kcalkg" onclick="setMetodoTDEE('kcalkg')" style="flex:1;padding:8px 4px;border:none;background:white;color:var(--slate-m);cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:700;border-left:1.5px solid var(--border-d)">📏 kcal/kg/${_L('die','day')}</button>
+    <button id="met-btn-custom" onclick="setMetodoTDEE('custom')" style="flex:1;padding:8px 4px;border:none;background:white;color:var(--slate-m);cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:700;border-left:1.5px solid var(--border-d)">🎯 ${_L('Personalizzato','Custom')}</button>
   </div>
   <div id="met-formula-section">
   <div class="fg" style="margin-bottom:10px"><label>${_L('Livello Attività Fisica (LAF)','Physical Activity Level (PAL)')}</label>
@@ -1465,6 +1485,11 @@ function calcolaFabbisogno(){
     <option value="ideale">${_L('Peso ideale (Lorenz)','Ideal weight (Lorenz)')} — ${Math.round(pi*10)/10} kg</option>
     <option value="aggiustato">${_L('Peso aggiustato','Adjusted weight')} — ${Math.round(pa*10)/10} kg</option>
   </select></div>
+  </div>
+  <div id="met-custom-section" style="display:none">
+  <div class="fg" style="margin-bottom:12px"><label>${_L('Apporto calorico scelto dal dietista (kcal/die)','Dietitian-chosen caloric intake (kcal/day)')}</label>
+  <input type="number" id="custom-kcal-input" min="200" max="6000" step="10" value="${customKcalGlobale!=null?customKcalGlobale:''}" placeholder="${_L('es. 1500','e.g. 1500')}" oninput="calcolaKcalPersonalizzato()" style="padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:inherit;font-size:13px;outline:none;width:100%;box-sizing:border-box"></div>
+  <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:4px">${_L('Inserisci direttamente il totale di kcal giornaliere da usare, indipendentemente dalle formule sopra — i macronutrienti verranno calcolati su questo valore.','Directly enter the total daily kcal to use, independent of the formulas above — macros will be calculated on this value.')}</div>
   </div>
   <div id="tdee-result"></div></div>
 
@@ -1745,6 +1770,7 @@ async function doSalva(cartellaId){
       fc:document.getElementById('val-fc')?.value||null,
       kcalkg_val:document.getElementById('kcalkg-input')?.value||null,
       kcalkg_peso_tipo:document.getElementById('kcalkg-peso-tipo')?.value||null,
+      custom_kcal_val:document.getElementById('custom-kcal-input')?.value||null,
       mb_globale:mbGlobale||null,
       selected_formula:selectedFormula||null,
     }),
@@ -2136,6 +2162,7 @@ function resetVal(){
   selectedPat.clear();renderPatChips();
   document.getElementById('risultati-col').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--slate-l)"><div style="font-size:44px;margin-bottom:14px">📊</div><p>Inserisci i dati e clicca Calcola Fabbisogno</p></div>';
   tdee=0;schedaId=null;
+  customKcalGlobale=null;metodoTDEE='formula';selectedFormula=null;mbGlobale=0;
   localStorage.removeItem('nutriplan_autosave_valutazione');
 }
 
@@ -2373,7 +2400,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
             if(ex.fc){const fcEl=document.getElementById('val-fc');if(fcEl)fcEl.value=ex.fc;}
             if(ex.kcalkg_val){const ki=document.getElementById('kcalkg-input');if(ki)ki.value=ex.kcalkg_val;}
             if(ex.kcalkg_peso_tipo){const kp=document.getElementById('kcalkg-peso-tipo');if(kp)kp.value=ex.kcalkg_peso_tipo;}
-            if(ex.metodo_tdee==='kcalkg')calcolaKcalKgDie();else if(ex.laf||ex.fc)aggiornaTDEE(mbGlobale);
+            if(ex.custom_kcal_val){customKcalGlobale=parseFloat(ex.custom_kcal_val);const ci=document.getElementById('custom-kcal-input');if(ci)ci.value=ex.custom_kcal_val;}
+            if(ex.metodo_tdee==='kcalkg')calcolaKcalKgDie();else if(ex.metodo_tdee==='custom')calcolaKcalPersonalizzato();else if(ex.laf||ex.fc)aggiornaTDEE(mbGlobale);
             if(ex.metodo_tdee){setMetodoTDEE(ex.metodo_tdee);}
             renderFormuleRows();
           }catch(e){}}

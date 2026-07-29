@@ -488,6 +488,10 @@
 
 <div class="ns">
   <h3>⚡ <span data-only-lang="it">Fabbisogno Energetico Stimato</span><span data-only-lang="en" style="display:none">Estimated Energy Requirements</span></h3>
+  <div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden;margin-bottom:14px;max-width:460px">
+    <button id="fabb-btn-formula" onclick="setFabbModeNCPT('formula')" style="flex:1;padding:8px 6px;border:none;background:var(--teal);color:white;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700">⚗️ <span data-only-lang="it">Formula MB×LAF</span><span data-only-lang="en" style="display:none">BMR×PAL Formula</span></button>
+    <button id="fabb-btn-custom" onclick="setFabbModeNCPT('custom')" style="flex:1;padding:8px 6px;border:none;background:white;color:var(--slate-m);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;border-left:1.5px solid var(--border-d)">🎯 <span data-only-lang="it">Personalizzato</span><span data-only-lang="en" style="display:none">Custom</span></button>
+  </div>
   <div class="fgrid c3">
     <div class="nf"><label><span data-only-lang="it">Formula MB usata</span><span data-only-lang="en" style="display:none">BMR formula used</span></label>
       <select id="v-formula" onchange="calcMB()"><option>Harris-Benedict</option><option>Mifflin-St Jeor</option><option>Schofield (LARN)</option><option>FAO/WHO 1985</option><option>Katch-McArdle</option></select></div>
@@ -495,10 +499,18 @@
     <div class="nf"><label><span data-only-lang="it">LAF</span><span data-only-lang="en" style="display:none">PAL</span></label>
       <select id="v-laf" onchange="calcMB()"><option value="1.2">1.2 — Sedentario</option><option value="1.375" selected>1.375 — Leggermente attivo</option><option value="1.55">1.55 — Moderatamente attivo</option><option value="1.725">1.725 — Molto attivo</option><option value="1.9">1.9 — Atleta</option></select></div>
     <div class="nf"><label><span data-only-lang="it">TDEE stimato (kcal)</span><span data-only-lang="en" style="display:none">Estimated TDEE (kcal)</span></label><input type="text" id="v-tdee" placeholder="es. 2100" readonly style="background:#F8FAFC"></div>
-    <div class="nf"><label><span data-only-lang="it">Kcal target prescritte</span><span data-only-lang="en" style="display:none">Prescribed target kcal</span></label><input type="text" id="v-kcal-tgt" placeholder="es. 1600"></div>
+  </div>
+  <div id="fabb-custom-section" style="display:none;margin-top:4px">
+    <div class="fgrid c3">
+      <div class="nf"><label><span data-only-lang="it">Apporto calorico scelto dal dietista (kcal/die)</span><span data-only-lang="en" style="display:none">Dietitian-chosen caloric intake (kcal/day)</span></label>
+        <input type="number" id="v-kcal-tgt" min="200" max="6000" step="10" placeholder="es. 1600" oninput="calcolaKcalPersonalizzatoNCPT()"></div>
+    </div>
+    <div style="font-size:11.5px;color:var(--slate-l);margin-bottom:10px"><span data-only-lang="it">Inserisci direttamente il totale di kcal giornaliere da usare, indipendentemente dalla formula sopra — i macronutrienti sotto verranno calcolati su questo valore.</span><span data-only-lang="en" style="display:none">Directly enter the total daily kcal to use, independent of the formula above — macros below will be calculated on this value.</span></div>
+  </div>
+  <div class="fgrid c3">
     <div class="nf">
       <label style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">
-        <span data-only-lang="it">Fabbisogno proteico</span><span data-only-lang="en" style="display:none">Protein requirement</span>
+        <span data-only-lang="it">Fabbisogno proteico (nota rapida)</span><span data-only-lang="en" style="display:none">Protein requirement (quick note)</span>
         <button id="prot-mode-btn" onclick="toggleNcptProtMode()" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1.5px solid #1D4ED8;background:transparent;color:#1D4ED8;cursor:pointer;font-weight:700;font-family:inherit;line-height:1.4;flex-shrink:0">g/die</button>
       </label>
       <div id="prot-gdie-row"><input type="text" id="v-prot" placeholder="es. 75-90 g"></div>
@@ -514,6 +526,10 @@
       <textarea id="v-note-fabb" rows="2" placeholder="Motivazione scelta calorica, peso di riferimento..."></textarea></div>
   </div>
   <div id="fabb-results" style="margin-top:14px"></div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1.5px solid var(--border)">
+    <div style="font-size:11.5px;font-weight:700;color:var(--slate-m);margin-bottom:7px;text-transform:uppercase;letter-spacing:.4px">🍽️ <span data-only-lang="it">Distribuzione Macronutrienti — in base al kcal attivo</span><span data-only-lang="en" style="display:none">Macronutrient Distribution — based on the active kcal</span></div>
+    <div id="ncpt-macro-dist-body" style="font-size:12px;color:var(--slate-l)"></div>
+  </div>
 </div>
 
 
@@ -926,6 +942,12 @@ function faoWhoMB(sesso,eta,peso){
   return Math.round(k);
 }
 let ncptProtMode='gdie';
+let ncptTdee=0;
+let ncptPesoF=0;
+let ncptPesoAttuale=0;
+let ncptFabbMode='formula';
+let ncptMacroDist={prot:20,cho:50,fat:30,fibra:25,prot_mode:'pct',prot_gkg:0,cho_mode:'pct',cho_gkg:0,fat_mode:'pct',fat_gkg:0};
+const NCPT_MACRO_ITEMS=[{key:'prot',label:_L('Proteine','Protein'),icon:'🥩',col:'#15803D',bg:'#F0FDF4',kcalpg:4,minGkg:0.5,maxGkg:4},{key:'cho',label:'CHO',icon:'🌾',col:'#1D4ED8',bg:'#EFF6FF',kcalpg:4,minGkg:1,maxGkg:10},{key:'fat',label:_L('Grassi','Fat'),icon:'🫒',col:'#B45309',bg:'#FEF3C7',kcalpg:9,minGkg:0.3,maxGkg:3}];
 
 function toggleNcptProtMode(){
   ncptProtMode=ncptProtMode==='gdie'?'gkg':'gdie';
@@ -983,6 +1005,9 @@ function calcMB(){
   document.getElementById('v-mb').value=mb;
   const tdee=Math.round(mb*laf);
   document.getElementById('v-tdee').value=tdee;
+  ncptPesoF=pesoF;
+  ncptPesoAttuale=peso;
+  if(ncptFabbMode==='formula'){ncptTdee=tdee;renderNcptMacroDist();}
   // Populate results panel
   const fabbRes=document.getElementById('fabb-results');
   if(!fabbRes) return;
@@ -1017,6 +1042,169 @@ function calcMB(){
       ${[1.0,1.2,1.5,2.0].map(v=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0"><span style="color:var(--slate-m)">${v} g/kg/${_L('die','day')}</span><b>${Math.round(pesoF*v*10)/10} g</b></div>`).join('')}
     </div>
   </div>`;
+}
+
+// ── Modalità kcal attivo: formula vs personalizzato ──
+function setFabbModeNCPT(modo){
+  ncptFabbMode=modo;
+  const btnF=document.getElementById('fabb-btn-formula');
+  const btnC=document.getElementById('fabb-btn-custom');
+  const cSec=document.getElementById('fabb-custom-section');
+  if(btnF){btnF.style.background=modo==='formula'?'var(--teal)':'white';btnF.style.color=modo==='formula'?'white':'var(--slate-m)';}
+  if(btnC){btnC.style.background=modo==='custom'?'var(--teal)':'white';btnC.style.color=modo==='custom'?'white':'var(--slate-m)';}
+  if(cSec)cSec.style.display=modo==='custom'?'':'none';
+  if(modo==='formula')calcMB();else calcolaKcalPersonalizzatoNCPT();
+}
+
+function calcolaKcalPersonalizzatoNCPT(){
+  const v=parseFloat(document.getElementById('v-kcal-tgt')?.value);
+  if(!v||v<=0){
+    const el=document.getElementById('ncpt-macro-dist-body');
+    if(el)el.innerHTML=`<p style="font-size:12px;color:var(--slate-l)">${_L('Inserisci un apporto calorico per calcolare i macronutrienti.','Enter a caloric intake to calculate macros.')}</p>`;
+    return;
+  }
+  ncptTdee=Math.round(v);
+  renderNcptMacroDist();
+}
+
+// ── Distribuzione macronutrienti (prot/cho/grassi) sul kcal attivo ──
+function renderNcptMacroDist(){
+  const el=document.getElementById('ncpt-macro-dist-body');
+  if(!el||!ncptTdee)return;
+  const tot=ncptMacroDist.prot+ncptMacroDist.cho+ncptMacroDist.fat;
+  const totOk=tot===100;
+  el.innerHTML=`
+  <div style="font-size:12px;font-weight:700;color:var(--teal-d);margin-bottom:8px">${_L('Kcal attivo:','Active kcal:')} <span style="font-size:15px">${ncptTdee} kcal</span> <span style="font-size:10.5px;color:var(--slate-l);font-weight:500">(${ncptFabbMode==='custom'?_L('personalizzato','custom'):_L('da formula MB×LAF','from BMR×PAL formula')})</span></div>
+  <div class="macro-dist-grid">
+  ${NCPT_MACRO_ITEMS.map(it=>{
+    const isGkg=ncptMacroDist[it.key+'_mode']==='gkg';
+    const gkg=ncptMacroDist[it.key+'_gkg']||0;
+    const gFromGkg=isGkg&&ncptPesoAttuale?Math.round(gkg*ncptPesoAttuale):0;
+    const g=isGkg?gFromGkg:Math.round(ncptTdee*ncptMacroDist[it.key]/100/it.kcalpg);
+    const kcal=isGkg?Math.round(gFromGkg*it.kcalpg):Math.round(ncptTdee*ncptMacroDist[it.key]/100);
+    return `<div id="ncpt-mdiv-${it.key}" style="background:${it.bg};border-radius:10px;padding:12px;border:2px solid ${totOk?it.col+'33':'#FCA5A5'}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:700;color:${it.col}">${it.icon} ${it.label}</div>
+        <button onclick="toggleNcptMacroMode('${it.key}')" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1.5px solid ${it.col};background:${isGkg?it.col:'transparent'};color:${isGkg?'white':it.col};cursor:pointer;font-weight:700;font-family:inherit;line-height:1.4">${isGkg?'g/kg·d':'%'}</button>
+      </div>
+      ${isGkg?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <input type="number" id="ncpt-inp-${it.key}" min="${it.minGkg}" max="${it.maxGkg}" step="0.1" value="${gkg}"
+          oninput="onNcptMacroGkgInput('${it.key}',this)"
+          style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
+        <span style="font-size:13px;font-weight:700;color:${it.col}">g/kg</span>
+      </div>
+      <div id="ncpt-mg-${it.key}" style="font-size:11.5px;color:${it.col};font-weight:600">${ncptMacroDist[it.key]}% · ${g}g  |  ${kcal} kcal</div>`
+      :`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <input type="number" id="ncpt-inp-${it.key}" min="5" max="80" value="${ncptMacroDist[it.key]}"
+          oninput="onNcptMacroInput('${it.key}',this)"
+          onblur="onNcptMacroBlur('${it.key}',this)"
+          style="width:64px;padding:6px 8px;border:2px solid ${it.col};border-radius:8px;font-size:18px;font-weight:700;color:${it.col};text-align:center;outline:none;background:white">
+        <span style="font-size:18px;font-weight:700;color:${it.col}">%</span>
+      </div>
+      <div id="ncpt-mg-${it.key}" style="font-size:11.5px;color:${it.col};font-weight:600">${g}g  |  ${kcal} kcal</div>`}
+    </div>`;
+  }).join('')}
+  </div>
+  <div id="ncpt-mtot-indicator" style="padding:10px 14px;border-radius:8px;background:${totOk?'#F0FDF4':'#FEF2F2'};border:2px solid ${totOk?'#10B981':'#EF4444'};display:flex;align-items:center;justify-content:space-between;margin:10px 0">
+    <span class="mtot-text" style="font-size:13px;font-weight:700;color:${totOk?'#065F46':'#991B1B'}">
+      ${totOk?_L('✅ Totale: 100%','✅ Total: 100%'):_L('⚠️ Totale: ','⚠️ Total: ')+tot+_L('% — deve essere esattamente 100%','% — must be exactly 100%')}
+    </span>
+    <button class="auto-balance-btn" onclick="autoBalanceNcpt()" style="padding:5px 12px;background:#EF4444;color:white;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:${totOk?'none':'inline-block'}">${_L('Auto-bilancia','Auto-balance')}</button>
+  </div>
+  <div style="background:#FAF5FF;border-radius:8px;padding:10px">
+    <div style="font-size:12px;font-weight:700;color:#7E22CE;margin-bottom:8px">${_L('🌿 Fibra (separata dai CHO)','🌿 Fibre (separate from CHO)')}</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <input type="number" min="15" max="50" value="${ncptMacroDist.fibra||25}"
+        oninput="ncptMacroDist.fibra=parseInt(this.value)||25;document.getElementById('ncpt-fibra-display').textContent=this.value+'g/${_L('die','day')}';syncNcptMacroToIntervento();"
+        style="width:70px;padding:6px 8px;border:2px solid #7E22CE;border-radius:8px;font-size:16px;font-weight:700;color:#7E22CE;text-align:center;outline:none">
+      <span id="ncpt-fibra-display" style="font-size:13px;font-weight:700;color:#7E22CE">${ncptMacroDist.fibra||25}g/${_L('die','day')}</span>
+      <span style="font-size:11px;color:var(--slate-l)">${_L('Target: ≥25g/die','Target: ≥25g/day')}</span>
+    </div>
+  </div>`;
+  syncNcptMacroToIntervento();
+}
+
+function updateNcptMacroCalcs(){
+  const tot=ncptMacroDist.prot+ncptMacroDist.cho+ncptMacroDist.fat;
+  const totOk=tot===100;
+  NCPT_MACRO_ITEMS.forEach(it=>{
+    const isGkg=ncptMacroDist[it.key+'_mode']==='gkg';
+    const gFromGkg=isGkg&&ncptPesoAttuale?Math.round(ncptMacroDist[it.key+'_gkg']*ncptPesoAttuale):0;
+    const g=isGkg?gFromGkg:Math.round(ncptTdee*ncptMacroDist[it.key]/100/it.kcalpg);
+    const kcal=Math.round(ncptTdee*ncptMacroDist[it.key]/100);
+    const mgEl=document.getElementById('ncpt-mg-'+it.key);
+    if(mgEl)mgEl.textContent=(isGkg?ncptMacroDist[it.key]+'% · ':'')+g+'g  |  '+kcal+' kcal';
+    const div=document.getElementById('ncpt-mdiv-'+it.key);
+    if(div)div.style.borderColor=totOk?it.col+'33':'#FCA5A5';
+  });
+  const totEl=document.getElementById('ncpt-mtot-indicator');
+  if(totEl){
+    totEl.style.background=totOk?'#F0FDF4':'#FEF2F2';
+    totEl.style.borderColor=totOk?'#10B981':'#EF4444';
+    const txt=totEl.querySelector('.mtot-text');
+    if(txt){txt.textContent=totOk?_L('✅ Totale: 100%','✅ Total: 100%'):_L('⚠️ Totale: ','⚠️ Total: ')+tot+'% — '+_L('deve essere esattamente 100%','must be exactly 100%');txt.style.color=totOk?'#065F46':'#991B1B';}
+    const btn=totEl.querySelector('.auto-balance-btn');
+    if(btn)btn.style.display=totOk?'none':'inline-block';
+  }
+  syncNcptMacroToIntervento();
+}
+
+function onNcptMacroInput(key,input){
+  const v=parseInt(input.value);
+  if(!isNaN(v)&&v>=0){ncptMacroDist[key]=v;updateNcptMacroCalcs();}
+}
+function onNcptMacroBlur(key,input){
+  const v=Math.min(80,Math.max(5,parseInt(input.value)||5));
+  ncptMacroDist[key]=v;
+  input.value=v;
+  updateNcptMacroCalcs();
+}
+function toggleNcptMacroMode(key){
+  const item=NCPT_MACRO_ITEMS.find(m=>m.key===key);
+  const kcalpg=item?item.kcalpg:4;
+  const modeKey=key+'_mode';
+  if(ncptMacroDist[modeKey]==='pct'){
+    ncptMacroDist[modeKey]='gkg';
+    if(ncptTdee&&ncptPesoAttuale){
+      const g=ncptTdee*ncptMacroDist[key]/100/kcalpg;
+      ncptMacroDist[key+'_gkg']=Math.round(g/ncptPesoAttuale*10)/10;
+    }else{ncptMacroDist[key+'_gkg']=key==='cho'?3.0:1.0;}
+  }else{
+    ncptMacroDist[modeKey]='pct';
+  }
+  renderNcptMacroDist();
+}
+function onNcptMacroGkgInput(key,input){
+  const v=parseFloat(input.value);
+  const item=NCPT_MACRO_ITEMS.find(m=>m.key===key);
+  const kcalpg=item?item.kcalpg:4;
+  if(isNaN(v)||v<=0||!ncptPesoAttuale||!ncptTdee)return;
+  ncptMacroDist[key+'_gkg']=v;
+  const g=v*ncptPesoAttuale;
+  const kcal=g*kcalpg;
+  ncptMacroDist[key]=Math.max(5,Math.min(80,Math.round(kcal/ncptTdee*100)));
+  updateNcptMacroCalcs();
+}
+function autoBalanceNcpt(){
+  const diff=100-(ncptMacroDist.prot+ncptMacroDist.cho+ncptMacroDist.fat);
+  ncptMacroDist.cho=Math.max(5,ncptMacroDist.cho+diff);
+  renderNcptMacroDist();
+}
+
+// Propaga il kcal attivo e i macro calcolati al Piano Dietetico Prescritto (tab Intervento),
+// senza sovrascrivere campi che il dietista ha già modificato a mano
+function syncNcptMacroToIntervento(){
+  if(!ncptTdee)return;
+  const setIfNotEdited=(id,val)=>{const el=document.getElementById(id);if(el&&!el._userEdited)el.value=val;};
+  setIfNotEdited('i-kcal',ncptTdee);
+  NCPT_MACRO_ITEMS.forEach(it=>{
+    const isGkg=ncptMacroDist[it.key+'_mode']==='gkg';
+    const gFromGkg=isGkg&&ncptPesoAttuale?Math.round(ncptMacroDist[it.key+'_gkg']*ncptPesoAttuale):0;
+    const g=isGkg?gFromGkg:Math.round(ncptTdee*ncptMacroDist[it.key]/100/it.kcalpg);
+    const fieldId=it.key==='prot'?'i-prot':it.key==='cho'?'i-cho':'i-grassi';
+    setIfNotEdited(fieldId,g+'g ('+ncptMacroDist[it.key]+'%)');
+  });
+  setIfNotEdited('i-fibra',(ncptMacroDist.fibra||25)+'g');
 }
 
 // ── Eta helper ──────────────────────────────────────
@@ -1494,7 +1682,8 @@ function raccogliDati() {
       ffq_gelato:g('v-ffq-gelato'),ffq_caffe_freq:g('v-ffq-caffe_freq'),ffq_salse:g('v-ffq-salse'),ffq_fritti:g('v-ffq-fritti'),
       intoll:g('v-intoll'),attiv:g('v-attiv'),farmaci:g('v-farmaci'),
       formula:g('v-formula'),mb:g('v-mb'),laf:g('v-laf'),tdee:g('v-tdee'),
-      prot:g('v-prot'),prot_mode:ncptProtMode,prot_gkg:g('v-prot-gkg')||null,kcal_tgt:g('v-kcal-tgt'),note_fabb:g('v-note-fabb')
+      prot:g('v-prot'),prot_mode:ncptProtMode,prot_gkg:g('v-prot-gkg')||null,kcal_tgt:g('v-kcal-tgt'),note_fabb:g('v-note-fabb'),
+      fabb_mode:ncptFabbMode,ncpt_macro_dist:JSON.stringify(ncptMacroDist)
     }),
     diagnosi: JSON.stringify({pes: pesList}),
     intervento: JSON.stringify({
@@ -1596,6 +1785,8 @@ function caricaDati(data) {
     if(v.prot_mode&&v.prot_mode!=='gdie'){ncptProtMode='gdie';toggleNcptProtMode();}
     if(v.prot_gkg) s('v-prot-gkg',v.prot_gkg);
     if(v.prot_mode==='gkg') onNcptProtGkgInput();
+    if(v.ncpt_macro_dist){try{const md=JSON.parse(v.ncpt_macro_dist);Object.assign(ncptMacroDist,md);}catch(e){}}
+    if(v.fabb_mode){setFabbModeNCPT(v.fabb_mode);}else if(v.formula||v.laf){calcMB();}
     const d=JSON.parse(data.diagnosi||'{}');
     pesList = d.pes||[];
     renderPES();
@@ -1632,6 +1823,10 @@ function nuovoNCPt(clearCart=true) {
   currentNcptId=null;
   pesList=[]; obiettiviList=[]; storici=[]; monitExtra=[];
   if(ncptProtMode==='gkg'){ncptProtMode='gdie';toggleNcptProtMode();}
+  ncptTdee=0;ncptPesoF=0;ncptPesoAttuale=0;
+  ncptMacroDist={prot:20,cho:50,fat:30,fibra:25,prot_mode:'pct',prot_gkg:0,cho_mode:'pct',cho_gkg:0,fat_mode:'pct',fat_gkg:0};
+  if(ncptFabbMode!=='formula')setFabbModeNCPT('formula');else ncptFabbMode='formula';
+  const mdb=document.getElementById('ncpt-macro-dist-body');if(mdb)mdb.innerHTML='';
   document.querySelectorAll('.ncpt-panel input, .ncpt-panel textarea, .recall-ta').forEach(el=>{
     if(el.type!=='date') el.value='';
     else if(el.id==='v-data') el.value=new Date().toISOString().split('T')[0];
@@ -1716,6 +1911,7 @@ function printAllNCPt() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   updateSessoOptionsLang();
+  ['i-kcal','i-prot','i-cho','i-grassi','i-fibra'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el._userEdited=true);});
   // Global event delegation for ALL dropdowns (eziologia + cartelle)
   document.addEventListener('mousedown', function(e) {
     // Eziologia dropdown items

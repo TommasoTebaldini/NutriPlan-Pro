@@ -773,11 +773,13 @@ const DB_CREA=[
 {n:"Fegatini di pollo",c:"Carni bianche",k:122,p:20.5,gs:1.4000000000000001,g:4.5,z:0,ch:0,fi:0,ca:14,fe:4.5,mg:19,k2:260,na:76,zn:3.7,fo:995,se:9,col:555,src:"BDA"},
 {n:"Cuore bovino",c:"Carni rosse",k:123,p:16.8,gs:1.5,g:6,z:0.5,ch:0.5,fi:0,ca:9,fe:4.6,mg:22,k2:320,na:95,zn:1.7,fo:201,se:20,col:150,src:"CREA"},
 {n:"Piselli freschi lessi",c:"Verdure",k:104,p:9.7,gs:0,g:1,z:7,ch:11.5,fi:6.4,ca:33,fe:1.4,mg:24,k2:271,na:1,zn:0.9,fo:116,se:1,col:0,src:"CREA"},
-{n:"Crema di riso",c:"Cereali e pasta",k:356,p:7.2,gs:0.4,g:1.1,z:0,ch:79,fi:1.5,ca:8,fe:0.8,mg:23,k2:85,na:8,zn:0.8,fo:86,se:6,col:0,src:"CREA"},
+// Fosforo (farina di riso, ~86mg) era nel campo folati; folati reali riso ~15mcg - 2026-07-29
+{n:"Crema di riso",c:"Cereali e pasta",k:356,p:7.2,gs:0.4,g:1.1,z:0,ch:79,fi:1.5,ca:8,fe:0.8,mg:23,k2:85,na:8,zn:0.8,fo:15,se:6,col:0,src:"CREA"},
 {n:"Crema di mais",c:"Cereali e pasta",k:356,p:8.7,gs:0.3,g:3.5,z:0,ch:74,fi:5.0,ca:5,fe:2.4,mg:38,k2:287,na:5,zn:1.8,fo:20,se:15,col:0,src:"CREA"},
 {n:"Baguette",c:"Pane",k:270,p:8.3,gs:0.2,g:1.2,z:1.8,ch:56,fi:2.4,ca:24,fe:1.5,mg:25,k2:110,na:590,zn:0.6,fo:90,se:17,col:0,src:"CREA"},
 {n:"Rosetta (panino all'acqua)",c:"Pane",k:275,p:9,gs:0.2,g:1.9,z:7.5,ch:57.6,fi:3.1,ca:20,fe:1,mg:15,k2:103,na:317,zn:0.37,fo:80,se:2,col:0,src:"CREA"},
-{n:"Tarallo pugliese",c:"Biscotti e crackers",k:394,p:11.0,gs:2.5,g:12.5,z:1.0,ch:62,fi:4.0,ca:42,fe:2.0,mg:30,k2:130,na:640,zn:0.8,fo:120,se:14,col:0,src:"CREA"},
+// Fosforo (semola di grano duro, ~120mg) era nel campo folati; folati reali ~25mcg (farina non fortificata) - 2026-07-29
+{n:"Tarallo pugliese",c:"Biscotti e crackers",k:394,p:11.0,gs:2.5,g:12.5,z:1.0,ch:62,fi:4.0,ca:42,fe:2.0,mg:30,k2:130,na:640,zn:0.8,fo:25,se:14,col:0,src:"CREA"},
 {n:"Tè deteinato",c:"Bevande",k:1,p:0,gs:0,g:0,z:0,ch:0.2,fi:0,ca:0,fe:0,mg:1,k2:20,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 
 // ─── Nuovi alimenti CREA aggiunti 2025-05 ───
@@ -820,7 +822,8 @@ const DB_CREA=[
 {n:"Lupini in salamoia sgocciolati",c:"Legumi",k:119,p:16.4,gs:0.5,g:2.4,z:0.5,ch:7.1,fi:2.8,ca:45,fe:5.5,mg:85,k2:576,na:390,zn:2.0,fo:200,se:7,col:0,src:"CREA"},
 {n:"Fave fresche sgusciate crude",c:"Legumi",k:343,p:25.2,gs:0.64,g:3,z:4.9,ch:53.6,fi:7,ca:90,fe:5,mg:38,k2:250,na:3,zn:0.5,fo:78,se:1,col:0,src:"CREA"},
 {n:"Piselli freschi sgusciati crudi",c:"Legumi",k:64,p:5.5,gs:0.1,g:0.6,z:4,ch:6.5,fi:6.3,ca:45,fe:1.7,mg:33,k2:193,na:1,zn:1.2,fo:108,se:1.8,col:0,src:"CREA"},
-{n:"Tofu sodo (extra firm)",c:"Legumi",k:70,p:8.0,gs:0.5,g:4.2,z:0.5,ch:1.9,fi:0.3,ca:350,fe:2.7,mg:30,k2:120,na:7,zn:0.8,fo:97,se:10,col:0,src:"CREA"},
+// Fosforo (111mg, match USDA tofu extra firm) era nel campo folati; folati reali tofu ~9mcg (confermato via ricerca) - 2026-07-29
+{n:"Tofu sodo (extra firm)",c:"Legumi",k:70,p:8.0,gs:0.5,g:4.2,z:0.5,ch:1.9,fi:0.3,ca:350,fe:2.7,mg:30,k2:120,na:7,zn:0.8,fo:9,se:10,col:0,src:"CREA"},
 {n:"Tempeh di soia",c:"Legumi",k:173,p:20.7,gs:0.92,g:6.4,z:0.9,ch:6.4,fi:4.1,ca:120,fe:3.6,mg:81,k2:370,na:6,zn:1.8,fo:76,se:0.1,col:0,src:"BDA"},
 {n:"Seitan (glutine di grano)",c:"Legumi",k:128,p:25.0,gs:0.1,g:2.4,z:0,ch:1.2,fi:0.6,ca:80,fe:2.2,mg:18,k2:50,na:340,zn:0.5,fo:40,se:25,col:0,src:"CREA"},
 {n:"Rucola cruda",c:"Verdure",k:30,p:2.6,gs:0.1,g:0.3,z:3.9,ch:3.9,fi:0.9,ca:309,fe:5.2,mg:47,k2:468,na:27,zn:0.5,fo:52,se:0.3,col:0,src:"CREA"},
@@ -851,7 +854,8 @@ const DB_CREA=[
 {n:"Lattuga iceberg",c:"Verdure",k:22,p:1.5,gs:0,g:0.2,z:3,ch:3,fi:1.3,ca:53,fe:1.2,mg:7,k2:141,na:10,zn:0.2,fo:24,se:0.3,col:0,src:"CREA"},
 {n:"Fiocchi di frumento integrali",c:"Cereali da colazione",k:340,p:12.0,gs:0.3,g:2.2,z:3.0,ch:68.5,fi:7.5,ca:35,fe:3.0,mg:96,k2:340,na:10,zn:2.0,fo:35,se:35,col:0,src:"CREA"},
 {n:"Castagne lesse (bollite)",c:"Frutta secca",k:130,p:2.5,gs:0.245,g:1.3,z:7.5,ch:26.1,fi:5.4,ca:46,fe:1.73,mg:54,k2:715,na:27,zn:0.25,fo:38,se:0,col:0,src:"BDA"},
-{n:"Frumento soffiato",c:"Cereali da colazione",k:356,p:11.0,gs:0.2,g:1.5,z:1.5,ch:76.0,fi:4.0,ca:25,fe:3.0,mg:40,k2:140,na:2,zn:1.0,fo:140,se:5,col:0,src:"CREA"},
+// Fosforo (cereale integrale, ~140mg) era nel campo folati; folati reali frumento non fortificato ~30mcg - 2026-07-29
+{n:"Frumento soffiato",c:"Cereali da colazione",k:356,p:11.0,gs:0.2,g:1.5,z:1.5,ch:76.0,fi:4.0,ca:25,fe:3.0,mg:40,k2:140,na:2,zn:1.0,fo:30,se:5,col:0,src:"CREA"},
 {n:"Olio di oliva vergine",c:"Grassi",k:899,p:0,gs:15.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.2,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di sansa di oliva",c:"Grassi",k:899,p:0,gs:16.32,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Cumino (semi macinati)",c:"Spezie e aromi",k:419,p:17.8,gs:0.72,g:22.3,z:33.7,ch:33.7,fi:10.5,ca:931,fe:66.4,mg:931,k2:1788,na:168,zn:4.8,fo:0,se:5,col:0,src:"BDA"},

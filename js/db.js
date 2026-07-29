@@ -472,9 +472,12 @@ const DB_CREA=[
   {n:"Funghi porcini freschi",c:"Verdure",k:31,p:3.9,gs:0.1,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:12,k2:235,na:52,zn:0.7,fo:60,se:2,col:0,src:"CREA"},
   // Folati (680mcg) troppo alti per un fungo (fonti concordano su folati modesti anche per specie essiccate, <100mcg): corretto a 25mcg. NOTA: kcal (31) sembra quello del porcino FRESCO non essiccato (i secchi tipicamente 250-350kcal) - da verificare in futuro - 2026-07-29
   {n:"Funghi porcini secchi",c:"Verdure",k:31,p:3.9,gs:1.2,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:96,k2:235,na:52,zn:5.5,fo:25,se:14,col:0,src:"CREA"},
-  {n:"Finferli / Galletti freschi",c:"Verdure",k:20,p:1.5,gs:0.1,g:0.5,z:1.0,ch:1.5,fi:3.0,ca:15,fe:0.6,mg:12,k2:506,na:15,zn:0.5,fo:60,se:2,col:0,src:"CREA"},
-  {n:"Pleurotus / Funghi ostrica freschi",c:"Verdure",k:33,p:3.3,gs:0.2,g:0.4,z:2.0,ch:6.0,fi:2.3,ca:3,fe:1.3,mg:18,k2:420,na:18,zn:0.8,fo:120,se:2,col:0,src:"CREA"},
-  {n:"Cardoncelli / Funghi reale secchi",c:"Verdure",k:25,p:1.7,gs:0.1,g:0.4,z:1.5,ch:4.5,fi:2.5,ca:5,fe:1.1,mg:14,k2:340,na:12,zn:0.6,fo:80,se:2,col:0,src:"CREA"},
+  // Fosforo (57mg, match esatto USDA finferli) era nel campo folati; folati reali finferli/chanterelle ~2-6mcg - 2026-07-29
+  {n:"Finferli / Galletti freschi",c:"Verdure",k:20,p:1.5,gs:0.1,g:0.5,z:1.0,ch:1.5,fi:3.0,ca:15,fe:0.6,mg:12,k2:506,na:15,zn:0.5,fo:5,se:2,col:0,src:"CREA"},
+  // Fosforo (120mg, match esatto USDA funghi ostrica) era nel campo folati; folati reali ~38mcg - 2026-07-29
+  {n:"Pleurotus / Funghi ostrica freschi",c:"Verdure",k:33,p:3.3,gs:0.2,g:0.4,z:2.0,ch:6.0,fi:2.3,ca:3,fe:1.3,mg:18,k2:420,na:18,zn:0.8,fo:38,se:2,col:0,src:"CREA"},
+  // Fosforo (~85mg, match USDA cardoncelli/king oyster) era nel campo folati; folati reali ~17mcg - 2026-07-29
+  {n:"Cardoncelli / Funghi reale secchi",c:"Verdure",k:25,p:1.7,gs:0.1,g:0.4,z:1.5,ch:4.5,fi:2.5,ca:5,fe:1.1,mg:14,k2:340,na:12,zn:0.6,fo:17,se:2,col:0,src:"CREA"},
   {n:"Tartufo nero (Tuber melanosporum)",c:"Verdure",k:48,p:6,gs:0.4,g:0.5,z:0.7,ch:0.7,fi:8.4,ca:24,fe:3.5,mg:15,k2:530,na:50,zn:0.8,fo:100,se:3,col:0,src:"CREA"},
   // ── FRUTTA SPECIALE ──
   {n:"Fichi d'India (fico d'India) freschi",c:"Frutta fresca",k:63,p:0.8,gs:0.1,g:0.1,z:13,ch:13,fi:5,ca:30,fe:0.4,mg:85,k2:190,na:1,zn:0.1,fo:24,se:1,col:0,src:"CREA"},

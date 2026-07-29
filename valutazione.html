@@ -2000,17 +2000,18 @@ function calcolaCirconferenze() {
   if (!res) return;
   const results = [];
 
-  // 1. US Navy (Hodgdon & Beckett, 1984) — richiede vita, collo, altezza (+ fianchi per F)
+  // 1. US Navy (Hodgdon & Beckett, 1984) — coefficienti calibrati in POLLICI: le misure (cm) vanno convertite prima di applicarli, altrimenti il risultato è gonfiato di parecchi punti percentuali - 2026-07-29
   if (alt > 0 && vita > 0 && collo > 0) {
-    if (sesso === 'M' && vita > collo) {
-      const bf = 495 / (1.0324 - 0.19077 * Math.log10(vita - collo) + 0.15456 * Math.log10(alt)) - 450;
+    const alt_in = alt / 2.54, vita_in_navy = vita / 2.54, collo_in = collo / 2.54, fianchi_in_navy = fianchi / 2.54;
+    if (sesso === 'M' && vita_in_navy > collo_in) {
+      const bf = 495 / (1.0324 - 0.19077 * Math.log10(vita_in_navy - collo_in) + 0.15456 * Math.log10(alt_in)) - 450;
       if (bf > 2 && bf < 65) {
         const fm = peso ? peso * bf / 100 : null;
         results.push({ label: 'US Navy (Hodgdon & Beckett, 1984)', sites: 'Vita + Collo + Altezza', bf, fm, lm: fm && peso ? peso - fm : null });
       }
     }
-    if (sesso === 'F' && vita > 0 && fianchi > 0 && collo > 0 && (vita + fianchi) > collo) {
-      const bf = 495 / (1.29579 - 0.35004 * Math.log10(vita + fianchi - collo) + 0.22100 * Math.log10(alt)) - 450;
+    if (sesso === 'F' && vita > 0 && fianchi > 0 && collo > 0 && (vita_in_navy + fianchi_in_navy) > collo_in) {
+      const bf = 495 / (1.29579 - 0.35004 * Math.log10(vita_in_navy + fianchi_in_navy - collo_in) + 0.22100 * Math.log10(alt_in)) - 450;
       if (bf > 2 && bf < 65) {
         const fm = peso ? peso * bf / 100 : null;
         results.push({ label: 'US Navy (Hodgdon & Beckett, 1984)', sites: 'Vita + Fianchi + Collo + Altezza', bf, fm, lm: fm && peso ? peso - fm : null });
@@ -2018,13 +2019,14 @@ function calcolaCirconferenze() {
     }
   }
 
-  // 2. YMCA (Golding et al.) — richiede vita e peso
+  // 2. YMCA (Golding et al.) — richiede vita e peso. Formula corretta: (4.15*vita_in - 0.082*peso_lb - costante) / peso_lb * 100 — mancava la divisione per il peso finale, che quasi raddoppiava il risultato - 2026-07-29
   if (vita > 0 && peso > 0) {
     const vita_in = vita / 2.54;
     const peso_lb = peso / 0.453592;
-    const bf = sesso === 'M'
-      ? -98.42 + 4.15 * vita_in - 0.082 * peso_lb
-      : -76.76 + 4.15 * vita_in - 0.082 * peso_lb;
+    const raw = sesso === 'M'
+      ? 4.15 * vita_in - 0.082 * peso_lb - 98.42
+      : 4.15 * vita_in - 0.082 * peso_lb - 76.76;
+    const bf = (raw / peso_lb) * 100;
     if (bf > 2 && bf < 65) {
       const fm = peso * bf / 100;
       results.push({ label: 'YMCA (Golding et al.)', sites: 'Vita + Peso', bf, fm, lm: peso - fm });

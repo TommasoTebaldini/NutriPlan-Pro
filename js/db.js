@@ -831,7 +831,8 @@ const DB_CREA=[
 {n:"Ciliegie fresche",c:"Frutta fresca",k:50,p:1,gs:0.1,g:0.3,z:8.5,ch:12,fi:1.6,ca:13,fe:0.4,mg:11,k2:222,na:3,zn:0.07,fo:21,se:0,col:0,src:"CREA"},
 {n:"Prugne fresche",c:"Frutta fresca",k:45,p:0.5,gs:0,g:0.1,z:10.5,ch:10.5,fi:1.5,ca:13,fe:0.2,mg:7,k2:190,na:2,zn:0.1,fo:16,se:0,col:0,src:"CREA"},
 {n:"Melograno (chicchi)",c:"Frutta fresca",k:83,p:1.7,gs:0.1,g:1.2,z:13.7,ch:19,fi:4,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.35,fo:36,se:0.5,col:0,src:"CREA"},
-{n:"Mirtilli rossi (cranberry)",c:"Frutta fresca",k:46,p:0.4,gs:0,g:0.1,z:4,ch:12,fi:4.6,ca:8,fe:0.2,mg:6,k2:85,na:2,zn:0.1,fo:11,se:0.1,col:0,src:"CREA"},
+// Minerali aggiornati su fonte generica convergente (kcal/sodio gia esatti): potassio, calcio, ferro erano sottostimati — 2026-07-29
+{n:"Mirtilli rossi (cranberry)",c:"Frutta fresca",k:46,p:0.4,gs:0,g:0.1,z:4,ch:12,fi:4.6,ca:41,fe:0.7,mg:6,k2:160,na:2,zn:0.1,fo:11,se:0.1,col:0,src:"CREA"},
 {n:"Anguria",c:"Frutta fresca",k:30,p:0.6,gs:0,g:0.2,z:6.2,ch:7.6,fi:0.4,ca:7,fe:0.2,mg:10,k2:112,na:1,zn:0.1,fo:11,se:0.4,col:0,src:"CREA"},
 {n:"Melone giallo Cantalupo",c:"Frutta fresca",k:34,p:0.8,gs:0,g:0.2,z:7.4,ch:7.4,fi:0.7,ca:19,fe:0.3,mg:12,k2:333,na:8,zn:0.18,fo:15,se:0.4,col:0,src:"CREA"},
 {n:"More fresche",c:"Frutta fresca",k:43,p:1.4,gs:0,g:0.5,z:4.9,ch:9.6,fi:5.3,ca:29,fe:0.6,mg:20,k2:162,na:1,zn:0.53,fo:22,se:0.4,col:0,src:"CREA"},

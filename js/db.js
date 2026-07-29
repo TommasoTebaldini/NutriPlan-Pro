@@ -34,7 +34,8 @@ const DB_CREA=[
 {n:"Riso bianco crudo",c:"Cereali e pasta",k:334,p:6.7,gs:0.1,g:0.4,z:0.2,ch:80.4,fi:1,ca:24,fe:0.8,mg:20,k2:92,na:5,zn:1.3,fo:100,se:10,col:0,src:"CREA"},
 {n:"Riso integrale crudo",c:"Cereali e pasta",k:341,p:7.5,gs:0.3,g:1.9,z:1.2,ch:77.4,fi:1.9,ca:32,fe:1.6,mg:143,k2:214,na:9,zn:2,fo:221,se:14,col:0,src:"CREA"},
 {n:"Farro perlato crudo",c:"Cereali e pasta",k:353,p:14.6,gs:0.2,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:387,se:7,col:0,src:"CREA"},
-{n:"Quinoa cruda",c:"Cereali e pasta",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:457,se:8.5,col:0,src:"CREA"},
+// Fosforo (457mg, confermato da fonte USDA) era nel campo folati; corretto a 184mcg (folati reali, coerente con l'altra voce Quinoa rossa gia corretta) - 2026-07-29
+{n:"Quinoa cruda",c:"Cereali e pasta",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:184,se:8.5,col:0,src:"CREA"},
 {n:"Orzo perlato crudo",c:"Cereali e pasta",k:346,p:9.4,gs:0.37,g:1.5,z:1.5,ch:73.7,fi:9.2,ca:21,fe:1.1,mg:46,k2:179,na:3,zn:1.15,fo:240,se:37,col:0,src:"CREA"},
 {n:"Gamberi",c:"Crostacei",k:71,p:13.6,gs:0.2,g:0.6,z:2.9,ch:2.9,fi:0,ca:110,fe:1.8,mg:39,k2:266,na:146,zn:1.9,fo:349,se:30,col:150,src:"CREA"},
 {n:"Cioccolato fondente (>70%)",c:"Dolci",k:531,p:6.6,gs:20.8,g:33.6,z:49.7,ch:49.7,fi:8,ca:51,fe:5,mg:270,k2:300,na:11,zn:3.3,fo:310,se:4,col:0,src:"CREA"},
@@ -314,8 +315,10 @@ const DB_CREA=[
 {n:"Scorzonera",c:"Verdure",k:53,p:1.3,gs:0.07,g:0.3,z:1.5,ch:10.2,fi:3.2,ca:42,fe:0.9,mg:23,k2:310,na:5,zn:0.2,fo:57,se:0.5,col:0,src:"BDA"},
 // ── CEREALI aggiuntivi ──
 {n:"Grano saraceno crudo",c:"Cereali",k:329,p:12.4,gs:0.71,g:3.3,z:2.6,ch:61.2,fi:10,ca:110,fe:4,mg:231,k2:450,na:1,zn:2.4,fo:347,se:8,col:0,src:"CREA"},
-{n:"Quinoa rossa cruda",c:"Cereali",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:457,se:8.5,col:0,src:"CREA"},
-{n:"Quinoa nera cruda",c:"Cereali",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:457,se:8.5,col:0,src:"CREA"},
+// Stesso bug fosforo-in-folati - 2026-07-29
+{n:"Quinoa rossa cruda",c:"Cereali",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:184,se:8.5,col:0,src:"CREA"},
+// Stesso bug fosforo-in-folati - 2026-07-29
+{n:"Quinoa nera cruda",c:"Cereali",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:184,se:8.5,col:0,src:"CREA"},
 {n:"Kamut (frumento khorasan) crudo",c:"Cereali",k:337,p:14.7,gs:0.4,g:2.6,z:1.8,ch:70.2,fi:9.1,ca:34,fe:3.8,mg:153,k2:446,na:5,zn:3.7,fo:443,se:11,col:0,src:"CREA"},
 {n:"Spelta (farro grande) cruda",c:"Cereali",k:353,p:14.6,gs:0.3,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:401,se:11,col:0,src:"CREA"},
 {n:"Farro monococco crudo",c:"Cereali",k:353,p:14.6,gs:0.4,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:375,se:8,col:0,src:"CREA"},
@@ -1388,7 +1391,8 @@ const DB_BDA=[
   {n:"Radicchio",c:"Verdure",src:"CREA",k:19,p:1.4,ch:2.0,g:0.2,fi:1.5,ca:37,fe:0.6,mg:13,k2:302,na:22,zn:0.3,fo:24,se:1,col:0},
   // ── CEREALI e DERIVATI ──
   {n:"Farro perlato secco",c:"Cereali",src:"CREA",k:353,p:14.6,ch:69.3,g:2.4,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:310,se:7,col:0},
-  {n:"Sorgo",c:"Cereali",src:"BDA",k:339,p:11.3,ch:74.6,g:3.3,fi:6.3,ca:28,fe:4.4,mg:165,k2:350,na:6,zn:1.7,fo:289,se:7,col:0},
+  // Stesso bug fosforo-in-folati (fonte confermata: fosforo reale 287mg, corrisponde esattamente) - 2026-07-29
+  {n:"Sorgo",c:"Cereali",src:"BDA",k:339,p:11.3,ch:74.6,g:3.3,fi:6.3,ca:28,fe:4.4,mg:165,k2:350,na:6,zn:1.7,fo:20,se:7,col:0},
   {n:"Miglio",c:"Cereali",src:"CREA",k:343,p:11.8,ch:64.9,g:3.9,fi:8.5,ca:8,fe:3,mg:114,k2:195,na:5,zn:1.7,fo:285,se:2.7,col:0},
   {n:"Grano saraceno",c:"Cereali",src:"CREA",k:329,p:12.4,ch:61.2,g:3.3,fi:10,ca:110,fe:4,mg:231,k2:450,na:1,zn:2.4,fo:347,se:8,col:0},
   {n:"Amaranto",c:"Cereali",z:1.7,gs:1.46,src:"BDA",k:351,p:13.6,ch:58.6,g:7,fi:6.7,ca:159,fe:7.6,mg:248,k2:508,na:4,zn:2.87,fo:82,se:18.7,col:0},
@@ -1399,7 +1403,8 @@ const DB_BDA=[
   {n:"Coppa capocollo",c:"Carni e derivati",src:"BDA",k:450,p:20.8,gs:13.176,g:40.2,z:1.4,ch:1.4,fi:0,ca:25,fe:1,mg:23,k2:433,na:1524,zn:3.5,fo:2,se:7,col:96},
   {n:"Pancetta tesa",c:"Carni e derivati",src:"BDA",k:336,p:20.9,gs:9.61,g:28.1,z:0,ch:0,fi:0,ca:10,fe:0.4,mg:11,k2:149,na:1016,zn:1,fo:3,se:7,col:80},
   {n:"Lardo",c:"Carni e derivati",src:"BDA",k:891,p:0,gs:33.12,g:99,z:0,ch:0,fi:0,ca:1,fe:0.1,mg:1,k2:1,na:2,zn:0,fo:0,se:0,col:95},
-  {n:"Culatello",c:"Carni e derivati",src:"BDA",k:253,p:27,gs:4.5,g:15.5,z:0,ch:0,fi:0,ca:14,fe:1.7,mg:25,k2:440,na:2200,zn:2.5,fo:220,se:20,col:72},
+  // Stesso bug fosforo-in-folati degli altri salumi (vedi commit 48952f7) - 2026-07-29
+  {n:"Culatello",c:"Carni e derivati",src:"BDA",k:253,p:27,gs:4.5,g:15.5,z:0,ch:0,fi:0,ca:14,fe:1.7,mg:25,k2:440,na:2200,zn:2.5,fo:5,se:20,col:72},
   {n:"Salsiccia stagionata",c:"Carni e derivati",src:"BDA",k:420,p:24,gs:13,g:36,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:20,k2:300,na:2000,zn:2,fo:5,se:20,col:85},
   // ── CEREALI BDA aggiuntivi ──
   {n:"Pane multicereali",c:"Cereali e derivati",src:"BDA",k:262,p:9,gs:0.5,g:3,z:3.5,ch:47.5,fi:6,ca:80,fe:2.2,mg:55,k2:190,na:460,zn:1.4,fo:150,se:22,col:0},
@@ -1668,7 +1673,8 @@ const DB_BDA=[
   {n:"Crème fraîche (40% grassi)",c:"Latticini",src:"BDA",k:381,p:2.0,gs:23.0,g:40.0,z:3.1,ch:3.1,fi:0,ca:55,fe:0.1,mg:9,k2:90,na:35,zn:0.2,fo:55,se:2,col:137},
 
   // ── CEREALI ALTERNATIVI COTTI ──
-  {n:"Avena cruda (chicchi interi)",c:"Cereali",src:"CREA",k:389,p:16.9,gs:1.2,g:6.9,z:1.0,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:3.97,fo:523,se:34,col:0},
+  // Fosforo (523mg, confermato USDA) era nel campo folati; corretto a 56mcg (folati reali avena) - 2026-07-29
+  {n:"Avena cruda (chicchi interi)",c:"Cereali",src:"CREA",k:389,p:16.9,gs:1.2,g:6.9,z:1.0,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:3.97,fo:56,se:34,col:0},
   {n:"Miglio crudo (chicchi)",c:"Cereali",src:"CREA",k:378,p:11.0,gs:0.9,g:4.2,z:1.0,ch:72.9,fi:8.5,ca:8,fe:3.0,mg:114,k2:195,na:5,zn:1.7,fo:85,se:2.7,col:0},
   {n:"Sorgo crudo (chicchi)",c:"Cereali",src:"CREA",k:339,p:11.3,gs:0.6,g:3.3,z:2.0,ch:74.6,fi:6.7,ca:28,fe:4.4,mg:165,k2:350,na:6,zn:1.7,fo:287,se:10,col:0},
   {n:"Teff crudo (grano etiope)",c:"Cereali",src:"BDA",k:367,p:13.3,gs:0.7,g:2.4,z:1.8,ch:73.1,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:272,se:8,col:0},
@@ -1748,7 +1754,8 @@ const DB_BDA=[
 
   // ── CEREALI AGGIUNTIVI ──
   {n:"Segale integrale cruda",c:"Cereali e pasta",src:"BDA",k:314,p:10.3,gs:0.19,g:1.6,z:1,ch:60.8,fi:15.1,ca:24,fe:2.6,mg:110,k2:510,na:2,zn:2.65,fo:38,se:13.9,col:0},
-  {n:"Avena grains (chicchi interi)",c:"Cereali e pasta",src:"CREA",k:389,p:16.9,gs:1.3,g:6.9,z:0.9,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:4.0,fo:523,se:34,col:0},
+  // Stesso bug fosforo-in-folati - 2026-07-29
+  {n:"Avena grains (chicchi interi)",c:"Cereali e pasta",src:"CREA",k:389,p:16.9,gs:1.3,g:6.9,z:0.9,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:4.0,fo:56,se:34,col:0},
 
   // ── BEVANDE AGGIUNTIVE ──
   {n:"Cappuccino (latte intero + caffè)",c:"Bevande",src:"CREA",k:40,p:1.8,gs:0.9,g:1.6,z:2.4,ch:2.4,fi:0,ca:65,fe:0.1,mg:7,k2:85,na:22,zn:0.2,fo:52,se:1,col:6},

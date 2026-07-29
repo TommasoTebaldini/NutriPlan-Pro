@@ -543,7 +543,8 @@ const DB_CREA=[
   {n:"Roveja (pisello selvatico umbro) secca",c:"Legumi",k:320,p:22,gs:0.3,g:1.5,z:6.0,ch:57,fi:10,ca:75,fe:6.0,mg:88,k2:920,na:4,zn:2.5,fo:360,se:6,col:0,src:"CREA"},
   {n:"Ceci neri / Cicerchie nere secche",c:"Legumi",k:318,p:21,gs:0.5,g:1.8,z:6.0,ch:56,fi:11,ca:95,fe:7.5,mg:100,k2:1000,na:3,zn:3.0,fo:420,se:7,col:0,src:"CREA"},
   {n:"Uovo sodo intero",c:"Uova",k:128,p:12.4,gs:3.17,g:8.7,z:0,ch:0,fi:0,ca:48,fe:1.5,mg:13,k2:133,na:137,zn:1.2,fo:39,se:5.8,col:371,src:"BDA"},
-  {n:"Verdure miste",c:"Verdure",k:30,p:2.0,gs:0.1,g:0.3,z:3.5,ch:5.0,fi:2.5,ca:40,fe:1.0,mg:20,k2:290,na:30,zn:0.4,fo:50,se:1,col:0,src:"CREA"},
+// Kcal/carboidrati erano sottostimati (mix surgelato con mais/piselli tipicamente ~60-65kcal, non 30) — corretto su fonte generica dettagliata coerente (2.9p/13.1ch/4.4fi -> ~64kcal) — 2026-07-29
+  {n:"Verdure miste",c:"Verdure",k:64,p:2.9,gs:0.1,g:0.1,z:3.1,ch:13.1,fi:4.4,ca:40,fe:1.0,mg:20,k2:290,na:30,zn:0.4,fo:50,se:1,col:0,src:"CREA"},
   // ── PANE E DERIVATI — denominazioni CREA mancanti ──
   {n:"Pane comune",c:"Pane",k:269,p:8.4,gs:0.04,g:0.4,z:2,ch:59.8,fi:3.8,ca:15,fe:1,mg:15,k2:104,na:600,zn:0.37,fo:29,se:2,col:0,src:"BDA"},
   {n:"Grissini",c:"Pane",k:421,p:11.3,gs:1.2,g:13.9,z:2.2,ch:65.1,fi:3.5,ca:13,fe:2.3,mg:20,k2:95,na:660,zn:0.6,fo:90,se:8,col:0,src:"CREA"},

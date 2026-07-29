@@ -42,8 +42,8 @@ const DB_CREA=[
 {n:"Miele millefiori",c:"Dolci",k:304,p:0.6,gs:0,g:0,z:80.3,ch:80.3,fi:0,ca:5,fe:0.5,mg:3,k2:51,na:11,zn:0.1,fo:4,se:1,col:0,src:"CREA"},
 {n:"Mozzarella vaccina",c:"Formaggi",k:253,p:18.7,gs:12.5,g:19.5,z:0.7,ch:0.7,fi:0,ca:350,fe:0.4,mg:10,k2:145,na:200,zn:2.6,fo:350,se:2.5,col:46,src:"CREA"},
 {n:"Ricotta vaccina",c:"Formaggi",k:146,p:8.8,gs:7.41,g:10.9,z:3.5,ch:3.5,fi:0,ca:295,fe:0.4,mg:17,k2:119,na:78,zn:0.5,fo:237,se:3.9,col:57,src:"CREA"},
-{n:"Parmigiano Reggiano",c:"Formaggi",k:397,p:32.4,gs:19.6,g:29.7,z:0,ch:0,fi:0,ca:1159,fe:0.2,mg:43,k2:102,na:600,zn:4,fo:692,se:12,col:83,src:"CREA"},
-{n:"Grana Padano",c:"Formaggi",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:692,se:12,col:98,src:"CREA"},
+{n:"Parmigiano Reggiano",c:"Formaggi",k:397,p:32.4,gs:19.6,g:29.7,z:0,ch:0,fi:0,ca:1159,fe:0.2,mg:43,k2:102,na:600,zn:4,fo:7,se:12,col:83,src:"CREA"},
+{n:"Grana Padano",c:"Formaggi",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:7,se:12,col:98,src:"CREA"},
 {n:"Mela",c:"Frutta fresca",k:44,p:0.2,gs:0,g:0,z:10,ch:10,fi:2.6,ca:2,fe:0.1,mg:5,k2:76,na:2,zn:0.04,fo:6,se:0,col:0,src:"CREA"},
 {n:"Banana",c:"Frutta fresca",k:76,p:1.2,gs:0.1,g:0.3,z:14.8,ch:17.4,fi:1.8,ca:7,fe:0.8,mg:27,k2:350,na:1,zn:0.15,fo:28,se:1,col:0,src:"CREA"},
 {n:"Arancia",c:"Frutta fresca",k:37,p:0.7,gs:0.025,g:0.2,z:7.8,ch:7.8,fi:1.6,ca:49,fe:0.2,mg:10,k2:200,na:3,zn:0.2,fo:31,se:1,col:0,src:"BDA"},
@@ -53,7 +53,7 @@ const DB_CREA=[
 {n:"Avocado",c:"Frutta lipidica",k:238,p:4.4,gs:2.59,g:23,z:1.8,ch:1.8,fi:3.3,ca:13,fe:0.6,mg:29,k2:450,na:2,zn:0.64,fo:44,se:0.4,col:0,src:"CREA"},
 {n:"Mandorle dolci secche",c:"Frutta secca",k:628,p:22,gs:4.63,g:55.3,z:3.7,ch:4.6,fi:12.7,ca:240,fe:3,mg:264,k2:780,na:14,zn:2.5,fo:550,se:1.5,col:0,src:"CREA"},
 {n:"Noci",c:"Frutta secca",k:589,p:10.5,gs:5.6,g:57.7,z:3.4,ch:5.5,fi:3.5,ca:131,fe:2.6,mg:131,k2:368,na:3,zn:2.7,fo:380,se:3.1,col:0,src:"CREA"},
-{n:"Semi di chia",c:"Frutta secca",k:486,p:17,gs:3.3,g:31,z:0,ch:42,fi:34.4,ca:631,fe:7.4,mg:335,k2:407,na:16,zn:4.6,fo:860,se:55,col:0,src:"CREA"},
+{n:"Semi di chia",c:"Frutta secca",k:486,p:17,gs:3.3,g:31,z:0,ch:42,fi:34.4,ca:631,fe:7.4,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0,src:"CREA"},
 {n:"Burro",c:"Grassi",k:758,p:0.8,gs:54.2,g:83.4,z:1.1,ch:1.1,fi:0,ca:25,fe:0,mg:2,k2:15,na:7,zn:0.09,fo:23,se:1,col:250,src:"CREA"},
 {n:"Burro di arachidi",c:"Grassi",k:625,p:24.9,gs:11.18,g:53.7,z:4.4,ch:8,fi:6,ca:47,fe:2.5,mg:18,k2:680,na:370,zn:3.5,fo:363,se:4,col:0,src:"CREA"},
 {n:"Olio extra vergine di oliva",c:"Grassi",k:899,p:0,gs:15.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.2,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
@@ -63,7 +63,7 @@ const DB_CREA=[
 {n:"Lenticchie secche",c:"Legumi",k:319,p:22.7,gs:0.18,g:1,z:1.8,ch:51.1,fi:13.8,ca:57,fe:8,mg:83,k2:980,na:8,zn:2.9,fo:400,se:10.5,col:0,src:"CREA"},
 {n:"Fagioli borlotti secchi",c:"Legumi",k:312,p:20.2,gs:0.2,g:2,z:3.5,ch:47.7,fi:17.3,ca:102,fe:9,mg:163,k2:1478,na:3,zn:2.9,fo:464,se:16,col:0,src:"CREA"},
 {n:"Tofu naturale",c:"Legumi",k:81,p:8.1,gs:0.07,g:4.8,z:0,ch:0.7,fi:1.2,ca:105,fe:5.4,mg:30,k2:121,na:7,zn:0.8,fo:15,se:8,col:0,src:"BDA"},
-{n:"Soia secca",c:"Legumi",k:430,p:36.9,gs:2,g:19.1,z:11,ch:23.2,fi:11.9,ca:257,fe:6.9,mg:280,k2:1740,na:4,zn:4.9,fo:700,se:17,col:0,src:"CREA"},
+{n:"Soia secca",c:"Legumi",k:430,p:36.9,gs:2,g:19.1,z:11,ch:23.2,fi:11.9,ca:257,fe:6.9,mg:280,k2:1740,na:4,zn:4.9,fo:375,se:17,col:0,src:"CREA"},
 {n:"Pane bianco",c:"Pane",k:271,p:8.1,gs:0.1,g:0.5,z:2,ch:59.5,fi:3.8,ca:17,fe:0.7,mg:25,k2:120,na:293,zn:0.7,fo:77,se:15,col:0,src:"CREA"},
 {n:"Pane integrale",c:"Pane",k:224,p:8.5,gs:0.3,g:1.3,z:2,ch:44.1,fi:6.5,ca:25,fe:2.5,mg:75,k2:198,na:511,zn:1.5,fo:180,se:25,col:0,src:"CREA"},
 {n:"Pane di segale",c:"Pane",k:228,p:8.3,gs:0.3,g:1.7,z:1.8,ch:45.4,fi:4.6,ca:80,fe:2.5,mg:60,k2:190,na:580,zn:1.5,fo:200,se:18,col:0,src:"CREA"},
@@ -97,7 +97,7 @@ const DB_CREA=[
 // ── FORMAGGI aggiuntivi ──
 {n:"Burrata",c:"Formaggi",k:287,p:12.14,gs:15.0054,g:25.7,z:1.78,ch:1.78,fi:0,ca:127.2,fe:0.24,mg:8.8,k2:127,na:133.6,zn:1.68,fo:12.4,se:1.8,col:69.6,src:"BDA"},
 {n:"Feta",c:"Formaggi",k:250,p:15.6,gs:14.9,g:20.2,z:1.5,ch:1.5,fi:0,ca:360,fe:0.2,mg:19,k2:95,na:1440,zn:2.9,fo:280,se:15,col:68,src:"CREA"},
-{n:"Pecorino romano",c:"Formaggi",k:409,p:26,gs:17.1,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.5,mg:43,k2:90,na:1800,zn:3,fo:640,se:14,col:90,src:"CREA"},
+{n:"Pecorino romano",c:"Formaggi",k:409,p:26,gs:17.1,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.5,mg:43,k2:90,na:1800,zn:3,fo:18,se:14,col:90,src:"CREA"},
 {n:"Gorgonzola",c:"Formaggi",k:324,p:19.1,gs:17.41,g:27.1,z:1,ch:1,fi:0,ca:401,fe:0.3,mg:20,k2:111,na:600,zn:2.81,fo:326,se:7.3,col:70,src:"CREA"},
 {n:"Provolone dolce",c:"Formaggi",k:374,p:28.1,gs:19.18,g:28.2,z:2,ch:2,fi:0,ca:720,fe:0.5,mg:40,k2:139,na:860,zn:4.16,fo:530,se:13.1,col:73,src:"CREA"},
 {n:"Taleggio",c:"Formaggi",k:315,p:19,gs:12.5,g:26.2,z:0.9,ch:0.9,fi:0,ca:433,fe:0.1,mg:20,k2:89,na:873,zn:2.8,fo:310,se:5,col:76,src:"CREA"},
@@ -239,7 +239,7 @@ const DB_CREA=[
 {n:"Montasio",c:"Formaggi",k:411,p:30.3,gs:18.873,g:32.2,z:0,ch:0,fi:0,ca:870,fe:0.3,mg:37,k2:99,na:757,zn:2.3,fo:12,se:13,col:100,src:"BDA"},
 {n:"Brie",c:"Formaggi",k:320,p:19.3,gs:17.5,g:26.9,z:0.2,ch:0.2,fi:0,ca:540,fe:0.8,mg:20,k2:100,na:700,zn:2.4,fo:350,se:14,col:98,src:"CREA"},
 {n:"Camembert",c:"Formaggi",k:307,p:20.9,gs:15,g:24.7,z:0.2,ch:0.2,fi:0,ca:350,fe:0.2,mg:20,k2:100,na:650,zn:2.4,fo:370,se:14,col:78,src:"CREA"},
-{n:"Gruyère",c:"Formaggi",k:413,p:29.8,gs:17.5,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:81,na:336,zn:3.9,fo:640,se:14,col:104,src:"CREA"},
+{n:"Gruyère",c:"Formaggi",k:413,p:29.8,gs:17.5,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:81,na:336,zn:3.9,fo:10,se:14,col:104,src:"CREA"},
 {n:"Caprino fresco",c:"Formaggi",k:268,p:18.5,gs:11.5,g:21.3,z:0,ch:0.2,fi:0,ca:298,fe:1.9,mg:16,k2:75,na:370,zn:0.9,fo:140,se:4,col:64,src:"CREA"},
 {n:"Robiola",c:"Formaggi",k:338,p:20,gs:13,g:27.7,z:2.3,ch:2.3,fi:0,ca:366,fe:0.3,mg:18,k2:100,na:500,zn:2,fo:310,se:6,col:80,src:"CREA"},
 {n:"Primo Sale",c:"Formaggi",k:223,p:16.8,gs:9.5,g:16.5,z:0.5,ch:0.5,fi:0,ca:400,fe:0.3,mg:16,k2:85,na:620,zn:2.2,fo:280,se:6,col:58,src:"CREA"},
@@ -288,7 +288,7 @@ const DB_CREA=[
 {n:"Seitan",c:"Legumi",k:118,p:25,gs:0.2,g:1.7,z:0,ch:4.3,fi:0.6,ca:142,fe:3.5,mg:18,k2:150,na:660,zn:1.4,fo:108,se:15,col:0,src:"CREA"},
 {n:"Tofu affumicato",c:"Legumi",k:81,p:8.1,gs:0.07,g:4.8,z:0,ch:0.7,fi:1.2,ca:105,fe:5.4,mg:35,k2:121,na:7,zn:0.8,fo:15,se:12,col:0,src:"BDA"},
 // ── SEMI E SUPERFOOD ──
-{n:"Semi di sesamo crudi",c:"Frutta secca",k:573,p:17.7,gs:1.5,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:629,se:34,col:0,src:"CREA"},
+{n:"Semi di sesamo crudi",c:"Frutta secca",k:573,p:17.7,gs:1.5,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:97,se:34,col:0,src:"CREA"},
 {n:"Arachidi crude (non tostate)",c:"Frutta secca",k:567,p:25.8,gs:6.9,g:49.2,z:3.6,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:336,se:7,col:0,src:"CREA"},
 {n:"Spirulina in polvere",c:"Verdure",k:290,p:57.5,gs:0.7,g:7.7,z:2.4,ch:23.9,fi:3.6,ca:120,fe:28.5,mg:195,k2:1363,na:1048,zn:2.0,fo:118,se:7,col:0,src:"CREA"},
 {n:"Bacche di goji secche",c:"Frutta secca",k:349,p:14.3,gs:0.3,g:0.4,z:45.6,ch:77.1,fi:13.0,ca:190,fe:6.8,mg:83,k2:1132,na:298,zn:2.0,fo:67,se:5,col:0,src:"CREA"},
@@ -324,7 +324,7 @@ const DB_CREA=[
 {n:"Segale in chicchi cruda",c:"Cereali",k:335,p:14.8,gs:0.3,g:2.5,z:1.4,ch:69.8,fi:15.1,ca:33,fe:2.7,mg:121,k2:510,na:2,zn:3.7,fo:374,se:35,col:0,src:"CREA"},
 // ── LEGUMI aggiuntivi ──
 {n:"Ceci neri secchi",c:"Legumi",k:343,p:20.9,gs:0.85,g:6.3,z:3.7,ch:46.9,fi:13.6,ca:142,fe:6.4,mg:130,k2:881,na:6,zn:3.2,fo:322,se:2,col:0,src:"CREA"},
-{n:"Fagiolini di soia (edamame secchi)",c:"Legumi",k:471,p:36.5,gs:5.7,g:20.6,z:9.5,ch:30.2,fi:20.6,ca:277,fe:15.7,mg:280,k2:1797,na:15,zn:4.9,fo:704,se:17.3,col:0,src:"CREA"},
+{n:"Fagiolini di soia (edamame secchi)",c:"Legumi",k:471,p:36.5,gs:5.7,g:20.6,z:9.5,ch:30.2,fi:20.6,ca:277,fe:15.7,mg:280,k2:1797,na:15,zn:4.9,fo:375,se:17.3,col:0,src:"CREA"},
 {n:"Fagioli rossi kidney cotti",c:"Legumi",k:127,p:8.7,gs:0.1,g:0.5,z:0.4,ch:22.8,fi:6.4,ca:28,fe:2.9,mg:45,k2:403,na:2,zn:1.1,fo:130,se:1.2,col:0,src:"CREA"},
 {n:"Vigna dall'occhio (Black-eyed peas) secchi",c:"Legumi",k:336,p:23.5,gs:0.3,g:1.3,z:1.7,ch:60.0,fi:10.5,ca:110,fe:8.3,mg:184,k2:1112,na:58,zn:3.4,fo:441,se:9,col:0,src:"CREA"},
 {n:"Mungo secco (fagiolo verde mungo)",c:"Legumi",k:307,p:23.9,gs:0.22,g:1.1,z:1.5,ch:46.3,fi:13.9,ca:89,fe:6,mg:189,k2:1250,na:12,zn:2.7,fo:140,se:8.2,col:0,src:"BDA"},
@@ -426,7 +426,7 @@ const DB_CREA=[
   {n:"Arachidi crude con pellicola",c:"Frutta secca",k:585,p:26,gs:8.886,g:47.2,z:4.5,ch:11.2,fi:7.3,ca:60,fe:3.2,mg:210,k2:670,na:2,zn:3.5,fo:110,se:3,col:0,src:"BDA"},
   {n:"Burro di mandorle",c:"Frutta secca",k:614,p:21.1,gs:4.5,g:55.5,z:5.0,ch:18.8,fi:10.3,ca:347,fe:3.7,mg:303,k2:740,na:7,zn:3.1,fo:481,se:2.6,col:0,src:"CREA"},
   {n:"Burro di sesamo (tahini)",c:"Frutta secca",k:595,p:17.0,gs:7.8,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.5,fo:592,se:34,col:0,src:"CREA"},
-  {n:"Semi di canapa sgusciati",c:"Semi oleosi",k:553,p:31.6,gs:4.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:14,col:0,src:"CREA"},
+  {n:"Semi di canapa sgusciati",c:"Semi oleosi",k:553,p:31.6,gs:4.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:110,se:14,col:0,src:"CREA"},
   {n:"Pistacchi tostati salati",c:"Frutta secca",k:613,p:17.9,gs:6.744,g:55.4,z:5.7,ch:8.2,fi:6.1,ca:110,fe:3,mg:130,k2:1040,na:530,zn:2.2,fo:58,se:6,col:0,src:"BDA"},
   // ── GRASSI E OLI MANCANTI ──
   {n:"Olio di cocco vergine",c:"Grassi",k:899,p:0,gs:91.85,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
@@ -517,7 +517,7 @@ const DB_CREA=[
   {n:"Za'atar (mix spezie mediorientali)",c:"Spezie",k:300,p:10,gs:0.8,g:7.5,z:25,ch:41,fi:16,ca:350,fe:8.0,mg:130,k2:970,na:90,zn:2.0,fo:200,se:5,col:0,src:"CREA"},
   {n:"Ras el hanout (miscela spezie nordafricane)",c:"Spezie",k:300,p:8.0,gs:2.0,g:10,z:30,ch:43,fi:12,ca:200,fe:12,mg:150,k2:900,na:60,zn:2.0,fo:180,se:5,col:0,src:"CREA"},
   {n:"Berbere (miscela spezie etiope)",c:"Spezie",k:325,p:12,gs:3.5,g:14,z:28,ch:42,fi:15,ca:200,fe:10,mg:120,k2:850,na:100,zn:2.5,fo:160,se:5,col:0,src:"CREA"},
-  {n:"Gommasio (sesamo tostato e sale)",c:"Condimenti",k:580,p:18,gs:7.0,g:50,z:2.0,ch:22,fi:12,ca:975,fe:14,mg:350,k2:410,na:3500,zn:7.0,fo:629,se:34,col:0,src:"CREA"},
+  {n:"Gommasio (sesamo tostato e sale)",c:"Condimenti",k:580,p:18,gs:7.0,g:50,z:2.0,ch:22,fi:12,ca:975,fe:14,mg:350,k2:410,na:3500,zn:7.0,fo:97,se:34,col:0,src:"CREA"},
   {n:"Fleur de sel (sale marino grezzo)",c:"Condimenti",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0.3,mg:90,k2:89,na:39300,zn:0.1,fo:0,se:0,col:0,src:"BDA"},
   // ── ALIMENTI A BASE DI INSETTI ──
   {n:"Farina di grillo (Acheta domesticus)",c:"Carni e derivati",k:430,p:65,gs:4.5,g:13,z:4.0,ch:9.5,fi:5.0,ca:75,fe:5.5,mg:59,k2:440,na:300,zn:7.0,fo:930,se:19,col:210,src:"CREA"},
@@ -536,7 +536,7 @@ const DB_CREA=[
   {n:"Labneh (yogurt colato mediorientale)",c:"Latte e derivati",k:195,p:8.0,gs:7.5,g:13,z:4.5,ch:4.5,fi:0,ca:180,fe:0.3,mg:14,k2:170,na:125,zn:1.0,fo:220,se:4,col:32,src:"CREA"},
   {n:"Halloumi (formaggio cipriota grigliabile)",c:"Formaggi",k:321,p:21,gs:14,g:24,z:1.0,ch:1.5,fi:0,ca:720,fe:0.4,mg:27,k2:86,na:1500,zn:2.8,fo:460,se:12,col:80,src:"CREA"},
   {n:"Feta di capra (formaggio greco DOP) al 100%",c:"Formaggi",k:264,p:14,gs:12,g:22,z:4.0,ch:4.0,fi:0,ca:493,fe:0.7,mg:19,k2:138,na:1100,zn:2.9,fo:340,se:15,col:70,src:"CREA"},
-  {n:"Pecorino di Pienza stagionato",c:"Formaggi",k:420,p:27,gs:17,g:33,z:0,ch:1.0,fi:0,ca:1200,fe:0.5,mg:40,k2:95,na:1900,zn:4.0,fo:750,se:16,col:100,src:"CREA"},
+  {n:"Pecorino di Pienza stagionato",c:"Formaggi",k:420,p:27,gs:17,g:33,z:0,ch:1.0,fi:0,ca:1200,fe:0.5,mg:40,k2:95,na:1900,zn:4.0,fo:18,se:16,col:100,src:"CREA"},
   {n:"Castelmagno DOP",c:"Formaggi",k:360,p:22,gs:14,g:28,z:0.5,ch:1.5,fi:0,ca:580,fe:0.5,mg:30,k2:125,na:780,zn:3.2,fo:460,se:10,col:90,src:"CREA"},
   // ── CEREALI E PSEUDOCEREALI ──
   {n:"Farro integrale in chicchi crudo",c:"Cereali e derivati",k:353,p:14.6,gs:0.41,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:31,se:11.7,col:0,src:"BDA"},
@@ -579,7 +579,7 @@ const DB_CREA=[
   {n:"Natto (soia fermentata giapponese)",c:"Legumi",k:214,p:17.7,gs:1.59,g:11,z:0,ch:9,fi:5.4,ca:217,fe:8.6,mg:115,k2:729,na:7,zn:3.03,fo:8,se:9,col:0,src:"BDA"},
   {n:"Crauti (cavolo capuccio fermentato)",c:"Verdure",k:26,p:1.5,gs:0.08,g:0.3,z:4,ch:4,fi:1.1,ca:48,fe:0.6,mg:16,k2:288,na:355,zn:0.4,fo:16,se:1,col:0,src:"BDA"},
   // ── FORMAGGI REGIONALI ITALIANI ──
-  {n:"Caciocavallo stagionato",c:"Formaggi",k:431,p:35.7,gs:17.0,g:31.1,z:2.3,ch:2.3,fi:0,ca:860,fe:0.3,mg:20,k2:80,na:960,zn:3.75,fo:680,se:7.8,col:105,src:"CREA"},
+  {n:"Caciocavallo stagionato",c:"Formaggi",k:431,p:35.7,gs:17.0,g:31.1,z:2.3,ch:2.3,fi:0,ca:860,fe:0.3,mg:20,k2:80,na:960,zn:3.75,fo:20,se:7.8,col:105,src:"CREA"},
   {n:"Provolone piccante",c:"Formaggi",k:399,p:29.4,gs:17.992,g:30.4,z:2,ch:2,fi:0,ca:789,fe:0.7,mg:40,k2:79,na:1927,zn:4.4,fo:10,se:13,col:101,src:"BDA"},
   {n:"Asiago pressato (DOP)",c:"Formaggi",k:352,p:30.8,gs:12.5,g:25.5,z:0,ch:0.3,fi:0,ca:785,fe:0.6,mg:35,k2:105,na:610,zn:3.6,fo:510,se:12,col:80,src:"CREA"},
   {n:"Taleggio DOP",c:"Formaggi",k:315,p:19,gs:12.5,g:26.2,z:0.9,ch:0.9,fi:0,ca:433,fe:0.1,mg:25,k2:89,na:873,zn:2.8,fo:380,se:10,col:78,src:"CREA"},
@@ -660,10 +660,10 @@ const DB_CREA=[
 {n:"Azuki (fagioli rossi) secchi",c:"Legumi",k:294,p:19.9,gs:0.19,g:0.5,z:1,ch:50.1,fi:11.1,ca:84,fe:4.2,mg:120,k2:1220,na:5,zn:5,fo:622,se:1.5,col:0,src:"BDA"},
 {n:"Piselli surgelati",c:"Legumi",k:61,p:5.4,gs:0,g:0.3,z:4,ch:6.5,fi:6.3,ca:20,fe:2,mg:33,k2:150,na:129,zn:1.2,fo:100,se:1.7,col:0,src:"CREA"},
 {n:"Edamame (soia verde)",c:"Legumi",k:121,p:11.9,gs:1.2,g:5.2,z:1.1,ch:8.9,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:6,zn:1.4,fo:161,se:1.2,col:0,src:"CREA"},
-{n:"Semi di girasole",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5,fo:660,se:53,col:0,src:"CREA"},
-{n:"Semi di sesamo",c:"Frutta secca",k:565,p:17.7,gs:7,g:48.7,z:0.3,ch:23.4,fi:11.6,ca:975,fe:14.5,mg:351,k2:468,na:11,zn:7.75,fo:629,se:34,col:0,src:"CREA"},
-{n:"Semi di lino macinati",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0,src:"CREA"},
-{n:"Semi di zucca",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49.1,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:1233,se:9.4,col:0,src:"CREA"},
+{n:"Semi di girasole",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5,fo:227,se:53,col:0,src:"CREA"},
+{n:"Semi di sesamo",c:"Frutta secca",k:565,p:17.7,gs:7,g:48.7,z:0.3,ch:23.4,fi:11.6,ca:975,fe:14.5,mg:351,k2:468,na:11,zn:7.75,fo:97,se:34,col:0,src:"CREA"},
+{n:"Semi di lino macinati",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0,src:"CREA"},
+{n:"Semi di zucca",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49.1,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:58,se:9.4,col:0,src:"CREA"},
 {n:"Anacardi",c:"Frutta secca",k:604,p:15,gs:9.42,g:46,z:5.6,ch:33,fi:3,ca:45,fe:6,mg:260,k2:565,na:16,zn:6,fo:593,se:12,col:0,src:"CREA"},
 {n:"Nocciole",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:290,se:2,col:0,src:"CREA"},
 {n:"Pistacchi (senza guscio)",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:490,se:8,col:0,src:"CREA"},
@@ -806,9 +806,9 @@ const DB_CREA=[
 {n:"Lamponi freschi",c:"Frutta",k:49,p:1,gs:0,g:0.6,z:6.5,ch:6.5,fi:7.4,ca:49,fe:1,mg:22,k2:220,na:3,zn:0.4,fo:29,se:0.2,col:0,src:"CREA"},
 {n:"Ribes rosso fresco",c:"Frutta",k:36,p:1.1,gs:0,g:0,z:4.4,ch:4.4,fi:7.4,ca:36,fe:1.2,mg:13,k2:280,na:2,zn:0.2,fo:8,se:0.6,col:0,src:"BDA"},
 {n:"Melograno (arilli) fresco",c:"Frutta",k:83,p:1.7,gs:0.1,g:1.2,z:13.7,ch:18.7,fi:4.0,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:36,se:0.5,col:0,src:"CREA"},
-{n:"Chia semi crudi",c:"Frutta secca",k:486,p:16.5,gs:3.3,g:30.7,z:0,ch:42.1,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:860,se:55,col:0,src:"CREA"},
-{n:"Semi di lino crudi",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0,src:"CREA"},
-{n:"Semi di canapa sgusciati",c:"Frutta secca",k:553,p:31.6,gs:3.3,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:859,na:5,zn:9.9,fo:1650,se:14,col:0,src:"CREA"},
+{n:"Chia semi crudi",c:"Frutta secca",k:486,p:16.5,gs:3.3,g:30.7,z:0,ch:42.1,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0,src:"CREA"},
+{n:"Semi di lino crudi",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0,src:"CREA"},
+{n:"Semi di canapa sgusciati",c:"Frutta secca",k:553,p:31.6,gs:3.3,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:859,na:5,zn:9.9,fo:110,se:14,col:0,src:"CREA"},
 {n:"Tahina (pasta di sesamo)",c:"Condimenti",k:595,p:17.0,gs:5.5,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:17,zn:4.6,fo:570,se:34,col:0,src:"CREA"},
 {n:"Miso di soia (pasta)",c:"Condimenti",k:199,p:11.7,gs:1.0,g:6.0,z:6.2,ch:26.5,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3728,zn:2.6,fo:159,se:7,col:0,src:"CREA"},
 {n:"Aceto di mele",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.9,ch:0.9,fi:0,ca:7,fe:0.2,mg:5,k2:73,na:5,zn:0,fo:8,se:0.1,col:0,src:"CREA"},
@@ -820,8 +820,8 @@ const DB_CREA=[
 {n:"Aglio fresco crudo",c:"Spezie e aromi",k:45,p:0.9,gs:0.11,g:0.6,z:8.4,ch:8.4,fi:2.3,ca:14,fe:1.5,mg:25,k2:347,na:2,zn:0.56,fo:3,se:14,col:0,src:"BDA"},
 // ── CREA: alimenti mancanti dal confronto con tabelle ufficiali ──
 {n:"Sale da cucina",c:"Condimenti",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0.3,mg:1,k2:89,na:39300,zn:0.1,fo:0,se:0.1,col:0,src:"BDA"},
-{n:"Crusca di frumento",c:"Cereali e derivati",k:290,p:14.1,gs:1.09,g:5.5,z:3.8,ch:26.6,fi:42.4,ca:110,fe:12.9,mg:550,k2:1160,na:28,zn:0.99,fo:1013,se:4.3,col:0,src:"CREA"},
-{n:"Germe di grano (frumento)",c:"Cereali e derivati",k:378,p:26,gs:1.88,g:10,z:0,ch:43.5,fi:10.5,ca:72,fe:10,mg:255,k2:827,na:3,zn:1.22,fo:842,se:3.9,col:0,src:"CREA"},
+{n:"Crusca di frumento",c:"Cereali e derivati",k:290,p:14.1,gs:1.09,g:5.5,z:3.8,ch:26.6,fi:42.4,ca:110,fe:12.9,mg:550,k2:1160,na:28,zn:0.99,fo:79,se:4.3,col:0,src:"CREA"},
+{n:"Germe di grano (frumento)",c:"Cereali e derivati",k:378,p:26,gs:1.88,g:10,z:0,ch:43.5,fi:10.5,ca:72,fe:10,mg:255,k2:827,na:3,zn:1.22,fo:281,se:3.9,col:0,src:"CREA"},
 {n:"Lattuga iceberg",c:"Verdure",k:22,p:1.5,gs:0,g:0.2,z:3,ch:3,fi:1.3,ca:53,fe:1.2,mg:7,k2:141,na:10,zn:0.2,fo:24,se:0.3,col:0,src:"CREA"},
 {n:"Fiocchi di frumento integrali",c:"Cereali da colazione",k:340,p:12.0,gs:0.3,g:2.2,z:3.0,ch:68.5,fi:7.5,ca:35,fe:3.0,mg:96,k2:340,na:10,zn:2.0,fo:290,se:35,col:0,src:"CREA"},
 {n:"Castagne lesse (bollite)",c:"Frutta secca",k:130,p:2.5,gs:0.245,g:1.3,z:7.5,ch:26.1,fi:5.4,ca:46,fe:1.73,mg:54,k2:715,na:27,zn:0.25,fo:38,se:0,col:0,src:"BDA"},
@@ -834,13 +834,13 @@ const DB_CREA=[
 {n:"Fieno greco (semi)",c:"Spezie e aromi",k:323,p:23.0,gs:0.9,g:6.4,z:0,ch:58.4,fi:24.6,ca:176,fe:33.5,mg:191,k2:770,na:67,zn:2.5,fo:296,se:6,col:0,src:"CREA"},
 {n:"Pepe bianco macinato",c:"Spezie e aromi",k:296,p:10.4,gs:0.4,g:2.1,z:0,ch:68.6,fi:26.2,ca:265,fe:14.3,mg:90,k2:1259,na:5,zn:1.1,fo:176,se:3,col:0,src:"CREA"},
 {n:"Rafano fresco (radice, cren)",c:"Verdure",k:48,p:1.2,gs:0,g:0.5,z:7.2,ch:11.3,fi:3.3,ca:56,fe:0.4,mg:27,k2:246,na:420,zn:0.8,fo:31,se:2.8,col:0,src:"CREA"},
-{n:"Crusca d'avena",c:"Cereali e derivati",k:246,p:17.3,gs:1.3,g:7.0,z:1.2,ch:55.7,fi:15.4,ca:58,fe:3.8,mg:235,k2:566,na:4,zn:3.1,fo:734,se:45,col:0,src:"CREA"},
+{n:"Crusca d'avena",c:"Cereali e derivati",k:246,p:17.3,gs:1.3,g:7.0,z:1.2,ch:55.7,fi:15.4,ca:58,fe:3.8,mg:235,k2:566,na:4,zn:3.1,fo:56,se:45,col:0,src:"CREA"},
 {n:"Vaniglia (baccello intero)",c:"Spezie e aromi",k:288,p:12.7,gs:0.1,g:6.2,z:12.7,ch:62.4,fi:34.5,ca:11,fe:0.1,mg:12,k2:148,na:9,zn:0.1,fo:7,se:0,col:0,src:"CREA"},
 {n:"Macis (mace, spezia)",c:"Spezie e aromi",k:475,p:6.7,gs:2.0,g:32.4,z:0,ch:50.5,fi:20.2,ca:252,fe:13.9,mg:163,k2:463,na:80,zn:2.3,fo:110,se:3,col:0,src:"CREA"},
 {n:"Pepe verde in salamoia",c:"Condimenti",k:93,p:3.1,gs:0.2,g:3.3,z:0,ch:14.4,fi:7.4,ca:104,fe:3.4,mg:44,k2:340,na:1800,zn:0.5,fo:72,se:4,col:0,src:"CREA"},
 {n:"Capperi sotto sale (dissalati)",c:"Condimenti",k:23,p:2.4,gs:0.1,g:0.9,z:0,ch:4.9,fi:3.2,ca:40,fe:1.7,mg:33,k2:40,na:2347,zn:0.3,fo:10,se:1,col:0,src:"CREA"},
-{n:"Semi di sesamo tostati",c:"Frutta secca",k:573,p:17.7,gs:5.6,g:49.7,z:0.5,ch:23.5,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:629,se:34,col:0,src:"CREA"},
-{n:"Sesamo nero (semi crudi)",c:"Frutta secca",k:573,p:17.0,gs:5.0,g:49.7,z:0.3,ch:23.5,fi:11.8,ca:1000,fe:16.0,mg:360,k2:468,na:10,zn:8.0,fo:640,se:35,col:0,src:"CREA"},
+{n:"Semi di sesamo tostati",c:"Frutta secca",k:573,p:17.7,gs:5.6,g:49.7,z:0.5,ch:23.5,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:97,se:34,col:0,src:"CREA"},
+{n:"Sesamo nero (semi crudi)",c:"Frutta secca",k:573,p:17.0,gs:5.0,g:49.7,z:0.3,ch:23.5,fi:11.8,ca:1000,fe:16.0,mg:360,k2:468,na:10,zn:8.0,fo:97,se:35,col:0,src:"CREA"},
 // ── FRUTTA AGGIUNTIVA ──
 // Kcal/carboidrati sottostimati (50kcal/12g): fonte USDA converge su 63kcal/16g carb - 2026-07-29
 {n:"Ciliegie fresche",c:"Frutta fresca",k:63,p:1.1,gs:0.1,g:0.2,z:11,ch:16,fi:2.1,ca:13,fe:0.4,mg:11,k2:222,na:3,zn:0.07,fo:21,se:0,col:0,src:"CREA"},
@@ -861,10 +861,10 @@ const DB_CREA=[
 {n:"Pistacchi tostati non salati",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:490,se:8,col:0,src:"CREA"},
 {n:"Pinoli crudi",c:"Frutta secca",k:604,p:31.9,gs:4.9,g:50.3,z:3.9,ch:4,fi:4.5,ca:40,fe:2,mg:251,k2:597,na:2,zn:6.4,fo:575,se:0.7,col:0,src:"CREA"},
 {n:"Arachidi tostare non salate",c:"Frutta secca",k:567,p:25.8,gs:6.8,g:49.2,z:4,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7.2,col:0,src:"CREA"},
-{n:"Semi di zucca crudi",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:1174,se:9.4,col:0,src:"CREA"},
-{n:"Semi di girasole crudi",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5,fo:660,se:53,col:0,src:"CREA"},
-{n:"Semi di lino crudi",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25.4,col:0,src:"CREA"},
-{n:"Semi di canapa sgusciati",c:"Frutta secca",k:553,p:31.6,gs:4.6,g:48.8,z:1.5,ch:8.7,fi:4,ca:70,fe:7.9,mg:700,k2:859,na:5,zn:9.9,fo:1650,se:14,col:0,src:"CREA"},
+{n:"Semi di zucca crudi",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:58,se:9.4,col:0,src:"CREA"},
+{n:"Semi di girasole crudi",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5,fo:227,se:53,col:0,src:"CREA"},
+{n:"Semi di lino crudi",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25.4,col:0,src:"CREA"},
+{n:"Semi di canapa sgusciati",c:"Frutta secca",k:553,p:31.6,gs:4.6,g:48.8,z:1.5,ch:8.7,fi:4,ca:70,fe:7.9,mg:700,k2:859,na:5,zn:9.9,fo:110,se:14,col:0,src:"CREA"},
 // ── VERDURE AGGIUNTIVE ──
 {n:"Barbabietola rossa cruda",c:"Verdure",k:25,p:1.1,gs:0,g:0,z:4,ch:4,fi:2.6,ca:20,fe:0.4,mg:23,k2:300,na:84,zn:0.35,fo:40,se:0.7,col:0,src:"CREA"},
 {n:"Cavolo cappuccio crudo",c:"Verdure",k:25,p:1.3,gs:0,g:0.1,z:3.2,ch:5.8,fi:2.5,ca:40,fe:0.5,mg:12,k2:170,na:18,zn:0.18,fo:26,se:0.3,col:0,src:"CREA"},
@@ -932,14 +932,14 @@ const DB_CREA=[
 // ── FORMAGGI AGGIUNTIVI ──
 {n:"Brie francese",c:"Formaggi",k:320,p:19.3,gs:17.4,g:26.9,z:0.2,ch:0.2,fi:0,ca:540,fe:0.8,mg:20,k2:100,na:700,zn:2.4,fo:188,se:14.5,col:98,src:"CREA"},
 {n:"Camembert de Normandie",c:"Formaggi",k:307,p:20.9,gs:15.2,g:24.7,z:0.2,ch:0.2,fi:0,ca:350,fe:0.2,mg:20,k2:100,na:650,zn:2.4,fo:347,se:14,col:78,src:"CREA"},
-{n:"Emmental svizzero",c:"Formaggi",k:380,p:28.4,gs:19,g:29.5,z:0.5,ch:0.5,fi:0,ca:1006,fe:0.2,mg:36,k2:107,na:185,zn:3.8,fo:620,se:14.5,col:94,src:"CREA"},
+{n:"Emmental svizzero",c:"Formaggi",k:380,p:28.4,gs:19,g:29.5,z:0.5,ch:0.5,fi:0,ca:1006,fe:0.2,mg:36,k2:107,na:185,zn:3.8,fo:5,se:14.5,col:94,src:"CREA"},
 {n:"Crescenza",c:"Formaggi",k:281,p:16.1,gs:12.1,g:23.3,z:1.9,ch:1.9,fi:0,ca:557,fe:0.1,mg:20,k2:110,na:350,zn:2.33,fo:250,se:6.4,col:53,src:"CREA"},
 {n:"Stracchino",c:"Formaggi",k:300,p:18.5,gs:13.4,g:25.1,z:0,ch:0,fi:0,ca:567,fe:0.3,mg:18,k2:100,na:500,zn:1.7,fo:235,se:6,col:68,src:"CREA"},
 {n:"Mozzarella di bufala Campana DOP",c:"Formaggi",k:257,p:14.1,gs:14.3,g:21.7,z:2.7,ch:1.4,fi:0,ca:367,fe:0.1,mg:15,k2:12,na:211,zn:2.21,fo:210,se:11.2,col:52,src:"CREA"},
 {n:"Robiola fresca",c:"Formaggi",k:338,p:20,gs:15.7,g:27.7,z:2.3,ch:2.3,fi:0,ca:170,fe:0.2,mg:15,k2:95,na:350,zn:1.4,fo:190,se:5,col:80,src:"CREA"},
 {n:"Squacquerone di Romagna DOP",c:"Formaggi",k:180,p:10,gs:9.2,g:14.5,z:3.5,ch:3.5,fi:0,ca:220,fe:0.1,mg:12,k2:70,na:350,zn:0.9,fo:160,se:5,col:50,src:"CREA"},
 {n:"Scamorza bianca",c:"Formaggi",k:334,p:25,gs:16.1,g:25.6,z:1,ch:1,fi:0,ca:512,fe:0.3,mg:28,k2:112,na:450,zn:3.8,fo:580,se:16,col:100,src:"CREA"},
-{n:"Fiore Sardo DOP",c:"Formaggi",k:450,p:28,gs:23.8,g:37,z:0,ch:0,fi:0,ca:1136,fe:0.5,mg:45,k2:95,na:1450,zn:4.5,fo:700,se:20,col:115,src:"CREA"},
+{n:"Fiore Sardo DOP",c:"Formaggi",k:450,p:28,gs:23.8,g:37,z:0,ch:0,fi:0,ca:1136,fe:0.5,mg:45,k2:95,na:1450,zn:4.5,fo:18,se:20,col:115,src:"CREA"},
 // ── LATTICINI AGGIUNTIVI ──
 {n:"Skyr naturale (islandese)",c:"Latte e derivati",k:63,p:11,gs:0.1,g:0.2,z:4,ch:4,fi:0,ca:135,fe:0.1,mg:14,k2:160,na:40,zn:0.6,fo:110,se:4,col:3,src:"CREA"},
 {n:"Yogurt greco proteico 2%",c:"Latte e derivati",k:73,p:9,gs:1.2,g:2,z:3.5,ch:3.5,fi:0,ca:100,fe:0.1,mg:11,k2:141,na:44,zn:0.5,fo:100,se:3,col:8,src:"CREA"},
@@ -969,7 +969,7 @@ const DB_CREA=[
 {n:"Olio di mais",c:"Grassi",k:899,p:0,gs:15.66,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di lino",c:"Grassi",k:884,p:0,gs:9,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di arachidi",c:"Grassi",k:899,p:0,gs:16.32,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
-{n:"Tahini (crema di sesamo)",c:"Grassi",k:595,p:17.7,gs:7,g:50,z:0.5,ch:26.2,fi:9.3,ca:426,fe:9,mg:95,k2:414,na:115,zn:4.6,fo:641,se:5.8,col:0,src:"CREA"},
+{n:"Tahini (crema di sesamo)",c:"Grassi",k:595,p:17.7,gs:7,g:50,z:0.5,ch:26.2,fi:9.3,ca:426,fe:9,mg:95,k2:414,na:115,zn:4.6,fo:97,se:5.8,col:0,src:"CREA"},
 {n:"Margarina vegetale",c:"Grassi",k:760,p:0.6,gs:27.7,g:84,z:0.4,ch:0.4,fi:0,ca:20,fe:0.2,mg:2,k2:5,na:800,zn:0,fo:10,se:0,col:0,src:"CREA"},
 // ── DOLCI E PRODOTTI DA FORNO ──
 // Verificato CREA 208510 (Crostata, con marmellata, industriale — scelta la generica, non quella specifica alle albicocche, dato che il nome locale non specifica il gusto): k,p,g,ch aggiornati, resto non riportato da CREA per questa voce — 2026-07-29
@@ -1243,8 +1243,8 @@ const DB_CREA=[
 {n:"Coppa di testa (gelatina di testa suino)",c:"Salumi",k:268,p:16.5,gs:10.5,g:21.5,z:1.0,ch:2.5,fi:0,ca:18,fe:1.8,mg:12,k2:180,na:950,zn:2.0,fo:120,se:10,col:75,src:"CREA"},
 {n:"Wurstel di suino e bovino",c:"Salumi",k:270,p:11.5,gs:11,g:23,z:2.5,ch:3.5,fi:0,ca:15,fe:0.8,mg:12,k2:188,na:1150,zn:1.5,fo:100,se:10,col:60,src:"CREA"},
 // ── FORMAGGI ITALIANI MANCANTI (CREA 2019) ──
-{n:"Pecorino Romano DOP",c:"Formaggi",k:409,p:26,gs:21,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.5,mg:38,k2:90,na:1800,zn:3.5,fo:700,se:14,col:90,src:"CREA"},
-{n:"Pecorino Toscano DOP (stagionato)",c:"Formaggi",k:405,p:27,gs:21.5,g:33,z:0,ch:0.5,fi:0,ca:1060,fe:0.4,mg:35,k2:95,na:1280,zn:3.5,fo:650,se:12,col:100,src:"CREA"},
+{n:"Pecorino Romano DOP",c:"Formaggi",k:409,p:26,gs:21,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.5,mg:38,k2:90,na:1800,zn:3.5,fo:18,se:14,col:90,src:"CREA"},
+{n:"Pecorino Toscano DOP (stagionato)",c:"Formaggi",k:405,p:27,gs:21.5,g:33,z:0,ch:0.5,fi:0,ca:1060,fe:0.4,mg:35,k2:95,na:1280,zn:3.5,fo:18,se:12,col:100,src:"CREA"},
 {n:"Pecorino Sardo DOP (dolce)",c:"Formaggi",k:355,p:23.5,gs:18,g:28.5,z:0,ch:0.8,fi:0,ca:890,fe:0.4,mg:28,k2:85,na:1050,zn:3.0,fo:580,se:12,col:90,src:"CREA"},
 {n:"Provolone piccante (stagionato)",c:"Formaggi",k:376,p:28,gs:18,g:29,z:0,ch:1.0,fi:0,ca:980,fe:0.4,mg:30,k2:130,na:1150,zn:4.0,fo:590,se:14,col:95,src:"CREA"},
 {n:"Quartirolo Lombardo DOP",c:"Formaggi",k:255,p:20,gs:12,g:20,z:0,ch:1.5,fi:0,ca:680,fe:0.2,mg:18,k2:95,na:550,zn:2.5,fo:420,se:8,col:68,src:"CREA"},
@@ -1321,7 +1321,7 @@ const DB_BDA=[
 {n:"Merluzzo surgelato",c:"Pesce",k:75,p:17.3,gs:0.11,g:0.6,z:0,ch:0,fi:0,ca:30,fe:0.6,mg:20,k2:320,na:77,zn:2,fo:6,se:16.5,col:50,src:"BDA"},
 {n:"Trota",c:"Pesce",k:86,p:14.7,gs:0.7,g:3,z:0,ch:0,fi:0,ca:14,fe:1,mg:22,k2:465,na:40,zn:0.9,fo:13,se:19,col:55,src:"BDA"},
 {n:"Latte di mucca intero",c:"Latte e derivati",k:64,p:3.3,gs:2.27,g:3.6,z:4.9,ch:4.9,fi:0,ca:119,fe:0.1,mg:12,k2:150,na:50,zn:0.38,fo:90,se:1.6,col:11,src:"CREA"},
-{n:"Formaggio emmenthal",c:"Latte e derivati",k:382,p:28.8,gs:18.0,g:30.0,z:0.5,ch:0.5,fi:0,ca:1020,fe:0.3,mg:44,k2:100,na:450,zn:3.8,fo:620,se:14,col:97,src:"BDA"},
+{n:"Formaggio emmenthal",c:"Latte e derivati",k:382,p:28.8,gs:18.0,g:30.0,z:0.5,ch:0.5,fi:0,ca:1020,fe:0.3,mg:44,k2:100,na:450,zn:3.8,fo:5,se:14,col:97,src:"BDA"},
 {n:"Yogurt alla frutta",c:"Latte e derivati",k:91,p:3.5,gs:0.8,g:1.4,z:15.5,ch:16.0,fi:0.3,ca:115,fe:0.1,mg:11,k2:160,na:50,zn:0.4,fo:88,se:2,col:5,src:"BDA"},
 {n:"Mele golden",c:"Frutta",k:46,p:0.4,gs:0.016,g:0.1,z:10.7,ch:10.7,fi:1.7,ca:5,fe:0.2,mg:5,k2:132,na:0,zn:0.1,fo:1,se:0,col:0,src:"BDA"},
 {n:"Albicocche",c:"Frutta",k:31,p:0.4,gs:0.007,g:0.1,z:6.8,ch:6.8,fi:1.5,ca:16,fe:0.5,mg:11,k2:320,na:1,zn:0.1,fo:5,se:1,col:0,src:"BDA"},
@@ -1333,7 +1333,7 @@ const DB_BDA=[
 {n:"Cioccolato al latte",c:"Dolci",k:552,p:7.3,gs:21.86,g:36.3,z:50.5,ch:50.5,fi:3.2,ca:262,fe:3,mg:57,k2:420,na:120,zn:1.1,fo:9,se:3,col:10,src:"BDA"},
 {n:"Croissant (cornetto)",c:"Dolci",k:362,p:8.3,gs:8.5,g:20.3,z:1.1,ch:38,fi:1.6,ca:80,fe:2,mg:15,k2:140,na:390,zn:0.5,fo:90,se:5,col:75,src:"CREA"},
 {n:"Arachidi tostate salate",c:"Frutta secca e semi",k:615,p:24.5,gs:7.558,g:53,z:3.8,ch:7.1,fi:6.9,ca:37,fe:1.3,mg:180,k2:810,na:400,zn:2.9,fo:52,se:4,col:0,src:"BDA"},
-{n:"Semi di girasole",c:"Frutta secca e semi",k:584,p:20.8,gs:4.5,g:51.5,z:3.4,ch:18.6,fi:8.6,ca:78,fe:5.3,mg:325,k2:689,na:3,zn:5.3,fo:660,se:53,col:0,src:"BDA"},
+{n:"Semi di girasole",c:"Frutta secca e semi",k:584,p:20.8,gs:4.5,g:51.5,z:3.4,ch:18.6,fi:8.6,ca:78,fe:5.3,mg:325,k2:689,na:3,zn:5.3,fo:227,se:53,col:0,src:"BDA"},
 {n:"Tonno all'olio d'oliva (sgocciolato)",c:"Pesce",k:192,p:25.2,gs:1.936,g:10.1,z:0,ch:0,fi:0,ca:7,fe:1.7,mg:33,k2:301,na:316,zn:1.1,fo:5,se:90,col:65,src:"BDA"},
 {n:"Pesto genovese",c:"Condimenti",k:460,p:7.5,gs:8.0,g:46.5,z:1.0,ch:4.0,fi:1.8,ca:185,fe:2.5,mg:65,k2:330,na:600,zn:0.9,fo:120,se:2,col:12,src:"BDA"},
 {n:"Maionese",c:"Condimenti",k:655,p:4.2,gs:8.82,g:70,z:2.2,ch:2.2,fi:0,ca:18,fe:0.5,mg:5,k2:16,na:450,zn:0.5,fo:4,se:5,col:70,src:"BDA"},
@@ -1346,9 +1346,10 @@ const DB_BDA=[
   {n:"Edamame (soia verde)",c:"Legumi",src:"BDA",k:121,p:11.9,ch:8.9,g:5.2,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:6,zn:1.4,fo:115,se:1,col:0},
   {n:"Lupini",c:"Legumi",src:"CREA",k:119,p:16.4,ch:7.1,g:2.4,fi:2.8,ca:45,fe:5.5,mg:67,k2:240,na:387,zn:1.5,fo:65,se:2,col:0},
   // ── FRUTTA SECCA e SEMI ──
-  {n:"Semi di zucca",c:"Frutta secca",src:"CREA",k:559,p:30.2,ch:10.7,g:49.1,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:1233,se:9,col:0},
-  {n:"Semi di lino",c:"Frutta secca",src:"CREA",k:534,p:18.3,ch:28.9,g:42.2,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0},
-  {n:"Semi di chia",c:"Frutta secca",src:"BDA",k:486,p:16.5,ch:42.1,g:30.7,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:860,se:55,col:0},
+  {n:"Semi di zucca",c:"Frutta secca",src:"CREA",k:559,p:30.2,ch:10.7,g:49.1,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:58,se:9,col:0},
+  // fo conteneva fosforo (642mg, valore reale semi di lino) non folati: corretto a 87mcg - 2026-07-29
+  {n:"Semi di lino",c:"Frutta secca",src:"CREA",k:534,p:18.3,ch:28.9,g:42.2,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0},
+  {n:"Semi di chia",c:"Frutta secca",src:"BDA",k:486,p:16.5,ch:42.1,g:30.7,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0},
   {n:"Pistacchi tostati",c:"Frutta secca",src:"CREA",k:629,p:18.1,ch:8.1,g:56.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:490,se:8,col:0},
   // ── PESCE ──
   {n:"Tonno al naturale in scatola",c:"Pesce",src:"BDA",k:159,p:21.5,ch:0.1,g:8.1,fi:0,ca:38,fe:1.3,mg:26,k2:520,na:43,zn:0.5,fo:20,se:112,col:70},
@@ -1468,7 +1469,7 @@ const DB_BDA=[
   {n:"Lievito di birra secco attivo",c:"Condimenti",src:"BDA",k:223,p:35.6,gs:0.2,g:1.5,z:0,ch:3.5,fi:26.9,ca:80,fe:20,mg:230,k2:2000,na:50,zn:8,fo:4000,se:7.9,col:0},
   {n:"Lievito nutrizionale in scaglie",c:"Condimenti",src:"BDA",k:325,p:50,gs:0.5,g:6.5,z:1,ch:29,fi:14,ca:24,fe:4,mg:97,k2:2100,na:40,zn:5.0,fo:600,se:98,col:0},
   // ── SEMI AGGIUNTIVI ──
-  {n:"Semi di canapa decorticati",c:"Frutta secca",src:"BDA",k:553,p:31.6,gs:3.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.95,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:0,col:0},
+  {n:"Semi di canapa decorticati",c:"Frutta secca",src:"BDA",k:553,p:31.6,gs:3.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.95,mg:700,k2:1200,na:5,zn:9.9,fo:110,se:0,col:0},
   // ── VERDURE E ORTAGGI NON ANCORA PRESENTI ──
   {n:"Okra (gombo)",c:"Verdure",src:"CREA",k:33,p:2.0,gs:0,g:0.2,z:1.5,ch:7.5,fi:3.2,ca:82,fe:0.8,mg:57,k2:303,na:8,zn:0.6,fo:88,se:0.2,col:0},
   {n:"Ravanelli",c:"Verdure",src:"CREA",k:13,p:0.8,gs:0,g:0.1,z:1.8,ch:1.8,fi:1.3,ca:39,fe:0.9,mg:10,k2:240,na:59,zn:0.3,fo:25,se:0.7,col:0},
@@ -1506,7 +1507,7 @@ const DB_BDA=[
   {n:"Strachitunt (erborinato bergamasco)",c:"Formaggi",src:"CREA",k:368,p:22.5,gs:13.5,g:29.5,z:0.5,ch:0.5,fi:0,ca:520,fe:0.4,mg:22,k2:85,na:1100,zn:2.8,fo:440,se:11,col:88},
   {n:"Cagliata fresca",c:"Formaggi",src:"CREA",k:90,p:9.5,gs:2.5,g:4.5,z:3.5,ch:4.0,fi:0,ca:165,fe:0.1,mg:12,k2:80,na:60,zn:0.9,fo:130,se:3,col:18},
   {n:"Stracciatella di bufala",c:"Formaggi",src:"CREA",k:307,p:12.8,gs:14,g:27.5,z:0,ch:1.5,fi:0,ca:285,fe:0.2,mg:14,k2:70,na:310,zn:1.8,fo:285,se:4,col:95},
-  {n:"Pecorino Romano grattugiato",c:"Formaggi",src:"CREA",k:409,p:26,gs:13,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.3,mg:38,k2:90,na:1800,zn:4.5,fo:730,se:18,col:90},
+  {n:"Pecorino Romano grattugiato",c:"Formaggi",src:"CREA",k:409,p:26,gs:13,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.3,mg:38,k2:90,na:1800,zn:4.5,fo:18,se:18,col:90},
   {n:"Quartirolo lombardo",c:"Formaggi",src:"CREA",k:253,p:17.5,gs:10.5,g:19.5,z:0.5,ch:0.5,fi:0,ca:480,fe:0.3,mg:18,k2:88,na:450,zn:2.2,fo:350,se:6,col:65},
   {n:"Crescenza / Stracchino",c:"Formaggi",src:"CREA",k:281,p:16.1,gs:12.5,g:23.3,z:1.9,ch:1.9,fi:0,ca:557,fe:0.1,mg:20,k2:110,na:350,zn:2.33,fo:350,se:6.4,col:53},
   // ── CARNI E DERIVATI NON ANCORA PRESENTI ──
@@ -1534,13 +1535,13 @@ const DB_BDA=[
   {n:"Maionese light",c:"Condimenti",src:"BDA",k:313,p:1.4,gs:3.8,g:32,z:3.5,ch:5,fi:0,ca:15,fe:0.3,mg:3,k2:18,na:620,zn:0.1,fo:28,se:2,col:42},
   {n:"Salsa Caesar industriale",c:"Condimenti",src:"BDA",k:388,p:2.5,gs:4.5,g:40,z:3.5,ch:5,fi:0.3,ca:60,fe:0.3,mg:5,k2:32,na:890,zn:0.2,fo:35,se:4,col:30},
   {n:"Pasta al pistacchio (pesto)",c:"Condimenti",src:"BDA",k:480,p:8,gs:9,g:44,z:6,ch:18,fi:4,ca:70,fe:2.5,mg:75,k2:370,na:350,zn:1.5,fo:200,se:3,col:5},
-  {n:"Tahini / crema di sesamo",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:7.5,g:53.8,z:0.5,ch:21.2,fi:9.0,ca:426,fe:8.9,mg:95,k2:582,na:115,zn:4.6,fo:732,se:34,col:0},
+  {n:"Tahini / crema di sesamo",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:7.5,g:53.8,z:0.5,ch:21.2,fi:9.0,ca:426,fe:8.9,mg:95,k2:582,na:115,zn:4.6,fo:97,se:34,col:0},
   {n:"Marmellata di arance",c:"Dolci",src:"BDA",k:262,p:0.1,gs:0,g:0,z:69.5,ch:69.5,fi:0.5,ca:26,fe:0.2,mg:3,k2:35,na:64,zn:0.1,fo:5,se:1,col:0},
   {n:"Marmellata di albicocche",c:"Dolci",src:"BDA",k:251,p:0.4,gs:0,g:0.1,z:60,ch:65,fi:2.0,ca:11,fe:0.8,mg:7,k2:130,na:10,zn:0.1,fo:6,se:0.5,col:0},
   {n:"Crema di pistacchi senza zucchero",c:"Creme e spalmate",src:"BDA",k:559,p:18.5,gs:4.5,g:44,z:3.5,ch:24,fi:10.5,ca:105,fe:3.5,mg:120,k2:990,na:5,zn:2.0,fo:480,se:7,col:0},
   {n:"Cioccolato fondente 85%",c:"Dolci",src:"BDA",k:575,p:12.5,gs:17.5,g:42.5,z:26,ch:32.5,fi:12.5,ca:73,fe:12.5,mg:228,k2:715,na:20,zn:3.3,fo:308,se:6.8,col:0},
   {n:"Cioccolato fondente 72%",c:"Dolci",src:"BDA",k:540,p:8,gs:13.5,g:36,z:33.5,ch:45,fi:10,ca:60,fe:8,mg:180,k2:560,na:22,zn:2.2,fo:240,se:5,col:3},
-  {n:"Cacao amaro in polvere",c:"Dolci",src:"CREA",k:355,p:20.4,gs:3.0,g:25.6,z:0,ch:11.5,fi:37.0,ca:51,fe:14.3,mg:499,k2:1524,na:21,zn:6.8,fo:734,se:14,col:0},
+  {n:"Cacao amaro in polvere",c:"Dolci",src:"CREA",k:355,p:20.4,gs:3.0,g:25.6,z:0,ch:11.5,fi:37.0,ca:51,fe:14.3,mg:499,k2:1524,na:21,zn:6.8,fo:32,se:14,col:0},
   {n:"Cioccolato al latte 35%",c:"Dolci",src:"BDA",k:541,p:7.3,gs:17.5,g:30.7,z:55.5,ch:58.5,fi:1.5,ca:230,fe:2.5,mg:55,k2:380,na:95,zn:1.5,fo:215,se:4.5,col:18},
   {n:"Menta piperita essiccata",c:"Condimenti",src:"BDA",k:360,p:24.8,gs:0.76,g:4.6,z:34.6,ch:34.6,fi:44.7,ca:1370,fe:6.2,mg:602,k2:1700,na:98,zn:3.8,fo:110,se:4.9,col:0},
   {n:"Cardamomo in polvere",c:"Condimenti",src:"BDA",k:311,p:10.8,gs:0.7,g:6.7,z:4.0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:178,se:0.9,col:0},
@@ -1552,7 +1553,7 @@ const DB_BDA=[
   {n:"Asiago stagionato",c:"Formaggi",src:"BDA",k:359,p:31.4,gs:15.004,g:25.6,z:0.8,ch:0.8,fi:0,ca:870,fe:0.3,mg:27,k2:89,na:760,zn:4.3,fo:6,se:15,col:90},
   {n:"Squacquerone",c:"Formaggi",src:"CREA",k:213,p:11.5,gs:9.5,g:17.5,z:2.5,ch:2.5,fi:0,ca:320,fe:0.2,mg:15,k2:85,na:620,zn:1.5,fo:280,se:5,col:56},
   {n:"Bitto",c:"Formaggi",src:"CREA",k:398,p:26.5,gs:14.5,g:32.0,z:0.3,ch:0.3,fi:0,ca:880,fe:0.3,mg:30,k2:80,na:700,zn:3.5,fo:540,se:15,col:100},
-  {n:"Grana Padano grattugiato",c:"Formaggi",src:"CREA",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:680,se:12,col:98},
+  {n:"Grana Padano grattugiato",c:"Formaggi",src:"CREA",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:7,se:12,col:98},
   // ── PESCE AGGIUNTIVO ──
   {n:"Tilapia",c:"Pesce",src:"CREA",k:96,p:20.1,gs:0.5,g:1.7,z:0,ch:0,fi:0,ca:10,fe:0.6,mg:27,k2:302,na:52,zn:0.3,fo:170,se:54,col:50},
   {n:"Pangasio",c:"Pesce",src:"CREA",k:83,p:15.0,gs:0.7,g:2.3,z:0,ch:0,fi:0,ca:15,fe:0.4,mg:22,k2:250,na:60,zn:0.3,fo:160,se:12,col:42},
@@ -1644,10 +1645,10 @@ const DB_BDA=[
   {n:"Lenticchie rosse decorticate secche",c:"Legumi",src:"CREA",k:319,p:22.7,gs:0.18,g:1,z:1.8,ch:51.1,fi:13.8,ca:57,fe:8,mg:83,k2:980,na:8,zn:2.9,fo:480,se:10.5,col:0},
 
   // ── FORMAGGI MANCANTI ──
-  {n:"Emmental / Groviera svizzero",c:"Formaggi",src:"BDA",k:380,p:28.4,gs:11.0,g:29.0,z:0.4,ch:0.4,fi:0,ca:1000,fe:0.3,mg:36,k2:96,na:450,zn:4.0,fo:720,se:16,col:94},
-  {n:"Gruyère stagionato",c:"Formaggi",src:"BDA",k:413,p:29.8,gs:13.0,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:95,na:336,zn:3.9,fo:730,se:15,col:110},
+  {n:"Emmental / Groviera svizzero",c:"Formaggi",src:"BDA",k:380,p:28.4,gs:11.0,g:29.0,z:0.4,ch:0.4,fi:0,ca:1000,fe:0.3,mg:36,k2:96,na:450,zn:4.0,fo:5,se:16,col:94},
+  {n:"Gruyère stagionato",c:"Formaggi",src:"BDA",k:413,p:29.8,gs:13.0,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:95,na:336,zn:3.9,fo:10,se:15,col:110},
   {n:"Scamorza fresca bianca",c:"Formaggi",src:"CREA",k:334,p:25,gs:10.0,g:25.6,z:1,ch:1,fi:0,ca:512,fe:0.3,mg:18,k2:78,na:650,zn:2.5,fo:420,se:7,col:73},
-  {n:"Raclette",c:"Formaggi",src:"BDA",k:357,p:25.0,gs:11.5,g:28.5,z:0.5,ch:0.5,fi:0,ca:895,fe:0.3,mg:30,k2:88,na:750,zn:3.5,fo:660,se:14,col:92},
+  {n:"Raclette",c:"Formaggi",src:"BDA",k:357,p:25.0,gs:11.5,g:28.5,z:0.5,ch:0.5,fi:0,ca:895,fe:0.3,mg:30,k2:88,na:750,zn:3.5,fo:24,se:14,col:92},
   {n:"Edam (formaggio olandese)",c:"Formaggi",src:"CREA",k:326,p:25.5,gs:12.5,g:24.3,z:1.4,ch:1.4,fi:0,ca:731,fe:0.5,mg:32,k2:88,na:965,zn:3.75,fo:546,se:15,col:79},
   {n:"Gouda stagionato",c:"Formaggi",src:"BDA",k:361,p:25,gs:18.615000000000002,g:29,z:0,ch:0,fi:0,ca:600,fe:0.5,mg:38,k2:100,na:1250,zn:1.8,fo:43,se:15,col:100},
 
@@ -1671,12 +1672,13 @@ const DB_BDA=[
   {n:"Gnocchi di patate freschi",c:"Cereali e derivati",src:"CREA",k:164,p:3.9,gs:0,g:0.3,z:1.4,ch:37.9,fi:1.9,ca:14,fe:0.6,mg:18,k2:310,na:9,zn:0.3,fo:38,se:4,col:7},
 
   // ── SEMI INTERI MANCANTI ──
-  {n:"Semi di lino interi crudi",c:"Semi oleosi",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0},
-  {n:"Semi di chia crudi",c:"Semi oleosi",src:"CREA",k:486,p:16.5,gs:3.3,g:30.7,z:0.3,ch:42.1,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:860,se:55,col:0},
-  {n:"Semi di zucca crudi (pepitas)",c:"Semi oleosi",src:"CREA",k:559,p:30.2,gs:5.6,g:49.1,z:1.4,ch:10.7,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:1174,se:9,col:0},
-  {n:"Semi di girasole crudi sbucciati",c:"Semi oleosi",src:"CREA",k:584,p:20.8,gs:4.5,g:51.5,z:2.4,ch:20.0,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5.0,fo:660,se:53,col:0},
-  {n:"Semi di sesamo crudi",c:"Semi oleosi",src:"CREA",k:573,p:17.7,gs:7.0,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:629,se:34,col:0},
-  {n:"Noci del Brasile crude",c:"Frutta secca a guscio",src:"CREA",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:725,se:1917,col:0},
+  {n:"Semi di lino interi crudi",c:"Semi oleosi",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0},
+  // fo conteneva fosforo (860mg, valore reale semi di chia) non folati: corretto a 49mcg - 2026-07-29
+  {n:"Semi di chia crudi",c:"Semi oleosi",src:"CREA",k:486,p:16.5,gs:3.3,g:30.7,z:0.3,ch:42.1,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0},
+  {n:"Semi di zucca crudi (pepitas)",c:"Semi oleosi",src:"CREA",k:559,p:30.2,gs:5.6,g:49.1,z:1.4,ch:10.7,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:58,se:9,col:0},
+  {n:"Semi di girasole crudi sbucciati",c:"Semi oleosi",src:"CREA",k:584,p:20.8,gs:4.5,g:51.5,z:2.4,ch:20.0,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5.0,fo:227,se:53,col:0},
+  {n:"Semi di sesamo crudi",c:"Semi oleosi",src:"CREA",k:573,p:17.7,gs:7.0,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:97,se:34,col:0},
+  {n:"Noci del Brasile crude",c:"Frutta secca a guscio",src:"CREA",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0},
   {n:"Noci di Macadamia crude",c:"Frutta secca a guscio",src:"CREA",k:751,p:8,gs:12.56,g:76,z:4,ch:5.1,fi:8,ca:70,fe:3,mg:118,k2:363,na:5,zn:1,fo:160,se:4,col:0},
   // ── NUOVI ALIMENTI BDA ──
   // Piatti tradizionali italiani (valori per 100g di prodotto finito)
@@ -1736,7 +1738,7 @@ const DB_BDA=[
   {n:"Ricotta di pecora",c:"Formaggi",src:"CREA",k:157,p:9.5,gs:8,g:11.5,z:4.2,ch:4.2,fi:0,ca:166,fe:0.3,mg:15,k2:98,na:85,zn:0.2,fo:180,se:4,col:42},
   {n:"Formaggio spalmabile (Philadelphia tipo)",c:"Formaggi",src:"BDA",k:313,p:8.6,gs:18.519,g:31,z:0,ch:0,fi:0,ca:110,fe:0.1,mg:9,k2:150,na:330,zn:0.7,fo:13,se:3,col:90},
   {n:"Primosale (pecorino giovane)",c:"Formaggi",src:"BDA",k:342,p:26,gs:17.84,g:25.4,z:2.4,ch:2.4,fi:0,ca:470,fe:0.9,mg:20,k2:129,na:1084,zn:2,fo:23,se:6,col:70},
-  {n:"Gruviera (Gruyère)",c:"Formaggi",src:"BDA",k:413,p:29.8,gs:19.9,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:95,na:336,zn:3.9,fo:605,se:14,col:110},
+  {n:"Gruviera (Gruyère)",c:"Formaggi",src:"BDA",k:413,p:29.8,gs:19.9,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:95,na:336,zn:3.9,fo:10,se:14,col:110},
 
   // ── CEREALI AGGIUNTIVI ──
   {n:"Segale integrale cruda",c:"Cereali e pasta",src:"BDA",k:314,p:10.3,gs:0.19,g:1.6,z:1,ch:60.8,fi:15.1,ca:24,fe:2.6,mg:110,k2:510,na:2,zn:2.65,fo:38,se:13.9,col:0},
@@ -1762,7 +1764,7 @@ const DB_BDA=[
 
   // ── FRUTTA SECCA E SEMI AGGIUNTIVI ──
   {n:"Noci di macadamia",c:"Frutta secca",src:"BDA",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:188,se:3.6,col:0},
-  {n:"Semi di papavero",c:"Frutta secca",src:"BDA",k:525,p:17.9,gs:4.5,g:41.6,z:2.1,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:870,se:13,col:0},
+  {n:"Semi di papavero",c:"Frutta secca",src:"BDA",k:525,p:17.9,gs:4.5,g:41.6,z:2.1,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:58,se:13,col:0},
 
   // ── PIATTI PRONTI ──
   {n:"Risotto bianco cotto (riso+brodo+olio)",c:"Piatti pronti",src:"CREA",k:140,p:2.8,gs:0.5,g:3.5,z:0.5,ch:24,fi:0.5,ca:12,fe:0.5,mg:12,k2:55,na:250,zn:0.5,fo:55,se:7,col:0},
@@ -1804,7 +1806,7 @@ const DB_BDA=[
   {n:"Arachidi tostate senza sale",c:"Frutta secca",src:"BDA",k:620,p:29,gs:7.13,g:50,z:3.1,ch:8.5,fi:10.9,ca:64,fe:3.5,mg:175,k2:680,na:6,zn:3.5,fo:44,se:3,col:0},
   {n:"Burro di arachidi (naturale, senza zucchero)",c:"Condimenti",src:"BDA",k:588,p:25.0,gs:10.5,g:50.5,z:6.0,ch:16.0,fi:6.0,ca:49,fe:1.9,mg:154,k2:649,na:5,zn:2.9,fo:336,se:4,col:0,src:"BDA"},
   {n:"Burro di mandorle (crema di mandorle)",c:"Condimenti",src:"BDA",k:614,p:21.0,gs:3.5,g:55.5,z:5.0,ch:19.0,fi:10.5,ca:347,fe:3.5,mg:270,k2:748,na:3,zn:3.1,fo:484,se:2.5,col:0,src:"BDA"},
-  {n:"Burro di sesamo (tahini)",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:4.5,g:53.8,z:1.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:732,se:34,col:0,src:"BDA"},
+  {n:"Burro di sesamo (tahini)",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:4.5,g:53.8,z:1.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:97,se:34,col:0,src:"BDA"},
 {n:"Spinaci lessati",c:"Verdure cotte",k:41,p:4,gs:0,g:0.8,z:0.5,ch:3.5,fi:2.3,ca:74,fe:2.2,mg:36,k2:265,na:75,zn:1.07,fo:62,se:0.9,col:0,src:"CREA"},
 {n:"Fagioli cannellini lessi",c:"Legumi cotti",k:107,p:8,gs:0.1,g:0.4,z:0.6,ch:14.9,fi:7.8,ca:47,fe:1.7,mg:53,k2:289,na:2,zn:1.54,fo:200,se:5,col:0,src:"CREA"},
 {n:"Lenticchie lesse",c:"Legumi cotti",k:109,p:6.9,gs:0.1,g:0.4,z:0.7,ch:16.3,fi:8.3,ca:29,fe:3,mg:28,k2:266,na:2,zn:1.1,fo:180,se:4,col:0,src:"CREA"},
@@ -1852,9 +1854,9 @@ const DB_BDA=[
 {n:"Friselle (pane biscottato pugliese)",c:"Pane",k:345,p:10.5,gs:0.39,g:2,z:2,ch:74.5,fi:2.9,ca:71,fe:1.9,mg:131,k2:207,na:914,zn:0.22,fo:73,se:2.8,col:0,src:"BDA"},
 {n:"Succo di pompelmo fresco",c:"Bevande",k:34,p:0.4,gs:0.01,g:0.1,z:8.3,ch:8.3,fi:0,ca:14,fe:0.2,mg:8,k2:100,na:7,zn:0,fo:6,se:1,col:0,src:"BDA"},
 {n:"Acciughe sotto sale",c:"Pesce",k:137,p:25,gs:0.821,g:3.1,z:2.3,ch:2.3,fi:0,ca:542,fe:6.9,mg:41,k2:215,na:3604,zn:1.7,fo:8,se:37,col:119,src:"BDA"},
-{n:"Latte intero in polvere",c:"Latte e derivati",k:484,p:25.7,gs:20.0,g:24.9,z:42,ch:42,fi:0,ca:1050,fe:0.7,mg:94,k2:1270,na:440,zn:3.0,fo:736,se:12,col:109,src:"CREA"},
+{n:"Latte intero in polvere",c:"Latte e derivati",k:484,p:25.7,gs:20.0,g:24.9,z:42,ch:42,fi:0,ca:1050,fe:0.7,mg:94,k2:1270,na:440,zn:3.0,fo:47,se:12,col:109,src:"CREA"},
 // Verificato CREA 135630 (Latte di vacca, in polvere, SCREMATO — scartato apposta il candidato "parzialmente scremato" quasi a pari punteggio) — 2026-07-29
-{n:"Latte scremato in polvere",c:"Latte e derivati",k:351,p:33.1,gs:0.1,g:0.9,z:56.2,ch:56.2,fi:0,ca:1323,fe:0.9,mg:117,k2:1650,na:550,zn:4.2,fo:1020,se:30,col:22,src:"CREA"},
+{n:"Latte scremato in polvere",c:"Latte e derivati",k:351,p:33.1,gs:0.1,g:0.9,z:56.2,ch:56.2,fi:0,ca:1323,fe:0.9,mg:117,k2:1650,na:550,zn:4.2,fo:51,se:30,col:22,src:"CREA"},
 {n:"Gallette di mais (non al sale)",c:"Biscotti e crackers",k:362,p:7.7,gs:0.13,g:1.1,z:0.4,ch:84.7,fi:1.7,ca:77,fe:2.9,mg:15,k2:103,na:187,zn:0.29,fo:7,se:2.1,col:0,src:"BDA"},
 {n:"Tortellini freschi all'uovo",c:"Cereali e derivati",k:326,p:13.0,gs:1.2,g:6.0,z:1.5,ch:55.5,fi:1.8,ca:25,fe:2.3,mg:30,k2:130,na:350,zn:1.1,fo:145,se:22,col:70,src:"CREA"},
 {n:"Ravioli freschi di carne",c:"Cereali e derivati",k:230,p:10.5,gs:1.5,g:6.5,z:1.5,ch:31.5,fi:1.5,ca:35,fe:1.5,mg:20,k2:120,na:340,zn:1.0,fo:120,se:10,col:45,src:"CREA"},
@@ -1975,11 +1977,11 @@ const DB_BDA=[
 {n:"Olio di palma",c:"Grassi e oli",k:899,p:0,gs:47.57,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 
 // ── FARINE MANCANTI ──
-{n:"Farina di soia intera",c:"Cereali e derivati",k:469,p:36.8,gs:3.51,g:23.5,z:11.2,ch:23.4,fi:11.2,ca:210,fe:6.9,mg:280,k2:1660,na:9,zn:3.9,fo:670,se:6,col:0,src:"CREA"},
+{n:"Farina di soia intera",c:"Cereali e derivati",k:469,p:36.8,gs:3.51,g:23.5,z:11.2,ch:23.4,fi:11.2,ca:210,fe:6.9,mg:280,k2:1660,na:9,zn:3.9,fo:305,se:6,col:0,src:"CREA"},
 {n:"Farina di farro",c:"Cereali e derivati",k:331,p:11.4,gs:0.38,g:3,z:1.3,ch:64,fi:9.3,ca:31,fe:3,mg:92,k2:360,na:5,zn:2.8,fo:59.3,se:20,col:0,src:"BDA"},
 {n:"Farina di segale integrale",c:"Cereali e derivati",k:299,p:15.9,gs:0.27,g:2.2,z:2.3,ch:44.8,fi:23.8,ca:37,fe:4.9,mg:160,k2:717,na:2,zn:5.04,fo:33,se:18,col:0,src:"BDA"},
 {n:"Farina di grano tenero tipo 2",c:"Cereali e derivati",k:343,p:12.5,gs:0.2,g:1.8,z:2.0,ch:70.3,fi:4.5,ca:24,fe:1.8,mg:50,k2:200,na:3,zn:1.2,fo:200,se:18,col:0,src:"CREA"},
-{n:"Farina di canapa decorticata",c:"Cereali e derivati",k:357,p:30.8,gs:3.0,g:10.5,z:0,ch:27.8,fi:9.8,ca:70,fe:7.5,mg:400,k2:1200,na:5,zn:7.0,fo:1160,se:14,col:0,src:"BDA"},
+{n:"Farina di canapa decorticata",c:"Cereali e derivati",k:357,p:30.8,gs:3.0,g:10.5,z:0,ch:27.8,fi:9.8,ca:70,fe:7.5,mg:400,k2:1200,na:5,zn:7.0,fo:110,se:14,col:0,src:"BDA"},
 
 // ── VERDURE MANCANTI (CREA/BDA) ──
 {n:"Pastinaca cruda",c:"Ortaggi",k:75,p:1.4,gs:0.1,g:0.5,z:4.8,ch:17.9,fi:4.9,ca:36,fe:0.6,mg:29,k2:375,na:10,zn:0.6,fo:71,se:1.8,col:0,src:"CREA"},
@@ -1998,9 +2000,9 @@ const DB_BDA=[
 {n:"Feijoa fresca",c:"Frutta",k:59,p:0.7,gs:0.197,g:0.8,z:9.6,ch:9.6,fi:6.5,ca:6,fe:4,mg:7,k2:225,na:18,zn:0.1,fo:23,se:0.6,col:0,src:"BDA"},
 
 // ── FORMAGGI MANCANTI ──
-{n:"Pecorino sardo stagionato",c:"Formaggi",k:392,p:25.5,gs:22.0,g:31.5,z:0,ch:0,fi:0,ca:1120,fe:0.5,mg:28,k2:90,na:1800,zn:3.5,fo:700,se:15,col:95,src:"CREA"},
-{n:"Ragusano DOP",c:"Formaggi",k:385,p:25.0,gs:21.0,g:30.5,z:0,ch:0,fi:0,ca:1080,fe:0.5,mg:30,k2:85,na:1750,zn:3.2,fo:680,se:14,col:90,src:"CREA"},
-{n:"Canestrato pugliese",c:"Formaggi",k:388,p:24.8,gs:21.5,g:31.0,z:0,ch:0,fi:0,ca:1100,fe:0.5,mg:28,k2:88,na:1820,zn:3.3,fo:690,se:14,col:92,src:"CREA"},
+{n:"Pecorino sardo stagionato",c:"Formaggi",k:392,p:25.5,gs:22.0,g:31.5,z:0,ch:0,fi:0,ca:1120,fe:0.5,mg:28,k2:90,na:1800,zn:3.5,fo:18,se:15,col:95,src:"CREA"},
+{n:"Ragusano DOP",c:"Formaggi",k:385,p:25.0,gs:21.0,g:30.5,z:0,ch:0,fi:0,ca:1080,fe:0.5,mg:30,k2:85,na:1750,zn:3.2,fo:20,se:14,col:90,src:"CREA"},
+{n:"Canestrato pugliese",c:"Formaggi",k:388,p:24.8,gs:21.5,g:31.0,z:0,ch:0,fi:0,ca:1100,fe:0.5,mg:28,k2:88,na:1820,zn:3.3,fo:20,se:14,col:92,src:"CREA"},
 {n:"Murazzano DOP (pecorino piemontese)",c:"Formaggi",k:290,p:20.5,gs:13.5,g:22.0,z:0.5,ch:0.5,fi:0,ca:730,fe:0.3,mg:20,k2:75,na:900,zn:2.0,fo:420,se:10,col:70,src:"CREA"},
 
 // ── CROSTACEI E MOLLUSCHI MANCANTI (CREA) ──
@@ -2032,11 +2034,11 @@ const DB_BDA=[
 {n:"Farro dicocco crudo",c:"Cereali e derivati",k:353,p:14.6,gs:0.3,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:310,se:34,col:0,src:"CREA"},
 
 // ── NOCI E SEMI MANCANTI ──
-{n:"Semi di canapa decorticati",c:"Semi e frutta secca",k:553,p:31.6,gs:3.8,g:48.7,z:1.1,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:483,k2:1200,na:5,zn:9.9,fo:1650,se:14,col:0,src:"BDA"},
+{n:"Semi di canapa decorticati",c:"Semi e frutta secca",k:553,p:31.6,gs:3.8,g:48.7,z:1.1,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:483,k2:1200,na:5,zn:9.9,fo:110,se:14,col:0,src:"BDA"},
 {n:"Noci pecan crude",c:"Semi e frutta secca",k:723,p:7.2,gs:6.165,g:71.8,z:4.3,ch:7.9,fi:9.4,ca:83,fe:2.1,mg:131,k2:368,na:2,zn:2.7,fo:39,se:3.1,col:0,src:"BDA"},
 {n:"Arachidi crude non tostate",c:"Semi e frutta secca",k:567,p:25.8,gs:7.0,g:49.2,z:3.9,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7.2,col:0,src:"CREA"},
 {n:"Mandorle crude con pelle",c:"Semi e frutta secca",k:578,p:21.1,gs:3.8,g:49.9,z:3.9,ch:19.7,fi:12.5,ca:248,fe:3.7,mg:270,k2:705,na:1,zn:3.1,fo:481,se:2.5,col:0,src:"CREA"},
-{n:"Noci brasiliane crude",c:"Semi e frutta secca",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:725,se:1917,col:0,src:"BDA"},
+{n:"Noci brasiliane crude",c:"Semi e frutta secca",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0,src:"BDA"},
 
 // ── ALGHE E PRODOTTI MARINI ──
 {n:"Alga nori essiccata",c:"Alimenti vari",k:35,p:5.8,gs:0.3,g:0.3,z:0.5,ch:5.1,fi:3.5,ca:70,fe:1.9,mg:2,k2:356,na:48,zn:1.5,fo:58,se:1,col:0,src:"BDA"},
@@ -2046,15 +2048,15 @@ const DB_BDA=[
 // ── CONDIMENTI E SALSE MANCANTI ──
 {n:"Aceto di mele biologico non filtrato",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.4,ch:5.0,fi:0,ca:7,fe:0.3,mg:5,k2:73,na:5,zn:0.1,fo:4,se:0,col:0,src:"BDA"},
 {n:"Miso (pasta di soia fermentata)",c:"Condimenti",k:200,p:12.0,gs:1.0,g:6.0,z:3.2,ch:26.5,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3728,zn:2.6,fo:153,se:7,col:0,src:"BDA"},
-{n:"Tahini (pasta di sesamo)",c:"Condimenti",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:640,se:2.7,col:0,src:"CREA"},
+{n:"Tahini (pasta di sesamo)",c:"Condimenti",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:97,se:2.7,col:0,src:"CREA"},
 {n:"Harissa (salsa piccante nordafricana)",c:"Condimenti",k:90,p:3.8,gs:1.3,g:5.5,z:3.5,ch:9.8,fi:4.5,ca:45,fe:3.0,mg:28,k2:320,na:750,zn:0.8,fo:60,se:3,col:0,src:"BDA"},
 
 // ── FORMAGGI REGIONALI MANCANTI ──
-{n:"Piave DOP (stagionato)",c:"Formaggi",k:390,p:30.0,gs:18.5,g:27.0,z:0,ch:0,fi:0,ca:1200,fe:0.3,mg:40,k2:120,na:900,zn:4.0,fo:750,se:15,col:88,src:"CREA"},
-{n:"Pecorino toscano DOP semi-stagionato",c:"Formaggi",k:355,p:28.0,gs:19.5,g:27.5,z:0,ch:0,fi:0,ca:900,fe:0.3,mg:30,k2:100,na:1100,zn:3.5,fo:620,se:12,col:90,src:"CREA"},
+{n:"Piave DOP (stagionato)",c:"Formaggi",k:390,p:30.0,gs:18.5,g:27.0,z:0,ch:0,fi:0,ca:1200,fe:0.3,mg:40,k2:120,na:900,zn:4.0,fo:15,se:15,col:88,src:"CREA"},
+{n:"Pecorino toscano DOP semi-stagionato",c:"Formaggi",k:355,p:28.0,gs:19.5,g:27.5,z:0,ch:0,fi:0,ca:900,fe:0.3,mg:30,k2:100,na:1100,zn:3.5,fo:18,se:12,col:90,src:"CREA"},
 {n:"Cacioricotta fresco",c:"Formaggi",k:182,p:11.9,gs:9.5,g:14.3,z:1.5,ch:1.5,fi:0,ca:396,fe:0.3,mg:20,k2:110,na:500,zn:2.0,fo:350,se:8,col:60,src:"CREA"},
 {n:"Scamorza bianca fresca",c:"Formaggi",k:334,p:25,gs:15.0,g:25.6,z:1,ch:1,fi:0,ca:512,fe:0.3,mg:18,k2:100,na:700,zn:2.5,fo:420,se:10,col:88,src:"CREA"},
-{n:"Valtellina Casera DOP",c:"Formaggi",k:360,p:27.0,gs:16.5,g:25.5,z:0,ch:0,fi:0,ca:950,fe:0.3,mg:35,k2:95,na:780,zn:3.8,fo:660,se:13,col:85,src:"CREA"},
+{n:"Valtellina Casera DOP",c:"Formaggi",k:360,p:27.0,gs:16.5,g:25.5,z:0,ch:0,fi:0,ca:950,fe:0.3,mg:35,k2:95,na:780,zn:3.8,fo:15,se:13,col:85,src:"CREA"},
 {n:"Asiago pressato DOP",c:"Formaggi",k:326,p:25.5,gs:14.0,g:22.5,z:0.5,ch:1.5,fi:0,ca:780,fe:0.3,mg:32,k2:110,na:700,zn:3.2,fo:560,se:12,col:78,src:"CREA"},
 
 // ── CARNI MANCANTI ──
@@ -2114,7 +2116,8 @@ const DB_BDA=[
 {n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:337,p:2.3,gs:20.4,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:55,se:1,col:120,src:"CREA"},
 {n:"Farinata di ceci (piatto tipico genovese cotto)",c:"Cereali e derivati",k:152,p:5.5,gs:0.8,g:8.5,z:0.5,ch:14.5,fi:2.0,ca:28,fe:1.8,mg:30,k2:130,na:300,zn:0.7,fo:90,se:2,col:0,src:"BDA"},
 {n:"Gelatina in fogli (colla di pesce)",c:"Condimenti",k:335,p:84.4,gs:0,g:0.1,z:0,ch:0,fi:0,ca:10,fe:0.1,mg:1,k2:2,na:30,zn:0.1,fo:20,se:0,col:70,src:"BDA"},
-{n:"Crusca di riso",c:"Cereali e derivati",k:316,p:13.4,gs:1.8,g:20.8,z:0,ch:49.7,fi:21.0,ca:57,fe:18.5,mg:781,k2:1485,na:5,zn:6.1,fo:1677,se:16,col:0,src:"BDA"},
+// fo conteneva fosforo (1677mg, valore reale crusca di riso) non folati: corretto a 63mcg - 2026-07-29
+{n:"Crusca di riso",c:"Cereali e derivati",k:316,p:13.4,gs:1.8,g:20.8,z:0,ch:49.7,fi:21.0,ca:57,fe:18.5,mg:781,k2:1485,na:5,zn:6.1,fo:63,se:16,col:0,src:"BDA"},
 {n:"Farina di lenticchie rosse",c:"Cereali e derivati",k:340,p:25.7,gs:0.2,g:1.2,z:1.5,ch:58.5,fi:11.0,ca:59,fe:7.3,mg:100,k2:897,na:5,zn:3.0,fo:370,se:6,col:0,src:"BDA"},
 {n:"Farina di piselli secchi",c:"Cereali e derivati",k:335,p:21.7,gs:0.2,g:1.5,z:3.0,ch:60.4,fi:8.3,ca:55,fe:4.7,mg:115,k2:900,na:9,zn:2.8,fo:350,se:3,col:0,src:"BDA"},
 {n:"Anice stellato (badiana)",c:"Spezie e aromi",k:337,p:17.6,gs:0.5,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:440,se:3,col:0,src:"BDA"},
@@ -2181,9 +2184,9 @@ const DB_BDA=[
 {n:"Stracciatella di bufala",c:"Formaggi",k:268,p:13.5,gs:13.0,g:23.5,z:0.5,ch:1.0,fi:0,ca:210,fe:0.2,mg:18,k2:80,na:95,zn:0.9,fo:250,se:8,col:75,src:"CREA"},
 {n:"Latticello (buttermilk)",c:"Latte e derivati",k:40,p:3.3,gs:0.2,g:0.9,z:4.8,ch:4.8,fi:0,ca:116,fe:0.1,mg:11,k2:151,na:105,zn:0.4,fo:36,se:2,col:5,src:"BDA"},
 {n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:337,p:2.3,gs:20.5,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:56,se:1,col:120,src:"CREA"},
-{n:"Formaggio Fontina DOP",c:"Formaggi",k:352,p:25.5,gs:14.5,g:26.0,z:0,ch:0,fi:0,ca:870,fe:0.2,mg:28,k2:100,na:700,zn:3.5,fo:620,se:14,col:80,src:"CREA"},
-{n:"Pecorino Sardo DOP stagionato",c:"Formaggi",k:404,p:28.8,gs:24.5,g:32,z:0.2,ch:0.2,fi:0,ca:607,fe:0.6,mg:40,k2:90,na:1800,zn:3.38,fo:730,se:6.3,col:88,src:"CREA"},
-{n:"Caciocavallo silano DOP",c:"Formaggi",k:431,p:35.7,gs:20.0,g:31.1,z:2.3,ch:2.3,fi:0,ca:860,fe:0.3,mg:20,k2:80,na:960,zn:3.75,fo:720,se:7.8,col:92,src:"CREA"},
+{n:"Formaggio Fontina DOP",c:"Formaggi",k:352,p:25.5,gs:14.5,g:26.0,z:0,ch:0,fi:0,ca:870,fe:0.2,mg:28,k2:100,na:700,zn:3.5,fo:15,se:14,col:80,src:"CREA"},
+{n:"Pecorino Sardo DOP stagionato",c:"Formaggi",k:404,p:28.8,gs:24.5,g:32,z:0.2,ch:0.2,fi:0,ca:607,fe:0.6,mg:40,k2:90,na:1800,zn:3.38,fo:18,se:6.3,col:88,src:"CREA"},
+{n:"Caciocavallo silano DOP",c:"Formaggi",k:431,p:35.7,gs:20.0,g:31.1,z:2.3,ch:2.3,fi:0,ca:860,fe:0.3,mg:20,k2:80,na:960,zn:3.75,fo:20,se:7.8,col:92,src:"CREA"},
 
 // ── DOLCI E DESSERT ITALIANI MANCANTI (CREA) ──
 {n:"Panna cotta (senza caramello)",c:"Dolci",k:200,p:3.5,gs:11.5,g:16.0,z:18.0,ch:20.5,fi:0,ca:80,fe:0.1,mg:6,k2:70,na:45,zn:0.2,fo:40,se:1,col:55,src:"CREA"},
@@ -2360,7 +2363,7 @@ const DB_BDA=[
 
 // ── ALIMENTI FUNZIONALI E SUPERFOODS (CREA/BDA) ──
 {n:"Polvere di proteine di pisello (pea protein isolate)",c:"Proteine in Polvere",k:360,p:80.0,gs:0.5,g:6.0,z:2.5,ch:7.5,fi:2.5,ca:120,fe:8.0,mg:80,k2:900,na:320,zn:3.5,fo:250,se:4,col:0,src:"BDA"},
-{n:"Polvere di proteine di canapa (hemp protein)",c:"Proteine in Polvere",k:350,p:50.0,gs:2.5,g:11.0,z:3.0,ch:32.0,fi:14.0,ca:70,fe:9.0,mg:480,k2:900,na:35,zn:5.5,fo:900,se:8,col:0,src:"BDA"},
+{n:"Polvere di proteine di canapa (hemp protein)",c:"Proteine in Polvere",k:350,p:50.0,gs:2.5,g:11.0,z:3.0,ch:32.0,fi:14.0,ca:70,fe:9.0,mg:480,k2:900,na:35,zn:5.5,fo:110,se:8,col:0,src:"BDA"},
 {n:"Collagene idrolizzato in polvere (bovino/marino)",c:"Proteine in Polvere",k:360,p:90.0,gs:0,g:0,z:0,ch:2.0,fi:0,ca:120,fe:0,mg:12,k2:50,na:150,zn:0.5,fo:1,se:0,col:0,src:"BDA"},
 {n:"Creatina monoidrato in polvere",c:"Integratori",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Spirulina in compresse (alghe)",c:"Alghe",k:290,p:57.5,gs:0.7,g:7.7,z:3.1,ch:23.9,fi:3.6,ca:120,fe:28.5,mg:195,k2:1363,na:1048,zn:2.0,fo:94,se:7,col:0,src:"CREA"},
@@ -2572,7 +2575,7 @@ const DB_UPF = [
   // ── CONDIMENTI aggiuntivi ──
   {n:"Salsa Worcester",c:"Condimenti",src:"UPF",k:78,p:1.1,gs:0,g:0.1,z:18,ch:20,fi:0.5,ca:61,fe:2.7,mg:18,k2:220,na:980,zn:0.3,fo:15,se:1,col:0},
   {n:"Salsa di soia (industriale shoyu)",c:"Condimenti",src:"UPF",k:84,p:9,gs:0,g:0,z:2,ch:9.8,fi:0.9,ca:18,fe:2.4,mg:45,k2:212,na:6600,zn:0.5,fo:130,se:1,col:0},
-  {n:"Salsa tahini / crema di sesamo",c:"Condimenti",src:"UPF",k:595,p:17,gs:7.5,g:53.8,z:0.5,ch:21.2,fi:9,ca:426,fe:8.9,mg:95,k2:582,na:115,zn:4.6,fo:732,se:34,col:0},
+  {n:"Salsa tahini / crema di sesamo",c:"Condimenti",src:"UPF",k:595,p:17,gs:7.5,g:53.8,z:0.5,ch:21.2,fi:9,ca:426,fe:8.9,mg:95,k2:582,na:115,zn:4.6,fo:97,se:34,col:0},
 
   // ── PRODOTTI DA FORNO E PASTICCERIA CONFEZIONATA ──
   {n:"Pandoro porzione 100g",c:"Dolci confezionati",src:"UPF",k:400,p:6.7,gs:14,g:21,z:24,ch:44,fi:0.6,ca:50,fe:1.5,mg:15,k2:120,na:240,zn:0.5,fo:80,se:6,col:115},
@@ -2828,8 +2831,8 @@ const DB_UPF = [
   {n:"Mozzarella light (2% grassi)",c:"Latte e derivati",src:"UPF",k:165,p:20.5,gs:6,g:8.5,z:1.5,ch:1.5,fi:0,ca:500,fe:0.1,mg:18,k2:100,na:200,zn:1.5,fo:340,se:10,col:12},
   {n:"Philadelphia light (spalmabile)",c:"Latte e derivati",src:"UPF",k:146.7,p:7.2,gs:6.9,g:10,z:5.1,ch:5.1,fi:0.3,ca:80,fe:0.1,mg:8,k2:90,na:82.5,zn:0.7,fo:95,se:4,col:30},
   {n:"Feta light in salamoia",c:"Latte e derivati",src:"UPF",k:170,p:19,gs:7,g:10,z:0.5,ch:1,fi:0,ca:360,fe:0.3,mg:18,k2:120,na:880,zn:1.6,fo:220,se:10,col:40},
-  {n:"Parmigiano Reggiano DOP 30 mesi",c:"Latte e derivati",src:"CREA",k:397,p:32.4,gs:19.6,g:29.7,z:0,ch:0,fi:0,ca:1159,fe:0.2,mg:43,k2:102,na:600,zn:4,fo:740,se:12,col:83},
-  {n:"Grana Padano DOP",c:"Latte e derivati",src:"CREA",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:720,se:12,col:98},
+  {n:"Parmigiano Reggiano DOP 30 mesi",c:"Latte e derivati",src:"CREA",k:397,p:32.4,gs:19.6,g:29.7,z:0,ch:0,fi:0,ca:1159,fe:0.2,mg:43,k2:102,na:600,zn:4,fo:7,se:12,col:83},
+  {n:"Grana Padano DOP",c:"Latte e derivati",src:"CREA",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:7,se:12,col:98},
 
   // ── PRODOTTI SENZA LATTOSIO ──
   {n:"Latte senza lattosio intero",c:"Latte e derivati",src:"UPF",k:66,p:3.3,gs:1.5,g:3.7,z:4.8,ch:4.8,fi:0,ca:120,fe:0,mg:11,k2:145,na:43,zn:0.4,fo:92,se:3,col:14},
@@ -3375,7 +3378,7 @@ const DB_UPF = [
 {n:"Ricotta di pecora (per 100g)",c:"Formaggi e latticini",src:"CREA",k:157,p:9.5,gs:8,g:11.5,z:4.2,ch:4.2,fi:0,ca:166,fe:0.3,mg:15,k2:98,na:85,zn:0.2,fo:165,se:10,col:42},
 {n:"Gorgonzola DOP (per 100g)",c:"Formaggi e latticini",src:"CREA",k:358,p:19.5,gs:18.5,g:29.5,z:0,ch:0.5,fi:0,ca:420,fe:0.4,mg:22,k2:165,na:920,zn:2.5,fo:275,se:12,col:95},
 {n:"Taleggio DOP (per 100g)",c:"Formaggi e latticini",src:"CREA",k:322,p:20.5,gs:16.5,g:25.5,z:0,ch:0.5,fi:0,ca:395,fe:0.2,mg:18,k2:145,na:830,zn:2.0,fo:240,se:10,col:80},
-{n:"Caciocavallo (per 100g)",c:"Formaggi e latticini",src:"CREA",k:439,p:37.5,gs:20.5,g:31.5,z:0,ch:1.0,fi:0,ca:1060,fe:0.5,mg:30,k2:110,na:720,zn:4.5,fo:620,se:15,col:110},
+{n:"Caciocavallo (per 100g)",c:"Formaggi e latticini",src:"CREA",k:439,p:37.5,gs:20.5,g:31.5,z:0,ch:1.0,fi:0,ca:1060,fe:0.5,mg:30,k2:110,na:720,zn:4.5,fo:20,se:15,col:110},
 // ── VERDURE ITALIANE E ASIATICHE ──
 {n:"Topinambur (per 100g crudo)",c:"Verdure",src:"CREA",k:73,p:2.0,gs:0,g:0.1,z:9.5,ch:17.5,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:78,se:0.7,col:0},
 {n:"Radicchio rosso di Treviso (per 100g)",c:"Verdure",src:"CREA",k:23,p:1.8,gs:0,g:0.3,z:2.5,ch:3.5,fi:2.2,ca:38,fe:0.6,mg:12,k2:302,na:22,zn:0.5,fo:35,se:0.5,col:0},
@@ -3403,9 +3406,9 @@ const DB_UPF = [
 // Verificato CREA 006590 (Gnocchi di patate, CRUDI — scelto crudi non cotti dato che "freschi confezionati" implica non ancora cotti, come la pasta fresca) — 2026-07-29
 {n:"Gnocchi di patate freschi confezionati (per 100g)",c:"Cereali e derivati",src:"CREA",k:164,p:3.9,gs:0.3,g:0.3,z:1.4,ch:37.9,fi:1.9,ca:14,fe:0.6,mg:18,k2:310,na:9,zn:0.3,fo:55,se:5,col:7},
 // ── SEMI E FRUTTA SECCA SPECIALI ──
-{n:"Semi di canapa decorticati (per 100g)",c:"Semi e frutta secca",src:"CREA",k:553,p:31.5,gs:5.5,g:48.7,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:14,col:0},
-{n:"Noci del Brasile (per 100g)",c:"Semi e frutta secca",src:"CREA",k:656,p:14.3,gs:16.2,g:66.4,z:2.3,ch:12.3,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:725,se:1917,col:0},
-{n:"Semi di lino (per 100g)",c:"Semi e frutta secca",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:642,se:25,col:0},
+{n:"Semi di canapa decorticati (per 100g)",c:"Semi e frutta secca",src:"CREA",k:553,p:31.5,gs:5.5,g:48.7,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:110,se:14,col:0},
+{n:"Noci del Brasile (per 100g)",c:"Semi e frutta secca",src:"CREA",k:656,p:14.3,gs:16.2,g:66.4,z:2.3,ch:12.3,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0},
+{n:"Semi di lino (per 100g)",c:"Semi e frutta secca",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0},
 // ── CUCINA INTERNAZIONALE ──
 {n:"Falafel fritto (per 100g)",c:"Cucina etnica",src:"INT",k:333,p:13.3,gs:2.38,g:17.8,z:1.4,ch:31.8,fi:4.9,ca:60,fe:3.8,mg:65,k2:380,na:294,zn:1.5,fo:175,se:4,col:0},
 {n:"Shakshuka / uova in salsa pomodoro (per 100g)",c:"Cucina etnica",src:"INT",k:98,p:5.5,gs:1.2,g:6.5,z:4.0,ch:5.5,fi:1.5,ca:42,fe:1.5,mg:18,k2:280,na:420,zn:0.8,fo:85,se:12,col:145},
@@ -3588,10 +3591,10 @@ const DB_UPF = [
 {n:"Castelmagno DOP (100g)",c:"Formaggi",src:"CREA",k:370,p:26.5,gs:17.5,g:28.5,z:0,ch:0,fi:0,ca:680,fe:0.5,mg:38,k2:105,na:1120,zn:2.5,fo:520,se:8,col:78},
 {n:"Bitto DOP (100g, stagionato)",c:"Formaggi",src:"CREA",k:398,p:29.0,gs:19.5,g:30.0,z:0,ch:0,fi:0,ca:1050,fe:0.3,mg:40,k2:90,na:550,zn:3.5,fo:580,se:10,col:98},
 {n:"Spressa delle Giudicarie DOP",c:"Formaggi",src:"CREA",k:360,p:27.5,gs:16.5,g:27.5,z:0,ch:0,fi:0,ca:840,fe:0.4,mg:36,k2:95,na:720,zn:3.0,fo:520,se:8,col:84},
-{n:"Nostrano Valtrompia DOP (stagionato)",c:"Formaggi",src:"CREA",k:392,p:30.0,gs:18.0,g:29.5,z:0,ch:0,fi:0,ca:1080,fe:0.3,mg:42,k2:88,na:600,zn:3.8,fo:610,se:12,col:92},
+{n:"Nostrano Valtrompia DOP (stagionato)",c:"Formaggi",src:"CREA",k:392,p:30.0,gs:18.0,g:29.5,z:0,ch:0,fi:0,ca:1080,fe:0.3,mg:42,k2:88,na:600,zn:3.8,fo:15,se:12,col:92},
 {n:"Silter DOP (Brescia, stagionato)",c:"Formaggi",src:"CREA",k:388,p:29.5,gs:18.5,g:29.0,z:0,ch:0,fi:0,ca:1020,fe:0.3,mg:38,k2:90,na:580,zn:3.5,fo:590,se:10,col:88},
 {n:"Puzzone di Moena / Spretz Tzaorì",c:"Formaggi",src:"CREA",k:355,p:25.5,gs:16.0,g:27.0,z:0.5,ch:0.5,fi:0,ca:750,fe:0.4,mg:32,k2:100,na:960,zn:2.8,fo:480,se:8,col:80},
-{n:"Montasio stagionato DOP",c:"Formaggi",src:"CREA",k:384,p:32.5,gs:18.0,g:28.0,z:0,ch:0,fi:0,ca:1050,fe:0.3,mg:38,k2:85,na:580,zn:4.0,fo:620,se:10,col:94},
+{n:"Montasio stagionato DOP",c:"Formaggi",src:"CREA",k:384,p:32.5,gs:18.0,g:28.0,z:0,ch:0,fi:0,ca:1050,fe:0.3,mg:38,k2:85,na:580,zn:4.0,fo:15,se:10,col:94},
 {n:"Ragusano DOP (Sicilia)",c:"Formaggi",src:"CREA",k:376,p:30.0,gs:17.5,g:28.5,z:0,ch:0,fi:0,ca:980,fe:0.3,mg:35,k2:88,na:650,zn:3.5,fo:550,se:9,col:88},
 {n:"Provolone Valpadana DOP piccante",c:"Formaggi",src:"CREA",k:378,p:29.0,gs:17.0,g:29.0,z:0.5,ch:0.5,fi:0,ca:740,fe:0.4,mg:32,k2:95,na:780,zn:2.8,fo:510,se:8,col:86},
 {n:"Caciocavallo Silano DOP (stagionato)",c:"Formaggi",src:"CREA",k:392,p:31.5,gs:18.5,g:30.0,z:0,ch:0,fi:0,ca:950,fe:0.3,mg:36,k2:82,na:760,zn:3.8,fo:570,se:9,col:90},
@@ -3632,7 +3635,7 @@ const DB_UPF = [
 {n:"Cacao grezzo in polvere (non zuccherato)",c:"Superfoods",src:"INT",k:228,p:19.6,gs:8.07,g:13.7,z:1.8,ch:57.9,fi:37,ca:128,fe:13.86,mg:499,k2:1524,na:21,zn:6.81,fo:32,se:14.3,col:0},
 {n:"Lucuma in polvere (frutto andino)",c:"Superfoods",src:"INT",k:369,p:3.5,gs:0.3,g:1.1,z:14.6,ch:85.3,fi:2,ca:32,fe:0.4,mg:35,k2:430,na:5,zn:0.5,fo:65,se:0,col:0},
 {n:"Moringa in polvere (foglie essiccate)",c:"Superfoods",src:"INT",k:282,p:27,gs:0.5,g:2,z:3.0,ch:38,fi:19.2,ca:1500,fe:28,mg:368,k2:1350,na:9,zn:3.3,fo:204,se:5,col:0},
-{n:"Semi di canapa sbucciati (cuori di canapa)",c:"Semi e frutta secca",src:"CREA",k:553,p:31.6,gs:3.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.95,mg:483,k2:1200,na:5,zn:9.9,fo:1650,se:14.5,col:0},
+{n:"Semi di canapa sbucciati (cuori di canapa)",c:"Semi e frutta secca",src:"CREA",k:553,p:31.6,gs:3.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.95,mg:483,k2:1200,na:5,zn:9.9,fo:110,se:14.5,col:0},
 {n:"Olio di lino biologico (pressato a freddo)",c:"Grassi e oli",src:"CREA",k:884,p:0,gs:9.0,g:100.0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
 {n:"Olio di canapa (pressato a freddo)",c:"Grassi e oli",src:"CREA",k:884,p:0,gs:9.5,g:100.0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
 {n:"Olio di avocado extra vergine",c:"Grassi e oli",src:"CREA",k:884,p:0,gs:12.5,g:100.0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
@@ -4266,7 +4269,7 @@ const DB_EXTRA=[
 {n:"Colatura di alici di Cetara (per 100ml)",c:"Condimenti",src:"EXTRA",k:68,p:14,gs:0.5,g:2,z:0,ch:0,fi:0,ca:50,fe:2,mg:25,k2:200,na:7200,zn:0.8,fo:10,se:40,col:60},
 {n:"Lardo di Colonnata IGP (per 100g)",c:"Salumi",src:"EXTRA",k:800,p:2,gs:35,g:88,z:0,ch:0.1,fi:0,ca:5,fe:0.4,mg:2,k2:20,na:900,zn:0.5,fo:20,se:5,col:95},
 {n:"Culatello di Zibello DOP (per 100g)",c:"Salumi",src:"EXTRA",k:292,p:28,gs:7.8,g:20,z:0,ch:0,fi:0,ca:12,fe:1.5,mg:22,k2:340,na:2000,zn:2.8,fo:200,se:24,col:70},
-{n:"Grana Padano DOP giovane (9 mesi, per 100g)",c:"Latte e derivati",src:"EXTRA",k:398,p:33,gs:18.4,g:29,z:0,ch:0,fi:0,ca:1165,fe:0.4,mg:44,k2:117,na:600,zn:4.2,fo:750,se:12,col:90},
+{n:"Grana Padano DOP giovane (9 mesi, per 100g)",c:"Latte e derivati",src:"EXTRA",k:398,p:33,gs:18.4,g:29,z:0,ch:0,fi:0,ca:1165,fe:0.4,mg:44,k2:117,na:600,zn:4.2,fo:7,se:12,col:90},
 // === CONDIMENTI E SALSE ASIATICHE ===
 {n:"Mirin (vino di riso dolce, per 100ml)",c:"Condimenti",src:"EXTRA",k:233,p:0,gs:0,g:0,z:43,ch:47,fi:0,ca:8,fe:0.2,mg:5,k2:40,na:4,zn:0.1,fo:10,se:0.5,col:0},
 {n:"Furikake (condimento per riso giapponese, per 100g)",c:"Condimenti",src:"EXTRA",k:205,p:15,gs:1.5,g:8,z:8,ch:20,fi:2,ca:850,fe:6,mg:120,k2:800,na:3200,zn:2.5,fo:380,se:45,col:45},

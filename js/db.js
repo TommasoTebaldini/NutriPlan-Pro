@@ -1900,7 +1900,8 @@ const DB_BDA=[
 // Verificato CREA 110906 (Wurstel di puro suino, COTTO — scelto cotto perche il wurstel si vende tipicamente gia pronto al consumo in Italia; differenza crudo/cotto comunque minima) — 2026-07-29
 {n:"Wurstel di suino",c:"Salumi e insaccati",k:259,p:14.6,gs:7.08,g:22.2,z:0,ch:0.3,fi:0,ca:17,fe:0.9,mg:9,k2:223,na:920,zn:0.9,fo:5,se:10,col:84,src:"CREA"},
 {n:"Latte di pecora intero fresco",c:"Latte e derivati",k:103,p:5.3,gs:5.1,g:6.9,z:5.2,ch:5.2,fi:0,ca:180,fe:0.1,mg:18,k2:182,na:30,zn:0.5,fo:158,se:2,col:11,src:"CREA"},
-{n:"Yogurt di capra",c:"Latte e derivati",k:63,p:3.6,gs:2.5,g:3.8,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:155,na:40,zn:0.4,fo:103,se:2,col:13,src:"CREA"},
+// Stesso bug fosforo-in-folati dei latticini gia corretti (fosforo latte di capra ~106mg, folati reali yogurt ~12mcg) - 2026-07-29
+{n:"Yogurt di capra",c:"Latte e derivati",k:63,p:3.6,gs:2.5,g:3.8,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:155,na:40,zn:0.4,fo:12,se:2,col:13,src:"CREA"},
 {n:"Pan di Spagna",c:"Dolci",k:275,p:10.1,gs:1.45,g:5.1,z:31.2,ch:49.7,fi:1.4,ca:31,fe:1.1,mg:10,k2:97,na:79,zn:0.64,fo:20,se:3.8,col:144,src:"BDA"},
 {n:"Savoiardi",c:"Dolci",k:395,p:11.9,gs:3.5,g:9.2,z:39.3,ch:69.6,fi:1.6,ca:40,fe:2,mg:10,k2:105,na:125,zn:0.5,fo:90,se:10,col:165,src:"CREA"},
 {n:"Pesche sciroppate",c:"Frutta conservata",k:56,p:0.5,gs:0,g:0,z:14,ch:14,fi:0.9,ca:3,fe:0.2,mg:6,k2:110,na:4,zn:0.1,fo:15,se:0.4,col:0,src:"CREA"},

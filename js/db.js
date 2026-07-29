@@ -677,7 +677,8 @@ const DB_CREA=[
 {n:"Salsa di soia",c:"Condimenti",k:66,p:8.7,gs:0,g:0,z:8.3,ch:8.3,fi:0,ca:19,fe:2.7,mg:42,k2:360,na:5720,zn:0.1,fo:130,se:1,col:0,src:"CREA"},
 {n:"Aceto di vino",c:"Condimenti",k:21,p:0,gs:0,g:0,z:0.3,ch:0.6,fi:0,ca:7,fe:0.4,mg:2,k2:65,na:2,zn:0.03,fo:8,se:0.5,col:0,src:"CREA"},
 {n:"Alga Kelp (Laminaria) essiccata",c:"Verdure",k:43,p:1.7,gs:0.3,g:0.6,z:0.6,ch:9.6,fi:1.3,ca:168,fe:2.9,mg:121,k2:89,na:233,zn:1.2,fo:42,se:0.7,col:0,src:"CREA"},
-{n:"Alga Dulse essiccata",c:"Verdure",k:264,p:21.7,gs:0.4,g:3.2,z:0,ch:46,fi:32,ca:567,fe:150,mg:220,k2:8060,na:2085,zn:1.9,fo:194,se:0.7,col:0,src:"CREA"},
+// Potassio (8060mg) e ferro (150mg) erano implausibili anche per un alga essiccata: allineati a fonti multiple convergenti (ferro ~25mg, potassio ~1244mg, magnesio ~482mg, proteine ~32g) - 2026-07-29
+{n:"Alga Dulse essiccata",c:"Verdure",k:298,p:32,gs:0.4,g:4,z:0,ch:52,fi:32,ca:372,fe:25,mg:482,k2:1244,na:2085,zn:1.9,fo:194,se:0.7,col:0,src:"CREA"},
 {n:"Agar-agar (essiccato)",c:"Verdure",k:306,p:0.5,gs:0,g:0.2,z:0,ch:80,fi:7,ca:625,fe:21.4,mg:770,k2:1125,na:102,zn:5.8,fo:52,se:0,col:0,src:"CREA"},
 {n:"Ortica fresca",c:"Verdure",k:43,p:5.9,gs:0.09,g:0.7,z:1.3,ch:1.3,fi:4.1,ca:590,fe:4.4,mg:57,k2:670,na:1,zn:1.7,fo:220,se:0.2,col:0,src:"BDA"},
 {n:"Malva fresca",c:"Verdure",k:28,p:3.2,gs:0,g:0.6,z:0,ch:2.5,fi:1.6,ca:257,fe:3.0,mg:45,k2:370,na:10,zn:0.5,fo:52,se:0.5,col:0,src:"CREA"},
@@ -3318,7 +3319,8 @@ const DB_UPF = [
 {n:"Hamburger di pollo (burger surgelato, per 100g)",c:"Surgelati",src:"UPF",k:113,p:18,gs:1,g:3,z:0.8,ch:3.5,fi:0.8,ca:40,fe:0.8,mg:18,k2:200,na:480,zn:0.8,fo:130,se:12,col:38},
 {n:"Cannelloni surgelati ripieni (per 100g)",c:"Surgelati",src:"UPF",k:119,p:6.2,gs:2.6,g:4.4,z:2.1,ch:12.9,fi:1.0,ca:95,fe:0.8,mg:15,k2:155,na:336,zn:0.9,fo:100,se:6,col:30},
 // ── SNACK SALATI INTERNAZIONALI ──
-{n:"Doritos Nacho Cheese (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.1,gs:3.57,g:28.6,z:3.6,ch:60.7,fi:3.6,ca:142.9,fe:75,mg:50,k2:178.6,na:0.6,zn:0.8,fo:140,se:4,col:0},
+// Ferro (75mg) e sodio (0.6mg) erano implausibili per patatine di mais (confrontato col duplicato EXTRA dello stesso prodotto: fe~1.5mg, na~440mg) - 2026-07-29
+{n:"Doritos Nacho Cheese (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.1,gs:3.57,g:28.6,z:3.6,ch:60.7,fi:3.6,ca:142.9,fe:1.5,mg:50,k2:178.6,na:440,zn:0.8,fo:140,se:4,col:0},
 {n:"Cheetos (per 100g)",c:"Snack salati",src:"UPF",k:540,p:6,gs:15,g:30,z:7,ch:53,fi:2,ca:60,fe:1.0,mg:22,k2:185,na:1030,zn:0.5,fo:90,se:3,col:3},
 {n:"Pringles Original (per 100g)",c:"Snack salati",src:"UPF",k:528,p:6.2,gs:3,g:31,z:0.9,ch:54,fi:4.1,ca:25,fe:1.5,mg:30,k2:580,na:1,zn:0.5,fo:100,se:3,col:0},
 {n:"Lay's classiche (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.0,gs:3.0,g:35,z:1.0,ch:52,fi:3.5,ca:20,fe:1.5,mg:40,k2:1150,na:580,zn:0.5,fo:150,se:4,col:0},

@@ -430,7 +430,8 @@ const DB_CREA=[
   // ── FRUTTA SECCA E SEMI MANCANTI ──
   {n:"Arachidi crude con pellicola",c:"Frutta secca",k:585,p:26,gs:8.886,g:47.2,z:4.5,ch:11.2,fi:7.3,ca:60,fe:3.2,mg:210,k2:670,na:2,zn:3.5,fo:110,se:3,col:0,src:"BDA"},
   {n:"Burro di mandorle",c:"Frutta secca",k:614,p:21.1,gs:4.5,g:55.5,z:5.0,ch:18.8,fi:10.3,ca:347,fe:3.7,mg:303,k2:740,na:7,zn:3.1,fo:29,se:2.6,col:0,src:"CREA"},
-  {n:"Burro di sesamo (tahini)",c:"Frutta secca",k:595,p:17.0,gs:7.8,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.5,fo:592,se:34,col:0,src:"CREA"},
+  // Stesso bug fosforo-in-folati del sesamo/tahini gia corretto altrove - 2026-07-29
+  {n:"Burro di sesamo (tahini)",c:"Frutta secca",k:595,p:17.0,gs:7.8,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.5,fo:97,se:34,col:0,src:"CREA"},
   {n:"Semi di canapa sgusciati",c:"Semi oleosi",k:553,p:31.6,gs:4.7,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:110,se:14,col:0,src:"CREA"},
   {n:"Pistacchi tostati salati",c:"Frutta secca",k:613,p:17.9,gs:6.744,g:55.4,z:5.7,ch:8.2,fi:6.1,ca:110,fe:3,mg:130,k2:1040,na:530,zn:2.2,fo:58,se:6,col:0,src:"BDA"},
   // ── GRASSI E OLI MANCANTI ──
@@ -1990,7 +1991,7 @@ const DB_BDA=[
 // ── CEREALI MANCANTI ──
 {n:"Avena soffiata",c:"Cereali e pasta",k:374,p:14.9,gs:1.3,g:7.2,z:0,ch:69.9,fi:6.5,ca:53,fe:4.5,mg:143,k2:390,na:8,zn:3.6,fo:35,se:30,col:0,src:"BDA"},
 {n:"Mais da pop corn (chicchi secchi)",c:"Cereali e pasta",k:358,p:8.1,gs:0.6,g:3.8,z:0.6,ch:74.3,fi:7.3,ca:3,fe:2.7,mg:127,k2:287,na:35,zn:2.2,fo:25,se:15,col:0,src:"CREA"},
-{n:"Popcorn soffiato non condito",c:"Cereali e pasta",k:387,p:12.1,gs:0.6,g:4.5,z:0.7,ch:77.9,fi:14.5,ca:7,fe:3.0,mg:144,k2:329,na:8,zn:2.9,fo:358,se:9,col:0,src:"BDA"},
+{n:"Popcorn soffiato non condito",c:"Cereali e pasta",k:387,p:12.1,gs:0.6,g:4.5,z:0.7,ch:77.9,fi:14.5,ca:7,fe:3.0,mg:144,k2:329,na:8,zn:2.9,fo:25,se:9,col:0,src:"BDA"},
 
 // ── CARNI MANCANTI (CREA) ──
 {n:"Quaglie intere eviscerate crude",c:"Carni e derivati",k:111,p:21.8,gs:0.6,g:2.8,z:0,ch:0,fi:0,ca:12,fe:1.9,mg:24,k2:238,na:55,zn:2.5,fo:9,se:14,col:72,src:"CREA"},
@@ -2509,7 +2510,7 @@ const DB_UPF = [
   {n:"Patatine fritte in busta (chips classiche)",c:"Snack salati",src:"UPF",k:536,p:7,gs:3.1,g:34,z:0.5,ch:53,fi:2.5,ca:20,fe:1.5,mg:40,k2:1100,na:560,zn:0.8,fo:10,se:3,col:0},
   {n:"Patatine al formaggio (Fonzies/simili)",c:"Snack salati",src:"UPF",k:510,p:5,gs:2.5,g:29,z:2,ch:58,fi:1.5,ca:25,fe:0.8,mg:15,k2:200,na:700,zn:0.5,fo:80,se:2,col:5},
   {n:"Crackers snack con sesamo (tipo MixBowl)",c:"Snack salati",src:"UPF",k:427,p:10.3,gs:1.88,g:12.3,z:0.7,ch:66.4,fi:4.7,ca:60,fe:2,mg:40,k2:150,na:948,zn:1,fo:130,se:5,col:0},
-  {n:"Pop corn da microonde al burro",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:2,fe:1.5,mg:90,k2:250,na:500,zn:1.5,fo:280,se:5,col:10},
+  {n:"Pop corn da microonde al burro",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:2,fe:1.5,mg:90,k2:250,na:500,zn:1.5,fo:25,se:5,col:10},
   {n:"Pretzels/grissini salati industriali",c:"Snack salati",src:"UPF",k:492,p:9.8,gs:0,g:11,z:2.3,ch:72,fi:2.8,ca:25,fe:2,mg:25,k2:150,na:800,zn:0.8,fo:90,se:8,col:0},
   {n:"Nachos/tortilla chips al formaggio",c:"Snack salati",src:"UPF",k:520,p:4,gs:4,g:28,z:4,ch:76,fi:12,ca:110,fe:1.5,mg:55,k2:190,na:200,zn:1,fo:160,se:4,col:5},
   {n:"Crackers Ritz (classici)",c:"Snack salati",src:"UPF",k:484,p:7.7,gs:2,g:23,z:8.5,ch:60,fi:3.3,ca:30,fe:2.5,mg:15,k2:100,na:520,zn:0.4,fo:55,se:5,col:0},
@@ -2690,7 +2691,7 @@ const DB_UPF = [
 
   // ── SALSE E CONDIMENTI INDUSTRIALI aggiuntivi ──
   {n:"Salsa guacamole industriale in vaschetta",c:"Condimenti",src:"UPF",k:148,p:1.5,gs:3.5,g:14,z:1,ch:5,fi:4,ca:15,fe:0.5,mg:22,k2:320,na:480,zn:0.4,fo:38,se:0.3,col:0},
-  {n:"Salsa tzatziki industriale in vaschetta",c:"Condimenti",src:"UPF",k:107,p:3,gs:3.5,g:8.3,z:4.7,ch:4.9,fi:0.3,ca:80,fe:0.2,mg:13,k2:110,na:865,zn:0.3,fo:52,se:3,col:16},
+  {n:"Salsa tzatziki industriale in vaschetta",c:"Condimenti",src:"UPF",k:107,p:3,gs:3.5,g:8.3,z:4.7,ch:4.9,fi:0.3,ca:80,fe:0.2,mg:13,k2:110,na:865,zn:0.3,fo:10,se:3,col:16},
 // Allineato a voce BDA gia verificata "Sriracha (salsa di peperoncino piccante)" — 2026-07-28
   {n:"Salsa Sriracha piccante",c:"Condimenti",src:"UPF",k:93,p:2,gs:0.1,g:1.0,z:12.5,ch:19.5,fi:0.5,ca:35,fe:1.0,mg:20,k2:220,na:1120,zn:0.3,fo:20,se:1,col:0},
   {n:"Salsa Teriyaki industriale",c:"Condimenti",src:"UPF",k:89,p:4,gs:0,g:0.2,z:17,ch:17.5,fi:0.3,ca:10,fe:0.9,mg:20,k2:90,na:2500,zn:0.2,fo:25,se:1,col:0},
@@ -2771,7 +2772,7 @@ const DB_UPF = [
   {n:"Crocchette di patate tipo Tater Tots",c:"Piatti pronti",src:"UPF",k:186,p:2.3,gs:1.74,g:9.3,z:1.2,ch:16.3,fi:1.2,ca:10,fe:0.58,mg:15,k2:476.7,na:523.3,zn:0.3,fo:60,se:1,col:0},
 
   // ── SNACK E DOLCI AGGIUNTIVI ──
-  {n:"Pop corn al burro commerciale (busta)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:8,fe:2.5,mg:95,k2:330,na:500,zn:2.0,fo:270,se:5,col:15},
+  {n:"Pop corn al burro commerciale (busta)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:8,fe:2.5,mg:95,k2:330,na:500,zn:2.0,fo:25,se:5,col:15},
   {n:"Biscotti Oreo (o tipo sandwich cacao)",c:"Biscotti e crackers",src:"UPF",k:478.3,p:4.3,gs:4.35,g:19.6,z:39.1,ch:73.9,fi:0,ca:33,fe:4.5,mg:25,k2:195,na:331.3,zn:0.5,fo:95,se:3,col:0},
   {n:"Muffin ai mirtilli industriale",c:"Dolci confezionati",src:"UPF",k:374,p:4.8,gs:1.7,g:18.1,z:23.1,ch:47.6,fi:1.5,ca:45,fe:1.2,mg:12,k2:100,na:176,zn:0.4,fo:60,se:4,col:45},
   {n:"Snickers / Mars tipo (barretta cioccolato)",c:"Dolci confezionati",src:"UPF",k:483,p:8.6,gs:8,g:23,z:51,ch:61,fi:1.0,ca:100,fe:1.0,mg:30,k2:230,na:240,zn:0.7,fo:80,se:2,col:8},
@@ -2940,7 +2941,7 @@ const DB_UPF = [
   {n:"Crema di zucca in vasetto industriale",c:"Piatti pronti",src:"UPF",k:52,p:0.5,gs:0.6,g:3.5,z:2.2,ch:2.8,fi:3.8,ca:25,fe:0.5,mg:15,k2:190,na:530,zn:0.2,fo:35,se:1,col:5},
   {n:"Hummus industriale in vasetto (chickpea spread)",c:"Piatti pronti",src:"UPF",k:245.6,p:7,gs:2.64,g:17.5,z:1.8,ch:15.8,fi:5.3,ca:42.1,fe:1.75,mg:55,k2:294.7,na:456.1,zn:1.5,fo:150,se:5,col:0},
   {n:"Guacamole industriale in vasetto",c:"Piatti pronti",src:"UPF",k:175,p:1.2,gs:3.5,g:14.6,z:2.5,ch:7.9,fi:3.8,ca:30,fe:0.5,mg:18,k2:380,na:232,zn:0.5,fo:35,se:1,col:0},
-  {n:"Tzatziki industriale (salsa greca)",c:"Piatti pronti",src:"UPF",k:100,p:4,gs:1.8,g:6.9,z:4.1,ch:5.5,fi:0.5,ca:80,fe:0.2,mg:10,k2:120,na:400,zn:0.5,fo:90,se:2,col:12},
+  {n:"Tzatziki industriale (salsa greca)",c:"Piatti pronti",src:"UPF",k:100,p:4,gs:1.8,g:6.9,z:4.1,ch:5.5,fi:0.5,ca:80,fe:0.2,mg:10,k2:120,na:400,zn:0.5,fo:10,se:2,col:12},
   {n:"Arrosto di pollo pronto in busta (taglio fette)",c:"Piatti pronti",src:"UPF",k:91,p:17,gs:0.5,g:1.5,z:1,ch:1.5,fi:1.5,ca:15,fe:0.8,mg:28,k2:310,na:680,zn:1.5,fo:8,se:20,col:70},
   {n:"Lasagne pronte surgelate (Findus o sim.)",c:"Piatti pronti",src:"UPF",k:296,p:11,gs:0.8,g:2.6,z:1.5,ch:56,fi:1.5,ca:80,fe:0.8,mg:14,k2:140,na:28,zn:0.8,fo:90,se:5,col:22},
 
@@ -3047,7 +3048,7 @@ const DB_UPF = [
   {n:"Barretta Kit Kat (per 100g)",c:"Dolci",src:"UPF",k:512,p:6.7,gs:14.9,g:26.4,z:43.5,ch:60.5,fi:2.5,ca:90,fe:1.5,mg:40,k2:250,na:90,zn:0.7,fo:120,se:5,col:5},
   {n:"Patatine Lay's Classic (per 100g)",c:"Snack",src:"UPF",k:571.4,p:7.1,gs:5.36,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:20,fe:0.5,mg:45,k2:1080,na:607.1,zn:0.5,fo:10,se:3,col:0},
   {n:"Patatine Pringles Original (per 100g)",c:"Snack",src:"UPF",k:535.7,p:3.6,gs:8.93,g:32.1,z:0,ch:62.5,fi:3.6,ca:0,fe:0.36,mg:38,k2:392.9,na:535.7,zn:0.4,fo:110,se:3,col:0},
-  {n:"Popcorn microonde burro (per 100g)",c:"Snack",src:"UPF",k:456,p:8.0,gs:10.0,g:22.5,z:1.0,ch:58.0,fi:9.5,ca:5,fe:1.5,mg:100,k2:240,na:710,zn:1.5,fo:230,se:10,col:0},
+  {n:"Popcorn microonde burro (per 100g)",c:"Snack",src:"UPF",k:456,p:8.0,gs:10.0,g:22.5,z:1.0,ch:58.0,fi:9.5,ca:5,fe:1.5,mg:100,k2:240,na:710,zn:1.5,fo:25,se:10,col:0},
   {n:"Nachos con formaggio Doritos (per 100g)",c:"Snack",src:"UPF",k:501,p:6.5,gs:3.4,g:26,z:2.7,ch:58,fi:5.6,ca:100,fe:1.5,mg:40,k2:250,na:480,zn:0.8,fo:130,se:4,col:0},
   {n:"Salsa ketchup Heinz (per 100g)",c:"Condimenti",src:"UPF",k:102,p:1.2,gs:0.1,g:0.1,z:22.8,ch:23.2,fi:0.8,ca:25,fe:1.0,mg:15,k2:350,na:708,zn:0.1,fo:30,se:1,col:0},
   {n:"Maionese industriale (per 100g)",c:"Condimenti",src:"UPF",k:606,p:1.1,gs:7.8,g:66,z:0.3,ch:2,fi:0,ca:19,fe:0.4,mg:4,k2:30,na:376,zn:0.1,fo:30,se:2,col:55},
@@ -3567,7 +3568,7 @@ const DB_UPF = [
 {n:"Kinder Fetta al Latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:410,p:7.5,gs:8.5,g:17.0,z:41.0,ch:53.5,fi:0.5,ca:155,fe:0.4,mg:15,k2:200,na:145,zn:0.6,fo:135,se:4,col:20},
 {n:"Plumcake all'olio (merendina)",c:"Dolci confezionati",src:"UPF",k:365,p:7.6,gs:3.2,g:19,z:1,ch:51,fi:2.2,ca:25,fe:1.2,mg:10,k2:85,na:156,zn:0.3,fo:55,se:2,col:55},
 {n:"Panna Cotta industriale (vasetto)",c:"Dolci confezionati",src:"UPF",k:206,p:3.2,gs:8.8,g:13,z:19,ch:19,fi:0,ca:70,fe:0.1,mg:6,k2:80,na:24,zn:0.2,fo:55,se:1,col:28},
-{n:"Pop corn burro microonde (per 100g)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:15,fe:1.5,mg:95,k2:235,na:500,zn:1.8,fo:220,se:8,col:0},
+{n:"Pop corn burro microonde (per 100g)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:15,fe:1.5,mg:95,k2:235,na:500,zn:1.8,fo:25,se:8,col:0},
 // ═══ PIZZA E PIATTI PRONTI ═══
 {n:"Pizza margherita (pizzeria, al piatto)",c:"Piatti pronti",src:"UPF",k:230,p:7.5,gs:5,g:9.2,z:1.4,ch:27,fi:3.8,ca:155,fe:0,mg:0,k2:190,na:433,zn:0,fo:120,se:8,col:18},
 {n:"Pizza margherita surgelata (Buitoni/simile, cruda)",c:"Piatti pronti",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:130,fe:1.0,mg:15,k2:170,na:600,zn:0.8,fo:100,se:5,col:12},
@@ -4224,7 +4225,7 @@ const DB_EXTRA=[
 {n:"Pringles Original",c:"Snack salati",src:"EXTRA",k:534,p:5.9,gs:6.6,g:31,z:1.4,ch:56,fi:3.5,ca:15,fe:1.5,mg:25,k2:350,na:440,zn:0.3,fo:90,se:5,col:0},
 {n:"Doritos Nacho Cheese",c:"Snack salati",src:"EXTRA",k:499,p:6.4,gs:2.5,g:26,z:2.7,ch:57,fi:3,ca:55,fe:1.5,mg:40,k2:300,na:440,zn:0.8,fo:130,se:5,col:0},
 {n:"Lay's Classic",c:"Snack salati",src:"EXTRA",k:571,p:7.1,gs:5.4,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:15,fe:1.5,mg:35,k2:620,na:607,zn:0.5,fo:10,se:8,col:0},
-{n:"Popcorn al burro",c:"Snack salati",src:"EXTRA",k:475,p:8,gs:10,g:24,z:2,ch:57,fi:7.5,ca:5,fe:1.5,mg:95,k2:180,na:600,zn:1.5,fo:200,se:12,col:15},
+{n:"Popcorn al burro",c:"Snack salati",src:"EXTRA",k:475,p:8,gs:10,g:24,z:2,ch:57,fi:7.5,ca:5,fe:1.5,mg:95,k2:180,na:600,zn:1.5,fo:25,se:12,col:15},
 {n:"Popcorn salato da microonde",c:"Snack salati",src:"EXTRA",k:430,p:7,gs:5,g:20,z:1.5,ch:58,fi:7,ca:5,fe:1.5,mg:80,k2:160,na:650,zn:1.5,fo:180,se:12,col:0},
 // === CONDIMENTI E SALSE ===
 {n:"Ketchup Heinz",c:"Condimenti",src:"EXTRA",k:102,p:1.2,gs:0.1,g:0.1,z:22.8,ch:23.2,fi:0,ca:20,fe:0.5,mg:12,k2:280,na:720,zn:0.1,fo:25,se:0.5,col:0},

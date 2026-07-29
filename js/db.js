@@ -267,9 +267,12 @@ const DB_CREA=[
 // ── SPEZIE E AROMI ──
 {n:"Pepe nero macinato",c:"Condimenti",k:311,p:11.4,gs:1.4,g:3.3,z:0.6,ch:49,fi:25.9,ca:430,fe:11.2,mg:171,k2:1260,na:44,zn:1.2,fo:117,se:4.9,col:0,src:"CREA"},
 {n:"Peperoncino secco",c:"Condimenti",k:282,p:12,gs:1.5,g:6.2,z:5.3,ch:49.7,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:106,se:8.8,col:0,src:"CREA"},
-{n:"Cannella in polvere",c:"Condimenti",k:301,p:3.9,gs:0.65,g:3.2,z:55.5,ch:55.5,fi:24.4,ca:1228,fe:38.1,mg:60,k2:500,na:26,zn:2,fo:0,se:3.1,col:0,src:"BDA"},
-{n:"Curcuma in polvere",c:"Condimenti",k:312,p:9.7,gs:1.5,g:3.3,z:3.2,ch:67.1,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:39,se:6.2,col:0,src:"CREA"},
-{n:"Origano essiccato",c:"Condimenti",k:408,p:11,gs:2.67,g:10.3,z:49.5,ch:49.5,fi:42.8,ca:1580,fe:44,mg:270,k2:1670,na:15,zn:4.4,fo:0,se:4.5,col:0,src:"BDA"},
+// Allineato a 2 duplicati concordi gia nel DB (247kcal, coerente coi dati USDA standard per la cannella) — era un valore isolato/outlier (301kcal, ferro 38.1mg molto alto) — 2026-07-29
+{n:"Cannella in polvere",c:"Condimenti",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0,src:"BDA"},
+// Allineato a 2 duplicati concordi gia nel DB (354kcal) — era un valore isolato/outlier (312kcal, folati molto piu bassi) — 2026-07-29
+{n:"Curcuma in polvere",c:"Condimenti",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:268,se:6.2,col:0,src:"CREA"},
+// Allineato al duplicato con dati piu vicini a fonti standard (265kcal, calcio 1576mg — quest'ultimo praticamente identico a USDA ~1597mg) — era un valore isolato/outlier (408kcal) — 2026-07-29
+{n:"Origano essiccato",c:"Condimenti",k:265,p:9,gs:4.3,g:10.3,z:21,ch:68.9,fi:42.5,ca:1576,fe:44,mg:270,k2:1260,na:25,zn:2.7,fo:148,se:4.5,col:0,src:"BDA"},
 // ── LATTICINI E DERIVATI aggiuntivi ──
 {n:"Panna da cucina 18%",c:"Latte e derivati",k:206,p:2.8,gs:11.64,g:20,z:3.9,ch:3.9,fi:0,ca:87,fe:0.1,mg:9,k2:91,na:34,zn:0.5,fo:7,se:0,col:66,src:"BDA"},
 {n:"Panna montata",c:"Latte e derivati",k:337,p:2.3,gs:19,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:65,se:2,col:120,src:"CREA"},
@@ -1601,7 +1604,8 @@ const DB_BDA=[
   {n:"Finocchio selvatico (fresco)",c:"Verdure",src:"CREA",k:31,p:2.8,gs:0,g:0.6,z:1.0,ch:2.0,fi:5.3,ca:109,fe:6.4,mg:49,k2:414,na:88,zn:1.0,fo:27,se:0.7,col:0},
   {n:"Peperoncino fresco rosso",c:"Verdure",src:"CREA",k:40,p:2.0,gs:0,g:0.4,z:5.7,ch:8.8,fi:1.5,ca:14,fe:1.0,mg:23,k2:322,na:9,zn:0.3,fo:34,se:0.5,col:0},
   {n:"Zenzero fresco (radice)",c:"Verdure",src:"CREA",k:80,p:1.8,gs:0,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:11,se:0.6,col:0},
-  {n:"Curcuma fresca (radice)",c:"Verdure",src:"BDA",k:354,p:7.8,gs:0.6,g:9.9,z:3.8,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.5,fo:36,se:6.2,col:0},
+  // Corretto: questa voce "radice FRESCA" aveva per errore gli stessi identici minerali della curcuma in POLVERE (fe:41.4, k2:2525 — impossibili per una radice fresca all'80% acqua) — allineato all'altro duplicato "Curcuma fresca" gia corretto nel DB (80kcal, coerente con zenzero fresco) — 2026-07-29
+  {n:"Curcuma fresca (radice)",c:"Verdure",src:"BDA",k:80,p:1.8,gs:0.1,g:0.7,z:2.5,ch:17.8,fi:2,ca:25,fe:0.9,mg:13,k2:430,na:9,zn:0.3,fo:39,se:0.3,col:0},
   {n:"Ravanello fresco",c:"Verdure",src:"CREA",k:16,p:0.7,gs:0,g:0.1,z:2.0,ch:3.4,fi:1.6,ca:25,fe:0.3,mg:10,k2:233,na:39,zn:0.3,fo:25,se:0.6,col:0},
   {n:"Crescione d'acqua",c:"Verdure",src:"CREA",k:11,p:2.3,gs:0,g:0.1,z:0.4,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.4,fo:9,se:0.9,col:0},
   {n:"Nasturzio (fiori e foglie)",c:"Verdure",src:"BDA",k:28,p:2.1,gs:0,g:0.5,z:3.5,ch:5.1,fi:1.8,ca:130,fe:1.6,mg:29,k2:272,na:17,zn:0.4,fo:24,se:0.4,col:0},
@@ -2046,7 +2050,8 @@ const DB_BDA=[
 {n:"Zucca delica / Butternut cruda",c:"Verdure",k:40,p:1.0,gs:0,g:0.1,z:4.0,ch:10.5,fi:2.0,ca:48,fe:0.7,mg:34,k2:352,na:4,zn:0.3,fo:33,se:0.5,col:0,src:"BDA"},
 {n:"Senape in foglie cruda (Brassica juncea)",c:"Verdure",k:27,p:2.9,gs:0,g:0.4,z:0.7,ch:4.7,fi:3.2,ca:115,fe:1.6,mg:32,k2:354,na:20,zn:0.5,fo:58,se:0.9,col:0,src:"BDA"},
 {n:"Broccolo romanesco crudo",c:"Verdure",k:22,p:2.5,gs:0,g:0.3,z:1.5,ch:3.5,fi:2.4,ca:47,fe:0.7,mg:21,k2:400,na:16,zn:0.5,fo:66,se:0.8,col:0,src:"CREA"},
-{n:"Porro crudo",c:"Verdure",k:31,p:1.5,gs:0,g:0.3,z:3.0,ch:7.3,fi:1.8,ca:59,fe:2.1,mg:28,k2:180,na:10,zn:0.1,fo:35,se:1.0,col:0,src:"CREA"},
+// Allineato a duplicato "Porro crudo" gia corretto nel DB (61kcal, standard USDA/leek) — era 31kcal, meta del reale — 2026-07-29
+{n:"Porro crudo",c:"Verdure",k:61,p:1.5,gs:0.1,g:0.3,z:3.9,ch:14,fi:1.8,ca:59,fe:2,mg:28,k2:180,na:20,zn:0.12,fo:35,se:1,col:0,src:"CREA"},
 {n:"Cavolo cappuccio bianco crudo",c:"Verdure",k:25,p:1.3,gs:0,g:0.1,z:3.8,ch:5.8,fi:2.5,ca:40,fe:0.5,mg:12,k2:246,na:18,zn:0.2,fo:26,se:0.3,col:0,src:"CREA"},
 {n:"Cavolo cappuccio rosso crudo",c:"Verdure",k:22,p:1.9,gs:0,g:0.2,z:2.7,ch:2.7,fi:1,ca:60,fe:1,mg:16,k2:250,na:8,zn:0.2,fo:42,se:0.6,col:0,src:"CREA"},
 

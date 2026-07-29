@@ -537,7 +537,8 @@ const DB_CREA=[
   {n:"Gommasio (sesamo tostato e sale)",c:"Condimenti",k:580,p:18,gs:7.0,g:50,z:2.0,ch:22,fi:12,ca:975,fe:14,mg:350,k2:410,na:3500,zn:7.0,fo:97,se:34,col:0,src:"CREA"},
   {n:"Fleur de sel (sale marino grezzo)",c:"Condimenti",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0.3,mg:90,k2:89,na:39300,zn:0.1,fo:0,se:0,col:0,src:"BDA"},
   // ── ALIMENTI A BASE DI INSETTI ──
-  {n:"Farina di grillo (Acheta domesticus)",c:"Carni e derivati",k:430,p:65,gs:4.5,g:13,z:4.0,ch:9.5,fi:5.0,ca:75,fe:5.5,mg:59,k2:440,na:300,zn:7.0,fo:930,se:19,col:210,src:"CREA"},
+  // Fosforo (grilli noti per fosforo molto elevato, ~900-1200mg/100g) era nel campo folati; folati reali grillo ~10mcg (confermato via ricerca) - 2026-07-29
+  {n:"Farina di grillo (Acheta domesticus)",c:"Carni e derivati",k:430,p:65,gs:4.5,g:13,z:4.0,ch:9.5,fi:5.0,ca:75,fe:5.5,mg:59,k2:440,na:300,zn:7.0,fo:10,se:19,col:210,src:"CREA"},
   // ── BEVANDE FUNZIONALI ──
   {n:"Succo di aloe vera puro",c:"Bevande",k:10,p:0.1,gs:0,g:0,z:2.0,ch:2.2,fi:0.2,ca:20,fe:0.2,mg:5,k2:160,na:60,zn:0.1,fo:3,se:0,col:0,src:"CREA"},
   {n:"Acqua di cocco naturale (senza zuccheri aggiunti)",c:"Bevande",k:19,p:0.7,gs:0,g:0.2,z:3.7,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:250,na:105,zn:0.1,fo:9,se:1,col:0,src:"CREA"},

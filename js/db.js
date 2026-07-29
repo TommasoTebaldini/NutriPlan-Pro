@@ -53,7 +53,7 @@ const DB_CREA=[
 {n:"Kiwi",c:"Frutta fresca",k:48,p:1.2,gs:0,g:0.6,z:9,ch:9,fi:2.2,ca:25,fe:0.5,mg:12,k2:400,na:5,zn:0.1,fo:70,se:0.2,col:0,src:"CREA"},
 {n:"Avocado",c:"Frutta lipidica",k:238,p:4.4,gs:2.59,g:23,z:1.8,ch:1.8,fi:3.3,ca:13,fe:0.6,mg:29,k2:450,na:2,zn:0.64,fo:44,se:0.4,col:0,src:"CREA"},
 {n:"Mandorle dolci secche",c:"Frutta secca",k:628,p:22,gs:4.63,g:55.3,z:3.7,ch:4.6,fi:12.7,ca:240,fe:3,mg:264,k2:780,na:14,zn:2.5,fo:550,se:1.5,col:0,src:"CREA"},
-{n:"Noci",c:"Frutta secca",k:589,p:10.5,gs:5.6,g:57.7,z:3.4,ch:5.5,fi:3.5,ca:131,fe:2.6,mg:131,k2:368,na:3,zn:2.7,fo:380,se:3.1,col:0,src:"CREA"},
+{n:"Noci",c:"Frutta secca",k:589,p:10.5,gs:5.6,g:57.7,z:3.4,ch:5.5,fi:3.5,ca:131,fe:2.6,mg:131,k2:368,na:3,zn:2.7,fo:98,se:3.1,col:0,src:"CREA"},
 {n:"Semi di chia",c:"Frutta secca",k:486,p:17,gs:3.3,g:31,z:0,ch:42,fi:34.4,ca:631,fe:7.4,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0,src:"CREA"},
 {n:"Burro",c:"Grassi",k:758,p:0.8,gs:54.2,g:83.4,z:1.1,ch:1.1,fi:0,ca:25,fe:0,mg:2,k2:15,na:7,zn:0.09,fo:23,se:1,col:250,src:"CREA"},
 {n:"Burro di arachidi",c:"Grassi",k:625,p:24.9,gs:11.18,g:53.7,z:4.4,ch:8,fi:6,ca:47,fe:2.5,mg:18,k2:680,na:370,zn:3.5,fo:363,se:4,col:0,src:"CREA"},
@@ -251,7 +251,7 @@ const DB_CREA=[
 {n:"Cicerchie secche",c:"Legumi",k:334,p:26.8,gs:0.2,g:1.3,z:0,ch:58.7,fi:14.5,ca:92,fe:8.6,mg:100,k2:960,na:5,zn:3.6,fo:490,se:6,col:0,src:"CREA"},
 {n:"Fagioli di Spagna secchi",c:"Legumi",k:312,p:20.2,gs:0.1,g:2,z:3.5,ch:47.7,fi:17.3,ca:102,fe:9,mg:163,k2:1478,na:3,zn:2.9,fo:550,se:16,col:0,src:"CREA"},
 // ── FRUTTA SECCA E SEMI aggiuntivi ──
-{n:"Noci di Macadamia",c:"Frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:305,se:3.6,col:0,src:"CREA"},
+{n:"Noci di Macadamia",c:"Frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:11,se:3.6,col:0,src:"CREA"},
 {n:"Noci Pecan",c:"Frutta secca",k:723,p:7.2,gs:8.11,g:71.8,z:4.3,ch:7.9,fi:9.4,ca:61,fe:2.4,mg:121,k2:603,na:0,zn:5,fo:22,se:6,col:0,src:"CREA"},
 {n:"Pinoli",c:"Frutta secca",k:604,p:31.9,gs:4.9,g:50.3,z:3.9,ch:4,fi:4.5,ca:40,fe:2,mg:251,k2:597,na:2,zn:6.4,fo:58,se:0.7,col:0,src:"CREA"},
 {n:"Castagne fresche",c:"Frutta secca",k:174,p:2.9,gs:0.3,g:1.7,z:8.9,ch:36.7,fi:4.7,ca:30,fe:0.9,mg:30,k2:395,na:9,zn:0.5,fo:81,se:1.2,col:0,src:"CREA"},
@@ -669,9 +669,9 @@ const DB_CREA=[
 {n:"Semi di sesamo",c:"Frutta secca",k:565,p:17.7,gs:7,g:48.7,z:0.3,ch:23.4,fi:11.6,ca:975,fe:14.5,mg:351,k2:468,na:11,zn:7.75,fo:97,se:34,col:0,src:"CREA"},
 {n:"Semi di lino macinati",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0,src:"CREA"},
 {n:"Semi di zucca",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49.1,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:58,se:9.4,col:0,src:"CREA"},
-{n:"Anacardi",c:"Frutta secca",k:604,p:15,gs:9.42,g:46,z:5.6,ch:33,fi:3,ca:45,fe:6,mg:260,k2:565,na:16,zn:6,fo:593,se:12,col:0,src:"CREA"},
-{n:"Nocciole",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:290,se:2,col:0,src:"CREA"},
-{n:"Pistacchi (senza guscio)",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:490,se:8,col:0,src:"CREA"},
+{n:"Anacardi",c:"Frutta secca",k:604,p:15,gs:9.42,g:46,z:5.6,ch:33,fi:3,ca:45,fe:6,mg:260,k2:565,na:16,zn:6,fo:25,se:12,col:0,src:"CREA"},
+{n:"Nocciole",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:113,se:2,col:0,src:"CREA"},
+{n:"Pistacchi (senza guscio)",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0,src:"CREA"},
 {n:"Farina di mais (polenta) cruda",c:"Cereali e pasta",k:323,p:8,gs:0.5,g:0.7,z:0.6,ch:72.7,fi:6.2,ca:7,fe:0.4,mg:15,k2:34,na:5,zn:0.18,fo:25,se:9.5,col:0,src:"CREA"},
 {n:"Mortadella Bologna",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.9,ch:0,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:5,se:20,col:72,src:"CREA"},
 // Kcal/grassi sottostimati (402kcal era sotto ogni fonte reale trovata, range tipico 450-600kcal) - 2026-07-29
@@ -861,10 +861,10 @@ const DB_CREA=[
 {n:"Mandarini",c:"Frutta fresca",k:76,p:0.9,gs:0,g:0.3,z:17.6,ch:17.6,fi:1.7,ca:32,fe:0.3,mg:12,k2:210,na:1,zn:0.07,fo:20,se:0.1,col:0,src:"CREA"},
 {n:"Pompelmo rosa",c:"Frutta fresca",k:41,p:0.8,gs:0.02,g:0.1,z:6.9,ch:9.1,fi:1.6,ca:22,fe:0.1,mg:9,k2:135,na:0,zn:0.07,fo:13,se:0.1,col:0,src:"BDA"},
 {n:"Uvetta di Corinto",c:"Frutta secca",k:293,p:1.9,gs:0.076,g:0.6,z:72,ch:72,fi:5.2,ca:78,fe:3.3,mg:31,k2:864,na:52,zn:0.1,fo:27,se:0.7,col:0,src:"BDA"},
-{n:"Anacardi tostati non salati",c:"Frutta secca",k:604,p:15,gs:9.42,g:46,z:5.6,ch:33,fi:3,ca:45,fe:6,mg:260,k2:565,na:16,zn:6,fo:490,se:12,col:0,src:"CREA"},
-{n:"Nocciole tostate",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:310,se:2,col:0,src:"CREA"},
-{n:"Pistacchi tostati non salati",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:490,se:8,col:0,src:"CREA"},
-{n:"Pinoli crudi",c:"Frutta secca",k:604,p:31.9,gs:4.9,g:50.3,z:3.9,ch:4,fi:4.5,ca:40,fe:2,mg:251,k2:597,na:2,zn:6.4,fo:575,se:0.7,col:0,src:"CREA"},
+{n:"Anacardi tostati non salati",c:"Frutta secca",k:604,p:15,gs:9.42,g:46,z:5.6,ch:33,fi:3,ca:45,fe:6,mg:260,k2:565,na:16,zn:6,fo:25,se:12,col:0,src:"CREA"},
+{n:"Nocciole tostate",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:113,se:2,col:0,src:"CREA"},
+{n:"Pistacchi tostati non salati",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0,src:"CREA"},
+{n:"Pinoli crudi",c:"Frutta secca",k:604,p:31.9,gs:4.9,g:50.3,z:3.9,ch:4,fi:4.5,ca:40,fe:2,mg:251,k2:597,na:2,zn:6.4,fo:34,se:0.7,col:0,src:"CREA"},
 {n:"Arachidi tostare non salate",c:"Frutta secca",k:567,p:25.8,gs:6.8,g:49.2,z:4,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7.2,col:0,src:"CREA"},
 {n:"Semi di zucca crudi",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:58,se:9.4,col:0,src:"CREA"},
 {n:"Semi di girasole crudi",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5,fo:227,se:53,col:0,src:"CREA"},
@@ -1359,7 +1359,7 @@ const DB_BDA=[
   // fo conteneva fosforo (642mg, valore reale semi di lino) non folati: corretto a 87mcg - 2026-07-29
   {n:"Semi di lino",c:"Frutta secca",src:"CREA",k:534,p:18.3,ch:28.9,g:42.2,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0},
   {n:"Semi di chia",c:"Frutta secca",src:"BDA",k:486,p:16.5,ch:42.1,g:30.7,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0},
-  {n:"Pistacchi tostati",c:"Frutta secca",src:"CREA",k:629,p:18.1,ch:8.1,g:56.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:490,se:8,col:0},
+  {n:"Pistacchi tostati",c:"Frutta secca",src:"CREA",k:629,p:18.1,ch:8.1,g:56.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0},
   // ── PESCE ──
   {n:"Tonno al naturale in scatola",c:"Pesce",src:"BDA",k:159,p:21.5,ch:0.1,g:8.1,fi:0,ca:38,fe:1.3,mg:26,k2:520,na:43,zn:0.5,fo:20,se:112,col:70},
   {n:"Tonno sott'olio sgocciolato",c:"Pesce",src:"CREA",k:192,p:25.2,ch:0,g:10.1,fi:0,ca:7,fe:1.7,mg:23,k2:301,na:316,zn:0.7,fo:10,se:75,col:65},
@@ -1691,7 +1691,7 @@ const DB_BDA=[
   {n:"Semi di girasole crudi sbucciati",c:"Semi oleosi",src:"CREA",k:584,p:20.8,gs:4.5,g:51.5,z:2.4,ch:20.0,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5.0,fo:227,se:53,col:0},
   {n:"Semi di sesamo crudi",c:"Semi oleosi",src:"CREA",k:573,p:17.7,gs:7.0,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:97,se:34,col:0},
   {n:"Noci del Brasile crude",c:"Frutta secca a guscio",src:"CREA",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0},
-  {n:"Noci di Macadamia crude",c:"Frutta secca a guscio",src:"CREA",k:751,p:8,gs:12.56,g:76,z:4,ch:5.1,fi:8,ca:70,fe:3,mg:118,k2:363,na:5,zn:1,fo:160,se:4,col:0},
+  {n:"Noci di Macadamia crude",c:"Frutta secca a guscio",src:"CREA",k:751,p:8,gs:12.56,g:76,z:4,ch:5.1,fi:8,ca:70,fe:3,mg:118,k2:363,na:5,zn:1,fo:11,se:4,col:0},
   // ── NUOVI ALIMENTI BDA ──
   // Piatti tradizionali italiani (valori per 100g di prodotto finito)
   {n:"Arancino / Arancina di riso (fritto)",c:"Piatti pronti",src:"BDA",k:195,p:6.0,gs:3.0,g:8.0,z:3.5,ch:26,fi:1.0,ca:30,fe:0.8,mg:12,k2:110,na:350,zn:0.8,fo:70,se:5,col:20},
@@ -1776,7 +1776,7 @@ const DB_BDA=[
   {n:"Ceci rossi secchi",c:"Legumi",src:"CREA",k:343,p:20.9,gs:0.85,g:6.3,z:3.7,ch:46.9,fi:13.6,ca:142,fe:6.4,mg:130,k2:881,na:6,zn:3.2,fo:390,se:2,col:0},
 
   // ── FRUTTA SECCA E SEMI AGGIUNTIVI ──
-  {n:"Noci di macadamia",c:"Frutta secca",src:"BDA",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:188,se:3.6,col:0},
+  {n:"Noci di macadamia",c:"Frutta secca",src:"BDA",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:11,se:3.6,col:0},
   {n:"Semi di papavero",c:"Frutta secca",src:"BDA",k:525,p:17.9,gs:4.5,g:41.6,z:2.1,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:58,se:13,col:0},
 
   // ── PIATTI PRONTI ──

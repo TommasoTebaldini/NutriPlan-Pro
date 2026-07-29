@@ -1102,7 +1102,8 @@ const DB_CREA=[
 {n:"Miso bianco (shiro miso)",c:"Condimenti",k:198,p:11.8,gs:0.6,g:5.9,z:13.6,ch:27,fi:5.4,ca:68,fe:2.6,mg:44,k2:210,na:3728,zn:1.5,fo:31,se:7,col:0,src:"CREA"},
 {n:"Tofu seta (silken tofu)",c:"Legumi",k:55,p:5,gs:0.2,g:3,z:0.4,ch:2,fi:0.1,ca:179,fe:0.5,mg:27,k2:96,na:5,zn:0.6,fo:19,se:8,col:0,src:"CREA"},
 {n:"Seitan (glutine di frumento)",c:"Cereali e derivati",k:370,p:75,gs:0,g:2,z:0,ch:14,fi:0.6,ca:142,fe:2.8,mg:27,k2:100,na:450,zn:1.6,fo:20,se:12,col:0,src:"CREA"},
-{n:"Alga dulse (secca)",c:"Verdure",k:247,p:21.6,gs:0.2,g:3.2,z:0,ch:43.2,fi:33,ca:567,fe:6.3,mg:220,k2:8060,na:2085,zn:1.9,fo:180,se:30,col:0,src:"CREA"},
+// Potassio (8060mg) stesso bug gia trovato/corretto su "Alga Dulse essiccata": allineato a ~1244mg (fonti convergenti) - 2026-07-29
+{n:"Alga dulse (secca)",c:"Verdure",k:247,p:21.6,gs:0.2,g:3.2,z:0,ch:43.2,fi:33,ca:567,fe:6.3,mg:220,k2:1244,na:2085,zn:1.9,fo:180,se:30,col:0,src:"CREA"},
 {n:"Alga kombu (secca)",c:"Verdure",k:243,p:8.2,gs:0.1,g:1.8,z:0,ch:60,fi:27.1,ca:168,fe:2.8,mg:760,k2:6100,na:2500,zn:1.2,fo:180,se:20,col:0,src:"CREA"},
 // ── DOLCI TRADIZIONALI ITALIANI ──
 {n:"Cantucci toscani (biscotti di Prato)",c:"Biscotti e crackers",k:443,p:11,gs:4,g:15,z:28,ch:67,fi:1.5,ca:70,fe:2,mg:30,k2:180,na:210,zn:0.9,fo:50,se:10,col:88,src:"CREA"},
@@ -3642,7 +3643,8 @@ const DB_UPF = [
 {n:"Ghee biologico (burro chiarificato)",c:"Grassi e oli",src:"CREA",k:900,p:0.1,gs:62.0,g:100.0,z:0.1,ch:0.1,fi:0,ca:2,fe:0,mg:0,k2:5,na:2,zn:0,fo:2,se:0,col:256},
 // ═══ PRODOTTI ITTICI INDUSTRIALI ═══
 {n:"Bastoncini di pesce impanati (merluzzo, cotti)",c:"Pesce",src:"UPF",k:189.3,p:11,gs:1.8,g:9.3,z:2.1,ch:14.6,fi:0,ca:30,fe:0.8,mg:25,k2:200,na:352,zn:0.5,fo:180,se:20,col:45},
-{n:"Filetto di merluzzo impanato surgelato (cotto)",c:"Pesce",src:"UPF",k:174,p:13.1,gs:1,g:6.7,z:2.1,ch:15,fi:1.0,ca:25,fe:0.6,mg:28,k2:210,na:409136,zn:0.5,fo:195,se:22,col:42},
+// Sodio (409136mg) era un errore di trascrizione grossolano, impossibile (>4x il peso dell'alimento): corretto a un valore tipico per pesce impanato surgelato - 2026-07-29
+{n:"Filetto di merluzzo impanato surgelato (cotto)",c:"Pesce",src:"UPF",k:174,p:13.1,gs:1,g:6.7,z:2.1,ch:15,fi:1.0,ca:25,fe:0.6,mg:28,k2:210,na:400,zn:0.5,fo:195,se:22,col:42},
 {n:"Salmone affumicato in busta (norvegese)",c:"Pesce",src:"CREA",k:147,p:25.4,gs:1.26,g:4.5,z:1.2,ch:1.2,fi:0,ca:19,fe:0.6,mg:22,k2:420,na:1880,zn:0.4,fo:260,se:38,col:50},
 {n:"Tonno in scatola in olio di girasole (scolato)",c:"Pesce",src:"CREA",k:198,p:25.5,gs:1.5,g:10.5,z:0,ch:0,fi:0,ca:15,fe:1.2,mg:30,k2:285,na:430,zn:0.8,fo:235,se:70,col:38},
 {n:"Sgombro in scatola al naturale (sgocciolato)",c:"Pesce",src:"CREA",k:155,p:20.5,gs:2.5,g:8.0,z:0,ch:0,fi:0,ca:20,fe:1.2,mg:32,k2:310,na:380,zn:0.8,fo:245,se:42,col:72},

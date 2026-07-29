@@ -1923,7 +1923,8 @@ const DB_BDA=[
 {n:"Mela cotogna fresca",c:"Frutta fresca",k:57,p:0.4,gs:0,g:0.1,z:8.9,ch:15.3,fi:1.9,ca:11,fe:0.7,mg:8,k2:197,na:4,zn:0.0,fo:17,se:0.6,col:0,src:"CREA"},
 {n:"Giuggiola fresca",c:"Frutta fresca",k:79,p:1.2,gs:0,g:0.2,z:18.5,ch:20.2,fi:1.8,ca:21,fe:0.5,mg:10,k2:250,na:3,zn:0.1,fo:23,se:0.3,col:0,src:"CREA"},
 {n:"Nespola comune (medlar) fresca",c:"Frutta fresca",k:47,p:0.4,gs:0,g:0.3,z:9.2,ch:11.1,fi:3.0,ca:30,fe:0.3,mg:9,k2:113,na:0,zn:0.1,fo:16,se:0.6,col:0,src:"CREA"},
-{n:"Azzeruolo fresco",c:"Frutta fresca",k:89,p:0.4,gs:0,g:0.3,z:16.0,ch:23.0,fi:2.0,ca:24,fe:0.7,mg:14,k2:185,na:5,zn:0.1,fo:21,se:0.5,col:0,src:"CREA"},
+// Kcal sovrastimate: allineate al duplicato Azzeruole gia corretto con fonte (32kcal) - 2026-07-29
+{n:"Azzeruolo fresco",c:"Frutta fresca",k:32,p:0.4,gs:0,g:0.2,z:5.5,ch:8,fi:2.0,ca:24,fe:0.7,mg:14,k2:185,na:5,zn:0.1,fo:21,se:0.5,col:0,src:"CREA"},
 // ── Pesce d'acqua dolce ──
 {n:"Lavarello (coregone) fresco",c:"Pesce",k:135,p:19,gs:1.66,g:6.5,z:0.1,ch:0.1,fi:0,ca:89,fe:0.9,mg:28,k2:400,na:50,zn:0.6,fo:10,se:12,col:52,src:"CREA"},
 {n:"Tinca fresca",c:"Pesce",k:79,p:17.9,gs:0.5,g:0.5,z:0.9,ch:0.9,fi:0,ca:31,fe:1,mg:24,k2:245,na:80,zn:0.8,fo:10,se:10,col:58,src:"CREA"},

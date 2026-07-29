@@ -1516,7 +1516,8 @@ const DB_BDA=[
   {n:"Astice (aragosta)",c:"Crostacei",src:"CREA",k:85,p:16,gs:0.66,g:1.9,z:1,ch:1,fi:0,ca:60,fe:0.8,mg:19,k2:180,na:177,zn:2.2,fo:175,se:54,col:70},
   {n:"Cannocchie / Pannocchie",c:"Crostacei",src:"CREA",k:83,p:14.4,gs:0.2,g:1.3,z:0,ch:1.4,fi:0,ca:55,fe:0.6,mg:40,k2:230,na:350,zn:2.0,fo:145,se:60,col:160},
   // ── CONDIMENTI E ALIMENTI VARI NON ANCORA PRESENTI ──
-  {n:"Colatura di alici",c:"Condimenti",src:"CREA",k:26,p:5.0,gs:0.1,g:0.1,z:0,ch:1.0,fi:0,ca:40,fe:0.8,mg:18,k2:120,na:8100,zn:0.6,fo:50,se:10,col:30},
+  // Allineato alla voce CREA "Colatura di alici di Cetara" gia verificata (stesso prodotto, la colatura di alici e per tradizione sempre di Cetara) — 2026-07-29
+  {n:"Colatura di alici",c:"Condimenti",src:"CREA",k:68,p:14,gs:0.5,g:2,z:0,ch:0,fi:0,ca:50,fe:2,mg:25,k2:200,na:7200,zn:0.8,fo:10,se:40,col:60},
   {n:"Ghee (burro chiarificato)",c:"Grassi e oli",src:"BDA",k:900,p:0.1,gs:61.9,g:99.5,z:0,ch:0.1,fi:0,ca:4,fe:0.1,mg:0,k2:4,na:2,zn:0,fo:0,se:0,col:256},
   {n:"Maionese light",c:"Condimenti",src:"BDA",k:313,p:1.4,gs:3.8,g:32,z:3.5,ch:5,fi:0,ca:15,fe:0.3,mg:3,k2:18,na:620,zn:0.1,fo:28,se:2,col:42},
   {n:"Salsa Caesar industriale",c:"Condimenti",src:"BDA",k:388,p:2.5,gs:4.5,g:40,z:3.5,ch:5,fi:0.3,ca:60,fe:0.3,mg:5,k2:32,na:890,zn:0.2,fo:35,se:4,col:30},

@@ -957,7 +957,8 @@ const DB_CREA=[
 {n:"Yogurt greco proteico 2%",c:"Latte e derivati",k:73,p:9,gs:1.2,g:2,z:3.5,ch:3.5,fi:0,ca:100,fe:0.1,mg:11,k2:141,na:44,zn:0.5,fo:10,se:3,col:8,src:"CREA"},
 {n:"Fiocchi di latte (cottage cheese)",c:"Latte e derivati",k:115,p:9.7,gs:4.242,g:7.1,z:3.2,ch:3.2,fi:0,ca:73,fe:0.1,mg:9,k2:89,na:290,zn:0.6,fo:27,se:4,col:24,src:"BDA"},
 {n:"Latte di capra intero",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:5,se:1.9,col:10,src:"CREA"},
-{n:"Panna da cucina (UHT 18%)",c:"Latte e derivati",k:177,p:2.8,gs:11.5,g:17.5,z:3.5,ch:3.9,fi:0,ca:67,fe:0.1,mg:8,k2:85,na:40,zn:0.2,fo:55,se:1.5,col:55,src:"CREA"},
+// Stesso bug fosforo-in-folati del comparto lattiero (mancato dalla soglia >60 usata nella correzione in blocco) - 2026-07-29
+{n:"Panna da cucina (UHT 18%)",c:"Latte e derivati",k:177,p:2.8,gs:11.5,g:17.5,z:3.5,ch:3.9,fi:0,ca:67,fe:0.1,mg:8,k2:85,na:40,zn:0.2,fo:5,se:1.5,col:55,src:"CREA"},
 {n:"Panna montata (light 25%)",c:"Latte e derivati",k:257,p:2.3,gs:16,g:25,z:3.2,ch:3.2,fi:0,ca:79,fe:0.1,mg:9,k2:90,na:25,zn:0.2,fo:5,se:1.5,col:78,src:"CREA"},
 // ── CEREALI E PRODOTTI DA FORNO AGGIUNTIVI ──
 {n:"Miglio decorticato",c:"Cereali e pasta",k:342,p:11,gs:0.7,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:40,se:2.7,col:0,src:"CREA"},
@@ -1681,7 +1682,7 @@ const DB_BDA=[
   {n:"Bevanda di avena non zuccherata",c:"Latticini alternativi",src:"BDA",k:44,p:1.0,gs:0.1,g:1.5,z:3.5,ch:6.6,fi:1.0,ca:120,fe:0.2,mg:13,k2:58,na:55,zn:0.2,fo:7,se:1,col:0},
   {n:"Bevanda di riso non zuccherata",c:"Latticini alternativi",src:"BDA",k:47,p:0.3,gs:0,g:1.0,z:5.1,ch:9.2,fi:0.3,ca:120,fe:0.2,mg:8,k2:25,na:50,zn:0.1,fo:10,se:0,col:0},
   {n:"Panna fresca da cucina (30% grassi)",c:"Latticini",src:"BDA",k:292,p:2.6,gs:17.46,g:30,z:3.2,ch:3.2,fi:0,ca:78,fe:0,mg:7,k2:100,na:34,zn:0.3,fo:7,se:0,col:90},
-  {n:"Panna acida (sour cream)",c:"Latticini",src:"BDA",k:193,p:2.1,gs:11.5,g:19.0,z:3.8,ch:4.5,fi:0,ca:65,fe:0.1,mg:8,k2:85,na:28,zn:0.2,fo:50,se:2,col:52},
+  {n:"Panna acida (sour cream)",c:"Latticini",src:"BDA",k:193,p:2.1,gs:11.5,g:19.0,z:3.8,ch:4.5,fi:0,ca:65,fe:0.1,mg:8,k2:85,na:28,zn:0.2,fo:5,se:2,col:52},
   {n:"Crème fraîche (40% grassi)",c:"Latticini",src:"BDA",k:381,p:2.0,gs:23.0,g:40.0,z:3.1,ch:3.1,fi:0,ca:55,fe:0.1,mg:9,k2:90,na:35,zn:0.2,fo:55,se:2,col:137},
 
   // ── CEREALI ALTERNATIVI COTTI ──
@@ -1771,7 +1772,7 @@ const DB_BDA=[
   {n:"Avena grains (chicchi interi)",c:"Cereali e pasta",src:"CREA",k:389,p:16.9,gs:1.3,g:6.9,z:0.9,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:4.0,fo:56,se:34,col:0},
 
   // ── BEVANDE AGGIUNTIVE ──
-  {n:"Cappuccino (latte intero + caffè)",c:"Bevande",src:"CREA",k:40,p:1.8,gs:0.9,g:1.6,z:2.4,ch:2.4,fi:0,ca:65,fe:0.1,mg:7,k2:85,na:22,zn:0.2,fo:52,se:1,col:6},
+  {n:"Cappuccino (latte intero + caffè)",c:"Bevande",src:"CREA",k:40,p:1.8,gs:0.9,g:1.6,z:2.4,ch:2.4,fi:0,ca:65,fe:0.1,mg:7,k2:85,na:22,zn:0.2,fo:5,se:1,col:6},
   {n:"Orzo solubile / tisana orzo",c:"Bevande",src:"BDA",k:300,p:6,gs:0.6,g:2.5,z:4.6,ch:55.1,fi:23.3,ca:58,fe:4.6,mg:244,k2:2443,na:83,zn:0.51,fo:52,se:64.1,col:0},
   {n:"Latte di cocco light (in lattina)",c:"Bevande",src:"BDA",k:77,p:1.0,gs:7.0,g:8.0,z:2.2,ch:3.3,fi:0,ca:12,fe:1.0,mg:15,k2:100,na:10,zn:0.2,fo:30,se:2,col:0},
 
@@ -1881,9 +1882,9 @@ const DB_BDA=[
 {n:"Friselle (pane biscottato pugliese)",c:"Pane",k:345,p:10.5,gs:0.39,g:2,z:2,ch:74.5,fi:2.9,ca:71,fe:1.9,mg:131,k2:207,na:914,zn:0.22,fo:73,se:2.8,col:0,src:"BDA"},
 {n:"Succo di pompelmo fresco",c:"Bevande",k:34,p:0.4,gs:0.01,g:0.1,z:8.3,ch:8.3,fi:0,ca:14,fe:0.2,mg:8,k2:100,na:7,zn:0,fo:6,se:1,col:0,src:"BDA"},
 {n:"Acciughe sotto sale",c:"Pesce",k:137,p:25,gs:0.821,g:3.1,z:2.3,ch:2.3,fi:0,ca:542,fe:6.9,mg:41,k2:215,na:3604,zn:1.7,fo:8,se:37,col:119,src:"BDA"},
-{n:"Latte intero in polvere",c:"Latte e derivati",k:484,p:25.7,gs:20.0,g:24.9,z:42,ch:42,fi:0,ca:1050,fe:0.7,mg:94,k2:1270,na:440,zn:3.0,fo:47,se:12,col:109,src:"CREA"},
+{n:"Latte intero in polvere",c:"Latte e derivati",k:484,p:25.7,gs:20.0,g:24.9,z:42,ch:42,fi:0,ca:1050,fe:0.7,mg:94,k2:1270,na:440,zn:3.0,fo:15,se:12,col:109,src:"CREA"},
 // Verificato CREA 135630 (Latte di vacca, in polvere, SCREMATO — scartato apposta il candidato "parzialmente scremato" quasi a pari punteggio) — 2026-07-29
-{n:"Latte scremato in polvere",c:"Latte e derivati",k:351,p:33.1,gs:0.1,g:0.9,z:56.2,ch:56.2,fi:0,ca:1323,fe:0.9,mg:117,k2:1650,na:550,zn:4.2,fo:51,se:30,col:22,src:"CREA"},
+{n:"Latte scremato in polvere",c:"Latte e derivati",k:351,p:33.1,gs:0.1,g:0.9,z:56.2,ch:56.2,fi:0,ca:1323,fe:0.9,mg:117,k2:1650,na:550,zn:4.2,fo:15,se:30,col:22,src:"CREA"},
 {n:"Gallette di mais (non al sale)",c:"Biscotti e crackers",k:362,p:7.7,gs:0.13,g:1.1,z:0.4,ch:84.7,fi:1.7,ca:77,fe:2.9,mg:15,k2:103,na:187,zn:0.29,fo:7,se:2.1,col:0,src:"BDA"},
 {n:"Tortellini freschi all'uovo",c:"Cereali e derivati",k:326,p:13.0,gs:1.2,g:6.0,z:1.5,ch:55.5,fi:1.8,ca:25,fe:2.3,mg:30,k2:130,na:350,zn:1.1,fo:145,se:22,col:70,src:"CREA"},
 {n:"Ravioli freschi di carne",c:"Cereali e derivati",k:230,p:10.5,gs:1.5,g:6.5,z:1.5,ch:31.5,fi:1.5,ca:35,fe:1.5,mg:20,k2:120,na:340,zn:1.0,fo:120,se:10,col:45,src:"CREA"},
@@ -2144,7 +2145,7 @@ const DB_BDA=[
 {n:"Malto d'orzo in polvere",c:"Cereali e derivati",k:371,p:11.0,gs:0.1,g:2.3,z:62.0,ch:77.4,fi:6.0,ca:40,fe:5.0,mg:85,k2:450,na:25,zn:2.3,fo:30,se:10,col:0,src:"BDA"},
 {n:"Sciroppo di glucosio",c:"Zuccheri",k:287,p:0,gs:0,g:0,z:28.1,ch:76.6,fi:0,ca:18,fe:0.4,mg:8,k2:44,na:160,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Latte condensato non zuccherato (evaporato)",c:"Latte e derivati",k:134,p:7,gs:5.1,g:8.2,z:8.6,ch:8.6,fi:0,ca:240,fe:0.1,mg:22,k2:323,na:150,zn:0.8,fo:12,se:3,col:31,src:"CREA"},
-{n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:337,p:2.3,gs:20.4,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:55,se:1,col:120,src:"CREA"},
+{n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:337,p:2.3,gs:20.4,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:5,se:1,col:120,src:"CREA"},
 {n:"Farinata di ceci (piatto tipico genovese cotto)",c:"Cereali e derivati",k:152,p:5.5,gs:0.8,g:8.5,z:0.5,ch:14.5,fi:2.0,ca:28,fe:1.8,mg:30,k2:130,na:300,zn:0.7,fo:90,se:2,col:0,src:"BDA"},
 {n:"Gelatina in fogli (colla di pesce)",c:"Condimenti",k:335,p:84.4,gs:0,g:0.1,z:0,ch:0,fi:0,ca:10,fe:0.1,mg:1,k2:2,na:30,zn:0.1,fo:20,se:0,col:70,src:"BDA"},
 // fo conteneva fosforo (1677mg, valore reale crusca di riso) non folati: corretto a 63mcg - 2026-07-29
@@ -2161,7 +2162,7 @@ const DB_BDA=[
 {n:"Estratto di lievito (tipo Marmite)",c:"Condimenti",k:180,p:35.6,gs:0.1,g:0.7,z:0.5,ch:17.6,fi:0,ca:100,fe:3.2,mg:30,k2:2100,na:3750,zn:1.2,fo:950,se:130,col:0,src:"BDA"},
 {n:"Olio di mandorle dolci",c:"Grassi",k:884,p:0,gs:8.2,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Olio di ricino",c:"Grassi",k:884,p:0,gs:2.9,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
-{n:"Panna acida (sour cream 20%)",c:"Latte e derivati",k:206,p:2.7,gs:12.6,g:20.0,z:3.5,ch:3.5,fi:0,ca:67,fe:0.1,mg:8,k2:95,na:40,zn:0.2,fo:55,se:1,col:50,src:"BDA"},
+{n:"Panna acida (sour cream 20%)",c:"Latte e derivati",k:206,p:2.7,gs:12.6,g:20.0,z:3.5,ch:3.5,fi:0,ca:67,fe:0.1,mg:8,k2:95,na:40,zn:0.2,fo:5,se:1,col:50,src:"BDA"},
 {n:"Zucchero grezzo di canna (mascobado)",c:"Zuccheri",k:380,p:0.1,gs:0,g:0,z:101.3,ch:101.3,fi:0,ca:56,fe:1.7,mg:17,k2:140,na:31,zn:0.1,fo:0,se:0,col:0,src:"BDA"},
 
 // ── VERDURE COTTE MANCANTI (CREA) ──
@@ -2210,17 +2211,17 @@ const DB_BDA=[
 // ── PRODOTTI LATTIERO-CASEARI MANCANTI (CREA) ──
 {n:"Quark (formaggio fresco magro)",c:"Formaggi",k:70,p:12.5,gs:0.2,g:0.5,z:2.5,ch:3.5,fi:0,ca:90,fe:0.1,mg:9,k2:130,na:75,zn:0.7,fo:24,se:8,col:5,src:"BDA"},
 {n:"Formaggio fresco tipo Quark intero",c:"Formaggi",k:115,p:11.0,gs:2.0,g:5.5,z:3.0,ch:4.0,fi:0,ca:95,fe:0.1,mg:10,k2:140,na:70,zn:0.8,fo:24,se:9,col:20,src:"BDA"},
-{n:"Kefir di latte intero",c:"Latte e derivati",k:63,p:3.3,gs:2.0,g:3.6,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:150,na:50,zn:0.4,fo:38,se:2,col:14,src:"BDA"},
-{n:"Latte di capra fresco intero",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:30,se:1.9,col:10,src:"CREA"},
+{n:"Kefir di latte intero",c:"Latte e derivati",k:63,p:3.3,gs:2.0,g:3.6,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:150,na:50,zn:0.4,fo:5,se:2,col:14,src:"BDA"},
+{n:"Latte di capra fresco intero",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:5,se:1.9,col:10,src:"CREA"},
 {n:"Stracciatella di bufala",c:"Formaggi",k:268,p:13.5,gs:13.0,g:23.5,z:0.5,ch:1.0,fi:0,ca:210,fe:0.2,mg:18,k2:80,na:95,zn:0.9,fo:20,se:8,col:75,src:"CREA"},
 {n:"Latticello (buttermilk)",c:"Latte e derivati",k:40,p:3.3,gs:0.2,g:0.9,z:4.8,ch:4.8,fi:0,ca:116,fe:0.1,mg:11,k2:151,na:105,zn:0.4,fo:36,se:2,col:5,src:"BDA"},
-{n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:337,p:2.3,gs:20.5,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:56,se:1,col:120,src:"CREA"},
+{n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:337,p:2.3,gs:20.5,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:5,se:1,col:120,src:"CREA"},
 {n:"Formaggio Fontina DOP",c:"Formaggi",k:352,p:25.5,gs:14.5,g:26.0,z:0,ch:0,fi:0,ca:870,fe:0.2,mg:28,k2:100,na:700,zn:3.5,fo:15,se:14,col:80,src:"CREA"},
 {n:"Pecorino Sardo DOP stagionato",c:"Formaggi",k:404,p:28.8,gs:24.5,g:32,z:0.2,ch:0.2,fi:0,ca:607,fe:0.6,mg:40,k2:90,na:1800,zn:3.38,fo:18,se:6.3,col:88,src:"CREA"},
 {n:"Caciocavallo silano DOP",c:"Formaggi",k:431,p:35.7,gs:20.0,g:31.1,z:2.3,ch:2.3,fi:0,ca:860,fe:0.3,mg:20,k2:80,na:960,zn:3.75,fo:20,se:7.8,col:92,src:"CREA"},
 
 // ── DOLCI E DESSERT ITALIANI MANCANTI (CREA) ──
-{n:"Panna cotta (senza caramello)",c:"Dolci",k:200,p:3.5,gs:11.5,g:16.0,z:18.0,ch:20.5,fi:0,ca:80,fe:0.1,mg:6,k2:70,na:45,zn:0.2,fo:40,se:1,col:55,src:"CREA"},
+{n:"Panna cotta (senza caramello)",c:"Dolci",k:200,p:3.5,gs:11.5,g:16.0,z:18.0,ch:20.5,fi:0,ca:80,fe:0.1,mg:6,k2:70,na:45,zn:0.2,fo:8,se:1,col:55,src:"CREA"},
 {n:"Crostata di marmellata (artigianale)",c:"Dolci",k:340,p:5.5,gs:3.0,g:12.0,z:35.0,ch:55.5,fi:1.5,ca:18,fe:1.2,mg:14,k2:100,na:180,zn:0.5,fo:55,se:4,col:60,src:"CREA"},
 {n:"Torta margherita (pan di spagna base)",c:"Dolci",k:370,p:8.9,gs:4.0,g:10.4,z:34.1,ch:63.4,fi:1.4,ca:9,fe:2.8,mg:12,k2:88,na:150,zn:0.6,fo:70,se:8,col:120,src:"CREA"},
 {n:"Biscotti da tè (tipo shortbread)",c:"Biscotti e crackers",k:490,p:6.5,gs:9.0,g:22.0,z:28.0,ch:67.0,fi:1.5,ca:25,fe:1.5,mg:15,k2:110,na:180,zn:0.5,fo:55,se:5,col:75,src:"CREA"},
@@ -3022,7 +3023,7 @@ const DB_UPF = [
 
   // ── DOLCI INDUSTRIALI TIPICI ──
   {n:"Tiramisù industriale (porzione confezionata)",c:"Dolci",src:"UPF",k:266,p:3,gs:7.4,g:8.1,z:16.9,ch:41.6,fi:0.5,ca:65,fe:0,mg:0,k2:95,na:112,zn:0,fo:85,se:4,col:90},
-  {n:"Panna cotta surgelata (monoporzione)",c:"Dolci",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:95,fe:0.1,mg:8,k2:90,na:48,zn:0.3,fo:60,se:2,col:48},
+  {n:"Panna cotta surgelata (monoporzione)",c:"Dolci",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:95,fe:0.1,mg:8,k2:90,na:48,zn:0.3,fo:8,se:2,col:48},
   {n:"Cheesecake industriale (porzione)",c:"Dolci",src:"UPF",k:359.7,p:4.5,gs:12.9,g:22.5,z:20,ch:34.5,fi:1.2,ca:78,fe:0.5,mg:10,k2:90,na:79,zn:0.5,fo:75,se:5,col:80},
   {n:"Merendina Mulino Bianco tipo Plumcake",c:"Dolci",src:"UPF",k:393,p:7.5,gs:5.5,g:16.5,z:22.5,ch:55.5,fi:1.5,ca:48,fe:1.2,mg:14,k2:125,na:295,zn:0.4,fo:85,se:6,col:60},
   {n:"Biscotti Pan di Stelle (per 100g)",c:"Biscotti e crackers",src:"UPF",k:485,p:7.8,gs:7.4,g:21,z:24,ch:64,fi:4.2,ca:80,fe:2.0,mg:30,k2:210,na:176,zn:0.8,fo:120,se:5,col:15},
@@ -3569,7 +3570,7 @@ const DB_UPF = [
 {n:"Croissant vuoto industriale (tipo Bauli)",c:"Dolci confezionati",src:"UPF",k:375,p:6.3,gs:8.33,g:20.8,z:8.3,ch:37.5,fi:2.1,ca:104,fe:2.08,mg:12,k2:73,na:395.8,zn:0.4,fo:65,se:3,col:0},
 {n:"Kinder Fetta al Latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:410,p:7.5,gs:8.5,g:17.0,z:41.0,ch:53.5,fi:0.5,ca:155,fe:0.4,mg:15,k2:200,na:145,zn:0.6,fo:135,se:4,col:20},
 {n:"Plumcake all'olio (merendina)",c:"Dolci confezionati",src:"UPF",k:365,p:7.6,gs:3.2,g:19,z:1,ch:51,fi:2.2,ca:25,fe:1.2,mg:10,k2:85,na:156,zn:0.3,fo:55,se:2,col:55},
-{n:"Panna Cotta industriale (vasetto)",c:"Dolci confezionati",src:"UPF",k:206,p:3.2,gs:8.8,g:13,z:19,ch:19,fi:0,ca:70,fe:0.1,mg:6,k2:80,na:24,zn:0.2,fo:55,se:1,col:28},
+{n:"Panna Cotta industriale (vasetto)",c:"Dolci confezionati",src:"UPF",k:206,p:3.2,gs:8.8,g:13,z:19,ch:19,fi:0,ca:70,fe:0.1,mg:6,k2:80,na:24,zn:0.2,fo:8,se:1,col:28},
 {n:"Pop corn burro microonde (per 100g)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:15,fe:1.5,mg:95,k2:235,na:500,zn:1.8,fo:25,se:8,col:0},
 // ═══ PIZZA E PIATTI PRONTI ═══
 {n:"Pizza margherita (pizzeria, al piatto)",c:"Piatti pronti",src:"UPF",k:230,p:7.5,gs:5,g:9.2,z:1.4,ch:27,fi:3.8,ca:155,fe:0,mg:0,k2:190,na:433,zn:0,fo:120,se:8,col:18},
@@ -3842,7 +3843,7 @@ const DB_ONS = [
 {n:"Yakult (bebanda probiotica, per 65mL)",c:"Latte e derivati",src:"UPF",k:83,p:1.5,gs:0,g:0,z:16.5,ch:19.5,fi:0,ca:24,fe:0,mg:5,k2:30,na:28,zn:0.1,fo:3,se:1,col:2},
 {n:"Mozzarella light industriale (per 100g)",c:"Latte e derivati",src:"UPF",k:157,p:18,gs:5.8,g:9,z:1,ch:1,fi:0,ca:430,fe:0.3,mg:20,k2:95,na:380,zn:2.0,fo:18,se:6,col:25},
 // Allineato a voce CREA gia verificata "Panna da cucina (UHT 18%)" — 2026-07-28
-{n:"Panna da cucina UHT (18% grassi, per 100g)",c:"Latte e derivati",src:"UPF",k:177,p:2.8,gs:11.5,g:17.5,z:3.5,ch:3.9,fi:0,ca:67,fe:0.1,mg:8,k2:85,na:40,zn:0.2,fo:55,se:1.5,col:55},
+{n:"Panna da cucina UHT (18% grassi, per 100g)",c:"Latte e derivati",src:"UPF",k:177,p:2.8,gs:11.5,g:17.5,z:3.5,ch:3.9,fi:0,ca:67,fe:0.1,mg:8,k2:85,na:40,zn:0.2,fo:5,se:1.5,col:55},
 {n:"Besciamella pronta (in tetrapak, per 100g)",c:"Piatti pronti",src:"UPF",k:100,p:2.5,gs:3.5,g:6.5,z:4.5,ch:8.5,fi:0.3,ca:85,fe:0.2,mg:8,k2:100,na:380,zn:0.3,fo:5,se:2,col:18},
 
 // ── PRODOTTI SALUTE E BENESSERE ──
@@ -4184,9 +4185,9 @@ const DB_EXTRA=[
 {n:"Halloumi",c:"Formaggi",src:"EXTRA",k:330,p:24,gs:16,g:26,z:2,ch:3,fi:0,ca:700,fe:0.4,mg:25,k2:85,na:1250,zn:2.5,fo:20,se:5,col:70},
 {n:"Philadelphia (cream cheese)",c:"Formaggi",src:"EXTRA",k:350,p:6.2,gs:20.21,g:34.4,z:3.8,ch:5.5,fi:0,ca:97,fe:0.11,mg:9,k2:132,na:314,zn:0.5,fo:9,se:8.6,col:101},
 {n:"Stracciatella di bufala",c:"Formaggi",src:"EXTRA",k:251,p:8.5,gs:16.3,g:23,z:2.4,ch:2.4,fi:0,ca:220,fe:0.3,mg:20,k2:180,na:248,zn:0.8,fo:20,se:3,col:65},
-{n:"Panna da cucina UHT",c:"Formaggi",src:"EXTRA",k:203,p:2.5,gs:10,g:20,z:3.5,ch:3.5,fi:0,ca:62,fe:0.1,mg:6,k2:90,na:40,zn:0.2,fo:55,se:2,col:68},
+{n:"Panna da cucina UHT",c:"Formaggi",src:"EXTRA",k:203,p:2.5,gs:10,g:20,z:3.5,ch:3.5,fi:0,ca:62,fe:0.1,mg:6,k2:90,na:40,zn:0.2,fo:5,se:2,col:68},
 // Grassi saturi aggiornati (24g su 35g totali, in linea con la scheda tecnica di un prodotto reale 35% m.g.) — 2026-07-28
-{n:"Panna fresca da montare",c:"Formaggi",src:"EXTRA",k:337,p:2,gs:24,g:35,z:3.5,ch:3.5,fi:0,ca:72,fe:0.1,mg:7,k2:100,na:36,zn:0.2,fo:60,se:2,col:115},
+{n:"Panna fresca da montare",c:"Formaggi",src:"EXTRA",k:337,p:2,gs:24,g:35,z:3.5,ch:3.5,fi:0,ca:72,fe:0.1,mg:7,k2:100,na:36,zn:0.2,fo:5,se:2,col:115},
 // === DOLCI E PASTICCERIA ===
 {n:"Tiramisù",c:"Dolci e dessert",src:"EXTRA",k:283,p:4.2,gs:9,g:19.4,z:18.1,ch:29.2,fi:0.3,ca:85,fe:0.8,mg:12,k2:140,na:264,zn:0.5,fo:120,se:5,col:155},
 {n:"Cannolo siciliano",c:"Dolci e dessert",src:"EXTRA",k:325,p:7.2,gs:8,g:14.6,z:26.1,ch:42.7,fi:2.1,ca:120,fe:1,mg:20,k2:200,na:118,zn:0.8,fo:130,se:8,col:60},

@@ -88,7 +88,8 @@ const DB_CREA=[
 {n:"Peperone rosso",c:"Verdure",k:28,p:0.9,gs:0,g:0.3,z:4.9,ch:6.7,fi:2.1,ca:11,fe:0.5,mg:11,k2:211,na:2,zn:0.25,fo:26,se:0.6,col:0,src:"CREA"},
 {n:"Funghi champignon",c:"Verdure",k:24,p:3.7,gs:0,g:0.2,z:0.8,ch:0.8,fi:2.3,ca:6,fe:0.8,mg:13,k2:320,na:5,zn:1.46,fo:86,se:7.5,col:0,src:"CREA"},
 {n:"Cipolla",c:"Verdure",k:28,p:1,gs:0.02,g:0.1,z:5.7,ch:5.7,fi:1.1,ca:25,fe:0.4,mg:9,k2:140,na:10,zn:0.3,fo:12,se:0.5,col:0,src:"BDA"},
-{n:"Aglio",c:"Verdure",k:53,p:8.4,gs:0.15,g:0.8,z:1,ch:1,fi:4.3,ca:15,fe:1.2,mg:17,k2:310,na:4,zn:0.59,fo:153,se:14,col:0,src:"CREA"},
+// Fosforo (153mg, confermato fonte USDA) era nel campo folati; folati reali dell'aglio sono ~3mcg - 2026-07-29
+{n:"Aglio",c:"Verdure",k:53,p:8.4,gs:0.15,g:0.8,z:1,ch:1,fi:4.3,ca:15,fe:1.2,mg:17,k2:310,na:4,zn:0.59,fo:3,se:14,col:0,src:"CREA"},
 {n:"Lattuga",c:"Verdure",k:22,p:1.8,gs:0,g:0.4,z:2.2,ch:2.2,fi:1.5,ca:45,fe:0.8,mg:14,k2:240,na:9,zn:0.2,fo:31,se:0.6,col:0,src:"CREA"},
 {n:"Asparagi",c:"Verdure",k:33,p:3.6,gs:0,g:0.2,z:3.3,ch:3.3,fi:2,ca:25,fe:1.2,mg:14,k2:260,na:1,zn:0.5,fo:52,se:2,col:0,src:"CREA"},
 {n:"Finocchio",c:"Verdure",k:13,p:1.2,gs:0,g:0,z:1,ch:1,fi:2.2,ca:45,fe:0.4,mg:13,k2:276,na:141,zn:0.1,fo:49,se:0.7,col:0,src:"BDA"},
@@ -2870,7 +2871,8 @@ const DB_UPF = [
   {n:"Zenzero fresco",c:"Spezie",src:"CREA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0},
   {n:"Cannella in polvere",c:"Spezie",src:"CREA",k:247,p:3.9,gs:0.2,g:1.2,z:4.8,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0},
   {n:"Pepe nero in grani",c:"Spezie",src:"CREA",k:311,p:11.4,gs:3.1,g:3.3,z:0.6,ch:49,fi:25.9,ca:430,fe:11.2,mg:171,k2:1260,na:44,zn:1.2,fo:173,se:4.9,col:0},
-  {n:"Aglio in polvere",c:"Spezie",src:"CREA",k:331,p:16.8,gs:0.1,g:0.7,z:5.3,ch:72.7,fi:9.0,ca:79,fe:2.3,mg:77,k2:1193,na:60,zn:1.9,fo:153,se:14.2,col:0},
+  // Stesso bug fosforo-in-folati dell'aglio fresco - 2026-07-29
+  {n:"Aglio in polvere",c:"Spezie",src:"CREA",k:331,p:16.8,gs:0.1,g:0.7,z:5.3,ch:72.7,fi:9.0,ca:79,fe:2.3,mg:77,k2:1193,na:60,zn:1.9,fo:20,se:14.2,col:0},
   {n:"Rosmarino fresco",c:"Spezie",src:"CREA",k:110,p:1.4,gs:0.2,g:4.4,z:13.5,ch:13.5,fi:7,ca:370,fe:8.5,mg:91,k2:280,na:15,zn:0.9,fo:68,se:1.8,col:0},
   {n:"Origano essiccato",c:"Spezie",src:"CREA",k:265,p:9,gs:4.3,g:10.3,z:21,ch:68.9,fi:42.5,ca:1576,fe:44,mg:270,k2:1260,na:25,zn:2.7,fo:148,se:4.5,col:0},
   {n:"Timo essiccato",c:"Spezie",src:"CREA",k:276,p:9.1,gs:2.7,g:7.4,z:15,ch:63.9,fi:37,ca:1890,fe:123.6,mg:220,k2:814,na:55,zn:6.2,fo:201,se:6.4,col:0},

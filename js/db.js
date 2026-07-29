@@ -275,7 +275,7 @@ const DB_CREA=[
 // Allineato a 2 duplicati concordi gia nel DB (247kcal, coerente coi dati USDA standard per la cannella) — era un valore isolato/outlier (301kcal, ferro 38.1mg molto alto) — 2026-07-29
 {n:"Cannella in polvere",c:"Condimenti",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0,src:"BDA"},
 // Allineato a 2 duplicati concordi gia nel DB (354kcal) — era un valore isolato/outlier (312kcal, folati molto piu bassi) — 2026-07-29
-{n:"Curcuma in polvere",c:"Condimenti",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:268,se:6.2,col:0,src:"CREA"},
+{n:"Curcuma in polvere",c:"Condimenti",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0,src:"CREA"},
 // Allineato al duplicato con dati piu vicini a fonti standard (265kcal, calcio 1576mg — quest'ultimo praticamente identico a USDA ~1597mg) — era un valore isolato/outlier (408kcal) — 2026-07-29
 {n:"Origano essiccato",c:"Condimenti",k:265,p:9,gs:4.3,g:10.3,z:21,ch:68.9,fi:42.5,ca:1576,fe:44,mg:270,k2:1260,na:25,zn:2.7,fo:148,se:4.5,col:0,src:"BDA"},
 // ── LATTICINI E DERIVATI aggiuntivi ──
@@ -439,8 +439,8 @@ const DB_CREA=[
   // ── DOLCI E SPEZIE MANCANTI ──
   {n:"Sciroppo d'acero puro",c:"Dolcificanti",k:252,p:0,gs:0.01,g:0.1,z:60.5,ch:67,fi:0,ca:102,fe:0.1,mg:21,k2:212,na:12,zn:1.47,fo:0,se:0.6,col:0,src:"BDA"},
   {n:"Stevia (foglie essiccate)",c:"Dolcificanti",k:290,p:13.5,gs:0,g:4.0,z:0,ch:62.5,fi:18.0,ca:464,fe:10.0,mg:77,k2:3816,na:190,zn:2.1,fo:24,se:0,col:0,src:"CREA"},
-  {n:"Cardamomo macinato",c:"Spezie",k:311,p:10.8,gs:0.7,g:6.7,z:0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:178,se:0.9,col:0,src:"CREA"},
-  {n:"Zenzero in polvere",c:"Spezie",k:335,p:8.9,gs:0.5,g:4.2,z:3.4,ch:71.6,fi:14.1,ca:116,fe:19.8,mg:214,k2:1320,na:27,zn:3.6,fo:168,se:55,col:0,src:"CREA"},
+  {n:"Cardamomo macinato",c:"Spezie",k:311,p:10.8,gs:0.7,g:6.7,z:0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:11,se:0.9,col:0,src:"CREA"},
+  {n:"Zenzero in polvere",c:"Spezie",k:335,p:8.9,gs:0.5,g:4.2,z:3.4,ch:71.6,fi:14.1,ca:116,fe:19.8,mg:214,k2:1320,na:27,zn:3.6,fo:13,se:55,col:0,src:"CREA"},
   {n:"Peperoncino piccante in polvere",c:"Spezie",k:282,p:13.5,gs:1.1,g:14.3,z:10.3,ch:49.7,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:293,se:8.8,col:0,src:"CREA"},
   // ── BEVANDE FERMENTATE ──
   {n:"Kombucha (bevanda fermentata tè)",c:"Bevande",k:9,p:0.2,gs:0,g:0.1,z:1.0,ch:2.5,fi:0,ca:8,fe:0.2,mg:4,k2:50,na:10,zn:0.1,fo:5,se:0,col:0,src:"CREA"},
@@ -821,7 +821,7 @@ const DB_CREA=[
 {n:"Aceto di mele",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.9,ch:0.9,fi:0,ca:7,fe:0.2,mg:5,k2:73,na:5,zn:0,fo:8,se:0.1,col:0,src:"CREA"},
 {n:"Latte di avena non zuccherato",c:"Bevande",k:44,p:1.0,gs:0.1,g:0.5,z:4.0,ch:8.1,fi:0.8,ca:120,fe:0.2,mg:11,k2:50,na:63,zn:0.1,fo:36,se:0.4,col:0,src:"CREA"},
 {n:"Tè verde in infuso",c:"Bevande",k:1,p:0.2,gs:0,g:0,z:0,ch:0.2,fi:0,ca:2,fe:0.1,mg:1,k2:19,na:1,zn:0,fo:1,se:0.2,col:0,src:"CREA"},
-{n:"Curcuma in polvere",c:"Spezie e aromi",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:268,se:6.2,col:0,src:"CREA"},
+{n:"Curcuma in polvere",c:"Spezie e aromi",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0,src:"CREA"},
 {n:"Zenzero fresco",c:"Spezie e aromi",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0,src:"CREA"},
 {n:"Cannella in polvere",c:"Spezie e aromi",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0,src:"CREA"},
 {n:"Aglio fresco crudo",c:"Spezie e aromi",k:45,p:0.9,gs:0.11,g:0.6,z:8.4,ch:8.4,fi:2.3,ca:14,fe:1.5,mg:25,k2:347,na:2,zn:0.56,fo:3,se:14,col:0,src:"BDA"},
@@ -836,10 +836,10 @@ const DB_CREA=[
 {n:"Olio di oliva vergine",c:"Grassi",k:899,p:0,gs:15.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.2,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di sansa di oliva",c:"Grassi",k:899,p:0,gs:16.32,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Cumino (semi macinati)",c:"Spezie e aromi",k:419,p:17.8,gs:0.72,g:22.3,z:33.7,ch:33.7,fi:10.5,ca:931,fe:66.4,mg:931,k2:1788,na:168,zn:4.8,fo:0,se:5,col:0,src:"BDA"},
-{n:"Semi di anice",c:"Spezie e aromi",k:337,p:17.6,gs:0.6,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:440,se:3,col:0,src:"CREA"},
-{n:"Coriandolo in semi (polvere)",c:"Spezie e aromi",k:298,p:12.4,gs:1.4,g:17.8,z:0,ch:54.9,fi:41.9,ca:709,fe:16.3,mg:330,k2:1267,na:35,zn:4.7,fo:409,se:26,col:0,src:"CREA"},
-{n:"Fieno greco (semi)",c:"Spezie e aromi",k:323,p:23.0,gs:0.9,g:6.4,z:0,ch:58.4,fi:24.6,ca:176,fe:33.5,mg:191,k2:770,na:67,zn:2.5,fo:296,se:6,col:0,src:"CREA"},
-{n:"Pepe bianco macinato",c:"Spezie e aromi",k:296,p:10.4,gs:0.4,g:2.1,z:0,ch:68.6,fi:26.2,ca:265,fe:14.3,mg:90,k2:1259,na:5,zn:1.1,fo:176,se:3,col:0,src:"CREA"},
+{n:"Semi di anice",c:"Spezie e aromi",k:337,p:17.6,gs:0.6,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:10,se:3,col:0,src:"CREA"},
+{n:"Coriandolo in semi (polvere)",c:"Spezie e aromi",k:298,p:12.4,gs:1.4,g:17.8,z:0,ch:54.9,fi:41.9,ca:709,fe:16.3,mg:330,k2:1267,na:35,zn:4.7,fo:21,se:26,col:0,src:"CREA"},
+{n:"Fieno greco (semi)",c:"Spezie e aromi",k:323,p:23.0,gs:0.9,g:6.4,z:0,ch:58.4,fi:24.6,ca:176,fe:33.5,mg:191,k2:770,na:67,zn:2.5,fo:57,se:6,col:0,src:"CREA"},
+{n:"Pepe bianco macinato",c:"Spezie e aromi",k:296,p:10.4,gs:0.4,g:2.1,z:0,ch:68.6,fi:26.2,ca:265,fe:14.3,mg:90,k2:1259,na:5,zn:1.1,fo:9,se:3,col:0,src:"CREA"},
 {n:"Rafano fresco (radice, cren)",c:"Verdure",k:48,p:1.2,gs:0,g:0.5,z:7.2,ch:11.3,fi:3.3,ca:56,fe:0.4,mg:27,k2:246,na:420,zn:0.8,fo:31,se:2.8,col:0,src:"CREA"},
 {n:"Crusca d'avena",c:"Cereali e derivati",k:246,p:17.3,gs:1.3,g:7.0,z:1.2,ch:55.7,fi:15.4,ca:58,fe:3.8,mg:235,k2:566,na:4,zn:3.1,fo:56,se:45,col:0,src:"CREA"},
 {n:"Vaniglia (baccello intero)",c:"Spezie e aromi",k:288,p:12.7,gs:0.1,g:6.2,z:12.7,ch:62.4,fi:34.5,ca:11,fe:0.1,mg:12,k2:148,na:9,zn:0.1,fo:7,se:0,col:0,src:"CREA"},
@@ -1453,7 +1453,7 @@ const DB_BDA=[
   {n:"Salvia essiccata",c:"Condimenti",src:"BDA",k:353,p:10.6,gs:7.03,g:12.7,z:42.7,ch:42.7,fi:18.1,ca:1650,fe:28.1,mg:428,k2:1070,na:11,zn:4.7,fo:0,se:0,col:0},
   {n:"Alloro essiccato",c:"Condimenti",src:"BDA",k:341,p:7.6,gs:2.29,g:8.4,z:48.6,ch:48.6,fi:26.3,ca:830,fe:43,mg:120,k2:530,na:23,zn:3.7,fo:0,se:0,col:0},
   {n:"Erba cipollina fresca",c:"Condimenti",src:"BDA",k:27,p:2.8,gs:0.12,g:0.6,z:1.7,ch:1.7,fi:1.9,ca:85,fe:1.6,mg:42,k2:230,na:5,zn:0.4,fo:105,se:0.9,col:0},
-  {n:"Paprica dolce in polvere",c:"Condimenti",src:"BDA",k:282,p:14.1,gs:2.0,g:13.0,z:10.3,ch:53.9,fi:34.9,ca:229,fe:21.1,mg:178,k2:2280,na:68,zn:4.33,fo:314,se:0,col:0},
+  {n:"Paprica dolce in polvere",c:"Condimenti",src:"BDA",k:282,p:14.1,gs:2.0,g:13.0,z:10.3,ch:53.9,fi:34.9,ca:229,fe:21.1,mg:178,k2:2280,na:68,zn:4.33,fo:106,se:0,col:0},
   {n:"Noce moscata in polvere",c:"Condimenti",src:"BDA",k:442,p:8.8,gs:20.72,g:29,z:26.3,ch:26.3,fi:23.7,ca:103,fe:9.3,mg:183,k2:350,na:16,zn:2.2,fo:0,se:0,col:0},
   // ── FARINE E DERIVATI ──
   {n:"Farina di mandorle",c:"Cereali e derivati",src:"BDA",k:579,p:21.4,gs:3.8,g:49.9,z:4.4,ch:21.7,fi:10.5,ca:236,fe:3.7,mg:258,k2:733,na:1,zn:3.1,fo:29,se:4,col:0},
@@ -1559,7 +1559,7 @@ const DB_BDA=[
   {n:"Cacao amaro in polvere",c:"Dolci",src:"CREA",k:355,p:20.4,gs:3.0,g:25.6,z:0,ch:11.5,fi:37.0,ca:51,fe:14.3,mg:499,k2:1524,na:21,zn:6.8,fo:32,se:14,col:0},
   {n:"Cioccolato al latte 35%",c:"Dolci",src:"BDA",k:541,p:7.3,gs:17.5,g:30.7,z:55.5,ch:58.5,fi:1.5,ca:230,fe:2.5,mg:55,k2:380,na:95,zn:1.5,fo:13,se:4.5,col:18},
   {n:"Menta piperita essiccata",c:"Condimenti",src:"BDA",k:360,p:24.8,gs:0.76,g:4.6,z:34.6,ch:34.6,fi:44.7,ca:1370,fe:6.2,mg:602,k2:1700,na:98,zn:3.8,fo:110,se:4.9,col:0},
-  {n:"Cardamomo in polvere",c:"Condimenti",src:"BDA",k:311,p:10.8,gs:0.7,g:6.7,z:4.0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:178,se:0.9,col:0},
+  {n:"Cardamomo in polvere",c:"Condimenti",src:"BDA",k:311,p:10.8,gs:0.7,g:6.7,z:4.0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:11,se:0.9,col:0},
   {n:"Zafferano in polvere",c:"Condimenti",src:"BDA",k:337,p:11.4,gs:1.59,g:5.9,z:42.4,ch:61.5,fi:3.9,ca:110,fe:11.1,mg:264,k2:1720,na:150,zn:1.1,fo:0,se:5.6,col:0},
   {n:"Aglio essiccato in polvere",c:"Condimenti",src:"BDA",k:266,p:18.7,gs:0.21,g:1.2,z:4.2,ch:42.7,fi:9.9,ca:65,fe:3.9,mg:77,k2:1360,na:19,zn:2.6,fo:0,se:14.2,col:0},
   // ── FORMAGGI E LATTICINI AGGIUNTIVI ──
@@ -2137,8 +2137,8 @@ const DB_BDA=[
 {n:"Crusca di riso",c:"Cereali e derivati",k:316,p:13.4,gs:1.8,g:20.8,z:0,ch:49.7,fi:21.0,ca:57,fe:18.5,mg:781,k2:1485,na:5,zn:6.1,fo:63,se:16,col:0,src:"BDA"},
 {n:"Farina di lenticchie rosse",c:"Cereali e derivati",k:340,p:25.7,gs:0.2,g:1.2,z:1.5,ch:58.5,fi:11.0,ca:59,fe:7.3,mg:100,k2:897,na:5,zn:3.0,fo:370,se:6,col:0,src:"BDA"},
 {n:"Farina di piselli secchi",c:"Cereali e derivati",k:335,p:21.7,gs:0.2,g:1.5,z:3.0,ch:60.4,fi:8.3,ca:55,fe:4.7,mg:115,k2:900,na:9,zn:2.8,fo:350,se:3,col:0,src:"BDA"},
-{n:"Anice stellato (badiana)",c:"Spezie e aromi",k:337,p:17.6,gs:0.5,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:440,se:3,col:0,src:"BDA"},
-{n:"Pepe di Cayenna (capsicum)",c:"Spezie e aromi",k:318,p:12.0,gs:1.9,g:17.3,z:0.7,ch:56.6,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:293,se:8.8,col:0,src:"BDA"},
+{n:"Anice stellato (badiana)",c:"Spezie e aromi",k:337,p:17.6,gs:0.5,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:10,se:3,col:0,src:"BDA"},
+{n:"Pepe di Cayenna (capsicum)",c:"Spezie e aromi",k:318,p:12.0,gs:1.9,g:17.3,z:0.7,ch:56.6,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:106,se:8.8,col:0,src:"BDA"},
 {n:"Pepe lungo (piper longum)",c:"Spezie e aromi",k:310,p:11.0,gs:0.4,g:4.9,z:0,ch:64.8,fi:13.2,ca:437,fe:16.3,mg:154,k2:1259,na:20,zn:1.2,fo:180,se:4,col:0,src:"BDA"},
 {n:"Curry in polvere (miscela spezie)",c:"Spezie e aromi",k:325,p:12.7,gs:2.3,g:13.8,z:0.7,ch:55.8,fi:33.2,ca:478,fe:29.6,mg:254,k2:1543,na:52,zn:4.1,fo:349,se:17,col:0,src:"BDA"},
 {n:"Garam masala (miscela spezie indiana)",c:"Spezie e aromi",k:379,p:14.1,gs:2.0,g:15.0,z:1.5,ch:50.4,fi:22.2,ca:524,fe:23.7,mg:230,k2:1315,na:60,zn:3.4,fo:380,se:6,col:0,src:"BDA"},
@@ -2870,7 +2870,7 @@ const DB_UPF = [
   {n:"Bevanda di farina di avena fermentata",c:"Bevande",src:"UPF",k:58,p:0,gs:0.3,g:2,z:3.6,ch:10,fi:1.2,ca:120,fe:0.5,mg:12,k2:70,na:52,zn:0.3,fo:22,se:1,col:0},
 
   // ── SPEZIE E CONDIMENTI FUNZIONALI ──
-  {n:"Curcuma in polvere",c:"Spezie",src:"CREA",k:354,p:7.8,gs:1.7,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:268,se:6.2,col:0},
+  {n:"Curcuma in polvere",c:"Spezie",src:"CREA",k:354,p:7.8,gs:1.7,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0},
   {n:"Zenzero fresco",c:"Spezie",src:"CREA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0},
   {n:"Cannella in polvere",c:"Spezie",src:"CREA",k:247,p:3.9,gs:0.2,g:1.2,z:4.8,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0},
   {n:"Pepe nero in grani",c:"Spezie",src:"CREA",k:311,p:11.4,gs:3.1,g:3.3,z:0.6,ch:49,fi:25.9,ca:430,fe:11.2,mg:171,k2:1260,na:44,zn:1.2,fo:173,se:4.9,col:0},

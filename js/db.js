@@ -1906,7 +1906,8 @@ const DB_BDA=[
 {n:"Scarola (indivia scarola)",c:"Verdure",k:19,p:1.1,gs:0,g:0.3,z:2.3,ch:2.3,fi:1.8,ca:37,fe:1.3,mg:9,k2:134,na:42,zn:0.14,fo:44,se:0.4,col:0,src:"CREA"},
 {n:"Germogli di alfa alfa (alfalfa)",c:"Verdure",k:23,p:4.0,gs:0,g:0.7,z:0.2,ch:2.1,fi:1.9,ca:32,fe:1.0,mg:27,k2:79,na:6,zn:0.9,fo:70,se:0.6,col:0,src:"CREA"},
 // ── Frutta fresca/bacche ──
-{n:"Lampone fresco",c:"Frutta fresca",k:34,p:1.2,gs:0,g:0.7,z:4.4,ch:5.4,fi:6.5,ca:25,fe:0.7,mg:22,k2:151,na:1,zn:0.4,fo:29,se:0.2,col:0,src:"CREA"},
+// Kcal/carboidrati sottostimati (34kcal/5.4g): fonte USDA converge su 52kcal/11.9g carb (minerali gia esatti, non toccati) - 2026-07-29
+{n:"Lampone fresco",c:"Frutta fresca",k:52,p:1.2,gs:0,g:0.7,z:4.4,ch:11.9,fi:6.5,ca:25,fe:0.7,mg:22,k2:151,na:1,zn:0.4,fo:29,se:0.2,col:0,src:"CREA"},
 {n:"Mora di rovo fresca",c:"Frutta fresca",k:42,p:1.3,gs:0,g:0,z:8.1,ch:8.1,fi:3.2,ca:36,fe:1.6,mg:20,k2:260,na:2,zn:0.5,fo:22,se:0.4,col:0,src:"CREA"},
 {n:"Fragoline di bosco",c:"Frutta fresca",k:31,p:0.9,gs:0,g:0.4,z:5.4,ch:7.1,fi:2.2,ca:16,fe:0.8,mg:13,k2:153,na:1,zn:0.2,fo:23,se:0.4,col:0,src:"CREA"},
 {n:"Gelso nero fresco",c:"Frutta fresca",k:39,p:1.3,gs:0,g:0,z:8.1,ch:8.1,fi:1.7,ca:36,fe:1.6,mg:15,k2:260,na:2,zn:0.2,fo:33,se:0,col:0,src:"BDA"},

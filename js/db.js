@@ -905,7 +905,8 @@ const DB_CREA=[
 {n:"Rapa cruda",c:"Verdure",k:24,p:1,gs:0,g:0,z:3.8,ch:4,fi:2.6,ca:40,fe:0.6,mg:11,k2:280,na:15,zn:0.27,fo:27,se:0.5,col:0,src:"CREA"},
 {n:"Sedano rapa crudo",c:"Verdure",k:29,p:1.9,gs:0.1,g:0.1,z:3.8,ch:3.8,fi:3.1,ca:52,fe:0.5,mg:20,k2:300,na:100,zn:0.33,fo:79,se:0.7,col:0,src:"CREA"},
 {n:"Radicchio rosso",c:"Verdure",k:19,p:1.4,gs:0.1,g:0.1,z:1.6,ch:1.6,fi:3,ca:36,fe:0.3,mg:13,k2:240,na:10,zn:0.25,fo:31,se:0.3,col:0,src:"CREA"},
-{n:"Bietola da coste cruda",c:"Verdure",k:19,p:1.8,gs:0,g:0.2,z:1.1,ch:3.7,fi:1.6,ca:51,fe:1.8,mg:81,k2:379,na:213,zn:0.36,fo:46,se:0.9,col:0,src:"CREA"},
+// Fosforo (~46mg, match esatto bietola) era nel campo folati; folati reali bietola ~14mcg - 2026-07-29
+{n:"Bietola da coste cruda",c:"Verdure",k:19,p:1.8,gs:0,g:0.2,z:1.1,ch:3.7,fi:1.6,ca:51,fe:1.8,mg:81,k2:379,na:213,zn:0.36,fo:14,se:0.9,col:0,src:"CREA"},
 // Fosforo (78mg, match esatto USDA topinambur) era nel campo folati; folati reali topinambur ~13mcg - 2026-07-29
 {n:"Topinambur crudo",c:"Verdure",k:73,p:2,gs:0,g:0.1,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.12,fo:13,se:0.7,col:0,src:"CREA"},
 {n:"Indivia belga",c:"Verdure",k:17,p:0.9,gs:0,g:0.1,z:0.1,ch:3.1,fi:3.1,ca:19,fe:0.2,mg:10,k2:211,na:2,zn:0.16,fo:26,se:0.2,col:0,src:"CREA"},
@@ -1009,10 +1010,13 @@ const DB_CREA=[
 {n:"Crostata con marmellata (torta casalinga)",c:"Dolci",k:339,p:4.9,gs:4,g:8.2,z:25,ch:65.5,fi:2,ca:30,fe:1.2,mg:15,k2:110,na:150,zn:0.4,fo:70,se:5,col:65,src:"CREA"},
 {n:"Torta di mele (casalinga)",c:"Dolci",k:300,p:5,gs:7,g:11.5,z:25.1,ch:46.3,fi:1.6,ca:22,fe:0.4,mg:8,k2:107,na:192,zn:0.31,fo:8,se:1.3,col:96,src:"BDA"},
 {n:"Tiramisù",c:"Dolci",k:303,p:6.8,gs:10.5,g:18.5,z:24,ch:28,fi:0.1,ca:58,fe:0.9,mg:14,k2:110,na:70,zn:0.7,fo:100,se:6,col:155,src:"CREA"},
-{n:"Gelato alla crema (artigianale)",c:"Dolci",k:207,p:3.9,gs:5.6,g:10.3,z:22,ch:24.8,fi:0,ca:100,fe:0.4,mg:11,k2:173,na:60,zn:0.5,fo:90,se:4,col:40,src:"CREA"},
+// Stesso bug fosforo-in-folati del comparto lattiero - 2026-07-29
+{n:"Gelato alla crema (artigianale)",c:"Dolci",k:207,p:3.9,gs:5.6,g:10.3,z:22,ch:24.8,fi:0,ca:100,fe:0.4,mg:11,k2:173,na:60,zn:0.5,fo:8,se:4,col:40,src:"CREA"},
 {n:"Sorbetto al limone",c:"Dolci",k:132,p:0.9,gs:0,g:0,z:34.2,ch:34.2,fi:0,ca:2,fe:0,mg:4,k2:42,na:18,zn:0,fo:4,se:0,col:0,src:"CREA"},
-{n:"Budino di riso casalingo",c:"Dolci",k:160,p:4,gs:2,g:4.5,z:12,ch:26.5,fi:0.5,ca:65,fe:0.4,mg:12,k2:130,na:50,zn:0.4,fo:80,se:3,col:20,src:"CREA"},
-{n:"Canederli (Knödel) al pane",c:"Piatti pronti",k:195,p:6.5,gs:2.5,g:7.5,z:2,ch:27,fi:1.5,ca:60,fe:1.2,mg:18,k2:130,na:450,zn:0.7,fo:90,se:8,col:30,src:"CREA"},
+// Stesso bug fosforo-in-folati del comparto lattiero (riso+latte) - 2026-07-29
+{n:"Budino di riso casalingo",c:"Dolci",k:160,p:4,gs:2,g:4.5,z:12,ch:26.5,fi:0.5,ca:65,fe:0.4,mg:12,k2:130,na:50,zn:0.4,fo:10,se:3,col:20,src:"CREA"},
+// Fosforo (pane+latte+uovo) era nel campo folati; folati reali canederli non fortificati ~20mcg - 2026-07-29
+{n:"Canederli (Knödel) al pane",c:"Piatti pronti",k:195,p:6.5,gs:2.5,g:7.5,z:2,ch:27,fi:1.5,ca:60,fe:1.2,mg:18,k2:130,na:450,zn:0.7,fo:20,se:8,col:30,src:"CREA"},
 // ── CONDIMENTI E SALSE ──
 {n:"Aceto di vino rosso",c:"Condimenti",k:20,p:0,gs:0,g:0,z:0.3,ch:0.9,fi:0,ca:6,fe:0.5,mg:4,k2:39,na:8,zn:0.03,fo:8,se:0.5,col:0,src:"CREA"},
 {n:"Aceto balsamico di Modena IGP",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:15.6,ch:17.3,fi:0,ca:17,fe:0.7,mg:10,k2:112,na:23,zn:0.1,fo:19,se:0.5,col:0,src:"CREA"},
@@ -1033,7 +1037,8 @@ const DB_CREA=[
 {n:"Vino bianco secco",c:"Bevande",k:71,p:0.1,gs:0,g:0,z:0.1,ch:0.1,fi:0,ca:9,fe:1,mg:8,k2:61,na:4,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Succo di arancia 100%",c:"Bevande",k:33,p:0.5,gs:0,g:0,z:8.2,ch:8.2,fi:0,ca:15,fe:0.2,mg:11,k2:180,na:2,zn:0.07,fo:17,se:0.1,col:0,src:"CREA"},
 {n:"Bevanda sportiva isotonica (500mL)",c:"Bevande",k:26,p:0,gs:0,g:0,z:5.5,ch:6.5,fi:0,ca:0,fe:0,mg:4,k2:14,na:46,zn:0,fo:0,se:0,col:0,src:"CREA"},
-{n:"Frullato di frutta (homemade con latte)",c:"Bevande",k:72,p:3,gs:0.9,g:1.5,z:11,ch:12.5,fi:0.5,ca:100,fe:0.2,mg:10,k2:200,na:40,zn:0.4,fo:90,se:1.5,col:5,src:"CREA"},
+// Stesso bug fosforo-in-folati del comparto lattiero (latte diluisce frutta) - 2026-07-29
+{n:"Frullato di frutta (homemade con latte)",c:"Bevande",k:72,p:3,gs:0.9,g:1.5,z:11,ch:12.5,fi:0.5,ca:100,fe:0.2,mg:10,k2:200,na:40,zn:0.4,fo:15,se:1.5,col:5,src:"CREA"},
 // ── VERDURE SELVATICHE E REGIONALI ──
 {n:"Catalogna (cicoria catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:15,k2:358,na:21,zn:0.3,fo:110,se:0.9,col:0,src:"BDA"},
 {n:"Agretti (barba di frate)",c:"Verdure",k:22,p:1.8,gs:0,g:0.2,z:2.2,ch:2.2,fi:2.3,ca:131,fe:1.2,mg:22,k2:470,na:149,zn:0.5,fo:72,se:1,col:0,src:"CREA"},
@@ -1041,7 +1046,8 @@ const DB_CREA=[
 {n:"Scorzonera (radice nera)",c:"Verdure",k:53,p:1.3,gs:0.07,g:0.3,z:1.5,ch:10.2,fi:3.2,ca:42,fe:0.9,mg:23,k2:310,na:5,zn:0.2,fo:57,se:0.6,col:0,src:"BDA"},
 {n:"Ortiche (foglie tenere, cotte)",c:"Verdure",k:36,p:5.5,gs:0,g:0.5,z:0,ch:4,fi:6.9,ca:481,fe:4.1,mg:57,k2:334,na:40,zn:0.6,fo:160,se:1,col:0,src:"CREA"},
 {n:"Asparagi selvatici",c:"Verdure",k:40,p:4.6,gs:0,g:0.2,z:4,ch:4,fi:2.2,ca:25,fe:1.1,mg:18,k2:198,na:5,zn:0.7,fo:168,se:2.3,col:0,src:"CREA"},
-{n:"Borragine (foglie fresche)",c:"Verdure",k:21,p:1.8,gs:0,g:0.7,z:0.8,ch:1.9,fi:1.5,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.2,fo:45,se:0.9,col:0,src:"CREA"},
+// Fosforo (~45mg, match esatto borragine) era nel campo folati; folati reali borragine ~13mcg (confermato via ricerca, coerente con DB_CREA_525) - 2026-07-29
+{n:"Borragine (foglie fresche)",c:"Verdure",k:21,p:1.8,gs:0,g:0.7,z:0.8,ch:1.9,fi:1.5,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
 {n:"Crescione d'acqua",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:14,se:0.9,col:0,src:"BDA"},
 {n:"Puntarelle (cicoria di catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:14,k2:358,na:21,zn:0.3,fo:110,se:0.8,col:0,src:"BDA"},
 {n:"Lampascioni (muscari bulbi)",c:"Verdure",k:27,p:2,gs:0,g:0.2,z:1.5,ch:5,fi:2.4,ca:22,fe:0.9,mg:12,k2:250,na:10,zn:0.4,fo:25,se:0.5,col:0,src:"CREA"},

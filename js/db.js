@@ -1352,7 +1352,8 @@ const DB_BDA=[
   {n:"Acciughe / Alici",c:"Pesce",src:"BDA",k:96,p:16.8,ch:1.5,g:2.6,fi:0,ca:148,fe:2.8,mg:22,k2:278,na:104,zn:4.2,fo:9,se:37,col:61},
   {n:"Vongole",c:"Pesce",src:"CREA",k:72,p:10.2,ch:2.5,g:0.8,fi:0,ca:86,fe:14.0,mg:48,k2:354,na:290,zn:2.7,fo:200,se:24,col:40},
   {n:"Cozze",c:"Pesce",src:"CREA",k:84,p:11.7,ch:3.4,g:2.2,fi:0,ca:88,fe:4.5,mg:37,k2:320,na:290,zn:2.1,fo:234,se:90,col:50},
-  {n:"Gamberetti",c:"Pesce",src:"CREA",k:71,p:13.6,ch:0.6,g:1.4,fi:0,ca:110,fe:1.5,mg:45,k2:185,na:150,zn:1.1,fo:220,se:38,col:152},
+  // Kcal/proteine sottostimati: fonti USDA multiple concordano su 85-99kcal/20-24g proteine, valore locale (71kcal/13.6g) era troppo basso - 2026-07-29
+  {n:"Gamberetti",c:"Pesce",src:"CREA",k:85,p:20.1,ch:0.2,g:1,fi:0,ca:110,fe:1.5,mg:45,k2:185,na:150,zn:1.1,fo:220,se:38,col:152},
   // ── LATTICINI ──
   {n:"Skyr naturale",c:"Latticini",src:"BDA",k:63,p:11.0,ch:4.0,g:0.2,fi:0,ca:135,fe:0.1,mg:14,k2:170,na:50,zn:0.6,fo:105,se:4,col:2},
   {n:"Formaggio Cottage",c:"Latticini",src:"BDA",k:98,p:11.1,ch:3.4,g:4.3,fi:0,ca:83,fe:0.1,mg:8,k2:84,na:365,zn:0.4,fo:132,se:9,col:15},
@@ -1566,8 +1567,10 @@ const DB_BDA=[
   {n:"Friarielli / Cime di rapa crude",c:"Verdure",src:"CREA",k:26,p:2.9,gs:0,g:0.4,z:1.4,ch:4.6,fi:2.6,ca:78,fe:2.3,mg:23,k2:389,na:30,zn:0.5,fo:87,se:0.8,col:0},
   {n:"More fresche",c:"Frutta fresca",src:"CREA",k:43,p:1.4,gs:0,g:0.5,z:4.9,ch:9.6,fi:5.3,ca:29,fe:0.6,mg:20,k2:162,na:1,zn:0.5,fo:25,se:0.4,col:0},
   {n:"Melograno",c:"Frutta fresca",src:"CREA",k:83,p:1.7,gs:0,g:1.2,z:13.7,ch:18.7,fi:4.0,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:107,se:0.5,col:0},
-  {n:"Fico fresco",c:"Frutta fresca",src:"CREA",k:47,p:0.7,gs:0,g:0.3,z:9.2,ch:12.4,fi:2.5,ca:35,fe:0.4,mg:11,k2:232,na:1,zn:0.2,fo:14,se:0.2,col:0},
-  {n:"Susina fresca",c:"Frutta fresca",src:"CREA",k:36,p:0.6,gs:0,g:0.1,z:7.5,ch:8.1,fi:1.4,ca:4,fe:0.2,mg:7,k2:157,na:0,zn:0.1,fo:5,se:0.5,col:0},
+  // Kcal/carboidrati/zuccheri sottostimati: fonte USDA converge su 74kcal/19g carb/14-16g zuccheri, valore locale (47kcal) era troppo basso; minerali gia coerenti, non toccati - 2026-07-29
+  {n:"Fico fresco",c:"Frutta fresca",src:"CREA",k:74,p:0.75,gs:0,g:0.3,z:16,ch:19,fi:2.9,ca:35,fe:0.37,mg:11,k2:232,na:1,zn:0.2,fo:14,se:0.2,col:0},
+  // Kcal/carboidrati sottostimati: fonti USDA convergono su ~46kcal/12g carb (potassio 157 gia coerente/esatto) - 2026-07-29
+  {n:"Susina fresca",c:"Frutta fresca",src:"CREA",k:46,p:0.7,gs:0,g:0.2,z:9,ch:12,fi:1.4,ca:4,fe:0.2,mg:7,k2:157,na:0,zn:0.1,fo:5,se:0.5,col:0},
   {n:"Uva rossa",c:"Frutta fresca",src:"CREA",k:53,p:0.5,gs:0,g:0.1,z:12.6,ch:12.6,fi:1.6,ca:33,fe:0.4,mg:7,k2:185,na:1,zn:0.1,fo:14,se:0.1,col:0},
   {n:"Mandarino",c:"Frutta fresca",src:"CREA",k:53,p:0.8,gs:0,g:0.3,z:9.4,ch:13.3,fi:1.8,ca:36,fe:0.2,mg:11,k2:166,na:2,zn:0.1,fo:22,se:0.1,col:0},
   {n:"Cedro",c:"Frutta fresca",src:"CREA",k:27,p:1.1,gs:0,g:0.3,z:3.2,ch:4.3,fi:4.7,ca:39,fe:0.5,mg:9,k2:130,na:4,zn:0.1,fo:20,se:0.4,col:0},

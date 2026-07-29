@@ -337,7 +337,7 @@ const DB_CREA=[
 {n:"Lassi naturale (bevanda yogurt)",c:"Latte e derivati",k:60,p:3.5,gs:1.8,g:3.0,z:6.8,ch:7.0,fi:0,ca:120,fe:0.1,mg:11,k2:145,na:42,zn:0.4,fo:90,se:3,col:12,src:"CREA"},
 {n:"Burrata fresca",c:"Latte e derivati",k:287,p:12.14,gs:15.0054,g:25.7,z:1.78,ch:1.78,fi:0,ca:127.2,fe:0.24,mg:8.8,k2:127,na:133.6,zn:1.68,fo:12.4,se:1.8,col:69.6,src:"BDA"},
 {n:"Quark (fiocchi magri tedeschi)",c:"Latte e derivati",k:115,p:9.7,gs:4.242,g:7.1,z:3.2,ch:3.2,fi:0,ca:73,fe:0.1,mg:9,k2:89,na:290,zn:0.6,fo:27,se:4,col:24,src:"BDA"},
-{n:"Labneh (yogurt scolato medio-oriente)",c:"Latte e derivati",k:195,p:12.5,gs:9.0,g:15.8,z:3.3,ch:3.3,fi:0,ca:135,fe:0.1,mg:14,k2:120,na:300,zn:1.1,fo:165,se:8,col:44,src:"CREA"},
+{n:"Labneh (yogurt scolato medio-oriente)",c:"Latte e derivati",k:195,p:12.5,gs:9.0,g:15.8,z:3.3,ch:3.3,fi:0,ca:135,fe:0.1,mg:14,k2:120,na:300,zn:1.1,fo:40,se:8,col:44,src:"CREA"},
 // ── CARNI aggiuntive ──
 {n:"Vitello (macinato magro)",c:"Carni e derivati",k:119,p:20.5,gs:1.2,g:4.0,z:0,ch:0,fi:0,ca:10,fe:1.4,mg:22,k2:320,na:70,zn:3.0,fo:8,se:9,col:78,src:"CREA"},
 {n:"Maiale magro (filetto)",c:"Carni e derivati",k:143,p:22.0,gs:1.4,g:5.9,z:0,ch:0,fi:0,ca:6,fe:0.8,mg:25,k2:380,na:54,zn:2.0,fo:8,se:32,col:68,src:"CREA"},
@@ -539,7 +539,7 @@ const DB_CREA=[
   {n:"Farina di konjac / glucomannano",c:"Cereali e derivati",k:286,p:6.0,gs:0,g:0.5,z:75,ch:76,fi:76,ca:180,fe:2.0,mg:30,k2:200,na:50,zn:0.5,fo:20,se:1,col:0,src:"CREA"},
   {n:"Jackfruit (frutto del pane) in salamoia sgocciolato",c:"Frutta fresca",k:35,p:1.7,gs:0,g:0.1,z:7.2,ch:7.5,fi:1.6,ca:22,fe:0.7,mg:28,k2:320,na:310,zn:0.3,fo:28,se:1,col:0,src:"CREA"},
   // ── PRODOTTI CASEARI SPECIALI ──
-  {n:"Labneh (yogurt colato mediorientale)",c:"Latte e derivati",k:195,p:8.0,gs:7.5,g:13,z:4.5,ch:4.5,fi:0,ca:180,fe:0.3,mg:14,k2:170,na:125,zn:1.0,fo:220,se:4,col:32,src:"CREA"},
+  {n:"Labneh (yogurt colato mediorientale)",c:"Latte e derivati",k:195,p:8.0,gs:7.5,g:13,z:4.5,ch:4.5,fi:0,ca:180,fe:0.3,mg:14,k2:170,na:125,zn:1.0,fo:40,se:4,col:32,src:"CREA"},
   {n:"Halloumi (formaggio cipriota grigliabile)",c:"Formaggi",k:321,p:21,gs:14,g:24,z:1.0,ch:1.5,fi:0,ca:720,fe:0.4,mg:27,k2:86,na:1500,zn:2.8,fo:20,se:12,col:80,src:"CREA"},
   {n:"Feta di capra (formaggio greco DOP) al 100%",c:"Formaggi",k:264,p:14,gs:12,g:22,z:4.0,ch:4.0,fi:0,ca:493,fe:0.7,mg:19,k2:138,na:1100,zn:2.9,fo:32,se:15,col:70,src:"CREA"},
   {n:"Pecorino di Pienza stagionato",c:"Formaggi",k:420,p:27,gs:17,g:33,z:0,ch:1.0,fi:0,ca:1200,fe:0.5,mg:40,k2:95,na:1900,zn:4.0,fo:18,se:16,col:100,src:"CREA"},
@@ -547,7 +547,7 @@ const DB_CREA=[
   // ── CEREALI E PSEUDOCEREALI ──
   {n:"Farro integrale in chicchi crudo",c:"Cereali e derivati",k:353,p:14.6,gs:0.41,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:31,se:11.7,col:0,src:"BDA"},
   {n:"Kamut (Khorasan) chicchi crudi",c:"Cereali e derivati",k:338,p:17,gs:0.8,g:2.6,z:4.5,ch:65,fi:11,ca:31,fe:4.5,mg:130,k2:450,na:5,zn:3.8,fo:440,se:60,col:0,src:"CREA"},
-  {n:"Freekeh (grano verde tostato)",c:"Cereali e derivati",k:340,p:12,gs:0.5,g:2.5,z:6.0,ch:72,fi:16,ca:35,fe:3.8,mg:110,k2:430,na:5,zn:2.8,fo:390,se:40,col:0,src:"CREA"},
+  {n:"Freekeh (grano verde tostato)",c:"Cereali e derivati",k:340,p:12,gs:0.5,g:2.5,z:6.0,ch:72,fi:16,ca:35,fe:3.8,mg:110,k2:430,na:5,zn:2.8,fo:40,se:40,col:0,src:"CREA"},
   {n:"Bulgur di farro crudo",c:"Cereali e derivati",k:340,p:14,gs:0.8,g:2.5,z:4.0,ch:68,fi:12,ca:38,fe:4.5,mg:120,k2:490,na:8,zn:3.8,fo:35,se:55,col:0,src:"CREA"},
   {n:"Fagioli Zolfini del Pratomagno secchi",c:"Legumi",k:345,p:23.6,gs:0.5,g:2.5,z:4,ch:51.7,fi:17,ca:137,fe:6.7,mg:90,k2:1445,na:4,zn:3.4,fo:130,se:7,col:0,src:"BDA"},
   {n:"Roveja (pisello selvatico umbro) secca",c:"Legumi",k:320,p:22,gs:0.3,g:1.5,z:6.0,ch:57,fi:10,ca:75,fe:6.0,mg:88,k2:920,na:4,zn:2.5,fo:360,se:6,col:0,src:"CREA"},
@@ -1510,7 +1510,7 @@ const DB_BDA=[
   {n:"Lupini in salamoia sgocciolati",c:"Legumi",src:"CREA",k:119,p:15.8,gs:0.3,g:2.8,z:0.4,ch:10.1,fi:2.0,ca:30,fe:1.6,mg:70,k2:242,na:390,zn:1.5,fo:66,se:2,col:0},
   // ── CEREALI E FARINE NON ANCORA PRESENTI ──
   {n:"Teff crudo",c:"Cereali",src:"BDA",k:335,p:13.3,gs:0.45,g:2.4,z:1.8,ch:65.1,fi:8,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:43,se:4.4,col:0},
-  {n:"Freekeh (grano verde tostato)",c:"Cereali",src:"BDA",k:362,p:12.6,gs:0.5,g:2.7,z:2.5,ch:72,fi:16.5,ca:32,fe:3.6,mg:78,k2:347,na:18,zn:2.9,fo:220,se:8,col:0},
+  {n:"Freekeh (grano verde tostato)",c:"Cereali",src:"BDA",k:362,p:12.6,gs:0.5,g:2.7,z:2.5,ch:72,fi:16.5,ca:32,fe:3.6,mg:78,k2:347,na:18,zn:2.9,fo:40,se:8,col:0},
   {n:"Riso integrale cotto",c:"Cereali e pasta",src:"CREA",k:113,p:2.5,gs:0.1,g:0.6,z:0.4,ch:25.5,fi:0.8,ca:12,fe:0.5,mg:44,k2:70,na:3,zn:0.6,fo:77,se:9.8,col:0},
   {n:"Semola di mais (fioretto)",c:"Cereali",src:"CREA",k:358,p:8.7,gs:0.3,g:4.0,z:1.0,ch:76,fi:2.4,ca:4,fe:1.1,mg:29,k2:142,na:1,zn:0.8,fo:78,se:8,col:0},
   {n:"Farina di riso integrale",c:"Cereali e derivati",src:"BDA",k:332,p:7.3,gs:0.13,g:0.5,z:0,ch:79.1,fi:1,ca:7,fe:0.4,mg:23,k2:104,na:4,zn:0.8,fo:4,se:15.1,col:0},
@@ -1553,7 +1553,8 @@ const DB_BDA=[
   {n:"Tahini / crema di sesamo",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:7.5,g:53.8,z:0.5,ch:21.2,fi:9.0,ca:426,fe:8.9,mg:95,k2:582,na:115,zn:4.6,fo:97,se:34,col:0},
   {n:"Marmellata di arance",c:"Dolci",src:"BDA",k:262,p:0.1,gs:0,g:0,z:69.5,ch:69.5,fi:0.5,ca:26,fe:0.2,mg:3,k2:35,na:64,zn:0.1,fo:5,se:1,col:0},
   {n:"Marmellata di albicocche",c:"Dolci",src:"BDA",k:251,p:0.4,gs:0,g:0.1,z:60,ch:65,fi:2.0,ca:11,fe:0.8,mg:7,k2:130,na:10,zn:0.1,fo:6,se:0.5,col:0},
-  {n:"Crema di pistacchi senza zucchero",c:"Creme e spalmate",src:"BDA",k:559,p:18.5,gs:4.5,g:44,z:3.5,ch:24,fi:10.5,ca:105,fe:3.5,mg:120,k2:990,na:5,zn:2.0,fo:480,se:7,col:0},
+  // Fosforo (490mg pistacchio confermato) era nel campo folati; corretto a 51mcg - 2026-07-29
+  {n:"Crema di pistacchi senza zucchero",c:"Creme e spalmate",src:"BDA",k:559,p:18.5,gs:4.5,g:44,z:3.5,ch:24,fi:10.5,ca:105,fe:3.5,mg:120,k2:990,na:5,zn:2.0,fo:51,se:7,col:0},
   {n:"Cioccolato fondente 85%",c:"Dolci",src:"BDA",k:575,p:12.5,gs:17.5,g:42.5,z:26,ch:32.5,fi:12.5,ca:73,fe:12.5,mg:228,k2:715,na:20,zn:3.3,fo:0,se:6.8,col:0},
   {n:"Cioccolato fondente 72%",c:"Dolci",src:"BDA",k:540,p:8,gs:13.5,g:36,z:33.5,ch:45,fi:10,ca:60,fe:8,mg:180,k2:560,na:22,zn:2.2,fo:0,se:5,col:3},
   {n:"Cacao amaro in polvere",c:"Dolci",src:"CREA",k:355,p:20.4,gs:3.0,g:25.6,z:0,ch:11.5,fi:37.0,ca:51,fe:14.3,mg:499,k2:1524,na:21,zn:6.8,fo:32,se:14,col:0},
@@ -1823,7 +1824,8 @@ const DB_BDA=[
   // Corretto su BDA "Arachidi, tostate" (non salate): folati erano sballati di 8x (376 vs 44mcg reali), carboidrati quasi doppi, sodio 3x piu alto nonostante "senza sale" — 2026-07-29
   {n:"Arachidi tostate senza sale",c:"Frutta secca",src:"BDA",k:620,p:29,gs:7.13,g:50,z:3.1,ch:8.5,fi:10.9,ca:64,fe:3.5,mg:175,k2:680,na:6,zn:3.5,fo:44,se:3,col:0},
   {n:"Burro di arachidi (naturale, senza zucchero)",c:"Condimenti",src:"BDA",k:588,p:25.0,gs:10.5,g:50.5,z:6.0,ch:16.0,fi:6.0,ca:49,fe:1.9,mg:154,k2:649,na:5,zn:2.9,fo:336,se:4,col:0,src:"BDA"},
-  {n:"Burro di mandorle (crema di mandorle)",c:"Condimenti",src:"BDA",k:614,p:21.0,gs:3.5,g:55.5,z:5.0,ch:19.0,fi:10.5,ca:347,fe:3.5,mg:270,k2:748,na:3,zn:3.1,fo:484,se:2.5,col:0,src:"BDA"},
+  // Fosforo (481mg mandorle confermato) era nel campo folati; corretto a 29mcg - 2026-07-29
+  {n:"Burro di mandorle (crema di mandorle)",c:"Condimenti",src:"BDA",k:614,p:21.0,gs:3.5,g:55.5,z:5.0,ch:19.0,fi:10.5,ca:347,fe:3.5,mg:270,k2:748,na:3,zn:3.1,fo:29,se:2.5,col:0,src:"BDA"},
   {n:"Burro di sesamo (tahini)",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:4.5,g:53.8,z:1.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:97,se:34,col:0,src:"BDA"},
 {n:"Spinaci lessati",c:"Verdure cotte",k:41,p:4,gs:0,g:0.8,z:0.5,ch:3.5,fi:2.3,ca:74,fe:2.2,mg:36,k2:265,na:75,zn:1.07,fo:62,se:0.9,col:0,src:"CREA"},
 {n:"Fagioli cannellini lessi",c:"Legumi cotti",k:107,p:8,gs:0.1,g:0.4,z:0.6,ch:14.9,fi:7.8,ca:47,fe:1.7,mg:53,k2:289,na:2,zn:1.54,fo:200,se:5,col:0,src:"CREA"},

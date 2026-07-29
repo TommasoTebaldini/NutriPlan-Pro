@@ -1288,9 +1288,11 @@ const DB_CREA=[
 const DB_BDA=[
 {n:"Olio extravergine di oliva",c:"Grassi e oli",k:899,p:0,gs:14.46,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.2,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Fragole",c:"Frutta fresca",k:30,p:0.9,gs:0.02,g:0.4,z:5.3,ch:5.3,fi:1.6,ca:35,fe:0.8,mg:10,k2:160,na:2,zn:0.1,fo:20,se:0,col:0,src:"BDA"},
-{n:"Pane tipo 0",c:"Cereali e derivati",k:279,p:8.9,gs:0.3,g:1.0,z:3.5,ch:56.8,fi:2.2,ca:24,fe:1.3,mg:25,k2:112,na:530,zn:0.6,fo:85,se:15,col:0,src:"BDA"},
+// Verificato BDA (Pane, Tipo 0, pezzatura da 100g — scelto il salato non "senza sale" dato che il locale aveva gia sodio alto, coerente) — 2026-07-29
+{n:"Pane tipo 0",c:"Cereali e derivati",k:268,p:8.1,gs:0.06,g:0.5,z:2,ch:59.5,fi:3.8,ca:17,fe:0.7,mg:15,k2:103,na:600,zn:0.37,fo:29,se:2,col:0,src:"BDA"},
 {n:"Pane tipo 00",c:"Cereali e derivati",k:295,p:8.6,gs:0.04,g:0.4,z:1.9,ch:66.9,fi:3.2,ca:14,fe:0.8,mg:15,k2:103,na:560,zn:0.37,fo:29,se:2,col:0,src:"BDA"},
-{n:"Pasta all'uovo cruda",c:"Cereali e derivati",k:368,p:12.8,gs:1.4,g:4.2,z:2,ch:66.5,fi:2.2,ca:30,fe:2.1,mg:40,k2:160,na:20,zn:1.1,fo:160,se:28,col:65,src:"BDA"},
+// Verificato BDA (Pasta All'Uovo, SECCA — valore locale gia vicino a questa, non alla versione fresca) — 2026-07-29
+{n:"Pasta all'uovo cruda",c:"Cereali e derivati",k:346,p:13,gs:0.78,g:2.4,z:2,ch:71,fi:3.2,ca:22,fe:2.1,mg:118,k2:164,na:17,zn:0.31,fo:38,se:3.4,col:94,src:"BDA"},
 {n:"Gnocchi di patate",c:"Cereali e derivati",k:164,p:3.9,gs:0.2,g:0.3,z:1.4,ch:37.9,fi:1.9,ca:14,fe:0.6,mg:18,k2:310,na:9,zn:0.3,fo:45,se:3,col:7,src:"CREA"},
 {n:"Farina di frumento tipo 00",c:"Cereali e derivati",k:323,p:11,gs:0.08,g:0.7,z:1.7,ch:71.6,fi:2.2,ca:17,fe:0.7,mg:120,k2:126,na:3,zn:0.07,fo:32,se:2.3,col:0,src:"BDA"},
 {n:"Farina integrale di frumento",c:"Cereali e derivati",k:313,p:11.9,gs:0.44,g:1.9,z:2.1,ch:61.8,fi:8.4,ca:28,fe:3,mg:83,k2:337,na:3,zn:1.9,fo:27,se:5,col:0,src:"BDA"},
@@ -1774,7 +1776,8 @@ const DB_BDA=[
   {n:"Edamame (soia verde) cotti",c:"Legumi",src:"BDA",k:121,p:11.9,gs:0.5,g:5.2,z:3.0,ch:8.9,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:6,zn:1.4,fo:311,se:1.5,col:0,src:"BDA"},
   {n:"Lenticchie rosse decorticate cotte",c:"Legumi",src:"BDA",k:116,p:9.0,gs:0.1,g:0.4,z:2.5,ch:20.1,fi:5.5,ca:19,fe:3.0,mg:38,k2:370,na:2,zn:1.4,fo:181,se:3,col:0,src:"BDA"},
   {n:"Lenticchie beluga (nere) cotte",c:"Legumi",src:"BDA",k:116,p:9.0,gs:0.1,g:0.5,z:2.0,ch:20.0,fi:8.0,ca:22,fe:3.3,mg:48,k2:350,na:2,zn:1.5,fo:180,se:3,col:0,src:"BDA"},
-  {n:"Arachidi tostate senza sale",c:"Frutta secca",src:"BDA",k:567,p:25.8,gs:6.9,g:49.2,z:3.6,ch:16.1,fi:8.5,ca:54,fe:2.3,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7,col:0,src:"BDA"},
+  // Corretto su BDA "Arachidi, tostate" (non salate): folati erano sballati di 8x (376 vs 44mcg reali), carboidrati quasi doppi, sodio 3x piu alto nonostante "senza sale" — 2026-07-29
+  {n:"Arachidi tostate senza sale",c:"Frutta secca",src:"BDA",k:620,p:29,gs:7.13,g:50,z:3.1,ch:8.5,fi:10.9,ca:64,fe:3.5,mg:175,k2:680,na:6,zn:3.5,fo:44,se:3,col:0},
   {n:"Burro di arachidi (naturale, senza zucchero)",c:"Condimenti",src:"BDA",k:588,p:25.0,gs:10.5,g:50.5,z:6.0,ch:16.0,fi:6.0,ca:49,fe:1.9,mg:154,k2:649,na:5,zn:2.9,fo:336,se:4,col:0,src:"BDA"},
   {n:"Burro di mandorle (crema di mandorle)",c:"Condimenti",src:"BDA",k:614,p:21.0,gs:3.5,g:55.5,z:5.0,ch:19.0,fi:10.5,ca:347,fe:3.5,mg:270,k2:748,na:3,zn:3.1,fo:484,se:2.5,col:0,src:"BDA"},
   {n:"Burro di sesamo (tahini)",c:"Condimenti",src:"BDA",k:595,p:17.0,gs:4.5,g:53.8,z:1.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:732,se:34,col:0,src:"BDA"},
@@ -1817,7 +1820,8 @@ const DB_BDA=[
 {n:"Nettarina fresca (pesca noce)",c:"Frutta fresca",k:44,p:1.1,gs:0,g:0.2,z:8.5,ch:10.5,fi:1.7,ca:9,fe:0.3,mg:11,k2:181,na:0,zn:0.2,fo:26,se:0.1,col:0,src:"CREA"},
 {n:"Pomodori secchi al sole",c:"Verdure",k:258,p:14.0,gs:0.5,g:3.0,z:30.0,ch:55.8,fi:12.3,ca:110,fe:9.1,mg:194,k2:3427,na:102,zn:2.0,fo:356,se:5.5,col:0,src:"CREA"},
 {n:"Pomodori secchi sott'olio",c:"Verdure",k:213,p:5.0,gs:0.4,g:14.0,z:8.0,ch:16.0,fi:4.0,ca:60,fe:4.0,mg:60,k2:1000,na:800,zn:1.0,fo:130,se:3.0,col:0,src:"CREA"},
-{n:"Frumento tenero (grano) chicchi interi",c:"Cereali",k:319,p:12.3,gs:0.4,g:2.5,z:2.0,ch:60.9,fi:12.7,ca:30,fe:3.3,mg:123,k2:363,na:3,zn:3.3,fo:402,se:35,col:0,src:"BDA"},
+// Verificato BDA (Frumento Tenero, crudo — proteine gia identiche, resto ravvicinato) — 2026-07-29
+{n:"Frumento tenero (grano) chicchi interi",c:"Cereali",k:336,p:12.3,gs:0.6,g:2.6,z:3.3,ch:65.2,fi:9.7,ca:35,fe:3.3,mg:90,k2:435,na:2,zn:3.1,fo:39,se:3.8,col:0,src:"BDA"},
 {n:"Grano duro (chicchi interi)",c:"Cereali",k:316,p:13.0,gs:0.3,g:2.9,z:2.0,ch:61.9,fi:9.8,ca:34,fe:3.3,mg:120,k2:431,na:2,zn:2.7,fo:393,se:56,col:0,src:"CREA"},
 {n:"Olio di soia",c:"Grassi e oli",k:899,p:0,gs:14.76,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Friselle (pane biscottato pugliese)",c:"Pane",k:345,p:10.5,gs:0.39,g:2,z:2,ch:74.5,fi:2.9,ca:71,fe:1.9,mg:131,k2:207,na:914,zn:0.22,fo:73,se:2.8,col:0,src:"BDA"},

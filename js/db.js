@@ -375,7 +375,8 @@ const DB_CREA=[
   {n:"Fave fresche sgranate",c:"Verdure",k:51,p:5.2,gs:0,g:0.4,z:2.2,ch:4.5,fi:5,ca:22,fe:1.7,mg:33,k2:200,na:17,zn:0.7,fo:125,se:1.2,col:0,src:"CREA"},
   {n:"Lattuga romana",c:"Verdure",k:22,p:1.8,gs:0,g:0.4,z:2.2,ch:2.2,fi:1.5,ca:45,fe:0.8,mg:14,k2:240,na:9,zn:0.2,fo:30,se:0.4,col:0,src:"CREA"},
   {n:"Cicoria di campo",c:"Verdure",k:17,p:1.4,gs:0,g:0.2,z:0.7,ch:0.7,fi:3.6,ca:74,fe:0.7,mg:30,k2:170,na:1,zn:0.4,fo:110,se:0.4,col:0,src:"CREA"},
-  {n:"Porro",c:"Verdure",k:31,p:1.5,gs:0,g:0.3,z:3.9,ch:7.2,fi:1.8,ca:59,fe:2.1,mg:28,k2:180,na:20,zn:0.1,fo:35,se:1.0,col:0,src:"CREA"},
+// Allineato a un secondo duplicato CREA gia presente nel DB (riga 1358 circa) con kcal/carboidrati corretti (61kcal standard USDA/CREA per il porro, non 31) — confermato anche da fonti web generiche — 2026-07-29
+  {n:"Porro",c:"Verdure",k:61,p:1.5,gs:0,g:0.3,z:3.9,ch:12.4,fi:1.8,ca:59,fe:2.0,mg:28,k2:180,na:5,zn:0.1,fo:35,se:1.0,col:0,src:"CREA"},
   {n:"Kohlrabi (cavolo rapa)",c:"Verdure",k:27,p:1.7,gs:0,g:0.1,z:3.5,ch:6.2,fi:3.6,ca:24,fe:0.4,mg:19,k2:350,na:20,zn:0.3,fo:46,se:0.7,col:0,src:"CREA"},
   {n:"Germogli di soia",c:"Verdure",k:54,p:6.2,gs:0,g:1.4,z:3,ch:3,fi:2.8,ca:48,fe:1,mg:21,k2:218,na:30,zn:0.5,fo:56,se:0.6,col:0,src:"CREA"},
   {n:"Germogli di lenticchie",c:"Verdure",k:106,p:9.0,gs:0,g:0.5,z:1.5,ch:22.0,fi:4.5,ca:25,fe:3.0,mg:37,k2:322,na:11,zn:1.5,fo:173,se:0.6,col:0,src:"CREA"},

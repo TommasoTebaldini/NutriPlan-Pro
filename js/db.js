@@ -2098,7 +2098,7 @@ const DB_BDA=[
 {n:"Olio di mandorle dolci",c:"Grassi",k:884,p:0,gs:8.2,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Olio di ricino",c:"Grassi",k:884,p:0,gs:2.9,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Panna acida (sour cream 20%)",c:"Latte e derivati",k:206,p:2.7,gs:12.6,g:20.0,z:3.5,ch:3.5,fi:0,ca:67,fe:0.1,mg:8,k2:95,na:40,zn:0.2,fo:55,se:1,col:50,src:"BDA"},
-{n:"Zucchero grezzo di canna (mascobado)",c:"Zuccheri",k:373,p:0.4,gs:0,g:0.1,z:83.3,ch:96.0,fi:0,ca:85,fe:1.5,mg:29,k2:346,na:39,zn:0.2,fo:22,se:1,col:0,src:"BDA"},
+{n:"Zucchero grezzo di canna (mascobado)",c:"Zuccheri",k:380,p:0.1,gs:0,g:0,z:101.3,ch:101.3,fi:0,ca:56,fe:1.7,mg:17,k2:140,na:31,zn:0.1,fo:0,se:0,col:0,src:"BDA"},
 
 // ── VERDURE COTTE MANCANTI (CREA) ──
 {n:"Zucchina lessata",c:"Verdure",k:14,p:1.0,gs:0,g:0.1,z:1.5,ch:2.0,fi:1.2,ca:16,fe:0.3,mg:14,k2:204,na:3,zn:0.3,fo:19,se:0.3,col:0,src:"CREA"},

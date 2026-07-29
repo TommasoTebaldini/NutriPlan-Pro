@@ -1807,7 +1807,8 @@ const DB_BDA=[
   // ── BEVANDE AGGIUNTIVE ──
   {n:"Cappuccino (latte intero + caffè)",c:"Bevande",src:"CREA",k:40,p:1.8,gs:0.9,g:1.6,z:2.4,ch:2.4,fi:0,ca:65,fe:0.1,mg:7,k2:85,na:22,zn:0.2,fo:5,se:1,col:6},
   {n:"Orzo solubile / tisana orzo",c:"Bevande",src:"BDA",k:300,p:6,gs:0.6,g:2.5,z:4.6,ch:55.1,fi:23.3,ca:58,fe:4.6,mg:244,k2:2443,na:83,zn:0.51,fo:52,se:64.1,col:0},
-  {n:"Latte di cocco light (in lattina)",c:"Bevande",src:"BDA",k:77,p:1.0,gs:7.0,g:8.0,z:2.2,ch:3.3,fi:0,ca:12,fe:1.0,mg:15,k2:100,na:10,zn:0.2,fo:30,se:2,col:0},
+  // Folati 30mcg implausibile per latte di cocco diluito (reale ~14mcg per versione intera, ~7mcg per light diluito) - 2026-07-29
+  {n:"Latte di cocco light (in lattina)",c:"Bevande",src:"BDA",k:77,p:1.0,gs:7.0,g:8.0,z:2.2,ch:3.3,fi:0,ca:12,fe:1.0,mg:15,k2:100,na:10,zn:0.2,fo:7,se:2,col:0},
 
   // ── CONDIMENTI AGGIUNTIVI ──
   {n:"Aceto di vino bianco",c:"Condimenti",src:"CREA",k:18,p:0.1,gs:0,g:0,z:0.2,ch:1.7,fi:0,ca:6,fe:0.1,mg:3,k2:28,na:7,zn:0.03,fo:5,se:1,col:0},
@@ -1849,11 +1850,14 @@ const DB_BDA=[
   {n:"Indivia riccia cruda",c:"Verdure",src:"BDA",k:20,p:0.9,gs:0.07,g:0.3,z:2.7,ch:2.7,fi:1.6,ca:93,fe:1.7,mg:12,k2:380,na:10,zn:0.4,fo:156,se:0.2,col:0,src:"BDA"},
   {n:"Ortica (foglie) cotta",c:"Verdure",src:"BDA",k:40,p:6.0,gs:0,g:0.6,z:1.5,ch:5.5,fi:4.5,ca:428,fe:1.7,mg:57,k2:334,na:42,zn:0.8,fo:30,se:1,col:0,src:"BDA"},
   {n:"Luppolo (germogli) crudi",c:"Verdure",src:"BDA",k:28,p:3.2,gs:0,g:0.5,z:1.0,ch:3.8,fi:2.5,ca:40,fe:1.5,mg:18,k2:260,na:10,zn:0.4,fo:32,se:0.5,col:0,src:"BDA"},
-  {n:"Acetosella (sorrel/romice) cruda",c:"Verdure",src:"BDA",k:22,p:2.0,gs:0,g:0.7,z:1.0,ch:3.2,fi:2.9,ca:44,fe:2.4,mg:103,k2:390,na:4,zn:0.2,fo:106,se:0.9,col:0,src:"BDA"},
+  // Magnesio (103mg, quasi identico) era nel campo folati; folati reali acetosella ~13mcg (confermato via ricerca, coerente con duplicato DB_CREA_274) - 2026-07-29
+  {n:"Acetosella (sorrel/romice) cruda",c:"Verdure",src:"BDA",k:22,p:2.0,gs:0,g:0.7,z:1.0,ch:3.2,fi:2.9,ca:44,fe:2.4,mg:103,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"BDA"},
   {n:"Cicoria di campo cruda",c:"Verdure",src:"CREA",k:17,p:1.4,gs:0,g:0.2,z:0.7,ch:0.7,fi:3.6,ca:74,fe:0.7,mg:30,k2:170,na:1,zn:0.4,fo:46,se:0.5,col:0,src:"BDA"},
   // ── CEREALI E PASTA COTTI ──
-  {n:"Farro cotto (spelta)",c:"Cereali e derivati",src:"BDA",k:130,p:5.5,gs:0.3,g:1.0,z:1.0,ch:27.0,fi:3.0,ca:19,fe:1.3,mg:45,k2:130,na:4,zn:1.2,fo:100,se:7,col:0,src:"BDA"},
-  {n:"Kamut® (grano Khorasan) cotto",c:"Cereali e derivati",src:"BDA",k:148,p:5.5,gs:0.2,g:1.0,z:1.5,ch:30.5,fi:2.5,ca:12,fe:1.5,mg:45,k2:168,na:3,zn:1.5,fo:110,se:10,col:0,src:"BDA"},
+  // Fosforo (cereale cotto, ~100mg) era nel campo folati; folati reali farro cotto ~30mcg - 2026-07-29
+  {n:"Farro cotto (spelta)",c:"Cereali e derivati",src:"BDA",k:130,p:5.5,gs:0.3,g:1.0,z:1.0,ch:27.0,fi:3.0,ca:19,fe:1.3,mg:45,k2:130,na:4,zn:1.2,fo:30,se:7,col:0,src:"BDA"},
+  // Stesso bug fosforo-in-folati, corretto per coerenza col duplicato DB_CREA_935 (33mcg) - 2026-07-29
+  {n:"Kamut® (grano Khorasan) cotto",c:"Cereali e derivati",src:"BDA",k:148,p:5.5,gs:0.2,g:1.0,z:1.5,ch:30.5,fi:2.5,ca:12,fe:1.5,mg:45,k2:168,na:3,zn:1.5,fo:33,se:10,col:0,src:"BDA"},
   {n:"Sorgho cotto",c:"Cereali e derivati",src:"BDA",k:123,p:4.0,gs:0.3,g:1.3,z:0.5,ch:25.5,fi:3.0,ca:13,fe:1.5,mg:35,k2:70,na:2,zn:0.6,fo:28,se:3,col:0,src:"BDA"},
   // ── PRODOTTI A BASE VEGETALE NATURALI ──
   {n:"Seitan al naturale (glutine di frumento)",c:"Legumi",src:"BDA",k:140,p:25.0,gs:0,g:2.0,z:0.5,ch:4.0,fi:0.6,ca:14,fe:1.2,mg:12,k2:50,na:360,zn:0.8,fo:42,se:3,col:0,src:"BDA"},

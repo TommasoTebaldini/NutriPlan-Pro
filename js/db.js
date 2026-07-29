@@ -346,7 +346,8 @@ const DB_CREA=[
 {n:"Cernia fresca",c:"Pesce",k:80,p:17.9,gs:0.158,g:0.7,z:0.6,ch:0.6,fi:0,ca:11,fe:0.3,mg:31,k2:483,na:53,zn:0.5,fo:9,se:37,col:37,src:"BDA"},
 {n:"Calamaro fresco",c:"Pesce",k:68,p:12.6,gs:0.85,g:1.7,z:0.6,ch:0.6,fi:0,ca:144,fe:0.2,mg:22,k2:145,na:185,zn:3.1,fo:213,se:44,col:177,src:"CREA"},
 {n:"Polpo cotto",c:"Pesce",k:57,p:10.6,gs:0.42,g:1,z:1.4,ch:1.4,fi:0,ca:144,fe:1.5,mg:39,k2:233,na:196,zn:5.1,fo:200,se:45,col:72,src:"CREA"},
-{n:"Ostrica fresca",c:"Pesce",k:69,p:10.2,gs:1.0,g:0.9,z:0.5,ch:5.4,fi:0,ca:186,fe:6,mg:22,k2:260,na:510,zn:90.0,fo:162,se:77,col:30,src:"CREA"},
+// Zinco (90mg) stesso bug sistemico gia trovato su altre 2 voci ostriche del DB: corretto a 3.6mg (fonti CREA verificate) - 2026-07-29
+{n:"Ostrica fresca",c:"Pesce",k:69,p:10.2,gs:1.0,g:0.9,z:0.5,ch:5.4,fi:0,ca:186,fe:6,mg:22,k2:260,na:510,zn:3.6,fo:162,se:77,col:30,src:"CREA"},
 {n:"Riccio di mare (polpa)",c:"Pesce",k:99,p:12.8,gs:0.7,g:3.3,z:3.7,ch:6.6,fi:0,ca:30,fe:1.1,mg:27,k2:220,na:220,zn:0.7,fo:148,se:30,col:150,src:"CREA"},
 // ── BEVANDE aggiuntive ──
 {n:"Succo di melograno 100%",c:"Bevande",k:54,p:0.2,gs:0,g:0.3,z:12.6,ch:13.4,fi:0.1,ca:11,fe:0.3,mg:7,k2:214,na:9,zn:0.2,fo:8,se:0.5,col:0,src:"CREA"},
@@ -754,7 +755,8 @@ const DB_CREA=[
 
 // ─── Nuovi alimenti CREA aggiunti 2025-05 ───
 {n:"Capesante crude",c:"Pesce",k:88,p:16.8,gs:0.2,g:0.8,z:0.5,ch:3.4,fi:0,ca:26,fe:0.5,mg:41,k2:310,na:287,zn:1.1,fo:16,se:20,col:53,src:"CREA"},
-{n:"Ostriche crude",c:"Pesce",k:59,p:9.0,gs:0.4,g:1.8,z:0.4,ch:3.7,fi:0,ca:37,fe:3.5,mg:22,k2:157,na:510,zn:45.0,fo:12,se:63,col:50,src:"CREA"},
+// Zinco (45mg) stesso bug gia trovato/corretto su "Ostriche fresche" (era 59mg): allineato ai valori CREA verificati per calcio/ferro/potassio - 2026-07-29
+{n:"Ostriche crude",c:"Pesce",k:59,p:9.0,gs:0.4,g:1.8,z:0.4,ch:3.7,fi:0,ca:186,fe:6.0,mg:22,k2:260,na:510,zn:3.6,fo:12,se:63,col:50,src:"CREA"},
 {n:"Scorfano rosso crudo",c:"Pesce",k:82,p:19,gs:0.1,g:0.4,z:0.6,ch:0.6,fi:0,ca:61,fe:5.5,mg:21,k2:465,na:62,zn:1.8,fo:9,se:36,col:67,src:"CREA"},
 {n:"Palamita fresca",c:"Pesce",k:144,p:23.2,gs:1.6,g:5.8,z:0,ch:0,fi:0,ca:28,fe:1.0,mg:41,k2:434,na:54,zn:0.8,fo:5,se:36,col:76,src:"CREA"},
 {n:"Sgombro sott'olio sgocciolato",c:"Pesce",k:201,p:25.3,gs:2.31,g:10.7,z:1,ch:1,fi:0,ca:32,fe:0.9,mg:10.615,k2:92,na:224,zn:0.5,fo:1,se:10.61,col:94,src:"BDA"},
@@ -839,7 +841,8 @@ const DB_CREA=[
 {n:"Semi di sesamo tostati",c:"Frutta secca",k:573,p:17.7,gs:5.6,g:49.7,z:0.5,ch:23.5,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:629,se:34,col:0,src:"CREA"},
 {n:"Sesamo nero (semi crudi)",c:"Frutta secca",k:573,p:17.0,gs:5.0,g:49.7,z:0.3,ch:23.5,fi:11.8,ca:1000,fe:16.0,mg:360,k2:468,na:10,zn:8.0,fo:640,se:35,col:0,src:"CREA"},
 // ── FRUTTA AGGIUNTIVA ──
-{n:"Ciliegie fresche",c:"Frutta fresca",k:50,p:1,gs:0.1,g:0.3,z:8.5,ch:12,fi:1.6,ca:13,fe:0.4,mg:11,k2:222,na:3,zn:0.07,fo:21,se:0,col:0,src:"CREA"},
+// Kcal/carboidrati sottostimati (50kcal/12g): fonte USDA converge su 63kcal/16g carb - 2026-07-29
+{n:"Ciliegie fresche",c:"Frutta fresca",k:63,p:1.1,gs:0.1,g:0.2,z:11,ch:16,fi:2.1,ca:13,fe:0.4,mg:11,k2:222,na:3,zn:0.07,fo:21,se:0,col:0,src:"CREA"},
 {n:"Prugne fresche",c:"Frutta fresca",k:45,p:0.5,gs:0,g:0.1,z:10.5,ch:10.5,fi:1.5,ca:13,fe:0.2,mg:7,k2:190,na:2,zn:0.1,fo:16,se:0,col:0,src:"CREA"},
 {n:"Melograno (chicchi)",c:"Frutta fresca",k:83,p:1.7,gs:0.1,g:1.2,z:13.7,ch:19,fi:4,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.35,fo:36,se:0.5,col:0,src:"CREA"},
 // Minerali aggiornati su fonte generica convergente (kcal/sodio gia esatti): potassio, calcio, ferro erano sottostimati — 2026-07-29
@@ -1154,7 +1157,8 @@ const DB_CREA=[
 {n:"Ricci di mare (gonadi fresche)",c:"Molluschi",k:110,p:12,gs:1.2,g:4.5,z:2.5,ch:8.2,fi:0,ca:27,fe:0.6,mg:48,k2:230,na:260,zn:1.5,fo:45,se:20,col:120,src:"CREA"},
 {n:"Fasolari (Callista chione, freschi)",c:"Molluschi",k:74,p:12.4,gs:0.3,g:1.4,z:0.5,ch:4.7,fi:0,ca:128,fe:5.6,mg:30,k2:314,na:154,zn:1.2,fo:23,se:25,col:40,src:"CREA"},
 {n:"Cannocchie (Squilla mantis, fresche)",c:"Molluschi",k:76,p:15.5,gs:0.2,g:1,z:0,ch:0.8,fi:0,ca:90,fe:1.2,mg:42,k2:290,na:210,zn:1.5,fo:18,se:35,col:85,src:"CREA"},
-{n:"Ostriche crude (Ostrea edulis)",c:"Molluschi",k:68,p:7.1,gs:0.4,g:2.5,z:0,ch:3.9,fi:0,ca:45,fe:4.6,mg:22,k2:168,na:254,zn:59,fo:10,se:63.7,col:46,src:"CREA"},
+// Zinco (59mg) stesso bug sistemico delle altre voci ostriche - 2026-07-29
+{n:"Ostriche crude (Ostrea edulis)",c:"Molluschi",k:68,p:7.1,gs:0.4,g:2.5,z:0,ch:3.9,fi:0,ca:45,fe:4.6,mg:22,k2:168,na:254,zn:3.6,fo:10,se:63.7,col:46,src:"CREA"},
 // FORMAGGI DOP REGIONALI
 {n:"Castelmagno DOP (stagionato)",c:"Latticini",k:370,p:34,gs:15,g:23,z:0,ch:0,fi:0,ca:750,fe:0.5,mg:26,k2:100,na:830,zn:4,fo:25,se:14,col:85,src:"CREA"},
 {n:"Bra DOP tenero",c:"Latticini",k:328,p:30.7,gs:13.363,g:22.8,z:0,ch:0,fi:0,ca:770,fe:0.4,mg:39,k2:97,na:897,zn:2.2,fo:40,se:4,col:90,src:"BDA"},
@@ -2359,7 +2363,8 @@ const DB_BDA=[
 {n:"Collagene idrolizzato in polvere (bovino/marino)",c:"Proteine in Polvere",k:360,p:90.0,gs:0,g:0,z:0,ch:2.0,fi:0,ca:120,fe:0,mg:12,k2:50,na:150,zn:0.5,fo:1,se:0,col:0,src:"BDA"},
 {n:"Creatina monoidrato in polvere",c:"Integratori",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Spirulina in compresse (alghe)",c:"Alghe",k:290,p:57.5,gs:0.7,g:7.7,z:3.1,ch:23.9,fi:3.6,ca:120,fe:28.5,mg:195,k2:1363,na:1048,zn:2.0,fo:94,se:7,col:0,src:"CREA"},
-{n:"Clorella in polvere (Chlorella vulgaris)",c:"Alghe",k:410,p:58.0,gs:1.0,g:9.3,z:0.5,ch:23.2,fi:0.3,ca:221,fe:130.0,mg:315,k2:1030,na:29,zn:71,fo:94,se:10,col:0,src:"BDA"},
+// Ferro (130mg) troppo alto vs fonte convergente su kcal/proteine/grassi/carboidrati (che cita ferro 54mg); zinco (71mg) verificato come valore realmente citato in alcune fonti per questo integratore ad alta variabilita, non toccato - 2026-07-29
+{n:"Clorella in polvere (Chlorella vulgaris)",c:"Alghe",k:410,p:58.0,gs:1.0,g:9.3,z:0.5,ch:23.2,fi:0.3,ca:221,fe:54.0,mg:315,k2:1030,na:29,zn:71,fo:94,se:10,col:0,src:"BDA"},
 {n:"Alga wakame essiccata",c:"Alghe",k:45,p:3.0,gs:0.1,g:0.6,z:0.6,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:50,na:872,zn:0.4,fo:196,se:0.7,col:0,src:"BDA"},
 {n:"Alga spirulina fresca (non essiccata)",c:"Alghe",k:26,p:5.9,gs:0.2,g:0.4,z:0.3,ch:2.4,fi:0.4,ca:12,fe:2.8,mg:19,k2:127,na:98,zn:0.2,fo:9,se:0.7,col:0,src:"BDA"},
 {n:"Maca in polvere (Lepidium meyenii)",c:"Erbe aromatiche",k:325,p:14.0,gs:1.5,g:3.5,z:3.0,ch:71.4,fi:7.1,ca:450,fe:14.7,mg:104,k2:2400,na:18,zn:3.8,fo:93,se:11,col:0,src:"BDA"},

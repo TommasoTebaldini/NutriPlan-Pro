@@ -174,7 +174,8 @@ const DB_CREA=[
 {n:"Pasta di lenticchie cruda",c:"Cereali e pasta",k:344,p:24,gs:0.3,g:2.3,z:2,ch:55,fi:11,ca:59,fe:8,mg:105,k2:842,na:4,zn:3,fo:380,se:6,col:0,src:"CREA"},
 {n:"Riso Arborio crudo",c:"Cereali e pasta",k:334,p:6.7,gs:0.1,g:0.4,z:0.2,ch:80.4,fi:1,ca:24,fe:0.8,mg:20,k2:92,na:5,zn:1.3,fo:110,se:10,col:0,src:"CREA"},
 {n:"Riso Venere crudo",c:"Cereali e pasta",k:355,p:7.8,gs:0.2,g:1.3,z:2.2,ch:80.4,fi:5.1,ca:13,fe:1.1,mg:101,k2:280,na:0,zn:1.5,fo:20,se:12,col:0,src:"CREA"},
-{n:"Polenta taragna cruda",c:"Cereali e pasta",k:350,p:11,gs:0.4,g:3.5,z:0,ch:68,fi:3,ca:30,fe:2.5,mg:80,k2:280,na:5,zn:2,fo:200,se:8,col:0,src:"CREA"},
+// Folati 200mcg implausibile per mais+grano saraceno (reali ~25mcg); probabile bug fosforo-in-folati - 2026-07-29
+{n:"Polenta taragna cruda",c:"Cereali e pasta",k:350,p:11,gs:0.4,g:3.5,z:0,ch:68,fi:3,ca:30,fe:2.5,mg:80,k2:280,na:5,zn:2,fo:25,se:8,col:0,src:"CREA"},
 {n:"Pasta di kamut cruda",c:"Cereali e pasta",k:348,p:14,gs:0.3,g:2.4,z:3,ch:68.5,fi:4.5,ca:24,fe:3.1,mg:110,k2:396,na:3,zn:2.8,fo:30,se:14,col:0,src:"CREA"},
 // ── CARNI aggiuntive ──
 {n:"Pollo coscia senza pelle",c:"Carni bianche",k:107,p:18.5,gs:1.08,g:3.7,z:0,ch:0,fi:0,ca:13,fe:1,mg:23,k2:355,na:86,zn:1.9,fo:9,se:10,col:88,src:"BDA"},
@@ -267,7 +268,8 @@ const DB_CREA=[
 {n:"Brodo di carne",c:"Condimenti",k:5,p:0.73,gs:0.05,g:0.19,z:0.02,ch:0.12,fi:0.01,ca:1,fe:0.05,mg:6,k2:15,na:222,zn:0.01,fo:12,se:2,col:0.02,src:"BDA"},
 {n:"Brodo vegetale",c:"Condimenti",k:6,p:0.3,gs:0.09,g:0.4,z:0.1,ch:0.3,fi:0,ca:1,fe:0.1,mg:8,k2:8,na:362,zn:0.01,fo:1,se:0,col:0,src:"BDA"},
 {n:"Aceto di mele",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.9,ch:0.9,fi:0,ca:7,fe:0.2,mg:5,k2:73,na:5,zn:0.04,fo:2,se:0,col:0,src:"CREA"},
-{n:"Besciamella fatta in casa",c:"Condimenti",k:128,p:4,gs:5,g:8.2,z:5.5,ch:10.5,fi:0.2,ca:132,fe:0.2,mg:14,k2:190,na:280,zn:0.5,fo:100,se:2,col:25,src:"CREA"},
+// Folati 100mcg implausibile per salsa latte+farina+burro (reali ~10mcg) - 2026-07-29
+{n:"Besciamella fatta in casa",c:"Condimenti",k:128,p:4,gs:5,g:8.2,z:5.5,ch:10.5,fi:0.2,ca:132,fe:0.2,mg:14,k2:190,na:280,zn:0.5,fo:10,se:2,col:25,src:"CREA"},
 {n:"Hummus fatto in casa",c:"Condimenti",k:180,p:7.9,gs:1.4,g:9.6,z:0.6,ch:17.4,fi:6,ca:49,fe:2.4,mg:57,k2:274,na:300,zn:1.8,fo:170,se:4,col:0,src:"CREA"},
 {n:"Guacamole fatto in casa",c:"Condimenti",k:140,p:2,gs:2.4,g:12.9,z:0.4,ch:7.6,fi:5.5,ca:13,fe:0.5,mg:23,k2:450,na:170,zn:0.5,fo:45,se:0.3,col:0,src:"CREA"},
 // ── SPEZIE E AROMI ──
@@ -397,7 +399,8 @@ const DB_CREA=[
   {n:"Melanzana lunga asiatica",c:"Verdure",k:25,p:0.8,gs:0,g:0.2,z:2.9,ch:5.9,fi:3.0,ca:9,fe:0.3,mg:14,k2:229,na:2,zn:0.2,fo:25,se:0.3,col:0,src:"CREA"},
   // ── FRUTTA MANCANTE ──
   {n:"Kumquat fresco",c:"Frutta fresca",k:71,p:1.9,gs:0,g:0.9,z:9.4,ch:15.9,fi:6.5,ca:62,fe:0.9,mg:20,k2:186,na:10,zn:0.17,fo:19,se:0.5,col:0,src:"CREA"},
-  {n:"Tamarindo (polpa fresca)",c:"Frutta fresca",k:239,p:2.8,gs:0.3,g:0.6,z:12.5,ch:62.5,fi:5.1,ca:74,fe:2.8,mg:92,k2:628,na:28,zn:0.1,fo:113,se:1.3,col:0,src:"CREA"},
+  // Fosforo (113mg, match esatto USDA tamarindo) era nel campo folati; folati reali tamarindo ~14mcg - 2026-07-29
+  {n:"Tamarindo (polpa fresca)",c:"Frutta fresca",k:239,p:2.8,gs:0.3,g:0.6,z:12.5,ch:62.5,fi:5.1,ca:74,fe:2.8,mg:92,k2:628,na:28,zn:0.1,fo:14,se:1.3,col:0,src:"CREA"},
   {n:"Jackfruit (frutto del pane) fresco",c:"Frutta fresca",k:95,p:1.7,gs:0,g:0.6,z:19.1,ch:23.2,fi:1.5,ca:24,fe:0.2,mg:29,k2:303,na:2,zn:0.1,fo:21,se:0.6,col:0,src:"CREA"},
   // ── LATTICINI MANCANTI ──
   {n:"Stracciatella di bufala",c:"Formaggi",k:310,p:13.5,gs:18.5,g:26.5,z:3.0,ch:3.0,fi:0,ca:275,fe:0.1,mg:12,k2:48,na:380,zn:1.4,fo:20,se:4,col:90,src:"CREA"},
@@ -444,7 +447,8 @@ const DB_CREA=[
   {n:"Stevia (foglie essiccate)",c:"Dolcificanti",k:290,p:13.5,gs:0,g:4.0,z:0,ch:62.5,fi:18.0,ca:464,fe:10.0,mg:77,k2:3816,na:190,zn:2.1,fo:24,se:0,col:0,src:"CREA"},
   {n:"Cardamomo macinato",c:"Spezie",k:311,p:10.8,gs:0.7,g:6.7,z:0,ch:68.5,fi:28.0,ca:383,fe:13.9,mg:229,k2:1119,na:18,zn:7.5,fo:11,se:0.9,col:0,src:"CREA"},
   {n:"Zenzero in polvere",c:"Spezie",k:335,p:8.9,gs:0.5,g:4.2,z:3.4,ch:71.6,fi:14.1,ca:116,fe:19.8,mg:214,k2:1320,na:27,zn:3.6,fo:13,se:55,col:0,src:"CREA"},
-  {n:"Peperoncino piccante in polvere",c:"Spezie",k:282,p:13.5,gs:1.1,g:14.3,z:10.3,ch:49.7,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:293,se:8.8,col:0,src:"CREA"},
+  // Fosforo (~293mg, match USDA cayenna) era nel campo folati; folati reali peperoncino in polvere ~106mcg - 2026-07-29
+  {n:"Peperoncino piccante in polvere",c:"Spezie",k:282,p:13.5,gs:1.1,g:14.3,z:10.3,ch:49.7,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:106,se:8.8,col:0,src:"CREA"},
   // ── BEVANDE FERMENTATE ──
   {n:"Kombucha (bevanda fermentata tè)",c:"Bevande",k:9,p:0.2,gs:0,g:0.1,z:1.0,ch:2.5,fi:0,ca:8,fe:0.2,mg:4,k2:50,na:10,zn:0.1,fo:5,se:0,col:0,src:"CREA"},
   {n:"Kefir d'acqua probiotico",c:"Bevande",k:15,p:0.5,gs:0,g:0.1,z:3.0,ch:3.5,fi:0,ca:10,fe:0.1,mg:5,k2:30,na:5,zn:0.1,fo:8,se:0,col:0,src:"CREA"},
@@ -457,7 +461,8 @@ const DB_CREA=[
   {n:"Natto (soia fermentata)",c:"Legumi",k:214,p:17.7,gs:1.59,g:11,z:0,ch:9,fi:5.4,ca:217,fe:8.6,mg:115,k2:729,na:7,zn:3.03,fo:8,se:13,col:0,src:"BDA"},
   {n:"Tofu compatto (silken)",c:"Legumi",k:53,p:4.9,gs:0.3,g:2.7,z:1.0,ch:2.0,fi:0.3,ca:130,fe:1.0,mg:27,k2:121,na:12,zn:0.6,fo:97,se:8.9,col:0,src:"CREA"},
   {n:"Tofu solido (firm tofu)",c:"Legumi",k:76,p:8.0,gs:0.5,g:4.5,z:0.9,ch:2.0,fi:0.3,ca:350,fe:2.7,mg:37,k2:150,na:7,zn:0.8,fo:120,se:11,col:0,src:"CREA"},
-  {n:"Crema di grano (semolino cotto)",c:"Cereali e derivati",k:65,p:2.1,gs:0.1,g:0.3,z:0.1,ch:13.6,fi:0.5,ca:7,fe:0.7,mg:12,k2:75,na:200,zn:0.4,fo:60,se:2,col:0,src:"CREA"},
+  // Folati 60mcg incoerente con diluizione da cottura (semolino crudo ~35mcg, qui diluito ~5x) - 2026-07-29
+  {n:"Crema di grano (semolino cotto)",c:"Cereali e derivati",k:65,p:2.1,gs:0.1,g:0.3,z:0.1,ch:13.6,fi:0.5,ca:7,fe:0.7,mg:12,k2:75,na:200,zn:0.4,fo:7,se:2,col:0,src:"CREA"},
   {n:"Crema di verdure (passato)",c:"Verdure",k:35,p:1.0,gs:0.0,g:1.0,z:3.5,ch:5.0,fi:1.5,ca:20,fe:0.3,mg:10,k2:200,na:300,zn:0.1,fo:25,se:0.5,col:0,src:"CREA"},
   {n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:337,p:2.3,gs:19.8,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:5,se:1,col:120,src:"CREA"},
   {n:"Biscotti secchi (tipo petit beurre)",c:"Biscotti e crackers",k:404,p:6.6,gs:5.0,g:7.9,z:18.5,ch:80.4,fi:2.6,ca:22,fe:0.9,mg:15,k2:140,na:410,zn:0.5,fo:80,se:5,col:20,src:"CREA"},

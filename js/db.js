@@ -320,12 +320,12 @@ const DB_CREA=[
 {n:"Quinoa rossa cruda",c:"Cereali",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:184,se:8.5,col:0,src:"CREA"},
 // Stesso bug fosforo-in-folati - 2026-07-29
 {n:"Quinoa nera cruda",c:"Cereali",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:184,se:8.5,col:0,src:"CREA"},
-{n:"Kamut (frumento khorasan) crudo",c:"Cereali",k:337,p:14.7,gs:0.4,g:2.6,z:1.8,ch:70.2,fi:9.1,ca:34,fe:3.8,mg:153,k2:446,na:5,zn:3.7,fo:443,se:11,col:0,src:"CREA"},
+{n:"Kamut (frumento khorasan) crudo",c:"Cereali",k:337,p:14.7,gs:0.4,g:2.6,z:1.8,ch:70.2,fi:9.1,ca:34,fe:3.8,mg:153,k2:446,na:5,zn:3.7,fo:20,se:11,col:0,src:"CREA"},
 {n:"Spelta (farro grande) cruda",c:"Cereali",k:353,p:14.6,gs:0.3,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:40,se:11,col:0,src:"CREA"},
 {n:"Farro monococco crudo",c:"Cereali",k:353,p:14.6,gs:0.4,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:40,se:8,col:0,src:"CREA"},
 {n:"Riso venere (riso nero) crudo",c:"Cereali",k:355,p:7.8,gs:0.2,g:1.3,z:2.2,ch:80.4,fi:5.1,ca:13,fe:1.1,mg:101,k2:280,na:0,zn:1.5,fo:20,se:7,col:0,src:"CREA"},
 {n:"Orzo integrale crudo",c:"Cereali",k:354,p:12.5,gs:0.3,g:2.3,z:1.6,ch:73.5,fi:17.3,ca:33,fe:3.6,mg:133,k2:452,na:12,zn:2.8,fo:23,se:37,col:0,src:"CREA"},
-{n:"Segale in chicchi cruda",c:"Cereali",k:335,p:14.8,gs:0.3,g:2.5,z:1.4,ch:69.8,fi:15.1,ca:33,fe:2.7,mg:121,k2:510,na:2,zn:3.7,fo:374,se:35,col:0,src:"CREA"},
+{n:"Segale in chicchi cruda",c:"Cereali",k:335,p:14.8,gs:0.3,g:2.5,z:1.4,ch:69.8,fi:15.1,ca:33,fe:2.7,mg:121,k2:510,na:2,zn:3.7,fo:78,se:35,col:0,src:"CREA"},
 // ── LEGUMI aggiuntivi ──
 {n:"Ceci neri secchi",c:"Legumi",k:343,p:20.9,gs:0.85,g:6.3,z:3.7,ch:46.9,fi:13.6,ca:142,fe:6.4,mg:130,k2:881,na:6,zn:3.2,fo:322,se:2,col:0,src:"CREA"},
 {n:"Fagiolini di soia (edamame secchi)",c:"Legumi",k:471,p:36.5,gs:5.7,g:20.6,z:9.5,ch:30.2,fi:20.6,ca:277,fe:15.7,mg:280,k2:1797,na:15,zn:4.9,fo:375,se:17.3,col:0,src:"CREA"},
@@ -830,7 +830,7 @@ const DB_CREA=[
 {n:"Crusca di frumento",c:"Cereali e derivati",k:290,p:14.1,gs:1.09,g:5.5,z:3.8,ch:26.6,fi:42.4,ca:110,fe:12.9,mg:550,k2:1160,na:28,zn:0.99,fo:79,se:4.3,col:0,src:"CREA"},
 {n:"Germe di grano (frumento)",c:"Cereali e derivati",k:378,p:26,gs:1.88,g:10,z:0,ch:43.5,fi:10.5,ca:72,fe:10,mg:255,k2:827,na:3,zn:1.22,fo:281,se:3.9,col:0,src:"CREA"},
 {n:"Lattuga iceberg",c:"Verdure",k:22,p:1.5,gs:0,g:0.2,z:3,ch:3,fi:1.3,ca:53,fe:1.2,mg:7,k2:141,na:10,zn:0.2,fo:24,se:0.3,col:0,src:"CREA"},
-{n:"Fiocchi di frumento integrali",c:"Cereali da colazione",k:340,p:12.0,gs:0.3,g:2.2,z:3.0,ch:68.5,fi:7.5,ca:35,fe:3.0,mg:96,k2:340,na:10,zn:2.0,fo:290,se:35,col:0,src:"CREA"},
+{n:"Fiocchi di frumento integrali",c:"Cereali da colazione",k:340,p:12.0,gs:0.3,g:2.2,z:3.0,ch:68.5,fi:7.5,ca:35,fe:3.0,mg:96,k2:340,na:10,zn:2.0,fo:35,se:35,col:0,src:"CREA"},
 {n:"Castagne lesse (bollite)",c:"Frutta secca",k:130,p:2.5,gs:0.245,g:1.3,z:7.5,ch:26.1,fi:5.4,ca:46,fe:1.73,mg:54,k2:715,na:27,zn:0.25,fo:38,se:0,col:0,src:"BDA"},
 {n:"Frumento soffiato",c:"Cereali da colazione",k:356,p:11.0,gs:0.2,g:1.5,z:1.5,ch:76.0,fi:4.0,ca:25,fe:3.0,mg:40,k2:140,na:2,zn:1.0,fo:140,se:5,col:0,src:"CREA"},
 {n:"Olio di oliva vergine",c:"Grassi",k:899,p:0,gs:15.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.2,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
@@ -1680,7 +1680,8 @@ const DB_BDA=[
   // Fosforo (523mg, confermato USDA) era nel campo folati; corretto a 56mcg (folati reali avena) - 2026-07-29
   {n:"Avena cruda (chicchi interi)",c:"Cereali",src:"CREA",k:389,p:16.9,gs:1.2,g:6.9,z:1.0,ch:66.3,fi:10.6,ca:54,fe:4.7,mg:177,k2:429,na:2,zn:3.97,fo:56,se:34,col:0},
   {n:"Miglio crudo (chicchi)",c:"Cereali",src:"CREA",k:378,p:11.0,gs:0.9,g:4.2,z:1.0,ch:72.9,fi:8.5,ca:8,fe:3.0,mg:114,k2:195,na:5,zn:1.7,fo:85,se:2.7,col:0},
-  {n:"Sorgo crudo (chicchi)",c:"Cereali",src:"CREA",k:339,p:11.3,gs:0.6,g:3.3,z:2.0,ch:74.6,fi:6.7,ca:28,fe:4.4,mg:165,k2:350,na:6,zn:1.7,fo:287,se:10,col:0},
+  // Stesso bug fosforo-in-folati del sorgo gia confermato con fonte (287mg fosforo reale) - 2026-07-29
+  {n:"Sorgo crudo (chicchi)",c:"Cereali",src:"CREA",k:339,p:11.3,gs:0.6,g:3.3,z:2.0,ch:74.6,fi:6.7,ca:28,fe:4.4,mg:165,k2:350,na:6,zn:1.7,fo:20,se:10,col:0},
   {n:"Teff crudo (grano etiope)",c:"Cereali",src:"BDA",k:367,p:13.3,gs:0.7,g:2.4,z:1.8,ch:73.1,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:30,se:8,col:0},
   {n:"Amaranto crudo",c:"Cereali",src:"BDA",k:351,p:13.6,gs:1.46,g:7,z:1.7,ch:58.6,fi:6.7,ca:159,fe:7.6,mg:248,k2:508,na:4,zn:2.87,fo:82,se:18.7,col:0},
   {n:"Riso Basmati bianco crudo",c:"Cereali",src:"CREA",k:367,p:9,gs:0.1,g:1.9,z:1.1,ch:82.9,fi:1.3,ca:5,fe:0.8,mg:32,k2:114,na:0,zn:1.48,fo:57,se:8,col:0},
@@ -1866,7 +1867,7 @@ const DB_BDA=[
 {n:"Pomodori secchi sott'olio",c:"Verdure",k:213,p:5.0,gs:0.4,g:14.0,z:8.0,ch:16.0,fi:4.0,ca:60,fe:4.0,mg:60,k2:1000,na:800,zn:1.0,fo:130,se:3.0,col:0,src:"CREA"},
 // Verificato BDA (Frumento Tenero, crudo — proteine gia identiche, resto ravvicinato) — 2026-07-29
 {n:"Frumento tenero (grano) chicchi interi",c:"Cereali",k:336,p:12.3,gs:0.6,g:2.6,z:3.3,ch:65.2,fi:9.7,ca:35,fe:3.3,mg:90,k2:435,na:2,zn:3.1,fo:39,se:3.8,col:0,src:"BDA"},
-{n:"Grano duro (chicchi interi)",c:"Cereali",k:316,p:13.0,gs:0.3,g:2.9,z:2.0,ch:61.9,fi:9.8,ca:34,fe:3.3,mg:120,k2:431,na:2,zn:2.7,fo:393,se:56,col:0,src:"CREA"},
+{n:"Grano duro (chicchi interi)",c:"Cereali",k:316,p:13.0,gs:0.3,g:2.9,z:2.0,ch:61.9,fi:9.8,ca:34,fe:3.3,mg:120,k2:431,na:2,zn:2.7,fo:40,se:56,col:0,src:"CREA"},
 {n:"Olio di soia",c:"Grassi e oli",k:899,p:0,gs:14.76,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Friselle (pane biscottato pugliese)",c:"Pane",k:345,p:10.5,gs:0.39,g:2,z:2,ch:74.5,fi:2.9,ca:71,fe:1.9,mg:131,k2:207,na:914,zn:0.22,fo:73,se:2.8,col:0,src:"BDA"},
 {n:"Succo di pompelmo fresco",c:"Bevande",k:34,p:0.4,gs:0.01,g:0.1,z:8.3,ch:8.3,fi:0,ca:14,fe:0.2,mg:8,k2:100,na:7,zn:0,fo:6,se:1,col:0,src:"BDA"},
@@ -2047,7 +2048,8 @@ const DB_BDA=[
 {n:"Riso Venere (riso nero) crudo",c:"Cereali e derivati",k:355,p:7.8,gs:0.5,g:1.3,z:2.2,ch:80.4,fi:5.1,ca:13,fe:1.1,mg:101,k2:280,na:0,zn:1.5,fo:20,se:18,col:0,src:"CREA"},
 {n:"Riso rosso fermentato",c:"Cereali e derivati",k:346,p:8.0,gs:0.4,g:2.0,z:0,ch:74.7,fi:3.0,ca:14,fe:2.5,mg:80,k2:180,na:9,zn:1.8,fo:20,se:10,col:0,src:"BDA"},
 {n:"Teff crudo (cereale etiope)",c:"Cereali e derivati",k:367,p:13.3,gs:0.7,g:2.4,z:1.8,ch:73.1,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:30,se:0,col:0,src:"BDA"},
-{n:"Sorgo in chicchi crudo",c:"Cereali e derivati",k:329,p:10.6,gs:0.4,g:3.5,z:2.0,ch:69.0,fi:6.3,ca:13,fe:3.4,mg:165,k2:350,na:2,zn:1.7,fo:289,se:12,col:0,src:"BDA"},
+// Stesso bug fosforo-in-folati del sorgo - 2026-07-29
+{n:"Sorgo in chicchi crudo",c:"Cereali e derivati",k:329,p:10.6,gs:0.4,g:3.5,z:2.0,ch:69.0,fi:6.3,ca:13,fe:3.4,mg:165,k2:350,na:2,zn:1.7,fo:20,se:12,col:0,src:"BDA"},
 {n:"Farro dicocco crudo",c:"Cereali e derivati",k:353,p:14.6,gs:0.3,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:40,se:34,col:0,src:"CREA"},
 
 // ── NOCI E SEMI MANCANTI ──
@@ -2127,7 +2129,7 @@ const DB_BDA=[
 {n:"Semola di grano duro cruda",c:"Cereali e derivati",k:346,p:11.5,gs:0.14,g:0.5,z:1.9,ch:76.9,fi:3.6,ca:17,fe:1.3,mg:45,k2:170,na:12,zn:1.1,fo:200,se:30,col:0,src:"CREA"},
 {n:"Farina di grano saraceno integrale",c:"Cereali e derivati",k:326,p:12.6,gs:0.6,g:3.1,z:2.6,ch:60.6,fi:10,ca:41,fe:4.1,mg:251,k2:577,na:11,zn:3.12,fo:54,se:5.7,col:0,src:"BDA"},
 {n:"Riso soffiato (base, non condito)",c:"Cereali da colazione",k:354,p:6,gs:0.25,g:1,z:9,ch:85.1,fi:1,ca:8.7,fe:1.1,mg:32,k2:115,na:48,zn:1.1,fo:6,se:13.2,col:0,src:"BDA"},
-{n:"Malto d'orzo in polvere",c:"Cereali e derivati",k:371,p:11.0,gs:0.1,g:2.3,z:62.0,ch:77.4,fi:6.0,ca:40,fe:5.0,mg:85,k2:450,na:25,zn:2.3,fo:300,se:10,col:0,src:"BDA"},
+{n:"Malto d'orzo in polvere",c:"Cereali e derivati",k:371,p:11.0,gs:0.1,g:2.3,z:62.0,ch:77.4,fi:6.0,ca:40,fe:5.0,mg:85,k2:450,na:25,zn:2.3,fo:30,se:10,col:0,src:"BDA"},
 {n:"Sciroppo di glucosio",c:"Zuccheri",k:287,p:0,gs:0,g:0,z:28.1,ch:76.6,fi:0,ca:18,fe:0.4,mg:8,k2:44,na:160,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Latte condensato non zuccherato (evaporato)",c:"Latte e derivati",k:134,p:7,gs:5.1,g:8.2,z:8.6,ch:8.6,fi:0,ca:240,fe:0.1,mg:22,k2:323,na:150,zn:0.8,fo:195,se:3,col:31,src:"CREA"},
 {n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:337,p:2.3,gs:20.4,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:55,se:1,col:120,src:"CREA"},
@@ -3511,7 +3513,7 @@ const DB_UPF = [
 {n:"Cereali al cacao soffiati tipo Choco Pops",c:"Cereali da colazione",src:"UPF",k:380,p:10,gs:1,g:2.2,z:22,ch:77,fi:6,ca:35,fe:8.0,mg:45,k2:180,na:268,zn:1.0,fo:130,se:5,col:0},
 {n:"Porridge d'avena istantaneo (in busta)",c:"Cereali da colazione",src:"UPF",k:360,p:10.5,gs:1.2,g:6.5,z:8.0,ch:63.0,fi:8.0,ca:55,fe:4.5,mg:110,k2:340,na:380,zn:2.5,fo:350,se:8,col:0},
 {n:"Fiocchi di farro (crudi)",c:"Cereali da colazione",src:"CREA",k:345,p:13.5,gs:0.3,g:2.5,z:1.5,ch:65.0,fi:7.0,ca:30,fe:2.2,mg:90,k2:370,na:8,zn:2.5,fo:35,se:6,col:0},
-{n:"Fiocchi di kamut (crudi)",c:"Cereali da colazione",src:"CREA",k:350,p:14.0,gs:0.3,g:2.8,z:1.5,ch:65.5,fi:6.5,ca:25,fe:2.5,mg:105,k2:390,na:6,zn:2.8,fo:360,se:8,col:0},
+{n:"Fiocchi di kamut (crudi)",c:"Cereali da colazione",src:"CREA",k:350,p:14.0,gs:0.3,g:2.8,z:1.5,ch:65.5,fi:6.5,ca:25,fe:2.5,mg:105,k2:390,na:6,zn:2.8,fo:20,se:8,col:0},
 {n:"Muesli proteico con semi e frutta",c:"Cereali da colazione",src:"UPF",k:360,p:29.6,gs:1,g:5.5,z:11,ch:45.4,fi:5.2,ca:80,fe:4.0,mg:95,k2:420,na:8,zn:2.5,fo:280,se:8,col:0},
 {n:"Cereali integrali multicereali con frutta",c:"Cereali da colazione",src:"UPF",k:365,p:8.5,gs:0.8,g:4.0,z:20.5,ch:68.5,fi:6.5,ca:120,fe:8.5,mg:70,k2:330,na:550,zn:1.5,fo:190,se:7,col:0},
 // ═══ BEVANDE INDUSTRIALI ═══

@@ -29,7 +29,7 @@ const BDA_MAP = {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-const SYNONYMS = { petto: 'fesa', fesa: 'fesa', fettina: 'fesa', filetto: 'fesa', parz: 'parzialmente', magro: 'magro', sgrassato: 'magro' };
+const SYNONYMS = { petto: 'fesa', fesa: 'fesa', fettina: 'fesa', filetto: 'fesa', parz: 'parzialmente', magro: 'magro', sgrassato: 'magro', manzo: 'bovino', susina: 'prugna', susine: 'prugna', susino: 'prugna' };
 const STOPWORDS = new Set(['di','da','in','con','e','il','lo','la','i','gli','le','un','una','del','della','dei','delle','al','allo','alla']);
 function normalize(s) {
   return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -38,7 +38,10 @@ function normalize(s) {
     .map(w => SYNONYMS[w] || w);
 }
 function headWord(s) { const n = normalize(s); return n.length ? n[0] : null; }
-const STATE_WORDS = new Set(['crudo','crudi','cruda','crude','cotto','cotti','cotta','cotte','secco','secchi','secca','secche','fresco','freschi','fresca','fresche','surgelato','surgelata','surgelati','bollito','bollita','bolliti','intero','intera','interi','scremato','scremata','parzialmente','affumicato','affumicata','scolato','scolata','salato','salata','tostato','tostata','tostati','arrosto','grigliato','grigliata','padella','vapore','microonde','forno','pastorizzato','pastorizzata']);
+// "affumicato/affumicata" RIMOSSO 2026-07-29 (vedi commento gemello in
+// audit-crea-batch.cjs) — causava un errore reale su "Anguilla" sostituita
+// coi valori di "Anguilla, AFFUMICATA" tramite il guardrail monoparola.
+const STATE_WORDS = new Set(['crudo','crudi','cruda','crude','cotto','cotti','cotta','cotte','secco','secchi','secca','secche','fresco','freschi','fresca','fresche','surgelato','surgelata','surgelati','bollito','bollita','bolliti','intero','intera','interi','scremato','scremata','parzialmente','scolato','scolata','salato','salata','tostato','tostata','tostati','arrosto','grigliato','grigliata','padella','vapore','microonde','forno','pastorizzato','pastorizzata']);
 function secondContentWord(s) {
   const n = normalize(s).filter(w => !STATE_WORDS.has(w));
   return n.length >= 2 ? n[1] : null;
@@ -73,6 +76,30 @@ function nameSimilarity(a, b) {
 // versione precedente provava per prima il solo contenuto tra parentesi
 // (spesso solo una parola di stato tipo "cotte"/"secca") invece del nome
 // vero, facendo fallire silenziosamente centinaia di ricerche.
+// Fix aggiuntivo 2026-07-29 (vedi commento gemello in audit-crea-batch.cjs):
+// aggiunte varianti di query per plurale/singolare italiano e sinonimi
+// colloquiali (manzo/bovino, susina/prugna), provate per ULTIME.
+const QUERY_SYNONYMS = { manzo: 'bovino', susina: 'prugna', susine: 'prugna', susino: 'prugna' };
+function italianNumberVariants(word) {
+  const w = word.toLowerCase();
+  const out = new Set();
+  if (/a$/.test(w)) out.add(w.slice(0, -1) + 'e');
+  if (/e$/.test(w)) { out.add(w.slice(0, -1) + 'i'); out.add(w.slice(0, -1) + 'a'); }
+  if (/o$/.test(w)) out.add(w.slice(0, -1) + 'i');
+  if (/i$/.test(w)) { out.add(w.slice(0, -1) + 'a'); out.add(w.slice(0, -1) + 'o'); out.add(w.slice(0, -1) + 'e'); }
+  out.delete(w);
+  return [...out];
+}
+function extraVariants(phrase) {
+  const words = phrase.trim().split(/\s+/);
+  const out = [];
+  words.forEach((w, i) => {
+    const lw = w.toLowerCase();
+    if (QUERY_SYNONYMS[lw]) { const r = [...words]; r[i] = QUERY_SYNONYMS[lw]; out.push(r.join(' ')); }
+    italianNumberVariants(w).forEach(v => { const r = [...words]; r[i] = v; out.push(r.join(' ')); });
+  });
+  return out;
+}
 function buildQueryVariants(name) {
   const variants = [];
   const parenMatch = name.match(/\(([^)]+)\)/);
@@ -85,6 +112,7 @@ function buildQueryVariants(name) {
   for (let n = Math.min(4, words.length - 1); n >= 2; n--) variants.push(words.slice(0, n).join(' '));
   if (words.length >= 1) variants.push(words[0]);
   if (parenContent && !parenIsJustState) variants.push(parenContent);
+  extraVariants(withoutParens || name).forEach(v => variants.push(v));
   return [...new Set(variants.filter(Boolean))];
 }
 async function searchBestEffort(name) {

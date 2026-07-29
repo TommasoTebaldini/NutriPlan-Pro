@@ -191,6 +191,7 @@ const DB_CREA=[
 {n:"Seppia",c:"Molluschi",k:72,p:14,gs:0.1,g:1.5,z:0.7,ch:0.7,fi:0,ca:27,fe:0.8,mg:32,k2:273,na:355,zn:4.2,fo:150,se:66,col:157,src:"CREA"},
 {n:"Totano",c:"Molluschi",k:65,p:13.5,gs:0.2,g:0.7,z:0,ch:0.5,fi:0,ca:20,fe:0.6,mg:25,k2:280,na:180,zn:1.4,fo:110,se:40,col:190,src:"CREA"},
 {n:"Capasanta",c:"Molluschi",k:76,p:14.8,gs:0.3,g:0.8,z:0,ch:2.4,fi:0,ca:32,fe:0.7,mg:38,k2:310,na:180,zn:1,fo:170,se:25,col:35,src:"CREA"},
+// Ripristinato 2026-07-29: il batch automatico l'aveva erroneamente sostituito coi valori di "Anguilla, AFFUMICATA" (stesso identico bug specie/variante gia' documentato in sessioni precedenti — "affumicato" era classificato come STATE_WORD innocuo, ma l'affumicatura cambia sostanzialmente acqua/nutrienti). Nessuna voce generica "Anguilla" esiste su CREA (solo affumicata/marinata/di fiume/di mare/d'allevamento) — lasciare il valore originale finche' non si decide quale variante rappresenta meglio "anguilla" generica.
 {n:"Anguilla",c:"Pesce",k:250,p:14.9,gs:3.5,g:20,z:0,ch:0,fi:0,ca:22,fe:0.8,mg:25,k2:305,na:56,zn:1.5,fo:220,se:20,col:143,src:"CREA"},
 {n:"Aringa fresca",c:"Pesce",k:216,p:16.5,gs:3.85,g:16.7,z:0,ch:0,fi:0,ca:63,fe:0.9,mg:35,k2:320,na:95,zn:1.1,fo:210,se:47,col:85,src:"CREA"},
 {n:"Baccalà dissalato",c:"Pesce",k:95,p:21.6,gs:0.2,g:1,z:0,ch:0,fi:0,ca:31,fe:2.3,mg:32,k2:320,na:400,zn:0.9,fo:190,se:36,col:50,src:"CREA"},

@@ -34,6 +34,10 @@ const SYNONYMS = {
   fettina: 'fesa', filetto: 'fesa',
   parz: 'parzialmente',
   magro: 'magro', sgrassato: 'magro',
+  // Aggiunti 2026-07-29: parole colloquiali diverse dalla terminologia CREA
+  // per lo stesso alimento (senza questi, l'head-word gate scarta a priori
+  // match corretti — es. "Manzo" locale vs "Bovino" CREA).
+  manzo: 'bovino', susina: 'prugna', susine: 'prugna', susino: 'prugna',
 };
 // Stopword tolte perché gonfiano artificialmente containment/jaccard senza
 // portare informazione (es. "Succo DI arancia" vs "Succo DI frutta" — "di"
@@ -73,7 +77,14 @@ function headWord(s) {
 // tra parole di stato condivise (successo reale, poi scartato: "Pollo
 // petto" appaiato a "Pollo, intero, senza pelle" — "senza pelle" bastava a
 // vincere pur perdendo "petto", cioè il taglio giusto).
-const STATE_WORDS = new Set(['crudo','crudi','cruda','crude','cotto','cotti','cotta','cotte','secco','secchi','secca','secche','fresco','freschi','fresca','fresche','surgelato','surgelata','surgelati','bollito','bollita','bolliti','intero','intera','interi','scremato','scremata','parzialmente','affumicato','affumicata','scolato','scolata','salato','salata','tostato','tostata','tostati','arrosto','grigliato','grigliata','padella','vapore','microonde','forno','pastorizzato','pastorizzata']);
+// "affumicato/affumicata" RIMOSSO 2026-07-29 dopo un errore reale: il
+// guardrail monoparola (vedi sotto) trattava l'affumicatura come uno stato
+// innocuo equivalente a crudo/cotto, permettendo di sostituire "Anguilla"
+// generica coi valori di "Anguilla, AFFUMICATA" — l'affumicatura concentra
+// acqua/nutrienti in modo molto più marcato di una semplice cottura e va
+// trattata come una parola di contenuto vera e propria (deve comparire nel
+// nome locale per essere accettata), non come uno stato equivalente.
+const STATE_WORDS = new Set(['crudo','crudi','cruda','crude','cotto','cotti','cotta','cotte','secco','secchi','secca','secche','fresco','freschi','fresca','fresche','surgelato','surgelata','surgelati','bollito','bollita','bolliti','intero','intera','interi','scremato','scremata','parzialmente','scolato','scolata','salato','salata','tostato','tostata','tostati','arrosto','grigliato','grigliata','padella','vapore','microonde','forno','pastorizzato','pastorizzata']);
 function secondContentWord(s) {
   const n = normalize(s).filter(w => !STATE_WORDS.has(w));
   return n.length >= 2 ? n[1] : null;
@@ -125,6 +136,38 @@ function nameSimilarity(a, b) {
 // nome senza parentesi come base per le varianti principali, e provare il
 // contenuto tra parentesi da solo per ultimo, e solo se contiene informazione
 // reale (non solo parole di stato tipo cotta/cruda/secca).
+// Fix aggiuntivo 2026-07-29: molti alimenti (soprattutto frutta/verdura)
+// sono indicizzati da CREA al PLURALE ("Pesche" non "Pesca", "Ciliege" non
+// "Ciliegia") o con un sinonimo diverso da quello colloquiale ("Bovino" non
+// "Manzo") — senza queste varianti la ricerca risultava vuota (falso "non
+// trovato") anche per alimenti sicuramente presenti. Scoperto testando a
+// mano durante la revisione del bucket "low-confidence": "cavolo" da solo
+// funzionava, "pesca" no ma "pesche" sì, "manzo" mai ma "bovino"/"vitellone"
+// sì. Queste varianti sono aggiunte per ULTIME (dopo tutte quelle già
+// esistenti) così non cambiano il comportamento nei casi che già
+// funzionavano — vengono provate solo se tutto il resto ha dato zero
+// risultati (searchBestEffort si ferma alla prima query con risultati).
+const QUERY_SYNONYMS = { manzo: 'bovino', susina: 'prugna', susine: 'prugne', susino: 'prugno' };
+function italianNumberVariants(word) {
+  const w = word.toLowerCase();
+  const out = new Set();
+  if (/a$/.test(w)) out.add(w.slice(0, -1) + 'e');
+  if (/e$/.test(w)) { out.add(w.slice(0, -1) + 'i'); out.add(w.slice(0, -1) + 'a'); }
+  if (/o$/.test(w)) out.add(w.slice(0, -1) + 'i');
+  if (/i$/.test(w)) { out.add(w.slice(0, -1) + 'a'); out.add(w.slice(0, -1) + 'o'); out.add(w.slice(0, -1) + 'e'); }
+  out.delete(w);
+  return [...out];
+}
+function extraVariants(phrase) {
+  const words = phrase.trim().split(/\s+/);
+  const out = [];
+  words.forEach((w, i) => {
+    const lw = w.toLowerCase();
+    if (QUERY_SYNONYMS[lw]) { const r = [...words]; r[i] = QUERY_SYNONYMS[lw]; out.push(r.join(' ')); }
+    italianNumberVariants(w).forEach(v => { const r = [...words]; r[i] = v; out.push(r.join(' ')); });
+  });
+  return out;
+}
 function buildQueryVariants(name) {
   const variants = [];
   const parenMatch = name.match(/\(([^)]+)\)/);
@@ -137,6 +180,7 @@ function buildQueryVariants(name) {
   for (let n = Math.min(4, words.length - 1); n >= 2; n--) variants.push(words.slice(0, n).join(' '));
   if (words.length >= 1) variants.push(words[0]);
   if (parenContent && !parenIsJustState) variants.push(parenContent);
+  extraVariants(withoutParens || name).forEach(v => variants.push(v));
   return [...new Set(variants.filter(Boolean))];
 }
 async function searchBestEffort(name) {

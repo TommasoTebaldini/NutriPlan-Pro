@@ -1464,7 +1464,8 @@ const DB_BDA=[
   {n:"Farina di mandorle",c:"Cereali e derivati",src:"BDA",k:579,p:21.4,gs:3.8,g:49.9,z:4.4,ch:21.7,fi:10.5,ca:236,fe:3.7,mg:258,k2:733,na:1,zn:3.1,fo:29,se:4,col:0},
   {n:"Farina di ceci",c:"Cereali e derivati",src:"BDA",k:363,p:21.8,gs:0.63,g:4.9,z:3.7,ch:54.3,fi:13.8,ca:117,fe:6.1,mg:115,k2:800,na:6,zn:3.3,fo:180,se:8,col:0},
   {n:"Pangrattato",c:"Cereali e derivati",src:"CREA",k:357,p:10.1,gs:0.5,g:2.1,z:5,ch:77.8,fi:3.2,ca:110,fe:2.1,mg:34,k2:190,na:400,zn:1.0,fo:120,se:25,col:0},
-  {n:"Semolino di grano duro",c:"Cereali e derivati",src:"BDA",k:350,p:12.7,gs:0.2,g:1.0,z:0.5,ch:72.8,fi:3.9,ca:17,fe:1.3,mg:47,k2:186,na:1,zn:1.2,fo:136,se:8,col:0},
+  // Fosforo (~136mg tipico della semola) era nel campo folati; folati reali semolino ~35mcg - 2026-07-29
+  {n:"Semolino di grano duro",c:"Cereali e derivati",src:"BDA",k:350,p:12.7,gs:0.2,g:1.0,z:0.5,ch:72.8,fi:3.9,ca:17,fe:1.3,mg:47,k2:186,na:1,zn:1.2,fo:35,se:8,col:0},
   {n:"Amido di mais",c:"Cereali e derivati",src:"CREA",k:328,p:0.3,gs:0,g:0,z:1.5,ch:87,fi:0,ca:2,fe:0.3,mg:3,k2:0,na:0,zn:0.06,fo:13,se:2,col:0},
   {n:"Fecola di patate",c:"Cereali e derivati",src:"CREA",k:346,p:1.4,gs:0,g:0,z:9.1,ch:90.7,fi:3.4,ca:10,fe:0.3,mg:11,k2:410,na:10,zn:0.12,fo:40,se:0.6,col:0},
   // ── CEREALI COTTI ──
@@ -1683,7 +1684,8 @@ const DB_BDA=[
   {n:"Bevanda di riso non zuccherata",c:"Latticini alternativi",src:"BDA",k:47,p:0.3,gs:0,g:1.0,z:5.1,ch:9.2,fi:0.3,ca:120,fe:0.2,mg:8,k2:25,na:50,zn:0.1,fo:10,se:0,col:0},
   {n:"Panna fresca da cucina (30% grassi)",c:"Latticini",src:"BDA",k:292,p:2.6,gs:17.46,g:30,z:3.2,ch:3.2,fi:0,ca:78,fe:0,mg:7,k2:100,na:34,zn:0.3,fo:7,se:0,col:90},
   {n:"Panna acida (sour cream)",c:"Latticini",src:"BDA",k:193,p:2.1,gs:11.5,g:19.0,z:3.8,ch:4.5,fi:0,ca:65,fe:0.1,mg:8,k2:85,na:28,zn:0.2,fo:5,se:2,col:52},
-  {n:"Crème fraîche (40% grassi)",c:"Latticini",src:"BDA",k:381,p:2.0,gs:23.0,g:40.0,z:3.1,ch:3.1,fi:0,ca:55,fe:0.1,mg:9,k2:90,na:35,zn:0.2,fo:55,se:2,col:137},
+  // Stesso bug fosforo-in-folati del comparto lattiero - 2026-07-29
+  {n:"Crème fraîche (40% grassi)",c:"Latticini",src:"BDA",k:381,p:2.0,gs:23.0,g:40.0,z:3.1,ch:3.1,fi:0,ca:55,fe:0.1,mg:9,k2:90,na:35,zn:0.2,fo:5,se:2,col:137},
 
   // ── CEREALI ALTERNATIVI COTTI ──
   // Fosforo (523mg, confermato USDA) era nel campo folati; corretto a 56mcg (folati reali avena) - 2026-07-29

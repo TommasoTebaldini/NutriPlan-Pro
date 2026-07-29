@@ -1057,7 +1057,8 @@ const DB_CREA=[
 {n:"Stracciatella di bufala",c:"Formaggi",k:305,p:11,gs:15,g:27,z:2.5,ch:2.5,fi:0,ca:320,fe:0.2,mg:20,k2:110,na:200,zn:1.8,fo:10,se:7,col:85,src:"CREA"},
 {n:"Latte di capra intero fresco",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:1,se:1.9,col:10,src:"CREA"},
 {n:"Latte di pecora intero",c:"Latte e derivati",k:103,p:5.3,gs:5.1,g:6.9,z:5.2,ch:5.2,fi:0,ca:180,fe:0.1,mg:18,k2:182,na:30,zn:0.6,fo:5,se:1.5,col:11,src:"CREA"},
-{n:"Yogurt greco 0% (scremato)",c:"Latte e derivati",k:59,p:10,gs:0,g:0.2,z:3.5,ch:3.6,fi:0,ca:130,fe:0.05,mg:11,k2:141,na:36,zn:0.5,fo:8,se:9,col:5,src:"CREA"},
+// Verificato CREA 150030 (Yogurt greco, 0% lipidi, non aromatizzato — scartato apposta il candidato "aromatizzato" quasi a pari punteggio): macro allineati, micronutrienti non riportati da CREA per questa voce, lasciati invariati — 2026-07-28
+{n:"Yogurt greco 0% (scremato)",c:"Latte e derivati",k:51,p:9,gs:0,g:0,z:4,ch:4,fi:0,ca:130,fe:0.05,mg:11,k2:141,na:36,zn:0.5,fo:8,se:9,col:1,src:"CREA"},
 // ── ERBE AROMATICHE E CONDIMENTI ──
 {n:"Aneto (fresco)",c:"Spezie e aromi",k:43,p:3.5,gs:0,g:1.1,z:0.9,ch:7,fi:2.1,ca:208,fe:6.6,mg:55,k2:738,na:61,zn:0.9,fo:150,se:1.2,col:0,src:"CREA"},
 {n:"Erba cipollina (fresca)",c:"Spezie e aromi",k:27,p:2.8,gs:0.12,g:0.6,z:1.7,ch:1.7,fi:1.9,ca:85,fe:1.6,mg:42,k2:230,na:5,zn:0.4,fo:105,se:0.9,col:0,src:"BDA"},

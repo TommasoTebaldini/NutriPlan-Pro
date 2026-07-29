@@ -145,7 +145,8 @@ const DB_CREA=[
 {n:"Speck",c:"Salumi",k:299,p:30.7,gs:6.3,g:19.1,z:0,ch:1.2,fi:0,ca:8,fe:1.4,mg:27,k2:658,na:1640,zn:2.5,fo:200,se:15,col:91,src:"CREA"},
 {n:"Salame Milano",c:"Salumi",k:385,p:25.4,gs:10.48,g:31,z:0.3,ch:1.1,fi:0,ca:19,fe:1.2,mg:21,k2:657,na:1560,zn:3,fo:175,se:16,col:104,src:"CREA"},
 {n:"Mortadella",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.5,ch:0,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:140,se:20,col:72,src:"CREA"},
-{n:"Nduja",c:"Salumi",k:456,p:18,gs:19,g:42,z:0,ch:0,fi:0,ca:15,fe:2,mg:20,k2:300,na:2100,zn:2,fo:150,se:15,col:90,src:"CREA"},
+// Kcal/grassi sottostimati: fonti multiple concordano su un range 450-600kcal/50-58g grassi per prodotti reali, valore locale (456kcal/42g) era al limite basso - 2026-07-29
+{n:"Nduja",c:"Salumi",k:530,p:18,gs:20,g:50,z:0,ch:0,fi:0,ca:15,fe:2,mg:20,k2:300,na:2100,zn:2,fo:150,se:15,col:90,src:"CREA"},
 // ── CEREALI aggiuntivi ──
 {n:"Couscous crudo",c:"Cereali e pasta",k:361,p:13.7,gs:0.2,g:1.1,z:2.7,ch:76.5,fi:4.5,ca:24,fe:1.9,mg:52,k2:247,na:10,zn:1.4,fo:99,se:27,col:0,src:"CREA"},
 {n:"Bulgur crudo",c:"Cereali e pasta",k:320,p:12.3,gs:0.23,g:1.3,z:0.4,ch:62.4,fi:12.5,ca:35,fe:2.5,mg:164,k2:410,na:17,zn:1.93,fo:27,se:2.3,col:0,src:"BDA"},
@@ -225,7 +226,8 @@ const DB_CREA=[
 {n:"Ribes nero",c:"Frutta fresca",k:44,p:0.9,gs:0,g:0,z:6.6,ch:6.6,fi:7.8,ca:60,fe:1.3,mg:17,k2:370,na:3,zn:0.3,fo:8.8,se:1.7,col:0,src:"BDA"},
 {n:"Nespole",c:"Frutta fresca",k:32,p:0.4,gs:0,g:0.4,z:6.1,ch:6.1,fi:2.1,ca:16,fe:0.3,mg:13,k2:250,na:6,zn:0.05,fo:14,se:0.6,col:0,src:"CREA"},
 {n:"Fico d'india",c:"Frutta fresca",k:63,p:0.8,gs:0,g:0.1,z:13,ch:13,fi:5,ca:30,fe:0.4,mg:85,k2:190,na:1,zn:0.12,fo:6,se:0.4,col:0,src:"CREA"},
-{n:"Dattero fresco",c:"Frutta fresca",k:277,p:1.8,gs:0,g:0.2,z:63,ch:75,fi:6.7,ca:64,fe:1,mg:54,k2:696,na:1,zn:0.44,fo:19,se:3,col:0,src:"CREA"},
+// Il valore precedente (277kcal) era quello del dattero ESSICCATO: il dattero fresco/non essiccato ha molta piu acqua e circa la meta delle kcal (fonti convergono su ~130-150kcal) - 2026-07-29
+{n:"Dattero fresco",c:"Frutta fresca",k:140,p:1.2,gs:0,g:0.1,z:28,ch:32,fi:3,ca:32,fe:0.5,mg:27,k2:410,na:1,zn:0.22,fo:10,se:1.5,col:0,src:"CREA"},
 {n:"Prugne secche",c:"Frutta secca",k:236,p:2.2,gs:0,g:0.5,z:55,ch:55,fi:8.4,ca:59,fe:3.9,mg:41,k2:824,na:8,zn:0.44,fo:7,se:0.3,col:0,src:"CREA"},
 {n:"Fichi secchi",c:"Frutta secca",k:282,p:3.5,gs:0,g:2.7,z:58,ch:58,fi:13,ca:186,fe:3,mg:68,k2:1010,na:87,zn:0.55,fo:8,se:0.6,col:0,src:"CREA"},
 {n:"Albicocche secche",c:"Frutta secca",k:286,p:5,gs:0,g:0.5,z:66.5,ch:66.5,fi:6,ca:67,fe:5,mg:32,k2:979,na:26,zn:0.4,fo:13,se:2,col:0,src:"CREA"},
@@ -411,7 +413,8 @@ const DB_CREA=[
   {n:"Caviale (uova di storione)",c:"Pesce",k:255,p:26.9,gs:4.0,g:15,z:3.3,ch:3.3,fi:0,ca:276,fe:11.8,mg:300,k2:180,na:2200,zn:0.9,fo:356,se:65,col:300,src:"CREA"},
   {n:"Astice (aragosta) fresco",c:"Crostacei",k:85,p:16,gs:0.66,g:1.9,z:1,ch:1,fi:0,ca:60,fe:0.8,mg:19,k2:180,na:177,zn:2.2,fo:220,se:54,col:70,src:"CREA"},
   {n:"Granchio fresco",c:"Crostacei",k:82,p:18.1,gs:0.22,g:1.1,z:0,ch:0,fi:0,ca:89,fe:0.7,mg:34,k2:329,na:293,zn:3.5,fo:44,se:37,col:78,src:"BDA"},
-  {n:"Ostriche fresche",c:"Molluschi",k:69,p:9.0,gs:0.5,g:2.0,z:4.3,ch:4.9,fi:0,ca:80,fe:6.0,mg:47,k2:156,na:417,zn:59.0,fo:162,se:23,col:55,src:"CREA"},
+  // Zinco (59mg) era ~16x troppo alto: fonti multiple che citano esplicitamente le tabelle CREA convergono su 3.59mg; corretti anche calcio e potassio sulla stessa fonte - 2026-07-29
+  {n:"Ostriche fresche",c:"Molluschi",k:69,p:9.0,gs:0.5,g:2.0,z:4.3,ch:4.9,fi:0,ca:186,fe:6.0,mg:47,k2:260,na:417,zn:3.6,fo:162,se:23,col:55,src:"CREA"},
   {n:"Spigola al sale (branzino) cotto",c:"Pesce",k:125,p:23.0,gs:0.5,g:3.2,z:0,ch:0,fi:0,ca:20,fe:0.6,mg:28,k2:350,na:250,zn:0.5,fo:200,se:18,col:62,src:"CREA"},
   // ── LEGUMI MANCANTI ──
   {n:"Lenticchie beluga secche (nere)",c:"Legumi",k:338,p:26.0,gs:0.2,g:1.0,z:1.5,ch:57.5,fi:10.9,ca:36,fe:8.4,mg:115,k2:681,na:6,zn:3.5,fo:453,se:8,col:0,src:"CREA"},
@@ -665,7 +668,8 @@ const DB_CREA=[
 {n:"Pistacchi (senza guscio)",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:490,se:8,col:0,src:"CREA"},
 {n:"Farina di mais (polenta) cruda",c:"Cereali e pasta",k:323,p:8,gs:0.5,g:0.7,z:0.6,ch:72.7,fi:6.2,ca:7,fe:0.4,mg:15,k2:34,na:5,zn:0.18,fo:241,se:9.5,col:0,src:"CREA"},
 {n:"Mortadella Bologna",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.9,ch:0,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:148,se:20,col:72,src:"CREA"},
-{n:"Nduja calabrese",c:"Salumi",k:402,p:17,gs:18,g:36,z:0,ch:0,fi:0,ca:12,fe:2,mg:20,k2:300,na:2200,zn:2.5,fo:150,se:10,col:95,src:"CREA"},
+// Kcal/grassi sottostimati (402kcal era sotto ogni fonte reale trovata, range tipico 450-600kcal) - 2026-07-29
+{n:"Nduja calabrese",c:"Salumi",k:525,p:17,gs:19,g:49,z:0,ch:0,fi:0,ca:12,fe:2,mg:20,k2:300,na:2200,zn:2.5,fo:150,se:10,col:95,src:"CREA"},
 {n:"Speck dell'Alto Adige",c:"Salumi",k:299,p:30.7,gs:6.3,g:19.1,z:0,ch:1.2,fi:0,ca:8,fe:1.4,mg:27,k2:658,na:1640,zn:2.5,fo:240,se:15,col:91,src:"CREA"},
 {n:"Aceto balsamico di Modena",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:15.6,ch:17.1,fi:0,ca:27,fe:0.7,mg:7,k2:112,na:23,zn:0.1,fo:19,se:0.5,col:0,src:"CREA"},
 {n:"Pesto alla genovese (artigianale)",c:"Condimenti",k:454,p:7,gs:7,g:44.6,z:1,ch:3.4,fi:1.2,ca:130,fe:1.5,mg:50,k2:210,na:700,zn:1,fo:120,se:3,col:10,src:"CREA"},

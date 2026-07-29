@@ -727,7 +727,8 @@ const DB_CREA=[
 {n:"Gallinella di mare",c:"Pesce",k:78,p:18.0,gs:0.2,g:0.5,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:28,k2:330,na:80,zn:0.5,fo:180,se:25,col:40,src:"CREA"},
 {n:"Sarago",c:"Pesce",k:97,p:20.7,gs:0.42,g:1.2,z:0,ch:1,fi:0,ca:22,fe:0.4,mg:26,k2:320,na:72,zn:0.5,fo:190,se:20,col:65,src:"CREA"},
 // ── VEGETALI aggiuntivo (CREA 2019) ──
-{n:"Rabarbaro crudo",c:"Verdure",k:13,p:0.6,gs:0,g:0.2,z:1.1,ch:2.4,fi:1.8,ca:86,fe:0.2,mg:12,k2:288,na:4,zn:0.1,fo:7,se:1.1,col:0,src:"CREA"},
+// Kcal/carboidrati sottostimati: fonte USDA converge su 21kcal/4.54g carb (locale era 13kcal/2.4g) - 2026-07-29
+{n:"Rabarbaro crudo",c:"Verdure",k:21,p:0.9,gs:0,g:0.2,z:1.1,ch:4.5,fi:1.8,ca:86,fe:0.2,mg:12,k2:288,na:4,zn:0.1,fo:7,se:1.1,col:0,src:"CREA"},
 // ── CEREALI/FARINE aggiuntivi (CREA 2019) ──
 {n:"Farina Manitoba (tipo 0 proteica)",c:"Cereali e pasta",k:349,p:14.0,gs:0.2,g:1.2,z:2.0,ch:72.0,fi:2.2,ca:18,fe:1.6,mg:28,k2:120,na:2,zn:0.9,fo:120,se:30,col:0,src:"CREA"},
 {n:"Farina di grano tenero tipo 2",c:"Cereali e pasta",k:339,p:11.0,gs:0.3,g:1.8,z:2.5,ch:68.5,fi:4.5,ca:24,fe:2.0,mg:60,k2:220,na:4,zn:1.8,fo:200,se:28,col:0,src:"CREA"},

@@ -242,7 +242,8 @@ const DB_CREA=[
 {n:"Brie",c:"Formaggi",k:320,p:19.3,gs:17.5,g:26.9,z:0.2,ch:0.2,fi:0,ca:540,fe:0.8,mg:20,k2:100,na:700,zn:2.4,fo:20,se:14,col:98,src:"CREA"},
 {n:"Camembert",c:"Formaggi",k:307,p:20.9,gs:15,g:24.7,z:0.2,ch:0.2,fi:0,ca:350,fe:0.2,mg:20,k2:100,na:650,zn:2.4,fo:20,se:14,col:78,src:"CREA"},
 {n:"Gruyère",c:"Formaggi",k:413,p:29.8,gs:17.5,g:32.3,z:0.4,ch:0.4,fi:0,ca:1011,fe:0.2,mg:36,k2:81,na:336,zn:3.9,fo:10,se:14,col:104,src:"CREA"},
-{n:"Caprino fresco",c:"Formaggi",k:268,p:18.5,gs:11.5,g:21.3,z:0,ch:0.2,fi:0,ca:298,fe:1.9,mg:16,k2:75,na:370,zn:0.9,fo:140,se:4,col:64,src:"CREA"},
+// Stesso bug fosforo-in-folati degli altri formaggi freschi - 2026-07-29
+{n:"Caprino fresco",c:"Formaggi",k:268,p:18.5,gs:11.5,g:21.3,z:0,ch:0.2,fi:0,ca:298,fe:1.9,mg:16,k2:75,na:370,zn:0.9,fo:20,se:4,col:64,src:"CREA"},
 {n:"Robiola",c:"Formaggi",k:338,p:20,gs:13,g:27.7,z:2.3,ch:2.3,fi:0,ca:366,fe:0.3,mg:18,k2:100,na:500,zn:2,fo:30,se:6,col:80,src:"CREA"},
 {n:"Primo Sale",c:"Formaggi",k:223,p:16.8,gs:9.5,g:16.5,z:0.5,ch:0.5,fi:0,ca:400,fe:0.3,mg:16,k2:85,na:620,zn:2.2,fo:15,se:6,col:58,src:"CREA"},
 // ── LEGUMI aggiuntivi ──
@@ -273,7 +274,7 @@ const DB_CREA=[
 {n:"Pepe nero macinato",c:"Condimenti",k:311,p:11.4,gs:1.4,g:3.3,z:0.6,ch:49,fi:25.9,ca:430,fe:11.2,mg:171,k2:1260,na:44,zn:1.2,fo:117,se:4.9,col:0,src:"CREA"},
 {n:"Peperoncino secco",c:"Condimenti",k:282,p:12,gs:1.5,g:6.2,z:5.3,ch:49.7,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:106,se:8.8,col:0,src:"CREA"},
 // Allineato a 2 duplicati concordi gia nel DB (247kcal, coerente coi dati USDA standard per la cannella) — era un valore isolato/outlier (301kcal, ferro 38.1mg molto alto) — 2026-07-29
-{n:"Cannella in polvere",c:"Condimenti",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0,src:"BDA"},
+{n:"Cannella in polvere",c:"Condimenti",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:6,se:3.1,col:0,src:"BDA"},
 // Allineato a 2 duplicati concordi gia nel DB (354kcal) — era un valore isolato/outlier (312kcal, folati molto piu bassi) — 2026-07-29
 {n:"Curcuma in polvere",c:"Condimenti",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0,src:"CREA"},
 // Allineato al duplicato con dati piu vicini a fonti standard (265kcal, calcio 1576mg — quest'ultimo praticamente identico a USDA ~1597mg) — era un valore isolato/outlier (408kcal) — 2026-07-29
@@ -826,7 +827,7 @@ const DB_CREA=[
 {n:"Tè verde in infuso",c:"Bevande",k:1,p:0.2,gs:0,g:0,z:0,ch:0.2,fi:0,ca:2,fe:0.1,mg:1,k2:19,na:1,zn:0,fo:1,se:0.2,col:0,src:"CREA"},
 {n:"Curcuma in polvere",c:"Spezie e aromi",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0,src:"CREA"},
 {n:"Zenzero fresco",c:"Spezie e aromi",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0,src:"CREA"},
-{n:"Cannella in polvere",c:"Spezie e aromi",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0,src:"CREA"},
+{n:"Cannella in polvere",c:"Spezie e aromi",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:6,se:3.1,col:0,src:"CREA"},
 {n:"Aglio fresco crudo",c:"Spezie e aromi",k:45,p:0.9,gs:0.11,g:0.6,z:8.4,ch:8.4,fi:2.3,ca:14,fe:1.5,mg:25,k2:347,na:2,zn:0.56,fo:3,se:14,col:0,src:"BDA"},
 // ── CREA: alimenti mancanti dal confronto con tabelle ufficiali ──
 {n:"Sale da cucina",c:"Condimenti",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0.3,mg:1,k2:89,na:39300,zn:0.1,fo:0,se:0.1,col:0,src:"BDA"},
@@ -2885,7 +2886,7 @@ const DB_UPF = [
   // ── SPEZIE E CONDIMENTI FUNZIONALI ──
   {n:"Curcuma in polvere",c:"Spezie",src:"CREA",k:354,p:7.8,gs:1.7,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0},
   {n:"Zenzero fresco",c:"Spezie",src:"CREA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0},
-  {n:"Cannella in polvere",c:"Spezie",src:"CREA",k:247,p:3.9,gs:0.2,g:1.2,z:4.8,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:64,se:3.1,col:0},
+  {n:"Cannella in polvere",c:"Spezie",src:"CREA",k:247,p:3.9,gs:0.2,g:1.2,z:4.8,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:6,se:3.1,col:0},
   {n:"Pepe nero in grani",c:"Spezie",src:"CREA",k:311,p:11.4,gs:3.1,g:3.3,z:0.6,ch:49,fi:25.9,ca:430,fe:11.2,mg:171,k2:1260,na:44,zn:1.2,fo:173,se:4.9,col:0},
   // Stesso bug fosforo-in-folati dell'aglio fresco - 2026-07-29
   {n:"Aglio in polvere",c:"Spezie",src:"CREA",k:331,p:16.8,gs:0.1,g:0.7,z:5.3,ch:72.7,fi:9.0,ca:79,fe:2.3,mg:77,k2:1193,na:60,zn:1.9,fo:20,se:14.2,col:0},

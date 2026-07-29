@@ -1825,7 +1825,8 @@ const DB_BDA=[
 {n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:352,p:12.0,gs:0.3,g:1.8,z:1.8,ch:70.5,fi:4.5,ca:22,fe:1.8,mg:45,k2:180,na:3,zn:1.2,fo:170,se:18,col:0,src:"CREA"},
 {n:"Farina di grano tenero tipo 2",c:"Cereali e derivati",k:340,p:12.5,gs:0.3,g:2.0,z:2.0,ch:67.0,fi:6.5,ca:28,fe:2.5,mg:75,k2:250,na:3,zn:1.8,fo:240,se:26,col:0,src:"CREA"},
 {n:"Semola rimacinata di grano duro",c:"Cereali e derivati",k:346,p:11.5,gs:0.14,g:0.5,z:1.9,ch:76.9,fi:3.6,ca:17,fe:1.3,mg:42,k2:170,na:12,zn:1.2,fo:140,se:8,col:0,src:"CREA"},
-{n:"Ricotta salata",c:"Formaggi",k:334,p:16.5,gs:12.0,g:21.5,z:0,ch:3.5,fi:0,ca:380,fe:0.5,mg:25,k2:90,na:1500,zn:2.0,fo:310,se:8,col:64,src:"CREA"},
+// Proteine/grassi corretti: 16.5g/21.5g erano incoerenti con le kcal dichiarate (334) e troppo bassi per ricotta salata stagionata (fonti concordano su proteine ~20g, grassi ~23g) - 2026-07-29
+{n:"Ricotta salata",c:"Formaggi",k:334,p:20,gs:14.5,g:23,z:0,ch:3.5,fi:0,ca:380,fe:0.5,mg:25,k2:90,na:1500,zn:2.0,fo:310,se:8,col:64,src:"CREA"},
 
 // ── AGGIUNTE FINALI: voci CREA/BDA mancanti ──
 {n:"Nettarina fresca (pesca noce)",c:"Frutta fresca",k:44,p:1.1,gs:0,g:0.2,z:8.5,ch:10.5,fi:1.7,ca:9,fe:0.3,mg:11,k2:181,na:0,zn:0.2,fo:26,se:0.1,col:0,src:"CREA"},
@@ -2477,7 +2478,8 @@ const DB_UPF = [
   {n:"Tiramisù industriale (porzione 100g)",c:"Dolci confezionati",src:"UPF",k:266,p:3,gs:7.4,g:8.1,z:16.9,ch:41.6,fi:0.3,ca:60,fe:0,mg:0,k2:110,na:112,zn:0,fo:75,se:4,col:85},
   {n:"Torta confezionata al cioccolato (tipo Sacher)",c:"Dolci confezionati",src:"UPF",k:367,p:6.6,gs:8.9,g:16,z:25,ch:48,fi:2,ca:30,fe:1.5,mg:25,k2:150,na:440,zn:0.5,fo:80,se:3,col:30},
   {n:"Brioche industriale (brioches confezionate)",c:"Dolci confezionati",src:"UPF",k:337,p:7,gs:7.9,g:9.9,z:13,ch:54,fi:2,ca:50,fe:1.5,mg:15,k2:100,na:380,zn:0.5,fo:70,se:6,col:85},
-  {n:"Croissant/cornetto industriale",c:"Dolci confezionati",src:"UPF",k:465,p:6,gs:15,g:28,z:0,ch:0,fi:1.5,ca:25,fe:1.5,mg:12,k2:110,na:0,zn:0.5,fo:65,se:5,col:60},
+  // Carboidrati/zuccheri erano a 0 (impossibile per un prodotto da forno a base di farina): ripristinati a valori tipici (~45g carb, ~12g zuccheri), coerenti con le kcal dichiarate - 2026-07-29
+  {n:"Croissant/cornetto industriale",c:"Dolci confezionati",src:"UPF",k:465,p:6,gs:15,g:28,z:12,ch:45,fi:1.5,ca:25,fe:1.5,mg:12,k2:110,na:0,zn:0.5,fo:65,se:5,col:60},
   {n:"Wafer al cioccolato (KitKat/simili)",c:"Dolci confezionati",src:"UPF",k:504,p:6.3,gs:22,g:25,z:26,ch:62,fi:1.5,ca:110,fe:1.8,mg:45,k2:215,na:100,zn:0.9,fo:145,se:3,col:5},
   {n:"Biscotti digestive industriali",c:"Dolci confezionati",src:"UPF",k:477,p:6,gs:5,g:19,z:20,ch:69,fi:3,ca:50,fe:2,mg:30,k2:150,na:570,zn:0.5,fo:100,se:8,col:0},
   {n:"Torta di riso industriale",c:"Dolci confezionati",src:"UPF",k:260,p:5,gs:4,g:10,z:28,ch:40,fi:0.5,ca:100,fe:0.5,mg:15,k2:120,na:120,zn:0.3,fo:90,se:2,col:85},
@@ -2681,7 +2683,8 @@ const DB_UPF = [
 
   // ── MERENDINE E DOLCI CONFEZIONATI aggiuntivi ──
   {n:"Crostatina Mulino Bianco tipo",c:"Dolci confezionati",src:"UPF",k:477,p:6.5,gs:6.7,g:22,z:28,ch:61.7,fi:1.5,ca:40,fe:1.2,mg:12,k2:110,na:140,zn:0.4,fo:65,se:3,col:35},
-  {n:"Pan di Stelle tipo (biscotti cacao)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.5,gs:7.8,g:10,z:23.5,ch:65,fi:4,ca:65,fe:3,mg:40,k2:280,na:190,zn:0.9,fo:130,se:4,col:10},
+  // Grassi totali erano 10g ma i saturi dichiarati (7.8g) da soli erano quasi il totale; dato ufficiale prodotto reale ~20.5g grassi totali, coerente con le kcal (483) - 2026-07-29
+  {n:"Pan di Stelle tipo (biscotti cacao)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.5,gs:7.8,g:20.5,z:23.5,ch:65,fi:4,ca:65,fe:3,mg:40,k2:280,na:190,zn:0.9,fo:130,se:4,col:10},
   {n:"Merendina spugnosa tipo Twinkie",c:"Dolci confezionati",src:"UPF",k:360,p:4.4,gs:9.8,g:9.8,z:0,ch:64,fi:0.5,ca:35,fe:1,mg:8,k2:65,na:330,zn:0.3,fo:50,se:3,col:20},
   {n:"Brioche con crema industriale",c:"Dolci confezionati",src:"UPF",k:340,p:6.5,gs:5,g:12,z:28,ch:52,fi:1,ca:55,fe:1.2,mg:14,k2:130,na:310,zn:0.4,fo:80,se:4,col:55},
   {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:41.7,gs:18,g:25.6,z:58,ch:13.9,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:105,se:3,col:10},
@@ -3033,7 +3036,8 @@ const DB_UPF = [
   // Valori erano assurdamente bassi per un biscotto (263kcal/0.8g proteine/2.6g grassi) — allineato a duplicato con valori plausibili per Macine reali (~480kcal) — 2026-07-29
   {n:"Macine Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:482,p:6,gs:3.9,g:20,z:19,ch:68.2,fi:2.5,ca:25,fe:1.5,mg:18,k2:145,na:330,zn:0.6,fo:20,se:8,col:12},
   {n:"TUC crackers salati (Lu, per 100g)",c:"Biscotti e crackers",src:"UPF",k:492,p:9.8,gs:0,g:11,z:2.3,ch:72,fi:2.8,ca:30,fe:1.5,mg:15,k2:120,na:800,zn:0.5,fo:70,se:5,col:0},
-  {n:"Plasmon biscotti per bambini (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:420,p:0,gs:0,g:0,z:20,ch:80,fi:1.5,ca:180,fe:5.0,mg:20,k2:150,na:600,zn:1.2,fo:125,se:6,col:20},
+  // Proteine e grassi erano azzerati per errore (impossibile per un biscotto); ripristinati ai valori ufficiali del prodotto reale (~8.5g proteine, ~8g grassi, ~73.5g carb, 400kcal) - 2026-07-29
+  {n:"Plasmon biscotti per bambini (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:400,p:8.5,gs:4,g:8,z:27,ch:73.5,fi:1.5,ca:180,fe:5.0,mg:20,k2:150,na:600,zn:1.2,fo:125,se:6,col:20},
   {n:"Ciocorì (Kinder/Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:540,p:7.5,gs:11.5,g:30.5,z:54.5,ch:61.5,fi:1.5,ca:120,fe:2.0,mg:32,k2:250,na:95,zn:0.8,fo:140,se:5,col:18},
   {n:"Fruttolo (Danone, yogurt da bere frutta, per 100g)",c:"Latte e derivati",src:"UPF",k:60,p:3,gs:0,g:0,z:12,ch:12,fi:0.3,ca:100,fe:0.1,mg:10,k2:130,na:40,zn:0.4,fo:80,se:2,col:6},
 
@@ -3070,7 +3074,8 @@ const DB_UPF = [
   {n:"Sofficini al formaggio Findus (per 100g)",c:"Piatti pronti",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:130,fe:0.8,mg:12,k2:120,na:392,zn:0.8,fo:95,se:5,col:22},
 
   // ── PRODOTTI FERMENTATI / FUNZIONALI ──
-  {n:"Kombucha (bevanda fermentata tè, per 100mL)",c:"Bevande",src:"UPF",k:16,p:0.2,gs:0,g:0,z:4,ch:48,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:0,zn:0,fo:4,se:0,col:0},
+  // Carboidrati erano 48g (errore di virgola, impossibile per una bevanda fermentata a bassa kcal): corretto a 4.8g, coerente con le altre 2 voci Kombucha del db (ch 2.5 e 4.0) - 2026-07-29
+  {n:"Kombucha (bevanda fermentata tè, per 100mL)",c:"Bevande",src:"UPF",k:16,p:0.2,gs:0,g:0,z:4,ch:4.8,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:0,zn:0,fo:4,se:0,col:0},
   {n:"Kefir di latte vaccino intero (per 100g)",c:"Latte e derivati",src:"UPF",k:43,p:3.3,gs:1.2,g:1.5,z:3.8,ch:4,fi:0,ca:120,fe:0.1,mg:12,k2:151,na:40,zn:0.4,fo:100,se:3,col:12},
   {n:"Tofu al naturale (industriale, per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:149,p:15,gs:1.5,g:8.5,z:0,ch:2,fi:2.3,ca:350,fe:5.4,mg:30,k2:121,na:0,zn:0.8,fo:97,se:8,col:0},
   {n:"Seitan al naturale (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:135,p:18,gs:0.2,g:1.2,z:0.9,ch:12,fi:2.1,ca:14,fe:2.4,mg:18,k2:45,na:580,zn:0.8,fo:90,se:3,col:0},
@@ -3269,7 +3274,8 @@ const DB_UPF = [
 // ── BEVANDE ALTERNATIVE VEGETALI ──
 {n:"Latte di avena industriale (per 100ml)",c:"Alternative vegetali",src:"UPF",k:51,p:1,gs:0.2,g:1,z:5,ch:9,fi:1,ca:120,fe:0.2,mg:12,k2:85,na:40,zn:0.1,fo:40,se:1,col:0},
 {n:"Latte di soia arricchito (per 100ml)",c:"Alternative vegetali",src:"UPF",k:56,p:3.6,gs:0.7,g:2.4,z:4.7,ch:4.9,fi:0.5,ca:120,fe:0.5,mg:18,k2:118,na:28,zn:0.3,fo:50,se:2,col:0},
-{n:"Latte di mandorla (per 100ml)",c:"Alternative vegetali",src:"UPF",k:53,p:0.4,gs:1,g:1,z:3.5,ch:0.4,fi:0.3,ca:120,fe:0.2,mg:8,k2:65,na:100,zn:0.1,fo:15,se:0,col:0},
+// Kcal (53) era incoerente coi macro dichiarati (che danno ~12kcal): tipico del latte di mandorla non zuccherato commerciale (13-24kcal/100ml) - 2026-07-29
+{n:"Latte di mandorla (per 100ml)",c:"Alternative vegetali",src:"UPF",k:15,p:0.4,gs:1,g:1,z:3.5,ch:0.4,fi:0.3,ca:120,fe:0.2,mg:8,k2:65,na:100,zn:0.1,fo:15,se:0,col:0},
 {n:"Latte di cocco (tetrapack, per 100ml)",c:"Alternative vegetali",src:"UPF",k:165,p:0,gs:15,g:17,z:2.5,ch:2.9,fi:0,ca:18,fe:0.5,mg:22,k2:160,na:60,zn:0.2,fo:40,se:2,col:0},
 {n:"Latte di riso arricchito (per 100ml)",c:"Alternative vegetali",src:"UPF",k:47,p:0.3,gs:0,g:1.0,z:5.5,ch:9.0,fi:0.3,ca:120,fe:0.2,mg:8,k2:60,na:50,zn:0.1,fo:20,se:0,col:0},
 {n:"Yogurt di soia alla frutta (per 100g)",c:"Alternative vegetali",src:"UPF",k:72,p:3.2,gs:0.2,g:1.5,z:9.5,ch:10.5,fi:0.5,ca:80,fe:0.3,mg:12,k2:100,na:40,zn:0.2,fo:45,se:1,col:0},
@@ -4195,7 +4201,8 @@ const DB_EXTRA=[
 {n:"Tortellini in brodo surgelati",c:"Piatti pronti",src:"EXTRA",k:187,p:12.3,gs:2.63,g:7.4,z:0.3,ch:16.9,fi:0.6,ca:55,fe:1,mg:15,k2:130,na:480,zn:0.8,fo:90,se:8,col:35},
 {n:"Spinaci al burro surgelati",c:"Piatti pronti",src:"EXTRA",k:67,p:3.4,gs:4,g:4.7,z:0.5,ch:2.8,fi:3,ca:120,fe:2.5,mg:60,k2:450,na:280,zn:0.8,fo:55,se:1.5,col:20},
 // === FRUTTA ESOTICA ===
-{n:"Avocado Hass",c:"Frutta esotica",src:"EXTRA",k:160,p:1.81,gs:2.1,g:20.31,z:0.7,ch:8.32,fi:6.7,ca:14.46,fe:0.61,mg:32.8,k2:576.4,na:0,zn:0.46,fo:128.7,se:0.4,col:0},
+// Grassi (20.31g) erano troppo alti rispetto al valore USDA standard per avocado Hass (~14.7g), incoerenti con le kcal dichiarate (160) - 2026-07-29
+{n:"Avocado Hass",c:"Frutta esotica",src:"EXTRA",k:160,p:2,gs:2.1,g:14.7,z:0.7,ch:8.53,fi:6.7,ca:14.46,fe:0.61,mg:32.8,k2:576.4,na:0,zn:0.46,fo:128.7,se:0.4,col:0},
 {n:"Papaya",c:"Frutta esotica",src:"EXTRA",k:43,p:0.5,gs:0.08,g:0.3,z:7.8,ch:10.8,fi:1.7,ca:20,fe:0.25,mg:21,k2:182,na:8,zn:0.08,fo:37,se:0.6,col:0},
 {n:"Mango",c:"Frutta esotica",src:"EXTRA",k:60,p:0.8,gs:0.09,g:0.4,z:13.7,ch:15,fi:1.6,ca:11,fe:0.16,mg:10,k2:168,na:1,zn:0.09,fo:43,se:0.6,col:0},
 {n:"Maracuja (frutto della passione)",c:"Frutta esotica",src:"EXTRA",k:97,p:2.2,gs:0.06,g:0.7,z:11.2,ch:23.4,fi:10.4,ca:12,fe:1.6,mg:29,k2:348,na:28,zn:0.1,fo:14,se:0.6,col:0},

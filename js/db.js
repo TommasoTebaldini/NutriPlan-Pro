@@ -469,7 +469,8 @@ const DB_CREA=[
   {n:"Pitaya / Dragon fruit rosso",c:"Frutta fresca",k:60,p:1.2,gs:0.1,g:0.4,z:13,ch:13,fi:3.0,ca:8,fe:0.7,mg:18,k2:272,na:39,zn:0.3,fo:22,se:0,col:0,src:"CREA"},
   {n:"Açaí in polvere disidratata",c:"Frutta fresca",k:534,p:8.1,gs:4.0,g:32,z:10,ch:33,fi:44,ca:260,fe:4.4,mg:105,k2:750,na:15,zn:0.9,fo:168,se:3,col:0,src:"CREA"},
   {n:"Mirto (bacche fresche)",c:"Frutta fresca",k:62,p:0.6,gs:0.1,g:0.4,z:12,ch:12,fi:3.5,ca:18,fe:0.8,mg:7,k2:90,na:2,zn:0.1,fo:20,se:1,col:0,src:"CREA"},
-  {n:"Corbezzolo fresco",c:"Frutta fresca",k:60,p:0.5,gs:0.1,g:0.3,z:13,ch:14,fi:3.0,ca:20,fe:0.8,mg:8,k2:180,na:2,zn:0.1,fo:18,se:1,col:0,src:"CREA"},
+  // Kcal sottostimate (60): fonti convergono su ~76kcal per il frutto fresco - 2026-07-29
+  {n:"Corbezzolo fresco",c:"Frutta fresca",k:76,p:0.5,gs:0.1,g:0.3,z:11,ch:16,fi:3.0,ca:20,fe:0.8,mg:8,k2:180,na:2,zn:0.1,fo:18,se:1,col:0,src:"CREA"},
   {n:"Olivello spinoso (bacche fresche)",c:"Frutta fresca",k:82,p:1.4,gs:0.5,g:7.0,z:4.5,ch:6.0,fi:3.6,ca:120,fe:1.1,mg:30,k2:290,na:1,zn:0.2,fo:10,se:1,col:0,src:"CREA"},
   {n:"Banana plantain / Platano verde crudo",c:"Frutta fresca",k:122,p:1.3,gs:0.1,g:0.4,z:14,ch:32,fi:2.3,ca:3,fe:0.6,mg:37,k2:499,na:4,zn:0.2,fo:34,se:1,col:0,src:"CREA"},
   {n:"Mangostano fresco",c:"Frutta fresca",k:73,p:0.4,gs:0.1,g:0.6,z:16,ch:17,fi:1.8,ca:12,fe:0.3,mg:13,k2:48,na:7,zn:0.2,fo:8,se:1,col:0,src:"CREA"},
@@ -612,7 +613,8 @@ const DB_CREA=[
   {n:"Corbezzole (corbezzolo) fresche",c:"Frutta",k:55,p:0.5,gs:0,g:0.3,z:9.5,ch:14.5,fi:4.4,ca:29,fe:0.6,mg:18,k2:160,na:5,zn:0.1,fo:22,se:0.5,col:0,src:"CREA"},
   {n:"Bergamotto (frutto fresco)",c:"Frutta",k:27,p:0.7,gs:0,g:0.3,z:3.0,ch:6.5,fi:3.6,ca:34,fe:0.4,mg:14,k2:150,na:2,zn:0.1,fo:18,se:0.5,col:0,src:"CREA"},
   {n:"Sambuco (bacche di) fresche",c:"Frutta",k:73,p:0.7,gs:0,g:0.5,z:11.5,ch:18.4,fi:7.0,ca:38,fe:1.6,mg:5,k2:280,na:6,zn:0.1,fo:9,se:0.6,col:0,src:"CREA"},
-  {n:"Azzeruole fresche",c:"Frutta",k:58,p:0.4,gs:0,g:0.2,z:10.5,ch:15.6,fi:3.0,ca:17,fe:0.4,mg:8,k2:136,na:2,zn:0.1,fo:11,se:0.3,col:0,src:"CREA"},
+  // Kcal sovrastimate (58): fonte converge su ~32kcal per il frutto fresco, carboidrati corretti di conseguenza - 2026-07-29
+  {n:"Azzeruole fresche",c:"Frutta",k:32,p:0.4,gs:0,g:0.2,z:5.5,ch:8,fi:3.0,ca:17,fe:0.4,mg:8,k2:136,na:2,zn:0.1,fo:11,se:0.3,col:0,src:"CREA"},
   // ── PESCE E MOLLUSCHI ──
   {n:"Sgombro sott'olio (conserva)",c:"Pesce",k:208,p:20.0,gs:3.5,g:14.0,z:0,ch:0,fi:0,ca:85,fe:1.2,mg:31,k2:275,na:380,zn:0.7,fo:255,se:42,col:65,src:"CREA"},
   {n:"Acciughe/alici sott'olio (conserva)",c:"Pesce",k:210,p:24.0,gs:4.0,g:12.5,z:0,ch:0,fi:0,ca:147,fe:3.2,mg:52,k2:383,na:3668,zn:1.9,fo:252,se:38,col:85,src:"CREA"},

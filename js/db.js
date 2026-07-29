@@ -1505,7 +1505,8 @@ const DB_BDA=[
   {n:"Litchi",c:"Frutta fresca",src:"BDA",k:72,p:1.1,gs:0.023,g:0.1,z:17.2,ch:17.2,fi:1.3,ca:2,fe:0.5,mg:6,k2:150,na:1,zn:0.2,fo:14,se:0.6,col:0},
   {n:"Maracuja / Frutto della passione",c:"Frutta fresca",src:"BDA",k:97,p:2.2,gs:0,g:0.7,z:11.2,ch:23.4,fi:10.4,ca:12,fe:1.6,mg:29,k2:348,na:28,zn:0.1,fo:15,se:0.6,col:0},
   {n:"Rambutano",c:"Frutta fresca",src:"BDA",k:82,p:0.9,gs:0,g:0.2,z:18,ch:20.9,fi:0.9,ca:22,fe:0.4,mg:7,k2:42,na:11,zn:0.08,fo:9,se:0.6,col:0},
-  {n:"Corbezzoli",c:"Frutta fresca",src:"CREA",k:50,p:0.5,gs:0,g:0.4,z:7.5,ch:11.4,fi:3.5,ca:16,fe:0.4,mg:9,k2:200,na:2,zn:0.1,fo:12,se:0.5,col:0},
+  // Kcal sottostimate: allineate al duplicato "Corbezzolo fresco" gia corretto con fonte (76kcal) - 2026-07-29
+  {n:"Corbezzoli",c:"Frutta fresca",src:"CREA",k:76,p:0.5,gs:0,g:0.3,z:11,ch:16,fi:3.5,ca:16,fe:0.4,mg:9,k2:200,na:2,zn:0.1,fo:12,se:0.5,col:0},
   {n:"Azuki (adzuki) fagioli rossi cotti",c:"Legumi",src:"BDA",k:128,p:7.5,gs:0.1,g:0.1,z:0.3,ch:24.8,fi:7.3,ca:28,fe:2.0,mg:52,k2:532,na:8,zn:2.0,fo:181,se:1.2,col:0},
   {n:"Lupini in salamoia sgocciolati",c:"Legumi",src:"CREA",k:119,p:15.8,gs:0.3,g:2.8,z:0.4,ch:10.1,fi:2.0,ca:30,fe:1.6,mg:70,k2:242,na:390,zn:1.5,fo:66,se:2,col:0},
   // ── CEREALI E FARINE NON ANCORA PRESENTI ──
@@ -1520,7 +1521,8 @@ const DB_BDA=[
   {n:"Castelmagno",c:"Formaggi",src:"CREA",k:390,p:28.8,gs:13,g:31.0,z:0.5,ch:0.5,fi:0,ca:680,fe:0.4,mg:25,k2:75,na:700,zn:3.5,fo:18,se:15,col:96},
   {n:"Puzzone di Moena",c:"Formaggi",src:"CREA",k:360,p:26.5,gs:14,g:28.0,z:0.5,ch:0.5,fi:0,ca:750,fe:0.3,mg:28,k2:80,na:900,zn:3.2,fo:20,se:12,col:90},
   {n:"Strachitunt (erborinato bergamasco)",c:"Formaggi",src:"CREA",k:368,p:22.5,gs:13.5,g:29.5,z:0.5,ch:0.5,fi:0,ca:520,fe:0.4,mg:22,k2:85,na:1100,zn:2.8,fo:20,se:11,col:88},
-  {n:"Cagliata fresca",c:"Formaggi",src:"CREA",k:90,p:9.5,gs:2.5,g:4.5,z:3.5,ch:4.0,fi:0,ca:165,fe:0.1,mg:12,k2:80,na:60,zn:0.9,fo:130,se:3,col:18},
+  // Stesso bug fosforo-in-folati degli altri formaggi freschi - 2026-07-29
+  {n:"Cagliata fresca",c:"Formaggi",src:"CREA",k:90,p:9.5,gs:2.5,g:4.5,z:3.5,ch:4.0,fi:0,ca:165,fe:0.1,mg:12,k2:80,na:60,zn:0.9,fo:20,se:3,col:18},
   {n:"Stracciatella di bufala",c:"Formaggi",src:"CREA",k:307,p:12.8,gs:14,g:27.5,z:0,ch:1.5,fi:0,ca:285,fe:0.2,mg:14,k2:70,na:310,zn:1.8,fo:20,se:4,col:95},
   {n:"Pecorino Romano grattugiato",c:"Formaggi",src:"CREA",k:409,p:26,gs:13,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.3,mg:38,k2:90,na:1800,zn:4.5,fo:18,se:18,col:90},
   {n:"Quartirolo lombardo",c:"Formaggi",src:"CREA",k:253,p:17.5,gs:10.5,g:19.5,z:0.5,ch:0.5,fi:0,ca:480,fe:0.3,mg:18,k2:88,na:450,zn:2.2,fo:25,se:6,col:65},
@@ -1542,7 +1544,8 @@ const DB_BDA=[
   {n:"Ostrica",c:"Molluschi",src:"CREA",k:69,p:10.2,gs:0.5,g:0.9,z:0.5,ch:5.4,fi:0,ca:186,fe:6,mg:47,k2:260,na:510,zn:16.6,fo:162,se:16,col:30},
   {n:"Granchio reale",c:"Crostacei",src:"BDA",k:82,p:18.1,gs:0.22,g:1.1,z:0,ch:0,fi:0,ca:89,fe:0.7,mg:34,k2:329,na:293,zn:3.5,fo:44,se:37,col:78},
   {n:"Astice (aragosta)",c:"Crostacei",src:"CREA",k:85,p:16,gs:0.66,g:1.9,z:1,ch:1,fi:0,ca:60,fe:0.8,mg:19,k2:180,na:177,zn:2.2,fo:20,se:54,col:70},
-  {n:"Cannocchie / Pannocchie",c:"Crostacei",src:"CREA",k:83,p:14.4,gs:0.2,g:1.3,z:0,ch:1.4,fi:0,ca:55,fe:0.6,mg:40,k2:230,na:350,zn:2.0,fo:145,se:60,col:160},
+  // Stesso bug fosforo-in-folati dei crostacei gia corretti - 2026-07-29
+  {n:"Cannocchie / Pannocchie",c:"Crostacei",src:"CREA",k:83,p:14.4,gs:0.2,g:1.3,z:0,ch:1.4,fi:0,ca:55,fe:0.6,mg:40,k2:230,na:350,zn:2.0,fo:20,se:60,col:160},
   // ── CONDIMENTI E ALIMENTI VARI NON ANCORA PRESENTI ──
   // Allineato alla voce CREA "Colatura di alici di Cetara" gia verificata (stesso prodotto, la colatura di alici e per tradizione sempre di Cetara) — 2026-07-29
   {n:"Colatura di alici",c:"Condimenti",src:"CREA",k:68,p:14,gs:0.5,g:2,z:0,ch:0,fi:0,ca:50,fe:2,mg:25,k2:200,na:7200,zn:0.8,fo:10,se:40,col:60},

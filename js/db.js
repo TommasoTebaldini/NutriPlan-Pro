@@ -1416,7 +1416,8 @@ const DB_BDA=[
   {n:"Senape in grani",c:"Condimenti",src:"BDA",k:66,p:4.4,gs:0.3,g:3.4,z:2.5,ch:5.8,fi:3.4,ca:58,fe:1.8,mg:48,k2:152,na:1120,zn:0.7,fo:115,se:8,col:0},
   // ── SPEZIE ED ERBE aromatiche ──
   {n:"Zenzero fresco",c:"Condimenti",src:"BDA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.34,fo:34,se:0.7,col:0},
-  {n:"Timo essiccato",c:"Condimenti",src:"BDA",k:310,p:9.1,gs:2.73,g:7.4,z:45.3,ch:45.3,fi:18.63,ca:1890,fe:123.6,mg:160,k2:810,na:55,zn:6.2,fo:0,se:0,col:0},
+  // Allineato a duplicato "Timo essiccato" con stessi identici minerali (ca 1890/fe 123.6/zn 6.2 esatti) ma carboidrati/fibre/folati piu completi (63.9g cho, 37g fibre — coerente col timo, noto per l'altissimo contenuto di fibre) — 2026-07-29
+  {n:"Timo essiccato",c:"Condimenti",src:"BDA",k:276,p:9.1,gs:2.7,g:7.4,z:15,ch:63.9,fi:37,ca:1890,fe:123.6,mg:220,k2:814,na:55,zn:6.2,fo:201,se:6.4,col:0},
   {n:"Rosmarino essiccato",c:"Condimenti",src:"BDA",k:366,p:4.9,gs:3.94,g:15.2,z:46.4,ch:46.4,fi:17.65,ca:1280,fe:29.3,mg:91,k2:950,na:50,zn:3.2,fo:0,se:0,col:0},
   {n:"Menta fresca",c:"Condimenti",src:"BDA",k:53,p:3.8,gs:0.12,g:0.7,z:5.3,ch:5.3,fi:5.6,ca:210,fe:9.5,mg:80,k2:260,na:15,zn:0.9,fo:110,se:0.9,col:0},
   {n:"Salvia essiccata",c:"Condimenti",src:"BDA",k:353,p:10.6,gs:7.03,g:12.7,z:42.7,ch:42.7,fi:18.1,ca:1650,fe:28.1,mg:428,k2:1070,na:11,zn:4.7,fo:0,se:0,col:0},

@@ -1053,7 +1053,7 @@ const DB_CREA=[
 {n:"Fontina DOP (Valle d'Aosta)",c:"Formaggi",k:343,p:25,gs:17,g:28,z:0.2,ch:0.2,fi:0,ca:870,fe:0.5,mg:30,k2:97,na:650,zn:3.5,fo:18,se:14,col:82,src:"CREA"},
 {n:"Asiago DOP (giovane, pressato)",c:"Formaggi",k:352,p:30,gs:18,g:26,z:0.3,ch:0.3,fi:0,ca:780,fe:0.4,mg:32,k2:100,na:580,zn:3.8,fo:12,se:12,col:80,src:"CREA"},
 {n:"Caciocavallo DOP (silano)",c:"Formaggi",k:378,p:31,gs:20,g:28.5,z:0.2,ch:0.2,fi:0,ca:760,fe:0.3,mg:25,k2:82,na:720,zn:3.5,fo:8,se:11,col:100,src:"CREA"},
-{n:"Pecorino romano DOP (stagionato)",c:"Formaggi",k:366,p:26,gs:20.5,g:31,z:0.4,ch:0.4,fi:0,ca:900,fe:0.3,mg:28,k2:90,na:1800,zn:3.5,fo:5,se:14,col:88,src:"CREA"},
+{n:"Pecorino romano DOP (stagionato)",c:"Formaggi",k:409,p:26,gs:20.5,g:33.1,z:1.8,ch:1.8,fi:0,ca:900,fe:0.3,mg:28,k2:90,na:1800,zn:3.5,fo:5,se:14,col:90,src:"CREA"},
 {n:"Quartirolo lombardo",c:"Formaggi",k:253,p:18,gs:10,g:16,z:0.3,ch:0.3,fi:0,ca:610,fe:0.3,mg:20,k2:80,na:340,zn:2.5,fo:8,se:8,col:55,src:"CREA"},
 {n:"Stracciatella di bufala",c:"Formaggi",k:305,p:11,gs:15,g:27,z:2.5,ch:2.5,fi:0,ca:320,fe:0.2,mg:20,k2:110,na:200,zn:1.8,fo:10,se:7,col:85,src:"CREA"},
 {n:"Latte di capra intero fresco",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:1,se:1.9,col:10,src:"CREA"},
@@ -1213,7 +1213,7 @@ const DB_CREA=[
 {n:"Finferli essiccati (Cantharellus, secchi)",c:"Funghi",k:269,p:10.5,gs:1.0,g:3.8,z:3.5,ch:48,fi:30,ca:110,fe:27,mg:85,k2:2300,na:70,zn:5.0,fo:390,se:15,col:0,src:"CREA"},
 // ── SALUMI ITALIANI MANCANTI (CREA 2019) ──
 {n:"Salame Napoli",c:"Salumi",k:378,p:27.4,gs:10.16,g:29.7,z:0.5,ch:0.2,fi:0,ca:12,fe:0.9,mg:22,k2:667,na:1640,zn:2.5,fo:165,se:17,col:91,src:"CREA"},
-{n:"Salame Felino IGP (stagionato)",c:"Salumi",k:395,p:23,gs:14,g:33,z:0.5,ch:1.0,fi:0,ca:18,fe:1.5,mg:20,k2:290,na:1650,zn:3.0,fo:185,se:20,col:95,src:"CREA"},
+{n:"Salame Felino IGP (stagionato)",c:"Salumi",k:375,p:30.5,gs:10.34,g:27.9,z:0.5,ch:0.5,fi:0,ca:14,fe:1.9,mg:31,k2:486,na:1697,zn:4.3,fo:185,se:3.1,col:95,src:"CREA"},
 {n:"Finocchiona IGP toscana (stagionata)",c:"Salumi",k:370,p:21,gs:13,g:30,z:1.5,ch:2.0,fi:0,ca:18,fe:1.5,mg:18,k2:275,na:1580,zn:2.8,fo:170,se:18,col:88,src:"CREA"},
 {n:"Culatello di Zibello DOP",c:"Salumi",k:170,p:31.5,gs:2.0,g:5.5,z:0,ch:0.5,fi:0,ca:12,fe:1.0,mg:25,k2:380,na:1450,zn:3.0,fo:200,se:22,col:75,src:"CREA"},
 {n:"Cotechino di Modena IGP (cotto)",c:"Salumi",k:253,p:23.6,gs:4.86,g:16.3,z:0.5,ch:3.2,fi:0,ca:14,fe:1.4,mg:9,k2:220,na:880,zn:1.6,fo:120,se:12,col:86,src:"CREA"},
@@ -3592,7 +3592,7 @@ const DB_UPF = [
 // ═══ PRODOTTI ITTICI INDUSTRIALI ═══
 {n:"Bastoncini di pesce impanati (merluzzo, cotti)",c:"Pesce",src:"UPF",k:189.3,p:11,gs:1.8,g:9.3,z:2.1,ch:14.6,fi:0,ca:30,fe:0.8,mg:25,k2:200,na:352,zn:0.5,fo:180,se:20,col:45},
 {n:"Filetto di merluzzo impanato surgelato (cotto)",c:"Pesce",src:"UPF",k:174,p:13.1,gs:1,g:6.7,z:2.1,ch:15,fi:1.0,ca:25,fe:0.6,mg:28,k2:210,na:409136,zn:0.5,fo:195,se:22,col:42},
-{n:"Salmone affumicato in busta (norvegese)",c:"Pesce",src:"CREA",k:142,p:21.0,gs:1.3,g:5.8,z:0,ch:0,fi:0,ca:9,fe:0.8,mg:22,k2:280,na:1880,zn:0.4,fo:260,se:38,col:35},
+{n:"Salmone affumicato in busta (norvegese)",c:"Pesce",src:"CREA",k:147,p:25.4,gs:1.26,g:4.5,z:1.2,ch:1.2,fi:0,ca:19,fe:0.6,mg:22,k2:420,na:1880,zn:0.4,fo:260,se:38,col:50},
 {n:"Tonno in scatola in olio di girasole (scolato)",c:"Pesce",src:"CREA",k:198,p:25.5,gs:1.5,g:10.5,z:0,ch:0,fi:0,ca:15,fe:1.2,mg:30,k2:285,na:430,zn:0.8,fo:235,se:70,col:38},
 {n:"Sgombro in scatola al naturale (sgocciolato)",c:"Pesce",src:"CREA",k:155,p:20.5,gs:2.5,g:8.0,z:0,ch:0,fi:0,ca:20,fe:1.2,mg:32,k2:310,na:380,zn:0.8,fo:245,se:42,col:72},
 {n:"Acciughe sott'olio sgocciolate (filetti)",c:"Pesce",src:"CREA",k:210,p:28.5,gs:2.5,g:10.5,z:0,ch:0,fi:0,ca:148,fe:3.5,mg:60,k2:485,na:3930,zn:2.0,fo:280,se:35,col:85},

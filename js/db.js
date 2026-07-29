@@ -956,7 +956,8 @@ const DB_CREA=[
 {n:"Tahini (crema di sesamo)",c:"Grassi",k:595,p:17.7,gs:7,g:50,z:0.5,ch:26.2,fi:9.3,ca:426,fe:9,mg:95,k2:414,na:115,zn:4.6,fo:641,se:5.8,col:0,src:"CREA"},
 {n:"Margarina vegetale",c:"Grassi",k:760,p:0.6,gs:27.7,g:84,z:0.4,ch:0.4,fi:0,ca:20,fe:0.2,mg:2,k2:5,na:800,zn:0,fo:10,se:0,col:0,src:"CREA"},
 // ── DOLCI E PRODOTTI DA FORNO ──
-{n:"Crostata con marmellata (torta casalinga)",c:"Dolci",k:338,p:5.5,gs:4,g:14,z:25,ch:48,fi:2,ca:30,fe:1.2,mg:15,k2:110,na:150,zn:0.4,fo:70,se:5,col:65,src:"CREA"},
+// Verificato CREA 208510 (Crostata, con marmellata, industriale — scelta la generica, non quella specifica alle albicocche, dato che il nome locale non specifica il gusto): k,p,g,ch aggiornati, resto non riportato da CREA per questa voce — 2026-07-29
+{n:"Crostata con marmellata (torta casalinga)",c:"Dolci",k:339,p:4.9,gs:4,g:8.2,z:25,ch:65.5,fi:2,ca:30,fe:1.2,mg:15,k2:110,na:150,zn:0.4,fo:70,se:5,col:65,src:"CREA"},
 {n:"Torta di mele (casalinga)",c:"Dolci",k:300,p:5,gs:7,g:11.5,z:25.1,ch:46.3,fi:1.6,ca:22,fe:0.4,mg:8,k2:107,na:192,zn:0.31,fo:8,se:1.3,col:96,src:"BDA"},
 {n:"Tiramisù",c:"Dolci",k:303,p:6.8,gs:10.5,g:18.5,z:24,ch:28,fi:0.1,ca:58,fe:0.9,mg:14,k2:110,na:70,zn:0.7,fo:100,se:6,col:155,src:"CREA"},
 {n:"Gelato alla crema (artigianale)",c:"Dolci",k:207,p:3.9,gs:5.6,g:10.3,z:22,ch:24.8,fi:0,ca:100,fe:0.4,mg:11,k2:173,na:60,zn:0.5,fo:90,se:4,col:40,src:"CREA"},
@@ -1823,7 +1824,8 @@ const DB_BDA=[
 {n:"Succo di pompelmo fresco",c:"Bevande",k:34,p:0.4,gs:0.01,g:0.1,z:8.3,ch:8.3,fi:0,ca:14,fe:0.2,mg:8,k2:100,na:7,zn:0,fo:6,se:1,col:0,src:"BDA"},
 {n:"Acciughe sotto sale",c:"Pesce",k:137,p:25,gs:0.821,g:3.1,z:2.3,ch:2.3,fi:0,ca:542,fe:6.9,mg:41,k2:215,na:3604,zn:1.7,fo:8,se:37,col:119,src:"BDA"},
 {n:"Latte intero in polvere",c:"Latte e derivati",k:484,p:25.7,gs:20.0,g:24.9,z:42,ch:42,fi:0,ca:1050,fe:0.7,mg:94,k2:1270,na:440,zn:3.0,fo:736,se:12,col:109,src:"CREA"},
-{n:"Latte scremato in polvere",c:"Latte e derivati",k:357,p:35.6,gs:0.1,g:0.8,z:52.0,ch:52.0,fi:0,ca:1252,fe:0.3,mg:117,k2:1596,na:535,zn:4.2,fo:1020,se:30,col:7,src:"CREA"},
+// Verificato CREA 135630 (Latte di vacca, in polvere, SCREMATO — scartato apposta il candidato "parzialmente scremato" quasi a pari punteggio) — 2026-07-29
+{n:"Latte scremato in polvere",c:"Latte e derivati",k:351,p:33.1,gs:0.1,g:0.9,z:56.2,ch:56.2,fi:0,ca:1323,fe:0.9,mg:117,k2:1650,na:550,zn:4.2,fo:1020,se:30,col:22,src:"CREA"},
 {n:"Gallette di mais (non al sale)",c:"Biscotti e crackers",k:362,p:7.7,gs:0.13,g:1.1,z:0.4,ch:84.7,fi:1.7,ca:77,fe:2.9,mg:15,k2:103,na:187,zn:0.29,fo:7,se:2.1,col:0,src:"BDA"},
 {n:"Tortellini freschi all'uovo",c:"Cereali e derivati",k:326,p:13.0,gs:1.2,g:6.0,z:1.5,ch:55.5,fi:1.8,ca:25,fe:2.3,mg:30,k2:130,na:350,zn:1.1,fo:145,se:22,col:70,src:"CREA"},
 {n:"Ravioli freschi di carne",c:"Cereali e derivati",k:230,p:10.5,gs:1.5,g:6.5,z:1.5,ch:31.5,fi:1.5,ca:35,fe:1.5,mg:20,k2:120,na:340,zn:1.0,fo:120,se:10,col:45,src:"CREA"},
@@ -1841,7 +1843,8 @@ const DB_BDA=[
 {n:"Carpa",c:"Pesce",k:139,p:18.9,gs:1.0,g:7.1,z:0,ch:0,fi:0,ca:34,fe:1,mg:33,k2:286,na:50,zn:1.4,fo:415,se:12,col:67,src:"CREA"},
 {n:"Rana pescatrice (coda di rospo)",c:"Pesce",k:62,p:12.8,gs:0.25,g:1,z:0.6,ch:0.6,fi:0,ca:28,fe:0.4,mg:21,k2:400,na:18,zn:0.4,fo:7,se:37,col:50,src:"BDA"},
 {n:"Suro (sugarello)",c:"Pesce",k:104,p:18.3,gs:1.24,g:3,z:1,ch:1,fi:0,ca:125,fe:0.9,mg:31,k2:212,na:111,zn:1.45,fo:250,se:30,col:65,src:"CREA"},
-{n:"Wurstel di suino",c:"Salumi e insaccati",k:298,p:11.5,gs:9.0,g:25.5,z:1.5,ch:1.5,fi:0,ca:15,fe:1.0,mg:12,k2:170,na:1100,zn:1.5,fo:110,se:8,col:65,src:"CREA"},
+// Verificato CREA 110906 (Wurstel di puro suino, COTTO — scelto cotto perche il wurstel si vende tipicamente gia pronto al consumo in Italia; differenza crudo/cotto comunque minima) — 2026-07-29
+{n:"Wurstel di suino",c:"Salumi e insaccati",k:259,p:14.6,gs:7.08,g:22.2,z:0,ch:0.3,fi:0,ca:17,fe:0.9,mg:9,k2:223,na:920,zn:0.9,fo:110,se:10,col:84,src:"CREA"},
 {n:"Latte di pecora intero fresco",c:"Latte e derivati",k:103,p:5.3,gs:5.1,g:6.9,z:5.2,ch:5.2,fi:0,ca:180,fe:0.1,mg:18,k2:182,na:30,zn:0.5,fo:158,se:2,col:11,src:"CREA"},
 {n:"Yogurt di capra",c:"Latte e derivati",k:63,p:3.6,gs:2.5,g:3.8,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:155,na:40,zn:0.4,fo:103,se:2,col:13,src:"CREA"},
 {n:"Pan di Spagna",c:"Dolci",k:275,p:10.1,gs:1.45,g:5.1,z:31.2,ch:49.7,fi:1.4,ca:31,fe:1.1,mg:10,k2:97,na:79,zn:0.64,fo:20,se:3.8,col:144,src:"BDA"},
@@ -2104,7 +2107,8 @@ const DB_BDA=[
 {n:"Carota lessata",c:"Verdure",k:28,p:0.8,gs:0,g:0.2,z:4.2,ch:6.0,fi:2.9,ca:40,fe:0.5,mg:11,k2:235,na:58,zn:0.2,fo:14,se:0.5,col:0,src:"CREA"},
 {n:"Finocchio cotto al vapore",c:"Verdure",k:25,p:1.1,gs:0,g:0.2,z:2.4,ch:4.5,fi:3.1,ca:43,fe:0.6,mg:14,k2:300,na:74,zn:0.2,fo:20,se:0.5,col:0,src:"CREA"},
 {n:"Sedano rapa cotto",c:"Verdure",k:29,p:1.9,gs:0,g:0.1,z:3.8,ch:3.8,fi:3.1,ca:52,fe:0.5,mg:14,k2:210,na:75,zn:0.2,fo:20,se:0.5,col:0,src:"CREA"},
-{n:"Cavolfiore al vapore",c:"Verdure",k:22,p:2.0,gs:0,g:0.2,z:1.5,ch:3.5,fi:2.1,ca:20,fe:0.4,mg:14,k2:180,na:15,zn:0.2,fo:56,se:0.8,col:0,src:"CREA"},
+// Approssimato con CREA "Cavolfiore, cotto, bollito" (nessuna voce specifica "al vapore" su CREA; bollito e microonde hanno valori quasi identici, bollito riporta piu campi) — 2026-07-29
+{n:"Cavolfiore al vapore",c:"Verdure",k:31,p:3.4,gs:0,g:0.2,z:2.6,ch:2.9,fi:2.6,ca:42,fe:0.6,mg:17,k2:175,na:6,zn:0.53,fo:56,se:0,col:0,src:"CREA"},
 {n:"Cavolo verza cotto",c:"Verdure",k:29,p:2,gs:0,g:0.1,z:3.8,ch:3.8,fi:2.9,ca:45,fe:0.4,mg:13,k2:195,na:10,zn:0.2,fo:28,se:0.5,col:0,src:"CREA"},
 {n:"Cavolo cappuccio cotto",c:"Verdure",k:24,p:2.1,gs:0,g:0.1,z:2.5,ch:2.5,fi:2.6,ca:57,fe:0.8,mg:10,k2:130,na:17,zn:0.2,fo:24,se:0.3,col:0,src:"CREA"},
 {n:"Peperone rosso cotto",c:"Verdure",k:32,p:1.0,gs:0,g:0.3,z:5.0,ch:7.5,fi:2.0,ca:10,fe:0.4,mg:12,k2:210,na:4,zn:0.2,fo:22,se:0.4,col:0,src:"CREA"},
@@ -3321,7 +3325,8 @@ const DB_UPF = [
 {n:"Cozze al vapore (per 100g edibile)",c:"Molluschi e crostacei",src:"CREA",k:86,p:12.5,gs:0.8,g:2.2,z:0,ch:3.7,fi:0,ca:26,fe:4.6,mg:34,k2:320,na:286,zn:1.6,fo:197,se:44,col:56},
 // ── CARNI SELVATICHE E PREGIATE ──
 {n:"Cinghiale (carne magra, per 100g cruda)",c:"Carne",src:"CREA",k:121,p:21.5,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:12,fe:3.2,mg:22,k2:280,na:55,zn:3.0,fo:195,se:18,col:65},
-{n:"Faraona (petto, per 100g cruda)",c:"Carne",src:"CREA",k:106,p:21.0,gs:0.4,g:2.0,z:0,ch:0,fi:0,ca:12,fe:1.0,mg:25,k2:310,na:65,zn:1.5,fo:185,se:18,col:68},
+// Verificato CREA 106050 (Faraona, petto, senza pelle, CRUDO — scartato apposta il candidato cotto allo spiedo quasi a pari punteggio) — 2026-07-29
+{n:"Faraona (petto, per 100g cruda)",c:"Carne",src:"CREA",k:121,p:25.8,gs:0.66,g:1.9,z:0,ch:0.2,fi:0,ca:10,fe:0.8,mg:20,k2:340,na:50,zn:0.6,fo:185,se:18,col:32},
 {n:"Capriolo (carne, per 100g cruda)",c:"Carne",src:"CREA",k:117,p:22.0,gs:0.4,g:2.5,z:0,ch:0,fi:0,ca:8,fe:3.8,mg:20,k2:290,na:52,zn:2.8,fo:210,se:15,col:60},
 // ── LATTICINI PREMIUM ──
 {n:"Burrata pugliese (per 100g)",c:"Formaggi e latticini",src:"CREA",k:295,p:14.5,gs:18.5,g:25.5,z:1.0,ch:1.5,fi:0,ca:350,fe:0.2,mg:18,k2:95,na:420,zn:1.5,fo:210,se:8,col:80},
@@ -3354,7 +3359,8 @@ const DB_UPF = [
 {n:"Pasta di lenticchie rosse (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:348,p:24.5,gs:0.2,g:1.5,z:0.5,ch:56.5,fi:8.5,ca:40,fe:6.5,mg:90,k2:350,na:8,zn:3.0,fo:290,se:6,col:0},
 {n:"Pasta di ceci (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:361,p:20.5,gs:0.3,g:6.5,z:2.0,ch:55,fi:11.5,ca:55,fe:4.5,mg:95,k2:440,na:10,zn:3.2,fo:310,se:6,col:0},
 {n:"Pane di segale (per 100g)",c:"Pane e prodotti da forno",src:"CREA",k:228,p:8.3,gs:0.3,g:1.7,z:1.8,ch:45.4,fi:4.6,ca:80,fe:2.5,mg:40,k2:190,na:580,zn:1.5,fo:130,se:12,col:0},
-{n:"Gnocchi di patate freschi confezionati (per 100g)",c:"Cereali e derivati",src:"CREA",k:158,p:4.5,gs:0.3,g:1.8,z:0.5,ch:32.5,fi:1.5,ca:22,fe:0.8,mg:18,k2:178,na:340,zn:0.5,fo:55,se:5,col:0},
+// Verificato CREA 006590 (Gnocchi di patate, CRUDI — scelto crudi non cotti dato che "freschi confezionati" implica non ancora cotti, come la pasta fresca) — 2026-07-29
+{n:"Gnocchi di patate freschi confezionati (per 100g)",c:"Cereali e derivati",src:"CREA",k:164,p:3.9,gs:0.3,g:0.3,z:1.4,ch:37.9,fi:1.9,ca:14,fe:0.6,mg:18,k2:310,na:9,zn:0.3,fo:55,se:5,col:7},
 // ── SEMI E FRUTTA SECCA SPECIALI ──
 {n:"Semi di canapa decorticati (per 100g)",c:"Semi e frutta secca",src:"CREA",k:553,p:31.5,gs:5.5,g:48.7,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:1650,se:14,col:0},
 {n:"Noci del Brasile (per 100g)",c:"Semi e frutta secca",src:"CREA",k:656,p:14.3,gs:16.2,g:66.4,z:2.3,ch:12.3,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:725,se:1917,col:0},
@@ -3569,7 +3575,8 @@ const DB_UPF = [
 {n:"Maritozzo romano con panna",c:"Dolci",src:"CREA",k:355,p:6.5,gs:7.5,g:18.5,z:22.5,ch:42.5,fi:1.0,ca:55,fe:1.0,mg:12,k2:110,na:200,zn:0.4,fo:70,se:3,col:50},
 // ═══ SALUMI DOP/IGP SPECIFICI ═══
 {n:"Prosciutto di Parma DOP (magro, senza grasso esterno)",c:"Salumi",src:"CREA",k:176,p:29.1,gs:2.03,g:6.4,z:0,ch:0.4,fi:0,ca:13,fe:1,mg:23,k2:618,na:2040,zn:2.6,fo:245,se:13,col:89},
-{n:"Prosciutto San Daniele DOP (fettine)",c:"Salumi",src:"CREA",k:165,p:28.0,gs:1.9,g:5.8,z:0,ch:0,fi:0,ca:9,fe:0.9,mg:25,k2:370,na:2280,zn:2.6,fo:250,se:24,col:78},
+// Verificato CREA 110521 (Prosciutto crudo di San Daniele DOP, SGRASSATO — valori gia vicini a quelli locali, coerente con fettine da affettato) — 2026-07-29
+{n:"Prosciutto San Daniele DOP (fettine)",c:"Salumi",src:"CREA",k:176,p:29.0,gs:2.06,g:6.5,z:0,ch:0.4,fi:0,ca:10,fe:1.1,mg:23,k2:667,na:2040,zn:2.7,fo:250,se:16,col:91},
 {n:"Salame di Varzi DOP",c:"Salumi",src:"CREA",k:368,p:24.5,gs:14.0,g:28.5,z:0,ch:1.5,fi:0,ca:15,fe:1.5,mg:20,k2:350,na:1680,zn:2.8,fo:200,se:15,col:88},
 {n:"Ciauscolo marchigiano IGP (morbido, spalmabile)",c:"Salumi",src:"CREA",k:395,p:21.0,gs:16.5,g:33.5,z:0,ch:1.0,fi:0,ca:10,fe:1.2,mg:18,k2:320,na:1580,zn:2.2,fo:175,se:14,col:98},
 {n:"Finocchiona IGP toscana",c:"Salumi",src:"CREA",k:362,p:23.0,gs:13.5,g:28.0,z:0,ch:2.0,fi:0,ca:12,fe:1.4,mg:19,k2:340,na:1720,zn:2.5,fo:190,se:16,col:90},

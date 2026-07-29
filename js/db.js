@@ -620,7 +620,8 @@ const DB_CREA=[
   {n:"Friarielli/Broccoli di rapa saltati",c:"Verdure",k:55,p:3.5,gs:0.5,g:4.0,z:1.0,ch:2.5,fi:2.8,ca:90,fe:2.0,mg:30,k2:250,na:60,zn:0.5,fo:60,se:1,col:0,src:"CREA"},
   {n:"Catalogna (cicoria asparago) cruda",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:22,k2:358,na:21,zn:0.3,fo:110,se:1,col:0,src:"BDA"},
   {n:"Puntarelle crude (cicoria di catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:20,k2:358,na:21,zn:0.3,fo:110,se:1,col:0,src:"BDA"},
-  {n:"Topinambur crudo",c:"Verdure",k:73,p:2.0,gs:0,g:0.1,z:4.0,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:78,se:0.7,col:0,src:"CREA"},
+  // Fosforo (78mg, match esatto USDA topinambur) era nel campo folati; folati reali topinambur ~13mcg - 2026-07-29
+  {n:"Topinambur crudo",c:"Verdure",k:73,p:2.0,gs:0,g:0.1,z:4.0,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0,src:"CREA"},
   {n:"Radicchio rosso di Treviso crudo",c:"Verdure",k:16,p:1.6,gs:0,g:0.1,z:1,ch:1,fi:2.5,ca:27,fe:0.4,mg:14,k2:234,na:13,zn:0.2,fo:24,se:0.9,col:0,src:"CREA"},
   {n:"Cavolo nero (toscano) crudo",c:"Verdure",k:32,p:4.3,gs:0,g:0.7,z:1.5,ch:3.3,fi:4.1,ca:135,fe:1.5,mg:34,k2:450,na:38,zn:0.4,fo:141,se:0.9,col:0,src:"CREA"},
   {n:"Borragine (foglie crude)",c:"Verdure",k:21,p:1.8,gs:0,g:0.7,z:1.0,ch:3.1,fi:2.0,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.2,fo:13,se:1,col:0,src:"CREA"},
@@ -654,11 +655,16 @@ const DB_CREA=[
   {n:"Coniglio al forno",c:"Carni e derivati",k:166,p:27.9,gs:2.372,g:6,z:0,ch:0,fi:0,ca:39,fe:1.1,mg:18,k2:200,na:48,zn:1.7,fo:5,se:16,col:73,src:"BDA"},
   {n:"Faraona arrosto",c:"Carni e derivati",k:148,p:28.0,gs:1.0,g:4.0,z:0,ch:0,fi:0,ca:13,fe:1.1,mg:27,k2:365,na:66,zn:1.9,fo:8,se:15,col:75,src:"CREA"},
   // ── PASTA E PRODOTTI TIPICI ──
-  {n:"Orecchiette fresche (pasta di semola)",c:"Cereali e derivati",k:295,p:10.0,gs:0.3,g:1.5,z:2.0,ch:60.5,fi:2.5,ca:18,fe:1.4,mg:30,k2:148,na:10,zn:0.9,fo:115,se:18,col:0,src:"CREA"},
-  {n:"Trofie fresche (pasta ligure)",c:"Cereali e derivati",k:290,p:9.5,gs:0.3,g:1.4,z:2.0,ch:59.5,fi:2.4,ca:17,fe:1.3,mg:28,k2:140,na:8,zn:0.8,fo:110,se:17,col:0,src:"CREA"},
-  {n:"Bigoli (pasta integrale veneta)",c:"Cereali e derivati",k:344,p:13.5,gs:0.5,g:2.5,z:2.5,ch:68.5,fi:5.5,ca:28,fe:2.5,mg:80,k2:310,na:5,zn:1.8,fo:260,se:22,col:0,src:"CREA"},
-  {n:"Pici (pasta toscana grossa)",c:"Cereali e derivati",k:350,p:11.5,gs:0.3,g:1.5,z:2.0,ch:72.5,fi:2.5,ca:16,fe:1.5,mg:25,k2:130,na:5,zn:0.9,fo:100,se:16,col:0,src:"CREA"},
-  {n:"Maltagliati all'uovo freschi",c:"Cereali e derivati",k:285,p:11.0,gs:1.2,g:4.0,z:2.0,ch:55.0,fi:2.0,ca:28,fe:1.8,mg:32,k2:148,na:18,zn:1.0,fo:145,se:20,col:55,src:"CREA"},
+  // Fosforo semola (~115mg, diluito da acqua) era nel campo folati; folati reali pasta fresca di semola ~25mcg - 2026-07-29
+  {n:"Orecchiette fresche (pasta di semola)",c:"Cereali e derivati",k:295,p:10.0,gs:0.3,g:1.5,z:2.0,ch:60.5,fi:2.5,ca:18,fe:1.4,mg:30,k2:148,na:10,zn:0.9,fo:25,se:18,col:0,src:"CREA"},
+  // Stesso bug fosforo-in-folati delle paste fresche di semola - 2026-07-29
+  {n:"Trofie fresche (pasta ligure)",c:"Cereali e derivati",k:290,p:9.5,gs:0.3,g:1.4,z:2.0,ch:59.5,fi:2.4,ca:17,fe:1.3,mg:28,k2:140,na:8,zn:0.8,fo:25,se:17,col:0,src:"CREA"},
+  // Fosforo (integrale, valore piu' alto per crusca) era nel campo folati; folati reali pasta integrale fresca ~40mcg - 2026-07-29
+  {n:"Bigoli (pasta integrale veneta)",c:"Cereali e derivati",k:344,p:13.5,gs:0.5,g:2.5,z:2.5,ch:68.5,fi:5.5,ca:28,fe:2.5,mg:80,k2:310,na:5,zn:1.8,fo:40,se:22,col:0,src:"CREA"},
+  // Stesso bug fosforo-in-folati delle paste fresche di semola - 2026-07-29
+  {n:"Pici (pasta toscana grossa)",c:"Cereali e derivati",k:350,p:11.5,gs:0.3,g:1.5,z:2.0,ch:72.5,fi:2.5,ca:16,fe:1.5,mg:25,k2:130,na:5,zn:0.9,fo:25,se:16,col:0,src:"CREA"},
+  // Folati reali pasta all'uovo leggermente piu' alti per contributo uovo (~35mcg) - 2026-07-29
+  {n:"Maltagliati all'uovo freschi",c:"Cereali e derivati",k:285,p:11.0,gs:1.2,g:4.0,z:2.0,ch:55.0,fi:2.0,ca:28,fe:1.8,mg:32,k2:148,na:18,zn:1.0,fo:35,se:20,col:55,src:"CREA"},
   // ── LEGUMI TIPICI ITALIANI ──
   {n:"Fave secche (decorticate)",c:"Legumi",k:331,p:21.3,gs:0.45,g:2.1,z:4.5,ch:52.8,fi:14.7,ca:102,fe:6.7,mg:95,k2:1090,na:11,zn:3.5,fo:423,se:8,col:0,src:"CREA"},
   {n:"Lupini sgusciati conservati (sotto sale)",c:"Legumi",k:119,p:15.6,gs:1.3,g:6.8,z:2.5,ch:9.5,fi:4.6,ca:50,fe:3.4,mg:92,k2:245,na:2041,zn:1.7,fo:178,se:4,col:0,src:"CREA"},
@@ -896,7 +902,8 @@ const DB_CREA=[
 {n:"Sedano rapa crudo",c:"Verdure",k:29,p:1.9,gs:0.1,g:0.1,z:3.8,ch:3.8,fi:3.1,ca:52,fe:0.5,mg:20,k2:300,na:100,zn:0.33,fo:79,se:0.7,col:0,src:"CREA"},
 {n:"Radicchio rosso",c:"Verdure",k:19,p:1.4,gs:0.1,g:0.1,z:1.6,ch:1.6,fi:3,ca:36,fe:0.3,mg:13,k2:240,na:10,zn:0.25,fo:31,se:0.3,col:0,src:"CREA"},
 {n:"Bietola da coste cruda",c:"Verdure",k:19,p:1.8,gs:0,g:0.2,z:1.1,ch:3.7,fi:1.6,ca:51,fe:1.8,mg:81,k2:379,na:213,zn:0.36,fo:46,se:0.9,col:0,src:"CREA"},
-{n:"Topinambur crudo",c:"Verdure",k:73,p:2,gs:0,g:0.1,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.12,fo:78,se:0.7,col:0,src:"CREA"},
+// Fosforo (78mg, match esatto USDA topinambur) era nel campo folati; folati reali topinambur ~13mcg - 2026-07-29
+{n:"Topinambur crudo",c:"Verdure",k:73,p:2,gs:0,g:0.1,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.12,fo:13,se:0.7,col:0,src:"CREA"},
 {n:"Indivia belga",c:"Verdure",k:17,p:0.9,gs:0,g:0.1,z:0.1,ch:3.1,fi:3.1,ca:19,fe:0.2,mg:10,k2:211,na:2,zn:0.16,fo:26,se:0.2,col:0,src:"CREA"},
 {n:"Cipolla rossa cruda",c:"Verdure",k:40,p:1.1,gs:0,g:0.1,z:4.2,ch:9.3,fi:1.7,ca:23,fe:0.2,mg:10,k2:146,na:4,zn:0.17,fo:29,se:0.5,col:0,src:"CREA"},
 {n:"Germogli di soia crudi",c:"Verdure",k:54,p:6.2,gs:0,g:1.4,z:3,ch:3,fi:2.8,ca:48,fe:1,mg:21,k2:218,na:30,zn:0.39,fo:48,se:0.6,col:0,src:"CREA"},
@@ -2029,7 +2036,8 @@ const DB_BDA=[
 {n:"Pastinaca cruda",c:"Ortaggi",k:75,p:1.4,gs:0.1,g:0.5,z:4.8,ch:17.9,fi:4.9,ca:36,fe:0.6,mg:29,k2:375,na:10,zn:0.6,fo:71,se:1.8,col:0,src:"CREA"},
 {n:"Rapa (navone) cruda",c:"Ortaggi",k:28,p:0.9,gs:0,g:0.1,z:3.8,ch:6.4,fi:1.8,ca:30,fe:0.3,mg:11,k2:233,na:67,zn:0.3,fo:27,se:0.7,col:0,src:"CREA"},
 {n:"Rapa rossa (barbabietola) cruda",c:"Ortaggi",k:43,p:1.6,gs:0,g:0.1,z:6.8,ch:9.6,fi:2.8,ca:16,fe:0.8,mg:23,k2:325,na:78,zn:0.4,fo:40,se:0.6,col:0,src:"CREA"},
-{n:"Topinambur crudo",c:"Ortaggi",k:73,p:2.0,gs:0,g:0.0,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:78,se:0.7,col:0,src:"CREA"},
+// Fosforo (78mg, match esatto USDA topinambur) era nel campo folati; folati reali topinambur ~13mcg - 2026-07-29
+{n:"Topinambur crudo",c:"Ortaggi",k:73,p:2.0,gs:0,g:0.0,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0,src:"CREA"},
 {n:"Crescione d'acqua fresco",c:"Ortaggi",k:22,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:282,na:41,zn:0.1,fo:60,se:0.9,col:0,src:"BDA"},
 {n:"Acetosella fresca (Rumex acetosa)",c:"Ortaggi",k:22,p:2.0,gs:0,g:0.3,z:0.5,ch:3.2,fi:3.0,ca:44,fe:2.4,mg:16,k2:390,na:4,zn:0.2,fo:62,se:0.9,col:0,src:"CREA"},
 {n:"Ortiche fresche (foglie)",c:"Ortaggi",k:42,p:7.2,gs:0,g:0.5,z:0,ch:7.5,fi:6.9,ca:481,fe:41.8,mg:57,k2:334,na:4,zn:0.3,fo:71,se:0.7,col:0,src:"CREA"},
@@ -3656,7 +3664,8 @@ const DB_UPF = [
 {n:"Riso Venere nero (crudo)",c:"Cereali e pasta",src:"CREA",k:355,p:7.8,gs:0.3,g:1.3,z:2.2,ch:80.4,fi:5.1,ca:13,fe:1.1,mg:101,k2:280,na:0,zn:1.5,fo:20,se:9,col:0},
 {n:"Pasta al nero di seppia (secca, cruda)",c:"Cereali e pasta",src:"CREA",k:348,p:11.5,gs:0.2,g:1.8,z:2.5,ch:70.5,fi:2.5,ca:25,fe:2.8,mg:55,k2:200,na:90,zn:1.2,fo:185,se:20,col:0},
 {n:"Bigoli all'uovo (crudi)",c:"Cereali e pasta",src:"CREA",k:370,p:13.5,gs:1.5,g:5.0,z:1.5,ch:66.5,fi:2.5,ca:30,fe:1.8,mg:38,k2:175,na:10,zn:1.5,fo:180,se:15,col:80},
-{n:"Trofie fresche di grano duro (crude)",c:"Cereali e pasta",src:"CREA",k:295,p:9.5,gs:0.2,g:1.0,z:1.5,ch:60.5,fi:2.5,ca:15,fe:1.2,mg:30,k2:130,na:5,zn:0.8,fo:120,se:12,col:0},
+// Stesso bug fosforo-in-folati delle paste fresche di semola - 2026-07-29
+{n:"Trofie fresche di grano duro (crude)",c:"Cereali e pasta",src:"CREA",k:295,p:9.5,gs:0.2,g:1.0,z:1.5,ch:60.5,fi:2.5,ca:15,fe:1.2,mg:30,k2:130,na:5,zn:0.8,fo:25,se:12,col:0},
 {n:"Pane di Altamura DOP (100g)",c:"Pane",src:"CREA",k:283,p:8.5,gs:0.3,g:1.5,z:1.5,ch:58.5,fi:3.5,ca:25,fe:1.8,mg:30,k2:115,na:365,zn:0.8,fo:90,se:8,col:0},
 {n:"Michetta/rosetta milanese vuota",c:"Pane",src:"CREA",k:288,p:8.0,gs:0.3,g:1.5,z:1.5,ch:59.5,fi:2.5,ca:22,fe:1.5,mg:20,k2:100,na:590,zn:0.5,fo:75,se:6,col:0},
 {n:"Brioche siciliana col tuppo",c:"Dolci",src:"CREA",k:360,p:8.5,gs:5.5,g:14.5,z:16.5,ch:50.5,fi:1.5,ca:48,fe:1.5,mg:18,k2:130,na:320,zn:0.6,fo:90,se:5,col:65},

@@ -1448,7 +1448,8 @@ const DB_BDA=[
   {n:"Pane multicereali",c:"Cereali e derivati",src:"BDA",k:262,p:9,gs:0.5,g:3,z:3.5,ch:47.5,fi:6,ca:80,fe:2.2,mg:55,k2:190,na:460,zn:1.4,fo:150,se:22,col:0},
   {n:"Focaccia genovese",c:"Cereali e derivati",src:"BDA",k:306,p:7.9,gs:0.91,g:5.9,z:2.1,ch:57.9,fi:2.3,ca:20,fe:1.1,mg:15,k2:99,na:789,zn:0.31,fo:32,se:2,col:0},
   {n:"Grissini artigianali",c:"Cereali e derivati",src:"CREA",k:421,p:11.3,gs:1,g:13.9,z:2.2,ch:65.1,fi:3.5,ca:13,fe:2.3,mg:25,k2:120,na:680,zn:0.7,fo:95,se:8,col:0},
-  {n:"Pane di casa tipo toscano",c:"Cereali e derivati",src:"BDA",k:265,p:8.6,gs:0.3,g:1.2,z:2,ch:53,fi:3,ca:35,fe:1.4,mg:25,k2:110,na:15,zn:0.7,fo:90,se:18,col:0},
+  // Fosforo (pane di grano, ~90mg) era nel campo folati; folati reali pane non fortificato ~25mcg - 2026-07-29
+  {n:"Pane di casa tipo toscano",c:"Cereali e derivati",src:"BDA",k:265,p:8.6,gs:0.3,g:1.2,z:2,ch:53,fi:3,ca:35,fe:1.4,mg:25,k2:110,na:15,zn:0.7,fo:25,se:18,col:0},
   {n:"Pasta sfoglia cruda",c:"Cereali e derivati",src:"BDA",k:493,p:6.7,gs:18.07,g:33.2,z:1.9,ch:42.8,fi:3.5,ca:98,fe:1.4,mg:13,k2:112,na:427,zn:0.4,fo:0,se:3,col:52},
   // ── LATTICINI BDA aggiuntivi ──
   {n:"Formaggino",c:"Latte e derivati",src:"BDA",k:309,p:11.2,gs:16.075,g:26.9,z:6,ch:6,fi:0,ca:430,fe:0.3,mg:22,k2:108,na:1000,zn:3.2,fo:18,se:10,col:93},
@@ -1460,7 +1461,8 @@ const DB_BDA=[
   {n:"Orata da acquacoltura",c:"Pesce",src:"CREA",k:159,p:19.7,gs:2.37,g:8.4,z:1.2,ch:1.2,fi:0,ca:30,fe:0.6,mg:23,k2:415,na:85,zn:0.5,fo:10,se:30,col:68},
   {n:"Cefalo",c:"Pesce",src:"CREA",k:127,p:15.8,gs:2.22,g:6.8,z:0.7,ch:0.7,fi:0,ca:26,fe:1.8,mg:21,k2:340,na:67,zn:2,fo:10,se:20,col:53},
   // ── CONDIMENTI BDA aggiuntivi ──
-  {n:"Tzatziki fatto in casa",c:"Condimenti",src:"BDA",k:90,p:5,gs:3,g:5.8,z:2,ch:4,fi:0.5,ca:90,fe:0.3,mg:15,k2:120,na:200,zn:0.3,fo:55,se:3,col:16},
+  // Stesso bug fosforo-in-folati del comparto lattiero (yogurt diluisce cetriolo/aglio) - 2026-07-29
+  {n:"Tzatziki fatto in casa",c:"Condimenti",src:"BDA",k:90,p:5,gs:3,g:5.8,z:2,ch:4,fi:0.5,ca:90,fe:0.3,mg:15,k2:120,na:200,zn:0.3,fo:10,se:3,col:16},
   {n:"Salsa di soia ridotto sale",c:"Condimenti",src:"BDA",k:47,p:6.6,gs:0,g:0.1,z:3.9,ch:3.9,fi:0.8,ca:16,fe:2,mg:35,k2:175,na:2900,zn:0.4,fo:110,se:0.5,col:0},
   // ── FRUTTA fresca aggiuntiva ──
   {n:"Pesca",c:"Frutta fresca",src:"BDA",k:30,p:0.8,gs:0.01,g:0.1,z:6.1,ch:6.1,fi:1.6,ca:8,fe:0.4,mg:9,k2:260,na:3,zn:0.35,fo:3,se:1,col:0},

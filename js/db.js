@@ -1262,10 +1262,13 @@ const DB_CREA=[
 {n:"Torta di riso carrarese",c:"Dolci",k:245,p:8.5,gs:4.5,g:12,z:20,ch:30,fi:0.5,ca:120,fe:0.8,mg:18,k2:145,na:80,zn:0.8,fo:15,se:8,col:110,src:"CREA"},
 {n:"Pinza triestina (dolce festivo)",c:"Dolci",k:320,p:7.5,gs:3.5,g:10,z:22,ch:50,fi:4.5,ca:42,fe:2.5,mg:38,k2:240,na:120,zn:1,fo:28,se:10,col:45,src:"CREA"},
 // ── FUNGHI ITALIANI MANCANTI (CREA 2019) ──
-{n:"Finferli / Gallinacci freschi (Cantharellus cibarius)",c:"Funghi",k:38,p:1.5,gs:0.2,g:0.5,z:0.5,ch:6.8,fi:3.8,ca:15,fe:3.5,mg:12,k2:506,na:9,zn:0.7,fo:57,se:2.2,col:0,src:"CREA"},
-{n:"Chiodini freschi (Armillaria mellea)",c:"Funghi",k:28,p:3.1,gs:0.1,g:0.4,z:1.5,ch:4.0,fi:2.5,ca:10,fe:1.0,mg:18,k2:340,na:6,zn:0.8,fo:85,se:3,col:0,src:"CREA"},
+// Stesso fungo (chanterelle) già corretto altrove (DB_CREA_400): fosforo ~57mg era nel campo folati, reali ~2-6mcg - 2026-07-29
+{n:"Finferli / Gallinacci freschi (Cantharellus cibarius)",c:"Funghi",k:38,p:1.5,gs:0.2,g:0.5,z:0.5,ch:6.8,fi:3.8,ca:15,fe:3.5,mg:12,k2:506,na:9,zn:0.7,fo:5,se:2.2,col:0,src:"CREA"},
+// Folati implausibili per fungo fresco (pattern fosforo-in-folati coerente con altri funghi già corretti), stimato ~20mcg - 2026-07-29
+{n:"Chiodini freschi (Armillaria mellea)",c:"Funghi",k:28,p:3.1,gs:0.1,g:0.4,z:1.5,ch:4.0,fi:2.5,ca:10,fe:1.0,mg:18,k2:340,na:6,zn:0.8,fo:20,se:3,col:0,src:"CREA"},
 {n:"Trombette dei morti essiccate (Craterellus cornucopioides)",c:"Funghi",k:29,p:2.7,gs:0.2,g:0.5,z:1.0,ch:4.5,fi:4.5,ca:20,fe:7.5,mg:20,k2:380,na:5,zn:1.2,fo:55,se:4,col:0,src:"CREA"},
-{n:"Pioppini / Agrocybe freschi (Agrocybe aegerita)",c:"Funghi",k:27,p:2.9,gs:0.1,g:0.3,z:0.8,ch:4.2,fi:2.2,ca:18,fe:0.8,mg:14,k2:280,na:5,zn:0.6,fo:95,se:3.5,col:0,src:"CREA"},
+// Folati implausibili per fungo fresco (pattern fosforo-in-folati coerente con altri funghi già corretti), stimato ~20mcg - 2026-07-29
+{n:"Pioppini / Agrocybe freschi (Agrocybe aegerita)",c:"Funghi",k:27,p:2.9,gs:0.1,g:0.3,z:0.8,ch:4.2,fi:2.2,ca:18,fe:0.8,mg:14,k2:280,na:5,zn:0.6,fo:20,se:3.5,col:0,src:"CREA"},
 // Folati (194mcg) troppo alti per un fungo fresco: fonti concordano su folati modesti (funghi in genere <15mcg) - 2026-07-29
 {n:"Morchelle fresche (Morchella esculenta)",c:"Funghi",k:31,p:3.1,gs:0.1,g:0.6,z:0.2,ch:5.1,fi:2.8,ca:43,fe:12,mg:12,k2:259,na:9,zn:2.1,fo:20,se:2.4,col:0,src:"CREA"},
 {n:"Ovuli / Amanita cesarea freschi",c:"Funghi",k:23,p:2,gs:0.1,g:0.3,z:1.6,ch:1.6,fi:3,ca:17,fe:1.1,mg:15,k2:295,na:4,zn:0.5,fo:80,se:2,col:0,src:"CREA"},

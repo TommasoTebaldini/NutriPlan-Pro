@@ -2630,3 +2630,58 @@ ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_stato TEXT; -- INVI | PREN | ER
 ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_protocollo TEXT;
 ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_messaggio TEXT; -- errore riportato dal Sistema TS, se presente
 ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_inviato_at TIMESTAMPTZ;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 36 — WHATSAPP BUSINESS REALE (feature #2)
+--
+-- Integrazione vera con l'API Meta WhatsApp Business Cloud (non la sola chat
+-- in-app "in stile WhatsApp" già esistente in broadcast.html). Il dietista
+-- collega un numero WhatsApp Business gestito su business.facebook.com/wa
+-- (Meta for Developers): serve un Phone Number ID, un access token
+-- permanente (System User), il Business Account ID e un webhook verify
+-- token a scelta. Restano un servizio/costo Meta esterno e un requisito
+-- reale: i messaggi liberi (non-template) sono inviabili solo entro 24h
+-- dall'ultimo messaggio ricevuto dal paziente su WhatsApp — fuori da quella
+-- finestra Meta richiede un messaggio "template" pre-approvato dal Business
+-- Manager (nome/lingua configurabili sotto, ma la creazione/approvazione
+-- del template avviene sul portale Meta, non da qui).
+--
+-- Come per Fatture in Cloud/Sistema TS: il dietista si registra
+-- autonomamente su Meta for Developers prima che la funzione sia
+-- utilizzabile — i pulsanti restano nascosti finché le credenziali non
+-- sono compilate.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS wa_phone_number_id TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS wa_access_token TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS wa_business_account_id TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS wa_webhook_verify_token TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS wa_app_secret TEXT; -- App Secret del proprio App Meta, per verificare la firma del webhook
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS wa_template_name TEXT; -- template approvato da usare fuori dalla finestra 24h
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS wa_template_lang TEXT DEFAULT 'it';
+
+ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS telefono TEXT;
+
+-- Log messaggi WhatsApp (in entrambe le direzioni) per dietista/paziente.
+-- cartella_id è nullable: un messaggio in arrivo da un numero non ancora
+-- associato a nessuna cartella resta comunque visibile/associabile a mano.
+CREATE TABLE IF NOT EXISTS whatsapp_messages (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  dietitian_id  UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  cartella_id   UUID        REFERENCES cartelle(id) ON DELETE SET NULL,
+  wa_phone      TEXT        NOT NULL, -- numero WhatsApp del paziente, formato E.164
+  direction     TEXT        NOT NULL CHECK (direction IN ('in','out')),
+  body          TEXT,
+  wa_message_id TEXT,       -- id assegnato da Meta, per aggiornare lo stato via webhook
+  status        TEXT,       -- sent | delivered | read | failed (solo per direction='out')
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_messages_dietitian_phone
+  ON whatsapp_messages (dietitian_id, wa_phone, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_messages_wa_message_id
+  ON whatsapp_messages (wa_message_id) WHERE wa_message_id IS NOT NULL;
+
+ALTER TABLE whatsapp_messages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "dietitian_own_whatsapp_messages" ON whatsapp_messages;
+CREATE POLICY "dietitian_own_whatsapp_messages" ON whatsapp_messages
+  FOR ALL USING (auth.uid() = dietitian_id) WITH CHECK (auth.uid() = dietitian_id);

@@ -87,6 +87,7 @@ async function ensureChartJs() {
   <a class="nav-item " href="profilo-pubblico.html"><span class="ni">👤</span><span data-only-lang="it">Profilo</span><span data-only-lang="en" style="display:none">Profile</span></a>
   <a class="nav-item " href="chat.html"><span class="ni">👥</span><span data-only-lang="it">Pazienti</span><span data-only-lang="en" style="display:none">Patients</span></a>
   <a class="nav-item" href="broadcast.html"><span class="ni">📢</span><span data-only-lang="it">Broadcast</span><span data-only-lang="en" style="display:none">Broadcast</span></a>
+  <a class="nav-item" href="whatsapp.html"><span class="ni">💬</span><span data-only-lang="it">WhatsApp</span><span data-only-lang="en" style="display:none">WhatsApp</span></a>
   <a class="nav-item" href="analytics.html"><span class="ni">📊</span><span data-only-lang="it">Analytics</span><span data-only-lang="en" style="display:none">Analytics</span></a>
   <a class="nav-item" href="pagamenti.html"><span class="ni">💳</span><span data-only-lang="it">Pagamenti</span><span data-only-lang="en" style="display:none">Payments</span></a>
   <!-- <a class="nav-item " href="anamnesi.html"><span class="ni">📋</span><span data-only-lang="it">Anamnesi</span><span data-only-lang="en" style="display:none">Intake Forms</span></a> -->
@@ -185,6 +186,7 @@ async function ensureChartJs() {
         <div class="fg"><label>Data di nascita</label><input type="date" id="nc-ddn"></div>
         <div class="fg"><label>Sesso</label><select id="nc-sesso"><option value="">—</option><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
         <div class="fg full"><label>Codice Fiscale</label><input type="text" id="nc-cf" data-i18n-placeholder="paz.nc_cf" maxlength="16" style="text-transform:uppercase"></div>
+        <div class="fg full"><label>Telefono (con prefisso, es. +39...)</label><input type="tel" id="nc-telefono" placeholder="+39 333 1234567"></div>
         <div class="fg full"><label>Diagnosi / Note cliniche</label><textarea id="nc-note" data-i18n-placeholder="paz.nc_note"></textarea></div>
       </div>
       <!-- SEZIONE TAG PATOLOGIE -->
@@ -1831,7 +1833,7 @@ function openNewCartella() {
   editingCartellaId = null;
   document.getElementById('nc-title').textContent = '📁 ' + _L('Nuova Cartella Paziente','New Patient Folder');
   document.getElementById('nc-save-btn').textContent = '📁 ' + _L('Crea Cartella','Create Folder');
-  ['nc-nome','nc-cognome','nc-cf','nc-note'].forEach(id => document.getElementById(id).value = '');
+  ['nc-nome','nc-cognome','nc-cf','nc-telefono','nc-note'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('nc-ddn').value = '';
   document.getElementById('nc-sesso').value = '';
   ncSelectedTags = [];
@@ -1844,7 +1846,7 @@ function openNewCartella() {
 async function editCartella(id) {
   if (id === _altroCartellaId) { toast(_L('⚠️ La cartella "Altro" non può essere modificata.','⚠️ The "Other" folder cannot be edited.'), 'warn'); return; }
   showLoading(true);
-  const { data } = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,codice_fiscale,note,tags,archived,user_id').eq('id', id).single();
+  const { data } = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,codice_fiscale,telefono,note,tags,archived,user_id').eq('id', id).single();
   showLoading(false);
   if (!data) return;
   editingCartellaId = id;
@@ -1855,6 +1857,7 @@ async function editCartella(id) {
   document.getElementById('nc-ddn').value = data.ddn || '';
   document.getElementById('nc-sesso').value = data.sesso || '';
   document.getElementById('nc-cf').value = data.codice_fiscale || '';
+  document.getElementById('nc-telefono').value = data.telefono || '';
   document.getElementById('nc-note').value = data.note || '';
   ncSelectedTags = Array.isArray(data.tags) ? [...data.tags] : [];
   renderNcTagChips();
@@ -1871,6 +1874,7 @@ async function salvaCartella() {
     ddn: document.getElementById('nc-ddn').value || null,
     sesso: document.getElementById('nc-sesso').value || null,
     codice_fiscale: document.getElementById('nc-cf').value.trim().toUpperCase() || null,
+    telefono: document.getElementById('nc-telefono').value.trim() || null,
     note: document.getElementById('nc-note').value.trim() || null,
     tags: ncSelectedTags.length ? ncSelectedTags : [],
   };

@@ -2718,7 +2718,8 @@ const DB_UPF = [
   {n:"Birra scura/doppio malto (7% vol.)",c:"Alcolici",src:"UPF",k:62,p:0.7,gs:0,g:0,z:2.5,ch:5,fi:0,ca:10,fe:0.1,mg:9,k2:60,na:6,zn:0.02,fo:40,se:1,col:0},
   {n:"Prosecco / spumante (11% vol.)",c:"Alcolici",src:"UPF",k:77,p:0.1,gs:0,g:0,z:1.2,ch:3,fi:0,ca:10,fe:0.2,mg:8,k2:59,na:10,zn:0.1,fo:14,se:1,col:0},
   {n:"Vodka (40% vol.)",c:"Alcolici",src:"UPF",k:221,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:2,na:1,zn:0,fo:0,se:0,col:0},
-  {n:"Whisky/Rum (40% vol.)",c:"Alcolici",src:"UPF",k:657,p:26.1,gs:9.2,g:48.6,z:3.2,ch:24.4,fi:0,ca:0,fe:0,mg:0,k2:1,na:0,zn:0,fo:0,se:0,col:0},
+  // FIX (dato palesemente corrotto): un distillato al 40% vol non puo' avere 26.1g proteine/48.6g grassi/24.4g carboidrati (sembra un profilo macro di tutt'altro alimento incollato per errore) - corretto ai valori reali di un superalcolico puro (solo etanolo, ~231kcal/100ml da 31.6g di alcol, zero macro) - 2026-07-30
+  {n:"Whisky/Rum (40% vol.)",c:"Alcolici",src:"UPF",k:231,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:1,na:0,zn:0,fo:0,se:0,col:0},
   {n:"Aperol Spritz (porzione 200mL)",c:"Alcolici",src:"UPF",k:76,p:0,gs:0,g:0,z:8,ch:8,fi:0,ca:5,fe:0,mg:2,k2:10,na:10,zn:0,fo:2,se:0,col:0},
   {n:"Cocktail Mojito (porzione 200mL)",c:"Alcolici",src:"UPF",k:105,p:0,gs:0,g:0,z:15,ch:15,fi:0,ca:5,fe:0.1,mg:3,k2:15,na:5,zn:0,fo:3,se:0,col:0},
 

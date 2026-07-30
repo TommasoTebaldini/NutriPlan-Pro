@@ -2452,7 +2452,8 @@ const DB_BDA=[
 {n:"Maitake (Grifola frondosa) fresco",c:"Verdure e ortaggi",k:31,p:2.7,gs:0.1,g:0.4,z:0.9,ch:4.8,fi:2.7,ca:1,fe:0.3,mg:10,k2:204,na:3,zn:0.9,fo:20,se:2,col:0,src:"CREA"},
 // Folati implausibili per fungo fresco (stesso pattern), stimato ~20mcg - 2026-07-30
 {n:"Enoki (Flammulina velutipes) fresco",c:"Verdure e ortaggi",k:37,p:2.7,gs:0.1,g:0.3,z:1.7,ch:7.0,fi:2.7,ca:0,fe:1.1,mg:16,k2:359,na:3,zn:0.6,fo:20,se:2,col:0,src:"CREA"},
-{n:"Wood ear (Auricularia) secco",c:"Verdure e ortaggi",k:284,p:9.2,gs:0.1,g:1.0,z:0.3,ch:74.6,fi:48.7,ca:159,fe:185.0,mg:195,k2:1100,na:82,zn:4.0,fo:140,se:8,col:0,src:"BDA"},
+// FIX: fo=140 fuori scala rispetto ai funghi esotici gemelli nella stessa categoria (Maitake/Enoki/Nameko/Pioppini/Chiodini tutti a 20) - 2026-07-30
+{n:"Wood ear (Auricularia) secco",c:"Verdure e ortaggi",k:284,p:9.2,gs:0.1,g:1.0,z:0.3,ch:74.6,fi:48.7,ca:159,fe:185.0,mg:195,k2:1100,na:82,zn:4.0,fo:20,se:8,col:0,src:"BDA"},
 // Folati implausibili per fungo fresco (stesso pattern), stimato ~20mcg - 2026-07-30
 {n:"Nameko (funghi giapponesi) freschi",c:"Verdure e ortaggi",k:25,p:2.5,gs:0.1,g:0.3,z:1.0,ch:4.5,fi:1.8,ca:5,fe:0.8,mg:10,k2:210,na:10,zn:0.7,fo:20,se:2,col:0,src:"BDA"},
 // Duplicato di Pioppini/Agrocybe già corretto (DB_CREA_1082) - 2026-07-30
@@ -3690,14 +3691,16 @@ const DB_UPF = [
 {n:"Crackers senza glutine",c:"Senza glutine",src:"INT",k:446,p:3.3,gs:7.1,g:12,z:5.2,ch:79,fi:4.4,ca:25,fe:1.0,mg:15,k2:80,na:640,zn:0.3,fo:45,se:1,col:0},
 {n:"Biscotti senza glutine (tipo digestive)",c:"Senza glutine",src:"INT",k:486,p:6.7,gs:10,g:24,z:18,ch:57,fi:7.4,ca:30,fe:1.2,mg:18,k2:100,na:212,zn:0.4,fo:50,se:1,col:0},
 {n:"Fette biscottate senza glutine",c:"Senza glutine",src:"INT",k:378,p:4.7,gs:0.7,g:5.4,z:4.9,ch:71,fi:14,ca:30,fe:1.8,mg:15,k2:90,na:760,zn:0.3,fo:45,se:1,col:0},
-{n:"Pizza margherita senza glutine (base+condimento)",c:"Senza glutine",src:"INT",k:236,p:6.7,gs:4.4,g:8.8,z:1.9,ch:31,fi:4,ca:120,fe:1.0,mg:18,k2:200,na:440,zn:0.8,fo:100,se:5,col:12},
+// FIX: fo=100 troppo alto per pizza (coerente col bucket "22" gia stabilito per pizza normale) - 2026-07-30
+{n:"Pizza margherita senza glutine (base+condimento)",c:"Senza glutine",src:"INT",k:236,p:6.7,gs:4.4,g:8.8,z:1.9,ch:31,fi:4,ca:120,fe:1.0,mg:18,k2:200,na:440,zn:0.8,fo:25,se:5,col:12},
 {n:"Cereali da colazione senza glutine (riso arricchito)",c:"Senza glutine",src:"INT",k:382,p:7.1,gs:0.6,g:2,z:11,ch:81,fi:6,ca:120,fe:8.0,mg:15,k2:90,na:300,zn:1.0,fo:60,se:3,col:0},
 {n:"Grissini senza glutine",c:"Senza glutine",src:"INT",k:462,p:1,gs:2.54,g:17.2,z:2.4,ch:73.6,fi:4.3,ca:20,fe:0.8,mg:10,k2:55,na:580,zn:0.3,fo:35,se:1,col:0},
 {n:"Pancarrè senza glutine",c:"Senza glutine",src:"INT",k:228,p:2.9,gs:0.7,g:5,z:3.8,ch:39.7,fi:6.3,ca:25,fe:1.2,mg:10,k2:55,na:200,zn:0.3,fo:38,se:1,col:0},
 {n:"Cous cous senza glutine (mais-riso, crudo)",c:"Senza glutine",src:"INT",k:398,p:8.1,gs:0.5,g:3.3,z:0.7,ch:82,fi:3,ca:10,fe:0.8,mg:18,k2:50,na:4,zn:0.3,fo:35,se:1,col:0},
 {n:"Birra senza glutine",c:"Senza glutine",src:"INT",k:39,p:0.3,gs:0,g:0,z:0,ch:2.9,fi:0,ca:6,fe:0.1,mg:6,k2:40,na:0,zn:0.01,fo:25,se:1,col:0},
 {n:"Wafer senza glutine alla vaniglia",c:"Senza glutine",src:"INT",k:518,p:3.9,gs:14,g:25,z:33,ch:69,fi:0.7,ca:30,fe:0.8,mg:15,k2:80,na:72,zn:0.4,fo:55,se:1,col:5},
-{n:"Torta al cioccolato senza glutine (fetta, 100g)",c:"Senza glutine",src:"INT",k:421,p:4.6,gs:4.4,g:22,z:31,ch:48,fi:3.7,ca:35,fe:1.5,mg:30,k2:150,na:216,zn:0.8,fo:95,se:2,col:80},
+// FIX: fo=95 fuori scala rispetto alle altre torte gia corrette (bucket 35 per dolci con uovo/crema) - 2026-07-30
+{n:"Torta al cioccolato senza glutine (fetta, 100g)",c:"Senza glutine",src:"INT",k:421,p:4.6,gs:4.4,g:22,z:31,ch:48,fi:3.7,ca:35,fe:1.5,mg:30,k2:150,na:216,zn:0.8,fo:35,se:2,col:80},
 // ═══ PRODOTTI VEGANI ═══
 {n:"Burger vegetale (soia e piselli)",c:"Prodotti vegani",src:"UPF",k:215,p:18.0,gs:2.0,g:9.5,z:1.5,ch:13.0,fi:4.0,ca:35,fe:2.5,mg:38,k2:280,na:420,zn:1.5,fo:180,se:5,col:0},
 {n:"Salsiccia vegetale (tofu affumicato)",c:"Prodotti vegani",src:"UPF",k:185,p:16.5,gs:1.5,g:8.5,z:1.0,ch:8.5,fi:1.5,ca:180,fe:2.0,mg:55,k2:200,na:580,zn:1.2,fo:5,se:8,col:0},
@@ -4325,12 +4328,15 @@ const DB_EXTRA=[
 {n:"Pane senza glutine (pronto)",c:"Senza glutine",src:"EXTRA",k:233,p:3.5,gs:0.4,g:3.4,z:3.3,ch:43,fi:8.1,ca:15,fe:0.5,mg:10,k2:80,na:396,zn:0.3,fo:40,se:5,col:0},
 {n:"Pizza senza glutine (base surgelata)",c:"Senza glutine",src:"EXTRA",k:236,p:6.7,gs:4.4,g:8.8,z:1.9,ch:31,fi:4,ca:30,fe:0.8,mg:10,k2:90,na:440,zn:0.4,fo:50,se:5,col:0},
 {n:"Biscotti senza glutine al cioccolato",c:"Senza glutine",src:"EXTRA",k:455,p:4,gs:7,g:20,z:30,ch:62,fi:2,ca:30,fe:2,mg:25,k2:180,na:380,zn:0.5,fo:80,se:3,col:5},
-{n:"Crackers senza glutine (riso)",c:"Senza glutine",src:"EXTRA",k:446,p:3.3,gs:7.1,g:12,z:5.2,ch:79,fi:4.4,ca:20,fe:0.5,mg:30,k2:110,na:640,zn:0.5,fo:100,se:5,col:0},
-{n:"Muesli senza glutine",c:"Senza glutine",src:"EXTRA",k:382,p:7.1,gs:0.6,g:2,z:11,ch:81,fi:6,ca:35,fe:3,mg:60,k2:280,na:300,zn:1.5,fo:180,se:8,col:0},
+// FIX: fo=100 fuori scala rispetto agli altri crackers senza glutine gia coerenti (35-50) - 2026-07-30
+{n:"Crackers senza glutine (riso)",c:"Senza glutine",src:"EXTRA",k:446,p:3.3,gs:7.1,g:12,z:5.2,ch:79,fi:4.4,ca:20,fe:0.5,mg:30,k2:110,na:640,zn:0.5,fo:35,se:5,col:0},
+// FIX: fo=180 fuori scala rispetto al resto della categoria (max secondo posto 110, la maggior parte sotto 100) - 2026-07-30
+{n:"Muesli senza glutine",c:"Senza glutine",src:"EXTRA",k:382,p:7.1,gs:0.6,g:2,z:11,ch:81,fi:6,ca:35,fe:3,mg:60,k2:280,na:300,zn:1.5,fo:45,se:8,col:0},
 {n:"Farina di mandorle",c:"Senza glutine",src:"EXTRA",k:611,p:22,gs:3.5,g:54.5,z:4,ch:4.8,fi:10,ca:260,fe:3.5,mg:275,k2:730,na:5,zn:2.9,fo:29,se:2,col:0},
 {n:"Piadina senza glutine",c:"Senza glutine",src:"EXTRA",k:292,p:4.5,gs:2,g:9,z:2,ch:48,fi:2.5,ca:55,fe:0.8,mg:12,k2:90,na:530,zn:0.4,fo:60,se:5,col:10},
 {n:"Gnocchi di patate senza glutine",c:"Senza glutine",src:"EXTRA",k:115,p:2,gs:0.2,g:0.8,z:0.5,ch:25,fi:1.5,ca:10,fe:0.5,mg:12,k2:200,na:350,zn:0.3,fo:40,se:2,col:0},
-{n:"Tiramisù senza glutine",c:"Senza glutine",src:"EXTRA",k:283,p:4.2,gs:8,g:19.4,z:18.1,ch:29.2,fi:0.5,ca:90,fe:0.5,mg:15,k2:180,na:264,zn:0.5,fo:110,se:3,col:95},
+// FIX: fo=110 fuori scala rispetto al bucket 35 gia stabilito per tiramisu/dolci con uovo-mascarpone - 2026-07-30
+{n:"Tiramisù senza glutine",c:"Senza glutine",src:"EXTRA",k:283,p:4.2,gs:8,g:19.4,z:18.1,ch:29.2,fi:0.5,ca:90,fe:0.5,mg:15,k2:180,na:264,zn:0.5,fo:35,se:3,col:95},
 {n:"Pasta senza glutine di mais (cotta)",c:"Senza glutine",src:"EXTRA",k:154,p:2.8,gs:0.13,g:0.8,z:0.5,ch:33.8,fi:0.5,ca:8,fe:0.3,mg:10,k2:40,na:0.5,zn:0.2,fo:35,se:5,col:0},
 // === INTEGRATORI SPORTIVI ===
 {n:"Proteine whey concentrate",c:"Integratori sportivi",src:"EXTRA",k:352,p:78.1,gs:0.78,g:1.6,z:0,ch:6.3,fi:3.1,ca:469,fe:1.13,mg:195,k2:500,na:156,zn:6.18,fo:33,se:26.7,col:16},

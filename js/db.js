@@ -2612,7 +2612,8 @@ const DB_UPF = [
   {n:"Torta di riso industriale",c:"Dolci confezionati",src:"UPF",k:260,p:5,gs:4,g:10,z:28,ch:40,fi:0.5,ca:100,fe:0.5,mg:15,k2:120,na:120,zn:0.3,fo:90,se:2,col:85},
 
   // ── GELATI E GHIACCIOLI ──
-  {n:"Gelato al cioccolato industriale",c:"Gelati",src:"UPF",k:216,p:3.5,gs:7,g:12,z:23,ch:26,fi:0.5,ca:105,fe:0.8,mg:18,k2:195,na:65,zn:0.5,fo:110,se:2,col:35},
+  // Fosforo (latte+panna, calcio 105mg conferma comparto lattiero) era nel campo folati; folati reali ~15mcg - 2026-07-30
+  {n:"Gelato al cioccolato industriale",c:"Gelati",src:"UPF",k:216,p:3.5,gs:7,g:12,z:23,ch:26,fi:0.5,ca:105,fe:0.8,mg:18,k2:195,na:65,zn:0.5,fo:15,se:2,col:35},
   {n:"Ghiacciolo alla fragola (tipo Polaretti)",c:"Gelati",src:"UPF",k:68,p:0,gs:0,g:0,z:17,ch:17,fi:0,ca:3,fe:0,mg:1,k2:5,na:10,zn:0,fo:2,se:0,col:0},
   {n:"Gelato Magnum (cioccolato, stima per 100g)",c:"Gelati",src:"UPF",k:324.7,p:4.2,gs:12.6,g:20.8,z:26,ch:30,fi:0.8,ca:85,fe:0.6,mg:15,k2:150,na:66.2,zn:0.4,fo:90,se:2,col:30},
   {n:"Gelato alla crema industriale",c:"Gelati",src:"UPF",k:255,p:3.1,gs:11,g:16,z:25,ch:25,fi:0.6,ca:110,fe:0.2,mg:10,k2:165,na:32,zn:0.4,fo:95,se:2,col:45},
@@ -3923,7 +3924,8 @@ const DB_ONS = [
 // ── PRODOTTI PRONTI (READY MEAL) ──
 {n:"Lasagne al ragù surgelate (per 100g)",c:"Piatti pronti",src:"UPF",k:135,p:6.5,gs:3.0,g:5.5,z:3.0,ch:15.5,fi:1.0,ca:60,fe:1.0,mg:12,k2:170,na:550,zn:0.7,fo:70,se:6,col:30},
 {n:"Riso pronto al vapore (pouch, per 100g cotto)",c:"Piatti pronti",src:"UPF",k:160,p:3.0,gs:0.1,g:1.5,z:0,ch:34.5,fi:0.5,ca:5,fe:0.5,mg:12,k2:30,na:390,zn:0.5,fo:8,se:6,col:0},
-{n:"Pasta fresca ripiena in busta (200g, per 100g)",c:"Piatti pronti",src:"UPF",k:220,p:9.5,gs:4.0,g:7.5,z:3.5,ch:29.5,fi:1.5,ca:80,fe:1.0,mg:15,k2:130,na:520,zn:0.8,fo:75,se:7,col:40},
+// Fosforo (pasta all'uovo+ripieno) era nel campo folati; folati reali ~40mcg - 2026-07-30
+{n:"Pasta fresca ripiena in busta (200g, per 100g)",c:"Piatti pronti",src:"UPF",k:220,p:9.5,gs:4.0,g:7.5,z:3.5,ch:29.5,fi:1.5,ca:80,fe:1.0,mg:15,k2:130,na:520,zn:0.8,fo:40,se:7,col:40},
 {n:"Sushi misto confezionato (per 100g)",c:"Piatti pronti",src:"UPF",k:146,p:6.7,gs:0.8,g:2.9,z:0.9,ch:23,fi:0.5,ca:25,fe:0.8,mg:18,k2:180,na:2200,zn:0.8,fo:80,se:15,col:35},
 {n:"Burger Beyond Meat vegetale (per 100g)",c:"Piatti pronti",src:"UPF",k:250,p:20.0,gs:5.0,g:18.0,z:0,ch:5.0,fi:2.0,ca:100,fe:3.2,mg:28,k2:270,na:370,zn:1.8,fo:0,se:0,col:0},
 {n:"Chicken nuggets surgelati (per 100g)",c:"Piatti pronti",src:"UPF",k:247,p:14.5,gs:3.0,g:13.5,z:0.5,ch:21.0,fi:0.8,ca:20,fe:1.0,mg:18,k2:240,na:540,zn:0.9,fo:8,se:12,col:45},

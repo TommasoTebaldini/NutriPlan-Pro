@@ -2275,7 +2275,8 @@ const DB_BDA=[
 {n:"Kefir di latte intero",c:"Latte e derivati",k:63,p:3.3,gs:2.0,g:3.6,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:150,na:50,zn:0.4,fo:5,se:2,col:14,src:"BDA"},
 {n:"Latte di capra fresco intero",c:"Latte e derivati",k:76,p:3.9,gs:3.32,g:4.8,z:4.7,ch:4.7,fi:0,ca:141,fe:0.1,mg:13,k2:180,na:40,zn:0.31,fo:5,se:1.9,col:10,src:"CREA"},
 {n:"Stracciatella di bufala",c:"Formaggi",k:268,p:13.5,gs:13.0,g:23.5,z:0.5,ch:1.0,fi:0,ca:210,fe:0.2,mg:18,k2:80,na:95,zn:0.9,fo:20,se:8,col:75,src:"CREA"},
-{n:"Latticello (buttermilk)",c:"Latte e derivati",k:40,p:3.3,gs:0.2,g:0.9,z:4.8,ch:4.8,fi:0,ca:116,fe:0.1,mg:11,k2:151,na:105,zn:0.4,fo:36,se:2,col:5,src:"BDA"},
+// Stesso bug fosforo-in-folati del comparto lattiero; folati reali latticello ~5mcg (confermato via ricerca) - 2026-07-30
+{n:"Latticello (buttermilk)",c:"Latte e derivati",k:40,p:3.3,gs:0.2,g:0.9,z:4.8,ch:4.8,fi:0,ca:116,fe:0.1,mg:11,k2:151,na:105,zn:0.4,fo:5,se:2,col:5,src:"BDA"},
 {n:"Panna fresca da cucina (35% grassi)",c:"Latte e derivati",k:337,p:2.3,gs:20.5,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:5,se:1,col:120,src:"CREA"},
 {n:"Formaggio Fontina DOP",c:"Formaggi",k:352,p:25.5,gs:14.5,g:26.0,z:0,ch:0,fi:0,ca:870,fe:0.2,mg:28,k2:100,na:700,zn:3.5,fo:15,se:14,col:80,src:"CREA"},
 {n:"Pecorino Sardo DOP stagionato",c:"Formaggi",k:404,p:28.8,gs:24.5,g:32,z:0.2,ch:0.2,fi:0,ca:607,fe:0.6,mg:40,k2:90,na:1800,zn:3.38,fo:18,se:6.3,col:88,src:"CREA"},

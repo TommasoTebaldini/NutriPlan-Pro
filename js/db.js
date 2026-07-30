@@ -87,7 +87,8 @@ const DB_CREA=[
 {n:"Patata",c:"Verdure",k:80,p:2.1,gs:0.03,g:0.1,z:0.4,ch:18,fi:1.6,ca:10,fe:0.6,mg:23,k2:570,na:7,zn:0.27,fo:35,se:1,col:0,src:"BDA"},
 {n:"Melanzana",c:"Verdure",k:20,p:1.1,gs:0.02,g:0.1,z:2.6,ch:2.6,fi:2.6,ca:14,fe:0.3,mg:11,k2:184,na:26,zn:0.2,fo:18,se:0.3,col:0,src:"BDA"},
 {n:"Peperone rosso",c:"Verdure",k:28,p:0.9,gs:0,g:0.3,z:4.9,ch:6.7,fi:2.1,ca:11,fe:0.5,mg:11,k2:211,na:2,zn:0.25,fo:26,se:0.6,col:0,src:"CREA"},
-{n:"Funghi champignon",c:"Verdure",k:24,p:3.7,gs:0,g:0.2,z:0.8,ch:0.8,fi:2.3,ca:6,fe:0.8,mg:13,k2:320,na:5,zn:1.46,fo:86,se:7.5,col:0,src:"CREA"},
+// FIX (rifinitura post-audit, blind spot pre-esistente): fosforo (champignon ~86mg) era nel campo folati; folati reali ~17mcg - 2026-07-30
+{n:"Funghi champignon",c:"Verdure",k:24,p:3.7,gs:0,g:0.2,z:0.8,ch:0.8,fi:2.3,ca:6,fe:0.8,mg:13,k2:320,na:5,zn:1.46,fo:17,se:7.5,col:0,src:"CREA"},
 {n:"Cipolla",c:"Verdure",k:28,p:1,gs:0.02,g:0.1,z:5.7,ch:5.7,fi:1.1,ca:25,fe:0.4,mg:9,k2:140,na:10,zn:0.3,fo:12,se:0.5,col:0,src:"BDA"},
 // Fosforo (153mg, confermato fonte USDA) era nel campo folati; folati reali dell'aglio sono ~3mcg - 2026-07-29
 {n:"Aglio",c:"Verdure",k:53,p:8.4,gs:0.15,g:0.8,z:1,ch:1,fi:4.3,ca:15,fe:1.2,mg:17,k2:310,na:4,zn:0.59,fo:3,se:14,col:0,src:"CREA"},
@@ -359,7 +360,8 @@ const DB_CREA=[
 {n:"Calamaro fresco",c:"Pesce",k:68,p:12.6,gs:0.85,g:1.7,z:0.6,ch:0.6,fi:0,ca:144,fe:0.2,mg:22,k2:145,na:185,zn:3.1,fo:8,se:44,col:177,src:"CREA"},
 {n:"Polpo cotto",c:"Pesce",k:57,p:10.6,gs:0.42,g:1,z:1.4,ch:1.4,fi:0,ca:144,fe:1.5,mg:39,k2:233,na:196,zn:5.1,fo:8,se:45,col:72,src:"CREA"},
 // Zinco (90mg) stesso bug sistemico gia trovato su altre 2 voci ostriche del DB: corretto a 3.6mg (fonti CREA verificate) - 2026-07-29
-{n:"Ostrica fresca",c:"Pesce",k:69,p:10.2,gs:1.0,g:0.9,z:0.5,ch:5.4,fi:0,ca:186,fe:6,mg:22,k2:260,na:510,zn:3.6,fo:162,se:77,col:30,src:"CREA"},
+// FIX (rifinitura post-audit, blind spot pre-esistente): folati reali ostrica confermati via ricerca (7-18mcg) - 2026-07-30
+{n:"Ostrica fresca",c:"Pesce",k:69,p:10.2,gs:1.0,g:0.9,z:0.5,ch:5.4,fi:0,ca:186,fe:6,mg:22,k2:260,na:510,zn:3.6,fo:15,se:77,col:30,src:"CREA"},
 {n:"Riccio di mare (polpa)",c:"Pesce",k:99,p:12.8,gs:0.7,g:3.3,z:3.7,ch:6.6,fi:0,ca:30,fe:1.1,mg:27,k2:220,na:220,zn:0.7,fo:7,se:30,col:150,src:"CREA"},
 // ── BEVANDE aggiuntive ──
 {n:"Succo di melograno 100%",c:"Bevande",k:54,p:0.2,gs:0,g:0.3,z:12.6,ch:13.4,fi:0.1,ca:11,fe:0.3,mg:7,k2:214,na:9,zn:0.2,fo:8,se:0.5,col:0,src:"CREA"},
@@ -463,8 +465,10 @@ const DB_CREA=[
   {n:"Crauti (cavolo fermentato)",c:"Verdure",k:26,p:1.5,gs:0.08,g:0.3,z:4,ch:4,fi:1.1,ca:48,fe:0.6,mg:13,k2:288,na:355,zn:0.4,fo:16,se:0.6,col:0,src:"BDA"},
   {n:"Miso bianco (shiro miso)",c:"Condimenti",k:198,p:11.7,gs:0.5,g:6.0,z:4.8,ch:26.2,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3930,zn:2.6,fo:159,se:3.7,col:0,src:"CREA"},
   {n:"Natto (soia fermentata)",c:"Legumi",k:214,p:17.7,gs:1.59,g:11,z:0,ch:9,fi:5.4,ca:217,fe:8.6,mg:115,k2:729,na:7,zn:3.03,fo:8,se:13,col:0,src:"BDA"},
-  {n:"Tofu compatto (silken)",c:"Legumi",k:53,p:4.9,gs:0.3,g:2.7,z:1.0,ch:2.0,fi:0.3,ca:130,fe:1.0,mg:27,k2:121,na:12,zn:0.6,fo:97,se:8.9,col:0,src:"CREA"},
-  {n:"Tofu solido (firm tofu)",c:"Legumi",k:76,p:8.0,gs:0.5,g:4.5,z:0.9,ch:2.0,fi:0.3,ca:350,fe:2.7,mg:37,k2:150,na:7,zn:0.8,fo:120,se:11,col:0,src:"CREA"},
+  // FIX (rifinitura post-audit, blind spot pre-esistente): stesso bug tofu, allineato al tofu seta già corretto (19mcg) - 2026-07-30
+  {n:"Tofu compatto (silken)",c:"Legumi",k:53,p:4.9,gs:0.3,g:2.7,z:1.0,ch:2.0,fi:0.3,ca:130,fe:1.0,mg:27,k2:121,na:12,zn:0.6,fo:19,se:8.9,col:0,src:"CREA"},
+  // FIX (rifinitura post-audit, blind spot pre-esistente): calcio 350mg identico al tofu extra firm già corretto (match esatto USDA), stesso bug - 2026-07-30
+  {n:"Tofu solido (firm tofu)",c:"Legumi",k:76,p:8.0,gs:0.5,g:4.5,z:0.9,ch:2.0,fi:0.3,ca:350,fe:2.7,mg:37,k2:150,na:7,zn:0.8,fo:9,se:11,col:0,src:"CREA"},
   // Folati 60mcg incoerente con diluizione da cottura (semolino crudo ~35mcg, qui diluito ~5x) - 2026-07-29
   {n:"Crema di grano (semolino cotto)",c:"Cereali e derivati",k:65,p:2.1,gs:0.1,g:0.3,z:0.1,ch:13.6,fi:0.5,ca:7,fe:0.7,mg:12,k2:75,na:200,zn:0.4,fo:7,se:2,col:0,src:"CREA"},
   {n:"Crema di verdure (passato)",c:"Verdure",k:35,p:1.0,gs:0.0,g:1.0,z:3.5,ch:5.0,fi:1.5,ca:20,fe:0.3,mg:10,k2:200,na:300,zn:0.1,fo:25,se:0.5,col:0,src:"CREA"},
@@ -473,7 +477,8 @@ const DB_CREA=[
   {n:"Pane di semola (rimacinata)",c:"Cereali e derivati",k:268,p:8.5,gs:0.3,g:1.5,z:3.0,ch:54.0,fi:2.5,ca:30,fe:1.8,mg:25,k2:105,na:490,zn:0.8,fo:90,se:15,col:0,src:"CREA"},
   {n:"Purea di patate (pronta)",c:"Verdure",k:85,p:2.0,gs:0.5,g:2.0,z:0.2,ch:15.0,fi:1.5,ca:30,fe:0.3,mg:12,k2:280,na:180,zn:0.2,fo:35,se:1,col:5,src:"CREA"},
   // ── FUNGHI ──
-  {n:"Funghi porcini freschi",c:"Verdure",k:31,p:3.9,gs:0.1,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:12,k2:235,na:52,zn:0.7,fo:60,se:2,col:0,src:"CREA"},
+  // FIX (rifinitura post-audit, blind spot pre-esistente): stesso pattern fosforo-in-folati dei funghi freschi già corretti - 2026-07-30
+  {n:"Funghi porcini freschi",c:"Verdure",k:31,p:3.9,gs:0.1,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:12,k2:235,na:52,zn:0.7,fo:20,se:2,col:0,src:"CREA"},
   // Folati (680mcg) troppo alti per un fungo (fonti concordano su folati modesti anche per specie essiccate, <100mcg): corretto a 25mcg. NOTA: kcal (31) sembra quello del porcino FRESCO non essiccato (i secchi tipicamente 250-350kcal) - da verificare in futuro - 2026-07-29
   {n:"Funghi porcini secchi",c:"Verdure",k:31,p:3.9,gs:1.2,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:96,k2:235,na:52,zn:5.5,fo:25,se:14,col:0,src:"CREA"},
   // Fosforo (57mg, match esatto USDA finferli) era nel campo folati; folati reali finferli/chanterelle ~2-6mcg - 2026-07-29
@@ -1887,8 +1892,10 @@ const DB_BDA=[
   {n:"Sorgho cotto",c:"Cereali e derivati",src:"BDA",k:123,p:4.0,gs:0.3,g:1.3,z:0.5,ch:25.5,fi:3.0,ca:13,fe:1.5,mg:35,k2:70,na:2,zn:0.6,fo:28,se:3,col:0,src:"BDA"},
   // ── PRODOTTI A BASE VEGETALE NATURALI ──
   {n:"Seitan al naturale (glutine di frumento)",c:"Legumi",src:"BDA",k:140,p:25.0,gs:0,g:2.0,z:0.5,ch:4.0,fi:0.6,ca:14,fe:1.2,mg:12,k2:50,na:360,zn:0.8,fo:42,se:3,col:0,src:"BDA"},
-  {n:"Tofu affumicato (tofu duro)",c:"Legumi",src:"BDA",k:132,p:15.0,gs:0.5,g:7.0,z:1.5,ch:3.5,fi:0.3,ca:164,fe:2.2,mg:58,k2:142,na:250,zn:1.0,fo:224,se:8,col:0,src:"BDA"},
-  {n:"Tofu fritto (aburage)",c:"Legumi",src:"BDA",k:270,p:17.0,gs:1.0,g:20.5,z:0.5,ch:3.5,fi:0.5,ca:200,fe:2.8,mg:60,k2:130,na:15,zn:1.2,fo:240,se:8,col:0,src:"BDA"},
+  // FIX (rifinitura post-audit: voce marcata "corrected" in una sessione precedente al pattern fosforo-in-folati, mai riverificata) - stesso bug tofu già confermato (DB_CREA_694, match esatto USDA 111mg); folati reali ~9mcg - 2026-07-30
+  {n:"Tofu affumicato (tofu duro)",c:"Legumi",src:"BDA",k:132,p:15.0,gs:0.5,g:7.0,z:1.5,ch:3.5,fi:0.3,ca:164,fe:2.2,mg:58,k2:142,na:250,zn:1.0,fo:9,se:8,col:0,src:"BDA"},
+  // FIX (rifinitura post-audit, stesso motivo): stesso bug tofu, folati reali ~9mcg - 2026-07-30
+  {n:"Tofu fritto (aburage)",c:"Legumi",src:"BDA",k:270,p:17.0,gs:1.0,g:20.5,z:0.5,ch:3.5,fi:0.5,ca:200,fe:2.8,mg:60,k2:130,na:15,zn:1.2,fo:9,se:8,col:0,src:"BDA"},
   {n:"Edamame (soia verde) cotti",c:"Legumi",src:"BDA",k:121,p:11.9,gs:0.5,g:5.2,z:3.0,ch:8.9,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:6,zn:1.4,fo:311,se:1.5,col:0,src:"BDA"},
   {n:"Lenticchie rosse decorticate cotte",c:"Legumi",src:"BDA",k:116,p:9.0,gs:0.1,g:0.4,z:2.5,ch:20.1,fi:5.5,ca:19,fe:3.0,mg:38,k2:370,na:2,zn:1.4,fo:181,se:3,col:0,src:"BDA"},
   {n:"Lenticchie beluga (nere) cotte",c:"Legumi",src:"BDA",k:116,p:9.0,gs:0.1,g:0.5,z:2.0,ch:20.0,fi:8.0,ca:22,fe:3.3,mg:48,k2:350,na:2,zn:1.5,fo:180,se:3,col:0,src:"BDA"},
@@ -3259,7 +3266,8 @@ const DB_UPF = [
   // Carboidrati erano 48g (errore di virgola, impossibile per una bevanda fermentata a bassa kcal): corretto a 4.8g, coerente con le altre 2 voci Kombucha del db (ch 2.5 e 4.0) - 2026-07-29
   {n:"Kombucha (bevanda fermentata tè, per 100mL)",c:"Bevande",src:"UPF",k:16,p:0.2,gs:0,g:0,z:4,ch:4.8,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:0,zn:0,fo:4,se:0,col:0},
   {n:"Kefir di latte vaccino intero (per 100g)",c:"Latte e derivati",src:"UPF",k:43,p:3.3,gs:1.2,g:1.5,z:3.8,ch:4,fi:0,ca:120,fe:0.1,mg:12,k2:151,na:40,zn:0.4,fo:5,se:3,col:12},
-  {n:"Tofu al naturale (industriale, per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:149,p:15,gs:1.5,g:8.5,z:0,ch:2,fi:2.3,ca:350,fe:5.4,mg:30,k2:121,na:0,zn:0.8,fo:97,se:8,col:0},
+  // FIX (rifinitura post-audit, blind spot pre-esistente): calcio 350mg identico al tofu extra firm già corretto, stesso bug - 2026-07-30
+  {n:"Tofu al naturale (industriale, per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:149,p:15,gs:1.5,g:8.5,z:0,ch:2,fi:2.3,ca:350,fe:5.4,mg:30,k2:121,na:0,zn:0.8,fo:9,se:8,col:0},
   {n:"Seitan al naturale (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:135,p:18,gs:0.2,g:1.2,z:0.9,ch:12,fi:2.1,ca:14,fe:2.4,mg:18,k2:45,na:580,zn:0.8,fo:90,se:3,col:0},
 // Allineato a voce CREA gia verificata "Tempeh di soia" (la pastorizzazione non altera la composizione) — 2026-07-28
   {n:"Tempeh di soia pastorizzato (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:173,p:20.7,gs:0.92,g:6.4,z:0.9,ch:6.4,fi:4.1,ca:120,fe:3.6,mg:81,k2:370,na:6,zn:1.8,fo:76,se:0.1,col:0},
@@ -3464,7 +3472,8 @@ const DB_UPF = [
 {n:"Panna di soia (per 100ml)",c:"Alternative vegetali",src:"UPF",k:168,p:2.5,gs:2.5,g:16,z:1.5,ch:3.5,fi:0,ca:20,fe:0.5,mg:15,k2:120,na:50,zn:0.2,fo:55,se:1,col:0},
 {n:"Formaggio vegano (per 100g)",c:"Alternative vegetali",src:"UPF",k:275,p:0,gs:14,g:23,z:0,ch:18,fi:1.5,ca:150,fe:1.0,mg:10,k2:80,na:759,zn:0.5,fo:80,se:2,col:0},
 {n:"Burger vegetale (Beyond/Impossible tipo, per 100g)",c:"Alternative vegetali",src:"UPF",k:154,p:10.2,gs:0.4,g:3.7,z:3.9,ch:18,fi:4.8,ca:80,fe:4.0,mg:25,k2:280,na:680,zn:2.0,fo:180,se:8,col:0},
-{n:"Tofu affumicato (per 100g)",c:"Alternative vegetali",src:"UPF",k:148,p:15,gs:1.5,g:8.5,z:1.0,ch:2.0,fi:0.5,ca:200,fe:2.5,mg:58,k2:185,na:400,zn:1.2,fo:200,se:8,col:0},
+// FIX (rifinitura post-audit, blind spot pre-esistente): stesso bug tofu affumicato già confermato (fo:9) - 2026-07-30
+{n:"Tofu affumicato (per 100g)",c:"Alternative vegetali",src:"UPF",k:148,p:15,gs:1.5,g:8.5,z:1.0,ch:2.0,fi:0.5,ca:200,fe:2.5,mg:58,k2:185,na:400,zn:1.2,fo:9,se:8,col:0},
 {n:"Quorn (mycoprotein, per 100g)",c:"Alternative vegetali",src:"UPF",k:99,p:14,gs:0.8,g:2.6,z:0.6,ch:1.7,fi:7.1,ca:21,fe:0.5,mg:18,k2:170,na:320,zn:0.8,fo:100,se:4,col:0},
 // ── FAST FOOD CATENE ──
 {n:"McDonald's Hamburger classico (per 100g)",c:"Fast food catene",src:"UPF",k:238.1,p:12.4,gs:2.86,g:7.6,z:6.5,ch:28.6,fi:1.9,ca:62,fe:2.5,mg:18,k2:225,na:600,zn:1.8,fo:8,se:10,col:38},
@@ -4499,7 +4508,8 @@ const DB_EXTRA=[
 // === FUNGHI ESOTICI ===
 {n:"Shiitake freschi",c:"Funghi",src:"EXTRA",k:34,p:2.2,gs:0,g:0.5,z:2.4,ch:6.8,fi:2.5,ca:2,fe:0.41,mg:20,k2:304,na:9,zn:1.03,fo:13,se:5.7,col:0},
 {n:"Funghi oyster freschi (ostrica)",c:"Funghi",src:"EXTRA",k:33,p:3.3,gs:0.06,g:0.4,z:1.1,ch:6.1,fi:2.3,ca:3,fe:1.33,mg:18,k2:420,na:18,zn:0.77,fo:38,se:2.6,col:0},
-{n:"Enoki freschi (funghi ago giapponesi)",c:"Funghi",src:"EXTRA",k:37,p:2.7,gs:0.03,g:0.3,z:0.2,ch:7.8,fi:2.7,ca:0,fe:1.15,mg:16,k2:359,na:3,zn:0.65,fo:48,se:2.2,col:0},
+// FIX (rifinitura post-audit): allineato al duplicato Enoki già corretto (20mcg) - 2026-07-30
+{n:"Enoki freschi (funghi ago giapponesi)",c:"Funghi",src:"EXTRA",k:37,p:2.7,gs:0.03,g:0.3,z:0.2,ch:7.8,fi:2.7,ca:0,fe:1.15,mg:16,k2:359,na:3,zn:0.65,fo:20,se:2.2,col:0},
 {n:"Funghi maitake freschi (hen of the woods)",c:"Funghi",src:"EXTRA",k:31,p:1.9,gs:0.03,g:0.2,z:2.1,ch:7,fi:2.7,ca:1,fe:0.3,mg:10,k2:204,na:1,zn:0.75,fo:21,se:2.2,col:0},
 // === PESCE AGGIUNTIVO ===
 // Allineato alla voce BDA gia verificata "Orata al forno" (stesso nome quasi esatto) — 2026-07-28

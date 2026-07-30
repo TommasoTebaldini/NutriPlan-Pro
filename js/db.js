@@ -3460,8 +3460,10 @@ const DB_UPF = [
 // ── CIBI ITALIANI REGIONALI E TRADIZIONALI ──
 {n:"Focaccia genovese (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:260,p:6.9,gs:1.1,g:7.7,z:2.4,ch:39,fi:3.5,ca:20,fe:1.2,mg:15,k2:90,na:2300,zn:0.5,fo:25,se:5,col:0},
 {n:"Arancino siciliano (per 100g)",c:"Piatti tipici regionali",src:"INT",k:220,p:6,gs:4,g:10,z:2,ch:23,fi:1,ca:60,fe:1.0,mg:18,k2:150,na:450,zn:1.0,fo:85,se:8,col:20},
-{n:"Risotto alla milanese (per 100g cotto)",c:"Piatti tipici regionali",src:"INT",k:160,p:3.5,gs:4.5,g:7.5,z:0.5,ch:21,fi:0.3,ca:35,fe:0.4,mg:10,k2:55,na:380,zn:0.5,fo:50,se:4,col:20},
-{n:"Polenta taragna (per 100g cotta)",c:"Cereali e derivati",src:"INT",k:125,p:3.5,gs:4.5,g:8.5,z:0.3,ch:16,fi:1.0,ca:120,fe:0.5,mg:20,k2:80,na:350,zn:0.8,fo:60,se:3,col:20},
+// Coerente col duplicato già verificato (DB_BDA_879, 8mcg): folati implausibili per riso cotto/diluito - 2026-07-30
+{n:"Risotto alla milanese (per 100g cotto)",c:"Piatti tipici regionali",src:"INT",k:160,p:3.5,gs:4.5,g:7.5,z:0.5,ch:21,fi:0.3,ca:35,fe:0.4,mg:10,k2:55,na:380,zn:0.5,fo:8,se:4,col:20},
+// Fosforo (mais+grano saraceno cotto/diluito) era nel campo folati; folati reali ~8mcg, coerente col duplicato già verificato (DB_CREA_1065, 12mcg) - 2026-07-30
+{n:"Polenta taragna (per 100g cotta)",c:"Cereali e derivati",src:"INT",k:125,p:3.5,gs:4.5,g:8.5,z:0.3,ch:16,fi:1.0,ca:120,fe:0.5,mg:20,k2:80,na:350,zn:0.8,fo:8,se:3,col:20},
 {n:"Ribollita toscana (per 100g)",c:"Zuppe e minestre",src:"INT",k:111,p:2.5,gs:0.9,g:5.9,z:2.1,ch:11,fi:2.5,ca:55,fe:1.2,mg:20,k2:280,na:320,zn:0.5,fo:55,se:3,col:0},
 // Allineato a voce BDA gia verificata "Panzanella toscana" (nome esatto identico) — 2026-07-28
 {n:"Panzanella toscana (per 100g)",c:"Insalate e contorni",src:"INT",k:145,p:3.5,gs:0.8,g:6.5,z:4.0,ch:20,fi:2.5,ca:42,fe:1.0,mg:22,k2:280,na:380,zn:0.5,fo:28,se:4,col:0},

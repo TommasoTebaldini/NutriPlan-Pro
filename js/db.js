@@ -1916,9 +1916,12 @@ const DB_BDA=[
 {n:"Ricotta salata",c:"Formaggi",k:334,p:20,gs:14.5,g:23,z:0,ch:3.5,fi:0,ca:380,fe:0.5,mg:25,k2:90,na:1500,zn:2.0,fo:12,se:8,col:64,src:"CREA"},
 
 // ── AGGIUNTE FINALI: voci CREA/BDA mancanti ──
-{n:"Nettarina fresca (pesca noce)",c:"Frutta fresca",k:44,p:1.1,gs:0,g:0.2,z:8.5,ch:10.5,fi:1.7,ca:9,fe:0.3,mg:11,k2:181,na:0,zn:0.2,fo:26,se:0.1,col:0,src:"CREA"},
-{n:"Pomodori secchi al sole",c:"Verdure",k:258,p:14.0,gs:0.5,g:3.0,z:30.0,ch:55.8,fi:12.3,ca:110,fe:9.1,mg:194,k2:3427,na:102,zn:2.0,fo:356,se:5.5,col:0,src:"CREA"},
-{n:"Pomodori secchi sott'olio",c:"Verdure",k:213,p:5.0,gs:0.4,g:14.0,z:8.0,ch:16.0,fi:4.0,ca:60,fe:4.0,mg:60,k2:1000,na:800,zn:1.0,fo:130,se:3.0,col:0,src:"CREA"},
+// Fosforo (26mg, match esatto nettarina) era nel campo folati; folati reali nettarina ~5mcg - 2026-07-30
+{n:"Nettarina fresca (pesca noce)",c:"Frutta fresca",k:44,p:1.1,gs:0,g:0.2,z:8.5,ch:10.5,fi:1.7,ca:9,fe:0.3,mg:11,k2:181,na:0,zn:0.2,fo:5,se:0.1,col:0,src:"CREA"},
+// Fosforo (pomodoro essiccato molto concentrato) era nel campo folati; folati reali ~35mcg (confermato via ricerca) - 2026-07-30
+{n:"Pomodori secchi al sole",c:"Verdure",k:258,p:14.0,gs:0.5,g:3.0,z:30.0,ch:55.8,fi:12.3,ca:110,fe:9.1,mg:194,k2:3427,na:102,zn:2.0,fo:35,se:5.5,col:0,src:"CREA"},
+// Stesso bug fosforo-in-folati, versione sott'olio diluita rispetto al secco - 2026-07-30
+{n:"Pomodori secchi sott'olio",c:"Verdure",k:213,p:5.0,gs:0.4,g:14.0,z:8.0,ch:16.0,fi:4.0,ca:60,fe:4.0,mg:60,k2:1000,na:800,zn:1.0,fo:20,se:3.0,col:0,src:"CREA"},
 // Verificato BDA (Frumento Tenero, crudo — proteine gia identiche, resto ravvicinato) — 2026-07-29
 {n:"Frumento tenero (grano) chicchi interi",c:"Cereali",k:336,p:12.3,gs:0.6,g:2.6,z:3.3,ch:65.2,fi:9.7,ca:35,fe:3.3,mg:90,k2:435,na:2,zn:3.1,fo:39,se:3.8,col:0,src:"BDA"},
 {n:"Grano duro (chicchi interi)",c:"Cereali",k:316,p:13.0,gs:0.3,g:2.9,z:2.0,ch:61.9,fi:9.8,ca:34,fe:3.3,mg:120,k2:431,na:2,zn:2.7,fo:40,se:56,col:0,src:"CREA"},
@@ -1930,9 +1933,12 @@ const DB_BDA=[
 // Verificato CREA 135630 (Latte di vacca, in polvere, SCREMATO — scartato apposta il candidato "parzialmente scremato" quasi a pari punteggio) — 2026-07-29
 {n:"Latte scremato in polvere",c:"Latte e derivati",k:351,p:33.1,gs:0.1,g:0.9,z:56.2,ch:56.2,fi:0,ca:1323,fe:0.9,mg:117,k2:1650,na:550,zn:4.2,fo:15,se:30,col:22,src:"CREA"},
 {n:"Gallette di mais (non al sale)",c:"Biscotti e crackers",k:362,p:7.7,gs:0.13,g:1.1,z:0.4,ch:84.7,fi:1.7,ca:77,fe:2.9,mg:15,k2:103,na:187,zn:0.29,fo:7,se:2.1,col:0,src:"BDA"},
-{n:"Tortellini freschi all'uovo",c:"Cereali e derivati",k:326,p:13.0,gs:1.2,g:6.0,z:1.5,ch:55.5,fi:1.8,ca:25,fe:2.3,mg:30,k2:130,na:350,zn:1.1,fo:145,se:22,col:70,src:"CREA"},
-{n:"Ravioli freschi di carne",c:"Cereali e derivati",k:230,p:10.5,gs:1.5,g:6.5,z:1.5,ch:31.5,fi:1.5,ca:35,fe:1.5,mg:20,k2:120,na:340,zn:1.0,fo:120,se:10,col:45,src:"CREA"},
-{n:"Lasagna all'uovo secca",c:"Cereali e derivati",k:368,p:12.5,gs:1.4,g:4.2,z:2.0,ch:67.0,fi:2.2,ca:30,fe:2.1,mg:40,k2:160,na:20,zn:1.1,fo:160,se:28,col:65,src:"CREA"},
+// Fosforo (pasta all'uovo+ripieno) era nel campo folati; folati reali ~40mcg (coerente col pattern pasta fresca all'uovo) - 2026-07-30
+{n:"Tortellini freschi all'uovo",c:"Cereali e derivati",k:326,p:13.0,gs:1.2,g:6.0,z:1.5,ch:55.5,fi:1.8,ca:25,fe:2.3,mg:30,k2:130,na:350,zn:1.1,fo:40,se:22,col:70,src:"CREA"},
+// Stesso bug fosforo-in-folati delle paste fresche ripiene - 2026-07-30
+{n:"Ravioli freschi di carne",c:"Cereali e derivati",k:230,p:10.5,gs:1.5,g:6.5,z:1.5,ch:31.5,fi:1.5,ca:35,fe:1.5,mg:20,k2:120,na:340,zn:1.0,fo:40,se:10,col:45,src:"CREA"},
+// Stesso bug fosforo-in-folati, pasta all'uovo secca (piu' concentrata ma stesso ordine di grandezza) - 2026-07-30
+{n:"Lasagna all'uovo secca",c:"Cereali e derivati",k:368,p:12.5,gs:1.4,g:4.2,z:2.0,ch:67.0,fi:2.2,ca:30,fe:2.1,mg:40,k2:160,na:20,zn:1.1,fo:40,se:28,col:65,src:"CREA"},
 {n:"Zucchero a velo",c:"Dolci",k:393,p:0,gs:0,g:0,z:103.8,ch:104.9,fi:0,ca:2,fe:0.5,mg:0,k2:11,na:12,zn:0.1,fo:0,se:0,col:0,src:"BDA"},
 {n:"Fruttosio",c:"Dolci",k:400,p:0,gs:0,g:0,z:100.0,ch:100.0,fi:0,ca:0,fe:0,mg:0,k2:4,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Acqua minerale gasata",c:"Bevande",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:12,fe:0,mg:3,k2:1,na:10,zn:0,fo:0,se:0,col:0,src:"CREA"},
@@ -1957,7 +1963,8 @@ const DB_BDA=[
 {n:"Albicocche sciroppate",c:"Frutta conservata",k:65,p:0.4,gs:0,g:0.1,z:16.1,ch:16.1,fi:0.9,ca:19,fe:0.2,mg:8,k2:150,na:10,zn:0.1,fo:15,se:0.5,col:0,src:"CREA"},
 {n:"Portulaca",c:"Verdure",k:21,p:1.7,gs:0,g:0.4,z:0.4,ch:3.5,fi:0.9,ca:65,fe:3.5,mg:68,k2:494,na:45,zn:0.3,fo:44,se:0.5,col:0,src:"CREA"},
 {n:"Scarola (indivia scarola)",c:"Verdure",k:19,p:1.1,gs:0,g:0.3,z:2.3,ch:2.3,fi:1.8,ca:37,fe:1.3,mg:9,k2:134,na:42,zn:0.14,fo:44,se:0.4,col:0,src:"CREA"},
-{n:"Germogli di alfa alfa (alfalfa)",c:"Verdure",k:23,p:4.0,gs:0,g:0.7,z:0.2,ch:2.1,fi:1.9,ca:32,fe:1.0,mg:27,k2:79,na:6,zn:0.9,fo:70,se:0.6,col:0,src:"CREA"},
+// Fosforo (70mg, match esatto USDA germogli alfalfa) era nel campo folati; folati reali ~36mcg (confermato via ricerca) - 2026-07-30
+{n:"Germogli di alfa alfa (alfalfa)",c:"Verdure",k:23,p:4.0,gs:0,g:0.7,z:0.2,ch:2.1,fi:1.9,ca:32,fe:1.0,mg:27,k2:79,na:6,zn:0.9,fo:36,se:0.6,col:0,src:"CREA"},
 // ── Frutta fresca/bacche ──
 // Kcal/carboidrati sottostimati (34kcal/5.4g): fonte USDA converge su 52kcal/11.9g carb (minerali gia esatti, non toccati) - 2026-07-29
 {n:"Lampone fresco",c:"Frutta fresca",k:52,p:1.2,gs:0,g:0.7,z:4.4,ch:11.9,fi:6.5,ca:25,fe:0.7,mg:22,k2:151,na:1,zn:0.4,fo:29,se:0.2,col:0,src:"CREA"},
@@ -2016,7 +2023,8 @@ const DB_BDA=[
 {n:"Murena fresca",c:"Pesce",k:107,p:19.8,gs:0.7,g:2.8,z:0,ch:0,fi:0,ca:22,fe:1.0,mg:28,k2:340,na:70,zn:0.5,fo:10,se:35,col:58,src:"CREA"},
 
 // ── FUNGHI E VERDURE MANCANTI ──
-{n:"Gallinacci / Finferli freschi",c:"Verdure",k:38,p:1.5,gs:0.1,g:0.5,z:1.1,ch:6.9,fi:3.8,ca:15,fe:3.5,mg:12,k2:506,na:17,zn:0.7,fo:57,se:2,col:0,src:"CREA"},
+// Stesso fungo (chanterelle) già corretto altrove (DB_CREA_400/DB_CREA_1079): fosforo ~57mg era nel campo folati, reali ~2-6mcg - 2026-07-30
+{n:"Gallinacci / Finferli freschi",c:"Verdure",k:38,p:1.5,gs:0.1,g:0.5,z:1.1,ch:6.9,fi:3.8,ca:15,fe:3.5,mg:12,k2:506,na:17,zn:0.7,fo:5,se:2,col:0,src:"CREA"},
 // Fosforo (120mg, match esatto USDA funghi ostrica) era nel campo folati; stesso bug del duplicato DB_CREA_401, corretto a 38mcg - 2026-07-30
 {n:"Funghi Pleurotus / Orecchione freschi",c:"Verdure",k:33,p:3.3,gs:0,g:0.4,z:2.2,ch:6.1,fi:2.3,ca:3,fe:1.3,mg:18,k2:420,na:18,zn:0.8,fo:38,se:3,col:0,src:"BDA"},
 {n:"Funghi shiitake secchi",c:"Verdure",k:337,p:16.3,gs:0.25,g:1,z:56.5,ch:63.9,fi:11.5,ca:11,fe:1.7,mg:132,k2:1530,na:13,zn:7.7,fo:88,se:46,col:0,src:"BDA"},
@@ -2027,7 +2035,8 @@ const DB_BDA=[
 {n:"Castagna d'acqua",c:"Verdure",k:97,p:1.4,gs:0,g:0.1,z:4.9,ch:23.9,fi:3.0,ca:11,fe:0.6,mg:22,k2:584,na:14,zn:0.5,fo:63,se:0.7,col:0,src:"BDA"},
 
 // ── FRUTTA MANCANTE ──
-{n:"Lime / Limetta fresca",c:"Frutta fresca",k:30,p:0.7,gs:0,g:0.2,z:1.7,ch:10.5,fi:2.8,ca:33,fe:0.6,mg:6,k2:102,na:2,zn:0.1,fo:18,se:0.4,col:0,src:"CREA"},
+// Fosforo (18mg, match lime) era nel campo folati; folati reali lime ~8mcg - 2026-07-30
+{n:"Lime / Limetta fresca",c:"Frutta fresca",k:30,p:0.7,gs:0,g:0.2,z:1.7,ch:10.5,fi:2.8,ca:33,fe:0.6,mg:6,k2:102,na:2,zn:0.1,fo:8,se:0.4,col:0,src:"CREA"},
 {n:"Pompelmo rosa fresco",c:"Frutta fresca",k:41,p:0.8,gs:0.02,g:0.1,z:6.9,ch:9.1,fi:1.6,ca:22,fe:0.1,mg:9,k2:135,na:0,zn:0.07,fo:13,se:0.1,col:0,src:"BDA"},
 
 // ── CARNI MANCANTI ──

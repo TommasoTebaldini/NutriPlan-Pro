@@ -401,9 +401,11 @@ async function ensureChartJs() {
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <input type="file" id="referto-pdf-input" accept="application/pdf" style="display:none" onchange="if(this.files[0])importaRefertoAI(this.files[0]);this.value=''">
           <button type="button" class="btn btn-ghost btn-sm" style="background:white" onclick="document.getElementById('referto-pdf-input').click()">🤖 <span data-only-lang="it">Importa da referto PDF</span><span data-only-lang="en">Import from PDF report</span></button>
+          <input type="file" id="referto-foto-input" accept="image/*" capture="environment" style="display:none" onchange="if(this.files[0])importaRefertoFoto(this.files[0]);this.value=''">
+          <button type="button" class="btn btn-ghost btn-sm" style="background:white" onclick="document.getElementById('referto-foto-input').click()">📷 <span data-only-lang="it">Importa da foto</span><span data-only-lang="en">Import from photo</span></button>
           <span id="referto-ai-status" style="font-size:12px;color:#5B21B6"></span>
         </div>
-        <p style="font-size:10.5px;color:#6D28D9;margin:6px 0 0;line-height:1.4"><span data-only-lang="it">L'AI estrae automaticamente i valori dal referto e compila le righe qui sotto — verifica sempre ogni valore prima di salvare. Il testo del referto viene inviato al servizio AI per l'estrazione.</span><span data-only-lang="en">The AI extracts values from the report and fills the rows below — always verify every value before saving. The report text is sent to the AI service for extraction.</span></p>
+        <p style="font-size:10.5px;color:#6D28D9;margin:6px 0 0;line-height:1.4"><span data-only-lang="it">L'AI estrae automaticamente i valori dal referto (PDF con testo, oppure foto/scansione) e compila le righe qui sotto — verifica sempre ogni valore prima di salvare. Il contenuto del referto viene inviato al servizio AI per l'estrazione.</span><span data-only-lang="en">The AI extracts values from the report (text PDF, or photo/scan) and fills the rows below — always verify every value before saving. The report content is sent to the AI service for extraction.</span></p>
       </div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:12.5px">
@@ -2586,39 +2588,99 @@ async function importaRefertoAI(file) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
-    const raw = data.content?.[0]?.text || '';
-    const m = raw.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error(_L('Risposta AI non valida','Invalid AI response'));
-    const parsed = JSON.parse(m[0]);
-    const esami = (Array.isArray(parsed.esami) ? parsed.esami : []).filter(e => e && e.tipo && isFinite(parseFloat(e.valore)));
-    if (!esami.length) throw new Error(_L('Nessun valore riconosciuto nel referto','No values recognized in the report'));
+    _applyEsamiExtraction(data, st);
+  } catch (e) {
+    if (st) st.textContent = '';
+    toast('❌ ' + (e.message || 'Errore'), 'err');
+  }
+}
 
-    if (parsed.data_esame && /^\d{4}-\d{2}-\d{2}$/.test(parsed.data_esame)) {
-      const dEl = document.getElementById('bulk-esami-data');
-      if (dEl) dEl.value = parsed.data_esame;
-    }
-    const tbody = document.getElementById('bulk-esami-rows');
-    tbody.innerHTML = '';
-    esami.forEach(e => {
-      const isKnown = _ESAMI_COMUNI.includes(e.tipo);
-      aggiungiRigaBulkEsame(isKnown ? e.tipo : undefined);
-      const tr = tbody.lastElementChild;
-      if (!tr) return;
-      const valEl = tr.querySelector('input[type=number]');
-      if (valEl) valEl.value = parseFloat(e.valore);
-      const unEl = tr.querySelector('.bulk-unita');
-      if (unEl && e.unita) unEl.value = String(e.unita).slice(0, 20);
-      if (!isKnown) {
-        const sel = tr.querySelector('select');
-        const customInp = tr.querySelector('input[type=text]:not(.bulk-unita)');
-        if (sel && customInp) {
-          sel.value = '__custom__';
-          customInp.style.display = 'block';
-          customInp.value = String(e.tipo).slice(0, 60);
-        }
+// Parsing/compilazione righe condiviso tra import da PDF (testo) e da foto
+// (vision) — entrambi gli endpoint rispondono con la stessa forma
+// {content:[{type:'text',text: '<json>'}]}.
+function _applyEsamiExtraction(data, st) {
+  const raw = data.content?.[0]?.text || '';
+  const m = raw.match(/\{[\s\S]*\}/);
+  if (!m) throw new Error(_L('Risposta AI non valida','Invalid AI response'));
+  const parsed = JSON.parse(m[0]);
+  const esami = (Array.isArray(parsed.esami) ? parsed.esami : []).filter(e => e && e.tipo && isFinite(parseFloat(e.valore)));
+  if (!esami.length) throw new Error(_L('Nessun valore riconosciuto nel referto','No values recognized in the report'));
+
+  if (parsed.data_esame && /^\d{4}-\d{2}-\d{2}$/.test(parsed.data_esame)) {
+    const dEl = document.getElementById('bulk-esami-data');
+    if (dEl) dEl.value = parsed.data_esame;
+  }
+  const tbody = document.getElementById('bulk-esami-rows');
+  tbody.innerHTML = '';
+  esami.forEach(e => {
+    const isKnown = _ESAMI_COMUNI.includes(e.tipo);
+    aggiungiRigaBulkEsame(isKnown ? e.tipo : undefined);
+    const tr = tbody.lastElementChild;
+    if (!tr) return;
+    const valEl = tr.querySelector('input[type=number]');
+    if (valEl) valEl.value = parseFloat(e.valore);
+    const unEl = tr.querySelector('.bulk-unita');
+    if (unEl && e.unita) unEl.value = String(e.unita).slice(0, 20);
+    if (!isKnown) {
+      const sel = tr.querySelector('select');
+      const customInp = tr.querySelector('input[type=text]:not(.bulk-unita)');
+      if (sel && customInp) {
+        sel.value = '__custom__';
+        customInp.style.display = 'block';
+        customInp.value = String(e.tipo).slice(0, 60);
       }
+    }
+  });
+  if (st) st.textContent = '✅ ' + esami.length + ' ' + _L('valori estratti — verifica prima di salvare','values extracted — verify before saving');
+}
+
+// Ridimensiona/comprime lato client prima dell'invio: una foto da telefono
+// può essere 12MP+, molto oltre quanto serve a un modello vision per leggere
+// una tabella di valori. Riduce banda, tempo di risposta e costo per token.
+function _resizeImageForOcr(file, maxDim = 1600, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(_L('Immagine non leggibile','Unreadable image'))); };
+    img.src = url;
+  });
+}
+
+async function importaRefertoFoto(file) {
+  const st = document.getElementById('referto-ai-status');
+  if (!file) return;
+  if (file.size > 20 * 1024 * 1024) { toast(_L('Foto troppo grande (max 20MB)','Photo too large (max 20MB)'), 'err'); return; }
+  try {
+    if (st) st.textContent = '⏳ ' + _L('Compressione immagine...','Compressing image...');
+    const image = await _resizeImageForOcr(file);
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) throw new Error(_L('Sessione scaduta','Session expired'));
+    if (st) st.textContent = '⏳ ' + _L('Lettura foto con AI...','Reading photo with AI...');
+
+    const system = 'Sei un assistente clinico. In questa immagine c\'è un referto di laboratorio (foto o scansione). Estrai SOLO i valori numerici realmente leggibili. Quando un esame corrisponde a uno di questi nomi standard usa ESATTAMENTE quel nome: ' + _ESAMI_COMUNI.join(', ') + '. Per esami non in elenco usa il nome del referto. Rispondi SOLO con JSON: {"data_esame":"YYYY-MM-DD o null","esami":[{"tipo":"...","valore":123.4,"unita":"..."}]}. Non inventare mai valori assenti o poco leggibili.';
+    const res = await fetch('/api/ocr-referto-immagine', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ system, image, max_tokens: 1200 }),
     });
-    if (st) st.textContent = '✅ ' + esami.length + ' ' + _L('valori estratti — verifica prima di salvare','values extracted — verify before saving');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    _applyEsamiExtraction(data, st);
   } catch (e) {
     if (st) st.textContent = '';
     toast('❌ ' + (e.message || 'Errore'), 'err');

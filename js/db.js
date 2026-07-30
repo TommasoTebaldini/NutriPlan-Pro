@@ -2547,7 +2547,8 @@ const DB_BDA=[
 {n:"Soppressata calabrese DOP (artigianale)",c:"Salumi",k:350,p:24,gs:12,g:28,z:0,ch:0,fi:0,ca:18,fe:1.5,mg:22,k2:310,na:1250,zn:2.8,fo:8,se:20,col:90,src:"BDA"},
 {n:"Nduja (salume spalmabile piccante)",c:"Salumi",k:450,p:16,gs:20,g:42,z:0,ch:0,fi:0,ca:14,fe:1.2,mg:18,k2:260,na:1800,zn:2.5,fo:6,se:15,col:110,src:"BDA"},
 // ── PIATTI TIPICI ITALIANI MANCANTI (BDA) ──
-{n:"Pasta cacio e pepe (ricetta romana)",c:"Piatti pronti",k:290,p:12.5,gs:8.5,g:14.5,z:0.5,ch:33,fi:2.0,ca:280,fe:1.2,mg:35,k2:130,na:580,zn:2.5,fo:200,se:18,col:38,src:"BDA"},
+// Fosforo (pasta+pecorino, calcio 280mg conferma forte contenuto di formaggio) era nel campo folati; folati reali ~30mcg - 2026-07-30
+{n:"Pasta cacio e pepe (ricetta romana)",c:"Piatti pronti",k:290,p:12.5,gs:8.5,g:14.5,z:0.5,ch:33,fi:2.0,ca:280,fe:1.2,mg:35,k2:130,na:580,zn:2.5,fo:30,se:18,col:38,src:"BDA"},
 {n:"Pasta alla norma (pomodoro, melanzane, ricotta salata)",c:"Piatti pronti",k:220,p:8.5,gs:2.5,g:8.0,z:4.5,ch:32,fi:3.5,ca:85,fe:1.2,mg:28,k2:330,na:420,zn:0.8,fo:85,se:8,col:8,src:"BDA"},
 {n:"Pasta al pesto genovese (DOP basilico)",c:"Piatti pronti",k:355,p:10.5,gs:9.5,g:21.5,z:1.5,ch:36,fi:2.5,ca:165,fe:1.5,mg:50,k2:195,na:480,zn:1.5,fo:125,se:5,col:18,src:"BDA"},
 {n:"Pasta e fagioli alla veneta",c:"Zuppe e minestre",k:145,p:8.0,gs:0.8,g:4.5,z:1.0,ch:19,fi:4.5,ca:45,fe:1.8,mg:38,k2:320,na:520,zn:1.2,fo:120,se:5,col:5,src:"BDA"},

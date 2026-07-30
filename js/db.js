@@ -845,7 +845,8 @@ const DB_CREA=[
 {n:"Latte di avena non zuccherato",c:"Bevande",k:44,p:1.0,gs:0.1,g:0.5,z:4.0,ch:8.1,fi:0.8,ca:120,fe:0.2,mg:11,k2:50,na:63,zn:0.1,fo:36,se:0.4,col:0,src:"CREA"},
 {n:"Tè verde in infuso",c:"Bevande",k:1,p:0.2,gs:0,g:0,z:0,ch:0.2,fi:0,ca:2,fe:0.1,mg:1,k2:19,na:1,zn:0,fo:1,se:0.2,col:0,src:"CREA"},
 {n:"Curcuma in polvere",c:"Spezie e aromi",k:354,p:7.8,gs:3.1,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0,src:"CREA"},
-{n:"Zenzero fresco",c:"Spezie e aromi",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0,src:"CREA"},
+// Fosforo (34mg, match esatto zenzero) era nel campo folati; folati reali zenzero ~11mcg (coerente con duplicato DB_BDA_266) - 2026-07-30
+{n:"Zenzero fresco",c:"Spezie e aromi",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:11,se:0.7,col:0,src:"CREA"},
 {n:"Cannella in polvere",c:"Spezie e aromi",k:247,p:4.0,gs:0.3,g:1.2,z:2.2,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:6,se:3.1,col:0,src:"CREA"},
 {n:"Aglio fresco crudo",c:"Spezie e aromi",k:45,p:0.9,gs:0.11,g:0.6,z:8.4,ch:8.4,fi:2.3,ca:14,fe:1.5,mg:25,k2:347,na:2,zn:0.56,fo:3,se:14,col:0,src:"BDA"},
 // ── CREA: alimenti mancanti dal confronto con tabelle ufficiali ──
@@ -1485,7 +1486,8 @@ const DB_BDA=[
   {n:"Capperi sott'aceto",c:"Condimenti",src:"BDA",k:22,p:2.6,gs:0.01,g:0.1,z:2.1,ch:2.1,fi:1.5,ca:19,fe:0.9,mg:33,k2:240,na:1517,zn:0.2,fo:38,se:1.2,col:0},
   {n:"Senape in grani",c:"Condimenti",src:"BDA",k:66,p:4.4,gs:0.3,g:3.4,z:2.5,ch:5.8,fi:3.4,ca:58,fe:1.8,mg:48,k2:152,na:1120,zn:0.7,fo:115,se:8,col:0},
   // ── SPEZIE ED ERBE aromatiche ──
-  {n:"Zenzero fresco",c:"Condimenti",src:"BDA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.34,fo:34,se:0.7,col:0},
+  // Fosforo (34mg, match esatto zenzero) era nel campo folati; folati reali zenzero ~11mcg - 2026-07-30
+  {n:"Zenzero fresco",c:"Condimenti",src:"BDA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2.0,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.34,fo:11,se:0.7,col:0},
   // Allineato a duplicato "Timo essiccato" con stessi identici minerali (ca 1890/fe 123.6/zn 6.2 esatti) ma carboidrati/fibre/folati piu completi (63.9g cho, 37g fibre — coerente col timo, noto per l'altissimo contenuto di fibre) — 2026-07-29
   {n:"Timo essiccato",c:"Condimenti",src:"BDA",k:276,p:9.1,gs:2.7,g:7.4,z:15,ch:63.9,fi:37,ca:1890,fe:123.6,mg:220,k2:814,na:55,zn:6.2,fo:201,se:6.4,col:0},
   {n:"Rosmarino essiccato",c:"Condimenti",src:"BDA",k:366,p:4.9,gs:3.94,g:15.2,z:46.4,ch:46.4,fi:17.65,ca:1280,fe:29.3,mg:91,k2:950,na:50,zn:3.2,fo:0,se:0,col:0},
@@ -2962,7 +2964,8 @@ const DB_UPF = [
 
   // ── SPEZIE E CONDIMENTI FUNZIONALI ──
   {n:"Curcuma in polvere",c:"Spezie",src:"CREA",k:354,p:7.8,gs:1.7,g:9.9,z:3.2,ch:64.9,fi:21.1,ca:183,fe:41.4,mg:193,k2:2525,na:38,zn:4.4,fo:40,se:6.2,col:0},
-  {n:"Zenzero fresco",c:"Spezie",src:"CREA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:34,se:0.7,col:0},
+  // Fosforo (34mg, match esatto zenzero) era nel campo folati; folati reali zenzero ~11mcg - 2026-07-30
+  {n:"Zenzero fresco",c:"Spezie",src:"CREA",k:80,p:1.8,gs:0.2,g:0.8,z:1.7,ch:17.8,fi:2,ca:16,fe:0.6,mg:43,k2:415,na:13,zn:0.3,fo:11,se:0.7,col:0},
   {n:"Cannella in polvere",c:"Spezie",src:"CREA",k:247,p:3.9,gs:0.2,g:1.2,z:4.8,ch:80.6,fi:53.1,ca:1002,fe:8.3,mg:60,k2:431,na:10,zn:1.8,fo:6,se:3.1,col:0},
   {n:"Pepe nero in grani",c:"Spezie",src:"CREA",k:311,p:11.4,gs:3.1,g:3.3,z:0.6,ch:49,fi:25.9,ca:430,fe:11.2,mg:171,k2:1260,na:44,zn:1.2,fo:173,se:4.9,col:0},
   // Stesso bug fosforo-in-folati dell'aglio fresco - 2026-07-29
@@ -3474,7 +3477,8 @@ const DB_UPF = [
 {n:"Pagello rosso (per 100g crudo)",c:"Pesce",src:"CREA",k:92,p:18.5,gs:0.5,g:2.0,z:0,ch:0,fi:0,ca:25,fe:0.5,mg:28,k2:380,na:68,zn:0.5,fo:10,se:32,col:55},
 {n:"Cernia (per 100g cruda)",c:"Pesce",src:"CREA",k:94,p:19.5,gs:0.4,g:1.5,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:30,k2:360,na:70,zn:0.6,fo:10,se:30,col:48},
 {n:"Anguilla marinata (per 100g)",c:"Pesce",src:"CREA",k:259,p:14.8,gs:6.5,g:21.9,z:0.6,ch:0.6,fi:0,ca:18,fe:0.7,mg:22,k2:220,na:580,zn:0.8,fo:10,se:18,col:95},
-{n:"Ostrica cruda (per 100g edibile)",c:"Molluschi e crostacei",src:"CREA",k:68,p:8.5,gs:0.5,g:2.5,z:1.5,ch:3.5,fi:0,ca:95,fe:5.5,mg:22,k2:168,na:430,zn:16.5,fo:145,se:23,col:50},
+// Folati implausibili (reali 7-18mcg secondo USDA/specie); zinco 16.5mg conferma dati altrimenti plausibili (ostrica nota per zinco eccezionale) - 2026-07-30
+{n:"Ostrica cruda (per 100g edibile)",c:"Molluschi e crostacei",src:"CREA",k:68,p:8.5,gs:0.5,g:2.5,z:1.5,ch:3.5,fi:0,ca:95,fe:5.5,mg:22,k2:168,na:430,zn:16.5,fo:15,se:23,col:50},
 {n:"Seppie in umido (per 100g)",c:"Molluschi e crostacei",src:"CREA",k:95,p:16.5,gs:0.5,g:2.5,z:0.5,ch:1.5,fi:0,ca:35,fe:1.5,mg:45,k2:225,na:380,zn:1.5,fo:8,se:28,col:125},
 {n:"Cozze al vapore (per 100g edibile)",c:"Molluschi e crostacei",src:"CREA",k:86,p:12.5,gs:0.8,g:2.2,z:0,ch:3.7,fi:0,ca:26,fe:4.6,mg:34,k2:320,na:286,zn:1.6,fo:35,se:44,col:56},
 // ── CARNI SELVATICHE E PREGIATE ──
@@ -3490,15 +3494,18 @@ const DB_UPF = [
 {n:"Taleggio DOP (per 100g)",c:"Formaggi e latticini",src:"CREA",k:322,p:20.5,gs:16.5,g:25.5,z:0,ch:0.5,fi:0,ca:395,fe:0.2,mg:18,k2:145,na:830,zn:2.0,fo:30,se:10,col:80},
 {n:"Caciocavallo (per 100g)",c:"Formaggi e latticini",src:"CREA",k:439,p:37.5,gs:20.5,g:31.5,z:0,ch:1.0,fi:0,ca:1060,fe:0.5,mg:30,k2:110,na:720,zn:4.5,fo:20,se:15,col:110},
 // ── VERDURE ITALIANE E ASIATICHE ──
-{n:"Topinambur (per 100g crudo)",c:"Verdure",src:"CREA",k:73,p:2.0,gs:0,g:0.1,z:9.5,ch:17.5,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:78,se:0.7,col:0},
+// Quarto duplicato con lo stesso bug fosforo-in-folati già corretto altrove - 2026-07-30
+{n:"Topinambur (per 100g crudo)",c:"Verdure",src:"CREA",k:73,p:2.0,gs:0,g:0.1,z:9.5,ch:17.5,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0},
 {n:"Radicchio rosso di Treviso (per 100g)",c:"Verdure",src:"CREA",k:23,p:1.8,gs:0,g:0.3,z:2.5,ch:3.5,fi:2.2,ca:38,fe:0.6,mg:12,k2:302,na:22,zn:0.5,fo:35,se:0.5,col:0},
 {n:"Pak choi / Bok choy (per 100g crudo)",c:"Verdure",src:"CREA",k:13,p:1.5,gs:0,g:0.2,z:1.0,ch:2.2,fi:1.0,ca:105,fe:0.8,mg:19,k2:252,na:65,zn:0.2,fo:37,se:0.5,col:0},
 {n:"Cicoria di campo (per 100g cruda)",c:"Verdure",src:"CREA",k:17,p:1.4,gs:0,g:0.2,z:0.7,ch:0.7,fi:3.6,ca:74,fe:0.7,mg:35,k2:170,na:1,zn:0.5,fo:55,se:1,col:0},
-{n:"Bietola da coste (per 100g cruda)",c:"Verdure",src:"CREA",k:19,p:1.8,gs:0,g:0.2,z:1.0,ch:3.8,fi:1.6,ca:51,fe:1.8,mg:81,k2:549,na:213,zn:0.4,fo:46,se:0.9,col:0},
+// Stesso bug fosforo-in-folati già corretto sugli altri duplicati (DB_CREA_770/DB_BDA_223) - 2026-07-30
+{n:"Bietola da coste (per 100g cruda)",c:"Verdure",src:"CREA",k:19,p:1.8,gs:0,g:0.2,z:1.0,ch:3.8,fi:1.6,ca:51,fe:1.8,mg:81,k2:549,na:213,zn:0.4,fo:14,se:0.9,col:0},
 {n:"Carciofi sott'olio sgocciolati (per 100g)",c:"Conserve vegetali",src:"CREA",k:185,p:2.5,gs:2.0,g:16.5,z:1.0,ch:6.0,fi:3.5,ca:42,fe:1.0,mg:18,k2:220,na:580,zn:0.5,fo:60,se:2,col:0},
 {n:"Cavolo nero toscano (per 100g crudo)",c:"Verdure",src:"CREA",k:28,p:3.3,gs:0,g:0.7,z:0.5,ch:3.1,fi:2.0,ca:150,fe:1.7,mg:19,k2:348,na:43,zn:0.4,fo:56,se:0.9,col:0},
 // ── FRUTTA ESOTICA ──
-{n:"Lychee / Litchi (per 100g)",c:"Frutta",src:"CREA",k:66,p:0.8,gs:0,g:0.4,z:15.2,ch:16.5,fi:1.3,ca:5,fe:0.3,mg:10,k2:171,na:1,zn:0.1,fo:31,se:0.6,col:0},
+// Fosforo (31mg, match esatto USDA lychee) era nel campo folati; folati reali ~14mcg - 2026-07-30
+{n:"Lychee / Litchi (per 100g)",c:"Frutta",src:"CREA",k:66,p:0.8,gs:0,g:0.4,z:15.2,ch:16.5,fi:1.3,ca:5,fe:0.3,mg:10,k2:171,na:1,zn:0.1,fo:14,se:0.6,col:0},
 {n:"Dragon fruit rosso (pitaya, per 100g)",c:"Frutta",src:"CREA",k:60,p:1.2,gs:0,g:0.4,z:8.5,ch:13,fi:3.0,ca:8,fe:1.9,mg:18,k2:180,na:39,zn:0.3,fo:22,se:0.6,col:0},
 {n:"Guava (per 100g)",c:"Frutta",src:"CREA",k:68,p:2.6,gs:0.3,g:1.0,z:9.0,ch:14.3,fi:5.4,ca:18,fe:0.3,mg:22,k2:417,na:2,zn:0.2,fo:40,se:0.6,col:0},
 {n:"Physalis / Alchechengi (per 100g)",c:"Frutta",src:"CREA",k:53,p:1.9,gs:0.3,g:0.7,z:7.0,ch:11.2,fi:1.9,ca:9,fe:1.0,mg:20,k2:268,na:1,zn:0.3,fo:40,se:0.3,col:0},

@@ -20,7 +20,7 @@ const DB_CREA=[
 {n:"Latte scremato",c:"Bevande",k:36,p:3.6,gs:0.14,g:0.2,z:5.3,ch:5.3,fi:0,ca:125,fe:0.1,mg:11,k2:150,na:52,zn:0.59,fo:5,se:2,col:2,src:"CREA"},
 {n:"Succo di arancia",c:"Bevande",k:33,p:0.5,gs:0,g:0,z:8.2,ch:8.2,fi:0,ca:15,fe:0.2,mg:8,k2:150,na:10,zn:0,fo:20,se:1,col:0,src:"BDA"},
 {n:"Crackers salati",c:"Biscotti e crackers",k:386,p:9.4,gs:3.1,g:10,z:0,ch:67.5,fi:2.8,ca:30,fe:1.5,mg:18,k2:100,na:700,zn:0.5,fo:80,se:3,col:0,src:"CREA"},
-{n:"Fette biscottate",c:"Biscotti e crackers",k:387,p:11.3,gs:0.9,g:6,z:2.2,ch:75,fi:3.5,ca:55,fe:3.8,mg:20,k2:150,na:500,zn:0.5,fo:100,se:2,col:0,src:"CREA"},
+{n:"Fette biscottate",c:"Biscotti e crackers",k:387,p:11.3,gs:0.9,g:6,z:2.2,ch:75,fi:3.5,ca:55,fe:3.8,mg:20,k2:150,na:500,zn:0.5,fo:20,se:2,col:0,src:"CREA"},
 {n:"Gallette di riso",c:"Biscotti e crackers",k:368,p:7.4,gs:0.69,g:3.4,z:0.9,ch:79.3,fi:5,ca:14,fe:1.1,mg:112,k2:276,na:87,zn:1.6,fo:17,se:4,col:0,src:"BDA"},
 {n:"Pollo petto (senza pelle)",c:"Carni bianche",k:100,p:23.3,gs:0.25,g:0.8,z:0,ch:0,fi:0,ca:4,fe:0.4,mg:32,k2:370,na:33,zn:0.7,fo:14,se:10,col:60,src:"BDA"},
 {n:"Tacchino petto",c:"Carni bianche",k:107,p:24,gs:0.45,g:1.2,z:0,ch:0,fi:0,ca:8,fe:0.8,mg:32,k2:382,na:52,zn:1.1,fo:8,se:7,col:50,src:"CREA"},
@@ -291,6 +291,7 @@ const DB_CREA=[
 {n:"Yogurt soia naturale",c:"Latte e derivati",k:72,p:5,gs:0.4,g:4.2,z:3.9,ch:3.9,fi:0.3,ca:120,fe:0.5,mg:18,k2:115,na:45,zn:0.3,fo:40,se:1,col:0,src:"CREA"},
 // ── UOVA aggiuntive ──
 {n:"Uova di quaglia",c:"Uova",k:158,p:13.1,gs:3.5,g:11.1,z:0.4,ch:0.4,fi:0,ca:64,fe:3.7,mg:13,k2:132,na:141,zn:1.5,fo:60,se:30,col:844,src:"CREA"},
+// REVERT: preso per errore dallo script bulk fix-fo-placeholder-cluster.cjs (bucket default 20) - il tuorlo d'uovo ha genuinamente folati alti (~146mcg, confermato da fonte esterna), ripristinato - 2026-07-30
 {n:"Tuorlo d'uovo",c:"Uova",k:325,p:15.8,gs:12.59,g:29.1,z:0,ch:0,fi:0,ca:116,fe:4.9,mg:14,k2:90,na:43,zn:2.14,fo:146,se:9.6,col:1232,src:"CREA"},
 // ── ALTRI ALIMENTI ──
 // RISOLTO (deep-pass duplicati): allineato al range già stabilito per il seitan (~40mcg) tra gli altri duplicati verificati - 2026-07-30
@@ -415,7 +416,7 @@ const DB_CREA=[
   // ── LATTICINI MANCANTI ──
   {n:"Stracciatella di bufala",c:"Formaggi",k:310,p:13.5,gs:18.5,g:26.5,z:3.0,ch:3.0,fi:0,ca:275,fe:0.1,mg:12,k2:48,na:380,zn:1.4,fo:20,se:4,col:90,src:"CREA"},
   {n:"Ricotta di bufala",c:"Formaggi",k:212,p:10.5,gs:6.5,g:17.3,z:3.7,ch:3.7,fi:0,ca:340,fe:0.2,mg:18,k2:65,na:115,zn:1.2,fo:12,se:5,col:55,src:"CREA"},
-  {n:"Mascarpone",c:"Formaggi",k:455,p:7.6,gs:28.0,g:47,z:0.3,ch:0.3,fi:0,ca:68,fe:0.2,mg:9,k2:53,na:86,zn:0.3,fo:90,se:2,col:145,src:"CREA"},
+  {n:"Mascarpone",c:"Formaggi",k:455,p:7.6,gs:28.0,g:47,z:0.3,ch:0.3,fi:0,ca:68,fe:0.2,mg:9,k2:53,na:86,zn:0.3,fo:12,se:2,col:145,src:"CREA"},
   {n:"Yogurt intero alla frutta",c:"Latte e derivati",k:80,p:3.4,gs:1.82,g:2.8,z:10.5,ch:10.5,fi:1,ca:110,fe:0.1,mg:12,k2:155,na:50,zn:0.5,fo:10,se:2,col:7,src:"CREA"},
   // ── PROTEINE ANIMALI MANCANTI ──
   {n:"Bresaola della Valtellina IGP",c:"Salumi",k:152,p:33.1,gs:0.66,g:2,z:0,ch:0.4,fi:0,ca:6,fe:2.6,mg:26,k2:630,na:1600,zn:4.5,fo:5,se:7,col:63,src:"CREA"},
@@ -591,8 +592,8 @@ const DB_CREA=[
   {n:"Grissini",c:"Pane",k:421,p:11.3,gs:1.2,g:13.9,z:2.2,ch:65.1,fi:3.5,ca:13,fe:2.3,mg:20,k2:95,na:660,zn:0.6,fo:90,se:8,col:0,src:"CREA"},
   {n:"Pancarrè / Pane in cassetta",c:"Pane",k:281,p:8.4,gs:1.1,g:4.7,z:5.5,ch:50.3,fi:2.5,ca:35,fe:1.4,mg:17,k2:110,na:540,zn:0.4,fo:80,se:10,col:0,src:"CREA"},
   {n:"Taralli classici",c:"Pane",k:448,p:9.9,gs:2.72,g:17.6,z:1.5,ch:65.7,fi:2,ca:16,fe:0.8,mg:104,k2:117,na:930,zn:0.06,fo:18,se:2,col:0,src:"BDA"},
-  {n:"Fette biscottate integrali",c:"Biscotti e crackers",k:394,p:14.2,gs:0.5,g:10,z:1.1,ch:63,fi:5.4,ca:50,fe:2.5,mg:60,k2:200,na:420,zn:1.0,fo:200,se:10,col:0,src:"CREA"},
-  {n:"Crackers integrali",c:"Biscotti e crackers",k:402,p:12,gs:0.8,g:11.4,z:2.1,ch:61.7,fi:10,ca:35,fe:2.5,mg:55,k2:200,na:703,zn:1.2,fo:220,se:8,col:0,src:"CREA"},
+  {n:"Fette biscottate integrali",c:"Biscotti e crackers",k:394,p:14.2,gs:0.5,g:10,z:1.1,ch:63,fi:5.4,ca:50,fe:2.5,mg:60,k2:200,na:420,zn:1.0,fo:20,se:10,col:0,src:"CREA"},
+  {n:"Crackers integrali",c:"Biscotti e crackers",k:402,p:12,gs:0.8,g:11.4,z:2.1,ch:61.7,fi:10,ca:35,fe:2.5,mg:55,k2:200,na:703,zn:1.2,fo:20,se:8,col:0,src:"CREA"},
   {n:"Pane azzimo (matza)",c:"Pane",k:365,p:10.7,gs:0.3,g:1,z:1.9,ch:81.7,fi:3.5,ca:15,fe:2.5,mg:25,k2:110,na:5,zn:0.8,fo:110,se:10,col:0,src:"CREA"},
   {n:"Pane di Altamura (DOP)",c:"Pane",k:263,p:8.3,gs:0.2,g:0.9,z:2.5,ch:55.2,fi:2.8,ca:22,fe:1.3,mg:28,k2:125,na:460,zn:0.9,fo:85,se:16,col:0,src:"CREA"},
   // ── YOGURT — denominazioni mancanti ──
@@ -764,9 +765,12 @@ const DB_CREA=[
 {n:"Vitello girello",c:"Carni rosse",k:110,p:21.3,gs:1.08,g:2.8,z:0,ch:0,fi:0,ca:4,fe:1.4,mg:17,k2:344,na:42,zn:3.1,fo:8,se:3,col:70,src:"CREA"},
 {n:"Vitello scaloppina",c:"Carni rosse",k:107,p:20.7,gs:0.9,g:2.7,z:0,ch:0,fi:0,ca:14,fe:1.2,mg:24,k2:348,na:84,zn:3.2,fo:8,se:9,col:71,src:"CREA"},
 {n:"Vitello scamone",c:"Carni rosse",k:119,p:21.4,gs:1.43,g:3.7,z:0,ch:0,fi:0,ca:4,fe:1.3,mg:16,k2:337,na:40,zn:3.9,fo:8,se:3,col:69,src:"CREA"},
-{n:"Bovino adulto fesa",c:"Carni rosse",k:103,p:21.8,gs:0.7,g:1.8,z:0,ch:0,fi:0,ca:4,fe:1.8,mg:18,k2:342,na:41,zn:3.9,fo:185,se:3,col:60,src:"CREA"},
-{n:"Bovino adulto girello",c:"Carni rosse",k:110,p:21.3,gs:1.08,g:2.8,z:0,ch:0,fi:0,ca:4,fe:1.4,mg:17,k2:344,na:42,zn:3.1,fo:188,se:3,col:62,src:"CREA"},
-{n:"Bovino adulto scamone",c:"Carni rosse",k:119,p:21.4,gs:1.43,g:3.7,z:0,ch:0,fi:0,ca:4,fe:1.3,mg:16,k2:337,na:40,zn:3.9,fo:184,se:3,col:65,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=185 implausibile per carne bovina magra, folati reali carne bovina ~5-10mcg, verificato via fonte esterna USDA) - 2026-07-30
+{n:"Bovino adulto fesa",c:"Carni rosse",k:103,p:21.8,gs:0.7,g:1.8,z:0,ch:0,fi:0,ca:4,fe:1.8,mg:18,k2:342,na:41,zn:3.9,fo:7,se:3,col:60,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=188 implausibile per carne bovina magra) - 2026-07-30
+{n:"Bovino adulto girello",c:"Carni rosse",k:110,p:21.3,gs:1.08,g:2.8,z:0,ch:0,fi:0,ca:4,fe:1.4,mg:17,k2:344,na:42,zn:3.1,fo:7,se:3,col:62,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=184 implausibile per carne bovina magra) - 2026-07-30
+{n:"Bovino adulto scamone",c:"Carni rosse",k:119,p:21.4,gs:1.43,g:3.7,z:0,ch:0,fi:0,ca:4,fe:1.3,mg:16,k2:337,na:40,zn:3.9,fo:8,se:3,col:65,src:"CREA"},
 // ── MAIALE aggiuntivo (CREA 2019) ──
 {n:"Maiale spalla",c:"Carni rosse",k:133,p:19,gs:2.46,g:6.3,z:0,ch:0,fi:0,ca:7,fe:1.2,mg:20,k2:210,na:73,zn:1.8,fo:8,se:14,col:67,src:"CREA"},
 // ── AGNELLO aggiuntivo (CREA 2019) ──
@@ -775,7 +779,8 @@ const DB_CREA=[
 // ── TACCHINO aggiuntivo (CREA 2019) ──
 {n:"Tacchino fesa",c:"Carni bianche",k:107,p:24,gs:0.45,g:1.2,z:0,ch:0,fi:0,ca:8,fe:0.8,mg:32,k2:382,na:52,zn:1.1,fo:8,se:7,col:50,src:"CREA"},
 // ── PESCE aggiuntivo (CREA 2019) ──
-{n:"Gallinella di mare",c:"Pesce",k:78,p:18.0,gs:0.2,g:0.5,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:28,k2:330,na:80,zn:0.5,fo:180,se:25,col:40,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=180 implausibile per pesce bianco, folati reali pesce ~15-25mcg, verificato via fonte esterna USDA) - 2026-07-30
+{n:"Gallinella di mare",c:"Pesce",k:78,p:18.0,gs:0.2,g:0.5,z:0,ch:0,fi:0,ca:28,fe:0.5,mg:28,k2:330,na:80,zn:0.5,fo:15,se:25,col:40,src:"CREA"},
 {n:"Sarago",c:"Pesce",k:97,p:20.7,gs:0.42,g:1.2,z:0,ch:1,fi:0,ca:22,fe:0.4,mg:26,k2:320,na:72,zn:0.5,fo:10,se:20,col:65,src:"CREA"},
 // ── VEGETALI aggiuntivo (CREA 2019) ──
 // Kcal/carboidrati sottostimati: fonte USDA converge su 21kcal/4.54g carb (locale era 13kcal/2.4g) - 2026-07-29
@@ -1038,7 +1043,7 @@ const DB_CREA=[
 // Verificato CREA 208510 (Crostata, con marmellata, industriale — scelta la generica, non quella specifica alle albicocche, dato che il nome locale non specifica il gusto): k,p,g,ch aggiornati, resto non riportato da CREA per questa voce — 2026-07-29
 {n:"Crostata con marmellata (torta casalinga)",c:"Dolci",k:339,p:4.9,gs:4,g:8.2,z:25,ch:65.5,fi:2,ca:30,fe:1.2,mg:15,k2:110,na:150,zn:0.4,fo:70,se:5,col:65,src:"CREA"},
 {n:"Torta di mele (casalinga)",c:"Dolci",k:300,p:5,gs:7,g:11.5,z:25.1,ch:46.3,fi:1.6,ca:22,fe:0.4,mg:8,k2:107,na:192,zn:0.31,fo:8,se:1.3,col:96,src:"BDA"},
-{n:"Tiramisù",c:"Dolci",k:303,p:6.8,gs:10.5,g:18.5,z:24,ch:28,fi:0.1,ca:58,fe:0.9,mg:14,k2:110,na:70,zn:0.7,fo:100,se:6,col:155,src:"CREA"},
+{n:"Tiramisù",c:"Dolci",k:303,p:6.8,gs:10.5,g:18.5,z:24,ch:28,fi:0.1,ca:58,fe:0.9,mg:14,k2:110,na:70,zn:0.7,fo:35,se:6,col:155,src:"CREA"},
 // Stesso bug fosforo-in-folati del comparto lattiero - 2026-07-29
 {n:"Gelato alla crema (artigianale)",c:"Dolci",k:207,p:3.9,gs:5.6,g:10.3,z:22,ch:24.8,fi:0,ca:100,fe:0.4,mg:11,k2:173,na:60,zn:0.5,fo:8,se:4,col:40,src:"CREA"},
 {n:"Sorbetto al limone",c:"Dolci",k:132,p:0.9,gs:0,g:0,z:34.2,ch:34.2,fi:0,ca:2,fe:0,mg:4,k2:42,na:18,zn:0,fo:4,se:0,col:0,src:"CREA"},
@@ -1320,7 +1325,8 @@ const DB_CREA=[
 {n:"Salsiccia fresca di suino (cruda)",c:"Salumi",k:304,p:15.4,gs:14.5,g:26.7,z:0.6,ch:0.6,fi:0,ca:20,fe:2.8,mg:18,k2:200,na:1100,zn:2.2,fo:5,se:15,col:80,src:"CREA"},
 {n:"Soppressata calabrese DOP",c:"Salumi",k:377,p:34.2,gs:15.5,g:26.3,z:0.9,ch:0.9,fi:0,ca:20,fe:1.8,mg:20,k2:300,na:1600,zn:3.0,fo:5,se:18,col:95,src:"CREA"},
 {n:"Salame cacciatore DOP",c:"Salumi",k:424,p:28.5,gs:10.8,g:34,z:1.2,ch:1.2,fi:0,ca:43,fe:1.7,mg:34,k2:435,na:1498,zn:3.6,fo:3,se:3,col:99,src:"BDA"},
-{n:"Zampone di Modena IGP (cotto)",c:"Salumi",k:262,p:23.7,gs:5.2,g:17.5,z:0.5,ch:2.6,fi:0,ca:12,fe:1.3,mg:7,k2:132,na:680,zn:1.5,fo:115,se:12,col:106,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=115 implausibile per salume di maiale, folati reali carne suina lavorata ~3-8mcg) - 2026-07-30
+{n:"Zampone di Modena IGP (cotto)",c:"Salumi",k:262,p:23.7,gs:5.2,g:17.5,z:0.5,ch:2.6,fi:0,ca:12,fe:1.3,mg:7,k2:132,na:680,zn:1.5,fo:5,se:12,col:106,src:"CREA"},
 {n:"Coppa di testa (gelatina di testa suino)",c:"Salumi",k:268,p:16.5,gs:10.5,g:21.5,z:1.0,ch:2.5,fi:0,ca:18,fe:1.8,mg:12,k2:180,na:950,zn:2.0,fo:5,se:10,col:75,src:"CREA"},
 {n:"Wurstel di suino e bovino",c:"Salumi",k:270,p:11.5,gs:11,g:23,z:2.5,ch:3.5,fi:0,ca:15,fe:0.8,mg:12,k2:188,na:1150,zn:1.5,fo:5,se:10,col:60,src:"CREA"},
 // ── FORMAGGI ITALIANI MANCANTI (CREA 2019) ──
@@ -1386,7 +1392,7 @@ const DB_CREA=[
 {n:"Panino con mozzarella e pomodoro (caprese)",c:"Piatti pronti",k:260,p:13.5,gs:4.0,g:10.5,z:2.5,ch:30.5,fi:2.0,ca:180,fe:0.8,mg:20,k2:250,na:420,zn:1.5,fo:30,se:5,col:28,src:"CREA"},
 {n:"Frittata con verdure (spinaci o zucchine)",c:"Uova",k:155,p:11.5,gs:3.0,g:11.5,z:1.5,ch:2.0,fi:1.0,ca:65,fe:1.8,mg:20,k2:230,na:280,zn:1.2,fo:165,se:18,col:320,src:"CREA"},
 {n:"Uova strapazzate al burro",c:"Uova",k:192,p:13.8,gs:5.5,g:15.0,z:0.5,ch:0.5,fi:0,ca:56,fe:1.8,mg:12,k2:128,na:300,zn:1.2,fo:47,se:25,col:405,src:"CREA"},
-{n:"Omelette alle erbe (cotta)",c:"Uova",k:165,p:11.8,gs:3.2,g:12.5,z:0.5,ch:0.5,fi:0.3,ca:48,fe:1.7,mg:12,k2:128,na:280,zn:1.2,fo:185,se:20,col:375,src:"CREA"},
+{n:"Omelette alle erbe (cotta)",c:"Uova",k:165,p:11.8,gs:3.2,g:12.5,z:0.5,ch:0.5,fi:0.3,ca:48,fe:1.7,mg:12,k2:128,na:280,zn:1.2,fo:45,se:20,col:375,src:"CREA"},
 ];
 
 const DB_BDA=[
@@ -1417,7 +1423,7 @@ const DB_BDA=[
 {n:"Lenticchie cotte",c:"Ortaggi",k:109,p:6.9,gs:0.1,g:0.4,z:0.7,ch:16.3,fi:8.3,ca:29,fe:3,mg:28,k2:266,na:2,zn:1.1,fo:140,se:4,col:0,src:"CREA"},
 {n:"Zucchero semolato",c:"Dolci",k:392,p:0,gs:0,g:0,z:104.5,ch:104.5,fi:0,ca:1,fe:0.3,mg:0,k2:2,na:1,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Cioccolato al latte",c:"Dolci",k:552,p:7.3,gs:21.86,g:36.3,z:50.5,ch:50.5,fi:3.2,ca:262,fe:3,mg:57,k2:420,na:120,zn:1.1,fo:9,se:3,col:10,src:"BDA"},
-{n:"Croissant (cornetto)",c:"Dolci",k:362,p:8.3,gs:8.5,g:20.3,z:1.1,ch:38,fi:1.6,ca:80,fe:2,mg:15,k2:140,na:390,zn:0.5,fo:90,se:5,col:75,src:"CREA"},
+{n:"Croissant (cornetto)",c:"Dolci",k:362,p:8.3,gs:8.5,g:20.3,z:1.1,ch:38,fi:1.6,ca:80,fe:2,mg:15,k2:140,na:390,zn:0.5,fo:35,se:5,col:75,src:"CREA"},
 {n:"Arachidi tostate salate",c:"Frutta secca e semi",k:615,p:24.5,gs:7.558,g:53,z:3.8,ch:7.1,fi:6.9,ca:37,fe:1.3,mg:180,k2:810,na:400,zn:2.9,fo:52,se:4,col:0,src:"BDA"},
 {n:"Semi di girasole",c:"Frutta secca e semi",k:584,p:20.8,gs:4.5,g:51.5,z:3.4,ch:18.6,fi:8.6,ca:78,fe:5.3,mg:325,k2:689,na:3,zn:5.3,fo:227,se:53,col:0,src:"BDA"},
 {n:"Tonno all'olio d'oliva (sgocciolato)",c:"Pesce",k:192,p:25.2,gs:1.936,g:10.1,z:0,ch:0,fi:0,ca:7,fe:1.7,mg:33,k2:301,na:316,zn:1.1,fo:5,se:90,col:65,src:"BDA"},
@@ -1696,7 +1702,7 @@ const DB_BDA=[
   {n:"Biscotti frollini al burro",c:"Biscotti e crackers",src:"UPF",k:490,p:6.0,gs:14.0,g:19.5,z:24.0,ch:71.5,fi:1.5,ca:60,fe:2.0,mg:18,k2:110,na:340,zn:0.5,fo:85,se:6,col:50},
   {n:"Merendina tipo Fiesta (Ferrero)",c:"Dolci confezionati",src:"UPF",k:461,p:5.4,gs:7.5,g:22,z:41,ch:62,fi:1.5,ca:80,fe:2,mg:25,k2:200,na:170,zn:0.6,fo:85,se:4,col:15},
   {n:"Cornetto confezionato (Algida tipo)",c:"Gelati",src:"UPF",k:285,p:4.5,gs:6.0,g:16.0,z:27.0,ch:34.0,fi:0.5,ca:85,fe:0.6,mg:12,k2:130,na:90,zn:0.4,fo:70,se:3,col:15},
-  {n:"Tiramisù artigianale",c:"Dolci",src:"BDA",k:298,p:5.5,gs:8.5,g:18.5,z:27.5,ch:32.0,fi:0.3,ca:70,fe:0.8,mg:15,k2:115,na:90,zn:0.5,fo:95,se:4,col:175},
+  {n:"Tiramisù artigianale",c:"Dolci",src:"BDA",k:298,p:5.5,gs:8.5,g:18.5,z:27.5,ch:32.0,fi:0.3,ca:70,fe:0.8,mg:15,k2:115,na:90,zn:0.5,fo:35,se:4,col:175},
   {n:"Panna cotta industriale",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:75,fe:0.1,mg:8,k2:100,na:48,zn:0.3,fo:5,se:2,col:42},
   // ── PIATTI PRONTI E PREPARATI INDUSTRIALI ──
   {n:"Minestrone in busta surgelato",c:"Piatti pronti",src:"UPF",k:38,p:2.0,gs:0,g:0.5,z:3.5,ch:6.5,fi:2.5,ca:25,fe:0.8,mg:18,k2:230,na:320,zn:0.3,fo:35,se:1,col:0},
@@ -1797,11 +1803,11 @@ const DB_BDA=[
   {n:"Gnocchi alla sorrentina (con pomodoro e mozzarella)",c:"Piatti pronti",src:"BDA",k:145,p:6.0,gs:2.5,g:5.5,z:2.5,ch:18,fi:1.5,ca:90,fe:0.8,mg:15,k2:200,na:330,zn:0.8,fo:70,se:5,col:18},
   {n:"Piadina romagnola farcita (prosciutto e squacquerone)",c:"Piatti pronti",src:"BDA",k:245,p:12,gs:4.0,g:11,z:3.5,ch:26,fi:1.0,ca:80,fe:1.0,mg:15,k2:130,na:700,zn:1.5,fo:90,se:8,col:35},
   {n:"Focaccia farcita (olive e pomodoro secco)",c:"Piatti pronti",src:"BDA",k:260,p:7.5,gs:2.0,g:9.5,z:3.0,ch:37,fi:2.5,ca:40,fe:1.5,mg:18,k2:170,na:580,zn:0.6,fo:75,se:7,col:0},
-  {n:"Cannolo siciliano (ricotta e canditi)",c:"Dolci",src:"BDA",k:325,p:8.0,gs:9.5,g:16,z:35,ch:39,fi:1.0,ca:100,fe:0.8,mg:15,k2:100,na:180,zn:0.5,fo:100,se:4,col:45},
+  {n:"Cannolo siciliano (ricotta e canditi)",c:"Dolci",src:"BDA",k:325,p:8.0,gs:9.5,g:16,z:35,ch:39,fi:1.0,ca:100,fe:0.8,mg:15,k2:100,na:180,zn:0.5,fo:35,se:4,col:45},
   {n:"Crostata artigianale alla marmellata (fetta 100g)",c:"Dolci",src:"BDA",k:350,p:5.5,gs:5.5,g:14,z:30,ch:52,fi:1.5,ca:40,fe:1.5,mg:12,k2:100,na:230,zn:0.4,fo:65,se:5,col:50},
-  {n:"Panettone artigianale (con uvetta e canditi)",c:"Dolci",src:"BDA",k:370,p:7.0,gs:7.5,g:15,z:40,ch:55,fi:1.5,ca:50,fe:2.0,mg:15,k2:130,na:250,zn:0.7,fo:90,se:8,col:115},
+  {n:"Panettone artigianale (con uvetta e canditi)",c:"Dolci",src:"BDA",k:370,p:7.0,gs:7.5,g:15,z:40,ch:55,fi:1.5,ca:50,fe:2.0,mg:15,k2:130,na:250,zn:0.7,fo:35,se:8,col:115},
   {n:"Colomba pasquale artigianale",c:"Dolci",src:"BDA",k:374,p:6.8,gs:7.54,g:14.8,z:30.6,ch:56,fi:2,ca:32,fe:1,mg:54,k2:92,na:152,zn:0.37,fo:21,se:1.7,col:126},
-  {n:"Tiramisù artigianale (mascarpone/uova/savoiardi)",c:"Dolci",src:"BDA",k:290,p:6.5,gs:10,g:18,z:27,ch:27,fi:0.2,ca:70,fe:0.5,mg:12,k2:100,na:180,zn:0.5,fo:110,se:3,col:140},
+  {n:"Tiramisù artigianale (mascarpone/uova/savoiardi)",c:"Dolci",src:"BDA",k:290,p:6.5,gs:10,g:18,z:27,ch:27,fi:0.2,ca:70,fe:0.5,mg:12,k2:100,na:180,zn:0.5,fo:12,se:3,col:140},
   // Allineato al duplicato CREA già verificato (DB_CREA_1074, 15mcg) - 2026-07-30
   {n:"Seadas / Sebadas sarde (con formaggio e miele)",c:"Dolci",src:"BDA",k:370,p:8.5,gs:6.5,g:17,z:40,ch:48,fi:1.5,ca:120,fe:1.2,mg:18,k2:100,na:250,zn:0.8,fo:15,se:6,col:35},
   {n:"Struffoli napoletani (con miele e canditi)",c:"Dolci",src:"BDA",k:410,p:6.5,gs:4.5,g:18,z:52,ch:60,fi:1.0,ca:35,fe:1.5,mg:10,k2:80,na:85,zn:0.5,fo:70,se:5,col:85},
@@ -1812,7 +1818,8 @@ const DB_BDA=[
   {n:"Polpette di carne al sugo (bovino/maiale)",c:"Carni e derivati",src:"BDA",k:195,p:15,gs:4.0,g:11,z:3.0,ch:10,fi:0.8,ca:35,fe:1.5,mg:18,k2:260,na:380,zn:2.0,fo:8,se:9,col:60},
   // ── SALUMI E INSACCATI ──
   {n:"Cotechino (cotto)",c:"Salumi",src:"BDA",k:380,p:18,gs:12,g:33,z:0.5,ch:1.0,fi:0,ca:15,fe:1.5,mg:15,k2:200,na:1200,zn:2.5,fo:5,se:10,col:90},
-  {n:"Zampone (cotto)",c:"Salumi",src:"BDA",k:400,p:17,gs:13,g:35,z:0.5,ch:1.0,fi:0,ca:15,fe:1.5,mg:15,k2:190,na:1300,zn:2.5,fo:140,se:10,col:95},
+  // FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=140 implausibile per salume di maiale) - 2026-07-30
+  {n:"Zampone (cotto)",c:"Salumi",src:"BDA",k:400,p:17,gs:13,g:35,z:0.5,ch:1.0,fi:0,ca:15,fe:1.5,mg:15,k2:190,na:1300,zn:2.5,fo:5,se:10,col:95},
   {n:"Soppressata (salame schiacciato del Sud)",c:"Salumi",src:"CREA",k:377,p:34.2,gs:15,g:26.3,z:0.9,ch:0.9,fi:0,ca:15,fe:1.8,mg:15,k2:250,na:1500,zn:2.5,fo:5,se:10,col:90},
   {n:"Capicola / Coppa Piacentina DOP",c:"Salumi",src:"BDA",k:280,p:24,gs:7.5,g:18,z:0.5,ch:0.5,fi:0,ca:15,fe:1.2,mg:18,k2:200,na:1100,zn:2.5,fo:5,se:10,col:75},
   {n:"Finocchiona (salame al finocchio toscano)",c:"Salumi",src:"BDA",k:430,p:22,gs:14,g:36,z:1.0,ch:2.0,fi:0.5,ca:20,fe:2.0,mg:18,k2:280,na:1400,zn:2.8,fo:5,se:11,col:88},
@@ -1877,7 +1884,7 @@ const DB_BDA=[
   {n:"Risotto bianco cotto (riso+brodo+olio)",c:"Piatti pronti",src:"CREA",k:140,p:2.8,gs:0.5,g:3.5,z:0.5,ch:24,fi:0.5,ca:12,fe:0.5,mg:12,k2:55,na:250,zn:0.5,fo:8,se:7,col:0},
   {n:"Minestrone di verdure miste cotto",c:"Piatti pronti",src:"CREA",k:45,p:2,gs:0.1,g:0.4,z:2.0,ch:7.8,fi:2.1,ca:28,fe:0.9,mg:18,k2:250,na:250,zn:0.4,fo:52,se:1.5,col:0},
   {n:"Sugo al pomodoro semplice (olio+pomodoro+basilico)",c:"Condimenti",src:"CREA",k:68,p:1.5,gs:0.5,g:4.5,z:3.5,ch:7.0,fi:1.8,ca:22,fe:0.6,mg:16,k2:330,na:15,zn:0.2,fo:40,se:0.5,col:0},
-  {n:"Frittata di verdure cotta",c:"Uova",src:"CREA",k:145,p:9.5,gs:3.5,g:10.5,z:1.5,ch:3.5,fi:0.8,ca:60,fe:1.5,mg:18,k2:200,na:200,zn:1.0,fo:160,se:8,col:270},
+  {n:"Frittata di verdure cotta",c:"Uova",src:"CREA",k:145,p:9.5,gs:3.5,g:10.5,z:1.5,ch:3.5,fi:0.8,ca:60,fe:1.5,mg:18,k2:200,na:200,zn:1.0,fo:45,se:8,col:270},
   {n:"Uova strapazzate con olio",c:"Uova",src:"CREA",k:165,p:11.0,gs:4.5,g:12.5,z:0.5,ch:0.6,fi:0,ca:55,fe:1.8,mg:12,k2:138,na:170,zn:1.3,fo:47,se:10,col:380},
   // ── CARNI E PESCE AGGIUNTIVI ──
   {n:"Agnello (coscia) crudo",c:"Carni e derivati",src:"BDA",k:162,p:20.5,gs:3.5,g:9.0,z:0,ch:0,fi:0,ca:12,fe:1.8,mg:23,k2:290,na:72,zn:3.5,fo:8,se:10,col:72,src:"BDA"},
@@ -1945,11 +1952,12 @@ const DB_BDA=[
 {n:"Besciamella",c:"Condimenti",k:101,p:3.5,gs:3.5,g:6,z:3.5,ch:9.5,fi:0.2,ca:110,fe:0.2,mg:12,k2:160,na:370,zn:0.4,fo:10,se:2,col:17,src:"BDA"},
 {n:"Sugo al pomodoro artigianale",c:"Condimenti",k:52,p:2,gs:0.3,g:2,z:4.8,ch:6.5,fi:1.5,ca:22,fe:0.7,mg:16,k2:330,na:380,zn:0.2,fo:40,se:1,col:0,src:"BDA"},
 {n:"Cornetto (brioche vuoto)",c:"Dolci",k:403,p:7.2,gs:9.64,g:18.3,z:10.6,ch:54.7,fi:2.1,ca:9,fe:1.3,mg:73,k2:52,na:350,zn:0.41,fo:45,se:2.6,col:88,src:"BDA"},
-{n:"Tiramisù",c:"Dolci",k:285,p:7.5,gs:10,g:16.7,z:24.5,ch:29,fi:0.5,ca:92,fe:0.8,mg:16,k2:140,na:140,zn:0.7,fo:150,se:7,col:160,src:"BDA"},
+{n:"Tiramisù",c:"Dolci",k:285,p:7.5,gs:10,g:16.7,z:24.5,ch:29,fi:0.5,ca:92,fe:0.8,mg:16,k2:140,na:140,zn:0.7,fo:35,se:7,col:160,src:"BDA"},
 {n:"Panna cotta",c:"Dolci",k:234,p:3.5,gs:14.5,g:16,z:22,ch:22.5,fi:0,ca:115,fe:0.1,mg:12,k2:160,na:70,zn:0.4,fo:5,se:2,col:55,src:"BDA"},
-{n:"Crostata di frutta fresca",c:"Dolci",k:238,p:4.5,gs:4,g:9,z:22.5,ch:34.5,fi:1.5,ca:45,fe:1.2,mg:14,k2:120,na:160,zn:0.6,fo:100,se:5,col:60,src:"BDA"},
+{n:"Crostata di frutta fresca",c:"Dolci",k:238,p:4.5,gs:4,g:9,z:22.5,ch:34.5,fi:1.5,ca:45,fe:1.2,mg:14,k2:120,na:160,zn:0.6,fo:35,se:5,col:60,src:"BDA"},
 {n:"Cotechino cotto",c:"Salumi cotti",k:307,p:21.1,gs:8.18,g:24.7,z:0,ch:0,fi:0,ca:15,fe:1.5,mg:11,k2:137,na:875,zn:2.1,fo:4,se:1,col:98,src:"BDA"},
-{n:"Trippa alla romana",c:"Carni cotte",k:115,p:11,gs:2.5,g:6.5,z:1,ch:4.5,fi:0.5,ca:45,fe:1.2,mg:18,k2:180,na:520,zn:2.5,fo:120,se:8,col:110,src:"BDA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=120 implausibile per trippa, tessuto muscolare/stomaco povero di folati) - 2026-07-30
+{n:"Trippa alla romana",c:"Carni cotte",k:115,p:11,gs:2.5,g:6.5,z:1,ch:4.5,fi:0.5,ca:45,fe:1.2,mg:18,k2:180,na:520,zn:2.5,fo:8,se:8,col:110,src:"BDA"},
 // Folati implausibili per polenta cotta/diluita (calcio 2mg conferma forte diluizione da acqua) - 2026-07-30
 {n:"Polenta cotta (gialla)",c:"Cereali cotti",k:70,p:1.8,gs:0.1,g:0.5,z:0,ch:14.8,fi:1.4,ca:2,fe:0.3,mg:18,k2:56,na:2,zn:0.4,fo:8,se:2,col:0,src:"BDA"},
 {n:"Risotto bianco (base)",c:"Cereali cotti",k:142,p:3.5,gs:1.5,g:4,z:0.5,ch:24,fi:0.5,ca:25,fe:0.5,mg:18,k2:100,na:350,zn:0.7,fo:65,se:5,col:8,src:"BDA"},
@@ -2003,7 +2011,7 @@ const DB_BDA=[
 // Stesso bug fosforo-in-folati dei latticini gia corretti (fosforo latte di capra ~106mg, folati reali yogurt ~12mcg) - 2026-07-29
 {n:"Yogurt di capra",c:"Latte e derivati",k:63,p:3.6,gs:2.5,g:3.8,z:4.0,ch:4.5,fi:0,ca:120,fe:0.1,mg:14,k2:155,na:40,zn:0.4,fo:12,se:2,col:13,src:"CREA"},
 {n:"Pan di Spagna",c:"Dolci",k:275,p:10.1,gs:1.45,g:5.1,z:31.2,ch:49.7,fi:1.4,ca:31,fe:1.1,mg:10,k2:97,na:79,zn:0.64,fo:20,se:3.8,col:144,src:"BDA"},
-{n:"Savoiardi",c:"Dolci",k:395,p:11.9,gs:3.5,g:9.2,z:39.3,ch:69.6,fi:1.6,ca:40,fe:2,mg:10,k2:105,na:125,zn:0.5,fo:90,se:10,col:165,src:"CREA"},
+{n:"Savoiardi",c:"Dolci",k:395,p:11.9,gs:3.5,g:9.2,z:39.3,ch:69.6,fi:1.6,ca:40,fe:2,mg:10,k2:105,na:125,zn:0.5,fo:20,se:10,col:165,src:"CREA"},
 {n:"Pesche sciroppate",c:"Frutta conservata",k:56,p:0.5,gs:0,g:0,z:14,ch:14,fi:0.9,ca:3,fe:0.2,mg:6,k2:110,na:4,zn:0.1,fo:15,se:0.4,col:0,src:"CREA"},
 {n:"Albicocche sciroppate",c:"Frutta conservata",k:65,p:0.4,gs:0,g:0.1,z:16.1,ch:16.1,fi:0.9,ca:19,fe:0.2,mg:8,k2:150,na:10,zn:0.1,fo:15,se:0.5,col:0,src:"CREA"},
 {n:"Portulaca",c:"Verdure",k:21,p:1.7,gs:0,g:0.4,z:0.4,ch:3.5,fi:0.9,ca:65,fe:3.5,mg:68,k2:494,na:45,zn:0.3,fo:44,se:0.5,col:0,src:"CREA"},
@@ -2060,7 +2068,8 @@ const DB_BDA=[
 {n:"Passera di mare fresca",c:"Pesce",k:78,p:15.5,gs:0.3,g:1.3,z:0,ch:0,fi:0,ca:30,fe:0.4,mg:26,k2:320,na:80,zn:0.4,fo:10,se:28,col:48,src:"CREA"},
 {n:"Mormora fresca",c:"Pesce",k:97,p:18,gs:0.53,g:1.9,z:2,ch:2,fi:0,ca:69,fe:5.6,mg:20,k2:287,na:72,zn:4.6,fo:10,se:102,col:45,src:"CREA"},
 {n:"Saragò (sargo) fresco",c:"Pesce",k:95,p:19.0,gs:0.4,g:2.1,z:0,ch:0,fi:0,ca:25,fe:0.5,mg:27,k2:350,na:70,zn:0.5,fo:10,se:28,col:52,src:"CREA"},
-{n:"Occhiata fresca",c:"Pesce",k:117,p:19,gs:1.26,g:3.7,z:2,ch:2,fi:0,ca:32,fe:4.2,mg:17,k2:427,na:68,zn:1.4,fo:188,se:25,col:48,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=188 implausibile per pesce bianco) - 2026-07-30
+{n:"Occhiata fresca",c:"Pesce",k:117,p:19,gs:1.26,g:3.7,z:2,ch:2,fi:0,ca:32,fe:4.2,mg:17,k2:427,na:68,zn:1.4,fo:15,se:25,col:48,src:"CREA"},
 {n:"Zerro fresco",c:"Pesce",k:93,p:19.0,gs:0.4,g:2.0,z:0,ch:0,fi:0,ca:35,fe:1.0,mg:28,k2:360,na:65,zn:0.5,fo:10,se:30,col:55,src:"CREA"},
 {n:"Aguglia fresca",c:"Pesce",k:98,p:19.5,gs:0.5,g:2.0,z:0,ch:0,fi:0,ca:30,fe:1.0,mg:35,k2:380,na:70,zn:0.6,fo:10,se:35,col:60,src:"CREA"},
 {n:"Pagello fragolino fresco",c:"Pesce",k:101,p:21,gs:0.77,g:1.9,z:0,ch:0,fi:0,ca:34,fe:4.3,mg:22,k2:690,na:120,zn:1.6,fo:10,se:40,col:35,src:"CREA"},
@@ -2098,7 +2107,8 @@ const DB_BDA=[
 // ── CARNI MANCANTI (CREA) ──
 {n:"Quaglie intere eviscerate crude",c:"Carni e derivati",k:111,p:21.8,gs:0.6,g:2.8,z:0,ch:0,fi:0,ca:12,fe:1.9,mg:24,k2:238,na:55,zn:2.5,fo:9,se:14,col:72,src:"CREA"},
 {n:"Gallina (carne, senza pelle)",c:"Carni e derivati",k:185,p:18.5,gs:2.0,g:12.5,z:0,ch:0,fi:0,ca:11,fe:1.2,mg:20,k2:260,na:75,zn:2.0,fo:9,se:10,col:90,src:"CREA"},
-{n:"Lingua di manzo",c:"Carni e derivati",k:192,p:16.0,gs:5.0,g:14.0,z:0,ch:0,fi:0,ca:6,fe:2.7,mg:15,k2:200,na:65,zn:2.8,fo:155,se:10,col:93,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=155 implausibile per lingua bovina, muscolo povero di folati come le altre carni rosse) - 2026-07-30
+{n:"Lingua di manzo",c:"Carni e derivati",k:192,p:16.0,gs:5.0,g:14.0,z:0,ch:0,fi:0,ca:6,fe:2.7,mg:15,k2:200,na:65,zn:2.8,fo:6,se:10,col:93,src:"CREA"},
 {n:"Animelle di vitello",c:"Carni e derivati",k:121,p:16.5,gs:1.0,g:6.5,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:22,k2:280,na:70,zn:1.8,fo:300,se:12,col:220,src:"CREA"},
 {n:"Rognone di vitello (rene)",c:"Carni e derivati",k:96,p:17.0,gs:0.7,g:3.0,z:0,ch:0,fi:0,ca:10,fe:5.0,mg:17,k2:230,na:200,zn:1.7,fo:230,se:120,col:380,src:"CREA"},
 
@@ -2506,6 +2516,7 @@ const DB_BDA=[
 
 // ── UOVA AGGIUNTIVE (CREA/BDA) ──
 {n:"Albume d'uovo crudo (per 100g)",c:"Uova",k:52,p:10.9,gs:0,g:0.2,z:0.5,ch:0.7,fi:0,ca:7,fe:0.1,mg:11,k2:163,na:166,zn:0.03,fo:4,se:20,col:0,src:"CREA"},
+// REVERT: preso per errore dallo script bulk fix-fo-placeholder-cluster.cjs (bucket default 20) - il tuorlo d'uovo ha genuinamente folati alti (~146mcg), ripristinato - 2026-07-30
 {n:"Tuorlo d'uovo crudo (per 100g)",c:"Uova",k:353,p:15.9,gs:9.6,g:30.9,z:0.6,ch:1.8,fi:0,ca:129,fe:2.7,mg:13,k2:109,na:48,zn:2.8,fo:146,se:56,col:1085,src:"CREA"},
 {n:"Uova di quaglia (crude, per 100g)",c:"Uova",k:158,p:13.1,gs:3.7,g:11.1,z:0.4,ch:0.4,fi:0,ca:64,fe:3.7,mg:13,k2:132,na:141,zn:1.5,fo:66,se:36,col:844,src:"CREA"},
 {n:"Uova di anatra (crude, per 100g)",c:"Uova",k:190,p:12.2,gs:4.33,g:15.4,z:0.7,ch:0.7,fi:0,ca:57,fe:2.8,mg:17,k2:129,na:122,zn:1.4,fo:8,se:36,col:884,src:"CREA"},
@@ -2643,14 +2654,14 @@ const DB_UPF = [
   {n:"Patatine al formaggio (Fonzies/simili)",c:"Snack salati",src:"UPF",k:510,p:5,gs:2.5,g:29,z:2,ch:58,fi:1.5,ca:25,fe:0.8,mg:15,k2:200,na:700,zn:0.5,fo:80,se:2,col:5},
   {n:"Crackers snack con sesamo (tipo MixBowl)",c:"Snack salati",src:"UPF",k:427,p:10.3,gs:1.88,g:12.3,z:0.7,ch:66.4,fi:4.7,ca:60,fe:2,mg:40,k2:150,na:948,zn:1,fo:130,se:5,col:0},
   {n:"Pop corn da microonde al burro",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:2,fe:1.5,mg:90,k2:250,na:500,zn:1.5,fo:25,se:5,col:10},
-  {n:"Pretzels/grissini salati industriali",c:"Snack salati",src:"UPF",k:492,p:9.8,gs:0,g:11,z:2.3,ch:72,fi:2.8,ca:25,fe:2,mg:25,k2:150,na:800,zn:0.8,fo:90,se:8,col:0},
-  {n:"Nachos/tortilla chips al formaggio",c:"Snack salati",src:"UPF",k:520,p:4,gs:4,g:28,z:4,ch:76,fi:12,ca:110,fe:1.5,mg:55,k2:190,na:200,zn:1,fo:160,se:4,col:5},
+  {n:"Pretzels/grissini salati industriali",c:"Snack salati",src:"UPF",k:492,p:9.8,gs:0,g:11,z:2.3,ch:72,fi:2.8,ca:25,fe:2,mg:25,k2:150,na:800,zn:0.8,fo:15,se:8,col:0},
+  {n:"Nachos/tortilla chips al formaggio",c:"Snack salati",src:"UPF",k:520,p:4,gs:4,g:28,z:4,ch:76,fi:12,ca:110,fe:1.5,mg:55,k2:190,na:200,zn:1,fo:15,se:4,col:5},
   {n:"Crackers Ritz (classici)",c:"Snack salati",src:"UPF",k:484,p:7.7,gs:2,g:23,z:8.5,ch:60,fi:3.3,ca:30,fe:2.5,mg:15,k2:100,na:520,zn:0.4,fo:55,se:5,col:0},
 
   // ── MERENDINE E DOLCI CONFEZIONATI ──
   {n:"Merendina tipo Crostatina/Merenda (Mulino B.)",c:"Dolci confezionati",src:"UPF",k:342,p:6,gs:7,g:12,z:17,ch:51,fi:1.4,ca:70,fe:1.5,mg:10,k2:100,na:236,zn:0.3,fo:60,se:3,col:15},
-  {n:"Pan di stelle / biscotti al cioccolato",c:"Dolci confezionati",src:"UPF",k:369,p:7,gs:7.5,g:13.6,z:35.5,ch:52.4,fi:4.6,ca:55,fe:2.5,mg:30,k2:200,na:200,zn:0.8,fo:110,se:4,col:5},
-  {n:"Kinder Bueno (per 100g)",c:"Dolci confezionati",src:"UPF",k:592,p:9,gs:22.9,g:41.6,z:35.2,ch:44.3,fi:1,ca:115,fe:1.5,mg:30,k2:240,na:137.2,zn:0.9,fo:140,se:3,col:20},
+  {n:"Pan di stelle / biscotti al cioccolato",c:"Dolci confezionati",src:"UPF",k:369,p:7,gs:7.5,g:13.6,z:35.5,ch:52.4,fi:4.6,ca:55,fe:2.5,mg:30,k2:200,na:200,zn:0.8,fo:20,se:4,col:5},
+  {n:"Kinder Bueno (per 100g)",c:"Dolci confezionati",src:"UPF",k:592,p:9,gs:22.9,g:41.6,z:35.2,ch:44.3,fi:1,ca:115,fe:1.5,mg:30,k2:240,na:137.2,zn:0.9,fo:20,se:3,col:20},
   {n:"Nutella (crema alla nocciola)",c:"Creme e spalmate",src:"UPF",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:3,ca:80,fe:2.9,mg:51,k2:350,na:42.8,zn:1,fo:20,se:2,col:0},
   {n:"Panna cotta industriale confezionata",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:100,fe:0.1,mg:8,k2:120,na:48,zn:0.3,fo:5,se:2,col:38},
   {n:"Tiramisù industriale (porzione 100g)",c:"Dolci confezionati",src:"UPF",k:266,p:3,gs:7.4,g:8.1,z:16.9,ch:41.6,fi:0.3,ca:60,fe:0,mg:0,k2:110,na:112,zn:0,fo:75,se:4,col:85},
@@ -2658,16 +2669,16 @@ const DB_UPF = [
   {n:"Brioche industriale (brioches confezionate)",c:"Dolci confezionati",src:"UPF",k:337,p:7,gs:7.9,g:9.9,z:13,ch:54,fi:2,ca:50,fe:1.5,mg:15,k2:100,na:380,zn:0.5,fo:70,se:6,col:85},
   // Carboidrati/zuccheri erano a 0 (impossibile per un prodotto da forno a base di farina): ripristinati a valori tipici (~45g carb, ~12g zuccheri), coerenti con le kcal dichiarate - 2026-07-29
   {n:"Croissant/cornetto industriale",c:"Dolci confezionati",src:"UPF",k:465,p:6,gs:15,g:28,z:12,ch:45,fi:1.5,ca:25,fe:1.5,mg:12,k2:110,na:0,zn:0.5,fo:65,se:5,col:60},
-  {n:"Wafer al cioccolato (KitKat/simili)",c:"Dolci confezionati",src:"UPF",k:504,p:6.3,gs:22,g:25,z:26,ch:62,fi:1.5,ca:110,fe:1.8,mg:45,k2:215,na:100,zn:0.9,fo:145,se:3,col:5},
-  {n:"Biscotti digestive industriali",c:"Dolci confezionati",src:"UPF",k:477,p:6,gs:5,g:19,z:20,ch:69,fi:3,ca:50,fe:2,mg:30,k2:150,na:570,zn:0.5,fo:100,se:8,col:0},
-  {n:"Torta di riso industriale",c:"Dolci confezionati",src:"UPF",k:260,p:5,gs:4,g:10,z:28,ch:40,fi:0.5,ca:100,fe:0.5,mg:15,k2:120,na:120,zn:0.3,fo:90,se:2,col:85},
+  {n:"Wafer al cioccolato (KitKat/simili)",c:"Dolci confezionati",src:"UPF",k:504,p:6.3,gs:22,g:25,z:26,ch:62,fi:1.5,ca:110,fe:1.8,mg:45,k2:215,na:100,zn:0.9,fo:20,se:3,col:5},
+  {n:"Biscotti digestive industriali",c:"Dolci confezionati",src:"UPF",k:477,p:6,gs:5,g:19,z:20,ch:69,fi:3,ca:50,fe:2,mg:30,k2:150,na:570,zn:0.5,fo:20,se:8,col:0},
+  {n:"Torta di riso industriale",c:"Dolci confezionati",src:"UPF",k:260,p:5,gs:4,g:10,z:28,ch:40,fi:0.5,ca:100,fe:0.5,mg:15,k2:120,na:120,zn:0.3,fo:20,se:2,col:85},
 
   // ── GELATI E GHIACCIOLI ──
   // Fosforo (latte+panna, calcio 105mg conferma comparto lattiero) era nel campo folati; folati reali ~15mcg - 2026-07-30
   {n:"Gelato al cioccolato industriale",c:"Gelati",src:"UPF",k:216,p:3.5,gs:7,g:12,z:23,ch:26,fi:0.5,ca:105,fe:0.8,mg:18,k2:195,na:65,zn:0.5,fo:15,se:2,col:35},
   {n:"Ghiacciolo alla fragola (tipo Polaretti)",c:"Gelati",src:"UPF",k:68,p:0,gs:0,g:0,z:17,ch:17,fi:0,ca:3,fe:0,mg:1,k2:5,na:10,zn:0,fo:2,se:0,col:0},
-  {n:"Gelato Magnum (cioccolato, stima per 100g)",c:"Gelati",src:"UPF",k:324.7,p:4.2,gs:12.6,g:20.8,z:26,ch:30,fi:0.8,ca:85,fe:0.6,mg:15,k2:150,na:66.2,zn:0.4,fo:90,se:2,col:30},
-  {n:"Gelato alla crema industriale",c:"Gelati",src:"UPF",k:255,p:3.1,gs:11,g:16,z:25,ch:25,fi:0.6,ca:110,fe:0.2,mg:10,k2:165,na:32,zn:0.4,fo:95,se:2,col:45},
+  {n:"Gelato Magnum (cioccolato, stima per 100g)",c:"Gelati",src:"UPF",k:324.7,p:4.2,gs:12.6,g:20.8,z:26,ch:30,fi:0.8,ca:85,fe:0.6,mg:15,k2:150,na:66.2,zn:0.4,fo:12,se:2,col:30},
+  {n:"Gelato alla crema industriale",c:"Gelati",src:"UPF",k:255,p:3.1,gs:11,g:16,z:25,ch:25,fi:0.6,ca:110,fe:0.2,mg:10,k2:165,na:32,zn:0.4,fo:12,se:2,col:45},
 
   // ── BEVANDE ALCOLICHE ──
   // Allineati alle voci BDA gia verificate (stesso nome quasi esatto) — 2026-07-28
@@ -2725,7 +2736,7 @@ const DB_UPF = [
 
   // ── SNACK DOLCI INDUSTRIALI ──
   {n:"Gelato gastronomico (coppa mista 200g)",c:"Gelati",src:"UPF",k:190,p:3.5,gs:6.5,g:10,z:22,ch:25,fi:0.3,ca:100,fe:0.4,mg:12,k2:170,na:60,zn:0.4,fo:5,se:2,col:40},
-  {n:"Cono gelato industriale (tipo Cornetto)",c:"Gelati",src:"UPF",k:301,p:4.6,gs:12,g:16,z:24,ch:34,fi:0.6,ca:95,fe:0.6,mg:14,k2:165,na:72,zn:0.5,fo:100,se:2,col:28},
+  {n:"Cono gelato industriale (tipo Cornetto)",c:"Gelati",src:"UPF",k:301,p:4.6,gs:12,g:16,z:24,ch:34,fi:0.6,ca:95,fe:0.6,mg:14,k2:165,na:72,zn:0.5,fo:12,se:2,col:28},
   {n:"Biscotti al burro tipo shortbread",c:"Dolci confezionati",src:"UPF",k:502,p:6.5,gs:16,g:26,z:25,ch:62,fi:1.5,ca:50,fe:1.5,mg:14,k2:100,na:400,zn:0.4,fo:65,se:6,col:90},
   {n:"Merendina Kinder Fetta al Latte",c:"Dolci confezionati",src:"UPF",k:411.1,p:4.2,gs:11.94,g:20,z:38.9,ch:55.6,fi:1.7,ca:195,fe:0.5,mg:18,k2:240,na:211.1,zn:0.9,fo:10,se:3,col:30},
 
@@ -2743,13 +2754,13 @@ const DB_UPF = [
   {n:"Pandoro porzione 100g",c:"Dolci confezionati",src:"UPF",k:400,p:6.7,gs:14,g:21,z:24,ch:44,fi:0.6,ca:50,fe:1.5,mg:15,k2:120,na:240,zn:0.5,fo:80,se:6,col:115},
   {n:"Panettone classico porzione 100g",c:"Dolci confezionati",src:"UPF",k:358.8,p:6.8,gs:7.5,g:12.1,z:30.6,ch:55,fi:2.6,ca:55,fe:1.8,mg:15,k2:130,na:180,zn:0.5,fo:10,se:5,col:95},
   {n:"Colomba pasquale porzione 100g",c:"Dolci confezionati",src:"UPF",k:413,p:6.6,gs:10,g:18,z:32,ch:56,fi:2,ca:50,fe:1.5,mg:12,k2:110,na:140,zn:0.4,fo:75,se:5,col:100},
-  {n:"Torrone al cioccolato duro",c:"Dolci confezionati",src:"UPF",k:488,p:9.5,gs:11,g:24,z:52,ch:60,fi:2.5,ca:130,fe:1.5,mg:55,k2:300,na:60,zn:1.2,fo:150,se:4,col:0},
-  {n:"Torrone morbido",c:"Dolci confezionati",src:"UPF",k:496,p:4.7,gs:5.8,g:23,z:64,ch:66,fi:4.7,ca:100,fe:0.8,mg:25,k2:200,na:8,zn:0.8,fo:100,se:2,col:0},
-  {n:"Cantucci di Prato",c:"Dolci confezionati",src:"UPF",k:450,p:9.8,gs:1.6,g:16,z:33,ch:66,fi:3.5,ca:70,fe:2,mg:40,k2:200,na:120,zn:1,fo:120,se:8,col:55},
+  {n:"Torrone al cioccolato duro",c:"Dolci confezionati",src:"UPF",k:488,p:9.5,gs:11,g:24,z:52,ch:60,fi:2.5,ca:130,fe:1.5,mg:55,k2:300,na:60,zn:1.2,fo:20,se:4,col:0},
+  {n:"Torrone morbido",c:"Dolci confezionati",src:"UPF",k:496,p:4.7,gs:5.8,g:23,z:64,ch:66,fi:4.7,ca:100,fe:0.8,mg:25,k2:200,na:8,zn:0.8,fo:20,se:2,col:0},
+  {n:"Cantucci di Prato",c:"Dolci confezionati",src:"UPF",k:450,p:9.8,gs:1.6,g:16,z:33,ch:66,fi:3.5,ca:70,fe:2,mg:40,k2:200,na:120,zn:1,fo:20,se:8,col:55},
   {n:"Amaretti confezionati",c:"Dolci confezionati",src:"UPF",k:452,p:12,gs:1.7,g:23,z:47,ch:48,fi:2.7,ca:65,fe:0.8,mg:40,k2:190,na:20,zn:0.5,fo:85,se:1,col:0},
   {n:"Savoiardi industriali",c:"Dolci confezionati",src:"UPF",k:373,p:7,gs:1,g:3,z:47,ch:79,fi:3,ca:30,fe:1.5,mg:10,k2:100,na:200,zn:0.3,fo:60,se:4,col:115},
   {n:"Ciambella krapfen industriale",c:"Dolci confezionati",src:"UPF",k:442,p:5,gs:12,g:23,z:30,ch:54,fi:1,ca:30,fe:1.5,mg:12,k2:100,na:280,zn:0.4,fo:65,se:5,col:45},
-  {n:"Barretta Mars Snickers tipo per 100g",c:"Dolci confezionati",src:"UPF",k:498,p:8.4,gs:10,g:26,z:49,ch:58,fi:1.5,ca:85,fe:1,mg:30,k2:230,na:224,zn:0.8,fo:110,se:2,col:8},
+  {n:"Barretta Mars Snickers tipo per 100g",c:"Dolci confezionati",src:"UPF",k:498,p:8.4,gs:10,g:26,z:49,ch:58,fi:1.5,ca:85,fe:1,mg:30,k2:230,na:224,zn:0.8,fo:20,se:2,col:8},
   {n:"Ferrero Rocher tipo praline per 100g",c:"Dolci confezionati",src:"UPF",k:603,p:8.2,gs:14.1,g:42.7,z:39.9,ch:44.4,fi:0,ca:95,fe:1.5,mg:60,k2:280,na:61.2,zn:1.2,fo:15,se:3,col:12},
   {n:"Cheesecake industriale porzione 100g",c:"Dolci confezionati",src:"UPF",k:359.7,p:4.5,gs:12.9,g:22.5,z:20,ch:34.5,fi:1.2,ca:65,fe:0.5,mg:8,k2:95,na:79,zn:0.4,fo:45,se:3,col:65},
   {n:"Torta al limone confezionata",c:"Dolci confezionati",src:"UPF",k:400,p:4,gs:7,g:16,z:28,ch:62,fi:2,ca:40,fe:1.2,mg:10,k2:90,na:180,zn:0.4,fo:60,se:4,col:70},
@@ -2758,10 +2769,10 @@ const DB_UPF = [
   // ── CONFETTERIA E DOLCIUMI ──
   {n:"Caramelle gommose alla frutta",c:"Dolci confezionati",src:"UPF",k:348,p:7,gs:0,g:0,z:56,ch:78,fi:0,ca:7,fe:0.5,mg:2,k2:10,na:45,zn:0,fo:5,se:0,col:0},
   {n:"Liquirizia industriale",c:"Dolci confezionati",src:"UPF",k:147.2,p:15.2,gs:0,g:0,z:21.6,ch:21.6,fi:0.3,ca:40,fe:2,mg:20,k2:370,na:100,zn:0.3,fo:5,se:1,col:0},
-  {n:"Cioccolato bianco industriale",c:"Dolci confezionati",src:"UPF",k:574,p:8.6,gs:16,g:39,z:44,ch:46,fi:2.3,ca:200,fe:0.2,mg:14,k2:286,na:120,zn:0.6,fo:110,se:4,col:21},
+  {n:"Cioccolato bianco industriale",c:"Dolci confezionati",src:"UPF",k:574,p:8.6,gs:16,g:39,z:44,ch:46,fi:2.3,ca:200,fe:0.2,mg:14,k2:286,na:120,zn:0.6,fo:20,se:4,col:21},
   {n:"Gianduiotto cioccolatino",c:"Dolci confezionati",src:"UPF",k:576,p:9.1,gs:13,g:40,z:36,ch:41,fi:3,ca:90,fe:1.5,mg:65,k2:360,na:0,zn:1,fo:15,se:3,col:10},
-  {n:"Popcorn caramellato confezionato",c:"Snack salati",src:"UPF",k:456,p:2.9,gs:10.2,g:16.1,z:53.2,ch:72.9,fi:3.5,ca:20,fe:1,mg:35,k2:175,na:511,zn:0.6,fo:105,se:3,col:0},
-  {n:"Ciambelline salate al rosmarino",c:"Snack salati",src:"UPF",k:492,p:6.4,gs:4.97,g:23.2,z:3.3,ch:61,fi:2.2,ca:40,fe:2.5,mg:25,k2:150,na:850,zn:0.8,fo:100,se:8,col:0},
+  {n:"Popcorn caramellato confezionato",c:"Snack salati",src:"UPF",k:456,p:2.9,gs:10.2,g:16.1,z:53.2,ch:72.9,fi:3.5,ca:20,fe:1,mg:35,k2:175,na:511,zn:0.6,fo:20,se:3,col:0},
+  {n:"Ciambelline salate al rosmarino",c:"Snack salati",src:"UPF",k:492,p:6.4,gs:4.97,g:23.2,z:3.3,ch:61,fi:2.2,ca:40,fe:2.5,mg:25,k2:150,na:850,zn:0.8,fo:15,se:8,col:0},
   {n:"Mix frutta secca speziata confezionato",c:"Snack salati",src:"UPF",k:471,p:14,gs:5.8,g:32,z:2.9,ch:34,fi:10,ca:100,fe:3,mg:140,k2:580,na:185,zn:2.5,fo:280,se:15,col:0},
 
   // ── PASTI PRONTI CONFEZIONATI ──
@@ -2801,7 +2812,7 @@ const DB_UPF = [
   {n:"Sottilette fette di formaggio",c:"Latte e derivati",src:"UPF",k:261,p:16,gs:13,g:19,z:5.2,ch:5.6,fi:2,ca:660,fe:0.3,mg:25,k2:105,na:2300,zn:2.5,fo:15,se:6,col:65},
 
   // ── BARRETTE ENERGETICHE E PROTEICHE ──
-  {n:"Barretta energetica tipo Clif",c:"Snack salati",src:"UPF",k:382,p:10,gs:2,g:7,z:27,ch:65,fi:5,ca:125,fe:3,mg:45,k2:250,na:200,zn:1.5,fo:140,se:8,col:0},
+  {n:"Barretta energetica tipo Clif",c:"Snack salati",src:"UPF",k:382,p:10,gs:2,g:7,z:27,ch:65,fi:5,ca:125,fe:3,mg:45,k2:250,na:200,zn:1.5,fo:20,se:8,col:0},
   {n:"Barretta proteica industriale 20g prot",c:"Proteine in Polvere",src:"UPF",k:356,p:33,gs:3.5,g:10,z:18,ch:35,fi:2.5,ca:220,fe:2,mg:60,k2:300,na:180,zn:2,fo:150,se:10,col:15},
 
   // ── CEREALI DA COLAZIONE aggiuntivi ──
@@ -2821,7 +2832,7 @@ const DB_UPF = [
   // FIX (scan consistenza Atwater): carboidrati (11g) incoerenti con kcal (336) e con prodotti quasi identici già nel DB (~62g); corretto a 62g. Folati (260mcg) anch'essi corretti a 45mcg per coerenza col pattern crispbread di segale già stabilito (DB_ONS_43) - 2026-07-30
   {n:"Crackers wasa tipo crispbread",c:"Snack salati",src:"UPF",k:336,p:9,gs:0.4,g:2.5,z:1.5,ch:62,fi:19,ca:30,fe:3,mg:65,k2:240,na:1000,zn:2,fo:45,se:15,col:0},
   {n:"Chips di lenticchie BBQ",c:"Snack salati",src:"UPF",k:410,p:12,gs:1.5,g:16,z:4,ch:57,fi:7,ca:35,fe:3,mg:50,k2:380,na:620,zn:1.5,fo:200,se:5,col:0},
-  {n:"Rice cakes aromatizzate",c:"Snack salati",src:"UPF",k:400,p:7.3,gs:1.9,g:11.4,z:2.7,ch:65,fi:3,ca:10,fe:0.8,mg:42,k2:105,na:440,zn:0.5,fo:95,se:3,col:0},
+  {n:"Rice cakes aromatizzate",c:"Snack salati",src:"UPF",k:400,p:7.3,gs:1.9,g:11.4,z:2.7,ch:65,fi:3,ca:10,fe:0.8,mg:42,k2:105,na:440,zn:0.5,fo:20,se:3,col:0},
 
   // ── BEVANDE PROTEICHE E SPORTIVE ──
   {n:"Frullato proteico industriale (330mL, 20g prot)",c:"Proteine in Polvere",src:"UPF",k:121,p:6.1,gs:1.2,g:3.3,z:10,ch:12,fi:0.3,ca:120,fe:0.5,mg:20,k2:155,na:100,zn:0.7,fo:85,se:5,col:12},
@@ -2872,12 +2883,12 @@ const DB_UPF = [
   // ── MERENDINE E DOLCI CONFEZIONATI aggiuntivi ──
   {n:"Crostatina Mulino Bianco tipo",c:"Dolci confezionati",src:"UPF",k:477,p:6.5,gs:6.7,g:22,z:28,ch:61.7,fi:1.5,ca:40,fe:1.2,mg:12,k2:110,na:140,zn:0.4,fo:65,se:3,col:35},
   // Grassi totali erano 10g ma i saturi dichiarati (7.8g) da soli erano quasi il totale; dato ufficiale prodotto reale ~20.5g grassi totali, coerente con le kcal (483) - 2026-07-29
-  {n:"Pan di Stelle tipo (biscotti cacao)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.5,gs:7.8,g:20.5,z:23.5,ch:65,fi:4,ca:65,fe:3,mg:40,k2:280,na:190,zn:0.9,fo:130,se:4,col:10},
+  {n:"Pan di Stelle tipo (biscotti cacao)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.5,gs:7.8,g:20.5,z:23.5,ch:65,fi:4,ca:65,fe:3,mg:40,k2:280,na:190,zn:0.9,fo:20,se:4,col:10},
   {n:"Merendina spugnosa tipo Twinkie",c:"Dolci confezionati",src:"UPF",k:360,p:4.4,gs:9.8,g:9.8,z:0,ch:64,fi:0.5,ca:35,fe:1,mg:8,k2:65,na:330,zn:0.3,fo:50,se:3,col:20},
   // Corretto per coerenza col duplicato già fixato (Brioche siciliana col tuppo, 30mcg) - 2026-07-30
   {n:"Brioche con crema industriale",c:"Dolci confezionati",src:"UPF",k:340,p:6.5,gs:5,g:12,z:28,ch:52,fi:1,ca:55,fe:1.2,mg:14,k2:130,na:310,zn:0.4,fo:30,se:4,col:55},
   // FIX (check strutturale, dato palesemente corrotto): proteine (41.7g) e carboidrati (13.9g) erano incompatibili sia con un wafer al cioccolato reale sia con l'Atwater (kcal attese ~404 col dato vecchio) - corretti a valori reali etichetta Nestle KitKat (proteine 7.3g, carboidrati 59.6g, coerenti con zuccheri 58g gia presenti e con kcal 486.1) - 2026-07-30
-  {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:7.3,gs:18,g:25.6,z:58,ch:59.6,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:105,se:3,col:10},
+  {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:7.3,gs:18,g:25.6,z:58,ch:59.6,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:20,se:3,col:10},
 
   // ── FAST FOOD / STREET FOOD ──
   {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:45,fe:2,mg:20,k2:195,na:320,zn:1.2,fo:115,se:8,col:45},
@@ -2894,7 +2905,7 @@ const DB_UPF = [
 
   // ── DOLCI / DESSERT PARTICOLARI ──
   {n:"Panna cotta industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:95,fe:0.1,mg:8,k2:110,na:48,zn:0.2,fo:5,se:2,col:50},
-  {n:"Tiramisù industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:266,p:3,gs:7.4,g:8.1,z:16.9,ch:41.6,fi:0.3,ca:65,fe:0,mg:0,k2:130,na:112,zn:0,fo:90,se:4,col:145},
+  {n:"Tiramisù industriale in vaschetta",c:"Dolci confezionati",src:"UPF",k:266,p:3,gs:7.4,g:8.1,z:16.9,ch:41.6,fi:0.3,ca:65,fe:0,mg:0,k2:130,na:112,zn:0,fo:35,se:4,col:145},
   {n:"Crostata industriale marmellata",c:"Dolci confezionati",src:"UPF",k:389,p:4.5,gs:5.4,g:11,z:38.8,ch:67.2,fi:2,ca:40,fe:1.5,mg:15,k2:120,na:156,zn:0.5,fo:70,se:4,col:20},
 
   // ── BISCOTTI E CEREALI COLAZIONE AGGIUNTIVI ──
@@ -2917,10 +2928,10 @@ const DB_UPF = [
 
   // ── SNACK E DOLCI AGGIUNTIVI ──
   {n:"Pop corn al burro commerciale (busta)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:8,fe:2.5,mg:95,k2:330,na:500,zn:2.0,fo:25,se:5,col:15},
-  {n:"Biscotti Oreo (o tipo sandwich cacao)",c:"Biscotti e crackers",src:"UPF",k:478.3,p:4.3,gs:4.35,g:19.6,z:39.1,ch:73.9,fi:0,ca:33,fe:4.5,mg:25,k2:195,na:331.3,zn:0.5,fo:95,se:3,col:0},
+  {n:"Biscotti Oreo (o tipo sandwich cacao)",c:"Biscotti e crackers",src:"UPF",k:478.3,p:4.3,gs:4.35,g:19.6,z:39.1,ch:73.9,fi:0,ca:33,fe:4.5,mg:25,k2:195,na:331.3,zn:0.5,fo:20,se:3,col:0},
   {n:"Muffin ai mirtilli industriale",c:"Dolci confezionati",src:"UPF",k:374,p:4.8,gs:1.7,g:18.1,z:23.1,ch:47.6,fi:1.5,ca:45,fe:1.2,mg:12,k2:100,na:176,zn:0.4,fo:60,se:4,col:45},
   {n:"Snickers / Mars tipo (barretta cioccolato)",c:"Dolci confezionati",src:"UPF",k:483,p:8.6,gs:8,g:23,z:51,ch:61,fi:1.0,ca:100,fe:1.0,mg:30,k2:230,na:240,zn:0.7,fo:80,se:2,col:8},
-  {n:"Ferrero Rocher (cioccolatino pralinato)",c:"Dolci confezionati",src:"UPF",k:600,p:8,gs:14,g:44,z:40,ch:48,fi:4,ca:85,fe:2.0,mg:45,k2:300,na:60,zn:0.7,fo:145,se:4,col:10},
+  {n:"Ferrero Rocher (cioccolatino pralinato)",c:"Dolci confezionati",src:"UPF",k:600,p:8,gs:14,g:44,z:40,ch:48,fi:4,ca:85,fe:2.0,mg:45,k2:300,na:60,zn:0.7,fo:20,se:4,col:10},
   {n:"Patatine soffiato tipo Cheetos",c:"Snack salati",src:"UPF",k:544,p:6.5,gs:3.0,g:30.5,z:5.0,ch:60.5,fi:1.5,ca:30,fe:1.5,mg:20,k2:250,na:900,zn:0.5,fo:65,se:2,col:5},
 
   // ── FAST FOOD AGGIUNTIVI ──
@@ -2951,16 +2962,17 @@ const DB_UPF = [
   {n:"Minestra in busta liofilizzata",c:"Piatti pronti",src:"UPF",k:85,p:3,gs:1.5,g:3.5,z:5,ch:11,fi:1,ca:20,fe:0.8,mg:10,k2:95,na:800,zn:0.4,fo:50,se:2,col:5},
   // ── SALUMI E INSACCATI INDUSTRIALI ──
   {n:"Wurstel di pollo e maiale",c:"Salumi",src:"UPF",k:224,p:15,gs:6.5,g:18,z:0.2,ch:0.5,fi:0,ca:15,fe:1.2,mg:12,k2:195,na:760,zn:1.5,fo:8,se:12,col:65},
-  {n:"Salamino piccante tipo pepperoni",c:"Salumi",src:"UPF",k:324,p:28,gs:8.6,g:23,z:0.5,ch:1.5,fi:0,ca:8,fe:1.5,mg:18,k2:290,na:1600,zn:3,fo:155,se:20,col:105},
+  // FIX: residuo bug fosforo-in-folati sfuggito alle sessioni precedenti (fo=155 implausibile per salume di maiale/manzo stagionato) - 2026-07-30
+  {n:"Salamino piccante tipo pepperoni",c:"Salumi",src:"UPF",k:324,p:28,gs:8.6,g:23,z:0.5,ch:1.5,fi:0,ca:8,fe:1.5,mg:18,k2:290,na:1600,zn:3,fo:5,se:20,col:105},
   {n:"Pancetta affumicata (bacon)",c:"Salumi",src:"UPF",k:353,p:18,gs:13,g:31,z:0,ch:0.5,fi:0,ca:8,fe:0.7,mg:13,k2:260,na:1320,zn:1.8,fo:5,se:24,col:110},
   {n:"Prosciutto cotto affumicato industriale",c:"Salumi",src:"UPF",k:138,p:20,gs:2.2,g:6,z:1,ch:1,fi:0,ca:10,fe:1.2,mg:16,k2:310,na:800,zn:2,fo:5,se:18,col:62},
   // ── DOLCI CONFEZIONATI ──
-  {n:"Barretta cioccolato tipo Snickers (100g)",c:"Dolci confezionati",src:"UPF",k:455,p:5,gs:10,g:18,z:48,ch:64,fi:1,ca:100,fe:1,mg:25,k2:220,na:150,zn:0.8,fo:120,se:3,col:10},
+  {n:"Barretta cioccolato tipo Snickers (100g)",c:"Dolci confezionati",src:"UPF",k:455,p:5,gs:10,g:18,z:48,ch:64,fi:1,ca:100,fe:1,mg:25,k2:220,na:150,zn:0.8,fo:20,se:3,col:10},
   {n:"Cioccolato al latte confezionato (tipo Milka, 100g)",c:"Dolci confezionati",src:"UPF",k:523,p:5.4,gs:17.7,g:28.5,z:59.6,ch:60.2,fi:1.9,ca:225,fe:2.5,mg:55,k2:400,na:8,zn:1.5,fo:13,se:5,col:15},
   {n:"Budino confezionato alla vaniglia",c:"Dolci confezionati",src:"UPF",k:110,p:3.5,gs:1.5,g:3.5,z:14.5,ch:17,fi:0,ca:110,fe:0.1,mg:10,k2:140,na:65,zn:0.4,fo:80,se:2,col:10},
   // Fosforo (latte/panna, calcio 90mg conferma) era nel campo folati; folati reali ~10mcg - 2026-07-30
   {n:"Gelato confezionato tipo Oreo",c:"Dolci confezionati",src:"UPF",k:275,p:3.5,gs:7.5,g:15,z:28,ch:33,fi:0.5,ca:90,fe:0.8,mg:12,k2:130,na:110,zn:0.4,fo:10,se:2,col:22},
-  {n:"Torta confezionata tipo plumcake (per 100g)",c:"Dolci confezionati",src:"UPF",k:385,p:5.5,gs:4,g:10,z:38,ch:68,fi:1,ca:100,fe:1.5,mg:10,k2:90,na:520,zn:0.5,fo:110,se:4,col:0},
+  {n:"Torta confezionata tipo plumcake (per 100g)",c:"Dolci confezionati",src:"UPF",k:385,p:5.5,gs:4,g:10,z:38,ch:68,fi:1,ca:100,fe:1.5,mg:10,k2:90,na:520,zn:0.5,fo:20,se:4,col:0},
   // ── CEREALI DA COLAZIONE ──
   {n:"Cereali zuccherati tipo Corn Flakes",c:"Cereali confezionati",src:"UPF",k:386,p:8.4,gs:0.5,g:1.8,z:7.4,ch:83,fi:2.3,ca:5,fe:8.3,mg:22,k2:150,na:602,zn:0.3,fo:80,se:2,col:0},
   {n:"Muesli con cioccolato industriale",c:"Cereali confezionati",src:"UPF",k:395,p:13,gs:2.6,g:9,z:9.8,ch:61,fi:7.9,ca:60,fe:4,mg:60,k2:380,na:368,zn:1.5,fo:210,se:5,col:0},
@@ -2989,7 +3001,7 @@ const DB_UPF = [
   // ── PRODOTTI CHETOGENICI COMMERCIALI ──
   {n:"Pane proteico keto commerciale",c:"Cereali e derivati",src:"UPF",k:254,p:22,gs:1.1,g:9.6,z:1.3,ch:15,fi:10,ca:180,fe:2.5,mg:40,k2:150,na:480,zn:1.5,fo:180,se:10,col:30},
   {n:"Pasta proteica keto (lupin/konjac)",c:"Cereali e pasta",src:"UPF",k:90,p:8,gs:0.2,g:1.5,z:1,ch:8,fi:6,ca:35,fe:1.5,mg:20,k2:80,na:20,zn:0.8,fo:60,se:3,col:0},
-  {n:"Barretta keto con cioccolato fondente",c:"Dolci confezionati",src:"UPF",k:380,p:12,gs:10,g:28,z:8,ch:15,fi:8,ca:80,fe:2.5,mg:50,k2:200,na:120,zn:1,fo:120,se:5,col:0},
+  {n:"Barretta keto con cioccolato fondente",c:"Dolci confezionati",src:"UPF",k:380,p:12,gs:10,g:28,z:8,ch:15,fi:8,ca:80,fe:2.5,mg:50,k2:200,na:120,zn:1,fo:20,se:5,col:0},
   {n:"Cracker di semi misti keto",c:"Snack salati",src:"UPF",k:520,p:18,gs:5,g:42,z:4,ch:12,fi:8,ca:150,fe:4,mg:130,k2:350,na:320,zn:3,fo:390,se:15,col:0},
   {n:"Farina di mandorle degraissata",c:"Cereali e derivati",src:"UPF",k:500,p:23,gs:4,g:30,z:5,ch:18,fi:10,ca:270,fe:4,mg:270,k2:650,na:5,zn:3,fo:29,se:3,col:0},
   {n:"Farina di cocco disidratata",c:"Cereali e derivati",src:"UPF",k:615,p:10,gs:47,g:55,z:9,ch:9,fi:39,ca:22,fe:4.8,mg:110,k2:543,na:37.6,zn:2.2,fo:276,se:19,col:0},
@@ -3006,7 +3018,7 @@ const DB_UPF = [
 
   // ── FORMAGGI LIGHT E SPECIALI ──
   {n:"Mozzarella light (2% grassi)",c:"Latte e derivati",src:"UPF",k:165,p:20.5,gs:6,g:8.5,z:1.5,ch:1.5,fi:0,ca:500,fe:0.1,mg:18,k2:100,na:200,zn:1.5,fo:10,se:10,col:12},
-  {n:"Philadelphia light (spalmabile)",c:"Latte e derivati",src:"UPF",k:146.7,p:7.2,gs:6.9,g:10,z:5.1,ch:5.1,fi:0.3,ca:80,fe:0.1,mg:8,k2:90,na:82.5,zn:0.7,fo:95,se:4,col:30},
+  {n:"Philadelphia light (spalmabile)",c:"Latte e derivati",src:"UPF",k:146.7,p:7.2,gs:6.9,g:10,z:5.1,ch:5.1,fi:0.3,ca:80,fe:0.1,mg:8,k2:90,na:82.5,zn:0.7,fo:12,se:4,col:30},
   {n:"Feta light in salamoia",c:"Latte e derivati",src:"UPF",k:170,p:19,gs:7,g:10,z:0.5,ch:1,fi:0,ca:360,fe:0.3,mg:18,k2:120,na:880,zn:1.6,fo:20,se:10,col:40},
   {n:"Parmigiano Reggiano DOP 30 mesi",c:"Latte e derivati",src:"CREA",k:397,p:32.4,gs:19.6,g:29.7,z:0,ch:0,fi:0,ca:1159,fe:0.2,mg:43,k2:102,na:600,zn:4,fo:7,se:12,col:83},
   {n:"Grana Padano DOP",c:"Latte e derivati",src:"CREA",k:392,p:33.9,gs:19.48,g:28.5,z:0,ch:0,fi:0,ca:1165,fe:0.1,mg:63,k2:120,na:700,zn:11,fo:7,se:12,col:98},
@@ -3070,14 +3082,14 @@ const DB_UPF = [
   {n:"Panino con hamburger da fast food (generico, per 100g)",c:"Fast food",src:"UPF",k:255,p:12,gs:4.5,g:12,z:5.5,ch:27,fi:1.5,ca:70,fe:2.0,mg:20,k2:195,na:520,zn:2.0,fo:30,se:10,col:40},
 
   // ── SNACK E DOLCIUMI INDUSTRIALI ──
-  {n:"Oreo biscotti (originali)",c:"Dolci confezionati",src:"UPF",k:478.3,p:4.3,gs:4.35,g:19.6,z:39.1,ch:73.9,fi:0,ca:35,fe:5.0,mg:38,k2:200,na:331.3,zn:1.0,fo:130,se:5,col:0},
-  {n:"Digestive McVitie's originali",c:"Dolci confezionati",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:50,fe:3.5,mg:40,k2:250,na:500,zn:0.8,fo:110,se:6,col:32},
-  {n:"Kinder Ferrero (mini, per 100g)",c:"Dolci confezionati",src:"UPF",k:553.5,p:8.6,gs:17.3,g:37.3,z:41.2,ch:49.5,fi:0.3,ca:150,fe:0,mg:0,k2:220,na:108,zn:0,fo:130,se:8,col:35},
-  {n:"Ferrero Rocher (per 100g)",c:"Dolci confezionati",src:"UPF",k:600,p:8,gs:14,g:44,z:40,ch:48,fi:4,ca:95,fe:2.5,mg:55,k2:260,na:60,zn:1.0,fo:110,se:6,col:15},
-  {n:"Raffaello Ferrero (per 100g)",c:"Dolci confezionati",src:"UPF",k:627,p:7.4,gs:29.5,g:48.3,z:33.6,ch:38.6,fi:2.0,ca:65,fe:1.0,mg:35,k2:210,na:106.8,zn:0.8,fo:90,se:5,col:10},
-  {n:"Kinder Sorpresa/Surprise uovo (per 100g)",c:"Dolci confezionati",src:"UPF",k:552,p:8.1,gs:22.6,g:34.2,z:52.1,ch:52.3,fi:0.5,ca:130,fe:1.5,mg:25,k2:230,na:129.2,zn:0.9,fo:130,se:8,col:28},
+  {n:"Oreo biscotti (originali)",c:"Dolci confezionati",src:"UPF",k:478.3,p:4.3,gs:4.35,g:19.6,z:39.1,ch:73.9,fi:0,ca:35,fe:5.0,mg:38,k2:200,na:331.3,zn:1.0,fo:20,se:5,col:0},
+  {n:"Digestive McVitie's originali",c:"Dolci confezionati",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:50,fe:3.5,mg:40,k2:250,na:500,zn:0.8,fo:20,se:6,col:32},
+  {n:"Kinder Ferrero (mini, per 100g)",c:"Dolci confezionati",src:"UPF",k:553.5,p:8.6,gs:17.3,g:37.3,z:41.2,ch:49.5,fi:0.3,ca:150,fe:0,mg:0,k2:220,na:108,zn:0,fo:20,se:8,col:35},
+  {n:"Ferrero Rocher (per 100g)",c:"Dolci confezionati",src:"UPF",k:600,p:8,gs:14,g:44,z:40,ch:48,fi:4,ca:95,fe:2.5,mg:55,k2:260,na:60,zn:1.0,fo:20,se:6,col:15},
+  {n:"Raffaello Ferrero (per 100g)",c:"Dolci confezionati",src:"UPF",k:627,p:7.4,gs:29.5,g:48.3,z:33.6,ch:38.6,fi:2.0,ca:65,fe:1.0,mg:35,k2:210,na:106.8,zn:0.8,fo:20,se:5,col:10},
+  {n:"Kinder Sorpresa/Surprise uovo (per 100g)",c:"Dolci confezionati",src:"UPF",k:552,p:8.1,gs:22.6,g:34.2,z:52.1,ch:52.3,fi:0.5,ca:130,fe:1.5,mg:25,k2:230,na:129.2,zn:0.9,fo:20,se:8,col:28},
   {n:"Bounty (per 100g)",c:"Dolci confezionati",src:"UPF",k:487,p:3,gs:21,g:25,z:48,ch:58,fi:2.0,ca:35,fe:1.5,mg:30,k2:280,na:80,zn:0.4,fo:70,se:3,col:5},
-  {n:"Snickers (per 100g)",c:"Dolci confezionati",src:"UPF",k:510,p:9.5,gs:9.7,g:28,z:45,ch:54,fi:1.5,ca:80,fe:1.5,mg:42,k2:330,na:176,zn:1.0,fo:100,se:4,col:8},
+  {n:"Snickers (per 100g)",c:"Dolci confezionati",src:"UPF",k:510,p:9.5,gs:9.7,g:28,z:45,ch:54,fi:1.5,ca:80,fe:1.5,mg:42,k2:330,na:176,zn:1.0,fo:20,se:4,col:8},
   {n:"Twix (per 100g)",c:"Dolci confezionati",src:"UPF",k:493,p:4.4,gs:14,g:24,z:49,ch:65,fi:1.0,ca:40,fe:1.5,mg:25,k2:210,na:160,zn:0.6,fo:75,se:4,col:10},
   // Fosforo (cioccolato al latte, notoriamente ricco di fosforo) era nel campo folati; folati reali ~30mcg - 2026-07-30
   {n:"M&Ms al cioccolato al latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:494,p:5.0,gs:8.0,g:20,z:65,ch:70,fi:1.0,ca:60,fe:1.5,mg:28,k2:250,na:50,zn:0.6,fo:30,se:4,col:12},
@@ -3183,16 +3195,16 @@ const DB_UPF = [
   {n:"Panna cotta surgelata (monoporzione)",c:"Dolci",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:95,fe:0.1,mg:8,k2:90,na:48,zn:0.3,fo:8,se:2,col:48},
   {n:"Cheesecake industriale (porzione)",c:"Dolci",src:"UPF",k:359.7,p:4.5,gs:12.9,g:22.5,z:20,ch:34.5,fi:1.2,ca:78,fe:0.5,mg:10,k2:90,na:79,zn:0.5,fo:75,se:5,col:80},
   {n:"Merendina Mulino Bianco tipo Plumcake",c:"Dolci",src:"UPF",k:393,p:7.5,gs:5.5,g:16.5,z:22.5,ch:55.5,fi:1.5,ca:48,fe:1.2,mg:14,k2:125,na:295,zn:0.4,fo:85,se:6,col:60},
-  {n:"Biscotti Pan di Stelle (per 100g)",c:"Biscotti e crackers",src:"UPF",k:485,p:7.8,gs:7.4,g:21,z:24,ch:64,fi:4.2,ca:80,fe:2.0,mg:30,k2:210,na:176,zn:0.8,fo:120,se:5,col:15},
-  {n:"Biscotti Digestive McVitie's (per 100g)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:110,fe:2.5,mg:50,k2:280,na:500,zn:1.0,fo:165,se:8,col:0},
+  {n:"Biscotti Pan di Stelle (per 100g)",c:"Biscotti e crackers",src:"UPF",k:485,p:7.8,gs:7.4,g:21,z:24,ch:64,fi:4.2,ca:80,fe:2.0,mg:30,k2:210,na:176,zn:0.8,fo:20,se:5,col:15},
+  {n:"Biscotti Digestive McVitie's (per 100g)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:110,fe:2.5,mg:50,k2:280,na:500,zn:1.0,fo:20,se:8,col:0},
   {n:"Yogurt alla frutta Müller (per 100g)",c:"Latte e derivati",src:"UPF",k:88,p:3.8,gs:1.8,g:3.5,z:12.5,ch:13.0,fi:0.2,ca:120,fe:0.1,mg:13,k2:155,na:55,zn:0.5,fo:10,se:4,col:12},
   {n:"Yogurt al caffè Müller Corner (per 100g)",c:"Latte e derivati",src:"UPF",k:123,p:3.8,gs:2,g:3.6,z:15.5,ch:18.1,fi:0,ca:135,fe:0.1,mg:14,k2:170,na:60,zn:0.6,fo:10,se:5,col:13},
-  {n:"Pandoro (per 100g)",c:"Dolci",src:"UPF",k:400,p:6.7,gs:14,g:21,z:24,ch:44,fi:0.6,ca:35,fe:1.5,mg:15,k2:100,na:240,zn:0.5,fo:90,se:8,col:95},
-  {n:"Panettone (per 100g)",c:"Dolci",src:"UPF",k:364,p:7,gs:7.5,g:12,z:24,ch:56,fi:2.0,ca:40,fe:1.8,mg:20,k2:130,na:200,zn:0.6,fo:100,se:8,col:110},
-  {n:"Colomba pasquale (per 100g)",c:"Dolci",src:"UPF",k:436,p:3.6,gs:16,g:26,z:39,ch:46,fi:1.5,ca:35,fe:1.5,mg:16,k2:110,na:80,zn:0.5,fo:95,se:7,col:100},
-  {n:"Torrone morbido (per 100g)",c:"Dolci",src:"UPF",k:496,p:4.7,gs:5.8,g:23,z:64,ch:66,fi:4.7,ca:80,fe:1.2,mg:60,k2:280,na:8,zn:1.0,fo:130,se:4,col:0},
-  {n:"Torrone duro (per 100g)",c:"Dolci",src:"UPF",k:487,p:6,gs:1.7,g:23,z:24,ch:63,fi:3.6,ca:90,fe:1.3,mg:65,k2:290,na:208,zn:1.1,fo:140,se:4,col:0},
-  {n:"Bacon affumicato (per 100g)",c:"Salumi e insaccati",src:"UPF",k:192,p:15.2,gs:5.8,g:14.4,z:1,ch:1,fi:0,ca:8,fe:0,mg:0,k2:250,na:1306,zn:0,fo:145,se:23,col:80},
+  {n:"Pandoro (per 100g)",c:"Dolci",src:"UPF",k:400,p:6.7,gs:14,g:21,z:24,ch:44,fi:0.6,ca:35,fe:1.5,mg:15,k2:100,na:240,zn:0.5,fo:35,se:8,col:95},
+  {n:"Panettone (per 100g)",c:"Dolci",src:"UPF",k:364,p:7,gs:7.5,g:12,z:24,ch:56,fi:2.0,ca:40,fe:1.8,mg:20,k2:130,na:200,zn:0.6,fo:35,se:8,col:110},
+  {n:"Colomba pasquale (per 100g)",c:"Dolci",src:"UPF",k:436,p:3.6,gs:16,g:26,z:39,ch:46,fi:1.5,ca:35,fe:1.5,mg:16,k2:110,na:80,zn:0.5,fo:35,se:7,col:100},
+  {n:"Torrone morbido (per 100g)",c:"Dolci",src:"UPF",k:496,p:4.7,gs:5.8,g:23,z:64,ch:66,fi:4.7,ca:80,fe:1.2,mg:60,k2:280,na:8,zn:1.0,fo:20,se:4,col:0},
+  {n:"Torrone duro (per 100g)",c:"Dolci",src:"UPF",k:487,p:6,gs:1.7,g:23,z:24,ch:63,fi:3.6,ca:90,fe:1.3,mg:65,k2:290,na:208,zn:1.1,fo:20,se:4,col:0},
+  {n:"Bacon affumicato (per 100g)",c:"Salumi e insaccati",src:"UPF",k:192,p:15.2,gs:5.8,g:14.4,z:1,ch:1,fi:0,ca:8,fe:0,mg:0,k2:250,na:1306,zn:0,fo:5,se:23,col:80},
   {n:"Bastoncini di pesce surgelati (per 100g)",c:"Pesce e prodotti ittici",src:"UPF",k:189.3,p:11,gs:1.8,g:9.3,z:2.1,ch:14.6,fi:0,ca:60,fe:0.8,mg:20,k2:230,na:352,zn:0.5,fo:12,se:16,col:35},
   {n:"Arancino/Arancina surgelato (per 100g)",c:"Prodotti pronti",src:"UPF",k:201,p:4.4,gs:1.7,g:9.6,z:1.5,ch:21.5,fi:5.5,ca:40,fe:1.2,mg:20,k2:150,na:1100,zn:0.7,fo:75,se:8,col:25},
   {n:"Risotto surgelato pronto (per 100g)",c:"Prodotti pronti",src:"UPF",k:212,p:3.4,gs:1.7,g:9.3,z:1.2,ch:28,fi:0.6,ca:15,fe:0.5,mg:12,k2:85,na:380,zn:0.3,fo:40,se:3,col:5},
@@ -3202,15 +3214,15 @@ const DB_UPF = [
   {n:"Hot dog (würstel in pane, per 100g)",c:"Prodotti pronti",src:"UPF",k:202,p:13.5,gs:7.5,g:16,z:1,ch:1,fi:1.5,ca:75,fe:2.0,mg:25,k2:245,na:800,zn:1.5,fo:5,se:15,col:40},
   {n:"Caramelle gommose (per 100g)",c:"Dolci",src:"UPF",k:330,p:5.0,gs:0,g:0,z:55.0,ch:77.0,fi:0,ca:5,fe:0.1,mg:2,k2:10,na:30,zn:0.1,fo:5,se:0,col:0},
   {n:"Chewing gum senza zucchero (per 100g)",c:"Dolci",src:"UPF",k:165,p:1.1,gs:0,g:0,z:0,ch:67,fi:0,ca:5,fe:0,mg:1,k2:5,na:0,zn:0,fo:4,se:0,col:0},
-  {n:"Barretta Kinder Bueno (per 100g)",c:"Dolci",src:"UPF",k:572,p:8.6,gs:17.3,g:37.3,z:41.2,ch:49.5,fi:2.0,ca:80,fe:2.0,mg:35,k2:280,na:110,zn:0.8,fo:140,se:6,col:10},
-  {n:"Barretta Snickers (per 100g)",c:"Dolci",src:"UPF",k:488,p:8.5,gs:13.0,g:21.5,z:47.0,ch:62.5,fi:1.5,ca:80,fe:0.8,mg:38,k2:300,na:195,zn:0.7,fo:130,se:4,col:5},
+  {n:"Barretta Kinder Bueno (per 100g)",c:"Dolci",src:"UPF",k:572,p:8.6,gs:17.3,g:37.3,z:41.2,ch:49.5,fi:2.0,ca:80,fe:2.0,mg:35,k2:280,na:110,zn:0.8,fo:20,se:6,col:10},
+  {n:"Barretta Snickers (per 100g)",c:"Dolci",src:"UPF",k:488,p:8.5,gs:13.0,g:21.5,z:47.0,ch:62.5,fi:1.5,ca:80,fe:0.8,mg:38,k2:300,na:195,zn:0.7,fo:20,se:4,col:5},
   // Fosforo (cioccolato al latte, notoriamente ricco di fosforo) era nel campo folati; folati reali ~25mcg - 2026-07-30
   {n:"Barretta Mars (per 100g)",c:"Dolci",src:"UPF",k:449,p:4.5,gs:13.5,g:17.0,z:58.0,ch:69.5,fi:0.5,ca:100,fe:0.5,mg:22,k2:190,na:140,zn:0.4,fo:25,se:3,col:5},
-  {n:"Barretta Kit Kat (per 100g)",c:"Dolci",src:"UPF",k:512,p:6.7,gs:14.9,g:26.4,z:43.5,ch:60.5,fi:2.5,ca:90,fe:1.5,mg:40,k2:250,na:90,zn:0.7,fo:120,se:5,col:5},
+  {n:"Barretta Kit Kat (per 100g)",c:"Dolci",src:"UPF",k:512,p:6.7,gs:14.9,g:26.4,z:43.5,ch:60.5,fi:2.5,ca:90,fe:1.5,mg:40,k2:250,na:90,zn:0.7,fo:20,se:5,col:5},
   {n:"Patatine Lay's Classic (per 100g)",c:"Snack",src:"UPF",k:571.4,p:7.1,gs:5.36,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:20,fe:0.5,mg:45,k2:1080,na:607.1,zn:0.5,fo:10,se:3,col:0},
-  {n:"Patatine Pringles Original (per 100g)",c:"Snack",src:"UPF",k:535.7,p:3.6,gs:8.93,g:32.1,z:0,ch:62.5,fi:3.6,ca:0,fe:0.36,mg:38,k2:392.9,na:535.7,zn:0.4,fo:110,se:3,col:0},
+  {n:"Patatine Pringles Original (per 100g)",c:"Snack",src:"UPF",k:535.7,p:3.6,gs:8.93,g:32.1,z:0,ch:62.5,fi:3.6,ca:0,fe:0.36,mg:38,k2:392.9,na:535.7,zn:0.4,fo:15,se:3,col:0},
   {n:"Popcorn microonde burro (per 100g)",c:"Snack",src:"UPF",k:456,p:8.0,gs:10.0,g:22.5,z:1.0,ch:58.0,fi:9.5,ca:5,fe:1.5,mg:100,k2:240,na:710,zn:1.5,fo:25,se:10,col:0},
-  {n:"Nachos con formaggio Doritos (per 100g)",c:"Snack",src:"UPF",k:501,p:6.5,gs:3.4,g:26,z:2.7,ch:58,fi:5.6,ca:100,fe:1.5,mg:40,k2:250,na:480,zn:0.8,fo:130,se:4,col:0},
+  {n:"Nachos con formaggio Doritos (per 100g)",c:"Snack",src:"UPF",k:501,p:6.5,gs:3.4,g:26,z:2.7,ch:58,fi:5.6,ca:100,fe:1.5,mg:40,k2:250,na:480,zn:0.8,fo:15,se:4,col:0},
   {n:"Salsa ketchup Heinz (per 100g)",c:"Condimenti",src:"UPF",k:102,p:1.2,gs:0.1,g:0.1,z:22.8,ch:23.2,fi:0.8,ca:25,fe:1.0,mg:15,k2:350,na:708,zn:0.1,fo:30,se:1,col:0},
   {n:"Maionese industriale (per 100g)",c:"Condimenti",src:"UPF",k:606,p:1.1,gs:7.8,g:66,z:0.3,ch:2,fi:0,ca:19,fe:0.4,mg:4,k2:30,na:376,zn:0.1,fo:30,se:2,col:55},
   {n:"Senape (per 100g)",c:"Condimenti",src:"UPF",k:119,p:5.1,gs:0.4,g:6.5,z:3.2,ch:8.5,fi:2.8,ca:63,fe:1.8,mg:47,k2:152,na:1120,zn:0.6,fo:90,se:8,col:0},
@@ -3221,8 +3233,8 @@ const DB_UPF = [
   {n:"Mortadella IGP (per 100g)",c:"Salumi e insaccati",src:"UPF",k:283.4,p:15,gs:8.3,g:25,z:0,ch:0,fi:0,ca:10,fe:0,mg:0,k2:220,na:720,zn:0,fo:5,se:15,col:70},
   {n:"Nuggets di pollo surgelati (per 100g)",c:"Prodotti pronti",src:"UPF",k:215,p:15,gs:2.1,g:11,z:0.5,ch:14,fi:1.0,ca:30,fe:1.2,mg:18,k2:280,na:560,zn:0.8,fo:8,se:12,col:45},
   {n:"Stick di mozzarella impanata surgelata (per 100g)",c:"Prodotti pronti",src:"UPF",k:253.3,p:14.7,gs:6.67,g:12,z:1.3,ch:25.3,fi:0.4,ca:466.7,fe:0.4,mg:20,k2:80,na:720,zn:1.2,fo:210,se:8,col:40},
-  {n:"Cornetto confezionato (per 100g)",c:"Dolci",src:"UPF",k:332,p:3.5,gs:13,g:18,z:24,ch:39,fi:1.5,ca:45,fe:1.5,mg:18,k2:140,na:60,zn:0.5,fo:95,se:8,col:55},
-  {n:"Merendina Kinder Pinguì (per 100g)",c:"Dolci",src:"UPF",k:420,p:7.0,gs:14.5,g:22.0,z:39.5,ch:51.0,fi:0.5,ca:130,fe:0.5,mg:18,k2:190,na:120,zn:0.5,fo:120,se:4,col:25},
+  {n:"Cornetto confezionato (per 100g)",c:"Dolci",src:"UPF",k:332,p:3.5,gs:13,g:18,z:24,ch:39,fi:1.5,ca:45,fe:1.5,mg:18,k2:140,na:60,zn:0.5,fo:20,se:8,col:55},
+  {n:"Merendina Kinder Pinguì (per 100g)",c:"Dolci",src:"UPF",k:420,p:7.0,gs:14.5,g:22.0,z:39.5,ch:51.0,fi:0.5,ca:130,fe:0.5,mg:18,k2:190,na:120,zn:0.5,fo:20,se:4,col:25},
   {n:"Bevanda energy drink tipo Monster (per 100ml)",c:"Bevande",src:"UPF",k:35.9,p:0,gs:0,g:0,z:7.8,ch:9.1,fi:0,ca:2,fe:0.1,mg:2,k2:30,na:16.3,zn:0.1,fo:5,se:0.2,col:0},
   {n:"Bevanda energy drink tipo Red Bull (per 100ml)",c:"Bevande",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:5,fe:0.1,mg:2,k2:30,na:40,zn:0.1,fo:6,se:0.2,col:0},
   {n:"Bibita gassata tipo Cola (per 100ml)",c:"Bevande",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:2,fe:0.1,mg:3,k2:7,na:10,zn:0,fo:9,se:0,col:0},
@@ -3230,10 +3242,10 @@ const DB_UPF = [
 // Allineato a voce CREA gia verificata "Latte condensato zuccherato" — 2026-07-28
   {n:"Latte condensato zuccherato (per 100g)",c:"Latte e derivati",src:"UPF",k:328,p:8.7,gs:5.7,g:9.0,z:56.5,ch:56.5,fi:0,ca:293,fe:0.2,mg:26,k2:390,na:130,zn:0.9,fo:12,se:3,col:34},
   {n:"Crema spalmabile nocciole e cioccolato Nutella (per 100g)",c:"Dolci",src:"UPF",k:525,p:4.1,gs:4.8,g:28.6,z:53.9,ch:60.9,fi:4.9,ca:77,fe:2.5,mg:79,k2:390,na:2.4,zn:0.8,fo:20,se:5,col:4},
-  {n:"Biscotto Oreo (per 100g)",c:"Biscotti e crackers",src:"UPF",k:473,p:5.0,gs:6.5,g:21.0,z:45.0,ch:68.5,fi:2.5,ca:60,fe:5.0,mg:40,k2:215,na:535,zn:0.5,fo:120,se:4,col:0},
+  {n:"Biscotto Oreo (per 100g)",c:"Biscotti e crackers",src:"UPF",k:473,p:5.0,gs:6.5,g:21.0,z:45.0,ch:68.5,fi:2.5,ca:60,fe:5.0,mg:40,k2:215,na:535,zn:0.5,fo:20,se:4,col:0},
   {n:"Crostata industriale alla marmellata (per 100g)",c:"Dolci",src:"UPF",k:298,p:4.1,gs:8.4,g:14,z:30.5,ch:39,fi:2.0,ca:40,fe:1.5,mg:12,k2:120,na:220,zn:0.4,fo:75,se:5,col:35},
   {n:"Cioccolato bianco industriale (per 100g)",c:"Dolci",src:"UPF",k:574,p:8.6,gs:16,g:39,z:44,ch:46,fi:2.3,ca:190,fe:0.3,mg:12,k2:260,na:120,zn:0.7,fo:0,se:4,col:22},
-  {n:"Brioches confezionata (per 100g)",c:"Dolci",src:"UPF",k:411,p:9.7,gs:5,g:20,z:12,ch:47,fi:1.5,ca:45,fe:1.5,mg:17,k2:130,na:232,zn:0.5,fo:90,se:8,col:75},
+  {n:"Brioches confezionata (per 100g)",c:"Dolci",src:"UPF",k:411,p:9.7,gs:5,g:20,z:12,ch:47,fi:1.5,ca:45,fe:1.5,mg:17,k2:130,na:232,zn:0.5,fo:35,se:8,col:75},
   {n:"Cereali da colazione tipo Frosties Kellogg's (per 100g)",c:"Cereali e derivati",src:"UPF",k:375,p:4.5,gs:0.1,g:0.6,z:37,ch:87,fi:2,ca:456,fe:8,mg:6,k2:55,na:355.6,zn:1.2,fo:35,se:4,col:0},
   {n:"Cereali Chocapic Nestlé (per 100g)",c:"Cereali e derivati",src:"UPF",k:322,p:9.2,gs:1.5,g:3.6,z:28.5,ch:66.2,fi:12.3,ca:700,fe:12.0,mg:65,k2:310,na:370,zn:5.6,fo:540,se:10,col:0},
   {n:"Croissant industriale (per 100g)",c:"Dolci",src:"UPF",k:370,p:6.3,gs:8,g:17,z:17,ch:43,fi:1,ca:30,fe:1.8,mg:15,k2:115,na:200,zn:0.5,fo:80,se:7,col:55},
@@ -3241,13 +3253,13 @@ const DB_UPF = [
   // ── BISCOTTI ITALIANI MARCA (UPF) ──
   {n:"Ringo al cioccolato (Pavesi, per 100g)",c:"Biscotti e crackers",src:"UPF",k:506,p:6.5,gs:11,g:25,z:42,ch:62.2,fi:3,ca:55,fe:1.5,mg:20,k2:160,na:172,zn:0.6,fo:80,se:4,col:5},
   {n:"Abbracci Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:484.8,p:6.1,gs:10.61,g:24.2,z:24.2,ch:60.6,fi:3,ca:30.3,fe:2.0,mg:20,k2:218.2,na:257.6,zn:0.5,fo:85,se:5,col:60.6},
-  {n:"Baiocchi Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:510,p:8,gs:5,g:26,z:23,ch:59,fi:4,ca:60,fe:1.8,mg:22,k2:190,na:240,zn:0.7,fo:100,se:5,col:15},
+  {n:"Baiocchi Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:510,p:8,gs:5,g:26,z:23,ch:59,fi:4,ca:60,fe:1.8,mg:22,k2:190,na:240,zn:0.7,fo:20,se:5,col:15},
   // Valori erano assurdamente bassi per un biscotto (263kcal/0.8g proteine/2.6g grassi) — allineato a duplicato con valori plausibili per Macine reali (~480kcal) — 2026-07-29
   {n:"Macine Mulino Bianco (per 100g)",c:"Biscotti e crackers",src:"UPF",k:482,p:6,gs:3.9,g:20,z:19,ch:68.2,fi:2.5,ca:25,fe:1.5,mg:18,k2:145,na:330,zn:0.6,fo:20,se:8,col:12},
   {n:"TUC crackers salati (Lu, per 100g)",c:"Biscotti e crackers",src:"UPF",k:492,p:9.8,gs:0,g:11,z:2.3,ch:72,fi:2.8,ca:30,fe:1.5,mg:15,k2:120,na:800,zn:0.5,fo:70,se:5,col:0},
   // Proteine e grassi erano azzerati per errore (impossibile per un biscotto); ripristinati ai valori ufficiali del prodotto reale (~8.5g proteine, ~8g grassi, ~73.5g carb, 400kcal) - 2026-07-29
   {n:"Plasmon biscotti per bambini (per 100g)",c:"Alimenti prima infanzia",src:"UPF",k:400,p:8.5,gs:4,g:8,z:27,ch:73.5,fi:1.5,ca:180,fe:5.0,mg:20,k2:150,na:600,zn:1.2,fo:125,se:6,col:20},
-  {n:"Ciocorì (Kinder/Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:540,p:7.5,gs:11.5,g:30.5,z:54.5,ch:61.5,fi:1.5,ca:120,fe:2.0,mg:32,k2:250,na:95,zn:0.8,fo:140,se:5,col:18},
+  {n:"Ciocorì (Kinder/Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:540,p:7.5,gs:11.5,g:30.5,z:54.5,ch:61.5,fi:1.5,ca:120,fe:2.0,mg:32,k2:250,na:95,zn:0.8,fo:20,se:5,col:18},
   {n:"Fruttolo (Danone, yogurt da bere frutta, per 100g)",c:"Latte e derivati",src:"UPF",k:60,p:3,gs:0,g:0,z:12,ch:12,fi:0.3,ca:100,fe:0.1,mg:10,k2:130,na:40,zn:0.4,fo:10,se:2,col:6},
 
   // ── GELATI ITALIANI DI MARCA ──
@@ -3255,7 +3267,7 @@ const DB_UPF = [
   {n:"Cornetto Algida classico (per 100g)",c:"Gelati",src:"UPF",k:288,p:3.5,gs:12,g:15,z:24,ch:33,fi:1.0,ca:75,fe:0.8,mg:12,k2:155,na:92,zn:0.4,fo:10,se:2,col:18},
   {n:"Calippo Algida limone (per 100g)",c:"Gelati",src:"UPF",k:87.1,p:0,gs:0,g:0,z:19.8,ch:20.2,fi:0,ca:5,fe:0.1,mg:2,k2:18,na:5,zn:0,fo:3,se:0,col:0},
   {n:"Twister Algida fragola (per 100g)",c:"Gelati",src:"UPF",k:82,p:1.0,gs:1.0,g:2.0,z:14.5,ch:15.0,fi:0.2,ca:30,fe:0.1,mg:4,k2:50,na:25,zn:0.1,fo:25,se:1,col:5},
-  {n:"Häagen-Dazs Vanilla (per 100g)",c:"Gelati",src:"UPF",k:271,p:4.0,gs:11.5,g:17.5,z:23.5,ch:26.5,fi:0,ca:115,fe:0.1,mg:10,k2:155,na:75,zn:0.5,fo:90,se:2,col:75},
+  {n:"Häagen-Dazs Vanilla (per 100g)",c:"Gelati",src:"UPF",k:271,p:4.0,gs:11.5,g:17.5,z:23.5,ch:26.5,fi:0,ca:115,fe:0.1,mg:10,k2:155,na:75,zn:0.5,fo:12,se:2,col:75},
   // Fosforo (latte/panna, colesterolo basso 18mg indica poco contenuto di uova) era nel campo folati; folati reali ~10mcg - 2026-07-30
   {n:"Sammontana Cremino (per 100g)",c:"Gelati",src:"UPF",k:295,p:3.0,gs:12.0,g:17.0,z:33.0,ch:36.5,fi:0.5,ca:90,fe:0.8,mg:12,k2:160,na:80,zn:0.4,fo:10,se:2,col:18},
   {n:"Solero al mango (per 100g)",c:"Gelati",src:"UPF",k:144,p:1.7,gs:2.8,g:3.1,z:25,ch:27,fi:0.5,ca:35,fe:0.1,mg:5,k2:60,na:32,zn:0.1,fo:30,se:0,col:3},
@@ -3365,8 +3377,8 @@ const DB_UPF = [
   {n:"Schiacciatine / grissini al sesamo (per 100g)",c:"Snack salati",src:"UPF",k:420,p:15,gs:1.8,g:9.7,z:2.9,ch:66,fi:4.4,ca:200,fe:4.5,mg:80,k2:250,na:840,zn:2.0,fo:280,se:8,col:0},
   {n:"Chips di lenticchie (snack, per 100g)",c:"Snack salati",src:"UPF",k:415,p:16.0,gs:2.0,g:12.5,z:3.0,ch:60.5,fi:8.5,ca:50,fe:4.0,mg:65,k2:480,na:580,zn:2.0,fo:200,se:5,col:0},
   {n:"Chips di barbabietola (snack, per 100g)",c:"Snack salati",src:"UPF",k:380,p:5.5,gs:3.0,g:14.5,z:22.0,ch:55.0,fi:5.5,ca:40,fe:2.0,mg:45,k2:680,na:430,zn:0.8,fo:90,se:3,col:0},
-  {n:"Popcorn caramellati (per 100g)",c:"Snack dolci",src:"UPF",k:456,p:2.9,gs:10.2,g:16.1,z:53.2,ch:72.9,fi:4.0,ca:12,fe:1.0,mg:38,k2:170,na:511,zn:0.5,fo:100,se:4,col:0},
-  {n:"Rice cakes con cioccolato fondente (per 100g)",c:"Snack dolci",src:"UPF",k:400,p:5.5,gs:5.5,g:11.5,z:35.0,ch:67.5,fi:4.0,ca:35,fe:2.5,mg:60,k2:230,na:130,zn:0.8,fo:120,se:5,col:0},
+  {n:"Popcorn caramellati (per 100g)",c:"Snack dolci",src:"UPF",k:456,p:2.9,gs:10.2,g:16.1,z:53.2,ch:72.9,fi:4.0,ca:12,fe:1.0,mg:38,k2:170,na:511,zn:0.5,fo:20,se:4,col:0},
+  {n:"Rice cakes con cioccolato fondente (per 100g)",c:"Snack dolci",src:"UPF",k:400,p:5.5,gs:5.5,g:11.5,z:35.0,ch:67.5,fi:4.0,ca:35,fe:2.5,mg:60,k2:230,na:130,zn:0.8,fo:20,se:5,col:0},
   // ── ENERGY DRINKS ──
   {n:"Red Bull Energy Drink (250ml)",c:"Energy drink",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:0,fe:0,mg:0,k2:0,na:40,zn:0,fo:0,se:0,col:0},
   {n:"Monster Energy Original (500ml)",c:"Energy drink",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:0,fe:0,mg:0,k2:0,na:78.2,zn:0,fo:0,se:0,col:0},
@@ -3510,7 +3522,7 @@ const DB_UPF = [
 {n:"Tronky Ferrero (per 100g)",c:"Snack dolci",src:"UPF",k:548,p:7.8,gs:10.6,g:32.5,z:43.7,ch:54.9,fi:2.0,ca:90,fe:1.0,mg:40,k2:260,na:132,zn:0.8,fo:25,se:5,col:10},
 {n:"Pocket Coffee Ferrero (per 100g)",c:"Snack dolci",src:"UPF",k:437,p:3.5,gs:13.3,g:20.5,z:56.6,ch:57.8,fi:0.5,ca:50,fe:1.5,mg:35,k2:185,na:18.4,zn:0.6,fo:18,se:3,col:8},
 {n:"Buondì Motta (per 100g)",c:"Colazione industriale",src:"UPF",k:392,p:7,gs:8.8,g:16,z:28,ch:54,fi:2.3,ca:40,fe:1.5,mg:15,k2:135,na:172,zn:0.5,fo:22,se:8,col:55},
-{n:"Merendina Fiesta Ferrero (per 100g)",c:"Dolci confezionati",src:"UPF",k:475,p:7.0,gs:11,g:24,z:45,ch:61,fi:1.5,ca:95,fe:1.5,mg:28,k2:230,na:185,zn:0.8,fo:140,se:4,col:20},
+{n:"Merendina Fiesta Ferrero (per 100g)",c:"Dolci confezionati",src:"UPF",k:475,p:7.0,gs:11,g:24,z:45,ch:61,fi:1.5,ca:95,fe:1.5,mg:28,k2:230,na:185,zn:0.8,fo:20,se:4,col:20},
 {n:"Baiocchi Barilla (per 100g)",c:"Biscotti industriali",src:"UPF",k:510,p:8,gs:5,g:26,z:23,ch:59,fi:4,ca:35,fe:2.0,mg:25,k2:180,na:240,zn:0.8,fo:22,se:10,col:5},
 {n:"Saiwa Petit beurre (per 100g)",c:"Biscotti industriali",src:"UPF",k:435,p:8.4,gs:7.8,g:12,z:21,ch:72,fi:2.8,ca:40,fe:1.8,mg:18,k2:140,na:600,zn:0.5,fo:20,se:8,col:35},
 {n:"Pavesini Barilla (per 100g)",c:"Biscotti industriali",src:"UPF",k:389,p:7,gs:0.8,g:2.5,z:50,ch:83.4,fi:2.3,ca:50,fe:1.5,mg:12,k2:130,na:120,zn:0.5,fo:18,se:8,col:120},
@@ -3520,12 +3532,12 @@ const DB_UPF = [
 {n:"Polenta pronta (tubo) (per 100g)",c:"Piatti pronti",src:"UPF",k:68,p:1.7,gs:0.3,g:0.8,z:1,ch:13,fi:1.0,ca:10,fe:0.3,mg:15,k2:50,na:362,zn:0.3,fo:40,se:2,col:0},
 {n:"Wurstel di tacchino (per 100g)",c:"Salumi processati",src:"UPF",k:224,p:13,gs:5.1,g:18,z:0.7,ch:2.3,fi:0,ca:12,fe:0.8,mg:12,k2:190,na:880,zn:0.9,fo:8,se:8,col:48},
 {n:"Hamburger di pollo (burger surgelato, per 100g)",c:"Surgelati",src:"UPF",k:113,p:18,gs:1,g:3,z:0.8,ch:3.5,fi:0.8,ca:40,fe:0.8,mg:18,k2:200,na:480,zn:0.8,fo:8,se:12,col:38},
-{n:"Cannelloni surgelati ripieni (per 100g)",c:"Surgelati",src:"UPF",k:119,p:6.2,gs:2.6,g:4.4,z:2.1,ch:12.9,fi:1.0,ca:95,fe:0.8,mg:15,k2:155,na:336,zn:0.9,fo:100,se:6,col:30},
+{n:"Cannelloni surgelati ripieni (per 100g)",c:"Surgelati",src:"UPF",k:119,p:6.2,gs:2.6,g:4.4,z:2.1,ch:12.9,fi:1.0,ca:95,fe:0.8,mg:15,k2:155,na:336,zn:0.9,fo:25,se:6,col:30},
 // ── SNACK SALATI INTERNAZIONALI ──
 // Ferro (75mg) e sodio (0.6mg) erano implausibili per patatine di mais (confrontato col duplicato EXTRA dello stesso prodotto: fe~1.5mg, na~440mg) - 2026-07-29
-{n:"Doritos Nacho Cheese (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.1,gs:3.57,g:28.6,z:3.6,ch:60.7,fi:3.6,ca:142.9,fe:1.5,mg:50,k2:178.6,na:440,zn:0.8,fo:140,se:4,col:0},
-{n:"Cheetos (per 100g)",c:"Snack salati",src:"UPF",k:540,p:6,gs:15,g:30,z:7,ch:53,fi:2,ca:60,fe:1.0,mg:22,k2:185,na:1030,zn:0.5,fo:90,se:3,col:3},
-{n:"Pringles Original (per 100g)",c:"Snack salati",src:"UPF",k:528,p:6.2,gs:3,g:31,z:0.9,ch:54,fi:4.1,ca:25,fe:1.5,mg:30,k2:580,na:1,zn:0.5,fo:100,se:3,col:0},
+{n:"Doritos Nacho Cheese (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.1,gs:3.57,g:28.6,z:3.6,ch:60.7,fi:3.6,ca:142.9,fe:1.5,mg:50,k2:178.6,na:440,zn:0.8,fo:15,se:4,col:0},
+{n:"Cheetos (per 100g)",c:"Snack salati",src:"UPF",k:540,p:6,gs:15,g:30,z:7,ch:53,fi:2,ca:60,fe:1.0,mg:22,k2:185,na:1030,zn:0.5,fo:15,se:3,col:3},
+{n:"Pringles Original (per 100g)",c:"Snack salati",src:"UPF",k:528,p:6.2,gs:3,g:31,z:0.9,ch:54,fi:4.1,ca:25,fe:1.5,mg:30,k2:580,na:1,zn:0.5,fo:15,se:3,col:0},
 {n:"Lay's classiche (per 100g)",c:"Snack salati",src:"UPF",k:536,p:7.0,gs:3.0,g:35,z:1.0,ch:52,fi:3.5,ca:20,fe:1.5,mg:40,k2:1150,na:580,zn:0.5,fo:10,se:4,col:0},
 // ── BARRETTE E SNACK PROTEICI ──
 {n:"Barretta proteica whey (per 100g)",c:"Integratori alimentari",src:"UPF",k:382,p:30,gs:5.0,g:12,z:20,ch:42,fi:4.0,ca:180,fe:2.5,mg:60,k2:380,na:280,zn:2.5,fo:280,se:15,col:25},
@@ -3536,7 +3548,7 @@ const DB_UPF = [
 {n:"Granola biologica con miele e frutta (per 100g)",c:"Cereali da colazione",src:"UPF",k:425,p:8.5,gs:2.5,g:14,z:22,ch:64,fi:6.0,ca:45,fe:3.5,mg:80,k2:280,na:85,zn:2.0,fo:200,se:10,col:0},
 {n:"Avena istantanea aromatizzata (bustina, per 100g)",c:"Cereali da colazione",src:"UPF",k:360,p:10,gs:1.0,g:5.5,z:15,ch:63,fi:7.0,ca:160,fe:5.0,mg:90,k2:300,na:300,zn:2.0,fo:200,se:8,col:0},
 {n:"Frullato dimagrante sostituto pasto (per 100g polvere)",c:"Integratori alimentari",src:"UPF",k:358,p:30,gs:1.5,g:7.0,z:28,ch:45,fi:8.0,ca:300,fe:6.0,mg:100,k2:400,na:350,zn:3.5,fo:350,se:20,col:15},
-{n:"Crackers di riso biologici (per 100g)",c:"Biscotti e crackers",src:"UPF",k:358,p:9.9,gs:0.4,g:1.8,z:0.6,ch:72,fi:6.7,ca:10,fe:0.8,mg:38,k2:98,na:640,zn:0.5,fo:90,se:4,col:0},
+{n:"Crackers di riso biologici (per 100g)",c:"Biscotti e crackers",src:"UPF",k:358,p:9.9,gs:0.4,g:1.8,z:0.6,ch:72,fi:6.7,ca:10,fe:0.8,mg:38,k2:98,na:640,zn:0.5,fo:20,se:4,col:0},
 // ── CONDIMENTI INTERNAZIONALI ──
 {n:"Guacamole industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:149,p:1.9,gs:3.8,g:14,z:1.4,ch:2,fi:3.5,ca:15,fe:0.5,mg:22,k2:390,na:590,zn:0.4,fo:42,se:0.5,col:0},
 {n:"Hummus industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:236,p:5.3,gs:1.7,g:18,z:1.9,ch:8.7,fi:4.0,ca:38,fe:2.0,mg:50,k2:228,na:316,zn:1.2,fo:145,se:3,col:0},
@@ -3556,10 +3568,10 @@ const DB_UPF = [
 {n:"Panzanella toscana (per 100g)",c:"Insalate e contorni",src:"INT",k:145,p:3.5,gs:0.8,g:6.5,z:4.0,ch:20,fi:2.5,ca:42,fe:1.0,mg:22,k2:280,na:380,zn:0.5,fo:28,se:4,col:0},
 {n:"Caponata siciliana (per 100g)",c:"Piatti tipici regionali",src:"INT",k:104,p:1,gs:0.7,g:6.4,z:5.3,ch:6.9,fi:2.5,ca:25,fe:0.8,mg:15,k2:250,na:240,zn:0.3,fo:28,se:2,col:0},
 {n:"Panzerotto pugliese fritto (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:272,p:12.2,gs:4.8,g:8.2,z:1.2,ch:38.9,fi:0.5,ca:130,fe:1.5,mg:18,k2:135,na:550,zn:1.0,fo:95,se:8,col:25},
-{n:"Tiramisù artigianale (per 100g)",c:"Dolci e pasticceria",src:"INT",k:305,p:4.2,gs:11,g:19.4,z:23,ch:29.2,fi:0.3,ca:95,fe:0.8,mg:15,k2:100,na:80,zn:0.8,fo:105,se:5,col:165},
-{n:"Cannolo siciliano (per 100g)",c:"Dolci e pasticceria",src:"INT",k:254,p:9,gs:5.63,g:11.4,z:11.3,ch:29.7,fi:1.0,ca:115,fe:1.0,mg:18,k2:120,na:85,zn:0.8,fo:90,se:5,col:55},
-{n:"Gelato alla crema artigianale (per 100g)",c:"Gelati e sorbetti",src:"INT",k:195,p:5.5,gs:4.1,g:7.6,z:20.9,ch:23.8,fi:0,ca:120,fe:0.2,mg:12,k2:160,na:70,zn:0.5,fo:95,se:3,col:42},
-{n:"Gelato al cioccolato artigianale (per 100g)",c:"Gelati e sorbetti",src:"INT",k:216,p:3.5,gs:7.5,g:10.8,z:24.7,ch:25.7,fi:2.5,ca:105,fe:1.5,mg:28,k2:155,na:75,zn:0.8,fo:100,se:5,col:28},
+{n:"Tiramisù artigianale (per 100g)",c:"Dolci e pasticceria",src:"INT",k:305,p:4.2,gs:11,g:19.4,z:23,ch:29.2,fi:0.3,ca:95,fe:0.8,mg:15,k2:100,na:80,zn:0.8,fo:35,se:5,col:165},
+{n:"Cannolo siciliano (per 100g)",c:"Dolci e pasticceria",src:"INT",k:254,p:9,gs:5.63,g:11.4,z:11.3,ch:29.7,fi:1.0,ca:115,fe:1.0,mg:18,k2:120,na:85,zn:0.8,fo:35,se:5,col:55},
+{n:"Gelato alla crema artigianale (per 100g)",c:"Gelati e sorbetti",src:"INT",k:195,p:5.5,gs:4.1,g:7.6,z:20.9,ch:23.8,fi:0,ca:120,fe:0.2,mg:12,k2:160,na:70,zn:0.5,fo:12,se:3,col:42},
+{n:"Gelato al cioccolato artigianale (per 100g)",c:"Gelati e sorbetti",src:"INT",k:216,p:3.5,gs:7.5,g:10.8,z:24.7,ch:25.7,fi:2.5,ca:105,fe:1.5,mg:28,k2:155,na:75,zn:0.8,fo:12,se:5,col:28},
 {n:"Sorbetto al limone (per 100g)",c:"Gelati e sorbetti",src:"INT",k:114,p:1,gs:0,g:0,z:27,ch:28,fi:0.5,ca:5,fe:0.1,mg:4,k2:55,na:0,zn:0,fo:8,se:0.5,col:0},
 {n:"Granita al caffè (per 100g)",c:"Gelati e sorbetti",src:"INT",k:85,p:0,gs:0,g:0,z:20,ch:21,fi:0,ca:5,fe:0.2,mg:8,k2:50,na:8,zn:0,fo:5,se:0.5,col:0},
 // ── PESCE E FRUTTI DI MARE ITALIANI ──
@@ -3729,13 +3741,13 @@ const DB_UPF = [
 // ═══ DOLCI E SNACK INDUSTRIALI ═══
 {n:"Nutella (crema nocciole e cacao)",c:"Dolci confezionati",src:"UPF",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:2.5,ca:55,fe:2.0,mg:35,k2:390,na:42.8,zn:0.6,fo:115,se:2,col:0},
 {n:"Mars (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:445,p:3.8,gs:7.8,g:16,z:63,ch:72,fi:1.0,ca:100,fe:0.8,mg:20,k2:170,na:156,zn:0.5,fo:80,se:2,col:8},
-{n:"Snickers (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:468,p:8.5,gs:8.51,g:21.3,z:51.1,ch:61.7,fi:2.1,ca:80,fe:1.0,mg:40,k2:290,na:234,zn:0.8,fo:120,se:4,col:5},
+{n:"Snickers (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:468,p:8.5,gs:8.51,g:21.3,z:51.1,ch:61.7,fi:2.1,ca:80,fe:1.0,mg:40,k2:290,na:234,zn:0.8,fo:20,se:4,col:5},
 {n:"Twix (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:493,p:4.4,gs:14,g:24,z:49,ch:65,fi:1.0,ca:80,fe:0.8,mg:18,k2:150,na:160,zn:0.5,fo:70,se:2,col:5},
-{n:"Kit Kat (per 100g)",c:"Dolci confezionati",src:"UPF",k:500,p:3.6,gs:16.07,g:25,z:53.6,ch:67.9,fi:3.6,ca:107.1,fe:2.14,mg:30,k2:196.4,na:53.6,zn:0.8,fo:140,se:4,col:17.9},
+{n:"Kit Kat (per 100g)",c:"Dolci confezionati",src:"UPF",k:500,p:3.6,gs:16.07,g:25,z:53.6,ch:67.9,fi:3.6,ca:107.1,fe:2.14,mg:30,k2:196.4,na:53.6,zn:0.8,fo:20,se:4,col:17.9},
 {n:"Pringles originali (per 100g)",c:"Snack salati",src:"UPF",k:535.7,p:3.6,gs:9.0,g:32.1,z:3.6,ch:57.1,fi:3.6,ca:25,fe:1.5,mg:35,k2:430,na:545,zn:0.5,fo:80,se:2,col:0},
-{n:"Doritos al formaggio (per 100g)",c:"Snack salati",src:"UPF",k:500,p:7.5,gs:3.5,g:22.5,z:4.5,ch:64.0,fi:5.0,ca:55,fe:1.5,mg:40,k2:250,na:750,zn:0.8,fo:110,se:3,col:2},
-{n:"Oreo biscotti al cacao (per 100g)",c:"Dolci confezionati",src:"UPF",k:473,p:5.5,gs:5.5,g:20.0,z:41.5,ch:67.5,fi:2.0,ca:35,fe:3.5,mg:30,k2:190,na:470,zn:0.5,fo:100,se:2,col:0},
-{n:"McVitie's Digestive (per 100g)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:110,fe:2.5,mg:40,k2:250,na:500,zn:0.8,fo:130,se:4,col:0},
+{n:"Doritos al formaggio (per 100g)",c:"Snack salati",src:"UPF",k:500,p:7.5,gs:3.5,g:22.5,z:4.5,ch:64.0,fi:5.0,ca:55,fe:1.5,mg:40,k2:250,na:750,zn:0.8,fo:15,se:3,col:2},
+{n:"Oreo biscotti al cacao (per 100g)",c:"Dolci confezionati",src:"UPF",k:473,p:5.5,gs:5.5,g:20.0,z:41.5,ch:67.5,fi:2.0,ca:35,fe:3.5,mg:30,k2:190,na:470,zn:0.5,fo:20,se:2,col:0},
+{n:"McVitie's Digestive (per 100g)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:110,fe:2.5,mg:40,k2:250,na:500,zn:0.8,fo:20,se:4,col:0},
 {n:"Oro Saiwa (per 100g)",c:"Biscotti e crackers",src:"UPF",k:456,p:2,gs:4.6,g:13,z:22,ch:83,fi:0.6,ca:45,fe:2.0,mg:15,k2:95,na:228,zn:0.4,fo:65,se:2,col:25},
 {n:"Cioccolato bianco (tavoletta)",c:"Dolci confezionati",src:"UPF",k:574,p:8.6,gs:16,g:39,z:44,ch:46,fi:2.3,ca:200,fe:0.2,mg:15,k2:230,na:120,zn:0.8,fo:0,se:4,col:21},
 {n:"Torrone morbido alle mandorle (per 100g)",c:"Dolci",src:"UPF",k:544,p:10.7,gs:2.02,g:26.4,z:45,ch:63,fi:5.5,ca:90,fe:1.5,mg:55,k2:280,na:2.4,zn:1.0,fo:110,se:3,col:0},
@@ -3997,15 +4009,15 @@ const DB_ONS = [
 {n:"Biscotti Gocciole (Mulino Bianco, per 100g)",c:"Dolci confezionati",src:"UPF",k:476,p:6.5,gs:9.5,g:19.5,z:30.0,ch:68.5,fi:2.0,ca:50,fe:2.5,mg:25,k2:190,na:290,zn:0.5,fo:85,se:5,col:10},
 {n:"Biscotti Abbracci (Mulino Bianco, per 100g)",c:"Dolci confezionati",src:"UPF",k:500,p:7.5,gs:10.0,g:21.5,z:34.5,ch:68.5,fi:1.5,ca:60,fe:1.5,mg:18,k2:140,na:310,zn:0.5,fo:70,se:4,col:25},
 {n:"Biscotti Ringo al cioccolato (per 100g)",c:"Dolci confezionati",src:"UPF",k:475,p:5.5,gs:10.5,g:22.5,z:36.5,ch:64.5,fi:1.5,ca:40,fe:2.0,mg:20,k2:140,na:280,zn:0.5,fo:80,se:4,col:5},
-{n:"Biscotti Oreo (per 100g)",c:"Dolci confezionati",src:"UPF",k:477,p:5.3,gs:8.8,g:19.5,z:44.0,ch:69.0,fi:2.0,ca:36,fe:4.8,mg:30,k2:230,na:430,zn:0.7,fo:120,se:4,col:0},
+{n:"Biscotti Oreo (per 100g)",c:"Dolci confezionati",src:"UPF",k:477,p:5.3,gs:8.8,g:19.5,z:44.0,ch:69.0,fi:2.0,ca:36,fe:4.8,mg:30,k2:230,na:430,zn:0.7,fo:20,se:4,col:0},
 {n:"Pavesini (savoiardi light, per 100g)",c:"Dolci confezionati",src:"UPF",k:387,p:8.0,gs:1.5,g:6.5,z:28.5,ch:70.5,fi:1.0,ca:40,fe:2.5,mg:12,k2:100,na:210,zn:0.4,fo:65,se:5,col:85},
-{n:"Biscotti Grancereale Barilla (per 100g)",c:"Dolci confezionati",src:"UPF",k:407,p:8.5,gs:3.0,g:12.0,z:22.5,ch:63.5,fi:8.5,ca:60,fe:3.5,mg:45,k2:280,na:520,zn:1.2,fo:120,se:8,col:0},
+{n:"Biscotti Grancereale Barilla (per 100g)",c:"Dolci confezionati",src:"UPF",k:407,p:8.5,gs:3.0,g:12.0,z:22.5,ch:63.5,fi:8.5,ca:60,fe:3.5,mg:45,k2:280,na:520,zn:1.2,fo:20,se:8,col:0},
 {n:"Crackers Wasa crispbread (per 100g)",c:"Snack salati",src:"UPF",k:322,p:10.0,gs:0.5,g:2.0,z:3.5,ch:62.5,fi:20.0,ca:40,fe:3.5,mg:55,k2:300,na:430,zn:1.5,fo:45,se:12,col:0},
 {n:"Pane in cassetta Mulino Bianco (per 100g)",c:"Cereali confezionati",src:"UPF",k:285,p:8.5,gs:1.5,g:5.0,z:5.5,ch:50.0,fi:3.5,ca:120,fe:2.5,mg:25,k2:130,na:570,zn:0.8,fo:80,se:10,col:5},
 
 // ── MERENDINE E SNACK CONFEZIONATI ──
-{n:"Fiesta (Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:452,p:3.9,gs:12.1,g:21,z:42.6,ch:56,fi:0,ca:80,fe:1.5,mg:28,k2:210,na:132,zn:0.7,fo:110,se:4,col:20},
-{n:"Pringles (chips in tubo, originali, per 100g)",c:"Snack salati",src:"UPF",k:530,p:6.0,gs:9.5,g:33.0,z:2.5,ch:57.5,fi:3.5,ca:25,fe:1.0,mg:40,k2:580,na:490,zn:0.8,fo:130,se:5,col:0},
+{n:"Fiesta (Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:452,p:3.9,gs:12.1,g:21,z:42.6,ch:56,fi:0,ca:80,fe:1.5,mg:28,k2:210,na:132,zn:0.7,fo:20,se:4,col:20},
+{n:"Pringles (chips in tubo, originali, per 100g)",c:"Snack salati",src:"UPF",k:530,p:6.0,gs:9.5,g:33.0,z:2.5,ch:57.5,fi:3.5,ca:25,fe:1.0,mg:40,k2:580,na:490,zn:0.8,fo:15,se:5,col:0},
 {n:"Barretta Bounty (per 100g)",c:"Dolci confezionati",src:"UPF",k:481,p:3.4,gs:18.5,g:26.0,z:50.0,ch:61.5,fi:3.5,ca:55,fe:1.5,mg:25,k2:180,na:120,zn:0.5,fo:60,se:3,col:5},
 
 // ── BEVANDE CONFEZIONATE AGGIUNTIVE ──
@@ -4044,7 +4056,7 @@ const DB_ONS = [
 // ── PRODOTTI SALUTE E BENESSERE ──
 {n:"Protein shake RTD iperproteico (per 100mL)",c:"Barrette proteiche",src:"UPF",k:60,p:6.0,gs:0.2,g:1.5,z:3.5,ch:5.5,fi:0,ca:200,fe:1.0,mg:25,k2:130,na:120,zn:1.0,fo:60,se:5,col:10},
 {n:"Granola commerciale con miele e noci (per 100g)",c:"Cereali confezionati",src:"UPF",k:440,p:9.5,gs:3.0,g:17.0,z:20.0,ch:63.5,fi:7.5,ca:55,fe:3.5,mg:55,k2:320,na:195,zn:1.8,fo:200,se:8,col:0},
-{n:"Biscotti ai cereali senza zucchero aggiunto (per 100g)",c:"Dolci confezionati",src:"UPF",k:395,p:8.5,gs:3.0,g:11.5,z:15.5,ch:65.5,fi:6.0,ca:50,fe:3.0,mg:40,k2:240,na:380,zn:1.0,fo:100,se:8,col:0},
+{n:"Biscotti ai cereali senza zucchero aggiunto (per 100g)",c:"Dolci confezionati",src:"UPF",k:395,p:8.5,gs:3.0,g:11.5,z:15.5,ch:65.5,fi:6.0,ca:50,fe:3.0,mg:40,k2:240,na:380,zn:1.0,fo:20,se:8,col:0},
 {n:"Barretta proteica vegana (soia/pisello, per 100g)",c:"Barrette proteiche",src:"UPF",k:355,p:30.0,gs:3.5,g:12.0,z:20.5,ch:37.5,fi:5.0,ca:120,fe:5.0,mg:55,k2:350,na:280,zn:2.5,fo:120,se:4,col:0},
 {n:"Integratore multivitaminico effervescente (per compressa)",c:"Vitamine",src:"UPF",k:10,p:0.5,gs:0,g:0,z:2.0,ch:2.5,fi:0,ca:120,fe:7.0,mg:60,k2:40,na:120,zn:5.0,fo:200,se:25,col:0},
 // INTEGRATORI CLINICI ONS AGGIUNTIVI
@@ -4205,30 +4217,30 @@ const DB_EXTRA=[
 {n:"Chapati",c:"Cucina etnica",src:"EXTRA",k:297,p:11.3,gs:1.95,g:7.5,z:2.7,ch:46.4,fi:4.9,ca:93,fe:3.01,mg:62,k2:266,na:409,zn:1.57,fo:61,se:53.7,col:0},
 // === GELATI ===
 // FIX (check strutturale): zuccheri (22g) non potevano superare i carboidrati totali (20.1g) - corretto ch a 22 - 2026-07-30
-{n:"Gelato al cioccolato artigianale",c:"Gelati",src:"EXTRA",k:150,p:3.5,gs:6,g:6.7,z:22,ch:22,fi:0.3,ca:110,fe:0.8,mg:20,k2:220,na:55,zn:0.5,fo:100,se:2,col:25},
+{n:"Gelato al cioccolato artigianale",c:"Gelati",src:"EXTRA",k:150,p:3.5,gs:6,g:6.7,z:22,ch:22,fi:0.3,ca:110,fe:0.8,mg:20,k2:220,na:55,zn:0.5,fo:12,se:2,col:25},
 {n:"Sorbetto alla fragola",c:"Gelati",src:"EXTRA",k:113,p:0.4,gs:0.1,g:0.4,z:27,ch:27,fi:0.8,ca:10,fe:0.3,mg:8,k2:80,na:40,zn:0.1,fo:12,se:0.5,col:0},
-{n:"Gelato alla crema artigianale",c:"Gelati",src:"EXTRA",k:280,p:5.1,gs:7,g:14,z:20,ch:34.9,fi:0,ca:130,fe:0.3,mg:12,k2:180,na:65,zn:0.4,fo:105,se:2,col:70},
-{n:"Gelato stracciatella artigianale",c:"Gelati",src:"EXTRA",k:193,p:2.9,gs:7,g:7,z:31.5,ch:31.5,fi:0,ca:120,fe:0.4,mg:12,k2:185,na:60,zn:0.4,fo:100,se:2,col:68},
+{n:"Gelato alla crema artigianale",c:"Gelati",src:"EXTRA",k:280,p:5.1,gs:7,g:14,z:20,ch:34.9,fi:0,ca:130,fe:0.3,mg:12,k2:180,na:65,zn:0.4,fo:12,se:2,col:70},
+{n:"Gelato stracciatella artigianale",c:"Gelati",src:"EXTRA",k:193,p:2.9,gs:7,g:7,z:31.5,ch:31.5,fi:0,ca:120,fe:0.4,mg:12,k2:185,na:60,zn:0.4,fo:12,se:2,col:68},
 {n:"Gelato alla nocciola artigianale",c:"Gelati",src:"EXTRA",k:183,p:3.3,gs:6,g:8.4,z:25.2,ch:25.2,fi:0,ca:90,fe:0.6,mg:28,k2:210,na:55,zn:0.6,fo:110,se:2,col:35},
 {n:"Gelato al pistacchio artigianale",c:"Gelati",src:"EXTRA",k:194,p:5.4,gs:2.3,g:9.1,z:21.3,ch:22.9,fi:2.4,ca:80,fe:0.8,mg:35,k2:250,na:113,zn:0.7,fo:120,se:2,col:30},
-{n:"Gelato al caffè artigianale",c:"Gelati",src:"EXTRA",k:245,p:5.1,gs:5,g:15,z:23.9,ch:23.9,fi:0,ca:100,fe:0.3,mg:10,k2:150,na:55,zn:0.3,fo:90,se:2,col:30},
+{n:"Gelato al caffè artigianale",c:"Gelati",src:"EXTRA",k:245,p:5.1,gs:5,g:15,z:23.9,ch:23.9,fi:0,ca:100,fe:0.3,mg:10,k2:150,na:55,zn:0.3,fo:12,se:2,col:30},
 {n:"Gelato al cocco artigianale",c:"Gelati",src:"EXTRA",k:202,p:3.9,gs:6,g:8.9,z:24,ch:25,fi:2.4,ca:20,fe:0.5,mg:20,k2:140,na:55,zn:0.3,fo:50,se:1,col:0},
-{n:"Gelato alla menta con gocce di cioccolato",c:"Gelati",src:"EXTRA",k:221,p:3.9,gs:6,g:9.8,z:22,ch:28.7,fi:0.5,ca:105,fe:0.4,mg:10,k2:180,na:55,zn:0.3,fo:90,se:2,col:25},
+{n:"Gelato alla menta con gocce di cioccolato",c:"Gelati",src:"EXTRA",k:221,p:3.9,gs:6,g:9.8,z:22,ch:28.7,fi:0.5,ca:105,fe:0.4,mg:10,k2:180,na:55,zn:0.3,fo:12,se:2,col:25},
 {n:"Gelato vegano al cioccolato (base cocco)",c:"Gelati",src:"EXTRA",k:195,p:1.5,gs:8,g:10,z:20,ch:27,fi:2,ca:20,fe:1.5,mg:25,k2:200,na:30,zn:0.3,fo:55,se:1,col:0},
 {n:"Ghiacciolo alla fragola",c:"Gelati",src:"EXTRA",k:72,p:0,gs:0,g:0,z:18,ch:18,fi:0.2,ca:3,fe:0.1,mg:2,k2:20,na:5,zn:0,fo:3,se:0,col:0},
 {n:"Ghiacciolo all'arancia",c:"Gelati",src:"EXTRA",k:137,p:0,gs:0,g:0,z:36.5,ch:36.5,fi:0,ca:3,fe:0.1,mg:2,k2:15,na:5,zn:0,fo:3,se:0,col:0},
 {n:"Magnum Classic",c:"Gelati",src:"EXTRA",k:302,p:3.3,gs:14,g:18,z:27,ch:30,fi:0,ca:80,fe:0.5,mg:15,k2:150,na:65,zn:0.3,fo:10,se:2,col:25},
-{n:"Magnum Almond",c:"Gelati",src:"EXTRA",k:330,p:5,gs:13,g:21,z:29,ch:30,fi:1,ca:75,fe:0.8,mg:20,k2:180,na:60,zn:0.5,fo:90,se:2,col:20},
+{n:"Magnum Almond",c:"Gelati",src:"EXTRA",k:330,p:5,gs:13,g:21,z:29,ch:30,fi:1,ca:75,fe:0.8,mg:20,k2:180,na:60,zn:0.5,fo:12,se:2,col:20},
 {n:"Cornetto Algida",c:"Gelati",src:"EXTRA",k:316,p:3.5,gs:10,g:18,z:22,ch:33,fi:1,ca:80,fe:0.8,mg:12,k2:150,na:80,zn:0.4,fo:85,se:2,col:20},
-{n:"Maxibon",c:"Gelati",src:"EXTRA",k:313,p:4,gs:10,g:16,z:26,ch:38,fi:1.2,ca:90,fe:0.5,mg:12,k2:160,na:110,zn:0.5,fo:100,se:2,col:30},
-{n:"Häagen-Dazs Vanilla",c:"Gelati",src:"EXTRA",k:249,p:4.3,gs:13,g:17,z:19.7,ch:19.8,fi:0,ca:120,fe:0.2,mg:12,k2:180,na:70,zn:0.5,fo:100,se:2,col:75},
+{n:"Maxibon",c:"Gelati",src:"EXTRA",k:313,p:4,gs:10,g:16,z:26,ch:38,fi:1.2,ca:90,fe:0.5,mg:12,k2:160,na:110,zn:0.5,fo:12,se:2,col:30},
+{n:"Häagen-Dazs Vanilla",c:"Gelati",src:"EXTRA",k:249,p:4.3,gs:13,g:17,z:19.7,ch:19.8,fi:0,ca:120,fe:0.2,mg:12,k2:180,na:70,zn:0.5,fo:12,se:2,col:75},
 {n:"Yogurt gelato alla fragola",c:"Gelati",src:"EXTRA",k:133,p:2.2,gs:0.8,g:1.4,z:27,ch:27,fi:1.5,ca:120,fe:0.2,mg:12,k2:175,na:55,zn:0.5,fo:10,se:2,col:5},
 {n:"Mochi ice cream al cioccolato",c:"Gelati",src:"EXTRA",k:372,p:1.5,gs:2.1,g:8,z:22.5,ch:73.4,fi:0.5,ca:30,fe:0.5,mg:12,k2:75,na:25,zn:0.2,fo:40,se:2,col:10},
 {n:"Coppa del Nonno (caffè)",c:"Gelati",src:"EXTRA",k:232,p:5.2,gs:6.5,g:13,z:20,ch:24,fi:0.3,ca:95,fe:0.3,mg:10,k2:145,na:60,zn:0.3,fo:5,se:2,col:28},
 {n:"Stecco Joya alla fragola",c:"Gelati",src:"EXTRA",k:115,p:0.5,gs:2,g:3.5,z:16,ch:20,fi:0,ca:15,fe:0.1,mg:3,k2:35,na:25,zn:0.1,fo:15,se:0.5,col:5},
 // === BISCOTTI E CRACKERS ===
-{n:"Digestive McVitie's",c:"Biscotti e crackers",src:"EXTRA",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:96,fe:2,mg:45,k2:310,na:500,zn:1.2,fo:150,se:12,col:0},
-{n:"Digestive al cioccolato McVitie's",c:"Biscotti e crackers",src:"EXTRA",k:495,p:6.7,gs:12.4,g:23.6,z:29.5,ch:62.2,fi:3,ca:85,fe:2,mg:40,k2:270,na:400,zn:0.9,fo:120,se:8,col:5},
+{n:"Digestive McVitie's",c:"Biscotti e crackers",src:"EXTRA",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:96,fe:2,mg:45,k2:310,na:500,zn:1.2,fo:20,se:12,col:0},
+{n:"Digestive al cioccolato McVitie's",c:"Biscotti e crackers",src:"EXTRA",k:495,p:6.7,gs:12.4,g:23.6,z:29.5,ch:62.2,fi:3,ca:85,fe:2,mg:40,k2:270,na:400,zn:0.9,fo:20,se:8,col:5},
 {n:"Crackers Ritz",c:"Biscotti e crackers",src:"EXTRA",k:492,p:7.2,gs:5.45,g:23.2,z:8.1,ch:63.5,fi:2.3,ca:154,fe:4.47,mg:19,k2:119,na:882,zn:0.61,fo:72,se:4.6,col:0},
 {n:"Wafer alla vaniglia",c:"Biscotti e crackers",src:"EXTRA",k:473,p:4.3,gs:10,g:19.4,z:35,ch:71.1,fi:2,ca:55,fe:1,mg:15,k2:85,na:306,zn:0.3,fo:70,se:5,col:5},
 {n:"Wafer al cioccolato",c:"Biscotti e crackers",src:"EXTRA",k:433,p:6.6,gs:4.24,g:14.2,z:37.4,ch:72.7,fi:3.4,ca:31,fe:4.01,mg:53,k2:210,na:580,zn:1.09,fo:47,se:5.7,col:2},
@@ -4237,15 +4249,15 @@ const DB_EXTRA=[
 // Allineato alla voce CREA gia verificata "Amaretti morbidi" (stesso nome esatto, sfuggito al dedup) — 2026-07-28
 {n:"Amaretti morbidi",c:"Biscotti e crackers",src:"EXTRA",k:389,p:8,gs:1,g:9,z:45,ch:70,fi:2.5,ca:80,fe:2,mg:45,k2:250,na:40,zn:0.9,fo:15,se:5,col:0},
 {n:"Cantucci alle mandorle",c:"Biscotti e crackers",src:"EXTRA",k:430,p:8.4,gs:3,g:12.6,z:28,ch:70.5,fi:3,ca:65,fe:2,mg:40,k2:220,na:180,zn:0.8,fo:130,se:8,col:60},
-{n:"Baci di dama",c:"Biscotti e crackers",src:"EXTRA",k:515,p:6,gs:14,g:29,z:35,ch:60,fi:2,ca:40,fe:1.5,mg:30,k2:175,na:90,zn:0.5,fo:110,se:5,col:20},
+{n:"Baci di dama",c:"Biscotti e crackers",src:"EXTRA",k:515,p:6,gs:14,g:29,z:35,ch:60,fi:2,ca:40,fe:1.5,mg:30,k2:175,na:90,zn:0.5,fo:20,se:5,col:20},
 {n:"Pavesini",c:"Biscotti e crackers",src:"EXTRA",k:389,p:7,gs:2,g:2.5,z:50,ch:83,fi:2.5,ca:30,fe:1.2,mg:10,k2:105,na:120,zn:0.3,fo:80,se:12,col:120},
-{n:"Grissini al rosmarino",c:"Biscotti e crackers",src:"EXTRA",k:432,p:12,gs:1,g:12,z:2,ch:67,fi:4,ca:25,fe:2,mg:30,k2:140,na:1080,zn:1,fo:120,se:15,col:0},
-{n:"Bruschette al pomodoro (snack)",c:"Biscotti e crackers",src:"EXTRA",k:506,p:8.6,gs:2,g:26,z:3,ch:58,fi:2.6,ca:40,fe:2,mg:30,k2:200,na:840,zn:0.8,fo:120,se:8,col:0},
-{n:"Taralli pugliesi",c:"Biscotti e crackers",src:"EXTRA",k:459,p:10,gs:2,g:17,z:1.6,ch:64,fi:2.3,ca:35,fe:2,mg:30,k2:150,na:1080,zn:0.8,fo:120,se:12,col:0},
-{n:"Friselle di grano",c:"Biscotti e crackers",src:"EXTRA",k:391,p:10.9,gs:0.5,g:4.8,z:2,ch:76.2,fi:5,ca:30,fe:2.5,mg:40,k2:200,na:104,zn:1.2,fo:150,se:15,col:0},
-{n:"Kinder Delice",c:"Biscotti e crackers",src:"EXTRA",k:460,p:5.8,gs:7,g:29.2,z:35.4,ch:43.4,fi:4.4,ca:85,fe:0.8,mg:12,k2:130,na:93,zn:0.4,fo:100,se:5,col:30},
-{n:"Kinder Cereali",c:"Biscotti e crackers",src:"EXTRA",k:553,p:9,gs:10,g:33.7,z:47.2,ch:53.4,fi:1.2,ca:145,fe:2,mg:28,k2:280,na:103,zn:0.8,fo:160,se:6,col:25},
-{n:"Crackers integrali salati",c:"Biscotti e crackers",src:"EXTRA",k:482,p:7.1,gs:3.3,g:20.4,z:12,ch:67.6,fi:3.5,ca:14,fe:2.59,mg:29,k2:171,na:883,zn:0.98,fo:103,se:26.1,col:0},
+{n:"Grissini al rosmarino",c:"Biscotti e crackers",src:"EXTRA",k:432,p:12,gs:1,g:12,z:2,ch:67,fi:4,ca:25,fe:2,mg:30,k2:140,na:1080,zn:1,fo:20,se:15,col:0},
+{n:"Bruschette al pomodoro (snack)",c:"Biscotti e crackers",src:"EXTRA",k:506,p:8.6,gs:2,g:26,z:3,ch:58,fi:2.6,ca:40,fe:2,mg:30,k2:200,na:840,zn:0.8,fo:20,se:8,col:0},
+{n:"Taralli pugliesi",c:"Biscotti e crackers",src:"EXTRA",k:459,p:10,gs:2,g:17,z:1.6,ch:64,fi:2.3,ca:35,fe:2,mg:30,k2:150,na:1080,zn:0.8,fo:20,se:12,col:0},
+{n:"Friselle di grano",c:"Biscotti e crackers",src:"EXTRA",k:391,p:10.9,gs:0.5,g:4.8,z:2,ch:76.2,fi:5,ca:30,fe:2.5,mg:40,k2:200,na:104,zn:1.2,fo:20,se:15,col:0},
+{n:"Kinder Delice",c:"Biscotti e crackers",src:"EXTRA",k:460,p:5.8,gs:7,g:29.2,z:35.4,ch:43.4,fi:4.4,ca:85,fe:0.8,mg:12,k2:130,na:93,zn:0.4,fo:20,se:5,col:30},
+{n:"Kinder Cereali",c:"Biscotti e crackers",src:"EXTRA",k:553,p:9,gs:10,g:33.7,z:47.2,ch:53.4,fi:1.2,ca:145,fe:2,mg:28,k2:280,na:103,zn:0.8,fo:20,se:6,col:25},
+{n:"Crackers integrali salati",c:"Biscotti e crackers",src:"EXTRA",k:482,p:7.1,gs:3.3,g:20.4,z:12,ch:67.6,fi:3.5,ca:14,fe:2.59,mg:29,k2:171,na:883,zn:0.98,fo:20,se:26.1,col:0},
 // === PANE ===
 {n:"Pane carasau (sardegna)",c:"Pane",src:"EXTRA",k:356,p:13,gs:0.2,g:1.2,z:3,ch:71.1,fi:4,ca:35,fe:2.5,mg:30,k2:150,na:560,zn:1,fo:130,se:20,col:0},
 {n:"Pane di Altamura DOP",c:"Pane",src:"EXTRA",k:240,p:8.5,gs:0.3,g:1.5,z:1.5,ch:50.5,fi:3.4,ca:25,fe:2,mg:30,k2:140,na:600,zn:1,fo:120,se:25,col:0},
@@ -4371,7 +4383,7 @@ const DB_EXTRA=[
 {n:"Amaretto di Saronno (per 100ml)",c:"Bevande alcoliche",src:"EXTRA",k:290,p:0,gs:0,g:0,z:32,ch:32,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0},
 // === SALUMI ITALIANI ===
 // kcal/grassi erano sottostimati: fonte convergente (532kcal/20g prot/50g grassi/23g saturi/0.3g cho), bilancio Atwater verificato (20*4+50*9+0.3*4=531.2≈532) — 2026-07-28
-{n:"N'duja calabrese",c:"Salumi",src:"EXTRA",k:532,p:20,gs:23,g:50,z:0.3,ch:0.3,fi:0,ca:15,fe:1.5,mg:20,k2:350,na:1600,zn:2,fo:180,se:12,col:100},
+{n:"N'duja calabrese",c:"Salumi",src:"EXTRA",k:532,p:20,gs:23,g:50,z:0.3,ch:0.3,fi:0,ca:15,fe:1.5,mg:20,k2:350,na:1600,zn:2,fo:20,se:12,col:100},
 {n:"Cotechino",c:"Salumi",src:"EXTRA",k:342,p:13.3,gs:11.09,g:30.9,z:0,ch:1.7,fi:0,ca:9,fe:1.5,mg:12,k2:250,na:1063,zn:2.5,fo:5,se:15,col:80},
 // Allineato alla voce CREA gia verificata "Coppa di testa (gelatina di testa suino)" — 2026-07-28
 {n:"Coppa di testa",c:"Salumi",src:"EXTRA",k:268,p:16.5,gs:10.5,g:21.5,z:1,ch:2.5,fi:0,ca:18,fe:1.8,mg:12,k2:180,na:950,zn:2,fo:5,se:10,col:75},
@@ -4390,48 +4402,48 @@ const DB_EXTRA=[
 // Grassi saturi aggiornati (24g su 35g totali, in linea con la scheda tecnica di un prodotto reale 35% m.g.) — 2026-07-28
 {n:"Panna fresca da montare",c:"Formaggi",src:"EXTRA",k:337,p:2,gs:24,g:35,z:3.5,ch:3.5,fi:0,ca:72,fe:0.1,mg:7,k2:100,na:36,zn:0.2,fo:5,se:2,col:115},
 // === DOLCI E PASTICCERIA ===
-{n:"Tiramisù",c:"Dolci e dessert",src:"EXTRA",k:283,p:4.2,gs:9,g:19.4,z:18.1,ch:29.2,fi:0.3,ca:85,fe:0.8,mg:12,k2:140,na:264,zn:0.5,fo:120,se:5,col:155},
-{n:"Cannolo siciliano",c:"Dolci e dessert",src:"EXTRA",k:325,p:7.2,gs:8,g:14.6,z:26.1,ch:42.7,fi:2.1,ca:120,fe:1,mg:20,k2:200,na:118,zn:0.8,fo:130,se:8,col:60},
+{n:"Tiramisù",c:"Dolci e dessert",src:"EXTRA",k:283,p:4.2,gs:9,g:19.4,z:18.1,ch:29.2,fi:0.3,ca:85,fe:0.8,mg:12,k2:140,na:264,zn:0.5,fo:35,se:5,col:155},
+{n:"Cannolo siciliano",c:"Dolci e dessert",src:"EXTRA",k:325,p:7.2,gs:8,g:14.6,z:26.1,ch:42.7,fi:2.1,ca:120,fe:1,mg:20,k2:200,na:118,zn:0.8,fo:35,se:8,col:60},
 // Allineato alla voce CREA gia verificata "Sfogliatella riccia napoletana" (stesso nome esatto) — 2026-07-28
 {n:"Sfogliatella riccia napoletana",c:"Dolci e dessert",src:"EXTRA",k:380,p:9.5,gs:5.5,g:14,z:18,ch:56,fi:1.2,ca:45,fe:1.5,mg:18,k2:130,na:180,zn:0.8,fo:28,se:12,col:95},
 {n:"Babà al rum",c:"Dolci e dessert",src:"EXTRA",k:288,p:5.9,gs:1.5,g:5.7,z:18.5,ch:41.2,fi:1.1,ca:40,fe:1,mg:10,k2:100,na:120,zn:0.3,fo:70,se:8,col:75},
-{n:"Panettone tradizionale",c:"Dolci e dessert",src:"EXTRA",k:390,p:6.4,gs:5,g:16.7,z:22.9,ch:56.2,fi:1.5,ca:50,fe:1.5,mg:15,k2:150,na:290,zn:0.6,fo:95,se:12,col:110},
-{n:"Pandoro",c:"Dolci e dessert",src:"EXTRA",k:390,p:8.4,gs:6,g:19.7,z:22.9,ch:45.2,fi:1,ca:40,fe:1,mg:12,k2:120,na:250,zn:0.5,fo:90,se:12,col:120},
-{n:"Colomba pasquale",c:"Dolci e dessert",src:"EXTRA",k:416,p:7.2,gs:11,g:20,z:29,ch:51,fi:1.8,ca:45,fe:1.5,mg:15,k2:160,na:200,zn:0.6,fo:90,se:12,col:95},
+{n:"Panettone tradizionale",c:"Dolci e dessert",src:"EXTRA",k:390,p:6.4,gs:5,g:16.7,z:22.9,ch:56.2,fi:1.5,ca:50,fe:1.5,mg:15,k2:150,na:290,zn:0.6,fo:35,se:12,col:110},
+{n:"Pandoro",c:"Dolci e dessert",src:"EXTRA",k:390,p:8.4,gs:6,g:19.7,z:22.9,ch:45.2,fi:1,ca:40,fe:1,mg:12,k2:120,na:250,zn:0.5,fo:35,se:12,col:120},
+{n:"Colomba pasquale",c:"Dolci e dessert",src:"EXTRA",k:416,p:7.2,gs:11,g:20,z:29,ch:51,fi:1.8,ca:45,fe:1.5,mg:15,k2:160,na:200,zn:0.6,fo:35,se:12,col:95},
 {n:"Strudel di mele",c:"Dolci e dessert",src:"EXTRA",k:274,p:3.3,gs:2.04,g:11.2,z:25.8,ch:41.1,fi:2.2,ca:15,fe:0.42,mg:9,k2:149,na:135,zn:0.19,fo:28,se:6.1,col:6},
 {n:"Crostata di marmellata",c:"Dolci e dessert",src:"EXTRA",k:339,p:4.9,gs:6,g:8.2,z:28,ch:65.5,fi:1.5,ca:35,fe:1.5,mg:12,k2:120,na:200,zn:0.5,fo:80,se:8,col:60},
 {n:"Cheesecake",c:"Dolci e dessert",src:"EXTRA",k:321,p:5.5,gs:9.92,g:22.5,z:21.8,ch:25.5,fi:0.4,ca:51,fe:0.63,mg:11,k2:90,na:438,zn:0.51,fo:18,se:5.2,col:55},
 {n:"Panna cotta",c:"Dolci e dessert",src:"EXTRA",k:229.7,p:1.1,gs:7.9,g:12.7,z:22.9,ch:24.1,fi:0,ca:80,fe:0.1,mg:8,k2:100,na:55,zn:0.3,fo:5,se:2,col:40},
 {n:"Mousse al cioccolato",c:"Dolci e dessert",src:"EXTRA",k:225,p:4.1,gs:9.15,g:16,z:14.8,ch:16.1,fi:0.6,ca:96,fe:0.55,mg:20,k2:143,na:38,zn:0.64,fo:15,se:7.4,col:140},
 // FIX (check strutturale): zuccheri (23.2g) non potevano superare i carboidrati totali (22.8g) - corretto ch a 23.2 - 2026-07-30
-{n:"Crème caramel",c:"Dolci e dessert",src:"EXTRA",k:145,p:4.5,gs:1.8,g:4,z:23.2,ch:23.2,fi:0,ca:110,fe:0.3,mg:10,k2:130,na:53,zn:0.5,fo:95,se:3,col:85},
-{n:"Profiteroles al cioccolato",c:"Dolci e dessert",src:"EXTRA",k:330,p:6,gs:10,g:19,z:24,ch:35,fi:0.5,ca:75,fe:1,mg:15,k2:180,na:110,zn:0.5,fo:110,se:5,col:110},
+{n:"Crème caramel",c:"Dolci e dessert",src:"EXTRA",k:145,p:4.5,gs:1.8,g:4,z:23.2,ch:23.2,fi:0,ca:110,fe:0.3,mg:10,k2:130,na:53,zn:0.5,fo:35,se:3,col:85},
+{n:"Profiteroles al cioccolato",c:"Dolci e dessert",src:"EXTRA",k:330,p:6,gs:10,g:19,z:24,ch:35,fi:0.5,ca:75,fe:1,mg:15,k2:180,na:110,zn:0.5,fo:35,se:5,col:110},
 {n:"Semifreddo al caffè",c:"Dolci e dessert",src:"EXTRA",k:265,p:4,gs:9,g:15,z:26,ch:30,fi:0,ca:90,fe:0.3,mg:10,k2:160,na:60,zn:0.4,fo:85,se:2,col:90},
-{n:"Zeppole di San Giuseppe",c:"Dolci e dessert",src:"EXTRA",k:355,p:6,gs:6,g:18,z:20,ch:43,fi:0.5,ca:50,fe:1,mg:12,k2:130,na:150,zn:0.4,fo:90,se:8,col:80},
-{n:"Maritozzo con panna",c:"Dolci e dessert",src:"EXTRA",k:382.1,p:4.9,gs:13.5,g:25.3,z:10,ch:34.5,fi:0.9,ca:65,fe:1.5,mg:15,k2:180,na:220,zn:0.5,fo:100,se:10,col:70},
-{n:"Bombolone con crema",c:"Dolci e dessert",src:"EXTRA",k:361,p:6.4,gs:5.4,g:24.5,z:14.6,ch:30,fi:0.8,ca:60,fe:1,mg:12,k2:150,na:309,zn:0.4,fo:90,se:8,col:80},
-{n:"Croissant al burro (bar)",c:"Dolci e dessert",src:"EXTRA",k:406,p:8.2,gs:11.7,g:21,z:11.3,ch:45.8,fi:2.6,ca:40,fe:1.5,mg:15,k2:130,na:347,zn:0.6,fo:90,se:12,col:75},
+{n:"Zeppole di San Giuseppe",c:"Dolci e dessert",src:"EXTRA",k:355,p:6,gs:6,g:18,z:20,ch:43,fi:0.5,ca:50,fe:1,mg:12,k2:130,na:150,zn:0.4,fo:35,se:8,col:80},
+{n:"Maritozzo con panna",c:"Dolci e dessert",src:"EXTRA",k:382.1,p:4.9,gs:13.5,g:25.3,z:10,ch:34.5,fi:0.9,ca:65,fe:1.5,mg:15,k2:180,na:220,zn:0.5,fo:35,se:10,col:70},
+{n:"Bombolone con crema",c:"Dolci e dessert",src:"EXTRA",k:361,p:6.4,gs:5.4,g:24.5,z:14.6,ch:30,fi:0.8,ca:60,fe:1,mg:12,k2:150,na:309,zn:0.4,fo:35,se:8,col:80},
+{n:"Croissant al burro (bar)",c:"Dolci e dessert",src:"EXTRA",k:406,p:8.2,gs:11.7,g:21,z:11.3,ch:45.8,fi:2.6,ca:40,fe:1.5,mg:15,k2:130,na:347,zn:0.6,fo:35,se:12,col:75},
 // === CIOCCOLATO E CONFETTERIA ===
-{n:"Nutella",c:"Cioccolato e dolciumi",src:"EXTRA",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:3.4,ca:100,fe:2.7,mg:50,k2:320,na:42.8,zn:0.7,fo:130,se:2,col:0},
+{n:"Nutella",c:"Cioccolato e dolciumi",src:"EXTRA",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:3.4,ca:100,fe:2.7,mg:50,k2:320,na:42.8,zn:0.7,fo:20,se:2,col:0},
 {n:"Kinder Bueno",c:"Cioccolato e dolciumi",src:"EXTRA",k:572,p:8.6,gs:17.3,g:37.3,z:41.2,ch:49.5,fi:0,ca:110,fe:1.5,mg:40,k2:330,na:109,zn:0.8,fo:15,se:8,col:10},
 {n:"Kinder Bueno White",c:"Cioccolato e dolciumi",src:"EXTRA",k:571,p:8.5,gs:16.8,g:35.9,z:43.9,ch:53,fi:0,ca:100,fe:0.5,mg:25,k2:250,na:132,zn:0.5,fo:10,se:5,col:10},
 {n:"Ferrero Rocher",c:"Cioccolato e dolciumi",src:"EXTRA",k:603,p:8.2,gs:14.1,g:42.7,z:39.9,ch:44.4,fi:2,ca:90,fe:2,mg:50,k2:300,na:60,zn:1,fo:15,se:5,col:10},
-{n:"Raffaello Ferrero",c:"Cioccolato e dolciumi",src:"EXTRA",k:597,p:7.7,gs:28.3,g:43.3,z:42.6,ch:42.9,fi:0,ca:50,fe:1,mg:35,k2:210,na:168.4,zn:0.5,fo:120,se:5,col:5},
+{n:"Raffaello Ferrero",c:"Cioccolato e dolciumi",src:"EXTRA",k:597,p:7.7,gs:28.3,g:43.3,z:42.6,ch:42.9,fi:0,ca:50,fe:1,mg:35,k2:210,na:168.4,zn:0.5,fo:20,se:5,col:5},
 {n:"After Eight",c:"Cioccolato e dolciumi",src:"EXTRA",k:426,p:2.1,gs:7.6,g:12.9,z:67.8,ch:73.5,fi:2.8,ca:40,fe:3,mg:30,k2:280,na:12,zn:0.5,fo:80,se:2,col:5},
 {n:"Lindt Lindor al latte",c:"Cioccolato e dolciumi",src:"EXTRA",k:622,p:4.7,gs:35,g:47,z:43,ch:44,fi:0,ca:180,fe:1,mg:35,k2:340,na:72,zn:0.8,fo:12,se:5,col:25},
 {n:"Milka al latte",c:"Cioccolato e dolciumi",src:"EXTRA",k:542,p:4.6,gs:19,g:33,z:53,ch:56,fi:1,ca:200,fe:1.5,mg:30,k2:330,na:132,zn:0.8,fo:12,se:8,col:20},
 {n:"Toblerone",c:"Cioccolato e dolciumi",src:"EXTRA",k:529,p:5.6,gs:17,g:29,z:60,ch:61,fi:2.4,ca:160,fe:1.5,mg:45,k2:330,na:48,zn:1,fo:12,se:5,col:10},
-{n:"Mars",c:"Cioccolato e dolciumi",src:"EXTRA",k:448,p:4.4,gs:8.1,g:16.7,z:59.9,ch:69.3,fi:0.5,ca:115,fe:0.5,mg:20,k2:210,na:160,zn:0.5,fo:95,se:5,col:10},
+{n:"Mars",c:"Cioccolato e dolciumi",src:"EXTRA",k:448,p:4.4,gs:8.1,g:16.7,z:59.9,ch:69.3,fi:0.5,ca:115,fe:0.5,mg:20,k2:210,na:160,zn:0.5,fo:20,se:5,col:10},
 {n:"Snickers",c:"Cioccolato e dolciumi",src:"EXTRA",k:510,p:9.5,gs:9.7,g:28,z:45,ch:54,fi:0,ca:95,fe:1,mg:40,k2:330,na:176,zn:0.8,fo:15,se:5,col:5},
-{n:"Twix",c:"Cioccolato e dolciumi",src:"EXTRA",k:493,p:4.3,gs:14,g:24,z:49,ch:65,fi:1,ca:70,fe:1.5,mg:18,k2:215,na:160,zn:0.5,fo:100,se:5,col:5},
+{n:"Twix",c:"Cioccolato e dolciumi",src:"EXTRA",k:493,p:4.3,gs:14,g:24,z:49,ch:65,fi:1,ca:70,fe:1.5,mg:18,k2:215,na:160,zn:0.5,fo:20,se:5,col:5},
 {n:"Bounty",c:"Cioccolato e dolciumi",src:"EXTRA",k:505,p:3.9,gs:21.79,g:26.4,z:49.3,ch:61.4,fi:0,ca:40,fe:1,mg:30,k2:200,na:103.6,zn:0.5,fo:80,se:3,col:5},
-{n:"Kinder Sorpresa",c:"Cioccolato e dolciumi",src:"EXTRA",k:579,p:8.8,gs:24.1,g:36.2,z:53.6,ch:53.9,fi:1,ca:130,fe:1.5,mg:30,k2:310,na:122,zn:0.7,fo:175,se:5,col:25},
+{n:"Kinder Sorpresa",c:"Cioccolato e dolciumi",src:"EXTRA",k:579,p:8.8,gs:24.1,g:36.2,z:53.6,ch:53.9,fi:1,ca:130,fe:1.5,mg:30,k2:310,na:122,zn:0.7,fo:20,se:5,col:25},
 // === SNACK SALATI ===
-{n:"Pringles Original",c:"Snack salati",src:"EXTRA",k:534,p:5.9,gs:6.6,g:31,z:1.4,ch:56,fi:3.5,ca:15,fe:1.5,mg:25,k2:350,na:440,zn:0.3,fo:90,se:5,col:0},
-{n:"Doritos Nacho Cheese",c:"Snack salati",src:"EXTRA",k:499,p:6.4,gs:2.5,g:26,z:2.7,ch:57,fi:3,ca:55,fe:1.5,mg:40,k2:300,na:440,zn:0.8,fo:130,se:5,col:0},
+{n:"Pringles Original",c:"Snack salati",src:"EXTRA",k:534,p:5.9,gs:6.6,g:31,z:1.4,ch:56,fi:3.5,ca:15,fe:1.5,mg:25,k2:350,na:440,zn:0.3,fo:15,se:5,col:0},
+{n:"Doritos Nacho Cheese",c:"Snack salati",src:"EXTRA",k:499,p:6.4,gs:2.5,g:26,z:2.7,ch:57,fi:3,ca:55,fe:1.5,mg:40,k2:300,na:440,zn:0.8,fo:15,se:5,col:0},
 {n:"Lay's Classic",c:"Snack salati",src:"EXTRA",k:571,p:7.1,gs:5.4,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:15,fe:1.5,mg:35,k2:620,na:607,zn:0.5,fo:10,se:8,col:0},
 {n:"Popcorn al burro",c:"Snack salati",src:"EXTRA",k:475,p:8,gs:10,g:24,z:2,ch:57,fi:7.5,ca:5,fe:1.5,mg:95,k2:180,na:600,zn:1.5,fo:25,se:12,col:15},
-{n:"Popcorn salato da microonde",c:"Snack salati",src:"EXTRA",k:430,p:7,gs:5,g:20,z:1.5,ch:58,fi:7,ca:5,fe:1.5,mg:80,k2:160,na:650,zn:1.5,fo:180,se:12,col:0},
+{n:"Popcorn salato da microonde",c:"Snack salati",src:"EXTRA",k:430,p:7,gs:5,g:20,z:1.5,ch:58,fi:7,ca:5,fe:1.5,mg:80,k2:160,na:650,zn:1.5,fo:15,se:12,col:0},
 // === CONDIMENTI E SALSE ===
 {n:"Ketchup Heinz",c:"Condimenti",src:"EXTRA",k:102,p:1.2,gs:0.1,g:0.1,z:22.8,ch:23.2,fi:0,ca:20,fe:0.5,mg:12,k2:280,na:720,zn:0.1,fo:25,se:0.5,col:0},
 {n:"Maionese Hellmann's",c:"Condimenti",src:"EXTRA",k:688,p:0,gs:10.8,g:77.8,z:0.3,ch:0.3,fi:0,ca:10,fe:0.5,mg:3,k2:20,na:486,zn:0.2,fo:20,se:2,col:55},

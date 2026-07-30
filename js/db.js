@@ -319,7 +319,8 @@ const DB_CREA=[
 {n:"Friarielli (cime di rapa napoletane)",c:"Verdure",k:22,p:2.9,gs:0,g:0.3,z:1.2,ch:3.2,fi:2.8,ca:82,fe:2.5,mg:22,k2:200,na:40,zn:0.4,fo:95,se:0.9,col:0,src:"CREA"},
 {n:"Cavolo nero toscano",c:"Verdure",k:35,p:3.3,gs:0,g:0.6,z:0.5,ch:6.7,fi:3.6,ca:157,fe:1.5,mg:34,k2:704,na:38,zn:0.4,fo:141,se:0.9,col:0,src:"CREA"},
 {n:"Carciofo crudo",c:"Verdure",k:33,p:2.7,gs:0,g:0.2,z:1.9,ch:2.5,fi:5.5,ca:86,fe:1,mg:45,k2:376,na:133,zn:0.95,fo:68,se:0.2,col:0,src:"CREA"},
-{n:"Topinambur",c:"Verdure",k:52,p:1.6,gs:0,g:0.1,z:13.1,ch:10.6,fi:2.7,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:14,se:0.7,col:0,src:"CREA"},
+// FIX (check strutturale): zuccheri (13.1g) non potevano superare i carboidrati totali (10.6g), impossibile per definizione - corretto ch a 13.1 - 2026-07-30
+{n:"Topinambur",c:"Verdure",k:52,p:1.6,gs:0,g:0.1,z:13.1,ch:13.1,fi:2.7,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:14,se:0.7,col:0,src:"CREA"},
 {n:"Acetosella (Rumex acetosa)",c:"Verdure",k:22,p:2.0,gs:0,g:0.8,z:1.1,ch:3.2,fi:2.9,ca:44,fe:2.4,mg:103,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
 {n:"Erbette (bietola da coste lessata)",c:"Verdure",k:18,p:1.5,gs:0,g:0.1,z:2.1,ch:2.1,fi:1.4,ca:64,fe:0.8,mg:52,k2:98,na:8,zn:1.5,fo:47,se:0,col:0,src:"CREA"},
 {n:"Scorzonera",c:"Verdure",k:53,p:1.3,gs:0.07,g:0.3,z:1.5,ch:10.2,fi:3.2,ca:42,fe:0.9,mg:23,k2:310,na:5,zn:0.2,fo:57,se:0.5,col:0,src:"BDA"},
@@ -740,7 +741,8 @@ const DB_CREA=[
 {n:"Olio di colza (canola)",c:"Grassi e oli",k:899,p:0,gs:6.5,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di vinacciolo",c:"Grassi e oli",k:899,p:0,gs:9.77,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Polpa di pomodoro a pezzi (in scatola)",c:"Verdure",k:20,p:1.0,gs:0,g:0.2,z:2.5,ch:3.8,fi:1.4,ca:12,fe:0.8,mg:13,k2:260,na:150,zn:0.1,fo:32,se:0.5,col:0,src:"CREA"},
-{n:"Pomodori datterini freschi",c:"Verdure",k:37,p:1.1,gs:0,g:0.4,z:9,ch:7.2,fi:1,ca:9,fe:0.4,mg:13,k2:255,na:5,zn:0.18,fo:26,se:0.5,col:0,src:"CREA"},
+// FIX (check strutturale): zuccheri (9g) non potevano superare i carboidrati totali (7.2g) - corretto ch a 9 - 2026-07-30
+{n:"Pomodori datterini freschi",c:"Verdure",k:37,p:1.1,gs:0,g:0.4,z:9,ch:9,fi:1,ca:9,fe:0.4,mg:13,k2:255,na:5,zn:0.18,fo:26,se:0.5,col:0,src:"CREA"},
 {n:"Peperone verde fresco",c:"Verdure",k:31,p:0.7,gs:0,g:0.2,z:6,ch:6,fi:1.9,ca:16,fe:0.6,mg:10,k2:175,na:3,zn:0.13,fo:20,se:0.3,col:0,src:"CREA"},
 {n:"Fegato di maiale",c:"Carni rosse",k:140,p:21.4,gs:1.4,g:4.8,z:0,ch:3.8,fi:0,ca:8,fe:19.0,mg:22,k2:300,na:73,zn:4.0,fo:380,se:65,col:260,src:"CREA"},
 {n:"Sardine sott'olio sgocciolate",c:"Pesce",k:198,p:22.3,gs:2.367,g:12.1,z:0,ch:0,fi:0,ca:613,fe:2.8,mg:46,k2:410,na:480,zn:2.2,fo:8,se:49,col:140,src:"BDA"},
@@ -985,7 +987,8 @@ const DB_CREA=[
 {n:"Emmental svizzero",c:"Formaggi",k:380,p:28.4,gs:19,g:29.5,z:0.5,ch:0.5,fi:0,ca:1006,fe:0.2,mg:36,k2:107,na:185,zn:3.8,fo:5,se:14.5,col:94,src:"CREA"},
 {n:"Crescenza",c:"Formaggi",k:281,p:16.1,gs:12.1,g:23.3,z:1.9,ch:1.9,fi:0,ca:557,fe:0.1,mg:20,k2:110,na:350,zn:2.33,fo:25,se:6.4,col:53,src:"CREA"},
 {n:"Stracchino",c:"Formaggi",k:300,p:18.5,gs:13.4,g:25.1,z:0,ch:0,fi:0,ca:567,fe:0.3,mg:18,k2:100,na:500,zn:1.7,fo:25,se:6,col:68,src:"CREA"},
-{n:"Mozzarella di bufala Campana DOP",c:"Formaggi",k:257,p:14.1,gs:14.3,g:21.7,z:2.7,ch:1.4,fi:0,ca:367,fe:0.1,mg:15,k2:12,na:211,zn:2.21,fo:10,se:11.2,col:52,src:"CREA"},
+// FIX (check strutturale): zuccheri (2.7g) non potevano superare i carboidrati totali (1.4g) - corretto ch a 2.7 - 2026-07-30
+{n:"Mozzarella di bufala Campana DOP",c:"Formaggi",k:257,p:14.1,gs:14.3,g:21.7,z:2.7,ch:2.7,fi:0,ca:367,fe:0.1,mg:15,k2:12,na:211,zn:2.21,fo:10,se:11.2,col:52,src:"CREA"},
 {n:"Robiola fresca",c:"Formaggi",k:338,p:20,gs:15.7,g:27.7,z:2.3,ch:2.3,fi:0,ca:170,fe:0.2,mg:15,k2:95,na:350,zn:1.4,fo:30,se:5,col:80,src:"CREA"},
 // Stesso bug fosforo-in-folati degli altri formaggi - 2026-07-29
 {n:"Squacquerone di Romagna DOP",c:"Formaggi",k:180,p:10,gs:9.2,g:14.5,z:3.5,ch:3.5,fi:0,ca:220,fe:0.1,mg:12,k2:70,na:350,zn:0.9,fo:25,se:5,col:50,src:"CREA"},
@@ -2955,7 +2958,8 @@ const DB_UPF = [
   {n:"Energy drink tipo Red Bull (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:0,fe:0,mg:0,k2:0,na:40,zn:0,fo:0,se:0,col:0},
   {n:"Cola (tipo Coca-Cola, per 100mL)",c:"Bibite zuccherate",src:"UPF",k:42.3,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:23.9,zn:0,fo:13,se:0,col:0},
   {n:"Cola Zero / Diet (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:0.4,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:4.8,zn:0,fo:15,se:0,col:0},
-  {n:"Bevanda isotonica sportiva tipo Gatorade (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:24,p:0,gs:0,g:0,z:6,ch:0.8,fi:0,ca:0,fe:0,mg:0,k2:52,na:110,zn:0,fo:8,se:0,col:0},
+  // FIX (check strutturale): zuccheri (6g) non potevano superare i carboidrati totali (0.8g) - corretto ch a 6 - 2026-07-30
+  {n:"Bevanda isotonica sportiva tipo Gatorade (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:24,p:0,gs:0,g:0,z:6,ch:6,fi:0,ca:0,fe:0,mg:0,k2:52,na:110,zn:0,fo:8,se:0,col:0},
   {n:"Succo di frutta 100% in brick (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:50,p:0.8,gs:0,g:0,z:8.6,ch:11.5,fi:0.3,ca:10,fe:0.3,mg:8,k2:150,na:8,zn:0.1,fo:15,se:0.3,col:0},
 
   // ── DOLCIFICANTI E SOSTITUTI DELLO ZUCCHERO ──
@@ -3469,7 +3473,8 @@ const DB_UPF = [
 {n:"Latte di avena industriale (per 100ml)",c:"Alternative vegetali",src:"UPF",k:51,p:1,gs:0.2,g:1,z:5,ch:9,fi:1,ca:120,fe:0.2,mg:12,k2:85,na:40,zn:0.1,fo:40,se:1,col:0},
 {n:"Latte di soia arricchito (per 100ml)",c:"Alternative vegetali",src:"UPF",k:56,p:3.6,gs:0.7,g:2.4,z:4.7,ch:4.9,fi:0.5,ca:120,fe:0.5,mg:18,k2:118,na:28,zn:0.3,fo:50,se:2,col:0},
 // Kcal (53) era incoerente coi macro dichiarati (che danno ~12kcal): tipico del latte di mandorla non zuccherato commerciale (13-24kcal/100ml) - 2026-07-29
-{n:"Latte di mandorla (per 100ml)",c:"Alternative vegetali",src:"UPF",k:15,p:0.4,gs:1,g:1,z:3.5,ch:0.4,fi:0.3,ca:120,fe:0.2,mg:8,k2:65,na:100,zn:0.1,fo:15,se:0,col:0},
+// FIX (check strutturale): zuccheri (3.5g) non potevano superare i carboidrati totali (0.4g) - corretto ch a 3.5 - 2026-07-30
+{n:"Latte di mandorla (per 100ml)",c:"Alternative vegetali",src:"UPF",k:15,p:0.4,gs:1,g:1,z:3.5,ch:3.5,fi:0.3,ca:120,fe:0.2,mg:8,k2:65,na:100,zn:0.1,fo:15,se:0,col:0},
 {n:"Latte di cocco (tetrapack, per 100ml)",c:"Alternative vegetali",src:"UPF",k:165,p:0,gs:15,g:17,z:2.5,ch:2.9,fi:0,ca:18,fe:0.5,mg:22,k2:160,na:60,zn:0.2,fo:40,se:2,col:0},
 {n:"Latte di riso arricchito (per 100ml)",c:"Alternative vegetali",src:"UPF",k:47,p:0.3,gs:0,g:1.0,z:5.5,ch:9.0,fi:0.3,ca:120,fe:0.2,mg:8,k2:60,na:50,zn:0.1,fo:20,se:0,col:0},
 {n:"Yogurt di soia alla frutta (per 100g)",c:"Alternative vegetali",src:"UPF",k:72,p:3.2,gs:0.2,g:1.5,z:9.5,ch:10.5,fi:0.5,ca:80,fe:0.3,mg:12,k2:100,na:40,zn:0.2,fo:45,se:1,col:0},

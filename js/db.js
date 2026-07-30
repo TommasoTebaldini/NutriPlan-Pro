@@ -2782,7 +2782,8 @@ const DB_UPF = [
 // Allineato a voce BDA gia verificata "Sriracha (salsa di peperoncino piccante)" — 2026-07-28
   {n:"Salsa Sriracha piccante",c:"Condimenti",src:"UPF",k:93,p:2,gs:0.1,g:1.0,z:12.5,ch:19.5,fi:0.5,ca:35,fe:1.0,mg:20,k2:220,na:1120,zn:0.3,fo:20,se:1,col:0},
   {n:"Salsa Teriyaki industriale",c:"Condimenti",src:"UPF",k:89,p:4,gs:0,g:0.2,z:17,ch:17.5,fi:0.3,ca:10,fe:0.9,mg:20,k2:90,na:2500,zn:0.2,fo:25,se:1,col:0},
-  {n:"Burro di cocco industriale",c:"Grassi e oli",src:"UPF",k:700,p:2,gs:55,g:63,z:5.5,ch:23,fi:9,ca:20,fe:3,mg:90,k2:540,na:15,zn:1,fo:240,se:12,col:0},
+  // Fosforo (polpa di cocco concentrata) era nel campo folati; folati reali cocco ~26mcg - 2026-07-30
+  {n:"Burro di cocco industriale",c:"Grassi e oli",src:"UPF",k:700,p:2,gs:55,g:63,z:5.5,ch:23,fi:9,ca:20,fe:3,mg:90,k2:540,na:15,zn:1,fo:26,se:12,col:0},
 
   // ── GELATI PARTICOLARI ──
   {n:"Gelato alla fragola industriale",c:"Gelati",src:"UPF",k:112,p:0.5,gs:0.1,g:0.5,z:26,ch:26,fi:0.2,ca:80,fe:0.2,mg:8,k2:120,na:55,zn:0.3,fo:70,se:1,col:10},
@@ -2804,7 +2805,8 @@ const DB_UPF = [
   {n:"Formaggio vegano fette (tipo violife)",c:"Latte e derivati",src:"UPF",k:275,p:0,gs:14,g:23,z:0,ch:18,fi:0.5,ca:550,fe:0.5,mg:5,k2:15,na:759,zn:0.2,fo:25,se:1,col:0},
   {n:"Panna vegetale di soia UHT",c:"Latte e derivati",src:"UPF",k:257,p:0.5,gs:21,g:22,z:12,ch:14,fi:0.3,ca:120,fe:0.5,mg:18,k2:90,na:150,zn:0.3,fo:40,se:1,col:0},
   {n:"Yogurt vegano cocco-ananas industriale",c:"Latte e derivati",src:"UPF",k:105,p:1.5,gs:4,g:7,z:8,ch:12,fi:0.5,ca:120,fe:0.3,mg:10,k2:85,na:30,zn:0.2,fo:30,se:1,col:0},
-  {n:"Tofu affumicato tipo naturli",c:"Legumi",src:"UPF",k:145,p:15,gs:2,g:8.5,z:0.5,ch:3,fi:0.5,ca:250,fe:3.5,mg:35,k2:150,na:550,zn:1.2,fo:120,se:10,col:0},
+  // Stesso bug fosforo-in-folati del tofu già corretto (DB_CREA_694, match esatto USDA 111mg) - 2026-07-30
+  {n:"Tofu affumicato tipo naturli",c:"Legumi",src:"UPF",k:145,p:15,gs:2,g:8.5,z:0.5,ch:3,fi:0.5,ca:250,fe:3.5,mg:35,k2:150,na:550,zn:1.2,fo:9,se:10,col:0},
 
   // ── BEVANDE PARTICOLARI ──
   {n:"Bevanda al caffè latte zuccherato (lattina)",c:"Bibite zuccherate",src:"UPF",k:55,p:7.7,gs:0.5,g:0.9,z:3.4,ch:3.9,fi:0,ca:75,fe:0,mg:8,k2:140,na:28,zn:0.3,fo:75,se:2,col:8},
@@ -2820,13 +2822,15 @@ const DB_UPF = [
   // Grassi totali erano 10g ma i saturi dichiarati (7.8g) da soli erano quasi il totale; dato ufficiale prodotto reale ~20.5g grassi totali, coerente con le kcal (483) - 2026-07-29
   {n:"Pan di Stelle tipo (biscotti cacao)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.5,gs:7.8,g:20.5,z:23.5,ch:65,fi:4,ca:65,fe:3,mg:40,k2:280,na:190,zn:0.9,fo:130,se:4,col:10},
   {n:"Merendina spugnosa tipo Twinkie",c:"Dolci confezionati",src:"UPF",k:360,p:4.4,gs:9.8,g:9.8,z:0,ch:64,fi:0.5,ca:35,fe:1,mg:8,k2:65,na:330,zn:0.3,fo:50,se:3,col:20},
-  {n:"Brioche con crema industriale",c:"Dolci confezionati",src:"UPF",k:340,p:6.5,gs:5,g:12,z:28,ch:52,fi:1,ca:55,fe:1.2,mg:14,k2:130,na:310,zn:0.4,fo:80,se:4,col:55},
+  // Corretto per coerenza col duplicato già fixato (Brioche siciliana col tuppo, 30mcg) - 2026-07-30
+  {n:"Brioche con crema industriale",c:"Dolci confezionati",src:"UPF",k:340,p:6.5,gs:5,g:12,z:28,ch:52,fi:1,ca:55,fe:1.2,mg:14,k2:130,na:310,zn:0.4,fo:30,se:4,col:55},
   {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:41.7,gs:18,g:25.6,z:58,ch:13.9,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:105,se:3,col:10},
 
   // ── FAST FOOD / STREET FOOD ──
   {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:45,fe:2,mg:20,k2:195,na:320,zn:1.2,fo:115,se:8,col:45},
   {n:"Panino da hamburger tipo Big Mac",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:200,na:396.6,zn:1.5,fo:120,se:10,col:15.5},
-  {n:"Patatine fritte fast food (porz. 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:3,ch:41,fi:3,ca:10,fe:0.7,mg:24,k2:420,na:300,zn:0.4,fo:90,se:1,col:0},
+  // Fosforo (patata fritta) era nel campo folati; folati reali patata ~15mcg - 2026-07-30
+  {n:"Patatine fritte fast food (porz. 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:3,ch:41,fi:3,ca:10,fe:0.7,mg:24,k2:420,na:300,zn:0.4,fo:15,se:1,col:0},
   {n:"Nuggets di pollo industriali (100g)",c:"Fast food",src:"UPF",k:230,p:10.4,gs:2.7,g:13.4,z:2.1,ch:16.6,fi:0.8,ca:15,fe:0,mg:0,k2:260,na:433,zn:0,fo:8,se:12,col:40},
   {n:"Arancino / supplì (fritto, 100g)",c:"Fast food",src:"UPF",k:201,p:4.4,gs:1.7,g:9.6,z:1.5,ch:21.5,fi:5.5,ca:30,fe:1,mg:18,k2:130,na:1100,zn:0.6,fo:75,se:5,col:15},
   {n:"Pizza margherita industriale surgelata",c:"Fast food",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:1.5,mg:20,k2:180,na:600,zn:1,fo:100,se:7,col:18},

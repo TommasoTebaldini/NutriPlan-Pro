@@ -2340,7 +2340,8 @@ const DB_BDA=[
 {n:"Brodetto di pesce marchigiano (base, per 100g)",c:"Piatti pronti",k:90,p:12.5,gs:0.8,g:3.5,z:2.0,ch:4.0,fi:0.5,ca:50,fe:1.5,mg:30,k2:350,na:450,zn:1.5,fo:15,se:25,col:65,src:"BDA"},
 {n:"Cacciucco livornese (base, per 100g)",c:"Piatti pronti",k:95,p:13.0,gs:0.9,g:3.5,z:2.5,ch:3.5,fi:0.5,ca:55,fe:1.8,mg:32,k2:370,na:480,zn:1.8,fo:150,se:28,col:70,src:"BDA"},
 {n:"Trippa alla romana (cotta con pomodoro)",c:"Piatti pronti",k:125,p:14.5,gs:2.0,g:5.0,z:3.0,ch:4.5,fi:1.0,ca:40,fe:1.5,mg:15,k2:210,na:550,zn:2.0,fo:90,se:10,col:110,src:"BDA"},
-{n:"Ossobuco alla milanese (senza risotto)",c:"Carni rosse",k:195,p:22.0,gs:2.5,g:10.0,z:2.5,ch:4.0,fi:0.5,ca:40,fe:2.0,mg:25,k2:380,na:420,zn:4.5,fo:180,se:12,col:80,src:"BDA"},
+// Fosforo (carne di vitello, ~170-200mg) era nel campo folati; folati reali carne ~15mcg - 2026-07-30
+{n:"Ossobuco alla milanese (senza risotto)",c:"Carni rosse",k:195,p:22.0,gs:2.5,g:10.0,z:2.5,ch:4.0,fi:0.5,ca:40,fe:2.0,mg:25,k2:380,na:420,zn:4.5,fo:15,se:12,col:80,src:"BDA"},
 
 // ── CUCINA INTERNAZIONALE (BDA) ──
 {n:"Riso per sushi (cotto con aceto di riso)",c:"Cereali e derivati",k:155,p:2.8,gs:0.1,g:0.3,z:4.5,ch:34.0,fi:0.5,ca:5,fe:0.3,mg:12,k2:30,na:210,zn:0.4,fo:10,se:4,col:0,src:"BDA"},
@@ -2552,7 +2553,8 @@ const DB_BDA=[
 {n:"Trippa alla romana (con pomodoro e pecorino)",c:"Piatti pronti",k:162,p:15.5,gs:3.5,g:9.5,z:1.5,ch:5.5,fi:1.5,ca:125,fe:1.5,mg:20,k2:220,na:580,zn:3.5,fo:100,se:15,col:72,src:"BDA"},
 {n:"Bollito misto con salsa verde",c:"Piatti pronti",k:195,p:22,gs:4.0,g:9.5,z:0.5,ch:4.0,fi:0.5,ca:20,fe:2.5,mg:22,k2:280,na:650,zn:3.5,fo:175,se:20,col:75,src:"BDA"},
 {n:"Scaloppine al limone (vitello)",c:"Piatti pronti",k:178,p:22.5,gs:2.5,g:8.5,z:0.5,ch:4.0,fi:0.3,ca:18,fe:1.5,mg:22,k2:295,na:420,zn:2.5,fo:8,se:15,col:68,src:"BDA"},
-{n:"Ossobuco alla milanese (con gremolata)",c:"Piatti pronti",k:215,p:20,gs:5.0,g:11.5,z:1.5,ch:7.5,fi:0.8,ca:42,fe:2.0,mg:25,k2:320,na:480,zn:3.0,fo:180,se:18,col:78,src:"BDA"},
+// Stesso bug fosforo-in-folati del duplicato (senza risotto) - 2026-07-30
+{n:"Ossobuco alla milanese (con gremolata)",c:"Piatti pronti",k:215,p:20,gs:5.0,g:11.5,z:1.5,ch:7.5,fi:0.8,ca:42,fe:2.0,mg:25,k2:320,na:480,zn:3.0,fo:15,se:18,col:78,src:"BDA"},
 {n:"Saltimbocca alla romana (vitello con prosciutto e salvia)",c:"Piatti pronti",k:220,p:24,gs:4.0,g:11.5,z:0.5,ch:3.5,fi:0.3,ca:25,fe:1.5,mg:20,k2:310,na:750,zn:2.5,fo:8,se:18,col:80,src:"BDA"},
 {n:"Pollo alla cacciatora (con pomodoro e olive)",c:"Piatti pronti",k:175,p:20.5,gs:3.0,g:8.5,z:2.0,ch:5.0,fi:1.5,ca:35,fe:1.5,mg:25,k2:385,na:420,zn:1.8,fo:8,se:22,col:65,src:"BDA"},
 {n:"Coniglio all'ischitana (con pomodoro e capperi)",c:"Piatti pronti",k:165,p:20.5,gs:2.0,g:7.5,z:2.0,ch:4.5,fi:1.0,ca:28,fe:1.2,mg:25,k2:355,na:450,zn:1.5,fo:8,se:15,col:55,src:"BDA"},

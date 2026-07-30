@@ -361,7 +361,8 @@ const DB_CREA=[
 {n:"Polpo cotto",c:"Pesce",k:57,p:10.6,gs:0.42,g:1,z:1.4,ch:1.4,fi:0,ca:144,fe:1.5,mg:39,k2:233,na:196,zn:5.1,fo:8,se:45,col:72,src:"CREA"},
 // Zinco (90mg) stesso bug sistemico gia trovato su altre 2 voci ostriche del DB: corretto a 3.6mg (fonti CREA verificate) - 2026-07-29
 // FIX (rifinitura post-audit, blind spot pre-esistente): folati reali ostrica confermati via ricerca (7-18mcg) - 2026-07-30
-{n:"Ostrica fresca",c:"Pesce",k:69,p:10.2,gs:1.0,g:0.9,z:0.5,ch:5.4,fi:0,ca:186,fe:6,mg:22,k2:260,na:510,zn:3.6,fo:15,se:77,col:30,src:"CREA"},
+// RIPRISTINATO 2026-07-30: valore originale (162mcg) corroborato da fonte ufficiale (voce "Ostrica" BDA_184, stesso valore, source CREA:127130) - avevo erroneamente sovrascritto con dato WebSearch USA/USDA senza controllare che esistesse gia' una fonte italiana ufficiale
+{n:"Ostrica fresca",c:"Pesce",k:69,p:10.2,gs:1.0,g:0.9,z:0.5,ch:5.4,fi:0,ca:186,fe:6,mg:22,k2:260,na:510,zn:3.6,fo:162,se:77,col:30,src:"CREA"},
 {n:"Riccio di mare (polpa)",c:"Pesce",k:99,p:12.8,gs:0.7,g:3.3,z:3.7,ch:6.6,fi:0,ca:30,fe:1.1,mg:27,k2:220,na:220,zn:0.7,fo:7,se:30,col:150,src:"CREA"},
 // ── BEVANDE aggiuntive ──
 {n:"Succo di melograno 100%",c:"Bevande",k:54,p:0.2,gs:0,g:0.3,z:12.6,ch:13.4,fi:0.1,ca:11,fe:0.3,mg:7,k2:214,na:9,zn:0.2,fo:8,se:0.5,col:0,src:"CREA"},

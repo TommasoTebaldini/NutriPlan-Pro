@@ -2410,7 +2410,8 @@ const DB_BDA=[
 // ── CEREALI E PSEUDOCEREALI AGGIUNTIVI (CREA/BDA) ──
 {n:"Avena in chicchi interi (groats, cotti)",c:"Cereali e derivati",k:140,p:5.0,gs:0.5,g:2.5,z:0.5,ch:27.0,fi:4.5,ca:20,fe:1.5,mg:45,k2:80,na:5,zn:1.3,fo:20,se:12,col:0,src:"CREA"},
 {n:"Miglio (Panicum miliaceum) cotto",c:"Cereali e derivati",k:119,p:3.5,gs:0.4,g:1.0,z:0.2,ch:23.7,fi:1.3,ca:3,fe:0.6,mg:44,k2:62,na:2,zn:0.9,fo:19,se:1.5,col:0,src:"CREA"},
-{n:"Amaranto in chicchi (cotto)",c:"Cereali e derivati",k:102,p:3.8,gs:0.5,g:1.6,z:0.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:6,zn:0.9,fo:49,se:11,col:0,src:"CREA"},
+// Corretto per coerenza con gli altri duplicati di amaranto cotto già fixati (27mcg) - 2026-07-30
+{n:"Amaranto in chicchi (cotto)",c:"Cereali e derivati",k:102,p:3.8,gs:0.5,g:1.6,z:0.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:6,zn:0.9,fo:27,se:11,col:0,src:"CREA"},
 {n:"Teff in chicchi (cotto)",c:"Cereali e derivati",k:101,p:3.9,gs:0.5,g:0.7,z:0.3,ch:19.9,fi:2.8,ca:88,fe:2.0,mg:60,k2:107,na:5,zn:1.1,fo:18,se:4,col:0,src:"CREA"},
 {n:"Triticale in chicchi (cotto)",c:"Cereali e derivati",k:105,p:4.0,gs:0.3,g:0.7,z:0.8,ch:22.0,fi:3.5,ca:18,fe:1.2,mg:40,k2:90,na:5,zn:1.2,fo:35,se:15,col:0,src:"CREA"},
 {n:"Freekeh (frumento verde, cotto)",c:"Cereali e derivati",k:130,p:5.0,gs:0.2,g:0.5,z:1.0,ch:28.0,fi:7.5,ca:25,fe:1.5,mg:55,k2:120,na:15,zn:1.5,fo:50,se:10,col:0,src:"BDA"},

@@ -2989,24 +2989,31 @@ const DB_UPF = [
   // ── PRODOTTI PER NUTRIZIONE CLINICA ORALE ──
   {n:"Polvere addensante (per disfagia, tipo Nutilis)",c:"Prodotti clinici",src:"UPF",k:370,p:0.5,gs:0,g:0.5,z:89,ch:90,fi:2,ca:20,fe:0.5,mg:5,k2:10,na:20,zn:0.1,fo:10,se:1,col:0},
   {n:"Modulare calorico lipidico (Calogen)",c:"Prodotti clinici",src:"UPF",k:900,p:0,gs:38,g:100,fi:0,z:0,ch:0,ca:0,fe:0,mg:0,k2:0,na:3,zn:0,fo:0,se:0,col:0},
-  {n:"Modulare proteico (Protifar polvere, 100g)",c:"Prodotti clinici",src:"UPF",k:380,p:90,gs:0.1,g:0.5,z:0,ch:3,fi:0,ca:350,fe:0.5,mg:40,k2:100,na:150,zn:2,fo:500,se:10,col:15},
+  // Folati implausibili per modulo proteico puro (nessuna fortificazione vitaminica prevista per design clinico); reali ~15mcg (proteine del latte) - 2026-07-30
+  {n:"Modulare proteico (Protifar polvere, 100g)",c:"Prodotti clinici",src:"UPF",k:380,p:90,gs:0.1,g:0.5,z:0,ch:3,fi:0,ca:350,fe:0.5,mg:40,k2:100,na:150,zn:2,fo:15,se:10,col:15},
   {n:"Modulare glucidico (Maxijul/Fantomalt)",c:"Prodotti clinici",src:"UPF",k:385,p:0,gs:0,g:0,z:96,ch:96,fi:0,ca:2,fe:0,mg:0,k2:0,na:80,zn:0,fo:5,se:0,col:0},
   {n:"Soluzione reidratante orale (ORS WHO)",c:"Prodotti clinici",src:"UPF",k:17,p:0,gs:0,g:0,z:4.2,ch:4.2,fi:0,ca:0,fe:0,mg:0,k2:78,na:513,zn:0,fo:0,se:0,col:0},
 
   // ── FAST FOOD CATENE INTERNAZIONALI (stime per 100g prodotto) ──
   {n:"McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:190,na:396.6,zn:2.2,fo:125,se:14,col:15.5},
-  {n:"McDonald's Patatine fritte grandi (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:2.0,g:15,z:1.5,ch:41,fi:3.0,ca:11,fe:0.6,mg:28,k2:580,na:400,zn:0.3,fo:85,se:0,col:0},
+  // Corretto per coerenza con gli altri duplicati patatine fritte già fixati (15mcg) - 2026-07-30
+  {n:"McDonald's Patatine fritte grandi (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:2.0,g:15,z:1.5,ch:41,fi:3.0,ca:11,fe:0.6,mg:28,k2:580,na:400,zn:0.3,fo:15,se:0,col:0},
   {n:"McDonald's McNuggets (per 100g)",c:"Fast food",src:"UPF",k:175,p:11,gs:1,g:8.3,z:0.5,ch:14,fi:0.6,ca:11,fe:0.8,mg:20,k2:250,na:724,zn:1.0,fo:8,se:10,col:50},
-  {n:"McDonald's McFlurry Oreo (per 100g)",c:"Fast food",src:"UPF",k:180,p:4.0,gs:5.0,g:5.5,z:27,ch:28,fi:0.5,ca:110,fe:0.4,mg:12,k2:180,na:100,zn:0.6,fo:95,se:2,col:20},
-  {n:"Burger King Whopper (per 100g)",c:"Fast food",src:"UPF",k:254,p:12,gs:5.0,g:12,z:5.5,ch:28,fi:1.5,ca:80,fe:2.2,mg:20,k2:200,na:480,zn:2.0,fo:110,se:10,col:38},
+  // Fosforo (latte/panna, calcio 110mg conferma) era nel campo folati; folati reali ~10mcg - 2026-07-30
+  {n:"McDonald's McFlurry Oreo (per 100g)",c:"Fast food",src:"UPF",k:180,p:4.0,gs:5.0,g:5.5,z:27,ch:28,fi:0.5,ca:110,fe:0.4,mg:12,k2:180,na:100,zn:0.6,fo:10,se:2,col:20},
+  // Fosforo (pane+carne+formaggio) era nel campo folati; folati reali ~30mcg - 2026-07-30
+  {n:"Burger King Whopper (per 100g)",c:"Fast food",src:"UPF",k:254,p:12,gs:5.0,g:12,z:5.5,ch:28,fi:1.5,ca:80,fe:2.2,mg:20,k2:200,na:480,zn:2.0,fo:30,se:10,col:38},
   {n:"KFC Pollo fritto croccante (per 100g)",c:"Fast food",src:"UPF",k:320,p:26,gs:3.5,g:19,z:2.5,ch:11,fi:0.5,ca:30,fe:1.2,mg:28,k2:290,na:680,zn:2.5,fo:8,se:18,col:80},
   {n:"Pizza surgelata Margherita (Dr. Oetker, per 100g)",c:"Fast food",src:"UPF",k:224,p:4.1,gs:3.3,g:10,z:4,ch:27,fi:2.5,ca:150,fe:1.8,mg:20,k2:180,na:400,zn:1.0,fo:115,se:7,col:18},
   {n:"Pizza surgelata Diavola/Pepperoni (per 100g)",c:"Fast food",src:"UPF",k:238.9,p:10,gs:3.89,g:7.8,z:2.2,ch:32.8,fi:1.7,ca:194.4,fe:1.94,mg:20,k2:166.7,na:455.6,zn:1.2,fo:120,se:8,col:16.7},
-  {n:"Subway Veggie Delite (sandwich 6\", per 100g)",c:"Fast food",src:"UPF",k:155,p:8.5,gs:0.8,g:2.5,z:4.0,ch:26,fi:2.5,ca:80,fe:2.5,mg:28,k2:280,na:480,zn:0.8,fo:90,se:6,col:0},
-  {n:"Subway Tuna sub (sandwich 6\", per 100g)",c:"Fast food",src:"UPF",k:250,p:12,gs:3.0,g:12,z:4.5,ch:27,fi:2.5,ca:80,fe:1.8,mg:25,k2:250,na:580,zn:0.8,fo:90,se:10,col:22},
+  // Fosforo (pane sandwich) era nel campo folati; folati reali ~30mcg - 2026-07-30
+  {n:"Subway Veggie Delite (sandwich 6\", per 100g)",c:"Fast food",src:"UPF",k:155,p:8.5,gs:0.8,g:2.5,z:4.0,ch:26,fi:2.5,ca:80,fe:2.5,mg:28,k2:280,na:480,zn:0.8,fo:30,se:6,col:0},
+  // Fosforo (pane sandwich+tonno) era nel campo folati; folati reali ~30mcg - 2026-07-30
+  {n:"Subway Tuna sub (sandwich 6\", per 100g)",c:"Fast food",src:"UPF",k:250,p:12,gs:3.0,g:12,z:4.5,ch:27,fi:2.5,ca:80,fe:1.8,mg:25,k2:250,na:580,zn:0.8,fo:30,se:10,col:22},
   {n:"Kebab (gyros) con pane pita e salse (per 100g)",c:"Fast food",src:"UPF",k:196,p:6.7,gs:6,g:7.7,z:9.3,ch:24,fi:5,ca:80,fe:1.5,mg:20,k2:200,na:520,zn:1.8,fo:8,se:8,col:32},
   {n:"Hot dog americano con pane e senape (per 100g)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:40,fe:2.0,mg:18,k2:180,na:320,zn:1.5,fo:5,se:8,col:30},
-  {n:"Panino con hamburger da fast food (generico, per 100g)",c:"Fast food",src:"UPF",k:255,p:12,gs:4.5,g:12,z:5.5,ch:27,fi:1.5,ca:70,fe:2.0,mg:20,k2:195,na:520,zn:2.0,fo:110,se:10,col:40},
+  // Corretto per coerenza col duplicato già fixato (Panino hamburger industriale completo, 30mcg) - 2026-07-30
+  {n:"Panino con hamburger da fast food (generico, per 100g)",c:"Fast food",src:"UPF",k:255,p:12,gs:4.5,g:12,z:5.5,ch:27,fi:1.5,ca:70,fe:2.0,mg:20,k2:195,na:520,zn:2.0,fo:30,se:10,col:40},
 
   // ── SNACK E DOLCIUMI INDUSTRIALI ──
   {n:"Oreo biscotti (originali)",c:"Dolci confezionati",src:"UPF",k:478.3,p:4.3,gs:4.35,g:19.6,z:39.1,ch:73.9,fi:0,ca:35,fe:5.0,mg:38,k2:200,na:331.3,zn:1.0,fo:130,se:5,col:0},
@@ -3018,7 +3025,8 @@ const DB_UPF = [
   {n:"Bounty (per 100g)",c:"Dolci confezionati",src:"UPF",k:487,p:3,gs:21,g:25,z:48,ch:58,fi:2.0,ca:35,fe:1.5,mg:30,k2:280,na:80,zn:0.4,fo:70,se:3,col:5},
   {n:"Snickers (per 100g)",c:"Dolci confezionati",src:"UPF",k:510,p:9.5,gs:9.7,g:28,z:45,ch:54,fi:1.5,ca:80,fe:1.5,mg:42,k2:330,na:176,zn:1.0,fo:100,se:4,col:8},
   {n:"Twix (per 100g)",c:"Dolci confezionati",src:"UPF",k:493,p:4.4,gs:14,g:24,z:49,ch:65,fi:1.0,ca:40,fe:1.5,mg:25,k2:210,na:160,zn:0.6,fo:75,se:4,col:10},
-  {n:"M&Ms al cioccolato al latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:494,p:5.0,gs:8.0,g:20,z:65,ch:70,fi:1.0,ca:60,fe:1.5,mg:28,k2:250,na:50,zn:0.6,fo:100,se:4,col:12},
+  // Fosforo (cioccolato al latte, notoriamente ricco di fosforo) era nel campo folati; folati reali ~30mcg - 2026-07-30
+  {n:"M&Ms al cioccolato al latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:494,p:5.0,gs:8.0,g:20,z:65,ch:70,fi:1.0,ca:60,fe:1.5,mg:28,k2:250,na:50,zn:0.6,fo:30,se:4,col:12},
   {n:"Haribo caramelle gommose (per 100g)",c:"Dolci confezionati",src:"UPF",k:341,p:5.1,gs:0.1,g:0.5,z:46,ch:79,fi:0,ca:5,fe:0.2,mg:2,k2:10,na:12,zn:0.1,fo:2,se:0,col:0},
   {n:"Mentos originali (rotolo, per 100g)",c:"Dolci confezionati",src:"UPF",k:387,p:0,gs:0.8,g:2.0,z:79,ch:96,fi:0,ca:12,fe:0.1,mg:2,k2:5,na:20,zn:0,fo:1,se:0,col:0},
   {n:"Barretta proteica tipo Mars Hi-Protein (per 100g)",c:"Dolci confezionati",src:"UPF",k:354.2,p:33.9,gs:4.75,g:8.3,z:22,ch:39,fi:4.7,ca:120,fe:1.5,mg:30,k2:200,na:320,zn:1.5,fo:180,se:8,col:10},

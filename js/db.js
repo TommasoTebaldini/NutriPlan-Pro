@@ -2070,12 +2070,14 @@ const DB_BDA=[
 
 // ── VERDURE MANCANTI (CREA/BDA) ──
 {n:"Pastinaca cruda",c:"Ortaggi",k:75,p:1.4,gs:0.1,g:0.5,z:4.8,ch:17.9,fi:4.9,ca:36,fe:0.6,mg:29,k2:375,na:10,zn:0.6,fo:71,se:1.8,col:0,src:"CREA"},
-{n:"Rapa (navone) cruda",c:"Ortaggi",k:28,p:0.9,gs:0,g:0.1,z:3.8,ch:6.4,fi:1.8,ca:30,fe:0.3,mg:11,k2:233,na:67,zn:0.3,fo:27,se:0.7,col:0,src:"CREA"},
+// Fosforo (27mg, match esatto rapa) era nel campo folati; folati reali rapa ~15mcg - 2026-07-30
+{n:"Rapa (navone) cruda",c:"Ortaggi",k:28,p:0.9,gs:0,g:0.1,z:3.8,ch:6.4,fi:1.8,ca:30,fe:0.3,mg:11,k2:233,na:67,zn:0.3,fo:15,se:0.7,col:0,src:"CREA"},
 {n:"Rapa rossa (barbabietola) cruda",c:"Ortaggi",k:43,p:1.6,gs:0,g:0.1,z:6.8,ch:9.6,fi:2.8,ca:16,fe:0.8,mg:23,k2:325,na:78,zn:0.4,fo:40,se:0.6,col:0,src:"CREA"},
 // Fosforo (78mg, match esatto USDA topinambur) era nel campo folati; folati reali topinambur ~13mcg - 2026-07-29
 {n:"Topinambur crudo",c:"Ortaggi",k:73,p:2.0,gs:0,g:0.0,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0,src:"CREA"},
 {n:"Crescione d'acqua fresco",c:"Ortaggi",k:22,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:282,na:41,zn:0.1,fo:60,se:0.9,col:0,src:"BDA"},
-{n:"Acetosella fresca (Rumex acetosa)",c:"Ortaggi",k:22,p:2.0,gs:0,g:0.3,z:0.5,ch:3.2,fi:3.0,ca:44,fe:2.4,mg:16,k2:390,na:4,zn:0.2,fo:62,se:0.9,col:0,src:"CREA"},
+// Terzo duplicato con lo stesso bug: folati reali acetosella ~13mcg (confermato via ricerca) - 2026-07-30
+{n:"Acetosella fresca (Rumex acetosa)",c:"Ortaggi",k:22,p:2.0,gs:0,g:0.3,z:0.5,ch:3.2,fi:3.0,ca:44,fe:2.4,mg:16,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
 {n:"Ortiche fresche (foglie)",c:"Ortaggi",k:42,p:7.2,gs:0,g:0.5,z:0,ch:7.5,fi:6.9,ca:481,fe:41.8,mg:57,k2:334,na:4,zn:0.3,fo:71,se:0.7,col:0,src:"CREA"},
 
 // ── FRUTTA MANCANTE ──
@@ -2102,7 +2104,8 @@ const DB_BDA=[
 {n:"Dattero di mare (Lithophaga) fresco",c:"Pesce",k:75,p:13.0,gs:0.3,g:1.5,z:2.5,ch:2.5,fi:0,ca:102,fe:19.0,mg:26,k2:200,na:310,zn:1.8,fo:35,se:32,col:45,src:"CREA"},
 
 // ── BEVANDE MANCANTI ──
-{n:"Acqua di cocco pura (non da concentrato)",c:"Bevande",k:19,p:0.7,gs:0,g:0.2,z:2.6,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:250,na:105,zn:0.1,fo:20,se:1,col:0,src:"BDA"},
+// Folati implausibili per acqua di cocco (reali ~3mcg, coerente col duplicato già corretto DB_CREA_1069) - 2026-07-30
+{n:"Acqua di cocco pura (non da concentrato)",c:"Bevande",k:19,p:0.7,gs:0,g:0.2,z:2.6,ch:3.7,fi:1.1,ca:24,fe:0.3,mg:25,k2:250,na:105,zn:0.1,fo:3,se:1,col:0,src:"BDA"},
 {n:"Vino cotto (sapa/mosto cotto)",c:"Bevande",k:258,p:0.5,gs:0,g:0,z:63.0,ch:64.0,fi:0,ca:22,fe:2.0,mg:12,k2:210,na:10,zn:0.2,fo:30,se:1,col:0,src:"BDA"},
 {n:"Succo di bergamotto puro",c:"Bevande",k:28,p:0.5,gs:0,g:0.1,z:3.2,ch:7.2,fi:0.3,ca:45,fe:0.1,mg:9,k2:110,na:3,zn:0.1,fo:12,se:0.2,col:0,src:"CREA"},
 

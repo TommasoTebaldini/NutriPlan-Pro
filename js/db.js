@@ -3037,7 +3037,8 @@ const DB_UPF = [
   {n:"Wrap di fajita confezionato (pronto)",c:"Piatti pronti",src:"UPF",k:307,p:8.7,gs:0.9,g:6.6,z:5.3,ch:52,fi:3.5,ca:85,fe:1.8,mg:20,k2:230,na:1101,zn:0.9,fo:90,se:7,col:18},
   {n:"Tramezzino industriale prosciutto/mozzarella",c:"Piatti pronti",src:"UPF",k:289.5,p:21.1,gs:11.84,g:21.1,z:0,ch:2.6,fi:0,ca:80,fe:1.5,mg:18,k2:140,na:526.3,zn:0.9,fo:90,se:7,col:28},
   {n:"Insalata pronta in busta (mista, 100g)",c:"Piatti pronti",src:"UPF",k:125,p:7.6,gs:3.2,g:9.2,z:1.6,ch:2.1,fi:2.0,ca:45,fe:1.5,mg:18,k2:350,na:30,zn:0.3,fo:60,se:1,col:0},
-  {n:"Riso in busta pronto micro (basmati, cotto)",c:"Piatti pronti",src:"UPF",k:145,p:3.5,gs:0.1,g:0.5,z:0.5,ch:32,fi:0.5,ca:5,fe:0.5,mg:15,k2:35,na:5,zn:0.5,fo:50,se:5,col:0},
+  // Corretto per coerenza col pattern riso cotto già stabilito (8mcg) - 2026-07-30
+  {n:"Riso in busta pronto micro (basmati, cotto)",c:"Piatti pronti",src:"UPF",k:145,p:3.5,gs:0.1,g:0.5,z:0.5,ch:32,fi:0.5,ca:5,fe:0.5,mg:15,k2:35,na:5,zn:0.5,fo:8,se:5,col:0},
   {n:"Brodo di pollo industriale (tetrapak pronto, per 100mL)",c:"Piatti pronti",src:"UPF",k:8,p:0.5,gs:0,g:0.3,z:0.5,ch:0.5,fi:0,ca:5,fe:0.2,mg:5,k2:55,na:750,zn:0.1,fo:5,se:1,col:5},
   {n:"Minestrone pronto in tetrapak (per 100g)",c:"Piatti pronti",src:"UPF",k:42,p:1.5,gs:0.2,g:1.7,z:1.6,ch:4.2,fi:2,ca:30,fe:0.8,mg:18,k2:220,na:280,zn:0.3,fo:50,se:2,col:0},
   {n:"Crema di zucca in vasetto industriale",c:"Piatti pronti",src:"UPF",k:52,p:0.5,gs:0.6,g:3.5,z:2.2,ch:2.8,fi:3.8,ca:25,fe:0.5,mg:15,k2:190,na:530,zn:0.2,fo:35,se:1,col:5},
@@ -3082,7 +3083,8 @@ const DB_UPF = [
   // ── FAST FOOD E PRODOTTI INDUSTRIA ALIMENTARE ──
   {n:"Hamburger McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:210,na:396.6,zn:2.5,fo:8,se:12,col:15.5},
   {n:"Chicken McNuggets McDonald's (per 100g)",c:"Fast food",src:"UPF",k:175,p:11,gs:1,g:8.3,z:0.5,ch:14,fi:0.6,ca:18,fe:0.6,mg:20,k2:220,na:724,zn:0.8,fo:8,se:10,col:50},
-  {n:"Patatine fritte McDonald's (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:1.5,g:15.0,z:0.8,ch:41.5,fi:3.8,ca:15,fe:0.8,mg:25,k2:670,na:350,zn:0.3,fo:115,se:4,col:0},
+  // Terzo duplicato con lo stesso bug fosforo-in-folati già corretto altrove (15mcg) - 2026-07-30
+  {n:"Patatine fritte McDonald's (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:1.5,g:15.0,z:0.8,ch:41.5,fi:3.8,ca:15,fe:0.8,mg:25,k2:670,na:350,zn:0.3,fo:15,se:4,col:0},
   {n:"Hot dog (wurstel in panino industriale)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.5,mg:20,k2:175,na:320,zn:1.5,fo:90,se:10,col:48},
   {n:"Pizza surgelata margherita (per 100g)",c:"Fast food",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:185,fe:1.5,mg:20,k2:175,na:600,zn:1.0,fo:95,se:10,col:18},
   {n:"Pizza surgelata 4 stagioni (per 100g)",c:"Fast food",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:175,fe:1.5,mg:18,k2:170,na:620,zn:1.2,fo:90,se:10,col:20},

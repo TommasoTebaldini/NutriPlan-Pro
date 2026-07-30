@@ -3441,7 +3441,8 @@ const DB_UPF = [
 {n:"Quorn (mycoprotein, per 100g)",c:"Alternative vegetali",src:"UPF",k:99,p:14,gs:0.8,g:2.6,z:0.6,ch:1.7,fi:7.1,ca:21,fe:0.5,mg:18,k2:170,na:320,zn:0.8,fo:100,se:4,col:0},
 // ── FAST FOOD CATENE ──
 {n:"McDonald's Hamburger classico (per 100g)",c:"Fast food catene",src:"UPF",k:238.1,p:12.4,gs:2.86,g:7.6,z:6.5,ch:28.6,fi:1.9,ca:62,fe:2.5,mg:18,k2:225,na:600,zn:1.8,fo:8,se:10,col:38},
-{n:"McDonald's Patatine fritte medie (per 100g)",c:"Fast food catene",src:"UPF",k:312,p:3.8,gs:1.8,g:15.5,z:0.5,ch:41,fi:3.5,ca:18,fe:1.2,mg:28,k2:615,na:370,zn:0.4,fo:100,se:5,col:0},
+// Quarto duplicato con lo stesso bug fosforo-in-folati già corretto altrove (15mcg) - 2026-07-30
+{n:"McDonald's Patatine fritte medie (per 100g)",c:"Fast food catene",src:"UPF",k:312,p:3.8,gs:1.8,g:15.5,z:0.5,ch:41,fi:3.5,ca:18,fe:1.2,mg:28,k2:615,na:370,zn:0.4,fo:15,se:5,col:0},
 {n:"KFC Pollo fritto (per 100g)",c:"Fast food catene",src:"UPF",k:298,p:20,gs:4.5,g:18,z:0.5,ch:14,fi:0.8,ca:28,fe:1.2,mg:20,k2:265,na:550,zn:1.5,fo:8,se:18,col:75},
 {n:"Pizza Hut Margherita (per 100g)",c:"Fast food catene",src:"UPF",k:266,p:11,gs:5.0,g:10,z:4.0,ch:34,fi:2.0,ca:200,fe:1.8,mg:20,k2:200,na:640,zn:1.5,fo:140,se:10,col:20},
 // ── SNACK DOLCI ITALIANI ──
@@ -3565,7 +3566,8 @@ const DB_UPF = [
 // ── SNACK E BEVANDE PREMIUM ──
 // Allineato a voce gia verificata "Cornetto vuoto (bar italiano)" — 2026-07-28
 {n:"Cornetto vuoto al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:390,p:7.5,gs:8.0,g:19.5,z:15,ch:50.5,fi:1.5,ca:35,fe:1.5,mg:15,k2:110,na:380,zn:0.5,fo:75,se:4,col:55},
-{n:"Cornetto alla crema al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:350,p:7.0,gs:5.5,g:15,z:18,ch:49,fi:1.0,ca:55,fe:1.5,mg:12,k2:100,na:195,zn:0.5,fo:80,se:8,col:65},
+// Corretto per coerenza col pattern pasticceria all'uovo già stabilito (30mcg) - 2026-07-30
+{n:"Cornetto alla crema al bar (per 100g)",c:"Colazione industriale",src:"UPF",k:350,p:7.0,gs:5.5,g:15,z:18,ch:49,fi:1.0,ca:55,fe:1.5,mg:12,k2:100,na:195,zn:0.5,fo:30,se:8,col:65},
 {n:"Tramezzino al tonno (bar, per 100g)",c:"Pane farcito",src:"UPF",k:266,p:9.1,gs:1.5,g:17.5,z:6.3,ch:24.5,fi:1.0,ca:38,fe:1.0,mg:15,k2:165,na:559,zn:0.6,fo:85,se:14,col:28},
 {n:"Crodino analcolico (per 100ml)",c:"Alcolici e simili",src:"UPF",k:61,p:0,gs:0,g:0,z:15,ch:15,fi:0,ca:3,fe:0,mg:2,k2:8,na:4,zn:0,fo:0,se:0,col:0},
 {n:"Spritz Aperol (per 100ml)",c:"Alcolici e simili",src:"UPF",k:81,p:0,gs:0,g:0,z:7.5,ch:9.5,fi:0,ca:5,fe:0,mg:3,k2:18,na:12,zn:0,fo:0,se:0,col:0},
@@ -3655,7 +3657,8 @@ const DB_UPF = [
 {n:"Nettare di mango (bottiglia)",c:"Succhi di frutta",src:"UPF",k:51,p:0.5,gs:0.1,g:0.5,z:12,ch:12,fi:0.6,ca:5,fe:0.3,mg:8,k2:100,na:4,zn:0.1,fo:8,se:0,col:0},
 {n:"Tè freddo al limone industriale (bottiglia)",c:"Bevande",src:"UPF",k:28,p:0,gs:0,g:0,z:7.0,ch:7.0,fi:0,ca:2,fe:0,mg:2,k2:15,na:10,zn:0,fo:2,se:0,col:0},
 {n:"Tè freddo alla pesca industriale (bottiglia)",c:"Bevande",src:"UPF",k:25,p:0,gs:0,g:0,z:6.2,ch:6.2,fi:0,ca:2,fe:0,mg:2,k2:12,na:0,zn:0,fo:2,se:0,col:0},
-{n:"Cappuccino RTD (pronto da bere, lattina)",c:"Bevande",src:"UPF",k:55,p:2.5,gs:1.0,g:2.0,z:8.0,ch:8.5,fi:0,ca:70,fe:0.1,mg:9,k2:120,na:45,zn:0.3,fo:65,se:1,col:6},
+// Fosforo (latte) era nel campo folati; folati reali ~8mcg - 2026-07-30
+{n:"Cappuccino RTD (pronto da bere, lattina)",c:"Bevande",src:"UPF",k:55,p:2.5,gs:1.0,g:2.0,z:8.0,ch:8.5,fi:0,ca:70,fe:0.1,mg:9,k2:120,na:45,zn:0.3,fo:8,se:1,col:6},
 {n:"Yakult (bevanda al Lactobacillus, per 100ml)",c:"Bevande",src:"INT",k:46,p:1.3,gs:0,g:0,z:4.2,ch:11,fi:3.2,ca:50,fe:0,mg:4,k2:55,na:16,zn:0.2,fo:40,se:0,col:0},
 {n:"Kombucha naturale industriale",c:"Bevande",src:"UPF",k:18,p:0,gs:0,g:0,z:3.5,ch:4.0,fi:0,ca:4,fe:0.1,mg:4,k2:25,na:10,zn:0,fo:5,se:0,col:0},
 {n:"Gatorade arancio (bevanda isotonica, per 100ml)",c:"Bevande",src:"UPF",k:22.2,p:0,gs:0,g:0,z:5.8,ch:5.8,fi:0,ca:0,fe:0,mg:0,k2:13,na:44.4,zn:0,fo:0,se:0,col:0},
@@ -3676,9 +3679,11 @@ const DB_UPF = [
 {n:"Gelato Magnum Classic (per 100g)",c:"Gelati",src:"UPF",k:307,p:3.3,gs:13,g:19,z:27,ch:30,fi:0.5,ca:80,fe:0.4,mg:12,k2:140,na:48,zn:0.4,fo:10,se:2,col:15},
 {n:"Gelato Cornetto Classico (per 100g)",c:"Gelati",src:"UPF",k:213,p:7.7,gs:0.2,g:1.4,z:3.5,ch:41,fi:3,ca:75,fe:0.5,mg:10,k2:120,na:472,zn:0.4,fo:10,se:2,col:12},
 {n:"Krapfen/Bombolone con crema",c:"Dolci",src:"UPF",k:347,p:8,gs:4.5,g:12,z:18,ch:51,fi:1.3,ca:35,fe:1.2,mg:12,k2:100,na:740,zn:0.4,fo:70,se:3,col:55},
-{n:"Donut al cioccolato (americano)",c:"Dolci",src:"UPF",k:398,p:5.0,gs:7.5,g:20.0,z:35.5,ch:48.0,fi:1.5,ca:40,fe:1.5,mg:15,k2:110,na:315,zn:0.5,fo:75,se:3,col:25},
+// Corretto per coerenza col pattern pasticceria lievitata già stabilito (30mcg) - 2026-07-30
+{n:"Donut al cioccolato (americano)",c:"Dolci",src:"UPF",k:398,p:5.0,gs:7.5,g:20.0,z:35.5,ch:48.0,fi:1.5,ca:40,fe:1.5,mg:15,k2:110,na:315,zn:0.5,fo:30,se:3,col:25},
 {n:"Croissant vuoto industriale (tipo Bauli)",c:"Dolci confezionati",src:"UPF",k:375,p:6.3,gs:8.33,g:20.8,z:8.3,ch:37.5,fi:2.1,ca:104,fe:2.08,mg:12,k2:73,na:395.8,zn:0.4,fo:65,se:3,col:0},
-{n:"Kinder Fetta al Latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:410,p:7.5,gs:8.5,g:17.0,z:41.0,ch:53.5,fi:0.5,ca:155,fe:0.4,mg:15,k2:200,na:145,zn:0.6,fo:135,se:4,col:20},
+// Duplicato con lo stesso bug fosforo-in-folati (calcio 155mg conferma latte), corretto per coerenza con l'altro duplicato (35mcg) - 2026-07-30
+{n:"Kinder Fetta al Latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:410,p:7.5,gs:8.5,g:17.0,z:41.0,ch:53.5,fi:0.5,ca:155,fe:0.4,mg:15,k2:200,na:145,zn:0.6,fo:35,se:4,col:20},
 {n:"Plumcake all'olio (merendina)",c:"Dolci confezionati",src:"UPF",k:365,p:7.6,gs:3.2,g:19,z:1,ch:51,fi:2.2,ca:25,fe:1.2,mg:10,k2:85,na:156,zn:0.3,fo:55,se:2,col:55},
 {n:"Panna Cotta industriale (vasetto)",c:"Dolci confezionati",src:"UPF",k:206,p:3.2,gs:8.8,g:13,z:19,ch:19,fi:0,ca:70,fe:0.1,mg:6,k2:80,na:24,zn:0.2,fo:8,se:1,col:28},
 {n:"Pop corn burro microonde (per 100g)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:15,fe:1.5,mg:95,k2:235,na:500,zn:1.8,fo:25,se:8,col:0},
@@ -3687,13 +3692,15 @@ const DB_UPF = [
 {n:"Pizza margherita surgelata (Buitoni/simile, cruda)",c:"Piatti pronti",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:130,fe:1.0,mg:15,k2:170,na:600,zn:0.8,fo:100,se:5,col:12},
 {n:"Pizza 4 stagioni (pizzeria)",c:"Piatti pronti",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:145,fe:1.5,mg:22,k2:210,na:620,zn:1.2,fo:130,se:9,col:22},
 {n:"Pizza diavola/salame piccante (pizzeria)",c:"Piatti pronti",src:"UPF",k:231,p:10.7,gs:4.2,g:7.8,z:6.1,ch:28,fi:1.5,ca:140,fe:1.5,mg:20,k2:200,na:551,zn:1.3,fo:130,se:8,col:28},
-{n:"Pizza al taglio rossa (forno)",c:"Piatti pronti",src:"UPF",k:240,p:7.5,gs:1.8,g:6.0,z:3.0,ch:37.5,fi:2.0,ca:40,fe:1.2,mg:15,k2:140,na:500,zn:0.6,fo:70,se:5,col:5},
+// Fosforo (impasto pane, senza formaggio dato calcio basso 40mg) era nel campo folati; folati reali ~25mcg - 2026-07-30
+{n:"Pizza al taglio rossa (forno)",c:"Piatti pronti",src:"UPF",k:240,p:7.5,gs:1.8,g:6.0,z:3.0,ch:37.5,fi:2.0,ca:40,fe:1.2,mg:15,k2:140,na:500,zn:0.6,fo:25,se:5,col:5},
 {n:"Pizza al taglio bianca (forno, con olio)",c:"Piatti pronti",src:"UPF",k:268.1,p:12,gs:6.6,g:14,z:1,ch:23,fi:1.1,ca:30,fe:1.2,mg:12,k2:100,na:580,zn:0.5,fo:60,se:4,col:0},
 // Allineato a voce BDA gia verificata "Calzone fritto napoletano (ripieno ricotta e salumi)" — 2026-07-28
 {n:"Calzone fritto napoletano",c:"Piatti pronti",src:"UPF",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33.0,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:120,se:10,col:42},
 {n:"Piadina con prosciutto crudo e squacquerone",c:"Piatti pronti",src:"UPF",k:324,p:14,gs:7,g:16,z:1,ch:31,fi:1.5,ca:120,fe:0.8,mg:18,k2:180,na:1300,zn:1.0,fo:120,se:6,col:38},
 {n:"Tramezzino tonno e maionese industriale",c:"Piatti pronti",src:"UPF",k:330,p:11,gs:2.8,g:19,z:2.6,ch:23,fi:1.2,ca:60,fe:1.2,mg:22,k2:180,na:1200,zn:0.8,fo:110,se:12,col:22},
-{n:"Toast al prosciutto cotto (bar/industriale)",c:"Piatti pronti",src:"UPF",k:248,p:12.5,gs:3.0,g:9.5,z:2.5,ch:28.0,fi:1.5,ca:120,fe:1.0,mg:15,k2:160,na:720,zn:1.0,fo:130,se:8,col:25},
+// Fosforo (pane+prosciutto+formaggio, calcio 120mg conferma) era nel campo folati; folati reali ~30mcg - 2026-07-30
+{n:"Toast al prosciutto cotto (bar/industriale)",c:"Piatti pronti",src:"UPF",k:248,p:12.5,gs:3.0,g:9.5,z:2.5,ch:28.0,fi:1.5,ca:120,fe:1.0,mg:15,k2:160,na:720,zn:1.0,fo:30,se:8,col:25},
 {n:"Hamburger tipo McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:220,na:396.6,zn:2.5,fo:8,se:10,col:15.5},
 {n:"Panino Kebab doner con salsa yogurt",c:"Fast food",src:"UPF",k:234,p:15.1,gs:10.9,g:17.5,z:0.5,ch:4.1,fi:1.5,ca:85,fe:2.0,mg:25,k2:250,na:760,zn:2.0,fo:140,se:8,col:38},
 {n:"Hot dog con ketchup e senape",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:50,fe:1.8,mg:15,k2:170,na:320,zn:1.2,fo:5,se:5,col:28},
@@ -3784,7 +3791,8 @@ const DB_UPF = [
 {n:"Jamón Serrano spagnolo (magro)",c:"Salumi",src:"UPF",k:229,p:32,gs:3.9,g:11,z:0,ch:0.5,fi:0,ca:12,fe:1.0,mg:25,k2:335,na:2000,zn:2.2,fo:5,se:20,col:68},
 {n:"Chorizo piccante spagnolo (a fette)",c:"Salumi",src:"UPF",k:370,p:21,gs:12,g:31,z:2.6,ch:3.3,fi:0,ca:12,fe:1.8,mg:18,k2:315,na:1200,zn:2.8,fo:5,se:14,col:90},
 {n:"Pastrami di manzo (fettine)",c:"Salumi",src:"UPF",k:138,p:21.5,gs:2.0,g:5.5,z:0.5,ch:0.5,fi:0,ca:18,fe:2.5,mg:22,k2:280,na:1310,zn:3.5,fo:8,se:18,col:62},
-{n:"Pepperoni americano (pizza topping)",c:"Salumi",src:"UPF",k:475,p:19.5,gs:18.0,g:42.5,z:0,ch:2.0,fi:0,ca:8,fe:1.0,mg:15,k2:250,na:1590,zn:1.8,fo:145,se:12,col:110},
+// Fosforo (salume, additivi fosfati tipici della carne conservata) era nel campo folati; folati reali ~8mcg - 2026-07-30
+{n:"Pepperoni americano (pizza topping)",c:"Salumi",src:"UPF",k:475,p:19.5,gs:18.0,g:42.5,z:0,ch:2.0,fi:0,ca:8,fe:1.0,mg:15,k2:250,na:1590,zn:1.8,fo:8,se:12,col:110},
 // ═══ ALIMENTI FUNZIONALI E SUPERFOODS ═══
 {n:"Açaí in polvere (freeze-dried)",c:"Superfoods",src:"INT",k:245,p:3.5,gs:3.5,g:14.5,z:2.5,ch:20.5,fi:14.5,ca:260,fe:4.4,mg:105,k2:735,na:5,zn:0.8,fo:55,se:0,col:0},
 // Allineato a voce CREA gia verificata "Matcha in polvere (cerimonia)" — 2026-07-28

@@ -38,7 +38,8 @@ const DB_CREA=[
 // Fosforo (457mg, confermato da fonte USDA) era nel campo folati; corretto a 184mcg (folati reali, coerente con l'altra voce Quinoa rossa gia corretta) - 2026-07-29
 {n:"Quinoa cruda",c:"Cereali e pasta",k:376,p:15.4,gs:2.72,g:8.1,z:5.3,ch:57.8,fi:12.2,ca:46,fe:3.6,mg:189,k2:655,na:0,zn:2.74,fo:184,se:8.5,col:0,src:"CREA"},
 {n:"Orzo perlato crudo",c:"Cereali e pasta",k:346,p:9.4,gs:0.37,g:1.5,z:1.5,ch:73.7,fi:9.2,ca:21,fe:1.1,mg:46,k2:179,na:3,zn:1.15,fo:23,se:37,col:0,src:"CREA"},
-{n:"Gamberi",c:"Crostacei",k:71,p:13.6,gs:0.2,g:0.6,z:2.9,ch:2.9,fi:0,ca:110,fe:1.8,mg:39,k2:266,na:146,zn:1.9,fo:349,se:30,col:150,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati (fo=349 implausibile per gamberi, folati reali crostacei ~20-30mcg, verificato via fonte esterna USDA) - 2026-07-30
+{n:"Gamberi",c:"Crostacei",k:71,p:13.6,gs:0.2,g:0.6,z:2.9,ch:2.9,fi:0,ca:110,fe:1.8,mg:39,k2:266,na:146,zn:1.9,fo:25,se:30,col:150,src:"CREA"},
 {n:"Cioccolato fondente (>70%)",c:"Dolci",k:531,p:6.6,gs:20.8,g:33.6,z:49.7,ch:49.7,fi:8,ca:51,fe:5,mg:270,k2:300,na:11,zn:3.3,fo:0,se:4,col:0,src:"CREA"},
 {n:"Marmellata / confettura",c:"Dolci",k:262,p:0.1,gs:0,g:0,z:69.5,ch:69.5,fi:0.5,ca:26,fe:0.2,mg:3,k2:35,na:64,zn:0.1,fo:5,se:1,col:0,src:"BDA"},
 {n:"Miele millefiori",c:"Dolci",k:304,p:0.6,gs:0,g:0,z:80.3,ch:80.3,fi:0,ca:5,fe:0.5,mg:3,k2:51,na:11,zn:0.1,fo:4,se:1,col:0,src:"CREA"},
@@ -198,7 +199,8 @@ const DB_CREA=[
 {n:"Cernia",c:"Pesce",k:88,p:17,gs:0.4,g:2,z:0.5,ch:0.5,fi:0,ca:11,fe:0.3,mg:25,k2:280,na:120,zn:0.5,fo:10,se:28,col:48,src:"CREA"},
 {n:"Seppia",c:"Molluschi",k:72,p:14,gs:0.1,g:1.5,z:0.7,ch:0.7,fi:0,ca:27,fe:0.8,mg:32,k2:273,na:355,zn:4.2,fo:8,se:66,col:157,src:"CREA"},
 {n:"Totano",c:"Molluschi",k:65,p:13.5,gs:0.2,g:0.7,z:0,ch:0.5,fi:0,ca:20,fe:0.6,mg:25,k2:280,na:180,zn:1.4,fo:8,se:40,col:190,src:"CREA"},
-{n:"Capasanta",c:"Molluschi",k:76,p:14.8,gs:0.3,g:0.8,z:0,ch:2.4,fi:0,ca:32,fe:0.7,mg:38,k2:310,na:180,zn:1,fo:170,se:25,col:35,src:"CREA"},
+// FIX: residuo bug fosforo-in-folati (fo=170 implausibile per capasanta, folati reali circa 5mcg, verificato via fonte esterna USDA) - 2026-07-30
+{n:"Capasanta",c:"Molluschi",k:76,p:14.8,gs:0.3,g:0.8,z:0,ch:2.4,fi:0,ca:32,fe:0.7,mg:38,k2:310,na:180,zn:1,fo:5,se:25,col:35,src:"CREA"},
 // Ripristinato 2026-07-29: il batch automatico l'aveva erroneamente sostituito coi valori di "Anguilla, AFFUMICATA" (stesso identico bug specie/variante gia' documentato in sessioni precedenti — "affumicato" era classificato come STATE_WORD innocuo, ma l'affumicatura cambia sostanzialmente acqua/nutrienti). Nessuna voce generica "Anguilla" esiste su CREA (solo affumicata/marinata/di fiume/di mare/d'allevamento) — lasciare il valore originale finche' non si decide quale variante rappresenta meglio "anguilla" generica.
 {n:"Anguilla",c:"Pesce",k:250,p:14.9,gs:3.5,g:20,z:0,ch:0,fi:0,ca:22,fe:0.8,mg:25,k2:305,na:56,zn:1.5,fo:10,se:20,col:143,src:"CREA"},
 {n:"Aringa fresca",c:"Pesce",k:216,p:16.5,gs:3.85,g:16.7,z:0,ch:0,fi:0,ca:63,fe:0.9,mg:35,k2:320,na:95,zn:1.1,fo:10,se:47,col:85,src:"CREA"},
@@ -529,7 +531,8 @@ const DB_CREA=[
   {n:"Ciccioli di maiale",c:"Salumi",k:636,p:45.2,gs:17.25,g:50.6,z:0.5,ch:0.5,fi:0,ca:12,fe:1.2,mg:16,k2:425,na:640,zn:1.4,fo:8,se:32,col:90,src:"CREA"},
   {n:"Salsiccia luganega fresca cruda",c:"Carni e derivati",k:304,p:15.4,gs:12,g:26.7,z:0.6,ch:0.6,fi:0,ca:20,fe:2.8,mg:15,k2:200,na:1100,zn:2.0,fo:5,se:10,col:70,src:"CREA"},
   {n:"Salsiccia piccante meridionale",c:"Carni e derivati",k:366,p:33.6,gs:14,g:25.2,z:1.3,ch:1.3,fi:0,ca:18,fe:1.5,mg:18,k2:260,na:1200,zn:2.5,fo:5,se:12,col:80,src:"CREA"},
-  {n:"Trippa di vitello bollita",c:"Carni e derivati",k:108,p:15.8,gs:0.5,g:5,z:0,ch:0,fi:0,ca:8,fe:4,mg:12,k2:18,na:107,zn:2.4,fo:76,se:10,col:122,src:"CREA"},
+  // FIX: residuo bug fosforo-in-folati (fo=76 troppo alto per trippa, gia corretto per "Trippa alla romana" a 8 nella sessione precedente) - 2026-07-30
+  {n:"Trippa di vitello bollita",c:"Carni e derivati",k:108,p:15.8,gs:0.5,g:5,z:0,ch:0,fi:0,ca:8,fe:4,mg:12,k2:18,na:107,zn:2.4,fo:8,se:10,col:122,src:"CREA"},
   // ── PANE E PRODOTTI DA FORNO ARTIGIANALI ──
   {n:"Piadina romagnola artigianale",c:"Cereali e derivati",k:315,p:7.2,gs:3.2,g:10.5,z:1.6,ch:49.9,fi:2.2,ca:12,fe:0.6,mg:82,k2:95,na:600,zn:0.05,fo:7,se:1.5,col:7,src:"BDA"},
   {n:"Focaccia al rosmarino artigianale",c:"Cereali e derivati",k:306,p:7.9,gs:0.91,g:5.9,z:2.1,ch:57.9,fi:2.3,ca:20,fe:1.1,mg:15,k2:99,na:789,zn:0.31,fo:32,se:2,col:0,src:"BDA"},
@@ -578,7 +581,8 @@ const DB_CREA=[
   {n:"Castelmagno DOP",c:"Formaggi",k:360,p:22,gs:14,g:28,z:0.5,ch:1.5,fi:0,ca:580,fe:0.5,mg:30,k2:125,na:780,zn:3.2,fo:18,se:10,col:90,src:"CREA"},
   // ── CEREALI E PSEUDOCEREALI ──
   {n:"Farro integrale in chicchi crudo",c:"Cereali e derivati",k:353,p:14.6,gs:0.41,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:31,se:11.7,col:0,src:"BDA"},
-  {n:"Kamut (Khorasan) chicchi crudi",c:"Cereali e derivati",k:338,p:17,gs:0.8,g:2.6,z:4.5,ch:65,fi:11,ca:31,fe:4.5,mg:130,k2:450,na:5,zn:3.8,fo:440,se:60,col:0,src:"CREA"},
+  // FIX: fo=440 implausibile per un chicco di grano intero (kamut ha folati inferiori al grano tenero integrale secondo fonti esterne, ~30-45mcg tipico dei cereali integrali non legumi) - 2026-07-30
+  {n:"Kamut (Khorasan) chicchi crudi",c:"Cereali e derivati",k:338,p:17,gs:0.8,g:2.6,z:4.5,ch:65,fi:11,ca:31,fe:4.5,mg:130,k2:450,na:5,zn:3.8,fo:40,se:60,col:0,src:"CREA"},
   {n:"Freekeh (grano verde tostato)",c:"Cereali e derivati",k:340,p:12,gs:0.5,g:2.5,z:6.0,ch:72,fi:16,ca:35,fe:3.8,mg:110,k2:430,na:5,zn:2.8,fo:40,se:40,col:0,src:"CREA"},
   {n:"Bulgur di farro crudo",c:"Cereali e derivati",k:340,p:14,gs:0.8,g:2.5,z:4.0,ch:68,fi:12,ca:38,fe:4.5,mg:120,k2:490,na:8,zn:3.8,fo:35,se:55,col:0,src:"CREA"},
   {n:"Fagioli Zolfini del Pratomagno secchi",c:"Legumi",k:345,p:23.6,gs:0.5,g:2.5,z:4,ch:51.7,fi:17,ca:137,fe:6.7,mg:90,k2:1445,na:4,zn:3.4,fo:130,se:7,col:0,src:"BDA"},
@@ -1618,7 +1622,8 @@ const DB_BDA=[
   {n:"Cervo coscia",c:"Carni rosse",src:"CREA",k:91,p:21,gs:0.3,g:0.8,z:0,ch:0,fi:0,ca:6,fe:4.5,mg:23,k2:330,na:55,zn:3.5,fo:8,se:12,col:75},
   {n:"Capretto coscia",c:"Carni bianche",src:"CREA",k:113,p:19.2,gs:0.8,g:4,z:0,ch:0,fi:0,ca:9,fe:1,mg:20,k2:280,na:72,zn:4.5,fo:9,se:8,col:61},
   {n:"Coniglio coscia",c:"Carni bianche",src:"BDA",k:137,p:21,gs:2.333,g:5.9,z:0,ch:0,fi:0,ca:22,fe:1,mg:22,k2:360,na:67,zn:3.9,fo:5,se:17,col:52},
-  {n:"Trippa di manzo",c:"Carni rosse",src:"CREA",k:108,p:15.8,gs:0.5,g:5,z:0,ch:0,fi:0,ca:8,fe:4,mg:18,k2:18,na:107,zn:2.5,fo:80,se:8,col:112},
+  // FIX: residuo bug fosforo-in-folati (fo=80 troppo alto per trippa) - 2026-07-30
+  {n:"Trippa di manzo",c:"Carni rosse",src:"CREA",k:108,p:15.8,gs:0.5,g:5,z:0,ch:0,fi:0,ca:8,fe:4,mg:18,k2:18,na:107,zn:2.5,fo:8,se:8,col:112},
   {n:"Rognone (reni) di manzo",c:"Carni rosse",src:"CREA",k:99,p:17.4,gs:0.8,g:3.1,z:0,ch:0.8,fi:0,ca:13,fe:4.4,mg:18,k2:262,na:182,zn:2.4,fo:247,se:141,col:387},
   {n:"Cuore di manzo",c:"Carni rosse",src:"CREA",k:123,p:16.8,gs:1.0,g:6,z:0.5,ch:0.5,fi:0,ca:9,fe:4.6,mg:22,k2:320,na:95,zn:1.7,fo:147,se:30,col:150},
   // ── PESCE E FRUTTI DI MARE NON ANCORA PRESENTI ──
@@ -2702,10 +2707,11 @@ const DB_UPF = [
 
   // ── FAST FOOD E PIATTI PRONTI ──
   {n:"Hamburger industriale (burger surgelato)",c:"Fast food",src:"UPF",k:285,p:15,gs:6,g:17,z:3,ch:21,fi:1.5,ca:50,fe:2.5,mg:20,k2:250,na:600,zn:2.5,fo:8,se:10,col:50},
-  {n:"Pizza margherita surgelata",c:"Fast food",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:180,fe:1.5,mg:20,k2:200,na:600,zn:1,fo:120,se:8,col:15},
-  {n:"Lasagne industriali surgelate",c:"Fast food",src:"UPF",k:296,p:11,gs:0.8,g:2.6,z:1.5,ch:56,fi:1,ca:80,fe:1,mg:15,k2:200,na:28,zn:0.8,fo:90,se:5,col:25},
+  {n:"Pizza margherita surgelata",c:"Fast food",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:180,fe:1.5,mg:20,k2:200,na:600,zn:1,fo:35,se:8,col:15},
+  {n:"Lasagne industriali surgelate",c:"Fast food",src:"UPF",k:296,p:11,gs:0.8,g:2.6,z:1.5,ch:56,fi:1,ca:80,fe:1,mg:15,k2:200,na:28,zn:0.8,fo:25,se:5,col:25},
   {n:"Nuggets di pollo surgelati",c:"Fast food",src:"UPF",k:215,p:15,gs:2.1,g:11,z:0.5,ch:14,fi:0.5,ca:20,fe:0.8,mg:18,k2:180,na:560,zn:0.8,fo:8,se:12,col:40},
-  {n:"Hotdog/würstel industriale",c:"Salumi processati",src:"UPF",k:153,p:4,gs:0.3,g:5.3,z:18,ch:21,fi:0,ca:10,fe:1.2,mg:12,k2:170,na:360,zn:1.5,fo:80,se:8,col:60},
+  // FIX: fo=80 fuori scala rispetto al resto della categoria Salumi processati (mediana 8) - stesso pattern placeholder gia corretto altrove - 2026-07-30
+  {n:"Hotdog/würstel industriale",c:"Salumi processati",src:"UPF",k:153,p:4,gs:0.3,g:5.3,z:18,ch:21,fi:0,ca:10,fe:1.2,mg:12,k2:170,na:360,zn:1.5,fo:8,se:8,col:60},
   {n:"Wurstel di pollo industriale",c:"Salumi processati",src:"UPF",k:215,p:13,gs:5.5,g:17,z:1,ch:2,fi:0,ca:15,fe:1,mg:15,k2:200,na:950,zn:1,fo:8,se:9,col:55},
   {n:"Salame Milano industriale",c:"Salumi processati",src:"UPF",k:361,p:24,gs:11,g:29,z:0.5,ch:0.9,fi:0,ca:10,fe:1.8,mg:20,k2:340,na:1320,zn:2.2,fo:5,se:18,col:80},
   {n:"Mortadella industriale",c:"Salumi processati",src:"UPF",k:240,p:11,gs:7,g:20,z:0.2,ch:7,fi:0,ca:8,fe:1.3,mg:15,k2:230,na:800,zn:1.5,fo:5,se:12,col:70},
@@ -2721,13 +2727,13 @@ const DB_UPF = [
   {n:"Cereali Frosties (glassati allo zucchero)",c:"Cereali da colazione",src:"UPF",k:381,p:4.5,gs:0.1,g:0.6,z:37,ch:87,fi:2,ca:3,fe:8,mg:15,k2:75,na:327,zn:0.3,fo:55,se:3,col:0},
 
   // ── PIATTI PRONTI / STREET FOOD ──
-  {n:"Pizza da asporto / pizzeria (margherita)",c:"Fast food",src:"UPF",k:226,p:9.8,gs:3.76,g:8.3,z:3.8,ch:27.8,fi:1.5,ca:188,fe:0.81,mg:22,k2:220,na:534,zn:1.5,fo:140,se:10,col:23},
-  {n:"Tramezzino industriale prosciutto",c:"Fast food",src:"UPF",k:298,p:14,gs:3.7,g:18,z:2.3,ch:20,fi:1.5,ca:60,fe:1.2,mg:15,k2:160,na:520,zn:0.7,fo:80,se:8,col:22},
-  {n:"Piadina industriale con prosciutto",c:"Fast food",src:"UPF",k:324,p:14,gs:7,g:16,z:1,ch:31,fi:1.5,ca:80,fe:1.3,mg:17,k2:175,na:1300,zn:0.8,fo:90,se:7,col:25},
+  {n:"Pizza da asporto / pizzeria (margherita)",c:"Fast food",src:"UPF",k:226,p:9.8,gs:3.76,g:8.3,z:3.8,ch:27.8,fi:1.5,ca:188,fe:0.81,mg:22,k2:220,na:534,zn:1.5,fo:35,se:10,col:23},
+  {n:"Tramezzino industriale prosciutto",c:"Fast food",src:"UPF",k:298,p:14,gs:3.7,g:18,z:2.3,ch:20,fi:1.5,ca:60,fe:1.2,mg:15,k2:160,na:520,zn:0.7,fo:25,se:8,col:22},
+  {n:"Piadina industriale con prosciutto",c:"Fast food",src:"UPF",k:324,p:14,gs:7,g:16,z:1,ch:31,fi:1.5,ca:80,fe:1.3,mg:17,k2:175,na:1300,zn:0.8,fo:25,se:7,col:25},
   {n:"Kebab in pita (stima per 200g porzione)",c:"Fast food",src:"UPF",k:196,p:6.7,gs:6,g:7.7,z:9.3,ch:24,fi:5,ca:60,fe:2.5,mg:22,k2:260,na:850,zn:2.5,fo:8,se:12,col:45},
-  {n:"Hot dog industriale con panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:40,fe:2,mg:15,k2:200,na:320,zn:1.5,fo:100,se:8,col:40},
+  {n:"Hot dog industriale con panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:40,fe:2,mg:15,k2:200,na:320,zn:1.5,fo:25,se:8,col:40},
   {n:"Cotoletta impanata surgelata",c:"Fast food",src:"UPF",k:234,p:12,gs:1.6,g:13,z:0.5,ch:17,fi:1,ca:30,fe:1.2,mg:22,k2:300,na:1300,zn:1.5,fo:8,se:14,col:65},
-  {n:"Sofficini (Findus/simili)",c:"Fast food",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:80,fe:1,mg:12,k2:110,na:392,zn:0.7,fo:75,se:5,col:15},
+  {n:"Sofficini (Findus/simili)",c:"Fast food",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:80,fe:1,mg:12,k2:110,na:392,zn:0.7,fo:20,se:5,col:15},
   {n:"Minestrone surgelato industriale",c:"Piatti pronti",src:"UPF",k:75,p:2.4,gs:0.6,g:3.6,z:1.4,ch:6.4,fi:3.5,ca:25,fe:0.8,mg:18,k2:230,na:216,zn:0.4,fo:55,se:1.5,col:0},
 
   // ── BEVANDE ALCOLICHE aggiuntive ──
@@ -2858,7 +2864,7 @@ const DB_UPF = [
   {n:"Pane senza glutine confezionato",c:"Cereali e derivati",src:"UPF",k:251,p:2.5,gs:0.6,g:5.1,z:3.4,ch:45,fi:7.1,ca:50,fe:0.5,mg:12,k2:60,na:520,zn:0.3,fo:45,se:3,col:0},
   {n:"Biscotti senza glutine al burro",c:"Dolci confezionati",src:"UPF",k:456,p:2.3,gs:8.5,g:14,z:18,ch:80,fi:1.5,ca:45,fe:0.8,mg:12,k2:80,na:192,zn:0.3,fo:50,se:4,col:70},
   {n:"Fette biscottate senza glutine",c:"Biscotti e crackers",src:"UPF",k:378,p:4.7,gs:0.7,g:5.4,z:4.9,ch:71,fi:14,ca:30,fe:0.6,mg:10,k2:65,na:480,zn:0.2,fo:40,se:2,col:0},
-  {n:"Pizza base senza glutine surgelata",c:"Fast food",src:"UPF",k:215,p:4,gs:1,g:6,z:3.5,ch:36,fi:2,ca:60,fe:0.6,mg:12,k2:70,na:530,zn:0.3,fo:45,se:3,col:0},
+  {n:"Pizza base senza glutine surgelata",c:"Fast food",src:"UPF",k:215,p:4,gs:1,g:6,z:3.5,ch:36,fi:2,ca:60,fe:0.6,mg:12,k2:70,na:530,zn:0.3,fo:35,se:3,col:0},
   {n:"Crackers senza glutine di mais",c:"Snack salati",src:"UPF",k:440,p:5,gs:0.5,g:10,z:2,ch:80,fi:2.5,ca:15,fe:0.5,mg:30,k2:80,na:680,zn:0.5,fo:60,se:4,col:0},
 
   // ── PRODOTTI VEGETALI / SOSTITUTI CARNE ──
@@ -2891,13 +2897,13 @@ const DB_UPF = [
   {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:7.3,gs:18,g:25.6,z:58,ch:59.6,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:20,se:3,col:10},
 
   // ── FAST FOOD / STREET FOOD ──
-  {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:45,fe:2,mg:20,k2:195,na:320,zn:1.2,fo:115,se:8,col:45},
-  {n:"Panino da hamburger tipo Big Mac",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:200,na:396.6,zn:1.5,fo:120,se:10,col:15.5},
+  {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:45,fe:2,mg:20,k2:195,na:320,zn:1.2,fo:25,se:8,col:45},
+  {n:"Panino da hamburger tipo Big Mac",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:200,na:396.6,zn:1.5,fo:25,se:10,col:15.5},
   // Fosforo (patata fritta) era nel campo folati; folati reali patata ~15mcg - 2026-07-30
   {n:"Patatine fritte fast food (porz. 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:3,ch:41,fi:3,ca:10,fe:0.7,mg:24,k2:420,na:300,zn:0.4,fo:15,se:1,col:0},
   {n:"Nuggets di pollo industriali (100g)",c:"Fast food",src:"UPF",k:230,p:10.4,gs:2.7,g:13.4,z:2.1,ch:16.6,fi:0.8,ca:15,fe:0,mg:0,k2:260,na:433,zn:0,fo:8,se:12,col:40},
-  {n:"Arancino / supplì (fritto, 100g)",c:"Fast food",src:"UPF",k:201,p:4.4,gs:1.7,g:9.6,z:1.5,ch:21.5,fi:5.5,ca:30,fe:1,mg:18,k2:130,na:1100,zn:0.6,fo:75,se:5,col:15},
-  {n:"Pizza margherita industriale surgelata",c:"Fast food",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:1.5,mg:20,k2:180,na:600,zn:1,fo:100,se:7,col:18},
+  {n:"Arancino / supplì (fritto, 100g)",c:"Fast food",src:"UPF",k:201,p:4.4,gs:1.7,g:9.6,z:1.5,ch:21.5,fi:5.5,ca:30,fe:1,mg:18,k2:130,na:1100,zn:0.6,fo:15,se:5,col:15},
+  {n:"Pizza margherita industriale surgelata",c:"Fast food",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:1.5,mg:20,k2:180,na:600,zn:1,fo:35,se:7,col:18},
 
   // ── SALUMI E CARNI PROCESSATE aggiuntivi ──
   {n:"Würstel di maiale e vitello",c:"Salumi processati",src:"UPF",k:226,p:12,gs:6.3,g:18,z:1,ch:4,fi:0,ca:15,fe:1.2,mg:12,k2:165,na:2300,zn:1.2,fo:8,se:10,col:55},
@@ -2936,10 +2942,10 @@ const DB_UPF = [
 
   // ── FAST FOOD AGGIUNTIVI ──
   {n:"Kebab in pita industriale",c:"Fast food",src:"UPF",k:196,p:6.7,gs:6,g:7.7,z:9.3,ch:24,fi:5,ca:55,fe:2.5,mg:25,k2:270,na:780,zn:2.0,fo:8,se:9,col:45},
-  {n:"Falafel industriale surgelato",c:"Fast food",src:"UPF",k:222,p:7.6,gs:2.0,g:9.9,z:3.5,ch:20,fi:11,ca:65,fe:3.5,mg:55,k2:410,na:650,zn:1.5,fo:185,se:5,col:0},
-  {n:"Spring roll / Rotoli primavera surgelati",c:"Fast food",src:"UPF",k:218,p:7,gs:0.1,g:2.4,z:0.5,ch:43,fi:2.0,ca:20,fe:1.0,mg:15,k2:135,na:120,zn:0.5,fo:75,se:5,col:10},
-  {n:"Onion rings surgelati (cipolla fritta)",c:"Fast food",src:"UPF",k:210,p:2.9,gs:1.4,g:12,z:2.8,ch:23,fi:2.1,ca:30,fe:0.8,mg:12,k2:145,na:440,zn:0.4,fo:55,se:4,col:0},
-  {n:"Panzerotto / calzone surgelato",c:"Fast food",src:"UPF",k:292.9,p:12.1,gs:6.06,g:15.7,z:3,ch:25.8,fi:1,ca:170,fe:1.8,mg:22,k2:190,na:757.6,zn:1.2,fo:110,se:8,col:35.4},
+  {n:"Falafel industriale surgelato",c:"Fast food",src:"UPF",k:222,p:7.6,gs:2.0,g:9.9,z:3.5,ch:20,fi:11,ca:65,fe:3.5,mg:55,k2:410,na:650,zn:1.5,fo:60,se:5,col:0},
+  {n:"Spring roll / Rotoli primavera surgelati",c:"Fast food",src:"UPF",k:218,p:7,gs:0.1,g:2.4,z:0.5,ch:43,fi:2.0,ca:20,fe:1.0,mg:15,k2:135,na:120,zn:0.5,fo:20,se:5,col:10},
+  {n:"Onion rings surgelati (cipolla fritta)",c:"Fast food",src:"UPF",k:210,p:2.9,gs:1.4,g:12,z:2.8,ch:23,fi:2.1,ca:30,fe:0.8,mg:12,k2:145,na:440,zn:0.4,fo:15,se:4,col:0},
+  {n:"Panzerotto / calzone surgelato",c:"Fast food",src:"UPF",k:292.9,p:12.1,gs:6.06,g:15.7,z:3,ch:25.8,fi:1,ca:170,fe:1.8,mg:22,k2:190,na:757.6,zn:1.2,fo:30,se:8,col:35.4},
 
   // ── BEVANDE AGGIUNTIVE ──
   {n:"Succo di frutta multivitaminico zuccherato",c:"Bibite zuccherate",src:"UPF",k:47,p:0.2,gs:0,g:0.1,z:10.5,ch:11.5,fi:0.1,ca:10,fe:0.5,mg:5,k2:80,na:15,zn:0.1,fo:15,se:0,col:0},
@@ -2948,11 +2954,11 @@ const DB_UPF = [
   {n:"Succo di melograno zuccherato",c:"Bibite zuccherate",src:"UPF",k:56,p:0.2,gs:0.1,g:0.3,z:12,ch:13,fi:0.1,ca:11,fe:0.2,mg:5,k2:183,na:11,zn:0.1,fo:8,se:0,col:0},
   // ── FAST FOOD ──
   {n:"Hamburger fast food classico",c:"Fast food",src:"UPF",k:296,p:13,gs:5.5,g:13,z:7,ch:30,fi:1,ca:100,fe:2.5,mg:25,k2:250,na:490,zn:2,fo:8,se:12,col:45},
-  {n:"Cheeseburger doppio fast food",c:"Fast food",src:"UPF",k:458,p:22,gs:12,g:22,z:8,ch:27,fi:1.5,ca:200,fe:3,mg:30,k2:300,na:780,zn:3.5,fo:250,se:18,col:80},
+  {n:"Cheeseburger doppio fast food",c:"Fast food",src:"UPF",k:458,p:22,gs:12,g:22,z:8,ch:27,fi:1.5,ca:200,fe:3,mg:30,k2:300,na:780,zn:3.5,fo:25,se:18,col:80},
   {n:"Nuggets di pollo (tipo fast food, 100g)",c:"Fast food",src:"UPF",k:230,p:10.4,gs:2.7,g:13.4,z:2.1,ch:16.6,fi:0.8,ca:10,fe:0,mg:0,k2:200,na:433,zn:0,fo:8,se:10,col:40},
   // Corretto per coerenza col duplicato già fixato (DB_UPF_167, 15mcg) - 2026-07-30
   {n:"Patate fritte fast food (porzione media, 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:0.5,ch:41,fi:3,ca:10,fe:0.7,mg:25,k2:480,na:400,zn:0.4,fo:15,se:0.5,col:0},
-  {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.8,mg:18,k2:210,na:320,zn:1.8,fo:140,se:10,col:48},
+  {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.8,mg:18,k2:210,na:320,zn:1.8,fo:25,se:10,col:48},
   // ── PIATTI PRONTI SURGELATI ──
   {n:"Pizza surgelata margherita",c:"Piatti pronti",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:2,mg:20,k2:200,na:600,zn:1,fo:130,se:8,col:12},
   {n:"Lasagne surgelate bolognese",c:"Piatti pronti",src:"UPF",k:184,p:8.7,gs:4,g:11,z:2.6,ch:12,fi:1,ca:80,fe:1.5,mg:15,k2:200,na:400,zn:1,fo:100,se:6,col:25},
@@ -3061,7 +3067,7 @@ const DB_UPF = [
   {n:"Soluzione reidratante orale (ORS WHO)",c:"Prodotti clinici",src:"UPF",k:17,p:0,gs:0,g:0,z:4.2,ch:4.2,fi:0,ca:0,fe:0,mg:0,k2:78,na:513,zn:0,fo:0,se:0,col:0},
 
   // ── FAST FOOD CATENE INTERNAZIONALI (stime per 100g prodotto) ──
-  {n:"McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:190,na:396.6,zn:2.2,fo:125,se:14,col:15.5},
+  {n:"McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:190,na:396.6,zn:2.2,fo:20,se:14,col:15.5},
   // Corretto per coerenza con gli altri duplicati patatine fritte già fixati (15mcg) - 2026-07-30
   {n:"McDonald's Patatine fritte grandi (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:2.0,g:15,z:1.5,ch:41,fi:3.0,ca:11,fe:0.6,mg:28,k2:580,na:400,zn:0.3,fo:15,se:0,col:0},
   {n:"McDonald's McNuggets (per 100g)",c:"Fast food",src:"UPF",k:175,p:11,gs:1,g:8.3,z:0.5,ch:14,fi:0.6,ca:11,fe:0.8,mg:20,k2:250,na:724,zn:1.0,fo:8,se:10,col:50},
@@ -3070,8 +3076,8 @@ const DB_UPF = [
   // Fosforo (pane+carne+formaggio) era nel campo folati; folati reali ~30mcg - 2026-07-30
   {n:"Burger King Whopper (per 100g)",c:"Fast food",src:"UPF",k:254,p:12,gs:5.0,g:12,z:5.5,ch:28,fi:1.5,ca:80,fe:2.2,mg:20,k2:200,na:480,zn:2.0,fo:30,se:10,col:38},
   {n:"KFC Pollo fritto croccante (per 100g)",c:"Fast food",src:"UPF",k:320,p:26,gs:3.5,g:19,z:2.5,ch:11,fi:0.5,ca:30,fe:1.2,mg:28,k2:290,na:680,zn:2.5,fo:8,se:18,col:80},
-  {n:"Pizza surgelata Margherita (Dr. Oetker, per 100g)",c:"Fast food",src:"UPF",k:224,p:4.1,gs:3.3,g:10,z:4,ch:27,fi:2.5,ca:150,fe:1.8,mg:20,k2:180,na:400,zn:1.0,fo:115,se:7,col:18},
-  {n:"Pizza surgelata Diavola/Pepperoni (per 100g)",c:"Fast food",src:"UPF",k:238.9,p:10,gs:3.89,g:7.8,z:2.2,ch:32.8,fi:1.7,ca:194.4,fe:1.94,mg:20,k2:166.7,na:455.6,zn:1.2,fo:120,se:8,col:16.7},
+  {n:"Pizza surgelata Margherita (Dr. Oetker, per 100g)",c:"Fast food",src:"UPF",k:224,p:4.1,gs:3.3,g:10,z:4,ch:27,fi:2.5,ca:150,fe:1.8,mg:20,k2:180,na:400,zn:1.0,fo:35,se:7,col:18},
+  {n:"Pizza surgelata Diavola/Pepperoni (per 100g)",c:"Fast food",src:"UPF",k:238.9,p:10,gs:3.89,g:7.8,z:2.2,ch:32.8,fi:1.7,ca:194.4,fe:1.94,mg:20,k2:166.7,na:455.6,zn:1.2,fo:35,se:8,col:16.7},
   // Fosforo (pane sandwich) era nel campo folati; folati reali ~30mcg - 2026-07-30
   {n:"Subway Veggie Delite (sandwich 6\", per 100g)",c:"Fast food",src:"UPF",k:155,p:8.5,gs:0.8,g:2.5,z:4.0,ch:26,fi:2.5,ca:80,fe:2.5,mg:28,k2:280,na:480,zn:0.8,fo:30,se:6,col:0},
   // Fosforo (pane sandwich+tonno) era nel campo folati; folati reali ~30mcg - 2026-07-30
@@ -3151,8 +3157,8 @@ const DB_UPF = [
   {n:"Chicken McNuggets McDonald's (per 100g)",c:"Fast food",src:"UPF",k:175,p:11,gs:1,g:8.3,z:0.5,ch:14,fi:0.6,ca:18,fe:0.6,mg:20,k2:220,na:724,zn:0.8,fo:8,se:10,col:50},
   // Terzo duplicato con lo stesso bug fosforo-in-folati già corretto altrove (15mcg) - 2026-07-30
   {n:"Patatine fritte McDonald's (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:1.5,g:15.0,z:0.8,ch:41.5,fi:3.8,ca:15,fe:0.8,mg:25,k2:670,na:350,zn:0.3,fo:15,se:4,col:0},
-  {n:"Hot dog (wurstel in panino industriale)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.5,mg:20,k2:175,na:320,zn:1.5,fo:90,se:10,col:48},
-  {n:"Pizza surgelata margherita (per 100g)",c:"Fast food",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:185,fe:1.5,mg:20,k2:175,na:600,zn:1.0,fo:95,se:10,col:18},
+  {n:"Hot dog (wurstel in panino industriale)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.5,mg:20,k2:175,na:320,zn:1.5,fo:25,se:10,col:48},
+  {n:"Pizza surgelata margherita (per 100g)",c:"Fast food",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:185,fe:1.5,mg:20,k2:175,na:600,zn:1.0,fo:35,se:10,col:18},
   // RISOLTO (deep-pass duplicati): allineato al duplicato già coerente col pattern pizza+formaggio (25mcg) - 2026-07-30
   {n:"Pizza surgelata 4 stagioni (per 100g)",c:"Fast food",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:175,fe:1.5,mg:18,k2:170,na:620,zn:1.2,fo:25,se:10,col:20},
   {n:"Kebab (doner, pane+carne+salse, per 100g)",c:"Fast food",src:"UPF",k:156,p:13.5,gs:3.1,g:9,z:2.2,ch:5.1,fi:0,ca:65,fe:2.5,mg:20,k2:200,na:670,zn:2.0,fo:8,se:10,col:45},
@@ -3517,7 +3523,7 @@ const DB_UPF = [
 // Quarto duplicato con lo stesso bug fosforo-in-folati già corretto altrove (15mcg) - 2026-07-30
 {n:"McDonald's Patatine fritte medie (per 100g)",c:"Fast food catene",src:"UPF",k:312,p:3.8,gs:1.8,g:15.5,z:0.5,ch:41,fi:3.5,ca:18,fe:1.2,mg:28,k2:615,na:370,zn:0.4,fo:15,se:5,col:0},
 {n:"KFC Pollo fritto (per 100g)",c:"Fast food catene",src:"UPF",k:298,p:20,gs:4.5,g:18,z:0.5,ch:14,fi:0.8,ca:28,fe:1.2,mg:20,k2:265,na:550,zn:1.5,fo:8,se:18,col:75},
-{n:"Pizza Hut Margherita (per 100g)",c:"Fast food catene",src:"UPF",k:266,p:11,gs:5.0,g:10,z:4.0,ch:34,fi:2.0,ca:200,fe:1.8,mg:20,k2:200,na:640,zn:1.5,fo:140,se:10,col:20},
+{n:"Pizza Hut Margherita (per 100g)",c:"Fast food catene",src:"UPF",k:266,p:11,gs:5.0,g:10,z:4.0,ch:34,fi:2.0,ca:200,fe:1.8,mg:20,k2:200,na:640,zn:1.5,fo:35,se:10,col:20},
 // ── SNACK DOLCI ITALIANI ──
 {n:"Tronky Ferrero (per 100g)",c:"Snack dolci",src:"UPF",k:548,p:7.8,gs:10.6,g:32.5,z:43.7,ch:54.9,fi:2.0,ca:90,fe:1.0,mg:40,k2:260,na:132,zn:0.8,fo:25,se:5,col:10},
 {n:"Pocket Coffee Ferrero (per 100g)",c:"Snack dolci",src:"UPF",k:437,p:3.5,gs:13.3,g:20.5,z:56.6,ch:57.8,fi:0.5,ca:50,fe:1.5,mg:35,k2:185,na:18.4,zn:0.6,fo:18,se:3,col:8},
@@ -3739,7 +3745,8 @@ const DB_UPF = [
 {n:"Gatorade arancio (bevanda isotonica, per 100ml)",c:"Bevande",src:"UPF",k:22.2,p:0,gs:0,g:0,z:5.8,ch:5.8,fi:0,ca:0,fe:0,mg:0,k2:13,na:44.4,zn:0,fo:0,se:0,col:0},
 {n:"Smoothie spinaci-mela-zenzero RTD (per 100ml)",c:"Succhi di frutta",src:"UPF",k:40,p:0.8,gs:0,g:0.3,z:8.5,ch:9.0,fi:0.8,ca:20,fe:0.5,mg:12,k2:170,na:15,zn:0.1,fo:18,se:0,col:0},
 // ═══ DOLCI E SNACK INDUSTRIALI ═══
-{n:"Nutella (crema nocciole e cacao)",c:"Dolci confezionati",src:"UPF",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:2.5,ca:55,fe:2.0,mg:35,k2:390,na:42.8,zn:0.6,fo:115,se:2,col:0},
+// FIX: residuo cluster placeholder folati sfuggito al giro precedente (altre 5 voci "Nutella" gia corrette a 18-20mcg, questa era rimasta a 115) - 2026-07-30
+{n:"Nutella (crema nocciole e cacao)",c:"Dolci confezionati",src:"UPF",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:2.5,ca:55,fe:2.0,mg:35,k2:390,na:42.8,zn:0.6,fo:20,se:2,col:0},
 {n:"Mars (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:445,p:3.8,gs:7.8,g:16,z:63,ch:72,fi:1.0,ca:100,fe:0.8,mg:20,k2:170,na:156,zn:0.5,fo:80,se:2,col:8},
 {n:"Snickers (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:468,p:8.5,gs:8.51,g:21.3,z:51.1,ch:61.7,fi:2.1,ca:80,fe:1.0,mg:40,k2:290,na:234,zn:0.8,fo:20,se:4,col:5},
 {n:"Twix (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:493,p:4.4,gs:14,g:24,z:49,ch:65,fi:1.0,ca:80,fe:0.8,mg:18,k2:150,na:160,zn:0.5,fo:70,se:2,col:5},
@@ -3777,7 +3784,7 @@ const DB_UPF = [
 // Fosforo (pane+prosciutto+formaggio, calcio 120mg conferma) era nel campo folati; folati reali ~30mcg - 2026-07-30
 {n:"Toast al prosciutto cotto (bar/industriale)",c:"Piatti pronti",src:"UPF",k:248,p:12.5,gs:3.0,g:9.5,z:2.5,ch:28.0,fi:1.5,ca:120,fe:1.0,mg:15,k2:160,na:720,zn:1.0,fo:30,se:8,col:25},
 {n:"Hamburger tipo McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:220,na:396.6,zn:2.5,fo:8,se:10,col:15.5},
-{n:"Panino Kebab doner con salsa yogurt",c:"Fast food",src:"UPF",k:234,p:15.1,gs:10.9,g:17.5,z:0.5,ch:4.1,fi:1.5,ca:85,fe:2.0,mg:25,k2:250,na:760,zn:2.0,fo:140,se:8,col:38},
+{n:"Panino Kebab doner con salsa yogurt",c:"Fast food",src:"UPF",k:234,p:15.1,gs:10.9,g:17.5,z:0.5,ch:4.1,fi:1.5,ca:85,fe:2.0,mg:25,k2:250,na:760,zn:2.0,fo:20,se:8,col:38},
 {n:"Hot dog con ketchup e senape",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:50,fe:1.8,mg:15,k2:170,na:320,zn:1.2,fo:5,se:5,col:28},
 {n:"Sushi California roll (per pezzo, 25g → per 100g)",c:"Cucina etnica",src:"UPF",k:111.8,p:4.7,gs:0.29,g:4.1,z:2.9,ch:15.9,fi:2.4,ca:17.6,fe:0.29,mg:12,k2:141.2,na:158.8,zn:0.4,fo:45,se:8,col:2.9},
 {n:"Sushi nigiri salmone (per pezzo, 30g → per 100g)",c:"Cucina etnica",src:"UPF",k:174,p:6.2,gs:0.9,g:7.6,z:3.8,ch:19.6,fi:0,ca:15,fe:0.5,mg:18,k2:130,na:480,zn:0.5,fo:75,se:20,col:22},

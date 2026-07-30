@@ -2593,3 +2593,40 @@ ALTER TABLE fatture ADD COLUMN IF NOT EXISTS overdue_reminder_sent_at TIMESTAMPT
 CREATE INDEX IF NOT EXISTS idx_fatture_scadenza_da_pagare
   ON fatture (scadenza)
   WHERE stato = 'da_pagare' AND scadenza IS NOT NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 35 — SISTEMA TESSERA SANITARIA (STS), feature #1
+--
+-- Obbligo di legge dal 2019: i dietisti (professione sanitaria) devono
+-- trasmettere al Sistema TS i dati di TUTTE le fatture emesse a persone
+-- fisiche (spese sanitarie detraibili, salvo opposizione del paziente).
+--
+-- Il Sistema TS non espone un'API pubblica diretta per i professionisti:
+-- l'accreditamento diretto presso SOGEI è un processo lungo pensato per
+-- grandi soggetti. Come già avviene per l'invio SDI (Fatture in Cloud,
+-- SEZIONE 32), la via realistica è un intermediario accreditato con una
+-- REST API — verificato: sistema-ts-api.it (prodotto A-Cube) espone
+-- POST /erogatori (registrazione una tantum come erogatore sanitario) e
+-- POST /documenti-spesa (invio della singola fattura, tipoSpesa "SP" per
+-- le professioni sanitarie diverse da medici/odontoiatri).
+--
+-- Il dietista deve REGISTRARSI AUTONOMAMENTE su un intermediario accreditato
+-- (es. sistema-ts-api.it) prima che questa funzione sia utilizzabile — le
+-- credenziali sotto restano vuote e il pulsante "Invia a STS" in Pagamenti
+-- resta nascosto finché non vengono compilate, esattamente come per FIC/SDI.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS sts_api_username TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS sts_api_password TEXT;
+-- Credenziali del PORTALE Sistema TS del dietista (sistemats2.sanita.finanze.it),
+-- non quelle dell'intermediario sopra: servono all'intermediario per
+-- trasmettere per suo conto (campo pincodeSts richiesto da POST /erogatori).
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS sts_username TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS sts_password TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS sts_pincode TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS sts_erogatore_registrato BOOLEAN DEFAULT false;
+
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_stato TEXT; -- INVI | PREN | ERRO
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_protocollo TEXT;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_messaggio TEXT; -- errore riportato dal Sistema TS, se presente
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_inviato_at TIMESTAMPTZ;

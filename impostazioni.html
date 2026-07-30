@@ -499,6 +499,46 @@
           </div>
         </div>
       </div>
+      <div style="border-top:1.5px dashed var(--border);padding-top:12px;margin-top:4px">
+        <div style="font-size:12.5px;font-weight:700;color:var(--slate);margin-bottom:4px">🏥 Sistema Tessera Sanitaria (invio spese sanitarie, opzionale)
+          <span id="sts-erogatore-badge" style="display:none;margin-left:8px;background:#DCFCE7;color:#166534;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:100px">✓ Erogatore registrato</span>
+        </div>
+        <p style="font-size:11.5px;color:var(--slate-l);margin:0 0 10px;line-height:1.5">Obbligo di legge dal 2019: i dietisti devono trasmettere al Sistema TS i dati delle fatture emesse a persone fisiche. Il Sistema TS non ha un'API diretta per i professionisti — serve un intermediario accreditato REST, es. <a href="https://www.sistema-ts-api.it" target="_blank" style="color:#0F766E;font-weight:600">sistema-ts-api.it</a> (prodotto A-Cube). Registrati lì per ottenere le credenziali API sotto; i campi "Sistema TS" sono invece le TUE credenziali del portale <a href="https://sistemats2.sanita.finanze.it" target="_blank" style="color:#0F766E;font-weight:600">sistemats2.sanita.finanze.it</a> (username, password, PIN), necessarie all'intermediario per trasmettere per tuo conto. Verifica sempre con il tuo commercialista/ordine professionale.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <div style="flex:1;min-width:180px">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--slate-l);margin-bottom:5px">Username API intermediario</label>
+            <input type="text" id="sts-api-username" autocomplete="off"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
+          <div style="flex:1;min-width:180px">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--slate-l);margin-bottom:5px">Password API intermediario</label>
+            <input type="password" id="sts-api-password" autocomplete="off"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:140px">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--slate-l);margin-bottom:5px">Username Sistema TS</label>
+            <input type="text" id="sts-username" autocomplete="off"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
+          <div style="flex:1;min-width:140px">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--slate-l);margin-bottom:5px">Password Sistema TS</label>
+            <input type="password" id="sts-password" autocomplete="off"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
+          <div style="flex:1;min-width:120px">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--slate-l);margin-bottom:5px">PIN Sistema TS</label>
+            <input type="password" id="sts-pincode" autocomplete="off"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <button class="btn btn-ghost" style="border:1.5px solid var(--border-d);padding:9px 16px;border-radius:10px;font-weight:700;font-size:12.5px;cursor:pointer;background:white" onclick="registraErogatoreSTS()">🏥 Registra come erogatore Sistema TS</button>
+          <span id="sts-registra-msg" style="margin-left:10px;font-size:12.5px;font-weight:600"></span>
+          <p style="font-size:11px;color:var(--slate-l);margin-top:6px">Operazione una tantum, da fare prima del primo invio fatture. Ripetila se cambi le credenziali sopra.</p>
+        </div>
+      </div>
       <div>
         <button class="btn" style="background:#0F766E;color:white;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer" onclick="saveFiscalData()">💾 Salva dati fiscali</button>
         <span id="fiscal-save-msg" style="margin-left:10px;font-size:12.5px;color:#0F766E;font-weight:600"></span>
@@ -760,9 +800,9 @@ async function togglePushSubscription() {
 // ══════════════════════════════════════════════
 async function loadFiscalData() {
   if (!currentUser) return;
-  // Fallback senza le colonne Fatture in Cloud (SEZIONE 32) se non ancora migrate
+  // Fallback senza le colonne Fatture in Cloud (SEZIONE 32) / STS (SEZIONE 35) se non ancora migrate
   let { data, error } = await sb.from('profiles')
-    .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fic_api_token,fic_company_id')
+    .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fic_api_token,fic_company_id,sts_api_username,sts_api_password,sts_username,sts_password,sts_pincode,sts_erogatore_registrato')
     .eq('id', currentUser.id).maybeSingle();
   if (error && (error.code === '42703' || error.code === 'PGRST204')) {
     ({ data, error } = await sb.from('profiles')
@@ -781,6 +821,13 @@ async function loadFiscalData() {
   setVal('fiscal-cap', data.fiscal_cap);
   setVal('fiscal-comune', data.fiscal_comune);
   setVal('fiscal-provincia', data.fiscal_provincia);
+  setVal('sts-api-username', data.sts_api_username);
+  setVal('sts-api-password', data.sts_api_password);
+  setVal('sts-username', data.sts_username);
+  setVal('sts-password', data.sts_password);
+  setVal('sts-pincode', data.sts_pincode);
+  const badge = document.getElementById('sts-erogatore-badge');
+  if (badge) badge.style.display = data.sts_erogatore_registrato ? 'inline-block' : 'none';
 }
 
 async function saveFiscalData() {
@@ -797,16 +844,25 @@ async function saveFiscalData() {
     fiscal_provincia: val('fiscal-provincia'),
     fic_api_token: val('fic-api-token'),
     fic_company_id: val('fic-company-id'),
+    sts_api_username: val('sts-api-username'),
+    sts_api_password: val('sts-api-password'),
+    sts_username: val('sts-username'),
+    sts_password: val('sts-password'),
+    sts_pincode: val('sts-pincode'),
   };
   const msgEl = document.getElementById('fiscal-save-msg');
   let { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
   if (error && (error.code === '42703' || error.code === 'PGRST204')) {
-    // Colonne FIC non ancora migrate (SEZIONE 32): salva almeno il resto
-    const base = { ...payload };
-    delete base.fic_api_token; delete base.fic_company_id;
+    // Colonne FIC/STS non ancora migrate (SEZIONE 32/35): salva almeno il resto
+    const base = {
+      fiscal_ragione_sociale: payload.fiscal_ragione_sociale, fiscal_codice_fiscale: payload.fiscal_codice_fiscale,
+      fiscal_partita_iva: payload.fiscal_partita_iva, fiscal_regime: payload.fiscal_regime,
+      fiscal_indirizzo: payload.fiscal_indirizzo, fiscal_cap: payload.fiscal_cap,
+      fiscal_comune: payload.fiscal_comune, fiscal_provincia: payload.fiscal_provincia,
+    };
     ({ error } = await sb.from('profiles').update(base).eq('id', currentUser.id));
-    if (!error && (payload.fic_api_token || payload.fic_company_id)) {
-      if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = '⚠️ Campi Fatture in Cloud NON salvati: esegui la SEZIONE 32 di supabase_setup.sql'; }
+    if (!error) {
+      if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = '⚠️ Campi Fatture in Cloud/STS NON salvati: esegui le SEZIONI 32 e 35 di supabase_setup.sql'; }
       return;
     }
   }
@@ -818,6 +874,26 @@ async function saveFiscalData() {
     msgEl.style.color = '#0F766E';
     msgEl.textContent = '✅ Salvato';
     setTimeout(() => { if (msgEl.textContent === '✅ Salvato') msgEl.textContent = ''; }, 3000);
+  }
+}
+
+async function registraErogatoreSTS() {
+  const msgEl = document.getElementById('sts-registra-msg');
+  if (msgEl) { msgEl.style.color = 'var(--slate-l)'; msgEl.textContent = '⏳ Registrazione in corso...'; }
+  await saveFiscalData(); // salva prima le credenziali appena inserite
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch('/api/sts-registra-erogatore', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    if (msgEl) { msgEl.style.color = '#0F766E'; msgEl.textContent = '✅ Registrato come erogatore Sistema TS'; }
+    const badge = document.getElementById('sts-erogatore-badge');
+    if (badge) badge.style.display = 'inline-block';
+  } catch (e) {
+    if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = '❌ ' + e.message; }
   }
 }
 

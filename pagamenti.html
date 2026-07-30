@@ -475,6 +475,7 @@ function renderFatture() {
           ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="Segna come pagato">✓</button>` : ''}
           <button class="btn btn-ghost btn-xs" onclick="generaFatturaElettronica('${esc(f.id)}')" title="${f.xml_generato_at ? 'XML già generato — rigenera' : 'Genera XML fattura elettronica'}">${f.xml_generato_at ? '📄✓' : '📄'}</button>
           ${f.sdi_inviato_at ? '<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="Inviata allo SDI via Fatture in Cloud">📤✓</span>' : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSDI('${esc(f.id)}')" title="Invia allo SDI via Fatture in Cloud (richiede il collegamento in Impostazioni → Dati fiscali)">📤</button>`}
+          ${f.sts_stato === 'INVI' || f.sts_stato === 'PREN' ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="Inviata al Sistema TS${f.sts_protocollo ? ' — protocollo ' + esc(f.sts_protocollo) : ''}">🏥✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSTS('${esc(f.id)}')" title="${f.sts_stato === 'ERRO' ? 'Ultimo invio Sistema TS fallito: ' + esc(f.sts_messaggio || '') + ' — riprova' : 'Invia al Sistema Tessera Sanitaria (richiede la registrazione in Impostazioni → Dati fiscali)'}">${f.sts_stato === 'ERRO' ? '🏥⚠' : '🏥'}</button>`}
           <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="Modifica">✏️</button>
           <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="Elimina">🗑️</button>
         </div>
@@ -545,6 +546,43 @@ async function inviaFatturaSDI(id) {
     fatture = fatture.map(x => x.id === id ? { ...x, sdi_inviato_at: nowIso } : x);
     renderFatture();
     toast('📤 Fattura inviata allo SDI via Fatture in Cloud (doc. ' + data.fic_document_id + ')', 'ok');
+  } catch (e) {
+    toast('❌ ' + e.message, 'err');
+  } finally {
+    showLoading(false);
+  }
+}
+
+// ── INVIO SISTEMA TESSERA SANITARIA (STS) ──
+// L'endpoint api/fattura-sts.js legge le credenziali dell'intermediario dal
+// profilo del dietista (Impostazioni → Dati fiscali) e trasmette la spesa
+// sanitaria — obbligo di legge dal 2019, vedi SEZIONE 35 di supabase_setup.sql.
+async function inviaFatturaSTS(id) {
+  const f = fatture.find(x => x.id === id);
+  if (!f) return;
+  if (useLocalFatt || String(id).startsWith('ls_')) {
+    toast('⚠️ Le fatture salvate solo localmente non possono essere inviate: configura prima la tabella fatture nel DB', 'err');
+    return;
+  }
+  if (!f.codice_fiscale_paziente) {
+    toast('⚠️ Aggiungi il codice fiscale del paziente a questa fattura prima di inviarla al Sistema TS', 'err');
+    return;
+  }
+  if (!confirm(`Inviare la fattura ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) al Sistema Tessera Sanitaria?\n\nL'invio comunica una spesa sanitaria detraibile del paziente all'Agenzia delle Entrate: verifica che il paziente non abbia richiesto opposizione a questo invio.`)) return;
+  showLoading(true);
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) throw new Error('Sessione scaduta, ricarica la pagina');
+    const res = await fetch('/api/fattura-sts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ fattura_id: id }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    fatture = fatture.map(x => x.id === id ? { ...x, sts_stato: data.stato, sts_protocollo: data.protocollo } : x);
+    renderFatture();
+    toast('🏥 Fattura inviata al Sistema TS' + (data.protocollo ? ' (protocollo ' + data.protocollo + ')' : ''), 'ok');
   } catch (e) {
     toast('❌ ' + e.message, 'err');
   } finally {

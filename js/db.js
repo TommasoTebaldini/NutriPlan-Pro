@@ -3148,7 +3148,8 @@ const DB_UPF = [
   {n:"Chewing gum senza zucchero (per 100g)",c:"Dolci",src:"UPF",k:165,p:1.1,gs:0,g:0,z:0,ch:67,fi:0,ca:5,fe:0,mg:1,k2:5,na:0,zn:0,fo:4,se:0,col:0},
   {n:"Barretta Kinder Bueno (per 100g)",c:"Dolci",src:"UPF",k:572,p:8.6,gs:17.3,g:37.3,z:41.2,ch:49.5,fi:2.0,ca:80,fe:2.0,mg:35,k2:280,na:110,zn:0.8,fo:140,se:6,col:10},
   {n:"Barretta Snickers (per 100g)",c:"Dolci",src:"UPF",k:488,p:8.5,gs:13.0,g:21.5,z:47.0,ch:62.5,fi:1.5,ca:80,fe:0.8,mg:38,k2:300,na:195,zn:0.7,fo:130,se:4,col:5},
-  {n:"Barretta Mars (per 100g)",c:"Dolci",src:"UPF",k:449,p:4.5,gs:13.5,g:17.0,z:58.0,ch:69.5,fi:0.5,ca:100,fe:0.5,mg:22,k2:190,na:140,zn:0.4,fo:90,se:3,col:5},
+  // Fosforo (cioccolato al latte, notoriamente ricco di fosforo) era nel campo folati; folati reali ~25mcg - 2026-07-30
+  {n:"Barretta Mars (per 100g)",c:"Dolci",src:"UPF",k:449,p:4.5,gs:13.5,g:17.0,z:58.0,ch:69.5,fi:0.5,ca:100,fe:0.5,mg:22,k2:190,na:140,zn:0.4,fo:25,se:3,col:5},
   {n:"Barretta Kit Kat (per 100g)",c:"Dolci",src:"UPF",k:512,p:6.7,gs:14.9,g:26.4,z:43.5,ch:60.5,fi:2.5,ca:90,fe:1.5,mg:40,k2:250,na:90,zn:0.7,fo:120,se:5,col:5},
   {n:"Patatine Lay's Classic (per 100g)",c:"Snack",src:"UPF",k:571.4,p:7.1,gs:5.36,g:35.7,z:3.6,ch:53.6,fi:3.6,ca:20,fe:0.5,mg:45,k2:1080,na:607.1,zn:0.5,fo:10,se:3,col:0},
   {n:"Patatine Pringles Original (per 100g)",c:"Snack",src:"UPF",k:535.7,p:3.6,gs:8.93,g:32.1,z:0,ch:62.5,fi:3.6,ca:0,fe:0.36,mg:38,k2:392.9,na:535.7,zn:0.4,fo:110,se:3,col:0},
@@ -3199,7 +3200,8 @@ const DB_UPF = [
   {n:"Calippo Algida limone (per 100g)",c:"Gelati",src:"UPF",k:87.1,p:0,gs:0,g:0,z:19.8,ch:20.2,fi:0,ca:5,fe:0.1,mg:2,k2:18,na:5,zn:0,fo:3,se:0,col:0},
   {n:"Twister Algida fragola (per 100g)",c:"Gelati",src:"UPF",k:82,p:1.0,gs:1.0,g:2.0,z:14.5,ch:15.0,fi:0.2,ca:30,fe:0.1,mg:4,k2:50,na:25,zn:0.1,fo:25,se:1,col:5},
   {n:"Häagen-Dazs Vanilla (per 100g)",c:"Gelati",src:"UPF",k:271,p:4.0,gs:11.5,g:17.5,z:23.5,ch:26.5,fi:0,ca:115,fe:0.1,mg:10,k2:155,na:75,zn:0.5,fo:90,se:2,col:75},
-  {n:"Sammontana Cremino (per 100g)",c:"Gelati",src:"UPF",k:295,p:3.0,gs:12.0,g:17.0,z:33.0,ch:36.5,fi:0.5,ca:90,fe:0.8,mg:12,k2:160,na:80,zn:0.4,fo:85,se:2,col:18},
+  // Fosforo (latte/panna, colesterolo basso 18mg indica poco contenuto di uova) era nel campo folati; folati reali ~10mcg - 2026-07-30
+  {n:"Sammontana Cremino (per 100g)",c:"Gelati",src:"UPF",k:295,p:3.0,gs:12.0,g:17.0,z:33.0,ch:36.5,fi:0.5,ca:90,fe:0.8,mg:12,k2:160,na:80,zn:0.4,fo:10,se:2,col:18},
   {n:"Solero al mango (per 100g)",c:"Gelati",src:"UPF",k:144,p:1.7,gs:2.8,g:3.1,z:25,ch:27,fi:0.5,ca:35,fe:0.1,mg:5,k2:60,na:32,zn:0.1,fo:30,se:0,col:3},
 
   // ── BIBITE ITALIANE E INTERNAZIONALI ──
@@ -3216,7 +3218,8 @@ const DB_UPF = [
 
   // ── PASTA FRESCA E PIATTI REFRIGERATI ──
   {n:"Tortellini ricotta e spinaci Giovanni Rana (per 100g)",c:"Piatti pronti",src:"UPF",k:251,p:11,gs:4.5,g:11,z:6.7,ch:25,fi:4.1,ca:120,fe:0,mg:0,k2:145,na:480,zn:0,fo:100,se:6,col:35},
-  {n:"Ravioli di carne Giovanni Rana (per 100g)",c:"Piatti pronti",src:"UPF",k:250,p:11.0,gs:3.0,g:7.5,z:2.5,ch:34.5,fi:1.5,ca:70,fe:1.5,mg:16,k2:135,na:480,zn:0.9,fo:90,se:5,col:30},
+  // Fosforo (pasta all'uovo+ripieno carne) era nel campo folati; folati reali ~40mcg - 2026-07-30
+  {n:"Ravioli di carne Giovanni Rana (per 100g)",c:"Piatti pronti",src:"UPF",k:250,p:11.0,gs:3.0,g:7.5,z:2.5,ch:34.5,fi:1.5,ca:70,fe:1.5,mg:16,k2:135,na:480,zn:0.9,fo:40,se:5,col:30},
   {n:"Buitoni pasta ripiena ricotta (per 100g)",c:"Piatti pronti",src:"UPF",k:292.5,p:11.3,gs:2.83,g:7.5,z:0.9,ch:45.3,fi:1.9,ca:110,fe:1.0,mg:15,k2:130,na:434,zn:0.7,fo:95,se:5,col:28},
   {n:"Findus 4 Salti in Padella pollo e verdure (per 100g)",c:"Piatti pronti",src:"UPF",k:105,p:7.5,gs:1.0,g:3.5,z:2.0,ch:11.5,fi:3.0,ca:25,fe:0.8,mg:22,k2:290,na:440,zn:0.6,fo:8,se:6,col:20},
   {n:"Findus 4 Salti in Padella carbonara (per 100g)",c:"Piatti pronti",src:"UPF",k:175,p:6.5,gs:3.5,g:8.5,z:3.0,ch:19.5,fi:1.5,ca:55,fe:0.7,mg:15,k2:150,na:550,zn:0.5,fo:80,se:6,col:40},

@@ -13,6 +13,7 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const targets = [
   { src: "js/db.js", out: "js/db.min.js" },
   { src: "js/lang.js", out: "js/lang.min.js" },
+  { src: "js/lang-labels.js", out: "js/lang-labels.min.js" },
   { src: "js/utils.js", out: "js/utils.min.js" },
   { src: "js/studies-data.js", out: "js/studies-data.min.js" },
   { src: "js/linee-guida-data.js", out: "js/linee-guida-data.min.js" },

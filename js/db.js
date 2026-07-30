@@ -2185,8 +2185,10 @@ const DB_BDA=[
 {n:"Polenta taragna cotta",c:"Cereali e derivati",k:73,p:0.9,gs:1.5,g:0.04,z:0.2,ch:17.8,fi:0.9,ca:3,fe:0.1,mg:2,k2:16,na:91,zn:0.03,fo:65,se:5,col:0,src:"CREA"},
 {n:"Riso Basmati cotto",c:"Cereali e derivati",k:113,p:3,gs:0.18,g:0.6,z:0.7,ch:25.2,fi:0.7,ca:9,fe:0.2,mg:11,k2:37,na:2,zn:0.53,fo:5,se:5,col:0,src:"BDA"},
 {n:"Riso parboiled cotto",c:"Cereali e derivati",k:97,p:2.1,gs:0.03,g:0.1,z:0.2,ch:23.3,fi:0.3,ca:19,fe:0.1,mg:7,k2:43,na:4,zn:0.3,fo:6,se:7,col:0,src:"BDA"},
-{n:"Farro spelta (grande) cotto",c:"Cereali e derivati",k:127,p:4.9,gs:0.1,g:0.9,z:0.3,ch:27.0,fi:3.9,ca:15,fe:1.3,mg:40,k2:130,na:4,zn:1.0,fo:130,se:15,col:0,src:"BDA"},
-{n:"Kamut (frumento khorasan) cotto",c:"Cereali e derivati",k:142,p:5.5,gs:0.1,g:0.8,z:0.3,ch:29.0,fi:3.2,ca:14,fe:1.1,mg:42,k2:145,na:4,zn:1.2,fo:145,se:18,col:0,src:"BDA"},
+// Stesso bug fosforo-in-folati del duplicato già corretto (DB_BDA_393), corretto per coerenza - 2026-07-30
+{n:"Farro spelta (grande) cotto",c:"Cereali e derivati",k:127,p:4.9,gs:0.1,g:0.9,z:0.3,ch:27.0,fi:3.9,ca:15,fe:1.3,mg:40,k2:130,na:4,zn:1.0,fo:30,se:15,col:0,src:"BDA"},
+// Stesso bug fosforo-in-folati, corretto per coerenza col duplicato già fixato (33mcg) - 2026-07-30
+{n:"Kamut (frumento khorasan) cotto",c:"Cereali e derivati",k:142,p:5.5,gs:0.1,g:0.8,z:0.3,ch:29.0,fi:3.2,ca:14,fe:1.1,mg:42,k2:145,na:4,zn:1.2,fo:33,se:18,col:0,src:"BDA"},
 
 // ── BEVANDE MANCANTI ──
 {n:"Vino rosato da tavola",c:"Alcolici",k:76,p:0.1,gs:0,g:0,z:2.5,ch:2.5,fi:0,ca:12,fe:1,mg:7,k2:75,na:4,zn:0,fo:0,se:0,col:0,src:"BDA"},
@@ -2205,7 +2207,8 @@ const DB_BDA=[
 {n:"Latte condensato non zuccherato (evaporato)",c:"Latte e derivati",k:134,p:7,gs:5.1,g:8.2,z:8.6,ch:8.6,fi:0,ca:240,fe:0.1,mg:22,k2:323,na:150,zn:0.8,fo:12,se:3,col:31,src:"CREA"},
 {n:"Crema di latte fresca (panna 35%)",c:"Latte e derivati",k:337,p:2.3,gs:20.4,g:35,z:3.4,ch:3.4,fi:0,ca:78,fe:0,mg:9,k2:100,na:34,zn:0.28,fo:5,se:1,col:120,src:"CREA"},
 {n:"Farinata di ceci (piatto tipico genovese cotto)",c:"Cereali e derivati",k:152,p:5.5,gs:0.8,g:8.5,z:0.5,ch:14.5,fi:2.0,ca:28,fe:1.8,mg:30,k2:130,na:300,zn:0.7,fo:90,se:2,col:0,src:"BDA"},
-{n:"Gelatina in fogli (colla di pesce)",c:"Condimenti",k:335,p:84.4,gs:0,g:0.1,z:0,ch:0,fi:0,ca:10,fe:0.1,mg:1,k2:2,na:30,zn:0.1,fo:20,se:0,col:70,src:"BDA"},
+// Folati implausibili per gelatina pura (collagene, profilo minerale quasi nullo tranne proteine) - 2026-07-30
+{n:"Gelatina in fogli (colla di pesce)",c:"Condimenti",k:335,p:84.4,gs:0,g:0.1,z:0,ch:0,fi:0,ca:10,fe:0.1,mg:1,k2:2,na:30,zn:0.1,fo:0,se:0,col:70,src:"BDA"},
 // fo conteneva fosforo (1677mg, valore reale crusca di riso) non folati: corretto a 63mcg - 2026-07-29
 {n:"Crusca di riso",c:"Cereali e derivati",k:316,p:13.4,gs:1.8,g:20.8,z:0,ch:49.7,fi:21.0,ca:57,fe:18.5,mg:781,k2:1485,na:5,zn:6.1,fo:63,se:16,col:0,src:"BDA"},
 {n:"Farina di lenticchie rosse",c:"Cereali e derivati",k:340,p:25.7,gs:0.2,g:1.2,z:1.5,ch:58.5,fi:11.0,ca:59,fe:7.3,mg:100,k2:897,na:5,zn:3.0,fo:370,se:6,col:0,src:"BDA"},

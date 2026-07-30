@@ -87,8 +87,8 @@ const DB_CREA=[
 {n:"Patata",c:"Verdure",k:80,p:2.1,gs:0.03,g:0.1,z:0.4,ch:18,fi:1.6,ca:10,fe:0.6,mg:23,k2:570,na:7,zn:0.27,fo:35,se:1,col:0,src:"BDA"},
 {n:"Melanzana",c:"Verdure",k:20,p:1.1,gs:0.02,g:0.1,z:2.6,ch:2.6,fi:2.6,ca:14,fe:0.3,mg:11,k2:184,na:26,zn:0.2,fo:18,se:0.3,col:0,src:"BDA"},
 {n:"Peperone rosso",c:"Verdure",k:28,p:0.9,gs:0,g:0.3,z:4.9,ch:6.7,fi:2.1,ca:11,fe:0.5,mg:11,k2:211,na:2,zn:0.25,fo:26,se:0.6,col:0,src:"CREA"},
-// FIX (rifinitura post-audit, blind spot pre-esistente): fosforo (champignon ~86mg) era nel campo folati; folati reali ~17mcg - 2026-07-30
-{n:"Funghi champignon",c:"Verdure",k:24,p:3.7,gs:0,g:0.2,z:0.8,ch:0.8,fi:2.3,ca:6,fe:0.8,mg:13,k2:320,na:5,zn:1.46,fo:17,se:7.5,col:0,src:"CREA"},
+// RIPRISTINATO 2026-07-30: valore originale (86mcg) verificato a mano su fonte ufficiale CREA:006000 ("Funghi coltivati, prataioli, crudi") - errore mio nel "correggerlo" senza controllare prima la fonte già presente in progress.json
+{n:"Funghi champignon",c:"Verdure",k:24,p:3.7,gs:0,g:0.2,z:0.8,ch:0.8,fi:2.3,ca:6,fe:0.8,mg:13,k2:320,na:5,zn:1.46,fo:86,se:7.5,col:0,src:"CREA"},
 {n:"Cipolla",c:"Verdure",k:28,p:1,gs:0.02,g:0.1,z:5.7,ch:5.7,fi:1.1,ca:25,fe:0.4,mg:9,k2:140,na:10,zn:0.3,fo:12,se:0.5,col:0,src:"BDA"},
 // Fosforo (153mg, confermato fonte USDA) era nel campo folati; folati reali dell'aglio sono ~3mcg - 2026-07-29
 {n:"Aglio",c:"Verdure",k:53,p:8.4,gs:0.15,g:0.8,z:1,ch:1,fi:4.3,ca:15,fe:1.2,mg:17,k2:310,na:4,zn:0.59,fo:3,se:14,col:0,src:"CREA"},
@@ -3266,8 +3266,8 @@ const DB_UPF = [
   // Carboidrati erano 48g (errore di virgola, impossibile per una bevanda fermentata a bassa kcal): corretto a 4.8g, coerente con le altre 2 voci Kombucha del db (ch 2.5 e 4.0) - 2026-07-29
   {n:"Kombucha (bevanda fermentata tè, per 100mL)",c:"Bevande",src:"UPF",k:16,p:0.2,gs:0,g:0,z:4,ch:4.8,fi:0,ca:5,fe:0.1,mg:2,k2:20,na:0,zn:0,fo:4,se:0,col:0},
   {n:"Kefir di latte vaccino intero (per 100g)",c:"Latte e derivati",src:"UPF",k:43,p:3.3,gs:1.2,g:1.5,z:3.8,ch:4,fi:0,ca:120,fe:0.1,mg:12,k2:151,na:40,zn:0.4,fo:5,se:3,col:12},
-  // FIX (rifinitura post-audit, blind spot pre-esistente): calcio 350mg identico al tofu extra firm già corretto, stesso bug - 2026-07-30
-  {n:"Tofu al naturale (industriale, per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:149,p:15,gs:1.5,g:8.5,z:0,ch:2,fi:2.3,ca:350,fe:5.4,mg:30,k2:121,na:0,zn:0.8,fo:9,se:8,col:0},
+  // RIPRISTINATO 2026-07-30: valore originale (97mcg) verificato su barcode reale OFF 8012666070251 (Tofu al naturale, Carrefour) - errore mio nel "correggerlo" senza controllare prima la fonte già presente in progress.json
+  {n:"Tofu al naturale (industriale, per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:149,p:15,gs:1.5,g:8.5,z:0,ch:2,fi:2.3,ca:350,fe:5.4,mg:30,k2:121,na:0,zn:0.8,fo:97,se:8,col:0},
   {n:"Seitan al naturale (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:135,p:18,gs:0.2,g:1.2,z:0.9,ch:12,fi:2.1,ca:14,fe:2.4,mg:18,k2:45,na:580,zn:0.8,fo:90,se:3,col:0},
 // Allineato a voce CREA gia verificata "Tempeh di soia" (la pastorizzazione non altera la composizione) — 2026-07-28
   {n:"Tempeh di soia pastorizzato (per 100g)",c:"Sostituti carne vegetali",src:"UPF",k:173,p:20.7,gs:0.92,g:6.4,z:0.9,ch:6.4,fi:4.1,ca:120,fe:3.6,mg:81,k2:370,na:6,zn:1.8,fo:76,se:0.1,col:0},
@@ -4508,8 +4508,8 @@ const DB_EXTRA=[
 // === FUNGHI ESOTICI ===
 {n:"Shiitake freschi",c:"Funghi",src:"EXTRA",k:34,p:2.2,gs:0,g:0.5,z:2.4,ch:6.8,fi:2.5,ca:2,fe:0.41,mg:20,k2:304,na:9,zn:1.03,fo:13,se:5.7,col:0},
 {n:"Funghi oyster freschi (ostrica)",c:"Funghi",src:"EXTRA",k:33,p:3.3,gs:0.06,g:0.4,z:1.1,ch:6.1,fi:2.3,ca:3,fe:1.33,mg:18,k2:420,na:18,zn:0.77,fo:38,se:2.6,col:0},
-// FIX (rifinitura post-audit): allineato al duplicato Enoki già corretto (20mcg) - 2026-07-30
-{n:"Enoki freschi (funghi ago giapponesi)",c:"Funghi",src:"EXTRA",k:37,p:2.7,gs:0.03,g:0.3,z:0.2,ch:7.8,fi:2.7,ca:0,fe:1.15,mg:16,k2:359,na:3,zn:0.65,fo:20,se:2.2,col:0},
+// RIPRISTINATO 2026-07-30: valore originale (48mcg) verificato a mano su fonte ufficiale USDA:169382 ("Mushrooms, enoki, raw") - errore mio nel "correggerlo" senza controllare prima la fonte già presente in progress.json
+{n:"Enoki freschi (funghi ago giapponesi)",c:"Funghi",src:"EXTRA",k:37,p:2.7,gs:0.03,g:0.3,z:0.2,ch:7.8,fi:2.7,ca:0,fe:1.15,mg:16,k2:359,na:3,zn:0.65,fo:48,se:2.2,col:0},
 {n:"Funghi maitake freschi (hen of the woods)",c:"Funghi",src:"EXTRA",k:31,p:1.9,gs:0.03,g:0.2,z:2.1,ch:7,fi:2.7,ca:1,fe:0.3,mg:10,k2:204,na:1,zn:0.75,fo:21,se:2.2,col:0},
 // === PESCE AGGIUNTIVO ===
 // Allineato alla voce BDA gia verificata "Orata al forno" (stesso nome quasi esatto) — 2026-07-28

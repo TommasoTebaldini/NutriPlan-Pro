@@ -2792,7 +2792,8 @@ const DB_UPF = [
   {n:"Panino hamburger industriale completo",c:"Fast food",src:"UPF",k:260,p:12,gs:4,g:10,z:4,ch:32,fi:2,ca:80,fe:2.5,mg:22,k2:230,na:750,zn:2,fo:30,se:10,col:40},
   {n:"Piadina romagnola industriale",c:"Cereali e derivati",src:"UPF",k:294,p:7.7,gs:1,g:7.4,z:1.5,ch:48,fi:2,ca:55,fe:1.8,mg:18,k2:130,na:2100,zn:0.7,fo:85,se:8,col:5},
   {n:"Focaccine tipo Tigelle industriali",c:"Cereali e derivati",src:"UPF",k:293,p:15,gs:5.8,g:15,z:2.4,ch:24,fi:3.4,ca:45,fe:1.5,mg:16,k2:110,na:600,zn:0.6,fo:80,se:8,col:0},
-  {n:"Crackers wasa tipo crispbread",c:"Snack salati",src:"UPF",k:336,p:9,gs:0.4,g:2.5,z:1.5,ch:11,fi:19,ca:30,fe:3,mg:65,k2:240,na:1000,zn:2,fo:260,se:15,col:0},
+  // FIX (scan consistenza Atwater): carboidrati (11g) incoerenti con kcal (336) e con prodotti quasi identici già nel DB (~62g); corretto a 62g. Folati (260mcg) anch'essi corretti a 45mcg per coerenza col pattern crispbread di segale già stabilito (DB_ONS_43) - 2026-07-30
+  {n:"Crackers wasa tipo crispbread",c:"Snack salati",src:"UPF",k:336,p:9,gs:0.4,g:2.5,z:1.5,ch:62,fi:19,ca:30,fe:3,mg:65,k2:240,na:1000,zn:2,fo:45,se:15,col:0},
   {n:"Chips di lenticchie BBQ",c:"Snack salati",src:"UPF",k:410,p:12,gs:1.5,g:16,z:4,ch:57,fi:7,ca:35,fe:3,mg:50,k2:380,na:620,zn:1.5,fo:200,se:5,col:0},
   {n:"Rice cakes aromatizzate",c:"Snack salati",src:"UPF",k:400,p:7.3,gs:1.9,g:11.4,z:2.7,ch:65,fi:3,ca:10,fe:0.8,mg:42,k2:105,na:440,zn:0.5,fo:95,se:3,col:0},
 

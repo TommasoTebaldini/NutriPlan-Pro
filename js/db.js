@@ -148,7 +148,8 @@ const DB_CREA=[
 // ── SALUMI aggiuntivi ──
 {n:"Speck",c:"Salumi",k:299,p:30.7,gs:6.3,g:19.1,z:0,ch:1.2,fi:0,ca:8,fe:1.4,mg:27,k2:658,na:1640,zn:2.5,fo:5,se:15,col:91,src:"CREA"},
 {n:"Salame Milano",c:"Salumi",k:385,p:25.4,gs:10.48,g:31,z:0.3,ch:1.1,fi:0,ca:19,fe:1.2,mg:21,k2:657,na:1560,zn:3,fo:5,se:16,col:104,src:"CREA"},
-{n:"Mortadella",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.5,ch:0,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:5,se:20,col:72,src:"CREA"},
+// FIX (check strutturale): zuccheri (0.5g, destrosio di stagionatura) non potevano superare i carboidrati totali (0g) - corretto ch a 0.5 - 2026-07-30
+{n:"Mortadella",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.5,ch:0.5,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:5,se:20,col:72,src:"CREA"},
 // Kcal/grassi sottostimati: fonti multiple concordano su un range 450-600kcal/50-58g grassi per prodotti reali, valore locale (456kcal/42g) era al limite basso - 2026-07-29
 {n:"Nduja",c:"Salumi",k:530,p:18,gs:20,g:50,z:0,ch:0,fi:0,ca:15,fe:2,mg:20,k2:300,na:2100,zn:2,fo:5,se:15,col:90,src:"CREA"},
 // ── CEREALI aggiuntivi ──
@@ -314,7 +315,8 @@ const DB_CREA=[
 // ── VERDURE aggiuntive ──
 {n:"Rucola selvatica",c:"Verdure",k:30,p:2.6,gs:0,g:0.3,z:3.9,ch:3.9,fi:0.9,ca:309,fe:5.2,mg:47,k2:468,na:27,zn:0.5,fo:97,se:0.3,col:0,src:"CREA"},
 // Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
-{n:"Crescione d'acqua",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:43,se:0.9,col:0,src:"BDA"},
+// FIX (check strutturale - divergenza kcal tra duplicati): allineato al duplicato CREA gia verificato e confermato da fonte esterna (~11kcal reali per crescione d'acqua, non 28) - 2026-07-30
+{n:"Crescione d'acqua",c:"Verdure",k:11,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.4,fo:43,se:0.9,col:0,src:"BDA"},
 {n:"Puntarelle (cicoria catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:20,k2:358,na:21,zn:0.3,fo:110,se:0.4,col:0,src:"BDA"},
 {n:"Friarielli (cime di rapa napoletane)",c:"Verdure",k:22,p:2.9,gs:0,g:0.3,z:1.2,ch:3.2,fi:2.8,ca:82,fe:2.5,mg:22,k2:200,na:40,zn:0.4,fo:95,se:0.9,col:0,src:"CREA"},
 {n:"Cavolo nero toscano",c:"Verdure",k:35,p:3.3,gs:0,g:0.6,z:0.5,ch:6.7,fi:3.6,ca:157,fe:1.5,mg:34,k2:704,na:38,zn:0.4,fo:141,se:0.9,col:0,src:"CREA"},
@@ -417,7 +419,8 @@ const DB_CREA=[
   {n:"Yogurt intero alla frutta",c:"Latte e derivati",k:80,p:3.4,gs:1.82,g:2.8,z:10.5,ch:10.5,fi:1,ca:110,fe:0.1,mg:12,k2:155,na:50,zn:0.5,fo:10,se:2,col:7,src:"CREA"},
   // ── PROTEINE ANIMALI MANCANTI ──
   {n:"Bresaola della Valtellina IGP",c:"Salumi",k:152,p:33.1,gs:0.66,g:2,z:0,ch:0.4,fi:0,ca:6,fe:2.6,mg:26,k2:630,na:1600,zn:4.5,fo:5,se:7,col:63,src:"CREA"},
-  {n:"Coppa / Capocollo",c:"Salumi",k:400,p:28.9,gs:11.28,g:31.6,z:0.5,ch:0,fi:0,ca:7,fe:1.3,mg:27,k2:685,na:1960,zn:3.7,fo:5,se:12,col:127,src:"CREA"},
+  // FIX (check strutturale): zuccheri (0.5g, destrosio di stagionatura) non potevano superare i carboidrati totali (0g) - corretto ch a 0.5 - 2026-07-30
+  {n:"Coppa / Capocollo",c:"Salumi",k:400,p:28.9,gs:11.28,g:31.6,z:0.5,ch:0.5,fi:0,ca:7,fe:1.3,mg:27,k2:685,na:1960,zn:3.7,fo:5,se:12,col:127,src:"CREA"},
   {n:"Lardo stagionato",c:"Salumi",k:891,p:0,gs:33.12,g:99,z:0,ch:0,fi:0,ca:5,fe:0.3,mg:2,k2:1,na:2,zn:0.4,fo:30,se:4,col:95,src:"CREA"},
   {n:"Porchetta",c:"Carni rosse",k:395,p:18.0,gs:11.0,g:35.0,z:0,ch:0,fi:0,ca:8,fe:1.5,mg:18,k2:280,na:1100,zn:2.0,fo:8,se:22,col:85,src:"CREA"},
   {n:"Faraona petto senza pelle",c:"Carni bianche",k:121,p:25.8,gs:0.66,g:1.9,z:0,ch:0.2,fi:0,ca:10,fe:0.8,mg:20,k2:340,na:50,zn:0.6,fo:9,se:15,col:32,src:"CREA"},
@@ -512,7 +515,8 @@ const DB_CREA=[
   {n:"Borragine fresca",c:"Verdure",k:21,p:1.8,gs:0.1,g:0.7,z:1.0,ch:3.1,fi:1.5,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.2,fo:52,se:1,col:0,src:"CREA"},
   {n:"Agretti / Barba di frate cruda",c:"Verdure",k:22,p:1.8,gs:0.1,g:0.2,z:2.2,ch:2.2,fi:2.3,ca:131,fe:1.2,mg:22,k2:420,na:95,zn:0.2,fo:77,se:1,col:0,src:"CREA"},
   // Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
-  {n:"Crescione d'acqua fresco",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:43,se:1,col:0,src:"BDA"},
+  // FIX (check strutturale - divergenza kcal tra duplicati): allineato al duplicato CREA gia verificato e confermato da fonte esterna (~11kcal reali per crescione d'acqua, non 28) - 2026-07-30
+  {n:"Crescione d'acqua fresco",c:"Verdure",k:11,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.4,fo:43,se:1,col:0,src:"BDA"},
   {n:"Rucola selvatica fresca",c:"Verdure",k:30,p:2.6,gs:0.2,g:0.3,z:3.9,ch:3.9,fi:0.9,ca:309,fe:5.2,mg:47,k2:468,na:27,zn:0.5,fo:97,se:1,col:0,src:"CREA"},
   {n:"Coltivato / Songino / Valerianella fresca",c:"Verdure",k:25,p:2.0,gs:0.1,g:0.4,z:1.6,ch:3.6,fi:2.2,ca:38,fe:2.2,mg:13,k2:459,na:38,zn:0.7,fo:93,se:0,col:0,src:"CREA"},
   {n:"Trevigiano (radicchio di Treviso) fresco",c:"Verdure",k:16,p:1.6,gs:0.1,g:0.1,z:1,ch:1,fi:2.5,ca:27,fe:0.4,mg:14,k2:234,na:13,zn:0.2,fo:24,se:2,col:0,src:"CREA"},
@@ -520,7 +524,8 @@ const DB_CREA=[
   {n:"Bottarga di muggine (uova di cefalo essiccate)",c:"Pesce",k:405,p:43.5,gs:7.8,g:25.7,z:0,ch:0,fi:0,ca:200,fe:2.5,mg:80,k2:300,na:3200,zn:3.8,fo:600,se:110,col:440,src:"CREA"},
   {n:"'Nduja calabrese (insaccato spalmabile)",c:"Salumi",k:450,p:22,gs:16,g:38,z:0.5,ch:0.5,fi:0,ca:20,fe:2.0,mg:18,k2:280,na:1800,zn:2.5,fo:5,se:12,col:85,src:"CREA"},
   {n:"Guanciale stagionato",c:"Salumi",k:655,p:11,gs:35,g:70,z:0,ch:0,fi:0,ca:10,fe:0.8,mg:12,k2:130,na:1100,zn:1.5,fo:5,se:8,col:120,src:"CREA"},
-  {n:"Ciccioli di maiale",c:"Salumi",k:636,p:45.2,gs:17.25,g:50.6,z:0.5,ch:0,fi:0,ca:12,fe:1.2,mg:16,k2:425,na:640,zn:1.4,fo:8,se:32,col:90,src:"CREA"},
+  // FIX (check strutturale): zuccheri (0.5g) non potevano superare i carboidrati totali (0g) - corretto ch a 0.5 - 2026-07-30
+  {n:"Ciccioli di maiale",c:"Salumi",k:636,p:45.2,gs:17.25,g:50.6,z:0.5,ch:0.5,fi:0,ca:12,fe:1.2,mg:16,k2:425,na:640,zn:1.4,fo:8,se:32,col:90,src:"CREA"},
   {n:"Salsiccia luganega fresca cruda",c:"Carni e derivati",k:304,p:15.4,gs:12,g:26.7,z:0.6,ch:0.6,fi:0,ca:20,fe:2.8,mg:15,k2:200,na:1100,zn:2.0,fo:5,se:10,col:70,src:"CREA"},
   {n:"Salsiccia piccante meridionale",c:"Carni e derivati",k:366,p:33.6,gs:14,g:25.2,z:1.3,ch:1.3,fi:0,ca:18,fe:1.5,mg:18,k2:260,na:1200,zn:2.5,fo:5,se:12,col:80,src:"CREA"},
   {n:"Trippa di vitello bollita",c:"Carni e derivati",k:108,p:15.8,gs:0.5,g:5,z:0,ch:0,fi:0,ca:8,fe:4,mg:12,k2:18,na:107,zn:2.4,fo:76,se:10,col:122,src:"CREA"},
@@ -709,7 +714,8 @@ const DB_CREA=[
 {n:"Nocciole",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:113,se:2,col:0,src:"CREA"},
 {n:"Pistacchi (senza guscio)",c:"Frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0,src:"CREA"},
 {n:"Farina di mais (polenta) cruda",c:"Cereali e pasta",k:323,p:8,gs:0.5,g:0.7,z:0.6,ch:72.7,fi:6.2,ca:7,fe:0.4,mg:15,k2:34,na:5,zn:0.18,fo:25,se:9.5,col:0,src:"CREA"},
-{n:"Mortadella Bologna",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.9,ch:0,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:5,se:20,col:72,src:"CREA"},
+// FIX (check strutturale): zuccheri (0.9g, destrosio di stagionatura) non potevano superare i carboidrati totali (0g) - corretto ch a 0.9 - 2026-07-30
+{n:"Mortadella Bologna",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.9,ch:0.9,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:5,se:20,col:72,src:"CREA"},
 // Kcal/grassi sottostimati (402kcal era sotto ogni fonte reale trovata, range tipico 450-600kcal) - 2026-07-29
 {n:"Nduja calabrese",c:"Salumi",k:525,p:17,gs:19,g:49,z:0,ch:0,fi:0,ca:12,fe:2,mg:20,k2:300,na:2200,zn:2.5,fo:5,se:10,col:95,src:"CREA"},
 {n:"Speck dell'Alto Adige",c:"Salumi",k:299,p:30.7,gs:6.3,g:19.1,z:0,ch:1.2,fi:0,ca:8,fe:1.4,mg:27,k2:658,na:1640,zn:2.5,fo:5,se:15,col:91,src:"CREA"},
@@ -832,7 +838,8 @@ const DB_CREA=[
 {n:"Noci del Brasile (Paranoci)",c:"Frutta secca",k:659,p:14.3,gs:16.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0,src:"CREA"},
 // Corretto a valore reale confermato via ricerca (~18mcg), coerente col duplicato BDA_749 già corretto - 2026-07-30
 {n:"Wasabi in pasta",c:"Condimenti",k:109,p:4.8,gs:0.1,g:0.6,z:4.1,ch:23.0,fi:7.8,ca:128,fe:1.0,mg:69,k2:568,na:818,zn:0.9,fo:18,se:2.5,col:0,src:"CREA"},
-{n:"Lievito di birra in scaglie",c:"Alimenti vari",k:70,p:12.1,gs:0.6,g:0.4,z:1.1,ch:1.1,fi:6.9,ca:13,fe:4.9,mg:50,k2:610,na:16,zn:7.5,fo:2000,se:15,col:0,src:"CREA"},
+// FIX (check strutturale): grassi saturi (0.6g) non potevano superare i grassi totali (0.4g) - corretto g a 0.6 - 2026-07-30
+{n:"Lievito di birra in scaglie",c:"Alimenti vari",k:70,p:12.1,gs:0.6,g:0.6,z:1.1,ch:1.1,fi:6.9,ca:13,fe:4.9,mg:50,k2:610,na:16,zn:7.5,fo:2000,se:15,col:0,src:"CREA"},
 {n:"Quinoa cotta",c:"Cereali e derivati",k:140,p:4.8,gs:0.84,g:2.5,z:3.1,ch:24.3,fi:3.6,ca:21,fe:1.1,mg:61,k2:175,na:4,zn:1.18,fo:152,se:3,col:0,src:"CREA"},
 {n:"Orzo perlato cotto",c:"Cereali e derivati",k:118,p:2.6,gs:0.1,g:0.6,z:1.2,ch:26.4,fi:1.8,ca:16,fe:0.9,mg:34,k2:67,na:2,zn:0.82,fo:54,se:13,col:0,src:"CREA"},
 {n:"Cous cous cotto",c:"Cereali e derivati",k:179,p:3.6,gs:0,g:1.1,z:1.3,ch:39.7,fi:2.7,ca:10,fe:0.5,mg:15,k2:84,na:96,zn:0.39,fo:22,se:27,col:0,src:"CREA"},
@@ -975,7 +982,8 @@ const DB_CREA=[
 {n:"Pollo intero (con pelle)",c:"Carni bianche",k:171,p:19,gs:3.27,g:10.6,z:0,ch:0,fi:0,ca:5,fe:0.6,mg:24,k2:300,na:62,zn:1.1,fo:9,se:9,col:93,src:"BDA"},
 {n:"Pollo coscia (con pelle)",c:"Carni bianche",k:125,p:18.4,gs:1.61,g:5.7,z:0,ch:0,fi:0,ca:8,fe:0.7,mg:21,k2:228,na:87,zn:1.7,fo:8,se:13,col:94,src:"BDA"},
 // ── SALUMI AGGIUNTIVI ──
-{n:"Mortadella Bologna IGP",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.5,ch:0,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:5,se:20,col:72,src:"CREA"},
+// FIX (check strutturale): zuccheri (0.5g, destrosio di stagionatura) non potevano superare i carboidrati totali (0g) - corretto ch a 0.5 - 2026-07-30
+{n:"Mortadella Bologna IGP",c:"Salumi",k:288,p:15.7,gs:7.88,g:25,z:0.5,ch:0.5,fi:0,ca:8,fe:1,mg:13,k2:314,na:960,zn:1.6,fo:5,se:20,col:72,src:"CREA"},
 {n:"Speck Alto Adige IGP",c:"Salumi",k:299,p:30.7,gs:6.3,g:19.1,z:0,ch:1.2,fi:0,ca:8,fe:1.4,mg:27,k2:658,na:1640,zn:2.5,fo:5,se:15,col:91,src:"CREA"},
 {n:"Pancetta affumicata",c:"Salumi",k:276,p:15.8,gs:7.97,g:23.6,z:0,ch:0,fi:0,ca:6,fe:0.5,mg:15,k2:250,na:1260,zn:1.5,fo:3,se:7,col:65,src:"BDA"},
 {n:"Nduja di Spilinga",c:"Salumi processati",k:540,p:13,gs:21,g:54,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:15,k2:230,na:1200,zn:2,fo:5,se:12,col:100,src:"CREA"},
@@ -1071,7 +1079,8 @@ const DB_CREA=[
 // Fosforo (~45mg, match esatto borragine) era nel campo folati; folati reali borragine ~13mcg (confermato via ricerca, coerente con DB_CREA_525) - 2026-07-29
 {n:"Borragine (foglie fresche)",c:"Verdure",k:21,p:1.8,gs:0,g:0.7,z:0.8,ch:1.9,fi:1.5,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
 // Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
-{n:"Crescione d'acqua",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:43,se:0.9,col:0,src:"BDA"},
+// FIX (check strutturale - divergenza kcal tra duplicati): allineato al duplicato CREA gia verificato e confermato da fonte esterna (~11kcal reali per crescione d'acqua, non 28) - 2026-07-30
+{n:"Crescione d'acqua",c:"Verdure",k:11,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.4,fo:43,se:0.9,col:0,src:"BDA"},
 {n:"Puntarelle (cicoria di catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:14,k2:358,na:21,zn:0.3,fo:110,se:0.8,col:0,src:"BDA"},
 {n:"Lampascioni (muscari bulbi)",c:"Verdure",k:27,p:2,gs:0,g:0.2,z:1.5,ch:5,fi:2.4,ca:22,fe:0.9,mg:12,k2:250,na:10,zn:0.4,fo:25,se:0.5,col:0,src:"CREA"},
 {n:"Tarassaco (foglie, dente di leone)",c:"Verdure",k:37,p:3.1,gs:0,g:1.1,z:3.7,ch:3.7,fi:0.4,ca:316,fe:3.2,mg:36,k2:440,na:76,zn:0.41,fo:27,se:0.5,col:0,src:"CREA"},
@@ -1256,7 +1265,8 @@ const DB_CREA=[
 {n:"Zafferano in polvere",c:"Condimenti",k:337,p:11.4,gs:1.59,g:5.9,z:42.4,ch:61.5,fi:3.9,ca:110,fe:11.1,mg:264,k2:1720,na:150,zn:1.1,fo:0,se:5,col:0,src:"BDA"},
 {n:"Pasta di acciughe (in tubo)",c:"Condimenti",k:182,p:20,gs:2.5,g:10,z:0,ch:1.5,fi:0,ca:230,fe:3.5,mg:40,k2:380,na:3650,zn:1.8,fo:15,se:32,col:56,src:"CREA"},
 {n:"Aceto balsamico di Modena IGP",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:15,ch:17.3,fi:0,ca:27,fe:0.7,mg:12,k2:112,na:23,zn:0.1,fo:1,se:0.5,col:0,src:"CREA"},
-{n:"Senape di Digione",c:"Condimenti",k:93,p:4.4,gs:0.5,g:5.8,z:3.2,ch:8.1,fi:3,ca:100,fe:2.7,mg:49,k2:152,na:1040,zn:0.8,fo:45,se:5,col:0,src:"CREA"},
+// FIX (dupe kcal 93 vs 150 con voce EXTRA equivalente): 93kcal era troppo basso, confermato da 2 fonti indipendenti (fatsecret.it/lecalorie.it) che la senape di Digione reale e' ~145-151kcal, 11g grassi, 7-7.5g proteine - 2026-07-30
+{n:"Senape di Digione",c:"Condimenti",k:150,p:7.5,gs:0.7,g:11,z:2.2,ch:4,fi:3,ca:100,fe:2.7,mg:49,k2:152,na:1040,zn:0.8,fo:45,se:5,col:0,src:"CREA"},
 {n:"Tahini (crema di sesamo)",c:"Condimenti",k:595,p:17,gs:7.7,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:98,se:34.4,col:0,src:"CREA"},
 // OLI VEGETALI MENO COMUNI
 {n:"Olio di sesamo (crudo)",c:"Grassi e oli",k:899,p:0,gs:13.85,g:99.9,z:0,ch:0,fi:0,ca:1,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
@@ -1300,7 +1310,8 @@ const DB_CREA=[
 // Folati (390mcg) troppo alti per un fungo essiccato: fonti concordano su folati modesti anche concentrati dall'essiccazione - 2026-07-29
 {n:"Finferli essiccati (Cantharellus, secchi)",c:"Funghi",k:269,p:10.5,gs:1.0,g:3.8,z:3.5,ch:48,fi:30,ca:110,fe:27,mg:85,k2:2300,na:70,zn:5.0,fo:60,se:15,col:0,src:"CREA"},
 // ── SALUMI ITALIANI MANCANTI (CREA 2019) ──
-{n:"Salame Napoli",c:"Salumi",k:378,p:27.4,gs:10.16,g:29.7,z:0.5,ch:0.2,fi:0,ca:12,fe:0.9,mg:22,k2:667,na:1640,zn:2.5,fo:5,se:17,col:91,src:"CREA"},
+// FIX (check strutturale): zuccheri (0.5g) non potevano superare i carboidrati totali (0.2g) - corretto ch a 0.5 - 2026-07-30
+{n:"Salame Napoli",c:"Salumi",k:378,p:27.4,gs:10.16,g:29.7,z:0.5,ch:0.5,fi:0,ca:12,fe:0.9,mg:22,k2:667,na:1640,zn:2.5,fo:5,se:17,col:91,src:"CREA"},
 {n:"Salame Felino IGP (stagionato)",c:"Salumi",k:375,p:30.5,gs:10.34,g:27.9,z:0.5,ch:0.5,fi:0,ca:14,fe:1.9,mg:31,k2:486,na:1697,zn:4.3,fo:5,se:3.1,col:95,src:"CREA"},
 {n:"Finocchiona IGP toscana (stagionata)",c:"Salumi",k:370,p:21,gs:13,g:30,z:1.5,ch:2.0,fi:0,ca:18,fe:1.5,mg:18,k2:275,na:1580,zn:2.8,fo:5,se:18,col:88,src:"CREA"},
 // Grassi troppo bassi (5.5g) per un salume pregiato ben marezzato — allineato a duplicato con profilo piu plausibile (20g grassi) — 2026-07-29
@@ -2110,7 +2121,8 @@ const DB_BDA=[
 // Fosforo (78mg, match esatto USDA topinambur) era nel campo folati; folati reali topinambur ~13mcg - 2026-07-29
 {n:"Topinambur crudo",c:"Ortaggi",k:73,p:2.0,gs:0,g:0.0,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0,src:"CREA"},
 // Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
-{n:"Crescione d'acqua fresco",c:"Ortaggi",k:22,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:282,na:41,zn:0.1,fo:43,se:0.9,col:0,src:"BDA"},
+// FIX (check strutturale - divergenza kcal tra duplicati): allineato al duplicato CREA gia verificato e confermato da fonte esterna (~11kcal reali per crescione d'acqua, non 22) - 2026-07-30
+{n:"Crescione d'acqua fresco",c:"Ortaggi",k:11,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.1,fo:43,se:0.9,col:0,src:"BDA"},
 // Terzo duplicato con lo stesso bug: folati reali acetosella ~13mcg (confermato via ricerca) - 2026-07-30
 {n:"Acetosella fresca (Rumex acetosa)",c:"Ortaggi",k:22,p:2.0,gs:0,g:0.3,z:0.5,ch:3.2,fi:3.0,ca:44,fe:2.4,mg:16,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
 // Allineato al duplicato fresco già corretto (30mcg) - 2026-07-30
@@ -2393,7 +2405,8 @@ const DB_BDA=[
 {n:"Pad Thai di gamberi (noodles di riso)",c:"Piatti pronti",k:190,p:12.0,gs:1.5,g:7.0,z:4.0,ch:21.5,fi:1.0,ca:45,fe:1.8,mg:30,k2:280,na:650,zn:1.5,fo:120,se:18,col:55,src:"BDA"},
 {n:"Dhal di lenticchie rosse (indiano)",c:"Piatti pronti",k:110,p:6.5,gs:0.5,g:2.5,z:2.0,ch:17.5,fi:4.5,ca:40,fe:3.0,mg:35,k2:320,na:350,zn:1.2,fo:130,se:4,col:0,src:"BDA"},
 {n:"Zuppa miso con tofu e alga wakame",c:"Piatti pronti",k:40,p:3.0,gs:0.3,g:1.5,z:1.5,ch:4.5,fi:0.8,ca:50,fe:0.8,mg:18,k2:160,na:900,zn:0.5,fo:20,se:2,col:0,src:"BDA"},
-{n:"Bulgogi di manzo (coreano, marinato)",c:"Carni rosse",k:185,p:22.0,gs:2.5,g:9.5,z:4.5,ch:4.0,fi:0.2,ca:15,fe:2.5,mg:25,k2:380,na:580,zn:4.5,fo:8,se:12,col:75,src:"BDA"},
+// FIX (check strutturale): zuccheri (4.5g, marinata dolce coreana) non potevano superare i carboidrati totali (4.0g) - corretto ch a 4.5 - 2026-07-30
+{n:"Bulgogi di manzo (coreano, marinato)",c:"Carni rosse",k:185,p:22.0,gs:2.5,g:9.5,z:4.5,ch:4.5,fi:0.2,ca:15,fe:2.5,mg:25,k2:380,na:580,zn:4.5,fo:8,se:12,col:75,src:"BDA"},
 {n:"Tikka masala di pollo (piatto, con salsa)",c:"Piatti pronti",k:130,p:14.5,gs:2.0,g:7.0,z:3.5,ch:5.5,fi:1.0,ca:60,fe:1.2,mg:28,k2:420,na:650,zn:1.5,fo:8,se:12,col:55,src:"BDA"},
 {n:"Satay di pollo (spiedino, senza salsa)",c:"Carni bianche",k:165,p:22.5,gs:1.2,g:7.5,z:1.5,ch:1.5,fi:0.2,ca:15,fe:0.8,mg:28,k2:310,na:480,zn:1.2,fo:8,se:20,col:75,src:"BDA"},
 {n:"Tacos di pollo (tortilla mais + pollo + verdure)",c:"Piatti pronti",k:200,p:12.0,gs:2.0,g:7.5,z:2.5,ch:22.0,fi:2.5,ca:80,fe:1.5,mg:30,k2:280,na:520,zn:1.5,fo:110,se:10,col:40,src:"BDA"},
@@ -2863,7 +2876,8 @@ const DB_UPF = [
   {n:"Merendina spugnosa tipo Twinkie",c:"Dolci confezionati",src:"UPF",k:360,p:4.4,gs:9.8,g:9.8,z:0,ch:64,fi:0.5,ca:35,fe:1,mg:8,k2:65,na:330,zn:0.3,fo:50,se:3,col:20},
   // Corretto per coerenza col duplicato già fixato (Brioche siciliana col tuppo, 30mcg) - 2026-07-30
   {n:"Brioche con crema industriale",c:"Dolci confezionati",src:"UPF",k:340,p:6.5,gs:5,g:12,z:28,ch:52,fi:1,ca:55,fe:1.2,mg:14,k2:130,na:310,zn:0.4,fo:30,se:4,col:55},
-  {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:41.7,gs:18,g:25.6,z:58,ch:13.9,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:105,se:3,col:10},
+  // FIX (check strutturale, dato palesemente corrotto): proteine (41.7g) e carboidrati (13.9g) erano incompatibili sia con un wafer al cioccolato reale sia con l'Atwater (kcal attese ~404 col dato vecchio) - corretti a valori reali etichetta Nestle KitKat (proteine 7.3g, carboidrati 59.6g, coerenti con zuccheri 58g gia presenti e con kcal 486.1) - 2026-07-30
+  {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:7.3,gs:18,g:25.6,z:58,ch:59.6,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:105,se:3,col:10},
 
   // ── FAST FOOD / STREET FOOD ──
   {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:45,fe:2,mg:20,k2:195,na:320,zn:1.2,fo:115,se:8,col:45},
@@ -3116,8 +3130,8 @@ const DB_UPF = [
   {n:"Salsa Caesar industriale (bottiglia)",c:"Condimenti",src:"UPF",k:388,p:2.5,gs:4.5,g:40,z:3.5,ch:5.0,fi:0.3,ca:60,fe:0.3,mg:5,k2:32,na:890,zn:0.2,fo:35,se:4,col:30},
   // Allineato a duplicato con valori piu coerenti con l'etichetta reale Hellmann's (688kcal/77.8g grassi, tipico per maionese piena) — 2026-07-29
   {n:"Maionese Hellmann's (per 100g)",c:"Condimenti",src:"UPF",k:688,p:0,gs:10.8,g:77.8,z:0.3,ch:0.3,fi:0,ca:10,fe:0.5,mg:3,k2:20,na:486,zn:0.2,fo:20,se:2,col:55},
-  // Allineato a voce CREA gia verificata "Senape di Digione" — 2026-07-28
-  {n:"Senape di Digione (Maille, per 100g)",c:"Condimenti",src:"UPF",k:93,p:4.4,gs:0.5,g:5.8,z:3.2,ch:8.1,fi:3.0,ca:100,fe:2.7,mg:49,k2:152,na:1040,zn:0.8,fo:45,se:5,col:0},
+  // Allineato a voce CREA "Senape di Digione" ricorretta (era 93kcal, ora 150kcal - vedi fix 2026-07-30) — 2026-07-28/30
+  {n:"Senape di Digione (Maille, per 100g)",c:"Condimenti",src:"UPF",k:150,p:7.5,gs:0.7,g:11,z:2.2,ch:4,fi:3.0,ca:100,fe:2.7,mg:49,k2:152,na:1040,zn:0.8,fo:45,se:5,col:0},
   {n:"Aceto di mele Ponti in bottiglia (per 100mL)",c:"Condimenti",src:"UPF",k:42,p:0.1,gs:0,g:0,z:6,ch:7,fi:0,ca:7,fe:0.3,mg:5,k2:73,na:5,zn:0.1,fo:4,se:0,col:0},
 
   // ── FAST FOOD E PRODOTTI INDUSTRIA ALIMENTARE ──
@@ -3130,7 +3144,8 @@ const DB_UPF = [
   // RISOLTO (deep-pass duplicati): allineato al duplicato già coerente col pattern pizza+formaggio (25mcg) - 2026-07-30
   {n:"Pizza surgelata 4 stagioni (per 100g)",c:"Fast food",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:175,fe:1.5,mg:18,k2:170,na:620,zn:1.2,fo:25,se:10,col:20},
   {n:"Kebab (doner, pane+carne+salse, per 100g)",c:"Fast food",src:"UPF",k:156,p:13.5,gs:3.1,g:9,z:2.2,ch:5.1,fi:0,ca:65,fe:2.5,mg:20,k2:200,na:670,zn:2.0,fo:8,se:10,col:45},
-  {n:"Würstel di pollo (industriale)",c:"Carni e derivati",src:"UPF",k:214,p:14,gs:4.9,g:17,z:1.0,ch:0.5,fi:1.5,ca:25,fe:0.8,mg:12,k2:170,na:870,zn:1.0,fo:8,se:10,col:60},
+  // FIX (check strutturale): zuccheri (1g, destrosio industriale) non potevano superare i carboidrati totali (0.5g) - corretto ch a 1 - 2026-07-30
+  {n:"Würstel di pollo (industriale)",c:"Carni e derivati",src:"UPF",k:214,p:14,gs:4.9,g:17,z:1.0,ch:1.0,fi:1.5,ca:25,fe:0.8,mg:12,k2:170,na:870,zn:1.0,fo:8,se:10,col:60},
   {n:"Würstel di maiale (industriale)",c:"Carni e derivati",src:"UPF",k:305,p:11.5,gs:6.0,g:27.0,z:0.5,ch:2.5,fi:0,ca:10,fe:0.9,mg:10,k2:160,na:930,zn:1.5,fo:8,se:14,col:75},
   {n:"Cotechino (precotto in busta)",c:"Carni e derivati",src:"UPF",k:304,p:22,gs:7.9,g:24,z:0,ch:0,fi:0,ca:12,fe:1.5,mg:14,k2:200,na:720,zn:2.0,fo:5,se:15,col:90},
 
@@ -3465,7 +3480,8 @@ const DB_UPF = [
 {n:"Yomo yogurt alla frutta (per 100g)",c:"Latticini industriali",src:"UPF",k:89,p:4.1,gs:0.1,g:0.1,z:17,ch:17,fi:0.1,ca:125,fe:0.1,mg:10,k2:155,na:68,zn:0.4,fo:7,se:2,col:8},
 // SALSE E CONDIMENTI INDUSTRIALI
 {n:"Sriracha Hot Chili Sauce (per 100g)",c:"Salse e condimenti",src:"UPF",k:4,p:0,gs:0,g:0,z:0.5,ch:1,fi:0,ca:0,fe:3,mg:0,k2:1,na:75,zn:0,fo:5,se:2,col:0},
-{n:"Barbecue sauce (per 100g)",c:"Salse e condimenti",src:"UPF",k:63.7,p:0.7,gs:0,g:0,z:3.3,ch:7.3,fi:0.5,ca:12,fe:0.5,mg:10,k2:280,na:600,zn:0.2,fo:2,se:1,col:0},
+// FIX (check strutturale, Atwater incoerente - il vecchio dato era troppo diluito): allineato a valori tipici salsa BBQ generica (172kcal, 41.5g carboidrati di cui 33g zuccheri, USDA/fatsecret) - 2026-07-30
+{n:"Barbecue sauce (per 100g)",c:"Salse e condimenti",src:"UPF",k:172,p:0.8,gs:0.1,g:0.6,z:33,ch:41.5,fi:0.9,ca:18,fe:0.7,mg:14,k2:280,na:985,zn:0.2,fo:2,se:1,col:0},
 {n:"Tzatziki industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:117,p:6,gs:0.6,g:9.1,z:2.3,ch:2.8,fi:0.5,ca:95,fe:0.3,mg:12,k2:125,na:12.8,zn:0.5,fo:10,se:3,col:18},
 {n:"Ranch Dressing (per 100g)",c:"Salse e condimenti",src:"UPF",k:367,p:0,gs:5,g:36.7,z:3.3,ch:6.7,fi:0,ca:48,fe:0.2,mg:5,k2:55,na:933,zn:0.2,fo:5,se:2,col:38},
 {n:"Salsa teriyaki (per 100g)",c:"Salse e condimenti",src:"UPF",k:152,p:2.3,gs:0.1,g:0.5,z:22,ch:35,fi:0.1,ca:18,fe:0.5,mg:18,k2:152,na:2160,zn:0.3,fo:8,se:3,col:0},
@@ -4188,7 +4204,8 @@ const DB_EXTRA=[
 {n:"Samosa (patate e piselli)",c:"Cucina etnica",src:"EXTRA",k:308,p:4.7,gs:2,g:17.9,z:2,ch:32.2,fi:3,ca:25,fe:1.5,mg:20,k2:250,na:400,zn:0.5,fo:70,se:3,col:0},
 {n:"Chapati",c:"Cucina etnica",src:"EXTRA",k:297,p:11.3,gs:1.95,g:7.5,z:2.7,ch:46.4,fi:4.9,ca:93,fe:3.01,mg:62,k2:266,na:409,zn:1.57,fo:61,se:53.7,col:0},
 // === GELATI ===
-{n:"Gelato al cioccolato artigianale",c:"Gelati",src:"EXTRA",k:150,p:3.5,gs:6,g:6.7,z:22,ch:20.1,fi:0.3,ca:110,fe:0.8,mg:20,k2:220,na:55,zn:0.5,fo:100,se:2,col:25},
+// FIX (check strutturale): zuccheri (22g) non potevano superare i carboidrati totali (20.1g) - corretto ch a 22 - 2026-07-30
+{n:"Gelato al cioccolato artigianale",c:"Gelati",src:"EXTRA",k:150,p:3.5,gs:6,g:6.7,z:22,ch:22,fi:0.3,ca:110,fe:0.8,mg:20,k2:220,na:55,zn:0.5,fo:100,se:2,col:25},
 {n:"Sorbetto alla fragola",c:"Gelati",src:"EXTRA",k:113,p:0.4,gs:0.1,g:0.4,z:27,ch:27,fi:0.8,ca:10,fe:0.3,mg:8,k2:80,na:40,zn:0.1,fo:12,se:0.5,col:0},
 {n:"Gelato alla crema artigianale",c:"Gelati",src:"EXTRA",k:280,p:5.1,gs:7,g:14,z:20,ch:34.9,fi:0,ca:130,fe:0.3,mg:12,k2:180,na:65,zn:0.4,fo:105,se:2,col:70},
 {n:"Gelato stracciatella artigianale",c:"Gelati",src:"EXTRA",k:193,p:2.9,gs:7,g:7,z:31.5,ch:31.5,fi:0,ca:120,fe:0.4,mg:12,k2:185,na:60,zn:0.4,fo:100,se:2,col:68},
@@ -4253,7 +4270,8 @@ const DB_EXTRA=[
 {n:"Crema di verdure Nestlé Naturnes",c:"Baby food",src:"EXTRA",k:58,p:1.5,gs:0.5,g:2,z:2,ch:9,fi:1,ca:25,fe:0.5,mg:10,k2:150,na:30,zn:0.3,fo:35,se:1,col:0},
 {n:"Biscotti baby Plasmon",c:"Baby food",src:"EXTRA",k:435,p:6.8,gs:2.7,g:12.6,z:24.2,ch:73.7,fi:3.4,ca:83,fe:2.9,mg:30,k2:425,na:9,zn:0.8,fo:110,se:20.5,col:4},
 {n:"Pastina stelline (cotta)",c:"Baby food",src:"EXTRA",k:149,p:4.5,gs:0.1,g:0.7,z:0.5,ch:30,fi:1,ca:8,fe:0.8,mg:12,k2:50,na:3,zn:0.4,fo:55,se:8,col:0},
-{n:"Latte di crescita 3 (formula)",c:"Baby food",src:"EXTRA",k:66,p:1.9,gs:1.8,g:3,z:8,ch:7.8,fi:0.5,ca:84,fe:1.2,mg:8,k2:80,na:34,zn:0.5,fo:65,se:2,col:5},
+// FIX (check strutturale): zuccheri (8g, lattosio) non potevano superare i carboidrati totali (7.8g) - corretto ch a 8 - 2026-07-30
+{n:"Latte di crescita 3 (formula)",c:"Baby food",src:"EXTRA",k:66,p:1.9,gs:1.8,g:3,z:8,ch:8,fi:0.5,ca:84,fe:1.2,mg:8,k2:80,na:34,zn:0.5,fo:65,se:2,col:5},
 {n:"Purea di mele baby",c:"Baby food",src:"EXTRA",k:68,p:0.2,gs:0,g:0.3,z:10,ch:16,fi:1,ca:5,fe:0.1,mg:3,k2:80,na:3,zn:0.1,fo:8,se:0.2,col:0},
 {n:"Purea banana e cereali baby",c:"Baby food",src:"EXTRA",k:85,p:1,gs:0.1,g:0.3,z:12,ch:20,fi:1.5,ca:10,fe:1,mg:12,k2:180,na:10,zn:0.3,fo:25,se:1,col:0},
 {n:"Fiocchi di avena per bambini",c:"Baby food",src:"EXTRA",k:389,p:16.9,gs:1.22,g:6.9,z:1,ch:66.3,fi:10.6,ca:54,fe:4.72,mg:177,k2:429,na:2,zn:3.97,fo:56,se:20,col:0},
@@ -4385,7 +4403,8 @@ const DB_EXTRA=[
 {n:"Cheesecake",c:"Dolci e dessert",src:"EXTRA",k:321,p:5.5,gs:9.92,g:22.5,z:21.8,ch:25.5,fi:0.4,ca:51,fe:0.63,mg:11,k2:90,na:438,zn:0.51,fo:18,se:5.2,col:55},
 {n:"Panna cotta",c:"Dolci e dessert",src:"EXTRA",k:229.7,p:1.1,gs:7.9,g:12.7,z:22.9,ch:24.1,fi:0,ca:80,fe:0.1,mg:8,k2:100,na:55,zn:0.3,fo:5,se:2,col:40},
 {n:"Mousse al cioccolato",c:"Dolci e dessert",src:"EXTRA",k:225,p:4.1,gs:9.15,g:16,z:14.8,ch:16.1,fi:0.6,ca:96,fe:0.55,mg:20,k2:143,na:38,zn:0.64,fo:15,se:7.4,col:140},
-{n:"Crème caramel",c:"Dolci e dessert",src:"EXTRA",k:145,p:4.5,gs:1.8,g:4,z:23.2,ch:22.8,fi:0,ca:110,fe:0.3,mg:10,k2:130,na:53,zn:0.5,fo:95,se:3,col:85},
+// FIX (check strutturale): zuccheri (23.2g) non potevano superare i carboidrati totali (22.8g) - corretto ch a 23.2 - 2026-07-30
+{n:"Crème caramel",c:"Dolci e dessert",src:"EXTRA",k:145,p:4.5,gs:1.8,g:4,z:23.2,ch:23.2,fi:0,ca:110,fe:0.3,mg:10,k2:130,na:53,zn:0.5,fo:95,se:3,col:85},
 {n:"Profiteroles al cioccolato",c:"Dolci e dessert",src:"EXTRA",k:330,p:6,gs:10,g:19,z:24,ch:35,fi:0.5,ca:75,fe:1,mg:15,k2:180,na:110,zn:0.5,fo:110,se:5,col:110},
 {n:"Semifreddo al caffè",c:"Dolci e dessert",src:"EXTRA",k:265,p:4,gs:9,g:15,z:26,ch:30,fi:0,ca:90,fe:0.3,mg:10,k2:160,na:60,zn:0.4,fo:85,se:2,col:90},
 {n:"Zeppole di San Giuseppe",c:"Dolci e dessert",src:"EXTRA",k:355,p:6,gs:6,g:18,z:20,ch:43,fi:0.5,ca:50,fe:1,mg:12,k2:130,na:150,zn:0.4,fo:90,se:8,col:80},
@@ -4506,7 +4525,8 @@ const DB_EXTRA=[
 {n:"Skyr islandese naturale",c:"Latticini",src:"EXTRA",k:63,p:11,gs:0,g:0.2,z:4,ch:4,fi:0,ca:130,fe:0.1,mg:14,k2:170,na:50,zn:0.6,fo:3,se:5,col:2},
 {n:"Knekkebrød di segale (gallette scandinave)",c:"Pane e derivati",src:"EXTRA",k:348,p:11,gs:0.5,g:3.5,z:1.5,ch:65,fi:17,ca:30,fe:3.5,mg:80,k2:350,na:480,zn:2,fo:80,se:15,col:0},
 {n:"Aringa marinata nordica (herring)",c:"Pesce",src:"EXTRA",k:262,p:14.2,gs:2.38,g:18,z:7.7,ch:9.6,fi:0,ca:77,fe:1.22,mg:8,k2:69,na:870,zn:0.53,fo:2,se:58.5,col:13},
-{n:"Salmone gravlax (salmone marinato nordico)",c:"Pesce",src:"EXTRA",k:175,p:23,gs:1.5,g:9,z:0.5,ch:0,fi:0,ca:20,fe:0.8,mg:30,k2:420,na:1500,zn:0.6,fo:10,se:40,col:55},
+// FIX (check strutturale): zuccheri (0.5g, dalla marinata sale+zucchero del gravlax) non potevano superare i carboidrati totali (0g) - corretto ch a 0.5 - 2026-07-30
+{n:"Salmone gravlax (salmone marinato nordico)",c:"Pesce",src:"EXTRA",k:175,p:23,gs:1.5,g:9,z:0.5,ch:0.5,fi:0,ca:20,fe:0.8,mg:30,k2:420,na:1500,zn:0.6,fo:10,se:40,col:55},
 // kcal/carboidrati/zuccheri erano sovrastimati rispetto a fonte ufficiale norvegese (matvaretabellen.no, 190kcal/45g cho/44g zuccheri/1.5g fibre) — 2026-07-28
 {n:"Marmellata di lingonberry (mirtilli nordici)",c:"Frutta conservata",src:"EXTRA",k:190,p:0.3,gs:0,g:0.3,z:44,ch:45,fi:1.5,ca:10,fe:0.5,mg:5,k2:40,na:10,zn:0.1,fo:10,se:0.5,col:0},
 // === CUCINA MEDIORIENTALE AGGIUNTIVA ===
@@ -4530,8 +4550,10 @@ const DB_EXTRA=[
 {n:"Orata (sparus aurata) al forno",c:"Pesce",src:"EXTRA",k:115,p:20.5,gs:0.8,g:3.5,z:0,ch:0,fi:0,ca:32,fe:0.8,mg:30,k2:350,na:65,zn:0.6,fo:10,se:42,col:60},
 // Allineato a voce CREA gia verificata "Sardine fresche": il calcio locale (382mg) era sproporzionato per pesce fresco senza lische commestibili (valore piu tipico delle sardine in scatola con lische ammorbidite) — 2026-07-28
 {n:"Sardine fresche crude",c:"Pesce",src:"EXTRA",k:225,p:20.3,gs:5.23,g:15.4,z:1.5,ch:1.5,fi:0,ca:85,fe:2.4,mg:70,k2:630,na:115,zn:3.9,fo:10,se:58,col:65},
-{n:"Trota salmonata affumicata",c:"Pesce",src:"EXTRA",k:168,p:25,gs:1.5,g:7,z:0.5,ch:0,fi:0,ca:30,fe:0.5,mg:28,k2:500,na:800,zn:0.5,fo:10,se:35,col:70},
-{n:"Cernia (grouper) al vapore",c:"Pesce",src:"EXTRA",k:118,p:24,gs:0.5,g:2,z:0.5,ch:0,fi:0,ca:25,fe:0.6,mg:35,k2:400,na:90,zn:0.4,fo:10,se:40,col:55},
+// FIX (check strutturale): zuccheri (0.5g) impossibile per pesce affumicato senza marinata zuccherina - azzerato invece di alzare ch (nessuna fonte reale attribuisce zucchero al pesce affumicato semplice) - 2026-07-30
+{n:"Trota salmonata affumicata",c:"Pesce",src:"EXTRA",k:168,p:25,gs:1.5,g:7,z:0,ch:0,fi:0,ca:30,fe:0.5,mg:28,k2:500,na:800,zn:0.5,fo:10,se:35,col:70},
+// FIX (check strutturale): zuccheri (0.5g) impossibile per pesce al vapore senza alcun ingrediente zuccherino - azzerato invece di alzare ch - 2026-07-30
+{n:"Cernia (grouper) al vapore",c:"Pesce",src:"EXTRA",k:118,p:24,gs:0.5,g:2,z:0,ch:0,fi:0,ca:25,fe:0.6,mg:35,k2:400,na:90,zn:0.4,fo:10,se:40,col:55},
 // === FORMAGGI E PIATTI TIPICI ITALIANI ===
 {n:"Castelmagno DOP (formaggio piemontese, stagionato 12 mesi)",c:"Formaggi",src:"EXTRA",k:415,p:26,gs:24,g:34,z:0,ch:0.5,fi:0,ca:700,fe:0.3,mg:30,k2:150,na:670,zn:3,fo:18,se:8,col:95},
 {n:"Fiordilatte (mozzarella vaccina fresca campana)",c:"Formaggi",src:"EXTRA",k:299,p:22.2,gs:13.9,g:22.1,z:0,ch:2.4,fi:0,ca:505,fe:0.44,mg:20,k2:76,na:486,zn:2.92,fo:7,se:17,col:79},

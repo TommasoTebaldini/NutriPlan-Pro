@@ -1326,7 +1326,8 @@ const DB_CREA=[
 {n:"Vino passito (per 100ml)",c:"Bevande",k:145,p:0.5,gs:0,g:0,z:15,ch:17,fi:0,ca:10,fe:0.5,mg:12,k2:120,na:18,zn:0.1,fo:25,se:0,col:0,src:"CREA"},
 // ── VOCI CREA MANCANTI (aggiornamento finale) ──
 {n:"Polenta gialla cotta",c:"Cereali e derivati",k:73,p:0.9,gs:0.1,g:0.04,z:0.2,ch:17.8,fi:0.9,ca:3,fe:0.1,mg:2,k2:16,na:91,zn:0.03,fo:38,se:2,col:0,src:"CREA"},
-{n:"Agnolotti piemontesi al ragù (freschi)",c:"Piatti pronti",k:265,p:13.5,gs:4.5,g:9.5,z:2.5,ch:32,fi:1.5,ca:65,fe:2.0,mg:25,k2:185,na:350,zn:1.8,fo:145,se:15,col:55,src:"CREA"},
+// Fosforo (pasta all'uovo+ripieno carne) era nel campo folati; folati reali ~40mcg (coerente col pattern pasta fresca all'uovo) - 2026-07-30
+{n:"Agnolotti piemontesi al ragù (freschi)",c:"Piatti pronti",k:265,p:13.5,gs:4.5,g:9.5,z:2.5,ch:32,fi:1.5,ca:65,fe:2.0,mg:25,k2:185,na:350,zn:1.8,fo:40,se:15,col:55,src:"CREA"},
 {n:"Bistecca fiorentina (vitellone, cruda)",c:"Carni rosse",k:126,p:22.8,gs:1.3,g:4.0,z:0,ch:0,fi:0,ca:8,fe:2.5,mg:22,k2:355,na:55,zn:4.5,fo:8,se:22,col:65,src:"CREA"},
 {n:"Babà napoletano (con rum)",c:"Dolci",k:310,p:5.5,gs:3.0,g:8.5,z:30,ch:52,fi:0.5,ca:35,fe:1.2,mg:12,k2:95,na:180,zn:0.5,fo:55,se:8,col:80,src:"CREA"},
 {n:"Lombata di manzo (fiorentina, cruda)",c:"Carni rosse",k:138,p:21.5,gs:2.5,g:5.5,z:0,ch:0,fi:0,ca:7,fe:2.4,mg:22,k2:350,na:55,zn:4.2,fo:8,se:20,col:65,src:"CREA"},
@@ -1343,8 +1344,10 @@ const DB_CREA=[
 {n:"Arrosto di maiale (lombo, cotto)",c:"Carni rosse",k:205,p:28.0,gs:2.5,g:10.0,z:0,ch:0,fi:0,ca:10,fe:1.0,mg:26,k2:365,na:310,zn:2.5,fo:8,se:42,col:80,src:"CREA"},
 {n:"Brodo di pollo (fatto in casa)",c:"Condimenti",k:18,p:2.5,gs:0.2,g:0.8,z:0,ch:0.5,fi:0,ca:10,fe:0.3,mg:7,k2:100,na:380,zn:0.4,fo:35,se:5,col:5,src:"CREA"},
 {n:"Zuppa di cipolle (alla francese)",c:"Piatti pronti",k:75,p:3.5,gs:1.5,g:3.0,z:5.5,ch:9.0,fi:1.2,ca:45,fe:0.6,mg:10,k2:175,na:480,zn:0.4,fo:55,se:3,col:8,src:"CREA"},
-{n:"Panino al prosciutto crudo",c:"Piatti pronti",k:285,p:16.5,gs:2.5,g:8.5,z:1.5,ch:38.5,fi:2.0,ca:35,fe:1.8,mg:28,k2:280,na:850,zn:1.8,fo:165,se:18,col:28,src:"CREA"},
-{n:"Panino con mozzarella e pomodoro (caprese)",c:"Piatti pronti",k:260,p:13.5,gs:4.0,g:10.5,z:2.5,ch:30.5,fi:2.0,ca:180,fe:0.8,mg:20,k2:250,na:420,zn:1.5,fo:150,se:5,col:28,src:"CREA"},
+// Fosforo (pane+prosciutto crudo, entrambi ricchi di fosforo) era nel campo folati; folati reali ~30mcg - 2026-07-30
+{n:"Panino al prosciutto crudo",c:"Piatti pronti",k:285,p:16.5,gs:2.5,g:8.5,z:1.5,ch:38.5,fi:2.0,ca:35,fe:1.8,mg:28,k2:280,na:850,zn:1.8,fo:30,se:18,col:28,src:"CREA"},
+// Fosforo (mozzarella molto ricca di fosforo) era nel campo folati; folati reali ~30mcg - 2026-07-30
+{n:"Panino con mozzarella e pomodoro (caprese)",c:"Piatti pronti",k:260,p:13.5,gs:4.0,g:10.5,z:2.5,ch:30.5,fi:2.0,ca:180,fe:0.8,mg:20,k2:250,na:420,zn:1.5,fo:30,se:5,col:28,src:"CREA"},
 {n:"Frittata con verdure (spinaci o zucchine)",c:"Uova",k:155,p:11.5,gs:3.0,g:11.5,z:1.5,ch:2.0,fi:1.0,ca:65,fe:1.8,mg:20,k2:230,na:280,zn:1.2,fo:165,se:18,col:320,src:"CREA"},
 {n:"Uova strapazzate al burro",c:"Uova",k:192,p:13.8,gs:5.5,g:15.0,z:0.5,ch:0.5,fi:0,ca:56,fe:1.8,mg:12,k2:128,na:300,zn:1.2,fo:47,se:25,col:405,src:"CREA"},
 {n:"Omelette alle erbe (cotta)",c:"Uova",k:165,p:11.8,gs:3.2,g:12.5,z:0.5,ch:0.5,fi:0.3,ca:48,fe:1.7,mg:12,k2:128,na:280,zn:1.2,fo:185,se:20,col:375,src:"CREA"},

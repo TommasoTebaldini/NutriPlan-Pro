@@ -3718,23 +3718,35 @@ const DB_UPF = [
 {n:"Strachitunt DOP (Bergamo, erborinato)",c:"Formaggi",src:"CREA",k:352,p:23.5,gs:17.5,g:28.5,z:0.5,ch:0.5,fi:0,ca:590,fe:0.5,mg:28,k2:115,na:1280,zn:2.5,fo:20,se:6,col:72},
 {n:"Pecorino di Filiano DOP (stagionato)",c:"Formaggi",src:"CREA",k:405,p:28.5,gs:20.5,g:33.5,z:0,ch:0,fi:0,ca:920,fe:0.4,mg:38,k2:80,na:880,zn:3.0,fo:18,se:9,col:100},
 // ═══ PASTA FRESCA E PIATTI REGIONALI ═══
-{n:"Tortellini freschi prosciutto (crudi, per 100g)",c:"Cereali e pasta",src:"CREA",k:308,p:13.5,gs:3.5,g:9.5,z:1.5,ch:44.5,fi:2.0,ca:75,fe:1.5,mg:22,k2:130,na:450,zn:1.2,fo:140,se:8,col:75},
+// Fosforo (pasta all'uovo+ripieno prosciutto) era nel campo folati; folati reali ~40mcg - 2026-07-30
+{n:"Tortellini freschi prosciutto (crudi, per 100g)",c:"Cereali e pasta",src:"CREA",k:308,p:13.5,gs:3.5,g:9.5,z:1.5,ch:44.5,fi:2.0,ca:75,fe:1.5,mg:22,k2:130,na:450,zn:1.2,fo:40,se:8,col:75},
 {n:"Ravioli ricotta e spinaci (freschi, crudi)",c:"Cereali e pasta",src:"CREA",k:262,p:11.5,gs:2.5,g:7.5,z:1.0,ch:37.5,fi:2.5,ca:120,fe:1.8,mg:30,k2:180,na:320,zn:1.0,fo:130,se:6,col:65},
 {n:"Gnocchi di patate (freschi, crudi)",c:"Cereali e pasta",src:"CREA",k:164,p:3.9,gs:0.1,g:0.3,z:1.4,ch:37.9,fi:1.9,ca:14,fe:0.6,mg:18,k2:310,na:9,zn:0.3,fo:50,se:2,col:7},
-{n:"Gnocchi alla romana (semolino, cotti al forno)",c:"Piatti pronti",src:"CREA",k:195,p:7.5,gs:4.5,g:8.5,z:0.5,ch:23.5,fi:0.5,ca:175,fe:0.6,mg:18,k2:110,na:320,zn:0.8,fo:140,se:4,col:28},
-{n:"Malloreddus (gnocchetti sardi, crudi)",c:"Cereali e pasta",src:"CREA",k:350,p:11.0,gs:0.2,g:1.5,z:2.0,ch:72.5,fi:3.0,ca:20,fe:1.5,mg:40,k2:180,na:5,zn:1.0,fo:160,se:20,col:0},
-{n:"Orecchiette pugliesi (artigianali, crude)",c:"Cereali e pasta",src:"CREA",k:348,p:11.5,gs:0.2,g:1.5,z:2.0,ch:71.5,fi:3.0,ca:22,fe:1.5,mg:42,k2:185,na:5,zn:1.0,fo:165,se:22,col:0},
-{n:"Casoncelli bergamaschi (freschi, crudi)",c:"Cereali e pasta",src:"CREA",k:280,p:12.5,gs:3.0,g:9.0,z:1.5,ch:38.5,fi:1.5,ca:65,fe:1.5,mg:20,k2:120,na:380,zn:1.0,fo:125,se:7,col:65},
+// Fosforo (semolino+latte+formaggio, calcio 175mg conferma) era nel campo folati; folati reali ~25mcg - 2026-07-30
+{n:"Gnocchi alla romana (semolino, cotti al forno)",c:"Piatti pronti",src:"CREA",k:195,p:7.5,gs:4.5,g:8.5,z:0.5,ch:23.5,fi:0.5,ca:175,fe:0.6,mg:18,k2:110,na:320,zn:0.8,fo:25,se:4,col:28},
+// Fosforo semola era nel campo folati; folati reali pasta fresca di semola ~25mcg - 2026-07-30
+{n:"Malloreddus (gnocchetti sardi, crudi)",c:"Cereali e pasta",src:"CREA",k:350,p:11.0,gs:0.2,g:1.5,z:2.0,ch:72.5,fi:3.0,ca:20,fe:1.5,mg:40,k2:180,na:5,zn:1.0,fo:25,se:20,col:0},
+// Duplicato di Orecchiette già corretto (DB_CREA_551) - 2026-07-30
+{n:"Orecchiette pugliesi (artigianali, crude)",c:"Cereali e pasta",src:"CREA",k:348,p:11.5,gs:0.2,g:1.5,z:2.0,ch:71.5,fi:3.0,ca:22,fe:1.5,mg:42,k2:185,na:5,zn:1.0,fo:25,se:22,col:0},
+// Fosforo (pasta all'uovo+ripieno carne) era nel campo folati; folati reali ~40mcg - 2026-07-30
+{n:"Casoncelli bergamaschi (freschi, crudi)",c:"Cereali e pasta",src:"CREA",k:280,p:12.5,gs:3.0,g:9.0,z:1.5,ch:38.5,fi:1.5,ca:65,fe:1.5,mg:20,k2:120,na:380,zn:1.0,fo:40,se:7,col:65},
 {n:"Riso Venere nero (crudo)",c:"Cereali e pasta",src:"CREA",k:355,p:7.8,gs:0.3,g:1.3,z:2.2,ch:80.4,fi:5.1,ca:13,fe:1.1,mg:101,k2:280,na:0,zn:1.5,fo:20,se:9,col:0},
-{n:"Pasta al nero di seppia (secca, cruda)",c:"Cereali e pasta",src:"CREA",k:348,p:11.5,gs:0.2,g:1.8,z:2.5,ch:70.5,fi:2.5,ca:25,fe:2.8,mg:55,k2:200,na:90,zn:1.2,fo:185,se:20,col:0},
-{n:"Bigoli all'uovo (crudi)",c:"Cereali e pasta",src:"CREA",k:370,p:13.5,gs:1.5,g:5.0,z:1.5,ch:66.5,fi:2.5,ca:30,fe:1.8,mg:38,k2:175,na:10,zn:1.5,fo:180,se:15,col:80},
+// Fosforo (pasta di semola secca) era nel campo folati; folati reali ~30mcg - 2026-07-30
+{n:"Pasta al nero di seppia (secca, cruda)",c:"Cereali e pasta",src:"CREA",k:348,p:11.5,gs:0.2,g:1.8,z:2.5,ch:70.5,fi:2.5,ca:25,fe:2.8,mg:55,k2:200,na:90,zn:1.2,fo:30,se:20,col:0},
+// Fosforo (pasta all'uovo secca) era nel campo folati; folati reali ~40mcg - 2026-07-30
+{n:"Bigoli all'uovo (crudi)",c:"Cereali e pasta",src:"CREA",k:370,p:13.5,gs:1.5,g:5.0,z:1.5,ch:66.5,fi:2.5,ca:30,fe:1.8,mg:38,k2:175,na:10,zn:1.5,fo:40,se:15,col:80},
 // Stesso bug fosforo-in-folati delle paste fresche di semola - 2026-07-29
 {n:"Trofie fresche di grano duro (crude)",c:"Cereali e pasta",src:"CREA",k:295,p:9.5,gs:0.2,g:1.0,z:1.5,ch:60.5,fi:2.5,ca:15,fe:1.2,mg:30,k2:130,na:5,zn:0.8,fo:25,se:12,col:0},
-{n:"Pane di Altamura DOP (100g)",c:"Pane",src:"CREA",k:283,p:8.5,gs:0.3,g:1.5,z:1.5,ch:58.5,fi:3.5,ca:25,fe:1.8,mg:30,k2:115,na:365,zn:0.8,fo:90,se:8,col:0},
-{n:"Michetta/rosetta milanese vuota",c:"Pane",src:"CREA",k:288,p:8.0,gs:0.3,g:1.5,z:1.5,ch:59.5,fi:2.5,ca:22,fe:1.5,mg:20,k2:100,na:590,zn:0.5,fo:75,se:6,col:0},
-{n:"Brioche siciliana col tuppo",c:"Dolci",src:"CREA",k:360,p:8.5,gs:5.5,g:14.5,z:16.5,ch:50.5,fi:1.5,ca:48,fe:1.5,mg:18,k2:130,na:320,zn:0.6,fo:90,se:5,col:65},
-{n:"Cornetto vuoto (bar italiano)",c:"Dolci",src:"CREA",k:390,p:7.5,gs:8.0,g:19.5,z:15.0,ch:50.5,fi:1.5,ca:35,fe:1.5,mg:15,k2:110,na:380,zn:0.5,fo:75,se:4,col:55},
-{n:"Maritozzo romano con panna",c:"Dolci",src:"CREA",k:355,p:6.5,gs:7.5,g:18.5,z:22.5,ch:42.5,fi:1.0,ca:55,fe:1.0,mg:12,k2:110,na:200,zn:0.4,fo:70,se:3,col:50},
+// Fosforo (pane di semola non fortificato) era nel campo folati; folati reali ~25mcg - 2026-07-30
+{n:"Pane di Altamura DOP (100g)",c:"Pane",src:"CREA",k:283,p:8.5,gs:0.3,g:1.5,z:1.5,ch:58.5,fi:3.5,ca:25,fe:1.8,mg:30,k2:115,na:365,zn:0.8,fo:25,se:8,col:0},
+// Fosforo (pane non fortificato) era nel campo folati; folati reali ~25mcg - 2026-07-30
+{n:"Michetta/rosetta milanese vuota",c:"Pane",src:"CREA",k:288,p:8.0,gs:0.3,g:1.5,z:1.5,ch:59.5,fi:2.5,ca:22,fe:1.5,mg:20,k2:100,na:590,zn:0.5,fo:25,se:6,col:0},
+// Fosforo (impasto ricco di uova/burro) era nel campo folati; folati reali ~30mcg - 2026-07-30
+{n:"Brioche siciliana col tuppo",c:"Dolci",src:"CREA",k:360,p:8.5,gs:5.5,g:14.5,z:16.5,ch:50.5,fi:1.5,ca:48,fe:1.5,mg:18,k2:130,na:320,zn:0.6,fo:30,se:5,col:65},
+// Fosforo (impasto sfogliato non fortificato) era nel campo folati; folati reali ~25mcg - 2026-07-30
+{n:"Cornetto vuoto (bar italiano)",c:"Dolci",src:"CREA",k:390,p:7.5,gs:8.0,g:19.5,z:15.0,ch:50.5,fi:1.5,ca:35,fe:1.5,mg:15,k2:110,na:380,zn:0.5,fo:25,se:4,col:55},
+// Fosforo (pane dolce non fortificato) era nel campo folati; folati reali ~25mcg - 2026-07-30
+{n:"Maritozzo romano con panna",c:"Dolci",src:"CREA",k:355,p:6.5,gs:7.5,g:18.5,z:22.5,ch:42.5,fi:1.0,ca:55,fe:1.0,mg:12,k2:110,na:200,zn:0.4,fo:25,se:3,col:50},
 // ═══ SALUMI DOP/IGP SPECIFICI ═══
 {n:"Prosciutto di Parma DOP (magro, senza grasso esterno)",c:"Salumi",src:"CREA",k:176,p:29.1,gs:2.03,g:6.4,z:0,ch:0.4,fi:0,ca:13,fe:1,mg:23,k2:618,na:2040,zn:2.6,fo:5,se:13,col:89},
 // Verificato CREA 110521 (Prosciutto crudo di San Daniele DOP, SGRASSATO — valori gia vicini a quelli locali, coerente con fettine da affettato) — 2026-07-29

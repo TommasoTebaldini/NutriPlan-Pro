@@ -2377,12 +2377,17 @@ const DB_BDA=[
 {n:"Ras el hanout (blend spezie marocchine)",c:"Erbe aromatiche",k:320,p:10.0,gs:2.0,g:8.0,z:5.0,ch:52.0,fi:22.0,ca:380,fe:10.0,mg:150,k2:700,na:40,zn:4.0,fo:90,se:6,col:0,src:"BDA"},
 
 // ── FUNGHI AGGIUNTIVI (CREA/BDA) ──
-{n:"Maitake (Grifola frondosa) fresco",c:"Verdure e ortaggi",k:31,p:2.7,gs:0.1,g:0.4,z:0.9,ch:4.8,fi:2.7,ca:1,fe:0.3,mg:10,k2:204,na:3,zn:0.9,fo:75,se:2,col:0,src:"CREA"},
-{n:"Enoki (Flammulina velutipes) fresco",c:"Verdure e ortaggi",k:37,p:2.7,gs:0.1,g:0.3,z:1.7,ch:7.0,fi:2.7,ca:0,fe:1.1,mg:16,k2:359,na:3,zn:0.6,fo:65,se:2,col:0,src:"CREA"},
+// Folati implausibili per fungo fresco (pattern fosforo-in-folati coerente con altri funghi già corretti), stimato ~20mcg - 2026-07-30
+{n:"Maitake (Grifola frondosa) fresco",c:"Verdure e ortaggi",k:31,p:2.7,gs:0.1,g:0.4,z:0.9,ch:4.8,fi:2.7,ca:1,fe:0.3,mg:10,k2:204,na:3,zn:0.9,fo:20,se:2,col:0,src:"CREA"},
+// Folati implausibili per fungo fresco (stesso pattern), stimato ~20mcg - 2026-07-30
+{n:"Enoki (Flammulina velutipes) fresco",c:"Verdure e ortaggi",k:37,p:2.7,gs:0.1,g:0.3,z:1.7,ch:7.0,fi:2.7,ca:0,fe:1.1,mg:16,k2:359,na:3,zn:0.6,fo:20,se:2,col:0,src:"CREA"},
 {n:"Wood ear (Auricularia) secco",c:"Verdure e ortaggi",k:284,p:9.2,gs:0.1,g:1.0,z:0.3,ch:74.6,fi:48.7,ca:159,fe:185.0,mg:195,k2:1100,na:82,zn:4.0,fo:140,se:8,col:0,src:"BDA"},
-{n:"Nameko (funghi giapponesi) freschi",c:"Verdure e ortaggi",k:25,p:2.5,gs:0.1,g:0.3,z:1.0,ch:4.5,fi:1.8,ca:5,fe:0.8,mg:10,k2:210,na:10,zn:0.7,fo:50,se:2,col:0,src:"BDA"},
-{n:"Pioppini (Cyclocybe aegerita) freschi",c:"Verdure e ortaggi",k:28,p:3.0,gs:0.1,g:0.4,z:1.5,ch:3.8,fi:2.0,ca:4,fe:0.9,mg:11,k2:230,na:5,zn:0.8,fo:60,se:4,col:0,src:"CREA"},
-{n:"Chiodini/Famigliole (Armillaria) freschi",c:"Verdure e ortaggi",k:24,p:2.8,gs:0.1,g:0.2,z:1.5,ch:3.2,fi:1.8,ca:4,fe:0.7,mg:12,k2:250,na:4,zn:0.8,fo:55,se:3,col:0,src:"CREA"},
+// Folati implausibili per fungo fresco (stesso pattern), stimato ~20mcg - 2026-07-30
+{n:"Nameko (funghi giapponesi) freschi",c:"Verdure e ortaggi",k:25,p:2.5,gs:0.1,g:0.3,z:1.0,ch:4.5,fi:1.8,ca:5,fe:0.8,mg:10,k2:210,na:10,zn:0.7,fo:20,se:2,col:0,src:"BDA"},
+// Duplicato di Pioppini/Agrocybe già corretto (DB_CREA_1082) - 2026-07-30
+{n:"Pioppini (Cyclocybe aegerita) freschi",c:"Verdure e ortaggi",k:28,p:3.0,gs:0.1,g:0.4,z:1.5,ch:3.8,fi:2.0,ca:4,fe:0.9,mg:11,k2:230,na:5,zn:0.8,fo:20,se:4,col:0,src:"CREA"},
+// Duplicato di Chiodini già corretto (DB_CREA_1080) - 2026-07-30
+{n:"Chiodini/Famigliole (Armillaria) freschi",c:"Verdure e ortaggi",k:24,p:2.8,gs:0.1,g:0.2,z:1.5,ch:3.2,fi:1.8,ca:4,fe:0.7,mg:12,k2:250,na:4,zn:0.8,fo:20,se:3,col:0,src:"CREA"},
 
 // ── VERDURE AGGIUNTIVE (CREA/BDA) ──
 {n:"Daikon (ravanello bianco giapponese) fresco",c:"Verdure e ortaggi",k:18,p:0.7,gs:0,g:0.1,z:2.5,ch:4.1,fi:1.6,ca:27,fe:0.4,mg:16,k2:227,na:21,zn:0.2,fo:27,se:0.7,col:0,src:"CREA"},

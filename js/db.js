@@ -275,7 +275,8 @@ const DB_CREA=[
 {n:"Aceto di mele",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.9,ch:0.9,fi:0,ca:7,fe:0.2,mg:5,k2:73,na:5,zn:0.04,fo:2,se:0,col:0,src:"CREA"},
 // Folati 100mcg implausibile per salsa latte+farina+burro (reali ~10mcg) - 2026-07-29
 {n:"Besciamella fatta in casa",c:"Condimenti",k:128,p:4,gs:5,g:8.2,z:5.5,ch:10.5,fi:0.2,ca:132,fe:0.2,mg:14,k2:190,na:280,zn:0.5,fo:10,se:2,col:25,src:"CREA"},
-{n:"Hummus fatto in casa",c:"Condimenti",k:180,p:7.9,gs:1.4,g:9.6,z:0.6,ch:17.4,fi:6,ca:49,fe:2.4,mg:57,k2:274,na:300,zn:1.8,fo:170,se:4,col:0,src:"CREA"},
+// FIX: fo=170 troppo alto per hummus (i ceci hanno folati alti ma diluiti da olio/tahini, reale ~70mcg, verificato via fonte esterna) - 2026-07-30
+{n:"Hummus fatto in casa",c:"Condimenti",k:180,p:7.9,gs:1.4,g:9.6,z:0.6,ch:17.4,fi:6,ca:49,fe:2.4,mg:57,k2:274,na:300,zn:1.8,fo:70,se:4,col:0,src:"CREA"},
 {n:"Guacamole fatto in casa",c:"Condimenti",k:140,p:2,gs:2.4,g:12.9,z:0.4,ch:7.6,fi:5.5,ca:13,fe:0.5,mg:23,k2:450,na:170,zn:0.5,fo:45,se:0.3,col:0,src:"CREA"},
 // ── SPEZIE E AROMI ──
 {n:"Pepe nero macinato",c:"Condimenti",k:311,p:11.4,gs:1.4,g:3.3,z:0.6,ch:49,fi:25.9,ca:430,fe:11.2,mg:171,k2:1260,na:44,zn:1.2,fo:117,se:4.9,col:0,src:"CREA"},
@@ -726,7 +727,7 @@ const DB_CREA=[
 {n:"Speck dell'Alto Adige",c:"Salumi",k:299,p:30.7,gs:6.3,g:19.1,z:0,ch:1.2,fi:0,ca:8,fe:1.4,mg:27,k2:658,na:1640,zn:2.5,fo:5,se:15,col:91,src:"CREA"},
 {n:"Aceto balsamico di Modena",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:15.6,ch:17.1,fi:0,ca:27,fe:0.7,mg:7,k2:112,na:23,zn:0.1,fo:19,se:0.5,col:0,src:"CREA"},
 {n:"Pesto alla genovese (artigianale)",c:"Condimenti",k:454,p:7,gs:7,g:44.6,z:1,ch:3.4,fi:1.2,ca:130,fe:1.5,mg:50,k2:210,na:700,zn:1,fo:120,se:3,col:10,src:"CREA"},
-{n:"Salsa di soia",c:"Condimenti",k:66,p:8.7,gs:0,g:0,z:8.3,ch:8.3,fi:0,ca:19,fe:2.7,mg:42,k2:360,na:5720,zn:0.1,fo:130,se:1,col:0,src:"CREA"},
+{n:"Salsa di soia",c:"Condimenti",k:66,p:8.7,gs:0,g:0,z:8.3,ch:8.3,fi:0,ca:19,fe:2.7,mg:42,k2:360,na:5720,zn:0.1,fo:25,se:1,col:0,src:"CREA"},
 {n:"Aceto di vino",c:"Condimenti",k:21,p:0,gs:0,g:0,z:0.3,ch:0.6,fi:0,ca:7,fe:0.4,mg:2,k2:65,na:2,zn:0.03,fo:8,se:0.5,col:0,src:"CREA"},
 {n:"Alga Kelp (Laminaria) essiccata",c:"Verdure",k:43,p:1.7,gs:0.3,g:0.6,z:0.6,ch:9.6,fi:1.3,ca:168,fe:2.9,mg:121,k2:89,na:233,zn:1.2,fo:42,se:0.7,col:0,src:"CREA"},
 // Potassio (8060mg) e ferro (150mg) erano implausibili anche per un alga essiccata: allineati a fonti multiple convergenti (ferro ~25mg, potassio ~1244mg, magnesio ~482mg, proteine ~32g) - 2026-07-29
@@ -1058,13 +1059,14 @@ const DB_CREA=[
 // ── CONDIMENTI E SALSE ──
 {n:"Aceto di vino rosso",c:"Condimenti",k:20,p:0,gs:0,g:0,z:0.3,ch:0.9,fi:0,ca:6,fe:0.5,mg:4,k2:39,na:8,zn:0.03,fo:8,se:0.5,col:0,src:"CREA"},
 {n:"Aceto balsamico di Modena IGP",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:15.6,ch:17.3,fi:0,ca:17,fe:0.7,mg:10,k2:112,na:23,zn:0.1,fo:19,se:0.5,col:0,src:"CREA"},
-{n:"Salsa di soia (normale)",c:"Condimenti",k:66,p:8.7,gs:0.1,g:0,z:8.3,ch:8.3,fi:0,ca:19,fe:2.7,mg:40,k2:360,na:5720,zn:0.4,fo:130,se:2,col:0,src:"CREA"},
-{n:"Salsa di soia tamari (GF)",c:"Condimenti",k:61,p:10.5,gs:0.1,g:0.1,z:2.9,ch:6.2,fi:0.8,ca:20,fe:2.5,mg:40,k2:461,na:4500,zn:0.4,fo:130,se:2,col:0,src:"CREA"},
+{n:"Salsa di soia (normale)",c:"Condimenti",k:66,p:8.7,gs:0.1,g:0,z:8.3,ch:8.3,fi:0,ca:19,fe:2.7,mg:40,k2:360,na:5720,zn:0.4,fo:25,se:2,col:0,src:"CREA"},
+{n:"Salsa di soia tamari (GF)",c:"Condimenti",k:61,p:10.5,gs:0.1,g:0.1,z:2.9,ch:6.2,fi:0.8,ca:20,fe:2.5,mg:40,k2:461,na:4500,zn:0.4,fo:25,se:2,col:0,src:"CREA"},
 {n:"Ketchup Heinz",c:"Condimenti",k:101,p:1.8,gs:0,g:0.1,z:21,ch:25,fi:0.3,ca:14,fe:0.4,mg:10,k2:325,na:1040,zn:0.1,fo:26,se:0.5,col:0,src:"CREA"},
 {n:"Maionese classica",c:"Condimenti",k:655,p:4.2,gs:8.82,g:70,z:2.2,ch:2.2,fi:0,ca:18,fe:0.5,mg:3,k2:16,na:450,zn:0.5,fo:4,se:5,col:70,src:"BDA"},
 {n:"Senape gialla",c:"Condimenti",k:66,p:4.4,gs:0.2,g:3.3,z:2.8,ch:8.7,fi:3.2,ca:58,fe:1.6,mg:48,k2:152,na:1120,zn:0.6,fo:81,se:0.8,col:0,src:"CREA"},
 {n:"Miso bianco (shiro miso)",c:"Condimenti",k:199,p:12,gs:1.2,g:6,z:6.2,ch:26,fi:5.4,ca:57,fe:2.6,mg:48,k2:210,na:3728,zn:1.6,fo:159,se:8,col:0,src:"CREA"},
-{n:"Pesto genovese (basilico)",c:"Condimenti",k:449,p:6.4,gs:8.8,g:46,z:1.6,ch:4.3,fi:1.5,ca:195,fe:2.5,mg:60,k2:274,na:660,zn:1.2,fo:170,se:3,col:20,src:"CREA"},
+// FIX: fo=170 troppo alto per pesto (basilico ha folati modesti, molto diluiti da olio/formaggio/pinoli, reale ~16mcg, verificato via fonte esterna) - 2026-07-30
+{n:"Pesto genovese (basilico)",c:"Condimenti",k:449,p:6.4,gs:8.8,g:46,z:1.6,ch:4.3,fi:1.5,ca:195,fe:2.5,mg:60,k2:274,na:660,zn:1.2,fo:16,se:3,col:20,src:"CREA"},
 {n:"Concentrato di pomodoro",c:"Condimenti",k:55,p:0.9,gs:0.06,g:0.4,z:11.4,ch:11.4,fi:2.3,ca:15,fe:1,mg:37,k2:225,na:3,zn:0.7,fo:54,se:0.9,col:0,src:"BDA"},
 {n:"Lievito alimentare in scaglie",c:"Condimenti",k:325,p:46,gs:0.6,g:4.5,z:0,ch:35,fi:14.6,ca:90,fe:14,mg:232,k2:1400,na:30,zn:7,fo:1400,se:150,col:0,src:"CREA"},
 // ── BEVANDE AGGIUNTIVE ──
@@ -1524,7 +1526,8 @@ const DB_BDA=[
   {n:"Pesce persico",c:"Pesce",src:"BDA",k:75,p:15.4,gs:0.302,g:1.5,z:0,ch:0,fi:0,ca:80,fe:0.9,mg:30,k2:80,na:92,zn:1.1,fo:5,se:13,col:70},
   // ── BRODI E CONDIMENTI aggiuntivi ──
   {n:"Brodo di pollo",c:"Condimenti",src:"BDA",k:9,p:0.6,gs:0.11,g:0.5,z:0.6,ch:0.6,fi:0,ca:6,fe:0,mg:8,k2:10,na:608,zn:0,fo:23,se:3,col:0},
-  {n:"Dado da brodo granulare",c:"Condimenti",src:"BDA",k:238,p:16.5,gs:3.5,g:11,z:2,ch:22,fi:0,ca:130,fe:2.5,mg:55,k2:900,na:18000,zn:1.5,fo:200,se:5,col:0},
+  // FIX: fo=200 implausibile per dado da brodo (prodotto di condimento salato, folati reali trascurabili, verificato via fonte esterna) - 2026-07-30
+  {n:"Dado da brodo granulare",c:"Condimenti",src:"BDA",k:238,p:16.5,gs:3.5,g:11,z:2,ch:22,fi:0,ca:130,fe:2.5,mg:55,k2:900,na:18000,zn:1.5,fo:3,se:5,col:0},
   // ── OLIVE E CAPPERI ──
   {n:"Olive verdi denocciolate",c:"Condimenti",src:"BDA",k:151,p:0.8,gs:2.1,g:15,z:1,ch:1,fi:4.4,ca:64,fe:1.6,mg:11,k2:432,na:54,zn:0.4,fo:0,se:0.9,col:0},
   {n:"Olive nere in salamoia",c:"Condimenti",src:"BDA",k:240,p:1.6,gs:3.51,g:25.1,z:0.8,ch:0.8,fi:2.4,ca:62,fe:1.6,mg:4,k2:432,na:54,zn:0.5,fo:0,se:0.9,col:0},
@@ -2753,7 +2756,7 @@ const DB_UPF = [
 
   // ── CONDIMENTI aggiuntivi ──
   {n:"Salsa Worcester",c:"Condimenti",src:"UPF",k:78,p:1.1,gs:0,g:0.1,z:18,ch:20,fi:0.5,ca:61,fe:2.7,mg:18,k2:220,na:980,zn:0.3,fo:15,se:1,col:0},
-  {n:"Salsa di soia (industriale shoyu)",c:"Condimenti",src:"UPF",k:84,p:9,gs:0,g:0,z:2,ch:9.8,fi:0.9,ca:18,fe:2.4,mg:45,k2:212,na:6600,zn:0.5,fo:130,se:1,col:0},
+  {n:"Salsa di soia (industriale shoyu)",c:"Condimenti",src:"UPF",k:84,p:9,gs:0,g:0,z:2,ch:9.8,fi:0.9,ca:18,fe:2.4,mg:45,k2:212,na:6600,zn:0.5,fo:25,se:1,col:0},
   {n:"Salsa tahini / crema di sesamo",c:"Condimenti",src:"UPF",k:595,p:17,gs:7.5,g:53.8,z:0.5,ch:21.2,fi:9,ca:426,fe:8.9,mg:95,k2:582,na:115,zn:4.6,fo:97,se:34,col:0},
 
   // ── PRODOTTI DA FORNO E PASTICCERIA CONFEZIONATA ──
@@ -2985,7 +2988,7 @@ const DB_UPF = [
   {n:"Barretta ai cereali e miele industriale",c:"Cereali confezionati",src:"UPF",k:415,p:8.1,gs:1.6,g:14,z:2.5,ch:71,fi:3.5,ca:40,fe:3,mg:35,k2:200,na:272,zn:1,fo:140,se:4,col:0},
   // ── CONDIMENTI INDUSTRIALI ──
   {n:"Dado da brodo industriale (per 100g)",c:"Condimenti",src:"UPF",k:195,p:20,gs:3,g:11,z:0.5,ch:15,fi:0,ca:40,fe:1.5,mg:20,k2:200,na:4000,zn:0.8,fo:100,se:5,col:5},
-  {n:"Salsa di soia industriale",c:"Condimenti",src:"UPF",k:84,p:9,gs:0,g:0,z:2,ch:9.8,fi:0.9,ca:17,fe:2.4,mg:40,k2:356,na:6600,zn:0.4,fo:130,se:0.6,col:0},
+  {n:"Salsa di soia industriale",c:"Condimenti",src:"UPF",k:84,p:9,gs:0,g:0,z:2,ch:9.8,fi:0.9,ca:17,fe:2.4,mg:40,k2:356,na:6600,zn:0.4,fo:25,se:0.6,col:0},
   // ── BEVANDE ──
   {n:"Energy drink tipo Red Bull (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:0,fe:0,mg:0,k2:0,na:40,zn:0,fo:0,se:0,col:0},
   {n:"Cola (tipo Coca-Cola, per 100mL)",c:"Bibite zuccherate",src:"UPF",k:42.3,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:23.9,zn:0,fo:13,se:0,col:0},
@@ -3557,9 +3560,11 @@ const DB_UPF = [
 {n:"Crackers di riso biologici (per 100g)",c:"Biscotti e crackers",src:"UPF",k:358,p:9.9,gs:0.4,g:1.8,z:0.6,ch:72,fi:6.7,ca:10,fe:0.8,mg:38,k2:98,na:640,zn:0.5,fo:20,se:4,col:0},
 // ── CONDIMENTI INTERNAZIONALI ──
 {n:"Guacamole industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:149,p:1.9,gs:3.8,g:14,z:1.4,ch:2,fi:3.5,ca:15,fe:0.5,mg:22,k2:390,na:590,zn:0.4,fo:42,se:0.5,col:0},
-{n:"Hummus industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:236,p:5.3,gs:1.7,g:18,z:1.9,ch:8.7,fi:4.0,ca:38,fe:2.0,mg:50,k2:228,na:316,zn:1.2,fo:145,se:3,col:0},
+// FIX: fo=145 troppo alto per hummus industriale (reale ~70mcg) - 2026-07-30
+{n:"Hummus industriale (per 100g)",c:"Salse e condimenti",src:"UPF",k:236,p:5.3,gs:1.7,g:18,z:1.9,ch:8.7,fi:4.0,ca:38,fe:2.0,mg:50,k2:228,na:316,zn:1.2,fo:70,se:3,col:0},
 // Allineato a voce CREA gia verificata "Pesto alla genovese (artigianale)" (kcal gia identico, altri campi ravvicinati) — 2026-07-28
-{n:"Pesto alla genovese (barattolo, per 100g)",c:"Salse e condimenti",src:"UPF",k:454,p:7.0,gs:7.0,g:44.6,z:1.0,ch:3.4,fi:1.2,ca:130,fe:1.5,mg:50,k2:210,na:700,zn:1.0,fo:120,se:3,col:10},
+// FIX: fo=120 troppo alto per pesto industriale (reale ~16mcg) - 2026-07-30
+{n:"Pesto alla genovese (barattolo, per 100g)",c:"Salse e condimenti",src:"UPF",k:454,p:7.0,gs:7.0,g:44.6,z:1.0,ch:3.4,fi:1.2,ca:130,fe:1.5,mg:50,k2:210,na:700,zn:1.0,fo:16,se:3,col:10},
 {n:"Tahini (crema di sesamo, per 100g)",c:"Creme e spalmate",src:"UPF",k:667,p:27.9,gs:10,g:57.9,z:0.1,ch:6.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:20,zn:4.6,fo:590,se:34,col:0},
 {n:"Crema di marmite (per 100g)",c:"Condimenti",src:"UPF",k:260,p:34,gs:0.1,g:0.5,z:1.2,ch:30,fi:3.0,ca:95,fe:3.5,mg:180,k2:2100,na:4320,zn:1.5,fo:1980,se:8,col:0},
 // ── CIBI ITALIANI REGIONALI E TRADIZIONALI ──
@@ -4462,7 +4467,8 @@ const DB_EXTRA=[
 {n:"Tabasco",c:"Condimenti",src:"EXTRA",k:12,p:1.3,gs:0.11,g:0.8,z:0.1,ch:0.8,fi:0.6,ca:12,fe:1.16,mg:12,k2:128,na:633,zn:0.16,fo:1,se:0.5,col:0},
 // RISOLTO (deep-pass duplicati): allineato al pattern pesto già stabilito (basilico fresco genuinamente ricco di folati, ~120mcg) - 2026-07-30
 {n:"Pesto genovese",c:"Condimenti",src:"EXTRA",k:418,p:9.8,gs:7.07,g:37.6,z:6.3,ch:10.1,fi:1.8,ca:306,fe:0.57,mg:47,k2:560,na:603,zn:1.33,fo:120,se:5,col:8},
-{n:"Soffritto dado granulare",c:"Condimenti",src:"EXTRA",k:458,p:6.6,gs:5,g:29,z:15,ch:41.1,fi:2,ca:100,fe:2.5,mg:30,k2:1200,na:14000,zn:0.5,fo:200,se:5,col:0},
+// FIX: fo=200 implausibile per dado da brodo (folati reali trascurabili) - 2026-07-30
+{n:"Soffritto dado granulare",c:"Condimenti",src:"EXTRA",k:458,p:6.6,gs:5,g:29,z:15,ch:41.1,fi:2,ca:100,fe:2.5,mg:30,k2:1200,na:14000,zn:0.5,fo:3,se:5,col:0},
 {n:"Margarina da spalmare",c:"Grassi e oli",src:"EXTRA",k:424,p:0.2,gs:8.79,g:47.5,z:0,ch:0.9,fi:0,ca:5,fe:0,mg:0,k2:10,na:646,zn:0,fo:5,se:0,col:5},
 {n:"Strutto",c:"Grassi e oli",src:"EXTRA",k:896,p:0,gs:39.2,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0.2,col:95},
 // === PIATTI PRONTI SURGELATI ===

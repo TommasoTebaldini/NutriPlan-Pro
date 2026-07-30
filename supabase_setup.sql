@@ -2571,3 +2571,25 @@ CREATE POLICY "voice_messages_delete" ON storage.objects
       )
     )
   );
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 34 — PROMEMORIA PAGAMENTI SCADUTI (feature #5, seconda metà)
+--
+-- Scadenza pagamento per fattura (facoltativa, impostata dal dietista in
+-- pagamenti.html). Il cron api/cron-overdue-payments.js segnala al DIETISTA
+-- (push, stesso canale/filosofia di api/cron-appointment-reminders.js — mai
+-- email/SMS per non introdurre un costo per invio che cresce con la base
+-- utenti) le fatture con stato='da_pagare' E scadenza nel passato. Traccia
+-- l'invio con overdue_reminder_sent_at per non rimandare lo stesso avviso
+-- ogni giorno — se l'importo resta scaduto a lungo, un nuovo promemoria
+-- riparte solo se il dietista sposta la scadenza in avanti (aggiornandola)
+-- o dopo un periodo di silenzio impostato nel cron stesso.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS scadenza DATE;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS overdue_reminder_sent_at TIMESTAMPTZ;
+
+CREATE INDEX IF NOT EXISTS idx_fatture_scadenza_da_pagare
+  ON fatture (scadenza)
+  WHERE stato = 'da_pagare' AND scadenza IS NOT NULL;

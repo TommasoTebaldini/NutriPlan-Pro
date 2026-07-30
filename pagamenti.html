@@ -267,6 +267,11 @@
             <option value="pagato">Pagato</option>
           </select>
         </div>
+        <div class="fg">
+          <label>Scadenza pagamento</label>
+          <input type="date" id="fatt-scadenza">
+          <div style="font-size:11px;color:var(--slate-l);margin-top:3px">Se impostata, ricevi un promemoria push quando è scaduta e non ancora pagata.</div>
+        </div>
         <div class="fg full">
           <label>Note</label>
           <textarea id="fatt-note" rows="2" placeholder="Note aggiuntive (opzionale)..."></textarea>
@@ -464,6 +469,7 @@ function renderFatture() {
         <span class="fatt-tipo">${esc(f.tipo_visita||'—')}</span>
         <span class="fatt-amount">${euro(f.importo)}</span>
         <span class="fatt-status ${f.stato||'da_pagare'}">${f.stato==='pagato'?'✓ Pagato':'⏳ In attesa'}</span>
+        ${f.stato !== 'pagato' && f.scadenza && new Date(f.scadenza) < new Date() ? '<span style="color:#DC2626;font-weight:700;font-size:11px">⚠ Scaduta ' + new Date(f.scadenza).toLocaleDateString('it') + '</span>' : ''}
         <span class="fatt-date">${fmtDate(f.data_fattura)}</span>
         <div style="display:flex;gap:4px;margin-left:auto">
           ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="Segna come pagato">✓</button>` : ''}
@@ -819,6 +825,7 @@ function openNuovaFattura() {
   document.getElementById('fatt-tipo').value = '';
   document.getElementById('fatt-importo').value = '';
   document.getElementById('fatt-stato').value = 'da_pagare';
+  document.getElementById('fatt-scadenza').value = '';
   document.getElementById('fatt-note').value = '';
   document.getElementById('fatt-numero').value = generateNumeroFattura();
   document.getElementById('fatt-cf-paziente').value = '';
@@ -877,6 +884,7 @@ async function salvaFattura() {
     tipo_visita: tipo,
     importo,
     stato: document.getElementById('fatt-stato').value,
+    scadenza: document.getElementById('fatt-scadenza').value || null,
     note: document.getElementById('fatt-note').value.trim() || null,
     codice_fiscale_paziente: document.getElementById('fatt-cf-paziente').value.trim() || null,
     indirizzo_paziente: document.getElementById('fatt-indirizzo-paziente').value.trim() || null,
@@ -939,6 +947,7 @@ function editFattura(id) {
   document.getElementById('fatt-tipo').value = f.tipo_visita || '';
   document.getElementById('fatt-importo').value = f.importo || '';
   document.getElementById('fatt-stato').value = f.stato || 'da_pagare';
+  document.getElementById('fatt-scadenza').value = f.scadenza || '';
   document.getElementById('fatt-note').value = f.note || '';
   document.getElementById('fatt-numero').value = f.numero_fattura || '';
   document.getElementById('fatt-cf-paziente').value = f.codice_fiscale_paziente || '';

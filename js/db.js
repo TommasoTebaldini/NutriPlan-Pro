@@ -481,7 +481,8 @@ const DB_CREA=[
   // FIX (rifinitura post-audit, blind spot pre-esistente): stesso pattern fosforo-in-folati dei funghi freschi già corretti - 2026-07-30
   {n:"Funghi porcini freschi",c:"Verdure",k:31,p:3.9,gs:0.1,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:12,k2:235,na:52,zn:0.7,fo:20,se:2,col:0,src:"CREA"},
   // Folati (680mcg) troppo alti per un fungo (fonti concordano su folati modesti anche per specie essiccate, <100mcg): corretto a 25mcg. NOTA: kcal (31) sembra quello del porcino FRESCO non essiccato (i secchi tipicamente 250-350kcal) - da verificare in futuro - 2026-07-29
-  {n:"Funghi porcini secchi",c:"Verdure",k:31,p:3.9,gs:1.2,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:96,k2:235,na:52,zn:5.5,fo:25,se:14,col:0,src:"CREA"},
+  // FIX (check strutturale): grassi saturi (1.2g) non potevano superare i grassi totali (0.7g), impossibile per definizione - corretto gs a 0.7 - 2026-07-30
+{n:"Funghi porcini secchi",c:"Verdure",k:31,p:3.9,gs:0.7,g:0.7,z:1,ch:1,fi:2.5,ca:22,fe:1.2,mg:96,k2:235,na:52,zn:5.5,fo:25,se:14,col:0,src:"CREA"},
   // Fosforo (57mg, match esatto USDA finferli) era nel campo folati; folati reali finferli/chanterelle ~2-6mcg - 2026-07-29
   {n:"Finferli / Galletti freschi",c:"Verdure",k:20,p:1.5,gs:0.1,g:0.5,z:1.0,ch:1.5,fi:3.0,ca:15,fe:0.6,mg:12,k2:506,na:15,zn:0.5,fo:5,se:2,col:0,src:"CREA"},
   // Fosforo (120mg, match esatto USDA funghi ostrica) era nel campo folati; folati reali ~38mcg - 2026-07-29
@@ -2215,7 +2216,8 @@ const DB_BDA=[
 {n:"Aceto balsamico tradizionale DOP (invecchiato)",c:"Condimenti",k:88,p:0.5,gs:0,g:0.1,z:15.6,ch:17.1,fi:0,ca:27,fe:0.7,mg:7,k2:112,na:23,zn:0.1,fo:19,se:0.5,col:0,src:"CREA"},
 
 // ── CEREALI COTTI MANCANTI ──
-{n:"Polenta taragna cotta",c:"Cereali e derivati",k:73,p:0.9,gs:1.5,g:0.04,z:0.2,ch:17.8,fi:0.9,ca:3,fe:0.1,mg:2,k2:16,na:91,zn:0.03,fo:65,se:5,col:0,src:"CREA"},
+// FIX (check strutturale): grassi totali (0.04g) inferiori ai grassi saturi (1.5g), impossibile per definizione - corretto g a 1.5 - 2026-07-30
+{n:"Polenta taragna cotta",c:"Cereali e derivati",k:73,p:0.9,gs:1.5,g:1.5,z:0.2,ch:17.8,fi:0.9,ca:3,fe:0.1,mg:2,k2:16,na:91,zn:0.03,fo:65,se:5,col:0,src:"CREA"},
 {n:"Riso Basmati cotto",c:"Cereali e derivati",k:113,p:3,gs:0.18,g:0.6,z:0.7,ch:25.2,fi:0.7,ca:9,fe:0.2,mg:11,k2:37,na:2,zn:0.53,fo:5,se:5,col:0,src:"BDA"},
 {n:"Riso parboiled cotto",c:"Cereali e derivati",k:97,p:2.1,gs:0.03,g:0.1,z:0.2,ch:23.3,fi:0.3,ca:19,fe:0.1,mg:7,k2:43,na:4,zn:0.3,fo:6,se:7,col:0,src:"BDA"},
 // Stesso bug fosforo-in-folati del duplicato già corretto (DB_BDA_393), corretto per coerenza - 2026-07-30
@@ -3317,7 +3319,8 @@ const DB_UPF = [
   {n:"Prosciutto cotto alta qualità (per 100g)",c:"Salumi e insaccati",src:"UPF",k:153,p:20,gs:3.5,g:8,z:1,ch:1,fi:0,ca:10,fe:0.8,mg:18,k2:290,na:1800,zn:2.0,fo:5,se:18,col:65},
   {n:"Salame Felino IGP (per 100g)",c:"Salumi e insaccati",src:"UPF",k:367,p:26,gs:10,g:29,z:0.5,ch:0.5,fi:0.5,ca:12,fe:1.5,mg:18,k2:310,na:1400,zn:2.5,fo:5,se:24,col:95},
   {n:"Capicola/Capocollo (per 100g)",c:"Salumi e insaccati",src:"UPF",k:265,p:27,gs:6.9,g:17,z:0,ch:1,fi:0,ca:8,fe:1.0,mg:16,k2:270,na:1960,zn:1.8,fo:5,se:20,col:85},
-  {n:"Bresaola della Valtellina IGP (per 100g)",c:"Salumi e insaccati",src:"UPF",k:155,p:33,gs:0.8,g:2.5,z:95,ch:0.5,fi:2,ca:12,fe:2.5,mg:22,k2:380,na:4000,zn:4.5,fo:5,se:10,col:65},
+  // FIX (check strutturale, non folati): zuccheri (95g) erano fisicamente impossibili per un salume (95g di zucchero su 0.5g di carboidrati totali), probabile corruzione dati non correlata alla verifica OFF dei macro principali - corretto a 0 (la bresaola tradizionale non contiene zuccheri aggiunti) - 2026-07-30
+  {n:"Bresaola della Valtellina IGP (per 100g)",c:"Salumi e insaccati",src:"UPF",k:155,p:33,gs:0.8,g:2.5,z:0,ch:0.5,fi:2,ca:12,fe:2.5,mg:22,k2:380,na:4000,zn:4.5,fo:5,se:10,col:65},
   {n:"Pancetta tesa affumicata (per 100g)",c:"Salumi e insaccati",src:"UPF",k:311,p:21,gs:10,g:25,z:0.5,ch:0.6,fi:0,ca:8,fe:0.6,mg:14,k2:240,na:1574.8,zn:1.5,fo:5,se:22,col:85},
   {n:"Guanciale stagionato (per 100g)",c:"Salumi e insaccati",src:"UPF",k:645,p:6,gs:25,g:68,z:0,ch:0.4,fi:0,ca:7,fe:0.5,mg:10,k2:200,na:1480,zn:1.2,fo:5,se:18,col:90},
   {n:"Speck dell'Alto Adige IGP (per 100g)",c:"Salumi e insaccati",src:"UPF",k:264,p:30,gs:6.2,g:16,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:20,k2:310,na:1574,zn:3.0,fo:5,se:22,col:80},
@@ -3631,7 +3634,8 @@ const DB_UPF = [
 {n:"Biscottini Plasmon (per 100g)",c:"Baby food",src:"INT",k:412,p:9.5,gs:3.4,g:8,z:26.6,ch:74,fi:3,ca:330,fe:6.5,mg:20,k2:150,na:260,zn:0.8,fo:110,se:3,col:25},
 // Proteine/carboidrati/calcio erano sottostimati rispetto alla media Plasmon "pappa lattea" (varie varianti, 384-396kcal/12.5-14.5g prot/70-75g cho/400-450mg ca) — 2026-07-28
 {n:"Farina lattea (polvere, come consumata)",c:"Baby food",src:"INT",k:389,p:13.4,gs:3.5,g:9.5,z:36.5,ch:72.4,fi:2.0,ca:437,fe:8.0,mg:35,k2:380,na:160,zn:2.5,fo:240,se:8,col:18},
-{n:"Yogurt per bambini (intero, alla frutta)",c:"Baby food",src:"INT",k:86,p:1,gs:1.5,g:1.1,z:14,ch:17.6,fi:0.6,ca:65,fe:0.1,mg:10,k2:130,na:45,zn:0.4,fo:10,se:2,col:8},
+// FIX (check strutturale): grassi totali (1.1g) inferiori ai grassi saturi (1.5g), impossibile per definizione - corretto g a 1.5 - 2026-07-30
+{n:"Yogurt per bambini (intero, alla frutta)",c:"Baby food",src:"INT",k:86,p:1,gs:1.5,g:1.5,z:14,ch:17.6,fi:0.6,ca:65,fe:0.1,mg:10,k2:130,na:45,zn:0.4,fo:10,se:2,col:8},
 {n:"Omogeneizzato multivitaminico frutta (vasetto)",c:"Baby food",src:"INT",k:60,p:0.4,gs:0.1,g:0.3,z:9,ch:14,fi:0.8,ca:6,fe:0.5,mg:4,k2:90,na:4,zn:0.05,fo:6,se:0,col:0},
 // ═══ SENZA GLUTINE ═══
 {n:"Pane senza glutine (Schar tipo, affettato)",c:"Senza glutine",src:"INT",k:233,p:3.5,gs:0.4,g:3.4,z:3.3,ch:43,fi:8.1,ca:20,fe:1.5,mg:12,k2:60,na:396,zn:0.3,fo:40,se:1,col:0},
@@ -4257,12 +4261,15 @@ const DB_EXTRA=[
 {n:"Maionese vegana",c:"Prodotti vegani",src:"EXTRA",k:583,p:0.9,gs:5,g:61,z:1,ch:7.5,fi:0,ca:5,fe:0.2,mg:2,k2:20,na:600,zn:0.1,fo:10,se:1,col:0},
 {n:"Crema al cioccolato vegana",c:"Prodotti vegani",src:"EXTRA",k:500,p:8.4,gs:5,g:25,z:51,ch:58,fi:4,ca:30,fe:3.5,mg:60,k2:350,na:40,zn:1,fo:120,se:2,col:0},
 {n:"Yogurt di soia alla fragola",c:"Prodotti vegani",src:"EXTRA",k:94,p:3.5,gs:0.26,g:1.8,z:1.2,ch:16,fi:0.2,ca:118,fe:1.06,mg:40,k2:47,na:35,zn:0.31,fo:6,se:13,col:0},
-{n:"Yogurt di cocco naturale",c:"Prodotti vegani",src:"EXTRA",k:83,p:0.6,gs:10,g:6,z:5,ch:5.7,fi:0,ca:15,fe:0.5,mg:15,k2:70,na:20,zn:0.2,fo:30,se:1,col:0},
-{n:"Latte di cocco da bere (Alpro)",c:"Prodotti vegani",src:"EXTRA",k:20,p:0.1,gs:1.5,g:0.9,z:1.9,ch:2.7,fi:0.1,ca:120,fe:0.2,mg:8,k2:50,na:40,zn:0.1,fo:90,se:1,col:0},
+// FIX (check strutturale): grassi totali (6g) inferiori ai grassi saturi (10g); il cocco e' naturalmente a dominanza satura, corretto g a 10 - 2026-07-30
+{n:"Yogurt di cocco naturale",c:"Prodotti vegani",src:"EXTRA",k:83,p:0.6,gs:10,g:10,z:5,ch:5.7,fi:0,ca:15,fe:0.5,mg:15,k2:70,na:20,zn:0.2,fo:30,se:1,col:0},
+// FIX (check strutturale): grassi totali (0.9g) inferiori ai grassi saturi (1.5g); cocco a dominanza satura, corretto g a 1.5 - 2026-07-30
+{n:"Latte di cocco da bere (Alpro)",c:"Prodotti vegani",src:"EXTRA",k:20,p:0.1,gs:1.5,g:1.5,z:1.9,ch:2.7,fi:0.1,ca:120,fe:0.2,mg:8,k2:50,na:40,zn:0.1,fo:90,se:1,col:0},
 {n:"Wurstel vegano (soia)",c:"Prodotti vegani",src:"EXTRA",k:183,p:17,gs:0.9,g:10,z:0.5,ch:5,fi:2.7,ca:50,fe:2,mg:30,k2:220,na:520,zn:1.2,fo:5,se:3,col:0},
 {n:"Prosciutto vegano (affettato)",c:"Prodotti vegani",src:"EXTRA",k:238,p:21,gs:1,g:13,z:2,ch:8.8,fi:1.1,ca:40,fe:2.5,mg:35,k2:260,na:720,zn:1,fo:5,se:3,col:0},
 {n:"Panna di avena (da cucina)",c:"Prodotti vegani",src:"EXTRA",k:148,p:1,gs:1.1,g:13,z:3,ch:6.2,fi:1,ca:20,fe:0.1,mg:8,k2:70,na:44,zn:0.1,fo:20,se:1,col:0},
-{n:"Burro di cocco vergine",c:"Prodotti vegani",src:"EXTRA",k:670,p:6.9,gs:86,g:64.5,z:0,ch:23.6,fi:0,ca:1,fe:0,mg:0,k2:5,na:0,zn:0,fo:0,se:0,col:0},
+// FIX (check strutturale): grassi totali (64.5g) inferiori ai grassi saturi (86g); cocco a dominanza satura, corretto g a 86 - 2026-07-30
+{n:"Burro di cocco vergine",c:"Prodotti vegani",src:"EXTRA",k:670,p:6.9,gs:86,g:86,z:0,ch:23.6,fi:0,ca:1,fe:0,mg:0,k2:5,na:0,zn:0,fo:0,se:0,col:0},
 {n:"Formaggio vegano affettato",c:"Prodotti vegani",src:"EXTRA",k:285,p:0,gs:21,g:23,z:0,ch:20,fi:1,ca:400,fe:0.5,mg:10,k2:80,na:920,zn:0.5,fo:40,se:1,col:0},
 // === SENZA GLUTINE ===
 {n:"Pasta senza glutine di riso (cotta)",c:"Senza glutine",src:"EXTRA",k:97,p:2,gs:0.04,g:0.2,z:0.1,ch:21.1,fi:1,ca:2,fe:0.14,mg:5,k2:10,na:5,zn:0.41,fo:1,se:5.6,col:0},
@@ -4454,7 +4461,8 @@ const DB_EXTRA=[
 {n:"Nigiri di tonno (per 100g)",c:"Cucina etnica",src:"EXTRA",k:150,p:9,gs:0.3,g:3,z:4,ch:20,fi:0.4,ca:8,fe:0.5,mg:22,k2:220,na:200,zn:0.4,fo:10,se:30,col:30},
 {n:"Nigiri di gambero/gamberetto (per 100g)",c:"Cucina etnica",src:"EXTRA",k:128,p:10,gs:0.1,g:0.8,z:0.5,ch:18.5,fi:0.5,ca:50,fe:0.8,mg:18,k2:140,na:200,zn:0.8,fo:20,se:22,col:55},
 {n:"Sashimi di salmone (per 100g)",c:"Cucina etnica",src:"EXTRA",k:179,p:19.9,gs:3.1,g:10.4,z:0,ch:0,fi:0,ca:26,fe:0.25,mg:95,k2:394,na:47,zn:0.44,fo:30,se:36.5,col:50},
-{n:"Sashimi di tonno (per 100g)",c:"Cucina etnica",src:"EXTRA",k:108,p:24.4,gs:1.2,g:0.5,z:0,ch:0,fi:0,ca:9,fe:1.1,mg:55,k2:444,na:45,zn:0.7,fo:10,se:90,col:38},
+// FIX (check strutturale): grassi saturi (1.2g) non potevano superare i grassi totali (0.5g); il tonno ha grassi prevalentemente insaturi, corretto gs a 0.5 - 2026-07-30
+{n:"Sashimi di tonno (per 100g)",c:"Cucina etnica",src:"EXTRA",k:108,p:24.4,gs:0.5,g:0.5,z:0,ch:0,fi:0,ca:9,fe:1.1,mg:55,k2:444,na:45,zn:0.7,fo:10,se:90,col:38},
 {n:"California roll (per 100g)",c:"Cucina etnica",src:"EXTRA",k:173,p:5.8,gs:0.5,g:4.3,z:5.6,ch:27,fi:2.2,ca:15,fe:0.5,mg:18,k2:110,na:529,zn:0.5,fo:65,se:12,col:8},
 {n:"Temaki di tonno (handroll, per 100g)",c:"Cucina etnica",src:"EXTRA",k:160,p:9,gs:0.5,g:3,z:0.5,ch:22,fi:1.5,ca:12,fe:0.6,mg:18,k2:160,na:330,zn:0.5,fo:10,se:18,col:12},
 {n:"Uramaki (inside-out roll, per 100g)",c:"Cucina etnica",src:"EXTRA",k:173,p:5.5,gs:1,g:3.9,z:5.9,ch:28.5,fi:2.2,ca:18,fe:0.7,mg:20,k2:130,na:380,zn:0.6,fo:75,se:10,col:15},

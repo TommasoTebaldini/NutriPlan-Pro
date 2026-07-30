@@ -2566,7 +2566,8 @@ const DB_BDA=[
 {n:"Pollo alla cacciatora (con pomodoro e olive)",c:"Piatti pronti",k:175,p:20.5,gs:3.0,g:8.5,z:2.0,ch:5.0,fi:1.5,ca:35,fe:1.5,mg:25,k2:385,na:420,zn:1.8,fo:8,se:22,col:65,src:"BDA"},
 {n:"Coniglio all'ischitana (con pomodoro e capperi)",c:"Piatti pronti",k:165,p:20.5,gs:2.0,g:7.5,z:2.0,ch:4.5,fi:1.0,ca:28,fe:1.2,mg:25,k2:355,na:450,zn:1.5,fo:8,se:15,col:55,src:"BDA"},
 {n:"Porchetta di Ariccia (arista di maiale speziata)",c:"Piatti pronti",k:298,p:22.5,gs:9.5,g:23,z:0.5,ch:0.5,fi:0,ca:18,fe:1.0,mg:18,k2:280,na:850,zn:2.8,fo:8,se:18,col:88,src:"BDA"},
-{n:"Focaccia al formaggio di Recco (con stracchino)",c:"Pane e prodotti da forno",k:315,p:10.5,gs:9.5,g:16.5,z:1.5,ch:37,fi:1.5,ca:185,fe:1.0,mg:18,k2:100,na:680,zn:1.5,fo:145,se:8,col:38,src:"BDA"},
+// Fosforo (pasta+stracchino, calcio 185mg conferma contenuto di formaggio) era nel campo folati; folati reali ~25mcg - 2026-07-30
+{n:"Focaccia al formaggio di Recco (con stracchino)",c:"Pane e prodotti da forno",k:315,p:10.5,gs:9.5,g:16.5,z:1.5,ch:37,fi:1.5,ca:185,fe:1.0,mg:18,k2:100,na:680,zn:1.5,fo:25,se:8,col:38,src:"BDA"},
 {n:"Calzone fritto napoletano (ripieno ricotta e salumi)",c:"Pane e prodotti da forno",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:120,se:10,col:42,src:"BDA"},
 {n:"Supplì al telefono romani (riso e ragù fritti)",c:"Piatti pronti",k:218,p:8.5,gs:4.5,g:9.5,z:1.5,ch:26,fi:1.2,ca:65,fe:1.5,mg:22,k2:170,na:520,zn:1.5,fo:95,se:10,col:38,src:"BDA"},
 {n:"Minestrone lombardo (con pasta o riso)",c:"Zuppe e minestre",k:75,p:3.5,gs:0.3,g:2.0,z:2.0,ch:10.5,fi:3.5,ca:42,fe:1.2,mg:22,k2:290,na:380,zn:0.5,fo:55,se:3,col:5,src:"BDA"},

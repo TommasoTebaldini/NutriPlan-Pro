@@ -10,7 +10,8 @@ const DB_CREA=[
 {n:"Maccheroni (pasta di semola cruda)",c:"Cereali e pasta",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:20,se:2.7,col:0,src:"CREA"},
 // RISOLTO (deep-pass duplicati): allineato al duplicato BDA (12mcg), riso crudo non giustifica folati così alti - 2026-07-30
 {n:"Riso Basmati crudo",c:"Cereali e pasta",k:367,p:9,gs:0.1,g:1.9,z:1.1,ch:82.9,fi:1.3,ca:5,fe:0.8,mg:32,k2:114,na:0,zn:1.48,fo:12,se:8,col:0,src:"CREA"},
-{n:"Farina di grano tenero tipo 00",c:"Cereali e derivati",k:323,p:11,gs:0.2,g:0.7,z:1.7,ch:71.6,fi:2.2,ca:17,fe:0.7,mg:20,k2:126,na:3,zn:0.7,fo:100,se:10,col:0,src:"CREA"},
+// FIX: fo=100 troppo alto per farina 00 (coerente con farina tipo 0 gia corretta a 45mcg) - 2026-07-30
+{n:"Farina di grano tenero tipo 00",c:"Cereali e derivati",k:323,p:11,gs:0.2,g:0.7,z:1.7,ch:71.6,fi:2.2,ca:17,fe:0.7,mg:20,k2:126,na:3,zn:0.7,fo:45,se:10,col:0,src:"CREA"},
 {n:"Acqua minerale naturale",c:"Bevande",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0,mg:3,k2:0,na:2,zn:0,fo:0,se:1,col:0,src:"BDA"},
 {n:"Birra analcolica",c:"Bevande",k:9,p:0.2,gs:0,g:0,z:1,ch:1.5,fi:0,ca:8,fe:0,mg:12,k2:56,na:12,zn:0,fo:6,se:0,col:0,src:"BDA"},
 {n:"Birra normale (4-5%)",c:"Bevande",k:43,p:0.3,gs:0,g:0,z:0,ch:3.5,fi:0,ca:6,fe:0,mg:6,k2:35,na:4,zn:0.01,fo:28,se:1,col:0,src:"CREA"},
@@ -1614,7 +1615,8 @@ const DB_BDA=[
   // ── CEREALI E FARINE NON ANCORA PRESENTI ──
   {n:"Teff crudo",c:"Cereali",src:"BDA",k:335,p:13.3,gs:0.45,g:2.4,z:1.8,ch:65.1,fi:8,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:43,se:4.4,col:0},
   {n:"Freekeh (grano verde tostato)",c:"Cereali",src:"BDA",k:362,p:12.6,gs:0.5,g:2.7,z:2.5,ch:72,fi:16.5,ca:32,fe:3.6,mg:78,k2:347,na:18,zn:2.9,fo:40,se:8,col:0},
-  {n:"Riso integrale cotto",c:"Cereali e pasta",src:"CREA",k:113,p:2.5,gs:0.1,g:0.6,z:0.4,ch:25.5,fi:0.8,ca:12,fe:0.5,mg:44,k2:70,na:3,zn:0.6,fo:77,se:9.8,col:0},
+  // FIX: fo=77 troppo alto per riso integrale cotto (folati reali riso, anche integrale, restano bassi) - 2026-07-30
+  {n:"Riso integrale cotto",c:"Cereali e pasta",src:"CREA",k:113,p:2.5,gs:0.1,g:0.6,z:0.4,ch:25.5,fi:0.8,ca:12,fe:0.5,mg:44,k2:70,na:3,zn:0.6,fo:15,se:9.8,col:0},
   // Fosforo (farina di mais) era nel campo folati; folati reali mais non fortificato ~25mcg - 2026-07-30
   {n:"Semola di mais (fioretto)",c:"Cereali",src:"CREA",k:358,p:8.7,gs:0.3,g:4.0,z:1.0,ch:76,fi:2.4,ca:4,fe:1.1,mg:29,k2:142,na:1,zn:0.8,fo:25,se:8,col:0},
   {n:"Farina di riso integrale",c:"Cereali e derivati",src:"BDA",k:332,p:7.3,gs:0.13,g:0.5,z:0,ch:79.1,fi:1,ca:7,fe:0.4,mg:23,k2:104,na:4,zn:0.8,fo:4,se:15.1,col:0},
@@ -1967,7 +1969,8 @@ const DB_BDA=[
 {n:"Pasta e fagioli",c:"Piatti pronti",k:90,p:5.5,gs:0.3,g:1.5,z:1,ch:14.5,fi:3.5,ca:55,fe:1.8,mg:30,k2:310,na:450,zn:1,fo:70,se:3,col:0,src:"BDA"},
 {n:"Risotto ai funghi",c:"Piatti pronti",k:133,p:4,gs:1.5,g:4,z:1,ch:21,fi:1.5,ca:30,fe:0.9,mg:22,k2:180,na:380,zn:0.8,fo:22,se:5,col:8,src:"BDA"},
 {n:"Pappa al pomodoro",c:"Piatti pronti",k:76,p:2.5,gs:0.4,g:2.2,z:2.5,ch:11.5,fi:1.8,ca:30,fe:0.9,mg:14,k2:280,na:420,zn:0.4,fo:45,se:3,col:0,src:"BDA"},
-{n:"Ragù alla bolognese",c:"Condimenti",k:177,p:12,gs:3.5,g:11.5,z:2,ch:7,fi:0.8,ca:30,fe:2.5,mg:22,k2:350,na:400,zn:2.5,fo:160,se:12,col:45,src:"BDA"},
+// FIX: fo=160 troppo alto per ragu alla bolognese (carne+pomodoro, nessun ingrediente ad alto contenuto di folati) - 2026-07-30
+{n:"Ragù alla bolognese",c:"Condimenti",k:177,p:12,gs:3.5,g:11.5,z:2,ch:7,fi:0.8,ca:30,fe:2.5,mg:22,k2:350,na:400,zn:2.5,fo:25,se:12,col:45,src:"BDA"},
 // Stesso bug fosforo-in-folati del duplicato già corretto (DB_CREA_239) - 2026-07-30
 {n:"Besciamella",c:"Condimenti",k:101,p:3.5,gs:3.5,g:6,z:3.5,ch:9.5,fi:0.2,ca:110,fe:0.2,mg:12,k2:160,na:370,zn:0.4,fo:10,se:2,col:17,src:"BDA"},
 {n:"Sugo al pomodoro artigianale",c:"Condimenti",k:52,p:2,gs:0.3,g:2,z:4.8,ch:6.5,fi:1.5,ca:22,fe:0.7,mg:16,k2:330,na:380,zn:0.2,fo:40,se:1,col:0,src:"BDA"},
@@ -3059,7 +3062,8 @@ const DB_UPF = [
 
   // ── PRODOTTI SENZA GLUTINE INTEGRALI ──
   {n:"Pasta integrale senza glutine (quinoa-mais)",c:"Cereali e pasta",src:"UPF",k:355,p:8,gs:0.5,g:3,z:1,ch:70,fi:6,ca:25,fe:1.5,mg:60,k2:250,na:10,zn:1.2,fo:150,se:5,col:0},
-  {n:"Pane integrale senza glutine con semi",c:"Cereali e derivati",src:"UPF",k:265,p:6,gs:0.8,g:7,z:4,ch:44,fi:7,ca:60,fe:1.5,mg:50,k2:200,na:500,zn:1,fo:100,se:6,col:0},
+  // FIX: fo=100 fuori scala rispetto al resto dei pani senza glutine gia coerenti (30-40) - 2026-07-30
+  {n:"Pane integrale senza glutine con semi",c:"Cereali e derivati",src:"UPF",k:265,p:6,gs:0.8,g:7,z:4,ch:44,fi:7,ca:60,fe:1.5,mg:50,k2:200,na:500,zn:1,fo:40,se:6,col:0},
   {n:"Fette biscottate integrali senza glutine",c:"Cereali e derivati",src:"UPF",k:378,p:4.7,gs:0.7,g:5.4,z:4.9,ch:71,fi:14,ca:40,fe:1,mg:30,k2:150,na:470,zn:0.6,fo:90,se:4,col:0},
 
   // ── BEVERAGES FUNZIONALI ──
@@ -3598,7 +3602,8 @@ const DB_UPF = [
 // Allineato a voce BDA gia verificata "Panzanella toscana" (nome esatto identico) — 2026-07-28
 {n:"Panzanella toscana (per 100g)",c:"Insalate e contorni",src:"INT",k:145,p:3.5,gs:0.8,g:6.5,z:4.0,ch:20,fi:2.5,ca:42,fe:1.0,mg:22,k2:280,na:380,zn:0.5,fo:28,se:4,col:0},
 {n:"Caponata siciliana (per 100g)",c:"Piatti tipici regionali",src:"INT",k:104,p:1,gs:0.7,g:6.4,z:5.3,ch:6.9,fi:2.5,ca:25,fe:0.8,mg:15,k2:250,na:240,zn:0.3,fo:28,se:2,col:0},
-{n:"Panzerotto pugliese fritto (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:272,p:12.2,gs:4.8,g:8.2,z:1.2,ch:38.9,fi:0.5,ca:130,fe:1.5,mg:18,k2:135,na:550,zn:1.0,fo:95,se:8,col:25},
+// FIX: fo=95 fuori scala (coerente col bucket 30 gia stabilito per panzerotto/calzone in Fast food) - 2026-07-30
+{n:"Panzerotto pugliese fritto (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:272,p:12.2,gs:4.8,g:8.2,z:1.2,ch:38.9,fi:0.5,ca:130,fe:1.5,mg:18,k2:135,na:550,zn:1.0,fo:30,se:8,col:25},
 {n:"Tiramisù artigianale (per 100g)",c:"Dolci e pasticceria",src:"INT",k:305,p:4.2,gs:11,g:19.4,z:23,ch:29.2,fi:0.3,ca:95,fe:0.8,mg:15,k2:100,na:80,zn:0.8,fo:35,se:5,col:165},
 {n:"Cannolo siciliano (per 100g)",c:"Dolci e pasticceria",src:"INT",k:254,p:9,gs:5.63,g:11.4,z:11.3,ch:29.7,fi:1.0,ca:115,fe:1.0,mg:18,k2:120,na:85,zn:0.8,fo:35,se:5,col:55},
 {n:"Gelato alla crema artigianale (per 100g)",c:"Gelati e sorbetti",src:"INT",k:195,p:5.5,gs:4.1,g:7.6,z:20.9,ch:23.8,fi:0,ca:120,fe:0.2,mg:12,k2:160,na:70,zn:0.5,fo:12,se:3,col:42},
@@ -3819,7 +3824,8 @@ const DB_UPF = [
 {n:"Sushi nigiri salmone (per pezzo, 30g → per 100g)",c:"Cucina etnica",src:"UPF",k:174,p:6.2,gs:0.9,g:7.6,z:3.8,ch:19.6,fi:0,ca:15,fe:0.5,mg:18,k2:130,na:480,zn:0.5,fo:75,se:20,col:22},
 {n:"Sushi maki tonno (per pezzo, 18g → per 100g)",c:"Cucina etnica",src:"UPF",k:135,p:9.0,gs:0.2,g:0.8,z:0.5,ch:21.0,fi:0.8,ca:8,fe:0.6,mg:15,k2:120,na:180,zn:0.4,fo:10,se:25,col:15},
 {n:"Lasagne al forno pronte surgelate",c:"Piatti pronti",src:"UPF",k:150,p:8.7,gs:3.3,g:6.9,z:2.2,ch:12.7,fi:1.1,ca:110,fe:0.8,mg:15,k2:190,na:201,zn:0.8,fo:22,se:5,col:22},
-{n:"Tortellini freschi prosciutto-formaggio (cotti)",c:"Cereali e pasta",src:"UPF",k:404,p:14,gs:3.9,g:10,z:1.9,ch:63,fi:3,ca:70,fe:0.8,mg:15,k2:90,na:880,zn:0.7,fo:100,se:5,col:38},
+// FIX: fo=100 troppo alto (ripieno prosciutto-formaggio, nessun ingrediente ad alto contenuto di folati) - 2026-07-30
+{n:"Tortellini freschi prosciutto-formaggio (cotti)",c:"Cereali e pasta",src:"UPF",k:404,p:14,gs:3.9,g:10,z:1.9,ch:63,fi:3,ca:70,fe:0.8,mg:15,k2:90,na:880,zn:0.7,fo:25,se:5,col:38},
 // ═══ CUCINA ETNICA ═══
 {n:"Curry di pollo indiano (pronto)",c:"Cucina etnica",src:"UPF",k:136,p:8.2,gs:1.1,g:5,z:0.5,ch:14,fi:1,ca:30,fe:1.5,mg:22,k2:280,na:420,zn:1.0,fo:8,se:8,col:42},
 {n:"Dal di lenticchie rosse (pronto)",c:"Cucina etnica",src:"UPF",k:98,p:6.0,gs:0.5,g:2.5,z:2.0,ch:13.5,fi:3.5,ca:22,fe:2.0,mg:30,k2:260,na:350,zn:0.8,fo:85,se:3,col:0},
@@ -4330,7 +4336,8 @@ const DB_EXTRA=[
 {n:"Polpette vegane (soia e legumi)",c:"Prodotti vegani",src:"EXTRA",k:164,p:17,gs:1,g:4.8,z:1,ch:11,fi:4,ca:80,fe:3.5,mg:40,k2:350,na:400,zn:1.5,fo:8,se:5,col:0},
 {n:"Mozzarella vegana (anacardi)",c:"Prodotti vegani",src:"EXTRA",k:248,p:11.5,gs:3.71,g:12.2,z:23.7,ch:23.7,fi:0,ca:610,fe:0.4,mg:41,k2:455,na:685,zn:1.92,fo:11,se:19.2,col:0},
 {n:"Maionese vegana",c:"Prodotti vegani",src:"EXTRA",k:583,p:0.9,gs:5,g:61,z:1,ch:7.5,fi:0,ca:5,fe:0.2,mg:2,k2:20,na:600,zn:0.1,fo:10,se:1,col:0},
-{n:"Crema al cioccolato vegana",c:"Prodotti vegani",src:"EXTRA",k:500,p:8.4,gs:5,g:25,z:51,ch:58,fi:4,ca:30,fe:3.5,mg:60,k2:350,na:40,zn:1,fo:120,se:2,col:0},
+// FIX: fo=120 troppo alto (stesso pattern gia corretto per Nutella, crema spalmabile cioccolato senza ingrediente ad alto contenuto di folati) - 2026-07-30
+{n:"Crema al cioccolato vegana",c:"Prodotti vegani",src:"EXTRA",k:500,p:8.4,gs:5,g:25,z:51,ch:58,fi:4,ca:30,fe:3.5,mg:60,k2:350,na:40,zn:1,fo:20,se:2,col:0},
 {n:"Yogurt di soia alla fragola",c:"Prodotti vegani",src:"EXTRA",k:94,p:3.5,gs:0.26,g:1.8,z:1.2,ch:16,fi:0.2,ca:118,fe:1.06,mg:40,k2:47,na:35,zn:0.31,fo:6,se:13,col:0},
 // FIX (check strutturale): grassi totali (6g) inferiori ai grassi saturi (10g); il cocco e' naturalmente a dominanza satura, corretto g a 10 - 2026-07-30
 {n:"Yogurt di cocco naturale",c:"Prodotti vegani",src:"EXTRA",k:83,p:0.6,gs:10,g:10,z:5,ch:5.7,fi:0,ca:15,fe:0.5,mg:15,k2:70,na:20,zn:0.2,fo:30,se:1,col:0},

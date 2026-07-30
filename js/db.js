@@ -298,7 +298,8 @@ const DB_CREA=[
 {n:"Spirulina in polvere",c:"Verdure",k:290,p:57.5,gs:0.7,g:7.7,z:2.4,ch:23.9,fi:3.6,ca:120,fe:28.5,mg:195,k2:1363,na:1048,zn:2.0,fo:118,se:7,col:0,src:"CREA"},
 {n:"Bacche di goji secche",c:"Frutta secca",k:349,p:14.3,gs:0.3,g:0.4,z:45.6,ch:77.1,fi:13.0,ca:190,fe:6.8,mg:83,k2:1132,na:298,zn:2.0,fo:67,se:5,col:0,src:"CREA"},
 // ── FRUTTA ESOTICA aggiuntiva ──
-{n:"Pitaya / Dragon fruit (polpa)",c:"Frutta fresca",k:50,p:1.1,gs:0,g:0.4,z:9.2,ch:13.0,fi:3.0,ca:18,fe:1.9,mg:40,k2:436,na:39,zn:0.4,fo:34,se:0.6,col:0,src:"CREA"},
+// Corretto a valore reale confermato via ricerca (7mcg), coerente con altro duplicato già verificato (DB_CREA_680) - 2026-07-30
+{n:"Pitaya / Dragon fruit (polpa)",c:"Frutta fresca",k:50,p:1.1,gs:0,g:0.4,z:9.2,ch:13.0,fi:3.0,ca:18,fe:1.9,mg:40,k2:436,na:39,zn:0.4,fo:7,se:0.6,col:0,src:"CREA"},
 {n:"Pomelo fresco",c:"Frutta fresca",k:38,p:0.8,gs:0,g:0.1,z:6.7,ch:9.6,fi:1.0,ca:4,fe:0.1,mg:6,k2:216,na:1,zn:0.08,fo:16,se:0.5,col:0,src:"CREA"},
 // Fosforo (113mg, tipico della noce di cocco) era nel campo folati; folati reali cocco fresco ~26mcg - 2026-07-29
 {n:"Noce di cocco fresca (polpa)",c:"Frutta lipidica",k:354,p:3.3,gs:29.7,g:33.5,z:6.2,ch:15.2,fi:9.0,ca:14,fe:2.4,mg:32,k2:356,na:20,zn:1.1,fo:26,se:10,col:0,src:"CREA"},
@@ -309,7 +310,8 @@ const DB_CREA=[
 {n:"Giuggiole fresche",c:"Frutta fresca",k:79,p:1.2,gs:0,g:0.2,z:17.4,ch:20.2,fi:0.6,ca:21,fe:0.5,mg:10,k2:250,na:3,zn:0.1,fo:23,se:0.3,col:0,src:"CREA"},
 // ── VERDURE aggiuntive ──
 {n:"Rucola selvatica",c:"Verdure",k:30,p:2.6,gs:0,g:0.3,z:3.9,ch:3.9,fi:0.9,ca:309,fe:5.2,mg:47,k2:468,na:27,zn:0.5,fo:97,se:0.3,col:0,src:"CREA"},
-{n:"Crescione d'acqua",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:14,se:0.9,col:0,src:"BDA"},
+// Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
+{n:"Crescione d'acqua",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:43,se:0.9,col:0,src:"BDA"},
 {n:"Puntarelle (cicoria catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:20,k2:358,na:21,zn:0.3,fo:110,se:0.4,col:0,src:"BDA"},
 {n:"Friarielli (cime di rapa napoletane)",c:"Verdure",k:22,p:2.9,gs:0,g:0.3,z:1.2,ch:3.2,fi:2.8,ca:82,fe:2.5,mg:22,k2:200,na:40,zn:0.4,fo:95,se:0.9,col:0,src:"CREA"},
 {n:"Cavolo nero toscano",c:"Verdure",k:35,p:3.3,gs:0,g:0.6,z:0.5,ch:6.7,fi:3.6,ca:157,fe:1.5,mg:34,k2:704,na:38,zn:0.4,fo:141,se:0.9,col:0,src:"CREA"},
@@ -482,7 +484,8 @@ const DB_CREA=[
   // ── FRUTTA SPECIALE ──
   {n:"Fichi d'India (fico d'India) freschi",c:"Frutta fresca",k:63,p:0.8,gs:0.1,g:0.1,z:13,ch:13,fi:5,ca:30,fe:0.4,mg:85,k2:190,na:1,zn:0.1,fo:24,se:1,col:0,src:"CREA"},
   {n:"Carruba (polpa essiccata)",c:"Frutta fresca",k:222,p:4.6,gs:0.1,g:0.7,z:48,ch:49,fi:40,ca:348,fe:2.9,mg:42,k2:827,na:11,zn:0.9,fo:29,se:2,col:0,src:"CREA"},
-  {n:"Pitaya / Dragon fruit rosso",c:"Frutta fresca",k:60,p:1.2,gs:0.1,g:0.4,z:13,ch:13,fi:3.0,ca:8,fe:0.7,mg:18,k2:272,na:39,zn:0.3,fo:22,se:0,col:0,src:"CREA"},
+  // Corretto a valore reale confermato via ricerca (7mcg) - 2026-07-30
+  {n:"Pitaya / Dragon fruit rosso",c:"Frutta fresca",k:60,p:1.2,gs:0.1,g:0.4,z:13,ch:13,fi:3.0,ca:8,fe:0.7,mg:18,k2:272,na:39,zn:0.3,fo:7,se:0,col:0,src:"CREA"},
   {n:"Açaí in polvere disidratata",c:"Frutta fresca",k:534,p:8.1,gs:4.0,g:32,z:10,ch:33,fi:44,ca:260,fe:4.4,mg:105,k2:750,na:15,zn:0.9,fo:168,se:3,col:0,src:"CREA"},
   {n:"Mirto (bacche fresche)",c:"Frutta fresca",k:62,p:0.6,gs:0.1,g:0.4,z:12,ch:12,fi:3.5,ca:18,fe:0.8,mg:7,k2:90,na:2,zn:0.1,fo:20,se:1,col:0,src:"CREA"},
   // Kcal sottostimate (60): fonti convergono su ~76kcal per il frutto fresco - 2026-07-29
@@ -498,7 +501,8 @@ const DB_CREA=[
   {n:"Lampascioni / Muscari (cipolletti selvatici)",c:"Verdure",k:57,p:2.0,gs:0.1,g:0.3,z:8.5,ch:13,fi:1.6,ca:30,fe:0.8,mg:15,k2:260,na:5,zn:0.4,fo:40,se:1,col:0,src:"CREA"},
   {n:"Borragine fresca",c:"Verdure",k:21,p:1.8,gs:0.1,g:0.7,z:1.0,ch:3.1,fi:1.5,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.2,fo:52,se:1,col:0,src:"CREA"},
   {n:"Agretti / Barba di frate cruda",c:"Verdure",k:22,p:1.8,gs:0.1,g:0.2,z:2.2,ch:2.2,fi:2.3,ca:131,fe:1.2,mg:22,k2:420,na:95,zn:0.2,fo:77,se:1,col:0,src:"CREA"},
-  {n:"Crescione d'acqua fresco",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:14,se:1,col:0,src:"BDA"},
+  // Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
+  {n:"Crescione d'acqua fresco",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:43,se:1,col:0,src:"BDA"},
   {n:"Rucola selvatica fresca",c:"Verdure",k:30,p:2.6,gs:0.2,g:0.3,z:3.9,ch:3.9,fi:0.9,ca:309,fe:5.2,mg:47,k2:468,na:27,zn:0.5,fo:97,se:1,col:0,src:"CREA"},
   {n:"Coltivato / Songino / Valerianella fresca",c:"Verdure",k:25,p:2.0,gs:0.1,g:0.4,z:1.6,ch:3.6,fi:2.2,ca:38,fe:2.2,mg:13,k2:459,na:38,zn:0.7,fo:93,se:0,col:0,src:"CREA"},
   {n:"Trevigiano (radicchio di Treviso) fresco",c:"Verdure",k:16,p:1.6,gs:0.1,g:0.1,z:1,ch:1,fi:2.5,ca:27,fe:0.4,mg:14,k2:234,na:13,zn:0.2,fo:24,se:2,col:0,src:"CREA"},
@@ -707,7 +711,8 @@ const DB_CREA=[
 // Potassio (8060mg) e ferro (150mg) erano implausibili anche per un alga essiccata: allineati a fonti multiple convergenti (ferro ~25mg, potassio ~1244mg, magnesio ~482mg, proteine ~32g) - 2026-07-29
 {n:"Alga Dulse essiccata",c:"Verdure",k:298,p:32,gs:0.4,g:4,z:0,ch:52,fi:32,ca:372,fe:25,mg:482,k2:1244,na:2085,zn:1.9,fo:194,se:0.7,col:0,src:"CREA"},
 {n:"Agar-agar (essiccato)",c:"Verdure",k:306,p:0.5,gs:0,g:0.2,z:0,ch:80,fi:7,ca:625,fe:21.4,mg:770,k2:1125,na:102,zn:5.8,fo:52,se:0,col:0,src:"CREA"},
-{n:"Ortica fresca",c:"Verdure",k:43,p:5.9,gs:0.09,g:0.7,z:1.3,ch:1.3,fi:4.1,ca:590,fe:4.4,mg:57,k2:670,na:1,zn:1.7,fo:220,se:0.2,col:0,src:"BDA"},
+// Corretto a valore reale confermato via ricerca (ortica cruda ~14-40mcg, qui stimato 30mcg) - 2026-07-30
+{n:"Ortica fresca",c:"Verdure",k:43,p:5.9,gs:0.09,g:0.7,z:1.3,ch:1.3,fi:4.1,ca:590,fe:4.4,mg:57,k2:670,na:1,zn:1.7,fo:30,se:0.2,col:0,src:"BDA"},
 {n:"Malva fresca",c:"Verdure",k:28,p:3.2,gs:0,g:0.6,z:0,ch:2.5,fi:1.6,ca:257,fe:3.0,mg:45,k2:370,na:10,zn:0.5,fo:52,se:0.5,col:0,src:"CREA"},
 {n:"Silene (erba) fresca",c:"Verdure",k:26,p:2.8,gs:0,g:0.3,z:0,ch:2.0,fi:1.5,ca:120,fe:4.1,mg:30,k2:280,na:8,zn:0.3,fo:40,se:0.3,col:0,src:"CREA"},
 {n:"Mirtilli essiccati",c:"Frutta secca",k:303,p:0.4,gs:0,g:1.3,z:47,ch:75,fi:3.4,ca:11,fe:0.3,mg:6,k2:90,na:2,zn:0.1,fo:12,se:0.1,col:0,src:"CREA"},
@@ -814,7 +819,8 @@ const DB_CREA=[
 {n:"Maracuja (Frutto della Passione) fresco",c:"Frutta",k:97,p:2.2,gs:0.1,g:0.7,z:11.2,ch:23.4,fi:10.4,ca:12,fe:1.6,mg:29,k2:348,na:28,zn:0.1,fo:14,se:0.6,col:0,src:"CREA"},
 {n:"Semi di girasole tostati",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20.0,fi:8.6,ca:78,fe:5.2,mg:325,k2:645,na:3,zn:5.3,fo:227,se:53,col:0,src:"CREA"},
 {n:"Noci del Brasile (Paranoci)",c:"Frutta secca",k:659,p:14.3,gs:16.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0,src:"CREA"},
-{n:"Wasabi in pasta",c:"Condimenti",k:109,p:4.8,gs:0.1,g:0.6,z:4.1,ch:23.0,fi:7.8,ca:128,fe:1.0,mg:69,k2:568,na:818,zn:0.9,fo:61,se:2.5,col:0,src:"CREA"},
+// Corretto a valore reale confermato via ricerca (~18mcg), coerente col duplicato BDA_749 già corretto - 2026-07-30
+{n:"Wasabi in pasta",c:"Condimenti",k:109,p:4.8,gs:0.1,g:0.6,z:4.1,ch:23.0,fi:7.8,ca:128,fe:1.0,mg:69,k2:568,na:818,zn:0.9,fo:18,se:2.5,col:0,src:"CREA"},
 {n:"Lievito di birra in scaglie",c:"Alimenti vari",k:70,p:12.1,gs:0.6,g:0.4,z:1.1,ch:1.1,fi:6.9,ca:13,fe:4.9,mg:50,k2:610,na:16,zn:7.5,fo:2000,se:15,col:0,src:"CREA"},
 {n:"Quinoa cotta",c:"Cereali e derivati",k:140,p:4.8,gs:0.84,g:2.5,z:3.1,ch:24.3,fi:3.6,ca:21,fe:1.1,mg:61,k2:175,na:4,zn:1.18,fo:152,se:3,col:0,src:"CREA"},
 {n:"Orzo perlato cotto",c:"Cereali e derivati",k:118,p:2.6,gs:0.1,g:0.6,z:1.2,ch:26.4,fi:1.8,ca:16,fe:0.9,mg:34,k2:67,na:2,zn:0.82,fo:54,se:13,col:0,src:"CREA"},
@@ -1046,11 +1052,13 @@ const DB_CREA=[
 {n:"Agretti (barba di frate)",c:"Verdure",k:22,p:1.8,gs:0,g:0.2,z:2.2,ch:2.2,fi:2.3,ca:131,fe:1.2,mg:22,k2:470,na:149,zn:0.5,fo:72,se:1,col:0,src:"CREA"},
 {n:"Topinambur (tartufo di canna)",c:"Verdure",k:73,p:2,gs:0,g:0.2,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0,src:"CREA"},
 {n:"Scorzonera (radice nera)",c:"Verdure",k:53,p:1.3,gs:0.07,g:0.3,z:1.5,ch:10.2,fi:3.2,ca:42,fe:0.9,mg:23,k2:310,na:5,zn:0.2,fo:57,se:0.6,col:0,src:"BDA"},
-{n:"Ortiche (foglie tenere, cotte)",c:"Verdure",k:36,p:5.5,gs:0,g:0.5,z:0,ch:4,fi:6.9,ca:481,fe:4.1,mg:57,k2:334,na:40,zn:0.6,fo:160,se:1,col:0,src:"CREA"},
+// Corretto a valore reale confermato via ricerca, coerente con la versione cotta BDA (20mcg) - 2026-07-30
+{n:"Ortiche (foglie tenere, cotte)",c:"Verdure",k:36,p:5.5,gs:0,g:0.5,z:0,ch:4,fi:6.9,ca:481,fe:4.1,mg:57,k2:334,na:40,zn:0.6,fo:20,se:1,col:0,src:"CREA"},
 {n:"Asparagi selvatici",c:"Verdure",k:40,p:4.6,gs:0,g:0.2,z:4,ch:4,fi:2.2,ca:25,fe:1.1,mg:18,k2:198,na:5,zn:0.7,fo:168,se:2.3,col:0,src:"CREA"},
 // Fosforo (~45mg, match esatto borragine) era nel campo folati; folati reali borragine ~13mcg (confermato via ricerca, coerente con DB_CREA_525) - 2026-07-29
 {n:"Borragine (foglie fresche)",c:"Verdure",k:21,p:1.8,gs:0,g:0.7,z:0.8,ch:1.9,fi:1.5,ca:93,fe:3.3,mg:52,k2:470,na:80,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
-{n:"Crescione d'acqua",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:14,se:0.9,col:0,src:"BDA"},
+// Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
+{n:"Crescione d'acqua",c:"Verdure",k:28,p:3,gs:0.27,g:1,z:0.4,ch:0.4,fi:3,ca:170,fe:2.2,mg:21,k2:230,na:49,zn:0.7,fo:43,se:0.9,col:0,src:"BDA"},
 {n:"Puntarelle (cicoria di catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:14,k2:358,na:21,zn:0.3,fo:110,se:0.8,col:0,src:"BDA"},
 {n:"Lampascioni (muscari bulbi)",c:"Verdure",k:27,p:2,gs:0,g:0.2,z:1.5,ch:5,fi:2.4,ca:22,fe:0.9,mg:12,k2:250,na:10,zn:0.4,fo:25,se:0.5,col:0,src:"CREA"},
 {n:"Tarassaco (foglie, dente di leone)",c:"Verdure",k:37,p:3.1,gs:0,g:1.1,z:3.7,ch:3.7,fi:0.4,ca:316,fe:3.2,mg:36,k2:440,na:76,zn:0.41,fo:27,se:0.5,col:0,src:"CREA"},
@@ -1228,7 +1236,8 @@ const DB_CREA=[
 {n:"Noci macadamia",c:"Semi e frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:11,se:3.6,col:0,src:"CREA"},
 {n:"Semi di zucca tostati (senza sale)",c:"Semi e frutta secca",k:574,p:29.8,gs:5.6,g:49,z:1.4,ch:14.7,fi:6,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.6,fo:57,se:9.4,col:0,src:"CREA"},
 // CONDIMENTI E SPEZIE
-{n:"Curry in polvere (miscela)",c:"Condimenti",k:325,p:14,gs:1.3,g:14,z:2.8,ch:58,fi:33,ca:478,fe:29.6,mg:254,k2:1543,na:52,zn:4.1,fo:1.1,se:17,col:0,src:"CREA"},
+// Corretto a valore reale confermato via ricerca (56mcg, USDA "food folate"); risolve discrepanza col duplicato BDA (349mcg, anch'esso corretto) - 2026-07-30
+{n:"Curry in polvere (miscela)",c:"Condimenti",k:325,p:14,gs:1.3,g:14,z:2.8,ch:58,fi:33,ca:478,fe:29.6,mg:254,k2:1543,na:52,zn:4.1,fo:56,se:17,col:0,src:"CREA"},
 {n:"Paprika affumicata (pimenton)",c:"Condimenti",k:289,p:14.8,gs:2.6,g:13,z:10,ch:53,fi:35,ca:229,fe:21.1,mg:178,k2:2345,na:68,zn:4.3,fo:8,se:28,col:0,src:"CREA"},
 {n:"Zafferano in polvere",c:"Condimenti",k:337,p:11.4,gs:1.59,g:5.9,z:42.4,ch:61.5,fi:3.9,ca:110,fe:11.1,mg:264,k2:1720,na:150,zn:1.1,fo:0,se:5,col:0,src:"BDA"},
 {n:"Pasta di acciughe (in tubo)",c:"Condimenti",k:182,p:20,gs:2.5,g:10,z:0,ch:1.5,fi:0,ca:230,fe:3.5,mg:40,k2:380,na:3650,zn:1.8,fo:15,se:32,col:56,src:"CREA"},
@@ -1689,7 +1698,8 @@ const DB_BDA=[
   // Corretto: questa voce "radice FRESCA" aveva per errore gli stessi identici minerali della curcuma in POLVERE (fe:41.4, k2:2525 — impossibili per una radice fresca all'80% acqua) — allineato all'altro duplicato "Curcuma fresca" gia corretto nel DB (80kcal, coerente con zenzero fresco) — 2026-07-29
   {n:"Curcuma fresca (radice)",c:"Verdure",src:"BDA",k:80,p:1.8,gs:0.1,g:0.7,z:2.5,ch:17.8,fi:2,ca:25,fe:0.9,mg:13,k2:430,na:9,zn:0.3,fo:39,se:0.3,col:0},
   {n:"Ravanello fresco",c:"Verdure",src:"CREA",k:16,p:0.7,gs:0,g:0.1,z:2.0,ch:3.4,fi:1.6,ca:25,fe:0.3,mg:10,k2:233,na:39,zn:0.3,fo:25,se:0.6,col:0},
-  {n:"Crescione d'acqua",c:"Verdure",src:"CREA",k:11,p:2.3,gs:0,g:0.1,z:0.4,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.4,fo:9,se:0.9,col:0},
+  // Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
+  {n:"Crescione d'acqua",c:"Verdure",src:"CREA",k:11,p:2.3,gs:0,g:0.1,z:0.4,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:330,na:41,zn:0.4,fo:43,se:0.9,col:0},
   {n:"Nasturzio (fiori e foglie)",c:"Verdure",src:"BDA",k:28,p:2.1,gs:0,g:0.5,z:3.5,ch:5.1,fi:1.8,ca:130,fe:1.6,mg:29,k2:272,na:17,zn:0.4,fo:24,se:0.4,col:0},
 
   // ── FRUTTA SECCA E DISIDRATATA MANCANTE ──
@@ -1765,7 +1775,8 @@ const DB_BDA=[
   {n:"Panettone artigianale (con uvetta e canditi)",c:"Dolci",src:"BDA",k:370,p:7.0,gs:7.5,g:15,z:40,ch:55,fi:1.5,ca:50,fe:2.0,mg:15,k2:130,na:250,zn:0.7,fo:90,se:8,col:115},
   {n:"Colomba pasquale artigianale",c:"Dolci",src:"BDA",k:374,p:6.8,gs:7.54,g:14.8,z:30.6,ch:56,fi:2,ca:32,fe:1,mg:54,k2:92,na:152,zn:0.37,fo:21,se:1.7,col:126},
   {n:"Tiramisù artigianale (mascarpone/uova/savoiardi)",c:"Dolci",src:"BDA",k:290,p:6.5,gs:10,g:18,z:27,ch:27,fi:0.2,ca:70,fe:0.5,mg:12,k2:100,na:180,zn:0.5,fo:110,se:3,col:140},
-  {n:"Seadas / Sebadas sarde (con formaggio e miele)",c:"Dolci",src:"BDA",k:370,p:8.5,gs:6.5,g:17,z:40,ch:48,fi:1.5,ca:120,fe:1.2,mg:18,k2:100,na:250,zn:0.8,fo:100,se:6,col:35},
+  // Allineato al duplicato CREA già verificato (DB_CREA_1074, 15mcg) - 2026-07-30
+  {n:"Seadas / Sebadas sarde (con formaggio e miele)",c:"Dolci",src:"BDA",k:370,p:8.5,gs:6.5,g:17,z:40,ch:48,fi:1.5,ca:120,fe:1.2,mg:18,k2:100,na:250,zn:0.8,fo:15,se:6,col:35},
   {n:"Struffoli napoletani (con miele e canditi)",c:"Dolci",src:"BDA",k:410,p:6.5,gs:4.5,g:18,z:52,ch:60,fi:1.0,ca:35,fe:1.5,mg:10,k2:80,na:85,zn:0.5,fo:70,se:5,col:85},
   {n:"Caponata siciliana (agrodolce con melanzane)",c:"Verdure",src:"BDA",k:90,p:1.8,gs:0.3,g:5.5,z:5.5,ch:9.0,fi:3.0,ca:35,fe:0.8,mg:22,k2:300,na:380,zn:0.2,fo:30,se:1,col:0},
   {n:"Baccalà fritto in pastella",c:"Pesce",src:"BDA",k:200,p:18,gs:1.5,g:9.0,z:3.5,ch:13,fi:0.5,ca:35,fe:0.8,mg:30,k2:300,na:450,zn:0.6,fo:10,se:25,col:55},
@@ -1856,7 +1867,8 @@ const DB_BDA=[
   {n:"Finocchio selvatico (foglie)",c:"Verdure",src:"BDA",k:31,p:1.8,gs:0,g:0.6,z:3.0,ch:5.0,fi:3.1,ca:109,fe:2.7,mg:49,k2:414,na:88,zn:0.7,fo:27,se:0.6,col:0,src:"BDA"},
   {n:"Bieta da coste cotta",c:"Verdure",src:"CREA",k:18,p:1.5,gs:0,g:0.1,z:2.1,ch:2.1,fi:1.4,ca:64,fe:0.8,mg:52,k2:98,na:8,zn:1.5,fo:9,se:0,col:0,src:"BDA"},
   {n:"Indivia riccia cruda",c:"Verdure",src:"BDA",k:20,p:0.9,gs:0.07,g:0.3,z:2.7,ch:2.7,fi:1.6,ca:93,fe:1.7,mg:12,k2:380,na:10,zn:0.4,fo:156,se:0.2,col:0,src:"BDA"},
-  {n:"Ortica (foglie) cotta",c:"Verdure",src:"BDA",k:40,p:6.0,gs:0,g:0.6,z:1.5,ch:5.5,fi:4.5,ca:428,fe:1.7,mg:57,k2:334,na:42,zn:0.8,fo:30,se:1,col:0,src:"BDA"},
+  // Allineato al duplicato CREA cotto già corretto (20mcg) - 2026-07-30
+  {n:"Ortica (foglie) cotta",c:"Verdure",src:"BDA",k:40,p:6.0,gs:0,g:0.6,z:1.5,ch:5.5,fi:4.5,ca:428,fe:1.7,mg:57,k2:334,na:42,zn:0.8,fo:20,se:1,col:0,src:"BDA"},
   {n:"Luppolo (germogli) crudi",c:"Verdure",src:"BDA",k:28,p:3.2,gs:0,g:0.5,z:1.0,ch:3.8,fi:2.5,ca:40,fe:1.5,mg:18,k2:260,na:10,zn:0.4,fo:32,se:0.5,col:0,src:"BDA"},
   // Magnesio (103mg, quasi identico) era nel campo folati; folati reali acetosella ~13mcg (confermato via ricerca, coerente con duplicato DB_CREA_274) - 2026-07-29
   {n:"Acetosella (sorrel/romice) cruda",c:"Verdure",src:"BDA",k:22,p:2.0,gs:0,g:0.7,z:1.0,ch:3.2,fi:2.9,ca:44,fe:2.4,mg:103,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"BDA"},
@@ -2078,10 +2090,12 @@ const DB_BDA=[
 {n:"Rapa rossa (barbabietola) cruda",c:"Ortaggi",k:43,p:1.6,gs:0,g:0.1,z:6.8,ch:9.6,fi:2.8,ca:16,fe:0.8,mg:23,k2:325,na:78,zn:0.4,fo:40,se:0.6,col:0,src:"CREA"},
 // Fosforo (78mg, match esatto USDA topinambur) era nel campo folati; folati reali topinambur ~13mcg - 2026-07-29
 {n:"Topinambur crudo",c:"Ortaggi",k:73,p:2.0,gs:0,g:0.0,z:9.6,ch:17.4,fi:1.6,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:13,se:0.7,col:0,src:"CREA"},
-{n:"Crescione d'acqua fresco",c:"Ortaggi",k:22,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:282,na:41,zn:0.1,fo:60,se:0.9,col:0,src:"BDA"},
+// Corretto a valore reale confermato via ricerca precedente (~43mcg) - 2026-07-30
+{n:"Crescione d'acqua fresco",c:"Ortaggi",k:22,p:2.3,gs:0,g:0.1,z:0.2,ch:1.3,fi:0.5,ca:120,fe:0.2,mg:21,k2:282,na:41,zn:0.1,fo:43,se:0.9,col:0,src:"BDA"},
 // Terzo duplicato con lo stesso bug: folati reali acetosella ~13mcg (confermato via ricerca) - 2026-07-30
 {n:"Acetosella fresca (Rumex acetosa)",c:"Ortaggi",k:22,p:2.0,gs:0,g:0.3,z:0.5,ch:3.2,fi:3.0,ca:44,fe:2.4,mg:16,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},
-{n:"Ortiche fresche (foglie)",c:"Ortaggi",k:42,p:7.2,gs:0,g:0.5,z:0,ch:7.5,fi:6.9,ca:481,fe:41.8,mg:57,k2:334,na:4,zn:0.3,fo:71,se:0.7,col:0,src:"CREA"},
+// Allineato al duplicato fresco già corretto (30mcg) - 2026-07-30
+{n:"Ortiche fresche (foglie)",c:"Ortaggi",k:42,p:7.2,gs:0,g:0.5,z:0,ch:7.5,fi:6.9,ca:481,fe:41.8,mg:57,k2:334,na:4,zn:0.3,fo:30,se:0.7,col:0,src:"CREA"},
 
 // ── FRUTTA MANCANTE ──
 {n:"Nespola del Giappone (loquat) fresca",c:"Frutta",k:47,p:0.4,gs:0,g:0.2,z:7.3,ch:12.1,fi:1.7,ca:16,fe:0.3,mg:13,k2:266,na:1,zn:0.1,fo:27,se:0.5,col:0,src:"CREA"},
@@ -2219,7 +2233,8 @@ const DB_BDA=[
 {n:"Anice stellato (badiana)",c:"Spezie e aromi",k:337,p:17.6,gs:0.5,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:10,se:3,col:0,src:"BDA"},
 {n:"Pepe di Cayenna (capsicum)",c:"Spezie e aromi",k:318,p:12.0,gs:1.9,g:17.3,z:0.7,ch:56.6,fi:27.2,ca:148,fe:7.8,mg:152,k2:2014,na:30,zn:2.5,fo:106,se:8.8,col:0,src:"BDA"},
 {n:"Pepe lungo (piper longum)",c:"Spezie e aromi",k:310,p:11.0,gs:0.4,g:4.9,z:0,ch:64.8,fi:13.2,ca:437,fe:16.3,mg:154,k2:1259,na:20,zn:1.2,fo:180,se:4,col:0,src:"BDA"},
-{n:"Curry in polvere (miscela spezie)",c:"Spezie e aromi",k:325,p:12.7,gs:2.3,g:13.8,z:0.7,ch:55.8,fi:33.2,ca:478,fe:29.6,mg:254,k2:1543,na:52,zn:4.1,fo:349,se:17,col:0,src:"BDA"},
+// Corretto a valore reale confermato via ricerca (56mcg, USDA "food folate"); risolve discrepanza col duplicato CREA (1.1mcg, anch'esso corretto) - 2026-07-30
+{n:"Curry in polvere (miscela spezie)",c:"Spezie e aromi",k:325,p:12.7,gs:2.3,g:13.8,z:0.7,ch:55.8,fi:33.2,ca:478,fe:29.6,mg:254,k2:1543,na:52,zn:4.1,fo:56,se:17,col:0,src:"BDA"},
 {n:"Garam masala (miscela spezie indiana)",c:"Spezie e aromi",k:379,p:14.1,gs:2.0,g:15.0,z:1.5,ch:50.4,fi:22.2,ca:524,fe:23.7,mg:230,k2:1315,na:60,zn:3.4,fo:380,se:6,col:0,src:"BDA"},
 {n:"Pasta di acciughe (tube)",c:"Condimenti",k:185,p:18.0,gs:1.5,g:11.5,z:0,ch:0,fi:0,ca:140,fe:2.5,mg:30,k2:300,na:3000,zn:1.2,fo:10,se:30,col:70,src:"BDA"},
 {n:"Salsa Worcestershire (inglese)",c:"Condimenti",k:78,p:1.1,gs:0,g:0.1,z:10.7,ch:19.5,fi:0.2,ca:59,fe:2.7,mg:22,k2:152,na:980,zn:0.1,fo:29,se:2,col:0,src:"BDA"},
@@ -2560,7 +2575,8 @@ const DB_BDA=[
 {n:"Fritto misto di pesce (con panatura)",c:"Pesce e frutti di mare",k:235,p:16,gs:3.5,g:12.5,z:0.5,ch:18,fi:0.8,ca:65,fe:1.5,mg:35,k2:290,na:480,zn:1.2,fo:12,se:28,col:65,src:"BDA"},
 {n:"Risotto al nero di seppia",c:"Piatti pronti",k:195,p:9.5,gs:2.5,g:7.5,z:0.5,ch:26,fi:0.5,ca:38,fe:1.8,mg:32,k2:210,na:580,zn:1.5,fo:145,se:30,col:55,src:"BDA"},
 {n:"Trippa alla romana (con pomodoro e pecorino)",c:"Piatti pronti",k:162,p:15.5,gs:3.5,g:9.5,z:1.5,ch:5.5,fi:1.5,ca:125,fe:1.5,mg:20,k2:220,na:580,zn:3.5,fo:100,se:15,col:72,src:"BDA"},
-{n:"Bollito misto con salsa verde",c:"Piatti pronti",k:195,p:22,gs:4.0,g:9.5,z:0.5,ch:4.0,fi:0.5,ca:20,fe:2.5,mg:22,k2:280,na:650,zn:3.5,fo:175,se:20,col:75,src:"BDA"},
+// Allineato al duplicato già verificato (10mcg): carne bollita non giustifica folati così elevati anche con salsa verde - 2026-07-30
+{n:"Bollito misto con salsa verde",c:"Piatti pronti",k:195,p:22,gs:4.0,g:9.5,z:0.5,ch:4.0,fi:0.5,ca:20,fe:2.5,mg:22,k2:280,na:650,zn:3.5,fo:10,se:20,col:75,src:"BDA"},
 {n:"Scaloppine al limone (vitello)",c:"Piatti pronti",k:178,p:22.5,gs:2.5,g:8.5,z:0.5,ch:4.0,fi:0.3,ca:18,fe:1.5,mg:22,k2:295,na:420,zn:2.5,fo:8,se:15,col:68,src:"BDA"},
 // Stesso bug fosforo-in-folati del duplicato (senza risotto) - 2026-07-30
 {n:"Ossobuco alla milanese (con gremolata)",c:"Piatti pronti",k:215,p:20,gs:5.0,g:11.5,z:1.5,ch:7.5,fi:0.8,ca:42,fe:2.0,mg:25,k2:320,na:480,zn:3.0,fo:15,se:18,col:78,src:"BDA"},
@@ -3534,7 +3550,8 @@ const DB_UPF = [
 // ── FRUTTA ESOTICA ──
 // Fosforo (31mg, match esatto USDA lychee) era nel campo folati; folati reali ~14mcg - 2026-07-30
 {n:"Lychee / Litchi (per 100g)",c:"Frutta",src:"CREA",k:66,p:0.8,gs:0,g:0.4,z:15.2,ch:16.5,fi:1.3,ca:5,fe:0.3,mg:10,k2:171,na:1,zn:0.1,fo:14,se:0.6,col:0},
-{n:"Dragon fruit rosso (pitaya, per 100g)",c:"Frutta",src:"CREA",k:60,p:1.2,gs:0,g:0.4,z:8.5,ch:13,fi:3.0,ca:8,fe:1.9,mg:18,k2:180,na:39,zn:0.3,fo:22,se:0.6,col:0},
+// Corretto a valore reale confermato via ricerca (7mcg) - 2026-07-30
+{n:"Dragon fruit rosso (pitaya, per 100g)",c:"Frutta",src:"CREA",k:60,p:1.2,gs:0,g:0.4,z:8.5,ch:13,fi:3.0,ca:8,fe:1.9,mg:18,k2:180,na:39,zn:0.3,fo:7,se:0.6,col:0},
 {n:"Guava (per 100g)",c:"Frutta",src:"CREA",k:68,p:2.6,gs:0.3,g:1.0,z:9.0,ch:14.3,fi:5.4,ca:18,fe:0.3,mg:22,k2:417,na:2,zn:0.2,fo:40,se:0.6,col:0},
 {n:"Physalis / Alchechengi (per 100g)",c:"Frutta",src:"CREA",k:53,p:1.9,gs:0.3,g:0.7,z:7.0,ch:11.2,fi:1.9,ca:9,fe:1.0,mg:20,k2:268,na:1,zn:0.3,fo:40,se:0.3,col:0},
 {n:"Jackfruit / Jaca (per 100g)",c:"Frutta",src:"CREA",k:95,p:1.7,gs:0,g:0.6,z:19.1,ch:23.2,fi:1.5,ca:24,fe:0.6,mg:29,k2:448,na:2,zn:0.4,fo:21,se:0.5,col:0},
@@ -4392,7 +4409,8 @@ const DB_EXTRA=[
 {n:"Mango",c:"Frutta esotica",src:"EXTRA",k:60,p:0.8,gs:0.09,g:0.4,z:13.7,ch:15,fi:1.6,ca:11,fe:0.16,mg:10,k2:168,na:1,zn:0.09,fo:43,se:0.6,col:0},
 {n:"Maracuja (frutto della passione)",c:"Frutta esotica",src:"EXTRA",k:97,p:2.2,gs:0.06,g:0.7,z:11.2,ch:23.4,fi:10.4,ca:12,fe:1.6,mg:29,k2:348,na:28,zn:0.1,fo:14,se:0.6,col:0},
 {n:"Lychee",c:"Frutta esotica",src:"EXTRA",k:66,p:0.8,gs:0.1,g:0.4,z:15.2,ch:16.5,fi:1.3,ca:5,fe:0.31,mg:10,k2:171,na:1,zn:0.07,fo:14,se:0.6,col:0},
-{n:"Pitahaya rossa (frutto del drago)",c:"Frutta esotica",src:"EXTRA",k:60,p:1.2,gs:0,g:0.4,z:8,ch:13,fi:3,ca:18,fe:0.7,mg:36,k2:436,na:39,zn:0.4,fo:22,se:0.6,col:0},
+// Corretto a valore reale confermato via ricerca (7mcg) - 2026-07-30
+{n:"Pitahaya rossa (frutto del drago)",c:"Frutta esotica",src:"EXTRA",k:60,p:1.2,gs:0,g:0.4,z:8,ch:13,fi:3,ca:18,fe:0.7,mg:36,k2:436,na:39,zn:0.4,fo:7,se:0.6,col:0},
 {n:"Jackfruit maturo",c:"Frutta esotica",src:"EXTRA",k:95,p:1.7,gs:0.2,g:0.6,z:19.1,ch:23.3,fi:1.5,ca:24,fe:0.23,mg:29,k2:448,na:2,zn:0.13,fo:24,se:0.6,col:0},
 {n:"Star fruit (carambola)",c:"Frutta esotica",src:"EXTRA",k:31,p:1,gs:0,g:0.3,z:4,ch:7,fi:2.8,ca:3,fe:0.1,mg:10,k2:133,na:2,zn:0.1,fo:12,se:0.6,col:0},
 {n:"Guava",c:"Frutta esotica",src:"EXTRA",k:68,p:2.6,gs:0.27,g:1,z:8.9,ch:14.3,fi:5.4,ca:18,fe:0.26,mg:22,k2:417,na:2,zn:0.23,fo:49,se:0.6,col:0},

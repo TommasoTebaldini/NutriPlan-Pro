@@ -2738,7 +2738,8 @@ const DB_UPF = [
   // ── BEVANDE ZUCCHERATE aggiuntive ──
   {n:"Nettare di pesca brick",c:"Bibite zuccherate",src:"UPF",k:55,p:0.4,gs:0,g:0.1,z:12.6,ch:12.6,fi:0.9,ca:8,fe:0.3,mg:7,k2:110,na:0,zn:0.05,fo:8,se:0,col:0},
   {n:"Succo di pera brick",c:"Bibite zuccherate",src:"UPF",k:56,p:0,gs:0,g:0,z:13,ch:13,fi:0.2,ca:8,fe:0.2,mg:6,k2:100,na:0,zn:0.02,fo:4,se:0,col:0},
-  {n:"Latte al cioccolato industriale",c:"Bibite zuccherate",src:"UPF",k:71,p:3.2,gs:1.2,g:2,z:11.5,ch:11.5,fi:0,ca:115,fe:0.5,mg:20,k2:185,na:65,zn:0.5,fo:90,se:2,col:8},
+  // Fosforo (latte, calcio 115mg conferma) era nel campo folati; folati reali ~8mcg - 2026-07-30
+  {n:"Latte al cioccolato industriale",c:"Bibite zuccherate",src:"UPF",k:71,p:3.2,gs:1.2,g:2,z:11.5,ch:11.5,fi:0,ca:115,fe:0.5,mg:20,k2:185,na:65,zn:0.5,fo:8,se:2,col:8},
   {n:"Bevanda alla soia zuccherata",c:"Bibite zuccherate",src:"UPF",k:50,p:3.1,gs:0.2,g:1.7,z:5.1,ch:5.4,fi:0.3,ca:120,fe:0.5,mg:17,k2:95,na:40,zn:0.3,fo:40,se:1,col:0},
   {n:"Latte di cocco in lattina",c:"Bibite zuccherate",src:"UPF",k:165,p:0,gs:15,g:17,z:2.5,ch:2.9,fi:0,ca:18,fe:3.3,mg:37,k2:263,na:60,zn:0.7,fo:22,se:6,col:0},
 
@@ -2759,9 +2760,11 @@ const DB_UPF = [
 
   // ── PRODOTTI DA FORNO SALATI INDUSTRIALI ──
   {n:"Focaccia industriale confezionata",c:"Snack salati",src:"UPF",k:258,p:8,gs:1.4,g:5.4,z:1.1,ch:43.1,fi:2.5,ca:30,fe:1.5,mg:15,k2:90,na:520,zn:0.5,fo:75,se:8,col:0},
-  {n:"Toast confezionato prosciutto e formaggio",c:"Fast food",src:"UPF",k:248,p:11,gs:4,g:11,z:3.5,ch:28,fi:1.5,ca:160,fe:1.2,mg:18,k2:150,na:780,zn:1.2,fo:110,se:10,col:35},
+  // Fosforo (pane+prosciutto+formaggio, calcio 160mg conferma formaggio) era nel campo folati; folati reali ~30mcg - 2026-07-30
+  {n:"Toast confezionato prosciutto e formaggio",c:"Fast food",src:"UPF",k:248,p:11,gs:4,g:11,z:3.5,ch:28,fi:1.5,ca:160,fe:1.2,mg:18,k2:150,na:780,zn:1.2,fo:30,se:10,col:35},
   {n:"Wrap industriale pollo e verdure",c:"Fast food",src:"UPF",k:220,p:10,gs:2,g:8,z:3,ch:28,fi:2.5,ca:60,fe:1.5,mg:20,k2:190,na:680,zn:0.9,fo:8,se:9,col:20},
-  {n:"Panino hamburger industriale completo",c:"Fast food",src:"UPF",k:260,p:12,gs:4,g:10,z:4,ch:32,fi:2,ca:80,fe:2.5,mg:22,k2:230,na:750,zn:2,fo:120,se:10,col:40},
+  // Fosforo (pane+carne+formaggio) era nel campo folati; folati reali ~30mcg - 2026-07-30
+  {n:"Panino hamburger industriale completo",c:"Fast food",src:"UPF",k:260,p:12,gs:4,g:10,z:4,ch:32,fi:2,ca:80,fe:2.5,mg:22,k2:230,na:750,zn:2,fo:30,se:10,col:40},
   {n:"Piadina romagnola industriale",c:"Cereali e derivati",src:"UPF",k:294,p:7.7,gs:1,g:7.4,z:1.5,ch:48,fi:2,ca:55,fe:1.8,mg:18,k2:130,na:2100,zn:0.7,fo:85,se:8,col:5},
   {n:"Focaccine tipo Tigelle industriali",c:"Cereali e derivati",src:"UPF",k:293,p:15,gs:5.8,g:15,z:2.4,ch:24,fi:3.4,ca:45,fe:1.5,mg:16,k2:110,na:600,zn:0.6,fo:80,se:8,col:0},
   {n:"Crackers wasa tipo crispbread",c:"Snack salati",src:"UPF",k:336,p:9,gs:0.4,g:2.5,z:1.5,ch:11,fi:19,ca:30,fe:3,mg:65,k2:240,na:1000,zn:2,fo:260,se:15,col:0},

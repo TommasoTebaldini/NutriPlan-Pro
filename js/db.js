@@ -610,7 +610,8 @@ const DB_CREA=[
   {n:"Farro integrale crudo",c:"Cereali e derivati",k:353,p:14.6,gs:0.6,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:40,se:25,col:0,src:"CREA"},
   {n:"Grano saraceno decorticato crudo",c:"Cereali e derivati",k:329,p:12.4,gs:0.71,g:3.3,z:1.5,ch:61.2,fi:10,ca:110,fe:4,mg:231,k2:450,na:1,zn:2.4,fo:24,se:8,col:0,src:"CREA"},
   {n:"Grano saraceno cotto",c:"Cereali e derivati",k:329,p:12.4,gs:0.71,g:3.3,z:1.5,ch:61.2,fi:10,ca:110,fe:4,mg:65,k2:450,na:1,zn:0.9,fo:120,se:3,col:0,src:"CREA"},
-  {n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.1,g:1.6,z:1.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:2,zn:0.8,fo:148,se:5,col:0,src:"CREA"},
+  // Fosforo (amaranto cotto ~148mg) era nel campo folati; folati reali ~27mcg - 2026-07-30
+  {n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.1,g:1.6,z:1.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:2,zn:0.8,fo:27,se:5,col:0,src:"CREA"},
   {n:"Miglio decorticato crudo",c:"Cereali e derivati",k:342,p:11,gs:0.5,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:40,se:2,col:0,src:"CREA"},
   {n:"Miglio cotto",c:"Cereali e derivati",k:343,p:11.8,gs:0.2,g:3.9,z:0.5,ch:64.9,fi:8.5,ca:8,fe:3,mg:44,k2:195,na:5,zn:0.5,fo:74,se:0.5,col:0,src:"CREA"},
   {n:"Teff crudo (cereale etiope)",c:"Cereali e derivati",k:367,p:13.3,gs:0.3,g:2.4,z:1.8,ch:73.1,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:30,se:8,col:0,src:"CREA"},
@@ -2287,12 +2288,14 @@ const DB_BDA=[
 {n:"Crostata di marmellata (artigianale)",c:"Dolci",k:340,p:5.5,gs:3.0,g:12.0,z:35.0,ch:55.5,fi:1.5,ca:18,fe:1.2,mg:14,k2:100,na:180,zn:0.5,fo:55,se:4,col:60,src:"CREA"},
 {n:"Torta margherita (pan di spagna base)",c:"Dolci",k:370,p:8.9,gs:4.0,g:10.4,z:34.1,ch:63.4,fi:1.4,ca:9,fe:2.8,mg:12,k2:88,na:150,zn:0.6,fo:70,se:8,col:120,src:"CREA"},
 {n:"Biscotti da tè (tipo shortbread)",c:"Biscotti e crackers",k:490,p:6.5,gs:9.0,g:22.0,z:28.0,ch:67.0,fi:1.5,ca:25,fe:1.5,mg:15,k2:110,na:180,zn:0.5,fo:55,se:5,col:75,src:"CREA"},
-{n:"Budino di riso (con latte e zucchero)",c:"Dolci",k:138,p:3.8,gs:2.0,g:4.5,z:18.0,ch:22.0,fi:0.2,ca:90,fe:0.3,mg:10,k2:115,na:55,zn:0.4,fo:55,se:3,col:18,src:"CREA"},
+// Stesso bug fosforo-in-folati del duplicato già corretto (DB_CREA_863) - 2026-07-30
+{n:"Budino di riso (con latte e zucchero)",c:"Dolci",k:138,p:3.8,gs:2.0,g:4.5,z:18.0,ch:22.0,fi:0.2,ca:90,fe:0.3,mg:10,k2:115,na:55,zn:0.4,fo:10,se:3,col:18,src:"CREA"},
 
 // ── FARINE E SEMOLE MANCANTI (CREA) ──
 {n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:355,p:12.5,gs:0.2,g:1.6,z:1.5,ch:72.0,fi:3.2,ca:20,fe:1.8,mg:38,k2:155,na:3,zn:1.0,fo:150,se:17,col:0,src:"CREA"},
 {n:"Miglio decorticato cotto",c:"Cereali e derivati",k:342,p:11,gs:0.1,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:74,se:0.6,col:0,src:"CREA"},
-{n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.2,g:1.6,z:0.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:6,zn:0.9,fo:148,se:2,col:0,src:"BDA"},
+// Fosforo (amaranto cotto ~148mg) era nel campo folati; folati reali ~27mcg - 2026-07-30
+{n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.2,g:1.6,z:0.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:6,zn:0.9,fo:27,se:2,col:0,src:"BDA"},
 
 // ── TISANE E INFUSI (CREA) ──
 {n:"Camomilla in infuso (non zuccherata)",c:"Bevande",k:1,p:0.1,gs:0,g:0,z:0,ch:0.2,fi:0,ca:5,fe:0.1,mg:2,k2:10,na:1,zn:0,fo:5,se:0,col:0,src:"CREA"},
@@ -2323,7 +2326,8 @@ const DB_BDA=[
 // ── PIATTI PRONTI TRADIZIONALI ITALIANI (BDA/CREA) ──
 {n:"Gnocchi di patate freschi (cotti)",c:"Piatti pronti",k:130,p:3.2,gs:0.2,g:1.0,z:0.5,ch:27.5,fi:1.5,ca:18,fe:0.5,mg:15,k2:190,na:290,zn:0.3,fo:40,se:2,col:0,src:"BDA"},
 {n:"Ravioli di ricotta e spinaci (freschi, cotti)",c:"Piatti pronti",k:175,p:8.5,gs:3.0,g:6.5,z:1.5,ch:22.0,fi:1.5,ca:120,fe:1.5,mg:28,k2:220,na:310,zn:0.8,fo:90,se:8,col:55,src:"BDA"},
-{n:"Tortellini in brodo (freschi, cotti)",c:"Piatti pronti",k:160,p:8.0,gs:3.0,g:6.0,z:1.0,ch:19.5,fi:0.8,ca:65,fe:1.0,mg:15,k2:185,na:520,zn:0.8,fo:90,se:7,col:45,src:"BDA"},
+// Stesso bug fosforo-in-folati delle paste fresche ripiene, corretto per coerenza col pattern pasta all'uovo - 2026-07-30
+{n:"Tortellini in brodo (freschi, cotti)",c:"Piatti pronti",k:160,p:8.0,gs:3.0,g:6.0,z:1.0,ch:19.5,fi:0.8,ca:65,fe:1.0,mg:15,k2:185,na:520,zn:0.8,fo:40,se:7,col:45,src:"BDA"},
 {n:"Risotto ai funghi porcini (cotto)",c:"Piatti pronti",k:145,p:3.5,gs:1.5,g:5.5,z:1.0,ch:22.0,fi:1.5,ca:18,fe:0.8,mg:22,k2:180,na:350,zn:0.7,fo:35,se:4,col:8,src:"BDA"},
 {n:"Polenta cotta (senza sale)",c:"Cereali e derivati",k:73,p:0.9,gs:0.1,g:0.04,z:0.2,ch:17.8,fi:0.9,ca:3,fe:0.1,mg:2,k2:16,na:91,zn:0.03,fo:10,se:1,col:0,src:"CREA"},
 {n:"Ribollita toscana (zuppa di pane e verdure)",c:"Piatti pronti",k:100,p:4.0,gs:0.5,g:2.5,z:2.0,ch:16.5,fi:4.5,ca:65,fe:1.5,mg:30,k2:350,na:380,zn:0.7,fo:80,se:4,col:0,src:"BDA"},

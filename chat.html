@@ -630,11 +630,21 @@ async function loadAndamento() {
   const cycleQ = selectedPatientId ? safeQ(sb.from('menstrual_cycle').select('start_date,end_date,cycle_length,symptoms,notes').eq('user_id', selectedPatientId).order('start_date',{ascending:false}).limit(12)) : Promise.resolve([]);
 
   // Wellness: query per user_id con fallback su cartella_id
-  const WELL_BASE = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,symptoms,notes';
+  // steps/heart_rate_avg (SEZIONE wearables Diet-Plan-Pro-app-claude): se le
+  // colonne non sono ancora migrate sul progetto Supabase, PostgREST rifiuta
+  // l'intera select con un errore colonna — ricadere sulle sole colonne
+  // "storiche" invece di perdere anche umore/sonno già funzionanti.
+  const WELL_BASE_WEARABLES = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,symptoms,notes,steps,heart_rate_avg';
+  const WELL_BASE_LEGACY = 'date,logged_at,mood,energy,sleep_hours,sleep_quality,sleep_restedness,symptoms,notes';
+  let WELL_BASE = WELL_BASE_WEARABLES;
   let wellQ;
   if (selectedPatientId) {
     let wRes = [];
-    const r1 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+    let r1 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+    if (r1.error && (r1.error.code === '42703' || r1.error.code === 'PGRST204')) {
+      WELL_BASE = WELL_BASE_LEGACY;
+      r1 = await sb.from('daily_wellness').select(WELL_BASE).eq('user_id', selectedPatientId).gte('date', cutoffStr).order('date',{ascending:false}).limit(300);
+    }
     wRes = r1.data || [];
     if (!wRes.length && selectedPatientCartellaId) {
       const r2 = await sb.from('daily_wellness').select(WELL_BASE).eq('cartella_id', selectedPatientCartellaId).gte('logged_at', cutoff.toISOString()).order('logged_at',{ascending:false}).limit(300);
@@ -745,6 +755,8 @@ function renderDiaryDay() {
   if (well?.energy) badges.push(`<span class="diary-badge" style="background:#FEF9C3;color:#854D0E">${energyMap[well.energy]||'⚡'} Energia ${well.energy}/5</span>`);
   if (well?.stress_level) badges.push(`<span class="diary-badge" style="background:#FEE2E2;color:#991B1B">${stressMap2[well.stress_level]||'😐'} Stress ${well.stress_level}/5</span>`);
   if (well?.sleep_hours) badges.push(`<span class="diary-badge" style="background:#EDE9FE;color:#5B21B6">😴 ${well.sleep_hours}h sonno</span>`);
+  if (well?.steps) badges.push(`<span class="diary-badge" style="background:#F0FDF4;color:#166534">👣 ${Number(well.steps).toLocaleString('it-IT')} passi</span>`);
+  if (well?.heart_rate_avg) badges.push(`<span class="diary-badge" style="background:#FEF2F2;color:#B91C1C">❤️ ${well.heart_rate_avg} bpm</span>`);
   if (water) badges.push(`<span class="diary-badge" style="background:#EFF6FF;color:#1D4ED8">💧 ${(water/1000).toFixed(2)}L</span>`);
   if (acts.length) badges.push(`<span class="diary-badge" style="background:#ECFDF5;color:#065F46">🏃 ${acts.reduce((s,a)=>s+(a.duration_minutes||0),0)} min</span>`);
   if (weight) badges.push(`<span class="diary-badge" style="background:#FFF7ED;color:#9A3412">⚖️ ${weight} kg</span>`);
@@ -849,6 +861,16 @@ function renderDiaryDay() {
           <div style="font-size:22px">💧</div>
           <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${well.hydration_level}/5</div>
           ${mkBar(well.hydration_level,5,'#3B82F6')}
+        </div>`:''}
+        ${well?.steps?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">${_L('Passi','Steps')}</div>
+          <div style="font-size:22px">👣</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${Number(well.steps).toLocaleString('it-IT')}</div>
+        </div>`:''}
+        ${well?.heart_rate_avg?`<div style="background:white;border-radius:8px;padding:8px 12px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--slate-l);text-transform:uppercase;margin-bottom:4px">${_L('Freq. cardiaca','Heart rate')}</div>
+          <div style="font-size:22px">❤️</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-top:2px">${well.heart_rate_avg} bpm</div>
         </div>`:''}
       </div>
       ${well?.symptoms&&(Array.isArray(well.symptoms)?well.symptoms.length:well.symptoms)?`
@@ -1070,6 +1092,8 @@ function renderDiaryOverview() {
     const hasEnergia = displayDates.some(d => _diaryWellByDate[d]?.energy);
     const hasStress  = displayDates.some(d => _diaryWellByDate[d]?.stress_level);
     const hasSonno   = displayDates.some(d => _diaryWellByDate[d]?.sleep_hours);
+    const hasPassi   = displayDates.some(d => _diaryWellByDate[d]?.steps);
+    const hasFC      = displayDates.some(d => _diaryWellByDate[d]?.heart_rate_avg);
     const hasCiclo   = displayDates.some(d => window._diaryCycleDates?.has(d));
 
     let wRows = '';
@@ -1077,6 +1101,8 @@ function renderDiaryOverview() {
     if (hasEnergia) wRows += mkWellRow('⚡',_L('Energia','Energy'), (w) => w?.energy  ? `${energyMap2[w.energy]||'⚡'}<span style="font-size:9px;color:#BE185D;margin-left:2px">${w.energy}/5</span>` : null);
     if (hasStress)  wRows += mkWellRow('😤','Stress',  (w) => w?.stress_level ? `${stressMap3[w.stress_level]}<span style="font-size:9px;color:#BE185D;margin-left:2px">${w.stress_level}/5</span>` : null);
     if (hasSonno)   wRows += mkWellRow('😴',_L('Sonno','Sleep'),   (w) => w?.sleep_hours  ? `<span style="font-size:12px;font-weight:700;color:#5B21B6">${w.sleep_hours}h</span>${w.sleep_quality?`<span style="font-size:9px;color:#7C3AED;margin-left:2px">q${w.sleep_quality}</span>`:''}` : null);
+    if (hasPassi)   wRows += mkWellRow('👣',_L('Passi','Steps'), (w) => w?.steps ? `<span style="font-size:12px;font-weight:700;color:#166534">${Number(w.steps).toLocaleString('it-IT')}</span>` : null);
+    if (hasFC)      wRows += mkWellRow('❤️',_L('Freq. cardiaca','Heart rate'), (w) => w?.heart_rate_avg ? `<span style="font-size:12px;font-weight:700;color:#B91C1C">${w.heart_rate_avg} bpm</span>` : null);
     if (hasCiclo)   wRows += mkWellRow('🌸',_L('Ciclo','Cycle'), (w, date) => window._diaryCycleDates?.has(date) ? '<span style="font-size:16px">🌸</span>' : null);
     // Sintomi
     const hasSintomi = displayDates.some(d => { const w=_diaryWellByDate[d]; return w?.symptoms && (Array.isArray(w.symptoms)?w.symptoms.length:w.symptoms); });

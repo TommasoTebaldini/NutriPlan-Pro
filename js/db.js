@@ -32,7 +32,8 @@ const DB_CREA=[
 {n:"Corn flakes",c:"Cereali da colazione",k:367,p:6.6,gs:0.2,g:0.8,z:10.4,ch:87.4,fi:2.8,ca:74,fe:2.8,mg:14,k2:99,na:500,zn:0.28,fo:60,se:2,col:0,src:"CREA"},
 {n:"Pasta di semola cruda",c:"Cereali e pasta",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:20,se:2.7,col:0,src:"CREA"},
 {n:"Pasta integrale cruda",c:"Cereali e pasta",k:330,p:13.3,gs:0.3,g:2.2,z:3,ch:64.8,fi:7.1,ca:30,fe:2.7,mg:100,k2:330,na:11,zn:2,fo:25,se:39,col:0,src:"CREA"},
-{n:"Riso bianco crudo",c:"Cereali e pasta",k:334,p:6.7,gs:0.1,g:0.4,z:0.2,ch:80.4,fi:1,ca:24,fe:0.8,mg:20,k2:92,na:5,zn:1.3,fo:100,se:10,col:0,src:"CREA"},
+// FIX: fo=100 troppo alto per riso bianco raffinato (folati reali molto bassi) - 2026-07-30
+{n:"Riso bianco crudo",c:"Cereali e pasta",k:334,p:6.7,gs:0.1,g:0.4,z:0.2,ch:80.4,fi:1,ca:24,fe:0.8,mg:20,k2:92,na:5,zn:1.3,fo:8,se:10,col:0,src:"CREA"},
 {n:"Riso integrale crudo",c:"Cereali e pasta",k:341,p:7.5,gs:0.3,g:1.9,z:1.2,ch:77.4,fi:1.9,ca:32,fe:1.6,mg:143,k2:214,na:9,zn:2,fo:20,se:14,col:0,src:"CREA"},
 {n:"Farro perlato crudo",c:"Cereali e pasta",k:353,p:14.6,gs:0.2,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:40,se:7,col:0,src:"CREA"},
 // Fosforo (457mg, confermato da fonte USDA) era nel campo folati; corretto a 184mcg (folati reali, coerente con l'altra voce Quinoa rossa gia corretta) - 2026-07-29
@@ -52,7 +53,8 @@ const DB_CREA=[
 {n:"Arancia",c:"Frutta fresca",k:37,p:0.7,gs:0.025,g:0.2,z:7.8,ch:7.8,fi:1.6,ca:49,fe:0.2,mg:10,k2:200,na:3,zn:0.2,fo:31,se:1,col:0,src:"BDA"},
 {n:"Pera",c:"Frutta fresca",k:43,p:0.3,gs:0.016,g:0.1,z:8.8,ch:8.8,fi:3.8,ca:11,fe:0.3,mg:7,k2:127,na:2,zn:0.05,fo:2,se:0,col:0,src:"BDA"},
 {n:"Fragola",c:"Frutta fresca",k:30,p:0.9,gs:0,g:0.4,z:5.3,ch:5.3,fi:1.6,ca:35,fe:0.8,mg:13,k2:160,na:2,zn:0.14,fo:26,se:0.4,col:0,src:"CREA"},
-{n:"Kiwi",c:"Frutta fresca",k:48,p:1.2,gs:0,g:0.6,z:9,ch:9,fi:2.2,ca:25,fe:0.5,mg:12,k2:400,na:5,zn:0.1,fo:70,se:0.2,col:0,src:"CREA"},
+// FIX: fo=70 troppo alto (reale ~25mcg, verificato via fonte esterna USDA) - 2026-07-30
+{n:"Kiwi",c:"Frutta fresca",k:48,p:1.2,gs:0,g:0.6,z:9,ch:9,fi:2.2,ca:25,fe:0.5,mg:12,k2:400,na:5,zn:0.1,fo:25,se:0.2,col:0,src:"CREA"},
 {n:"Avocado",c:"Frutta lipidica",k:238,p:4.4,gs:2.59,g:23,z:1.8,ch:1.8,fi:3.3,ca:13,fe:0.6,mg:29,k2:450,na:2,zn:0.64,fo:44,se:0.4,col:0,src:"CREA"},
 {n:"Mandorle dolci secche",c:"Frutta secca",k:628,p:22,gs:4.63,g:55.3,z:3.7,ch:4.6,fi:12.7,ca:240,fe:3,mg:264,k2:780,na:14,zn:2.5,fo:550,se:1.5,col:0,src:"CREA"},
 {n:"Noci",c:"Frutta secca",k:589,p:10.5,gs:5.6,g:57.7,z:3.4,ch:5.5,fi:3.5,ca:131,fe:2.6,mg:131,k2:368,na:3,zn:2.7,fo:98,se:3.1,col:0,src:"CREA"},
@@ -154,7 +156,8 @@ const DB_CREA=[
 // Kcal/grassi sottostimati: fonti multiple concordano su un range 450-600kcal/50-58g grassi per prodotti reali, valore locale (456kcal/42g) era al limite basso - 2026-07-29
 {n:"Nduja",c:"Salumi",k:530,p:18,gs:20,g:50,z:0,ch:0,fi:0,ca:15,fe:2,mg:20,k2:300,na:2100,zn:2,fo:5,se:15,col:90,src:"CREA"},
 // ── CEREALI aggiuntivi ──
-{n:"Couscous crudo",c:"Cereali e pasta",k:361,p:13.7,gs:0.2,g:1.1,z:2.7,ch:76.5,fi:4.5,ca:24,fe:1.9,mg:52,k2:247,na:10,zn:1.4,fo:99,se:27,col:0,src:"CREA"},
+// FIX: fo=99 troppo alto per couscous (semola di grano, folati modesti) - 2026-07-30
+{n:"Couscous crudo",c:"Cereali e pasta",k:361,p:13.7,gs:0.2,g:1.1,z:2.7,ch:76.5,fi:4.5,ca:24,fe:1.9,mg:52,k2:247,na:10,zn:1.4,fo:25,se:27,col:0,src:"CREA"},
 {n:"Bulgur crudo",c:"Cereali e pasta",k:320,p:12.3,gs:0.23,g:1.3,z:0.4,ch:62.4,fi:12.5,ca:35,fe:2.5,mg:164,k2:410,na:17,zn:1.93,fo:27,se:2.3,col:0,src:"BDA"},
 // ── DOLCIFICANTI e CONDIMENTI ──
 {n:"Aceto balsamico",c:"Condimenti",k:88,p:0.5,gs:0,g:0,z:17,ch:17.0,fi:0,ca:27,fe:0.7,mg:12,k2:112,na:23,zn:0.08,fo:7,se:0,col:0,src:"CREA"},
@@ -176,7 +179,8 @@ const DB_CREA=[
 {n:"Pasta di semola cotta",c:"Cereali e pasta",k:175,p:6.9,gs:0.1,g:0.6,z:1.1,ch:37.3,fi:0.9,ca:21,fe:1.1,mg:24,k2:115,na:2,zn:0.5,fo:50,se:10,col:0,src:"CREA"},
 {n:"Pasta di ceci cruda",c:"Cereali e pasta",k:352,p:21,gs:0.5,g:6.3,z:1,ch:54,fi:11,ca:53,fe:6,mg:86,k2:700,na:30,zn:2.5,fo:420,se:5,col:0,src:"CREA"},
 {n:"Pasta di lenticchie cruda",c:"Cereali e pasta",k:344,p:24,gs:0.3,g:2.3,z:2,ch:55,fi:11,ca:59,fe:8,mg:105,k2:842,na:4,zn:3,fo:380,se:6,col:0,src:"CREA"},
-{n:"Riso Arborio crudo",c:"Cereali e pasta",k:334,p:6.7,gs:0.1,g:0.4,z:0.2,ch:80.4,fi:1,ca:24,fe:0.8,mg:20,k2:92,na:5,zn:1.3,fo:110,se:10,col:0,src:"CREA"},
+// FIX: fo=110 troppo alto per riso raffinato (folati reali molto bassi) - 2026-07-30
+{n:"Riso Arborio crudo",c:"Cereali e pasta",k:334,p:6.7,gs:0.1,g:0.4,z:0.2,ch:80.4,fi:1,ca:24,fe:0.8,mg:20,k2:92,na:5,zn:1.3,fo:8,se:10,col:0,src:"CREA"},
 {n:"Riso Venere crudo",c:"Cereali e pasta",k:355,p:7.8,gs:0.2,g:1.3,z:2.2,ch:80.4,fi:5.1,ca:13,fe:1.1,mg:101,k2:280,na:0,zn:1.5,fo:20,se:12,col:0,src:"CREA"},
 // Folati 200mcg implausibile per mais+grano saraceno (reali ~25mcg); probabile bug fosforo-in-folati - 2026-07-29
 {n:"Polenta taragna cruda",c:"Cereali e pasta",k:350,p:11,gs:0.4,g:3.5,z:0,ch:68,fi:3,ca:30,fe:2.5,mg:80,k2:280,na:5,zn:2,fo:25,se:8,col:0,src:"CREA"},
@@ -264,7 +268,8 @@ const DB_CREA=[
 {n:"Pinoli",c:"Frutta secca",k:604,p:31.9,gs:4.9,g:50.3,z:3.9,ch:4,fi:4.5,ca:40,fe:2,mg:251,k2:597,na:2,zn:6.4,fo:58,se:0.7,col:0,src:"CREA"},
 {n:"Castagne fresche",c:"Frutta secca",k:174,p:2.9,gs:0.3,g:1.7,z:8.9,ch:36.7,fi:4.7,ca:30,fe:0.9,mg:30,k2:395,na:9,zn:0.5,fo:81,se:1.2,col:0,src:"CREA"},
 {n:"Castagne secche",c:"Frutta secca",k:315,p:6,gs:0.4,g:3.4,z:16.1,ch:62,fi:13.8,ca:56,fe:1.9,mg:50,k2:738,na:17,zn:0.7,fo:107,se:2,col:0,src:"CREA"},
-{n:"Cocco secco rapè",c:"Frutta secca",k:669,p:5.6,gs:57.33,g:62,z:16.4,ch:16.4,fi:13.7,ca:23,fe:3.6,mg:90,k2:660,na:28,zn:1.1,fo:260,se:18,col:0,src:"CREA"},
+// FIX: fo=260 implausibile per cocco essiccato (reale 7-26mcg, verificato via fonte esterna) - 2026-07-30
+{n:"Cocco secco rapè",c:"Frutta secca",k:669,p:5.6,gs:57.33,g:62,z:16.4,ch:16.4,fi:13.7,ca:23,fe:3.6,mg:90,k2:660,na:28,zn:1.1,fo:10,se:18,col:0,src:"CREA"},
 {n:"Nocciole crude",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:113,se:2,col:0,src:"CREA"},
 // ── CONDIMENTI E SALSE aggiuntivi ──
 {n:"Passata di pomodoro",c:"Condimenti",k:21,p:1.3,gs:0,g:0.2,z:3,ch:3,fi:1.5,ca:16,fe:0.8,mg:15,k2:348,na:16,zn:0.15,fo:40,se:0.5,col:0,src:"CREA"},
@@ -383,7 +388,8 @@ const DB_CREA=[
 {n:"Farina di grano saraceno",c:"Cereali e derivati",k:341,p:8.7,gs:0.34,g:2.7,z:1.5,ch:73.5,fi:3.1,ca:6,fe:1.8,mg:251,k2:130,na:1,zn:3.1,fo:24,se:5,col:0,src:"CREA"},
 {n:"Amido di mais (maizena)",c:"Cereali e derivati",k:328,p:0.3,gs:0,g:0,z:1.5,ch:87,fi:0,ca:2,fe:0.2,mg:3,k2:0,na:0,zn:0.1,fo:13,se:3,col:0,src:"CREA"},
 {n:"Amido di tapioca",c:"Cereali e derivati",k:357,p:0.2,gs:0,g:0.0,z:0,ch:85.7,fi:0.9,ca:20,fe:1.6,mg:1,k2:11,na:1,zn:0.1,fo:7,se:0.8,col:0,src:"CREA"},
-{n:"Farina di cocco",c:"Cereali e derivati",k:341,p:8.7,gs:0.34,g:2.7,z:1.5,ch:73.5,fi:3.1,ca:6,fe:1.8,mg:90,k2:130,na:1,zn:1.1,fo:260,se:18,col:0,src:"CREA"},
+// FIX: fo=260 implausibile per farina di cocco (reale 7-26mcg) - 2026-07-30
+{n:"Farina di cocco",c:"Cereali e derivati",k:341,p:8.7,gs:0.34,g:2.7,z:1.5,ch:73.5,fi:3.1,ca:6,fe:1.8,mg:90,k2:130,na:1,zn:1.1,fo:20,se:18,col:0,src:"CREA"},
 {n:"Farina di avena",c:"Cereali e derivati",k:378,p:12.6,gs:1.46,g:7.1,z:1.2,ch:66.3,fi:7.6,ca:80,fe:4.2,mg:177,k2:370,na:33,zn:3.6,fo:32,se:34,col:0,src:"CREA"},
 // ── GRASSI E OLI aggiuntivi ──
 {n:"Olio di avocado",c:"Grassi e oli",k:899,p:0,gs:16.32,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
@@ -396,7 +402,8 @@ const DB_CREA=[
   {n:"Pane di farro integrale",c:"Cereali e pane",k:248,p:9.2,gs:0.3,g:1.5,z:1.8,ch:46.5,fi:5.8,ca:30,fe:2.5,mg:50,k2:280,na:400,zn:2.0,fo:30,se:8,col:0,src:"CREA"},
   {n:"Pane multicereali",c:"Cereali e pane",k:260,p:9.5,gs:0.3,g:2.5,z:2.0,ch:47.5,fi:5.5,ca:40,fe:2.8,mg:55,k2:260,na:420,zn:2.0,fo:30,se:9,col:0,src:"CREA"},
   {n:"Focaccia genovese",c:"Cereali e pane",k:306,p:7.9,gs:0.91,g:5.9,z:2.1,ch:57.9,fi:2.3,ca:20,fe:1.1,mg:15,k2:99,na:789,zn:0.31,fo:32,se:2,col:0,src:"BDA"},
-  {n:"Ciabatta",c:"Cereali e pane",k:270,p:8.5,gs:0.4,g:2.8,z:1.5,ch:52,fi:2.5,ca:22,fe:1.8,mg:24,k2:130,na:540,zn:0.9,fo:110,se:6,col:0,src:"CREA"},
+  // FIX: fo=110 fuori scala rispetto all'altro duplicato "Ciabatta" gia a 80 in categoria Pane - 2026-07-30
+  {n:"Ciabatta",c:"Cereali e pane",k:270,p:8.5,gs:0.4,g:2.8,z:1.5,ch:52,fi:2.5,ca:22,fe:1.8,mg:24,k2:130,na:540,zn:0.9,fo:30,se:6,col:0,src:"CREA"},
   {n:"Riso parboiled crudo",c:"Cereali e pasta",k:338,p:7.4,gs:0.2,g:0.3,z:0.3,ch:81.3,fi:0.5,ca:60,fe:2.9,mg:42,k2:150,na:9,zn:2,fo:20,se:14,col:0,src:"CREA"},
   {n:"Pasta di farro cruda",c:"Cereali e pasta",k:343,p:14.0,gs:0.3,g:2.5,z:3.5,ch:65.5,fi:6.5,ca:30,fe:3.8,mg:130,k2:410,na:5,zn:3.0,fo:35,se:15,col:0,src:"CREA"},
   // ── VERDURE MANCANTI ──
@@ -634,7 +641,8 @@ const DB_CREA=[
   {n:"Farro perlato cotto",c:"Cereali e derivati",k:178,p:6.2,gs:0.2,g:1,z:0.9,ch:37.3,fi:2.1,ca:15,fe:0.6,mg:23,k2:50,na:1,zn:0.61,fo:110,se:7,col:0,src:"CREA"},
   {n:"Farro integrale crudo",c:"Cereali e derivati",k:353,p:14.6,gs:0.6,g:2.4,z:2.4,ch:69.3,fi:6.5,ca:35,fe:1.9,mg:112,k2:407,na:10,zn:2.6,fo:40,se:25,col:0,src:"CREA"},
   {n:"Grano saraceno decorticato crudo",c:"Cereali e derivati",k:329,p:12.4,gs:0.71,g:3.3,z:1.5,ch:61.2,fi:10,ca:110,fe:4,mg:231,k2:450,na:1,zn:2.4,fo:24,se:8,col:0,src:"CREA"},
-  {n:"Grano saraceno cotto",c:"Cereali e derivati",k:329,p:12.4,gs:0.71,g:3.3,z:1.5,ch:61.2,fi:10,ca:110,fe:4,mg:65,k2:450,na:1,zn:0.9,fo:120,se:3,col:0,src:"CREA"},
+  // FIX: fo=120 troppo alto per grano saraceno cotto (diluito in acqua, folati modesti) - 2026-07-30
+  {n:"Grano saraceno cotto",c:"Cereali e derivati",k:329,p:12.4,gs:0.71,g:3.3,z:1.5,ch:61.2,fi:10,ca:110,fe:4,mg:65,k2:450,na:1,zn:0.9,fo:15,se:3,col:0,src:"CREA"},
   // Fosforo (amaranto cotto ~148mg) era nel campo folati; folati reali ~27mcg - 2026-07-30
   {n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.1,g:1.6,z:1.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:2,zn:0.8,fo:27,se:5,col:0,src:"CREA"},
   {n:"Miglio decorticato crudo",c:"Cereali e derivati",k:342,p:11,gs:0.5,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:40,se:2,col:0,src:"CREA"},
@@ -741,7 +749,8 @@ const DB_CREA=[
 {n:"Latte di riso commerciale",c:"Latte e derivati",k:40,p:0.3,gs:0,g:1.0,z:5.5,ch:8.0,fi:0.1,ca:120,fe:0.1,mg:5,k2:35,na:40,zn:0.1,fo:10,se:0,col:0,src:"CREA"},
 {n:"Olio di germe di grano",c:"Grassi",k:899,p:0,gs:16.5,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Conserva di pomodoro (passata)",c:"Verdure",k:21,p:1.3,gs:0,g:0.2,z:3,ch:3,fi:1.5,ca:16,fe:1.0,mg:20,k2:430,na:16,zn:0.2,fo:40,se:0.9,col:0,src:"CREA"},
-{n:"Koji di riso",c:"Cereali e pasta",k:189,p:13.0,gs:0,g:0.2,z:0,ch:38.0,fi:1.0,ca:30,fe:1.5,mg:40,k2:150,na:10,zn:1.0,fo:120,se:3,col:0,src:"CREA"},
+// FIX: fo=120 troppo alto per koji di riso (riso fermentato, base rimane il riso) - 2026-07-30
+{n:"Koji di riso",c:"Cereali e pasta",k:189,p:13.0,gs:0,g:0.2,z:0,ch:38.0,fi:1.0,ca:30,fe:1.5,mg:40,k2:150,na:10,zn:1.0,fo:10,se:3,col:0,src:"CREA"},
 {n:"Pasta frolla cruda",c:"Cereali e pasta",k:473,p:7.5,gs:12.32,g:24.1,z:26.1,ch:59.8,fi:1.1,ca:26,fe:1.1,mg:61,k2:75,na:184,zn:0.39,fo:24,se:2.3,col:204,src:"BDA"},
 {n:"Uovo fritto (olio EVO)",c:"Uova",k:184,p:13.6,gs:3.5,g:14.2,z:0.3,ch:0.4,fi:0,ca:55,fe:1.9,mg:11,k2:127,na:190,zn:1.4,fo:47,se:14,col:410,src:"CREA"},
 {n:"Torta margherita (crostata base)",c:"Dolci",k:370,p:8.9,gs:3.0,g:10.4,z:34.1,ch:63.4,fi:1.4,ca:9,fe:2.8,mg:10,k2:100,na:200,zn:0.4,fo:35,se:5,col:85,src:"CREA"},
@@ -1189,11 +1198,11 @@ const DB_CREA=[
 {n:"Alga dulse (secca)",c:"Verdure",k:247,p:21.6,gs:0.2,g:3.2,z:0,ch:43.2,fi:33,ca:567,fe:6.3,mg:220,k2:1244,na:2085,zn:1.9,fo:180,se:30,col:0,src:"CREA"},
 {n:"Alga kombu (secca)",c:"Verdure",k:243,p:8.2,gs:0.1,g:1.8,z:0,ch:60,fi:27.1,ca:168,fe:2.8,mg:760,k2:6100,na:2500,zn:1.2,fo:180,se:20,col:0,src:"CREA"},
 // ── DOLCI TRADIZIONALI ITALIANI ──
-{n:"Cantucci toscani (biscotti di Prato)",c:"Biscotti e crackers",k:443,p:11,gs:4,g:15,z:28,ch:67,fi:1.5,ca:70,fe:2,mg:30,k2:180,na:210,zn:0.9,fo:50,se:10,col:88,src:"CREA"},
+{n:"Cantucci toscani (biscotti di Prato)",c:"Biscotti e crackers",k:443,p:11,gs:4,g:15,z:28,ch:67,fi:1.5,ca:70,fe:2,mg:30,k2:180,na:210,zn:0.9,fo:20,se:10,col:88,src:"CREA"},
 {n:"Amaretti morbidi",c:"Dolci",k:389,p:8,gs:1,g:9,z:45,ch:70,fi:2.5,ca:80,fe:2,mg:45,k2:250,na:40,zn:0.9,fo:15,se:5,col:0,src:"CREA"},
 {n:"Ricciarelli di Siena (mandorle)",c:"Dolci",k:439,p:10,gs:1.2,g:20,z:42,ch:57,fi:3,ca:50,fe:1.5,mg:40,k2:200,na:30,zn:1.2,fo:18,se:4,col:0,src:"CREA"},
 {n:"Torta caprese (al cioccolato e mandorle)",c:"Dolci",k:408,p:9,gs:9,g:25,z:35,ch:41,fi:3,ca:60,fe:3.5,mg:58,k2:290,na:120,zn:1.5,fo:20,se:8,col:120,src:"CREA"},
-{n:"Panettone artigianale",c:"Dolci",k:337,p:6.4,gs:6.5,g:10.7,z:22.9,ch:56.2,fi:2.1,ca:149,fe:3,mg:18,k2:130,na:190,zn:0.7,fo:60,se:15,col:120,src:"CREA"},
+{n:"Panettone artigianale",c:"Dolci",k:337,p:6.4,gs:6.5,g:10.7,z:22.9,ch:56.2,fi:2.1,ca:149,fe:3,mg:18,k2:130,na:190,zn:0.7,fo:35,se:15,col:120,src:"CREA"},
 {n:"Pandoro artigianale",c:"Dolci",k:401,p:7.8,gs:11.04,g:20,z:23.8,ch:50,fi:1.2,ca:28,fe:0.8,mg:58,k2:106,na:248,zn:0.47,fo:24,se:2.4,col:126,src:"BDA"},
 {n:"Strudel di mele artigianale",c:"Dolci",k:262,p:3.5,gs:2.5,g:9,z:17,ch:42,fi:2,ca:28,fe:1,mg:12,k2:135,na:160,zn:0.4,fo:15,se:5,col:25,src:"CREA"},
 {n:"Zeppole di San Giuseppe (al forno)",c:"Dolci",k:310,p:6,gs:4.5,g:14,z:20,ch:41,fi:1,ca:60,fe:1,mg:10,k2:110,na:140,zn:0.5,fo:30,se:8,col:115,src:"CREA"},
@@ -1377,7 +1386,7 @@ const DB_CREA=[
 // Fosforo (pasta all'uovo+ripieno carne) era nel campo folati; folati reali ~40mcg (coerente col pattern pasta fresca all'uovo) - 2026-07-30
 {n:"Agnolotti piemontesi al ragù (freschi)",c:"Piatti pronti",k:265,p:13.5,gs:4.5,g:9.5,z:2.5,ch:32,fi:1.5,ca:65,fe:2.0,mg:25,k2:185,na:350,zn:1.8,fo:40,se:15,col:55,src:"CREA"},
 {n:"Bistecca fiorentina (vitellone, cruda)",c:"Carni rosse",k:126,p:22.8,gs:1.3,g:4.0,z:0,ch:0,fi:0,ca:8,fe:2.5,mg:22,k2:355,na:55,zn:4.5,fo:8,se:22,col:65,src:"CREA"},
-{n:"Babà napoletano (con rum)",c:"Dolci",k:310,p:5.5,gs:3.0,g:8.5,z:30,ch:52,fi:0.5,ca:35,fe:1.2,mg:12,k2:95,na:180,zn:0.5,fo:55,se:8,col:80,src:"CREA"},
+{n:"Babà napoletano (con rum)",c:"Dolci",k:310,p:5.5,gs:3.0,g:8.5,z:30,ch:52,fi:0.5,ca:35,fe:1.2,mg:12,k2:95,na:180,zn:0.5,fo:35,se:8,col:80,src:"CREA"},
 {n:"Lombata di manzo (fiorentina, cruda)",c:"Carni rosse",k:138,p:21.5,gs:2.5,g:5.5,z:0,ch:0,fi:0,ca:7,fe:2.4,mg:22,k2:350,na:55,zn:4.2,fo:8,se:20,col:65,src:"CREA"},
 {n:"Spezzatino di vitello (cotto)",c:"Piatti pronti",k:175,p:22.5,gs:2.5,g:8.5,z:1.5,ch:3.5,fi:0.5,ca:20,fe:1.5,mg:25,k2:295,na:380,zn:3.5,fo:8,se:12,col:78,src:"CREA"},
 {n:"Insalata di riso (con tonno e verdure)",c:"Piatti pronti",k:190,p:5.9,gs:2.75,g:11.5,z:1,ch:16.1,fi:1.3,ca:79,fe:0.8,mg:18,k2:121,na:430,zn:1.3,fo:10,se:10,col:34,src:"BDA"},
@@ -1548,7 +1557,8 @@ const DB_BDA=[
   // ── FARINE E DERIVATI ──
   {n:"Farina di mandorle",c:"Cereali e derivati",src:"BDA",k:579,p:21.4,gs:3.8,g:49.9,z:4.4,ch:21.7,fi:10.5,ca:236,fe:3.7,mg:258,k2:733,na:1,zn:3.1,fo:29,se:4,col:0},
   {n:"Farina di ceci",c:"Cereali e derivati",src:"BDA",k:363,p:21.8,gs:0.63,g:4.9,z:3.7,ch:54.3,fi:13.8,ca:117,fe:6.1,mg:115,k2:800,na:6,zn:3.3,fo:180,se:8,col:0},
-  {n:"Pangrattato",c:"Cereali e derivati",src:"CREA",k:357,p:10.1,gs:0.5,g:2.1,z:5,ch:77.8,fi:3.2,ca:110,fe:2.1,mg:34,k2:190,na:400,zn:1.0,fo:120,se:25,col:0},
+  // FIX: fo=120 troppo alto per pangrattato (pane secco macinato, folati modesti) - 2026-07-30
+  {n:"Pangrattato",c:"Cereali e derivati",src:"CREA",k:357,p:10.1,gs:0.5,g:2.1,z:5,ch:77.8,fi:3.2,ca:110,fe:2.1,mg:34,k2:190,na:400,zn:1.0,fo:30,se:25,col:0},
   // Fosforo (~136mg tipico della semola) era nel campo folati; folati reali semolino ~35mcg - 2026-07-29
   {n:"Semolino di grano duro",c:"Cereali e derivati",src:"BDA",k:350,p:12.7,gs:0.2,g:1.0,z:0.5,ch:72.8,fi:3.9,ca:17,fe:1.3,mg:47,k2:186,na:1,zn:1.2,fo:35,se:8,col:0},
   {n:"Amido di mais",c:"Cereali e derivati",src:"CREA",k:328,p:0.3,gs:0,g:0,z:1.5,ch:87,fi:0,ca:2,fe:0.3,mg:3,k2:0,na:0,zn:0.06,fo:13,se:2,col:0},
@@ -1686,7 +1696,8 @@ const DB_BDA=[
   {n:"Coste di bietola crude",c:"Verdure",src:"CREA",k:19,p:1.6,gs:0,g:0.2,z:1.1,ch:3.6,fi:1.6,ca:51,fe:1.8,mg:81,k2:380,na:213,zn:0.4,fo:9,se:0.9,col:0},
   {n:"Friarielli / Cime di rapa crude",c:"Verdure",src:"CREA",k:26,p:2.9,gs:0,g:0.4,z:1.4,ch:4.6,fi:2.6,ca:78,fe:2.3,mg:23,k2:389,na:30,zn:0.5,fo:87,se:0.8,col:0},
   {n:"More fresche",c:"Frutta fresca",src:"CREA",k:43,p:1.4,gs:0,g:0.5,z:4.9,ch:9.6,fi:5.3,ca:29,fe:0.6,mg:20,k2:162,na:1,zn:0.5,fo:25,se:0.4,col:0},
-  {n:"Melograno",c:"Frutta fresca",src:"CREA",k:83,p:1.7,gs:0,g:1.2,z:13.7,ch:18.7,fi:4.0,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:107,se:0.5,col:0},
+  // FIX: fo=107 troppo alto per melograno (reale ~38mcg) - 2026-07-30
+{n:"Melograno",c:"Frutta fresca",src:"CREA",k:83,p:1.7,gs:0,g:1.2,z:13.7,ch:18.7,fi:4.0,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:38,se:0.5,col:0},
   // Kcal/carboidrati/zuccheri sottostimati: fonte USDA converge su 74kcal/19g carb/14-16g zuccheri, valore locale (47kcal) era troppo basso; minerali gia coerenti, non toccati - 2026-07-29
   {n:"Fico fresco",c:"Frutta fresca",src:"CREA",k:74,p:0.75,gs:0,g:0.3,z:16,ch:19,fi:2.9,ca:35,fe:0.37,mg:11,k2:232,na:1,zn:0.2,fo:14,se:0.2,col:0},
   // Kcal/carboidrati sottostimati: fonti USDA convergono su ~46kcal/12g carb (potassio 157 gia coerente/esatto) - 2026-07-29
@@ -1698,7 +1709,8 @@ const DB_BDA=[
   // ── PRODOTTI DA FORNO E CEREALI AGGIUNTIVI ──
   {n:"Pane azzimo (non lievitato)",c:"Cereali e derivati",src:"CREA",k:365,p:10.7,gs:0.4,g:1,z:1.9,ch:81.7,fi:3.5,ca:25,fe:2.0,mg:30,k2:130,na:10,zn:0.8,fo:95,se:20,col:0},
   {n:"Pane pita",c:"Cereali e derivati",src:"BDA",k:275,p:9.1,gs:0.3,g:1.2,z:0.5,ch:57.5,fi:3.0,ca:58,fe:2.3,mg:26,k2:120,na:540,zn:0.7,fo:95,se:15,col:0},
-  {n:"Tortilla di farina di mais",c:"Cereali e derivati",src:"BDA",k:234,p:5.7,gs:0.4,g:3.8,z:0.3,ch:47.4,fi:4.0,ca:81,fe:2.4,mg:55,k2:154,na:5,zn:0.8,fo:128,se:8,col:0},
+  // FIX: fo=128 troppo alto per tortilla di mais (folati modesti, coerente col bucket pizza/pane) - 2026-07-30
+  {n:"Tortilla di farina di mais",c:"Cereali e derivati",src:"BDA",k:234,p:5.7,gs:0.4,g:3.8,z:0.3,ch:47.4,fi:4.0,ca:81,fe:2.4,mg:55,k2:154,na:5,zn:0.8,fo:25,se:8,col:0},
   {n:"Orzo decorticato secco",c:"Cereali",src:"CREA",k:304,p:10.0,gs:0.2,g:1.4,z:0.8,ch:62.8,fi:15.6,ca:33,fe:2.5,mg:79,k2:280,na:6,zn:2.1,fo:23,se:37,col:0},
   // ── CONDIMENTI E SALSE AGGIUNTIVE ──
   {n:"Aceto di mele non filtrato",c:"Condimenti",src:"BDA",k:21,p:0.1,gs:0,g:0,z:0.9,ch:0.9,fi:0,ca:7,fe:0.2,mg:5,k2:73,na:5,zn:0.04,fo:11,se:0.1,col:0},
@@ -1969,10 +1981,12 @@ const DB_BDA=[
 // Folati implausibili per polenta cotta/diluita (calcio 2mg conferma forte diluizione da acqua) - 2026-07-30
 {n:"Polenta cotta (gialla)",c:"Cereali cotti",k:70,p:1.8,gs:0.1,g:0.5,z:0,ch:14.8,fi:1.4,ca:2,fe:0.3,mg:18,k2:56,na:2,zn:0.4,fo:8,se:2,col:0,src:"BDA"},
 {n:"Risotto bianco (base)",c:"Cereali cotti",k:142,p:3.5,gs:1.5,g:4,z:0.5,ch:24,fi:0.5,ca:25,fe:0.5,mg:18,k2:100,na:350,zn:0.7,fo:65,se:5,col:8,src:"BDA"},
-{n:"Farina di grano tenero tipo 0",c:"Cereali e derivati",k:321,p:11.5,gs:0.18,g:1,z:1.8,ch:69.5,fi:2.9,ca:18,fe:0.9,mg:25,k2:140,na:2,zn:0.8,fo:115,se:10,col:0,src:"CREA"},
+// FIX: fo=115 troppo alto per farina di grano tenero (folati reali farina non fortificata ~40-50mcg) - 2026-07-30
+{n:"Farina di grano tenero tipo 0",c:"Cereali e derivati",k:321,p:11.5,gs:0.18,g:1,z:1.8,ch:69.5,fi:2.9,ca:18,fe:0.9,mg:25,k2:140,na:2,zn:0.8,fo:45,se:10,col:0,src:"CREA"},
 {n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:352,p:12.0,gs:0.3,g:1.8,z:1.8,ch:70.5,fi:4.5,ca:22,fe:1.8,mg:45,k2:180,na:3,zn:1.2,fo:30,se:18,col:0,src:"CREA"},
 {n:"Farina di grano tenero tipo 2",c:"Cereali e derivati",k:340,p:12.5,gs:0.3,g:2.0,z:2.0,ch:67.0,fi:6.5,ca:28,fe:2.5,mg:75,k2:250,na:3,zn:1.8,fo:30,se:26,col:0,src:"CREA"},
-{n:"Semola rimacinata di grano duro",c:"Cereali e derivati",k:346,p:11.5,gs:0.14,g:0.5,z:1.9,ch:76.9,fi:3.6,ca:17,fe:1.3,mg:42,k2:170,na:12,zn:1.2,fo:140,se:8,col:0,src:"CREA"},
+// FIX: fo=140 troppo alto per semola di grano duro (folati reali ~30mcg) - 2026-07-30
+{n:"Semola rimacinata di grano duro",c:"Cereali e derivati",k:346,p:11.5,gs:0.14,g:0.5,z:1.9,ch:76.9,fi:3.6,ca:17,fe:1.3,mg:42,k2:170,na:12,zn:1.2,fo:30,se:8,col:0,src:"CREA"},
 // Proteine/grassi corretti: 16.5g/21.5g erano incoerenti con le kcal dichiarate (334) e troppo bassi per ricotta salata stagionata (fonti concordano su proteine ~20g, grassi ~23g) - 2026-07-29
 {n:"Ricotta salata",c:"Formaggi",k:334,p:20,gs:14.5,g:23,z:0,ch:3.5,fi:0,ca:380,fe:0.5,mg:25,k2:90,na:1500,zn:2.0,fo:12,se:8,col:64,src:"CREA"},
 
@@ -2267,7 +2281,8 @@ const DB_BDA=[
 // ── BDA: alimenti mancanti dal confronto con tabelle ufficiali ──
 {n:"Glucosio (destrosio)",c:"Zuccheri",k:374,p:0,gs:0,g:0,z:99.0,ch:99.7,fi:0,ca:0,fe:0,mg:0,k2:2,na:0,zn:0,fo:0,se:0,col:0,src:"BDA"},
 {n:"Fiocchi di farro",c:"Cereali da colazione",k:354,p:14.0,gs:0.3,g:2.7,z:3.5,ch:67.5,fi:8.5,ca:33,fe:3.5,mg:100,k2:350,na:5,zn:2.5,fo:35,se:18,col:0,src:"BDA"},
-{n:"Semola di grano duro cruda",c:"Cereali e derivati",k:346,p:11.5,gs:0.14,g:0.5,z:1.9,ch:76.9,fi:3.6,ca:17,fe:1.3,mg:45,k2:170,na:12,zn:1.1,fo:200,se:30,col:0,src:"CREA"},
+// FIX: fo=200 troppo alto per semola di grano duro (folati reali ~30mcg) - 2026-07-30
+{n:"Semola di grano duro cruda",c:"Cereali e derivati",k:346,p:11.5,gs:0.14,g:0.5,z:1.9,ch:76.9,fi:3.6,ca:17,fe:1.3,mg:45,k2:170,na:12,zn:1.1,fo:30,se:30,col:0,src:"CREA"},
 {n:"Farina di grano saraceno integrale",c:"Cereali e derivati",k:326,p:12.6,gs:0.6,g:3.1,z:2.6,ch:60.6,fi:10,ca:41,fe:4.1,mg:251,k2:577,na:11,zn:3.12,fo:54,se:5.7,col:0,src:"BDA"},
 {n:"Riso soffiato (base, non condito)",c:"Cereali da colazione",k:354,p:6,gs:0.25,g:1,z:9,ch:85.1,fi:1,ca:8.7,fe:1.1,mg:32,k2:115,na:48,zn:1.1,fo:6,se:13.2,col:0,src:"BDA"},
 {n:"Malto d'orzo in polvere",c:"Cereali e derivati",k:371,p:11.0,gs:0.1,g:2.3,z:62.0,ch:77.4,fi:6.0,ca:40,fe:5.0,mg:85,k2:450,na:25,zn:2.3,fo:30,se:10,col:0,src:"BDA"},
@@ -2353,9 +2368,9 @@ const DB_BDA=[
 
 // ── DOLCI E DESSERT ITALIANI MANCANTI (CREA) ──
 {n:"Panna cotta (senza caramello)",c:"Dolci",k:200,p:3.5,gs:11.5,g:16.0,z:18.0,ch:20.5,fi:0,ca:80,fe:0.1,mg:6,k2:70,na:45,zn:0.2,fo:8,se:1,col:55,src:"CREA"},
-{n:"Crostata di marmellata (artigianale)",c:"Dolci",k:340,p:5.5,gs:3.0,g:12.0,z:35.0,ch:55.5,fi:1.5,ca:18,fe:1.2,mg:14,k2:100,na:180,zn:0.5,fo:55,se:4,col:60,src:"CREA"},
+{n:"Crostata di marmellata (artigianale)",c:"Dolci",k:340,p:5.5,gs:3.0,g:12.0,z:35.0,ch:55.5,fi:1.5,ca:18,fe:1.2,mg:14,k2:100,na:180,zn:0.5,fo:35,se:4,col:60,src:"CREA"},
 {n:"Torta margherita (pan di spagna base)",c:"Dolci",k:370,p:8.9,gs:4.0,g:10.4,z:34.1,ch:63.4,fi:1.4,ca:9,fe:2.8,mg:12,k2:88,na:150,zn:0.6,fo:35,se:8,col:120,src:"CREA"},
-{n:"Biscotti da tè (tipo shortbread)",c:"Biscotti e crackers",k:490,p:6.5,gs:9.0,g:22.0,z:28.0,ch:67.0,fi:1.5,ca:25,fe:1.5,mg:15,k2:110,na:180,zn:0.5,fo:55,se:5,col:75,src:"CREA"},
+{n:"Biscotti da tè (tipo shortbread)",c:"Biscotti e crackers",k:490,p:6.5,gs:9.0,g:22.0,z:28.0,ch:67.0,fi:1.5,ca:25,fe:1.5,mg:15,k2:110,na:180,zn:0.5,fo:20,se:5,col:75,src:"CREA"},
 // Stesso bug fosforo-in-folati del duplicato già corretto (DB_CREA_863) - 2026-07-30
 {n:"Budino di riso (con latte e zucchero)",c:"Dolci",k:138,p:3.8,gs:2.0,g:4.5,z:18.0,ch:22.0,fi:0.2,ca:90,fe:0.3,mg:10,k2:115,na:55,zn:0.4,fo:10,se:3,col:18,src:"CREA"},
 
@@ -2642,7 +2657,8 @@ const DB_BDA=[
 {n:"Porchetta di Ariccia (arista di maiale speziata)",c:"Piatti pronti",k:298,p:22.5,gs:9.5,g:23,z:0.5,ch:0.5,fi:0,ca:18,fe:1.0,mg:18,k2:280,na:850,zn:2.8,fo:8,se:18,col:88,src:"BDA"},
 // Fosforo (pasta+stracchino, calcio 185mg conferma contenuto di formaggio) era nel campo folati; folati reali ~25mcg - 2026-07-30
 {n:"Focaccia al formaggio di Recco (con stracchino)",c:"Pane e prodotti da forno",k:315,p:10.5,gs:9.5,g:16.5,z:1.5,ch:37,fi:1.5,ca:185,fe:1.0,mg:18,k2:100,na:680,zn:1.5,fo:25,se:8,col:38,src:"BDA"},
-{n:"Calzone fritto napoletano (ripieno ricotta e salumi)",c:"Pane e prodotti da forno",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:120,se:10,col:42,src:"BDA"},
+// FIX: fo=120 troppo alto (coerente col bucket 30 gia stabilito per panzerotto/calzone in Fast food) - 2026-07-30
+{n:"Calzone fritto napoletano (ripieno ricotta e salumi)",c:"Pane e prodotti da forno",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:30,se:10,col:42,src:"BDA"},
 {n:"Supplì al telefono romani (riso e ragù fritti)",c:"Piatti pronti",k:218,p:8.5,gs:4.5,g:9.5,z:1.5,ch:26,fi:1.2,ca:65,fe:1.5,mg:22,k2:170,na:520,zn:1.5,fo:22,se:10,col:38,src:"BDA"},
 {n:"Minestrone lombardo (con pasta o riso)",c:"Zuppe e minestre",k:75,p:3.5,gs:0.3,g:2.0,z:2.0,ch:10.5,fi:3.5,ca:42,fe:1.2,mg:22,k2:290,na:380,zn:0.5,fo:55,se:3,col:5,src:"BDA"},
 {n:"Zuppa di farro toscana (con legumi)",c:"Zuppe e minestre",k:118,p:6.5,gs:0.5,g:2.0,z:1.0,ch:20,fi:4.5,ca:38,fe:2.0,mg:45,k2:285,na:420,zn:1.2,fo:135,se:8,col:0,src:"BDA"},
@@ -2666,10 +2682,10 @@ const DB_UPF = [
   {n:"Pop corn da microonde al burro",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:2,fe:1.5,mg:90,k2:250,na:500,zn:1.5,fo:25,se:5,col:10},
   {n:"Pretzels/grissini salati industriali",c:"Snack salati",src:"UPF",k:492,p:9.8,gs:0,g:11,z:2.3,ch:72,fi:2.8,ca:25,fe:2,mg:25,k2:150,na:800,zn:0.8,fo:15,se:8,col:0},
   {n:"Nachos/tortilla chips al formaggio",c:"Snack salati",src:"UPF",k:520,p:4,gs:4,g:28,z:4,ch:76,fi:12,ca:110,fe:1.5,mg:55,k2:190,na:200,zn:1,fo:15,se:4,col:5},
-  {n:"Crackers Ritz (classici)",c:"Snack salati",src:"UPF",k:484,p:7.7,gs:2,g:23,z:8.5,ch:60,fi:3.3,ca:30,fe:2.5,mg:15,k2:100,na:520,zn:0.4,fo:55,se:5,col:0},
+  {n:"Crackers Ritz (classici)",c:"Snack salati",src:"UPF",k:484,p:7.7,gs:2,g:23,z:8.5,ch:60,fi:3.3,ca:30,fe:2.5,mg:15,k2:100,na:520,zn:0.4,fo:20,se:5,col:0},
 
   // ── MERENDINE E DOLCI CONFEZIONATI ──
-  {n:"Merendina tipo Crostatina/Merenda (Mulino B.)",c:"Dolci confezionati",src:"UPF",k:342,p:6,gs:7,g:12,z:17,ch:51,fi:1.4,ca:70,fe:1.5,mg:10,k2:100,na:236,zn:0.3,fo:60,se:3,col:15},
+  {n:"Merendina tipo Crostatina/Merenda (Mulino B.)",c:"Dolci confezionati",src:"UPF",k:342,p:6,gs:7,g:12,z:17,ch:51,fi:1.4,ca:70,fe:1.5,mg:10,k2:100,na:236,zn:0.3,fo:20,se:3,col:15},
   {n:"Pan di stelle / biscotti al cioccolato",c:"Dolci confezionati",src:"UPF",k:369,p:7,gs:7.5,g:13.6,z:35.5,ch:52.4,fi:4.6,ca:55,fe:2.5,mg:30,k2:200,na:200,zn:0.8,fo:20,se:4,col:5},
   {n:"Kinder Bueno (per 100g)",c:"Dolci confezionati",src:"UPF",k:592,p:9,gs:22.9,g:41.6,z:35.2,ch:44.3,fi:1,ca:115,fe:1.5,mg:30,k2:240,na:137.2,zn:0.9,fo:20,se:3,col:20},
   {n:"Nutella (crema alla nocciola)",c:"Creme e spalmate",src:"UPF",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:3,ca:80,fe:2.9,mg:51,k2:350,na:42.8,zn:1,fo:20,se:2,col:0},
@@ -2769,12 +2785,12 @@ const DB_UPF = [
   {n:"Torrone morbido",c:"Dolci confezionati",src:"UPF",k:496,p:4.7,gs:5.8,g:23,z:64,ch:66,fi:4.7,ca:100,fe:0.8,mg:25,k2:200,na:8,zn:0.8,fo:20,se:2,col:0},
   {n:"Cantucci di Prato",c:"Dolci confezionati",src:"UPF",k:450,p:9.8,gs:1.6,g:16,z:33,ch:66,fi:3.5,ca:70,fe:2,mg:40,k2:200,na:120,zn:1,fo:20,se:8,col:55},
   {n:"Amaretti confezionati",c:"Dolci confezionati",src:"UPF",k:452,p:12,gs:1.7,g:23,z:47,ch:48,fi:2.7,ca:65,fe:0.8,mg:40,k2:190,na:20,zn:0.5,fo:20,se:1,col:0},
-  {n:"Savoiardi industriali",c:"Dolci confezionati",src:"UPF",k:373,p:7,gs:1,g:3,z:47,ch:79,fi:3,ca:30,fe:1.5,mg:10,k2:100,na:200,zn:0.3,fo:60,se:4,col:115},
+  {n:"Savoiardi industriali",c:"Dolci confezionati",src:"UPF",k:373,p:7,gs:1,g:3,z:47,ch:79,fi:3,ca:30,fe:1.5,mg:10,k2:100,na:200,zn:0.3,fo:20,se:4,col:115},
   {n:"Ciambella krapfen industriale",c:"Dolci confezionati",src:"UPF",k:442,p:5,gs:12,g:23,z:30,ch:54,fi:1,ca:30,fe:1.5,mg:12,k2:100,na:280,zn:0.4,fo:35,se:5,col:45},
   {n:"Barretta Mars Snickers tipo per 100g",c:"Dolci confezionati",src:"UPF",k:498,p:8.4,gs:10,g:26,z:49,ch:58,fi:1.5,ca:85,fe:1,mg:30,k2:230,na:224,zn:0.8,fo:20,se:2,col:8},
   {n:"Ferrero Rocher tipo praline per 100g",c:"Dolci confezionati",src:"UPF",k:603,p:8.2,gs:14.1,g:42.7,z:39.9,ch:44.4,fi:0,ca:95,fe:1.5,mg:60,k2:280,na:61.2,zn:1.2,fo:15,se:3,col:12},
   {n:"Cheesecake industriale porzione 100g",c:"Dolci confezionati",src:"UPF",k:359.7,p:4.5,gs:12.9,g:22.5,z:20,ch:34.5,fi:1.2,ca:65,fe:0.5,mg:8,k2:95,na:79,zn:0.4,fo:45,se:3,col:65},
-  {n:"Torta al limone confezionata",c:"Dolci confezionati",src:"UPF",k:400,p:4,gs:7,g:16,z:28,ch:62,fi:2,ca:40,fe:1.2,mg:10,k2:90,na:180,zn:0.4,fo:60,se:4,col:70},
+  {n:"Torta al limone confezionata",c:"Dolci confezionati",src:"UPF",k:400,p:4,gs:7,g:16,z:28,ch:62,fi:2,ca:40,fe:1.2,mg:10,k2:90,na:180,zn:0.4,fo:35,se:4,col:70},
   {n:"Muffin industriale ai mirtilli",c:"Dolci confezionati",src:"UPF",k:374,p:4.8,gs:1.7,g:18.1,z:23.1,ch:47.6,fi:1.5,ca:35,fe:1.5,mg:12,k2:115,na:176,zn:0.4,fo:35,se:5,col:40},
 
   // ── CONFETTERIA E DOLCIUMI ──
@@ -2867,7 +2883,7 @@ const DB_UPF = [
   // ── PRODOTTI SENZA GLUTINE INDUSTRIALI ──
   {n:"Pasta senza glutine di mais-riso (Barilla/Garofalo)",c:"Cereali e pasta",src:"UPF",k:360,p:6.5,gs:0.3,g:1.5,z:0.6,ch:79,fi:3,ca:20,fe:0.5,mg:20,k2:80,na:5,zn:0.3,fo:55,se:3,col:0},
   {n:"Pane senza glutine confezionato",c:"Cereali e derivati",src:"UPF",k:251,p:2.5,gs:0.6,g:5.1,z:3.4,ch:45,fi:7.1,ca:50,fe:0.5,mg:12,k2:60,na:520,zn:0.3,fo:45,se:3,col:0},
-  {n:"Biscotti senza glutine al burro",c:"Dolci confezionati",src:"UPF",k:456,p:2.3,gs:8.5,g:14,z:18,ch:80,fi:1.5,ca:45,fe:0.8,mg:12,k2:80,na:192,zn:0.3,fo:50,se:4,col:70},
+  {n:"Biscotti senza glutine al burro",c:"Dolci confezionati",src:"UPF",k:456,p:2.3,gs:8.5,g:14,z:18,ch:80,fi:1.5,ca:45,fe:0.8,mg:12,k2:80,na:192,zn:0.3,fo:20,se:4,col:70},
   {n:"Fette biscottate senza glutine",c:"Biscotti e crackers",src:"UPF",k:378,p:4.7,gs:0.7,g:5.4,z:4.9,ch:71,fi:14,ca:30,fe:0.6,mg:10,k2:65,na:480,zn:0.2,fo:40,se:2,col:0},
   {n:"Pizza base senza glutine surgelata",c:"Fast food",src:"UPF",k:215,p:4,gs:1,g:6,z:3.5,ch:36,fi:2,ca:60,fe:0.6,mg:12,k2:70,na:530,zn:0.3,fo:35,se:3,col:0},
   {n:"Crackers senza glutine di mais",c:"Snack salati",src:"UPF",k:440,p:5,gs:0.5,g:10,z:2,ch:80,fi:2.5,ca:15,fe:0.5,mg:30,k2:80,na:680,zn:0.5,fo:60,se:4,col:0},
@@ -2895,7 +2911,7 @@ const DB_UPF = [
   {n:"Crostatina Mulino Bianco tipo",c:"Dolci confezionati",src:"UPF",k:477,p:6.5,gs:6.7,g:22,z:28,ch:61.7,fi:1.5,ca:40,fe:1.2,mg:12,k2:110,na:140,zn:0.4,fo:20,se:3,col:35},
   // Grassi totali erano 10g ma i saturi dichiarati (7.8g) da soli erano quasi il totale; dato ufficiale prodotto reale ~20.5g grassi totali, coerente con le kcal (483) - 2026-07-29
   {n:"Pan di Stelle tipo (biscotti cacao)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.5,gs:7.8,g:20.5,z:23.5,ch:65,fi:4,ca:65,fe:3,mg:40,k2:280,na:190,zn:0.9,fo:20,se:4,col:10},
-  {n:"Merendina spugnosa tipo Twinkie",c:"Dolci confezionati",src:"UPF",k:360,p:4.4,gs:9.8,g:9.8,z:0,ch:64,fi:0.5,ca:35,fe:1,mg:8,k2:65,na:330,zn:0.3,fo:50,se:3,col:20},
+  {n:"Merendina spugnosa tipo Twinkie",c:"Dolci confezionati",src:"UPF",k:360,p:4.4,gs:9.8,g:9.8,z:0,ch:64,fi:0.5,ca:35,fe:1,mg:8,k2:65,na:330,zn:0.3,fo:20,se:3,col:20},
   // Corretto per coerenza col duplicato già fixato (Brioche siciliana col tuppo, 30mcg) - 2026-07-30
   {n:"Brioche con crema industriale",c:"Dolci confezionati",src:"UPF",k:340,p:6.5,gs:5,g:12,z:28,ch:52,fi:1,ca:55,fe:1.2,mg:14,k2:130,na:310,zn:0.4,fo:30,se:4,col:55},
   // FIX (check strutturale, dato palesemente corrotto): proteine (41.7g) e carboidrati (13.9g) erano incompatibili sia con un wafer al cioccolato reale sia con l'Atwater (kcal attese ~404 col dato vecchio) - corretti a valori reali etichetta Nestle KitKat (proteine 7.3g, carboidrati 59.6g, coerenti con zuccheri 58g gia presenti e con kcal 486.1) - 2026-07-30
@@ -2940,8 +2956,8 @@ const DB_UPF = [
   // ── SNACK E DOLCI AGGIUNTIVI ──
   {n:"Pop corn al burro commerciale (busta)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:8,fe:2.5,mg:95,k2:330,na:500,zn:2.0,fo:25,se:5,col:15},
   {n:"Biscotti Oreo (o tipo sandwich cacao)",c:"Biscotti e crackers",src:"UPF",k:478.3,p:4.3,gs:4.35,g:19.6,z:39.1,ch:73.9,fi:0,ca:33,fe:4.5,mg:25,k2:195,na:331.3,zn:0.5,fo:20,se:3,col:0},
-  {n:"Muffin ai mirtilli industriale",c:"Dolci confezionati",src:"UPF",k:374,p:4.8,gs:1.7,g:18.1,z:23.1,ch:47.6,fi:1.5,ca:45,fe:1.2,mg:12,k2:100,na:176,zn:0.4,fo:60,se:4,col:45},
-  {n:"Snickers / Mars tipo (barretta cioccolato)",c:"Dolci confezionati",src:"UPF",k:483,p:8.6,gs:8,g:23,z:51,ch:61,fi:1.0,ca:100,fe:1.0,mg:30,k2:230,na:240,zn:0.7,fo:80,se:2,col:8},
+  {n:"Muffin ai mirtilli industriale",c:"Dolci confezionati",src:"UPF",k:374,p:4.8,gs:1.7,g:18.1,z:23.1,ch:47.6,fi:1.5,ca:45,fe:1.2,mg:12,k2:100,na:176,zn:0.4,fo:35,se:4,col:45},
+  {n:"Snickers / Mars tipo (barretta cioccolato)",c:"Dolci confezionati",src:"UPF",k:483,p:8.6,gs:8,g:23,z:51,ch:61,fi:1.0,ca:100,fe:1.0,mg:30,k2:230,na:240,zn:0.7,fo:20,se:2,col:8},
   {n:"Ferrero Rocher (cioccolatino pralinato)",c:"Dolci confezionati",src:"UPF",k:600,p:8,gs:14,g:44,z:40,ch:48,fi:4,ca:85,fe:2.0,mg:45,k2:300,na:60,zn:0.7,fo:20,se:4,col:10},
   {n:"Patatine soffiato tipo Cheetos",c:"Snack salati",src:"UPF",k:544,p:6.5,gs:3.0,g:30.5,z:5.0,ch:60.5,fi:1.5,ca:30,fe:1.5,mg:20,k2:250,na:900,zn:0.5,fo:20,se:2,col:5},
 
@@ -3015,7 +3031,8 @@ const DB_UPF = [
   {n:"Barretta keto con cioccolato fondente",c:"Dolci confezionati",src:"UPF",k:380,p:12,gs:10,g:28,z:8,ch:15,fi:8,ca:80,fe:2.5,mg:50,k2:200,na:120,zn:1,fo:20,se:5,col:0},
   {n:"Cracker di semi misti keto",c:"Snack salati",src:"UPF",k:520,p:18,gs:5,g:42,z:4,ch:12,fi:8,ca:150,fe:4,mg:130,k2:350,na:320,zn:3,fo:25,se:15,col:0},
   {n:"Farina di mandorle degraissata",c:"Cereali e derivati",src:"UPF",k:500,p:23,gs:4,g:30,z:5,ch:18,fi:10,ca:270,fe:4,mg:270,k2:650,na:5,zn:3,fo:29,se:3,col:0},
-  {n:"Farina di cocco disidratata",c:"Cereali e derivati",src:"UPF",k:615,p:10,gs:47,g:55,z:9,ch:9,fi:39,ca:22,fe:4.8,mg:110,k2:543,na:37.6,zn:2.2,fo:276,se:19,col:0},
+  // FIX: fo=276 implausibile per farina di cocco disidratata (reale 7-26mcg) - 2026-07-30
+  {n:"Farina di cocco disidratata",c:"Cereali e derivati",src:"UPF",k:615,p:10,gs:47,g:55,z:9,ch:9,fi:39,ca:22,fe:4.8,mg:110,k2:543,na:37.6,zn:2.2,fo:20,se:19,col:0},
 
   // ── PRODOTTI AD ALTO CONTENUTO PROTEICO ──
   {n:"Quark proteico 0% grassi",c:"Latte e derivati",src:"UPF",k:58,p:10,gs:0,g:0,z:3.5,ch:4.5,fi:0,ca:120,fe:0,mg:0,k2:140,na:39,zn:0,fo:12,se:5,col:2},
@@ -3451,7 +3468,7 @@ const DB_UPF = [
   {n:"Tigelle emiliane (industriali, per 100g)",c:"Pane",src:"UPF",k:268,p:1.5,gs:3.9,g:7.3,z:3.8,ch:44,fi:2,ca:50,fe:2,mg:15,k2:120,na:320,zn:0.7,fo:50,se:8,col:15},
   {n:"Grissini torinesi industriali (per 100g)",c:"Pane",src:"UPF",k:427,p:9.9,gs:1,g:11,z:3.5,ch:70,fi:4,ca:30,fe:2.5,mg:20,k2:150,na:1000,zn:0.8,fo:70,se:10,col:0},
   {n:"Taralli pugliesi industriali (per 100g)",c:"Snack salati",src:"UPF",k:493,p:9.1,gs:3.5,g:22,z:1.1,ch:64,fi:1.6,ca:38,fe:2.5,mg:30,k2:170,na:1000,zn:0.8,fo:60,se:8,col:0},
-  {n:"Crostini antipasto industriali (per 100g)",c:"Snack salati",src:"UPF",k:433,p:10,gs:3.33,g:13.3,z:0,ch:66.7,fi:3.3,ca:0,fe:1.2,mg:20,k2:130,na:967,zn:0.7,fo:50,se:8,col:0},
+  {n:"Crostini antipasto industriali (per 100g)",c:"Snack salati",src:"UPF",k:433,p:10,gs:3.33,g:13.3,z:0,ch:66.7,fi:3.3,ca:0,fe:1.2,mg:20,k2:130,na:967,zn:0.7,fo:20,se:8,col:0},
   // ── SALUMI PROCESSATI ──
   {n:"Wurstel di manzo (per 100g)",c:"Salumi",src:"UPF",k:285,p:12,gs:10,g:25,z:1,ch:2.5,fi:0,ca:20,fe:1,mg:15,k2:160,na:1050,zn:2,fo:8,se:12,col:75},
   {n:"Porchetta artigianale (per 100g)",c:"Salumi",src:"UPF",k:256,p:20.3,gs:6.2,g:17.7,z:2.6,ch:3.5,fi:0.8,ca:12,fe:0.8,mg:18,k2:200,na:614,zn:1.8,fo:5,se:18,col:88},
@@ -3635,7 +3652,8 @@ const DB_UPF = [
 {n:"Pasta al farro integrale (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:342,p:13.5,gs:0.4,g:2.5,z:2.5,ch:68,fi:7.0,ca:28,fe:3.5,mg:85,k2:245,na:5,zn:2.5,fo:35,se:18,col:0},
 {n:"Pasta di lenticchie rosse (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:348,p:24.5,gs:0.2,g:1.5,z:0.5,ch:56.5,fi:8.5,ca:40,fe:6.5,mg:90,k2:350,na:8,zn:3.0,fo:290,se:6,col:0},
 {n:"Pasta di ceci (per 100g cruda)",c:"Cereali e derivati",src:"CREA",k:361,p:20.5,gs:0.3,g:6.5,z:2.0,ch:55,fi:11.5,ca:55,fe:4.5,mg:95,k2:440,na:10,zn:3.2,fo:310,se:6,col:0},
-{n:"Pane di segale (per 100g)",c:"Pane e prodotti da forno",src:"CREA",k:228,p:8.3,gs:0.3,g:1.7,z:1.8,ch:45.4,fi:4.6,ca:80,fe:2.5,mg:40,k2:190,na:580,zn:1.5,fo:130,se:12,col:0},
+// FIX: fo=130 troppo alto per pane di segale (folati reali pane non fortificato ~30-40mcg) - 2026-07-30
+{n:"Pane di segale (per 100g)",c:"Pane e prodotti da forno",src:"CREA",k:228,p:8.3,gs:0.3,g:1.7,z:1.8,ch:45.4,fi:4.6,ca:80,fe:2.5,mg:40,k2:190,na:580,zn:1.5,fo:40,se:12,col:0},
 // Verificato CREA 006590 (Gnocchi di patate, CRUDI — scelto crudi non cotti dato che "freschi confezionati" implica non ancora cotti, come la pasta fresca) — 2026-07-29
 {n:"Gnocchi di patate freschi confezionati (per 100g)",c:"Cereali e derivati",src:"CREA",k:164,p:3.9,gs:0.3,g:0.3,z:1.4,ch:37.9,fi:1.9,ca:14,fe:0.6,mg:18,k2:310,na:9,zn:0.3,fo:55,se:5,col:7},
 // ── SEMI E FRUTTA SECCA SPECIALI ──
@@ -3757,9 +3775,9 @@ const DB_UPF = [
 // ═══ DOLCI E SNACK INDUSTRIALI ═══
 // FIX: residuo cluster placeholder folati sfuggito al giro precedente (altre 5 voci "Nutella" gia corrette a 18-20mcg, questa era rimasta a 115) - 2026-07-30
 {n:"Nutella (crema nocciole e cacao)",c:"Dolci confezionati",src:"UPF",k:539,p:6.3,gs:10.6,g:30.9,z:56.3,ch:57.5,fi:2.5,ca:55,fe:2.0,mg:35,k2:390,na:42.8,zn:0.6,fo:20,se:2,col:0},
-{n:"Mars (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:445,p:3.8,gs:7.8,g:16,z:63,ch:72,fi:1.0,ca:100,fe:0.8,mg:20,k2:170,na:156,zn:0.5,fo:80,se:2,col:8},
+{n:"Mars (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:445,p:3.8,gs:7.8,g:16,z:63,ch:72,fi:1.0,ca:100,fe:0.8,mg:20,k2:170,na:156,zn:0.5,fo:20,se:2,col:8},
 {n:"Snickers (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:468,p:8.5,gs:8.51,g:21.3,z:51.1,ch:61.7,fi:2.1,ca:80,fe:1.0,mg:40,k2:290,na:234,zn:0.8,fo:20,se:4,col:5},
-{n:"Twix (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:493,p:4.4,gs:14,g:24,z:49,ch:65,fi:1.0,ca:80,fe:0.8,mg:18,k2:150,na:160,zn:0.5,fo:70,se:2,col:5},
+{n:"Twix (barretta, per 100g)",c:"Dolci confezionati",src:"UPF",k:493,p:4.4,gs:14,g:24,z:49,ch:65,fi:1.0,ca:80,fe:0.8,mg:18,k2:150,na:160,zn:0.5,fo:20,se:2,col:5},
 {n:"Kit Kat (per 100g)",c:"Dolci confezionati",src:"UPF",k:500,p:3.6,gs:16.07,g:25,z:53.6,ch:67.9,fi:3.6,ca:107.1,fe:2.14,mg:30,k2:196.4,na:53.6,zn:0.8,fo:20,se:4,col:17.9},
 {n:"Pringles originali (per 100g)",c:"Snack salati",src:"UPF",k:535.7,p:3.6,gs:9.0,g:32.1,z:3.6,ch:57.1,fi:3.6,ca:25,fe:1.5,mg:35,k2:430,na:545,zn:0.5,fo:20,se:2,col:0},
 {n:"Doritos al formaggio (per 100g)",c:"Snack salati",src:"UPF",k:500,p:7.5,gs:3.5,g:22.5,z:4.5,ch:64.0,fi:5.0,ca:55,fe:1.5,mg:40,k2:250,na:750,zn:0.8,fo:15,se:3,col:2},
@@ -3767,7 +3785,8 @@ const DB_UPF = [
 {n:"McVitie's Digestive (per 100g)",c:"Biscotti e crackers",src:"UPF",k:483,p:7.1,gs:10.1,g:21.3,z:15.1,ch:63.7,fi:3.4,ca:110,fe:2.5,mg:40,k2:250,na:500,zn:0.8,fo:20,se:4,col:0},
 {n:"Oro Saiwa (per 100g)",c:"Biscotti e crackers",src:"UPF",k:456,p:2,gs:4.6,g:13,z:22,ch:83,fi:0.6,ca:45,fe:2.0,mg:15,k2:95,na:228,zn:0.4,fo:20,se:2,col:25},
 {n:"Cioccolato bianco (tavoletta)",c:"Dolci confezionati",src:"UPF",k:574,p:8.6,gs:16,g:39,z:44,ch:46,fi:2.3,ca:200,fe:0.2,mg:15,k2:230,na:120,zn:0.8,fo:0,se:4,col:21},
-{n:"Torrone morbido alle mandorle (per 100g)",c:"Dolci",src:"UPF",k:544,p:10.7,gs:2.02,g:26.4,z:45,ch:63,fi:5.5,ca:90,fe:1.5,mg:55,k2:280,na:2.4,zn:1.0,fo:110,se:3,col:0},
+// FIX: fo=110 fuori scala rispetto al bucket 20 gia stabilito per torrone/confetteria (le mandorle sono una componente minore in un dolce a base di zucchero) - 2026-07-30
+{n:"Torrone morbido alle mandorle (per 100g)",c:"Dolci",src:"UPF",k:544,p:10.7,gs:2.02,g:26.4,z:45,ch:63,fi:5.5,ca:90,fe:1.5,mg:55,k2:280,na:2.4,zn:1.0,fo:20,se:3,col:0},
 {n:"Gelato Magnum Classic (per 100g)",c:"Gelati",src:"UPF",k:307,p:3.3,gs:13,g:19,z:27,ch:30,fi:0.5,ca:80,fe:0.4,mg:12,k2:140,na:48,zn:0.4,fo:10,se:2,col:15},
 {n:"Gelato Cornetto Classico (per 100g)",c:"Gelati",src:"UPF",k:213,p:7.7,gs:0.2,g:1.4,z:3.5,ch:41,fi:3,ca:75,fe:0.5,mg:10,k2:120,na:472,zn:0.4,fo:10,se:2,col:12},
 {n:"Krapfen/Bombolone con crema",c:"Dolci",src:"UPF",k:347,p:8,gs:4.5,g:12,z:18,ch:51,fi:1.3,ca:35,fe:1.2,mg:12,k2:100,na:740,zn:0.4,fo:35,se:3,col:55},
@@ -3776,7 +3795,7 @@ const DB_UPF = [
 {n:"Croissant vuoto industriale (tipo Bauli)",c:"Dolci confezionati",src:"UPF",k:375,p:6.3,gs:8.33,g:20.8,z:8.3,ch:37.5,fi:2.1,ca:104,fe:2.08,mg:12,k2:73,na:395.8,zn:0.4,fo:35,se:3,col:0},
 // Duplicato con lo stesso bug fosforo-in-folati (calcio 155mg conferma latte), corretto per coerenza con l'altro duplicato (35mcg) - 2026-07-30
 {n:"Kinder Fetta al Latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:410,p:7.5,gs:8.5,g:17.0,z:41.0,ch:53.5,fi:0.5,ca:155,fe:0.4,mg:15,k2:200,na:145,zn:0.6,fo:35,se:4,col:20},
-{n:"Plumcake all'olio (merendina)",c:"Dolci confezionati",src:"UPF",k:365,p:7.6,gs:3.2,g:19,z:1,ch:51,fi:2.2,ca:25,fe:1.2,mg:10,k2:85,na:156,zn:0.3,fo:55,se:2,col:55},
+{n:"Plumcake all'olio (merendina)",c:"Dolci confezionati",src:"UPF",k:365,p:7.6,gs:3.2,g:19,z:1,ch:51,fi:2.2,ca:25,fe:1.2,mg:10,k2:85,na:156,zn:0.3,fo:20,se:2,col:55},
 {n:"Panna Cotta industriale (vasetto)",c:"Dolci confezionati",src:"UPF",k:206,p:3.2,gs:8.8,g:13,z:19,ch:19,fi:0,ca:70,fe:0.1,mg:6,k2:80,na:24,zn:0.2,fo:8,se:1,col:28},
 {n:"Pop corn burro microonde (per 100g)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:15,fe:1.5,mg:95,k2:235,na:500,zn:1.8,fo:25,se:8,col:0},
 // ═══ PIZZA E PIATTI PRONTI ═══
@@ -4035,7 +4054,7 @@ const DB_ONS = [
 // ── MERENDINE E SNACK CONFEZIONATI ──
 {n:"Fiesta (Ferrero, per 100g)",c:"Dolci confezionati",src:"UPF",k:452,p:3.9,gs:12.1,g:21,z:42.6,ch:56,fi:0,ca:80,fe:1.5,mg:28,k2:210,na:132,zn:0.7,fo:20,se:4,col:20},
 {n:"Pringles (chips in tubo, originali, per 100g)",c:"Snack salati",src:"UPF",k:530,p:6.0,gs:9.5,g:33.0,z:2.5,ch:57.5,fi:3.5,ca:25,fe:1.0,mg:40,k2:580,na:490,zn:0.8,fo:15,se:5,col:0},
-{n:"Barretta Bounty (per 100g)",c:"Dolci confezionati",src:"UPF",k:481,p:3.4,gs:18.5,g:26.0,z:50.0,ch:61.5,fi:3.5,ca:55,fe:1.5,mg:25,k2:180,na:120,zn:0.5,fo:60,se:3,col:5},
+{n:"Barretta Bounty (per 100g)",c:"Dolci confezionati",src:"UPF",k:481,p:3.4,gs:18.5,g:26.0,z:50.0,ch:61.5,fi:3.5,ca:55,fe:1.5,mg:25,k2:180,na:120,zn:0.5,fo:20,se:3,col:5},
 
 // ── BEVANDE CONFEZIONATE AGGIUNTIVE ──
 {n:"Smoothie confezionato alla frutta (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:60,p:0.5,gs:0,g:0.2,z:11.5,ch:13.5,fi:1.0,ca:10,fe:0.3,mg:10,k2:160,na:15,zn:0.1,fo:20,se:0.5,col:0},
@@ -4260,9 +4279,9 @@ const DB_EXTRA=[
 {n:"Digestive al cioccolato McVitie's",c:"Biscotti e crackers",src:"EXTRA",k:495,p:6.7,gs:12.4,g:23.6,z:29.5,ch:62.2,fi:3,ca:85,fe:2,mg:40,k2:270,na:400,zn:0.9,fo:20,se:8,col:5},
 {n:"Crackers Ritz",c:"Biscotti e crackers",src:"EXTRA",k:492,p:7.2,gs:5.45,g:23.2,z:8.1,ch:63.5,fi:2.3,ca:154,fe:4.47,mg:19,k2:119,na:882,zn:0.61,fo:20,se:4.6,col:0},
 {n:"Wafer alla vaniglia",c:"Biscotti e crackers",src:"EXTRA",k:473,p:4.3,gs:10,g:19.4,z:35,ch:71.1,fi:2,ca:55,fe:1,mg:15,k2:85,na:306,zn:0.3,fo:20,se:5,col:5},
-{n:"Wafer al cioccolato",c:"Biscotti e crackers",src:"EXTRA",k:433,p:6.6,gs:4.24,g:14.2,z:37.4,ch:72.7,fi:3.4,ca:31,fe:4.01,mg:53,k2:210,na:580,zn:1.09,fo:47,se:5.7,col:2},
+{n:"Wafer al cioccolato",c:"Biscotti e crackers",src:"EXTRA",k:433,p:6.6,gs:4.24,g:14.2,z:37.4,ch:72.7,fi:3.4,ca:31,fe:4.01,mg:53,k2:210,na:580,zn:1.09,fo:20,se:5.7,col:2},
 {n:"Oreo",c:"Biscotti e crackers",src:"EXTRA",k:476,p:4.8,gs:4.14,g:21.5,z:36,ch:70.2,fi:3.2,ca:24,fe:4.9,mg:48,k2:194,na:528,zn:1.23,fo:30,se:5,col:0},
-{n:"Lotus Biscoff",c:"Biscotti e crackers",src:"EXTRA",k:484,p:4.9,gs:8.8,g:19,z:38.1,ch:72.9,fi:1.3,ca:45,fe:2,mg:15,k2:100,na:362,zn:0.3,fo:60,se:5,col:0},
+{n:"Lotus Biscoff",c:"Biscotti e crackers",src:"EXTRA",k:484,p:4.9,gs:8.8,g:19,z:38.1,ch:72.9,fi:1.3,ca:45,fe:2,mg:15,k2:100,na:362,zn:0.3,fo:20,se:5,col:0},
 // Allineato alla voce CREA gia verificata "Amaretti morbidi" (stesso nome esatto, sfuggito al dedup) — 2026-07-28
 {n:"Amaretti morbidi",c:"Biscotti e crackers",src:"EXTRA",k:389,p:8,gs:1,g:9,z:45,ch:70,fi:2.5,ca:80,fe:2,mg:45,k2:250,na:40,zn:0.9,fo:15,se:5,col:0},
 {n:"Cantucci alle mandorle",c:"Biscotti e crackers",src:"EXTRA",k:430,p:8.4,gs:3,g:12.6,z:28,ch:70.5,fi:3,ca:65,fe:2,mg:40,k2:220,na:180,zn:0.8,fo:130,se:8,col:60},

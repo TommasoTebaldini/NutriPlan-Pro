@@ -801,7 +801,8 @@ const DB_CREA=[
 // Kcal/carboidrati sottostimati: fonte USDA converge su 21kcal/4.54g carb (locale era 13kcal/2.4g) - 2026-07-29
 {n:"Rabarbaro crudo",c:"Verdure",k:21,p:0.9,gs:0,g:0.2,z:1.1,ch:4.5,fi:1.8,ca:86,fe:0.2,mg:12,k2:288,na:4,zn:0.1,fo:7,se:1.1,col:0,src:"CREA"},
 // ── CEREALI/FARINE aggiuntivi (CREA 2019) ──
-{n:"Farina Manitoba (tipo 0 proteica)",c:"Cereali e pasta",k:349,p:14.0,gs:0.2,g:1.2,z:2.0,ch:72.0,fi:2.2,ca:18,fe:1.6,mg:28,k2:120,na:2,zn:0.9,fo:120,se:30,col:0,src:"CREA"},
+// FIX: fo=120 troppo alto (farina ad alto contenuto proteico/glutine, non fortificata in vitamine - coerente con farina di grano tenero gia corretta a 45mcg) - 2026-07-30
+{n:"Farina Manitoba (tipo 0 proteica)",c:"Cereali e pasta",k:349,p:14.0,gs:0.2,g:1.2,z:2.0,ch:72.0,fi:2.2,ca:18,fe:1.6,mg:28,k2:120,na:2,zn:0.9,fo:45,se:30,col:0,src:"CREA"},
 {n:"Farina di grano tenero tipo 2",c:"Cereali e pasta",k:339,p:11.0,gs:0.3,g:1.8,z:2.5,ch:68.5,fi:4.5,ca:24,fe:2.0,mg:60,k2:220,na:4,zn:1.8,fo:30,se:28,col:0,src:"CREA"},
 // ── CONDIMENTI/SUGHI aggiuntivi (CREA 2019) ──
 {n:"Sugo all'amatriciana artigianale",c:"Condimenti",k:156,p:5.0,gs:3.5,g:12.0,z:3.0,ch:6.0,fi:1.2,ca:28,fe:1.0,mg:18,k2:310,na:680,zn:0.8,fo:25,se:4,col:20,src:"CREA"},

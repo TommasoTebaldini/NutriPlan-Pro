@@ -610,9 +610,9 @@ const DB_CREA=[
   {n:"Formaggio spalmabile tipo Philadelphia",c:"Formaggi",k:313,p:8.6,gs:18.519,g:31,z:0,ch:0,fi:0,ca:110,fe:0.1,mg:9,k2:150,na:330,zn:0.7,fo:13,se:3,col:90,src:"BDA"},
   {n:"Ricotta di capra",c:"Formaggi",k:182,p:11.9,gs:6.0,g:14.3,z:1.5,ch:1.5,fi:0,ca:396,fe:0.5,mg:17,k2:115,na:85,zn:0.8,fo:12,se:4,col:40,src:"CREA"},
   // ── PIATTI PRONTI — denominazioni CREA mancanti ──
-  {n:"Pasta cotta con pomodoro (piatto pronto)",c:"Piatti pronti",k:145,p:4.8,gs:0.5,g:3.0,z:3.5,ch:26.5,fi:2.0,ca:18,fe:0.7,mg:15,k2:180,na:320,zn:0.4,fo:55,se:5,col:0,src:"CREA"},
+  {n:"Pasta cotta con pomodoro (piatto pronto)",c:"Piatti pronti",k:145,p:4.8,gs:0.5,g:3.0,z:3.5,ch:26.5,fi:2.0,ca:18,fe:0.7,mg:15,k2:180,na:320,zn:0.4,fo:22,se:5,col:0,src:"CREA"},
   {n:"Minestrone (zuppa di verdure cotto)",c:"Piatti pronti",k:45,p:2,gs:0.2,g:0.4,z:2.5,ch:7.8,fi:2.1,ca:25,fe:0.7,mg:15,k2:220,na:290,zn:0.3,fo:40,se:1,col:0,src:"CREA"},
-  {n:"Risotto al pomodoro (cotto)",c:"Piatti pronti",k:140,p:3.5,gs:0.5,g:2.5,z:1.0,ch:27.0,fi:0.8,ca:12,fe:0.5,mg:12,k2:90,na:280,zn:0.5,fo:55,se:5,col:0,src:"CREA"},
+  {n:"Risotto al pomodoro (cotto)",c:"Piatti pronti",k:140,p:3.5,gs:0.5,g:2.5,z:1.0,ch:27.0,fi:0.8,ca:12,fe:0.5,mg:12,k2:90,na:280,zn:0.5,fo:22,se:5,col:0,src:"CREA"},
   {n:"Polpette di carne al sugo",c:"Piatti pronti",k:175,p:12.0,gs:3.5,g:10.5,z:2.5,ch:8.5,fi:0.5,ca:25,fe:1.5,mg:18,k2:270,na:480,zn:2.0,fo:8,se:8,col:55,src:"CREA"},
   // ── ALIMENTI FERMENTATI ──
   {n:"Kefir di latte intero",c:"Latte e derivati",k:61,p:3.3,gs:2.0,g:3.5,z:3.8,ch:4.5,fi:0,ca:114,fe:0.1,mg:13,k2:164,na:50,zn:0.4,fo:5,se:3,col:13,src:"CREA"},
@@ -745,7 +745,7 @@ const DB_CREA=[
 {n:"Pasta frolla cruda",c:"Cereali e pasta",k:473,p:7.5,gs:12.32,g:24.1,z:26.1,ch:59.8,fi:1.1,ca:26,fe:1.1,mg:61,k2:75,na:184,zn:0.39,fo:24,se:2.3,col:204,src:"BDA"},
 {n:"Uovo fritto (olio EVO)",c:"Uova",k:184,p:13.6,gs:3.5,g:14.2,z:0.3,ch:0.4,fi:0,ca:55,fe:1.9,mg:11,k2:127,na:190,zn:1.4,fo:47,se:14,col:410,src:"CREA"},
 {n:"Torta margherita (crostata base)",c:"Dolci",k:370,p:8.9,gs:3.0,g:10.4,z:34.1,ch:63.4,fi:1.4,ca:9,fe:2.8,mg:10,k2:100,na:200,zn:0.4,fo:35,se:5,col:85,src:"CREA"},
-{n:"Lasagne al forno (artigianale, ragù e besciamella)",c:"Piatti pronti",k:188,p:10.5,gs:4.0,g:8.5,z:2.5,ch:18.5,fi:1.0,ca:90,fe:1.4,mg:22,k2:210,na:440,zn:1.5,fo:130,se:8,col:50,src:"CREA"},
+{n:"Lasagne al forno (artigianale, ragù e besciamella)",c:"Piatti pronti",k:188,p:10.5,gs:4.0,g:8.5,z:2.5,ch:18.5,fi:1.0,ca:90,fe:1.4,mg:22,k2:210,na:440,zn:1.5,fo:22,se:8,col:50,src:"CREA"},
 {n:"Crespelle / crepes (pasta, latte, uova)",c:"Cereali e pasta",k:207,p:6.5,gs:2.5,g:8.0,z:5.0,ch:27.0,fi:0.8,ca:70,fe:1.0,mg:10,k2:115,na:200,zn:0.6,fo:60,se:8,col:95,src:"CREA"},
 {n:"Manzo macinato (bovino, magro 10% grassi)",c:"Carni rosse",k:175,p:19.8,gs:4.1,g:10.0,z:0,ch:0,fi:0,ca:11,fe:2.3,mg:22,k2:310,na:68,zn:4.8,fo:8,se:13,col:71,src:"CREA"},
 {n:"Maiale macinato",c:"Carni rosse",k:263,p:16.8,gs:8.5,g:21.5,z:0,ch:0,fi:0,ca:10,fe:0.9,mg:20,k2:270,na:65,zn:2.2,fo:8,se:22,col:80,src:"CREA"},
@@ -1391,7 +1391,7 @@ const DB_CREA=[
 {n:"Arrosto di manzo (cotto al forno)",c:"Carni rosse",k:195,p:29.5,gs:2.5,g:8.5,z:0,ch:0,fi:0,ca:8,fe:2.8,mg:26,k2:350,na:320,zn:5.0,fo:8,se:25,col:78,src:"CREA"},
 {n:"Arrosto di maiale (lombo, cotto)",c:"Carni rosse",k:205,p:28.0,gs:2.5,g:10.0,z:0,ch:0,fi:0,ca:10,fe:1.0,mg:26,k2:365,na:310,zn:2.5,fo:8,se:42,col:80,src:"CREA"},
 {n:"Brodo di pollo (fatto in casa)",c:"Condimenti",k:18,p:2.5,gs:0.2,g:0.8,z:0,ch:0.5,fi:0,ca:10,fe:0.3,mg:7,k2:100,na:380,zn:0.4,fo:35,se:5,col:5,src:"CREA"},
-{n:"Zuppa di cipolle (alla francese)",c:"Piatti pronti",k:75,p:3.5,gs:1.5,g:3.0,z:5.5,ch:9.0,fi:1.2,ca:45,fe:0.6,mg:10,k2:175,na:480,zn:0.4,fo:55,se:3,col:8,src:"CREA"},
+{n:"Zuppa di cipolle (alla francese)",c:"Piatti pronti",k:75,p:3.5,gs:1.5,g:3.0,z:5.5,ch:9.0,fi:1.2,ca:45,fe:0.6,mg:10,k2:175,na:480,zn:0.4,fo:45,se:3,col:8,src:"CREA"},
 // Fosforo (pane+prosciutto crudo, entrambi ricchi di fosforo) era nel campo folati; folati reali ~30mcg - 2026-07-30
 {n:"Panino al prosciutto crudo",c:"Piatti pronti",k:285,p:16.5,gs:2.5,g:8.5,z:1.5,ch:38.5,fi:2.0,ca:35,fe:1.8,mg:28,k2:280,na:850,zn:1.8,fo:30,se:18,col:28,src:"CREA"},
 // Fosforo (mozzarella molto ricca di fosforo) era nel campo folati; folati reali ~30mcg - 2026-07-30
@@ -1714,7 +1714,7 @@ const DB_BDA=[
   {n:"Panna cotta industriale",c:"Dolci confezionati",src:"UPF",k:245,p:3.1,gs:14,g:21,z:11,ch:11,fi:0,ca:75,fe:0.1,mg:8,k2:100,na:48,zn:0.3,fo:5,se:2,col:42},
   // ── PIATTI PRONTI E PREPARATI INDUSTRIALI ──
   {n:"Minestrone in busta surgelato",c:"Piatti pronti",src:"UPF",k:38,p:2.0,gs:0,g:0.5,z:3.5,ch:6.5,fi:2.5,ca:25,fe:0.8,mg:18,k2:230,na:320,zn:0.3,fo:35,se:1,col:0},
-  {n:"Pasta al pomodoro pronta in busta",c:"Piatti pronti",src:"UPF",k:135,p:4.5,gs:0.5,g:2.0,z:4.5,ch:25.0,fi:2.0,ca:25,fe:1.0,mg:18,k2:180,na:480,zn:0.5,fo:60,se:10,col:0},
+  {n:"Pasta al pomodoro pronta in busta",c:"Piatti pronti",src:"UPF",k:135,p:4.5,gs:0.5,g:2.0,z:4.5,ch:25.0,fi:2.0,ca:25,fe:1.0,mg:18,k2:180,na:480,zn:0.5,fo:22,se:10,col:0},
   {n:"Riso in busta pronto (basmati/thai)",c:"Piatti pronti",src:"UPF",k:128,p:2.7,gs:0.1,g:0.4,z:0.5,ch:27.5,fi:0.8,ca:5,fe:0.3,mg:10,k2:30,na:200,zn:0.4,fo:40,se:5,col:0},
   {n:"Polpette di carne surgelate",c:"Piatti pronti",src:"UPF",k:218,p:14.0,gs:3.5,g:15.5,z:0.5,ch:6.5,fi:0.5,ca:30,fe:1.5,mg:18,k2:260,na:650,zn:2.0,fo:8,se:12,col:55},
   {n:"Bastoncini di pesce surgelati",c:"Piatti pronti",src:"BDA",k:191,p:11,gs:1.852,g:10.1,z:0.6,ch:15,fi:0,ca:46,fe:0.7,mg:19,k2:230,na:480,zn:0.4,fo:6,se:17,col:34},
@@ -1799,18 +1799,18 @@ const DB_BDA=[
   {n:"Noci di Macadamia crude",c:"Frutta secca a guscio",src:"CREA",k:751,p:8,gs:12.56,g:76,z:4,ch:5.1,fi:8,ca:70,fe:3,mg:118,k2:363,na:5,zn:1,fo:11,se:4,col:0},
   // ── NUOVI ALIMENTI BDA ──
   // Piatti tradizionali italiani (valori per 100g di prodotto finito)
-  {n:"Arancino / Arancina di riso (fritto)",c:"Piatti pronti",src:"BDA",k:195,p:6.0,gs:3.0,g:8.0,z:3.5,ch:26,fi:1.0,ca:30,fe:0.8,mg:12,k2:110,na:350,zn:0.8,fo:70,se:5,col:20},
-  {n:"Supplì romano al telefono (fritto)",c:"Piatti pronti",src:"BDA",k:200,p:6.5,gs:3.5,g:9.0,z:3.5,ch:24,fi:1.0,ca:50,fe:0.9,mg:12,k2:110,na:380,zn:0.9,fo:75,se:5,col:25},
-  {n:"Pizza margherita artigianale (cotta al forno)",c:"Piatti pronti",src:"BDA",k:235,p:9.0,gs:4.5,g:9.5,z:3.0,ch:29,fi:2.0,ca:160,fe:1.8,mg:25,k2:200,na:490,zn:1.2,fo:120,se:8,col:20},
-  {n:"Lasagna al forno artigianale (bovino/maiale)",c:"Piatti pronti",src:"BDA",k:160,p:8.5,gs:3.5,g:7.5,z:2.5,ch:16,fi:1.5,ca:120,fe:1.0,mg:18,k2:150,na:360,zn:1.5,fo:100,se:6,col:30},
-  {n:"Risotto ai funghi porcini (cotto)",c:"Piatti pronti",src:"BDA",k:115,p:3.5,gs:0.8,g:3.5,z:1.0,ch:18,fi:1.2,ca:18,fe:0.8,mg:20,k2:130,na:250,zn:0.8,fo:60,se:5,col:8},
-  {n:"Pasta e fagioli (minestra)",c:"Piatti pronti",src:"BDA",k:95,p:5.0,gs:0.5,g:2.5,z:1.0,ch:14,fi:3.5,ca:42,fe:1.5,mg:28,k2:230,na:280,zn:0.8,fo:85,se:3,col:0},
+  {n:"Arancino / Arancina di riso (fritto)",c:"Piatti pronti",src:"BDA",k:195,p:6.0,gs:3.0,g:8.0,z:3.5,ch:26,fi:1.0,ca:30,fe:0.8,mg:12,k2:110,na:350,zn:0.8,fo:22,se:5,col:20},
+  {n:"Supplì romano al telefono (fritto)",c:"Piatti pronti",src:"BDA",k:200,p:6.5,gs:3.5,g:9.0,z:3.5,ch:24,fi:1.0,ca:50,fe:0.9,mg:12,k2:110,na:380,zn:0.9,fo:22,se:5,col:25},
+  {n:"Pizza margherita artigianale (cotta al forno)",c:"Piatti pronti",src:"BDA",k:235,p:9.0,gs:4.5,g:9.5,z:3.0,ch:29,fi:2.0,ca:160,fe:1.8,mg:25,k2:200,na:490,zn:1.2,fo:22,se:8,col:20},
+  {n:"Lasagna al forno artigianale (bovino/maiale)",c:"Piatti pronti",src:"BDA",k:160,p:8.5,gs:3.5,g:7.5,z:2.5,ch:16,fi:1.5,ca:120,fe:1.0,mg:18,k2:150,na:360,zn:1.5,fo:22,se:6,col:30},
+  {n:"Risotto ai funghi porcini (cotto)",c:"Piatti pronti",src:"BDA",k:115,p:3.5,gs:0.8,g:3.5,z:1.0,ch:18,fi:1.2,ca:18,fe:0.8,mg:20,k2:130,na:250,zn:0.8,fo:22,se:5,col:8},
+  {n:"Pasta e fagioli (minestra)",c:"Piatti pronti",src:"BDA",k:95,p:5.0,gs:0.5,g:2.5,z:1.0,ch:14,fi:3.5,ca:42,fe:1.5,mg:28,k2:230,na:280,zn:0.8,fo:70,se:3,col:0},
   {n:"Ribollita toscana (zuppa pane/fagioli/cavolo)",c:"Piatti pronti",src:"BDA",k:80,p:3.5,gs:0.4,g:2.5,z:0.8,ch:12,fi:3.0,ca:60,fe:1.5,mg:22,k2:260,na:330,zn:0.5,fo:70,se:2,col:0},
   {n:"Pappa al pomodoro (piatto tipico toscano)",c:"Piatti pronti",src:"BDA",k:90,p:3.0,gs:0.5,g:2.5,z:1.0,ch:14,fi:2.5,ca:30,fe:1.2,mg:18,k2:260,na:380,zn:0.3,fo:50,se:3,col:0},
-  {n:"Canederli tirolesi al formaggio (bolliti)",c:"Piatti pronti",src:"BDA",k:170,p:7.0,gs:2.5,g:7.5,z:3.5,ch:20,fi:1.5,ca:100,fe:1.2,mg:22,k2:160,na:450,zn:1.2,fo:100,se:7,col:28},
-  {n:"Gnocchi alla sorrentina (con pomodoro e mozzarella)",c:"Piatti pronti",src:"BDA",k:145,p:6.0,gs:2.5,g:5.5,z:2.5,ch:18,fi:1.5,ca:90,fe:0.8,mg:15,k2:200,na:330,zn:0.8,fo:70,se:5,col:18},
-  {n:"Piadina romagnola farcita (prosciutto e squacquerone)",c:"Piatti pronti",src:"BDA",k:245,p:12,gs:4.0,g:11,z:3.5,ch:26,fi:1.0,ca:80,fe:1.0,mg:15,k2:130,na:700,zn:1.5,fo:90,se:8,col:35},
-  {n:"Focaccia farcita (olive e pomodoro secco)",c:"Piatti pronti",src:"BDA",k:260,p:7.5,gs:2.0,g:9.5,z:3.0,ch:37,fi:2.5,ca:40,fe:1.5,mg:18,k2:170,na:580,zn:0.6,fo:75,se:7,col:0},
+  {n:"Canederli tirolesi al formaggio (bolliti)",c:"Piatti pronti",src:"BDA",k:170,p:7.0,gs:2.5,g:7.5,z:3.5,ch:20,fi:1.5,ca:100,fe:1.2,mg:22,k2:160,na:450,zn:1.2,fo:22,se:7,col:28},
+  {n:"Gnocchi alla sorrentina (con pomodoro e mozzarella)",c:"Piatti pronti",src:"BDA",k:145,p:6.0,gs:2.5,g:5.5,z:2.5,ch:18,fi:1.5,ca:90,fe:0.8,mg:15,k2:200,na:330,zn:0.8,fo:22,se:5,col:18},
+  {n:"Piadina romagnola farcita (prosciutto e squacquerone)",c:"Piatti pronti",src:"BDA",k:245,p:12,gs:4.0,g:11,z:3.5,ch:26,fi:1.0,ca:80,fe:1.0,mg:15,k2:130,na:700,zn:1.5,fo:22,se:8,col:35},
+  {n:"Focaccia farcita (olive e pomodoro secco)",c:"Piatti pronti",src:"BDA",k:260,p:7.5,gs:2.0,g:9.5,z:3.0,ch:37,fi:2.5,ca:40,fe:1.5,mg:18,k2:170,na:580,zn:0.6,fo:22,se:7,col:0},
   {n:"Cannolo siciliano (ricotta e canditi)",c:"Dolci",src:"BDA",k:325,p:8.0,gs:9.5,g:16,z:35,ch:39,fi:1.0,ca:100,fe:0.8,mg:15,k2:100,na:180,zn:0.5,fo:35,se:4,col:45},
   {n:"Crostata artigianale alla marmellata (fetta 100g)",c:"Dolci",src:"BDA",k:350,p:5.5,gs:5.5,g:14,z:30,ch:52,fi:1.5,ca:40,fe:1.5,mg:12,k2:100,na:230,zn:0.4,fo:35,se:5,col:50},
   {n:"Panettone artigianale (con uvetta e canditi)",c:"Dolci",src:"BDA",k:370,p:7.0,gs:7.5,g:15,z:40,ch:55,fi:1.5,ca:50,fe:2.0,mg:15,k2:130,na:250,zn:0.7,fo:35,se:8,col:115},
@@ -1821,7 +1821,7 @@ const DB_BDA=[
   {n:"Struffoli napoletani (con miele e canditi)",c:"Dolci",src:"BDA",k:410,p:6.5,gs:4.5,g:18,z:52,ch:60,fi:1.0,ca:35,fe:1.5,mg:10,k2:80,na:85,zn:0.5,fo:35,se:5,col:85},
   {n:"Caponata siciliana (agrodolce con melanzane)",c:"Verdure",src:"BDA",k:90,p:1.8,gs:0.3,g:5.5,z:5.5,ch:9.0,fi:3.0,ca:35,fe:0.8,mg:22,k2:300,na:380,zn:0.2,fo:30,se:1,col:0},
   {n:"Baccalà fritto in pastella",c:"Pesce",src:"BDA",k:200,p:18,gs:1.5,g:9.0,z:3.5,ch:13,fi:0.5,ca:35,fe:0.8,mg:30,k2:300,na:450,zn:0.6,fo:10,se:25,col:55},
-  {n:"Tramezzino al tonno e maionese (industriale)",c:"Piatti pronti",src:"BDA",k:230,p:10,gs:3.0,g:9.5,z:4.5,ch:27,fi:1.5,ca:35,fe:1.5,mg:20,k2:150,na:620,zn:0.8,fo:90,se:8,col:30},
+  {n:"Tramezzino al tonno e maionese (industriale)",c:"Piatti pronti",src:"BDA",k:230,p:10,gs:3.0,g:9.5,z:4.5,ch:27,fi:1.5,ca:35,fe:1.5,mg:20,k2:150,na:620,zn:0.8,fo:22,se:8,col:30},
   {n:"Cotoletta alla milanese fritta (vitello impanato)",c:"Carni e derivati",src:"BDA",k:295,p:22,gs:5.5,g:16,z:3.0,ch:16,fi:0.5,ca:45,fe:1.5,mg:25,k2:300,na:480,zn:2.8,fo:8,se:12,col:120},
   {n:"Polpette di carne al sugo (bovino/maiale)",c:"Carni e derivati",src:"BDA",k:195,p:15,gs:4.0,g:11,z:3.0,ch:10,fi:0.8,ca:35,fe:1.5,mg:18,k2:260,na:380,zn:2.0,fo:8,se:9,col:60},
   // ── SALUMI E INSACCATI ──
@@ -1950,10 +1950,10 @@ const DB_BDA=[
 {n:"Zucchine grigliate",c:"Verdure cotte",k:29,p:0,gs:0,g:0.2,z:5.7,ch:5.7,fi:2.8,ca:58,fe:0.8,mg:65,k2:1003,na:2,zn:0.73,fo:65,se:0.3,col:0,src:"CREA"},
 {n:"Patate lesse",c:"Verdure cotte",k:74,p:1.8,gs:0,g:0.1,z:0.4,ch:16.9,fi:1.3,ca:5,fe:0.4,mg:22,k2:280,na:7,zn:0.3,fo:44,se:1,col:0,src:"CREA"},
 {n:"Carote lesse",c:"Verdure cotte",k:47,p:1.3,gs:0,g:0.2,z:8.7,ch:8.7,fi:3.6,ca:42,fe:0.5,mg:7,k2:110,na:71,zn:2.19,fo:36,se:0.9,col:0,src:"CREA"},
-{n:"Minestrone di verdure",c:"Piatti pronti",k:45,p:2,gs:0.2,g:0.4,z:2.8,ch:7.8,fi:2.1,ca:35,fe:0.8,mg:20,k2:250,na:380,zn:0.4,fo:55,se:1,col:0,src:"CREA"},
-{n:"Ribollita (zuppa toscana)",c:"Piatti pronti",k:82,p:3.5,gs:0.3,g:2,z:1.5,ch:12,fi:3.5,ca:50,fe:1.5,mg:28,k2:300,na:420,zn:0.7,fo:80,se:2,col:0,src:"BDA"},
-{n:"Pasta e fagioli",c:"Piatti pronti",k:90,p:5.5,gs:0.3,g:1.5,z:1,ch:14.5,fi:3.5,ca:55,fe:1.8,mg:30,k2:310,na:450,zn:1,fo:100,se:3,col:0,src:"BDA"},
-{n:"Risotto ai funghi",c:"Piatti pronti",k:133,p:4,gs:1.5,g:4,z:1,ch:21,fi:1.5,ca:30,fe:0.9,mg:22,k2:180,na:380,zn:0.8,fo:90,se:5,col:8,src:"BDA"},
+{n:"Minestrone di verdure",c:"Piatti pronti",k:45,p:2,gs:0.2,g:0.4,z:2.8,ch:7.8,fi:2.1,ca:35,fe:0.8,mg:20,k2:250,na:380,zn:0.4,fo:45,se:1,col:0,src:"CREA"},
+{n:"Ribollita (zuppa toscana)",c:"Piatti pronti",k:82,p:3.5,gs:0.3,g:2,z:1.5,ch:12,fi:3.5,ca:50,fe:1.5,mg:28,k2:300,na:420,zn:0.7,fo:45,se:2,col:0,src:"BDA"},
+{n:"Pasta e fagioli",c:"Piatti pronti",k:90,p:5.5,gs:0.3,g:1.5,z:1,ch:14.5,fi:3.5,ca:55,fe:1.8,mg:30,k2:310,na:450,zn:1,fo:70,se:3,col:0,src:"BDA"},
+{n:"Risotto ai funghi",c:"Piatti pronti",k:133,p:4,gs:1.5,g:4,z:1,ch:21,fi:1.5,ca:30,fe:0.9,mg:22,k2:180,na:380,zn:0.8,fo:22,se:5,col:8,src:"BDA"},
 {n:"Pappa al pomodoro",c:"Piatti pronti",k:76,p:2.5,gs:0.4,g:2.2,z:2.5,ch:11.5,fi:1.8,ca:30,fe:0.9,mg:14,k2:280,na:420,zn:0.4,fo:45,se:3,col:0,src:"BDA"},
 {n:"Ragù alla bolognese",c:"Condimenti",k:177,p:12,gs:3.5,g:11.5,z:2,ch:7,fi:0.8,ca:30,fe:2.5,mg:22,k2:350,na:400,zn:2.5,fo:160,se:12,col:45,src:"BDA"},
 // Stesso bug fosforo-in-folati del duplicato già corretto (DB_CREA_239) - 2026-07-30
@@ -2387,28 +2387,29 @@ const DB_BDA=[
 {n:"Salvia fresca",c:"Erbe aromatiche",k:145,p:3.9,gs:2.54,g:4.6,z:15.6,ch:15.6,fi:14.7,ca:600,fe:10.3,mg:47,k2:390,na:4,zn:1.7,fo:0,se:1.4,col:0,src:"BDA"},
 {n:"Timo fresco",c:"Erbe aromatiche",k:116,p:3,gs:0.69,g:2.5,z:15.1,ch:15.1,fi:12.32,ca:630,fe:41.2,mg:160,k2:270,na:18,zn:2.1,fo:39.6,se:1.1,col:0,src:"BDA"},
 // ── PIATTI REGIONALI ITALIANI (BDA) ──
-{n:"Pizzoccheri della Valtellina (cotti)",c:"Piatti pronti",k:195,p:7.0,gs:4.5,g:9.0,z:2.5,ch:22.0,fi:2.5,ca:120,fe:1.2,mg:30,k2:180,na:350,zn:1.2,fo:90,se:8,col:28,src:"BDA"},
-{n:"Vincisgrassi marchigiani (pasta al forno)",c:"Piatti pronti",k:175,p:9.0,gs:3.5,g:7.5,z:2.5,ch:18.5,fi:1.0,ca:85,fe:1.5,mg:20,k2:200,na:420,zn:1.2,fo:120,se:8,col:55,src:"BDA"},
+{n:"Pizzoccheri della Valtellina (cotti)",c:"Piatti pronti",k:195,p:7.0,gs:4.5,g:9.0,z:2.5,ch:22.0,fi:2.5,ca:120,fe:1.2,mg:30,k2:180,na:350,zn:1.2,fo:45,se:8,col:28,src:"BDA"},
+{n:"Vincisgrassi marchigiani (pasta al forno)",c:"Piatti pronti",k:175,p:9.0,gs:3.5,g:7.5,z:2.5,ch:18.5,fi:1.0,ca:85,fe:1.5,mg:20,k2:200,na:420,zn:1.2,fo:22,se:8,col:55,src:"BDA"},
 {n:"Abbacchio al forno (agnello da latte romano)",c:"Carni rosse",k:180,p:24.0,gs:3.5,g:9.0,z:0,ch:0.5,fi:0,ca:12,fe:2.0,mg:22,k2:330,na:75,zn:4.0,fo:8,se:12,col:85,src:"BDA"},
-{n:"Strangolapreti trentini (spinaci e ricotta)",c:"Piatti pronti",k:155,p:7.5,gs:2.5,g:5.5,z:2.5,ch:20.0,fi:1.5,ca:120,fe:1.5,mg:25,k2:220,na:380,zn:0.9,fo:90,se:5,col:35,src:"BDA"},
+{n:"Strangolapreti trentini (spinaci e ricotta)",c:"Piatti pronti",k:155,p:7.5,gs:2.5,g:5.5,z:2.5,ch:20.0,fi:1.5,ca:120,fe:1.5,mg:25,k2:220,na:380,zn:0.9,fo:45,se:5,col:35,src:"BDA"},
 
 // ── PIATTI PRONTI TRADIZIONALI ITALIANI (BDA/CREA) ──
 {n:"Gnocchi di patate freschi (cotti)",c:"Piatti pronti",k:130,p:3.2,gs:0.2,g:1.0,z:0.5,ch:27.5,fi:1.5,ca:18,fe:0.5,mg:15,k2:190,na:290,zn:0.3,fo:40,se:2,col:0,src:"BDA"},
-{n:"Ravioli di ricotta e spinaci (freschi, cotti)",c:"Piatti pronti",k:175,p:8.5,gs:3.0,g:6.5,z:1.5,ch:22.0,fi:1.5,ca:120,fe:1.5,mg:28,k2:220,na:310,zn:0.8,fo:90,se:8,col:55,src:"BDA"},
+// FIX: alzato da 22 (bucket generico pasta) a 35 per il ripieno di spinaci reale, coerente con Strangolapreti/altre paste ripiene di spinaci - 2026-07-30
+{n:"Ravioli di ricotta e spinaci (freschi, cotti)",c:"Piatti pronti",k:175,p:8.5,gs:3.0,g:6.5,z:1.5,ch:22.0,fi:1.5,ca:120,fe:1.5,mg:28,k2:220,na:310,zn:0.8,fo:35,se:8,col:55,src:"BDA"},
 // Stesso bug fosforo-in-folati delle paste fresche ripiene, corretto per coerenza col pattern pasta all'uovo - 2026-07-30
 {n:"Tortellini in brodo (freschi, cotti)",c:"Piatti pronti",k:160,p:8.0,gs:3.0,g:6.0,z:1.0,ch:19.5,fi:0.8,ca:65,fe:1.0,mg:15,k2:185,na:520,zn:0.8,fo:40,se:7,col:45,src:"BDA"},
 {n:"Risotto ai funghi porcini (cotto)",c:"Piatti pronti",k:145,p:3.5,gs:1.5,g:5.5,z:1.0,ch:22.0,fi:1.5,ca:18,fe:0.8,mg:22,k2:180,na:350,zn:0.7,fo:35,se:4,col:8,src:"BDA"},
 {n:"Polenta cotta (senza sale)",c:"Cereali e derivati",k:73,p:0.9,gs:0.1,g:0.04,z:0.2,ch:17.8,fi:0.9,ca:3,fe:0.1,mg:2,k2:16,na:91,zn:0.03,fo:10,se:1,col:0,src:"CREA"},
-{n:"Ribollita toscana (zuppa di pane e verdure)",c:"Piatti pronti",k:100,p:4.0,gs:0.5,g:2.5,z:2.0,ch:16.5,fi:4.5,ca:65,fe:1.5,mg:30,k2:350,na:380,zn:0.7,fo:80,se:4,col:0,src:"BDA"},
-{n:"Pasta e fagioli (zuppa, cotta)",c:"Piatti pronti",k:115,p:5.5,gs:0.4,g:2.0,z:1.0,ch:19.5,fi:4.0,ca:45,fe:1.5,mg:35,k2:300,na:290,zn:0.9,fo:90,se:3,col:0,src:"BDA"},
-{n:"Pasta e ceci (zuppa, cotta)",c:"Piatti pronti",k:120,p:5.0,gs:0.3,g:2.0,z:1.0,ch:21.0,fi:4.5,ca:40,fe:1.8,mg:38,k2:280,na:300,zn:1.0,fo:110,se:4,col:0,src:"BDA"},
-{n:"Zuppa di lenticchie (cotta)",c:"Piatti pronti",k:95,p:5.5,gs:0.2,g:1.0,z:1.5,ch:16.0,fi:5.0,ca:30,fe:2.2,mg:28,k2:310,na:260,zn:1.0,fo:100,se:4,col:0,src:"BDA"},
-{n:"Minestrone misto di verdure (cotto)",c:"Piatti pronti",k:55,p:2.5,gs:0.2,g:1.0,z:2.5,ch:9.0,fi:3.5,ca:35,fe:0.8,mg:20,k2:310,na:280,zn:0.4,fo:55,se:2,col:0,src:"BDA"},
-{n:"Arancino al ragù siciliano",c:"Piatti pronti",k:210,p:7.0,gs:3.0,g:9.0,z:1.5,ch:26.0,fi:1.5,ca:40,fe:1.5,mg:22,k2:200,na:480,zn:1.2,fo:90,se:8,col:30,src:"BDA"},
-{n:"Supplì al telefono romano",c:"Piatti pronti",k:195,p:7.5,gs:2.5,g:8.5,z:1.0,ch:24.0,fi:1.0,ca:55,fe:1.2,mg:18,k2:170,na:420,zn:1.0,fo:70,se:6,col:35,src:"BDA"},
+{n:"Ribollita toscana (zuppa di pane e verdure)",c:"Piatti pronti",k:100,p:4.0,gs:0.5,g:2.5,z:2.0,ch:16.5,fi:4.5,ca:65,fe:1.5,mg:30,k2:350,na:380,zn:0.7,fo:45,se:4,col:0,src:"BDA"},
+{n:"Pasta e fagioli (zuppa, cotta)",c:"Piatti pronti",k:115,p:5.5,gs:0.4,g:2.0,z:1.0,ch:19.5,fi:4.0,ca:45,fe:1.5,mg:35,k2:300,na:290,zn:0.9,fo:70,se:3,col:0,src:"BDA"},
+{n:"Pasta e ceci (zuppa, cotta)",c:"Piatti pronti",k:120,p:5.0,gs:0.3,g:2.0,z:1.0,ch:21.0,fi:4.5,ca:40,fe:1.8,mg:38,k2:280,na:300,zn:1.0,fo:22,se:4,col:0,src:"BDA"},
+{n:"Zuppa di lenticchie (cotta)",c:"Piatti pronti",k:95,p:5.5,gs:0.2,g:1.0,z:1.5,ch:16.0,fi:5.0,ca:30,fe:2.2,mg:28,k2:310,na:260,zn:1.0,fo:70,se:4,col:0,src:"BDA"},
+{n:"Minestrone misto di verdure (cotto)",c:"Piatti pronti",k:55,p:2.5,gs:0.2,g:1.0,z:2.5,ch:9.0,fi:3.5,ca:35,fe:0.8,mg:20,k2:310,na:280,zn:0.4,fo:45,se:2,col:0,src:"BDA"},
+{n:"Arancino al ragù siciliano",c:"Piatti pronti",k:210,p:7.0,gs:3.0,g:9.0,z:1.5,ch:26.0,fi:1.5,ca:40,fe:1.5,mg:22,k2:200,na:480,zn:1.2,fo:22,se:8,col:30,src:"BDA"},
+{n:"Supplì al telefono romano",c:"Piatti pronti",k:195,p:7.5,gs:2.5,g:8.5,z:1.0,ch:24.0,fi:1.0,ca:55,fe:1.2,mg:18,k2:170,na:420,zn:1.0,fo:22,se:6,col:35,src:"BDA"},
 {n:"Brodetto di pesce marchigiano (base, per 100g)",c:"Piatti pronti",k:90,p:12.5,gs:0.8,g:3.5,z:2.0,ch:4.0,fi:0.5,ca:50,fe:1.5,mg:30,k2:350,na:450,zn:1.5,fo:15,se:25,col:65,src:"BDA"},
-{n:"Cacciucco livornese (base, per 100g)",c:"Piatti pronti",k:95,p:13.0,gs:0.9,g:3.5,z:2.5,ch:3.5,fi:0.5,ca:55,fe:1.8,mg:32,k2:370,na:480,zn:1.8,fo:150,se:28,col:70,src:"BDA"},
-{n:"Trippa alla romana (cotta con pomodoro)",c:"Piatti pronti",k:125,p:14.5,gs:2.0,g:5.0,z:3.0,ch:4.5,fi:1.0,ca:40,fe:1.5,mg:15,k2:210,na:550,zn:2.0,fo:90,se:10,col:110,src:"BDA"},
+{n:"Cacciucco livornese (base, per 100g)",c:"Piatti pronti",k:95,p:13.0,gs:0.9,g:3.5,z:2.5,ch:3.5,fi:0.5,ca:55,fe:1.8,mg:32,k2:370,na:480,zn:1.8,fo:22,se:28,col:70,src:"BDA"},
+{n:"Trippa alla romana (cotta con pomodoro)",c:"Piatti pronti",k:125,p:14.5,gs:2.0,g:5.0,z:3.0,ch:4.5,fi:1.0,ca:40,fe:1.5,mg:15,k2:210,na:550,zn:2.0,fo:22,se:10,col:110,src:"BDA"},
 // Fosforo (carne di vitello, ~170-200mg) era nel campo folati; folati reali carne ~15mcg - 2026-07-30
 {n:"Ossobuco alla milanese (senza risotto)",c:"Carni rosse",k:195,p:22.0,gs:2.5,g:10.0,z:2.5,ch:4.0,fi:0.5,ca:40,fe:2.0,mg:25,k2:380,na:420,zn:4.5,fo:15,se:12,col:80,src:"BDA"},
 
@@ -2418,16 +2419,16 @@ const DB_BDA=[
 {n:"Wasabi (pasta, da radice fresca)",c:"Condimenti",k:109,p:4.8,gs:0.1,g:0.6,z:5.0,ch:21.5,fi:7.8,ca:128,fe:1.0,mg:69,k2:568,na:17,zn:1.6,fo:18,se:3,col:0,src:"BDA"},
 {n:"Zenzero marinato/gari (per sushi)",c:"Condimenti",k:20,p:0.2,gs:0,g:0.1,z:3.5,ch:4.7,fi:0.4,ca:10,fe:0.3,mg:8,k2:50,na:600,zn:0.1,fo:5,se:0,col:0,src:"BDA"},
 {n:"Injera (pane etiope di tef fermentato)",c:"Cereali e derivati",k:165,p:5.5,gs:0.1,g:0.7,z:1.0,ch:35.0,fi:3.5,ca:25,fe:3.0,mg:40,k2:200,na:280,zn:1.5,fo:25,se:4,col:0,src:"BDA"},
-{n:"Falafel (fritto, ceci e fave)",c:"Piatti pronti",k:290,p:12.5,gs:2.5,g:15.5,z:1.0,ch:28.5,fi:5.5,ca:75,fe:3.5,mg:60,k2:480,na:480,zn:1.8,fo:250,se:5,col:0,src:"BDA"},
-{n:"Gyoza al vapore (ravioli giapponesi)",c:"Piatti pronti",k:165,p:8.5,gs:1.0,g:5.0,z:1.5,ch:22.0,fi:1.0,ca:30,fe:1.2,mg:18,k2:200,na:520,zn:0.9,fo:80,se:8,col:30,src:"BDA"},
-{n:"Pad Thai di gamberi (noodles di riso)",c:"Piatti pronti",k:190,p:12.0,gs:1.5,g:7.0,z:4.0,ch:21.5,fi:1.0,ca:45,fe:1.8,mg:30,k2:280,na:650,zn:1.5,fo:120,se:18,col:55,src:"BDA"},
-{n:"Dhal di lenticchie rosse (indiano)",c:"Piatti pronti",k:110,p:6.5,gs:0.5,g:2.5,z:2.0,ch:17.5,fi:4.5,ca:40,fe:3.0,mg:35,k2:320,na:350,zn:1.2,fo:130,se:4,col:0,src:"BDA"},
+{n:"Falafel (fritto, ceci e fave)",c:"Piatti pronti",k:290,p:12.5,gs:2.5,g:15.5,z:1.0,ch:28.5,fi:5.5,ca:75,fe:3.5,mg:60,k2:480,na:480,zn:1.8,fo:70,se:5,col:0,src:"BDA"},
+{n:"Gyoza al vapore (ravioli giapponesi)",c:"Piatti pronti",k:165,p:8.5,gs:1.0,g:5.0,z:1.5,ch:22.0,fi:1.0,ca:30,fe:1.2,mg:18,k2:200,na:520,zn:0.9,fo:22,se:8,col:30,src:"BDA"},
+{n:"Pad Thai di gamberi (noodles di riso)",c:"Piatti pronti",k:190,p:12.0,gs:1.5,g:7.0,z:4.0,ch:21.5,fi:1.0,ca:45,fe:1.8,mg:30,k2:280,na:650,zn:1.5,fo:22,se:18,col:55,src:"BDA"},
+{n:"Dhal di lenticchie rosse (indiano)",c:"Piatti pronti",k:110,p:6.5,gs:0.5,g:2.5,z:2.0,ch:17.5,fi:4.5,ca:40,fe:3.0,mg:35,k2:320,na:350,zn:1.2,fo:70,se:4,col:0,src:"BDA"},
 {n:"Zuppa miso con tofu e alga wakame",c:"Piatti pronti",k:40,p:3.0,gs:0.3,g:1.5,z:1.5,ch:4.5,fi:0.8,ca:50,fe:0.8,mg:18,k2:160,na:900,zn:0.5,fo:20,se:2,col:0,src:"BDA"},
 // FIX (check strutturale): zuccheri (4.5g, marinata dolce coreana) non potevano superare i carboidrati totali (4.0g) - corretto ch a 4.5 - 2026-07-30
 {n:"Bulgogi di manzo (coreano, marinato)",c:"Carni rosse",k:185,p:22.0,gs:2.5,g:9.5,z:4.5,ch:4.5,fi:0.2,ca:15,fe:2.5,mg:25,k2:380,na:580,zn:4.5,fo:8,se:12,col:75,src:"BDA"},
 {n:"Tikka masala di pollo (piatto, con salsa)",c:"Piatti pronti",k:130,p:14.5,gs:2.0,g:7.0,z:3.5,ch:5.5,fi:1.0,ca:60,fe:1.2,mg:28,k2:420,na:650,zn:1.5,fo:8,se:12,col:55,src:"BDA"},
 {n:"Satay di pollo (spiedino, senza salsa)",c:"Carni bianche",k:165,p:22.5,gs:1.2,g:7.5,z:1.5,ch:1.5,fi:0.2,ca:15,fe:0.8,mg:28,k2:310,na:480,zn:1.2,fo:8,se:20,col:75,src:"BDA"},
-{n:"Tacos di pollo (tortilla mais + pollo + verdure)",c:"Piatti pronti",k:200,p:12.0,gs:2.0,g:7.5,z:2.5,ch:22.0,fi:2.5,ca:80,fe:1.5,mg:30,k2:280,na:520,zn:1.5,fo:110,se:10,col:40,src:"BDA"},
+{n:"Tacos di pollo (tortilla mais + pollo + verdure)",c:"Piatti pronti",k:200,p:12.0,gs:2.0,g:7.5,z:2.5,ch:22.0,fi:2.5,ca:80,fe:1.5,mg:30,k2:280,na:520,zn:1.5,fo:45,se:10,col:40,src:"BDA"},
 
 // ── SALSE E CONDIMENTI ASIATICI (BDA) ──
 {n:"Salsa di pesce (fish sauce, Nam Pla)",c:"Condimenti",k:35,p:5.0,gs:0,g:0,z:0.5,ch:4.0,fi:0,ca:25,fe:0.8,mg:14,k2:110,na:5600,zn:0.3,fo:8,se:0,col:0,src:"BDA"},
@@ -2620,15 +2621,15 @@ const DB_BDA=[
 // ── PIATTI TIPICI ITALIANI MANCANTI (BDA) ──
 // Fosforo (pasta+pecorino, calcio 280mg conferma forte contenuto di formaggio) era nel campo folati; folati reali ~30mcg - 2026-07-30
 {n:"Pasta cacio e pepe (ricetta romana)",c:"Piatti pronti",k:290,p:12.5,gs:8.5,g:14.5,z:0.5,ch:33,fi:2.0,ca:280,fe:1.2,mg:35,k2:130,na:580,zn:2.5,fo:30,se:18,col:38,src:"BDA"},
-{n:"Pasta alla norma (pomodoro, melanzane, ricotta salata)",c:"Piatti pronti",k:220,p:8.5,gs:2.5,g:8.0,z:4.5,ch:32,fi:3.5,ca:85,fe:1.2,mg:28,k2:330,na:420,zn:0.8,fo:85,se:8,col:8,src:"BDA"},
-{n:"Pasta al pesto genovese (DOP basilico)",c:"Piatti pronti",k:355,p:10.5,gs:9.5,g:21.5,z:1.5,ch:36,fi:2.5,ca:165,fe:1.5,mg:50,k2:195,na:480,zn:1.5,fo:125,se:5,col:18,src:"BDA"},
+{n:"Pasta alla norma (pomodoro, melanzane, ricotta salata)",c:"Piatti pronti",k:220,p:8.5,gs:2.5,g:8.0,z:4.5,ch:32,fi:3.5,ca:85,fe:1.2,mg:28,k2:330,na:420,zn:0.8,fo:22,se:8,col:8,src:"BDA"},
+{n:"Pasta al pesto genovese (DOP basilico)",c:"Piatti pronti",k:355,p:10.5,gs:9.5,g:21.5,z:1.5,ch:36,fi:2.5,ca:165,fe:1.5,mg:50,k2:195,na:480,zn:1.5,fo:22,se:5,col:18,src:"BDA"},
 {n:"Pasta e fagioli alla veneta",c:"Zuppe e minestre",k:145,p:8.0,gs:0.8,g:4.5,z:1.0,ch:19,fi:4.5,ca:45,fe:1.8,mg:38,k2:320,na:520,zn:1.2,fo:120,se:5,col:5,src:"BDA"},
 {n:"Pasta e ceci (zuppa)",c:"Zuppe e minestre",k:138,p:7.5,gs:0.5,g:3.5,z:1.0,ch:20,fi:4.0,ca:38,fe:2.0,mg:35,k2:295,na:490,zn:1.0,fo:115,se:4,col:2,src:"BDA"},
 {n:"Polpo alla luciana (in umido con olive e capperi)",c:"Piatti pronti",k:120,p:18.5,gs:1.5,g:4.5,z:1.0,ch:3.5,fi:1.0,ca:65,fe:2.8,mg:62,k2:318,na:520,zn:2.0,fo:8,se:55,col:85,src:"BDA"},
 {n:"Baccalà alla vicentina (mantecato)",c:"Piatti pronti",k:235,p:22,gs:8.5,g:14,z:0.5,ch:5.5,fi:0.5,ca:120,fe:1.5,mg:38,k2:380,na:650,zn:1.8,fo:10,se:42,col:65,src:"BDA"},
 {n:"Fritto misto di pesce (con panatura)",c:"Pesce e frutti di mare",k:235,p:16,gs:3.5,g:12.5,z:0.5,ch:18,fi:0.8,ca:65,fe:1.5,mg:35,k2:290,na:480,zn:1.2,fo:12,se:28,col:65,src:"BDA"},
-{n:"Risotto al nero di seppia",c:"Piatti pronti",k:195,p:9.5,gs:2.5,g:7.5,z:0.5,ch:26,fi:0.5,ca:38,fe:1.8,mg:32,k2:210,na:580,zn:1.5,fo:145,se:30,col:55,src:"BDA"},
-{n:"Trippa alla romana (con pomodoro e pecorino)",c:"Piatti pronti",k:162,p:15.5,gs:3.5,g:9.5,z:1.5,ch:5.5,fi:1.5,ca:125,fe:1.5,mg:20,k2:220,na:580,zn:3.5,fo:100,se:15,col:72,src:"BDA"},
+{n:"Risotto al nero di seppia",c:"Piatti pronti",k:195,p:9.5,gs:2.5,g:7.5,z:0.5,ch:26,fi:0.5,ca:38,fe:1.8,mg:32,k2:210,na:580,zn:1.5,fo:22,se:30,col:55,src:"BDA"},
+{n:"Trippa alla romana (con pomodoro e pecorino)",c:"Piatti pronti",k:162,p:15.5,gs:3.5,g:9.5,z:1.5,ch:5.5,fi:1.5,ca:125,fe:1.5,mg:20,k2:220,na:580,zn:3.5,fo:22,se:15,col:72,src:"BDA"},
 // Allineato al duplicato già verificato (10mcg): carne bollita non giustifica folati così elevati anche con salsa verde - 2026-07-30
 {n:"Bollito misto con salsa verde",c:"Piatti pronti",k:195,p:22,gs:4.0,g:9.5,z:0.5,ch:4.0,fi:0.5,ca:20,fe:2.5,mg:22,k2:280,na:650,zn:3.5,fo:10,se:20,col:75,src:"BDA"},
 {n:"Scaloppine al limone (vitello)",c:"Piatti pronti",k:178,p:22.5,gs:2.5,g:8.5,z:0.5,ch:4.0,fi:0.3,ca:18,fe:1.5,mg:22,k2:295,na:420,zn:2.5,fo:8,se:15,col:68,src:"BDA"},
@@ -2641,7 +2642,7 @@ const DB_BDA=[
 // Fosforo (pasta+stracchino, calcio 185mg conferma contenuto di formaggio) era nel campo folati; folati reali ~25mcg - 2026-07-30
 {n:"Focaccia al formaggio di Recco (con stracchino)",c:"Pane e prodotti da forno",k:315,p:10.5,gs:9.5,g:16.5,z:1.5,ch:37,fi:1.5,ca:185,fe:1.0,mg:18,k2:100,na:680,zn:1.5,fo:25,se:8,col:38,src:"BDA"},
 {n:"Calzone fritto napoletano (ripieno ricotta e salumi)",c:"Pane e prodotti da forno",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:120,se:10,col:42,src:"BDA"},
-{n:"Supplì al telefono romani (riso e ragù fritti)",c:"Piatti pronti",k:218,p:8.5,gs:4.5,g:9.5,z:1.5,ch:26,fi:1.2,ca:65,fe:1.5,mg:22,k2:170,na:520,zn:1.5,fo:95,se:10,col:38,src:"BDA"},
+{n:"Supplì al telefono romani (riso e ragù fritti)",c:"Piatti pronti",k:218,p:8.5,gs:4.5,g:9.5,z:1.5,ch:26,fi:1.2,ca:65,fe:1.5,mg:22,k2:170,na:520,zn:1.5,fo:22,se:10,col:38,src:"BDA"},
 {n:"Minestrone lombardo (con pasta o riso)",c:"Zuppe e minestre",k:75,p:3.5,gs:0.3,g:2.0,z:2.0,ch:10.5,fi:3.5,ca:42,fe:1.2,mg:22,k2:290,na:380,zn:0.5,fo:55,se:3,col:5,src:"BDA"},
 {n:"Zuppa di farro toscana (con legumi)",c:"Zuppe e minestre",k:118,p:6.5,gs:0.5,g:2.0,z:1.0,ch:20,fi:4.5,ca:38,fe:2.0,mg:45,k2:285,na:420,zn:1.2,fo:135,se:8,col:0,src:"BDA"},
 ];
@@ -2737,7 +2738,7 @@ const DB_UPF = [
   {n:"Hot dog industriale con panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:40,fe:2,mg:15,k2:200,na:320,zn:1.5,fo:25,se:8,col:40},
   {n:"Cotoletta impanata surgelata",c:"Fast food",src:"UPF",k:234,p:12,gs:1.6,g:13,z:0.5,ch:17,fi:1,ca:30,fe:1.2,mg:22,k2:300,na:1300,zn:1.5,fo:8,se:14,col:65},
   {n:"Sofficini (Findus/simili)",c:"Fast food",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:80,fe:1,mg:12,k2:110,na:392,zn:0.7,fo:20,se:5,col:15},
-  {n:"Minestrone surgelato industriale",c:"Piatti pronti",src:"UPF",k:75,p:2.4,gs:0.6,g:3.6,z:1.4,ch:6.4,fi:3.5,ca:25,fe:0.8,mg:18,k2:230,na:216,zn:0.4,fo:55,se:1.5,col:0},
+  {n:"Minestrone surgelato industriale",c:"Piatti pronti",src:"UPF",k:75,p:2.4,gs:0.6,g:3.6,z:1.4,ch:6.4,fi:3.5,ca:25,fe:0.8,mg:18,k2:230,na:216,zn:0.4,fo:45,se:1.5,col:0},
 
   // ── BEVANDE ALCOLICHE aggiuntive ──
   {n:"Gin tonic (porzione 200mL)",c:"Alcolici",src:"UPF",k:88,p:0,gs:0,g:0,z:10,ch:10,fi:0,ca:3,fe:0,mg:1,k2:5,na:8,zn:0,fo:1,se:0,col:0},
@@ -2787,13 +2788,13 @@ const DB_UPF = [
   // ── PASTI PRONTI CONFEZIONATI ──
   // Fosforo (mix di riso secco) era nel campo folati; folati reali riso ~15mcg - 2026-07-30
   {n:"Risotto in busta pronto",c:"Piatti pronti",src:"UPF",k:370,p:8,gs:0.5,g:2.5,z:2,ch:77,fi:1.5,ca:15,fe:1,mg:20,k2:110,na:900,zn:0.5,fo:15,se:8,col:0},
-  {n:"Pasta al pomodoro in vasetto pronta",c:"Piatti pronti",src:"UPF",k:137.5,p:6,gs:2.05,g:5.3,z:3.3,ch:16,fi:1.1,ca:25,fe:1.2,mg:20,k2:200,na:430,zn:0.4,fo:55,se:5,col:0},
-  {n:"Ragù industriale in vasetto",c:"Piatti pronti",src:"UPF",k:87,p:4.8,gs:1.3,g:4.1,z:4,ch:6.7,fi:1.8,ca:20,fe:1,mg:12,k2:180,na:400,zn:1,fo:60,se:5,col:20},
+  {n:"Pasta al pomodoro in vasetto pronta",c:"Piatti pronti",src:"UPF",k:137.5,p:6,gs:2.05,g:5.3,z:3.3,ch:16,fi:1.1,ca:25,fe:1.2,mg:20,k2:200,na:430,zn:0.4,fo:22,se:5,col:0},
+  {n:"Ragù industriale in vasetto",c:"Piatti pronti",src:"UPF",k:87,p:4.8,gs:1.3,g:4.1,z:4,ch:6.7,fi:1.8,ca:20,fe:1,mg:12,k2:180,na:400,zn:1,fo:22,se:5,col:20},
   {n:"Sugo ai funghi industriale vasetto",c:"Piatti pronti",src:"UPF",k:201,p:2.2,gs:2.2,g:16,z:1.2,ch:12,fi:2.9,ca:25,fe:1.2,mg:14,k2:220,na:396,zn:0.4,fo:45,se:5,col:0},
   {n:"Pesto rosso industriale vasetto",c:"Condimenti",src:"UPF",k:264,p:4,gs:3.4,g:24,z:7.5,ch:9,fi:3,ca:110,fe:2,mg:45,k2:400,na:840,zn:0.8,fo:100,se:3,col:5},
   {n:"Polpette in scatola al pomodoro",c:"Piatti pronti",src:"UPF",k:149,p:11,gs:3.7,g:6.6,z:2.9,ch:9.6,fi:3.4,ca:25,fe:1.5,mg:16,k2:190,na:700,zn:1.8,fo:8,se:7,col:50},
   {n:"Zuppa di verdure in lattina",c:"Piatti pronti",src:"UPF",k:30,p:1.6,gs:0.2,g:0.9,z:1.2,ch:1.4,fi:4.9,ca:22,fe:0.7,mg:15,k2:230,na:550,zn:0.3,fo:45,se:1.5,col:0},
-  {n:"Pasta e fagioli pronta in barattolo",c:"Piatti pronti",src:"UPF",k:77.2,p:4.7,gs:0.34,g:1.7,z:2,ch:11.4,fi:2,ca:38,fe:2.5,mg:38,k2:330,na:201.3,zn:1,fo:95,se:3,col:0},
+  {n:"Pasta e fagioli pronta in barattolo",c:"Piatti pronti",src:"UPF",k:77.2,p:4.7,gs:0.34,g:1.7,z:2,ch:11.4,fi:2,ca:38,fe:2.5,mg:38,k2:330,na:201.3,zn:1,fo:70,se:3,col:0},
   // Folati implausibili per carne processata (non frattaglia); reali ~8mcg - 2026-07-30
   {n:"Carne in scatola corned beef",c:"Salumi processati",src:"UPF",k:218,p:25.9,gs:5.5,g:12.5,z:0,ch:0,fi:0,ca:14,fe:2.7,mg:14,k2:150,na:900,zn:4.4,fo:8,se:18,col:98},
 
@@ -2926,14 +2927,14 @@ const DB_UPF = [
   {n:"Musli svizzero industriale misto",c:"Cereali da colazione",src:"UPF",k:409,p:10.7,gs:3.8,g:13.5,z:17.3,ch:56.1,fi:9.9,ca:70,fe:3.0,mg:80,k2:350,na:85,zn:1.8,fo:180,se:7,col:0},
 
   // ── PIATTI PRONTI AGGIUNTIVI ──
-  {n:"Lasagne al ragù surgelate (porz. 300g)",c:"Piatti pronti",src:"UPF",k:150,p:1.1,gs:1.4,g:6.2,z:4.2,ch:16,fi:2,ca:110,fe:1.5,mg:18,k2:200,na:2880,zn:1.0,fo:120,se:8,col:30},
-  {n:"Risotto ai funghi pronto in busta",c:"Piatti pronti",src:"UPF",k:137,p:2.7,gs:3.56,g:5.4,z:0.5,ch:18.9,fi:2.5,ca:20,fe:0.8,mg:15,k2:110,na:248,zn:0.5,fo:55,se:5,col:0},
+  {n:"Lasagne al ragù surgelate (porz. 300g)",c:"Piatti pronti",src:"UPF",k:150,p:1.1,gs:1.4,g:6.2,z:4.2,ch:16,fi:2,ca:110,fe:1.5,mg:18,k2:200,na:2880,zn:1.0,fo:22,se:8,col:30},
+  {n:"Risotto ai funghi pronto in busta",c:"Piatti pronti",src:"UPF",k:137,p:2.7,gs:3.56,g:5.4,z:0.5,ch:18.9,fi:2.5,ca:20,fe:0.8,mg:15,k2:110,na:248,zn:0.5,fo:22,se:5,col:0},
   {n:"Pollo al curry pronto in vaschetta",c:"Piatti pronti",src:"UPF",k:113,p:11,gs:1,g:4.3,z:0.3,ch:6.3,fi:1.5,ca:30,fe:1.0,mg:22,k2:280,na:700,zn:0.8,fo:8,se:10,col:35},
-  {n:"Pasta carbonara pronta in vaschetta",c:"Piatti pronti",src:"UPF",k:177,p:7.2,gs:3.6,g:7.2,z:3.1,ch:19,fi:1.0,ca:75,fe:1.2,mg:18,k2:140,na:348,zn:0.8,fo:100,se:10,col:55},
-  {n:"Zuppa di legumi pronta in tetrapak",c:"Piatti pronti",src:"UPF",k:50,p:1.9,gs:0.1,g:0.9,z:1.4,ch:7.7,fi:1.6,ca:35,fe:1.5,mg:30,k2:350,na:472,zn:0.8,fo:100,se:2,col:0},
+  {n:"Pasta carbonara pronta in vaschetta",c:"Piatti pronti",src:"UPF",k:177,p:7.2,gs:3.6,g:7.2,z:3.1,ch:19,fi:1.0,ca:75,fe:1.2,mg:18,k2:140,na:348,zn:0.8,fo:22,se:10,col:55},
+  {n:"Zuppa di legumi pronta in tetrapak",c:"Piatti pronti",src:"UPF",k:50,p:1.9,gs:0.1,g:0.9,z:1.4,ch:7.7,fi:1.6,ca:35,fe:1.5,mg:30,k2:350,na:472,zn:0.8,fo:70,se:2,col:0},
   {n:"Gnocchi di patate surgelati",c:"Piatti pronti",src:"UPF",k:155,p:3.3,gs:0,g:1,z:0,ch:32,fi:2.6,ca:12,fe:0.6,mg:13,k2:140,na:520,zn:0.3,fo:38,se:4,col:0},
   {n:"Cotoletta di pollo panata surgelata",c:"Piatti pronti",src:"UPF",k:251,p:12,gs:3,g:15,z:0.6,ch:17,fi:0,ca:20,fe:1.0,mg:20,k2:240,na:520,zn:1.0,fo:8,se:12,col:35},
-  {n:"Crocchette di patate tipo Tater Tots",c:"Piatti pronti",src:"UPF",k:186,p:2.3,gs:1.74,g:9.3,z:1.2,ch:16.3,fi:1.2,ca:10,fe:0.58,mg:15,k2:476.7,na:523.3,zn:0.3,fo:60,se:1,col:0},
+  {n:"Crocchette di patate tipo Tater Tots",c:"Piatti pronti",src:"UPF",k:186,p:2.3,gs:1.74,g:9.3,z:1.2,ch:16.3,fi:1.2,ca:10,fe:0.58,mg:15,k2:476.7,na:523.3,zn:0.3,fo:15,se:1,col:0},
 
   // ── SNACK E DOLCI AGGIUNTIVI ──
   {n:"Pop corn al burro commerciale (busta)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:8,fe:2.5,mg:95,k2:330,na:500,zn:2.0,fo:25,se:5,col:15},
@@ -2963,11 +2964,11 @@ const DB_UPF = [
   {n:"Patate fritte fast food (porzione media, 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:0.5,ch:41,fi:3,ca:10,fe:0.7,mg:25,k2:480,na:400,zn:0.4,fo:15,se:0.5,col:0},
   {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.8,mg:18,k2:210,na:320,zn:1.8,fo:25,se:10,col:48},
   // ── PIATTI PRONTI SURGELATI ──
-  {n:"Pizza surgelata margherita",c:"Piatti pronti",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:2,mg:20,k2:200,na:600,zn:1,fo:130,se:8,col:12},
-  {n:"Lasagne surgelate bolognese",c:"Piatti pronti",src:"UPF",k:184,p:8.7,gs:4,g:11,z:2.6,ch:12,fi:1,ca:80,fe:1.5,mg:15,k2:200,na:400,zn:1,fo:100,se:6,col:25},
-  {n:"Sofficini di formaggio surgelati",c:"Piatti pronti",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:120,fe:1.2,mg:15,k2:160,na:392,zn:0.8,fo:110,se:5,col:18},
+  {n:"Pizza surgelata margherita",c:"Piatti pronti",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:2,mg:20,k2:200,na:600,zn:1,fo:22,se:8,col:12},
+  {n:"Lasagne surgelate bolognese",c:"Piatti pronti",src:"UPF",k:184,p:8.7,gs:4,g:11,z:2.6,ch:12,fi:1,ca:80,fe:1.5,mg:15,k2:200,na:400,zn:1,fo:22,se:6,col:25},
+  {n:"Sofficini di formaggio surgelati",c:"Piatti pronti",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:120,fe:1.2,mg:15,k2:160,na:392,zn:0.8,fo:22,se:5,col:18},
   {n:"Bastoncini di pesce impanati surgelati",c:"Piatti pronti",src:"UPF",k:189.3,p:11,gs:1.8,g:9.3,z:2.1,ch:14.6,fi:0,ca:50,fe:0.8,mg:22,k2:250,na:352,zn:0.7,fo:12,se:18,col:30},
-  {n:"Pasta istantanea (ramen industriale, 100g cotto)",c:"Piatti pronti",src:"UPF",k:436,p:9,gs:7.5,g:17,z:1,ch:62,fi:2,ca:18,fe:3.5,mg:25,k2:150,na:1700,zn:0.9,fo:90,se:5,col:0},
+  {n:"Pasta istantanea (ramen industriale, 100g cotto)",c:"Piatti pronti",src:"UPF",k:436,p:9,gs:7.5,g:17,z:1,ch:62,fi:2,ca:18,fe:3.5,mg:25,k2:150,na:1700,zn:0.9,fo:22,se:5,col:0},
   {n:"Minestra in busta liofilizzata",c:"Piatti pronti",src:"UPF",k:85,p:3,gs:1.5,g:3.5,z:5,ch:11,fi:1,ca:20,fe:0.8,mg:10,k2:95,na:800,zn:0.4,fo:50,se:2,col:5},
   // ── SALUMI E INSACCATI INDUSTRIALI ──
   {n:"Wurstel di pollo e maiale",c:"Salumi",src:"UPF",k:224,p:15,gs:6.5,g:18,z:0.2,ch:0.5,fi:0,ca:15,fe:1.2,mg:12,k2:195,na:760,zn:1.5,fo:8,se:12,col:65},
@@ -3107,21 +3108,21 @@ const DB_UPF = [
   {n:"Barretta proteica tipo Mars Hi-Protein (per 100g)",c:"Dolci confezionati",src:"UPF",k:354.2,p:33.9,gs:4.75,g:8.3,z:22,ch:39,fi:4.7,ca:120,fe:1.5,mg:30,k2:200,na:320,zn:1.5,fo:180,se:8,col:10},
 
   // ── PIADINE, TRAMEZZINI E PRODOTTI CONFEZIONATI ──
-  {n:"Piadina confezionata industriale (Buitoni o sim.)",c:"Piatti pronti",src:"UPF",k:354,p:6.9,gs:6.5,g:15,z:1.1,ch:46,fi:2.1,ca:25,fe:1.8,mg:18,k2:130,na:820,zn:0.8,fo:90,se:8,col:15},
-  {n:"Tortilla di grano (industriale, tipo El Sabor)",c:"Piatti pronti",src:"UPF",k:310,p:8.5,gs:3.5,g:9.0,z:4.5,ch:49,fi:2.5,ca:90,fe:2.0,mg:18,k2:150,na:700,zn:0.6,fo:80,se:6,col:0},
-  {n:"Wrap di fajita confezionato (pronto)",c:"Piatti pronti",src:"UPF",k:307,p:8.7,gs:0.9,g:6.6,z:5.3,ch:52,fi:3.5,ca:85,fe:1.8,mg:20,k2:230,na:1101,zn:0.9,fo:90,se:7,col:18},
-  {n:"Tramezzino industriale prosciutto/mozzarella",c:"Piatti pronti",src:"UPF",k:289.5,p:21.1,gs:11.84,g:21.1,z:0,ch:2.6,fi:0,ca:80,fe:1.5,mg:18,k2:140,na:526.3,zn:0.9,fo:90,se:7,col:28},
-  {n:"Insalata pronta in busta (mista, 100g)",c:"Piatti pronti",src:"UPF",k:125,p:7.6,gs:3.2,g:9.2,z:1.6,ch:2.1,fi:2.0,ca:45,fe:1.5,mg:18,k2:350,na:30,zn:0.3,fo:60,se:1,col:0},
+  {n:"Piadina confezionata industriale (Buitoni o sim.)",c:"Piatti pronti",src:"UPF",k:354,p:6.9,gs:6.5,g:15,z:1.1,ch:46,fi:2.1,ca:25,fe:1.8,mg:18,k2:130,na:820,zn:0.8,fo:22,se:8,col:15},
+  {n:"Tortilla di grano (industriale, tipo El Sabor)",c:"Piatti pronti",src:"UPF",k:310,p:8.5,gs:3.5,g:9.0,z:4.5,ch:49,fi:2.5,ca:90,fe:2.0,mg:18,k2:150,na:700,zn:0.6,fo:22,se:6,col:0},
+  {n:"Wrap di fajita confezionato (pronto)",c:"Piatti pronti",src:"UPF",k:307,p:8.7,gs:0.9,g:6.6,z:5.3,ch:52,fi:3.5,ca:85,fe:1.8,mg:20,k2:230,na:1101,zn:0.9,fo:22,se:7,col:18},
+  {n:"Tramezzino industriale prosciutto/mozzarella",c:"Piatti pronti",src:"UPF",k:289.5,p:21.1,gs:11.84,g:21.1,z:0,ch:2.6,fi:0,ca:80,fe:1.5,mg:18,k2:140,na:526.3,zn:0.9,fo:22,se:7,col:28},
+  {n:"Insalata pronta in busta (mista, 100g)",c:"Piatti pronti",src:"UPF",k:125,p:7.6,gs:3.2,g:9.2,z:1.6,ch:2.1,fi:2.0,ca:45,fe:1.5,mg:18,k2:350,na:30,zn:0.3,fo:25,se:1,col:0},
   // Corretto per coerenza col pattern riso cotto già stabilito (8mcg) - 2026-07-30
   {n:"Riso in busta pronto micro (basmati, cotto)",c:"Piatti pronti",src:"UPF",k:145,p:3.5,gs:0.1,g:0.5,z:0.5,ch:32,fi:0.5,ca:5,fe:0.5,mg:15,k2:35,na:5,zn:0.5,fo:8,se:5,col:0},
   {n:"Brodo di pollo industriale (tetrapak pronto, per 100mL)",c:"Piatti pronti",src:"UPF",k:8,p:0.5,gs:0,g:0.3,z:0.5,ch:0.5,fi:0,ca:5,fe:0.2,mg:5,k2:55,na:750,zn:0.1,fo:5,se:1,col:5},
   {n:"Minestrone pronto in tetrapak (per 100g)",c:"Piatti pronti",src:"UPF",k:42,p:1.5,gs:0.2,g:1.7,z:1.6,ch:4.2,fi:2,ca:30,fe:0.8,mg:18,k2:220,na:280,zn:0.3,fo:50,se:2,col:0},
   {n:"Crema di zucca in vasetto industriale",c:"Piatti pronti",src:"UPF",k:52,p:0.5,gs:0.6,g:3.5,z:2.2,ch:2.8,fi:3.8,ca:25,fe:0.5,mg:15,k2:190,na:530,zn:0.2,fo:35,se:1,col:5},
-  {n:"Hummus industriale in vasetto (chickpea spread)",c:"Piatti pronti",src:"UPF",k:245.6,p:7,gs:2.64,g:17.5,z:1.8,ch:15.8,fi:5.3,ca:42.1,fe:1.75,mg:55,k2:294.7,na:456.1,zn:1.5,fo:150,se:5,col:0},
+  {n:"Hummus industriale in vasetto (chickpea spread)",c:"Piatti pronti",src:"UPF",k:245.6,p:7,gs:2.64,g:17.5,z:1.8,ch:15.8,fi:5.3,ca:42.1,fe:1.75,mg:55,k2:294.7,na:456.1,zn:1.5,fo:70,se:5,col:0},
   {n:"Guacamole industriale in vasetto",c:"Piatti pronti",src:"UPF",k:175,p:1.2,gs:3.5,g:14.6,z:2.5,ch:7.9,fi:3.8,ca:30,fe:0.5,mg:18,k2:380,na:232,zn:0.5,fo:35,se:1,col:0},
   {n:"Tzatziki industriale (salsa greca)",c:"Piatti pronti",src:"UPF",k:100,p:4,gs:1.8,g:6.9,z:4.1,ch:5.5,fi:0.5,ca:80,fe:0.2,mg:10,k2:120,na:400,zn:0.5,fo:10,se:2,col:12},
   {n:"Arrosto di pollo pronto in busta (taglio fette)",c:"Piatti pronti",src:"UPF",k:91,p:17,gs:0.5,g:1.5,z:1,ch:1.5,fi:1.5,ca:15,fe:0.8,mg:28,k2:310,na:680,zn:1.5,fo:8,se:20,col:70},
-  {n:"Lasagne pronte surgelate (Findus o sim.)",c:"Piatti pronti",src:"UPF",k:296,p:11,gs:0.8,g:2.6,z:1.5,ch:56,fi:1.5,ca:80,fe:0.8,mg:14,k2:140,na:28,zn:0.8,fo:90,se:5,col:22},
+  {n:"Lasagne pronte surgelate (Findus o sim.)",c:"Piatti pronti",src:"UPF",k:296,p:11,gs:0.8,g:2.6,z:1.5,ch:56,fi:1.5,ca:80,fe:0.8,mg:14,k2:140,na:28,zn:0.8,fo:22,se:5,col:22},
 
   // ── BEVANDE INDUSTRIALI AGGIUNTIVE ──
   {n:"Red Bull Energy Drink (lattina 250mL, per 100mL)",c:"Bibite zuccherate",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:0,fe:0,mg:0,k2:0,na:40,zn:0,fo:0,se:0,col:0},
@@ -3294,16 +3295,17 @@ const DB_UPF = [
   {n:"Coca-Cola Zero Sugar (per 100mL)",c:"Bibite zuccherate",src:"UPF",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:2,fe:0,mg:0,k2:0,na:8,zn:0,fo:0,se:0,col:0},
 
   // ── PASTA FRESCA E PIATTI REFRIGERATI ──
-  {n:"Tortellini ricotta e spinaci Giovanni Rana (per 100g)",c:"Piatti pronti",src:"UPF",k:251,p:11,gs:4.5,g:11,z:6.7,ch:25,fi:4.1,ca:120,fe:0,mg:0,k2:145,na:480,zn:0,fo:100,se:6,col:35},
+  // FIX: alzato da 22 a 35 per il ripieno di spinaci reale (stessa logica di Ravioli ricotta e spinaci) - 2026-07-30
+  {n:"Tortellini ricotta e spinaci Giovanni Rana (per 100g)",c:"Piatti pronti",src:"UPF",k:251,p:11,gs:4.5,g:11,z:6.7,ch:25,fi:4.1,ca:120,fe:0,mg:0,k2:145,na:480,zn:0,fo:35,se:6,col:35},
   // Fosforo (pasta all'uovo+ripieno carne) era nel campo folati; folati reali ~40mcg - 2026-07-30
   {n:"Ravioli di carne Giovanni Rana (per 100g)",c:"Piatti pronti",src:"UPF",k:250,p:11.0,gs:3.0,g:7.5,z:2.5,ch:34.5,fi:1.5,ca:70,fe:1.5,mg:16,k2:135,na:480,zn:0.9,fo:40,se:5,col:30},
-  {n:"Buitoni pasta ripiena ricotta (per 100g)",c:"Piatti pronti",src:"UPF",k:292.5,p:11.3,gs:2.83,g:7.5,z:0.9,ch:45.3,fi:1.9,ca:110,fe:1.0,mg:15,k2:130,na:434,zn:0.7,fo:95,se:5,col:28},
+  {n:"Buitoni pasta ripiena ricotta (per 100g)",c:"Piatti pronti",src:"UPF",k:292.5,p:11.3,gs:2.83,g:7.5,z:0.9,ch:45.3,fi:1.9,ca:110,fe:1.0,mg:15,k2:130,na:434,zn:0.7,fo:22,se:5,col:28},
   {n:"Findus 4 Salti in Padella pollo e verdure (per 100g)",c:"Piatti pronti",src:"UPF",k:105,p:7.5,gs:1.0,g:3.5,z:2.0,ch:11.5,fi:3.0,ca:25,fe:0.8,mg:22,k2:290,na:440,zn:0.6,fo:8,se:6,col:20},
-  {n:"Findus 4 Salti in Padella carbonara (per 100g)",c:"Piatti pronti",src:"UPF",k:175,p:6.5,gs:3.5,g:8.5,z:3.0,ch:19.5,fi:1.5,ca:55,fe:0.7,mg:15,k2:150,na:550,zn:0.5,fo:80,se:6,col:40},
-  {n:"Wok surgelato misto asia (per 100g)",c:"Piatti pronti",src:"UPF",k:29,p:1.7,gs:0.1,g:0.2,z:2.4,ch:4,fi:1.8,ca:40,fe:1.0,mg:25,k2:280,na:500,zn:0.6,fo:70,se:4,col:15},
+  {n:"Findus 4 Salti in Padella carbonara (per 100g)",c:"Piatti pronti",src:"UPF",k:175,p:6.5,gs:3.5,g:8.5,z:3.0,ch:19.5,fi:1.5,ca:55,fe:0.7,mg:15,k2:150,na:550,zn:0.5,fo:22,se:6,col:40},
+  {n:"Wok surgelato misto asia (per 100g)",c:"Piatti pronti",src:"UPF",k:29,p:1.7,gs:0.1,g:0.2,z:2.4,ch:4,fi:1.8,ca:40,fe:1.0,mg:25,k2:280,na:500,zn:0.6,fo:45,se:4,col:15},
   {n:"Polpette di carne surgelate (per 100g)",c:"Piatti pronti",src:"UPF",k:168,p:15,gs:4.9,g:6.9,z:1.3,ch:12,fi:1.0,ca:30,fe:1.5,mg:18,k2:240,na:580,zn:2.0,fo:8,se:10,col:55},
   {n:"Cordon bleu di pollo surgelato (per 100g)",c:"Piatti pronti",src:"UPF",k:215,p:15,gs:2.3,g:11,z:0.9,ch:14,fi:1.0,ca:80,fe:0.8,mg:15,k2:220,na:600,zn:0.8,fo:8,se:10,col:45},
-  {n:"Sofficini al formaggio Findus (per 100g)",c:"Piatti pronti",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:130,fe:0.8,mg:12,k2:120,na:392,zn:0.8,fo:95,se:5,col:22},
+  {n:"Sofficini al formaggio Findus (per 100g)",c:"Piatti pronti",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:130,fe:0.8,mg:12,k2:120,na:392,zn:0.8,fo:22,se:5,col:22},
 
   // ── PRODOTTI FERMENTATI / FUNZIONALI ──
   // Carboidrati erano 48g (errore di virgola, impossibile per una bevanda fermentata a bassa kcal): corretto a 4.8g, coerente con le altre 2 voci Kombucha del db (ch 2.5 e 4.0) - 2026-07-29
@@ -3404,7 +3406,7 @@ const DB_UPF = [
   {n:"Pizza gluten-free surgelata (per 100g)",c:"Piatti pronti",src:"UPF",k:206,p:9.3,gs:3.7,g:6.8,z:1.8,ch:26.8,fi:1.5,ca:80,fe:0.8,mg:10,k2:100,na:560,zn:0.5,fo:8,se:5,col:10},
   // ── ZUPPE E MINESTRE PRONTE ──
   {n:"Minestrone in busta pronto (per 100g)",c:"Piatti pronti",src:"UPF",k:42,p:1.5,gs:0.2,g:1.7,z:1.6,ch:4.2,fi:2,ca:30,fe:0.8,mg:12,k2:280,na:280,zn:0.3,fo:20,se:2,col:0},
-  {n:"Zuppa di lenticchie in brick (per 100g)",c:"Piatti pronti",src:"UPF",k:45,p:3.2,gs:0.2,g:0.9,z:0.8,ch:1.5,fi:8.8,ca:28,fe:2,mg:20,k2:310,na:256,zn:0.8,fo:60,se:2.5,col:0},
+  {n:"Zuppa di lenticchie in brick (per 100g)",c:"Piatti pronti",src:"UPF",k:45,p:3.2,gs:0.2,g:0.9,z:0.8,ch:1.5,fi:8.8,ca:28,fe:2,mg:20,k2:310,na:256,zn:0.8,fo:70,se:2.5,col:0},
   {n:"Crema di zucca in lattina (per 100g)",c:"Piatti pronti",src:"UPF",k:52,p:0.5,gs:0.6,g:3.5,z:2.2,ch:2.8,fi:3.8,ca:18,fe:0.4,mg:10,k2:220,na:410,zn:0.2,fo:10,se:1,col:0},
   // ── CEREALI DA COLAZIONE INDUSTRIALI ──
   {n:"Kellogg's Corn Flakes (per 100g)",c:"Cereali da colazione",src:"UPF",k:385,p:7,gs:0.2,g:1,z:8,ch:87,fi:2.6,ca:3,fe:18.8,mg:14,k2:91,na:460,zn:7,fo:100,se:2,col:0},
@@ -3775,17 +3777,17 @@ const DB_UPF = [
 {n:"Panna Cotta industriale (vasetto)",c:"Dolci confezionati",src:"UPF",k:206,p:3.2,gs:8.8,g:13,z:19,ch:19,fi:0,ca:70,fe:0.1,mg:6,k2:80,na:24,zn:0.2,fo:8,se:1,col:28},
 {n:"Pop corn burro microonde (per 100g)",c:"Snack salati",src:"UPF",k:540,p:10,gs:24,g:32,z:0,ch:40,fi:10,ca:15,fe:1.5,mg:95,k2:235,na:500,zn:1.8,fo:25,se:8,col:0},
 // ═══ PIZZA E PIATTI PRONTI ═══
-{n:"Pizza margherita (pizzeria, al piatto)",c:"Piatti pronti",src:"UPF",k:230,p:7.5,gs:5,g:9.2,z:1.4,ch:27,fi:3.8,ca:155,fe:0,mg:0,k2:190,na:433,zn:0,fo:120,se:8,col:18},
-{n:"Pizza margherita surgelata (Buitoni/simile, cruda)",c:"Piatti pronti",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:130,fe:1.0,mg:15,k2:170,na:600,zn:0.8,fo:100,se:5,col:12},
-{n:"Pizza 4 stagioni (pizzeria)",c:"Piatti pronti",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:145,fe:1.5,mg:22,k2:210,na:620,zn:1.2,fo:130,se:9,col:22},
-{n:"Pizza diavola/salame piccante (pizzeria)",c:"Piatti pronti",src:"UPF",k:231,p:10.7,gs:4.2,g:7.8,z:6.1,ch:28,fi:1.5,ca:140,fe:1.5,mg:20,k2:200,na:551,zn:1.3,fo:130,se:8,col:28},
+{n:"Pizza margherita (pizzeria, al piatto)",c:"Piatti pronti",src:"UPF",k:230,p:7.5,gs:5,g:9.2,z:1.4,ch:27,fi:3.8,ca:155,fe:0,mg:0,k2:190,na:433,zn:0,fo:22,se:8,col:18},
+{n:"Pizza margherita surgelata (Buitoni/simile, cruda)",c:"Piatti pronti",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:130,fe:1.0,mg:15,k2:170,na:600,zn:0.8,fo:22,se:5,col:12},
+{n:"Pizza 4 stagioni (pizzeria)",c:"Piatti pronti",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:145,fe:1.5,mg:22,k2:210,na:620,zn:1.2,fo:22,se:9,col:22},
+{n:"Pizza diavola/salame piccante (pizzeria)",c:"Piatti pronti",src:"UPF",k:231,p:10.7,gs:4.2,g:7.8,z:6.1,ch:28,fi:1.5,ca:140,fe:1.5,mg:20,k2:200,na:551,zn:1.3,fo:22,se:8,col:28},
 // Fosforo (impasto pane, senza formaggio dato calcio basso 40mg) era nel campo folati; folati reali ~25mcg - 2026-07-30
 {n:"Pizza al taglio rossa (forno)",c:"Piatti pronti",src:"UPF",k:240,p:7.5,gs:1.8,g:6.0,z:3.0,ch:37.5,fi:2.0,ca:40,fe:1.2,mg:15,k2:140,na:500,zn:0.6,fo:25,se:5,col:5},
-{n:"Pizza al taglio bianca (forno, con olio)",c:"Piatti pronti",src:"UPF",k:268.1,p:12,gs:6.6,g:14,z:1,ch:23,fi:1.1,ca:30,fe:1.2,mg:12,k2:100,na:580,zn:0.5,fo:60,se:4,col:0},
+{n:"Pizza al taglio bianca (forno, con olio)",c:"Piatti pronti",src:"UPF",k:268.1,p:12,gs:6.6,g:14,z:1,ch:23,fi:1.1,ca:30,fe:1.2,mg:12,k2:100,na:580,zn:0.5,fo:22,se:4,col:0},
 // Allineato a voce BDA gia verificata "Calzone fritto napoletano (ripieno ricotta e salumi)" — 2026-07-28
-{n:"Calzone fritto napoletano",c:"Piatti pronti",src:"UPF",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33.0,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:120,se:10,col:42},
-{n:"Piadina con prosciutto crudo e squacquerone",c:"Piatti pronti",src:"UPF",k:324,p:14,gs:7,g:16,z:1,ch:31,fi:1.5,ca:120,fe:0.8,mg:18,k2:180,na:1300,zn:1.0,fo:120,se:6,col:38},
-{n:"Tramezzino tonno e maionese industriale",c:"Piatti pronti",src:"UPF",k:330,p:11,gs:2.8,g:19,z:2.6,ch:23,fi:1.2,ca:60,fe:1.2,mg:22,k2:180,na:1200,zn:0.8,fo:110,se:12,col:22},
+{n:"Calzone fritto napoletano",c:"Piatti pronti",src:"UPF",k:272,p:11.5,gs:5.5,g:11.5,z:1.5,ch:33.0,fi:1.5,ca:140,fe:1.8,mg:18,k2:155,na:620,zn:1.5,fo:22,se:10,col:42},
+{n:"Piadina con prosciutto crudo e squacquerone",c:"Piatti pronti",src:"UPF",k:324,p:14,gs:7,g:16,z:1,ch:31,fi:1.5,ca:120,fe:0.8,mg:18,k2:180,na:1300,zn:1.0,fo:22,se:6,col:38},
+{n:"Tramezzino tonno e maionese industriale",c:"Piatti pronti",src:"UPF",k:330,p:11,gs:2.8,g:19,z:2.6,ch:23,fi:1.2,ca:60,fe:1.2,mg:22,k2:180,na:1200,zn:0.8,fo:22,se:12,col:22},
 // Fosforo (pane+prosciutto+formaggio, calcio 120mg conferma) era nel campo folati; folati reali ~30mcg - 2026-07-30
 {n:"Toast al prosciutto cotto (bar/industriale)",c:"Piatti pronti",src:"UPF",k:248,p:12.5,gs:3.0,g:9.5,z:2.5,ch:28.0,fi:1.5,ca:120,fe:1.0,mg:15,k2:160,na:720,zn:1.0,fo:30,se:8,col:25},
 {n:"Hamburger tipo McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:220,na:396.6,zn:2.5,fo:8,se:10,col:15.5},
@@ -3794,7 +3796,7 @@ const DB_UPF = [
 {n:"Sushi California roll (per pezzo, 25g → per 100g)",c:"Cucina etnica",src:"UPF",k:111.8,p:4.7,gs:0.29,g:4.1,z:2.9,ch:15.9,fi:2.4,ca:17.6,fe:0.29,mg:12,k2:141.2,na:158.8,zn:0.4,fo:45,se:8,col:2.9},
 {n:"Sushi nigiri salmone (per pezzo, 30g → per 100g)",c:"Cucina etnica",src:"UPF",k:174,p:6.2,gs:0.9,g:7.6,z:3.8,ch:19.6,fi:0,ca:15,fe:0.5,mg:18,k2:130,na:480,zn:0.5,fo:75,se:20,col:22},
 {n:"Sushi maki tonno (per pezzo, 18g → per 100g)",c:"Cucina etnica",src:"UPF",k:135,p:9.0,gs:0.2,g:0.8,z:0.5,ch:21.0,fi:0.8,ca:8,fe:0.6,mg:15,k2:120,na:180,zn:0.4,fo:10,se:25,col:15},
-{n:"Lasagne al forno pronte surgelate",c:"Piatti pronti",src:"UPF",k:150,p:8.7,gs:3.3,g:6.9,z:2.2,ch:12.7,fi:1.1,ca:110,fe:0.8,mg:15,k2:190,na:201,zn:0.8,fo:110,se:5,col:22},
+{n:"Lasagne al forno pronte surgelate",c:"Piatti pronti",src:"UPF",k:150,p:8.7,gs:3.3,g:6.9,z:2.2,ch:12.7,fi:1.1,ca:110,fe:0.8,mg:15,k2:190,na:201,zn:0.8,fo:22,se:5,col:22},
 {n:"Tortellini freschi prosciutto-formaggio (cotti)",c:"Cereali e pasta",src:"UPF",k:404,p:14,gs:3.9,g:10,z:1.9,ch:63,fi:3,ca:70,fe:0.8,mg:15,k2:90,na:880,zn:0.7,fo:100,se:5,col:38},
 // ═══ CUCINA ETNICA ═══
 {n:"Curry di pollo indiano (pronto)",c:"Cucina etnica",src:"UPF",k:136,p:8.2,gs:1.1,g:5,z:0.5,ch:14,fi:1,ca:30,fe:1.5,mg:22,k2:280,na:420,zn:1.0,fo:8,se:8,col:42},
@@ -4041,11 +4043,11 @@ const DB_ONS = [
 {n:"Bevanda di soia alla vaniglia zuccherata (per 100mL)",c:"Bevande vegetali",src:"UPF",k:50,p:3.3,gs:0.3,g:1.8,z:5.5,ch:6.5,fi:0.5,ca:125,fe:0.4,mg:10,k2:90,na:55,zn:0.3,fo:10,se:1,col:0},
 
 // ── PRODOTTI PRONTI (READY MEAL) ──
-{n:"Lasagne al ragù surgelate (per 100g)",c:"Piatti pronti",src:"UPF",k:135,p:6.5,gs:3.0,g:5.5,z:3.0,ch:15.5,fi:1.0,ca:60,fe:1.0,mg:12,k2:170,na:550,zn:0.7,fo:70,se:6,col:30},
+{n:"Lasagne al ragù surgelate (per 100g)",c:"Piatti pronti",src:"UPF",k:135,p:6.5,gs:3.0,g:5.5,z:3.0,ch:15.5,fi:1.0,ca:60,fe:1.0,mg:12,k2:170,na:550,zn:0.7,fo:22,se:6,col:30},
 {n:"Riso pronto al vapore (pouch, per 100g cotto)",c:"Piatti pronti",src:"UPF",k:160,p:3.0,gs:0.1,g:1.5,z:0,ch:34.5,fi:0.5,ca:5,fe:0.5,mg:12,k2:30,na:390,zn:0.5,fo:8,se:6,col:0},
 // Fosforo (pasta all'uovo+ripieno) era nel campo folati; folati reali ~40mcg - 2026-07-30
 {n:"Pasta fresca ripiena in busta (200g, per 100g)",c:"Piatti pronti",src:"UPF",k:220,p:9.5,gs:4.0,g:7.5,z:3.5,ch:29.5,fi:1.5,ca:80,fe:1.0,mg:15,k2:130,na:520,zn:0.8,fo:40,se:7,col:40},
-{n:"Sushi misto confezionato (per 100g)",c:"Piatti pronti",src:"UPF",k:146,p:6.7,gs:0.8,g:2.9,z:0.9,ch:23,fi:0.5,ca:25,fe:0.8,mg:18,k2:180,na:2200,zn:0.8,fo:80,se:15,col:35},
+{n:"Sushi misto confezionato (per 100g)",c:"Piatti pronti",src:"UPF",k:146,p:6.7,gs:0.8,g:2.9,z:0.9,ch:23,fi:0.5,ca:25,fe:0.8,mg:18,k2:180,na:2200,zn:0.8,fo:22,se:15,col:35},
 {n:"Burger Beyond Meat vegetale (per 100g)",c:"Piatti pronti",src:"UPF",k:250,p:20.0,gs:5.0,g:18.0,z:0,ch:5.0,fi:2.0,ca:100,fe:3.2,mg:28,k2:270,na:370,zn:1.8,fo:0,se:0,col:0},
 {n:"Chicken nuggets surgelati (per 100g)",c:"Piatti pronti",src:"UPF",k:247,p:14.5,gs:3.0,g:13.5,z:0.5,ch:21.0,fi:0.8,ca:20,fe:1.0,mg:18,k2:240,na:540,zn:0.9,fo:8,se:12,col:45},
 
@@ -4473,14 +4475,15 @@ const DB_EXTRA=[
 {n:"Strutto",c:"Grassi e oli",src:"EXTRA",k:896,p:0,gs:39.2,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0.2,col:95},
 // === PIATTI PRONTI SURGELATI ===
 {n:"Lasagne al ragù surgelate",c:"Piatti pronti",src:"EXTRA",k:191,p:10.5,gs:4.37,g:11.1,z:2.8,ch:12.4,fi:1.3,ca:185,fe:0.74,mg:24,k2:266,na:524,zn:1.35,fo:16,se:20.9,col:31},
-{n:"Risotto ai funghi surgelato",c:"Piatti pronti",src:"EXTRA",k:147,p:3.3,gs:2.9,g:6.6,z:1.3,ch:18.3,fi:0.8,ca:15,fe:0.8,mg:15,k2:160,na:400,zn:0.5,fo:60,se:5,col:5},
+{n:"Risotto ai funghi surgelato",c:"Piatti pronti",src:"EXTRA",k:147,p:3.3,gs:2.9,g:6.6,z:1.3,ch:18.3,fi:0.8,ca:15,fe:0.8,mg:15,k2:160,na:400,zn:0.5,fo:22,se:5,col:5},
 {n:"Minestrone surgelato",c:"Piatti pronti",src:"EXTRA",k:53,p:2.1,gs:0.62,g:1.2,z:2.2,ch:8.6,fi:2.4,ca:25,fe:0.74,mg:6,k2:255,na:288,zn:0.6,fo:22,se:2.2,col:2},
 {n:"Cordon bleu surgelato",c:"Piatti pronti",src:"EXTRA",k:206,p:13,gs:2.2,g:11,z:0.6,ch:13,fi:1,ca:80,fe:1,mg:18,k2:210,na:720,zn:1,fo:8,se:12,col:45},
-{n:"Sofficini Findus",c:"Piatti pronti",src:"EXTRA",k:243,p:8.7,gs:2.5,g:9.6,z:1,ch:30,fi:1.5,ca:60,fe:1,mg:12,k2:120,na:480,zn:0.5,fo:80,se:8,col:15},
+{n:"Sofficini Findus",c:"Piatti pronti",src:"EXTRA",k:243,p:8.7,gs:2.5,g:9.6,z:1,ch:30,fi:1.5,ca:60,fe:1,mg:12,k2:120,na:480,zn:0.5,fo:22,se:8,col:15},
 {n:"Crocchette di patate surgelate",c:"Piatti pronti",src:"EXTRA",k:209,p:6.5,gs:2.4,g:8.3,z:1.2,ch:26,fi:1.9,ca:8,fe:0.5,mg:15,k2:280,na:323,zn:0.3,fo:45,se:1,col:0},
 {n:"Patate al forno surgelate",c:"Piatti pronti",src:"EXTRA",k:162,p:3,gs:0.5,g:5.5,z:0.5,ch:24,fi:2.5,ca:8,fe:0.5,mg:18,k2:350,na:300,zn:0.3,fo:50,se:1,col:0},
-{n:"Tortellini in brodo surgelati",c:"Piatti pronti",src:"EXTRA",k:187,p:12.3,gs:2.63,g:7.4,z:0.3,ch:16.9,fi:0.6,ca:55,fe:1,mg:15,k2:130,na:480,zn:0.8,fo:90,se:8,col:35},
-{n:"Spinaci al burro surgelati",c:"Piatti pronti",src:"EXTRA",k:67,p:3.4,gs:4,g:4.7,z:0.5,ch:2.8,fi:3,ca:120,fe:2.5,mg:60,k2:450,na:280,zn:0.8,fo:55,se:1.5,col:20},
+{n:"Tortellini in brodo surgelati",c:"Piatti pronti",src:"EXTRA",k:187,p:12.3,gs:2.63,g:7.4,z:0.3,ch:16.9,fi:0.6,ca:55,fe:1,mg:15,k2:130,na:480,zn:0.8,fo:22,se:8,col:35},
+// FIX: alzato da 22 a 60 - gli spinaci sono l'ingrediente principale del piatto (non diluiti in un impasto), reale folati spinaci elevati - 2026-07-30
+{n:"Spinaci al burro surgelati",c:"Piatti pronti",src:"EXTRA",k:67,p:3.4,gs:4,g:4.7,z:0.5,ch:2.8,fi:3,ca:120,fe:2.5,mg:60,k2:450,na:280,zn:0.8,fo:60,se:1.5,col:20},
 // === FRUTTA ESOTICA ===
 // Grassi (20.31g) erano troppo alti rispetto al valore USDA standard per avocado Hass (~14.7g), incoerenti con le kcal dichiarate (160) - 2026-07-29
 {n:"Avocado Hass",c:"Frutta esotica",src:"EXTRA",k:160,p:2,gs:2.1,g:14.7,z:0.7,ch:8.53,fi:6.7,ca:14.46,fe:0.61,mg:32.8,k2:576.4,na:0,zn:0.46,fo:128.7,se:0.4,col:0},

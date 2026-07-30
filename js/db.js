@@ -8,7 +8,8 @@ const DB_CREA=[
 {n:"Rigatoni (pasta di semola cruda)",c:"Cereali e pasta",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:20,se:2.7,col:0,src:"CREA"},
 {n:"Farfalle (pasta di semola cruda)",c:"Cereali e pasta",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:20,se:2.7,col:0,src:"CREA"},
 {n:"Maccheroni (pasta di semola cruda)",c:"Cereali e pasta",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:20,se:2.7,col:0,src:"CREA"},
-{n:"Riso Basmati crudo",c:"Cereali e pasta",k:367,p:9,gs:0.1,g:1.9,z:1.1,ch:82.9,fi:1.3,ca:5,fe:0.8,mg:32,k2:114,na:0,zn:1.48,fo:57,se:8,col:0,src:"CREA"},
+// RISOLTO (deep-pass duplicati): allineato al duplicato BDA (12mcg), riso crudo non giustifica folati così alti - 2026-07-30
+{n:"Riso Basmati crudo",c:"Cereali e pasta",k:367,p:9,gs:0.1,g:1.9,z:1.1,ch:82.9,fi:1.3,ca:5,fe:0.8,mg:32,k2:114,na:0,zn:1.48,fo:12,se:8,col:0,src:"CREA"},
 {n:"Farina di grano tenero tipo 00",c:"Cereali e derivati",k:323,p:11,gs:0.2,g:0.7,z:1.7,ch:71.6,fi:2.2,ca:17,fe:0.7,mg:20,k2:126,na:3,zn:0.7,fo:100,se:10,col:0,src:"CREA"},
 {n:"Acqua minerale naturale",c:"Bevande",k:0,p:0,gs:0,g:0,z:0,ch:0,fi:0,ca:10,fe:0,mg:3,k2:0,na:2,zn:0,fo:0,se:1,col:0,src:"BDA"},
 {n:"Birra analcolica",c:"Bevande",k:9,p:0.2,gs:0,g:0,z:1,ch:1.5,fi:0,ca:8,fe:0,mg:12,k2:56,na:12,zn:0,fo:6,se:0,col:0,src:"BDA"},
@@ -290,7 +291,8 @@ const DB_CREA=[
 {n:"Uova di quaglia",c:"Uova",k:158,p:13.1,gs:3.5,g:11.1,z:0.4,ch:0.4,fi:0,ca:64,fe:3.7,mg:13,k2:132,na:141,zn:1.5,fo:60,se:30,col:844,src:"CREA"},
 {n:"Tuorlo d'uovo",c:"Uova",k:325,p:15.8,gs:12.59,g:29.1,z:0,ch:0,fi:0,ca:116,fe:4.9,mg:14,k2:90,na:43,zn:2.14,fo:146,se:9.6,col:1232,src:"CREA"},
 // ── ALTRI ALIMENTI ──
-{n:"Seitan",c:"Legumi",k:118,p:25,gs:0.2,g:1.7,z:0,ch:4.3,fi:0.6,ca:142,fe:3.5,mg:18,k2:150,na:660,zn:1.4,fo:108,se:15,col:0,src:"CREA"},
+// RISOLTO (deep-pass duplicati): allineato al range già stabilito per il seitan (~40mcg) tra gli altri duplicati verificati - 2026-07-30
+{n:"Seitan",c:"Legumi",k:118,p:25,gs:0.2,g:1.7,z:0,ch:4.3,fi:0.6,ca:142,fe:3.5,mg:18,k2:150,na:660,zn:1.4,fo:40,se:15,col:0,src:"CREA"},
 {n:"Tofu affumicato",c:"Legumi",k:81,p:8.1,gs:0.07,g:4.8,z:0,ch:0.7,fi:1.2,ca:105,fe:5.4,mg:35,k2:121,na:7,zn:0.8,fo:15,se:12,col:0,src:"BDA"},
 // ── SEMI E SUPERFOOD ──
 {n:"Semi di sesamo crudi",c:"Frutta secca",k:573,p:17.7,gs:1.5,g:49.7,z:0.3,ch:23.4,fi:11.8,ca:975,fe:14.6,mg:351,k2:468,na:11,zn:7.8,fo:97,se:34,col:0,src:"CREA"},
@@ -826,7 +828,8 @@ const DB_CREA=[
 {n:"Orzo perlato cotto",c:"Cereali e derivati",k:118,p:2.6,gs:0.1,g:0.6,z:1.2,ch:26.4,fi:1.8,ca:16,fe:0.9,mg:34,k2:67,na:2,zn:0.82,fo:54,se:13,col:0,src:"CREA"},
 {n:"Cous cous cotto",c:"Cereali e derivati",k:179,p:3.6,gs:0,g:1.1,z:1.3,ch:39.7,fi:2.7,ca:10,fe:0.5,mg:15,k2:84,na:96,zn:0.39,fo:22,se:27,col:0,src:"CREA"},
 {n:"Edamame (soia verde) lessato",c:"Legumi",k:122,p:11.9,gs:0.5,g:5.2,z:2.2,ch:8.9,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:4,zn:1.4,fo:169,se:0.6,col:0,src:"CREA"},
-{n:"Lupini in salamoia sgocciolati",c:"Legumi",k:119,p:16.4,gs:0.5,g:2.4,z:0.5,ch:7.1,fi:2.8,ca:45,fe:5.5,mg:85,k2:576,na:390,zn:2.0,fo:200,se:7,col:0,src:"CREA"},
+// RISOLTO (deep-pass duplicati): allineato al valore già stabilito per lupini in salamoia (~66-70mcg) tra gli altri duplicati - 2026-07-30
+{n:"Lupini in salamoia sgocciolati",c:"Legumi",k:119,p:16.4,gs:0.5,g:2.4,z:0.5,ch:7.1,fi:2.8,ca:45,fe:5.5,mg:85,k2:576,na:390,zn:2.0,fo:66,se:7,col:0,src:"CREA"},
 {n:"Fave fresche sgusciate crude",c:"Legumi",k:343,p:25.2,gs:0.64,g:3,z:4.9,ch:53.6,fi:7,ca:90,fe:5,mg:38,k2:250,na:3,zn:0.5,fo:78,se:1,col:0,src:"CREA"},
 {n:"Piselli freschi sgusciati crudi",c:"Legumi",k:64,p:5.5,gs:0.1,g:0.6,z:4,ch:6.5,fi:6.3,ca:45,fe:1.7,mg:33,k2:193,na:1,zn:1.2,fo:108,se:1.8,col:0,src:"CREA"},
 // Fosforo (111mg, match USDA tofu extra firm) era nel campo folati; folati reali tofu ~9mcg (confermato via ricerca) - 2026-07-29
@@ -1148,7 +1151,8 @@ const DB_CREA=[
 {n:"Tempeh (soia fermentata)",c:"Legumi",k:173,p:20.7,gs:0.92,g:6.4,z:0.9,ch:6.4,fi:4.1,ca:120,fe:3.6,mg:81,k2:370,na:6,zn:1.8,fo:76,se:0.1,col:0,src:"BDA"},
 {n:"Natto (soia fermentata giapponese)",c:"Legumi",k:214,p:17.7,gs:1.59,g:11,z:0,ch:9,fi:5.4,ca:217,fe:8.6,mg:115,k2:729,na:7,zn:3.03,fo:8,se:8.8,col:0,src:"BDA"},
 {n:"Kimchi (cavolo fermentato)",c:"Verdure",k:15,p:1.1,gs:0,g:0.5,z:1.2,ch:2.4,fi:1.6,ca:33,fe:0.7,mg:15,k2:151,na:498,zn:0.2,fo:60,se:0.7,col:0,src:"CREA"},
-{n:"Miso bianco (shiro miso)",c:"Condimenti",k:198,p:11.8,gs:0.6,g:5.9,z:13.6,ch:27,fi:5.4,ca:68,fe:2.6,mg:44,k2:210,na:3728,zn:1.5,fo:31,se:7,col:0,src:"CREA"},
+// RISOLTO (deep-pass duplicati): allineato agli altri 2 duplicati concordi (159mcg) - 2026-07-30
+{n:"Miso bianco (shiro miso)",c:"Condimenti",k:198,p:11.8,gs:0.6,g:5.9,z:13.6,ch:27,fi:5.4,ca:68,fe:2.6,mg:44,k2:210,na:3728,zn:1.5,fo:159,se:7,col:0,src:"CREA"},
 {n:"Tofu seta (silken tofu)",c:"Legumi",k:55,p:5,gs:0.2,g:3,z:0.4,ch:2,fi:0.1,ca:179,fe:0.5,mg:27,k2:96,na:5,zn:0.6,fo:19,se:8,col:0,src:"CREA"},
 {n:"Seitan (glutine di frumento)",c:"Cereali e derivati",k:370,p:75,gs:0,g:2,z:0,ch:14,fi:0.6,ca:142,fe:2.8,mg:27,k2:100,na:450,zn:1.6,fo:20,se:12,col:0,src:"CREA"},
 // Potassio (8060mg) stesso bug gia trovato/corretto su "Alga Dulse essiccata": allineato a ~1244mg (fonti convergenti) - 2026-07-29
@@ -1459,7 +1463,8 @@ const DB_BDA=[
   {n:"Culatello",c:"Carni e derivati",src:"BDA",k:253,p:27,gs:4.5,g:15.5,z:0,ch:0,fi:0,ca:14,fe:1.7,mg:25,k2:440,na:2200,zn:2.5,fo:5,se:20,col:72},
   {n:"Salsiccia stagionata",c:"Carni e derivati",src:"BDA",k:420,p:24,gs:13,g:36,z:0,ch:0,fi:0,ca:10,fe:1.5,mg:20,k2:300,na:2000,zn:2,fo:5,se:20,col:85},
   // ── CEREALI BDA aggiuntivi ──
-  {n:"Pane multicereali",c:"Cereali e derivati",src:"BDA",k:262,p:9,gs:0.5,g:3,z:3.5,ch:47.5,fi:6,ca:80,fe:2.2,mg:55,k2:190,na:460,zn:1.4,fo:150,se:22,col:0},
+  // RISOLTO (deep-pass duplicati): allineato al duplicato CREA (30mcg), pane non fortificato non giustifica 150mcg - 2026-07-30
+  {n:"Pane multicereali",c:"Cereali e derivati",src:"BDA",k:262,p:9,gs:0.5,g:3,z:3.5,ch:47.5,fi:6,ca:80,fe:2.2,mg:55,k2:190,na:460,zn:1.4,fo:30,se:22,col:0},
   {n:"Focaccia genovese",c:"Cereali e derivati",src:"BDA",k:306,p:7.9,gs:0.91,g:5.9,z:2.1,ch:57.9,fi:2.3,ca:20,fe:1.1,mg:15,k2:99,na:789,zn:0.31,fo:32,se:2,col:0},
   {n:"Grissini artigianali",c:"Cereali e derivati",src:"CREA",k:421,p:11.3,gs:1,g:13.9,z:2.2,ch:65.1,fi:3.5,ca:13,fe:2.3,mg:25,k2:120,na:680,zn:0.7,fo:95,se:8,col:0},
   // Fosforo (pane di grano, ~90mg) era nel campo folati; folati reali pane non fortificato ~25mcg - 2026-07-29
@@ -1549,7 +1554,8 @@ const DB_BDA=[
   {n:"Cavolo rapa",c:"Verdure",src:"CREA",k:27,p:1.7,gs:0,g:0.1,z:3.6,ch:6.2,fi:3.6,ca:24,fe:0.5,mg:19,k2:350,na:20,zn:0.4,fo:20,se:0.4,col:0},
   {n:"Bieta a coste cotta",c:"Verdure",src:"CREA",k:18,p:1.5,gs:0,g:0.1,z:2.1,ch:2.1,fi:1.4,ca:64,fe:0.8,mg:52,k2:98,na:8,zn:1.5,fo:12,se:0,col:0},
   {n:"Broccoli cotti",c:"Verdure",src:"CREA",k:28,p:3.3,gs:0,g:0.4,z:1.8,ch:4.7,fi:3.0,ca:64,fe:0.9,mg:22,k2:293,na:41,zn:0.5,fo:91,se:2.5,col:0},
-  {n:"Cime di rapa cotte",c:"Verdure",src:"CREA",k:27,p:3.1,gs:0,g:0.5,z:1.0,ch:3.5,fi:3.2,ca:98,fe:2.5,mg:24,k2:235,na:38,zn:0.5,fo:120,se:1.5,col:0},
+  // RISOLTO (deep-pass duplicati): allineato al duplicato coerente con la resa di cottura (50mcg) - 2026-07-30
+  {n:"Cime di rapa cotte",c:"Verdure",src:"CREA",k:27,p:3.1,gs:0,g:0.5,z:1.0,ch:3.5,fi:3.2,ca:98,fe:2.5,mg:24,k2:235,na:38,zn:0.5,fo:50,se:1.5,col:0},
   // ── FRUTTA NON ANCORA PRESENTE ──
   {n:"Tamarindo fresco",c:"Frutta fresca",src:"BDA",k:239,p:2.8,gs:0,g:0.6,z:38,ch:62.5,fi:5.1,ca:74,fe:2.8,mg:92,k2:628,na:28,zn:0.1,fo:113,se:1.3,col:0},
   {n:"Giuggiole fresche",c:"Frutta fresca",src:"CREA",k:79,p:1.2,gs:0,g:0.2,z:17.5,ch:20.2,fi:4.0,ca:21,fe:0.5,mg:10,k2:250,na:3,zn:0.05,fo:23,se:0.8,col:0},
@@ -1897,7 +1903,8 @@ const DB_BDA=[
 {n:"Lenticchie lesse",c:"Legumi cotti",k:109,p:6.9,gs:0.1,g:0.4,z:0.7,ch:16.3,fi:8.3,ca:29,fe:3,mg:28,k2:266,na:2,zn:1.1,fo:180,se:4,col:0,src:"CREA"},
 {n:"Ceci lessati",c:"Legumi cotti",k:132,p:7,gs:0.2,g:2.4,z:1.3,ch:18.9,fi:5.8,ca:58,fe:2.2,mg:37,k2:302,na:5,zn:1.7,fo:168,se:1,col:0,src:"CREA"},
 {n:"Fagioli borlotti lessati",c:"Legumi cotti",k:106,p:6.9,gs:0.1,g:0.4,z:1,ch:16.4,fi:6.9,ca:46,fe:2.3,mg:48,k2:282,na:2,zn:1.2,fo:190,se:6,col:0,src:"CREA"},
-{n:"Piselli lessati",c:"Legumi cotti",k:104,p:9.7,gs:0.1,g:1,z:7,ch:11.5,fi:6.4,ca:27,fe:1.5,mg:29,k2:271,na:3,zn:1,fo:117,se:1.8,col:0,src:"CREA"},
+// RISOLTO (deep-pass duplicati): allineato al duplicato coerente col dato USDA piselli bolliti (~63mcg) - 2026-07-30
+{n:"Piselli lessati",c:"Legumi cotti",k:104,p:9.7,gs:0.1,g:1,z:7,ch:11.5,fi:6.4,ca:27,fe:1.5,mg:29,k2:271,na:3,zn:1,fo:63,se:1.8,col:0,src:"CREA"},
 {n:"Pollo arrosto (senza pelle)",c:"Carni cotte",k:206,p:28.9,gs:3.185,g:10,z:0,ch:0,fi:0,ca:10,fe:0.8,mg:31,k2:320,na:85,zn:2.1,fo:6,se:16,col:109,src:"BDA"},
 {n:"Uova sode",c:"Uova cotte",k:128,p:12.4,gs:3.5,g:8.7,z:0,ch:0,fi:0,ca:56,fe:1.9,mg:12,k2:126,na:124,zn:1.3,fo:47,se:13,col:358,src:"CREA"},
 {n:"Sogliola al forno",c:"Pesce cotto",k:86,p:16.9,gs:0.219,g:1.7,z:0.8,ch:0.8,fi:0,ca:12,fe:0.8,mg:0.2,k2:280,na:120,zn:1.5,fo:5,se:36,col:25,src:"BDA"},
@@ -2149,7 +2156,8 @@ const DB_BDA=[
 
 // ── ALGHE E PRODOTTI MARINI ──
 {n:"Alga nori essiccata",c:"Alimenti vari",k:35,p:5.8,gs:0.3,g:0.3,z:0.5,ch:5.1,fi:3.5,ca:70,fe:1.9,mg:2,k2:356,na:48,zn:1.5,fo:58,se:1,col:0,src:"BDA"},
-{n:"Alga wakame essiccata",c:"Alimenti vari",k:45,p:3.0,gs:0.2,g:0.6,z:0.5,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:89,na:872,zn:0.4,fo:80,se:0.7,col:0,src:"BDA"},
+// RISOLTO (deep-pass duplicati): allineato al valore già confermato con match esatto per wakame essiccata (196mcg, verificato in sessione precedente) - 2026-07-30
+{n:"Alga wakame essiccata",c:"Alimenti vari",k:45,p:3.0,gs:0.2,g:0.6,z:0.5,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:89,na:872,zn:0.4,fo:196,se:0.7,col:0,src:"BDA"},
 {n:"Alga kombu essiccata",c:"Alimenti vari",k:43,p:1.7,gs:0.5,g:0.6,z:0,ch:9.6,fi:1.3,ca:168,fe:2.8,mg:121,k2:89,na:233,zn:1.2,fo:42,se:0.7,col:0,src:"BDA"},
 
 // ── CONDIMENTI E SALSE MANCANTI ──
@@ -2309,7 +2317,8 @@ const DB_BDA=[
 {n:"Budino di riso (con latte e zucchero)",c:"Dolci",k:138,p:3.8,gs:2.0,g:4.5,z:18.0,ch:22.0,fi:0.2,ca:90,fe:0.3,mg:10,k2:115,na:55,zn:0.4,fo:10,se:3,col:18,src:"CREA"},
 
 // ── FARINE E SEMOLE MANCANTI (CREA) ──
-{n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:355,p:12.5,gs:0.2,g:1.6,z:1.5,ch:72.0,fi:3.2,ca:20,fe:1.8,mg:38,k2:155,na:3,zn:1.0,fo:150,se:17,col:0,src:"CREA"},
+// RISOLTO (deep-pass duplicati): allineato al duplicato coerente col pattern farina non fortificata (~30mcg) - 2026-07-30
+{n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:355,p:12.5,gs:0.2,g:1.6,z:1.5,ch:72.0,fi:3.2,ca:20,fe:1.8,mg:38,k2:155,na:3,zn:1.0,fo:30,se:17,col:0,src:"CREA"},
 {n:"Miglio decorticato cotto",c:"Cereali e derivati",k:342,p:11,gs:0.1,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:74,se:0.6,col:0,src:"CREA"},
 // Fosforo (amaranto cotto ~148mg) era nel campo folati; folati reali ~27mcg - 2026-07-30
 {n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.2,g:1.6,z:0.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:6,zn:0.9,fo:27,se:2,col:0,src:"BDA"},
@@ -3103,7 +3112,8 @@ const DB_UPF = [
   {n:"Patatine fritte McDonald's (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:1.5,g:15.0,z:0.8,ch:41.5,fi:3.8,ca:15,fe:0.8,mg:25,k2:670,na:350,zn:0.3,fo:15,se:4,col:0},
   {n:"Hot dog (wurstel in panino industriale)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.5,mg:20,k2:175,na:320,zn:1.5,fo:90,se:10,col:48},
   {n:"Pizza surgelata margherita (per 100g)",c:"Fast food",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:185,fe:1.5,mg:20,k2:175,na:600,zn:1.0,fo:95,se:10,col:18},
-  {n:"Pizza surgelata 4 stagioni (per 100g)",c:"Fast food",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:175,fe:1.5,mg:18,k2:170,na:620,zn:1.2,fo:90,se:10,col:20},
+  // RISOLTO (deep-pass duplicati): allineato al duplicato già coerente col pattern pizza+formaggio (25mcg) - 2026-07-30
+  {n:"Pizza surgelata 4 stagioni (per 100g)",c:"Fast food",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:175,fe:1.5,mg:18,k2:170,na:620,zn:1.2,fo:25,se:10,col:20},
   {n:"Kebab (doner, pane+carne+salse, per 100g)",c:"Fast food",src:"UPF",k:156,p:13.5,gs:3.1,g:9,z:2.2,ch:5.1,fi:0,ca:65,fe:2.5,mg:20,k2:200,na:670,zn:2.0,fo:8,se:10,col:45},
   {n:"Würstel di pollo (industriale)",c:"Carni e derivati",src:"UPF",k:214,p:14,gs:4.9,g:17,z:1.0,ch:0.5,fi:1.5,ca:25,fe:0.8,mg:12,k2:170,na:870,zn:1.0,fo:8,se:10,col:60},
   {n:"Würstel di maiale (industriale)",c:"Carni e derivati",src:"UPF",k:305,p:11.5,gs:6.0,g:27.0,z:0.5,ch:2.5,fi:0,ca:10,fe:0.9,mg:10,k2:160,na:930,zn:1.5,fo:8,se:14,col:75},
@@ -4290,7 +4300,8 @@ const DB_EXTRA=[
 {n:"Bevanda di cocco Alpro (per 100ml)",c:"Alternative vegetali",src:"EXTRA",k:14,p:0.1,gs:1.1,g:1.2,z:0,ch:0,fi:0,ca:120,fe:0.2,mg:8,k2:50,na:28,zn:0.1,fo:90,se:1,col:0},
 {n:"Panna di soia da cucina",c:"Alternative vegetali",src:"EXTRA",k:151,p:2,gs:1.7,g:15,z:1.2,ch:1.2,fi:0.3,ca:85,fe:0.3,mg:10,k2:90,na:56,zn:0.2,fo:55,se:2,col:0},
 {n:"Crema di anacardi",c:"Alternative vegetali",src:"EXTRA",k:607,p:22,gs:8.1,g:47,z:3.9,ch:23,fi:2.1,ca:45,fe:6,mg:260,k2:660,na:156,zn:5.6,fo:490,se:19,col:0},
-{n:"Seitan",c:"Alternative vegetali",src:"EXTRA",k:129,p:19,gs:0.1,g:1.4,z:0,ch:8.8,fi:0.6,ca:142,fe:2.4,mg:15,k2:50,na:400,zn:0.8,fo:0,se:0,col:0},
+// RISOLTO (deep-pass duplicati): 0 era probabilmente dato mancante, allineato al range già stabilito per il seitan (~40mcg) - 2026-07-30
+{n:"Seitan",c:"Alternative vegetali",src:"EXTRA",k:129,p:19,gs:0.1,g:1.4,z:0,ch:8.8,fi:0.6,ca:142,fe:2.4,mg:15,k2:50,na:400,zn:0.8,fo:40,se:0,col:0},
 {n:"Miso (pasta)",c:"Alternative vegetali",src:"EXTRA",k:198,p:12.8,gs:1.02,g:6,z:6.2,ch:25.4,fi:5.4,ca:57,fe:2.49,mg:48,k2:210,na:3728,zn:2.56,fo:19,se:7,col:0},
 // === BEVANDE ANALCOLICHE ===
 {n:"Coca-Cola (per 100ml)",c:"Bevande",src:"EXTRA",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:0,fe:0,mg:0,k2:0,na:4,zn:0,fo:0,se:0,col:0},
@@ -4388,7 +4399,8 @@ const DB_EXTRA=[
 {n:"Sriracha",c:"Condimenti",src:"EXTRA",k:139,p:2.3,gs:0.2,g:1.2,z:22,ch:28,fi:1,ca:20,fe:0.5,mg:15,k2:230,na:2872,zn:0.2,fo:30,se:1,col:0},
 {n:"Salsa Worcestershire",c:"Condimenti",src:"EXTRA",k:77,p:0,gs:0,g:0,z:10,ch:19.2,fi:0,ca:107,fe:5.3,mg:13,k2:800,na:1300,zn:0.19,fo:8,se:0.5,col:0},
 {n:"Tabasco",c:"Condimenti",src:"EXTRA",k:12,p:1.3,gs:0.11,g:0.8,z:0.1,ch:0.8,fi:0.6,ca:12,fe:1.16,mg:12,k2:128,na:633,zn:0.16,fo:1,se:0.5,col:0},
-{n:"Pesto genovese",c:"Condimenti",src:"EXTRA",k:418,p:9.8,gs:7.07,g:37.6,z:6.3,ch:10.1,fi:1.8,ca:306,fe:0.57,mg:47,k2:560,na:603,zn:1.33,fo:16,se:5,col:8},
+// RISOLTO (deep-pass duplicati): allineato al pattern pesto già stabilito (basilico fresco genuinamente ricco di folati, ~120mcg) - 2026-07-30
+{n:"Pesto genovese",c:"Condimenti",src:"EXTRA",k:418,p:9.8,gs:7.07,g:37.6,z:6.3,ch:10.1,fi:1.8,ca:306,fe:0.57,mg:47,k2:560,na:603,zn:1.33,fo:120,se:5,col:8},
 {n:"Soffritto dado granulare",c:"Condimenti",src:"EXTRA",k:458,p:6.6,gs:5,g:29,z:15,ch:41.1,fi:2,ca:100,fe:2.5,mg:30,k2:1200,na:14000,zn:0.5,fo:200,se:5,col:0},
 {n:"Margarina da spalmare",c:"Grassi e oli",src:"EXTRA",k:424,p:0.2,gs:8.79,g:47.5,z:0,ch:0.9,fi:0,ca:5,fe:0,mg:0,k2:10,na:646,zn:0,fo:5,se:0,col:5},
 {n:"Strutto",c:"Grassi e oli",src:"EXTRA",k:896,p:0,gs:39.2,g:100,z:0,ch:0,fi:0,ca:0,fe:0,mg:0,k2:0,na:0,zn:0,fo:0,se:0.2,col:95},

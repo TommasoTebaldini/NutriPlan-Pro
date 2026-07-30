@@ -1553,7 +1553,8 @@ const DB_BDA=[
   {n:"Teff crudo",c:"Cereali",src:"BDA",k:335,p:13.3,gs:0.45,g:2.4,z:1.8,ch:65.1,fi:8,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:43,se:4.4,col:0},
   {n:"Freekeh (grano verde tostato)",c:"Cereali",src:"BDA",k:362,p:12.6,gs:0.5,g:2.7,z:2.5,ch:72,fi:16.5,ca:32,fe:3.6,mg:78,k2:347,na:18,zn:2.9,fo:40,se:8,col:0},
   {n:"Riso integrale cotto",c:"Cereali e pasta",src:"CREA",k:113,p:2.5,gs:0.1,g:0.6,z:0.4,ch:25.5,fi:0.8,ca:12,fe:0.5,mg:44,k2:70,na:3,zn:0.6,fo:77,se:9.8,col:0},
-  {n:"Semola di mais (fioretto)",c:"Cereali",src:"CREA",k:358,p:8.7,gs:0.3,g:4.0,z:1.0,ch:76,fi:2.4,ca:4,fe:1.1,mg:29,k2:142,na:1,zn:0.8,fo:78,se:8,col:0},
+  // Fosforo (farina di mais) era nel campo folati; folati reali mais non fortificato ~25mcg - 2026-07-30
+  {n:"Semola di mais (fioretto)",c:"Cereali",src:"CREA",k:358,p:8.7,gs:0.3,g:4.0,z:1.0,ch:76,fi:2.4,ca:4,fe:1.1,mg:29,k2:142,na:1,zn:0.8,fo:25,se:8,col:0},
   {n:"Farina di riso integrale",c:"Cereali e derivati",src:"BDA",k:332,p:7.3,gs:0.13,g:0.5,z:0,ch:79.1,fi:1,ca:7,fe:0.4,mg:23,k2:104,na:4,zn:0.8,fo:4,se:15.1,col:0},
   {n:"Pasta di grano saraceno cruda (soba)",c:"Cereali e pasta",src:"BDA",k:368,p:14.7,gs:0.5,g:3.4,z:0,ch:74.4,fi:8.5,ca:20,fe:2.2,mg:230,k2:440,na:5,zn:2.4,fo:24,se:8,col:0},
   {n:"Pane di kamut crudo",c:"Cereali e derivati",src:"BDA",k:259,p:11.0,gs:0.5,g:3.5,z:3.0,ch:47.5,fi:4.0,ca:28,fe:2.5,mg:80,k2:210,na:480,zn:2.2,fo:30,se:12,col:0},
@@ -1831,7 +1832,8 @@ const DB_BDA=[
   {n:"Semi di papavero",c:"Frutta secca",src:"BDA",k:525,p:17.9,gs:4.5,g:41.6,z:2.1,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:58,se:13,col:0},
 
   // ── PIATTI PRONTI ──
-  {n:"Risotto bianco cotto (riso+brodo+olio)",c:"Piatti pronti",src:"CREA",k:140,p:2.8,gs:0.5,g:3.5,z:0.5,ch:24,fi:0.5,ca:12,fe:0.5,mg:12,k2:55,na:250,zn:0.5,fo:55,se:7,col:0},
+  // Folati implausibili per riso cotto/diluito in brodo (impasto semplice riso+brodo+olio, senza componenti folato-ricche) - 2026-07-30
+  {n:"Risotto bianco cotto (riso+brodo+olio)",c:"Piatti pronti",src:"CREA",k:140,p:2.8,gs:0.5,g:3.5,z:0.5,ch:24,fi:0.5,ca:12,fe:0.5,mg:12,k2:55,na:250,zn:0.5,fo:8,se:7,col:0},
   {n:"Minestrone di verdure miste cotto",c:"Piatti pronti",src:"CREA",k:45,p:2,gs:0.1,g:0.4,z:2.0,ch:7.8,fi:2.1,ca:28,fe:0.9,mg:18,k2:250,na:250,zn:0.4,fo:52,se:1.5,col:0},
   {n:"Sugo al pomodoro semplice (olio+pomodoro+basilico)",c:"Condimenti",src:"CREA",k:68,p:1.5,gs:0.5,g:4.5,z:3.5,ch:7.0,fi:1.8,ca:22,fe:0.6,mg:16,k2:330,na:15,zn:0.2,fo:40,se:0.5,col:0},
   {n:"Frittata di verdure cotta",c:"Uova",src:"CREA",k:145,p:9.5,gs:3.5,g:10.5,z:1.5,ch:3.5,fi:0.8,ca:60,fe:1.5,mg:18,k2:200,na:200,zn:1.0,fo:160,se:8,col:270},

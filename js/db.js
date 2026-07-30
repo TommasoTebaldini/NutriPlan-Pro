@@ -2886,7 +2886,8 @@ const DB_UPF = [
   {n:"Hamburger fast food classico",c:"Fast food",src:"UPF",k:296,p:13,gs:5.5,g:13,z:7,ch:30,fi:1,ca:100,fe:2.5,mg:25,k2:250,na:490,zn:2,fo:8,se:12,col:45},
   {n:"Cheeseburger doppio fast food",c:"Fast food",src:"UPF",k:458,p:22,gs:12,g:22,z:8,ch:27,fi:1.5,ca:200,fe:3,mg:30,k2:300,na:780,zn:3.5,fo:250,se:18,col:80},
   {n:"Nuggets di pollo (tipo fast food, 100g)",c:"Fast food",src:"UPF",k:230,p:10.4,gs:2.7,g:13.4,z:2.1,ch:16.6,fi:0.8,ca:10,fe:0,mg:0,k2:200,na:433,zn:0,fo:8,se:10,col:40},
-  {n:"Patate fritte fast food (porzione media, 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:0.5,ch:41,fi:3,ca:10,fe:0.7,mg:25,k2:480,na:400,zn:0.4,fo:75,se:0.5,col:0},
+  // Corretto per coerenza col duplicato già fixato (DB_UPF_167, 15mcg) - 2026-07-30
+  {n:"Patate fritte fast food (porzione media, 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:0.5,ch:41,fi:3,ca:10,fe:0.7,mg:25,k2:480,na:400,zn:0.4,fo:15,se:0.5,col:0},
   {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.8,mg:18,k2:210,na:320,zn:1.8,fo:140,se:10,col:48},
   // ── PIATTI PRONTI SURGELATI ──
   {n:"Pizza surgelata margherita",c:"Piatti pronti",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:2,mg:20,k2:200,na:600,zn:1,fo:130,se:8,col:12},
@@ -2904,7 +2905,8 @@ const DB_UPF = [
   {n:"Barretta cioccolato tipo Snickers (100g)",c:"Dolci confezionati",src:"UPF",k:455,p:5,gs:10,g:18,z:48,ch:64,fi:1,ca:100,fe:1,mg:25,k2:220,na:150,zn:0.8,fo:120,se:3,col:10},
   {n:"Cioccolato al latte confezionato (tipo Milka, 100g)",c:"Dolci confezionati",src:"UPF",k:523,p:5.4,gs:17.7,g:28.5,z:59.6,ch:60.2,fi:1.9,ca:225,fe:2.5,mg:55,k2:400,na:8,zn:1.5,fo:13,se:5,col:15},
   {n:"Budino confezionato alla vaniglia",c:"Dolci confezionati",src:"UPF",k:110,p:3.5,gs:1.5,g:3.5,z:14.5,ch:17,fi:0,ca:110,fe:0.1,mg:10,k2:140,na:65,zn:0.4,fo:80,se:2,col:10},
-  {n:"Gelato confezionato tipo Oreo",c:"Dolci confezionati",src:"UPF",k:275,p:3.5,gs:7.5,g:15,z:28,ch:33,fi:0.5,ca:90,fe:0.8,mg:12,k2:130,na:110,zn:0.4,fo:80,se:2,col:22},
+  // Fosforo (latte/panna, calcio 90mg conferma) era nel campo folati; folati reali ~10mcg - 2026-07-30
+  {n:"Gelato confezionato tipo Oreo",c:"Dolci confezionati",src:"UPF",k:275,p:3.5,gs:7.5,g:15,z:28,ch:33,fi:0.5,ca:90,fe:0.8,mg:12,k2:130,na:110,zn:0.4,fo:10,se:2,col:22},
   {n:"Torta confezionata tipo plumcake (per 100g)",c:"Dolci confezionati",src:"UPF",k:385,p:5.5,gs:4,g:10,z:38,ch:68,fi:1,ca:100,fe:1.5,mg:10,k2:90,na:520,zn:0.5,fo:110,se:4,col:0},
   // ── CEREALI DA COLAZIONE ──
   {n:"Cereali zuccherati tipo Corn Flakes",c:"Cereali confezionati",src:"UPF",k:386,p:8.4,gs:0.5,g:1.8,z:7.4,ch:83,fi:2.3,ca:5,fe:8.3,mg:22,k2:150,na:602,zn:0.3,fo:80,se:2,col:0},

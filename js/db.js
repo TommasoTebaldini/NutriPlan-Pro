@@ -2714,7 +2714,8 @@ const DB_UPF = [
   {n:"Mix frutta secca speziata confezionato",c:"Snack salati",src:"UPF",k:471,p:14,gs:5.8,g:32,z:2.9,ch:34,fi:10,ca:100,fe:3,mg:140,k2:580,na:185,zn:2.5,fo:280,se:15,col:0},
 
   // ── PASTI PRONTI CONFEZIONATI ──
-  {n:"Risotto in busta pronto",c:"Piatti pronti",src:"UPF",k:370,p:8,gs:0.5,g:2.5,z:2,ch:77,fi:1.5,ca:15,fe:1,mg:20,k2:110,na:900,zn:0.5,fo:80,se:8,col:0},
+  // Fosforo (mix di riso secco) era nel campo folati; folati reali riso ~15mcg - 2026-07-30
+  {n:"Risotto in busta pronto",c:"Piatti pronti",src:"UPF",k:370,p:8,gs:0.5,g:2.5,z:2,ch:77,fi:1.5,ca:15,fe:1,mg:20,k2:110,na:900,zn:0.5,fo:15,se:8,col:0},
   {n:"Pasta al pomodoro in vasetto pronta",c:"Piatti pronti",src:"UPF",k:137.5,p:6,gs:2.05,g:5.3,z:3.3,ch:16,fi:1.1,ca:25,fe:1.2,mg:20,k2:200,na:430,zn:0.4,fo:55,se:5,col:0},
   {n:"Ragù industriale in vasetto",c:"Piatti pronti",src:"UPF",k:87,p:4.8,gs:1.3,g:4.1,z:4,ch:6.7,fi:1.8,ca:20,fe:1,mg:12,k2:180,na:400,zn:1,fo:60,se:5,col:20},
   {n:"Sugo ai funghi industriale vasetto",c:"Piatti pronti",src:"UPF",k:201,p:2.2,gs:2.2,g:16,z:1.2,ch:12,fi:2.9,ca:25,fe:1.2,mg:14,k2:220,na:396,zn:0.4,fo:45,se:5,col:0},
@@ -2722,7 +2723,8 @@ const DB_UPF = [
   {n:"Polpette in scatola al pomodoro",c:"Piatti pronti",src:"UPF",k:149,p:11,gs:3.7,g:6.6,z:2.9,ch:9.6,fi:3.4,ca:25,fe:1.5,mg:16,k2:190,na:700,zn:1.8,fo:8,se:7,col:50},
   {n:"Zuppa di verdure in lattina",c:"Piatti pronti",src:"UPF",k:30,p:1.6,gs:0.2,g:0.9,z:1.2,ch:1.4,fi:4.9,ca:22,fe:0.7,mg:15,k2:230,na:550,zn:0.3,fo:45,se:1.5,col:0},
   {n:"Pasta e fagioli pronta in barattolo",c:"Piatti pronti",src:"UPF",k:77.2,p:4.7,gs:0.34,g:1.7,z:2,ch:11.4,fi:2,ca:38,fe:2.5,mg:38,k2:330,na:201.3,zn:1,fo:95,se:3,col:0},
-  {n:"Carne in scatola corned beef",c:"Salumi processati",src:"UPF",k:218,p:25.9,gs:5.5,g:12.5,z:0,ch:0,fi:0,ca:14,fe:2.7,mg:14,k2:150,na:900,zn:4.4,fo:120,se:18,col:98},
+  // Folati implausibili per carne processata (non frattaglia); reali ~8mcg - 2026-07-30
+  {n:"Carne in scatola corned beef",c:"Salumi processati",src:"UPF",k:218,p:25.9,gs:5.5,g:12.5,z:0,ch:0,fi:0,ca:14,fe:2.7,mg:14,k2:150,na:900,zn:4.4,fo:8,se:18,col:98},
 
   // ── BEVANDE ALCOLICHE aggiuntive ──
   {n:"Birra artigianale IPA 6%",c:"Alcolici",src:"UPF",k:52,p:0.5,gs:0,g:0,z:1,ch:4.5,fi:0,ca:8,fe:0.1,mg:7,k2:50,na:8,zn:0.02,fo:30,se:1,col:0},

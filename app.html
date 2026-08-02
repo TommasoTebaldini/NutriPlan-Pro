@@ -450,13 +450,13 @@ window._buildDashCardsHtml = function () {
       <div style="margin-bottom:10px">
         <input type="text" id="alt-search" class="db-search" placeholder="🔍 Cerca alimento alternativo..." oninput="showAlternatives()" style="width:100%">
       </div>
-      <div id="alt-draft-bar" style="display:none;background:#ECFDF5;border:1px solid #6EE7B7;border-radius:10px;padding:10px 12px;margin-bottom:14px">
-        <label style="font-size:12px;font-weight:700;color:#065F46;display:block;margin-bottom:6px">🔗 Sostituzione combinata in costruzione</label>
-        <div id="alt-draft-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div>
-        <input type="text" id="alt-draft-nota" placeholder="📝 Nota per questa sostituzione (facoltativa)..." style="width:100%;box-sizing:border-box;padding:6px 9px;border:1px solid #6EE7B7;border-radius:8px;font-size:12px;margin-bottom:8px" oninput="onAltDraftNotaInput(this)">
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-primary btn-sm" style="background:#0F766E;border-color:#0F766E" onclick="saveAltDraftGroup()">💾 Salva come sostituzione</button>
-          <button class="btn btn-sm" onclick="clearAltDraft()">Annulla</button>
+      <div id="alt-draft-bar" style="display:none">
+        <label>🔗 Sostituzione combinata in costruzione</label>
+        <div id="alt-draft-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+        <input type="text" id="alt-draft-nota" placeholder="📝 Nota per questa sostituzione (facoltativa)..." style="width:100%;box-sizing:border-box;padding:6px 10px;border-radius:var(--r-sm);font-size:12px;font-family:inherit;margin-bottom:10px" oninput="onAltDraftNotaInput(this)">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="saveAltDraftGroup()">💾 Salva come sostituzione</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearAltDraft()">Annulla</button>
         </div>
       </div>
       <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 12px;margin-bottom:14px">
@@ -1013,7 +1013,7 @@ function buildRow(mi, ii) {
     const microTdsAlt = MICROS.map((m, mIdx) => `<td data-mk="${m.k}" style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(t.mic[mIdx], 2)}</td>`).join('');
     return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${gi}">
       <td style="padding-left:22px;text-align:left">
-        <div class="alt-inline-wrap">↳ ALT: ${foodsHtml}</div>
+        <div class="alt-inline-wrap"><span class="alt-label">Alt</span>${foodsHtml}</div>
         <input class="alt-nota-input" type="text" value="${esc(g.nota || '')}" placeholder="${_L('📝 Nota (facoltativa)...','📝 Note (optional)...')}" oninput="onAltNotaInput(${mi},${ii},${gi},this)">
       </td>
       <td class="alt-qt">${t.qt}g</td>
@@ -1922,19 +1922,18 @@ function showAlternatives() {
     const srcCls = a.food.src === 'CREA' ? 'src-crea' : a.food.src === 'BDA' ? 'src-bda' : 'src-custom';
     const matchBadges = a.details ? a.details.map(d => {
       const absErr = Math.abs(d.errPct);
-      const color = absErr <= 10 ? '#065F46' : absErr <= 25 ? '#92400E' : '#991B1B';
-      const bg = absErr <= 10 ? '#D1FAE5' : absErr <= 25 ? '#FEF3C7' : '#FEE2E2';
+      const cls = absErr <= 10 ? 'good' : absErr <= 25 ? 'warn' : 'bad';
       const nl = _NL(ALL_NUTRIENTS.find(n => n.k === d.k) || { l: d.k, k: d.k });
-      return `<span style="background:${bg};color:${color};padding:1px 6px;border-radius:5px;font-size:9.5px;font-weight:700">${nl}: ${d.got} (${d.errPct >= 0 ? '+' : ''}${d.errPct}%)</span>`;
-    }).join(' ') : '';
-    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:white;border-radius:6px;margin-bottom:5px;border:1px solid var(--border);flex-wrap:wrap">
+      return `<span class="alt-match-badge ${cls}">${nl}: ${d.got} (${d.errPct >= 0 ? '+' : ''}${d.errPct}%)</span>`;
+    }).join('') : '';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:white;border-radius:var(--r-sm);margin-bottom:6px;border:1px solid var(--border);flex-wrap:wrap">
       <div style="font-weight:600;font-size:12.5px;flex:1;min-width:140px">${esc(foodNameEN(a.food.n))} <span class="ac-src ${srcCls}">${a.food.src}</span></div>
-      <span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700">${a.newQt}g</span>
+      <span style="background:var(--sage);color:var(--teal-d);padding:2px 8px;border-radius:9px;font-size:12px;font-weight:700">${a.newQt}g</span>
       <span style="font-size:10.5px;color:var(--slate-l)">${a.kcal}kcal · P${a.prot}g</span>
       <div style="display:flex;gap:6px;flex-shrink:0">
         <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${_L('Sostituisci','Substitute')}</button>
-        <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?_L('✅ In stampa','✅ In print'):_L('📄 +Stampa','📄 +Print')}</button>
-        <button class="btn btn-xs" style="background:#F5F3FF;color:#5B21B6;border:1px solid #DDD6FE" onclick="addToAltDraft('${escJS(a.food.n)}',${a.newQt})" title="${_L('Aggiungi a un gruppo di più alimenti (es. fette+marmellata+burro)','Add to a multi-food group (e.g. toast+jam+butter)')}">${_L('🔗 +Gruppo','🔗 +Group')}</button>
+        <button class="btn btn-xs btn-alt-print${inPrint ? ' on' : ''}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?_L('✅ In stampa','✅ In print'):_L('📄 +Stampa','📄 +Print')}</button>
+        <button class="btn btn-xs btn-alt-group" onclick="addToAltDraft('${escJS(a.food.n)}',${a.newQt})" title="${_L('Aggiungi a un gruppo di più alimenti (es. fette+marmellata+burro)','Add to a multi-food group (e.g. toast+jam+butter)')}">${_L('🔗 +Gruppo','🔗 +Group')}</button>
       </div>
       ${matchBadges ? `<div style="display:flex;gap:4px;flex-wrap:wrap;width:100%">${matchBadges}</div>` : ''}
     </div>`;

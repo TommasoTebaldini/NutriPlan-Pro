@@ -241,7 +241,7 @@ async function sendWaMessage() {
   input.disabled = true;
   try {
     const { data: { session } } = await sb.auth.getSession();
-    const res = await fetch('/api/whatsapp-send', {
+    const res = await fetch('/api/whatsapp-webhook?action=send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
       body: JSON.stringify({ cartella_id: activeCartellaId, testo }),

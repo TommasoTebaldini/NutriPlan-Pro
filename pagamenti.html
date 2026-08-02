@@ -533,7 +533,7 @@ async function inviaFatturaSDI(id) {
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) throw new Error('Sessione scaduta, ricarica la pagina');
-    const res = await fetch('/api/fattura-sdi', {
+    const res = await fetch('/api/fatture?action=sdi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ fattura: f }),
@@ -555,8 +555,8 @@ async function inviaFatturaSDI(id) {
 }
 
 // ── INVIO SISTEMA TESSERA SANITARIA (STS) ──
-// L'endpoint api/fattura-sts.js legge le credenziali dell'intermediario dal
-// profilo del dietista (Impostazioni → Dati fiscali) e trasmette la spesa
+// L'endpoint api/fatture.js?action=sts legge le credenziali dell'intermediario
+// dal profilo del dietista (Impostazioni → Dati fiscali) e trasmette la spesa
 // sanitaria — obbligo di legge dal 2019, vedi SEZIONE 35 di supabase_setup.sql.
 async function inviaFatturaSTS(id) {
   const f = fatture.find(x => x.id === id);
@@ -574,7 +574,7 @@ async function inviaFatturaSTS(id) {
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) throw new Error('Sessione scaduta, ricarica la pagina');
-    const res = await fetch('/api/fattura-sts', {
+    const res = await fetch('/api/fatture?action=sts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ fattura_id: id }),

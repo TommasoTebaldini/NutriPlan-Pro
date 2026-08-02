@@ -1371,7 +1371,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Realtime channel handles live updates (startRealtimeSync above).
   // Load Google Client ID from server config, then init Google Identity Services
   try {
-    const cfg = await fetch('/api/config').then(r => r.json());
+    const cfg = await fetch('/api/meta?what=config').then(r => r.json());
     if (cfg && cfg.googleClientId) GOOGLE_CLIENT_ID = cfg.googleClientId;
   } catch(e) {}
   if (GOOGLE_CLIENT_ID) {
@@ -1444,7 +1444,7 @@ function startRealtimeSync() {
 // your domain to the authorised JavaScript origins in the Google Cloud Console.
 // NOTE: The Client ID is not a secret — it is safe to include in client-side
 // JavaScript.
-let GOOGLE_CLIENT_ID = ''; // loaded from /api/config at startup
+let GOOGLE_CLIENT_ID = ''; // loaded from /api/meta?what=config at startup
 
 let gcalToken = null;
 let gcalTokenExpiry = 0;
@@ -1733,7 +1733,8 @@ async function syncAllEventsToGCal() {
 // ─── Calendar Sync Modal ──────────────────────────────────────────────────────
 
 // Returns a secured calendar feed URL for the current user.
-// Calls /api/calendar-token (requires auth) to get the HMAC token.
+// Calls /api/calendar?action=token (requires auth) to get the HMAC token —
+// merged into api/calendar.js to stay within Vercel's Hobby function limit.
 // Falls back to uid-only URL if the endpoint fails or secret is not configured.
 async function getCalendarUrl() {
   if (!currentUser) return null;
@@ -1741,7 +1742,7 @@ async function getCalendarUrl() {
     const { data: { session } } = await sb.auth.getSession();
     const jwt = session?.access_token;
     if (!jwt) throw new Error('no session');
-    const res = await fetch('/api/calendar-token', {
+    const res = await fetch('/api/calendar?action=token', {
       headers: { Authorization: 'Bearer ' + jwt }
     });
     if (res.ok) {

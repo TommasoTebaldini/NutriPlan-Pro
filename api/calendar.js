@@ -1,10 +1,59 @@
 // api/calendar.js — NutriPlan Pro
 // Serves a live iCalendar (ICS) feed for a user's agenda events stored in Supabase.
 // Subscribe in any calendar app via: webcal://YOUR_DOMAIN/api/calendar?uid=USER_UUID&token=HMAC_TOKEN
-// The token is obtained from /api/calendar-token (requires login).
+// The token is obtained via GET /api/calendar?action=token (requires login) —
+// merged in from the former api/calendar-token.js: this URL is saved as a
+// permanent subscription by external calendar apps (Google/Apple/Outlook),
+// so the /api/calendar path itself must never change, but the *token*
+// endpoint was only ever called from our own agenda.html and could safely
+// move behind ?action=token on the same file instead of staying a separate
+// Vercel Serverless Function (the Hobby plan caps at 12 per deployment).
 // The calendar app will auto-refresh this feed, keeping all devices in sync.
 
 import crypto from 'crypto';
+
+const SUPABASE_ANON_KEY_FOR_AUTH = process.env.SUPABASE_ANON_KEY;
+async function verifySupabaseToken(bearerToken) {
+  const res = await fetch(`${process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co'}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${bearerToken}`, apikey: SUPABASE_ANON_KEY_FOR_AUTH },
+  });
+  if (!res.ok) return null;
+  return await res.json();
+}
+
+// GET /api/calendar?action=token — returns a signed HMAC token + subscribe
+// URL for the authenticated user's calendar feed (former api/calendar-token.js).
+async function handleTokenRequest(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  const authHeader = req.headers.authorization || '';
+  if (!authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Non autorizzato: token mancante.' });
+  }
+  const user = await verifySupabaseToken(authHeader.slice(7));
+  if (!user?.id) {
+    return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
+  }
+
+  const uid = user.id;
+  const calToken = CALENDAR_SECRET ? deriveCalendarToken(uid) : null;
+  const origin = (req.headers['x-forwarded-proto'] || 'https') + '://' + (req.headers['x-forwarded-host'] || req.headers.host || 'nutriplan-pro.vercel.app');
+  const subscribeUrl = calToken
+    ? `${origin}/api/calendar?uid=${uid}&token=${calToken}`
+    : `${origin}/api/calendar?uid=${uid}`;
+
+  return res.status(200).json({
+    token: calToken,
+    uid,
+    url: subscribeUrl,
+    webcal: subscribeUrl.replace(/^https?:\/\//, 'webcal://'),
+    secured: !!calToken,
+  });
+}
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 // Prefer SUPABASE_SERVICE_KEY (bypasses RLS) for direct table access.
@@ -49,6 +98,8 @@ const TIPO_LABELS = {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default async function handler(req, res) {
+  if (req.query.action === 'token') return handleTokenRequest(req, res);
+
   if (!SUPABASE_SERVICE_KEY && !SUPABASE_ANON_KEY) {
     console.error('calendar.js: SUPABASE_ANON_KEY is empty. Check the Vercel environment variables and ensure the get_user_agenda_events SQL migration has been applied.');
     res.status(500).send('Server configuration error: Supabase key not configured');

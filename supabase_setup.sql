@@ -2685,3 +2685,200 @@ ALTER TABLE whatsapp_messages ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "dietitian_own_whatsapp_messages" ON whatsapp_messages;
 CREATE POLICY "dietitian_own_whatsapp_messages" ON whatsapp_messages
   FOR ALL USING (auth.uid() = dietitian_id) WITH CHECK (auth.uid() = dietitian_id);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 37 — schema_migrations (tracciamento sezioni eseguite) + client_errors
+--
+-- Problema: ogni nuova feature richiede di copiare/eseguire a mano una nuova
+-- sezione di questo file nell'SQL Editor di Supabase; con 36+ sezioni non è
+-- più chiaro quali risultino già state eseguite sul progetto live (causa nota
+-- di bug intermittenti 404/PGRST204 quando una sezione resta non eseguita).
+-- Da qui in avanti, OGNI sezione futura deve terminare con un INSERT in
+-- schema_migrations che registra il proprio id — così una query su questa
+-- tabella dice esattamente cosa è stato applicato, senza doverlo ricordare a
+-- memoria. Per lo stato ATTUALE (sezioni 1-36, mai state marcate a runtime),
+-- usare invece scripts/check-schema-status.sql, che verifica direttamente
+-- l'esistenza di tabelle/colonne attese confrontandole con information_schema.
+--
+-- client_errors: raccolta automatica di errori JS non gestiti lato client
+-- (window.onerror / unhandledrejection), per non dipendere da un servizio di
+-- error-monitoring esterno a pagamento. Scrittura aperta (anche pre-login,
+-- es. pagina di login stessa) perché non contiene nulla di più sensibile di
+-- quanto già visibile lato client; lettura riservata agli admin.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS schema_migrations (
+  id          TEXT        PRIMARY KEY,
+  applied_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  note        TEXT
+);
+
+ALTER TABLE schema_migrations ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='schema_migrations_admin_only' AND tablename='schema_migrations') THEN
+    CREATE POLICY "schema_migrations_admin_only" ON schema_migrations
+      FOR ALL USING (check_is_admin()) WITH CHECK (check_is_admin());
+  END IF;
+END $$;
+
+CREATE TABLE IF NOT EXISTS client_errors (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  app         TEXT        NOT NULL,               -- 'nutriplan-pro' | 'diet-plan-pro-app'
+  level       TEXT        NOT NULL DEFAULT 'error', -- 'error' | 'unhandledrejection'
+  message     TEXT        NOT NULL,
+  stack       TEXT,
+  page_url    TEXT,
+  user_id     UUID        REFERENCES auth.users(id) ON DELETE SET NULL,
+  user_email  TEXT,
+  user_agent  TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_client_errors_created_at ON client_errors (created_at DESC);
+
+ALTER TABLE client_errors ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='client_errors_insert_any' AND tablename='client_errors') THEN
+    CREATE POLICY "client_errors_insert_any" ON client_errors
+      FOR INSERT WITH CHECK (true);
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='client_errors_select_admin' AND tablename='client_errors') THEN
+    CREATE POLICY "client_errors_select_admin" ON client_errors
+      FOR SELECT USING (check_is_admin());
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_37_observability', 'schema_migrations + client_errors')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 38 — usage_counters: quote mensili per dietista (AI/storage)
+--
+-- Il rate limiter esistente (api/_rateLimit.js) blocca gli abusi al minuto,
+-- ma non un tetto mensile: uno studio molto attivo potrebbe generare costi
+-- Groq/AI sproporzionati rispetto al prezzo dell'abbonamento. Serve un
+-- contatore DURATURO (sopravvive a cold start e dura 30 giorni): sia
+-- api/_rateLimit.js (in-memory/Upstash) sia il rate limiter Deno lato
+-- Diet-Plan-Pro (_shared/rateLimit.ts) sono esplicitamente per-istanza/non
+-- garantiti su finestre lunghe — inadatti a una quota mensile reale. Qui il
+-- contatore vive in Postgres, incrementato atomicamente via RPC.
+--
+-- period = 'YYYY-MM' (mese di calendario, UTC). scope = nome libero per
+-- endpoint/risorsa (es. 'ai_calls_claude', 'ai_calls_scribe', 'storage_bytes').
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS usage_counters (
+  user_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  scope       TEXT        NOT NULL,
+  period      TEXT        NOT NULL,
+  count       BIGINT      NOT NULL DEFAULT 0,
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (user_id, scope, period)
+);
+
+ALTER TABLE usage_counters ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='usage_counters_own_read' AND tablename='usage_counters') THEN
+    CREATE POLICY "usage_counters_own_read" ON usage_counters
+      FOR SELECT USING (auth.uid() = user_id OR check_is_admin());
+  END IF;
+END $$;
+
+-- Incrementa atomicamente il contatore (user_id, scope, period) e ritorna
+-- true se il nuovo totale resta entro p_max, false se lo supera. Pensata per
+-- essere chiamata dai soli endpoint serverless (api/_monthlyQuota.js /
+-- _shared/monthlyQuota.ts) con la service role key, DOPO aver già verificato
+-- il JWT reale dell'utente lato server. Guardia p_user_id = auth.uid() come
+-- nel trigger prevent_self_privilege_escalation (SEZIONE 1): bypassata solo
+-- quando auth.uid() IS NULL, cioè service role/SQL editor — un utente
+-- autenticato che chiamasse questa RPC direttamente (bypassando il server)
+-- potrebbe quindi incrementare/controllare solo il PROPRIO contatore, mai
+-- quello di un altro dietista.
+CREATE OR REPLACE FUNCTION increment_usage_and_check(p_user_id UUID, p_scope TEXT, p_period TEXT, p_max BIGINT)
+RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  new_count BIGINT;
+BEGIN
+  IF auth.uid() IS NOT NULL AND auth.uid() != p_user_id THEN
+    RAISE EXCEPTION 'p_user_id deve coincidere con l''utente autenticato';
+  END IF;
+  INSERT INTO usage_counters (user_id, scope, period, count, updated_at)
+  VALUES (p_user_id, p_scope, p_period, 1, NOW())
+  ON CONFLICT (user_id, scope, period)
+  DO UPDATE SET count = usage_counters.count + 1, updated_at = NOW()
+  RETURNING count INTO new_count;
+  RETURN new_count <= p_max;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION increment_usage_and_check(UUID, TEXT, TEXT, BIGINT) TO authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_38_usage_counters', 'usage_counters + increment_usage_and_check() per quote mensili')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 39 — delete_own_dietitian_account() (GDPR Art. 17, lato dietista)
+--
+-- Specchio di delete_own_account() (Diet-Plan-Pro-app-claude/src/sql/
+-- delete_own_account.sql, lato paziente), ma per un account NutriPlan-Pro.
+--
+-- La quasi totalità delle tabelle proprietà del dietista ha già
+-- ON DELETE CASCADE sulla colonna che punta a auth.users(id) (cartelle,
+-- piani, ncpt, bia_records, schede_valutazione, note_specialistiche,
+-- esami_biochimici, patient_files, agenda_events, alimenti_custom,
+-- patient_dietitian, studio_collaborators, chat_groups, broadcast_messages,
+-- piani_template, fatture, patient_signatures, dietitian_push_subscriptions,
+-- dietitian_todos, liste_spesa, pacchetti, pacchetti_acquistati,
+-- whatsapp_messages, usage_counters, profiles): il DELETE FROM auth.users
+-- finale le rimuove tutte automaticamente.
+--
+-- Verificate a mano (audit di ogni "REFERENCES auth.users" nel file) le SOLE
+-- eccezioni SENZA cascade, gestite esplicitamente qui sotto PRIMA del DELETE
+-- finale — altrimenti la FK bloccherebbe l'intera cancellazione con un
+-- errore invece di completarla:
+--   • clinical_audit_log.changed_by — si preserva la riga (audit trail
+--     clinico, ha senso restare anche dopo che l'autore ha cancellato
+--     l'account), si scollega solo l'autore (colonna nullable).
+--   • patient_specialty_access.updated_by — stesso trattamento: si preserva
+--     il toggle attivo per il paziente, si scollega solo chi l'ha impostato.
+--   • patient_documents.dietitian_id / patient_consents.dietitian_id —
+--     NOT NULL, nessun cascade: qui la riga va rimossa esplicitamente (di
+--     norma cadrebbe comunque in cascata da cartella_id, ma è nullable, quindi
+--     un documento/consenso non ancora legato a una cartella andrebbe perso
+--     senza questa riga esplicita).
+--   • chat_messages.sender_id / chat_group_messages.sender_id — NOT NULL,
+--     nessun cascade, nessuna colonna "mittente anonimo" disponibile: i
+--     messaggi INVIATI dal dietista vengono rimossi anche dal lato paziente/
+--     gruppo (stesso compromesso di qualunque cancellazione account su
+--     contenuti condivisi — non c'è alternativa senza una modifica di schema).
+--
+-- Non tocca lo Storage (bucket patient-files/document-prints/ecc.): stessa
+-- scelta già fatta in delete_own_account.sql lato paziente, i file restano
+-- orfani nel bucket — limite noto, non nuovo qui.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION delete_own_dietitian_account()
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, auth AS $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'dietitian') THEN
+    RAISE EXCEPTION 'Solo un account dietista può usare questa funzione';
+  END IF;
+
+  UPDATE clinical_audit_log SET changed_by = NULL WHERE changed_by = auth.uid();
+  UPDATE patient_specialty_access SET updated_by = NULL WHERE updated_by = auth.uid();
+
+  DELETE FROM patient_documents WHERE dietitian_id = auth.uid();
+  DELETE FROM patient_consents WHERE dietitian_id = auth.uid();
+  DELETE FROM chat_messages WHERE sender_id = auth.uid();
+  DELETE FROM chat_group_messages WHERE sender_id = auth.uid();
+
+  DELETE FROM auth.users WHERE id = auth.uid();
+END;
+$$;
+GRANT EXECUTE ON FUNCTION delete_own_dietitian_account() TO authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_39_delete_dietitian_account', 'delete_own_dietitian_account() GDPR Art. 17')
+ON CONFLICT (id) DO NOTHING;

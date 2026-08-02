@@ -444,11 +444,20 @@ window._buildDashCardsHtml = function () {
     <div class="mhdr"><h2 id="alt-title">🔄 Alternative Equivalenti</h2><button class="mclose" onclick="closeM('modal-alt')">✕</button></div>
     <div class="mbody">
       <div style="margin-bottom:10px">
-        <label style="font-size:12px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:6px">Trova equivalente per:</label>
+        <label style="font-size:12px;font-weight:600;color:var(--slate-m);display:block;margin-bottom:6px">Trova equivalente per (puoi selezionarne più di uno):</label>
         <div style="display:flex;gap:5px;flex-wrap:wrap" id="alt-nutrient-btns"></div>
       </div>
       <div style="margin-bottom:10px">
         <input type="text" id="alt-search" class="db-search" placeholder="🔍 Cerca alimento alternativo..." oninput="showAlternatives()" style="width:100%">
+      </div>
+      <div id="alt-draft-bar" style="display:none;background:#ECFDF5;border:1px solid #6EE7B7;border-radius:10px;padding:10px 12px;margin-bottom:14px">
+        <label style="font-size:12px;font-weight:700;color:#065F46;display:block;margin-bottom:6px">🔗 Sostituzione combinata in costruzione</label>
+        <div id="alt-draft-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div>
+        <input type="text" id="alt-draft-nota" placeholder="📝 Nota per questa sostituzione (facoltativa)..." style="width:100%;box-sizing:border-box;padding:6px 9px;border:1px solid #6EE7B7;border-radius:8px;font-size:12px;margin-bottom:8px" oninput="onAltDraftNotaInput(this)">
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-primary btn-sm" style="background:#0F766E;border-color:#0F766E" onclick="saveAltDraftGroup()">💾 Salva come sostituzione</button>
+          <button class="btn btn-sm" onclick="clearAltDraft()">Annulla</button>
+        </div>
       </div>
       <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 12px;margin-bottom:14px">
         <label style="font-size:12px;font-weight:700;color:#5B21B6;display:flex;align-items:center;gap:5px;margin-bottom:6px">✨ Suggerimento AI</label>
@@ -670,7 +679,8 @@ let dirty = false;
 let currentPianoId = null;
 let renamingPastoIdx = null;
 let renamingGiornoIdx = null;
-let altMi = -1, altIi = -1, altNutrient = 'ch';
+let altMi = -1, altIi = -1, altNutrients = ['ch'];
+let altDraft = [], altDraftNota = '';
 
 // ═══════════════════════════════════════════════════
 // CUSTOM CONFIRM DIALOG
@@ -992,23 +1002,26 @@ function buildRow(mi, ii) {
   const misura = item.misura || '';
   const srcBadge = f ? `<span class="ac-src src-${f.src === 'CREA' ? 'crea' : f.src === 'BDA' ? 'bda' : f.src === 'Ricetta' ? 'ricetta' : 'custom'}">${srcLabel(f.src)}</span>` : '';
   const microTds = MICROS.map(m => `<td class="vc" style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(f, m.k, qt), 2)}</td>`).join('');
-  item.altPrint = (item.altPrint || []).map(a => normalizeAltEntry(a));
-  const altRows = (item.altPrint || []).map((a, ai) => {
-    const fa = lookup(a.nome);
-    const av = getAltComputedValues(a);
-    return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${ai}">
+  item.altPrint = (item.altPrint || []).map(g => normalizeAltGroup(g));
+  const altRows = (item.altPrint || []).map((g, gi) => {
+    const t = computeAltGroupTotals(g);
+    const foodsHtml = g.items.map((a, si) => `<span class="alt-food-chip"><b>${esc(a.nome)}</b>
+        <input class="alt-grammatura-input" type="number" min="1" step="1" value="${a.qt}" oninput="onAltQtInput(${mi},${ii},${gi},${si},this)" title="Grammatura alternativa">
+        <span class="alt-grammatura-unit">g</span>
+        ${g.items.length > 1 ? `<button class="alt-food-remove no-print" onclick="removeAltGroupItem(${mi},${ii},${gi},${si})" title="${_L('Rimuovi questo alimento dal gruppo','Remove this food from the group')}">✕</button>` : ''}
+      </span>`).join('<span class="alt-plus">+</span>');
+    const microTdsAlt = MICROS.map((m, mIdx) => `<td data-mk="${m.k}" style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(t.mic[mIdx], 2)}</td>`).join('');
+    return `<tr class="alt-print-row" id="apr-${mi}-${ii}-${gi}">
       <td style="padding-left:22px;text-align:left">
-        <span class="alt-inline-wrap">↳ ALT: <b>${esc(a.nome)}</b>
-          <input class="alt-grammatura-input" type="number" min="1" step="1" value="${a.qt}" oninput="onAltQtInput(${mi},${ii},${ai},this)" title="Grammatura alternativa">
-          <span class="alt-grammatura-unit">g</span>
-        </span>
+        <div class="alt-inline-wrap">↳ ALT: ${foodsHtml}</div>
+        <input class="alt-nota-input" type="text" value="${esc(g.nota || '')}" placeholder="${_L('📝 Nota (facoltativa)...','📝 Note (optional)...')}" oninput="onAltNotaInput(${mi},${ii},${gi},this)">
       </td>
-      <td class="alt-qt">${a.qt}g</td>
-      <td data-k="k">${fmtV(av.k)}</td><td data-k="p">${fmtV(av.p)}</td>
-      <td></td><td data-k="g">${fmtV(av.g)}</td><td></td><td data-k="ch">${fmtV(av.ch)}</td><td data-k="fi">${fmtV(av.fi)}</td>
-      ${MICROS.map(m => `<td style="display:${visM.has(m.k) ? '' : 'none'}">${fmtV(cv(fa, m.k, a.qt), 2)}</td>`).join('')}
+      <td class="alt-qt">${t.qt}g</td>
+      <td data-k="k">${fmtV(t.k)}</td><td data-k="p">${fmtV(t.p)}</td>
+      <td></td><td data-k="g">${fmtV(t.g)}</td><td></td><td data-k="ch">${fmtV(t.ch)}</td><td data-k="fi">${fmtV(t.fi)}</td>
+      ${microTdsAlt}
       <td></td>
-      <td class="no-print"><button class="del-row" onclick="removeAltPrint(${mi},${ii},${ai})">✕</button></td>
+      <td class="no-print"><button class="del-row" onclick="removeAltPrint(${mi},${ii},${gi})" title="${_L('Rimuovi sostituzione','Remove substitution')}">✕</button></td>
       <td></td>
     </tr>`;
   }).join('');
@@ -1313,17 +1326,27 @@ function onQI(mi, ii, inp) {
   // Scale alternative quantities proportionally when the main quantity changes
   if (oldQt > 0 && newQt > 0 && item.altPrint && item.altPrint.length) {
     const ratio = newQt / oldQt;
-    item.altPrint = item.altPrint.map(a => scaleAltEntry(a, ratio));
+    item.altPrint = item.altPrint.map(g => scaleAltGroup(g, ratio));
     // Update the alt-print rows already in the DOM
-    item.altPrint.forEach((a, ai) => {
-      const aprRow = document.getElementById(`apr-${mi}-${ii}-${ai}`);
+    item.altPrint.forEach((g, gi) => {
+      const aprRow = document.getElementById(`apr-${mi}-${ii}-${gi}`);
       if (!aprRow) return;
+      const t = computeAltGroupTotals(g);
       const qtCell = aprRow.querySelector('.alt-qt');
-      if (qtCell) qtCell.textContent = a.qt + 'g';
-      const av = getAltComputedValues(a);
+      if (qtCell) qtCell.textContent = t.qt + 'g';
+      const vals = { k: t.k, p: t.p, g: t.g, ch: t.ch, fi: t.fi };
       aprRow.querySelectorAll('td[data-k]').forEach(td => {
         const key = td.getAttribute('data-k');
-        td.innerHTML = fmtV(av[key]);
+        td.innerHTML = fmtV(vals[key]);
+      });
+      aprRow.querySelectorAll('td[data-mk]').forEach(td => {
+        const mIdx = MICROS.findIndex(m => m.k === td.getAttribute('data-mk'));
+        if (mIdx >= 0) td.innerHTML = fmtV(t.mic[mIdx], 2);
+      });
+      // Refresh per-food grammatura inputs (scaled values) without losing the group row identity
+      g.items.forEach((a, si) => {
+        const inp = aprRow.querySelectorAll('.alt-grammatura-input')[si];
+        if (inp) inp.value = a.qt;
       });
     });
   }
@@ -1627,22 +1650,70 @@ function scaleAltEntry(alt, ratio) {
     }
   };
 }
-function onAltQtInput(mi, ii, ai, inp) {
+function genAltGroupId() {
+  return 'ag_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+// A substitution "group" bundles one or more foods printed together as a single
+// alternative (es. biscotti → fette biscottate + marmellata + burro), plus an
+// optional free-text note. Legacy saved plans store a flat {nome,qt,...} per
+// entry: wrap it into a 1-food group so old data keeps rendering unchanged.
+function normalizeAltGroup(g) {
+  if (g && Array.isArray(g.items)) {
+    return { id: g.id || genAltGroupId(), nota: g.nota || '', items: g.items.map(normalizeAltEntry) };
+  }
+  return { id: genAltGroupId(), nota: '', items: [normalizeAltEntry(g)] };
+}
+function scaleAltGroup(g, ratio) {
+  return { ...g, items: g.items.map(a => scaleAltEntry(a, ratio)) };
+}
+function computeAltGroupTotals(group) {
+  let k = 0, p = 0, ch = 0, gr = 0, fi = 0, qt = 0;
+  const mic = MICROS.map(() => 0);
+  group.items.forEach(a => {
+    const av = getAltComputedValues(a);
+    k += av.k; p += av.p; ch += av.ch; gr += av.g; fi += av.fi;
+    qt += parseFloat(a.qt) || 0;
+    const fa = lookup(a.nome);
+    MICROS.forEach((m, mIdx) => { mic[mIdx] += cv(fa, m.k, a.qt) || 0; });
+  });
+  return { k, p, ch, g: gr, fi, qt, mic };
+}
+function onAltQtInput(mi, ii, gi, si, inp) {
   const item = getMeals()[mi]?.items[ii];
-  if (!item || !item.altPrint || !item.altPrint[ai]) return;
+  const group = item?.altPrint?.[gi];
+  if (!group || !group.items[si]) return;
   const newQt = Math.max(1, Math.round(parseFloat(inp.value) || 1));
-  item.altPrint[ai] = normalizeAltEntry({ ...item.altPrint[ai], qt: newQt });
+  group.items[si] = normalizeAltEntry({ ...group.items[si], qt: newQt });
   markDirty();
-  const row = document.getElementById(`apr-${mi}-${ii}-${ai}`);
+  const row = document.getElementById(`apr-${mi}-${ii}-${gi}`);
   if (!row) return;
-  const av = getAltComputedValues(item.altPrint[ai]);
+  const t = computeAltGroupTotals(group);
   const qtCell = row.querySelector('.alt-qt');
-  if (qtCell) qtCell.textContent = newQt + 'g';
+  if (qtCell) qtCell.textContent = t.qt + 'g';
+  const vals = { k: t.k, p: t.p, g: t.g, ch: t.ch, fi: t.fi };
   ['k', 'p', 'g', 'ch', 'fi'].forEach(k => {
     const td = row.querySelector(`td[data-k="${k}"]`);
     if (!td) return;
-    td.innerHTML = fmtV(av[k]);
+    td.innerHTML = fmtV(vals[k]);
   });
+  row.querySelectorAll('td[data-mk]').forEach(td => {
+    const mIdx = MICROS.findIndex(m => m.k === td.getAttribute('data-mk'));
+    if (mIdx >= 0) td.innerHTML = fmtV(t.mic[mIdx], 2);
+  });
+}
+function onAltNotaInput(mi, ii, gi, inp) {
+  const group = getMeals()[mi]?.items[ii]?.altPrint?.[gi];
+  if (!group) return;
+  group.nota = inp.value;
+  markDirty();
+}
+function removeAltGroupItem(mi, ii, gi, si) {
+  const item = getMeals()[mi]?.items[ii];
+  const group = item?.altPrint?.[gi];
+  if (!group) return;
+  group.items.splice(si, 1);
+  if (!group.items.length) item.altPrint.splice(gi, 1);
+  markDirty(); renderPiano();
 }
 function openAlt(mi, ii) {
   altMi = mi; altIi = ii;
@@ -1650,14 +1721,51 @@ function openAlt(mi, ii) {
   const f = lookup(item.nome);
   if (!item.nome || !f) { toast(_L('Seleziona prima un alimento valido','Select a valid food item first'), 'err'); return; }
   document.getElementById('alt-title').textContent = `⇄ Alternative a: ${foodNameEN(item.nome)} (${item.qt || 0}g)`;
-  document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
-    `<button class="mtog${altNutrient === b.k ? ' on' : ''}" onclick="altNutrient='${b.k}';document.querySelectorAll('#alt-nutrient-btns .mtog').forEach(x=>x.classList.remove('on'));this.classList.add('on');showAlternatives()">${_NL(b)}</button>`
-  ).join('');
+  renderAltNutrientBtns();
   document.getElementById('alt-search').value = '';
   document.getElementById('alt-ai-context').value = '';
   document.getElementById('alt-ai-results').innerHTML = '';
+  altDraft = []; altDraftNota = '';
+  const notaInp = document.getElementById('alt-draft-nota'); if (notaInp) notaInp.value = '';
+  renderAltDraftBar();
   showAlternatives();
   openM('modal-alt');
+}
+
+// ── Gruppo di sostituzione in costruzione (più alimenti in una sola sostituzione) ──
+function addToAltDraft(nome, qt) {
+  altDraft.push(normalizeAltEntry({ nome, qt, originalQt: qt, originalValues: buildAltOriginalValues(nome, qt) }));
+  renderAltDraftBar();
+  toast(_L('➕ Aggiunto al gruppo in costruzione','➕ Added to the substitution group'), 'ok');
+}
+function removeFromAltDraft(idx) {
+  altDraft.splice(idx, 1);
+  renderAltDraftBar();
+}
+function clearAltDraft() {
+  altDraft = []; altDraftNota = '';
+  const notaInp = document.getElementById('alt-draft-nota'); if (notaInp) notaInp.value = '';
+  renderAltDraftBar();
+}
+function onAltDraftNotaInput(inp) { altDraftNota = inp.value; }
+function renderAltDraftBar() {
+  const bar = document.getElementById('alt-draft-bar');
+  const chips = document.getElementById('alt-draft-chips');
+  if (!bar || !chips) return;
+  if (!altDraft.length) { bar.style.display = 'none'; return; }
+  bar.style.display = '';
+  chips.innerHTML = altDraft.map((a, i) => `<span class="alt-draft-chip">${esc(foodNameEN(a.nome))} <b>${a.qt}g</b>
+    <button onclick="removeFromAltDraft(${i})" title="${_L('Rimuovi','Remove')}">✕</button></span>`).join('');
+}
+function saveAltDraftGroup() {
+  if (!altDraft.length) return;
+  const item = getMeals()[altMi]?.items[altIi];
+  if (!item) return;
+  if (!item.altPrint) item.altPrint = [];
+  item.altPrint.push({ id: genAltGroupId(), nota: altDraftNota.trim(), items: altDraft.slice() });
+  clearAltDraft();
+  markDirty(); renderPiano(); showAlternatives();
+  toast(_L('✅ Sostituzione combinata salvata!','✅ Combined substitution saved!'), 'ok');
 }
 
 async function suggestAIAlternatives() {
@@ -1727,34 +1835,75 @@ async function suggestAIAlternatives() {
   }
 }
 
+function renderAltNutrientBtns() {
+  document.getElementById('alt-nutrient-btns').innerHTML = ALL_NUTRIENTS.map(b =>
+    `<button class="mtog${altNutrients.includes(b.k) ? ' on' : ''}" onclick="toggleAltNutrient('${b.k}')">${_NL(b)}</button>`
+  ).join('');
+}
+function toggleAltNutrient(k) {
+  const idx = altNutrients.indexOf(k);
+  if (idx >= 0) {
+    if (altNutrients.length === 1) { toast(_L('Seleziona almeno un nutriente','Select at least one nutrient'), 'info'); return; }
+    altNutrients.splice(idx, 1);
+  } else {
+    altNutrients.push(k);
+  }
+  renderAltNutrientBtns();
+  showAlternatives();
+}
 function showAlternatives() {
   const item = getMeals()[altMi]?.items[altIi];
   if (!item) return;
   const f = lookup(item.nome); if (!f) return;
   const qt = parseFloat(item.qt) || 100;
-  const targetVal = (f[altNutrient] || 0) / 100 * qt;
-  const _an = ALL_NUTRIENTS.find(n => n.k === altNutrient) || { l: altNutrient, k: altNutrient };
-  const nutriLabel = _NL(_an);
   const searchQ = (document.getElementById('alt-search')?.value || '').toLowerCase().trim();
 
-  // If searching by name: show all matching foods regardless of targetVal
-  // If not searching: show equivalents by nutrient
+  // If searching by name: show all matching foods regardless of target values
   let pool = ALL_DB.filter(alt => alt.n !== f.n);
   if (searchQ) pool = pool.filter(alt => alt.n.toLowerCase().includes(searchQ));
 
+  const nutriKeys = altNutrients.length ? altNutrients : ['ch'];
+  const targets = nutriKeys.map(k => ({ k, val: (f[k] || 0) / 100 * qt })).filter(t => t.val > 0);
+
   let alts, introText;
-  if (targetVal > 0) {
-    const withNutrient = pool.filter(alt => alt[altNutrient] && alt[altNutrient] > 0);
+  if (targets.length === 1) {
+    // Single nutrient: exact equivalence (one unknown, one equation) — solvable precisely.
+    const nk = targets[0].k, targetVal = targets[0].val;
+    const nutriLabel = _NL(ALL_NUTRIENTS.find(n => n.k === nk) || { l: nk, k: nk });
+    const withNutrient = pool.filter(alt => alt[nk] && alt[nk] > 0);
     const mapped = withNutrient.map(alt => {
-      const newQt = Math.round((targetVal / (alt[altNutrient] / 100)) * 10) / 10;
+      const newQt = Math.round((targetVal / (alt[nk] / 100)) * 10) / 10;
       return { food: alt, newQt, kcal: Math.round((alt.k || 0) / 100 * newQt), prot: r1((alt.p || 0) / 100 * newQt), diff: Math.abs(newQt - qt) };
     }).filter(a => a.newQt > 0 && a.newQt < 2000);
-    // Sort by similarity if no search, else keep search order
     alts = searchQ ? mapped : mapped.sort((a, b) => a.diff - b.diff);
     alts = alts.slice(0, 40);
     introText = _L(`<b>${qt}g di ${foodNameEN(f.n)}</b> apportano <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalenti (stessa quantità di ${nutriLabel}):`,`<b>${qt}g of ${foodNameEN(f.n)}</b> provide <b>${r1(targetVal)} ${nutriLabel}</b>. Equivalents (same amount of ${nutriLabel}):`);
+  } else if (targets.length > 1) {
+    // Multiple nutrients: one unknown quantity can't hit several targets exactly, so we
+    // solve for the quantity that minimizes the combined relative error (least squares
+    // over the selected nutrients) and rank candidates by how close they land overall.
+    const withAny = pool.filter(alt => targets.some(t => (alt[t.k] || 0) > 0));
+    const mapped = withAny.map(alt => {
+      const coeffs = targets.map(t => (alt[t.k] || 0) / 100 / t.val);
+      const sumC = coeffs.reduce((s, c) => s + c, 0);
+      const sumC2 = coeffs.reduce((s, c) => s + c * c, 0);
+      let newQt = sumC2 > 0 ? sumC / sumC2 : 0;
+      newQt = Math.round(newQt * 10) / 10;
+      if (!(newQt > 0) || newQt >= 2000) return null;
+      const details = targets.map(t => {
+        const got = (alt[t.k] || 0) / 100 * newQt;
+        const errPct = Math.round(((got - t.val) / t.val) * 100);
+        return { k: t.k, got: r1(got), errPct };
+      });
+      const score = details.reduce((s, d) => s + (d.errPct / 100) * (d.errPct / 100), 0);
+      return { food: alt, newQt, kcal: Math.round((alt.k || 0) / 100 * newQt), prot: r1((alt.p || 0) / 100 * newQt), details, score };
+    }).filter(Boolean);
+    alts = searchQ ? mapped : mapped.sort((a, b) => a.score - b.score);
+    alts = alts.slice(0, 40);
+    const labelList = targets.map(t => _NL(ALL_NUTRIENTS.find(n => n.k === t.k) || { l: t.k, k: t.k })).join(' + ');
+    introText = _L(`<b>${qt}g di ${foodNameEN(f.n)}</b> — corrispondenza migliore approssimata su <b>${labelList}</b> insieme (nessun alimento può eguagliare esattamente più nutrienti con un'unica quantità: ordinati dal più vicino):`,`<b>${qt}g of ${foodNameEN(f.n)}</b> — best approximate match across <b>${labelList}</b> together (no single food can hit several nutrients exactly with one quantity: ranked closest first):`);
   } else {
-    // No nutrient value: just show matching foods
+    // No usable nutrient value: just show matching foods
     alts = pool.slice(0, 40).map(alt => ({
       food: alt, newQt: qt,
       kcal: Math.round((alt.k || 0) / 100 * qt),
@@ -1767,10 +1916,17 @@ function showAlternatives() {
     document.getElementById('alt-results').innerHTML = `<p style="color:var(--slate-l)">${_L('Nessuna alternativa trovata. Prova a cercare per nome.','No alternatives found. Try searching by name.')}</p>`;
     return;
   }
-  const currentPrint = (getMeals()[altMi].items[altIi].altPrint || []).map(a => a.nome);
+  const currentPrint = (getMeals()[altMi].items[altIi].altPrint || []).filter(g => g.items.length === 1).map(g => g.items[0].nome);
   const rows = alts.map(a => {
     const inPrint = currentPrint.includes(a.food.n);
     const srcCls = a.food.src === 'CREA' ? 'src-crea' : a.food.src === 'BDA' ? 'src-bda' : 'src-custom';
+    const matchBadges = a.details ? a.details.map(d => {
+      const absErr = Math.abs(d.errPct);
+      const color = absErr <= 10 ? '#065F46' : absErr <= 25 ? '#92400E' : '#991B1B';
+      const bg = absErr <= 10 ? '#D1FAE5' : absErr <= 25 ? '#FEF3C7' : '#FEE2E2';
+      const nl = _NL(ALL_NUTRIENTS.find(n => n.k === d.k) || { l: d.k, k: d.k });
+      return `<span style="background:${bg};color:${color};padding:1px 6px;border-radius:5px;font-size:9.5px;font-weight:700">${nl}: ${d.got} (${d.errPct >= 0 ? '+' : ''}${d.errPct}%)</span>`;
+    }).join(' ') : '';
     return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:white;border-radius:6px;margin-bottom:5px;border:1px solid var(--border);flex-wrap:wrap">
       <div style="font-weight:600;font-size:12.5px;flex:1;min-width:140px">${esc(foodNameEN(a.food.n))} <span class="ac-src ${srcCls}">${a.food.src}</span></div>
       <span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700">${a.newQt}g</span>
@@ -1778,7 +1934,9 @@ function showAlternatives() {
       <div style="display:flex;gap:6px;flex-shrink:0">
         <button class="btn btn-primary btn-xs" onclick="applyAlt(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${_L('Sostituisci','Substitute')}</button>
         <button class="btn btn-xs" style="background:${inPrint?'#D1FAE5':'#E0F2F1'};color:${inPrint?'#065F46':'#0F766E'};border:1px solid ${inPrint?'#6EE7B7':'#5EEAD4'}" onclick="toggleAltPrint(${altMi},${altIi},'${escJS(a.food.n)}',${a.newQt})">${inPrint?_L('✅ In stampa','✅ In print'):_L('📄 +Stampa','📄 +Print')}</button>
+        <button class="btn btn-xs" style="background:#F5F3FF;color:#5B21B6;border:1px solid #DDD6FE" onclick="addToAltDraft('${escJS(a.food.n)}',${a.newQt})" title="${_L('Aggiungi a un gruppo di più alimenti (es. fette+marmellata+burro)','Add to a multi-food group (e.g. toast+jam+butter)')}">${_L('🔗 +Gruppo','🔗 +Group')}</button>
       </div>
+      ${matchBadges ? `<div style="display:flex;gap:4px;flex-wrap:wrap;width:100%">${matchBadges}</div>` : ''}
     </div>`;
   }).join('');
   document.getElementById('alt-results').innerHTML = `<p style="font-size:12px;color:var(--slate-l);margin-bottom:10px">${introText}</p>${rows}<p style="font-size:11px;color:var(--slate-l);margin-top:6px">${_L(`Mostrando ${alts.length} risultati. Usa la ricerca per filtrare.`,`Showing ${alts.length} results. Use the search to filter.`)}</p>`;
@@ -1786,15 +1944,19 @@ function showAlternatives() {
 
 function toggleAltPrint(mi, ii, nome, qt) {
   if (!getMeals()[mi].items[ii].altPrint) getMeals()[mi].items[ii].altPrint = [];
-  const idx = getMeals()[mi].items[ii].altPrint.findIndex(a => a.nome === nome);
+  const idx = getMeals()[mi].items[ii].altPrint.findIndex(g => g.items.length === 1 && g.items[0].nome === nome);
   if (idx >= 0) { getMeals()[mi].items[ii].altPrint.splice(idx, 1); toast(_L('🗑️ Rimosso dalla stampa','🗑️ Removed from print'), 'info'); }
   else {
-    getMeals()[mi].items[ii].altPrint.push(normalizeAltEntry({
-      nome,
-      qt,
-      originalQt: qt,
-      originalValues: buildAltOriginalValues(nome, qt)
-    }));
+    getMeals()[mi].items[ii].altPrint.push({
+      id: genAltGroupId(),
+      nota: '',
+      items: [normalizeAltEntry({
+        nome,
+        qt,
+        originalQt: qt,
+        originalValues: buildAltOriginalValues(nome, qt)
+      })]
+    });
     toast(_L('📄 Aggiunto alla stampa!','📄 Added to print!'), 'ok');
   }
   markDirty(); showAlternatives(); renderPiano();
@@ -2170,7 +2332,8 @@ function esportaExcel() {
         const fi=f?xn((f.fi||0)/100*qt):0;
         pK+=k;pP+=p;pCH+=ch;pZ+=z;pG+=g;pGS+=gs;pFi+=fi;
         const mV=selMicros.map((mk,mi)=>{const v=f?xn((f[mk]||0)/100*qt):0;pM[mi]+=v;return v;});
-        const alt=item.altPrint?.length&&item.altPrint[0]?.nome?` (Alt: ${item.altPrint[0].nome} ${item.altPrint[0].qt}g)`:'';
+        const alt0=item.altPrint?.[0];
+        const alt=alt0&&alt0.items?.length?` (Alt: ${alt0.items.map(a=>`${a.nome} ${a.qt}g`).join('+')}${alt0.nota?` [${alt0.nota}]`:''})`:'';
         const odd=ri%2,s0=odd?(alt?16:8):(alt?15:7),sn=odd?10:9,sk=odd?12:11,sq=odd?14:13;
         dRow([item.nome+alt,qt,k,p,ch,z,g,gs,fi,...mV],[s0,sq,sk,sn,sn,sn,sn,sn,sn,...mV.map(()=>sn)],16);
       });
@@ -2331,15 +2494,17 @@ function _buildPDFAllDaysHTML(lyt) {
         html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(f,'fi',qt)) + '</td>';
         html += '<td style="padding:2px 3px;font-size:6.5px;text-align:left">' + (f?esc(f.c||''):'') + '</td></tr>';
         if (it.altPrint && it.altPrint.length) {
-          it.altPrint.forEach(a => {
-            const fa=lookup(a.nome);
-            html += '<tr style="background:#F0FDF4;border-bottom:1px solid #DCFCE7"><td style="padding:2px 4px 2px 16px;text-align:left;color:#065F46;font-size:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">↳ ALT: ' + esc(a.nome) + '</td>';
-            html += '<td style="padding:2px 3px;text-align:center;color:#065F46">' + a.qt + '</td>';
-            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'k',a.qt)) + '</td>';
-            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'p',a.qt)) + '</td>';
+          it.altPrint.forEach(g => {
+            const grp = normalizeAltGroup(g);
+            const t = computeAltGroupTotals(grp);
+            const label = grp.items.map(a=>esc(a.nome)+' '+a.qt+'g').join(' + ');
+            html += '<tr style="background:#F0FDF4;border-bottom:1px solid #DCFCE7"><td style="padding:2px 4px 2px 16px;text-align:left;color:#065F46;font-size:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">↳ ALT: ' + label + (grp.nota?' <span style="font-style:italic">('+esc(grp.nota)+')</span>':'') + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center;color:#065F46">' + t.qt + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(t.k) + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(t.p) + '</td>';
             html += '<td></td><td></td><td></td>';
-            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'ch',a.qt)) + '</td>';
-            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(cv(fa,'fi',a.qt)) + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(t.ch) + '</td>';
+            html += '<td style="padding:2px 3px;text-align:center">' + fmtV(t.fi) + '</td>';
             html += '<td></td></tr>';
           });
         }
@@ -2403,8 +2568,10 @@ function _buildSimpleDayHTML(giorno, showDayHeader, lyt) {
       const qtTxt=item.qt?'<span style="font-weight:700;color:#334155">'+item.qt+'g</span>':'';
       html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 12px;border-bottom:1px solid #F1F5F9"><span style="font-size:13px">' + esc(item.nome) + misuraTxt + '</span><span style="font-size:13px;white-space:nowrap;padding-left:10px">' + qtTxt + '</span></div>';
       if (item.altPrint && item.altPrint.length) {
-        item.altPrint.forEach(a => {
-          html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 12px 4px 24px;background:#F0FDF4;border-bottom:1px solid #DCFCE7"><span style="font-size:11.5px;color:#15803D">↳ oppure: ' + esc(a.nome) + '</span><span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:10px">' + a.qt + 'g</span></div>';
+        item.altPrint.forEach(g => {
+          const grp = normalizeAltGroup(g);
+          const label = grp.items.map(a=>esc(a.nome)+' <b style="color:#15803D">'+a.qt+'g</b>').join(' + ');
+          html += '<div style="padding:4px 12px 4px 24px;background:#F0FDF4;border-bottom:1px solid #DCFCE7"><span style="font-size:11.5px;color:#15803D">↳ oppure: ' + label + '</span>' + (grp.nota?'<div style="font-size:10.5px;color:#15803D;font-style:italic;margin-top:2px">📝 '+esc(grp.nota)+'</div>':'') + '</div>';
         });
       }
     });
@@ -2516,8 +2683,10 @@ function _buildCompattaDayHTML(giorno, showDayHeader, lyt) {
       if (qtStr) html += '<span style="font-size:13px;font-weight:700;color:'+lyt.accent+'">' + qtStr + '</span>';
       html += '</div></div>';
       if (item.altPrint&&item.altPrint.length) {
-        item.altPrint.forEach(a=>{
-          html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 16px 5px 28px;background:#F0FDF4;border-bottom:1px solid #DCFCE7"><span style="font-size:11.5px;color:#15803D">↳ oppure: ' + esc(a.nome) + '</span><span style="font-size:11.5px;font-weight:700;color:#15803D;white-space:nowrap;padding-left:8px">' + a.qt + ' g</span></div>';
+        item.altPrint.forEach(g=>{
+          const grp = normalizeAltGroup(g);
+          const label = grp.items.map(a=>esc(a.nome)+' <b>'+a.qt+' g</b>').join(' + ');
+          html += '<div style="padding:5px 16px 5px 28px;background:#F0FDF4;border-bottom:1px solid #DCFCE7"><span style="font-size:11.5px;color:#15803D">↳ oppure: ' + label + '</span>' + (grp.nota?'<div style="font-size:10.5px;color:#15803D;font-style:italic;margin-top:2px">📝 '+esc(grp.nota)+'</div>':'') + '</div>';
         });
       }
     });

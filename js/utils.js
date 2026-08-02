@@ -1818,6 +1818,48 @@ function initPianoEsempio(containerId, config) {
 })();
 
 // ═══════════════════════════════════════════════════
+// AUTOMATIC CLIENT ERROR LOGGING — cattura errori JS non gestiti e promise
+// rejection non gestite, li registra su client_errors (Supabase). Sostituto
+// leggero di un servizio esterno tipo Sentry: nessun costo/account terzo,
+// solo per far emergere errori silenziosi in produzione (es. webhook/JS che
+// falliscono senza che nessuno se ne accorga). Letto solo dagli admin.
+// ═══════════════════════════════════════════════════
+(function _installErrorLogger() {
+  const MAX_PER_SESSION = 20; // evita di floodare la tabella in caso di errore ripetuto in loop
+  let sent = 0;
+  const seen = new Set();
+
+  async function _logClientError(level, message, stack) {
+    if (sent >= MAX_PER_SESSION) return;
+    const key = (level + '|' + (message || '')).slice(0, 300);
+    if (seen.has(key)) return;
+    seen.add(key);
+    sent++;
+    try {
+      if (typeof sb === 'undefined') return;
+      await sb.from('client_errors').insert({
+        app: 'nutriplan-pro',
+        level,
+        message: String(message || '(nessun messaggio)').slice(0, 2000),
+        stack: stack ? String(stack).slice(0, 4000) : null,
+        page_url: window.location.href,
+        user_id: (typeof currentUser !== 'undefined' && currentUser?.id) || null,
+        user_email: (typeof currentUser !== 'undefined' && currentUser?.email) || null,
+        user_agent: navigator.userAgent,
+      });
+    } catch (e) { /* silenzioso: un logger di errori non deve mai generare altri errori */ }
+  }
+
+  window.addEventListener('error', e => {
+    _logClientError('error', e.message, e.error && e.error.stack);
+  });
+  window.addEventListener('unhandledrejection', e => {
+    const reason = e.reason;
+    _logClientError('unhandledrejection', (reason && reason.message) || String(reason), reason && reason.stack);
+  });
+})();
+
+// ═══════════════════════════════════════════════════
 // CUSTOM SELECT DROPDOWN
 // ═══════════════════════════════════════════════════
 (function() {

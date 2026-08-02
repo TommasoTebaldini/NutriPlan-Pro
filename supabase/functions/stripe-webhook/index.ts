@@ -27,6 +27,21 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
+// Logga su client_errors (stessa tabella usata lato client, vedi
+// supabase_setup.sql sezione "schema_migrations + client_errors") così un
+// webhook Stripe che fallisce non passa inosservato — prima di questo, un
+// errore qui finiva solo nei log Deno, mai controllati proattivamente.
+async function logServerError(message: string, stack?: string) {
+  try {
+    await supabase.from("client_errors").insert({
+      app: "stripe-webhook",
+      level: "error",
+      message: String(message).slice(0, 2000),
+      stack: stack ? String(stack).slice(0, 4000) : null,
+    });
+  } catch (_e) { /* silenzioso: non deve mai far fallire la risposta al webhook */ }
+}
+
 serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
   const body = await req.text();
@@ -41,6 +56,7 @@ serve(async (req) => {
     );
   } catch (err) {
     console.error("Webhook signature failed:", err.message);
+    await logServerError("Webhook signature failed: " + err.message);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
@@ -124,6 +140,7 @@ serve(async (req) => {
     }
   } catch (err) {
     console.error("Handler error:", err);
+    await logServerError("Handler error (" + event.type + "): " + err.message, err.stack);
     return new Response(`Handler Error: ${err.message}`, { status: 500 });
   }
 

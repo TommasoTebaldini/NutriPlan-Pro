@@ -3,6 +3,7 @@
 // Variabile: GEMINI_API_KEY
 
 import { checkRateLimit } from './_rateLimit.js';
+import { checkMonthlyQuota } from './_monthlyQuota.js';
 
 // Public Supabase values — l'URL non è sensibile, ma l'anon key non deve avere
 // un fallback hardcoded nel codice server-side (vedi verifySupabaseToken sotto).
@@ -15,6 +16,9 @@ const MAX_CONTENT_BYTES = 32768; // 32 KB per request body
 // Rate limiter: distribuito su Upstash se configurato, altrimenti in memoria
 // (vedi api/_rateLimit.js). 10 richieste/min per utente.
 const RL_MAX = 10;
+// Tetto mensile duraturo (vedi api/_monthlyQuota.js) — 10/min moltiplicato per
+// un mese intero sarebbe teoricamente enorme; questo è il freno reale ai costi.
+const MONTHLY_MAX = 500;
 
 // Token verification cache: evita una chiamata HTTP a Supabase per ogni richiesta
 const _tkCache = new Map(); // token → { user, exp }
@@ -74,6 +78,9 @@ export default async function handler(req, res) {
 
   if (!(await checkRateLimit(user.id, { scope: 'claude', max: RL_MAX }))) {
     return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
+  }
+  if (!(await checkMonthlyQuota(token, user.id, 'ai_calls', MONTHLY_MAX))) {
+    return res.status(429).json({ error: `Hai raggiunto il limite di ${MONTHLY_MAX} richieste AI incluse nel piano per questo mese. Il conteggio si azzera a inizio mese.` });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;

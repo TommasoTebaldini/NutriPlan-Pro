@@ -7,7 +7,7 @@ const CONSIGLI_BASE = [
   {
     id:'diabete', emoji:'🩸', nome:'Diabete Mellito Tipo 2', colore:'#3B82F6',
     pasti:'5 pasti (3 principali + 2 spuntini)', porzioni:'Porzioni moderate, costanti nei CHO',
-    idratazione:'≥1.5-2 L/die, preferire acqua', nota:'ESPEN 2023 · Distribuire i carboidrati uniformemente durante la giornata. Evitare pasti abbondanti. Monitorare la glicemia post-prandiale.',
+    idratazione:'≥1.5-2 L/die, preferire acqua', nota:'EASD/DNSG 2023 · Distribuire i carboidrati uniformemente durante la giornata (nessuna % di CHO fissa raccomandata). Evitare pasti abbondanti. Monitorare la glicemia post-prandiale.',
     ok:['Pasta/riso integrali','Legumi (lenticchie, ceci, fagioli)','Verdure non amidacee (abbondanti)','Frutta fresca (porzioni moderate)','Olio EVO','Pesce, pollo, tacchino','Yogurt greco 0%','Avena, orzo','Noci e mandorle (piccole porzioni)'],
     no:['Zucchero, miele, sciroppi','Bevande zuccherate e succhi di frutta','Dolci, caramelle, dessert','Pane bianco e riso bianco in eccesso','Patate fritte, snack','Alcol a stomaco vuoto'],
     mod:['Frutta ad alto indice glicemico (banane, uva)','Pane bianco (preferire integrale)','Patate lesse','Alcol (solo ai pasti)'],
@@ -17,7 +17,7 @@ const CONSIGLI_BASE = [
   {
     id:'irc', emoji:'🫘', nome:'Insufficienza Renale Cronica', colore:'#F97316',
     pasti:'3 pasti principali + 1-2 spuntini leggeri', porzioni:'Porzioni di proteine ridotte e controllate',
-    idratazione:'Secondo indicazione medica (spesso limitata)', nota:'ESPEN 2021 · Lisciviare le verdure: sbucciare, tagliare a pezzi, lessare in abbondante acqua fredda cambiandola 2-3 volte. Questo riduce il potassio del 30-50%.',
+    idratazione:'Secondo indicazione medica (spesso limitata)', nota:'ESPEN 2021 + KDOQI 2020 · Proteine 0.55-0.60 g/kg/die (0.6-0.8 se diabetico). KDOQI 2020 non raccomanda più un limite fisso di potassio per tutti: individualizzare sui valori sierici. Quando la restrizione è indicata, lisciviare le verdure (sbucciare, tagliare a pezzi, lessare in abbondante acqua fredda cambiandola 2-3 volte) resta utile per ridurne il contenuto.',
     ok:['Riso bianco, pasta bianca','Pane bianco non salato','Albume d\'uovo (basso fosforo)','Mela, pera (basso potassio)','Verdure lessate (lisciviazione)','Cetriolo, lattuga, zucchine','Olio EVO','Miele, marmellata (senza K aggiunto)'],
     no:['Banane, kiwi, albicocche, agrumi (alto K)','Patate, pomodori, legumi (alto K)','Latticini in eccesso (alto P)','Cioccolato, noci, semi (alto P)','Cola (alta in fosforo)','Sale aggiunto','Cibi in scatola (alto Na e P)','Integratori di K e P non prescritti'],
     mod:['Carne e pesce (proteine: quantità controllate)','Pane integrale (più P)','Frutta cotta (riduce K)'],
@@ -27,7 +27,7 @@ const CONSIGLI_BASE = [
   {
     id:'ipertensione', emoji:'💊', nome:'Ipertensione Arteriosa', colore:'#6366F1',
     pasti:'3 pasti regolari + 1-2 spuntini', porzioni:'Porzioni normali, evitare abbuffate',
-    idratazione:'≥2 L/die, evitare alcolici e bevande energetiche', nota:'ESH 2023 · La riduzione di 1g di sodio/die abbassa la pressione di ~3 mmHg. Oltre il 70% del sodio alimentare proviene da cibi industriali, non dal sale aggiunto.',
+    idratazione:'≥2 L/die, evitare alcolici e bevande energetiche', nota:'ESH 2023 · La riduzione di 1g di sodio/die abbassa la pressione di ~3 mmHg. Una parte rilevante del sodio alimentare proviene da cibi industriali/processati, non solo dal sale aggiunto a tavola.',
     ok:['Verdure a foglia verde (spinaci, rucola, bietole)','Frutta fresca (banane, kiwi, agrumi — ricchi di K)','Cereali integrali','Legumi','Pesce azzurro (omega-3)','Latticini magri (yogurt, latte scremato)','Noci (moderate)','Olio EVO','Aglio, erbe aromatiche (sostituiscono il sale)'],
     no:['Sale aggiunto (max 5g NaCl al giorno totale)','Salumi, affettati, insaccati','Formaggi stagionati','Cibi in scatola e conserve','Patatine, snack salati','Dadi da brodo, salse pronte','Alcol (soprattutto in eccesso)','Liquirizia (aumenta la pressione)'],
     mod:['Caffè (max 2-3/die)','Formaggi freschi (mozzarella, ricotta)','Carne rossa (1-2 volte/settimana)'],
@@ -37,7 +37,7 @@ const CONSIGLI_BASE = [
   {
     id:'obesita', emoji:'⚖️', nome:'Obesità e Sovrappeso', colore:'#22C55E',
     pasti:'5 pasti (evitare di saltare i pasti)', porzioni:'Ridurre le porzioni del 20-30%',
-    idratazione:'≥2 L/die (bere prima dei pasti aiuta)', nota:'ESPEN 2022 · Obiettivo: -0.5/1 kg a settimana. Diete troppo restrittive portano a recupero del peso. La perdita graduale preserva la massa muscolare.',
+    idratazione:'≥2 L/die (bere prima dei pasti aiuta)', nota:'ESPEN/UEG 2022 · Obiettivo: -0.5/1 kg a settimana. Diete troppo restrittive portano a recupero del peso. La perdita graduale preserva la massa muscolare.',
     ok:['Verdure non amidacee (abbondanti, riempiono)', 'Proteine magre: pollo, tacchino, pesce, legumi','Cereali integrali (saziano di più)','Frutta fresca (2 porzioni/die)','Yogurt greco 0%','Acqua e tisane senza zucchero','Olio EVO (2-3 cucchiai/die)'],
     no:['Cibi ultra-processati (merendine, snack)','Bevande zuccherate e alcoliche','Dolci, gelati, dessert','Fritture e fast food','Pane bianco in eccesso','Formaggi grassi in eccesso','Salse e condimenti ipercalorici'],
     mod:['Frutta secca (alta densità calorica: max 30g/die)','Pane (preferire integrale, max 2 fette/die)','Pasta/riso (porzioni ridotte: 70-80g)','Formaggio (1-2 volte/settimana)'],
@@ -47,7 +47,7 @@ const CONSIGLI_BASE = [
   {
     id:'dislipidemia', emoji:'🫀', nome:'Dislipidemia', colore:'#EF4444',
     pasti:'3 pasti + 1-2 spuntini', porzioni:'Porzioni moderate, limitare grassi animali',
-    idratazione:'≥2 L/die', nota:'ESC/EAS 2019 · La dieta può ridurre LDL del 10-20%. I grassi trans (presenti in molti cibi industriali) sono particolarmente dannosi e aumentano LDL riducendo HDL.',
+    idratazione:'≥2 L/die', nota:'ESC/EAS 2019 · Le modifiche dietetiche combinate possono ridurre LDL del 20-30%. I grassi trans (presenti in molti cibi industriali) sono particolarmente dannosi e aumentano LDL riducendo HDL.',
     ok:['Olio EVO (fonte di grassi monoinsaturi)','Pesce azzurro 2-3 volte/settimana (omega-3)','Avena e orzo (fibre solubili riducono colesterolo)','Legumi (fibre solubili)','Frutta secca: noci, mandorle (omega-3, fibre)','Yogurt con fitosteroli','Soia e derivati','Verdure e frutta abbondanti','Aglio (effetto ipocolesterolemizzante)'],
     no:['Burro, strutto, lardo','Carni grasse, salumi, insaccati','Formaggi stagionati in eccesso','Margarine con grassi trans','Dolci con olio di palma/cocco','Fritti','Frattaglie (fegato, reni)'],
     mod:['Uova (max 3-4/settimana)','Carne rossa (max 1-2 volte/settimana)','Formaggi freschi (mozzarella, ricotta)','Alcol (max 1 bicchiere di vino/die)'],
@@ -175,7 +175,7 @@ const CONSIGLI_BASE = [
     id:'dialisi', emoji:'💧', nome:'Dialisi (Emodialisi / Peritoneale)', colore:'#06B6D4',
     pasti:'3 pasti + 1-2 spuntini', porzioni:'Proteine aumentate, volume liquidi controllato',
     idratazione:'500 mL + diuresi residua (misurare ogni giorno)',
-    nota:'ESPEN 2021 · La dialisi rimuove proteine → aumentare l\'apporto. Fosforo e potassio: limitare. Liquidi: controllare rigorosamente (pesarsi ogni giorno). Albumina target >3.5 g/dL.',
+    nota:'ESPEN 2021 + KDOQI 2020 · La dialisi rimuove proteine → aumentare l\'apporto (1.0-1.2 g/kg secondo KDOQI 2020). Fosforo: limitare; potassio: individualizzare sui valori sierici (non più un limite fisso universale). Liquidi: controllare rigorosamente (pesarsi ogni giorno). Albumina utile ma aspecifica (risente anche di infiammazione/idratazione): non unico indicatore.',
     ok:['Albume d\'uovo (alto valore biologico, basso fosforo)','Pollo e tacchino (proteine + basso fosforo vs latticini)','Pesce magro (merluzzo, branzino)','Riso bianco e pasta bianca (basso K e P)','Verdure lessate in abbondante acqua (riduce K del 50%)','Mele, pere (basso potassio)','Olio EVO'],
     no:['Banane, kiwi, agrumi, pomodori (alto potassio)','Latticini in eccesso (alto fosforo)','Cola e bevande con fosforo (E338-E341)','Legumi (alto K e P)','Cioccolato, noci, semi (alto P)','Sale aggiunto','Liquidi in eccesso (rispettare quota prescritta)'],
     mod:['Carne: quantità controllate (proteine necessarie ma non eccessive)','Pane (preferire senza sale)'],

@@ -160,31 +160,31 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 124 | iperomocisteinemia | ✅ verificato-corretto | 2026-08-03 | ESC 2020 + EFNS 2020, coerente internamente (non verificato con ricerca dedicata). |
 | 125 | ipoglicemia_reattiva | ✅ verificato-corretto | 2026-08-03 | Endocrine Society 2022, coerente internamente (non riverificato se sovrappone a guideline 2009 ipoglicemia). |
 | 126 | malassorbimento_fruttosio | ✅ verificato-corretto | 2026-08-03 | ACG 2021, coerente internamente. |
-| 127 | ncgs | da fare | | |
-| 128 | obesita_pediatrica | da fare | | |
-| 129 | terapia_anticoagulante | da fare | | |
-| 130 | iperparatiroidismo | da fare | | |
-| 131 | sclerodermia | da fare | | |
-| 132 | allergia_nichel | da fare | | |
-| 133 | intestino_corto | da fare | | |
-| 134 | masld_nash_avanzato | da fare | | |
-| 135 | depressione_nutrizione | da fare | | |
-| 136 | sonno_nutrizione | da fare | | |
-| 137 | ipertensione_resistente | da fare | | |
-| 138 | gravidanza_fisiologica | da fare | | |
-| 139 | trapianto_renale | da fare | | |
-| 140 | coronaropatia | da fare | | |
-| 141 | post_infarto | da fare | | |
-| 142 | fibrillazione_atriale | da fare | | |
-| 143 | cardiomiopatia_dilatativa | da fare | | |
-| 144 | aop | da fare | | |
-| 145 | cardiomiopatia_ipertrofica | da fare | | |
-| 146 | miastenia_gravis | da fare | | |
-| 147 | spondilite_anchilosante | da fare | | |
-| 148 | colangite_sclerosante | da fare | | |
-| 149 | emicrania | da fare | | |
-| 150 | autismo_nutrizione | da fare | | |
-| 151 | glicogenosi_i | da fare | | |
+| 127 | ncgs | ✅ verificato-corretto | 2026-08-03 | ESPGHAN/BSG 2021, coerente internamente. |
+| 128 | obesita_pediatrica | ✅ verificato-corretto | 2026-08-03 | ESPGHAN 2022/ISPAD 2024, coerente internamente. |
+| 129 | terapia_anticoagulante | ✅ verificato-corretto | 2026-08-03 | ESC/ACCP 2021, contenuti su vitamina K/warfarin/NAO corretti. |
+| 130 | iperparatiroidismo | ✅ verificato-corretto | 2026-08-03 | AACE/ACE/ENDO 2022, paradosso calcio alimentare e target coerenti. |
+| 131 | sclerodermia | 🔧 corretto-con-fix | 2026-08-03 | Badge "EULAR 2022" incoerente con note "EULAR 2022 · ACR 2023"; verificato che il vero aggiornamento è EULAR 2023 ("EULAR recommendations for the treatment of systemic sclerosis: 2023 update"). Corretto badge/note/fonte in "EULAR 2023" in entrambi i file, rimossa la co-attribuzione ACR non confermata. |
+| 132 | allergia_nichel | ⚠️ dubbio | 2026-08-03 | Incoerenza di anno tra badge "SIAAIC 2023", note "SIAAIC 2023 · EAACI 2022", fonte "SIAAIC/EAACI 2023". Il concetto clinico (SNAS, dieta BraMa-Ni) è reale e documentato (Braga et al. 2011-2013) ma l'attribuzione a un ente/anno specifico non è verificabile online. Non modificato. |
+| 133 | intestino_corto | ⚠️ dubbio (duplicazione) | 2026-08-03 | Scheda praticamente ridondante con "sbs" (Short Bowel Syndrome, riga 92, già corretta in "ESPEN 2022 + AGA 2020"): stesso argomento clinico, contenuti sovrapponibili, ma badge diverso ("ESPEN 2023", non riverificato). Segnalata all'utente la ridondanza tra le due schede per una eventuale decisione di unificazione — non modificato senza conferma. |
+| 134 | masld_nash_avanzato | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "EASL/AGA 2024" errato: la vera guideline 2024 è EASL-EASD-EASO (Journal of Hepatology 2024), l'AGA non è coautrice. Corretto in "EASL/EASD/EASO 2024" in entrambi i file. |
+| 135 | depressione_nutrizione | ✅ verificato-corretto | 2026-08-03 | ISNPR, ente reale, coerente internamente (anno non riverificato con ricerca dedicata). |
+| 136 | sonno_nutrizione | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "AASM/ESS 2023" inesistente: nessuna guideline nutrizionale formale AASM o "ESS" di quell'anno. Il contenuto è in realtà una sintesi narrativa di studi reali (Sleep Medicine Reviews 2022, RCT kiwi, ecc.), non un documento ufficiale. Corretto badge/note/fonte in "Revisione narrativa (Sleep Med Rev 2022)" in entrambi i file. |
+| 137 | ipertensione_resistente | ✅ verificato-corretto | 2026-08-03 | ACC/AHA 2023 + RHTN Network 2022, coerente internamente. |
+| 138 | gravidanza_fisiologica | ✅ verificato-corretto | 2026-08-03 | ACOG/SIGO/ISS 2023, target folico/ferro/iodio/DHA coerenti. |
+| 139 | trapianto_renale | ✅ verificato-corretto | 2026-08-03 | KDIGO/EBPG 2023, coerente internamente. |
+| 140 | coronaropatia | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Scoperto un blocco di 42 schede ("─── Nuove linee guida patologie ───", righe 1530+ e 2262+) dove il campo badge conteneva un codice interno breve ("Cardio", "Deficit Vit. A", ecc.) invece del formato "ENTE ANNO" usato ovunque nel resto del dataset, mentre la vera citazione era già presente nel campo fonte separato — bug di formato user-visible (il badge appare come titolo della sezione "Razionale scientifico" nell'app). Corretto badge in "ESC 2021" (da fonte "ESC Guidelines 2021 + PREDIMED Trial"), armonizzato con le altre 41 schede dello stesso blocco (vedi righe 141-151 e 234-263 per l'elenco completo). |
+| 141 | post_infarto | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "Post-IMA" → "AHA/ACC 2023" (da fonte "AHA/ACC Guidelines 2023 + GISSI Prevenzione"). Vedi nota riga 140. |
+| 142 | fibrillazione_atriale | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "FA" → "ESC 2020" (da fonte "ESC Guidelines AF 2020"). Vedi nota riga 140. |
+| 143 | cardiomiopatia_dilatativa | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "CMP" → "ESC 2021" (da fonte "ESC Heart Failure Guidelines 2021"). Vedi nota riga 140. |
+| 144 | aop | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "AOP" → "ESC/ESVS 2017" (da fonte "ESC/ESVS Guidelines PAD 2017"). Vedi nota riga 140. |
+| 145 | cardiomiopatia_ipertrofica | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "CMI" → "ESC 2014/2022" (da fonte "ESC Guidelines HCM 2014, aggiornamento 2022"). Vedi nota riga 140. |
+| 146 | miastenia_gravis | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "MG" → "EFNS" (fonte "EFNS Guidelines Neuromuscular Diseases" non riporta un anno specifico, non inventato). Vedi nota riga 140. |
+| 147 | spondilite_anchilosante | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "SA" → "ASAS/EULAR 2022" (da fonte "ASAS/EULAR Recommendations 2022"). Vedi nota riga 140. |
+| 148 | colangite_sclerosante | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "PSC" → "EASL 2022" (da fonte "EASL Clinical Practice Guidelines PSC 2022"). Vedi nota riga 140. |
+| 149 | emicrania | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "Emicrania" → "EHF 2022" (da fonte "EHF Guidelines 2022 + Cochrane Review"). Vedi nota riga 140. |
+| 150 | autismo_nutrizione | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "ASD" → "AND 2022 + NICE" (da fonte "Academy of Nutrition and Dietetics 2022 + NICE Guidelines ASD"). Vedi nota riga 140. |
+| 151 | glicogenosi_i | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "GSD-I" → "SSIEM 2017" (da fonte "SSIEM Guidelines GSD-I 2017 + European Registry"). Vedi nota riga 140. |
 | 152 | mastocitosi | da fare | | |
 | 153 | porfiria | da fare | | |
 | 154 | ipoparatiroidismo | da fare | | |
@@ -254,36 +254,36 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 218 | rachitismo_osteomalacia | da fare | | |
 | 219 | deficit_tiamina | da fare | | |
 | 220 | celiachia_bambini | da fare | | |
-| 221 | deficit_vitamina_a | da fare | | |
-| 222 | deficit_vitamina_c | da fare | | |
-| 223 | deficit_vitamina_e | da fare | | |
-| 224 | deficit_vitamina_k | da fare | | |
-| 225 | deficit_niacina | da fare | | |
-| 226 | deficit_riboflavina | da fare | | |
-| 227 | deficit_biotina | da fare | | |
-| 228 | deficit_magnesio | da fare | | |
-| 229 | deficit_calcio | da fare | | |
-| 230 | deficit_rame | da fare | | |
-| 231 | omocistinuria | da fare | | |
-| 232 | glicogenosi_iii | da fare | | |
-| 233 | glicogenosi_v | da fare | | |
-| 234 | acidemia_propionica | da fare | | |
-| 235 | malattia_gaucher | da fare | | |
-| 236 | esofagite_eosinofila | da fare | | |
-| 237 | dieta_chetogenica | da fare | | |
-| 238 | dieta_dash | da fare | | |
-| 239 | dieta_antiinfiammatoria | da fare | | |
-| 240 | prevenzione_oncologica | da fare | | |
-| 241 | cachessia_oncologica | da fare | | |
-| 242 | sindrome_lisi_tumorale | da fare | | |
-| 243 | artrite_idiopatica_giovanile | da fare | | |
-| 244 | sport_endurance | da fare | | |
-| 245 | sport_forza | da fare | | |
-| 246 | lipodistrofia | da fare | | |
-| 247 | sindrome_gilbert | da fare | | |
-| 248 | iperfosfatemia | da fare | | |
-| 249 | nutrizione_geriatrica_rsa | da fare | | |
-| 250 | anemia_emolitica | da fare | | |
+| 221 | deficit_vitamina_a | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Deficit Vit. A" → "WHO 2011 + EFSA 2015" (da fonte "OMS Vitamin A Supplementation Guidelines 2011; EFSA 2015"), fix sistemico di formato — vedi riga 140. Contenuto/target non ancora verificato indipendentemente. |
+| 222 | deficit_vitamina_c | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2013" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 223 | deficit_vitamina_e | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2015" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 224 | deficit_vitamina_k | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2017" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 225 | deficit_niacina | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "WHO 2000 + EFSA 2014" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 226 | deficit_riboflavina | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2017" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 227 | deficit_biotina | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2014" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 228 | deficit_magnesio | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2015" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 229 | deficit_calcio | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2015 + NOF 2020" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 230 | deficit_rame | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2015" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
+| 231 | omocistinuria | 🔧 corretto-con-fix | 2026-08-03 | Badge "Omocistinuria" → "SSIEM 2022" (da fonte, fix sistemico riga 140) + corretto un refuso reale "ESIEM"→"SSIEM" (Society for the Study of Inborn Errors of Metabolism) nel campo fonte, presente in entrambi i file. Contenuto/target non riverificato indipendentemente. |
+| 232 | glicogenosi_iii | 🔧 corretto-con-fix | 2026-08-03 | Badge "GSD III" → "SSIEM 2023" + corretto refuso "ESIEM"→"SSIEM" in fonte, in entrambi i file. Vedi riga 231/140. Contenuto non riverificato indipendentemente. |
+| 233 | glicogenosi_v | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "GSD V" → "Quinlivan 2010" (da fonte "Quinlivan Brain 2010" — nessun ente di linee guida formale citato, solo studi). Fix sistemico di formato, vedi riga 140. |
+| 234 | acidemia_propionica | 🔧 corretto-con-fix | 2026-08-03 | Badge "Acidemia Prop." → "SSIEM 2014" + corretto refuso "ESIEM"→"SSIEM" in fonte. Vedi riga 231/140. Contenuto non riverificato indipendentemente. |
+| 235 | malattia_gaucher | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Gaucher" → "Gaucher Alliance 2022" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 236 | esofagite_eosinofila | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "EoE" → "UEG 2022" (fonte citava anche "AGREE EoE Guidelines 2022" ma AGREE è uno strumento di valutazione delle linee guida, non un ente emittente — mantenuto solo UEG, verificato altrove nel dataset per EoE). Fix sistemico, vedi riga 140. |
+| 237 | dieta_chetogenica | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Dieta Keto" → "ILAE/Charlie Foundation 2022" (da fonte). Fix sistemico di formato, vedi riga 140. Nota: scheda distinta da "epilessia" (già corretta in "International Ketogenic Diet Study Group 2018") — non unificate, attribuzione ILAE non riverificata qui. |
+| 238 | dieta_dash | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "DASH" → "NHLBI 2021" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 239 | dieta_antiinfiammatoria | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Anti-infiamm." → "Calder 2017" (da fonte, nessun ente di linee guida formale — solo studi). Fix sistemico di formato, vedi riga 140. |
+| 240 | prevenzione_oncologica | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Prev. Cancro" → "WCRF/AICR 2018" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 241 | cachessia_oncologica | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Cachessia" → "ESPEN 2021" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 242 | sindrome_lisi_tumorale | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Lisi Tumorale" → "Cairo-Bishop 2004" (classificazione clinica reale, non un ente di linee guida). Fix sistemico di formato, vedi riga 140. |
+| 243 | artrite_idiopatica_giovanile | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "AIJ" → "EULAR/ACR 2019" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 244 | sport_endurance | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Endurance" → "ISSN 2021 + ACSM 2022" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 245 | sport_forza | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Forza" → "ISSN 2022" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 246 | lipodistrofia | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Lipodistrofia" → "Akinci 2022" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 247 | sindrome_gilbert | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Gilbert" → "Bosma 1995" (da fonte, nessun ente di linee guida formale — solo studio storico). Fix sistemico di formato, vedi riga 140. |
+| 248 | iperfosfatemia | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Iperfosfat." → "KDIGO 2017" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 249 | nutrizione_geriatrica_rsa | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "RSA" → "ESPEN 2020" (da fonte). Fix sistemico di formato, vedi riga 140. |
+| 250 | anemia_emolitica | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Anemia Emol." → "ASH 2018" (da fonte). Fix sistemico di formato, vedi riga 140. |
 | 251 | allergia_soia | da fare | | |
 | 252 | allergia_sedano | da fare | | |
 | 253 | allergia_senape | da fare | | |

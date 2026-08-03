@@ -71,7 +71,7 @@ async function handleSdi(req, res, user) {
     });
   }
   const vatTypes = vt.body?.data || [];
-  let vat = null;
+  let vat;
   if (regime === 'RF01') {
     vat = vatTypes.find(v => Number(v.value) === 22 && !v.is_disabled) || vatTypes.find(v => Number(v.value) === 22);
   } else {

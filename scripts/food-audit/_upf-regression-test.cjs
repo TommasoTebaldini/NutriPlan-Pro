@@ -1,6 +1,9 @@
 // Test di non-regressione: OGNI bug reale trovato in sessioni precedenti,
 // rifatto girare come controllo automatico PRIMA di ogni batch UPF su
 // scala. Se anche uno solo fallisce, NON lanciare batch — investigare prima.
+/* eslint-disable no-undef -- tokenScore/passesHardGuards/orderConsistent sono
+   definite dinamicamente dall'eval() qui sotto (funzioni condivise da
+   audit-upf-batch.cjs senza un vero export), invisibile all'analisi statica */
 const fs = require('fs');
 const src = fs.readFileSync(__dirname + '/audit-upf-batch.cjs', 'utf8');
 eval(src.split('async function main()')[0]);

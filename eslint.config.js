@@ -66,7 +66,7 @@ export default [
     },
   },
   {
-    files: ['api/**/*.js', 'server.js', 'scripts/**/*.js', 'generate-icons.js'],
+    files: ['api/**/*.js', 'server.js', 'scripts/**/*.js', 'scripts/**/*.cjs', 'generate-icons.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

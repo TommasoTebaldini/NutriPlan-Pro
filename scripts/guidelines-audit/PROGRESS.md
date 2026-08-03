@@ -56,7 +56,7 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 20 | gravidanza | ✅ verificato-corretto | 2026-08-03 | Iodio 220 µg/die verificato: valore citato direttamente dalle linee guida SIGO 2023 (220-250 mcg/die), non un errore — il LARN "base" di 200 µg/die è un minimo di popolazione, non il target clinico SIGO usato qui. Nessuna modifica. |
 | 21 | allattamento | ✅ verificato-corretto | 2026-08-03 | Iodio 290 µg/die verificato: valore citato dalle stesse linee guida SIGO (in accordo con IOM), coerente con badge/fonte "SIGO/LARN 2023". Nessuna modifica. |
 | 22 | larn_popolazione_sana | 🔧 corretto-con-fix | 2026-08-03 | Anno aggiornamento LARN 2023→2024 (V Revisione presentata a giugno 2024, non 2023). |
-| 23 | allergia_latte | ⚠️ dubbio | 2026-08-03 | Badge "EAACI 2019" non confermato: EAACI ha una guideline 2020/21 su *prevenzione* allergie, non su diagnosi/gestione APLV specifica. Fonti più specifiche: WAO/DRACMA o ESPGHAN. Da approfondire, non ancora corretto. |
+| 23 | allergia_latte | 🔧 corretto-con-fix | 2026-08-03 | Riverificato in batch 3: nessuna pubblicazione EAACI reale nel 2019 (confermato: il core "Diagnosis and management of food allergy" è Muraro et al. 2014, l'anafilassi è stata aggiornata nel 2021). Corretto badge/note in "EAACI 2014" in entrambi i file (fix sistemico esteso a tutte le schede allergia, vedi righe 53-55, 61-62). |
 | 24 | fenilchetonuria | 🔧 corretto-con-fix | 2026-08-03 | Badge ACMG 2014→European PKU Guidelines 2017 (van Wegberg): i target 360/600 µmol/L per età sono di quella linea guida, non di ACMG 2014 (che usa 360 unico per tutte le età). Aggiunta nota sulla differenza. |
 | 25 | hiv | ✅ verificato-corretto | 2026-08-03 | Badge/contenuti plausibili, nessuna azione. |
 | 26 | gastrectomia | ✅ verificato-corretto | 2026-08-03 | ESPEN chirurgia gastrica, contenuti plausibili. |
@@ -85,21 +85,21 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 49 | tumore_seno | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, claim alcol/fitoestrogeni coerenti con WCRF/metanalisi 2019. |
 | 50 | tumore_pancreas | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, PERT 40-80.000 UI/pasto e diabete tipo 3c corretti (nota: qui il range PERT ampio è per neoplasia/steatorrea da compressione dotto, contesto diverso da ipe — non serve armonizzare). |
 | 51 | tumore_colon | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, classificazione IARC carni lavorate/rosse e immunonutrizione perioperatoria corrette. |
-| 52 | diverticolosi | da fare | | |
-| 53 | allergia_pesce | da fare | | |
-| 54 | allergia_molluschi | da fare | | |
-| 55 | allergia_frutta_secca | da fare | | |
-| 56 | fibrosi_cistica | da fare | | |
-| 57 | epilessia | da fare | | |
-| 58 | alzheimer | da fare | | |
-| 59 | gastroparesi | da fare | | |
-| 60 | sla | da fare | | |
-| 61 | 6fed | da fare | | |
-| 62 | 4fed | da fare | | |
-| 63 | cded_fase1 | da fare | | |
-| 64 | cded_fase2 | da fare | | |
-| 65 | cded_mant | da fare | | |
-| 66 | scd | da fare | | |
+| 52 | diverticolosi | 🔧 corretto-con-fix | 2026-08-03 | Stessa incoerenza già trovata in "diverticolite" (riga 27): badge "ACG 2015" ma url gastro.org (dominio AGA) e science già cita lo studio Strate 2008 su noci/semi. Corretto badge/note/fonte in "AGA 2021" (AGA Clinical Practice Update on Diet in Chronic Diverticular Disease, Peery et al. — copre esattamente la de-restrizione di noci/semi per diverticolosi cronica). Mirror applicato in consigli-data.js. |
+| 53 | allergia_pesce | 🔧 corretto-con-fix | 2026-08-03 | Badge "EAACI 2019" non corrisponde a nessuna pubblicazione EAACI reale di quell'anno — fix sistemico, vedi nota riga 61 (6fed) più sotto. Corretto in "EAACI 2014" (guideline reale "Diagnosis and management of food allergy", Muraro et al. 2014). |
+| 54 | allergia_molluschi | 🔧 corretto-con-fix | 2026-08-03 | Stesso fix sistemico "EAACI 2019"→"EAACI 2014" (vedi riga 53). |
+| 55 | allergia_frutta_secca | 🔧 corretto-con-fix | 2026-08-03 | Stesso fix sistemico "EAACI 2019"→"EAACI 2014" (vedi riga 53). |
+| 56 | fibrosi_cistica | ✅ verificato-corretto | 2026-08-03 | ECFS/ESPEN 2016 (Turck et al., "ESPEN-ESPGHAN-ECFS guidelines on nutrition care for infants, children, and adults with cystic fibrosis") è la vera linea guida di quell'anno. |
+| 57 | epilessia | 🔧 corretto-con-fix | 2026-08-03 | Badge "ILAE/ESPEN 2021" incoerente con la nota che già diceva "ILAE 2008" (l'ILAE non pubblica linee guida sulla dieta chetogenica; il vero ente è l'International Ketogenic Diet Study Group, Kossoff et al., consensus 2009 aggiornato 2018). Corretto badge/note/fonte in "International Ketogenic Diet Study Group 2018" in entrambi i file. |
+| 58 | alzheimer | 🔧 corretto-con-fix | 2026-08-03 | Badge "ESPEN 2023" non corrisponde a nessuna pubblicazione ESPEN di quell'anno sul tema — la vera linea guida ESPEN su nutrizione/idratazione nella demenza è del 2015, aggiornata nel 2024 (Volkert et al.). Corretto in "ESPEN 2024" in badge/note/fonte, mirror applicato in consigli-data.js. |
+| 59 | gastroparesi | ✅ verificato-corretto | 2026-08-03 | ACG 2022 "Camilleri et al., ACG Clinical Guideline: Gastroparesis" è reale; badge "ADA/ACG 2022" ok anche se fonte finale abbrevia in "ADA 2022" (minore, non corretto per non introdurre altra incoerenza). |
+| 60 | sla | 🔧 corretto-con-fix | 2026-08-03 | Badge "ESPEN 2023" errato: la vera linea guida ESPEN che copre la SLA è "Clinical Nutrition in Neurology" del 2018 (Burgos et al.), la stessa già corretta per "ictus" (riga 36). Corretto badge/note/fonte/science in "ESPEN 2018" in entrambi i file. |
+| 61 | 6fed | 🔧 corretto-con-fix | 2026-08-03 | Badge "ACG/AGA 2020" impreciso: la vera guideline 2020 su EoE è "AGA Institute and Joint Task Force on Allergy-Immunology Practice Parameters" (Hirano et al., Gastroenterology 2020) — un documento AGA, non ACG (l'ACG ha una guideline EoE separata, 2013 poi aggiornata 2025). Corretto in "AGA 2020" in linee-guida-data.js e consigli-data.js. |
+| 62 | 4fed | 🔧 corretto-con-fix | 2026-08-03 | Stesso fix di riga 61: "ACG/AGA 2020"→"AGA 2020". |
+| 63 | cded_fase1 | ✅ verificato-corretto | 2026-08-03 | Levine 2019 (Gastroenterology, CDED+PEN vs EEN) è lo studio reale fondativo; ECCO 2022 come riferimento di adozione clinica è plausibile. |
+| 64 | cded_fase2 | ✅ verificato-corretto | 2026-08-03 | Stessa fonte di riga 63, coerente. |
+| 65 | cded_mant | ✅ verificato-corretto | 2026-08-03 | Stessa fonte di riga 63, coerente. |
+| 66 | scd | ✅ verificato-corretto | 2026-08-03 | CCF 2021 come riferimento divulgativo/di sintesi dello studio DINE-CD (Lewis et al., Gastroenterology 2021) è una semplificazione accettabile per un'app rivolta al paziente, non un errore fattuale. |
 | 67 | diabete_gestazionale | da fare | | |
 | 68 | diabete_t1 | da fare | | |
 | 69 | menopausa | da fare | | |

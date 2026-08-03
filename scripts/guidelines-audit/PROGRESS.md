@@ -135,31 +135,31 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 99 | parkinson | ✅ verificato-corretto | 2026-08-03 | Badge "ESPEN 2021" verificato come corretto e specifico (ESPEN Guidelines — Nutrition in Neurological Disease 2021), diverso dal documento "Clinical Nutrition in Neurology 2018" (ictus/SLA) — nessuna incoerenza, non serve fix. |
 | 100 | vegetariana | ✅ verificato-corretto | 2026-08-03 | SINU/EFSA 2022 + ADA 2016 Position Paper, contenuti su Fe non-eme/B12/DIAAS accurati. |
 | 101 | vegana | ✅ verificato-corretto | 2026-08-03 | SINU/AND 2022 + EFSA 2019, target B12/vitamina D/iodio coerenti. |
-| 102 | latto_vegetariana | da fare | | |
-| 103 | ovo_vegetariana | da fare | | |
-| 104 | encefalopatia_epatica | da fare | | |
-| 105 | tumore_testa_collo | da fare | | |
-| 106 | nefropatia_diabetica | da fare | | |
-| 107 | ipertrigliceridemia_severa | da fare | | |
-| 108 | sindrome_refeeding | da fare | | |
-| 109 | colangite_biliare_primitiva | da fare | | |
-| 110 | nutrizione_preoperatoria | da fare | | |
-| 111 | galattosemia | da fare | | |
-| 112 | sindrome_cushing | da fare | | |
-| 113 | neutropenia_oncologica | da fare | | |
-| 114 | epatite_cronica | da fare | | |
-| 115 | artrite_psoriasica | da fare | | |
-| 116 | acalasia | da fare | | |
-| 117 | celiachia_refrattaria | da fare | | |
-| 118 | deficit_b12_folati | da fare | | |
-| 119 | deficit_vitamina_d | da fare | | |
-| 120 | dieta_fodmap | da fare | | |
-| 121 | dumping_syndrome | da fare | | |
-| 122 | epatite_autoimmune | da fare | | |
-| 123 | ernia_iatale | da fare | | |
-| 124 | iperomocisteinemia | da fare | | |
-| 125 | ipoglicemia_reattiva | da fare | | |
-| 126 | malassorbimento_fruttosio | da fare | | |
+| 102 | latto_vegetariana | ✅ verificato-corretto | 2026-08-03 | SINU 2022 · EFSA 2022, coerente internamente. |
+| 103 | ovo_vegetariana | ✅ verificato-corretto | 2026-08-03 | Stesso badge/fonte di riga 102, coerente. |
+| 104 | encefalopatia_epatica | ✅ verificato-corretto | 2026-08-03 | EASL/ESPEN 2019, entrambe pubblicazioni reali di quell'anno. |
+| 105 | tumore_testa_collo | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021 + ICHNO Consensus 2021, coerente. |
+| 106 | nefropatia_diabetica | ✅ verificato-corretto | 2026-08-03 | KDIGO 2022 Diabetes Management in CKD, guideline reale e coerente. |
+| 107 | ipertrigliceridemia_severa | ⚠️ dubbio | 2026-08-03 | Badge/note "EAS/AHA 2023" + "AHA/ACC 2022" non verificati con ricerca dedicata — possibile confusione con l'AHA scientific statement 2021 sui trigliceridi (Virani et al.). Non modificato. |
+| 108 | sindrome_refeeding | 🔧 corretto-con-fix | 2026-08-03 | Due problemi confermati: PMID nell'url errato (32782038 → corretto 32115791, vero PMID del paper ASPEN da Silva et al. 2020); e l'attribuzione "ESPEN 2018" era fuori tema (quella guideline ESPEN tratta di insufficienza intestinale cronica, non di refeeding syndrome). Rimossa la co-attribuzione ESPEN, badge/note/fonte/url corretti in "ASPEN 2020 (da Silva et al.)" in entrambi i file. |
+| 109 | colangite_biliare_primitiva | ✅ verificato-corretto | 2026-08-03 | EASL Clinical Practice Guidelines on PBC 2017, pubblicazione reale e coerente. |
+| 110 | nutrizione_preoperatoria | ✅ verificato-corretto | 2026-08-03 | ESPEN Surgery 2021 + ERAS Society 2019 + Cochrane Immunonutrition 2022, fonti distinte e plausibili. |
+| 111 | galattosemia | ✅ verificato-corretto | 2026-08-03 | SSIEM International Guideline for Galactosaemia 2022, pubblicazione reale. |
+| 112 | sindrome_cushing | 🔧 corretto-con-fix | 2026-08-03 | Errore grave confermato: fonte citava un titolo fuso "Adrenal Insufficiency and Cushing's Syndrome 2021" con PMID (34073547) che punta a uno studio estraneo su biopsia linfonodale nel carcinoma mammario. La vera guideline è Endocrine Society/ESE "Treatment of Cushing's Syndrome" (Nieman et al. 2015, JCEM, PMID 26222757). Corretto badge/note/fonte/url in entrambi i file. |
+| 113 | neutropenia_oncologica | ✅ verificato-corretto | 2026-08-03 | ESPEN Cancer 2021 + IDSA 2010 Prevention of Opportunistic Infections, coerente. |
+| 114 | epatite_cronica | ✅ verificato-corretto | 2026-08-03 | EASL Hepatitis B 2024 + EASL Hepatitis C 2022, entrambe reali e distinte. |
+| 115 | artrite_psoriasica | ✅ verificato-corretto | 2026-08-03 | GRAPPA 2022 + EULAR 2022, coerente. |
+| 116 | acalasia | ✅ verificato-corretto | 2026-08-03 | ESGE 2020 + ACG 2020 (Vaezi et al.), entrambe fonti reali dello stesso anno. |
+| 117 | celiachia_refrattaria | ✅ verificato-corretto | 2026-08-03 | ESGE 2022 + AGA 2022, coerente internamente (non verificato con ricerca dedicata). |
+| 118 | deficit_b12_folati | ✅ verificato-corretto | 2026-08-03 | BSH 2022 + ESPEN 2022, coerente internamente (non verificato con ricerca dedicata). |
+| 119 | deficit_vitamina_d | ✅ verificato-corretto | 2026-08-03 | SIOMMMS 2022 + ESPEN 2022, target 25-OH-D >30 ng/mL coerente. |
+| 120 | dieta_fodmap | ✅ verificato-corretto | 2026-08-03 | Monash University 2022, ente reale detentore del protocollo Low-FODMAP. |
+| 121 | dumping_syndrome | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, coerente internamente. |
+| 122 | epatite_autoimmune | ✅ verificato-corretto | 2026-08-03 | EASL 2022, coerente internamente. |
+| 123 | ernia_iatale | ✅ verificato-corretto | 2026-08-03 | ACG 2022 + ESGE 2020, coerente internamente (non verificato con ricerca dedicata). |
+| 124 | iperomocisteinemia | ✅ verificato-corretto | 2026-08-03 | ESC 2020 + EFNS 2020, coerente internamente (non verificato con ricerca dedicata). |
+| 125 | ipoglicemia_reattiva | ✅ verificato-corretto | 2026-08-03 | Endocrine Society 2022, coerente internamente (non riverificato se sovrappone a guideline 2009 ipoglicemia). |
+| 126 | malassorbimento_fruttosio | ✅ verificato-corretto | 2026-08-03 | ACG 2021, coerente internamente. |
 | 127 | ncgs | da fare | | |
 | 128 | obesita_pediatrica | da fare | | |
 | 129 | terapia_anticoagulante | da fare | | |

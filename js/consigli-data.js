@@ -1168,7 +1168,7 @@ const CONSIGLI_BASE = [
   {
     id:'sindrome_refeeding', emoji:'⚠️', nome:'Refeeding Syndrome (Prevenzione)', colore:'#DC2626',
     pasti:'Iniziare con 3-4 piccoli pasti/die; incrementare gradualmente la dimensione', porzioni:'Molto piccole inizialmente (10 kcal/kg/die); incrementare ogni 2-3 giorni', idratazione:'1-1.5L/die; controllare il bilancio idrico (rischio iperidratazione)',
-    nota:'ASPEN/ESPEN 2020 · Tiamina 200-300mg EV PRIMA di qualsiasi nutrizione. Max 10 kcal/kg/die i primi 3 giorni. Monitorare P, K, Mg ogni 12-24h.',
+    nota:'ASPEN 2020 (da Silva et al.) · Tiamina 200-300mg EV PRIMA di qualsiasi nutrizione. Max 10 kcal/kg/die i primi 3 giorni. Monitorare P, K, Mg ogni 12-24h.',
     ok:['Riso bianco, pasta in piccole porzioni (CHO facilmente digeribili)','Pollo o pesce in piccole quantità (proteine graduali)','Verdure cotte morbide (zucchina, carota, patata bollita)','Yogurt o formaggi freschi (calcio, proteine)','Frutta matura frullata (CHO facilmente assimilabili)','Integratori di tiamina (B1): obbligatori prima della renutrizione'],
     no:['Introduzione rapida di grandi quantità di CHO (scatena shift fosforo)','Glucosio EV come unica fonte energetica (picco insulinico massivo)','Digiuno prolungato (aumenta il rischio di RS)','Supplementazione di potassio/fosforo senza monitoraggio dei valori sierici (rischio ipercorrection)','Iniziare renutrizione senza supplementare tiamina preventivamente','Pasti abbondanti nei primissimi giorni di renutrizione'],
     mod:['Grassi: aumentare gradualmente; inizialmente privilegiare CHO e proteine','Sale: moderato; preferire alimenti naturali non salati'],
@@ -1208,7 +1208,7 @@ const CONSIGLI_BASE = [
   {
     id:'sindrome_cushing', emoji:'🌙', nome:'Sindrome di Cushing (ipercortisolismo)', colore:'#7C3AED',
     pasti:'3 pasti + 2 spuntini; pasti regolari per controllo glicemico', porzioni:'Controllate in CHO (basso IG); moderate in proteine (1.2-1.5g/kg)', idratazione:'≥1.5-2L/die; acqua, tisane non dolcificate; limitare caffeina se ipertensione',
-    nota:'ES/ESE 2021 · Sodio <2g/die (ipertensione). Calcio 1000-1200mg/die + vitamina D 2000-4000 UI/die (osteoporosi). Proteine aumentate (catabolismo). CHO basso IG.',
+    nota:'Endocrine Society/ESE 2015 (Nieman et al.) · Sodio <2g/die (ipertensione). Calcio 1000-1200mg/die + vitamina D 2000-4000 UI/die (osteoporosi). Proteine aumentate (catabolismo). CHO basso IG.',
     ok:['Latticini magri (latte scremato, yogurt 0% grassi): calcio 1000-1200mg/die','Vitamina D 2000-4000 UI/die (supplemento)','Pesce, pollo, legumi, uova: proteine 1.2-1.5 g/kg/die (contrasta catabolismo)','Cereali integrali e legumi (CHO basso IG: orzo, quinoa, riso basmati)','Frutta e verdura a basso IG (mirtilli, fragole, mela, verdure a foglia verde)','Potassio da frutta e verdure (banane, patate: contrastano ipokaliemia)','Attività fisica di resistenza (preserva massa muscolare)'],
     no:['Sodio in eccesso (sale, affettati, cibi in scatola: aggrava ipertensione e ritenzione idrica)','Zuccheri semplici e dolci (aggravano iperglicemia da cortisolo)','Grassi saturi (burro, lardo, carni grasse: dislipidemia frequente nel Cushing)','Alcol (peggiora catabolismo osseo, interagisce con farmaci)','Caffeina eccessiva (se ipertensione non controllata)'],
     mod:['Frutta ad alto IG (banana, uva, fichi): con moderazione e in associazione con proteine','Pane bianco e pasta raffinata: preferire integrali'],

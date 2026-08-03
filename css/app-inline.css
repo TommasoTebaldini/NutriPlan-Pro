@@ -63,6 +63,19 @@
   .pasto-hdr{background:#1E293B!important;padding:5px 8px!important}
   .pasto-hdr .ph-macro{display:none!important}
   .alt-print-row td{background:#D1FAE5!important;color:#065F46!important}
+  /* Le chip/nota sono pensate per l'editor a schermo (bordi, sfondo, pillola):
+     in stampa (soprattutto "stampa normale" a giorno singolo, che riusa
+     questo stesso DOM) andavano appesantendo ogni sostituzione multi-
+     alimento, facendo diventare enorme il pasto. Appiattite a testo semplice
+     come già avviene per gli altri input della tabella, e la riga nota resta
+     visibile solo se contiene davvero del testo. */
+  .alt-food-chip{border:none!important;background:transparent!important;padding:0!important;border-radius:0!important;gap:2px!important;box-shadow:none!important}
+  /* Più specifico della regola generica "tbody td input" sopra, che
+     imporrebbe width:100% — qui l'input sta dentro una chip inline insieme
+     al nome alimento, non da solo in una cella. */
+  .alt-food-chip .alt-grammatura-input{width:auto!important;min-width:16px!important;max-width:26px!important;text-align:right!important}
+  .alt-label{background:transparent!important;color:#065F46!important;padding:0!important;font-weight:700!important}
+  .alt-nota-input:placeholder-shown{display:none!important}
   .macro-bar{page-break-inside:avoid;margin-bottom:5px!important;padding:6px 10px!important;flex-wrap:wrap!important}
   .mpill{padding:3px 7px!important;font-size:10px!important}
   .giorno-tabs,.micro-bar,.add-pasto-area,.pasto-footer,.ph-drag,.ph-tog,.pasto-note-input{display:none!important}
@@ -88,6 +101,17 @@
   body.pm-weekly #weekly-print-area{display:block!important;font-family:'DM Sans',sans-serif;page-break-inside:avoid;break-inside:avoid}
   body.pm-weekly #weekly-print-area>div{page-break-inside:avoid;break-inside:avoid}
   body.pm-pdfsingleday #pdf-day-medie{display:block!important;font-family:'DM Sans',sans-serif}
+  /* Logo profilo (position:fixed, top:6mm/left:15mm/max-height:20mm in
+     profiloFirmaHtml, js/utils.js) fuori dal flusso: nei layout a
+     tabella/full-width (stampa normale singolo/multi giorno, prospetto
+     settimanale) copriva le prime righe perché non c'era spazio riservato.
+     Applicato solo se un logo è davvero configurato (has-print-logo, vedi
+     _activatePrintMode) — nessuno spazio sprecato per chi non ne ha uno.
+     "Stampa semplice"/"compatta" non ne hanno bisogno: intestazione centrata
+     con margini laterali ampi, il logo ci sta già senza sovrapporsi. */
+  body.has-print-logo.pm-pdfsingleday #main{padding-top:30mm!important}
+  body.has-print-logo.pm-pdfalldays #main{padding-top:30mm!important}
+  body.has-print-logo.pm-weekly #main{padding-top:30mm!important}
 }
 /* ── Row drag handle ── */
 .row-drag-handle{cursor:grab;font-size:14px;padding:2px 4px;color:#CBD5E1;transition:color .12s;user-select:none;line-height:1;display:inline-block}

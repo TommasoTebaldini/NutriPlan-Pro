@@ -3272,6 +3272,15 @@ function _activatePrintMode(mode) {
   document.body.classList.remove(...allCls);
   const map = {'simple':'pm-simple','compact':'pm-compact','pdf-alldays':'pm-pdfalldays','weekly':'pm-weekly','pdf-singleday':'pm-pdfsingleday'};
   if (mode && map[mode]) document.body.classList.add(map[mode]);
+  // Il logo del profilo (profiloFirmaHtml, js/utils.js) è position:fixed in
+  // alto a sinistra senza riservare spazio nel flusso — in "stampa normale"
+  // (singolo/multi giorno) e "prospetto settimanale" il contenuto è a
+  // tabella/full-width e parte subito sotto il bordo pagina, quindi il logo
+  // lo copre. "Stampa semplice"/"compatta" hanno un'intestazione centrata
+  // con margini laterali ampi, quindi il logo ci sta senza sovrapporsi — non
+  // serve spazio riservato lì. Vedi regola CSS body.has-print-logo in
+  // css/app-inline.css.
+  document.body.classList.toggle('has-print-logo', typeof _isValidImageDataUrl === 'function' && typeof getProfiloOperatore === 'function' && _isValidImageDataUrl(getProfiloOperatore().logo));
 }
 
 function _applyPortraitPrint() {

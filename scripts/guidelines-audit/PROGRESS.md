@@ -157,7 +157,7 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 121 | dumping_syndrome | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, coerente internamente. |
 | 122 | epatite_autoimmune | ✅ verificato-corretto | 2026-08-03 | EASL 2022, coerente internamente. |
 | 123 | ernia_iatale | ✅ verificato-corretto | 2026-08-03 | ACG 2022 + ESGE 2020, coerente internamente (non verificato con ricerca dedicata). |
-| 124 | iperomocisteinemia | ✅ verificato-corretto | 2026-08-03 | ESC 2020 + EFNS 2020, coerente internamente (non verificato con ricerca dedicata). |
+| 124 | iperomocisteinemia | 🔧 corretto-con-fix (retroattivo) | 2026-08-03 | Correzione retroattiva: la verifica "corretto internamente" originale non aveva controllato che l'EFNS si è sciolta nel 2014 (fusa nella EAN), quindi "EFNS 2020" era impossibile — stesso errore trovato in "neuropatia_periferica" (riga 272) durante l'ultimo batch. Corretto badge/note/fonte in "ESC 2020 + EAN" in entrambi i file. |
 | 125 | ipoglicemia_reattiva | ✅ verificato-corretto | 2026-08-03 | Endocrine Society 2022, coerente internamente (non riverificato se sovrappone a guideline 2009 ipoglicemia). |
 | 126 | malassorbimento_fruttosio | ✅ verificato-corretto | 2026-08-03 | ACG 2021, coerente internamente. |
 | 127 | ncgs | ✅ verificato-corretto | 2026-08-03 | ESPGHAN/BSG 2021, coerente internamente. |
@@ -305,17 +305,17 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 269 | policitemia_vera | ✅ verificato-corretto | 2026-08-03 | ELN (European LeukemiaNet) 2021, ente reale. |
 | 270 | arfid | ✅ verificato-corretto | 2026-08-03 | DSM-5 2013, anno di pubblicazione corretto. |
 | 271 | pots | ✅ verificato-corretto | 2026-08-03 | ESC Guidelines 2022 + Heart Rhythm Society POTS Expert Consensus 2021, coerente. |
-| 272 | neuropatia_periferica | da fare | | |
-| 273 | epatite_b_cronica | da fare | | |
-| 274 | epatite_c_cronica | da fare | | |
-| 275 | intolleranza_sorbitolo | da fare | | |
-| 276 | huntington | da fare | | |
-| 277 | prolattinoma | da fare | | |
-| 278 | piaghe_decubito | da fare | | |
-| 279 | bypass_gastrico | da fare | | |
-| 280 | sleeve_gastrectomy | da fare | | |
-| 281 | sport_squadra | da fare | | |
-| 282 | sport_peso | da fare | | |
-| 283 | ansia_nutrizione | da fare | | |
-| 284 | ckd_stadio1_2 | da fare | | |
-| 285 | burnout_nutrizionale | da fare | | |
+| 272 | neuropatia_periferica | 🔧 corretto-con-fix | 2026-08-03 | Badge "EFNS 2020" impossibile: l'EFNS (European Federation of Neurological Societies) si è sciolta nel 2014 fondendosi nella EAN (European Academy of Neurology) — non poteva pubblicare nulla nel 2020. Corretto in "EAN + AAN" in badge/note/science/fonte, in entrambi i file. Vedi anche riga 124 (stesso errore, corretto retroattivamente). |
+| 273 | epatite_b_cronica | 🔧 corretto-con-fix | 2026-08-03 | Badge/note/science/fonte "EASL 2023" errato: l'url già presente (PII "...(17)30185-6") conferma che il documento reale è EASL 2017 (nessuna versione 2023 esiste; un aggiornamento 2025 esiste ma non era quanto citato). Corretto in "EASL 2017" in entrambi i file. |
+| 274 | epatite_c_cronica | ⚠️ dubbio | 2026-08-03 | Badge "EASL 2024" impreciso: le EASL recommendations complete sul trattamento HCV sono la "Final update" del 2020; un position paper EASL 2024 esiste ma è specifico sul follow-up post-guarigione, non sul trattamento generale (che la scheda comunque copre). Citare entrambi gli anni sarebbe più accurato. Non modificato senza ulteriore verifica. |
+| 275 | intolleranza_sorbitolo | ⚠️ dubbio | 2026-08-03 | Badge "SGAMN 2018" non verificabile: nessuna conferma di un ente con questo acronimo che pubblichi linee guida su polioli/sorbitolo. Contenuto scientifico e riferimento Monash FODMAP corretti. Non modificato. |
+| 276 | huntington | 🔧 corretto-con-fix | 2026-08-03 | Badge "ESPEN 2023" errato: la guideline ESPEN "Clinical Nutrition in Neurology" è del 2018 e copre solo SLA/Parkinson/ictus/SM, non Huntington (stesso pattern già corretto altrove). La fonte pertinente è EHDN (European Huntington Disease Network) 2022, già presente. Rimossa l'attribuzione ESPEN in badge/note/fonte, in entrambi i file. |
+| 277 | prolattinoma | 🔧 corretto-con-fix | 2026-08-03 | Badge/note/fonte "ES 2022"/"Endocrine Society 2022" errato: la vera Endocrine Society Clinical Practice Guideline "Diagnosis and Treatment of Hyperprolactinemia" è di Melmed et al. 2011 (JCEM), nessun aggiornamento 2022 trovato (url già corretto). Corretto in "Endocrine Society 2011 (Melmed et al.)" in entrambi i file. |
+| 278 | piaghe_decubito | 🔧 corretto-con-fix | 2026-08-03 | Badge/note/fonte "EPUAP 2022" errato: la 3ª edizione reale della linea guida EPUAP/NPIAP/PPPIA "Prevention and Treatment of Pressure Ulcers/Injuries" è di novembre 2019, non 2022. Corretto in "EPUAP/NPIAP/PPPIA 2019" in entrambi i file. |
+| 279 | bypass_gastrico | 🔧 corretto-con-fix | 2026-08-03 | Badge/note/fonte "ASMBS 2023"/"ASMBS/AACE/TOS 2023" errato: gli aggiornamenti reali delle linee guida AACE/TOS/ASMBS/OMA/ASA sono 2013/2019/2020 (Mechanick et al.), nessuna edizione 2023 trovata. Corretto in "ASMBS/AACE/TOS 2019 (Mechanick et al.)" in entrambi i file. Non è una duplicazione di "chirurgia_bariatrica" (contenuto post-operatorio specifico, non ridondante). |
+| 280 | sleeve_gastrectomy | 🔧 corretto-con-fix | 2026-08-03 | Stesso errore di riga 279: badge/note/fonte "ASMBS 2023" corretto in "ASMBS/AACE/TOS 2019 (Mechanick et al.)" in entrambi i file. Contenuto specifico e distinto (rischio GERD, minori carenze vs bypass), non duplicato. |
+| 281 | sport_squadra | ✅ verificato-corretto | 2026-08-03 | Badge "IOC 2018" coerente con url (BJSM vol.52 = 2018, IOC Consensus Statement on Sports Nutrition 2018). |
+| 282 | sport_peso | ✅ verificato-corretto | 2026-08-03 | Stesso IOC 2018 (RED-S Consensus), coerente con url. |
+| 283 | ansia_nutrizione | ⚠️ dubbio | 2026-08-03 | Badge/fonte "ISSFAL 2021" non verificato: le uniche ISSFAL Official Statements confermate riguardano dosaggi omega-3 generali, nessuna dichiarazione specifica su ansia trovata. Le vere fonti sostanziali sono già citate nel campo science (Su 2018 JAMA Network Open, Jacka 2017 "Nutritional Psychiatry", ecc.) — stesso pattern di sovra-attribuzione di "sonno_nutrizione". Non modificato. |
+| 284 | ckd_stadio1_2 | ✅ verificato-corretto | 2026-08-03 | Badge "KDIGO 2024" verificato reale (pubblicato marzo 2024, Kidney International, aggiornamento del KDIGO 2012). |
+| 285 | burnout_nutrizionale | ⚠️ dubbio | 2026-08-03 | Stesso problema di riga 283: badge "ISSFAL 2021" non verificato per questo contenuto (stress cronico/cortisolo). Fonti reali sostanziali già citate (Jacka 2017, Chandrasekhar 2012, Tomiyama 2010, Daubenmier 2012). Non modificato. |

@@ -1655,7 +1655,7 @@ const CONSIGLI_BASE = [
    pasti:'3 pasti + 2 spuntini. Calcio distribuito nell\'arco della giornata (max 500mg per pasto).',
    porzioni:'Calcio: 1000-1500mg/die distribuito. No mega-dosi in un solo pasto.',
    idratazione:'Acqua 2L/die. Succo di limone/arancia ai pasti (citrato migliora assorbimento Ca).',
-   nota:'ETA 2022. Vitamina D attiva (calcitriolo) prescritta dal medico. Calcio alimentare è fondamentale.',
+   nota:'ESE 2016 (Brandi et al.). Vitamina D attiva (calcitriolo) prescritta dal medico. Calcio alimentare è fondamentale.',
    ok:['Latticini freschi (latte, yogurt, ricotta)','Sardine con liscio','Broccoli, cavolo, rucola','Mandorle, sesamo','Acqua calcica (>300mg/L Ca)','Agrumi (citrato)','Tofu'],
    no:['Cola e bibite gassate (fosforo abbassa Ca)','Spinaci, bietole in eccesso (ossalati bloccano Ca)','Crusca/fibre eccessive (riducono assorbimento Ca)','Alcol','Caffeina in eccesso','Additivi fosfatici E450, E451'],
    mod:['Formaggi stagionati (Ca alto ma fosforo alto)','Legumi (fitati riducono Ca)','Cereali integrali'],

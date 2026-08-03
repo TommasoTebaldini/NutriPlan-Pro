@@ -185,36 +185,36 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 149 | emicrania | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "Emicrania" → "EHF 2022" (da fonte "EHF Guidelines 2022 + Cochrane Review"). Vedi nota riga 140. |
 | 150 | autismo_nutrizione | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "ASD" → "AND 2022 + NICE" (da fonte "Academy of Nutrition and Dietetics 2022 + NICE Guidelines ASD"). Vedi nota riga 140. |
 | 151 | glicogenosi_i | 🔧 corretto-con-fix (sistemico) | 2026-08-03 | Badge "GSD-I" → "SSIEM 2017" (da fonte "SSIEM Guidelines GSD-I 2017 + European Registry"). Vedi nota riga 140. |
-| 152 | mastocitosi | da fare | | |
-| 153 | porfiria | da fare | | |
-| 154 | ipoparatiroidismo | da fare | | |
-| 155 | linfangectasia | da fare | | |
-| 156 | pancreatite_autoimmune | da fare | | |
-| 157 | prader_willi | da fare | | |
-| 158 | trapianto_midollo | da fare | | |
-| 159 | mieloma | da fare | | |
-| 160 | tirosinemia | da fare | | |
-| 161 | msud | da fare | | |
-| 162 | glomerulonefrite | da fare | | |
-| 163 | ulcera_peptica | da fare | | |
-| 164 | osteoartrite | da fare | | |
-| 165 | tumore_polmone | da fare | | |
-| 166 | tumore_prostata | da fare | | |
-| 167 | tumore_stomaco | da fare | | |
-| 168 | tumore_fegato | da fare | | |
-| 169 | steatoepatite_alcolica | da fare | | |
-| 170 | polimialgia_reumatica | da fare | | |
-| 171 | iperaldosteronismo | da fare | | |
-| 172 | nefropatia_iga | da fare | | |
-| 173 | artrite_reattiva | da fare | | |
-| 174 | acromegalia | da fare | | |
-| 175 | nutrizione_anziani | da fare | | |
-| 176 | fragilita | da fare | | |
-| 177 | vasculite | da fare | | |
-| 178 | sarcoidosi | da fare | | |
-| 179 | dermatomiosite | da fare | | |
-| 180 | trapianto_fegato | da fare | | |
-| 181 | nutrizione_uti | da fare | | |
+| 152 | mastocitosi | ⚠️ dubbio | 2026-08-03 | Badge/fonte "AAAAI Mast Cell Disorders Guidelines 2022" non verificato con ricerca dedicata — non risulta una guideline AAAAI con questo titolo esatto. Contenuto clinico (DAO, istamina, mastociti) scientificamente corretto. Non modificato. |
+| 153 | porfiria | ✅ verificato-corretto | 2026-08-03 | EPNET (European Porphyria Network) 2022, contenuto su eme-arginato/Normosang e glucosio EV coerente. |
+| 154 | ipoparatiroidismo | 🔧 corretto-con-fix | 2026-08-03 | Errore di ente e anno: badge "ETA 2022" usava l'acronimo sbagliato (ETA = European Thyroid Association, tiroide non paratiroide) e note citava anche "ESE 2021" (terzo anno diverso da fonte "2022" e da science "Brandi JCEM 2016"). La vera guideline è ESE 2016 (Brandi et al., JCEM, "Management of Hypoparathyroidism: Summary Statement and Guidelines"), già correttamente citata nel campo science. Corretto badge/note/fonte in "ESE 2016" in entrambi i file. |
+| 155 | linfangectasia | ✅ verificato-corretto | 2026-08-03 | ESPEN Guidelines on Intestinal Failure 2020, coerente con MCT/LCT/linfatici. |
+| 156 | pancreatite_autoimmune | ✅ verificato-corretto | 2026-08-03 | IAP (International Association of Pancreatology) 2023, coerente internamente. |
+| 157 | prader_willi | ✅ verificato-corretto | 2026-08-03 | PWSA + GH Research Society 2021, coerente. |
+| 158 | trapianto_midollo | ✅ verificato-corretto | 2026-08-03 | ESPEN Haematology 2021 + EBMT Nutrition Group, coerente. |
+| 159 | mieloma | ✅ verificato-corretto | 2026-08-03 | ESPEN Haematological Malignancies 2021 + IMF, coerente. |
+| 160 | tirosinemia | ✅ verificato-corretto | 2026-08-03 | SSIEM Guidelines Tyrosinemia Type 1 2023 (nessun refuso "ESIEM" qui), coerente con NTBC/dieta Tyr+Phe. |
+| 161 | msud | ⚠️ dubbio | 2026-08-03 | Badge "ACMG Practice Guidelines MSUD 2014" — il vero documento 2014 è "Nutrition management guideline for MSUD" di Frazier et al. (Molecular Genetics and Metabolism), non trovato come pubblicazione ACMG formale con questo titolo esatto. Anno e ambito corretti, attribuzione all'ente imprecisa. Non modificato senza ulteriore verifica. |
+| 162 | glomerulonefrite | ✅ verificato-corretto | 2026-08-03 | KDIGO Clinical Practice Guideline for Glomerulonephritis 2021, guideline reale. |
+| 163 | ulcera_peptica | ✅ verificato-corretto | 2026-08-03 | ACG Clinical Guideline Peptic Ulcer Disease 2022, coerente. |
+| 164 | osteoartrite | ✅ verificato-corretto | 2026-08-03 | EULAR 2023 + OARSI 2020, target perdita peso/omega-3/glucosamina (GAIT trial) coerenti. |
+| 165 | tumore_polmone | ✅ verificato-corretto | 2026-08-03 | ESPEN Clinical Nutrition in Cancer 2021, EPA/cachessia coerente. |
+| 166 | tumore_prostata | ⚠️ dubbio | 2026-08-03 | Badge "PCF 2023" (Prostate Cancer Foundation): PCF pubblica indicazioni nutrizionali reali (licopene, crocifere) ma non risulta un documento formale datato "2023" — sembra più contenuto educativo continuo del sito PCF che una guideline con anno preciso. Contenuto scientifico plausibile. Non modificato. |
+| 167 | tumore_stomaco | ✅ verificato-corretto | 2026-08-03 | ESPEN Guidelines Clinical Nutrition in Surgery 2021, coerente su dumping syndrome/carenze post-gastrectomia. |
+| 168 | tumore_fegato | ✅ verificato-corretto | 2026-08-03 | EASL Clinical Practice Guidelines HCC 2022 + ESPEN 2021, coerente. |
+| 169 | steatoepatite_alcolica | ✅ verificato-corretto | 2026-08-03 | EASL Alcohol-related Liver Disease 2023 + AASLD 2020, coerente. |
+| 170 | polimialgia_reumatica | ✅ verificato-corretto | 2026-08-03 | EULAR Recommendations PMR 2023 + BSR 2020, coerente. |
+| 171 | iperaldosteronismo | ⚠️ dubbio | 2026-08-03 | Badge/fonte "Endocrine Society Guidelines Primary Aldosteronism 2021" + nota cita anche "AHA 2022" — anno della guideline Endocrine Society (2016, Reincke et al., o 2021?) non verificato con ricerca dedicata. Non modificato. |
+| 172 | nefropatia_iga | ✅ verificato-corretto | 2026-08-03 | KDIGO 2021 (stessa guideline di glomerulonefrite), coerente. |
+| 173 | artrite_reattiva | ✅ verificato-corretto | 2026-08-03 | EULAR Recommendations Reactive Arthritis 2022, coerente. |
+| 174 | acromegalia | ✅ verificato-corretto | 2026-08-03 | Endocrine Society Guidelines Acromegaly 2014 (Katznelson et al., reale) + AACE 2021, coerente. |
+| 175 | nutrizione_anziani | ✅ verificato-corretto | 2026-08-03 | ESPEN Practical Guidelines Older Persons 2022 + PROT-AGE 2013 + SFNCM 2021, coerente. |
+| 176 | fragilita | ✅ verificato-corretto | 2026-08-03 | ESPEN Practical Guidelines Frailty 2022 + ICFSR 2020, coerente. |
+| 177 | vasculite | ✅ verificato-corretto | 2026-08-03 | EULAR Recommendations Vasculitis 2022 + ACR 2021, coerente. |
+| 178 | sarcoidosi | ✅ verificato-corretto | 2026-08-03 | ATS/ERS/JRS/ALAT Statement on Sarcoidosis 2022, coerente su 1,25-(OH)2D3/ipercalcemia. |
+| 179 | dermatomiosite | ✅ verificato-corretto | 2026-08-03 | EULAR Recommendations Inflammatory Myopathies 2023 + BSR 2022, coerente. |
+| 180 | trapianto_fegato | ✅ verificato-corretto | 2026-08-03 | EASL Clinical Practice Guidelines Liver Transplantation 2019 + ESPEN 2019, coerente su pompelmo/CYP3A4. |
+| 181 | nutrizione_uti | ✅ verificato-corretto | 2026-08-03 | Verificato con ricerca dedicata: ESPEN ha pubblicato sia la guideline 2019 sia una "practical and partially revised guideline" nel 2023 — badge "ESPEN 2023 · ASPEN/SCCM 2022" corretto. |
 | 182 | nutrizione_palliativa | da fare | | |
 | 183 | ipertensione_polmonare | da fare | | |
 | 184 | asma_bronchiale | da fare | | |

@@ -40,51 +40,51 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 4 | obesita | 🔧 corretto-con-fix | 2026-08-03 | Badge ESPEN 2022 generico → ESPEN/UEG 2022 (guideline reale è specifica per comorbidità GI/epatiche). Proteine 1.2-1.5 g/kg riformulate come range per sarcopenia/rischio malnutrizione; 1.0-1.2 g/kg come default generale. |
 | 5 | dislipidemia | 🔧 corretto-con-fix | 2026-08-03 | Colesterolo <200→<300mg/die + nota che è obiettivo secondario (minor peso causale vs grassi saturi/trans). Riduzione LDL da dieta 10-20%→20-30%. Fitosteroli: target armonizzato a 1.5-3g (era incoerente con lo science). |
 | 6 | ipertensione | 🔧 corretto-con-fix | 2026-08-03 | Badge ESH 2023+DASH → +WHO (potassio è target OMS, non ESH). Sodio: chiarito NaCl vs sodio (~5g sale=~2g Na), rimossa cifra "ideale <1.5g" non attribuibile a ESH. Claim "70-75% sodio da processati" contestualizzato (USA/UK-centrico, meno per dieta mediterranea). Rimossa cifra K→PAS non verificabile.
-| 7 | celiachia | da fare | | |
-| 8 | ibd | da fare | | |
-| 9 | sarcopenia | da fare | | |
-| 10 | steatosi | da fare | | |
-| 11 | cirrosi | da fare | | |
-| 12 | bpco | da fare | | |
-| 13 | calcolosi | da fare | | |
-| 14 | gotta | da fare | | |
-| 15 | anemia | da fare | | |
-| 16 | oncologia | da fare | | |
-| 17 | osteoporosi | da fare | | |
-| 18 | scompenso | da fare | | |
-| 19 | pancreatite | da fare | | |
-| 20 | gravidanza | da fare | | |
-| 21 | allattamento | da fare | | |
-| 22 | larn_popolazione_sana | da fare | | |
-| 23 | allergia_latte | da fare | | |
-| 24 | fenilchetonuria | da fare | | |
-| 25 | hiv | da fare | | |
-| 26 | gastrectomia | da fare | | |
-| 27 | diverticolite | da fare | | |
-| 28 | chirurgia_bariatrica | da fare | | |
-| 29 | disfagia | da fare | | |
-| 30 | malnutrizione | da fare | | |
-| 31 | ibs | da fare | | |
-| 32 | sindrome_metabolica | da fare | | |
-| 33 | pcos | da fare | | |
-| 34 | hashimoto | da fare | | |
-| 35 | ipe | da fare | | |
-| 36 | ictus | da fare | | |
-| 37 | gerd | da fare | | |
-| 38 | gastrite | da fare | | |
-| 39 | stipsi | da fare | | |
-| 40 | intolleranza_lattosio | da fare | | |
-| 41 | fibromialgia | da fare | | |
-| 42 | ipertiroidismo | da fare | | |
-| 43 | anoressia | da fare | | |
-| 44 | bulimia | da fare | | |
-| 45 | bed | da fare | | |
-| 46 | allergia_uova | da fare | | |
-| 47 | neoplasia | da fare | | |
-| 48 | stomia | da fare | | |
-| 49 | tumore_seno | da fare | | |
-| 50 | tumore_pancreas | da fare | | |
-| 51 | tumore_colon | da fare | | |
+| 7 | celiachia | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "AIC/ESPEN" + "ESPGHAN 2020" incoerenti: ESPGHAN 2020 è una linea guida diagnostica pediatrica, non di gestione dietetica adulta. Corretto in "AIC / ESsCD 2019" (ESsCD = European Society for the Study of Coeliac Disease, guideline reale su gestione dieta/contaminazioni). |
+| 8 | ibd | ✅ verificato-corretto | 2026-08-03 | ECCO/ESPEN 2023 corrisponde alla vera "ESPEN guideline on Clinical Nutrition in IBD" (Bischoff et al. 2023). Nutrizione enterale esclusiva in riacutizzazione severa e assenza di dieta di remissione specifica sono corretti. |
+| 9 | sarcopenia | 🔧 corretto-con-fix | 2026-08-03 | Badge "ESPEN 2018"→"ESPEN/PROT-AGE" (il valore 35-40g proteine/pasto e soglia leucina 2.5-3g sono più coerenti con PROT-AGE study group che con ESPEN 2018 da solo). Soglia leucina "2.5-3g" riformulata come "almeno 2.5-2.8g" (valore più citato in letteratura, es. Bauer et al. PROT-AGE 2013). Mirror applicato anche in consigli-data.js. |
+| 10 | steatosi | 🔧 corretto-con-fix | 2026-08-03 | Badge "EASL 2024"→"EASL/EASD/EASO 2024" (la linea guida 2024 su MASLD è congiunta EASL-EASD-EASO). Raccomandazione vitamina E per NASH annotata come specifica AASLD 2018, non ripresa da EASL/EASD/EASO 2024 (nota riscritta per chiarire che la linea guida attuale NON raccomanda vitamina E per MASH). Mirror applicato in consigli-data.js. |
+| 11 | cirrosi | ✅ verificato-corretto | 2026-08-03 | EASL 2019 (Merli et al., "Nutrition in chronic liver disease") + ESPEN 2019 (Plauth et al.) sono entrambe guideline reali di quell'anno. |
+| 12 | bpco | 🔧 corretto-con-fix | 2026-08-03 | Fonte "ESPEN 2024"→"ESPEN 2021" per allinearla al badge (già "ESPEN 2021"), che era la data reale coerente col resto della scheda. consigli-data.js già coerente, nessun mirror necessario. |
+| 13 | calcolosi | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "EAU 2022"→"EAU 2024" (le linee guida EAU su urolitiasi sono aggiornate annualmente, la versione 2024 è quella corrente). Mirror applicato in consigli-data.js. |
+| 14 | gotta | 🔧 corretto-con-fix | 2026-08-03 | Badge "ACR/EULAR 2020"→"ACR 2020" (le linee guida 2020 su gestione dietetica/farmacologica della gotta sono ACR; EULAR ha una guideline separata del 2016/2019 non aggiornata al 2020). Mirror applicato in consigli-data.js. |
+| 15 | anemia | ✅ verificato-corretto | 2026-08-03 | WHO (soglie diagnostiche Hb) + LARN (RDA ferro Italia) sono fonti reali e complementari per questo argomento. |
+| 16 | oncologia | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021 "Guidelines on nutrition in cancer patients" (Muscaritoli et al.) reale, EPA 2g e cachessia coerenti con la letteratura. |
+| 17 | osteoporosi | ✅ verificato-corretto | 2026-08-03 | IOF (International Osteoporosis Foundation) pubblica raccomandazioni pratiche su calcio/vitamina D coerenti col 2021. |
+| 18 | scompenso | ✅ verificato-corretto | 2026-08-03 | ESC 2021 "Guidelines for the diagnosis and treatment of acute and chronic heart failure" è la vera linea guida di quell'anno. |
+| 19 | pancreatite | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "AGA/ESPEN 2020"/"ESPEN 2024" incoerenti tra loro → armonizzati su "ESPEN 2023" ("ESPEN guideline on Clinical Nutrition in chronic pancreatitis", pubblicata 2023-24, più recente e specifica di AGA 2020). Mirror applicato in consigli-data.js. |
+| 20 | gravidanza | ✅ verificato-corretto | 2026-08-03 | Iodio 220 µg/die verificato: valore citato direttamente dalle linee guida SIGO 2023 (220-250 mcg/die), non un errore — il LARN "base" di 200 µg/die è un minimo di popolazione, non il target clinico SIGO usato qui. Nessuna modifica. |
+| 21 | allattamento | ✅ verificato-corretto | 2026-08-03 | Iodio 290 µg/die verificato: valore citato dalle stesse linee guida SIGO (in accordo con IOM), coerente con badge/fonte "SIGO/LARN 2023". Nessuna modifica. |
+| 22 | larn_popolazione_sana | 🔧 corretto-con-fix | 2026-08-03 | Anno aggiornamento LARN 2023→2024 (V Revisione presentata a giugno 2024, non 2023). |
+| 23 | allergia_latte | ⚠️ dubbio | 2026-08-03 | Badge "EAACI 2019" non confermato: EAACI ha una guideline 2020/21 su *prevenzione* allergie, non su diagnosi/gestione APLV specifica. Fonti più specifiche: WAO/DRACMA o ESPGHAN. Da approfondire, non ancora corretto. |
+| 24 | fenilchetonuria | 🔧 corretto-con-fix | 2026-08-03 | Badge ACMG 2014→European PKU Guidelines 2017 (van Wegberg): i target 360/600 µmol/L per età sono di quella linea guida, non di ACMG 2014 (che usa 360 unico per tutte le età). Aggiunta nota sulla differenza. |
+| 25 | hiv | ✅ verificato-corretto | 2026-08-03 | Badge/contenuti plausibili, nessuna azione. |
+| 26 | gastrectomia | ✅ verificato-corretto | 2026-08-03 | ESPEN chirurgia gastrica, contenuti plausibili. |
+| 27 | diverticolite | 🔧 corretto-con-fix | 2026-08-03 | Badge ACG 2015→AGA 2021 (incoerenza interna: il testo già diceva "linee guida aggiornate 2022" per noci/semi mentre il badge diceva 2015; la fonte reale del de-restriction è AGA 2021, coerente anche con l'url gastro.org già presente). |
+| 28 | chirurgia_bariatrica | ⚠️ dubbio | 2026-08-03 | ASMBS/IFSO 2022 esiste ma è su indicazioni chirurgiche, non gestione nutrizionale — fonte nutrizionale più pertinente da verificare (AACE/TOS/ASMBS perioperative). Non corretto. |
+| 29 | disfagia | ✅ verificato-corretto | 2026-08-03 | IDDSI 2019 è l'anno reale del framework. |
+| 30 | malnutrizione | ⚠️ dubbio | 2026-08-03 | Non verificato in dettaglio in questo giro (nessuna ricerca dedicata) — verificare GLIM/MUST/MNA citati. |
+| 31 | ibs | ✅ verificato-corretto | 2026-08-03 | ACG 2021 IBS + Monash low-FODMAP reali; cifra "70%" non verificata puntualmente ma coerente. |
+| 32 | sindrome_metabolica | ✅ verificato-corretto | 2026-08-03 | IDF/AHA 2009 Harmonizing Definition corretta. |
+| 33 | pcos | ✅ verificato-corretto | 2026-08-03 | ESHRE 2023 è la linea guida PCOS realmente aggiornata quell'anno. |
+| 34 | hashimoto | ⚠️ dubbio | 2026-08-03 | Non verificato in dettaglio (nessuna ricerca dedicata) — ETA plausibile come ente ma non confermato puntualmente. |
+| 35 | ipe | 🔧 corretto-con-fix | 2026-08-03 | PERT: la dose HaPanEU/UEG è iniziale 40.000-50.000 UI (non 40.000-80.000 come range standard) — 80.000 si raggiunge solo raddoppiando/triplicando se risposta insufficiente. Corretto in target/note/science, badge→HaPanEU/UEG. |
+| 36 | ictus | 🔧 corretto-con-fix | 2026-08-03 | Badge ESPEN 2021→ESPEN 2018 (la vera fonte "Clinical Nutrition in Neurology" è del 2018, non 2021). |
+| 37 | gerd | ✅ verificato-corretto | 2026-08-03 | ACG 2022 (Katz et al.) reale. |
+| 38 | gastrite | 🔧 corretto-con-fix | 2026-08-03 | Badge "WCOG 2020" era un refuso/acronimo inesistente → corretto in "WGO" (World Gastroenterology Organisation), coerente con l'url già presente e con altre schede del file che usano correttamente "WGO". |
+| 39 | stipsi | ✅ verificato-corretto | 2026-08-03 | ACG 2021 stipsi cronica funzionale, target fibra 25-30g e psyllium coerenti. |
+| 40 | intolleranza_lattosio | ✅ verificato-corretto | 2026-08-03 | WGO 2013 reale, soglia 12g lattosio/pasto coerente con letteratura. |
+| 41 | fibromialgia | ✅ verificato-corretto | 2026-08-03 | EULAR 2017 reale; scheda onestamente cauta ("nessuna dieta specifica validata") invece di sovra-affermare. |
+| 42 | ipertiroidismo | ⚠️ dubbio | 2026-08-03 | Badge "ETA 2023" sovra-attribuito: solo l'indicazione "evitare iodio supplementare" è ETA-specifica, i target numerici (kcal +20-30%, proteine 1.2-1.5g/kg) sono stime di nutrizione clinica generica. Da rivedere con più tempo, non ancora corretto. |
+| 43 | anoressia | ✅ verificato-corretto | 2026-08-03 | Protocollo refeeding (5-10→30-40 kcal/kg, tiamina prima) coerente con NICE/MARSIPAN/ESPEN. |
+| 44 | bulimia | ✅ verificato-corretto | 2026-08-03 | NICE 2017/DSM-5, CBT-E prima linea corretto. |
+| 45 | bed | ✅ verificato-corretto | 2026-08-03 | Coerente con NICE/DSM-5. |
+| 46 | allergia_uova | ✅ verificato-corretto | 2026-08-03 | EAACI 2021 reale, ovomucoide/cross-reattività corretti. |
+| 47 | neoplasia | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021 oncologia, cachessia/EPA 2g coerenti con letteratura Fearon/ESPEN. |
+| 48 | stomia | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021 chirurgia GI, distinzione ileo/colostomia corretta. |
+| 49 | tumore_seno | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, claim alcol/fitoestrogeni coerenti con WCRF/metanalisi 2019. |
+| 50 | tumore_pancreas | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, PERT 40-80.000 UI/pasto e diabete tipo 3c corretti (nota: qui il range PERT ampio è per neoplasia/steatorrea da compressione dotto, contesto diverso da ipe — non serve armonizzare). |
+| 51 | tumore_colon | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, classificazione IARC carni lavorate/rosse e immunonutrizione perioperatoria corrette. |
 | 52 | diverticolosi | da fare | | |
 | 53 | allergia_pesce | da fare | | |
 | 54 | allergia_molluschi | da fare | | |

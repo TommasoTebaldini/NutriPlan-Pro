@@ -5,6 +5,7 @@
 
 import { checkRateLimit } from './_rateLimit.js';
 import { checkMonthlyQuota } from './_monthlyQuota.js';
+import { ragSearch } from './_ragSearch.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 // No hardcoded fallback for the anon key: verifySupabaseToken() below already
@@ -16,6 +17,9 @@ const MAX_CONTENT_BYTES = 32768; // 32 KB per request body
 
 // Rate limiter distribuito/in-memoria — vedi api/_rateLimit.js. 10 req/min.
 const RL_MAX = 10;
+// mode:'rag-search' è una ricerca dati (nessuna chiamata LLM, nessun costo
+// Groq) — limite più permissivo e scope separato dalla chat vera e propria.
+const RAG_RL_MAX = 30;
 // Tetto mensile duraturo condiviso con api/claude.js (stesso scope 'ai_calls'
 // in usage_counters — stessa API Groq/costo sottostante, vedi api/_monthlyQuota.js).
 const MONTHLY_MAX = 500;
@@ -74,6 +78,25 @@ export default async function handler(req, res) {
   const user = await verifySupabaseToken(token);
   if (!user?.id) {
     return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
+  }
+
+  // mode:'rag-search' — ricerca nel contesto clinico auditato (linee guida,
+  // consigli, ricette), nessuna chiamata LLM: bypassa quota mensile e modelli
+  // Groq, usa solo il proprio rate limit. Riusa lo stesso endpoint/auth di
+  // /api/gemini invece di aggiungere una nuova function Vercel (piano Hobby:
+  // limite di 12 function, vedi vercel.json).
+  if (req.body?.mode === 'rag-search') {
+    if (!(await checkRateLimit(user.id, { scope: 'rag-search', max: RAG_RL_MAX }))) {
+      return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
+    }
+    const tags = Array.isArray(req.body.tags) ? req.body.tags.slice(0, 20).map(t => String(t).slice(0, 100)) : [];
+    const query = String(req.body.query || '').slice(0, 500);
+    try {
+      return res.status(200).json(ragSearch({ tags, query }));
+    } catch (err) {
+      console.error('rag-search error:', err);
+      return res.status(500).json({ error: 'Errore ricerca contesto: ' + err.message });
+    }
   }
 
   if (!(await checkRateLimit(user.id, { scope: 'gemini', max: RL_MAX }))) {

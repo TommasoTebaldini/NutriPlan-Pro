@@ -2755,6 +2755,28 @@ async function loadTimelineChat() {
 // ══════════════════════════════════════════════════════════
 let _aiChatSysPrompt = '';
 let _aiChatHistory = [];
+let _aiChatTags = [];
+
+// Formatta il risultato di /api/gemini {mode:'rag-search'} in un blocco di
+// testo da accodare al system prompt — grounding sulle linee guida/ricette
+// auditate invece di lasciare l'AI rispondere "a briglia sciolta".
+function formatRagContext(rag) {
+  if (!rag) return '';
+  const parts = [];
+  if (rag.guidelines?.length) {
+    parts.push('LINEE GUIDA PERTINENTI (fonte: dataset clinico interno, verificato):\n' +
+      rag.guidelines.map(g => '- ' + g.nome + (g.badge ? ' [' + g.badge + ']' : '') +
+        (g.target ? '. Target: ' + g.target : '') +
+        (g.note ? '. Nota: ' + g.note : '') +
+        (g.avvisi?.length ? ' Avvisi: ' + g.avvisi.join('; ') : '')
+      ).join('\n'));
+  }
+  if (rag.recipes?.length) {
+    parts.push('RICETTE SUGGERIBILI DAL RICETTARIO INTERNO:\n' +
+      rag.recipes.map(r => '- ' + r.nome + ' (' + (r.categoria||'') + (r.kcal ? ', ~' + r.kcal + ' kcal/porzione' : '') + ')').join('\n'));
+  }
+  return parts.length ? '\n\n' + parts.join('\n\n') : '';
+}
 
 async function loadAIChatPaziente() {
   const wrap = document.getElementById('ai-chat-wrap');
@@ -2764,6 +2786,7 @@ async function loadAIChatPaziente() {
 
   // Carica contesto paziente
   let cartCtx = '';
+  let patientTags = [];
   if (p.cartellaId) {
     const [carR, esamiR, biaR] = await Promise.all([
       sb.from('cartelle').select('nome,ddn,sesso,tags,note').eq('id',p.cartellaId).maybeSingle(),
@@ -2771,6 +2794,7 @@ async function loadAIChatPaziente() {
       sb.from('bia_records').select('peso,bf_pct,ffm_kg,data_misura').eq('cartella_id',p.cartellaId).order('data_misura',{ascending:false}).limit(1),
     ]);
     const cart = carR.data;
+    patientTags = Array.isArray(cart?.tags) ? cart.tags : [];
     const esami = esamiR.data||[];
     const bia = biaR.data?.[0];
     const ddn = cart?.ddn ? new Date(cart.ddn) : null;
@@ -2788,6 +2812,7 @@ async function loadAIChatPaziente() {
 
   _aiChatSysPrompt = 'Sei un assistente nutrizionale clinico specializzato. Fornisci supporto professionale basandoti sui dati di questo paziente:\n\n'+cartCtx+'\n\nRispondi sempre in italiano. Sii preciso, clinicamente appropriato e conciso.';
   _aiChatHistory = [];
+  _aiChatTags = patientTags;
 
   wrap.innerHTML =
     '<div id="ai-chat-msgs" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px">' +
@@ -2831,10 +2856,26 @@ async function sendAIChat() {
   let reply = '';
   try {
     const {data:{session}} = await sb.auth.getSession();
+    const authHeader = session?.access_token?'Bearer '+session.access_token:'';
+
+    // Arricchimento RAG: recupera linee guida/ricette pertinenti dal dataset
+    // clinico auditato prima di rispondere, invece di lasciare l'AI "a
+    // briglia sciolta". Best-effort: se fallisce, si procede senza (nessun
+    // blocco della chat per un problema di questo solo arricchimento).
+    let ragCtx = '';
+    try {
+      const ragRes = await fetch('/api/gemini', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':authHeader},
+        body:JSON.stringify({mode:'rag-search', tags:_aiChatTags, query:msg})
+      });
+      ragCtx = formatRagContext(await ragRes.json());
+    } catch(e) { /* RAG opzionale */ }
+
     const res = await fetch('/api/gemini', {
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':session?.access_token?'Bearer '+session.access_token:''},
-      body:JSON.stringify({system:_aiChatSysPrompt, messages:_aiChatHistory.slice(-8), max_tokens:1024})
+      headers:{'Content-Type':'application/json','Authorization':authHeader},
+      body:JSON.stringify({system:_aiChatSysPrompt+ragCtx, messages:_aiChatHistory.slice(-8), max_tokens:1024})
     });
     const json = await res.json();
     reply = json?.content?.[0]?.text || '';

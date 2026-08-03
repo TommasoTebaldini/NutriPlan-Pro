@@ -243,6 +243,28 @@ async function ensureChartJs() {
     </div>
   </div>
 </div>
+
+<div class="modal-bg" id="modal-ai-piano">
+  <div class="modal" style="max-width:640px">
+    <div class="mhdr">
+      <h2>🤖 Bozza piano alimentare (AI)</h2>
+      <button class="mclose" onclick="closeM('modal-ai-piano')">✕</button>
+    </div>
+    <div class="mbody" style="padding:18px 22px;max-height:65vh;overflow-y:auto">
+      <div style="background:#FEF3C7;border-left:3px solid #D97706;border-radius:8px;padding:10px 12px;font-size:11.5px;color:#78350F;line-height:1.5;margin-bottom:14px">
+        ⚠️ Bozza generata da AI (Claude) — rivedi/modifica prima di salvare. Nessun piano raggiunge il paziente senza la tua conferma.
+      </div>
+      <div id="ai-piano-body">
+        <div style="text-align:center;padding:30px;color:var(--slate-m)">⏳ Generazione in corso, può richiedere qualche secondo...</div>
+      </div>
+    </div>
+    <div class="mfoot" id="ai-piano-foot" style="display:none">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-ai-piano')">Chiudi</button>
+      <button class="btn btn-ghost btn-sm" onclick="copiaPianoAI()">📋 Copia testo</button>
+      <button class="btn btn-primary btn-sm" id="ai-piano-save-btn" onclick="salvaPianoAI()" style="display:none">💾 Salva come piano assegnato</button>
+    </div>
+  </div>
+</div>
 <!-- MODAL: COLLEGA PAZIENTE -->
 <div class="modal-bg" id="modal-collega">
   <div class="modal" style="max-width:420px">
@@ -1354,6 +1376,7 @@ async function renderCartellaDetail(id) {
           <span style="background:#EFF6FF;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:6px">${(piani||[]).length}</span>
         </h4>
         <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;box-shadow:0 2px 8px rgba(15,118,110,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(15,118,110,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(15,118,110,.3)';this.style.transform=''" onclick="nuovoPianoInCartella('${cart.id}')">📋 ${_L('Nuovo Piano','New Plan')}</button>
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;box-shadow:0 2px 8px rgba(124,58,237,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(124,58,237,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(124,58,237,.3)';this.style.transform=''" onclick="apriBozzaPianoAI('${cart.id}','${patientId||''}')">🤖 ${_L('Bozza AI','AI Draft')}</button>
       </div>
       <div style="padding:10px 14px">${pianiHtml}</div>
     </div>
@@ -1696,6 +1719,140 @@ function nuovoPianoInCartella(cartellaId) {
   sessionStorage.setItem('loadPianoId', '');
   sessionStorage.setItem('newPianoCartella', cartellaId);
   window.location.href = 'app.html';
+}
+
+// ══════════════════════════════════════════════
+// BOZZA PIANO ALIMENTARE AI (Claude) — generatore lato dietista, sempre
+// bozza da rivedere. Salva su patient_diets/diet_meals (schema condiviso
+// con Diet-Plan-Pro-app-claude) solo se la cartella è collegata a un
+// account paziente reale (patientId presente).
+// ══════════════════════════════════════════════
+let _aiPianoDraft = null;
+let _aiPianoPatientId = null;
+
+const MEAL_TYPE_LABELS = {
+  colazione: 'Colazione', spuntino_mattina: 'Spuntino (mattina)', pranzo: 'Pranzo',
+  spuntino_pomeriggio: 'Spuntino (pomeriggio)', cena: 'Cena',
+};
+
+async function apriBozzaPianoAI(cartellaId, patientId) {
+  _aiPianoDraft = null;
+  _aiPianoPatientId = patientId || null;
+  document.getElementById('ai-piano-foot').style.display = 'none';
+  document.getElementById('ai-piano-body').innerHTML = '<div style="text-align:center;padding:30px;color:var(--slate-m)">⏳ Generazione in corso, può richiedere qualche secondo...</div>';
+  openM('modal-ai-piano');
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': session?.access_token ? 'Bearer ' + session.access_token : '' },
+      body: JSON.stringify({ mode: 'meal-plan', patientId: cartellaId }),
+    });
+    const json = await res.json();
+    if (!res.ok || !json.plan) throw new Error(json.error || 'Risposta non valida');
+    _aiPianoDraft = json.plan;
+    renderPianoAI();
+  } catch (e) {
+    document.getElementById('ai-piano-body').innerHTML = '<div style="color:#DC2626;padding:16px;font-size:13px">⚠️ Errore generazione bozza: ' + esc(e.message) + '</div>';
+  }
+}
+
+function renderPianoAI() {
+  const p = _aiPianoDraft;
+  const meals = Array.isArray(p.meals) ? p.meals : [];
+  document.getElementById('ai-piano-body').innerHTML =
+    '<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:var(--slate-m)">Nome piano</label>' +
+    '<input id="ai-piano-name" value="' + esc(p.name||'') + '" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box;margin-top:4px"></div>' +
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">' +
+    ['kcal_target','protein_target','carbs_target','fats_target'].map((k,i) => {
+      const labels = ['Kcal','Proteine (g)','Carboidrati (g)','Grassi (g)'];
+      return '<div><label style="font-size:10.5px;font-weight:700;color:var(--slate-m)">'+labels[i]+'</label>' +
+        '<input type="number" id="ai-piano-'+k+'" value="'+(p[k]??'')+'" style="width:100%;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit;box-sizing:border-box;margin-top:3px"></div>';
+    }).join('') + '</div>' +
+    (p.notes ? '<div style="background:#F0FDF4;border-radius:8px;padding:10px 12px;font-size:12px;color:#14532D;margin-bottom:14px;line-height:1.5"><b>Nota clinica AI:</b> '+esc(p.notes)+'</div>' : '') +
+    '<div style="display:flex;flex-direction:column;gap:8px">' +
+    meals.map((m,i) => '<div style="display:flex;gap:8px;align-items:center;background:#F8FAFC;border-radius:8px;padding:8px 10px">' +
+      '<span style="font-size:11px;font-weight:700;color:var(--teal);width:110px;flex-shrink:0">'+esc(MEAL_TYPE_LABELS[m.meal_type]||m.meal_type||'')+'</span>' +
+      '<input data-meal-idx="'+i+'" data-field="description" value="'+esc(m.description||'')+'" style="flex:1;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit">' +
+      '<input data-meal-idx="'+i+'" data-field="kcal" type="number" value="'+(m.kcal??'')+'" style="width:70px;padding:6px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12.5px;font-family:inherit" title="kcal">' +
+      '</div>').join('') +
+    '</div>';
+  document.getElementById('ai-piano-foot').style.display = 'flex';
+  document.getElementById('ai-piano-save-btn').style.display = _aiPianoPatientId ? '' : 'none';
+}
+
+function _syncPianoAIFromInputs() {
+  if (!_aiPianoDraft) return;
+  ['name'].forEach(k => { const el = document.getElementById('ai-piano-'+k); if (el) _aiPianoDraft[k] = el.value; });
+  ['kcal_target','protein_target','carbs_target','fats_target'].forEach(k => {
+    const el = document.getElementById('ai-piano-'+k); if (el) _aiPianoDraft[k] = parseInt(el.value,10) || null;
+  });
+  document.querySelectorAll('#ai-piano-body [data-meal-idx]').forEach(el => {
+    const idx = parseInt(el.dataset.mealIdx, 10);
+    const field = el.dataset.field;
+    if (!_aiPianoDraft.meals[idx]) return;
+    _aiPianoDraft.meals[idx][field] = field === 'kcal' ? (parseInt(el.value,10)||0) : el.value;
+  });
+}
+
+function copiaPianoAI() {
+  _syncPianoAIFromInputs();
+  const p = _aiPianoDraft;
+  const lines = [
+    p.name || 'Piano alimentare',
+    'Target: ' + (p.kcal_target||'-') + ' kcal, ' + (p.protein_target||'-') + 'g proteine, ' + (p.carbs_target||'-') + 'g carb, ' + (p.fats_target||'-') + 'g grassi',
+    '',
+    ...(p.meals||[]).map(m => (MEAL_TYPE_LABELS[m.meal_type]||m.meal_type) + ': ' + m.description + (m.kcal ? ' (~'+m.kcal+' kcal)' : '')),
+    p.notes ? '\nNota: ' + p.notes : '',
+  ];
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    toast('Testo copiato negli appunti', 'ok');
+  }).catch(() => toast('Impossibile copiare', 'err'));
+}
+
+async function salvaPianoAI() {
+  if (!_aiPianoPatientId) return;
+  _syncPianoAIFromInputs();
+  const p = _aiPianoDraft;
+  const btn = document.getElementById('ai-piano-save-btn');
+  btn.disabled = true; btn.textContent = 'Salvataggio...';
+  try {
+    const { data: dietRow, error: e1 } = await sb.from('patient_diets').insert({
+      user_id: _aiPianoPatientId,
+      name: p.name || 'Piano AI',
+      kcal_target: p.kcal_target || null,
+      protein_target: p.protein_target || null,
+      carbs_target: p.carbs_target || null,
+      fats_target: p.fats_target || null,
+      meals_count: (p.meals||[]).length || 5,
+      notes: p.notes || null,
+      is_active: true,
+    }).select().single();
+    if (e1) throw e1;
+
+    const mealsPayload = (p.meals||[]).map((m, i) => ({
+      diet_id: dietRow.id,
+      meal_type: m.meal_type,
+      meal_order: 1,
+      description: m.description,
+      kcal: m.kcal || null,
+      proteins: m.proteins || null,
+      carbs: m.carbs || null,
+      fats: m.fats || null,
+      foods: [],
+    }));
+    if (mealsPayload.length) {
+      const { error: e2 } = await sb.from('diet_meals').insert(mealsPayload);
+      if (e2) throw e2;
+    }
+    toast('Piano salvato e assegnato al paziente', 'ok');
+    closeM('modal-ai-piano');
+  } catch (e) {
+    toast('Errore salvataggio: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Salva come piano assegnato';
+  }
 }
 
 function caricaPiano(id) {
@@ -3368,12 +3525,56 @@ async function diarioFotoHandleFile(input) {
     _diarioFoto.result = data;
     _diarioFoto.selected = new Set(data.foods.map((_, i) => i));
     _diarioFoto.grams = Object.fromEntries(data.foods.map((f, i) => [i, f.grams]));
+    _diarioFoto.conflicts = {};
     _diarioFoto.phase = 'results';
   } catch (e) {
     _diarioFoto.error = e.message || String(e);
     _diarioFoto.phase = 'error';
   }
   renderDiarioFotoModal();
+  if (_diarioFoto.phase === 'results') _diarioFotoCheckConflicts(data.foods);
+}
+
+// Arricchimento RAG (best-effort): segnala alimenti rilevati che ricadono
+// nella lista "no" delle linee guida abbinate ai tag/patologie del paziente.
+// Non blocca né rallenta il flusso principale — gira dopo che i risultati
+// sono già mostrati, e fallisce silenziosamente se non disponibile.
+function _foodConflictsWithNo(foodName, noPhrases) {
+  const name = (foodName || '').toLowerCase();
+  if (!name) return null;
+  for (const phrase of noPhrases) {
+    const items = String(phrase).toLowerCase().split(/[,;]/).map(s => s.trim()).filter(Boolean);
+    for (const item of items) {
+      const key = item.split(/[\s(]/)[0];
+      if (key.length > 3 && (name.includes(key) || key.includes(name))) return item;
+    }
+  }
+  return null;
+}
+
+async function _diarioFotoCheckConflicts(foods) {
+  try {
+    const tags = (window._currentCartellaData && window._currentCartellaData.cart && window._currentCartellaData.cart.tags) || [];
+    if (!tags.length) return;
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': session?.access_token ? 'Bearer ' + session.access_token : '' },
+      body: JSON.stringify({ mode: 'rag-search', tags, query: '' }),
+    });
+    const rag = await res.json();
+    const noPhrases = (rag.guidelines || []).flatMap(g => g.no || []);
+    if (!noPhrases.length) return;
+    const conflicts = {};
+    foods.forEach((f, i) => {
+      const reason = _foodConflictsWithNo(f.name, noPhrases);
+      if (reason) conflicts[i] = reason;
+    });
+    if (_diarioFoto && _diarioFoto.phase === 'results') {
+      _diarioFoto.conflicts = conflicts;
+      renderDiarioFotoModal();
+    }
+  } catch (e) { /* arricchimento opzionale, ignora errori */ }
 }
 
 function diarioFotoToggleFood(i) {
@@ -3477,11 +3678,13 @@ function renderDiarioFotoModal() {
       ${s.result.foods.map((food, i) => {
         const checked = s.selected.has(i);
         const grams = s.grams[i] ?? food.grams;
+        const conflict = s.conflicts && s.conflicts[i];
         return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-light)">
           <input type="checkbox" ${checked ? 'checked' : ''} onchange="diarioFotoToggleFood(${i})" style="width:18px;height:18px;flex-shrink:0">
           <div style="flex:1;min-width:0;opacity:${checked ? 1 : 0.5}">
             <div style="font-size:13px;font-weight:600">${esc(food.name)}</div>
             <div style="font-size:11px;color:var(--slate-l)">${Math.round(_diarioFotoFoodValue(food, 'kcal', grams))} kcal</div>
+            ${conflict ? `<div style="font-size:11px;color:#B45309;margin-top:2px" title="${_L('Suggerimento automatico, non sostituisce il giudizio clinico','Automatic hint, does not replace clinical judgement')}">⚠️ ${_L('Da limitare per le patologie del paziente','May need limiting given the patient\\'s conditions')} (${esc(conflict)})</div>` : ''}
           </div>
           <input type="number" min="1" value="${grams}" onchange="diarioFotoSetGrams(${i}, this.value)" style="width:60px;padding:5px 6px;font-size:12px;text-align:right;border:1.5px solid var(--border);border-radius:6px">
           <span style="font-size:11px;color:var(--slate-l)">g</span>

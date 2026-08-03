@@ -4,6 +4,8 @@
 
 import { checkRateLimit } from './_rateLimit.js';
 import { checkMonthlyQuota } from './_monthlyQuota.js';
+import { recipesForMealPlan } from './_ragSearch.js';
+import { callClaude } from './_anthropic.js';
 
 // Public Supabase values — l'URL non è sensibile, ma l'anon key non deve avere
 // un fallback hardcoded nel codice server-side (vedi verifySupabaseToken sotto).
@@ -19,6 +21,13 @@ const RL_MAX = 10;
 // Tetto mensile duraturo (vedi api/_monthlyQuota.js) — 10/min moltiplicato per
 // un mese intero sarebbe teoricamente enorme; questo è il freno reale ai costi.
 const MONTHLY_MAX = 500;
+
+// mode:'meal-plan' — genera una bozza di piano alimentare con Claude reale
+// (non Groq): l'unico punto dell'app dove il contenuto clinico generato è
+// abbastanza delicato da giustificare il modello migliore invece del più
+// economico. Limiti separati e più stretti (costo Anthropic più alto).
+const MEAL_PLAN_RL_MAX = 5;
+const MEAL_PLAN_MONTHLY_MAX = 50;
 
 // Token verification cache: evita una chiamata HTTP a Supabase per ogni richiesta
 const _tkCache = new Map(); // token → { user, exp }
@@ -74,6 +83,10 @@ export default async function handler(req, res) {
   const user = await verifySupabaseToken(token);
   if (!user?.id) {
     return res.status(401).json({ error: 'Non autorizzato: sessione non valida.' });
+  }
+
+  if (req.body?.mode === 'meal-plan') {
+    return handleMealPlan(req, res, token, user);
   }
 
   if (!(await checkRateLimit(user.id, { scope: 'claude', max: RL_MAX }))) {
@@ -162,4 +175,127 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ error: 'Errore server: ' + err.message });
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// mode:'meal-plan' — genera una bozza di piano alimentare (Claude reale).
+// Il piano NON viene salvato da questo endpoint: torna al dietista come
+// bozza JSON, che la revisiona/modifica in UI e la salva lei stessa (client,
+// tabelle patient_diets/diet_meals già esistenti — stesso schema/RLS usati
+// da Diet-Plan-Pro-app-claude, progetto Supabase condiviso). Nessun piano
+// generato da AI raggiunge il paziente senza revisione umana.
+// ─────────────────────────────────────────────────────────────────────────
+
+const MEAL_TYPES = ['colazione', 'spuntino_mattina', 'pranzo', 'spuntino_pomeriggio', 'cena'];
+
+async function isDietitian(token, userId) {
+  if (!SUPABASE_ANON_KEY) return false;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=role`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return false;
+    const rows = await res.json();
+    return rows?.[0]?.role === 'dietitian';
+  } catch {
+    return false;
+  }
+}
+
+async function fetchPatientContext(token, dietitianUserId, patientId) {
+  const [cartRes, biaRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/cartelle?id=eq.${patientId}&user_id=eq.${dietitianUserId}&select=nome,ddn,sesso,tags`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
+    }),
+    fetch(`${SUPABASE_URL}/rest/v1/bia_records?cartella_id=eq.${patientId}&select=peso&order=data_misura.desc&limit=1`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
+    }),
+  ]);
+  const cart = (await cartRes.json())?.[0];
+  const bia = (await biaRes.json())?.[0];
+  return cart ? { ...cart, peso: bia?.peso } : null;
+}
+
+function extractJson(text) {
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) return null;
+  try { return JSON.parse(match[0]); } catch { return null; }
+}
+
+async function handleMealPlan(req, res, token, user) {
+  if (!(await checkRateLimit(user.id, { scope: 'meal-plan', max: MEAL_PLAN_RL_MAX }))) {
+    return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
+  }
+  if (!(await checkMonthlyQuota(token, user.id, 'ai_meal_plan', MEAL_PLAN_MONTHLY_MAX))) {
+    return res.status(429).json({ error: `Hai raggiunto il limite di ${MEAL_PLAN_MONTHLY_MAX} bozze di piano AI incluse nel piano per questo mese.` });
+  }
+  if (!(await isDietitian(token, user.id))) {
+    return res.status(403).json({ error: 'Funzione riservata agli account dietista.' });
+  }
+
+  const patientId = String(req.body?.patientId || '');
+  if (!patientId) {
+    return res.status(400).json({ error: 'Parametro patientId mancante.' });
+  }
+
+  const patient = await fetchPatientContext(token, user.id, patientId);
+  if (!patient) {
+    return res.status(404).json({ error: 'Paziente non trovato o non associato a questo account.' });
+  }
+
+  const tags = Array.isArray(patient.tags) ? patient.tags : [];
+  const { guidelines, recipesByCategory } = recipesForMealPlan({ tags });
+
+  const guidelinesText = guidelines.length
+    ? guidelines.map(g => `- ${g.nome} [${g.badge || ''}]: ${g.target || ''}`).join('\n')
+    : '(nessuna linea guida specifica trovata per i tag di questo paziente — usa buon senso clinico generale)';
+
+  const recipesText = Object.entries(recipesByCategory)
+    .filter(([, list]) => list.length)
+    .map(([cat, list]) => `${cat}: ` + list.map(r => `"${r.nome}" (id:${r.id}, ~${r.kcal || '?'} kcal/porzione)`).join(', '))
+    .join('\n');
+
+  const system = `Sei un assistente per dietisti italiani. Genera UNA bozza di piano alimentare giornaliero (si applica ad ogni giorno, non è specifico per giorno della settimana) da sottoporre a revisione del dietista.
+
+VINCOLO ASSOLUTO: usa SOLO le ricette elencate sotto (riportane id e nome esattamente come dati). Non inventare ricette o piatti non presenti nella lista. Se una categoria non ha ricette disponibili, ometti quel pasto o usa alimenti semplici generici (es. "yogurt naturale + frutta") invece di inventare un piatto strutturato.
+
+Paziente: ${patient.nome || ''}${patient.peso ? `, peso attuale ${patient.peso} kg` : ''}${tags.length ? `, tag/patologie: ${tags.join(', ')}` : ''}.
+
+Linee guida cliniche pertinenti (fonte: dataset interno verificato):
+${guidelinesText}
+
+Ricette disponibili per categoria:
+${recipesText}
+
+Rispondi SOLO con un oggetto JSON valido (nessun testo fuori dal JSON, nessun blocco markdown), in questo formato esatto:
+{
+  "name": "titolo breve del piano",
+  "kcal_target": <numero intero>,
+  "protein_target": <numero intero, grammi>,
+  "carbs_target": <numero intero, grammi>,
+  "fats_target": <numero intero, grammi>,
+  "meals_count": 5,
+  "notes": "breve nota clinica per il dietista su come è stato costruito il piano",
+  "meals": [
+    { "meal_type": "colazione", "meal_order": 1, "description": "nome ricetta o alimento", "recipeId": "id ricetta o null", "kcal": <numero>, "proteins": <numero>, "carbs": <numero>, "fats": <numero> }
+  ]
+}
+"meal_type" deve essere uno tra: ${MEAL_TYPES.join(', ')}. Includi un pasto per ciascuno dei 5 tipi.`;
+
+  const result = await callClaude({
+    system,
+    userMessage: 'Genera la bozza del piano alimentare secondo le istruzioni sopra.',
+    maxTokens: 2048,
+  });
+
+  if (!result.ok) {
+    return res.status(result.status || 502).json({ error: 'Errore generazione piano: ' + result.error });
+  }
+
+  const plan = extractJson(result.text);
+  if (!plan) {
+    return res.status(502).json({ error: 'Risposta AI non in formato JSON valido. Riprova.' });
+  }
+
+  return res.status(200).json({ plan, model: result.model });
 }

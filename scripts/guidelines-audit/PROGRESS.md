@@ -245,15 +245,15 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 209 | anemia_falciforme | ✅ verificato-corretto | 2026-08-03 | ASH Clinical Practice Guidelines Sickle Cell Disease 2020, coerente. |
 | 210 | abuso_alcol | ✅ verificato-corretto | 2026-08-03 | EASL Clinical Practice Guidelines: Liver Disease and Alcohol 2018 + ESPEN 2023, coerente. |
 | 211 | distrofia_muscolare | ✅ verificato-corretto | 2026-08-03 | TREAT-NMD Nutritional Management Guidelines for DMD 2021, coerente. |
-| 212 | alimentazione_complementare | da fare | | |
-| 213 | sindrome_premestruale | da fare | | |
-| 214 | infertilita_nutrizione | da fare | | |
-| 215 | ortoressia | da fare | | |
-| 216 | microbiota_intestinale | da fare | | |
-| 217 | politrauma | da fare | | |
-| 218 | rachitismo_osteomalacia | da fare | | |
-| 219 | deficit_tiamina | da fare | | |
-| 220 | celiachia_bambini | da fare | | |
+| 212 | alimentazione_complementare | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "ESPGHAN 2022" errato: verificato che il vero documento è Fewtrell et al. 2017 (JPGN 64:119-132), nessun aggiornamento formale più recente trovato. Corretto in "ESPGHAN 2017" in badge/note/science/fonte in entrambi i file. |
+| 213 | sindrome_premestruale | 🔧 corretto-con-fix | 2026-08-03 | Badge "ACOG 2023" corretto (esiste davvero ACOG Clinical Practice Guideline No. 7, dicembre 2023), ma l'url puntava al vecchio Practice Bulletin 2000 (path "/2000/04/"). Corretto fonte/url con il documento 2023 reale. |
+| 214 | infertilita_nutrizione | ✅ verificato-corretto | 2026-08-03 | ESHRE Guidelines Unexplained Infertility 2023 + Gaskins AJCN 2021, coerente internamente. |
+| 215 | ortoressia | 🔧 corretto-con-fix | 2026-08-03 | Badge "Bratman 2017" incoerente con science/fonte "2016"; verificato che la vera pubblicazione è Dunn TM, Bratman S. 2016, rivista "Eating Behaviors" (non "Advances in Eating Disorders" come scritto in fonte — nome rivista sbagliato). Corretto badge in "Dunn & Bratman 2016" e fonte con la rivista corretta, in entrambi i file. |
+| 216 | microbiota_intestinale | 🔧 corretto-con-fix | 2026-08-03 | Badge "Nature 2021" errato: lo studio primario (Sonnenburg/Wastyk, coerente con l'url cell.com già presente) è su Cell, non Nature. Corretto badge in "Cell 2021" e rimossa una citazione spuria "Nature Microbiome 2021" dal campo fonte, in entrambi i file. |
+| 217 | politrauma | ✅ verificato-corretto | 2026-08-03 | Brain Trauma Foundation Guidelines 2022 + ESPEN Critical Care 2018, coerente. |
+| 218 | rachitismo_osteomalacia | ✅ verificato-corretto | 2026-08-03 | ENDO Clinical Practice Guideline on Vitamin D 2011 (Holick et al.) + ISS 2022, coerente. |
+| 219 | deficit_tiamina | ✅ verificato-corretto | 2026-08-03 | EFNS Guidelines Wernicke Encephalopathy 2010 + ESPEN 2022, coerente. |
+| 220 | celiachia_bambini | ✅ verificato-corretto | 2026-08-03 | ESPGHAN Guidelines on Celiac Disease 2020 (Husby et al.) + SIGENP 2023, coerente. |
 | 221 | deficit_vitamina_a | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Deficit Vit. A" → "WHO 2011 + EFSA 2015" (da fonte "OMS Vitamin A Supplementation Guidelines 2011; EFSA 2015"), fix sistemico di formato — vedi riga 140. Contenuto/target non ancora verificato indipendentemente. |
 | 222 | deficit_vitamina_c | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2013" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
 | 223 | deficit_vitamina_e | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge → "EFSA 2015" (da fonte). Fix sistemico di formato, vedi riga 140. Contenuto non ancora verificato indipendentemente. |
@@ -284,27 +284,27 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 248 | iperfosfatemia | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Iperfosfat." → "KDIGO 2017" (da fonte). Fix sistemico di formato, vedi riga 140. |
 | 249 | nutrizione_geriatrica_rsa | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "RSA" → "ESPEN 2020" (da fonte). Fix sistemico di formato, vedi riga 140. |
 | 250 | anemia_emolitica | 🔧 corretto-con-fix (solo badge) | 2026-08-03 | Badge "Anemia Emol." → "ASH 2018" (da fonte). Fix sistemico di formato, vedi riga 140. |
-| 251 | allergia_soia | da fare | | |
-| 252 | allergia_sedano | da fare | | |
-| 253 | allergia_senape | da fare | | |
-| 254 | allergia_lupino | da fare | | |
-| 255 | allergia_solfiti | da fare | | |
-| 256 | diabete_lada | da fare | | |
-| 257 | tumore_rene | da fare | | |
-| 258 | tumore_tiroide | da fare | | |
-| 259 | tumore_ovaio | da fare | | |
-| 260 | anemia_megaloblastica | da fare | | |
-| 261 | morbo_crohn | da fare | | |
-| 262 | colite_ulcerosa | da fare | | |
-| 263 | ipotiroidismo | da fare | | |
-| 264 | feocromocitoma | da fare | | |
-| 265 | apnea_sonno | da fare | | |
-| 266 | tumore_vescica | da fare | | |
-| 267 | tumore_esofago | da fare | | |
-| 268 | tumore_endometrio | da fare | | |
-| 269 | policitemia_vera | da fare | | |
-| 270 | arfid | da fare | | |
-| 271 | pots | da fare | | |
+| 251 | allergia_soia | ✅ verificato-corretto | 2026-08-03 | EAACI 2014 (Muraro et al.), stesso pattern già verificato per altre allergie alimentari. |
+| 252 | allergia_sedano | ✅ verificato-corretto | 2026-08-03 | Stesso pattern EAACI 2014, coerente. |
+| 253 | allergia_senape | ✅ verificato-corretto | 2026-08-03 | Stesso pattern EAACI 2014, coerente. |
+| 254 | allergia_lupino | ✅ verificato-corretto | 2026-08-03 | Stesso pattern EAACI 2014, coerente. |
+| 255 | allergia_solfiti | 🔧 corretto-con-fix | 2026-08-03 | Badge "FDA/EAACI 2014" con anno non supportato da nessun altro campo (note diceva solo "FDA/EAACI." senza anno, fonte cita solo Vally Thorax 2000 senza anno FDA/EAACI, consigli-data.js diceva addirittura "EAACI/FDA 2019" — terzo anno diverso). Rimosso l'anno inventato/non tracciabile, badge/nota ora "FDA/EAACI" in entrambi i file. |
+| 256 | diabete_lada | ✅ verificato-corretto | 2026-08-03 | ADA Standards of Care 2023 + ADA/EASD Consensus Report 2023, coerente. |
+| 257 | tumore_rene | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, pattern oncologico coerente. |
+| 258 | tumore_tiroide | 🔧 corretto-con-fix | 2026-08-03 | Incoerenza a tre vie: badge "ETA/ESPEN 2021" ometteva ATA (presente in fonte "ATA DTC Guidelines 2015; ETA Guidelines 2021") e aggiungeva ESPEN (assente da fonte e science, che citano solo "ATA Management Guidelines 2015"). Nessuna guideline ESPEN specifica su DTC risulta esistere — stesso pattern di sovra-attribuzione già visto in "ipertiroidismo"/"post_covid". Corretto badge/note in "ATA 2015 + ETA 2021" in entrambi i file, rimossa ESPEN. |
+| 259 | tumore_ovaio | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, pattern oncologico coerente. |
+| 260 | anemia_megaloblastica | ✅ verificato-corretto | 2026-08-03 | BSH 2014, coerente. |
+| 261 | morbo_crohn | ✅ verificato-corretto | 2026-08-03 | ECCO/ESPEN 2023, badge omette ESPEN ma non è un'incoerenza sostanziale. |
+| 262 | colite_ulcerosa | ✅ verificato-corretto | 2026-08-03 | ECCO 2023, stesso ente/anno di morbo_crohn, coerente. |
+| 263 | ipotiroidismo | ✅ verificato-corretto | 2026-08-03 | ETA/ATA Guidelines 2021/2012, coerente. |
+| 264 | feocromocitoma | ✅ verificato-corretto | 2026-08-03 | ENSAT (European Network for the Study of Adrenal Tumours) 2023, ente reale. |
+| 265 | apnea_sonno | ✅ verificato-corretto | 2026-08-03 | AASM Clinical Practice Guidelines 2023, coerente (diverso da "sonno_nutrizione" già corretto — qui l'ente/anno non risultava fabbricato). |
+| 266 | tumore_vescica | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, pattern oncologico coerente. |
+| 267 | tumore_esofago | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, coerente. |
+| 268 | tumore_endometrio | ✅ verificato-corretto | 2026-08-03 | ESPEN 2021, coerente. |
+| 269 | policitemia_vera | ✅ verificato-corretto | 2026-08-03 | ELN (European LeukemiaNet) 2021, ente reale. |
+| 270 | arfid | ✅ verificato-corretto | 2026-08-03 | DSM-5 2013, anno di pubblicazione corretto. |
+| 271 | pots | ✅ verificato-corretto | 2026-08-03 | ESC Guidelines 2022 + Heart Rhythm Society POTS Expert Consensus 2021, coerente. |
 | 272 | neuropatia_periferica | da fare | | |
 | 273 | epatite_b_cronica | da fare | | |
 | 274 | epatite_c_cronica | da fare | | |

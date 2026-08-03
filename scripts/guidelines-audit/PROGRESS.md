@@ -75,7 +75,7 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 39 | stipsi | ✅ verificato-corretto | 2026-08-03 | ACG 2021 stipsi cronica funzionale, target fibra 25-30g e psyllium coerenti. |
 | 40 | intolleranza_lattosio | ✅ verificato-corretto | 2026-08-03 | WGO 2013 reale, soglia 12g lattosio/pasto coerente con letteratura. |
 | 41 | fibromialgia | ✅ verificato-corretto | 2026-08-03 | EULAR 2017 reale; scheda onestamente cauta ("nessuna dieta specifica validata") invece di sovra-affermare. |
-| 42 | ipertiroidismo | ⚠️ dubbio | 2026-08-03 | Badge "ETA 2023" sovra-attribuito: solo l'indicazione "evitare iodio supplementare" è ETA-specifica, i target numerici (kcal +20-30%, proteine 1.2-1.5g/kg) sono stime di nutrizione clinica generica. Da rivedere con più tempo, non ancora corretto. |
+| 42 | ipertiroidismo | 🔧 corretto-con-fix | 2026-08-03 | Badge "ETA 2023"→"ETA 2023 (iodio) + stime cliniche generali": solo "evitare iodio supplementare" è ETA-specifico, i target numerici (kcal +20-30%, proteine 1.2-1.5g/kg) sono stime di nutrizione clinica generica per ipermetabolismo, non cifre ETA. Corretto in badge/note/fonte in entrambi i file. |
 | 43 | anoressia | ✅ verificato-corretto | 2026-08-03 | Protocollo refeeding (5-10→30-40 kcal/kg, tiamina prima) coerente con NICE/MARSIPAN/ESPEN. |
 | 44 | bulimia | ✅ verificato-corretto | 2026-08-03 | NICE 2017/DSM-5, CBT-E prima linea corretto. |
 | 45 | bed | ✅ verificato-corretto | 2026-08-03 | Coerente con NICE/DSM-5. |

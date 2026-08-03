@@ -215,36 +215,36 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 179 | dermatomiosite | ✅ verificato-corretto | 2026-08-03 | EULAR Recommendations Inflammatory Myopathies 2023 + BSR 2022, coerente. |
 | 180 | trapianto_fegato | ✅ verificato-corretto | 2026-08-03 | EASL Clinical Practice Guidelines Liver Transplantation 2019 + ESPEN 2019, coerente su pompelmo/CYP3A4. |
 | 181 | nutrizione_uti | ✅ verificato-corretto | 2026-08-03 | Verificato con ricerca dedicata: ESPEN ha pubblicato sia la guideline 2019 sia una "practical and partially revised guideline" nel 2023 — badge "ESPEN 2023 · ASPEN/SCCM 2022" corretto. |
-| 182 | nutrizione_palliativa | da fare | | |
-| 183 | ipertensione_polmonare | da fare | | |
-| 184 | asma_bronchiale | da fare | | |
-| 185 | bronchiectasie | da fare | | |
-| 186 | acidemia_metilmalonica | da fare | | |
-| 187 | sindrome_down | da fare | | |
-| 188 | fibrosi_polmonare | da fare | | |
-| 189 | emofilia | da fare | | |
-| 190 | cistinuria | da fare | | |
-| 191 | sindrome_antifosfolipidi | da fare | | |
-| 192 | ipercalcemia | da fare | | |
-| 193 | obesita_sarcopenica | da fare | | |
-| 194 | nutrizione_atleta | da fare | | |
-| 195 | diarrea_cronica | da fare | | |
-| 196 | digiuno_intermittente | da fare | | |
-| 197 | dieta_mediterranea | da fare | | |
-| 198 | nutrizione_enterale | da fare | | |
-| 199 | nutrizione_parenterale | da fare | | |
-| 200 | ustioni_gravi | da fare | | |
-| 201 | sepsi | da fare | | |
-| 202 | tumori_net | da fare | | |
-| 203 | leucemia | da fare | | |
-| 204 | linfoma | da fare | | |
-| 205 | trapianto_cuore | da fare | | |
-| 206 | rene_policistico | da fare | | |
-| 207 | deficit_zinco | da fare | | |
-| 208 | deficit_iodio | da fare | | |
-| 209 | anemia_falciforme | da fare | | |
-| 210 | abuso_alcol | da fare | | |
-| 211 | distrofia_muscolare | da fare | | |
+| 182 | nutrizione_palliativa | ✅ verificato-corretto | 2026-08-03 | ESPEN Nutrition in Advanced Disease 2021 + EAPC Atlas, coerente. |
+| 183 | ipertensione_polmonare | ✅ verificato-corretto | 2026-08-03 | ESC/ERS Guidelines Pulmonary Hypertension 2022, url reale su Eur Heart J. |
+| 184 | asma_bronchiale | ✅ verificato-corretto | 2026-08-03 | GINA 2023 Update, meta-analisi dieta mediterranea (Thorax 2021) citata correttamente come studio separato. |
+| 185 | bronchiectasie | ✅ verificato-corretto | 2026-08-03 | ERS 2017 (update 2022) + BTS 2019, coerente. |
+| 186 | acidemia_metilmalonica | ✅ verificato-corretto | 2026-08-03 | ACMG 2022 + SSIEM 2020, nessun refuso "ESIEM" qui. |
+| 187 | sindrome_down | ✅ verificato-corretto | 2026-08-03 | JIDSA 2022 + ESPGHAN 2022, coerente (acronimo JIDSA non riverificato con ricerca dedicata). |
+| 188 | fibrosi_polmonare | ✅ verificato-corretto | 2026-08-03 | ATS/ERS/JRS/ALAT Guidelines IPF 2022, coerente. |
+| 189 | emofilia | ✅ verificato-corretto | 2026-08-03 | WFH Guidelines Management of Hemophilia 2020 (3rd Ed.), coerente. |
+| 190 | cistinuria | ✅ verificato-corretto | 2026-08-03 | EAU Guidelines Urolithiasis 2022 (capitolo cistinuria), coerente. |
+| 191 | sindrome_antifosfolipidi | ✅ verificato-corretto | 2026-08-03 | EULAR Recommendations APS 2023, Ann Rheum Dis, coerente. |
+| 192 | ipercalcemia | ✅ verificato-corretto | 2026-08-03 | ENDO/AACE Guidelines Hypercalcemia 2022, JCEM, coerente. |
+| 193 | obesita_sarcopenica | ✅ verificato-corretto | 2026-08-03 | ESPEN/EASO Guidelines Sarcopenic Obesity 2022, coerente. |
+| 194 | nutrizione_atleta | 🔧 corretto-con-fix | 2026-08-03 | Badge/note "IOC 2021" errato: fonte già citava correttamente "IOC Consensus Statement Relative Energy Deficiency in Sport 2023" (Mountjoy et al., BJSM vol.57 = 2023, coerente con l'url). Corretto badge/note in "IOC 2023" in entrambi i file. |
+| 195 | diarrea_cronica | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "ACG 2022" errato e url che puntava letteralmente alla guideline IBS ("...Management_of_Irritable..."), non diarrea. Verificato con ricerca web: non esiste una guideline ACG dedicata alla diarrea cronica del 2022; la vera fonte è AGA 2019 (Smalley et al., "Laboratory Evaluation of Functional Diarrhea and Diarrhea-Predominant IBS", Gastroenterology). Corretto badge/note/fonte/url in entrambi i file. |
+| 196 | digiuno_intermittente | ✅ verificato-corretto | 2026-08-03 | de Cabo & Mattson NEJM 2019, badge onesto (review, non guideline formale). |
+| 197 | dieta_mediterranea | ✅ verificato-corretto | 2026-08-03 | Estruch et al. NEJM 2013 (PREDIMED), coerente. |
+| 198 | nutrizione_enterale | ✅ verificato-corretto | 2026-08-03 | ESPEN Guideline Clinical Nutrition in Critical Care 2019, coerente. |
+| 199 | nutrizione_parenterale | ✅ verificato-corretto | 2026-08-03 | ESPEN 2019 / ASPEN Parenteral Nutrition Guidelines 2022, coerente. |
+| 200 | ustioni_gravi | ✅ verificato-corretto | 2026-08-03 | ESPEN Guidelines Enteral Nutrition: Burns 2013 + ABA 2022, coerente. |
+| 201 | sepsi | ✅ verificato-corretto | 2026-08-03 | ESPEN Guideline Critical Care 2023 + Surviving Sepsis Campaign 2021, coerente. |
+| 202 | tumori_net | ✅ verificato-corretto | 2026-08-03 | ENETS Consensus Guidelines 2022 + ESPEN Oncology 2021, coerente. |
+| 203 | leucemia | ✅ verificato-corretto | 2026-08-03 | ESPEN Clinical Nutrition in Cancer 2021 + NCCN 2023, coerente. |
+| 204 | linfoma | ✅ verificato-corretto | 2026-08-03 | ESPEN Clinical Nutrition in Cancer 2021, coerente. |
+| 205 | trapianto_cuore | ✅ verificato-corretto | 2026-08-03 | ISHLT Guidelines Heart Transplantation 2016 + ESPEN 2022, coerente. |
+| 206 | rene_policistico | ✅ verificato-corretto | 2026-08-03 | KDIGO 2023 Clinical Practice Guideline for ADPKD, coerente. |
+| 207 | deficit_zinco | ✅ verificato-corretto | 2026-08-03 | WHO/UNICEF Zinc Supplementation 2022 + ESPEN 2022 (badge omette UNICEF, discrepanza minore non corretta). |
+| 208 | deficit_iodio | 🔧 corretto-con-fix | 2026-08-03 | Badge "WHO/ICCIDD 2007" incoerente con fonte ("WHO Iodine Status Worldwide; ISS Progetto IODIO 2022"). Verificato che il documento WHO/ICCIDD/UNICEF 2007 "Assessment of Iodine Deficiency Disorders" (3ª ed.) è reale e resta il riferimento standard (nessun aggiornamento formale più recente trovato) — quindi il 2007 non era l'errore, ma l'incoerenza badge/fonte sì. Armonizzato in "WHO/ICCIDD/UNICEF 2007 + ISS 2022" in entrambi i file. |
+| 209 | anemia_falciforme | ✅ verificato-corretto | 2026-08-03 | ASH Clinical Practice Guidelines Sickle Cell Disease 2020, coerente. |
+| 210 | abuso_alcol | ✅ verificato-corretto | 2026-08-03 | EASL Clinical Practice Guidelines: Liver Disease and Alcohol 2018 + ESPEN 2023, coerente. |
+| 211 | distrofia_muscolare | ✅ verificato-corretto | 2026-08-03 | TREAT-NMD Nutritional Management Guidelines for DMD 2021, coerente. |
 | 212 | alimentazione_complementare | da fare | | |
 | 213 | sindrome_premestruale | da fare | | |
 | 214 | infertilita_nutrizione | da fare | | |

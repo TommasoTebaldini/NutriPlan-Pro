@@ -821,7 +821,7 @@ const CONSIGLI_BASE = [
     id:'allergia_sesamo', emoji:'\u{1F330}', nome:'Allergia al Sesamo', colore:'#B45309',
     pasti:'Normali', porzioni:'Normali — eliminare solo sesamo e derivati',
     idratazione:'>=2 L/die',
-    nota:"EAACI 2023 · 15° allergene obbligatorio in etichetta UE dal 2023. Fonti nascoste: tahini, hummus, halva, pane da hamburger, cracker orientali.",
+    nota:"EAACI · In UE allergene a dichiarazione obbligatoria fin dal 2014 (Reg. UE 1169/2011, non una novità del 2023); il 2023 riguarda gli USA (FASTER Act, 9° allergene maggiore per legge). Fonti nascoste: tahini, hummus, halva, pane da hamburger, cracker orientali.",
     ok:['Cereali e pane senza semi di sesamo (verificare etichetta)','Carni, pesce, uova freschi','Latte e derivati','Legumi (senza tahini)','Frutta e verdura','Olio EVO, olio di girasole, olio di mais','Frutta secca senza sesamo'],
     no:['Semi di sesamo (interi, tostati, decorticati, in crosta di pane)','Olio di sesamo','Tahini (pasta di sesamo)','Hummus (contiene tahini)','Halva','Gomashio (condimento giapponese)','Cucine asiatiche e mediorientali senza garanzie'],
     mod:['Olio di sesamo raffinato: potrebbe essere tollerato da alcuni, verificare con allergologo'],

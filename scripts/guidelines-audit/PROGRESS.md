@@ -92,24 +92,24 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 56 | fibrosi_cistica | ✅ verificato-corretto | 2026-08-03 | ECFS/ESPEN 2016 (Turck et al., "ESPEN-ESPGHAN-ECFS guidelines on nutrition care for infants, children, and adults with cystic fibrosis") è la vera linea guida di quell'anno. |
 | 57 | epilessia | 🔧 corretto-con-fix | 2026-08-03 | Badge "ILAE/ESPEN 2021" incoerente con la nota che già diceva "ILAE 2008" (l'ILAE non pubblica linee guida sulla dieta chetogenica; il vero ente è l'International Ketogenic Diet Study Group, Kossoff et al., consensus 2009 aggiornato 2018). Corretto badge/note/fonte in "International Ketogenic Diet Study Group 2018" in entrambi i file. |
 | 58 | alzheimer | 🔧 corretto-con-fix | 2026-08-03 | Badge "ESPEN 2023" non corrisponde a nessuna pubblicazione ESPEN di quell'anno sul tema — la vera linea guida ESPEN su nutrizione/idratazione nella demenza è del 2015, aggiornata nel 2024 (Volkert et al.). Corretto in "ESPEN 2024" in badge/note/fonte, mirror applicato in consigli-data.js. |
-| 59 | gastroparesi | ✅ verificato-corretto | 2026-08-03 | ACG 2022 "Camilleri et al., ACG Clinical Guideline: Gastroparesis" è reale; badge "ADA/ACG 2022" ok anche se fonte finale abbrevia in "ADA 2022" (minore, non corretto per non introdurre altra incoerenza). |
+| 59 | gastroparesi | 🔧 corretto-con-fix | 2026-08-03 | Verifica successiva più approfondita: "ADA/ACG 2022" era comunque fuorviante — la vera fonte è solo "ACG Clinical Guideline: Gastroparesis" (Camilleri et al., Am J Gastroenterol 2022), pubblicazione gastroenterologica, non ADA (diabetes.org). Corretto badge/note/fonte/url in "ACG 2022" in entrambi i file (url gastro.org invece di diabetes.org). |
 | 60 | sla | 🔧 corretto-con-fix | 2026-08-03 | Badge "ESPEN 2023" errato: la vera linea guida ESPEN che copre la SLA è "Clinical Nutrition in Neurology" del 2018 (Burgos et al.), la stessa già corretta per "ictus" (riga 36). Corretto badge/note/fonte/science in "ESPEN 2018" in entrambi i file. |
 | 61 | 6fed | 🔧 corretto-con-fix | 2026-08-03 | Badge "ACG/AGA 2020" impreciso: la vera guideline 2020 su EoE è "AGA Institute and Joint Task Force on Allergy-Immunology Practice Parameters" (Hirano et al., Gastroenterology 2020) — un documento AGA, non ACG (l'ACG ha una guideline EoE separata, 2013 poi aggiornata 2025). Corretto in "AGA 2020" in linee-guida-data.js e consigli-data.js. |
 | 62 | 4fed | 🔧 corretto-con-fix | 2026-08-03 | Stesso fix di riga 61: "ACG/AGA 2020"→"AGA 2020". |
 | 63 | cded_fase1 | ✅ verificato-corretto | 2026-08-03 | Levine 2019 (Gastroenterology, CDED+PEN vs EEN) è lo studio reale fondativo; ECCO 2022 come riferimento di adozione clinica è plausibile. |
 | 64 | cded_fase2 | ✅ verificato-corretto | 2026-08-03 | Stessa fonte di riga 63, coerente. |
 | 65 | cded_mant | ✅ verificato-corretto | 2026-08-03 | Stessa fonte di riga 63, coerente. |
-| 66 | scd | ✅ verificato-corretto | 2026-08-03 | CCF 2021 come riferimento divulgativo/di sintesi dello studio DINE-CD (Lewis et al., Gastroenterology 2021) è una semplificazione accettabile per un'app rivolta al paziente, non un errore fattuale. |
-| 67 | diabete_gestazionale | da fare | | |
-| 68 | diabete_t1 | da fare | | |
-| 69 | menopausa | da fare | | |
-| 70 | sibo | da fare | | |
-| 71 | allergia_arachidi | da fare | | |
-| 72 | allergia_grano | da fare | | |
-| 73 | allergia_sesamo | da fare | | |
-| 74 | intolleranza_istamina | da fare | | |
-| 75 | intolleranza_nichel | da fare | | |
-| 76 | sindrome_nefrosica | da fare | | |
+| 66 | scd | 🔧 corretto-con-fix | 2026-08-03 | Badge CCF 2021/ECCO 2022 corretto (non toccato). Trovato però un errore di data nel campo `science`: "Trial DINE-CD (2023)" — lo studio reale (Lewis et al.) è del 2021 su Gastroenterology, non 2023. Corretto in entrambe le lingue in linee-guida-data.js (nessuna occorrenza in consigli-data.js). |
+| 67 | diabete_gestazionale | ✅ verificato-corretto | 2026-08-03 | ADA/ACOG 2023, target e cifre coerenti con ADA Standards of Care. |
+| 68 | diabete_t1 | ✅ verificato-corretto | 2026-08-03 | ISPAD 2024 CPCG reale, contenuti su CHO counting coerenti. |
+| 69 | menopausa | 🔧 corretto-con-fix | 2026-08-03 | Badge "IMS/ESHRE 2022" sovra-attribuiva a ESHRE (riproduzione/embriologia, non tipicamente associata a menopausa/nutrizione) mentre note/fonte citavano solo "IMS 2022". Corretto badge in "IMS 2022" in linee-guida-data.js (consigli-data.js era già corretto). |
+| 70 | sibo | 🔧 corretto-con-fix | 2026-08-03 | Badge "ACG/WGO 2021" incoerente con note/fonte ("ACG 2020 · WGO 2021" — la vera ACG Clinical Guideline SIBO, Pimentel et al., è del 2020). Corretto badge in "ACG 2020 + WGO 2021" in linee-guida-data.js (consigli-data.js era già corretto). |
+| 71 | allergia_arachidi | ⚠️ dubbio | 2026-08-03 | Badge "EAACI 2021" con DOI specifico non verificato puntualmente (contenuto su Ara h2/Palforzia corretto). Potrebbe essere una guideline EAACI più specifica del 2021 (diversa dalla Food Allergy Guideline 2014) — da confermare, non modificato. |
+| 72 | allergia_grano | ⚠️ dubbio | 2026-08-03 | Stesso caso di riga 71: badge "EAACI 2021" con DOI non verificato puntualmente. Contenuto (omega-5 gliadina, WDEIA) corretto. Non modificato. |
+| 73 | allergia_sesamo | 🔧 corretto-con-fix | 2026-08-03 | Errore fattuale confermato: il testo diceva "15° allergene obbligatorio UE dal 2023", ma in UE il sesamo è tra i 14 allergeni a dichiarazione obbligatoria fin dal Reg. UE 1169/2011 (2014) — il 2023 riguarda solo gli USA (FASTER Act, 9° allergene maggiore per legge FDA). Corretto badge/desc/note/science/fonte in entrambi i file, chiarendo le due timeline UE/USA distinte. |
+| 74 | intolleranza_istamina | ✅ verificato-corretto | 2026-08-03 | Meccanismo DAO, cifre coerenti con letteratura (Maintz & Novak). Badge cita correttamente sia EAACI 2020 che Maintz 2007. |
+| 75 | intolleranza_nichel | ✅ verificato-corretto | 2026-08-03 | SNAS, cifre nichel/alimenti plausibili. |
+| 76 | sindrome_nefrosica | ✅ verificato-corretto | 2026-08-03 | KDIGO 2021, target proteine/sodio coerenti con gestione clinica standard. |
 | 77 | pancreatite_acuta | da fare | | |
 | 78 | trapianto | da fare | | |
 | 79 | colite_microscopica | da fare | | |

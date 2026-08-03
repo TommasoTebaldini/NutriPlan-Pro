@@ -887,7 +887,7 @@ const CONSIGLI_BASE = [
     id:'colite_microscopica', emoji:'\u{1F52C}', nome:'Colite Microscopica (Collagena/Linfocitica)', colore:'#0D9488',
     pasti:'5-6 pasti piccoli', porzioni:'Basso residuo in fase acuta; fibre insolubili ridotte',
     idratazione:'>=2 L/die (perdite con diarrea acquosa)',
-    nota:'EMCG 2020 · ACG 2020 · Trattamento prima linea: budesonide. Identificare farmaci scatenanti (FANS, IPP, SSRI). Trial GFD 4-6 settimane nel 40-50% dei casi con sensibilita al glutine.',
+    nota:'UEG/EMCG 2020 · Trattamento prima linea: budesonide. Identificare farmaci scatenanti (FANS, IPP, SSRI). Trial GFD 4-6 settimane nel 40-50% dei casi con sensibilita al glutine.',
     ok:['Riso bianco, pasta di semola, patate','Gallette di riso, pane bianco','Carni bianche magre (pollo, tacchino)','Pesce magro al vapore','Uova (se tollerato)','Latte senza lattosio, yogurt senza lattosio','Verdure cotte (carote, zucchine)','Frutta sbucciata matura (banana, mela, pera)','Olio EVO'],
     no:['Caffeina in eccesso (caffe, te forte, energy drink)','FANS (ibuprofene, aspirina) senza prescrizione — avvisare il medico','Cibi ad alto residuo in fase acuta (legumi, verdure crude, cereali integrali)','Alcol','Latticini con lattosio se intolleranza associata','Glutine se trial GFD positivo','Alimenti piccanti','Dolcificanti polioli (sorbitolo, mannitolo)'],
     mod:['Glutine: trial senza glutine 4-6 settimane per verificare se migliora la diarrea','Lattosio: testare tolleranza individuale con yogurt senza lattosio','Caffe: limitare a 1-2 tazze/die'],
@@ -948,7 +948,7 @@ const CONSIGLI_BASE = [
   {
     id:'acne', emoji:'✨', nome:'Acne Vulgaris / Dermatite Seborroica', colore:'#D97706',
     pasti:'3 pasti + 1-2 spuntini', porzioni:'Normali', idratazione:'>=2 L/die',
-    nota:'JAAD 2022 · AAD 2022 · Dieta basso IG riduce lesioni del 25-50%. Limitare latte scremato e whey protein. Zinco 30mg/die. Omega-3 1-2g/die anti-infiammatori.',
+    nota:'AAD 2024 · Dieta basso IG riduce lesioni del 25-50%. Limitare latte scremato e whey protein. Zinco 30mg/die. Omega-3 1-2g/die anti-infiammatori.',
     ok:['Cereali integrali, legumi, verdure (basso IG)','Pesce grasso (omega-3 anti-infiammatori)','Frutta a basso IG (fragole, mirtilli, mela)','Semi di zucca, carne magra (zinco)','Probiotici: yogurt naturale, kefir','Acqua abbondante','Verdure antiossidanti'],
     no:['Zuccheri semplici: dolci, pane bianco, bibite, succhi','Latte scremato in eccesso (insulinogeno)','Whey protein in polvere (aumenta IGF-1)','Cibi ultra-processati (omega-6 pro-infiammatori)'],
     mod:['Latte intero (meno insulinogeno dello scremato)','Cioccolato al latte (ad alto IG: limitare)','Alcol (pro-infiammatorio)'],
@@ -998,7 +998,7 @@ const CONSIGLI_BASE = [
   {
     id:'lipedema', emoji:'🦵', nome:'Lipedema', colore:'#A855F7',
     pasti:'3 pasti + 1-2 spuntini', porzioni:'Normali (la restrizione calorica non riduce il lipedema)', idratazione:'>=2 L/die',
-    nota:'ILA 2021 · Dieta anti-infiammatoria (mediterranea o RAD). Ridurre CHO raffinati e zuccheri. Omega-3 2-3g/die. Il grasso lipedematoso non risponde alla dieta ipocalorica convenzionale.',
+    nota:'US Lipedema SOC 2021 (Herbst et al.) · Dieta anti-infiammatoria (mediterranea o RAD). Ridurre CHO raffinati e zuccheri. Omega-3 2-3g/die. Il grasso lipedematoso non risponde alla dieta ipocalorica convenzionale.',
     ok:['Pesce grasso (omega-3 anti-infiammatori)','Verdure anti-infiammatorie: spinaci, broccoli, mirtilli, cavolo','Olio EVO e avocado','Proteine magre (pollo, pesce, uova, legumi)','Frutta a basso IG (frutti di bosco, mele, agrumi)','Semi di lino, noci (omega-3 ALA)','Acqua abbondante (drenaggio linfatico)'],
     no:['Alcol (peggiora edema linfatico e infiammazione)','Zuccheri semplici aggiunti (iperinsulinemia -> peggiora edema)','Farine raffinate e pane bianco','Cibi ultra-processati','Sale eccessivo (ritenzione liquidi linfatici)'],
     mod:['Latticini (alcuni pazienti riferiscono miglioramento con riduzione)','Glutine (alcuni pazienti riferiscono miglioramento con riduzione: trial 3 mesi)'],
@@ -1041,7 +1041,7 @@ const CONSIGLI_BASE = [
   {
     id:'post_covid', emoji:'🦠', nome:'Long COVID / Post-COVID-19', colore:'#7C3AED',
     pasti:'3 pasti + 2-3 spuntini (se fatigue impedisce pasti abbondanti)', porzioni:'Normali o ridotte se fatigue/disfagia', idratazione:'≥2L/die',
-    nota:'OMS 2023 · Dieta anti-infiammatoria. Vitamina D, zinco, omega-3. Probiotici per disbiosi post-virale.',
+    nota:'WHO (solo case-definition) + stime cliniche generali · Dieta anti-infiammatoria. Vitamina D, zinco, omega-3. Probiotici per disbiosi post-virale.',
     ok:['Pesce azzurro (salmone, sgombro, sardine) 3 volte/settimana (omega-3)','Yogurt e kefir (probiotici per disbiosi)','Frutti di bosco e agrumi (vitamina C, polifenoli anti-ossidanti)','Verdure a foglia verde (folati, antiossidanti)','Legumi (fibre per microbiota)','Curcuma + pepe nero ai pasti (anti-infiammatoria)','Noci e semi (omega-3 ALA, vitamina E)'],
     no:['Alcol (aggrava infiammazione e foggy brain)','Zuccheri semplici in eccesso (pro-infiammatori)','Ultra-processed food (pro-infiammatori)','Caffeina in eccesso se presente tachicardia post-COVID'],
     mod:['Caffeina: moderare se palpitazioni (frequente nel Long COVID)','Sale: moderare se ipertensione post-COVID'],

@@ -110,31 +110,31 @@ verso la fine), quindi si procede top-to-bottom salvo motivi per saltare.
 | 74 | intolleranza_istamina | ✅ verificato-corretto | 2026-08-03 | Meccanismo DAO, cifre coerenti con letteratura (Maintz & Novak). Badge cita correttamente sia EAACI 2020 che Maintz 2007. |
 | 75 | intolleranza_nichel | ✅ verificato-corretto | 2026-08-03 | SNAS, cifre nichel/alimenti plausibili. |
 | 76 | sindrome_nefrosica | ✅ verificato-corretto | 2026-08-03 | KDIGO 2021, target proteine/sodio coerenti con gestione clinica standard. |
-| 77 | pancreatite_acuta | da fare | | |
-| 78 | trapianto | da fare | | |
-| 79 | colite_microscopica | da fare | | |
-| 80 | endometriosi | da fare | | |
-| 81 | prediabete | da fare | | |
-| 82 | ipercolesterolemia_familiare | da fare | | |
-| 83 | psoriasi | da fare | | |
-| 84 | dermatite_atopica | da fare | | |
-| 85 | acne | da fare | | |
-| 86 | sjogren | da fare | | |
-| 87 | talassemia | da fare | | |
-| 88 | favismo | da fare | | |
-| 89 | wilson | da fare | | |
-| 90 | lipedema | da fare | | |
-| 91 | iperemesi_gravidica | da fare | | |
-| 92 | sbs | da fare | | |
-| 93 | addison | da fare | | |
-| 94 | post_covid | da fare | | |
-| 95 | emocromatosi | da fare | | |
-| 96 | sclerosi_multipla | da fare | | |
-| 97 | lupus | da fare | | |
-| 98 | artrite_reumatoide | da fare | | |
-| 99 | parkinson | da fare | | |
-| 100 | vegetariana | da fare | | |
-| 101 | vegana | da fare | | |
+| 77 | pancreatite_acuta | ✅ verificato-corretto | 2026-08-03 | IAP/APA/ESPEN 2020, contenuti su NE precoce vs digiuno coerenti con le linee guida reali. |
+| 78 | trapianto | ✅ verificato-corretto | 2026-08-03 | ESPEN 2019, contenuti su CYP3A4/pompelmo e sicurezza alimentare coerenti. |
+| 79 | colite_microscopica | 🔧 corretto-con-fix | 2026-08-03 | Badge/note "EMCG/ACG 2020" errato: la vera guideline 2020 è UEG/EMCG (United European Gastroenterology + European Microscopic Colitis Group, Miehlke et al.), non coinvolge l'ACG (che infatti non compariva nel campo fonte). Corretto badge/note/fonte in "UEG/EMCG 2020" in entrambi i file. |
+| 80 | endometriosi | ✅ verificato-corretto | 2026-08-03 | ASRM/ESHRE 2022, entrambe le società hanno pubblicato guideline quell'anno. |
+| 81 | prediabete | ✅ verificato-corretto | 2026-08-03 | ADA 2024/IDF 2022, target IFG/IGT e DPP -58% coerenti. |
+| 82 | ipercolesterolemia_familiare | ✅ verificato-corretto | 2026-08-03 | EAS consensus/aggiornamenti su FH, target LDL e fitosteroli coerenti. |
+| 83 | psoriasi | ✅ verificato-corretto | 2026-08-03 | BAD/EADV 2023, contenuti su omega-3/PASI/obesità coerenti. |
+| 84 | dermatite_atopica | ✅ verificato-corretto | 2026-08-03 | EAACI/AAD 2022, approccio "no eliminazioni empiriche" coerente con le linee guida reali. |
+| 85 | acne | 🔧 corretto-con-fix | 2026-08-03 | Badge/fonte "JAAD/AAD 2022" errato: JAAD è la rivista non un ente, e non esiste una guideline AAD acne del 2022 (le uniche reali sono 2016 e l'aggiornamento 2024, Reynolds et al., pubblicato su JAAD). Corretto in "AAD 2024" in entrambi i file. |
+| 86 | sjogren | ✅ verificato-corretto | 2026-08-03 | EULAR 2020, contenuti su xerostomia/rischio linfoma coerenti. |
+| 87 | talassemia | ✅ verificato-corretto | 2026-08-03 | TIF (Thalassaemia International Federation) 2021, target ferro/vitamina C/chelanti coerenti. |
+| 88 | favismo | ✅ verificato-corretto | 2026-08-03 | WHO/ENERCA 2022, contenuti su vicina/convicina e farmaci ossidanti corretti. |
+| 89 | wilson | ✅ verificato-corretto | 2026-08-03 | EASL 2012/AASLD 2022, target rame <1mg/die e farmacoterapia coerenti. |
+| 90 | lipedema | 🔧 corretto-con-fix | 2026-08-03 | Badge "ILA/NHLBI 2021" non corrispondeva a nessuna fonte reale con quel nome; la vera guideline 2021 è "Standard of Care for Lipedema in the United States" (Herbst et al., Phlebology, consensus Delphi con supporto NIH, non NHLBI). Corretto badge/note/fonte in "US Lipedema SOC 2021 (Herbst et al.)" in entrambi i file. |
+| 91 | iperemesi_gravidica | ✅ verificato-corretto | 2026-08-03 | RCOG 2024/ACOG 2022, target zenzero/B6/tiamina coerenti. |
+| 92 | sbs | 🔧 corretto-con-fix | 2026-08-03 | Badge "ESPEN/AGA 2022" incoerente con note/fonte che già dicevano correttamente "ESPEN 2022 · AGA 2020" (AGA Clinical Practice Update è del 2020). Corretto badge in "ESPEN 2022 + AGA 2020" in linee-guida-data.js (consigli-data.js citava solo ESPEN 2022, già corretto). |
+| 93 | addison | ✅ verificato-corretto | 2026-08-03 | Badge "ES/ESE 2021" coerente con fonte, contenuti su sodio/potassio/fludrocortisone corretti. |
+| 94 | post_covid | 🔧 corretto-con-fix | 2026-08-03 | Badge "OMS 2023" sovra-attribuiva: il WHO ha solo una scientific brief sulla case-definition, non una guideline nutrizionale con target quantitativi (vitamina D/zinco/omega-3) — stesso pattern già visto in "ipertiroidismo". Corretto badge/note in attribuzione mista "WHO (case definition) + stime cliniche generali" in entrambi i file. |
+| 95 | emocromatosi | ✅ verificato-corretto | 2026-08-03 | EASL 2022, meccanismo epcidina/HFE e interazioni vitamina C/tannini corretti. |
+| 96 | sclerosi_multipla | ✅ verificato-corretto | 2026-08-03 | ECTRIMS 2023, target vitamina D e omega-3 coerenti con consensus reali. |
+| 97 | lupus | ✅ verificato-corretto | 2026-08-03 | EULAR 2023, contenuti su vitamina D/omega-3/canavanina (alfalfa) corretti. |
+| 98 | artrite_reumatoide | ✅ verificato-corretto | 2026-08-03 | EULAR 2022, target omega-3/folati-MTX coerenti. |
+| 99 | parkinson | ✅ verificato-corretto | 2026-08-03 | Badge "ESPEN 2021" verificato come corretto e specifico (ESPEN Guidelines — Nutrition in Neurological Disease 2021), diverso dal documento "Clinical Nutrition in Neurology 2018" (ictus/SLA) — nessuna incoerenza, non serve fix. |
+| 100 | vegetariana | ✅ verificato-corretto | 2026-08-03 | SINU/EFSA 2022 + ADA 2016 Position Paper, contenuti su Fe non-eme/B12/DIAAS accurati. |
+| 101 | vegana | ✅ verificato-corretto | 2026-08-03 | SINU/AND 2022 + EFSA 2019, target B12/vitamina D/iodio coerenti. |
 | 102 | latto_vegetariana | da fare | | |
 | 103 | ovo_vegetariana | da fare | | |
 | 104 | encefalopatia_epatica | da fare | | |

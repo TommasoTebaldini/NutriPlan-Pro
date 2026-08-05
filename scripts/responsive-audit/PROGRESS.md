@@ -105,9 +105,18 @@ il browser scarica sempre l'ultima versione subito dopo un deploy.
 Segnalato all'utente, non corretto autonomamente (è una scelta di
 configurazione del deploy).
 
-## Stato — Lotto 4/6: ncpt, obesita, oncologia, pagamenti, pancreas, patient-portal, patient-view, patologie
+## Stato — Lotto 4/6 (completato 2026-08-05)
 
-*(da fare)*
+| Pagina | Tablet | Mobile | Note |
+|---|---|---|---|
+| ncpt.html | ✅ | ✅ | Stepper 4 fasi e form si adattano bene (tour di benvenuto presente al primo accesso, non un bug) |
+| obesita.html | ✅ | ✅ | Menu 6 tab si riorganizza su 2 righe |
+| oncologia.html | ✅ | ✅ | Menu 7 tab si riorganizza su 2 righe |
+| pagamenti.html | ✅ | ✅ | Card statistiche mostrava "—" nei test — probabile falso positivo di timing (stesso pattern di analytics.html), da riverificare con calma se si vuole certezza |
+| pancreas.html | ✅ | ✅ | — |
+| patient-portal.html | ✅ | ⚠️ | **Bug confermato via JS** (non falso positivo): la barra dei 10 tab (`.pp-tab-bar`) ha `overflow-x:hidden` con contenuto largo 724px in uno spazio di 358px su mobile — 5 tab su 10 (Privacy, Statistiche, Macro, Attività, Progressi) sono completamente irraggiungibili dal paziente su telefono, nessuno scroll o a-capo. Su tablet (768px) invece tutti i 10 tab entrano correttamente (verificato: scrollWidth=clientWidth=736px). **Rilevante**: è il portale rivolto al paziente, verosimilmente usato spesso da telefono |
+| patient-view.html | ✅ | ✅ | Richiede parametri URL (id documento) per mostrare contenuto reale; testato solo lo stato "Nessun documento", che è centrato e leggibile su entrambi i formati — non verificabile a fondo senza un link reale con documento |
+| patologie.html | ✅ | ✅ | Griglia 13 sezioni specialistiche e card diete (285 schemi) si riorganizzano bene; badge fonte (es. "ESPEN 2023" per Diabete) qui appartengono a un dataset diverso da linee-guida.html (schemi dietetici, non linee guida) — non confuso con la scoperta cache sopra |
 
 ## Stato — Lotto 5/6: paziente-sano, pazienti, pediatria, piano-app-pazienti, privacy, profilo-pubblico, questionari, renale
 

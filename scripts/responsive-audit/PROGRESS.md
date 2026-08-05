@@ -155,6 +155,51 @@ richiesto. Non è né un bug di formattazione né di link: è un problema di
 esposizione di informazioni interne/di business. Da valutare se rimuoverla
 dal dominio pubblico o proteggerla.
 
-## Stato — Lotto 6/6: ricette, ristorazione, sport, studi, termini, valutazione, visita, whatsapp
+## Stato — Lotto 6/6 (completato 2026-08-05)
 
-*(da fare)*
+| Pagina | Tablet | Mobile | Note |
+|---|---|---|---|
+| ricette.html | ✅ | ✅ | 1061 ricette, griglia OK (catturata una volta a metà caricamento, falso positivo risolto riverificando). Nota a margine: tutte le 1061 ricette sono renderizzate nel DOM senza virtualizzazione/paginazione — non un bug di formattazione ma potenziale problema di performance da tenere presente |
+| ristorazione.html | ✅ | ✅ | Menu 9 tab si adatta bene |
+| sport.html | ✅ | ✅ | — |
+| studi.html | ✅ | ✅ | 305 studi con filtri a chip, si riorganizzano bene. Database DOI mai incluso nell'audit link esterni (scoped solo su linee-guida-data.js) — segnalato come fuori scope, non verificato |
+| termini.html | ✅ | ✅ | Testo legale (bozza, come già noto) si adatta bene |
+| valutazione.html | ✅ | ✅ | Form antropometrico si impila correttamente |
+| visita.html | ✅ (dopo fix) | ✅ (dopo fix) | **Bug confermato e corretto** — vedi sotto |
+| whatsapp.html | ✅ | ✅ | Card lista pazienti e conversazione si impilano correttamente |
+
+### 🔴 Bug trovato e corretto: visita.html non si adattava a tablet/mobile
+
+Il layout a due colonne (editor + pannello "Inserimento rapido") restava
+affiancato e schiacciato sia su tablet (768px) che su mobile (390px),
+troncando etichette e contenuti. Causa: il div `#visita-layout` imposta
+`grid-template-columns:1fr 340px` come **stile inline** (riga 137), che ha
+priorità più alta di qualsiasi regola CSS non-`!important`. La media query
+`@media(max-width:900px){#visita-layout{grid-template-columns:1fr}}` (riga
+31) esisteva già ma non aveva mai avuto effetto per questo motivo — il bug
+era probabilmente presente da quando la pagina è stata creata. **Corretto e
+deployato in produzione** (commit `ef01162`, aggiunto `!important` alla
+regola responsive), verificato live che il layout ora si impila
+correttamente su entrambi i formati.
+
+---
+
+## Riepilogo finale (48/48 pagine verificate)
+
+- **2 bug critici trovati e già corretti in produzione**: `pazienti.html`
+  (pagina interamente non funzionante per un errore di sintassi JS) e
+  `visita.html` (layout a due colonne che non si adattava a tablet/mobile).
+- **3 bug di formattazione noti da prima, non ancora corretti** (Lotto 1/2):
+  tabelle che escono dallo schermo senza scroll in `admin.html`, `app.html`,
+  `disfagia.html`.
+- **1 bug di formattazione mobile-only trovato in Lotto 4, non ancora
+  corretto**: `patient-portal.html`, 5 tab su 10 irraggiungibili su
+  telefono (portale rivolto al paziente).
+- **1 link esterno rotto trovato e corretto** (fase link, `d93cf07`):
+  ipotiroidismo in `linee-guida-data.js`.
+- **Segnalazioni fuori scope per decisione dell'utente** (non toccate):
+  cache 7 giorni sui file dati JS senza cache-busting; nota interna
+  `piano-app-pazienti.html` pubblicamente accessibile senza login; fonti
+  cliniche delle sezioni specialistiche (chetogenica, diabete, obesità,
+  ecc.) e del database studi (305 DOI) mai verificate, dataset diversi
+  dalle 285 linee guida già auditate.

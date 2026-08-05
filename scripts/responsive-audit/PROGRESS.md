@@ -70,13 +70,40 @@ solo bug isolati per pagina.
 
 **Scoperta importante fuori scope (da valutare in futuro)**: le "sezioni specialistiche" (chetogenica.html, diabete.html, e probabilmente le altre pagine patologia-specifiche: disfagia, dna/DCA, ecc.) sembrano avere un **proprio contenuto clinico con fonti citate indipendenti**, DIVERSO dai 285 argomenti in `js/linee-guida-data.js` già interamente verificati. Non è stato controllato se queste fonti sono corrette — è un dataset separato mai auditato finora. Da segnalare esplicitamente all'utente, non risolvere di propria iniziativa.
 
-## Stato — Lotto 3/6: ecm, gdpr, gravidanza, impostazioni, index, integratori, linee-guida, moduli
+## Stato — Lotto 3/6 (completato 2026-08-05)
 
-*(da fare)*
+| Pagina | Tablet | Mobile | Note |
+|---|---|---|---|
+| ecm.html | ✅ | ✅ | Link inline `ecm.agenas.it` e `asand.it` verificati 200 OK con curl (rilevante: l'utente ha chiesto esplicitamente di controllare i "corsi ECM") |
+| gdpr.html | ✅ | ✅ | Tabella mostrava "Caricamento..." in entrambi i formati — probabile falso positivo di timing, non un bug di layout; menu a tab e card si adattano correttamente |
+| gravidanza.html | ✅ | ✅ | Campi form e menu a tab si impilano correttamente |
+| impostazioni.html | ✅ | ✅ | Griglia temi (8 swatch colore) si riorganizza 7→3→1 colonne, selettore lingua si adatta bene |
+| index.html | — | — | È un redirect/rewrite ad app.html (stesso contenuto, stesso URL finale) — già coperto in Lotto 1 (⚠️ tabella alimenti tagliata, vedi riga app.html) |
+| integratori.html | ✅ | ✅ | Card categorie (62 prodotti/10 categorie) si impilano bene |
+| linee-guida.html | ✅ | ✅ | Layout OK. **Nota importante non di formattazione**: vedi sezione "Scoperta: cache 7 giorni sui file dati" sotto |
+| moduli.html | ✅ | ✅ | Barra tab (5 moduli) scorre orizzontalmente con frecce ◀▶ visibili — buon pattern, coerente con database.html |
 
-## Stato — Lotto 3/6: ecm, gdpr, gravidanza, impostazioni, index, integratori, linee-guida, moduli
+### Scoperta: cache 7 giorni sui file dati JS (fuori scope formattazione, ma rilevante)
 
-*(da fare)*
+Durante il test di `linee-guida.html` è emerso che `vercel.json` imposta
+`Cache-Control: public, max-age=604800, stale-while-revalidate=86400` su
+**tutti** i file `/js/*.js`, incluse le fonti dati cliniche
+(`linee-guida-data.min.js`, `consigli-data.min.js`, `ricette-db.min.js`),
+**senza alcun cache-busting** (nessuna query string di versione o hash nel
+nome file). Le pagine HTML invece sono correttamente `no-cache,
+must-revalidate` (si aggiornano sempre).
+
+Verificato che il contenuto attualmente sul server è corretto e aggiornato
+(confermato via fetch diretto `no-store` e lettura del file `.min.js`
+deployato). **Non è un bug oggi**, ma è un rischio concreto per il futuro:
+qualunque correzione ai dati clinici (es. un'altra revisione delle 285
+patologie) non sarà visibile a un browser con cache calda per fino a 7
+giorni dopo il deploy, perché il nome del file JS non cambia mai. Da
+valutare se aggiungere un parametro di versione (es.
+`linee-guida-data.min.js?v=2`) o un hash nel nome file ad ogni build, così
+il browser scarica sempre l'ultima versione subito dopo un deploy.
+Segnalato all'utente, non corretto autonomamente (è una scelta di
+configurazione del deploy).
 
 ## Stato — Lotto 4/6: ncpt, obesita, oncologia, pagamenti, pancreas, patient-portal, patient-view, patologie
 

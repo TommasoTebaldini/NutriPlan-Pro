@@ -55,7 +55,22 @@ solo bug isolati per pagina.
 | app.html (Piano Alimentare) | ⚠️ | ⚠️ | Tabella alimenti (Colazione ecc.): colonna "Fonte" e altre tagliate fuori, stesso problema di admin.html |
 | bia.html | ✅ | ✅ | — |
 
-## Stato — Lotto 2/6: broadcast, chat, chetogenica, consigli, database, diabete, disfagia, dna
+## Stato — Lotto 2/6 (completato 2026-08-05)
+
+| Pagina | Tablet | Mobile | Note |
+|---|---|---|---|
+| broadcast.html | ✅ | ✅ | — |
+| chat.html | ✅ | ✅ | — |
+| chetogenica.html | ✅ | ✅ | Cita "ILAE 2018 · AAN 2016 · ESPEN 2021" — set di fonti DIVERSO da quello in linee-guida-data.js (vedi nota sotto) |
+| consigli.html | ✅ | ✅ | Conferma "285 patologie", coerente col dataset già auditato |
+| database.html | ✅ | ✅ | Tabella a 16 colonne (3521 alimenti) gestita BENE: scroll orizzontale visibile con frecce ◀▶. Contraddice l'ipotesi "nessuna tabella ha strategia responsive" — il pattern è incoerente tra pagine, non assente ovunque |
+| diabete.html | ✅ | ✅ | Cita "ADA 2024 · EASD · AMD-SID 2023" — set di fonti DIVERSO da linee-guida-data.js (vedi nota sotto) |
+| disfagia.html | ⚠️ | ⚠️ | Tabella "Classificazione IDDSI 2019" (5 colonne) tagliata fuori, nessuno scroll — stesso bug di admin.html/app.html |
+| dna.html (contenuto: DCA) | ✅ | ✅ | Nome file fuorviante (dna.html → contenuto è Disturbi Comportamento Alimentare, non genetica). Formattazione OK per il contenuto visibile; tabella "Epidemiologia" più in basso non verificata (fuori dall'area catturata) |
+
+**Scoperta importante fuori scope (da valutare in futuro)**: le "sezioni specialistiche" (chetogenica.html, diabete.html, e probabilmente le altre pagine patologia-specifiche: disfagia, dna/DCA, ecc.) sembrano avere un **proprio contenuto clinico con fonti citate indipendenti**, DIVERSO dai 285 argomenti in `js/linee-guida-data.js` già interamente verificati. Non è stato controllato se queste fonti sono corrette — è un dataset separato mai auditato finora. Da segnalare esplicitamente all'utente, non risolvere di propria iniziativa.
+
+## Stato — Lotto 3/6: ecm, gdpr, gravidanza, impostazioni, index, integratori, linee-guida, moduli
 
 *(da fare)*
 

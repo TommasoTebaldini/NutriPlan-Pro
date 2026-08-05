@@ -118,9 +118,42 @@ configurazione del deploy).
 | patient-view.html | ✅ | ✅ | Richiede parametri URL (id documento) per mostrare contenuto reale; testato solo lo stato "Nessun documento", che è centrato e leggibile su entrambi i formati — non verificabile a fondo senza un link reale con documento |
 | patologie.html | ✅ | ✅ | Griglia 13 sezioni specialistiche e card diete (285 schemi) si riorganizzano bene; badge fonte (es. "ESPEN 2023" per Diabete) qui appartengono a un dataset diverso da linee-guida.html (schemi dietetici, non linee guida) — non confuso con la scoperta cache sopra |
 
-## Stato — Lotto 5/6: paziente-sano, pazienti, pediatria, piano-app-pazienti, privacy, profilo-pubblico, questionari, renale
+## Stato — Lotto 5/6 (completato 2026-08-05)
 
-*(da fare)*
+| Pagina | Tablet | Mobile | Note |
+|---|---|---|---|
+| paziente-sano.html | ✅ | ✅ | — |
+| pazienti.html | ✅ | ✅ | Vedi bug critico corretto sotto — dopo il fix la pagina carica e si adatta correttamente su tutti i formati |
+| pediatria.html | ✅ | ✅ | Tabella "Valori Medi OMS" (7 colonne): entra senza scroll su tablet (verificato via JS, scrollWidth=clientWidth), su mobile eccede ma ha `overflow-x:auto` funzionante — buon pattern |
+| piano-app-pazienti.html | ✅ | ✅ | Formattazione OK (tabella con scroll funzionante). **Vedi segnalazione esposizione sotto — non è un problema di formattazione** |
+| privacy.html | ✅ | ✅ | Testo legale (bozza, come già noto) si adatta bene |
+| profilo-pubblico.html | ✅ | ✅ | Card e sidebar preview si riorganizzano bene (catturato in fase di caricamento dati, nessun errore console) |
+| questionari.html | ✅ | ✅ | Menu 4 tab e questionari a risposta multipla si adattano bene |
+| renale.html | ✅ | ✅ | Menu 8 tab su 2 righe; tabella KDIGO (7 colonne) scrollabile correttamente su mobile |
+
+### 🔴 Bug critico trovato e corretto: pazienti.html non caricava affatto
+
+Durante il test, `pazienti.html` restava bloccato su "Caricamento..." indefinitamente
+su TUTTI i formati, anche con attese lunghe. Causa trovata in console: un
+`SyntaxError: missing ) after argument list` alla riga 3686, dovuto a un escape
+errato (`patient\\'s conditions` invece di `patient\'s conditions`, doppio
+backslash) nella stringa inglese del badge di conflitto alimentare (feature
+aggiunta in una sessione precedente per il diario foto). Il doppio backslash
+chiudeva la stringa JS in anticipo, rompendo il parsing dell'INTERO script e
+impedendo il caricamento di tutta la pagina "Cartelle Pazienti" per ogni
+utente. **Corretto e deployato in produzione** (commit `19bd4e8`), verificato
+che la pagina ora carica e funziona correttamente (cartella paziente, piani
+alimentari, bottone "Bozza AI", schede NCPt/valutazione tutti visibili).
+
+### ⚠️ Segnalazione fuori scope: nota interna esposta pubblicamente
+
+`piano-app-pazienti.html` è una nota strategica interna (analisi competitiva
+Yazio/FatSecret/Cronometer/MyFitnessPal, "Aggiornato: maggio 2025") **senza
+alcun controllo di autenticazione** (nessun riferimento a Supabase/auth nel
+file) — chiunque conosca o indovini l'URL può leggerla, nessun login
+richiesto. Non è né un bug di formattazione né di link: è un problema di
+esposizione di informazioni interne/di business. Da valutare se rimuoverla
+dal dominio pubblico o proteggerla.
 
 ## Stato — Lotto 6/6: ricette, ristorazione, sport, studi, termini, valutazione, visita, whatsapp
 

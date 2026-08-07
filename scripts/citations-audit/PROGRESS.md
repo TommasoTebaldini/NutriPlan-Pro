@@ -122,13 +122,36 @@ solo `node` con fetch nativo e accesso a internet, nessuna chiave API;
 
 ## Come riprendere
 
-Il ri-sourcing dei 164 studi fabbricati è iniziato 2026-08-07 (batch 1,
-vedi tabella sotto). Per ogni studio del batch: WebSearch per un vero
-studio esistente sullo stesso tema/claim, verifica DOI/PMID reali, e
-aggiornamento conservativo di titolo/autori/rivista/anno/doi/pubmed/link
-in `js/studies-data.js` — SOLO se i campi risultati/metodi/analisi del
-JSON restano compatibili col vero studio trovato (altrimenti vanno
-riscritti anch'essi per riflettere i risultati reali, non solo la
-citazione). Se nessun corrispettivo reale unico esiste per il claim
-descritto, marcare la entry per rimozione invece di forzare un
-abbinamento debole.
+Il ri-sourcing dei 164 studi fabbricati è iniziato 2026-08-07 (batch 1).
+Per ogni studio: WebSearch per un vero studio esistente sullo stesso
+tema/claim, verifica DOI/PMID reali (Crossref/PubMed), e riscrittura
+COMPLETA in `js/studies-data.js` di titolo/autori/rivista/anno/doi/
+pubmed/link/partecipanti/durata/obiettivo/metodi/risultati/analisi (IT+EN)
+per riflettere il vero studio trovato — non solo la citazione, anche i
+numeri e le conclusioni, che vanno verificati uno per uno. Se nessun
+corrispettivo reale unico esiste per il claim descritto, marcare la
+entry per rimozione invece di forzare un abbinamento debole.
+
+**⚠️ Scoperta importante nel batch 1**: non è solo un problema di ID
+citazione sbagliato — in almeno un caso (#8, vedi sotto) i dati
+"fabbricati" invertono la conclusione reale dello studio vero
+sottostante (risultato significativo a favore di un intervento quando lo
+studio reale trovava un risultato NON significativo). Questo significa
+che il ri-sourcing non può limitarsi a sostituire DOI/PMID/titolo: va
+sempre riletto il vero abstract e riscritto il campo `risultati`/`analisi`
+di conseguenza, altrimenti si lascia una citazione vera abbinata a
+conclusioni ancora false.
+
+**Batch 1 completato (2/164), esempi ad alto rigore per validare il
+metodo:**
+
+| ID | Prima (fabbricato) | Dopo (verificato) |
+|---|---|---|
+| 1 | "Salas-Salvadó et al., Ann Intern Med 2023", DOI/PMID inventati, RR 0.77 (23% riduzione) | Schwingshackl L et al., *Public Health Nutrition* 2015, PMID 25145972 reale. RR pooled 0.81 (19% riduzione, IC 95% 0.73–0.90) — numero originale era vicino ma non esatto, aggiornato al dato reale |
+| 8 | "Lowe DA et al., Cell Metabolism 2023" (autori/n/durata già corretti, ma rivista/anno/DOI/PMID inventati), risultato fabbricato: TRE **significativamente superiore** al controllo (-6.3kg vs -4.2kg, p=0.04) | Stesso trial reale (TREAT, Lowe DA et al., *JAMA Intern Med* 2020, PMID 32986097): risultato vero è che il TRE **NON è risultato superiore** al controllo (differenza -0.26kg, p=0.63, NS), con segnale di perdita di massa magra nel gruppo TRE — conclusione opposta a quella presentata prima |
+
+Rimangono **162 studi da ri-sourciare**. Lista completa con verdetto per
+ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
+rigenerato — vedi script sopra). Dato il volume di lavoro per studio
+(ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a
+piccoli batch su più sessioni, come da richiesta esplicita dell'utente.

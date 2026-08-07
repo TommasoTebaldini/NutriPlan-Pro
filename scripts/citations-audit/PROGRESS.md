@@ -335,9 +335,22 @@ et al., vero studio di coorte EPIC, *Lancet Planetary Health* 2023 —
 riguarda specificamente il rischio ONCOLOGICO a 25 sedi tumorali, non la
 mortalità generale/altre patologie come generalizzato).
 
-**Totale progressivo: 56/164 studi ri-sourciati (~34%).**
+**Batch 21 (2 studi, commit `8232225`)**: #67 dieta e PCOS (Barrea et
+al., *Nutrients* 2019 — studio caso-controllo, non revisione sistematica
+multi-pattern); #70 dieta e NAFLD/MASLD (Romero-Gomez/Zelber-Sagi/
+Trenell, *J Hepatol* 2017 — review narrativa, non network meta-analisi
+con ranking numerico).
 
-Rimangono **108 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 22 (2 studi, commit `5066c8e`)**: #73 linee guida ESPEN terapia
+intensiva (DOI/PMID corretti alla vera pubblicazione 2023 — è la
+versione "pratica" abbreviata della guideline 2019, contenuto
+sostanzialmente accurato); #75 creatina e performance (Lanhers et al.,
+*Sports Medicine* 2015, non European Journal of Sport Science 2023 —
+specifico su arti inferiori, 60 RCT, effect size reali 0.24-0.34).
+
+**Totale progressivo: 60/164 studi ri-sourciati (~37%).**
+
+Rimangono **104 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

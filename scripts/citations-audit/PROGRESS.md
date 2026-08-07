@@ -53,14 +53,52 @@ citazioni con pattern "(aggiornamento YYYY)" o anno isolato sospetto.
 
 ## Non ancora coperto (fuori scope di questo giro)
 
-- **Database studi.html (305 DOI)**: mai verificato, esplicitamente
-  segnalato come fuori scope nell'audit responsive. Task di dimensioni
-  paragonabili all'audit delle 285 linee guida — sessione dedicata futura.
-- **Dubbio ESPGHAN 2023 in gravidanza.html** (vedi tabella sopra) — non
-  risolto per bassa confidenza.
+- **Dubbio ESPGHAN 2023 in gravidanza.html** — RISOLTO 2026-08-07 (vedi
+  sotto).
 - Nessuna pagina oltre le 14 con banner "Basato su/Fonte/Source/Based on"
   aveva citazioni cliniche esplicite da verificare (ristorazione.html,
   questionari.html, ncpt.html, bia.html verificate via grep: nessun match).
+
+## 🔴 SCOPERTA CRITICA 2026-08-07 — Database studi.html (`js/studies-data.js`, 305 studi)
+
+Verifica batch (script, non manuale) di DOI e PMID di tutti i 305 studi
+contro le API pubbliche Crossref e NCBI PubMed eutils, con confronto del
+titolo restituito dall'API contro il titolo salvato nella pagina.
+
+**Risultato: solo 54/305 (18%) hanno DOI/PMID che risolvono e corrispondono
+al titolo dichiarato. 204/305 (67%) hanno un DOI inesistente, un DOI che
+risolve a un articolo REALE ma COMPLETAMENTE DIVERSO, o un PMID che punta
+a un altro articolo reale non correlato. 47/305 (15%) non hanno né DOI né
+PMID (non verificabili in un senso o nell'altro).**
+
+Esempi concreti verificati a mano (non falsi positivi dello script):
+- Studio #1 "Mediterranean Diet and Risk of Type 2 Diabetes..." — DOI
+  `10.7326/M22-3054` non esiste su Crossref; il PMID `36716423` citato
+  appartiene in realtà a un articolo di dermatologia su laser vascolari,
+  argomento completamente estraneo.
+- Studio #6 "Omega-3 Fatty Acids and Cardiovascular Disease: Updated
+  Evidence..." — il DOI `10.1056/NEJMoa1812792` è reale ma appartiene al
+  trial REDUCE-IT (icosapent etile, NEJM 2019), un altro studio omega-3/
+  cardiovascolare realmente esistente ma diverso da quello descritto nella
+  pagina; il PMID citato appartiene a un articolo su anestesia/EEG.
+
+**Interpretazione**: il pattern (titoli plausibili e specifici, DOI a
+volte reali ma di un altro studio a tema affine, PMID quasi casuali) è
+coerente con contenuto generato che ha inventato l'apparato bibliografico
+(DOI/PMID) per dare l'impressione di verificabilità, non con semplici
+errori di trascrizione. Non è un problema isolato come le altre pagine
+sopra: riguarda i due terzi dell'intero database studi, usato da
+dietisti come rassegna di "evidenze scientifiche".
+
+**Non ancora deciso come procedere** — richiede una scelta esplicita
+dell'utente prima di agire (rimuovere gli studi non verificabili,
+ri-sourcing manuale uno per uno, disclaimer, o altro). Vedi conversazione
+per le opzioni presentate. Risultati completi (per-studio, con DOI/PMID
+reali restituiti dalle API dove disponibili) salvati in
+`studi_verify_results.json` nello scratchpad della sessione che ha fatto
+la scoperta — non ancora copiati nel repo, da rigenerare se serve in una
+sessione futura (script riproducibile, richiede solo `node` e accesso a
+internet, nessuna chiave API).
 
 ## Come riprendere
 

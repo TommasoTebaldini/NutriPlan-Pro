@@ -164,7 +164,23 @@ numeri fabbricati erano quasi sempre più "puliti"/ottimistici delle
 evidenze reali (che spesso sono più deboli, più caute o riguardano un
 sottogruppo più specifico).
 
-Rimangono **155 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 2 completato (5 studi aggiuntivi, 14/164 totali)**:
+
+| ID | Prima (fabbricato) | Dopo (verificato) |
+|---|---|---|
+| 10 | "Schwingshackl et al., JAMA Oncology 2023" — stesso team reale, ma topic (DII score) e rivista inventati | Vero paper dello stesso team: "Food groups and risk of CRC", *Int J Cancer* 2018, PMID 29210053 — su gruppi alimentari, non DII |
+| 12 | "Livingston G, Huntley J, Sommerlad A, Lancet Neurology 2023" — autori reali (Lancet Commission demenza) ma per un lavoro diverso (quel report non è uno studio di coorte su MIND/Mediterranea/DASH) | Sostituito con lo studio reale sul confronto specifico: Wang Y et al., *Nutrition Reviews* 2026, PMID 40644461. Risultato reale più cauto: solo la MIND diet raggiunge significatività (HR 0.78), Mediterranea e DASH no |
+| 16 | "Harris L, Hamilton S, Azevedo LB, JAMA Intern Med 2023" — stesso team reale ma rivista/anno/numeri inventati (IF "superiore" alla CER) | Vero paper: JBI Database Syst Rev 2018, PMID 29419624. Risultato reale: IF comparabile alla CER (nessuna differenza significativa), non superiore; gli autori stessi invitano alla cautela per la piccola base di evidenza (6 studi) |
+| 17 | "Sachdev HPS, Gera T, Nestel P, AJCN 2022" — stesso team reale ma per un lavoro diverso (quello reale è più vecchio, più specifico e più cauto) | Vero paper dello stesso team: *Public Health Nutrition* 2005, PMID 15877905. Effetto reale sullo sviluppo motorio: NULLO (non menzionato/impliciamente positivo come fabbricato); beneficio cognitivo reale solo nei bambini ≥8 anni e con anemia/carenza accertata |
+| 18 | "Mead E, Brown T, Rees K, Cochrane 2017" (anno già corretto, ma DOI/PMID sbagliati, popolazione/numeri alterati) | Stesso anno/team ma DOI/PMID/titolo corretti (CD012651, PMID 28639319). Effetto reale su BMI z-score: -0.06 (non -0.10 come fabbricato); il claim fabbricato "maggiore efficacia con coinvolgimento genitoriale" è ESPLICITAMENTE CONTRADDETTO dal vero studio ("nessun effetto di sottogruppo significativo") |
+
+**Nuovo pattern osservato nel batch 2**: oltre a "autori reali abbinati a
+paper sbagliato", emerge anche il caso "claim specifico presentato come
+dimostrato quando lo studio reale lo esclude esplicitamente" (#18,
+coinvolgimento genitoriale) — il più insidioso, perché non è solo un dato
+mancante ma un'affermazione contraria a quanto lo studio reale conclude.
+
+Rimangono **150 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

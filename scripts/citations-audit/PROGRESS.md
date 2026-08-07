@@ -216,9 +216,47 @@ cautela assente nella versione fabbricata); #33 food insecurity/obesità
 donne, e la partecipazione a programmi di assistenza alimentare potrebbe
 PEGGIORARE gli esiti, dato controintuitivo assente nel fabbricato).
 
-**Totale progressivo: 26/164 studi ri-sourciati.**
+**Batch 6 (3 studi, commit `1974817`)**: #34 zinco (Wessells & Brown 2012
+è una STIMA di prevalenza da dati FAO, non un trial sugli effetti della
+supplementazione — le percentuali di efficacia fabbricate su diarrea/
+polmonite non appartenevano a questa citazione); #36 dieta mediterranea/
+MASLD (trial CENTRAL, Gepner et al., *J Hepatol* 2019, non *Hepatology*
+2023 — la riduzione del grasso epatico è risultata il MECCANISMO dei
+benefici cardiometabolici, non solo un effetto collaterale); #37 linee
+guida BDA per IBS (McKenzie et al. 2016 — il low FODMAP è raccomandazione
+di SECONDA linea, non prima scelta).
 
-Rimangono **138 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 7 (3 studi, commit `2fe21a6`)**: #38 dieta e salute mentale
+(Firth et al., vero articolo è una clinical review *BMJ* 2020 senza
+effect size aggregati, non una meta-analisi *Lancet Psychiatry* come
+fabbricato); #39 B12 vegetariani/vegani (Pawlak et al. 2014, non 2023 —
+range di prevalenza molto ampi per forte eterogeneità tra studi, non un
+singolo dato affidabile); #40 magnesio/T2D-CV (gli autori fabbricati
+Barbagallo/Veronese/Dominguez hanno un vero paper *Nutrients* 2022 ma è
+un EDITORIALE, non una meta-analisi dose-risposta — sostituito con la
+vera meta-analisi di Fang et al., *BMC Medicine* 2016).
+
+**Batch 8 (2 studi, commit `aadbcf9`)**: #42 calcio e rischio CV (gli
+autori fabbricati Bolland/Avenell/Baron hanno davvero pubblicato insieme,
+ma su un tema diverso e più critico — supplementi di calcio SENZA
+vitamina D associati a +30% di rischio di infarto miocardico, *BMJ*
+2010 — non uno studio di efficacia sulla prevenzione delle fratture);
+#44 UPF e salute mentale (Lane et al., vero paper *Nutrients* 2022 non
+PLOS Medicine — 15 dei 17 studi inclusi sono cross-sezionali, limitando
+fortemente le conclusioni causali).
+
+**Batch 9 (2 studi, commit `0113266`)**: #45 flavan-3-oli e pressione
+(Ottaviani et al., vero studio EPIC-Norfolk *Scientific Reports* 2020 —
+studio CROSS-SEZIONALE, non un RCT o network meta-analysis come
+fabbricato); #46 PROT-AGE apporto proteico anziani (Bauer/Biolo/
+Cederholm et al. 2013, non 2022 — gli autori dichiarano ESPLICITAMENTE
+che l'evidenza non è sufficiente per raccomandazioni su distribuzione
+nei pasti/timing, contrariamente a consigli spesso presentati altrove
+come "basati su PROT-AGE").
+
+**Totale progressivo: 36/164 studi ri-sourciati (~22%).**
+
+Rimangono **128 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

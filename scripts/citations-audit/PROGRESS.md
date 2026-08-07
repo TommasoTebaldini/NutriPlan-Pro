@@ -62,14 +62,31 @@ citazioni con pattern "(aggiornamento YYYY)" o anno isolato sospetto.
 ## 🔴 SCOPERTA CRITICA 2026-08-07 — Database studi.html (`js/studies-data.js`, 305 studi)
 
 Verifica batch (script, non manuale) di DOI e PMID di tutti i 305 studi
-contro le API pubbliche Crossref e NCBI PubMed eutils, con confronto del
-titolo restituito dall'API contro il titolo salvato nella pagina.
+contro le API pubbliche Crossref e NCBI PubMed eutils.
 
-**Risultato: solo 54/305 (18%) hanno DOI/PMID che risolvono e corrispondono
-al titolo dichiarato. 204/305 (67%) hanno un DOI inesistente, un DOI che
-risolve a un articolo REALE ma COMPLETAMENTE DIVERSO, o un PMID che punta
-a un altro articolo reale non correlato. 47/305 (15%) non hanno né DOI né
-PMID (non verificabili in un senso o nell'altro).**
+**Prima passata (solo confronto testuale del titolo)**: aveva sovrastimato
+il problema (204/305 flaggati, 67%) perché molti studi reali e correttamente
+citati usano in pagina un titolo PARAFRASATO invece del titolo accademico
+esatto (es. PREDIMED, Reynolds et al. Lancet 2019 sulla fibra, Dinu et al.
+su diete vegetariane, Morton et al. BJSM 2018 sulle proteine — tutti DOI/PMID
+corretti, solo titolo di visualizzazione diverso dall'originale).
+
+**Seconda passata (corretta)**: aggiunto confronto dei cognomi degli autori
+restituiti da Crossref/PubMed contro gli autori dichiarati in pagina, non
+solo il titolo — un paper è considerato "reale" se ANCHE SOLO UNO tra
+titolo o autori corrisponde ragionevolmente.
+
+**Risultato corretto e verificato a campione: 94/305 (31%) sono studi reali
+correttamente citati (DOI/PMID validi, autori/argomento confermati — anche
+se a volte con titolo parafrasato). 164/305 (54%) restano genuinamente
+fabbricati o non corrispondenti: il DOI e/o il PMID risolvono a un articolo
+reale ma su un ARGOMENTO COMPLETAMENTE DIVERSO E AUTORI COMPLETAMENTE
+DIVERSI (verificato non solo sul titolo ma sull'elenco autori restituito
+dalle API — es. #1 PMID punta a uno studio di dermatologia laser di
+Glover/Richer, non a Salas-Salvadó et al.; #5 DOI punta a uno studio
+proteogenomico su cancro ovarico, PMID a uno studio su fistole in Crohn
+pediatrico, nessuno dei due ha nulla a che fare con "Zhao L, Zhang F, Ding
+X" microbiota). 47/305 (15%) non hanno né DOI né PMID (non verificabili).**
 
 Esempi concreti verificati a mano (non falsi positivi dello script):
 - Studio #1 "Mediterranean Diet and Risk of Type 2 Diabetes..." — DOI
@@ -83,28 +100,35 @@ Esempi concreti verificati a mano (non falsi positivi dello script):
   pagina; il PMID citato appartiene a un articolo su anestesia/EEG.
 
 **Interpretazione**: il pattern (titoli plausibili e specifici, DOI a
-volte reali ma di un altro studio a tema affine, PMID quasi casuali) è
-coerente con contenuto generato che ha inventato l'apparato bibliografico
-(DOI/PMID) per dare l'impressione di verificabilità, non con semplici
-errori di trascrizione. Non è un problema isolato come le altre pagine
-sopra: riguarda i due terzi dell'intero database studi, usato da
-dietisti come rassegna di "evidenze scientifiche".
+volte reali ma di un altro studio a tema affine, PMID quasi casuali, ZERO
+sovrapposizione di cognomi autori) è coerente con contenuto generato che
+ha inventato l'apparato bibliografico (DOI/PMID) per dare l'impressione
+di verificabilità, non con semplici errori di trascrizione. Non è un
+problema isolato come le altre pagine sopra: riguarda più della metà
+dell'intero database studi, usato da dietisti come rassegna di "evidenze
+scientifiche".
 
-**Non ancora deciso come procedere** — richiede una scelta esplicita
-dell'utente prima di agire (rimuovere gli studi non verificabili,
-ri-sourcing manuale uno per uno, disclaimer, o altro). Vedi conversazione
-per le opzioni presentate. Risultati completi (per-studio, con DOI/PMID
-reali restituiti dalle API dove disponibili) salvati in
-`studi_verify_results.json` nello scratchpad della sessione che ha fatto
-la scoperta — non ancora copiati nel repo, da rigenerare se serve in una
-sessione futura (script riproducibile, richiede solo `node` e accesso a
-internet, nessuna chiave API).
+**Decisione dell'utente (2026-08-07)**: ri-sourcing graduale su sessioni
+future, sullo stesso modello dell'audit delle 285 linee guida — per ogni
+studio fabbricato si cerca un vero studio equivalente sul tema, oppure si
+marca per rimozione se non esiste un corrispettivo reale unico. Nessuna
+rimozione di massa nel frattempo. Risultati completi per-studio (verdetto,
+titolo/autori reali restituiti dalle API dove disponibili) salvati in
+`studi_verify_v2.json` nello scratchpad della sessione che ha fatto la
+scoperta — non ancora copiati nel repo, da rigenerare se serve in una
+sessione futura (script riproducibile in `verify_studi_v2.js`, richiede
+solo `node` con fetch nativo e accesso a internet, nessuna chiave API;
+~5-8 minuti per l'intero database, va lanciato in background).
 
 ## Come riprendere
 
-Se l'utente chiede di continuare: cominciare dal dubbio ESPGHAN 2023
-irrisolto sopra, poi valutare se affrontare il database studi.html (305
-DOI) come task a parte. Tutte le modifiche di questo giro sono nei file
-HTML committati singolarmente (vedi git log per i commit message
-dettagliati); non ancora pushate/committate al momento della stesura di
-questo file — vedi stato conversazione per l'ultimo commit reale.
+Il ri-sourcing dei 164 studi fabbricati è iniziato 2026-08-07 (batch 1,
+vedi tabella sotto). Per ogni studio del batch: WebSearch per un vero
+studio esistente sullo stesso tema/claim, verifica DOI/PMID reali, e
+aggiornamento conservativo di titolo/autori/rivista/anno/doi/pubmed/link
+in `js/studies-data.js` — SOLO se i campi risultati/metodi/analisi del
+JSON restano compatibili col vero studio trovato (altrimenti vanno
+riscritti anch'essi per riflettere i risultati reali, non solo la
+citazione). Se nessun corrispettivo reale unico esiste per il claim
+descritto, marcare la entry per rimozione invece di forzare un
+abbinamento debole.

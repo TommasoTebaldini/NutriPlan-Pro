@@ -254,9 +254,48 @@ che l'evidenza non è sufficiente per raccomandazioni su distribuzione
 nei pasti/timing, contrariamente a consigli spesso presentati altrove
 come "basati su PROT-AGE").
 
-**Totale progressivo: 36/164 studi ri-sourciati (~22%).**
+**Batch 10 (2 studi, commit `2463f10`)**: #48 selenio/tiroide (Ventura et
+al., vero articolo *Int J Endocrinology* 2017, non Nutrients — review
+narrativa senza meta-analisi quantitativa come fabbricato); #49
+collagene/vitamina C (Shaw et al. 2017, *AJCN* — lo studio meccanicistico
+originale del campo, un trial crossover su SOLI 8 uomini che misura
+marcatori ematici, non una meta-analisi su esiti clinici come fabbricato).
 
-Rimangono **128 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 11 (2 studi, commit `974fcba`)**: #51 vitamina D/mortalità (Keum
+et al. 2019, *Ann Oncol* — riduce la mortalità ONCOLOGICA ma non
+l'incidenza del cancro; un'altra meta-analisi indipendente più ampia su
+mortalità per TUTTE le cause non ha trovato alcun effetto significativo);
+#52 digiuno intermittente vs restrizione calorica continua (Cioffi et
+al. 2018, *J Transl Med* — nessuna differenza significativa sulla
+perdita di peso tra i due approcci).
+
+**Batch 12 (2 studi, commit `10ee042`)**: #53 diete plant-based e
+rischio CV (sostituito con Satija et al., *JACC* 2017 — solo la versione
+di QUALITÀ della dieta plant-based [hPDI] riduce il rischio coronarico,
+una versione ricca di cereali raffinati/dolci ancora "vegetale" [uPDI]
+aumenta il rischio); #54 proteine e massa muscolare anziani (sostituito
+con Whaikid & Piaseu 2024 — il beneficio su massa/forza NON si traduce
+in miglioramento della performance fisica funzionale in questa
+meta-analisi).
+
+**Batch 13 (2 studi, commit `b94733f`)**: #55 fibra e cancro colon-retto
+(Aune et al. 2011, *BMJ* — dato robusto confermato, RR 0.90 per 10g/die);
+#57 epidemiologia dell'anemia (Chaparro & Suchdev 2019 — il contributo
+della carenza di ferro all'anemia VARIA sostanzialmente per area
+geografica e carico infettivo, non è automaticamente sinonimo di
+carenza di ferro ovunque).
+
+**Batch 14 (2 studi, commit `781284b`)**: #58 dieta mediterranea e
+cognizione (Samieri/Okereke et al. 2013, *J Nutr* — associata a miglior
+stato cognitivo generale ma NON a un rallentamento del declino cognitivo
+nel tempo, distinzione esplicita nel titolo stesso dello studio reale);
+#60 acido folico e difetti del tubo neurale (Copp/Stanier/Greene 2013,
+*Lancet Neurology* — review ampia su genetica/sviluppo/chirurgia fetale,
+non solo efficacia della supplementazione come fabbricato).
+
+**Totale progressivo: 46/164 studi ri-sourciati (~28%).**
+
+Rimangono **118 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

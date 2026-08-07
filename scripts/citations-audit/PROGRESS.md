@@ -180,7 +180,23 @@ dimostrato quando lo studio reale lo esclude esplicitamente" (#18,
 coinvolgimento genitoriale) — il più insidioso, perché non è solo un dato
 mancante ma un'affermazione contraria a quanto lo studio reale conclude.
 
-Rimangono **150 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 3 completato (5 studi aggiuntivi, 19/164 totali)**:
+
+| ID | Prima (fabbricato) | Dopo (verificato) |
+|---|---|---|
+| 19 | "Betts JA, Williams C., Sports Medicine 2023" — stessi autori/rivista reali ma anno/topic inventati (CHO loading pre-gara) | Vero paper dello stesso team: Sports Medicine 2010, PMID 20942510 — su proteine+carboidrati nel RECUPERO post-esercizio, non CHO loading pre-gara |
+| 21 | "Chiavaroli et al., Circulation 2019" — stesso team reale ma rivista/tipo studio inventati (network meta-analysis DASH vs 17 diete) | Vero paper dello stesso team: *Nutrients* 2019, PMID 30764511 — umbrella review sulla sola DASH, non confronto network con altre diete; certezza dell'evidenza bassa per l'incidenza CV (non "superiore a tutte le altre diete" come fabbricato) |
+| 23 | "Schauer PR et al. NEJM 2021" — trial reale (STAMPEDE) ma DOI/PMID puntavano al paper sbagliato (3 anni, 2014, non 5 anni) | Corretto a NEJM 2017 (5 anni), PMID 28199805. I NUMERI fabbricati erano in realtà quasi tutti accurati (remissione 29%/23%/5%, calo peso -23%/-19%/-5%) — solo citazione/anno errati, caso raro di dati sostanzialmente corretti |
+| 25 | "Tessier AJ, Doyen J, Pallet V, Nature Communications 2023" — PREDIMED-Plus/UK Biobank inventati | Sostituito con vero paper Tessier: *JAMA Network Open* 2024, PMID 38709531 — su olio d'oliva e mortalità da demenza in NHS-II/HPFS (92.383 persone), non declino cognitivo in PREDIMED/UK Biobank |
+| 26 | "Kramer MS, Kakuma R., Cochrane 2023 pub3" — anno/DOI/PMID inventati, numeri precisi fabbricati (RR 0.63, +3.7 QI, -20% cancro seno) | Vera versione: Cochrane 2012 pub2, PMID 22895934. La revisione reale NON riporta RR aggregati precisi né benefici cognitivi (anzi: nessun beneficio su QI/comportamento nello studio bielorusso) |
+
+**Pattern aggiuntivo (#23)**: non tutti i casi sono fabbricazioni pure —
+a volte i NUMERI erano corretti ma la citazione (DOI/PMID/anno) puntava
+alla versione sbagliata dello stesso trial/serie di pubblicazioni. Utile
+per calibrare le aspettative: alcuni fix restano quasi solo "correzione
+d'identificativo", altri richiedono riscrivere completamente i risultati.
+
+Rimangono **145 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

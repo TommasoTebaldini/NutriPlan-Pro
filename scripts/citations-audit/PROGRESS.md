@@ -293,9 +293,33 @@ nel tempo, distinzione esplicita nel titolo stesso dello studio reale);
 *Lancet Neurology* — review ampia su genetica/sviluppo/chirurgia fetale,
 non solo efficacia della supplementazione come fabbricato).
 
-**Totale progressivo: 46/164 studi ri-sourciati (~28%).**
+**Batch 15 (2 studi, commit `b1602ff`)**: #61 magnesio/glicemia
+(Veronese et al. 2016, *Eur J Clin Nutr* — RCT di SUPPLEMENTAZIONE,
+distinto dallo studio osservazionale sull'apporto dietetico già coperto
+al #40); #62 flavanoli e prevenzione CV (Heiss/Keen/Kelm, *Eur Heart J*
+2010 — basato su ENDPOINT SURROGATI, non su eventi clinici duri come
+talvolta presentato).
 
-Rimangono **118 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 16 (2 studi, commit `0e6c94e`)**: #63 carenza di B12
+(Green/Allen/Bjørke-Monsen, *Nat Rev Dis Primers* 2017 — il range di
+prevalenza della carenza subclinica, 2.5-26%, ha rilevanza clinica
+"non chiara" secondo gli stessi autori); #64 bevande zuccherate e T2D
+(Imamura et al., *BMJ* 2015 — dato controintuitivo: le bevande
+dolcificate ARTIFICIALMENTE mostravano un'associazione grezza col T2D
+perfino più alta di quelle zuccherate, attribuita dagli autori a
+causalità inversa, non a un vero effetto dannoso).
+
+**Batch 17 (2 studi, commit `6f0da12`)**: #65 sodio nello scompenso
+cardiaco (Kalogeropoulos et al., *Circ Heart Fail* 2020 — trial PILOTA
+DI FATTIBILITÀ su soli 27 pazienti, non una meta-analisi su 4200 come
+fabbricato); #66 tè verde e mortalità (Zhao LG et al., *J Epidemiol*
+2017 — associazione debole/borderline con mortalità totale, assente per
+mortalità oncologica specificamente, contrariamente alla narrativa
+comune).
+
+**Totale progressivo: 52/164 studi ri-sourciati (~32%).**
+
+Rimangono **112 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

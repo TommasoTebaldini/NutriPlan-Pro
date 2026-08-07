@@ -388,10 +388,92 @@ ipertensione (Kashino/Eguchi/Miki et al., *Nutrients* 2020 — l'outcome
 reale è l'ipertensione incidente, non il cancro colorettale come
 riportato nella versione fabbricata; campione piccolo, 944 soggetti).
 
-**Totale progressivo: 72/164 studi ri-sourciati (~44%).**
+**Totale progressivo (prima del batch 26): 72/164 studi ri-sourciati (~44%).**
 
-Rimangono **92 studi da ri-sourciare**. Lista completa con verdetto per
-ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
-rigenerato — vedi script sopra). Dato il volume di lavoro per studio
-(ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a
-piccoli batch su più sessioni, come da richiesta esplicita dell'utente.
+## 🔴 Rigenerazione elenco fabbricati (2026-08-08) — `verify_studi_v3.cjs`
+
+`studi_bad_full.json`/`verify_studi_v2.js` (scratchpad sessione 2026-08-07)
+non erano più disponibili in questa sessione. Riscritto da zero un
+verificatore equivalente in `scripts/citations-audit/verify_studi_v3.cjs`
+(stessa metodologia: confronto titolo — Jaccard sui termini >3 caratteri,
+soglia 0.5 — E confronto cognomi autori contro Crossref/PubMed, "reale" se
+titolo O autori corrispondono). Rilanciato su tutti i 305 studi:
+
+**Risultato: 158 reali, 100 fabbricati, 47 senza DOI/PMID.** La differenza
+rispetto al conteggio precedente (94 reali/164 fabbricati prima dei batch,
+attesi 166/92 dopo i 72 fix) è dovuta a differenze di soglia tra
+l'euristica v2 (persa) e v3 (nuova) — non un regresso: nessuno dei 72 ID
+già corretti nei batch 1-25 compare nel nuovo elenco fabbricati. Spot-check
+manuale di 4 ID del nuovo elenco (41, 50, 74, 88) confermato: DOI/PMID
+risolvono a paper del tutto estranei (COVID/NAFLD, TRAF3IP2/insulino-
+resistenza, sindrome metabolica colazione, piombo/eritropoietina) — non
+falsi positivi dello script. File completo: `studi_bad_v3.json` (gitignored,
+va rigenerato ad ogni sessione con `node scripts/citations-audit/verify_studi_v3.cjs`,
+~5 min, richiede internet).
+
+**Nuovo totale fabbricati confermato: 100/305.** ID completi: 41, 50, 74,
+88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 103, 104, 105,
+106, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121,
+122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 134, 135, 136, 137,
+138, 139, 141, 143, 144, 145, 146, 147, 148, 150, 151, 152, 153, 154, 155,
+156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170,
+171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 188, 193,
+194, 195, 211, 214, 221.
+
+**Batch 26 (10 studi, sessione 2026-08-08)**: #41 dieta mediterranea in
+gravidanza (Martínez-Galiano et al. fabbricato → Xu J et al., *Adv Nutr*
+2024, PMID 38042258 — solo GDM e SGA confermati da RCT, gli altri esiti
+[ipertensione, preeclampsia, pretermine, basso peso, IUGR] solo da coorti
+osservazionali, distinzione assente nel fabbricato che presentava tutto
+come ugualmente supportato); #50 DASH e ipertensione (Filippou CD et al.
+— autori reali, DOI/PMID fabbricati puntavano a documenti estranei →
+vero paper dello stesso team, *Adv Nutr* 2020, PMID 32330233 — valuta la
+SOLA dieta DASH, effetto molto più modesto [-3.2/-2.5 mmHg] del network
+di 7 pattern dietetici fabbricato [-11.2 mmHg]); #74 sonno e dieta (Frank
+S et al. inventato → Godos J et al., *Sleep Med Rev* 2021, PMID 33549913
+— revisione NARRATIVA di 29 studi cross-sezionali, nessun dato numerico
+reale su +385kcal/grelina/leptina come fabbricato); #88 PREDIMED-Plus
+(outcome MACE a 7.5 anni fabbricato appartiene in realtà al trial
+PREDIMED ORIGINALE 2013 → sostituito con Salas-Salvadó/Díaz-López et al.,
+*Diabetes Care* 2019, PMID 30389673 — vero outcome primario PREDIMED-Plus
+a 1 anno è perdita di peso/fattori di rischio CV, n=626 non 7.447); #89
+microbiota e T2D (autori fabbricati "Bhatt DL/AS/SH" → Houghton D et al.,
+*Diabetologia* 2018, PMID 29754286 — base di evidenza reale molto più
+piccola, 8 studi/395 partecipanti non 52 RCT/28.000+; HbA1c migliora ma
+glicemia a digiuno no, nessun genere batterico specifico cambia in modo
+significativo); #90 proteine e massa muscolare anziani (stesso team reale
+Morton RW ma anno/DOI sbagliati → *BJSM* 2018, PMID 28698222 — riguarda
+adulti sani in generale, non anziani; la meta-regressione mostra che il
+beneficio sulla FFM si RIDUCE con l'età, opposto alla narrativa fabbricata
+su "resistenza anabolica" negli over-65); #91 sodio e pressione (Filippini
+T et al. — vero paper dello stesso team, *Circulation* 2021, PMID
+33586450, non JAMA Intern Med 2022 — relazione lineare confermata, ma
+SENZA evidenza di effetto età/sesso-specifico, a differenza del claim
+fabbricato); #92 vitamina D e mortalità (sostituito con il vero trial
+VITAL di Manson JE, *NEJM* 2019, PMID 30415629 — nessuna riduzione
+significativa di cancro invasivo [HR 0.96] né eventi CV [HR 0.97]; il
+claim fabbricato "riduzione 12% mortalità cancro, RR 0.88 significativo"
+non regge, il vero HR 0.83 è al limite della significatività); #93 diete
+plant-based e rischio CV (Hemler EC fabbricato, Hu FB reale ma per altro
+paper → Satija A, Hu FB, *Trends Cardiovasc Med* 2018, PMID 29496410 —
+REVISIONE NARRATIVA non meta-analisi con effect size pooled; messaggio
+chiave reale: solo il pattern vegetale di ALTA qualità [hPDI] riduce il
+rischio CV, un pattern vegetale di bassa qualità [uPDI] lo aumenta); #94
+probiotici e IBS (autori Ford/Harris/Lacy/Quigley/Moayyedi ESATTAMENTE
+reali, ma rivista/anno sbagliati → *Aliment Pharmacol Ther* 2018, PMID
+30294792 — il risultato pooled robusto reale riguarda la RIFAXIMINA
+[antibiotico, RR 0.84], non i probiotici multi-ceppo come fabbricato; per
+i probiotici gli autori dichiarano evidenza troppo eterogenea per un
+effetto di classe affidabile).
+
+**Totale progressivo: 82/174 studi ri-sourciati sul nuovo conteggio
+confermato (100 fabbricati identificati + 72 già corretti prima del
+ricalcolo, meno sovrapposizioni = verificare cumulativo esatto alla
+prossima sessione rigenerando studi_bad_v3.json). Rimangono ~90 studi
+da ri-sourciare** (100 fabbricati nell'elenco v3 meno i 10 appena corretti
+in batch 26). Dato il volume di lavoro per studio (ricerca + verifica +
+riscrittura di ~15 campi in 2 lingue), procedere a piccoli batch su più
+sessioni, come da richiesta esplicita dell'utente. Metodo aggiornato:
+lanciare `node scripts/citations-audit/verify_studi_v3.cjs` a inizio
+sessione per rigenerare l'elenco corrente (va rilanciato ogni volta,
+`studi_bad_v3.json` non è committato).

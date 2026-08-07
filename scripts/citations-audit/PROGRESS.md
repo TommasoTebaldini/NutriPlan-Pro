@@ -348,9 +348,49 @@ sostanzialmente accurato); #75 creatina e performance (Lanhers et al.,
 *Sports Medicine* 2015, non European Journal of Sport Science 2023 —
 specifico su arti inferiori, 60 RCT, effect size reali 0.24-0.34).
 
-**Totale progressivo: 60/164 studi ri-sourciati (~37%).**
+**Batch 23 (2 studi, commit `422f7ef` e precedente)**: #80 alcol e carico
+di malattia globale (GBD 2016 Alcohol Collaborators, *Lancet* 2018 — il
+livello di consumo che minimizza il danno complessivo è zero, ma le cause
+di morte alcol-correlate variano molto per età); #81 restrizione calorica
+CALERIE (Kraus et al., *Lancet Diabetes Endocrinol* 2019).
 
-Rimangono **104 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 24 (1 studio, commit `422f7ef`)**: #85 calcio e densità minerale
+ossea (Tai/Leung/Grey/Reid/Bolland, *BMJ* 2015, non 2022 — gli stessi
+autori concludono che l'aumento di DMO misurato è improbabile si traduca
+in una riduzione clinicamente significativa del rischio di frattura,
+coerente con altri studi scettici sul calcio dello stesso gruppo).
+
+**Batch 25 (9 studi, commit `691289a`, `df18fcd`, `a58674d`, `ee555b5`,
+`c752bda`)**: #76 dieta e MICI (Hou/Abraham/El-Serag, *Am J Gastroenterol*
+2011 — revisione sistematica QUALITATIVA di 19 studi, non una
+meta-analisi quantitativa con OR pooled); #77 probiotici e diabete
+(Miraghajani/Zaghian/Dehkohneh et al., *Probiotics Antimicrob Proteins*
+2019 — piccolo RCT, n=48, su latte di soia probiotico e nefropatia
+diabetica, non una network meta-analisi su T2D generico); #78 qualità
+carboidrati (Moslehi/Golzarand/Mirmiran et al., *Obes Res Clin Pract*
+2023 — nella coorte TLGS la qualità proteica predice l'incidenza di
+fenotipi metabolicamente non sani meglio della sola qualità dei
+carboidrati); #79 EAT-Lancet e mortalità (Cacau/De Carli et al.,
+*Nutrients* 2021 — è lo studio di sviluppo/validazione del Planetary
+Health Diet Index, non uno studio di esito su mortalità); #82 DASH vs
+Mediterranea (Altorf-van der Kuil/Engberink et al., *PLoS ONE* 2010 —
+revisione su proteine alimentari e pressione, non un confronto diretto
+tra pattern dietetici); #83 dieta e cancro WCRF (Clinton/Giovannucci/
+Hursting, *J Nutr* 2020 — commentario sul Third Expert Report 2018, non
+una nuova meta-analisi 2023 di 8.000 studi); #84 omega-3 e infiammazione
+(Calder PC, *Br J Clin Pharmacol* 2013 — efficacia condizione-specifica,
+dimostrata per artrite reumatoide, inconsistente per IBD/asma, richiede
+dosi >2g/die); #86 UPF e diabete tipo 2 (Chen/Khandpur/Desjardins et al.,
+*Diabetes Care* 2023 — 3 coorti USA + meta-analisi, con scomposizione per
+sottocategoria: bevande zuccherate/carni processate dannose, cereali/pane
+integrale/yogurt UPF neutri o protettivi); #87 cereali integrali e
+ipertensione (Kashino/Eguchi/Miki et al., *Nutrients* 2020 — l'outcome
+reale è l'ipertensione incidente, non il cancro colorettale come
+riportato nella versione fabbricata; campione piccolo, 944 soggetti).
+
+**Totale progressivo: 72/164 studi ri-sourciati (~44%).**
+
+Rimangono **92 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

@@ -196,7 +196,29 @@ alla versione sbagliata dello stesso trial/serie di pubblicazioni. Utile
 per calibrare le aspettative: alcuni fix restano quasi solo "correzione
 d'identificativo", altri richiedono riscrivere completamente i risultati.
 
-Rimangono **145 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 4 (3 studi, commit `9a8c625`)**: #27 DAPA-CKD (numeri quasi tutti
+corretti, solo rivista/DOI/PMID sbagliati — NEJM non Lancet); #28
+farmacoterapia obesità di Shi et al. (il paper reale è stato RITIRATO E
+RIPUBBLICATO nel 2024 dopo rimozione di 5 trial sovrapposti — usata la
+versione corrente PMID 38582569); #29 alcol/cirrosi (autori fabbricati
+"Huang Z, Chen X, Zhu M" senza riscontro reale, sostituiti con Llamosas-
+Falcón et al. 2024 sul tema esatto).
+
+**Batch 5 (4 studi, commit `5f6c605`)**: #30 screening nutrizionale
+ospedaliero (Lim et al. 2012, non uno studio sui tool di screening ma
+sull'impatto della malnutrizione su costi/degenza/mortalità a 3 anni);
+#31 fruttosio (Taskinen/Packard/Borén, ma il vero paper è *Nutrients*
+2019 non Cell Metabolism 2022, e non riporta le soglie numeriche precise
+fabbricate); #32 probiotici (vera umbrella review classifica TUTTA
+l'evidenza come credibilità di Classe IV, la più bassa — dettaglio di
+cautela assente nella versione fabbricata); #33 food insecurity/obesità
+(Franklin et al. 2012, non 2022 — l'associazione reale è più forte nelle
+donne, e la partecipazione a programmi di assistenza alimentare potrebbe
+PEGGIORARE gli esiti, dato controintuitivo assente nel fabbricato).
+
+**Totale progressivo: 26/164 studi ri-sourciati.**
+
+Rimangono **138 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

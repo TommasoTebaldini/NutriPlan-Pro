@@ -142,15 +142,29 @@ sempre riletto il vero abstract e riscritto il campo `risultati`/`analisi`
 di conseguenza, altrimenti si lascia una citazione vera abbinata a
 conclusioni ancora false.
 
-**Batch 1 completato (2/164), esempi ad alto rigore per validare il
+**Batch 1 completato (9/164), esempi ad alto rigore per validare il
 metodo:**
 
 | ID | Prima (fabbricato) | Dopo (verificato) |
 |---|---|---|
-| 1 | "Salas-Salvadó et al., Ann Intern Med 2023", DOI/PMID inventati, RR 0.77 (23% riduzione) | Schwingshackl L et al., *Public Health Nutrition* 2015, PMID 25145972 reale. RR pooled 0.81 (19% riduzione, IC 95% 0.73–0.90) — numero originale era vicino ma non esatto, aggiornato al dato reale |
-| 8 | "Lowe DA et al., Cell Metabolism 2023" (autori/n/durata già corretti, ma rivista/anno/DOI/PMID inventati), risultato fabbricato: TRE **significativamente superiore** al controllo (-6.3kg vs -4.2kg, p=0.04) | Stesso trial reale (TREAT, Lowe DA et al., *JAMA Intern Med* 2020, PMID 32986097): risultato vero è che il TRE **NON è risultato superiore** al controllo (differenza -0.26kg, p=0.63, NS), con segnale di perdita di massa magra nel gruppo TRE — conclusione opposta a quella presentata prima |
+| 1 | "Salas-Salvadó et al., Ann Intern Med 2023", DOI/PMID inventati, RR 0.77 (23% riduzione) | Schwingshackl L et al., *Public Health Nutrition* 2015, PMID 25145972 reale. RR pooled 0.81 (19% riduzione, IC 95% 0.73–0.90) |
+| 2 | "Cervenka MC et al., Epilepsia Open 2023" inventato, 52% riduzione ≥50% crisi | Liu H et al., *Epilepsia Open* 2018, PMID 29588983 reale (rivista giusta, anno/autori sbagliati). Riduzione ≥50%: 53% — molto vicino, ma libertà dalle crisi reale è 13%, non il "19% remissione" fabbricato |
+| 3 | "Kalantar-Zadeh K et al., Lancet 2022" — autori reali (esistono davvero, ma per un DIVERSO paper: review generale CKD, non su restrizione proteica) con HR 0.70/0.66 inventati | Sostituito con lo studio reale sul tema specifico: Hahn D et al., Cochrane 2020, PMID 33118160. Risultato vero più sfumato: nessun beneficio chiaro con LPD moderata (RR 1.05 NS), beneficio solo con VLPD severa (RR 0.65) |
+| 4 | "Askari M et al., Int J Obes 2023" — autori/rivista reali ma anno/DOI/PMID e numero (OR 1.55) inventati | Stesso team reale, paper vero: Askari M et al. *Int J Obes* 2020, PMID 32796919. Effect size reale molto più modesto (1.26 per obesità, non 1.55) e basato quasi solo su studi cross-sezionali (13/14), non prospettici come dichiarato |
+| 5 | "Zhao L et al., Cell 2023" — autori reali ma per un DIVERSO paper (review generica mai esistita) | Sostituito con il vero paper di quel team: Zhao L et al. *Science* 2018, PMID 29590046 (RCT su fibra/SCFA/T2D, non review) |
+| 7 | "Liao CD et al., Cochrane 2023" — autori reali ma rivista/anno/DOI/PMID inventati | Vero paper dello stesso team: *Am J Clin Nutr* 2017, PMID 28814401. Risultati reali espressi come SMD, non MD in kg come fabbricato |
+| 8 | "Lowe DA et al., Cell Metabolism 2023" (autori/n/durata reali, rivista/anno/DOI/PMID inventati), risultato fabbricato: TRE **significativamente superiore** (-6.3kg vs -4.2kg, p=0.04) | Stesso trial reale (TREAT, *JAMA Intern Med* 2020, PMID 32986097): il TRE **NON è risultato superiore** al controllo (differenza -0.26kg, p=0.63, NS) — conclusione opposta a quella fabbricata |
+| 9 | "Muscogiuri G et al., Obesity Reviews 2023" — autori reali (task force EASO) ma rivista/anno inventati | Vero paper dello stesso team: *Obesity Facts* 2021, PMID 33882506 — base reale delle linee guida EASO su VLCKD |
+| 11 | "Adler AJ et al., Cochrane 2023 pub5" — autori reali ma versione/anno/DOI/PMID inventati, conclusione presentata come "riduzione mortalità CV 14% confermata" | Vera versione Cochrane: pub3, 2014, PMID 25519688. Conclusione reale MOLTO più cauta: gli autori dichiarano esplicitamente evidenza insufficiente per confermare un beneficio sulla mortalità CV |
 
-Rimangono **162 studi da ri-sourciare**. Lista completa con verdetto per
+**Pattern ricorrente nel batch**: in quasi tutti i casi gli AUTORI erano
+reali (ricercatori esistenti nel campo), ma abbinati a un titolo/rivista/
+anno/DOI/PMID inventati che punta a un paper diverso o inesistente — e i
+numeri fabbricati erano quasi sempre più "puliti"/ottimistici delle
+evidenze reali (che spesso sono più deboli, più caute o riguardano un
+sottogruppo più specifico).
+
+Rimangono **155 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

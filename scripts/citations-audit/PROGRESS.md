@@ -317,9 +317,27 @@ fabbricato); #66 tè verde e mortalità (Zhao LG et al., *J Epidemiol*
 mortalità oncologica specificamente, contrariamente alla narrativa
 comune).
 
-**Totale progressivo: 52/164 studi ri-sourciati (~32%).**
+**Batch 18 (2 studi, commit `8e803f9`)**: #68 GBD rischi dietetici
+(Afshin et al./GBD 2017 Collaborators, *Lancet* 2019 — il sodio elevato
+è il singolo fattore dietetico con più morti attribuite a livello
+globale, 3 milioni, davanti a carenza di cereali integrali e frutta);
+#69 zinco e raffreddore (la vera Cochrane review sui fabbricati autori
+"Singh M, Das RR" fu RITIRATA nel 2015 per errori/plagio — sostituita
+con la revisione Cochrane attuale, Nault et al. 2024, che la rimpiazza).
 
-Rimangono **112 studi da ri-sourciare**. Lista completa con verdetto per
+**Batch 19 (1 studio, commit `ec2acf2`)**: #71 allattamento e
+neurosviluppo (Victora et al., vera Lancet Breastfeeding Series 2016,
+non 2022 — nessuna associazione trovata con asma/allergie, pressione o
+colesterolo, contrariamente ad affermazioni più ampie talvolta fatte).
+
+**Batch 20 (1 studio, commit `6b090ef`)**: #72 UPF e mortalità (Kliemann
+et al., vero studio di coorte EPIC, *Lancet Planetary Health* 2023 —
+riguarda specificamente il rischio ONCOLOGICO a 25 sedi tumorali, non la
+mortalità generale/altre patologie come generalizzato).
+
+**Totale progressivo: 56/164 studi ri-sourciati (~34%).**
+
+Rimangono **108 studi da ri-sourciare**. Lista completa con verdetto per
 ID in `studi_bad_full.json` (scratchpad sessione 2026-08-07, va
 rigenerato — vedi script sopra). Dato il volume di lavoro per studio
 (ricerca + verifica + riscrittura di ~15 campi in 2 lingue), procedere a

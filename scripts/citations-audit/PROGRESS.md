@@ -504,18 +504,68 @@ low-FODMAP e IBS, secondo studio distinto da #95 (Schumann D et al., vero
 paper *Nutrition* 2018, PMID 29129233, non Cochrane 2023 — 9 RCT/596
 partecipanti non 24/2.800+, effetti in SMD non percentuali per sottotipo).
 
-**Totale progressivo: 92/100 studi fabbricati ancora da correggere sul
-conteggio v3 → 20 corretti nei batch 26-27, restano 80 da ri-sourciare**
-sull'elenco confermato di 100 fabbricati (41, 50, 74, 88-99, 101-105 ora
-tutti corretti). ID ancora da fare: 106, 108, 109, 110, 111, 112, 113,
-114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128,
-129, 130, 131, 132, 134, 135, 136, 137, 138, 139, 141, 143, 144, 145, 146,
-147, 148, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162,
-163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177,
-178, 179, 180, 181, 182, 183, 188, 193, 194, 195, 211, 214, 221. Dato il
-volume di lavoro per studio (ricerca + verifica + riscrittura di ~15
-campi in 2 lingue), procedere a piccoli batch su più sessioni, come da
-richiesta esplicita dell'utente. Metodo aggiornato: lanciare `node
+**Batch 28 (10 studi, sessione 2026-08-08)**: #106 omega-3 e fibrillazione
+atriale (Gencer/Djousse/Al-Ramady et al. — autori reali, DOI/PMID
+fabbricati inesistenti → vero paper *Circulation* 2021, PMID 34612056:
+caso raro, i numeri centrali erano quasi tutti accurati, solo
+citazione/conteggio RCT sbagliati [7 reali non 13]); #108 time-restricted
+eating (Cienfuegos S fabbricato come primo autore → vero primo autore è
+Varady KA, *Annual Review of Nutrition* 2021, PMID 34633860 — REVISIONE
+NARRATIVA su tutto il digiuno intermittente ADF+5:2+TRE, non una
+meta-analisi quantitativa di 29 RCT sulla sola TRE); #109 fibra e
+diversità microbiota (Dahl WJ fabbricato → So D et al., *Am J Clin Nutr*
+2018, PMID 29757343 — CONTRADICE il fabbricato: NESSUN effetto
+significativo su alfa-diversità, solo su Bifidobacterium/Lactobacillus);
+#110 sodio e outcome CV (Filippini T fabbricato, verificato che non ha un
+secondo vero paper su questo outcome distinto dal #91 → sostituito con
+Zhu Y et al., *BMC Cardiovasc Disord* 2018, PMID 30340541, autori
+realmente diversi — effetto reale SPECIFICO sull'ictus, NESSUN effetto
+su mortalità cardiaca/totale); #111 diete plant-based e T2D (Qian F, Hu
+FB — vero paper è *JAMA Intern Med* 2019 non 2023, PMID 31329220 — NON è
+un confronto vegano/vegetariano vs onnivoro come fabbricato, ma un
+punteggio continuo PDI/hPDI/uPDI su 18 gruppi alimentari); #112
+probiotici e IBD (Kaur L et al. — vera Cochrane review copre SOLO
+induzione remissione in colite ulcerosa attiva, *Cochrane* 2020, PMID
+32128795, non mantenimento/Crohn's/IBD generico come fabbricato, che
+mescolava dati da più review Cochrane distinte; evidenza reale di
+certezza bassa/molto bassa); #113 creatina e sarcopenia (Lanhers C
+fabbricato, distinto dal vero Lanhers già usato al #75 → Chilibeck PD et
+al., *Open Access J Sports Med* 2017, PMID 29138605 — la cifra +1.37kg
+massa magra è reale, ma forza in kg assoluti/handgrip/TUG/sicurezza
+renale CKD sono tutte aggiunte inventate); #114 low-FODMAP e IBS, terzo
+studio distinto nel database dopo #95 e #105 (Moayyedi/Quigley/Lacy
+parziali reali → ACG Monograph on Management of IBS, *Am J Gastroenterol*
+2018, PMID 29950604 — RR/NNT fabbricato è reale ma qualità evidenza
+dichiarata MOLTO BASSA dagli autori, non "prima scelta" come implicito);
+#115 aderenza GFD e QoL in celiachia (Silvester JA autrice reale → vero
+studio *J Hum Nutr Diet* 2016, PMID 25891988 — STUDIO TRASVERSALE su 222
+pazienti, non revisione sistematica di 48 studi; impatto QoL concentrato
+nel dominio sociale); #116 DASH e pressione (Chiavaroli L fabbricato,
+verificato che il suo unico vero paper è l'umbrella review già usata al
+#21, quindi non riusabile → sostituito con Guo R et al. su DASH
+MODIFICATA, *Frontiers in Nutrition* 2021, PMID 34557511, gruppo di
+ricerca diverso — effetto pressorio reale più modesto).
+
+**Totale progressivo: 30/100 studi fabbricati corretti (batch 26-27-28),
+restano 70 da ri-sourciare** sull'elenco confermato di 100 fabbricati (41,
+50, 74, 88-99, 101-116 ora tutti corretti). ID ancora da fare: 117, 118,
+119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 134,
+135, 136, 137, 138, 139, 141, 143, 144, 145, 146, 147, 148, 150, 151, 152,
+153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167,
+168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182,
+183, 188, 193, 194, 195, 211, 214, 221. Dato il volume di lavoro per
+studio (ricerca + verifica + riscrittura di ~15 campi in 2 lingue),
+procedere a piccoli batch su più sessioni, come da richiesta esplicita
+dell'utente. Metodo aggiornato: lanciare `node
 scripts/citations-audit/verify_studi_v3.cjs` a inizio sessione se serve
 ri-verificare (l'elenco ID sopra è già aggiornato e riutilizzabile senza
 rilanciare lo script, finché non si sospetta un regresso).
+
+**Pattern nuovo osservato nei batch 27-28**: più volte lo stesso claim
+generico (DASH, low-FODMAP/IBS, sodio/CV, creatina) appare PIÙ VOLTE nel
+database con autori "fabbricati" diversi ma tema identico — quando
+l'autore fabbricato è reale ma ha un solo vero paper già usato altrove
+nel dataset, serve cercare un SECONDO studio reale distinto (di altri
+autori) sullo stesso claim, non riusare la stessa fonte due volte. Prima
+di chiudere un ID, controllare sempre se il tema è già stato coperto da
+un ID precedente nel database.

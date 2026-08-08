@@ -466,14 +466,56 @@ reali, ma rivista/anno sbagliati → *Aliment Pharmacol Ther* 2018, PMID
 i probiotici gli autori dichiarano evidenza troppo eterogenea per un
 effetto di classe affidabile).
 
-**Totale progressivo: 82/174 studi ri-sourciati sul nuovo conteggio
-confermato (100 fabbricati identificati + 72 già corretti prima del
-ricalcolo, meno sovrapposizioni = verificare cumulativo esatto alla
-prossima sessione rigenerando studi_bad_v3.json). Rimangono ~90 studi
-da ri-sourciare** (100 fabbricati nell'elenco v3 meno i 10 appena corretti
-in batch 26). Dato il volume di lavoro per studio (ricerca + verifica +
-riscrittura di ~15 campi in 2 lingue), procedere a piccoli batch su più
-sessioni, come da richiesta esplicita dell'utente. Metodo aggiornato:
-lanciare `node scripts/citations-audit/verify_studi_v3.cjs` a inizio
-sessione per rigenerare l'elenco corrente (va rilanciato ogni volta,
-`studi_bad_v3.json` non è committato).
+**Batch 27 (10 studi, sessione 2026-08-08)**: #95 low-FODMAP e IBS
+(Staudacher HM autrice reale ma DOI/PMID fabbricati estranei → Black CJ,
+Staudacher HM, Ford AC, *Gut* 2022, PMID 34376515 — network meta-analisi
+non Cochrane, 13 RCT/944 partecipanti non 14/1.900+; solo sintomi globali
+e gonfiore significativi, non l'alterazione dell'alvo); #96 celiachia e
+guarigione mucosale (nessun vero paper del team fabbricato Kabbani/Vanga/
+Leffler su questo tema specifico → Szakács Z et al., *PLOS ONE* 2017,
+PMID 29095937, unico vero meta-analisi sul claim esatto — tassi di
+guarigione reali molto più bassi negli adulti [24%, non 34-79%
+fabbricato], durata dieta NON predittiva); #97 digiuno intermittente vs
+CCR (distinto dal Cioffi 2018 già usato al #52 → sostituito con RCT reale
+Trepanowski et al., *JAMA Intern Med* 2017, PMID 28459931 — CONTRADICE il
+fabbricato: dropout ADF più alto non più basso, LDL peggiora con ADF);
+#98 pattern dietetici e demenza (Aridi/Walker/Wright autori reali ma vero
+paper è *Nutrients* 2017 non 2023, PMID 28657600 — REVISIONE QUALITATIVA
+solo su dieta mediterranea, nessun RR/HR pooled per MIND/DASH/dieta
+occidentale come fabbricato); #99 ferro orale vs EV (Camaschella C., vero
+paper è la review narrativa NEJM 2015, PMID 25946282, non una
+meta-analisi di 43 RCT — nessun effect size pooled reale per le cifre
+fabbricate); #101 supplementazione NAFLD/MASLD (Younossi/Zelber-Sagi
+autori reali ma vero paper è una review su STILE DI VITA, *Nat Rev
+Gastroenterol Hepatol* 2023, PMID 37402873, non una meta-analisi di 120
+RCT su supplementi specifici); #102 dieta mediterranea e mortalità (DOI
+fabbricato inesistente → Soltani/Jayedi/Shab-Bidar/Becerra-Tomás/
+Salas-Salvadó, *Adv Nutr* 2019, PMID 31111871 — RR reale 0.90 per 2 punti
+score con eterogeneità ALTA I²=81.1%, non menzionata nel fabbricato); #103
+UPF e cancro (Lane MM fabbricato con DOI/PMID estranei → Chang K, Gunter
+MJ et al., coorte UK Biobank, *eClinicalMedicine* 2023, PMID 36880051 —
+solo il cancro OVARICO mostra incidenza significativamente aumentata
+[+19%], non colorettale/mammario/pancreatico come generalizzato nel
+fabbricato); #104 proteine e sarcopenia (Dent/Morley/Cruz-Jentoft autori
+reali ma vero documento è una linea guida di CONSENSUS GRADE, *J Nutr
+Health Aging* 2018, PMID 30498820, non una meta-analisi di 68 RCT —
+raccomandazione FORTE solo per esercizio, CONDIZIONALE per proteina); #105
+low-FODMAP e IBS, secondo studio distinto da #95 (Schumann D et al., vero
+paper *Nutrition* 2018, PMID 29129233, non Cochrane 2023 — 9 RCT/596
+partecipanti non 24/2.800+, effetti in SMD non percentuali per sottotipo).
+
+**Totale progressivo: 92/100 studi fabbricati ancora da correggere sul
+conteggio v3 → 20 corretti nei batch 26-27, restano 80 da ri-sourciare**
+sull'elenco confermato di 100 fabbricati (41, 50, 74, 88-99, 101-105 ora
+tutti corretti). ID ancora da fare: 106, 108, 109, 110, 111, 112, 113,
+114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128,
+129, 130, 131, 132, 134, 135, 136, 137, 138, 139, 141, 143, 144, 145, 146,
+147, 148, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162,
+163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177,
+178, 179, 180, 181, 182, 183, 188, 193, 194, 195, 211, 214, 221. Dato il
+volume di lavoro per studio (ricerca + verifica + riscrittura di ~15
+campi in 2 lingue), procedere a piccoli batch su più sessioni, come da
+richiesta esplicita dell'utente. Metodo aggiornato: lanciare `node
+scripts/citations-audit/verify_studi_v3.cjs` a inizio sessione se serve
+ri-verificare (l'elenco ID sopra è già aggiornato e riutilizzabile senza
+rilanciare lo script, finché non si sospetta un regresso).

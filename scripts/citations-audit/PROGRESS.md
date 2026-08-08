@@ -619,11 +619,55 @@ più schede mirate (vedi nota metodologica "se nessun corrispettivo
 reale unico esiste, marcare per rimozione invece di forzare un
 abbinamento debole").
 
-**Totale progressivo: 39/100 studi fabbricati corretti (batch 26-29),
-1 flaggato per rimozione (#123, non ancora rimosso), restano 60 da
-ri-sourciare.** ID ancora da fare: 127, 128, 129, 130, 131, 132, 134,
-135, 136, 137, 138, 139, 141, 143, 144, 145, 146, 147, 148, 150, 151,
-152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165,
-166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
-180, 181, 182, 183, 188, 193, 194, 195, 211, 214, 221 (+ #123 da
-decidere).
+**Batch 30 (10 studi, sessione 2026-08-08)**: #127 carenza di ferro e
+anemia (Pasricha SR fabbricato come meta-analisi 87 studi/850.000 donne
+→ vero paper della stessa autrice: *The Lancet* 2021 [Seminar], PMID
+33285139, REVISIONE NARRATIVA, nessuna cifra di prevalenza pooled);
+#128 dieta mediterranea e salute mentale (Parletta N — vero è il trial
+HELFIMED originale 2017/2019, PMID 29215971, SINGOLO RCT su 152
+partecipanti, non meta-analisi di 32 RCT); #129 vitamina D e outcome
+cardiometabolici (nessuna meta-analisi combinata VITAL+D-Health+ViDA
+esiste → Kuznia/Zhu et al., *Ageing Res Rev* 2023, PMID 37004841, che
+include realmente Scragg R — ma riguarda SOLO mortalità oncologica,
+beneficio reale condizionato al dosaggio giornaliero non a bolo); #130
+TRE 16:8 e rischio CV, terzo studio fabbricato con Cioffi/Evangelista/
+Ponzo (dopo il #52) → il loro vero secondo paper, Pellegrini et al.,
+*Rev Endocr Metab Disord* 2020, PMID 31808043 — 11 studi perlopiù
+Ramadan-based, non 29 RCT su 16:8 strutturato, effetti reali molto più
+modesti; #131 omega-3 e cancro (Nindrea et al. — vero paper copre SOLO
+cancro al seno in popolazioni asiatiche, *Asian Pac J Cancer Prev* 2019,
+PMID 30803190, non 5 tumori/68 studi come fabbricato); #132 proteine e
+massa muscolare anziani (Liao CD — STESSO autore del #16, nessun secondo
+paper reale → sostituito con Nunes EA et al., *J Cachexia Sarcopenia
+Muscle* 2022, PMID 35187864, effect size reali molto più modesti [SMD
+0.22]); #134 diete plant-based ed esiti a lungo termine (Dinu/Sofi —
+STESSI autori del #121, nessun secondo paper genuino → Quek J et al.,
+*Front Cardiovasc Med* 2021, PMID 34805312, solo esiti cardiovascolari,
+scoperta chiave: dieta vegetale di bassa qualità AUMENTA la mortalità
+CV); #135 fibra e cancro colorettale (Zhu/Sun/Qi/Zhong/Miao — vero
+paper riguarda SOLO legumi, non fibra totale, *Scientific Reports* 2015,
+PMID 25739376, distinto dal classico Aune et al. già al #55); #136
+sodio e pressione (He/Li/MacGregor — vera Cochrane review classica 2013,
+PMID 23558162, 34 RCT/3.230 non 133/12.200+, NESSUN dato mortalità CV,
+distinta da #91 e #110); #137 microbiota e T2D (Gurung et al. — vero
+paper *EBioMedicine* 2020, PMID 31901868, revisione TASSONOMICA di 42
+studi: Bacteroides classificato come PROTETTIVO nella fonte reale,
+INVERTITO nel fabbricato che lo presentava come di rischio — errore di
+contenuto, non solo di citazione; distinto da #89).
+
+**Totale progressivo: 49/100 studi fabbricati corretti (batch 26-30),
+1 flaggato per rimozione (#123, non ancora rimosso), restano 50 da
+ri-sourciare.** ID ancora da fare: 138, 139, 141, 143, 144, 145, 146,
+147, 148, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161,
+162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+176, 177, 178, 179, 180, 181, 182, 183, 188, 193, 194, 195, 211, 214,
+221 (+ #123 da decidere).
+
+**Pattern confermato nel batch 30**: la maggior parte degli autori
+fabbricati continua a essere ricercatori esattamente reali del campo,
+con citazione (DOI/PMID/anno/rivista) inventata — ma con crescente
+frequenza il vero paper copre uno SCOPE molto più stretto del claim
+fabbricato (es. #131 solo seno non 5 tumori, #135 solo legumi non fibra
+totale, #136 solo PA non mortalità). In un caso (#137) l'errore va oltre
+la citazione: un dato di contenuto (Bacteroides protettivo vs di rischio)
+è stato letteralmente invertito rispetto alla fonte reale.

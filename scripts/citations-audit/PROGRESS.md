@@ -569,3 +569,61 @@ nel dataset, serve cercare un SECONDO studio reale distinto (di altri
 autori) sullo stesso claim, non riusare la stessa fonte due volte. Prima
 di chiudere un ID, controllare sempre se il tema è già stato coperto da
 un ID precedente nel database.
+
+**Batch 29 (9 studi corretti + 1 flaggato per rimozione, sessione
+2026-08-08)**: #117 nutrizione in menopausa (Stachowiak et al. — vero
+paper è *Przegląd Menopauzalny* 2015, PMID 26327890, REVISIONE
+NARRATIVA di fisiopatologia, zero dati quantitativi su calcio/vitamina
+D/fitoestrogeni/K2 come fabbricato); #118 supporto nutrizionale in BPCO
+(Ferreira/Brooks/White/Goldstein autori esattamente reali, ma vera
+versione è pub3/2012 non pub4/2022, PMID 23235577 — beneficio reale
+specifico dei pazienti MALNUTRITI, 6MWT +40m ma NON significativo tra
+gruppi); #119 dieta mediterranea e decadimento cognitivo (STESSI autori
+Aridi/Walker/Wright del #98, verificato che hanno un solo vero paper già
+usato lì → secondo studio reale di gruppo diverso, Nucci D et al.,
+*Aging Clin Exp Res* 2024, PMID 38519775, OR 0.73 per Alzheimer non HR
+0.77, nessuna analisi dose-risposta/APOE4 pooled come fabbricato); #120
+interventi nutrizionali in gravidanza (Zerfu/Ayele — vero paper è
+*Nutrition Journal* 2013, PMID 23368953, SINTESI QUALITATIVA di 17
+studi, nessuna delle percentuali precise fabbricate ha riscontro); #121
+diete plant-based e rischio CV (Dinu/Sofi — vero paper *Crit Rev Food
+Sci Nutr* 2017, PMID 26853923, non 2023 — coincidenza parziale: il 25%
+di riduzione cardiopatia ischemica nei vegetariani è reale, ma IMA/
+mortalità CV nei vegani e riduzione diabete 23% sono inventati); #122
+fibra e stipsi cronica (Christodoulides/Dimidi — vero paper *Aliment
+Pharmacol Ther* 2016, PMID 27170558, 7 RCT/287 partecipanti non 20/
+1.800+, gli autori stessi segnalano rischio di bias ALTO, tono opposto
+alla certezza clinica fabbricata); #124 UPF e mortalità totale
+(citazione fabbricata "et al. (coorti)" già sospetta di per sé →
+sostituito con Fang Z et al., *BMJ* 2024, PMID 38719536, Nurses' Health
+Study + HPFS — effetto reale +4% mortalità totale non +12%, NESSUNA
+associazione significativa con mortalità CV/oncologica specificamente,
+distinto da #72 e #103 già nel database); #125 pattern dietetici e MASLD
+(Eslam/Sanyal/George — vero paper è il CONSENSUS STATEMENT fondativo
+sulla nomenclatura MAFLD, *Gastroenterology* 2020, PMID 32044314,
+puramente definitorio, zero dati su pattern dietetici); #126 nutrizione
+e Hashimoto (Ihnatowicz/Drywień — vero paper *Ann Agric Environ Med*
+2020, PMID 32588591, REVISIONE NARRATIVA qualitativa, nessuna cifra
+percentuale di riduzione anticorpale ha riscontro).
+
+**#123 omega-3 in pediatria — FLAGGATO PER RIMOZIONE, non sostituito**:
+gli autori fabbricati "Wierzbicka E, Wlodarek D" non hanno un vero paper
+su questo tema; il claim è un amalgama di almeno 4 filoni di ricerca
+reali ma completamente distinti (DHA formula/IQ, omega-3/ADHD, omega-3
+prenatale/asma, PCR in obesità pediatrica), ciascuno con autori/riviste/
+numeri propri — nessuna singola vera meta-analisi copre 0-18 anni con
+tutti questi outcome insieme. Forzare una sostituzione con una sola
+fonte travisirebbe lo scope. Lasciato invariato (ancora fabbricato) in
+attesa di decisione esplicita dell'utente su rimozione vs riscrittura in
+più schede mirate (vedi nota metodologica "se nessun corrispettivo
+reale unico esiste, marcare per rimozione invece di forzare un
+abbinamento debole").
+
+**Totale progressivo: 39/100 studi fabbricati corretti (batch 26-29),
+1 flaggato per rimozione (#123, non ancora rimosso), restano 60 da
+ri-sourciare.** ID ancora da fare: 127, 128, 129, 130, 131, 132, 134,
+135, 136, 137, 138, 139, 141, 143, 144, 145, 146, 147, 148, 150, 151,
+152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165,
+166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
+180, 181, 182, 183, 188, 193, 194, 195, 211, 214, 221 (+ #123 da
+decidere).

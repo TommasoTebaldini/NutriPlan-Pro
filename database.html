@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -268,7 +268,7 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
-<script src="js/db.min.js?v=1" defer></script>
+<script src="js/lazy-loader.js" defer></script>
 <script src="js/lang.min.js?v=2" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
@@ -563,6 +563,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   _asDatabase.register();
   const ok = await checkAuth();
   if (!ok) return;
+  try {
+    await window.loadNutriData('db');
+  } catch(e) {
+    console.error('Errore caricamento database alimenti:', e);
+  }
   rebuildDB();
   await loadCustomFoods();
   populateCats();

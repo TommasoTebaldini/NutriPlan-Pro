@@ -62,7 +62,7 @@ function filterStudies() {
   currentPage = 1;
   const q = (document.getElementById('study-search').value || '').toLowerCase().trim();
   const countEl = document.getElementById('study-count');
-  let filtered = STUDI;
+  let filtered = window.STUDI || [];
 
   if (currentFilter !== 'tutti') {
     filtered = filtered.filter(s => s.categorie.includes(currentFilter));
@@ -164,9 +164,14 @@ function toggleStudy(id) {
 }
 
 // Init
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const srch = document.getElementById('study-search');
   if (srch) srch.placeholder = _L('🔍 Cerca per titolo, autori, argomento...','🔍 Search by title, authors, topic...');
+  try {
+    await window.loadNutriData('studi');
+  } catch(e) {
+    console.error('Errore caricamento dati studi:', e);
+  }
   filterStudies();
   if (typeof initAuth === 'function') initAuth();
 

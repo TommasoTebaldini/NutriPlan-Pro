@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -656,8 +656,7 @@ CREATE POLICY "template_own" ON piani_template FOR ALL USING (auth.uid() = user_
 <div id="loading-overlay"><div class="spinner"></div><span style="color:var(--slate-l);font-size:13px"><span data-only-lang="it">Caricamento...</span><span data-only-lang="en">Loading...</span></span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
-<script src="js/db.min.js?v=1" defer></script>
-<script src="js/ricette-db.min.js?v=2080" defer></script>
+<script src="js/lazy-loader.js" defer></script>
 <script src="js/lang.min.js?v=2" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
@@ -3470,6 +3469,11 @@ document.addEventListener('mousedown', function(e) {
 async function init() {
   const ok = await checkAuth();
   if (!ok) return;
+  try {
+    await Promise.all([window.loadNutriData('db'), window.loadNutriData('ricette')]);
+  } catch(e) {
+    console.error('Errore caricamento database alimenti/ricette:', e);
+  }
   rebuildDB();
   // Inizializza giorni subito (sincrono) così la pagina non è mai in stato non valido
   // anche durante le chiamate async che seguono

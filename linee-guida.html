@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -142,7 +142,7 @@
 <script src="js/lang.min.js?v=2" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
-<script src="js/linee-guida-data.min.js" defer></script>
+<script src="js/lazy-loader.js" defer></script>
 <script src="js/tour.js" defer></script>
 <script>
 function buildCard(d) {
@@ -277,9 +277,14 @@ window.addEventListener('afterprint', () => {
 document.addEventListener('DOMContentLoaded', async () => {
   const srch = document.getElementById('lg-search');
   if (srch) srch.placeholder = _L('🔍 Cerca patologia (es. diabete, cirrosi, osteoporosi...)...','🔍 Search condition (e.g. diabetes, cirrhosis, osteoporosis...)...');
+  try {
+    await window.loadNutriData('linee-guida');
+  } catch(e) {
+    console.error('Errore caricamento dati linee guida:', e);
+  }
   renderAll();
   const s = document.getElementById('lg-stat-n');
-  if(s) s.textContent = LG_DATA.length;
+  if(s) s.textContent = (window.LG_DATA || []).length;
   try { await checkAuth(false); } catch(e) {}
 
   if (typeof initPageTour === 'function') {

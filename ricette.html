@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -219,7 +219,7 @@
 <div id="loading-overlay"><div class="spinner"></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4" defer></script>
-<script src="js/db.min.js?v=1" defer></script>
+<script src="js/lazy-loader.js" defer></script>
 <script src="js/lang.min.js?v=2" defer></script>
 <script src="js/utils.min.js" defer></script>
 <script src="js/print-capture.js" defer></script>
@@ -904,6 +904,11 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
 
 document.addEventListener('DOMContentLoaded', async () => {
   _asRicetta.register();
+  try {
+    await window.loadNutriData('db');
+  } catch(e) {
+    console.error('Errore caricamento database alimenti:', e);
+  }
   rebuildDB();
   updateCatOptions();
   document.addEventListener('langChanged', updateCatOptions);

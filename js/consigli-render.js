@@ -1,4 +1,4 @@
-﻿const CONSIGLI_PAGE_SIZE = 30;
+const CONSIGLI_PAGE_SIZE = 30;
 let currentConsigliPage = 1;
 
 function renderConsigli(filter = '', resetPage = true) {
@@ -8,7 +8,8 @@ function renderConsigli(filter = '', resetPage = true) {
   const q = filter.toLowerCase();
   // Custom entries override base entries with the same ID
   const customIds = new Set(consigliPersonalizzati.map(c => c.id));
-  const all = [...CONSIGLI_BASE.filter(c => !customIds.has(c.id)), ...consigliPersonalizzati];
+  const baseConsigli = window.CONSIGLI_BASE || [];
+  const all = [...baseConsigli.filter(c => !customIds.has(c.id)), ...consigliPersonalizzati];
   const filtered = q ? all.filter(c => c.nome.toLowerCase().includes(q) || (c.id||'').includes(q)) : all;
   const total = filtered.length;
   const totalPages = Math.ceil(total / CONSIGLI_PAGE_SIZE);
@@ -411,11 +412,16 @@ ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz 
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   _asConsiglio = autoSaveFields('nutriplan_draft_consiglio', ['nc-nome','nc-emoji','nc-colore','nc-pasti','nc-porzioni','nc-idratazione','nc-nota','nc-ok','nc-no','nc-mod','nc-pratici','nc-avvisi']);
   _asConsiglio.register();
   document.body.dataset.printTab = 'patologie';
   initCartellaWidget('cs-cartella-cw', { hiddenInputId:'cs-cartella', accentColor:'#16A34A', labelColor:'#15803D', hoverBg:'#F0FDF4', nuovaBg:'#F0FDF4', onSelect:()=>onCartellaChange() });
+  try {
+    await window.loadNutriData('consigli');
+  } catch(e) {
+    console.error('Errore caricamento dati consigli:', e);
+  }
   renderConsigli();
   renderAtlas();
   renderECM();

@@ -932,11 +932,33 @@ usato per #55). Il vero studio mostra associazioni per lo più NON
 significative isolatamente (ampi IC), molto più incerte del "RR 0.90
 netto con plateau a 25g/die" dichiarato nel fabbricato.
 
-**AUDIT DEI 100 STUDI FABBRICATI: COMPLETATO — 99/100 corretti (batch
-26-35 + fix #161), 1 flaggato per rimozione non ancora agito (#123).**
-Nessun ID rimanente da ri-sourciare nella lista dei 100 fabbricati
-identificati il 2026-08-08. Resta solo la decisione dell'utente su
-#123 (rimuovere la scheda o riscriverla come più schede mirate). Prima
-di dichiarare l'audit definitivamente chiuso, sarebbe prudente
-rilanciare `verify_studi_v3.cjs` una volta per riconfermare che non ci
-siano altri ID sfuggiti al conteggio manuale (come accaduto con #161).
+**#123 RISOLTO 2026-08-10 (decisione utente: riscrivi come più schede
+mirate)**: la scheda #123 (Wierzbicka/Wlodarek fabbricata, claim
+amalgama di 4 filoni omega-3-pediatria scollegati) è stata sostituita
+con Bisgaard H et al., *NEJM* 2016, PMID 28029926 (RCT COPSAC2010: omega-3
+marini in gravidanza riducono del 31% respiro sibilante/asma nella
+prole — il filone più solido e distintivo, mantenuto sullo stesso ID
+#123). Gli altri 3 filoni sono stati spostati in schede NUOVE con ID
+306/307/308 (appesi in fondo all'array, per non rinumerare l'intero
+dataset): #306 = Bloch/Qawasmi 2011 (omega-3 e ADHD, JAACAP, PMID
+21961774, effetto piccolo ma significativo); #307 = Tian A et al. 2025
+(rapporto DHA/ARA e sviluppo cognitivo infantile, Nutrients, PMID
+40292560, nessun beneficio netto se non nel sottogruppo con rapporto
+0.5-1); #308 = López-Alarcón M et al. 2019 (omega-3 e obesità/
+insulino-resistenza pediatrica, Pediatr Obes, PMID 30590877 — RISULTATO
+NEGATIVO, RCT ampio n=366 che mostra NESSUN effetto su peso/HOMA-IR
+nonostante l'aumento eritrocitario di omega-3, un utile contrappeso a
+claim generici sull'effetto anti-infiammatorio automatico). Il dataset
+ora ha 308 studi totali (305 + 3 nuovi), STUDI.length calcolato
+dinamicamente, nessun riferimento hardcoded a "305" trovato altrove nel
+codice da aggiornare.
+
+**AUDIT DEI 100 STUDI FABBRICATI: DEFINITIVAMENTE COMPLETATO — 100/100
+risolti** (99 ri-sourciati batch 26-35 + fix #161, più #123 riscritto
+come 4 schede reali distinte il 2026-08-10). Nessun ID rimanente da
+ri-sourciare nella lista dei 100 fabbricati identificati il 2026-08-08.
+Prima di considerare l'intero database `studies-data.js` verificato al
+100%, sarebbe comunque prudente rilanciare una volta
+`verify_studi_v3.cjs` su tutti i 308 studi per riconfermare che non ci
+siano altri ID sfuggiti al conteggio manuale (come accaduto con #161) o
+introdotti dai batch stessi.

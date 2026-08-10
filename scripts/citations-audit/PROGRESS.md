@@ -780,8 +780,50 @@ resoconto testuale di un agente anche quando dichiara verifica completa —
 va sempre controllato il contenuto EFFETTIVO del file (grep/read diretto)
 per ogni ID dichiarato corretto, non solo i PMID citati nel resoconto.
 
-**Totale progressivo: 69/100 studi fabbricati corretti (batch 26-32),
-1 flaggato per rimozione (#123, non ancora rimosso), restano 30 da
-ri-sourciare.** ID ancora da fare: 162, 163, 164, 165, 166, 167, 168,
-169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182,
-183, 188, 193, 194, 195, 211, 214, 221 (+ #123 da decidere).
+**Batch 33 (10 studi, sessione 2026-08-10, commit da fare)**: tutti e 5
+fork usati questa volta hanno rispettato la direttiva "solo testo, non
+modificare il file" — nessuna scrittura autonoma sul file, tutte le
+modifiche applicate e verificate manualmente. #162 diete vegetariane/
+vegane e CVD (Dybvik/Svendsen/Aagaard/Svendsen fabbricato — autori
+REALI ma coautore sbagliato, vero paper è Dybvik/Svendsen/Aune Eur J
+Nutr 2023 PMID 36030329, no associazione significativa con ictus);
+#163 vitamina D umbrella review (Pludowski fabbricato → Theodoratou E
+et al. BMJ 2014 PMID 24690624 — CONCLUSIONE OPPOSTA al fabbricato:
+nessuna evidenza altamente convincente per nessun singolo esito, solo
+poche associazioni 'probabili' non correlate a mortalità/fratture);
+#164 asse intestino-cervello (Dinan/Cryan fabbricato, generico su
+gastroenterologia → il vero paper degli stessi autori è specifico su
+salute mentale, Psychosom Med 2017 PMID 28806201 — distinto dall'#155
+già presente sullo stesso gruppo di autori ma su obesità; conclusione
+reale MOLTO cauta, nessun RCT clinico solido esiste ancora); #165 dieta
+e depressione (Firth/Marx/Dash fabbricato → vero paper stessi autori
+Psychosom Med 2019 PMID 30720698, effect size reale MODESTO g=0.16 non
+RR 0.67 del fabbricato, NESSUN effetto su ansia, claim su nutrienti
+isolati rimossi perché non supportati); #166 probiotici multi-condizione
+(Sniffen/McFarland fabbricato, 2023/PLOS ONE con numeri aggregati
+inventati → vero paper stessi autori 2018 PLOS ONE PMID 30586435, guida
+pratica ceppo-specifica, non una meta-analisi con percentuali aggregate);
+#167 digiuno intermittente vs CER (Harris/Hamilton fabbricato come
+network meta-analisi 2024/55 RCT → vero paper stessi autori è una
+revisione molto più piccola, JBI 2018 PMID 29419624, solo 6 studi,
+nessun dato TRE 16:8 separato); #168 sodio e CV (Huang/Trieu/Yoshimura
+fabbricato su eventi CV duri → vero paper BMJ 2020 PMID 32094151 copre
+SOLO pressione arteriosa, non stroke/IHD/mortalità come dichiarato,
+distinto da #136); #169 dieta MIND e Alzheimer (Agarwal/Leurgans/Dhana
+fabbricato come meta-analisi RR 0.47 → vero paper stessi autori è
+studio autoptico Rush MAP, Neurology 2023 PMID 36889921, dati patologici
+diretti su β-amiloide, non RR clinico); #170 chetogenica oltre epilessia
+(Bostock/Kirkby/Taylor fabbricato su Alzheimer/Parkinson/SLA/SM → vero
+paper stessi autori è su disturbi PSICHIATRICI, Front Psychiatry 2017
+PMID 28373848, evidenza quasi tutta preclinica/animale, conclusione
+INSUFFICIENTE per uso clinico); #171 carne rossa/processata e CRC
+(Feskens/Sluik/van Woudenbergh fabbricato, tema già coperto da altro ID
+nel dataset → sostituito con secondo studio reale distinto, Vieira AR
+et al. WCRF-AICR CUP update, Ann Oncol 2017 PMID 28407090, include
+anche alcol/latticini/cereali integrali).
+
+**Totale progressivo: 79/100 studi fabbricati corretti (batch 26-33),
+1 flaggato per rimozione (#123, non ancora rimosso), restano 20 da
+ri-sourciare.** ID ancora da fare: 172, 173, 174, 175, 176, 177, 178,
+179, 180, 181, 182, 183, 188, 193, 194, 195, 211, 214, 221 (+ #123 da
+decidere).

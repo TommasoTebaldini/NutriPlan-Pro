@@ -266,11 +266,58 @@ async function sendPatientPush(patientId, title, body, serviceKey) {
   return res.json();
 }
 
+// Email di promemoria (canale aggiuntivo al push, solo per il paziente — è il
+// canale con maggior impatto sul no-show. Best-effort: se RESEND_API_KEY non
+// è configurata, viene semplicemente saltata senza rompere il job di push
+// già esistente).
+function appointmentReminderEmailHtml({ patientName, dietitianName, whenText }) {
+  return `<!DOCTYPE html>
+<html lang="it">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F0FDF4;font-family:Arial,Helvetica,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4;padding:40px 16px">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
+        <tr><td bgcolor="#0F766E" style="background-color:#0F766E;border-radius:16px 16px 0 0;padding:32px 40px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px">🥗 DietPlan Pro</div>
+        </td></tr>
+        <tr><td style="background:#ffffff;padding:40px;border-left:1px solid #D1FAE5;border-right:1px solid #D1FAE5;text-align:center">
+          <h1 style="margin:0 0 8px;font-size:22px;color:#064E3B;font-weight:700">📅 Promemoria appuntamento</h1>
+          <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.6">
+            Ciao ${patientName}, ti ricordiamo il tuo appuntamento con <b>${dietitianName}</b>${whenText}.
+          </p>
+          <p style="margin:0;font-size:12px;color:#94A3B8">Email automatica — nessuna azione richiesta se l'appuntamento è confermato.</p>
+        </td></tr>
+        <tr><td style="background:#F8FAFC;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;border:1px solid #D1FAE5;border-top:none">
+          <p style="margin:0;font-size:11px;color:#94A3B8">DietPlan Pro</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+async function sendAppointmentReminderEmail(email, patientName, dietitianName, appointmentDateIso, resendKey) {
+  const whenText = ` ${formatGiornoOra(appointmentDateIso)}`;
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'DietPlan Pro <gestione@app.dietplan-pro.com>',
+      to: email,
+      subject: `Promemoria appuntamento con ${dietitianName}`,
+      html: appointmentReminderEmailHtml({ patientName, dietitianName, whenText }),
+    }),
+  });
+}
+
 async function jobAppointmentReminders() {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const vapidPublic = process.env.VAPID_PUBLIC_KEY;
   const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
   ensureVapid(serviceKey, vapidPublic, vapidPrivate);
+  const resendKey = process.env.RESEND_API_KEY; // canale email opzionale, best-effort: se assente il job continua solo via push
 
   const now = new Date();
   const windowEnd = new Date(now.getTime() + 48 * 60 * 60 * 1000);
@@ -286,7 +333,7 @@ async function jobAppointmentReminders() {
   if (!appts || !appts.length) return { ok: true, checked: 0, dietitiansNotified: 0, patientsNotified: 0 };
 
   const userIds = [...new Set([...appts.map(a => a.patient_id), ...appts.map(a => a.dietitian_id)])];
-  const profiles = await sbFetch(`profiles?select=id,first_name,last_name,full_name,nome,cognome&id=in.(${userIds.join(',')})`, serviceKey);
+  const profiles = await sbFetch(`profiles?select=id,first_name,last_name,full_name,nome,cognome,email&id=in.(${userIds.join(',')})`, serviceKey);
   const profileById = new Map(profiles.map(p => [p.id, p]));
   function displayName(id) {
     const p = profileById.get(id);
@@ -339,8 +386,9 @@ async function jobAppointmentReminders() {
   }
 
   const patientSentApptIds = [];
-  const forPatient = appts.filter(a => !a.patient_reminder_sent_at);
   let patientsNotified = 0;
+  let patientsEmailed = 0;
+  const forPatient = appts.filter(a => !a.patient_reminder_sent_at);
   for (const a of forPatient) {
     try {
       await sendPatientPush(
@@ -353,6 +401,16 @@ async function jobAppointmentReminders() {
       patientSentApptIds.push(a.id);
     } catch {
       // best-effort: verrà ritentato al prossimo run finché resta nella finestra 48h
+    }
+
+    const patientEmail = profileById.get(a.patient_id)?.email;
+    if (resendKey && patientEmail) {
+      try {
+        await sendAppointmentReminderEmail(patientEmail, displayName(a.patient_id), displayName(a.dietitian_id), a.appointment_date, resendKey);
+        patientsEmailed++;
+      } catch {
+        // best-effort: la notifica push resta comunque il canale primario
+      }
     }
   }
 
@@ -372,6 +430,7 @@ async function jobAppointmentReminders() {
     ok: true, checked: appts.length,
     dietitiansNotified, dietitianAppointmentsMarkedSent: dietitianSentApptIds.length,
     patientsNotified, patientAppointmentsMarkedSent: patientSentApptIds.length,
+    patientsEmailed: resendKey ? patientsEmailed : 'skipped (RESEND_API_KEY non configurata)',
   };
 }
 

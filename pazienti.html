@@ -286,6 +286,34 @@ async function ensureChartJs() {
   </div>
 </div>
 
+<!-- MODAL: NUOVO PERCORSO -->
+<div class="modal-bg" id="modal-percorso">
+  <div class="modal" style="max-width:420px">
+    <div class="mhdr"><h2>🗓️ Nuovo Percorso</h2><button class="mclose" onclick="closeM('modal-percorso')">✕</button></div>
+    <div class="mbody" style="padding:18px 22px">
+      <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px;line-height:1.5">Il paziente riceverà in automatico un promemoria push/email di check-in se non registra il peso nell'app entro la cadenza scelta, e un avviso quando il percorso sta per terminare.</p>
+      <div class="fg" style="margin-bottom:12px">
+        <label>Nome percorso *</label>
+        <input type="text" id="percorso-nome" placeholder="es. Percorso dimagrimento 12 settimane" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+      </div>
+      <div style="display:flex;gap:10px">
+        <div class="fg" style="flex:1;margin-bottom:12px">
+          <label>Durata (settimane) *</label>
+          <input type="number" id="percorso-durata" min="1" value="12" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        </div>
+        <div class="fg" style="flex:1;margin-bottom:12px">
+          <label>Check-in ogni (giorni) *</label>
+          <input type="number" id="percorso-checkin" min="1" value="7" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-percorso')">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="salvaPercorso()">🗓️ Avvia percorso</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: NUOVO DOCUMENTO -->
 <div class="modal-bg" id="modal-invia-modulo">
   <div class="modal" style="max-width:520px">
@@ -1166,7 +1194,7 @@ async function renderCartellaDetail(id) {
   }
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
-  const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici, patientFiles, diarioFoto] = await Promise.all([
+  const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici, patientFiles, diarioFoto, percorsi] = await Promise.all([
     safeQuery(sb.from('piani').select('id,nome,saved_at,data_piano,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
     safeQuery(sb.from('ncpt').select('id,created_at,updated_at,visible_to_patient,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('schede_valutazione').select('id,nome,saved_at,created_at,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
@@ -1176,6 +1204,7 @@ async function renderCartellaDetail(id) {
     safeQuery(sb.from('esami_biochimici').select('id,data_esame,tipo,valore,unita,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_esame', {ascending:false})),
     safeQuery(sb.from('patient_files').select('id,filename,storage_path,file_size,mime_type,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
     safeQuery(sb.from('diario_alimentare_foto').select('id,storage_path,data_diario,ai_description,ai_confidence,foods,totali,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_diario', {ascending:false})),
+    safeQuery(sb.from('percorsi_nutrizionali').select('id,nome,data_inizio,durata_settimane,checkin_ogni_giorni,stato').eq('cartella_id', id).eq('dietitian_id', currentUser.id).order('created_at', {ascending:false})),
   ]);
 
   const cart = cartResult.data;
@@ -1293,6 +1322,36 @@ async function renderCartellaDetail(id) {
   // Store esami for timeline access and PDF/AI
   window._currentCartellaEsami = esamiBiochimici || [];
   window._currentCartellaData = { cart, eta, biaList, esamiBiochimici, piani, diarioFoto };
+
+  // Percorso nutrizionale attivo (SEZIONE 42) — check-in/scadenza automatizzati via cron
+  const percorsoAttivo = (percorsi || []).find(p => p.stato === 'attivo') || null;
+  const percorsoHtml = !percorsoAttivo
+    ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div style="color:var(--slate-l);font-size:12.5px;font-style:italic">${_L('Nessun percorso attivo.','No active program.')}</div>
+        <button class="btn btn-sm" style="background:var(--teal);color:white" onclick="apriModalPercorso('${id}')">🗓️ ${_L('Avvia percorso','Start program')}</button>
+      </div>`
+    : (() => {
+        const startD = new Date(percorsoAttivo.data_inizio);
+        const endD = new Date(startD); endD.setDate(endD.getDate() + percorsoAttivo.durata_settimane * 7);
+        const today = new Date();
+        const totalDays = Math.max(1, Math.round((endD - startD) / 86400000));
+        const elapsedDays = Math.min(totalDays, Math.max(0, Math.round((today - startD) / 86400000)));
+        const pct = Math.round((elapsedDays / totalDays) * 100);
+        const weekNum = Math.min(percorsoAttivo.durata_settimane, Math.floor(elapsedDays / 7) + 1);
+        const daysLeft = Math.round((endD - today) / 86400000);
+        return `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+          <div>
+            <div style="font-weight:700;font-size:13.5px;color:var(--slate)">${esc(percorsoAttivo.nome)}</div>
+            <div style="font-size:11.5px;color:var(--slate-l)">${_L('Settimana','Week')} ${weekNum}/${percorsoAttivo.durata_settimane} · ${daysLeft >= 0 ? _L('termina il ','ends on ') + endD.toLocaleDateString(_L('it','en')) : _L('scaduto','expired')} · ${_L('check-in ogni','check-in every')} ${percorsoAttivo.checkin_ogni_giorni} ${_L('giorni','days')}</div>
+          </div>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-ghost btn-xs" onclick="chiudiPercorso('${percorsoAttivo.id}','completato')" title="${_L('Segna come completato','Mark as completed')}">✅</button>
+            <button class="btn btn-ghost btn-xs" onclick="chiudiPercorso('${percorsoAttivo.id}','annullato')" title="${_L('Annulla','Cancel')}">🗑️</button>
+          </div>
+        </div>
+        <div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#0F766E,#14B8A6);border-radius:4px"></div></div>`;
+      })();
 
   // Attività & Dispositivi — dati sincronizzati dal paziente via app (Diet-Plan-Pro).
   // Il payload di sync scrive solo user_id+date (non cartella_id/patient_id), quindi
@@ -1559,6 +1618,16 @@ async function renderCartellaDetail(id) {
         <button style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;box-shadow:0 2px 8px rgba(29,78,216,.3);transition:all .15s;font-family:inherit;flex-shrink:0" onmouseover="this.style.boxShadow='0 4px 14px rgba(29,78,216,.45)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(29,78,216,.3)';this.style.transform=''" onclick="window.location.href='bia.html?cartella=${id}'">⚡ ${_L('Nuova BIA','New BIA')}</button>
       </div>
       <div style="padding:10px 14px">${biaHtml}</div>
+    </div>
+
+    <!-- Percorso Nutrizionale (SEZIONE 42) -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
+          🗓️ ${_L('Percorso Nutrizionale','Nutrition Program')}
+        </h4>
+      </div>
+      <div style="padding:10px 14px">${percorsoHtml}</div>
     </div>
 
     <!-- Attività & Dispositivi (wearable app paziente) -->
@@ -2663,6 +2732,52 @@ async function renderWeightChart(canvasId, data) {
       }
     }
   });
+}
+
+// ══════════════════════════════════════════════
+// PERCORSO NUTRIZIONALE (SEZIONE 42) — check-in/scadenza automatizzati
+// ══════════════════════════════════════════════
+let _percorsoCartellaId = null;
+
+function apriModalPercorso(cartellaId) {
+  _percorsoCartellaId = cartellaId;
+  document.getElementById('percorso-nome').value = '';
+  document.getElementById('percorso-durata').value = '12';
+  document.getElementById('percorso-checkin').value = '7';
+  openM('modal-percorso');
+}
+
+async function salvaPercorso() {
+  const nome = (document.getElementById('percorso-nome').value || '').trim();
+  const durata = parseInt(document.getElementById('percorso-durata').value, 10);
+  const checkin = parseInt(document.getElementById('percorso-checkin').value, 10);
+  if (!nome) { toast(_L('Inserisci un nome per il percorso','Enter a program name'), 'err'); return; }
+  if (!durata || durata < 1) { toast(_L('Durata non valida','Invalid duration'), 'err'); return; }
+  if (!checkin || checkin < 1) { toast(_L('Cadenza check-in non valida','Invalid check-in frequency'), 'err'); return; }
+
+  const { data: link } = await sb.from('patient_dietitian').select('patient_id').eq('cartella_id', _percorsoCartellaId).eq('dietitian_id', currentUser.id).maybeSingle();
+
+  const { error } = await sb.from('percorsi_nutrizionali').insert({
+    dietitian_id: currentUser.id,
+    cartella_id: _percorsoCartellaId,
+    patient_id: link?.patient_id || null,
+    nome,
+    durata_settimane: durata,
+    checkin_ogni_giorni: checkin,
+  });
+  if (error) { toast('❌ ' + error.message, 'err'); return; }
+  closeM('modal-percorso');
+  toast(_L('🗓️ Percorso avviato!','🗓️ Program started!'), 'ok');
+  if (cartellaAperta) renderCartellaDetail(cartellaAperta);
+}
+
+async function chiudiPercorso(percorsoId, nuovoStato) {
+  const msg = nuovoStato === 'completato' ? _L('Segnare il percorso come completato?','Mark the program as completed?') : _L('Annullare il percorso?','Cancel the program?');
+  if (!confirm(msg)) return;
+  const { error } = await sb.from('percorsi_nutrizionali').update({ stato: nuovoStato }).eq('id', percorsoId).eq('dietitian_id', currentUser.id);
+  if (error) { toast('❌ ' + error.message, 'err'); return; }
+  toast('✅ ' + _L('Percorso aggiornato','Program updated'), 'ok');
+  if (cartellaAperta) renderCartellaDetail(cartellaAperta);
 }
 
 // ══════════════════════════════════════════════

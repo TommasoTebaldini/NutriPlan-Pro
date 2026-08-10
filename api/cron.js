@@ -518,6 +518,181 @@ async function jobOverduePayments() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// JOB: program-checkins — percorsi nutrizionali multi-settimana (SEZIONE 42
+// di supabase_setup.sql, tabella percorsi_nutrizionali). Due automatismi:
+//   • promemoria di check-in al paziente se non registra il peso da almeno
+//     `checkin_ogni_giorni` giorni (riusa weight_logs, già sincronizzato
+//     dall'app — nessuna nuova tabella di "check-in");
+//   • avviso di scadenza (7 giorni o meno alla fine del percorso), una sola
+//     volta, a paziente e dietista.
+// ═══════════════════════════════════════════════════════════════════════════
+const MAX_PERCORSI = 5000;
+
+function checkinReminderEmailHtml({ patientName, programName }) {
+  return `<!DOCTYPE html>
+<html lang="it">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F0FDF4;font-family:Arial,Helvetica,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4;padding:40px 16px">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
+        <tr><td bgcolor="#0F766E" style="background-color:#0F766E;border-radius:16px 16px 0 0;padding:32px 40px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px">🥗 DietPlan Pro</div>
+        </td></tr>
+        <tr><td style="background:#ffffff;padding:40px;border-left:1px solid #D1FAE5;border-right:1px solid #D1FAE5;text-align:center">
+          <h1 style="margin:0 0 8px;font-size:22px;color:#064E3B;font-weight:700">📋 È ora del tuo check-in</h1>
+          <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.6">Ciao ${patientName}, per il percorso <b>${programName}</b> è il momento di registrare il tuo peso nell'app.</p>
+          <p style="margin:0;font-size:12px;color:#94A3B8">Email automatica.</p>
+        </td></tr>
+        <tr><td style="background:#F8FAFC;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;border:1px solid #D1FAE5;border-top:none">
+          <p style="margin:0;font-size:11px;color:#94A3B8">DietPlan Pro</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+function programExpiryEmailHtml({ isDietitian, patientName, dietitianName, programName, endDateText }) {
+  const body = isDietitian
+    ? `Il percorso <b>${programName}</b> di ${patientName} termina il ${endDateText}.`
+    : `Ciao ${patientName}, il tuo percorso <b>${programName}</b> con ${dietitianName} termina il ${endDateText}.`;
+  return `<!DOCTYPE html>
+<html lang="it">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F0FDF4;font-family:Arial,Helvetica,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4;padding:40px 16px">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
+        <tr><td bgcolor="#0F766E" style="background-color:#0F766E;border-radius:16px 16px 0 0;padding:32px 40px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px">🥗 DietPlan Pro</div>
+        </td></tr>
+        <tr><td style="background:#ffffff;padding:40px;border-left:1px solid #D1FAE5;border-right:1px solid #D1FAE5;text-align:center">
+          <h1 style="margin:0 0 8px;font-size:22px;color:#064E3B;font-weight:700">⏳ Percorso in scadenza</h1>
+          <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.6">${body}</p>
+          <p style="margin:0;font-size:12px;color:#94A3B8">Email automatica.</p>
+        </td></tr>
+        <tr><td style="background:#F8FAFC;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;border:1px solid #D1FAE5;border-top:none">
+          <p style="margin:0;font-size:11px;color:#94A3B8">DietPlan Pro</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+async function sendSimpleEmail(email, subject, html, resendKey) {
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: 'DietPlan Pro <gestione@app.dietplan-pro.com>', to: email, subject, html }),
+  });
+}
+
+async function jobProgramCheckins() {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const vapidPublic = process.env.VAPID_PUBLIC_KEY;
+  const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
+  ensureVapid(serviceKey, vapidPublic, vapidPrivate);
+  const resendKey = process.env.RESEND_API_KEY;
+
+  const percorsi = await sbFetch(
+    `percorsi_nutrizionali?select=id,dietitian_id,cartella_id,patient_id,nome,data_inizio,durata_settimane,checkin_ogni_giorni,ultimo_checkin_reminder_at,scadenza_notificata_at` +
+      `&stato=eq.attivo&patient_id=not.is.null&limit=${MAX_PERCORSI}`,
+    serviceKey,
+  );
+  if (!percorsi || !percorsi.length) return { ok: true, checked: 0, checkinRemindersSent: 0, expiryNoticesSent: 0 };
+
+  const patientIds = [...new Set(percorsi.map(p => p.patient_id))];
+  const dietitianIds = [...new Set(percorsi.map(p => p.dietitian_id))];
+  const allIds = [...new Set([...patientIds, ...dietitianIds])];
+  const profiles = await sbFetch(`profiles?select=id,first_name,last_name,full_name,nome,cognome,email&id=in.(${allIds.join(',')})`, serviceKey);
+  const profileById = new Map(profiles.map(p => [p.id, p]));
+  function displayName(id) {
+    const p = profileById.get(id);
+    if (!p) return 'Paziente';
+    return [p.first_name, p.last_name].filter(Boolean).join(' ') || p.full_name || [p.nome, p.cognome].filter(Boolean).join(' ') || 'Paziente';
+  }
+
+  // Ultimo peso registrato per paziente — è il "check-in" reale, niente tabella dedicata
+  const weightRows = await sbFetch(`weight_logs?select=user_id,date&user_id=in.(${patientIds.join(',')})&order=date.desc`, serviceKey);
+  const lastWeightByPatient = new Map();
+  (weightRows || []).forEach(w => { if (!lastWeightByPatient.has(w.user_id)) lastWeightByPatient.set(w.user_id, w.date); });
+
+  const today = new Date();
+  const todayIso = today.toISOString();
+
+  let checkinRemindersSent = 0;
+  let expiryNoticesSent = 0;
+  const checkinSentIds = [];
+  const expirySentIds = [];
+
+  for (const p of percorsi) {
+    const patientName = displayName(p.patient_id);
+    const dietitianName = displayName(p.dietitian_id);
+    const patientEmail = profileById.get(p.patient_id)?.email;
+    const dietitianEmail = profileById.get(p.dietitian_id)?.email;
+
+    // ── Promemoria check-in ──
+    const lastWeightDate = lastWeightByPatient.get(p.patient_id);
+    const daysSinceCheckin = Math.floor((today - new Date(lastWeightDate || p.data_inizio)) / 86400000);
+    const daysSinceLastReminder = p.ultimo_checkin_reminder_at
+      ? Math.floor((today - new Date(p.ultimo_checkin_reminder_at)) / 86400000)
+      : Infinity;
+    if (daysSinceCheckin >= p.checkin_ogni_giorni && daysSinceLastReminder >= p.checkin_ogni_giorni) {
+      try {
+        await sendPatientPush(p.patient_id, '📋 Check-in percorso', `È ora del tuo check-in per "${p.nome}" — registra il peso di oggi`, serviceKey);
+      } catch {
+        // best-effort: verrà ritentato al prossimo run
+      }
+      if (resendKey && patientEmail) {
+        await sendSimpleEmail(patientEmail, `Check-in percorso "${p.nome}"`, checkinReminderEmailHtml({ patientName, programName: p.nome }), resendKey).catch(() => {});
+      }
+      checkinRemindersSent++;
+      checkinSentIds.push(p.id);
+    }
+
+    // ── Avviso scadenza (una sola volta, 7 giorni o meno alla fine) ──
+    if (!p.scadenza_notificata_at) {
+      const endDate = new Date(p.data_inizio);
+      endDate.setDate(endDate.getDate() + p.durata_settimane * 7);
+      const daysToEnd = Math.floor((endDate - today) / 86400000);
+      if (daysToEnd <= 7 && daysToEnd >= 0) {
+        const endDateText = endDate.toLocaleDateString('it-IT');
+        try {
+          await sendPatientPush(p.patient_id, '⏳ Percorso in scadenza', `Il tuo percorso "${p.nome}" termina il ${endDateText}`, serviceKey);
+        } catch {
+          // best-effort
+        }
+        if (resendKey && patientEmail) {
+          await sendSimpleEmail(patientEmail, `Il tuo percorso "${p.nome}" sta per terminare`, programExpiryEmailHtml({ isDietitian: false, patientName, dietitianName, programName: p.nome, endDateText }), resendKey).catch(() => {});
+        }
+        if (resendKey && dietitianEmail) {
+          await sendSimpleEmail(dietitianEmail, `Percorso di ${patientName} in scadenza`, programExpiryEmailHtml({ isDietitian: true, patientName, dietitianName, programName: p.nome, endDateText }), resendKey).catch(() => {});
+        }
+        expiryNoticesSent++;
+        expirySentIds.push(p.id);
+      }
+    }
+  }
+
+  if (checkinSentIds.length) {
+    await sbFetch(`percorsi_nutrizionali?id=in.(${checkinSentIds.join(',')})`, serviceKey, {
+      method: 'PATCH', body: JSON.stringify({ ultimo_checkin_reminder_at: todayIso }),
+    });
+  }
+  if (expirySentIds.length) {
+    await sbFetch(`percorsi_nutrizionali?id=in.(${expirySentIds.join(',')})`, serviceKey, {
+      method: 'PATCH', body: JSON.stringify({ scadenza_notificata_at: todayIso }),
+    });
+  }
+
+  return { ok: true, checked: percorsi.length, checkinRemindersSent, expiryNoticesSent };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 export default async function handler(req, res) {
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = req.headers.authorization || '';
@@ -530,7 +705,8 @@ export default async function handler(req, res) {
     if (job === 'inactive-patients') return res.status(200).json(await jobInactivePatients());
     if (job === 'appointment-reminders') return res.status(200).json(await jobAppointmentReminders());
     if (job === 'overdue-payments') return res.status(200).json(await jobOverduePayments());
-    return res.status(400).json({ error: 'Parametro ?job mancante o sconosciuto (attesi: inactive-patients, appointment-reminders, overdue-payments)' });
+    if (job === 'program-checkins') return res.status(200).json(await jobProgramCheckins());
+    return res.status(400).json({ error: 'Parametro ?job mancante o sconosciuto (attesi: inactive-patients, appointment-reminders, overdue-payments, program-checkins)' });
   } catch (err) {
     console.error(`cron (job=${job}) error:`, err);
     return res.status(500).json({ error: 'Errore server: ' + err.message });

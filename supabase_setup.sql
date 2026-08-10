@@ -3191,3 +3191,65 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_41_wearable_columns', 'daily_wellness.steps/heart_rate_avg per sync wearable + dashboard attività paziente')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 42 — PERCORSI NUTRIZIONALI MULTI-SETTIMANA (check-in e scadenza
+-- automatizzati)
+--
+-- Prima d'ora l'unico automatismo temporale era il messaggio programmato
+-- singolo (chat_group_messages.scheduled_at, un invio una tantum). Questa
+-- sezione introduce un vero "percorso" con durata e cadenza di check-in: il
+-- dietista lo avvia una volta per un paziente, poi il job cron
+-- ?job=program-checkins (api/cron.js) invia da solo, senza altro intervento:
+--   • un promemoria push+email al paziente quando è passato più tempo di
+--     `checkin_ogni_giorni` dall'ultimo peso registrato (weight_logs, già
+--     sincronizzato da Diet-Plan-Pro-app-claude — nessuna nuova tabella di
+--     "check-in", si riusa il dato reale già esistente);
+--   • un avviso push+email quando mancano 7 giorni o meno dalla fine del
+--     percorso (data_inizio + durata_settimane), sia al paziente che al
+--     dietista.
+--
+-- NOTA: FK verso cartelle_raw, non verso la vista `cartelle` (una VIEW non
+-- può essere target di REFERENCES — stessa cautela già documentata nel
+-- pattern di cifratura di SEZIONE 40).
+
+CREATE TABLE IF NOT EXISTS public.percorsi_nutrizionali (
+  id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  dietitian_id              UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  cartella_id               UUID NOT NULL REFERENCES public.cartelle_raw(id) ON DELETE CASCADE,
+  patient_id                UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  nome                      TEXT NOT NULL,
+  data_inizio               DATE NOT NULL DEFAULT CURRENT_DATE,
+  durata_settimane          INTEGER NOT NULL CHECK (durata_settimane > 0),
+  checkin_ogni_giorni       INTEGER NOT NULL DEFAULT 7 CHECK (checkin_ogni_giorni > 0),
+  stato                     TEXT NOT NULL DEFAULT 'attivo' CHECK (stato IN ('attivo','completato','annullato')),
+  ultimo_checkin_reminder_at TIMESTAMPTZ,
+  scadenza_notificata_at    TIMESTAMPTZ,
+  note                      TEXT,
+  created_at                TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_percorsi_stato_attivo ON public.percorsi_nutrizionali(stato) WHERE stato = 'attivo';
+CREATE INDEX IF NOT EXISTS idx_percorsi_cartella ON public.percorsi_nutrizionali(cartella_id);
+
+ALTER TABLE public.percorsi_nutrizionali ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'percorsi_dietitian_all' AND tablename = 'percorsi_nutrizionali') THEN
+    CREATE POLICY "percorsi_dietitian_all" ON public.percorsi_nutrizionali
+      FOR ALL USING (dietitian_id = auth.uid()) WITH CHECK (dietitian_id = auth.uid());
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'percorsi_patient_read' AND tablename = 'percorsi_nutrizionali') THEN
+    CREATE POLICY "percorsi_patient_read" ON public.percorsi_nutrizionali
+      FOR SELECT USING (patient_id = auth.uid());
+  END IF;
+END $$;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.percorsi_nutrizionali TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_42_percorsi_nutrizionali', 'Tabella percorsi_nutrizionali + RLS per check-in/scadenza automatizzati (job cron program-checkins)')
+ON CONFLICT (id) DO NOTHING;

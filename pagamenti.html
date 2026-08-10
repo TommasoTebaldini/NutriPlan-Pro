@@ -96,6 +96,7 @@
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>💳 <span data-only-lang="it">Pagamenti</span><span data-only-lang="en">Payments</span></h2>
   <div class="tbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="exportFattureCSV()">⬇️ <span data-only-lang="it">Esporta CSV</span><span data-only-lang="en">Export CSV</span></button>
     <button class="btn btn-primary btn-sm" onclick="openNuovaFattura()">➕ <span data-only-lang="it">Nuova Fattura</span><span data-only-lang="en">New Invoice</span></button>
   </div>
 </div>
@@ -449,7 +450,7 @@ function populateAnnoFilter() {
   sel.innerHTML = '<option value="">Tutti gli anni</option>' + anni.map(a => `<option value="${a}" ${a===String(cur)?'selected':''}>${a}</option>`).join('');
 }
 
-function renderFatture() {
+function getFilteredFatture() {
   const q = (document.getElementById('fatt-search')?.value||'').toLowerCase();
   const stato = document.getElementById('fatt-filter-stato')?.value || '';
   const anno = document.getElementById('fatt-filter-anno')?.value || '';
@@ -457,6 +458,42 @@ function renderFatture() {
   if (q) list = list.filter(f => (f.patient_name||'').toLowerCase().includes(q) || (f.tipo_visita||'').toLowerCase().includes(q) || (f.numero_fattura||'').toLowerCase().includes(q));
   if (stato) list = list.filter(f => f.stato === stato);
   if (anno) list = list.filter(f => (f.data_fattura||'').startsWith(anno));
+  return list;
+}
+
+// Export CSV per contabilità/fatturazione — rispetta i filtri correnti
+// (ricerca/stato/anno), stesso principio del CSV già presente in analytics.html.
+function csvEscape(v) {
+  const s = String(v ?? '');
+  return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function exportFattureCSV() {
+  const list = getFilteredFatture();
+  if (!list.length) { toast('Nessuna fattura da esportare', 'err'); return; }
+  const header = ['Numero fattura','Paziente','Codice fiscale','Tipo visita','Data fattura','Importo (EUR)','Aliquota IVA (%)','Stato','Nota'].join(';');
+  const rows = list.map(f => [
+    csvEscape(f.numero_fattura || ''),
+    csvEscape(f.patient_name || ''),
+    csvEscape(f.codice_fiscale_paziente || ''),
+    csvEscape(f.tipo_visita || ''),
+    csvEscape(f.data_fattura ? fmtDate(f.data_fattura) : ''),
+    csvEscape((f.importo != null ? f.importo : 0).toFixed(2).replace('.', ',')),
+    csvEscape(f.aliquota_iva != null ? String(f.aliquota_iva).replace('.', ',') : ''),
+    csvEscape(f.stato === 'pagato' ? 'Pagato' : 'Da pagare'),
+    csvEscape(f.note || ''),
+  ].join(';'));
+  const csv = '﻿' + header + '\n' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `fatture_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('📊 CSV esportato!', 'ok');
+}
+
+function renderFatture() {
+  const list = getFilteredFatture();
   const container = document.getElementById('fatture-list');
   if (!list.length) {
     container.innerHTML = `<div class="empty-state"><div class="ei">🧾</div><h3>${fatture.length === 0 ? 'Nessuna fattura emessa' : 'Nessuna fattura trovata'}</h3><p>${fatture.length === 0 ? 'Clicca "Nuova Fattura" per iniziare.' : 'Prova a cambiare i filtri.'}</p></div>`;

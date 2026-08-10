@@ -150,6 +150,7 @@ async function ensureChartJs() {
   <span id="bulk-count-label" style="font-weight:700;font-size:13px;flex:1"><span data-only-lang="it">0 pazienti selezionati</span><span data-only-lang="en">0 patients selected</span></span>
   <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkArchivia()">📦 <span data-only-lang="it">Archivia selezionati</span><span data-only-lang="en" style="display:none">Archive selected</span></button>
   <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkEsportaCSV()">📊 <span data-only-lang="it">Esporta CSV</span><span data-only-lang="en" style="display:none">Export CSV</span></button>
+  <button class="btn btn-sm" style="background:white;color:#0F766E;font-weight:700" onclick="bulkEsportaPDF()">📄 <span data-only-lang="it">Esporta PDF</span><span data-only-lang="en" style="display:none">Export PDF</span></button>
   <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;border:1.5px solid rgba(255,255,255,.4)" onclick="deselezionaTutto()">✕ <span data-only-lang="it">Deseleziona</span><span data-only-lang="en" style="display:none">Deselect all</span></button>
 </div>
 <!-- BARRA RICERCA + FILTRI PAZIENTI -->
@@ -919,6 +920,111 @@ function bulkEsportaCSV() {
   a.href = url; a.download = 'pazienti_selezionati_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click(); URL.revokeObjectURL(url);
   toast(_L('📊 CSV esportato!','📊 CSV exported!'), 'ok');
+}
+
+// PDF aggregato multi-paziente (riepilogo stampabile, per revisione/handoff
+// dello studio) — a differenza del CSV sopra, include anche l'ultima misura
+// BIA e il numero di piani per paziente, con 2 query aggiuntive best-effort.
+async function bulkEsportaPDF() {
+  const ids = getSelectedIds();
+  if (!ids.length) return;
+  const selected = allCartelleData.filter(c => ids.includes(c.id));
+
+  showLoading(true);
+  await new Promise(res => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+    s.onload = res; s.onerror = res;
+    document.head.appendChild(s);
+  });
+
+  let biaRows = [], pianiRows = [];
+  try {
+    const [biaRes, pianiRes] = await Promise.all([
+      sb.from('bia_records').select('cartella_id,peso,data_misura').in('cartella_id', ids).eq('user_id', currentUser.id).order('data_misura', { ascending: false }),
+      sb.from('piani').select('cartella_id').in('cartella_id', ids).eq('user_id', currentUser.id),
+    ]);
+    biaRows = biaRes.data || [];
+    pianiRows = pianiRes.data || [];
+  } catch (e) {
+    // best-effort: il PDF procede comunque solo con i dati anagrafici
+  }
+  showLoading(false);
+
+  if (!window.jspdf) { toast(_L('jsPDF non disponibile','jsPDF not available'), 'err'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+  const lastBiaByCartella = new Map();
+  biaRows.forEach(b => { if (!lastBiaByCartella.has(b.cartella_id)) lastBiaByCartella.set(b.cartella_id, b); });
+  const pianiCountByCartella = new Map();
+  pianiRows.forEach(p => pianiCountByCartella.set(p.cartella_id, (pianiCountByCartella.get(p.cartella_id) || 0) + 1));
+
+  const lm = 14, rm = 283;
+  let y = 20;
+
+  doc.setFillColor(15, 118, 110);
+  doc.rect(0, 0, 297, 24, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(17); doc.setFont('helvetica', 'bold');
+  doc.text('DietPlan Pro', lm, 11);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  doc.text(_L('Riepilogo Pazienti','Patients Summary') + ' - ' + new Date().toLocaleDateString(_L('it','en')) + ' - ' + selected.length + ' ' + _L('pazienti','patients'), lm, 18);
+  y = 32;
+
+  const cols = [
+    { label: _L('Nome','Name'), w: 45 },
+    { label: _L('Età','Age'), w: 16 },
+    { label: _L('Sesso','Sex'), w: 16 },
+    { label: _L('Tag','Tags'), w: 55 },
+    { label: _L('Ultimo peso','Last weight'), w: 30 },
+    { label: _L('Data BIA','BIA date'), w: 26 },
+    { label: _L('Piani','Plans'), w: 18 },
+    { label: _L('In carico dal','Patient since'), w: 26 },
+  ];
+
+  const drawTableHeader = () => {
+    doc.setFillColor(240, 253, 250);
+    doc.rect(lm, y - 5, rm - lm, 7, 'F');
+    doc.setFontSize(8.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
+    let x = lm + 2;
+    cols.forEach(c => { doc.text(c.label, x, y); x += c.w; });
+    y += 7;
+  };
+  drawTableHeader();
+
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(30, 41, 59);
+  selected.forEach((c, i) => {
+    if (y > 195) { doc.addPage(); y = 20; drawTableHeader(); }
+    const eta = c.ddn ? calcolaEta(c.ddn) : null;
+    const bia = lastBiaByCartella.get(c.id);
+    const rowVals = [
+      (c.nome || '').replace(/[^\x00-\xFF]/g, '').slice(0, 28),
+      eta !== null ? String(eta) : '-',
+      c.sesso || '-',
+      (Array.isArray(c.tags) ? c.tags.join(', ') : '').replace(/[^\x00-\xFF]/g, '').slice(0, 38),
+      bia?.peso ? bia.peso + ' kg' : '-',
+      bia?.data_misura ? new Date(bia.data_misura).toLocaleDateString(_L('it','en')) : '-',
+      String(pianiCountByCartella.get(c.id) || 0),
+      c.created_at ? new Date(c.created_at).toLocaleDateString(_L('it','en')) : '-',
+    ];
+    if (i % 2 === 1) { doc.setFillColor(248, 250, 252); doc.rect(lm, y - 4.5, rm - lm, 6, 'F'); }
+    let x = lm + 2;
+    rowVals.forEach((v, idx) => { doc.text(String(v), x, y); x += cols[idx].w; });
+    y += 6;
+  });
+
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(203, 213, 225); doc.line(lm, 200, rm, 200);
+    doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
+    doc.text(_L('DietPlan Pro - Documento riservato. Trattamento dati ai sensi del GDPR (UE) 2016/679.','DietPlan Pro - Confidential document. Data processing under GDPR (EU) 2016/679.'), lm, 205);
+    doc.text(_L('Pag. ','Page ') + i + '/' + pageCount, rm, 205, { align: 'right' });
+  }
+
+  doc.save('riepilogo_pazienti_' + new Date().toISOString().slice(0, 10) + '.pdf');
+  toast(_L('📄 PDF esportato!','📄 PDF exported!'), 'ok');
 }
 
 function resetFiltri() {

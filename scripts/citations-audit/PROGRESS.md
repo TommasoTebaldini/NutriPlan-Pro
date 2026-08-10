@@ -875,3 +875,68 @@ elevato in gravidanza associato a esiti avversi).
 1 flaggato per rimozione (#123, non ancora rimosso), restano 10 da
 ri-sourciare.** ID ancora da fare: 182, 183, 188, 193, 194, 195, 211,
 214, 221 (+ #123 da decidere).
+
+**Batch 35 (9 studi, sessione 2026-08-10, ULTIMO BATCH — commit da
+fare)**: #182 malnutrizione ospedaliera/GLIM (Cederholm fabbricato con
+sensibilità/specificità/mortalità inventate → vero aggiornamento a 5
+anni degli stessi autori, Clin Nutr 2025 PMID 40222089, consensus
+narrativo senza cifre quantitative aggregate); #183 legumi e rischio
+cardiometabolico (Marventano fabbricato con LDL/glicemia/PA/peso/
+mortalità multi-outcome → vero paper stessi autori, Public Health Nutr
+2017 PMID 28077199, SOLO CVD/CHD con RR 0.90, risultato NULLO per
+ictus); #188 dieta mediterranea verde e adiposità viscerale/DIRECT-PLUS
+(Tsaban fabbricato su "Heart" 2021 con dati su LDL/glicemia/microbiota
+→ vero paper è Zelicha H et al., BMC Medicine 2022 PMID 36175997, VAT
+via MRI raddoppiata nel gruppo green-MED, no dati su microbiota/LDL
+specifici); #193 indice/carico glicemico e malattie croniche (Livesey
+fabbricato con DM2+CVD+cancro colorettale+endometriale+mortalità →
+vero paper stessi autori, Nutrients 2019 PMID 31195724, ESCLUSIVAMENTE
+su DM2); #194 dieta senza glutine e recupero mucosale in celiachia
+(Rubio-Tapia fabbricato con "82% normalizzazione a 5 anni" → vero paper
+stessi autori, Am J Gastroenterol 2010 PMID 20145607, tassi reali
+diversi 34%/66% a 2/5 anni, associazione con mortalità solo borderline);
+#195 PCOS e interventi dietetici (Barr/Hart/Reeves fabbricato come
+meta-analisi di 30 RCT → vero paper stessi autori è uno studio
+OSSERVAZIONALE-DESCRITTIVO su 210 donne, Eur J Clin Nutr 2011 PMID
+21629269, nessun dato di efficacia comparata tra interventi); #211
+vitamina D e rischio cardiovascolare (Barbarawi fabbricato con rivista
+sbagliata "JAMA Internal Medicine" → vera rivista JAMA Cardiology 2019
+PMID 31215980, contenuto numerico quasi identico all'originale, solo
+citazione errata); #214 polifenoli e malattie croniche (Grosso G
+fabbricato con scope enorme CVD+T2D+cancro+Alzheimer per 127 studi →
+vero paper più pertinente dello stesso autore, Am J Epidemiol 2017 PMID
+28472215, SOLO flavonoidi/lignani e SOLO mortalità totale/CV, 22 studi);
+#221 interventi nutrizionali e outcome cognitivi (Solfrizzi fabbricato
+con cifre MIND diet 35-53% riduzione Alzheimer → vero paper STESSI
+autori/rivista/anno esatti (solo DOI/PMID erano fabbricati), Neurosci
+Biobehav Rev 2018 PMID 30395922, RCT-based, NESSUN effetto chiaro sulla
+cognizione globale, benefici solo in sottogruppi con biomarcatori
+specifici).
+
+**Pattern finale confermato nell'ultimo batch**: diversi casi di "quasi
+corretto" — contenuto numerico quasi identico al vero studio, solo
+rivista/anno/DOI/PMID sbagliati (#211, #221) — a conferma che il
+meccanismo di fabbricazione originale spesso parte da un vero abstract
+e ne altera solo l'apparato citazionale, non necessariamente il
+contenuto scientifico stesso.
+
+**ID #161 SALTATO PER ERRORE tra batch 32 e 33** (batch 32 copriva
+151-160, batch 33 iniziava da 162 saltando 161) — scoperto solo alla
+verifica finale del conteggio (98 corretti + 1 #123 pending = 99, non
+100). Verificato fabbricato (PMID 37335688 → studio su recupero
+coscienza post-ictus, non fibra/cancro colorettale come dichiarato).
+Corretto direttamente: sostituito con Oh H et al., *Br J Nutr* 2019,
+PMID 31495339 (dose-response meta-analysis di 10 studi su fonti di
+fibra e CRC/adenoma — distinto dal classico Aune et al. BMJ 2011 già
+usato per #55). Il vero studio mostra associazioni per lo più NON
+significative isolatamente (ampi IC), molto più incerte del "RR 0.90
+netto con plateau a 25g/die" dichiarato nel fabbricato.
+
+**AUDIT DEI 100 STUDI FABBRICATI: COMPLETATO — 99/100 corretti (batch
+26-35 + fix #161), 1 flaggato per rimozione non ancora agito (#123).**
+Nessun ID rimanente da ri-sourciare nella lista dei 100 fabbricati
+identificati il 2026-08-08. Resta solo la decisione dell'utente su
+#123 (rimuovere la scheda o riscriverla come più schede mirate). Prima
+di dichiarare l'audit definitivamente chiuso, sarebbe prudente
+rilanciare `verify_studi_v3.cjs` una volta per riconfermare che non ci
+siano altri ID sfuggiti al conteggio manuale (come accaduto con #161).

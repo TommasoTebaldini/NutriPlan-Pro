@@ -200,3 +200,46 @@ supabase functions deploy create-patient-checkout-session
 4. Il gate Free/Pro si attiva automaticamente sia per il dietista (sidebar) sia per il paziente collegato (portale)
 
 ⚠️ Non flippare questo flag finché non hai completato TUTTI i punti 1-9 sopra (account Stripe live, prodotti, secrets, migrazione SQL, edge functions deployate, webhook, PayPal) — altrimenti il pulsante "Abbonati" porterà a un errore invece che al checkout.
+
+---
+
+## 12. Pagamento diretto paziente→dietista (Stripe Connect)
+
+Diverso dall'abbonamento SaaS sopra: qui i soldi di una singola **fattura**
+(tab Pagamenti → Fatture, `pagamenti.html`) vanno direttamente sul conto
+Stripe del dietista, non sul conto della piattaforma — la piattaforma
+trattiene solo il **5%** di commissione (deciso in sessione, modificabile
+cambiando `PLATFORM_FEE_PCT` in `create-invoice-checkout-session/index.ts`).
+Richiede **Stripe Connect**, non solo Checkout — un prerequisito in più
+rispetto ai punti 1-11.
+
+1. Stripe Dashboard → **Connect** → **Impostazioni** → attiva Connect (se non
+   già attivo). Tipo di account: **Express**.
+2. Deploy delle 2 nuove edge functions + redeploy del webhook esteso:
+```bash
+supabase functions deploy stripe-connect-onboarding
+supabase functions deploy create-invoice-checkout-session
+supabase functions deploy stripe-webhook
+```
+3. Nessun nuovo secret: entrambe le funzioni riusano `STRIPE_SECRET_KEY` già
+   configurato.
+4. Aggiungi l'evento **`account.updated`** al webhook esistente (Stripe
+   Dashboard → Webhook → il tuo endpoint → **Aggiungi evento**) — serve per
+   sapere quando un dietista ha completato l'onboarding Connect
+   (`charges_enabled`).
+5. Esegui in Supabase SQL Editor la SEZIONE 43 di `supabase_setup.sql`
+   (colonne `stripe_connect_*` su `profiles`, `stripe_checkout_session_id`/
+   `stripe_payment_intent_id`/`pagato_online_at` su `fatture`, policy di
+   lettura paziente su `fatture`).
+6. Test: da `pagamenti.html` (account dietista) clicca **Attiva pagamenti
+   online**, completa l'onboarding Express Stripe (dati di test in test
+   mode). Poi da un account paziente collegato, apri `/pagamenti` nell'app e
+   verifica che una fattura non pagata mostri il pulsante **Paga ora** e che
+   dopo il pagamento risulti "pagato" sia in Supabase sia in
+   `pagamenti.html`.
+
+⚠️ Finché un dietista non completa l'onboarding Connect
+(`stripe_connect_charges_enabled = true`), i suoi pazienti vedono comunque le
+fatture in `/pagamenti` ma il pulsante "Paga ora" restituisce un errore
+esplicito invece di un checkout — è un comportamento voluto (l'elenco fatture
+resta utile anche senza pagamento online), non un bug.

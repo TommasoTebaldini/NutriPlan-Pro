@@ -14,6 +14,7 @@
 //   customer.subscription.updated
 //   customer.subscription.deleted
 //   invoice.payment_failed
+//   account.updated   (Stripe Connect — vedi SEZIONE 43 di supabase_setup.sql)
 // ═══════════════════════════════════════════════════════════════
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -64,13 +65,26 @@ serve(async (req) => {
 
   try {
     switch (event.type) {
-      // ── Payment successful / subscription created ──
+      // ── Payment successful / subscription created / fattura pagata ──
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.client_reference_id; // Supabase user UUID
         const subscriptionId = session.subscription as string;
+        const fatturaId = session.metadata?.fattura_id;
 
-        if (userId && subscriptionId) {
+        if (fatturaId) {
+          // Pagamento diretto paziente→dietista di una singola fattura
+          // (SEZIONE 43) — flusso "payment" one-time, distinto dagli
+          // abbonamenti ricorrenti gestiti sotto.
+          await supabase.from("fatture").update({
+            stato: "pagato",
+            stripe_checkout_session_id: session.id,
+            stripe_payment_intent_id: session.payment_intent as string,
+            pagato_online_at: new Date().toISOString(),
+          }).eq("id", fatturaId);
+
+          console.log(`Fattura ${fatturaId} pagata online (session ${session.id})`);
+        } else if (userId && subscriptionId) {
           const sub = await stripe.subscriptions.retrieve(subscriptionId);
           const expiresAt = new Date(sub.current_period_end * 1000).toISOString();
 
@@ -83,6 +97,15 @@ serve(async (req) => {
 
           console.log(`User ${userId} → pro until ${expiresAt}`);
         }
+        break;
+      }
+
+      // ── Stripe Connect: stato onboarding del dietista aggiornato ──
+      case "account.updated": {
+        const account = event.data.object as Stripe.Account;
+        await supabase.from("profiles").update({
+          stripe_connect_charges_enabled: !!account.charges_enabled,
+        }).eq("stripe_connect_account_id", account.id);
         break;
       }
 

@@ -3253,3 +3253,50 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_42_percorsi_nutrizionali', 'Tabella percorsi_nutrizionali + RLS per check-in/scadenza automatizzati (job cron program-checkins)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 43 — PAGAMENTO DIRETTO PAZIENTE→DIETISTA (Stripe Connect)
+--
+-- Distinto dall'abbonamento SaaS ricorrente già presente (profiles.
+-- stripe_customer_id/stripe_subscription_id, sezione più sopra): qui i soldi
+-- di una SINGOLA fattura (`fatture`, tab Pagamenti di pagamenti.html) vanno
+-- direttamente sul conto Stripe del dietista via Stripe Connect (destination
+-- charge), non sul conto della piattaforma. Commissione piattaforma: 5%
+-- (application_fee_amount), decisione esplicita dell'utente 2026-08-10.
+--
+-- Nuove funzioni Edge richieste (non deployabili da questa sessione, sola
+-- lettura — vedi supabase/functions/stripe-connect-onboarding/ e
+-- supabase/functions/create-invoice-checkout-session/):
+--   • stripe-connect-onboarding: crea/riprende l'account Stripe Connect
+--     Express del dietista (Account Links).
+--   • create-invoice-checkout-session: crea la Checkout Session di
+--     pagamento per una fattura specifica, lato paziente.
+--   • stripe-webhook (esistente, esteso): su checkout.session.completed con
+--     metadata.fattura_id marca la fattura pagata; su account.updated
+--     aggiorna stripe_connect_charges_enabled.
+
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS stripe_connect_account_id TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS stripe_connect_charges_enabled BOOLEAN NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS idx_profiles_stripe_connect ON public.profiles(stripe_connect_account_id) WHERE stripe_connect_account_id IS NOT NULL;
+
+ALTER TABLE public.fatture ADD COLUMN IF NOT EXISTS stripe_checkout_session_id TEXT;
+ALTER TABLE public.fatture ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT;
+ALTER TABLE public.fatture ADD COLUMN IF NOT EXISTS pagato_online_at TIMESTAMPTZ;
+
+-- Il paziente deve poter LEGGERE le proprie fatture per pagarle dall'app —
+-- finora `fatture` aveva policy solo per il dietista proprietario (nessun
+-- accesso paziente). Sola lettura: lo stato "pagato" viene sempre scritto
+-- dal webhook con service role, mai dal client paziente.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'fatture_patient_read' AND tablename = 'fatture') THEN
+    CREATE POLICY "fatture_patient_read" ON public.fatture
+      FOR SELECT USING (patient_id = auth.uid());
+  END IF;
+END $$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_43_stripe_connect_fatture', 'Stripe Connect per pagamento diretto paziente->dietista (commissione piattaforma 5%)')
+ON CONFLICT (id) DO NOTHING;

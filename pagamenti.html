@@ -128,6 +128,20 @@
     <div class="summary-item"><span class="val" id="sum-count">—</span><span class="lbl">Fatture emesse</span></div>
   </div>
 
+  <!-- PAGAMENTI ONLINE (Stripe Connect) -->
+  <div class="card" style="margin-bottom:16px;padding:14px 16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span style="font-size:22px;flex-shrink:0">💳</span>
+        <div style="min-width:0">
+          <div style="font-size:13.5px;font-weight:700;color:var(--slate)">Pagamenti online dai pazienti</div>
+          <div id="stripe-connect-status" style="font-size:12px;color:var(--slate-l)">Verifica in corso...</div>
+        </div>
+      </div>
+      <button id="stripe-connect-btn" class="btn btn-primary btn-sm" onclick="attivaStripeConnect()" style="display:none;flex-shrink:0"></button>
+    </div>
+  </div>
+
   <!-- TABS -->
   <div id="pag-tabs" style="display:flex;gap:8px;margin-bottom:16px">
     <button class="pag-tab active" id="tab-fatture-btn" onclick="setTab('fatture')">🧾 Fatture</button>
@@ -356,6 +370,53 @@ async function loadPage() {
   renderFatture();
   renderTariffario();
   populateAnnoFilter();
+  loadStripeConnectStatus();
+}
+
+// ── Pagamenti online (Stripe Connect) — SEZIONE 43 ──
+async function loadStripeConnectStatus() {
+  const statusEl = document.getElementById('stripe-connect-status');
+  const btnEl = document.getElementById('stripe-connect-btn');
+  if (!currentUser) return;
+  const { data, error } = await sb.from('profiles').select('stripe_connect_account_id,stripe_connect_charges_enabled').eq('id', currentUser.id).maybeSingle();
+  if (error || !data) {
+    statusEl.textContent = 'Impossibile verificare lo stato dei pagamenti online.';
+    return;
+  }
+  if (data.stripe_connect_charges_enabled) {
+    statusEl.innerHTML = '✅ Attivo — i pazienti possono pagarti direttamente dall\'app.';
+    btnEl.style.display = 'none';
+  } else if (data.stripe_connect_account_id) {
+    statusEl.textContent = 'Configurazione iniziata ma non completata su Stripe.';
+    btnEl.textContent = '↩️ Completa configurazione';
+    btnEl.style.display = '';
+  } else {
+    statusEl.textContent = 'Non attivato — i pazienti non possono ancora pagarti direttamente dall\'app (resta possibile la fattura manuale).';
+    btnEl.textContent = '🔗 Attiva pagamenti online';
+    btnEl.style.display = '';
+  }
+}
+
+async function attivaStripeConnect() {
+  const btn = document.getElementById('stripe-connect-btn');
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = '⏳ Reindirizzamento a Stripe...';
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { toast('Effettua il login prima di continuare.', 'err'); return; }
+    const res = await fetch(SUPABASE_URL + '/functions/v1/stripe-connect-onboarding', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Impossibile avviare la configurazione Stripe.');
+    window.location.href = data.url;
+  } catch (err) {
+    toast('❌ ' + err.message, 'err');
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
 }
 
 async function loadPatients() {

@@ -3162,3 +3162,32 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_39_delete_dietitian_account', 'delete_own_dietitian_account() GDPR Art. 17')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 41 — COLONNE MANCANTI PER SYNC WEARABLE (daily_wellness.steps/heart_rate_avg)
+--
+-- Diet-Plan-Pro-app-claude (HealthSyncPage.jsx, syncWearablesToSupabase())
+-- prova già a scrivere `steps` e `heart_rate_avg` su daily_wellness ad ogni
+-- sync da Apple Health/Google Health Connect/Bluetooth, ma le colonne non
+-- esistono sul DB — la scrittura fallisce silenziosamente (errore Postgres
+-- 42703 "column does not exist", intercettato e ignorato lato client) e i
+-- dati non vengono mai salvati. Questa sezione aggiunge solo le due colonne
+-- mancanti: nessuna RLS da cambiare (le policy esistenti su daily_wellness
+-- sono già a livello di riga, non di colonna) e nessun trigger necessario.
+--
+-- Nota per la dashboard "Attività & Dispositivi" in pazienti.html: il
+-- payload scritto dal paziente NON valorizza cartella_id/patient_id (solo
+-- user_id+date) — per leggere questi dati lato dietista si usa quindi la
+-- policy "dietista legge wellness pazienti"/"dietista legge peso pazienti"
+-- (già esistente, chiave su user_id via patient_dietitian), filtrando le
+-- query su daily_wellness/weight_logs per user_id = patientId, non per
+-- cartella_id.
+
+ALTER TABLE public.daily_wellness ADD COLUMN IF NOT EXISTS steps integer;
+ALTER TABLE public.daily_wellness ADD COLUMN IF NOT EXISTS heart_rate_avg integer;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_41_wearable_columns', 'daily_wellness.steps/heart_rate_avg per sync wearable + dashboard attività paziente')
+ON CONFLICT (id) DO NOTHING;

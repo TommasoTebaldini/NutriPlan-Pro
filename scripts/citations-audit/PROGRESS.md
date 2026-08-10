@@ -827,3 +827,51 @@ anche alcol/latticini/cereali integrali).
 ri-sourciare.** ID ancora da fare: 172, 173, 174, 175, 176, 177, 178,
 179, 180, 181, 182, 183, 188, 193, 194, 195, 211, 214, 221 (+ #123 da
 decidere).
+
+**Batch 34 (10 studi, sessione 2026-08-10, commit da fare)**: #172 SSB
+e rischio cardiometabolico (Jayalath/de Souza fabbricato come "DM2/CVD/
+obesità/mortalità" → vero paper stessi autori, Am J Clin Nutr 2015
+PMID 26269365, copre SOLO ipertensione incidente, RR 1.12; claim più
+ampi rimossi); #173 magnesio e DM2/CVD/mortalità (Fang X fabbricato —
+il vero paper di Fang X è già usato per un altro ID nel dataset →
+sostituito con secondo studio reale distinto, Zhao B et al. BMJ Open
+2020 PMID 32198298, DM2/ictus non mortalità); #174 restrizione
+calorica e CALERIE trial (Redman fabbricato con "orologio epigenetico
+-2.5 anni" → vero paper Cell Metab 2018 PMID 29576535, dati reali su
+dispendio energetico/asse tiroideo/stress ossidativo, NESSUN dato su
+Horvath clock, CR reale ~15% non 25%); #175 zinco e immunità multi-
+condizione (Wessels/Maywald/Rink fabbricato con percentuali cliniche
+per raffreddore/COVID/sarcopenia/acne → vero paper Nutrients 2017 PMID
+29186856 è una revisione MECCANICISTICA sui trasportatori dello zinco,
+nessun dato clinico quantitativo, claim rimossi); #176 dieta EAT-Lancet
+e mortalità (Kesse-Guyot fabbricato con HR 0.75 mortalità → il vero
+paper degli stessi autori su EAT-Lancet/NutriNet-Santé riguarda le
+EMISSIONI DI GAS SERRA, non la mortalità, Sci Total Environ 2024 PMID
+39142409 — nessun paper reale collega EAT-Lancet a mortalità con
+questi autori); #177 carenza di ferro e assorbimento (Camaschella
+fabbricato con percentuali specifiche vitamina C/tè/calcio → vero
+paper Haematologica 2020 PMID 31949017 è su fisiopatologia molecolare
+epcidina-ferroportina, nessun dettaglio pratico quantitativo, ma
+conferma il razionale scientifico reale della supplementazione a
+giorni alterni); #178 polifenoli e salute cardiometabolica (Imamura F
+fabbricato, nessun match trovato per questi autori → sostituito con
+network meta-analisi bayesiana reale ma più ristretta, Miao R et al.
+Phytother Res 2025 PMID 40439602, SOLO 4 fitochimici in pazienti DM2,
+non 6 classi in popolazione generale); #179 nutrizione sportiva
+endurance (Burke/Hawley/Jeukendrup fabbricato come review completa 2023
+→ vero paper stessi autori è solo sui carboidrati, J Sports Sci 2011
+PMID 21660838, parte del consensus IOC 2011, non copre proteine/
+caffeina/creatina/nitrati/idratazione come dichiarato); #180 supporto
+nutrizionale in gravidanza (Cetin/Koletzko fabbricato con cifre NTD/QI/
+pre-eclampsia specifiche → vero paper Ann Nutr Metab 2019 PMID
+30939482 è una revisione narrativa/call-to-action senza dati
+quantitativi aggregati); #181 caffè e salute (Poole/Kennedy fabbricato
+come 2023/214 meta-analisi → vero paper stessi autori è la umbrella
+review classica BMJ 2017 (non 2023) PMID 29167102, numeri reali
+leggermente diversi, ECCEZIONE IMPORTANTE non nel fabbricato: consumo
+elevato in gravidanza associato a esiti avversi).
+
+**Totale progressivo: 89/100 studi fabbricati corretti (batch 26-34),
+1 flaggato per rimozione (#123, non ancora rimosso), restano 10 da
+ri-sourciare.** ID ancora da fare: 182, 183, 188, 193, 194, 195, 211,
+214, 221 (+ #123 da decidere).

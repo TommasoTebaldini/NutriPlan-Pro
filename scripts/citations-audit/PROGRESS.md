@@ -671,3 +671,64 @@ fabbricato (es. #131 solo seno non 5 tumori, #135 solo legumi non fibra
 totale, #136 solo PA non mortalità). In un caso (#137) l'errore va oltre
 la citazione: un dato di contenuto (Bacteroides protettivo vs di rischio)
 è stato letteralmente invertito rispetto alla fonte reale.
+
+**Batch 31 (10 studi, sessione 2026-08-09/10, commit da fare)**: #138 PCOS
+e dieta (Szczuko et al. fabbricato → Juhász AE et al., *Reprod Health*
+2024, PMID 38388374, network meta-analisi 19 RCT/727 donne: DASH prima
+scelta su HOMA-IR/insulina/trigliceridi, metformina superiore su
+testosterone/LDL — outcome-specifico, non generico "efficace su tutto"
+come il fabbricato); #139 iperuricemia/gotta (Yokose/McCormick/Choi
+fabbricato → Wen ZY et al., *Front Nutr* 2024, PMID 38481974, n=163.192,
+conferma che conta il PATTERN alimentare complessivo non il singolo
+alimento purinico); #141 creatina (Lanhers/Pereira/Naughton — autori
+REALI con 2 meta-analisi genuine, usata quella su arti superiori 2017,
+PMID 27328852 — claim originali su anziani/sarcopenia/cognizione/
+sicurezza renale NON coperti da questa fonte, rimossi senza sostituzione
+forzata); #143 dieta ipoproteica CKD (Kalantar-Zadeh et al. fabbricato,
+nessun match trovato → sostituito con Cochrane review Hahn/Hodson/Fouque
+2020, PMID 33118160 — claim su chetoanaloghi e SGLT2i NON coperti,
+rimossi); #144 calcio+vitamina D e fratture (autori dichiarati Zhao JG
+et al. REALI ma citazione sbagliata: non Cochrane 2022 ma JAMA 2017,
+PMID 29279934 — risultato opposto al fabbricato: calcio/vitamina D NON
+riducono le fratture in community-dwelling, nessun beneficio significativo
+trovato); #145 dieta mediterranea e declino cognitivo (Charisis/HELIAD
+fabbricato — i lavori HELIAD reali sono coorti singole non meta-analisi
+di 22 studi → sostituito con García-Casares N et al., *J Clin Med* 2021,
+PMID 34682764, effect size reali più modesti RR 0.89-0.91 vs il 33-53%
+di riduzione rischio dichiarato); #146 VLCKD e diabete tipo 2 (Muscogiuri
+et al. — autrice REALE, vero paper è una guida pratica clinica *J Transl
+Med* 2019, PMID 31665015, non uno studio con cifre di remissione DM2 —
+riscritto come guida alle 3 fasi VLCKD invece di forzare numeri di
+remissione inesistenti nella fonte); #147 probiotici multi-indicazione
+(Bafeta/Koh/Riveros/Ravaud fabbricato — il vero paper di Bafeta A. è
+sulla qualità del reporting degli harm negli RCT su microbiota, *Ann
+Intern Med* 2018, tema diverso → sostituito con umbrella review più
+recente e pertinente, Hoang/Kim, *Nutr Rev* 2026, PMID 42289829, 128
+revisioni sintetizzate); #148 dieta mediterranea e CV (PREDIMED-Plus
+"5-year results" 2024 fabbricato — quell'esito a 5 anni sugli eventi CV
+maggiori non risulta ancora pubblicato → sostituito con i veri risultati
+PREDIMED-Plus a 1 anno su peso/sindrome metabolica, Salas-Salvadó et al.,
+*Diabetes Care* 2019, PMID 30389673, n=626); #150 chirurgia bariatrica e
+nutrizione (Mechanick/AACE-TOS-ASMBS 2023 fabbricato — le vere linee
+guida Mechanick esistono ma dietro paywall senza numeri verificabili in
+accesso libero → sostituito con altre linee guida ASMBS reali e verificabili,
+Parrott J et al., *Surg Obes Relat Dis* 2017, PMID 28392254).
+
+**Nota metodologica batch 31**: un file di lavoro `batch31_input.json`
+(mai committato) lasciato da una sessione precedente conteneva
+l'estrazione grezza delle 10 schede ancora fabbricate — NON un batch già
+ri-sourciato, come inizialmente sospettato. Verificato e confermato via
+PubMed eutils che i DOI/PMID lì presenti erano ancora quelli fabbricati
+originali (puntano a paper completamente estranei: chimica dei polimeri,
+dermatologia, odontoiatria, ecc.), poi scartato. Tutti i 10 studi sono
+stati ri-sourciati da zero con verifica PubMed eutils indipendente di
+ogni DOI/PMID proposto (sia dai fork agent sia nel lavoro diretto), prima
+di applicare le modifiche al file sorgente — nessuna sostituzione
+applicata senza verifica autonoma del match titolo/autori/rivista.
+
+**Totale progressivo: 59/100 studi fabbricati corretti (batch 26-31),
+1 flaggato per rimozione (#123, non ancora rimosso), restano 40 da
+ri-sourciare.** ID ancora da fare: 151, 152, 153, 154, 155, 156, 157,
+158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
+172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 188, 193,
+194, 195, 211, 214, 221 (+ #123 da decidere).

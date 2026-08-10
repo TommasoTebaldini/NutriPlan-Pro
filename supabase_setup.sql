@@ -2879,6 +2879,286 @@ END;
 $$;
 GRANT EXECUTE ON FUNCTION delete_own_dietitian_account() TO authenticated;
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 40 — CIFRATURA APPLICATIVA DEI CAMPI CLINICI SENSIBILI (pilota: cartelle.note)
+--
+-- Fino ad oggi i dati sono protetti SOLO dalla cifratura infrastrutturale di
+-- Supabase (a riposo, automatica) e da RLS — il valore stesso di un campo
+-- sensibile è in chiaro nel database. Questa sezione aggiunge cifratura reale
+-- a livello di campo (pgcrypto + Supabase Vault) per il campo clinico più
+-- sensibile di `cartelle` (`note`), come primo tassello di un lavoro che
+-- andrà esteso — su più sessioni, esattamente come l'audit alimenti — ad
+-- altri campi (note_specialistiche.nota, ncpt.*, chat_messages.content,
+-- chat_group_messages.content, patient_intake_forms.responses).
+--
+-- APPROCCIO: vista trasparente, ZERO modifiche al codice client.
+-- `cartelle` diventa una VIEW (non più la tabella reale) che espone `note`
+-- già decifrato; la tabella reale con la colonna cifrata si chiama ora
+-- `cartelle_raw`. Ogni `sb.from('cartelle').select(...)`/`.insert(...)`/
+-- `.update(...)`/`.delete(...)` esistente in tutte le pagine continua a
+-- funzionare esattamente come prima — decifra in lettura, cifra in
+-- scrittura, in modo trasparente lato Postgres. La vista è
+-- `security_invoker=true`: le policy RLS già esistenti su `cartelle`
+-- (rinominate insieme alla tabella) restano applicate esattamente come
+-- prima, per lo stesso utente, senza bypass.
+--
+-- CHIAVE: generata casualmente una sola volta, salvata in Supabase Vault
+-- (mai visibile lato client, leggibile solo dalle funzioni SECURITY DEFINER
+-- sotto). Se in futuro la chiave venisse ruotata, TUTTI i valori cifrati con
+-- la chiave vecchia diventerebbero illeggibili — non implementata qui la
+-- rotazione, fuori scope per un primo pilota.
+--
+-- ATTENZIONE — cosa NON viene fatto qui, deliberatamente:
+--  • La colonna col testo in chiaro originale NON viene droppata: resta
+--    rinominata `note_plain_deprecated` dentro `cartelle_raw`, come rete di
+--    sicurezza ispezionabile finché non si conferma che tutto funziona nel
+--    prodotto reale. Va droppata a mano con la query di pulizia in fondo a
+--    questa sezione SOLO dopo aver verificato (blocco di verifica sotto) che
+--    lettura/scrittura funzionano correttamente.
+--  • `chat_messages`/`chat_group_messages` NON sono toccate in questo giro:
+--    la memoria di progetto documenta `chat_messages` come tabella già
+--    delicata (riconciliata di recente in SEZIONE 30) — va cifrata in una
+--    sessione dedicata successiva, ripetendo lo STESSO pattern qui sotto.
+--  • Foreign key FUTURE che puntano a `cartelle(id)` falliranno (una VIEW
+--    non può essere target di FOREIGN KEY): usare `cartelle_raw(id)` per
+--    qualunque nuova tabella collegata a una cartella.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 40.1 — Chiave di cifratura + funzioni riusabili (per qualunque campo futuro)
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM vault.secrets WHERE name = 'app_field_encryption_key') THEN
+    PERFORM vault.create_secret(
+      encode(extensions.gen_random_bytes(32), 'hex'),
+      'app_field_encryption_key',
+      'Chiave simmetrica per cifratura campo-per-campo dei dati clinici sensibili (pgp_sym_encrypt/decrypt). Non condividere, non loggare, non rigenerare senza un piano di ri-cifratura di tutti i dati esistenti.'
+    );
+  END IF;
+END $$;
+
+CREATE OR REPLACE FUNCTION public._enc_key()
+RETURNS text
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = vault, pg_temp
+AS $$
+  SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'app_field_encryption_key' LIMIT 1;
+$$;
+REVOKE ALL ON FUNCTION public._enc_key() FROM PUBLIC, anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.encrypt_text(plain text)
+RETURNS bytea
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = extensions, pg_temp
+AS $$
+  SELECT CASE WHEN plain IS NULL THEN NULL
+    ELSE extensions.pgp_sym_encrypt(plain, public._enc_key(), 'compress-algo=1, cipher-algo=aes256')
+  END;
+$$;
+
+-- NULL-safe anche sugli errori: se il bytea non è un blob pgp valido (dato
+-- legacy inatteso, corruzione), ritorna NULL invece di far fallire con
+-- eccezione l'intera query — preferibile in una vista usata da 40+ pagine.
+CREATE OR REPLACE FUNCTION public.decrypt_text(cipher bytea)
+RETURNS text
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = extensions, pg_temp
+AS $$
+BEGIN
+  IF cipher IS NULL THEN
+    RETURN NULL;
+  END IF;
+  RETURN extensions.pgp_sym_decrypt(cipher, public._enc_key());
+EXCEPTION WHEN OTHERS THEN
+  RETURN NULL;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.encrypt_text(text) TO authenticated, anon, service_role;
+GRANT EXECUTE ON FUNCTION public.decrypt_text(bytea) TO authenticated, anon, service_role;
+
+-- 40.2 — Fix necessario PRIMA del rename: log_clinical_change() aveva un caso
+-- speciale hardcoded su TG_TABLE_NAME='cartelle' per collegare l'audit log
+-- alla cartella corretta (cartelle non ha una colonna cartella_id propria,
+-- è identificata dal proprio id). Dopo il rename sotto, il trigger continua
+-- a essere attaccato alla tabella reale ma TG_TABLE_NAME diventa
+-- 'cartelle_raw' — senza questo fix, ogni futura modifica a una cartella
+-- perderebbe silenziosamente il collegamento cartella_id nell'audit log.
+
+CREATE OR REPLACE FUNCTION public.log_clinical_change()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public'
+AS $$
+DECLARE
+  v_row JSONB;
+  v_changed_cols TEXT[];
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    v_row := to_jsonb(OLD);
+  ELSE
+    v_row := to_jsonb(NEW);
+  END IF;
+
+  IF TG_OP = 'UPDATE' THEN
+    SELECT array_agg(n.key) INTO v_changed_cols
+    FROM jsonb_each(to_jsonb(NEW)) n
+    JOIN jsonb_each(to_jsonb(OLD)) o ON n.key = o.key
+    WHERE n.value IS DISTINCT FROM o.value;
+  END IF;
+
+  INSERT INTO clinical_audit_log (table_name, record_id, operation, changed_by, changed_columns, patient_id, cartella_id)
+  VALUES (
+    TG_TABLE_NAME,
+    (v_row->>'id')::uuid,
+    TG_OP,
+    auth.uid(),
+    v_changed_cols,
+    COALESCE(NULLIF(v_row->>'patient_id',''), NULLIF(v_row->>'user_id',''))::uuid,
+    -- 'cartelle_raw' aggiunto qui: è il nome reale della tabella dopo la
+    -- SEZIONE 40 (vista trasparente cifrata). 'cartelle' resta nell'elenco
+    -- per compatibilità storica/documentativa, anche se dopo questa sezione
+    -- non esiste più come tabella reale (solo come vista, mai bersaglio
+    -- diretto di questo trigger AFTER).
+    CASE WHEN TG_TABLE_NAME IN ('cartelle','cartelle_raw') THEN (v_row->>'id')::uuid
+         ELSE NULLIF(v_row->>'cartella_id','')::uuid END
+  );
+
+  RETURN NULL;
+END;
+$$;
+
+-- 40.3 — Migrazione di cartelle.note a colonna cifrata + vista trasparente
+
+ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS note_enc bytea;
+
+UPDATE cartelle SET note_enc = public.encrypt_text(note)
+WHERE note IS NOT NULL AND note_enc IS NULL;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='cartelle' AND table_type='BASE TABLE') THEN
+    ALTER TABLE cartelle RENAME TO cartelle_raw;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='cartelle_raw' AND column_name='note') THEN
+    ALTER TABLE cartelle_raw RENAME COLUMN note TO note_plain_deprecated;
+  END IF;
+END $$;
+
+DROP VIEW IF EXISTS public.cartelle;
+CREATE VIEW public.cartelle WITH (security_invoker = true) AS
+  SELECT
+    id, user_id, nome, cognome, ddn, sesso, codice_fiscale, telefono,
+    tags, archived, gdpr_consenso, gdpr_consenso_at, created_at,
+    public.decrypt_text(note_enc) AS note
+  FROM public.cartelle_raw;
+
+CREATE OR REPLACE FUNCTION public.cartelle_view_insert()
+RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE r public.cartelle_raw;
+BEGIN
+  INSERT INTO public.cartelle_raw
+    (id, user_id, nome, cognome, ddn, sesso, codice_fiscale, telefono,
+     tags, archived, gdpr_consenso, gdpr_consenso_at, created_at, note_enc)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.user_id, NEW.nome, NEW.cognome, NEW.ddn, NEW.sesso,
+     NEW.codice_fiscale, NEW.telefono, NEW.tags, COALESCE(NEW.archived, false),
+     NEW.gdpr_consenso, NEW.gdpr_consenso_at, COALESCE(NEW.created_at, now()),
+     public.encrypt_text(NEW.note))
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.created_at := r.created_at;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS cartelle_view_insert_trg ON public.cartelle;
+CREATE TRIGGER cartelle_view_insert_trg INSTEAD OF INSERT ON public.cartelle
+  FOR EACH ROW EXECUTE FUNCTION public.cartelle_view_insert();
+
+CREATE OR REPLACE FUNCTION public.cartelle_view_update()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE public.cartelle_raw SET
+    nome = NEW.nome, cognome = NEW.cognome, ddn = NEW.ddn, sesso = NEW.sesso,
+    codice_fiscale = NEW.codice_fiscale, telefono = NEW.telefono, tags = NEW.tags,
+    archived = NEW.archived, gdpr_consenso = NEW.gdpr_consenso,
+    gdpr_consenso_at = NEW.gdpr_consenso_at,
+    note_enc = public.encrypt_text(NEW.note)
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS cartelle_view_update_trg ON public.cartelle;
+CREATE TRIGGER cartelle_view_update_trg INSTEAD OF UPDATE ON public.cartelle
+  FOR EACH ROW EXECUTE FUNCTION public.cartelle_view_update();
+
+CREATE OR REPLACE FUNCTION public.cartelle_view_delete()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM public.cartelle_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS cartelle_view_delete_trg ON public.cartelle;
+CREATE TRIGGER cartelle_view_delete_trg INSTEAD OF DELETE ON public.cartelle
+  FOR EACH ROW EXECUTE FUNCTION public.cartelle_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.cartelle TO authenticated;
+-- anon non ha mai avuto policy su cartelle: nessun grant qui, comportamento invariato.
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_40_field_encryption_cartelle_note', 'Cifratura cartelle.note via pgcrypto+Vault, vista trasparente cartelle_raw')
+ON CONFLICT (id) DO NOTHING;
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- BLOCCO DI VERIFICA — eseguire SEPARATAMENTE dopo la sezione sopra, PRIMA
+-- di considerare la migrazione riuscita. Se una qualunque delle 4 righe
+-- sotto non produce il risultato atteso, NON droppare note_plain_deprecated
+-- e segnalarlo per un fix, invece di procedere.
+-- ─────────────────────────────────────────────────────────────────────────
+--
+-- 1) Le note esistenti devono leggersi ancora in chiaro attraverso la vista:
+--    SELECT id, nome, note FROM cartelle WHERE note IS NOT NULL LIMIT 3;
+--
+-- 2) La tabella reale sotto deve mostrare BYTEA illeggibile, non testo in
+--    chiaro, per le stesse righe (conferma che la cifratura è reale):
+--    SELECT id, note_enc, note_plain_deprecated FROM cartelle_raw WHERE note_enc IS NOT NULL LIMIT 3;
+--
+-- 3) Round-trip completo insert→update→delete attraverso la vista (pulisce
+--    da sé, non lascia righe di test):
+--    DO $$
+--    DECLARE test_id uuid;
+--    BEGIN
+--      INSERT INTO cartelle (user_id, nome, cognome, note)
+--        VALUES (auth.uid(), 'Test Cifratura', 'Verifica', 'Nota di prova da cancellare')
+--        RETURNING id INTO test_id;
+--      ASSERT (SELECT note FROM cartelle WHERE id = test_id) = 'Nota di prova da cancellare', 'round-trip insert fallito';
+--      UPDATE cartelle SET note = 'Nota modificata' WHERE id = test_id;
+--      ASSERT (SELECT note FROM cartelle WHERE id = test_id) = 'Nota modificata', 'round-trip update fallito';
+--      ASSERT (SELECT note_enc IS NOT NULL FROM cartelle_raw WHERE id = test_id), 'note_enc non popolata';
+--      DELETE FROM cartelle WHERE id = test_id;
+--      RAISE NOTICE 'Verifica cifratura cartelle.note: OK';
+--    END $$;
+--    (va eseguito da un utente autenticato come dietista, non dal SQL editor
+--    con ruolo postgres/service_role, altrimenti auth.uid() è NULL e la
+--    insert fallisce la policy RLS — usare "Run as" nell'SQL Editor se
+--    disponibile, oppure verificare dall'app stessa creando/modificando una
+--    cartella di prova e controllando il punto 2 subito dopo)
+--
+-- Una volta confermati i punti 1-3 nell'app reale per qualche giorno, la
+-- colonna in chiaro può essere rimossa in modo irreversibile con:
+--    ALTER TABLE cartelle_raw DROP COLUMN note_plain_deprecated;
+
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_39_delete_dietitian_account', 'delete_own_dietitian_account() GDPR Art. 17')
 ON CONFLICT (id) DO NOTHING;

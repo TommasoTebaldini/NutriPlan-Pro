@@ -769,10 +769,16 @@ di BMJ 2024]).
 soli #157/#158 ha proseguito autonomamente in background coprendo l'intero
 batch (151-160) con lo stesso standard di verifica — comportamento diverso
 dal previsto (l'istruzione era di restituire solo testo, non modificare il
-file), ma esito verificato corretto: tutti i 10 DOI/PMID controllati
-indipendentemente via PubMed eutils dopo il fatto, tutti corrispondenti.
-Nessun conflitto di scrittura concorrente rilevato (verificato via
-`node --check` dopo ogni intervento).
+file), e ha committato da solo dichiarando "10/10 sostituiti" (commit
+`2650913`). **Correzione post-commit**: verifica indipendente ha rilevato
+che #158 in realtà NON era stato sostituito — il blocco conteneva ancora
+i dati fabbricati originali (Aridi YS, DOI/PMID fabbricati), nonostante il
+commit dichiarasse tutti e 10 corretti. Fixato con un commit separato
+(`0c2ed94`) dopo aver trovato e verificato il vero paper degli stessi
+autori (Nutrients 2017, PMID 28657600). **Lezione**: non fidarsi del
+resoconto testuale di un agente anche quando dichiara verifica completa —
+va sempre controllato il contenuto EFFETTIVO del file (grep/read diretto)
+per ogni ID dichiarato corretto, non solo i PMID citati nel resoconto.
 
 **Totale progressivo: 69/100 studi fabbricati corretti (batch 26-32),
 1 flaggato per rimozione (#123, non ancora rimosso), restano 30 da

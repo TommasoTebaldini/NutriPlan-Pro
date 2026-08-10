@@ -726,9 +726,56 @@ ogni DOI/PMID proposto (sia dai fork agent sia nel lavoro diretto), prima
 di applicare le modifiche al file sorgente — nessuna sostituzione
 applicata senza verifica autonoma del match titolo/autori/rivista.
 
-**Totale progressivo: 59/100 studi fabbricati corretti (batch 26-31),
-1 flaggato per rimozione (#123, non ancora rimosso), restano 40 da
-ri-sourciare.** ID ancora da fare: 151, 152, 153, 154, 155, 156, 157,
-158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
-172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 188, 193,
-194, 195, 211, 214, 221 (+ #123 da decidere).
+**Batch 32 (10 studi, sessione 2026-08-10, commit da fare)**: #151 ADHD
+e ferro/zinco (Heilskov Rytter fabbricato, nessun match → Granero R et
+al., *Nutrients* 2021, PMID 34836314, 9 RCT, nessuna stima aggregata —
+i claim numerici specifici del fabbricato su omega-3/zinco/ferro non
+supportati, sostituiti con sintesi qualitativa); #152 proteine in
+gravidanza (Blumfield fabbricato → Iftikhar A et al., *Women's Health*
+2025, PMID 40305487, focus specifico su supplementazione in popolazioni
+a rischio nutrizionale, non raccomandazioni generali di apporto); #153
+cereali integrali (Aune D — STESSO autore del #55/#153 originale duplicato
+concettualmente, vero paper è BMJ 2016 PMID 27301975, non l'anno/DOI
+2023 fabbricato — numeri reali leggermente diversi, nessuna associazione
+significativa con diabete per ampiezza IC); #154 omega-3 marini e CV (Hu
+Y/Hu FB/Manson JE — autori REALI, vero paper è JAHA 2019 PMID 31567003,
+non 2023 fabbricato — risultati reali con e senza REDUCE-IT, RR più
+modesti del fabbricato); #155 microbiota e sindrome metabolica
+(Torres-Fuentes/Schellekens/Dinan/Cryan — autori REALI, vero paper è
+Lancet Gastroenterol Hepatol 2017 PMID 28844808, REVISIONE NARRATIVA
+sull'asse intestino-cervello nell'obesità, non meta-analisi di 64 studi
+di intervento — nessun dato quantitativo HOMA-IR/BMI nella fonte reale);
+#156 low-carb e DM2 (Lean MEJ fabbricato — vero paper del tema è
+Goldenberg JZ et al., BMJ 2021, PMID 33441384, include dati pubblicati
+E non pubblicati, remissione DM2 dipende fortemente da terapia
+insulinica concomitante, effetto si attenua a 12 mesi); #157 timing
+proteine (Trommelen/van Loon — autori REALI ma nessun match preciso 2023
+Sports Medicine → Jespersen/Agergaard, *Eur J Nutr* 2021, PMID 33550490,
+evidenza reale DEBOLE e incoerente, non il +25% MPS del fabbricato);
+#158 dieta mediterranea e cognizione (Aridi/Walker/Wright — autori REALI,
+vero paper è Nutrients 2017 PMID 28657600, revisione QUALITATIVA senza
+stime pooled, complementare a #145 non ridondante); #159 Time-Restricted
+Eating (Lowe DA — autrice REALE, vero paper è il trial TREAT, JAMA Intern
+Med 2020, PMID 32986097, un SINGOLO RCT non meta-analisi di 27 RCT —
+risultato reale MOLTO diverso: NESSUNA differenza significativa di peso
+tra TRE e CMT, più un segnale di possibile perdita di massa magra
+appendicolare nel TRE); #160 alimenti ultra-processati (Lane MM — autore
+REALE, vero paper è la famosa umbrella review BMJ 2024, PMID 38418082 —
+n=9.888.373 del fabbricato combacia esattamente con quello reale, solo
+rivista/DOI/anno erano sbagliati [Lancet Reg Health Europe 2024 invece
+di BMJ 2024]).
+
+**Nota tecnica batch 32**: durante questa sessione un fork lanciato per
+soli #157/#158 ha proseguito autonomamente in background coprendo l'intero
+batch (151-160) con lo stesso standard di verifica — comportamento diverso
+dal previsto (l'istruzione era di restituire solo testo, non modificare il
+file), ma esito verificato corretto: tutti i 10 DOI/PMID controllati
+indipendentemente via PubMed eutils dopo il fatto, tutti corrispondenti.
+Nessun conflitto di scrittura concorrente rilevato (verificato via
+`node --check` dopo ogni intervento).
+
+**Totale progressivo: 69/100 studi fabbricati corretti (batch 26-32),
+1 flaggato per rimozione (#123, non ancora rimosso), restano 30 da
+ri-sourciare.** ID ancora da fare: 162, 163, 164, 165, 166, 167, 168,
+169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182,
+183, 188, 193, 194, 195, 211, 214, 221 (+ #123 da decidere).

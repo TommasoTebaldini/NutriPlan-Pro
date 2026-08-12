@@ -3300,3 +3300,52 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_43_stripe_connect_fatture', 'Stripe Connect per pagamento diretto paziente->dietista (commissione piattaforma 5%)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 44 — TABELLA MANCANTE: diario_alimentare_foto
+--
+-- Il "Diario Alimentare Fotografico" (upload foto pasto → analisi AI →
+-- selezione alimenti → nota clinica del dietista) è completo lato client in
+-- pazienti.html (openDiarioFotoModal/diarioFotoSave/viewDiarioFoto/
+-- deleteDiarioFoto) ma la tabella non è mai stata creata — ogni query
+-- falliva con 404 PostgREST (schema cache: tabella sconosciuta), silenziata
+-- da safeQuery() che la traduce in "nessuna foto". Nessun dato perso: la
+-- feature semplicemente non ha mai scritto nulla finché questa sezione non
+-- viene eseguita.
+--
+-- FK verso cartelle_raw (non la vista `cartelle`), stessa cautela delle
+-- sezioni precedenti (una VIEW non può essere target di REFERENCES).
+
+CREATE TABLE IF NOT EXISTS public.diario_alimentare_foto (
+  id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id        UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  cartella_id    UUID        NOT NULL REFERENCES public.cartelle_raw(id) ON DELETE CASCADE,
+  storage_path   TEXT        NOT NULL,
+  data_diario    DATE        NOT NULL DEFAULT CURRENT_DATE,
+  ai_description TEXT,
+  ai_confidence  TEXT,
+  foods          JSONB       NOT NULL DEFAULT '[]'::jsonb,
+  totali         JSONB       NOT NULL DEFAULT '{}'::jsonb,
+  note           TEXT,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_diario_alimentare_foto_cartella ON public.diario_alimentare_foto(cartella_id);
+
+ALTER TABLE public.diario_alimentare_foto ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'diario_alimentare_foto_dietitian_all' AND tablename = 'diario_alimentare_foto') THEN
+    CREATE POLICY "diario_alimentare_foto_dietitian_all" ON public.diario_alimentare_foto
+      FOR ALL USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+  END IF;
+END $$;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.diario_alimentare_foto TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_44_diario_alimentare_foto', 'Tabella diario_alimentare_foto mancante (feature già completa lato client, mai aveva una tabella)')
+ON CONFLICT (id) DO NOTHING;

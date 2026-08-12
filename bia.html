@@ -275,12 +275,6 @@
       </div>
     </div>
   </div>
-  <div class="calc-box" id="wearable-storico-box">
-    <h3>⌚ <span data-only-lang="it">Attività & Dispositivi</span><span data-only-lang="en" style="display:none">Activity & Devices</span></h3>
-    <div id="wearable-storico-body">
-      <div class="alert-info"><span data-only-lang="it">Seleziona un paziente per vedere i dati sincronizzati dall'app.</span><span data-only-lang="en" style="display:none">Select a patient to view data synced from the app.</span></div>
-    </div>
-  </div>
 </div>
 
 <!-- TAB 4: VALORI RIFERIMENTO -->
@@ -1028,8 +1022,6 @@ async function loadStorico() {
   let query = sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,cartella_id,note,visible_to_patient').eq('user_id', currentUser.id).order('data_misura', {ascending: false});
   if (cartellaFilt) query = query.eq('cartella_id', cartellaFilt);
 
-  loadWearableStorico(cartellaFilt);
-
   const { data, error } = await query;
   const wrap = document.getElementById('storico-table-wrap');
 
@@ -1157,84 +1149,6 @@ function renderBiaTrend(data) {
       y1: { position: 'right', title: { display: true, text: 'Angolo °' }, grid: { drawOnChartArea: false } }
     }}
   });
-}
-
-// ── Attività & Dispositivi — dati sincronizzati dal paziente via app
-// (Diet-Plan-Pro). Spostato qui da pazienti.html su richiesta esplicita
-// dell'utente: prima viveva come card nella cartella paziente, ora nella tab
-// Storico & Trend di BIA, filtrato dallo stesso selettore paziente. Il
-// payload di sync del paziente scrive solo user_id+date (non cartella_id),
-// quindi si interroga per user_id = patientId, non per cartella_id.
-let _wearableChart = null;
-async function loadWearableStorico(cartellaId) {
-  const body = document.getElementById('wearable-storico-body');
-  if (!body) return;
-
-  if (!cartellaId) {
-    body.innerHTML = `<div class="alert-info"><span data-only-lang="it">Seleziona un paziente per vedere i dati sincronizzati dall'app.</span><span data-only-lang="en" style="display:none">Select a patient to view data synced from the app.</span></div>`;
-    if (_wearableChart) { _wearableChart.destroy(); _wearableChart = null; }
-    return;
-  }
-
-  const { data: link } = await sb.from('patient_dietitian').select('patient_id').eq('cartella_id', cartellaId).eq('dietitian_id', currentUser.id).maybeSingle();
-  const patientId = link?.patient_id || null;
-
-  if (!patientId) {
-    body.innerHTML = `<div class="alert-info"><span data-only-lang="it">Il paziente non ha ancora collegato il proprio account app.</span><span data-only-lang="en" style="display:none">Patient has not linked their app account yet.</span></div>`;
-    if (_wearableChart) { _wearableChart.destroy(); _wearableChart = null; }
-    return;
-  }
-
-  const [weightRes, wellRes] = await Promise.all([
-    sb.from('weight_logs').select('weight_kg,date').eq('user_id', patientId).order('date', { ascending: false }).limit(30),
-    sb.from('daily_wellness').select('date,steps,heart_rate_avg,sleep_hours').eq('user_id', patientId).order('date', { ascending: false }).limit(14),
-  ]);
-  const weightLogs = weightRes.data || [];
-  const wellnessLogs = wellRes.data || [];
-
-  const avgOf = (nums) => { const v = nums.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
-  const avgSteps = avgOf(wellnessLogs.map(w => w.steps));
-  const avgHr = avgOf(wellnessLogs.map(w => w.heart_rate_avg));
-  const avgSleep = avgOf(wellnessLogs.map(w => w.sleep_hours));
-  const latestWeight = weightLogs[0]?.weight_kg ?? null;
-  const oldestWeightInRange = weightLogs[weightLogs.length - 1]?.weight_kg ?? null;
-  const weightDelta = (latestWeight != null && oldestWeightInRange != null) ? +(latestWeight - oldestWeightInRange).toFixed(1) : null;
-  const hasData = weightLogs.length || wellnessLogs.some(w => w.steps != null || w.heart_rate_avg != null || w.sleep_hours != null);
-
-  if (!hasData) {
-    body.innerHTML = `<div class="alert-info"><span data-only-lang="it">Nessun dato da wearable/app ancora sincronizzato.</span><span data-only-lang="en" style="display:none">No wearable/app data synced yet.</span></div>`;
-    if (_wearableChart) { _wearableChart.destroy(); _wearableChart = null; }
-    return;
-  }
-
-  const tile = (icon, label, value, unit, color) => `
-    <div style="flex:1;min-width:100px;background:white;border-radius:10px;border:1.5px solid var(--border);padding:12px 14px;text-align:center">
-      <div style="font-size:20px">${icon}</div>
-      <div style="font-size:18px;font-weight:800;color:${color};margin-top:4px">${value != null ? esc(String(value)) + (unit ? ' ' + unit : '') : '—'}</div>
-      <div style="font-size:11px;color:var(--slate-m);margin-top:2px">${label}</div>
-    </div>`;
-
-  body.innerHTML = `
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-      ${tile('⚖️', _L('Peso attuale','Current weight'), latestWeight, 'kg', '#0F766E')}
-      ${tile(weightDelta == null ? '📊' : (weightDelta <= 0 ? '📉' : '📈'), _L('Variazione peso','Weight change'), weightDelta == null ? null : (weightDelta > 0 ? '+' : '') + weightDelta, 'kg', (weightDelta != null && weightDelta < 0) ? '#16A34A' : '#475569')}
-      ${tile('👣', _L('Passi (media 14gg)','Steps (14d avg)'), avgSteps != null ? Math.round(avgSteps) : null, '', '#1D4ED8')}
-      ${tile('❤️', _L('FC media','Avg HR'), avgHr != null ? Math.round(avgHr) : null, 'bpm', '#DC2626')}
-      ${tile('😴', _L('Sonno (media)','Sleep (avg)'), avgSleep != null ? avgSleep.toFixed(1) : null, 'h', '#7C3AED')}
-    </div>
-    ${weightLogs.length >= 2 ? `<div style="position:relative;height:220px"><canvas id="wearable-storico-chart"></canvas></div>` : ''}`;
-
-  if (_wearableChart) { _wearableChart.destroy(); _wearableChart = null; }
-  if (weightLogs.length >= 2 && typeof Chart !== 'undefined') {
-    const ordered = [...weightLogs].reverse();
-    const labels = ordered.map(w => new Date(w.date).toLocaleDateString('it', { day: '2-digit', month: '2-digit' }));
-    const values = ordered.map(w => w.weight_kg);
-    _wearableChart = new Chart(document.getElementById('wearable-storico-chart'), {
-      type: 'line',
-      data: { labels, datasets: [{ label: _L('Peso (kg)','Weight (kg)'), data: values, borderColor: '#0F766E', backgroundColor: 'rgba(15,118,110,.1)', tension: .3, spanGaps: true, pointRadius: 4 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } },
-    });
-  }
 }
 
 function parsePastedText() {

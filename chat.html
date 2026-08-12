@@ -2312,18 +2312,70 @@ async function loadStorico(limitMonths) {
     .select('*').eq('cartella_id', p.cartellaId).order('saved_at', {ascending:true});
   if (limitMonths) schedeQ = schedeQ.gte('saved_at', new Date(Date.now()-limitMonths*30*86400000).toISOString());
 
-  // All 3 queries in parallel
-  const [schedeRes, {data: wLogs}, {data: esamiDB}] = await Promise.all([
+  // All 5 queries in parallel — weight_logs/daily_wellness per Attività &
+  // Dispositivi (spostata qui da pazienti.html su richiesta esplicita
+  // dell'utente) filtrate per user_id = p.id (il paziente collegato): il
+  // payload di sync dell'app paziente scrive solo user_id+date, mai
+  // cartella_id, quindi filtrare per cartella_id qui darebbe sempre 0 righe.
+  const [schedeRes, {data: wLogs}, {data: esamiDB}, {data: actWeightLogs}, {data: actWellnessLogs}] = await Promise.all([
     schedeQ,
     sb.from('weight_logs').select('weight,logged_at').eq('cartella_id', p.cartellaId).order('logged_at',{ascending:true}).limit(200),
     sb.from('esami_biochimici').select('tipo,valore,unita,data_esame,created_at').eq('cartella_id', p.cartellaId).order('data_esame',{ascending:true}),
+    sb.from('weight_logs').select('weight_kg,date').eq('user_id', p.id).order('date', {ascending:false}).limit(30),
+    sb.from('daily_wellness').select('date,steps,heart_rate_avg,sleep_hours').eq('user_id', p.id).order('date', {ascending:false}).limit(14),
   ]);
   const schede = schedeRes.data || [];
   const error = schedeRes.error;
 
-  if (error) { panel.innerHTML = `<div class="stor-no-data">❌ ${esc(error.message)}</div>`; return; }
+  // ── Attività & Dispositivi — indipendente dalle schede di valutazione, va
+  // calcolata prima di qualunque return anticipato così compare anche per un
+  // paziente che sincronizza dati wearable ma non ha ancora una valutazione.
+  const activityWeightLogs = actWeightLogs || [];
+  const activityWellnessLogs = actWellnessLogs || [];
+  const avgOf = (nums) => { const v = nums.filter(x => x != null); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; };
+  const actAvgSteps = avgOf(activityWellnessLogs.map(w => w.steps));
+  const actAvgHr = avgOf(activityWellnessLogs.map(w => w.heart_rate_avg));
+  const actAvgSleep = avgOf(activityWellnessLogs.map(w => w.sleep_hours));
+  const actLatestWeight = activityWeightLogs[0]?.weight_kg ?? null;
+  const actOldestWeight = activityWeightLogs[activityWeightLogs.length - 1]?.weight_kg ?? null;
+  const actWeightDelta = (actLatestWeight != null && actOldestWeight != null) ? +(actLatestWeight - actOldestWeight).toFixed(1) : null;
+  const hasActivityData = activityWeightLogs.length || activityWellnessLogs.some(w => w.steps != null || w.heart_rate_avg != null || w.sleep_hours != null);
+
+  const actTile = (icon, label, value, unit, color) => `
+    <div class="stor-stat"><div class="stor-stat-val" style="color:${color}">${value != null ? esc(String(value)) + (unit ? ' ' + unit : '') : '—'}</div><div class="stor-stat-lbl">${icon} ${label}</div></div>`;
+
+  const activityHtml = !hasActivityData ? '' : `<div class="stor-chart-card" style="grid-column:1/-1">
+    <h4>⌚ ${_L('Attività & Dispositivi','Activity & Devices')}</h4>
+    <div class="stor-stat-grid" style="margin-bottom:10px">
+      ${actTile('⚖️', _L('Peso attuale','Current weight'), actLatestWeight, 'kg', '#0F766E')}
+      ${actTile(actWeightDelta == null ? '📊' : (actWeightDelta <= 0 ? '📉' : '📈'), _L('Variazione peso','Weight change'), actWeightDelta == null ? null : (actWeightDelta > 0 ? '+' : '') + actWeightDelta, 'kg', (actWeightDelta != null && actWeightDelta < 0) ? '#16A34A' : '#475569')}
+      ${actTile('👣', _L('Passi (media 14gg)','Steps (14d avg)'), actAvgSteps != null ? Math.round(actAvgSteps) : null, '', '#1D4ED8')}
+      ${actTile('❤️', _L('FC media','Avg HR'), actAvgHr != null ? Math.round(actAvgHr) : null, 'bpm', '#DC2626')}
+      ${actTile('😴', _L('Sonno (media)','Sleep (avg)'), actAvgSleep != null ? actAvgSleep.toFixed(1) : null, 'h', '#7C3AED')}
+    </div>
+    ${activityWeightLogs.length >= 2 ? `<div class="stor-chart-wrap"><canvas id="chart-activity-weight"></canvas></div>` : ''}
+  </div>`;
+
+  function renderActivityChart() {
+    const el = document.getElementById('chart-activity-weight');
+    if (!el || typeof Chart === 'undefined' || activityWeightLogs.length < 2) return;
+    const ordered = [...activityWeightLogs].reverse();
+    const c = new Chart(el, {
+      type: 'line',
+      data: {
+        labels: ordered.map(w => new Date(w.date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })),
+        datasets: [{ label: 'Peso (kg)', data: ordered.map(w => w.weight_kg), borderColor: '#0F766E', backgroundColor: 'rgba(15,118,110,.15)', fill: true, borderWidth: 2.5, pointRadius: 4, tension: .3, spanGaps: true }],
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } },
+    });
+    _storicoCharts.push(c);
+  }
+
+  if (error) { panel.innerHTML = `<div class="stor-no-data">❌ ${esc(error.message)}</div>` + activityHtml; await ensureChartJs(); requestAnimationFrame(renderActivityChart); return; }
   if (!schede || schede.length < 1) {
-    panel.innerHTML = `<div class="stor-no-data"><div style="font-size:36px">📊</div><div>${_L('Nessuna scheda di valutazione trovata per questo paziente.','No assessment records found for this patient.')}<br><span style="font-size:12px;color:var(--slate-l)">${_L('Le schede compaiono qui dopo la compilazione della Valutazione Paziente.','Records appear here after completing the Patient Assessment.')}</span></div></div>`;
+    panel.innerHTML = `<div class="stor-no-data"><div style="font-size:36px">📊</div><div>${_L('Nessuna scheda di valutazione trovata per questo paziente.','No assessment records found for this patient.')}<br><span style="font-size:12px;color:var(--slate-l)">${_L('Le schede compaiono qui dopo la compilazione della Valutazione Paziente.','Records appear here after completing the Patient Assessment.')}</span></div></div>` + activityHtml;
+    await ensureChartJs();
+    requestAnimationFrame(renderActivityChart);
     return;
   }
 
@@ -2552,6 +2604,7 @@ async function loadStorico(limitMonths) {
   }).join('') : '';
 
   const chartsHTML = `<div class="stor-charts-grid">
+    ${activityHtml}
     ${schede.length>1&&(pesi.some(v=>v)||(wLogs&&wLogs.length)) ? `<div class="stor-chart-card"><h4>⚖️ Andamento Peso</h4><div class="stor-chart-wrap"><canvas id="chart-peso"></canvas></div></div>` : ''}
     ${schede.length>1&&bmis.some(v=>v) ? `<div class="stor-chart-card"><h4>📐 Indice di Massa Corporea (BMI)</h4><div class="stor-chart-wrap"><canvas id="chart-bmi"></canvas></div></div>` : ''}
     ${schede.length>1&&(mgrasSS.some(v=>v)||mmagraKg.some(v=>v)) ? `<div class="stor-chart-card"><h4>💪 Composizione Corporea</h4><div class="stor-chart-wrap"><canvas id="chart-comp"></canvas></div></div>` : ''}
@@ -2563,6 +2616,7 @@ async function loadStorico(limitMonths) {
 
   await ensureChartJs();
   requestAnimationFrame(() => {
+    renderActivityChart();
     const font = { family: "'DM Sans', sans-serif" };
     const defaults = { borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 7, tension: .42, fill: false, pointBackgroundColor: 'white', pointBorderWidth: 2, spanGaps: true };
     const gridOpts = { color: 'rgba(226,232,240,.7)', lineWidth: 1 };

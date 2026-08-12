@@ -1353,44 +1353,6 @@ async function renderCartellaDetail(id) {
         <div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#0F766E,#14B8A6);border-radius:4px"></div></div>`;
       })();
 
-  // Attività & Dispositivi — dati sincronizzati dal paziente via app (Diet-Plan-Pro).
-  // Il payload di sync scrive solo user_id+date (non cartella_id/patient_id), quindi
-  // si interroga per user_id = patientId, non per cartella_id.
-  const [weightLogs, wellnessLogs] = patientId ? await Promise.all([
-    safeQuery(sb.from('weight_logs').select('weight_kg,date').eq('user_id', patientId).order('date', {ascending:false}).limit(30)),
-    safeQuery(sb.from('daily_wellness').select('date,steps,heart_rate_avg,sleep_hours').eq('user_id', patientId).order('date', {ascending:false}).limit(14)),
-  ]) : [[], []];
-
-  const avgOf = (nums) => { const v = nums.filter(x => x != null); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; };
-  const avgSteps = avgOf(wellnessLogs.map(w => w.steps));
-  const avgHr = avgOf(wellnessLogs.map(w => w.heart_rate_avg));
-  const avgSleep = avgOf(wellnessLogs.map(w => w.sleep_hours));
-  const latestWeight = weightLogs[0]?.weight_kg ?? null;
-  const oldestWeightInRange = weightLogs[weightLogs.length - 1]?.weight_kg ?? null;
-  const weightDelta = (latestWeight != null && oldestWeightInRange != null) ? +(latestWeight - oldestWeightInRange).toFixed(1) : null;
-  const hasWearableData = !!(patientId && (weightLogs.length || wellnessLogs.some(w => w.steps != null || w.heart_rate_avg != null || w.sleep_hours != null)));
-
-  const wearableStatTile = (icon, label, value, unit, color) => `
-    <div style="flex:1;min-width:110px;background:white;border-radius:10px;border:1.5px solid var(--border);padding:12px 14px;text-align:center">
-      <div style="font-size:20px">${icon}</div>
-      <div style="font-size:18px;font-weight:800;color:${color};margin-top:4px">${value != null ? esc(String(value)) + (unit ? ' ' + unit : '') : '—'}</div>
-      <div style="font-size:11px;color:var(--slate-l);margin-top:2px">${label}</div>
-    </div>`;
-
-  const wearableHtml = !patientId
-    ? `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Il paziente non ha ancora collegato il proprio account app.','Patient has not linked their app account yet.')}</div>`
-    : !hasWearableData
-    ? `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Nessun dato da wearable/app ancora sincronizzato.','No wearable/app data synced yet.')}</div>`
-    : `
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-      ${wearableStatTile('⚖️', _L('Peso attuale','Current weight'), latestWeight, 'kg', '#0F766E')}
-      ${wearableStatTile(weightDelta == null ? '📊' : (weightDelta <= 0 ? '📉' : '📈'), _L('Variazione peso','Weight change'), weightDelta == null ? null : (weightDelta > 0 ? '+' : '') + weightDelta, 'kg', (weightDelta != null && weightDelta < 0) ? '#16A34A' : '#475569')}
-      ${wearableStatTile('👣', _L('Passi (media 14gg)','Steps (14d avg)'), avgSteps != null ? Math.round(avgSteps) : null, '', '#1D4ED8')}
-      ${wearableStatTile('❤️', _L('FC media','Avg HR'), avgHr != null ? Math.round(avgHr) : null, 'bpm', '#DC2626')}
-      ${wearableStatTile('😴', _L('Sonno (media)','Sleep (avg)'), avgSleep != null ? avgSleep.toFixed(1) : null, 'h', '#7C3AED')}
-    </div>
-    ${weightLogs.length >= 2 ? `<div style="height:180px;position:relative"><canvas id="wearable-weight-chart"></canvas></div>` : ''}`;
-
   // Build esami biochimici list
   const esamiHtml = (esamiBiochimici && esamiBiochimici.length) ? esamiBiochimici.map(e => {
     const bdg = getEsameBadge(e.tipo, e.valore);
@@ -1630,16 +1592,6 @@ async function renderCartellaDetail(id) {
       <div style="padding:10px 14px">${percorsoHtml}</div>
     </div>
 
-    <!-- Attività & Dispositivi (wearable app paziente) -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <h4 style="display:flex;align-items:center;gap:8px;font-size:14px;margin:0;flex:1;min-width:0">
-          ⌚ ${_L('Attività & Dispositivi','Activity & Devices')}
-        </h4>
-      </div>
-      <div style="padding:10px 14px">${wearableHtml}</div>
-    </div>
-
     <!-- Questionari Salvati -->
     <div class="card" style="margin-bottom:12px">
       <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -1731,11 +1683,6 @@ async function renderCartellaDetail(id) {
   `;
 
   loadAuditLog(id);
-
-  if (patientId && weightLogs.length >= 2) {
-    const wearableChartData = [...weightLogs].reverse().map(w => ({ logged_at: w.date, weight: w.weight_kg }));
-    renderWeightChart('wearable-weight-chart', wearableChartData);
-  }
 }
 
 async function loadAuditLog(cartellaId) {

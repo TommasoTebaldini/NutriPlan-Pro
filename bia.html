@@ -930,7 +930,7 @@ async function salvaBIA() {
 
   const record = {
     cartella_id,
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     data_misura: document.getElementById('bia-data').value || new Date().toISOString().split('T')[0],
     note: document.getElementById('bia-note').value,
     peso: d.peso, altezza: d.alt, eta: d.eta, sesso: d.sesso,
@@ -947,7 +947,7 @@ async function salvaBIA() {
   let error;
   const isUpdate = !!currentBiaId;
   if (currentBiaId) {
-    ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId).eq('user_id', currentUser.id));
+    ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId).eq('user_id', studioOwnerId || currentUser.id));
   } else {
     record.visible_to_patient = false;
     const result = await sb.from('bia_records').insert(record).select().single();
@@ -1019,7 +1019,7 @@ async function salvaBIA() {
 async function loadStorico() {
   if (!currentUser) return;
   const cartellaFilt = document.getElementById('storico-cartella')?.value || '';
-  let query = sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,cartella_id,note,visible_to_patient').eq('user_id', currentUser.id).order('data_misura', {ascending: false});
+  let query = sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,cartella_id,note,visible_to_patient').eq('user_id', studioOwnerId || currentUser.id).order('data_misura', {ascending: false});
   if (cartellaFilt) query = query.eq('cartella_id', cartellaFilt);
 
   const { data, error } = await query;
@@ -1236,7 +1236,7 @@ function onCartellaChange() {
 
 async function loadCartellePaz() {
   if (!currentUser) return;
-  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   cartelleList = data || [];
   ['bia-cartella','storico-cartella'].forEach(selId => {
     const sel = document.getElementById(selId);
@@ -1269,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (biaIdParam && currentUser) {
       showLoading(true);
-      const { data } = await sb.from('bia_records').select('*').eq('id', biaIdParam).eq('user_id', currentUser.id).single();
+      const { data } = await sb.from('bia_records').select('*').eq('id', biaIdParam).eq('user_id', studioOwnerId || currentUser.id).single();
       showLoading(false);
       if (data) {
         currentBiaId = data.id;

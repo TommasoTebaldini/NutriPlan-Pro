@@ -151,7 +151,7 @@ async function loadChatPatients() {
   // Get patients linked via patient_dietitian (include cartella_id for name fallback)
   const { data: links, error: linkErr } = await sb.from('patient_dietitian')
     .select('patient_id,cartella_id')
-    .eq('dietitian_id', currentUser.id);
+    .eq('dietitian_id', studioOwnerId || currentUser.id);
 
   if (linkErr || !links || !links.length) {
     listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate-l);font-size:12.5px">' + _L('Nessun paziente collegato.','No connected patients.') + '<br><br><span style="font-size:11px">' + _L('Collega i pazienti dalla loro cartella.','Connect patients from their patient file.') + '</span></div>';
@@ -1690,7 +1690,9 @@ async function _insertChatMessage(payload) {
 
 async function startVideoCall() {
   if (!selectedPatientId || !currentUser) return;
-  const room = _callRoomName(selectedPatientId, currentUser.id);
+  // Il lato paziente (ChatPage.jsx) calcola la stanza da patient_dietitian.dietitian_id
+  // (l'id del titolare/studio), mai da chi sta chiamando — deve combaciare.
+  const room = _callRoomName(selectedPatientId, studioOwnerId || currentUser.id);
   // Notifica il paziente in chat con la convenzione message_type:'video_call'
   // che ChatPage.jsx già renderizza con il pulsante "Partecipa".
   const { data, error } = await _insertChatMessage({
@@ -1974,17 +1976,21 @@ async function loadPrivacy() {
     return;
   }
 
+  const _owner = studioOwnerId || currentUser.id;
   const [{ data: consent }, { data: me }, { data: privDoc }, { data: altriModuli }] = await Promise.all([
     sb.from('patient_consents').select('id,consent_text,signed_at,created_at').eq('cartella_id', p.cartellaId).order('created_at', {ascending:false}).limit(1).maybeSingle(),
-    sb.from('profiles').select('email,consent_template').eq('id', currentUser.id).maybeSingle(),
+    // Il template di consenso è a livello di studio (unico, condiviso), non
+    // personale del singolo collaboratore — si legge sempre dal profilo del
+    // titolare, anche quando chi sta scrivendo è un collaboratore.
+    sb.from('profiles').select('email,consent_template').eq('id', _owner).maybeSingle(),
     // patient_documents is what the React patient app signs — check it for real signed status
     selectedPatientId
-      ? sb.from('patient_documents').select('signed_at,signature_accepted,created_at').eq('patient_id', selectedPatientId).eq('type', 'privacy').eq('dietitian_id', currentUser.id).order('created_at', {ascending:false}).limit(1).maybeSingle()
+      ? sb.from('patient_documents').select('signed_at,signature_accepted,created_at').eq('patient_id', selectedPatientId).eq('type', 'privacy').eq('dietitian_id', _owner).order('created_at', {ascending:false}).limit(1).maybeSingle()
       : Promise.resolve({ data: null }),
     // Altri documenti da firmare (GDPR, moduli/contratti generici) — la
     // dedicated card sopra copre solo 'privacy', qui mostriamo tutto il resto.
     selectedPatientId
-      ? sb.from('patient_documents').select('id,title,type,content,signed_at,created_at').eq('patient_id', selectedPatientId).eq('dietitian_id', currentUser.id).neq('type', 'privacy').eq('requires_signature', true).order('created_at', {ascending:false})
+      ? sb.from('patient_documents').select('id,title,type,content,signed_at,created_at').eq('patient_id', selectedPatientId).eq('dietitian_id', _owner).neq('type', 'privacy').eq('requires_signature', true).order('created_at', {ascending:false})
       : Promise.resolve({ data: [] }),
   ]);
 
@@ -2105,7 +2111,7 @@ async function createConsent(cartellaId, patientName, dietEmail) {
   const pid = chatPatients.find(x => x.id === selectedPatientId)?.id || null;
   const {error} = await sb.from('patient_consents').insert({
     cartella_id: cartellaId,
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     patient_id: pid,
     consent_text: text,
     visible_to_patient: true,
@@ -2117,7 +2123,8 @@ async function createConsent(cartellaId, patientName, dietEmail) {
 }
 
 async function getConsentTemplate() {
-  const {data} = await sb.from('profiles').select('consent_template').eq('id', currentUser.id).maybeSingle();
+  // Template a livello di studio: si legge sempre dal profilo del titolare.
+  const {data} = await sb.from('profiles').select('consent_template').eq('id', studioOwnerId || currentUser.id).maybeSingle();
   return data?.consent_template || null;
 }
 
@@ -3133,7 +3140,7 @@ async function scribeSaveNote() {
     `SOGGETTIVO\n${soap.soggettivo}\n\nOBIETTIVO\n${soap.obiettivo}\n\nVALUTAZIONE\n${soap.valutazione}\n\nPIANO\n${soap.piano}`;
   try {
     const { error } = await sb.from('note_specialistiche').insert({
-      user_id: currentUser.id,
+      user_id: studioOwnerId || currentUser.id,
       cartella_id: p.cartellaId,
       tipo: 'ai_scribe_soap',
       nota: notaTesto,

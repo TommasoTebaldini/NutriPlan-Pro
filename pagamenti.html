@@ -422,7 +422,7 @@ async function attivaStripeConnect() {
 async function loadPatients() {
   if (!currentUser) return;
   try {
-    const { data: relations } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+    const { data: relations } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', studioOwnerId || currentUser.id);
     if (!relations?.length) return;
     const ids = relations.map(r => r.patient_id);
     const { data: profiles } = await sb.from('profiles').select('id,full_name,first_name,last_name,email').in('id', ids);
@@ -440,7 +440,7 @@ async function loadFatture() {
     return;
   }
   try {
-    const { data, error } = await sb.from('fatture').select('*').eq('dietitian_id', currentUser.id).order('data_fattura', { ascending: false });
+    const { data, error } = await sb.from('fatture').select('*').eq('dietitian_id', studioOwnerId || currentUser.id).order('data_fattura', { ascending: false });
     if (error) {
       if (error.code === '42P01') {
         fattureTableMissing = true;
@@ -713,8 +713,8 @@ async function loadPacchetti() {
   if (!currentUser) return;
   _pacchettiLoaded = true;
   const [pRes, vRes] = await Promise.all([
-    sb.from('pacchetti').select('*').eq('dietitian_id', currentUser.id).order('created_at', { ascending: true }),
-    sb.from('pacchetti_acquistati').select('*').eq('dietitian_id', currentUser.id).order('created_at', { ascending: false }),
+    sb.from('pacchetti').select('*').eq('dietitian_id', studioOwnerId || currentUser.id).order('created_at', { ascending: true }),
+    sb.from('pacchetti_acquistati').select('*').eq('dietitian_id', studioOwnerId || currentUser.id).order('created_at', { ascending: false }),
   ]);
   if (pRes.error && pRes.error.code === '42P01') {
     document.getElementById('pacchetti-list').innerHTML = '<div style="background:#FEF3C7;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#92400E">⚠️ Tabelle pacchetti mancanti — esegui la SEZIONE 31 di <code>supabase_setup.sql</code> su Supabase.</div>';
@@ -793,9 +793,9 @@ async function salvaPacchetto() {
   const durata = parseInt(document.getElementById('pacc-durata').value, 10) || null;
   const descrizione = document.getElementById('pacc-desc').value.trim() || null;
   if (!nome || !n_visite || n_visite < 1 || !isFinite(prezzo) || prezzo < 0) { toast('Compila nome, visite e prezzo', 'err'); return; }
-  const payload = { dietitian_id: currentUser.id, nome, n_visite, prezzo, durata_giorni: durata, descrizione };
+  const payload = { dietitian_id: studioOwnerId || currentUser.id, nome, n_visite, prezzo, durata_giorni: durata, descrizione };
   const res = _editingPacchettoId
-    ? await sb.from('pacchetti').update(payload).eq('id', _editingPacchettoId).eq('dietitian_id', currentUser.id)
+    ? await sb.from('pacchetti').update(payload).eq('id', _editingPacchettoId).eq('dietitian_id', studioOwnerId || currentUser.id)
     : await sb.from('pacchetti').insert(payload);
   if (res.error) {
     toast(res.error.code === '42P01' ? '⚠️ Esegui la SEZIONE 31 di supabase_setup.sql' : '❌ ' + res.error.message, 'err');
@@ -808,7 +808,7 @@ async function salvaPacchetto() {
 
 async function deletePacchetto(id) {
   if (!confirm('Eliminare questo pacchetto? I percorsi già venduti ai pazienti restano invariati.')) return;
-  const { error } = await sb.from('pacchetti').delete().eq('id', id).eq('dietitian_id', currentUser.id);
+  const { error } = await sb.from('pacchetti').delete().eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error) { toast('❌ ' + error.message, 'err'); return; }
   await loadPacchetti();
 }
@@ -834,7 +834,7 @@ async function confermaVendiPacchetto() {
     ? new Date(new Date(dataInizio).getTime() + p.durata_giorni * 86400000).toISOString().slice(0, 10)
     : null;
   const { error } = await sb.from('pacchetti_acquistati').insert({
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     patient_id: patientId,
     patient_name: patients.find(x => x.id === patientId)?.name || null,
     pacchetto_id: p.id,
@@ -857,7 +857,7 @@ async function registraVisitaPacchetto(id) {
   if (!v || v.visite_usate >= v.visite_totali) return;
   const { error } = await sb.from('pacchetti_acquistati')
     .update({ visite_usate: v.visite_usate + 1 })
-    .eq('id', id).eq('dietitian_id', currentUser.id);
+    .eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error) { toast('❌ ' + error.message, 'err'); return; }
   await loadPacchetti();
 }
@@ -876,7 +876,7 @@ function fatturaDaPacchetto(id) {
 
 async function deletePacchettoVenduto(id) {
   if (!confirm('Rimuovere questo pacchetto assegnato al paziente?')) return;
-  const { error } = await sb.from('pacchetti_acquistati').delete().eq('id', id).eq('dietitian_id', currentUser.id);
+  const { error } = await sb.from('pacchetti_acquistati').delete().eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error) { toast('❌ ' + error.message, 'err'); return; }
   await loadPacchetti();
 }
@@ -1013,7 +1013,7 @@ async function salvaFattura() {
   if (importo <= 0) { toast('Inserisci un importo valido', 'err'); return; }
   const now = new Date().toISOString();
   const payload = {
-    dietitian_id: currentUser?.id || 'local',
+    dietitian_id: studioOwnerId || currentUser?.id || 'local',
     patient_id: patientId || null,
     patient_name: patientName,
     numero_fattura: document.getElementById('fatt-numero').value,

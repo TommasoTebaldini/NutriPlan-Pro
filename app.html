@@ -2054,13 +2054,13 @@ async function salvaPiano() {
     })
   }));
   const payload = {
-    user_id: currentUser.id, nome, data_piano: data,
+    user_id: studioOwnerId || currentUser.id, nome, data_piano: data,
     meals: JSON.stringify(giorniEnriched),
     saved_at: new Date().toISOString(), cartella_id: finalCartellaId
   };
   showLoading(true);
   let result;
-  if (currentPianoId) { result = await sb.from('piani').update(payload).eq('id', currentPianoId).eq('user_id', currentUser.id); }
+  if (currentPianoId) { result = await sb.from('piani').update(payload).eq('id', currentPianoId).eq('user_id', studioOwnerId || currentUser.id); }
   else { payload.visible_to_patient = false; result = await sb.from('piani').insert(payload).select().single(); if (result.data) currentPianoId = result.data.id; }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
@@ -2187,7 +2187,7 @@ async function autoCapturePianoForVisibility(pianoId, cartellaId, formato) {
       return;
     }
 
-    const { error } = await sb.from('piani').update({ visible_to_patient: true, display_mode: formato }).eq('id', pianoId).eq('user_id', currentUser.id);
+    const { error } = await sb.from('piani').update({ visible_to_patient: true, display_mode: formato }).eq('id', pianoId).eq('user_id', studioOwnerId || currentUser.id);
     if (error) {
       toast(_L('⚠️ Immagine creata ma errore visibilità: ','⚠️ Image created but visibility error: ') + error.message, 'err');
     } else {
@@ -2920,7 +2920,7 @@ async function _lsCaricaSalvata(tipo) {
   try {
     const { data, error } = await sb.from('liste_spesa')
       .select('id,items,visible_to_patient,piano_id')
-      .eq('user_id', currentUser.id)
+      .eq('user_id', studioOwnerId || currentUser.id)
       .eq('cartella_id', cartella_id)
       .eq('tipo', tipo)
       .order('updated_at', { ascending: false })
@@ -3006,7 +3006,7 @@ async function eliminaListaSpesa() {
   if (!_lsId || !currentUser) return;
   if (!confirm(_L('Eliminare definitivamente questa lista della spesa?','Permanently delete this shopping list?'))) return;
   showLoading(true);
-  const { error } = await sb.from('liste_spesa').delete().eq('id', _lsId).eq('user_id', currentUser.id);
+  const { error } = await sb.from('liste_spesa').delete().eq('id', _lsId).eq('user_id', studioOwnerId || currentUser.id);
   showLoading(false);
   if (error) { toast(_L('❌ Errore nell\'eliminazione','❌ Error deleting the list'), 'err'); return; }
   _lsId = null;
@@ -3118,7 +3118,7 @@ async function salvaListaSpesa() {
 
   const visible = document.getElementById('ls-visible-toggle')?.checked || false;
   const payload = {
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     cartella_id,
     piano_id: _lsTipo === 'auto' ? (currentPianoId || null) : null,
     nome: _lsTipo === 'auto' ? _L('Lista spesa dal piano','Shopping list from plan') : _L('Lista spesa','Shopping list'),
@@ -3130,7 +3130,7 @@ async function salvaListaSpesa() {
 
   showLoading(true);
   const result = _lsId
-    ? await sb.from('liste_spesa').update(payload).eq('id', _lsId).eq('user_id', currentUser.id)
+    ? await sb.from('liste_spesa').update(payload).eq('id', _lsId).eq('user_id', studioOwnerId || currentUser.id)
     : await sb.from('liste_spesa').insert(payload).select().single();
   showLoading(false);
 
@@ -3316,7 +3316,7 @@ let allCartelle = [];
 
 async function loadCartelleAll() {
   if (!currentUser) return;
-  const { data } = await sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id', currentUser.id).order('nome');
+  const { data } = await sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   allCartelle = data || [];
   // Also populate standard select for compatibility
   const sel = document.getElementById('inp-cartella');
@@ -3782,7 +3782,7 @@ async function _loadDashboardData() {
   try {
     const { data: appts } = await sb.from('appointments')
       .select('id,appointment_date,patient_id,duration_minutes,status')
-      .eq('dietitian_id', currentUser.id)
+      .eq('dietitian_id', studioOwnerId || currentUser.id)
       .gte('appointment_date', today + 'T00:00:00')
       .lte('appointment_date', today + 'T23:59:59')
       .neq('status', 'cancelled')
@@ -3811,7 +3811,7 @@ async function _loadDashboardData() {
   } catch(e) { const el=document.getElementById('dash-appts-body'); if(el) el.innerHTML='<p style="font-size:12px;color:#94A3B8">Non disponibile</p>'; }
 
   try {
-    const { data: links } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+    const { data: links } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', studioOwnerId || currentUser.id);
     const patientIds = (links||[]).map(l => l.patient_id).filter(Boolean);
     let unreadCount = 0;
     if (patientIds.length) {
@@ -3834,7 +3834,7 @@ async function _loadDashboardData() {
     const days = parseInt(localStorage.getItem('dp_inactivity_days')||'5',10);
     const since = new Date(); since.setDate(since.getDate()-days);
     const sinceStr = since.toISOString().split('T')[0];
-    const { data: links2 } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+    const { data: links2 } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', studioOwnerId || currentUser.id);
     const patIds = (links2||[]).map(l => l.patient_id).filter(Boolean);
     if (!patIds.length) {
       const el = document.getElementById('dash-inactive-body');
@@ -4124,7 +4124,7 @@ async function _loadTemplates() {
       .select('id,user_id,nome,descrizione,categoria,meals,giorni,created_at,shared,usage_count')
       .order('created_at', { ascending: false });
     if (!error && data) {
-      const otherIds = [...new Set(data.filter(t => t.user_id !== currentUser.id).map(t => t.user_id))];
+      const otherIds = [...new Set(data.filter(t => t.user_id !== (studioOwnerId || currentUser.id)).map(t => t.user_id))];
       if (otherIds.length) {
         const { data: authors } = await sb.from('profiles').select('id,nome,cognome').in('id', otherIds);
         _tmplAuthorNames = {};
@@ -4145,7 +4145,7 @@ async function _saveTemplate(tmpl) {
   const ok = await _checkTemplateTable();
   if (ok) {
     const payload = {
-      user_id: currentUser.id,
+      user_id: studioOwnerId || currentUser.id,
       nome: tmpl.nome,
       descrizione: tmpl.descrizione || null,
       categoria: tmpl.categoria || 'Altro',
@@ -4154,7 +4154,7 @@ async function _saveTemplate(tmpl) {
       shared: !!tmpl.shared
     };
     if (tmpl.id) {
-      const { error } = await sb.from('piani_template').update(payload).eq('id', tmpl.id).eq('user_id', currentUser.id);
+      const { error } = await sb.from('piani_template').update(payload).eq('id', tmpl.id).eq('user_id', studioOwnerId || currentUser.id);
       return { ok: !error, error };
     } else {
       const { error } = await sb.from('piani_template').insert(payload);
@@ -4175,7 +4175,7 @@ async function _saveTemplate(tmpl) {
 async function _deleteTemplate(id) {
   const ok = await _checkTemplateTable();
   if (ok && !String(id).startsWith('ls_')) {
-    const { error } = await sb.from('piani_template').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('piani_template').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
     return !error;
   }
   // LocalStorage
@@ -4247,7 +4247,7 @@ function renderTemplateList() {
   const container = document.getElementById('tmpl-list-container');
   if (!container) return;
   const q = (document.getElementById('tmpl-search')?.value || '').toLowerCase().trim();
-  const isMine = t => !currentUser || t.user_id === currentUser.id || t.id?.startsWith?.('ls_');
+  const isMine = t => !currentUser || t.user_id === (studioOwnerId || currentUser.id) || t.id?.startsWith?.('ls_');
   const items = (_cachedTemplates || []).filter(t => {
     if (_tmplScope === 'miei' && !isMine(t)) return false;
     if (_tmplScope === 'community' && (isMine(t) || !t.shared)) return false;
@@ -4313,7 +4313,7 @@ function applicaTemplate(id) {
     toast('📂 Template "' + tmpl.nome + '" caricato!', 'ok');
     // Best-effort, non blocca l'UI: conta l'utilizzo solo per template altrui
     // realmente condivisi (la RPC stessa lo ricontrolla server-side).
-    if (tmpl.user_id && tmpl.user_id !== currentUser?.id && tmpl.shared) {
+    if (tmpl.user_id && tmpl.user_id !== (studioOwnerId || currentUser?.id) && tmpl.shared) {
       sb.rpc('increment_template_usage', { tmpl_id: tmpl.id }).catch(() => {});
     }
   }, { okLabel: 'Carica Template' });

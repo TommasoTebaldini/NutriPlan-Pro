@@ -1781,7 +1781,7 @@ async function precompilaMNA() {
 
   const { data, error } = await sb.from('schede_valutazione')
     .select('peso,altezza,dati_extra,saved_at,created_at')
-    .eq('cartella_id', cartellaId).eq('user_id', currentUser.id)
+    .eq('cartella_id', cartellaId).eq('user_id', studioOwnerId || currentUser.id)
     .order('saved_at', { ascending: false }).limit(1);
 
   if (error) { toast(_L('Errore nel caricamento della valutazione','Error loading assessment'), 'err'); return; }
@@ -1845,7 +1845,7 @@ async function aggiornaPrecompilaButtons(cartellaId) {
     const { data } = await sb.from('note_specialistiche')
       .select('dati')
       .eq('cartella_id', cartellaId)
-      .eq('user_id', currentUser.id)
+      .eq('user_id', studioOwnerId || currentUser.id)
       .eq('tipo', 'questionario');
     if (!data || !data.length) return;
     const savedNames = new Set();
@@ -1865,7 +1865,7 @@ async function precompilaFromLast(qNome) {
     const { data } = await sb.from('note_specialistiche')
       .select('dati,created_at')
       .eq('cartella_id', cartellaId)
-      .eq('user_id', currentUser.id)
+      .eq('user_id', studioOwnerId || currentUser.id)
       .eq('tipo', 'questionario')
       .order('created_at', { ascending: false });
     if (!data || !data.length) { toast(_L('Nessun questionario salvato trovato','No saved questionnaire found'), 'err'); return; }
@@ -2733,7 +2733,7 @@ let _cartellePazienti = [];
 async function loadCartellePazienti() {
   if (!currentUser) return;
   try {
-    const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome', { ascending: true });
+    const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome', { ascending: true });
     _cartellePazienti = data || [];
     const sel = document.getElementById('sq-cartella');
     if (!sel) return;
@@ -2804,12 +2804,12 @@ async function salvaQuestionarioInCartella() {
       nota,
       dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
       updated_at: new Date().toISOString()
-    }).eq('id', _editingNoteSpecId).eq('user_id', currentUser.id);
+    }).eq('id', _editingNoteSpecId).eq('user_id', studioOwnerId || currentUser.id);
     error = res.error;
   } else {
     const res = await sb.from('note_specialistiche').insert({
       cartella_id: cartellaId,
-      user_id: currentUser.id,
+      user_id: studioOwnerId || currentUser.id,
       tipo: 'questionario',
       nota,
       dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
@@ -2860,12 +2860,12 @@ async function salvaQFromBar() {
       nota,
       dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),
       updated_at: now
-    }).eq('id', _editingNoteSpecId).eq('user_id', currentUser.id);
+    }).eq('id', _editingNoteSpecId).eq('user_id', studioOwnerId || currentUser.id);
     error = res.error;
   } else {
     const res = await sb.from('note_specialistiche').insert({
       cartella_id: cartellaId,
-      user_id: currentUser.id,
+      user_id: studioOwnerId || currentUser.id,
       tipo: 'questionario',
       nota,
       dati: JSON.stringify({ questionario: _qSaveNome, ..._qSaveDati }),

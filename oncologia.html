@@ -1184,7 +1184,7 @@ async function salvaOncologia() {
   if (!cartella_id) { toast(_L('⚠️ Seleziona una cartella paziente','⚠️ Select a patient record'), 'err'); return; }
   const nota = document.getElementById('onc-nota')?.value || '';
   const dati = raccogliDatiONC();
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'oncologia', nota, dati: JSON.stringify(dati) };
+  const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'oncologia', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
   if (editingOncNoteId) {

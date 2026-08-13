@@ -1061,7 +1061,7 @@ let editingDgNoteId = null;
 async function loadDgCartelle() {
   if (!currentUser) return;
   if (dgCartelle.length) return; // already loaded
-  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   dgCartelle = data || [];
   const sel = document.getElementById('dg-cartella');
   if (!sel) return;
@@ -1122,7 +1122,7 @@ async function salvaDiabete() {
   const dati = raccogliDatiDg();
   { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_cho=parseFloat(_p.cho_tot)||0,_prot=_kcal?Math.round(_kcal*.15/4):0,_fat=_kcal?Math.round(_kcal*.25/9):0,_nc=(document.getElementById('dg-cartella-cw-srch')?.value||'').trim();
     dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:'',alimenti:p.alimenti,note:p.note||(parseFloat(p.cho)?'CHO: '+p.cho+' g':'')})),{titolo:_nc||nota,sottotitolo:_p.tipo?'Tipo: '+_p.tipo+(_p.insulina?' · Insulina: '+_p.insulina:''):'',totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat}); }
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
+  const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
   if (editingDgNoteId) {

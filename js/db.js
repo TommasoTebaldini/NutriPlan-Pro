@@ -4702,7 +4702,7 @@ async function loadCustomFoods() {
     const { data, error } = await sb
       .from('alimenti_custom')
       .select('*')
-      .eq('user_id', currentUser.id)
+      .eq('user_id', studioOwnerId || currentUser.id)
       .order('nome');
     if (error) {
       console.error('loadCustomFoods error:', error.message);

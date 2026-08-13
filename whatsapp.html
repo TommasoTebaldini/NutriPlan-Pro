@@ -164,17 +164,17 @@ function normalizePhone(p) { return String(p || '').replace(/[^\d]/g, ''); }
 
 async function init() {
   showLoading(true);
-  const { data: prof } = await sb.from('profiles').select('wa_phone_number_id').eq('id', currentUser.id).maybeSingle();
+  const { data: prof } = await sb.from('profiles').select('wa_phone_number_id').eq('id', studioOwnerId || currentUser.id).maybeSingle();
   document.getElementById('wa-not-configured').style.display = prof?.wa_phone_number_id ? 'none' : 'block';
 
-  const { data } = await sb.from('cartelle').select('id,nome,cognome,telefono').eq('user_id', currentUser.id).not('telefono', 'is', null).order('nome', { ascending: true });
+  const { data } = await sb.from('cartelle').select('id,nome,cognome,telefono').eq('user_id', studioOwnerId || currentUser.id).not('telefono', 'is', null).order('nome', { ascending: true });
   contacts = data || [];
   renderContacts();
   showLoading(false);
 
   if (waRealtimeChannel) sb.removeChannel(waRealtimeChannel);
-  waRealtimeChannel = sb.channel('wa-messages-' + currentUser.id)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages', filter: `dietitian_id=eq.${currentUser.id}` }, () => {
+  waRealtimeChannel = sb.channel('wa-messages-' + (studioOwnerId || currentUser.id))
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages', filter: `dietitian_id=eq.${studioOwnerId || currentUser.id}` }, () => {
       if (activeCartellaId) loadThread(activeCartellaId);
     })
     .subscribe();
@@ -209,7 +209,7 @@ async function loadThread(cartellaId) {
   document.getElementById('wa-thread-phone').textContent = c.telefono || '';
 
   const { data } = await sb.from('whatsapp_messages').select('*')
-    .eq('dietitian_id', currentUser.id).eq('cartella_id', cartellaId)
+    .eq('dietitian_id', studioOwnerId || currentUser.id).eq('cartella_id', cartellaId)
     .order('created_at', { ascending: true }).limit(200);
   const messages = data || [];
 

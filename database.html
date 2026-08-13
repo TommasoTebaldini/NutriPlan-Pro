@@ -522,13 +522,13 @@ async function saveFood() {
 
   let error;
   if (_editingFoodId) {
-    ({ error } = await sb.from('alimenti_custom').update(row).eq('id', _editingFoodId).eq('user_id', currentUser.id));
+    ({ error } = await sb.from('alimenti_custom').update(row).eq('id', _editingFoodId).eq('user_id', studioOwnerId || currentUser.id));
     if (!error) {
       toast(_L('Alimento aggiornato ✓','Food updated ✓'), 'ok');
       await sb.from('public_foods').update(publicRow).eq('source_id', _editingFoodId);
     }
   } else {
-    row.user_id = currentUser.id;
+    row.user_id = studioOwnerId || currentUser.id;
     const { data: inserted, error: insErr } = await sb.from('alimenti_custom').insert(row).select('id').single();
     error = insErr;
     if (!error) {
@@ -548,7 +548,7 @@ async function saveFood() {
 
 function deleteCustomFood(id) {
   customConfirm(_L('Eliminare questo alimento dal database personale?','Delete this food from personal database?'), async () => {
-    const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
     if (error) { toast('Errore: ' + error.message, 'err'); return; }
     await sb.from('public_foods').delete().eq('source_id', id);
     toast(_L('Alimento eliminato','Food deleted'), 'ok');

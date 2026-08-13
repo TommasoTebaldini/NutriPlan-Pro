@@ -1229,7 +1229,7 @@ async function salvaNota() {
     (bmi ? _L(' · BMI pre: ',' · Pre-BMI: ') + bmi : '') +
     (pesoAtt && pesoPre ? _L(' · Guadagno: +',' · Gain: +') + (parseFloat(pesoAtt)-parseFloat(pesoPre)).toFixed(1) + ' kg' : ''));
   const payload = {
-    cartella_id, user_id: currentUser.id,
+    cartella_id, user_id: studioOwnerId || currentUser.id,
     tipo: 'gravidanza', nota: sommario,
     dati: { eta, pesoPre, altezza, pesoAtt, settimane, tipo, bmi },
   };

@@ -379,7 +379,7 @@ async function salvaVisita() {
 
   const dati = JSON.stringify({ tipo_visita: tipo, data_visita: data, contenuto_html: contenuto });
   const record = {
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     cartella_id: cartellaId || null,
     tipo: 'visita_clinica',
     nota: titolo,
@@ -412,7 +412,7 @@ async function loadSavedVisite() {
   }
   const { data, error } = await sb.from('note_specialistiche')
     .select('id,nota,dati,created_at,cartella_id')
-    .eq('user_id', currentUser.id)
+    .eq('user_id', studioOwnerId || currentUser.id)
     .eq('tipo', 'visita_clinica')
     .eq('cartella_id', cartellaId)
     .order('created_at', { ascending: false })

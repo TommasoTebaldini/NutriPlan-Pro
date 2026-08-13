@@ -1335,7 +1335,7 @@ async function salvaObesita() {
   if (!cartella_id) { toast(_L('⚠️ Seleziona una cartella paziente','⚠️ Select a patient file'), 'err'); return; }
   const nota = document.getElementById('ob-nota')?.value || '';
   const dati = raccogliDatiOB();
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'obesita', nota, dati: JSON.stringify(dati) };
+  const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'obesita', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
   if (editingObNoteId) {

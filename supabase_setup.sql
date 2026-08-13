@@ -3545,3 +3545,95 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_47_patient_documents_audit_log', 'Collaboratori su patient_documents + fix patient_audit_log (RLS attiva ma senza policy, sempre vuota)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 48 — COLLABORATORI DI STUDIO: patient_consents, ricette
+--
+-- Ultime due tabelle trovate durante il giro completo di pazienti.html,
+-- chat.html, bia.html, ncpt.html, valutazione.html, questionari.html,
+-- agenda.html, app.html, pagamenti.html, ricette.html: nessuna delle due
+-- aveva policy per i collaboratori.
+
+DROP POLICY IF EXISTS "patient_consents_collaborator_read" ON patient_consents;
+CREATE POLICY "patient_consents_collaborator_read" ON patient_consents
+  FOR SELECT USING (dietitian_id = get_studio_owner(auth.uid()));
+
+DROP POLICY IF EXISTS "patient_consents_collaborator_write" ON patient_consents;
+CREATE POLICY "patient_consents_collaborator_write" ON patient_consents
+  FOR ALL USING (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))
+  WITH CHECK (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()));
+
+DROP POLICY IF EXISTS "ricette_collaborator_read" ON ricette;
+CREATE POLICY "ricette_collaborator_read" ON ricette
+  FOR SELECT USING (user_id = get_studio_owner(auth.uid()));
+
+DROP POLICY IF EXISTS "ricette_collaborator_write" ON ricette;
+CREATE POLICY "ricette_collaborator_write" ON ricette
+  FOR ALL USING (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))
+  WITH CHECK (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()));
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_48_collaboratori_consents_ricette', 'Collaboratori su patient_consents e ricette')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 49 — COLLABORATORI DI STUDIO: giro completo pagine rimanenti
+--
+-- Trovate durante il giro finale su anamnesi.html, database.html,
+-- pagamenti.html (pacchetti), broadcast.html, profilo-pubblico.html,
+-- app.html (liste_spesa, piani_template): nessuna aveva policy collaboratori.
+-- chat_groups/chat_group_members restano volutamente esclusi: il modello a
+-- membership esplicita (is_chat_group_member) è già indipendente dallo studio
+-- e un titolare può aggiungere manualmente il collaboratore a un gruppo.
+-- dietitian_todos resta volutamente esclusa: è una todo-list personale per
+-- singolo utente, non condivisa (come agenda_events).
+
+-- ── Tabelle con ownership su user_id ──
+DO $$
+DECLARE
+  tbl TEXT;
+BEGIN
+  FOREACH tbl IN ARRAY ARRAY['alimenti_custom','liste_spesa','piani_template']
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_read', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR SELECT USING (user_id = get_studio_owner(auth.uid()))',
+      tbl || '_collaborator_read', tbl
+    );
+
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_write', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR ALL USING (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid())) WITH CHECK (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))',
+      tbl || '_collaborator_write', tbl
+    );
+  END LOOP;
+END $$;
+
+-- ── Tabelle con ownership su dietitian_id ──
+DO $$
+DECLARE
+  tbl TEXT;
+BEGIN
+  FOREACH tbl IN ARRAY ARRAY['patient_intake_forms','pacchetti','pacchetti_acquistati','broadcast_messages','dietitian_profiles','shared_recipes','whatsapp_messages']
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_read', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR SELECT USING (dietitian_id = get_studio_owner(auth.uid()))',
+      tbl || '_collaborator_read', tbl
+    );
+
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_write', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR ALL USING (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid())) WITH CHECK (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))',
+      tbl || '_collaborator_write', tbl
+    );
+  END LOOP;
+END $$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_49_collaboratori_giro_finale', 'Collaboratori su patient_intake_forms/alimenti_custom/pacchetti/pacchetti_acquistati/broadcast_messages/dietitian_profiles/shared_recipes/whatsapp_messages/liste_spesa/piani_template')
+ON CONFLICT (id) DO NOTHING;

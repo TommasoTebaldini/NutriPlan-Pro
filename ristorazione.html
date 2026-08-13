@@ -1091,7 +1091,7 @@ let editingRistNoteId = null;
 async function loadRistCartelle() {
   if (!currentUser) return;
   if (ristCartelle.length) return;
-  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   ristCartelle = data || [];
   const sel = document.getElementById('rist-cartella');
   if (!sel) return;
@@ -1154,7 +1154,7 @@ async function salvaRistorazione() {
   const dati = raccogliDatiRist();
   { const _p=dati.piano||{},_nc=(document.getElementById('rist-cartella-cw-srch')?.value||'').trim(),_tipo=_p.tipo||'',_utenza=_p.utenza||'',_coperti=_p.coperti||'';
     dati.stampa_html=buildStampaCompattaHtml((_p.portate||[]).filter(p=>p.nome||p.menu).map(p=>({nome:p.nome,kcal:'',alimenti:[p.porzione,p.menu].filter(Boolean).join('\n'),note:p.note})),{titolo:_nc||nota,sottotitolo:[_tipo,_utenza,_coperti?_coperti+' coperti':''].filter(Boolean).join(' · '),totKcal:0,totProt:0,totCho:0,totFat:0}); }
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'ristorazione', nota, dati: JSON.stringify(dati) };
+  const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'ristorazione', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
   if (editingRistNoteId) {

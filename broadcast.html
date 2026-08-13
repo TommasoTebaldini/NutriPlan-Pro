@@ -416,7 +416,7 @@ function switchTopTab(tab) {
 
 // ─── Contacts (patients + studio dietitians) ───────────────────────────────
 async function loadPatients() {
-  const { data: links } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+  const { data: links } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', studioOwnerId || currentUser.id);
   const patientIds = [...new Set((links || []).map(l => l.patient_id))];
   if (!patientIds.length) { allPatients = []; renderPatList(); return; }
   const { data } = await sb.from('profiles').select('id,email,full_name,created_at').eq('role','patient').eq('approved',true).in('id', patientIds).order('full_name',{ascending:true});
@@ -489,7 +489,7 @@ function clearRecipients() {
 }
 
 async function loadHistory() {
-  const { data } = await sb.from('broadcast_messages').select('*').eq('dietitian_id', currentUser.id).order('created_at',{ascending:false}).limit(50);
+  const { data } = await sb.from('broadcast_messages').select('*').eq('dietitian_id', studioOwnerId || currentUser.id).order('created_at',{ascending:false}).limit(50);
   broadcastHistory = data || [];
   renderHistory();
 }
@@ -559,7 +559,7 @@ async function sendBroadcast() {
       if (error) throw error;
     }
     await sb.from('broadcast_messages').insert({
-      dietitian_id: currentUser.id,
+      dietitian_id: studioOwnerId || currentUser.id,
       message_text: text,
       message_type: msgType,
       recipients_count: patientIds.length,

@@ -211,7 +211,7 @@ async function loadAnamnesi() {
   if (!currentUser) return;
   const { data, error } = await sb.from('patient_intake_forms')
     .select('*')
-    .eq('dietitian_id', currentUser.id)
+    .eq('dietitian_id', studioOwnerId || currentUser.id)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -285,7 +285,7 @@ async function generaLink() {
 
   document.getElementById('an-genera-btn').disabled = true;
   const { data, error } = await sb.from('patient_intake_forms').insert({
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     patient_name: nome,
     patient_email: email || null,
     sections: sections,
@@ -356,7 +356,7 @@ async function vediRisposte(id) {
 
 async function eliminaAnamnesi(id) {
   if (!confirm('Eliminare questa anamnesi?')) return;
-  const { error } = await sb.from('patient_intake_forms').delete().eq('id', id).eq('dietitian_id', currentUser.id);
+  const { error } = await sb.from('patient_intake_forms').delete().eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
   toast('🗑️ Anamnesi eliminata', 'ok');
   loadAnamnesi();

@@ -492,7 +492,7 @@ async function loadPatientAppointments() {
     const { data: appts, error } = await sb
       .from('appointments')
       .select('id, appointment_date, duration_minutes, notes, booked_by_patient, status, patient_id')
-      .eq('dietitian_id', currentUser.id)
+      .eq('dietitian_id', studioOwnerId || currentUser.id)
       .neq('status', 'cancelled')
       .order('appointment_date', { ascending: true });
     if (error || !appts || !appts.length) return;
@@ -540,7 +540,7 @@ async function cancelPatientAppt(apptId) {
     const { error } = await sb.from('appointments')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
       .eq('id', apptId)
-      .eq('dietitian_id', currentUser.id);
+      .eq('dietitian_id', studioOwnerId || currentUser.id);
     if (error) throw error;
     patientAppts = patientAppts.filter(a => a._apptId !== apptId);
     closeM('modal-event');

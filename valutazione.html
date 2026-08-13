@@ -1536,7 +1536,7 @@ async function confermaSalva(){
   if(!currentUser){toast(_L('Sessione scaduta, ricarica la pagina','Session expired, reload the page'),'err');return;}
   showLoading(true);
   const{data,error}=await sb.from('cartelle').insert({
-    user_id:currentUser.id,
+    user_id:studioOwnerId || currentUser.id,
     nome:nomeCart,
     ddn:document.getElementById('v-ddn').value||null,
     sesso:document.getElementById('v-sesso').value||null,
@@ -1601,7 +1601,7 @@ async function doSalva(cartellaId){
   if(!cartellaId){toast(_L('Seleziona o crea una cartella paziente','Select or create a patient folder'),'err');return;}
   const payload={
     cartella_id:cartellaId,
-    user_id:currentUser.id,
+    user_id:studioOwnerId || currentUser.id,
     nome:document.getElementById('v-nome').value.trim()||null,
     cognome:document.getElementById('v-cognome').value.trim()||null,
     ddn:document.getElementById('v-ddn').value||null,
@@ -1781,7 +1781,7 @@ async function doSalva(cartellaId){
   let result;
   try {
     if(schedaId){
-      result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId).eq('user_id',currentUser.id);
+      result=await sb.from('schede_valutazione').update(payload).eq('id',schedaId).eq('user_id',studioOwnerId || currentUser.id);
     } else {
       payload.visible_to_patient=false;
       result=await sb.from('schede_valutazione').insert(payload).select('id').single();
@@ -1934,7 +1934,7 @@ async function loadCartelleDropdown2(){
   const sel=document.getElementById('v-cartella');
   if(!sel||!currentUser)return;
   try{
-    const{data,error}=await sb.from('cartelle').select('id,nome').eq('user_id',currentUser.id).order('nome');
+    const{data,error}=await sb.from('cartelle').select('id,nome').eq('user_id',studioOwnerId || currentUser.id).order('nome');
     if(error){console.warn('Errore caricamento cartelle:',error.message);return;}
     const cur=sel.value;
     sel.innerHTML='<option value="">-- Crea nuova cartella --</option>';

@@ -802,7 +802,7 @@ function showCartDD(q='') {
   const dd = document.getElementById('cart-dd');
   if (!dd) return;
   if (!allCartelle.length && currentUser) {
-    sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',currentUser.id).order('nome').then(({data}) => {
+    sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',studioOwnerId || currentUser.id).order('nome').then(({data}) => {
       allCartelle = data || [];
       showCartDD(q);
     });
@@ -835,7 +835,7 @@ function showCartDDMain(q='') {
   const dd = document.getElementById('cart-dd-main');
   if (!dd) return;
   if (!allCartelle.length && currentUser) {
-    sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',currentUser.id).order('nome').then(({data}) => {
+    sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',studioOwnerId || currentUser.id).order('nome').then(({data}) => {
       allCartelle = data || [];
       showCartDDMain(q);
     });
@@ -1646,7 +1646,7 @@ function raccogliDati() {
   const g=id=>document.getElementById(id)?.value||'';
   return {
     cartella_id: currentCartellaId,
-    user_id: currentUser?.id,
+    user_id: studioOwnerId || currentUser?.id,
     valutazione: JSON.stringify({
       nome:g('v-nome'),ddn:g('v-ddn'),sesso:g('v-sesso'),data:g('v-data'),
       diag:g('v-diag'),anamnesi:g('v-anamnesi'),
@@ -1729,7 +1729,7 @@ async function salvaNCPt() {
   showLoading(true);
   let result;
   if(currentNcptId){
-    result = await sb.from('ncpt').update(payload).eq('id',currentNcptId).eq('user_id',currentUser.id);
+    result = await sb.from('ncpt').update(payload).eq('id',currentNcptId).eq('user_id',studioOwnerId || currentUser.id);
   } else {
     payload.created_at = new Date().toISOString();
     payload.visible_to_patient = false;
@@ -1975,7 +1975,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await checkAuth();
     initCartellaWidget('ncpt-cartella-cw', { hiddenInputId:'ncpt-cartella-val', accentColor:'#14B8A6', labelColor:'#0F766E', hoverBg:'#F0FDF4', nuovaBg:'#F0FDF4', onSelect:(id,nome)=>selCartella(id,nome) });
-    const {data} = await sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',currentUser.id).order('nome');
+    const {data} = await sb.from('cartelle').select('id,nome,ddn,sesso').eq('user_id',studioOwnerId || currentUser.id).order('nome');
     allCartelle = data || [];
 
     // Check if we should open a specific NCPt or cartella

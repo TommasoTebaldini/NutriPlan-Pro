@@ -837,7 +837,7 @@ async function salvaModulo(tipo, titoloDefault) {
   if (!currentUser) return;
   const titolo = titoloDefault + ' — ' + new Date().toLocaleDateString('it');
   const { error } = await sb.from('note_specialistiche').insert({
-    user_id: currentUser.id, cartella_id: cartellaId,
+    user_id: studioOwnerId || currentUser.id, cartella_id: cartellaId,
     tipo: 'modulo_' + tipo, nota: titolo,
     dati: JSON.stringify({ tipo_modulo: tipo, data: new Date().toISOString() }),
     visible_to_patient: false,

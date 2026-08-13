@@ -437,7 +437,7 @@ function fillAvailabilityUI(rows) {
 function collectAvailabilityPayload() {
   const dur = parseInt(document.getElementById('f-slot-duration').value, 10) || 60;
   return DAYS_IT.map((_, dow) => ({
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     day_of_week: dow,
     enabled: document.getElementById(`av-en-${dow}`)?.checked || false,
     start_time_1: document.getElementById(`av-s1-${dow}`)?.value || '09:00',
@@ -609,7 +609,7 @@ async function saveProfile() {
   if (coords) { latitude = coords.lat; longitude = coords.lon; }
 
   const payload = {
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     nome,
     cognome: document.getElementById('f-cognome').value.trim(),
     titoli: document.getElementById('f-titoli').value.trim(),
@@ -680,8 +680,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load existing profile and availability in parallel
   const [{ data }, { data: avData }] = await Promise.all([
-    sb.from('dietitian_profiles').select('*').eq('dietitian_id', currentUser.id).maybeSingle(),
-    sb.from('dietitian_availability').select('*').eq('dietitian_id', currentUser.id),
+    sb.from('dietitian_profiles').select('*').eq('dietitian_id', studioOwnerId || currentUser.id).maybeSingle(),
+    sb.from('dietitian_availability').select('*').eq('dietitian_id', studioOwnerId || currentUser.id),
   ]);
 
   if (data) {

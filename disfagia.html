@@ -1225,7 +1225,7 @@ let editingDisNoteId = null;
 
 async function loadDisCartelle() {
   if (!currentUser) return;
-  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   if (!data) return;
   const sel = document.getElementById('dis-cartella');
   if (!sel) return;
@@ -1241,7 +1241,7 @@ async function salvaDisfagia() {
   const datiObj = {iddsi: selIddsi, kcal: selKcal, valutazione: raccogliVal_dis()};
   try { datiObj.stampa_html = buildStampaSpecialisticaHTML(datiObj, 'disfagia', nota); } catch(e) { console.warn('buildStampaSpecialisticaHTML failed:', e); }
   const dati = JSON.stringify(datiObj);
-  const payload = {user_id: currentUser.id, tipo: 'disfagia', cartella_id, nota, dati};
+  const payload = {user_id: studioOwnerId || currentUser.id, tipo: 'disfagia', cartella_id, nota, dati};
   showLoading(true);
   let result;
   const wasNew = !editingDisNoteId;

@@ -1413,7 +1413,7 @@ async function salvaPazienteSano() {
   if (typeof buildStampaSpecialisticaHTML === 'function') {
     try { dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'paziente_sano', nota); } catch(e) {}
   }
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'paziente_sano', nota, dati: JSON.stringify(dati) };
+  const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'paziente_sano', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
   if (editingPsNoteId) {

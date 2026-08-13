@@ -1550,7 +1550,7 @@ let editingKetoNoteId = null;
 async function loadKetoCartelle() {
   if (!currentUser) return;
   if (ketoCartelle.length) return;
-  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  const {data} = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   ketoCartelle = data || [];
   const sel = document.getElementById('keto-cartella');
   if (!sel) return;
@@ -1588,7 +1588,7 @@ async function salvaKeto() {
   const nota = document.getElementById('keto-nota').value.trim() || _L('Sessione Chetogenica ','Ketogenic Session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiKeto();
   dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'chetogenica', nota);
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };
+  const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
   const wasNew = !editingKetoNoteId;

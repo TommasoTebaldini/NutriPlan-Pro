@@ -262,7 +262,7 @@ async function loadRicette() {
     return;
   }
   // Serve from sessionStorage cache immediately, refresh in background
-  const _cacheKey = 'np_rc_' + currentUser.id;
+  const _cacheKey = 'np_rc_' + (studioOwnerId || currentUser.id);
   try {
     const _cached = sessionStorage.getItem(_cacheKey);
     if (_cached) {
@@ -273,7 +273,7 @@ async function loadRicette() {
         showLoading(false);
         renderRicette();
         lazyLoadTemplates();
-        sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,ingredienti').eq('user_id', currentUser.id).order('created_at', { ascending: false })
+        sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,ingredienti').eq('user_id', studioOwnerId || currentUser.id).order('created_at', { ascending: false })
           .then(function(res) {
             if (res.data) {
               ricette = res.data;
@@ -286,7 +286,7 @@ async function loadRicette() {
     }
   } catch(_e) {}
   try {
-    const { data, error } = await sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,ingredienti').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    const { data, error } = await sb.from('ricette').select('id,nome,categoria,porzioni,note,created_at,ingredienti').eq('user_id', studioOwnerId || currentUser.id).order('created_at', { ascending: false });
     showLoading(false);
     if (error) {
       if (error.code === '42P01') {
@@ -530,7 +530,7 @@ async function salvaRicetta() {
   const now = new Date().toISOString();
   const nome_en = (document.getElementById('r-nome-en')?.value || '').trim() || null;
   const payload = {
-    user_id: currentUser?.id || 'local',
+    user_id: studioOwnerId || currentUser?.id || 'local',
     nome,
     categoria: document.getElementById('r-cat').value,
     porzioni: parseInt(document.getElementById('r-porzioni').value) || 4,
@@ -716,7 +716,7 @@ async function openCondividiRicetta() {
   const listEl = document.getElementById('condividi-pazienti-list');
   listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--slate-l)"><div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0 auto 8px"></div><span style="font-size:12px">' + _L('Caricamento pazienti...','Loading patients...') + '</span></div>';
   openM('modal-condividi-ricetta');
-  const { data: relations, error } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', currentUser.id);
+  const { data: relations, error } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error || !relations?.length) {
     listEl.innerHTML = '<p style="text-align:center;font-size:13px;color:var(--slate-l);padding:20px">' + _L('Nessun paziente associato al tuo account.','No patients linked to your account.') + '</p>';
     return;
@@ -754,7 +754,7 @@ async function eseguiCondividi() {
     note: detRicetta.isTemplate ? _L(detRicetta.note||'', detRicetta.note_en||detRicetta.note||'') : (detRicetta.note||''),
   };
   const rows = checked.map(patient_id => ({
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     patient_id,
     recipe_id: (detRicetta.isTemplate || !detRicetta.id || String(detRicetta.id).startsWith('ls_')) ? null : String(detRicetta.id),
     recipe_data: recipeSnapshot,

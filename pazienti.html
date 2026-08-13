@@ -3504,17 +3504,42 @@ async function sendAiPazMsg() {
   msgsEl.scrollTop = msgsEl.scrollHeight;
 
   try {
+    const { data: { session } } = await sb.auth.getSession();
+    const authHeader = session?.access_token ? 'Bearer ' + session.access_token : '';
+
+    // Aggancio RAG: recupera linee guida cliniche verificate pertinenti ai tag
+    // del paziente + alla domanda corrente, stesso dataset/endpoint già usato
+    // per le bozze di piano alimentare — prima le risposte di questa chat non
+    // erano ancorate a nessuna fonte interna, solo conoscenza generica del
+    // modello. Best-effort: se questa chiamata fallisce, la chat prosegue
+    // comunque senza il contesto RAG invece di bloccarsi.
+    let ragContext = '';
+    try {
+      const d = window._currentCartellaData;
+      const tags = (d && d.cart && Array.isArray(d.cart.tags)) ? d.cart.tags : [];
+      const ragRes = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
+        body: JSON.stringify({ mode: 'rag-search', tags, query: text }),
+      });
+      const rag = await ragRes.json();
+      if (Array.isArray(rag.guidelines) && rag.guidelines.length) {
+        ragContext = '\n\nLinee guida cliniche pertinenti (fonte: dataset interno verificato — cita queste fonti quando rilevanti, segnala esplicitamente quando esci da questo dataset e usi conoscenza generale):\n' +
+          rag.guidelines.map(g => `- ${g.nome}${g.badge ? ' [' + g.badge + ']' : ''}: ${g.target || g.note || ''}`).join('\n');
+      }
+    } catch (e) { /* best-effort, vedi commento sopra */ }
+
     const res = await fetch('/api/gemini', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
       body: JSON.stringify({
-        system: _buildAiPazSystemPrompt(),
+        system: _buildAiPazSystemPrompt() + ragContext,
         messages: _aiPazMessages.slice(-10),
         max_tokens: 1024
       })
     });
     const json = await res.json();
-    const reply = json?.content?.[0]?.text || _L('Errore nella risposta AI.','AI response error.');
+    const reply = json?.content?.[0]?.text || json?.error || _L('Errore nella risposta AI.','AI response error.');
     _aiPazMessages.push({ role: 'assistant', content: reply });
   } catch(e) {
     _aiPazMessages.push({ role: 'assistant', content: '❌ ' + _L('Errore di connessione: ','Connection error: ') + e.message });

@@ -203,17 +203,25 @@ async function isDietitian(token, userId) {
 }
 
 async function fetchPatientContext(token, dietitianUserId, patientId) {
-  const [cartRes, biaRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/cartelle?id=eq.${patientId}&user_id=eq.${dietitianUserId}&select=nome,ddn,sesso,tags`, {
+  // Esami e nota clinica aggiunti perché il piano deve poter reagire a dati
+  // di laboratorio recenti (es. LDL alto → meno grassi saturi) e a indicazioni
+  // libere del dietista (es. obiettivi specifici, preferenze) — prima il
+  // generatore vedeva solo tag+peso, ignorando tutto il resto della cartella.
+  const [cartRes, biaRes, esamiRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/cartelle?id=eq.${patientId}&user_id=eq.${dietitianUserId}&select=nome,ddn,sesso,tags,note`, {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
     }),
     fetch(`${SUPABASE_URL}/rest/v1/bia_records?cartella_id=eq.${patientId}&select=peso&order=data_misura.desc&limit=1`, {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
     }),
+    fetch(`${SUPABASE_URL}/rest/v1/esami_biochimici?cartella_id=eq.${patientId}&select=tipo,valore,unita,data_esame&order=data_esame.desc&limit=8`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
+    }),
   ]);
   const cart = (await cartRes.json())?.[0];
   const bia = (await biaRes.json())?.[0];
-  return cart ? { ...cart, peso: bia?.peso } : null;
+  const esami = await esamiRes.json();
+  return cart ? { ...cart, peso: bia?.peso, esami: Array.isArray(esami) ? esami : [] } : null;
 }
 
 function extractJson(text) {
@@ -255,11 +263,18 @@ async function handleMealPlan(req, res, token, user) {
     .map(([cat, list]) => `${cat}: ` + list.map(r => `"${r.nome}" (id:${r.id}, ~${r.kcal || '?'} kcal/porzione)`).join(', '))
     .join('\n');
 
+  const esamiText = (patient.esami && patient.esami.length)
+    ? patient.esami.map(e => `- ${e.tipo}: ${e.valore}${e.unita ? ' ' + e.unita : ''}${e.data_esame ? ` (${e.data_esame})` : ''}`).join('\n')
+    : '(nessun esame biochimico registrato)';
+
   const system = `Sei un assistente per dietisti italiani. Genera UNA bozza di piano alimentare giornaliero (si applica ad ogni giorno, non è specifico per giorno della settimana) da sottoporre a revisione del dietista.
 
 VINCOLO ASSOLUTO: usa SOLO le ricette elencate sotto (riportane id e nome esattamente come dati). Non inventare ricette o piatti non presenti nella lista. Se una categoria non ha ricette disponibili, ometti quel pasto o usa alimenti semplici generici (es. "yogurt naturale + frutta") invece di inventare un piatto strutturato.
 
 Paziente: ${patient.nome || ''}${patient.peso ? `, peso attuale ${patient.peso} kg` : ''}${tags.length ? `, tag/patologie: ${tags.join(', ')}` : ''}.
+${patient.note && patient.note !== '__altro__' ? `Note cliniche del dietista: ${patient.note}\n` : ''}
+Esami biochimici recenti (tienine conto per le scelte alimentari, es. LDL/trigliceridi alti → meno grassi saturi e zuccheri semplici, glicemia/HbA1c alterata → attenzione a carico glicemico e ripartizione carboidrati):
+${esamiText}
 
 Linee guida cliniche pertinenti (fonte: dataset interno verificato):
 ${guidelinesText}

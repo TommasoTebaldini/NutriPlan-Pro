@@ -3349,3 +3349,199 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_44_diario_alimentare_foto', 'Tabella diario_alimentare_foto mancante (feature già completa lato client, mai aveva una tabella)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 45 — COLLABORATORI DI STUDIO: estensione alle tabelle mancanti
+--
+-- Il pattern "collaboratori" (SEZIONE 15: studio_collaborators,
+-- get_studio_owner(), is_dietitian_level_collaborator()) copriva finora solo
+-- cartelle, piani, ncpt, bia_records, schede_valutazione, note_specialistiche
+-- (+ patient_dietitian in sola lettura, + appointments già completo). Tutte
+-- le tabelle aggiunte in sessioni successive (esami_biochimici, patient_files,
+-- diario_alimentare_foto, percorsi_nutrizionali, fatture) non erano mai state
+-- estese: un collaboratore non vedeva né poteva scrivere nulla lì, pur
+-- avendo accesso al resto della cartella dello stesso paziente.
+--
+-- Aggiunge anche la policy di SCRITTURA mancante su patient_dietitian per i
+-- collaboratori dietista-level: prima potevano solo leggere il roster
+-- pazienti del titolare, non collegarne di nuovi.
+
+-- ── Tabelle con ownership su user_id: stesso pattern del loop di SEZIONE 15 ──
+DO $$
+DECLARE
+  tbl TEXT;
+BEGIN
+  FOREACH tbl IN ARRAY ARRAY['esami_biochimici','patient_files','diario_alimentare_foto']
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_read', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR SELECT USING (user_id = get_studio_owner(auth.uid()))',
+      tbl || '_collaborator_read', tbl
+    );
+
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_write', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR ALL USING (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid())) WITH CHECK (user_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))',
+      tbl || '_collaborator_write', tbl
+    );
+  END LOOP;
+END $$;
+
+-- ── Tabelle con ownership su dietitian_id: percorsi_nutrizionali, fatture ──
+DO $$
+DECLARE
+  tbl TEXT;
+BEGIN
+  FOREACH tbl IN ARRAY ARRAY['percorsi_nutrizionali','fatture']
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_read', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR SELECT USING (dietitian_id = get_studio_owner(auth.uid()))',
+      tbl || '_collaborator_read', tbl
+    );
+
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I', tbl || '_collaborator_write', tbl);
+    EXECUTE format(
+      'CREATE POLICY %I ON %I FOR ALL USING (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid())) WITH CHECK (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))',
+      tbl || '_collaborator_write', tbl
+    );
+  END LOOP;
+END $$;
+
+-- ── patient_dietitian: i collaboratori dietista-level possono collegare/scollegare pazienti ──
+DROP POLICY IF EXISTS "patient_dietitian_collaborator_write" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_collaborator_write" ON patient_dietitian
+  FOR ALL USING (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))
+  WITH CHECK (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()));
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_45_collaboratori_estensione', 'RLS collaboratori estesa a esami_biochimici/patient_files/diario_alimentare_foto/percorsi_nutrizionali/fatture + scrittura patient_dietitian')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 46 — COLLABORATORI DI STUDIO: policy storage bucket
+--
+-- Le policy sui bucket storage sono indipendenti dalle RLS delle tabelle
+-- (SEZIONE 45 sopra) — un collaboratore poteva già leggere/scrivere la RIGA
+-- in patient_files, ma non il FILE vero e proprio nello storage, perché
+-- patient_files_storage_* controllava che il primo segmento del path fosse
+-- letteralmente auth.uid() (l'id di chi è loggato ORA), non
+-- get_studio_owner(auth.uid()) (l'id del titolare dello studio). Stesso
+-- discorso per patient-photos, tramite il join su cartelle_raw.user_id.
+--
+-- NOTA IMPORTANTE per il client: i nuovi upload su patient-files vanno
+-- scritti sotto la cartella `${studioOwnerId}/...`, non più
+-- `${currentUser.id}/...` — altrimenti la policy INSERT sotto rifiuta la
+-- scrittura (il path deve combaciare con get_studio_owner(auth.uid())).
+-- I file già esistenti restano leggibili: per un titolare/dietista
+-- indipendente studioOwnerId === currentUser.id, nessun path esistente cambia.
+
+DROP POLICY IF EXISTS "patient_files_storage_select" ON storage.objects;
+CREATE POLICY "patient_files_storage_select" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'patient-files' AND auth.uid() IS NOT NULL
+    AND (storage.foldername(name))[1] = get_studio_owner(auth.uid())::text
+  );
+
+DROP POLICY IF EXISTS "patient_files_storage_insert" ON storage.objects;
+CREATE POLICY "patient_files_storage_insert" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'patient-files' AND auth.uid() IS NOT NULL
+    AND (storage.foldername(name))[1] = get_studio_owner(auth.uid())::text
+    AND is_dietitian_level_collaborator(auth.uid())
+  );
+
+DROP POLICY IF EXISTS "patient_files_storage_delete" ON storage.objects;
+CREATE POLICY "patient_files_storage_delete" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'patient-files' AND auth.uid() IS NOT NULL
+    AND (storage.foldername(name))[1] = get_studio_owner(auth.uid())::text
+    AND is_dietitian_level_collaborator(auth.uid())
+  );
+
+-- patient-photos: il path è ${cartellaId}/${schedaId}/..., non uid — la
+-- policy verifica l'ownership via join, basta risolvere lo studio owner lì.
+DROP POLICY IF EXISTS "patient_photos_owner_read" ON storage.objects;
+CREATE POLICY "patient_photos_owner_read" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'patient-photos' AND EXISTS (
+      SELECT 1 FROM cartelle_raw c
+      WHERE c.id = ((storage.foldername(objects.name))[1])::uuid
+        AND c.user_id = get_studio_owner(auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "patient_photos_owner_write" ON storage.objects;
+CREATE POLICY "patient_photos_owner_write" ON storage.objects
+  FOR ALL USING (
+    bucket_id = 'patient-photos' AND EXISTS (
+      SELECT 1 FROM cartelle_raw c
+      WHERE c.id = ((storage.foldername(objects.name))[1])::uuid
+        AND c.user_id = get_studio_owner(auth.uid())
+    ) AND is_dietitian_level_collaborator(auth.uid())
+  ) WITH CHECK (
+    bucket_id = 'patient-photos' AND EXISTS (
+      SELECT 1 FROM cartelle_raw c
+      WHERE c.id = ((storage.foldername(objects.name))[1])::uuid
+        AND c.user_id = get_studio_owner(auth.uid())
+    ) AND is_dietitian_level_collaborator(auth.uid())
+  );
+
+-- La vecchia policy combinata (read+write insieme, senza distinzione
+-- segreteria/dietista) va rimossa esplicitamente: le due nuove sopra la
+-- sostituiscono con lettura permissiva + scrittura solo dietista-level.
+DROP POLICY IF EXISTS "patient_photos_owner_all" ON storage.objects;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_46_collaboratori_storage', 'Policy storage bucket (patient-files, patient-photos) aggiornate per i collaboratori di studio')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 47 — patient_documents (collaboratori) + fix patient_audit_log
+--
+-- patient_documents (Privacy/GDPR/moduli inviati al paziente) non aveva
+-- alcuna policy per i collaboratori: un collaboratore che invia un modulo lo
+-- "orfanizza" sotto il proprio auth.uid(), invisibile al titolare e agli
+-- altri collaboratori dello studio.
+--
+-- patient_audit_log è un bug scoperto durante questa sessione, indipendente
+-- dai collaboratori: la tabella ha RLS attiva ma ZERO policy — significa
+-- accesso negato a chiunque, titolare compreso. È il motivo per cui lo
+-- storico modifiche in pazienti.html è sempre risultato vuoto (l'INSERT di
+-- logAuditEvent() fallisce silenziosamente, il try/catch lo nasconde).
+-- Deliberatamente NESSUNA policy UPDATE/DELETE: un log di audit deve restare
+-- append-only, non modificabile nemmeno dal titolare.
+
+DROP POLICY IF EXISTS "patient_documents_collaborator_read" ON patient_documents;
+CREATE POLICY "patient_documents_collaborator_read" ON patient_documents
+  FOR SELECT USING (dietitian_id = get_studio_owner(auth.uid()));
+
+DROP POLICY IF EXISTS "patient_documents_collaborator_write" ON patient_documents;
+CREATE POLICY "patient_documents_collaborator_write" ON patient_documents
+  FOR ALL USING (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()))
+  WITH CHECK (dietitian_id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()));
+
+DROP POLICY IF EXISTS "patient_audit_log_studio_read" ON patient_audit_log;
+CREATE POLICY "patient_audit_log_studio_read" ON patient_audit_log
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM cartelle_raw c WHERE c.id = patient_audit_log.patient_id AND c.user_id = get_studio_owner(auth.uid()))
+  );
+
+DROP POLICY IF EXISTS "patient_audit_log_studio_insert" ON patient_audit_log;
+CREATE POLICY "patient_audit_log_studio_insert" ON patient_audit_log
+  FOR INSERT WITH CHECK (
+    dietitian_id = auth.uid()
+    AND EXISTS (SELECT 1 FROM cartelle_raw c WHERE c.id = patient_audit_log.patient_id AND c.user_id = get_studio_owner(auth.uid()))
+  );
+
+GRANT SELECT, INSERT ON public.patient_audit_log TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_47_patient_documents_audit_log', 'Collaboratori su patient_documents + fix patient_audit_log (RLS attiva ma senza policy, sempre vuota)')
+ON CONFLICT (id) DO NOTHING;

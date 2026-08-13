@@ -42,6 +42,18 @@ let isAdmin = false;
 let currentProfile = null;
 let loadProfileError = null;
 
+// Utente loggato risolto al "proprietario dello studio" di cui fa parte —
+// se stesso per un dietista indipendente/titolare, il titolare per un
+// collaboratore (tabella studio_collaborators, SEZIONE 15/45 di
+// supabase_setup.sql). OGNI query sui dati di un paziente (cartelle, piani,
+// esami, appuntamenti, fatture...) deve filtrare per studioOwnerId, mai per
+// currentUser.id — altrimenti un collaboratore non vede/crea nulla pur
+// avendone il permesso lato RLS: il filtro lato client sarebbe più
+// restrittivo della policy stessa. currentUser.id resta corretto solo per
+// l'identità dell'utente loggato in sé (profilo, notifiche personali, "chi
+// ha compiuto questa azione" nei log).
+let studioOwnerId = null;
+
 // ═══════════════════════════════════════════════════
 // AUTH
 // ═══════════════════════════════════════════════════
@@ -55,12 +67,42 @@ async function checkAuth(redirectIfNotLogged = true) {
       return false;
     }
     currentUser = session.user;
+    await resolveStudioOwner();
     await loadProfile();
     return true;
   } catch(e) {
     console.warn('checkAuth error:', e.message);
     return false;
   }
+}
+
+// ─── Studio owner sessionStorage cache (5-min TTL, stesso pattern del profilo) ───
+const _STUDIO_OWNER_CACHE_TTL = 5 * 60 * 1000;
+function _readStudioOwnerCache(uid) {
+  try {
+    const raw = sessionStorage.getItem('dpp_studio_owner_' + uid);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > _STUDIO_OWNER_CACHE_TTL) { sessionStorage.removeItem('dpp_studio_owner_' + uid); return null; }
+    return data;
+  } catch(e) { return null; }
+}
+function _writeStudioOwnerCache(uid, data) {
+  try { sessionStorage.setItem('dpp_studio_owner_' + uid, JSON.stringify({ data, ts: Date.now() })); } catch(e) {}
+}
+
+async function resolveStudioOwner() {
+  if (!currentUser) { studioOwnerId = null; return null; }
+  const cached = _readStudioOwnerCache(currentUser.id);
+  if (cached) { studioOwnerId = cached; return studioOwnerId; }
+  try {
+    const { data, error } = await sb.rpc('get_studio_owner', { uid: currentUser.id });
+    studioOwnerId = (!error && data) ? data : currentUser.id;
+  } catch(e) {
+    studioOwnerId = currentUser.id;
+  }
+  _writeStudioOwnerCache(currentUser.id, studioOwnerId);
+  return studioOwnerId;
 }
 
 // ─── Profile sessionStorage cache (5-min TTL) ─────────────────────────────
@@ -312,7 +354,12 @@ async function salvaProfiloOp() {
 async function doLogout() {
   try {
     const uid = currentUser?.id || '';
-    if (uid) { sessionStorage.removeItem('dpp_profile_' + uid); sessionStorage.removeItem('dpp_cartelle_' + uid); }
+    if (uid) {
+      sessionStorage.removeItem('dpp_profile_' + uid);
+      sessionStorage.removeItem('dpp_studio_owner_' + uid);
+      sessionStorage.removeItem('dpp_cartelle_' + uid);
+      if (studioOwnerId) sessionStorage.removeItem('dpp_cartelle_' + studioOwnerId);
+    }
   } catch(e) {}
   await sb.auth.signOut();
   window.location.href = 'index.html';
@@ -395,7 +442,7 @@ async function loadCartelleDropdown() {
   // Support both old select and new search input
   const sel = document.getElementById('inp-cartella');
   if (!currentUser) return;
-  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   if (!data) return;
   if (sel && sel.tagName === 'SELECT') {
     sel.innerHTML = '<option value="">-- Nessuna cartella --</option>';
@@ -716,13 +763,14 @@ window._cartelleCache = null;
 async function _cwLoadCache() {
   if (window._cartelleCache) return window._cartelleCache;
   if (!currentUser) return [];
-  const _cartKey = 'dpp_cartelle_' + currentUser.id;
+  const _owner = studioOwnerId || currentUser.id;
+  const _cartKey = 'dpp_cartelle_' + _owner;
   try { const c = sessionStorage.getItem(_cartKey); if (c) { window._cartelleCache = JSON.parse(c); return window._cartelleCache; } } catch(e) {}
   try {
-    const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+    const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', _owner).order('nome');
     window._cartelleCache = data || [];
   } catch(e) { window._cartelleCache = []; }
-  try { sessionStorage.setItem('dpp_cartelle_' + currentUser.id, JSON.stringify(window._cartelleCache)); } catch(e) {}
+  try { sessionStorage.setItem(_cartKey, JSON.stringify(window._cartelleCache)); } catch(e) {}
   return window._cartelleCache;
 }
 
@@ -884,7 +932,7 @@ function _cwNuovaCartella(cid) {
   _cwHide(cid);
   openNuovaCartellaModal(async function(id, nome) {
     window._cartelleCache = null;
-    try { if (currentUser) sessionStorage.removeItem('dpp_cartelle_' + currentUser.id); } catch(e) {}
+    try { if (currentUser) sessionStorage.removeItem('dpp_cartelle_' + (studioOwnerId || currentUser.id)); } catch(e) {}
     if (typeof allCartelle !== 'undefined') allCartelle = await _cwLoadCache();
     _cwSelect(cid, id, nome);
   });
@@ -935,7 +983,7 @@ async function _gncCrea() {
   if (!currentUser) { toast('Sessione scaduta, ricarica la pagina', 'err'); return; }
   showLoading(true);
   var result = await sb.from('cartelle').insert({
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     nome: nome,
     created_at: new Date().toISOString()
   }).select().single();

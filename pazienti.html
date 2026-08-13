@@ -739,7 +739,7 @@ async function init() {
 // the end of the grid. Identified by note='__altro__'.
 // ═══════════════════════════════════════════════════
 function _altroKey() {
-  return currentUser ? `altro_cartella_${currentUser.id}` : null;
+  return currentUser ? `altro_cartella_${studioOwnerId || currentUser.id}` : null;
 }
 
 async function ensureAltroCartella(allCartelle) {
@@ -763,7 +763,7 @@ async function ensureAltroCartella(allCartelle) {
 
   // First time: create the "Altro" folder
   const { data, error } = await sb.from('cartelle').insert({
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     nome: 'Altro',
     note: '__altro__',
     created_at: new Date().toISOString()
@@ -777,7 +777,8 @@ async function ensureAltroCartella(allCartelle) {
 
 async function loadCartelle(skipCache = false) {
   const wrap = document.getElementById('main-content');
-  const _ck = 'np_cart_' + currentUser.id;
+  const _owner = studioOwnerId || currentUser.id;
+  const _ck = 'np_cart_' + _owner;
   if (skipCache) { try { sessionStorage.removeItem(_ck); } catch(_e) {} }
   let data, error;
   try {
@@ -786,14 +787,14 @@ async function loadCartelle(skipCache = false) {
       const { data: _cd, ts } = JSON.parse(_cached);
       if (Date.now() - ts < 120000) {
         data = _cd;
-        sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', currentUser.id).order('created_at', { ascending: false })
+        sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', _owner).order('created_at', { ascending: false })
           .then(function(r) { if (r.data) { try { sessionStorage.setItem(_ck, JSON.stringify({ data: r.data, ts: Date.now() })); } catch(e) {} } });
       }
     }
   } catch(_e) {}
   if (!data) {
     wrap.innerHTML = `<div class="empty-state"><div class="ei">⏳</div><h3>${_L('Caricamento...','Loading...')}</h3></div>`;
-    const res = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    const res = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived').eq('user_id', _owner).order('created_at', { ascending: false });
     data = res.data; error = res.error;
     if (data) { try { sessionStorage.setItem(_ck, JSON.stringify({ data, ts: Date.now() })); } catch(_e) {} }
   }
@@ -969,8 +970,8 @@ async function bulkEsportaPDF() {
   let biaRows = [], pianiRows = [];
   try {
     const [biaRes, pianiRes] = await Promise.all([
-      sb.from('bia_records').select('cartella_id,peso,data_misura').in('cartella_id', ids).eq('user_id', currentUser.id).order('data_misura', { ascending: false }),
-      sb.from('piani').select('cartella_id').in('cartella_id', ids).eq('user_id', currentUser.id),
+      sb.from('bia_records').select('cartella_id,peso,data_misura').in('cartella_id', ids).eq('user_id', studioOwnerId || currentUser.id).order('data_misura', { ascending: false }),
+      sb.from('piani').select('cartella_id').in('cartella_id', ids).eq('user_id', studioOwnerId || currentUser.id),
     ]);
     biaRows = biaRes.data || [];
     pianiRows = pianiRes.data || [];
@@ -1185,7 +1186,8 @@ async function renderCartellaDetail(id) {
     if (!currentUser) { wrap.innerHTML = `<div class="empty-state"><div class="ei">🔒</div><h3>${_L('Sessione scaduta — effettua nuovamente il login','Session expired — please log in again')}</h3></div>`; return; }
   }
 
-  const cartResult = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived,user_id').eq('id', id).eq('user_id', currentUser.id).maybeSingle();
+  const _owner = studioOwnerId || currentUser.id;
+  const cartResult = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived,user_id').eq('id', id).eq('user_id', _owner).maybeSingle();
   if (cartResult?.error) {
     console.error('Errore caricamento cartella:', cartResult.error);
     wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>${_L('Errore caricamento cartella','Folder loading error')}</h3><p style="color:var(--slate-l);font-size:13px">${esc(cartResult.error.message)}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">${_L('← Torna all\'elenco','← Back to list')}</button></div>`;
@@ -1195,16 +1197,16 @@ async function renderCartellaDetail(id) {
   // Load related data with individual error handling (tables may not exist yet)
   const safeQuery = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
   const [piani, ncpts, schede, biaList, noteSpec, patientLink, esamiBiochimici, patientFiles, diarioFoto, percorsi] = await Promise.all([
-    safeQuery(sb.from('piani').select('id,nome,saved_at,data_piano,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
-    safeQuery(sb.from('ncpt').select('id,created_at,updated_at,visible_to_patient,valutazione').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('schede_valutazione').select('id,nome,saved_at,created_at,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('saved_at', {ascending:false})),
-    safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,visible_to_patient').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_misura', {ascending:false})),
-    safeQuery(sb.from('note_specialistiche').select('id,tipo,nota,created_at,visible_to_patient,dati').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).eq('dietitian_id', currentUser.id).limit(1)),
-    safeQuery(sb.from('esami_biochimici').select('id,data_esame,tipo,valore,unita,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_esame', {ascending:false})),
-    safeQuery(sb.from('patient_files').select('id,filename,storage_path,file_size,mime_type,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('created_at', {ascending:false})),
-    safeQuery(sb.from('diario_alimentare_foto').select('id,storage_path,data_diario,ai_description,ai_confidence,foods,totali,note,created_at').eq('cartella_id', id).eq('user_id', currentUser.id).order('data_diario', {ascending:false})),
-    safeQuery(sb.from('percorsi_nutrizionali').select('id,nome,data_inizio,durata_settimane,checkin_ogni_giorni,stato').eq('cartella_id', id).eq('dietitian_id', currentUser.id).order('created_at', {ascending:false})),
+    safeQuery(sb.from('piani').select('id,nome,saved_at,data_piano,visible_to_patient').eq('cartella_id', id).eq('user_id', _owner).order('saved_at', {ascending:false})),
+    safeQuery(sb.from('ncpt').select('id,created_at,updated_at,visible_to_patient,valutazione').eq('cartella_id', id).eq('user_id', _owner).order('created_at', {ascending:false})),
+    safeQuery(sb.from('schede_valutazione').select('id,nome,saved_at,created_at,visible_to_patient').eq('cartella_id', id).eq('user_id', _owner).order('saved_at', {ascending:false})),
+    safeQuery(sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,visible_to_patient').eq('cartella_id', id).eq('user_id', _owner).order('data_misura', {ascending:false})),
+    safeQuery(sb.from('note_specialistiche').select('id,tipo,nota,created_at,visible_to_patient,dati').eq('cartella_id', id).eq('user_id', _owner).order('created_at', {ascending:false})),
+    safeQuery(sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).eq('dietitian_id', _owner).limit(1)),
+    safeQuery(sb.from('esami_biochimici').select('id,data_esame,tipo,valore,unita,note,created_at').eq('cartella_id', id).eq('user_id', _owner).order('data_esame', {ascending:false})),
+    safeQuery(sb.from('patient_files').select('id,filename,storage_path,file_size,mime_type,created_at').eq('cartella_id', id).eq('user_id', _owner).order('created_at', {ascending:false})),
+    safeQuery(sb.from('diario_alimentare_foto').select('id,storage_path,data_diario,ai_description,ai_confidence,foods,totali,note,created_at').eq('cartella_id', id).eq('user_id', _owner).order('data_diario', {ascending:false})),
+    safeQuery(sb.from('percorsi_nutrizionali').select('id,nome,data_inizio,durata_settimane,checkin_ogni_giorni,stato').eq('cartella_id', id).eq('dietitian_id', _owner).order('created_at', {ascending:false})),
   ]);
 
   const cart = cartResult.data;
@@ -1761,7 +1763,7 @@ async function inviaPrivacy(patientId, cartellaId) {
   try {
     const { error } = await sb.from('patient_documents').insert({
       patient_id: patientId,
-      dietitian_id: currentUser.id,
+      dietitian_id: studioOwnerId || currentUser.id,
       title: 'Informativa Privacy',
       type: 'privacy',
       content: 'Il paziente è informato che i propri dati personali e sanitari vengono trattati ai sensi del Regolamento (UE) 2016/679 (GDPR) e del D.Lgs. 196/2003 come modificato dal D.Lgs. 101/2018. I dati sono trattati per finalità di assistenza nutrizionale e non vengono comunicati a terzi senza consenso esplicito. Il paziente ha diritto di accedere, rettificare, cancellare i propri dati e di revocare il consenso in qualsiasi momento.',
@@ -1783,7 +1785,7 @@ async function inviaGDPR(patientId, cartellaId) {
     const { data: existing } = await sb.from('patient_documents')
       .select('id, signed_at')
       .eq('patient_id', patientId)
-      .eq('dietitian_id', currentUser.id)
+      .eq('dietitian_id', studioOwnerId || currentUser.id)
       .eq('type', 'gdpr')
       .is('signed_at', null)
       .maybeSingle();
@@ -1809,7 +1811,7 @@ Firmando il presente documento, il paziente presta il proprio consenso libero, s
 
     const { error } = await sb.from('patient_documents').insert({
       patient_id: patientId,
-      dietitian_id: currentUser.id,
+      dietitian_id: studioOwnerId || currentUser.id,
       title: 'Consenso GDPR — Trattamento Dati Sanitari',
       type: 'gdpr',
       content: gdprContent,
@@ -1842,7 +1844,7 @@ async function inviaModuloPersonalizzato() {
   try {
     const { error } = await sb.from('patient_documents').insert({
       patient_id: _moduloTargetPatientId,
-      dietitian_id: currentUser.id,
+      dietitian_id: studioOwnerId || currentUser.id,
       title: titolo,
       type: 'modulo',
       content: contenuto,
@@ -1870,7 +1872,7 @@ function apriModificaBIA(biaId, cartellaId) {
 async function delBIA(id, cartellaId) {
   customConfirm(_L('Eliminare questa misurazione BIA?','Delete this BIA measurement?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('bia_records').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('bia_records').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaId);
@@ -2038,7 +2040,7 @@ function caricaPiano(id) {
 async function delPiano(id) {
   customConfirm(_L('Eliminare questo piano?','Delete this plan?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('piani').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('piani').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
@@ -2049,7 +2051,7 @@ async function delPiano(id) {
 async function delNCPt(id) {
   customConfirm(_L('Eliminare questa scheda NCPt?','Delete this NCPt form?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('ncpt').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('ncpt').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
@@ -2060,7 +2062,7 @@ async function delNCPt(id) {
 async function delScheda(id) {
   customConfirm(_L('Eliminare questa scheda valutazione?','Delete this assessment form?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('schede_valutazione').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('schede_valutazione').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
@@ -2071,7 +2073,7 @@ async function delScheda(id) {
 async function delNoteSpec(id) {
   customConfirm(_L('Eliminare questa scheda specialistica?','Delete this specialist note?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('note_specialistiche').delete().eq('id', id).eq('user_id', currentUser.id);
+    const { error } = await sb.from('note_specialistiche').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     await renderCartellaDetail(cartellaAperta);
@@ -2117,7 +2119,7 @@ async function salvaSoap() {
   showLoading(true);
   const { error } = await sb.from('note_specialistiche').insert({
     cartella_id: _soapCartellaId,
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     tipo: 'soap_note',
     nota: _L('Nota SOAP','SOAP Note') + ' — ' + fmtIt + ' (' + tipoV + ')',
     dati: JSON.stringify(dati),
@@ -2200,7 +2202,7 @@ async function salvaCartella() {
   const nome = document.getElementById('nc-nome').value.trim();
   if (!nome) { toast(_L('Inserisci il nome','Enter the name'), 'err'); return; }
   const payload = {
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     nome: nome + (document.getElementById('nc-cognome').value.trim() ? ' ' + document.getElementById('nc-cognome').value.trim() : ''),
     cognome: document.getElementById('nc-cognome').value.trim(),
     ddn: document.getElementById('nc-ddn').value || null,
@@ -2317,7 +2319,7 @@ async function cercaPazienteEmail() {
   }
 
   // Check if already linked
-  const { data: existing } = await sb.from('patient_dietitian').select('id').eq('patient_id', data.id).eq('dietitian_id', currentUser.id).eq('cartella_id', collegaCartellaId).maybeSingle();
+  const { data: existing } = await sb.from('patient_dietitian').select('id').eq('patient_id', data.id).eq('dietitian_id', studioOwnerId || currentUser.id).eq('cartella_id', collegaCartellaId).maybeSingle();
 
   if (existing) {
     resultEl.innerHTML = '<div style="color:var(--teal);font-size:12.5px">✅ ' + _L('Questo paziente è già collegato a questa cartella.','This patient is already linked to this folder.') + '</div>';
@@ -2337,7 +2339,7 @@ async function confermaCollegamento() {
   showLoading(true);
   const { error } = await sb.from('patient_dietitian').insert({
     patient_id: collegaFoundUserId,
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     cartella_id: collegaCartellaId
   });
   showLoading(false);
@@ -2407,7 +2409,7 @@ async function toggleArchiviaCartella(id, currentlyArchived) {
 function scollegaPaziente(patientId, cartellaId) {
   customConfirm(_L('Sei sicuro di voler scollegare questo paziente? Non perderà i suoi dati, ma non sarà più associato a questa cartella.','Are you sure you want to unlink this patient? They will not lose their data, but will no longer be associated with this folder.'), async () => {
     showLoading(true);
-    const { data, error } = await sb.from('patient_dietitian').delete().eq('patient_id', patientId).eq('dietitian_id', currentUser.id).eq('cartella_id', cartellaId).select();
+    const { data, error } = await sb.from('patient_dietitian').delete().eq('patient_id', patientId).eq('dietitian_id', studioOwnerId || currentUser.id).eq('cartella_id', cartellaId).select();
     showLoading(false);
     if (error) { toast('❌ ' + _L('Errore: ','Error: ') + error.message, 'err'); return; }
     if (!data || data.length === 0) { toast(_L('❌ Impossibile scollegare: il collegamento non è stato trovato o non hai i permessi necessari. Contatta l\'amministratore.','❌ Cannot unlink: the connection was not found or you do not have the required permissions. Contact the administrator.'), 'err'); return; }
@@ -2702,10 +2704,10 @@ async function salvaPercorso() {
   if (!durata || durata < 1) { toast(_L('Durata non valida','Invalid duration'), 'err'); return; }
   if (!checkin || checkin < 1) { toast(_L('Cadenza check-in non valida','Invalid check-in frequency'), 'err'); return; }
 
-  const { data: link } = await sb.from('patient_dietitian').select('patient_id').eq('cartella_id', _percorsoCartellaId).eq('dietitian_id', currentUser.id).maybeSingle();
+  const { data: link } = await sb.from('patient_dietitian').select('patient_id').eq('cartella_id', _percorsoCartellaId).eq('dietitian_id', studioOwnerId || currentUser.id).maybeSingle();
 
   const { error } = await sb.from('percorsi_nutrizionali').insert({
-    dietitian_id: currentUser.id,
+    dietitian_id: studioOwnerId || currentUser.id,
     cartella_id: _percorsoCartellaId,
     patient_id: link?.patient_id || null,
     nome,
@@ -2721,7 +2723,7 @@ async function salvaPercorso() {
 async function chiudiPercorso(percorsoId, nuovoStato) {
   const msg = nuovoStato === 'completato' ? _L('Segnare il percorso come completato?','Mark the program as completed?') : _L('Annullare il percorso?','Cancel the program?');
   if (!confirm(msg)) return;
-  const { error } = await sb.from('percorsi_nutrizionali').update({ stato: nuovoStato }).eq('id', percorsoId).eq('dietitian_id', currentUser.id);
+  const { error } = await sb.from('percorsi_nutrizionali').update({ stato: nuovoStato }).eq('id', percorsoId).eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error) { toast('❌ ' + error.message, 'err'); return; }
   toast('✅ ' + _L('Percorso aggiornato','Program updated'), 'ok');
   if (cartellaAperta) renderCartellaDetail(cartellaAperta);
@@ -2839,7 +2841,7 @@ async function salvaEsame() {
 
   const { error } = await sb.from('esami_biochimici').insert({
     cartella_id: _esameCartellaId,
-    user_id: currentUser.id,
+    user_id: studioOwnerId || currentUser.id,
     tipo,
     valore: parseFloat(valore),
     unita: unita || null,
@@ -3085,7 +3087,7 @@ async function salvaBulkEsami() {
     const valore = parseFloat(valoreRaw);
     if (isNaN(valore)) return;
     const unita = (tr.querySelector('.bulk-unita')?.value || '').trim();
-    records.push({ cartella_id: _bulkEsameCartellaId, user_id: currentUser.id, tipo, valore, unita: unita||null, data_esame });
+    records.push({ cartella_id: _bulkEsameCartellaId, user_id: studioOwnerId || currentUser.id, tipo, valore, unita: unita||null, data_esame });
   });
   if (!records.length) { toast(_L('Nessun valore inserito','No values entered'), 'err'); return; }
   const { error } = await sb.from('esami_biochimici').insert(records);
@@ -3111,11 +3113,12 @@ async function toggleTimeline(cartellaId, btn) {
   btn.disabled = true;
 
   const safeQ = async (q) => { try { const r = await q; return r.data || []; } catch(e) { return []; }};
+  const _owner3 = studioOwnerId || currentUser.id;
   const [piani, schede, bia, note] = await Promise.all([
-    safeQ(sb.from('piani').select('id,nome,saved_at,data_piano').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
-    safeQ(sb.from('schede_valutazione').select('id,nome,saved_at,created_at').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
-    safeQ(sb.from('bia_records').select('id,data_misura,peso').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
-    safeQ(sb.from('note_specialistiche').select('id,tipo,nota,created_at').eq('cartella_id', cartellaId).eq('user_id', currentUser.id)),
+    safeQ(sb.from('piani').select('id,nome,saved_at,data_piano').eq('cartella_id', cartellaId).eq('user_id', _owner3)),
+    safeQ(sb.from('schede_valutazione').select('id,nome,saved_at,created_at').eq('cartella_id', cartellaId).eq('user_id', _owner3)),
+    safeQ(sb.from('bia_records').select('id,data_misura,peso').eq('cartella_id', cartellaId).eq('user_id', _owner3)),
+    safeQ(sb.from('note_specialistiche').select('id,tipo,nota,created_at').eq('cartella_id', cartellaId).eq('user_id', _owner3)),
   ]);
   const esami = window._currentCartellaEsami || [];
 
@@ -3195,11 +3198,12 @@ async function uploadAllegato(input, cartellaId) {
   let errCount = 0;
   for (const file of validFiles) {
     const safeName = sanitizeAllegatoFilename(file.name);
-    const path = currentUser.id + '/' + cartellaId + '/' + Date.now() + '_' + safeName;
+    const _owner4 = studioOwnerId || currentUser.id;
+    const path = _owner4 + '/' + cartellaId + '/' + Date.now() + '_' + safeName;
     const { error: upErr } = await sb.storage.from('patient-files').upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
     if (upErr) { errCount++; console.error('Upload error:', upErr); continue; }
     const { error: dbErr } = await sb.from('patient_files').insert({
-      user_id: currentUser.id,
+      user_id: _owner4,
       cartella_id: cartellaId,
       filename: safeName,
       storage_path: path,
@@ -3626,7 +3630,7 @@ async function importaCSV() {
     const nome = (row.nome + (row.cognome ? ' ' + row.cognome : '')).trim();
     const tags = row.tags ? row.tags.split(';').map(t => t.trim()).filter(Boolean) : [];
     const payload = {
-      user_id: currentUser.id,
+      user_id: studioOwnerId || currentUser.id,
       nome,
       cognome: row.cognome || null,
       ddn: row.ddn || null,
@@ -3953,7 +3957,8 @@ async function diarioFotoSave() {
   showLoading(true);
   try {
     const safeName = 'diario_' + Date.now() + '.jpg';
-    const path = currentUser.id + '/' + s.cartellaId + '/diario/' + safeName;
+    const _owner5 = studioOwnerId || currentUser.id;
+    const path = _owner5 + '/' + s.cartellaId + '/diario/' + safeName;
     const { error: upErr } = await sb.storage.from('patient-files').upload(path, s.file, { upsert: false, contentType: s.file.type || 'image/jpeg' });
     if (upErr) throw upErr;
 
@@ -3965,7 +3970,7 @@ async function diarioFotoSave() {
 
     const { error: dbErr } = await sb.from('diario_alimentare_foto').insert({
       cartella_id: s.cartellaId,
-      user_id: currentUser.id,
+      user_id: _owner5,
       storage_path: path,
       data_diario: s.dataDiario,
       ai_description: s.result.description || null,

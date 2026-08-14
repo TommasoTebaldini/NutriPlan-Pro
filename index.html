@@ -109,6 +109,20 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn" id="login-btn" onclick="doLogin()" data-i18n="index.login_btn">Accedi</button>
       <p class="note" style="margin-top:10px"><button onclick="showForgot()" style="background:none;border:none;padding:0;color:#0F766E;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">Password dimenticata?</button></p>
+
+      <p class="note" style="margin-top:14px;text-align:center"><button onclick="toggleSsoOptions()" id="sso-toggle-btn" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">Accesso aziendale (SSO) →</button></p>
+      <div id="sso-options" style="display:none;margin-top:10px;padding-top:12px;border-top:1px solid #E2E8F0">
+        <div class="err" id="sso-err"></div>
+        <button type="button" onclick="doLoginAzure()" style="width:100%;padding:10px;background:white;color:#1E293B;border:1.5px solid #E2E8F0;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px">
+          <svg width="16" height="16" viewBox="0 0 16 16"><rect width="7" height="7" fill="#F25022"/><rect x="9" width="7" height="7" fill="#7FBA00"/><rect y="9" width="7" height="7" fill="#00A4EF"/><rect x="9" y="9" width="7" height="7" fill="#FFB900"/></svg>
+          Accedi con Microsoft
+        </button>
+        <button type="button" onclick="doLoginSSO()" style="width:100%;padding:10px;background:white;color:#1E293B;border:1.5px solid #E2E8F0;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit">
+          🔐 Accedi con SSO aziendale (SAML)
+        </button>
+        <p class="note" style="margin-top:8px;font-size:11px">Per il login SSO/SAML inserisci la tua email aziendale nel campo Email qui sopra prima di premere il pulsante.</p>
+      </div>
+
       <p class="note"><span data-i18n="index.privacy_note">I tuoi dati sono salvati in modo sicuro.</span> <a href="privacy.html" style="color:#0F766E;font-weight:600">Privacy Policy</a> · <a href="termini.html" style="color:#0F766E;font-weight:600">Termini di Servizio</a></p>
     </div>
 
@@ -377,8 +391,17 @@ async function doLogin() {
   btn.disabled=false;btn.textContent='Accedi';
   if (error){err.textContent=error.message==='Invalid login credentials'?'Email o password errata.':error.message;err.classList.add('show');return;}
 
-  // Se l'account ha la 2FA attiva, il login con sola password resta al livello
-  // aal1: serve un secondo passaggio (codice TOTP) prima di procedere.
+  await checkMfaThenRedirect(data.user);
+}
+
+// Punto unico di applicazione della 2FA, a prescindere da come è stata
+// ottenuta la sessione (password, SSO/SAML, Microsoft, o sessione persistita
+// da un precedente login). Un fattore TOTP verificato porta la sessione ad
+// aal1 con qualunque metodo di autenticazione — un login SSO/OAuth non
+// soddisfa di per sé il secondo fattore configurato lato Supabase, quindi
+// senza questo controllo un account con 2FA attiva sarebbe protetto solo
+// dall'Identity Provider esterno, bypassando la 2FA dell'app.
+async function checkMfaThenRedirect(user) {
   const { data: aal } = await sb.auth.mfa.getAuthenticatorAssuranceLevel();
   if (aal && aal.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
     const { data: factors } = await sb.auth.mfa.listFactors();
@@ -386,7 +409,7 @@ async function doLogin() {
     if (totpFactor) {
       _mfaMode = 'login';
       _pendingMfaFactorId = totpFactor.id;
-      _pendingMfaUser = data.user;
+      _pendingMfaUser = user;
       document.getElementById('mfa-code').value = '';
       document.getElementById('mfa-err').classList.remove('show');
       document.getElementById('mfa-modal').style.display = 'flex';
@@ -394,8 +417,59 @@ async function doLogin() {
       return;
     }
   }
+  await checkAndRedirect(user);
+}
 
-  await checkAndRedirect(data.user);
+function toggleSsoOptions() {
+  const box = document.getElementById('sso-options');
+  const isHidden = box.style.display === 'none';
+  box.style.display = isHidden ? 'block' : 'none';
+  document.getElementById('sso-toggle-btn').textContent = isHidden ? '← Accesso aziendale (SSO)' : 'Accesso aziendale (SSO) →';
+}
+
+// Login via Microsoft Entra ID (Azure AD), tramite il provider OAuth integrato
+// di Supabase — copre le strutture il cui Active Directory è sincronizzato con
+// Microsoft 365/Entra ID (il caso più comune in ambito PA/ospedaliero), senza
+// bisogno di configurare un provider SAML dedicato.
+async function doLoginAzure() {
+  const err = document.getElementById('sso-err');
+  err.classList.remove('show');
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'azure',
+    options: {
+      scopes: 'email openid profile',
+      redirectTo: window.location.origin + window.location.pathname
+    }
+  });
+  if (error) { err.textContent = error.message; err.classList.add('show'); }
+  // In caso di successo il browser viene reindirizzato a Microsoft: non c'è altro da fare qui.
+}
+
+// Login via un Identity Provider SAML 2.0 dedicato (ADFS, Okta, o qualunque IdP
+// SAML che la struttura utilizzi al posto/accanto ad Azure AD). Il dominio email
+// deve essere stato registrato lato Supabase (supabase sso add --domains ...)
+// prima che questo funzioni per un dato cliente/struttura.
+async function doLoginSSO() {
+  const email = document.getElementById('login-email').value.trim();
+  const err = document.getElementById('sso-err');
+  err.classList.remove('show');
+  const domain = email.includes('@') ? email.split('@')[1] : '';
+  if (!domain) {
+    err.textContent = 'Inserisci la tua email aziendale nel campo Email qui sopra, poi riprova.';
+    err.classList.add('show');
+    return;
+  }
+  const { data, error } = await sb.auth.signInWithSSO({
+    domain,
+    options: { redirectTo: window.location.origin + window.location.pathname }
+  });
+  if (error) { err.textContent = error.message; err.classList.add('show'); return; }
+  if (data?.url) {
+    window.location.href = data.url;
+  } else {
+    err.textContent = 'Nessun provider SSO configurato per il dominio ' + domain + '.';
+    err.classList.add('show');
+  }
 }
 
 let _mfaMode = 'login'; // 'login' | 'recovery' — decide cosa fare dopo verifyMfaCode()
@@ -624,7 +698,7 @@ async function init() {
   }
   const {data:{session}} = await sb.auth.getSession();
   document.getElementById('loading').classList.remove('show');
-  if (session?.user) await checkAndRedirect(session.user);
+  if (session?.user) await checkMfaThenRedirect(session.user);
 }
 </script>
 </body>

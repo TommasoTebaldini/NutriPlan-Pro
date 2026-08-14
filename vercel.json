@@ -28,7 +28,8 @@
       "maxDuration": 10
     },
     "api/cron.js": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "js/fhir-*.js"
     },
     "api/ai-scribe.js": {
       "maxDuration": 60
@@ -38,7 +39,8 @@
     { "path": "/api/cron?job=inactive-patients", "schedule": "0 8 * * *" },
     { "path": "/api/cron?job=appointment-reminders", "schedule": "0 9 * * *" },
     { "path": "/api/cron?job=overdue-payments", "schedule": "0 10 * * *" },
-    { "path": "/api/cron?job=program-checkins", "schedule": "0 11 * * *" }
+    { "path": "/api/cron?job=program-checkins", "schedule": "0 11 * * *" },
+    { "path": "/api/cron?job=fhir-sync", "schedule": "0 */6 * * *" }
   ],
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" }

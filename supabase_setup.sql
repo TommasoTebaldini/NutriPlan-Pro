@@ -3813,3 +3813,96 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_50_audit_log_centralizzato_retention', 'Trigger di audit centralizzato su 13 tabelle cliniche (sostituisce logAuditEvent client-side, mai affidabile) + retention policy automatica via pg_cron (rapporto + 10 anni, come da registro trattamenti B.1)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 51 — CODA DI SINCRONIZZAZIONE FHIR (FSE 2.0)
+--
+-- Fin qui l'unico export verso il FSE era fse.js: un modulo compilato a mano
+-- dal dietista, un documento CDA alla volta, da firmare e caricare
+-- manualmente sul portale regionale. Non è un flusso continuo — se cambia un
+-- esame, un piano, una diagnosi, nessuno se ne accorge finché il dietista
+-- non riapre manualmente l'export.
+--
+-- Questa sezione aggiunge la parte "flusso continuo" lato database: un
+-- trigger, stesso pattern della SEZIONE 50, che segna una cartella come "da
+-- risincronizzare" ogni volta che cambia un dato clinico rilevante
+-- (patologie/tag, esami, BIA, piano). La costruzione vera e propria del
+-- Bundle FHIR (con le mappature LOINC/SNOMED) resta lato applicazione — vedi
+-- js/fhir-export.js e api/_fhir.js — perché richiede logica di mappatura
+-- terminologica che non ha senso duplicare in PL/pgSQL; qui il trigger si
+-- limita a dire "questo paziente ha bisogno di un nuovo invio", non tenta di
+-- costruire la risorsa FHIR.
+--
+-- Una riga per cartella (non una per evento): un paziente con più modifiche
+-- nello stesso giorno resta "pending" una sola volta, il job di sync
+-- ricostruisce comunque l'intero Bundle aggiornato ad ogni invio, non un
+-- delta incrementale.
+
+CREATE TABLE IF NOT EXISTS fhir_export_queue (
+  cartella_id uuid PRIMARY KEY REFERENCES cartelle(id) ON DELETE CASCADE,
+  status text NOT NULL DEFAULT 'pending', -- 'pending' | 'sent' | 'failed'
+  queued_at timestamptz NOT NULL DEFAULT now(),
+  sent_at timestamptz,
+  attempts integer NOT NULL DEFAULT 0,
+  last_error text
+);
+
+ALTER TABLE fhir_export_queue ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "fhir_export_queue_studio_read" ON fhir_export_queue;
+CREATE POLICY "fhir_export_queue_studio_read" ON fhir_export_queue
+  FOR SELECT USING (EXISTS (
+    SELECT 1 FROM cartelle c WHERE c.id = fhir_export_queue.cartella_id
+      AND c.user_id = get_studio_owner(auth.uid())
+  ));
+
+CREATE INDEX IF NOT EXISTS idx_fhir_export_queue_status ON fhir_export_queue(status);
+
+CREATE OR REPLACE FUNCTION enqueue_fhir_export()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_cartella_id uuid;
+BEGIN
+  IF TG_TABLE_NAME = 'cartelle' THEN
+    v_cartella_id := COALESCE(NEW.id, OLD.id);
+  ELSE
+    v_cartella_id := COALESCE(NEW.cartella_id, OLD.cartella_id);
+  END IF;
+
+  IF v_cartella_id IS NOT NULL THEN
+    INSERT INTO fhir_export_queue (cartella_id, status, queued_at, last_error)
+    VALUES (v_cartella_id, 'pending', now(), NULL)
+    ON CONFLICT (cartella_id) DO UPDATE
+      SET status = 'pending', queued_at = now(), last_error = NULL;
+  END IF;
+
+  RETURN COALESCE(NEW, OLD);
+EXCEPTION WHEN OTHERS THEN
+  RAISE WARNING 'enqueue_fhir_export fallito su %.%: %', TG_TABLE_NAME, TG_OP, SQLERRM;
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+DO $$
+DECLARE
+  tbl TEXT;
+BEGIN
+  FOREACH tbl IN ARRAY ARRAY['cartelle','esami_biochimici','bia_records','piani']
+  LOOP
+    EXECUTE format('DROP TRIGGER IF EXISTS trg_enqueue_fhir_export ON %I', tbl);
+    EXECUTE format(
+      'CREATE TRIGGER trg_enqueue_fhir_export AFTER INSERT OR UPDATE OR DELETE ON %I FOR EACH ROW EXECUTE FUNCTION enqueue_fhir_export()',
+      tbl
+    );
+  END LOOP;
+END $$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_51_fhir_export_queue', 'Coda fhir_export_queue + trigger su cartelle/esami_biochimici/bia_records/piani: segna una cartella da (ri)sincronizzare verso FSE 2.0 ad ogni scrittura clinica rilevante — lato costruzione Bundle FHIR in js/fhir-export.js + api/_fhir.js, job di invio in api/cron.js (?job=fhir-sync)')
+ON CONFLICT (id) DO NOTHING;

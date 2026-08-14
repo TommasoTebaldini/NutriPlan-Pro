@@ -693,6 +693,94 @@ async function jobProgramCheckins() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// JOB: fhir-sync — svuota fhir_export_queue (SEZIONE 51): per ogni cartella
+// "pending" ricostruisce il Bundle FHIR completo (Patient/Practitioner/
+// Condition/Observation/NutritionOrder, mappatura LOINC/SNOMED in
+// js/fhir-export.js) e lo invia al Gateway FSE regionale.
+//
+// FSE_GATEWAY_URL non è configurata di default: il Gateway FSE 2.0 richiede
+// una registrazione formale presso la Regione (certificati Sogei CA,
+// adesione a un Avviso, ammissione con test in ambiente Stage) prima che
+// esista un endpoint reale da chiamare — vedi SETUP-FHIR-FSE.md. Finché
+// quella registrazione non è stata fatta, il job si limita a costruire e
+// validare strutturalmente il Bundle (utile per intercettare bug di
+// mappatura/generazione da subito) senza inviarlo, e lascia la voce in coda
+// come 'pending' — non 'sent', perché niente è stato davvero trasmesso.
+const MAX_FHIR_QUEUE_BATCH = 20;
+
+async function jobFhirSync() {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) throw new Error('Configurazione server mancante (SUPABASE_SERVICE_ROLE_KEY)');
+  const gatewayUrl = process.env.FSE_GATEWAY_URL || null;
+  const gatewayToken = process.env.FSE_GATEWAY_TOKEN || null;
+
+  const { loadFhirModules } = await import('./_fhir.js');
+  const { buildBundleForCartella, validateBundleStructure } = loadFhirModules();
+
+  const queue = await sbFetch(
+    `fhir_export_queue?select=cartella_id,attempts&status=eq.pending&order=queued_at.asc&limit=${MAX_FHIR_QUEUE_BATCH}`,
+    serviceKey,
+  );
+  if (!queue || !queue.length) return { ok: true, checked: 0, sent: 0, built: 0, failed: 0, gatewayConfigured: !!gatewayUrl };
+
+  let sent = 0, built = 0, failed = 0;
+  for (const item of queue) {
+    const cartellaId = item.cartella_id;
+    try {
+      const [cartelle, esami, bia, piani] = await Promise.all([
+        sbFetch(`cartelle?select=id,nome,cognome,ddn,sesso,codice_fiscale,tags,user_id,created_at&id=eq.${cartellaId}`, serviceKey),
+        sbFetch(`esami_biochimici?select=tipo,valore,unita,data_esame,note&cartella_id=eq.${cartellaId}&order=data_esame.desc&limit=20`, serviceKey),
+        sbFetch(`bia_records?select=data_misura,peso,altezza,bmi,bf_pct,ffm_kg,angolo_fase&cartella_id=eq.${cartellaId}&order=data_misura.desc&limit=1`, serviceKey),
+        sbFetch(`piani?select=nome,meals,saved_at&cartella_id=eq.${cartellaId}&order=saved_at.desc&limit=1`, serviceKey),
+      ]);
+      const cartella = cartelle?.[0];
+      if (!cartella) {
+        // Cartella cancellata dopo l'accodamento: rimuove la voce, non è un errore da ritentare.
+        await sbFetch(`fhir_export_queue?cartella_id=eq.${cartellaId}`, serviceKey, { method: 'DELETE' });
+        continue;
+      }
+      const [dietitianProfile] = await sbFetch(`profiles?select=nome,cognome,email,fiscal_codice_fiscale&id=eq.${cartella.user_id}`, serviceKey);
+
+      const bundle = buildBundleForCartella({
+        cartella,
+        dietitianProfile,
+        tags: Array.isArray(cartella.tags) ? cartella.tags : [],
+        esami: esami || [],
+        bia: bia || [],
+        piani: piani || [],
+      });
+      const check = validateBundleStructure(bundle);
+      if (!check.valid) throw new Error('Bundle non valido: ' + check.errors.join('; '));
+      built++;
+
+      if (!gatewayUrl) continue; // resta 'pending': costruito e validato, non ancora inviabile
+
+      const res = await fetch(gatewayUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/fhir+json',
+          ...(gatewayToken ? { Authorization: `Bearer ${gatewayToken}` } : {}),
+        },
+        body: JSON.stringify(bundle),
+      });
+      if (!res.ok) throw new Error(`Gateway HTTP ${res.status}: ${await res.text().catch(() => '')}`);
+
+      await sbFetch(`fhir_export_queue?cartella_id=eq.${cartellaId}`, serviceKey, {
+        method: 'PATCH', body: JSON.stringify({ status: 'sent', sent_at: new Date().toISOString(), last_error: null }),
+      });
+      sent++;
+    } catch (e) {
+      failed++;
+      await sbFetch(`fhir_export_queue?cartella_id=eq.${cartellaId}`, serviceKey, {
+        method: 'PATCH', body: JSON.stringify({ status: 'failed', attempts: (item.attempts || 0) + 1, last_error: String(e.message || e).slice(0, 500) }),
+      }).catch(() => {});
+    }
+  }
+
+  return { ok: true, checked: queue.length, built, sent, failed, gatewayConfigured: !!gatewayUrl };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 export default async function handler(req, res) {
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = req.headers.authorization || '';
@@ -706,7 +794,8 @@ export default async function handler(req, res) {
     if (job === 'appointment-reminders') return res.status(200).json(await jobAppointmentReminders());
     if (job === 'overdue-payments') return res.status(200).json(await jobOverduePayments());
     if (job === 'program-checkins') return res.status(200).json(await jobProgramCheckins());
-    return res.status(400).json({ error: 'Parametro ?job mancante o sconosciuto (attesi: inactive-patients, appointment-reminders, overdue-payments, program-checkins)' });
+    if (job === 'fhir-sync') return res.status(200).json(await jobFhirSync());
+    return res.status(400).json({ error: 'Parametro ?job mancante o sconosciuto (attesi: inactive-patients, appointment-reminders, overdue-payments, program-checkins, fhir-sync)' });
   } catch (err) {
     console.error(`cron (job=${job}) error:`, err);
     return res.status(500).json({ error: 'Errore server: ' + err.message });

@@ -1702,18 +1702,49 @@ async function loadAuditLog(cartellaId) {
       el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">' + _L('Nessuna modifica registrata finora.','No changes recorded yet.') + '</div>';
       return;
     }
+    const AUDIT_TABLE_LABELS = {
+      cartelle: _L('Cartella paziente','Patient folder'),
+      piani: _L('Piano alimentare','Meal plan'),
+      ncpt: 'NCPt',
+      bia_records: _L('Bioimpedenziometria (BIA)','Bioimpedance (BIA)'),
+      schede_valutazione: _L('Scheda di valutazione','Assessment form'),
+      note_specialistiche: _L('Nota specialistica','Specialist note'),
+      esami_biochimici: _L('Esame biochimico','Lab test'),
+      patient_files: _L('Documento paziente','Patient document'),
+      diario_alimentare_foto: _L('Foto diario alimentare','Food diary photo'),
+      percorsi_nutrizionali: _L('Percorso nutrizionale','Nutrition pathway'),
+      patient_dietitian: _L('Collegamento paziente','Patient link'),
+      patient_documents: _L('Documento/consenso inviato','Document/consent sent'),
+      patient_consents: _L('Consenso','Consent'),
+    };
+    const AUDIT_OP_META = {
+      insert: { icon: '➕', label: _L('creato','created') },
+      update: { icon: '✏️', label: _L('modificato','updated') },
+      delete: { icon: '🗑️', label: _L('eliminato','deleted') },
+    };
     el.innerHTML = data.map(log => {
-      const actionIcons = { updated_profile: '✏️', archived: '📦', restored: '♻️', created: '📁', deleted: '🗑️' };
-      const icon = actionIcons[log.action] || '📋';
+      const m = /^(.+)_(insert|update|delete)$/.exec(log.action || '');
+      const table = m ? m[1] : null;
+      const op = m ? m[2] : null;
+      const opMeta = op ? AUDIT_OP_META[op] : null;
+      const icon = opMeta ? opMeta.icon : '📋';
+      const label = table
+        ? `${AUDIT_TABLE_LABELS[table] || table} ${opMeta ? opMeta.label : ''}`.trim()
+        : (log.action || _L('attività','activity'));
       const ts = new Date(log.created_at).toLocaleString(_L('it','en-GB'), {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
       let details = '';
       if (log.details) {
-        try { const d = typeof log.details === 'string' ? JSON.parse(log.details) : log.details; details = Object.entries(d).map(([k,v])=>`${k}: ${v}`).join(', '); } catch(e){}
+        try {
+          const d = typeof log.details === 'string' ? JSON.parse(log.details) : log.details;
+          if (Array.isArray(d.changed_fields) && d.changed_fields.length) {
+            details = _L('Campi modificati: ','Fields changed: ') + d.changed_fields.join(', ');
+          }
+        } catch(e){}
       }
       return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:8px;background:#F8FAFC;border:1px solid var(--border);margin-bottom:6px">
         <span style="font-size:16px;flex-shrink:0">${icon}</span>
         <div style="flex:1;min-width:0">
-          <div style="font-size:12.5px;font-weight:600;color:var(--slate)">${esc(log.action || _L('attività','activity'))}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--slate)">${esc(label)}</div>
           ${details ? `<div style="font-size:11.5px;color:var(--slate-l)">${esc(details)}</div>` : ''}
         </div>
         <span style="font-size:11px;color:var(--slate-l);flex-shrink:0">${ts}</span>
@@ -1721,21 +1752,6 @@ async function loadAuditLog(cartellaId) {
     }).join('');
   } catch(e) {
     el.innerHTML = `<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">${_L('Audit log non disponibile. SQL per creare la tabella:','Audit log unavailable. SQL to create the table:')}<br><code style="font-size:11px;background:#F1F5F9;padding:4px 8px;border-radius:4px;display:block;margin-top:6px;user-select:all">CREATE TABLE patient_audit_log (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), patient_id uuid REFERENCES cartelle(id) ON DELETE CASCADE, dietitian_id uuid, action text, details jsonb, created_at timestamptz DEFAULT now());</code></div>`;
-  }
-}
-
-async function logAuditEvent(patientId, action, details = {}) {
-  if (!currentUser || !sb) return;
-  try {
-    await sb.from('patient_audit_log').insert({
-      patient_id: patientId,
-      dietitian_id: currentUser.id,
-      action,
-      details: JSON.stringify(details),
-      created_at: new Date().toISOString()
-    });
-  } catch(e) {
-    console.warn('Audit log error:', e.message);
   }
 }
 
@@ -2236,9 +2252,6 @@ async function salvaCartella() {
   closeM('modal-nc');
   _clearNcDraft();
   toast(editingCartellaId ? _L('✅ Cartella aggiornata!','✅ Folder updated!') : _L('📁 Cartella creata!','📁 Folder created!'), 'ok');
-  if (editingCartellaId) {
-    await logAuditEvent(editingCartellaId, 'updated_profile', { nome: payload.nome, cognome: payload.cognome || '' });
-  }
   editingCartellaId = null;
   if (cartellaAperta) await renderCartellaDetail(cartellaAperta);
   else loadCartelle(true);

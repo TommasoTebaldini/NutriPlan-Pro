@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Politica di Audit Log e Conservazione Dati — NutriPlan-Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1E293B;min-height:100vh;padding:24px 16px}
+.container{max-width:960px;margin:0 auto;background:white;border-radius:16px;padding:40px 48px;box-shadow:0 4px 24px rgba(0,0,0,.07)}
+@media(max-width:600px){.container{padding:24px 18px}}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#0F766E;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:28px}
+.back-link:hover{text-decoration:underline}
+h1{font-family:'DM Serif Display',serif;font-size:28px;color:#0F766E;margin-bottom:6px}
+.subtitle{font-size:12.5px;color:#64748B;margin-bottom:32px;letter-spacing:.3px}
+h2{font-size:16px;font-weight:700;color:#1E293B;margin:30px 0 10px}
+h3{font-size:14.5px;font-weight:700;color:#0F766E;margin:24px 0 8px}
+p{font-size:13.5px;color:#334155;line-height:1.7;margin-bottom:10px}
+ul,ol{padding-left:20px;margin-bottom:10px}
+li{font-size:13.5px;color:#334155;line-height:1.7;margin-bottom:4px}
+.badge{display:inline-block;background:#D1FAE5;color:#065F46;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin-bottom:16px;letter-spacing:.5px}
+.section-divider{border:none;border-top:1.5px solid #E2E8F0;margin:28px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0 22px;font-size:12.5px}
+thead th{background:#0F766E;color:white;padding:8px 10px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+tbody td{padding:8px 10px;border-bottom:1px solid #E2E8F0;vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+code{background:#F1F5F9;padding:1px 6px;border-radius:4px;font-size:12px;font-family:'SF Mono',Consolas,monospace}
+.contact-box{background:#1E293B;color:white;border-radius:12px;padding:20px 24px;margin-top:28px}
+.contact-box h3{color:#2DD4BF;margin-top:0}
+.contact-box p{color:#CBD5E1;font-size:13px}
+.last-update{font-size:12px;color:#94A3B8;margin-top:28px;text-align:center}
+.draft-banner{background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:#92400E;line-height:1.6}
+.draft-banner strong{color:#78350F}
+.todo{background:#FEF9C3;color:#854D0E;padding:1px 6px;border-radius:4px;font-weight:700;font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back-link" href="../privacy.html">← Torna alla Privacy Policy</a>
+
+  <h1>Politica di Audit Log e Conservazione Dati</h1>
+  <p class="subtitle">Misure tecniche e organizzative — audit trail clinico e retention policy</p>
+
+  <span class="badge">Bozza — da validare legalmente</span>
+
+  <div class="draft-banner">
+    ⚠️ <strong>Bozza in attesa di validazione legale.</strong> Documento tecnico-organizzativo a supporto del <a href="registro-trattamenti.html">Registro dei Trattamenti</a> (voce B.1) e dell'<a href="dpa-responsabile-trattamento.html">Accordo di Nomina a Responsabile</a>. I periodi di conservazione indicati sono un default ragionevole allineato alla prassi per la documentazione sanitaria italiana; vanno confermati da un consulente legale/DPO prima di considerarli definitivi, in particolare in vista di un eventuale utilizzo in ambito ospedaliero/PA.
+  </div>
+
+  <hr class="section-divider">
+
+  <h2>1 — Cos'è l'audit trail clinico</h2>
+  <p>Ogni scrittura (creazione, modifica, cancellazione) sui dati clinici di un paziente viene registrata in una tabella dedicata (<code>patient_audit_log</code>), indipendentemente dalla pagina o funzione dell'applicazione da cui l'operazione è stata effettuata.</p>
+  <p>La registrazione avviene tramite <strong>trigger a livello di database</strong>, non tramite chiamate dal codice dell'applicazione. Questa scelta è deliberata: un trigger di database si attiva su ogni scrittura reale sulla tabella, indipendentemente da quale pagina, funzione o eventuale bug lato client l'abbia generata — a differenza di una chiamata esplicita nel codice, che può essere dimenticata in una nuova funzionalità o fallire silenziosamente senza che nessuno se ne accorga.</p>
+
+  <h3>1.1 — Cosa viene registrato per ogni evento</h3>
+  <table>
+    <thead><tr><th>Campo</th><th>Contenuto</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Paziente</strong></td><td>La cartella clinica a cui l'evento si riferisce.</td></tr>
+      <tr><td><strong>Autore</strong></td><td>L'utente autenticato che ha effettuato l'operazione (professionista titolare, collaboratore di studio, o il paziente stesso per le azioni che gli sono consentite, es. caricamento foto diario).</td></tr>
+      <tr><td><strong>Tabella e operazione</strong></td><td>Es. <code>piani_update</code>, <code>note_specialistiche_delete</code>.</td></tr>
+      <tr><td><strong>Dettaglio — creazione</strong></td><td>Identificativo del record creato.</td></tr>
+      <tr><td><strong>Dettaglio — modifica</strong></td><td>Elenco dei campi modificati, con valore precedente e nuovo per ciascuno (esclusi i campi di contenuto clinico esteso — es. il testo di un piano alimentare — il cui valore attuale resta comunque sempre consultabile nella cartella stessa).</td></tr>
+      <tr><td><strong>Dettaglio — cancellazione</strong></td><td>Copia completa del record cancellato (unico punto in cui quel contenuto resta consultabile dopo la cancellazione).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.2 — Ambito coperto</h3>
+  <p>L'audit trail copre tutte le tabelle che contengono dati clinici del paziente: cartelle, piani alimentari, NCPt, bioimpedenziometrie (BIA), schede di valutazione, note specialistiche (incluse le pagine specialistiche per patologia), esami biochimici, documenti e foto caricati, percorsi nutrizionali multi-settimana, collegamento paziente↔professionista, documenti/consensi inviati.</p>
+  <p>Non copre invece dati non clinici del professionista (es. ricette personali non condivise, template di piano, contabilità/fatture) né l'agenda personale — al di fuori dello scopo di un audit trail sul fascicolo del paziente.</p>
+
+  <h3>1.3 — Chi può consultarlo</h3>
+  <p>Lo storico modifiche di una cartella è visibile solo al professionista titolare e ai collaboratori del suo studio (stesso perimetro di accesso dei dati clinici stessi), tramite Row Level Security a livello di database. Non è mai visibile al paziente. Non è modificabile né cancellabile da nessun utente applicativo: solo il meccanismo di conservazione automatica descritto in §2 può rimuoverne delle voci, e solo una volta scaduto il periodo di conservazione.</p>
+
+  <hr class="section-divider">
+
+  <h2>2 — Retention policy</h2>
+  <p>Il principio di limitazione della conservazione (art. 5.1.e GDPR) impone di non conservare i dati personali più a lungo del necessario. Per un dato clinico, "necessario" coincide di norma con la durata prevista per la documentazione sanitaria dalla prassi professionale italiana.</p>
+
+  <table>
+    <thead><tr><th>Categoria</th><th>Periodo di conservazione</th><th>Meccanismo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Dati clinici del paziente</strong> (cartella, piani, NCPt, BIA, schede, note, esami, documenti)</td><td>Durata del rapporto terapeutico + 10 anni, salvo esercizio del diritto all'oblio dal paziente tramite il professionista.</td><td>Cancellazione manuale dal professionista (nessuna cancellazione automatica dei dati clinici stessi).</td></tr>
+      <tr><td><strong>Audit trail</strong> (<code>patient_audit_log</code>)</td><td>Stessa regola del dato che documenta: non ha senso che la prova di "chi ha scritto cosa" scada prima del dato clinico a cui si riferisce.</td><td>Automatico — job mensile che rimuove solo le voci di cartelle <strong>archiviate da oltre 10 anni</strong>. Finché una cartella non è archiviata, il rapporto è considerato attivo e nulla viene rimosso.</td></tr>
+      <tr><td><strong>Voci di audit orfane</strong> (cartella cancellata fisicamente dal database)</td><td>10 anni dalla data dell'evento stesso.</td><td>Automatico, stesso job mensile — rete di sicurezza per il caso limite in cui la data di fine rapporto non sia più ricostruibile.</td></tr>
+      <tr><td><strong>Log di accesso/autenticazione</strong></td><td>12 mesi.</td><td>Vedi <a href="registro-trattamenti.html">Registro dei Trattamenti</a>, voce A.1.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.1 — Come viene determinata la "fine del rapporto"</h3>
+  <p>La data di archiviazione di una cartella (<code>archived_at</code>) viene registrata automaticamente dal database nel momento in cui il professionista archivia o riattiva un paziente — non è mai impostata dal codice dell'applicazione, per lo stesso motivo per cui l'audit trail stesso è gestito a livello di database: evitare che una dimenticanza lato client lasci un dato senza data di riferimento per la conservazione.</p>
+
+  <hr class="section-divider">
+
+  <h2>3 — Stato di implementazione</h2>
+  <p>Trigger di audit, colonna <code>archived_at</code> e job di conservazione automatica sono implementati in <code>supabase_setup.sql</code> (SEZIONE 50) tramite trigger PostgreSQL e job pianificato (<code>pg_cron</code>, esecuzione mensile). Il job di conservazione può essere sospeso o modificato senza intervento sul codice applicativo, direttamente a livello di database.</p>
+
+  <div class="contact-box">
+    <h3>📩 Contatti</h3>
+    <p>Per domande relative alla presente politica, contatta il Titolare/Responsabile all'indirizzo indicato nell'Informativa Privacy.</p>
+  </div>
+
+  <p class="last-update">Ultimo aggiornamento: Agosto 2026 — NutriPlan-Pro · Bozza v0.1, non ancora validata legalmente</p>
+</div>
+</body>
+</html>

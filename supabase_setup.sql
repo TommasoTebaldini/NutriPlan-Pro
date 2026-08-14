@@ -3637,3 +3637,179 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_49_collaboratori_giro_finale', 'Collaboratori su patient_intake_forms/alimenti_custom/pacchetti/pacchetti_acquistati/broadcast_messages/dietitian_profiles/shared_recipes/whatsapp_messages/liste_spesa/piani_template')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 50 — AUDIT LOG CLINICO CENTRALIZZATO + RETENTION POLICY
+--
+-- patient_audit_log era scritta da un'unica chiamata client (logAuditEvent,
+-- solo su 'updated_profile' in pazienti.html) che non controllava mai
+-- l'errore dell'insert: finché la RLS non copriva la tabella (prima della
+-- SEZIONE 47), ogni scrittura falliva in silenzio — la tabella è sempre
+-- rimasta vuota. Anche risolta la RLS, un singolo call-site client-side non
+-- copre "tutte le azioni cliniche rilevanti": creare/modificare/eliminare un
+-- piano, una BIA, una scheda NCPt/valutazione, una nota specialistica,
+-- collegare/scollegare un paziente, inviare un consenso o un documento.
+--
+-- Soluzione: un trigger generico lato database, non aggirabile da un bug o
+-- una dimenticanza lato client, agganciato AFTER INSERT/UPDATE/DELETE su
+-- tutte le tabelle cliniche. SECURITY DEFINER cosicché l'audit funzioni
+-- anche quando l'attore non ha di per sé i permessi RLS per scrivere in
+-- patient_audit_log (es. un paziente che carica una foto diario). La
+-- funzione non deve mai bloccare la scrittura clinica primaria: qualunque
+-- eccezione nell'audit viene loggata come WARNING e ignorata.
+
+CREATE OR REPLACE FUNCTION log_patient_audit_event()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  -- Colonne con contenuto clinico esteso: il valore attuale resta sempre
+  -- leggibile nella tabella di origine, non serve duplicarlo nell'audit
+  -- trail (eviterebbe solo di gonfiare la tabella senza reale beneficio).
+  v_heavy_cols text[] := ARRAY['meals','dati','ingredienti','items','giorni','contenuto_html','recipe_data'];
+  v_new jsonb;
+  v_old jsonb;
+  v_cartella_id uuid;
+  v_record_id uuid;
+  v_action text;
+  v_changed text[];
+  v_details jsonb;
+BEGIN
+  v_new := CASE WHEN TG_OP <> 'DELETE' THEN to_jsonb(NEW) - v_heavy_cols ELSE NULL END;
+  v_old := CASE WHEN TG_OP <> 'INSERT' THEN to_jsonb(OLD) - v_heavy_cols ELSE NULL END;
+
+  IF TG_TABLE_NAME = 'cartelle' THEN
+    v_cartella_id := COALESCE(v_new->>'id', v_old->>'id')::uuid;
+  ELSE
+    v_cartella_id := COALESCE(v_new->>'cartella_id', v_old->>'cartella_id')::uuid;
+  END IF;
+  v_record_id := COALESCE(v_new->>'id', v_old->>'id')::uuid;
+  v_action := TG_TABLE_NAME || '_' || lower(TG_OP);
+  v_details := jsonb_build_object('record_id', v_record_id);
+
+  IF TG_OP = 'UPDATE' THEN
+    SELECT array_agg(n.key) INTO v_changed
+    FROM jsonb_each(v_new) n JOIN jsonb_each(v_old) o USING (key)
+    WHERE n.value IS DISTINCT FROM o.value;
+    IF v_changed IS NOT NULL THEN
+      v_details := v_details || jsonb_build_object(
+        'changed_fields', v_changed,
+        'before', (SELECT jsonb_object_agg(key, v_old->key) FROM unnest(v_changed) key),
+        'after',  (SELECT jsonb_object_agg(key, v_new->key) FROM unnest(v_changed) key)
+      );
+    END IF;
+  ELSIF TG_OP = 'DELETE' THEN
+    -- Unico punto in cui il contenuto del record cancellato resterà mai
+    -- consultabile: qui vale la pena tenere lo snapshot completo (esclusi
+    -- i campi pesanti sopra).
+    v_details := v_details || jsonb_build_object('deleted_row', v_old);
+  END IF;
+
+  IF v_cartella_id IS NOT NULL THEN
+    INSERT INTO patient_audit_log (patient_id, dietitian_id, action, details, created_at)
+    VALUES (v_cartella_id, auth.uid(), v_action, v_details, now());
+  END IF;
+
+  RETURN COALESCE(NEW, OLD);
+EXCEPTION WHEN OTHERS THEN
+  RAISE WARNING 'log_patient_audit_event fallito su %.%: %', TG_TABLE_NAME, TG_OP, SQLERRM;
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+DO $$
+DECLARE
+  tbl TEXT;
+BEGIN
+  FOREACH tbl IN ARRAY ARRAY['cartelle','piani','ncpt','bia_records','schede_valutazione','note_specialistiche','esami_biochimici','patient_files','diario_alimentare_foto','percorsi_nutrizionali','patient_dietitian','patient_documents','patient_consents']
+  LOOP
+    EXECUTE format('DROP TRIGGER IF EXISTS trg_audit_log ON %I', tbl);
+    EXECUTE format(
+      'CREATE TRIGGER trg_audit_log AFTER INSERT OR UPDATE OR DELETE ON %I FOR EACH ROW EXECUTE FUNCTION log_patient_audit_event()',
+      tbl
+    );
+  END LOOP;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_patient_audit_log_patient_id ON patient_audit_log(patient_id);
+CREATE INDEX IF NOT EXISTS idx_patient_audit_log_created_at ON patient_audit_log(created_at);
+
+-- ── Retention policy ─────────────────────────────────────────────────────
+-- Allineata alla voce B.1 del registro dei trattamenti (legal/registro-
+-- trattamenti.html): "durata del rapporto terapeutico + 10 anni
+-- (documentazione sanitaria)". L'audit trail documenta modifiche a dati
+-- clinici, quindi segue la stessa regola del fascicolo che documenta — non
+-- avrebbe senso cancellare "chi ha modificato cosa" prima del dato stesso,
+-- svuoterebbe di valore probatorio la cartella che resta.
+--
+-- Per applicarla serve sapere QUANDO è finito il rapporto: si aggiunge
+-- cartelle.archived_at, stampata automaticamente (mai dal client, stesso
+-- errore di affidabilità dell'audit log stesso) al primo archiviare/
+-- riattivare una cartella. Finché archived = false il rapporto è
+-- considerato attivo e nulla viene mai cancellato automaticamente.
+
+ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS archived_at timestamptz;
+
+CREATE OR REPLACE FUNCTION stamp_cartella_archived_at()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF NEW.archived IS DISTINCT FROM OLD.archived THEN
+    NEW.archived_at := CASE WHEN NEW.archived THEN now() ELSE NULL END;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_stamp_archived_at ON cartelle;
+CREATE TRIGGER trg_stamp_archived_at BEFORE UPDATE ON cartelle
+FOR EACH ROW EXECUTE FUNCTION stamp_cartella_archived_at();
+
+CREATE OR REPLACE FUNCTION purge_expired_patient_audit_log()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  -- Cartelle archiviate da oltre 10 anni: fine del periodo di conservazione.
+  DELETE FROM patient_audit_log al
+  USING cartelle c
+  WHERE al.patient_id = c.id
+    AND c.archived = true
+    AND c.archived_at IS NOT NULL
+    AND c.archived_at < now() - interval '10 years';
+
+  -- Voci orfane (cartella già cancellata fisicamente dal database): non
+  -- potendo più risalire alla data di fine rapporto, si applicano 10 anni
+  -- dalla scrittura dell'evento stesso come rete di sicurezza, in linea con
+  -- il principio di limitazione della conservazione (art. 5.1.e GDPR).
+  DELETE FROM patient_audit_log al
+  WHERE NOT EXISTS (SELECT 1 FROM cartelle c WHERE c.id = al.patient_id)
+    AND al.created_at < now() - interval '10 years';
+END;
+$$;
+
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'purge_expired_patient_audit_log') THEN
+    PERFORM cron.unschedule('purge_expired_patient_audit_log');
+  END IF;
+END $$;
+
+SELECT cron.schedule(
+  'purge_expired_patient_audit_log',
+  '0 3 1 * *',
+  $$SELECT public.purge_expired_patient_audit_log();$$
+);
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_50_audit_log_centralizzato_retention', 'Trigger di audit centralizzato su 13 tabelle cliniche (sostituisce logAuditEvent client-side, mai affidabile) + retention policy automatica via pg_cron (rapporto + 10 anni, come da registro trattamenti B.1)')
+ON CONFLICT (id) DO NOTHING;

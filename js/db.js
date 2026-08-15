@@ -3098,7 +3098,7 @@ const DB_UPF = [
   {n:"McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:190,na:396.6,zn:2.2,fo:20,se:14,col:15.5},
   // Corretto per coerenza con gli altri duplicati patatine fritte già fixati (15mcg) - 2026-07-30
   {n:"McDonald's Patatine fritte grandi (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:2.0,g:15,z:1.5,ch:41,fi:3.0,ca:11,fe:0.6,mg:28,k2:580,na:400,zn:0.3,fo:15,se:0,col:0},
-  {n:"McDonald's McNuggets (per 100g)",c:"Fast food",src:"UPF",k:175,p:11,gs:1,g:8.3,z:0.5,ch:14,fi:0.6,ca:11,fe:0.8,mg:20,k2:250,na:724,zn:1.0,fo:8,se:10,col:50},
+  {n:"McDonald's McNuggets (per 100g)",c:"Fast food",src:"UPF",k:244,p:15,gs:1.4,g:12,z:0.7,ch:19,fi:0.9,ca:11,fe:0.8,mg:20,k2:250,na:440,zn:1.0,fo:8,se:10,col:50},
   // Fosforo (latte/panna, calcio 110mg conferma) era nel campo folati; folati reali ~10mcg - 2026-07-30
   {n:"McDonald's McFlurry Oreo (per 100g)",c:"Fast food",src:"UPF",k:180,p:4.0,gs:5.0,g:5.5,z:27,ch:28,fi:0.5,ca:110,fe:0.4,mg:12,k2:180,na:100,zn:0.6,fo:10,se:2,col:20},
   // Fosforo (pane+carne+formaggio) era nel campo folati; folati reali ~30mcg - 2026-07-30
@@ -3182,7 +3182,7 @@ const DB_UPF = [
 
   // ── FAST FOOD E PRODOTTI INDUSTRIA ALIMENTARE ──
   {n:"Hamburger McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:210,na:396.6,zn:2.5,fo:8,se:12,col:15.5},
-  {n:"Chicken McNuggets McDonald's (per 100g)",c:"Fast food",src:"UPF",k:175,p:11,gs:1,g:8.3,z:0.5,ch:14,fi:0.6,ca:18,fe:0.6,mg:20,k2:220,na:724,zn:0.8,fo:8,se:10,col:50},
+  {n:"Chicken McNuggets McDonald's (per 100g)",c:"Fast food",src:"UPF",k:244,p:15,gs:1.4,g:12,z:0.7,ch:19,fi:0.9,ca:18,fe:0.6,mg:20,k2:220,na:440,zn:0.8,fo:8,se:10,col:50},
   // Terzo duplicato con lo stesso bug fosforo-in-folati già corretto altrove (15mcg) - 2026-07-30
   {n:"Patatine fritte McDonald's (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:1.5,g:15.0,z:0.8,ch:41.5,fi:3.8,ca:15,fe:0.8,mg:25,k2:670,na:350,zn:0.3,fo:15,se:4,col:0},
   {n:"Hot dog (wurstel in panino industriale)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.5,mg:20,k2:175,na:320,zn:1.5,fo:25,se:10,col:48},
@@ -3484,7 +3484,7 @@ const DB_UPF = [
 {n:"Kit Kat Classic (per 100g)",c:"Snack dolci",src:"UPF",k:512,p:6.7,gs:14.9,g:26.4,z:43.5,ch:60.5,fi:2.5,ca:135,fe:1.5,mg:32,k2:220,na:92,zn:0.8,fo:18,se:6,col:5},
 {n:"After Eight (per 100g)",c:"Snack dolci",src:"UPF",k:425,p:2.1,gs:7.6,g:12.9,z:67.6,ch:73.3,fi:2.7,ca:12,fe:4.5,mg:22,k2:185,na:12,zn:0.5,fo:8,se:2,col:0},
 {n:"M&M's Cioccolato al latte (per 100g)",c:"Snack dolci",src:"UPF",k:499,p:5.5,gs:14,g:20.5,z:66,ch:69,fi:1,ca:115,fe:1.2,mg:32,k2:245,na:80,zn:0.8,fo:15,se:5,col:8},
-{n:"Raffaello (per 100g)",c:"Snack dolci",src:"UPF",k:362,p:5.2,gs:20.4,g:24.8,z:26.1,ch:28.6,fi:3,ca:60,fe:0.8,mg:38,k2:220,na:79.2,zn:0.7,fo:15,se:5,col:5},
+{n:"Raffaello (per 100g)",c:"Snack dolci",src:"UPF",k:627,p:7.4,gs:29.5,g:48.3,z:33.6,ch:38.6,fi:2,ca:65,fe:1,mg:35,k2:210,na:106.8,zn:0.8,fo:20,se:5,col:10},
 // CHIP E SNACK SALATI ITALIANI
 {n:"Fonzies formaggio (per 100g)",c:"Snack salati",src:"UPF",k:553,p:7.8,gs:4.7,g:35,z:4.8,ch:51,fi:1.9,ca:55,fe:1,mg:28,k2:180,na:720,zn:0.8,fo:12,se:8,col:2},
 {n:"Cipster (per 100g)",c:"Snack salati",src:"UPF",k:476,p:4.2,gs:9.8,g:22,z:0.7,ch:64,fi:4.5,ca:20,fe:1.5,mg:32,k2:1150,na:1544,zn:0.5,fo:20,se:4,col:0},

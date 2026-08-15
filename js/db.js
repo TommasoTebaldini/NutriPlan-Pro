@@ -2223,7 +2223,7 @@ const DB_BDA=[
 // ── CONDIMENTI E SALSE MANCANTI ──
 {n:"Aceto di mele biologico non filtrato",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.4,ch:5.0,fi:0,ca:7,fe:0.3,mg:5,k2:73,na:5,zn:0.1,fo:4,se:0,col:0,src:"BDA"},
 {n:"Miso (pasta di soia fermentata)",c:"Condimenti",k:200,p:12.0,gs:1.0,g:6.0,z:3.2,ch:26.5,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3728,zn:2.6,fo:153,se:7,col:0,src:"BDA"},
-{n:"Tahini (pasta di sesamo)",c:"Condimenti",k:341,p:13.5,gs:0.25,g:1.2,z:2.2,ch:72.7,fi:1.7,ca:22,fe:1.4,mg:51,k2:192,na:4,zn:1.15,fo:97,se:2.7,col:0,src:"CREA"},
+{n:"Tahini (pasta di sesamo)",c:"Condimenti",k:595,p:17,gs:7.7,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:98,se:34.4,col:0,src:"CREA"},
 {n:"Harissa (salsa piccante nordafricana)",c:"Condimenti",k:90,p:3.8,gs:1.3,g:5.5,z:3.5,ch:9.8,fi:4.5,ca:45,fe:3.0,mg:28,k2:320,na:750,zn:0.8,fo:60,se:3,col:0,src:"BDA"},
 
 // ── FORMAGGI REGIONALI MANCANTI ──
@@ -3591,7 +3591,7 @@ const DB_UPF = [
 // Allineato a voce CREA gia verificata "Pesto alla genovese (artigianale)" (kcal gia identico, altri campi ravvicinati) — 2026-07-28
 // FIX: fo=120 troppo alto per pesto industriale (reale ~16mcg) - 2026-07-30
 {n:"Pesto alla genovese (barattolo, per 100g)",c:"Salse e condimenti",src:"UPF",k:454,p:7.0,gs:7.0,g:44.6,z:1.0,ch:3.4,fi:1.2,ca:130,fe:1.5,mg:50,k2:210,na:700,zn:1.0,fo:16,se:3,col:10},
-{n:"Tahini (crema di sesamo, per 100g)",c:"Creme e spalmate",src:"UPF",k:667,p:27.9,gs:10,g:57.9,z:0.1,ch:6.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:20,zn:4.6,fo:590,se:34,col:0},
+{n:"Tahini (crema di sesamo, per 100g)",c:"Creme e spalmate",src:"UPF",k:595,p:17,gs:7.7,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:115,zn:4.6,fo:98,se:34,col:0},
 {n:"Crema di marmite (per 100g)",c:"Condimenti",src:"UPF",k:260,p:34,gs:0.1,g:0.5,z:1.2,ch:30,fi:3.0,ca:95,fe:3.5,mg:180,k2:2100,na:4320,zn:1.5,fo:1980,se:8,col:0},
 // ── CIBI ITALIANI REGIONALI E TRADIZIONALI ──
 {n:"Focaccia genovese (per 100g)",c:"Pane e prodotti da forno",src:"INT",k:260,p:6.9,gs:1.1,g:7.7,z:2.4,ch:39,fi:3.5,ca:20,fe:1.2,mg:15,k2:90,na:2300,zn:0.5,fo:25,se:5,col:0},

@@ -626,7 +626,7 @@ const DB_CREA=[
   {n:"Kefir di latte intero",c:"Latte e derivati",k:61,p:3.3,gs:2.0,g:3.5,z:3.8,ch:4.5,fi:0,ca:114,fe:0.1,mg:13,k2:164,na:50,zn:0.4,fo:5,se:3,col:13,src:"CREA"},
   {n:"Kefir di latte magro",c:"Latte e derivati",k:36,p:3.4,gs:0.1,g:0.2,z:3.8,ch:4.6,fi:0,ca:120,fe:0.1,mg:12,k2:160,na:49,zn:0.4,fo:5,se:3,col:2,src:"CREA"},
   {n:"Kombucha (bevanda fermentata da tè)",c:"Bevande",k:17,p:0.1,gs:0,g:0,z:2.5,ch:4.0,fi:0,ca:8,fe:0.1,mg:5,k2:28,na:7,zn:0.1,fo:5,se:0,col:0,src:"CREA"},
-  {n:"Tempeh di soia al naturale",c:"Legumi",k:193,p:20.3,gs:2.2,g:10.8,z:0,ch:7.6,fi:4.1,ca:111,fe:2.7,mg:81,k2:412,na:9,zn:1.6,fo:221,se:7,col:0,src:"CREA"},
+  {n:"Tempeh di soia al naturale",c:"Legumi",k:173,p:20.7,gs:0.92,g:6.4,z:0.9,ch:6.4,fi:4.1,ca:120,fe:3.6,mg:81,k2:370,na:6,zn:1.8,fo:76,se:0.1,col:0,src:"BDA"},
   {n:"Miso (pasta di soia fermentata)",c:"Condimenti",k:208,p:13.3,gs:0.89,g:6.2,z:0,ch:23.5,fi:5.4,ca:73,fe:4.2,mg:48,k2:160,na:3650,zn:3.3,fo:33,se:7,col:0,src:"BDA"},
   {n:"Natto (soia fermentata giapponese)",c:"Legumi",k:214,p:17.7,gs:1.59,g:11,z:0,ch:9,fi:5.4,ca:217,fe:8.6,mg:115,k2:729,na:7,zn:3.03,fo:8,se:9,col:0,src:"BDA"},
   {n:"Crauti (cavolo capuccio fermentato)",c:"Verdure",k:26,p:1.5,gs:0.08,g:0.3,z:4,ch:4,fi:1.1,ca:48,fe:0.6,mg:16,k2:288,na:355,zn:0.4,fo:16,se:1,col:0,src:"BDA"},
@@ -1899,7 +1899,7 @@ const DB_BDA=[
   {n:"Ceci rossi secchi",c:"Legumi",src:"CREA",k:343,p:20.9,gs:0.85,g:6.3,z:3.7,ch:46.9,fi:13.6,ca:142,fe:6.4,mg:130,k2:881,na:6,zn:3.2,fo:390,se:2,col:0},
 
   // ── FRUTTA SECCA E SEMI AGGIUNTIVI ──
-  {n:"Noci di macadamia",c:"Frutta secca",src:"BDA",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:11,se:3.6,col:0},
+  {n:"Noci di macadamia",c:"Frutta secca",src:"BDA",k:751,p:8,gs:12.1,g:76,z:4,ch:5.1,fi:8,ca:70,fe:3,mg:118,k2:363,na:5,zn:1,fo:11,se:3.6,col:0},
   {n:"Semi di papavero",c:"Frutta secca",src:"BDA",k:525,p:17.9,gs:4.5,g:41.6,z:2.1,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:58,se:13,col:0},
 
   // ── PIATTI PRONTI ──

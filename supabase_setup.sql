@@ -4003,3 +4003,65 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_52_consent_and_patient_profile_fix', 'terms_accepted_at + ai_photo_consent_at su profiles; create_patient_profile() risolve un bug live — la registrazione paziente dipendeva da un trigger su auth.users rimosso in SEZIONE 1, mai sostituito lato paziente')
 ON CONFLICT (id) DO NOTHING;
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 53 — coach_ai_messages: log delle conversazioni Coach AI paziente
+--
+-- Il Coach AI (Diet-Plan-Pro-app-claude, api/coach-ai.js) era finora
+-- completamente client-side/effimero: nessuna riga scritta da nessuna parte,
+-- la conversazione spariva al refresh. Rischio identificato in sessione:
+-- nessuna sorveglianza clinica possibile da parte del dietista su cosa il
+-- paziente chiede e cosa l'AI risponde. Questa tabella la rende un log
+-- reale, in sola lettura per il dietista/studio collegato — stesso schema
+-- di accesso già validato per esami_biochimici/patient_audit_log
+-- (get_studio_owner, supporta i collaboratori di studio).
+--
+-- Scrittura: solo il paziente stesso (in pratica solo dal server con il
+-- token del paziente, mai con service role — stesso pattern già usato in
+-- coach-ai.js per leggere i tag). Nessun UPDATE/DELETE previsto: log
+-- d'appendice, non un contenuto editabile.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS coach_ai_messages (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id  UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role        TEXT        NOT NULL CHECK (role IN ('user','assistant')),
+  content     TEXT        NOT NULL,
+  blocked     BOOLEAN     NOT NULL DEFAULT false, -- true = risposta di rifiuto automatico (es. tag DCA), mai inviata al modello
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_coach_ai_messages_patient ON coach_ai_messages (patient_id, created_at DESC);
+
+ALTER TABLE coach_ai_messages ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "coach_ai_messages_insert_own" ON coach_ai_messages;
+CREATE POLICY "coach_ai_messages_insert_own" ON coach_ai_messages
+  FOR INSERT WITH CHECK (auth.uid() = patient_id);
+
+DROP POLICY IF EXISTS "coach_ai_messages_select" ON coach_ai_messages;
+CREATE POLICY "coach_ai_messages_select" ON coach_ai_messages
+  FOR SELECT USING (
+    auth.uid() = patient_id
+    OR EXISTS (
+      SELECT 1 FROM patient_dietitian pd
+      WHERE pd.patient_id = coach_ai_messages.patient_id
+        AND get_studio_owner(pd.dietitian_id) = get_studio_owner(auth.uid())
+    )
+  );
+
+-- Colonna consenso esplicito Coach AI (stesso pattern di ai_photo_consent_at,
+-- SEZIONE 52) — il consenso alla foto pasto NON copre il Coach AI: sono due
+-- funzioni AI distinte con due fornitori distinti (Gemini vs Groq), due
+-- consensi distinti.
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='coach_ai_consent_at') THEN
+    ALTER TABLE profiles ADD COLUMN coach_ai_consent_at TIMESTAMPTZ;
+  END IF;
+END $$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_53_coach_ai_safety', 'coach_ai_messages (log conversazioni, sola lettura dietista/studio) + profiles.coach_ai_consent_at')
+ON CONFLICT (id) DO NOTHING;

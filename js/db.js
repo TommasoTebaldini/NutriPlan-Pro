@@ -723,7 +723,7 @@ const DB_CREA=[
 {n:"Edamame (soia verde)",c:"Legumi",k:121,p:11.9,gs:1.2,g:5.2,z:1.1,ch:8.9,fi:5.2,ca:63,fe:2.3,mg:64,k2:436,na:6,zn:1.4,fo:161,se:1.2,col:0,src:"CREA"},
 {n:"Semi di girasole",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5,fo:227,se:53,col:0,src:"CREA"},
 {n:"Semi di sesamo",c:"Frutta secca",k:565,p:17.7,gs:7,g:48.7,z:0.3,ch:23.4,fi:11.6,ca:975,fe:14.5,mg:351,k2:468,na:11,zn:7.75,fo:97,se:34,col:0,src:"CREA"},
-{n:"Semi di lino macinati",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0,src:"CREA"},
+{n:"Semi di lino macinati",c:"Frutta secca",k:447,p:24.5,gs:3,g:31,z:0,ch:0,fi:34.8,ca:198,fe:8.2,mg:392,k2:725,na:60,zn:7.8,fo:60,se:25,col:0,src:"BDA"},
 {n:"Semi di zucca",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49.1,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:58,se:9.4,col:0,src:"CREA"},
 {n:"Anacardi",c:"Frutta secca",k:604,p:15,gs:9.42,g:46,z:5.6,ch:33,fi:3,ca:45,fe:6,mg:260,k2:565,na:16,zn:6,fo:25,se:12,col:0,src:"CREA"},
 {n:"Nocciole",c:"Frutta secca",k:671,p:13.8,gs:4.16,g:64.1,z:4.1,ch:6.1,fi:8.1,ca:150,fe:3.3,mg:160,k2:466,na:11,zn:2,fo:113,se:2,col:0,src:"CREA"},
@@ -883,7 +883,7 @@ const DB_CREA=[
 {n:"Ribes rosso fresco",c:"Frutta",k:36,p:1.1,gs:0,g:0,z:4.4,ch:4.4,fi:7.4,ca:36,fe:1.2,mg:13,k2:280,na:2,zn:0.2,fo:8,se:0.6,col:0,src:"BDA"},
 {n:"Melograno (arilli) fresco",c:"Frutta",k:83,p:1.7,gs:0.1,g:1.2,z:13.7,ch:18.7,fi:4.0,ca:10,fe:0.3,mg:12,k2:236,na:3,zn:0.4,fo:36,se:0.5,col:0,src:"CREA"},
 {n:"Chia semi crudi",c:"Frutta secca",k:486,p:16.5,gs:3.3,g:30.7,z:0,ch:42.1,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0,src:"CREA"},
-{n:"Semi di lino crudi",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0,src:"CREA"},
+{n:"Semi di lino crudi",c:"Frutta secca",k:447,p:24.5,gs:3,g:31,z:0,ch:0,fi:34.8,ca:198,fe:8.2,mg:392,k2:725,na:60,zn:7.8,fo:60,se:25,col:0,src:"BDA"},
 {n:"Semi di canapa sgusciati",c:"Frutta secca",k:553,p:31.6,gs:3.3,g:48.8,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:859,na:5,zn:9.9,fo:110,se:14,col:0,src:"CREA"},
 {n:"Tahina (pasta di sesamo)",c:"Condimenti",k:595,p:17.0,gs:5.5,g:53.8,z:0.5,ch:21.2,fi:9.3,ca:426,fe:8.9,mg:95,k2:414,na:17,zn:4.6,fo:97,se:34,col:0,src:"CREA"},
 {n:"Miso di soia (pasta)",c:"Condimenti",k:199,p:11.7,gs:1.0,g:6.0,z:6.2,ch:26.5,fi:5.4,ca:57,fe:2.5,mg:48,k2:210,na:3728,zn:2.6,fo:159,se:7,col:0,src:"CREA"},
@@ -941,7 +941,7 @@ const DB_CREA=[
 {n:"Arachidi tostare non salate",c:"Frutta secca",k:567,p:25.8,gs:6.8,g:49.2,z:4,ch:16.1,fi:8.5,ca:92,fe:4.6,mg:168,k2:705,na:18,zn:3.3,fo:376,se:7.2,col:0,src:"CREA"},
 {n:"Semi di zucca crudi",c:"Frutta secca",k:559,p:30.2,gs:8.7,g:49,z:1.4,ch:10.7,fi:6,ca:46,fe:8.8,mg:592,k2:809,na:7,zn:7.8,fo:58,se:9.4,col:0,src:"CREA"},
 {n:"Semi di girasole crudi",c:"Frutta secca",k:584,p:20.8,gs:4.5,g:51.5,z:2.6,ch:20,fi:8.6,ca:78,fe:5.3,mg:325,k2:645,na:9,zn:5,fo:227,se:53,col:0,src:"CREA"},
-{n:"Semi di lino crudi",c:"Frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25.4,col:0,src:"CREA"},
+{n:"Semi di lino crudi",c:"Frutta secca",k:447,p:24.5,gs:3,g:31,z:0,ch:0,fi:34.8,ca:198,fe:8.2,mg:392,k2:725,na:60,zn:7.8,fo:60,se:25.4,col:0,src:"BDA"},
 {n:"Semi di canapa sgusciati",c:"Frutta secca",k:553,p:31.6,gs:4.6,g:48.8,z:1.5,ch:8.7,fi:4,ca:70,fe:7.9,mg:700,k2:859,na:5,zn:9.9,fo:110,se:14,col:0,src:"CREA"},
 // ── VERDURE AGGIUNTIVE ──
 {n:"Barbabietola rossa cruda",c:"Verdure",k:25,p:1.1,gs:0,g:0,z:4,ch:4,fi:2.6,ca:20,fe:0.4,mg:23,k2:300,na:84,zn:0.35,fo:40,se:0.7,col:0,src:"CREA"},
@@ -1273,7 +1273,7 @@ const DB_CREA=[
 {n:"Quaglia intera (cruda)",c:"Pollame",k:192,p:22,gs:3.5,g:11.8,z:0,ch:0,fi:0,ca:15,fe:4.5,mg:28,k2:237,na:65,zn:3.0,fo:14,se:22,col:76,src:"CREA"},
 // SEMI E FRUTTA SECCA
 {n:"Semi di canapa decorticati",c:"Semi e frutta secca",k:553,p:31.6,gs:1.5,g:48.7,z:1.5,ch:8.7,fi:4,ca:14,fe:7.9,mg:483,k2:1200,na:5,zn:9.9,fo:110,se:14.6,col:0,src:"CREA"},
-{n:"Semi di lino dorati (interi)",c:"Semi e frutta secca",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25.4,col:0,src:"CREA"},
+{n:"Semi di lino dorati (interi)",c:"Semi e frutta secca",k:447,p:24.5,gs:3,g:31,z:0,ch:0,fi:34.8,ca:198,fe:8.2,mg:392,k2:725,na:60,zn:7.8,fo:60,se:25.4,col:0,src:"BDA"},
 {n:"Semi di papavero",c:"Semi e frutta secca",k:525,p:17.9,gs:4.5,g:41.6,z:2.9,ch:28.1,fi:19.5,ca:1438,fe:9.8,mg:347,k2:719,na:26,zn:7.9,fo:82,se:13.7,col:0,src:"CREA"},
 {n:"Castagne essiccate",c:"Semi e frutta secca",k:315,p:6,gs:0.3,g:3.4,z:16.1,ch:62,fi:13.8,ca:56,fe:1.9,mg:90,k2:738,na:17,zn:0.7,fo:53,se:4.3,col:0,src:"CREA"},
 {n:"Pistacchi non salati",c:"Semi e frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0,src:"CREA"},
@@ -1457,7 +1457,7 @@ const DB_BDA=[
   // ── FRUTTA SECCA e SEMI ──
   {n:"Semi di zucca",c:"Frutta secca",src:"CREA",k:559,p:30.2,ch:10.7,g:49.1,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:58,se:9,col:0},
   // fo conteneva fosforo (642mg, valore reale semi di lino) non folati: corretto a 87mcg - 2026-07-29
-  {n:"Semi di lino",c:"Frutta secca",src:"CREA",k:534,p:18.3,ch:28.9,g:42.2,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0},
+  {n:"Semi di lino",c:"Frutta secca",src:"BDA",k:447,p:24.5,ch:0,g:31,fi:34.8,ca:198,fe:8.2,mg:392,k2:725,na:60,zn:7.8,fo:60,se:25,col:0},
   {n:"Semi di chia",c:"Frutta secca",src:"BDA",k:486,p:16.5,ch:42.1,g:30.7,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0},
   {n:"Pistacchi tostati",c:"Frutta secca",src:"CREA",k:629,p:18.1,ch:8.1,g:56.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0},
   // ── PESCE ──
@@ -1804,7 +1804,7 @@ const DB_BDA=[
   {n:"Gnocchi di patate freschi",c:"Cereali e derivati",src:"CREA",k:164,p:3.9,gs:0,g:0.3,z:1.4,ch:37.9,fi:1.9,ca:14,fe:0.6,mg:18,k2:310,na:9,zn:0.3,fo:38,se:4,col:7},
 
   // ── SEMI INTERI MANCANTI ──
-  {n:"Semi di lino interi crudi",c:"Semi oleosi",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.5,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0},
+  {n:"Semi di lino interi crudi",c:"Semi oleosi",src:"BDA",k:447,p:24.5,gs:3,g:31,z:0,ch:0,fi:34.8,ca:198,fe:8.2,mg:392,k2:725,na:60,zn:7.8,fo:60,se:25,col:0},
   // fo conteneva fosforo (860mg, valore reale semi di chia) non folati: corretto a 49mcg - 2026-07-29
   {n:"Semi di chia crudi",c:"Semi oleosi",src:"CREA",k:486,p:16.5,gs:3.3,g:30.7,z:0.3,ch:42.1,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0},
   {n:"Semi di zucca crudi (pepitas)",c:"Semi oleosi",src:"CREA",k:559,p:30.2,gs:5.6,g:49.1,z:1.4,ch:10.7,fi:6.0,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.8,fo:58,se:9,col:0},
@@ -3666,7 +3666,7 @@ const DB_UPF = [
 // ── SEMI E FRUTTA SECCA SPECIALI ──
 {n:"Semi di canapa decorticati (per 100g)",c:"Semi e frutta secca",src:"CREA",k:553,p:31.5,gs:5.5,g:48.7,z:1.5,ch:8.7,fi:4.0,ca:70,fe:7.9,mg:700,k2:1200,na:5,zn:9.9,fo:110,se:14,col:0},
 {n:"Noci del Brasile (per 100g)",c:"Semi e frutta secca",src:"CREA",k:656,p:14.3,gs:16.2,g:66.4,z:2.3,ch:12.3,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0},
-{n:"Semi di lino (per 100g)",c:"Semi e frutta secca",src:"CREA",k:534,p:18.3,gs:3.7,g:42.2,z:1.6,ch:28.9,fi:27.3,ca:255,fe:5.7,mg:392,k2:813,na:30,zn:4.3,fo:87,se:25,col:0},
+{n:"Semi di lino (per 100g)",c:"Semi e frutta secca",src:"BDA",k:447,p:24.5,gs:3,g:31,z:0,ch:0,fi:34.8,ca:198,fe:8.2,mg:392,k2:725,na:60,zn:7.8,fo:60,se:25,col:0},
 // ── CUCINA INTERNAZIONALE ──
 {n:"Falafel fritto (per 100g)",c:"Cucina etnica",src:"INT",k:333,p:13.3,gs:2.38,g:17.8,z:1.4,ch:31.8,fi:4.9,ca:60,fe:3.8,mg:65,k2:380,na:294,zn:1.5,fo:175,se:4,col:0},
 {n:"Shakshuka / uova in salsa pomodoro (per 100g)",c:"Cucina etnica",src:"INT",k:98,p:5.5,gs:1.2,g:6.5,z:4.0,ch:5.5,fi:1.5,ca:42,fe:1.5,mg:18,k2:280,na:420,zn:0.8,fo:85,se:12,col:145},

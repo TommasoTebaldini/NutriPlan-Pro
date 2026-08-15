@@ -3268,7 +3268,7 @@ const DB_UPF = [
   {n:"Nuggets di pollo surgelati (per 100g)",c:"Prodotti pronti",src:"UPF",k:215,p:15,gs:2.1,g:11,z:0.5,ch:14,fi:1.0,ca:30,fe:1.2,mg:18,k2:280,na:560,zn:0.8,fo:8,se:12,col:45},
   {n:"Stick di mozzarella impanata surgelata (per 100g)",c:"Prodotti pronti",src:"UPF",k:253.3,p:14.7,gs:6.67,g:12,z:1.3,ch:25.3,fi:0.4,ca:466.7,fe:0.4,mg:20,k2:80,na:720,zn:1.2,fo:210,se:8,col:40},
   {n:"Cornetto confezionato (per 100g)",c:"Dolci",src:"UPF",k:332,p:3.5,gs:13,g:18,z:24,ch:39,fi:1.5,ca:45,fe:1.5,mg:18,k2:140,na:60,zn:0.5,fo:20,se:8,col:55},
-  {n:"Merendina Kinder Pinguì (per 100g)",c:"Dolci",src:"UPF",k:420,p:7.0,gs:14.5,g:22.0,z:39.5,ch:51.0,fi:0.5,ca:130,fe:0.5,mg:18,k2:190,na:120,zn:0.5,fo:20,se:4,col:25},
+  {n:"Merendina Kinder Pinguì (per 100g)",c:"Dolci",src:"UPF",k:448,p:7.0,gs:19.6,g:29.7,z:29.1,ch:37.8,fi:0.5,ca:130,fe:0.5,mg:18,k2:190,na:120,zn:0.5,fo:20,se:4,col:25},
   {n:"Bevanda energy drink tipo Monster (per 100ml)",c:"Bevande",src:"UPF",k:35.9,p:0,gs:0,g:0,z:7.8,ch:9.1,fi:0,ca:2,fe:0.1,mg:2,k2:30,na:16.3,zn:0.1,fo:5,se:0.2,col:0},
   {n:"Bevanda energy drink tipo Red Bull (per 100ml)",c:"Bevande",src:"UPF",k:46,p:0,gs:0,g:0,z:11,ch:11,fi:0,ca:5,fe:0.1,mg:2,k2:30,na:40,zn:0.1,fo:6,se:0.2,col:0},
   {n:"Bibita gassata tipo Cola (per 100ml)",c:"Bevande",src:"UPF",k:42,p:0,gs:0,g:0,z:10.6,ch:10.6,fi:0,ca:2,fe:0.1,mg:3,k2:7,na:10,zn:0,fo:9,se:0,col:0},
@@ -3479,7 +3479,7 @@ const DB_UPF = [
   {n:"Wurstel di manzo (per 100g)",c:"Salumi",src:"UPF",k:285,p:12,gs:10,g:25,z:1,ch:2.5,fi:0,ca:20,fe:1,mg:15,k2:160,na:1050,zn:2,fo:8,se:12,col:75},
   {n:"Porchetta artigianale (per 100g)",c:"Salumi",src:"UPF",k:256,p:20.3,gs:6.2,g:17.7,z:2.6,ch:3.5,fi:0.8,ca:12,fe:0.8,mg:18,k2:200,na:614,zn:1.8,fo:5,se:18,col:88},
 // CIOCCOLATO E SNACK DOLCI INDUSTRIALI
-{n:"Kinder Pinguì (per 100g)",c:"Snack dolci",src:"UPF",k:450,p:7.5,gs:16,g:26,z:42,ch:56,fi:1.2,ca:185,fe:0.8,mg:22,k2:180,na:120,zn:0.5,fo:15,se:6,col:15},
+{n:"Kinder Pinguì (per 100g)",c:"Snack dolci",src:"UPF",k:448,p:7.0,gs:18.3,g:29.7,z:28.4,ch:37.8,fi:1.2,ca:185,fe:0.8,mg:22,k2:180,na:120,zn:0.5,fo:15,se:6,col:15},
 {n:"Kinder Delice (per 100g)",c:"Snack dolci",src:"UPF",k:455,p:5.5,gs:13.1,g:22.6,z:41,ch:58.8,fi:0.8,ca:175,fe:0.5,mg:18,k2:165,na:104.8,zn:0.4,fo:12,se:5,col:18},
 {n:"Kit Kat Classic (per 100g)",c:"Snack dolci",src:"UPF",k:512,p:6.7,gs:14.9,g:26.4,z:43.5,ch:60.5,fi:2.5,ca:135,fe:1.5,mg:32,k2:220,na:92,zn:0.8,fo:18,se:6,col:5},
 {n:"After Eight (per 100g)",c:"Snack dolci",src:"UPF",k:425,p:2.1,gs:7.6,g:12.9,z:67.6,ch:73.3,fi:2.7,ca:12,fe:4.5,mg:22,k2:185,na:12,zn:0.5,fo:8,se:2,col:0},

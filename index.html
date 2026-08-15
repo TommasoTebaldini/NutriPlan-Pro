@@ -147,7 +147,7 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <div class="ok" id="reset-ok"></div>
       <div class="fg">
         <label>Nuova password</label>
-        <input type="password" id="reset-pw1" placeholder="Minimo 6 caratteri" autocomplete="new-password">
+        <input type="password" id="reset-pw1" placeholder="Minimo 8 caratteri" autocomplete="new-password">
       </div>
       <div class="fg">
         <label>Conferma password</label>
@@ -160,7 +160,7 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <div class="err" id="reg-err"></div>
       <div class="ok" id="reg-ok"></div>
       <div class="fg"><label data-i18n="index.email">Email</label><input type="email" id="reg-email" placeholder="la-tua@email.com" autocomplete="email"></div>
-      <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="reg-pw" placeholder="Minimo 6 caratteri" autocomplete="new-password"></div>
+      <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="reg-pw" placeholder="Minimo 8 caratteri" autocomplete="new-password"></div>
       <div class="fg"><label data-i18n="index.confirm_password">Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#334155;margin:10px 0;cursor:pointer;line-height:1.4">
         <input type="checkbox" id="reg-consent" style="margin-top:2px;flex-shrink:0">
@@ -526,7 +526,7 @@ async function doRegister() {
   err.classList.remove('show');ok.classList.remove('show');
   if (!email||!pw){err.textContent='Compila tutti i campi.';err.classList.add('show');return;}
   if (pw!==pw2){err.textContent='Le password non coincidono.';err.classList.add('show');return;}
-  if (pw.length<6){err.textContent='Password minimo 6 caratteri.';err.classList.add('show');return;}
+  if (pw.length<8){err.textContent='Password minimo 8 caratteri.';err.classList.add('show');return;}
   if (!document.getElementById('reg-consent')?.checked){err.textContent='Devi accettare Privacy Policy e Termini di Servizio per registrarti.';err.classList.add('show');return;}
   const btn = document.getElementById('reg-btn');
   btn.disabled=true;btn.textContent='Registrazione...';
@@ -652,7 +652,7 @@ async function doResetPassword() {
   const ok  = document.getElementById('reset-ok');
   const btn = document.getElementById('reset-btn');
   err.className = 'err'; ok.className = 'ok';
-  if (pw1.length < 6) { err.textContent = 'La password deve essere di almeno 6 caratteri.'; err.className = 'err show'; return; }
+  if (pw1.length < 8) { err.textContent = 'La password deve essere di almeno 8 caratteri.'; err.className = 'err show'; return; }
   if (pw1 !== pw2) { err.textContent = 'Le password non coincidono.'; err.className = 'err show'; return; }
   btn.disabled = true; btn.textContent = 'Salvataggio…';
   try {

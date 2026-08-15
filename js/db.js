@@ -3123,7 +3123,7 @@ const DB_UPF = [
   {n:"Raffaello Ferrero (per 100g)",c:"Dolci confezionati",src:"UPF",k:627,p:7.4,gs:29.5,g:48.3,z:33.6,ch:38.6,fi:2.0,ca:65,fe:1.0,mg:35,k2:210,na:106.8,zn:0.8,fo:20,se:5,col:10},
   {n:"Kinder Sorpresa/Surprise uovo (per 100g)",c:"Dolci confezionati",src:"UPF",k:552,p:8.1,gs:22.6,g:34.2,z:52.1,ch:52.3,fi:0.5,ca:130,fe:1.5,mg:25,k2:230,na:129.2,zn:0.9,fo:20,se:8,col:28},
   {n:"Bounty (per 100g)",c:"Dolci confezionati",src:"UPF",k:487,p:3,gs:21,g:25,z:48,ch:58,fi:2.0,ca:35,fe:1.5,mg:30,k2:280,na:80,zn:0.4,fo:20,se:3,col:5},
-  {n:"Snickers (per 100g)",c:"Dolci confezionati",src:"UPF",k:510,p:9.5,gs:9.7,g:28,z:45,ch:54,fi:1.5,ca:80,fe:1.5,mg:42,k2:330,na:176,zn:1.0,fo:20,se:4,col:8},
+  {n:"Snickers (per 100g)",c:"Dolci confezionati",src:"UPF",k:486,p:8,gs:8.5,g:23.5,z:50,ch:61,fi:1.3,ca:85,fe:1.2,mg:38,k2:280,na:200,zn:0.8,fo:20,se:3,col:8},
   {n:"Twix (per 100g)",c:"Dolci confezionati",src:"UPF",k:493,p:4.4,gs:14,g:24,z:49,ch:65,fi:1.0,ca:40,fe:1.5,mg:25,k2:210,na:160,zn:0.6,fo:20,se:4,col:10},
   // Fosforo (cioccolato al latte, notoriamente ricco di fosforo) era nel campo folati; folati reali ~30mcg - 2026-07-30
   {n:"M&Ms al cioccolato al latte (per 100g)",c:"Dolci confezionati",src:"UPF",k:494,p:5.0,gs:8.0,g:20,z:65,ch:70,fi:1.0,ca:60,fe:1.5,mg:28,k2:250,na:50,zn:0.6,fo:30,se:4,col:12},
@@ -4482,7 +4482,7 @@ const DB_EXTRA=[
 {n:"Milka al latte",c:"Cioccolato e dolciumi",src:"EXTRA",k:542,p:4.6,gs:19,g:33,z:53,ch:56,fi:1,ca:200,fe:1.5,mg:30,k2:330,na:132,zn:0.8,fo:12,se:8,col:20},
 {n:"Toblerone",c:"Cioccolato e dolciumi",src:"EXTRA",k:529,p:5.6,gs:17,g:29,z:60,ch:61,fi:2.4,ca:160,fe:1.5,mg:45,k2:330,na:48,zn:1,fo:12,se:5,col:10},
 {n:"Mars",c:"Cioccolato e dolciumi",src:"EXTRA",k:448,p:4.4,gs:8.1,g:16.7,z:59.9,ch:69.3,fi:0.5,ca:115,fe:0.5,mg:20,k2:210,na:160,zn:0.5,fo:20,se:5,col:10},
-{n:"Snickers",c:"Cioccolato e dolciumi",src:"EXTRA",k:510,p:9.5,gs:9.7,g:28,z:45,ch:54,fi:0,ca:95,fe:1,mg:40,k2:330,na:176,zn:0.8,fo:15,se:5,col:5},
+{n:"Snickers",c:"Cioccolato e dolciumi",src:"EXTRA",k:486,p:8,gs:8.5,g:23.5,z:50,ch:61,fi:1.3,ca:95,fe:1,mg:40,k2:280,na:200,zn:0.8,fo:15,se:5,col:5},
 {n:"Twix",c:"Cioccolato e dolciumi",src:"EXTRA",k:493,p:4.3,gs:14,g:24,z:49,ch:65,fi:1,ca:70,fe:1.5,mg:18,k2:215,na:160,zn:0.5,fo:20,se:5,col:5},
 {n:"Bounty",c:"Cioccolato e dolciumi",src:"EXTRA",k:505,p:3.9,gs:21.79,g:26.4,z:49.3,ch:61.4,fi:0,ca:40,fe:1,mg:30,k2:200,na:103.6,zn:0.5,fo:20,se:3,col:5},
 {n:"Kinder Sorpresa",c:"Cioccolato e dolciumi",src:"EXTRA",k:579,p:8.8,gs:24.1,g:36.2,z:53.6,ch:53.9,fi:1,ca:130,fe:1.5,mg:30,k2:310,na:122,zn:0.7,fo:20,se:5,col:25},

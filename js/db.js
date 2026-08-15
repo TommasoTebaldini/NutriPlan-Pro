@@ -2943,7 +2943,7 @@ const DB_UPF = [
   // ── BISCOTTI E CEREALI COLAZIONE AGGIUNTIVI ──
   {n:"Biscotti Digestive (McVitie's tipo)",c:"Biscotti e crackers",src:"UPF",k:477,p:6,gs:5,g:19,z:20,ch:69,fi:3,ca:58,fe:2.5,mg:24,k2:180,na:570,zn:0.7,fo:20,se:6,col:0},
   {n:"Cereali al miele tipo Cheerios",c:"Cereali da colazione",src:"UPF",k:389,p:9.2,gs:0.5,g:3,z:19,ch:77,fi:7.0,ca:130,fe:14.0,mg:80,k2:270,na:304,zn:5.0,fo:290,se:8,col:0},
-  {n:"Cereali al cacao tipo Chocapic",c:"Cereali da colazione",src:"UPF",k:322,p:9.2,gs:1.5,g:3.6,z:32.0,ch:66.2,fi:12.3,ca:90,fe:12.0,mg:55,k2:240,na:410,zn:4.0,fo:200,se:7,col:0},
+  {n:"Cereali al cacao tipo Chocapic",c:"Cereali da colazione",src:"UPF",k:385,p:8.6,gs:1.3,g:4.6,z:24.9,ch:73.3,fi:8,ca:90,fe:12.0,mg:55,k2:240,na:410,zn:4.0,fo:200,se:7,col:0},
   {n:"Cereali tipo Frosties (mais zuccherato)",c:"Cereali da colazione",src:"UPF",k:378,p:6.0,gs:0.1,g:0.5,z:37.0,ch:88.0,fi:1.0,ca:10,fe:8.5,mg:10,k2:75,na:540,zn:0.3,fo:95,se:2,col:0},
   {n:"Riso soffiato tipo Rice Krispies",c:"Cereali da colazione",src:"UPF",k:375,p:7.5,gs:0,g:0,z:10,ch:90,fi:0,ca:0,fe:11.25,mg:0,k2:75,na:500,zn:0,fo:90,se:3,col:0},
   {n:"Musli svizzero industriale misto",c:"Cereali da colazione",src:"UPF",k:409,p:10.7,gs:3.8,g:13.5,z:17.3,ch:56.1,fi:9.9,ca:70,fe:3.0,mg:80,k2:350,na:85,zn:1.8,fo:180,se:7,col:0},
@@ -3281,7 +3281,7 @@ const DB_UPF = [
   {n:"Cioccolato bianco industriale (per 100g)",c:"Dolci",src:"UPF",k:574,p:8.6,gs:16,g:39,z:44,ch:46,fi:2.3,ca:190,fe:0.3,mg:12,k2:260,na:120,zn:0.7,fo:0,se:4,col:22},
   {n:"Brioches confezionata (per 100g)",c:"Dolci",src:"UPF",k:411,p:9.7,gs:5,g:20,z:12,ch:47,fi:1.5,ca:45,fe:1.5,mg:17,k2:130,na:232,zn:0.5,fo:35,se:8,col:75},
   {n:"Cereali da colazione tipo Frosties Kellogg's (per 100g)",c:"Cereali e derivati",src:"UPF",k:375,p:4.5,gs:0.1,g:0.6,z:37,ch:87,fi:2,ca:456,fe:8,mg:6,k2:55,na:355.6,zn:1.2,fo:35,se:4,col:0},
-  {n:"Cereali Chocapic Nestlé (per 100g)",c:"Cereali e derivati",src:"UPF",k:322,p:9.2,gs:1.5,g:3.6,z:28.5,ch:66.2,fi:12.3,ca:700,fe:12.0,mg:65,k2:310,na:370,zn:5.6,fo:540,se:10,col:0},
+  {n:"Cereali Chocapic Nestlé (per 100g)",c:"Cereali e derivati",src:"UPF",k:385,p:8.6,gs:1.3,g:4.6,z:24.9,ch:73.3,fi:8,ca:700,fe:12.0,mg:65,k2:310,na:370,zn:5.6,fo:540,se:10,col:0},
   {n:"Croissant industriale (per 100g)",c:"Dolci",src:"UPF",k:370,p:6.3,gs:8,g:17,z:17,ch:43,fi:1,ca:30,fe:1.8,mg:15,k2:115,na:200,zn:0.5,fo:35,se:7,col:55},
 
   // ── BISCOTTI ITALIANI MARCA (UPF) ──

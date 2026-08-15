@@ -1554,7 +1554,7 @@ const DB_BDA=[
   {n:"Salvia essiccata",c:"Condimenti",src:"BDA",k:353,p:10.6,gs:7.03,g:12.7,z:42.7,ch:42.7,fi:18.1,ca:1650,fe:28.1,mg:428,k2:1070,na:11,zn:4.7,fo:0,se:0,col:0},
   {n:"Alloro essiccato",c:"Condimenti",src:"BDA",k:341,p:7.6,gs:2.29,g:8.4,z:48.6,ch:48.6,fi:26.3,ca:830,fe:43,mg:120,k2:530,na:23,zn:3.7,fo:0,se:0,col:0},
   {n:"Erba cipollina fresca",c:"Condimenti",src:"BDA",k:27,p:2.8,gs:0.12,g:0.6,z:1.7,ch:1.7,fi:1.9,ca:85,fe:1.6,mg:42,k2:230,na:5,zn:0.4,fo:105,se:0.9,col:0},
-  {n:"Paprica dolce in polvere",c:"Condimenti",src:"BDA",k:282,p:14.1,gs:2.0,g:13.0,z:10.3,ch:53.9,fi:34.9,ca:229,fe:21.1,mg:178,k2:2280,na:68,zn:4.33,fo:106,se:0,col:0},
+  {n:"Paprica dolce in polvere",c:"Condimenti",src:"BDA",k:348,p:14.8,gs:2.11,g:13.0,z:0,ch:34.8,fi:20.9,ca:177,fe:23.6,mg:178,k2:2344,na:34,zn:4.1,fo:0,se:0,col:0},
   {n:"Noce moscata in polvere",c:"Condimenti",src:"BDA",k:442,p:8.8,gs:20.72,g:29,z:26.3,ch:26.3,fi:23.7,ca:103,fe:9.3,mg:183,k2:350,na:16,zn:2.2,fo:0,se:0,col:0},
   // ── FARINE E DERIVATI ──
   {n:"Farina di mandorle",c:"Cereali e derivati",src:"BDA",k:579,p:21.4,gs:3.8,g:49.9,z:4.4,ch:21.7,fi:10.5,ca:236,fe:3.7,mg:258,k2:733,na:1,zn:3.1,fo:29,se:4,col:0},

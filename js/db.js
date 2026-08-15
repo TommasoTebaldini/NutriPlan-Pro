@@ -2757,7 +2757,7 @@ const DB_UPF = [
   {n:"Tramezzino industriale prosciutto",c:"Fast food",src:"UPF",k:298,p:14,gs:3.7,g:18,z:2.3,ch:20,fi:1.5,ca:60,fe:1.2,mg:15,k2:160,na:520,zn:0.7,fo:25,se:8,col:22},
   {n:"Piadina industriale con prosciutto",c:"Fast food",src:"UPF",k:324,p:14,gs:7,g:16,z:1,ch:31,fi:1.5,ca:80,fe:1.3,mg:17,k2:175,na:1300,zn:0.8,fo:25,se:7,col:25},
   {n:"Kebab in pita (stima per 200g porzione)",c:"Fast food",src:"UPF",k:196,p:6.7,gs:6,g:7.7,z:9.3,ch:24,fi:5,ca:60,fe:2.5,mg:22,k2:260,na:850,zn:2.5,fo:8,se:12,col:45},
-  {n:"Hot dog industriale con panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:40,fe:2,mg:15,k2:200,na:320,zn:1.5,fo:25,se:8,col:40},
+  {n:"Hot dog industriale con panino",c:"Fast food",src:"UPF",k:255,p:11,gs:3.6,g:13,z:1,ch:24,fi:1.9,ca:40,fe:0.8,mg:15,k2:150,na:600,zn:0.5,fo:15,se:5,col:42},
   {n:"Cotoletta impanata surgelata",c:"Fast food",src:"UPF",k:234,p:12,gs:1.6,g:13,z:0.5,ch:17,fi:1,ca:30,fe:1.2,mg:22,k2:300,na:1300,zn:1.5,fo:8,se:14,col:65},
   {n:"Sofficini (Findus/simili)",c:"Fast food",src:"UPF",k:215,p:7,gs:2.9,g:9.2,z:3.9,ch:25.8,fi:1,ca:80,fe:1,mg:12,k2:110,na:392,zn:0.7,fo:20,se:5,col:15},
   {n:"Minestrone surgelato industriale",c:"Piatti pronti",src:"UPF",k:75,p:2.4,gs:0.6,g:3.6,z:1.4,ch:6.4,fi:3.5,ca:25,fe:0.8,mg:18,k2:230,na:216,zn:0.4,fo:45,se:1.5,col:0},
@@ -2923,7 +2923,7 @@ const DB_UPF = [
   {n:"Wafer cioccolato tipo KitKat",c:"Dolci confezionati",src:"UPF",k:486.1,p:7.3,gs:18,g:25.6,z:58,ch:59.6,fi:7.5,ca:95,fe:1.8,mg:30,k2:220,na:153.1,zn:0.8,fo:20,se:3,col:10},
 
   // ── FAST FOOD / STREET FOOD ──
-  {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:45,fe:2,mg:20,k2:195,na:320,zn:1.2,fo:25,se:8,col:45},
+  {n:"Hot dog industriale (salsiccia in panino)",c:"Fast food",src:"UPF",k:255,p:11,gs:3.6,g:13,z:1,ch:24,fi:1.9,ca:45,fe:0.8,mg:15,k2:150,na:600,zn:0.5,fo:15,se:5,col:42},
   {n:"Panino da hamburger tipo Big Mac",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:200,na:396.6,zn:1.5,fo:25,se:10,col:15.5},
   // Fosforo (patata fritta) era nel campo folati; folati reali patata ~15mcg - 2026-07-30
   {n:"Patatine fritte fast food (porz. 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:3,ch:41,fi:3,ca:10,fe:0.7,mg:24,k2:420,na:300,zn:0.4,fo:15,se:1,col:0},
@@ -2984,7 +2984,7 @@ const DB_UPF = [
   {n:"Nuggets di pollo (tipo fast food, 100g)",c:"Fast food",src:"UPF",k:230,p:10.4,gs:2.7,g:13.4,z:2.1,ch:16.6,fi:0.8,ca:10,fe:0,mg:0,k2:200,na:433,zn:0,fo:8,se:10,col:40},
   // Corretto per coerenza col duplicato già fixato (DB_UPF_167, 15mcg) - 2026-07-30
   {n:"Patate fritte fast food (porzione media, 100g)",c:"Fast food",src:"UPF",k:312,p:3.5,gs:2,g:15,z:0.5,ch:41,fi:3,ca:10,fe:0.7,mg:25,k2:480,na:400,zn:0.4,fo:15,se:0.5,col:0},
-  {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.8,mg:18,k2:210,na:320,zn:1.8,fo:25,se:10,col:48},
+  {n:"Hot dog / Würstel in panino",c:"Fast food",src:"UPF",k:255,p:11,gs:3.6,g:13,z:1,ch:24,fi:1.9,ca:17,fe:0.8,mg:15,k2:150,na:600,zn:0.5,fo:15,se:5,col:42},
   // ── PIATTI PRONTI SURGELATI ──
   {n:"Pizza surgelata margherita",c:"Piatti pronti",src:"UPF",k:245,p:13,gs:3.7,g:7.5,z:2.2,ch:30,fi:2,ca:150,fe:2,mg:20,k2:200,na:600,zn:1,fo:22,se:8,col:12},
   {n:"Lasagne surgelate bolognese",c:"Piatti pronti",src:"UPF",k:184,p:8.7,gs:4,g:11,z:2.6,ch:12,fi:1,ca:80,fe:1.5,mg:15,k2:200,na:400,zn:1,fo:22,se:6,col:25},
@@ -3111,7 +3111,7 @@ const DB_UPF = [
   // Fosforo (pane sandwich+tonno) era nel campo folati; folati reali ~30mcg - 2026-07-30
   {n:"Subway Tuna sub (sandwich 6\", per 100g)",c:"Fast food",src:"UPF",k:250,p:12,gs:3.0,g:12,z:4.5,ch:27,fi:2.5,ca:80,fe:1.8,mg:25,k2:250,na:580,zn:0.8,fo:30,se:10,col:22},
   {n:"Kebab (gyros) con pane pita e salse (per 100g)",c:"Fast food",src:"UPF",k:196,p:6.7,gs:6,g:7.7,z:9.3,ch:24,fi:5,ca:80,fe:1.5,mg:20,k2:200,na:520,zn:1.8,fo:8,se:8,col:32},
-  {n:"Hot dog americano con pane e senape (per 100g)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:40,fe:2.0,mg:18,k2:180,na:320,zn:1.5,fo:5,se:8,col:30},
+  {n:"Hot dog americano con pane e senape (per 100g)",c:"Fast food",src:"UPF",k:255,p:11,gs:3.6,g:13,z:1,ch:24,fi:1.9,ca:40,fe:0.8,mg:15,k2:150,na:600,zn:0.5,fo:15,se:5,col:42},
   // Corretto per coerenza col duplicato già fixato (Panino hamburger industriale completo, 30mcg) - 2026-07-30
   {n:"Panino con hamburger da fast food (generico, per 100g)",c:"Fast food",src:"UPF",k:255,p:12,gs:4.5,g:12,z:5.5,ch:27,fi:1.5,ca:70,fe:2.0,mg:20,k2:195,na:520,zn:2.0,fo:30,se:10,col:40},
 
@@ -3821,7 +3821,7 @@ const DB_UPF = [
 {n:"Toast al prosciutto cotto (bar/industriale)",c:"Piatti pronti",src:"UPF",k:248,p:12.5,gs:3.0,g:9.5,z:2.5,ch:28.0,fi:1.5,ca:120,fe:1.0,mg:15,k2:160,na:720,zn:1.0,fo:30,se:8,col:25},
 {n:"Hamburger tipo McDonald's Big Mac (per 100g)",c:"Fast food",src:"UPF",k:228.4,p:11.6,gs:4.14,g:11.6,z:3.4,ch:18.1,fi:1.6,ca:50,fe:0.86,mg:9.1,k2:220,na:396.6,zn:2.5,fo:8,se:10,col:15.5},
 {n:"Panino Kebab doner con salsa yogurt",c:"Fast food",src:"UPF",k:234,p:15.1,gs:10.9,g:17.5,z:0.5,ch:4.1,fi:1.5,ca:85,fe:2.0,mg:25,k2:250,na:760,zn:2.0,fo:20,se:8,col:38},
-{n:"Hot dog con ketchup e senape",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:50,fe:1.8,mg:15,k2:170,na:320,zn:1.2,fo:5,se:5,col:28},
+{n:"Hot dog con ketchup e senape",c:"Fast food",src:"UPF",k:255,p:11,gs:3.6,g:13,z:1,ch:24,fi:1.9,ca:50,fe:0.8,mg:15,k2:150,na:600,zn:0.5,fo:15,se:5,col:42},
 {n:"Sushi California roll (per pezzo, 25g → per 100g)",c:"Cucina etnica",src:"UPF",k:111.8,p:4.7,gs:0.29,g:4.1,z:2.9,ch:15.9,fi:2.4,ca:17.6,fe:0.29,mg:12,k2:141.2,na:158.8,zn:0.4,fo:45,se:8,col:2.9},
 {n:"Sushi nigiri salmone (per pezzo, 30g → per 100g)",c:"Cucina etnica",src:"UPF",k:174,p:6.2,gs:0.9,g:7.6,z:3.8,ch:19.6,fi:0,ca:15,fe:0.5,mg:18,k2:130,na:480,zn:0.5,fo:75,se:20,col:22},
 {n:"Sushi maki tonno (per pezzo, 18g → per 100g)",c:"Cucina etnica",src:"UPF",k:135,p:9.0,gs:0.2,g:0.8,z:0.5,ch:21.0,fi:0.8,ca:8,fe:0.6,mg:15,k2:120,na:180,zn:0.4,fo:10,se:25,col:15},

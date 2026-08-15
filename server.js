@@ -69,7 +69,7 @@ app.use(
   })
 );
 
-app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 
 app.listen(PORT, HOST, () => {
   console.log(`NutriPlan Pro running on http://${HOST}:${PORT}`);

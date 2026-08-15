@@ -647,7 +647,7 @@ const DB_CREA=[
   // Fosforo (amaranto cotto ~148mg) era nel campo folati; folati reali ~27mcg - 2026-07-30
   {n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.1,g:1.6,z:1.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:2,zn:0.8,fo:27,se:5,col:0,src:"CREA"},
   {n:"Miglio decorticato crudo",c:"Cereali e derivati",k:342,p:11,gs:0.5,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:40,se:2,col:0,src:"CREA"},
-  {n:"Miglio cotto",c:"Cereali e derivati",k:343,p:11.8,gs:0.2,g:3.9,z:0.5,ch:64.9,fi:8.5,ca:8,fe:3,mg:44,k2:195,na:5,zn:0.5,fo:74,se:0.5,col:0,src:"CREA"},
+  {n:"Miglio cotto",c:"Cereali e derivati",k:119,p:3.5,gs:0.4,g:1.0,z:0.2,ch:23.7,fi:1.3,ca:3,fe:0.6,mg:44,k2:62,na:2,zn:0.9,fo:19,se:1.5,col:0,src:"CREA"},
   {n:"Teff crudo (cereale etiope)",c:"Cereali e derivati",k:367,p:13.3,gs:0.3,g:2.4,z:1.8,ch:73.1,fi:8.0,ca:180,fe:7.6,mg:184,k2:427,na:12,zn:3.6,fo:30,se:8,col:0,src:"CREA"},
   // ── VERDURE ITALIANE TIPICHE ──
   {n:"Agretti (barba di frate) crudi",c:"Verdure",k:22,p:1.8,gs:0,g:0.2,z:2.2,ch:2.2,fi:2.3,ca:131,fe:1.2,mg:40,k2:340,na:38,zn:0.3,fo:30,se:0.5,col:0,src:"CREA"},
@@ -1373,7 +1373,7 @@ const DB_CREA=[
 {n:"Arselle / Telline fresche (Donax trunculus)",c:"Molluschi e crostacei",k:58,p:10.8,gs:0.2,g:0.8,z:0,ch:1.8,fi:0,ca:38,fe:18,mg:38,k2:270,na:480,zn:1.8,fo:35,se:20,col:35,src:"CREA"},
 {n:"Granseola (grancevola) fresca",c:"Molluschi e crostacei",k:86,p:16.5,gs:0.2,g:1.8,z:0,ch:1.0,fi:0,ca:68,fe:2.2,mg:42,k2:280,na:320,zn:5.5,fo:20,se:40,col:65,src:"CREA"},
 {n:"Palamita (Sarda sarda) fresca",c:"Pesce",k:129,p:20.8,gs:1.16,g:4.5,z:1.5,ch:1.5,fi:0,ca:33,fe:1.8,mg:10,k2:630,na:66,zn:0.8,fo:10,se:38,col:63,src:"CREA"},
-{n:"Occhiata (Oblada melanura) fresca",c:"Pesce",k:82,p:18.0,gs:0.3,g:1.5,z:0,ch:0,fi:0,ca:20,fe:0.5,mg:25,k2:370,na:70,zn:0.5,fo:10,se:28,col:45,src:"CREA"},
+{n:"Occhiata (Oblada melanura) fresca",c:"Pesce",k:117,p:19,gs:1.26,g:3.7,z:0,ch:0,fi:0,ca:32,fe:4.2,mg:17,k2:427,na:70,zn:1.4,fo:10,se:28,col:48,src:"CREA"},
 {n:"Nasello surgelato (merluzzo europeo)",c:"Pesce",k:75,p:17.3,gs:0.15,g:0.6,z:0,ch:0,fi:0,ca:30,fe:0.6,mg:20,k2:320,na:77,zn:2,fo:10,se:16.5,col:50,src:"CREA"},
 {n:"Cicala di mare (Scyllarus arctus) fresca",c:"Molluschi e crostacei",k:90,p:17.5,gs:0.2,g:1.5,z:0,ch:0.5,fi:0,ca:88,fe:1.0,mg:48,k2:295,na:380,zn:2.5,fo:20,se:42,col:120,src:"CREA"},
 // ── BEVANDE ALCOLICHE ITALIANE (CREA 2019) ──
@@ -2381,7 +2381,7 @@ const DB_BDA=[
 // ── FARINE E SEMOLE MANCANTI (CREA) ──
 // RISOLTO (deep-pass duplicati): allineato al duplicato coerente col pattern farina non fortificata (~30mcg) - 2026-07-30
 {n:"Farina di grano tenero tipo 1",c:"Cereali e derivati",k:355,p:12.5,gs:0.2,g:1.6,z:1.5,ch:72.0,fi:3.2,ca:20,fe:1.8,mg:38,k2:155,na:3,zn:1.0,fo:30,se:17,col:0,src:"CREA"},
-{n:"Miglio decorticato cotto",c:"Cereali e derivati",k:342,p:11,gs:0.1,g:4.2,z:4.9,ch:67.8,fi:3.1,ca:17,fe:3.5,mg:160,k2:174,na:1,zn:2.3,fo:74,se:0.6,col:0,src:"CREA"},
+{n:"Miglio decorticato cotto",c:"Cereali e derivati",k:119,p:3.5,gs:0.4,g:1.0,z:0.2,ch:23.7,fi:1.3,ca:3,fe:0.6,mg:44,k2:62,na:2,zn:0.9,fo:19,se:1.5,col:0,src:"CREA"},
 // Fosforo (amaranto cotto ~148mg) era nel campo folati; folati reali ~27mcg - 2026-07-30
 {n:"Amaranto cotto",c:"Cereali e derivati",k:102,p:3.8,gs:0.2,g:1.6,z:0.5,ch:18.7,fi:2.1,ca:47,fe:2.1,mg:65,k2:135,na:6,zn:0.9,fo:27,se:2,col:0,src:"BDA"},
 

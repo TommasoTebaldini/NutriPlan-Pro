@@ -1461,7 +1461,7 @@ const DB_BDA=[
   {n:"Semi di chia",c:"Frutta secca",src:"BDA",k:486,p:16.5,ch:42.1,g:30.7,fi:34.4,ca:631,fe:7.7,mg:335,k2:407,na:16,zn:4.6,fo:49,se:55,col:0},
   {n:"Pistacchi tostati",c:"Frutta secca",src:"CREA",k:629,p:18.1,ch:8.1,g:56.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0},
   // ── PESCE ──
-  {n:"Tonno al naturale in scatola",c:"Pesce",src:"BDA",k:159,p:21.5,ch:0.1,g:8.1,fi:0,ca:38,fe:1.3,mg:26,k2:520,na:43,zn:0.5,fo:20,se:112,col:70},
+  {n:"Tonno al naturale in scatola",c:"Pesce",src:"BDA",k:103,p:25.1,ch:0,g:0.3,fi:0,ca:8,fe:1,mg:27,k2:230,na:320,zn:0.7,fo:4,se:78,col:63},
   {n:"Tonno sott'olio sgocciolato",c:"Pesce",src:"CREA",k:192,p:25.2,ch:0,g:10.1,fi:0,ca:7,fe:1.7,mg:23,k2:301,na:316,zn:0.7,fo:10,se:75,col:65},
   {n:"Sgombro in scatola",c:"Pesce",src:"CREA",k:156,p:19.4,ch:0,g:8.5,fi:0,ca:190,fe:1.5,mg:30,k2:280,na:330,zn:0.8,fo:10,se:45,col:55},
   {n:"Salmone in scatola",c:"Pesce",src:"CREA",k:153,p:20.0,ch:0,g:7.2,fi:0,ca:205,fe:0.7,mg:24,k2:300,na:310,zn:0.6,fo:10,se:36,col:60},

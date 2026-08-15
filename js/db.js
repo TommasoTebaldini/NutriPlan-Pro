@@ -1198,7 +1198,7 @@ const DB_CREA=[
 {n:"Seitan (glutine di frumento)",c:"Cereali e derivati",k:370,p:75,gs:0,g:2,z:0,ch:14,fi:0.6,ca:142,fe:2.8,mg:27,k2:100,na:450,zn:1.6,fo:20,se:12,col:0,src:"CREA"},
 // Potassio (8060mg) stesso bug gia trovato/corretto su "Alga Dulse essiccata": allineato a ~1244mg (fonti convergenti) - 2026-07-29
 {n:"Alga dulse (secca)",c:"Verdure",k:247,p:21.6,gs:0.2,g:3.2,z:0,ch:43.2,fi:33,ca:567,fe:6.3,mg:220,k2:1244,na:2085,zn:1.9,fo:180,se:30,col:0,src:"CREA"},
-{n:"Alga kombu (secca)",c:"Verdure",k:243,p:8.2,gs:0.1,g:1.8,z:0,ch:60,fi:27.1,ca:168,fe:2.8,mg:760,k2:6100,na:2500,zn:1.2,fo:180,se:20,col:0,src:"CREA"},
+{n:"Alga kombu (secca)",c:"Verdure",k:160,p:7.1,gs:0.71,g:1.6,z:0,ch:0,fi:58.7,ca:900,fe:12.7,mg:760,k2:450,na:1830,zn:1.2,fo:180,se:20,col:0,src:"BDA"},
 // ── DOLCI TRADIZIONALI ITALIANI ──
 {n:"Cantucci toscani (biscotti di Prato)",c:"Biscotti e crackers",k:443,p:11,gs:4,g:15,z:28,ch:67,fi:1.5,ca:70,fe:2,mg:30,k2:180,na:210,zn:0.9,fo:20,se:10,col:88,src:"CREA"},
 {n:"Amaretti morbidi",c:"Dolci",k:389,p:8,gs:1,g:9,z:45,ch:70,fi:2.5,ca:80,fe:2,mg:45,k2:250,na:40,zn:0.9,fo:15,se:5,col:0,src:"CREA"},
@@ -1569,7 +1569,7 @@ const DB_BDA=[
   {n:"Bulgur cotto",c:"Cereali e pasta",src:"BDA",k:76,p:3.1,gs:0.04,g:0.2,z:0.1,ch:14.1,fi:4.5,ca:10,fe:1,mg:32,k2:68,na:5,zn:0.57,fo:18,se:0.6,col:0},
   {n:"Couscous cotto",c:"Cereali e pasta",src:"BDA",k:179,p:3.6,gs:0.2,g:1.1,z:1.3,ch:39.7,fi:2.7,ca:10,fe:0.5,mg:15,k2:84,na:96,zn:0.39,fo:13,se:3,col:0},
   // ── ALGHE ──
-  {n:"Alghe Nori (essiccate)",c:"Verdure",src:"BDA",k:35,p:5.8,gs:0.1,g:0.3,z:0,ch:5.1,fi:0.3,ca:70,fe:1.8,mg:2,k2:356,na:48,zn:1.05,fo:58,se:0.7,col:0},
+  {n:"Alghe Nori (essiccate)",c:"Verdure",src:"BDA",k:225,p:30.7,gs:0.33,g:1.5,z:0,ch:0,fi:44.4,ca:430,fe:19.6,mg:2,k2:2840,na:790,zn:6.4,fo:146,se:0.7,col:0},
   {n:"Alghe Wakame (essiccate)",c:"Verdure",src:"BDA",k:45,p:3.0,gs:0.1,g:0.6,z:0.5,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:50,na:872,zn:0.38,fo:80,se:0.7,col:0},
   // ── MISO ──
   {n:"Miso (pasta fermentata di soia)",c:"Condimenti",src:"BDA",k:208,p:13.3,gs:0.89,g:6.2,z:0,ch:23.5,fi:5.4,ca:73,fe:4.2,mg:48,k2:160,na:3650,zn:3.3,fo:33,se:7,col:0},

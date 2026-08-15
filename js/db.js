@@ -1570,7 +1570,7 @@ const DB_BDA=[
   {n:"Couscous cotto",c:"Cereali e pasta",src:"BDA",k:179,p:3.6,gs:0.2,g:1.1,z:1.3,ch:39.7,fi:2.7,ca:10,fe:0.5,mg:15,k2:84,na:96,zn:0.39,fo:13,se:3,col:0},
   // ── ALGHE ──
   {n:"Alghe Nori (essiccate)",c:"Verdure",src:"BDA",k:225,p:30.7,gs:0.33,g:1.5,z:0,ch:0,fi:44.4,ca:430,fe:19.6,mg:2,k2:2840,na:790,zn:6.4,fo:146,se:0.7,col:0},
-  {n:"Alghe Wakame (essiccate)",c:"Verdure",src:"BDA",k:45,p:3.0,gs:0.1,g:0.6,z:0.5,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:50,na:872,zn:0.38,fo:80,se:0.7,col:0},
+  {n:"Alghe Wakame (essiccate)",c:"Verdure",src:"BDA",k:165,p:12.4,gs:0.49,g:2.4,z:0,ch:0,fi:47.1,ca:660,fe:11.6,mg:107,k2:220,na:3220,zn:1.7,fo:196,se:0.7,col:0},
   // ── MISO ──
   {n:"Miso (pasta fermentata di soia)",c:"Condimenti",src:"BDA",k:208,p:13.3,gs:0.89,g:6.2,z:0,ch:23.5,fi:5.4,ca:73,fe:4.2,mg:48,k2:160,na:3650,zn:3.3,fo:33,se:7,col:0},
   // ── GRASSI E OLI aggiuntivi ──
@@ -2215,10 +2215,10 @@ const DB_BDA=[
 {n:"Noci brasiliane crude",c:"Semi e frutta secca",k:659,p:14.3,gs:15.1,g:67.1,z:2.3,ch:11.7,fi:7.5,ca:160,fe:2.4,mg:376,k2:659,na:3,zn:4.1,fo:22,se:1917,col:0,src:"BDA"},
 
 // ── ALGHE E PRODOTTI MARINI ──
-{n:"Alga nori essiccata",c:"Alimenti vari",k:35,p:5.8,gs:0.3,g:0.3,z:0.5,ch:5.1,fi:3.5,ca:70,fe:1.9,mg:2,k2:356,na:48,zn:1.5,fo:58,se:1,col:0,src:"BDA"},
+{n:"Alga nori essiccata",c:"Alimenti vari",k:225,p:30.7,gs:0.33,g:1.5,z:0,ch:0,fi:44.4,ca:430,fe:19.6,mg:2,k2:2840,na:790,zn:6.4,fo:146,se:1,col:0,src:"BDA"},
 // RISOLTO (deep-pass duplicati): allineato al valore già confermato con match esatto per wakame essiccata (196mcg, verificato in sessione precedente) - 2026-07-30
-{n:"Alga wakame essiccata",c:"Alimenti vari",k:45,p:3.0,gs:0.2,g:0.6,z:0.5,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:89,na:872,zn:0.4,fo:196,se:0.7,col:0,src:"BDA"},
-{n:"Alga kombu essiccata",c:"Alimenti vari",k:43,p:1.7,gs:0.5,g:0.6,z:0,ch:9.6,fi:1.3,ca:168,fe:2.8,mg:121,k2:89,na:233,zn:1.2,fo:42,se:0.7,col:0,src:"BDA"},
+{n:"Alga wakame essiccata",c:"Alimenti vari",k:165,p:12.4,gs:0.49,g:2.4,z:0,ch:0,fi:47.1,ca:660,fe:11.6,mg:107,k2:220,na:3220,zn:1.7,fo:196,se:0.7,col:0,src:"BDA"},
+{n:"Alga kombu essiccata",c:"Alimenti vari",k:160,p:7.1,gs:0.71,g:1.6,z:0,ch:0,fi:58.7,ca:900,fe:12.7,mg:121,k2:450,na:1830,zn:1.2,fo:180,se:0.7,col:0,src:"BDA"},
 
 // ── CONDIMENTI E SALSE MANCANTI ──
 {n:"Aceto di mele biologico non filtrato",c:"Condimenti",k:22,p:0,gs:0,g:0,z:0.4,ch:5.0,fi:0,ca:7,fe:0.3,mg:5,k2:73,na:5,zn:0.1,fo:4,se:0,col:0,src:"BDA"},
@@ -2434,7 +2434,7 @@ const DB_BDA=[
 
 // ── CUCINA INTERNAZIONALE (BDA) ──
 {n:"Riso per sushi (cotto con aceto di riso)",c:"Cereali e derivati",k:155,p:2.8,gs:0.1,g:0.3,z:4.5,ch:34.0,fi:0.5,ca:5,fe:0.3,mg:12,k2:30,na:210,zn:0.4,fo:10,se:4,col:0,src:"BDA"},
-{n:"Alga nori essiccata (per foglio, foglio ~2g)",c:"Alghe",k:35,p:5.8,gs:0.1,g:0.3,z:0.5,ch:5.1,fi:1.3,ca:70,fe:2.5,mg:22,k2:356,na:48,zn:1.5,fo:146,se:1,col:0,src:"BDA"},
+{n:"Alga nori essiccata (per foglio, foglio ~2g)",c:"Alghe",k:225,p:30.7,gs:0.33,g:1.5,z:0,ch:0,fi:44.4,ca:430,fe:19.6,mg:22,k2:2840,na:790,zn:6.4,fo:146,se:1,col:0,src:"BDA"},
 {n:"Wasabi (pasta, da radice fresca)",c:"Condimenti",k:109,p:4.8,gs:0.1,g:0.6,z:5.0,ch:21.5,fi:7.8,ca:128,fe:1.0,mg:69,k2:568,na:17,zn:1.6,fo:18,se:3,col:0,src:"BDA"},
 {n:"Zenzero marinato/gari (per sushi)",c:"Condimenti",k:20,p:0.2,gs:0,g:0.1,z:3.5,ch:4.7,fi:0.4,ca:10,fe:0.3,mg:8,k2:50,na:600,zn:0.1,fo:5,se:0,col:0,src:"BDA"},
 {n:"Injera (pane etiope di tef fermentato)",c:"Cereali e derivati",k:165,p:5.5,gs:0.1,g:0.7,z:1.0,ch:35.0,fi:3.5,ca:25,fe:3.0,mg:40,k2:200,na:280,zn:1.5,fo:25,se:4,col:0,src:"BDA"},
@@ -2566,7 +2566,7 @@ const DB_BDA=[
 {n:"Spirulina in compresse (alghe)",c:"Alghe",k:290,p:57.5,gs:0.7,g:7.7,z:3.1,ch:23.9,fi:3.6,ca:120,fe:28.5,mg:195,k2:1363,na:1048,zn:2.0,fo:94,se:7,col:0,src:"CREA"},
 // Ferro (130mg) troppo alto vs fonte convergente su kcal/proteine/grassi/carboidrati (che cita ferro 54mg); zinco (71mg) verificato come valore realmente citato in alcune fonti per questo integratore ad alta variabilita, non toccato - 2026-07-29
 {n:"Clorella in polvere (Chlorella vulgaris)",c:"Alghe",k:410,p:58.0,gs:1.0,g:9.3,z:0.5,ch:23.2,fi:0.3,ca:221,fe:54.0,mg:315,k2:1030,na:29,zn:71,fo:94,se:10,col:0,src:"BDA"},
-{n:"Alga wakame essiccata",c:"Alghe",k:45,p:3.0,gs:0.1,g:0.6,z:0.6,ch:9.1,fi:0.5,ca:150,fe:2.2,mg:107,k2:50,na:872,zn:0.4,fo:196,se:0.7,col:0,src:"BDA"},
+{n:"Alga wakame essiccata",c:"Alghe",k:165,p:12.4,gs:0.49,g:2.4,z:0,ch:0,fi:47.1,ca:660,fe:11.6,mg:107,k2:220,na:3220,zn:1.7,fo:196,se:0.7,col:0,src:"BDA"},
 {n:"Alga spirulina fresca (non essiccata)",c:"Alghe",k:26,p:5.9,gs:0.2,g:0.4,z:0.3,ch:2.4,fi:0.4,ca:12,fe:2.8,mg:19,k2:127,na:98,zn:0.2,fo:9,se:0.7,col:0,src:"BDA"},
 {n:"Maca in polvere (Lepidium meyenii)",c:"Erbe aromatiche",k:325,p:14.0,gs:1.5,g:3.5,z:3.0,ch:71.4,fi:7.1,ca:450,fe:14.7,mg:104,k2:2400,na:18,zn:3.8,fo:93,se:11,col:0,src:"BDA"},
 {n:"Ashwagandha in polvere (Withania somnifera)",c:"Erbe aromatiche",k:245,p:3.9,gs:0.1,g:0.3,z:4.5,ch:49.9,fi:32.3,ca:23,fe:3.3,mg:28,k2:250,na:14,zn:0.2,fo:0,se:1,col:0,src:"BDA"},

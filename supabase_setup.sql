@@ -3906,3 +3906,100 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_51_fhir_export_queue', 'Coda fhir_export_queue + trigger su cartelle/esami_biochimici/bia_records/piani: segna una cartella da (ri)sincronizzare verso FSE 2.0 ad ogni scrittura clinica rilevante — lato costruzione Bundle FHIR in js/fhir-export.js + api/_fhir.js, job di invio in api/cron.js (?job=fhir-sync)')
 ON CONFLICT (id) DO NOTHING;
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 52 — Consenso registrazione persistito + gate consenso AI foto pasto
+--             + fix creazione profilo paziente (bug scoperto in questa sessione)
+--
+-- Bug scoperto: la SEZIONE 1 rimuove il trigger on_auth_user_created su
+-- auth.users (rischio 500 da GoTrue, vedi commento lì) e lo sostituisce con
+-- l'RPC client-side create_profile_for_new_user() — MA quella sostituzione
+-- era stata fatta solo per il flusso dietista (NutriPlan-Pro). Il flusso
+-- paziente (Diet-Plan-Pro-app-claude, RegisterPage.jsx) continuava a fare
+-- affidamento sullo stesso trigger (handle_new_user(), definito nel repo
+-- Diet-Plan-Pro-app-claude/supabase-schema.sql) per creare la riga profiles
+-- con role='patient' — trigger che su questo progetto NON esiste più.
+-- Verificato sul database live: 0 righe in pg_trigger per
+-- on_auth_user_created, funzione handle_new_user() orfana (definita, mai
+-- eseguita). Nessun paziente reale ha ancora colpito il bug (22/22 utenti
+-- attuali hanno un profilo, presumibilmente tutti creati prima della
+-- rimozione del trigger, o via altro percorso), ma la prossima
+-- autoregistrazione paziente fallirebbe silenziosamente (auth.users creato,
+-- profiles mai creato, app bloccata su profilo nullo).
+--
+-- Fix: stesso pattern già collaudato per il dietista, esteso al paziente.
+-- create_patient_profile() è una funzione GEMELLA di
+-- create_profile_for_new_user() — SECURITY DEFINER, concessa anche ad anon
+-- (funziona senza sessione attiva, subito dopo signUp()) — con una
+-- differenza di sicurezza intenzionale ereditata dal trigger originale: il
+-- ruolo 'patient' è hardcoded nella funzione, MAI passato come parametro
+-- dal client, per lo stesso motivo già documentato nel trigger rimosso
+-- (chiunque potrebbe altrimenti passare role='dietitian' via un parametro
+-- client-controlled e ottenere accesso alle policy gated su quel ruolo).
+--
+-- Entrambe le funzioni ora accettano anche `terms_accepted` per persistere
+-- terms_accepted_at nella tabella profiles stessa (prima veniva solo passato
+-- a supabase.auth.signUp({options:{data:{...}}}), che lo scrive in
+-- auth.users.raw_user_meta_data — non leggibile/interrogabile da un admin
+-- via la tabella profiles, quindi di fatto inutile ai fini di controllo/
+-- audit del consenso).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='terms_accepted_at') THEN
+    ALTER TABLE profiles ADD COLUMN terms_accepted_at TIMESTAMPTZ;
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='ai_photo_consent_at') THEN
+    ALTER TABLE profiles ADD COLUMN ai_photo_consent_at TIMESTAMPTZ;
+  END IF;
+END $$;
+
+-- create_profile_for_new_user(): ora accetta anche terms_accepted (default
+-- false per retro-compatibilità con eventuali chiamate esistenti a 2
+-- argomenti — ma va preferita sempre la chiamata a 3 argomenti dal client).
+DROP FUNCTION IF EXISTS create_profile_for_new_user(UUID, TEXT);
+CREATE OR REPLACE FUNCTION create_profile_for_new_user(uid UUID, user_email TEXT, terms_accepted BOOLEAN DEFAULT false)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, approved, is_admin, terms_accepted_at)
+  VALUES (uid, user_email, false, false, CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION create_profile_for_new_user(UUID, TEXT, BOOLEAN) TO anon, authenticated;
+
+-- create_patient_profile(): equivalente per il flusso paziente
+-- (Diet-Plan-Pro-app-claude) — sostituisce il trigger handle_new_user() che
+-- su questo progetto non è più agganciato ad auth.users. role='patient' è
+-- SEMPRE hardcoded, mai un parametro.
+CREATE OR REPLACE FUNCTION create_patient_profile(
+  uid UUID, user_email TEXT, p_full_name TEXT, p_first_name TEXT, p_last_name TEXT,
+  terms_accepted BOOLEAN DEFAULT false
+)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, first_name, last_name, role, terms_accepted_at)
+  VALUES (uid, user_email, p_full_name, p_first_name, p_last_name, 'patient',
+          CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    full_name  = COALESCE(EXCLUDED.full_name,  profiles.full_name),
+    first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
+    last_name  = COALESCE(EXCLUDED.last_name,  profiles.last_name),
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION create_patient_profile(UUID, TEXT, TEXT, TEXT, TEXT, BOOLEAN) TO anon, authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_52_consent_and_patient_profile_fix', 'terms_accepted_at + ai_photo_consent_at su profiles; create_patient_profile() risolve un bug live — la registrazione paziente dipendeva da un trigger su auth.users rimosso in SEZIONE 1, mai sostituito lato paziente')
+ON CONFLICT (id) DO NOTHING;

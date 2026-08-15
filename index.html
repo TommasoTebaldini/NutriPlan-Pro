@@ -124,7 +124,7 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
         <p class="note" style="margin-top:8px;font-size:11px">Per il login SSO/SAML inserisci la tua email aziendale nel campo Email qui sopra prima di premere il pulsante.</p>
       </div>
 
-      <p class="note"><span data-i18n="index.privacy_note">I tuoi dati sono salvati in modo sicuro.</span> <a href="privacy.html" style="color:#0F766E;font-weight:600">Privacy Policy</a> · <a href="termini.html" style="color:#0F766E;font-weight:600">Termini di Servizio</a></p>
+      <p class="note"><span data-i18n="index.privacy_note">I tuoi dati sono salvati in modo sicuro.</span> <a href="privacy.html" style="color:#0F766E;font-weight:600">Privacy Policy</a> · <a href="termini.html" style="color:#0F766E;font-weight:600">Termini di Servizio</a> · <a href="guida-rapida.html" style="color:#0F766E;font-weight:600">Guida Rapida</a></p>
     </div>
 
     <!-- Pannello reset password -->
@@ -168,6 +168,7 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       </label>
       <button class="btn" id="reg-btn" onclick="doRegister()" data-i18n="index.register_btn">Crea Account</button>
       <p class="note" data-i18n="index.register_note">Dopo la registrazione attendi l'approvazione dell'amministratore.</p>
+      <p class="note">Nel frattempo, dai un'occhiata alla <a href="guida-rapida.html" style="color:#0F766E;font-weight:600">Guida Rapida</a> per sapere cosa aspettarti dal primo accesso.</p>
     </div>
   </div>
 </div>
@@ -565,7 +566,7 @@ async function doRegister() {
   }
 
   // Always call the RPC to ensure the profile exists (works with anon key, no session needed)
-  await sb.rpc('create_profile_for_new_user', { uid: data.user.id, user_email: email });
+  await sb.rpc('create_profile_for_new_user', { uid: data.user.id, user_email: email, terms_accepted: true });
 
   if (data.session) {
     ok.textContent = '✅ Account creato! Reindirizzamento...';

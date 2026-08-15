@@ -202,6 +202,41 @@
     </div>
   </div>
 
+    <!-- ERRORI APPLICATIVI (client_errors) -->
+    <div class="card" id="admin-errors-card" style="margin-bottom:16px">
+      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <h3>🐛 Errori Applicativi</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="err-app-filter" onchange="loadClientErrors()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit">
+            <option value="">Tutte le app</option>
+            <option value="nutriplan-pro">NutriPlan-Pro</option>
+            <option value="diet-plan-pro-app">Diet-Plan-Pro (pazienti)</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="loadClientErrors()">🔄 Aggiorna</button>
+          <button class="btn btn-ghost btn-sm" style="color:#DC2626;border-color:#FECACA" onclick="clearOldClientErrors()">🗑️ Elimina &gt;30gg</button>
+        </div>
+      </div>
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:12px 16px;margin:0 16px 12px;font-size:12.5px;color:#1E3A5F">
+        ℹ️ Errori JS non gestiti raccolti automaticamente lato client (sostituto leggero di Sentry, vedi <code>js/utils.js</code>). Mostra gli ultimi 200, più recenti in alto.
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;min-width:760px;border-collapse:collapse;font-size:12.5px">
+          <thead>
+            <tr style="background:var(--slate);color:#CBD5E1">
+              <th style="padding:8px 10px;text-align:left;white-space:nowrap">Quando</th>
+              <th style="padding:8px 10px;text-align:center">App</th>
+              <th style="padding:8px 10px;text-align:center">Livello</th>
+              <th style="padding:8px 10px;text-align:left">Messaggio</th>
+              <th style="padding:8px 10px;text-align:left">Pagina</th>
+              <th style="padding:8px 10px;text-align:left">Utente</th>
+              <th style="padding:8px 10px;text-align:center">Azioni</th>
+            </tr>
+          </thead>
+          <tbody id="errors-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
   <!-- STUDIO ASSOCIATO -->
   <div class="card" style="margin-bottom:16px" id="studio-card">
     <div class="card-hdr">
@@ -238,6 +273,19 @@
     <div style="padding:14px 20px;border-top:1px solid #E2E8F0;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0">
       <button onclick="closeSectionsModal()" style="padding:8px 18px;background:#F1F5F9;color:#475569;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Annulla</button>
       <button onclick="saveSections()" style="padding:8px 18px;background:#0F766E;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- ERROR DETAIL MODAL -->
+<div id="modal-error-detail" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;max-width:640px;width:94%;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.28)">
+    <div style="padding:16px 20px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="font-size:15px;font-weight:700;color:#1E293B">🐛 Dettaglio errore</div>
+      <button onclick="document.getElementById('modal-error-detail').style.display='none'" style="background:none;border:none;font-size:18px;cursor:pointer;color:#64748B;padding:4px 8px;min-width:40px;min-height:40px">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding:16px 20px;flex:1">
+      <pre id="error-detail-content" style="white-space:pre-wrap;word-break:break-all;font-size:12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px;margin:0;font-family:'SFMono-Regular',Consolas,monospace"></pre>
     </div>
   </div>
 </div>
@@ -338,6 +386,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('admin-content').style.display = 'block';
   loadUtenti();
   loadECMCorsi();
+  loadClientErrors();
 
   if (typeof initPageTour === 'function') {
     initPageTour('admin', [
@@ -567,6 +616,94 @@ async function saveSections() {
   toast(sections_enabled === null ? '🔓 Accesso completo ripristinato' : '✅ Sezioni aggiornate!', 'ok');
   closeSectionsModal();
   loadUtenti();
+}
+
+// ─── Client Errors (osservabilità) ─────────────────────────────────────────
+
+let _clientErrorsCache = [];
+
+async function loadClientErrors() {
+  const tbody = document.getElementById('errors-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--slate-l)">Caricamento...</td></tr>';
+  const appFilter = document.getElementById('err-app-filter')?.value || '';
+  let q = sb.from('client_errors').select('*').order('created_at', { ascending: false }).limit(200);
+  if (appFilter) q = q.eq('app', appFilter);
+  const { data, error } = await q;
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="7"><div style="margin:24px auto;max-width:520px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:20px 24px;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">⚠️</span><span style="font-weight:700;color:#B91C1C;font-size:15px">Tabella non trovata</span></div>
+      <p style="margin:0 0 8px;color:#7F1D1D;font-size:13px;line-height:1.5">La tabella <code style="background:#FEE2E2;border-radius:4px;padding:1px 5px;font-size:12px">client_errors</code> non esiste, o la SEZIONE 37 di <code>supabase_setup.sql</code> non è ancora stata eseguita.</p>
+      <details style="margin-top:4px"><summary style="cursor:pointer;font-size:12px;color:#B91C1C;font-weight:600">Dettaglio errore tecnico</summary><p style="margin:6px 0 0;font-size:11px;color:#9CA3AF;font-family:monospace;word-break:break-all">${esc(error.message)}</p></details>
+    </div></td></tr>`;
+    return;
+  }
+  _clientErrorsCache = data || [];
+  if (!_clientErrorsCache.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--slate-l)">Nessun errore registrato 🎉</td></tr>';
+    return;
+  }
+  const appLabel = { 'nutriplan-pro': 'NutriPlan-Pro', 'diet-plan-pro-app': 'Diet-Plan-Pro' };
+  tbody.innerHTML = _clientErrorsCache.map((e, i) => {
+    const levelColor = e.level === 'unhandledrejection' ? '#B45309' : '#DC2626';
+    let pageShort = '—';
+    try { pageShort = e.page_url ? (new URL(e.page_url).pathname || e.page_url) : '—'; } catch { pageShort = e.page_url || '—'; }
+    return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 10px;white-space:nowrap;font-size:11.5px;color:var(--slate-l)">${e.created_at ? new Date(e.created_at).toLocaleString('it') : '—'}</td>
+      <td style="padding:8px 10px;text-align:center;font-size:11.5px">${esc(appLabel[e.app] || e.app || '—')}</td>
+      <td style="padding:8px 10px;text-align:center"><span style="color:${levelColor};font-weight:700;font-size:11px">${esc(e.level || 'error')}</span></td>
+      <td style="padding:8px 10px;max-width:280px;font-size:12px">${esc((e.message || '').slice(0, 140))}${(e.message || '').length > 140 ? '…' : ''}</td>
+      <td style="padding:8px 10px;max-width:160px;font-size:11.5px;color:var(--slate-l);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(pageShort)}</td>
+      <td style="padding:8px 10px;font-size:11.5px;color:var(--slate-l)">${esc(e.user_email || '—')}</td>
+      <td style="padding:8px 10px;text-align:center">
+        <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-xs" onclick="showErrorDetail(${i})">🔍 Dettaglio</button>
+          <button class="btn btn-ghost btn-xs" style="color:#DC2626;border-color:#FECACA" onclick="deleteClientError('${e.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function showErrorDetail(i) {
+  const e = _clientErrorsCache[i];
+  if (!e) return;
+  const parts = [
+    'Data: ' + (e.created_at ? new Date(e.created_at).toLocaleString('it') : '—'),
+    'App: ' + (e.app || '—'),
+    'Livello: ' + (e.level || '—'),
+    'Pagina: ' + (e.page_url || '—'),
+    'Utente: ' + (e.user_email || e.user_id || '—'),
+    'User agent: ' + (e.user_agent || '—'),
+    '',
+    'Messaggio:',
+    e.message || '(nessuno)',
+    '',
+    'Stack trace:',
+    e.stack || '(non disponibile)',
+  ];
+  document.getElementById('error-detail-content').textContent = parts.join('\n');
+  document.getElementById('modal-error-detail').style.display = 'flex';
+}
+
+async function deleteClientError(id) {
+  if (!confirm('Eliminare questo errore dal log?')) return;
+  showLoading(true);
+  const { error } = await sb.from('client_errors').delete().eq('id', id);
+  showLoading(false);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  toast('🗑️ Eliminato', 'info');
+  loadClientErrors();
+}
+
+async function clearOldClientErrors() {
+  if (!confirm('Eliminare tutti gli errori più vecchi di 30 giorni? Non è reversibile.')) return;
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  showLoading(true);
+  const { error, count } = await sb.from('client_errors').delete({ count: 'exact' }).lt('created_at', cutoff);
+  showLoading(false);
+  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  toast(`🗑️ Eliminati ${count ?? 0} errori vecchi`, 'ok');
+  loadClientErrors();
 }
 </script>
 </body>

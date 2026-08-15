@@ -384,7 +384,7 @@ const DB_CREA=[
 {n:"Tisana camomilla (infuso)",c:"Bevande",k:1,p:0,gs:0,g:0,z:0.2,ch:0.2,fi:0,ca:2,fe:0.1,mg:1,k2:8,na:1,zn:0,fo:1,se:0,col:0,src:"CREA"},
 {n:"Acqua di riso (bevanda)",c:"Bevande",k:10,p:0.1,gs:0,g:0.1,z:2.4,ch:2.5,fi:0,ca:2,fe:0.1,mg:3,k2:10,na:3,zn:0,fo:6,se:0,col:0,src:"CREA"},
 // ── FARINE E AMIDI aggiuntivi ──
-{n:"Farina di riso bianca",c:"Cereali e derivati",k:332,p:7.3,gs:0.2,g:0.5,z:0,ch:79.1,fi:1,ca:7,fe:0.4,mg:35,k2:104,na:4,zn:0.9,fo:98,se:15,col:0,src:"CREA"},
+{n:"Farina di riso bianca",c:"Cereali e derivati",k:332,p:7.3,gs:0.2,g:0.5,z:0,ch:79.1,fi:1,ca:7,fe:0.4,mg:35,k2:104,na:4,zn:0.9,fo:8,se:15,col:0,src:"CREA"},
 {n:"Farina di mais (polenta)",c:"Cereali e derivati",k:341,p:8.7,gs:0.34,g:2.7,z:1.5,ch:73.5,fi:3.1,ca:6,fe:1.8,mg:127,k2:130,na:1,zn:2.2,fo:25,se:15,col:0,src:"CREA"},
 {n:"Farina di grano saraceno",c:"Cereali e derivati",k:341,p:8.7,gs:0.34,g:2.7,z:1.5,ch:73.5,fi:3.1,ca:6,fe:1.8,mg:251,k2:130,na:1,zn:3.1,fo:24,se:5,col:0,src:"CREA"},
 {n:"Amido di mais (maizena)",c:"Cereali e derivati",k:328,p:0.3,gs:0,g:0,z:1.5,ch:87,fi:0,ca:2,fe:0.2,mg:3,k2:0,na:0,zn:0.1,fo:13,se:3,col:0,src:"CREA"},
@@ -3300,7 +3300,7 @@ const DB_UPF = [
   {n:"Magnum Classic Algida (per 100g)",c:"Gelati",src:"UPF",k:307,p:3.3,gs:13,g:19,z:27,ch:30,fi:0.5,ca:80,fe:1.5,mg:15,k2:175,na:48,zn:0.5,fo:10,se:2,col:20},
   {n:"Cornetto Algida classico (per 100g)",c:"Gelati",src:"UPF",k:288,p:3.5,gs:12,g:15,z:24,ch:33,fi:1.0,ca:75,fe:0.8,mg:12,k2:155,na:92,zn:0.4,fo:10,se:2,col:18},
   {n:"Calippo Algida limone (per 100g)",c:"Gelati",src:"UPF",k:87.1,p:0,gs:0,g:0,z:19.8,ch:20.2,fi:0,ca:5,fe:0.1,mg:2,k2:18,na:5,zn:0,fo:3,se:0,col:0},
-  {n:"Twister Algida fragola (per 100g)",c:"Gelati",src:"UPF",k:82,p:1.0,gs:1.0,g:2.0,z:14.5,ch:15.0,fi:0.2,ca:30,fe:0.1,mg:4,k2:50,na:25,zn:0.1,fo:25,se:1,col:5},
+  {n:"Twister Algida fragola (per 100g)",c:"Gelati",src:"UPF",k:150,p:3.5,gs:5.0,g:6.0,z:20,ch:22.0,fi:1.0,ca:30,fe:0.1,mg:4,k2:50,na:120,zn:0.1,fo:12,se:1,col:5},
   {n:"Häagen-Dazs Vanilla (per 100g)",c:"Gelati",src:"UPF",k:271,p:4.0,gs:11.5,g:17.5,z:23.5,ch:26.5,fi:0,ca:115,fe:0.1,mg:10,k2:155,na:75,zn:0.5,fo:12,se:2,col:75},
   // Fosforo (latte/panna, colesterolo basso 18mg indica poco contenuto di uova) era nel campo folati; folati reali ~10mcg - 2026-07-30
   {n:"Sammontana Cremino (per 100g)",c:"Gelati",src:"UPF",k:295,p:3.0,gs:12.0,g:17.0,z:33.0,ch:36.5,fi:0.5,ca:90,fe:0.8,mg:12,k2:160,na:80,zn:0.4,fo:10,se:2,col:18},

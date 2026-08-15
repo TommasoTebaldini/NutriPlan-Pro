@@ -330,7 +330,7 @@ const DB_CREA=[
 {n:"Puntarelle (cicoria catalogna)",c:"Verdure",k:30,p:1.8,gs:0.12,g:0.5,z:3,ch:3.2,fi:3.1,ca:74,fe:0.7,mg:20,k2:358,na:21,zn:0.3,fo:110,se:0.4,col:0,src:"BDA"},
 {n:"Friarielli (cime di rapa napoletane)",c:"Verdure",k:22,p:2.9,gs:0,g:0.3,z:1.2,ch:3.2,fi:2.8,ca:82,fe:2.5,mg:22,k2:200,na:40,zn:0.4,fo:95,se:0.9,col:0,src:"CREA"},
 {n:"Cavolo nero toscano",c:"Verdure",k:35,p:3.3,gs:0,g:0.6,z:0.5,ch:6.7,fi:3.6,ca:157,fe:1.5,mg:34,k2:704,na:38,zn:0.4,fo:141,se:0.9,col:0,src:"CREA"},
-{n:"Carciofo crudo",c:"Verdure",k:33,p:2.7,gs:0,g:0.2,z:1.9,ch:2.5,fi:5.5,ca:86,fe:1,mg:45,k2:376,na:133,zn:0.95,fo:68,se:0.2,col:0,src:"CREA"},
+{n:"Carciofo crudo",c:"Verdure",k:48,p:3,gs:0,g:0.2,z:1.9,ch:6.1,fi:5.5,ca:65,fe:1.1,mg:45,k2:376,na:133,zn:0.95,fo:68,se:0.2,col:0,src:"CREA"},
 // FIX (check strutturale): zuccheri (13.1g) non potevano superare i carboidrati totali (10.6g), impossibile per definizione - corretto ch a 13.1 - 2026-07-30
 {n:"Topinambur",c:"Verdure",k:52,p:1.6,gs:0,g:0.1,z:13.1,ch:13.1,fi:2.7,ca:14,fe:3.4,mg:17,k2:429,na:4,zn:0.1,fo:14,se:0.7,col:0,src:"CREA"},
 {n:"Acetosella (Rumex acetosa)",c:"Verdure",k:22,p:2.0,gs:0,g:0.8,z:1.1,ch:3.2,fi:2.9,ca:44,fe:2.4,mg:103,k2:390,na:4,zn:0.2,fo:13,se:0.9,col:0,src:"CREA"},

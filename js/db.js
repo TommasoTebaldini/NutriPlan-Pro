@@ -264,7 +264,7 @@ const DB_CREA=[
 {n:"Cicerchie secche",c:"Legumi",k:334,p:26.8,gs:0.2,g:1.3,z:0,ch:58.7,fi:14.5,ca:92,fe:8.6,mg:100,k2:960,na:5,zn:3.6,fo:490,se:6,col:0,src:"CREA"},
 {n:"Fagioli di Spagna secchi",c:"Legumi",k:312,p:20.2,gs:0.1,g:2,z:3.5,ch:47.7,fi:17.3,ca:102,fe:9,mg:163,k2:1478,na:3,zn:2.9,fo:550,se:16,col:0,src:"CREA"},
 // ── FRUTTA SECCA E SEMI aggiuntivi ──
-{n:"Noci di Macadamia",c:"Frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:11,se:3.6,col:0,src:"CREA"},
+{n:"Noci di Macadamia",c:"Frutta secca",k:751,p:8,gs:12.4,g:76,z:4,ch:5.1,fi:8,ca:70,fe:3,mg:118,k2:363,na:5,zn:1,fo:11,se:4,col:0,src:"CREA"},
 {n:"Noci Pecan",c:"Frutta secca",k:723,p:7.2,gs:8.11,g:71.8,z:4.3,ch:7.9,fi:9.4,ca:61,fe:2.4,mg:121,k2:603,na:0,zn:5,fo:22,se:6,col:0,src:"CREA"},
 {n:"Pinoli",c:"Frutta secca",k:604,p:31.9,gs:4.9,g:50.3,z:3.9,ch:4,fi:4.5,ca:40,fe:2,mg:251,k2:597,na:2,zn:6.4,fo:58,se:0.7,col:0,src:"CREA"},
 {n:"Castagne fresche",c:"Frutta secca",k:174,p:2.9,gs:0.3,g:1.7,z:8.9,ch:36.7,fi:4.7,ca:30,fe:0.9,mg:30,k2:395,na:9,zn:0.5,fo:81,se:1.2,col:0,src:"CREA"},
@@ -1278,7 +1278,7 @@ const DB_CREA=[
 {n:"Castagne essiccate",c:"Semi e frutta secca",k:315,p:6,gs:0.3,g:3.4,z:16.1,ch:62,fi:13.8,ca:56,fe:1.9,mg:90,k2:738,na:17,zn:0.7,fo:53,se:4.3,col:0,src:"CREA"},
 {n:"Pistacchi non salati",c:"Semi e frutta secca",k:629,p:18.1,gs:5.97,g:56.1,z:4.5,ch:8.1,fi:10.6,ca:131,fe:7.3,mg:158,k2:972,na:1,zn:2.37,fo:51,se:8,col:0,src:"CREA"},
 {n:"Noci pecan",c:"Semi e frutta secca",k:723,p:7.2,gs:8.11,g:71.8,z:4.3,ch:7.9,fi:9.4,ca:61,fe:2.4,mg:121,k2:603,na:0,zn:5,fo:22,se:6,col:0,src:"CREA"},
-{n:"Noci macadamia",c:"Semi e frutta secca",k:718,p:7.9,gs:12.1,g:75.8,z:4.6,ch:13.8,fi:8.6,ca:85,fe:3.7,mg:130,k2:368,na:5,zn:1.3,fo:11,se:3.6,col:0,src:"CREA"},
+{n:"Noci macadamia",c:"Semi e frutta secca",k:751,p:8,gs:12.4,g:76,z:4,ch:5.1,fi:8,ca:70,fe:3,mg:118,k2:363,na:5,zn:1,fo:11,se:4,col:0,src:"CREA"},
 {n:"Semi di zucca tostati (senza sale)",c:"Semi e frutta secca",k:574,p:29.8,gs:5.6,g:49,z:1.4,ch:14.7,fi:6,ca:46,fe:8.8,mg:592,k2:919,na:7,zn:7.6,fo:57,se:9.4,col:0,src:"CREA"},
 // CONDIMENTI E SPEZIE
 // Corretto a valore reale confermato via ricerca (56mcg, USDA "food folate"); risolve discrepanza col duplicato BDA (349mcg, anch'esso corretto) - 2026-07-30

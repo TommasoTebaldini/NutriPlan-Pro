@@ -3185,7 +3185,7 @@ const DB_UPF = [
   {n:"Chicken McNuggets McDonald's (per 100g)",c:"Fast food",src:"UPF",k:244,p:15,gs:1.4,g:12,z:0.7,ch:19,fi:0.9,ca:18,fe:0.6,mg:20,k2:220,na:440,zn:0.8,fo:8,se:10,col:50},
   // Terzo duplicato con lo stesso bug fosforo-in-folati già corretto altrove (15mcg) - 2026-07-30
   {n:"Patatine fritte McDonald's (per 100g)",c:"Fast food",src:"UPF",k:312,p:3.4,gs:1.5,g:15.0,z:0.8,ch:41.5,fi:3.8,ca:15,fe:0.8,mg:25,k2:670,na:350,zn:0.3,fo:15,se:4,col:0},
-  {n:"Hot dog (wurstel in panino industriale)",c:"Fast food",src:"UPF",k:302,p:8.9,gs:0.8,g:5.7,z:6,ch:52,fi:0,ca:55,fe:1.5,mg:20,k2:175,na:320,zn:1.5,fo:25,se:10,col:48},
+  {n:"Hot dog (wurstel in panino industriale)",c:"Fast food",src:"UPF",k:255,p:11,gs:3.6,g:13,z:1,ch:24,fi:1.9,ca:17,fe:0.8,mg:15,k2:150,na:600,zn:0.5,fo:15,se:5,col:42},
   {n:"Pizza surgelata margherita (per 100g)",c:"Fast food",src:"UPF",k:252,p:12,gs:4.1,g:8,z:1.9,ch:32,fi:2,ca:185,fe:1.5,mg:20,k2:175,na:600,zn:1.0,fo:35,se:10,col:18},
   // RISOLTO (deep-pass duplicati): allineato al duplicato già coerente col pattern pizza+formaggio (25mcg) - 2026-07-30
   {n:"Pizza surgelata 4 stagioni (per 100g)",c:"Fast food",src:"UPF",k:214,p:10,gs:2.5,g:7,z:2.5,ch:27,fi:1.5,ca:175,fe:1.5,mg:18,k2:170,na:620,zn:1.2,fo:25,se:10,col:20},
@@ -3245,7 +3245,7 @@ const DB_UPF = [
   {n:"Paella surgelata pronta (per 100g)",c:"Prodotti pronti",src:"UPF",k:221,p:13,gs:11,g:17,z:2.6,ch:3.2,fi:1.2,ca:30,fe:1.5,mg:25,k2:200,na:420,zn:0.8,fo:90,se:12,col:35},
   // Sodio (2880mg) e proteine (1.1g, troppo basse per un piatto con ragu di carne) erano fuori scala — allineato a 2 duplicati concordi nel DB (~135-190kcal, 550mg sodio) — 2026-07-29
   {n:"Lasagne surgelate al ragù (per 100g)",c:"Prodotti pronti",src:"UPF",k:135,p:6.5,gs:3,g:5.5,z:3,ch:15.5,fi:1,ca:60,fe:1,mg:12,k2:170,na:550,zn:0.7,fo:70,se:6,col:30},
-  {n:"Hot dog (würstel in pane, per 100g)",c:"Prodotti pronti",src:"UPF",k:202,p:13.5,gs:7.5,g:16,z:1,ch:1,fi:1.5,ca:75,fe:2.0,mg:25,k2:245,na:800,zn:1.5,fo:5,se:15,col:40},
+  {n:"Hot dog (würstel in pane, per 100g)",c:"Prodotti pronti",src:"UPF",k:255,p:11,gs:3.6,g:13,z:1,ch:24,fi:1.9,ca:17,fe:0.8,mg:15,k2:150,na:600,zn:0.5,fo:15,se:5,col:42},
   {n:"Caramelle gommose (per 100g)",c:"Dolci",src:"UPF",k:330,p:5.0,gs:0,g:0,z:55.0,ch:77.0,fi:0,ca:5,fe:0.1,mg:2,k2:10,na:30,zn:0.1,fo:5,se:0,col:0},
   {n:"Chewing gum senza zucchero (per 100g)",c:"Dolci",src:"UPF",k:165,p:1.1,gs:0,g:0,z:0,ch:67,fi:0,ca:5,fe:0,mg:1,k2:5,na:0,zn:0,fo:4,se:0,col:0},
   {n:"Barretta Kinder Bueno (per 100g)",c:"Dolci",src:"UPF",k:572,p:8.6,gs:17.3,g:37.3,z:41.2,ch:49.5,fi:2.0,ca:80,fe:2.0,mg:35,k2:280,na:110,zn:0.8,fo:20,se:6,col:10},

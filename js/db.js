@@ -906,7 +906,7 @@ const DB_CREA=[
 {n:"Frumento soffiato",c:"Cereali da colazione",k:356,p:11.0,gs:0.2,g:1.5,z:1.5,ch:76.0,fi:4.0,ca:25,fe:3.0,mg:40,k2:140,na:2,zn:1.0,fo:30,se:5,col:0,src:"CREA"},
 {n:"Olio di oliva vergine",c:"Grassi",k:899,p:0,gs:15.3,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.2,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
 {n:"Olio di sansa di oliva",c:"Grassi",k:899,p:0,gs:16.32,g:99.9,z:0,ch:0,fi:0,ca:0,fe:0.1,mg:0,k2:0,na:0,zn:0,fo:0,se:0,col:0,src:"CREA"},
-{n:"Cumino (semi macinati)",c:"Spezie e aromi",k:419,p:17.8,gs:0.72,g:22.3,z:33.7,ch:33.7,fi:10.5,ca:931,fe:66.4,mg:931,k2:1788,na:168,zn:4.8,fo:0,se:5,col:0,src:"BDA"},
+{n:"Cumino (semi macinati)",c:"Spezie e aromi",k:419,p:17.8,gs:0.72,g:22.3,z:33.7,ch:33.7,fi:10.5,ca:931,fe:66.4,mg:366,k2:1788,na:168,zn:4.8,fo:0,se:5,col:0,src:"BDA"},
 {n:"Semi di anice",c:"Spezie e aromi",k:337,p:17.6,gs:0.6,g:15.9,z:0,ch:50.0,fi:14.6,ca:646,fe:36.9,mg:170,k2:1441,na:16,zn:5.1,fo:10,se:3,col:0,src:"CREA"},
 {n:"Coriandolo in semi (polvere)",c:"Spezie e aromi",k:298,p:12.4,gs:1.4,g:17.8,z:0,ch:54.9,fi:41.9,ca:709,fe:16.3,mg:330,k2:1267,na:35,zn:4.7,fo:21,se:26,col:0,src:"CREA"},
 {n:"Fieno greco (semi)",c:"Spezie e aromi",k:323,p:23.0,gs:0.9,g:6.4,z:0,ch:58.4,fi:24.6,ca:176,fe:33.5,mg:191,k2:770,na:67,zn:2.5,fo:57,se:6,col:0,src:"CREA"},
@@ -2526,7 +2526,7 @@ const DB_BDA=[
 
 // ── LATTICINI E FORMAGGI REGIONALI (CREA/BDA) ──
 {n:"Squacquerone di Romagna DOP",c:"Latticini e formaggi",k:270,p:13.0,gs:12.5,g:23.0,z:2.0,ch:2.5,fi:0,ca:330,fe:0.2,mg:18,k2:130,na:380,zn:1.8,fo:25,se:6,col:75,src:"CREA"},
-{n:"Stracchino/Crescenza fresco",c:"Latticini e formaggi",k:255,p:15.5,gs:13.0,g:21.5,z:2.5,ch:2.5,fi:0,ca:320,fe:0.2,mg:15,k2:125,na:320,zn:1.8,fo:22,se:5,col:68,src:"CREA"},
+{n:"Stracchino/Crescenza fresco",c:"Latticini e formaggi",k:300,p:18.5,gs:13.0,g:25.1,z:0,ch:0,fi:0,ca:567,fe:0.3,mg:15,k2:125,na:320,zn:1.8,fo:22,se:5,col:68,src:"CREA"},
 {n:"Casatella trevigiana DOP",c:"Latticini e formaggi",k:245,p:14.5,gs:12.0,g:20.5,z:2.0,ch:2.0,fi:0,ca:310,fe:0.2,mg:16,k2:120,na:340,zn:1.7,fo:22,se:5,col:65,src:"CREA"},
 {n:"Parmigiano Reggiano 30 mesi (extra maturo)",c:"Latticini e formaggi",k:392,p:33.0,gs:14.0,g:28.5,z:0,ch:0,fi:0,ca:1265,fe:0.8,mg:45,k2:90,na:600,zn:4.2,fo:8,se:22,col:95,src:"CREA"},
 {n:"Ricotta di bufala campana",c:"Latticini e formaggi",k:212,p:10.5,gs:9.0,g:17.3,z:3.7,ch:3.7,fi:0,ca:340,fe:0.3,mg:22,k2:160,na:100,zn:1.2,fo:15,se:5,col:55,src:"CREA"},

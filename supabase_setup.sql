@@ -4084,3 +4084,35 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_54_nutrition_goal', 'profiles.nutrition_goal — persiste server-side l''obiettivo scelto in onboarding (prima solo in localStorage, mai letto)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 55 — FIX: colonne mancanti terms_accepted_at / ai_photo_consent_at
+--
+-- La SEZIONE 52 (scritta in una sessione precedente) doveva aggiungere queste
+-- due colonne a profiles, ma non risulta mai stata eseguita sul database live
+-- — schema_migrations non ha la riga 'sezione_52_...' e le colonne non
+-- esistono, verificato query diretta. Nel frattempo AuthContext.jsx (sia
+-- NutriPlan-Pro che Diet-Plan-Pro-app-claude) seleziona già
+-- ai_photo_consent_at in ogni fetch del profilo: da quando quel codice è
+-- stato deployato, OGNI fetch del profilo (login, refresh cache 30min)
+-- falliva con HTTP 400 (colonna inesistente) — scoperto dai log del browser
+-- del paziente. Rieseguita qui identica alla SEZIONE 52 originale, IF NOT
+-- EXISTS quindi innocua da rilanciare.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='terms_accepted_at') THEN
+    ALTER TABLE profiles ADD COLUMN terms_accepted_at TIMESTAMPTZ;
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='ai_photo_consent_at') THEN
+    ALTER TABLE profiles ADD COLUMN ai_photo_consent_at TIMESTAMPTZ;
+  END IF;
+END $$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_55_fix_missing_consent_columns', 'terms_accepted_at + ai_photo_consent_at su profiles — SEZIONE 52 non era mai stata eseguita, causava 400 su ogni fetch profilo')
+ON CONFLICT (id) DO NOTHING;

@@ -4065,3 +4065,22 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_53_coach_ai_safety', 'coach_ai_messages (log conversazioni, sola lettura dietista/studio) + profiles.coach_ai_consent_at')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 54 — profiles.nutrition_goal (obiettivo scelto in onboarding)
+--
+-- OnboardingFlow.jsx (Diet-Plan-Pro-app-claude) raccoglieva già l'obiettivo
+-- del paziente (dimagrire/mantenere/aumentare) ma lo scriveva solo in
+-- localStorage: nessuna funzione server (coach-ai.js, food-swap.js) né
+-- altra pagina lo leggeva mai — dato morto. Questa colonna lo rende
+-- persistente e condivisibile tra client e funzioni server, così l'AI e il
+-- framing dei target macro possono usarlo davvero.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS nutrition_goal TEXT CHECK (nutrition_goal IN ('lose','maintain','gain'));
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_54_nutrition_goal', 'profiles.nutrition_goal — persiste server-side l''obiettivo scelto in onboarding (prima solo in localStorage, mai letto)')
+ON CONFLICT (id) DO NOTHING;

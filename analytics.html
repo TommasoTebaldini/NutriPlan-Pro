@@ -107,7 +107,9 @@
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
   <h2>📊 Analytics Studio</h2>
   <div class="tbar-actions">
-    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ Esporta CSV</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportExcel()">📊 Excel</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportPDF()">📄 PDF</button>
     <button class="btn btn-primary btn-sm" onclick="loadAnalytics()">🔄 Aggiorna</button>
   </div>
 </div>
@@ -419,7 +421,10 @@ function renderAdherence() {
   });
 }
 
-function renderCohortTable() {
+// Righe grezze della cohort table, riusate sia per il rendering DOM sia per
+// gli export PDF/Excel — un'unica fonte di verità per non disallineare i
+// numeri mostrati a video da quelli esportati.
+function computeCohortRows() {
   const now = new Date();
   const rows = [];
   for (let i = Math.min(activeMonths, 12) - 1; i >= 0; i--) {
@@ -430,16 +435,23 @@ function renderCohortTable() {
     const active90 = registered.filter(p => p.last_seen_at && isWithin90Days(p.last_seen_at)).length;
     const ret90 = registered.length ? Math.round(active90 / registered.length * 100) : null;
     const visits = allAppts.filter(a => getMonthKey(a.data || a.created) === mk).length;
-    const retColor = ret90 === null ? 'delta-neutral' : ret90 >= 70 ? 'delta-up' : ret90 >= 40 ? 'delta-neutral' : 'delta-down';
-    rows.push(`<tr>
-      <td>${d.toLocaleDateString('it', { month: 'long', year: 'numeric' })}</td>
-      <td>${registered.length}</td>
-      <td>${active30}</td>
-      <td>${active90}</td>
-      <td>${ret90 !== null ? `<span class="retention-pill kpi-delta ${retColor}">${ret90}%</span>` : '—'}</td>
-      <td>${visits}</td>
-    </tr>`);
+    rows.push({ mese: d.toLocaleDateString('it', { month: 'long', year: 'numeric' }), registrati: registered.length, attivi30: active30, attivi90: active90, retention90: ret90, visite: visits });
   }
+  return rows;
+}
+
+function renderCohortTable() {
+  const rows = computeCohortRows().map(r => {
+    const retColor = r.retention90 === null ? 'delta-neutral' : r.retention90 >= 70 ? 'delta-up' : r.retention90 >= 40 ? 'delta-neutral' : 'delta-down';
+    return `<tr>
+      <td>${r.mese}</td>
+      <td>${r.registrati}</td>
+      <td>${r.attivi30}</td>
+      <td>${r.attivi90}</td>
+      <td>${r.retention90 !== null ? `<span class="retention-pill kpi-delta ${retColor}">${r.retention90}%</span>` : '—'}</td>
+      <td>${r.visite}</td>
+    </tr>`;
+  });
   document.getElementById('cohort-tbody').innerHTML = rows.join('') || '<tr><td colspan="6" style="text-align:center;padding:16px;color:var(--slate-l)">Nessun dato</td></tr>';
 }
 
@@ -492,9 +504,8 @@ async function loadAnalytics() {
   showLoading(false);
 }
 
-function exportCSV() {
-  if (!allPatients.length) { toast('Nessun dato da esportare', 'err'); return; }
-  const header = 'Mese,Nuovi pazienti,Visite\n';
+// Righe mensili (Mese/Nuovi pazienti/Visite) riusate da CSV/PDF/Excel.
+function computeMonthlyRows() {
   const now = new Date();
   const rows = [];
   for (let i = activeMonths - 1; i >= 0; i--) {
@@ -502,14 +513,193 @@ function exportCSV() {
     const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     const acquired = allPatients.filter(p => getMonthKey(p.created_at) === mk).length;
     const visits = allAppts.filter(a => getMonthKey(a.data || a.created) === mk).length;
-    rows.push(`${d.toLocaleDateString('it',{month:'long',year:'numeric'})},${acquired},${visits}`);
+    rows.push({ mese: d.toLocaleDateString('it', { month: 'long', year: 'numeric' }), nuovi: acquired, visite: visits });
   }
-  const csv = header + rows.join('\n');
+  return rows;
+}
+
+function exportCSV() {
+  if (!allPatients.length) { toast('Nessun dato da esportare', 'err'); return; }
+  const header = 'Mese,Nuovi pazienti,Visite\n';
+  const csv = header + computeMonthlyRows().map(r => `${r.mese},${r.nuovi},${r.visite}`).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `analytics_${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
+}
+
+function currentKpis() {
+  return [
+    [_L('Pazienti totali','Total patients'), document.getElementById('kpi-total').textContent],
+    [_L('Attivi (ultimi 90gg)','Active (last 90d)'), document.getElementById('kpi-active').textContent],
+    [_L('Nuovi questo mese','New this month'), document.getElementById('kpi-new').textContent],
+    [_L('Retention rate','Retention rate'), document.getElementById('kpi-retention').textContent],
+    [_L('Visite questo mese','Visits this month'), document.getElementById('kpi-appt').textContent],
+    [_L('Documenti condivisi','Shared documents'), document.getElementById('kpi-docs').textContent],
+    [_L('Attivi ultimi 7gg','Active last 7d'), document.getElementById('kpi-adh-7').textContent],
+    [_L('Attivi ultimi 30gg','Active last 30d'), document.getElementById('kpi-adh-30').textContent],
+    [_L('Media gg con log / 30gg','Avg. logged days / 30d'), document.getElementById('kpi-adh-days').textContent],
+  ];
+}
+
+async function loadJsPDF() {
+  if (window.jspdf) return;
+  await new Promise(res => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+    s.onload = res; s.onerror = res;
+    document.head.appendChild(s);
+  });
+}
+
+async function exportPDF() {
+  if (!allPatients.length && !allAppts.length) { toast(_L('Nessun dato da esportare','No data to export'), 'err'); return; }
+  showLoading(true);
+  await loadJsPDF();
+  showLoading(false);
+  if (!window.jspdf) { toast(_L('jsPDF non disponibile','jsPDF not available'), 'err'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const lm = 14, rm = 196;
+  let y = 20;
+
+  doc.setFillColor(15, 118, 110);
+  doc.rect(0, 0, 210, 24, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(17); doc.setFont('helvetica', 'bold');
+  doc.text('DietPlan Pro', lm, 11);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  doc.text(_L('Report Analytics','Analytics Report') + ' - ' + new Date().toLocaleDateString(_L('it','en')) + ' - ' + _L(`ultimi ${activeMonths} mesi`, `last ${activeMonths} months`), lm, 18);
+  y = 34;
+
+  // KPI
+  doc.setTextColor(30, 41, 59); doc.setFontSize(11); doc.setFont('helvetica', 'bold');
+  doc.text(_L('Indicatori chiave','Key indicators'), lm, y); y += 7;
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  const kpis = currentKpis();
+  const kpiColW = (rm - lm) / 3;
+  kpis.forEach((k, i) => {
+    const col = i % 3, row = Math.floor(i / 3);
+    const x = lm + col * kpiColW;
+    const ky = y + row * 12;
+    doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110); doc.text(String(k[1]), x, ky);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(100, 116, 139); doc.text(k[0], x, ky + 5, { maxWidth: kpiColW - 4 });
+  });
+  y += Math.ceil(kpis.length / 3) * 12 + 6;
+
+  const drawTable = (title, cols, rows) => {
+    if (y > 250) { doc.addPage(); y = 20; }
+    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 41, 59);
+    doc.text(title, lm, y); y += 6;
+    doc.setFillColor(240, 253, 250);
+    doc.rect(lm, y - 4, rm - lm, 7, 'F');
+    doc.setFontSize(8.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(15, 118, 110);
+    let x = lm + 2;
+    cols.forEach(c => { doc.text(c.label, x, y); x += c.w; });
+    y += 6;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
+    rows.forEach(vals => {
+      if (y > 280) { doc.addPage(); y = 20; }
+      let x = lm + 2;
+      vals.forEach((v, i) => { doc.text(String(v), x, y); x += cols[i].w; });
+      y += 6;
+    });
+    y += 8;
+  };
+
+  drawTable(_L('Andamento mensile','Monthly trend'),
+    [{ label: _L('Mese','Month'), w: 60 }, { label: _L('Nuovi pazienti','New patients'), w: 55 }, { label: _L('Visite','Visits'), w: 40 }],
+    computeMonthlyRows().map(r => [r.mese, r.nuovi, r.visite]));
+
+  drawTable(_L('Analisi per coorte','Cohort analysis'),
+    [{ label: _L('Mese','Month'), w: 40 }, { label: _L('Registrati','Registered'), w: 32 }, { label: _L('Attivi 30gg','Active 30d'), w: 32 }, { label: _L('Attivi 90gg','Active 90d'), w: 32 }, { label: _L('Retention 90gg','Retention 90d'), w: 26 }],
+    computeCohortRows().map(r => [r.mese, r.registrati, r.attivi30, r.attivi90, r.retention90 !== null ? r.retention90 + '%' : '—']));
+
+  doc.save(`analytics_${new Date().toISOString().slice(0,10)}.pdf`);
+  toast(_L('📥 PDF esportato!','📥 PDF exported!'), 'ok');
+}
+
+// Genera un vero .xlsx (ZIP OOXML) in JS puro, stesso approccio a costo zero
+// usato in app.html per l'export del piano alimentare — qui semplificato
+// perché serve solo una griglia tabellare, senza celle unite/multi-sezione.
+function buildSimpleXlsx(sheetName, sections) {
+  const ENC = new TextEncoder();
+  const u8s = s => ENC.encode(s);
+  const u16 = n => new Uint8Array([n & 255, (n >> 8) & 255]);
+  const u32 = n => { n = n >>> 0; return new Uint8Array([n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >> 24) & 255]); };
+  const cat = (...a) => { const r = new Uint8Array(a.reduce((s, x) => s + x.length, 0)); let o = 0; for (const x of a) { r.set(x, o); o += x.length; } return r; };
+  const CRC = new Uint32Array(256);
+  for (let i = 0; i < 256; i++) { let c = i; for (let j = 0; j < 8; j++) c = c & 1 ? (0xEDB88320 ^ (c >>> 1)) : c >>> 1; CRC[i] = c; }
+  const crc32 = d => { let c = 0xFFFFFFFF; for (let i = 0; i < d.length; i++) c = (c >>> 8) ^ CRC[(c ^ d[i]) & 255]; return (c ^ 0xFFFFFFFF) >>> 0; };
+  function buildZip(files) {
+    const locs = [], cds = []; let off = 0;
+    const nd = new Date(), dt = ((nd.getFullYear() - 1980) << 9) | ((nd.getMonth() + 1) << 5) | nd.getDate();
+    const tm = (nd.getHours() << 11) | (nd.getMinutes() << 5) | (nd.getSeconds() >> 1);
+    for (const { name, data } of files) {
+      const nb = u8s(name), crc = crc32(data), sz = data.length;
+      const lh = cat(new Uint8Array([0x50, 0x4B, 0x03, 0x04]), u16(20), u16(0), u16(0), u16(tm), u16(dt), u32(crc), u32(sz), u32(sz), u16(nb.length), u16(0), nb);
+      const cd = cat(new Uint8Array([0x50, 0x4B, 0x01, 0x02]), u16(20), u16(20), u16(0), u16(0), u16(tm), u16(dt), u32(crc), u32(sz), u32(sz), u16(nb.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(off), nb);
+      locs.push(cat(lh, data)); cds.push(cd); off += lh.length + sz;
+    }
+    const cdBuf = cat(...cds);
+    return cat(...locs, cdBuf, cat(new Uint8Array([0x50, 0x4B, 0x05, 0x06]), u16(0), u16(0), u16(files.length), u16(files.length), u32(cdBuf.length), u32(off), u16(0)));
+  }
+
+  const CTYPE = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`;
+  const RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`;
+  const WB_RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
+  const WB = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="${sheetName.replace(/[&<>]/g,'').slice(0,31)}" sheetId="1" r:id="rId1"/></sheets></workbook>`;
+  // xf: 0=default, 1=titolo sezione (grassetto+sfondo), 2=header colonna (grassetto), 3=cella dato
+  const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="10"/><name val="Calibri"/><color rgb="FF1E293B"/></font><font><sz val="12"/><b/><name val="Calibri"/><color rgb="FFFFFFFF"/></font><font><sz val="10"/><b/><name val="Calibri"/><color rgb="FF0F766E"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0F766E"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"><alignment horizontal="left" vertical="center"/></xf><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"><alignment horizontal="left"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"><alignment horizontal="left"/></xf></cellXfs></styleSheet>`;
+
+  function colLetter(c) { let s = ''; while (c > 0) { s = String.fromCharCode(64 + (c - 1) % 26 + 1) + s; c = Math.floor((c - 1) / 26); } return s; }
+  const cr = (c, r) => colLetter(c) + r;
+  const xe = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let rn = 0, maxCols = 1;
+  const WS = [];
+  const row = (vals, sid) => {
+    rn++;
+    WS.push(`<row r="${rn}">${vals.map((v, i) => {
+      if (v == null || v === '') return `<c r="${cr(i + 1, rn)}" s="${sid}"/>`;
+      if (typeof v === 'number') return `<c r="${cr(i + 1, rn)}" s="${sid}"><v>${v}</v></c>`;
+      return `<c r="${cr(i + 1, rn)}" s="${sid}" t="inlineStr"><is><t>${xe(v)}</t></is></c>`;
+    }).join('')}</row>`);
+    maxCols = Math.max(maxCols, vals.length);
+  };
+
+  sections.forEach(({ title, headers, rows: dataRows }) => {
+    row([title], 1);
+    if (headers) row(headers, 2);
+    dataRows.forEach(r => row(r, 3));
+    row([], 0); // riga vuota di separazione
+  });
+
+  const wsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>${Array.from({length:maxCols},(_,i)=>`<col min="${i+1}" max="${i+1}" width="24" customWidth="1"/>`).join('')}</cols><sheetData>${WS.join('')}</sheetData></worksheet>`;
+
+  const zipBuf = buildZip([
+    { name: '[Content_Types].xml', data: u8s(CTYPE) },
+    { name: '_rels/.rels', data: u8s(RELS) },
+    { name: 'xl/workbook.xml', data: u8s(WB) },
+    { name: 'xl/_rels/workbook.xml.rels', data: u8s(WB_RELS) },
+    { name: 'xl/styles.xml', data: u8s(STYLES) },
+    { name: 'xl/worksheets/sheet1.xml', data: u8s(wsXml) },
+  ]);
+  return new Blob([zipBuf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+}
+
+function exportExcel() {
+  if (!allPatients.length && !allAppts.length) { toast(_L('Nessun dato da esportare','No data to export'), 'err'); return; }
+  const blob = buildSimpleXlsx('Analytics', [
+    { title: _L('Indicatori chiave','Key indicators'), headers: null, rows: currentKpis() },
+    { title: _L('Andamento mensile','Monthly trend'), headers: [_L('Mese','Month'), _L('Nuovi pazienti','New patients'), _L('Visite','Visits')], rows: computeMonthlyRows().map(r => [r.mese, r.nuovi, r.visite]) },
+    { title: _L('Analisi per coorte','Cohort analysis'), headers: [_L('Mese','Month'), _L('Registrati','Registered'), _L('Attivi 30gg','Active 30d'), _L('Attivi 90gg','Active 90d'), _L('Retention 90gg','Retention 90d'), _L('Visite','Visits')], rows: computeCohortRows().map(r => [r.mese, r.registrati, r.attivi30, r.attivi90, r.retention90 !== null ? r.retention90 + '%' : '—', r.visite]) },
+  ]);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `analytics_${new Date().toISOString().slice(0,10)}.xlsx`;
+  a.click(); URL.revokeObjectURL(url);
+  toast(_L('📥 Excel esportato!','📥 Excel exported!'), 'ok');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -524,7 +714,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       { selector:'#kpi-grid', title:_L('Indicatori chiave','Key indicators'), text:_L('Pazienti totali, attivi, nuovi del mese, retention, visite e documenti condivisi, con la variazione rispetto al periodo precedente.','Total patients, active patients, new this month, retention, visits and shared documents, with the change vs. the previous period.') },
       { selector:'#analytics-charts-row1', title:_L('Andamento nel tempo','Trends over time'), text:_L('Pazienti acquisiti, visite mensili e retention rate rappresentati graficamente per individuare subito i trend dello studio.','Acquired patients, monthly visits and retention rate charted so you can spot practice trends at a glance.') },
       { selector:'#cohort-table', title:_L('Analisi per coorte','Cohort analysis'), text:_L('Ogni riga è un mese di registrazione: quanti pazienti sono arrivati, quanti sono rimasti attivi e quante visite hanno generato.','Each row is a registration month: how many patients joined, how many stayed active and how many visits they generated.') },
-      { selector:'.tbar-actions', title:_L('Esporta i dati','Export the data'), text:_L('Scarica i dati in CSV per un\'analisi esterna, oppure aggiorna manualmente le statistiche con l\'ultimo dato disponibile.','Download the data as CSV for external analysis, or manually refresh the statistics with the latest data.') }
+      { selector:'.tbar-actions', title:_L('Esporta i dati','Export the data'), text:_L('Scarica un report in CSV, Excel o PDF (indicatori chiave, andamento mensile e coorte) per un\'analisi esterna o da condividere, oppure aggiorna manualmente le statistiche con l\'ultimo dato disponibile.','Download a CSV, Excel or PDF report (key indicators, monthly trend and cohort) for external analysis or sharing, or manually refresh the statistics with the latest data.') }
     ], { badge:_L('Analytics','Analytics') });
   }
 });

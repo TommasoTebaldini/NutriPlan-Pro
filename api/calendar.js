@@ -11,6 +11,7 @@
 // The calendar app will auto-refresh this feed, keeping all devices in sync.
 
 import crypto from 'crypto';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 const SUPABASE_ANON_KEY_FOR_AUTH = process.env.SUPABASE_ANON_KEY;
 async function verifySupabaseToken(bearerToken) {
@@ -97,7 +98,7 @@ const TIPO_LABELS = {
 // Validate UUID v4 format
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.query.action === 'token') return handleTokenRequest(req, res);
 
   if (!SUPABASE_SERVICE_KEY && !SUPABASE_ANON_KEY) {
@@ -173,9 +174,12 @@ export default async function handler(req, res) {
     res.send(ics);
   } catch (e) {
     console.error('calendar.js error:', e);
+    await logServerError('calendar', e, req).catch(() => {});
     res.status(500).send('Internal server error');
   }
 };
+
+export default withErrorLogging('calendar', handler);
 
 function generateICS(events) {
   const pad = (n) => String(n).padStart(2, '0');

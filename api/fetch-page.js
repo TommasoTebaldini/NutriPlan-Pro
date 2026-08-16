@@ -3,6 +3,7 @@
 
 import dns from 'node:dns';
 import { checkRateLimit } from './_rateLimit.js';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 const dnsLookup = dns.promises.lookup;
 
 // Rate limiter distribuito/in-memoria — vedi api/_rateLimit.js. 30 req/min.
@@ -85,7 +86,7 @@ async function verifySupabaseToken(token) {
   return user;
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
@@ -166,6 +167,9 @@ export default async function handler(req, res) {
       return res.status(408).json({ error: 'Timeout: la pagina ha impiegato troppo a rispondere' });
     }
     console.error('Fetch page error:', err);
+    await logServerError('fetch-page', err, req).catch(() => {});
     return res.status(500).json({ error: 'Errore fetch: ' + err.message });
   }
 }
+
+export default withErrorLogging('fetch-page', handler);

@@ -16,6 +16,7 @@
 // da "export default handler" a una funzione dedicata per job.
 
 import webpush from 'web-push';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const PATIENT_APP_URL = process.env.PATIENT_APP_URL || 'https://app.dietplan-pro.com';
@@ -781,7 +782,7 @@ async function jobFhirSync() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-export default async function handler(req, res) {
+async function handler(req, res) {
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = req.headers.authorization || '';
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
@@ -798,6 +799,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Parametro ?job mancante o sconosciuto (attesi: inactive-patients, appointment-reminders, overdue-payments, program-checkins, fhir-sync)' });
   } catch (err) {
     console.error(`cron (job=${job}) error:`, err);
+    await logServerError(`cron:${job || 'unknown'}`, err, req).catch(() => {});
     return res.status(500).json({ error: 'Errore server: ' + err.message });
   }
 }
+
+export default withErrorLogging('cron', handler);

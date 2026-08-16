@@ -10,6 +10,7 @@
 // il MODEL — vedi https://console.groq.com/docs/deprecations.
 
 import { checkRateLimit } from './_rateLimit.js';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
@@ -59,7 +60,7 @@ function setCorsHeaders(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -133,6 +134,9 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error('ocr-referto-immagine error:', err);
+    await logServerError('ocr-referto-immagine', err, req).catch(() => {});
     return res.status(500).json({ error: 'Errore server: ' + err.message });
   }
 }
+
+export default withErrorLogging('ocr-referto-immagine', handler);

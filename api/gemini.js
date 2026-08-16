@@ -6,6 +6,7 @@
 import { checkRateLimit } from './_rateLimit.js';
 import { checkMonthlyQuota } from './_monthlyQuota.js';
 import { ragSearch } from './_ragSearch.js';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 // No hardcoded fallback for the anon key: verifySupabaseToken() below already
@@ -59,7 +60,7 @@ function setCorsHeaders(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -95,6 +96,7 @@ export default async function handler(req, res) {
       return res.status(200).json(ragSearch({ tags, query }));
     } catch (err) {
       console.error('rag-search error:', err);
+      await logServerError('gemini:rag-search', err, req).catch(() => {});
       return res.status(500).json({ error: 'Errore ricerca contesto: ' + err.message });
     }
   }
@@ -191,6 +193,9 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error('AI proxy error:', err);
+    await logServerError('gemini', err, req).catch(() => {});
     return res.status(500).json({ error: 'Errore server: ' + err.message });
   }
 }
+
+export default withErrorLogging('gemini', handler);

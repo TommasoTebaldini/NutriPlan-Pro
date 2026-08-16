@@ -24,6 +24,7 @@
 // del corpo a mano, invece di usare req.body.
 
 import crypto from 'node:crypto';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
@@ -159,12 +160,13 @@ async function handleSend(req, res) {
 
     return res.status(200).json({ ok: true, mode: withinWindow ? 'text' : 'template', wa_message_id: waMessageId });
   } catch (e) {
+    await logServerError('whatsapp-webhook:send', e, req).catch(() => {});
     return res.status(500).json({ error: 'Errore interno: ' + e.message });
   }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.query.action === 'send') return handleSend(req, res);
 
   const dietitianId = req.query.dietitian_id;
@@ -242,6 +244,9 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   } catch (e) {
     console.error('whatsapp-webhook error:', e);
+    await logServerError('whatsapp-webhook', e, req).catch(() => {});
     return res.status(200).json({ ok: true }); // Meta ripete l'invio su errore: rispondere 200 comunque per evitare loop di retry infiniti su un bug nostro
   }
 }
+
+export default withErrorLogging('whatsapp-webhook', handler);

@@ -2,6 +2,7 @@
 // Env vars: SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
 
 import { checkRateLimit } from './_rateLimit.js';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 
@@ -11,7 +12,7 @@ const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const RESET_MAX = 3;
 const RESET_WIN_SEC = 15 * 60;
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const origin = req.headers.origin || 'https://app.dietplan-pro.com';
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -65,6 +66,7 @@ export default async function handler(req, res) {
     if (linkRes.status === 404 || err?.code === 'user_not_found') {
       return res.status(200).json({ ok: true });
     }
+    await logServerError('send-reset', new Error(`generate_link HTTP ${linkRes.status}: ${err?.message || err?.code || ''}`), req).catch(() => {});
     return res.status(500).json({ error: 'Errore generazione link' });
   }
 
@@ -149,8 +151,11 @@ export default async function handler(req, res) {
   if (!emailRes.ok) {
     const err = await emailRes.json().catch(() => ({}));
     console.error('Resend error:', err);
+    await logServerError('send-reset', new Error(`Resend HTTP ${emailRes.status}: ${err?.message || ''}`), req).catch(() => {});
     return res.status(500).json({ error: 'Errore invio email. Riprova tra qualche minuto.' });
   }
 
   return res.status(200).json({ ok: true });
 };
+
+export default withErrorLogging('send-reset', handler);

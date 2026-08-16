@@ -13,6 +13,7 @@
 
 import { checkRateLimit } from './_rateLimit.js';
 import { checkMonthlyQuota } from './_monthlyQuota.js';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 export const config = {
   api: { bodyParser: { sizeLimit: '12mb' } }, // audio compresso (webm/opus) di una seduta breve
@@ -109,7 +110,7 @@ async function generaNotaSOAP(transcript, apiKey) {
   }
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -164,6 +165,9 @@ export default async function handler(req, res) {
     return res.status(200).json({ transcript, soap });
   } catch (err) {
     console.error('ai-scribe error:', err);
+    await logServerError('ai-scribe', err, req).catch(() => {});
     return res.status(500).json({ error: 'Errore server: ' + err.message });
   }
 }
+
+export default withErrorLogging('ai-scribe', handler);

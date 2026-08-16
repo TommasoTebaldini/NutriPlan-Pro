@@ -20,6 +20,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14";
+import { logServerError } from "../_shared/errorLog.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
 
@@ -28,20 +29,12 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
-// Logga su client_errors (stessa tabella usata lato client, vedi
-// supabase_setup.sql sezione "schema_migrations + client_errors") così un
-// webhook Stripe che fallisce non passa inosservato — prima di questo, un
-// errore qui finiva solo nei log Deno, mai controllati proattivamente.
-async function logServerError(message: string, stack?: string) {
-  try {
-    await supabase.from("client_errors").insert({
-      app: "stripe-webhook",
-      level: "error",
-      message: String(message).slice(0, 2000),
-      stack: stack ? String(stack).slice(0, 4000) : null,
-    });
-  } catch (_e) { /* silenzioso: non deve mai far fallire la risposta al webhook */ }
-}
+// Logging errori: usa il modulo condiviso _shared/errorLog.ts (stessa tabella
+// client_errors, ma con dedup di un'ora + alert email via Resend — vedi quel
+// file per il contesto). Questa funzione aveva in precedenza un suo logger
+// locale minimale (stesso concetto, senza alert/dedup, tag app diverso:
+// "stripe-webhook" invece di "nutriplan-pro-server"); unificato qui per non
+// avere due sistemi di logging paralleli nello stesso repo.
 
 serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
@@ -57,7 +50,7 @@ serve(async (req) => {
     );
   } catch (err) {
     console.error("Webhook signature failed:", err.message);
-    await logServerError("Webhook signature failed: " + err.message);
+    await logServerError("stripe-webhook", new Error("Signature verification failed: " + err.message)).catch(() => {});
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
@@ -163,7 +156,9 @@ serve(async (req) => {
     }
   } catch (err) {
     console.error("Handler error:", err);
-    await logServerError("Handler error (" + event.type + "): " + err.message, err.stack);
+    const logErr = new Error(`[${event.type}] ${err.message}`);
+    logErr.stack = err.stack;
+    await logServerError("stripe-webhook", logErr).catch(() => {});
     return new Response(`Handler Error: ${err.message}`, { status: 500 });
   }
 

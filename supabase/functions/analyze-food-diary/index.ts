@@ -17,6 +17,7 @@
 //   supabase functions deploy analyze-food-diary
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { logServerError } from '../_shared/errorLog.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -232,11 +233,15 @@ Deno.serve(async (req: Request) => {
   for (const call of providers) {
     try { text = await call(); break } catch (e) { lastError = (e as Error).message }
   }
-  if (!text) return json({ error: lastError || 'Errore AI' }, 500)
+  if (!text) {
+    await logServerError('analyze-food-diary', lastError || 'Errore AI: tutti i provider hanno fallito').catch(() => {})
+    return json({ error: lastError || 'Errore AI' }, 500)
+  }
 
   try {
     return json(parseResponse(text))
   } catch (e) {
+    await logServerError('analyze-food-diary', e).catch(() => {})
     return json({ error: (e as Error).message }, 500)
   }
 })

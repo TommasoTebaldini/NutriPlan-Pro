@@ -12,7 +12,9 @@
 //   GET /api/meta?what=config  → configurazione pubblica lato client (es.
 //     Google Client ID per Calendar sync in agenda.html)
 
-export default function handler(req, res) {
+import { withErrorLogging } from './_errorLog.js';
+
+function handler(req, res) {
   const what = req.query?.what;
 
   if (what === 'ip') {
@@ -40,3 +42,5 @@ export default function handler(req, res) {
 
   return res.status(400).json({ error: 'Parametro what non valido (ip|vapid|config)' });
 }
+
+export default withErrorLogging('meta', handler);

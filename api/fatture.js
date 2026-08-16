@@ -6,6 +6,8 @@
 // rispetto ai file originali, solo spostata da "export default handler" a
 // una funzione dedicata per azione.
 
+import { withErrorLogging, logServerError } from './_errorLog.js';
+
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -274,7 +276,7 @@ async function handleRegistraErogatore(req, res, user) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
@@ -289,6 +291,9 @@ export default async function handler(req, res) {
     if (action === 'registra-erogatore') return await handleRegistraErogatore(req, res, user);
     return res.status(400).json({ error: 'Parametro ?action mancante o sconosciuto (attesi: sdi, sts, registra-erogatore)' });
   } catch (e) {
+    await logServerError('fatture', e, req).catch(() => {});
     return res.status(500).json({ error: 'Errore interno: ' + e.message });
   }
 }
+
+export default withErrorLogging('fatture', handler);

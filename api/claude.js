@@ -6,6 +6,7 @@ import { checkRateLimit } from './_rateLimit.js';
 import { checkMonthlyQuota } from './_monthlyQuota.js';
 import { recipesForMealPlan } from './_ragSearch.js';
 import { callClaude } from './_anthropic.js';
+import { withErrorLogging, logServerError } from './_errorLog.js';
 
 // Public Supabase values — l'URL non è sensibile, ma l'anon key non deve avere
 // un fallback hardcoded nel codice server-side (vedi verifySupabaseToken sotto).
@@ -64,7 +65,7 @@ function setCorsHeaders(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -173,9 +174,12 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: lastError || 'Servizio non disponibile' });
 
   } catch (err) {
+    await logServerError('claude', err, req).catch(() => {});
     return res.status(500).json({ error: 'Errore server: ' + err.message });
   }
 }
+
+export default withErrorLogging('claude', handler);
 
 // ─────────────────────────────────────────────────────────────────────────
 // mode:'meal-plan' — genera una bozza di piano alimentare (Claude reale).

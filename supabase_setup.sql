@@ -4227,3 +4227,73 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_57_segnalazioni_bug', 'Tabella segnalazioni_bug — la funzione "Segnala un bug" scriveva già qui con fallback email, ora anche storicizzata per l''admin')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 58 — FIX CRITICO: create_patient_profile() mancante,
+-- create_profile_for_new_user() rimasta alla firma a 2 parametri
+--
+-- La SEZIONE 55 (sessione precedente) aveva ripreso da SEZIONE 52 solo le
+-- due ALTER TABLE (terms_accepted_at/ai_photo_consent_at), non le due
+-- funzioni RPC che erano nella stessa sezione originale — rimaste quindi
+-- mai eseguite. Impatto verificato sul database live:
+--
+--   • create_patient_profile(uid, user_email, p_full_name, p_first_name,
+--     p_last_name, terms_accepted) NON ESISTE AFFATTO. AuthContext.jsx
+--     (Diet-Plan-Pro-app-claude, signUp()) la chiama subito dopo
+--     auth.signUp() — nessun trigger su auth.users crea più la riga
+--     profiles (rimosso in SEZIONE 1), quindi OGNI AUTOREGISTRAZIONE
+--     PAZIENTE ha creato l'utente in auth.users MA MAI la riga in
+--     profiles: l'app restava bloccata su profilo nullo dopo la
+--     conferma email. Bug totale, non parziale.
+--
+--   • create_profile_for_new_user(uid, user_email) esiste ancora nella
+--     vecchia firma a 2 parametri (mai sostituita dalla versione a 3
+--     parametri con terms_accepted). index.html (NutriPlan-Pro,
+--     registrazione dietista) chiama però la RPC passando 3 argomenti
+--     (uid, user_email, terms_accepted:true) — PostgREST non trova una
+--     funzione con quella firma esatta e rifiuta la chiamata: anche la
+--     REGISTRAZIONE DIETISTA falliva.
+--
+-- Questa sezione ripropone identiche le due definizioni già scritte in
+-- SEZIONE 52 (mai perse, solo mai eseguite).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP FUNCTION IF EXISTS create_profile_for_new_user(UUID, TEXT);
+CREATE OR REPLACE FUNCTION create_profile_for_new_user(uid UUID, user_email TEXT, terms_accepted BOOLEAN DEFAULT false)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, approved, is_admin, terms_accepted_at)
+  VALUES (uid, user_email, false, false, CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION create_profile_for_new_user(UUID, TEXT, BOOLEAN) TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION create_patient_profile(
+  uid UUID, user_email TEXT, p_full_name TEXT, p_first_name TEXT, p_last_name TEXT,
+  terms_accepted BOOLEAN DEFAULT false
+)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, first_name, last_name, role, terms_accepted_at)
+  VALUES (uid, user_email, p_full_name, p_first_name, p_last_name, 'patient',
+          CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    full_name  = COALESCE(EXCLUDED.full_name,  profiles.full_name),
+    first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
+    last_name  = COALESCE(EXCLUDED.last_name,  profiles.last_name),
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION create_patient_profile(UUID, TEXT, TEXT, TEXT, TEXT, BOOLEAN) TO anon, authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_58_fix_missing_signup_rpcs', 'create_patient_profile() (mancante del tutto) + create_profile_for_new_user() a 3 parametri — registrazione paziente E dietista erano entrambe rotte')
+ON CONFLICT (id) DO NOTHING;

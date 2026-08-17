@@ -4186,3 +4186,44 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_56_dietitian_reviews', 'Tabella dietitian_reviews + RLS — mai eseguita, DietitianReviews.jsx falliva su ogni lettura/scrittura')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 57 — tabella segnalazioni_bug (mai creata)
+--
+-- js/utils.js (_sendBugReport, funzione "Segnala un bug" disponibile su ogni
+-- pagina) prova già a scrivere qui, con un fallback via mailto se la tabella
+-- manca — quindi NON è un bug (la funzione ha sempre funzionato, solo via
+-- email), ma creare la tabella fa sì che le segnalazioni restino anche
+-- consultabili/storicizzate lato admin, non solo nella tua casella di posta.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS segnalazioni_bug (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tipo         TEXT NOT NULL DEFAULT 'altro',
+  descrizione  TEXT NOT NULL,
+  pagina       TEXT,
+  url          TEXT,
+  user_id      UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  user_email   TEXT,
+  user_agent   TEXT,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE segnalazioni_bug ENABLE ROW LEVEL SECURITY;
+
+-- Chiunque autenticato può segnalare (stesso principio di client_errors:
+-- l'inserimento non deve richiedere privilegi, solo la lettura è ristretta).
+DROP POLICY IF EXISTS "segnalazioni_bug_insert_any" ON segnalazioni_bug;
+CREATE POLICY "segnalazioni_bug_insert_any" ON segnalazioni_bug
+  FOR INSERT TO authenticated, anon
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "segnalazioni_bug_select_admin" ON segnalazioni_bug;
+CREATE POLICY "segnalazioni_bug_select_admin" ON segnalazioni_bug
+  FOR SELECT USING (check_is_admin());
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_57_segnalazioni_bug', 'Tabella segnalazioni_bug — la funzione "Segnala un bug" scriveva già qui con fallback email, ora anche storicizzata per l''admin')
+ON CONFLICT (id) DO NOTHING;

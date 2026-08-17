@@ -4849,6 +4849,7 @@ DROP POLICY IF EXISTS "bia_records_collaborator_read" ON bia_records;
 DROP POLICY IF EXISTS "bia_records_patient_select" ON bia_records;
 DROP POLICY IF EXISTS "bia_records_select_patient_visible" ON bia_records;
 DROP POLICY IF EXISTS "paziente legge propri bia" ON bia_records;
+DROP POLICY IF EXISTS "bia_records_select_combined" ON bia_records;
 CREATE POLICY "bia_records_select_combined" ON bia_records
   FOR SELECT USING (
     (user_id = get_studio_owner((select auth.uid())))
@@ -4888,6 +4889,7 @@ CREATE POLICY "cartelle_collaborator_write" ON cartelle_raw
 DROP POLICY IF EXISTS "cartelle_collaborator_read" ON cartelle_raw;
 DROP POLICY IF EXISTS "cartelle_select_linked_patient" ON cartelle_raw;
 DROP POLICY IF EXISTS "dietista legge cartelle" ON cartelle_raw;
+DROP POLICY IF EXISTS "cartelle_select_combined" ON cartelle_raw;
 CREATE POLICY "cartelle_select_combined" ON cartelle_raw
   FOR SELECT USING (
     (user_id = get_studio_owner((select auth.uid())))
@@ -4961,6 +4963,7 @@ CREATE POLICY "chat_messages_select_visible" ON chat_messages
 -- ── clinical_audit_log ──
 DROP POLICY IF EXISTS "clinical_audit_log_dietitian_read" ON clinical_audit_log;
 DROP POLICY IF EXISTS "clinical_audit_log_own_read" ON clinical_audit_log;
+DROP POLICY IF EXISTS "clinical_audit_log_select_combined" ON clinical_audit_log;
 CREATE POLICY "clinical_audit_log_select_combined" ON clinical_audit_log
   FOR SELECT USING (
     (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.dietitian_id = (select auth.uid()) AND (((clinical_audit_log.patient_id IS NOT NULL) AND (pd.patient_id = clinical_audit_log.patient_id)) OR ((clinical_audit_log.cartella_id IS NOT NULL) AND (pd.cartella_id = clinical_audit_log.cartella_id)))))
@@ -5016,6 +5019,7 @@ CREATE POLICY "daily_wellness_insert_patient" ON daily_wellness
 DROP POLICY IF EXISTS "daily_wellness_select_dietitian" ON daily_wellness;
 DROP POLICY IF EXISTS "daily_wellness_select_patient" ON daily_wellness;
 DROP POLICY IF EXISTS "dietista legge wellness pazienti" ON daily_wellness;
+DROP POLICY IF EXISTS "daily_wellness_select_combined" ON daily_wellness;
 CREATE POLICY "daily_wellness_select_combined" ON daily_wellness
   FOR SELECT USING (
     (EXISTS (SELECT 1 FROM patient_dietitian WHERE patient_dietitian.dietitian_id = (select auth.uid()) AND patient_dietitian.cartella_id = daily_wellness.cartella_id))
@@ -5052,6 +5056,7 @@ CREATE POLICY "dietista gestisce pasti" ON diet_meals
   WITH CHECK (EXISTS (SELECT 1 FROM patient_diets pd JOIN patient_dietitian pdt ON pdt.patient_id = pd.user_id WHERE pd.id = diet_meals.diet_id AND pdt.dietitian_id = (select auth.uid())));
 DROP POLICY IF EXISTS "accesso pasti dieta propria" ON diet_meals;
 DROP POLICY IF EXISTS "users see diet meals" ON diet_meals;
+DROP POLICY IF EXISTS "diet_meals_select_own_diet" ON diet_meals;
 CREATE POLICY "diet_meals_select_own_diet" ON diet_meals
   FOR SELECT USING (EXISTS (SELECT 1 FROM patient_diets pd WHERE pd.id = diet_meals.diet_id AND pd.user_id = (select auth.uid())));
 
@@ -5123,6 +5128,7 @@ CREATE POLICY "fatture_collaborator_write" ON fatture
   WITH CHECK ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())));
 DROP POLICY IF EXISTS "fatture_collaborator_read" ON fatture;
 DROP POLICY IF EXISTS "fatture_patient_read" ON fatture;
+DROP POLICY IF EXISTS "fatture_select_combined" ON fatture;
 CREATE POLICY "fatture_select_combined" ON fatture
   FOR SELECT USING ((dietitian_id = get_studio_owner((select auth.uid()))) OR (patient_id = (select auth.uid())));
 
@@ -5144,6 +5150,7 @@ CREATE POLICY "liste_spesa_dietitian_all" ON liste_spesa
   FOR ALL USING ((select auth.uid()) = user_id) WITH CHECK ((select auth.uid()) = user_id);
 DROP POLICY IF EXISTS "liste_spesa_collaborator_read" ON liste_spesa;
 DROP POLICY IF EXISTS "liste_spesa_select_patient_visible" ON liste_spesa;
+DROP POLICY IF EXISTS "liste_spesa_select_combined" ON liste_spesa;
 CREATE POLICY "liste_spesa_select_combined" ON liste_spesa
   FOR SELECT USING (
     (user_id = get_studio_owner((select auth.uid())))
@@ -5193,6 +5200,7 @@ DROP POLICY IF EXISTS "ncpt_collaborator_read" ON ncpt;
 DROP POLICY IF EXISTS "ncpt_patient_select" ON ncpt;
 DROP POLICY IF EXISTS "ncpt_select_patient_visible" ON ncpt;
 DROP POLICY IF EXISTS "paziente legge propri ncpt" ON ncpt;
+DROP POLICY IF EXISTS "ncpt_select_combined" ON ncpt;
 CREATE POLICY "ncpt_select_combined" ON ncpt
   FOR SELECT USING (
     (user_id = get_studio_owner((select auth.uid())))
@@ -5217,6 +5225,7 @@ DROP POLICY IF EXISTS "note_specialistiche_patient_select" ON note_specialistich
 DROP POLICY IF EXISTS "note_specialistiche_select_patient_visible" ON note_specialistiche;
 DROP POLICY IF EXISTS "patients_read_notes_via_cartella" ON note_specialistiche;
 DROP POLICY IF EXISTS "paziente legge proprie note" ON note_specialistiche;
+DROP POLICY IF EXISTS "note_specialistiche_select_combined" ON note_specialistiche;
 CREATE POLICY "note_specialistiche_select_combined" ON note_specialistiche
   FOR SELECT USING (
     (user_id = get_studio_owner((select auth.uid())))
@@ -5227,6 +5236,7 @@ CREATE POLICY "note_specialistiche_select_combined" ON note_specialistiche
   );
 DROP POLICY IF EXISTS "note_visibili_pazienti" ON note_specialistiche;
 DROP POLICY IF EXISTS "read_visible_notes" ON note_specialistiche;
+DROP POLICY IF EXISTS "note_specialistiche_select_visible_authenticated" ON note_specialistiche;
 CREATE POLICY "note_specialistiche_select_visible_authenticated" ON note_specialistiche
   FOR SELECT TO authenticated USING (visible_to_patient = true);
 
@@ -5252,6 +5262,7 @@ CREATE POLICY "pacchetti_acquistati_owner_all" ON pacchetti_acquistati
   FOR ALL USING ((select auth.uid()) = dietitian_id) WITH CHECK ((select auth.uid()) = dietitian_id);
 DROP POLICY IF EXISTS "pacchetti_acquistati_collaborator_read" ON pacchetti_acquistati;
 DROP POLICY IF EXISTS "pacchetti_acquistati_patient_read" ON pacchetti_acquistati;
+DROP POLICY IF EXISTS "pacchetti_acquistati_select_combined" ON pacchetti_acquistati;
 CREATE POLICY "pacchetti_acquistati_select_combined" ON pacchetti_acquistati
   FOR SELECT USING ((dietitian_id = get_studio_owner((select auth.uid()))) OR ((select auth.uid()) = patient_id));
 
@@ -5273,6 +5284,7 @@ CREATE POLICY "patient_consents_dietitian_all" ON patient_consents
   FOR ALL USING ((select auth.uid()) = dietitian_id) WITH CHECK ((select auth.uid()) = dietitian_id);
 DROP POLICY IF EXISTS "patient_consents_collaborator_read" ON patient_consents;
 DROP POLICY IF EXISTS "patient_consents_patient_select" ON patient_consents;
+DROP POLICY IF EXISTS "patient_consents_select_combined" ON patient_consents;
 CREATE POLICY "patient_consents_select_combined" ON patient_consents
   FOR SELECT USING (
     (dietitian_id = get_studio_owner((select auth.uid())))
@@ -5293,6 +5305,7 @@ CREATE POLICY "patient_diets_own" ON patient_diets
   FOR ALL USING ((select auth.uid()) = user_id);
 DROP POLICY IF EXISTS "pazienti leggono la propria dieta" ON patient_diets;
 DROP POLICY IF EXISTS "users see own diet" ON patient_diets;
+DROP POLICY IF EXISTS "patient_diets_select_own" ON patient_diets;
 CREATE POLICY "patient_diets_select_own" ON patient_diets
   FOR SELECT USING ((select auth.uid()) = user_id);
 
@@ -5311,6 +5324,7 @@ DROP POLICY IF EXISTS "patient_documents_collaborator_read" ON patient_documents
 DROP POLICY IF EXISTS "patient_documents_patient_select" ON patient_documents;
 DROP POLICY IF EXISTS "patient_documents_select_patient_visible" ON patient_documents;
 DROP POLICY IF EXISTS "paziente vede propri documenti" ON patient_documents;
+DROP POLICY IF EXISTS "patient_documents_select_combined" ON patient_documents;
 CREATE POLICY "patient_documents_select_combined" ON patient_documents
   FOR SELECT USING (
     (dietitian_id = (select auth.uid()))
@@ -5372,6 +5386,7 @@ CREATE POLICY "percorsi_nutrizionali_collaborator_write" ON percorsi_nutrizional
   WITH CHECK ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())));
 DROP POLICY IF EXISTS "percorsi_nutrizionali_collaborator_read" ON percorsi_nutrizionali;
 DROP POLICY IF EXISTS "percorsi_patient_read" ON percorsi_nutrizionali;
+DROP POLICY IF EXISTS "percorsi_select_combined" ON percorsi_nutrizionali;
 CREATE POLICY "percorsi_select_combined" ON percorsi_nutrizionali
   FOR SELECT USING ((dietitian_id = get_studio_owner((select auth.uid()))) OR (patient_id = (select auth.uid())));
 
@@ -5390,6 +5405,7 @@ DROP POLICY IF EXISTS "paziente legge propri piani" ON piani;
 DROP POLICY IF EXISTS "piani_collaborator_read" ON piani;
 DROP POLICY IF EXISTS "piani_patient_select" ON piani;
 DROP POLICY IF EXISTS "piani_select_patient_visible" ON piani;
+DROP POLICY IF EXISTS "piani_select_combined" ON piani;
 CREATE POLICY "piani_select_combined" ON piani
   FOR SELECT USING (
     (cartella_id IN (SELECT patient_dietitian.cartella_id FROM patient_dietitian WHERE patient_dietitian.patient_id = (select auth.uid())))
@@ -5399,6 +5415,7 @@ CREATE POLICY "piani_select_combined" ON piani
   );
 DROP POLICY IF EXISTS "piani_visibili_pazienti" ON piani;
 DROP POLICY IF EXISTS "read_visible_piani" ON piani;
+DROP POLICY IF EXISTS "piani_select_visible_authenticated" ON piani;
 CREATE POLICY "piani_select_visible_authenticated" ON piani
   FOR SELECT TO authenticated USING (visible_to_patient = true);
 
@@ -5412,6 +5429,7 @@ CREATE POLICY "template_own" ON piani_template
   FOR ALL USING ((select auth.uid()) = user_id) WITH CHECK ((select auth.uid()) = user_id);
 DROP POLICY IF EXISTS "piani_template_collaborator_read" ON piani_template;
 DROP POLICY IF EXISTS "template_shared_read" ON piani_template;
+DROP POLICY IF EXISTS "piani_template_select_combined" ON piani_template;
 CREATE POLICY "piani_template_select_combined" ON piani_template
   FOR SELECT USING (
     (user_id = get_studio_owner((select auth.uid())))
@@ -5426,6 +5444,7 @@ DROP POLICY IF EXISTS "profiles_select_linked_dietitians" ON profiles;
 DROP POLICY IF EXISTS "profiles_select_linked_patients" ON profiles;
 DROP POLICY IF EXISTS "profiles_select_own" ON profiles;
 DROP POLICY IF EXISTS "profiles_select_studio_mates" ON profiles;
+DROP POLICY IF EXISTS "profiles_select_combined" ON profiles;
 CREATE POLICY "profiles_select_combined" ON profiles
   FOR SELECT USING (
     check_is_admin()
@@ -5440,6 +5459,7 @@ CREATE POLICY "profiles_insert_own" ON profiles
   FOR INSERT WITH CHECK ((select auth.uid()) = id);
 DROP POLICY IF EXISTS "profiles_update_admin" ON profiles;
 DROP POLICY IF EXISTS "profiles_update_own" ON profiles;
+DROP POLICY IF EXISTS "profiles_update_combined" ON profiles;
 CREATE POLICY "profiles_update_combined" ON profiles
   FOR UPDATE USING (check_is_admin() OR ((select auth.uid()) = id));
 
@@ -5489,6 +5509,7 @@ CREATE POLICY "ricette_collaborator_write" ON ricette
   WITH CHECK ((user_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())));
 DROP POLICY IF EXISTS "leggi ricette proprie e pubbliche" ON ricette;
 DROP POLICY IF EXISTS "ricette_collaborator_read" ON ricette;
+DROP POLICY IF EXISTS "ricette_select_combined" ON ricette;
 CREATE POLICY "ricette_select_combined" ON ricette
   FOR SELECT USING (((select auth.uid()) = user_id) OR (is_public = true) OR (user_id = get_studio_owner((select auth.uid()))));
 
@@ -5506,6 +5527,7 @@ DROP POLICY IF EXISTS "paziente legge proprie schede" ON schede_valutazione;
 DROP POLICY IF EXISTS "schede_valutazione_collaborator_read" ON schede_valutazione;
 DROP POLICY IF EXISTS "schede_valutazione_patient_select" ON schede_valutazione;
 DROP POLICY IF EXISTS "schede_valutazione_select_patient_visible" ON schede_valutazione;
+DROP POLICY IF EXISTS "schede_valutazione_select_combined" ON schede_valutazione;
 CREATE POLICY "schede_valutazione_select_combined" ON schede_valutazione
   FOR SELECT USING (
     ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = schede_valutazione.cartella_id))))
@@ -5524,6 +5546,7 @@ CREATE POLICY "shared_recipes_collaborator_write" ON shared_recipes
   WITH CHECK ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())));
 DROP POLICY IF EXISTS "patient reads received recipes" ON shared_recipes;
 DROP POLICY IF EXISTS "shared_recipes_collaborator_read" ON shared_recipes;
+DROP POLICY IF EXISTS "shared_recipes_select_combined" ON shared_recipes;
 CREATE POLICY "shared_recipes_select_combined" ON shared_recipes
   FOR SELECT USING (((select auth.uid()) = patient_id) OR (dietitian_id = get_studio_owner((select auth.uid()))));
 DROP POLICY IF EXISTS "patient marks viewed" ON shared_recipes;
@@ -5576,6 +5599,7 @@ CREATE POLICY "weight_logs_insert_patient" ON weight_logs
 DROP POLICY IF EXISTS "dietista legge peso pazienti" ON weight_logs;
 DROP POLICY IF EXISTS "weight_logs_select_dietitian" ON weight_logs;
 DROP POLICY IF EXISTS "weight_logs_select_patient" ON weight_logs;
+DROP POLICY IF EXISTS "weight_logs_select_combined" ON weight_logs;
 CREATE POLICY "weight_logs_select_combined" ON weight_logs
   FOR SELECT USING (
     (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = weight_logs.user_id AND pd.dietitian_id = (select auth.uid())))

@@ -4576,3 +4576,131 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_62_dietitian_credentials_table', 'Nuove tabelle dietitian_credentials e user_payment_credentials (owner+admin only, +collaborator_read su dietitian_credentials) con copia dei segreti operativi/Stripe da profiles — FASE 1 di 2, profiles non ancora modificata')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 63 — fix RLS storage: patient-photos e patient-files leggibili da
+-- collaboratori "segretario"
+--
+-- Trovato da un audit delle policy su storage.objects (non ancora coperto
+-- dai giri precedenti, che avevano riguardato solo le tabelle). Le policy
+-- INSERT/DELETE di patient_photos_owner_write e patient_files_storage_delete/
+-- _insert richiedono correttamente is_dietitian_level_collaborator(auth.uid())
+-- — cioè escludono i collaboratori di livello "segretario" dall'accesso a
+-- dati clinici, stessa regola già applicata alle tabelle in SEZIONE 60/61.
+-- Le policy SELECT gemelle (patient_photos_owner_read,
+-- patient_files_storage_select) però NON avevano questo controllo: un
+-- collaboratore "segretario" non poteva caricare o cancellare foto/documenti
+-- di un paziente, ma poteva comunque leggerli/scaricarli.
+--
+-- Verificato via grep in NutriPlan-Pro: patient-photos è scritto/letto solo
+-- da valutazione.html (lato dietista, foto scattate in visita — pazienti.html
+-- e l'app pazienti non vi accedono mai); patient-files è scritto/letto solo
+-- da pazienti.html (documenti caricati dal dietista nella scheda paziente).
+--
+-- Include anche una pulizia di "doc prints select" su document-prints: un
+-- terzo ramo OR confrontava dietitian_id con la prima cartella del path,
+-- quando js/print-capture.js usa sempre <patient_id>/... — ramo non
+-- sfruttabile in pratica (richiederebbe una collisione di UUID) ma morto/
+-- fuorviante, rimosso mantenendo i due rami reali (paziente legge i propri
+-- documenti, dietista collegato legge quelli del proprio paziente).
+--
+-- Piano di rientro: le versioni precedenti di queste 3 policy sono qui sopra
+-- in chiaro (query pg_policies), volendo si possono ricreare identiche.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "patient_photos_owner_read" ON storage.objects;
+CREATE POLICY "patient_photos_owner_read" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'patient-photos'
+    AND EXISTS (
+      SELECT 1 FROM cartelle_raw c
+      WHERE c.id = (storage.foldername(objects.name))[1]::uuid
+        AND c.user_id = get_studio_owner(auth.uid())
+    )
+    AND is_dietitian_level_collaborator(auth.uid())
+  );
+
+DROP POLICY IF EXISTS "patient_files_storage_select" ON storage.objects;
+CREATE POLICY "patient_files_storage_select" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'patient-files'
+    AND auth.uid() IS NOT NULL
+    AND (storage.foldername(name))[1] = (get_studio_owner(auth.uid()))::text
+    AND is_dietitian_level_collaborator(auth.uid())
+  );
+
+DROP POLICY IF EXISTS "doc prints select" ON storage.objects;
+CREATE POLICY "doc prints select" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'document-prints'
+    AND (
+      (auth.uid())::text = (storage.foldername(objects.name))[1]
+      OR EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE (pd.patient_id)::text = (storage.foldername(objects.name))[1]
+          AND pd.dietitian_id = auth.uid()
+      )
+    )
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_63_storage_rls_collaborator_gap', 'Fix RLS storage.objects: patient_photos_owner_read e patient_files_storage_select ora richiedono is_dietitian_level_collaborator come le policy INSERT/DELETE gemelle (segretari non potevano scrivere ma potevano leggere foto/documenti clinici) — pulito anche un ramo morto/errato in "doc prints select" su document-prints')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 64 — pulizia performance mirata (advisor "performance" di Supabase)
+--
+-- L'advisor segnala ~260 policy RLS che rivalutano auth.uid() riga per riga
+-- invece che una volta per query (fix: avvolgerlo in "(select auth.uid())"),
+-- e quasi 1000 casi di policy permissive sovrapposte sulla stessa azione, su
+-- circa 70 tabelle del database — debito preesistente a questa sessione, non
+-- toccato qui: è un intervento ampio (centinaia di policy da riscrivere e
+-- verificare una per una) che merita una decisione esplicita, non un fix
+-- silenzioso in un giro di controllo bug.
+--
+-- Qui vengono sistemate solo le 2 tabelle create in SEZIONE 62 (comunque di
+-- competenza diretta di questa sessione) più 2 indici duplicati segnalati
+-- altrove, entrambi interventi a rischio zero:
+--   • dietitian_credentials/user_payment_credentials avevano 2-3 policy
+--     permissive sovrapposte sullo stesso SELECT (owner_all + admin_read
+--     [+ collaborator_read]) — consolidate in una sola policy SELECT con OR,
+--     più policy separate INSERT/UPDATE/DELETE solo per il proprietario.
+--   • idx_activity_logs_user_date duplica activity_logs_user_date_idx;
+--     idx_chat_messages_patient duplica idx_chat_messages_patient_created.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP INDEX IF EXISTS idx_activity_logs_user_date;
+DROP INDEX IF EXISTS idx_chat_messages_patient;
+
+DROP POLICY IF EXISTS "dietitian_credentials_owner_all" ON dietitian_credentials;
+DROP POLICY IF EXISTS "dietitian_credentials_admin_read" ON dietitian_credentials;
+DROP POLICY IF EXISTS "dietitian_credentials_collaborator_read" ON dietitian_credentials;
+
+CREATE POLICY "dietitian_credentials_select" ON dietitian_credentials
+  FOR SELECT USING (
+    (select auth.uid()) = id
+    OR check_is_admin()
+    OR (id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+  );
+CREATE POLICY "dietitian_credentials_owner_insert" ON dietitian_credentials
+  FOR INSERT WITH CHECK ((select auth.uid()) = id);
+CREATE POLICY "dietitian_credentials_owner_update" ON dietitian_credentials
+  FOR UPDATE USING ((select auth.uid()) = id) WITH CHECK ((select auth.uid()) = id);
+CREATE POLICY "dietitian_credentials_owner_delete" ON dietitian_credentials
+  FOR DELETE USING ((select auth.uid()) = id);
+
+DROP POLICY IF EXISTS "user_payment_credentials_owner_all" ON user_payment_credentials;
+DROP POLICY IF EXISTS "user_payment_credentials_admin_read" ON user_payment_credentials;
+
+CREATE POLICY "user_payment_credentials_select" ON user_payment_credentials
+  FOR SELECT USING ((select auth.uid()) = id OR check_is_admin());
+CREATE POLICY "user_payment_credentials_owner_insert" ON user_payment_credentials
+  FOR INSERT WITH CHECK ((select auth.uid()) = id);
+CREATE POLICY "user_payment_credentials_owner_update" ON user_payment_credentials
+  FOR UPDATE USING ((select auth.uid()) = id) WITH CHECK ((select auth.uid()) = id);
+CREATE POLICY "user_payment_credentials_owner_delete" ON user_payment_credentials
+  FOR DELETE USING ((select auth.uid()) = id);
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_64_perf_new_tables_plus_dup_indexes', 'Consolidate le policy SELECT sovrapposte di dietitian_credentials/user_payment_credentials (fix auth_rls_initplan + multiple_permissive_policies) e rimossi 2 indici duplicati (activity_logs, chat_messages) — il resto del debito performance segnalato dall''advisor (~70 tabelle preesistenti) resta intenzionalmente non toccato, richiede decisione esplicita per l''ampiezza dell''intervento')
+ON CONFLICT (id) DO NOTHING;

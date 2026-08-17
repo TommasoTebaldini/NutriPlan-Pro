@@ -84,7 +84,7 @@ serve(async (req) => {
     }
 
     const { data: dietitianProfile, error: dietErr } = await supabaseAdmin
-      .from("profiles")
+      .from("dietitian_credentials")
       .select("stripe_connect_account_id, stripe_connect_charges_enabled")
       .eq("id", fattura.dietitian_id)
       .maybeSingle();

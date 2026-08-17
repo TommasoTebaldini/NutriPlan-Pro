@@ -42,11 +42,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("stripe_customer_id, role")
-      .eq("id", user.id)
-      .maybeSingle();
+    const [{ data: profile }, { data: paymentCreds }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("role").eq("id", user.id).maybeSingle(),
+      supabaseAdmin.from("user_payment_credentials").select("stripe_customer_id").eq("id", user.id).maybeSingle(),
+    ]);
 
     if (profile?.role === "dietitian") {
       return new Response(JSON.stringify({ error: "Use the dietitian checkout" }), {
@@ -64,14 +63,14 @@ serve(async (req) => {
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
 
     // Get or create Stripe customer
-    let customerId = profile?.stripe_customer_id;
+    let customerId = paymentCreds?.stripe_customer_id;
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email,
         metadata: { supabase_uid: user.id, role: "patient" },
       });
       customerId = customer.id;
-      await supabaseAdmin.from("profiles").update({ stripe_customer_id: customerId }).eq("id", user.id);
+      await supabaseAdmin.from("user_payment_credentials").upsert({ id: user.id, stripe_customer_id: customerId });
     }
 
     const origin = req.headers.get("origin") || "https://nutri-patient-app.vercel.app";

@@ -378,7 +378,10 @@ async function loadStripeConnectStatus() {
   const statusEl = document.getElementById('stripe-connect-status');
   const btnEl = document.getElementById('stripe-connect-btn');
   if (!currentUser) return;
-  const { data, error } = await sb.from('profiles').select('stripe_connect_account_id,stripe_connect_charges_enabled').eq('id', currentUser.id).maybeSingle();
+  // dietitian_credentials (SEZIONE 62): spostato da profiles, leggibile da
+  // co-membri di chat/studio/pazienti collegati, non il posto giusto per un
+  // account ID Stripe.
+  const { data, error } = await sb.from('dietitian_credentials').select('stripe_connect_account_id,stripe_connect_charges_enabled').eq('id', currentUser.id).maybeSingle();
   if (error || !data) {
     statusEl.textContent = 'Impossibile verificare lo stato dei pagamenti online.';
     return;
@@ -590,7 +593,7 @@ async function generaFatturaElettronica(id) {
   if (!f) return;
   showLoading(true);
   try {
-    const { data: fiscal, error: fiscalErr } = await sb.from('profiles')
+    const { data: fiscal, error: fiscalErr } = await sb.from('dietitian_credentials')
       .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fiscal_progressivo_invio')
       .eq('id', currentUser.id).maybeSingle();
     if (fiscalErr || !fiscal) throw new Error('Impossibile leggere i dati fiscali del profilo.');
@@ -603,7 +606,7 @@ async function generaFatturaElettronica(id) {
     // Persisti il progressivo E marca la fattura come generata SOLO dopo un
     // download riuscito, così un errore di generazione non "brucia" un
     // numero di progressivo mai usato davvero.
-    await sb.from('profiles').update({ fiscal_progressivo_invio: progressivo }).eq('id', currentUser.id);
+    await sb.from('dietitian_credentials').update({ fiscal_progressivo_invio: progressivo }).eq('id', currentUser.id);
     const nowIso = new Date().toISOString();
     if (!useLocalFatt) await sb.from('fatture').update({ xml_generato_at: nowIso }).eq('id', id);
     fatture = fatture.map(x => x.id === id ? { ...x, xml_generato_at: nowIso } : x);

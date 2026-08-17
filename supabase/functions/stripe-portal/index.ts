@@ -38,13 +38,13 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
+    const { data: paymentCreds } = await supabaseAdmin
+      .from("user_payment_credentials")
       .select("stripe_customer_id")
       .eq("id", user.id)
       .maybeSingle();
 
-    if (!profile?.stripe_customer_id) {
+    if (!paymentCreds?.stripe_customer_id) {
       return new Response(JSON.stringify({ error: "No subscription found" }), {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -54,7 +54,7 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://nutriplan-pro.vercel.app";
 
     const portalSession = await stripe.billingPortal.sessions.create({
-      customer: profile.stripe_customer_id,
+      customer: paymentCreds.stripe_customer_id,
       return_url: `${origin}/abbonamento.html`,
     });
 

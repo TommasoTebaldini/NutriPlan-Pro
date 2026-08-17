@@ -740,7 +740,13 @@ async function jobFhirSync() {
         await sbFetch(`fhir_export_queue?cartella_id=eq.${cartellaId}`, serviceKey, { method: 'DELETE' });
         continue;
       }
-      const [dietitianProfile] = await sbFetch(`profiles?select=nome,cognome,email,fiscal_codice_fiscale&id=eq.${cartella.user_id}`, serviceKey);
+      // fiscal_codice_fiscale ora vive in dietitian_credentials (SEZIONE 62),
+      // non più in profiles — due query invece di una, tabelle diverse.
+      const [[dietitianProfileBase], [dietitianCreds]] = await Promise.all([
+        sbFetch(`profiles?select=nome,cognome,email&id=eq.${cartella.user_id}`, serviceKey),
+        sbFetch(`dietitian_credentials?select=fiscal_codice_fiscale&id=eq.${cartella.user_id}`, serviceKey),
+      ]);
+      const dietitianProfile = { ...dietitianProfileBase, fiscal_codice_fiscale: dietitianCreds?.fiscal_codice_fiscale ?? null };
 
       const bundle = buildBundleForCartella({
         cartella,

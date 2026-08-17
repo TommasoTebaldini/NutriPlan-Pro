@@ -84,9 +84,13 @@ serve(async (req) => {
           await supabase.from("profiles").update({
             subscription_plan: "pro",
             subscription_expires_at: expiresAt,
+          }).eq("id", userId);
+
+          await supabase.from("user_payment_credentials").upsert({
+            id: userId,
             stripe_customer_id: session.customer as string,
             stripe_subscription_id: subscriptionId,
-          }).eq("id", userId);
+          });
 
           console.log(`User ${userId} → pro until ${expiresAt}`);
         }
@@ -96,7 +100,7 @@ serve(async (req) => {
       // ── Stripe Connect: stato onboarding del dietista aggiornato ──
       case "account.updated": {
         const account = event.data.object as Stripe.Account;
-        await supabase.from("profiles").update({
+        await supabase.from("dietitian_credentials").update({
           stripe_connect_charges_enabled: !!account.charges_enabled,
         }).eq("stripe_connect_account_id", account.id);
         break;
@@ -105,21 +109,26 @@ serve(async (req) => {
       // ── Subscription renewed or changed ──
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
-        const userId = sub.metadata?.supabase_uid;
+        let userId = sub.metadata?.supabase_uid;
         const expiresAt = new Date(sub.current_period_end * 1000).toISOString();
         const plan = sub.status === "active" || sub.status === "trialing" ? "pro" : "free";
+
+        if (!userId) {
+          // Fallback: risali all'utente tramite user_payment_credentials, dato
+          // che stripe_subscription_id non vive più su profiles (SEZIONE 62).
+          const { data: creds } = await supabase
+            .from("user_payment_credentials")
+            .select("id")
+            .eq("stripe_subscription_id", sub.id)
+            .maybeSingle();
+          userId = creds?.id;
+        }
 
         if (userId) {
           await supabase.from("profiles").update({
             subscription_plan: plan,
             subscription_expires_at: plan === "pro" ? expiresAt : null,
           }).eq("id", userId);
-        } else {
-          // Fallback: find by stripe_subscription_id
-          await supabase.from("profiles").update({
-            subscription_plan: plan,
-            subscription_expires_at: plan === "pro" ? expiresAt : null,
-          }).eq("stripe_subscription_id", sub.id);
         }
         break;
       }
@@ -127,18 +136,22 @@ serve(async (req) => {
       // ── Subscription cancelled ──
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
-        const userId = sub.metadata?.supabase_uid;
+        let userId = sub.metadata?.supabase_uid;
+
+        if (!userId) {
+          const { data: creds } = await supabase
+            .from("user_payment_credentials")
+            .select("id")
+            .eq("stripe_subscription_id", sub.id)
+            .maybeSingle();
+          userId = creds?.id;
+        }
 
         if (userId) {
           await supabase.from("profiles").update({
             subscription_plan: "free",
             subscription_expires_at: null,
           }).eq("id", userId);
-        } else {
-          await supabase.from("profiles").update({
-            subscription_plan: "free",
-            subscription_expires_at: null,
-          }).eq("stripe_subscription_id", sub.id);
         }
         break;
       }

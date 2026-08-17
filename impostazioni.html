@@ -897,14 +897,17 @@ async function togglePushSubscription() {
 // ══════════════════════════════════════════════
 async function loadFiscalData() {
   if (!currentUser) return;
-  // Fallback senza le colonne Fatture in Cloud (SEZIONE 32) / STS (SEZIONE 35) se non ancora migrate
-  let { data, error } = await sb.from('profiles')
+  // Questi campi vivono in dietitian_credentials (SEZIONE 62), non più in
+  // profiles — spostati perché profiles è leggibile da co-membri di
+  // chat/studio/pazienti collegati (necessario per nome/foto), esponendo
+  // altrimenti anche password/token qui dentro. Fallback silenzioso se la
+  // tabella non esiste ancora (SEZIONE 62 non eseguita).
+  const { data, error } = await sb.from('dietitian_credentials')
     .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fic_api_token,fic_company_id,sts_api_username,sts_api_password,sts_username,sts_password,sts_pincode,sts_erogatore_registrato')
     .eq('id', currentUser.id).maybeSingle();
-  if (error && (error.code === '42703' || error.code === 'PGRST204')) {
-    ({ data, error } = await sb.from('profiles')
-      .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia')
-      .eq('id', currentUser.id).maybeSingle());
+  if (error && (error.code === '42P01' || error.code === 'PGRST205')) {
+    console.warn('Tabella dietitian_credentials non ancora creata: esegui la SEZIONE 62 di supabase_setup.sql');
+    return;
   }
   if (error || !data) { if (error) console.warn('loadFiscalData error:', error.message); return; }
   const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
@@ -948,23 +951,14 @@ async function saveFiscalData() {
     sts_pincode: val('sts-pincode'),
   };
   const msgEl = document.getElementById('fiscal-save-msg');
-  let { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
-  if (error && (error.code === '42703' || error.code === 'PGRST204')) {
-    // Colonne FIC/STS non ancora migrate (SEZIONE 32/35): salva almeno il resto
-    const base = {
-      fiscal_ragione_sociale: payload.fiscal_ragione_sociale, fiscal_codice_fiscale: payload.fiscal_codice_fiscale,
-      fiscal_partita_iva: payload.fiscal_partita_iva, fiscal_regime: payload.fiscal_regime,
-      fiscal_indirizzo: payload.fiscal_indirizzo, fiscal_cap: payload.fiscal_cap,
-      fiscal_comune: payload.fiscal_comune, fiscal_provincia: payload.fiscal_provincia,
-    };
-    ({ error } = await sb.from('profiles').update(base).eq('id', currentUser.id));
-    if (!error) {
-      if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = '⚠️ Campi Fatture in Cloud/STS NON salvati: esegui le SEZIONI 32 e 35 di supabase_setup.sql'; }
-      return;
-    }
-  }
+  const { error } = await sb.from('dietitian_credentials').upsert({ id: currentUser.id, ...payload });
   if (error) {
-    if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = '❌ ' + error.message; }
+    if (msgEl) {
+      msgEl.style.color = 'var(--red)';
+      msgEl.textContent = (error.code === '42P01' || error.code === 'PGRST205')
+        ? '⚠️ Esegui la SEZIONE 62 di supabase_setup.sql'
+        : '❌ ' + error.message;
+    }
     return;
   }
   if (msgEl) {
@@ -1002,10 +996,10 @@ async function loadWhatsappData() {
   const urlEl = document.getElementById('wa-webhook-url-display');
   if (urlEl) urlEl.textContent = `${location.origin}/api/whatsapp-webhook?dietitian_id=${currentUser.id}`;
 
-  const { data, error } = await sb.from('profiles')
+  const { data, error } = await sb.from('dietitian_credentials')
     .select('wa_phone_number_id,wa_access_token,wa_business_account_id,wa_webhook_verify_token,wa_app_secret,wa_template_name,wa_template_lang')
     .eq('id', currentUser.id).maybeSingle();
-  if (error && (error.code === '42703' || error.code === 'PGRST204')) return; // SEZIONE 36 non ancora migrata
+  if (error && (error.code === '42P01' || error.code === 'PGRST205')) return; // SEZIONE 62 non ancora eseguita
   if (error || !data) { if (error) console.warn('loadWhatsappData error:', error.message); return; }
   const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
   setVal('wa-phone-number-id', data.wa_phone_number_id);
@@ -1030,12 +1024,12 @@ async function saveWhatsappData() {
     wa_template_lang: val('wa-template-lang') || 'it',
   };
   const msgEl = document.getElementById('wa-save-msg');
-  const { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
+  const { error } = await sb.from('dietitian_credentials').upsert({ id: currentUser.id, ...payload });
   if (error) {
     if (msgEl) {
       msgEl.style.color = 'var(--red)';
-      msgEl.textContent = (error.code === '42703' || error.code === 'PGRST204')
-        ? '⚠️ Esegui la SEZIONE 36 di supabase_setup.sql'
+      msgEl.textContent = (error.code === '42P01' || error.code === 'PGRST205')
+        ? '⚠️ Esegui la SEZIONE 62 di supabase_setup.sql'
         : '❌ ' + error.message;
     }
     return;

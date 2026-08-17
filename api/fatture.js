@@ -52,7 +52,7 @@ async function handleSdi(req, res, user) {
   }
 
   const profRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=fiscal_regime,fic_api_token,fic_company_id`,
+    `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}&select=fiscal_regime,fic_api_token,fic_company_id`,
     { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } }
   );
   const profiles = profRes.ok ? await profRes.json() : [];
@@ -147,7 +147,7 @@ async function handleSts(req, res, user) {
   const sbHeaders = { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` };
 
   const [profRes, fatRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=fiscal_partita_iva,sts_api_username,sts_api_password,sts_erogatore_registrato`, { headers: sbHeaders }),
+    fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}&select=fiscal_partita_iva,sts_api_username,sts_api_password,sts_erogatore_registrato`, { headers: sbHeaders }),
     fetch(`${SUPABASE_URL}/rest/v1/fatture?id=eq.${fatturaId}&dietitian_id=eq.${user.id}&select=*`, { headers: sbHeaders }),
   ]);
   const profiles = profRes.ok ? await profRes.json() : [];
@@ -223,7 +223,7 @@ async function handleSts(req, res, user) {
 // ═══════════════════════════════════════════════════════════════════════════
 async function handleRegistraErogatore(req, res, user) {
   const profRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,sts_api_username,sts_api_password,sts_username,sts_password,sts_pincode`,
+    `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}&select=fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,sts_api_username,sts_api_password,sts_username,sts_password,sts_pincode`,
     { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } }
   );
   const profiles = profRes.ok ? await profRes.json() : [];
@@ -263,7 +263,7 @@ async function handleRegistraErogatore(req, res, user) {
     return res.status(502).json({ error: 'Registrazione erogatore fallita: ' + (erBody?.message || erBody?.error || erRes.status) });
   }
 
-  await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
+  await fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}`, {
     method: 'PATCH',
     headers: {
       apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}`,

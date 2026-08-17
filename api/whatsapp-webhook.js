@@ -96,7 +96,7 @@ async function handleSend(req, res) {
     if (!cartella_id || !testoTrim) return res.status(400).json({ error: 'cartella_id o testo mancante' });
 
     const [profiles, cartelle] = await Promise.all([
-      sbFetch(`profiles?id=eq.${user.id}&select=wa_phone_number_id,wa_access_token,wa_template_name,wa_template_lang`),
+      sbFetch(`dietitian_credentials?id=eq.${user.id}&select=wa_phone_number_id,wa_access_token,wa_template_name,wa_template_lang`),
       sbFetch(`cartelle?id=eq.${cartella_id}&user_id=eq.${user.id}&select=id,telefono`),
     ]);
     const prof = profiles?.[0];
@@ -177,7 +177,7 @@ async function handler(req, res) {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
-    const profiles = await sbFetch(`profiles?id=eq.${dietitianId}&select=wa_webhook_verify_token`);
+    const profiles = await sbFetch(`dietitian_credentials?id=eq.${dietitianId}&select=wa_webhook_verify_token`);
     const expected = profiles?.[0]?.wa_webhook_verify_token;
     if (mode === 'subscribe' && expected && token === expected) {
       res.setHeader('Content-Type', 'text/plain');
@@ -191,7 +191,7 @@ async function handler(req, res) {
   try {
     const raw = await readRawBody(req);
 
-    const profiles = await sbFetch(`profiles?id=eq.${dietitianId}&select=wa_app_secret`);
+    const profiles = await sbFetch(`dietitian_credentials?id=eq.${dietitianId}&select=wa_app_secret`);
     const appSecret = profiles?.[0]?.wa_app_secret;
     if (appSecret) {
       const signature = req.headers['x-hub-signature-256'] || '';

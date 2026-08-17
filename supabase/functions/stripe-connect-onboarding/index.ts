@@ -47,7 +47,7 @@ serve(async (req) => {
     );
     const { data: profile, error: profErr } = await supabaseAdmin
       .from("profiles")
-      .select("role, stripe_connect_account_id")
+      .select("role")
       .eq("id", user.id)
       .maybeSingle();
     if (profErr) throw profErr;
@@ -57,9 +57,16 @@ serve(async (req) => {
       });
     }
 
+    const { data: credentials, error: credErr } = await supabaseAdmin
+      .from("dietitian_credentials")
+      .select("stripe_connect_account_id")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (credErr) throw credErr;
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
 
-    let accountId = profile.stripe_connect_account_id as string | null;
+    let accountId = credentials?.stripe_connect_account_id as string | null;
     if (!accountId) {
       const account = await stripe.accounts.create({
         type: "express",
@@ -73,7 +80,7 @@ serve(async (req) => {
         metadata: { supabase_uid: user.id },
       });
       accountId = account.id;
-      await supabaseAdmin.from("profiles").update({ stripe_connect_account_id: accountId }).eq("id", user.id);
+      await supabaseAdmin.from("dietitian_credentials").upsert({ id: user.id, stripe_connect_account_id: accountId });
     }
 
     const origin = req.headers.get("origin") || "https://nutriplan-pro.vercel.app";

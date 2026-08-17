@@ -4443,3 +4443,136 @@ DROP POLICY IF EXISTS "Public update responses by token" ON patient_intake_forms
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_61_drop_overpermissive_rls', 'Rimosse 12 policy RLS residue/troppo ampie (clinico, patient_dietitian, patient_documents, patient_intake_forms) — verificato che nessuna sia usata da codice reale prima di rimuoverle')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 62 — dietitian_credentials: sposta i segreti operativi fuori da
+-- profiles (FASE 1 di 2 — additiva, non distruttiva, revert = DROP TABLE)
+--
+-- Trovato dall'audit RLS: profiles mescola dati che DEVONO restare
+-- condivisi (nome, foto) con segreti che NON dovrebbero mai esserlo
+-- (password Sistema TS, token WhatsApp Business, ID Stripe, codici
+-- fiscali) — le policy che permettono a co-membri di chat/studio/pazienti
+-- collegati di leggere il profilo di un dietista (necessarie per mostrarne
+-- nome/foto) espongono SEMPRE anche questi campi, perché RLS è per riga,
+-- non per colonna: non basta stringere le policy esistenti.
+--
+-- Questa sezione copia i valori esistenti in una tabella nuova, dedicata,
+-- con policy owner+admin-only. Le colonne originali su profiles NON
+-- vengono ancora toccate — restano lì, invariate, finché il codice
+-- applicativo non è stato aggiornato per leggere/scrivere dalla tabella
+-- nuova e verificato che tutto funzioni ancora. Solo allora (SEZIONE 63,
+-- da lanciare separatamente, dopo verifica) le colonne originali vengono
+-- rimosse da profiles — quello è il passo che chiude davvero la falla,
+-- e l'unico dei due non banale da annullare con un git revert del codice.
+--
+-- Piano di rientro per QUESTA sezione: DROP TABLE dietitian_credentials —
+-- profiles resta intatta, nessun dato perso, nessun impatto sull'app.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS dietitian_credentials (
+  id                              UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+  sts_username                    TEXT,
+  sts_password                    TEXT,
+  sts_pincode                     TEXT,
+  sts_api_username                TEXT,
+  sts_api_password                TEXT,
+  sts_erogatore_registrato        BOOLEAN,
+  wa_access_token                 TEXT,
+  wa_app_secret                   TEXT,
+  wa_webhook_verify_token         TEXT,
+  wa_business_account_id          TEXT,
+  wa_phone_number_id              TEXT,
+  wa_template_lang                TEXT,
+  wa_template_name                TEXT,
+  fic_api_token                   TEXT,
+  fic_company_id                  TEXT,
+  stripe_connect_account_id       TEXT,
+  stripe_connect_charges_enabled  BOOLEAN NOT NULL DEFAULT false,
+  fiscal_codice_fiscale           TEXT,
+  fiscal_partita_iva              TEXT,
+  fiscal_indirizzo                TEXT,
+  fiscal_cap                      TEXT,
+  fiscal_comune                   TEXT,
+  fiscal_provincia                TEXT,
+  fiscal_regime                   TEXT,
+  fiscal_ragione_sociale          TEXT,
+  fiscal_progressivo_invio        INTEGER,
+  updated_at                      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Copia non distruttiva: profiles non viene toccata.
+INSERT INTO dietitian_credentials (
+  id, sts_username, sts_password, sts_pincode, sts_api_username, sts_api_password, sts_erogatore_registrato,
+  wa_access_token, wa_app_secret, wa_webhook_verify_token, wa_business_account_id, wa_phone_number_id, wa_template_lang, wa_template_name,
+  fic_api_token, fic_company_id,
+  stripe_connect_account_id, stripe_connect_charges_enabled,
+  fiscal_codice_fiscale, fiscal_partita_iva, fiscal_indirizzo, fiscal_cap, fiscal_comune, fiscal_provincia, fiscal_regime, fiscal_ragione_sociale, fiscal_progressivo_invio
+)
+SELECT
+  id, sts_username, sts_password, sts_pincode, sts_api_username, sts_api_password, sts_erogatore_registrato,
+  wa_access_token, wa_app_secret, wa_webhook_verify_token, wa_business_account_id, wa_phone_number_id, wa_template_lang, wa_template_name,
+  fic_api_token, fic_company_id,
+  stripe_connect_account_id, COALESCE(stripe_connect_charges_enabled, false),
+  fiscal_codice_fiscale, fiscal_partita_iva, fiscal_indirizzo, fiscal_cap, fiscal_comune, fiscal_provincia, fiscal_regime, fiscal_ragione_sociale, fiscal_progressivo_invio
+FROM profiles
+WHERE role = 'dietitian'
+ON CONFLICT (id) DO NOTHING;
+
+ALTER TABLE dietitian_credentials ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "dietitian_credentials_owner_all" ON dietitian_credentials;
+CREATE POLICY "dietitian_credentials_owner_all" ON dietitian_credentials
+  FOR ALL USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+
+DROP POLICY IF EXISTS "dietitian_credentials_admin_read" ON dietitian_credentials;
+CREATE POLICY "dietitian_credentials_admin_read" ON dietitian_credentials
+  FOR SELECT USING (check_is_admin());
+
+-- Un collaboratore di livello dietista deve poter vedere (sola lettura) le
+-- credenziali del titolare dello studio — es. whatsapp.html mostra "numero
+-- collegato sì/no" anche a un collaboratore, leggendo lo stato di
+-- studioOwnerId, non necessariamente la propria riga. La scrittura resta
+-- owner-only: solo il titolare configura le proprie credenziali.
+DROP POLICY IF EXISTS "dietitian_credentials_collaborator_read" ON dietitian_credentials;
+CREATE POLICY "dietitian_credentials_collaborator_read" ON dietitian_credentials
+  FOR SELECT USING (id = get_studio_owner(auth.uid()) AND is_dietitian_level_collaborator(auth.uid()));
+
+-- Le funzioni server (Stripe webhook, Stripe Connect, invio fatture SDI/STS,
+-- WhatsApp webhook) usano la service role, che ignora comunque RLS — nessuna
+-- policy aggiuntiva necessaria per quei percorsi.
+
+-- stripe_customer_id/stripe_subscription_id NON sono solo del dietista: è
+-- l'abbonamento SaaS generico, e anche i pazienti hanno un piano a
+-- pagamento (App Pazienti, €5.99/mese) — quindi una tabella "solo
+-- dietisti" li avrebbe rotti per metà utenti. Tabella separata, valida per
+-- qualunque profilo, stesso principio owner+admin-only.
+-- Piano di rientro: DROP TABLE user_payment_credentials — profiles resta
+-- intatta, nessun dato perso.
+CREATE TABLE IF NOT EXISTS user_payment_credentials (
+  id                     UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+  stripe_customer_id     TEXT,
+  stripe_subscription_id TEXT,
+  updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO user_payment_credentials (id, stripe_customer_id, stripe_subscription_id)
+SELECT id, stripe_customer_id, stripe_subscription_id
+FROM profiles
+WHERE stripe_customer_id IS NOT NULL OR stripe_subscription_id IS NOT NULL
+ON CONFLICT (id) DO NOTHING;
+
+ALTER TABLE user_payment_credentials ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "user_payment_credentials_owner_all" ON user_payment_credentials;
+CREATE POLICY "user_payment_credentials_owner_all" ON user_payment_credentials
+  FOR ALL USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+
+DROP POLICY IF EXISTS "user_payment_credentials_admin_read" ON user_payment_credentials;
+CREATE POLICY "user_payment_credentials_admin_read" ON user_payment_credentials
+  FOR SELECT USING (check_is_admin());
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_62_dietitian_credentials_table', 'Nuove tabelle dietitian_credentials e user_payment_credentials (owner+admin only, +collaborator_read su dietitian_credentials) con copia dei segreti operativi/Stripe da profiles — FASE 1 di 2, profiles non ancora modificata')
+ON CONFLICT (id) DO NOTHING;

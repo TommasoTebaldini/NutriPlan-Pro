@@ -164,7 +164,7 @@ function normalizePhone(p) { return String(p || '').replace(/[^\d]/g, ''); }
 
 async function init() {
   showLoading(true);
-  const { data: prof } = await sb.from('profiles').select('wa_phone_number_id').eq('id', studioOwnerId || currentUser.id).maybeSingle();
+  const { data: prof } = await sb.from('dietitian_credentials').select('wa_phone_number_id').eq('id', studioOwnerId || currentUser.id).maybeSingle();
   document.getElementById('wa-not-configured').style.display = prof?.wa_phone_number_id ? 'none' : 'block';
 
   const { data } = await sb.from('cartelle').select('id,nome,cognome,telefono').eq('user_id', studioOwnerId || currentUser.id).not('telefono', 'is', null).order('nome', { ascending: true });

@@ -58,20 +58,20 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
+    const { data: paymentCreds } = await supabaseAdmin
+      .from("user_payment_credentials")
       .select("stripe_customer_id")
       .eq("id", user.id)
       .maybeSingle();
 
-    let customerId = profile?.stripe_customer_id;
+    let customerId = paymentCreds?.stripe_customer_id;
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email,
         metadata: { supabase_uid: user.id },
       });
       customerId = customer.id;
-      await supabaseAdmin.from("profiles").update({ stripe_customer_id: customerId }).eq("id", user.id);
+      await supabaseAdmin.from("user_payment_credentials").upsert({ id: user.id, stripe_customer_id: customerId });
     }
 
     // 4. Determine success URL (use request origin or fallback)

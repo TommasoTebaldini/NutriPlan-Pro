@@ -4297,3 +4297,28 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_58_fix_missing_signup_rpcs', 'create_patient_profile() (mancante del tutto) + create_profile_for_new_user() a 3 parametri — registrazione paziente E dietista erano entrambe rotte')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 59 — fix WARN sicurezza: search_path mutabile su 7 funzioni trigger
+--
+-- Segnalato dall'advisor di sicurezza Supabase (function_search_path_mutable):
+-- queste 7 funzioni non fissano search_path, quindi risolvono i nomi di
+-- tabella non qualificati (es. "cartelle" invece di "public.cartelle" in
+-- _auto_gdpr_consent) in base al search_path della sessione — che in teoria
+-- un utente con permessi di creare schema/oggetti potrebbe manipolare per
+-- far eseguire codice non previsto a una funzione SECURITY DEFINER. Fix
+-- standard: fissare lo schema di risoluzione, indipendentemente dal
+-- search_path della sessione chiamante.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER FUNCTION public._auto_gdpr_consent() SET search_path = public;
+ALTER FUNCTION public.agenda_events_set_updated_at() SET search_path = public;
+ALTER FUNCTION public.cartelle_view_delete() SET search_path = public;
+ALTER FUNCTION public.cartelle_view_insert() SET search_path = public;
+ALTER FUNCTION public.cartelle_view_update() SET search_path = public;
+ALTER FUNCTION public.patient_consents_set_updated_at() SET search_path = public;
+ALTER FUNCTION public.prevent_patient_document_tampering() SET search_path = public;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_59_fix_search_path_functions', 'SET search_path = public su 7 funzioni trigger — fix WARN advisor sicurezza (function_search_path_mutable)')
+ON CONFLICT (id) DO NOTHING;

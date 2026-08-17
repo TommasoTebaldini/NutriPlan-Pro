@@ -5634,3 +5634,89 @@ DROP POLICY IF EXISTS "weight_logs_own" ON weight_logs;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_65b_fix_regressione_own_policies', 'Ri-drop delle 7 policy _own pericolose (ncpt/bia_records/note_specialistiche/piani/schede_valutazione/patient_documents/weight_logs) reintrodotte per errore dalla prima stesura di SEZIONE 65 — vedi commento sopra')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 66 — FIX SICUREZZA: gap collaboratore "segretario" su 10 tabelle
+-- + 3 policy residue che concedevano accesso a qualunque utente autenticato
+--
+-- Trovato continuando l'audit dopo SEZIONE 63 (stesso bug, lì corretto solo
+-- per lo storage): 10 tabelle hanno una coppia "<tabella>_collaborator_write"
+-- (FOR ALL, richiede correttamente is_dietitian_level_collaborator — esclude
+-- i collaboratori "segretario" dai dati clinici/sensibili) e una
+-- "<tabella>_collaborator_read" gemella SENZA quel controllo — un
+-- collaboratore "segretario" non può scrivere ma può leggere. Tra le tabelle
+-- coinvolte: esami_biochimici (esami clinici), patient_files, whatsapp_messages
+-- (messaggi privati), patient_intake_forms (moduli anamnesi), diario_alimentare_foto.
+-- Verificato via query diretta su pg_policies (join tra le coppie write/read
+-- per is_dietitian_level_collaborator nel solo qual della write) — 10 coppie
+-- trovate, non ~25 come stimato in SEZIONE 65 (quella era una stima
+-- approssimativa dell'agente che aveva scritto SEZIONE 65).
+--
+-- Trovate anche 3 policy residue che concedevano accesso non ristretto,
+-- verificate contro il codice reale prima di rimuoverle (nessun percorso
+-- legittimo le usa, coperte da policy più strette già esistenti):
+--   • diet_meals_own (FOR ALL, "auth.role()=authenticated", NESSUN controllo
+--     di proprietà): un paziente qualunque avrebbe potuto modificare/
+--     cancellare i pasti del piano di un altro paziente. pazienti.html
+--     (unico inserimento reale, dietista) è già coperto da "dietista
+--     gestisce pasti"; le letture lato paziente sono coperte da
+--     diet_meals_select_own_diet.
+--   • ecm_corsi_auth (FOR ALL, "auth.role()=authenticated"): qualunque
+--     utente autenticato, incluso un paziente, avrebbe potuto alterare il
+--     catalogo corsi ECM. admin.html (scrittura) è già coperto da
+--     ecm_corsi_admin_write, ecm.html (sola lettura) da ecm_corsi_read_all.
+--   • push_subscriptions_service_read (SELECT, qual=true, roles=public):
+--     endpoint e chiavi di cifratura push di OGNI utente leggibili da
+--     chiunque. Il nome suggerisce fosse pensata per il service role, che
+--     però ignora comunque RLS (non gli serve una policy) — verificato che
+--     l'unico lettore server-side reale (api/send-push.js, Diet-Plan-Pro-
+--     app-claude) usa già la service role key, non l'anon/authenticated.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "alimenti_custom_collaborator_read" ON alimenti_custom;
+CREATE POLICY "alimenti_custom_collaborator_read" ON alimenti_custom
+  FOR SELECT USING (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "broadcast_messages_collaborator_read" ON broadcast_messages;
+CREATE POLICY "broadcast_messages_collaborator_read" ON broadcast_messages
+  FOR SELECT USING (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "diario_alimentare_foto_collaborator_read" ON diario_alimentare_foto;
+CREATE POLICY "diario_alimentare_foto_collaborator_read" ON diario_alimentare_foto
+  FOR SELECT USING (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "dietitian_profiles_collaborator_read" ON dietitian_profiles;
+CREATE POLICY "dietitian_profiles_collaborator_read" ON dietitian_profiles
+  FOR SELECT USING (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "esami_biochimici_collaborator_read" ON esami_biochimici;
+CREATE POLICY "esami_biochimici_collaborator_read" ON esami_biochimici
+  FOR SELECT USING (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "pacchetti_collaborator_read" ON pacchetti;
+CREATE POLICY "pacchetti_collaborator_read" ON pacchetti
+  FOR SELECT USING (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "patient_dietitian_collaborator_read" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_collaborator_read" ON patient_dietitian
+  FOR SELECT USING (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "patient_files_collaborator_read" ON patient_files;
+CREATE POLICY "patient_files_collaborator_read" ON patient_files
+  FOR SELECT USING (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "patient_intake_forms_collaborator_read" ON patient_intake_forms;
+CREATE POLICY "patient_intake_forms_collaborator_read" ON patient_intake_forms
+  FOR SELECT USING (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "whatsapp_messages_collaborator_read" ON whatsapp_messages;
+CREATE POLICY "whatsapp_messages_collaborator_read" ON whatsapp_messages
+  FOR SELECT USING (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "diet_meals_own" ON diet_meals;
+DROP POLICY IF EXISTS "ecm_corsi_auth" ON ecm_corsi;
+DROP POLICY IF EXISTS "push_subscriptions_service_read" ON push_subscriptions;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_66_collaborator_read_gap_plus_residual_policies', 'Aggiunto is_dietitian_level_collaborator alle policy _collaborator_read di 10 tabelle (stesso bug di SEZIONE 63, qui a livello tabella) — segretari potevano leggere ma non scrivere dati clinici/sensibili. Rimosse anche 3 policy residue verificate come non necessarie (diet_meals_own e ecm_corsi_auth davano accesso a qualunque utente autenticato, push_subscriptions_service_read dava lettura pubblica di endpoint/chiavi push di ogni utente)')
+ON CONFLICT (id) DO NOTHING;

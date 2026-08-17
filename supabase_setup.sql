@@ -4116,3 +4116,73 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_55_fix_missing_consent_columns', 'terms_accepted_at + ai_photo_consent_at su profiles — SEZIONE 52 non era mai stata eseguita, causava 400 su ogni fetch profilo')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 56 — FIX: tabella dietitian_reviews mancante del tutto
+--
+-- Trovata durante l'incrocio sistematico query-codice/schema-reale di questa
+-- sessione: src/components/DietitianReviews.jsx (Diet-Plan-Pro-app-claude)
+-- legge/scrive dietitian_reviews in 5 punti, ma la tabella non esiste sul
+-- database — ogni lettura/invio/eliminazione di una recensione fallisce.
+-- Esisteva già una migration completa e mai eseguita in
+-- Diet-Plan-Pro-app-claude/src/sql/dietitian_reviews_migration.sql — questa
+-- sezione la riporta identica qui per restare nel pattern SEZIONE unico del
+-- database condiviso, così va a segno un solo giro di "esegui l'SQL" invece
+-- di due file separati in due repo diversi.
+--
+-- Regola business: una recensione richiede che il paziente abbia avuto
+-- almeno un appuntamento passato e non annullato con quel dietista
+-- ("verified experience", stesso principio di Amazon/TripAdvisor).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS dietitian_reviews (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  dietitian_id  UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  patient_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  rating        SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment       TEXT DEFAULT '',
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(dietitian_id, patient_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_dietitian_reviews_dietitian
+  ON dietitian_reviews(dietitian_id, created_at DESC);
+
+ALTER TABLE dietitian_reviews ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "read_all_reviews" ON dietitian_reviews;
+CREATE POLICY "read_all_reviews" ON dietitian_reviews
+  FOR SELECT TO authenticated
+  USING (true);
+
+DROP POLICY IF EXISTS "patient_review_if_had_appointment" ON dietitian_reviews;
+CREATE POLICY "patient_review_if_had_appointment" ON dietitian_reviews
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    auth.uid() = patient_id
+    AND EXISTS (
+      SELECT 1 FROM appointments a
+      WHERE a.patient_id = auth.uid()
+        AND a.dietitian_id = dietitian_reviews.dietitian_id
+        AND a.appointment_date < NOW()
+        AND COALESCE(a.status, 'pending') <> 'cancelled'
+    )
+  );
+
+DROP POLICY IF EXISTS "patient_update_own_review" ON dietitian_reviews;
+CREATE POLICY "patient_update_own_review" ON dietitian_reviews
+  FOR UPDATE TO authenticated
+  USING (auth.uid() = patient_id)
+  WITH CHECK (auth.uid() = patient_id);
+
+DROP POLICY IF EXISTS "patient_delete_own_review" ON dietitian_reviews;
+CREATE POLICY "patient_delete_own_review" ON dietitian_reviews
+  FOR DELETE TO authenticated
+  USING (auth.uid() = patient_id);
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_56_dietitian_reviews', 'Tabella dietitian_reviews + RLS — mai eseguita, DietitianReviews.jsx falliva su ogni lettura/scrittura')
+ON CONFLICT (id) DO NOTHING;

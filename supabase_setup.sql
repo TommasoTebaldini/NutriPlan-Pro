@@ -5720,3 +5720,101 @@ DROP POLICY IF EXISTS "push_subscriptions_service_read" ON push_subscriptions;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_66_collaborator_read_gap_plus_residual_policies', 'Aggiunto is_dietitian_level_collaborator alle policy _collaborator_read di 10 tabelle (stesso bug di SEZIONE 63, qui a livello tabella) — segretari potevano leggere ma non scrivere dati clinici/sensibili. Rimosse anche 3 policy residue verificate come non necessarie (diet_meals_own e ecm_corsi_auth davano accesso a qualunque utente autenticato, push_subscriptions_service_read dava lettura pubblica di endpoint/chiavi push di ogni utente)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 67 — FIX SICUREZZA: decrypt_text/encrypt_text erano un oracolo di
+-- decifratura chiamabile da chiunque via RPC, bypassando la RLS
+--
+-- Trovato dall'advisor di sicurezza (anon/authenticated_security_definer_
+-- function_executable): decrypt_text(bytea)/encrypt_text(text) — le funzioni
+-- che il pilota di cifratura campi sensibili (cartelle.note, vedi
+-- [[project_field_encryption]]) usa per decifrare/cifrare in modo
+-- trasparente tramite la vista "cartelle" — avevano EXECUTE concesso a
+-- PUBLIC (il default di Postgres alla creazione, mai revocato). Essendo
+-- funzioni nello schema public, PostgREST le espone automaticamente come
+-- /rest/v1/rpc/decrypt_text: qualunque utente autenticato poteva chiamarla
+-- direttamente con QUALUNQUE blob cifrato e ottenere il testo in chiaro,
+-- bypassando completamente la RLS di cartelle_raw — un secondo canale che
+-- vanifica lo scopo della cifratura se un ciphertext altrui viene ottenuto
+-- per qualunque altra via. _enc_key() (la funzione che legge la chiave da
+-- Vault) non ha questo problema: verificato che ha zero grant PUBLIC.
+--
+-- Fix: la vista "cartelle" ha security_invoker=true (corretto, la RLS di
+-- cartelle_raw resta quella di chi interroga) — questo significa che il
+-- ruolo "authenticated" deve poter eseguire decrypt_text/encrypt_text
+-- perché la vista (e i trigger INSTEAD OF che scrivono note_enc) funzionino,
+-- quindi non si può semplicemente revocare l'EXECUTE. La soluzione standard
+-- Supabase è spostare le funzioni fuori dallo schema "public" (che PostgREST
+-- espone come RPC) nello schema "extensions" (già usato da pgcrypto stesso,
+-- non esposto da PostgREST) — la vista e i trigger continuano a funzionare
+-- perché referenziano la funzione col percorso completo, ma
+-- /rest/v1/rpc/decrypt_text smette di esistere.
+--
+-- IMPORTANTE — verificare dopo aver eseguito: aprire una cartella con nota
+-- clinica in pazienti.html e controllare che la nota si legga e si possa
+-- salvare correttamente (lettura via vista "cartelle", scrittura via
+-- trigger INSTEAD OF). Piano di rientro se qualcosa si rompe:
+--   ALTER FUNCTION extensions.decrypt_text(bytea) SET SCHEMA public;
+--   ALTER FUNCTION extensions.encrypt_text(text) SET SCHEMA public;
+-- (poi ripristinare le definizioni di vista/trigger sotto usando
+-- "public.decrypt_text"/"public.encrypt_text" invece di "extensions.").
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER FUNCTION public.decrypt_text(bytea) SET SCHEMA extensions;
+ALTER FUNCTION public.encrypt_text(text) SET SCHEMA extensions;
+
+REVOKE EXECUTE ON FUNCTION extensions.decrypt_text(bytea) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION extensions.encrypt_text(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION extensions.decrypt_text(bytea) TO authenticated;
+GRANT EXECUTE ON FUNCTION extensions.encrypt_text(text) TO authenticated;
+
+CREATE OR REPLACE VIEW public.cartelle
+  WITH (security_invoker = true) AS
+SELECT
+  id, user_id, nome, cognome, ddn, sesso, codice_fiscale, telefono,
+  tags, archived, gdpr_consenso, gdpr_consenso_at, created_at,
+  extensions.decrypt_text(note_enc) AS note
+FROM cartelle_raw;
+
+CREATE OR REPLACE FUNCTION public.cartelle_view_insert()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO 'public'
+AS $$
+DECLARE r public.cartelle_raw;
+BEGIN
+  INSERT INTO public.cartelle_raw
+    (id, user_id, nome, cognome, ddn, sesso, codice_fiscale, telefono,
+     tags, archived, gdpr_consenso, gdpr_consenso_at, created_at, note_enc)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.user_id, NEW.nome, NEW.cognome, NEW.ddn, NEW.sesso,
+     NEW.codice_fiscale, NEW.telefono, NEW.tags, COALESCE(NEW.archived, false),
+     NEW.gdpr_consenso, NEW.gdpr_consenso_at, COALESCE(NEW.created_at, now()),
+     extensions.encrypt_text(NEW.note))
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.created_at := r.created_at;
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.cartelle_view_update()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO 'public'
+AS $$
+BEGIN
+  UPDATE public.cartelle_raw SET
+    nome = NEW.nome, cognome = NEW.cognome, ddn = NEW.ddn, sesso = NEW.sesso,
+    codice_fiscale = NEW.codice_fiscale, telefono = NEW.telefono, tags = NEW.tags,
+    archived = NEW.archived, gdpr_consenso = NEW.gdpr_consenso,
+    gdpr_consenso_at = NEW.gdpr_consenso_at,
+    note_enc = extensions.encrypt_text(NEW.note)
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_67_fix_decrypt_encrypt_rpc_exposure', 'decrypt_text/encrypt_text spostate da public a extensions (non esposto da PostgREST) — erano chiamabili da chiunque via /rest/v1/rpc con qualunque blob cifrato, bypassando la RLS di cartelle_raw. Vista cartelle e trigger cartelle_view_insert/update aggiornati per referenziare extensions.decrypt_text/encrypt_text, EXECUTE concesso solo ad authenticated')
+ON CONFLICT (id) DO NOTHING;

@@ -4322,3 +4322,124 @@ ALTER FUNCTION public.prevent_patient_document_tampering() SET search_path = pub
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_59_fix_search_path_functions', 'SET search_path = public su 7 funzioni trigger — fix WARN advisor sicurezza (function_search_path_mutable)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 60 — FIX SICUREZZA: paziente poteva modificare qualunque campo
+-- del proprio appuntamento (data, dietista, titolo), non solo annullarlo
+--
+-- appointments_own (FOR ALL, nessun WITH CHECK) concede al paziente UPDATE
+-- su ogni colonna della propria riga. La policy "paziente annulla
+-- appuntamento" (pensata per limitare il paziente al solo annullamento) non
+-- basta da sola: essendo permissive, le policy si combinano in OR — quella
+-- più ampia prevale comunque. Stesso pattern già usato per
+-- patient_documents (prevent_patient_document_tampering): un trigger
+-- applica il vincolo a prescindere da quale policy abbia concesso
+-- l'UPDATE.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.prevent_patient_appointment_tampering()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path = public
+AS $$
+DECLARE
+  allowed TEXT[] := ARRAY['status', 'cancelled_at'];
+  old_j JSONB := to_jsonb(OLD);
+BEGIN
+  IF auth.uid() = OLD.patient_id AND auth.uid() IS DISTINCT FROM OLD.dietitian_id THEN
+    IF (to_jsonb(NEW) - allowed) IS DISTINCT FROM (old_j - allowed) THEN
+      RAISE EXCEPTION 'Un paziente può solo annullare un appuntamento, non modificarne gli altri dati';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_prevent_patient_appointment_tampering ON appointments;
+CREATE TRIGGER trg_prevent_patient_appointment_tampering
+  BEFORE UPDATE ON public.appointments
+  FOR EACH ROW EXECUTE FUNCTION prevent_patient_appointment_tampering();
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_60_appointments_patient_tampering', 'Trigger: un paziente può aggiornare solo status/cancelled_at sui propri appuntamenti, non riassegnarli o cambiarne data/dietista')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 61 — FIX SICUREZZA: policy RLS residue/troppo ampie su tabelle
+-- cliniche, collegamento paziente-dietista, documenti, moduli anamnesi
+--
+-- Trovate da un audit sistematico di tutte le 280 policy RLS del database
+-- condiviso. Verificato PRIMA di rimuovere ciascuna: nessuna delle policy
+-- sotto è usata da un percorso di codice reale in NutriPlan-Pro o
+-- Diet-Plan-Pro-app-claude (grep esaustivo di ogni .from(...) rilevante) —
+-- sono residui di iterazioni precedenti del modello di permessi, rimasti
+-- accanto a policy più recenti e corrette senza essere mai stati rimossi.
+-- Postgres unisce le policy permissive in OR: quella più larga vince a
+-- prescindere da quante policy strette esistano accanto.
+--
+-- 1) ncpt_own / bia_records_own / note_specialistiche_own / piani_own /
+--    schede_valutazione_own / patient_documents_own (tutte FOR ALL,
+--    "auth.uid()=user_id OR auth.uid()=patient_id", NESSUN WITH CHECK):
+--    davano al PAZIENTE INSERT/UPDATE/DELETE completo sui propri dati
+--    clinici — diagnosi, referti, piani, documenti firmati — invece del
+--    solo accesso in lettura (quando visible_to_patient=true) già garantito
+--    dalle policy corrette (*_select_patient_visible, *_patient_select,
+--    "paziente legge propri/e ..."). Un paziente avrebbe potuto modificare
+--    la propria diagnosi NCPT, inventare una misurazione BIA, o cancellare
+--    un documento firmato. Il lato dietista resta coperto da
+--    *_dietitian_all/*_collaborator_write (con WITH CHECK corretto) — non
+--    toccate.
+--
+-- 2) patient_dietitian_own (FOR ALL, stesso schema): lato dietista
+--    ridondante con patient_dietitian_dietitian_all (già con WITH CHECK);
+--    lato paziente mai usato da nessun codice reale, e comunque pericoloso
+--    (permetterebbe in teoria di alterare/cancellare il proprio
+--    collegamento clinico).
+--
+-- 3) "paziente si auto-registra" (patient_dietitian, INSERT, WITH CHECK
+--    solo "auth.uid()=patient_id", NESSUN controllo su cartella_id):
+--    verificato che né NutriPlan-Pro né Diet-Plan-Pro-app-claude la usano
+--    mai — il collegamento è sempre creato dal dietista via pazienti.html
+--    (patient_dietitian_insert_own, che verifica anche il ruolo e che la
+--    cartella appartenga davvero al dietista). Rimasta attiva, avrebbe
+--    permesso a un paziente di autoassegnarsi qualunque cartella_id
+--    esistente — incluso quella di un paziente estraneo — ottenendo
+--    accesso in lettura al suo intero fascicolo clinico ovunque sia
+--    visible_to_patient=true.
+--
+-- 4) "dietista crea relazioni" (patient_dietitian, INSERT, WITH CHECK solo
+--    "auth.uid()=dietitian_id", nessun controllo sulla cartella): più
+--    permissiva di patient_dietitian_insert_own, che copre già il caso
+--    reale (verificato in pazienti.html) col controllo di proprietà
+--    cartella incluso.
+--
+-- 5) "Public read by token" / "Public update responses by token" su
+--    patient_intake_forms (qual/with_check letteralmente "true"): nessuna
+--    pagina in nessuno dei due repo implementa davvero il filtro per
+--    token previsto dal nome — funzionalità mai completata. Con
+--    l'anon key (pubblica per definizione, incorporata in ogni pagina)
+--    chiunque poteva leggere/modificare OGNI modulo di anamnesi mai
+--    inviato a qualunque paziente, di qualunque dietista. Se in futuro si
+--    vuole completare il flusso "link pubblico senza login", va rifatto
+--    con una funzione SECURITY DEFINER che verifica il token lato server
+--    (RLS non può confrontare in sicurezza un valore fornito dal client),
+--    non con una policy "true".
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "ncpt_own" ON ncpt;
+DROP POLICY IF EXISTS "bia_records_own" ON bia_records;
+DROP POLICY IF EXISTS "note_specialistiche_own" ON note_specialistiche;
+DROP POLICY IF EXISTS "piani_own" ON piani;
+DROP POLICY IF EXISTS "schede_valutazione_own" ON schede_valutazione;
+DROP POLICY IF EXISTS "patient_documents_own" ON patient_documents;
+DROP POLICY IF EXISTS "patient_dietitian_own" ON patient_dietitian;
+DROP POLICY IF EXISTS "paziente si auto-registra" ON patient_dietitian;
+DROP POLICY IF EXISTS "dietista crea relazioni" ON patient_dietitian;
+DROP POLICY IF EXISTS "weight_logs_own" ON weight_logs;
+DROP POLICY IF EXISTS "Public read by token" ON patient_intake_forms;
+DROP POLICY IF EXISTS "Public update responses by token" ON patient_intake_forms;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_61_drop_overpermissive_rls', 'Rimosse 12 policy RLS residue/troppo ampie (clinico, patient_dietitian, patient_documents, patient_intake_forms) — verificato che nessuna sia usata da codice reale prima di rimuoverle')
+ON CONFLICT (id) DO NOTHING;

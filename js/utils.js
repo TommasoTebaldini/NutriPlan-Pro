@@ -1871,6 +1871,16 @@ function initPianoEsempio(containerId, config) {
 // leggero di un servizio esterno tipo Sentry: nessun costo/account terzo,
 // solo per far emergere errori silenziosi in produzione (es. webhook/JS che
 // falliscono senza che nessuno se ne accorga). Letto solo dagli admin.
+//
+// In più (non solo log invisibile all'utente): un avviso non bloccante,
+// una sola volta per errore distinto per sessione — prima un bug JS in una
+// sezione di pagina falliva del tutto in silenzio, l'utente restava davanti
+// a qualcosa di rotto senza nessun segnale che il problema non dipendeva da
+// lui. Non protegge dal bug in sé (questo sito non ha l'equivalente di un
+// React Error Boundary, essendo pagine HTML/JS indipendenti, non un'unica
+// app con un albero di componenti da isolare) — è solo il segnale minimo
+// perché l'utente sappia che è successo qualcosa e possa provare a
+// ricaricare, invece di continuare a usare una pagina silenziosamente rotta.
 // ═══════════════════════════════════════════════════
 (function _installErrorLogger() {
   const MAX_PER_SESSION = 20; // evita di floodare la tabella in caso di errore ripetuto in loop
@@ -1883,6 +1893,9 @@ function initPianoEsempio(containerId, config) {
     if (seen.has(key)) return;
     seen.add(key);
     sent++;
+    if (typeof toast === 'function') {
+      toast('⚠️ Si è verificato un problema imprevisto. Se qualcosa non funziona come dovrebbe, prova a ricaricare la pagina.', 'err');
+    }
     try {
       if (typeof sb === 'undefined') return;
       await sb.from('client_errors').insert({

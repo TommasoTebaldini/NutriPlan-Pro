@@ -452,7 +452,7 @@ async function handleSubscribe() {
 
   try {
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) { toast('Effettua il login prima di abbonarti.', 'error'); btn.disabled = false; return; }
+    if (!session) { toast('Effettua il login prima di abbonarti.', 'err'); btn.disabled = false; return; }
 
     const plan = billingAnnual ? 'annual' : 'monthly';
     const res = await fetch(SUPABASE_URL + '/functions/v1/create-checkout-session', {
@@ -471,7 +471,7 @@ async function handleSubscribe() {
       throw new Error(data.error || 'Impossibile creare la sessione di pagamento');
     }
   } catch (err) {
-    toast('❌ Errore: ' + err.message, 'error');
+    toast('❌ Errore: ' + err.message, 'err');
     btn.disabled = false;
     btn.textContent = '⭐ Inizia la prova gratuita';
   }
@@ -487,9 +487,9 @@ async function manageSubscription() {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-    else toast('Impossibile aprire il portale: ' + (data.error || ''), 'error');
+    else toast('Impossibile aprire il portale: ' + (data.error || ''), 'err');
   } catch (err) {
-    toast('❌ Errore: ' + err.message, 'error');
+    toast('❌ Errore: ' + err.message, 'err');
   }
 }
 

@@ -788,12 +788,12 @@
     <div class="q-card-hdr" onclick="toggleQCard('bes')">
       <h3>🍽️ BES — Binge Eating Scale</h3>
       <div style="display:flex;align-items:center;gap:8px">
-        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95"><span data-only-lang="it">Binge Eating Disorder — 16 item</span><span data-only-lang="en" style="display:none">Binge Eating Disorder — 16 items</span></span>
+        <span class="q-badge" style="background:#EDE9FE;color:#4C1D95"><span data-only-lang="it">Binge Eating Disorder — versione abbreviata, 8 item</span><span data-only-lang="en" style="display:none">Binge Eating Disorder — abbreviated version, 8 items</span></span>
         <span id="bes-tog">▼</span>
       </div>
     </div>
     <div class="q-card-body" id="qbody-bes">
-      <div class="info-box ib-teal" style="font-size:12px"><span data-only-lang="it">La BES (Gormally et al., 1982) valuta la presenza e la gravità del Binge Eating Disorder (BED). Ogni item ha 3–4 opzioni con peso differente. Totale: 0–46 punti. Cut-off: &lt;17 = nessuna/lieve · 17-26 = moderata · ≥27 = grave.</span><span data-only-lang="en" style="display:none">The BES (Gormally et al., 1982) assesses the presence and severity of Binge Eating Disorder (BED). Each item has 3–4 options with different weights. Total: 0–46 points. Cut-off: &lt;17 = none/mild · 17–26 = moderate · ≥27 = severe.</span></div>
+      <div class="info-box ib-teal" style="font-size:12px"><span data-only-lang="it">Versione abbreviata (8 dei 16 item) della BES (Gormally et al., 1982), che valuta la presenza e la gravità del Binge Eating Disorder (BED). Ogni item ha 4 opzioni (0–3 punti). Totale: 0–24 punti. Cut-off proporzionali alla scala originale (non validati clinicamente per questa versione ridotta): &lt;9 = nessuna/lieve · 9–13 = moderata · ≥14 = grave. Per uno screening con soglie cliniche validate, usare la BES completa a 16 item.</span><span data-only-lang="en" style="display:none">Abbreviated version (8 of 16 items) of the BES (Gormally et al., 1982), which assesses the presence and severity of Binge Eating Disorder (BED). Each item has 4 options (0–3 points). Total: 0–24 points. Cut-offs proportionally scaled from the original scale (not clinically validated for this shortened version): &lt;9 = none/mild · 9–13 = moderate · ≥14 = severe. For a screening with clinically validated thresholds, use the full 16-item BES.</span></div>
       <div id="bes-items"></div>
       <div class="q-result-box" id="bes-result"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
@@ -2155,12 +2155,15 @@ function calcBES(show) {
   if (show && vals.some(v => v === null)) { toast(_L('Compila tutte le domande','Fill in all questions'), 'err'); return; }
   if (!show) return;
   const score = vals.reduce((s,v) => s+(v||0), 0);
+  // Versione abbreviata (8/16 item, max 24 invece di 46) — soglie scalate
+  // proporzionalmente da quelle ufficiali (<17 · 17-26 · >26 su 46) e non
+  // validate clinicamente per questa forma ridotta, vedi info-box sopra.
   let label, color, desc, rec;
-  if (score < 17) {
+  if (score < 9) {
     label = _L('🟢 Nessuna/Lieve problematica binge','🟢 No/Mild binge eating problem'); color = '#ECFDF5';
     desc = _L('Nessuna evidenza significativa di Binge Eating Disorder.','No significant evidence of Binge Eating Disorder.');
     rec = _L('Monitorare i comportamenti alimentari nel tempo. Educazione nutrizionale centrata sul riconoscimento dei segnali di fame/sazietà.','Monitor eating behaviours over time. Nutritional education focused on recognising hunger/satiety cues.');
-  } else if (score <= 26) {
+  } else if (score <= 13) {
     label = _L('🟡 Binge Eating Moderato','🟡 Moderate Binge Eating'); color = '#FEF3C7';
     desc = _L('Presenza di comportamenti binge di intensità moderata.','Presence of moderate-intensity binge behaviours.');
     rec = _L('Valutare i trigger emotivi delle abbuffate. Iniziare un lavoro cognitivo-comportamentale (CBT-E). Collaborazione con psicologo. Piano alimentare strutturato senza restrizioni rigide.','Assess emotional triggers of binges. Begin cognitive-behavioural work (CBT-E). Collaboration with psychologist. Structured meal plan without rigid restrictions.');
@@ -2171,8 +2174,8 @@ function calcBES(show) {
   }
   showResult('bes-result', `
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">
-      <div><div style="font-size:10px;color:var(--slate-l)">${_L('Punteggio BES','BES Score')}</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/46</span></div></div>
-      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/46*100)}%;background:${score<17?'#10B981':score<=26?'#F59E0B':'#EF4444'}"></div></div>
+      <div><div style="font-size:10px;color:var(--slate-l)">${_L('Punteggio BES (versione abbreviata)','BES Score (abbreviated version)')}</div><div class="q-result-score">${score}<span style="font-size:14px;font-weight:400">/24</span></div></div>
+      <div class="q-bar" style="flex:1;min-width:100px"><div class="q-bar-fill" style="width:${Math.round(score/24*100)}%;background:${score<9?'#10B981':score<=13?'#F59E0B':'#EF4444'}"></div></div>
       <div class="q-result-label">${label}</div>
     </div>
     <div class="q-result-desc"><b>${_L('Interpretazione','Interpretation')}:</b> ${desc}<br><br><b>${_L('Raccomandazione clinica','Clinical recommendation')}:</b> ${rec}</div>
@@ -2515,7 +2518,7 @@ function calcSGA(show) {
       </div>
     </div>
     <div class="q-result-desc"><b>${_L('Interpretazione','Interpretation')}:</b> ${desc}<br><br><b>${_L('Raccomandazione ESPEN','ESPEN Recommendation')}:</b> ${rec}</div>
-  `, color, 'SGA', { categoria: cat, label, countA, countB, countC });
+  `, color, 'SGA', { score: cat, categoria: cat, label, countA, countB, countC });
 }
 
 // ─────────────────────────────────
@@ -3029,10 +3032,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ─── SARC-F ──────────────────────────────────────────────────────────────────
 function calcSARCF(show) {
-  const vals = ['sarcf1','sarcf2','sarcf3','sarcf4','sarcf5'].map(n => parseInt(getRadio(n)||'0'));
+  const raw = ['sarcf1','sarcf2','sarcf3','sarcf4','sarcf5'].map(n => getRadio(n));
+  if (show && raw.some(v => v === null)) { toast(_L('Compila tutte le domande','Fill in all questions'), 'err'); return; }
+  if (!show) return;
+  const vals = raw.map(v => parseInt(v||'0'));
   const score = vals.reduce((a,b) => a+b, 0);
   const box = document.getElementById('sarcf-result');
-  if (!show) return;
   let col, label, desc;
   if (score <= 3) {
     col = '#10B981'; label = _L('🟢 Basso rischio sarcopenia','🟢 Low sarcopenia risk');
@@ -3052,10 +3057,12 @@ function calcSARCF(show) {
 
 // ─── FRAIL Scale ─────────────────────────────────────────────────────────────
 function calcFRAIL(show) {
-  const vals = ['frail1','frail2','frail3','frail4','frail5'].map(n => parseInt(getRadio(n)||'0'));
+  const raw = ['frail1','frail2','frail3','frail4','frail5'].map(n => getRadio(n));
+  if (show && raw.some(v => v === null)) { toast(_L('Compila tutte le domande','Fill in all questions'), 'err'); return; }
+  if (!show) return;
+  const vals = raw.map(v => parseInt(v||'0'));
   const score = vals.reduce((a,b) => a+b, 0);
   const box = document.getElementById('frail-result');
-  if (!show) return;
   let col, label, desc;
   if (score === 0) {
     col = '#10B981'; label = _L('🟢 Robusto (Non fragile)','🟢 Robust (Not frail)');
@@ -3078,10 +3085,12 @@ function calcFRAIL(show) {
 
 // ─── STRONGkids ───────────────────────────────────────────────────────────────
 function calcSTRONGkids(show) {
-  const vals = ['sk1','sk2','sk3','sk4'].map(n => parseInt(getRadio(n)||'0'));
+  const raw = ['sk1','sk2','sk3','sk4'].map(n => getRadio(n));
+  if (show && raw.some(v => v === null)) { toast(_L('Compila tutte le domande','Fill in all questions'), 'err'); return; }
+  if (!show) return;
+  const vals = raw.map(v => parseInt(v||'0'));
   const score = vals.reduce((a,b) => a+b, 0);
   const box = document.getElementById('strongkids-result');
-  if (!show) return;
   let col, label, desc;
   if (score === 0) {
     col = '#10B981'; label = _L('🟢 Basso rischio nutrizionale','🟢 Low nutritional risk');
@@ -3150,6 +3159,7 @@ function calcTFEQ(show) {
   const crItems = ['tfeq1','tfeq2','tfeq3','tfeq4','tfeq5','tfeq6'];
   const ueItems = ['tfeq7','tfeq8','tfeq9','tfeq10','tfeq11','tfeq12','tfeq13','tfeq14','tfeq15'];
   const eeItems = ['tfeq16','tfeq17','tfeq18'];
+  if (show && [...crItems, ...ueItems, ...eeItems].some(n => getRadio(n) === null)) { toast(_L('Compila tutte le domande','Fill in all questions'), 'err'); return; }
   const getSum = (items) => items.reduce((sum, n) => sum + parseInt(getRadio(n)||'1'), 0);
   const crRaw = getSum(crItems);
   const ueRaw = getSum(ueItems);
@@ -3197,11 +3207,12 @@ function calcTFEQ(show) {
 function calcPSS10(show) {
   const direct = ['pss1','pss2','pss3','pss6','pss9','pss10q'];
   const reversed = ['pss4r','pss5r','pss7r','pss8r'];
+  if (show && [...direct, ...reversed].some(k => (scaleState[k] ?? null) === null)) { toast(_L('Compila tutte le domande','Fill in all questions'), 'err'); return; }
+  if (!show) return;
   const dSum = direct.reduce((s, k) => s + (scaleState[k] ?? 0), 0);
   const rSum = reversed.reduce((s, k) => s + (4 - (scaleState[k] ?? 0)), 0);
   const score = dSum + rSum;
   const box = document.getElementById('pss10-result');
-  if (!show) return;
   let col, label, desc;
   if (score <= 13) {
     col = '#10B981'; label = _L('🟢 Stress percepito basso','🟢 Low perceived stress');

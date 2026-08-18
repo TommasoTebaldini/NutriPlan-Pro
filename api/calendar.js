@@ -67,9 +67,13 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.s
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
-// When set, calendar URLs must include ?token=HMAC-SHA256(uid, CALENDAR_SECRET).
-// Without this env var the feed accepts the bare uid (legacy / backward compat).
-// Set CALENDAR_SECRET in the Vercel dashboard to enable token verification.
+// Calendar URLs must include ?token=HMAC-SHA256(uid, CALENDAR_SECRET).
+// CALENDAR_SECRET must be set (Vercel dashboard → env var) — senza, il feed
+// nega sempre (fail closed): prima del 2026-08-18 mancava il fallback in
+// chiaro sul solo uid, esponendo agenda/nomi pazienti a chiunque conoscesse
+// lo UUID del dietista, senza login. Se cambi CALENDAR_SECRET, ogni link di
+// abbonamento calendario già generato smette di funzionare finché non si
+// rigenera da Agenda.
 const CALENDAR_SECRET = process.env.CALENDAR_SECRET || '';
 
 function deriveCalendarToken(uid) {
@@ -77,7 +81,7 @@ function deriveCalendarToken(uid) {
 }
 
 function verifyCalendarToken(uid, token) {
-  if (!CALENDAR_SECRET) return true; // secret not configured — skip verification
+  if (!CALENDAR_SECRET) return false; // secret non configurato — nega, non permettere in chiaro
   if (!token) return false;
   const expected = deriveCalendarToken(uid);
   // Use timingSafeEqual to prevent timing attacks

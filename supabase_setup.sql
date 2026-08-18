@@ -6097,3 +6097,100 @@ REVOKE EXECUTE ON FUNCTION extensions.encrypt_text(text) FROM anon;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_72_fix_explicit_anon_grants_not_public', 'Correzione: REVOKE EXECUTE FROM PUBLIC (SEZIONE 67 e 71) non basta quando esiste anche un grant esplicito diretto ad anon (verificato via pg_proc.proacl) — questo progetto concede grant espliciti per ruolo alla creazione di ogni funzione, non solo il grant implicito a PUBLIC. Aggiunto REVOKE EXECUTE ... FROM anon esplicito su find_dietitian_by_email/decrypt_text/encrypt_text. Nessuna delle tre era comunque sfruttabile nel frattempo (guardia nel corpo per la prima, extensions non esposto da PostgREST per le altre due), ma l''ACL ora riflette correttamente l''intento dichiarato')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 73 — chat_messages: aggiunta dietitian_id per evitare lettura
+-- incrociata della chat se un paziente ha più dietisti indipendenti
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Scoperto continuando l'audit dopo la SEZIONE 72: chat_messages non ha MAI
+-- avuto una colonna che leghi un messaggio a UNO specifico dietista — solo
+-- patient_id. Le policy RLS attuali concedono lettura a "qualunque dietista
+-- collegato a questo paziente" (EXISTS su patient_dietitian), il che è
+-- corretto quando un paziente ha un solo studio (titolare + collaboratori,
+-- che condividono legittimamente l'accesso), ma NON quando un paziente è
+-- collegato a due dietisti INDIPENDENTI (studi diversi) — scenario reale e
+-- già possibile oggi tramite confermaCollegamento() in pazienti.html, che
+-- permette a un dietista di collegare qualunque account paziente esistente
+-- al proprio studio. In quel caso il secondo dietista potrebbe leggere
+-- l'intera chat scambiata con il primo, senza alcun legame con quei messaggi.
+--
+-- Verificato via query diretta: OGGI nessun paziente ha 2+ dietitian_id
+-- distinti in patient_dietitian (0 righe), quindi il rischio non si è ancora
+-- concretizzato — ma è strutturale e latente, non richiede altro che un
+-- singolo collegamento futuro per attivarsi.
+--
+-- Fix in due parti:
+-- 1) Questa SEZIONE (SQL, retrocompatibile, non richiede modifiche urgenti
+--    al codice JS): aggiunge dietitian_id, lo retro-popola per le righe
+--    esistenti (sicuro e univoco oggi, verificato sopra), aggiorna le due
+--    policy che concedono accesso "a qualunque dietista collegato" perché
+--    richiedano ANCHE dietitian_id IS NULL (righe storiche, nessun rischio
+--    dato il backfill) OR dietitian_id = lo specifico dietista/studio che
+--    legge — senza rompere l'invio/lettura attuale, dato che il codice JS
+--    non passa ancora dietitian_id negli insert (la colonna resta NULL per
+--    i nuovi messaggi finché non viene aggiornato il codice).
+-- 2) Un secondo giro (JS, SEZIONE successiva) aggiornerà tutti i punti che
+--    fanno insert su chat_messages (chat.html, broadcast.html,
+--    patient-portal.html lato dietista; ChatPage.jsx, CheckinPage.jsx,
+--    DietPage.jsx lato paziente) per valorizzare dietitian_id sempre —
+--    da spedire SOLO dopo che questa SEZIONE risulta eseguita, per non
+--    rompere l'invio messaggi nel frattempo (stesso ordine "SQL prima, poi
+--    codice dipendente" seguito per ogni SEZIONE di questa sessione).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS dietitian_id UUID REFERENCES auth.users(id);
+
+UPDATE chat_messages cm
+SET dietitian_id = pd.dietitian_id
+FROM patient_dietitian pd
+WHERE pd.patient_id = cm.patient_id
+  AND cm.dietitian_id IS NULL;
+
+CREATE INDEX IF NOT EXISTS idx_chat_messages_dietitian_id ON chat_messages(dietitian_id);
+
+DROP POLICY IF EXISTS "chat visibile ai coinvolti" ON chat_messages;
+CREATE POLICY "chat visibile ai coinvolti" ON chat_messages
+  FOR ALL USING (
+    (patient_id = (select auth.uid()))
+    OR (
+      EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = chat_messages.patient_id
+          AND pd.dietitian_id = get_studio_owner((select auth.uid()))
+      )
+      AND (dietitian_id IS NULL OR dietitian_id = get_studio_owner((select auth.uid())))
+    )
+  )
+  WITH CHECK (
+    (patient_id = (select auth.uid()))
+    OR (
+      EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = chat_messages.patient_id
+          AND pd.dietitian_id = get_studio_owner((select auth.uid()))
+      )
+      AND (dietitian_id IS NULL OR dietitian_id = get_studio_owner((select auth.uid())))
+    )
+  );
+
+DROP POLICY IF EXISTS "chat_messages_select_visible" ON chat_messages;
+CREATE POLICY "chat_messages_select_visible" ON chat_messages
+  FOR SELECT USING (
+    (
+      (patient_id = (select auth.uid()))
+      OR (
+        EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = chat_messages.patient_id
+            AND pd.dietitian_id = get_studio_owner((select auth.uid()))
+        )
+        AND (dietitian_id IS NULL OR dietitian_id = get_studio_owner((select auth.uid())))
+      )
+    )
+    AND (status = 'sent' OR sender_id = (select auth.uid()))
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_73_chat_messages_dietitian_id', 'Aggiunta chat_messages.dietitian_id (nullable, retro-popolata dalle relazioni patient_dietitian esistenti — verificato 0 pazienti con 2+ dietisti oggi, backfill univoco e sicuro). Aggiornate le policy "chat visibile ai coinvolti" e "chat_messages_select_visible" per richiedere dietitian_id IS NULL (righe storiche) OR dietitian_id = lo studio di chi legge, invece del solo "qualunque dietista collegato al paziente". Chiude una lettura incrociata della chat, oggi non ancora sfruttabile (nessun paziente con relazioni multiple) ma strutturalmente possibile dato che pazienti.html permette di collegare qualunque account paziente esistente a un nuovo studio. Il codice JS che valorizza dietitian_id sui nuovi messaggi arriva in una sezione/commit separato, da spedire solo a migrazione confermata eseguita')
+ON CONFLICT (id) DO NOTHING;

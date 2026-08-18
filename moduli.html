@@ -548,7 +548,9 @@
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function toast(msg,type='ok'){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast show '+(type==='err'?'toast-err':type==='warn'?'toast-warn':'toast-ok');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3200);}
+// toast() non è ridefinito qui: js/utils.min.js (caricato con defer, quindi
+// sempre dopo) lo sovrascriverebbe comunque — una versione locale qui
+// sarebbe morta, riconosce solo ok/err/info, mai 'warn' (vedi commit).
 
 document.addEventListener('DOMContentLoaded', async () => {
   const overlay = document.getElementById('loading-overlay');
@@ -833,7 +835,7 @@ function stampaModulo(tipo) {
 
 async function salvaModulo(tipo, titoloDefault) {
   const cartellaId = document.getElementById('inp-cartella')?.value;
-  if (!cartellaId) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'warn'); return; }
+  if (!cartellaId) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'info'); return; }
   if (!currentUser) return;
   const titolo = titoloDefault + ' — ' + new Date().toLocaleDateString('it');
   const { error } = await sb.from('note_specialistiche').insert({

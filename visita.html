@@ -275,7 +275,9 @@
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function toast(msg, type='ok'){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast show '+(type==='err'?'toast-err':type==='warn'?'toast-warn':'toast-ok');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3200);}
+// toast() non è ridefinito qui: js/utils.min.js (caricato con defer, quindi
+// sempre dopo) lo sovrascriverebbe comunque — una versione locale qui
+// sarebbe morta, riconosce solo ok/err/info, mai 'warn' (vedi commit).
 
 let _currentVisitaId = null;
 
@@ -375,7 +377,7 @@ async function salvaVisita() {
   const contenuto = document.getElementById('editor-body').innerHTML;
 
   if (!currentUser) { toast(_L('Sessione scaduta','Session expired'), 'err'); return; }
-  if (!cartellaId) { toast(_L('Seleziona la cartella per il salvataggio','Select a patient folder to save'), 'warn'); return; }
+  if (!cartellaId) { toast(_L('Seleziona la cartella per il salvataggio','Select a patient folder to save'), 'info'); return; }
 
   const dati = JSON.stringify({ tipo_visita: tipo, data_visita: data, contenuto_html: contenuto });
   const record = {

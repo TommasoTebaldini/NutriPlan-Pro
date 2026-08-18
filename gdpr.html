@@ -541,11 +541,11 @@ async function toggleConsenso(cartellaId, val) {
   let { error } = await sb.from('cartelle').update({ gdpr_consenso: val, gdpr_consenso_at: val ? new Date().toISOString() : null }).eq('id', cartellaId);
   if (error && (error.message || '').includes('gdpr_consenso')) {
     // Colonna non ancora migrata — eseguire: ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso BOOLEAN DEFAULT FALSE; ADD COLUMN IF NOT EXISTS gdpr_consenso_at TIMESTAMPTZ;
-    toast('⚠️ Colonna GDPR mancante — esegui la migrazione SQL in Supabase', 'warn');
+    toast('⚠️ Colonna GDPR mancante — esegui la migrazione SQL in Supabase', 'info');
     return;
   }
   if (error) { toast('Errore aggiornamento consenso: ' + error.message, 'err'); return; }
-  toast(val ? '✅ Consenso registrato' : '❌ Consenso revocato', val ? 'ok' : 'warn');
+  toast(val ? '✅ Consenso registrato' : '❌ Consenso revocato', val ? 'ok' : 'info');
   // update local
   const c = _allCartelle.find(x => x.id === cartellaId);
   if (c) c.gdpr_consenso = val;
@@ -599,7 +599,7 @@ function renderPortabilita() {
 
 async function esportaDatiPaziente() {
   const cartellaId = document.getElementById('portabilita-select').value;
-  if (!cartellaId) { toast('Seleziona un paziente', 'warn'); return; }
+  if (!cartellaId) { toast('Seleziona un paziente', 'info'); return; }
   const cart = _allCartelle.find(c => c.id === cartellaId);
   showLoading(true);
   try {

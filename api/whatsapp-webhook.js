@@ -95,9 +95,19 @@ async function handleSend(req, res) {
     const testoTrim = String(testo || '').trim();
     if (!cartella_id || !testoTrim) return res.status(400).json({ error: 'cartella_id o testo mancante' });
 
+    // Un collaboratore di studio invia usando le credenziali WhatsApp e le
+    // cartelle del titolare, non le proprie (whatsapp.html risolve allo
+    // stesso modo lato client con studioOwnerId||currentUser.id — qui va
+    // rifatto perché il client non è affidabile: senza questo, ogni
+    // collaboratore riceveva "Paziente non trovato" a prescindere dal setup,
+    // dato che dietitian_credentials/cartelle sono sempre del titolare).
+    // Stessa logica di get_studio_owner() in supabase_setup.sql.
+    const collab = await sbFetch(`studio_collaborators?collaborator_id=eq.${user.id}&select=titolare_id&limit=1`);
+    const ownerId = collab?.[0]?.titolare_id || user.id;
+
     const [profiles, cartelle] = await Promise.all([
-      sbFetch(`dietitian_credentials?id=eq.${user.id}&select=wa_phone_number_id,wa_access_token,wa_template_name,wa_template_lang`),
-      sbFetch(`cartelle?id=eq.${cartella_id}&user_id=eq.${user.id}&select=id,telefono`),
+      sbFetch(`dietitian_credentials?id=eq.${ownerId}&select=wa_phone_number_id,wa_access_token,wa_template_name,wa_template_lang`),
+      sbFetch(`cartelle?id=eq.${cartella_id}&user_id=eq.${ownerId}&select=id,telefono`),
     ]);
     const prof = profiles?.[0];
     const cart = cartelle?.[0];
@@ -111,7 +121,7 @@ async function handleSend(req, res) {
     const waPhone = cart.telefono.replace(/[^\d+]/g, '');
 
     const lastInbound = await sbFetch(
-      `whatsapp_messages?dietitian_id=eq.${user.id}&wa_phone=eq.${encodeURIComponent(waPhone)}&direction=eq.in&order=created_at.desc&limit=1&select=created_at`
+      `whatsapp_messages?dietitian_id=eq.${ownerId}&wa_phone=eq.${encodeURIComponent(waPhone)}&direction=eq.in&order=created_at.desc&limit=1&select=created_at`
     );
     const withinWindow = lastInbound?.[0]?.created_at
       ? (Date.now() - new Date(lastInbound[0].created_at).getTime()) < SEND_WINDOW_MS
@@ -153,7 +163,7 @@ async function handleSend(req, res) {
     await sbFetch('whatsapp_messages', {
       method: 'POST',
       body: JSON.stringify({
-        dietitian_id: user.id, cartella_id, wa_phone: waPhone, direction: 'out',
+        dietitian_id: ownerId, cartella_id, wa_phone: waPhone, direction: 'out',
         body: testoTrim, wa_message_id: waMessageId, status: 'sent',
       }),
     });

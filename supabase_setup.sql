@@ -5972,3 +5972,46 @@ DROP POLICY IF EXISTS "patient_intake_forms_collaborator_read" ON patient_intake
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_69_perf_patient_intake_forms', 'Ultima tabella rimasta da SEZIONE 65: auth.uid() avvolto in (select ...), rimossa patient_intake_forms_collaborator_read diventata duplicato puro di _collaborator_write dopo SEZIONE 66. Verificato che patient_intake_forms non ha il problema di sicurezza di SEZIONE 68 (nessuna colonna cartella_id)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 70 — FIX SICUREZZA CRITICO: qualunque dietista poteva leggere le
+-- cartelle (nome, DDN, codice fiscale, telefono, nota clinica decifrata) di
+-- QUALUNQUE altro dietista sulla piattaforma, senza alcun legame di studio
+--
+-- Trovato continuando l'audit dopo SEZIONE 68/69: "cartelle_select_combined"
+-- (consolidata in SEZIONE 65 a partire da una policy preesistente "dietista
+-- legge cartelle", mai documentata nel file — verosimilmente creata a mano
+-- dal Dashboard Supabase in una sessione precedente, nessuna traccia in git)
+-- ha un terzo ramo OR:
+--   EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'dietitian')
+-- che NON referenzia affatto la riga di cartelle_raw in esame — controlla
+-- solo che CHI CHIAMA sia un dietista, condizione identica per ogni riga
+-- della tabella. Risultato: qualunque account con role='dietitian' (soglia
+-- banale da raggiungere, basta registrarsi) poteva leggere OGNI cartella di
+-- OGNI paziente di OGNI altro dietista sulla piattaforma — inclusa la nota
+-- clinica, decifrata in automatico dalla vista "cartelle" (SEZIONE 40/67).
+--
+-- Confronto con piani_template_select_combined (stesso "EXISTS ... role =
+-- 'dietitian'" ma dentro "(shared = true) AND (...)"): lì è corretto, un
+-- modello condiviso apposta con gli altri dietisti — la differenza è che
+-- piani_template ha una colonna "shared" che ancora la condizione alla riga.
+-- cartelle_raw non ha (e non deve avere) l'equivalente: le cartelle pazienti
+-- non sono mai pensate per essere condivise fuori dal proprio studio.
+--
+-- Verificato via grep esaustivo (24 file, ogni singola chiamata
+-- .from('cartelle')/.from('cartelle_raw') in entrambi i repo): tutte
+-- filtrano già per studioOwnerId||currentUser.id — nessun percorso di
+-- codice reale, nessuna funzione admin, nessun sistema di referral tra
+-- dietisti dipende da questo accesso incrociato. Sicuro da rimuovere.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "cartelle_select_combined" ON cartelle_raw;
+CREATE POLICY "cartelle_select_combined" ON cartelle_raw
+  FOR SELECT USING (
+    (user_id = get_studio_owner((select auth.uid())))
+    OR is_linked_patient(id)
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_70_fix_cartelle_cross_dietitian_read', 'Fix sicurezza critico: rimosso da cartelle_select_combined un ramo OR non correlato alla riga (EXISTS(...role=''dietitian''), vero per qualunque dietista su qualunque riga) che permetteva a QUALUNQUE dietista di leggere le cartelle — inclusa la nota clinica decifrata — di QUALUNQUE altro dietista, senza legame di studio. Verificato via grep esaustivo che nessun codice reale dipenda da questo accesso incrociato')
+ON CONFLICT (id) DO NOTHING;

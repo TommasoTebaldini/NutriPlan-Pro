@@ -227,7 +227,7 @@ async function loadCSCartelle() {
   if (!currentUser) return;
   const sel = document.getElementById('cs-cartella');
   if (!sel || sel.dataset.loaded) return;
-  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', currentUser.id).order('nome');
+  const { data } = await sb.from('cartelle').select('id,nome').eq('user_id', studioOwnerId || currentUser.id).order('nome');
   if (!data) return;
   sel.innerHTML = `<option value="">-- ${_L('Nessuna cartella selezionata','No folder selected')} --</option>`;
   data.forEach(c => {
@@ -246,7 +246,7 @@ async function onCartellaChange() {
 }
 
 async function caricaNoteConsigli(cartella_id) {
-  const { data } = await sb.from('note_specialistiche').select('id,dati').eq('cartella_id', cartella_id).eq('user_id', currentUser.id).eq('tipo', 'consiglio');
+  const { data } = await sb.from('note_specialistiche').select('id,dati').eq('cartella_id', cartella_id).eq('user_id', studioOwnerId || currentUser.id).eq('tipo', 'consiglio');
   noteConsigli = {};
   (data || []).forEach(row => {
     try {
@@ -280,7 +280,7 @@ async function salvaNotePaziente(consiglioId) {
     pasti: c?.pasti || '', porzioni: c?.porzioni || '', idratazione: c?.idratazione || '',
     stampa_html: c ? buildStampaHTML(c, testo) : '',
   };
-  const payload = { cartella_id, user_id: currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
+  const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
   const existing = noteConsigli[consiglioId];
@@ -347,7 +347,7 @@ async function salvaSelezioneInCartella() {
       pasti: c?.pasti || '', porzioni: c?.porzioni || '', idratazione: c?.idratazione || '',
       stampa_html: c ? buildStampaHTML(c, testo) : '',
     };
-    const payload = { cartella_id, user_id: currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
+    const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'consiglio', nota: c?.nome || consiglioId, dati: JSON.stringify(dati) };
     const existing = noteConsigli[consiglioId];
     let result;
     if (existing?.id) {

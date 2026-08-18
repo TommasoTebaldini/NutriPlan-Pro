@@ -399,12 +399,36 @@ function switchChatTab(tab) {
 let _diaryFoodByDate = {}, _diaryTotalsByDate = {}, _diaryWaterByDate = {};
 let _diaryWellByDate = {}, _diaryActByDate = {}, _diaryWeightByDate = {};
 
+// Barra di selezione periodo — estratta in una funzione a sé perché deve
+// essere visibile ANCHE quando il periodo selezionato non ha dati (prima era
+// inline solo nel ramo "con dati" di renderAndamentoContent: selezionando un
+// periodo senza log l'intera card, selettore incluso, spariva e non c'era
+// più modo di allargare il periodo se non ricaricando la pagina — e dato che
+// il default è 7 giorni, ricaricare non bastava nemmeno).
+function andamentoFilterBarHtml(withViewModeToggle) {
+  const vmodeHtml = withViewModeToggle ? `<div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden;margin-left:auto">
+      <button id="diary-vmode-day" onclick="setDiaryViewMode('day')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:${_diaryViewMode==='day'?'var(--teal)':'white'};color:${_diaryViewMode==='day'?'white':'var(--slate-m)'};transition:all .15s">${_L('Giorno per giorno','Day by day')}</button>
+      <button id="diary-vmode-over" onclick="setDiaryViewMode('over')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:${_diaryViewMode==='over'?'var(--teal)':'white'};color:${_diaryViewMode==='over'?'white':'var(--slate-m)'};transition:all .15s">${_L('Prospetto','Overview')}</button>
+    </div>` : '';
+  return `<div class="and-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-size:12px;color:var(--slate-l);font-weight:600">${_L('Periodo:','Period:')}</span>
+    <select id="and-period-filter" onchange="filterAndamento(this.value)">
+      <option value="7"  ${andamentoPeriodDays===7 ?'selected':''}>${_L('Ultimi 7 giorni','Last 7 days')}</option>
+      <option value="14" ${andamentoPeriodDays===14?'selected':''}>${_L('Ultimi 14 giorni','Last 14 days')}</option>
+      <option value="30" ${andamentoPeriodDays===30?'selected':''}>${_L('Ultimi 30 giorni','Last 30 days')}</option>
+      <option value="60" ${andamentoPeriodDays===60?'selected':''}>${_L('Ultimi 60 giorni','Last 60 days')}</option>
+      <option value="0"  ${andamentoPeriodDays===0 ?'selected':''}>${_L('Tutto','All')}</option>
+    </select>
+    ${vmodeHtml}
+  </div>`;
+}
+
 function renderAndamentoContent(panel) {
   const activityLogs = Object.values(_diaryActByDate).flat();
   const totalActMin = activityLogs.reduce((s, a) => s + (a.duration_minutes || 0), 0);
 
   if (!_diaryDates.length) {
-    panel.innerHTML = `<div class="and-empty"><div style="font-size:36px">📓</div><div>${_L('Nessun dato registrato in questo periodo.','No data recorded in this period.')}<br><span style="font-size:12px;color:var(--slate-l)">${_L('I dati appariranno quando il paziente utilizzerà l\'app NutriPlan.','Data will appear when the patient uses the NutriPlan app.')}</span></div></div>`;
+    panel.innerHTML = andamentoFilterBarHtml() + `<div class="and-empty"><div style="font-size:36px">📓</div><div>${_L('Nessun dato registrato in questo periodo.','No data recorded in this period.')}<br><span style="font-size:12px;color:var(--slate-l)">${_L('I dati appariranno quando il paziente utilizzerà l\'app NutriPlan.','Data will appear when the patient uses the NutriPlan app.')}</span></div></div>`;
     return;
   }
 
@@ -442,20 +466,7 @@ function renderAndamentoContent(panel) {
   const corrLabel = r => r === null ? null : Math.abs(r) < 0.2 ? _L('assente','absent') : Math.abs(r) < 0.4 ? _L('debole','weak') : Math.abs(r) < 0.6 ? _L('moderata','moderate') : Math.abs(r) < 0.8 ? _L('forte','strong') : _L('molto forte','very strong');
   const corrColor = r => r === null ? '#94A3B8' : r > 0.4 ? '#16A34A' : r < -0.4 ? '#DC2626' : '#94A3B8';
 
-  const filterSel = `<div class="and-filter-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-    <span style="font-size:12px;color:var(--slate-l);font-weight:600">${_L('Periodo:','Period:')}</span>
-    <select id="and-period-filter" onchange="filterAndamento(this.value)">
-      <option value="7"  ${andamentoPeriodDays===7 ?'selected':''}>${_L('Ultimi 7 giorni','Last 7 days')}</option>
-      <option value="14" ${andamentoPeriodDays===14?'selected':''}>${_L('Ultimi 14 giorni','Last 14 days')}</option>
-      <option value="30" ${andamentoPeriodDays===30?'selected':''}>${_L('Ultimi 30 giorni','Last 30 days')}</option>
-      <option value="60" ${andamentoPeriodDays===60?'selected':''}>${_L('Ultimi 60 giorni','Last 60 days')}</option>
-      <option value="0"  ${andamentoPeriodDays===0 ?'selected':''}>${_L('Tutto','All')}</option>
-    </select>
-    <div style="display:flex;border:1.5px solid var(--border-d);border-radius:8px;overflow:hidden;margin-left:auto">
-      <button id="diary-vmode-day" onclick="setDiaryViewMode('day')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:${_diaryViewMode==='day'?'var(--teal)':'white'};color:${_diaryViewMode==='day'?'white':'var(--slate-m)'};transition:all .15s">${_L('Giorno per giorno','Day by day')}</button>
-      <button id="diary-vmode-over" onclick="setDiaryViewMode('over')" style="padding:4px 10px;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;background:${_diaryViewMode==='over'?'var(--teal)':'white'};color:${_diaryViewMode==='over'?'white':'var(--slate-m)'};transition:all .15s">${_L('Prospetto','Overview')}</button>
-    </div>
-  </div>`;
+  const filterSel = andamentoFilterBarHtml(/* withViewModeToggle */ true);
 
   // ── Indice di Aderenza ────────────────────────────────────────────────────
   const periodDays = andamentoPeriodDays > 0 ? andamentoPeriodDays : Math.max(1, _diaryDates.length);
@@ -693,7 +704,7 @@ async function loadAndamento() {
   ])].sort((a, b) => b.localeCompare(a));
 
   if (!_diaryDates.length) {
-    panel.innerHTML = `<div class="and-empty"><div style="font-size:36px">📓</div><div>${_L('Nessun dato registrato in questo periodo.','No data recorded in this period.')}<br><span style="font-size:12px;color:var(--slate-l)">${_L('I dati appariranno quando il paziente utilizzerà l\'app NutriPlan.','Data will appear when the patient uses the NutriPlan app.')}</span></div></div>`;
+    panel.innerHTML = andamentoFilterBarHtml() + `<div class="and-empty"><div style="font-size:36px">📓</div><div>${_L('Nessun dato registrato in questo periodo.','No data recorded in this period.')}<br><span style="font-size:12px;color:var(--slate-l)">${_L('I dati appariranno quando il paziente utilizzerà l\'app NutriPlan.','Data will appear when the patient uses the NutriPlan app.')}</span></div></div>`;
     return;
   }
 

@@ -1082,7 +1082,7 @@ function syncSharedData() {
       const ageM = anni*12 + (parseFloat(document.getElementById('g-mesi').value)||0);
       const wRes = getPercResult('weight', sesso, ageM, peso);
       const hRes = getPercResult('height', sesso, ageM, alt);
-      const bmiMed = 13.4 + (ageM/12)*0.35, bmiSd = 1.5 + (ageM/12)*0.08;
+      const bmiMed = (sesso==='M' ? 13.4 : 13.3) + (ageM/12)*0.37, bmiSd = (sesso==='M' ? 1.50 : 1.40) + (ageM/12)*0.08;
       const bmiZ = (bmi - bmiMed)/bmiSd;
       const bmiPerc = zToPercentile(bmiZ);
       cards.innerHTML = [

@@ -595,7 +595,7 @@ async function generaFatturaElettronica(id) {
   try {
     const { data: fiscal, error: fiscalErr } = await sb.from('dietitian_credentials')
       .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fiscal_progressivo_invio')
-      .eq('id', currentUser.id).maybeSingle();
+      .eq('id', studioOwnerId || currentUser.id).maybeSingle();
     if (fiscalErr || !fiscal) throw new Error('Impossibile leggere i dati fiscali del profilo.');
 
     const progressivo = (fiscal.fiscal_progressivo_invio || 0) + 1;
@@ -606,7 +606,11 @@ async function generaFatturaElettronica(id) {
     // Persisti il progressivo E marca la fattura come generata SOLO dopo un
     // download riuscito, così un errore di generazione non "brucia" un
     // numero di progressivo mai usato davvero.
-    await sb.from('dietitian_credentials').update({ fiscal_progressivo_invio: progressivo }).eq('id', currentUser.id);
+    // Nota: le fatture (tabella fatture) sono condivise a livello di studio
+    // (dietitian_id = studioOwnerId), quindi anche i dati fiscali e il
+    // progressivo di numerazione devono essere quelli del titolare dello
+    // studio, non del singolo collaboratore che genera l'XML.
+    await sb.from('dietitian_credentials').update({ fiscal_progressivo_invio: progressivo }).eq('id', studioOwnerId || currentUser.id);
     const nowIso = new Date().toISOString();
     if (!useLocalFatt) await sb.from('fatture').update({ xml_generato_at: nowIso }).eq('id', id);
     fatture = fatture.map(x => x.id === id ? { ...x, xml_generato_at: nowIso } : x);

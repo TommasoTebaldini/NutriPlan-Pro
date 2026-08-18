@@ -519,7 +519,7 @@ function computeMonthlyRows() {
 }
 
 function exportCSV() {
-  if (!allPatients.length) { toast('Nessun dato da esportare', 'err'); return; }
+  if (!allPatients.length && !allAppts.length) { toast('Nessun dato da esportare', 'err'); return; }
   const header = 'Mese,Nuovi pazienti,Visite\n';
   const csv = header + computeMonthlyRows().map(r => `${r.mese},${r.nuovi},${r.visite}`).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

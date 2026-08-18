@@ -994,12 +994,14 @@ async function saveEvent() {
 
   // Collision detection: check for overlapping events on the same date
   if (ora) {
-    const newStart = ora.split(':').reduce((h, m, i) => i === 0 ? parseInt(h)*60 : parseInt(h) + parseInt(m), 0);
+    const [newH, newM] = ora.split(':').map(Number);
+    const newStart = newH * 60 + newM;
     const newDurMin = parseInt(durata, 10) || 60;
     const newEnd = newStart + newDurMin;
     const collision = events.find(e => {
       if (e.data !== data || !e.ora) return false;
-      const eStart = e.ora.split(':').reduce((h, m, i) => i === 0 ? parseInt(h)*60 : parseInt(h) + parseInt(m), 0);
+      const [eH, eM] = e.ora.split(':').map(Number);
+      const eStart = eH * 60 + eM;
       const eEnd = eStart + (parseInt(e.durata, 10) || 60);
       return newStart < eEnd && newEnd > eStart;
     });
@@ -1090,6 +1092,12 @@ function openEventDetail(id) {
   const ev = events.find(e => e.id === id);
   if(!ev) return;
   currentEventId = id;
+  // Reset the delete button in case a previous modal open (e.g. a patient-booked
+  // appointment) rebound it to cancelPatientAppt() with a stale patient/appt id —
+  // without this, clicking "Elimina" here would silently cancel the WRONG appointment.
+  const delBtn = document.getElementById('btn-del-event');
+  delBtn.onclick = deleteCurrentEvent;
+  delBtn.textContent = _L('🗑️ Elimina','🗑️ Delete');
   const d = formatStoredDate(ev.data, {weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('modal-event-title').textContent = tipoLabel(ev.tipo);
   document.getElementById('modal-event-hdr').style.background = 
@@ -1152,6 +1160,12 @@ function openGCalEventDetail(id) {
   const ev = gcalEvents.find(e => e.id === id);
   if (!ev) return;
   currentEventId = id;
+  // Reset the delete button in case a previous modal open (e.g. a patient-booked
+  // appointment) rebound it to cancelPatientAppt() with a stale patient/appt id —
+  // this modal already provides its own Edit/Delete buttons in the body below.
+  const delBtn = document.getElementById('btn-del-event');
+  delBtn.onclick = deleteCurrentEvent;
+  delBtn.textContent = _L('🗑️ Elimina','🗑️ Delete');
   const d = ev.data ? formatStoredDate(ev.data, {weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
   document.getElementById('modal-event-title').textContent = ev.titolo || 'Evento Google Calendar';
   document.getElementById('modal-event-hdr').style.background = '#6366F1';

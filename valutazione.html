@@ -1896,7 +1896,7 @@ async function uploadFotoProgressi(cartellaId, schedaId) {
       uploads.push({ tipo, path, data_foto: dateFoto, note_foto: noteFoto, peso_al_momento: pesoFoto });
     } catch(e) { console.warn('Upload foto error:', e); }
   }
-  if (rejected.length) toast('⚠️ ' + _L('File rifiutati: ','Rejected files: ') + rejected.join(', '), 'warn');
+  if (rejected.length) toast('⚠️ ' + _L('File rifiutati: ','Rejected files: ') + rejected.join(', '), 'err');
   if (uploads.length > 0) {
     toast('📸 ' + uploads.length + ' ' + _L('foto salvata/e con successo!','photo(s) saved successfully!'), 'ok');
     await caricaFotoSalvate(cartellaId, schedaId);

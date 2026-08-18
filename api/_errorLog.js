@@ -37,7 +37,7 @@ async function sendAlertEmail(fnName, message) {
       subject: `⚠️ Errore server — ${fnName}`,
       html: `<p>Nuovo errore in produzione nella funzione <b>${escapeHtml(fnName)}</b>:</p>
 <pre style="white-space:pre-wrap;background:#F1F5F9;padding:12px;border-radius:8px;font-size:13px">${escapeHtml(message)}</pre>
-<p style="color:#6B7280;font-size:12px">Dettagli completi (stack, user agent) in Admin → Log errori. Non riceverai un\'altra email per lo stesso errore nella prossima ora.</p>`,
+<p style="color:#6B7280;font-size:12px">Dettagli completi (stack, user agent) in Admin → Log errori. Non riceverai un'altra email per lo stesso errore nella prossima ora.</p>`,
     }),
   });
 }

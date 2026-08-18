@@ -66,7 +66,7 @@ export default [
     },
   },
   {
-    files: ['api/**/*.js', 'server.js', 'scripts/**/*.js', 'scripts/**/*.cjs', 'generate-icons.js'],
+    files: ['api/**/*.js', 'server.js', 'scripts/**/*.js', 'scripts/**/*.cjs', 'generate-icons.js', 'vite.config.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

@@ -13,7 +13,7 @@
 
 import fs from 'fs';
 
-const STATEMENT_KEYWORDS = /^(create|alter|drop|insert|update|delete|select|do|grant|revoke|comment|begin|end)\b/i;
+const STATEMENT_KEYWORDS = /^(create|alter|drop|insert|update|delete|select|do|grant|revoke|comment|begin|end|notify)\b/i;
 
 function stripDollarQuotedBodies(sql) {
   let out = [];
@@ -34,6 +34,37 @@ function stripDollarQuotedBodies(sql) {
   return out.join('');
 }
 
+// A ';' inside a single-quoted string literal (e.g. a migration note's prose
+// text) is not a statement boundary. Blank out quoted-string bodies the same
+// way dollar-quoted bodies are blanked above, so the naive split(';') below
+// only ever sees real statement separators. Postgres string literals escape
+// an embedded quote by doubling it ('') — that doubled quote must not be
+// read as the closing quote.
+function stripQuotedStringBodies(sql) {
+  let out = [];
+  let i = 0;
+  while (i < sql.length) {
+    if (sql[i] === "'") {
+      let j = i + 1;
+      while (j < sql.length) {
+        if (sql[j] === "'") {
+          if (sql[j + 1] === "'") { j += 2; continue; }
+          break;
+        }
+        j++;
+      }
+      const body = sql.slice(i, j + 1);
+      const newlines = (body.match(/\n/g) || []).length;
+      out.push("'X'" + '\n'.repeat(newlines));
+      i = j + 1;
+    } else {
+      out.push(sql[i]);
+      i++;
+    }
+  }
+  return out.join('');
+}
+
 function stripLineComments(sql) {
   return sql
     .split('\n')
@@ -45,7 +76,7 @@ function stripLineComments(sql) {
 }
 
 function findSuspiciousStatements(sql) {
-  const cleaned = stripLineComments(stripDollarQuotedBodies(sql));
+  const cleaned = stripQuotedStringBodies(stripLineComments(stripDollarQuotedBodies(sql)));
   const statements = cleaned.split(';');
   let lineNo = 1;
   const suspicious = [];

@@ -7,7 +7,7 @@ const vm = require('vm');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
 let code = fs.readFileSync(path.join(repoRoot, 'js', 'studies-data.js'), 'utf8');
-code = code.replace(/^﻿/, '');
+code = code.replace(/^\uFEFF/, '');
 const sandbox = {};
 vm.createContext(sandbox);
 vm.runInContext(code + '\nthis.__STUDI = STUDI;', sandbox);

@@ -6015,3 +6015,51 @@ CREATE POLICY "cartelle_select_combined" ON cartelle_raw
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_70_fix_cartelle_cross_dietitian_read', 'Fix sicurezza critico: rimosso da cartelle_select_combined un ramo OR non correlato alla riga (EXISTS(...role=''dietitian''), vero per qualunque dietista su qualunque riga) che permetteva a QUALUNQUE dietista di leggere le cartelle — inclusa la nota clinica decifrata — di QUALUNQUE altro dietista, senza legame di studio. Verificato via grep esaustivo che nessun codice reale dipenda da questo accesso incrociato')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 71 — FIX: find_dietitian_by_email() chiamabile da anonimi
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'advisor di sicurezza Supabase (get_advisors) durante l'audit
+-- successivo alla SEZIONE 70: find_dietitian_by_email(p_email TEXT), pur
+-- avendo GRANT EXECUTE ... TO authenticated esplicito, restava comunque
+-- chiamabile anche da anon/utenti non loggati — Postgres concede EXECUTE a
+-- PUBLIC su ogni funzione per default alla creazione, e il GRANT esplicito
+-- ad "authenticated" non revoca quel grant implicito (stesso difetto già
+-- corretto per extensions.decrypt_text/encrypt_text in SEZIONE 67).
+--
+-- Impatto: chiunque, senza account, poteva enumerare email e scoprire se
+-- appartengono a un account dietista approvato, ottenendone nome e cognome —
+-- nessun dato clinico o paziente, ma un'enumerazione di indirizzi email +
+-- nome reale, non necessaria per la funzione (usata SOLO in
+-- impostazioni.html → addCollaborator(), dietro login dietista, per
+-- collegare un collaboratore di studio via email — verificato via grep
+-- esaustivo su entrambi i repo: nessun altro chiamante, mai usata
+-- nell'app paziente).
+--
+-- Fix: REVOKE EXECUTE FROM PUBLIC (chiude l'accesso anonimo) + guardia
+-- esplicita nel corpo della funzione che richiede a chi chiama di essere
+-- già un account dietista approvato (stesso stile di guardia già usato in
+-- delete_own_dietitian_account) — così anche un paziente autenticato non
+-- può più usarla, coerente con l'unico utilizzo reale della funzione.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION find_dietitian_by_email(p_email TEXT)
+RETURNS TABLE(id UUID, nome TEXT, cognome TEXT)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT p.id, p.nome, p.cognome
+  FROM profiles p
+  WHERE p.email = p_email AND p.role = 'dietitian' AND p.approved = true
+    AND EXISTS (
+      SELECT 1 FROM profiles caller
+      WHERE caller.id = auth.uid() AND caller.role = 'dietitian' AND caller.approved = true
+    )
+  LIMIT 1;
+$$;
+
+REVOKE EXECUTE ON FUNCTION find_dietitian_by_email(TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION find_dietitian_by_email(TEXT) TO authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_71_fix_find_dietitian_by_email_anon', 'Fix sicurezza: find_dietitian_by_email() era chiamabile da anon nonostante il GRANT esplicito a authenticated (il GRANT a PUBLIC di default alla creazione non viene mai revocato automaticamente — stesso difetto di SEZIONE 67). Permetteva enumerazione email/nome di dietisti approvati senza login. Aggiunta REVOKE EXECUTE FROM PUBLIC + guardia nel corpo che richiede a chi chiama di essere un dietista approvato, coerente con l''unico uso reale (impostazioni.html addCollaborator, dietro login dietista)')
+ON CONFLICT (id) DO NOTHING;

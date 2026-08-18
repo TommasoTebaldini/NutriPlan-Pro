@@ -5842,3 +5842,133 @@ $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_67_fix_decrypt_encrypt_rpc_exposure', 'decrypt_text/encrypt_text spostate da public a extensions (non esposto da PostgREST) — erano chiamabili da chiunque via /rest/v1/rpc con qualunque blob cifrato, bypassando la RLS di cartelle_raw. Vista cartelle e trigger cartelle_view_insert/update aggiornati per referenziare extensions.decrypt_text/encrypt_text, EXECUTE concesso solo ad authenticated')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 68 — FIX SICUREZZA: patient_dietitian, INSERT/UPDATE senza
+-- controllo di proprietà sulla cartella (variante del bug di SEZIONE 61) +
+-- pulizia performance sulle stesse policy (rimaste escluse da SEZIONE 65)
+--
+-- Continuando la pulizia performance rimasta in sospeso su patient_dietitian
+-- (escluso da SEZIONE 65 per il problema stale-read poi risolto), è emerso
+-- che DUE policy FOR ALL ancora attive hanno lo stesso identico difetto della
+-- policy "dietista crea relazioni" già rimossa in SEZIONE 61 (WITH CHECK
+-- basato solo su auth.uid()=dietitian_id, NESSUN controllo che cartella_id
+-- appartenga davvero a quel dietista/studio) — la SEZIONE 61 aveva trovato e
+-- rimosso una policy con questo difetto, ma ne sono rimaste altre due con lo
+-- stesso problema sotto nomi diversi, mai controllate insieme:
+--
+-- • patient_dietitian_dietitian_all (titolare): un dietista poteva INSERT/
+--   UPDATE un patient_dietitian con dietitian_id=se stesso e QUALUNQUE
+--   cartella_id, incluso quello di un paziente di un altro dietista —
+--   ottenendo così una "relazione" usata altrove come prova di autorizzazione
+--   per leggere i dati clinici di quel paziente.
+-- • patient_dietitian_collaborator_write (collaboratore): stesso problema,
+--   ma per un collaboratore di studio — poteva agganciare al proprio studio
+--   la cartella di un paziente di QUALUNQUE altro dietista nel sistema
+--   (non solo del proprio studio), verificato che nessun controllo su
+--   cartella_id fosse presente.
+--
+-- Verificato via grep: l'unico INSERT reale (pazienti.html,
+-- confermaCollegamento) è protetto solo lato client (l'utente sceglie la
+-- cartella dalla propria UI) — la RLS è l'unica barriera reale contro una
+-- chiamata diretta all'API che aggiri il client. Nessun UPDATE reale in
+-- nessuno dei due repo: "dietista aggiorna relazioni" e la parte UPDATE di
+-- _dietitian_all risultano inutilizzate, ma corrette comunque per coerenza
+-- e sicurezza futura.
+--
+-- Fix: aggiunto lo stesso controllo già usato da patient_dietitian_insert_own
+-- (cartella_id IS NULL OR appartiene a una cartella del dietista/studio) al
+-- WITH CHECK di entrambe le policy — la USING resta invariata (leggere/
+-- cancellare una riga già esistente dove si è già il dietitian_id non è a
+-- rischio, il problema riguardava solo la creazione/modifica di nuove righe).
+--
+-- Consolidate anche le 5 policy SELECT in una sola (stesso pattern SEZIONE
+-- 65): "accesso patient_dietitian" era un duplicato puro (stessa condizione
+-- già coperta dalla policy combinata "public", quindi ridondante per
+-- qualunque ruolo authenticated); rimosse "patient_dietitian_delete_own" e
+-- "dietista aggiorna relazioni" perché ridondanti con _dietitian_all (DELETE
+-- e UPDATE, stessa condizione). auth.uid() avvolto in (select ...) ovunque.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "patient_dietitian_dietitian_all" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_dietitian_all" ON patient_dietitian
+  FOR ALL
+  USING ((select auth.uid()) = dietitian_id)
+  WITH CHECK (
+    (select auth.uid()) = dietitian_id
+    AND (cartella_id IS NULL OR cartella_id IN (
+      SELECT cartelle_raw.id FROM cartelle_raw WHERE cartelle_raw.user_id = (select auth.uid())
+    ))
+  );
+
+DROP POLICY IF EXISTS "patient_dietitian_collaborator_write" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_collaborator_write" ON patient_dietitian
+  FOR ALL
+  USING ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())))
+  WITH CHECK (
+    (dietitian_id = get_studio_owner((select auth.uid())))
+    AND is_dietitian_level_collaborator((select auth.uid()))
+    AND (cartella_id IS NULL OR cartella_id IN (
+      SELECT cartelle_raw.id FROM cartelle_raw WHERE cartelle_raw.user_id = get_studio_owner((select auth.uid()))
+    ))
+  );
+
+DROP POLICY IF EXISTS "patient_dietitian_delete_own" ON patient_dietitian;
+DROP POLICY IF EXISTS "dietista aggiorna relazioni" ON patient_dietitian;
+
+DROP POLICY IF EXISTS "patient_dietitian_insert_own" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_insert_own" ON patient_dietitian
+  FOR INSERT WITH CHECK (
+    ((select auth.uid()) = dietitian_id)
+    AND (EXISTS (SELECT 1 FROM profiles WHERE profiles.id = (select auth.uid()) AND profiles.role = 'dietitian'))
+    AND (cartella_id IS NULL OR cartella_id IN (
+      SELECT cartelle_raw.id FROM cartelle_raw WHERE cartelle_raw.user_id = (select auth.uid())
+    ))
+  );
+
+DROP POLICY IF EXISTS "accesso patient_dietitian" ON patient_dietitian;
+DROP POLICY IF EXISTS "patient_dietitian_patient_select" ON patient_dietitian;
+DROP POLICY IF EXISTS "patient_dietitian_select_own" ON patient_dietitian;
+DROP POLICY IF EXISTS "visibile ai coinvolti" ON patient_dietitian;
+DROP POLICY IF EXISTS "patient_dietitian_collaborator_read" ON patient_dietitian;
+DROP POLICY IF EXISTS "patient_dietitian_select_combined" ON patient_dietitian;
+CREATE POLICY "patient_dietitian_select_combined" ON patient_dietitian
+  FOR SELECT USING (
+    (select auth.uid()) = dietitian_id
+    OR (select auth.uid()) = patient_id
+    OR (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_68_fix_patient_dietitian_cartella_check', 'Fix sicurezza: aggiunto controllo proprietà cartella_id al WITH CHECK di patient_dietitian_dietitian_all e _collaborator_write (stesso difetto della policy rimossa in SEZIONE 61, sopravvissuto sotto altri nomi) — un dietista o collaboratore poteva agganciare al proprio studio la cartella di un paziente altrui. Consolidate anche le 5 policy SELECT in una, rimosse 2 policy UPDATE/DELETE ridondanti, auth.uid() avvolto ovunque')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 69 — pulizia performance su patient_intake_forms (ultima tabella
+-- rimasta esclusa da SEZIONE 65, verificato che non ha lo stesso problema di
+-- patient_dietitian: non ha una colonna cartella_id da poter falsificare,
+-- solo dietitian_id/patient_id diretti — nessun fix di sicurezza necessario
+-- qui, solo avvolgere auth.uid() e rimuovere una policy diventata ridondante)
+--
+-- patient_intake_forms_collaborator_read (SELECT) è diventata un duplicato
+-- puro di patient_intake_forms_collaborator_write (FOR ALL, stessa identica
+-- condizione da quando SEZIONE 66 le ha allineate) — una policy FOR ALL
+-- applica già il proprio USING anche a SELECT, quindi quella dedicata non
+-- aggiunge alcun accesso in più. Rimossa.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "Dietitian manages own intake forms" ON patient_intake_forms;
+CREATE POLICY "Dietitian manages own intake forms" ON patient_intake_forms
+  FOR ALL USING (dietitian_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "patient_intake_forms_collaborator_write" ON patient_intake_forms;
+CREATE POLICY "patient_intake_forms_collaborator_write" ON patient_intake_forms
+  FOR ALL
+  USING ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())))
+  WITH CHECK ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "patient_intake_forms_collaborator_read" ON patient_intake_forms;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_69_perf_patient_intake_forms', 'Ultima tabella rimasta da SEZIONE 65: auth.uid() avvolto in (select ...), rimossa patient_intake_forms_collaborator_read diventata duplicato puro di _collaborator_write dopo SEZIONE 66. Verificato che patient_intake_forms non ha il problema di sicurezza di SEZIONE 68 (nessuna colonna cartella_id)')
+ON CONFLICT (id) DO NOTHING;

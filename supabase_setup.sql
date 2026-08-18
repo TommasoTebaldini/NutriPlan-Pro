@@ -6063,3 +6063,37 @@ GRANT EXECUTE ON FUNCTION find_dietitian_by_email(TEXT) TO authenticated;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_71_fix_find_dietitian_by_email_anon', 'Fix sicurezza: find_dietitian_by_email() era chiamabile da anon nonostante il GRANT esplicito a authenticated (il GRANT a PUBLIC di default alla creazione non viene mai revocato automaticamente — stesso difetto di SEZIONE 67). Permetteva enumerazione email/nome di dietisti approvati senza login. Aggiunta REVOKE EXECUTE FROM PUBLIC + guardia nel corpo che richiede a chi chiama di essere un dietista approvato, coerente con l''unico uso reale (impostazioni.html addCollaborator, dietro login dietista)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 72 — CORREZIONE: REVOKE FROM PUBLIC non basta, serve REVOKE FROM anon
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Verificando lo stato live dopo la SEZIONE 71 (pg_proc.proacl), find_dietitian_
+-- by_email() risultava ANCORA eseguibile da anon: "REVOKE EXECUTE ... FROM
+-- PUBLIC" revoca solo il grant implicito che Postgres concede a PUBLIC alla
+-- creazione di una funzione, ma questo progetto Supabase concede ANCHE un
+-- grant ESPLICITO e diretto ad anon/authenticated/service_role su ogni
+-- funzione dello schema public al momento della creazione (proacl mostrava
+-- "anon=X/postgres" come voce a sé, non ereditata da PUBLIC) — un REVOKE
+-- da PUBLIC non tocca un grant esplicito separato fatto a un ruolo specifico.
+-- Stesso identico difetto verificato anche su extensions.decrypt_text/
+-- encrypt_text (SEZIONE 67): anon ha ancora il grant esplicito lì.
+--
+-- Severità reale invariata: find_dietitian_by_email() resta comunque
+-- innocua per anon grazie alla guardia aggiunta nel corpo in SEZIONE 71
+-- (auth.uid() è NULL per anon, quindi la EXISTS sul chiamante fallisce
+-- sempre — zero risultati, nessuna enumerazione possibile). decrypt_text/
+-- encrypt_text restano innocue perché extensions non è tra gli schemi
+-- esposti da PostgREST (nessuna rotta /rest/v1/rpc/... le raggiunge) e un
+-- client browser non ha mai accesso diretto al protocollo Postgres. Questa
+-- sezione chiude comunque il gap sui permessi per allineare l'ACL reale a
+-- quanto dichiarato nelle sezioni precedenti (difesa in profondità).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+REVOKE EXECUTE ON FUNCTION find_dietitian_by_email(TEXT) FROM anon;
+REVOKE EXECUTE ON FUNCTION extensions.decrypt_text(bytea) FROM anon;
+REVOKE EXECUTE ON FUNCTION extensions.encrypt_text(text) FROM anon;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_72_fix_explicit_anon_grants_not_public', 'Correzione: REVOKE EXECUTE FROM PUBLIC (SEZIONE 67 e 71) non basta quando esiste anche un grant esplicito diretto ad anon (verificato via pg_proc.proacl) — questo progetto concede grant espliciti per ruolo alla creazione di ogni funzione, non solo il grant implicito a PUBLIC. Aggiunto REVOKE EXECUTE ... FROM anon esplicito su find_dietitian_by_email/decrypt_text/encrypt_text. Nessuna delle tre era comunque sfruttabile nel frattempo (guardia nel corpo per la prima, extensions non esposto da PostgREST per le altre due), ma l''ACL ora riflette correttamente l''intento dichiarato')
+ON CONFLICT (id) DO NOTHING;

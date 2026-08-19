@@ -565,8 +565,17 @@ async function doRegister() {
     return;
   }
 
-  // Always call the RPC to ensure the profile exists (works with anon key, no session needed)
-  await sb.rpc('create_profile_for_new_user', { uid: data.user.id, user_email: email, terms_accepted: true });
+  // Always call the RPC to ensure the profile exists (works with anon key, no session needed).
+  // SEZIONE 76: la RPC non ingoia più i propri errori — un fallimento qui
+  // lascerebbe l'account in auth.users senza riga in profiles, quindi va
+  // segnalato invece di proseguire come se la registrazione fosse riuscita.
+  const { error: profileErr } = await sb.rpc('create_profile_for_new_user', { uid: data.user.id, user_email: email, terms_accepted: true });
+  if (profileErr) {
+    console.error('create_profile_for_new_user error:', profileErr);
+    err.textContent = 'Account creato ma si è verificato un problema nella configurazione del profilo. Contatta il supporto.';
+    err.classList.add('show');
+    return;
+  }
 
   if (data.session) {
     ok.textContent = '✅ Account creato! Reindirizzamento...';

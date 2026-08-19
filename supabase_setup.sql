@@ -6365,3 +6365,63 @@ CREATE TRIGGER "notify-document" AFTER INSERT ON patient_documents
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_75_fix_webhook_triggers_service_role_leak', 'Fix sicurezza: i trigger notify-chat-message/notify-diet-update/notify-document (creati a mano dal Dashboard, nessuna traccia in git) usavano supabase_functions.http_request con un JWT service_role (valido 10 anni, bypassa ogni RLS) scritto in chiaro come argomento del trigger — visibile via pg_get_triggerdef()/information_schema.triggers a chiunque avesse accesso diretto al database. Non raggiungibile dall''app (PostgREST non espone pg_catalog), ma debito di sicurezza reale. Sostituito con pg_net.http_post dentro un wrapper che legge un secret dedicato da Supabase Vault ad ogni chiamata (mai nella definizione del trigger, mai in questo file). Il secret è generato casualmente dalla SQL stessa, mai hardcoded. Va impostato come WEBHOOK_TOKEN nei secret della Edge Function notify-on-event (che lo supporta già nativamente) dopo l''esecuzione di questa sezione')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 76 — FIX AFFIDABILITÀ CRITICO: le RPC di creazione profilo alla
+-- registrazione ingoiavano silenziosamente QUALUNQUE errore
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Continuando l'audit lato database: create_patient_profile() e create_
+-- profile_for_new_user() sono, dalla SEZIONE 52/58, l'UNICO meccanismo che
+-- crea la riga profiles alla registrazione — verificato che NON esiste più
+-- alcun trigger su auth.users (rimosso, come già documentato nei commenti
+-- del codice chiamante in AuthContext.jsx/index.html). Entrambe le funzioni
+-- però avevano un blocco "EXCEPTION WHEN OTHERS THEN NULL" che ingoia
+-- QUALUNQUE errore imprevisto durante l'INSERT (non solo il conflitto già
+-- gestito correttamente da ON CONFLICT DO UPDATE) — se qualcosa va storto
+-- (una futura colonna NOT NULL senza default, un vincolo violato, un lag
+-- di replica sulla foreign key verso auth.users), la RPC ritorna comunque
+-- "successo" al chiamante, l'utente risulta registrato in auth.users ma
+-- SENZA alcuna riga in profiles, e non c'è alcun errore da nessuna parte
+-- (né nei log della funzione, né nel client) per capire perché — l'esatto
+-- bug che la SEZIONE 58 era nata per risolvere, reintrodotto silenziosamente
+-- dal proprio meccanismo di sicurezza.
+--
+-- Fix: rimosso il blocco EXCEPTION. ON CONFLICT DO UPDATE resta la sola
+-- protezione necessaria (rende la funzione già sicura da richiamare più
+-- volte); qualunque altro errore ora si propaga al chiamante invece di
+-- sparire. Aggiornato anche il codice JS che chiama queste RPC (index.html,
+-- AuthContext.jsx — commit separato) per controllare l'errore invece di
+-- ignorarlo, così un fallimento reale mostra un messaggio invece di un
+-- falso "registrazione completata".
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION create_patient_profile(uid UUID, user_email TEXT, p_full_name TEXT, p_first_name TEXT, p_last_name TEXT, terms_accepted BOOLEAN DEFAULT false)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, first_name, last_name, role, terms_accepted_at)
+  VALUES (uid, user_email, p_full_name, p_first_name, p_last_name, 'patient',
+          CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    full_name  = COALESCE(EXCLUDED.full_name,  profiles.full_name),
+    first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
+    last_name  = COALESCE(EXCLUDED.last_name,  profiles.last_name),
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION create_profile_for_new_user(uid UUID, user_email TEXT, terms_accepted BOOLEAN DEFAULT false)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, approved, is_admin, terms_accepted_at)
+  VALUES (uid, user_email, false, false, CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+END;
+$$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_76_fix_signup_rpc_swallowed_exceptions', 'Fix affidabilità critico: create_patient_profile()/create_profile_for_new_user() — uniche funzioni che creano la riga profiles alla registrazione, dato che il trigger su auth.users non esiste più — avevano EXCEPTION WHEN OTHERS THEN NULL, che ingoiava qualunque errore imprevisto durante l''INSERT lasciando l''utente con un account auth.users ma nessun profilo, senza errore da nessuna parte. Rimosso il blocco: ON CONFLICT DO UPDATE resta l''unica protezione necessaria (idempotente per design), gli errori reali ora si propagano al chiamante')
+ON CONFLICT (id) DO NOTHING;

@@ -1708,6 +1708,7 @@ async function startVideoCall() {
   // che ChatPage.jsx già renderizza con il pulsante "Partecipa".
   const { data, error } = await _insertChatMessage({
     patient_id: selectedPatientId,
+    dietitian_id: studioOwnerId || currentUser.id,
     sender_id: currentUser.id,
     sender_role: 'dietitian',
     content: room,
@@ -1731,6 +1732,7 @@ async function sendMessage() {
 
   const msgPayload = {
     patient_id: selectedPatientId,
+    dietitian_id: studioOwnerId || currentUser.id,
     sender_id: currentUser.id,
     sender_role: 'dietitian',
     content: content,

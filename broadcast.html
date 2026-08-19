@@ -549,6 +549,7 @@ async function sendBroadcast() {
     if (msgType === 'chat') {
       const inserts = patientIds.map(pid => ({
         patient_id: pid,
+        dietitian_id: studioOwnerId || currentUser.id,
         sender_id: currentUser.id,
         sender_role: 'dietitian',
         content: text,

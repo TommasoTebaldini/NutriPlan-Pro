@@ -73,9 +73,10 @@
   }
 
   function _hideCaptureBar() {
+    if (_captureCount > 0) return; // another capture is still in progress — keep the bar up
     const bar = document.getElementById('_capture-bar');
     if (bar) bar.style.display = 'none';
-    if (_captureCount === 0) window.removeEventListener('beforeunload', _beforeUnloadCapture);
+    window.removeEventListener('beforeunload', _beforeUnloadCapture);
   }
   // ─────────────────────────────────────────────────────────────────────────────
 

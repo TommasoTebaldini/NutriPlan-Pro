@@ -306,12 +306,12 @@ function anteprimaLogoOp(input) {
   const file = input.files && input.files[0];
   if (!file) return;
   if (!['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'].includes(file.type)) {
-    toast('⚠️ Formato non supportato. Usa PNG, JPG, GIF o WebP.', 'warn');
+    toast('⚠️ Formato non supportato. Usa PNG, JPG, GIF o WebP.', 'err');
     input.value = '';
     return;
   }
   if (file.size > 200 * 1024) {
-    toast('⚠️ L\'immagine supera i 200 KB. Scegli un\'immagine più piccola.', 'warn');
+    toast('⚠️ L\'immagine supera i 200 KB. Scegli un\'immagine più piccola.', 'err');
     input.value = '';
     return;
   }

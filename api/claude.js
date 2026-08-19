@@ -206,6 +206,27 @@ async function isDietitian(token, userId) {
   }
 }
 
+// Un collaboratore di studio genera bozze piano per le cartelle del titolare,
+// non le proprie: senza risolvere l'id del titolare, fetchPatientContext
+// interrogava cartelle con user_id=eq.<id del collaboratore> e trovava sempre
+// zero righe ("Paziente non trovato") anche se le policy RLS gli
+// consentirebbero l'accesso via get_studio_owner(auth.uid()). Stessa logica
+// di get_studio_owner() in supabase_setup.sql (vedi anche api/whatsapp-webhook.js).
+async function resolveStudioOwner(token, userId) {
+  if (!SUPABASE_ANON_KEY) return userId;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/studio_collaborators?collaborator_id=eq.${userId}&select=titolare_id&limit=1`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } }
+    );
+    if (!res.ok) return userId;
+    const rows = await res.json();
+    return rows?.[0]?.titolare_id || userId;
+  } catch {
+    return userId;
+  }
+}
+
 async function fetchPatientContext(token, dietitianUserId, patientId) {
   // Esami e nota clinica aggiunti perché il piano deve poter reagire a dati
   // di laboratorio recenti (es. LDL alto → meno grassi saturi) e a indicazioni
@@ -250,7 +271,8 @@ async function handleMealPlan(req, res, token, user) {
     return res.status(400).json({ error: 'Parametro patientId mancante.' });
   }
 
-  const patient = await fetchPatientContext(token, user.id, patientId);
+  const ownerId = await resolveStudioOwner(token, user.id);
+  const patient = await fetchPatientContext(token, ownerId, patientId);
   if (!patient) {
     return res.status(404).json({ error: 'Paziente non trovato o non associato a questo account.' });
   }

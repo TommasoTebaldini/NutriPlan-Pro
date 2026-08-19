@@ -706,6 +706,35 @@ async function jobProgramCheckins() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// JOB: daily-all — consolida i 4 job giornalieri sopra in UNA sola chiamata
+// cron. Il piano Vercel Hobby permette al massimo 2 cron job (solo con
+// frequenza giornaliera), mentre vercel.json ne definiva 5. Temporaneo
+// finché non si passa a Pro (già necessario comunque per SAML SSO): vedi
+// memoria di progetto. Ogni job resta isolato in try/catch, così il
+// fallimento di uno non impedisce agli altri di girare — stesso principio
+// del try/catch nell'handler sotto, applicato per-job invece che per
+// l'intera richiesta.
+async function jobDailyAll(req) {
+  const jobs = [
+    ['inactive-patients', jobInactivePatients],
+    ['appointment-reminders', jobAppointmentReminders],
+    ['overdue-payments', jobOverduePayments],
+    ['program-checkins', jobProgramCheckins],
+  ];
+  const results = {};
+  for (const [name, fn] of jobs) {
+    try {
+      results[name] = await fn();
+    } catch (err) {
+      console.error(`cron (job=daily-all/${name}) error:`, err);
+      await logServerError(`cron:daily-all:${name}`, err, req).catch(() => {});
+      results[name] = { ok: false, error: err.message };
+    }
+  }
+  return results;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // JOB: fhir-sync — svuota fhir_export_queue (SEZIONE 51): per ogni cartella
 // "pending" ricostruisce il Bundle FHIR completo (Patient/Practitioner/
 // Condition/Observation/NutritionOrder, mappatura LOINC/SNOMED in
@@ -809,12 +838,13 @@ async function handler(req, res) {
 
   const job = req.query.job;
   try {
+    if (job === 'daily-all') return res.status(200).json(await jobDailyAll(req));
     if (job === 'inactive-patients') return res.status(200).json(await jobInactivePatients());
     if (job === 'appointment-reminders') return res.status(200).json(await jobAppointmentReminders());
     if (job === 'overdue-payments') return res.status(200).json(await jobOverduePayments());
     if (job === 'program-checkins') return res.status(200).json(await jobProgramCheckins());
     if (job === 'fhir-sync') return res.status(200).json(await jobFhirSync());
-    return res.status(400).json({ error: 'Parametro ?job mancante o sconosciuto (attesi: inactive-patients, appointment-reminders, overdue-payments, program-checkins, fhir-sync)' });
+    return res.status(400).json({ error: 'Parametro ?job mancante o sconosciuto (attesi: daily-all, inactive-patients, appointment-reminders, overdue-payments, program-checkins, fhir-sync)' });
   } catch (err) {
     console.error(`cron (job=${job}) error:`, err);
     await logServerError(`cron:${job || 'unknown'}`, err, req).catch(() => {});

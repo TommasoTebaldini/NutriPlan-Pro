@@ -6273,3 +6273,95 @@ $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_74_fix_log_clinical_change_patient_id', 'Fix correttezza registro audit clinico: log_clinical_change() usava COALESCE(patient_id, user_id) per clinical_audit_log.patient_id, ma su esami_biochimici/liste_spesa/cartelle_raw user_id è il DIETISTA (verificato via pg_policies: policy "..._dietitian_all" con auth.uid()=user_id), non il paziente — ogni voce di audit per queste 3 tabelle registrava l''id del dietista nel campo "patient_id". Rimosso il fallback: resta NULL quando non c''è una vera colonna patient_id, invece di riportare un id sbagliato. Storico non corretto retroattivamente')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 75 — FIX SICUREZZA: chiave service_role in chiaro nei trigger di
+-- notifica webhook (notify-chat-message, notify-diet-update, notify-document)
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Scoperto continuando l'audit lato database: questi 3 trigger AFTER INSERT/
+-- UPDATE (su chat_messages, patient_diets, patient_documents) sono stati
+-- creati a mano dal Dashboard Supabase (nessuna traccia in git) usando
+-- supabase_functions.http_request(url, method, headers, params, timeout) —
+-- il wrapper legacy dei Database Webhook che richiede gli header, incluso
+-- "Authorization: Bearer <service_role JWT>", come ARGOMENTO LETTERALE del
+-- trigger. Risultato: pg_get_triggerdef()/information_schema.triggers
+-- espongono in chiaro un JWT service_role valido 10 anni (bypassa OGNI RLS)
+-- a chiunque abbia accesso diretto al database (dashboard, stringa di
+-- connessione, backup) — non raggiungibile dall'app (PostgREST non espone
+-- pg_catalog/information_schema a anon/authenticated) e non presente nella
+-- cronologia git di questo file, ma comunque un debito di sicurezza reale.
+--
+-- Fix: sostituisce supabase_functions.http_request con pg_net.http_post
+-- dentro una funzione wrapper che legge il secret da Supabase Vault A OGNI
+-- CHIAMATA (mai scritto nella definizione del trigger, mai in questo file
+-- committato — il valore stesso viene generato casualmente dalla SQL
+-- sotto, non hardcoded). Payload ricostruito identico a quello che
+-- supabase_functions.http_request generava in automatico
+-- ({type, table, schema, record, old_record}), verificato contro
+-- notify-on-event/index.ts (Diet-Plan-Pro-app-claude) che lo consuma.
+--
+-- notify-on-event già supporta nativamente un secret DEDICATO e separato
+-- dalla service_role per l'autenticazione del webhook (variabile
+-- WEBHOOK_TOKEN, vedi il file — nessuna modifica lato Edge Function
+-- necessaria): dopo aver eseguito questa sezione, il valore generato nel
+-- Vault va impostato come secret WEBHOOK_TOKEN della funzione
+-- notify-on-event (`supabase secrets set WEBHOOK_TOKEN=<valore>` o da
+-- Dashboard), sostituendo la dipendenza dalla service_role key.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM vault.decrypted_secrets WHERE name = 'notify_on_event_webhook_token') THEN
+    PERFORM vault.create_secret(
+      encode(gen_random_bytes(32), 'hex'),
+      'notify_on_event_webhook_token',
+      'Segreto condiviso per i trigger webhook chat_messages/patient_diets/patient_documents verso la Edge Function notify-on-event (Diet-Plan-Pro-app-claude). Va impostato come secret WEBHOOK_TOKEN della funzione dopo l''esecuzione di SEZIONE 75.'
+    );
+  END IF;
+END $$;
+
+CREATE OR REPLACE FUNCTION notify_on_event_webhook()
+RETURNS TRIGGER
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_token TEXT;
+BEGIN
+  SELECT decrypted_secret INTO v_token
+  FROM vault.decrypted_secrets
+  WHERE name = 'notify_on_event_webhook_token';
+
+  IF v_token IS NOT NULL THEN
+    PERFORM net.http_post(
+      url := 'https://hvdwqowkhutfsdpiubxe.supabase.co/functions/v1/notify-on-event',
+      body := jsonb_build_object(
+        'type', TG_OP,
+        'table', TG_TABLE_NAME,
+        'schema', TG_TABLE_SCHEMA,
+        'record', CASE WHEN TG_OP = 'DELETE' THEN NULL ELSE to_jsonb(NEW) END,
+        'old_record', CASE WHEN TG_OP IN ('UPDATE','DELETE') THEN to_jsonb(OLD) ELSE NULL END
+      ),
+      headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || v_token),
+      timeout_milliseconds := 5000
+    );
+  END IF;
+
+  RETURN NULL;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS "notify-chat-message" ON chat_messages;
+CREATE TRIGGER "notify-chat-message" AFTER INSERT ON chat_messages
+  FOR EACH ROW EXECUTE FUNCTION notify_on_event_webhook();
+
+DROP TRIGGER IF EXISTS "notify-diet-update" ON patient_diets;
+CREATE TRIGGER "notify-diet-update" AFTER INSERT OR UPDATE ON patient_diets
+  FOR EACH ROW EXECUTE FUNCTION notify_on_event_webhook();
+
+DROP TRIGGER IF EXISTS "notify-document" ON patient_documents;
+CREATE TRIGGER "notify-document" AFTER INSERT ON patient_documents
+  FOR EACH ROW EXECUTE FUNCTION notify_on_event_webhook();
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_75_fix_webhook_triggers_service_role_leak', 'Fix sicurezza: i trigger notify-chat-message/notify-diet-update/notify-document (creati a mano dal Dashboard, nessuna traccia in git) usavano supabase_functions.http_request con un JWT service_role (valido 10 anni, bypassa ogni RLS) scritto in chiaro come argomento del trigger — visibile via pg_get_triggerdef()/information_schema.triggers a chiunque avesse accesso diretto al database. Non raggiungibile dall''app (PostgREST non espone pg_catalog), ma debito di sicurezza reale. Sostituito con pg_net.http_post dentro un wrapper che legge un secret dedicato da Supabase Vault ad ogni chiamata (mai nella definizione del trigger, mai in questo file). Il secret è generato casualmente dalla SQL stessa, mai hardcoded. Va impostato come WEBHOOK_TOKEN nei secret della Edge Function notify-on-event (che lo supporta già nativamente) dopo l''esecuzione di questa sezione')
+ON CONFLICT (id) DO NOTHING;

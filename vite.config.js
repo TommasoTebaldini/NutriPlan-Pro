@@ -18,11 +18,20 @@ const htmlFiles = fs.readdirSync(__dirname)
 // via <script src="js/...">. Vite non li bundlerizza (non può, senza type="module") e
 // di default non li copia nemmeno in dist/, lasciando l'app senza JS. Li copiamo quindi
 // verbatim: sono già minificati a monte da scripts/build-minify.js (npm run build:minify).
+//
+// icons/: referenziate solo come stringhe dentro manifest.webmanifest (icone PWA,
+// apple-touch-icon, favicon) — Vite non le individua/copia perché non le vede come
+// riferimenti HTML/CSS/JS statici, quindi restavano fuori da dist/ e 404 in
+// produzione (manifest.webmanifest stesso viene invece rilevato tramite <link
+// rel="manifest">, hashato e spostato sotto assets/webmanifest/ — i percorsi delle
+// icone all'interno DEVONO quindi essere assoluti, "/icons/...", per risolvere
+// correttamente indipendentemente da dove finisce il manifest).
 function copyClassicScriptsPlugin() {
   return {
     name: 'copy-classic-scripts',
     closeBundle() {
       fs.cpSync(resolve(__dirname, 'js'), resolve(__dirname, 'dist/js'), { recursive: true });
+      fs.cpSync(resolve(__dirname, 'icons'), resolve(__dirname, 'dist/icons'), { recursive: true });
     },
   };
 }

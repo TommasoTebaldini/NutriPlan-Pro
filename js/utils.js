@@ -2214,11 +2214,28 @@ function initPianoEsempio(containerId, config) {
 
   function _init() {
     _injectBadges();
-    sb.auth.getSession().then(function(res) {
+    sb.auth.getSession().then(async function(res) {
       var user = res && res.data && res.data.session && res.data.session.user;
       if (!user) return;
-      _loadInboxCount(user.id);
-      _subscribeRealtime(user.id);
+      // patient_dietitian.dietitian_id is keyed to the STUDIO OWNER, never to
+      // whichever collaborator is logged in (same pattern as chat.html) — a
+      // collaborator's own id would never match a row, so the badge would
+      // silently stay at 0/empty for them. Resolve via the same cache/RPC
+      // used by resolveStudioOwner() (top of this file), self-contained here
+      // since this IIFE fires independently of the page's own checkAuth().
+      var ownerId = user.id;
+      try {
+        var cached = _readStudioOwnerCache(user.id);
+        if (cached) {
+          ownerId = cached;
+        } else {
+          var rpcRes = await sb.rpc('get_studio_owner', { uid: user.id });
+          if (!rpcRes.error && rpcRes.data) ownerId = rpcRes.data;
+          _writeStudioOwnerCache(user.id, ownerId);
+        }
+      } catch(e) {}
+      _loadInboxCount(ownerId);
+      _subscribeRealtime(ownerId);
     }).catch(function() {});
   }
 

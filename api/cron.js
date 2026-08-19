@@ -334,7 +334,10 @@ async function jobAppointmentReminders() {
   if (!appts || !appts.length) return { ok: true, checked: 0, dietitiansNotified: 0, patientsNotified: 0 };
 
   const userIds = [...new Set([...appts.map(a => a.patient_id), ...appts.map(a => a.dietitian_id)])];
-  const profiles = await sbFetch(`profiles?select=id,first_name,last_name,full_name,nome,cognome,email&id=in.(${userIds.join(',')})`, serviceKey);
+  const profiles = [];
+  for (const b of chunk(userIds, 150)) {
+    profiles.push(...(await sbFetch(`profiles?select=id,first_name,last_name,full_name,nome,cognome,email&id=in.(${b.join(',')})`, serviceKey)));
+  }
   const profileById = new Map(profiles.map(p => [p.id, p]));
   function displayName(id) {
     const p = profileById.get(id);
@@ -609,7 +612,10 @@ async function jobProgramCheckins() {
   const patientIds = [...new Set(percorsi.map(p => p.patient_id))];
   const dietitianIds = [...new Set(percorsi.map(p => p.dietitian_id))];
   const allIds = [...new Set([...patientIds, ...dietitianIds])];
-  const profiles = await sbFetch(`profiles?select=id,first_name,last_name,full_name,nome,cognome,email&id=in.(${allIds.join(',')})`, serviceKey);
+  const profiles = [];
+  for (const b of chunk(allIds, 150)) {
+    profiles.push(...(await sbFetch(`profiles?select=id,first_name,last_name,full_name,nome,cognome,email&id=in.(${b.join(',')})`, serviceKey)));
+  }
   const profileById = new Map(profiles.map(p => [p.id, p]));
   function displayName(id) {
     const p = profileById.get(id);
@@ -617,10 +623,16 @@ async function jobProgramCheckins() {
     return [p.first_name, p.last_name].filter(Boolean).join(' ') || p.full_name || [p.nome, p.cognome].filter(Boolean).join(' ') || 'Paziente';
   }
 
-  // Ultimo peso registrato per paziente — è il "check-in" reale, niente tabella dedicata
-  const weightRows = await sbFetch(`weight_logs?select=user_id,date&user_id=in.(${patientIds.join(',')})&order=date.desc`, serviceKey);
+  // Ultimo peso registrato per paziente — è il "check-in" reale, niente tabella dedicata.
+  // Chunk + limit per evitare URL troppo lunghe e troncamenti silenziosi su bacini grandi
+  // (order=date.desc + "prima occorrenza per user" resta corretto per-chunk, dato che ogni
+  // paziente compare in un solo chunk).
+  const weightRows = [];
+  for (const b of chunk(patientIds, 150)) {
+    weightRows.push(...(await sbFetch(`weight_logs?select=user_id,date&user_id=in.(${b.join(',')})&order=date.desc&limit=20000`, serviceKey)));
+  }
   const lastWeightByPatient = new Map();
-  (weightRows || []).forEach(w => { if (!lastWeightByPatient.has(w.user_id)) lastWeightByPatient.set(w.user_id, w.date); });
+  weightRows.forEach(w => { if (!lastWeightByPatient.has(w.user_id)) lastWeightByPatient.set(w.user_id, w.date); });
 
   const today = new Date();
   const todayIso = today.toISOString();
@@ -731,7 +743,7 @@ async function jobFhirSync() {
       const [cartelle, esami, bia, piani] = await Promise.all([
         sbFetch(`cartelle?select=id,nome,cognome,ddn,sesso,codice_fiscale,tags,user_id,created_at&id=eq.${cartellaId}`, serviceKey),
         sbFetch(`esami_biochimici?select=tipo,valore,unita,data_esame,note&cartella_id=eq.${cartellaId}&order=data_esame.desc&limit=20`, serviceKey),
-        sbFetch(`bia_records?select=data_misura,peso,altezza,bmi,bf_pct,ffm_kg,angolo_fase&cartella_id=eq.${cartellaId}&order=data_misura.desc&limit=1`, serviceKey),
+        sbFetch(`bia_records?select=data_misura,peso,bf_pct,ffm_kg,angolo_fase&cartella_id=eq.${cartellaId}&order=data_misura.desc&limit=1`, serviceKey),
         sbFetch(`piani?select=nome,meals,saved_at&cartella_id=eq.${cartellaId}&order=saved_at.desc&limit=1`, serviceKey),
       ]);
       const cartella = cartelle?.[0];

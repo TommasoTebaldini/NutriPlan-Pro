@@ -24,6 +24,31 @@ async function verifySupabaseToken(token) {
   return user?.id ? user : null;
 }
 
+// La tabella `fatture` e i dati fiscali in `dietitian_credentials` sono
+// condivisi a livello di studio (dietitian_id = id del TITOLARE, non del
+// singolo collaboratore che agisce — vedi pagamenti.html, che scrive sempre
+// dietitian_id: studioOwnerId || currentUser.id). Senza risolvere l'id del
+// titolare qui, un collaboratore che clicca "Invia SDI/STS" o "Registra
+// erogatore" interrogherebbe dietitian_credentials/fatture con il proprio id
+// e otterrebbe "fattura non trovata" / "collega prima Fatture in Cloud" anche
+// se lo studio è correttamente configurato — o, peggio, userebbe le proprie
+// credenziali fiscali personali (se presenti) per un'operazione che deve
+// invece appartenere al titolare. Stessa logica di api/claude.js.
+async function resolveStudioOwner(token, userId) {
+  if (!SUPABASE_ANON_KEY) return userId;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/studio_collaborators?collaborator_id=eq.${userId}&select=titolare_id&limit=1`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } }
+    );
+    if (!res.ok) return userId;
+    const rows = await res.json();
+    return rows?.[0]?.titolare_id || userId;
+  } catch {
+    return userId;
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // action=sdi — Invio fattura elettronica allo SDI tramite l'API di Fatture in
 // Cloud (l'intermediario accreditato: è FIC a trasmettere allo SDI, non noi).
@@ -45,14 +70,14 @@ async function ficFetch(ficToken, path, options = {}) {
   return { ok: res.ok, status: res.status, body };
 }
 
-async function handleSdi(req, res, user) {
+async function handleSdi(req, res, ownerId) {
   const f = req.body?.fattura;
   if (!f || !f.data_fattura || !(parseFloat(f.importo) > 0) || !f.patient_name) {
     return res.status(400).json({ error: 'Dati fattura incompleti' });
   }
 
   const profRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}&select=fiscal_regime,fic_api_token,fic_company_id`,
+    `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_regime,fic_api_token,fic_company_id`,
     { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } }
   );
   const profiles = profRes.ok ? await profRes.json() : [];
@@ -140,15 +165,15 @@ async function handleSdi(req, res, user) {
 // tipoSpesa "SP": prestazioni delle professioni sanitarie diverse da medici
 // e odontoiatri.
 // ═══════════════════════════════════════════════════════════════════════════
-async function handleSts(req, res, user) {
+async function handleSts(req, res, ownerId) {
   const fatturaId = req.body?.fattura_id;
   if (!fatturaId) return res.status(400).json({ error: 'fattura_id mancante' });
 
   const sbHeaders = { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` };
 
   const [profRes, fatRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}&select=fiscal_partita_iva,sts_api_username,sts_api_password,sts_erogatore_registrato`, { headers: sbHeaders }),
-    fetch(`${SUPABASE_URL}/rest/v1/fatture?id=eq.${fatturaId}&dietitian_id=eq.${user.id}&select=*`, { headers: sbHeaders }),
+    fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_partita_iva,sts_api_username,sts_api_password,sts_erogatore_registrato`, { headers: sbHeaders }),
+    fetch(`${SUPABASE_URL}/rest/v1/fatture?id=eq.${fatturaId}&dietitian_id=eq.${ownerId}&select=*`, { headers: sbHeaders }),
   ]);
   const profiles = profRes.ok ? await profRes.json() : [];
   const fatture = fatRes.ok ? await fatRes.json() : [];
@@ -221,9 +246,9 @@ async function handleSts(req, res, user) {
 // action=registra-erogatore — Registrazione una tantum come erogatore
 // sanitario presso l'intermediario accreditato per il Sistema TS.
 // ═══════════════════════════════════════════════════════════════════════════
-async function handleRegistraErogatore(req, res, user) {
+async function handleRegistraErogatore(req, res, ownerId) {
   const profRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}&select=fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,sts_api_username,sts_api_password,sts_username,sts_password,sts_pincode`,
+    `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,sts_api_username,sts_api_password,sts_username,sts_password,sts_pincode`,
     { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } }
   );
   const profiles = profRes.ok ? await profRes.json() : [];
@@ -263,7 +288,7 @@ async function handleRegistraErogatore(req, res, user) {
     return res.status(502).json({ error: 'Registrazione erogatore fallita: ' + (erBody?.message || erBody?.error || erRes.status) });
   }
 
-  await fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${user.id}`, {
+  await fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}`, {
     method: 'PATCH',
     headers: {
       apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
@@ -285,10 +310,11 @@ async function handler(req, res) {
     if (!user) return res.status(401).json({ error: 'Non autorizzato' });
     if (!SERVICE_ROLE_KEY) return res.status(500).json({ error: 'Configurazione server incompleta (SUPABASE_SERVICE_ROLE_KEY)' });
 
+    const ownerId = await resolveStudioOwner(token, user.id);
     const action = req.query.action;
-    if (action === 'sdi') return await handleSdi(req, res, user);
-    if (action === 'sts') return await handleSts(req, res, user);
-    if (action === 'registra-erogatore') return await handleRegistraErogatore(req, res, user);
+    if (action === 'sdi') return await handleSdi(req, res, ownerId);
+    if (action === 'sts') return await handleSts(req, res, ownerId);
+    if (action === 'registra-erogatore') return await handleRegistraErogatore(req, res, ownerId);
     return res.status(400).json({ error: 'Parametro ?action mancante o sconosciuto (attesi: sdi, sts, registra-erogatore)' });
   } catch (e) {
     await logServerError('fatture', e, req).catch(() => {});

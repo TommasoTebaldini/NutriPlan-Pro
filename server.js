@@ -49,6 +49,14 @@ async function loadHandler(name) {
 app.all('/api/:name', async (req, res) => {
   try {
     const name = req.params.name.replace(/[^a-zA-Z0-9_-]/g, '');
+    // File prefissati con `_` (es. _anthropic.js, _rateLimit.js) sono moduli
+    // interni importati da altri handler, non route pubbliche: su Vercel
+    // questa esclusione è automatica (il prefisso `_` li esime dal diventare
+    // Serverless Function a sé, vedi i commenti in testa a quei file). Questo
+    // router Express non replica quella convenzione di default — senza
+    // questo controllo, /api/_ragSearch (ecc.) importerebbe ed eseguirebbe
+    // moduli pensati per restare privati.
+    if (name.startsWith('_')) return res.status(404).json({ error: 'Not found' });
     const handler = await loadHandler(name);
     if (!handler) return res.status(404).json({ error: 'Not found' });
     await handler(req, res);

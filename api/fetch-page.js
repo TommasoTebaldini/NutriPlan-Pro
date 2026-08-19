@@ -129,26 +129,55 @@ async function handler(req, res) {
     return res.status(400).json({ error: 'URL non valido' });
   }
 
-  // SSRF protection: block requests to private/internal network addresses,
-  // including hostnames that only resolve to a private IP at fetch time.
-  if (await resolvesToPrivateIp(parsedUrl.hostname)) {
-    return res.status(400).json({ error: 'URL non consentito' });
-  }
-
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; DietPlanPro/1.0)',
-        'Accept': 'text/html,application/xhtml+xml',
-        'Accept-Language': 'it-IT,it;q=0.9'
-      }
-    });
+    let response;
+    try {
+      // redirect: 'manual' + rivalidazione ad ogni hop — con 'follow' (il
+      // default) il controllo SSRF sopra riguarderebbe solo l'URL iniziale:
+      // un sito esterno consentito potrebbe rispondere con un 3xx verso
+      // http://169.254.169.254/ (metadata cloud) o http://localhost/... e
+      // fetch lo seguirebbe automaticamente, bypassando la protezione.
+      let currentUrl = parsedUrl;
+      let hops = 0;
+      const MAX_REDIRECTS = 5;
+      for (;;) {
+        if (!['http:', 'https:'].includes(currentUrl.protocol)) {
+          return res.status(400).json({ error: 'Protocollo non supportato' });
+        }
+        if (await resolvesToPrivateIp(currentUrl.hostname)) {
+          return res.status(400).json({ error: 'URL non consentito' });
+        }
 
-    clearTimeout(timeout);
+        response = await fetch(currentUrl, {
+          signal: controller.signal,
+          redirect: 'manual',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; DietPlanPro/1.0)',
+            'Accept': 'text/html,application/xhtml+xml',
+            'Accept-Language': 'it-IT,it;q=0.9'
+          }
+        });
+
+        if ([301, 302, 303, 307, 308].includes(response.status)) {
+          const location = response.headers.get('location');
+          if (!location || ++hops > MAX_REDIRECTS) {
+            return res.status(400).json({ error: 'Troppi redirect o redirect senza destinazione' });
+          }
+          try {
+            currentUrl = new URL(location, currentUrl);
+          } catch {
+            return res.status(400).json({ error: 'Redirect verso un URL non valido' });
+          }
+          continue;
+        }
+        break;
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!response.ok) {
       return res.status(response.status).json({ error: `HTTP ${response.status}` });

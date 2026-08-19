@@ -10,6 +10,7 @@
 // il MODEL — vedi https://console.groq.com/docs/deprecations.
 
 import { checkRateLimit } from './_rateLimit.js';
+import { checkMonthlyQuota } from './_monthlyQuota.js';
 import { withErrorLogging, logServerError } from './_errorLog.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';
@@ -25,6 +26,13 @@ const MAX_CONTENT_BYTES = 3 * 1024 * 1024; // 3 MB (data URL base64 inclusa)
 // Chiamate vision costano di più su Groq del testo puro: limite più stretto
 // delle 10/min di claude.js/gemini.js.
 const RL_MAX = 6;
+// Tetto mensile duraturo (vedi api/_monthlyQuota.js) — mancava qui pur
+// essendo presente su tutti gli altri endpoint AI (gemini.js: 'ai_calls' 500,
+// ai-scribe.js: 'ai_scribe' 60): senza, il solo rate limit al minuto non pone
+// alcun tetto sull'uso sostenuto nel mese di una chiamata vision (la più
+// costosa del gruppo). Scope dedicato perché il costo per chiamata è diverso
+// dalla chat testuale.
+const MONTHLY_MAX = 100;
 
 const _tkCache = new Map(); // token → { user, exp }
 
@@ -82,6 +90,9 @@ async function handler(req, res) {
 
   if (!(await checkRateLimit(user.id, { scope: 'ocr-referto', max: RL_MAX }))) {
     return res.status(429).json({ error: 'Troppe richieste. Riprova tra un minuto.' });
+  }
+  if (!(await checkMonthlyQuota(token, user.id, 'ocr_referto', MONTHLY_MAX))) {
+    return res.status(429).json({ error: `Hai raggiunto il limite di ${MONTHLY_MAX} scansioni referto incluse nel piano per questo mese. Il conteggio si azzera a inizio mese.` });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;

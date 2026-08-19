@@ -345,6 +345,22 @@
 </div>`);
     }
 
+    // Reset all fields first — the modal markup is only injected once, so on
+    // a second open (for a different patient) stale values from the previous
+    // patient would otherwise remain in inputs that aren't explicitly set
+    // below (diagnosi, raccomandazioni, note, o cf/peso/altezza mancanti nel
+    // nuovo patientData), finendo per essere esportati nel documento FSE del
+    // paziente sbagliato.
+    document.getElementById('fse-cf').value = '';
+    document.getElementById('fse-sex').value = 'M';
+    document.getElementById('fse-diag-code').value = '';
+    document.getElementById('fse-diag-desc').value = '';
+    document.getElementById('fse-weight').value = '';
+    document.getElementById('fse-height').value = '';
+    document.getElementById('fse-recommendations').value = '';
+    document.getElementById('fse-notes').value = '';
+    document.getElementById('fse-doctype').value = 'Referto ambulatoriale nutrizionale';
+
     // Pre-fill from patient data
     if (patientData) {
       const cf = patientData.cf || patientData.codice_fiscale || '';

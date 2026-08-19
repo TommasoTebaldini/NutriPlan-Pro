@@ -39,6 +39,25 @@ jobs:
           npm run build:minify
           git diff --exit-code js/db.min.js js/lang.min.js js/utils.min.js js/studies-data.min.js js/linee-guida-data.min.js js/consigli-data.min.js js/ricette-db.min.js
 
+      # This is the build that actually deploys to production (Vercel runs
+      # `vite build`) — the raw checked-out files are NOT what's live. Assets
+      # referenced only as a string (manifest.webmanifest icon paths, sw.js
+      # registered via serviceWorker.register('/sw.js'), a subfolder of HTML
+      # pages) are invisible to Vite's static HTML/CSS/JS asset scanner and
+      # silently vanish from dist/ unless vite.config.js explicitly copies
+      # them — found broken in production this way for sw.js, legal/*.html,
+      # icons/, favicon.svg, robots.txt, template_pazienti.csv all at once.
+      # This step catches a regression of any of those before it reaches prod.
+      - name: Build with Vite and verify no critical asset silently dropped
+        run: |
+          npm run build
+          missing=0
+          for f in dist/sw.js dist/favicon.svg dist/robots.txt dist/template_pazienti.csv \
+                   dist/icons/icon-144x144.png dist/legal/dpa-responsabile-trattamento.html; do
+            if [ ! -f "$f" ]; then echo "MISSING from Vite build output: $f"; missing=1; fi
+          done
+          exit $missing
+
       - name: Smoke-test the Express server
         run: |
           node server.js &

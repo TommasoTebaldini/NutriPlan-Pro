@@ -26,7 +26,7 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "202
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  Deno.env.get("SB_SECRET_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
 // Logging errori: usa il modulo condiviso _shared/errorLog.ts (stessa tabella
@@ -68,15 +68,25 @@ serve(async (req) => {
         if (fatturaId) {
           // Pagamento diretto paziente→dietista di una singola fattura
           // (SEZIONE 43) — flusso "payment" one-time, distinto dagli
-          // abbonamenti ricorrenti gestiti sotto.
-          await supabase.from("fatture").update({
-            stato: "pagato",
-            stripe_checkout_session_id: session.id,
-            stripe_payment_intent_id: session.payment_intent as string,
-            pagato_online_at: new Date().toISOString(),
-          }).eq("id", fatturaId);
+          // abbonamenti ricorrenti gestiti sotto. checkout.session.completed
+          // può arrivare con payment_status ancora "unpaid" per metodi di
+          // pagamento asincroni (es. bonifici) — qui accettiamo solo card/
+          // paypal (sincroni), ma controlliamo comunque payment_status prima
+          // di segnare la fattura come pagata: se non ancora pagato, non
+          // facciamo nulla e aspettiamo async_payment_succeeded (o il
+          // controllo manuale del dietista).
+          if (session.payment_status === "paid") {
+            await supabase.from("fatture").update({
+              stato: "pagato",
+              stripe_checkout_session_id: session.id,
+              stripe_payment_intent_id: session.payment_intent as string,
+              pagato_online_at: new Date().toISOString(),
+            }).eq("id", fatturaId);
 
-          console.log(`Fattura ${fatturaId} pagata online (session ${session.id})`);
+            console.log(`Fattura ${fatturaId} pagata online (session ${session.id})`);
+          } else {
+            console.log(`Fattura ${fatturaId}: checkout completato ma payment_status=${session.payment_status}, non ancora segnata come pagata`);
+          }
         } else if (userId && subscriptionId) {
           const sub = await stripe.subscriptions.retrieve(subscriptionId);
           const expiresAt = new Date(sub.current_period_end * 1000).toISOString();

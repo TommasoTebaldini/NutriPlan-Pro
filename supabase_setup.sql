@@ -6194,3 +6194,82 @@ CREATE POLICY "chat_messages_select_visible" ON chat_messages
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_73_chat_messages_dietitian_id', 'Aggiunta chat_messages.dietitian_id (nullable, retro-popolata dalle relazioni patient_dietitian esistenti — verificato 0 pazienti con 2+ dietisti oggi, backfill univoco e sicuro). Aggiornate le policy "chat visibile ai coinvolti" e "chat_messages_select_visible" per richiedere dietitian_id IS NULL (righe storiche) OR dietitian_id = lo studio di chi legge, invece del solo "qualunque dietista collegato al paziente". Chiude una lettura incrociata della chat, oggi non ancora sfruttabile (nessun paziente con relazioni multiple) ma strutturalmente possibile dato che pazienti.html permette di collegare qualunque account paziente esistente a un nuovo studio. Il codice JS che valorizza dietitian_id sui nuovi messaggi arriva in una sezione/commit separato, da spedire solo a migrazione confermata eseguita')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 74 — FIX: log_clinical_change() etichettava il DIETISTA come
+-- "patient_id" nel registro di audit clinico per alcune tabelle
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Continuando l'audit sul lato database (trigger/funzioni non ancora
+-- riverificati, dopo l'estesa revisione RLS delle sezioni precedenti):
+-- log_clinical_change() (il trigger AFTER su 12 tabelle cliniche) usa
+--   COALESCE(NULLIF(patient_id,''), NULLIF(user_id,''))
+-- per popolare clinical_audit_log.patient_id — assumendo che, in assenza di
+-- una colonna patient_id, "user_id" identifichi comunque il paziente.
+--
+-- Falso per esami_biochimici e liste_spesa: verificato via pg_policies che
+-- la loro colonna user_id è il DIETISTA (policy "esami_biochimici_dietitian_
+-- all"/"liste_spesa_dietitian_all": auth.uid() = user_id), non il paziente
+-- — hanno solo cartella_id per identificare il paziente, già gestito
+-- correttamente dal CASE esistente. Stesso problema per cartelle_raw (solo
+-- user_id = dietista, nessuna colonna patient_id: molte cartelle non hanno
+-- nemmeno un account paziente collegato).
+--
+-- Effetto: ogni voce di clinical_audit_log per queste 3 tabelle registrava
+-- silenziosamente l'id del DIETISTA nel campo pensato per identificare IL
+-- PAZIENTE — un registro di audit clinico/GDPR che risponde male alla
+-- domanda che dovrebbe rispondere ("cosa è cambiato sui dati di QUESTO
+-- paziente"). Le altre 9 tabelle con questo trigger hanno tutte una vera
+-- colonna patient_id (bia_records, ncpt, note_specialistiche, schede_
+-- valutazione, chat_messages, patient_documents) o un user_id che è
+-- genuinamente il paziente (menstrual_cycle, patient_diets — dati
+-- paziente-owned, verificato via pg_policies) — non affette.
+--
+-- Fix: rimosso il fallback a user_id. Se una tabella non ha una vera
+-- colonna patient_id, il campo resta NULL (onesto: "non tracciato a
+-- questo livello di granularità") invece di riportare un id sbagliato.
+-- Storico NON corretto retroattivamente (un registro di audit non va
+-- riscritto silenziosamente) — se serve, è una decisione separata.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION log_clinical_change()
+RETURNS TRIGGER
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_row JSONB;
+  v_changed_cols TEXT[];
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    v_row := to_jsonb(OLD);
+  ELSE
+    v_row := to_jsonb(NEW);
+  END IF;
+
+  IF TG_OP = 'UPDATE' THEN
+    SELECT array_agg(n.key) INTO v_changed_cols
+    FROM jsonb_each(to_jsonb(NEW)) n
+    JOIN jsonb_each(to_jsonb(OLD)) o ON n.key = o.key
+    WHERE n.value IS DISTINCT FROM o.value;
+  END IF;
+
+  INSERT INTO clinical_audit_log (table_name, record_id, operation, changed_by, changed_columns, patient_id, cartella_id)
+  VALUES (
+    TG_TABLE_NAME,
+    (v_row->>'id')::uuid,
+    TG_OP,
+    auth.uid(),
+    v_changed_cols,
+    -- SEZIONE 74: NIENTE fallback a user_id — su esami_biochimici/
+    -- liste_spesa/cartelle_raw user_id è il dietista, non il paziente.
+    NULLIF(v_row->>'patient_id','')::uuid,
+    CASE WHEN TG_TABLE_NAME IN ('cartelle','cartelle_raw') THEN (v_row->>'id')::uuid
+         ELSE NULLIF(v_row->>'cartella_id','')::uuid END
+  );
+
+  RETURN NULL;
+END;
+$$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_74_fix_log_clinical_change_patient_id', 'Fix correttezza registro audit clinico: log_clinical_change() usava COALESCE(patient_id, user_id) per clinical_audit_log.patient_id, ma su esami_biochimici/liste_spesa/cartelle_raw user_id è il DIETISTA (verificato via pg_policies: policy "..._dietitian_all" con auth.uid()=user_id), non il paziente — ogni voce di audit per queste 3 tabelle registrava l''id del dietista nel campo "patient_id". Rimosso il fallback: resta NULL quando non c''è una vera colonna patient_id, invece di riportare un id sbagliato. Storico non corretto retroattivamente')
+ON CONFLICT (id) DO NOTHING;

@@ -6425,3 +6425,581 @@ $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_76_fix_signup_rpc_swallowed_exceptions', 'Fix affidabilità critico: create_patient_profile()/create_profile_for_new_user() — uniche funzioni che creano la riga profiles alla registrazione, dato che il trigger su auth.users non esiste più — avevano EXCEPTION WHEN OTHERS THEN NULL, che ingoiava qualunque errore imprevisto durante l''INSERT lasciando l''utente con un account auth.users ma nessun profilo, senza errore da nessuna parte. Rimosso il blocco: ON CONFLICT DO UPDATE resta l''unica protezione necessaria (idempotente per design), gli errori reali ora si propagano al chiamante')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 77 — FIX SICUREZZA CRITICO: policy RLS residua "chat_messages_own"
+-- vanificava il filtro status='sent' dei messaggi programmati
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Stesso pattern già visto in SEZIONE 61 (policy permissive residue che
+-- sopravvivono accanto a policy più corrette e ne vanificano la restrizione,
+-- perché Postgres unisce le policy permissive in OR — la più larga vince).
+--
+-- chat_messages ha oggi 3 policy:
+--   1) "chat visibile ai coinvolti" (FOR ALL) — corretta, con vincolo
+--      dietitian_id da SEZIONE 73.
+--   2) "chat_messages_select_visible" (FOR SELECT) — corretta, aggiunge
+--      "AND (status='sent' OR sender_id=me)" per nascondere ai destinatari
+--      i messaggi programmati non ancora inviati (funzionalità "Programma
+--      invio" di chat.html).
+--   3) "chat_messages_own" (FOR ALL, USING "sender_id=me OR patient_id=me",
+--      NESSUN filtro status) — residuo di un'iterazione precedente del
+--      modello di permessi, mai rimosso. Essendo FOR ALL si applica ANCHE
+--      a SELECT, e concede lettura al paziente (patient_id=me) a
+--      PRESCINDERE dallo status — quindi un messaggio con status='scheduled'
+--      diventa comunque leggibile dal paziente tramite questa policy, anche
+--      se "chat_messages_select_visible" lo nascondeva correttamente.
+--      Risultato concreto: i messaggi che il dietista programma per un
+--      orario futuro (chat.html, "📅 Programma invio") sono visibili al
+--      paziente SUBITO, non all'ora prevista — la funzionalità di
+--      programmazione non protegge la privacy come inteso.
+--
+-- Verificato prima di rimuovere: "chat_messages_own" è un sottoinsieme di
+-- "chat visibile ai coinvolti" per ogni caso d'uso reale.
+--   - Lettura/scrittura come paziente (patient_id=me): già coperta
+--     identicamente da "chat visibile ai coinvolti" (patient_id=me).
+--   - Lettura/scrittura come dietista (sender_id=me): già coperta da
+--     "chat visibile ai coinvolti" tramite la relazione patient_dietitian +
+--     dietitian_id — verificato che l'INSERT di un dietista non valorizza
+--     dietitian_id (resta NULL, il codice JS di scrittura dietitian_id
+--     annunciato in SEZIONE 73 non è ancora stato spedito), quindi la
+--     condizione "dietitian_id IS NULL" della policy corretta è sempre
+--     soddisfatta oggi per i nuovi messaggi dietista.
+-- Nessun percorso di codice reale (grep esaustivo di .from('chat_messages')
+-- in chat.html, broadcast.html, patient-portal.html, ChatPage.jsx,
+-- CheckinPage.jsx, DietPage.jsx) dipende da un caso coperto SOLO da
+-- "chat_messages_own" e non dalle altre due.
+--
+-- IMPORTANTE — verificare dopo aver eseguito: aprire chat.html, programmare
+-- un messaggio per qualche minuto nel futuro, controllare che NON compaia
+-- subito nell'app paziente (ChatPage.jsx) e che compaia solo dopo l'orario
+-- programmato (o dopo l'invio manuale, se il job che marca status='sent'
+-- non è ancora schedulato). Controllare anche che l'invio normale (non
+-- programmato) e la ricezione di messaggi vocali/foto continuino a
+-- funzionare su entrambi i lati.
+-- Piano di rientro se qualcosa si rompe:
+--   CREATE POLICY "chat_messages_own" ON chat_messages FOR ALL
+--     USING ((select auth.uid()) = sender_id OR (select auth.uid()) = patient_id);
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "chat_messages_own" ON chat_messages;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_77_fix_chat_messages_scheduled_leak', 'Rimossa la policy RLS residua "chat_messages_own" (FOR ALL, sender_id=me OR patient_id=me, nessun filtro status) su chat_messages — permissiva e unita in OR con "chat_messages_select_visible", vanificava il filtro status=''sent'' che nasconde ai destinatari i messaggi programmati non ancora inviati (i pazienti vedevano i messaggi programmati dal dietista subito, non all''orario previsto). Verificato che "chat visibile ai coinvolti" + "chat_messages_select_visible" coprono già tutti i percorsi di codice reali (lettura/scrittura paziente e dietista) senza bisogno della policy rimossa')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 78 — FIX SICUREZZA CRITICO: policy RLS "*_select_visible_authenticated"
+-- su note_specialistiche e piani espone dati clinici a QUALUNQUE utente
+-- autenticato, di qualunque studio, senza alcuna relazione col paziente
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Stesso pattern di SEZIONE 61/77 (policy permissiva residua che si somma in
+-- OR alle policy corrette e ne vanifica lo scoping), trovato continuando
+-- l'audit su note_specialistiche/piani: entrambe hanno, oltre alla policy
+-- "*_select_combined" corretta (verifica proprietà dietista O relazione
+-- patient_dietitian reale O is_linked_patient), una TERZA policy SELECT
+-- residua:
+--   note_specialistiche_select_visible_authenticated: USING (visible_to_patient = true)
+--   piani_select_visible_authenticated:                USING (visible_to_patient = true)
+-- Nessun controllo di proprietà, nessuna relazione paziente-dietista, nessun
+-- filtro su cartella_id/patient_id — SOLO un booleano sulla riga stessa.
+-- Essendo policy SELECT permissive, si sommano in OR a "*_select_combined":
+-- qualunque utente autenticato (paziente O dietista, di QUALUNQUE studio,
+-- anche senza alcuna relazione con quella cartella) può leggere OGNI nota
+-- specialistica o piano alimentare marcato visible_to_patient=true di
+-- QUALUNQUE paziente sulla piattaforma — non solo i propri. Più grave del
+-- gap chat_messages di SEZIONE 77: qui non serve nemmeno una relazione
+-- paziente-dietista pregressa, basta essere autenticati sulla piattaforma.
+--
+-- Verificato prima di rimuovere: "*_select_combined" copre già ogni caso
+-- legittimo (dietista proprietario/collaboratore, paziente collegato con
+-- visible_to_patient=true) — la policy "*_select_visible_authenticated" non
+-- aggiunge nessun caso reale, solo la falla. Nessun percorso di codice (grep
+-- su note_specialistiche/piani in entrambi i repo) si aspetta di leggere
+-- dati clinici di pazienti non collegati.
+--
+-- IMPORTANTE — verificare dopo aver eseguito: aprire una cartella paziente
+-- in pazienti.html, controllare che note specialistiche e piani alimentari
+-- marcati "visibile al paziente" continuino a essere leggibili normalmente
+-- sia dal dietista proprietario sia dall'app paziente collegata.
+-- Piano di rientro (da NON eseguire se non in caso di rottura confermata,
+-- riapre la falla):
+--   CREATE POLICY "note_specialistiche_select_visible_authenticated" ON note_specialistiche FOR SELECT USING (visible_to_patient = true);
+--   CREATE POLICY "piani_select_visible_authenticated" ON piani FOR SELECT USING (visible_to_patient = true);
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "note_specialistiche_select_visible_authenticated" ON note_specialistiche;
+DROP POLICY IF EXISTS "piani_select_visible_authenticated" ON piani;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_78_fix_cross_tenant_phi_leak', 'Rimosse le policy RLS residue "note_specialistiche_select_visible_authenticated" e "piani_select_visible_authenticated" (USING visible_to_patient=true, nessuno scoping su proprietà/relazione paziente-dietista) — permettevano a QUALUNQUE utente autenticato della piattaforma di leggere note specialistiche e piani alimentari di QUALUNQUE paziente, anche senza alcuna relazione con quel paziente/dietista. Le policy "*_select_combined" già coprono correttamente tutti i casi legittimi')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 79 — CIFRATURA APPLICATIVA: estensione a note_specialistiche.nota
+-- e ncpt.{valutazione,diagnosi,intervento,monitoraggio}
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Stesso pattern "vista trasparente" del pilota su cartelle.note (SEZIONE 40,
+-- corretto in SEZIONE 67 per non esporre encrypt_text/decrypt_text come RPC
+-- pubblica — qui si usa direttamente extensions.encrypt_text/decrypt_text,
+-- non public., seguendo la versione già corretta). Zero modifiche al codice
+-- client: chat.html/pazienti.html/ChatPage.jsx continuano a fare
+-- .from('note_specialistiche')/.from('ncpt') come prima, la vista fa da
+-- passthrough trasparente cifrando/decifrando.
+--
+-- Escluso deliberatamente da questa sezione: chat_messages.content — NON
+-- applicare questo pattern lì senza prima riprogettare la lettura realtime.
+-- Verificato oggi (grep .on('postgres_changes', {table:'chat_messages'})
+-- sia in chat.html che in ChatPage.jsx) che ENTRAMBE le app usano Supabase
+-- Realtime su questa tabella per i messaggi live: Realtime legge il WAL
+-- della tabella BASE, non la vista — un client sottoscritto continuerebbe a
+-- ricevere `content` cifrato (bytea) nel payload realtime invece del testo,
+-- rompendo silenziosamente la chat in tempo reale. cartelle/note_
+-- specialistiche/ncpt non hanno mai avuto sottoscrizioni realtime (verificato
+-- stesso grep, zero risultati), quindi non hanno questo problema.
+--
+-- Escluso anche patient_intake_forms.responses: colonna JSONB (non text),
+-- il pattern encrypt_text/decrypt_text opera su text/bytea — servirebbe un
+-- cast responses::text prima di cifrare e ::jsonb dopo aver decifrato, mai
+-- verificato che sia lossless per ogni struttura JSON reale già salvata.
+-- Inoltre la feature "link pubblico senza login" di questa tabella è già
+-- stata trovata incompleta/mai avviata da nessuna pagina (SEZIONE 61,
+-- "Public read/update by token" rimosse perché codice morto) — priorità
+-- bassa, da riprendere in una sessione dedicata se si completa quella
+-- feature.
+--
+-- IMPORTANTE — verificare dopo aver eseguito (stesso protocollo di SEZIONE
+-- 40): aprire una cartella paziente in pazienti.html, leggere/scrivere una
+-- nota specialistica e una valutazione NCPT esistenti, controllare che si
+-- leggano/salvino correttamente. Poi ispezionare direttamente
+-- note_specialistiche_raw.nota_enc/ncpt_raw.valutazione_enc dal SQL Editor
+-- e confermare che sia bytea illeggibile, non testo in chiaro.
+-- Dopo conferma in produzione per qualche giorno, droppare le colonne
+-- *_plain_deprecated (irreversibile, NON incluso in questa sezione):
+--   ALTER TABLE note_specialistiche_raw DROP COLUMN nota_plain_deprecated;
+--   ALTER TABLE ncpt_raw DROP COLUMN valutazione_plain_deprecated, DROP COLUMN diagnosi_plain_deprecated, DROP COLUMN intervento_plain_deprecated, DROP COLUMN monitoraggio_plain_deprecated;
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- ── note_specialistiche ──────────────────────────────────────────────────
+ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS nota_enc bytea;
+UPDATE note_specialistiche SET nota_enc = extensions.encrypt_text(nota) WHERE nota IS NOT NULL AND nota_enc IS NULL;
+
+ALTER TABLE note_specialistiche RENAME TO note_specialistiche_raw;
+ALTER TABLE note_specialistiche_raw RENAME COLUMN nota TO nota_plain_deprecated;
+
+CREATE VIEW public.note_specialistiche WITH (security_invoker = true) AS
+SELECT id, cartella_id, user_id, tipo, extensions.decrypt_text(nota_enc) AS nota, dati,
+       created_at, updated_at, visible_to_patient, patient_id, print_image_url,
+       print_image_url_compact, print_image_url_simple, print_image_url_alldays, print_format
+FROM note_specialistiche_raw;
+
+CREATE OR REPLACE FUNCTION public.note_specialistiche_view_insert()
+RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE r public.note_specialistiche_raw;
+BEGIN
+  INSERT INTO public.note_specialistiche_raw
+    (id, cartella_id, user_id, tipo, nota_enc, dati, created_at, updated_at,
+     visible_to_patient, patient_id, print_image_url, print_image_url_compact,
+     print_image_url_simple, print_image_url_alldays, print_format)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.cartella_id, NEW.user_id, NEW.tipo,
+     extensions.encrypt_text(NEW.nota), NEW.dati, COALESCE(NEW.created_at, now()),
+     COALESCE(NEW.updated_at, now()), NEW.visible_to_patient, NEW.patient_id,
+     NEW.print_image_url, NEW.print_image_url_compact, NEW.print_image_url_simple,
+     NEW.print_image_url_alldays, NEW.print_format)
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.created_at := r.created_at;
+  NEW.updated_at := r.updated_at;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS note_specialistiche_view_insert_trg ON public.note_specialistiche;
+CREATE TRIGGER note_specialistiche_view_insert_trg INSTEAD OF INSERT ON public.note_specialistiche
+  FOR EACH ROW EXECUTE FUNCTION public.note_specialistiche_view_insert();
+
+CREATE OR REPLACE FUNCTION public.note_specialistiche_view_update()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE public.note_specialistiche_raw SET
+    tipo = NEW.tipo, nota_enc = extensions.encrypt_text(NEW.nota), dati = NEW.dati,
+    updated_at = now(), visible_to_patient = NEW.visible_to_patient,
+    patient_id = NEW.patient_id, print_image_url = NEW.print_image_url,
+    print_image_url_compact = NEW.print_image_url_compact,
+    print_image_url_simple = NEW.print_image_url_simple,
+    print_image_url_alldays = NEW.print_image_url_alldays, print_format = NEW.print_format
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS note_specialistiche_view_update_trg ON public.note_specialistiche;
+CREATE TRIGGER note_specialistiche_view_update_trg INSTEAD OF UPDATE ON public.note_specialistiche
+  FOR EACH ROW EXECUTE FUNCTION public.note_specialistiche_view_update();
+
+CREATE OR REPLACE FUNCTION public.note_specialistiche_view_delete()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM public.note_specialistiche_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS note_specialistiche_view_delete_trg ON public.note_specialistiche;
+CREATE TRIGGER note_specialistiche_view_delete_trg INSTEAD OF DELETE ON public.note_specialistiche
+  FOR EACH ROW EXECUTE FUNCTION public.note_specialistiche_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.note_specialistiche TO authenticated;
+
+-- ── ncpt ──────────────────────────────────────────────────────────────────
+ALTER TABLE ncpt ADD COLUMN IF NOT EXISTS valutazione_enc bytea;
+ALTER TABLE ncpt ADD COLUMN IF NOT EXISTS diagnosi_enc bytea;
+ALTER TABLE ncpt ADD COLUMN IF NOT EXISTS intervento_enc bytea;
+ALTER TABLE ncpt ADD COLUMN IF NOT EXISTS monitoraggio_enc bytea;
+UPDATE ncpt SET
+  valutazione_enc  = extensions.encrypt_text(valutazione)  WHERE valutazione  IS NOT NULL AND valutazione_enc  IS NULL;
+UPDATE ncpt SET
+  diagnosi_enc     = extensions.encrypt_text(diagnosi)     WHERE diagnosi     IS NOT NULL AND diagnosi_enc     IS NULL;
+UPDATE ncpt SET
+  intervento_enc   = extensions.encrypt_text(intervento)   WHERE intervento   IS NOT NULL AND intervento_enc   IS NULL;
+UPDATE ncpt SET
+  monitoraggio_enc = extensions.encrypt_text(monitoraggio) WHERE monitoraggio IS NOT NULL AND monitoraggio_enc IS NULL;
+
+ALTER TABLE ncpt RENAME TO ncpt_raw;
+ALTER TABLE ncpt_raw RENAME COLUMN valutazione  TO valutazione_plain_deprecated;
+ALTER TABLE ncpt_raw RENAME COLUMN diagnosi     TO diagnosi_plain_deprecated;
+ALTER TABLE ncpt_raw RENAME COLUMN intervento   TO intervento_plain_deprecated;
+ALTER TABLE ncpt_raw RENAME COLUMN monitoraggio TO monitoraggio_plain_deprecated;
+
+CREATE VIEW public.ncpt WITH (security_invoker = true) AS
+SELECT id, cartella_id, user_id,
+       extensions.decrypt_text(valutazione_enc)  AS valutazione,
+       extensions.decrypt_text(diagnosi_enc)     AS diagnosi,
+       extensions.decrypt_text(intervento_enc)   AS intervento,
+       extensions.decrypt_text(monitoraggio_enc) AS monitoraggio,
+       created_at, updated_at, visible_to_patient, patient_id, print_image_url
+FROM ncpt_raw;
+
+CREATE OR REPLACE FUNCTION public.ncpt_view_insert()
+RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE r public.ncpt_raw;
+BEGIN
+  INSERT INTO public.ncpt_raw
+    (id, cartella_id, user_id, valutazione_enc, diagnosi_enc, intervento_enc, monitoraggio_enc,
+     created_at, updated_at, visible_to_patient, patient_id, print_image_url)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.cartella_id, NEW.user_id,
+     extensions.encrypt_text(NEW.valutazione), extensions.encrypt_text(NEW.diagnosi),
+     extensions.encrypt_text(NEW.intervento), extensions.encrypt_text(NEW.monitoraggio),
+     COALESCE(NEW.created_at, now()), COALESCE(NEW.updated_at, now()),
+     NEW.visible_to_patient, NEW.patient_id, NEW.print_image_url)
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.created_at := r.created_at;
+  NEW.updated_at := r.updated_at;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS ncpt_view_insert_trg ON public.ncpt;
+CREATE TRIGGER ncpt_view_insert_trg INSTEAD OF INSERT ON public.ncpt
+  FOR EACH ROW EXECUTE FUNCTION public.ncpt_view_insert();
+
+CREATE OR REPLACE FUNCTION public.ncpt_view_update()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE public.ncpt_raw SET
+    valutazione_enc  = extensions.encrypt_text(NEW.valutazione),
+    diagnosi_enc     = extensions.encrypt_text(NEW.diagnosi),
+    intervento_enc   = extensions.encrypt_text(NEW.intervento),
+    monitoraggio_enc = extensions.encrypt_text(NEW.monitoraggio),
+    updated_at = now(), visible_to_patient = NEW.visible_to_patient,
+    patient_id = NEW.patient_id, print_image_url = NEW.print_image_url
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS ncpt_view_update_trg ON public.ncpt;
+CREATE TRIGGER ncpt_view_update_trg INSTEAD OF UPDATE ON public.ncpt
+  FOR EACH ROW EXECUTE FUNCTION public.ncpt_view_update();
+
+CREATE OR REPLACE FUNCTION public.ncpt_view_delete()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM public.ncpt_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS ncpt_view_delete_trg ON public.ncpt;
+CREATE TRIGGER ncpt_view_delete_trg INSTEAD OF DELETE ON public.ncpt
+  FOR EACH ROW EXECUTE FUNCTION public.ncpt_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.ncpt TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_79_field_encryption_note_ncpt', 'Estesa la cifratura applicativa (pattern vista trasparente di SEZIONE 40/67) a note_specialistiche.nota e ncpt.{valutazione,diagnosi,intervento,monitoraggio}. Tabelle rinominate *_raw, viste trasparenti con security_invoker=true (RLS del chiamante invariata), trigger INSTEAD OF INSERT/UPDATE/DELETE. Zero modifiche richieste al codice client. Esclusa deliberatamente chat_messages.content (rotture Realtime — verificato che entrambe le app sottoscrivono postgres_changes su questa tabella) e patient_intake_forms.responses (colonna JSONB, feature del link pubblico già morta)')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 80 — CIFRATURA APPLICATIVA: chat_messages.content, con migrazione
+-- da postgres_changes a "Broadcast from Database" per non rompere il realtime
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Motivo per cui questa tabella era stata esclusa in SEZIONE 79: Supabase
+-- Realtime "postgres_changes" legge il replication stream (WAL) della
+-- tabella BASE, non la vista — cifrare content in chat_messages_raw senza
+-- cambiare altro avrebbe fatto arrivare ai client bytea cifrato invece del
+-- testo nei payload realtime, rompendo silenziosamente la chat live.
+--
+-- Soluzione: pattern ufficiale Supabase "Broadcast from Database"
+-- (https://supabase.com/docs/guides/realtime/broadcast). Invece di far
+-- leggere ai client il WAL grezzo, un trigger AFTER INSERT/UPDATE su
+-- chat_messages_raw DECIFRA il contenuto e lo invia esplicitamente via
+-- `realtime.send()` su un topic privato `chat:<patient_id>` — stesso schema
+-- di autorizzazione già usato dalla tabella (patient_id=me OR dietista dello
+-- studio collegato), replicato come policy RLS su `realtime.messages`
+-- (tabella dedicata di Supabase per l'autorizzazione dei canali broadcast,
+-- RLS abilitata di default, ZERO policy esistenti prima di questa sezione —
+-- verificato che nessun'altra feature del progetto usa già Broadcast).
+--
+-- **Cambio richiesto lato client (commit separato, stesso giorno)**:
+--   - chat.html: canale `sb.channel('chat-'+patientId)` con
+--     `.on('postgres_changes', {table:'chat_messages', event:'INSERT'}, ...)`
+--     diventa `sb.channel('chat:'+patientId, {config:{private:true}})` con
+--     `.on('broadcast', {event:'INSERT'}, payload => { const msg = payload.payload; ... })`.
+--   - ChatPage.jsx: stesso cambio, topic `chat:`+user.id (== patientId
+--     quando il lettore è il paziente stesso — canale UNICO condiviso dalle
+--     due app, prima erano due nomi diversi 'chat-X'/'chat-patient-X' che
+--     comunque puntavano alla stessa tabella via postgres_changes). Il
+--     listener UPDATE (read_at) diventa broadcast event 'UPDATE'. Il
+--     listener sulla tabella `profiles` (stato online dietista) NON cambia,
+--     resta su un canale separato via postgres_changes — non riguarda dati
+--     cifrati.
+--
+-- **IMPORTANTE — questo è l'unico punto del lavoro di oggi che richiede
+-- test dal vivo con due sessioni browser reali (dietista + paziente),
+-- perché il meccanismo websocket non è testabile da qui**: dopo aver
+-- eseguito SQL + deploy del codice client, aprire chat.html e ChatPage.jsx
+-- in due browser/sessioni diverse per la stessa coppia dietista-paziente,
+-- mandare un messaggio da un lato e verificare che compaia SUBITO
+-- dall'altro senza refresh manuale. Testare anche: messaggio vocale, foto,
+-- videochiamata (message_type:'video_call'), segno di lettura (spunta
+-- doppia blu). Piano di rientro se il realtime non funziona più (i
+-- messaggi si vedono solo ricaricando la pagina, non più in tempo reale):
+--   1. Rollback del solo codice client ai canali `postgres_changes`
+--      precedenti (git revert del commit indicato sopra) — la tabella resta
+--      cifrata, il caricamento iniziale (.select()) via vista continua a
+--      funzionare normalmente, si perde solo l'aggiornamento istantaneo
+--      (bisogna ricaricare per vedere nuovi messaggi) finché non si
+--      indaga il problema di broadcast con più calma.
+--   2. Se serve annullare anche la cifratura: stesso pattern di rollback
+--      delle sezioni precedenti (ripristinare vista/colonna con
+--      content_plain_deprecated), non incluso qui per non incoraggiarlo
+--      senza necessità.
+--
+-- ── chat_messages: cifratura content ────────────────────────────────────
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS content_enc bytea;
+UPDATE chat_messages SET content_enc = extensions.encrypt_text(content) WHERE content IS NOT NULL AND content_enc IS NULL;
+
+ALTER TABLE chat_messages RENAME TO chat_messages_raw;
+ALTER TABLE chat_messages_raw RENAME COLUMN content TO content_plain_deprecated;
+
+-- La tabella non serve più nella publication postgres_changes: dopo il
+-- passaggio a broadcast nessun client vi si iscrive più in quel modo, e
+-- lasciarla dentro esporrebbe inutilmente content_enc (bytea cifrato) a
+-- qualunque eventuale client residuo non aggiornato che tentasse ancora
+-- postgres_changes su questa tabella.
+ALTER PUBLICATION supabase_realtime DROP TABLE public.chat_messages_raw;
+
+CREATE VIEW public.chat_messages WITH (security_invoker = true) AS
+SELECT id, patient_id, sender_id, sender_role, extensions.decrypt_text(content_enc) AS content,
+       read_at, created_at, message_type, file_url, file_name, duration_seconds,
+       type, status, scheduled_at, dietitian_id
+FROM chat_messages_raw;
+
+CREATE OR REPLACE FUNCTION public.chat_messages_view_insert()
+RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE r public.chat_messages_raw;
+BEGIN
+  INSERT INTO public.chat_messages_raw
+    (id, patient_id, sender_id, sender_role, content_enc, read_at, created_at,
+     message_type, file_url, file_name, duration_seconds, type, status, scheduled_at, dietitian_id)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.patient_id, NEW.sender_id, NEW.sender_role,
+     extensions.encrypt_text(NEW.content), NEW.read_at, COALESCE(NEW.created_at, now()),
+     NEW.message_type, NEW.file_url, NEW.file_name, NEW.duration_seconds,
+     NEW.type, NEW.status, NEW.scheduled_at, NEW.dietitian_id)
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.created_at := r.created_at;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS chat_messages_view_insert_trg ON public.chat_messages;
+CREATE TRIGGER chat_messages_view_insert_trg INSTEAD OF INSERT ON public.chat_messages
+  FOR EACH ROW EXECUTE FUNCTION public.chat_messages_view_insert();
+
+CREATE OR REPLACE FUNCTION public.chat_messages_view_update()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE public.chat_messages_raw SET
+    content_enc = extensions.encrypt_text(NEW.content),
+    read_at = NEW.read_at, message_type = NEW.message_type, file_url = NEW.file_url,
+    file_name = NEW.file_name, duration_seconds = NEW.duration_seconds,
+    type = NEW.type, status = NEW.status, scheduled_at = NEW.scheduled_at,
+    dietitian_id = NEW.dietitian_id
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS chat_messages_view_update_trg ON public.chat_messages;
+CREATE TRIGGER chat_messages_view_update_trg INSTEAD OF UPDATE ON public.chat_messages
+  FOR EACH ROW EXECUTE FUNCTION public.chat_messages_view_update();
+
+CREATE OR REPLACE FUNCTION public.chat_messages_view_delete()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM public.chat_messages_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS chat_messages_view_delete_trg ON public.chat_messages;
+CREATE TRIGGER chat_messages_view_delete_trg INSTEAD OF DELETE ON public.chat_messages
+  FOR EACH ROW EXECUTE FUNCTION public.chat_messages_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.chat_messages TO authenticated;
+
+-- ── Broadcast from Database: decifra e invia ai canali chat:<patient_id> ──
+CREATE OR REPLACE FUNCTION public.chat_messages_broadcast()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  v_payload jsonb;
+BEGIN
+  v_payload := jsonb_build_object(
+    'id', COALESCE(NEW.id, OLD.id),
+    'patient_id', COALESCE(NEW.patient_id, OLD.patient_id),
+    'dietitian_id', COALESCE(NEW.dietitian_id, OLD.dietitian_id),
+    'sender_id', COALESCE(NEW.sender_id, OLD.sender_id),
+    'sender_role', COALESCE(NEW.sender_role, OLD.sender_role),
+    'content', extensions.decrypt_text(COALESCE(NEW.content_enc, OLD.content_enc)),
+    'message_type', COALESCE(NEW.message_type, OLD.message_type),
+    'file_url', COALESCE(NEW.file_url, OLD.file_url),
+    'file_name', COALESCE(NEW.file_name, OLD.file_name),
+    'duration_seconds', COALESCE(NEW.duration_seconds, OLD.duration_seconds),
+    'type', COALESCE(NEW.type, OLD.type),
+    'status', COALESCE(NEW.status, OLD.status),
+    'scheduled_at', COALESCE(NEW.scheduled_at, OLD.scheduled_at),
+    'read_at', COALESCE(NEW.read_at, OLD.read_at),
+    'created_at', COALESCE(NEW.created_at, OLD.created_at)
+  );
+
+  PERFORM realtime.send(
+    v_payload,
+    TG_OP,
+    'chat:' || COALESCE(NEW.patient_id, OLD.patient_id)::text,
+    true
+  );
+  RETURN NULL;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_chat_messages_broadcast ON public.chat_messages_raw;
+CREATE TRIGGER trg_chat_messages_broadcast
+  AFTER INSERT OR UPDATE ON public.chat_messages_raw
+  FOR EACH ROW EXECUTE FUNCTION public.chat_messages_broadcast();
+
+-- ── Autorizzazione canali broadcast (Realtime Authorization) ─────────────
+-- Stessa logica della policy "chat visibile ai coinvolti" su chat_messages:
+-- il topic ha forma 'chat:<patient_id>' — chi legge deve essere il paziente
+-- stesso o un dietista dello studio collegato a quel paziente.
+DROP POLICY IF EXISTS "chat_broadcast_select" ON realtime.messages;
+CREATE POLICY "chat_broadcast_select" ON realtime.messages
+  FOR SELECT
+  TO authenticated
+  USING (
+    realtime.topic() ~ '^chat:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+    AND (
+      substring(realtime.topic() from 6)::uuid = (SELECT auth.uid())
+      OR EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = substring(realtime.topic() from 6)::uuid
+          AND pd.dietitian_id = get_studio_owner((SELECT auth.uid()))
+      )
+    )
+  );
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_80_field_encryption_chat_broadcast', 'Cifrata chat_messages.content (pattern vista trasparente) + migrazione da postgres_changes a Broadcast from Database (trigger AFTER INSERT/UPDATE che decifra e invia via realtime.send() al topic chat:<patient_id>, policy RLS su realtime.messages che replica lo scoping paziente/dietista-studio esistente). Rimossa chat_messages_raw dalla publication supabase_realtime. Richiede aggiornamento codice client (chat.html, ChatPage.jsx) da postgres_changes a canale broadcast privato — commit separato stesso giorno. Unico punto che richiede test dal vivo con due sessioni browser, non verificabile da qui')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 81 — FIX BUG SEZIONE 80: invio messaggi rotto, NOT NULL residuo su
+-- content_plain_deprecated
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dal test dal vivo richiesto in SEZIONE 80 (esattamente il motivo
+-- per cui era stato chiesto): inviare un messaggio da chat.html falliva con
+-- "null value in column content_plain_deprecated ... violates not-null
+-- constraint". Causa: la colonna `content` originale di chat_messages era
+-- NOT NULL (a differenza di cartelle.note/note_specialistiche.nota/ncpt.*,
+-- tutte nullable — verificato con query diretta su information_schema.columns
+-- che SOLO questa colonna tra le 4 migrazioni odierne aveva il vincolo).
+-- Il rename a content_plain_deprecated in SEZIONE 80 ha portato con sé il
+-- vincolo, ma chat_messages_view_insert() non scrive più su quella colonna
+-- (solo su content_enc) — quindi resta NULL a ogni nuovo INSERT, violando
+-- il NOT NULL. Non capitato prima d'ora perché SEZIONE 80 non era ancora
+-- stata testata con un invio reale.
+--
+-- Fix: rimuovere il vincolo. La colonna è comunque "congelata" (nessun
+-- codice la scrive più, serve solo da rete di sicurezza ispezionabile prima
+-- del drop finale, stesso pattern delle altre 3 tabelle) — non ha senso
+-- che blocchi gli INSERT nuovi.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE chat_messages_raw ALTER COLUMN content_plain_deprecated DROP NOT NULL;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_81_fix_chat_messages_not_null_regression', 'Rimosso il vincolo NOT NULL residuo su chat_messages_raw.content_plain_deprecated (ereditato dalla colonna content originale, mai smesso di essere valorizzata dal trigger di INSERT della vista dopo SEZIONE 80) — bloccava l''invio di OGNI nuovo messaggio in chat. Trovato dal test dal vivo richiesto nella sezione precedente. Verificato che le altre 3 tabelle cifrate oggi (cartelle_raw, note_specialistiche_raw, ncpt_raw) non hanno lo stesso problema, le loro colonne *_plain_deprecated erano già nullable in origine')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 82 — FIX SICUREZZA: search_path mutabile sulle 9 funzioni trigger
+-- create oggi (SEZIONE 79+80), stesso problema già risolto per altre 7
+-- funzioni in una sezione precedente ("SEZIONE 59 — fix WARN sicurezza:
+-- search_path mutabile su 7 funzioni trigger") ma non applicato a queste
+-- nuove, segnalato dall'advisor di sicurezza Supabase (function_search_path_
+-- mutable) subito dopo l'esecuzione di SEZIONE 80.
+--
+-- Funzioni con search_path non fissato: {note_specialistiche,ncpt,
+-- chat_messages}_view_{insert,update,delete} — le 9 funzioni INSTEAD OF
+-- delle viste cifrate di oggi. Rischio: senza un search_path fisso, un
+-- ruolo che riuscisse a creare oggetti in uno schema che precede "public"
+-- nel search_path della sessione potrebbe far risolvere un riferimento non
+-- qualificato verso un oggetto malevolo invece di quello atteso. Verificato
+-- che tutte e 9 le funzioni referenziano SEMPRE gli oggetti con lo schema
+-- esplicito (public.xxx_raw, extensions.encrypt_text/decrypt_text) — quindi
+-- `search_path = ''` (vuoto, il più restrittivo possibile) è sicuro da
+-- applicare senza cambiare alcun comportamento, stesso valore già usato in
+-- chat_messages_broadcast() di SEZIONE 80.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER FUNCTION public.note_specialistiche_view_insert() SET search_path = '';
+ALTER FUNCTION public.note_specialistiche_view_update() SET search_path = '';
+ALTER FUNCTION public.note_specialistiche_view_delete() SET search_path = '';
+ALTER FUNCTION public.ncpt_view_insert() SET search_path = '';
+ALTER FUNCTION public.ncpt_view_update() SET search_path = '';
+ALTER FUNCTION public.ncpt_view_delete() SET search_path = '';
+ALTER FUNCTION public.chat_messages_view_insert() SET search_path = '';
+ALTER FUNCTION public.chat_messages_view_update() SET search_path = '';
+ALTER FUNCTION public.chat_messages_view_delete() SET search_path = '';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_82_fix_search_path_view_triggers', 'Fissato search_path='''' sulle 9 funzioni INSTEAD OF create in SEZIONE 79/80 (note_specialistiche/ncpt/chat_messages view insert/update/delete) — segnalate dall''advisor di sicurezza (function_search_path_mutable) subito dopo l''esecuzione. Verificato che tutte referenziano già gli oggetti con schema esplicito, nessun cambio di comportamento atteso')
+ON CONFLICT (id) DO NOTHING;

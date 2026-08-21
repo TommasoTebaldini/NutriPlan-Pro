@@ -16,6 +16,17 @@
 -- 🆘 SE TI BLOCCHI FUORI (es. hai la 2FA attiva e non riesci più ad accedere):
 --    esegui nel SQL Editor le righe della sezione ESCAPE HATCH qui sotto e
 --    torni immediatamente allo stato precedente.
+--
+-- ⚠️ AGGIORNATO 2026-08-20: 'cartelle', 'note_specialistiche' e 'ncpt' sono
+--    diventate VISTE (pattern cifratura campi, vedi SEZIONE 40/79 di
+--    supabase_setup.sql) — una policy RLS non può essere creata su una vista,
+--    solo sulla tabella base. Sostituiti con 'cartelle_raw'/
+--    'note_specialistiche_raw'/'ncpt_raw' nell'array sotto (le viste hanno
+--    security_invoker=true, quindi la policy sulla tabella base si applica
+--    comunque correttamente a chi legge/scrive tramite la vista). Aggiunto
+--    anche 'AND table_type = ''BASE TABLE''' al controllo di esistenza per
+--    evitare lo stesso problema se in futuro altre tabelle di questa lista
+--    vengono rinominate per lo stesso pattern.
 -- ============================================================================
 
 -- Helper: TRUE se l'utente può accedere ai dati clinici in questa sessione.
@@ -46,17 +57,18 @@ DO $$
 DECLARE
   t text;
   tables text[] := ARRAY[
-    'cartelle', 'esami_biochimici', 'note_specialistiche', 'bia_records',
-    'schede_valutazione', 'ncpt', 'patient_documents', 'patient_consents',
+    'cartelle_raw', 'esami_biochimici', 'note_specialistiche_raw', 'bia_records',
+    'schede_valutazione', 'ncpt_raw', 'patient_documents', 'patient_consents',
     'patient_signatures', 'patient_files', 'chat_messages', 'piani',
     'daily_wellness', 'weight_logs', 'menstrual_cycle', 'fatture',
     'liste_spesa', 'patient_specialty_access'
   ];
 BEGIN
   FOREACH t IN ARRAY tables LOOP
-    -- salta le tabelle non ancora esistenti sul DB (fault-tolerant)
+    -- salta le tabelle non ancora esistenti sul DB (fault-tolerant) e le
+    -- viste (una policy RLS richiede una tabella base, vedi nota 2026-08-20 sopra)
     IF EXISTS (SELECT 1 FROM information_schema.tables
-               WHERE table_schema = 'public' AND table_name = t) THEN
+               WHERE table_schema = 'public' AND table_name = t AND table_type = 'BASE TABLE') THEN
       EXECUTE format('DROP POLICY IF EXISTS "mfa_required" ON public.%I', t);
       EXECUTE format(
         'CREATE POLICY "mfa_required" ON public.%I AS RESTRICTIVE FOR ALL '
@@ -70,8 +82,8 @@ END $$;
 --    allo stato precedente (rimuove il vincolo 2FA dalle tabelle):
 --
 --   DO $$
---   DECLARE t text; tables text[] := ARRAY['cartelle','esami_biochimici',
---     'note_specialistiche','bia_records','schede_valutazione','ncpt',
+--   DECLARE t text; tables text[] := ARRAY['cartelle_raw','esami_biochimici',
+--     'note_specialistiche_raw','bia_records','schede_valutazione','ncpt_raw',
 --     'patient_documents','patient_consents','patient_signatures',
 --     'patient_files','chat_messages','piani','daily_wellness','weight_logs',
 --     'menstrual_cycle','fatture','liste_spesa','patient_specialty_access'];

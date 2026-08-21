@@ -20,7 +20,7 @@
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const FROM_ADDRESS = 'DietPlan Pro <gestione@app.dietplan-pro.com>';
 
-function escapeHtml(s) {
+export function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 

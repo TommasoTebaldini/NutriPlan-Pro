@@ -16,7 +16,7 @@
 // da "export default handler" a una funzione dedicata per job.
 
 import webpush from 'web-push';
-import { withErrorLogging, logServerError } from './_errorLog.js';
+import { withErrorLogging, logServerError, escapeHtml } from './_errorLog.js';
 
 const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const PATIENT_APP_URL = process.env.PATIENT_APP_URL || 'https://app.dietplan-pro.com';
@@ -61,7 +61,8 @@ const MAX_PATIENTS = 50000;
 const MAX_PATIENTS_PER_DIETITIAN = 2000;
 
 function inactivePatientsEmailHtml({ dietitianName, rows }) {
-  const items = rows.map(r => `<li style="margin-bottom:6px"><b>${r.name}</b> — ${r.everLogged ? `nessun diario negli ultimi ${INACTIVE_DAYS} giorni` : 'nessun diario ancora registrato'}</li>`).join('');
+  dietitianName = escapeHtml(dietitianName);
+  const items = rows.map(r => `<li style="margin-bottom:6px"><b>${escapeHtml(r.name)}</b> — ${r.everLogged ? `nessun diario negli ultimi ${INACTIVE_DAYS} giorni` : 'nessun diario ancora registrato'}</li>`).join('');
   return `<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -272,6 +273,8 @@ async function sendPatientPush(patientId, title, body, serviceKey) {
 // è configurata, viene semplicemente saltata senza rompere il job di push
 // già esistente).
 function appointmentReminderEmailHtml({ patientName, dietitianName, whenText }) {
+  patientName = escapeHtml(patientName);
+  dietitianName = escapeHtml(dietitianName);
   return `<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -533,6 +536,8 @@ async function jobOverduePayments() {
 const MAX_PERCORSI = 5000;
 
 function checkinReminderEmailHtml({ patientName, programName }) {
+  patientName = escapeHtml(patientName);
+  programName = escapeHtml(programName);
   return `<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -559,6 +564,9 @@ function checkinReminderEmailHtml({ patientName, programName }) {
 }
 
 function programExpiryEmailHtml({ isDietitian, patientName, dietitianName, programName, endDateText }) {
+  patientName = escapeHtml(patientName);
+  dietitianName = escapeHtml(dietitianName);
+  programName = escapeHtml(programName);
   const body = isDietitian
     ? `Il percorso <b>${programName}</b> di ${patientName} termina il ${endDateText}.`
     : `Ciao ${patientName}, il tuo percorso <b>${programName}</b> con ${dietitianName} termina il ${endDateText}.`;

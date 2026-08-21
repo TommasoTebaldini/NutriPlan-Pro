@@ -12,9 +12,25 @@ const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const RESET_MAX = 3;
 const RESET_WIN_SEC = 15 * 60;
 
+// Dominio canonico dell'app — MAI derivato dall'header Origin della richiesta:
+// questo endpoint genera un vero link di recovery Supabase (redirect_to), e
+// fidarsi di un Origin arbitrario permetterebbe a chiunque di dirottare il
+// link verso un dominio malevolo (l'access_token/refresh_token finirebbero
+// nel frammento URL di quel dominio dopo il click della vittima).
+const CANONICAL_ORIGIN = 'https://app.dietplan-pro.com';
+
 async function handler(req, res) {
-  const origin = req.headers.origin || 'https://app.dietplan-pro.com';
-  res.setHeader('Access-Control-Allow-Origin', origin);
+  // CORS: stesso pattern allowlist degli altri endpoint (ai-scribe.js,
+  // claude.js, fetch-page.js, gemini.js, ocr-referto-immagine.js) — l'Origin
+  // della richiesta viene riflesso SOLO se è nell'allowlist, mai a scatola
+  // chiusa.
+  const requestOrigin = req.headers.origin || '';
+  const configured = process.env.ALLOWED_ORIGIN || '';
+  const allowedOrigins = configured.split(',').map(s => s.trim()).filter(Boolean);
+  if (allowedOrigins.length > 0 && allowedOrigins.includes(requestOrigin)) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -44,7 +60,7 @@ async function handler(req, res) {
     return res.status(429).json({ error: 'Troppe richieste. Riprova tra 15 minuti.' });
   }
 
-  const REDIRECT_URL = origin + '/';
+  const REDIRECT_URL = CANONICAL_ORIGIN + '/';
 
   // Generate recovery link via Supabase Admin API
   const linkRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {

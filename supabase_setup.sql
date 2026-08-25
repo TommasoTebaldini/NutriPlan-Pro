@@ -7632,3 +7632,75 @@ GRANT EXECUTE ON FUNCTION public.link_patient_to_dietitian_via_ref(uuid) TO auth
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_93_fix_patient_dietitian_ref_link', 'RegisterPage.jsx/AuthContext.jsx (Diet-Plan-Pro-app-claude) inserivano patient_dietitian con un dietitian_id preso senza validazione da ?ref= in query string. La RLS attuale blocca già l''insert diretto per un paziente (auth.uid()=dietitian_id richiesto), rendendo l''auto-link oggi sempre fallito silenziosamente — bug funzionale oltre che base fragile. Aggiunta RPC link_patient_to_dietitian_via_ref(uuid) SECURITY DEFINER che valida che il target sia un dietista con account approvato prima di collegarlo, usa sempre auth.uid() per patient_id. Il codice client (repo Diet-Plan-Pro-app-claude) va aggiornato per chiamare questa RPC invece dell''insert diretto. Trovato dall''audit di sicurezza del 2026-08-25')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 94 — FIX di SEZIONE 83/84/86/92/93: "REVOKE ... FROM anon" non
+-- toglie nulla se la funzione ha ancora il grant di default a PUBLIC
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato verificando dal vivo (pg_proc.proacl / pg_class.relacl) l'esito
+-- reale delle SEZIONE 83-93 dopo l'esecuzione da parte dell'utente il
+-- 2026-08-25, richiesta esplicitamente come controllo di conferma.
+--
+-- Bug: ogni funzione riceve EXECUTE su PUBLIC (il ruolo implicito di cui
+-- tutti i ruoli sono membri) al momento della CREATE FUNCTION, salvo
+-- REVOKE esplicito. "REVOKE EXECUTE ... FROM anon" toglie solo un
+-- eventuale grant diretto ad anon — se anon non l'aveva mai avuto
+-- direttamente (lo eredita da PUBLIC, come qui), il comando è un no-op e
+-- has_function_privilege('anon', ...) resta true. Confermato dal vivo su
+-- get_user_agenda_events (SEZIONE 84), increment_usage_and_check (SEZIONE
+-- 86), is_chat_group_member/is_dietitian_level_collaborator/get_studio_
+-- owner (SEZIONE 92), link_patient_to_dietitian_via_ref (SEZIONE 93):
+-- proacl mostrava ancora "=X/postgres" (il grant a PUBLIC) su tutte.
+--
+-- Impatto pratico ridotto per 3 delle 4 funzioni "critiche": get_user_
+-- agenda_events, increment_usage_and_check e link_patient_to_dietitian_
+-- via_ref hanno già, nel corpo stesso della funzione (SEZIONE 84/86/93),
+-- un controllo che fallisce silenziosamente/con eccezione quando
+-- auth.uid() è NULL (chiamata anonima) — quindi anon può ancora ESEGUIRLE
+-- ma senza ottenere alcun dato/effetto utile, l'IDOR/bypass di fondo era
+-- già chiuso dal fix sul corpo della funzione. Resta invece pienamente
+-- aperto (anche se già BASSO/info-leak, non critico) il caso degli helper
+-- RLS is_chat_group_member/is_dietitian_level_collaborator/get_studio_
+-- owner, che non hanno alcun controllo su auth.uid() e restano interamente
+-- eseguibili da anon.
+--
+-- Fix corretto: REVOKE ... FROM PUBLIC (non da anon), poi ri-GRANT
+-- esplicito a authenticated dove serve ancora (gli helper usati dentro le
+-- RLS restano utilizzabili da chi è loggato; get_user_agenda_events/
+-- increment_usage_and_check/link_patient_to_dietitian_via_ref restano
+-- utilizzabili solo da authenticated).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+REVOKE EXECUTE ON FUNCTION public.get_user_agenda_events(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_user_agenda_events(uuid) TO authenticated;
+
+REVOKE EXECUTE ON FUNCTION public.increment_usage_and_check(uuid,text,text,bigint) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.increment_usage_and_check(uuid,text,text,bigint) TO authenticated;
+
+REVOKE EXECUTE ON FUNCTION public.link_patient_to_dietitian_via_ref(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.link_patient_to_dietitian_via_ref(uuid) TO authenticated;
+
+REVOKE EXECUTE ON FUNCTION
+  public.is_chat_group_member(uuid, uuid),
+  public.is_dietitian_level_collaborator(uuid),
+  public.get_studio_owner(uuid)
+FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION
+  public.is_chat_group_member(uuid, uuid),
+  public.is_dietitian_level_collaborator(uuid),
+  public.get_studio_owner(uuid)
+TO authenticated;
+
+-- appointment_slots (SEZIONE 83): la REVOKE originale elencava INSERT/
+-- UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER ma non MAINTAIN (privilegio
+-- introdotto in Postgres 17, lettera 'm' in relacl) — non era nella lista
+-- perché dimenticato, non perché intenzionale. Su una vista MAINTAIN non ha
+-- un effetto pratico rilevante (VACUUM/ANALYZE/REINDEX/CLUSTER si applicano
+-- alle tabelle, non alle viste), ma va comunque tolto per coerenza con
+-- "solo SELECT" dichiarato nel commento della SEZIONE 83.
+REVOKE MAINTAIN ON public.appointment_slots FROM anon, authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_94_fix_revoke_from_public_not_anon', 'Verifica live post-esecuzione SEZIONE 83-93 (2026-08-25) ha trovato che "REVOKE EXECUTE ... FROM anon" nelle SEZIONE 84/86/92/93 non aveva effetto reale: le funzioni avevano ancora EXECUTE concesso a PUBLIC (grant di default alla CREATE FUNCTION, mai revocato), da cui anon eredita comunque il privilegio. Corretto con REVOKE ... FROM PUBLIC + GRANT esplicito a authenticated su get_user_agenda_events, increment_usage_and_check, link_patient_to_dietitian_via_ref, is_chat_group_member, is_dietitian_level_collaborator, get_studio_owner. Aggiunto anche REVOKE MAINTAIN su appointment_slots (SEZIONE 83 aveva dimenticato questo privilegio, introdotto in PG17, oltre a INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER)')
+ON CONFLICT (id) DO NOTHING;

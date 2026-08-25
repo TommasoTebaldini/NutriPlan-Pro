@@ -7003,3 +7003,632 @@ ALTER FUNCTION public.chat_messages_view_delete() SET search_path = '';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_82_fix_search_path_view_triggers', 'Fissato search_path='''' sulle 9 funzioni INSTEAD OF create in SEZIONE 79/80 (note_specialistiche/ncpt/chat_messages view insert/update/delete) — segnalate dall''advisor di sicurezza (function_search_path_mutable) subito dopo l''esecuzione. Verificato che tutte referenziano già gli oggetti con schema esplicito, nessun cambio di comportamento atteso')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 83 — FIX CRITICO: appointment_slots concede scrittura pubblica,
+-- bypassa completamente le RLS di appointments
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25 (audit live via MCP
+-- Supabase). appointment_slots è una vista SECURITY DEFINER (owner postgres,
+-- bypassa RLS) su appointments, pensata per esporre solo dietitian_id/data/
+-- durata/stato senza rivelare patient_id — ma essendo auto-aggiornabile
+-- (nessun DISTINCT/JOIN/aggregazione) e senza security_invoker, Postgres le
+-- ha assegnato di default i grant pieni arwdDxtm su anon e authenticated,
+-- non solo SELECT. Risultato: chiunque avesse anche solo la anon key
+-- pubblica (già nel bundle client di entrambe le app) poteva fare
+-- PATCH/DELETE su /rest/v1/appointment_slots per modificare o cancellare
+-- QUALSIASI appuntamento di QUALSIASI dietista/paziente, bypassando tutte
+-- le policy RLS di appointments (visto che la vista, essendo owned da
+-- postgres senza security_invoker, non le applica affatto).
+--
+-- Verificato live: pg_class.relacl per appointment_slots conteneva
+-- {anon=arwdDxtm/postgres, authenticated=arwdDxtm/postgres, ...}.
+--
+-- Fix: la vista deve restare leggibile (nasconde patient_id di proposito,
+-- design intenzionale) ma non scrivibile — le scritture devono continuare
+-- a passare solo dalla tabella base appointments, dove le RLS granulari
+-- (paziente prenota/annulla, dietista/collaboratore gestisce) si applicano
+-- correttamente.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER
+  ON public.appointment_slots FROM anon, authenticated;
+GRANT SELECT ON public.appointment_slots TO anon, authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_83_fix_appointment_slots_public_write', 'appointment_slots (vista SECURITY DEFINER su appointments) aveva grant di scrittura pieni per anon/authenticated (relacl arwdDxtm), permettendo di modificare/cancellare qualsiasi appuntamento bypassando le RLS di appointments. Revocati INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER da anon e authenticated, lasciato solo SELECT. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 84 — FIX CRITICO: get_user_agenda_events(uuid) — IDOR, nessun
+-- controllo ownership, eseguibile da anon
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25. La funzione è
+-- SECURITY DEFINER (bypassa le RLS di agenda_events, che sono corrette:
+-- agenda_events_own → auth.uid() = user_id) ma non replica internamente
+-- alcun controllo di ownership su p_user_id, ed è eseguibile anche da anon
+-- (has_function_privilege('anon', ..., 'EXECUTE') = true). Chiunque, anche
+-- senza login, poteva chiamare rpc/get_user_agenda_events con un UUID
+-- qualsiasi e leggere l'intera agenda di quell'utente.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.get_user_agenda_events(p_user_id uuid)
+ RETURNS SETOF agenda_events
+ LANGUAGE sql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $$
+  SELECT * FROM agenda_events
+  WHERE user_id = p_user_id AND p_user_id = auth.uid()
+  ORDER BY data ASC, ora ASC;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.get_user_agenda_events(uuid) FROM anon;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_84_fix_get_user_agenda_events_idor', 'get_user_agenda_events(uuid) era SECURITY DEFINER senza alcun controllo che p_user_id coincidesse con l''utente chiamante, eseguibile anche da anon — IDOR che permetteva di leggere l''agenda di qualsiasi utente conoscendone lo UUID. Aggiunto AND p_user_id = auth.uid() alla query interna e revocato EXECUTE da anon. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 85 — FIX CRITICO: bypass di visible_to_patient su
+-- note_specialistiche_select_combined e piani_select_combined
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25. Entrambe le policy
+-- (SEZIONE 65, mai più toccate — SEZIONE 78 ha corretto un'ALTRA policy
+-- leaky con nome simile su queste stesse tabelle, *_select_visible_
+-- authenticated, ma il suo commento affermava erroneamente che "*_select_
+-- combined copre già ogni caso legittimo", non notando questo bug nella
+-- policy che stava vouchando) hanno un branch OR — identico, copy-paste,
+-- a un branch adiacente correttamente protetto — a cui manca la guardia
+-- "visible_to_patient = true":
+--   note_specialistiche_select_combined, branch 4 di 5 (senza guardia):
+--     cartella_id IN (SELECT cartella_id FROM patient_dietitian WHERE patient_id = auth.uid())
+--   piani_select_combined, branch 1 di 4 (senza guardia):
+--     cartella_id IN (SELECT cartella_id FROM patient_dietitian WHERE patient_id = auth.uid())
+-- Ogni altro branch della stessa policy applica correttamente "AND
+-- visible_to_patient = true" prima della stessa condizione — il branch
+-- senza guardia la rende del tutto inutile: qualsiasi paziente collegato a
+-- una cartella può leggere OGNI nota specialistica e OGNI piano alimentare
+-- di quella cartella, incluse le bozze/valutazioni che il dietista ha
+-- esplicitamente marcato come non visibili al paziente (es. appunti su
+-- sospetto disturbo alimentare in attesa di conferma) — dato sanitario
+-- special-category, GDPR art.9, esposto al soggetto interessato in un modo
+-- che il titolare (il dietista) non intendeva.
+--
+-- Confermato live via pg_policies, non solo nel file .sql. Fix: rimuovere
+-- il branch non protetto da entrambe le policy — i branch rimanenti
+-- coprono già ogni caso legittimo di accesso paziente (stesso schema già
+-- usato altrove nelle stesse policy), quindi nessuna perdita di accesso
+-- legittimo.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "note_specialistiche_select_combined" ON public.note_specialistiche_raw;
+CREATE POLICY "note_specialistiche_select_combined" ON public.note_specialistiche_raw
+  FOR SELECT USING (
+    (user_id = get_studio_owner((select auth.uid())))
+    OR ((visible_to_patient = true) AND (cartella_id IN (SELECT patient_dietitian.cartella_id FROM patient_dietitian WHERE patient_dietitian.patient_id = (select auth.uid()))))
+    OR ((visible_to_patient = true) AND is_linked_patient(cartella_id))
+    OR ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = note_specialistiche_raw.cartella_id))))
+  );
+
+DROP POLICY IF EXISTS "piani_select_combined" ON public.piani;
+CREATE POLICY "piani_select_combined" ON public.piani
+  FOR SELECT USING (
+    ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = piani.cartella_id))))
+    OR (user_id = get_studio_owner((select auth.uid())))
+    OR ((visible_to_patient = true) AND is_linked_patient(cartella_id))
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_85_fix_visible_to_patient_bypass', 'note_specialistiche_select_combined e piani_select_combined (SEZIONE 65) avevano un branch OR copy-paste senza la guardia "visible_to_patient=true" presente in ogni altro branch — un paziente poteva leggere note specialistiche e piani alimentari marcati esplicitamente non visibili dal dietista. Rimosso il branch non protetto da entrambe le policy, verificato live via pg_policies prima e dopo. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 86 — FIX ALTO: increment_usage_and_check bypassabile da anon
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25. Il controllo ownership
+-- era "IF auth.uid() IS NOT NULL AND auth.uid() != p_user_id THEN RAISE
+-- EXCEPTION" — se auth.uid() è NULL (chiamata anonima), il controllo viene
+-- saltato del tutto: un utente non autenticato poteva passare qualsiasi
+-- p_user_id e incrementare/leggere i contatori-quota (usage_counters) per
+-- conto di altri utenti, alterandone i limiti di utilizzo delle feature
+-- (DoS mirato sulle quote).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.increment_usage_and_check(p_user_id uuid, p_scope text, p_period text, p_max bigint)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $$
+DECLARE
+  new_count BIGINT;
+BEGIN
+  IF auth.uid() IS NULL OR auth.uid() != p_user_id THEN
+    RAISE EXCEPTION 'p_user_id deve coincidere con l''utente autenticato';
+  END IF;
+  INSERT INTO usage_counters (user_id, scope, period, count, updated_at)
+  VALUES (p_user_id, p_scope, p_period, 1, NOW())
+  ON CONFLICT (user_id, scope, period)
+  DO UPDATE SET count = usage_counters.count + 1, updated_at = NOW()
+  RETURNING count INTO new_count;
+  RETURN new_count <= p_max;
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.increment_usage_and_check(uuid,text,text,bigint) FROM anon;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_86_fix_increment_usage_anon_bypass', 'increment_usage_and_check saltava del tutto il controllo ownership quando auth.uid() era NULL (chiamata anonima), permettendo a chiunque di alterare i contatori-quota (usage_counters) di altri utenti. Cambiato il controllo da "IS NOT NULL AND !=" a "IS NULL OR !=" (richiede sempre auth.uid()=p_user_id) e revocato EXECUTE da anon. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 87 — FIX ALTO: appointments_own troppo permissiva (DELETE
+-- paziente senza audit), profili sovrascrivibili via RPC anonima
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25.
+--
+-- Parte 1 — appointments_own (ALL, dietitian_id=auth.uid() OR patient_id=
+-- auth.uid()) coesiste, PERMISSIVE quindi sommata in OR, con le policy
+-- granulari "paziente vede i propri appuntamenti" (SELECT), "paziente
+-- prenota appuntamento" (INSERT), "paziente annulla appuntamento" (UPDATE)
+-- — che insieme già coprono ogni azione legittima del paziente. Essendo
+-- ALL, appointments_own da sola concede anche DELETE, che nessuna policy
+-- granulare prevede (il nome/intento è "annulla", non "cancella"): un
+-- paziente può cancellare fisicamente e senza traccia un proprio
+-- appuntamento (es. per far sparire un no-show), aggirando anche il
+-- trigger prevent_patient_appointment_tampering (blocca solo UPDATE dei
+-- campi non ammessi, non tocca affatto DELETE). Nessun trigger di audit
+-- (log_clinical_change) era collegato ad appointments, a differenza di
+-- patient_documents/cartelle_raw/ecc.
+--
+-- Fix: rimossa la policy ridondante (i pazienti mantengono SELECT/INSERT/
+-- UPDATE-limitato tramite le policy granulari già esistenti, perdono la
+-- sola DELETE diretta; dietista/collaboratore invariati, restano gestiti
+-- dalle policy "dietista gestisce appuntamenti"/"collaboratore gestisce
+-- appuntamenti" che sono ALL e includono già il DELETE per loro).
+-- Aggiunto trigger di audit standard (stesso pattern già usato su 11 altre
+-- tabelle cliniche).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "appointments_own" ON public.appointments;
+
+DROP TRIGGER IF EXISTS trg_audit_appointments ON public.appointments;
+CREATE TRIGGER trg_audit_appointments
+AFTER INSERT OR UPDATE OR DELETE ON public.appointments
+FOR EACH ROW EXECUTE FUNCTION log_clinical_change();
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_87_fix_appointments_own_and_audit', 'appointments_own (policy ALL ridondante con le 3 policy granulari paziente) concedeva ai pazienti anche il DELETE fisico degli appuntamenti (non solo "annulla" via UPDATE status), senza traccia di audit. Rimossa la policy ridondante — dietista/collaboratore/paziente mantengono l''accesso legittimo tramite le policy granulari già esistenti — e aggiunto trigger trg_audit_appointments (log_clinical_change), stesso pattern già usato su 11 altre tabelle cliniche. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 88 — CIFRATURA APPLICATIVA + MFA: dietitian_credentials
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25: dietitian_credentials è
+-- l'unica tabella dell'intero schema con credenziali di servizi terzi in
+-- chiaro (password/PIN Sistema TS, token/app-secret WhatsApp Business,
+-- token Fatture in Cloud) — il WhatsApp Business token è attivamente in
+-- uso. Non è tra le 18 tabelle con mfa_required, e nessun campo passa dal
+-- pattern vista-cifrata pgcrypto/Vault già collaudato su cartelle.note
+-- (SEZIONE 40), note_specialistiche/ncpt (SEZIONE 79), chat_messages
+-- (SEZIONE 80). Stesso pattern "vista trasparente" applicato qui, zero
+-- modifiche richieste al codice client (impostazioni.html continua a fare
+-- .from('dietitian_credentials') come prima).
+--
+-- Colonne cifrate: sts_password, sts_pincode, sts_api_password,
+-- wa_access_token, wa_app_secret, wa_webhook_verify_token, fic_api_token.
+-- Restano in chiaro: gli *_username/*_id/*_lang/*_name (identificatori, non
+-- segreti) e i dati fiscali (fiscal_*, già protetti da RLS owner-only e non
+-- credenziali di autenticazione verso terzi).
+--
+-- id qui referenzia direttamente profiles(id) (non un gen_random_uuid()
+-- indipendente come nelle altre viste cifrate) — il trigger INSERT usa
+-- NEW.id direttamente, mai un fallback generato, per rispettare il vincolo
+-- FK dietitian_credentials_id_fkey.
+--
+-- IMPORTANTE — verificare dopo aver eseguito (stesso protocollo di SEZIONE
+-- 40/79/80): aprire impostazioni.html, leggere/salvare le credenziali STS
+-- e WhatsApp di un dietista di test, controllare che funzionino ancora
+-- (incluso l'invio reale di un messaggio WhatsApp se possibile). Poi
+-- ispezionare direttamente dietitian_credentials_raw.wa_access_token_enc
+-- dal SQL Editor e confermare che sia bytea illeggibile, non testo in
+-- chiaro. Dopo conferma in produzione, droppare le colonne
+-- *_plain_deprecated (irreversibile, NON incluso in questa sezione).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE dietitian_credentials ADD COLUMN IF NOT EXISTS sts_password_enc bytea;
+ALTER TABLE dietitian_credentials ADD COLUMN IF NOT EXISTS sts_pincode_enc bytea;
+ALTER TABLE dietitian_credentials ADD COLUMN IF NOT EXISTS sts_api_password_enc bytea;
+ALTER TABLE dietitian_credentials ADD COLUMN IF NOT EXISTS wa_access_token_enc bytea;
+ALTER TABLE dietitian_credentials ADD COLUMN IF NOT EXISTS wa_app_secret_enc bytea;
+ALTER TABLE dietitian_credentials ADD COLUMN IF NOT EXISTS wa_webhook_verify_token_enc bytea;
+ALTER TABLE dietitian_credentials ADD COLUMN IF NOT EXISTS fic_api_token_enc bytea;
+
+UPDATE dietitian_credentials SET sts_password_enc = extensions.encrypt_text(sts_password) WHERE sts_password IS NOT NULL AND sts_password_enc IS NULL;
+UPDATE dietitian_credentials SET sts_pincode_enc = extensions.encrypt_text(sts_pincode) WHERE sts_pincode IS NOT NULL AND sts_pincode_enc IS NULL;
+UPDATE dietitian_credentials SET sts_api_password_enc = extensions.encrypt_text(sts_api_password) WHERE sts_api_password IS NOT NULL AND sts_api_password_enc IS NULL;
+UPDATE dietitian_credentials SET wa_access_token_enc = extensions.encrypt_text(wa_access_token) WHERE wa_access_token IS NOT NULL AND wa_access_token_enc IS NULL;
+UPDATE dietitian_credentials SET wa_app_secret_enc = extensions.encrypt_text(wa_app_secret) WHERE wa_app_secret IS NOT NULL AND wa_app_secret_enc IS NULL;
+UPDATE dietitian_credentials SET wa_webhook_verify_token_enc = extensions.encrypt_text(wa_webhook_verify_token) WHERE wa_webhook_verify_token IS NOT NULL AND wa_webhook_verify_token_enc IS NULL;
+UPDATE dietitian_credentials SET fic_api_token_enc = extensions.encrypt_text(fic_api_token) WHERE fic_api_token IS NOT NULL AND fic_api_token_enc IS NULL;
+
+ALTER TABLE dietitian_credentials RENAME TO dietitian_credentials_raw;
+ALTER TABLE dietitian_credentials_raw RENAME COLUMN sts_password TO sts_password_plain_deprecated;
+ALTER TABLE dietitian_credentials_raw RENAME COLUMN sts_pincode TO sts_pincode_plain_deprecated;
+ALTER TABLE dietitian_credentials_raw RENAME COLUMN sts_api_password TO sts_api_password_plain_deprecated;
+ALTER TABLE dietitian_credentials_raw RENAME COLUMN wa_access_token TO wa_access_token_plain_deprecated;
+ALTER TABLE dietitian_credentials_raw RENAME COLUMN wa_app_secret TO wa_app_secret_plain_deprecated;
+ALTER TABLE dietitian_credentials_raw RENAME COLUMN wa_webhook_verify_token TO wa_webhook_verify_token_plain_deprecated;
+ALTER TABLE dietitian_credentials_raw RENAME COLUMN fic_api_token TO fic_api_token_plain_deprecated;
+
+CREATE VIEW public.dietitian_credentials WITH (security_invoker = true) AS
+SELECT id, sts_username,
+       extensions.decrypt_text(sts_password_enc) AS sts_password,
+       extensions.decrypt_text(sts_pincode_enc) AS sts_pincode,
+       sts_api_username,
+       extensions.decrypt_text(sts_api_password_enc) AS sts_api_password,
+       sts_erogatore_registrato,
+       extensions.decrypt_text(wa_access_token_enc) AS wa_access_token,
+       extensions.decrypt_text(wa_app_secret_enc) AS wa_app_secret,
+       extensions.decrypt_text(wa_webhook_verify_token_enc) AS wa_webhook_verify_token,
+       wa_business_account_id, wa_phone_number_id, wa_template_lang, wa_template_name,
+       extensions.decrypt_text(fic_api_token_enc) AS fic_api_token,
+       fic_company_id, stripe_connect_account_id, stripe_connect_charges_enabled,
+       fiscal_codice_fiscale, fiscal_partita_iva, fiscal_indirizzo, fiscal_cap,
+       fiscal_comune, fiscal_provincia, fiscal_regime, fiscal_ragione_sociale,
+       fiscal_progressivo_invio, updated_at
+FROM dietitian_credentials_raw;
+
+CREATE OR REPLACE FUNCTION public.dietitian_credentials_view_insert()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  INSERT INTO public.dietitian_credentials_raw
+    (id, sts_username, sts_password_enc, sts_pincode_enc, sts_api_username, sts_api_password_enc,
+     sts_erogatore_registrato, wa_access_token_enc, wa_app_secret_enc, wa_webhook_verify_token_enc,
+     wa_business_account_id, wa_phone_number_id, wa_template_lang, wa_template_name,
+     fic_api_token_enc, fic_company_id, stripe_connect_account_id, stripe_connect_charges_enabled,
+     fiscal_codice_fiscale, fiscal_partita_iva, fiscal_indirizzo, fiscal_cap, fiscal_comune,
+     fiscal_provincia, fiscal_regime, fiscal_ragione_sociale, fiscal_progressivo_invio, updated_at)
+  VALUES
+    (NEW.id, NEW.sts_username, extensions.encrypt_text(NEW.sts_password), extensions.encrypt_text(NEW.sts_pincode),
+     NEW.sts_api_username, extensions.encrypt_text(NEW.sts_api_password),
+     COALESCE(NEW.sts_erogatore_registrato, false),
+     extensions.encrypt_text(NEW.wa_access_token), extensions.encrypt_text(NEW.wa_app_secret),
+     extensions.encrypt_text(NEW.wa_webhook_verify_token),
+     NEW.wa_business_account_id, NEW.wa_phone_number_id, NEW.wa_template_lang, NEW.wa_template_name,
+     extensions.encrypt_text(NEW.fic_api_token), NEW.fic_company_id, NEW.stripe_connect_account_id,
+     COALESCE(NEW.stripe_connect_charges_enabled, false),
+     NEW.fiscal_codice_fiscale, NEW.fiscal_partita_iva, NEW.fiscal_indirizzo, NEW.fiscal_cap,
+     NEW.fiscal_comune, NEW.fiscal_provincia, NEW.fiscal_regime, NEW.fiscal_ragione_sociale,
+     NEW.fiscal_progressivo_invio, COALESCE(NEW.updated_at, now()));
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS dietitian_credentials_view_insert_trg ON public.dietitian_credentials;
+CREATE TRIGGER dietitian_credentials_view_insert_trg INSTEAD OF INSERT ON public.dietitian_credentials
+  FOR EACH ROW EXECUTE FUNCTION public.dietitian_credentials_view_insert();
+
+CREATE OR REPLACE FUNCTION public.dietitian_credentials_view_update()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE public.dietitian_credentials_raw SET
+    sts_username = NEW.sts_username,
+    sts_password_enc = extensions.encrypt_text(NEW.sts_password),
+    sts_pincode_enc = extensions.encrypt_text(NEW.sts_pincode),
+    sts_api_username = NEW.sts_api_username,
+    sts_api_password_enc = extensions.encrypt_text(NEW.sts_api_password),
+    sts_erogatore_registrato = NEW.sts_erogatore_registrato,
+    wa_access_token_enc = extensions.encrypt_text(NEW.wa_access_token),
+    wa_app_secret_enc = extensions.encrypt_text(NEW.wa_app_secret),
+    wa_webhook_verify_token_enc = extensions.encrypt_text(NEW.wa_webhook_verify_token),
+    wa_business_account_id = NEW.wa_business_account_id,
+    wa_phone_number_id = NEW.wa_phone_number_id,
+    wa_template_lang = NEW.wa_template_lang,
+    wa_template_name = NEW.wa_template_name,
+    fic_api_token_enc = extensions.encrypt_text(NEW.fic_api_token),
+    fic_company_id = NEW.fic_company_id,
+    stripe_connect_account_id = NEW.stripe_connect_account_id,
+    stripe_connect_charges_enabled = NEW.stripe_connect_charges_enabled,
+    fiscal_codice_fiscale = NEW.fiscal_codice_fiscale,
+    fiscal_partita_iva = NEW.fiscal_partita_iva,
+    fiscal_indirizzo = NEW.fiscal_indirizzo,
+    fiscal_cap = NEW.fiscal_cap,
+    fiscal_comune = NEW.fiscal_comune,
+    fiscal_provincia = NEW.fiscal_provincia,
+    fiscal_regime = NEW.fiscal_regime,
+    fiscal_ragione_sociale = NEW.fiscal_ragione_sociale,
+    fiscal_progressivo_invio = NEW.fiscal_progressivo_invio,
+    updated_at = now()
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS dietitian_credentials_view_update_trg ON public.dietitian_credentials;
+CREATE TRIGGER dietitian_credentials_view_update_trg INSTEAD OF UPDATE ON public.dietitian_credentials
+  FOR EACH ROW EXECUTE FUNCTION public.dietitian_credentials_view_update();
+
+CREATE OR REPLACE FUNCTION public.dietitian_credentials_view_delete()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM public.dietitian_credentials_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS dietitian_credentials_view_delete_trg ON public.dietitian_credentials;
+CREATE TRIGGER dietitian_credentials_view_delete_trg INSTEAD OF DELETE ON public.dietitian_credentials
+  FOR EACH ROW EXECUTE FUNCTION public.dietitian_credentials_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.dietitian_credentials TO authenticated;
+
+ALTER FUNCTION public.dietitian_credentials_view_insert() SET search_path = '';
+ALTER FUNCTION public.dietitian_credentials_view_update() SET search_path = '';
+ALTER FUNCTION public.dietitian_credentials_view_delete() SET search_path = '';
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables
+             WHERE table_schema = 'public' AND table_name = 'dietitian_credentials_raw' AND table_type = 'BASE TABLE') THEN
+    EXECUTE 'DROP POLICY IF EXISTS "mfa_required" ON public.dietitian_credentials_raw';
+    EXECUTE 'CREATE POLICY "mfa_required" ON public.dietitian_credentials_raw AS RESTRICTIVE FOR ALL '
+            'USING (public.mfa_ok()) WITH CHECK (public.mfa_ok())';
+  END IF;
+END $$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_88_field_encryption_dietitian_credentials', 'Estesa la cifratura applicativa (pattern vista trasparente di SEZIONE 40/79/80) a dietitian_credentials: sts_password, sts_pincode, sts_api_password, wa_access_token, wa_app_secret, wa_webhook_verify_token, fic_api_token — unica tabella dello schema con credenziali di terzi in chiaro (WhatsApp Business token attivamente in uso). Tabella rinominata *_raw, vista trasparente security_invoker=true, trigger INSTEAD OF INSERT/UPDATE/DELETE, search_path fissato sui trigger. Aggiunto anche mfa_required RESTRICTIVE (mancava). Zero modifiche richieste al codice client. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 89 — FIX ALTO: create_patient_profile / create_profile_for_new_user
+-- permettevano di sovrascrivere nome/cognome di un profilo altrui
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25. Il ramo ON CONFLICT
+-- (id) DO UPDATE usava COALESCE(EXCLUDED.full_name, profiles.full_name) —
+-- ma l'attaccante controlla sempre p_full_name/p_first_name/p_last_name
+-- (parametri della funzione), quindi COALESCE non protegge nulla in
+-- pratica: chiunque conosca lo UUID di un profilo esistente può chiamare
+-- la RPC (SECURITY DEFINER, senza verifica auth.uid()=uid — intenzionale
+-- per motivi diversi, vedi SEZIONE 52: permette il flusso di signup prima
+-- che la sessione sia stabilita, e hardcoda role='patient' per bloccare
+-- l'escalation di privilegio) e sovrascriverne SEMPRE nome/cognome.
+--
+-- Fix minimale che non rompe il flusso signup senza sessione: il ramo ON
+-- CONFLICT smette di toccare i campi anagrafici, aggiorna solo
+-- terms_accepted_at (comportamento già presente, unico che ha senso
+-- riproporre su un profilo già esistente).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.create_patient_profile(uid uuid, user_email text, p_full_name text, p_first_name text, p_last_name text, terms_accepted boolean DEFAULT false)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, first_name, last_name, role, terms_accepted_at)
+  VALUES (uid, user_email, p_full_name, p_first_name, p_last_name, 'patient',
+          CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.create_profile_for_new_user(uid uuid, user_email text, terms_accepted boolean DEFAULT false)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, approved, is_admin, terms_accepted_at)
+  VALUES (uid, user_email, false, false, CASE WHEN terms_accepted THEN NOW() ELSE NULL END)
+  ON CONFLICT (id) DO UPDATE SET
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+END;
+$$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_89_fix_create_profile_overwrite', 'create_patient_profile/create_profile_for_new_user sovrascrivevano sempre full_name/first_name/last_name di un profilo esistente nel ramo ON CONFLICT (il COALESCE non protegge nulla perché l''attaccante controlla sempre i parametri EXCLUDED) — chiunque conoscesse lo UUID di un profilo poteva rinominarlo via RPC anonima/non verificata. Rimosso l''overwrite dei campi anagrafici dal ramo ON CONFLICT, mantenuto solo l''aggiornamento di terms_accepted_at. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 90 — MFA: estensione a 4 tabelle sensibili non ancora coperte
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25, confrontando le
+-- tabelle con dati sensibili contro le 18 già protette da mfa_required
+-- (migrazione 20260721150000__enforce_2fa_rls.sql): medication_reminders
+-- (farmaci, dato sanitario), whatsapp_messages (testo messaggi con
+-- pazienti, parallelo a chat_messages_raw che è cifrato+MFA), coach_ai_
+-- messages (conversazioni su alimentazione/salute con l'AI coach),
+-- weekly_checkins (testo libero paziente→dietista). patient_intake_forms
+-- deliberatamente ESCLUSA, stessa motivazione di SEZIONE 79 (feature del
+-- link pubblico già morta — confermato di nuovo oggi: 1 sola riga in
+-- tabella, ultima creata il 2026-07-04).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+DECLARE
+  t text;
+  tables text[] := ARRAY['medication_reminders', 'whatsapp_messages', 'coach_ai_messages', 'weekly_checkins'];
+BEGIN
+  FOREACH t IN ARRAY tables LOOP
+    IF EXISTS (SELECT 1 FROM information_schema.tables
+               WHERE table_schema = 'public' AND table_name = t AND table_type = 'BASE TABLE') THEN
+      EXECUTE format('DROP POLICY IF EXISTS "mfa_required" ON public.%I', t);
+      EXECUTE format(
+        'CREATE POLICY "mfa_required" ON public.%I AS RESTRICTIVE FOR ALL '
+        'USING (public.mfa_ok()) WITH CHECK (public.mfa_ok())', t);
+    END IF;
+  END LOOP;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_90_mfa_4_tabelle_sensibili', 'Estesa mfa_required RESTRICTIVE (stesso pattern di 20260721150000__enforce_2fa_rls.sql) a medication_reminders, whatsapp_messages, coach_ai_messages, weekly_checkins — dati sensibili non ancora coperti dall''audit precedente. patient_intake_forms esclusa deliberatamente (feature morta, stessa motivazione SEZIONE 79). Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 91 — PERFORMANCE: 5 policy con auth.uid() non wrappato
+-- (auth_rls_initplan)
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25 (advisor Supabase,
+-- auth_rls_initplan, WARN). auth.uid() non wrappato in (select auth.uid())
+-- viene rivalutato per ogni riga invece che una sola volta per query — solo
+-- un problema di performance su tabelle grandi, non di sicurezza. Le altre
+-- ~70 tabelle dello schema usano già il pattern wrappato.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "Dietitian manages own intake forms" ON public.patient_intake_forms;
+CREATE POLICY "Dietitian manages own intake forms" ON public.patient_intake_forms
+  FOR ALL USING (dietitian_id = (select auth.uid()));
+
+DROP POLICY IF EXISTS "patient_intake_forms_collaborator_write" ON public.patient_intake_forms;
+CREATE POLICY "patient_intake_forms_collaborator_write" ON public.patient_intake_forms
+  FOR ALL
+  USING ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())))
+  WITH CHECK ((dietitian_id = get_studio_owner((select auth.uid()))) AND is_dietitian_level_collaborator((select auth.uid())));
+
+DROP POLICY IF EXISTS "own" ON public.fasting_logs;
+CREATE POLICY "own" ON public.fasting_logs
+  FOR ALL USING ((select auth.uid()) = user_id);
+
+DROP POLICY IF EXISTS "dietitian_push_subs_own" ON public.dietitian_push_subscriptions;
+CREATE POLICY "dietitian_push_subs_own" ON public.dietitian_push_subscriptions
+  FOR ALL
+  USING ((select auth.uid()) = user_id)
+  WITH CHECK ((select auth.uid()) = user_id);
+
+DROP POLICY IF EXISTS "dietitian_todos_owner_all" ON public.dietitian_todos;
+CREATE POLICY "dietitian_todos_owner_all" ON public.dietitian_todos
+  FOR ALL
+  USING ((select auth.uid()) = user_id)
+  WITH CHECK ((select auth.uid()) = user_id);
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_91_perf_auth_rls_initplan', 'Wrappato auth.uid() in (select auth.uid()) nelle 5 policy segnalate dall''advisor Supabase (auth_rls_initplan): patient_intake_forms (2 policy), fasting_logs, dietitian_push_subscriptions, dietitian_todos — solo ottimizzazione performance, nessun cambio di comportamento. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 92 — DIFESA IN PROFONDITÀ: EXECUTE revocato su funzioni
+-- SECURITY DEFINER che non devono essere chiamabili direttamente
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25 (advisor Supabase,
+-- anon_security_definer_function_executable / authenticated_security_
+-- definer_function_executable, WARN). Nessuna di queste funzioni è
+-- sfruttabile oggi (le funzioni trigger falliscono comunque se chiamate
+-- via RPC, mancando TG_OP/NEW/OLD fuori contesto trigger; i 3 helper RLS
+-- restano authenticated perché richiamati dentro le policy stesse — vedi
+-- nota sotto), ma revocare EXECUTE dove non serve riduce la superficie
+-- d'attacco in caso di bug futuri.
+--
+-- Funzioni trigger/event-trigger, mai chiamate via RPC da codice
+-- applicativo — revocato EXECUTE da PUBLIC (quindi anche anon e
+-- authenticated): l'esecuzione automatica dei trigger non richiede che il
+-- ruolo che ha innescato l'evento abbia EXECUTE sulla funzione.
+--
+-- Helper usati DENTRO le policy RLS (is_chat_group_member,
+-- is_dietitian_level_collaborator, get_studio_owner) — questi DEVONO
+-- restare eseguibili da authenticated (la valutazione della policy avviene
+-- nel contesto del ruolo che esegue la query, non del definer), revocato
+-- EXECUTE solo da anon dato che non serve a utenti non loggati e accettano
+-- uno uid arbitrario senza verificarlo (minor info-leak se lasciati ad
+-- anon: oracle booleano su membership/ruolo di terzi).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+REVOKE EXECUTE ON FUNCTION
+  public.prevent_role_self_update(),
+  public.prevent_self_privilege_escalation(),
+  public.log_clinical_change(),
+  public.notify_on_event_webhook(),
+  public.handle_new_user(),
+  public._auto_gdpr_consent(),
+  public.chat_messages_broadcast(),
+  public.prevent_patient_appointment_tampering(),
+  public.prevent_patient_document_tampering()
+FROM PUBLIC, anon, authenticated;
+
+REVOKE EXECUTE ON FUNCTION
+  public.is_chat_group_member(uuid, uuid),
+  public.is_dietitian_level_collaborator(uuid),
+  public.get_studio_owner(uuid)
+FROM anon;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_92_revoke_execute_security_definer', 'Difesa in profondità (advisor Supabase security_definer_function_executable, WARN): revocato EXECUTE da PUBLIC/anon/authenticated su 9 funzioni trigger-only mai chiamate via RPC applicativa; revocato EXECUTE da solo anon (restano authenticated) su 3 helper usati dentro le policy RLS (is_chat_group_member, is_dietitian_level_collaborator, get_studio_owner). Nessuna era sfruttabile oggi, riduzione preventiva della superficie d''attacco. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 93 — FIX: auto-link paziente→dietista via link d'invito
+-- (Diet-Plan-Pro-app-claude) accettava un UUID qualsiasi, non validato
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi approfondita del 2026-08-25 (audit sicurezza app
+-- paziente). RegisterPage.jsx legge ?ref=<uuid> dalla query string e
+-- AuthContext.jsx, al primo SIGNED_IN dopo la registrazione, fa un INSERT
+-- diretto client-side su patient_dietitian con quel UUID come dietitian_id,
+-- senza alcuna validazione che sia un dietista reale/approvato.
+--
+-- Verificato qui lato database: la RLS attuale (patient_dietitian_insert_
+-- own, WITH CHECK auth.uid() = dietitian_id) in realtà blocca già questo
+-- INSERT per un paziente che si autoregistra (il suo auth.uid() è il
+-- paziente, non il dietista) — quindi l'auto-link è oggi silenziosamente
+-- SEMPRE FALLITO (bug funzionale, non exploit attivo: l'errore RLS viene
+-- ignorato dal client, che si limita a non rimuovere pending_dietitian_ref
+-- da localStorage). Resta comunque una base di codice fragile: userebbe
+-- solo bastasse allentare in futuro quella RLS (es. per farla funzionare
+-- davvero) perché il varco si aprisse subito, dato che il client non
+-- valida NULLA sull'UUID prima di provare l'insert.
+--
+-- Fix: una RPC SECURITY DEFINER dedicata che (a) fa funzionare davvero
+-- l'auto-link (risolve anche il bug funzionale), (b) valida che
+-- p_dietitian_id sia effettivamente un dietista con account approvato
+-- prima di collegarlo, (c) usa SEMPRE auth.uid() per patient_id, mai un
+-- parametro lato client. Non implementa un token d'invito firmato/one-time
+-- (richiederebbe modifiche anche lato generazione del link in NutriPlan-
+-- Pro, fuori scope di questa sezione) — resta quindi possibile per un
+-- paziente autoregistrarsi a QUALSIASI dietista approvato di cui conosca
+-- lo UUID, non solo a quello che gli ha inviato il link; ma non più a UUID
+-- arbitrari/inventati/di account non-dietista.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.link_patient_to_dietitian_via_ref(p_dietitian_id uuid)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $$
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'Richiede un utente autenticato';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM profiles
+    WHERE id = p_dietitian_id AND role = 'dietitian' AND approved = true
+  ) THEN
+    RETURN false;
+  END IF;
+  INSERT INTO public.patient_dietitian (patient_id, dietitian_id)
+  VALUES (auth.uid(), p_dietitian_id)
+  ON CONFLICT (patient_id, dietitian_id) DO NOTHING;
+  RETURN true;
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.link_patient_to_dietitian_via_ref(uuid) FROM anon;
+GRANT EXECUTE ON FUNCTION public.link_patient_to_dietitian_via_ref(uuid) TO authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_93_fix_patient_dietitian_ref_link', 'RegisterPage.jsx/AuthContext.jsx (Diet-Plan-Pro-app-claude) inserivano patient_dietitian con un dietitian_id preso senza validazione da ?ref= in query string. La RLS attuale blocca già l''insert diretto per un paziente (auth.uid()=dietitian_id richiesto), rendendo l''auto-link oggi sempre fallito silenziosamente — bug funzionale oltre che base fragile. Aggiunta RPC link_patient_to_dietitian_via_ref(uuid) SECURITY DEFINER che valida che il target sia un dietista con account approvato prima di collegarlo, usa sempre auth.uid() per patient_id. Il codice client (repo Diet-Plan-Pro-app-claude) va aggiornato per chiamare questa RPC invece dell''insert diretto. Trovato dall''audit di sicurezza del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;

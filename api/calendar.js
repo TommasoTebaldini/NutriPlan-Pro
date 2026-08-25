@@ -22,12 +22,28 @@ async function verifySupabaseToken(bearerToken) {
   return await res.json();
 }
 
+// Stesso pattern "allowlist, mai '*'" già usato in claude.js/gemini.js/
+// fetch-page.js/ocr-referto-immagine.js/ai-scribe.js/send-reset.js — prima
+// questo endpoint era l'unico a riflettere sempre ALLOWED_ORIGIN o, se non
+// configurato, letteralmente '*' (qualunque sito poteva leggere la risposta
+// via CORS). Basso impatto pratico (l'endpoint richiede comunque un Bearer
+// token, niente cookie coinvolti), ma inconsistente e non fail-closed.
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin || '';
+  const configured = process.env.ALLOWED_ORIGIN || '';
+  const allowed = configured.split(',').map(s => s.trim()).filter(Boolean);
+  if (allowed.length > 0 && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
+
 // GET /api/calendar?action=token — returns a signed HMAC token + subscribe
 // URL for the authenticated user's calendar feed (former api/calendar-token.js).
 async function handleTokenRequest(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  setCorsHeaders(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 

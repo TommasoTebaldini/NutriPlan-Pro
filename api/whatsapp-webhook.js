@@ -203,18 +203,25 @@ async function handler(req, res) {
 
     const profiles = await sbFetch(`dietitian_credentials?id=eq.${dietitianId}&select=wa_app_secret`);
     const appSecret = profiles?.[0]?.wa_app_secret;
-    if (appSecret) {
-      const signature = req.headers['x-hub-signature-256'] || '';
-      const expectedSig = 'sha256=' + crypto.createHmac('sha256', appSecret).update(raw).digest('hex');
-      const sigBuf = Buffer.from(signature);
-      const expBuf = Buffer.from(expectedSig);
-      if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
-        return res.status(401).json({ error: 'Firma non valida' });
-      }
+    // FIX 2026-08-25: prima, senza wa_app_secret configurato, la richiesta
+    // veniva comunque accettata ("per non bloccare il setup iniziale") ma
+    // senza alcuna garanzia di autenticità — chiunque conoscesse/indovinasse
+    // un dietitian_id poteva iniettare messaggi WhatsApp fasulli in
+    // whatsapp_messages durante quella finestra. Ora si rifiuta (fail
+    // closed): nessun messaggio viene accettato finché il dietista non
+    // configura wa_app_secret dalle impostazioni — la verifica GET del
+    // webhook (hub.challenge, sopra) resta comunque disponibile per il setup
+    // iniziale in Meta, che non richiede appSecret.
+    if (!appSecret) {
+      return res.status(401).json({ error: 'wa_app_secret non configurato: impossibile verificare l\'autenticità della richiesta' });
     }
-    // Se wa_app_secret non è configurato, la richiesta viene comunque accettata
-    // (per non bloccare il setup iniziale) ma senza garanzia di autenticità —
-    // consigliato impostarlo appena creato l'App Meta.
+    const signature = req.headers['x-hub-signature-256'] || '';
+    const expectedSig = 'sha256=' + crypto.createHmac('sha256', appSecret).update(raw).digest('hex');
+    const sigBuf = Buffer.from(signature);
+    const expBuf = Buffer.from(expectedSig);
+    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+      return res.status(401).json({ error: 'Firma non valida' });
+    }
 
     const body = JSON.parse(raw.toString('utf8') || '{}');
     const changes = (body.entry || []).flatMap(e => e.changes || []);

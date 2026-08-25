@@ -1,7 +1,8 @@
 // api/_ragSearch.js — retrieval helper per il contesto RAG (linee guida cliniche,
 // consigli pratici, ricette). Prefisso `_`: non è una function Vercel a sé, solo
-// un modulo importato da altri handler (api/rag-search.js, ecc.) — non conta
-// verso il limite di 12 function del piano Hobby.
+// un modulo importato da altri handler (api/gemini.js — mode:'rag-search' — e
+// api/claude.js, per il RAG del meal-plan) — non conta verso il limite di 12
+// function del piano Hobby.
 //
 // LG_DATA/CONSIGLI_BASE/RICETTE_DB sono script pensati per il browser (variabili
 // globali `const`/plain assignment, non moduli CommonJS/ESM) — li carichiamo in

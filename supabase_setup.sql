@@ -7704,3 +7704,77 @@ REVOKE MAINTAIN ON public.appointment_slots FROM anon, authenticated;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_94_fix_revoke_from_public_not_anon', 'Verifica live post-esecuzione SEZIONE 83-93 (2026-08-25) ha trovato che "REVOKE EXECUTE ... FROM anon" nelle SEZIONE 84/86/92/93 non aveva effetto reale: le funzioni avevano ancora EXECUTE concesso a PUBLIC (grant di default alla CREATE FUNCTION, mai revocato), da cui anon eredita comunque il privilegio. Corretto con REVOKE ... FROM PUBLIC + GRANT esplicito a authenticated su get_user_agenda_events, increment_usage_and_check, link_patient_to_dietitian_via_ref, is_chat_group_member, is_dietitian_level_collaborator, get_studio_owner. Aggiunto anche REVOKE MAINTAIN su appointment_slots (SEZIONE 83 aveva dimenticato questo privilegio, introdotto in PG17, oltre a INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 95 — Enforcement server-side del limite ricette Free (Diet-Plan-
+-- Pro-app-claude), unico limite Free/Pro realmente legato ai dati
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'analisi architetturale del 2026-08-25: l'enforcement Free/
+-- Pro (ProGate.jsx, useSubscription.js) è interamente lato client. Per la
+-- stragrande maggioranza delle feature "Pro" (grafici avanzati, PDF,
+-- micronutrienti, storico peso più lungo...) questo è corretto e non
+-- richiede fix server-side: sono la STESSA riga di dati già leggibile
+-- dall'utente (le sue proprie misurazioni/log), solo presentata in modo
+-- più ricco — non esiste un confine di sicurezza da far rispettare al
+-- database, solo una scelta di prodotto su cosa mostrare nella UI.
+--
+-- L'UNICA eccezione reale è FREE_RECIPES_LIMIT = 5 in RecipesPage.jsx: un
+-- vero limite di MUTAZIONE (quante righe puoi creare), oggi controllato
+-- solo lato client — un utente Free poteva creare ricette illimitate
+-- chiamando /rest/v1/ricette direttamente, bypassando il controllo React.
+--
+-- IMPORTANTE — PAYMENTS_ACTIVE è oggi false (src/hooks/useSubscription.js):
+-- finché è così, il client tratta OGNI paziente come Pro (isPro sempre
+-- true), quindi in produzione oggi nessuno ha davvero il limite di 5
+-- ricette. Se il trigger sotto controllasse solo profiles.subscription_
+-- plan (che di default è 'free' per tutti nel DB, anche se il client li
+-- tratta da Pro), bloccherebbe SUBITO tutti gli utenti attuali a 5
+-- ricette — una regressione reale, non quello che si vuole ora. Per
+-- restare coerente col comportamento del client, il trigger controlla
+-- prima payments_active() (funzione SQL, di default false, da allineare
+-- a mano quando si flippa PAYMENTS_ACTIVE lato client — vedi commento in
+-- useSubscription.js) e non applica alcun limite finché resta false.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.payments_active()
+RETURNS boolean LANGUAGE sql IMMUTABLE AS $$ SELECT false $$;
+
+CREATE OR REPLACE FUNCTION public.check_free_recipe_limit()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_plan text;
+  v_expires timestamptz;
+  v_count int;
+BEGIN
+  IF NOT public.payments_active() THEN
+    RETURN NEW; -- pre-lancio: tutti trattati come Pro, stesso comportamento del client
+  END IF;
+
+  SELECT subscription_plan, subscription_expires_at INTO v_plan, v_expires
+  FROM public.profiles WHERE id = NEW.user_id;
+
+  IF v_plan = 'pro' AND (v_expires IS NULL OR v_expires > now()) THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT count(*) INTO v_count FROM public.ricette WHERE user_id = NEW.user_id;
+  IF v_count >= 5 THEN
+    RAISE EXCEPTION 'Limite di 5 ricette raggiunto nel piano Free. Passa al Pro per ricette illimitate.';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_check_free_recipe_limit ON public.ricette;
+CREATE TRIGGER trg_check_free_recipe_limit
+BEFORE INSERT ON public.ricette
+FOR EACH ROW EXECUTE FUNCTION public.check_free_recipe_limit();
+
+REVOKE EXECUTE ON FUNCTION public.check_free_recipe_limit() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.payments_active() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.payments_active() TO anon, authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_95_free_recipe_limit_server_side', 'Aggiunto enforcement server-side del limite di 5 ricette Free (unico limite Free/Pro legato a una vera mutazione dati, non solo a cosa mostra la UI) — un utente Free poteva creare ricette illimitate chiamando /rest/v1/ricette direttamente. Trigger BEFORE INSERT su ricette, gated da payments_active() (nuova funzione, default false) per restare coerente col comportamento attuale del client mentre PAYMENTS_ACTIVE=false in useSubscription.js — non applica alcun limite finché entrambi non vengono flippati a true insieme. Deliberatamente NON replicato per il limite "storico 7 giorni" del diario: quello è un pacing/UX sui dati GIA'' di proprietà dell''utente, non una mutazione, e altre feature (sfide, report settimanali, achievement) leggono già storico oltre 7 giorni per tutti indipendentemente dal piano — un blocco RLS lì romperebbe quelle. Trovato dall''audit architetturale del 2026-08-25')
+ON CONFLICT (id) DO NOTHING;

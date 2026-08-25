@@ -1,4 +1,4 @@
-// api/ai.js — Vercel Serverless Function
+// api/gemini.js — Vercel Serverless Function
 // Usa Groq API: GRATIS, velocissima, nessun limite pratico
 // Chiave gratuita su: https://console.groq.com/keys (registrazione con Google/GitHub)
 // Vercel: Settings → Environment Variables → GEMINI_API_KEY (stessa variabile, non cambiare nome)

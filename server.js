@@ -15,21 +15,31 @@ app.disable('x-powered-by');
 app.use(express.json({ limit: '64kb' }));
 app.use(express.urlencoded({ extended: false, limit: '64kb' }));
 
+// Header di sicurezza letti direttamente da vercel.json invece di essere
+// riscritti a mano qui — prima le due copie (questa e quella in vercel.json,
+// l'unica realmente usata in produzione) erano già andate fuori sync senza
+// che nessuno se ne accorgesse: server.js includeva https://api.groq.com in
+// connect-src (non presente in vercel.json) e mancava upgrade-insecure-
+// requests. Ora vercel.json resta l'unica fonte di verità: un cambio alla
+// CSP/security header lì si riflette automaticamente anche qui, non serve
+// più ricordarsi di aggiornare due file.
+const vercelConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'vercel.json'), 'utf8'));
+const catchAllHeaders = vercelConfig.headers?.find(h => h.source === '/(.*)')?.headers || [];
+
 app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(), payment=()');
-  if (process.env.NODE_ENV === 'production') {
-    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
-  } else {
+  const isProd = process.env.NODE_ENV === 'production';
+  for (const { key, value } of catchAllHeaders) {
+    // 'Link' (preconnect hints) è specifico del CDN/hosting di produzione.
+    // 'Strict-Transport-Security' fuori produzione forzerebbe il browser a
+    // ricordare "solo HTTPS" anche per questo host di sviluppo locale —
+    // stesso comportamento (solo in prod) del codice precedente.
+    if (key === 'Link') continue;
+    if (key === 'Strict-Transport-Security' && !isProd) continue;
+    res.setHeader(key, value);
+  }
+  if (!isProd) {
     res.setHeader('Cache-Control', 'no-store');
   }
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com https://storage.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://api.qrserver.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googleapis.com https://accounts.google.com https://api.groq.com https://cdn.jsdelivr.net https://world.openfoodfacts.org https://world.openfoodfacts.net https://fonts.googleapis.com https://fonts.gstatic.com https://api.qrserver.com; manifest-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
-  );
   next();
 });
 
